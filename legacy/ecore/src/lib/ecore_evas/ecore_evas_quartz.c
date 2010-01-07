@@ -21,6 +21,8 @@
 #include "Ecore_Quartz.h"
 #include "Evas_Engine_Quartz.h"
 
+// FIXME: this engine has lots of problems. only 1 window at a time, drawRect looks wrong, doesnt handle resizes and more
+
 static int                      _ecore_evas_init_count = 0;
 static Ecore_Evas               *ecore_evases = NULL;
 static Ecore_Event_Handler      *ecore_evas_event_handlers[4] = {
@@ -292,7 +294,7 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
 }
 
-static const Ecore_Evas_Engine_Func _ecore_quartz_engine_func =
+static Ecore_Evas_Engine_Func _ecore_quartz_engine_func =
 {
    _ecore_evas_quartz_free,
    NULL,
@@ -336,7 +338,9 @@ static const Ecore_Evas_Engine_Func _ecore_quartz_engine_func =
    NULL,
    NULL,
    NULL,
-   NULL
+   NULL,
+     
+     NULL // render
 };
 #endif
 

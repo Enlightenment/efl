@@ -12,17 +12,11 @@
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 static int _ecore_evas_init_count = 0;
 
-static int _ecore_evas_fps_debug = 0;
-
-static Ecore_Evas *ecore_evases = NULL;
-
 static int
 _ecore_evas_buffer_init(void)
 {
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
-   if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
-   if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
    return _ecore_evas_init_count;
 }
 
@@ -39,8 +33,6 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
      }
    else
      {
-	ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
-
 	free(ee->engine.buffer.pixels);
      }
    _ecore_evas_buffer_shutdown();
@@ -91,11 +83,6 @@ _ecore_evas_buffer_shutdown(void)
    _ecore_evas_init_count--;
    if (_ecore_evas_init_count == 0)
      {
-	while (ecore_evases)
-	  {
-	     _ecore_evas_free(ecore_evases);
-	  }
-	if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;
@@ -372,7 +359,7 @@ _ecore_evas_buffer_cb_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
 
-static const Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
+static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 {
    _ecore_evas_buffer_free,
      NULL,
@@ -418,7 +405,9 @@ static const Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
      NULL,
      NULL,
-     NULL
+     NULL,
+     
+     NULL // render
 };
 #endif
 
@@ -499,7 +488,9 @@ ecore_evas_buffer_new(int w, int h)
 
    evas_event_feed_mouse_in(ee->evas, 0, NULL);
 
-   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+   ee->engine.func->fn_render = _ecore_evas_buffer_render;
+   _ecore_evas_register(ee);
+   
    return ee;
 #else
    return NULL;
@@ -636,6 +627,9 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
    ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
+   
+   ee->engine.func->fn_render = _ecore_evas_buffer_render;
+   
    return o;
 #else
    return NULL;

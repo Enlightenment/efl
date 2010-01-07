@@ -21,11 +21,7 @@
 #ifdef BUILD_ECORE_EVAS_X11
 static int _ecore_evas_init_count = 0;
 
-static int _ecore_evas_fps_debug = 0;
-
-static Ecore_Evas *ecore_evases = NULL;
 static Ecore_Event_Handler *ecore_evas_event_handlers[12];
-static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 
 #ifdef HAVE_ECORE_X_XCB
 static xcb_visualtype_t *
@@ -998,37 +994,10 @@ _ecore_evas_x_layer_update(Ecore_Evas *ee)
 }
 
 static int
-_ecore_evas_x_idle_enter(void *data __UNUSED__)
-{
-   Ecore_Evas *ee;
-   double t1 = 0.0;
-   double t2 = 0.0;
-   int rend = 0;
-
-   if (!ecore_evases) return 1;
-   if (_ecore_evas_fps_debug)
-     {
-	t1 = ecore_time_get();
-     }
-   EINA_INLIST_FOREACH(ecore_evases, ee)
-	rend |= _ecore_evas_x_render(ee);
-   ecore_x_flush();
-   if (_ecore_evas_fps_debug)
-     {
-	t2 = ecore_time_get();
-	if (rend)
-          _ecore_evas_fps_debug_rendertime_add(t2 - t1);
-     }
-   return 1;
-}
-
-static int
 _ecore_evas_x_init(void)
 {
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
-   if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
-   ecore_evas_idle_enterer = ecore_idle_enterer_add(_ecore_evas_x_idle_enter, NULL);
    ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_IN, _ecore_evas_x_event_mouse_in, NULL);
    ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_OUT, _ecore_evas_x_event_mouse_out, NULL);
    ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_FOCUS_IN, _ecore_evas_x_event_window_focus_in, NULL);
@@ -1042,7 +1011,6 @@ _ecore_evas_x_init(void)
    ecore_evas_event_handlers[10] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROPERTY, _ecore_evas_x_event_property_change, NULL);
    ecore_evas_event_handlers[11] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_VISIBILITY_CHANGE, _ecore_evas_x_event_visibility_change, NULL);
    ecore_event_evas_init();
-   if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
    return _ecore_evas_init_count;
 }
 
@@ -1058,7 +1026,7 @@ _ecore_evas_x_free(Ecore_Evas *ee)
    ee->engine.x.mask = 0;
    ee->engine.x.gc = 0;
    ee->engine.x.damages = NULL;
-	ecore_event_window_unregister(ee->prop.window);
+   ecore_event_window_unregister(ee->prop.window);
    while (ee->engine.x.win_extra)
      {
 	Ecore_X_Window *winp;
@@ -1068,7 +1036,6 @@ _ecore_evas_x_free(Ecore_Evas *ee)
 	ecore_event_window_unregister(*winp);
 	free(winp);
      }
-   ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    _ecore_evas_x_shutdown();
    ecore_x_shutdown();
 }
@@ -2179,19 +2146,15 @@ _ecore_evas_x_shutdown(void)
      {
 	unsigned int i;
 
-	while (ecore_evases) _ecore_evas_free(ecore_evases);
 	for (i = 0; i < sizeof(ecore_evas_event_handlers) / sizeof(Ecore_Event_Handler*); i++)
 	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
-	ecore_idle_enterer_del(ecore_evas_idle_enterer);
-	ecore_evas_idle_enterer = NULL;
-	if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
 	ecore_event_evas_shutdown();
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;
 }
 
-static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
+static Ecore_Evas_Engine_Func _ecore_x_engine_func =
 {
    _ecore_evas_x_free,
      NULL,
@@ -2237,7 +2200,9 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
      _ecore_evas_x_withdrawn_set,
      _ecore_evas_x_sticky_set,
      _ecore_evas_x_ignore_events_set,
-     _ecore_evas_x_alpha_set
+     _ecore_evas_x_alpha_set,
+     
+     NULL // render
 };
 #endif /* BUILD_ECORE_EVAS_X11 */
 
@@ -2485,7 +2450,8 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
                            0 /* window_group */,
                            0 /* is_urgent */);
 
-   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+   ee->engine.func->fn_render = _ecore_evas_x_render;
+   _ecore_evas_register(ee);
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
    return ee;
 }
@@ -2674,7 +2640,8 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
                            0 /* window_group */,
                            0 /* is_urgent */);
    
-   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+   ee->engine.func->fn_render = _ecore_evas_x_render;
+   _ecore_evas_register(ee);
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
 # endif /* HAVE_ECORE_X_XCB */
 
@@ -2922,7 +2889,8 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
                            0 /* window_group */,
                            0 /* is_urgent */);
    
-   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+   ee->engine.func->fn_render = _ecore_evas_x_render;
+   _ecore_evas_register(ee);
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
    return ee;
 }
@@ -3134,7 +3102,8 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
                            0 /* window_group */,
                            0 /* is_urgent */);
    
-   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+   ee->engine.func->fn_render = _ecore_evas_x_render;
+   _ecore_evas_register(ee);
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
    return ee;
 }

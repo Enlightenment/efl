@@ -183,6 +183,8 @@ struct _Ecore_Evas_Engine_Func
    void        (*fn_sticky_set) (Ecore_Evas *ee, int sticky);
    void        (*fn_ignore_events_set) (Ecore_Evas *ee, int ignore);
    void        (*fn_alpha_set) (Ecore_Evas *ee, int alpha);
+
+   int         (*fn_render) (Ecore_Evas *ee);
 };
 
 struct _Ecore_Evas_Engine
@@ -331,6 +333,8 @@ struct _Ecore_Evas
    Eina_List *sub_ecore_evas;
 
    unsigned char ignore_events : 1;
+   unsigned char manual_render : 1;
+   unsigned char registered : 1;
 };
 
 #ifdef BUILD_ECORE_EVAS_X11
@@ -356,6 +360,7 @@ int _ecore_evas_wince_shutdown(void);
 void _ecore_evas_fps_debug_init(void);
 void _ecore_evas_fps_debug_shutdown(void);
 void _ecore_evas_fps_debug_rendertime_add(double t);
+void _ecore_evas_register(Ecore_Evas *ee);
 void _ecore_evas_free(Ecore_Evas *ee);
 void _ecore_evas_idle_timeout_update(Ecore_Evas *ee);
 void _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp);

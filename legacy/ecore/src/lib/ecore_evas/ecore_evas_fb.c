@@ -22,12 +22,9 @@
 #ifdef BUILD_ECORE_EVAS_FB
 static int _ecore_evas_init_count = 0;
 
-static int _ecore_evas_fps_debug = 0;
 static char *ecore_evas_default_display = "0";
 static Eina_List *ecore_evas_input_devices = NULL;
-static Ecore_Evas *ecore_evases = NULL;
 static Ecore_Event_Handler *ecore_evas_event_handlers[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
-static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 
 static void
 _ecore_evas_mouse_move_process_fb(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
@@ -67,10 +64,12 @@ _ecore_evas_mouse_move_process_fb(Ecore_Evas *ee, int x, int y, unsigned int tim
      evas_event_feed_mouse_move(ee->evas, y, (fbw - ee->w) + ee->w - x - 1, timestamp, NULL);
 }
 
+static Ecore_Evas *fb_ee = NULL;
+
 static Ecore_Evas *
 _ecore_evas_fb_match(void)
 {
-   return ecore_evases;
+   return fb_ee;
 }
 
 static void
@@ -80,8 +79,7 @@ _ecore_evas_fb_lose(void *data __UNUSED__)
    Eina_List *ll;
    Ecore_Fb_Input_Device *dev;
 
-   EINA_INLIST_FOREACH(ecore_evases, ee)
-	ee->visible = 0;
+   if (fb_ee) fb_ee->visible = 0;
 
    EINA_LIST_FOREACH(ecore_evas_input_devices, ll, dev)
      ecore_fb_input_device_listen(dev, 0);
@@ -94,8 +92,10 @@ _ecore_evas_fb_gain(void *data __UNUSED__)
    Eina_List *ll;
    Ecore_Fb_Input_Device *dev;
 
-   EINA_INLIST_FOREACH(ecore_evases,ee)
+   if (fb_ee) 
      {
+        ee = fb_ee;
+        
 	ee->visible = 1;
 	if ((ee->rotation == 90) || (ee->rotation == 270))
 	  evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
@@ -191,53 +191,39 @@ _ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *
 }
 
 static int
-_ecore_evas_idle_enter(void *data __UNUSED__)
+_ecore_evas_fb_render(Ecore_Evas *ee)
 {
-   Ecore_Evas *ee;
-   double t1 = 0.0;
-   double t2 = 0.0;
-
-   if (!ecore_evases) return 1;
-   if (_ecore_evas_fps_debug)
+   int rend = 0;
+   
+   if (ee->visible)
      {
-	t1 = ecore_time_get();
-     }
-   EINA_INLIST_FOREACH(ecore_evases, ee)
-     {
-	if (ee->visible)
-	  {
-	     Eina_List *updates;
-
+        Eina_List *updates;
+        
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
-	     Eina_List *ll;
-	     Ecore_Evas *ee2;
+        Eina_List *ll;
+        Ecore_Evas *ee2;
 #endif
-	     if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+        if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
-	     EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
-	       {
-		  if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-		  _ecore_evas_buffer_render(ee2);
-		  if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-	       }
+        EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
+          {
+             if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
+             _ecore_evas_buffer_render(ee2);
+             if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
+          }
 #endif
-	     updates = evas_render_updates(ee->evas);
-	     if (updates)
-	       {
-		  evas_render_updates_free(updates);
-		  _ecore_evas_idle_timeout_update(ee);
-	       }
-	     if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-	  }
-	else
-	  evas_norender(ee->evas);
+        updates = evas_render_updates(ee->evas);
+        if (updates)
+          {
+             evas_render_updates_free(updates);
+             _ecore_evas_idle_timeout_update(ee);
+             rend = 1;
+          }
+        if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
      }
-   if (_ecore_evas_fps_debug)
-     {
-	t2 = ecore_time_get();
-	_ecore_evas_fps_debug_rendertime_add(t2 - t1);
-     }
-   return 1;
+   else
+     evas_norender(ee->evas);
+   return rend;
 }
 
 static int
@@ -254,9 +240,6 @@ _ecore_evas_fb_init(int w, int h)
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
 
-   if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
-   ecore_evas_idle_enterer = ecore_idle_enterer_add(_ecore_evas_idle_enter, NULL);
-   if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
    /* register all input devices */
    input_dir = opendir("/dev/input/");
    if (!input_dir) return _ecore_evas_init_count;
@@ -322,7 +305,7 @@ _ecore_evas_fb_init(int w, int h)
 static void
 _ecore_evas_fb_free(Ecore_Evas *ee)
 {
-   ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+   if (fb_ee == ee) fb_ee = NULL;
    _ecore_evas_fb_shutdown();
    ecore_fb_shutdown();
 }
@@ -521,19 +504,15 @@ _ecore_evas_fb_shutdown(void)
      {
 	int i;
 
-	while (ecore_evases) _ecore_evas_free(ecore_evases);
 	for (i = 0; i < 5; i++)
 	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
-	ecore_idle_enterer_del(ecore_evas_idle_enterer);
-	ecore_evas_idle_enterer = NULL;
-	if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
 	ecore_fb_ts_shutdown();
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;
 }
 
-static const Ecore_Evas_Engine_Func _ecore_fb_engine_func =
+static Ecore_Evas_Engine_Func _ecore_fb_engine_func =
 {
    _ecore_evas_fb_free,
      NULL,
@@ -579,7 +558,9 @@ static const Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      NULL,
      NULL,
      NULL,
-     NULL
+     NULL,
+     
+     NULL // render
 };
 #endif
 
@@ -673,7 +654,10 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
 
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 
-   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+   ee->engine.func->fn_render = _ecore_evas_buffer_render;
+   _ecore_evas_register(ee);
+   fb_ee = ee;
+   
    return ee;
 }
 #else

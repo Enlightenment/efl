@@ -321,6 +321,10 @@ EAPI void        ecore_evas_sticky_set(Ecore_Evas *ee, int sticky);
 EAPI int         ecore_evas_sticky_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_ignore_events_set(Ecore_Evas *ee, int ignore);
 EAPI int         ecore_evas_ignore_events_get(const Ecore_Evas *ee);
+EAPI void        ecore_evas_manual_render_set(Ecore_Evas *ee, int manual_render);
+EAPI int         ecore_evas_manual_render_get(const Ecore_Evas *ee);
+EAPI void        ecore_evas_manual_render(Ecore_Evas *ee);
+       
 EAPI Ecore_Window ecore_evas_window_get(const Ecore_Evas *ee);
 
 

@@ -19,13 +19,9 @@
 
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
 static int _ecore_evas_init_count = 0;
-static int _ecore_evas_fps_debug = 0;
 static Ecore_Event_Handler *ecore_evas_event_handlers[13];
 
-static Ecore_Evas *ecore_evases = NULL;
 static Eina_Hash *ecore_evases_hash = NULL;
-
-static Ecore_Idle_Enterer *ecore_evas_directfb_idle_enterer = NULL;
 
 static void
 _ecore_evas_directfb_render(Ecore_Evas *ee)
@@ -49,28 +45,6 @@ _ecore_evas_directfb_render(Ecore_Evas *ee)
 	_ecore_evas_idle_timeout_update(ee);
      }
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-}
-
-static int
-_ecore_evas_directfb_idle_enter(void *data __UNUSED__)
-{
-   Ecore_Evas *ee;
-   double t1 = 0.0;
-   double t2 = 0.0;
-
-   if (!ecore_evases) return 1;
-   if (_ecore_evas_fps_debug)
-     {
-	t1 = ecore_time_get();
-     }
-   EINA_INLIST_FOREACH(ecore_evases, ee)
-	_ecore_evas_directfb_render(ee);
-   if (_ecore_evas_fps_debug)
-     {
-	t2 = ecore_time_get();
-	_ecore_evas_fps_debug_rendertime_add(t2 - t1);
-     }
-   return 1;
 }
 
 static char *
@@ -258,12 +232,8 @@ _ecore_evas_directfb_shutdown(void)
      {
 	int i;
 
-	while (ecore_evases) _ecore_evas_free(ecore_evases);
 	for (i = 0; i < 8; i++)
 	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
-	ecore_idle_enterer_del(ecore_evas_directfb_idle_enterer);
-	ecore_evas_directfb_idle_enterer = NULL;
-	if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;
@@ -278,9 +248,6 @@ _ecore_evas_directfb_init(void)
 {
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
-   if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
-   ecore_evas_directfb_idle_enterer = ecore_idle_enterer_add(_ecore_evas_directfb_idle_enter, NULL);
-   if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
 
    ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_DIRECTFB_EVENT_KEY_DOWN, _ecore_evas_directfb_event_key_down, NULL);
    ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_DIRECTFB_EVENT_KEY_UP, _ecore_evas_directfb_event_key_up, NULL);
@@ -307,7 +274,6 @@ _ecore_evas_directfb_free(Ecore_Evas *ee)
 {
    eina_hash_del(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(ee->engine.directfb.window->id), ee);
    ecore_directfb_window_free(ee->engine.directfb.window);
-   ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    _ecore_evas_directfb_shutdown();
    ecore_directfb_shutdown();
 }
@@ -469,7 +435,7 @@ _ecore_evas_directfb_window_get(const Ecore_Evas *ee)
 #endif
 
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
-static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
+static Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
 {
    _ecore_evas_directfb_free,	/* free an ecore_evas */
      NULL,				/* cb resize */
@@ -515,7 +481,9 @@ static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
      NULL,				/* withdrawn */
      NULL,				/* sticky */
      NULL,                              /* ignore events */
-     NULL                               /* alpha */
+     NULL,                              /* alpha */
+     
+     NULL // render
 };
 #endif
 
@@ -572,7 +540,10 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
 	einfo->info.surface = window->surface;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
-   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+   
+   ee->engine.func->fn_render = _ecore_evas_directfb_render;
+   _ecore_evas_register(ee);
+   
    if (!ecore_evases_hash)
      ecore_evases_hash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(ee->engine.directfb.window->id), ee);

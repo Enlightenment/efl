@@ -26,11 +26,8 @@
 #define ECORE_EVAS_EVENT_COUNT 7
 
 static int _ecore_evas_init_count = 0;
-static int _ecore_evas_fps_debug  = 0;
 
 static Ecore_Event_Handler *ecore_evas_event_handlers[ECORE_EVAS_EVENT_COUNT];
-static Ecore_Idle_Enterer  *ecore_evas_idle_enterer = NULL;
-static Ecore_Evas          *ecore_evases = NULL;
 
 static int _ecore_evas_wince_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event);
 
@@ -48,9 +45,10 @@ static int _ecore_evas_wince_event_window_delete_request(void *data __UNUSED__, 
 
 /* Private functions */
 
-static void
+static int
 _ecore_evas_wince_render(Ecore_Evas *ee)
 {
+   int rend = 0;
    Eina_List *updates = NULL;
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    Eina_List *ll;
@@ -86,30 +84,9 @@ _ecore_evas_wince_render(Ecore_Evas *ee)
      }
    else
      evas_norender(ee->evas);
+   if (updates) rend = 1;
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-}
-
-static int
-_ecore_evas_wince_idle_enter(void *data __UNUSED__)
-{
-   Ecore_Evas *ee;
-   double       t1 = 0.0;
-   double       t2 = 0.0;
-
-   if (!ecore_evases) return 1;
-   if (_ecore_evas_fps_debug)
-     {
-	t1 = ecore_time_get();
-     }
-   EINA_INLIST_FOREACH(ecore_evases, ee)
-	_ecore_evas_wince_render(ee);
-
-   if (_ecore_evas_fps_debug)
-     {
-	t2 = ecore_time_get();
-	_ecore_evas_fps_debug_rendertime_add(t2 - t1);
-     }
-   return 1;
+   return rend;
 }
 
 static int
@@ -118,12 +95,7 @@ _ecore_evas_wince_init(void)
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1)
      return _ecore_evas_init_count;
-
-   if (getenv("ECORE_EVAS_FPS_DEBUG"))
-     _ecore_evas_fps_debug = 1;
-
-   ecore_evas_idle_enterer = ecore_idle_enterer_add(_ecore_evas_wince_idle_enter, NULL);
-
+   
    ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_WINCE_EVENT_MOUSE_IN, _ecore_evas_wince_event_mouse_in, NULL);
    ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_WINCE_EVENT_MOUSE_OUT, _ecore_evas_wince_event_mouse_out, NULL);
    ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_DAMAGE, _ecore_evas_wince_event_window_damage, NULL);
@@ -131,8 +103,6 @@ _ecore_evas_wince_init(void)
    ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_SHOW, _ecore_evas_wince_event_window_show, NULL);
    ecore_evas_event_handlers[5]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_HIDE, _ecore_evas_wince_event_window_hide, NULL);
    ecore_evas_event_handlers[6]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_DELETE_REQUEST, _ecore_evas_wince_event_window_delete_request, NULL);
-
-   if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
 
    ecore_event_evas_init();
    return _ecore_evas_init_count;
@@ -146,12 +116,8 @@ _ecore_evas_wince_shutdown(void)
      {
 	int i;
 
-	while (ecore_evases) _ecore_evas_free(ecore_evases);
 	for (i = 0; i < ECORE_EVAS_EVENT_COUNT; i++)
 	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
-	ecore_idle_enterer_del(ecore_evas_idle_enterer);
-	ecore_evas_idle_enterer = NULL;
-	if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
         ecore_event_evas_shutdown();
      }
 
@@ -708,7 +674,7 @@ _ecore_evas_wince_fullscreen_set(Ecore_Evas *ee, int on)
      }
 }
 
-static const Ecore_Evas_Engine_Func _ecore_wince_engine_func =
+static Ecore_Evas_Engine_Func _ecore_wince_engine_func =
 {
    _ecore_evas_wince_free,
    NULL,
@@ -754,7 +720,9 @@ static const Ecore_Evas_Engine_Func _ecore_wince_engine_func =
    NULL, /* _ecore_evas_x_withdrawn_set */
    NULL, /* _ecore_evas_x_sticky_set */
    NULL, /* _ecore_evas_x_ignore_events_set */
-   NULL  /* _ecore_evas_x_alpha_set */
+   NULL,  /* _ecore_evas_x_alpha_set */
+     
+     NULL // render
 };
 
 /* API */
@@ -848,7 +816,8 @@ ecore_evas_software_wince_new_internal(int                 backend,
         ecore_wince_window_resume_set((Ecore_WinCE_Window *)ee->prop.window, einfo->func.resume);
      }
 
-   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+   ee->engine.func->fn_render = _ecore_evas_wince_render;
+   _ecore_evas_register(ee);
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process);
 
    return ee;

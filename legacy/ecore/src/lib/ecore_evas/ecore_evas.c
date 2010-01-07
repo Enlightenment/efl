@@ -22,6 +22,40 @@ static int _ecore_evas_init_count = 0;
 static Ecore_Fd_Handler *_ecore_evas_async_events_fd = NULL;
 static int _ecore_evas_async_events_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 
+static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
+static Ecore_Evas *ecore_evases = NULL;
+static int _ecore_evas_fps_debug = 0;
+
+static int
+_ecore_evas_idle_enter(void *data __UNUSED__)
+{
+   Ecore_Evas *ee;
+   double t1 = 0.0;
+   double t2 = 0.0;
+   int rend = 0;
+   
+   if (!ecore_evases) return 1;
+   if (_ecore_evas_fps_debug)
+     {
+        t1 = ecore_time_get();
+     }
+   EINA_INLIST_FOREACH(ecore_evases, ee)
+     {
+        if (!ee->manual_render)
+          {
+             if (ee->engine.func->fn_render)
+               rend |= ee->engine.func->fn_render(ee);
+          }
+     }
+   if (_ecore_evas_fps_debug)
+     {
+        t2 = ecore_time_get();
+        if (rend)
+          _ecore_evas_fps_debug_rendertime_add(t2 - t1);
+     }
+   return 1;
+}
+
 /**
  * Query if a particular renginering engine target has support
  * @param  engine The engine to check support for
@@ -178,6 +212,12 @@ ecore_evas_init(void)
 							     ECORE_FD_READ,
 							     _ecore_evas_async_events_fd_handler, NULL,
 							     NULL, NULL);
+   
+   ecore_evas_idle_enterer = 
+     ecore_idle_enterer_add(_ecore_evas_idle_enter, NULL);
+   if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
+   if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
+   
    return _ecore_evas_init_count;
 
  shutdown_ecore:
@@ -197,6 +237,12 @@ ecore_evas_init(void)
 EAPI int
 ecore_evas_shutdown(void)
 {
+   while (ecore_evases) _ecore_evas_free(ecore_evases);
+
+   if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
+   ecore_idle_enterer_del(ecore_evas_idle_enterer);
+   ecore_evas_idle_enterer = NULL;
+   
    if (--_ecore_evas_init_count != 0)
      return _ecore_evas_init_count;
 
@@ -2284,12 +2330,12 @@ EAPI void
 ecore_evas_withdrawn_set(Ecore_Evas *ee, int withdrawn)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
-   {
-      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
-         "ecore_evas_withdrawn_set");
-      return;
-   }
-
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_withdrawn_set");
+        return;
+     }
+   
    IFC(ee, fn_withdrawn_set) (ee, withdrawn);
    IFE;
 }
@@ -2304,12 +2350,12 @@ EAPI int
 ecore_evas_withdrawn_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
-   {
-      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
-         "ecore_evas_withdrawn_get");
-      return 0;
-   } else
-      return ee->prop.withdrawn ? 1:0;
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_withdrawn_get");
+        return 0;
+     } else
+     return ee->prop.withdrawn ? 1:0;
 }
 
 /**
@@ -2323,12 +2369,12 @@ EAPI void
 ecore_evas_sticky_set(Ecore_Evas *ee, int sticky)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
-   {
-      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
-         "ecore_evas_sticky_set");
-      return;
-   }
-
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_sticky_set");
+        return;
+     }
+   
    IFC(ee, fn_sticky_set) (ee, sticky);
    IFE;
 }
@@ -2344,12 +2390,12 @@ EAPI int
 ecore_evas_sticky_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
-   {
-      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
-         "ecore_evas_sticky_get");
-      return 0;
-   } else
-      return ee->prop.sticky ? 1:0;
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_sticky_get");
+        return 0;
+     } else
+     return ee->prop.sticky ? 1:0;
 }
 
 /**
@@ -2363,12 +2409,12 @@ EAPI void
 ecore_evas_ignore_events_set(Ecore_Evas *ee, int ignore)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
-   {
-      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
-         "ecore_evas_ignore_events_set");
-      return;
-   }
-
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_ignore_events_set");
+        return;
+     }
+   
    IFC(ee, fn_ignore_events_set) (ee, ignore);
    IFE;
 }
@@ -2384,12 +2430,49 @@ EAPI int
 ecore_evas_ignore_events_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
-   {
-      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
-         "ecore_evas_ignore_events_get");
-      return 0;
-   } else
-      return ee->ignore_events ? 1 : 0;
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_ignore_events_get");
+        return 0;
+     }
+   return ee->ignore_events ? 1 : 0;
+}
+
+EAPI void
+ecore_evas_manual_render_set(Ecore_Evas *ee, int manual_render)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_manual_render_set");
+        return;
+     }
+   ee->manual_render = manual_render;
+}
+
+EAPI int
+ecore_evas_manual_render_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_manual_render_get");
+        return 0;
+     }
+   return ee->manual_render ? 1 : 0;
+}
+
+EAPI void
+ecore_evas_manual_render(Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_manual_render");
+        return;
+     }
+   if (ee->engine.func->fn_render)
+     ee->engine.func->fn_render(ee);
 }
 
 EAPI Ecore_Window
@@ -2492,6 +2575,14 @@ _ecore_evas_fps_debug_rendertime_add(double t)
 }
 
 void
+_ecore_evas_register(Ecore_Evas *ee)
+{
+   ee->registered = 1;
+   ecore_evases = (Ecore_Evas *)eina_inlist_prepend
+     (EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+}
+
+void
 _ecore_evas_free(Ecore_Evas *ee)
 {
    if (ee->func.fn_pre_free) ee->func.fn_pre_free(ee);
@@ -2518,6 +2609,11 @@ _ecore_evas_free(Ecore_Evas *ee)
    if (ee->engine.idle_flush_timer)
      ecore_timer_del(ee->engine.idle_flush_timer);
    if (ee->engine.func->fn_free) ee->engine.func->fn_free(ee);
+   if (ee->registered)
+     {
+        ecore_evases = (Ecore_Evas *)eina_inlist_remove
+          (EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+     }
    free(ee);
 }
 

@@ -16,28 +16,26 @@
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
+// fixme: 1 sdl window only at a time? seems wrong
+
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
 
 /* static char *ecore_evas_default_display = "0"; */
 /* static Ecore_List *ecore_evas_input_devices = NULL; */
 
 static int                      _ecore_evas_init_count = 0;
-#ifndef _WIN32
-static int                      _ecore_evas_fps_debug = 0;
-#endif /* _WIN32 */
-static Ecore_Evas               *ecore_evases = NULL;
+
+static Ecore_Evas               *sdl_ee = NULL;
 static Ecore_Event_Handler      *ecore_evas_event_handlers[4] = {
    NULL, NULL, NULL, NULL
 };
-static Ecore_Idle_Enterer       *ecore_evas_idle_enterer = NULL;
-static Ecore_Poller             *ecore_evas_event = NULL;
 
 static const char               *ecore_evas_sdl_default = "EFL SDL";
 
 static Ecore_Evas *
 _ecore_evas_sdl_match(void)
 {
-   return ecore_evases;
+   return sdl_ee;
 }
 
 static int
@@ -99,7 +97,7 @@ _ecore_evas_sdl_event_video_expose(void *data __UNUSED__, int type __UNUSED__, v
    return 0;
 }
 
-static void
+static int
 _ecore_evas_render(Ecore_Evas *ee)
 {
    Eina_List *updates;
@@ -110,63 +108,44 @@ _ecore_evas_render(Ecore_Evas *ee)
 	evas_render_updates_free(updates);
 	_ecore_evas_idle_timeout_update(ee);
      }
+   return (int)updates;
 }
 
 static int
-_ecore_evas_idle_enter(void *data __UNUSED__)
+ecore_evas_sdl_render(Ecore_Evas *ee)
 {
-   Ecore_Evas  *ee;
-   double       t1 = 0.0;
-   double       t2 = 0.0;
-
-   if (!ecore_evases) return 1;
-#ifndef _WIN32
-   if (_ecore_evas_fps_debug)
-     {
-	t1 = ecore_time_get();
-     }
-#endif /* _WIN32 */
-   EINA_INLIST_FOREACH(ecore_evases, ee)
-     {
+   int rend = 0;
+   
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
-	Eina_List *ll;
-	Ecore_Evas *ee2;
-
-	EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
-	  {
-	     if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-	     _ecore_evas_buffer_render(ee2);
-	     if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-	  }
-#endif
-
-	if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
-
-	if (ee->prop.avoid_damage) _ecore_evas_render(ee);
-	else if ((ee->visible) ||
-		 ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
-		 ((ee->should_be_visible) && (ee->prop.override)))
-	  _ecore_evas_render(ee);
-	else
-	  evas_norender(ee->evas);
-
-	if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-     }
-#ifndef _WIN32
-   if (_ecore_evas_fps_debug)
+   Eina_List *ll;
+   Ecore_Evas *ee2;
+   
+   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
-	t2 = ecore_time_get();
-	_ecore_evas_fps_debug_rendertime_add(t2 - t1);
+        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
+        _ecore_evas_buffer_render(ee2);
+        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
      }
-#endif /* _WIN32 */
-   return 1;
+#endif
+   
+   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+   
+   if (ee->prop.avoid_damage) rend = _ecore_evas_render(ee);
+   else if ((ee->visible) ||
+            ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
+            ((ee->should_be_visible) && (ee->prop.override)))
+     rend = _ecore_evas_render(ee);
+   else
+     evas_norender(ee->evas);
+   
+   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+   return rend;
 }
 
 static int
 _ecore_evas_sdl_event(void *data __UNUSED__)
 {
    ecore_sdl_feed_events();
-
    return 1;
 }
 
@@ -179,7 +158,10 @@ _ecore_evas_sdl_init(int w __UNUSED__, int h __UNUSED__)
 #ifndef _WIN32
    if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
 #endif /* _WIN32 */
-   ecore_evas_idle_enterer = ecore_idle_enterer_add(_ecore_evas_idle_enter, NULL);
+   // this is pretty bad: poller? and set poll time? pol time is meant to be 
+   // adjustable for things like polling battery state, or amoutn of spare
+   // memory etc.
+   // 
    ecore_evas_event = ecore_poller_add(ECORE_POLLER_CORE, 1, _ecore_evas_sdl_event, NULL);
    ecore_poller_poll_interval_set(ECORE_POLLER_CORE, 0.006);
 #ifndef _WIN32
@@ -204,13 +186,9 @@ _ecore_evas_sdl_shutdown(void)
      {
 	int i;
 
-        while (ecore_evases) _ecore_evas_free(ecore_evases);
-
         for (i = 0; i < sizeof (ecore_evas_event_handlers) / sizeof (Ecore_Event_Handler*); i++)
 	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
 	ecore_event_evas_shutdown();
-	ecore_idle_enterer_del(ecore_evas_idle_enterer);
-	ecore_evas_idle_enterer = NULL;
         ecore_poller_del(ecore_evas_event);
         ecore_evas_event = NULL;
 #ifndef _WIN32
@@ -224,7 +202,8 @@ _ecore_evas_sdl_shutdown(void)
 static void
 _ecore_evas_sdl_free(Ecore_Evas *ee)
 {
-   ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+   if (sdl_ee == ee) sdl_ee = NULL;
+   
    ecore_event_window_unregister(0);
    _ecore_evas_sdl_shutdown();
    ecore_sdl_shutdown();
@@ -300,7 +279,7 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
 }
 
-static const Ecore_Evas_Engine_Func _ecore_sdl_engine_func =
+static Ecore_Evas_Engine_Func _ecore_sdl_engine_func =
 {
    _ecore_evas_sdl_free,
    NULL,
@@ -346,7 +325,9 @@ static const Ecore_Evas_Engine_Func _ecore_sdl_engine_func =
    NULL,
    NULL,
    NULL,
-   NULL
+   NULL,
+     
+     NULL // render
 };
 
 static Ecore_Evas*
@@ -423,7 +404,11 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
 
    SDL_ShowCursor(SDL_DISABLE);
 
-   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+   ee->engine.func->fn_render = _ecore_evas_sdl_render;
+   _ecore_evas_register(ee);
+   
+   sdl_ee = ee;
+   
    return ee;
 }
 #endif
