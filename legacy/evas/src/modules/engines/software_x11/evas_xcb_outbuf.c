@@ -54,7 +54,7 @@ _find_xcbob(xcb_connection_t *conn, int depth, int w, int h, int shm, void *data
    sz = lbytes * h;
    EINA_LIST_FOREACH(shmpool, l, xcbob2)
      {
-	int                szdif;
+	int szdif;
 
 	if ((xcbob2->image->depth != depth) ||
 	    (xcbob2->connection != conn))
@@ -466,10 +466,10 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
                                                                      NULL);
                   if (buf->priv.x11.xcb.mask)
                     obr->mxcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x11.xcb.conn,
-                                                                       buf->priv.x11.xcb.depth,
-                                                                       buf->w, buf->h,
-                                                                       use_shm,
-                                                                       NULL);
+                                                                        1,
+                                                                        buf->w, buf->h,
+                                                                        use_shm,
+                                                                        NULL);
                }
 	     else if ((buf->rot == 90) || (buf->rot == 270))
                {
@@ -480,10 +480,10 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
                                                                      NULL);
                   if (buf->priv.x11.xcb.mask)
                     obr->mxcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x11.xcb.conn,
-                                                                       buf->priv.x11.xcb.depth,
-                                                                       buf->h, buf->w,
-                                                                       use_shm,
-                                                                       NULL);
+                                                                        1,
+                                                                        buf->h, buf->w,
+                                                                        use_shm,
+                                                                        NULL);
                }
 	  }
 	/* FIXME: We should be able to remove this memset, but somewhere in the process
@@ -533,7 +533,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 	im->extended_info = obr;
 	if (buf->priv.x11.xcb.mask)
 	  obr->mxcbob = _find_xcbob(buf->priv.x11.xcb.conn,
-                                    buf->priv.x11.xcb.depth,
+                                    1,
                                     w, h,
                                     use_shm,
                                     NULL);
@@ -559,8 +559,8 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
                                       NULL);
              if (buf->priv.x11.xcb.mask)
                obr->mxcbob = _find_xcbob(buf->priv.x11.xcb.conn,
-                                         buf->priv.x11.xcb.depth,
-                                          w, h,
+                                         1,
+                                         w, h,
                                          use_shm,
                                          NULL);
           }
@@ -579,7 +579,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
                                       NULL);
              if (buf->priv.x11.xcb.mask)
                obr->mxcbob = _find_xcbob(buf->priv.x11.xcb.conn,
-                                         buf->priv.x11.xcb.depth,
+                                         1,
                                          h, w,
                                          use_shm,
                                          NULL);

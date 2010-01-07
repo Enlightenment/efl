@@ -395,7 +395,6 @@ evas_software_xcb_x_output_buffer_free(Xcb_Output_Buffer *xcbob,
                                          xcb_get_input_focus_unchecked(xcbob->connection),
                                          NULL));
 	xcb_shm_detach(xcbob->connection, xcbob->shm_info->shmseg);
-	free(xcbob->image->data);
 	xcb_image_destroy(xcbob->image);
 	shmdt(xcbob->shm_info->shmaddr);
 	shmctl(xcbob->shm_info->shmid, IPC_RMID, 0);
@@ -424,7 +423,7 @@ evas_software_xcb_x_output_buffer_paste(Xcb_Output_Buffer    *xcbob,
                           xcbob->image, *xcbob->shm_info,
                           0, 0,
                           x, y,
-                          xcbob->image->width, xcbob->image->height,
+                          xcbob->w, xcbob->h,
                           0);
 	if (sync)
           free(xcb_get_input_focus_reply(xcbob->connection,
