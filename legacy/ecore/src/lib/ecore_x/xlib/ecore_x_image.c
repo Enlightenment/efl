@@ -13,6 +13,7 @@
 #include <X11/Xutil.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <string.h>
 
 static int _composite_available;
 
