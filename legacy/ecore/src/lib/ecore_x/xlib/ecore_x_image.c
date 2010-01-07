@@ -80,17 +80,17 @@ _ecore_x_image_shm_check(void)
    if (_ecore_x_image_err)
      {
         XShmDetach(_ecore_x_disp, &shminfo);
+        XDestroyImage(xim);
         shmdt(shminfo.shmaddr); 
         shmctl(shminfo.shmid, IPC_RMID, 0);
-        XDestroyImage(xim);
         _ecore_x_image_shm_can = 0;
         return;
      }
    
    XShmDetach(_ecore_x_disp, &shminfo);
+   XDestroyImage(xim);
    shmdt(shminfo.shmaddr);
    shmctl(shminfo.shmid, IPC_RMID, 0);
-   XDestroyImage(xim);
    
    _ecore_x_image_shm_can = 1;
 }
@@ -128,16 +128,17 @@ ecore_x_image_free(Ecore_X_Image *im)
 {
    if (im->shm)
      {
-        XShmDetach(_ecore_x_disp, &(im->shminfo));
-        shmdt(im->shminfo.shmaddr);
-        shmctl(im->shminfo.shmid, IPC_RMID, 0);
+        if (im->xim)
+          {
+             XShmDetach(_ecore_x_disp, &(im->shminfo));
+             XDestroyImage(im->xim);
+             shmdt(im->shminfo.shmaddr);
+             shmctl(im->shminfo.shmid, IPC_RMID, 0);
+          }
      }
    else
      {
         if (im->xim) free(im->xim->data);
-     }
-   if (im->xim)
-     {
         im->xim->data = NULL;
         XDestroyImage(im->xim);
      }
