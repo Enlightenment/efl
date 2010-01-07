@@ -3,15 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#if defined(EMOTION_HAVE_ECORE_X) || defined(EMOTION_HAVE_ECORE_FB)
-
 #include <Evas.h>
 #include <Ecore.h>
-#ifdef EMOTION_HAVE_ECORE_X
-# include <Ecore_X.h>
-#else
-# include <Ecore_Fb.h>
-#endif
 #include <Ecore_Evas.h>
 #include <Edje.h>
 
@@ -64,7 +57,6 @@ main_start(int argc, char **argv)
    edje_frametime_set(1.0 / 30.0);
 
    if (!ecore_evas_init()) return -1;
-#ifdef EMOTION_HAVE_ECORE_X
      {
         int i;
 
@@ -121,11 +113,7 @@ main_start(int argc, char **argv)
    if (mode == 3)
      ecore_evas = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, startw, starth);
 
-#else
-   startw = 240;
-   starth = 320;
-   ecore_evas = ecore_evas_fb_new(NULL, 270,  startw, starth);
-#endif
+
    if (!ecore_evas) return -1;
    ecore_evas_callback_delete_request_set(ecore_evas, main_delete_request);
    ecore_evas_callback_resize_set(ecore_evas, main_resize);
@@ -894,12 +882,3 @@ main(int argc, char **argv)
    main_stop();
    return 0;
 }
-
-#else
-# warning "EMOTION_HAVE_ECORE_X and EMOTION_HAVE_ECORE_FB not defined !"
-int main()
-{
-	puts("Could not find Ecore_X.h or Ecore_Fb.h so test is disabled");
-	return 0;
-}
-#endif
