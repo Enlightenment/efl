@@ -126,7 +126,6 @@ ecore_x_image_new(int w, int h, Ecore_X_Visual vis, int depth)
 EAPI void
 ecore_x_image_free(Ecore_X_Image *im)
 {
-   printf("%p: shm--\n", im);
    if (im->shm)
      {
         XShmDetach(_ecore_x_disp, &(im->shminfo));
@@ -181,7 +180,6 @@ _ecore_x_image_shm_create(Ecore_X_Image *im)
    if (im->xim->bits_per_pixel <= 8) im->bpp = 1;
    else if (im->xim->bits_per_pixel <= 16) im->bpp = 2;
    else im->bpp = 4;
-   printf("%p: shm++\n", im);
 }
 
 EAPI void
