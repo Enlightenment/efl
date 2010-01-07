@@ -1314,7 +1314,7 @@ elm_scale_set(double scale)
  *
  * Elementary is designed to be finger-friendly for touchscreens, and so in
  * addition to scaling for display resolution, it can also scale based on
- * finger "resoltion" (or size).
+ * finger "resolution" (or size).
  */
 
 /**
