@@ -4,7 +4,6 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore \
 @EFL_ECORE_INPUT_BUILD@ \
-@EVAS_CFLAGS@ \
 @EINA_CFLAGS@ \
 @EVIL_CFLAGS@
 
@@ -18,7 +17,6 @@ ecore_input.c
 
 libecore_input_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@EVAS_LIBS@ \
 @EINA_LIBS@ \
 @EVIL_LIBS@
 

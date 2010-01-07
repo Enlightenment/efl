@@ -121,6 +121,10 @@ if BUILD_ECORE_INPUT
 pkgconfig_DATA += ecore-input.pc
 endif
 
+if BUILD_ECORE_INPUT_EVAS
+pkgconfig_DATA += ecore-input-evas.pc
+endif
+
 if BUILD_ECORE_IPC
 pkgconfig_DATA += ecore-ipc.pc
 endif

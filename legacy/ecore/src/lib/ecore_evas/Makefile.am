@@ -62,9 +62,11 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_srcdir)/src/lib/ecore_input_evas \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_input_evas \
 @EFL_ECORE_EVAS_BUILD@ \
 $(ECORE_X_INC) \
 $(ECORE_FB_INC) \

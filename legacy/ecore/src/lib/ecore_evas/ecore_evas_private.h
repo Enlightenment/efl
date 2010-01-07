@@ -20,6 +20,7 @@
 #include <ecore_private.h>
 #include <Ecore_Data.h>
 #include <Ecore_Input.h>
+#include <Ecore_Input_Evas.h>
 
 #define ECORE_MAGIC_EVAS 0x76543211
 

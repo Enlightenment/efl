@@ -45,6 +45,7 @@ case "$host_os" in
       ecore_imf_evas_release_info="-release $release"
       ecore_imf_release_info="-release $release"
       ecore_input_release_info="-release $release"
+      ecore_input_evas_release_info="-release $release"
       ecore_ipc_release_info="-release $release"
       ecore_job_release_info="-release $release"
       ecore_quartz_release_info="-release $release"
@@ -64,6 +65,7 @@ AC_SUBST(ecore_file_release_info)
 AC_SUBST(ecore_imf_evas_release_info)
 AC_SUBST(ecore_imf_release_info)
 AC_SUBST(ecore_input_release_info)
+AC_SUBST(ecore_input_evas_release_info)
 AC_SUBST(ecore_ipc_release_info)
 AC_SUBST(ecore_job_release_info)
 AC_SUBST(ecore_quartz_release_info)
@@ -202,6 +204,7 @@ requirements_ecore_file=""
 requirements_ecore_imf=""
 requirements_ecore_imf_evas=""
 requirements_ecore_input=""
+requirements_ecore_input_evas=""
 requirements_ecore_ipc=""
 requirements_ecore_job=""
 requirements_ecore_quartz=""
@@ -373,6 +376,7 @@ requirements_ecore_file="ecore eina-0 ${requirements_ecore_file}"
 requirements_ecore_imf="ecore eina-0 ${requirements_ecore_imf}"
 requirements_ecore_imf_evas="ecore eina-0 ${requirements_ecore_imf_evas}"
 requirements_ecore_input="ecore eina-0 ${requirements_ecore_input}"
+requirements_ecore_input_evas="ecore eina-0 ${requirements_ecore_input_evas}"
 requirements_ecore_ipc="ecore eina-0 ${requirements_ecore_ipc}"
 requirements_ecore_job="ecore eina-0 ${requirements_ecore_job}"
 requirements_ecore_quartz="ecore eina-0 ${requirements_ecore_quartz}"
@@ -672,7 +676,7 @@ AM_CONDITIONAL(BUILD_ECORE_X_XLIB, test $have_ecore_x_xlib = yes)
 AM_CONDITIONAL(BUILD_ECORE_X_XCB, test $have_ecore_x_xcb = yes)
 
 
-# Evas library (ecore_config, ecore_input, ecore_imf_evas and ecore_evas)
+# Evas library (ecore_config, ecore_input_evas, ecore_imf_evas and ecore_evas)
 
 PKG_CHECK_MODULES([EVAS], [evas >= 0.9.9],
    [have_evas="yes"],
@@ -890,9 +894,10 @@ fi
 ECORE_CHECK_MODULE([IMF_EVAS], [${want_ecore_imf}], [${ecore_imf_evas_deps}],
    [requirements_ecore_imf_evas="ecore-imf evas ${requirements_ecore_imf_evas}"])
 
-# ecore_input
-ECORE_CHECK_MODULE([Input], [${want_ecore_input}], [${have_evas}],
-   [requirements_ecore_input="evas ${requirements_ecore_input}"])
+# ecore_input{_evas}
+ECORE_CHECK_MODULE([Input], [${want_ecore_input}])
+ECORE_CHECK_MODULE([Input_Evas], [${want_ecore_input}], [${have_evas}],
+   [requirements_ecore_input_evas="ecore-input evas ${requirements_ecore_input}"])
 
 ## Graphic systems
 
@@ -967,12 +972,12 @@ ECORE_CHECK_MODULE([WinCE], [${want_ecore_wince}], [${have_ecore_input}],
 # ecore_evas
 
 ecore_evas_deps="no"
-if test "x${have_evas}" = "xyes" -a "x${have_ecore_input}" = "xyes" ; then
+if test "x${have_evas}" = "xyes" -a "x${have_ecore_input}" = "xyes" -a "x${have_ecore_input_evas}" = "xyes" ; then
    ecore_evas_deps="yes"
 fi
 
 ECORE_CHECK_MODULE([Evas], [${want_ecore_evas}], [${ecore_evas_deps}],
-  [requirements_ecore_evas="ecore-input evas ${requirements_ecore_evas}"])
+  [requirements_ecore_evas="ecore-input ecore-input-evas evas ${requirements_ecore_evas}"])
 
 # ecore_evas_buffer
 
@@ -1131,6 +1136,7 @@ AC_SUBST(requirements_ecore_file)
 AC_SUBST(requirements_ecore_imf)
 AC_SUBST(requirements_ecore_imf_evas)
 AC_SUBST(requirements_ecore_input)
+AC_SUBST(requirements_ecore_input_evas)
 AC_SUBST(requirements_ecore_ipc)
 AC_SUBST(requirements_ecore_job)
 AC_SUBST(requirements_ecore_quartz)
@@ -1155,6 +1161,7 @@ ecore-job.pc
 ecore-txt.pc
 ecore-x.pc
 ecore-input.pc
+ecore-input-evas.pc
 ecore-win32.pc
 ecore-sdl.pc
 ecore-quartz.pc
@@ -1178,6 +1185,7 @@ src/lib/ecore_con/Makefile
 src/lib/ecore_imf/Makefile
 src/lib/ecore_imf_evas/Makefile
 src/lib/ecore_input/Makefile
+src/lib/ecore_input_evas/Makefile
 src/lib/ecore_ipc/Makefile
 src/lib/ecore_txt/Makefile
 src/lib/ecore_config/Makefile
@@ -1236,6 +1244,7 @@ echo "  Ecore_Config.................: $have_ecore_config"
 echo "  Ecore_IMF....................: $have_ecore_imf"
 echo "  Ecore_IMF_Evas...............: $have_ecore_imf_evas"
 echo "  Ecore_Input..................: $have_ecore_input"
+echo "  Ecore_Input_Evas.............: $have_ecore_input_evas"
 
 echo
 echo " Graphic systems:"

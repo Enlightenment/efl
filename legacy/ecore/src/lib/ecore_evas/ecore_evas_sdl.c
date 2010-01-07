@@ -8,6 +8,7 @@
 
 #include <Ecore.h>
 #include <Ecore_Input.h>
+#include <Ecore_Input_Evas.h>
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
 #include <Ecore_Sdl.h>
 #include <Evas_Engine_SDL.h>

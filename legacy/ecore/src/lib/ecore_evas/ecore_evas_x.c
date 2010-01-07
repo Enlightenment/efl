@@ -10,6 +10,7 @@
 
 #include <Ecore.h>
 #include <Ecore_Input.h>
+#include <Ecore_Input_Evas.h>
 #ifdef BUILD_ECORE_EVAS_X11
 # include <Ecore_X.h>
 # include <Ecore_X_Atoms.h>
