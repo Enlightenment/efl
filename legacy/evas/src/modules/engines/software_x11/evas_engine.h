@@ -9,7 +9,7 @@
 # include <X11/Xutil.h>
 # include <X11/Xatom.h>
 # include <X11/extensions/XShm.h>
-# include <X11/Xresource.h>
+# include <X11/Xresource.h> // xres - dpi
 #endif
 
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
