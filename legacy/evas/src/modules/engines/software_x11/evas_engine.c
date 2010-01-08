@@ -553,11 +553,12 @@ eng_output_free(void *data)
 
    if (!data) return;
 
+   re = (Render_Engine *)data;
+   
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
-   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
+//   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
 #endif   
    
-   re = (Render_Engine *)data;
    re->outbuf_free(re->ob);
    evas_common_tilebuf_free(re->tb);
    if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);

@@ -170,6 +170,9 @@ eng_output_free(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   
+   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
+   
    eng_window_free(re->win);
    free(re);
 
