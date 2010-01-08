@@ -210,18 +210,24 @@ ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw,
              int r;
              
              tim = ecore_x_image_new(w, h, im->vis, im->depth);
-             ecore_x_image_get(tim, draw, x, y, 0, 0, w, h);
-             spixels = ecore_x_image_data_get(tim, &sbpl, &srows, &sbpp);
-             pixels = ecore_x_image_data_get(im, &bpl, &rows, &bpp);
-             p = pixels + (sy * bpl) + (sx * bpp);
-             sp = spixels;
-             for (r = srows; r > 0; r--)
+             if (tim)
                {
-                  memcpy(p, sp, sbpl);
-                  p += bpl;
-                  sp += sbpl;
+                  ecore_x_image_get(tim, draw, x, y, 0, 0, w, h);
+                  spixels = ecore_x_image_data_get(tim, &sbpl, &srows, &sbpp);
+                  pixels = ecore_x_image_data_get(im, &bpl, &rows, &bpp);
+                  if ((pixels) && (spixels))
+                    {
+                       p = pixels + (sy * bpl) + (sx * bpp);
+                       sp = spixels;
+                       for (r = srows; r > 0; r--)
+                         {
+                            memcpy(p, sp, sbpl);
+                            p += bpl;
+                            sp += sbpl;
+                         }
+                    }
+                  ecore_x_image_free(tim);
                }
-             ecore_x_image_free(tim);
           }
      }
    else
