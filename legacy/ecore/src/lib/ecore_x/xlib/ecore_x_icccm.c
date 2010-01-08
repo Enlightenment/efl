@@ -104,7 +104,7 @@ ecore_x_icccm_save_yourself_send(Ecore_X_Window win, Ecore_X_Time t)
 EAPI void
 ecore_x_icccm_move_resize_send(Ecore_X_Window win, int x, int y, int w, int h)
 {
-   XEvent              ev;
+   XEvent ev;
 
    ev.type = ConfigureNotify;
    ev.xconfigure.display = _ecore_x_disp;
@@ -443,7 +443,7 @@ ecore_x_icccm_title_set(Ecore_X_Window win, const char *t)
    free(list[0]);
 }
 
-EAPI char               *
+EAPI char *
 ecore_x_icccm_title_get(Ecore_X_Window win)
 {
    XTextProperty       xprop;
@@ -453,10 +453,10 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
      {
 	if (xprop.value)
 	  {
-	     char              **list = NULL;
-	     char               *t = NULL;
-	     int                 num = 0;
-	     int                 ret;
+	     char **list = NULL;
+	     char *t = NULL;
+	     int num = 0;
+	     int ret;
 
 	     if (xprop.encoding == ECORE_X_ATOM_UTF8_STRING)
 	       {

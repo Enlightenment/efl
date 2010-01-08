@@ -48,10 +48,10 @@ struct _Ecore_X_Startup_Info
 static void  _ecore_x_window_prop_string_utf8_set(Ecore_X_Window win, Ecore_X_Atom atom, const char *str);
 static char *_ecore_x_window_prop_string_utf8_get(Ecore_X_Window win, Ecore_X_Atom atom);
 #if 0 /* Unused */
-static int   _ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info);
-static int   _ecore_x_netwm_startup_info_parse(Ecore_X_Startup_Info *info, char *data);
+static int _ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info);
+static int _ecore_x_netwm_startup_info_parse(Ecore_X_Startup_Info *info, char *data);
 #endif
-static void  _ecore_x_netwm_startup_info_free(void *data);
+static void _ecore_x_netwm_startup_info_free(void *data);
 
 /*
  * Convenience macros
@@ -106,7 +106,7 @@ ecore_x_netwm_supported_set(Ecore_X_Window root, Ecore_X_Atom *supported, int nu
 EAPI int
 ecore_x_netwm_supported_get(Ecore_X_Window root, Ecore_X_Atom **supported, int *num)
 {
-   int            num_ret;
+   int num_ret;
 
    if (num) *num = 0;
    if (supported) *supported = NULL;
@@ -141,10 +141,10 @@ EAPI void
 ecore_x_netwm_desk_names_set(Ecore_X_Window root,
 			     const char **names, unsigned int n_desks)
 {
-   char                ss[32], *buf;
-   const char         *s;
-   unsigned int        i;
-   int                 l, len;
+   char ss[32], *buf;
+   const char *s;
+   unsigned int i;
+   int l, len;
 
    buf = NULL;
    len = 0;
@@ -174,7 +174,7 @@ EAPI void
 ecore_x_netwm_desk_size_set(Ecore_X_Window root, unsigned int width,
 			    unsigned int height)
 {
-   unsigned int        size[2];
+   unsigned int size[2];
 
    size[0] = width;
    size[1] = height;
@@ -469,10 +469,10 @@ ecore_x_netwm_strut_partial_get(Ecore_X_Window win, int *left, int *right,
 EAPI int
 ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
 {
-   unsigned int  *data, *p;
-   unsigned int  *src;
-   unsigned int   len, icons, i;
-   int            num_ret;
+   unsigned int *data, *p;
+   unsigned int *src;
+   unsigned int len, icons, i;
+   int num_ret;
 
    if (num) *num = 0;
    if (icon) *icon = NULL;
@@ -741,8 +741,8 @@ ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecore_X_Window_State *state, 
 EAPI int
 ecore_x_netwm_window_state_get(Ecore_X_Window win, Ecore_X_Window_State **state, unsigned int *num)
 {
-   int                   num_ret, i;
-   Ecore_X_Atom         *atoms;
+   int num_ret, i;
+   Ecore_X_Atom *atoms;
 
    if (num) *num = 0;
    if (state) *state = NULL;
@@ -833,8 +833,8 @@ ecore_x_netwm_window_type_set(Ecore_X_Window win, Ecore_X_Window_Type type)
 EAPI int
 ecore_x_netwm_window_type_get(Ecore_X_Window win, Ecore_X_Window_Type *type)
 {
-   int                  num;
-   Ecore_X_Atom        *atoms = NULL;
+   int num;
+   Ecore_X_Atom *atoms = NULL;
 
    if (type) *type = ECORE_X_WINDOW_TYPE_NORMAL;
 
@@ -852,8 +852,8 @@ ecore_x_netwm_window_type_get(Ecore_X_Window win, Ecore_X_Window_Type *type)
 EAPI int
 ecore_x_netwm_window_types_get(Ecore_X_Window win, Ecore_X_Window_Type **types)
 {
-   int                  num, i;
-   Ecore_X_Atom        *atoms = NULL;
+   int num, i;
+   Ecore_X_Atom *atoms = NULL;
    Ecore_X_Window_Type *atoms2 = NULL;
    
    if (types) *types = NULL;
@@ -913,8 +913,8 @@ _ecore_x_netwm_action_atom_get(Ecore_X_Action action)
 EAPI int
 ecore_x_netwm_allowed_action_isset(Ecore_X_Window win, Ecore_X_Action action)
 {
-   int                  num, i, ret = 0;
-   Ecore_X_Atom        *atoms, atom;
+   int num, i, ret = 0;
+   Ecore_X_Atom *atoms, atom;
 
    num = ecore_x_window_prop_atom_list_get(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
 					   &atoms);
@@ -940,8 +940,8 @@ ecore_x_netwm_allowed_action_isset(Ecore_X_Window win, Ecore_X_Action action)
 EAPI void
 ecore_x_netwm_allowed_action_set(Ecore_X_Window win, Ecore_X_Action *action, unsigned int num)
 {
-   Ecore_X_Atom  *set;
-   unsigned int   i;
+   Ecore_X_Atom *set;
+   unsigned int i;
 
    if (!num)
      {
@@ -963,8 +963,8 @@ ecore_x_netwm_allowed_action_set(Ecore_X_Window win, Ecore_X_Action *action, uns
 EAPI int
 ecore_x_netwm_allowed_action_get(Ecore_X_Window win, Ecore_X_Action **action, unsigned int *num)
 {
-   int                   num_ret, i;
-   Ecore_X_Atom         *atoms;
+   int num_ret, i;
+   Ecore_X_Atom *atoms;
 
    if (num) *num = 0;
    if (action) *action = NULL;
@@ -1039,7 +1039,7 @@ ecore_x_netwm_frame_size_get(Ecore_X_Window win, int *fl, int *fr, int *ft, int 
 EAPI int
 ecore_x_netwm_sync_counter_get(Ecore_X_Window win, Ecore_X_Sync_Counter *counter)
 {
-   int          ret;
+   int ret;
    unsigned int tmp;
 
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER,
@@ -1236,11 +1236,11 @@ _ecore_x_window_prop_string_utf8_set(Ecore_X_Window win, Ecore_X_Atom atom,
 static char *
 _ecore_x_window_prop_string_utf8_get(Ecore_X_Window win, Ecore_X_Atom atom)
 {
-   char               *str;
-   unsigned char      *prop_ret;
-   Atom                type_ret;
-   unsigned long       bytes_after, num_ret;
-   int                 format_ret;
+   char *str;
+   unsigned char *prop_ret;
+   Atom type_ret;
+   unsigned long bytes_after, num_ret;
+   int format_ret;
 
    str = NULL;
    prop_ret = NULL;
@@ -1270,8 +1270,8 @@ static int
 _ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info)
 {
    Ecore_X_Event_Startup_Sequence *e;
-   int                             event;
-   char                           *p;
+   int event;
+   char *p;
 
    p = strchr(info->buffer, ':');
    if (!p)
@@ -1344,7 +1344,6 @@ _ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info)
 static int
 _ecore_x_netwm_startup_info_parse(Ecore_X_Startup_Info *info, char *data)
 {
-
    while (*data)
      {
 	int in_quot_sing, in_quot_dbl, escaped;
@@ -1513,9 +1512,9 @@ _ecore_x_netwm_startup_info_free(void *data)
 EAPI int
 ecore_x_screen_is_composited(int screen)
 {
-   Ecore_X_Window      win;
+   Ecore_X_Window win;
    static Ecore_X_Atom atom = None;
-   char                buf[32];
+   char buf[32];
 
    snprintf(buf, sizeof(buf), "_NET_WM_CM_S%i", screen);
    if (atom == None) atom = XInternAtom(_ecore_x_disp, buf, True);
@@ -1530,10 +1529,10 @@ EAPI void
 ecore_x_screen_is_composited_set(int screen, Ecore_X_Window win)
 {
    static Ecore_X_Atom atom = None;
-   char                buf[32];
-   
+   char buf[32];
+
    snprintf(buf, sizeof(buf), "_NET_WM_CM_S%i", screen);
    if (atom == None) atom = XInternAtom(_ecore_x_disp, buf, True);
-   if (atom == None) return 0;
+   if (atom == None) return;
    XSetSelectionOwner(_ecore_x_disp, atom, win, _ecore_x_event_last_time);
 }
