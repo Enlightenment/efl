@@ -37,7 +37,7 @@ _mempool_init(void)
 static void
 _mempool_shutdown(void)
 {
-   eina_module_list_flush(_modules);
+   eina_module_list_free(_modules);
    /* TODO delete the list */
    eina_shutdown();
 }

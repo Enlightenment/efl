@@ -238,7 +238,7 @@ eina_mempool_shutdown(void)
    buddy_shutdown();
 #endif
    /* dynamic backends */
-   eina_module_list_flush(_modules);
+   eina_module_list_free(_modules);
    if (_modules)
      eina_array_free(_modules);
 

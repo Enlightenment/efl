@@ -121,7 +121,7 @@ _edje_module_shutdown(void)
    Eina_List *l;
    const char *data;
 
-   eina_module_list_flush(_available_modules);
+   eina_module_list_free(_available_modules);
    if (_available_modules)
      {
        eina_array_free(_available_modules);
