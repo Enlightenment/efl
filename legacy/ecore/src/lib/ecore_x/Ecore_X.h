@@ -1781,7 +1781,8 @@ EAPI void              ecore_x_damage_free(Ecore_X_Damage damage);
 EAPI void              ecore_x_damage_subtract(Ecore_X_Damage damage, Ecore_X_Region repair, Ecore_X_Region parts);
 
 EAPI int               ecore_x_screen_is_composited(int screen);
-
+EAPI void              ecore_x_screen_is_composited_set(int screen, Ecore_X_Window win);
+       
 EAPI int               ecore_x_dpms_query(void);
 EAPI void              ecore_x_dpms_capable_get_prefetch(void);
 EAPI void              ecore_x_dpms_capable_get_fetch(void);
