@@ -14,7 +14,10 @@ struct _Widget_Data
 {
    Evas_Object *lbl;
    const char *label;
+   Evas_Coord lastw;
+   Ecore_Job *deferred_recalc_job;
    Eina_Bool linewrap : 1;
+   Eina_Bool changed : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -22,10 +25,30 @@ static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 
 static void
+_elm_win_recalc_job(void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord resw, resh, minminw;
+   
+   wd->deferred_recalc_job = NULL;
+   evas_object_geometry_get(wd->lbl, NULL, NULL, &resw, &resh);
+   resh = 0;
+   minminw = 0;
+   edje_object_size_min_restricted_calc(wd->lbl, &minw, &minh, 0, 0);
+   minminw = minw;
+   edje_object_size_min_restricted_calc(wd->lbl, &minw, &minh, resw, 0);
+   evas_object_size_hint_min_set(data, minminw, minh);
+   maxh = minh;
+   evas_object_size_hint_max_set(data, -1, maxh);
+}
+
+static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
+   if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
    if (wd->label) eina_stringshare_del(wd->label);
    free(wd);
 }
@@ -50,12 +73,37 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord resw, resh, minminw;
 
-   edje_object_size_min_calc(wd->lbl, &minw, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, maxw, maxh);
+   if (wd->linewrap)
+     {
+        evas_object_geometry_get(wd->lbl, NULL, NULL, &resw, &resh);
+        if ((resw == wd->lastw) && (!wd->changed)) return;
+        wd->changed = EINA_FALSE;
+        wd->lastw = resw;
+        if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
+        wd->deferred_recalc_job = ecore_job_add(_elm_win_recalc_job, obj);
+     }
+   else
+     {
+        evas_object_geometry_get(wd->lbl, NULL, NULL, &resw, &resh);
+        edje_object_size_min_calc(wd->lbl, &minw, &minh);
+        evas_object_size_hint_min_set(obj, minw, minh);
+        maxh = minh;
+        evas_object_size_hint_max_set(obj, maxw, maxh);
+     }
 }
 
+static void 
+_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   
+   if (wd->linewrap)
+     {
+        _sizing_eval(data);
+     }
+}
 /**
  * Add a new label to the parent
  *
@@ -88,6 +136,10 @@ elm_label_add(Evas_Object *parent)
    wd->label = eina_stringshare_add("<br>");
    edje_object_part_text_set(wd->lbl, "elm.text", "<br>");
    elm_widget_resize_object_set(obj, wd->lbl);
+   
+   evas_object_event_callback_add(wd->lbl, EVAS_CALLBACK_RESIZE, _resize, obj);
+   
+   wd->changed = 1;
    _sizing_eval(obj);
    return obj;
 }
@@ -109,6 +161,7 @@ elm_label_label_set(Evas_Object *obj, const char *label)
    if (wd->label) eina_stringshare_del(wd->label);
    wd->label = eina_stringshare_add(label);
    edje_object_part_text_set(wd->lbl, "elm.text", label);
+   wd->changed = 1;
    _sizing_eval(obj);
 }
 
@@ -142,5 +195,6 @@ elm_label_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
      _elm_theme_set(wd->lbl, "label", "base", elm_widget_style_get(obj));
    elm_label_label_set(obj, t);
    eina_stringshare_del(t);
+   wd->changed = 1;
    _sizing_eval(obj);
 }

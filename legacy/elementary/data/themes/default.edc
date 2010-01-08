@@ -556,7 +556,7 @@ collections {
 	    description { state: "default" 0.0;
 	       text {
 		  style: "textblock_style";
-		  min: 0 0;
+		  min: 0 1;
 	       }
 	    }
 	 }
