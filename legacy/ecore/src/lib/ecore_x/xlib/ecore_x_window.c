@@ -1347,8 +1347,9 @@ ecore_x_window_argb_get(Ecore_X_Window win)
 #ifdef ECORE_XRENDER   
    XWindowAttributes att;
    XRenderPictFormat *fmt;
-   
-   XGetWindowAttributes(_ecore_x_disp, win, &att);
+
+   att.visual = 0;
+   if (!XGetWindowAttributes(_ecore_x_disp, win, &att)) return 0;
    fmt = XRenderFindVisualFormat(_ecore_x_disp, att.visual);
    if (!fmt) return 0;
    if ((fmt->type == PictTypeDirect) && (fmt->direct.alphaMask)) return 1;
