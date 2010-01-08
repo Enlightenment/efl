@@ -246,7 +246,7 @@ eng_output_free(void *data)
 
    re = (Render_Engine *)data;
    
-   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
+//   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
    
    if (re->shbuf) evas_software_x11_x_output_buffer_free(re->shbuf, 0);
    if (re->clip_rects) XDestroyRegion(re->clip_rects);

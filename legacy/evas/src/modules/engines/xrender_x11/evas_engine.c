@@ -501,7 +501,7 @@ eng_output_free(void *data)
    re = (Render_Engine *)data;
    
 #ifdef BUILD_ENGINE_XRENDER_X11
-   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
+//   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
 #endif
    
    evas_common_font_shutdown();
