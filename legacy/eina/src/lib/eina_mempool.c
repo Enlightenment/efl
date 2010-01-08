@@ -60,7 +60,7 @@ static int _eina_mempool_log_dom = -1;
 
 
 static Eina_Mempool *
-_new_from_buffer(const char *name, const char *context, const char *options, va_list args)
+_new_va(const char *name, const char *context, const char *options, va_list args)
 {
 	Eina_Mempool_Backend *be;
 	Eina_Mempool *mp;
@@ -202,6 +202,9 @@ eina_mempool_init(void)
 #ifdef EINA_STATIC_BUILD_FIXED_BITMAP
    fixed_bitmap_init();
 #endif
+#ifdef EINA_STATIC_BUILD_BUDDY
+   buddy_init();
+#endif
 
    return EINA_TRUE;
 
@@ -230,6 +233,9 @@ eina_mempool_shutdown(void)
 #endif
 #ifdef EINA_STATIC_BUILD_FIXED_BITMAP
    fixed_bitmap_shutdown();
+#endif
+#ifdef EINA_STATIC_BUILD_BUDDY
+   buddy_shutdown();
 #endif
    /* dynamic backends */
    eina_module_list_flush(_modules);
@@ -268,7 +274,7 @@ eina_mempool_add(const char *name, const char *context, const char *options, ...
 	    name, context ? context : "", options ? options : "");
 
 	va_start(args, options);
-	mp = _new_from_buffer(name, context, options, args);
+	mp = _new_va(name, context, options, args);
 	va_end(args);
 
 	DBG("name=%s, context=%s, options=%s, mp=%p",

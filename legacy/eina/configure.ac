@@ -399,6 +399,7 @@ EINA_CHECK_MODULE([ememoa-fixed], [${enable_ememoa}], [ememoa fixed])
 EINA_CHECK_MODULE([ememoa-unknown], [${enable_ememoa}], [ememoa unknown])
 EINA_CHECK_MODULE([fixed-bitmap], [yes], [fixed bitmap])
 EINA_CHECK_MODULE([pass-through], [yes], [pass through])
+EINA_CHECK_MODULE([buddy], [yes], [buddy])
 
 
 ### Make the debug preprocessor configurable
@@ -453,6 +454,7 @@ src/modules/mp/ememoa_fixed/Makefile
 src/modules/mp/ememoa_unknown/Makefile
 src/modules/mp/pass_through/Makefile
 src/modules/mp/fixed_bitmap/Makefile
+src/modules/mp/buddy/Makefile
 src/tests/Makefile
 ])
 
@@ -502,6 +504,7 @@ echo "    Ememoa fixed.......: ${enable_ememoa_fixed}"
 echo "    Ememoa unknown.....: ${enable_ememoa_unknown}"
 echo "    Fixed bitmap.......: ${enable_fixed_bitmap}"
 echo "    Pass through.......: ${enable_pass_through}"
+echo "    Buddy..............: ${enable_buddy}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
