@@ -16,51 +16,49 @@ struct _Ecore_Event_Handler
 {
    EINA_INLIST;
    ECORE_MAGIC;
-   int          type;
-   int          delete_me : 1;
-   int        (*func) (void *data, int type, void *event);
-   void        *data;
+   int type;
+   int delete_me : 1;
+   int (*func) (void *data, int type, void *event);
+   void  *data;
 };
 
 struct _Ecore_Event_Filter
 {
    EINA_INLIST;
    ECORE_MAGIC;
-   int          delete_me : 1;
-   void *     (*func_start) (void *data);
-   int        (*func_filter) (void *data, void *loop_data, int type, void *event);
-   void       (*func_end) (void *data, void *loop_data);
-   void        *loop_data;
-   void        *data;
+   int delete_me : 1;
+   void *(*func_start) (void *data);
+   int (*func_filter) (void *data, void *loop_data, int type, void *event);
+   void (*func_end) (void *data, void *loop_data);
+   void *loop_data;
+   void *data;
 };
 
 struct _Ecore_Event
 {
    EINA_INLIST;
    ECORE_MAGIC;
-   int          type;
-   void        *event;
-   int          delete_me : 1;
-   void       (*func_free) (void *data, void *ev);
-   void        *data;
+   int type;
+   void *event;
+   int delete_me : 1;
+   void (*func_free) (void *data, void *ev);
+   void *data;
 };
 
 
-static int                  events_num = 0;
-static Ecore_Event         *events = NULL;
+static int events_num = 0;
+static Ecore_Event *events = NULL;
 
 static Ecore_Event_Handler **event_handlers = NULL;
-static int                   event_handlers_num = 0;
-static int                   event_handlers_alloc_num = 0;
-static Eina_List            *event_handlers_delete_list = NULL;
+static int event_handlers_num = 0;
+static int event_handlers_alloc_num = 0;
+static Eina_List *event_handlers_delete_list = NULL;
 
-static Ecore_Event_Filter  *event_filters = NULL;
-static int                  event_filters_delete_me = 0;
-
-static int                  event_id_max = ECORE_EVENT_COUNT;
-
-static int                  ecore_raw_event_type = ECORE_EVENT_NONE;
-static void                *ecore_raw_event_event =  NULL;
+static Ecore_Event_Filter *event_filters = NULL;
+static int event_filters_delete_me = 0;
+static int event_id_max = ECORE_EVENT_COUNT;
+static int ecore_raw_event_type = ECORE_EVENT_NONE;
+static void *ecore_raw_event_event =  NULL;
 
 
 /**
