@@ -68,6 +68,7 @@ elm_menu.c \
 elm_panel.c \
 elm_map.c \
 elm_flip.c \
+elm_conform.c \
 \
 elc_notepad.c \
 elc_anchorview.c \

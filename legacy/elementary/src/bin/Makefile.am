@@ -69,7 +69,8 @@ test_panel.c \
 test_map.c \
 test_weather.c \
 test_flip.c \
-test_label.c
+test_label.c \
+test_conform.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@
 elementary_test_LDFLAGS =

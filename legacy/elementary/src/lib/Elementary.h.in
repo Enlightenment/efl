@@ -1247,6 +1247,9 @@ extern "C" {
    EAPI Eina_Bool    elm_scrolled_entry_context_menu_disabled_get(Evas_Object *obj);
    EAPI void         elm_scrolled_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scroller_Policy v);
 
+   EAPI Evas_Object *elm_conformant_add(Evas_Object *parent);
+   EAPI void         elm_conformant_content_set(Evas_Object *obj, Evas_Object *content);
+
 #ifdef __cplusplus
 }
 #endif
