@@ -11,6 +11,7 @@ extern FT_Library         evas_ft_lib;
 
 static int                font_cache_usage = 0;
 static int                font_cache = 0;
+static int                font_dpi = 75;
 
 static Eina_Hash * fonts_src = NULL;
 static Eina_Hash * fonts = NULL;
@@ -112,6 +113,12 @@ evas_common_font_load_shutdown(void)
 
    eina_hash_free(fonts_src);
    fonts_src = NULL;
+}
+
+EAPI void
+evas_common_font_dpi_set(int dpi)
+{
+   font_dpi = dpi;
 }
 
 EAPI RGBA_Font_Source *
@@ -366,7 +373,7 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
 	FT_Activate_Size(fi->ft.size);
      }
    fi->real_size = fi->size * 64;
-   error = FT_Set_Char_Size(fi->src->ft.face, 0, fi->real_size, 75, 75);
+   error = FT_Set_Char_Size(fi->src->ft.face, 0, fi->real_size, font_dpi, font_dpi);
    if (error)
      {
 	fi->real_size = fi->size;

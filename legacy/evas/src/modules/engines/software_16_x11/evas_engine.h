@@ -5,6 +5,7 @@
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
 #include <X11/extensions/XShm.h>
+#include <X11/Xresource.h> // xres - dpi
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include "evas_common.h"

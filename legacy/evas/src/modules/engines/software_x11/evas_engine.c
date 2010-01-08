@@ -30,7 +30,14 @@ struct _Render_Engine
    Tilebuf_Rect *rects;
    Eina_Inlist  *cur_rect;
    int           end : 1;
-
+   
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
+   XrmDatabase   xrdb; // xres - dpi
+   struct { // xres - dpi
+      int        dpi; // xres - dpi
+   } xr; // xres - dpi
+#endif
+   
    void        (*outbuf_free)(Outbuf *ob);
    void        (*outbuf_reconfigure)(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
    int         (*outbuf_get_rot)(Outbuf *ob);
@@ -91,6 +98,52 @@ _output_xlib_setup(int      w,
    evas_software_xlib_x_color_init();
    evas_software_xlib_outbuf_init();
 
+     {
+        int status;
+        char *type = NULL;
+        XrmValue val;
+        
+        re->xr.dpi = 75000; // dpy * 1000
+        re->xrdb = XrmGetDatabase(disp);
+        status = XrmGetResource(re->xrdb, "Xft.dpi", "Xft.Dpi", &type, &val);
+        if ((status) && (type))
+          {
+             if (!strcmp(type, "String"))
+               {
+                  const char *str, *dp;
+                  
+                  str = val.addr;
+                  dp = strchr(str, '.');
+                  if (!dp) dp = strchr(str, ',');
+                  
+                  if (dp)
+                    {
+                       int subdpi, len, i;
+                       char *buf;
+                       
+                       buf = alloca(dp - str + 1);
+                       strncpy(buf, str, dp - str);
+                       buf[dp - str] = 0;
+                       len = strlen(dp + 1);
+                       subdpi = atoi(dp + 1);
+                       
+                       if (len < 3)
+                         {
+                            for (i = len; i < 3; i++) subdpi *= 10;
+                         }
+                       else if (len > 3)
+                         {
+                            for (i = len; i > 3; i--) subdpi /= 10;
+                         }
+                       re->xr.dpi = atoi(buf) * 1000;
+                    }
+                  else
+                    re->xr.dpi = atoi(str) * 1000;
+               }
+          }
+        evas_common_font_dpi_set(re->xr.dpi / 1000);
+     }
+   
    re->ob = evas_software_xlib_outbuf_setup_x(w,
                                               h,
                                               rot,
@@ -162,6 +215,8 @@ _output_xcb_setup(int               w,
    evas_software_xcb_x_color_init();
    evas_software_xcb_outbuf_init();
 
+   // FIXME: re->xrdb
+   
    re->ob = evas_software_xcb_outbuf_setup_x(w,
                                              h,
                                              rot,
@@ -498,6 +553,10 @@ eng_output_free(void *data)
 
    if (!data) return;
 
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
+   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
+#endif   
+   
    re = (Render_Engine *)data;
    re->outbuf_free(re->ob);
    evas_common_tilebuf_free(re->tb);

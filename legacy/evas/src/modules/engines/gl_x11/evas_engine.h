@@ -13,13 +13,7 @@
 #   include <X11/Xatom.h>
 #   include <X11/Xutil.h>
 #   include <X11/extensions/Xrender.h>
-//// this changed. this was the old style. above the new style
-//#   include <EGL/egl.h>
-//#   include <GLES/gl.h>
-//#   include <X11/Xlib.h>
-//#   include <X11/Xatom.h>
-//#   include <X11/Xutil.h>
-//#   include <X11/extensions/Xrender.h>
+# include <X11/Xresource.h> // xres - dpi
 #  elif defined(GLES_VARIETY_SGX)
 #   define SUPPORT_X11 1
 #   include <EGL/egl.h>
@@ -29,13 +23,15 @@
 #   include <X11/Xatom.h>
 #   include <X11/Xutil.h>
 #   include <X11/extensions/Xrender.h>
-#  endif
+#   include <X11/Xresource.h> // xres - dpi
+#endif
 # else
 #  include <GL/glx.h>
 #  include <X11/Xlib.h>
 #  include <X11/Xatom.h>
 #  include <X11/Xutil.h>
 #  include <X11/extensions/Xrender.h>
+#  include <X11/Xresource.h> // xres - dpi
 #  include <GL/gl.h>
 #  include <GL/glext.h>
 #  include <GL/glx.h>

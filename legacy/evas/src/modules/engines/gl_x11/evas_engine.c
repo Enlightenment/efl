@@ -19,6 +19,11 @@ struct _Render_Engine
 {
    Evas_GL_X11_Window *win;
    int                 end;
+   
+   XrmDatabase   xrdb; // xres - dpi
+   struct { // xres - dpi
+      int        dpi; // xres - dpi
+   } xr; // xres - dpi
 };
 
 static void *
@@ -75,9 +80,55 @@ eng_setup(Evas *e, void *in)
 	     e->engine.data.output = NULL;
 	     return 0;
 	  }
-
+        
+          {
+             int status;
+             char *type = NULL;
+             XrmValue val;
+             
+             re->xr.dpi = 75000; // dpy * 1000
+             re->xrdb = XrmGetDatabase(info->info.display);
+             status = XrmGetResource(re->xrdb, "Xft.dpi", "Xft.Dpi", &type, &val);
+             if ((status) && (type))
+               {
+                  if (!strcmp(type, "String"))
+                    {
+                       const char *str, *dp;
+                       
+                       str = val.addr;
+                       dp = strchr(str, '.');
+                       if (!dp) dp = strchr(str, ',');
+                       
+                       if (dp)
+                         {
+                            int subdpi, len, i;
+                            char *buf;
+                            
+                            buf = alloca(dp - str + 1);
+                            strncpy(buf, str, dp - str);
+                            buf[dp - str] = 0;
+                            len = strlen(dp + 1);
+                            subdpi = atoi(dp + 1);
+                            
+                            if (len < 3)
+                              {
+                                 for (i = len; i < 3; i++) subdpi *= 10;
+                              }
+                            else if (len > 3)
+                              {
+                                 for (i = len; i > 3; i--) subdpi /= 10;
+                              }
+                            re->xr.dpi = atoi(buf) * 1000;
+                         }
+                       else
+                         re->xr.dpi = atoi(str) * 1000;
+                    }
+               }
+             evas_common_font_dpi_set(re->xr.dpi / 1000);
+          }
+        
 	evas_common_cpu_init();
-
+        
 	evas_common_blend_init();
 	evas_common_image_init();
 	evas_common_convert_init();

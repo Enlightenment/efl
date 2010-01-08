@@ -9,6 +9,7 @@
 #include <X11/Xatom.h>
 #include <X11/extensions/XShm.h>
 #include <X11/extensions/Xrender.h>
+#include <X11/Xresource.h> // xres - dpi
 
 #ifdef BUILD_ENGINE_XRENDER_XCB
 # include <xcb/xcb.h>

@@ -30,6 +30,13 @@ struct _Render_Engine
    } x11;
    unsigned char    destination_alpha : 1;
 
+#ifdef BUILD_ENGINE_XRENDER_X11
+   XrmDatabase   xrdb; // xres - dpi
+   struct { // xres - dpi
+      int        dpi; // xres - dpi
+   } xr; // xres - dpi
+#endif
+   
    Ximage_Info     *xinf;
    Xrender_Surface *output;
    Xrender_Surface *mask_output;
@@ -217,6 +224,52 @@ _output_xlib_setup(int           width,
    re->render_surface_line_draw = _xr_xlib_render_surface_line_draw;
    re->render_surface_polygon_draw = _xr_xlib_render_surface_polygon_draw;
 
+     {   
+        int status;
+        char *type = NULL;
+        XrmValue val;
+        
+        re->xr.dpi = 75000; // dpy * 1000
+        re->xrdb = XrmGetDatabase((Display *)re->x11.connection);
+        status = XrmGetResource(re->xrdb, "Xft.dpi", "Xft.Dpi", &type, &val);
+        if ((status) && (type))
+          {
+             if (!strcmp(type, "String"))
+               {
+                  const char *str, *dp;
+                  
+                  str = val.addr;
+                  dp = strchr(str, '.');
+                  if (!dp) dp = strchr(str, ',');
+                  
+                  if (dp)
+                    {
+                       int subdpi, len, i;
+                       char *buf;
+                       
+                       buf = alloca(dp - str + 1);
+                       strncpy(buf, str, dp - str);
+                       buf[dp - str] = 0;
+                       len = strlen(dp + 1);
+                       subdpi = atoi(dp + 1);
+                       
+                       if (len < 3)
+                         {
+                            for (i = len; i < 3; i++) subdpi *= 10;
+                         }
+                       else if (len > 3)
+                         {
+                            for (i = len; i > 3; i--) subdpi /= 10;
+                         }
+                       re->xr.dpi = atoi(buf) * 1000;
+                    }
+                  else
+                    re->xr.dpi = atoi(str) * 1000;
+               }
+          }
+        evas_common_font_dpi_set(re->xr.dpi / 1000);
+     }
+   
    return re;
 }
 
@@ -446,6 +499,11 @@ eng_output_free(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   
+#ifdef BUILD_ENGINE_XRENDER_X11
+   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
+#endif
+   
    evas_common_font_shutdown();
    evas_common_image_shutdown();
    while (re->updates)

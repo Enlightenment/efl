@@ -29,7 +29,7 @@ EAPI int               evas_common_font_glyph_search         (RGBA_Font *fn, RGB
 EAPI RGBA_Font_Glyph  *evas_common_font_int_cache_glyph_get  (RGBA_Font_Int *fi, FT_UInt index);
 
 /* load */
-
+EAPI void              evas_common_font_dpi_set              (int dpi);
 EAPI RGBA_Font_Source *evas_common_font_source_memory_load   (const char *name, const void *data, int data_size);
 EAPI RGBA_Font_Source *evas_common_font_source_load          (const char *name);
 EAPI int               evas_common_font_source_load_complete (RGBA_Font_Source *fs);
