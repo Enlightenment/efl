@@ -32,6 +32,9 @@ static Ecore_Event_Handler      *ecore_evas_event_handlers[4] = {
 };
 
 static const char               *ecore_evas_sdl_default = "EFL SDL";
+static int                      _ecore_evas_fps_debug = 0;
+static Ecore_Poller             *ecore_evas_event;
+static Ecore_Evas		*ecore_evases = NULL;
 
 static Ecore_Evas *
 _ecore_evas_sdl_match(void)
@@ -113,7 +116,7 @@ _ecore_evas_render(Ecore_Evas *ee)
 }
 
 static int
-ecore_evas_sdl_render(Ecore_Evas *ee)
+_ecore_evas_sdl_render(Ecore_Evas *ee)
 {
    int rend = 0;
    
