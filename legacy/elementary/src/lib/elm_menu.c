@@ -28,6 +28,7 @@ struct _Menu_Item
    const char *label;
 
    void (*func) (void *data, Evas_Object *obj, void *event_info);
+   void (*del_cb) (void *data, Evas_Object *obj, void *event_info);
    const void *data;
 
    //if submenu
@@ -77,6 +78,7 @@ _del_hook(Evas_Object *obj)
 	EINA_LIST_FREE(l, item)
 	  {
 	     ll = eina_list_append(ll, item->items);
+	     if (item->del_cb) item->del_cb((void*)item->data, item->o, item);
 	     if (item->label) eina_stringshare_del(item->label);
 	     if (item->icon) evas_object_del(item->icon);
 	     if (item->hv) evas_object_del(item->hv);
@@ -521,11 +523,9 @@ elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 }
 
 /*
- * Move the menu to a new position
+ * Get the Evas_Object of an Elm_Menu_Item
  * 
- * @param obj The menu object.
- * @param x The new position.
- * @param y The new position.
+ * @param it The menu item object.
  */
 EAPI Evas_Object *
 elm_menu_object_get(const Elm_Menu_Item *it)
@@ -679,6 +679,8 @@ elm_menu_item_del(Elm_Menu_Item *item)
 
    if (!item) return;
 
+   if (item->del_cb) item->del_cb((void*)item->data, item->o, item);
+
    EINA_LIST_FREE(item->items, _item)
      elm_menu_item_del(_item);
 
@@ -697,6 +699,20 @@ elm_menu_item_del(Elm_Menu_Item *item)
      }
 
    free(item);
+}
+
+/**
+ * Set the function called when a menu item is freed.
+ *
+ * @param it The item to set the callback on
+ * @param func The function called
+ *
+ * @ingroup Menu
+ */
+EAPI void
+elm_menu_item_del_cb_set(Elm_Menu_Item *it, void (*func)(void *data, Evas_Object *obj, void *event_info))
+{
+   it->del_cb = func;
 }
 
 EAPI const Eina_List *
