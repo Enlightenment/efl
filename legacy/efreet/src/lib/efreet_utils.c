@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <fnmatch.h>
+#include <limits.h>
 
 #include <Ecore.h>
 #include <Ecore_File.h>
