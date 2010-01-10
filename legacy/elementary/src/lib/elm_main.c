@@ -1393,6 +1393,21 @@ elm_object_focus(Evas_Object *obj)
 }
 
 /**
+ * Set the focus to the object
+ *
+ * This sets the focus target forkeyboard input to be the object indicated.
+ *
+ * @param obj The object
+ * @ingroup Focus
+ */
+EAPI void
+elm_object_unfocus(Evas_Object *obj)
+{
+   if (!elm_widget_can_focus_get(obj)) return;
+   elm_widget_focused_object_clear(obj);
+}
+
+/**
  * Set the ability for the object to focus
  *
  * This sets the ability for the object to be able to get keyboard focus or
