@@ -340,8 +340,8 @@ extern "C" {
    EAPI Evas_Object *elm_image_add(Evas_Object *parent);
    EAPI Eina_Bool    elm_image_file_set(Evas_Object *obj, const char *file, const char *group);
    EAPI void         elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth);
-   EAPI void         elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
    EAPI void         elm_image_object_size_get(const Evas_Object *obj, int *w, int *h);
+   EAPI void         elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
    EAPI void         elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
    EAPI void         elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
    EAPI void         elm_image_prescale_set(Evas_Object *obj, int size);
@@ -486,11 +486,11 @@ extern "C" {
      } Elm_Notify_Orient;
    EAPI Evas_Object *elm_notify_add(Evas_Object *parent);
    EAPI void         elm_notify_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI void	     elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void	     elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient);
    EAPI void         elm_notify_timeout_set(Evas_Object *obj, int timeout);
    EAPI void	     elm_notify_timer_init(Evas_Object *obj);
    EAPI void	     elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat);
-   EAPI void	     elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent);
    /* smart callbacks called:
     */
    typedef enum _Elm_Hover_Axis
@@ -675,6 +675,7 @@ extern "C" {
    EAPI const Eina_List * elm_hoversel_items_get(Evas_Object *obj);
    EAPI Elm_Hoversel_Item *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI void         elm_hoversel_item_del(Elm_Hoversel_Item *item);
+   EAPI void         elm_hoversel_item_del_cb_set(Elm_Hoversel_Item *it, void (*func)(void *data, Evas_Object *obj, void *event_info));
    EAPI void        *elm_hoversel_item_data_get(Elm_Hoversel_Item *it);
    EAPI const char  *elm_hoversel_item_label_get(Elm_Hoversel_Item *it);
    EAPI void         elm_hoversel_item_icon_set(Elm_Hoversel_Item *it, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type);
@@ -688,40 +689,42 @@ extern "C" {
    typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item;
    EAPI Evas_Object      *elm_toolbar_add(Evas_Object *parent);
    EAPI void              elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size);
-   EAPI void              elm_toolbar_align_set(Evas_Object *obj, double align);
    EAPI int               elm_toolbar_icon_size_get(Evas_Object *obj);
-   EAPI void              elm_toolbar_item_unselect_all(Evas_Object *obj);
    EAPI Elm_Toolbar_Item *elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI Evas_Object      *elm_toolbar_item_icon_get(Elm_Toolbar_Item *item);
    EAPI const char       *elm_toolbar_item_label_get(Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label);
    EAPI void              elm_toolbar_item_del(Elm_Toolbar_Item *item);
+   EAPI void              elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *it, void (*func)(void *data, Evas_Object *obj, void *event_info));
    EAPI void              elm_toolbar_item_select(Elm_Toolbar_Item *item);
    EAPI Eina_Bool         elm_toolbar_item_disabled_get(Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled);
    EAPI void              elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator);
    EAPI Eina_Bool         elm_toolbar_item_separator_get(Elm_Toolbar_Item *item);
-   EAPI void	          elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu);
-   EAPI Evas_Object      *elm_toolbar_item_menu_get(Elm_Toolbar_Item *item);
-   EAPI void	          elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void              elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable);
    EAPI void	          elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous);
+   EAPI void	          elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
+   EAPI void              elm_toolbar_item_unselect_all(Evas_Object *obj);
+   EAPI void              elm_toolbar_align_set(Evas_Object *obj, double align);
+   EAPI void	          elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu);
+   EAPI Evas_Object      *elm_toolbar_item_menu_get(Elm_Toolbar_Item *item);
    /* smart callbacks called:
     * "clicked" - when the user clicks on a toolbar item and becomes selected
     */
 
    typedef struct _Menu_Item Elm_Menu_Item;
    EAPI Evas_Object     *elm_menu_add(Evas_Object *parent);
-   EAPI void		 elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
    EAPI void		 elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
+   EAPI void		 elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+   EAPI Evas_Object     *elm_menu_object_get(const Elm_Menu_Item *it);
    EAPI Elm_Menu_Item   *elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
-   EAPI Elm_Menu_Item   *elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent);
    EAPI void		 elm_menu_item_label_set(Elm_Menu_Item *item, const char *label);
    EAPI const char      *elm_menu_item_label_get(Elm_Menu_Item *item);
    EAPI void		 elm_menu_item_icon_set(Elm_Menu_Item *item, Evas_Object *icon);
    EAPI void		 elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled);
+   EAPI Elm_Menu_Item   *elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent);
    EAPI void		 elm_menu_item_del(Elm_Menu_Item *item);
-   EAPI Evas_Object     *elm_menu_object_get(const Elm_Menu_Item *it);
+   EAPI void		 elm_menu_item_del_cb_set(Elm_Menu_Item *it, void (*func)(void *data, Evas_Object *obj, void *event_info));
    EAPI const Eina_List *elm_menu_item_subitems_get(Elm_Menu_Item *item);
    /* smart callbacks called:
     * "clicked" - the user clicked the empty space in the menu to dismiss. event_info is NULL.
@@ -977,16 +980,16 @@ extern "C" {
     */
 
    EAPI Evas_Object *elm_progressbar_add(Evas_Object *parent);
+   EAPI void         elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse);
+   EAPI void         elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state);
+   EAPI void         elm_progressbar_value_set(Evas_Object *obj, double val);
+   EAPI double       elm_progressbar_value_get(const Evas_Object *obj);
    EAPI void         elm_progressbar_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon);
    EAPI void         elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size);
+   EAPI void         elm_progressbar_unit_format_set(Evas_Object *obj, const char *format);
    EAPI void         elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
    EAPI void         elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted);
-   EAPI void         elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse);
-   EAPI void         elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state);
-   EAPI void         elm_progressbar_unit_format_set(Evas_Object *obj, const char *format);
-   EAPI void         elm_progressbar_value_set(Evas_Object *obj, double val);
-   EAPI double       elm_progressbar_value_get(const Evas_Object *obj);
    /* smart callbacks called:
     */
    /* available item styles:
