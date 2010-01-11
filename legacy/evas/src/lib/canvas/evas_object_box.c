@@ -50,7 +50,9 @@ struct _Evas_Object_Box_Accessor
        return val;							\
     }
 
-static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
+EVAS_SMART_SUBCLASS_NEW("Evas_Object_Box", _evas_object_box,
+			Evas_Object_Box_Api, Evas_Smart_Class,
+			evas_object_smart_clipped_smart_set, NULL)
 
 static Eina_Bool
 _evas_object_box_iterator_next(Evas_Object_Box_Iterator *it, void **data)
@@ -420,7 +422,7 @@ _evas_object_box_smart_add(Evas_Object *o)
 
 	evas_object_smart_data_set(o, priv);
      }
-   _parent_sc.add(o);
+   _evas_object_box_parent_sc.add(o);
 
    priv->children = NULL;
    priv->align.h = 0.5;
@@ -461,7 +463,7 @@ _evas_object_box_smart_del(Evas_Object *o)
    if (priv->layout.data && priv->layout.free_data)
      priv->layout.free_data(priv->layout.data);
 
-   _parent_sc.del(o);
+   _evas_object_box_parent_sc.del(o);
 }
 
 static void
@@ -487,15 +489,23 @@ _evas_object_box_smart_calculate(Evas_Object *o)
      ERR("No layout function set for %p box.", o);
 }
 
-static Evas_Smart *
-_evas_object_box_smart_class_new(void)
+static void
+_evas_object_box_smart_set_user(Evas_Object_Box_Api *api)
 {
-   static Evas_Object_Box_Api api = EVAS_OBJECT_BOX_API_INIT_NAME_VERSION("Evas_Object_Box");
+   api->base.add = _evas_object_box_smart_add;
+   api->base.del = _evas_object_box_smart_del;
+   api->base.resize = _evas_object_box_smart_resize;
+   api->base.calculate = _evas_object_box_smart_calculate;
 
-   if (!_parent_sc.name)
-     evas_object_box_smart_set(&api);
-
-   return evas_smart_class_new(&api.base);
+   api->append = _evas_object_box_append_default;
+   api->prepend = _evas_object_box_prepend_default;
+   api->insert_before = _evas_object_box_insert_before_default;
+   api->insert_after = _evas_object_box_insert_after_default;
+   api->insert_at = _evas_object_box_insert_at_default;
+   api->remove = _evas_object_box_remove_default;
+   api->remove_at = _evas_object_box_remove_at_default;
+   api->option_new = _evas_object_box_option_new_default;
+   api->option_free = _evas_object_box_option_free_default;
 }
 
 /**
@@ -506,17 +516,10 @@ _evas_object_box_smart_class_new(void)
  * properties of the box must be set/retrieved via
  * evas_object_box_{h,v}_{align,padding}_{get,set)().
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_box_add(Evas *evas)
 {
-   static Evas_Smart *smart = NULL;
-   Evas_Object *o;
-
-   if (!smart)
-     smart = _evas_object_box_smart_class_new();
-
-   o = evas_object_smart_add(evas, smart);
-   return o;
+   return evas_object_smart_add(evas, _evas_object_box_smart_class_new());
 }
 
 /**
@@ -524,7 +527,7 @@ evas_object_box_add(Evas *evas)
  *
  * @see evas_object_box_add()
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_box_add_to(Evas_Object *parent)
 {
    Evas *evas;
@@ -540,41 +543,12 @@ evas_object_box_add_to(Evas_Object *parent)
  * Set the default box @a api struct (Evas_Object_Box_Api)
  * with the default values. May be used to extend that API.
  */
-void
+EAPI void
 evas_object_box_smart_set(Evas_Object_Box_Api *api)
 {
    if (!api)
      return;
-
-   if (!_parent_sc.name)
-     evas_object_smart_clipped_smart_set(&_parent_sc);
-
-   api->base.add = _evas_object_box_smart_add;
-   api->base.del = _evas_object_box_smart_del;
-   api->base.move = _parent_sc.move;
-   api->base.resize = _evas_object_box_smart_resize;
-   api->base.show = _parent_sc.show;
-   api->base.hide = _parent_sc.hide;
-   api->base.color_set = _parent_sc.color_set;
-   api->base.clip_set = _parent_sc.clip_set;
-   api->base.clip_unset = _parent_sc.clip_unset;
-   api->base.calculate = _evas_object_box_smart_calculate;
-   api->base.member_add = _parent_sc.member_add;
-   api->base.member_del = _parent_sc.member_del;
-
-   api->append = _evas_object_box_append_default;
-   api->prepend = _evas_object_box_prepend_default;
-   api->insert_before = _evas_object_box_insert_before_default;
-   api->insert_after = _evas_object_box_insert_after_default;
-   api->insert_at = _evas_object_box_insert_at_default;
-   api->remove = _evas_object_box_remove_default;
-   api->remove_at = _evas_object_box_remove_at_default;
-   api->property_set = NULL;
-   api->property_get = NULL;
-   api->property_name_get = NULL;
-   api->property_id_get = NULL;
-   api->option_new = _evas_object_box_option_new_default;
-   api->option_free = _evas_object_box_option_free_default;
+   _evas_object_box_smart_set(api);
 }
 
 /**
@@ -582,7 +556,7 @@ evas_object_box_smart_set(Evas_Object_Box_Api *api)
  * which here defines its genre (horizontal, vertical, homogeneous,
  * etc.).
  */
-void
+EAPI void
 evas_object_box_layout_set(Evas_Object *o, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data))
 {
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, priv);
@@ -789,7 +763,7 @@ _evas_object_box_layout_horizontal_weight_apply(Evas_Object_Box_Data *priv, Evas
  * properties must be set (by the
  * evas_object_size_hint_{min,max}_set() functions.
  */
-void
+EAPI void
 evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
    int pad_inc = 0, sub_pixel = 0;
@@ -955,7 +929,7 @@ _evas_object_box_layout_vertical_weight_apply(Evas_Object_Box_Data *priv, Evas_O
  * evas_object_box_layout_horizontal().  The description of its
  * behaviour can be derived from that function's documentation.
  */
-void
+EAPI void
 evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
    int pad_inc = 0, sub_pixel = 0;
@@ -1092,7 +1066,7 @@ evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void
  * element to the exact height of its parent (respecting the max hint
  * on the child's height).
  */
-void
+EAPI void
 evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
    int cell_sz, share, inc;
@@ -1161,7 +1135,7 @@ evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Da
  * evas_object_box_layout_homogeneous_horizontal().  The description
  * of its behaviour can be derived from that function's documentation.
  */
-void
+EAPI void
 evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
    int cell_sz, share, inc;
@@ -1262,7 +1236,7 @@ evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data
  * element to the exact height of its parent (respecting the max hint
  * on the child's height).
  */
-void
+EAPI void
 evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
    int remaining, global_pad, pad_inc = 0, sub_pixel = 0;
@@ -1355,7 +1329,7 @@ evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Obje
  * description of its behaviour can be derived from that function's
  * documentation.
  */
-void
+EAPI void
 evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
    int remaining, global_pad, pad_inc = 0, sub_pixel = 0;
@@ -1538,7 +1512,7 @@ _evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *p
  * @c align_y dictates positioning relative to the *largest height*
  * required by a child object in the actual row.
  */
-void
+EAPI void
 evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
    int n_children, v_justify;
@@ -1727,7 +1701,7 @@ _evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *pri
  * evas_object_box_layout_flow_horizontal().  The description of its
  * behaviour can be derived from that function's documentation.
  */
-void
+EAPI void
 evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
    int n_children;
@@ -1863,7 +1837,7 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
  * accounting its horizontal padding properties).  Same applies to
  * vertical axis.
  */
-void
+EAPI void
 evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
    Eina_List *l;
@@ -1914,7 +1888,7 @@ evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv, void *d
 /**
  * Set the alignment of the whole bounding box of contents.
  */
-void
+EAPI void
 evas_object_box_align_set(Evas_Object *o, double horizontal, double vertical)
 {
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, priv);
@@ -1928,7 +1902,7 @@ evas_object_box_align_set(Evas_Object *o, double horizontal, double vertical)
 /**
  * Get alignment of the whole bounding box of contents.
  */
-void
+EAPI void
 evas_object_box_align_get(const Evas_Object *o, double *horizontal, double *vertical)
 {
    EVAS_OBJECT_BOX_DATA_GET(o, priv);
@@ -1947,7 +1921,7 @@ evas_object_box_align_get(const Evas_Object *o, double *horizontal, double *vert
 /**
  * Set the space (padding) between cells.
  */
-void
+EAPI void
 evas_object_box_padding_set(Evas_Object *o, Evas_Coord horizontal, Evas_Coord vertical)
 {
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, priv);
@@ -1961,7 +1935,7 @@ evas_object_box_padding_set(Evas_Object *o, Evas_Coord horizontal, Evas_Coord ve
 /**
  * Get the (space) padding between cells.
  */
-void
+EAPI void
 evas_object_box_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
    EVAS_OBJECT_BOX_DATA_GET(o, priv);
@@ -1981,7 +1955,7 @@ evas_object_box_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas_C
  * Append a new object @a child to the box @a o. On error, @c NULL is
  * returned.
  */
-Evas_Object_Box_Option *
+EAPI Evas_Object_Box_Option *
 evas_object_box_append(Evas_Object *o, Evas_Object *child)
 {
    Evas_Object_Box_Option *opt;
@@ -2011,7 +1985,7 @@ evas_object_box_append(Evas_Object *o, Evas_Object *child)
  * Prepend a new object @a child to the box @a o. On error, @c NULL is
  * returned.
  */
-Evas_Object_Box_Option *
+EAPI Evas_Object_Box_Option *
 evas_object_box_prepend(Evas_Object *o, Evas_Object *child)
 {
    Evas_Object_Box_Option *opt;
@@ -2042,7 +2016,7 @@ evas_object_box_prepend(Evas_Object *o, Evas_Object *child)
  * reference. If @a reference is not contained in the box or any other
  * error occurs, @c NULL is returned.
  */
-Evas_Object_Box_Option *
+EAPI Evas_Object_Box_Option *
 evas_object_box_insert_before(Evas_Object *o, Evas_Object *child, const Evas_Object *reference)
 {
    Evas_Object_Box_Option *opt;
@@ -2073,7 +2047,7 @@ evas_object_box_insert_before(Evas_Object *o, Evas_Object *child, const Evas_Obj
  * reference. If @a reference is not contained in the box or any other
  * error occurs, @c NULL is returend.
  */
-Evas_Object_Box_Option *
+EAPI Evas_Object_Box_Option *
 evas_object_box_insert_after(Evas_Object *o, Evas_Object *child, const Evas_Object *reference)
 {
    Evas_Object_Box_Option *opt;
@@ -2103,7 +2077,7 @@ evas_object_box_insert_after(Evas_Object *o, Evas_Object *child, const Evas_Obje
  * Insert a new object @a child to the box @a o at position @a pos. On
  * error, @c NULL is returned.
  */
-Evas_Object_Box_Option *
+EAPI Evas_Object_Box_Option *
 evas_object_box_insert_at(Evas_Object *o, Evas_Object *child, unsigned int pos)
 {
    Evas_Object_Box_Option *opt;
@@ -2133,7 +2107,7 @@ evas_object_box_insert_at(Evas_Object *o, Evas_Object *child, unsigned int pos)
  * Remove an object @a child from the box @a o. On error, @c 0 is
  * returned.
  */
-Eina_Bool
+EAPI Eina_Bool
 evas_object_box_remove(Evas_Object *o, Evas_Object *child)
 {
    const Evas_Object_Box_Api *api;
@@ -2163,7 +2137,7 @@ evas_object_box_remove(Evas_Object *o, Evas_Object *child)
  * Remove an object from the box @a o which occupies position @a
  * pos. On error, @c 0 is returned.
  */
-Eina_Bool
+EAPI Eina_Bool
 evas_object_box_remove_at(Evas_Object *o, unsigned int pos)
 {
    const Evas_Object_Box_Api *api;
@@ -2190,7 +2164,7 @@ evas_object_box_remove_at(Evas_Object *o, unsigned int pos)
  * Remove all child objects.
  * @return 0 on errors
  */
-Eina_Bool
+EAPI Eina_Bool
 evas_object_box_remove_all(Evas_Object *o, Eina_Bool clear)
 {
    const Evas_Object_Box_Api *api;
@@ -2226,7 +2200,7 @@ evas_object_box_remove_all(Evas_Object *o, Eina_Bool clear)
  *
  * @note Do not remove or delete objects while walking the list.
  */
-Eina_Iterator *
+EAPI Eina_Iterator *
 evas_object_box_iterator_new(const Evas_Object *o)
 {
    Evas_Object_Box_Iterator *it;
@@ -2255,7 +2229,7 @@ evas_object_box_iterator_new(const Evas_Object *o)
  *
  * @note Do not remove or delete objects while walking the list.
  */
-Eina_Accessor *
+EAPI Eina_Accessor *
 evas_object_box_accessor_new(const Evas_Object *o)
 {
    Evas_Object_Box_Accessor *it;
@@ -2287,7 +2261,7 @@ evas_object_box_accessor_new(const Evas_Object *o)
  *       It's possible to remove objects from the box when walking this
  *       list, but these removals won't be reflected on it.
  */
-Eina_List *
+EAPI Eina_List *
 evas_object_box_children_get(const Evas_Object *o)
 {
    Eina_List *new_list = NULL, *l;
@@ -2305,7 +2279,7 @@ evas_object_box_children_get(const Evas_Object *o)
  * Get the name of the property of the child elements of the box @a o
  * whose id is @a property. On error, @c NULL is returned.
  */
-const char *
+EAPI const char *
 evas_object_box_option_property_name_get(Evas_Object *o, int property)
 {
    const Evas_Object_Box_Api *api;
@@ -2326,7 +2300,7 @@ evas_object_box_option_property_name_get(Evas_Object *o, int property)
  * Get the id of the property of the child elements of the box @a o
  * whose name is @a name. On error, @c -1 is returned.
  */
-int
+EAPI int
 evas_object_box_option_property_id_get(Evas_Object *o, const char *name)
 {
    const Evas_Object_Box_Api *api;
@@ -2349,7 +2323,7 @@ evas_object_box_option_property_id_get(Evas_Object *o, const char *name)
  * must be the last arguments and their type *must* match that of the
  * property itself. On error, @c 0 is returned.
  */
-Eina_Bool
+EAPI Eina_Bool
 evas_object_box_option_property_set(Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...)
 {
    Eina_Bool ret;
@@ -2370,7 +2344,7 @@ evas_object_box_option_property_set(Evas_Object *o, Evas_Object_Box_Option *opt,
  * is returned.
  */
 
-Eina_Bool
+EAPI Eina_Bool
 evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
    const Evas_Object_Box_Api *api;
@@ -2396,7 +2370,7 @@ evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt
  * be addresses of variables with the same type of that property. On
  * error, @c 0 is returned.
  */
-Eina_Bool
+EAPI Eina_Bool
 evas_object_box_option_property_get(Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...)
 {
    Eina_Bool ret;
@@ -2415,7 +2389,7 @@ evas_object_box_option_property_get(Evas_Object *o, Evas_Object_Box_Option *opt,
  * va_list @a args is initialized with must be addresses of variables
  * with the same type of that property. On error, @c 0 is returned.
  */
-Eina_Bool
+EAPI Eina_Bool
 evas_object_box_option_property_vget(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
    const Evas_Object_Box_Api *api;

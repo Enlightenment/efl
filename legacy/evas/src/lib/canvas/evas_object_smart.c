@@ -11,6 +11,7 @@ struct _Evas_Object_Smart
    void             *data;
    Eina_List        *callbacks;
    Eina_Inlist *contained;
+   Evas_Smart_Cb_Description_Array callbacks_descriptions;
    int               walking_list;
    Eina_Bool         deletions_waiting : 1;
    Eina_Bool         need_recalculate : 1;
@@ -465,6 +466,174 @@ evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event
    eina_stringshare_del(strshare);
    o->walking_list--;
    evas_object_smart_callbacks_clear(obj);
+}
+
+/**
+ * Set smart object instance callbacks descriptions.
+ *
+ * These descriptions are hints to be used by introspection and are
+ * not enforced in any way.
+ *
+ * It will not be checked if instance callbacks descriptions have the
+ * same name as another in class. Both are kept in different arrays
+ * and users of evas_object_smart_callbacks_descriptions_get() should
+ * handle this case as they wish.
+ *
+ * @param obj The smart object
+ * @param descriptions NULL terminated (name != NULL) array with
+ *        descriptions.  Array elements will not be modified, but
+ *        reference to them and their contents will be made, so this
+ *        array should be kept alive during object lifetime.
+ * @return 1 on success, 0 on failure.
+ * @ingroup Evas_Smart_Object_Group
+ *
+ * @note while instance callbacks descriptions are possible, they are
+ *       not recommended. Use class callbacks descriptions instead as they
+ *       make user's life simpler and will use less memory as descriptions
+ *       and arrays will be shared among all instances.
+ */
+EAPI Eina_Bool
+evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, const Evas_Smart_Cb_Description *descriptions)
+{
+   const Evas_Smart_Cb_Description *d;
+   const Evas_Smart_Cb_Description_Array *sa;
+   Evas_Object_Smart *o;
+   unsigned int i, count;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Smart *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
+   return 0;
+   MAGIC_CHECK_END();
+
+   if ((!descriptions) || (!descriptions->name))
+     {
+	evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, 0);
+	return 1;
+     }
+
+   for (count = 0, d = descriptions; d->name != NULL; d++)
+     count++;
+
+   evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, count);
+   for (i = 0, d = descriptions; i < count; d++, i++)
+     o->callbacks_descriptions.array[i] = d;
+
+   evas_smart_cb_descriptions_fix(&o->callbacks_descriptions);
+
+   return 1;
+}
+
+/**
+ * Get the callbacks descriptions known by this smart object.
+ *
+ * This call retrieves processed callbacks descriptions for both
+ * instance and class. These arrays are sorted by description's name
+ * and are @c NULL terminated, so both @a class_count and
+ * @a instance_count can be ignored, the terminator @c NULL is not
+ * counted in these values.
+ *
+ * @param s the smart object.
+ * @param class_descriptions where to store class callbacks
+ *        descriptions array, if any is known. If no descriptions are
+ *        known, @c NULL is returned. This parameter may be @c NULL if
+ *        it is not of interest.
+ * @param class_count returns how many class callbacks descriptions
+ *        are known.
+ * @param instance_descriptions where to store instance callbacks
+ *        descriptions array, if any is known. If no descriptions are
+ *        known, @c NULL is returned. This parameter may be @c NULL if
+ *        it is not of interest.
+ * @param instance_count returns how many instance callbacks
+ *        descriptions are known.
+ *
+ * @note if just class descriptions are of interest, try
+ *       evas_smart_callbacks_descriptions_get() instead.
+ *
+ * @see evas_smart_callbacks_descriptions_get()
+ * @ingroup Evas_Smart_Object_Group
+ */
+EAPI void
+evas_object_smart_callbacks_descriptions_get(const Evas_Object *obj, const Evas_Smart_Cb_Description ***class_descriptions, unsigned int *class_count, const Evas_Smart_Cb_Description ***instance_descriptions, unsigned int *instance_count)
+{
+   Evas_Object_Smart *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (class_descriptions) *class_descriptions = NULL;
+   if (class_count) *class_count = 0;
+   if (instance_descriptions) *instance_descriptions = NULL;
+   if (instance_count) *instance_count = 0;
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Smart *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
+   if (class_descriptions) *class_descriptions = NULL;
+   if (class_count) *class_count = 0;
+   if (instance_descriptions) *instance_descriptions = NULL;
+   if (instance_count) *instance_count = 0;
+   return;
+   MAGIC_CHECK_END();
+
+   if (class_descriptions)
+     *class_descriptions = obj->smart.smart->callbacks.array;
+   if (class_count)
+     *class_count = obj->smart.smart->callbacks.size;
+
+   if (instance_descriptions)
+     *instance_descriptions = o->callbacks_descriptions.array;
+   if (instance_count)
+     *instance_count = o->callbacks_descriptions.size;
+}
+
+/**
+ * Find callback description for callback called @a name.
+ *
+ * @param obj the smart object.
+ * @param name name of desired callback, must @b not be @c NULL.  The
+ *        search have a special case for @a name being the same
+ *        pointer as registered with Evas_Smart_Cb_Description, one
+ *        can use it to avoid excessive use of strcmp().
+ * @param class_description pointer to return class description or @c
+ *        NULL if not found. If parameter is @c NULL, no search will
+ *        be done on class descriptions.
+ * @param instance_description pointer to return instance description
+ *        or @c NULL if not found. If parameter is @c NULL, no search
+ *        will be done on instance descriptions.
+ * @return reference to description if found, @c NULL if not found.
+ */
+EAPI void
+evas_object_smart_callback_description_find(const Evas_Object *obj, const char *name, const Evas_Smart_Cb_Description **class_description, const Evas_Smart_Cb_Description **instance_description)
+{
+   Evas_Object_Smart *o;
+
+   if (!name)
+     {
+	if (class_description) *class_description = NULL;
+	if (instance_description) *instance_description = NULL;
+	return;
+     }
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (class_description) *class_description = NULL;
+   if (instance_description) *instance_description = NULL;
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Smart *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
+   if (class_description) *class_description = NULL;
+   if (instance_description) *instance_description = NULL;
+   return;
+   MAGIC_CHECK_END();
+
+   if (class_description)
+     *class_description = evas_smart_cb_description_find
+       (&obj->smart.smart->callbacks, name);
+
+   if (instance_description)
+     *instance_description = evas_smart_cb_description_find
+       (&o->callbacks_descriptions, name);
 }
 
 /**

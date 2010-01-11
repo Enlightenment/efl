@@ -49,6 +49,7 @@ typedef struct _Evas_Key_Grab               Evas_Key_Grab;
 typedef struct _Evas_Callbacks              Evas_Callbacks;
 typedef struct _Evas_Format                 Evas_Format;
 typedef struct _Evas_Map_Point              Evas_Map_Point;
+typedef struct _Evas_Smart_Cb_Description_Array Evas_Smart_Cb_Description_Array;
 
 #define MAGIC_EVAS                 0x70777770
 #define MAGIC_OBJ                  0x71777770
@@ -173,6 +174,12 @@ struct _Evas_Intercept_Func
    Evas_Intercept_Func_Basic   clip_unset;
 };
 
+struct _Evas_Smart_Cb_Description_Array
+{
+   unsigned int                      size;
+   const Evas_Smart_Cb_Description **array;
+};
+
 struct _Evas_Smart
 {
    DATA32            magic;
@@ -180,6 +187,8 @@ struct _Evas_Smart
    int               usage;
 
    const Evas_Smart_Class *smart_class;
+
+   Evas_Smart_Cb_Description_Array callbacks;
 
    unsigned char     delete_me : 1;
    unsigned char     class_allocated : 1;
@@ -761,6 +770,10 @@ void evas_debug_generic(const char *str);
 const char *evas_debug_magic_string_get(DATA32 magic);
 void evas_object_smart_use(Evas_Smart *s);
 void evas_object_smart_unuse(Evas_Smart *s);
+void evas_smart_cb_descriptions_fix(Evas_Smart_Cb_Description_Array *a) EINA_ARG_NONNULL(1);
+Eina_Bool evas_smart_cb_descriptions_resize(Evas_Smart_Cb_Description_Array *a, unsigned int size) EINA_ARG_NONNULL(1);
+const Evas_Smart_Cb_Description *evas_smart_cb_description_find(const Evas_Smart_Cb_Description_Array *a, const char *name) EINA_ARG_NONNULL(1, 2) EINA_PURE;
+
 void evas_object_smart_del(Evas_Object *obj);
 void evas_object_smart_cleanup(Evas_Object *obj);
 void evas_object_smart_member_raise(Evas_Object *member);

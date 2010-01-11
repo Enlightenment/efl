@@ -104,6 +104,7 @@ typedef enum _Evas_Object_Table_Homogeneous_Mode
 typedef struct _Evas_Transform Evas_Transform; /**< An Evas projective or affine transform */
 typedef struct _Evas_Coord_Rectangle  Evas_Coord_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Smart_Class      Evas_Smart_Class; /**< A smart object base class */
+typedef struct _Evas_Smart_Cb_Description Evas_Smart_Cb_Description; /**< A smart object callback description, used to provide introspection */
 typedef struct _Evas_Map              Evas_Map; /**< An array of map points */
 
 typedef struct _Evas Evas; /**< An Evas canvas handle */
@@ -144,7 +145,7 @@ typedef enum _Evas_Aspect_Control
 } Evas_Aspect_Control;
 
 
-#define EVAS_SMART_CLASS_VERSION 3 /** the version you have to put into the version field in the smart class struct */
+#define EVAS_SMART_CLASS_VERSION 4 /** the version you have to put into the version field in the smart class struct */
 struct _Evas_Smart_Class /** a smart object class */
 {
    const char *name; /** the string name of the class */
@@ -164,7 +165,44 @@ struct _Evas_Smart_Class /** a smart object class */
    void  (*member_add)  (Evas_Object *o, Evas_Object *child);
    void  (*member_del)  (Evas_Object *o, Evas_Object *child);
 
+   const Evas_Smart_Class *parent; /**< this class inherits from this parent */
+   const Evas_Smart_Cb_Description *callbacks; /**< callbacks at this level, NULL terminated */
+
    const void *data;
+};
+
+struct _Evas_Smart_Cb_Description
+{
+   const char *name; /**< callback name, ie: "changed" */
+
+   /**
+    * @brief Hint type of @c event_info parameter of Evas_Smart_Cb.
+    *
+    * The type string uses the pattern similar to
+    *
+    * http://dbus.freedesktop.org/doc/dbus-specification.html#message-protocol-signatures
+    *
+    * but extended to optionally include variable names within
+    * brackets preceding types. Example:
+    *
+    * @li Structure with two integers:
+    *     @c "(ii)"
+    *
+    * @li Structure called 'x' with two integers named 'a' and 'b':
+    *     @c "[x]([a]i[b]i)"
+    *
+    * @li Array of integers:
+    *     @c "ai"
+    *
+    * @li Array called 'x' of struct with two integers:
+    *     @c "[x]a(ii)"
+    *
+    * @note This type string is used as a hint and is @b not validated
+    *       or enforced anyhow. Implementors should make the best use
+    *       of it to help bindings, documentation and other users of
+    *       introspection features.
+    */
+   const char *type;
 };
 
 /**
@@ -172,8 +210,10 @@ struct _Evas_Smart_Class /** a smart object class */
  *
  * @see EVAS_SMART_CLASS_INIT_VERSION
  * @see EVAS_SMART_CLASS_INIT_NAME_VERSION
+ * @see EVAS_SMART_CLASS_INIT_NAME_VERSION_PARENT
+ * @see EVAS_SMART_CLASS_INIT_NAME_VERSION_PARENT_CALLBACKS
  */
-#define EVAS_SMART_CLASS_INIT_NULL {NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
+#define EVAS_SMART_CLASS_INIT_NULL {NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
 
 /**
  * Initializer to zero a whole Evas_Smart_Class structure and set version.
@@ -183,8 +223,10 @@ struct _Evas_Smart_Class /** a smart object class */
  *
  * @see EVAS_SMART_CLASS_INIT_NULL
  * @see EVAS_SMART_CLASS_INIT_NAME_VERSION
+ * @see EVAS_SMART_CLASS_INIT_NAME_VERSION_PARENT
+ * @see EVAS_SMART_CLASS_INIT_NAME_VERSION_PARENT_CALLBACKS
  */
-#define EVAS_SMART_CLASS_INIT_VERSION {NULL, EVAS_SMART_CLASS_VERSION, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
+#define EVAS_SMART_CLASS_INIT_VERSION {NULL, EVAS_SMART_CLASS_VERSION, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
 
 /**
  * Initializer to zero a whole Evas_Smart_Class structure and set name
@@ -199,10 +241,133 @@ struct _Evas_Smart_Class /** a smart object class */
  *
  * @see EVAS_SMART_CLASS_INIT_NULL
  * @see EVAS_SMART_CLASS_INIT_VERSION
+ * @see EVAS_SMART_CLASS_INIT_NAME_VERSION_PARENT
+ * @see EVAS_SMART_CLASS_INIT_NAME_VERSION_PARENT_CALLBACKS
  */
-#define EVAS_SMART_CLASS_INIT_NAME_VERSION(name) {name, EVAS_SMART_CLASS_VERSION, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
+#define EVAS_SMART_CLASS_INIT_NAME_VERSION(name) {name, EVAS_SMART_CLASS_VERSION, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
 
+/**
+ * Initializer to zero a whole Evas_Smart_Class structure and set name,
+ * version and parent class.
+ *
+ * Similar to EVAS_SMART_CLASS_INIT_NULL, but will set version field to
+ * latest EVAS_SMART_CLASS_VERSION, name to the specified value and
+ * parent class.
+ *
+ * It will keep a reference to name field as a "const char *", that is,
+ * name must be available while the structure is used (hint: static or global!)
+ * and will not be modified. Similarly, parent reference will be kept.
+ *
+ * @see EVAS_SMART_CLASS_INIT_NULL
+ * @see EVAS_SMART_CLASS_INIT_VERSION
+ * @see EVAS_SMART_CLASS_INIT_NAME_VERSION
+ * @see EVAS_SMART_CLASS_INIT_NAME_VERSION_PARENT_CALLBACKS
+ */
+#define EVAS_SMART_CLASS_INIT_NAME_VERSION_PARENT(name, parent) {name, EVAS_SMART_CLASS_VERSION, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, parent, NULL}
 
+/**
+ * Initializer to zero a whole Evas_Smart_Class structure and set name,
+ * version, parent class and callbacks definition.
+ *
+ * Similar to EVAS_SMART_CLASS_INIT_NULL, but will set version field to
+ * latest EVAS_SMART_CLASS_VERSION, name to the specified value, parent
+ * class and callbacks at this level.
+ *
+ * It will keep a reference to name field as a "const char *", that is,
+ * name must be available while the structure is used (hint: static or global!)
+ * and will not be modified. Similarly, parent and callbacks reference
+ * will be kept.
+ *
+ * @see EVAS_SMART_CLASS_INIT_NULL
+ * @see EVAS_SMART_CLASS_INIT_VERSION
+ * @see EVAS_SMART_CLASS_INIT_NAME_VERSION
+ * @see EVAS_SMART_CLASS_INIT_NAME_VERSION_PARENT
+ */
+#define EVAS_SMART_CLASS_INIT_NAME_VERSION_PARENT_CALLBACKS(name, parent, callbacks) {name, EVAS_SMART_CLASS_VERSION, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, parent, callbacks}
+
+/**
+ * Convenience macro to subclass a Smart Class.
+ *
+ * This macro saves some typing when writing a Smart Class derived from
+ * another one. In order to work, the user needs to provide some functions
+ * adhering to the following guidelines.
+ *  - <prefix>_smart_set_user(): the internal _smart_set function will call
+ *    this one provided by the user after inheriting everything from the
+ *    parent, which should take care of setting the right member functions
+ *    for the class.
+ *  - <prefix>_parent_sc: smart class of the parent. When calling parent
+ *    functions from overloaded ones, use this global variable.
+ *  - <prefix>_smart_class_new(): this function returns the Evas_Smart needed
+ *    to create smart objects with this class, should be called by the public
+ *    _add() function.
+ *  - If this new class should be subclassable as well, a public _smart_set()
+ *    function is desirable to fill the class used as parent by the children.
+ *    It's up to the user to provide this interface, which will most likely
+ *    call <prefix>_smart_set() to get the job done.
+ *
+ * @param smart_name The name used for the Smart Class. e.g: "Evas_Object_Box".
+ * @param prefix Prefix used for all variables and functions defined.
+ * @param api_type Type of the structure used as API for the Smart Class. Either Evas_Smart_Class or something derived from it.
+ * @param parent_type Type of the parent class API.
+ * @param parent_func Function that sets up the parent class. e.g: evas_object_box_smart_set().
+ * @param cb_desc Array of callback descriptions for this Smart Class.
+ */
+#define EVAS_SMART_SUBCLASS_NEW(smart_name, prefix, api_type, parent_type, parent_func, cb_desc) \
+static parent_type prefix##_parent_sc; \
+static Eina_Bool prefix##_parent_init = 0; \
+static void prefix##_smart_set_user(api_type *api); \
+static void prefix##_smart_set(api_type *api) \
+{ \
+   Evas_Smart_Class *sc; \
+   if (!(sc = (Evas_Smart_Class *)api)) \
+     return; \
+   if (!prefix##_parent_init) \
+     { \
+	memset(&prefix##_parent_sc, 0, sizeof(parent_type)); \
+	((Evas_Smart_Class)prefix##_parent_sc).version = EVAS_SMART_CLASS_VERSION; \
+	parent_func(&prefix##_parent_sc); \
+	prefix##_parent_init = 1; \
+     } \
+   evas_smart_class_inherit(sc, &prefix##_parent_sc); \
+   prefix##_smart_set_user(api); \
+} \
+static Evas_Smart * prefix##_smart_class_new(void) \
+{ \
+   static Evas_Smart *smart = NULL; \
+   static api_type api; \
+   if (!smart) \
+     { \
+	Evas_Smart_Class *sc = (Evas_Smart_Class *)&api; \
+	memset(&api, 0, sizeof(api_type)); \
+	sc->version = EVAS_SMART_CLASS_VERSION; \
+	sc->name = smart_name; \
+	sc->callbacks = cb_desc; \
+	prefix##_smart_set(&api); \
+	smart = evas_smart_class_new(sc); \
+     } \
+   return smart; \
+}
+
+/**
+ * Convenience macro to allocate smart data only if needed.
+ *
+ * When writing a subclassable smart object, the .add function will need
+ * to check if the smart private data was already allocated by some child
+ * object or not. This macro makes it easier to do it.
+ *
+ * @param o Evas object passed to the .add function
+ * @param priv_type The type of the data to allocate
+ */
+#define EVAS_SMART_DATA_ALLOC(o, priv_type) \
+   priv_type *priv; \
+   priv = evas_object_smart_data_get(o); \
+   if (!priv) \
+     { \
+	priv = (priv_type *)calloc(1, sizeof(priv_type)); \
+	if (!priv) \
+	  return; \
+	evas_object_smart_data_set(o, priv); \
+     }
 
 typedef struct _Evas_Pixel_Import_Source Evas_Pixel_Import_Source; /**< A source description of pixels for importing pixels */
 typedef struct _Evas_Engine_Info      Evas_Engine_Info; /**< A generic Evas Engine information structure */
@@ -898,6 +1063,20 @@ extern "C" {
    EAPI const Evas_Smart_Class *evas_smart_class_get        (const Evas_Smart *s) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
    EAPI void             *evas_smart_data_get               (const Evas_Smart *s) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+   EAPI const Evas_Smart_Cb_Description *evas_smart_callback_description_find(const Evas_Smart *s, const char *name) EINA_ARG_NONNULL(1, 2) EINA_PURE;
+
+  EAPI Eina_Bool         evas_smart_class_inherit_full      (Evas_Smart_Class *sc, const Evas_Smart_Class *parent_sc, unsigned int parent_sc_size) EINA_ARG_NONNULL(1, 2);
+  /**
+   * Easy to use version of evas_smart_class_inherit_full().
+   *
+   * This version will use sizeof(parent_sc), copying everything.
+   *
+   * @param sc child class, will have methods copied from @a parent_sc
+   * @param parent_sc parent class, will provide contents to be copied.
+   * @return 1 on success, 0 on failure.
+   */
+#define evas_smart_class_inherit(sc, parent_sc) evas_smart_class_inherit_full(sc, parent_sc, sizeof(*parent_sc))
+
 
    EAPI Evas_Object      *evas_object_smart_add             (Evas *e, Evas_Smart *s) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_MALLOC;
    EAPI void              evas_object_smart_member_add      (Evas_Object *obj, Evas_Object *smart_obj) EINA_ARG_NONNULL(1, 2);
@@ -910,6 +1089,11 @@ extern "C" {
    EAPI void              evas_object_smart_callback_add    (Evas_Object *obj, const char *event, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1, 2, 3);
    EAPI void             *evas_object_smart_callback_del    (Evas_Object *obj, const char *event, Evas_Smart_Cb func) EINA_ARG_NONNULL(1, 2, 3);
    EAPI void              evas_object_smart_callback_call   (Evas_Object *obj, const char *event, void *event_info) EINA_ARG_NONNULL(1, 2);
+
+   EAPI Eina_Bool         evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, const Evas_Smart_Cb_Description *descriptions) EINA_ARG_NONNULL(1);
+   EAPI void              evas_object_smart_callbacks_descriptions_get(const Evas_Object *obj, const Evas_Smart_Cb_Description ***class_descriptions, unsigned int *class_count, const Evas_Smart_Cb_Description ***instance_descriptions, unsigned int *instance_count) EINA_ARG_NONNULL(1);
+   EAPI void             evas_object_smart_callback_description_find(const Evas_Object *obj, const char *name, const Evas_Smart_Cb_Description **class_description, const Evas_Smart_Cb_Description **instance_description) EINA_ARG_NONNULL(1, 2);
+
    EAPI void              evas_object_smart_changed         (Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool         evas_object_smart_need_recalculate_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
