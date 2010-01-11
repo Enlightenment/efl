@@ -23,6 +23,7 @@ static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _signal_clicked(void *data, Evas_Object *obj, const char *emission, const char *source);
+static void _on_focus_hook(void *data, Evas_Object *obj);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -32,6 +33,31 @@ _del_hook(Evas_Object *obj)
    if (wd->label) eina_stringshare_del(wd->label);
    free(wd);
 }
+
+static void
+_on_focus_hook(void *data, Evas_Object *obj)
+{
+	Widget_Data *wd = elm_widget_data_get(obj);
+	Evas_Object *top = elm_widget_top_get(obj);
+
+   	if (elm_widget_focus_get(obj)) {
+		edje_object_signal_emit(wd->btn, "elm,action,focus", "elm");
+
+		if( top ) {
+			elm_win_keyboard_mode_set( top, ELM_WIN_KEYBOARD_ON );
+		}
+
+	}else {
+		edje_object_signal_emit(wd->btn, "elm,action,unfocus", "elm");
+
+		if ( top ) {
+			elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
+		}
+	}
+	
+}
+
+
 
 static void
 _theme_hook(Evas_Object *obj)
@@ -132,10 +158,12 @@ elm_button_add(Evas_Object *parent)
    obj = elm_widget_add(e);
    elm_widget_type_set(obj, "button");
    elm_widget_sub_object_add(parent, obj);
+   elm_widget_on_focus_hook_set( obj, _on_focus_hook, NULL );
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
+   elm_widget_can_focus_set( obj, 1 );                 
 
    wd->btn = edje_object_add(e);
    _elm_theme_set(wd->btn, "button", "base", "default");
