@@ -31,7 +31,7 @@
 
 #include <assert.h>
 #include <stdio.h>
-#include <stdlib.h>		/* for _MAX_PATH */
+#include <limits.h>		/* for PATH_MAX */
 #include <string.h>
 
 #include "embryo_cc_sc.h"

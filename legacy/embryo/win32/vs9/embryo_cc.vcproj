@@ -235,10 +235,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bin\embryo_cc_osdefs.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bin\embryo_cc_prefix.h"
 				>
 			</File>

@@ -36,7 +36,6 @@
 #include <stdio.h>
 #include <setjmp.h>
 
-#include "embryo_cc_osdefs.h"
 #include "embryo_cc_amx.h"
 
 /* Note: the "cell" and "ucell" types are defined in AMX.H */

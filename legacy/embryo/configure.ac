@@ -35,6 +35,7 @@ case "$host_os" in
 esac
 AC_SUBST(release_info)
 
+EFL_CHECK_PATH_MAX
 
 ### Default options with respect to host
 

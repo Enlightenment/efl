@@ -21,8 +21,6 @@
  *  Version: $Id$
  */
 
-#include "embryo_cc_osdefs.h"
-
 #ifndef EMBRYO_CC_AMX_H
 #define EMBRYO_CC_AMX_H
 

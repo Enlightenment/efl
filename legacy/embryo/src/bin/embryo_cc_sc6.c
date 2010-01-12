@@ -34,7 +34,6 @@
 #include <stdlib.h>		/* for macro max() */
 #include <string.h>
 #include <ctype.h>
-#include "embryo_cc_osdefs.h"
 #include "embryo_cc_sc.h"
 
 typedef             cell(*OPCODE_PROC) (FILE * fbin, char *params, cell opcode);

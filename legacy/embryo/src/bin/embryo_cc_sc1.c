@@ -48,7 +48,6 @@
 # include <Evil.h>
 #endif /* HAVE_EVIL */
 
-#include "embryo_cc_osdefs.h"
 #include "embryo_cc_sc.h"
 #include "embryo_cc_prefix.h"
 
@@ -121,31 +120,31 @@ static int          rettype = 0;	/* the type that a "return" expression should h
 static int          skipinput = 0;	/* number of lines to skip from the first input file */
 static int          wq[wqTABSZ];	/* "while queue", internal stack for nested loops */
 static int         *wqptr;	/* pointer to next entry */
-static char         binfname[_MAX_PATH];	/* binary file name */
+static char         binfname[PATH_MAX];	/* binary file name */
 
 int
 main(int argc, char *argv[], char *env[] __UNUSED__)
 {
-   char                argv0[_MAX_PATH];
+   char                argv0[PATH_MAX];
    int                 i;
 
-   snprintf(argv0, _MAX_PATH, "%s", argv[0]);
+   snprintf(argv0, sizeof(argv0), "%s", argv[0]);
    /* Linux stores the name of the program in argv[0], but not the path.
     * To adjust this, I store a string with the path in argv[0]. To do
     * so, I try to get the current path with getcwd(), and if that fails
     * I search for the PWD= setting in the environment.
     */
-   if (NULL != getcwd(argv0, _MAX_PATH))
+   if (NULL != getcwd(argv0, PATH_MAX))
      {
 	i = strlen(argv0);
-	snprintf(argv0 + i, _MAX_PATH - i, "/%s", argv[0]);
+	snprintf(argv0 + i, sizeof(argv0) - i, "/%s", argv[0]);
      }
    else
      {
 	char               *pwd = getenv("PWD");
 
 	if (pwd != NULL)
-	   snprintf(argv0, _MAX_PATH, "%s/%s", pwd, argv[0]);
+	   snprintf(argv0, sizeof(argv0), "%s/%s", pwd, argv[0]);
      }				/* if */
    argv[0] = argv0;		/* set location to new first parameter */
 
@@ -291,8 +290,8 @@ sc_compile(int argc, char *argv[])
 {
    int                 entry, i, jmpcode, fd_out;
    int                 retcode;
-   char                incfname[_MAX_PATH];
-   char                reportname[_MAX_PATH];
+   char                incfname[PATH_MAX];
+   char                reportname[PATH_MAX];
    FILE               *binf;
    void               *inpfmark;
    char                lcl_ctrlchar;
@@ -312,7 +311,7 @@ sc_compile(int argc, char *argv[])
       goto cleanup;
 
    /* allocate memory for fixed tables */
-   inpfname = (char *)malloc(_MAX_PATH);
+   inpfname = (char *)malloc(PATH_MAX);
    litq = (cell *) malloc(litmax * sizeof(cell));
    if (litq == NULL)
       error(103);		/* insufficient memory */
@@ -330,7 +329,7 @@ sc_compile(int argc, char *argv[])
    tmpdir = (char *)evil_tmpdir_get();
 #endif /* ! HAVE_EVIL */
 
-   snprintf(outfname, _MAX_PATH, "%s/embryo_cc.asm-tmp-XXXXXX", tmpdir);
+   snprintf(outfname, PATH_MAX, "%s/embryo_cc.asm-tmp-XXXXXX", tmpdir);
    fd_out = mkstemp(outfname);
    if (fd_out < 0)
      error(101, outfname);
@@ -681,7 +680,7 @@ setopt(int argc, char **argv, char *iname, char *oname,
 static void
 setconfig(char *root)
 {
-   char                path[_MAX_PATH];
+   char                path[PATH_MAX];
    char               *ptr;
    int                 len;
 

@@ -38,7 +38,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
-#include "embryo_cc_osdefs.h"
 #include "embryo_cc_sc.h"
 #include "Embryo.h"
 
@@ -154,7 +153,7 @@ plungefile(char *name, int try_currentpath, int try_includepaths)
      {
 	for (i = 0; !result && (ptr = get_path(i)) != NULL; i++)
 	  {
-	     char                path[_MAX_PATH];
+	     char                path[PATH_MAX];
 
 	     strncpy(path, ptr, sizeof path);
 	     path[sizeof path - 1] = '\0';	/* force '\0' termination */
@@ -190,7 +189,7 @@ check_empty(char *lptr)
 static void
 doinclude(void)
 {
-   char                name[_MAX_PATH], c;
+   char                name[PATH_MAX], c;
    int                 i, result;
 
    while (*lptr <= ' ' && *lptr != 0)	/* skip leading whitespace */
@@ -933,7 +932,7 @@ command(void)
      case tpFILE:
 	if (skiplevel == 0)
 	  {
-	     char                pathname[_MAX_PATH];
+	     char                pathname[PATH_MAX];
 
 	     lptr = getstring(pathname, sizeof pathname, lptr);
 	     if (pathname[0] != '\0')
