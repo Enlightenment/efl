@@ -1462,6 +1462,35 @@ eet_data_read_cipher(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, c
    return data_dec;
 }
 
+EAPI Eet_Node *
+eet_data_node_read_cipher(Eet_File *ef, const char *name, const char *key)
+{
+   const Eet_Dictionary *ed = NULL;
+   const void *data = NULL;
+   Eet_Node *result;
+   Eet_Free_Context context;
+   int required_free = 0;
+   int size;
+
+   ed = eet_dictionary_get(ef);
+
+   if (!key)
+     data = eet_read_direct(ef, name, &size);
+   if (!data)
+     {
+	required_free = 1;
+	data = eet_read_cipher(ef, name, &size, key);
+	if (!data) return NULL;
+     }
+
+   memset(&context, 0, sizeof (context));
+   result = _eet_data_descriptor_decode(&context, ed, NULL, data, size);
+   if (required_free)
+     free((void*)data);
+
+   return result;
+}
+
 EAPI void *
 eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name)
 {
@@ -3177,10 +3206,10 @@ eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd,
 				  const char *key,
 				  int size_in)
 {
-   void *deciphered = NULL;
+   void *deciphered = (void*) data_in;
    void *ret;
    Eet_Free_Context context;
-   unsigned int deciphered_len = 0;
+   unsigned int deciphered_len = size_in;
 
    if (key && data_in)
      {
@@ -3189,13 +3218,14 @@ eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd,
 	   if (deciphered) free(deciphered);
 	   return NULL;
 	 }
-       memset(&context, 0, sizeof (context));
-       ret = _eet_data_descriptor_decode(&context, NULL, edd, deciphered, deciphered_len);
-       free(deciphered);
-       return ret;
      }
+
    memset(&context, 0, sizeof (context));
-   return _eet_data_descriptor_decode(&context, NULL, edd, data_in, size_in);
+   ret = _eet_data_descriptor_decode(&context, NULL, edd, deciphered, deciphered_len);
+
+   if (data_in != deciphered) free(deciphered);
+
+   return ret;
 }
 
 EAPI void *
@@ -3204,6 +3234,31 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			   int size_in)
 {
    return eet_data_descriptor_decode_cipher(edd, data_in, NULL, size_in);
+}
+
+EAPI void *
+eet_data_node_decode_cipher(const void *data_in, const char *key, int size_in)
+{
+   void *deciphered = (void*) data_in;
+   Eet_Node *ret;
+   Eet_Free_Context context;
+   unsigned int deciphered_len = size_in;
+
+   if (key && data_in)
+     {
+       if (eet_decipher(data_in, size_in, key, strlen(key), &deciphered, &deciphered_len))
+	 {
+	   if (deciphered) free(deciphered);
+	   return NULL;
+	 }
+     }
+
+   memset(&context, 0, sizeof (context));
+   ret = _eet_data_descriptor_decode(&context, NULL, NULL, deciphered, deciphered_len);
+
+   if (data_in != deciphered) free(deciphered);
+
+   return ret;
 }
 
 static void *
