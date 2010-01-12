@@ -901,6 +901,7 @@ _backspace(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
    c1 = evas_object_textblock_cursor_new(o);
    if (!evas_textblock_cursor_char_prev(c))
      {
+	evas_textblock_cursor_node_prev(c); 
 	if (!evas_textblock_cursor_node_prev(c))
 	  nodel = 1;
 	else
@@ -2195,8 +2196,8 @@ _edje_entry_imf_event_changed_cb(void *data, int type __UNUSED__, void *event)
 
    en->have_composition = EINA_TRUE;
 
-   evas_textblock_cursor_text_prepend(en->cursor, preedit_string);
-
+   evas_object_textblock_text_markup_prepend (en->cursor, preedit_string);
+   
    _sel_extend(en->cursor, rp->object, en);
 
    _curs_update_from_curs(en->cursor, rp->object, en);
