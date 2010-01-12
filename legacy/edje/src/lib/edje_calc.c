@@ -257,13 +257,13 @@ _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, FLOAT_T *x, FLOAT_T *y)
 	     else if (ep->part->dragable.x != 0) ret = 1;
 	     else if (ep->part->dragable.y != 0) ret = 2;
 
-	     dx = SUB(ep->x, ep->drag->confine_to->x);
-	     dw = SUB(ep->drag->confine_to->w, ep->w);
+	     dx = FROM_INT(ep->x - ep->drag->confine_to->x);
+	     dw = FROM_INT(ep->drag->confine_to->w - ep->w);
 	     if (dw != ZERO) dx = DIV(dx, dw);
 	     else dx = ZERO;
 
-	     dy = SUB(ep->y, ep->drag->confine_to->y);
-	     dh = SUB(ep->drag->confine_to->h, ep->h);
+	     dy = FROM_INT(ep->y - ep->drag->confine_to->y);
+	     dh = FROM_INT(ep->drag->confine_to->h - ep->h);
 	     if (dh != ZERO) dy = DIV(dy, dh);
 	     else dy = ZERO;
 
