@@ -225,7 +225,7 @@ static void _statistics(void *data)
 	unsigned int i;
 
 	printf("Information:\n");
-	printf("size = %d, min_order = %d, max_order = %d, num_order = %d, num_blocks = %d (%dKB)\n", b->size, b->min_order, b->max_order, b->num_order, 1 << b->num_order, ((1 << (b->num_order)) * sizeof(Block)) / 1024);
+	printf("size = %li, min_order = %d, max_order = %d, num_order = %d, num_blocks = %d (%luKB)\n", b->size, b->min_order, b->max_order, b->num_order, 1 << b->num_order, ((1 << (b->num_order)) * sizeof(Block)) / 1024);
 	printf("Area dumping:");
 	/* iterate over the free lists and dump the maps */
 	for (i = 0; i < b->num_order; i++)
@@ -235,7 +235,7 @@ static void _statistics(void *data)
 		printf("\n2^%d:", b->min_order + i);
 		EINA_INLIST_FOREACH(b->areas[i], block)
 		{
-			printf(" %d", (block - &b->blocks[0]));
+			printf(" %li", (block - &b->blocks[0]));
 		}
 	}
 	printf("\nBlocks dumping:\n");
