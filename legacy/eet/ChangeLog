@@ -295,3 +295,8 @@
 2009-12-29  Cedric BAIL
 
 	* Don't mess up when memory realloc failed during data descriptor creation.
+
+2010-01-12  Cedric BAIL
+
+	* Rewrite Eet_Data. Now you can do list/hash/array of strings and all
+	the test suite is passing.
