@@ -3319,8 +3319,11 @@ st_collections_group_parts_part_description_align(void)
     @parameters
         [width, 0 or 1] [height, 0 or 1]
     @effect
-        When the "min" or "max" properties are set, fixed enables or disables
-        resizing for each dimension. The default value is "0 0"
+        This affects the minimum size calculation. See
+        edje_object_size_min_calc() and edje_object_size_min_restricted_calc().
+        This tells the min size calculation routine that this part does not
+        change size in width or height (1 for it doesn't, 0 for it does), so
+        the routine should not try and expand or contract the part.
     @endproperty
 */
 static void
