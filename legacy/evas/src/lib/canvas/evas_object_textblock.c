@@ -3026,7 +3026,7 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
 					   strcpy(ttag2, "+ ");
 					   strcat(ttag2, ttag);
 					}
-				      evas_textblock_cursor_format_append(o->cursor, ttag2);
+				      evas_textblock_cursor_format_prepend(o->cursor, ttag2);
 				      free(ttag2);
 				   }
 			      }
