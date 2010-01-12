@@ -71,6 +71,8 @@ extern "C" {
 #define EET_G_HASH       104 /**< Hash table group type */
 #define EET_G_LAST       105 /**< Last group type */
 
+#define EET_I_LIMIT      128 /**< Other type exist but are reserved for internal purpose. */
+
 /***************************************************************************/
 
    typedef enum _Eet_File_Mode
@@ -1491,6 +1493,12 @@ eet_dictionary_string_check    * example: values), and @p type is the basic data
    EAPI Eet_Node *eet_node_hash_new(const char *name, const char *key, Eet_Node *node);
    EAPI Eet_Node *eet_node_struct_new(const char *name, Eina_List *nodes);
    EAPI Eet_Node *eet_node_struct_child_new(const char *parent, Eet_Node *child);
+
+   EAPI void eet_node_list_append(Eet_Node *parent, const char *name, Eet_Node *child);
+   EAPI void eet_node_struct_append(Eet_Node *parent, const char *name, Eet_Node *child);
+   EAPI void eet_node_hash_add(Eet_Node *parent, const char *name, const char *key, Eet_Node *child);
+
+   EAPI void eet_node_dump(Eet_Node *n, int dumplevel, void (*dumpfunc) (void *data, const char *str), void *dumpdata);
    EAPI void eet_node_del(Eet_Node *n);
 
    EAPI void *eet_data_node_encode_cipher(Eet_Node *node, const char *key, int *size_ret);

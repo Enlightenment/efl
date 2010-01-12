@@ -238,7 +238,7 @@ START_TEST(eet_test_basic_data_type_encoding_decoding)
    eddc.name = "Eet_Test_Basic_Type";
    eddc.size = sizeof(Eet_Test_Basic_Type);
 
-   edd = eet_data_descriptor2_new(&eddc);
+   edd = eet_data_descriptor_stream_new(&eddc);
    fail_if(!edd);
 
    _eet_build_basic_descriptor(edd);
@@ -310,7 +310,7 @@ _eet_build_ex_descriptor(Eet_Data_Descriptor *edd)
    eet_test_setup_eddc(&eddc);
    eddc.name = "Eet_Test_Basic_Type";
    eddc.size = sizeof(Eet_Test_Basic_Type);
-   eddb = eet_data_descriptor3_new(&eddc);
+   eddb = eet_data_descriptor_file_new(&eddc);
    fail_if(!eddb);
 
    _eet_build_basic_descriptor(eddb);
@@ -517,7 +517,7 @@ START_TEST(eet_test_data_type_encoding_decoding)
    eddc.name = "Eet_Test_Ex_Type";
    eddc.size = sizeof(Eet_Test_Ex_Type);
 
-   edd = eet_data_descriptor3_new(&eddc);
+   edd = eet_data_descriptor_file_new(&eddc);
    fail_if(!edd);
 
    _eet_build_ex_descriptor(edd);
@@ -540,9 +540,9 @@ START_TEST(eet_test_data_type_encoding_decoding)
    fail_if(strcmp(result->charray[5], "plouf") != 0);
 
    test = 0;
-   eina_hash_foreach(result->hash, func, &test);
+   if (result->hash) eina_hash_foreach(result->hash, func, &test);
    fail_if(test != 0);
-   eina_hash_foreach(result->ihash, func7, &test);
+   if (result->ihash) eina_hash_foreach(result->ihash, func7, &test);
    fail_if(test != 0);
 
    eet_shutdown();
@@ -602,7 +602,7 @@ START_TEST(eet_test_data_type_dump_undump)
    eddc.name = "Eet_Test_Ex_Type";
    eddc.size = sizeof(Eet_Test_Ex_Type);
 
-   edd = eet_data_descriptor3_new(&eddc);
+   edd = eet_data_descriptor_file_new(&eddc);
    fail_if(!edd);
 
    _eet_build_ex_descriptor(edd);
@@ -614,15 +614,14 @@ START_TEST(eet_test_data_type_dump_undump)
    eet_data_text_dump(transfert1, size1, append_string, &string1);
    fail_if(!string1);
 
-   transfert2 = eet_data_text_undump(string1, strlen(string1), &size2);
+   transfert2 = eet_data_text_undump(string1, string1 ? strlen(string1) : 0, &size2);
    fail_if(!transfert2 && size2 <= 0);
-   fail_if(size1 != size2);
 
    string2 = NULL;
    eet_data_text_dump(transfert2, size2, append_string, &string2);
    fail_if(!string2);
 
-   fail_if(memcmp(transfert1, transfert2, size1) != 0);
+   fail_if(strlen(string2) != strlen(string1));
 
    result = eet_data_descriptor_decode(edd, transfert2, size2);
    fail_if(!result);
@@ -638,9 +637,9 @@ START_TEST(eet_test_data_type_dump_undump)
    fail_if(strcmp(result->charray[0], "test") != 0);
 
    test = 0;
-   eina_hash_foreach(result->hash, func, &test);
+   if (result->hash) eina_hash_foreach(result->hash, func, &test);
    fail_if(test != 0);
-   eina_hash_foreach(result->ihash, func7, &test);
+   if (result->ihash) eina_hash_foreach(result->ihash, func7, &test);
    fail_if(test != 0);
 
    eet_shutdown();
@@ -657,7 +656,7 @@ START_TEST(eet_file_simple_write)
 
    eet_init();
 
-   mktemp(file);
+   fail_if(!mktemp(file));
 
    fail_if(eet_mode_get(NULL) != EET_FILE_MODE_INVALID);
 
@@ -744,12 +743,12 @@ START_TEST(eet_file_data_test)
    eddc.name = "Eet_Test_Ex_Type";
    eddc.size = sizeof(Eet_Test_Ex_Type);
 
-   edd = eet_data_descriptor3_new(&eddc);
+   edd = eet_data_descriptor_file_new(&eddc);
    fail_if(!edd);
 
    _eet_build_ex_descriptor(edd);
 
-   mktemp(file);
+   fail_if(!mktemp(file));
 
    /* Insert an error in etbt. */
    etbt.i = 0;
@@ -811,9 +810,9 @@ START_TEST(eet_file_data_test)
    fail_if(strcmp(result->charray[0], "test") != 0);
 
    test = 0;
-   eina_hash_foreach(result->hash, func, &test);
+   if (result->hash) eina_hash_foreach(result->hash, func, &test);
    fail_if(test != 0);
-   eina_hash_foreach(result->ihash, func7, &test);
+   if (result->ihash) eina_hash_foreach(result->ihash, func7, &test);
    fail_if(test != 0);
 
    list = eet_list(ef, "keys/*", &size);
@@ -878,16 +877,14 @@ START_TEST(eet_file_data_dump_test)
    memset(&etbt.charray, 0, sizeof(etbt.charray));
    etbt.charray[0] = "test";
 
-   eet_test_setup_eddc(&eddc);
-   eddc.name = "Eet_Test_Ex_Type";
-   eddc.size = sizeof(Eet_Test_Ex_Type);
+   eet_eina_file_data_descriptor_class_set(&eddc, "Eet_Test_Ex_Type", sizeof(Eet_Test_Ex_Type));
 
-   edd = eet_data_descriptor3_new(&eddc);
+   edd = eet_data_descriptor_file_new(&eddc);
    fail_if(!edd);
 
    _eet_build_ex_descriptor(edd);
 
-   mktemp(file);
+   fail_if(!mktemp(file));
 
    /* Save the encoded data in a file. */
    ef = eet_open(file, EET_FILE_MODE_WRITE);
@@ -929,9 +926,9 @@ START_TEST(eet_file_data_dump_test)
    fail_if(strcmp(result->charray[0], "test") != 0);
 
    test = 0;
-   eina_hash_foreach(result->hash, func, &test);
+   if (result->hash) eina_hash_foreach(result->hash, func, &test);
    fail_if(test != 0);
-   eina_hash_foreach(result->ihash, func7, &test);
+   if (result->ihash) eina_hash_foreach(result->ihash, func7, &test);
    fail_if(test != 0);
 
    fail_if(unlink(file) != 0);
@@ -953,7 +950,7 @@ START_TEST(eet_image)
    unsigned int w;
    unsigned int h;
 
-   mktemp(file);
+   fail_if(!mktemp(file));
 
    /* Save the encoded data in a file. */
    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
@@ -1173,7 +1170,7 @@ START_TEST(eet_small_image)
 
    eet_init();
 
-   mktemp(file);
+   fail_if(!mktemp(file));
 
    ef = eet_open(file, EET_FILE_MODE_WRITE);
    fail_if(!ef);
@@ -1215,8 +1212,8 @@ START_TEST(eet_identity_simple)
 
    eet_init();
 
-   mktemp(file);
-   chdir("src/tests");
+   fail_if(!mktemp(file));
+   fail_if(chdir("src/tests"));
 
    /* Sign an eet file. */
    ef = eet_open(file, EET_FILE_MODE_WRITE);
@@ -1279,7 +1276,7 @@ START_TEST(eet_identity_open_simple)
 
    eet_init();
 
-   chdir("src/tests");
+   fail_if(chdir("src/tests"));
 
    k = eet_identity_open("cert.pem", "key.pem", NULL);
    fail_if(!k);
@@ -1296,7 +1293,7 @@ START_TEST(eet_identity_open_pkcs8)
 
    eet_init();
 
-   chdir("src/tests");
+   fail_if(chdir("src/tests"));
 
    k = eet_identity_open("cert.pem", "key_enc_none.pem", NULL);
    fail_if(!k);
@@ -1334,7 +1331,7 @@ START_TEST(eet_identity_open_pkcs8_enc)
 
    eet_init();
 
-   chdir("src/tests");
+   fail_if(chdir("src/tests"));
 
    k = eet_identity_open("cert.pem", "key_enc.pem", NULL);
    fail_if(k);
@@ -1367,8 +1364,8 @@ START_TEST(eet_cipher_decipher_simple)
 
    eet_init();
 
-   mktemp(file);
-   chdir("src/tests");
+   fail_if(!mktemp(file));
+   fail_if(chdir("src/tests"));
 
    /* Crypt an eet file. */
    ef = eet_open(file, EET_FILE_MODE_WRITE);

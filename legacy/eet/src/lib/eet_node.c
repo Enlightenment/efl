@@ -186,10 +186,104 @@ eet_node_struct_child_new(const char *parent, Eet_Node *child)
 }
 
 void
+eet_node_list_append(Eet_Node *parent, const char *name, Eet_Node *child)
+{
+   const char *tmp;
+   Eet_Node *nn;
+
+   tmp = eina_stringshare_add(name);
+
+   for (nn = parent->values; nn; nn = nn->next)
+     if (nn->name == tmp && nn->type == EET_G_LIST)
+       {
+	  Eet_Node *n;
+
+	  if (!nn->values) nn->values = child;
+	  else
+	    {
+	       for (n = nn->values; n->next; n = n->next)
+		 ;
+	       n->next = child;
+	    }
+	  child->next = NULL;
+
+	  eina_stringshare_del(tmp);
+
+	  return ;
+       }
+
+   /* No list found, so create it. */
+   nn = eet_node_list_new(tmp, eina_list_append(NULL, child));
+
+   /* And add it to the parent. */
+   nn->next = parent->values;
+   parent->values = nn;
+
+   eina_stringshare_del(tmp);
+}
+
+void
+eet_node_struct_append(Eet_Node *parent, const char *name, Eet_Node *child)
+{
+   const char *tmp;
+   Eet_Node *prev;
+   Eet_Node *nn;
+
+   if (parent->type != EET_G_UNKNOWN)
+     {
+	ERR("[%s] is not a structure. Will not insert [%s] in it", parent->name, name);
+	eet_node_del(child);
+	return ;
+     }
+
+   tmp = eina_stringshare_add(name);
+
+   for (prev = NULL, nn = parent->values; nn; prev = nn, nn = nn->next)
+     if (nn->name == tmp && nn->type == child->type)
+       {
+	  if (prev) prev->next = nn->next;
+	  else parent->values = nn->next;
+
+	  nn->next = NULL;
+	  eet_node_del(nn);
+
+	  break;
+       }
+
+   if (prev)
+     {
+	prev->next = child;
+	child->next = NULL;
+     }
+   else
+     {
+	child->next = NULL;
+	parent->values = child;
+     }
+
+   eina_stringshare_del(tmp);
+}
+
+void
+eet_node_hash_add(Eet_Node *parent, const char *name, const char *key, Eet_Node *child)
+{
+   Eet_Node *nn;
+
+   /* No list found, so create it. */
+   nn = eet_node_hash_new(name, key, child);
+
+   /* And add it to the parent. */
+   nn->next = parent->values;
+   parent->values = nn;
+}
+
+void
 eet_node_del(Eet_Node *n)
 {
    Eet_Node *nn;
    Eet_Node *tmp;
+
+   if (!n) return ;
 
    switch (n->type)
      {
@@ -225,7 +319,6 @@ eet_node_del(Eet_Node *n)
    eina_stringshare_del(n->name);
    free(n);
 }
-
 
 static const char *eet_node_dump_g_name[6] = {
   "struct",
@@ -270,23 +363,22 @@ eet_node_string_escape(const char *str)
      {
 	if (*strp == '\"') sz += 2;
 	else if (*strp == '\\') sz += 2;
+	else if (*strp == '\n') sz += 2;
 	else sz += 1;
      }
    s = malloc(sz + 1);
    if (!s) return NULL;
    for (strp = str, sp = s; *strp; strp++, sp++)
      {
-	if (*strp == '\"')
+	if (*strp == '\"'
+	    || *strp == '\\'
+	    || *strp == '\n')
 	  {
 	     *sp = '\\';
 	     sp++;
 	  }
-	else if (*strp == '\\')
-	  {
-	     *sp = '\\';
-	     sp++;
-	  }
-	*sp = *strp;
+	if (*strp == '\n') *sp = 'n';
+	else *sp = *strp;
      }
    *sp = 0;
    return s;
@@ -312,7 +404,7 @@ eet_node_dump_simple_type(Eet_Node *n, int level,
    char tbuf[256];
 
    eet_node_dump_level(level, dumpfunc, dumpdata);
-   dumpfunc(dumpdata, "  value \"");
+   dumpfunc(dumpdata, "value \"");
    eet_node_dump_string_escape(dumpdata, dumpfunc, n->name);
    dumpfunc(dumpdata, "\" ");
 
@@ -383,7 +475,7 @@ static void
 eet_node_dump_group_end(int level, void (*dumpfunc) (void *data, const char *str), void *dumpdata)
 {
    eet_node_dump_level(level, dumpfunc, dumpdata);
-   dumpfunc(dumpdata, "  }\n");
+   dumpfunc(dumpdata, "}\n");
 }
 
 void
@@ -400,7 +492,7 @@ eet_node_dump(Eet_Node *n, int dumplevel, void (*dumpfunc) (void *data, const ch
       case EET_G_UNKNOWN:
       case EET_G_HASH:
       case EET_G_LIST:
-	 eet_node_dump_group_start(dumplevel + 1, dumpfunc, dumpdata, n->type, n->name);
+	 eet_node_dump_group_start(dumplevel, dumpfunc, dumpdata, n->type, n->name);
 
 	 if (n->type == EET_G_VAR_ARRAY
 	     || n->type == EET_G_ARRAY)
@@ -437,6 +529,7 @@ eet_node_dump(Eet_Node *n, int dumplevel, void (*dumpfunc) (void *data, const ch
       case EET_T_UCHAR:
       case EET_T_USHORT:
       case EET_T_UINT:
+      case EET_T_ULONG_LONG:
 	 eet_node_dump_simple_type(n, dumplevel, dumpfunc, dumpdata);
 	 break;
      }
