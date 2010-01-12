@@ -23,3 +23,5 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 libecore_input_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_input_release_info@
 
 endif
+
+EXTRA_DIST = ecore_input_private.h
