@@ -30,4 +30,4 @@ libecore_sdl_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @v
 
 endif
 
-EXTRA_DIST = Ecore_Sdl_Keys.h
+EXTRA_DIST = Ecore_Sdl_Keys.h ecore_sdl_private.h

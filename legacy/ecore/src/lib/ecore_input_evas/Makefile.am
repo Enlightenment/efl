@@ -28,3 +28,5 @@ $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 libecore_input_evas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_input_evas_release_info@
 
 endif
+
+EXTRA_DIST = ecore_input_evas_private.h
