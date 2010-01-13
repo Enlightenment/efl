@@ -72,7 +72,7 @@ EAPI void eina_stringshare_del(const char *str);
 EAPI int eina_stringshare_strlen(const char *str) EINA_CONST EINA_WARN_UNUSED_RESULT;
 EAPI void eina_stringshare_dump(void);
 
-static inline Eina_Bool eina_stringshare_replace(const char **p_str, const char *news) EINA_ARG_NONNULL(1, 2);
+static inline Eina_Bool eina_stringshare_replace(const char **p_str, const char *news) EINA_ARG_NONNULL(1);
 
 #include "eina_inline_stringshare.x"
 
