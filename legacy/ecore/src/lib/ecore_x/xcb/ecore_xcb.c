@@ -203,7 +203,7 @@ ecore_x_init(const char *name)
        return --_ecore_xcb_init_count;
      }
    _ecore_xcb_conn = xcb_connect(name, &screen);
-   if (!_ecore_xcb_conn) {
+   if (xcb_connection_has_error(_ecore_xcb_conn)) {
      eina_log_domain_unregister(_ecore_x11xcb_log_dom);
      _ecore_x11xcb_log_dom = -1;
      return --_ecore_xcb_init_count;
