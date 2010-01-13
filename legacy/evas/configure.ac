@@ -320,6 +320,32 @@ if test "x$res" = "xno"; then
    fi
 fi
 
+# dlopen
+dlopen_libs=""
+case "$host_os" in
+  mingw32ce* | cegcc*)
+# managed by evil
+    AC_DEFINE(HAVE_DLADDR)
+  ;;
+  mingw*)
+# nothing on mingw platform
+  ;;
+  *)
+    AC_CHECK_FUNCS(dlopen, res=yes, res=no)
+    if test "x$res" = "xyes"; then
+      AC_CHECK_FUNCS(dladdr, AC_DEFINE(HAVE_DLADDR))
+    else
+      AC_CHECK_LIB(dl, dlopen, res=yes, res=no)
+      if test "x$res" = "xyes"; then
+        AC_CHECK_LIB(dl, dladdr, AC_DEFINE(HAVE_DLADDR))
+        dlopen_libs=-ldl
+      else
+        AC_MSG_ERROR(Cannot find dlopen)
+      fi
+    fi
+esac
+AC_SUBST(dlopen_libs)
+
 # (shm_open (for cache server)
 AC_ARG_ENABLE([evas-cserve],
    AC_HELP_STRING([--disable-evas-cserve],
