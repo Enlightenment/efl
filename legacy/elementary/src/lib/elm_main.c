@@ -601,6 +601,14 @@ elm_quicklaunch_init(int argc, char **argv)
 		 (!strcasecmp(s, "software-fb")) ||
 		 (!strcasecmp(s, "software_fb")))
 	  _elm_config->engine = ELM_SOFTWARE_FB;
+	else if ((!strcasecmp(s, "sdl")) ||
+		 (!strcasecmp(s, "software-sdl")) ||
+		 (!strcasecmp(s, "software_sdl")))
+	  _elm_config->engine = ELM_SOFTWARE_SDL;
+	else if ((!strcasecmp(s, "sdl-16")) ||
+		 (!strcasecmp(s, "software-16-sdl")) ||
+		 (!strcasecmp(s, "software_16_sdl")))
+	  _elm_config->engine = ELM_SOFTWARE_16_SDL;
 	else if ((!strcasecmp(s, "opengl")) ||
 		 (!strcasecmp(s, "gl")) ||
 		 (!strcasecmp(s, "opengl-x11")) ||
@@ -783,6 +791,8 @@ elm_quicklaunch_sub_shutdown(void)
        (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
        (_elm_config->engine == ELM_XRENDER_X11) ||
        (_elm_config->engine == ELM_OPENGL_X11) ||
+       (_elm_config->engine == ELM_SOFTWARE_SDL) ||
+       (_elm_config->engine == ELM_SOFTWARE_16_SDL) ||
        (_elm_config->engine == ELM_SOFTWARE_WIN32) ||
        (_elm_config->engine == ELM_SOFTWARE_16_WINCE))
      {

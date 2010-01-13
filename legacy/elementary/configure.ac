@@ -166,6 +166,17 @@ PKG_CHECK_MODULES([ELEMENTARY_FB],
    [have_elementary_fb="no"]
 )
 
+have_elementary_sdl="no"
+PKG_CHECK_MODULES([ELEMENTARY_SDL],
+   [ecore-sdl],
+   [
+    AC_DEFINE(HAVE_ELEMENTARY_FB, 1, [FB support for Elementary])
+    have_elementary_sdl="yes"
+    requirement_elm="ecore-sdl ${requirement_elm}"
+   ],
+   [have_elementary_sdl="no"]
+)
+
 have_elementary_win32="no"
 PKG_CHECK_MODULES([ELEMENTARY_WIN32],
    [ecore-win32],
@@ -298,6 +309,7 @@ echo
 echo "  Engines:"
 echo "    X11................: ${have_elementary_x}"
 echo "    Framebuffer........: ${have_elementary_fb}"
+echo "    SDL................: ${have_elementary_sdl}"
 echo "    Windows XP.........: ${have_elementary_win32}"
 echo "    Windows CE.........: ${have_elementary_wince}"
 echo
