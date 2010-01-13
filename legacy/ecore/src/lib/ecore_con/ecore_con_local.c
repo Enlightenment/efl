@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <sys/stat.h>
 
 #include <Ecore.h>
 #include <ecore_private.h>
