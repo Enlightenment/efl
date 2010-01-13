@@ -193,6 +193,9 @@ struct _Ecore_Event_Modifiers
 EAPI int	 ecore_event_init(void);
 EAPI int	 ecore_event_shutdown(void);
 
+EAPI unsigned int ecore_event_modifier_mask(Ecore_Event_Modifier modifier);
+EAPI Ecore_Event_Modifier ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, int inc);
+
 #ifdef __cplusplus
 }
 #endif
