@@ -170,7 +170,7 @@ have_elementary_sdl="no"
 PKG_CHECK_MODULES([ELEMENTARY_SDL],
    [ecore-sdl],
    [
-    AC_DEFINE(HAVE_ELEMENTARY_SDL, 1, [FB support for Elementary])
+    AC_DEFINE(HAVE_ELEMENTARY_SDL, 1, [SDL support for Elementary])
     have_elementary_sdl="yes"
     requirement_elm="ecore-sdl ${requirement_elm}"
    ],
