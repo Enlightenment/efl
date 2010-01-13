@@ -179,7 +179,7 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
 
    do {
       check = write(_fd_write, &ev, sizeof (Evas_Event_Async*));
-   } while ((check != sizeof (Evas_Event_Async)) && ((errno == EINTR) || (errno == EAGAIN)));
+   } while ((check != sizeof (Evas_Event_Async*)) && ((errno == EINTR) || (errno == EAGAIN)));
 
    evas_cache_image_wakeup();
 
