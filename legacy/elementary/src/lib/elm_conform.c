@@ -65,6 +65,7 @@ elm_conformant_add(Evas_Object *parent)
    _elm_theme_set(wd->base, "conformant", "base", "default");
    elm_widget_resize_object_set(obj, wd->base);
 
+#ifdef HAVE_ELEMENTARY_X
    ecore_x_e_illume_top_shelf_geometry_get(ecore_x_window_root_first_get(), 
                                            NULL, NULL, NULL, &sh);
    if (sh < 0) sh = 32;
@@ -74,6 +75,7 @@ elm_conformant_add(Evas_Object *parent)
    evas_object_size_hint_min_set(wd->shelf, -1, sh);
    evas_object_size_hint_max_set(wd->shelf, -1, sh);
    edje_object_part_swallow(wd->base, "elm.swallow.shelf", wd->shelf);
+#endif
 
    _sizing_eval(obj);
    return obj;
