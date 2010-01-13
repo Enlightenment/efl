@@ -9,6 +9,7 @@
 #include <string.h>
 
 #ifdef HAVE_NETINET_IN_H
+# include <sys/types.h>
 # include <netinet/in.h>
 #endif
 
