@@ -193,7 +193,6 @@ cache/libevas_cache.la \
 imaging/libevas_imaging.la \
 $(libevas_cserve_la) \
 engines/common/libevas_engine_common.la \
-@dlopen_libs@ \
 @FREETYPE_LIBS@ \
 @FRIBIDI_LIBS@ \
 @EET_LIBS@ \
