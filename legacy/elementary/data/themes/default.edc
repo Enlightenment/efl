@@ -22194,6 +22194,18 @@ group
                   align: 0.0 0.0;
                   rel1.relative: 0.0 1.0;
                   rel1.to_y: "elm.swallow.shelf";
+                  rel2.relative: 1.0 0.0;
+                  rel2.to_y: "elm.swallow.panel";
+               }
+          }
+        part 
+          {
+             name: "elm.swallow.panel";
+             type: SWALLOW;
+             description 
+               {
+                  state: "default" 0.0;
+                  align: 0.0 1.0;
                }
           }
      }
