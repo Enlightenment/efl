@@ -229,6 +229,7 @@ elm_hoversel_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
 
    wd->btn = elm_button_add(parent);
