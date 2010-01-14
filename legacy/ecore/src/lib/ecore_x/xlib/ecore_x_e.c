@@ -446,3 +446,34 @@ ecore_x_e_illume_top_shelf_geometry_get(Ecore_X_Window win, int *x, int *y, int 
    if (h) *h = geom[3];
    return 1;
 }
+
+EAPI void 
+ecore_x_e_illume_bottom_panel_geometry_set(Ecore_X_Window win, int x, int y, int w, int h) 
+{
+   unsigned int geom[4];
+
+   geom[0] = x;
+   geom[1] = y;
+   geom[2] = w;
+   geom[3] = h;
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_BOTTOM_PANEL_GEOMETRY, 
+                                  geom, 4);
+}
+
+EAPI int 
+ecore_x_e_illume_bottom_panel_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h) 
+{
+   int ret = 0;
+   unsigned int geom[4];
+
+   ret = 
+     ecore_x_window_prop_card32_get(win, 
+                                    ECORE_X_ATOM_E_ILLUME_BOTTOM_PANEL_GEOMETRY, 
+                                    geom, 4);
+   if (ret != 4) return 0;
+   if (x) *x = geom[0];
+   if (y) *y = geom[1];
+   if (w) *w = geom[2];
+   if (h) *h = geom[3];
+   return 1;
+}
