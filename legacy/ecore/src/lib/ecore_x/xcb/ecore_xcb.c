@@ -194,7 +194,7 @@ ecore_x_init(const char *name)
 
    xcb_intern_atom_cookie_t           atom_cookies[ECORE_X_ATOMS_COUNT];
 
-   if (--_ecore_xcb_init_count != 1)
+   if (++_ecore_xcb_init_count != 1)
      return _ecore_xcb_init_count;
    _ecore_x11xcb_log_dom = eina_log_domain_register("EcoreXCB", ECORE_XLIB_XCB_DEFAULT_LOG_COLOR);
    if(_ecore_x11xcb_log_dom < 0)
