@@ -261,7 +261,7 @@ struct _Edje_External_Param
 typedef struct _Edje_External_Param Edje_External_Param;
 
 #define EDJE_EXTERNAL_INT_UNSET 0xffffffff
-#define EDJE_EXTERNAL_DOUBLE_UNSET 0x1.0p255f
+#define EDJE_EXTERNAL_DOUBLE_UNSET HUGE_VAL
 
 struct _Edje_External_Param_Info
 {
