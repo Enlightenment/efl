@@ -1051,6 +1051,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    /* a new client */
    size_in = sizeof(struct sockaddr_in);
 
+   bzero(&incoming, size_in);
    new_fd = accept(svr->fd, (struct sockaddr *)&incoming, (socklen_t *)&size_in);
    if (new_fd >= 0)
      {
