@@ -2990,7 +2990,6 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
 {
    Evas_Engine_Info_Software_16_X11 *einfo;
    Ecore_Evas *ee;
-   int argb = 0;
    int rmethod;
    static int redraw_debug = -1;
 
@@ -3037,7 +3036,6 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
 	if (ecore_x_window_argb_get(parent))
 	  {
 	     ee->prop.window = ecore_x_window_argb_new(parent, x, y, w, h);
-	     argb = 1;
 	  }
 	else
 	  ee->prop.window = ecore_x_window_new(parent, x, y, w, h);
