@@ -33,19 +33,19 @@ evas_key_lock_number(const Evas_Lock *l, const char *keyname)
 
 /**
  * Returns a handle to the modifiers available in the system.  This is required to check
- * for modifiers with the evas_key_modifier_is_set_get function.
+ * for modifiers with the evas_key_modifier_is_set function.
  *
  *
  * @see evas_key_modifier_add
  * @see evas_key_modifier_del
  * @see evas_key_modifier_on
  * @see evas_key_modifier_off
- * @see evas_key_modifier_is_set_get
+ * @see evas_key_modifier_is_set
  *
  * @param e The pointer to the Evas Canvas
  *
  * @return An Evas_Modifier handle to query the modifier subsystem with
- *	evas_key_modifier_is_set_get, or NULL on error.
+ *	evas_key_modifier_is_set, or NULL on error.
  */
 EAPI const Evas_Modifier *
 evas_key_modifier_get(const Evas *e)
@@ -58,18 +58,18 @@ evas_key_modifier_get(const Evas *e)
 
 /**
  * Returns a handle to the locks available in the system.  This is required to check for
- * locks with the evas_key_lock_is_set_get function.
+ * locks with the evas_key_lock_is_set function.
  *
  * @see evas_key_lock_add
  * @see evas_key_lock_del
  * @see evas_key_lock_on
  * @see evas_key_lock_off
  *
- * @see evas_key_lock_is_set_get
+ * @see evas_key_lock_is_set
  * @param e The pointer to the Evas Canvas
  *
  * @return An Evas_Lock handle to query the lock subsystem with
- *	evas_key_lock_is_set_get, or NULL on error.
+ *	evas_key_lock_is_set, or NULL on error.
  */
 EAPI const Evas_Lock *
 evas_key_lock_get(const Evas *e)
@@ -153,7 +153,7 @@ evas_key_lock_is_set(const Evas_Lock *l, const char *keyname)
  * @see evas_key_modifier_get
  * @see evas_key_modifier_on
  * @see evas_key_modifier_off
- * @see evas_key_modifier_is_set_get
+ * @see evas_key_modifier_is_set
  *
  * @param e The pointer to the Evas Canvas
  * @param keyname The name of the modifier to add to the list.
@@ -180,7 +180,7 @@ evas_key_modifier_add(Evas *e, const char *keyname)
  * @see evas_key_modifier_get
  * @see evas_key_modifier_on
  * @see evas_key_modifier_off
- * @see evas_key_modifier_is_set_get
+ * @see evas_key_modifier_is_set
  *
  * @param e The pointer to the Evas Canvas
  * @param keyname The name of the key to remove from the modifiers list.
@@ -283,7 +283,7 @@ evas_key_lock_del(Evas *e, const char *keyname)
  * @see evas_key_modifier_add
  * @see evas_key_modifier_get
  * @see evas_key_modifier_off
- * @see evas_key_modifier_is_set_get
+ * @see evas_key_modifier_is_set
  *
  * @param e The pointer to the Evas Canvas
  * @param keyname The name of the modifier to set.
@@ -310,7 +310,7 @@ evas_key_modifier_on(Evas *e, const char *keyname)
  * @see evas_key_modifier_add
  * @see evas_key_modifier_get
  * @see evas_key_modifier_on
- * @see evas_key_modifier_is_set_get
+ * @see evas_key_modifier_is_set
  *
  * @param e The pointer to the Evas Canvas
  * @param keyname The name of the modifier to un-set.
@@ -395,7 +395,7 @@ evas_key_lock_off(Evas *e, const char *keyname)
  * @see evas_key_modifier_get
  * @see evas_key_modifier_on
  * @see evas_key_modifier_off
- * @see evas_key_modifier_is_set_get
+ * @see evas_key_modifier_is_set
  *
  * @param keyname The name of the modifier to create the mask for.
  *
