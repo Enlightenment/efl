@@ -194,11 +194,11 @@ static int
 _ecore_evas_fb_render(Ecore_Evas *ee)
 {
    int rend = 0;
-   
+
    if (ee->visible)
      {
         Eina_List *updates;
-        
+
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
         Eina_List *ll;
         Ecore_Evas *ee2;
@@ -208,7 +208,7 @@ _ecore_evas_fb_render(Ecore_Evas *ee)
         EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
           {
              if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-             _ecore_evas_buffer_render(ee2);
+             rend |= _ecore_evas_buffer_render(ee2);
              if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
           }
 #endif

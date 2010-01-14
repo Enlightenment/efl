@@ -112,36 +112,36 @@ _ecore_evas_render(Ecore_Evas *ee)
 	evas_render_updates_free(updates);
 	_ecore_evas_idle_timeout_update(ee);
      }
-   return (int)updates;
+   return updates ? 1 : 0;
 }
 
 static int
 _ecore_evas_sdl_render(Ecore_Evas *ee)
 {
    int rend = 0;
-   
+
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    Eina_List *ll;
    Ecore_Evas *ee2;
-   
+
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
         if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-        _ecore_evas_buffer_render(ee2);
+        rend |= _ecore_evas_buffer_render(ee2);
         if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
      }
 #endif
-   
+
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
-   
+
    if (ee->prop.avoid_damage) rend = _ecore_evas_render(ee);
    else if ((ee->visible) ||
             ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
             ((ee->should_be_visible) && (ee->prop.override)))
-     rend = _ecore_evas_render(ee);
+     rend |= _ecore_evas_render(ee);
    else
      evas_norender(ee->evas);
-   
+
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
    return rend;
 }

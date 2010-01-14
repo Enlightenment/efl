@@ -23,17 +23,18 @@ static Ecore_Event_Handler *ecore_evas_event_handlers[13];
 
 static Eina_Hash *ecore_evases_hash = NULL;
 
-static void
+static int
 _ecore_evas_directfb_render(Ecore_Evas *ee)
 {
    Eina_List *updates, *ll;
    Ecore_Evas *ee2;
+   int rend = 0;
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
 	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-	_ecore_evas_buffer_render(ee2);
+	rend |= _ecore_evas_buffer_render(ee2);
 	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
      }
 #endif
@@ -45,6 +46,8 @@ _ecore_evas_directfb_render(Ecore_Evas *ee)
 	_ecore_evas_idle_timeout_update(ee);
      }
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+
+   return updates ? 1 : rend;
 }
 
 static char *

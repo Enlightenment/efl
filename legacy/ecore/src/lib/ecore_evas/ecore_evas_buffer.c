@@ -88,16 +88,17 @@ _ecore_evas_buffer_shutdown(void)
    return _ecore_evas_init_count;
 }
 
-void
+int
 _ecore_evas_buffer_render(Ecore_Evas *ee)
 {
    Eina_List *updates, *l, *ll;
    Ecore_Evas *ee2;
+   int rend = 0;
 
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
 	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-	_ecore_evas_buffer_render(ee2);
+	rend |= _ecore_evas_buffer_render(ee2);
 	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
      }
    if (ee->engine.buffer.image)
@@ -123,6 +124,8 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
 	evas_render_updates_free(updates);
 	_ecore_evas_idle_timeout_update(ee);
      }
+
+   return updates ? 1 : rend;
 }
 
 static void
