@@ -1547,6 +1547,7 @@ EAPI Ecore_X_Virtual_Keyboard_State ecore_x_e_virtual_keyboard_state_get(Ecore_X
 EAPI void                ecore_x_e_virtual_keyboard_state_send(Ecore_X_Window win, Ecore_X_Virtual_Keyboard_State state);
 
 
+EAPI void                ecore_x_e_illume_zone_list_set(Ecore_X_Window win, Ecore_X_Window *p_zones, unsigned int n_zones);
 EAPI void                ecore_x_e_illume_conformant_set(Ecore_X_Window win, unsigned int is_conformant);
 EAPI int                 ecore_x_e_illume_conformant_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_mode_set(Ecore_X_Window win, Ecore_X_Illume_Mode mode);

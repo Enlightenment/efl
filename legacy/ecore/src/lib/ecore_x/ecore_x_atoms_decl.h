@@ -227,6 +227,7 @@ EAPI Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_KEYPAD      = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_J2ME        = 0;
 
 /* currently E specific illume extension */
+EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_ZONE_LIST             = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_CONFORMANT            = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_MODE                  = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_MODE_SINGLE           = 0;
