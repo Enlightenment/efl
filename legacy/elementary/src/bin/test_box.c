@@ -67,12 +67,12 @@ test_box_vert2(void *data, Evas_Object *obj, void *event_info)
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 0.0, 0.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(bx, 0.0, 0.0);
    evas_object_show(bx);
 
    bt = elm_button_add(win);
