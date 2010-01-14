@@ -31,7 +31,7 @@ static Eina_List *_edje_swallows_collect(Edje *ed);
  * descriptions. A single file contains multiple named groups. This function
  * specifies the file and group name to load @a obj from.
  */
-EAPI int
+EAPI Eina_Bool
 edje_object_file_set(Evas_Object *obj, const char *file, const char *group)
 {
    return _edje_object_file_set_internal(obj, file, group, NULL);
@@ -177,7 +177,7 @@ edje_file_collection_list_free(Eina_List *lst)
  *
  * @return 1 if a match is found, 0 otherwise
  */
-EAPI int
+EAPI Eina_Bool
 edje_file_group_exists(const char *file, const char *glob)
 {
    Edje_File *edf;

@@ -233,16 +233,17 @@ edje_scale_get(void)
  * @see edje_object_scale_get().
  *
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_scale_set(Evas_Object *obj, double scale)
 {
    Edje *ed;
 
    ed = _edje_fetch(obj);
-   if (!ed) return;
-   if (ed->scale == scale) return;
+   if (!ed) return EINA_FALSE;
+   if (ed->scale == scale) return EINA_TRUE;
    ed->scale = FROM_DOUBLE(scale);
    edje_object_calc_force(obj);
+   return EINA_TRUE;
 }
 
 /**
@@ -399,24 +400,24 @@ edje_object_thaw(Evas_Object *obj)
  * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
  *       half-transparent white is 255 255 255 128.
  */
-EAPI void
+EAPI Eina_Bool
 edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
    Eina_List *members;
    Edje_Color_Class *cc;
 
-   if (!color_class) return;
+   if (!color_class) return EINA_FALSE;
 
    cc = eina_hash_find(_edje_color_class_hash, color_class);
    if (!cc)
      {
         cc = calloc(1, sizeof(Edje_Color_Class));
-	if (!cc) return;
+	if (!cc) return EINA_FALSE;
 	cc->name = eina_stringshare_add(color_class);
 	if (!cc->name)
 	  {
 	     free(cc);
-	     return;
+	     return EINA_FALSE;
 	  }
 	if (!_edje_color_class_hash) 
           _edje_color_class_hash = eina_hash_string_superfast_new(NULL);
@@ -437,7 +438,7 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
        (cc->b2 == b2) && (cc->a2 == a2) &&
        (cc->r3 == r3) && (cc->g3 == g3) &&
        (cc->b3 == b3) && (cc->a3 == a3))
-     return;
+     return EINA_TRUE;
    cc->r = r;
    cc->g = g;
    cc->b = b;
@@ -465,6 +466,7 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
 	_edje_emit(ed, "color_class,set", color_class);
 	members = eina_list_next(members);
      }
+   return EINA_TRUE;
 }
 
 /**
@@ -642,7 +644,7 @@ _edje_color_class_list_foreach(const Eina_Hash *hash __UNUSED__, const void *key
  * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
  *       half-transparent white is 255 255 255 128.
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
    Edje *ed;
@@ -651,7 +653,7 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
    int i;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!color_class)) return;
+   if ((!ed) || (!color_class)) return EINA_FALSE;
    if (r < 0)   r = 0;
    if (r > 255) r = 255;
    if (g < 0)   g = 0;
@@ -670,7 +672,7 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
 		 (cc->b2 == b2) && (cc->a2 == a2) &&
 		 (cc->r3 == r3) && (cc->g3 == g3) &&
 		 (cc->b3 == b3) && (cc->a3 == a3))
-	       return;
+	       return EINA_TRUE;
 	     cc->r = r;
 	     cc->g = g;
 	     cc->b = b;
@@ -688,16 +690,16 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
 	     ed->all_part_change = 1;
 #endif
 	     _edje_recalc(ed);
-	     return;
+	     return EINA_TRUE;
 	  }
      }
    cc = malloc(sizeof(Edje_Color_Class));
-   if (!cc) return;
+   if (!cc) return EINA_FALSE;
    cc->name = eina_stringshare_add(color_class);
    if (!cc->name)
      {
 	free(cc);
-	return;
+	return EINA_FALSE;
      }
    cc->r = r;
    cc->g = g;
@@ -730,6 +732,7 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
 
    _edje_recalc(ed);
    _edje_emit(ed, "color_class,set", color_class);
+   return EINA_TRUE;
 }
 
 /**
@@ -858,13 +861,13 @@ edje_object_color_class_del(Evas_Object *obj, const char *color_class)
  * @see edje_text_class_get().
  *
  */
-EAPI void
+EAPI Eina_Bool
 edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size)
 {
    Eina_List *members;
    Edje_Text_Class *tc;
 
-   if (!text_class) return;
+   if (!text_class) return EINA_FALSE;
    if (!font) font = "";
 
    tc = eina_hash_find(_edje_text_class_hash, text_class);
@@ -872,24 +875,24 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
    if (!tc)
      {
         tc = calloc(1, sizeof(Edje_Text_Class));
-	if (!tc) return;
+	if (!tc) return EINA_FALSE;
 	tc->name = eina_stringshare_add(text_class);
 	if (!tc->name)
 	  {
 	     free(tc);
-	     return;
+	     return EINA_FALSE;
 	  }
 	if (!_edje_text_class_hash) _edje_text_class_hash = eina_hash_string_superfast_new(NULL);
         eina_hash_add(_edje_text_class_hash, text_class, tc);
 
 	tc->font = eina_stringshare_add(font);
 	tc->size = size;
-	return;
+	return EINA_FALSE;
      }
 
    /* If the class found is the same just return */
    if ((tc->size == size) && (tc->font) && (!strcmp(tc->font, font)))
-     return;
+     return EINA_TRUE;
 
    /* Update the class found */
    eina_stringshare_del(tc->font);
@@ -898,7 +901,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
      {
         eina_hash_del(_edje_text_class_hash, text_class, tc);
 	free(tc);
-	return;
+	return FALSE;
      }
    tc->size = size;
 
@@ -917,6 +920,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
 	_edje_recalc(ed);
 	members = eina_list_next(members);
      }
+   return EINA_TRUE;
 }
 
 /**
@@ -1002,7 +1006,7 @@ _edje_text_class_list_foreach(const Eina_Hash *hash __UNUSED__, const void *key,
  * This function sets the text class for the Edje.
  *
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size)
 {
    Edje *ed;
@@ -1011,7 +1015,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
    int i;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!text_class)) return;
+   if ((!ed) || (!text_class)) return EINA_FALSE;
 
    /* for each text_class in the edje */
    EINA_LIST_FOREACH(ed->text_classes, l, tc)
@@ -1021,10 +1025,10 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
 	     /* Match and the same, return */
 	     if ((tc->font) && (font) && (!strcmp(tc->font, font)) &&
 		 (tc->size == size))
-	       return;
+	       return EINA_TRUE;
 
 	     /* No font but size is the same, return */
-	     if ((!tc->font) && (!font) && (tc->size == size)) return;
+	     if ((!tc->font) && (!font) && (tc->size == size)) return EINA_TRUE;
 
 	     /* Update new text class properties */
 	     if (tc->font) eina_stringshare_del(tc->font);
@@ -1038,18 +1042,18 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
 	     ed->text_part_change = 1;
 #endif
 	     _edje_recalc(ed);
-	     return;
+	     return EINA_TRUE;
 	  }
      }
 
    /* No matches, create a new text class */
    tc = calloc(1, sizeof(Edje_Text_Class));
-   if (!tc) return;
+   if (!tc) return EINA_FALSE;
    tc->name = eina_stringshare_add(text_class);
    if (!tc->name)
      {
 	free(tc);
-	return;
+	return EINA_FALSE;
      }
    if (font) tc->font = eina_stringshare_add(font);
    else tc->font = NULL;
@@ -1073,6 +1077,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
 #endif
    _edje_textblock_style_all_update(ed);
    _edje_recalc(ed);
+   return EINA_TRUE;
 }
 
 /**
@@ -1086,7 +1091,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
  * This function returns if a part exists in the edje.
  *
  */
-EAPI int
+EAPI Eina_Bool
 edje_object_part_exists(const Evas_Object *obj, const char *part)
 {
    Edje *ed;
@@ -1147,7 +1152,7 @@ edje_object_part_object_get(const Evas_Object *obj, const char *part)
  * It is valid to pass NULL as any of @a x, @a y, @a w or @a h, whose
  * values you are uninterested in.
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_part_geometry_get(const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h )
 {
    Edje *ed;
@@ -1160,7 +1165,7 @@ edje_object_part_geometry_get(const Evas_Object *obj, const char *part, Evas_Coo
 	if (y) *y = 0;
 	if (w) *w = 0;
 	if (h) *h = 0;
-	return;
+	return EINA_FALSE;
      }
 
    /* Need to recalc before providing the object. */
@@ -1173,12 +1178,13 @@ edje_object_part_geometry_get(const Evas_Object *obj, const char *part, Evas_Coo
 	if (y) *y = 0;
 	if (w) *w = 0;
 	if (h) *h = 0;
-	return;
+	return EINA_FALSE;
      }
    if (x) *x = rp->x;
    if (y) *y = rp->y;
    if (w) *w = rp->w;
    if (h) *h = rp->h;
+   return EINA_TRUE;
 }
 
 /* FIXDOC: New Function */
@@ -1216,14 +1222,14 @@ edje_object_text_change_cb_set(Evas_Object *obj, void (*func) (void *data, Evas_
      }
 }
 
-static void
+static Eina_Bool
 _edje_object_part_text_raw_set(Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text)
 {
    if ((!rp->text.text) && (!text))
-     return;
+     return EINA_FALSE;
    if ((rp->text.text) && (text) &&
        (!strcmp(rp->text.text, text)))
-     return;
+     return EINA_FALSE;
    if (rp->text.text)
      {
 	eina_stringshare_del(rp->text.text);
@@ -1240,6 +1246,7 @@ _edje_object_part_text_raw_set(Evas_Object *obj, Edje_Real_Part *rp, const char 
    _edje_recalc(rp->edje);
    if (rp->edje->text_change.func)
      rp->edje->text_change.func(rp->edje->text_change.data, obj, part);
+   return EINA_TRUE;
 }
 
 /** Sets the text for an object part
@@ -1247,19 +1254,19 @@ _edje_object_part_text_raw_set(Evas_Object *obj, Edje_Real_Part *rp, const char 
  * @param part The part name
  * @param text The text string
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
 {
    Edje *ed;
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return;
+   if (!rp) return EINA_FALSE;
    if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
-       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return;
-   _edje_object_part_text_raw_set(obj, rp, part, text);
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return EINA_FALSE;
+   return _edje_object_part_text_raw_set(obj, rp, part, text);
 }
 
 /**
@@ -1459,25 +1466,27 @@ _edje_text_unescape(const char *text)
  * @see edje_object_part_text_unescaped_get().
  *
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_part_text_unescaped_set(Evas_Object *obj, const char *part, const char *text_to_escape)
 {
    Edje *ed;
    Edje_Real_Part *rp;
+   Eina_Bool ret = EINA_FALSE;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return ret;
    rp = _edje_real_part_recursive_get(ed, part);
-   if (!rp) return;
+   if (!rp) return ret;
    if (rp->part->type == EDJE_PART_TYPE_TEXT)
-     _edje_object_part_text_raw_set(obj, rp, part, text_to_escape);
+     ret = _edje_object_part_text_raw_set(obj, rp, part, text_to_escape);
    else if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
      {
 	char *text = _edje_text_escape(text_to_escape);
 
-	_edje_object_part_text_raw_set(obj, rp, part, text);
+	ret = _edje_object_part_text_raw_set(obj, rp, part, text);
 	free(text);
      }
+   return ret;
 }
 
 /**
@@ -2048,14 +2057,14 @@ edje_object_part_text_cursor_content_get(const Evas_Object *obj, const char *par
  * If an object has already been swallowed into this part, then it
  * will first be unswallowed before the new object is swallowed.
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_swallow)
 {
    Edje *ed;
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
 
    /* Need to recalc before providing the object. */
    // XXX: I guess this is not required, removing for testing purposes
@@ -2068,14 +2077,15 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
    _edje_recalc_do(ed);
 
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return;
+   if (!rp) return EINA_FALSE;
    if (rp->part->type != EDJE_PART_TYPE_SWALLOW)
      {
 	fprintf(stderr, "ERROR: cannot unswallow part %s: not swallow type!\n",
 		rp->part->name);
-	return;
+	return EINA_FALSE;
      }
    _edje_real_part_swallow(rp, obj_swallow);
+   return EINA_TRUE;
 }
 
 static void
@@ -2827,18 +2837,18 @@ edje_object_part_drag_dir_get(const Evas_Object *obj, const char *part)
  *
  * Places the dragable object at the given location.
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, double dy)
 {
    Edje *ed;
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return;
-   if (!rp->drag) return;
-   if (rp->drag->down.count > 0) return;
+   if (!rp) return EINA_FALSE;
+   if (!rp->drag) return EINA_FALSE;
+   if (rp->drag->down.count > 0) return EINA_FALSE;
    if (rp->part->dragable.confine_id != -1)
      {
 	dx = CLAMP(dx, 0.0, 1.0);
@@ -2846,7 +2856,7 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
      }
    if (rp->part->dragable.x < 0) dx = 1.0 - dx;
    if (rp->part->dragable.y < 0) dy = 1.0 - dy;
-   if ((rp->drag->val.x == FROM_DOUBLE(dx)) && (rp->drag->val.y == FROM_DOUBLE(dy))) return;
+   if ((rp->drag->val.x == FROM_DOUBLE(dx)) && (rp->drag->val.y == FROM_DOUBLE(dy))) return EINA_TRUE;
    rp->drag->val.x = FROM_DOUBLE(dx);
    rp->drag->val.y = FROM_DOUBLE(dy);
 #ifdef EDJE_CALC_CACHE
@@ -2854,6 +2864,7 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
 #endif
    _edje_dragable_pos_set(rp->edje, rp, rp->drag->val.x, rp->drag->val.y);
    _edje_emit(rp->edje, "drag,set", rp->part->name);
+   return EINA_TRUE;
 }
 
 /**
@@ -2867,7 +2878,7 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
  * Gets the drag location values.
  */
 /* FIXME: Should this be x and y instead of dx/dy? */
-EAPI void
+EAPI Eina_Bool
 edje_object_part_drag_value_get(const Evas_Object *obj, const char *part, double *dx, double *dy)
 {
    Edje *ed;
@@ -2879,7 +2890,7 @@ edje_object_part_drag_value_get(const Evas_Object *obj, const char *part, double
      {
 	if (dx) *dx = 0;
 	if (dy) *dy = 0;
-	return;
+	return EINA_FALSE;
      }
 
    /* Need to recalc before providing the object. */
@@ -2890,7 +2901,7 @@ edje_object_part_drag_value_get(const Evas_Object *obj, const char *part, double
      {
 	if (dx) *dx = 0;
 	if (dy) *dy = 0;
-	return;
+	return EINA_FALSE;
      }
    ddx = TO_DOUBLE(rp->drag->val.x);
    ddy = TO_DOUBLE(rp->drag->val.y);
@@ -2898,6 +2909,7 @@ edje_object_part_drag_value_get(const Evas_Object *obj, const char *part, double
    if (rp->part->dragable.y < 0) ddy = 1.0 - ddy;
    if (dx) *dx = ddx;
    if (dy) *dy = ddy;
+   return EINA_TRUE;
 }
 
 /**
@@ -2910,22 +2922,22 @@ edje_object_part_drag_value_get(const Evas_Object *obj, const char *part, double
  *
  * Sets the size of the dragable object.
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, double dh)
 {
    Edje *ed;
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return;
-   if (!rp->drag) return;
+   if (!rp) return EINA_FALSE;
+   if (!rp->drag) return EINA_FALSE;
    if (dw < 0.0) dw = 0.0;
    else if (dw > 1.0) dw = 1.0;
    if (dh < 0.0) dh = 0.0;
    else if (dh > 1.0) dh = 1.0;
-   if ((rp->drag->size.x == FROM_DOUBLE(dw)) && (rp->drag->size.y == FROM_DOUBLE(dh))) return;
+   if ((rp->drag->size.x == FROM_DOUBLE(dw)) && (rp->drag->size.y == FROM_DOUBLE(dh))) return EINA_TRUE;
    rp->drag->size.x = FROM_DOUBLE(dw);
    rp->drag->size.y = FROM_DOUBLE(dh);
    rp->edje->dirty = 1;
@@ -2933,6 +2945,7 @@ edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, do
    rp->invalidate = 1;
 #endif
    _edje_recalc(rp->edje);
+   return EINA_TRUE;
 }
 
 /**
@@ -2945,7 +2958,7 @@ edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, do
  *
  * Gets the dragable object size.
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_part_drag_size_get(const Evas_Object *obj, const char *part, double *dw, double *dh)
 {
    Edje *ed;
@@ -2956,7 +2969,7 @@ edje_object_part_drag_size_get(const Evas_Object *obj, const char *part, double 
      {
 	if (dw) *dw = 0;
 	if (dh) *dh = 0;
-	return;
+	return EINA_FALSE;
      }
 
    /* Need to recalc before providing the object. */
@@ -2967,10 +2980,11 @@ edje_object_part_drag_size_get(const Evas_Object *obj, const char *part, double 
      {
 	if (dw) *dw = 0;
 	if (dh) *dh = 0;
-	return;
+	return EINA_FALSE;
      }
    if (dw) *dw = TO_DOUBLE(rp->drag->size.x);
    if (dh) *dh = TO_DOUBLE(rp->drag->size.y);
+   return EINA_TRUE;
 }
 
 /**
@@ -2983,17 +2997,17 @@ edje_object_part_drag_size_get(const Evas_Object *obj, const char *part, double 
  *
  * Sets the x,y step increments for a dragable object.
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_part_drag_step_set(Evas_Object *obj, const char *part, double dx, double dy)
 {
    Edje *ed;
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return;
-   if (!rp->drag) return;
+   if (!rp) return EINA_FALSE;
+   if (!rp->drag) return EINA_FALSE;
    if (dx < 0.0) dx = 0.0;
    else if (dx > 1.0) dx = 1.0;
    if (dy < 0.0) dy = 0.0;
@@ -3003,6 +3017,7 @@ edje_object_part_drag_step_set(Evas_Object *obj, const char *part, double dx, do
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
 #endif
+   return EINA_TRUE;
 }
 
 /**
@@ -3015,7 +3030,7 @@ edje_object_part_drag_step_set(Evas_Object *obj, const char *part, double dx, do
  *
  * Gets the x and y step increments for the dragable object.
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_part_drag_step_get(const Evas_Object *obj, const char *part, double *dx, double *dy)
 {
    Edje *ed;
@@ -3026,7 +3041,7 @@ edje_object_part_drag_step_get(const Evas_Object *obj, const char *part, double 
      {
 	if (dx) *dx = 0;
 	if (dy) *dy = 0;
-	return;
+	return EINA_FALSE;
      }
 
    /* Need to recalc before providing the object. */
@@ -3037,10 +3052,11 @@ edje_object_part_drag_step_get(const Evas_Object *obj, const char *part, double 
      {
 	if (dx) *dx = 0;
 	if (dy) *dy = 0;
-	return;
+	return EINA_FALSE;
      }
    if (dx) *dx = TO_DOUBLE(rp->drag->step.x);
    if (dy) *dy = TO_DOUBLE(rp->drag->step.y);
+   return EINA_TRUE;
 }
 
 /**
@@ -3053,17 +3069,17 @@ edje_object_part_drag_step_get(const Evas_Object *obj, const char *part, double 
  *
  * Sets the x,y page step increment values.
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_part_drag_page_set(Evas_Object *obj, const char *part, double dx, double dy)
 {
    Edje *ed;
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return;
-   if (!rp->drag) return;
+   if (!rp) return EINA_FALSE;
+   if (!rp->drag) return EINA_FALSE;
    if (dx < 0.0) dx = 0.0;
    else if (dx > 1.0) dx = 1.0;
    if (dy < 0.0) dy = 0.0;
@@ -3073,6 +3089,7 @@ edje_object_part_drag_page_set(Evas_Object *obj, const char *part, double dx, do
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
 #endif
+   return EINA_TRUE;
 }
 
 /**
@@ -3085,7 +3102,7 @@ edje_object_part_drag_page_set(Evas_Object *obj, const char *part, double dx, do
  *
  * Gets the x,y page step increments for the dragable object.
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_part_drag_page_get(const Evas_Object *obj, const char *part, double *dx, double *dy)
 {
    Edje *ed;
@@ -3096,7 +3113,7 @@ edje_object_part_drag_page_get(const Evas_Object *obj, const char *part, double 
      {
 	if (dx) *dx = 0;
 	if (dy) *dy = 0;
-	return;
+	return EINA_FALSE;
      }
 
    /* Need to recalc before providing the object. */
@@ -3107,10 +3124,11 @@ edje_object_part_drag_page_get(const Evas_Object *obj, const char *part, double 
      {
 	if (dx) *dx = 0;
 	if (dy) *dy = 0;
-	return;
+	return EINA_FALSE;
      }
    if (dx) *dx = TO_DOUBLE(rp->drag->page.x);
    if (dy) *dy = TO_DOUBLE(rp->drag->page.y);
+   return EINA_TRUE;
 }
 
 /**
@@ -3124,7 +3142,7 @@ edje_object_part_drag_page_get(const Evas_Object *obj, const char *part, double 
  * Steps x,y where the step increment is the amount set by
  * edje_object_part_drag_step_set.
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double dy)
 {
    Edje *ed;
@@ -3132,11 +3150,11 @@ edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double
    FLOAT_T px, py;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return;
-   if (!rp->drag) return;
-   if (rp->drag->down.count > 0) return;
+   if (!rp) return EINA_FALSE;
+   if (!rp->drag) return EINA_FALSE;
+   if (rp->drag->down.count > 0) return EINA_FALSE;
    px = rp->drag->val.x;
    py = rp->drag->val.y;
    rp->drag->val.x = ADD(px, MUL(FROM_DOUBLE(dx),
@@ -3145,12 +3163,13 @@ edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double
 				 MUL(rp->drag->step.y, rp->part->dragable.y)));
    rp->drag->val.x = CLAMP (rp->drag->val.x, ZERO, FROM_DOUBLE(1.0));
    rp->drag->val.y = CLAMP (rp->drag->val.y, ZERO, FROM_DOUBLE(1.0));
-   if ((px == rp->drag->val.x) && (py == rp->drag->val.y)) return;
+   if ((px == rp->drag->val.x) && (py == rp->drag->val.y)) return EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
 #endif
    _edje_dragable_pos_set(rp->edje, rp, rp->drag->val.x, rp->drag->val.y);
    _edje_emit(rp->edje, "drag,step", rp->part->name);
+   return EINA_TRUE;
 }
 
 /**
@@ -3164,7 +3183,7 @@ edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double
  * Pages x,y where the increment is defined by
  * edje_object_part_drag_page_set.\n WARNING: Paging is bugged!
  */
-EAPI void
+EAPI Eina_Bool
 edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double dy)
 {
    Edje *ed;
@@ -3172,23 +3191,24 @@ edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double
    FLOAT_T px, py;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return;
-   if (!rp->drag) return;
-   if (rp->drag->down.count > 0) return;
+   if (!rp) return EINA_FALSE;
+   if (!rp->drag) return EINA_FALSE;
+   if (rp->drag->down.count > 0) return EINA_FALSE;
    px = rp->drag->val.x;
    py = rp->drag->val.y;
    rp->drag->val.x = ADD(px, MUL(FROM_DOUBLE(dx), MUL(rp->drag->page.x, rp->part->dragable.x)));
    rp->drag->val.y = ADD(py, MUL(FROM_DOUBLE(dy), MUL(rp->drag->page.y, rp->part->dragable.y)));
    rp->drag->val.x = CLAMP (rp->drag->val.x, ZERO, FROM_DOUBLE(1.0));
    rp->drag->val.y = CLAMP (rp->drag->val.y, ZERO, FROM_DOUBLE(1.0));
-   if ((px == rp->drag->val.x) && (py == rp->drag->val.y)) return;
+   if ((px == rp->drag->val.x) && (py == rp->drag->val.y)) return EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
 #endif
    _edje_dragable_pos_set(rp->edje, rp, rp->drag->val.x, rp->drag->val.y);
    _edje_emit(rp->edje, "drag,page", rp->part->name);
+   return EINA_TRUE;
 }
 
 void

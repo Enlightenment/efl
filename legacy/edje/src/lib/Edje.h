@@ -381,13 +381,13 @@ extern "C" {
    EAPI const char  *edje_fontset_append_get         (void);
    EAPI void         edje_scale_set                  (double scale);
    EAPI double       edje_scale_get                  (void);
-   EAPI void         edje_object_scale_set           (Evas_Object *obj, double scale);
+   EAPI Eina_Bool    edje_object_scale_set           (Evas_Object *obj, double scale);
    EAPI double       edje_object_scale_get           (const Evas_Object *obj);
 
    /* edje_load.c */
    EAPI Eina_List   *edje_file_collection_list       (const char *file);
    EAPI void         edje_file_collection_list_free  (Eina_List *lst);
-   EAPI int          edje_file_group_exists          (const char *file, const char *glob);
+   EAPI Eina_Bool    edje_file_group_exists          (const char *file, const char *glob);
    EAPI char        *edje_file_data_get              (const char *file, const char *key);
    EAPI void         edje_file_cache_set             (int count);
    EAPI int          edje_file_cache_get             (void);
@@ -398,11 +398,11 @@ extern "C" {
 
 
    /* edje_util.c */
-   EAPI void         edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
+   EAPI Eina_Bool    edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
    EAPI Eina_Bool    edje_color_class_get(const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
    EAPI void         edje_color_class_del(const char *color_class);
    EAPI Eina_List *  edje_color_class_list(void);
-   EAPI void         edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size);
+   EAPI Eina_Bool    edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size);
    EAPI void         edje_text_class_del(const char *text_class);
    EAPI Eina_List *  edje_text_class_list(void);
    EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
@@ -417,7 +417,7 @@ extern "C" {
    EAPI const char  *edje_object_data_get            (const Evas_Object *obj, const char *key);
 
    /* edje_load.c */
-   EAPI int          edje_object_file_set            (Evas_Object *obj, const char *file, const char *group);
+   EAPI Eina_Bool    edje_object_file_set            (Evas_Object *obj, const char *file, const char *group);
    EAPI void         edje_object_file_get            (const Evas_Object *obj, const char **file, const char **group);
    EAPI int          edje_object_load_error_get      (const Evas_Object *obj);
    EAPI const char  *edje_load_error_str             (int error);
@@ -437,22 +437,22 @@ extern "C" {
    /* edje_util.c */
    EAPI int          edje_object_freeze              (Evas_Object *obj);
    EAPI int          edje_object_thaw                (Evas_Object *obj);
-   EAPI void         edje_object_color_class_set     (Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
+   EAPI Eina_Bool    edje_object_color_class_set     (Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
    EAPI Eina_Bool     edje_object_color_class_get    (const Evas_Object *o, const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
    EAPI void         edje_object_color_class_del     (Evas_Object *obj, const char *color_class);
-   EAPI void         edje_object_text_class_set      (Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size);
+   EAPI Eina_Bool    edje_object_text_class_set      (Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size);
    EAPI void         edje_object_size_min_get        (const Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
    EAPI void         edje_object_size_max_get        (const Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh);
    EAPI void         edje_object_calc_force          (Evas_Object *obj);
    EAPI void         edje_object_size_min_calc       (Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
    EAPI void         edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh);
-   EAPI int          edje_object_part_exists         (const Evas_Object *obj, const char *part);
+   EAPI Eina_Bool    edje_object_part_exists         (const Evas_Object *obj, const char *part);
    EAPI const Evas_Object *edje_object_part_object_get     (const Evas_Object *obj, const char *part);
-   EAPI void         edje_object_part_geometry_get   (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+   EAPI Eina_Bool    edje_object_part_geometry_get   (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    EAPI void         edje_object_text_change_cb_set  (Evas_Object *obj, Edje_Text_Change_Cb func, void *data);
-   EAPI void         edje_object_part_text_set       (Evas_Object *obj, const char *part, const char *text);
+   EAPI Eina_Bool    edje_object_part_text_set       (Evas_Object *obj, const char *part, const char *text);
    EAPI const char  *edje_object_part_text_get       (const Evas_Object *obj, const char *part);
-   EAPI void         edje_object_part_text_unescaped_set(Evas_Object *obj, const char *part, const char *text_to_escape);
+   EAPI Eina_Bool    edje_object_part_text_unescaped_set(Evas_Object *obj, const char *part, const char *text_to_escape);
    EAPI char        *edje_object_part_text_unescaped_get(const Evas_Object *obj, const char *part);
 
    EAPI const char      *edje_object_part_text_selection_get           (const Evas_Object *obj, const char *part);
@@ -478,21 +478,21 @@ extern "C" {
    EAPI Eina_Bool        edje_object_part_text_cursor_is_visible_format_get(const Evas_Object *obj, const char *part, Edje_Cursor cur);
    EAPI const char      *edje_object_part_text_cursor_content_get(const Evas_Object *obj, const char *part, Edje_Cursor cur);
 
-   EAPI void         edje_object_part_swallow        (Evas_Object *obj, const char *part, Evas_Object *obj_swallow);
+   EAPI Eina_Bool    edje_object_part_swallow        (Evas_Object *obj, const char *part, Evas_Object *obj_swallow);
    EAPI void         edje_object_part_unswallow      (Evas_Object *obj, Evas_Object *obj_swallow);
    EAPI Evas_Object *edje_object_part_swallow_get    (const Evas_Object *obj, const char *part);
    EAPI const char  *edje_object_part_state_get      (const Evas_Object *obj, const char *part, double *val_ret);
    EAPI int          edje_object_part_drag_dir_get   (const Evas_Object *obj, const char *part);
-   EAPI void         edje_object_part_drag_value_set (Evas_Object *obj, const char *part, double dx, double dy);
-   EAPI void         edje_object_part_drag_value_get (const Evas_Object *obj, const char *part, double *dx, double *dy);
-   EAPI void         edje_object_part_drag_size_set  (Evas_Object *obj, const char *part, double dw, double dh);
-   EAPI void         edje_object_part_drag_size_get  (const Evas_Object *obj, const char *part, double *dw, double *dh);
-   EAPI void         edje_object_part_drag_step_set  (Evas_Object *obj, const char *part, double dx, double dy);
-   EAPI void         edje_object_part_drag_step_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
-   EAPI void         edje_object_part_drag_page_set  (Evas_Object *obj, const char *part, double dx, double dy);
-   EAPI void         edje_object_part_drag_page_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
-   EAPI void         edje_object_part_drag_step      (Evas_Object *obj, const char *part, double dx, double dy);
-   EAPI void         edje_object_part_drag_page      (Evas_Object *obj, const char *part, double dx, double dy);
+   EAPI Eina_Bool    edje_object_part_drag_value_set (Evas_Object *obj, const char *part, double dx, double dy);
+   EAPI Eina_Bool    edje_object_part_drag_value_get (const Evas_Object *obj, const char *part, double *dx, double *dy);
+   EAPI Eina_Bool    edje_object_part_drag_size_set  (Evas_Object *obj, const char *part, double dw, double dh);
+   EAPI Eina_Bool    edje_object_part_drag_size_get  (const Evas_Object *obj, const char *part, double *dw, double *dh);
+   EAPI Eina_Bool    edje_object_part_drag_step_set  (Evas_Object *obj, const char *part, double dx, double dy);
+   EAPI Eina_Bool    edje_object_part_drag_step_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
+   EAPI Eina_Bool    edje_object_part_drag_page_set  (Evas_Object *obj, const char *part, double dx, double dy);
+   EAPI Eina_Bool    edje_object_part_drag_page_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
+   EAPI Eina_Bool    edje_object_part_drag_step      (Evas_Object *obj, const char *part, double dx, double dy);
+   EAPI Eina_Bool    edje_object_part_drag_page      (Evas_Object *obj, const char *part, double dx, double dy);
    EAPI Eina_Bool    edje_object_part_box_append     (Evas_Object *obj, const char *part, Evas_Object *child);
    EAPI Eina_Bool    edje_object_part_box_prepend    (Evas_Object *obj, const char *part, Evas_Object *child);
    EAPI Eina_Bool    edje_object_part_box_insert_before (Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
