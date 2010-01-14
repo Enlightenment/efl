@@ -138,9 +138,12 @@ ecore_x_image_free(Ecore_X_Image *im)
      }
    else
      {
-        if (im->xim) free(im->xim->data);
-        im->xim->data = NULL;
-        XDestroyImage(im->xim);
+        if (im->xim)
+	  {
+	     free(im->xim->data);
+	     im->xim->data = NULL;
+	     XDestroyImage(im->xim);
+	  }
      }
    free(im);
 }
