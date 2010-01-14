@@ -26,6 +26,7 @@ struct _Widget_Data
    Evas_Object *btn, *hover;
    Evas_Object *hover_parent;
    Eina_List *items;
+   Eina_Bool horizontal:1;
 };
 
 struct _Elm_Hoversel_Item
@@ -151,6 +152,7 @@ _activate(Evas_Object *obj)
 
    bx = elm_box_add(wd->hover);
    elm_box_homogenous_set(bx, 1);
+   elm_box_horizontal_set(bx, wd->horizontal);
 
    snprintf(buf, sizeof(buf), "hoversel_vertical_entry/%s",
             elm_widget_style_get(obj));
@@ -185,6 +187,8 @@ _activate(Evas_Object *obj)
 
    evas_object_show(wd->hover);
    evas_object_smart_callback_call(obj, "clicked", NULL);
+
+   if(wd->horizontal)evas_object_hide(wd->btn);
 }
 
 static void
@@ -280,6 +284,13 @@ elm_hoversel_label_set(Evas_Object *obj, const char *label)
 
    if (!wd) return;
    elm_button_label_set(wd->btn, label);
+}
+
+EAPI void
+elm_hoversel_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->horizontal = !!horizontal;
 }
 
 /**
