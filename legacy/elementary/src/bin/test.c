@@ -6,6 +6,7 @@ void test_bg_plain(void *data, Evas_Object *obj, void *event_info);
 void test_bg_image(void *data, Evas_Object *obj, void *event_info);
 void test_icon(void *data, Evas_Object *obj, void *event_info);
 void test_box_vert(void *data, Evas_Object *obj, void *event_info);
+void test_box_vert2(void *data, Evas_Object *obj, void *event_info);
 void test_box_horiz(void *data, Evas_Object *obj, void *event_info);
 void test_button(void *data, Evas_Object *obj, void *event_info);
 void test_toggle(void *data, Evas_Object *obj, void *event_info);
@@ -146,6 +147,7 @@ my_win_main(void)
    elm_list_item_append(li, "Bg Image", NULL, NULL, test_bg_image, NULL);
    elm_list_item_append(li, "Icon Transparent", NULL, NULL, test_icon, NULL);
    elm_list_item_append(li, "Box Vert", NULL, NULL, test_box_vert, NULL);
+   elm_list_item_append(li, "Box Vert 2", NULL, NULL, test_box_vert2, NULL);
    elm_list_item_append(li, "Box Horiz", NULL, NULL, test_box_horiz, NULL);
    elm_list_item_append(li, "Buttons", NULL, NULL, test_button, NULL);
    elm_list_item_append(li, "Toggles", NULL, NULL, test_toggle, NULL);
