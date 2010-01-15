@@ -394,9 +394,6 @@ video_obj_down_cb(void *data, Evas *ev, Evas_Object *obj, void *event_info)
 static void
 video_obj_up_cb(void *data, Evas *ev, Evas_Object *obj, void *event_info)
 {
-   Evas_Event_Mouse_Up *e;
-
-   e = event_info;
    evas_object_color_set(obj, 100, 100, 100, 100);
 }
 
@@ -501,9 +498,6 @@ video_obj_position_update_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 video_obj_stopped_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *oe;
-
-   oe = data;
    printf("video stopped!\n");
    emotion_object_position_set(obj, 0.0);
    emotion_object_play_set(obj, 1);
@@ -512,9 +506,6 @@ video_obj_stopped_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 video_obj_channels_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *oe;
-
-   oe = data;
    printf("channels changed: [AUD %i][VID %i][SPU %i]\n",
 	  emotion_object_audio_channel_count(obj),
 	  emotion_object_video_channel_count(obj),
@@ -524,18 +515,12 @@ video_obj_channels_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 video_obj_title_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *oe;
-
-   oe = data;
    printf("video title to: \"%s\"\n", emotion_object_title_get(obj));
 }
 
 static void
 video_obj_progress_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *oe;
-
-   oe = data;
    printf("progress: \"%s\" %3.3f\n",
 	  emotion_object_progress_info_get(obj),
 	  emotion_object_progress_status_get(obj));
@@ -544,9 +529,6 @@ video_obj_progress_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 video_obj_ref_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *oe;
-
-   oe = data;
    printf("video ref to: \"%s\" %i\n",
 	  emotion_object_ref_file_get(obj),
 	  emotion_object_ref_num_get(obj));
@@ -555,9 +537,6 @@ video_obj_ref_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 video_obj_button_num_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *oe;
-
-   oe = data;
    printf("video spu buttons to: %i\n",
 	  emotion_object_spu_button_count_get(obj));
 }
@@ -565,9 +544,6 @@ video_obj_button_num_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 video_obj_button_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *oe;
-
-   oe = data;
    printf("video selected spu button: %i\n",
 	  emotion_object_spu_button_get(obj));
 }

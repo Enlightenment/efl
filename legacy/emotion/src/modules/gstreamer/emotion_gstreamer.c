@@ -771,21 +771,14 @@ em_audio_handled(void *video)
 }
 
 static int
-em_seekable(void *video)
+em_seekable(void *video __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
-
    return 1;
 }
 
 static void
-em_frame_done(void *video)
+em_frame_done(void *video __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
 }
 
 static Emotion_Format
@@ -899,27 +892,18 @@ em_bgra_data_get(void *video, unsigned char **bgra_data)
 }
 
 static void
-em_event_feed(void *video, int event __UNUSED__)
+em_event_feed(void *video __UNUSED__, int event __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
 }
 
 static void
-em_event_mouse_button_feed(void *video, int button __UNUSED__, int x __UNUSED__, int y __UNUSED__)
+em_event_mouse_button_feed(void *video __UNUSED__, int button __UNUSED__, int x __UNUSED__, int y __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
 }
 
 static void
-em_event_mouse_move_feed(void *video, int x __UNUSED__, int y __UNUSED__)
+em_event_mouse_move_feed(void *video __UNUSED__, int x __UNUSED__, int y __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
 }
 
 /* Video channels */
@@ -956,13 +940,9 @@ em_video_channel_get(void *video)
 }
 
 static const char *
-em_video_channel_name_get(void *video,
+em_video_channel_name_get(void *video __UNUSED__,
 			  int   channel __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
-
    return NULL;
 }
 
@@ -1022,13 +1002,9 @@ em_audio_channel_get(void *video)
 }
 
 static const char *
-em_audio_channel_name_get(void *video,
+em_audio_channel_name_get(void *video __UNUSED__,
 			  int   channel __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
-
    return NULL;
 }
 
@@ -1099,122 +1075,76 @@ em_audio_channel_volume_get(void *video)
 /* spu stuff */
 
 static int
-em_spu_channel_count(void *video)
+em_spu_channel_count(void *video __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
-
    return 0;
 }
 
 static void
-em_spu_channel_set(void *video, int channel __UNUSED__)
+em_spu_channel_set(void *video __UNUSED__, int channel __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
 }
 
 static int
-em_spu_channel_get(void *video)
+em_spu_channel_get(void *video __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
-
    return 1;
 }
 
 static const char *
-em_spu_channel_name_get(void *video, int channel __UNUSED__)
+em_spu_channel_name_get(void *video __UNUSED__, int channel __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
    return NULL;
 }
 
 static void
-em_spu_channel_mute_set(void *video, int mute __UNUSED__)
+em_spu_channel_mute_set(void *video __UNUSED__, int mute __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
 }
 
 static int
-em_spu_channel_mute_get(void *video)
+em_spu_channel_mute_get(void *video __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
-
    return 0;
 }
 
 static int
-em_chapter_count(void *video)
+em_chapter_count(void *video __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
    return 0;
 }
 
 static void
-em_chapter_set(void *video, int chapter __UNUSED__)
+em_chapter_set(void *video __UNUSED__, int chapter __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
 }
 
 static int
-em_chapter_get(void *video)
+em_chapter_get(void *video __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
-
    return 0;
 }
 
 static const char *
-em_chapter_name_get(void *video, int chapter __UNUSED__)
+em_chapter_name_get(void *video __UNUSED__, int chapter __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
-
    return NULL;
 }
 
 static void
-em_speed_set(void *video, double speed __UNUSED__)
+em_speed_set(void *video __UNUSED__, double speed __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
 }
 
 static double
-em_speed_get(void *video)
+em_speed_get(void *video __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
-
    return 1.0;
 }
 
 static int
-em_eject(void *video)
+em_eject(void *video __UNUSED__)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
-
    return 1;
 }
 
@@ -1305,7 +1235,6 @@ _for_each_tag(GstTagList const* list,
 		    void *data)
 {
    Emotion_Gstreamer_Video *ev;
-   const GValue *val;
    int i;
    int count;
 
@@ -1315,7 +1244,6 @@ _for_each_tag(GstTagList const* list,
    if (!ev || !ev->metadata) return;
 
    count = gst_tag_list_get_tag_size(list, tag);
-   val = gst_tag_list_get_value_index(list, tag, 0);
 
    for (i = 0; i < count; i++)
      {
@@ -1438,10 +1366,8 @@ _em_buffer_read(void *data, void *buf, unsigned int nbyte __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
    Emotion_Video_Sink      *vsink;
-   GstBuffer               *buffer;
 
    ev = (Emotion_Gstreamer_Video *)data;
-   buffer = *((GstBuffer **)buf);
    _emotion_frame_new(ev->obj);
    vsink = (Emotion_Video_Sink *)eina_list_nth(ev->video_sinks, ev->video_sink_nbr);
    if (vsink)

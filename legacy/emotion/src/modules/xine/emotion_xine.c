@@ -525,11 +525,8 @@ em_fps_num_get(void *ef)
 }
 
 static int
-em_fps_den_get(void *ef)
+em_fps_den_get(void *ef __UNUSED__)
 {
-   Emotion_Xine_Video *ev;
-   
-   ev = (Emotion_Xine_Video *)ef;
    return 10000;
 }
 
@@ -883,11 +880,8 @@ em_video_channel_get(void *ef)
 }
 
 static const char *
-em_video_channel_name_get(void *ef, int channel __UNUSED__)
+em_video_channel_name_get(void *ef __UNUSED__, int channel __UNUSED__)
 {
-   Emotion_Xine_Video *ev;
-   
-   ev = (Emotion_Xine_Video *)ef;
    return NULL;
 }
 
@@ -1072,45 +1066,30 @@ em_chapter_count(void *ef)
 }
 
 static void
-em_chapter_set(void *ef, int chapter __UNUSED__)
+em_chapter_set(void *ef __UNUSED__, int chapter __UNUSED__)
 {
-   Emotion_Xine_Video *ev;
-   
-   ev = (Emotion_Xine_Video *)ef;
 }
 
 static int
-em_chapter_get(void *ef)
+em_chapter_get(void *ef __UNUSED__)
 {
-   Emotion_Xine_Video *ev;
-   
-   ev = (Emotion_Xine_Video *)ef;
    return 0;
 }
 
 static const char *
-em_chapter_name_get(void *ef, int chapter __UNUSED__)
+em_chapter_name_get(void *ef __UNUSED__, int chapter __UNUSED__)
 {
-   Emotion_Xine_Video *ev;
-   
-   ev = (Emotion_Xine_Video *)ef;
    return NULL;
 }
 
 static void
-em_speed_set(void *ef, double speed __UNUSED__)
+em_speed_set(void *ef __UNUSED__, double speed __UNUSED__)
 {
-   Emotion_Xine_Video *ev;
-   
-   ev = (Emotion_Xine_Video *)ef;
 }
 
 static double
-em_speed_get(void *ef)
+em_speed_get(void *ef __UNUSED__)
 {
-   Emotion_Xine_Video *ev;
-   
-   ev = (Emotion_Xine_Video *)ef;
    return 1.0;
 }
 
@@ -1166,14 +1145,14 @@ _em_fd_active(void *data, Ecore_Fd_Handler *fdh)
    void *buf;
    int fd, len;
    Emotion_Xine_Video_Frame *fr;
-   Emotion_Xine_Video *ev;
    
-   ev = data;
    fd = ecore_main_fd_handler_fd_get(fdh);
    while ((len = read(fd, &buf, sizeof(buf))) > 0)
      {
 	if (len == sizeof(buf))
 	  {
+	     Emotion_Xine_Video *ev;
+
 	     fr = buf;
 	     ev = _emotion_video_get(fr->obj);
 	     if (ev)
@@ -1242,16 +1221,15 @@ _em_module_event(void *data, int type)
 static int
 _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 {
-   Emotion_Xine_Video *ev;
    int fd, len;
    void *buf[2];
    
-   ev = data;
    fd = ecore_main_fd_handler_fd_get(fdh);
    while ((len = read(fd, buf, sizeof(buf))) > 0)
      {
 	if (len == sizeof(buf))
 	  {
+	     Emotion_Xine_Video *ev;
 	     Emotion_Xine_Event *eev;
 	     
 	     ev = buf[0];
@@ -1322,17 +1300,9 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 			 }
 		       break;
 		     case XINE_EVENT_FRAME_FORMAT_CHANGE:
-			 {
-			    xine_format_change_data_t *e;
-			    
-			    e = (xine_format_change_data_t *)eev->xine_event;
-			 }
 		       break;
 		     case XINE_EVENT_UI_MESSAGE:
 			 {
-			    xine_ui_message_data_t *e;
-			    
-			    e = (xine_ui_message_data_t *)eev->xine_event;
 			    printf("EV: UI Message [FIXME: break this out to emotion api]\n");
 			    // e->type = error type(XINE_MSG_NO_ERROR, XINE_MSG_GENERAL_WARNING, XINE_MSG_UNKNOWN_HOST etc.)
 			    // e->messages is a list of messages DOUBLE null terminated
@@ -1340,9 +1310,6 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		       break;
 		     case XINE_EVENT_AUDIO_LEVEL:
 			 {
-			    xine_audio_level_data_t *e;
-			    
-			    e = (xine_audio_level_data_t *)eev->xine_event;
 			    _emotion_audio_level_change(ev->obj);
 			    printf("EV: Audio Level [FIXME: break this out to emotion api]\n");
 			    // e->left (0->100) 
