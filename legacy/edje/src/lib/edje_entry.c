@@ -1406,7 +1406,6 @@ _edje_part_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
    Evas_Event_Mouse_Up *ev = event_info;
    Entry *en;
    Evas_Coord x, y, w, h;
-   Eina_Bool multiline;
    Evas_Textblock_Cursor *tc;
    if (ev->button != 1) return;
    if (!rp) return;
@@ -1417,7 +1416,6 @@ _edje_part_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
      return;
    tc = evas_object_textblock_cursor_new(rp->object);
    evas_textblock_cursor_copy(en->cursor, tc);
-   multiline = rp->part->multiline;
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
    en->cx = ev->canvas.x - x;
    en->cy = ev->canvas.y - y;
@@ -1470,7 +1468,6 @@ _edje_part_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    Entry *en;
    Evas_Coord x, y, w, h;
    Evas_Textblock_Cursor *tc;
-   Eina_Bool multiline;
    if (!rp) return;
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
@@ -1480,7 +1477,6 @@ _edje_part_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
      {
         tc = evas_object_textblock_cursor_new(rp->object);
         evas_textblock_cursor_copy(en->cursor, tc);
-        multiline = rp->part->multiline;
         evas_object_geometry_get(rp->object, &x, &y, &w, &h);
         en->cx = ev->cur.canvas.x - x;
         en->cy = ev->cur.canvas.y - y;
@@ -2156,7 +2152,6 @@ _edje_entry_imf_event_changed_cb(void *data, int type __UNUSED__, void *event)
    Edje* ed = data;
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en;
-   int cursor_pos;
    int length;
    Ecore_IMF_Event_Commit *ev = event;
    int i;
@@ -2179,8 +2174,6 @@ _edje_entry_imf_event_changed_cb(void *data, int type __UNUSED__, void *event)
    if ( 0 /* check the maximum length of evas_textblock */ )
      return 1;
    
-   cursor_pos = evas_textblock_cursor_pos_get(en->cursor); 
-
    if (en->have_composition)
      {
 	// delete the composing characters
@@ -2215,7 +2208,6 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, int type __UNUSED__, voi
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en;
    Ecore_IMF_Event_Delete_Surrounding *ev = event;
-   int cursor_pos;
    
    if (!rp) return 1;
    en = rp->entry_data;
@@ -2225,8 +2217,6 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, int type __UNUSED__, voi
    
    if (en->imf_context != ev->ctx) return 1;
    
-   cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
-
    return 0;
 }
 #endif

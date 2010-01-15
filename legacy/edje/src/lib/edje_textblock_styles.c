@@ -83,7 +83,6 @@ _edje_format_parse(const char **s)
 	     item = malloc(s2 - s1 + 1);
 	     if (item)
 	       {
-		  ds = item;
 		  for (ds = item, ss = s1; ss < s2; ss++, ds++)
 		    {
 		       if ((*ss == '\\') && (ss < (s2 - 1))) ss++;

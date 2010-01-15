@@ -750,7 +750,6 @@ _edje_part_recalc_single_text(FLOAT_T sc,
 			      int *minw, int *minh,
 			      int *maxw, int *maxh)
 {
-   const char *font;
    char *sfont = NULL;
    int size;
 
@@ -902,7 +901,7 @@ _edje_part_recalc_single_text(FLOAT_T sc,
 
    /* FIXME: Do we really need to call it twice if chosen_desc ? */
    sfont = NULL;
-   font = _edje_text_class_font_get(ed, desc, &size, &sfont);
+   _edje_text_class_font_get(ed, desc, &size, &sfont);
    free(sfont);
    params->type.text.size = size;
 }

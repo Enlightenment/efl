@@ -1605,7 +1605,6 @@ static int
 _edje_lua_object_get_evas(lua_State *L)
 {
    Edje_Lua_Evas_Object *obj = _edje_lua_checkudata(L, 1, &mObject);
-   Evas *evas = evas_object_evas_get(obj->eo);
    lua_pushnil(L);
    // FIXME implement Evas class in the first place?
    return 1;
