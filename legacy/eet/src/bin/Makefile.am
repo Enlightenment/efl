@@ -12,7 +12,8 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@ \
 @EVIL_CFLAGS@
 
-bin_PROGRAMS = eet
+bin_PROGRAMS = @EET_PRG@
+EXTRA_PROGRAMS = eet
 
 eet_SOURCES = eet_main.c
 eet_CFLAGS = @EET_CFLAGS@

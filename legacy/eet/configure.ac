@@ -65,6 +65,8 @@ AC_ARG_ENABLE([amalgamation],
 )
 AM_CONDITIONAL(EET_AMALGAMATION, test "x${do_amalgamation}" = "xyes")
 
+EFL_ENABLE_BIN([eet])
+
 # Old eet file format support
 
 old_eet_file_format="yes"
@@ -426,22 +428,27 @@ echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
 echo
+echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Gnutls...............: ${have_gnutls}"
 echo "  Openssl..............: ${have_openssl}"
 echo "    Cipher support.....: ${have_cipher}"
 echo "    Signature..........: ${have_signature}"
 echo "  Thread Support.......: ${have_pthread}"
 echo
-echo "  Amalgamation.........: ${do_amalgamation}"
-echo "  Documentation........: ${build_doc}"
+echo "  Old eet file format..: ${old_eet_file_format}"
+echo
 echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"
 echo
-echo "  Old eet file format..: ${old_eet_file_format}"
+echo "  Build eet............: $have_eet"
 echo
-echo "  Compilation..........: make"
+echo "  Documentation........: ${build_doc}"
 echo
-echo "  Installation.........: make install"
+echo "Compilation............: make (or gmake)"
+echo "  CPPFLAGS.............: $CPPFLAGS"
+echo "  CFLAGS...............: $CFLAGS"
+echo "  LDFLAGS..............: $LDFLAGS"
 echo
-echo "    prefix.............: $prefix"
+echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
+echo "  prefix...............: $prefix"
 echo
