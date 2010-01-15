@@ -18,7 +18,6 @@
 
 #include <Evas.h>
 #include <ecore_private.h>
-#include <Ecore_Data.h>
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
 

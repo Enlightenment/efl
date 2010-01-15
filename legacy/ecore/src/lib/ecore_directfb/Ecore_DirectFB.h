@@ -2,7 +2,6 @@
 #define _ECORE_DIRECTFB_H
 
 #include <directfb.h>
-#include <Ecore_Data.h>
 
 #ifdef EAPI
 #undef EAPI

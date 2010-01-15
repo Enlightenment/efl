@@ -9,7 +9,7 @@
 #ifdef HAVE_NETDB_H
 # include <netdb.h>
 #endif
-#include <Ecore_Data.h>
+#include <Eina.h>
 
 #ifdef EAPI
 # undef EAPI
