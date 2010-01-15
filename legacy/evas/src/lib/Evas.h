@@ -324,7 +324,7 @@ static void prefix##_smart_set(api_type *api) \
    if (!prefix##_parent_init) \
      { \
 	memset(&prefix##_parent_sc, 0, sizeof(parent_type)); \
-	((Evas_Smart_Class)prefix##_parent_sc).version = EVAS_SMART_CLASS_VERSION; \
+	((Evas_Smart_Class*)&prefix##_parent_sc)->version = EVAS_SMART_CLASS_VERSION; \
 	parent_func(&prefix##_parent_sc); \
 	prefix##_parent_init = 1; \
      } \
