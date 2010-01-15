@@ -661,7 +661,7 @@ assemble(FILE * fout, FILE * fin)
    constvalue         *constptr;
    cell                mainaddr;
    int                 nametable, tags, libraries, publics, natives, pubvars;
-   int                 cod, dat, hea, stp, cip, size, defsize;
+   int                 cod, defsize;
 
 #if !defined NDEBUG
    /* verify that the opcode list is sorted (skip entry 1; it is reserved
@@ -784,11 +784,11 @@ assemble(FILE * fout, FILE * fin)
    tags = hdr.tags = hdr.pubvars + numpubvars * sizeof(FUNCSTUB);
    nametable = hdr.nametable = hdr.tags + numtags * sizeof(FUNCSTUB);
    cod = hdr.cod = hdr.nametable + nametablesize + padding;
-   dat = hdr.dat = hdr.cod + code_idx;
-   hea = hdr.hea = hdr.dat + glb_declared * sizeof(cell);
-   stp = hdr.stp = hdr.hea + sc_stksize * sizeof(cell);
-   cip = hdr.cip = mainaddr;
-   size = hdr.size = hdr.hea;	/* preset, this is incorrect in case of compressed output */
+   hdr.dat = hdr.cod + code_idx;
+   hdr.hea = hdr.dat + glb_declared * sizeof(cell);
+   hdr.stp = hdr.hea + sc_stksize * sizeof(cell);
+   hdr.cip = mainaddr;
+   hdr.size = hdr.hea;	/* preset, this is incorrect in case of compressed output */
 #ifdef WORDS_BIGENDIAN
    align32(&hdr.size);
    align16(&hdr.magic);

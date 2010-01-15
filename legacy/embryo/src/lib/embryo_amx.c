@@ -680,13 +680,11 @@ embryo_program_variable_count_get(Embryo_Program *ep)
 EAPI Embryo_Cell
 embryo_program_variable_get(Embryo_Program *ep, int num)
 {
-   Embryo_Header *hdr;
    Embryo_Cell    paddr;
    char           pname[sNAMEMAX + 1];
 
    if (!ep) return EMBRYO_CELL_NONE;
    if (!ep->base) return EMBRYO_CELL_NONE;
-   hdr = (Embryo_Header *)ep->base;
    if (_embryo_var_get(ep, num, pname, &paddr) == EMBRYO_ERROR_NONE)
      return paddr;
    return EMBRYO_CELL_NONE;
@@ -964,12 +962,10 @@ EAPI Embryo_Cell
 embryo_data_heap_push(Embryo_Program *ep, int cells)
 {
    Embryo_Header *hdr;
-   unsigned char *data;
    Embryo_Cell    addr;
 
    if ((!ep) || (!ep->base)) return EMBRYO_CELL_NONE;
    hdr = (Embryo_Header *)ep->base;
-   data = ep->base + (int)hdr->dat;
    if (ep->stk - ep->hea - (cells * sizeof(Embryo_Cell)) < STKMARGIN)
      return EMBRYO_CELL_NONE;
    addr = ep->hea;
