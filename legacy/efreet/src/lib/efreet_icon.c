@@ -95,13 +95,6 @@ static void efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, un
 
 static Efreet_Icon_Theme *fake_null = NULL;
 
-
-#ifdef EFREET_MODULE_LOG_DOM 
-#undef EFREET_MODULE_LOG_DOM
-#endif
-#define EFREET_MODULE_LOG_DOM _efreet_icon_log_dom
-static int _efreet_icon_log_dom = -1; 
-
 static void
 _efreet_icon_cache_list_destroy(Eina_List *list)
 {

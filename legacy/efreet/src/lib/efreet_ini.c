@@ -40,7 +40,6 @@ static int _efreet_ini_log_dom = -1;
 
 static Eina_Hash *efreet_ini_parse(const char *file);
 static char *efreet_ini_unescape(const char *str);
-static int _efreet_ini_log_om = -1;
 static Eina_Bool
 efreet_ini_section_save(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 static Eina_Bool
@@ -57,8 +56,8 @@ efreet_ini_init(void)
     _efreet_ini_log_dom = eina_log_domain_register("Efreet_init", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_ini_log_dom < 0)
     {
-	ERROR("Efreet: Could not create a log domain for efreet_init");
-	return 0;
+	    ERROR("Efreet: Could not create a log domain for efreet_init");
+	    return 0;
     }
     return 1;
 }
