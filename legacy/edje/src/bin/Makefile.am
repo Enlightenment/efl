@@ -13,26 +13,11 @@ AM_CPPFLAGS = \
 @ECORE_FILE_CFLAGS@ \
 @EVIL_CFLAGS@
 
-if BUILD_EDJE_CC
-EDJE_CC = edje_cc
-else
-EDJE_CC =
-endif
+bin_SCRIPTS = @EDJE_RECC_PRG@
 
-if BUILD_EDJE_DECC
-EDJE_DECC = edje_decc
-else
-EDJE_DECC =
-endif
+bin_PROGRAMS = @EDJE_CC_PRG@ @EDJE_DECC_PRG@
 
-bin_SCRIPTS = \
-@EDJE_RECC_PRG@
-
-bin_PROGRAMS = $(EDJE_CC) $(EDJE_DECC)
-
-EXTRA_PROGRAMS = \
-edje_cc \
-edje_decc
+EXTRA_PROGRAMS = edje_cc edje_decc
 
 edje_cc_SOURCES = \
 edje_cc.c \

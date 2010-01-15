@@ -69,33 +69,9 @@ AC_ARG_ENABLE([amalgamation],
 )
 AM_CONDITIONAL(EDJE_AMALGAMATION, test "x${do_amalgamation}" = "xyes")
 
-AC_ARG_ENABLE([edje-cc],
-   [AC_HELP_STRING([--disable-edje-cc], [disable building of edje_cc])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       have_edje_cc="yes"
-    else
-       have_edje_cc="no"
-    fi
-   ]
-)
-AC_MSG_CHECKING(whether to build edje_cc)
-AC_MSG_RESULT([${have_edje_cc}])
-
-AM_CONDITIONAL(BUILD_EDJE_CC, test "x${have_edje_cc}" = "xyes")
-AM_CONDITIONAL(BUILD_EDJE_DECC, test "x${have_edje_cc}" = "xyes")
-
-EDJE_CC_PRG=""
-EDJE_DECC_PRG=""
-EDJE_RECC_PRG=""
-if test "x${have_edje_cc}" = "xyes"; then
-   EDJE_CC_PRG="edje_cc"
-   EDJE_DECC_PRG="edje_decc"
-   EDJE_RECC_PRG="edje_recc"
-fi
-AC_SUBST(EDJE_CC_PRG)
-AC_SUBST(EDJE_DECC_PRG)
-AC_SUBST(EDJE_RECC_PRG)
+EFL_ENABLE_BIN([edje-cc])
+EFL_ENABLE_BIN([edje-decc])
+EFL_ENABLE_BIN([edje-recc])
 
 # Optional EDJE_PROGRAM_CACHE (use much more ram, but increase speed in some cases)
 want_edje_program_cache="no"
@@ -358,7 +334,9 @@ echo "  EDJE_PROGRAM_CACHE...: $want_edje_program_cache"
 echo "  EDJE_CALC_CACHE......: $want_edje_calc_cache"
 echo "  Fixed point..........: $want_fixed_point"
 echo
-echo "  Build binaries.......: $have_edje_cc"
+echo "  Build edje_cc........: $have_edje_cc"
+echo "  Build edje_decc......: $have_edje_decc"
+echo "  Build edje_recc......: $have_edje_recc"
 echo
 echo "  Documentation........: ${build_doc}"
 echo
