@@ -112,7 +112,7 @@ eet_amalgamation.c: $(base_sources) Makefile
 
 	@echo "#ifdef HAVE_CIPHER" >> eet_amalgamation.c
 	@echo "# ifdef HAVE_GNUTLS" >> eet_amalgamation.c
-	@echo "#  include <gnutls/x509..h>" >> eet_amalgamation.c
+	@echo "#  include <gnutls/x509.h>" >> eet_amalgamation.c
 	@echo "#  include <gcrypt.h>" >> eet_amalgamation.c
 	@echo "# else" >> eet_amalgamation.c
 	@echo "#  include <openssl/evp.h>" >> eet_amalgamation.c

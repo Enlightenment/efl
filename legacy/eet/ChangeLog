@@ -301,3 +301,7 @@
 	* Rewrite Eet_Data. Now you can do list/hash/array of strings and all
 	the test suite is passing.
 	* Add eet_data_node_decode_cipher and eet_data_node_read_cipher.
+
+2010-01-15  Cedric BAIL
+
+	* Fix amalgamation.
