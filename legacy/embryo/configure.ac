@@ -45,6 +45,8 @@ embryoincludedir="${datadir}/include"
 
 ### Additional options to configure
 
+EFL_ENABLE_BIN([embryo-cc])
+
 
 ### Checks for programs
 AC_PROG_CC
@@ -185,6 +187,8 @@ echo "$PACKAGE $VERSION"
 echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
+echo
+echo "  Build embryo_cc......: $have_embryo_cc"
 echo
 echo "  Documentation........: ${build_doc}"
 echo
