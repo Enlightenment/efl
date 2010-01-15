@@ -63,8 +63,6 @@ START_TEST(eina_benchmark_simple)
 
    fail_if(global_test != 499500);
 
-   eina_array_free(ea);
-
    eina_benchmark_free(eb);
 }
 END_TEST
