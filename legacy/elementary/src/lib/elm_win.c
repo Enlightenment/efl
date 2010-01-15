@@ -819,8 +819,7 @@ elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard)
    _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
    if (win->xwin)
-     ecore_x_e_virtual_keyboard_set
-     (win->xwin, is_keyboard);
+     ecore_x_e_virtual_keyboard_set(win->xwin, is_keyboard);
 #endif
 }
 
@@ -833,6 +832,35 @@ elm_win_screen_position_get(Evas_Object *obj, int *x, int *y)
    if (!win) return;
    if (x) *x = win->screen.x;
    if (y) *y = win->screen.y;
+}
+
+EAPI void 
+elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant) 
+{
+   Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   _elm_win_xwindow_get(win);
+#ifdef HAVE_ELEMENTARY_X
+   if (win->xwin)
+     ecore_x_e_illume_conformant_set(win->xwin, conformant);
+#endif
+}
+
+EAPI Eina_Bool 
+elm_win_conformant_get(Evas_Object *obj) 
+{
+   Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+   _elm_win_xwindow_get(win);
+#ifdef HAVE_ELEMENTARY_X
+   if (win->xwin)
+     return ecore_x_e_illume_conformant_get(win->xwin);
+#endif
+   return EINA_FALSE;
 }
 
 typedef struct _Widget_Data Widget_Data;
