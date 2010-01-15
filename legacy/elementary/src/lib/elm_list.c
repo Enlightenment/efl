@@ -39,6 +39,7 @@ struct _Elm_List_Item
 };
 
 static void _del_hook(Evas_Object *obj);
+static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _on_focus_hook(void *data, Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -189,6 +190,23 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_get(wd->scr, &maxw, &maxh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
+}
+
+static void
+_theme_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_List_Item *it;
+   Eina_List *n;
+   
+   elm_smart_scroller_theme_set(wd->scr, "scroller", "base", elm_widget_style_get(obj));
+   edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
+   EINA_LIST_FOREACH(wd->items, n, it)
+     {
+        it->fixed = 0;
+     }
+   _fix_items(obj);
+   _sizing_eval(obj);
 }
 
 static void
@@ -670,6 +688,7 @@ elm_list_add(Evas_Object *parent)
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, 1);
 
    wd->scr = elm_scroller_add(parent);

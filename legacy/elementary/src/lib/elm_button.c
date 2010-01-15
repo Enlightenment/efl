@@ -163,7 +163,7 @@ elm_button_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
-   elm_widget_can_focus_set( obj, 1 );                 
+   elm_widget_can_focus_set(obj, 1 );                 
 
    wd->btn = edje_object_add(e);
    _elm_theme_set(wd->btn, "button", "base", "default");

@@ -140,6 +140,18 @@ elm_theme_flush(void)
    _elm_win_rescale();
 }
 
+EAPI void
+elm_theme_all_set(const char *theme)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_THEME");
+   ecore_x_window_prop_string_set(ecore_x_window_root_first_get(),
+                                  atom, theme);
+#endif
+}
+
 int
 _elm_theme_set(Evas_Object *o, const char *clas, const char *group, const char *style)
 {

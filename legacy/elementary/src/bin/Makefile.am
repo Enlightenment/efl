@@ -21,7 +21,7 @@ if ELEMENTARY_WINDOWS_BUILD
 AM_CPPFLAGS += -DELEMENTARY_BUILD
 endif
 
-bin_PROGRAMS = elementary_test
+bin_PROGRAMS = elementary_test elementary_config
 if BUILD_QUICKLAUNCH
 bin_PROGRAMS += elementary_quicklaunch elementary_run elementary_testql
 endif
@@ -74,6 +74,12 @@ test_conform.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@
 elementary_test_LDFLAGS =
+
+elementary_config_SOURCES = \
+config.c
+
+elementary_config_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@
+elementary_config_LDFLAGS =
 
 if BUILD_QUICKLAUNCH
 elementary_quicklaunch_SOURCES = quicklaunch.c

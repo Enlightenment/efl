@@ -1320,6 +1320,27 @@ elm_scale_set(double scale)
 }
 
 /**
+ * Set the global scaling factor for all applications on the display
+ * 
+ * This sets the globally configured scaling factor that is applied to all
+ * objects for all applications.
+ * @param scale The scaling factor to set
+ * @ingroup Scaling
+ */
+EAPI void
+elm_scale_all_set(double scale)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   int scale_i = (int)(scale * 1000.0);
+
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_SCALE");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &scale_i, 1);
+#endif   
+}
+
+/**
  * @defgroup Fingers Fingers
  *
  * Elementary is designed to be finger-friendly for touchscreens, and so in
@@ -1355,6 +1376,28 @@ elm_finger_size_set(Evas_Coord size)
    if (_elm_config->finger_size == size) return;
    _elm_config->finger_size = size;
    _elm_rescale();
+}
+
+/**
+ * Set the configured finger size for all applications on the display
+ *
+ * This sets the globally configured finger size in pixels for all applications
+ * on the display
+ *
+ * @param size The finger size
+ * @ingroup Fingers
+ */
+EAPI void
+elm_finger_size_all_set(Evas_Coord size)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   int size_i = (int)size;
+
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_FINGER_SIZE");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &size_i, 1);
+#endif   
 }
 
 /**
