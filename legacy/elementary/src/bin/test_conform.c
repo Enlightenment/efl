@@ -4,17 +4,12 @@
 void 
 test_conformant(void *data, Evas_Object *obj, void *event) 
 {
-   Evas_Object *win, *bg, *conform;
-   Evas_Object *box, *btn;
-   Ecore_X_Window xwin;
+   Evas_Object *win, *bg, *conform, *btn;
 
    win = elm_win_add(NULL, "conformant", ELM_WIN_BASIC);
    elm_win_title_set(win, "Conformant");
    elm_win_autodel_set(win, 1);
-#ifdef HAVE_ELEMENTARY_X
-   xwin = elm_win_xwindow_get(win);
-   ecore_x_e_illume_conformant_set(xwin, 1);
-#endif
+   elm_win_conformant_set(win, 1);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
