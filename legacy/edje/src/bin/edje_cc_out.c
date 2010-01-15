@@ -547,7 +547,6 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 			    int mode, qual;
 
 			    snprintf(buf, sizeof(buf), "images/%i", img->id);
-			    mode = 2;
 			    qual = 80;
 			    if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
 				(img->source_param == 0))
@@ -827,7 +826,6 @@ compile_script_file(Eet_File *ef, const char *source, const char *output,
 
    if (size > 0)
      {
-	int bt;
 	void *data = malloc(size);
 
 	if (data)
@@ -837,7 +835,7 @@ compile_script_file(Eet_File *ef, const char *source, const char *output,
 			       "\"%s\"\n", output);
 
 	     snprintf(buf, sizeof(buf), "scripts/%i", script_num);
-	     bt = eet_write(ef, buf, data, size, 1);
+	     eet_write(ef, buf, data, size, 1);
 	     free(data);
 	  }
      }

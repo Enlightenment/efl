@@ -805,7 +805,6 @@ int
 is_num(int n)
 {
    char *str;
-   long int ret;
    char *end;
 
    str = eina_list_nth(params, n);
@@ -817,7 +816,7 @@ is_num(int n)
      }
    if (str[0] == 0) return 0;
    end = str;
-   ret = strtol(str, &end, 0);
+   strtol(str, &end, 0);
    if ((end != str) && (end[0] == 0)) return 1;
    return 0;
 }
@@ -860,7 +859,7 @@ _parse_enum(char *str, va_list va)
 	     s = va_arg(va2, char *);
 	     while (s)
 	       {
-		  v = va_arg(va2, int);
+		  va_arg(va2, int);
 		  fprintf(stderr, " %s", s);
 		  s = va_arg(va2, char *);
 		  if (!s) break;

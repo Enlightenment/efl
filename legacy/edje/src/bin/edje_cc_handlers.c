@@ -1589,10 +1589,8 @@ st_collections_group_max(void)
 static void
 ob_collections_group_script(void)
 {
-   Edje_Part_Collection *pc;
    Code *cd;
 
-   pc = eina_list_data_get(eina_list_last(edje_collections));
    cd = eina_list_data_get(eina_list_last(codes));
 
    if (!is_verbatim()) track_verbatim(1);
@@ -1621,10 +1619,8 @@ ob_collections_group_script(void)
 static void
 ob_collections_group_lua_script(void)
 {
-   Edje_Part_Collection *pc;
    Code *cd;
 
-   pc = eina_list_data_get(eina_list_last(edje_collections));
    cd = eina_list_data_get(eina_list_last(codes));
 
    if (!is_verbatim()) track_verbatim(1);
