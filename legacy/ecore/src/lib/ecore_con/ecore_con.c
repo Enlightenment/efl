@@ -80,6 +80,11 @@ ecore_con_init(void)
    if (++_ecore_con_init_count != 1)
      return _ecore_con_init_count;
 
+#ifdef HAVE_EVIL
+   if (!evil_init())
+     return --_ecore_con_init_count;
+#endif
+
    if (!ecore_init())
      return --_ecore_con_init_count;
 
@@ -126,6 +131,9 @@ ecore_con_shutdown(void)
    eina_log_domain_unregister(_ecore_con_log_dom);
    _ecore_con_log_dom = -1;
    ecore_shutdown();
+#ifdef HAVE_EVIL
+   evil_shutdown();
+#endif
 
    return _ecore_con_init_count;
 }
@@ -216,10 +224,12 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
    error:
    if (svr->name) free(svr->name);
    if (svr->path) free(svr->path);
+#ifndef _WIN32
    if (svr->fd >= 0) close(svr->fd);
    if (svr->fd_handler) ecore_main_fd_handler_del(svr->fd_handler);
    if (svr->write_buf) free(svr->write_buf);
    if (svr->ip) free(svr->ip);
+#endif
    ecore_con_ssl_server_shutdown(svr);
    free(svr);
    return NULL;
@@ -1051,7 +1061,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    /* a new client */
    size_in = sizeof(struct sockaddr_in);
 
-   bzero(&incoming, size_in);
+   memset(&incoming, 0, size_in);
    new_fd = accept(svr->fd, (struct sockaddr *)&incoming, (socklen_t *)&size_in);
    if (new_fd >= 0)
      {
