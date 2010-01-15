@@ -5,8 +5,6 @@
 #ifndef ECORE_FILE_H
 #define ECORE_FILE_H
 
-#include <Ecore_Data.h>
-
 /*
  * TODO:
  * - More events, move/rename of directory file
