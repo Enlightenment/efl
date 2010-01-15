@@ -990,8 +990,8 @@ _ethumb_client_generated_cb(void *data, DBusMessage *msg)
 {
    DBusMessageIter iter;
    dbus_int32_t id = -1;
-   const char *thumb;
-   const char *thumb_key;
+   const char *thumb = NULL;
+   const char *thumb_key = NULL;
    Ethumb_Client *client = data;
    int t;
    dbus_bool_t success;
@@ -1054,8 +1054,8 @@ _ethumb_client_generated_cb(void *data, DBusMessage *msg)
      }
 
 end:
-   eina_stringshare_del(thumb);
-   eina_stringshare_del(thumb_key);
+   if (thumb) eina_stringshare_del(thumb);
+   if (thumb_key) eina_stringshare_del(thumb_key);
 }
 
 static void
@@ -1254,7 +1254,6 @@ ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Gener
 	if (pending->free_data)
 	  pending->free_data(pending->data);
 	free(pending);
-	found = 1;
 	break;
      }
 

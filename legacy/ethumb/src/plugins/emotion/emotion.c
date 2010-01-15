@@ -299,7 +299,6 @@ _generate_thumb(Ethumb *e)
    Evas_Object *o;
    int r;
    const char *file;
-   float start;
    Ethumb_Thumb_Format f;
    struct _emotion_plugin *_plugin = calloc(sizeof(struct _emotion_plugin), 1);
 
@@ -318,7 +317,7 @@ _generate_thumb(Ethumb *e)
    _plugin->video = o;
 
    ethumb_file_get(e, &file, NULL);
-   start = ethumb_video_start_get(e);
+   ethumb_video_start_get(e);
    f = ethumb_thumb_format_get(e);
 
    emotion_object_file_set(o, file);

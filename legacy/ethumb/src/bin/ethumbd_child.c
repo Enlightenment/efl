@@ -666,7 +666,6 @@ _ec_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 
    DBG("received op: %d\n", op_id);
 
-   r = 1;
    switch (op_id)
      {
       case ETHUMBD_OP_NEW:
