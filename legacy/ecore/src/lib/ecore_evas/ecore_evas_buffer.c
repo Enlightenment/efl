@@ -220,6 +220,51 @@ _ecore_evas_buffer_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *o
 }
 
 static void
+_ecore_evas_buffer_cb_multi_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Ecore_Evas *ee;
+   Evas_Event_Multi_Down *ev;
+   Evas_Coord x, y;
+
+   ee = data;
+   ev = event_info;
+   x = ev->canvas.x;
+   y = ev->canvas.y;
+   _ecore_evas_buffer_coord_translate(ee, &x, &y);
+   evas_event_feed_multi_down(ee->evas, ev->device, x, y, ev->radius, ev->radius_x, ev->radius_y, ev->flags, ev->timestamp, NULL);
+}
+
+static void
+_ecore_evas_buffer_cb_multi_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Ecore_Evas *ee;
+   Evas_Event_Multi_Up *ev;
+   Evas_Coord x, y;
+
+   ee = data;
+   ev = event_info;
+   x = ev->canvas.x;
+   y = ev->canvas.y;
+   _ecore_evas_buffer_coord_translate(ee, &x, &y);
+   evas_event_feed_multi_up(ee->evas, ev->device, x, y, ev->radius, ev->radius_x, ev->radius_y, ev->flags, ev->timestamp, NULL);
+}
+
+static void
+_ecore_evas_buffer_cb_multi_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Ecore_Evas *ee;
+   Evas_Event_Multi_Move *ev;
+   Evas_Coord x, y;
+
+   ee = data;
+   ev = event_info;
+   x = ev->cur.canvas.x;
+   y = ev->cur.canvas.y;
+   _ecore_evas_buffer_coord_translate(ee, &x, &y);
+   evas_event_feed_multi_move(ee->evas, ev->device, x, y, ev->radius, ev->radius_x, ev->radius_y, ev->timestamp, NULL);
+}
+
+static void
 _ecore_evas_buffer_cb_free(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee;
@@ -586,6 +631,15 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    evas_object_event_callback_add(ee->engine.buffer.image,
 				  EVAS_CALLBACK_MOUSE_WHEEL,
 				  _ecore_evas_buffer_cb_mouse_wheel, ee);
+   evas_object_event_callback_add(ee->engine.buffer.image,
+				  EVAS_CALLBACK_MULTI_DOWN,
+				  _ecore_evas_buffer_cb_multi_down, ee);
+   evas_object_event_callback_add(ee->engine.buffer.image,
+				  EVAS_CALLBACK_MULTI_UP,
+				  _ecore_evas_buffer_cb_multi_up, ee);
+   evas_object_event_callback_add(ee->engine.buffer.image,
+				  EVAS_CALLBACK_MULTI_MOVE,
+				  _ecore_evas_buffer_cb_multi_move, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
 				  EVAS_CALLBACK_FREE,
 				  _ecore_evas_buffer_cb_free, ee);

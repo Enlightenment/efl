@@ -657,8 +657,9 @@ if ! test "x$have_ecore_x_xcb" = "xyes" ; then
     ECORE_CHECK_X_EXTENSION([Xrender], [Xrender.h], [Xrender], [XRenderFindVisualFormat])
     ECORE_CHECK_X_EXTENSION([Xtest], [XTest.h], [Xtst], [XTestFakeKeyEvent])
     ECORE_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput])
+    ECORE_CHECK_X_EXTENSION([Xi2], [XInput2.h], [Xi], [XIQueryDevice])
 
-    ecore_x_libs_private="${Xcursor_libs} ${XKB_LIBS} ${XCOMPOSITE_LIBS} ${XDAMAGE_LIBS} ${XDPMS_LIBS} ${XFIXES_LIBS} ${XINERAMA_LIBS} ${XPRINT_LIBS} ${XRANDR_LIBS} ${XRENDER_LIBS} ${XTEST_LIBS} ${XSS_LIBS} "
+    ecore_x_libs_private="${Xcursor_libs} ${XKB_LIBS} ${XCOMPOSITE_LIBS} ${XDAMAGE_LIBS} ${XDPMS_LIBS} ${XFIXES_LIBS} ${XINERAMA_LIBS} ${XPRINT_LIBS} ${XRANDR_LIBS} ${XRENDER_LIBS} ${XTEST_LIBS} ${XSS_LIBS} ${XI2_LIBS}"
 
     AC_DEFINE(HAVE_ECORE_X_XLIB, 1, [Defined to 1 if Xlib is enabled.])
     have_x="yes"
@@ -1280,6 +1281,7 @@ if test "x$have_ecore_x" = "xyes" ; then
     echo "    Xdpms......................: $use_xdpms"
     echo "    Xtest......................: $use_xtest"
     echo "    XIM........................: $want_xim"
+    echo "    Xi2........................: $use_xi2"
   fi
 else
   echo "  Ecore_X......................: $have_ecore_x"

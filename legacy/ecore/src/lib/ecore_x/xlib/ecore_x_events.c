@@ -199,7 +199,8 @@ _ecore_mouse_move(unsigned int timestamp, unsigned int xmodifiers,
 		  unsigned int event_window,
 		  unsigned int window,
 		  unsigned int root_win,
-		  int same_screen)
+		  int same_screen,
+                  int dev, int radx, int rady)
 {
    Ecore_Event_Mouse_Move *e;
    Ecore_Event *event;
@@ -218,6 +219,11 @@ _ecore_mouse_move(unsigned int timestamp, unsigned int xmodifiers,
    e->y = y;
    e->root.x = x_root;
    e->root.y = y_root;
+
+   e->device = dev;
+   e->radius = (radx + rady) / 2;
+   e->radius_x = radx;
+   e->radius_y = rady;
 
    event = ecore_event_add(ECORE_EVENT_MOUSE_MOVE, e, _ecore_x_event_free_mouse_move, NULL);
 
@@ -353,7 +359,8 @@ _ecore_mouse_button(int event,
 		    unsigned int event_window,
 		    unsigned int window,
 		    unsigned int root_win,
-		    int same_screen)
+		    int same_screen,
+                    int dev, int radx, int rady)
 {
    Ecore_Event_Mouse_Button *e;
 
@@ -402,6 +409,11 @@ _ecore_mouse_button(int event,
        && !e->double_click
        && !e->triple_click)
      _ecore_x_mouse_up_count = 0;
+   
+   e->device = dev;
+   e->radius = (radx + rady) / 2;
+   e->radius_x = radx;
+   e->radius_y = rady;
 
    _ecore_x_event_last_time = e->timestamp;
    _ecore_x_event_last_win = e->window;
@@ -413,6 +425,10 @@ _ecore_mouse_button(int event,
    return e;
 }
 
+#ifdef ECORE_XI2
+extern int _ecore_x_xi2_opcode;
+#endif
+
 void
 _ecore_x_event_handle_any_event(XEvent *xevent)
 {
@@ -420,6 +436,72 @@ _ecore_x_event_handle_any_event(XEvent *xevent)
    memcpy(ev, xevent, sizeof(XEvent));
 
    ecore_event_add(ECORE_X_EVENT_ANY, ev, NULL, NULL);
+   
+#ifdef ECORE_XI2
+   if (xevent->xcookie.type == GenericEvent &&
+       xevent->xcookie.extension == opcode)
+     {
+        if (XGetEventData(_ecore_x_disp &(xevent->xcookie)))
+          {
+             XIDeviceEvent* evd = (XIDeviceEvent *)(xevent->xcookie.data);
+             int devid = evd->deviceid;
+             
+             //printf("deviceID = %d\n", devid);
+             switch (xevent->xcookie.evtype)
+               {
+               case XI_Motion:
+                  _ecore_mouse_move
+                    (xevent->xcookie.time, // ???
+                     0, // state
+                     evd->event_x, evd->event_y,
+                     evd->root_x, evd->root_y,
+                     xevent->xcookie.window, // ???
+                     (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->xbutton.window), // ???
+                     xevent->xcookie.root, // ???
+                     xevent->xcookie.same_screen, // ??? 
+                     devid, 1, 1);
+
+                  //printf("motion\n");
+                  printf("=");
+                  break;
+               case XI_ButtonPress:
+                  _ecore_mouse_button
+                    (ECORE_EVENT_MOUSE_BUTTON_DOWN,
+                    (xevent->xcookie.time, // ???
+                     0, // state
+                     0, // button
+                     evd->event_x, evd->event_y,
+                     evd->root_x, evd->root_y,
+                     xevent->xcookie.window, // ???
+                     (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->xbutton.window), // ???
+                     xevent->xcookie.root, // ???
+                     xevent->xcookie.same_screen, // ??? 
+                     devid, 1, 1);
+                  //printf("abs X:%f Y:%f - ", evd->root_x, evd->root_y);
+                  //printf("win X:%f Y:%f\n", evd->event_x, evd->event_y);
+                  printf("[[");
+                  break;
+               case XI_ButtonRelease:
+                  _ecore_mouse_button
+                    (ECORE_EVENT_MOUSE_BUTTON_UP,
+                    (xevent->xcookie.time, // ???
+                     0, // state
+                     0, // button
+                     evd->event_x, evd->event_y,
+                     evd->root_x, evd->root_y,
+                     xevent->xcookie.window, // ???
+                     (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->xbutton.window), // ???
+                     xevent->xcookie.root, // ???
+                     xevent->xcookie.same_screen, // ??? 
+                     devid, 1, 1);
+                  //printf("unclick\n");
+                  printf("]]\n");
+                  break;
+               }
+          }
+     }
+   XFreeEventData(_ecore_x_disp &(xevent->xcookie));
+#endif   
 }
 
 void
@@ -505,7 +587,7 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 			     xevent->xbutton.window,
 			     (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->xbutton.window),
 			     xevent->xbutton.root,
-			     xevent->xbutton.same_screen);
+			     xevent->xbutton.same_screen, 0, 1, 1);
 	}
 	{
 	   Ecore_Event_Mouse_Button *e;
@@ -531,7 +613,8 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 				   xevent->xbutton.x, xevent->xbutton.y,
 				   xevent->xbutton.x_root, xevent->xbutton.y_root,
 				   event_window, window,
-				   xevent->xbutton.root, xevent->xbutton.same_screen);
+				   xevent->xbutton.root, xevent->xbutton.same_screen,
+                                   0, 1, 1);
 	   if (e)
 	     for (i = 0; i < _ecore_window_grabs_num; i++)
 	       {
@@ -586,7 +669,7 @@ _ecore_x_event_handle_button_release(XEvent *xevent)
 			  xevent->xbutton.window,
 			  (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->xbutton.window),
 			  xevent->xbutton.root,
-			  xevent->xbutton.same_screen);
+			  xevent->xbutton.same_screen, 0, 1, 1);
 
 	_ecore_mouse_button(ECORE_EVENT_MOUSE_BUTTON_UP,
 			    xevent->xbutton.time, xevent->xbutton.state,
@@ -596,7 +679,8 @@ _ecore_x_event_handle_button_release(XEvent *xevent)
 			    xevent->xbutton.window,
 			    (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->xbutton.window),
 			    xevent->xbutton.root,
-			    xevent->xbutton.same_screen);
+			    xevent->xbutton.same_screen,
+                            0, 1, 1);
      }
 }
 
@@ -617,7 +701,7 @@ _ecore_x_event_handle_motion_notify(XEvent *xevent)
 		     xevent->xmotion.window,
 		     (xevent->xmotion.subwindow ? xevent->xmotion.subwindow : xevent->xmotion.window),
 		     xevent->xmotion.root,
-		     xevent->xmotion.same_screen);
+		     xevent->xmotion.same_screen, 0, 1, 1);
 
    _ecore_x_last_event_mouse_move = 1;
 
@@ -636,7 +720,7 @@ _ecore_x_event_handle_enter_notify(XEvent *xevent)
 			  xevent->xcrossing.window,
 			  (xevent->xcrossing.subwindow ? xevent->xcrossing.subwindow : xevent->xcrossing.window),
 			  xevent->xcrossing.root,
-			  xevent->xcrossing.same_screen);
+			  xevent->xcrossing.same_screen, 0, 1, 1);
      }
      {
 	Ecore_X_Event_Mouse_In *e;
@@ -689,7 +773,7 @@ _ecore_x_event_handle_leave_notify(XEvent *xevent)
 			  xevent->xcrossing.window,
 			  (xevent->xcrossing.subwindow ? xevent->xcrossing.subwindow : xevent->xcrossing.window),
 			  xevent->xcrossing.root,
-			  xevent->xcrossing.same_screen);
+			  xevent->xcrossing.same_screen, 0, 1, 1);
      }
      {
 	Ecore_X_Event_Mouse_Out *e;

@@ -73,6 +73,8 @@ typedef Ecore_X_ID     Ecore_X_Randr_Crtc;
 typedef Ecore_X_ID     Ecore_X_Randr_Mode;
 typedef unsigned short Ecore_X_Randr_Size_ID;
 
+typedef Ecore_X_ID   Ecore_X_Device;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -1820,6 +1822,8 @@ EAPI void              ecore_x_image_free(Ecore_X_Image *im);
 EAPI void              ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw, int x, int y, int sx, int sy, int w, int h);
 EAPI void              ecore_x_image_put(Ecore_X_Image *im, Ecore_X_Drawable draw, int x, int y, int sx, int sy, int w, int h);
 EAPI void             *ecore_x_image_data_get(Ecore_X_Image *im, int *bpl, int *rows, int *bpp);
+
+EAPI Eina_Bool         ecore_x_input_multi_select(Ecore_X_Window win);
        
 #ifdef __cplusplus
 }

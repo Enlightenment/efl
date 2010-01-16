@@ -96,6 +96,11 @@ struct _Ecore_Event_Mouse_Button
       int	 x;
       int	 y;
    } root;
+   
+   int           device;
+   int           radius;
+   int           radius_x;
+   int           radius_y;
 };
 
 typedef struct _Ecore_Event_Mouse_Wheel Ecore_Event_Mouse_Wheel;
@@ -140,6 +145,11 @@ struct _Ecore_Event_Mouse_Move
       int	 x;
       int	 y;
    } root;
+
+   int           device;
+   int           radius;
+   int           radius_x;
+   int           radius_y;
 };
 
 typedef struct _Ecore_Event_Mouse_IO Ecore_Event_Mouse_IO;

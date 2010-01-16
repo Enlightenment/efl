@@ -50,6 +50,9 @@
 #ifdef ECORE_XKB
 #include <X11/XKBlib.h>
 #endif
+#ifdef ECORE_XI2
+#include <X11/extensions/XInput2.h>
+#endif
 
 #include "Ecore.h"
 #include "ecore_private.h"
