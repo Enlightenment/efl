@@ -45,6 +45,7 @@ void *alloca (size_t);
 #include <sys/types.h>
 #include <dirent.h>
 #include <string.h>
+#include <libgen.h>
 
 #include <dlfcn.h>
 
@@ -564,10 +565,16 @@ eina_module_find(const Eina_Array *array, const char *module)
 
    EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
    {
-      const char *file_m;
+      char *file_m;
+      char *tmp;
       ssize_t len;
 
-      file_m = basename(eina_module_file_get(m));
+      /* basename() can modify its argument, so we first get a copie */
+      /* do not use strdupa, as opensolaris does not have it */
+      len = strlen(eina_module_file_get(m));
+      tmp = alloca(len + 1);
+      memcpy(tmp, eina_module_file_get(m), len + 1);
+      file_m = basename(tmp);
       len = strlen(file_m);
       len -= sizeof(MODULE_EXTENSION) - 1;
       if (len <= 0) continue;
