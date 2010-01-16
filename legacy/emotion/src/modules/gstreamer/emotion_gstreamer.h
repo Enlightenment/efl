@@ -7,7 +7,6 @@
 
 #include <Evas.h>
 #include <Ecore.h>
-#include <Ecore_Data.h>
 
 #define HTTP_STREAM 0
 #define RTSP_STREAM 1
