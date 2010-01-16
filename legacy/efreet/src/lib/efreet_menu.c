@@ -12,6 +12,7 @@
 
 #include <Ecore_Str.h>
 #include <Ecore_File.h>
+#include <Ecore_Data.h>
 
 #include "Efreet.h"
 #include "efreet_private.h"
