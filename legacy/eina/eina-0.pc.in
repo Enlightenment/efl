@@ -7,6 +7,6 @@ Name: Eina
 Description: A Library that implements fast data types and miscellaneous tools
 @pkgconfig_requires_private@: @requirement_eina@
 Version: @VERSION@
-Libs: -L${exec_prefix}/lib -leina
+Libs: -L${libdir} -leina
 Libs.private: -ldl
 Cflags: -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-@VMAJ@/eina
