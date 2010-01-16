@@ -10,6 +10,8 @@
  * - More events, move/rename of directory file
  */
 
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
