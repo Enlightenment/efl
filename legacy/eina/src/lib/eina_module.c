@@ -87,12 +87,6 @@ static int EINA_MODULE_LOG_DOM = -1;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(EINA_MODULE_LOG_DOM, __VA_ARGS__)
 
-#if defined(_WIN32) || defined(__CYGWIN__)
-# define MODULE_EXTENSION ".dll"
-#else
-# define MODULE_EXTENSION ".so"
-#endif /* !defined(_WIN32) && !defined(__CYGWIN__) */
-
 #define EINA_MODULE_SYMBOL_INIT "__eina_module_init"
 #define EINA_MODULE_SYMBOL_SHUTDOWN "__eina_module_shutdown"
 
@@ -138,10 +132,10 @@ static void _dir_list_cb(const char *name, const char *path, void *data)
    size_t length;
 
    length = strlen(name);
-   if (length < sizeof(MODULE_EXTENSION)) /* x.so */
+   if (length < sizeof(SHARED_LIB_SUFFIX)) /* x.so */
      return;
-   if (!strcmp(name + length - sizeof(MODULE_EXTENSION) + 1,
-	       MODULE_EXTENSION))
+   if (!strcmp(name + length - sizeof(SHARED_LIB_SUFFIX) + 1,
+	       SHARED_LIB_SUFFIX))
      {
 	char *file;
 	Eina_Module *m;
@@ -576,7 +570,7 @@ eina_module_find(const Eina_Array *array, const char *module)
       memcpy(tmp, eina_module_file_get(m), len + 1);
       file_m = basename(tmp);
       len = strlen(file_m);
-      len -= sizeof(MODULE_EXTENSION) - 1;
+      len -= sizeof(SHARED_LIB_SUFFIX) - 1;
       if (len <= 0) continue;
       if (!strncmp(module, file_m, len)) return m;
    }

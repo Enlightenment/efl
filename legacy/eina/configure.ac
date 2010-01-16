@@ -45,6 +45,8 @@ AC_SUBST(release_info)
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "${MODULE_ARCH}", "Module architecture")
 
+AC_DEFINE_UNQUOTED(SHARED_LIB_SUFFIX, "$shrext_cmds", [Suffix for shared objects])
+
 EFL_CHECK_CPU_MMX([have_mmx="yes"], [have_mmx="no"])
 EFL_CHECK_CPU_SSE([have_sse="yes"], [have_sse="no"])
 EFL_CHECK_CPU_SSE2([have_sse2="yes"], [have_sse2="no"])
