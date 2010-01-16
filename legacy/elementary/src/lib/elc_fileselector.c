@@ -298,8 +298,8 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
      }
    closedir(dir);
 
-   files = eina_list_sort(files, EINA_SORT_MIN, EINA_COMPARE_CB(strcoll));
-   dirs = eina_list_sort(dirs, EINA_SORT_MIN, EINA_COMPARE_CB(strcoll));
+   files = eina_list_sort(files, eina_list_count(files), EINA_COMPARE_CB(strcoll));
+   dirs = eina_list_sort(dirs, eina_list_count(dirs), EINA_COMPARE_CB(strcoll));
 
    EINA_LIST_FOREACH(dirs, l, real)
      {

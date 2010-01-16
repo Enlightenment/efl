@@ -117,7 +117,7 @@ _fill_list(Evas_Object *obj)
      }
    closedir(d);
 
-   dirs = eina_list_sort(dirs, EINA_SORT_MIN, EINA_COMPARE_CB(strcoll));
+   dirs = eina_list_sort(dirs, eina_list_count(dirs), EINA_COMPARE_CB(strcoll));
 
    EINA_LIST_FOREACH(dirs, l, real) 
      {
