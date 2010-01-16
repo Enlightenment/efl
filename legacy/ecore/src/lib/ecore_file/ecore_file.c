@@ -697,7 +697,7 @@ ecore_file_ls(const char *dir)
      }
    closedir(dirp);
 
-   list = eina_list_sort(list, EINA_SORT_MIN, EINA_COMPARE_CB(strcoll));
+   list = eina_list_sort(list, eina_list_count(list), EINA_COMPARE_CB(strcoll));
 
    return list;
 }
