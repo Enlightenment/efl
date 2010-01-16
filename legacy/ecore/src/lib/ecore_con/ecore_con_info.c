@@ -241,8 +241,8 @@ ecore_con_info_get(Ecore_Con_Server *svr,
 	    container->size = tosend_len;
 
 	    memcpy(&container->info, result, sizeof(struct addrinfo));
-	    memcpy(tosend + sizeof(Ecore_Con_Info), result->ai_addr, result->ai_addrlen);
-	    memcpy(tosend + sizeof(Ecore_Con_Info) + result->ai_addrlen, result->ai_canonname, canonname_len);
+	    memcpy((char *)tosend + sizeof(Ecore_Con_Info), result->ai_addr, result->ai_addrlen);
+	    memcpy((char *)tosend + sizeof(Ecore_Con_Info) + result->ai_addrlen, result->ai_canonname, canonname_len);
 
 	    if (!getnameinfo(result->ai_addr, result->ai_addrlen,
 			     hbuf, sizeof(hbuf), sbuf, sizeof(sbuf),
@@ -298,15 +298,15 @@ _ecore_con_info_readdata(CB_Data *cbdata)
 
 	memcpy(torecv, &container, sizeof(Ecore_Con_Info));
 
-	size = read(ecore_main_fd_handler_fd_get(cbdata->fdh), torecv + sizeof(Ecore_Con_Info),
+	size = read(ecore_main_fd_handler_fd_get(cbdata->fdh), (char *)torecv + sizeof(Ecore_Con_Info),
 		    torecv_len - sizeof(Ecore_Con_Info));
 	if (size == torecv_len - sizeof(Ecore_Con_Info))
 	  {
 	    recv = (Ecore_Con_Info *)torecv;
 
-	    recv->info.ai_addr = torecv + sizeof(Ecore_Con_Info);
+	    recv->info.ai_addr = (char *)torecv + sizeof(Ecore_Con_Info);
 	    if (torecv_len != (sizeof(Ecore_Con_Info) + recv->info.ai_addrlen))
-	      recv->info.ai_canonname = torecv + sizeof(Ecore_Con_Info) + recv->info.ai_addrlen;
+	      recv->info.ai_canonname = (char *)torecv + sizeof(Ecore_Con_Info) + recv->info.ai_addrlen;
 	    else
 	      recv->info.ai_canonname = NULL;
 	    recv->info.ai_next = NULL;
