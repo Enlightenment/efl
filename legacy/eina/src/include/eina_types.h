@@ -250,9 +250,6 @@ typedef unsigned char Eina_Bool;
 
 EAPI extern const unsigned int eina_prime_table[];
 
-#define EINA_SORT_MIN 0
-#define EINA_SORT_MAX 1
-
 /**
  * @typedef Eina_Compare_Cb
  * Function used in functions using sorting. It compares @p data1 and
