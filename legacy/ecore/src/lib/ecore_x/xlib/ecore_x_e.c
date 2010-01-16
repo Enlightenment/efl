@@ -424,6 +424,31 @@ ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_Window win)
 }
 
 EAPI void 
+ecore_x_e_illume_quickpanel_zone_set(Ecore_X_Window win, Ecore_X_Window *zone) 
+{
+   ecore_x_window_prop_window_set(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE, 
+                                  zone, 1);
+}
+
+EAPI Ecore_X_Window 
+ecore_x_e_illume_quickpanel_zone_get(Ecore_X_Window win) 
+{
+   Ecore_X_Window zone;
+
+   if (!ecore_x_window_prop_window_get(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE, 
+                                       &zone, 1)) return 0;
+   return zone;
+}
+
+EAPI void 
+ecore_x_e_illume_quickpanel_zone_request_send(Ecore_X_Window win) 
+{
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE_REQUEST,
+				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+				 1, 0, 0, 0, 0);
+}
+
+EAPI void 
 ecore_x_e_illume_top_shelf_geometry_set(Ecore_X_Window win, int x, int y, int w, int h) 
 {
    unsigned int geom[4];
