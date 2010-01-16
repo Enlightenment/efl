@@ -12,7 +12,6 @@
 
 #include <Ecore_Str.h>
 #include <Ecore_File.h>
-#include <Ecore_Data.h>
 
 #include "Efreet.h"
 #include "efreet_private.h"
@@ -381,7 +380,7 @@ static void efreet_menu_resolve_moves(Efreet_Menu_Internal *internal);
 static void efreet_menu_concatenate(Efreet_Menu_Internal *dest, Efreet_Menu_Internal *src);
 
 static int efreet_menu_cb_menu_compare(Efreet_Menu_Internal *a, Efreet_Menu_Internal *b);
-static int efreet_menu_cb_md_compare(Efreet_Menu_Desktop *a, Efreet_Menu_Desktop *b);
+static int efreet_menu_cb_md_compare(const Efreet_Menu_Desktop *a, const Efreet_Menu_Desktop *b);
 
 static int efreet_menu_save_menu(Efreet_Menu *menu, FILE *f, int indent);
 static int efreet_menu_save_indent(FILE *f, int indent);
@@ -2753,32 +2752,19 @@ efreet_menu_process_filters(Efreet_Menu_Internal *internal, unsigned int only_un
 
     /* sort the menu applications. we do this in process filters so it will only
      * be done once per menu.*/
-    if (internal->applications)
+    if (eina_list_count(internal->applications))
     {
-        int count;
+        Efreet_Menu_Desktop *md;
+        Eina_List           *l, *l2;
 
-        count = eina_list_count(internal->applications);
-        if (count)
+        EINA_LIST_FOREACH_SAFE(internal->applications, l, l2, md)
         {
-            Ecore_Sheap *sheap;
-            Efreet_Menu_Desktop *md;
-
-            sheap = ecore_sheap_new(
-                        ECORE_COMPARE_CB(efreet_menu_cb_md_compare), count);
-            while ((md = eina_list_data_get(internal->applications)))
-            {
-                internal->applications = eina_list_remove_list(internal->applications,
-                                                               internal->applications);
-                ecore_sheap_insert(sheap, md);
-            }
-            while ((md = ecore_sheap_extract(sheap)))
-            {
-                if (md->desktop->no_display) continue;
-                internal->applications = eina_list_append(internal->applications, md);
-            }
-
-            ecore_sheap_destroy(sheap);
+            if (md->desktop->no_display)
+                internal->applications = eina_list_remove_list(internal->applications, l);
         }
+        internal->applications = eina_list_sort(internal->applications,
+                                                eina_list_count(internal->applications),
+                                                EINA_COMPARE_CB(efreet_menu_cb_md_compare));
     }
 }
 
@@ -3594,7 +3580,7 @@ efreet_menu_directory_get(Efreet_Menu_Internal *internal, const char *path)
  * @brief Compares the desktop files.
  */
 static int
-efreet_menu_cb_md_compare(Efreet_Menu_Desktop *a, Efreet_Menu_Desktop *b)
+efreet_menu_cb_md_compare(const Efreet_Menu_Desktop *a, const Efreet_Menu_Desktop *b)
 {
 #ifdef STRICT_SPEC
     return strcmp(ecore_file_file_get(a->desktop->orig_path), ecore_file_file_get(b->desktop->orig_path));
