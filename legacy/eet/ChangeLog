@@ -305,3 +305,7 @@
 2010-01-15  Cedric BAIL
 
 	* Fix amalgamation.
+
+2010-01-16  Vincent Torri
+
+	* eet_cipher.c: Fix arithmetic pointer on void *

@@ -553,7 +553,7 @@ eet_identity_check(const void *data_base, unsigned int data_length,
    if (sign_len + cert_len + sizeof(int) * 3 > signature_length) return NULL;
 
    /* Update the signature and certificate pointer */
-   sign = signature_base + sizeof(int) * 3;
+   sign = (unsigned char *)signature_base + sizeof(int) * 3;
    cert_der = sign + sign_len;
 
 # ifdef HAVE_GNUTLS
