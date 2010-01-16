@@ -58,7 +58,6 @@ _elm_module_shutdown(void)
 void
 _elm_module_parse(const char *s)
 {
-   Eina_List *names = NULL;
    const char *p, *pe;
    
    p = s;
@@ -162,7 +161,7 @@ _elm_module_add(const char *name, const char *as)
                        m->name = eina_stringshare_add(name);
                        snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s", _elm_lib_dir, name, MODULE_ARCH);
                        m->bin_dir = eina_stringshare_add(buf);
-                       snprintf(buf, sizeof(buf), "%s/elementary/modules/%s", _elm_lib_dir, name, MODULE_ARCH);
+                       snprintf(buf, sizeof(buf), "%s/elementary/modules/%s", _elm_lib_dir, name);
                        m->data_dir = eina_stringshare_add(buf);
                     }
                   else
