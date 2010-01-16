@@ -361,8 +361,6 @@ ecore_file_recursive_rm(const char *dir)
 	if (ret == -1) return 0;
 	return ecore_file_unlink(dir);
      }
-
-   return 1;
 }
 
 static inline int
