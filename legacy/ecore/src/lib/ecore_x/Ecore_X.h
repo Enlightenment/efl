@@ -5,9 +5,12 @@
 #ifndef _ECORE_X_H
 #define _ECORE_X_H
 
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
+
 #ifdef _MSC_VER
 # ifdef BUILDING_DLL
 #  define EAPI __declspec(dllexport)
