@@ -905,19 +905,21 @@ _item_block_position(Item_Block *itb, int in)
 {
    const Eina_List *l;
    Elm_Genlist_Item *it;
-   Evas_Coord y = 0, ox, oy, ow, oh;
+   Evas_Coord y = 0, ox, oy, ow, oh, cvx, cvy, cvw, cvh;
    int vis;
 
    evas_object_geometry_get(itb->wd->pan_smart, &ox, &oy, &ow, &oh);
+   evas_output_viewport_get(evas_object_evas_get(itb->wd->obj), &cvx, &cvy, &cvw, &cvh);
    EINA_LIST_FOREACH(itb->items, l, it)
      {
 	if (it->delete_me) continue;
 	it->x = 0;
 	it->y = y;
 	it->w = itb->w;
-	vis = (ELM_RECTS_INTERSECT(itb->x + it->x - itb->wd->pan_x,
-				   itb->y + it->y - itb->wd->pan_y,
-				   it->w, it->h, 0, 0, ow, oh));
+	vis = (ELM_RECTS_INTERSECT(itb->x - it->wd->pan_x + ox,
+                                   itb->y - it->wd->pan_y + oy,
+                                   itb->w, itb->h,
+                                   cvx, cvy, cvw, cvh));
 	if ((itb->realized) && (!it->realized))
 	  {
 	     if (vis)
@@ -1192,17 +1194,18 @@ _pan_calculate(Evas_Object *obj)
 {
    Pan *sd = evas_object_smart_data_get(obj);
    Item_Block *itb;
-   Evas_Coord ow, oh;
+   Evas_Coord ox, oy, ow, oh, cvx, cvy, cvw, cvh;
    int in = 0;
 
-   evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
+   evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
+   evas_output_viewport_get(evas_object_evas_get(obj), &cvx, &cvy, &cvw, &cvh);
    EINA_INLIST_FOREACH(sd->wd->blocks, itb)
      {
 	itb->w = sd->wd->minw;
-	if (ELM_RECTS_INTERSECT(itb->x - sd->wd->pan_x,
-				itb->y - sd->wd->pan_y,
+	if (ELM_RECTS_INTERSECT(itb->x - sd->wd->pan_x + ox,
+				itb->y - sd->wd->pan_y + oy,
 				itb->w, itb->h,
-				0, 0, ow, oh))
+				cvx, cvy, cvw, cvh))
 	  {
 	     if ((!itb->realized) || (itb->changed))
                _item_block_realize(itb, in, 0);
