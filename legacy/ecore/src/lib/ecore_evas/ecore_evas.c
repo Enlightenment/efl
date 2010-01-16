@@ -176,7 +176,6 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 	return 0;
 	break;
      };
-   return 0;
 }
 
 /**
