@@ -11,6 +11,11 @@
 # define USER_TIMER_MINIMUM 0x0a
 #endif
 
+#ifdef __SUNPRO_C
+# include <ieeefp.h>
+# include <string.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
