@@ -97,10 +97,18 @@ struct _Ecore_Event_Mouse_Button
       int	 y;
    } root;
    
-   int           device;
-   int           radius;
-   int           radius_x;
-   int           radius_y;
+   struct
+     {
+        int        device; /* 0 if normal mouse, 1+ for other mouse-devices (eg multi-touch - other fingers) */
+        double     radius, radius_x, radius_y; /* radius of press point - radius_x and y if its an ellipse (radius is the average of the 2) */
+        double     pressure; /* pressure - 1.0 == normal, > 1.0 == more, 0.0 == none */
+        double     angle; /* angle relative to perpendicular (0.0 == perpendicular), in degrees */
+        double     x, y; /* same as x, y root.x, root.y, but with sub-pixel precision, if available */
+        struct
+          {
+             double  x, y;
+          } root;
+     } multi;
 };
 
 typedef struct _Ecore_Event_Mouse_Wheel Ecore_Event_Mouse_Wheel;
@@ -146,10 +154,18 @@ struct _Ecore_Event_Mouse_Move
       int	 y;
    } root;
 
-   int           device;
-   int           radius;
-   int           radius_x;
-   int           radius_y;
+   struct
+     {
+        int        device; /* 0 if normal mouse, 1+ for other mouse-devices (eg multi-touch - other fingers) */
+        double     radius, radius_x, radius_y; /* radius of press point - radius_x and y if its an ellipse (radius is the average of the 2) */
+        double     pressure; /* pressure - 1.0 == normal, > 1.0 == more, 0.0 == none */
+        double     angle; /* angle relative to perpendicular (0.0 == perpendicular), in degrees */
+        double     x, y; /* same as x, y root.x, root.y, but with sub-pixel precision, if available */
+        struct
+          {
+             double  x, y;
+          } root;
+     } multi;
 };
 
 typedef struct _Ecore_Event_Mouse_IO Ecore_Event_Mouse_IO;

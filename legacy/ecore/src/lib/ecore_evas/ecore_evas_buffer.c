@@ -224,14 +224,19 @@ _ecore_evas_buffer_cb_multi_down(void *data, Evas *e __UNUSED__, Evas_Object *ob
 {
    Ecore_Evas *ee;
    Evas_Event_Multi_Down *ev;
-   Evas_Coord x, y;
+   Evas_Coord x, y, xx, yy;
+   double xf, yf;
 
    ee = data;
    ev = event_info;
    x = ev->canvas.x;
    y = ev->canvas.y;
+   xx = x;
+   yy = y;
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
-   evas_event_feed_multi_down(ee->evas, ev->device, x, y, ev->radius, ev->radius_x, ev->radius_y, ev->flags, ev->timestamp, NULL);
+   xf = (ev->canvas.xsub - (double)xx) + (double)x;
+   yf = (ev->canvas.ysub - (double)yy) + (double)y;
+   evas_event_feed_multi_down(ee->evas, ev->device, x, y, ev->radius, ev->radius_x, ev->radius_y, ev->pressure, ev->angle, xf, yf, ev->flags, ev->timestamp, NULL);
 }
 
 static void
@@ -239,14 +244,19 @@ _ecore_evas_buffer_cb_multi_up(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 {
    Ecore_Evas *ee;
    Evas_Event_Multi_Up *ev;
-   Evas_Coord x, y;
+   Evas_Coord x, y, xx, yy;
+   double xf, yf;
 
    ee = data;
    ev = event_info;
    x = ev->canvas.x;
    y = ev->canvas.y;
+   xx = x;
+   yy = y;
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
-   evas_event_feed_multi_up(ee->evas, ev->device, x, y, ev->radius, ev->radius_x, ev->radius_y, ev->flags, ev->timestamp, NULL);
+   xf = (ev->canvas.xsub - (double)xx) + (double)x;
+   yf = (ev->canvas.ysub - (double)yy) + (double)y;
+   evas_event_feed_multi_up(ee->evas, ev->device, x, y, ev->radius, ev->radius_x, ev->radius_y, ev->pressure, ev->angle, xf, yf, ev->flags, ev->timestamp, NULL);
 }
 
 static void
@@ -254,14 +264,19 @@ _ecore_evas_buffer_cb_multi_move(void *data, Evas *e __UNUSED__, Evas_Object *ob
 {
    Ecore_Evas *ee;
    Evas_Event_Multi_Move *ev;
-   Evas_Coord x, y;
+   Evas_Coord x, y, xx, yy;
+   double xf, yf;
 
    ee = data;
    ev = event_info;
    x = ev->cur.canvas.x;
    y = ev->cur.canvas.y;
+   xx = x;
+   yy = y;
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
-   evas_event_feed_multi_move(ee->evas, ev->device, x, y, ev->radius, ev->radius_x, ev->radius_y, ev->timestamp, NULL);
+   xf = (ev->cur.canvas.xsub - (double)xx) + (double)x;
+   yf = (ev->cur.canvas.ysub - (double)yy) + (double)y;
+   evas_event_feed_multi_move(ee->evas, ev->device, x, y, ev->radius, ev->radius_x, ev->radius_y, ev->pressure, ev->angle, xf, yf, ev->timestamp, NULL);
 }
 
 static void

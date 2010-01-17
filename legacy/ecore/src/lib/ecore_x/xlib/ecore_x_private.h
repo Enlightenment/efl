@@ -287,6 +287,9 @@ void _ecore_x_dpms_init(void);
 void _ecore_x_randr_init(void);
 
 void _ecore_x_atoms_init(void);
+
+void _ecore_x_input_init(void);
+void _ecore_x_input_shutdown(void);
     
 /* from sync */
 

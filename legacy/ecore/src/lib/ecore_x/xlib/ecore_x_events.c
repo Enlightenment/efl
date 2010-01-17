@@ -200,7 +200,7 @@ _ecore_mouse_move(unsigned int timestamp, unsigned int xmodifiers,
 		  unsigned int window,
 		  unsigned int root_win,
 		  int same_screen,
-                  int dev, int radx, int rady)
+                  int dev, double radx, double rady, double pressure, double angle, double mx, double my, double mrx, double mry)
 {
    Ecore_Event_Mouse_Move *e;
    Ecore_Event *event;
@@ -220,11 +220,17 @@ _ecore_mouse_move(unsigned int timestamp, unsigned int xmodifiers,
    e->root.x = x_root;
    e->root.y = y_root;
 
-   e->device = dev;
-   e->radius = (radx + rady) / 2;
-   e->radius_x = radx;
-   e->radius_y = rady;
-
+   e->multi.device = dev;
+   e->multi.radius = (radx + rady) / 2;
+   e->multi.radius_x = radx;
+   e->multi.radius_y = rady;
+   e->multi.pressure = pressure;
+   e->multi.angle = angle;
+   e->multi.x = mx;
+   e->multi.y = my;
+   e->multi.root.x = mrx;
+   e->multi.root.y = mry;
+   
    event = ecore_event_add(ECORE_EVENT_MOUSE_MOVE, e, _ecore_x_event_free_mouse_move, NULL);
 
    _ecore_x_event_last_time = timestamp;
@@ -360,7 +366,7 @@ _ecore_mouse_button(int event,
 		    unsigned int window,
 		    unsigned int root_win,
 		    int same_screen,
-                    int dev, int radx, int rady)
+                    int dev, double radx, double rady, double pressure, double angle, double mx, double my, double mrx, double mry)
 {
    Ecore_Event_Mouse_Button *e;
 
@@ -410,11 +416,17 @@ _ecore_mouse_button(int event,
        && !e->triple_click)
      _ecore_x_mouse_up_count = 0;
    
-   e->device = dev;
-   e->radius = (radx + rady) / 2;
-   e->radius_x = radx;
-   e->radius_y = rady;
-
+   e->multi.device = dev;
+   e->multi.radius = (radx + rady) / 2;
+   e->multi.radius_x = radx;
+   e->multi.radius_y = rady;
+   e->multi.pressure = pressure;
+   e->multi.angle = angle;
+   e->multi.x = mx;
+   e->multi.y = my;
+   e->multi.root.x = mrx;
+   e->multi.root.y = mry;
+   
    _ecore_x_event_last_time = e->timestamp;
    _ecore_x_event_last_win = e->window;
    _ecore_x_event_last_root_x = x_root;
@@ -458,9 +470,12 @@ _ecore_x_event_handle_any_event(XEvent *xevent)
                      evd->event,
                      (evd->child ? evd->child : evd->event),
                      evd->root,
-                     1,
-                     devid, 1, 1);
-
+                     1, // same_screen
+                     devid, 1, 1, 
+                     1.0, // pressure
+                     0.0, // angle
+                     evd->event_x, evd->event_y,
+                     evd->root_x, evd->root_y);
                   //printf("motion\n");
                   printf("=");
                   break;
@@ -475,8 +490,12 @@ _ecore_x_event_handle_any_event(XEvent *xevent)
                      evd->event,
                      (evd->child ? evd->child : evd->event),
                      evd->root,
-                     1,
-                     devid, 1, 1);
+                     1, // same_screen
+                     devid, 1, 1,
+                     1.0, // pressure
+                     0.0, // angle
+                     evd->event_x, evd->event_y,
+                     evd->root_x, evd->root_y);
                   //printf("abs X:%f Y:%f - ", evd->root_x, evd->root_y);
                   //printf("win X:%f Y:%f\n", evd->event_x, evd->event_y);
                   printf("[[");
@@ -492,8 +511,12 @@ _ecore_x_event_handle_any_event(XEvent *xevent)
                      evd->event,
                      (evd->child ? evd->child : evd->event),
                      evd->root,
-                     1,
-                     devid, 1, 1);
+                     1, // same_screen
+                     devid, 1, 1,
+                     1.0, // pressure
+                     0.0, // angle
+                     evd->event_x, evd->event_y,
+                     evd->root_x, evd->root_y);
                   //printf("unclick\n");
                   printf("]]\n");
                   break;
@@ -587,7 +610,12 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 			     xevent->xbutton.window,
 			     (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->xbutton.window),
 			     xevent->xbutton.root,
-			     xevent->xbutton.same_screen, 0, 1, 1);
+			     xevent->xbutton.same_screen,
+                             0, 1, 1,
+                             1.0, // pressure
+                             0.0, // angle
+                             xevent->xbutton.x, xevent->xbutton.y,
+                             xevent->xbutton.x_root, xevent->xbutton.y_root);
 	}
 	{
 	   Ecore_Event_Mouse_Button *e;
@@ -614,7 +642,11 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 				   xevent->xbutton.x_root, xevent->xbutton.y_root,
 				   event_window, window,
 				   xevent->xbutton.root, xevent->xbutton.same_screen,
-                                   0, 1, 1);
+                                   0, 1, 1,
+                                   1.0, // pressure
+                                   0.0, // angle
+                                   xevent->xbutton.x, xevent->xbutton.y,
+                                   xevent->xbutton.x_root, xevent->xbutton.y_root);
 	   if (e)
 	     for (i = 0; i < _ecore_window_grabs_num; i++)
 	       {
@@ -669,7 +701,12 @@ _ecore_x_event_handle_button_release(XEvent *xevent)
 			  xevent->xbutton.window,
 			  (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->xbutton.window),
 			  xevent->xbutton.root,
-			  xevent->xbutton.same_screen, 0, 1, 1);
+			  xevent->xbutton.same_screen,
+                          0, 1, 1,
+                          1.0, // pressure
+                          0.0, // angle
+                          xevent->xbutton.x, xevent->xbutton.y,
+                          xevent->xbutton.x_root, xevent->xbutton.y_root);
 
 	_ecore_mouse_button(ECORE_EVENT_MOUSE_BUTTON_UP,
 			    xevent->xbutton.time, xevent->xbutton.state,
@@ -680,7 +717,11 @@ _ecore_x_event_handle_button_release(XEvent *xevent)
 			    (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->xbutton.window),
 			    xevent->xbutton.root,
 			    xevent->xbutton.same_screen,
-                            0, 1, 1);
+                            0, 1, 1,
+                            1.0, // pressure
+                            0.0, // angle
+                            xevent->xbutton.x, xevent->xbutton.y,
+                            xevent->xbutton.x_root, xevent->xbutton.y_root);
      }
 }
 
@@ -701,7 +742,12 @@ _ecore_x_event_handle_motion_notify(XEvent *xevent)
 		     xevent->xmotion.window,
 		     (xevent->xmotion.subwindow ? xevent->xmotion.subwindow : xevent->xmotion.window),
 		     xevent->xmotion.root,
-		     xevent->xmotion.same_screen, 0, 1, 1);
+		     xevent->xmotion.same_screen,
+                     0, 1, 1,
+                     1.0, // pressure
+                     0.0, // angle
+                     xevent->xmotion.x, xevent->xmotion.y,
+                     xevent->xmotion.x_root, xevent->xmotion.y_root);
 
    _ecore_x_last_event_mouse_move = 1;
 
@@ -714,13 +760,18 @@ _ecore_x_event_handle_enter_notify(XEvent *xevent)
 {
    _ecore_x_last_event_mouse_move = 0;
      {
-	_ecore_mouse_move(xevent->xmotion.time, xevent->xcrossing.state,
+	_ecore_mouse_move(xevent->xcrossing.time, xevent->xcrossing.state,
 			  xevent->xcrossing.x, xevent->xcrossing.y,
 			  xevent->xcrossing.x_root, xevent->xcrossing.y_root,
 			  xevent->xcrossing.window,
 			  (xevent->xcrossing.subwindow ? xevent->xcrossing.subwindow : xevent->xcrossing.window),
 			  xevent->xcrossing.root,
-			  xevent->xcrossing.same_screen, 0, 1, 1);
+			  xevent->xcrossing.same_screen,
+                          0, 1, 1,
+                          1.0, // pressure
+                          0.0, // angle
+                          xevent->xcrossing.x, xevent->xcrossing.y,
+                          xevent->xcrossing.x_root, xevent->xcrossing.y_root);
      }
      {
 	Ecore_X_Event_Mouse_In *e;
@@ -767,13 +818,18 @@ _ecore_x_event_handle_leave_notify(XEvent *xevent)
 {
    _ecore_x_last_event_mouse_move = 0;
      {
-	_ecore_mouse_move(xevent->xmotion.time, xevent->xcrossing.state,
+	_ecore_mouse_move(xevent->xcrossing.time, xevent->xcrossing.state,
 			  xevent->xcrossing.x, xevent->xcrossing.y,
 			  xevent->xcrossing.x_root, xevent->xcrossing.y_root,
 			  xevent->xcrossing.window,
 			  (xevent->xcrossing.subwindow ? xevent->xcrossing.subwindow : xevent->xcrossing.window),
 			  xevent->xcrossing.root,
-			  xevent->xcrossing.same_screen, 0, 1, 1);
+			  xevent->xcrossing.same_screen,
+                          0, 1, 1,
+                          1.0, // pressure
+                          0.0, // angle
+                          xevent->xcrossing.x, xevent->xcrossing.y,
+                          xevent->xcrossing.x_root, xevent->xcrossing.y_root);
      }
      {
 	Ecore_X_Event_Mouse_Out *e;

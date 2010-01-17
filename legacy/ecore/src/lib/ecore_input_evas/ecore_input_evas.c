@@ -155,7 +155,7 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
    if (!lookup) return 1;
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
-   if (e->device == 0)
+   if (e->multi.device == 0)
      {
         ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
         if (press == ECORE_DOWN)
@@ -165,9 +165,45 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
      }
    else
      {
-        // FIXME: multi-touch feed
+        if (press == ECORE_DOWN)
+          evas_event_feed_multi_down(lookup->evas, e->multi.device, e->x, e->y, e->multi.radius, e->multi.radius_x, e->multi.radius_y, e->multi.pressure, e->multi.angle, e->multi.x, e->multi.y, flags, e->timestamp, NULL);
+        else
+          evas_event_feed_multi_up(lookup->evas, e->multi.device, e->x, e->y, e->multi.radius, e->multi.radius_x, e->multi.radius_y, e->multi.pressure, e->multi.angle, e->multi.x, e->multi.y, flags, e->timestamp, NULL);
      }
    return 1;
+}
+
+EAPI int
+ecore_event_evas_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Event_Mouse_Move *e;
+   Ecore_Input_Window *lookup;
+
+   e = event;
+   lookup = _ecore_event_window_match(e->window);
+   if (!lookup) return 1;
+   if (e->multi.device == 0)
+     {
+        ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
+        lookup->move_mouse(lookup->window, e->x, e->y, e->timestamp);
+     }
+   else
+     {
+        evas_event_feed_multi_move(lookup->evas, e->multi.device, e->x, e->y, e->multi.radius, e->multi.radius_x, e->multi.radius_y, e->multi.pressure, e->multi.angle, e->multi.x, e->multi.y, e->timestamp, NULL);
+     }
+   return 1;
+}
+
+EAPI int
+ecore_event_evas_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button *)event, ECORE_DOWN);
+}
+
+EAPI int
+ecore_event_evas_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button *)event, ECORE_UP);
 }
 
 static int
@@ -207,18 +243,6 @@ ecore_event_evas_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 EAPI int
-ecore_event_evas_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, void *event)
-{
-   return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button*) event, ECORE_DOWN);
-}
-
-EAPI int
-ecore_event_evas_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, void *event)
-{
-   return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button*) event, ECORE_UP);
-}
-
-EAPI int
 ecore_event_evas_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Event_Mouse_Wheel *e;
@@ -230,27 +254,6 @@ ecore_event_evas_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *e
    ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
    evas_event_feed_mouse_wheel(lookup->evas, e->direction, e->z, e->timestamp, NULL);
 
-   return 1;
-}
-
-EAPI int
-ecore_event_evas_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
-{
-   Ecore_Event_Mouse_Move *e;
-   Ecore_Input_Window *lookup;
-
-   e = event;
-   lookup = _ecore_event_window_match(e->window);
-   if (!lookup) return 1;
-   if (e->device == 0)
-     {
-        ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
-        lookup->move_mouse(lookup->window, e->x, e->y, e->timestamp);
-     }
-   else
-     {
-        // FIXME: multi-touch feed
-     }
    return 1;
 }
 

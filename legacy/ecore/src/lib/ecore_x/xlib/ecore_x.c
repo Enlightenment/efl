@@ -434,6 +434,7 @@ ecore_x_init(const char *name)
    _ecore_x_composite_init();
    _ecore_x_dpms_init();
    _ecore_x_randr_init();
+   _ecore_x_input_init();
    
    _ecore_x_private_win = ecore_x_window_override_new(0, -77, -777, 123, 456);
 
@@ -514,6 +515,7 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_fd_handler_handle = NULL;
    _ecore_x_disp = NULL;
    _ecore_x_event_handlers = NULL;
+   _ecore_x_input_shutdown();
    _ecore_x_selection_shutdown();
    _ecore_x_dnd_shutdown();
    ecore_x_netwm_shutdown();
