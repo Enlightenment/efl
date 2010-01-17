@@ -641,19 +641,20 @@ efreet_menu_get(void)
     const char *dir;
     Eina_List *config_dirs, *l;
 
-    /* check the users config directory first */
-    snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
-                        efreet_config_home_get(), efreet_menu_prefix_get());
-    if (ecore_file_exists(menu))
-        return efreet_menu_parse(menu);
-
 #ifndef STRICT_SPEC
+    /* prefer user set menu */
     if (efreet_menu_file)
     {
         if (ecore_file_exists(efreet_menu_file))
         return efreet_menu_parse(efreet_menu_file);
     }
 #endif
+
+    /* check the users config directory first */
+    snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
+                        efreet_config_home_get(), efreet_menu_prefix_get());
+    if (ecore_file_exists(menu))
+        return efreet_menu_parse(menu);
 
     /* fallback to the XDG_CONFIG_DIRS */
     config_dirs = efreet_config_dirs_get();
@@ -1790,6 +1791,9 @@ efreet_menu_handle_default_merge_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *
 {
     Eina_List *dirs;
     char path[PATH_MAX], *p;
+#ifndef STRICT_SPEC
+    char parent_path[PATH_MAX];
+#endif
     const char *prefix;
 
     if (!parent || !xml) return 0;
@@ -1823,6 +1827,11 @@ efreet_menu_handle_default_merge_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *
         efreet_menu_merge_dir(parent, xml, p);
         FREE(p);
     }
+#ifndef STRICT_SPEC
+    /* Also check the path of the parent file */
+    snprintf(parent_path, sizeof(parent_path), "%s/%s", parent->file.path, path);
+    efreet_menu_merge_dir(parent, xml, parent_path);
+#endif
 
     return 1;
 }
