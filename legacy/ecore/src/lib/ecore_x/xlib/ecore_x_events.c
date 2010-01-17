@@ -441,7 +441,7 @@ _ecore_x_event_handle_any_event(XEvent *xevent)
    if (xevent->xcookie.type == GenericEvent &&
        xevent->xcookie.extension == _ecore_x_xi2_opcode)
      {
-        if (XGetEventData(_ecore_x_disp &(xevent->xcookie)))
+        if (XGetEventData(_ecore_x_disp, &(xevent->xcookie)))
           {
              XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
              int devid = evd->deviceid;
@@ -500,7 +500,7 @@ _ecore_x_event_handle_any_event(XEvent *xevent)
                }
           }
      }
-   XFreeEventData(_ecore_x_disp &(xevent->xcookie));
+   XFreeEventData(_ecore_x_disp, &(xevent->xcookie));
 #endif   
 }
 
