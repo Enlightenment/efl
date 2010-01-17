@@ -451,7 +451,7 @@ elm_toolbar_item_del(Elm_Toolbar_Item *it)
  * @param it The item to set the callback on
  * @param func The function called
  *
- * @ingroup Hoversel
+ * @ingroup Toolbar
  */
 EAPI void
 elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *it, void (*func)(void *data, Evas_Object *obj, void *event_info))
