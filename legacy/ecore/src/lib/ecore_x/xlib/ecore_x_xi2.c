@@ -62,18 +62,18 @@ ecore_x_input_multi_select(Ecore_X_Window win)
 {
 #ifdef ECORE_XI2
    int i, find = 0;
-   
+
    if (!_ecore_x_xi2_devs) return 0;
 
-   for (i = 0; i < num; i++)
+   for (i = 0; i < _ecore_x_xi2_num; i++)
      {
         XIDeviceInfo *dev = &(_ecore_x_xi2_devs[i]);
-        
+
         if (dev->use == XIFloatingSlave)
           {
              XIEventMask eventmask;
              unsigned char mask[1] = { 0 };
-             
+
              eventmask.deviceid = dev->deviceid;
              eventmask.mask_len = sizeof(mask);
              eventmask.mask = mask;
@@ -84,7 +84,7 @@ ecore_x_input_multi_select(Ecore_X_Window win)
              find = 1;
           }
      }
-   
+
    return find;
 #else
    return 0;
