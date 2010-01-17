@@ -309,3 +309,7 @@
 2010-01-16  Vincent Torri
 
 	* eet_cipher.c: Fix arithmetic pointer on void *
+
+2010-01-17  Cedric BAIL
+
+	* Add a mempool for Eet_Node.
