@@ -443,7 +443,7 @@ _ecore_x_event_handle_any_event(XEvent *xevent)
      {
         if (XGetEventData(_ecore_x_disp &(xevent->xcookie)))
           {
-             XIDeviceEvent* evd = (XIDeviceEvent *)(xevent->xcookie.data);
+             XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
              int devid = evd->deviceid;
              
              //printf("deviceID = %d\n", devid);
@@ -451,14 +451,14 @@ _ecore_x_event_handle_any_event(XEvent *xevent)
                {
                case XI_Motion:
                   _ecore_mouse_move
-                    (xevent->xcookie.time, // ???
+                    (evd->time,
                      0, // state
                      evd->event_x, evd->event_y,
                      evd->root_x, evd->root_y,
-                     xevent->xcookie.window, // ???
-                     (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->xbutton.window), // ???
-                     xevent->xcookie.root, // ???
-                     xevent->xcookie.same_screen, // ??? 
+                     evd->event,
+                     (evd->child ? evd->child : evd->event),
+                     evd->root,
+                     1,
                      devid, 1, 1);
 
                   //printf("motion\n");
@@ -467,15 +467,15 @@ _ecore_x_event_handle_any_event(XEvent *xevent)
                case XI_ButtonPress:
                   _ecore_mouse_button
                     (ECORE_EVENT_MOUSE_BUTTON_DOWN,
-                    (xevent->xcookie.time, // ???
+                    (evd->time,
                      0, // state
                      0, // button
                      evd->event_x, evd->event_y,
                      evd->root_x, evd->root_y,
-                     xevent->xcookie.window, // ???
-                     (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->xbutton.window), // ???
-                     xevent->xcookie.root, // ???
-                     xevent->xcookie.same_screen, // ??? 
+                     evd->event,
+                     (evd->child ? evd->child : evd->event),
+                     evd->root,
+                     1,
                      devid, 1, 1);
                   //printf("abs X:%f Y:%f - ", evd->root_x, evd->root_y);
                   //printf("win X:%f Y:%f\n", evd->event_x, evd->event_y);
@@ -484,15 +484,15 @@ _ecore_x_event_handle_any_event(XEvent *xevent)
                case XI_ButtonRelease:
                   _ecore_mouse_button
                     (ECORE_EVENT_MOUSE_BUTTON_UP,
-                    (xevent->xcookie.time, // ???
+                    (evd->time,
                      0, // state
                      0, // button
                      evd->event_x, evd->event_y,
                      evd->root_x, evd->root_y,
-                     xevent->xcookie.window, // ???
-                     (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->xbutton.window), // ???
-                     xevent->xcookie.root, // ???
-                     xevent->xcookie.same_screen, // ??? 
+                     evd->event,
+                     (evd->child ? evd->child : evd->event),
+                     evd->root,
+                     1,
                      devid, 1, 1);
                   //printf("unclick\n");
                   printf("]]\n");
