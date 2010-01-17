@@ -721,6 +721,12 @@ elm_menu_item_data_get(const Elm_Menu_Item *it)
    return (void *)it->data;
 }
 
+EAPI void
+elm_menu_item_data_set(Elm_Menu_Item *item, const void *data)
+{
+   item->data = data;
+}
+
 EAPI const Eina_List *
 elm_menu_item_subitems_get(Elm_Menu_Item *item)
 {

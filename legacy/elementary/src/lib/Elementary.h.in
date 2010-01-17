@@ -734,6 +734,7 @@ extern "C" {
    EAPI void		 elm_menu_item_del(Elm_Menu_Item *item);
    EAPI void		 elm_menu_item_del_cb_set(Elm_Menu_Item *it, void (*func)(void *data, Evas_Object *obj, void *event_info));
    EAPI void		*elm_menu_item_data_get(const Elm_Menu_Item *it);
+   EAPI void		 elm_menu_item_data_set(Elm_Menu_Item *item, const void *data);
    EAPI const Eina_List *elm_menu_item_subitems_get(Elm_Menu_Item *item);
    /* smart callbacks called:
     * "clicked" - the user clicked the empty space in the menu to dismiss. event_info is NULL.
