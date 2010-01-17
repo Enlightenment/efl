@@ -482,7 +482,7 @@ _ecore_x_event_handle_any_event(XEvent *xevent)
                case XI_ButtonPress:
                   _ecore_mouse_button
                     (ECORE_EVENT_MOUSE_BUTTON_DOWN,
-                    (evd->time,
+                     evd->time,
                      0, // state
                      0, // button
                      evd->event_x, evd->event_y,
@@ -503,7 +503,7 @@ _ecore_x_event_handle_any_event(XEvent *xevent)
                case XI_ButtonRelease:
                   _ecore_mouse_button
                     (ECORE_EVENT_MOUSE_BUTTON_UP,
-                    (evd->time,
+                     evd->time,
                      0, // state
                      0, // button
                      evd->event_x, evd->event_y,
