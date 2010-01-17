@@ -945,7 +945,13 @@ evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
 }
 
 EAPI void
-evas_event_feed_multi_down(Evas *e, int d, int x, int y, int rad, int radx, int rady, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
+evas_event_feed_multi_down(Evas *e, 
+                           int d, int x, int y, 
+                           double rad, double radx, double rady,
+                           double pres, double ang,
+                           double fx, double fy,
+                           Evas_Button_Flags flags, unsigned int timestamp, 
+                           const void *data)
 {
    Eina_List *l, *copy;
    Evas_Event_Multi_Down ev;
@@ -966,6 +972,10 @@ evas_event_feed_multi_down(Evas *e, int d, int x, int y, int rad, int radx, int 
    ev.radius = rad;
    ev.radius_x = radx;
    ev.radius_y = rady;
+   ev.pressure = pres;
+   ev.angle = ang;
+   ev.canvas.xsub = fx;
+   ev.canvas.ysub = fy;
    ev.data = (void *)data;
    ev.modifiers = &(e->modifiers);
    ev.locks = &(e->locks);
@@ -979,7 +989,13 @@ evas_event_feed_multi_down(Evas *e, int d, int x, int y, int rad, int radx, int 
      {
         ev.canvas.x = x;
         ev.canvas.y = y;
+        ev.canvas.xsub = fx;
+        ev.canvas.ysub = fy;
         _evas_event_havemap_adjust(obj, &ev.canvas.x, &ev.canvas.y);
+        if (x != ev.canvas.x) 
+          ev.canvas.xsub = ev.canvas.x; // fixme - lost precision
+        if (y != ev.canvas.y)
+          ev.canvas.ysub = ev.canvas.y; // fixme - lost precision
 	if (e->events_frozen <= 0)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MULTI_DOWN, &ev);
 	if (e->delete_me) break;
@@ -989,7 +1005,13 @@ evas_event_feed_multi_down(Evas *e, int d, int x, int y, int rad, int radx, int 
 }
 
 EAPI void
-evas_event_feed_multi_up(Evas *e, int d, int x, int y, int rad, int radx, int rady, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
+evas_event_feed_multi_up(Evas *e, 
+                         int d, int x, int y, 
+                         double rad, double radx, double rady,
+                         double pres, double ang,
+                         double fx, double fy,
+                         Evas_Button_Flags flags, unsigned int timestamp, 
+                         const void *data)
 {
    Eina_List *l, *copy;
    Evas_Event_Multi_Up ev;
@@ -1010,6 +1032,10 @@ evas_event_feed_multi_up(Evas *e, int d, int x, int y, int rad, int radx, int ra
    ev.radius = rad;
    ev.radius_x = radx;
    ev.radius_y = rady;
+   ev.pressure = pres;
+   ev.angle = ang;
+   ev.canvas.xsub = fx;
+   ev.canvas.ysub = fy;
    ev.data = (void *)data;
    ev.modifiers = &(e->modifiers);
    ev.locks = &(e->locks);
@@ -1023,7 +1049,13 @@ evas_event_feed_multi_up(Evas *e, int d, int x, int y, int rad, int radx, int ra
      {
         ev.canvas.x = x;
         ev.canvas.y = y;
+        ev.canvas.xsub = fx;
+        ev.canvas.ysub = fy;
         _evas_event_havemap_adjust(obj, &ev.canvas.x, &ev.canvas.y);
+        if (x != ev.canvas.x) 
+          ev.canvas.xsub = ev.canvas.x; // fixme - lost precision
+        if (y != ev.canvas.y)
+          ev.canvas.ysub = ev.canvas.y; // fixme - lost precision
         if (e->events_frozen <= 0)
           evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_UP, &ev);
         if (e->delete_me) break;
@@ -1034,7 +1066,12 @@ evas_event_feed_multi_up(Evas *e, int d, int x, int y, int rad, int radx, int ra
 }
 
 EAPI void
-evas_event_feed_multi_move(Evas *e, int d, int x, int y, int rad, int radx, int rady, unsigned int timestamp, const void *data)
+evas_event_feed_multi_move(Evas *e, 
+                           int d, int x, int y, 
+                           double rad, double radx, double rady,
+                           double pres, double ang,
+                           double fx, double fy,
+                           unsigned int timestamp, const void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -1063,6 +1100,10 @@ evas_event_feed_multi_move(Evas *e, int d, int x, int y, int rad, int radx, int 
         ev.radius = rad;
         ev.radius_x = radx;
         ev.radius_y = rady;
+        ev.pressure = pres;
+        ev.angle = ang;
+        ev.cur.canvas.xsub = fx;
+        ev.cur.canvas.ysub = fy;
         ev.data = (void *)data;
         ev.modifiers = &(e->modifiers);
         ev.locks = &(e->locks);
@@ -1077,9 +1118,15 @@ evas_event_feed_multi_move(Evas *e, int d, int x, int y, int rad, int radx, int 
                  (!evas_event_passes_through(obj)) &&
                  (!obj->clip.clipees))
                {
-                  ev.cur.canvas.x = e->pointer.x;
-                  ev.cur.canvas.y = e->pointer.y;
+                  ev.cur.canvas.x = x;
+                  ev.cur.canvas.y = y;
+                  ev.cur.canvas.xsub = fx;
+                  ev.cur.canvas.ysub = fy;
                   _evas_event_havemap_adjust(obj, &ev.cur.canvas.x, &ev.cur.canvas.y);
+                  if (x != ev.cur.canvas.x) 
+                    ev.cur.canvas.xsub = ev.cur.canvas.x; // fixme - lost precision
+                  if (y != ev.cur.canvas.y)
+                    ev.cur.canvas.ysub = ev.cur.canvas.y; // fixme - lost precision
                   if (e->events_frozen <= 0)
                     evas_object_event_callback_call(obj, EVAS_CALLBACK_MULTI_MOVE, &ev);
 	       }
@@ -1101,6 +1148,10 @@ evas_event_feed_multi_move(Evas *e, int d, int x, int y, int rad, int radx, int 
         ev.radius = rad;
         ev.radius_x = radx;
         ev.radius_y = rady;
+        ev.pressure = pres;
+        ev.angle = ang;
+        ev.cur.canvas.xsub = fx;
+        ev.cur.canvas.ysub = fy;
 	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);
@@ -1128,7 +1179,13 @@ evas_event_feed_multi_move(Evas *e, int d, int x, int y, int rad, int radx, int 
 	       {
                   ev.cur.canvas.x = x;
                   ev.cur.canvas.y = y;
+                  ev.cur.canvas.xsub = fx;
+                  ev.cur.canvas.ysub = fy;
                   _evas_event_havemap_adjust(obj, &ev.cur.canvas.x, &ev.cur.canvas.y);
+                  if (x != ev.cur.canvas.x) 
+                    ev.cur.canvas.xsub = ev.cur.canvas.x; // fixme - lost precision
+                  if (y != ev.cur.canvas.y)
+                    ev.cur.canvas.ysub = ev.cur.canvas.y; // fixme - lost precision
                   if (e->events_frozen <= 0)
                     evas_object_event_callback_call(obj, EVAS_CALLBACK_MULTI_MOVE, &ev);
 	       }

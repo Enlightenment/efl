@@ -592,13 +592,15 @@ struct _Evas_Event_Mouse_Wheel /** Wheel event */
 
 struct _Evas_Event_Multi_Down /** Multi button press event */
 {
-   int device; /**< Multi device number that went down (1 or more) */
-   int radius, radius_x, radius_y;
+   int device; /**< Multi device number that went down (1 or more for extra touches) */
+   double radius, radius_x, radius_y;
+   double pressure, angle;
    struct {
       int x, y;
    } output;
    struct {
       Evas_Coord x, y;
+      double xsub, ysub;
    } canvas;
    void          *data;
    Evas_Modifier *modifiers;
@@ -612,13 +614,15 @@ struct _Evas_Event_Multi_Down /** Multi button press event */
 
 struct _Evas_Event_Multi_Up /** Multi button release event */
 {
-   int device; /**< Multi button number that was raised (1 - 32) */
-   int radius, radius_x, radius_y;
+   int device; /**< Multi device number that went up (1 or more for extra touches) */
+   double radius, radius_x, radius_y;
+   double pressure, angle;
    struct {
       int x, y;
    } output;
    struct {
       Evas_Coord x, y;
+      double xsub, ysub;
    } canvas;
    void          *data;
    Evas_Modifier *modifiers;
@@ -632,14 +636,16 @@ struct _Evas_Event_Multi_Up /** Multi button release event */
 
 struct _Evas_Event_Multi_Move /** Multi button down event */
 {
-   int device; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
-   int radius, radius_x, radius_y;
+   int device; /**< Multi device number that moved (1 or more for extra touches) */
+   double radius, radius_x, radius_y;
+   double pressure, angle;
    struct {
       struct {
 	 int x, y;
       } output;
       struct {
 	 Evas_Coord x, y;
+         double xsub, ysub;
       } canvas;
    } cur;
    void          *data;
@@ -1176,10 +1182,9 @@ extern "C" {
    EAPI void              evas_event_feed_mouse_move        (Evas *e, int x, int y, unsigned int timestamp, const void *data) EINA_ARG_NONNULL(1);
    EAPI void              evas_event_feed_mouse_in          (Evas *e, unsigned int timestamp, const void *data) EINA_ARG_NONNULL(1);
    EAPI void              evas_event_feed_mouse_out         (Evas *e, unsigned int timestamp, const void *data) EINA_ARG_NONNULL(1);
-   EAPI void              evas_event_feed_multi_down        (Evas *e, int d, int x, int y, int rad, int radx, int rady, Evas_Button_Flags flags, unsigned int timestamp, const void *data);
-   EAPI void              evas_event_feed_multi_up          (Evas *e, int d, int x, int y, int rad, int radx, int rady, Evas_Button_Flags flags, unsigned int timestamp, const void *data);
-   EAPI void              evas_event_feed_multi_move        (Evas *e, int d, int x, int y, int rad, int radx, int rady, unsigned int timestamp, const void *data);
-       
+   EAPI void              evas_event_feed_multi_down        (Evas *e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Evas_Button_Flags flags, unsigned int timestamp, const void *data);
+   EAPI void              evas_event_feed_multi_up          (Evas *e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Evas_Button_Flags flags, unsigned int timestamp, const void *data);
+   EAPI void              evas_event_feed_multi_move        (Evas *e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, unsigned int timestamp, const void *data);
    EAPI void              evas_event_feed_mouse_cancel      (Evas *e, unsigned int timestamp, const void *data) EINA_ARG_NONNULL(1);
    EAPI void              evas_event_feed_mouse_wheel       (Evas *e, int direction, int z, unsigned int timestamp, const void *data) EINA_ARG_NONNULL(1);
    EAPI void              evas_event_feed_key_down          (Evas *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data) EINA_ARG_NONNULL(1);
