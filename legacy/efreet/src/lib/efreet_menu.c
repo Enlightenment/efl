@@ -3276,13 +3276,14 @@ efreet_menu_app_dir_free(Efreet_Menu_App_Dir *dir)
  * @internal
  * @param a: The app dir to compare too
  * @param b: The path to compare too
- * @return Returns 1 if the strings are equals, 0 otherwise
+ * @return Returns 0 if the strings are equals, != 0 otherwise
  * @brief Compares the too strings
  */
 static int
 efreet_menu_cb_app_dirs_compare(Efreet_Menu_App_Dir *a, const char *b)
 {
-    return ecore_str_compare(a->path, b);
+    if (!a->path || !b) return 1;
+    return strcmp(a->path, b);
 }
 
 static void
@@ -3378,7 +3379,8 @@ efreet_menu_path_get(Efreet_Menu_Internal *internal, const char *suffix)
 static int
 efreet_menu_cb_menu_compare(Efreet_Menu_Internal *a, Efreet_Menu_Internal *b)
 {
-    return ecore_str_compare(a->name.internal, b->name.internal);
+    if (!a->name.internal || !b->name.internal) return 1;
+    return strcmp(a->name.internal, b->name.internal);
 }
 
 static int
@@ -3944,20 +3946,23 @@ static int
 efreet_menu_cb_entry_compare_menu(Efreet_Menu *entry, Efreet_Menu_Internal *internal)
 {
     if (entry->type != EFREET_MENU_ENTRY_MENU) return 1;
-    return ecore_str_compare(entry->name, internal->name.name);
+    if (!entry->name || !internal->name.name) return 1;
+    return strcmp(entry->name, internal->name.name);
 }
 
 static int
 efreet_menu_cb_entry_compare_desktop(Efreet_Menu *entry, Efreet_Desktop *desktop)
 {
     if (entry->type != EFREET_MENU_ENTRY_DESKTOP) return -1;
-    return ecore_str_compare(entry->name, desktop->name);
+    if (!entry->name || !desktop->name) return -1;
+    return strcmp(entry->name, desktop->name);
 }
 
 static int
 efreet_menu_cb_move_compare(Efreet_Menu_Move *move, const char *old)
 {
-    return ecore_str_compare(move->old_name, old);
+    if (!move->old_name || !old) return 1;
+    return strcmp(move->old_name, old);
 }
 
 static int
