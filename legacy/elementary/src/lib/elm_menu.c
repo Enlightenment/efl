@@ -715,6 +715,12 @@ elm_menu_item_del_cb_set(Elm_Menu_Item *it, void (*func)(void *data, Evas_Object
    it->del_cb = func;
 }
 
+EAPI void *
+elm_menu_item_data_get(const Elm_Menu_Item *it)
+{
+   return (void *)it->data;
+}
+
 EAPI const Eina_List *
 elm_menu_item_subitems_get(Elm_Menu_Item *item)
 {
