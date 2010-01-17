@@ -773,6 +773,12 @@ eet_init(void)
 	goto shutdown_eina;
      }
 
+   if (!eet_node_init())
+     {
+	EINA_LOG_ERR("Eet: Eet_Node mempool creation failed");
+	goto unregister_log_domain;
+     }
+
 #ifdef HAVE_GNUTLS
    /* Before the library can be used, it must initialize itself if needed. */
    if (gcry_control (GCRYCTL_ANY_INITIALIZATION_P) == 0)
@@ -781,7 +787,7 @@ eet_init(void)
 	/* Disable warning messages about problems with the secure memory subsystem.
 	   This command should be run right after gcry_check_version. */
 	if (gcry_control(GCRYCTL_DISABLE_SECMEM_WARN))
-	  goto unregister_log_domain;
+	  goto shutdown_eet;
 	/* This command is used to allocate a pool of secure memory and thus
 	   enabling the use of secure memory. It also drops all extra privileges the
 	   process has (i.e. if it is run as setuid (root)). If the argument nbytes
@@ -792,7 +798,7 @@ eet_init(void)
 	  WRN("BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
      }
    if (gnutls_global_init())
-     goto unregister_log_domain;
+     goto shutdown_eet;
 #endif
 #ifdef HAVE_OPENSSL
    ERR_load_crypto_strings();
@@ -801,6 +807,8 @@ eet_init(void)
 
    return eet_init_count;
 
+ shutdown_eet:
+   eet_node_shutdown();
  unregister_log_domain:
    eina_log_domain_unregister(_eet_log_dom_global);
    _eet_log_dom_global = -1;
@@ -816,6 +824,7 @@ eet_shutdown(void)
      return eet_init_count;
 
    eet_clearcache();
+   eet_node_shutdown();
 #ifdef HAVE_GNUTLS
    gnutls_global_deinit();
 #endif

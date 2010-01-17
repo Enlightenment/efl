@@ -6,6 +6,7 @@
 # include <config.h>
 #endif
 
+#include <string.h>
 #include <stdio.h>
 
 #include <Eina.h>
@@ -13,12 +14,33 @@
 #include "Eet.h"
 #include "Eet_private.h"
 
+static Eina_Mempool *_eet_node_mp = NULL;
+
+Eet_Node *
+eet_node_new(void)
+{
+   Eet_Node *result;
+
+   result = eina_mempool_malloc(_eet_node_mp, sizeof (Eet_Node));
+   if (!result)
+     return NULL;
+
+   memset(result, 0, sizeof (Eet_Node));
+   return result;
+}
+
+void
+eet_node_free(Eet_Node *node)
+{
+   eina_mempool_free(_eet_node_mp, node);
+}
+
 static Eet_Node *
 _eet_node_new(const char *name, int type)
 {
    Eet_Node *n;
 
-   n = calloc(1, sizeof (Eet_Node));
+   n = eet_node_new();
    if (!n) return NULL;
 
    n->type = type;
@@ -317,7 +339,7 @@ eet_node_del(Eet_Node *n)
      }
 
    eina_stringshare_del(n->name);
-   free(n);
+   eet_node_free(n);
 }
 
 static const char *eet_node_dump_g_name[6] = {
@@ -533,4 +555,27 @@ eet_node_dump(Eet_Node *n, int dumplevel, void (*dumpfunc) (void *data, const ch
 	 eet_node_dump_simple_type(n, dumplevel, dumpfunc, dumpdata);
 	 break;
      }
+}
+
+int
+eet_node_init(void)
+{
+   char *choice;
+   char *tmp;
+
+   choice = "chained_mempool";
+   tmp = getenv("EET_MEMPOOL");
+   if (tmp && tmp[0])
+     choice = tmp;
+
+   _eet_node_mp = eina_mempool_add(choice, "eet-node-alloc", NULL, sizeof(Eet_Node), 1024);
+
+   return _eet_node_mp ? 1 : 0;
+}
+
+void
+eet_node_shutdown(void)
+{
+   eina_mempool_del(_eet_node_mp);
+   _eet_node_mp = NULL;
 }

@@ -136,6 +136,11 @@ Eet_Error eet_identity_sign(FILE *fp, Eet_Key *key);
 void eet_identity_unref(Eet_Key *key);
 void eet_identity_ref(Eet_Key *key);
 
+void eet_node_shutdown(void);
+int eet_node_init(void);
+Eet_Node *eet_node_new(void);
+void eet_node_free(Eet_Node *node);
+
 #ifndef PATH_MAX
 # define PATH_MAX 4096
 #endif

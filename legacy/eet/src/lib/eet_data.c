@@ -2133,7 +2133,7 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
 				 if (!strcmp(tok4, "{"))
 				   {
 				      /* we have 'group NAM TYP {' */
-				      n = calloc(1, sizeof(Eet_Node));
+				      n = eet_node_new();
 				      if (n)
 					{
 					   n->parent = node;
@@ -2192,7 +2192,7 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
 				 /* we have 'value NAME TYP XXX' */
 				 if (node_base)
 				   {
-				      n = calloc(1, sizeof(Eet_Node));
+				      n = eet_node_new();
 				      if (n)
 					{
 					   n->parent = node;
