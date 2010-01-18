@@ -119,28 +119,4 @@ test_multi(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(win);
 }
 
-/*
-void
-test_bg_image(void *data, Evas_Object *obj, void *event_info)
-{
-   Evas_Object *win, *bg;
-   char buf[PATH_MAX];
-
-   win = elm_win_add(NULL, "bg-image", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Bg Image");
-   elm_win_autodel_set(win, 1);
-
-   bg = elm_bg_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
-   elm_bg_file_set(bg, buf, NULL);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
-
-   evas_object_size_hint_min_set(bg, 160, 160);
-   evas_object_size_hint_max_set(bg, 640, 640);
-   evas_object_resize(win, 320, 320);
-   evas_object_show(win);
-}*/
-
 #endif
