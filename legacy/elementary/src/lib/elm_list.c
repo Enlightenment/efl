@@ -199,7 +199,7 @@ _theme_hook(Evas_Object *obj)
    Elm_List_Item *it;
    Eina_List *n;
    
-   elm_smart_scroller_theme_set(wd->scr, "scroller", "base", elm_widget_style_get(obj));
+   elm_smart_scroller_theme_set(wd->scr, "list", "base", elm_widget_style_get(obj));
    edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
    EINA_LIST_FOREACH(wd->items, n, it)
      {

@@ -76,6 +76,11 @@ collections {
 
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/scroller/base/default";
+      
+      alias: "elm/list/base/default";
+      alias: "elm/genlist/base/default";
+      alias: "elm/carousel/base/default";
+      
       script {
 	 public sbvis_v, sbvis_h, sbalways_v, sbalways_h, sbvis_timer;
 	 public timer0(val) {
