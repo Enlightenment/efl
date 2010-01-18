@@ -9,6 +9,10 @@
 #include <string.h>
 #include <stdio.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include <Eina.h>
 
 #include "Eet.h"
