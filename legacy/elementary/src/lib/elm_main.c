@@ -329,8 +329,14 @@ _elm_window_property_change(void *data, int ev_type, void *ev)
              
              val = ecore_x_window_prop_string_get(event->win,
                                                   event->atom);
+             if (_elm_config->theme)
+               {
+                  eina_stringshare_del(_elm_config->theme);
+                  _elm_config->theme = NULL;
+               }
              if (val)
                {
+                  _elm_config->theme = eina_stringshare_add(val);
                   _elm_theme_parse(val);
                   free(val);
                   _elm_rescale();
@@ -459,7 +465,7 @@ elm_quicklaunch_init(int argc, char **argv)
 {
    int i;
    char buf[PATH_MAX], *s;
-
+   
    eina_init();
    _elm_log_dom = eina_log_domain_register("elementary", EINA_COLOR_LIGHTBLUE);
    if (!_elm_log_dom)
@@ -549,35 +555,151 @@ elm_quicklaunch_init(int argc, char **argv)
 #endif
    if (!_elm_data_dir)
      _elm_data_dir = eina_stringshare_add(PACKAGE_DATA_DIR);
-   if (!_elm_data_dir)
+  if (!_elm_data_dir)
      _elm_data_dir = eina_stringshare_add("/");
    if (!_elm_lib_dir)
      _elm_lib_dir = eina_stringshare_add(PACKAGE_LIB_DIR);
    if (!_elm_lib_dir)
      _elm_lib_dir = eina_stringshare_add("/");
 
-   // FIXME: actually load config from file - use eet. also for X properties,
-   // reduce to single x property with eet data encoded in it.
-   _elm_config = ELM_NEW(Elm_Config);
-   _elm_config->engine = ELM_SOFTWARE_X11;
-   _elm_config->thumbscroll_enable = 1;
-   _elm_config->thumbscroll_threshhold = 24;
-   _elm_config->thumbscroll_momentum_threshhold = 100.0;
-   _elm_config->thumbscroll_friction = 1.0;
-   _elm_config->thumbscroll_bounce_friction = 0.5;
-   _elm_config->thumbscroll_bounce_enable = 1;
-   _elm_config->page_scroll_friction = 0.5;
-   _elm_config->bring_in_scroll_friction = 0.5;
-   _elm_config->zoom_friction = 0.5;
-   _elm_config->scale = 1.0;
-   _elm_config->font_hinting = 2;
-   _elm_config->font_dirs = NULL;
-   _elm_config->image_cache = 4096;
-   _elm_config->font_cache = 512;
-   _elm_config->finger_size = 40;
-   _elm_config->bgpixmap = 0;
-   _elm_config->compositing = 1;
-   _elm_config->fps = 60.0;
+
+   // yes - this should be a function. do it later
+     {
+        Eet_Data_Descriptor_Class eddc;
+        Eet_Data_Descriptor *edd = NULL;
+        Eet_File *ef = NULL;
+        int len = 0;
+        char buf[PATH_MAX], *p;
+        const char *home = NULL;
+        char *profile = strdup("default");
+        
+        EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Config);
+        
+        eddc.func.str_direct_alloc = NULL;
+        eddc.func.str_direct_free = NULL;
+        
+        edd = eet_data_descriptor_file_new(&eddc);
+        if (edd)
+          {
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "engine", engine, EET_T_INT);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_enable", thumbscroll_enable, EET_T_INT);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_threshhold", thumbscroll_threshhold, EET_T_INT);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_momentum_threshhold", thumbscroll_momentum_threshhold, EET_T_DOUBLE);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_friction", thumbscroll_friction, EET_T_DOUBLE);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_bounce_friction", thumbscroll_bounce_friction, EET_T_DOUBLE);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "page_scroll_friction", page_scroll_friction, EET_T_DOUBLE);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "bring_in_scroll_friction", bring_in_scroll_friction, EET_T_DOUBLE);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "zoom_friction", zoom_friction, EET_T_DOUBLE);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_bounce_enable", thumbscroll_bounce_enable, EET_T_INT);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "scale", scale, EET_T_DOUBLE);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "bgpixmap", bgpixmap, EET_T_INT);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "compositing", compositing, EET_T_INT);
+             // EET_DATA_DESCRIPTOR_ADD_LIST(edd, Elm_Config, "font_dirs", font_dirs, sub_edd);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "font_hinting", font_hinting, EET_T_INT);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "image_cache", image_cache, EET_T_INT);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "font_cache", font_cache, EET_T_INT);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "finger_size", finger_size, EET_T_INT);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "fps", fps, EET_T_DOUBLE);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "theme", theme, EET_T_STRING);
+             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "modules", modules, EET_T_STRING);
+          }
+        else
+          {
+             printf("EEEK! eet_data_descriptor_file_new() failed\n");
+          }
+        
+        home = getenv("HOME");
+        if (!home) home = "/";
+        
+        snprintf(buf, sizeof(buf), "%s/.elementary/config/profile.cfg", home);
+        ef = eet_open(buf, EET_FILE_MODE_READ);
+        if (ef)
+          {
+             p = eet_read(ef, "config", &len);
+             if (p)
+               {
+                  free(profile);
+                  profile = malloc(len + 1);
+                  memcpy(profile, p, len);
+                  profile[len] = 0;
+                  free(p);
+               }
+             eet_close(ef);
+             if (!p) ef = NULL;
+          }
+        if (!ef)
+          {
+             snprintf(buf, sizeof(buf), "%s/config/profile.cfg", _elm_data_dir);
+             ef = eet_open(buf, EET_FILE_MODE_READ);
+             if (ef)
+               {
+                  p = eet_read(ef, "config", &len);
+                  if (p)
+                    {
+                       free(profile);
+                       profile = malloc(len + 1);
+                       memcpy(profile, p, len);
+                       profile[len] = 0;
+                       free(p);
+                    }
+                  eet_close(ef);
+               }
+          }
+        
+        s = getenv("ELM_PROFILE");
+        if (s)
+          {
+             free(profile);
+             profile = strdup(s);
+          }
+        
+        snprintf(buf, sizeof(buf), "%s/.elementary/config/%s/base.cfg", home, profile);
+        ef = eet_open(buf, EET_FILE_MODE_READ);
+        if (ef)
+          {
+             _elm_config = eet_data_read(ef, edd, "config");
+             eet_close(ef);
+          }
+        if (!_elm_config)
+          {
+             snprintf(buf, sizeof(buf), "%s/config/%s/base.cfg", _elm_data_dir, profile);
+             ef = eet_open(buf, EET_FILE_MODE_READ);
+             if (ef)
+               {
+                  _elm_config = eet_data_read(ef, edd, "config");
+                  eet_close(ef);
+               }
+          }
+        
+        if (edd) eet_data_descriptor_free(edd);
+        if (profile) free(profile);
+     }
+
+   if (!_elm_config)
+     {
+        _elm_config = ELM_NEW(Elm_Config);
+        _elm_config->engine = ELM_SOFTWARE_X11;
+        _elm_config->thumbscroll_enable = 1;
+        _elm_config->thumbscroll_threshhold = 24;
+        _elm_config->thumbscroll_momentum_threshhold = 100.0;
+        _elm_config->thumbscroll_friction = 1.0;
+        _elm_config->thumbscroll_bounce_friction = 0.5;
+        _elm_config->page_scroll_friction = 0.5;
+        _elm_config->bring_in_scroll_friction = 0.5;
+        _elm_config->zoom_friction = 0.5;
+        _elm_config->thumbscroll_bounce_enable = 1;
+        _elm_config->scale = 1.0;
+        _elm_config->bgpixmap = 0;
+        _elm_config->font_hinting = 2;
+        _elm_config->font_dirs = NULL;
+        _elm_config->image_cache = 4096;
+        _elm_config->font_cache = 512;
+        _elm_config->finger_size = 40;
+        _elm_config->compositing = 1;
+        _elm_config->fps = 60.0;
+        _elm_config->theme = eina_stringshare_add("default");
+        _elm_config->modules = NULL;
+     }
 
    s = getenv("ELM_ENGINE");
    if (s)
@@ -641,8 +763,17 @@ elm_quicklaunch_init(int argc, char **argv)
    if (s) _elm_config->zoom_friction = atof(s);
 
    s = getenv("ELM_THEME");
-   if (s) _elm_theme_parse(s);
-   else _elm_theme_parse("default");
+   if (s)
+     {
+        if (_elm_config->theme)
+          {
+             eina_stringshare_del(_elm_config->theme);
+             _elm_config->theme = NULL;
+          }
+        _elm_config->theme = eina_stringshare_add(s);
+     }
+   
+   _elm_theme_parse(_elm_config->theme);
 
    _elm_config->font_hinting = 2;
    s = getenv("ELM_FONT_HINTING");
@@ -659,6 +790,11 @@ elm_quicklaunch_init(int argc, char **argv)
 	const char *p, *pp;
 	char *buf;
 
+        EINA_LIST_FREE(_elm_config->font_dirs, p)
+          {
+             eina_stringshare_del(p);
+          }
+        
 	buf = alloca(strlen(s) + 1);
 	p = s;
 	pp = p;
@@ -705,11 +841,20 @@ elm_quicklaunch_init(int argc, char **argv)
    if (_elm_config->fps < 1.0) _elm_config->fps = 1.0;
 
    ecore_animator_frametime_set(1.0 / _elm_config->fps);
-   edje_frametime_set(1.0 / 60.0);
+   edje_frametime_set(1.0 / _elm_config->fps);
    edje_scale_set(_elm_config->scale);
 
    s = getenv("ELM_MODULES");
-   if (s) _elm_module_parse(s);
+   if (s)
+     {
+        if (_elm_config->modules)
+          {
+             eina_stringshare_del(_elm_config->modules);
+             _elm_config->modules = NULL;
+          }
+        _elm_config->modules = eina_stringshare_add(s);
+     }
+   if (_elm_config->modules) _elm_module_parse(_elm_config->modules);
 }
 
 EAPI void
@@ -775,6 +920,12 @@ elm_quicklaunch_sub_init(int argc, char **argv)
                                                 _elm_atom_enlightenment_theme);
              if (s)
 	       {
+                  if (_elm_config->theme)
+                    {
+                       eina_stringshare_del(_elm_config->theme);
+                       _elm_config->theme = NULL;
+                    }
+                  _elm_config->theme = eina_stringshare_add(s);
                   _elm_theme_parse(s);
                   free(s);
 	       }
@@ -817,12 +968,16 @@ elm_quicklaunch_shutdown(void)
      {
 	eina_stringshare_del(fontdir);
      }
-
+   
+   if (_elm_config->theme) eina_stringshare_del(_elm_config->theme);
+   if (_elm_config->modules) eina_stringshare_del(_elm_config->modules);
+   
+   free(_elm_config);
+   free(_elm_appname);
+   
    ecore_event_handler_del(_elm_exit_handler);
    _elm_exit_handler = NULL;
 
-   free(_elm_config);
-   free(_elm_appname);
    _elm_unneed_efreet();
    _elm_unneed_e_dbus();
    _elm_module_shutdown();

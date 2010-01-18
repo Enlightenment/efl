@@ -131,7 +131,7 @@ AM_CONDITIONAL([ELEMENTARY_WINDOWS_BUILD], [test "x${have_windows}" = "xyes"])
 PKG_CHECK_MODULES([ELEMENTARY],
    [
     eina-0 >= 0.0.1
-    eet >= 1.1.0
+    eet >= 1.2.3
     evas >= 0.9.9
     ecore >= 0.9.9
     ecore-evas >= 0.9.9
@@ -142,6 +142,17 @@ PKG_CHECK_MODULES([ELEMENTARY],
    ]
 )
 
+AC_ARG_WITH(eet-eet,
+[  --with-eet-eet=PATH              specify a specific path to eet utility],
+[
+  v=$withval;
+  eet_eet=$v
+  echo "  Elementary eet explicitly set to "$eet_eet;
+],[
+  eet_eet=$(pkg-config --variable=prefix eet)/bin/eet
+])
+AC_SUBST(eet_eet)
+        
 requirement_elm="edje ecore-file ecore-txt ecore-job ecore-evas ecore evas eet eina-0 ${requirement_elm}"
 
 have_elementary_x="no"
@@ -292,6 +303,10 @@ data/themes/Makefile
 data/images/Makefile
 data/objects/Makefile
 data/desktop/Makefile
+config/Makefile
+config/default/Makefile
+config/standard/Makefile
+config/illume/Makefile
 ])
 
 #####################################################################

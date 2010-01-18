@@ -1,0 +1,22 @@
+group "Elm_Config" struct {
+  value "engine" int: 0;
+  value "thumbscroll_enable" int: 1;
+  value "thumbscroll_threshhold" int: 4;
+  value "thumbscroll_momentum_threshhold" double: 100.0;
+  value "thumbscroll_friction" double: 1.0;
+  value "thumbscroll_bounce_friction" double: 0.5;
+  value "page_scroll_friction" double: 0.5;
+  value "bring_in_scroll_friction" double: 0.5;
+  value "zoom_friction" double: 0.5;
+  value "thumbscroll_bounce_enable" int: 1;
+  value "scale" double: 1.0;
+  value "bgpixmap" int: 0;
+  value "compositing" int: 1;
+  value "font_hinting" int: 2;
+  value "image_cache" int: 4096;
+  value "font_cache" int: 512;
+  value "finger_size" int: 5;
+  value "fps" double: 60.0;
+  value "theme" string: "default";
+  value "modules" string: "";
+}

@@ -1,4 +1,4 @@
-SUBDIRS = src data doc
+SUBDIRS = src data config doc
 
 ACLOCAL_AMFLAGS = -I m4
 
