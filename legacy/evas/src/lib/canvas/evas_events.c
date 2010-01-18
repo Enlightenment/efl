@@ -280,6 +280,7 @@ EAPI void
 evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
    Eina_List *l, *copy;
+   Eina_List *ins;
    Evas_Event_Mouse_Down ev;
    Evas_Object *obj;
 
@@ -307,6 +308,11 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
    ev.event_flags = EVAS_EVENT_FLAG_NONE;
 
    _evas_walk(e);
+   ins = evas_event_objects_event_list(e, NULL, e->pointer.x, e->pointer.y);
+   /* free our old list of ins */
+   e->pointer.object.in = eina_list_free(e->pointer.object.in);
+   /* and set up the new one */
+   e->pointer.object.in = ins;
    copy = evas_event_list_copy(e->pointer.object.in);
    EINA_LIST_FOREACH(copy, l, obj)
      {
