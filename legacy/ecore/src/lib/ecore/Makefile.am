@@ -43,7 +43,15 @@ libecore_la_SOURCES += ecore_exe_win32.c
 
 else
 
+if ECORE_HAVE_WINCE
+
+libecore_la_SOURCES += ecore_exe_wince.c
+
+else
+
 libecore_la_SOURCES += ecore_exe.c
+
+endif
 
 endif
 
