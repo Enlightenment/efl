@@ -274,7 +274,7 @@ AC_ARG_WITH(edje-cc,
 [
   v=$withval;
   edje_cc=$v
-  echo "  Enlightenment edje_cc explicitly set to "$edje_cc;
+  echo "  Elementary edje_cc explicitly set to "$edje_cc;
 ],[
   edje_cc=$(pkg-config --variable=prefix edje)/bin/edje_cc
 ])
