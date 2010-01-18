@@ -1944,8 +1944,13 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
                                            it = (Evas_Object_Textblock_Item *)(EINA_INLIST_GET(c->ln->items))->last;
                                            _layout_strip_trailing_whitespace(c, fmt, it);
                                            twrap = _layout_word_end(str, wrap);
-                                           ch = evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
-                                           str = str + twrap;
+					   if (twrap >= 0)
+					     {
+						ch = evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
+						str = str + twrap;
+					     }
+					   else
+					     str = NULL;
                                         }
 				   }
 			      }
@@ -1973,9 +1978,11 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 				      wrap = 0;
 				      twrap = _layout_word_end(it->text, wrap);
 				      wrap = twrap;
-				      ch = evas_common_font_utf8_get_next((unsigned char *)str, &wrap);
 				      if (twrap >= 0)
-					_layout_item_text_cutoff(c, it, twrap);
+					{
+					   ch = evas_common_font_utf8_get_next((unsigned char *)str, &wrap);
+					   _layout_item_text_cutoff(c, it, twrap);
+					}
 				      if (wrap > 0)
 					str = str + wrap;
 				      else

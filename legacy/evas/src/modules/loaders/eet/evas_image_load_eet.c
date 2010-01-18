@@ -42,14 +42,14 @@ evas_image_load_file_head_eet(Image_Entry *ie, const char *file, const char *key
      }
    ok = eet_data_image_header_read(ef, key,
 				   &w, &h, &alpha, &compression, &quality, &lossy);
-   if (IMG_TOO_BIG(w, h))
-     {
-	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	goto on_error;
-     }
    if (!ok)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	goto on_error;
+     }
+   if (IMG_TOO_BIG(w, h))
+     {
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	goto on_error;
      }
    if (alpha) ie->flags.alpha = 1;
