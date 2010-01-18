@@ -33,7 +33,6 @@ struct _Widget_Data
    Eina_Bool deferred_cur : 1;
    Eina_Bool disabled : 1;
    Eina_Bool context_menu : 1;
-   Eina_Bool horizontal : 1;   
 };
 
 struct _Elm_Entry_Context_Menu_Item
@@ -385,10 +384,16 @@ _long_press(void *data)
      }
    else if (wd->context_menu)
      {
+        const char *context_menu_orientation;
+        
         if (wd->hoversel) evas_object_del(wd->hoversel);
         else elm_widget_scroll_freeze_push(data);
         wd->hoversel = elm_hoversel_add(data);
-        elm_hoversel_horizontal_set(wd->hoversel, wd->horizontal);	
+        context_menu_orientation = edje_object_data_get
+          (wd->ent, "context_menu_orientation");
+        if ((context_menu_orientation) &&
+            (!strcmp(context_menu_orientation, "horizontal")))
+          elm_hoversel_horizontal_set(wd->hoversel, 1);
         elm_object_style_set(wd->hoversel, "entry");
         elm_widget_sub_object_add(data, wd->hoversel);
         elm_hoversel_label_set(wd->hoversel, "Text");
@@ -1457,13 +1462,6 @@ elm_entry_context_menu_clear(Evas_Object *obj)
         eina_stringshare_del(it->icon_group);
         free(it);
      }
-}
-
-EAPI void
-elm_entry_context_menu_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   wd->horizontal = !!horizontal;
 }
 
 EAPI void

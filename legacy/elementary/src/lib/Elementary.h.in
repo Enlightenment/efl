@@ -565,7 +565,6 @@ extern "C" {
    EAPI void         elm_entry_selection_copy(Evas_Object *obj);
    EAPI void         elm_entry_selection_paste(Evas_Object *obj);
    EAPI void         elm_entry_context_menu_clear(Evas_Object *obj);
-   EAPI void         elm_entry_context_menu_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
    EAPI void         elm_entry_context_menu_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI void         elm_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disabled);
    EAPI Eina_Bool    elm_entry_context_menu_disabled_get(Evas_Object *obj);
