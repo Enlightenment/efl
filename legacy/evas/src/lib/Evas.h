@@ -1098,6 +1098,8 @@ extern "C" {
 
    EAPI void              evas_object_map_enable_set        (Evas_Object *obj, Eina_Bool enabled);
    EAPI Eina_Bool         evas_object_map_enable_get        (const Evas_Object *obj);
+   EAPI void              evas_object_map_source_set        (Evas_Object *obj, Evas_Object *src);
+   EAPI Evas_Object      *evas_object_map_source_get        (const Evas_Object *obj);
    EAPI void              evas_object_map_set               (Evas_Object *obj, const Evas_Map *map);
    EAPI const Evas_Map   *evas_object_map_get               (const Evas_Object *obj);
 

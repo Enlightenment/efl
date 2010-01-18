@@ -313,6 +313,42 @@ evas_object_map_enable_get(const Evas_Object *obj)
    return obj->cur.usemap;
 }
 
+
+/**
+ * Set the map sourc eobject
+ * 
+ * This sets the object from which the map is taken - can be any object that
+ * has map enabled on it.
+ * 
+ * Currently not implemented. for future use.
+ * 
+ * @param obj object to set the map source of
+ * @param src the source object from which the map is taken
+ */
+EAPI void
+evas_object_map_source_set(Evas_Object *obj, Evas_Object *src)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+}
+
+/**
+ * get the map source object
+ * 
+ * See evas_object_map_source_set()
+ * 
+ * @param obj object to set the map source of
+ * @return the object set as the source
+ */
+EAPI Evas_Object *
+evas_object_map_source_get(const Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+}
+
 /**
  * Set current object transformation map.
  * 
