@@ -303,7 +303,6 @@ _ecore_evas_wince_free(Ecore_Evas *ee)
 
    ecore_wince_window_free((Ecore_WinCE_Window *)ee->prop.window);
    ecore_event_window_unregister(ee->prop.window);
-   ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    _ecore_evas_wince_shutdown();
    ecore_wince_shutdown();
 }
@@ -720,7 +719,7 @@ static Ecore_Evas_Engine_Func _ecore_wince_engine_func =
    NULL, /* _ecore_evas_x_withdrawn_set */
    NULL, /* _ecore_evas_x_sticky_set */
    NULL, /* _ecore_evas_x_ignore_events_set */
-   NULL,  /* _ecore_evas_x_alpha_set */
+   NULL, /* _ecore_evas_x_alpha_set */
      
      NULL // render
 };
