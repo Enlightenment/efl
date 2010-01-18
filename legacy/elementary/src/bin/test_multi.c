@@ -114,7 +114,7 @@ test_multi(void *data, Evas_Object *obj, void *event_info)
    evas_object_event_callback_add(r, EVAS_CALLBACK_MULTI_MOVE, _multi_move, win);
 
    evas_object_size_hint_min_set(bg, 160, 160);
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 480, 800);
    
    evas_object_show(win);
 }
