@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <libgen.h>
 
 #ifndef _FILE_OFFSET_BITS
 # define _FILE_OFFSET_BITS  64
@@ -600,13 +601,8 @@ ecore_file_dir_get(const char *file)
    char buf[PATH_MAX];
 
    strncpy(buf, file, PATH_MAX);
-   p = strrchr(buf, '/');
-   if (!p) return strdup(file);
-
-   if (p == buf) return strdup("/");
-
-   *p = 0;
-   return strdup(buf);
+   p = dirname(buf);
+   return strdup(p);
 }
 
 /**
