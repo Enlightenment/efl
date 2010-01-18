@@ -666,26 +666,27 @@ grid_load(Evas_Object *obj, Grid *g)
    Widget_Data *wd = elm_widget_data_get(obj);
    int x, y;
    int size;
-   Evas_Coord ow, oh, tx, ty, gw, gh, xx, yy, ww, hh;
+   Evas_Coord ox, oy, ow, oh, cvx, cvy, cvw, cvh, tx, ty, gw, gh, xx, yy, ww, hh;
    Eina_Iterator *it;
    Eina_Matrixsparse_Cell *cell;
    Grid_Item *gi;
 
-   elm_smart_scroller_child_viewport_size_get(wd->scr, &ow, &oh);
-
+   evas_object_geometry_get(wd->pan_smart, &ox, &oy, &ow, &oh);
+   evas_output_viewport_get(evas_object_evas_get(wd->obj), &cvx, &cvy, &cvw, &cvh);
+                               
    gw = wd->size.w;
    gh = wd->size.h;
 
-   if(gw <= 0 || gh <= 0) return ;
+   if ((gw <= 0) || (gh <= 0)) return;
 
    size = g->tsize;
    if ((gw != g->w) && (g->w > 0))
      size = ((long long)gw * size) / g->w;
-   if(size < g->tsize / 2) return; // else we will load to much tiles
+   if (size < (g->tsize / 2)) return; // else we will load to much tiles
 
 
    it = eina_matrixsparse_iterator_new(g->grid);
-
+   
    EINA_ITERATOR_FOREACH(it, cell)
      {
 	Grid_Item *gi = eina_matrixsparse_cell_data_get(cell);
@@ -708,8 +709,10 @@ grid_load(Evas_Object *obj, Grid *g)
 	     hh = (((long long)gh * (ty + hh)) / g->h) - yy;
 	  }
 
-	if(! ELM_RECTS_INTERSECT( wd->pan_x, wd->pan_y, ow, oh,
-		 xx, yy, ww, hh) )
+        if (!ELM_RECTS_INTERSECT(xx - wd->pan_x + ox, 
+                                 yy  - wd->pan_y + oy,
+                                 ww, hh,
+                                 cvx, cvy, cvw, cvh))
 	  {
 	     if (gi->want)
 	       {
@@ -717,7 +720,7 @@ grid_load(Evas_Object *obj, Grid *g)
 		  if (wd->preload_num == 0)
 		    {
 		       edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
-			     "elm,state,busy,stop", "elm");
+                                               "elm,state,busy,stop", "elm");
 		       evas_object_smart_callback_call(obj, "loaded,detail", NULL);
 		    }
 		  evas_object_hide(gi->img);
@@ -725,8 +728,8 @@ grid_load(Evas_Object *obj, Grid *g)
 		  evas_object_image_file_set(gi->img, NULL, NULL);
 		  gi->want = EINA_FALSE;
 		  gi->have = EINA_FALSE;
-
-		  if(gi->job)
+                  
+		  if (gi->job)
 		    {
 		       DBG("DOWNLOAD abort %s", gi->file);
 		       ecore_file_download_abort(gi->job);
@@ -749,16 +752,16 @@ grid_load(Evas_Object *obj, Grid *g)
    eina_iterator_free(it);
 
    xx = wd->pan_x / size;
-   if(xx < 0) xx = 0;
+   if (xx < 0) xx = 0;
 
    yy = wd->pan_y / size;
-   if(yy < 0) yy = 0;
+   if (yy < 0) yy = 0;
 
-   ww =  ow / size + 1;
-   if(xx + ww >= g->gw) ww = g->gw - xx - 1;
+   ww = ow / size + 1;
+   if (xx + ww >= g->gw) ww = g->gw - xx - 1;
 
-   hh =  oh / size + 1;
-   if(yy + hh >= g->gh) hh = g->gh - yy - 1;
+   hh = oh / size + 1;
+   if (yy + hh >= g->gh) hh = g->gh - yy - 1;
 
    for (y = yy; y <= yy + hh; y++)
      {
@@ -766,10 +769,10 @@ grid_load(Evas_Object *obj, Grid *g)
 	  {
 	     gi = eina_matrixsparse_data_idx_get(g->grid, y, x);
 
-	     if(!gi && g != eina_list_data_get(wd->grids))
+	     if ((!gi) && (g != eina_list_data_get(wd->grids)))
 	       continue;
 
-	     if(!gi)
+	     if (!gi)
 	       {
 		  gi = calloc(1, sizeof(Grid_Item));
 		  gi->src.x = x * g->tsize;
@@ -783,28 +786,28 @@ grid_load(Evas_Object *obj, Grid *g)
 		  gi->out.h = gi->src.h;
 
 		  gi->wd = wd;
-
+                  
 		  gi->img = evas_object_image_add(evas_object_evas_get(obj));
 		  evas_object_image_scale_hint_set
-		     (gi->img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
+                    (gi->img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
 		  evas_object_image_filled_set(gi->img, 1);
-
+                  
 		  evas_object_smart_member_add(gi->img,
-			wd->pan_smart);
+                                               wd->pan_smart);
 		  elm_widget_sub_object_add(obj, gi->img);
 		  evas_object_pass_events_set(gi->img, 1);
-
+                  
 		  /*gi->txt = evas_object_text_add(evas_object_evas_get(obj));
-		    evas_object_text_font_set(gi->txt, "Vera", 12);
-		    evas_object_color_set(gi->txt, 100, 100, 100, 255);
-		    evas_object_smart_member_add(gi->txt,
-		    wd->pan_smart);
-		    elm_widget_sub_object_add(obj, gi->txt);
-		    evas_object_pass_events_set(gi->txt, 1);
-		    */
+                   evas_object_text_font_set(gi->txt, "Vera", 12);
+                   evas_object_color_set(gi->txt, 100, 100, 100, 255);
+                   evas_object_smart_member_add(gi->txt,
+                   wd->pan_smart);
+                   elm_widget_sub_object_add(obj, gi->txt);
+                   evas_object_pass_events_set(gi->txt, 1);
+                   */
 		  eina_matrixsparse_data_idx_set(g->grid, y, x, gi);
 	       }
-
+             
 	     if (!gi->have && !gi->download)
 	       {
 		  char buf[PATH_MAX], buf2[PATH_MAX];

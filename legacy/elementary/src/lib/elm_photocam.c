@@ -361,9 +361,10 @@ grid_load(Evas_Object *obj, Grid *g)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    int x, y;
-   Evas_Coord ow, oh, gw, gh, ax, ay, tx, ty;
+   Evas_Coord ox, oy, ow, oh, cvx, cvy, cvw, cvh, gw, gh, ax, ay, tx, ty;
 
-   elm_smart_scroller_child_viewport_size_get(wd->scr, &ow, &oh);
+   evas_object_geometry_get(wd->pan_smart, &ox, &oy, &ow, &oh);
+   evas_output_viewport_get(evas_object_evas_get(wd->obj), &cvx, &cvy, &cvw, &cvh);
    ax = 0;
    ay = 0;
    gw = wd->size.w;
@@ -396,8 +397,10 @@ grid_load(Evas_Object *obj, Grid *g)
                }
 //             xx += ax;
 //             yy += ay;
-             if (ELM_RECTS_INTERSECT(wd->pan_x, wd->pan_y, ow, oh,
-                                     xx, yy, ww, hh))
+             if (ELM_RECTS_INTERSECT(xx - wd->pan_x + ox, 
+                                     yy  - wd->pan_y + oy,
+                                     ww, hh,
+                                     cvx, cvy, cvw, cvh))
                visible = 1;
              if ((visible) && (!g->grid[tn].have) && (!g->grid[tn].want))
                {
