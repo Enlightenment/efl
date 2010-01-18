@@ -157,10 +157,6 @@ if BUILD_ECORE_QUARTZ
 pkgconfig_DATA += ecore-quartz.pc
 endif
 
-if BUILD_ECORE_X_XCB
-pkgconfig_DATA += ecore-x.pc
-endif
-
 .PHONY: doc
 
 doc:
