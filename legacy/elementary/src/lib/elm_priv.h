@@ -27,6 +27,7 @@ typedef enum _Elm_Engine
 {
    ELM_SOFTWARE_X11,
      ELM_SOFTWARE_FB,
+     ELM_SOFTWARE_DIRECTFB,
      ELM_SOFTWARE_16_X11,
      ELM_XRENDER_X11,
      ELM_OPENGL_X11,

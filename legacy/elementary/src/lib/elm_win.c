@@ -191,6 +191,7 @@ _elm_win_xwindow_get(Elm_Win *win)
 	if (win->ee) win->xwin = ecore_evas_software_x11_window_get(win->ee);
 	break;
       case ELM_SOFTWARE_FB:
+      case ELM_SOFTWARE_DIRECTFB:
       case ELM_SOFTWARE_16_WINCE:
       case ELM_SOFTWARE_SDL:
       case ELM_SOFTWARE_16_SDL:
@@ -355,6 +356,9 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 	break;
       case ELM_SOFTWARE_FB:
 	win->ee = ecore_evas_fb_new(NULL, 0, 1, 1);
+	break;
+      case ELM_SOFTWARE_DIRECTFB:
+        win->ee = ecore_evas_directfb_new(NULL, 1, 0, 0, 1, 1);
 	break;
       case ELM_SOFTWARE_16_X11:
 	win->ee = ecore_evas_software_x11_16_new(NULL, 0, 0, 0, 1, 1);

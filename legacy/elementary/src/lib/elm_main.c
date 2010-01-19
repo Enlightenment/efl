@@ -723,9 +723,12 @@ elm_quicklaunch_init(int argc, char **argv)
 		 (!strcasecmp(s, "software-fb")) ||
 		 (!strcasecmp(s, "software_fb")))
 	  _elm_config->engine = ELM_SOFTWARE_FB;
-	else if ((!strcasecmp(s, "sdl")) ||
-		 (!strcasecmp(s, "software-sdl")) ||
-		 (!strcasecmp(s, "software_sdl")))
+        else if ((!strcasecmp(s, "directfb")) ||
+                 (!strcasecmp(s, "dfb")))
+          _elm_config->engine = ELM_SOFTWARE_DIRECTFB;
+        else if ((!strcasecmp(s, "sdl")) ||
+                 (!strcasecmp(s, "software-sdl")) ||
+                 (!strcasecmp(s, "software_sdl")))
 	  _elm_config->engine = ELM_SOFTWARE_SDL;
 	else if ((!strcasecmp(s, "sdl-16")) ||
 		 (!strcasecmp(s, "software-16-sdl")) ||
