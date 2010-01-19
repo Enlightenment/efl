@@ -17,7 +17,7 @@ syn keyword	cStructure	part parts dragable description rel1 rel2
 syn keyword	cStatement	text image font fill origin size tag
 syn keyword	cStructure	programs program script script_only lua_script lua_script_only styles style base
 syn keyword	cStructure	spectra spectrum
-syn match	cType		"+ + +;" contained 
+syn match	cType		"+ + +;" contained
 
 syn keyword	cLabel		item name min max type effect
 syn keyword	cLabel		mouse_events repeat_events clip_to
@@ -26,19 +26,24 @@ syn keyword	cLabel		state visible align step aspect aspect_preference fixed
 syn keyword	cLabel		relative offset to to_x to_y normal tween
 syn keyword	cLabel		border color color2 color3 font size fit align
 syn keyword	cLabel		signal source action transition in target after
-syn keyword	cLabel		text smooth inherit
+syn keyword	cLabel		text smooth inherit scale middle ignore_flags
+syn keyword	cLabel		alias events entry_mode select_mode multiline
+syn keyword	cLabel		source1 source2 source3 source4 source5 source6
+syn keyword	cLabel		text_source transitions
+syn keyword	cLabel		size_w size_h size_max_w size_max_h size_min_w size_min_w
 
 syn keyword	cConditional	if else switch
 syn keyword	cRepeat		while for do
-syn keyword	cConstant 	COMP RAW LOSSY 
-syn keyword	cConstant 	TEXT IMAGE RECT SWALLOW
+syn keyword	cConstant 	COMP RAW LOSSY
+syn keyword	cConstant 	TEXT TEXTBLOCK IMAGE RECT SWALLOW SOLID
 syn keyword	cConstant 	NONE PLAIN OUTLINE SOFT_OUTLINE SHADOW
 syn keyword	cConstant 	SOFT_SHADOW OUTLINE_SHADOW OUTLINE_SOFT_SHADOW
 syn keyword	cConstant 	STATE_SET ACTION_STOP SIGNAL_EMIT
 syn keyword	cConstant 	SCRIPT LUA_SCRIPT
 syn keyword	cConstant	DRAG_VAL_SET DRAG_VAL_STEP DRAG_VAL_PAGE
 syn keyword	cConstant	LINEAR SINUSOIDAL ACCELERATE DECELERATE
-syn keyword	cConstant	"default"
+syn keyword	cConstant	VERTICAL HORIZONTAL ON_HOLD BOTH EDITABLE EXPLICIT
+syn keyword	cConstant	FOCUS_SET "default"
 
 syn keyword	cTodo		contained TODO FIXME XXX
 
