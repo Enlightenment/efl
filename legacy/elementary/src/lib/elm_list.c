@@ -1116,3 +1116,25 @@ elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
 }
+
+/**
+ * Set the scrollbar policy
+ *
+ * This sets the scrollbar visibility policy for the given scroller.
+ * ELM_SMART_SCROLLER_POLICY_AUTO means the scrollber is made visible if it
+ * is needed, and otherwise kept hidden. ELM_SMART_SCROLLER_POLICY_ON turns
+ * it on all the time, and ELM_SMART_SCROLLER_POLICY_OFF always keeps it off.
+ * This applies respectively for the horizontal and vertical scrollbars.
+ *
+ * @param obj The list object
+ * @param policy_h Horizontal scrollbar policy
+ * @param policy_v Vertical scrollbar policy
+ *
+ * @ingroup List
+ */
+EAPI void
+elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   elm_scroller_policy_set(wd->scr, policy_h, policy_v);
+}
