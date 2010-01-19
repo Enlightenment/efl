@@ -120,6 +120,10 @@ EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_NEW = 0;
 EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE = 0;
 EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE = 0;
 
+#if 1 //def USE_XI
+EAPI int ECORE_X_EVENT_GENERIC = 0;
+#endif
+
 int ECORE_X_MODIFIER_SHIFT = 0;
 int ECORE_X_MODIFIER_CTRL = 0;
 int ECORE_X_MODIFIER_ALT = 0;
@@ -273,6 +277,9 @@ ecore_x_init(const char *name)
    _ecore_x_event_handlers[ColormapNotify]   = _ecore_x_event_handle_colormap_notify;
    _ecore_x_event_handlers[ClientMessage]    = _ecore_x_event_handle_client_message;
    _ecore_x_event_handlers[MappingNotify]    = _ecore_x_event_handle_mapping_notify;
+#if 1 //def USE_XI
+  _ecore_x_event_handlers[GenericEvent]    = _ecore_x_event_handle_generic_event;	
+#endif
    if (_ecore_x_event_shape_id)
      _ecore_x_event_handlers[_ecore_x_event_shape_id] = _ecore_x_event_handle_shape_change;
    if (_ecore_x_event_screensaver_id)
@@ -372,6 +379,10 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_STARTUP_SEQUENCE_NEW     = ecore_event_type_new();
 	ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE  = ecore_event_type_new();
 	ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE  = ecore_event_type_new();
+
+#if 1 //def USE_XI
+	ECORE_X_EVENT_GENERIC     = ecore_event_type_new();
+#endif
      }
    
    /* everything has these... unless its like a pda... :) */

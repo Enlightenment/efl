@@ -57,6 +57,7 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_X.h"
+#include "Ecore_Input.h"
 
 /* FIXME: this is for simulation only */
 #include "Ecore_Txt.h"
@@ -251,6 +252,7 @@ void _ecore_x_event_handle_fixes_selection_notify(XEvent *xevent);
 #ifdef ECORE_XDAMAGE
 void _ecore_x_event_handle_damage_notify(XEvent *xevent);
 #endif
+void _ecore_x_event_handle_generic_event(XEvent *xevent);
 
 void  _ecore_x_selection_data_init(void);
 void  _ecore_x_selection_shutdown(void);
@@ -288,9 +290,14 @@ void _ecore_x_randr_init(void);
 
 void _ecore_x_atoms_init(void);
 
+extern int _ecore_x_xi2_opcode;
+
 void _ecore_x_input_init(void);
 void _ecore_x_input_shutdown(void);
-    
+void _ecore_x_input_handler(XEvent* xevent);    
 /* from sync */
+
+void _ecore_mouse_move(unsigned int timestamp, unsigned int xmodifiers, int x, int y, int x_root, int y_root, unsigned int event_window, unsigned int window, unsigned int root_win, int same_screen, int dev, double radx, double rady, double pressure, double angle, double mx, double my, double mrx, double mry);
+Ecore_Event_Mouse_Button *_ecore_mouse_button(int event, unsigned int timestamp, unsigned int xmodifiers, unsigned int buttons, int x, int y, int x_root, int y_root, unsigned int event_window, unsigned int window, unsigned int root_win, int same_screen, int dev, double radx, double rady, double pressure, double angle, double mx, double my, double mrx, double mry);
 
 #endif

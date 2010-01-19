@@ -45,9 +45,9 @@
 
 
 typedef unsigned int Ecore_X_ID;
-#  ifndef _ECORE_X_WINDOW_PREDEF
+#ifndef _ECORE_X_WINDOW_PREDEF
 typedef Ecore_X_ID   Ecore_X_Window;
-#  endif
+#endif
 #ifdef HAVE_ECORE_X_XCB
 typedef Ecore_X_ID   Ecore_X_Visual;
 #else
@@ -326,8 +326,8 @@ typedef struct _Ecore_X_Event_Screensaver_Notify       Ecore_X_Event_Screensaver
 typedef struct _Ecore_X_Event_Sync_Counter             Ecore_X_Event_Sync_Counter;
 typedef struct _Ecore_X_Event_Sync_Alarm               Ecore_X_Event_Sync_Alarm;
 typedef struct _Ecore_X_Event_Screen_Change            Ecore_X_Event_Screen_Change;
-typedef struct _Ecore_X_Event_Randr_Crtc_Change        Ecore_X_Event_Randr_Crtc_Change;
-typedef struct _Ecore_X_Event_Randr_Output_Change       Ecore_X_Event_Randr_Output_Change;
+typedef struct _Ecore_X_Event_Randr_Crtc_Change            Ecore_X_Event_Randr_Crtc_Change;
+typedef struct _Ecore_X_Event_Randr_Output_Change          Ecore_X_Event_Randr_Output_Change;
 typedef struct _Ecore_X_Event_Randr_Output_Property_Notify Ecore_X_Event_Randr_Output_Property_Notify;
 
 typedef struct _Ecore_X_Event_Window_Delete_Request                Ecore_X_Event_Window_Delete_Request;
@@ -347,6 +347,8 @@ typedef struct _Ecore_X_Event_Ping                       Ecore_X_Event_Ping;
 typedef struct _Ecore_X_Event_Desktop_Change             Ecore_X_Event_Desktop_Change;
 
 typedef struct _Ecore_X_Event_Startup_Sequence           Ecore_X_Event_Startup_Sequence;
+
+typedef struct _Ecore_X_Event_Generic                    Ecore_X_Event_Generic;
 
 struct _Ecore_X_Event_Mouse_In
 {
@@ -829,10 +831,17 @@ struct _Ecore_X_Event_Desktop_Change
    int                         source;
 };
 
+struct _Ecore_X_Event_Generic
+{
+   int            extension;
+   int            evtype;
+   unsigned int   cookie;
+   void           *data;
+};
+
 EAPI extern int ECORE_X_EVENT_ANY; /**< low level event dependent on
 				        backend in use, if Xlib will be XEvent,
 					if XCB will be xcb_generic_event_t.
-
 					@warning avoid using it.
 				   */
 EAPI extern int ECORE_X_EVENT_MOUSE_IN;
@@ -892,6 +901,8 @@ EAPI extern int ECORE_X_EVENT_DESKTOP_CHANGE;
 EAPI extern int ECORE_X_EVENT_STARTUP_SEQUENCE_NEW;
 EAPI extern int ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE;
 EAPI extern int ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE;
+
+EAPI extern int ECORE_X_EVENT_GENERIC;
 
 EAPI extern int ECORE_X_EVENT_XDND_ENTER;
 EAPI extern int ECORE_X_EVENT_XDND_POSITION;

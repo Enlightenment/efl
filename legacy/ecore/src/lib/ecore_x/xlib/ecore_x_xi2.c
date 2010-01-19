@@ -13,8 +13,12 @@
 #include "Ecore_X.h"
 
 #ifdef ECORE_XI2
+#include "Ecore_Input.h"
+#endif
+
 int _ecore_x_xi2_opcode = -1;
 
+#ifdef ECORE_XI2
 static XIDeviceInfo *_ecore_x_xi2_devs = NULL;
 static int _ecore_x_xi2_num = 0;
 #endif
@@ -54,6 +58,72 @@ _ecore_x_input_shutdown(void)
      }
    _ecore_x_xi2_num = 0;
    _ecore_x_xi2_opcode = -1;
+#endif   
+}
+
+void
+_ecore_x_input_handler(XEvent* xevent)
+{
+#ifdef ECORE_XI2
+   XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
+   int devid = evd->deviceid;
+   
+   //printf("deviceID = %d\n", devid);
+   switch (xevent->xcookie.evtype)
+     {
+     case XI_Motion:
+        _ecore_mouse_move
+          (evd->time,
+           0, // state
+           evd->event_x, evd->event_y,
+           evd->root_x, evd->root_y,
+           evd->event,
+           (evd->child ? evd->child : evd->event),
+           evd->root,
+           1, // same_screen
+           devid, 1, 1, 
+           1.0, // pressure
+           0.0, // angle
+           evd->event_x, evd->event_y,
+           evd->root_x, evd->root_y);
+        break;
+     case XI_ButtonPress:
+        _ecore_mouse_button
+          (ECORE_EVENT_MOUSE_BUTTON_DOWN,
+           evd->time,
+           0, // state
+           0, // button
+           evd->event_x, evd->event_y,
+           evd->root_x, evd->root_y,
+           evd->event,
+           (evd->child ? evd->child : evd->event),
+           evd->root,
+           1, // same_screen
+           devid, 1, 1,
+           1.0, // pressure
+           0.0, // angle
+           evd->event_x, evd->event_y,
+           evd->root_x, evd->root_y);
+        break;
+     case XI_ButtonRelease:
+        _ecore_mouse_button
+          (ECORE_EVENT_MOUSE_BUTTON_UP,
+           evd->time,
+           0, // state
+           0, // button
+           evd->event_x, evd->event_y,
+           evd->root_x, evd->root_y,
+           evd->event,
+           (evd->child ? evd->child : evd->event),
+           evd->root,
+           1, // same_screen
+           devid, 1, 1,
+           1.0, // pressure
+           0.0, // angle
+           evd->event_x, evd->event_y,
+           evd->root_x, evd->root_y);
+        break;
+     }
 #endif   
 }
 

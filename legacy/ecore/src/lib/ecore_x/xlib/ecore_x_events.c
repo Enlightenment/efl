@@ -17,7 +17,6 @@
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
-#include "Ecore_Input.h"
 
 /** OpenBSD does not define CODESET
  * FIXME ??
@@ -192,7 +191,7 @@ _ecore_x_event_modifiers(unsigned int state)
    return modifiers;
 }
 
-static void
+void
 _ecore_mouse_move(unsigned int timestamp, unsigned int xmodifiers,
 		  int x, int y,
 		  int x_root, int y_root,
@@ -242,8 +241,7 @@ _ecore_mouse_move(unsigned int timestamp, unsigned int xmodifiers,
 }
 
 static void
-_ecore_key_press(int event,
-		 XKeyEvent *xevent)
+_ecore_key_press(int event, XKeyEvent *xevent)
 {
    Ecore_Event_Key *e;
    char *compose = NULL;
@@ -356,7 +354,7 @@ _ecore_key_press(int event,
    if (tmp) free(tmp);
 }
 
-static Ecore_Event_Mouse_Button*
+Ecore_Event_Mouse_Button *
 _ecore_mouse_button(int event,
 		    unsigned int timestamp, unsigned int xmodifiers,
 		    unsigned int buttons,
@@ -437,94 +435,13 @@ _ecore_mouse_button(int event,
    return e;
 }
 
-#ifdef ECORE_XI2
-extern int _ecore_x_xi2_opcode;
-#endif
-
 void
 _ecore_x_event_handle_any_event(XEvent *xevent)
 {
    XEvent* ev = malloc(sizeof(XEvent));
-   memcpy(ev, xevent, sizeof(XEvent));
-
-   ecore_event_add(ECORE_X_EVENT_ANY, ev, NULL, NULL);
    
-#ifdef ECORE_XI2
-   if (xevent->xcookie.type == GenericEvent &&
-       xevent->xcookie.extension == _ecore_x_xi2_opcode)
-     {
-        if (XGetEventData(_ecore_x_disp, &(xevent->xcookie)))
-          {
-             XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
-             int devid = evd->deviceid;
-             
-             //printf("deviceID = %d\n", devid);
-             switch (xevent->xcookie.evtype)
-               {
-               case XI_Motion:
-                  _ecore_mouse_move
-                    (evd->time,
-                     0, // state
-                     evd->event_x, evd->event_y,
-                     evd->root_x, evd->root_y,
-                     evd->event,
-                     (evd->child ? evd->child : evd->event),
-                     evd->root,
-                     1, // same_screen
-                     devid, 1, 1, 
-                     1.0, // pressure
-                     0.0, // angle
-                     evd->event_x, evd->event_y,
-                     evd->root_x, evd->root_y);
-                  //printf("motion\n");
-                  printf("=");
-                  break;
-               case XI_ButtonPress:
-                  _ecore_mouse_button
-                    (ECORE_EVENT_MOUSE_BUTTON_DOWN,
-                     evd->time,
-                     0, // state
-                     0, // button
-                     evd->event_x, evd->event_y,
-                     evd->root_x, evd->root_y,
-                     evd->event,
-                     (evd->child ? evd->child : evd->event),
-                     evd->root,
-                     1, // same_screen
-                     devid, 1, 1,
-                     1.0, // pressure
-                     0.0, // angle
-                     evd->event_x, evd->event_y,
-                     evd->root_x, evd->root_y);
-                  //printf("abs X:%f Y:%f - ", evd->root_x, evd->root_y);
-                  //printf("win X:%f Y:%f\n", evd->event_x, evd->event_y);
-                  printf("[[");
-                  break;
-               case XI_ButtonRelease:
-                  _ecore_mouse_button
-                    (ECORE_EVENT_MOUSE_BUTTON_UP,
-                     evd->time,
-                     0, // state
-                     0, // button
-                     evd->event_x, evd->event_y,
-                     evd->root_x, evd->root_y,
-                     evd->event,
-                     (evd->child ? evd->child : evd->event),
-                     evd->root,
-                     1, // same_screen
-                     devid, 1, 1,
-                     1.0, // pressure
-                     0.0, // angle
-                     evd->event_x, evd->event_y,
-                     evd->root_x, evd->root_y);
-                  //printf("unclick\n");
-                  printf("]]\n");
-                  break;
-               }
-          }
-     }
-   XFreeEventData(_ecore_x_disp, &(xevent->xcookie));
-#endif   
+   memcpy(ev, xevent, sizeof(XEvent));
+   ecore_event_add(ECORE_X_EVENT_ANY, ev, NULL, NULL);
 }
 
 void
@@ -2131,3 +2048,51 @@ _ecore_x_event_handle_damage_notify(XEvent *event)
    ecore_event_add(ECORE_X_EVENT_DAMAGE_NOTIFY, e, NULL, NULL);
 }
 #endif
+
+static void
+_ecore_x_event_free_generic_event(void *data, void *ev)
+{
+#ifdef ECORE_XI2
+   Ecore_X_Event_Generic *e = (Ecore_X_Event_Generic*)ev;
+   
+   if (e->data)
+     {
+        XFreeEventData(_ecore_x_disp, (XGenericEventCookie *)data);
+     }
+#endif   
+}
+
+void
+_ecore_x_event_handle_generic_event(XEvent *event)
+{
+#ifdef ECORE_XI2
+   XGenericEvent *generic_event;
+   Ecore_X_Event_Generic *e;
+   
+   generic_event = (XGenericEvent *)event;
+   
+   e = calloc(1, sizeof(Ecore_X_Event_Generic));
+   if (!e) return;
+   
+   if (XGetEventData(_ecore_x_disp, &event->xcookie))
+     {
+        e->cookie = event->xcookie.cookie;
+        e->data = event->xcookie.data;
+     }
+   else
+     {
+        e->cookie = 0;
+        e->data = NULL;
+     }
+   
+   e->extension = generic_event->extension;
+   e->evtype = generic_event->evtype;
+   
+   if (e->extension == _ecore_x_xi2_opcode)
+     {
+        _ecore_x_input_handler(event);
+     }
+   
+   ecore_event_add(ECORE_X_EVENT_GENERIC, e, _ecore_x_event_free_generic_event, event);
+#endif   
+}
