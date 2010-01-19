@@ -1563,3 +1563,20 @@ elm_photocam_paused_get(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->paused;
 }
+
+/**
+ * Get ther internal low-res image used for photocam
+ * 
+ * This gets the internal image object inside photocam. Do not modify it. It
+ * is for inspection only, and hooking callbacks to. Nothing else. It may be
+ * deleted at any time as well.
+ *
+ * @param obj The photocam object
+ * @return The internal image object handle, or NULL if none exists
+ */
+EAPI Evas_Object *
+elm_photocam_internal_image_get(const Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->img;
+}

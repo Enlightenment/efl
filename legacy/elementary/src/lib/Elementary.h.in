@@ -1067,6 +1067,8 @@ extern "C" {
    EAPI void         elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h);
    EAPI void         elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused);
    EAPI Eina_Bool    elm_photocam_paused_get(Evas_Object *obj);
+   EAPI Evas_Object *elm_photocam_internal_image_get(const Evas_Object *obj);
+   
    /* smart callbacks called:
     * "clicked" - when image clicked
     * "press" - when mouse/finger held down initially on image
