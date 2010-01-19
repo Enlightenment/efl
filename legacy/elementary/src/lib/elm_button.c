@@ -37,27 +37,14 @@ _del_hook(Evas_Object *obj)
 static void
 _on_focus_hook(void *data, Evas_Object *obj)
 {
-	Widget_Data *wd = elm_widget_data_get(obj);
-	Evas_Object *top = elm_widget_top_get(obj);
-
-   	if (elm_widget_focus_get(obj)) {
-		edje_object_signal_emit(wd->btn, "elm,action,focus", "elm");
-
-		if( top ) {
-			elm_win_keyboard_mode_set( top, ELM_WIN_KEYBOARD_ON );
-		}
-
-	}else {
-		edje_object_signal_emit(wd->btn, "elm,action,unfocus", "elm");
-
-		if ( top ) {
-			elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
-		}
-	}
-	
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *top = elm_widget_top_get(obj);
+   
+   if (elm_widget_focus_get(obj))
+     edje_object_signal_emit(wd->btn, "elm,action,focus", "elm");
+   else
+     edje_object_signal_emit(wd->btn, "elm,action,unfocus", "elm");
 }
-
-
 
 static void
 _theme_hook(Evas_Object *obj)
