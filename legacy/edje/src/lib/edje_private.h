@@ -1214,6 +1214,8 @@ void  _edje_unref(Edje *ed);
 int   _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
 void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
 void  _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const char *ssrc);
+void _edje_programs_patterns_clean(Edje *ed);
+void _edje_programs_patterns_init(Edje *ed);
 void  _edje_emit(Edje *ed, const char *sig, const char *src);
 void  _edje_emit_handle(Edje *ed, const char *sig, const char *src);
 void  _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp);

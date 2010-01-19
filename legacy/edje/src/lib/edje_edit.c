@@ -4805,13 +4805,8 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
    ed->table_programs[epr->id % ed->table_programs_size] = epr;
 
    //Update patterns
-   if (ed->patterns.programs.signals_patterns)
-     {
-	edje_match_patterns_free(ed->patterns.programs.signals_patterns);
-	edje_match_patterns_free(ed->patterns.programs.sources_patterns);
-     }
-   ed->patterns.programs.signals_patterns = edje_match_programs_signal_init(ed->collection->programs);
-   ed->patterns.programs.sources_patterns = edje_match_programs_source_init(ed->collection->programs);
+   _edje_programs_patterns_clean(ed);
+   _edje_programs_patterns_init(ed);
 
    return 1;
 }

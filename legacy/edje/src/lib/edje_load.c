@@ -245,7 +245,7 @@ edje_file_data_get(const char *file, const char *key)
    return str;
 }
 
-static void
+void
 _edje_programs_patterns_clean(Edje *ed)
 {
    _edje_signals_sources_patterns_clean(&ed->patterns.programs);
@@ -258,7 +258,7 @@ _edje_programs_patterns_clean(Edje *ed)
    ed->patterns.programs.globing = eina_list_free(ed->patterns.programs.globing);
 }
 
-static void
+void
 _edje_programs_patterns_init(Edje *ed)
 {
    Edje_Signals_Sources_Patterns *ssp = &ed->patterns.programs;
