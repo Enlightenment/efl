@@ -120,6 +120,33 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
 
    notify = elm_notify_add(win);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_CENTER);
+   elm_notify_timeout_set(notify, 10);
+
+   bx = elm_box_add(win);
+   elm_notify_content_set(notify, bx);
+   elm_box_horizontal_set(bx, 1);
+   evas_object_show(bx);
+
+   lb = elm_label_add(win);
+   elm_label_label_set(lb, "Center position. This notify use a timeout of 10 sec.");
+   elm_box_pack_end(bx, lb);
+   evas_object_show(lb);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Close");
+   evas_object_smart_callback_add(bt, "clicked", _bt_close, notify);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Center");
+   evas_object_smart_callback_add(bt, "clicked", _bt, notify);
+   elm_table_pack(tb, bt, 1, 1, 1, 1);
+   evas_object_show(bt);
+
+   notify = elm_notify_add(win);
+   evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_RIGHT);
 
    bx = elm_box_add(win);

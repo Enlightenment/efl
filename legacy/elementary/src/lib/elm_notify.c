@@ -136,6 +136,9 @@ _calc(Evas_Object *obj)
 	   case ELM_NOTIFY_ORIENT_TOP:
              evas_object_move(wd->notify, x + offx, y);
              break;
+	   case ELM_NOTIFY_ORIENT_CENTER:
+             evas_object_move(wd->notify, x + offx, y + offy);
+             break;
 	   case ELM_NOTIFY_ORIENT_BOTTOM:
              evas_object_move(wd->notify, x + offx, y + h - minh);
              break;
@@ -371,6 +374,9 @@ elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient)
       case ELM_NOTIFY_ORIENT_TOP:
         _elm_theme_set(wd->notify, "notify", "base", "default");
         break;
+      case ELM_NOTIFY_ORIENT_CENTER:
+        _elm_theme_set(wd->notify, "notify", "base", "center");
+        break;		
       case ELM_NOTIFY_ORIENT_BOTTOM:
         _elm_theme_set(wd->notify, "notify", "base", "bottom");
         break;
