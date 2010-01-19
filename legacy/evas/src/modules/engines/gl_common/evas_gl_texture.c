@@ -3,8 +3,8 @@
 #if 1
 static const GLenum rgba_fmt   = GL_RGBA;
 static const GLenum rgba_ifmt  = GL_RGBA;
-//static const GLenum rgb_fmt    = GL_RGBA;
-//static const GLenum rgb_ifmt   = GL_RGBA;
+static const GLenum rgb_fmt    = GL_RGBA;
+static const GLenum rgb_ifmt   = GL_RGBA;
 static const GLenum alpha_fmt  = GL_ALPHA;
 static const GLenum alpha_ifmt = GL_ALPHA;
 static const GLenum lum_fmt    = GL_LUMINANCE;
@@ -12,8 +12,8 @@ static const GLenum lum_ifmt   = GL_LUMINANCE;
 #else
 static const GLenum rgba_fmt   = GL_RGBA;
 static const GLenum rgba_ifmt  = GL_COMPRESSED_RGBA;
-//static const GLenum rgb_fmt    = GL_RGBA;
-//static const GLenum rgb_ifmt   = GL_COMPRESSED_RGBA;
+static const GLenum rgb_fmt    = GL_RGBA;
+static const GLenum rgb_ifmt   = GL_COMPRESSED_RGBA;
 static const GLenum alpha_fmt  = GL_ALPHA;
 static const GLenum alpha_ifmt = GL_COMPRESSED_ALPHA;
 static const GLenum lum_fmt    = GL_LUMINANCE;
@@ -224,14 +224,18 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im)
    
    tex->gc = gc;
    tex->references = 1;
-//   if (im->cache_entry.flags.alpha)
-   tex->pt = _pool_tex_find(gc, im->cache_entry.w + 2,
-                            im->cache_entry.h + 1, rgba_ifmt, rgba_fmt, 
-                            &u, &v, &l_after, 1024);
-//   else
-//     tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
-//                              im->cache_entry.h + 1, rgb_ifmt, rgb_fmt,
-//                              &u, &v, &l_after, 1024);
+
+   if (im->cache_entry.flags.alpha)
+     {
+        tex->pt = _pool_tex_find(gc, im->cache_entry.w + 2,
+                                 im->cache_entry.h + 1, rgba_ifmt, rgba_fmt, 
+                                 &u, &v, &l_after, 1024);
+        tex->alpha = 1;
+     }
+   else
+     tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
+                              im->cache_entry.h + 1, rgb_ifmt, rgb_fmt,
+                              &u, &v, &l_after, 1024);
    if (!tex->pt)
      {
         free(tex);
@@ -300,6 +304,21 @@ _pool_tex_render_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    return pt;
 }
 
+static void
+pt_unref(Evas_GL_Texture_Pool *pt)
+{
+   pt->references--;
+   if (pt->references > 0) return;
+   if (pt->whole)
+     pt->gc->shared->tex.whole = eina_list_remove(pt->gc->shared->tex.whole, pt);
+   else
+     pt->gc->shared->tex.atlas [pt->slot][pt->fslot] =
+     eina_list_remove(pt->gc->shared->tex.atlas[pt->slot][pt->fslot], pt);
+   glDeleteTextures(1, &(pt->texture));
+   if (pt->fb) glsym_glDeleteFramebuffers(1, &(pt->fb));
+   free(pt);
+}
+
 Evas_GL_Texture *
 evas_gl_common_texture_render_new(Evas_GL_Context *gc, int w, int h, int alpha)
 {
@@ -312,7 +331,11 @@ evas_gl_common_texture_render_new(Evas_GL_Context *gc, int w, int h, int alpha)
    
    tex->gc = gc;
    tex->references = 1;
-   tex->pt = _pool_tex_render_new(gc, w, h, rgba_ifmt, rgba_fmt);
+   tex->alpha = alpha;
+   if (alpha)
+     tex->pt = _pool_tex_render_new(gc, w, h, rgba_ifmt, rgba_fmt);
+   else
+     tex->pt = _pool_tex_render_new(gc, w, h, rgb_ifmt, rgb_fmt);
    if (!tex->pt)
      {
         free(tex);
@@ -329,6 +352,29 @@ evas_gl_common_texture_render_new(Evas_GL_Context *gc, int w, int h, int alpha)
 void
 evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 {
+   if (tex->alpha != im->cache_entry.flags.alpha)
+     {
+        tex->pt->allocations = eina_list_remove(tex->pt->allocations, tex);
+        pt_unref(tex->pt);
+        tex->alpha = im->cache_entry.flags.alpha;
+        if (tex->alpha)
+          tex->pt = _pool_tex_render_new(tex->gc, tex->w, tex->h, rgba_ifmt, rgba_fmt);
+        else
+          tex->pt = _pool_tex_render_new(tex->gc, tex->w, tex->h, rgb_ifmt, rgb_fmt);
+     }
+/* FIXME: on fglrx this doesnt work - is uploads alpha channel too AND uses it
+ * so need to fill in alpha channel - all bad! the texture is set up as rgb,
+ * not rgba. perhaps a shader can fix this that forcible sets a to 0xff if
+ * blend is off
+   if (!tex->alpha)
+     {
+        DATA32 *pixels, *p, *end;
+
+        pixels = im->image.data;
+        end = pixels + (im->cache_entry.w * im->cache_entry.h);
+        for (p = pixels; p < end; p++) *p |= 0xff000000;
+     }
+ */
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
 #ifdef GL_UNPACK_ROW_LENGTH   
    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
@@ -379,21 +425,6 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
                im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w) + (im->cache_entry.w - 1));
    if (tex->pt->texture != tex->gc->shader.cur_tex)
      glBindTexture(GL_TEXTURE_2D, tex->gc->shader.cur_tex);
-}
-
-static void
-pt_unref(Evas_GL_Texture_Pool *pt)
-{
-   pt->references--;
-   if (pt->references > 0) return;
-   if (pt->whole)
-     pt->gc->shared->tex.whole = eina_list_remove(pt->gc->shared->tex.whole, pt);
-   else
-     pt->gc->shared->tex.atlas [pt->slot][pt->fslot] =
-     eina_list_remove(pt->gc->shared->tex.atlas[pt->slot][pt->fslot], pt);
-   glDeleteTextures(1, &(pt->texture));
-   if (pt->fb) glsym_glDeleteFramebuffers(1, &(pt->fb));
-   free(pt);
 }
 
 void

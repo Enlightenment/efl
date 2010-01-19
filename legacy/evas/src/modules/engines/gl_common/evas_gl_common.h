@@ -162,6 +162,8 @@ struct _Evas_GL_Texture
    int              x, y, w, h;
    double           sx1, sy1, sx2, sy2;
    int              references;
+   
+   Eina_Bool        alpha : 1;
 };
 
 struct _Evas_GL_Image

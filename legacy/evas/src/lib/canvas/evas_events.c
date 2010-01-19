@@ -1063,7 +1063,7 @@ evas_event_feed_multi_up(Evas *e,
         if (y != ev.canvas.y)
           ev.canvas.ysub = ev.canvas.y; // fixme - lost precision
         if (e->events_frozen <= 0)
-          evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_UP, &ev);
+          evas_object_event_callback_call(obj, EVAS_CALLBACK_MULTI_UP, &ev);
         if (e->delete_me) break;
      }
    if (copy) copy = eina_list_free(copy);
