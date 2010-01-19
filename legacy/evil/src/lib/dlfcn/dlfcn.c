@@ -144,22 +144,28 @@ dladdr (const void *addr __UNUSED__, Dl_info *info)
    size_t length;
    int    ret = 0;
 
-  if (!info)
-    return 0;
+   if (!info)
+     return 0;
 
-  length = VirtualQuery(addr, &mbi, sizeof(mbi));
-  if (!length)
-    return 0;
+#ifdef _WIN32_WINNT
+   length = VirtualQuery(addr, &mbi, sizeof(mbi));
+   if (!length)
+     return 0;
 
-  if (mbi.State != MEM_COMMIT)
-    return 0;
+   if (mbi.State != MEM_COMMIT)
+     return 0;
 
-  if (!mbi.AllocationBase)
-    return 0;
+   if (!mbi.AllocationBase)
+     return 0;
 
-  ret = GetModuleFileName((HMODULE)mbi.AllocationBase, (LPTSTR)&tpath, PATH_MAX);
+   ret = GetModuleFileName((HMODULE)mbi.AllocationBase, (LPTSTR)&tpath, PATH_MAX);
    if (!ret)
      return 0;
+#else
+   ret = GetModuleFileName(NULL, (LPTSTR)&tpath, PATH_MAX);
+   if (!ret)
+     return 0;
+#endif
 
 #ifdef UNICODE
    path = evil_wchar_to_char(tpath);
