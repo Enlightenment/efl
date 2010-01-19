@@ -18,7 +18,8 @@ EXTRA_DIST = m4/Makefile.in \
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
-	ethumb.pc
+	ethumb.pc \
+	ethumb_client.pc
 
 
 if USE_MODULE_ETHUMBD
