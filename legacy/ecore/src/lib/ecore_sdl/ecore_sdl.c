@@ -108,6 +108,23 @@ ecore_sdl_shutdown(void)
    return _ecore_sdl_init_count;
 }
 
+static unsigned int
+_ecore_sdl_event_modifiers(int mod)
+{
+   unsigned int        modifiers = 0;
+
+   if(mod & KMOD_LSHIFT) modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+   if(mod & KMOD_RSHIFT) modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+   if(mod & KMOD_LCTRL) modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+   if(mod & KMOD_RCTRL) modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+   if(mod & KMOD_LALT) modifiers |= ECORE_EVENT_MODIFIER_ALT;
+   if(mod & KMOD_RALT) modifiers |= ECORE_EVENT_MODIFIER_ALT;
+   if(mod & KMOD_NUM) modifiers |= ECORE_EVENT_LOCK_NUM;
+   if(mod & KMOD_CAPS) modifiers |= ECORE_EVENT_LOCK_CAPS;
+
+   return modifiers;
+}
+
 static Ecore_Event_Key*
 _ecore_sdl_event_key(SDL_Event *event, double time)
 {
@@ -119,7 +136,7 @@ _ecore_sdl_event_key(SDL_Event *event, double time)
 
    ev->timestamp = time;
    ev->window = 0;
-   ev->modifiers = 0; /* FIXME: keep modifier around. */
+   ev->modifiers = _ecore_sdl_event_modifiers(SDL_GetModState());
    ev->key = NULL;
    ev->compose = NULL;
 
