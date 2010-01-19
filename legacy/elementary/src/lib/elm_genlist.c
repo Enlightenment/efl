@@ -465,9 +465,22 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 	     _item_unselect(it);
 	  }
      }
-   if ((!it->down) || (it->wd->on_hold) || (it->wd->longpressed)) return;
+   if ((!it->down) || (it->wd->on_hold) || (it->wd->longpressed))
+     {
+        if (it->long_timer)
+          {
+             ecore_timer_del(it->long_timer);
+             it->long_timer = NULL;
+          }
+        return;
+     }
    if (it->dragging)
      {
+        if (it->long_timer)
+          {
+             ecore_timer_del(it->long_timer);
+             it->long_timer = NULL;
+          }
         evas_object_smart_callback_call(it->wd->obj, "drag", it);
         return;
      }
