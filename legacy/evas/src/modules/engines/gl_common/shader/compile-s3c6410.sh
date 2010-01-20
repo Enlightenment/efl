@@ -1,5 +1,5 @@
 #!/bin/sh
-ORIONEXE=/home/raster/Data/orion/orion.exe
+ORIONEXE=/home/raster/samsung/build/x1/tools/orion/orion.exe
 OPTS="-O --nolodcalc -lp"
 
 function compile()

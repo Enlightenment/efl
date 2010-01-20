@@ -228,7 +228,6 @@ evas_gl_common_context_new(void)
         
         glEnableVertexAttribArray(SHAD_VERTEX);
         glEnableVertexAttribArray(SHAD_COLOR);
-        glEnableVertexAttribArray(SHAD_TEXUV);
         
         evas_gl_common_shader_program_init(&(shared->shader.rect), 
                                            &(shader_rect_vert_src), 
@@ -307,9 +306,9 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
      }
    
 
-   free(gc->array.vertex);
-   free(gc->array.color);
-   free(gc->array.texuv);
+   if (gc->array.vertex) free(gc->array.vertex);
+   if (gc->array.color) free(gc->array.color);
+   if (gc->array.texuv) free(gc->array.texuv);
    if (gc->array.texuv2) free(gc->array.texuv2);
    if (gc->array.texuv3) free(gc->array.texuv3);
    
@@ -385,16 +384,21 @@ _evas_gl_common_context_array_alloc(Evas_GL_Context *gc)
 {
    if (gc->array.num <= gc->array.alloc) return;
    gc->array.alloc += 6 * 1024;
-   gc->array.vertex = realloc(gc->array.vertex,
-                              gc->array.alloc * sizeof(GLshort) * 3);
-   gc->array.color  = realloc(gc->array.color,
-                              gc->array.alloc * sizeof(GLubyte) * 4);
-   gc->array.texuv  = realloc(gc->array.texuv,
-                              gc->array.alloc * sizeof(GLfloat) * 2);
-   gc->array.texuv2  = realloc(gc->array.texuv2,
+   if (gc->array.use_vertex)
+     gc->array.vertex = realloc(gc->array.vertex,
+                                gc->array.alloc * sizeof(GLshort) * 3);
+   if (gc->array.use_color)
+     gc->array.color  = realloc(gc->array.color,
+                                gc->array.alloc * sizeof(GLubyte) * 4);
+   if (gc->array.use_texuv)
+     gc->array.texuv  = realloc(gc->array.texuv,
+                                gc->array.alloc * sizeof(GLfloat) * 2);
+   if (gc->array.use_texuv2)
+     gc->array.texuv2  = realloc(gc->array.texuv2,
                                gc->array.alloc * sizeof(GLfloat) * 2);
-   gc->array.texuv3  = realloc(gc->array.texuv3,
-                               gc->array.alloc * sizeof(GLfloat) * 2);
+   if (gc->array.use_texuv3)
+     gc->array.texuv3  = realloc(gc->array.texuv3,
+                                 gc->array.alloc * sizeof(GLfloat) * 2);
 }
 
 void
@@ -412,7 +416,7 @@ evas_gl_common_context_line_push(Evas_GL_Context *gc,
    if (gc->dc->render_op == EVAS_RENDER_COPY) blend = 0;
    gc->shader.cur_tex = 0;
    gc->shader.cur_prog = gc->shared->shader.rect.prog;
-   gc->shader.blend = blend;
+   gc->shader.blend = 1;
    gc->shader.render_op = gc->dc->render_op;
    gc->shader.clip = clip;
    gc->shader.cx = cx;
@@ -421,13 +425,19 @@ evas_gl_common_context_line_push(Evas_GL_Context *gc,
    gc->shader.ch = ch;
    
    gc->array.line = 1;
+   gc->array.use_vertex = 1;
+   gc->array.use_color = 1;
+   gc->array.use_texuv = 0;
+   gc->array.use_texuv2 = 0;
+   gc->array.use_texuv3 = 0;
+   
    pnum = gc->array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nt = pnum * 4;
    gc->array.num += 1;
    _evas_gl_common_context_array_alloc(gc);
   
-   PUSH_VERTEX(x1    , y1    , 0);
-   PUSH_VERTEX(x2    , y2    , 0);
+   PUSH_VERTEX(x1, y1, 0);
+   PUSH_VERTEX(x2, y2, 0);
    
    for (i = 0; i < 2; i++)
      {
@@ -436,6 +446,11 @@ evas_gl_common_context_line_push(Evas_GL_Context *gc,
    
    shader_array_flush(gc);
    gc->array.line = 0;
+   gc->array.use_vertex = 0;
+   gc->array.use_color = 0;
+   gc->array.use_texuv = 0;
+   gc->array.use_texuv2 = 0;
+   gc->array.use_texuv3 = 0;
 }
 
 void
@@ -448,9 +463,12 @@ evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
    
    if (a < 255) blend = 1;
    if (gc->dc->render_op == EVAS_RENDER_COPY) blend = 0;
+   
+   gc->shader.blend = 1;
+   
    if ((gc->shader.cur_tex != 0)
        || (gc->shader.cur_prog != gc->shared->shader.rect.prog)
-       || (gc->shader.blend != blend)
+//       || (gc->shader.blend != blend)
        || (gc->shader.render_op != gc->dc->render_op)
        || (gc->shader.clip != 0)
        )
@@ -458,10 +476,17 @@ evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
         shader_array_flush(gc);
         gc->shader.cur_tex = 0;
         gc->shader.cur_prog = gc->shared->shader.rect.prog;
-        gc->shader.blend = blend;
+        gc->shader.blend = 1;
         gc->shader.render_op = gc->dc->render_op;
         gc->shader.clip = 0;
+
      }
+   gc->array.line = 0;
+   gc->array.use_vertex = 1;
+   gc->array.use_color = 1;
+   gc->array.use_texuv = 0;
+   gc->array.use_texuv2 = 0;
+   gc->array.use_texuv3 = 0;
    
    pnum = gc->array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nt = pnum * 4;
@@ -476,10 +501,6 @@ evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
    PUSH_VERTEX(x + w, y + h, 0);
    PUSH_VERTEX(x    , y + h, 0);
    
-   for (i = 0; i < 6; i++)
-     {
-        PUSH_TEXUV(0.0, 0.0);
-     }
    for (i = 0; i < 6; i++)
      {
         PUSH_COLOR(r, g, b, a);
@@ -494,17 +515,20 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
                                   int r, int g, int b, int a,
                                   Eina_Bool smooth)
 {
-   int pnum, nv, nc, nu, nt, i;
+   int pnum, nv, nc, nu, nu2, nt, i;
    GLfloat tx1, tx2, ty1, ty2;
+   GLfloat bl = 1.0;
    Eina_Bool blend = 1;
 
    if (tex->pt->format == GL_RGB) blend = 0;
-   if (a < 255) blend = 1;
+//   if (a < 255) blend = 1;
+   
+   gc->shader.blend = 1;
    
    if ((gc->shader.cur_tex != tex->pt->texture)
        || (gc->shader.cur_prog != gc->shared->shader.img.prog)
        || (gc->shader.smooth != smooth)
-       || (gc->shader.blend != blend)
+//       || (gc->shader.blend != blend)
        || (gc->shader.render_op != gc->dc->render_op)
        || (gc->shader.clip != 0)
        )
@@ -513,13 +537,20 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
         gc->shader.cur_tex = tex->pt->texture;
         gc->shader.cur_prog = gc->shared->shader.img.prog;
         gc->shader.smooth = smooth;
-        gc->shader.blend = blend;
+        gc->shader.blend = 1;
         gc->shader.render_op = gc->dc->render_op;
         gc->shader.clip = 0;
-     }
-   
+     } 
+   gc->array.line = 0;
+   gc->array.use_vertex = 1;
+   gc->array.use_color = 1;
+   gc->array.use_texuv = 1;
+   gc->array.use_texuv2 = 1;
+   gc->array.use_texuv3 = 0;
+  
    pnum = gc->array.num;
-   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nt = pnum * 4;
+   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nu2 = pnum * 2;
+   nt = pnum * 4;
    gc->array.num += 6;
    _evas_gl_common_context_array_alloc(gc);
 
@@ -527,6 +558,8 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    ty1 = ((double)(tex->y) + sy) / (double)tex->pt->h;
    tx2 = ((double)(tex->x) + sx + sw) / (double)tex->pt->w;
    ty2 = ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
+   
+   if (blend) bl = 0.0;
    
    PUSH_VERTEX(x    , y    , 0);
    PUSH_VERTEX(x + w, y    , 0);
@@ -536,6 +569,10 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    PUSH_TEXUV(tx2, ty1);
    PUSH_TEXUV(tx1, ty2);
    
+   PUSH_TEXUV2(bl, 0.0);
+   PUSH_TEXUV2(bl, 0.0);
+   PUSH_TEXUV2(bl, 0.0);
+   
    PUSH_VERTEX(x + w, y    , 0);
    PUSH_VERTEX(x + w, y + h, 0);
    PUSH_VERTEX(x    , y + h, 0);
@@ -544,6 +581,10 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    PUSH_TEXUV(tx2, ty2);
    PUSH_TEXUV(tx1, ty2);
 
+   PUSH_TEXUV2(bl, 0.0);
+   PUSH_TEXUV2(bl, 0.0);
+   PUSH_TEXUV2(bl, 0.0);
+   
    for (i = 0; i < 6; i++)
      {
         PUSH_COLOR(r, g, b, a);
@@ -560,10 +601,12 @@ evas_gl_common_context_font_push(Evas_GL_Context *gc,
    int pnum, nv, nc, nu, nt, i;
    GLfloat tx1, tx2, ty1, ty2;
 
+   gc->shader.blend = 1;
+   
    if ((gc->shader.cur_tex != tex->pt->texture)
        || (gc->shader.cur_prog != gc->shared->shader.font.prog)
        || (gc->shader.smooth != 0)
-       || (gc->shader.blend != 1)
+//       || (gc->shader.blend != 1)
        || (gc->shader.render_op != gc->dc->render_op)
        || (gc->shader.clip != 0)
        )
@@ -576,6 +619,12 @@ evas_gl_common_context_font_push(Evas_GL_Context *gc,
         gc->shader.render_op = gc->dc->render_op;
         gc->shader.clip = 0;
      }
+   gc->array.line = 0;
+   gc->array.use_vertex = 1;
+   gc->array.use_color = 1;
+   gc->array.use_texuv = 1;
+   gc->array.use_texuv2 = 0;
+   gc->array.use_texuv3 = 0;
    
    pnum = gc->array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nt = pnum * 4;
@@ -633,10 +682,12 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
 
    if (a < 255) blend = 1;
    
+   gc->shader.blend = 1;
+   
    if ((gc->shader.cur_tex != tex->pt->texture)
        || (gc->shader.cur_prog != gc->shared->shader.yuv.prog)
        || (gc->shader.smooth != smooth)
-       || (gc->shader.blend != blend)
+//       || (gc->shader.blend != blend)
        || (gc->shader.render_op != gc->dc->render_op)
        || (gc->shader.clip != 0)
        )
@@ -647,10 +698,16 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
         gc->shader.cur_texv = tex->ptv->texture;
         gc->shader.cur_prog = gc->shared->shader.yuv.prog;
         gc->shader.smooth = smooth;
-        gc->shader.blend = blend;
+        gc->shader.blend = 1;
         gc->shader.render_op = gc->dc->render_op;
         gc->shader.clip = 0;
      }
+   gc->array.line = 0;
+   gc->array.use_vertex = 1;
+   gc->array.use_color = 1;
+   gc->array.use_texuv = 1;
+   gc->array.use_texuv2 = 1;
+   gc->array.use_texuv3 = 1;
    
    pnum = gc->array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; 
@@ -714,23 +771,24 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
                                        int r, int g, int b, int a,
                                        Eina_Bool smooth, Eina_Bool tex_only)
 {
-   int pnum, nv, nc, nu, nt, i;
+   int pnum, nv, nc, nu, nu2, nt, i;
    const int points[6] = { 0, 1, 2, 0, 2, 3 };
    GLfloat tx[4], ty[4];
+   GLfloat bl = 1.0;
    Eina_Bool blend = 1;
    RGBA_Map_Point *pt;
    DATA32 cmul;
 
-   blend = 1;
+   gc->shader.blend = 1;
    
-//   if (tex->pt->format == GL_RGB) blend = 0;
+   if (tex->pt->format == GL_RGB) blend = 0;
 //   if (a < 255) blend = 1;
    
    if ((gc->shader.cur_tex != tex->pt->texture)
        || ((tex_only) && (gc->shader.cur_prog != gc->shared->shader.tex.prog))
        || ((!tex_only) && (gc->shader.cur_prog != gc->shared->shader.img.prog))
        || (gc->shader.smooth != smooth)
-       || (gc->shader.blend != blend)
+//       || (gc->shader.blend != blend)
        || (gc->shader.render_op != gc->dc->render_op)
        || (gc->shader.clip != clip)
        || (gc->shader.cx != cx)
@@ -746,7 +804,7 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
         else
           gc->shader.cur_prog =gc->shared->shader.img.prog; 
         gc->shader.smooth = smooth;
-        gc->shader.blend = blend;
+        gc->shader.blend = 1;
         gc->shader.render_op = gc->dc->render_op;
         gc->shader.clip = clip;
         gc->shader.cx = cx;
@@ -754,9 +812,16 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
         gc->shader.cw = cw;
         gc->shader.ch = ch;
      }
+   gc->array.line = 0;
+   gc->array.use_vertex = 1;
+   gc->array.use_color = 1;
+   gc->array.use_texuv = 1;
+   gc->array.use_texuv2 = 1;
+   gc->array.use_texuv3 = 0;
    
    pnum = gc->array.num;
-   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nt = pnum * 4;
+   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nu2 = pnum * 2;
+   nt = pnum * 4;
    gc->array.num += 6;
    _evas_gl_common_context_array_alloc(gc);
 
@@ -767,6 +832,9 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
         ty[i] = ((double)(tex->y) + (((double)p[i].v) / FP1)) / 
           (double)tex->pt->h;
      }
+   
+   if (blend) bl = 0.0;
+   
    cmul = ARGB_JOIN(a, r, g, b);
    for (i = 0; i < 6; i++)
      {
@@ -778,6 +846,9 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
 //                    (p[points[i]].z >> FP));
         PUSH_TEXUV(tx[points[i]],
                    ty[points[i]]);
+        
+        PUSH_TEXUV2(bl, 0.0);
+   
         PUSH_COLOR(R_VAL(&cl),
                    G_VAL(&cl),
                    B_VAL(&cl),
@@ -895,17 +966,24 @@ shader_array_flush(Evas_GL_Context *gc)
  */
    glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, gc->array.vertex);
    glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, gc->array.color);
-   glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv);
+   if (gc->array.use_texuv)
+     {
+        glEnableVertexAttribArray(SHAD_TEXUV);
+        glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv);
+     }
+   else
+     glDisableVertexAttribArray(SHAD_TEXUV);
    
    if (gc->array.line)
      {
-        glDisableVertexAttribArray(SHAD_TEXUV2);
+        glDisableVertexAttribArray(SHAD_TEXUV);
+        glDisableVertexAttribArray(SHAD_TEXUV2); 
         glDisableVertexAttribArray(SHAD_TEXUV3);
         glDrawArrays(GL_LINES, 0, gc->array.num);
      }
    else
      {
-        if ((gc->array.texuv2) && (gc->array.texuv3))
+        if ((gc->array.use_texuv2) && (gc->array.use_texuv3))
           {
              glEnableVertexAttribArray(SHAD_TEXUV2);
              glEnableVertexAttribArray(SHAD_TEXUV3);
@@ -915,6 +993,11 @@ shader_array_flush(Evas_GL_Context *gc)
              glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texu);
              glActiveTexture(GL_TEXTURE2);
              glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texv);
+          }
+        else if (gc->array.use_texuv2)
+          {
+             glEnableVertexAttribArray(SHAD_TEXUV2);
+             glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv2);
           }
         else
           {
@@ -935,9 +1018,9 @@ shader_array_flush(Evas_GL_Context *gc)
    gc->shader.current.cw = gc->shader.cw;
    gc->shader.current.ch = gc->shader.ch;
    
-   free(gc->array.vertex);
-   free(gc->array.color);
-   free(gc->array.texuv);
+   if (gc->array.vertex) free(gc->array.vertex);
+   if (gc->array.color) free(gc->array.color);
+   if (gc->array.texuv) free(gc->array.texuv);
    if (gc->array.texuv2) free(gc->array.texuv2);
    if (gc->array.texuv3) free(gc->array.texuv3);
    

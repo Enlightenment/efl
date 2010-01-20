@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 function compile()
 {
   F=$1

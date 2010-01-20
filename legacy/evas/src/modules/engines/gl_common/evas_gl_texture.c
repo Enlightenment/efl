@@ -3,8 +3,8 @@
 #if 1
 static const GLenum rgba_fmt   = GL_RGBA;
 static const GLenum rgba_ifmt  = GL_RGBA;
-static const GLenum rgb_fmt    = GL_RGBA;
-static const GLenum rgb_ifmt   = GL_RGBA;
+static const GLenum rgb_fmt    = GL_RGB;
+static const GLenum rgb_ifmt   = GL_RGB;
 static const GLenum alpha_fmt  = GL_ALPHA;
 static const GLenum alpha_ifmt = GL_ALPHA;
 static const GLenum lum_fmt    = GL_LUMINANCE;
@@ -12,8 +12,8 @@ static const GLenum lum_ifmt   = GL_LUMINANCE;
 #else
 static const GLenum rgba_fmt   = GL_RGBA;
 static const GLenum rgba_ifmt  = GL_COMPRESSED_RGBA;
-static const GLenum rgb_fmt    = GL_RGBA;
-static const GLenum rgb_ifmt   = GL_COMPRESSED_RGBA;
+static const GLenum rgb_fmt    = GL_RGB;
+static const GLenum rgb_ifmt   = GL_COMPRESSED_RGB;
 static const GLenum alpha_fmt  = GL_ALPHA;
 static const GLenum alpha_ifmt = GL_COMPRESSED_ALPHA;
 static const GLenum lum_fmt    = GL_LUMINANCE;
@@ -386,42 +386,48 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
    // 
    _tex_sub_2d(tex->x, tex->y, 
                im->cache_entry.w, im->cache_entry.h,
-               tex->pt->format, tex->pt->dataformat,
+//               tex->pt->format, tex->pt->dataformat,
+               rgba_fmt, tex->pt->dataformat,
                im->image.data);
    // |xxx
    // |xxx
    // 
    _tex_sub_2d(tex->x - 1, tex->y, 
                1, im->cache_entry.h,
-               tex->pt->format, tex->pt->dataformat,
+//               tex->pt->format, tex->pt->dataformat,
+               rgba_fmt, tex->pt->dataformat,
                im->image.data);
    //  xxx|
    //  xxx|
    // 
    _tex_sub_2d(tex->x + im->cache_entry.w, tex->y, 
                1, im->cache_entry.h,
-               tex->pt->format, tex->pt->dataformat,
+//               tex->pt->format, tex->pt->dataformat,
+               rgba_fmt, tex->pt->dataformat,
                im->image.data + (im->cache_entry.w - 1));
    //  xxx
    //  xxx
    //  ---
    _tex_sub_2d(tex->x, tex->y + im->cache_entry.h,
                im->cache_entry.w, 1,
-               tex->pt->format, tex->pt->dataformat,
+//               tex->pt->format, tex->pt->dataformat,
+               rgba_fmt, tex->pt->dataformat,
                im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w));
    //  xxx
    //  xxx
    // o
    _tex_sub_2d(tex->x - 1, tex->y + im->cache_entry.h,
                1, 1,
-               tex->pt->format, tex->pt->dataformat,
+//               tex->pt->format, tex->pt->dataformat,
+               rgba_fmt, tex->pt->dataformat,
                im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w));
    //  xxx
    //  xxx
    //     o
    _tex_sub_2d(tex->x + im->cache_entry.w, tex->y + im->cache_entry.h,
                1, 1,
-               tex->pt->format, tex->pt->dataformat,
+//               tex->pt->format, tex->pt->dataformat,
+               rgba_fmt, tex->pt->dataformat,
                im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w) + (im->cache_entry.w - 1));
    if (tex->pt->texture != tex->gc->shader.cur_tex)
      glBindTexture(GL_TEXTURE_2D, tex->gc->shader.cur_tex);

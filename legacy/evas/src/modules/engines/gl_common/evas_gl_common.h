@@ -135,6 +135,11 @@ struct _Evas_GL_Context
       GLfloat *texuv2;
       GLfloat *texuv3;
       Eina_Bool line : 1;
+      Eina_Bool use_vertex : 1;
+      Eina_Bool use_color : 1;
+      Eina_Bool use_texuv : 1;
+      Eina_Bool use_texuv2 : 1;
+      Eina_Bool use_texuv3 : 1;
    } array;
    struct {
       Eina_Bool size : 1;
