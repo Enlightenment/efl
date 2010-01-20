@@ -600,6 +600,7 @@ ecore_file_dir_get(const char *file)
    char *p;
    char buf[PATH_MAX];
 
+   if (!file) return NULL;
    strncpy(buf, file, PATH_MAX);
    p = dirname(buf);
    return strdup(p);
