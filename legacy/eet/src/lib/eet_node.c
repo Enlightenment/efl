@@ -75,7 +75,7 @@ _eet_node_append(Eet_Node *n, Eina_List *nodes)
      n = _eet_node_new(name, Eet_type);			\
      if (!n) return NULL;				\
      							\
-     n->data.Value = Value;				\
+     n->data.value.Value = Value;				\
 							\
      return n;						\
   }
@@ -89,7 +89,7 @@ _eet_node_append(Eet_Node *n, Eina_List *nodes)
      n = _eet_node_new(name, Eet_type);			\
      if (!n) return NULL;				\
      							\
-     n->data.Value = eina_stringshare_add(Value);	\
+     n->data.value.Value = eina_stringshare_add(Value);	\
 							\
      return n;						\
   }
@@ -115,7 +115,7 @@ eet_node_null_new(const char *name)
    n = _eet_node_new(name, EET_T_NULL);
    if (!n) return NULL;
 
-   n->data.str = NULL;
+   n->data.value.str = NULL;
 
    return n;
 }
@@ -328,7 +328,7 @@ eet_node_del(Eet_Node *n)
 	 break;
       case EET_T_STRING:
       case EET_T_INLINED_STRING:
-	 eina_stringshare_del(n->data.str);
+	 eina_stringshare_del(n->data.value.str);
 	 break;
       case EET_T_CHAR:
       case EET_T_SHORT:
@@ -442,7 +442,7 @@ eet_node_dump_simple_type(Eet_Node *n, int level,
    case Eet_Type:							\
      {									\
 	dumpfunc(dumpdata, eet_node_dump_t_name[Eet_Type][0]);		\
-	snprintf(tbuf, sizeof (tbuf), eet_node_dump_t_name[Eet_Type][1], n->data.Type); \
+	snprintf(tbuf, sizeof (tbuf), eet_node_dump_t_name[Eet_Type][1], n->data.value.Type); \
 	dumpfunc(dumpdata, tbuf);					\
 	break;								\
      }
@@ -465,7 +465,7 @@ eet_node_dump_simple_type(Eet_Node *n, int level,
 	 if (!type_name) type_name = "string: \"";
 
 	 dumpfunc(dumpdata, type_name);
-	 eet_node_dump_string_escape(dumpdata, dumpfunc, n->data.str);
+	 eet_node_dump_string_escape(dumpdata, dumpfunc, n->data.value.str);
 	 dumpfunc(dumpdata, "\"");
 	 break;
       case EET_T_NULL:
@@ -560,6 +560,68 @@ eet_node_dump(Eet_Node *n, int dumplevel, void (*dumpfunc) (void *data, const ch
 	 break;
      }
 }
+
+void*
+eet_node_walk(void *parent, const char *name, Eet_Node *root, Eet_Node_Walk *cb, void *user_data)
+{
+   Eet_Node *it;
+   void *me = NULL;
+   int i;
+
+   if (!root)
+     {
+	if (parent) cb->struct_add(parent, name, NULL, user_data);
+	return NULL;
+     }
+
+   switch (root->type)
+     {
+      case EET_G_UNKNOWN:
+	 me = cb->struct_alloc(root->name, user_data);
+
+	 for (it = root->values; it != NULL; it = it->next)
+	   eet_node_walk(me, it->name, it, cb, user_data);
+
+	 break;
+      case EET_G_VAR_ARRAY:
+      case EET_G_ARRAY:
+	 me = cb->array(root->type == EET_G_VAR_ARRAY ? EINA_TRUE : EINA_FALSE,
+			root->name, root->count, user_data);
+
+	 for (i = 0, it = root->values; it != NULL; it = it->next)
+	   cb->insert(me, i++, eet_node_walk(NULL, NULL, it, cb, user_data), user_data);
+
+	 break;
+      case EET_G_LIST:
+	 me = cb->list(root->name, user_data);
+
+	 for (it = root->values; it != NULL; it = it->next)
+	   cb->append(me, eet_node_walk(NULL, NULL, it, cb, user_data), user_data);
+
+	 break;
+      case EET_G_HASH:
+	 if (!parent) return NULL;
+
+	 return cb->hash(parent, root->name, root->key, eet_node_walk(NULL, NULL, root->values, cb, user_data), user_data);
+      case EET_T_STRING:
+      case EET_T_INLINED_STRING:
+      case EET_T_CHAR:
+      case EET_T_SHORT:
+      case EET_T_INT:
+      case EET_T_LONG_LONG:
+      case EET_T_FLOAT:
+      case EET_T_DOUBLE:
+      case EET_T_UCHAR:
+      case EET_T_USHORT:
+      case EET_T_UINT:
+      case EET_T_ULONG_LONG:
+	 me = cb->simple(root->type, &root->data, user_data);
+	 break;
+     }
+
+   if (parent) cb->struct_add(parent, name, me, user_data);
+   return me;
+};
 
 int
 eet_node_init(void)

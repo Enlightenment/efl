@@ -61,19 +61,7 @@ struct _Eet_Node
    Eet_Node   *values;
    Eet_Node   *next;
    Eet_Node   *parent;
-   union {
-      char                c;
-      short               s;
-      int                 i;
-      long long           l;
-      float               f;
-      double              d;
-      unsigned char       uc;
-      unsigned short      us;
-      unsigned int        ui;
-      unsigned long long  ul;
-      const char         *str;
-   } data;
+   Eet_Node_Data data;
 };
 
 /*

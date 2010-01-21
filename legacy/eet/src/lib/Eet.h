@@ -111,8 +111,39 @@ extern "C" {
    typedef struct _Eet_Data_Descriptor       Eet_Data_Descriptor;
    typedef struct _Eet_Key                   Eet_Key;
    typedef struct _Eet_Node                  Eet_Node;
+   typedef struct _Eet_Node_Data             Eet_Node_Data;
+   typedef struct _Eet_Node_Walk             Eet_Node_Walk;
 
    typedef struct _Eet_Data_Descriptor_Class Eet_Data_Descriptor_Class;
+
+   struct _Eet_Node_Data
+   {
+      union {
+	 char c;
+	 short s;
+	 int i;
+	 long long l;
+	 float f;
+	 double d;
+	 unsigned char uc;
+	 unsigned short us;
+	 unsigned int ui;
+	 unsigned long long ul;
+	 const char *str;
+      } value;
+   };
+
+   struct _Eet_Node_Walk
+   {
+      void *(*struct_alloc)(const char *type, void *user_data);
+      void (*struct_add)(void *parent, const char *name, void *child, void *user_data);
+      void *(*array)(Eina_Bool variable, const char *name, int count, void *user_data);
+      void (*insert)(void *array, int index, void *child, void *user_data);
+      void *(*list)(const char *name, void *user_data);
+      void (*append)(void *list, void *child, void *user_data);
+      void *(*hash)(void *parent, const char *name, const char *key, void *value, void *user_data);
+      void *(*simple)(int type, Eet_Node_Data *data, void *user_data);
+   };
 
 #define EET_DATA_DESCRIPTOR_CLASS_VERSION 2
    struct _Eet_Data_Descriptor_Class
@@ -1506,6 +1537,9 @@ eet_dictionary_string_check    * example: values), and @p type is the basic data
 
    EAPI Eet_Node *eet_data_node_read_cipher(Eet_File *ef, const char *name, const char *key);
    EAPI int eet_data_node_write_cipher(Eet_File *ef, const char *name, const char *key, Eet_Node *node, int compress);
+
+  /* EXPERIMENTAL: THIS API MAY CHANGE IN THE FUTUR, USE IT ONLY IF YOU KNOW WHAT YOU ARE DOING. */
+   EAPI void *eet_node_walk(void *parent, const char *name, Eet_Node *root, Eet_Node_Walk *cb, void *user_data);
 
 /***************************************************************************/
 

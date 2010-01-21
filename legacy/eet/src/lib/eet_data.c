@@ -1947,7 +1947,7 @@ _eet_data_dump_encode(int parent_type,
 	       {
 		case EET_T_STRING:
 		case EET_T_INLINED_STRING:
-		   data = eet_data_put_type(ed, n->type, &(n->data.str), &size);
+		   data = eet_data_put_type(ed, n->type, &(n->data.value.str), &size);
 		   if (data) eet_data_encode(ed, ds, data, node->name, size, n->type, node->type);
 		   break;
 		case EET_T_NULL:
@@ -1982,7 +1982,7 @@ _eet_data_dump_encode(int parent_type,
 	       {
 		case EET_T_STRING:
 		case EET_T_INLINED_STRING:
-		   data = eet_data_put_type(ed, n->type, &(n->data.str), &size);
+		   data = eet_data_put_type(ed, n->type, &(n->data.value.str), &size);
 		   if (data) eet_data_encode(ed, ds, data, node->name, size, n->type, node->type);
 		   break;
 		case EET_T_NULL:
@@ -2022,7 +2022,7 @@ _eet_data_dump_encode(int parent_type,
 	       {
 		case EET_T_STRING:
 		case EET_T_INLINED_STRING:
-		   data = eet_data_put_type(ed, n->type, &(n->data.str), &size);
+		   data = eet_data_put_type(ed, n->type, &(n->data.value.str), &size);
 		   if (data) eet_data_encode(ed, ds, data, node->name, size, n->type, node->type);
 		   break;
 		case EET_T_NULL:
@@ -2045,7 +2045,7 @@ _eet_data_dump_encode(int parent_type,
 
 #define EET_DATA_NODE_ENCODE(Eet_Type, Type)				\
       case Eet_Type:							\
-	data = eet_data_put_type(ed, node->type, &(node->data.Type), &size); \
+	data = eet_data_put_type(ed, node->type, &(node->data.value.Type), &size); \
         if (data)								\
 	  {								\
 	     eet_data_encode(ed, ds, data, node->name, size, node->type, parent_type); \
@@ -2214,67 +2214,67 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
 					   if      (!strcmp(tok3, "char:"))
 					     {
 						n->type = EET_T_CHAR;
-						sscanf(tok4, "%hhi", &(n->data.c));
+						sscanf(tok4, "%hhi", &(n->data.value.c));
 					     }
 					   else if (!strcmp(tok3, "short:"))
 					     {
 						n->type = EET_T_SHORT;
-						sscanf(tok4, "%hi", &(n->data.s));
+						sscanf(tok4, "%hi", &(n->data.value.s));
 					     }
 					   else if (!strcmp(tok3, "int:"))
 					     {
 						n->type = EET_T_INT;
-						sscanf(tok4, "%i", &(n->data.i));
+						sscanf(tok4, "%i", &(n->data.value.i));
 					     }
 					   else if (!strcmp(tok3, "long_long:"))
 					     {
 						n->type = EET_T_LONG_LONG;
-						sscanf(tok4, "%lli", &(n->data.l));
+						sscanf(tok4, "%lli", &(n->data.value.l));
 					     }
 					   else if (!strcmp(tok3, "float:"))
 					     {
 						n->type = EET_T_FLOAT;
-						sscanf(tok4, "%f", &(n->data.f));
+						sscanf(tok4, "%f", &(n->data.value.f));
 					     }
 					   else if (!strcmp(tok3, "double:"))
 					     {
 						n->type = EET_T_DOUBLE;
-						sscanf(tok4, "%lf", &(n->data.d));
+						sscanf(tok4, "%lf", &(n->data.value.d));
 					     }
 					   else if (!strcmp(tok3, "uchar:"))
 					     {
 						n->type = EET_T_UCHAR;
-						sscanf(tok4, "%hhu", &(n->data.uc));
+						sscanf(tok4, "%hhu", &(n->data.value.uc));
 					     }
 					   else if (!strcmp(tok3, "ushort:"))
 					     {
 						n->type = EET_T_USHORT;
-						sscanf(tok4, "%hu", &(n->data.us));
+						sscanf(tok4, "%hu", &(n->data.value.us));
 					     }
 					   else if (!strcmp(tok3, "uint:"))
 					     {
 						n->type = EET_T_UINT;
-						sscanf(tok4, "%u", &(n->data.ui));
+						sscanf(tok4, "%u", &(n->data.value.ui));
 					     }
 					   else if (!strcmp(tok3, "ulong_long:"))
 					     {
 						n->type = EET_T_ULONG_LONG;
-						sscanf(tok4, "%llu", &(n->data.ul));
+						sscanf(tok4, "%llu", &(n->data.value.ul));
 					     }
 					   else if (!strcmp(tok3, "string:"))
 					     {
 						n->type = EET_T_STRING;
-						n->data.str = eina_stringshare_add(tok4);
+						n->data.value.str = eina_stringshare_add(tok4);
 					     }
 					   else if (!strcmp(tok3, "inlined:"))
 					     {
 						n->type = EET_T_INLINED_STRING;
-						n->data.str = eina_stringshare_add(tok4);
+						n->data.value.str = eina_stringshare_add(tok4);
 					     }
 					   else if (!strcmp(tok3, "null"))
 					     {
 						n->type = EET_T_NULL;
-						n->data.str = NULL;
+						n->data.value.str = NULL;
 					     }
 					   else
 					     {

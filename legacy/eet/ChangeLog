@@ -313,3 +313,7 @@
 2010-01-17  Cedric BAIL
 
 	* Add a mempool for Eet_Node.
+
+2010-01-21  Cedric BAIL
+
+	* Add experimental API to walk Eet_Node tree.
