@@ -568,11 +568,21 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    gc->array.num += 6;
    _evas_gl_common_context_array_alloc(gc);
 
-   tx1 = ((double)(tex->x) + sx) / (double)tex->pt->w;
-   ty1 = ((double)(tex->y) + sy) / (double)tex->pt->h;
-   tx2 = ((double)(tex->x) + sx + sw) / (double)tex->pt->w;
-   ty2 = ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
-   
+   // yinvert!
+   if ((tex->im) && (tex->im->native.data) && (!tex->im->native.yinvert))
+     {
+        tx1 = ((double)(tex->x) + sx) / (double)tex->pt->w;
+        ty1 = ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
+        tx2 = ((double)(tex->x) + sx + sw) / (double)tex->pt->w;
+        ty2 = ((double)(tex->y) + sy) / (double)tex->pt->h;
+     }
+   else
+     {
+        tx1 = ((double)(tex->x) + sx) / (double)tex->pt->w;
+        ty1 = ((double)(tex->y) + sy) / (double)tex->pt->h;
+        tx2 = ((double)(tex->x) + sx + sw) / (double)tex->pt->w;
+        ty2 = ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
+     }
    if (blend) bl = 0.0;
    
    PUSH_VERTEX(x    , y    , 0);
@@ -845,6 +855,7 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
    gc->array.num += 6;
    _evas_gl_common_context_array_alloc(gc);
 
+   // FIXME: handle yinvert
    for (i = 0; i < 4; i++)
      {
         tx[i] = ((double)(tex->x) + (((double)p[i].u) / FP1)) /

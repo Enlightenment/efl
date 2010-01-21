@@ -322,6 +322,13 @@ _pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    pt->references = 0;
    glGenTextures(1, &(pt->texture));
    glBindTexture(GL_TEXTURE_2D, pt->texture);
+   
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   // is this really needed for gl-es?
+   glTexImage2D(GL_TEXTURE_2D, 0, intformat, w, h, 0, format, 
+                GL_UNSIGNED_BYTE, 0);
+#endif
+   
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
