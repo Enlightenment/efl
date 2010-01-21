@@ -868,15 +868,7 @@ eng_image_alpha_get(void *data, void *image)
 //   re = (Render_Engine *)data;
    if (!image) return 1;
    im = image;
-   /* FIXME: can move to gl_common */
-   switch (im->cs.space)
-     {
-      case EVAS_COLORSPACE_ARGB8888:
-	if (im->im->cache_entry.flags.alpha) return 1;
-      default:
-	break;
-     }
-   return 0;
+   return im->alpha;
 }
 
 static int
@@ -899,13 +891,13 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
 
    re = (Render_Engine *)data;
    if (!image) return NULL;
-   eng_window_use(re->win);
    im = image;
    if (im->native.data)
      {
         im->alpha = has_alpha;
         return image;
      }
+   eng_window_use(re->win);
    /* FIXME: can move to gl_common */
    if (im->cs.space != EVAS_COLORSPACE_ARGB8888) return im;
    if ((has_alpha) && (im->im->cache_entry.flags.alpha)) return image;
@@ -953,6 +945,7 @@ eng_image_comment_get(void *data, void *image, char *key __UNUSED__)
 //   re = (Render_Engine *)data;
    if (!image) return NULL;
    im = image;
+   if (!im->im) return NULL;
    return im->im->info.comment;
 }
 
@@ -1418,8 +1411,8 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 
    re = (Render_Engine *)data;
    if (!image) return NULL;
-   eng_window_use(re->win);
    if (im->native.data) return image;
+   eng_window_use(re->win);
    evas_gl_common_image_dirty(image, x, y, w, h);
    return image;
 }
