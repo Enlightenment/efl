@@ -27,7 +27,7 @@ if !EVAS_STATIC_BUILD_GL_X11
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = $(GL_X11_SOURCES)
-module_la_LIBADD = @EINA_LIBS@ $(GL_X11_LIBADD) $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD = @EINA_LIBS@ $(GL_X11_LIBADD) $(top_builddir)/src/lib/libevas.la @dlopen_libs@
 module_la_LDFLAGS = -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 

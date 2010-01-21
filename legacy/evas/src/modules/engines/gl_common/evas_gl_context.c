@@ -24,18 +24,22 @@ gl_symbols(void)
    
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers");
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersEXT");
+   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersARB");
    FALLBAK(glsym_glGenFramebuffers);
    
    FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer");
    FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferEXT");
+   FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferARB");
    FALLBAK(glsym_glBindFramebuffer);
    
    FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2D");
    FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DEXT");
+   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DARB");
    FALLBAK(glsym_glFramebufferTexture2D);
 
    FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffers");
    FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersEXT");
+   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersARB");
    FALLBAK(glsym_glDeleteFramebuffers);
 }
 
@@ -513,7 +517,7 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
                                   double sx, double sy, double sw, double sh,
                                   int x, int y, int w, int h,
                                   int r, int g, int b, int a,
-                                  Eina_Bool smooth)
+                                  Eina_Bool smooth, Eina_Bool tex_only)
 {
    int pnum, nv, nc, nu, nu2, nt, i;
    GLfloat tx1, tx2, ty1, ty2;
@@ -526,7 +530,8 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    gc->shader.blend = 1;
    
    if ((gc->shader.cur_tex != tex->pt->texture)
-       || (gc->shader.cur_prog != gc->shared->shader.img.prog)
+       || ((tex_only) && (gc->shader.cur_prog != gc->shared->shader.tex.prog))
+       || ((!tex_only) && (gc->shader.cur_prog != gc->shared->shader.img.prog))
        || (gc->shader.smooth != smooth)
 //       || (gc->shader.blend != blend)
        || (gc->shader.render_op != gc->dc->render_op)
@@ -535,18 +540,27 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
      {
         shader_array_flush(gc);
         gc->shader.cur_tex = tex->pt->texture;
-        gc->shader.cur_prog = gc->shared->shader.img.prog;
+        if (tex_only)
+          gc->shader.cur_prog = gc->shared->shader.tex.prog;
+        else
+          gc->shader.cur_prog =gc->shared->shader.img.prog;
         gc->shader.smooth = smooth;
         gc->shader.blend = 1;
         gc->shader.render_op = gc->dc->render_op;
         gc->shader.clip = 0;
      } 
+   if ((tex->im) && (tex->im->native.data))
+     {
+        shader_array_flush(gc);
+        gc->array.im = tex->im;
+     }
    gc->array.line = 0;
    gc->array.use_vertex = 1;
    gc->array.use_color = 1;
    gc->array.use_texuv = 1;
    gc->array.use_texuv2 = 1;
    gc->array.use_texuv3 = 0;
+
   
    pnum = gc->array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nu2 = pnum * 2;
@@ -588,6 +602,12 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    for (i = 0; i < 6; i++)
      {
         PUSH_COLOR(r, g, b, a);
+     }
+
+   if ((tex->im) && (tex->im->native.data))
+     {
+        shader_array_flush(gc);
+        gc->array.im = NULL;
      }
 }
 
@@ -877,6 +897,12 @@ shader_array_flush(Evas_GL_Context *gc)
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
      }
+   if (gc->array.im)
+     {
+        if (gc->array.im->native.func.bind)
+          gc->array.im->native.func.bind(gc->array.im->native.func.data, 
+                                         gc->array.im);
+     }
    if (gc->shader.render_op != gc->shader.current.render_op)
      {
         switch (gc->shader.render_op)
@@ -1007,6 +1033,13 @@ shader_array_flush(Evas_GL_Context *gc)
    
         glDrawArrays(GL_TRIANGLES, 0, gc->array.num);
      }
+   if (gc->array.im)
+     {
+        if (gc->array.im->native.func.unbind)
+          gc->array.im->native.func.unbind(gc->array.im->native.func.data, 
+                                           gc->array.im);
+     }
+
    gc->shader.current.cur_prog = gc->shader.cur_prog;
    gc->shader.current.cur_tex = gc->shader.cur_tex;
    gc->shader.current.blend = gc->shader.blend;

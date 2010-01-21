@@ -1,13 +1,63 @@
 #include "evas_engine.h"
 
+#include <dlfcn.h>      /* dlopen,dlclose,etc */
+
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 // EGL / GLES
+# if defined(GLES_VARIETY_S3C6410)
+# elif defined(GLES_VARIETY_SGX)
+# endif
+#else
+// GLX
+#endif
+
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 # if defined(GLES_VARIETY_S3C6410)
 # elif defined(GLES_VARIETY_SGX)
 # endif
-// GLX
 #else
+typedef void (*_eng_fn) (void);
+
+_eng_fn (*glsym_glXGetProcAddress) (const char *a) = NULL;
+void (*glsym_glXBindTexImage) (Display *a, GLXDrawable b, int c, int *d) = NULL;
+void (*glsym_glXReleaseTexImage) (Display *a, GLXDrawable b, int c) = NULL;
 #endif
+                
+static void
+_sym_init(void)
+{
+   static int done = 0;
+   
+#define FINDSYM(dst, sym) \
+   if ((!dst) && (glsym_glXGetProcAddress)) dst = glsym_glXGetProcAddress(sym); \
+   if (!dst) dst = dlsym(RTLD_DEFAULT, sym)
+   
+   if (done) return;
+   
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+# if defined(GLES_VARIETY_S3C6410)
+# elif defined(GLES_VARIETY_SGX)
+# endif
+#else
+   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress");
+   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT");
+   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressARB");
+   
+   FINDSYM(glsym_glXBindTexImage, "glXBindTexImage");
+   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageEXT");
+   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageARB");
+
+   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImage");
+   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageEXT");
+   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageARB");
+   
+   printf("glXGetProcAddress: %p\n"
+          "glXBindTexImage: %p\n"
+          "glXReleaseTexImage: %p\n",
+          glsym_glXGetProcAddress,
+          glsym_glXBindTexImage, glsym_glXReleaseTexImage);
+#endif
+}
 
 int _evas_engine_GL_X11_log_dom = -1;
 /* function tables - filled in later (func and parent func) */
@@ -30,6 +80,7 @@ static void *
 eng_info(Evas *e)
 {
    Evas_Engine_Info_GL_X11 *info;
+
    info = calloc(1, sizeof(Evas_Engine_Info_GL_X11));
    info->magic.magic = rand();
    info->func.best_visual_get = eng_best_visual_get;
@@ -160,6 +211,8 @@ eng_setup(Evas *e, void *in)
      e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
    eng_window_use(re->win);
+   
+   _sym_init();
    
    return 1;
 }
@@ -337,21 +390,21 @@ eng_output_flush(void *data)
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
 #else
 # ifdef VSYNC_TO_SCREEN
-     {
-	unsigned int rc;
-        
-	glXGetVideoSyncSGI(&rc);
-	glXWaitVideoSyncSGI(2, (rc + 1) % 2, &rc);
-     }
+//     {
+//	unsigned int rc;
+//        
+//	glXGetVideoSyncSGI(&rc);
+//	glXWaitVideoSyncSGI(2, (rc + 1) % 2, &rc);
+//     }
 # endif
 # ifdef SLOW_GL_COPY_RECT
    glXSwapBuffers(re->win->disp, re->win->win);
 # else
-   /* SLOW AS ALL HELL! */
-   evas_gl_common_swap_rect(re->win->gl_context,
-			    re->win->draw.x1, re->win->draw.y1,
-			    re->win->draw.x2 - re->win->draw.x1 + 1,
-			    re->win->draw.y2 - re->win->draw.y1 + 1);
+//   /* SLOW AS ALL HELL! */
+//   evas_gl_common_swap_rect(re->win->gl_context,
+//			    re->win->draw.x1, re->win->draw.y1,
+//			    re->win->draw.x2 - re->win->draw.x1 + 1,
+//			    re->win->draw.y2 - re->win->draw.y1 + 1);
 # endif
 //   glFlush();
 //   glXWaitGL();
@@ -945,16 +998,290 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
    im->cs.space = cspace;
 }
 
-static void
-eng_image_native_set(void *data __UNUSED__, void *image __UNUSED__, void *native __UNUSED__)
+/////////////////////////////////////////////////////////////////////////
+//
+//
+typedef struct _Native Native;
+
+struct _Native
 {
+   Evas_Native_Surface ns;
+   Pixmap     pixmap;
+   Visual    *visual;
+   
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#else
+# ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
+   GLXFBConfig fbc;
+   GLXPixmap   glx_pixmap;
+# endif
+#endif
+};
+
+static void
+_native_bind_cb(void *data, void *image)
+{
+   Render_Engine *re = data;
+   Evas_GL_Image *im = image;
+   Native *n = im->native.data;
+   
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+//   eglBindTexImage(egl->dpy, egl->pixmap_surface, EGL_SINGLE_BUFFER);
+#else
+# ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
+   if (glsym_glXBindTexImage)
+     {
+        const int pixmap_att[] =
+          {
+             GLX_TEXTURE_TARGET_EXT, 
+               GLX_TEXTURE_2D_EXT,
+               GLX_TEXTURE_FORMAT_EXT, 
+               GLX_TEXTURE_FORMAT_RGBA_EXT,
+               0
+          };
+        
+        n->glx_pixmap = glXCreatePixmap(re->win->disp, n->fbc, 
+                                        n->pixmap, pixmap_att);
+        printf("bind: %p %i %i %p\n", re->win->disp, n->glx_pixmap, GLX_FRONT_LEFT_EXT, NULL);
+        glsym_glXBindTexImage(re->win->disp, n->glx_pixmap, 
+                              GLX_FRONT_LEFT_EXT, NULL);
+     }
+# endif
+#endif
+}
+
+static void
+_native_unbind_cb(void *data, void *image)
+{
+   Render_Engine *re = data;
+   Evas_GL_Image *im = image;
+   Native *n = im->native.data;
+
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+//   eglReleaseTexImage(egl->dpy, egl->pixmap_surface, EGL_SINGLE_BUFFER);
+#else
+# ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
+   if (glsym_glXReleaseTexImage)
+     {
+        printf("unbind: %p %i %i\n", re->win->disp, n->glx_pixmap, GLX_FRONT_LEFT_EXT);
+        glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap, 
+                                 GLX_FRONT_LEFT_EXT);
+        glXDestroyPixmap(re->win->disp, n->glx_pixmap);
+        n->glx_pixmap = 0;
+     }
+# endif
+#endif
+}
+
+static void
+_native_free_cb(void *data, void *image)
+{
+   Render_Engine *re = data;
+   Evas_GL_Image *im = image;
+   Native *n = im->native.data;
+
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+/* if (egl->pixmap_ctx != EGL_NO_CONTEXT)
+     {
+        eglDestroyContext(egl->dpy, egl->pixmap_ctx);
+        egl->pixmap_ctx = EGL_NO_CONTEXT;
+     }
+   if (egl->pixmap_surface != EGL_NO_SURFACE)
+     {
+        eglDestroySurface(egl->dpy, egl->pixmap_surface);
+        egl->pixmap_surface = EGL_NO_SURFACE;
+     }
+   res = true; */
+#else
+# ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
+   if (n->glx_pixmap)
+     {
+        glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap, 
+                                 GLX_FRONT_LEFT_EXT);
+        glXDestroyPixmap(re->win->disp, n->glx_pixmap);
+        n->glx_pixmap = 0;
+     }
+# endif
+#endif
+   im->native.data        = NULL;
+   im->native.func.data   = NULL;
+   im->native.func.bind   = NULL;
+   im->native.func.unbind = NULL;
+   im->native.func.free   = NULL;
+   free(n);
+}
+
+static void
+eng_image_native_set(void *data, void *image, void *native)
+{
+   Render_Engine *re = (Render_Engine *)data;
+   Evas_Native_Surface *ns = native;
+   Evas_GL_Image *im = image;
+   Visual *vis = NULL;
+   Pixmap pm = 0;
+
+   printf("eng_image_native_set\n");
+   if (ns)
+     {
+        vis = ns->data.x11.visual;
+        pm = ns->data.x11.pixmap;
+        if (im->native.data)
+          {
+             Evas_Native_Surface *n = im->native.data;
+             if ((n->data.x11.visual == vis) && (n->data.x11.pixmap == pm))
+               {
+                  printf("  same\n");
+                  return;
+               }
+          }
+     }
+   printf("  .1\n");
+   if ((!ns) && (!im->native.data)) return;
+   printf("  ..2\n");
+   if (!im) return;
+   printf("  ...3\n");
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+/* EGLConfig cfg;
+   EGLint num;
+   EGLint attbs[30] = { NULL, };
+   
+   EGLint ctx_attbs[] =
+     {
+        EGL_CONTEXT_CLIENT_VERSION, 2,
+          EGL_NONE
+     };
+   
+   int i = 0;
+   
+   attbs[i++] = EGL_RED_SIZE;
+   attbs[i++] = egl->cfg_r;
+   attbs[i++] = EGL_GREEN_SIZE;
+   attbs[i++] = egl->cfg_g;
+   attbs[i++] = EGL_BLUE_SIZE;
+   attbs[i++] = egl->cfg_b;
+   attbs[i++] = EGL_ALPHA_SIZE;
+   attbs[i++] = egl->cfg_a;
+   attbs[i++] = EGL_DEPTH_SIZE;
+   attbs[i++] = egl->cfg_d;
+   attbs[i++] = EGL_STENCIL_SIZE;
+   attbs[i++] = egl->cfg_s;
+   attbs[i++] = EGL_RENDERABLE_TYPE;
+   attbs[i++] = EGL_OPENGL_ES2_BIT;
+   attbs[i++] = EGL_SURFACE_TYPE;
+   attbs[i++] = EGL_PIXMAP_BIT; // for pixmap surface
+   attbs[i++] = EGL_NONE;
+   
+   eglChooseConfig(egl->dpy, attbs, &cfg, 1, &num);
+   egl->pixmap_surface = eglCreatePixmapSurface(egl->dpy, cfg, pixmap, NULL);
+   eglBindAPI(EGL_OPENGL_ES_API);
+   egl->pixmap_ctx = eglCreateContext(egl->dpy, cfg, EGL_NO_CONTEXT, ctx_attbs); */
+#else
+# ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
+   printf("  ....4\n");
+   // FIXME: if there is already a natiive surface - free it
+   if (im->native.data)
+     {
+        if (im->native.func.free)
+          im->native.func.free(im->native.func.data, im);
+        evas_gl_common_image_native_disable(im);
+     }
+   if (native)
+     {
+        VisualID vid;
+        GLXFBConfig *fbc;
+        int i, num;
+        int yinvert = 0;
+        
+        vid = XVisualIDFromVisual(vis);
+        fbc = glXGetFBConfigs(re->win->disp,
+                              0 /* FIXME: screen 0 assumption */,
+                              &num);
+        printf("  .....5\n");
+        if (fbc)
+          {
+             printf("  ......6\n");
+             for (i = 0; i < num; i++)
+               {
+                  XVisualInfo *vi;
+                  int val;
+                  
+                  vi = glXGetVisualFromFBConfig(re->win->disp, fbc[i]);
+                  if ((!vi) || (vi->visualid != vid))
+                    continue;
+                  
+                  glXGetFBConfigAttrib(re->win->disp, fbc[i], 
+                                       GLX_DRAWABLE_TYPE, &val);
+                  if (!(val & GLX_PIXMAP_BIT)) continue;
+                  
+                  glXGetFBConfigAttrib(re->win->disp, fbc[i],
+                                       GLX_BIND_TO_TEXTURE_TARGETS_EXT, &val);
+                  if (!(val & GLX_TEXTURE_2D_BIT_EXT)) continue;
+                  
+                  glXGetFBConfigAttrib(re->win->disp, fbc[i],
+                                       GLX_BIND_TO_TEXTURE_RGBA_EXT, &val);
+                  if (!val)
+                    {
+                       glXGetFBConfigAttrib(re->win->disp, fbc[i],
+                                            GLX_BIND_TO_TEXTURE_RGB_EXT, &val);
+                       if (!val) continue;
+                    }
+                  
+                  glXGetFBConfigAttrib(re->win->disp, fbc[i],
+                                       GLX_Y_INVERTED_EXT, &val);
+                  if (val) yinvert = 1;
+                  break;
+               }
+             if (i == num)
+               {
+                  printf("  err \n");
+                  // error
+               }
+             else
+               {
+                  Native *n;
+                  
+                  printf("  .......7\n");
+                  n = calloc(1, sizeof(Native));
+                  if (n)
+                    {
+                       
+                       printf("  .......8\n");
+                       evas_gl_common_image_native_enable(im);
+                       memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
+                       n->pixmap = pm;
+                       n->visual = vis;
+                       memcpy(&(n->fbc), fbc, sizeof(GLXFBConfig));
+                       n->fbc = *fbc;
+                       im->native.yinvert     = yinvert;
+                       im->native.data        = n;
+                       im->native.func.data   = re;
+                       im->native.func.bind   = _native_bind_cb;
+                       im->native.func.unbind = _native_unbind_cb;
+                       im->native.func.free   = _native_free_cb;
+                       printf("  yinvert = %i\n", yinvert);
+                    }
+               }
+          }
+     }
+# endif   
+#endif
 }
 
 static void *
-eng_image_native_get(void *data __UNUSED__, void *image __UNUSED__)
+eng_image_native_get(void *data, void *image)
 {
-   return NULL;
+   Render_Engine *re = (Render_Engine *)data;
+   Evas_GL_Image *im = image;
+   Native *n;
+   if (!im) return NULL;
+   n = im->native.data;
+   if (!n) return NULL;
+   return &(n->ns);
 }
+
+//
+//
+/////////////////////////////////////////////////////////////////////////
 
 static void *
 eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)

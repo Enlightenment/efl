@@ -414,10 +414,13 @@ struct _Evas_Pixel_Import_Source
 struct _Evas_Native_Surface
 {
    union {
-      void           *p;
-      unsigned short  s;
-      unsigned int    i;
-      unsigned long   l;
+      struct {
+         void *visual;
+         long  pixmap;
+      } x11;
+      struct { /* padding data for future use - have space for 8 pointers */
+         void *d[8];
+      } padding;
    } data;
 };
 

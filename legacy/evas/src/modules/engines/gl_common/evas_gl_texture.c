@@ -304,6 +304,32 @@ _pool_tex_render_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    return pt;
 }
 
+static Evas_GL_Texture_Pool *
+_pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int format)
+{
+   Evas_GL_Texture_Pool *pt;
+   
+   pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
+   if (!pt) return NULL;
+   h = _tex_round_slot(gc, h) << 4;
+   _tex_adjust(gc, &w, &h);
+   pt->gc = gc;
+   pt->w = w;
+   pt->h = h;
+   pt->intformat = intformat;
+   pt->format = format;
+   pt->dataformat = GL_UNSIGNED_BYTE;
+   pt->references = 0;
+   glGenTextures(1, &(pt->texture));
+   glBindTexture(GL_TEXTURE_2D, pt->texture);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
+   return pt;
+}
+
 static void
 pt_unref(Evas_GL_Texture_Pool *pt)
 {
@@ -317,6 +343,36 @@ pt_unref(Evas_GL_Texture_Pool *pt)
    glDeleteTextures(1, &(pt->texture));
    if (pt->fb) glsym_glDeleteFramebuffers(1, &(pt->fb));
    free(pt);
+}
+
+Evas_GL_Texture *
+evas_gl_common_texture_native_new(Evas_GL_Context *gc, int w, int h, int alpha)
+{
+   Evas_GL_Texture *tex;
+   Eina_List *l_after = NULL;
+   int u = 0, v = 0;
+
+   tex = calloc(1, sizeof(Evas_GL_Texture));
+   if (!tex) return NULL;
+   
+   tex->gc = gc;
+   tex->references = 1;
+   tex->alpha = alpha;
+   if (alpha)
+     tex->pt = _pool_tex_native_new(gc, w, h, rgba_ifmt, rgba_fmt);
+   else
+     tex->pt = _pool_tex_native_new(gc, w, h, rgb_ifmt, rgb_fmt);
+   if (!tex->pt)
+     {
+        free(tex);
+        return NULL;
+     }
+   tex->x = 0;
+   tex->y = 0;
+   tex->w = w;
+   tex->h = h;
+   tex->pt->references++;
+   return tex;
 }
 
 Evas_GL_Texture *
