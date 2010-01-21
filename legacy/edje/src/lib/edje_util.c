@@ -424,14 +424,14 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
         eina_hash_add(_edje_color_class_hash, color_class, cc);
      }
 
-   if (r < 0)   r = 0;
-   if (r > 255) r = 255;
-   if (g < 0)   g = 0;
-   if (g > 255) g = 255;
-   if (b < 0)   b = 0;
-   if (b > 255) b = 255;
-   if (a < 0)   a = 0;
-   if (a > 255) a = 255;
+   if (r < 0)        r = 0;
+   else if (r > 255) r = 255;
+   if (g < 0)        g = 0;
+   else if (g > 255) g = 255;
+   if (b < 0)        b = 0;
+   else if (b > 255) b = 255;
+   if (a < 0)        a = 0;
+   else if (a > 255) a = 255;
    if ((cc->r == r) && (cc->g == g) &&
        (cc->b == b) && (cc->a == a) &&
        (cc->r2 == r2) && (cc->g2 == g2) &&
@@ -654,14 +654,14 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!color_class)) return EINA_FALSE;
-   if (r < 0)   r = 0;
-   if (r > 255) r = 255;
-   if (g < 0)   g = 0;
-   if (g > 255) g = 255;
-   if (b < 0)   b = 0;
-   if (b > 255) b = 255;
-   if (a < 0)   a = 0;
-   if (a > 255) a = 255;
+   if (r < 0)        r = 0;
+   else if (r > 255) r = 255;
+   if (g < 0)        g = 0;
+   else if (g > 255) g = 255;
+   if (b < 0)        b = 0;
+   else if (b > 255) b = 255;
+   if (a < 0)        a = 0;
+   else if (a > 255) a = 255;
    EINA_LIST_FOREACH(ed->color_classes, l, cc)
      {
 	if ((cc->name) && (!strcmp(cc->name, color_class)))
