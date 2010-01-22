@@ -43,7 +43,7 @@ static const struct _ecore_sdl_keys_s  keystable[] =
    { SDLK_7,            "7",            "7" },
    { SDLK_8,            "8",            "8" },
    { SDLK_9,            "9",            "9" },
-   { SDLK_COLON,        "colon",        ";" },
+   { SDLK_COLON,        "colon",        ":" },
    { SDLK_SEMICOLON,    "semicolon",    ";" },
    { SDLK_LESS,         "less",         "<" },
    { SDLK_EQUALS,       "equal",        "=" },
