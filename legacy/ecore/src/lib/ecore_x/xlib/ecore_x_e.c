@@ -449,6 +449,15 @@ ecore_x_e_illume_quickpanel_zone_request_send(Ecore_X_Window win, Ecore_X_Window
 }
 
 EAPI void 
+ecore_x_e_illume_quickpanel_position_update_send(Ecore_X_Window win) 
+{
+   ecore_x_client_message32_send(win, 
+                                 ECORE_X_ATOM_E_ILLUME_QUICKPANEL_POSITION_UPDATE,
+				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+				 1, 0, 0, 0, 0);
+}
+
+EAPI void 
 ecore_x_e_illume_top_shelf_geometry_set(Ecore_X_Window win, int x, int y, int w, int h) 
 {
    unsigned int geom[4];

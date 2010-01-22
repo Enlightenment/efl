@@ -1590,6 +1590,7 @@ EAPI int                 ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_
 EAPI void                ecore_x_e_illume_quickpanel_zone_set(Ecore_X_Window win, Ecore_X_Window *zone);
 EAPI Ecore_X_Window      ecore_x_e_illume_quickpanel_zone_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_quickpanel_zone_request_send(Ecore_X_Window win, Ecore_X_Window qp);
+EAPI void                ecore_x_e_illume_quickpanel_position_update_send(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_home_send(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_top_shelf_geometry_set(Ecore_X_Window win, int x, int y, int w, int h);
 EAPI int                 ecore_x_e_illume_top_shelf_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h);
