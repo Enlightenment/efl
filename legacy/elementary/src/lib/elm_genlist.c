@@ -975,6 +975,10 @@ _calc_job(void *data)
    Item_Block *chb = NULL;
    int in = 0, minw_change = 0;
 
+   double t, t_start;
+   
+   t_start = ecore_time_get();
+   
    EINA_INLIST_FOREACH(wd->blocks, itb)
      {
 	int showme = 0;
@@ -1045,6 +1049,9 @@ _calc_job(void *data)
      }
    wd->calc_job = NULL;
    evas_object_smart_changed(wd->pan_smart);
+   
+   t = ecore_time_get();
+   printf("calc job %1.5f\n", t - t_start);
 }
 
 static void
@@ -1596,8 +1603,10 @@ _item_idler(void *data)
 {
    Widget_Data *wd = data;
    int n;
+   double t_start, t;
 
-   for (n = 0; (wd->queue) && (n < 8); n++)
+   t_start = ecore_time_get();
+   for (n = 0; (wd->queue) && (n < 1024); n++)
      {
 	Elm_Genlist_Item *it;
 
@@ -1605,7 +1614,15 @@ _item_idler(void *data)
 	wd->queue = eina_list_remove_list(wd->queue, wd->queue);
 	it->queued = EINA_FALSE;
 	_item_block_add(wd, it);
+        t = ecore_time_get();
+        // FIXME: call calc job now
+//        if ((t - t_start) > ecore_animator_frametime_get())
+//          {
+//             printf("abort idler\n");
+//             break;
+//          }
      }
+//   printf("%1.5f\n", t - t_start);
    if (n > 0)
      {
 	if (wd->calc_job) ecore_job_del(wd->calc_job);

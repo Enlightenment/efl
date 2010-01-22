@@ -1466,6 +1466,7 @@ _smart_onhold_animator(void *data)
         sd->down.onhold_vxe -= (int)sd->down.onhold_vxe;
         sd->down.onhold_vye -= (int)sd->down.onhold_vye;
         elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
+//        printf("scroll %i %i\n", sd->down.hold_x, sd->down.hold_y);
      }
    sd->down.onhold_tlast = t;
    return 1;
@@ -1556,6 +1557,8 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
                        sd->down.hold_y = y;
                        if (!sd->down.hold_animator)
                          sd->down.hold_animator = ecore_animator_add(_smart_hold_animator, sd);
+//                       printf("a %i %i\n", sd->down.hold_x, sd->down.hold_y);
+                       _smart_onhold_animator(sd);
 //                       elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
                     }
 	       }
@@ -1610,6 +1613,8 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
                             sd->down.onhold_tlast = 0.0;
                             sd->down.onhold_animator = ecore_animator_add(_smart_onhold_animator, sd);
                          }
+//                       printf("b %i %i\n", sd->down.hold_x, sd->down.hold_y);
+                       _smart_onhold_animator(sd);
                     }
                   else
                     {
