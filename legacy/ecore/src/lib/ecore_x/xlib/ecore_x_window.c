@@ -867,7 +867,7 @@ _ecore_x_window_tree_shadow_stop(void)
    _ecore_x_window_tree_shadow_free();
 }
 
-Shadow *
+static Shadow *
 _ecore_x_window_shadow_tree_find_shadow(Shadow *s, Window win)
 {
    Shadow *ss;
@@ -886,7 +886,7 @@ _ecore_x_window_shadow_tree_find_shadow(Shadow *s, Window win)
    return NULL;
 }
 
-Shadow *
+static Shadow *
 _ecore_x_window_shadow_tree_find(Window base)
 {
    Shadow *s;

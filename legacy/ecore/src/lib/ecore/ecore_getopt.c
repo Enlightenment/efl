@@ -1535,7 +1535,7 @@ ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser)
    return 0;
 }
 
-const Ecore_Getopt_Desc *
+static const Ecore_Getopt_Desc *
 _ecore_getopt_find_help(const Ecore_Getopt *parser)
 {
    const Ecore_Getopt_Desc *desc = parser->descs;

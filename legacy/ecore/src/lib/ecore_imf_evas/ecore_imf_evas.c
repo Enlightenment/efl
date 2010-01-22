@@ -14,7 +14,7 @@
  * Helper functions to make it easy to use Evas with Ecore_IMF.
  */
 
-static char *_ecore_imf_evas_event_empty = "";
+static const char *_ecore_imf_evas_event_empty = "";
 
 /* Converts the Evas modifiers to Ecore_IMF keyboard modifiers */
 static void

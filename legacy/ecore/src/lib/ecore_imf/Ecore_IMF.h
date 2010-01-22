@@ -232,7 +232,7 @@ extern "C" {
 
    struct _Ecore_IMF_Event_Key_Down
      {
-	char                        *keyname;   /**< The string name of the key pressed */
+	const char                  *keyname;   /**< The string name of the key pressed */
 	Ecore_IMF_Keyboard_Modifiers modifiers; /**< The keyboard modifiers active when the event has been emitted */
 	Ecore_IMF_Keyboard_Locks     locks;     /**< The keyboard locks active when the event has been emitted */
 	const char                  *key;       /**< The logical key : (eg shift+1 == exclamation) */
@@ -243,7 +243,7 @@ extern "C" {
 
    struct _Ecore_IMF_Event_Key_Up
      {
-	char                        *keyname;   /**< The string name of the key pressed */
+	const char                  *keyname;   /**< The string name of the key pressed */
 	Ecore_IMF_Keyboard_Modifiers modifiers; /**< The keyboard modifiers active when the event has been emitted */
 	Ecore_IMF_Keyboard_Locks     locks;     /**< The keyboard locks active when the event has been emitted */
 	const char                  *key;       /**< The logical key : (eg shift+1 == exclamation) */

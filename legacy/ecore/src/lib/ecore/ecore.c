@@ -225,7 +225,7 @@ void
 _ecore_fps_debug_init(void)
 {
    char  buf[4096];
-   char *tmp;
+   const char *tmp;
    int   pid;
 
    _ecore_fps_debug_init_count++;
@@ -265,8 +265,8 @@ _ecore_fps_debug_shutdown(void)
    if (_ecore_fps_debug_init_count > 0) return;
    if (_ecore_fps_debug_fd >= 0)
      {
-	char buf[4096];
-        char *tmp;
+        char buf[4096];
+        const char *tmp;
         int   pid;
 
 #ifndef HAVE_EVIL
