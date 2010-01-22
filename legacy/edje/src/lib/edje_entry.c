@@ -901,7 +901,6 @@ _backspace(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
    c1 = evas_object_textblock_cursor_new(o);
    if (!evas_textblock_cursor_char_prev(c))
      {
-	evas_textblock_cursor_node_prev(c); 
 	if (!evas_textblock_cursor_node_prev(c))
 	  nodel = 1;
 	else
