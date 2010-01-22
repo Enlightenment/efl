@@ -90,6 +90,8 @@ _sizing_eval(Evas_Object *obj)
 static void
 _mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   Evas_Event_Mouse_Up *ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    evas_object_smart_callback_call(data, "clicked", event_info);
 }
 
