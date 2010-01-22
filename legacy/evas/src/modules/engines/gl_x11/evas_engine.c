@@ -110,13 +110,14 @@ eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
    Evas_Engine_Info_GL_X11 *info;
-   int eb, evb;
 
    info = (Evas_Engine_Info_GL_X11 *)in;
    if (!e->engine.data.output)
      {
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 #else        
+        int eb, evb;
+        
 	if (!glXQueryExtension(info->info.display, &eb, &evb)) return 0;
 #endif
 	re = calloc(1, sizeof(Render_Engine));
@@ -1015,7 +1016,6 @@ struct _Native
    
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    EGLSurface  egl_surface;
-   EGLContext  egl_context;
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
    GLXFBConfig fbc;
@@ -1091,11 +1091,6 @@ _native_free_cb(void *data, void *image)
    Native *n = im->native.data;
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   if (n->egl_context)
-     {
-        eglDestroyContext(re->win->egl_disp, n->egl_context);
-        n->egl_context = 0;
-     }
    if (n->egl_surface)
      {
         eglDestroySurface(re->win->egl_disp, n->egl_surface);
@@ -1159,13 +1154,8 @@ eng_image_native_set(void *data, void *image, void *native)
         if (n)
           {
              EGLConfig egl_config;
-             int context_attrs[3];
              int config_attrs[20];
              int num_config, i;
-             
-             context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
-             context_attrs[1] = 2;
-             context_attrs[2] = EGL_NONE;
              
              i = 0;
              config_attrs[i++] = EGL_RED_SIZE;
@@ -1187,11 +1177,8 @@ eng_image_native_set(void *data, void *image, void *native)
              eglChooseConfig(re->win->egl_disp, config_attrs, 
                              &egl_config, 1, &num_config);
              n->egl_surface = eglCreatePixmapSurface(re->win->egl_disp, 
-                                                     egl_config, pixmap, 
+                                                     egl_config, pm, 
                                                      NULL);
-             eglBindAPI(EGL_OPENGL_ES_API);
-             n->egl_context = eglCreateContext(re->win->egl_disp, egl_config, 
-                                               NULL, context_attrs);
              evas_gl_common_image_native_enable(im);
              n->pixmap = pm;
              n->visual = vis;
