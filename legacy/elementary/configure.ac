@@ -303,6 +303,7 @@ data/themes/Makefile
 data/images/Makefile
 data/objects/Makefile
 data/desktop/Makefile
+data/edje_externals/Makefile
 config/Makefile
 config/default/Makefile
 config/standard/Makefile

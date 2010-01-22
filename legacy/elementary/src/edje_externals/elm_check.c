@@ -64,4 +64,5 @@ static Edje_External_Param_Info external_check_params[] = {
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
+DEFINE_EXTERNAL_ICON_ADD(check, "check")
 DEFINE_EXTERNAL_TYPE_SIMPLE(check, "Check")

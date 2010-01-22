@@ -40,7 +40,7 @@ external_button_params_parse(void *data, Evas_Object *obj, const Eina_List *para
    return mem;
 }
 
-static void
+ static void
 external_button_params_free(void *params)
 {
    Elm_Params_Button *mem = params;
@@ -56,4 +56,5 @@ static Edje_External_Param_Info external_button_params[] = {
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
+DEFINE_EXTERNAL_ICON_ADD(button, "button");
 DEFINE_EXTERNAL_TYPE_SIMPLE(button, "Button");

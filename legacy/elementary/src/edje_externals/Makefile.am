@@ -1,4 +1,3 @@
-
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \

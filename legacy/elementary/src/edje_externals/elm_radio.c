@@ -86,4 +86,5 @@ static Edje_External_Param_Info external_radio_params[] = {
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
+DEFINE_EXTERNAL_ICON_ADD(radio, "radio")
 DEFINE_EXTERNAL_TYPE_SIMPLE(radio, "Radio")

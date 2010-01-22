@@ -106,4 +106,5 @@ static Edje_External_Param_Info external_slider_params[] = {
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
+DEFINE_EXTERNAL_ICON_ADD(slider, "slider")
 DEFINE_EXTERNAL_TYPE_SIMPLE(slider, "Slider")

@@ -68,4 +68,5 @@ static Edje_External_Param_Info external_scrolled_entry_params[] = {
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
+DEFINE_EXTERNAL_ICON_ADD(scrolled_entry, "scrolled_entry")
 DEFINE_EXTERNAL_TYPE_SIMPLE(scrolled_entry, "Entry");

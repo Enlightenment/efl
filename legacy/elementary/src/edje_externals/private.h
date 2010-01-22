@@ -54,7 +54,7 @@ const Edje_External_Type external_##type_name##_type = {\
     .state_set = external_##type_name##_state_set,      \
     .params_parse = external_##type_name##_params_parse,\
     .params_free = external_##type_name##_params_free,  \
-    .icon_add = NULL,                                   \
+    .icon_add = external_##type_name##_icon_add,        \
     .label_get = external_##type_name##_label_get,      \
     .parameters_info = external_##type_name##_params,   \
     .data = NULL                                        \
@@ -69,6 +69,18 @@ external_##type_name##_add(void *data, Evas *evas, Evas_Object *parent, const Ei
 \
 DEFINE_EXTERNAL_TYPE(type_name, name)
 
+#define DEFINE_EXTERNAL_ICON_ADD(type_name, name)                   \
+Evas_Object *                                                       \
+external_##type_name##_icon_add(void *data, Evas *e) {              \
+   Evas_Object *ic;                                                 \
+   int w = 20, h = 10;                                              \
+                                                                    \
+   ic = edje_object_add(e);                                         \
+   edje_object_file_set(ic, PACKAGE_DATA_DIR"/edje_externals/icons.edj", "ico_"name);\
+   evas_object_size_hint_min_set(ic, w, h);                         \
+                                                                    \
+   return ic;                                                       \
+}
 
 #define DEFINE_EXTERNAL_COMMON_PARAMS           \
     EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("label", "label goes here")
