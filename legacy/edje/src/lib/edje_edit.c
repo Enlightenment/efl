@@ -1933,7 +1933,7 @@ edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_
      {
 	//printf("UnSet clip_to for part: %s\n", part);
 
-	if (rp->clip_to->object)
+	if (rp->clip_to && rp->clip_to->object)
 	  {
 	     evas_object_pointer_mode_set(rp->clip_to->object,
 					  EVAS_OBJECT_POINTER_MODE_AUTOGRAB);
