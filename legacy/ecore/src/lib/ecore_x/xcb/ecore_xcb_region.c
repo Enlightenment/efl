@@ -136,7 +136,7 @@ ecore_x_xregion_is_empty(Ecore_X_XRegion *region)
 }
 
 EAPI int
-ecore_x_xregion_is_empty(Ecore_X_XRegion *r1, Ecore_X_XRegion *r2)
+ecore_x_xregion_is_equal(Ecore_X_XRegion *r1, Ecore_X_XRegion *r2)
 {
    if (!r1 || !r2)
      return 0;
