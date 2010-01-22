@@ -114,7 +114,7 @@ Eina_Bool
 evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
                     Evas_Coord *mx, Evas_Coord *my, int grab)
 {
-   int order[4], i, j, edges, edge[4][2], douv;
+   int i, j, edges, edge[4][2], douv;
    Evas_Coord xe[2];
    double u[2] = { 0.0, 0.0 };
    double v[2] = { 0.0, 0.0 };
@@ -157,8 +157,8 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
    if ((mx) || (my)) douv = 1;
    for (i = 0; i < (edges - 1); i+= 2)
      {
-        Evas_Coord yp, yd, x0, x1;
-        
+        Evas_Coord yp, yd;
+
         j = i + 1;
         yd = m->points[edge[i][1]].y - m->points[edge[i][0]].y;
         if (yd > 0)

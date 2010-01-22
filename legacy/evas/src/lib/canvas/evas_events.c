@@ -1093,7 +1093,6 @@ evas_event_feed_multi_move(Evas *e,
    if (e->pointer.mouse_grabbed > 0)
      {
 	/* go thru old list of in objects */
-	Eina_List *outs = NULL;
 	Eina_List *l, *copy;
         Evas_Event_Multi_Move ev;
         Evas_Object *obj;

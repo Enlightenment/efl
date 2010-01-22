@@ -1364,7 +1364,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                          }
                        it.dead = img->dead;
                        it.useless = img->useless;
-                       DBG("...   memcpy %p %p %i ", 
+                       DBG("...   memcpy %p %p %zu ", 
                          itt, &it, sizeof(Op_Getinfo_Item));
                        memcpy(itt, &it, sizeof(Op_Getinfo_Item));
                        DBG("...   memcpy done %p", img);

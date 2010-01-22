@@ -9,7 +9,7 @@
           {
              int x, w, ww;
              FPc u, v, ud, vd, dv;
-             DATA32 *d, *s, *so[4], val1, val2;
+             DATA32 *d, *s;
 #ifdef COLMUL             
              FPc cv, cd, cc; // col
              DATA32 c1, c2; // col

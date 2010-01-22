@@ -10,7 +10,7 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
 {
    int i;
    int c, cx, cy, cw, ch;
-   int ytop, ybottom, ystart, yend, y, sw, sh, shp, swp, direct;
+   int ytop, ybottom, ystart, yend, y, sw, shp, swp, direct;
    Line *spans;
    DATA32 *buf = NULL, *sp;
    RGBA_Gfx_Func func = NULL;

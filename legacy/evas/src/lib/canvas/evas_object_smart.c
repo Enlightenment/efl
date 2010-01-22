@@ -496,7 +496,6 @@ EAPI Eina_Bool
 evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, const Evas_Smart_Cb_Description *descriptions)
 {
    const Evas_Smart_Cb_Description *d;
-   const Evas_Smart_Cb_Description_Array *sa;
    Evas_Object_Smart *o;
    unsigned int i, count;
 
