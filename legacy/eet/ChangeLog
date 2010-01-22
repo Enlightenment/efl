@@ -317,3 +317,7 @@
 2010-01-21  Cedric BAIL
 
 	* Add experimental API to walk Eet_Node tree.
+
+2010-01-22  Cedric BAIL
+
+	* Add VAR_ARRAY tests.

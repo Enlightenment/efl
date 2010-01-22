@@ -452,12 +452,18 @@ _eet_test_ex_check(Eet_Test_Ex_Type *stuff, int offset)
    if (stuff->ui != (unsigned int) EET_TEST_INT + offset) return 1;
    if (stuff->ul != EET_TEST_LONG_LONG + offset) return 1;
 
+   if (stuff->varray1_count != 5) return 1;
+   if (stuff->varray2_count != 10) return 1;
+
    for (i = 0; i < 5; ++i)
-     if (stuff->sarray2[i] != i * 42 + 1)
+     if (stuff->sarray2[i] != i * 42 + 1 && stuff->varray1[i] != i * 42 + 1)
        return 1;
 
    for (i = 0; i < 10; ++i)
-     _eet_test_basic_check(stuff->sarray1 + i, i);
+     {
+	_eet_test_basic_check(stuff->sarray1 + i, i);
+	_eet_test_basic_check(stuff->varray2 + i, i);
+     }
 
    return 0;
 }
