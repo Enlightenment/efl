@@ -337,7 +337,7 @@ _edje_lua_free_metatable(lua_State *L, const Edje_Lua_Reg ** class)
    lua_gc(L, LUA_GCCOLLECT, 0);
 }
 
-void *
+static void *
 _edje_lua_checkudata(lua_State *L, int pos, const Edje_Lua_Reg * module)
 {
    luaL_checktype(L, pos, LUA_TUSERDATA);
@@ -417,7 +417,7 @@ _edje_lua_set_class(lua_State *L, int index, const Edje_Lua_Reg ** class)
       lua_setmetatable(L, index);
 }
 
-int
+static int
 _edje_lua_look_fn(lua_State *L)
 {
    lua_rawgeti(L, -1, EDJE_LUA_FN);
@@ -432,7 +432,7 @@ _edje_lua_look_fn(lua_State *L)
      }
 }
 
-int
+static int
 _edje_lua_look_get(lua_State *L)
 {
    lua_rawgeti(L, -1, EDJE_LUA_GET);
@@ -455,7 +455,7 @@ _edje_lua_look_get(lua_State *L)
      }
 }
 
-int
+static int
 _edje_lua_look_set(lua_State *L)
 {
    lua_rawgeti(L, -1, EDJE_LUA_SET);
@@ -4489,7 +4489,7 @@ _edje_lua_group_fn_signal_emit(lua_State *L)
    return 0;
 }
 
-Edje_Program *
+static Edje_Program *
 _edje_lua_program_get_byname(Evas_Object * obj, const char *prog_name)
 {
    Edje_Program *epr;
@@ -5028,7 +5028,7 @@ _edje_lua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
    ela->cur += nsize - osize;
    if (ela->cur > ela->max)
      {
-        ERR("Edje Lua memory limit of %i bytes reached (%i allocated)",
+        ERR("Edje Lua memory limit of %zu bytes reached (%zu allocated)",
 	    ela->max, ela->cur);
 	return NULL;
      }
