@@ -1698,6 +1698,7 @@ EAPI int              ecore_x_xregion_union(Ecore_X_XRegion *dst, Ecore_X_XRegio
 EAPI int              ecore_x_xregion_union_rect(Ecore_X_XRegion *dst, Ecore_X_XRegion *src, Ecore_X_Rectangle *rect);
 EAPI int              ecore_x_xregion_subtract(Ecore_X_XRegion *dst, Ecore_X_XRegion *r1, Ecore_X_XRegion *r2);
 EAPI int              ecore_x_xregion_is_empty(Ecore_X_XRegion *region);
+EAPI int              ecore_x_xregion_is_equal(Ecore_X_XRegion *r1, Ecore_X_XRegion *r2);
 EAPI int              ecore_x_xregion_point_contain(Ecore_X_XRegion *region, int x, int y);
 EAPI int              ecore_x_xregion_rect_contain(Ecore_X_XRegion *region, Ecore_X_Rectangle *rect);
 
