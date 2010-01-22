@@ -36,6 +36,12 @@
 #include <stdio.h>
 #include <setjmp.h>
 
+#ifndef _MSC_VER
+# include <stdint.h>
+#else
+# include <stddef.h>
+#endif
+
 #include "embryo_cc_amx.h"
 
 /* Note: the "cell" and "ucell" types are defined in AMX.H */
@@ -53,7 +59,7 @@
 #define PREPROC_TERM  '\x7f'	/* termination character for preprocessor expressions (the "DEL" code) */
 #define sDEF_PREFIX   "default.inc"	/* default prefix filename */
 
-typedef void       *stkitem;	/* type of items stored on the stack */
+typedef intptr_t stkitem;	/* type of items stored on the stack */
 
 typedef struct __s_arginfo
 {				/* function argument info */

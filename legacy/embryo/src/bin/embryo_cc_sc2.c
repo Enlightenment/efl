@@ -116,14 +116,10 @@ plungequalifiedfile(char *name)
    pushstk((stkitem) inpf);
    pushstk((stkitem) inpfname);	/* pointer to current file name */
    pushstk((stkitem) curlibrary);
-   /* FIXME: 64bit unsafe */
    pushstk((stkitem) iflevel);
    assert(skiplevel == 0);
-   /* FIXME: 64bit unsafe */
    pushstk((stkitem) icomment);
-   /* FIXME: 64bit unsafe */
    pushstk((stkitem) fcurrent);
-   /* FIXME: 64bit unsafe */
    pushstk((stkitem) fline);
    inpfname = strdup(name);	/* set name of include file */
    if (inpfname == NULL)
