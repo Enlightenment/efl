@@ -1606,7 +1606,7 @@ _item_idler(void *data)
    double t_start, t;
 
    t_start = ecore_time_get();
-   for (n = 0; (wd->queue) && (n < 1024); n++)
+   for (n = 0; (wd->queue) && (n < 4); n++)
      {
 	Elm_Genlist_Item *it;
 
