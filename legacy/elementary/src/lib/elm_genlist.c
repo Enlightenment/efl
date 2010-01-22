@@ -1051,7 +1051,9 @@ _calc_job(void *data)
    evas_object_smart_changed(wd->pan_smart);
    
    t = ecore_time_get();
+#if 0
    printf("calc job %1.5f\n", t - t_start);
+#endif
 }
 
 static void
