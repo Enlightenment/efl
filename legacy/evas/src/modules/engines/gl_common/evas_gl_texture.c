@@ -3,8 +3,8 @@
 #if 1
 static const GLenum rgba_fmt   = GL_RGBA;
 static const GLenum rgba_ifmt  = GL_RGBA;
-static const GLenum rgb_fmt    = GL_RGB;
-static const GLenum rgb_ifmt   = GL_RGB;
+static const GLenum rgb_fmt    = GL_RGBA;
+static const GLenum rgb_ifmt   = GL_RGBA;
 static const GLenum alpha_fmt  = GL_ALPHA;
 static const GLenum alpha_ifmt = GL_ALPHA;
 static const GLenum lum_fmt    = GL_LUMINANCE;
@@ -12,8 +12,8 @@ static const GLenum lum_ifmt   = GL_LUMINANCE;
 #else
 static const GLenum rgba_fmt   = GL_RGBA;
 static const GLenum rgba_ifmt  = GL_COMPRESSED_RGBA;
-static const GLenum rgb_fmt    = GL_RGB;
-static const GLenum rgb_ifmt   = GL_COMPRESSED_RGB;
+static const GLenum rgb_fmt    = GL_RGBA;
+static const GLenum rgb_ifmt   = GL_COMPRESSED_RGBA;
 static const GLenum alpha_fmt  = GL_ALPHA;
 static const GLenum alpha_ifmt = GL_COMPRESSED_ALPHA;
 static const GLenum lum_fmt    = GL_LUMINANCE;
