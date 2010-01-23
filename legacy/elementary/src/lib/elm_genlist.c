@@ -1,3 +1,7 @@
+/*
+ *
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include <Elementary.h>
 #include "elm_priv.h"
 
@@ -237,6 +241,7 @@
  * have a specific style that overrides any theme the user or system sets up
  * you can use elm_theme_overlay_add() to add such a file.
  */
+
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Item_Block Item_Block;
 typedef struct _Pan Pan;
@@ -260,18 +265,24 @@ struct _Widget_Data
    Eina_Bool no_select : 1;
    Eina_Bool bring_in : 1;
    Eina_Bool compress : 1;
+   Eina_Bool homogeneous : 1;
+   int item_width;
+   int item_height;
+   int max_items_per_block;
 };
 
 struct _Item_Block
 {
    EINA_INLIST;
    int count;
+   int num;
    Widget_Data *wd;
    Eina_List *items;
    Evas_Coord x, y, w, h, minw, minh;
    Eina_Bool realized : 1;
    Eina_Bool changed : 1;
    Eina_Bool updateme : 1;
+   Eina_Bool showme : 1;
 };
 
 struct _Elm_Genlist_Item
@@ -691,12 +702,12 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
    elm_widget_sub_object_add(it->wd->obj, it->base);
 
    if (it->flags & ELM_GENLIST_ITEM_SUBITEMS) strncpy(buf, "tree", sizeof(buf));
-   else strncpy(buf, "item", sizeof(buf)); 
-   if (it->wd->compress) strncat(buf, "_compress", sizeof(buf));
+   else strncpy(buf, "item", sizeof(buf));
+   if (it->wd->compress) strncat(buf, "_compress", sizeof(buf) - strlen(buf));
 
-   if (in & 0x1) strncat(buf, "_odd", sizeof(buf));
-   strncat(buf, "/", sizeof(buf));
-   strncat(buf, it->itc->item_style, sizeof(buf));
+   if (in & 0x1) strncat(buf, "_odd", sizeof(buf) - strlen(buf));
+   strncat(buf, "/", sizeof(buf) - strlen(buf));
+   strncat(buf, it->itc->item_style, sizeof(buf) - strlen(buf));
    
    _elm_theme_set(it->base, "genlist", buf, elm_widget_style_get(it->wd->obj));
    it->spacer = evas_object_rectangle_add(evas_object_evas_get(it->wd->obj));
@@ -736,71 +747,90 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
 	  edje_object_signal_emit(it->base, "elm,state,expanded", "elm");
      }
 
-   if (it->itc->func.label_get)
+   if (calc && it->wd->homogeneous && it->wd->item_width)
      {
-	const Eina_List *l;
-	const char *key;
-
-	it->labels = _stringlist_get(edje_object_data_get(it->base, "labels"));
-	EINA_LIST_FOREACH(it->labels, l, key)
+	/* homogenous genlist shortcut */
+	if (!it->mincalcd)
 	  {
-	     char *s = it->itc->func.label_get(it->data, it->wd->obj, l->data);
-
-	     if (s)
-	       {
-		  edje_object_part_text_set(it->base, l->data, s);
-		  free(s);
-	       }
+	     it->w = it->minw = it->wd->item_width;
+	     it->h = it->minh = it->wd->item_height;
+	     it->mincalcd = EINA_TRUE;
 	  }
      }
-   if (it->itc->func.icon_get)
+   else
      {
-	const Eina_List *l;
-	const char *key;
-
-	it->icons = _stringlist_get(edje_object_data_get(it->base, "icons"));
-	EINA_LIST_FOREACH(it->icons, l, key)
+	if (it->itc->func.label_get)
 	  {
-	     Evas_Object *ic = it->itc->func.icon_get(it->data, it->wd->obj, l->data);
+	     const Eina_List *l;
+	     const char *key;
 
-	     if (ic)
+	     it->labels = _stringlist_get(edje_object_data_get(it->base, "labels"));
+	     EINA_LIST_FOREACH(it->labels, l, key)
 	       {
-		  it->icon_objs = eina_list_append(it->icon_objs, ic);
-		  edje_object_part_swallow(it->base, key, ic);
-		  evas_object_show(ic);
-		  elm_widget_sub_object_add(it->wd->obj, ic);
+		  char *s = it->itc->func.label_get(it->data, it->wd->obj, l->data);
+
+		  if (s)
+		    {
+		       edje_object_part_text_set(it->base, l->data, s);
+		       free(s);
+		    }
 	       }
 	  }
-     }
-   if (it->itc->func.state_get)
-     {
-	const Eina_List *l;
-	const char *key;
-
-	it->states = _stringlist_get(edje_object_data_get(it->base, "states"));
-	EINA_LIST_FOREACH(it->states, l, key)
+	if (it->itc->func.icon_get)
 	  {
-	     Eina_Bool on = it->itc->func.state_get(it->data, it->wd->obj, l->data);
+	     const Eina_List *l;
+	     const char *key;
 
-	     if (on)
+	     it->icons = _stringlist_get(edje_object_data_get(it->base, "icons"));
+	     EINA_LIST_FOREACH(it->icons, l, key)
 	       {
-		  snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
-		  edje_object_signal_emit(it->base, buf, "elm");
+		  Evas_Object *ic = it->itc->func.icon_get(it->data, it->wd->obj, l->data);
+
+		  if (ic)
+		    {
+		       it->icon_objs = eina_list_append(it->icon_objs, ic);
+		       edje_object_part_swallow(it->base, key, ic);
+		       evas_object_show(ic);
+		       elm_widget_sub_object_add(it->wd->obj, ic);
+		    }
 	       }
 	  }
-     }
-   if (!it->mincalcd)
-     {
-	Evas_Coord mw = -1, mh = -1;
+	if (it->itc->func.state_get)
+	  {
+	     const Eina_List *l;
+	     const char *key;
 
-	elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-	edje_object_size_min_restricted_calc(it->base, &mw, &mh, mw, mh);
-	elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-	it->w = it->minw = mw;
-	it->h = it->minh = mh;
-	it->mincalcd = EINA_TRUE;
+	     it->states = _stringlist_get(edje_object_data_get(it->base, "states"));
+	     EINA_LIST_FOREACH(it->states, l, key)
+	       {
+		  Eina_Bool on = it->itc->func.state_get(it->data, it->wd->obj, l->data);
+
+		  if (on)
+		    {
+		       snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
+		       edje_object_signal_emit(it->base, buf, "elm");
+		    }
+	       }
+	  }
+	if (!it->mincalcd)
+	  {
+	     Evas_Coord mw = -1, mh = -1;
+
+	     elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+	     edje_object_size_min_restricted_calc(it->base, &mw, &mh, mw, mh);
+	     elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+	     it->w = it->minw = mw;
+	     it->h = it->minh = mh;
+	     it->mincalcd = EINA_TRUE;
+
+	     if (in == 0 && it->wd->homogeneous)
+	       {
+		  it->wd->item_width = mw;
+		  it->wd->item_height = mh;
+	       }
+	  }
+	if (!calc) evas_object_show(it->base);
      }
-   if (!calc) evas_object_show(it->base);
    it->realized = EINA_TRUE;
 }
 
@@ -829,22 +859,35 @@ _item_unrealize(Elm_Genlist_Item *it)
 }
 
 static int
-_item_block_recalc(Item_Block *itb, int in)
+_item_block_recalc(Item_Block *itb, int in, int qadd)
 {
    const Eina_List *l;
    Elm_Genlist_Item *it;
    Evas_Coord minw = 0, minh = 0;
-   int showme = 0;
+   int showme = 0, changed = 0;
    Evas_Coord y = 0;
 
+   itb->num = in;
    EINA_LIST_FOREACH(itb->items, l, it)
      {
 	if (it->delete_me) continue;
 	showme |= it->showme;
 	if (!itb->realized)
 	  {
-	     _item_realize(it, in, 1);
-	     _item_unrealize(it);
+             if (qadd)
+               {
+                  if (!it->mincalcd) changed = 1;
+                  if (changed)
+                    {
+                       _item_realize(it, in, 1);
+                       _item_unrealize(it);
+                    }
+               }
+             else
+               {
+                  _item_realize(it, in, 1);
+                  _item_unrealize(it);
+               }
 	  }
 	else
           {
@@ -975,14 +1018,13 @@ _calc_job(void *data)
    Item_Block *chb = NULL;
    int in = 0, minw_change = 0;
 
-   double t, t_start;
-   
-   t_start = ecore_time_get();
-   
    EINA_INLIST_FOREACH(wd->blocks, itb)
      {
 	int showme = 0;
 
+        itb->num = in;
+        showme = itb->showme;
+        itb->showme = 0;
 	if (chb)
 	  {
 	     if (itb->realized) _item_block_unrealize(itb);
@@ -990,7 +1032,7 @@ _calc_job(void *data)
 	if (itb->changed)
 	  {
 	     if (itb->realized) _item_block_unrealize(itb);
-	     showme = _item_block_recalc(itb, in);
+	     showme = _item_block_recalc(itb, in, 0);
 	     chb = itb;
 	  }
 	itb->y = y;
@@ -1049,11 +1091,6 @@ _calc_job(void *data)
      }
    wd->calc_job = NULL;
    evas_object_smart_changed(wd->pan_smart);
-   
-   t = ecore_time_get();
-#if 0
-   printf("calc job %1.5f\n", t - t_start);
-#endif
 }
 
 static void
@@ -1111,7 +1148,7 @@ _update_job(void *data)
           {
              position = 1;
              itb->changed = EINA_TRUE;
-             _item_block_recalc(itb, num0);
+             _item_block_recalc(itb, num0, 0);
              _item_block_position(itb, num0);
           }
      }
@@ -1311,6 +1348,7 @@ elm_genlist_add(Evas_Object *parent)
 
    wd->obj = obj;
    wd->mode = ELM_LIST_SCROLL;
+   wd->max_items_per_block = 32;
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
@@ -1502,7 +1540,7 @@ _item_block_add(Widget_Data *wd, Elm_Genlist_Item *it)
 		  if (wd->blocks)
 		    {
 		       itb = (Item_Block *)(wd->blocks);
-		       if (itb->count >= 32)
+		       if (itb->count >= wd->max_items_per_block)
 			 {
 			    itb = calloc(1, sizeof(Item_Block));
 			    if (!itb) return;
@@ -1527,7 +1565,7 @@ _item_block_add(Widget_Data *wd, Elm_Genlist_Item *it)
 		  if (wd->blocks)
 		    {
 		       itb = (Item_Block *)(wd->blocks->last);
-		       if (itb->count >= 32)
+		       if (itb->count >= wd->max_items_per_block)
 			 {
 			    itb = calloc(1, sizeof(Item_Block));
 			    if (!itb) return;
@@ -1570,7 +1608,7 @@ _item_block_add(Widget_Data *wd, Elm_Genlist_Item *it)
 	  _item_del(it->rel);
 	it->rel = NULL;
      }
-   if (itb->count > 32)
+   if (itb->count > itb->wd->max_items_per_block)
      {
         int newc;
         Item_Block *itb2;
@@ -1604,11 +1642,11 @@ static int
 _item_idler(void *data)
 {
    Widget_Data *wd = data;
-   int n;
-   double t_start, t;
+   int n, showme = 0;
+   double t0, t;
 
-   t_start = ecore_time_get();
-   for (n = 0; (wd->queue) && (n < 4); n++)
+   t0 = ecore_time_get();
+   for (n = 0; (wd->queue) && (n < 128); n++)
      {
 	Elm_Genlist_Item *it;
 
@@ -1617,14 +1655,14 @@ _item_idler(void *data)
 	it->queued = EINA_FALSE;
 	_item_block_add(wd, it);
         t = ecore_time_get();
-        // FIXME: call calc job now
-//        if ((t - t_start) > ecore_animator_frametime_get())
-//          {
-//             printf("abort idler\n");
-//             break;
-//          }
+        if (it->block->changed)
+          {
+             showme = _item_block_recalc(it->block, it->block->num, 1);
+             it->block->changed = 0;
+          }
+        if (showme) it->block->showme = 1;
+        if ((t - t0) > (ecore_animator_frametime_get())) break;
      }
-//   printf("%1.5f\n", t - t_start);
    if (n > 0)
      {
 	if (wd->calc_job) ecore_job_del(wd->calc_job);
@@ -2729,3 +2767,43 @@ elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
 }
+
+/**
+ * Set homogenous mode
+ *
+ * This will enable the homogeneous mode where items are of the same height and width
+ * so that genlist may do the lazy-loading at its maximum.  This implies 'compressed' mode
+ *
+ * @param obj The genlist object
+ * @param homogeneous Assume the items within the genlist are of the same height and width
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (homogeneous)
+      elm_genlist_compress_mode_set(obj, 1);
+   wd->homogeneous = homogeneous;
+}
+
+/**
+ * Set the maximum number of items within an item block
+ *
+ * This will configure the block count to tune to the target with particular performance matrix.
+ *
+ * @param obj The genlist object
+ * @param n   Maximum number of items within an item block
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_block_count_set(Evas_Object *obj, int n)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->max_items_per_block = n;
+}
+
+
