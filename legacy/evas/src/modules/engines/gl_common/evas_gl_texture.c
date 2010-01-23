@@ -312,7 +312,7 @@ _pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
    if (!pt) return NULL;
    h = _tex_round_slot(gc, h) << 4;
-   _tex_adjust(gc, &w, &h);
+//   _tex_adjust(gc, &w, &h);
    pt->gc = gc;
    pt->w = w;
    pt->h = h;
@@ -325,8 +325,8 @@ _pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    // is this really needed for gl-es?
-   glTexImage2D(GL_TEXTURE_2D, 0, intformat, w, h, 0, format, 
-                GL_UNSIGNED_BYTE, 0);
+//   glTexImage2D(GL_TEXTURE_2D, 0, intformat, w, h, 0, format, 
+//                GL_UNSIGNED_BYTE, 0);
 #endif
    
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
