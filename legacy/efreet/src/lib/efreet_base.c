@@ -126,11 +126,11 @@ efreet_data_dirs_get(void)
     if (xdg_data_dirs) return xdg_data_dirs;
 
 #ifdef _WIN32
-    snprintf(buf, 4096, "%s\\Efl;" PACKAGE_DATA_DIR ";/usr/share", getenv("APPDATA"));
+    snprintf(buf, 4096, "%s\\Efl;" PACKAGE_DATA_DIR ";/usr/share;/usr/local/share", getenv("APPDATA"));
     xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS", buf);
 #else
     xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS",
-                            PACKAGE_DATA_DIR ":/usr/share");
+                            PACKAGE_DATA_DIR ":/usr/share:/usr/local/share");
 #endif
     return xdg_data_dirs;
 }
