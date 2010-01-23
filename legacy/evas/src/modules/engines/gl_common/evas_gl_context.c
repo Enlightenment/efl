@@ -584,7 +584,7 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
         ty2 = ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
      }
    if (blend) bl = 0.0;
-   
+
    PUSH_VERTEX(x    , y    , 0);
    PUSH_VERTEX(x + w, y    , 0);
    PUSH_VERTEX(x    , y + h, 0);

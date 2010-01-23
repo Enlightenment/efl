@@ -159,6 +159,8 @@ struct _Evas_GL_Texture_Pool
    int              slot, fslot;
    Eina_List       *allocations;
    Eina_Bool        whole : 1;
+   Eina_Bool        render : 1;
+   Eina_Bool        native : 1;
 };
 
 struct _Evas_GL_Texture

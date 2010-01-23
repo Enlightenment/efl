@@ -271,6 +271,7 @@ _pool_tex_render_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    pt->intformat = intformat;
    pt->format = format;
    pt->dataformat = GL_UNSIGNED_BYTE;
+   pt->render = 1;
    pt->references = 0;
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 # ifndef GL_FRAMEBUFFER
@@ -311,8 +312,6 @@ _pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    
    pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
    if (!pt) return NULL;
-   h = _tex_round_slot(gc, h) << 4;
-//   _tex_adjust(gc, &w, &h);
    pt->gc = gc;
    pt->w = w;
    pt->h = h;
@@ -320,6 +319,7 @@ _pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    pt->format = format;
    pt->dataformat = GL_UNSIGNED_BYTE;
    pt->references = 0;
+   pt->native = 1;
    glGenTextures(1, &(pt->texture));
    glBindTexture(GL_TEXTURE_2D, pt->texture);
    
@@ -342,11 +342,14 @@ pt_unref(Evas_GL_Texture_Pool *pt)
 {
    pt->references--;
    if (pt->references > 0) return;
-   if (pt->whole)
-     pt->gc->shared->tex.whole = eina_list_remove(pt->gc->shared->tex.whole, pt);
-   else
-     pt->gc->shared->tex.atlas [pt->slot][pt->fslot] =
-     eina_list_remove(pt->gc->shared->tex.atlas[pt->slot][pt->fslot], pt);
+   if (!((pt->render) || (pt->native)))
+     {
+        if (pt->whole)
+          pt->gc->shared->tex.whole = eina_list_remove(pt->gc->shared->tex.whole, pt);
+        else
+          pt->gc->shared->tex.atlas [pt->slot][pt->fslot] =
+          eina_list_remove(pt->gc->shared->tex.atlas[pt->slot][pt->fslot], pt);
+     }
    glDeleteTextures(1, &(pt->texture));
    if (pt->fb) glsym_glDeleteFramebuffers(1, &(pt->fb));
    free(pt);
