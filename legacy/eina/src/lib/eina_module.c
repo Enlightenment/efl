@@ -139,7 +139,6 @@ static void _dir_list_cb(const char *name, const char *path, void *data)
      {
 	char *file;
 	Eina_Module *m;
-	size_t length;
 
 	length = strlen(path) + strlen(name) + 2;
 

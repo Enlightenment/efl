@@ -307,7 +307,7 @@ eina_list_iterator_free(Eina_Iterator_List *it)
 }
 
 static Eina_Bool
-eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int index, void **data)
+eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int idx, void **data)
 {
    const Eina_List *over;
    unsigned int middle;
@@ -315,22 +315,22 @@ eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int index, void **dat
 
    EINA_MAGIC_CHECK_LIST_ACCESSOR(it, EINA_FALSE);
 
-   if (index >= eina_list_count(it->head)) return EINA_FALSE;
+   if (idx >= eina_list_count(it->head)) return EINA_FALSE;
 
-   if (it->index == index)
+   if (it->index == idx)
      {
 	over = it->current;
      }
-   else if (index > it->index)
+   else if (idx > it->index)
      {
 	/* After current position. */
 	middle = ((eina_list_count(it->head) - it->index) >> 1) + it->index;
 
-	if (index > middle)
+	if (idx > middle)
 	  {
 	     /* Go backward from the end. */
 	     for (i = eina_list_count(it->head) - 1, over = eina_list_last(it->head);
-		  i > index && over != NULL;
+		  i > idx && over != NULL;
 		  --i, over = eina_list_prev(over))
 	       ;
 	  }
@@ -338,7 +338,7 @@ eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int index, void **dat
 	  {
 	     /* Go forward from current. */
 	     for (i = it->index, over = it->current;
-		  i < index && over != NULL;
+		  i < idx && over != NULL;
 		  ++i, over = eina_list_next(over))
 	       ;
 	  }
@@ -348,11 +348,11 @@ eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int index, void **dat
 	/* Before current position. */
 	middle = it->index >> 1;
 
-	if (index > middle)
+	if (idx > middle)
 	  {
 	     /* Go backward from current. */
 	     for (i = it->index, over = it->current;
-		  i > index && over != NULL;
+		  i > idx && over != NULL;
 		  --i, over = eina_list_prev(over))
 	       ;
 	  }
@@ -360,7 +360,7 @@ eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int index, void **dat
 	  {
 	     /* Go forward from start. */
 	     for (i = 0, over = it->head;
-		  i < index && over != NULL;
+		  i < idx && over != NULL;
 		  ++i, over = eina_list_next(over))
 	       ;
 	  }
@@ -369,7 +369,7 @@ eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int index, void **dat
    if (over == NULL) return EINA_FALSE;
 
    it->current = over;
-   it->index = index;
+   it->index = idx;
 
    *data = eina_list_data_get(it->current);
    return EINA_TRUE;

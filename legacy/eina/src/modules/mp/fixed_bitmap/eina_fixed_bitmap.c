@@ -108,7 +108,7 @@ eina_fixed_bitmap_malloc(void *data, __UNUSED__ unsigned int size)
    Eina_Fixed_Bitmap *mp = data;
    Eina_Fixed_Bitmap_Pool *pool = NULL;
    void *ptr;
-   int index;
+   int idx;
 
    if (mp->head)
      {
@@ -133,9 +133,9 @@ eina_fixed_bitmap_malloc(void *data, __UNUSED__ unsigned int size)
 	mp->lookup = eina_rbtree_inline_insert(mp->lookup, EINA_RBTREE_GET(pool), EINA_RBTREE_CMP_NODE_CB(_eina_fixed_cmp), NULL);
      }
 
-   index = ffs(pool->bitmask) - 1;
-   pool->bitmask &= ~(1 << index);
-   ptr = (unsigned char*) (pool + 1) + index * mp->item_size;
+   idx = ffs(pool->bitmask) - 1;
+   pool->bitmask &= ~(1 << idx);
+   ptr = (unsigned char*) (pool + 1) + idx * mp->item_size;
 
    if (pool->bitmask == 0)
      mp->head = eina_inlist_demote(mp->head, EINA_INLIST_GET(pool));

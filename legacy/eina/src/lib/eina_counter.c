@@ -331,10 +331,10 @@ eina_counter_free(Eina_Counter *counter)
 
    while (counter->clocks)
      {
-	Eina_Clock *clock = (Eina_Clock *) counter->clocks;
+	Eina_Clock *clk = (Eina_Clock *) counter->clocks;
 
 	counter->clocks = eina_inlist_remove(counter->clocks, counter->clocks);
-	free(clock);
+	free(clk);
      }
 
    free(counter);

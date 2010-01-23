@@ -87,34 +87,34 @@ eina_array_pop(Eina_Array *array)
  * @brief Return the data at a given position in an array.
  *
  * @param array The array.
- * @param index The potition of the data to retrieve.
+ * @param idx The potition of the data to retrieve.
  * @return The retrieved data.
  *
- * This function returns the data at the position @p index in @p
+ * This function returns the data at the position @p idx in @p
  * array. For performance reasons, there is no check of @p array or @p
- * index. If it is @c NULL or invalid, the program may crash.
+ * idx. If it is @c NULL or invalid, the program may crash.
  */
 static inline void *
-eina_array_data_get(const Eina_Array *array, unsigned int index)
+eina_array_data_get(const Eina_Array *array, unsigned int idx)
 {
-   return array->data[index];
+   return array->data[idx];
 }
 
 /**
  * @brief Return the data at a given position in an array.
  *
  * @param array The array.
- * @param index The potition of the data to set.
+ * @param idx The potition of the data to set.
  * @param data The data to set.
  *
- * This function returns the data at the position @p index in @p
+ * This function returns the data at the position @p idx in @p
  * array. For performance reasons, there is no check of @p array or @p
- * index. If it is @c NULL or invalid, the program may crash.
+ * idx. If it is @c NULL or invalid, the program may crash.
  */
 static inline void
-eina_array_data_set(const Eina_Array *array, unsigned int index, const void *data)
+eina_array_data_set(const Eina_Array *array, unsigned int idx, const void *data)
 {
-   array->data[index] = (void*) data;
+   array->data[idx] = (void*) data;
 }
 
 /**

@@ -72,6 +72,7 @@ static inline void _x86_cpuid(int op, int *a, int *b, int *c, int *d)
 		: "cc");
 }
 
+static
 void _x86_simd(Eina_Cpu_Features *features)
 {
 	int a, b, c, d;

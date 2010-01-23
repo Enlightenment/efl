@@ -82,8 +82,8 @@ EAPI Eina_Bool    eina_array_remove   (Eina_Array *array, Eina_Bool (*keep)(void
 
 static inline Eina_Bool     eina_array_push  (Eina_Array *array, const void *data) EINA_ARG_NONNULL(1, 2);
 static inline void         *eina_array_pop   (Eina_Array *array) EINA_ARG_NONNULL(1);
-static inline void         *eina_array_data_get (const Eina_Array *array, unsigned int index) EINA_ARG_NONNULL(1) EINA_PURE;
-static inline void          eina_array_data_set (const Eina_Array *array, unsigned int index, const void *data) EINA_ARG_NONNULL(1, 3);
+static inline void         *eina_array_data_get (const Eina_Array *array, unsigned int idx) EINA_ARG_NONNULL(1) EINA_PURE;
+static inline void          eina_array_data_set (const Eina_Array *array, unsigned int idx, const void *data) EINA_ARG_NONNULL(1, 3);
 static inline unsigned int  eina_array_count_get (const Eina_Array *array) EINA_ARG_NONNULL(1) EINA_PURE;
 
 EAPI Eina_Iterator *eina_array_iterator_new (const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;

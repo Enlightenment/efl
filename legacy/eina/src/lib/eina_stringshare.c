@@ -445,7 +445,7 @@ _eina_stringshare_small_cmp(const Eina_Stringshare_Small_Bucket *bucket, int i, 
 }
 
 static const char *
-_eina_stringshare_small_bucket_find(const Eina_Stringshare_Small_Bucket *bucket, const char *str, unsigned char length, int *index)
+_eina_stringshare_small_bucket_find(const Eina_Stringshare_Small_Bucket *bucket, const char *str, unsigned char length, int *idx)
 {
    const char *pstr = str + 1; /* skip first letter, it's always the same */
    unsigned char plength = length - 1;
@@ -453,7 +453,7 @@ _eina_stringshare_small_bucket_find(const Eina_Stringshare_Small_Bucket *bucket,
 
    if (bucket->count == 0)
      {
-	*index = 0;
+	*idx = 0;
 	return NULL;
      }
 
@@ -477,12 +477,12 @@ _eina_stringshare_small_bucket_find(const Eina_Stringshare_Small_Bucket *bucket,
 	  }
 	else
 	  {
-	     *index = i;
+	     *idx = i;
 	     return bucket->strings[i];
 	  }
      }
 
-   *index = low;
+   *idx = low;
    return NULL;
 }
 
@@ -520,7 +520,7 @@ _eina_stringshare_small_bucket_resize(Eina_Stringshare_Small_Bucket *bucket, int
 }
 
 static const char *
-_eina_stringshare_small_bucket_insert_at(Eina_Stringshare_Small_Bucket **p_bucket, const char *str, unsigned char length, int index)
+_eina_stringshare_small_bucket_insert_at(Eina_Stringshare_Small_Bucket **p_bucket, const char *str, unsigned char length, int idx)
 {
    Eina_Stringshare_Small_Bucket *bucket = *p_bucket;
    int todo, off;
@@ -552,39 +552,39 @@ _eina_stringshare_small_bucket_insert_at(Eina_Stringshare_Small_Bucket **p_bucke
    memcpy(snew, str, length);
    snew[length] = '\0';
 
-   off = index + 1;
-   todo = bucket->count - index;
+   off = idx + 1;
+   todo = bucket->count - idx;
    if (todo > 0)
      {
-	memmove((void *)(bucket->strings + off), bucket->strings + index,
+	memmove((void *)(bucket->strings + off), bucket->strings + idx,
 		todo * sizeof(bucket->strings[0]));
-	memmove(bucket->lengths + off, bucket->lengths + index,
+	memmove(bucket->lengths + off, bucket->lengths + idx,
 		todo * sizeof(bucket->lengths[0]));
-	memmove(bucket->references + off, bucket->references + index,
+	memmove(bucket->references + off, bucket->references + idx,
 		todo * sizeof(bucket->references[0]));
      }
 
-   bucket->strings[index] = snew;
-   bucket->lengths[index] = length;
-   bucket->references[index] = 1;
+   bucket->strings[idx] = snew;
+   bucket->lengths[idx] = length;
+   bucket->references[idx] = 1;
    bucket->count++;
 
    return snew;
 }
 
 static void
-_eina_stringshare_small_bucket_remove_at(Eina_Stringshare_Small_Bucket **p_bucket, int index)
+_eina_stringshare_small_bucket_remove_at(Eina_Stringshare_Small_Bucket **p_bucket, int idx)
 {
    Eina_Stringshare_Small_Bucket *bucket = *p_bucket;
    int todo, off;
 
-   if (bucket->references[index] > 1)
+   if (bucket->references[idx] > 1)
      {
-	bucket->references[index]--;
+	bucket->references[idx]--;
 	return;
      }
 
-   free((char *)bucket->strings[index]);
+   free((char *)bucket->strings[idx]);
 
    if (bucket->count == 1)
      {
@@ -597,17 +597,17 @@ _eina_stringshare_small_bucket_remove_at(Eina_Stringshare_Small_Bucket **p_bucke
      }
 
    bucket->count--;
-   if (index == bucket->count)
+   if (idx == bucket->count)
      goto end;
 
-   off = index + 1;
-   todo = bucket->count - index;
+   off = idx + 1;
+   todo = bucket->count - idx;
 
-   memmove((void *)(bucket->strings + index), bucket->strings + off,
+   memmove((void *)(bucket->strings + idx), bucket->strings + off,
 	   todo * sizeof(bucket->strings[0]));
-   memmove(bucket->lengths + index, bucket->lengths + off,
+   memmove(bucket->lengths + idx, bucket->lengths + off,
 	   todo * sizeof(bucket->lengths[0]));
-   memmove(bucket->references + index, bucket->references + off,
+   memmove(bucket->references + idx, bucket->references + off,
 	   todo * sizeof(bucket->references[0]));
 
  end:
