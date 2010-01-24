@@ -133,15 +133,9 @@ eng_window_new(Display *disp,
      }
 // GLX   
 #else
-
-#if 1
    if (!context)
      context = glXCreateContext(disp, gw->visualinfo, NULL, GL_TRUE);
    gw->context = context;
-#else   
-   gw->context = glXCreateContext(disp, gw->visualinfo, context, GL_TRUE);
-   if (!context) context = gw->context;
-#endif   
    
    glXMakeCurrent(gw->disp, gw->win, gw->context);
 #endif

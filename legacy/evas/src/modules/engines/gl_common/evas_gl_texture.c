@@ -306,7 +306,7 @@ _pool_tex_render_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
 }
 
 static Evas_GL_Texture_Pool *
-_pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int format)
+_pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int format, Evas_GL_Image *im)
 {
    Evas_GL_Texture_Pool *pt;
    
@@ -327,12 +327,19 @@ _pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    // is this really needed for gl-es?
 //   glTexImage2D(GL_TEXTURE_2D, 0, intformat, w, h, 0, format, 
 //                GL_UNSIGNED_BYTE, 0);
+#else
+   if (im->native.loose)
+     {
+        if (im->native.func.bind)
+          im->native.func.bind(im->native.func.data, im);
+     }
 #endif
    
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glBindTexture(GL_TEXTURE_2D, 0);
    glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
    return pt;
 }
@@ -356,7 +363,7 @@ pt_unref(Evas_GL_Texture_Pool *pt)
 }
 
 Evas_GL_Texture *
-evas_gl_common_texture_native_new(Evas_GL_Context *gc, int w, int h, int alpha)
+evas_gl_common_texture_native_new(Evas_GL_Context *gc, int w, int h, int alpha, Evas_GL_Image *im)
 {
    Evas_GL_Texture *tex;
    Eina_List *l_after = NULL;
@@ -369,9 +376,9 @@ evas_gl_common_texture_native_new(Evas_GL_Context *gc, int w, int h, int alpha)
    tex->references = 1;
    tex->alpha = alpha;
    if (alpha)
-     tex->pt = _pool_tex_native_new(gc, w, h, rgba_ifmt, rgba_fmt);
+     tex->pt = _pool_tex_native_new(gc, w, h, rgba_ifmt, rgba_fmt, im);
    else
-     tex->pt = _pool_tex_native_new(gc, w, h, rgb_ifmt, rgb_fmt);
+     tex->pt = _pool_tex_native_new(gc, w, h, rgb_ifmt, rgb_fmt, im);
    if (!tex->pt)
      {
         free(tex);

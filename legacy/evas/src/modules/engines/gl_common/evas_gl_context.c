@@ -905,6 +905,8 @@ shader_array_flush(Evas_GL_Context *gc)
 
    if (gc->shader.cur_tex != gc->shader.current.cur_tex)
      {
+        if (gc->shader.cur_tex) glEnable(GL_TEXTURE_2D);
+        else glDisable(GL_TEXTURE_2D);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
      }
@@ -943,10 +945,8 @@ shader_array_flush(Evas_GL_Context *gc)
      }
    if (gc->shader.blend != gc->shader.current.blend)
      {
-        if (gc->shader.blend)
-          glEnable(GL_BLEND);
-        else 
-          glDisable(GL_BLEND);
+        if (gc->shader.blend) glEnable(GL_BLEND);
+        else  glDisable(GL_BLEND);
      }
    if (gc->shader.smooth != gc->shader.current.smooth)
      {
@@ -1049,6 +1049,12 @@ shader_array_flush(Evas_GL_Context *gc)
         if (gc->array.im->native.func.unbind)
           gc->array.im->native.func.unbind(gc->array.im->native.func.data, 
                                            gc->array.im);
+/*        
+        gc->shader.cur_tex = 0;
+        glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
+        if (gc->shader.cur_tex) glEnable(GL_TEXTURE_2D);
+        else glDisable(GL_TEXTURE_2D);
+ */
      }
 
    gc->shader.current.cur_prog = gc->shader.cur_prog;

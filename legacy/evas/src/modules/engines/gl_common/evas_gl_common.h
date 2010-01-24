@@ -199,6 +199,7 @@ struct _Evas_GL_Image
          void      *data;
       } func;
       unsigned char yinvert : 1;
+      unsigned char loose : 1;
    } native;
    
    unsigned char    dirty : 1;
@@ -293,7 +294,7 @@ void              evas_gl_common_shader_program_init(Evas_GL_Program *p,
 void              evas_gl_common_rect_draw(Evas_GL_Context *gc, int x, int y, int w, int h);
 
 Evas_GL_Texture  *evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im);
-Evas_GL_Texture  *evas_gl_common_texture_native_new(Evas_GL_Context *gc, int w, int h, int alpha);
+Evas_GL_Texture  *evas_gl_common_texture_native_new(Evas_GL_Context *gc, int w, int h, int alpha, Evas_GL_Image *im);
 Evas_GL_Texture  *evas_gl_common_texture_render_new(Evas_GL_Context *gc, int w, int h, int alpha);
 void              evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im);
 void              evas_gl_common_texture_free(Evas_GL_Texture *tex);

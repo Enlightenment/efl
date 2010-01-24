@@ -1024,6 +1024,15 @@ struct _Native
 #endif
 };
 
+// FIXME: this is enabled so updates happen - but its SLOOOOOOOOOOOOOOOW
+// (i am sure this is the reason)  not to mention seemingly superfluous. but
+// i need to enable it for it to work on fglrx at least. havent tried nvidia.
+// 
+// why is this the case? does anyone know? has anyone tried it on other gfx
+// drivers?
+// 
+//#define GLX_TEX_PIXMAP_RECREATE 1
+
 static void
 _native_bind_cb(void *data, void *image)
 {
@@ -1040,6 +1049,7 @@ _native_bind_cb(void *data, void *image)
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
    if (glsym_glXBindTexImage)
      {
+#ifdef GLX_TEX_PIXMAP_RECREATE        
         const int pixmap_att[] =
           {
              GLX_TEXTURE_TARGET_EXT, 
@@ -1051,8 +1061,10 @@ _native_bind_cb(void *data, void *image)
         
         n->glx_pixmap = glXCreatePixmap(re->win->disp, n->fbc, 
                                         n->pixmap, pixmap_att);
-        glsym_glXBindTexImage(re->win->disp, n->glx_pixmap, 
-                              GLX_FRONT_LEFT_EXT, NULL);
+#endif        
+        if (!im->native.loose)
+          glsym_glXBindTexImage(re->win->disp, n->glx_pixmap, 
+                                GLX_FRONT_LEFT_EXT, NULL);
      }
 # endif
 #endif
@@ -1074,10 +1086,13 @@ _native_unbind_cb(void *data, void *image)
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
    if (glsym_glXReleaseTexImage)
      {
-        glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap, 
-                                 GLX_FRONT_LEFT_EXT);
+        if (!im->native.loose)
+          glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap, 
+                                   GLX_FRONT_LEFT_EXT);
+#ifdef GLX_TEX_PIXMAP_RECREATE        
         glXDestroyPixmap(re->win->disp, n->glx_pixmap);
         n->glx_pixmap = 0;
+#endif        
      }
 # endif
 #endif
@@ -1100,8 +1115,12 @@ _native_free_cb(void *data, void *image)
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
    if (n->glx_pixmap)
      {
-        glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap, 
-                                 GLX_FRONT_LEFT_EXT);
+        if (im->native.loose)
+          {
+             if (glsym_glXReleaseTexImage)
+               glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap,
+                                        GLX_FRONT_LEFT_EXT);
+          }
         glXDestroyPixmap(re->win->disp, n->glx_pixmap);
         n->glx_pixmap = 0;
      }
@@ -1176,18 +1195,19 @@ eng_image_native_set(void *data, void *image, void *native)
              
              eglChooseConfig(re->win->egl_disp, config_attrs, 
                              &egl_config, 1, &num_config);
-             n->egl_surface = eglCreatePixmapSurface(re->win->egl_disp, 
-                                                     egl_config, pm, 
-                                                     NULL);
-             evas_gl_common_image_native_enable(im);
              n->pixmap = pm;
              n->visual = vis;
              im->native.yinvert     = 1;
+             im->native.loose       = 0;
              im->native.data        = n;
              im->native.func.data   = re;
              im->native.func.bind   = _native_bind_cb;
              im->native.func.unbind = _native_unbind_cb;
              im->native.func.free   = _native_free_cb;
+             n->egl_surface = eglCreatePixmapSurface(re->win->egl_disp, 
+                                                     egl_config, pm, 
+                                                     NULL);
+             evas_gl_common_image_native_enable(im);
           }
      }
 #else
@@ -1254,18 +1274,33 @@ eng_image_native_set(void *data, void *image, void *native)
                   n = calloc(1, sizeof(Native));
                   if (n)
                     {
-                       evas_gl_common_image_native_enable(im);
+#ifndef GLX_TEX_PIXMAP_RECREATE        
+                       const int pixmap_att[] =
+                         {
+                            GLX_TEXTURE_TARGET_EXT, 
+                              GLX_TEXTURE_2D_EXT,
+                              GLX_TEXTURE_FORMAT_EXT, 
+                              GLX_TEXTURE_FORMAT_RGBA_EXT,
+                              0
+                         };
+#endif        
                        memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
                        n->pixmap = pm;
                        n->visual = vis;
                        memcpy(&(n->fbc), fbc, sizeof(GLXFBConfig));
                        n->fbc = *fbc;
                        im->native.yinvert     = yinvert;
+                       im->native.loose       = 0;
                        im->native.data        = n;
                        im->native.func.data   = re;
                        im->native.func.bind   = _native_bind_cb;
                        im->native.func.unbind = _native_unbind_cb;
                        im->native.func.free   = _native_free_cb;
+#ifndef GLX_TEX_PIXMAP_RECREATE
+                       n->glx_pixmap = glXCreatePixmap(re->win->disp, n->fbc, 
+                                                       n->pixmap, pixmap_att);
+#endif                       
+                       evas_gl_common_image_native_enable(im);
                     }
                }
           }

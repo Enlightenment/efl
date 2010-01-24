@@ -200,7 +200,7 @@ evas_gl_common_image_native_enable(Evas_GL_Image *im)
      }
    
    im->cs.space = EVAS_COLORSPACE_ARGB8888;
-   im->tex = evas_gl_common_texture_native_new(im->gc, im->w, im->h, im->alpha);
+   im->tex = evas_gl_common_texture_native_new(im->gc, im->w, im->h, im->alpha, im);
    im->tex_only = 1;
 }
 
