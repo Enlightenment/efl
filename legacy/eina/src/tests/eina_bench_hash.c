@@ -33,9 +33,7 @@
 # include <Evas.h>
 #endif
 
-#ifdef EINA_BENCH_HAVE_ECORE
 # include <Ecore_Data.h>
-#endif
 
 #include "eina_hash.h"
 #include "eina_array.h"
@@ -332,7 +330,6 @@ eina_bench_lookup_evas(int request)
 #endif
 #endif
 
-#ifdef EINA_BENCH_HAVE_ECORE
 typedef struct _Eina_Bench_Ecore Eina_Bench_Ecore;
 struct _Eina_Bench_Ecore
 {
@@ -379,7 +376,6 @@ eina_bench_lookup_ecore(int request)
 
    ecore_hash_destroy(hash);
 }
-#endif
 
 void eina_bench_hash(Eina_Benchmark *bench)
 {
@@ -395,7 +391,5 @@ void eina_bench_hash(Eina_Benchmark *bench)
    eina_benchmark_register(bench, "evas-lookup", EINA_BENCHMARK(eina_bench_lookup_evas), 10, 3000, 10);
 #endif
 #endif
-#ifdef EINA_BENCH_HAVE_ECORE
    eina_benchmark_register(bench, "ecore-lookup", EINA_BENCHMARK(eina_bench_lookup_ecore), 10, 3000, 10);
-#endif
 }

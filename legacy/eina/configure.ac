@@ -419,7 +419,6 @@ fi
 
 EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
 EINA_BENCH_MODULE([evas], [${enable_benchmark}], [evas], [enable_benchmark_evas="yes"], [enable_benchmark_evas="no"])
-EINA_BENCH_MODULE([ecore], [${enable_benchmark}], [ecore], [enable_benchmark_ecore="yes"], [enable_benchmark_ecore="no"])
 EINA_BENCH_MODULE([glib], [${enable_benchmark}], [glib-2.0], [enable_benchmark_glib="yes"], [enable_benchmark_glib="no"])
 
 AC_SUBST(requirement_eina)
@@ -490,7 +489,6 @@ echo "  Benchmark............: ${enable_benchmark}"
 if test "x${enable_benchmark}" = "xyes" ; then
 echo "    Glib...............: ${enable_benchmark_glib}"
 echo "    Evas...............: ${enable_benchmark_evas}"
-echo "    Ecore..............: ${enable_benchmark_ecore}"
 echo "    E17 real data......: ${enable_benchmark_e17}"
 fi
 echo

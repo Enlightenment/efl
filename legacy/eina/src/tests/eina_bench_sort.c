@@ -31,10 +31,7 @@
 # include <Evas.h>
 #endif
 
-#ifdef EINA_BENCH_HAVE_ECORE
-# include <Ecore.h>
-# include <Ecore_Data.h>
-#endif
+# include "Ecore_Data.h"
 
 #include "eina_bench.h"
 #include "Eina.h"
@@ -137,14 +134,12 @@ eina_bench_sort_glist(int request)
 }
 #endif
 
-#ifdef EINA_BENCH_HAVE_ECORE
 static void
 eina_bench_sort_ecore_default(int request)
 {
    Ecore_List *list = NULL;
    int i;
 
-   ecore_init();
    list = ecore_list_new();
    ecore_list_free_cb_set(list, free);
 
@@ -160,8 +155,6 @@ eina_bench_sort_ecore_default(int request)
    ecore_list_sort(list, ECORE_COMPARE_CB(_eina_cmp_str), 0);
 
    ecore_list_destroy(list);
-
-   ecore_shutdown();
 }
 
 static void
@@ -170,7 +163,6 @@ eina_bench_sort_ecore_merge(int request)
    Ecore_List *list = NULL;
    int i;
 
-   ecore_init();
    list = ecore_list_new();
    ecore_list_free_cb_set(list, free);
 
@@ -186,8 +178,6 @@ eina_bench_sort_ecore_merge(int request)
    ecore_list_mergesort(list, ECORE_COMPARE_CB(_eina_cmp_str), 0);
 
    ecore_list_destroy(list);
-
-   ecore_shutdown();
 }
 
 static void
@@ -196,7 +186,6 @@ eina_bench_sort_ecore_heap(int request)
    Ecore_List *list = NULL;
    int i;
 
-   ecore_init();
    list = ecore_list_new();
    ecore_list_free_cb_set(list, free);
 
@@ -212,10 +201,7 @@ eina_bench_sort_ecore_heap(int request)
    ecore_list_heapsort(list, ECORE_COMPARE_CB(_eina_cmp_str), 0);
 
    ecore_list_destroy(list);
-
-   ecore_shutdown();
 }
-#endif
 
 void eina_bench_sort(Eina_Benchmark *bench)
 {
@@ -223,11 +209,9 @@ void eina_bench_sort(Eina_Benchmark *bench)
 #ifdef EINA_BENCH_HAVE_GLIB
    eina_benchmark_register(bench, "glist", EINA_BENCHMARK(eina_bench_sort_glist), 10, 10000, 100);
 #endif
-#ifdef EINA_BENCH_HAVE_ECORE
    eina_benchmark_register(bench, "ecore", EINA_BENCHMARK(eina_bench_sort_ecore_default), 10, 10000, 100);
    eina_benchmark_register(bench, "ecore-merge", EINA_BENCHMARK(eina_bench_sort_ecore_merge), 10, 10000, 100);
    eina_benchmark_register(bench, "ecore-heap", EINA_BENCHMARK(eina_bench_sort_ecore_heap), 10, 10000, 100);
-#endif
 #ifdef EINA_BENCH_HAVE_EVAS
 #if 0
    eina_benchmark_register(bench, "evas", EINA_BENCHMARK(eina_bench_sort_evas), 10, 10000, 100);

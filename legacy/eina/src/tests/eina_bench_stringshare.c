@@ -32,9 +32,7 @@
 # include <Evas.h>
 #endif
 
-#ifdef EINA_BENCH_HAVE_ECORE
-# include <Ecore_Data.h>
-#endif
+# include "Ecore_Data.h"
 
 #include "eina_stringshare.h"
 #include "eina_bench.h"
@@ -141,7 +139,6 @@ eina_bench_evas_job(int request)
 #endif
 #endif
 
-#ifdef EINA_BENCH_HAVE_ECORE
 static void
 eina_bench_ecore_job(int request)
 {
@@ -172,7 +169,6 @@ eina_bench_ecore_job(int request)
 
    ecore_string_shutdown();
 }
-#endif
 
 void eina_bench_stringshare(Eina_Benchmark *bench)
 {
@@ -185,7 +181,5 @@ void eina_bench_stringshare(Eina_Benchmark *bench)
    eina_benchmark_register(bench, "stringshare (evas)", EINA_BENCHMARK(eina_bench_evas_job), 100, 20100, 500);
 #endif
 #endif
-#ifdef EINA_BENCH_HAVE_ECORE
    eina_benchmark_register(bench, "stringshare (ecore)", EINA_BENCHMARK(eina_bench_ecore_job), 100, 20100, 500);
-#endif
 }

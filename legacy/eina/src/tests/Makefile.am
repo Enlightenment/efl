@@ -13,8 +13,7 @@ AM_CPPFLAGS = 					\
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" 	\
 @CHECK_CFLAGS@					\
 @GLIB_CFLAGS@					\
-@EVAS_CFLAGS@					\
-@ECORE_CFLAGS@
+@EVAS_CFLAGS@
 
 if EINA_HAVE_GLIB
 
@@ -25,12 +24,6 @@ endif
 if EINA_HAVE_EVAS
 
 AM_CPPFLAGS += -DEINA_BENCH_HAVE_EVAS
-
-endif
-
-if EINA_HAVE_ECORE
-
-AM_CPPFLAGS += -DEINA_BENCH_HAVE_ECORE
 
 endif
 
@@ -96,9 +89,13 @@ eina_bench_convert.c	\
 eina_bench_mempool.c	\
 eina_bench_stringshare_e17.c \
 eina_bench_array.c	\
-eina_bench_rectangle_pool.c
+eina_bench_rectangle_pool.c \
+ecore_list.c \
+ecore_strings.c \
+ecore_hash.c \
+ecore_sheap.c
 
-eina_bench_LDADD = @ECORE_LIBS@ @EVAS_LIBS@ @GLIB_LIBS@ $(top_builddir)/src/lib/libeina.la
+eina_bench_LDADD = @EVAS_LIBS@ @GLIB_LIBS@ $(top_builddir)/src/lib/libeina.la
 
 endif
 
