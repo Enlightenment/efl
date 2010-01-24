@@ -74,7 +74,6 @@ static void
 eina_bench_lookup_rbtree(int request)
 {
    Eina_Rbtree *root = NULL;
-   Eina_Rbtree *tmp;
    int i;
    int j;
 
@@ -96,6 +95,7 @@ eina_bench_lookup_rbtree(int request)
    for (j = 0; j < 200; ++j)
      for (i = 0; i < request; ++i)
        {
+	  Eina_Rbtree *tmp;
 	  char tmp_key[10];
 
 	  eina_convert_itoa(rand() % request, tmp_key);

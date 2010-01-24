@@ -34,7 +34,7 @@ static void *_ecore_list_next(Ecore_List * list);
 static void *_ecore_list_last_goto(Ecore_List * list);
 static void *_ecore_list_first_goto(Ecore_List * list);
 static void *_ecore_list_goto(Ecore_List * list, const void *data);
-static void *_ecore_list_index_goto(Ecore_List *list, int index);
+static void *_ecore_list_index_goto(Ecore_List *list, int idx);
 
 /* Iterative functions */
 static int _ecore_list_for_each(Ecore_List *list, Ecore_For_Each function,
@@ -59,7 +59,7 @@ static Ecore_List_Node *_ecore_dlist_node_merge(Ecore_List_Node *first,
 /* Private double linked list functions */
 static void *_ecore_dlist_previous(Ecore_DList * list);
 static void *_ecore_dlist_first_remove(Ecore_DList *list);
-static void *_ecore_dlist_index_goto(Ecore_DList *list, int index);
+static void *_ecore_dlist_index_goto(Ecore_DList *list, int idx);
 
 /**
 @defgroup Ecore_Data_List_Creation_Group List Creation/Destruction Functions
@@ -613,18 +613,18 @@ Functions that can be used to traverse an Ecore_List.
 /**
  * Make the current item the item with the given index number.
  * @param   list  The list.
- * @param   index The position to move the current item.
+ * @param   idx The position to move the current item.
  * @return  A pointer to new current item on success, @c NULL on failure.
  * @ingroup Ecore_Data_List_Traverse_Group
  */
 EAPI inline void *
-ecore_list_index_goto(Ecore_List *list, int index)
+ecore_list_index_goto(Ecore_List *list, int idx)
 {
    void *ret;
 
    CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
-   ret = _ecore_list_index_goto(list, index);
+   ret = _ecore_list_index_goto(list, idx);
 
    return ret;
 }
@@ -632,7 +632,7 @@ ecore_list_index_goto(Ecore_List *list, int index)
 /* This is the non-threadsafe version, use this inside internal functions that
  * already lock the list */
 static void *
-_ecore_list_index_goto(Ecore_List *list, int index)
+_ecore_list_index_goto(Ecore_List *list, int idx)
 {
    int i;
 
@@ -642,10 +642,10 @@ _ecore_list_index_goto(Ecore_List *list, int index)
    if (ecore_list_empty_is(list))
      return NULL;
 
-   if (index > ecore_list_count(list) || index < 0)
+   if (idx > ecore_list_count(list) || idx < 0)
      return NULL;
 
-   if (index < list->index)
+   if (idx < list->index)
      {
 	_ecore_list_first_goto(list);
 	i = 0;
@@ -653,7 +653,7 @@ _ecore_list_index_goto(Ecore_List *list, int index)
    else
      i = list->index;
 
-   for (; i < index && _ecore_list_next(list); i++);
+   for (; i < idx && _ecore_list_next(list); i++);
 
    if (i >= list->nodes)
      return NULL;
@@ -686,13 +686,13 @@ ecore_list_goto(Ecore_List *list, const void *data)
 static void *
 _ecore_list_goto(Ecore_List *list, const void *data)
 {
-   int index;
+   int idx;
    Ecore_List_Node *node;
 
    if (!list)
      return NULL;
 
-   index = 0;
+   idx = 0;
 
    node = list->first;
    while (node && node->data)
@@ -706,14 +706,14 @@ _ecore_list_goto(Ecore_List *list, const void *data)
 
 	node = next;
 
-	index++;
+	idx++;
      }
 
    if (!node)
      return NULL;
 
    list->current = node;
-   list->index = index;
+   list->index = idx;
 
    return list->current->data;
 }
@@ -1674,17 +1674,17 @@ ecore_dlist_last_remove(Ecore_DList *list)
 /**
  * Moves the current item to the index number in the given doubly linked list.
  * @param  list  The given doubly linked list.
- * @param  index The position to move the current item
+ * @param  idx The position to move the current item
  * @return The node at specified index on success, @c NULL on error.
  */
 EAPI void *
-ecore_dlist_index_goto(Ecore_DList *list, int index)
+ecore_dlist_index_goto(Ecore_DList *list, int idx)
 {
    void *ret;
 
    CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
-   ret = _ecore_dlist_index_goto(list, index);
+   ret = _ecore_dlist_index_goto(list, idx);
 
    return ret;
 }
@@ -1692,7 +1692,7 @@ ecore_dlist_index_goto(Ecore_DList *list, int index)
 /* This is the non-threadsafe version, use this inside internal functions that
  * already lock the list */
 static void *
-_ecore_dlist_index_goto(Ecore_DList *list, int index)
+_ecore_dlist_index_goto(Ecore_DList *list, int idx)
 {
    int i, increment;
 
@@ -1702,18 +1702,18 @@ _ecore_dlist_index_goto(Ecore_DList *list, int index)
    if (ecore_list_empty_is(ECORE_LIST(list)))
      return NULL;
 
-   if (index > ecore_list_count(ECORE_LIST(list)) || index < 0)
+   if (idx > ecore_list_count(ECORE_LIST(list)) || idx < 0)
      return NULL;
 
    if (ECORE_LIST(list)->index >= ECORE_LIST(list)->nodes)
      _ecore_list_last_goto(ECORE_LIST(list));
 
-   if (index < ECORE_LIST(list)->index)
+   if (idx < ECORE_LIST(list)->index)
      increment = -1;
    else
      increment = 1;
 
-   for (i = ECORE_LIST(list)->index; i != index; i += increment)
+   for (i = ECORE_LIST(list)->index; i != idx; i += increment)
      {
 	if (increment > 0)
 	  _ecore_list_next(list);
