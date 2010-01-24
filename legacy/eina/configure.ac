@@ -294,32 +294,12 @@ case "${host_os}" in
 esac
 
 if ! test "x${VMIC}" = "x" ; then
-   CFLAGS_save="${CFLAGS}"
-   CFLAGS="${CFLAGS} -Wall -W"
-   AC_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([[]])],
-      [have_Wall="yes"],
-      [have_Wall="no"])
-   AC_MSG_CHECKING([whether the compiler supports -Wall])
-   AC_MSG_RESULT([${have_Wall}])
-   CFLAGS="${CFLAGS_save}"
-   if test "x${have_Wall}" = "xyes" ; then
-      EINA_CFLAGS="${EINA_CFLAGS} -Wall -W" # -Werror
-   fi
+   EFL_COMPILER_FLAG([-Wall])
+   EFL_COMPILER_FLAG([-W])
 fi
 
-CFLAGS_save="${CFLAGS}"
-CFLAGS="${CFLAGS} -fno-strict-aliasing"
-AC_COMPILE_IFELSE(
-   [AC_LANG_PROGRAM([[]])],
-   [have_no_strict_aliasing="yes"],
-   [have_no_strict_aliasing="no"])
-AC_MSG_CHECKING([whether the compiler supports -fno-strict-aliasing])
-AC_MSG_RESULT([${have_no_strict_aliasing}])
-CFLAGS="${CFLAGS_save}"
-if test "x${have_no_strict_aliasing}" = "xyes" ; then
-   EINA_CFLAGS="${EINA_CFLAGS} -fno-strict-aliasing"
-fi
+EFL_COMPILER_FLAG([-Wshadow])
+EFL_COMPILER_FLAG([-fno-strict-aliasing])
 
 AC_SUBST(EINA_CPPFLAGS)
 AC_SUBST(EINA_CFLAGS)
