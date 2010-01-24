@@ -124,6 +124,7 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
 	einfo->info.colormap = einfo->func.best_colormap_get(ecore_x_display_get(), screen);
 	einfo->info.drawable = win;
 	einfo->info.depth    = einfo->func.best_depth_get(ecore_x_display_get(), screen);
+        
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
         ecore_x_window_defaults_set(win);
      }
@@ -2735,6 +2736,36 @@ ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
 EAPI void
 ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Ecore_X_Window win __UNUSED__)
 {
+}
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
+EAPI void
+ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Evas *ee, void *data, void (*pre_cb) (void *data, Evas *e), void (*post_cb) (void *data, Evas *e))
+{
+   Evas_Engine_Info_GL_X11 *einfo;
+   
+   if (!(!strcmp(ee->driver, "opengl_x11"))) return;
+ 
+   einfo = (Evas_Engine_Info_GL_X11 *)evas_engine_info_get(ee->evas);
+   if (einfo)
+     {
+        einfo->callback.pre_swap = pre_cb;
+        einfo->callback.pre_swap = post_cb;
+        einfo->callback.data = data;
+	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+     }
+}
+#else
+EAPI void
+ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Evas *ee, void *data, void (*pre_cb) (void *data, Evas *e), void (*post_cb) (void *data, Evas *e))
+{
+   return;
 }
 #endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 

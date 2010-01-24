@@ -153,7 +153,8 @@ EAPI Ecore_X_Window  ecore_evas_gl_x11_window_get(const Ecore_Evas *ee);
 EAPI void            ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, int on);
 EAPI int             ecore_evas_gl_x11_direct_resize_get(const Ecore_Evas *ee);
 EAPI void            ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
-
+EAPI void            ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Evas *ee, void *data, void (*pre_cb) (void *data, Evas *e), void (*post_cb) (void *data, Evas *e));
+       
 EAPI Ecore_Evas     *ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window  ecore_evas_xrender_x11_window_get(const Ecore_Evas *ee);
 EAPI void            ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee, int on);
