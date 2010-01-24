@@ -867,6 +867,35 @@ elm_win_conformant_get(Evas_Object *obj)
    return EINA_FALSE;
 }
 
+EAPI void 
+elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel) 
+{
+   Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   _elm_win_xwindow_get(win);
+#ifdef HAVE_ELEMENTARY_X
+   if (win->xwin)
+     ecore_x_e_illume_quickpanel_set(win->xwin, quickpanel);
+#endif
+}
+
+EAPI Eina_Bool 
+elm_win_quickpanel_get(Evas_Object *obj) 
+{
+   Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+   _elm_win_xwindow_get(win);
+#ifdef HAVE_ELEMENTARY_X
+   if (win->xwin)
+     return ecore_x_e_illume_quickpanel_get(win->xwin);
+#endif
+   return EINA_FALSE;
+}
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
