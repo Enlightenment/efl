@@ -22,7 +22,7 @@ AC_ARG_ENABLE([$1],
    [enable_module="yes"])
 
 have_module="no"
-if test "x${enable_module}" = "xyes" -o "x${enable_module}" = "xstatic" ; then
+if test "x${enable_module}" = "xyes" || test "x${enable_module}" = "xstatic" ; then
    have_module="yes"
 fi
 
@@ -30,7 +30,7 @@ AC_MSG_CHECKING([whether to enable $3 built])
 AC_MSG_RESULT([${have_module}])
 
 build_module="no"
-if test "x${want_module}" = "xyes" -a "x${have_module}" = "xyes" ; then
+if test "x${want_module}" = "xyes" && test "x${have_module}" = "xyes" ; then
    build_module="yes"
 fi
 
@@ -38,7 +38,7 @@ AC_MSG_CHECKING([whether to build $3])
 AC_MSG_RESULT([${build_module}])
 
 static_module="no"
-if test "x${want_module}" = "xyes" -a "x${enable_module}" = "xstatic" ; then
+if test "x${want_module}" = "xyes" && test "x${enable_module}" = "xstatic" ; then
    static_module="yes"
 fi
 

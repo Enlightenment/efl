@@ -18,17 +18,13 @@ AC_ARG_ENABLE([$1],
    ],
    [enable_module="yes"])
 
-if test "x${enable_module}" = "xyes" -a "x${want_module}" = "xyes"; then
+if test "x${enable_module}" = "xyes" && test "x${want_module}" = "xyes"; then
    PKG_CHECK_MODULES([]UP[], [$3], [have_module="yes"], [have_module="no"])
 fi
 
 AM_CONDITIONAL([EINA_HAVE_]UP[], [test "x${have_module}" = "xyes"])
 
-if test "x${have_module}" = "xyes" ; then
-   ifelse([$4], , :, [$4])
-else
-   ifelse([$5], , :, [$5])
-fi
+AS_IF([test "x$have_module" = "xyes"], [$4], [$5])
 
 m4_popdef([UP])
 m4_popdef([DOWN])
