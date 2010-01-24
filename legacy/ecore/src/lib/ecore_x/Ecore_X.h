@@ -1847,4 +1847,7 @@ EAPI Eina_Bool         ecore_x_input_multi_select(Ecore_X_Window win);
 }
 #endif
 
+#include <Ecore_X_Atoms.h>
+#include <Ecore_X_Cursor.h>
+
 #endif
