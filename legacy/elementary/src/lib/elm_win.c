@@ -896,6 +896,64 @@ elm_win_quickpanel_get(Evas_Object *obj)
    return EINA_FALSE;
 }
 
+EAPI void 
+elm_win_quickpanel_priority_major_set(Evas_Object *obj, int priority) 
+{
+   Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   _elm_win_xwindow_get(win);
+#ifdef HAVE_ELEMENTARY_X
+   if (win->xwin)
+     ecore_x_e_illume_quickpanel_priority_major_set(win->xwin, priority);
+#endif
+}
+
+EAPI int 
+elm_win_quickpanel_priority_major_get(Evas_Object *obj) 
+{
+   Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return -1;
+   win = elm_widget_data_get(obj);
+   if (!win) return -1;
+   _elm_win_xwindow_get(win);
+#ifdef HAVE_ELEMENTARY_X
+   if (win->xwin)
+     return ecore_x_e_illume_quickpanel_priority_major_get(win->xwin);
+#endif
+   return -1;
+}
+
+EAPI void 
+elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority) 
+{
+   Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   _elm_win_xwindow_get(win);
+#ifdef HAVE_ELEMENTARY_X
+   if (win->xwin)
+     ecore_x_e_illume_quickpanel_priority_minor_set(win->xwin, priority);
+#endif
+}
+
+EAPI int 
+elm_win_quickpanel_priority_minor_get(Evas_Object *obj) 
+{
+   Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return -1;
+   win = elm_widget_data_get(obj);
+   if (!win) return -1;
+   _elm_win_xwindow_get(win);
+#ifdef HAVE_ELEMENTARY_X
+   if (win->xwin)
+     return ecore_x_e_illume_quickpanel_priority_minor_get(win->xwin);
+#endif
+   return -1;
+}
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data

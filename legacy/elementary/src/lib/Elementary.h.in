@@ -278,6 +278,10 @@ extern "C" {
    EAPI Eina_Bool    elm_win_conformant_get(Evas_Object *obj);
    EAPI void         elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel);
    EAPI Eina_Bool    elm_win_quickpanel_get(Evas_Object *obj);
+   EAPI void         elm_win_quickpanel_priority_major_set(Evas_Object *obj, int priority);
+   EAPI int          elm_win_quickpanel_priority_major_get(Evas_Object *obj);
+   EAPI void         elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority);
+   EAPI int          elm_win_quickpanel_priority_minor_get(Evas_Object *obj);
 
    /*...
     * ecore_x_icccm_hints_set -> accepts_focus (add to ecore_evas)
