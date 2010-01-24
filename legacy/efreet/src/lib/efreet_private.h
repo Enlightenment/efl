@@ -121,9 +121,7 @@ extern int _efreet_log_dom_global;
 typedef enum Efreet_Desktop_Command_Flag
 {
     EFREET_DESKTOP_EXEC_FLAG_FULLPATH = 0x0001,
-    EFREET_DESKTOP_EXEC_FLAG_URI      = 0x0002,
-    EFREET_DESKTOP_EXEC_FLAG_DIR      = 0x0004,
-    EFREET_DESKTOP_EXEC_FLAG_FILE     = 0x0008
+    EFREET_DESKTOP_EXEC_FLAG_URI      = 0x0002
 } Efreet_Desktop_Command_Flag;
 
 /**

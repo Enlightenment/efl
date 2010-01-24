@@ -22,7 +22,7 @@
 #include "Efreet.h"
 #include "efreet_private.h"
 
-#define DESKTOP_VERSION 1.0
+#define DESKTOP_VERSION "1.0"
 
 /**
  * The current desktop environment (e.g. "Enlightenment" or "Gnome")
@@ -355,8 +355,11 @@ efreet_desktop_read(Efreet_Desktop *desktop)
         info = efreet_desktop_type_parse(efreet_ini_string_get(ini, "Type"));
         if (info)
         {
+            const char *val;
+
             desktop->type = info->id;
-            desktop->version = efreet_ini_double_get(ini, "Version");
+            val = efreet_ini_string_get(ini, "Version");
+            if (val) desktop->version = strdup(val);
 
             if (info->parse_func)
                 desktop->type_data = info->parse_func(desktop, ini);
@@ -472,7 +475,7 @@ efreet_desktop_save(Efreet_Desktop *desktop)
         efreet_desktop_generic_fields_save(desktop, ini);
         /* When we save the file, it should be updated to the
          * latest version that we support! */
-        efreet_ini_double_set(ini, "Version", DESKTOP_VERSION);
+        efreet_ini_string_set(ini, "Version", DESKTOP_VERSION);
 
         if (!efreet_ini_save(ini, desktop->orig_path)) ok = 0;
         else
@@ -530,6 +533,7 @@ efreet_desktop_free(Efreet_Desktop *desktop)
 
     IF_FREE(desktop->orig_path);
 
+    IF_FREE(desktop->version);
     IF_FREE(desktop->name);
     IF_FREE(desktop->generic_name);
     IF_FREE(desktop->comment);
@@ -1270,14 +1274,6 @@ efreet_desktop_command_flags_get(Efreet_Desktop *desktop)
             case 'U':
                 flags |= EFREET_DESKTOP_EXEC_FLAG_URI;
                 break;
-            case 'd':
-            case 'D':
-                flags |= EFREET_DESKTOP_EXEC_FLAG_DIR;
-                break;
-            case 'n':
-            case 'N':
-                flags |= EFREET_DESKTOP_EXEC_FLAG_FILE;
-                break;
             case '%':
                 p++;
                 break;
@@ -1633,9 +1629,7 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
 /*
     DBG("FLAGS: %d, %d, %d, %d\n",
         command->flags & EFREET_DESKTOP_EXEC_FLAG_FULLPATH ? 1 : 0,
-        command->flags & EFREET_DESKTOP_EXEC_FLAG_URI ? 1 : 0,
-        command->flags & EFREET_DESKTOP_EXEC_FLAG_DIR ? 1 : 0,
-        command->flags & EFREET_DESKTOP_EXEC_FLAG_FILE ? 1 : 0);
+        command->flags & EFREET_DESKTOP_EXEC_FLAG_URI ? 1 : 0);
 */
     f = NEW(Efreet_Desktop_Command_File, 1);
     if (!f) return NULL;
@@ -1678,10 +1672,6 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
 
         if (command->flags & EFREET_DESKTOP_EXEC_FLAG_URI)
             f->uri = strdup(uri);
-        if (command->flags & EFREET_DESKTOP_EXEC_FLAG_DIR)
-            f->dir = strdup("/tmp");
-        if (command->flags & EFREET_DESKTOP_EXEC_FLAG_FILE)
-            f->file = strdup(base);
     }
     else
     {
@@ -1696,10 +1686,6 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
             snprintf(buf, sizeof(buf), "file://%s", abs);
             f->uri = strdup(buf);
         }
-        if (command->flags & EFREET_DESKTOP_EXEC_FLAG_DIR)
-            f->dir = ecore_file_dir_get(abs);
-        if (command->flags & EFREET_DESKTOP_EXEC_FLAG_FILE)
-            f->file = strdup(ecore_file_file_get(file));
 
         free(abs);
     }

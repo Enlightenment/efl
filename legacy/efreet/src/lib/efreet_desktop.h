@@ -59,7 +59,7 @@ struct _Efreet_Desktop
     int ref;                /**< reference count - internal */
     int cache_flush;        /**< cache flush value - internal */
 
-    double version;         /**< version of spec file conforms to */
+    char *version;          /**< version of spec file conforms to */
 
     char *orig_path;        /**< original path to .desktop file */
     long long load_time;    /**< modified time of .desktop on disk */
