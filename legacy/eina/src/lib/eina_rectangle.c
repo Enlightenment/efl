@@ -196,30 +196,30 @@ _eina_rectangle_empty_space_find(Eina_List *empty, int w, int h, int *x, int *y)
 	       }
 	     else
 	       {
-		  int x1, y1, w1, h1;
+		  int rx1, ry1, rw1, rh1;
 		  int x2, y2, w2, h2;
 
-		  x1 = r->x + w;
-		  y1 = r->y;
-		  w1 = r->w - w;
+		  rx1 = r->x + w;
+		  ry1 = r->y;
+		  rw1 = r->w - w;
 		  /* h1 could be h or r->h */
 		  x2 = r->x;
 		  y2 = r->y + h;
 		  /* w2 could be w or r->w */
 		  h2 = r->h - h;
 
-		  if (w1 * r->h > h2 * r->w)
+		  if (rw1 * r->h > h2 * r->w)
 		    {
-		       h1 = r->h;
+		       rh1 = r->h;
 		       w2 = w;
 		    }
 		  else
 		    {
-		       h1 = h;
+		       rh1 = h;
 		       w2 = r->w;
 		    }
 
-		  EINA_RECTANGLE_SET(r, x1, y1, w1, h1);
+		  EINA_RECTANGLE_SET(r, rx1, ry1, rw1, rh1);
 		  empty = _eina_rectangle_merge_list(empty, r);
 
 		  r = eina_rectangle_new(x2, y2, w2, h2);

@@ -126,7 +126,7 @@ eina_f32p32_cos(Eina_F32p32 a)
    Eina_F32p32 remainder_PI;
    Eina_F32p32 interpol;
    Eina_F32p32 result;
-   int index;
+   int idx;
    int index2;
 
    F32P32_2PI = EINA_F32P32_PI << 1;
@@ -144,16 +144,16 @@ eina_f32p32_cos(Eina_F32p32 a)
 
    interpol = eina_f32p32_div(eina_f32p32_scale(remainder_PI, MAX_PREC * 2),
 			      EINA_F32P32_PI);
-   index = eina_f32p32_int_to(interpol);
-   if (index >= MAX_PREC)
-     index = 2 * MAX_PREC - (index - 1);
+   idx = eina_f32p32_int_to(interpol);
+   if (idx >= MAX_PREC)
+     idx = 2 * MAX_PREC - (idx - 1);
 
-   index2 = index + 1;
+   index2 = idx + 1;
    if (index2 == MAX_PREC)
-     index2 = index - 1;
+     index2 = idx - 1;
 
-   result = eina_f32p32_add(eina_trigo[index],
-			    eina_f32p32_mul(eina_f32p32_sub(eina_trigo[index],
+   result = eina_f32p32_add(eina_trigo[idx],
+			    eina_f32p32_mul(eina_f32p32_sub(eina_trigo[idx],
 							    eina_trigo[index2]),
 					    (Eina_F32p32) eina_f32p32_fracc_get(interpol)));
 
@@ -177,7 +177,7 @@ eina_f32p32_sin(Eina_F32p32 a)
    Eina_F32p32 remainder_PI;
    Eina_F32p32 interpol;
    Eina_F32p32 result;
-   int index;
+   int idx;
    int index2;
 
    F32P32_2PI = EINA_F32P32_PI << 1;
@@ -198,16 +198,16 @@ eina_f32p32_sin(Eina_F32p32 a)
 
    interpol = eina_f32p32_div(eina_f32p32_scale(remainder_PI, MAX_PREC * 2),
 			      EINA_F32P32_PI);
-   index = eina_f32p32_int_to(interpol);
-   if (index >= MAX_PREC)
-     index = MAX_PREC - (index + 1);
+   idx = eina_f32p32_int_to(interpol);
+   if (idx >= MAX_PREC)
+     idx = MAX_PREC - (idx + 1);
 
-   index2 = index + 1;
+   index2 = idx + 1;
    if (index2 == MAX_PREC)
-     index2 = index - 1;
+     index2 = idx - 1;
 
-   result = eina_f32p32_add(eina_trigo[index],
-			    eina_f32p32_mul(eina_f32p32_sub(eina_trigo[index],
+   result = eina_f32p32_add(eina_trigo[idx],
+			    eina_f32p32_mul(eina_f32p32_sub(eina_trigo[idx],
 							    eina_trigo[index2]),
 					    (Eina_F32p32) eina_f32p32_fracc_get(interpol)));
 
