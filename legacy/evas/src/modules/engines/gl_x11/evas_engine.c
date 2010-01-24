@@ -1031,7 +1031,7 @@ struct _Native
 // why is this the case? does anyone know? has anyone tried it on other gfx
 // drivers?
 // 
-//#define GLX_TEX_PIXMAP_RECREATE 1
+#define GLX_TEX_PIXMAP_RECREATE 1
 
 static void
 _native_bind_cb(void *data, void *image)
