@@ -1367,18 +1367,18 @@ EAPI Eina_List *
 eina_list_reverse_clone(const Eina_List *list)
 {
    const Eina_List *l;
-   Eina_List *clone;
+   Eina_List *lclone;
    void *data;
 
    if (!list) return NULL;
 
    EINA_MAGIC_CHECK_LIST(list, NULL);
 
-   clone = NULL;
+   lclone = NULL;
    EINA_LIST_FOREACH(list, l, data)
-     clone = eina_list_prepend(clone, data);
+     lclone = eina_list_prepend(lclone, data);
 
-   return clone;
+   return lclone;
 }
 
 /**
@@ -1400,18 +1400,18 @@ EAPI Eina_List *
 eina_list_clone(const Eina_List *list)
 {
    const Eina_List *l;
-   Eina_List *clone;
+   Eina_List *lclone;
    void *data;
 
    if (!list) return NULL;
 
    EINA_MAGIC_CHECK_LIST(list, NULL);
 
-   clone = NULL;
+   lclone = NULL;
    EINA_LIST_FOREACH(list, l, data)
-     clone = eina_list_append(clone, data);
+     lclone = eina_list_append(lclone, data);
 
-   return clone;
+   return lclone;
 }
 
 /**

@@ -82,33 +82,33 @@ eina_inlist_iterator_free(Eina_Iterator_Inlist *it) {
 }
 
 static Eina_Bool
-eina_inlist_accessor_get_at(Eina_Accessor_Inlist *it, unsigned int index, void **data) {
+eina_inlist_accessor_get_at(Eina_Accessor_Inlist *it, unsigned int idx, void **data) {
 	const Eina_Inlist *over;
 	unsigned int middle;
 	unsigned int i;
 
-	if (it->index == index) {
+	if (it->index == idx) {
 		over = it->current;
-	} else if (index > it->index) {
+	} else if (idx > it->index) {
 		/* Looking after current. */
 		for (i = it->index, over = it->current;
-		     i < index && over != NULL;
+		     i < idx && over != NULL;
 		     ++i, over = over->next)
 			;
 
 	} else {
 		middle = it->index >> 1;
 
-		if (index > middle) {
+		if (idx > middle) {
 			/* Looking backward from current. */
 			for (i = it->index, over = it->current;
-			     i > index && over != NULL;
+			     i > idx && over != NULL;
 			     --i, over = over->prev)
 				;
 		} else {
 			/* Looking from the start. */
 			for (i = 0, over = it->head;
-			     i < index && over != NULL;
+			     i < idx && over != NULL;
 			     ++i, over = over->next)
 				;
 		}
@@ -117,7 +117,7 @@ eina_inlist_accessor_get_at(Eina_Accessor_Inlist *it, unsigned int index, void *
 	if (over == NULL) return EINA_FALSE;
 
 	it->current = over;
-	it->index = index;
+	it->index = idx;
 
 	if (data) *data = (void*) over;
 	return EINA_TRUE;
