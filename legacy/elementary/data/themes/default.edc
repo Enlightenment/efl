@@ -737,6 +737,11 @@ collections {
 	    name:   "button_click";
 	    signal: "mouse,down,1";
 	    source: "over2";
+	    action: SIGNAL_EMIT "elm,action,press" "";
+	    after: "button_click_anim";
+	 }
+	 program {
+	    name:   "button_click_anim";
 	    action: STATE_SET "clicked" 0.0;
 	    target: "button_image";
 	 }
@@ -744,6 +749,11 @@ collections {
 	    name:   "button_unclick";
 	    signal: "mouse,up,1";
 	    source: "over2";
+	    action: SIGNAL_EMIT "elm,action,unpress" "";
+	    after: "button_unclick_anim";
+	 }
+	 program {
+	    name:   "button_unclick_anim";
 	    action: STATE_SET "default" 0.0;
 	    target: "button_image";
 	 }

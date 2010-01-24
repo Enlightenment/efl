@@ -1,5 +1,17 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
+static void
+_bt_repeated(void *data, Evas_Object *obj, void *event_info)
+{
+	static int count;
+	char buf[16];
+
+	snprintf(buf, sizeof(buf), "count=%d", count++);
+	if (count >= 10000)
+		count = 0;
+	elm_button_label_set(obj, buf);
+}
+
 void
 test_button(void *data, Evas_Object *obj, void *event_info)
 {
@@ -68,6 +80,10 @@ test_button(void *data, Evas_Object *obj, void *event_info)
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Label Only");
    elm_box_pack_end(bx, bt);
+   evas_object_smart_callback_add(bt, "repeated", _bt_repeated, NULL);
+   elm_button_autorepeat_set(bt, 1);
+   elm_button_autorepeat_initital_timeout_set(bt, 2.0);
+   elm_button_autorepeat_gap_timeout_set(bt, 0.5);
    evas_object_show(bt);
 
    ic = elm_icon_add(win);

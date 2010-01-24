@@ -1,3 +1,7 @@
+/*
+ *
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include <Elementary.h>
 #include "elm_priv.h"
 
@@ -14,6 +18,12 @@ struct _Widget_Data
 {
    Evas_Object *btn, *icon;
    const char *label;
+
+   Eina_Bool autorepeat;
+   Eina_Bool repeating;
+   double ar_threshold;
+   double ar_interval;
+   Ecore_Timer *timer;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -23,6 +33,8 @@ static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _signal_clicked(void *data, Evas_Object *obj, const char *emission, const char *source);
+static void _signal_pressed(void *data, Evas_Object *obj, const char *emission, const char *source);
+static void _signal_unpressed(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _on_focus_hook(void *data, Evas_Object *obj);
 
 static void
@@ -124,6 +136,61 @@ _signal_clicked(void *data, Evas_Object *obj, const char *emission, const char *
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    evas_object_smart_callback_call(data, "clicked", NULL);
+   _signal_unpressed(data, obj, emission, source); /* safe guard when the theme does not emit the 'unpress' signal */
+}
+
+static int
+_autorepeat_send(void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return ECORE_CALLBACK_CANCEL;
+
+   evas_object_smart_callback_call(data, "repeated", NULL);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static int
+_autorepeat_initial_send(void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return ECORE_CALLBACK_CANCEL;
+
+   _autorepeat_send(data);
+   wd->timer = ecore_timer_add(wd->ar_interval, _autorepeat_send, data);
+   wd->repeating = 1;
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_signal_pressed(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+
+   if (wd->autorepeat)
+     {
+	if (wd->ar_threshold <= 0.0)
+	  _autorepeat_initial_send(data); /* call immediately */
+	else
+	  wd->timer = ecore_timer_add(wd->ar_threshold, _autorepeat_initial_send, data);
+     }
+}
+
+static void
+_signal_unpressed(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+   evas_object_smart_callback_call(data, "unpressed", NULL);
+
+   if (wd->timer)
+     {
+	ecore_timer_del(wd->timer);
+	wd->timer = NULL;
+     }
+   wd->repeating = 0;
 }
 
 /**
@@ -156,6 +223,10 @@ elm_button_add(Evas_Object *parent)
    _elm_theme_set(wd->btn, "button", "base", "default");
    edje_object_signal_callback_add(wd->btn, "elm,action,click", "",
                                    _signal_clicked, obj);
+   edje_object_signal_callback_add(wd->btn, "elm,action,press", "",
+                                   _signal_pressed, obj);
+   edje_object_signal_callback_add(wd->btn, "elm,action,unpress", "",
+                                   _signal_unpressed, obj);
    elm_widget_resize_object_set(obj, wd->btn);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
@@ -256,3 +327,81 @@ elm_button_style_set(Evas_Object *obj, const char *style)
 {
    elm_widget_style_set(obj, style);
 }
+
+/**
+ * Turn on/off the autorepeat event generated when the user keeps pressing on the button
+ *
+ * @param obj The button object
+ * @param on  A bool to turn on/off the event
+ *
+ * @ingroup Button
+ */
+EAPI void
+elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if (wd->timer) {
+	   ecore_timer_del(wd->timer);
+	   wd->timer = NULL;
+   }
+   wd->autorepeat = on;
+}
+
+/**
+ * Set the initial timeout before the autorepeat event is generated
+ *
+ * @param obj The button object
+ * @param t   Timeout
+ *
+ * @ingroup Button
+ */
+EAPI void
+elm_button_autorepeat_initital_timeout_set(Evas_Object *obj, double t)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if (wd->ar_threshold == t)
+     return;
+
+   if (wd->timer)
+     {
+	ecore_timer_del(wd->timer);
+	wd->timer = NULL;
+     }
+
+   wd->ar_threshold = t;
+}
+
+/**
+ * Set the interval between each generated autorepeat event
+ *
+ * @param obj The button object
+ * @param t   Interval
+ *
+ * @ingroup Button
+ */
+EAPI void         
+elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if (wd->ar_interval == t)
+     return;
+
+   if (wd->timer)
+     {
+	ecore_timer_del(wd->timer);
+	wd->timer = NULL;
+     }
+
+   wd->ar_interval = t;
+   if (wd->repeating)
+     {
+	wd->timer = ecore_timer_add(t, _autorepeat_send, obj);
+     }
+}
+
