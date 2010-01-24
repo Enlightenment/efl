@@ -26,6 +26,13 @@ struct _Evas_Engine_Info_GL_X11
       Colormap  (*best_colormap_get) (Display *disp, int screen);
       int       (*best_depth_get)    (Display *disp, int screen);
    } func;
+   
+   struct {
+      void      (*pre_swap)          (void *data, Evas *e);
+      void      (*post_swap)         (void *data, Evas *e);
+      
+      void       *data; // data for callback calls
+   } callback;
 };
 #endif
 

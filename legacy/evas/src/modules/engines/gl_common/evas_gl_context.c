@@ -1030,6 +1030,7 @@ shader_array_flush(Evas_GL_Context *gc)
              glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texu);
              glActiveTexture(GL_TEXTURE2);
              glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texv);
+             glActiveTexture(GL_TEXTURE0);
           }
         else if (gc->array.use_texuv2)
           {

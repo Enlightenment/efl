@@ -72,8 +72,10 @@ typedef struct _Render_Engine Render_Engine;
 
 struct _Render_Engine
 {
-   Evas_GL_X11_Window *win;
-   int                 end;
+   Evas_GL_X11_Window      *win;
+   Evas_Engine_Info_GL_X11 *info;
+   Evas                    *evas;
+   int                      end;
    
    XrmDatabase   xrdb; // xres - dpi
    struct { // xres - dpi
@@ -122,6 +124,8 @@ eng_setup(Evas *e, void *in)
 #endif
 	re = calloc(1, sizeof(Render_Engine));
 	if (!re) return 0;
+        re->info = info;
+        re->evas = e;
 	e->engine.data.output = re;
 	re->win = eng_window_new(info->info.display,
 				 info->info.drawable,
@@ -391,8 +395,8 @@ eng_output_flush(void *data)
    re->win->draw.drew = 0;
    eng_window_use(re->win);
 
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 //   glFlush();
-# if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
 #else
 # ifdef VSYNC_TO_SCREEN
@@ -403,18 +407,17 @@ eng_output_flush(void *data)
 //	glXWaitVideoSyncSGI(2, (rc + 1) % 2, &rc);
 //     }
 # endif
-# ifdef SLOW_GL_COPY_RECT
+   if (re->info->callback.pre_swap)
+     {
+        glXWaitGL();
+        re->info->callback.pre_swap(re->info->callback.data, re->evas);
+     }
    glXSwapBuffers(re->win->disp, re->win->win);
-# else
-//   /* SLOW AS ALL HELL! */
-//   evas_gl_common_swap_rect(re->win->gl_context,
-//			    re->win->draw.x1, re->win->draw.y1,
-//			    re->win->draw.x2 - re->win->draw.x1 + 1,
-//			    re->win->draw.y2 - re->win->draw.y1 + 1);
-# endif
-//   glFlush();
-//   glXWaitGL();
-//   XSync(re->win->disp, False);
+   if (re->info->callback.post_swap)
+     {
+        glXWaitGL();
+        re->info->callback.post_swap(re->info->callback.data, re->evas);
+     }
 #endif   
 }
 
