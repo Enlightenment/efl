@@ -876,8 +876,20 @@ elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel)
    if (!win) return;
    _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
-   if (win->xwin)
-     ecore_x_e_illume_quickpanel_set(win->xwin, quickpanel);
+   if (win->xwin) 
+     {
+        ecore_x_e_illume_quickpanel_set(win->xwin, quickpanel);
+        if (quickpanel) 
+          {
+             Ecore_X_Window_State states[2];
+
+             ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_DOCK);
+             states[0] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
+             states[1] = ECORE_X_WINDOW_STATE_SKIP_PAGER;
+             ecore_x_netwm_window_state_set(win->xwin, states, 2);
+             ecore_x_icccm_hints_set(win->xwin, 0, 0, 0, 0, 0, 0, 0);
+          }
+     }
 #endif
 }
 
@@ -952,6 +964,35 @@ elm_win_quickpanel_priority_minor_get(Evas_Object *obj)
      return ecore_x_e_illume_quickpanel_priority_minor_get(win->xwin);
 #endif
    return -1;
+}
+
+EAPI void 
+elm_win_quickpanel_zone_set(Evas_Object *obj, int zone) 
+{
+   Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   _elm_win_xwindow_get(win);
+#ifdef HAVE_ELEMENTARY_X
+   if (win->xwin) 
+     {
+        Ecore_X_Window *zones;
+        int zcount;
+
+        zcount = 
+          ecore_x_window_prop_window_list_get(ecore_x_window_root_first_get(), 
+                                              ECORE_X_ATOM_E_ILLUME_ZONE_LIST, 
+                                              &zones);
+        if ((zones) && (zcount >= (zone + 1))) 
+          {
+             ecore_x_e_illume_quickpanel_zone_set(win->xwin, &zones[zone]);
+             ecore_x_e_illume_quickpanel_zone_request_send(zones[zone], 
+                                                           win->xwin);
+             free(zones);
+          }
+     }
+#endif
 }
 
 typedef struct _Widget_Data Widget_Data;
