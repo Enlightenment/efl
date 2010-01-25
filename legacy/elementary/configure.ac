@@ -135,7 +135,6 @@ PKG_CHECK_MODULES([ELEMENTARY],
     evas >= 0.9.9
     ecore >= 0.9.9
     ecore-evas >= 0.9.9
-    ecore-job >= 0.9.9
     ecore-txt >= 0.9.9
     ecore-file >= 0.9.9
     edje >= 0.9.91
@@ -153,7 +152,7 @@ AC_ARG_WITH(eet-eet,
 ])
 AC_SUBST(eet_eet)
         
-requirement_elm="edje ecore-file ecore-txt ecore-job ecore-evas ecore evas eet eina-0 ${requirement_elm}"
+requirement_elm="edje ecore-file ecore-txt ecore-evas ecore evas eet eina-0 ${requirement_elm}"
 
 have_elementary_x="no"
 PKG_CHECK_MODULES([ELEMENTARY_X],
