@@ -49,6 +49,7 @@ external_##type_name##_label_get(void *data) {          \
 const Edje_External_Type external_##type_name##_type = {\
     .abi_version = EDJE_EXTERNAL_TYPE_ABI_VERSION,      \
     .module = "elm",                                    \
+    .module_name = "Elementary",                        \
     .add = external_##type_name##_add,                  \
     .signal_emit = external_signal,                     \
     .state_set = external_##type_name##_state_set,      \
