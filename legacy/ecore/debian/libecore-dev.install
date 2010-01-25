@@ -10,7 +10,6 @@ debian/tmp/usr/lib/libecore_imf_evas.so
 debian/tmp/usr/lib/libecore_imf.so
 debian/tmp/usr/lib/libecore_input.so
 debian/tmp/usr/lib/libecore_ipc.so
-debian/tmp/usr/lib/libecore_job.so
 debian/tmp/usr/lib/libecore_txt.so
 debian/tmp/usr/lib/libecore_x.so
 debian/tmp/usr/lib/pkgconfig/ecore*.pc

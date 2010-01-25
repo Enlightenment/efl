@@ -99,6 +99,7 @@ ecore_init(void)
    _ecore_exe_init();
    _ecore_thread_init();
    _ecore_glib_init();
+   _ecore_job_init();
    _ecore_loop_time = ecore_time_get();
 
    return _ecore_init_count;
@@ -132,6 +133,7 @@ ecore_shutdown(void)
    _ecore_poller_shutdown();
    _ecore_animator_shutdown();
    _ecore_glib_shutdown();
+   _ecore_job_shutdown();
    _ecore_thread_shutdown();
    _ecore_exe_shutdown();
    _ecore_idle_enterer_shutdown();

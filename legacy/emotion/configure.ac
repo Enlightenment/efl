@@ -79,8 +79,8 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
-PKG_CHECK_MODULES(EMOTION, [eina-0 evas >= 0.9.9 ecore >= 0.9.9 ecore-job >= 0.9.9])
-requirement_emotion="ecore-job ecore evas eina-0"
+PKG_CHECK_MODULES(EMOTION, [eina-0 evas >= 0.9.9 ecore >= 0.9.9])
+requirement_emotion="ecore evas eina-0"
 
 PKG_CHECK_MODULES(EMOTION_BIN, [evas >= 0.9.9 ecore >= 0.9.9 ecore-evas >= 0.9.9 edje >= 0.5.0])
 

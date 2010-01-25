@@ -227,7 +227,7 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    sd->seek_pos = 0;
    sd->len = 0;
 
-   ecore_job_init();
+   ecore_init();
 
    if ((!sd->module) || (!sd->video))
      {
@@ -1313,7 +1313,7 @@ _smart_del(Evas_Object * obj)
    free(sd->ref.file);
    free(sd);
 
-   ecore_job_shutdown();
+   ecore_shutdown();
 }
 
 static void

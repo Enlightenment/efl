@@ -47,7 +47,6 @@ case "$host_os" in
       ecore_input_release_info="-release $release"
       ecore_input_evas_release_info="-release $release"
       ecore_ipc_release_info="-release $release"
-      ecore_job_release_info="-release $release"
       ecore_quartz_release_info="-release $release"
       ecore_release_info="-release $release"
       ecore_sdl_release_info="-release $release"
@@ -67,7 +66,6 @@ AC_SUBST(ecore_imf_release_info)
 AC_SUBST(ecore_input_release_info)
 AC_SUBST(ecore_input_evas_release_info)
 AC_SUBST(ecore_ipc_release_info)
-AC_SUBST(ecore_job_release_info)
 AC_SUBST(ecore_quartz_release_info)
 AC_SUBST(ecore_release_info)
 AC_SUBST(ecore_sdl_release_info)
@@ -96,7 +94,6 @@ want_tslib="no"
 want_glib="no"
 
 # core modules
-want_ecore_job="yes"
 want_ecore_txt="yes"
 want_ecore_con="no"
 want_ecore_ipc="no"
@@ -206,7 +203,6 @@ requirements_ecore_imf_evas=""
 requirements_ecore_input=""
 requirements_ecore_input_evas=""
 requirements_ecore_ipc=""
-requirements_ecore_job=""
 requirements_ecore_quartz=""
 requirements_ecore_sdl=""
 requirements_ecore_txt=""
@@ -302,10 +298,8 @@ case "$host_os" in
       requirements_ecore_file="evil ${requirements_ecore_file}"
       requirements_ecore_imf="evil ${requirements_ecore_imf}"
       requirements_ecore_imf_evas="evil ${requirements_ecore_imf_evas}"
-      requirements_ecore_job="evil ${requirements_ecore_job}"
       requirements_ecore_txt="evil ${requirements_ecore_txt}"
       EFL_ECORE_BUILD="-DEFL_ECORE_BUILD"
-      EFL_ECORE_JOB_BUILD="-DEFL_ECORE_JOB_BUILD"
       EFL_ECORE_TXT_BUILD="-DEFL_ECORE_TXT_BUILD"
       EFL_ECORE_FILE_BUILD="-DEFL_ECORE_FILE_BUILD"
       EFL_ECORE_EVAS_BUILD="-DEFL_ECORE_EVAS_BUILD"
@@ -332,7 +326,6 @@ case "$host_os" in
 esac
 
 AC_SUBST(EFL_ECORE_BUILD)
-AC_SUBST(EFL_ECORE_JOB_BUILD)
 AC_SUBST(EFL_ECORE_TXT_BUILD)
 AC_SUBST(EFL_ECORE_FILE_BUILD)
 AC_SUBST(EFL_ECORE_EVAS_BUILD)
@@ -378,7 +371,6 @@ requirements_ecore_imf_evas="ecore eina-0 ${requirements_ecore_imf_evas}"
 requirements_ecore_input="ecore eina-0 ${requirements_ecore_input}"
 requirements_ecore_input_evas="ecore eina-0 ${requirements_ecore_input_evas}"
 requirements_ecore_ipc="ecore eina-0 ${requirements_ecore_ipc}"
-requirements_ecore_job="ecore eina-0 ${requirements_ecore_job}"
 requirements_ecore_quartz="ecore eina-0 ${requirements_ecore_quartz}"
 requirements_ecore_sdl="ecore eina-0 ${requirements_ecore_sdl}"
 requirements_ecore_win32="ecore eina-0 ${requirements_ecore_win32}"
@@ -799,9 +791,6 @@ fi
 
 ## Core modules
 
-# ecore_job
-ECORE_CHECK_MODULE([Job], [${want_ecore_job}])
-
 # ecore_txt
 ECORE_CHECK_MODULE([Txt], [${want_ecore_txt}], [$have_iconv])
 
@@ -1139,7 +1128,6 @@ AC_SUBST(requirements_ecore_imf_evas)
 AC_SUBST(requirements_ecore_input)
 AC_SUBST(requirements_ecore_input_evas)
 AC_SUBST(requirements_ecore_ipc)
-AC_SUBST(requirements_ecore_job)
 AC_SUBST(requirements_ecore_quartz)
 AC_SUBST(requirements_ecore_sdl)
 AC_SUBST(requirements_ecore_txt)
@@ -1158,7 +1146,6 @@ ecore-file.pc
 ecore-imf.pc
 ecore-imf-evas.pc
 ecore-ipc.pc
-ecore-job.pc
 ecore-txt.pc
 ecore-x.pc
 ecore-input.pc
@@ -1174,7 +1161,6 @@ src/Makefile
 src/bin/Makefile
 src/lib/Makefile
 src/lib/ecore/Makefile
-src/lib/ecore_job/Makefile
 src/lib/ecore_x/Makefile
 src/lib/ecore_x/xlib/Makefile
 src/lib/ecore_x/xcb/Makefile
@@ -1209,7 +1195,6 @@ echo
 echo "  Ecore........................: always"
 echo "    Thread support.............: $have_pthread"
 echo "    GLib support...............: $have_glib"
-echo "  Ecore_Job....................: $have_ecore_job"
 echo "  Ecore_Txt....................: $have_ecore_txt"
 echo "  Ecore_Con....................: $have_ecore_con"
 if test "x$have_ecore_con" = "xyes" ; then

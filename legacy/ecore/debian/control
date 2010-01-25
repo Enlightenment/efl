@@ -119,18 +119,6 @@ Description: Ecore inter-process communication functions
  .
  This package contains the Ecore inter-process communication functions.
 
-Package: libecore-job-svn-01
-Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}
-Description: Ecore job dealing functions
- This is the core event abstraction layer and X abstraction layer that makes
- doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
- handlers fast, optimized, and convenient. It's a separate library so anyone
- can make use of the work put into Ecore to make this job easy for
- applications.
- .
- This package contains functions for dealing with Ecore jobs.
-
 Package: libecore-txt-svn-01
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
@@ -169,7 +157,6 @@ Depends: ${misc:Depends}, libecore-svn-01 (= ${binary:Version}),
          libecore-imf-svn-01 (= ${binary:Version}),
          libecore-input-svn-01 (= ${binary:Version}),
          libecore-ipc-svn-01 (= ${binary:Version}),
-         libecore-job-svn-01 (= ${binary:Version}),
          libecore-txt-svn-01 (= ${binary:Version}),
          libecore-x-svn-01 (= ${binary:Version}),
          libeet-dev, libevas-dev (>= 0.9.9.060), libeina-dev, pkg-config,

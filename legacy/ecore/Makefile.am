@@ -72,7 +72,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN \
 	     ecore-imf.pc.in \
 	     ecore-imf-evas.pc.in \
 	     ecore-ipc.pc.in \
-	     ecore-job.pc.in \
 	     ecore-txt.pc.in \
 	     ecore-x.pc.in \
 	     ecore-win32.pc.in \
@@ -127,10 +126,6 @@ endif
 
 if BUILD_ECORE_IPC
 pkgconfig_DATA += ecore-ipc.pc
-endif
-
-if BUILD_ECORE_JOB
-pkgconfig_DATA += ecore-job.pc
 endif
 
 if BUILD_ECORE_TXT

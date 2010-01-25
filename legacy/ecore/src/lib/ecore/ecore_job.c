@@ -10,50 +10,33 @@
 
 #include "Ecore.h"
 #include "ecore_private.h"
-#include "ecore_job_private.h"
-#include "Ecore_Job.h"
 
-int _ecore_job_log_dom = -1;
 static int _ecore_job_event_handler(void *data, int type, void *ev);
 static void _ecore_job_event_free(void *data, void *ev);
-    
+
 static int ecore_event_job_type = 0;
-static int _ecore_job_init_count = 0;
 static Ecore_Event_Handler* _ecore_job_handler = NULL;
 
-EAPI int
-ecore_job_init(void)
+struct _Ecore_Job
 {
-   if (++_ecore_job_init_count != 1)
-     return _ecore_job_init_count;
-   _ecore_job_log_dom = eina_log_domain_register("EcoreJob", ECORE_JOB_DEFAULT_LOG_COLOR);
-   if(_ecore_job_log_dom < 0)
-     {
-       EINA_LOG_ERR("Impossible to create a log domain for the Ecore Job module.");
-       return _ecore_job_init_count--;
-     }
-   if (!ecore_init())
-     return --_ecore_job_init_count;
+   ECORE_MAGIC;
+   Ecore_Event  *event;
+   void        (*func) (void *data);
+   void         *data;
+};
 
+void
+_ecore_job_init(void)
+{
    ecore_event_job_type = ecore_event_type_new();
    _ecore_job_handler = ecore_event_handler_add(ecore_event_job_type, _ecore_job_event_handler, NULL);
-
-   return _ecore_job_init_count;
 }
 
-EAPI int
-ecore_job_shutdown(void)
+void
+_ecore_job_shutdown(void)
 {
-   if (--_ecore_job_init_count != 0)
-     return _ecore_job_init_count;
-
    ecore_event_handler_del(_ecore_job_handler);
    _ecore_job_handler = NULL;
-   eina_log_domain_unregister(_ecore_job_log_dom);
-   _ecore_job_log_dom = -1;
-   ecore_shutdown();
-   
-   return _ecore_job_init_count;
 }
 
 /**

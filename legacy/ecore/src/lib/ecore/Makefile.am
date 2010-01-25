@@ -20,6 +20,7 @@ ecore_hash.c \
 ecore_idle_enterer.c \
 ecore_idle_exiter.c \
 ecore_idler.c \
+ecore_job.c \
 ecore_list.c \
 ecore_main.c \
 ecore_path.c \

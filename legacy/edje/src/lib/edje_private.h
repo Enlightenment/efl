@@ -13,7 +13,6 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Str.h>
-#include <Ecore_Job.h>
 #ifdef HAVE_ECORE_IMF
 # include <Ecore_IMF.h>
 #endif

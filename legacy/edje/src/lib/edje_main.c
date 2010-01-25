@@ -34,13 +34,13 @@ Eina_Mempool *_edje_real_part_state_mp = NULL;
  *
  * This function initializes the ejde library, making the propers
  * calls to initialization functions. It makes calls to functions
- * eina_init(), ecore_job_init(), embryo_init() and eet_init() so
+ * eina_init(), ecore_init(), embryo_init() and eet_init() so
  * there is no need to call those functions again in your code. To
  * shutdown edje there is a function edje_shutdown().
  *
  * @see edje_shutdown()
  * @see eina_init()
- * @see ecore_job_init()
+ * @see ecore_init()
  * @see embryo_init()
  * @see eet_init()
  *
@@ -67,16 +67,16 @@ edje_init(void)
 	goto shutdown_eina;
      }
 
-   if (!ecore_job_init())
+   if (!ecore_init())
      {
-	ERR("Edje: Ecore_Job init failed");
+	ERR("Edje: Ecore init failed");
 	goto unregister_log_domain;
      }
 
    if (!embryo_init())
      {
 	ERR("Edje: Embryo init failed");
-	goto shutdown_ecore_job;
+	goto shutdown_ecore;
      }
 
    if (!eet_init())
@@ -131,8 +131,8 @@ edje_init(void)
    eet_shutdown();
  shutdown_embryo:
    embryo_shutdown();
- shutdown_ecore_job:
-   ecore_job_shutdown();
+ shutdown_ecore:
+   ecore_shutdown();
  unregister_log_domain:
    eina_log_domain_unregister(_edje_default_log_dom);
    _edje_default_log_dom = -1;
@@ -148,13 +148,13 @@ edje_init(void)
  *         shutdown.
  *
  * This function shuts down the edje library. It calls the functions
- * eina_shutdown(), ecore_job_shutdown(), embryo_shutdown() and
+ * eina_shutdown(), ecore_shutdown(), embryo_shutdown() and
  * eet_shutdown(), so there is no need to call these functions again
  * in your code.
  *
  * @see edje_init()
  * @see eina_shutdown()
- * @see ecore_job_shutdown()
+ * @see ecore_shutdown()
  * @see embryo_shutdown()
  * @see eet_shutdown()
  *
@@ -190,7 +190,7 @@ edje_shutdown(void)
 
    eet_shutdown();
    embryo_shutdown();
-   ecore_job_shutdown();
+   ecore_shutdown();
    eina_log_domain_unregister(_edje_default_log_dom);
    _edje_default_log_dom = -1;
    eina_shutdown();

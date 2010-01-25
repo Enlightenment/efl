@@ -73,6 +73,7 @@ extern int _ecore_log_dom ;
 #define ECORE_MAGIC_POLLER          0xf7568127
 #define ECORE_MAGIC_PIPE            0xf7458226
 #define ECORE_MAGIC_WIN32_HANDLER   0xf7e8f1a3
+#define ECORE_MAGIC_JOB             0x76543210
 
 
 #define ECORE_MAGIC                 Ecore_Magic  __magic
@@ -189,6 +190,9 @@ void _ecore_thread_shutdown(void);
 
 void _ecore_glib_init(void);
 void _ecore_glib_shutdown(void);
+
+void _ecore_job_init(void);
+void _ecore_job_shutdown(void);
 
 extern int    _ecore_fps_debug;
 extern double _ecore_loop_time;

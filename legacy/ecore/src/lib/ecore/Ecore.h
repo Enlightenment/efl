@@ -145,6 +145,8 @@ extern "C" {
    typedef struct _Ecore_Exe_Event_Data        Ecore_Exe_Event_Data; /**< Data from a child process */
    typedef struct _Ecore_Thread                Ecore_Thread;
 
+   typedef struct _Ecore_Job Ecore_Job; /**< A job handle */
+
    struct _Ecore_Event_Signal_User /** User signal event */
      {
 	int   number; /**< The signal number. Either 1 or 2 */
@@ -336,6 +338,8 @@ extern "C" {
    EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, int (*func) (void *data), const void *data);
    EAPI void         *ecore_poller_del(Ecore_Poller *poller);
 
+   EAPI Ecore_Job *ecore_job_add(void (*func) (void *data), const void *data);
+   EAPI void      *ecore_job_del(Ecore_Job *job);
 
 #ifdef __cplusplus
 }
