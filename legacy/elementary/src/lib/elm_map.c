@@ -1271,6 +1271,15 @@ _pan_calculate(Evas_Object *obj)
 }
 
 static void
+_pan_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+{
+   Pan *sd = evas_object_smart_data_get(obj);
+   
+   if (sd->wd->calc_job) ecore_job_del(sd->wd->calc_job);
+   sd->wd->calc_job = ecore_job_add(_calc_job, sd->wd);
+}
+
+static void
 _hold_on(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1689,6 +1698,7 @@ elm_map_add(Evas_Object *parent)
 	sc.add = _pan_add;
 	sc.del = _pan_del;
 	sc.resize = _pan_resize;
+	sc.move = _pan_move;
 	sc.calculate = _pan_calculate;
 	smart = evas_smart_class_new(&sc);
      }
