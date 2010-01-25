@@ -127,6 +127,7 @@ eng_setup(Evas *e, void *in)
         re->info = info;
         re->evas = e;
 	e->engine.data.output = re;
+        printf("eng_window_new: %i %i\n", e->output.w, e->output.h);
 	re->win = eng_window_new(info->info.display,
 				 info->info.drawable,
 				 0 /* FIXME: screen 0 assumption */,
@@ -206,6 +207,7 @@ eng_setup(Evas *e, void *in)
      {
 	re = e->engine.data.output;
 	eng_window_free(re->win);
+        printf("resize eng_window_new: %i %i\n", e->output.w, e->output.h);
 	re->win = eng_window_new(info->info.display,
 				 info->info.drawable,
 				 0,/* FIXME: screen 0 assumption */
@@ -397,6 +399,7 @@ eng_output_flush(void *data)
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 //   glFlush();
+   printf("eglSwapBuffers(%p, %p)\n", re->win->egl_disp, re->win->egl_surface[0]);
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
 #else
 # ifdef VSYNC_TO_SCREEN
@@ -1582,6 +1585,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
    eng_window_use(re->win);
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
+   printf("draw img %p: %i %i, %ix%i\n", image, dst_x, dst_y, dst_w, dst_h);
    evas_gl_common_image_draw(re->win->gl_context, image,
                              src_x, src_y, src_w, src_h,
                              dst_x, dst_y, dst_w, dst_h,

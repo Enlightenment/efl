@@ -49,35 +49,39 @@ eng_window_new(Display *disp,
 # if defined(GLES_VARIETY_S3C6410)
    if (_evas_gl_x11_vi->depth == 16) // 16bpp
      {
-        config_attrs[0] = EGL_SURFACE_TYPE;
-        config_attrs[1] = EGL_WINDOW_BIT;
-        config_attrs[2] = EGL_RENDERABLE_TYPE;
-        config_attrs[3] = EGL_OPENGL_ES2_BIT;
-        config_attrs[4] = EGL_RED_SIZE;
-        config_attrs[5] = 5;
-        config_attrs[6] = EGL_GREEN_SIZE;
-        config_attrs[7] = 6;
-        config_attrs[8] = EGL_BLUE_SIZE;
-        config_attrs[9] = 5;
+        config_attrs[0]  = EGL_SURFACE_TYPE;
+        config_attrs[1]  = EGL_WINDOW_BIT;
+        config_attrs[2]  = EGL_RENDERABLE_TYPE;
+        config_attrs[3]  = EGL_OPENGL_ES2_BIT;
+        config_attrs[4]  = EGL_RED_SIZE;
+        config_attrs[5]  = 5;
+        config_attrs[6]  = EGL_GREEN_SIZE;
+        config_attrs[7]  = 6;
+        config_attrs[8]  = EGL_BLUE_SIZE;
+        config_attrs[9]  = 5;
         config_attrs[10] = EGL_DEPTH_SIZE;
-        config_attrs[11] = 16;
-        config_attrs[12] = EGL_NONE;
+        config_attrs[11] = 0;
+        config_attrs[12] = EGL_STENCIL_SIZE;
+        config_attrs[13] = 0;
+        config_attrs[14] = EGL_NONE;
      }
    else // 24/32bit. no one does 8bpp anymore. and 15bpp... dead
      {
-        config_attrs[0] = EGL_SURFACE_TYPE;
-        config_attrs[1] = EGL_WINDOW_BIT;
-        config_attrs[2] = EGL_RENDERABLE_TYPE;
-        config_attrs[3] = EGL_OPENGL_ES2_BIT;
-        config_attrs[4] = EGL_RED_SIZE;
-        config_attrs[5] = 8;
-        config_attrs[6] = EGL_GREEN_SIZE;
-        config_attrs[7] = 8;
-        config_attrs[8] = EGL_BLUE_SIZE;
-        config_attrs[9] = 8;
+        config_attrs[0]  = EGL_SURFACE_TYPE;
+        config_attrs[1]  = EGL_WINDOW_BIT;
+        config_attrs[2]  = EGL_RENDERABLE_TYPE;
+        config_attrs[3]  = EGL_OPENGL_ES2_BIT;
+        config_attrs[4]  = EGL_RED_SIZE;
+        config_attrs[5]  = 8;
+        config_attrs[6]  = EGL_GREEN_SIZE;
+        config_attrs[7]  = 8;
+        config_attrs[8]  = EGL_BLUE_SIZE;
+        config_attrs[9]  = 8;
         config_attrs[10] = EGL_DEPTH_SIZE;
-        config_attrs[11] = 24;
-        config_attrs[12] = EGL_NONE;
+        config_attrs[11] = 0;
+        config_attrs[12] = EGL_STENCIL_SIZE;
+        config_attrs[13] = 0;
+        config_attrs[14] = EGL_NONE;
      }
 # elif defined(GLES_VARIETY_SGX)
    context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
@@ -255,6 +259,7 @@ eng_best_visual_get(Display *disp, int screen)
              GLX_RGBA, GLX_DOUBLEBUFFER,
                GLX_LEVEL, 0,
                GLX_DEPTH_SIZE, 0,
+               GLX_STENCIL_SIZE, 0,
                GLX_RED_SIZE, 1,
                GLX_GREEN_SIZE,1,
                GLX_BLUE_SIZE, 1,
