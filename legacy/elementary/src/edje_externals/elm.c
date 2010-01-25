@@ -35,7 +35,7 @@ external_common_icon_param_parse(Evas_Object **icon, Evas_Object *obj, const Ein
    Edje_External_Param *p;
 
    p = edje_external_param_find(params, "icon");
-   if (p)
+   if (p && p->s)
      {
 	Evas_Object *parent = evas_object_smart_parent_get(obj);
 	const char *file;
@@ -48,8 +48,8 @@ external_common_icon_param_parse(Evas_Object **icon, Evas_Object *obj, const Ein
 	  return;
 
 	evas_object_del(*icon);
-	*icon = NULL;
      }
+   *icon = NULL;
 }
 
 void

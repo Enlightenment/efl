@@ -29,7 +29,6 @@ static void *
 external_button_params_parse(void *data, Evas_Object *obj, const Eina_List *params)
 {
    Elm_Params_Button *mem;
-   Edje_External_Param *param;
 
    mem = external_common_params_parse(Elm_Params_Button, data, obj, params);
    if (!mem)
