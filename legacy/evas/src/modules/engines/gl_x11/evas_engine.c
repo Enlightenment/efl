@@ -206,16 +206,33 @@ eng_setup(Evas *e, void *in)
    else
      {
 	re = e->engine.data.output;
-	eng_window_free(re->win);
-        printf("resize eng_window_new: %i %i\n", e->output.w, e->output.h);
-	re->win = eng_window_new(info->info.display,
-				 info->info.drawable,
-				 0,/* FIXME: screen 0 assumption */
-				 info->info.visual,
-				 info->info.colormap,
-				 info->info.depth,
-				 e->output.w,
-				 e->output.h);
+        if ((info->info.display != re->win->disp) ||
+            (info->info.drawable != re->win->win) ||
+            (0 != re->win->screen) || /* FIXME: screen 0 assumption */
+            (info->info.visual != re->win->visual) ||
+            (info->info.colormap != re->win->colormap) ||
+            (info->info.depth != re->win->depth))
+          {
+             printf("re-init eng_window_new: %i %i\n", e->output.w, e->output.h);
+             eng_window_free(re->win);
+             re->win = eng_window_new(info->info.display,
+                                      info->info.drawable,
+                                      0,/* FIXME: screen 0 assumption */
+                                      info->info.visual,
+                                      info->info.colormap,
+                                      info->info.depth,
+                                      e->output.w,
+                                      e->output.h);
+          }
+        else if ((re->win->w != e->output.w) ||
+                 (re->win->h != e->output.h))
+          {
+             printf("resize eng_window_new: %i %i\n", e->output.w, e->output.h);
+             re->win->w = e->output.w;
+             re->win->h = e->output.h;
+             eng_window_use(re->win);
+             evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h);
+          }
         
      }
    if (!e->engine.data.output) return 0;
