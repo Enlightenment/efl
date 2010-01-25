@@ -1209,8 +1209,6 @@ eng_image_native_set(void *data, void *image, void *native)
              config_attrs[i++] = EGL_PIXMAP_BIT;
              config_attrs[i++] = EGL_NONE;
              
-             printf("glsym_eglBindTexImage = %p\n", glsym_eglBindTexImage);
-             printf("glsym_eglReleaseTexImage = %p\n", glsym_eglReleaseTexImage);
              if (!eglChooseConfig(re->win->egl_disp, config_attrs, 
                                   &egl_config, 1, &num_config))
                {
@@ -1228,7 +1226,10 @@ eng_image_native_set(void *data, void *image, void *native)
              n->egl_surface = eglCreatePixmapSurface(re->win->egl_disp, 
                                                      egl_config, pm, 
                                                      NULL);
-             printf("eglCreatePixmapSurface for 0x%x = %p\n", pm, n->egl_surface);
+             if (!n->egl_surface)
+               {
+                  printf("ERROR: eglCreatePixmapSurface() for 0x%x failed\n", pm);
+               }
              evas_gl_common_image_native_enable(im);
           }
      }
@@ -1601,7 +1602,6 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
    eng_window_use(re->win);
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
-   printf("draw img %p: %i %i, %ix%i\n", image, dst_x, dst_y, dst_w, dst_h);
    evas_gl_common_image_draw(re->win->gl_context, image,
                              src_x, src_y, src_w, src_h,
                              dst_x, dst_y, dst_w, dst_h,
