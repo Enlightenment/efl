@@ -371,10 +371,10 @@ _theme_hook(Evas_Object *obj)
    edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
    EINA_INLIST_FOREACH(wd->blocks, itb)
      {
-	if (itb->realized) _item_block_unrealize(itb);
-
 	Eina_List *l;
 	Elm_Genlist_Item *it;
+        
+	if (itb->realized) _item_block_unrealize(itb);
 	EINA_LIST_FOREACH(itb->items, l, it)
           it->mincalcd = EINA_FALSE;
 
@@ -1978,7 +1978,7 @@ elm_genlist_selected_item_get(const Evas_Object *obj)
  * by deletion). The list contains Elm_Genlist_Item pointers.
  *
  * @param obj The genlist object
- * @return The list of selected items, nor NUL if none are selected.
+ * @return The list of selected items, nor NULL if none are selected.
  *
  * @ingroup Genlist
  */
@@ -1988,6 +1988,49 @@ elm_genlist_selected_items_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    return wd->selected;
+}
+
+/**
+ * Get a list of realized items in genlist
+ *
+ * This returns a list of the realized items in the genlist. The list
+ * contains Elm_Genlist_Item pointers. The list must be freed by the
+ * caller when done with eina_list_free(). The item pointers in the list
+ * are only vallid so long as those items are not deleted or the genlist is
+ * not deleted.
+ *
+ * @param obj The genlist object
+ * @return The list of realized items, nor NULL if none are realized.
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_List *
+elm_genlist_realized_items_get(const Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_List *list = NULL;
+   Item_Block *itb;
+   Eina_Bool done = 0;
+
+   EINA_INLIST_FOREACH(wd->blocks, itb)
+     {
+	if (itb->realized)
+          {
+             Eina_List *l;
+             Elm_Genlist_Item *it;
+             
+             done = 1;
+             EINA_LIST_FOREACH(itb->items, l, it)
+               {
+                  if (it->realized) list = eina_list_append(list, it);
+               }
+          }
+        else
+          {
+             if (done) break;
+          }
+     }
+   return list;
 }
 
 /**
