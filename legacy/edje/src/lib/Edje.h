@@ -331,6 +331,7 @@ struct _Edje_External_Type
 			     */
 
   const char *module;
+  const char *module_name;
   Evas_Object *(*add) (void *data, Evas *evas, Evas_Object *parent, const Eina_List *params);
   void (*state_set) (void *data, Evas_Object *obj, const void *from_params, const void *to_params, float pos);
   void (*signal_emit) (void *data, Evas_Object *obj, const char *emission, const char *source);
