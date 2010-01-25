@@ -61,6 +61,7 @@ void test_label(void *data, Evas_Object *obj, void *event_info);
 void test_conformant(void *data, Evas_Object *obj, void *event_info);
 void test_multi(void *data, Evas_Object *obj, void *event_info);
 void test_floating(void *data, Evas_Object *obj, void *event_info);
+void test_launcher(void *data, Evas_Object *obj, void *event_info);
 
 static void
 my_win_del(void *data, Evas_Object *obj, void *event_info)
@@ -204,6 +205,7 @@ my_win_main(void)
    elm_list_item_append(li, "Conformant", NULL, NULL, test_conformant, NULL);
    elm_list_item_append(li, "Multi Touch", NULL, NULL, test_multi, NULL);
    elm_list_item_append(li, "Floating Objects", NULL, NULL, test_floating, NULL);
+   elm_list_item_append(li, "Launcher", NULL, NULL, test_launcher, NULL);
 
    elm_list_go(li);
 
