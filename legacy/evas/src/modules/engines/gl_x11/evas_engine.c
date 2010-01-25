@@ -55,12 +55,6 @@ _sym_init(void)
    FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImage");
    FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageEXT");
    FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageARB");
-   
-   printf("glXGetProcAddress: %p\n"
-          "glXBindTexImage: %p\n"
-          "glXReleaseTexImage: %p\n",
-          glsym_glXGetProcAddress,
-          glsym_glXBindTexImage, glsym_glXReleaseTexImage);
 #endif
 }
 
@@ -127,7 +121,6 @@ eng_setup(Evas *e, void *in)
         re->info = info;
         re->evas = e;
 	e->engine.data.output = re;
-        printf("eng_window_new: %i %i\n", e->output.w, e->output.h);
 	re->win = eng_window_new(info->info.display,
 				 info->info.drawable,
 				 0 /* FIXME: screen 0 assumption */,
@@ -213,7 +206,6 @@ eng_setup(Evas *e, void *in)
             (info->info.colormap != re->win->colormap) ||
             (info->info.depth != re->win->depth))
           {
-             printf("re-init eng_window_new: %i %i\n", e->output.w, e->output.h);
              eng_window_free(re->win);
              re->win = eng_window_new(info->info.display,
                                       info->info.drawable,
@@ -227,7 +219,6 @@ eng_setup(Evas *e, void *in)
         else if ((re->win->w != e->output.w) ||
                  (re->win->h != e->output.h))
           {
-             printf("resize eng_window_new: %i %i\n", e->output.w, e->output.h);
              re->win->w = e->output.w;
              re->win->h = e->output.h;
              eng_window_use(re->win);
@@ -416,7 +407,6 @@ eng_output_flush(void *data)
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 //   glFlush();
-   printf("eglSwapBuffers(%p, %p)\n", re->win->egl_disp, re->win->egl_surface[0]);
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
 #else
 # ifdef VSYNC_TO_SCREEN
@@ -1187,6 +1177,7 @@ eng_image_native_set(void *data, void *image, void *native)
         if (im->native.func.free)
           im->native.func.free(im->native.func.data, im);
         evas_gl_common_image_native_disable(im);
+        im->native.data = NULL;
      }
    if (native)
      {
@@ -1209,15 +1200,22 @@ eng_image_native_set(void *data, void *image, void *native)
              config_attrs[i++] = EGL_ALPHA_SIZE;
              config_attrs[i++] = 8;
              config_attrs[i++] = EGL_DEPTH_SIZE;
-             config_attrs[i++] = 32;
+             config_attrs[i++] = 0;
+             config_attrs[i++] = EGL_STENCIL_SIZE;
+             config_attrs[i++] = 0;
              config_attrs[i++] = EGL_RENDERABLE_TYPE;
              config_attrs[i++] = EGL_OPENGL_ES2_BIT;
              config_attrs[i++] = EGL_SURFACE_TYPE;
              config_attrs[i++] = EGL_PIXMAP_BIT;
              config_attrs[i++] = EGL_NONE;
              
-             eglChooseConfig(re->win->egl_disp, config_attrs, 
-                             &egl_config, 1, &num_config);
+             printf("glsym_eglBindTexImage = %p\n", glsym_eglBindTexImage);
+             printf("glsym_eglReleaseTexImage = %p\n", glsym_eglReleaseTexImage);
+             if (!eglChooseConfig(re->win->egl_disp, config_attrs, 
+                                  &egl_config, 1, &num_config))
+               {
+                  printf("ERROR: eglChooseConfig() failed for pixmap 0x%x, num_config = %i\n", pm, num_config);
+               }
              n->pixmap = pm;
              n->visual = vis;
              im->native.yinvert     = 1;
@@ -1230,6 +1228,7 @@ eng_image_native_set(void *data, void *image, void *native)
              n->egl_surface = eglCreatePixmapSurface(re->win->egl_disp, 
                                                      egl_config, pm, 
                                                      NULL);
+             printf("eglCreatePixmapSurface for 0x%x = %p\n", pm, n->egl_surface);
              evas_gl_common_image_native_enable(im);
           }
      }
