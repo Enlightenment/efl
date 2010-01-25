@@ -11,7 +11,7 @@ AM_CPPFLAGS = \
 if EINA_BUILD_PASS_THROUGH
 if !EINA_STATIC_BUILD_PASS_THROUGH
 
-controllerdir = $(libdir)/eina/mp
+controllerdir = $(libdir)/eina-$(VMAJ)/mp
 controller_LTLIBRARIES = eina_pass_through.la
 
 eina_pass_through_la_SOURCES = \

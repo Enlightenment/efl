@@ -10,7 +10,7 @@ AM_CPPFLAGS = \
 if EINA_BUILD_CHAINED_POOL
 if !EINA_STATIC_BUILD_CHAINED_POOL
 
-controllerdir = $(libdir)/eina/mp
+controllerdir = $(libdir)/eina-$(VMAJ)/mp
 controller_LTLIBRARIES = eina_chained_mempool.la
 
 eina_chained_mempool_la_SOURCES = \

@@ -24,6 +24,7 @@ VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
 VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
+AC_DEFINE_UNQUOTED(VMAJ, ["$VMAJ"], [Eina major version number])
 AC_SUBST(VMAJ)
 AC_SUBST(version_info)
 

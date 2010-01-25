@@ -165,17 +165,17 @@ eina_mempool_init(void)
    _backends = eina_hash_string_superfast_new(NULL);
 
    /* dynamic backends */
-   _modules = eina_module_list_get(NULL, PACKAGE_LIB_DIR "/eina/mp/", 0, NULL, NULL);
+   _modules = eina_module_list_get(NULL, PACKAGE_LIB_DIR "/eina-"VMAJ"/mp/", 0, NULL, NULL);
 
-   path = eina_module_environment_path_get("HOME", "/.eina/mp/");
+   path = eina_module_environment_path_get("HOME", "/.eina-"VMAJ"/mp/");
    _modules = eina_module_list_get(_modules, path, 0, NULL, NULL);
    if (path) free(path);
 
-   path = eina_module_environment_path_get("EINA_MODULES_MEMPOOL_DIR", "/eina/mp/");
+   path = eina_module_environment_path_get("EINA_MODULES_MEMPOOL_DIR", "/eina-"VMAJ"/mp/");
    _modules = eina_module_list_get(_modules, path, 0, NULL, NULL);
    if (path) free(path);
 
-   path = eina_module_symbol_path_get(eina_init, "/eina/mp/");
+   path = eina_module_symbol_path_get(eina_init, "/eina-"VMAJ"/mp/");
    _modules = eina_module_list_get(_modules, path, 0, NULL, NULL);
    if (path) free(path);
 

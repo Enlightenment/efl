@@ -12,7 +12,7 @@ AM_CPPFLAGS = \
 if EINA_BUILD_EMEMOA_UNKNOWN
 if !EINA_STATIC_BUILD_EMEMOA_UNKNOWN
 
-controllerdir = $(libdir)/eina/mp
+controllerdir = $(libdir)/eina-$(VMAJ)/mp
 controller_LTLIBRARIES = eina_ememoa_unknown.la
 
 eina_ememoa_unknown_la_SOURCES = \
