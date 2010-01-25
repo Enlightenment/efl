@@ -37,6 +37,7 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
 {
    Evas_Coord x1, x2, y1, y2;
    const Evas_Map_Point *p, *p_end;
+   int ch;
 
    if (!obj->cur.map) return;
    p = obj->cur.map->points;
@@ -53,11 +54,16 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
         if (p->y < y1) y1 = p->y;
         if (p->y > y2) y2 = p->y;
      }
+   ch = 0;
+   if (obj->cur.map->normal_geometry.x != x1) ch = 1;
+   if (obj->cur.map->normal_geometry.y != y1) ch = 1;
+   if (obj->cur.map->normal_geometry.w != (x2 - x1)) ch = 1;
+   if (obj->cur.map->normal_geometry.h != (y2 - y1)) ch = 1;
    obj->cur.map->normal_geometry.x = x1;
    obj->cur.map->normal_geometry.y = y1;
    obj->cur.map->normal_geometry.w = (x2 - x1);
    obj->cur.map->normal_geometry.h = (y2 - y1);
-   _evas_map_calc_geom_change(obj);
+   if (ch) _evas_map_calc_geom_change(obj);
 }
 
 static inline Evas_Map *
