@@ -5,6 +5,8 @@
 #ifndef _ECORE_IMF_H
 #define _ECORE_IMF_H
 
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
