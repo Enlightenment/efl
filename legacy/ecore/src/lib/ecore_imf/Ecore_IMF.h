@@ -5,8 +5,6 @@
 #ifndef _ECORE_IMF_H
 #define _ECORE_IMF_H
 
-#include <Ecore_Data.h>
-
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -293,6 +291,8 @@ extern "C" {
 
    EAPI int                           ecore_imf_init(void);
    EAPI int                           ecore_imf_shutdown(void);
+
+   EAPI void                          ecore_imf_module_register(const Ecore_IMF_Context_Info *info, Ecore_IMF_Context *(*imf_module_create)(void), Ecore_IMF_Context *(*imf_module_exit)(void));
 
    EAPI Eina_List                    *ecore_imf_context_available_ids_get(void);
    EAPI Eina_List                    *ecore_imf_context_available_ids_by_canvas_type_get(const char *canvas_type);

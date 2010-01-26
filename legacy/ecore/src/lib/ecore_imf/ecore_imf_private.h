@@ -49,9 +49,9 @@ struct _Ecore_IMF_Context
 
 struct _Ecore_IMF_Module
 {
-   Ecore_Plugin                 *plugin;
    const Ecore_IMF_Context_Info *info;
    Ecore_IMF_Context            *(*create)(void);
+   Ecore_IMF_Context            *(*exit)(void);
 };
 
 void               ecore_imf_module_init(void);
