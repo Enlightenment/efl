@@ -5,7 +5,14 @@ EDJE_CC = @edje_cc@
 EDJE_FLAGS = -v -id $(top_srcdir)/data -fd $(top_srcdir)/data
 
 filesdir = $(datadir)/emotion/data
-files_DATA = theme.edj
+
+files_DATA =
+
+if BUILD_EMOTION_TEST
+
+files_DATA += theme.edj
+
+endif
 
 EXTRA_DIST = \
 bpause.png \

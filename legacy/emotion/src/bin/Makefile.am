@@ -12,8 +12,13 @@ AM_CPPFLAGS = \
 @ECORE_X_CFLAGS@ \
 @ECORE_FB_CFLAGS@
 
-bin_PROGRAMS = @EMOTION_TEST_PRG@
-EXTRA_PROGRAMS = emotion_test
+bin_PROGRAMS =
+
+if BUILD_EMOTION_TEST
+
+bin_PROGRAMS += emotion_test
+
+endif
 
 emotion_test_SOURCES = emotion_test_main.c
 
