@@ -792,10 +792,10 @@ fi
 ## Core modules
 
 # ecore_txt
-ECORE_CHECK_MODULE([Txt], [${want_ecore_txt}], [$have_iconv])
+ECORE_CHECK_MODULE([txt], [${want_ecore_txt}], [Txt], [$have_iconv])
 
 # ecore_con
-ECORE_CHECK_MODULE([Con], [${want_ecore_con}])
+ECORE_CHECK_MODULE([con], [${want_ecore_con}], [Con])
 
 have_curl="no"
 have_gnutls="no"
@@ -842,11 +842,11 @@ fi
 AM_CONDITIONAL([HAVE_CARES], [test "x${have_cares}" = "xyes"])
 
 # ecore_ipc
-ECORE_CHECK_MODULE([Ipc], [${want_ecore_ipc}], [${have_ecore_con}],
+ECORE_CHECK_MODULE([ipc], [${want_ecore_ipc}], [Ipc], [${have_ecore_con}],
    [requirements_ecore_ipc="ecore-con ${requirements_ecore_ipc}"])
 
 # ecore_file
-ECORE_CHECK_MODULE([File], [${want_ecore_file}])
+ECORE_CHECK_MODULE([file], [${want_ecore_file}], [File])
 
 have_poll="no"
 have_inotify="no"
@@ -867,12 +867,12 @@ if test "x${have_eet}" = "xyes" -a "x${have_evas}"  -a "x${have_ecore_ipc}" ; th
    ecore_config_deps="yes"
 fi
 
-ECORE_CHECK_MODULE([Config], [${want_ecore_config}], [${ecore_config_deps}],
+ECORE_CHECK_MODULE([config], [${want_ecore_config}], [Config], [${ecore_config_deps}],
    [requirements_ecore_config="ecore-ipc evas eet ${requirements_ecore_config}"])
 
 # ecore_imf
 
-ECORE_CHECK_MODULE([IMF], [${want_ecore_imf}])
+ECORE_CHECK_MODULE([imf], [${want_ecore_imf}], [Imf])
 
 # ecore_imf_evas
 
@@ -881,12 +881,12 @@ if test "x${have_ecore_imf}" = "xyes" -a "x${have_evas}" = "xyes" ; then
    ecore_imf_evas_deps="yes"
 fi
 
-ECORE_CHECK_MODULE([IMF_EVAS], [${want_ecore_imf}], [${ecore_imf_evas_deps}],
+ECORE_CHECK_MODULE([imf-evas], [${want_ecore_imf}], [Imf_Evas], [${ecore_imf_evas_deps}],
    [requirements_ecore_imf_evas="ecore-imf evas ${requirements_ecore_imf_evas}"])
 
 # ecore_input{_evas}
-ECORE_CHECK_MODULE([Input], [${want_ecore_input}])
-ECORE_CHECK_MODULE([Input_Evas], [${want_ecore_input}], [${have_evas}],
+ECORE_CHECK_MODULE([input], [${want_ecore_input}], [Input])
+ECORE_CHECK_MODULE([input-evas], [${want_ecore_input}], [Input_Evas], [${have_evas}],
    [requirements_ecore_input_evas="ecore-input evas ${requirements_ecore_input}"])
 
 ## Graphic systems
@@ -900,7 +900,7 @@ if test "x${have_x}" = "xyes" -a \
    ecore_x_deps="yes"
 fi
 
-ECORE_CHECK_MODULE([X], [${want_ecore_x}], [${ecore_x_deps}],
+ECORE_CHECK_MODULE([x], [${want_ecore_x}], [X], [${ecore_x_deps}],
   [
    ecore_x_libs="$ecore_x_libs $x_libs"
    requirements_ecore_x="ecore-input ecore-txt ${requirements_ecore_x}"
@@ -908,7 +908,7 @@ ECORE_CHECK_MODULE([X], [${want_ecore_x}], [${ecore_x_deps}],
 
 # ecore_win32
 
-ECORE_CHECK_MODULE([Win32], [${want_ecore_win32}], [${have_ecore_input}],
+ECORE_CHECK_MODULE([win32], [${want_ecore_win32}], [Win32], [${have_ecore_input}],
    [
     ecore_win32_libs="-lole32 -lgdi32"
     requirements_ecore_win32="ecore-input ${requirements_ecore_win32}"
@@ -922,7 +922,7 @@ if test "x${have_ecore_input}" = "xyes" -a "x${have_quartz}" = "xyes" ; then
    ecore_quartz_deps="yes"
 fi
 
-ECORE_CHECK_MODULE([QUARTZ], [${want_ecore_quartz}], [${ecore_quartz_deps}],
+ECORE_CHECK_MODULE([quartz], [${want_ecore_quartz}], [Quartz], [${ecore_quartz_deps}],
    [requirements_ecore_quartz="ecore-input ${requirements_ecore_quartz}"])
 
 # ecore_sdl
@@ -932,11 +932,11 @@ if test "x${have_sdl}" = "xyes" -a "x${have_ecore_input}" = "xyes" ; then
    ecore_sdl_deps="yes"
 fi
 
-ECORE_CHECK_MODULE([SDL], [${want_ecore_sdl}], [${ecore_sdl_deps}],
+ECORE_CHECK_MODULE([sdl], [${want_ecore_sdl}], [Sdl], [${ecore_sdl_deps}],
    [requirements_ecore_sdl="ecore-input ${requirements_ecore_sdl}"])
 
 # ecore_fb
-ECORE_CHECK_MODULE([FB], [${want_ecore_fb}], [$have_fb])
+ECORE_CHECK_MODULE([fb], [${want_ecore_fb}], [FB], [$have_fb])
 
 if test "x${have_ecore_fb}" = "xyes" ; then
    ECORE_CHECK_TSLIB([${want_tslib}],
@@ -949,12 +949,12 @@ fi
 
 # ecore_directfb
 
-ECORE_CHECK_MODULE([DirectFB], [${want_ecore_directfb}], [${have_directfb}],
+ECORE_CHECK_MODULE([directfb], [${want_ecore_directfb}], [DirectFB], [${have_directfb}],
    [requirements_ecore_directfb="directfb ${requirements_ecore_directfb}"])
 
 # ecore_wince
 
-ECORE_CHECK_MODULE([WinCE], [${want_ecore_wince}], [${have_ecore_input}],
+ECORE_CHECK_MODULE([wince], [${want_ecore_wince}], [WinCE], [${have_ecore_input}],
    [requirements_ecore_win32="ecore-input ${requirements_ecore_win32}"])
 
 ## Ecore Evas
@@ -966,7 +966,7 @@ if test "x${have_evas}" = "xyes" -a "x${have_ecore_input}" = "xyes" -a "x${have_
    ecore_evas_deps="yes"
 fi
 
-ECORE_CHECK_MODULE([Evas], [${want_ecore_evas}], [${ecore_evas_deps}],
+ECORE_CHECK_MODULE([evas], [${want_ecore_evas}], [Evas], [${ecore_evas_deps}],
   [requirements_ecore_evas="ecore-input ecore-input-evas evas ${requirements_ecore_evas}"])
 
 # ecore_evas_buffer
