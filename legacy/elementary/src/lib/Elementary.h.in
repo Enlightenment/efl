@@ -1283,6 +1283,15 @@ extern "C" {
    EAPI Evas_Object *elm_conformant_add(Evas_Object *parent);
    EAPI void         elm_conformant_content_set(Evas_Object *obj, Evas_Object *content);
 
+   EAPI Evas_Object *elm_mapbuf_add(Evas_Object *parent);
+   EAPI void         elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI void         elm_mapbuf_enabled_set(Evas_Object *obj, Eina_Bool enabled);
+   EAPI Eina_Bool    elm_mapbuf_enabled_get(const Evas_Object *obj);
+   EAPI void         elm_mapbuf_smooth_set(Evas_Object *obj, Eina_Bool smooth);
+   EAPI Eina_Bool    elm_mapbuf_smooth_get(const Evas_Object *obj);
+   EAPI void         elm_mapbuf_alpha_set(Evas_Object *obj, Eina_Bool alpha);
+   EAPI Eina_Bool    elm_mapbuf_alpha_get(const Evas_Object *obj);
+       
 #ifdef __cplusplus
 }
 #endif

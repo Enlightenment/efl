@@ -5,7 +5,7 @@
 #include "elm_priv.h"
 
 /**
- * @defgroup Menu menu
+ * @defgroup Menu Menu
  *
  * A menu is a list of items display on top of the window. Each item can have a sub-menu. It can be used to
  * display a menu on right click, in a toolbar ...
@@ -475,6 +475,8 @@ elm_menu_add(Evas_Object *parent)
  *
  * @param obj The menu object.
  * @param parent The new parent.
+ * 
+ * @ingroup Menu
  */
 EAPI void
 elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
@@ -510,6 +512,8 @@ elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
  * @param obj The menu object.
  * @param x The new position.
  * @param y The new position.
+ * 
+ * @ingroup Menu
  */
 EAPI void
 elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
@@ -526,6 +530,8 @@ elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
  * Get the Evas_Object of an Elm_Menu_Item
  * 
  * @param it The menu item object.
+ * 
+ * @ingroup Menu
  */
 EAPI Evas_Object *
 elm_menu_object_get(const Elm_Menu_Item *it)
@@ -537,12 +543,13 @@ elm_menu_object_get(const Elm_Menu_Item *it)
  * Add an item at the end
  *
  * @param obj The menu object.
- * @param icon A icon display on the item. The icon will be destryed by the
- * menu.
+ * @param icon A icon display on the item. The icon will be destryed by the menu.
  * @param label The label of the item.
  * @param func Function called when the user select the item.
  * @param data Data sent by the callback.
- * #return Returns the new item.
+ * @return Returns the new item.
+ * 
+ * @ingroup Menu
  */
 EAPI Elm_Menu_Item *
 elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)

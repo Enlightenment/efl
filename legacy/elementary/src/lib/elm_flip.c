@@ -1,8 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-#if 1 // working on it
-
 /**
  * @defgroup Flip Flip
  *
@@ -28,6 +26,8 @@ static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
+
+static void _configure(Evas_Object *obj);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -210,6 +210,7 @@ _flip(Evas_Object *obj)
         evas_object_map_enable_set(wd->back.content, 0);
         wd->animator = NULL;
         wd->state = !wd->state;
+        _configure(obj);
         evas_object_smart_callback_call(obj, "animate,done", NULL);
         return 0;
      }
@@ -224,12 +225,14 @@ _configure(Evas_Object *obj)
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    if (wd->front.content)
      {
-        evas_object_move(wd->front.content, x, y);
+        if (!wd->animator)
+          evas_object_move(wd->front.content, x, y);
         evas_object_resize(wd->front.content, w, h);
      }
    if (wd->back.content)
      {
-        evas_object_move(wd->back.content, x, y);
+        if (!wd->animator)
+          evas_object_move(wd->back.content, x, y);
         evas_object_resize(wd->back.content, w, h);
      }
    _flip(obj);
@@ -383,4 +386,3 @@ elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode)
    wd->start = ecore_loop_time_get();
    wd->len = 0.5;
 }
-#endif
