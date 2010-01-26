@@ -377,12 +377,12 @@ AC_SUBST(fnmatch_libs)
 
 ### Modules
 
-EINA_CHECK_MODULE([chained-pool], [yes], [chained pool])
-EINA_CHECK_MODULE([ememoa-fixed], [${enable_ememoa}], [ememoa fixed])
+EINA_CHECK_MODULE([chained-pool],   [static],           [chained pool])
+EINA_CHECK_MODULE([ememoa-fixed],   [${enable_ememoa}], [ememoa fixed])
 EINA_CHECK_MODULE([ememoa-unknown], [${enable_ememoa}], [ememoa unknown])
-EINA_CHECK_MODULE([fixed-bitmap], [yes], [fixed bitmap])
-EINA_CHECK_MODULE([pass-through], [yes], [pass through])
-EINA_CHECK_MODULE([buddy], [yes], [buddy])
+EINA_CHECK_MODULE([fixed-bitmap],   [no],               [fixed bitmap])
+EINA_CHECK_MODULE([pass-through],   [no],               [pass through])
+EINA_CHECK_MODULE([buddy],          [no],               [buddy])
 
 
 ### Make the debug preprocessor configurable
