@@ -14,10 +14,8 @@
 #include <string.h>
 
 #include "Ecore.h"
-#include "Ecore_Data.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
-#include "Ecore_X_Atoms.h"
 
 typedef struct _Ecore_X_Startup_Info Ecore_X_Startup_Info;
 
