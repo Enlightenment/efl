@@ -16,6 +16,7 @@ struct _Widget_Data
    const char *label;
    Evas_Coord lastw;
    Ecore_Job *deferred_recalc_job;
+   Evas_Coord wrap_w;
    Eina_Bool linewrap : 1;
    Eina_Bool changed : 1;
 };
@@ -37,6 +38,8 @@ _elm_win_recalc_job(void *data)
    minminw = 0;
    edje_object_size_min_restricted_calc(wd->lbl, &minw, &minh, 0, 0);
    minminw = minw;
+   if (wd->wrap_w > minminw) minminw = wd->wrap_w;
+   if (wd->wrap_w > resw) resw = wd->wrap_w;
    edje_object_size_min_restricted_calc(wd->lbl, &minw, &minh, resw, 0);
    evas_object_size_hint_min_set(data, minminw, minh);
    maxh = minh;
@@ -169,10 +172,10 @@ elm_label_label_set(Evas_Object *obj, const char *label)
  * Get the label used on the label object
  *
  * @param obj The label object
- *
+ * @return The string inside the label
  * @ingroup Label
  */
-EAPI const char*
+EAPI const char *
 elm_label_label_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -181,6 +184,13 @@ elm_label_label_get(Evas_Object *obj)
    return wd->label;
 }
 
+/**
+ * Set the wrapping behavior of the label
+ *
+ * @param obj The label object
+ * @param wrap To wrap text or not
+ * @ingroup Label
+ */
 EAPI void
 elm_label_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
 {
@@ -197,4 +207,48 @@ elm_label_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
    eina_stringshare_del(t);
    wd->changed = 1;
    _sizing_eval(obj);
+}
+
+/**
+ * Get the wrapping behavior of the label
+ *
+ * @param obj The label object
+ * @return To wrap text or not
+ * @ingroup Label
+ */
+EAPI Eina_Bool
+elm_label_line_wrap_get(const Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->linewrap;
+}
+
+/**
+ * Set wrap width of the label
+ *
+ * @param obj The label object
+ * @param w The wrap width in pixels at a minimum where words need to wrap
+ * @ingroup Label
+ */
+EAPI void
+elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->wrap_w == w) return;
+   wd->wrap_w = w;
+   _sizing_eval(obj);
+}
+
+/**
+ * get wrap width of the label
+ *
+ * @param obj The label object
+ * @return The wrap width in pixels at a minimum where words need to wrap
+ * @ingroup Label
+ */
+EAPI Evas_Coord
+elm_label_wrap_width_get(const Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->wrap_w;
 }

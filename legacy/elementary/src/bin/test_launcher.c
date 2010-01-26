@@ -135,7 +135,6 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(mb);
    
    elm_scroller_page_relative_set(sc, 1.0, 1.0);
-   // elm_scroller_page_size_set(sc, 200, 200);
    evas_object_show(sc);
    
    tb2 = elm_table_add(win);
