@@ -724,12 +724,40 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              e->engine.func->context_free(e->engine.data.output, ctx);
           }
 
-        RDI(level); 
+        RDI(level);
         RD("        draw map4\n");
-        obj->layer->evas->engine.func->image_map4_draw
-          (e->engine.data.output, e->engine.data.context, surface, 
-           obj->cur.map->surface, pts, obj->cur.map->smooth, 0);
         
+        if ((pts[0].x == pts[3].x) &&
+            (pts[1].x == pts[2].x) &&
+            (pts[0].y == pts[1].y) &&
+            (pts[3].y == pts[2].y) &&
+            (pts[0].u == 0) && 
+            (pts[0].v == 0) &&
+            (pts[1].u == (obj->cur.map->surface_w << FP)) && 
+            (pts[1].v == 0) &&
+            (pts[2].u == (obj->cur.map->surface_w << FP)) && 
+            (pts[2].v == (obj->cur.map->surface_h << FP)) &&
+            (pts[3].u == 0) && 
+            (pts[3].v == (obj->cur.map->surface_h << FP)))
+          {
+             int dx, dy, dw, dh;
+
+             dx = pts[0].x >> FP;
+             dy = pts[0].y >> FP;
+             dw = (pts[2].x >> FP) - dx;
+             dh = (pts[2].y >> FP) - dy;
+             obj->layer->evas->engine.func->image_draw
+               (e->engine.data.output, e->engine.data.context, 
+                surface, obj->cur.map->surface,
+                0, 0, obj->cur.map->surface_w, obj->cur.map->surface_h,
+                dx, dy, dw, dh, obj->cur.map->smooth);
+          }
+        else
+          {
+             obj->layer->evas->engine.func->image_map4_draw
+               (e->engine.data.output, e->engine.data.context, surface, 
+                obj->cur.map->surface, pts, obj->cur.map->smooth, 0);
+          }
         // FIXME: needs to cache these maps and
         // keep them only rendering updates
 //        obj->layer->evas->engine.func->image_map_surface_free
