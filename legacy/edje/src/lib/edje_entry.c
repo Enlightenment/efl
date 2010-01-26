@@ -1190,20 +1190,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 	  }
         _edje_emit(ed, "entry,key,enter", rp->part->name);
      }
-   else if ((!strcmp(ev->key, "Multi_key")))
-     {
-	// FIXME: compose next 2 keystrokes (Examples):
-	// a " -> ä
-	// o / -> ø
-	// a e -> æ
-	// e ' -> é
-	// s s -> ß
-	// etc.
-     }
-   // FIXME: other input methods? (xim, scim, uim etc.)...
    else
      {
-	// FIXME: if composing.. store 2 keys
 	if (ev->string)
 	  {
             if (en->have_selection)
