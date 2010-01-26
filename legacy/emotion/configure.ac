@@ -45,6 +45,8 @@ requirement_emotion=""
 
 ### Additional options to configure
 
+EFL_ENABLE_BIN([emotion-test])
+
 # edje_cc
 
 AC_ARG_WITH([edje-cc],
@@ -82,7 +84,9 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 PKG_CHECK_MODULES(EMOTION, [eina-0 evas >= 0.9.9 ecore >= 0.9.9])
 requirement_emotion="ecore evas eina-0"
 
-PKG_CHECK_MODULES(EMOTION_BIN, [evas >= 0.9.9 ecore >= 0.9.9 ecore-evas >= 0.9.9 edje >= 0.5.0])
+if test "x${have_emotion_test}" = "xyes" ; then
+   PKG_CHECK_MODULES(EMOTION_BIN, [evas >= 0.9.9 ecore >= 0.9.9 ecore-evas >= 0.9.9 edje >= 0.5.0])
+fi
 
 PKG_CHECK_MODULES(ECORE_X, [ecore-x >= 0.9.9], [have_ecore_x="yes"], [have_ecore_x="no"])
 
@@ -194,6 +198,7 @@ echo "    Gstreamer..........: ${enable_gstreamer}"
 echo "    Gstreamer FFmpeg...: ${have_gst_ffmpeg}"
 echo "    Gstreamer CDDA.....: ${have_gst_cdiocddasrc}"
 echo
+echo "  Build emotion_test...: $have_emotion_test"
 echo "  edje_cc..............: ${edje_cc}"
 echo
 echo "Compilation............: make (or gmake)"
