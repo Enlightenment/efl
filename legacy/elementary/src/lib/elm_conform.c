@@ -65,32 +65,28 @@ elm_conformant_add(Evas_Object *parent)
    _elm_theme_set(wd->base, "conformant", "base", "default");
    elm_widget_resize_object_set(obj, wd->base);
 
-   // FIXME: broken. doesnt handle property changes, keyboard popup or not
-   // etc. doesnt gettop helf geometry either.
 #ifdef HAVE_ELEMENTARY_X
    int sh = -1;
 
    ecore_x_e_illume_top_shelf_geometry_get(ecore_x_window_root_first_get(), 
                                            NULL, NULL, NULL, &sh);
-   printf("sh0: %i\n", sh);
-   if (sh < 1) sh = 1;
+   if (sh < 0) sh = 32;
 
    wd->shelf = evas_object_rectangle_add(evas);
    evas_object_color_set(wd->shelf, 0, 0, 0, 0);
-   evas_object_size_hint_min_set(wd->shelf, 0, sh);
-   evas_object_size_hint_max_set(wd->shelf, -1, -1);
+   evas_object_size_hint_min_set(wd->shelf, -1, sh);
+   evas_object_size_hint_max_set(wd->shelf, -1, sh);
    edje_object_part_swallow(wd->base, "elm.swallow.shelf", wd->shelf);
 
    sh = -1;
    ecore_x_e_illume_bottom_panel_geometry_get(ecore_x_window_root_first_get(), 
                                               NULL, NULL, NULL, &sh);
-   printf("sh1: %i\n", sh);
-   if (sh < 1) sh = 1;
+   if (sh < 0) sh = 32;
 
    wd->panel = evas_object_rectangle_add(evas);
    evas_object_color_set(wd->panel, 0, 0, 0, 0);
-   evas_object_size_hint_min_set(wd->panel, 0, sh);
-   evas_object_size_hint_max_set(wd->panel, -1, -1);
+   evas_object_size_hint_min_set(wd->panel, -1, sh);
+   evas_object_size_hint_max_set(wd->panel, -1, sh);
    edje_object_part_swallow(wd->base, "elm.swallow.panel", wd->panel);
 #endif
 

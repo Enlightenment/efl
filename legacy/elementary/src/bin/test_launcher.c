@@ -70,7 +70,7 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, 0.5, 0.5);
    n = 0; m = 0;
-   for (k = 0 ; k < 5; k++)
+   for (k = 0 ; k < 4; k++)
      {
         pad = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_size_hint_min_set(pad, 470, 4);
