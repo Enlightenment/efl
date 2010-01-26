@@ -511,6 +511,51 @@ EAPI char *eina_module_environment_path_get(const char *env, const char *sub_dir
    return NULL;
 }
 
+static void _dir_arch_list_db(const char *name, const char *path, void *data)
+{
+   Dir_List_Get_Cb_Data *cb_data = data;
+   Eina_Module *m;
+   char *file;
+   size_t length;
+   
+   length = strlen(path) + 1 + strlen(name) + 1 + 
+     strlen((char *)(cb_data->data)) + 1 + sizeof("module") +
+     sizeof(SHARED_LIB_SUFFIX) + 1;
+   
+   file = alloca(length);
+   snprintf(file, length, "%s/%s/%s/module" SHARED_LIB_SUFFIX, 
+            path, name, (char *)(cb_data->data));
+   m = eina_module_new(file);
+   if (!m)
+     return;
+   eina_array_push(cb_data->array, m);
+}
+
+/**
+ * Get a list of modules found on the directory path
+ *
+ * @param array The array that stores the list of the modules.
+ * @param path The directory's path to search for modules
+ * @param arch the architecture string
+ * @param cb Callback function to call, if the return value of the callback is zero
+ * it won't be added to the list, if it is one, it will.
+ * @param data Data passed to the callback function
+ */
+EAPI Eina_Array * eina_module_arch_list_get(Eina_Array *array, const char *path, const char *arch)
+{
+   Dir_List_Get_Cb_Data list_get_cb_data;
+
+   if ((!path) || (!arch)) return array;
+
+   list_get_cb_data.array = array ? array : eina_array_new(4);
+   list_get_cb_data.cb = NULL;
+   list_get_cb_data.data = (void *)arch;
+
+   eina_file_dir_list(path, 0, &_dir_arch_list_db, &list_get_cb_data);
+
+   return list_get_cb_data.array;
+}
+
 /**
  * Get a list of modules found on the directory path
  *

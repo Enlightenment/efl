@@ -12,15 +12,15 @@ AM_CPPFLAGS = \
 if EINA_BUILD_EMEMOA_UNKNOWN
 if !EINA_STATIC_BUILD_EMEMOA_UNKNOWN
 
-controllerdir = $(libdir)/eina-$(VMAJ)/mp
-controller_LTLIBRARIES = eina_ememoa_unknown.la
+controllerdir = $(libdir)/eina/modules/mp/ememoa_unknown/$(MODULE_ARCH)
+controller_LTLIBRARIES = module.la
 
-eina_ememoa_unknown_la_SOURCES = \
+module_la_SOURCES = \
 eina_ememoa_unknown.c
 
-eina_ememoa_unknown_la_LIBADD       = $(top_builddir)/src/lib/libeina.la @EMEMOA_LIBS@ @EINA_LIBS@
-eina_ememoa_unknown_la_LDFLAGS      = -no-undefined @lt_enable_auto_import@ -module -avoid-version
-eina_ememoa_unknown_la_LIBTOOLFLAGS = --tag=disable-static
+module_la_LIBADD       = $(top_builddir)/src/lib/libeina.la @EMEMOA_LIBS@ @EINA_LIBS@
+module_la_LDFLAGS      = -no-undefined @lt_enable_auto_import@ -module -avoid-version
+module_la_LIBTOOLFLAGS = --tag=disable-static
 
 endif
 endif

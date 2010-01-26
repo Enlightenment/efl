@@ -28,6 +28,9 @@ AC_DEFINE_UNQUOTED(VMAJ, ["$VMAJ"], [Eina major version number])
 AC_SUBST(VMAJ)
 AC_SUBST(version_info)
 
+MODULE_ARCH="$host_os-$host_cpu-$release"
+AC_SUBST(MODULE_ARCH)
+AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
 ### Needed information
 

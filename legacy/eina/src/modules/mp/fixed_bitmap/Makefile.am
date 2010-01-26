@@ -11,15 +11,15 @@ AM_CPPFLAGS = \
 if EINA_BUILD_FIXED_BITMAP
 if !EINA_STATIC_BUILD_FIXED_BITMAP
 
-controllerdir = $(libdir)/eina-$(VMAJ)/mp
-controller_LTLIBRARIES = eina_fixed_bitmap.la
+controllerdir = $(libdir)/eina/modules/mp/fixed_bitmap/$(MODULE_ARCH)
+controller_LTLIBRARIES = module.la
 
-eina_fixed_bitmap_la_SOURCES = \
+module_la_SOURCES = \
 eina_fixed_bitmap.c
 
-eina_fixed_bitmap_la_LIBADD = $(top_builddir)/src/lib/libeina.la @EINA_LIBS@
-eina_fixed_bitmap_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
-eina_fixed_bitmap_la_LIBTOOLFLAGS = --tag=disable-static
+module_la_LIBADD = $(top_builddir)/src/lib/libeina.la @EINA_LIBS@
+module_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
+module_la_LIBTOOLFLAGS = --tag=disable-static
 
 endif
 endif
