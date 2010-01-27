@@ -63,7 +63,7 @@ _prop_change(void *data, int type, void *event)
 
         ecore_x_e_illume_top_shelf_geometry_get(ecore_x_window_root_first_get(), 
                                                 NULL, NULL, NULL, &sh);
-        if (sh < 0) sh = 1;
+        if (sh < 0) sh = 0;
         evas_object_size_hint_min_set(wd->shelf, -1, sh);
         evas_object_size_hint_max_set(wd->shelf, -1, sh);
 #endif
@@ -75,7 +75,7 @@ _prop_change(void *data, int type, void *event)
 
         ecore_x_e_illume_bottom_panel_geometry_get(ecore_x_window_root_first_get(), 
                                                    NULL, NULL, NULL, &sh);
-        if (sh < 0) sh = 1;
+        if (sh < 0) sh = 0;
         evas_object_size_hint_min_set(wd->panel, -1, sh);
         evas_object_size_hint_max_set(wd->panel, -1, sh);
 #endif
