@@ -6096,6 +6096,11 @@ edje_edit_save(Evas_Object *obj)
    Edje_File *ef;
    Eet_File *eetf;
    int bytes;
+   SrcFile *sf;
+   SrcFile_List *sfl;
+   const char *source_file;
+   FILE *f;
+   long sz;
 
    GET_ED_OR_RETURN(0);
 
@@ -6109,7 +6114,7 @@ edje_edit_save(Evas_Object *obj)
    if (strcmp(ef->compiler, "edje_edit"))
      {
 	_edje_if_string_free(ed, ef->compiler);
-	ef->compiler = strdup("edje_edit");
+	ef->compiler = eina_stringshare_add("edje_edit");
      }
 
    /* Open the eet file */
@@ -6152,11 +6157,6 @@ edje_edit_save(Evas_Object *obj)
      }
 
    /* Write the new edc source */
-   SrcFile *sf;
-   SrcFile_List *sfl;
-   const char *source_file;
-   FILE *f;
-   long sz;
 
    source_file = _edje_generate_source(obj);
    if (!source_file)
@@ -6213,6 +6213,11 @@ edje_edit_save(Evas_Object *obj)
    unlink(source_file);
    eina_stringshare_del(source_file);
    eet_close(eetf);
+   eina_list_free(sfl->list);
+   free(sfl);
+   free(sf->file);
+   free(sf->name);
+   free(sf);
    INF("***********  Saving DONE ******************");
    return 1;
 }
