@@ -180,6 +180,8 @@ extern "C" {
 #include "eina_tiler.h"
 #include "eina_hamster.h"
 #include "eina_matrixsparse.h"
+#include "eina_str.h"
+#include "eina_strbuf.h"
 
 #ifdef __cplusplus
 }

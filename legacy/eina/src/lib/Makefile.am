@@ -36,7 +36,9 @@ eina_stringshare.c \
 eina_cpu.c \
 eina_tiler.c \
 eina_hamster.c \
-eina_safety_checks.c
+eina_safety_checks.c \
+eina_str.c \
+eina_strbuf.c
 
 if EINA_STATIC_BUILD_CHAINED_POOL
 base_sources += $(top_srcdir)/src/modules/mp/chained_pool/eina_chained_mempool.c

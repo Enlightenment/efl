@@ -339,6 +339,7 @@ AC_SUBST(lt_enable_auto_import)
 
 ### Checks for library functions
 AC_FUNC_ALLOCA
+AC_CHECK_FUNCS(strlcpy)
 
 #dlopen and dladdr
 dlopen_libs=""
