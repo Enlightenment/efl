@@ -779,11 +779,38 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
 static void
 eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
 {
-   RGBA_Image *im;
+   RGBA_Image *im, *srf;
+   RGBA_Map_Point *pt = p;
 
    if (!image) return;
    im = image;
-   evas_common_map4_rgba(im, surface, context, p, smooth, level);
+   srf = surface;
+   if ((p[0].x == p[3].x) &&
+       (p[1].x == p[2].x) &&
+       (p[0].y == p[1].y) &&
+       (p[3].y == p[2].y) &&
+       (p[0].u == 0) &&
+       (p[0].v == 0) &&
+       (p[1].u == (im->cache_entry.w << FP)) &&
+       (p[1].v == 0) &&
+       (p[2].u == (im->cache_entry.w << FP)) &&
+       (p[2].v == (im->cache_entry.h << FP)) &&
+       (p[3].u == 0) &&
+       (p[3].v == (im->cache_entry.h << FP)))
+     {
+        int dx, dy, dw, dh;
+        
+        dx = p[0].x >> FP;
+        dy = p[0].y >> FP;
+        dw = (p[2].x >> FP) - dx;
+        dh = (p[2].y >> FP) - dy;
+        eng_image_draw
+          (data, context, surface, image,
+           0, 0, im->cache_entry.w, im->cache_entry.h,
+           dx, dy, dw, dh, smooth);
+     }
+   else
+     evas_common_map4_rgba(im, surface, context, p, smooth, level);
    evas_common_cpu_end_opt();
 }
 
