@@ -321,3 +321,7 @@
 2010-01-22  Cedric BAIL
 
 	* Add VAR_ARRAY tests.
+
+2010-01-27  Cedric BAIL
+
+	* Improve security by zeroying cipher material as soon as possible.
