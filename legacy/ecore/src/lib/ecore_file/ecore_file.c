@@ -6,7 +6,6 @@
 # include <config.h>
 #endif
 
-#include <Ecore_Str.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
@@ -222,7 +221,7 @@ ecore_file_mksubdirs(const char *base, const char **subdirs)
      return 0;
 
 #ifndef HAVE_ATFILE_SOURCE
-   baselen = ecore_strlcpy(buf, base, sizeof(buf));
+   baselen = eina_strlcpy(buf, base, sizeof(buf));
    if ((baselen < 1) || (baselen + 1 >= (int)sizeof(buf)))
      return 0;
 
@@ -244,7 +243,7 @@ ecore_file_mksubdirs(const char *base, const char **subdirs)
 	struct stat st;
 
 #ifndef HAVE_ATFILE_SOURCE
-	ecore_strlcpy(buf + baselen, *subdirs, sizeof(buf) - baselen);
+	eina_strlcpy(buf + baselen, *subdirs, sizeof(buf) - baselen);
 	if (stat(buf, &st) == 0)
 #else
 	if (fstatat(fd, *subdirs, &st, 0) == 0)
