@@ -7,6 +7,7 @@
 #endif
 
 #include <stdlib.h>
+#include <math.h>
 
 #include "Ecore.h"
 #include "ecore_private.h"
@@ -57,9 +58,16 @@ ecore_animator_add(int (*func) (void *data), const void *data)
    ECORE_MAGIC_SET(animator, ECORE_MAGIC_ANIMATOR);
    animator->func = func;
    animator->data = (void *)data;
-   animators = (Ecore_Animator *) eina_inlist_append(EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
+   animators = (Ecore_Animator *)eina_inlist_append(EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
    if (!timer)
-     timer = ecore_timer_add(animators_frametime, _ecore_animator, NULL);
+     {
+        double t_loop = ecore_loop_time_get();
+        double sync_0 = 0.0;
+        double d = -fmod(t_loop - sync_0, animators_frametime);
+        
+        timer = ecore_timer_loop_add(animators_frametime, _ecore_animator, NULL);
+        ecore_timer_delay(timer, d);
+     }
    return animator;
 }
 
