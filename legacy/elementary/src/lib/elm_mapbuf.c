@@ -90,8 +90,6 @@ _mapbuf(Evas_Object *obj)
         Evas_Map *m;
         Evas_Coord cx, cy, cz, px, py, foc;
         
-        evas_object_map_set(wd->content, NULL);
-        evas_object_map_enable_set(wd->content, 0);
         m = evas_map_new(4);
         evas_map_util_points_populate_from_geometry(m, x, y, w, h, 0);
         evas_map_smooth_set(m, wd->smooth);
