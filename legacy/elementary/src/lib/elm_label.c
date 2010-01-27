@@ -38,10 +38,18 @@ _elm_win_recalc_job(void *data)
    minminw = 0;
    edje_object_size_min_restricted_calc(wd->lbl, &minw, &minh, 0, 0);
    minminw = minw;
-   if (wd->wrap_w > minminw) minminw = wd->wrap_w;
-   if (wd->wrap_w > resw) resw = wd->wrap_w;
-   edje_object_size_min_restricted_calc(wd->lbl, &minw, &minh, resw, 0);
-   evas_object_size_hint_min_set(data, minminw, minh);
+   if (wd->wrap_w >= resw) 
+     {
+        resw = wd->wrap_w;
+        edje_object_size_min_restricted_calc(wd->lbl, &minw, &minh, resw, 0);
+        evas_object_size_hint_min_set(data, minw, minh);
+     }
+   else
+     {
+        if (wd->wrap_w > minminw) minminw = wd->wrap_w;
+        edje_object_size_min_restricted_calc(wd->lbl, &minw, &minh, resw, 0);
+        evas_object_size_hint_min_set(data, minminw, minh);
+     }
    maxh = minh;
    evas_object_size_hint_max_set(data, -1, maxh);
 }
@@ -84,8 +92,10 @@ _sizing_eval(Evas_Object *obj)
         if ((resw == wd->lastw) && (!wd->changed)) return;
         wd->changed = EINA_FALSE;
         wd->lastw = resw;
-        if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
-        wd->deferred_recalc_job = ecore_job_add(_elm_win_recalc_job, obj);
+        _elm_win_recalc_job(obj);
+// FIXME: works ok. but NOT for genlist. what should genlist do?        
+//        if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
+//        wd->deferred_recalc_job = ecore_job_add(_elm_win_recalc_job, obj);
      }
    else
      {
