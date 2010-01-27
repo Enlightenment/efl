@@ -727,7 +727,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
 
    /* Init Edje_Part_Collection */
    pc->id = id;
-   pc->references = 1;  //TODO i'm not shure about this (maybe set to 0 ?)
+   pc->references = 0;
    pc->programs = NULL;
    pc->parts = NULL;
    pc->data = NULL;
@@ -737,9 +737,8 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    //cd = _alloc(sizeof(Code));
    //codes = eina_list_append(codes, cd);
 
-   if (!ed->file->collection_hash)
-     ed->file->collection_hash = eina_hash_string_superfast_new(NULL);
-   eina_hash_add(ed->file->collection_hash, name, pc);
+   ed->file->collection_cache = eina_list_prepend(ed->file->collection_cache, pc);
+   _edje_cache_coll_clean(ed->file);
 
    return 1;
 }
