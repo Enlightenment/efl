@@ -68,7 +68,7 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
 	goto close_file;
      }
 
-   if (!png_check_sig(buf, PNG_BYTES_TO_CHECK))
+   if (png_sig_cmp(buf, 0, PNG_BYTES_TO_CHECK))
      {
 	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
 	goto close_file;
@@ -152,7 +152,7 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
 
    /* if we havent read the header before, set the header data */
    E_FREAD(buf, 1, PNG_BYTES_TO_CHECK, f);
-   if (!png_check_sig(buf, PNG_BYTES_TO_CHECK))
+   if (png_sig_cmp(buf, 0, PNG_BYTES_TO_CHECK))
      {
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 	goto close_file;
