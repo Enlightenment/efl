@@ -1,5 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include <ctype.h>
 
 /**
  * @defgroup Spinner
@@ -233,11 +234,17 @@ static void
 _apply_entry_value(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   const char *str;
+   char *end;
    double val;
 
    if (!wd) return;
    _hide_entry(obj);
-   val = atof(elm_entry_entry_get(wd->ent));
+
+   str = elm_entry_entry_get(wd->ent);
+   if (!str) return;
+   val = strtod(str, &end);
+   if ((*end != '\0') && (!isspace(*end))) return;
    elm_spinner_value_set(obj, val);
 }
 
