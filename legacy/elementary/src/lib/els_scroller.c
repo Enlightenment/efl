@@ -1614,7 +1614,6 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
                             sd->down.onhold_animator = ecore_animator_add(_smart_onhold_animator, sd);
                          }
 //                       printf("b %i %i\n", sd->down.hold_x, sd->down.hold_y);
-                       _smart_onhold_animator(sd);
                     }
                   else
                     {
