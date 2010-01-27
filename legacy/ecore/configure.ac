@@ -1289,12 +1289,7 @@ echo "  Ecore_Evas...................: $have_ecore_evas"
 if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    Software Memory Buffer.....: $have_ecore_evas_software_buffer"
   if test "x${have_ecore_evas_software_x11}" = "xyes" ; then
-    if test "x${have_ecore_evas_software_xlib}" = "xyes" ; then
-      echo "    Software X11...............: $have_ecore_evas_software_x11 (Xlib)"
-    fi
-    if test "x${have_ecore_evas_software_xcb}" = "xyes" ; then
-      echo "    Software X11...............: $have_ecore_evas_software_x11 (XCB)"
-    fi
+    echo "    Software X11...............: $have_ecore_evas_software_x11 (Xlib=${have_ecore_evas_software_xlib}) (XCB=${have_ecore_evas_software_xcb})"
   else
     echo "    Software X11...............: $have_ecore_evas_software_x11"
   fi
