@@ -1305,12 +1305,9 @@ _smart_event_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static int
 _smart_hold_animator(void *data)
 {
-   Smart_Data *sd;
-
-   sd = data;
-   sd->down.hold_animator = NULL;
+   Smart_Data *sd = data;
    elm_smart_scroller_child_pos_set(sd->smart_obj, sd->down.hold_x, sd->down.hold_y);
-   return 0;
+   return 1;
 }
 
 static void
@@ -1556,9 +1553,11 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
                        sd->down.hold_x = x;
                        sd->down.hold_y = y;
                        if (!sd->down.hold_animator)
-                         sd->down.hold_animator = ecore_animator_add(_smart_hold_animator, sd);
+                         {
+                            sd->down.hold_animator = ecore_animator_add(_smart_hold_animator, sd);
+                         }
 //                       printf("a %i %i\n", sd->down.hold_x, sd->down.hold_y);
-                       _smart_onhold_animator(sd);
+//                       _smart_onhold_animator(sd);
 //                       elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
                     }
 	       }
