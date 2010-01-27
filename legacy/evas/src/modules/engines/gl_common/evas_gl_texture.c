@@ -3,8 +3,13 @@
 #if 1
 static const GLenum rgba_fmt   = GL_RGBA;
 static const GLenum rgba_ifmt  = GL_RGBA;
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 static const GLenum rgb_fmt    = GL_RGBA;
 static const GLenum rgb_ifmt   = GL_RGBA;
+#else
+static const GLenum rgb_fmt    = GL_RGB;
+static const GLenum rgb_ifmt   = GL_RGB;
+#endif
 static const GLenum alpha_fmt  = GL_ALPHA;
 static const GLenum alpha_ifmt = GL_ALPHA;
 static const GLenum lum_fmt    = GL_LUMINANCE;
