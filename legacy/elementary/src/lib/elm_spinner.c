@@ -86,6 +86,50 @@ _delay_change(void *data)
 }
 
 static void
+_entry_show(Widget_Data *wd)
+{
+   char buf[32], fmt[32] = "%0.f";
+
+   /* try to construct just the format from given label
+    * completely ignoring pre/post words
+    */
+   if (wd->label)
+     {
+        const char *start = strchr(wd->label, '%');
+        while (start)
+          {
+	     /* handle %% */
+	     if (start[1] != '%')
+	       break;
+	     else
+	       start = strchr(start + 2, '%');
+          }
+
+        if (start)
+          {
+	     const char *itr, *end = NULL;
+	     for (itr = start + 1; *itr != '\0'; itr++)
+	       {
+		  /* allowing '%d' is quite dangerous, remove it? */
+		  if ((*itr == 'd') || (*itr == 'f'))
+		    {
+		       end = itr + 1;
+		       break;
+		    }
+	       }
+
+	     if ((end) && ((size_t)(end - start + 1) < sizeof(fmt)))
+	       {
+		  memcpy(fmt, start, end - start);
+		  fmt[end - start] = '\0';
+	       }
+          }
+     }
+   snprintf(buf, sizeof(buf), fmt, wd->val);
+   elm_entry_entry_set(wd->ent, buf);
+}
+
+static void
 _write_label(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -98,12 +142,7 @@ _write_label(Evas_Object *obj)
    edje_object_part_text_set(wd->spinner, "elm.text", buf);
 
    if (wd->entry_visible)
-     {
-        char buf[30];
-
-        snprintf(buf, sizeof(buf), "%f", wd->val);
-        elm_entry_entry_set(wd->ent, buf);
-     }
+     _entry_show(wd);
 }
 
 static Eina_Bool 
@@ -264,12 +303,9 @@ _toggle_entry(void *data, Evas_Object *obj, const char *emission, const char *so
      _apply_entry_value(data);
    else
      {
-        char buf[30];
-
-        snprintf(buf, sizeof(buf), "%f", wd->val);
         wd->orig_val = wd->val;
 	edje_object_signal_emit(wd->spinner, "elm,state,active", "elm");
-        elm_entry_entry_set(wd->ent, buf);
+        _entry_show(wd);
         elm_entry_select_all(wd->ent);
         wd->entry_visible = 1;
      }
