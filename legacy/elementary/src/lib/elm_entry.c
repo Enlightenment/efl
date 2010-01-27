@@ -404,17 +404,23 @@ _long_press(void *data)
           {
              elm_hoversel_item_add(wd->hoversel, "Select", NULL, ELM_ICON_NONE,
                                    _select, data);
-             if (wd->editable)
-               elm_hoversel_item_add(wd->hoversel, "Paste", NULL, ELM_ICON_NONE,
-                                     _paste, data);
+             if (1) // need way to detect if someone has a selection
+               {
+                  if (wd->editable)
+                    elm_hoversel_item_add(wd->hoversel, "Paste", NULL, ELM_ICON_NONE,
+                                          _paste, data);
+               }
           }
         else
           {
-             elm_hoversel_item_add(wd->hoversel, "Copy", NULL, ELM_ICON_NONE,
-                                   _copy, data);
-             if (wd->editable)
-               elm_hoversel_item_add(wd->hoversel, "Cut", NULL, ELM_ICON_NONE,
-                                     _cut, data);
+             if (wd->have_selection)
+               {
+                  elm_hoversel_item_add(wd->hoversel, "Copy", NULL, ELM_ICON_NONE,
+                                        _copy, data);
+                  if (wd->editable)
+                    elm_hoversel_item_add(wd->hoversel, "Cut", NULL, ELM_ICON_NONE,
+                                          _cut, data);
+               }
              elm_hoversel_item_add(wd->hoversel, "Cancel", NULL, ELM_ICON_NONE,
                                    _cancel, data);
           }
