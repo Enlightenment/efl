@@ -111,7 +111,7 @@ elm_conformant_add(Evas_Object *parent)
 
    ecore_x_e_illume_top_shelf_geometry_get(ecore_x_window_root_first_get(), 
                                            NULL, NULL, NULL, &sh);
-   if (sh < 0) sh = 1;
+   if (sh < 0) sh = 0;
 
    wd->shelf = evas_object_rectangle_add(evas);
    evas_object_color_set(wd->shelf, 0, 0, 0, 0);
@@ -122,7 +122,7 @@ elm_conformant_add(Evas_Object *parent)
    sh = -1;
    ecore_x_e_illume_bottom_panel_geometry_get(ecore_x_window_root_first_get(), 
                                               NULL, NULL, NULL, &sh);
-   if (sh < 0) sh = 1;
+   if (sh < 0) sh = 0;
 
    wd->panel = evas_object_rectangle_add(evas);
    evas_object_color_set(wd->panel, 0, 0, 0, 0);
