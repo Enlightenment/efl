@@ -96,6 +96,7 @@ S(convert);
 S(counter);
 S(benchmark);
 S(rectangle);
+S(strbuf);
 #undef S
 
 struct eina_desc_setup
@@ -122,7 +123,8 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
   S(convert),
   S(counter),
   S(benchmark),
-  S(rectangle)
+  S(rectangle),
+  S(strbuf)
 #undef S
 };
 static const size_t _eina_desc_setup_len = sizeof(_eina_desc_setup) / sizeof(_eina_desc_setup[0]);

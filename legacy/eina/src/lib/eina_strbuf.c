@@ -7,11 +7,24 @@
 # include "config.h"
 #endif
 
+#include "eina_private.h"
 #include "eina_str.h"
 #include "eina_strbuf.h"
+#include "eina_magic.h"
 
 #include <stdlib.h>
 #include <string.h>
+
+static const char EINA_MAGIC_STRBUF_STR[] = "Eina Strbuf";
+
+#define EINA_MAGIC_CHECK_STRBUF(d, ...)				\
+   do {								\
+	if (!EINA_MAGIC_CHECK((d), EINA_MAGIC_STRBUF))		\
+	  {							\
+	     EINA_MAGIC_FAIL((d), EINA_MAGIC_STRBUF);		\
+	     return __VA_ARGS__;				\
+	  }							\
+   } while (0);
 
 #define EINA_STRBUF_INIT_SIZE 32
 #define EINA_STRBUF_INIT_STEP 32
@@ -23,9 +36,24 @@ struct _Eina_Strbuf
    size_t len;
    size_t size;
    size_t step;
+
+   EINA_MAGIC
 };
 
 static int _eina_strbuf_resize(Eina_Strbuf *buf, size_t size);
+
+Eina_Bool
+eina_strbuf_init(void)
+{
+   eina_magic_string_static_set(EINA_MAGIC_STRBUF, EINA_MAGIC_STRBUF_STR);
+   return EINA_TRUE;
+}
+
+Eina_Bool
+eina_strbuf_shutdown(void)
+{
+   return EINA_TRUE;
+}
 
 /**
  * Create a new string buffer
@@ -37,6 +65,7 @@ eina_strbuf_new(void)
 
    buf = malloc(sizeof(Eina_Strbuf));
    if (!buf) return NULL;
+   EINA_MAGIC_SET(buf, EINA_MAGIC_STRBUF);
 
    buf->len = 0;
    buf->size = EINA_STRBUF_INIT_SIZE;
@@ -55,6 +84,7 @@ eina_strbuf_new(void)
 EAPI void
 eina_strbuf_free(Eina_Strbuf *buf)
 {
+   EINA_MAGIC_CHECK_STRBUF(buf);
    free(buf->buf);
    free(buf);
 }
@@ -69,6 +99,8 @@ eina_strbuf_append(Eina_Strbuf *buf, const char *str)
 {
    size_t l;
    size_t off = 0;
+
+   EINA_MAGIC_CHECK_STRBUF(buf);
 
    l = eina_strlcpy(buf->buf + buf->len, str, buf->size - buf->len);
 
@@ -99,6 +131,8 @@ eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos)
 {
    size_t len;
 
+   EINA_MAGIC_CHECK_STRBUF(buf);
+
    if (pos >= buf->len)
      {
 	eina_strbuf_append(buf, str);
@@ -127,6 +161,8 @@ eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos)
 EAPI void
 eina_strbuf_append_char(Eina_Strbuf *buf, char c)
 {
+   EINA_MAGIC_CHECK_STRBUF(buf);
+
    if (buf->len >= buf->size - 1)
      {
 	buf->size += buf->step;
@@ -149,6 +185,8 @@ eina_strbuf_append_char(Eina_Strbuf *buf, char c)
 EAPI const char *
 eina_strbuf_string_get(Eina_Strbuf *buf)
 {
+   EINA_MAGIC_CHECK_STRBUF(buf, NULL);
+
    return buf->buf;
 }
 
@@ -159,6 +197,8 @@ eina_strbuf_string_get(Eina_Strbuf *buf)
 EAPI size_t
 eina_strbuf_length_get(Eina_Strbuf *buf)
 {
+   EINA_MAGIC_CHECK_STRBUF(buf, 0);
+
    return buf->len;
 }
 
@@ -175,6 +215,8 @@ EAPI int
 eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with,
                      unsigned int n)
 {
+   EINA_MAGIC_CHECK_STRBUF(buf, 0);
+
    size_t len1, len2;
    char *spos;
    size_t pos;
@@ -222,6 +264,8 @@ eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with,
 EAPI int
 eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
 {
+   EINA_MAGIC_CHECK_STRBUF(buf, 0);
+
    size_t len1, len2, len;
    char *tmp_buf = NULL;
    char *spos;
