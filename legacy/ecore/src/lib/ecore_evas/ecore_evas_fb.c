@@ -504,8 +504,11 @@ _ecore_evas_fb_shutdown(void)
      {
 	int i;
 
-	for (i = 0; i < 5; i++)
-	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
+	for (i = 0; i < 6; i++)
+          {
+             if (ecore_evas_event_handlers[i])
+               ecore_event_handler_del(ecore_evas_event_handlers[i]);
+          }
 	ecore_fb_ts_shutdown();
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
