@@ -178,7 +178,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
    Ecore_Con_Server   *svr;
    Ecore_Con_Type      type;
 
-   if (port < 0) return NULL;
+   if (port < 0 || !name) return NULL;
    /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
    /* local  system socket: FILE:   /tmp/.ecore_service|[name]|[port] */
    /* remote system socket: TCP/IP: [name]:[port] */
@@ -560,7 +560,7 @@ ecore_con_client_send(Ecore_Con_Client *cl, const void *data, int size)
 
    if(cl->server && cl->server->type == ECORE_CON_REMOTE_UDP)
      {
-       sendto(cl->server->fd, data, size, 0, (struct sockaddr *) cl->client_addr, sizeof(struct sockaddr_in));
+       sendto(cl->server->fd, data, size, 0, (struct sockaddr *) cl->client_addr, cl->client_addr_len);
      }
    else if (cl->buf)
      {
@@ -1267,12 +1267,13 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      {
        unsigned char buf[READBUFSIZ];
-       struct sockaddr_in client_addr;
+       unsigned char client_addr[256];
        unsigned int client_addr_len = sizeof(client_addr);
        int num;
 
        errno = 0;
        num = recvfrom(svr->fd, buf, sizeof(buf), MSG_DONTWAIT, (struct sockaddr*) &client_addr, &client_addr_len);
+       fprintf(stderr, "%i vs %i\n", client_addr_len, sizeof(client_addr));
 
        if (num > 0)
 	 {
@@ -1280,8 +1281,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	     {
 	       Ecore_Con_Event_Client_Data *e;
 	       unsigned char *inbuf;
-	       uint32_t ip;
-	       char ipbuf[64];
+	       char ipbuf[INET6_ADDRSTRLEN + 1];
 
 	       /* Create a new client for use in the client data event */
 	       cl = calloc(1, sizeof(Ecore_Con_Client));
@@ -1291,24 +1291,48 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	       cl->fd = 0;
 	       cl->fd_handler = NULL;
 	       cl->server = svr;
-	       cl->client_addr = calloc(1, sizeof(client_addr));
+	       cl->client_addr = calloc(1, client_addr_len);
+	       cl->client_addr_len = client_addr_len;
 	       if(cl->client_addr == NULL)
 		 {
 		   free(cl);
 		   return 1;
 		 }
-	       memcpy(cl->client_addr,  &client_addr, sizeof(client_addr));
+	       memcpy(cl->client_addr, &client_addr, client_addr_len);
 	       ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
 	       svr->clients = eina_list_append(svr->clients, cl);
 
-	       ip = client_addr.sin_addr.s_addr;
-	       snprintf(ipbuf, sizeof(ipbuf),
-			"%i.%i.%i.%i",
-			(ip      ) & 0xff,
-			(ip >> 8 ) & 0xff,
-			(ip >> 16) & 0xff,
-			(ip >> 24) & 0xff);
-	       cl->ip = strdup(ipbuf);
+	       /* show v4mapped address in pretty form */
+	       if (cl->client_addr->sa_family == AF_INET6)
+		 {
+#define NIPQUAD(addr)					      \
+		    ((unsigned char *)&(addr))[0],	      \
+		      ((unsigned char *)&(addr))[1],          \
+		      ((unsigned char *)&(addr))[2],          \
+		      ((unsigned char *)&(addr))[3]
+
+		    struct sockaddr_in6 *sa6;
+
+		    sa6 = (struct sockaddr_in6 *) cl->client_addr;
+		    if (IN6_IS_ADDR_V4MAPPED(&sa6->sin6_addr))
+		      {
+			 snprintf(ipbuf, sizeof (ipbuf), "%u.%u.%u.%u",
+				  NIPQUAD(sa6->sin6_addr.s6_addr32[3]));
+			 cl->ip = strdup(ipbuf);
+		      }
+		 }
+
+	       if (!cl->ip)
+		 {
+		    if (getnameinfo(cl->client_addr, cl->client_addr_len,
+				    ipbuf, sizeof (ipbuf), NULL, 0, NI_NUMERICHOST))
+		      cl->ip = strdup("unknown");
+		    else
+		      {
+			 ipbuf[sizeof (ipbuf) - 1] = 0;
+			 cl->ip = strdup(ipbuf);
+		      }
+		 }
 
 	       inbuf = malloc(num);
 	       if(inbuf == NULL)

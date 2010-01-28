@@ -82,7 +82,8 @@ struct _Ecore_Con_Client
    unsigned char    *buf;
    char             *ip;
    int               event_count;
-   struct sockaddr_in *client_addr;
+   struct sockaddr  *client_addr;
+   int               client_addr_len;
 #if USE_GNUTLS
    gnutls_session    session;
 #elif USE_OPENSSL
