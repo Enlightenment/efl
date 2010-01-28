@@ -1924,6 +1924,7 @@ EAPI Eina_Bool
 edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_to)
 {
    Edje_Real_Part *clip;
+   Evas_Object *o, *oo;
 
    GET_RP_OR_RETURN(0);
 
@@ -1954,6 +1955,14 @@ edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_
    //printf("Set clip_to for part: %s [to: %s]\n", part, clip_to);
    clip = _edje_real_part_get(ed, clip_to);
    if (!clip || !clip->part) return 0;
+   o = clip->object;
+   while ((oo = evas_object_clip_get(o)))
+     {
+	if (o == rp->object)
+	  return 0;
+	o = oo;
+     }
+
    rp->part->clip_to_id = clip->part->id;
    rp->clip_to = clip;
 
