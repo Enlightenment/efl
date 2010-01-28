@@ -5,7 +5,6 @@
 
 #include <unistd.h>
 #include <fcntl.h>
-#include <pthread.h>
 #include <errno.h>
 
 static int _fd_write = -1;
