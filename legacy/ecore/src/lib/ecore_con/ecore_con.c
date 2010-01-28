@@ -92,7 +92,7 @@ ecore_con_init(void)
    _ecore_con_log_dom = eina_log_domain_register("EcoreCon", ECORE_CON_DEFAULT_LOG_COLOR);
    if(_ecore_con_log_dom < 0)
      {
-       EINA_LOG_ERR("Impossible to create a log domain foe Ecore Con.");
+       EINA_LOG_ERR("Impossible to create a log domain for Ecore Con.");
        ecore_shutdown();
        return --_ecore_con_init_count;
      }
@@ -122,7 +122,7 @@ ecore_con_shutdown(void)
 {
    if (--_ecore_con_init_count != 0)
      return _ecore_con_init_count;
-   
+
    while (servers)
      _ecore_con_server_free(eina_list_data_get(servers));
 
