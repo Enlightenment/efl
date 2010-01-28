@@ -70,6 +70,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef EFL_HAVE_PTHREAD
+# include <pthread.h>
+#endif
+
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
@@ -177,7 +181,6 @@ static int _eina_stringshare_log_dom = -1;
 
 
 #ifdef EFL_HAVE_PTHREAD
-#include <pthread.h>
 static Eina_Bool _stringshare_threads_activated = EINA_FALSE;
 //string < 4
 static pthread_mutex_t _mutex_small = PTHREAD_MUTEX_INITIALIZER;

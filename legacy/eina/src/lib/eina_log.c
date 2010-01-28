@@ -294,6 +294,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <fnmatch.h>
+#include <assert.h>
+
+#ifdef EFL_HAVE_PTHREAD
+# include <pthread.h>
+#endif
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
@@ -306,8 +311,6 @@
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_log.h"
-
-#include <assert.h>
 
 /* TODO
  * + printing logs to stdout or stderr can be implemented
@@ -359,7 +362,6 @@ static Eina_Bool _abort_on_critical = EINA_FALSE;
 static int _abort_level_on_critical = EINA_LOG_LEVEL_CRITICAL;
 
 #ifdef EFL_HAVE_PTHREAD
-#include <pthread.h>
 static Eina_Bool _threads_enabled = EINA_FALSE;
 static pthread_t _main_thread;
 

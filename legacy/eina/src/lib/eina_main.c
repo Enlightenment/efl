@@ -22,6 +22,10 @@
 # include "config.h"
 #endif
 
+#ifdef EFL_HAVE_PTHREAD
+# include <pthread.h>
+#endif
+
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_types.h"
@@ -64,7 +68,6 @@ static int _eina_log_dom = -1;
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_log_dom, __VA_ARGS__)
 
 #ifdef EFL_HAVE_PTHREAD
-#include <pthread.h>
 static Eina_Bool _threads_activated = EINA_FALSE;
 static pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
 #define LOCK() if(_threads_activated) pthread_mutex_lock(&_mutex);
