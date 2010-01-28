@@ -5916,7 +5916,7 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
 static const char* //return the name of the temp file containing the edc
 _edje_generate_source(Evas_Object *obj)
 {
-   printf("\n****** GENERATE EDC SOURCE *********\n");
+   //printf("\n****** GENERATE EDC SOURCE *********\n");
    char tmpn[PATH_MAX];
    int fd;
    FILE *f;
