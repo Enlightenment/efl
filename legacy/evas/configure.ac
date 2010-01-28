@@ -749,11 +749,10 @@ AC_ARG_ENABLE(async-events,
 AC_MSG_RESULT($build_async_events)
 
 AC_MSG_CHECKING(whether we can build Async Events support)
-if test \( "x$build_async_events" = "xyes" -o "x$build_async_events" = "xauto" \) -a "x$has_pthreads" = "xyes"; then
+if test "x$build_async_events" = "xyes" || test "x$build_async_events" = "xauto" ; then
   AC_MSG_RESULT(yes)
   AC_DEFINE(BUILD_ASYNC_EVENTS, 1, [Build async events support])
   build_async_events="yes"
-  need_pthreads="yes"
 else
   AC_MSG_RESULT(no)
   build_async_events="no"
