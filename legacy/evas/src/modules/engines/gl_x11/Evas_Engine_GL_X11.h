@@ -33,6 +33,8 @@ struct _Evas_Engine_Info_GL_X11
       
       void       *data; // data for callback calls
    } callback;
+   
+   unsigned char vsync : 1;
 };
 #endif
 

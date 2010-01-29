@@ -30,6 +30,8 @@ typedef void (*_eng_fn) (void);
 _eng_fn  (*glsym_glXGetProcAddress)  (const char *a) = NULL;
 void     (*glsym_glXBindTexImage)    (Display *a, GLXDrawable b, int c, int *d) = NULL;
 void     (*glsym_glXReleaseTexImage) (Display *a, GLXDrawable b, int c) = NULL;
+int      (*glsym_glXGetVideoSync)    (Display *a) = NULL;
+int      (*glsym_glXWaitVideoSync)   (int a, int b, unsigned int *c) = NULL;
 #endif
                 
 static void
@@ -48,6 +50,7 @@ _sym_init(void)
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress");
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT");
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB");
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR");
    
    FINDSYM(glsym_eglBindTexImage, "eglBindTexImage");
    FINDSYM(glsym_eglBindTexImage, "eglBindTexImageEXT");
@@ -86,6 +89,10 @@ _sym_init(void)
    FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImage");
    FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageEXT");
    FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageARB");
+
+   FINDSYM(glsym_glXGetVideoSync, "glXGetVideoSyncSGI");
+   
+   FINDSYM(glsym_glXWaitVideoSync, "glXWaitVideoSyncSGI");
 #endif
 }
 
@@ -362,7 +369,7 @@ eng_output_redraws_clear(void *data)
  */
 #define SLOW_GL_COPY_RECT 1
 /* vsync games - not for now though */
-//#define VSYNC_TO_SCREEN 1
+#define VSYNC_TO_SCREEN 1
 
 static void *
 eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
@@ -440,13 +447,17 @@ eng_output_flush(void *data)
 //   glFlush();
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
 #else
-# ifdef VSYNC_TO_SCREEN
-//     {
-//	unsigned int rc;
-//        
-//	glXGetVideoSyncSGI(&rc);
-//	glXWaitVideoSyncSGI(2, (rc + 1) % 2, &rc);
-//     }
+#ifdef VSYNC_TO_SCREEN   
+   if (re->info->vsync) 
+     {
+        if ((glsym_glXGetVideoSync) && (glsym_glXWaitVideoSync))
+          {
+             unsigned int rc;
+             
+             glsym_glXGetVideoSync(&rc);
+             glsym_glXWaitVideoSync(1, 0, &rc);
+          }
+     }
 # endif
    if (re->info->callback.pre_swap)
      {
