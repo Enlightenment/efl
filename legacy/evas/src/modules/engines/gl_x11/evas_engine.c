@@ -1173,8 +1173,8 @@ _native_free_cb(void *data, void *image)
    if (n->egl_surface)
      {
         if (glsym_eglDestroyImage)
-          n->egl_surface = glsym_eglDestroyImage(re->win->egl_disp,
-                                                 n->egl_surface);
+          glsym_eglDestroyImage(re->win->egl_disp,
+                                n->egl_surface);
      }
 # endif
 #else
@@ -1265,7 +1265,7 @@ eng_image_native_set(void *data, void *image, void *native)
              if (!eglChooseConfig(re->win->egl_disp, config_attrs, 
                                   &egl_config, 1, &num_config))
                {
-                  printf("ERROR: eglChooseConfig() failed for pixmap 0x%x, num_config = %i\n", pm, num_config);
+                  printf("ERROR: eglChooseConfig() failed for pixmap 0x%x, num_config = %i\n", (unsigned int)pm, num_config);
                }
              n->pixmap = pm;
              n->visual = vis;
@@ -1285,11 +1285,12 @@ eng_image_native_set(void *data, void *image, void *native)
                n->egl_surface = glsym_eglCreateImage(re->win->egl_disp,
                                                      EGL_NO_CONTEXT,
                                                      EGL_NATIVE_PIXMAP_KHR,
+                                                     (void *)pm,
                                                      NULL);
 #endif
              if (!n->egl_surface)
                {
-                  printf("ERROR: eglCreatePixmapSurface() for 0x%x failed\n", pm);
+                  printf("ERROR: eglCreatePixmapSurface() for 0x%x failed\n", (unsigned int)pm);
                }
              evas_gl_common_image_native_enable(im);
           }

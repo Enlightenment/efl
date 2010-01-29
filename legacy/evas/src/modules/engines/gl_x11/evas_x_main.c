@@ -118,7 +118,7 @@ eng_window_new(Display *disp,
                                                NULL);
    if (gw->egl_surface[0] == EGL_NO_SURFACE)
      {
-        printf("Error: eglCreateWindowSurface() fail.\n", gw->win);
+        printf("Error: eglCreateWindowSurface() fail for 0x%x.\n", (unsigned int)gw->win);
      }
    if (context == EGL_NO_CONTEXT)
      context = eglCreateContext(gw->egl_disp, gw->egl_config, NULL, 
