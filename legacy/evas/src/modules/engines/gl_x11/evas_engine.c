@@ -12,14 +12,24 @@
 #endif
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-void (*glsym_eglBindTexImage) (EGLDisplay a, EGLSurface b, int c) = NULL;
-void (*glsym_eglReleaseTexImage) (EGLDisplay a, EGLSurface b, int c) = NULL;
+
+#ifndef EGL_NATIVE_PIXMAP_KHR
+# define EGL_NATIVE_PIXMAP_KHR 0x30b0
+#endif
+typedef void (*_eng_fn) (void);
+
+_eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
+void     (*glsym_eglBindTexImage)              (EGLDisplay a, EGLSurface b, int c) = NULL;
+void     (*glsym_eglReleaseTexImage)           (EGLDisplay a, EGLSurface b, int c) = NULL;
+void    *(*glsym_eglCreateImage)               (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const int *e) = NULL;
+void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
+void     (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 #else
 typedef void (*_eng_fn) (void);
 
-_eng_fn (*glsym_glXGetProcAddress) (const char *a) = NULL;
-void (*glsym_glXBindTexImage) (Display *a, GLXDrawable b, int c, int *d) = NULL;
-void (*glsym_glXReleaseTexImage) (Display *a, GLXDrawable b, int c) = NULL;
+_eng_fn  (*glsym_glXGetProcAddress)  (const char *a) = NULL;
+void     (*glsym_glXBindTexImage)    (Display *a, GLXDrawable b, int c, int *d) = NULL;
+void     (*glsym_glXReleaseTexImage) (Display *a, GLXDrawable b, int c) = NULL;
 #endif
                 
 static void
@@ -31,14 +41,35 @@ _sym_init(void)
    if (done) return;
    
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-#define FINDSYM(dst, sym) if (!dst) dst = dlsym(RTLD_DEFAULT, sym)
+#define FINDSYM(dst, sym) \
+   if ((!dst) && (glsym_eglGetProcAddress)) dst = glsym_eglGetProcAddress(sym); \
+   if (!dst) dst = dlsym(RTLD_DEFAULT, sym)
+   
+   FINDSYM(glsym_eglGetProcAddress, "glXGetProcAddress");
+   FINDSYM(glsym_eglGetProcAddress, "glXGetProcAddressEXT");
+   FINDSYM(glsym_eglGetProcAddress, "glXGetProcAddressARB");
+   
    FINDSYM(glsym_eglBindTexImage, "eglBindTexImage");
    FINDSYM(glsym_eglBindTexImage, "eglBindTexImageEXT");
    FINDSYM(glsym_eglBindTexImage, "eglBindTexImageARB");
+   FINDSYM(glsym_eglBindTexImage, "eglBindTexImageKHR");
    
    FINDSYM(glsym_eglReleaseTexImage, "eglReleaseTexImage");
    FINDSYM(glsym_eglReleaseTexImage, "eglReleaseTexImageEXT");
    FINDSYM(glsym_eglReleaseTexImage, "eglReleaseTexImageARB");
+   FINDSYM(glsym_eglReleaseTexImage, "eglReleaseTexImageKHR");
+   
+   FINDSYM(glsym_eglCreateImage, "eglCreateImage");
+   FINDSYM(glsym_eglCreateImage, "eglCreateImageEXT");
+   FINDSYM(glsym_eglCreateImage, "eglCreateImageARB");
+   FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR");
+
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImage");
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageEXT");
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageARB");
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR");
+
+   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES");
 #else
 #define FINDSYM(dst, sym) \
    if ((!dst) && (glsym_glXGetProcAddress)) dst = glsym_glXGetProcAddress(sym); \
@@ -1028,7 +1059,7 @@ struct _Native
    Visual    *visual;
    
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   EGLSurface  egl_surface;
+   void      *egl_surface;
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
    GLXFBConfig fbc;
@@ -1054,10 +1085,19 @@ _native_bind_cb(void *data, void *image)
    Native *n = im->native.data;
    
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   if (glsym_eglBindTexImage)
+# if 0 // old texfrompixmap 
+   if (n->egl_surface)
      {
-        glsym_eglBindTexImage(re->win->egl_disp, n->egl_surface, EGL_SINGLE_BUFFER);
+        if (glsym_eglBindTexImage)
+          glsym_eglBindTexImage(re->win->egl_disp, n->egl_surface, EGL_SINGLE_BUFFER);
      }
+# else   
+   if (n->egl_surface)
+     {
+        if (glsym_glEGLImageTargetTexture2DOES)
+          glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->egl_surface);
+     }
+# endif   
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
    if (glsym_glXBindTexImage)
@@ -1068,7 +1108,8 @@ _native_bind_cb(void *data, void *image)
              GLX_TEXTURE_TARGET_EXT, 
                GLX_TEXTURE_2D_EXT,
                GLX_TEXTURE_FORMAT_EXT, 
-               GLX_TEXTURE_FORMAT_RGBA_EXT,
+//               GLX_TEXTURE_FORMAT_RGBA_EXT,
+               GLX_TEXTURE_FORMAT_RGB_EXT,
                0
           };
         
@@ -1091,10 +1132,13 @@ _native_unbind_cb(void *data, void *image)
    Native *n = im->native.data;
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   if (glsym_eglReleaseTexImage)
+# if 0 // old texfrompixmap 
+   if (n->egl_surface)
      {
-        glsym_eglReleaseTexImage(re->win->egl_disp, n->egl_surface, EGL_SINGLE_BUFFER);
+        if (glsym_eglReleaseTexImage)
+          glsym_eglReleaseTexImage(re->win->egl_disp, n->egl_surface, EGL_SINGLE_BUFFER);
      }
+# endif   
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
    if (glsym_glXReleaseTexImage)
@@ -1119,11 +1163,20 @@ _native_free_cb(void *data, void *image)
    Native *n = im->native.data;
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+# if 0 // old texfrompixmap 
    if (n->egl_surface)
      {
         eglDestroySurface(re->win->egl_disp, n->egl_surface);
         n->egl_surface = 0;
      }
+# else
+   if (n->egl_surface)
+     {
+        if (glsym_eglDestroyImage)
+          n->egl_surface = glsym_eglDestroyImage(re->win->egl_disp,
+                                                 n->egl_surface);
+     }
+# endif
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
    if (n->glx_pixmap)
@@ -1223,9 +1276,17 @@ eng_image_native_set(void *data, void *image, void *native)
              im->native.func.bind   = _native_bind_cb;
              im->native.func.unbind = _native_unbind_cb;
              im->native.func.free   = _native_free_cb;
+#if 0 // old texfrompixmap             
              n->egl_surface = eglCreatePixmapSurface(re->win->egl_disp, 
                                                      egl_config, pm, 
                                                      NULL);
+#else
+             if (glsym_eglCreateImage)
+               n->egl_surface = glsym_eglCreateImage(re->win->egl_disp,
+                                                     EGL_NO_CONTEXT,
+                                                     EGL_NATIVE_PIXMAP_KHR,
+                                                     NULL);
+#endif
              if (!n->egl_surface)
                {
                   printf("ERROR: eglCreatePixmapSurface() for 0x%x failed\n", pm);
@@ -1303,7 +1364,8 @@ eng_image_native_set(void *data, void *image, void *native)
                             GLX_TEXTURE_TARGET_EXT, 
                               GLX_TEXTURE_2D_EXT,
                               GLX_TEXTURE_FORMAT_EXT, 
-                              GLX_TEXTURE_FORMAT_RGBA_EXT,
+//                              GLX_TEXTURE_FORMAT_RGBA_EXT,
+                              GLX_TEXTURE_FORMAT_RGB_EXT,
                               0
                          };
 #endif        
