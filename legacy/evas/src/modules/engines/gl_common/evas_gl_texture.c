@@ -353,7 +353,7 @@ static void
 pt_unref(Evas_GL_Texture_Pool *pt)
 {
    pt->references--;
-   if (pt->references > 0) return;
+   if (pt->references != 0) return;
    if (!((pt->render) || (pt->native)))
      {
         if (pt->whole)
@@ -440,19 +440,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
         else
           tex->pt = _pool_tex_render_new(tex->gc, tex->w, tex->h, rgb_ifmt, rgb_fmt);
      }
-/* FIXME: on fglrx this doesnt work - is uploads alpha channel too AND uses it
- * so need to fill in alpha channel - all bad! the texture is set up as rgb,
- * not rgba. perhaps a shader can fix this that forcible sets a to 0xff if
- * blend is off
-   if (!tex->alpha)
-     {
-        DATA32 *pixels, *p, *end;
-
-        pixels = im->image.data;
-        end = pixels + (im->cache_entry.w * im->cache_entry.h);
-        for (p = pixels; p < end; p++) *p |= 0xff000000;
-     }
- */
+   if (!tex->pt) return;
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
 #ifdef GL_UNPACK_ROW_LENGTH   
    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
@@ -516,9 +504,14 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex)
 {
    if (!tex) return;
    tex->references--;
-   if (tex->references > 0) return;
-   tex->pt->allocations = eina_list_remove(tex->pt->allocations, tex);
-   pt_unref(tex->pt);
+   if (tex->references != 0) return;
+   if (tex->pt)
+     {
+//        printf("tex->pt = %p\n", tex->pt);
+//        printf("tex->pt->references = %i\n", tex->pt->references);
+        tex->pt->allocations = eina_list_remove(tex->pt->allocations, tex);
+        pt_unref(tex->pt);
+     }
    if (tex->ptu) pt_unref(tex->ptu);
    if (tex->ptv) pt_unref(tex->ptv);
    free(tex);
@@ -565,6 +558,7 @@ void
 evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels, 
                                     int w, int h, int fh)
 {
+   if (!tex->pt) return;
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
 #ifdef GL_UNPACK_ROW_LENGTH   
    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
@@ -589,16 +583,31 @@ evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, int w, int h)
    tex->gc = gc;
    tex->references = 1;
    tex->pt = _pool_tex_new(gc, w + 1, h  + 1, lum_ifmt, lum_fmt);
+   if (!tex->pt)
+     {
+        free(tex);
+        return NULL;
+     }
    gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->pt);
    tex->pt->slot = -1;
    tex->pt->fslot = -1;
    tex->pt->whole = 1;
    tex->ptu = _pool_tex_new(gc, (w / 2) + 1, (h / 2)  + 1, lum_ifmt, lum_fmt);
+   if (!tex->ptu)
+     {
+        free(tex);
+        return NULL;
+     }
    gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->ptu);
    tex->ptu->slot = -1;
    tex->ptu->fslot = -1;
    tex->ptu->whole = 1;
    tex->ptv = _pool_tex_new(gc, (w / 2) + 1, (h / 2)  + 1, lum_ifmt, lum_fmt);
+   if (!tex->ptv)
+     {
+        free(tex);
+        return NULL;
+     }
    gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->ptv);
    tex->ptv->slot = -1;
    tex->ptv->fslot = -1;
@@ -621,7 +630,8 @@ void
 evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, int w, int h)
 {
    int y;
-   
+
+   if (!tex->pt) return;
    // FIXME: works on lowest size 4 pixel high buffers. must also be multiple of 2
 #ifdef GL_UNPACK_ROW_LENGTH
    glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
