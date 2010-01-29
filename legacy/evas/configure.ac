@@ -1351,7 +1351,7 @@ echo "Engines:"
 echo "  Software Memory Buffer.....: $have_evas_engine_buffer"
 echo "  Software X11...............: $have_evas_engine_software_x11 (Xlib: $have_evas_engine_software_xlib) (XCB: $have_evas_engine_software_xcb)"
 echo "  XRender X11................: $have_evas_engine_xrender_x11 (XCB: $have_evas_engine_xrender_xcb)"
-echo -n "  OpenGL X11.................: $have_evas_engine_gl_x11 "
+echo $ECHO_N "  OpenGL X11.................: $have_evas_engine_gl_x11 $ECHO_C"
 if test "x$have_evas_engine_gl_x11" = "xyes"; then
    echo "(GLES: $gl_flavor_gles) (SGX: $gles_variety_sgx) (s3c6410: $gles_variety_s3c6410)"
 else
@@ -1364,7 +1364,7 @@ echo "  Direct3d...................: $have_evas_engine_direct3d"
 echo "  Quartz.....................: $have_evas_engine_quartz"
 echo "  OpenGL Glew................: $have_evas_engine_gl_glew"
 echo "  Software SDL...............: $have_evas_engine_software_sdl (primitive: $sdl_primitive)"
-echo -n "  OpenGL SDL.................: $have_evas_engine_gl_sdl "
+echo $ECHO_N "  OpenGL SDL.................: $have_evas_engine_gl_sdl $ECHO_C"
 if test "x$have_evas_engine_gl_sdl" = "xyes"; then
    echo "(GLES: $gl_flavor_gles) (SGX: $gles_variety_sgx) (s3c6410: $gles_variety_s3c6410)"
 else
