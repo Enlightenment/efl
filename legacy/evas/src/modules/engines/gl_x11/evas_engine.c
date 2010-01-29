@@ -45,9 +45,9 @@ _sym_init(void)
    if ((!dst) && (glsym_eglGetProcAddress)) dst = glsym_eglGetProcAddress(sym); \
    if (!dst) dst = dlsym(RTLD_DEFAULT, sym)
    
-   FINDSYM(glsym_eglGetProcAddress, "glXGetProcAddress");
-   FINDSYM(glsym_eglGetProcAddress, "glXGetProcAddressEXT");
-   FINDSYM(glsym_eglGetProcAddress, "glXGetProcAddressARB");
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress");
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT");
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB");
    
    FINDSYM(glsym_eglBindTexImage, "eglBindTexImage");
    FINDSYM(glsym_eglBindTexImage, "eglBindTexImageEXT");
