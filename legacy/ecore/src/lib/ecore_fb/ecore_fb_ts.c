@@ -65,7 +65,7 @@ struct _Ecore_Fb_Ts_Flite
 };
 
 static int _ecore_fb_ts_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
-static int _ecore_fb_ts_fd = 0;
+static int _ecore_fb_ts_fd = -1;
 static int _ecore_fb_ts_event_byte_count = 0;
 static int _ecore_fb_ts_apply_cal = 0;
 static Ecore_Fb_Ts_Event _ecore_fb_ts_event;
@@ -133,7 +133,7 @@ ecore_fb_ts_shutdown(void)
    if (_ecore_fb_ts_fd >= 0) close(_ecore_fb_ts_fd);
    if (_ecore_fb_ts_fd_handler_handle)
      ecore_main_fd_handler_del(_ecore_fb_ts_fd_handler_handle);
-   _ecore_fb_ts_fd = 0;
+   _ecore_fb_ts_fd = -1;
    _ecore_fb_ts_fd_handler_handle = NULL;
 }
 
