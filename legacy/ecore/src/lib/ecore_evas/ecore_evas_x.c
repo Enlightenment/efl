@@ -24,6 +24,18 @@ static int _ecore_evas_init_count = 0;
 
 static Ecore_Event_Handler *ecore_evas_event_handlers[12];
 
+static void
+_ecore_evas_x_protocols_set(Ecore_Evas *ee)
+{
+   Ecore_X_Atom protos[10];
+   int num = 0;
+   
+   protos[num++] = ECORE_X_ATOM_NET_WM_PING;
+   if (ee->func.fn_delete_request)
+     protos[num++] = ECORE_X_ATOM_WM_DELETE_WINDOW;
+   ecore_x_icccom_protocol_atoms_set(ee->prop.window, protos, num);
+}
+
 #ifdef HAVE_ECORE_X_XCB
 static xcb_visualtype_t *
 xcb_visualtype_get(xcb_screen_t *screen, xcb_visualid_t visual)
@@ -127,7 +139,8 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
         
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
         ecore_x_window_defaults_set(win);
-     }
+        _ecore_evas_x_protocols_set(ee);
+    }
    else
      {
 	win = 0;
@@ -1043,22 +1056,11 @@ _ecore_evas_x_free(Ecore_Evas *ee)
    ecore_x_shutdown();
 }
 
-/* FIXME: round trip */
 static void
 _ecore_evas_x_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
-#ifdef HAVE_ECORE_X_XCB
-   ecore_x_icccm_protocol_get_prefetch(ee->prop.window);
-   ecore_x_icccm_protocol_get_fetch();
-#endif /* HAVE_ECORE_X_XCB */
-   if (func)
-     ecore_x_icccm_protocol_set(ee->prop.window, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
-   else
-     ecore_x_icccm_protocol_set(ee->prop.window, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 0);
    ee->func.fn_delete_request = func;
-#ifdef HAVE_ECORE_X_XCB
-   ecore_xcb_reply_free();
-#endif /* HAVE_ECORE_X_XCB */
+   _ecore_evas_x_protocols_set(ee);
 }
 
 static void
@@ -1529,6 +1531,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 				0 /* icon_window */,
 				0 /* window_group */,
 				0 /* is_urgent */);
+        _ecore_evas_x_protocols_set(ee);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
      }
    else if (!strcmp(ee->driver, "xrender_x11"))
@@ -1603,6 +1606,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 				0 /* icon_window */,
 				0 /* window_group */,
 				0 /* is_urgent */);
+        _ecore_evas_x_protocols_set(ee);
 #endif /* BUILD_ECORE_EVAS_XRENDER_X11 || BUILD_ECORE_EVAS_XRENDER_XCB */
      }
    else if (!strcmp(ee->driver, "software_16_x11"))
@@ -1670,6 +1674,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 				0 /* icon_window */,
 				0 /* window_group */,
 				0 /* is_urgent */);
+        _ecore_evas_x_protocols_set(ee);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
      }
 }

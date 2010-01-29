@@ -495,6 +495,21 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
 }
 
 /**
+ * Set protocol atoms explicitly
+ * @param win The Window
+ * @param protos An array of protocol atoms
+ * @param num the number of members of the array
+ */
+EAPI void
+ecore_x_icccom_protocol_atoms_set(Ecore_X_Window win, Ecore_X_Atom *protos, int num)
+{
+   if (num > 0)
+     XSetWMProtocols(_ecore_x_disp, win, (Atom *)(protos), num);
+   else
+     XDeleteProperty(_ecore_x_disp, win, ECORE_X_ATOM_WM_PROTOCOLS);
+}
+
+/**
  * Set or unset a wm protocol property.
  * @param win The Window
  * @param protocol The protocol to enable/disable

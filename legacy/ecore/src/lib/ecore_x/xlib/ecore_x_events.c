@@ -1776,6 +1776,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	    && (xevent->xclient.format == 32))
      {
 	Ecore_X_Event_Ping *e;
+        Ecore_X_Window root;
 
 	e = calloc(1, sizeof(Ecore_X_Event_Ping));
 	if (!e) return;
@@ -1784,6 +1785,15 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	e->event_win = xevent->xclient.data.l[2];
 
 	ecore_event_add(ECORE_X_EVENT_PING, e, NULL, NULL);
+        /* send a reply anyway - we are alive... eventloop at least */
+        root = ecore_x_window_root_get(e->win);
+        if (xevent->xclient.window != root)
+          {
+             xevent->xclient.window = root;
+             XSendEvent(_ecore_x_disp, root, False, 
+                        SubstructureRedirectMask | SubstructureNotifyMask, 
+                        xevent);
+          }
      }
    else if ((xevent->xclient.message_type == ECORE_X_ATOM_NET_STARTUP_INFO_BEGIN) &&
 	    (xevent->xclient.format == 8))
