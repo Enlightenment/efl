@@ -55,6 +55,7 @@ want_evas_engine_buffer="yes"
 want_evas_engine_software_xlib="no"
 want_evas_engine_xrender_x11="no"
 want_evas_engine_gl_x11="no"
+want_evas_engine_gl_sdl="no"
 want_evas_engine_cairo_x11="no"
 want_evas_engine_software_xcb="no"
 want_evas_engine_xrender_xcb="no"
@@ -482,6 +483,8 @@ EVAS_CHECK_ENGINE([gl-glew], [${want_evas_engine_gl_glew}], [no], [OpenGL Glew])
 
 EVAS_CHECK_ENGINE([software-sdl], [${want_evas_engine_software_sdl}], [no], [Software SDL])
 
+EVAS_CHECK_ENGINE([gl-sdl], [${want_evas_engine_gl_sdl}], [yes], [OpenGL SDL])
+
 EVAS_CHECK_ENGINE([fb], [${want_evas_engine_fb}], [no], [Framebuffer])
 
 EVAS_CHECK_ENGINE([directfb], [${want_evas_engine_directfb}], [no], [DirectFB])
@@ -505,7 +508,8 @@ EVAS_CHECK_ENGINE([software-16-wince], [${want_evas_engine_software_16_wince}], 
 
 # common gl
 have_evas_engine_gl_common="no"
-if test "x$have_evas_engine_gl_x11" = "xyes" -o "x$have_evas_engine_gl_glew" = "xyes"; then
+if test "x$have_evas_engine_gl_x11" = "xyes" -o "x$have_evas_engine_gl_glew" = "xyes" \
+   -o "x$have_evas_gl_sdl" ="xyes"; then
    AC_DEFINE(BUILD_ENGINE_GL_COMMON, 1, [Generic OpenGL Rendering Support])
    have_evas_engine_gl_common="yes"
    evas_engine_gl_common_libs=""
@@ -518,6 +522,19 @@ fi
 AC_SUBST([evas_engine_gl_common_libs])
 
 AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, test "x$have_evas_engine_gl_common" = "xyes")
+
+# gl_sdl
+if test "x$have_evas_engine_gl_sdl" = "xyes"; then
+   AC_CHECK_DECL(SDL_GL_CONTEXT_MAJOR_VERSION,
+		 [AC_DEFINE(HAVE_SDL_GL_CONTEXT_VERSION, [], [SDL_GL version attributes present])],,
+		 [#include <SDL/SDL_video.h>])
+fi
+
+if test "x$gl_flavor_gles" = "xyes"; then
+   AC_CHECK_DECL(SDL_OPENGLES,
+		 [AC_DEFINE(HAVE_SDL_FLAG_OPENGLES, [], [SDL_OPENGLES flag is present])],,
+		 [#include <SDL/SDL_video.h>])
+fi
 
 # SDL primitive
 sdl_primitive="no"
@@ -1228,6 +1245,7 @@ evas-directfb.pc
 evas-fb.pc
 evas-opengl-glew.pc
 evas-opengl-x11.pc
+evas-opengl-sdl.pc
 evas-quartz.pc
 evas-software-buffer.pc
 evas-software-x11.pc
@@ -1274,6 +1292,7 @@ src/modules/engines/directfb/Makefile
 src/modules/engines/gl_common/Makefile
 src/modules/engines/gl_glew/Makefile
 src/modules/engines/gl_x11/Makefile
+src/modules/engines/gl_sdl/Makefile
 src/modules/engines/quartz/Makefile
 src/modules/engines/xrender_x11/Makefile
 src/modules/engines/software_sdl/Makefile
@@ -1334,6 +1353,7 @@ echo "  Direct3d...................: $have_evas_engine_direct3d"
 echo "  Quartz.....................: $have_evas_engine_quartz"
 echo "  OpenGL Glew................: $have_evas_engine_gl_glew"
 echo "  Software SDL...............: $have_evas_engine_software_sdl (primitive: $sdl_primitive)"
+echo "  OpenGL SDL.................: $have_evas_engine_gl_sdl"
 echo "  Software Framebuffer.......: $have_evas_engine_fb"
 echo "  DirectFB...................: $have_evas_engine_directfb"
 #echo "  Software Qtopia............: $have_evas_engine_software_qtopia"
