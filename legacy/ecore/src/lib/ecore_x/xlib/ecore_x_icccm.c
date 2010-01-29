@@ -501,7 +501,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
  * @param num the number of members of the array
  */
 EAPI void
-ecore_x_icccom_protocol_atoms_set(Ecore_X_Window win, Ecore_X_Atom *protos, int num)
+ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win, Ecore_X_Atom *protos, int num)
 {
    if (num > 0)
      XSetWMProtocols(_ecore_x_disp, win, (Atom *)(protos), num);

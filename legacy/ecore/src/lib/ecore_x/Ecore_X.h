@@ -1386,7 +1386,7 @@ EAPI int   ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
 					    double *max_aspect);
 EAPI void  ecore_x_icccm_title_set(Ecore_X_Window win, const char *t);
 EAPI char *ecore_x_icccm_title_get(Ecore_X_Window win);
-EAPI void  ecore_x_icccom_protocol_atoms_set(Ecore_X_Window win,
+EAPI void  ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win,
                                              Ecore_X_Atom *protos, int num);
 EAPI void  ecore_x_icccm_protocol_set(Ecore_X_Window win,
 				      Ecore_X_WM_Protocol protocol,
