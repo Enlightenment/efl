@@ -744,35 +744,55 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
 }
 
 /**
- * @brief Delete an edje object's current group.
+ * @brief Delete the specified group from the edje file.
  *
  * @param obj The pointer to the edje object.
+ * @param group_name Group to delete.
  *
  * @return @c 1 on success, @c 0 on failure.
  *
- * This function deletes the group which @a obj is set to. This
- * operation can be commited the the .edj file the object was loaded
- * with by use of @c edje_edit_save().
+ * This function deletes the given group from the file @a obj is set to. This
+ * operation can't be undone as all references to the group are removed from
+ * the file.
+ * This function may fail if the group to be deleted is currently in use.
  *
  */
 EAPI Eina_Bool
-edje_edit_group_del(Evas_Object *obj)
+edje_edit_group_del(Evas_Object *obj, const char *group_name)
 {
    char buf[32];
    Eina_List *l;
-   int i;
    Edje_Part_Collection *g;
    Eet_File *eetf;
    Edje_Part_Collection_Directory_Entry *e;
 
    GET_ED_OR_RETURN(0);
 
-   g = ed->collection;
-   //printf("REMOVE GROUP: %s [id: %d]\n", g->part, g->id);
-
-   /* Don't remove the last group */
-   if (eina_list_count(ed->file->collection_dir->entries) < 2)
+   if (eina_hash_find(ed->file->collection_hash, group_name))
      return 0;
+   EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, e)
+     {
+	if (!strcmp(e->entry, group_name))
+	  {
+	     if (e->id == ed->collection->id)
+	       return 0;
+	     ed->file->collection_dir->entries = eina_list_remove_list(ed->file->collection_dir->entries, l);
+	     break;
+	  }
+	e = NULL;
+     }
+   if (!e)
+     return 0;
+
+   EINA_LIST_FOREACH(ed->file->collection_cache, l, g)
+     {
+	if (g->id == e->id)
+	  {
+	     ed->file->collection_cache = eina_list_remove_list(ed->file->collection_cache, l);
+	     break;
+	  }
+	g = NULL;
+     }
 
    /* Remove collection/id from eet file */
    eetf = eet_open(ed->file->path, EET_FILE_MODE_READ_WRITE);
@@ -782,43 +802,20 @@ edje_edit_group_del(Evas_Object *obj)
 	    "for writing output", ed->file->path);
 	return 0;
      }
-   snprintf(buf, sizeof(buf), "collections/%d", g->id);
+   snprintf(buf, sizeof(buf), "collections/%d", e->id);
    eet_delete(eetf, buf);
    eet_close(eetf);
 
-   /* Remove all Edje_Real_Parts */
-   for (i = 0; i < ed->table_parts_size; i++)
-     _edje_real_part_free(ed->table_parts[i]);
-   ed->table_parts_size = 0;
-   free(ed->table_parts);
-   ed->table_parts = NULL;
-
    /* Free Group */
-   _edje_collection_free(ed->file, g);
+   if (g)
+     _edje_collection_free(ed->file, g);
 
-   /* Update collection_dir */
-   EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, e)
-     {
-	//printf("  id: %d  entry: %s\n", e->id, e->entry);
-	if (e->id == g->id)
-	  {
-	     ed->file->collection_dir->entries =
-		eina_list_remove_list(ed->file->collection_dir->entries, l);
-	     //         free(e->entry);  This should be right but cause a segv
-	     free(e);
-	     e = NULL;
-	     break;
-	  }
-     }
+   _edje_if_string_free(ed, e->entry);
+   free(e);
 
-   ed->collection = NULL;
-
-   if (ed->table_programs_size > 0)
-     {
-	free(ed->table_programs);
-	ed->table_programs = NULL;
-	ed->table_programs_size = 0;
-     }
+   /* we need to save everything to make sure the file won't have broken
+    * references the next time is loaded */
+   edje_edit_save_all(obj);
 
    return 1;
 }
@@ -5919,7 +5916,7 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
    fprintf(f, "   }\n");//group
    
    
-   //TODO Free the Evas_Object *obj
+   evas_object_del(obj);
 }
 
 static const char* //return the name of the temp file containing the edc
@@ -6086,6 +6083,8 @@ source_edd(void)
 {
    Eet_Data_Descriptor_Class eddc;
 
+   if (_srcfile_edd) return;
+
    eet_eina_stream_data_descriptor_class_set(&eddc, "srcfile", sizeof(SrcFile));
    _srcfile_edd = eet_data_descriptor_stream_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "name", name, EET_T_INLINED_STRING);
@@ -6097,80 +6096,49 @@ source_edd(void)
 }
 /////////////////////////////////////////
 
-EAPI int
-edje_edit_save(Evas_Object *obj)
+static int
+_edje_edit_edje_file_save(Eet_File *eetf, Edje_File *ef)
+{
+   /* Write Edje_File structure */
+   INF("** Writing Edje_File* ed->file");
+   if (eet_data_write(eetf, _edje_edd_edje_file, "edje_file", ef, 1) <= 0)
+     {
+	ERR("Error. unable to write \"edje_file\" "
+	    "entry to \"%s\"", ef->path);
+	return 0;
+     }
+   return 1;
+}
+
+static int
+_edje_edit_collection_save(Eet_File *eetf, Edje_Part_Collection *epc)
 {
    char buf[256];
-   Edje_File *ef;
-   Eet_File *eetf;
-   int bytes;
+
+   snprintf(buf, sizeof(buf), "collections/%i", epc->id);
+
+   if (eet_data_write(eetf, _edje_edd_edje_part_collection, buf, epc, 1) <= 0)
+     {
+	ERR("Error. unable to write \"%s\" part entry", buf);
+	return 0;
+     }
+   return 1;
+}
+
+static int
+_edje_edit_source_save(Eet_File *eetf, Evas_Object *obj)
+{
    SrcFile *sf;
    SrcFile_List *sfl;
    const char *source_file;
    FILE *f;
+   int bytes;
    long sz;
-
-   GET_ED_OR_RETURN(0);
-
-   ef = ed->file;
-   if (!ef) return 0;
-
-   INF("***********  Saving file ******************");
-   INF("** path: %s", ef->path);
-   
-   /* Set compiler name */
-   if (strcmp(ef->compiler, "edje_edit"))
-     {
-	_edje_if_string_free(ed, ef->compiler);
-	ef->compiler = eina_stringshare_add("edje_edit");
-     }
-
-   /* Open the eet file */
-   eetf = eet_open(ef->path, EET_FILE_MODE_READ_WRITE);
-   if (!eetf)
-     {
-	ERR("Error. unable to open \"%s\" for writing output",
-	    ef->path);
-	return 0;
-     }
-
-   /* Write Edje_File structure */
-   INF("** Writing Edje_File* ed->file");
-   bytes = eet_data_write(eetf, _edje_edd_edje_file, "edje_file", ef, 1);
-   if (bytes <= 0)
-     {
-	ERR("Error. unable to write \"edje_file\" "
-	    "entry to \"%s\"", ef->path);
-	eet_close(eetf);
-	return 0;
-     }
-
-   /* Write all the collections */
-   if (ed->collection)
-     {
-	INF("** Writing Edje_Part_Collection* ed->collection "
-	    "[id: %d]", ed->collection->id);
-
-	snprintf(buf, sizeof(buf), "collections/%i", ed->collection->id);
-
-	bytes = eet_data_write(eetf, _edje_edd_edje_part_collection,
-	                       buf, ed->collection, 1);
-	if (bytes <= 0)
-	  {
-		ERR("Error. unable to write \"%s\" part entry to %s",
-		    buf, ef->path);
-		eet_close(eetf);
-		return 0;
-	  }
-     }
-
-   /* Write the new edc source */
 
    source_file = _edje_generate_source(obj);
    if (!source_file)
      {
 	ERR("Error: can't create edc source");
-	eet_close(eetf);
 	return 0;
      }
    INF("** Writing EDC Source [from: %s]", source_file);
@@ -6185,7 +6153,6 @@ edje_edit_save(Evas_Object *obj)
      {
 	ERR("Error. unable to read the created edc source [%s]",
 	    source_file);
-	eet_close(eetf);
 	return 0;
      }
 
@@ -6201,6 +6168,7 @@ edje_edit_save(Evas_Object *obj)
    sf->file[sz] = '\0';
    fseek(f, 0, SEEK_SET);
    fclose(f);
+   unlink(source_file);
 
    //create the needed list of source files (only one)
    sfl = _alloc(sizeof(SrcFile_List)); //TODO check result and return nicely
@@ -6213,21 +6181,102 @@ edje_edit_save(Evas_Object *obj)
    if (bytes <= 0)
     {
 	ERR("Error. unable to write edc source");
-	eet_close(eetf);
 	return 0;
     }
 
    /* Clear stuff */
-   unlink(source_file);
    eina_stringshare_del(source_file);
-   eet_close(eetf);
    eina_list_free(sfl->list);
    free(sfl);
    free(sf->file);
    free(sf->name);
    free(sf);
+   return 1;
+}
+
+static Eina_Bool
+_edje_edit_coll_hash_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+{
+   _edje_edit_collection_save((Eet_File *)fdata, (Edje_Part_Collection *)data);
+   return 1;
+}
+
+int
+_edje_edit_internal_save(Evas_Object *obj, int current_only)
+{
+   Edje_File *ef;
+   Eet_File *eetf;
+
+   GET_ED_OR_RETURN(0);
+
+   ef = ed->file;
+   if (!ef) return 0;
+
+   INF("***********  Saving file ******************");
+   INF("** path: %s", ef->path);
+
+   /* Open the eet file */
+   eetf = eet_open(ef->path, EET_FILE_MODE_READ_WRITE);
+   if (!eetf)
+     {
+	ERR("Error. unable to open \"%s\" for writing output",
+	    ef->path);
+	return 0;
+     }
+
+   /* Set compiler name */
+   if (strcmp(ef->compiler, "edje_edit"))
+     {
+	_edje_if_string_free(ed, ef->compiler);
+	ef->compiler = eina_stringshare_add("edje_edit");
+     }
+
+   if (!_edje_edit_edje_file_save(eetf, ef))
+     {
+	eet_close(eetf);
+	return 0;
+     }
+
+   if (current_only)
+     {
+	if (ed->collection)
+	  {
+	     INF("** Writing Edje_Part_Collection* ed->collection "
+		   "[id: %d]", ed->collection->id);
+	     if (!_edje_edit_collection_save(eetf, ed->collection))
+	       {
+		  eet_close(eetf);
+		  return 0;
+	       }
+	  }
+     }
+   else
+     {
+	Eina_List *l;
+	Edje_Part_Collection *edc;
+
+	eina_hash_foreach(ef->collection_hash, _edje_edit_coll_hash_cb, eetf);
+	EINA_LIST_FOREACH(ef->collection_cache, l, edc)
+	   _edje_edit_collection_save(eetf, edc);
+     }
+
+   _edje_edit_source_save(eetf, obj);
+
+   eet_close(eetf);
    INF("***********  Saving DONE ******************");
    return 1;
+}
+
+EAPI int
+edje_edit_save(Evas_Object *obj)
+{
+   return _edje_edit_internal_save(obj, 1);
+}
+
+EAPI int
+edje_edit_save_all(Evas_Object *obj)
+{
+   return _edje_edit_internal_save(obj, 0);
 }
 
 EAPI void

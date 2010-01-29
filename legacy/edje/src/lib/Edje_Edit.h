@@ -119,11 +119,19 @@ edje_edit_compiler_get(
  * to the current loaded group will be saved back to the original file.
  *
  * NOTE: for now this as 2 limitations
- *    -the saved edje file cannot be decompiled anymore
  *    -you will lost your #define in the edc source
  */
 EAPI int                   ///@return 1 on success, 0 on failure
 edje_edit_save(
+   Evas_Object *obj        ///< The edje object to save
+);
+
+/**Saves every group back into the file.
+ *
+ * Same limitations as edje_edit_save
+ */
+EAPI int                   ///@return 1 on success, 0 on failure
+edje_edit_save_all(
    Evas_Object *obj        ///< The edje object to save
 );
 
@@ -153,14 +161,15 @@ edje_edit_group_add(
    const char  *name       ///< The name for the new empty group
 );
 
-/**Delete the current group from the given edje.
- * You can only delete the currently loaded group.
+/**Delete the specified group from the given edje.
+ * You can only delete a currently unused group.
  * All the parts and the programs inside the group will be deleted as well,
  * but not image or font embedded in the edje.
  */
 EAPI Eina_Bool         ///@return 1 on success, 0 on failure
 edje_edit_group_del(
-   Evas_Object *obj        ///< The edje object
+   Evas_Object *obj,       ///< The edje object
+   const char *group_name  ///< Group to delete
 );
 
 /**Check if a group with the given name exist in the edje.
