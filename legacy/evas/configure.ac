@@ -508,20 +508,26 @@ EVAS_CHECK_ENGINE([software-16-wince], [${want_evas_engine_software_16_wince}], 
 
 # common gl
 have_evas_engine_gl_common="no"
-if test "x$have_evas_engine_gl_x11" = "xyes" -o "x$have_evas_engine_gl_glew" = "xyes" \
-   -o "x$have_evas_gl_sdl" ="xyes"; then
-   AC_DEFINE(BUILD_ENGINE_GL_COMMON, 1, [Generic OpenGL Rendering Support])
+if test "x$have_evas_engine_gl_x11" = "xyes"; then
    have_evas_engine_gl_common="yes"
-   evas_engine_gl_common_libs=""
 fi
 
-if test "x$have_evas_engine_gl_glew" = "xyes" ; then
+if test "x$have_evas_engine_gl_glew" = "xyes"; then
    have_evas_engine_gl_common="yes"
-   evas_engine_gl_common_libs=""
 fi
+
+if test "x$have_evas_engine_gl_sdl" = "xyes"; then
+   have_evas_engine_gl_common="yes"
+fi
+
+if test "x$have_evas_engine_gl_common" = "xyes"; then
+   evas_engine_gl_common_libs=""
+   AC_DEFINE(BUILD_ENGINE_GL_COMMON, [1], [Generic OpenGL Rendering Support])
+fi
+
 AC_SUBST([evas_engine_gl_common_libs])
 
-AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, test "x$have_evas_engine_gl_common" = "xyes")
+AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, [test "x$have_evas_engine_gl_common" = "xyes"])
 
 # gl_sdl
 if test "x$have_evas_engine_gl_sdl" = "xyes"; then
@@ -1345,7 +1351,12 @@ echo "Engines:"
 echo "  Software Memory Buffer.....: $have_evas_engine_buffer"
 echo "  Software X11...............: $have_evas_engine_software_x11 (Xlib: $have_evas_engine_software_xlib) (XCB: $have_evas_engine_software_xcb)"
 echo "  XRender X11................: $have_evas_engine_xrender_x11 (XCB: $have_evas_engine_xrender_xcb)"
-echo "  OpenGL X11.................: $have_evas_engine_gl_x11 (GLES: $gl_flavor_gles) (SGX: $gles_variety_sgx) (s3c6410: $gles_variety_s3c6410)"
+echo -n "  OpenGL X11.................: $have_evas_engine_gl_x11 "
+if test "x$have_evas_engine_gl_x11" = "xyes"; then
+   echo "(GLES: $gl_flavor_gles) (SGX: $gles_variety_sgx) (s3c6410: $gles_variety_s3c6410)"
+else
+   echo
+fi
 #echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
 echo "  Software GDI...............: $have_evas_engine_software_gdi"
 echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"
@@ -1353,7 +1364,12 @@ echo "  Direct3d...................: $have_evas_engine_direct3d"
 echo "  Quartz.....................: $have_evas_engine_quartz"
 echo "  OpenGL Glew................: $have_evas_engine_gl_glew"
 echo "  Software SDL...............: $have_evas_engine_software_sdl (primitive: $sdl_primitive)"
-echo "  OpenGL SDL.................: $have_evas_engine_gl_sdl"
+echo -n "  OpenGL SDL.................: $have_evas_engine_gl_sdl "
+if test "x$have_evas_engine_gl_sdl" = "xyes"; then
+   echo "(GLES: $gl_flavor_gles) (SGX: $gles_variety_sgx) (s3c6410: $gles_variety_s3c6410)"
+else
+   echo
+fi
 echo "  Software Framebuffer.......: $have_evas_engine_fb"
 echo "  DirectFB...................: $have_evas_engine_directfb"
 #echo "  Software Qtopia............: $have_evas_engine_software_qtopia"

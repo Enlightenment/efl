@@ -1,27 +1,22 @@
 #ifndef EVAS_ENGINE_H
 #define EVAS_ENGINE_H
 
+#define _EVAS_ENGINE_SDL_H
+
 #include "config.h"
+#include <SDL/SDL.h>
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-# if defined(GLES_VARIETY_S3C6410)
-#  include <EGL/egl.h>
-#  include <GLES2/gl2.h>
-# elif defined(GLES_VARIETY_SGX)
-#  include <EGL/egl.h>
-#  include <GLES2/gl2.h>
-#  include <GLES2/gl2ext.h>
-# endif
+# include <EGL/egl.h>
+# include <SDL/SDL_opengles.h>
 # ifdef HAVE_SDL_FLAG_OPENGLES
 #  define EVAS_SDL_GL_FLAG SDL_OPENGLES
 # else
 #  define EVAS_SDL_GL_FLAG SDL_OPENGL /* This probably won't work? */
 # endif
 #else
+# include <SDL/SDL_opengl.h>
 # define EVAS_SDL_GL_FLAG SDL_OPENGL
 #endif
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-#include <GL/gl.h>
 #include "evas_common.h"
 #include "evas_private.h"
 #include "evas_gl_common.h"

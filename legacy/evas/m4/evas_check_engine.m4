@@ -520,7 +520,7 @@ if test "x${have_dep}" = "xyes" ; then
    evas_engine_[]$1[]_libs="${SDL_LIBS} -lGL -lpthread"
    evas_engine_gl_common_libs="-lGL -lpthread"
 else
-   AC_CHECK_HEADERS([EGL/egl.h], [have_egl="yes"])
+   AC_CHECK_HEADERS([SDL/SDL_opengles.h EGL/egl.h], [have_egl="yes"])
    if test "x${have_egl}" = "xyes" ; then
       AC_CHECK_LIB(GLESv2, glTexImage2D, [have_glesv2="yes"], , -lEGL -lpthread -lm)
       if test "x${have_glesv2}" = "xyes" ; then

@@ -23,16 +23,20 @@
 # include <OpenGL/gl.h>
 # include <OpenGL/glext.h>
 #else
-# if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-#  if defined(GLES_VARIETY_S3C6410)
-#   include <GLES2/gl2.h>
-#  elif defined(GLES_VARIETY_SGX)
-#   include <GLES2/gl2.h>
-#   include <GLES2/gl2ext.h>
-#  endif
+# ifdef _EVAS_ENGINE_SDL_H
+#  include <SDL/SDL_opengles.h>
 # else
-#  include <GL/gl.h>
-#  include <GL/glext.h>
+#  if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#   if defined(GLES_VARIETY_S3C6410)
+#    include <GLES2/gl2.h>
+#   elif defined(GLES_VARIETY_SGX)
+#    include <GLES2/gl2.h>
+#    include <GLES2/gl2ext.h>
+#   endif
+#  else
+#   include <GL/gl.h>
+#   include <GL/glext.h>
+#  endif
 # endif
 #endif
 

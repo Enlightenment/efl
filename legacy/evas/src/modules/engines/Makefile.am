@@ -23,6 +23,9 @@ endif
 if !EVAS_STATIC_BUILD_GL_X11
 SUBDIRS += gl_common gl_x11
 endif
+if !EVAS_STATIC_BUILD_GL_SDL
+SUBDIRS += gl_common gl_sdl
+endif
 if !EVAS_STATIC_BUILD_QUARTZ
 SUBDIRS += quartz
 endif
