@@ -382,11 +382,11 @@ evil_pipe(int *fds)
    if (!FD_ISSET (socket1, &write_set))
      goto out2;
 
-   arg = 1;
+   arg = 0;
    if (ioctlsocket (socket1, FIONBIO, &arg) == SOCKET_ERROR)
      goto out2;
 
-   arg = 1;
+   arg = 0;
    if (ioctlsocket (socket2, FIONBIO, &arg) == SOCKET_ERROR)
      goto out2;
 

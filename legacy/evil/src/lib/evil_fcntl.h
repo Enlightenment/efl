@@ -14,6 +14,12 @@
 # define FD_CLOEXEC 1
 
 /**
+ * @def O_NONBLOCK
+ * Specifies that the socket is in non-blocking mode.
+ */
+# define O_NONBLOCK 04000
+
+/**
  * @def F_SETFD
  * Specifies that fcntl() should set the file descriptor flags
  * associated with the filedes argument.

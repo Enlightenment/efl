@@ -1,4 +1,8 @@
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
 #include <stdio.h>
 
 #ifdef _MSC_VER
@@ -9,9 +13,7 @@
 # include <sys/locking.h>
 #endif /* __CEGCC__ */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif /* HAVE_CONFIG_H */
+#include <winsock2.h> /* for ioctlsocket */
 
 #include "Evil.h"
 
@@ -63,6 +65,12 @@ int fcntl(int fd, int cmd, ...)
              if (SetHandleInformation(h, HANDLE_FLAG_INHERIT, 0))
                res = 0;
 #endif /* __CEGCC__ || __MINGW32CE__ */
+          }
+        if (flag == O_NONBLOCK)
+          {
+             u_long arg = 1;
+             if (ioctlsocket((SOCKET)fd, FIONBIO, &arg) == SOCKET_ERROR)
+               res = 0;
           }
      }
 #if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )

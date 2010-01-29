@@ -1,3 +1,14 @@
+2010-01-29  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_fcntl.c:
+	* src/lib/evil_fcntl.h:
+	* src/lib/evil_unistd.c:
+	make pipe() blocking by default and allow fcntl()
+	to set a socket to be non-blocking
+
+	* src/lib/evil_stdlib.c:
+	fix warning
+
 2010-01-19  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/dlfcn/dlfcn.c:

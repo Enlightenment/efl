@@ -322,7 +322,7 @@ mkstemp(char *__template)
 
 #if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
         fd = _open(__template, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
-#else /* __CEGCC__ || __MINGW32CE__ */
+#else /* _WIN32_WCE */
         {
            FILE    *f;
            wchar_t *wtemplate;
@@ -339,9 +339,9 @@ mkstemp(char *__template)
 #endif /* HAVE_ERRNO_H */
                 return -1;
              }
-           fd = _fileno(f);
+           fd = (int)_fileno(f);
         }
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* _WIN32_WCE */
         if (fd >= 0)
           return fd;
 
