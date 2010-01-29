@@ -508,15 +508,9 @@ EVAS_CHECK_ENGINE([software-16-wince], [${want_evas_engine_software_16_wince}], 
 
 # common gl
 have_evas_engine_gl_common="no"
-if test "x$have_evas_engine_gl_x11" = "xyes"; then
-   have_evas_engine_gl_common="yes"
-fi
-
-if test "x$have_evas_engine_gl_glew" = "xyes"; then
-   have_evas_engine_gl_common="yes"
-fi
-
-if test "x$have_evas_engine_gl_sdl" = "xyes"; then
+if test "x$have_evas_engine_gl_x11" = "xyes" \
+   || test "x$have_evas_engine_gl_glew" = "xyes" \
+   || test "x$have_evas_engine_gl_sdl" = "xyes"; then
    have_evas_engine_gl_common="yes"
 fi
 
@@ -532,13 +526,13 @@ AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, [test "x$have_evas_engine_gl_common" = "x
 # gl_sdl
 if test "x$have_evas_engine_gl_sdl" = "xyes"; then
    AC_CHECK_DECL(SDL_GL_CONTEXT_MAJOR_VERSION,
-		 [AC_DEFINE(HAVE_SDL_GL_CONTEXT_VERSION, [], [SDL_GL version attributes present])],,
+		 [AC_DEFINE(HAVE_SDL_GL_CONTEXT_VERSION, [1], [SDL_GL version attributes present])],,
 		 [#include <SDL/SDL_video.h>])
 fi
 
 if test "x$gl_flavor_gles" = "xyes"; then
    AC_CHECK_DECL(SDL_OPENGLES,
-		 [AC_DEFINE(HAVE_SDL_FLAG_OPENGLES, [], [SDL_OPENGLES flag is present])],,
+		 [AC_DEFINE(HAVE_SDL_FLAG_OPENGLES, [1], [SDL_OPENGLES flag is present])],,
 		 [#include <SDL/SDL_video.h>])
 fi
 
