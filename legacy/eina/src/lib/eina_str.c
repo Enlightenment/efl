@@ -32,6 +32,8 @@
 #include <string.h>
 #include <limits.h>
 
+#include "eina_private.h"
+
 static int eina_str_has_suffix_helper(const char *str, const char *suffix,
 		int (*cmp)(const char *, const char *));
 /**
@@ -45,7 +47,7 @@ static int eina_str_has_suffix_helper(const char *str, const char *suffix,
  * will be copied.  Always NUL terminates (unless siz == 0).
  * Returns strlen(src); if retval >= siz, truncation occurred.
  */
-size_t
+EAPI size_t
 eina_strlcpy(char *dst, const char *src, size_t siz)
 {
 #ifdef HAVE_STRLCPY
@@ -91,7 +93,7 @@ eina_strlcpy(char *dst, const char *src, size_t siz)
  * Returns strlen(src) + MIN(siz, strlen(initial dst)).
  * If retval >= siz, truncation occurred.
  */
-size_t
+EAPI size_t
 eina_strlcat(char *dst, const char *src, size_t siz)
 {
    char *d = dst;
@@ -125,7 +127,7 @@ eina_strlcat(char *dst, const char *src, size_t siz)
  * @return true if str has the given prefix
  * @brief checks if the string has the given prefix
  */
-int
+EAPI int
 eina_str_has_prefix(const char *str, const char *prefix)
 {
    size_t str_len;
@@ -145,7 +147,7 @@ eina_str_has_prefix(const char *str, const char *prefix)
  * @return true if str has the given suffix
  * @brief checks if the string has the given suffix
  */
-int
+EAPI int
 eina_str_has_suffix(const char *str, const char *suffix)
 {
    return eina_str_has_suffix_helper(str, suffix, strcmp);
@@ -160,7 +162,7 @@ eina_str_has_suffix(const char *str, const char *suffix)
  * @return true if str has the given extension
  * @brief checks if the string has the given extension
  */
-int
+EAPI int
 eina_str_has_extension(const char *str, const char *ext)
 {
    return eina_str_has_suffix_helper(str, ext, strcasecmp);
@@ -200,7 +202,7 @@ eina_str_has_suffix_helper(const char *str, const char *suffix,
  *                    To free it: free the first element of the array
  *                    and the array itself.
  */
-char **
+EAPI char **
 eina_str_split(const char *str, const char *delim, int max_tokens)
 {
    char *s, *sep, **str_array;
@@ -249,7 +251,7 @@ eina_str_split(const char *str, const char *delim, int max_tokens)
  *
  * @see eina_str_join() and eina_str_join_static()
  */
-size_t
+EAPI size_t
 eina_str_join_len(char *dst, size_t size, char sep, const char *a, size_t a_len, const char *b, size_t b_len)
 {
    size_t ret = a_len + b_len + 1;
