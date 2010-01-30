@@ -84,13 +84,17 @@ eng_output_resize(void *data, int w, int h)
    re->w = w;
    re->h = h;
 
-   surface = SDL_SetVideoMode(w, h, 32, EVAS_SDL_GL_FLAG
-			      | (re->info->flags.fullscreen ? SDL_FULLSCREEN : 0)
-			      | (re->info->flags.noframe ? SDL_NOFRAME : 0));
-   if (!surface)
+   if(SDL_GetVideoSurface()->flags & SDL_RESIZABLE)
      {
-	ERR("Unable to change the resolution to : %ix%i", w, h);
-	exit(-1);
+	surface = SDL_SetVideoMode(w, h, 32, EVAS_SDL_GL_FLAG
+		      | (re->info->flags.fullscreen ? SDL_FULLSCREEN : 0)
+		      | (re->info->flags.noframe ? SDL_NOFRAME : 0));
+	if (!surface)
+	  {
+	     ERR("Unable to change the resolution to : %ix%i", w, h);
+	     SDL_Quit();
+	     exit(-1);
+	  }
      }
 
    evas_gl_common_context_resize(re->gl_context, w, h);
@@ -1366,19 +1370,26 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe)
    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+   SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 0);
 
    surface = SDL_SetVideoMode(w, h, 32, EVAS_SDL_GL_FLAG
-                              | (fullscreen ? SDL_FULLSCREEN : 0)
-                              | (noframe ? SDL_NOFRAME : 0));
+			   | (fullscreen ? SDL_FULLSCREEN : 0)
+			   | (noframe ? SDL_NOFRAME : 0));
 
    if (!surface)
      {
         CRIT("SDL_SetVideoMode [ %i x %i x 32 ] failed.", w, h);
+	CRIT("SDL: %s\n", SDL_GetError());
+	SDL_Quit();
         exit(-1);
      }
+
+   printf("Screen Depth : %d\n", SDL_GetVideoSurface()->format->BitsPerPixel);
+   printf("Vendor       : %s\n", glGetString(GL_VENDOR));
+   printf("Renderer     : %s\n", glGetString(GL_RENDERER));
+   printf("Version      : %s\n", glGetString(GL_VERSION));
 
    re->gl_context = evas_gl_common_context_new();
    if (!re->gl_context)

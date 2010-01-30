@@ -19,7 +19,11 @@ gl_symbols(void)
    if (sym_done) return;
    sym_done = 1;
 
-#define FINDSYM(dst, sym) if (!dst) dst = dlsym(RTLD_DEFAULT, sym)
+#ifdef _EVAS_ENGINE_SDL_H
+# define FINDSYM(dst, sym) if (!dst) dst = SDL_GL_GetProcAddress(sym)
+#else
+# define FINDSYM(dst, sym) if (!dst) dst = dlsym(RTLD_DEFAULT, sym)
+#endif
 #define FALLBAK(dst) if (!dst) dst = (void *)sym_missing;
    
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers");
