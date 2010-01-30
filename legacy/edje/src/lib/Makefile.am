@@ -101,7 +101,6 @@ edje_amalgamation.c: $(base_sources) Makefile
 	@echo "#include <Edje.h>" >> edje_amalgamation.c
 	@echo "#include <Evas.h>" >> edje_amalgamation.c
 	@echo "#include <Ecore.h>" >> edje_amalgamation.c
-	@echo "#include <Ecore_Str.h>" >> edje_amalgamation.c
 	@echo "#include <Embryo.h>" >> edje_amalgamation.c
 
 	@echo "#ifdef HAVE_ECORE_IMF" >> edje_amalgamation.c
@@ -117,7 +116,7 @@ edje_amalgamation.c: $(base_sources) Makefile
 		  file="$$f" ; \
 	   fi ; \
 	   echo "/* file: $$file */" >> edje_amalgamation.c; \
-	   grep -v -e '^# *include \+.\(config\|\|Evil\|Eina\|Eet\|Evas\|Ecore\|Ecore_Str\|Embryo\|Ecore_IMF\|string\|math\|limits\|sys/stat\|errno\|time\|unistd\|locale\|lua\|lauxlib\|edje_private\)[.]h.*' $$file >> edje_amalgamation.c; \
+	   grep -v -e '^# *include \+.\(config\|\|Evil\|Eina\|Eet\|Evas\|Ecore\|Embryo\|Ecore_IMF\|string\|math\|limits\|sys/stat\|errno\|time\|unistd\|locale\|lua\|lauxlib\|edje_private\)[.]h.*' $$file >> edje_amalgamation.c; \
 	done
 	@echo "edje_amalgamation.c generated"
 

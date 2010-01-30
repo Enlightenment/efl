@@ -3856,7 +3856,7 @@ _edje_real_part_recursive_get(Edje *ed, const char *part)
    Edje_Real_Part *rp;
    char **path;
 
-   path = ecore_str_split(part, EDJE_PART_PATH_SEPARATOR_STRING, 0);
+   path = eina_str_split(part, EDJE_PART_PATH_SEPARATOR_STRING, 0);
    if (!path) return NULL;
 
    //printf("recursive get: %s\n", part);

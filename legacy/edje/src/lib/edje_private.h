@@ -12,7 +12,6 @@
 #include <Eina.h>
 #include <Evas.h>
 #include <Ecore.h>
-#include <Ecore_Str.h>
 #ifdef HAVE_ECORE_IMF
 # include <Ecore_IMF.h>
 #endif
