@@ -9,7 +9,6 @@
  *  write docs
  */
 
-#include <Ecore_Str.h>
 #include <Elementary.h>
 #include "elm_priv.h"
 
@@ -232,22 +231,22 @@ _do_anchors(Evas_Object *obj, const char *path)
    //~ printf("ANCHORIZE...\n");
 
    buf[0] = '\0';
-   tok = ecore_str_split(path, "/", 0);
+   tok = eina_str_split(path, "/", 0);
    for (i = 0; tok[i]; i++)
      {
 	if (strlen(tok[i]) < 1) continue;
 	//~ printf("TOK: %s\n", tok[i]);
-	ecore_strlcat(buf, "/<a href=", sizeof(buf));
+	eina_strlcat(buf, "/<a href=", sizeof(buf));
 	for (j = 0; j <= i; j++)
 	  {
 	     if (strlen(tok[j]) < 1) continue;
 	     //~ printf("REV: %s\n",tok[j]);
-	     ecore_strlcat(buf, "/", sizeof(buf));
-	     ecore_strlcat(buf, tok[j], sizeof(buf));
+	     eina_strlcat(buf, "/", sizeof(buf));
+	     eina_strlcat(buf, tok[j], sizeof(buf));
 	  }
-	ecore_strlcat(buf, ">", sizeof(buf));
-	ecore_strlcat(buf, tok[i], sizeof(buf));
-	ecore_strlcat(buf, "</a>", sizeof(buf));
+	eina_strlcat(buf, ">", sizeof(buf));
+	eina_strlcat(buf, tok[i], sizeof(buf));
+	eina_strlcat(buf, "</a>", sizeof(buf));
      }
    free(tok[0]);
    free(tok);
