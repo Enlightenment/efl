@@ -1386,10 +1386,10 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe)
         exit(-1);
      }
 
-   printf("Screen Depth : %d\n", SDL_GetVideoSurface()->format->BitsPerPixel);
-   printf("Vendor       : %s\n", glGetString(GL_VENDOR));
-   printf("Renderer     : %s\n", glGetString(GL_RENDERER));
-   printf("Version      : %s\n", glGetString(GL_VERSION));
+   fprintf(stderr, "Screen Depth : %d\n", SDL_GetVideoSurface()->format->BitsPerPixel);
+   fprintf(stderr, "Vendor       : %s\n", glGetString(GL_VENDOR));
+   fprintf(stderr, "Renderer     : %s\n", glGetString(GL_RENDERER));
+   fprintf(stderr, "Version      : %s\n", glGetString(GL_VERSION));
 
    re->gl_context = evas_gl_common_context_new();
    if (!re->gl_context)
