@@ -129,6 +129,7 @@ want_ecore_evas_opengl_glew="no"
 want_ecore_evas_software_16_ddraw="no"
 want_ecore_evas_quartz="no"
 want_ecore_evas_software_sdl="no"
+want_ecore_evas_gl_sdl="no"
 want_ecore_evas_directfb="no"
 want_ecore_evas_fb="no"
 want_ecore_evas_software_16_wince="no"
@@ -150,6 +151,7 @@ case "$host_os" in
       want_ecore_evas_opengl_glew="yes"
       want_ecore_evas_software_16_ddraw="auto"
       want_ecore_evas_software_sdl="yes"
+      want_ecore_evas_gl_sdl="yes"
       ;;
    darwin*)
       want_curl="yes"
@@ -163,6 +165,7 @@ case "$host_os" in
       want_ecore_quartz="yes"
       want_ecore_evas_quartz="yes"
       want_ecore_evas_software_sdl="yes"
+      want_ecore_evas_gl_sdl="yes"
       ;;
    *)
       want_curl="yes"
@@ -186,6 +189,7 @@ case "$host_os" in
       want_ecore_evas_software_xcb="yes"
       want_ecore_evas_xrender_xcb="yes"
       want_ecore_evas_software_sdl="yes"
+      want_ecore_evas_gl_sdl="yes"
       want_ecore_evas_directfb="yes"
       want_ecore_evas_fb="yes"
       ;;
@@ -1088,6 +1092,14 @@ ECORE_EVAS_CHECK_MODULE([software-sdl],
    [${have_ecore_sdl}],
    [requirements_ecore_evas="ecore-sdl ${requirements_ecore_evas}"])
 
+# ecore_evas_gl_sdl
+
+ECORE_EVAS_CHECK_MODULE([opengl-sdl],
+   [${want_ecore_evas_gl_sdl}],
+   [OpenGL SDL],
+   [${have_ecore_sdl}],
+   [requirements_ecore_evas="ecore-sdl ${requirements_ecore_evas}"])
+
 # ecore_evas_directfb
 
 ECORE_EVAS_CHECK_MODULE([directfb],
@@ -1302,6 +1314,7 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    OpenGL Glew................: $have_ecore_evas_opengl_glew"
   echo "    Quartz.....................: $have_ecore_evas_quartz"
   echo "    Software SDL...............: $have_ecore_evas_software_sdl"
+  echo "    OpenGL SDL.................: $have_ecore_evas_opengl_sdl"
   echo "    DirectFB...................: $have_ecore_evas_directfb"
   echo "    Software Framebuffer.......: $have_ecore_evas_fb"
   echo "    Software 16bit X11.........: $have_ecore_evas_software_16_x11"

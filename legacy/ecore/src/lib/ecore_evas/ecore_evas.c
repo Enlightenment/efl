@@ -135,6 +135,12 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
         return 0;
 #endif
+     case ECORE_EVAS_ENGINE_OPENGL_SDL:
+#ifdef BUILD_ECORE_EVAS_OPENGL_SDL
+        return 1;
+#else
+        return 0;
+#endif
       case ECORE_EVAS_ENGINE_DIRECTFB:
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
 	return 1;
@@ -473,6 +479,25 @@ _ecore_evas_constructor_sdl16(int x __UNUSED__, int y __UNUSED__, int w, int h, 
 }
 #endif
 
+#ifdef BUILD_ECORE_EVAS_OPENGL_SDL
+static Ecore_Evas *
+_ecore_evas_constructor_opengl_sdl(int x __UNUSED__, int y __UNUSED__, int w, int h, const char *extra_options)
+{
+   Ecore_Evas *ee;
+   unsigned int fullscreen = 0, noframe = 0;
+   char *name = NULL;
+
+   _ecore_evas_parse_extra_options_str(extra_options, "name=", &name);
+   _ecore_evas_parse_extra_options_uint(extra_options, "fullscreen=", &fullscreen);
+   _ecore_evas_parse_extra_options_uint(extra_options, "noframe=", &noframe);
+
+   ee = ecore_evas_gl_sdl_new(name, w, h, fullscreen, noframe);
+   free(name);
+
+   return ee;
+}
+#endif
+
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
 static Ecore_Evas *
 _ecore_evas_constructor_directfb(int x, int y, int w, int h, const char *extra_options)
@@ -640,6 +665,10 @@ static const struct ecore_evas_engine _engines[] = {
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
   {"sdl", _ecore_evas_constructor_sdl},
   {"software_16_sdl", _ecore_evas_constructor_sdl16},
+#endif
+
+#ifdef BUILD_ECORE_EVAS_OPENGL_SDL
+  {"opengl_sdl", _ecore_evas_constructor_opengl_sdl},
 #endif
 
   /* independent */

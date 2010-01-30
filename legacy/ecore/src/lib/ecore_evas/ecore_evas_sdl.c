@@ -9,9 +9,14 @@
 #include <Ecore.h>
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
-#include <Ecore_Sdl.h>
-#include <Evas_Engine_SDL.h>
+#if defined(BUILD_ECORE_EVAS_SOFTWARE_SDL) || defined(BUILD_ECORE_EVAS_OPENGL_SDL)
+# include <Ecore_Sdl.h>
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
+#  include <Evas_Engine_SDL.h>
+# endif
+# ifdef BUILD_ECORE_EVAS_OPENGL_SDL
+#  include <Evas_Engine_GL_SDL.h>
+# endif
 #endif
 
 #include "ecore_evas_private.h"
@@ -19,7 +24,7 @@
 
 // fixme: 1 sdl window only at a time? seems wrong
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
+#if defined(BUILD_ECORE_EVAS_SOFTWARE_SDL) || defined(BUILD_ECORE_EVAS_OPENGL_SDL)
 
 /* static char *ecore_evas_default_display = "0"; */
 /* static Ecore_List *ecore_evas_input_devices = NULL; */
@@ -337,7 +342,7 @@ static Ecore_Evas_Engine_Func _ecore_sdl_engine_func =
 static Ecore_Evas*
 _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha)
 {
-   Evas_Engine_Info_SDL *einfo;
+   void                 *einfo;
    Ecore_Evas           *ee;
 
    if (!name)
@@ -381,15 +386,32 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
-   einfo = (Evas_Engine_Info_SDL*) evas_engine_info_get(ee->evas);
-   if (einfo)
+   if (rmethod == evas_render_method_lookup("software_sdl"))
      {
-        einfo->info.rotation = 0;
-        einfo->info.fullscreen = fullscreen;
-        einfo->info.hwsurface = hwsurface;
-        einfo->info.noframe = noframe;
-        einfo->info.alpha = alpha;
-        evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
+	einfo = evas_engine_info_get(ee->evas);
+	if (einfo)
+	  {
+	     ((Evas_Engine_Info_SDL *)einfo)->info.rotation = 0;
+	     ((Evas_Engine_Info_SDL *)einfo)->info.fullscreen = fullscreen;
+	     ((Evas_Engine_Info_SDL *)einfo)->info.hwsurface = hwsurface;
+	     ((Evas_Engine_Info_SDL *)einfo)->info.noframe = noframe;
+	     ((Evas_Engine_Info_SDL *)einfo)->info.alpha = alpha;
+	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+	  }
+#endif
+     }
+   else if (rmethod == evas_render_method_lookup("gl_sdl"))
+     {
+#ifdef BUILD_ECORE_EVAS_OPENGL_SDL
+	einfo = evas_engine_info_get(ee->evas);
+	if (einfo)
+	  {
+	     ((Evas_Engine_Info_GL_SDL *)einfo)->flags.fullscreen = fullscreen;
+	     ((Evas_Engine_Info_GL_SDL *)einfo)->flags.noframe = noframe;
+	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+	  }
+#endif
      }
 
    if (!ecore_sdl_init(name))
@@ -462,3 +484,27 @@ ecore_evas_sdl16_new(const char* name __UNUSED__, int w __UNUSED__, int h __UNUS
    return NULL;
 }
 #endif
+
+#ifdef BUILD_ECORE_EVAS_OPENGL_SDL
+EAPI Ecore_Evas*
+ecore_evas_gl_sdl_new(const char* name, int w, int h, int fullscreen, int noframe)
+{
+   Ecore_Evas          *ee;
+   int                  rmethod;
+
+   rmethod = evas_render_method_lookup("gl_sdl");
+   if (!rmethod) return NULL;
+
+   ee = _ecore_evas_internal_sdl_new(rmethod, name, w, h, fullscreen, 0, noframe, 0);
+   ee->driver = "gl_sdl";
+   return ee;
+}
+#else
+EAPI Ecore_Evas*
+ecore_evas_gl_sdl_new(const char* name __UNUSED__, int w __UNUSED__, int h __UNUSED__, int fullscreen __UNUSED__, int noframe __UNUSED__)
+{
+   ERR("OUTCH !");
+   return NULL;
+}
+#endif
+
