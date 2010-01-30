@@ -66,3 +66,46 @@ ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val)
 
   return 0;
 }
+
+EAPI Ecore_X_Sync_Counter
+ecore_x_sync_counter_new(int val)
+{
+   XSyncCounter counter;
+   XSyncValue v;
+   
+   XSyncIntToValue(&v, val);
+   counter = XSyncCreateCounter(_ecore_x_disp, v);
+   return counter;
+}
+
+EAPI void
+ecore_x_sync_counter_free(Ecore_X_Sync_Counter counter)
+{
+   XSyncDestroyCounter(_ecore_x_disp, counter);
+}
+
+EAPI void
+ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter, int val)
+{
+   XSyncValue v;
+   
+   XSyncIntToValue(&v, val);
+   XSyncChangeCounter(_ecore_x_disp, counter, v);
+}
+
+EAPI void
+ecore_x_sync_counter_inc_wait(Ecore_X_Sync_Counter counter, int val)
+{
+   XSyncWaitCondition cond;
+   XSyncValue v, v2;
+   
+   XSyncIntToValue(&v, val);
+   XSyncIntToValue(&v2, val + 2);
+   cond.trigger.counter = counter;
+   cond.trigger.value_type = XSyncRelative;
+   cond.trigger.wait_value = v;
+   cond.trigger.test_type = XSyncPositiveTransition;
+   cond.event_threshold = v2;
+   XSyncAwait(_ecore_x_disp, &cond, 1);
+   XSync(_ecore_x_disp, False);
+}

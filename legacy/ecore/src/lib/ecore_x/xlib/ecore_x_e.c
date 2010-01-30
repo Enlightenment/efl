@@ -518,3 +518,145 @@ ecore_x_e_illume_bottom_panel_geometry_get(Ecore_X_Window win, int *x, int *y, i
    if (h) *h = geom[3];
    return 1;
 }
+
+EAPI void 
+ecore_x_e_comp_sync_counter_set(Ecore_X_Window win, Ecore_X_Sync_Counter counter)
+{
+   if (counter)
+     ecore_x_window_prop_xid_set(win, ECORE_X_ATOM_E_COMP_SYNC_COUNTER,
+                                  ECORE_X_ATOM_CARDINAL, &counter, 1);
+   else
+     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_COMP_SYNC_COUNTER);
+}
+
+EAPI Ecore_X_Sync_Counter
+ecore_x_e_comp_sync_counter_get(Ecore_X_Window win)
+{
+   int ret = 0;
+   Ecore_X_Sync_Counter counter = 0;
+
+   ret = 
+     ecore_x_window_prop_xid_get(win, 
+                                 ECORE_X_ATOM_E_COMP_SYNC_COUNTER,
+                                 ECORE_X_ATOM_CARDINAL,
+                                 &counter, 1);
+   if (ret != 1) return 0;
+   return counter;
+}
+
+EAPI void
+ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window win)
+{
+   XEvent xev;
+   
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_E_COMP_SYNC_DRAW_DONE;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = win;
+   xev.xclient.data.l[1] = 0; // later
+   xev.xclient.data.l[2] = 0; // later
+   xev.xclient.data.l[3] = 0; // later
+   xev.xclient.data.l[4] = 0; // later
+   
+   XSendEvent(_ecore_x_disp, win, False,
+              SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+}
+
+EAPI void
+ecore_x_e_comp_sync_supported_set(Ecore_X_Window root, Eina_Bool enabled)
+{
+   Ecore_X_Window win;
+
+   if (enabled)
+     {
+        win = ecore_x_window_new(root, 1, 2, 3, 4);
+        ecore_x_window_prop_xid_set(win, ECORE_X_ATOM_E_COMP_SYNC_SUPPORTED,
+                                     ECORE_X_ATOM_WINDOW, &win, 1);
+        ecore_x_window_prop_xid_set(root, ECORE_X_ATOM_E_COMP_SYNC_SUPPORTED,
+                                     ECORE_X_ATOM_WINDOW, &win, 1);
+     }
+   else
+     {
+        int ret;
+        
+        ret = 
+          ecore_x_window_prop_xid_get(root, 
+                                      ECORE_X_ATOM_E_COMP_SYNC_SUPPORTED,
+                                      ECORE_X_ATOM_WINDOW,
+                                      &win, 1);
+        if ((ret == 1) && (win))
+          {
+             ecore_x_window_prop_property_del(root, ECORE_X_ATOM_E_COMP_SYNC_SUPPORTED);
+             ecore_x_window_del(win);
+          }
+     }
+}
+
+EAPI Eina_Bool
+ecore_x_e_comp_sync_supported_get(Ecore_X_Window root)
+{
+   Ecore_X_Window win, win2;
+   int ret;
+   
+   ret = 
+     ecore_x_window_prop_xid_get(root, 
+                                 ECORE_X_ATOM_E_COMP_SYNC_SUPPORTED,
+                                 ECORE_X_ATOM_WINDOW,
+                                 &win, 1);
+   if ((ret == 1) && (win))
+     {
+        ret = 
+          ecore_x_window_prop_xid_get(win, 
+                                      ECORE_X_ATOM_E_COMP_SYNC_SUPPORTED,
+                                      ECORE_X_ATOM_WINDOW,
+                                      &win2, 1);
+        if ((ret == 1) && (win2 == win))
+          {
+             return 1;
+          }
+     }
+   return 0;
+}
+
+EAPI void
+ecore_x_e_comp_sync_begin_send(Ecore_X_Window win)
+{
+   XEvent xev;
+   
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_E_COMP_SYNC_BEGIN;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = win;
+   xev.xclient.data.l[1] = 0; // later
+   xev.xclient.data.l[2] = 0; // later
+   xev.xclient.data.l[3] = 0; // later
+   xev.xclient.data.l[4] = 0; // later
+   
+   XSendEvent(_ecore_x_disp, win, False,
+              SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+}
+
+EAPI void
+ecore_x_e_comp_sync_end_send(Ecore_X_Window win)
+{
+   XEvent xev;
+   
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_E_COMP_SYNC_END;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = win;
+   xev.xclient.data.l[1] = 0; // later
+   xev.xclient.data.l[2] = 0; // later
+   xev.xclient.data.l[3] = 0; // later
+   xev.xclient.data.l[4] = 0; // later
+   
+   XSendEvent(_ecore_x_disp, win, False,
+              SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+}
+

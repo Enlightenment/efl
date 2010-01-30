@@ -1598,7 +1598,22 @@ EAPI int                 ecore_x_e_illume_top_shelf_geometry_get(Ecore_X_Window 
 EAPI void                ecore_x_e_illume_bottom_panel_geometry_set(Ecore_X_Window win, int x, int y, int w, int h);
 EAPI int                 ecore_x_e_illume_bottom_panel_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h);
 
-
+EAPI void                 ecore_x_e_comp_sync_counter_set(Ecore_X_Window win, Ecore_X_Sync_Counter counter);
+EAPI Ecore_X_Sync_Counter ecore_x_e_comp_sync_counter_get(Ecore_X_Window win);
+EAPI void                 ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window win);
+EAPI void                 ecore_x_e_comp_sync_supported_set(Ecore_X_Window root, Eina_Bool enabled);
+EAPI Eina_Bool            ecore_x_e_comp_sync_supported_get(Ecore_X_Window root);
+EAPI void                 ecore_x_e_comp_sync_begin_send(Ecore_X_Window win);
+EAPI void                 ecore_x_e_comp_sync_end_send(Ecore_X_Window win);
+       
+EAPI Ecore_X_Sync_Alarm   ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter);
+EAPI int                  ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm);
+EAPI int                  ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val);
+EAPI Ecore_X_Sync_Counter ecore_x_sync_counter_new(int val);
+EAPI void                 ecore_x_sync_counter_free(Ecore_X_Sync_Counter counter);
+EAPI void                 ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter, int val);
+EAPI void                 ecore_x_sync_counter_inc_wait(Ecore_X_Sync_Counter counter, int val);
+       
 EAPI void                ecore_x_xinerama_query_screens_prefetch(void);
 EAPI void                ecore_x_xinerama_query_screens_fetch(void);
 EAPI int                 ecore_x_xinerama_screen_count_get(void);
@@ -1703,11 +1718,6 @@ EAPI int              ecore_x_xregion_is_empty(Ecore_X_XRegion *region);
 EAPI int              ecore_x_xregion_is_equal(Ecore_X_XRegion *r1, Ecore_X_XRegion *r2);
 EAPI int              ecore_x_xregion_point_contain(Ecore_X_XRegion *region, int x, int y);
 EAPI int              ecore_x_xregion_rect_contain(Ecore_X_XRegion *region, Ecore_X_Rectangle *rect);
-
-/* ecore_x_sync.c */
-EAPI Ecore_X_Sync_Alarm ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter);
-EAPI int                ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm);
-EAPI int                ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val);
 
 /* ecore_x_randr.c */
 typedef struct _Ecore_X_Screen_Size Ecore_X_Screen_Size;
