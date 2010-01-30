@@ -786,10 +786,18 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
    return im;
 
  on_stat_error:
+#ifndef _WIN32
    if ((errno == ENOENT) || (errno == ENOTDIR) ||
        (errno == ENAMETOOLONG) || (errno == ELOOP))
+#else
+   if (errno == ENOENT)
+#endif
      *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+#ifndef _WIN32
    else if ((errno == ENOMEM) || (errno == EOVERFLOW))
+#else
+   else if (errno == ENOMEM)
+#endif
      *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
    else if (errno == EACCES)
      *error = EVAS_LOAD_ERROR_PERMISSION_DENIED;

@@ -9,6 +9,10 @@
 # include "config.h"  /* so that EAPI in Evas.h is correctly defined */
 #endif
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include <Eina.h>
 #include "Evas.h"
 

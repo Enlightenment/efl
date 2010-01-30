@@ -8,7 +8,7 @@
 #include <evas_private.h>
 #include <evas_module.h>
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 # ifdef open
 #  undef open
 # endif

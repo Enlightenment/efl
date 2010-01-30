@@ -21,13 +21,18 @@ evas_init(void)
    if (++_evas_init_count != 1)
      return _evas_init_count;
 
-   if (!eina_init())
+#ifdef HAVE_EVIL
+   if (!evil_init())
      return --_evas_init_count;
+#endif
+
+   if (!eina_init())
+     goto shutdown_evil;
 
    _evas_log_dom_global = eina_log_domain_register("evas_main",EVAS_DEFAULT_LOG_COLOR);
    if (_evas_log_dom_global < 0)
      {
-       EINA_LOG_ERR("Evas could not create a default log domain\n");
+	EINA_LOG_ERR("Evas could not create a default log domain\n");
 	goto shutdown_eina;
      }
 
@@ -52,6 +57,10 @@ evas_init(void)
 #endif
  shutdown_eina:
    eina_shutdown();
+ shutdown_evil:
+#ifdef HAVE_EVIL
+   evil_shutdown();
+#endif
 
    return --_evas_init_count;
 }
@@ -88,6 +97,9 @@ evas_shutdown(void)
    evas_module_shutdown();
    eina_log_domain_unregister(_evas_log_dom_global);
    eina_shutdown();
+#ifdef HAVE_EVIL
+   evil_shutdown();
+#endif
 
    return _evas_init_count;
 }
