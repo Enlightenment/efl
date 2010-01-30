@@ -11,7 +11,6 @@
 
 #include <Evas.h>
 #include <Ecore.h>
-#include <Ecore_Str.h>
 #include <Emotion.h>
 
 #define META_TRACK_TITLE 1
