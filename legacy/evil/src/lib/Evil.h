@@ -152,7 +152,7 @@ typedef unsigned long  gid_t;
 # define _S_IWUSR _S_IWRITE
 # define _S_IRUSR _S_IREAD
 
-#  define open(path, flag, ...) _open((path), _O_BINARY | (flag), __VA_ARGS__)
+#  define open(path, flag, ...) _open((path), _O_BINARY | (flag), ##__VA_ARGS__)
 //#  define close(fd) _close(fd)
 //#  define read(fd,buffer,count) _read((fd),(buffer),(count))
 //#  define write(fd,buffer,count) _write((fd),(buffer),(count))

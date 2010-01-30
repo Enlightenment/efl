@@ -1,5 +1,13 @@
 2010-01-30  Vincent Torri  <doursse at users dot sf dot net>
 
+	* src/lib/Evil.h:
+	change again the redefinition of open(). Needed
+	for the gif loader. But the compilation with vc++
+	is certainly broken. Will be fixed later with a specific
+	case for vc++.
+
+2010-01-30  Vincent Torri  <doursse at users dot sf dot net>
+
 	* src/lib/evil_fcntl.c:
 	* src/lib/evil_fcntl.h:
 	fix fcntl() with F_SETFL command
