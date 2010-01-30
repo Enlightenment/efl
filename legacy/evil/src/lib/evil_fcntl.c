@@ -66,6 +66,12 @@ int fcntl(int fd, int cmd, ...)
                res = 0;
 #endif /* __CEGCC__ || __MINGW32CE__ */
           }
+     }
+   else if (cmd == F_SETFL)
+     {
+        long flag;
+
+        flag = va_arg(va, long);
         if (flag == O_NONBLOCK)
           {
              u_long arg = 1;
