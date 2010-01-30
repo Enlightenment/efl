@@ -589,7 +589,7 @@ ecore_x_e_comp_sync_supported_set(Ecore_X_Window root, Eina_Bool enabled)
         if ((ret == 1) && (win))
           {
              ecore_x_window_prop_property_del(root, ECORE_X_ATOM_E_COMP_SYNC_SUPPORTED);
-             ecore_x_window_del(win);
+             ecore_x_window_free(win);
           }
      }
 }
