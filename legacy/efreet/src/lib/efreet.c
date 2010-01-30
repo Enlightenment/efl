@@ -8,8 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <Ecore_Str.h>
-
 #include "Efreet.h"
 #include "efreet_private.h"
 #include "efreet_xml.h"
@@ -240,7 +238,7 @@ efreet_array_cat(char *buffer, size_t size, const char *strs[])
     size_t n;
     for (i = 0, n = 0; n < size && strs[i]; i++)
     {
-        n += ecore_strlcpy(buffer + n, strs[i], size - n);
+        n += eina_strlcpy(buffer + n, strs[i], size - n);
     }
     return n;
 }

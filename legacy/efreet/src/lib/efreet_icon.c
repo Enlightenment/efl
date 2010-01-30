@@ -13,7 +13,6 @@
 #include <limits.h>
 
 #include <Ecore.h>
-#include <Ecore_Str.h>
 #include <Ecore_File.h>
 
 #include "Efreet.h"
@@ -889,7 +888,7 @@ efreet_icon_fallback_dir_scan(const char *dir, const char *icon_name)
     size = efreet_array_cat(path, sizeof(path), icon_path);
     EINA_LIST_FOREACH(efreet_icon_extensions, l, ext)
     {
-        ecore_strlcpy(path + size, ext, sizeof(path) - size);
+        eina_strlcpy(path + size, ext, sizeof(path) - size);
 
         if (ecore_file_exists(path))
         {
@@ -939,7 +938,7 @@ efreet_icon_lookup_directory_helper(Efreet_Icon_Theme_Directory *dir,
 
     EINA_LIST_FOREACH(efreet_icon_extensions, l, ext)
     {
-        ecore_strlcpy(file_path + len, ext, sizeof(file_path) - len);
+        eina_strlcpy(file_path + len, ext, sizeof(file_path) - len);
 
         if (ecore_file_exists(file_path))
         {

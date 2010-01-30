@@ -16,7 +16,6 @@
 #endif
 
 #include <Ecore.h>
-#include <Ecore_Str.h>
 #include <Ecore_File.h>
 
 #include "Efreet.h"
@@ -1583,7 +1582,7 @@ efreet_string_append(char *dest, int *size, int *len, const char *src)
     int l;
     int off = 0;
 
-    l = ecore_strlcpy(dest + *len, src, *size - *len);
+    l = eina_strlcpy(dest + *len, src, *size - *len);
 
     while (l > *size - *len)
     {
@@ -1594,7 +1593,7 @@ efreet_string_append(char *dest, int *size, int *len, const char *src)
         dest = realloc(dest, *size);
         *(dest + *len) = '\0';
 
-        l = ecore_strlcpy(dest + *len, src + off, *size - *len);
+        l = eina_strlcpy(dest + *len, src + off, *size - *len);
     }
     *len += l;
 

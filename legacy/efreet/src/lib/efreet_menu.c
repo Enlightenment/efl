@@ -10,7 +10,6 @@
 #include <dirent.h>
 #include <limits.h>
 
-#include <Ecore_Str.h>
 #include <Ecore_File.h>
 
 #include "Efreet.h"
@@ -1939,9 +1938,9 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
 
         if (!strcmp(file->d_name, ".") || !strcmp(file->d_name, "..")) continue;
         file_path[0] = '\0';
-        ecore_strlcpy(file_path, path, PATH_MAX);
-        ecore_strlcpy(file_path + path_len, "/", PATH_MAX - path_len);
-        ecore_strlcpy(file_path + path_len + 1, file->d_name, PATH_MAX - path_len - 1);
+        eina_strlcpy(file_path, path, PATH_MAX);
+        eina_strlcpy(file_path + path_len, "/", PATH_MAX - path_len);
+        eina_strlcpy(file_path + path_len + 1, file->d_name, PATH_MAX - path_len - 1);
 
         /* recurse into sub directories */
         if (ecore_file_is_dir(file_path))
