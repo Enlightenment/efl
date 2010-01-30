@@ -20,6 +20,7 @@ evil_test_gettimeofday.c \
 evil_test_link.c \
 evil_test_memcpy.c \
 evil_test_mkstemp.c \
+evil_test_pipe.c \
 evil_test_realpath.c
 
 if EVIL_HAVE_WINCE

@@ -75,8 +75,17 @@ int fcntl(int fd, int cmd, ...)
         if (flag == O_NONBLOCK)
           {
              u_long arg = 1;
-             if (ioctlsocket((SOCKET)fd, FIONBIO, &arg) == SOCKET_ERROR)
-               res = 0;
+             int    type;
+             int    len;
+             int    ret;
+
+             len = (int)sizeof(int);
+             ret = getsockopt((SOCKET)fd, SOL_SOCKET, SO_TYPE, (char *)&type, &len);
+             if (!ret && (type == SOCK_STREAM))
+               {
+                  if (!ioctlsocket((SOCKET)fd, FIONBIO, &arg) == SOCKET_ERROR)
+                    res = 0;
+               }
           }
      }
 #if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )

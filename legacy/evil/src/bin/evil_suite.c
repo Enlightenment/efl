@@ -17,6 +17,7 @@
 #include "evil_test_link.h"
 #include "evil_test_memcpy.h"
 #include "evil_test_mkstemp.h"
+#include "evil_test_pipe.h"
 #include "evil_test_realpath.h"
 
 
@@ -182,6 +183,7 @@ main()
      { "gettimeofday",  test_gettimeofday },
      { "link        ",  test_link },
      { "mkstemp     ",  test_mkstemp },
+     { "pipe        ",  test_pipe },
      { "realpath    ",  test_realpath },
 /*      { "memcpy      ",  test_memcpy }, */
      { NULL,            NULL },

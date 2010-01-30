@@ -1,5 +1,15 @@
 2010-01-30  Vincent Torri  <doursse at users dot sf dot net>
 
+	* src/lib/evil_fcntl.c:
+	verify that the data passed to fcntl() is really a socket
+	and fix ioctlsocket() returned value check.
+
+	* src/bin/Makefile.am:
+	* src/bin/evil_suite.c:
+	add unit test for pipe().
+
+2010-01-30  Vincent Torri  <doursse at users dot sf dot net>
+
 	* src/lib/Evil.h:
 	change again the redefinition of open(). Needed
 	for the gif loader. But the compilation with vc++
