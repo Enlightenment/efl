@@ -1044,12 +1044,45 @@ static Ecore_Con_State svr_try_connect(Ecore_Con_Server *svr)
     }
 }
 
+#define NIPQUAD(addr)					      \
+		    ((unsigned char *)&(addr))[0],	      \
+		      ((unsigned char *)&(addr))[1],          \
+		      ((unsigned char *)&(addr))[2],          \
+		      ((unsigned char *)&(addr))[3]
+
+static char *
+_ecore_con_pretty_ip(struct sockaddr *client_addr, socklen_t size)
+{
+   char ipbuf[INET6_ADDRSTRLEN + 1];
+
+   /* show v4mapped address in pretty form */
+   if (client_addr->sa_family == AF_INET6)
+     {
+	struct sockaddr_in6 *sa6;
+
+	sa6 = (struct sockaddr_in6 *) client_addr;
+	if (IN6_IS_ADDR_V4MAPPED(&sa6->sin6_addr))
+	  {
+	     snprintf(ipbuf, sizeof (ipbuf), "%u.%u.%u.%u",
+		      NIPQUAD(sa6->sin6_addr.s6_addr32[3]));
+	     return strdup(ipbuf);
+	  }
+     }
+
+   if (getnameinfo(client_addr, size,
+		   ipbuf, sizeof (ipbuf), NULL, 0, NI_NUMERICHOST))
+     return strdup("0.0.0.0");
+
+   ipbuf[sizeof (ipbuf) - 1] = 0;
+   return strdup(ipbuf);
+}
+
 static int
 _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Ecore_Con_Server   *svr;
    int                 new_fd;
-   struct sockaddr_in  incoming;
+   unsigned char       incoming[256];
    size_t              size_in;
 
    svr = data;
@@ -1060,7 +1093,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	if (eina_list_count(svr->clients) >= svr->client_limit) return 1;
      }
    /* a new client */
-   size_in = sizeof(struct sockaddr_in);
+   size_in = sizeof(incoming);
 
    memset(&incoming, 0, size_in);
    new_fd = accept(svr->fd, (struct sockaddr *)&incoming, (socklen_t *)&size_in);
@@ -1105,16 +1138,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
 	svr->clients = eina_list_append(svr->clients, cl);
 	if (!svr->path)
-	  {
-	     ip = incoming.sin_addr.s_addr;
-	     snprintf(buf, sizeof(buf),
-		      "%i.%i.%i.%i",
-		      (ip      ) & 0xff,
-		      (ip >> 8 ) & 0xff,
-		      (ip >> 16) & 0xff,
-		      (ip >> 24) & 0xff);
-	     cl->ip = strdup(buf);
-	  }
+	  cl->ip = _ecore_con_pretty_ip((struct sockaddr *) &incoming, size_in);
 	if (!cl->delete_me)
 	  {
 	     Ecore_Con_Event_Client_Add *e;
@@ -1276,7 +1300,6 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 
        errno = 0;
        num = recvfrom(svr->fd, buf, sizeof(buf), MSG_DONTWAIT, (struct sockaddr*) &client_addr, &client_addr_len);
-       fprintf(stderr, "%i vs %i\n", client_addr_len, sizeof(client_addr));
 
        if (num > 0)
 	 {
@@ -1284,7 +1307,6 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	     {
 	       Ecore_Con_Event_Client_Data *e;
 	       unsigned char *inbuf;
-	       char ipbuf[INET6_ADDRSTRLEN + 1];
 
 	       /* Create a new client for use in the client data event */
 	       cl = calloc(1, sizeof(Ecore_Con_Client));
@@ -1305,37 +1327,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	       ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
 	       svr->clients = eina_list_append(svr->clients, cl);
 
-	       /* show v4mapped address in pretty form */
-	       if (cl->client_addr->sa_family == AF_INET6)
-		 {
-#define NIPQUAD(addr)					      \
-		    ((unsigned char *)&(addr))[0],	      \
-		      ((unsigned char *)&(addr))[1],          \
-		      ((unsigned char *)&(addr))[2],          \
-		      ((unsigned char *)&(addr))[3]
-
-		    struct sockaddr_in6 *sa6;
-
-		    sa6 = (struct sockaddr_in6 *) cl->client_addr;
-		    if (IN6_IS_ADDR_V4MAPPED(&sa6->sin6_addr))
-		      {
-			 snprintf(ipbuf, sizeof (ipbuf), "%u.%u.%u.%u",
-				  NIPQUAD(sa6->sin6_addr.s6_addr32[3]));
-			 cl->ip = strdup(ipbuf);
-		      }
-		 }
-
-	       if (!cl->ip)
-		 {
-		    if (getnameinfo(cl->client_addr, cl->client_addr_len,
-				    ipbuf, sizeof (ipbuf), NULL, 0, NI_NUMERICHOST))
-		      cl->ip = strdup("unknown");
-		    else
-		      {
-			 ipbuf[sizeof (ipbuf) - 1] = 0;
-			 cl->ip = strdup(ipbuf);
-		      }
-		 }
+	       cl->ip = _ecore_con_pretty_ip(cl->client_addr, cl->client_addr_len);
 
 	       inbuf = malloc(num);
 	       if(inbuf == NULL)
