@@ -381,12 +381,23 @@ AC_SUBST(fnmatch_libs)
 
 ### Modules
 
-EINA_CHECK_MODULE([chained-pool],   [static],           [chained pool])
-EINA_CHECK_MODULE([ememoa-fixed],   [${enable_ememoa}], [ememoa fixed])
-EINA_CHECK_MODULE([ememoa-unknown], [${enable_ememoa}], [ememoa unknown])
-EINA_CHECK_MODULE([fixed-bitmap],   [no],               [fixed bitmap])
-EINA_CHECK_MODULE([pass-through],   [no],               [pass through])
-EINA_CHECK_MODULE([buddy],          [no],               [buddy])
+if test "x${have_default_mempool}" = "xyes" ; then
+   enable_chained_pool="no"
+   enable_pass_through="static"
+else
+   enable_chained_pool="static"
+   enable_pass_through="no"
+fi
+
+AC_MSG_WARN([cp : $enable_chained_pool])
+AC_MSG_WARN([pt : $enable_pass_through])
+
+EINA_CHECK_MODULE([chained-pool],   [${enable_chained_pool}], [chained pool])
+EINA_CHECK_MODULE([ememoa-fixed],   [${enable_ememoa}],       [ememoa fixed])
+EINA_CHECK_MODULE([ememoa-unknown], [${enable_ememoa}],       [ememoa unknown])
+EINA_CHECK_MODULE([fixed-bitmap],   [no],                     [fixed bitmap])
+EINA_CHECK_MODULE([pass-through],   [${enable_pass_through}], [pass through])
+EINA_CHECK_MODULE([buddy],          [no],                     [buddy])
 
 
 ### Make the debug preprocessor configurable
