@@ -243,6 +243,7 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im)
                               &u, &v, &l_after, 1024);
    if (!tex->pt)
      {
+        memset(tex, 0x11, sizeof(Evas_GL_Texture)); // mark as freed
         free(tex);
         return NULL;
      }
@@ -318,20 +319,26 @@ _pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
    if (!pt) return NULL;
    pt->gc = gc;
-   pt->w = w;
-   pt->h = h;
+   if (im->native.target == GL_TEXTURE_RECTANGLE_ARB)
+     {
+        printf("REEEEEEEEECT\n");
+     }
+   else
+     {
+        printf("%i %i\n", w, h);
+        // FIXME: handle npo2
+        pt->w = w;
+        pt->h = h;
+     }
    pt->intformat = intformat;
    pt->format = format;
    pt->dataformat = GL_UNSIGNED_BYTE;
    pt->references = 0;
    pt->native = 1;
    glGenTextures(1, &(pt->texture));
-   glBindTexture(GL_TEXTURE_2D, pt->texture);
+   glBindTexture(im->native.target, pt->texture);
    
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   // is this really needed for gl-es?
-//   glTexImage2D(GL_TEXTURE_2D, 0, intformat, w, h, 0, format, 
-//                GL_UNSIGNED_BYTE, 0);
 #else
    if (im->native.loose)
      {
@@ -340,12 +347,12 @@ _pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
      }
 #endif
    
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-   glBindTexture(GL_TEXTURE_2D, 0);
-   glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
+   glTexParameteri(im->native.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(im->native.target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(im->native.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(im->native.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glBindTexture(im->native.target, 0);
+   glBindTexture(im->native.target, gc->shader.cur_tex);
    return pt;
 }
 
@@ -362,8 +369,10 @@ pt_unref(Evas_GL_Texture_Pool *pt)
           pt->gc->shared->tex.atlas [pt->slot][pt->fslot] =
           eina_list_remove(pt->gc->shared->tex.atlas[pt->slot][pt->fslot], pt);
      }
+   
    glDeleteTextures(1, &(pt->texture));
    if (pt->fb) glsym_glDeleteFramebuffers(1, &(pt->fb));
+   memset(pt, 0x22, sizeof(Evas_GL_Texture_Pool)); // mark as freed
    free(pt);
 }
 
@@ -386,6 +395,7 @@ evas_gl_common_texture_native_new(Evas_GL_Context *gc, int w, int h, int alpha, 
      tex->pt = _pool_tex_native_new(gc, w, h, rgb_ifmt, rgb_fmt, im);
    if (!tex->pt)
      {
+        memset(tex, 0x33, sizeof(Evas_GL_Texture)); // mark as freed
         free(tex);
         return NULL;
      }
@@ -416,6 +426,7 @@ evas_gl_common_texture_render_new(Evas_GL_Context *gc, int w, int h, int alpha)
      tex->pt = _pool_tex_render_new(gc, w, h, rgb_ifmt, rgb_fmt);
    if (!tex->pt)
      {
+        memset(tex, 0x44, sizeof(Evas_GL_Texture)); // mark as freed
         free(tex);
         return NULL;
      }
@@ -514,6 +525,7 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex)
      }
    if (tex->ptu) pt_unref(tex->ptu);
    if (tex->ptv) pt_unref(tex->ptv);
+   memset(tex, 0x55, sizeof(Evas_GL_Texture)); // mark as freed
    free(tex);
 }
 
@@ -537,6 +549,7 @@ evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels,
                             &l_after, tw);
    if (!tex->pt)
      {
+        memset(tex, 0x66, sizeof(Evas_GL_Texture)); // mark as freed
         free(tex);
         return NULL;
      }
@@ -585,6 +598,7 @@ evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, int w, int h)
    tex->pt = _pool_tex_new(gc, w + 1, h  + 1, lum_ifmt, lum_fmt);
    if (!tex->pt)
      {
+        memset(tex, 0x77, sizeof(Evas_GL_Texture)); // mark as freed
         free(tex);
         return NULL;
      }
@@ -595,6 +609,8 @@ evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, int w, int h)
    tex->ptu = _pool_tex_new(gc, (w / 2) + 1, (h / 2)  + 1, lum_ifmt, lum_fmt);
    if (!tex->ptu)
      {
+        pt_unref(tex->pt);
+        memset(tex, 0x88, sizeof(Evas_GL_Texture)); // mark as freed
         free(tex);
         return NULL;
      }
@@ -605,6 +621,9 @@ evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, int w, int h)
    tex->ptv = _pool_tex_new(gc, (w / 2) + 1, (h / 2)  + 1, lum_ifmt, lum_fmt);
    if (!tex->ptv)
      {
+        pt_unref(tex->pt);
+        pt_unref(tex->ptu);
+        memset(tex, 0x99, sizeof(Evas_GL_Texture)); // mark as freed
         free(tex);
         return NULL;
      }

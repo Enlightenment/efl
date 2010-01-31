@@ -140,8 +140,90 @@ eng_window_new(Display *disp,
    if (!context)
      context = glXCreateContext(disp, gw->visualinfo, NULL, GL_TRUE);
    gw->context = context;
-   
-   glXMakeCurrent(gw->disp, gw->win, gw->context);
+
+   if (gw->context)
+     {
+        int i, j,  num;
+        GLXFBConfig *fbc;
+        
+        glXMakeCurrent(gw->disp, gw->win, gw->context);
+        
+        fbc = glXGetFBConfigs(disp, 0/* FIXME: assume screen 0 */, &num);
+        for (i = 0; i <= 32; i++)
+          {
+             for (j = 0; j < num; j++)
+               {
+                  XVisualInfo *vi;
+                  int vd;
+                  int alpha, val, dbuf, stencil, depth;
+                  int rgba;
+                  
+                  vi = glXGetVisualFromFBConfig(disp, fbc[j]);
+                  if (!vi) continue;
+                  vd = vi->depth;
+                  XFree(vi);
+                  
+                  if (vd != i) continue;
+                  
+                  glXGetFBConfigAttrib(disp, fbc[j], GLX_ALPHA_SIZE, &alpha);
+                  glXGetFBConfigAttrib(disp, fbc[j], GLX_BUFFER_SIZE, &val);
+                  
+                  if ((val != i) && ((val - alpha) != i)) continue;
+                  
+                  val = 0;
+                  rgba = 0;
+                  
+                  if (i == 32)
+                    {
+                       glXGetFBConfigAttrib(disp, fbc[j], GLX_BIND_TO_TEXTURE_RGBA_EXT, &val);
+                       if (val)
+                         {
+                            rgba = 1;
+                            gw->depth_cfg[i].tex_format = GLX_TEXTURE_FORMAT_RGBA_EXT;
+                         }
+                    }
+                  if (!val)
+                    {
+                       if (rgba) continue;
+                       glXGetFBConfigAttrib(disp, fbc[j], GLX_BIND_TO_TEXTURE_RGB_EXT, &val);
+                       if (!val) continue;
+                       gw->depth_cfg[i].tex_format = GLX_TEXTURE_FORMAT_RGB_EXT;
+                    }
+                  
+                  dbuf = 0x7fff;
+                  glXGetFBConfigAttrib(disp, fbc[j], GLX_DOUBLEBUFFER, &val);
+                  if (val > dbuf) continue;
+                  dbuf = val;
+                  
+                  stencil = 0x7fff;
+                  glXGetFBConfigAttrib(disp, fbc[j], GLX_STENCIL_SIZE, &val);
+                  if (val > stencil) continue;
+                  stencil = val;
+                  
+                  depth = 0x7fff;
+                  glXGetFBConfigAttrib(disp, fbc[j], GLX_DEPTH_SIZE, &val);
+                  if (val > depth) continue;
+                  depth = val;
+                  
+                  glXGetFBConfigAttrib(disp, fbc[j], GLX_BIND_TO_MIPMAP_TEXTURE_EXT, &val);
+                  if (val < 0) continue;
+                  gw->depth_cfg[i].mipmap = val;
+                  
+                  glXGetFBConfigAttrib(disp, fbc[j], GLX_Y_INVERTED_EXT, &val);
+                  gw->depth_cfg[i].yinvert = val;
+                  
+                  glXGetFBConfigAttrib(disp, fbc[j], GLX_BIND_TO_TEXTURE_TARGETS_EXT, &val);
+                  gw->depth_cfg[i].tex_target = val;
+                  
+                  gw->depth_cfg[i].fbc = fbc[i];
+               }
+          }
+        XFree(fbc);
+        if (!gw->depth_cfg[DefaultDepth(disp, 0/* FIXMEL assume screen 0*/)].fbc)
+          {
+             printf("text from pixmap not going to work\n");
+          }
+     }
 #endif
    _evas_gl_x11_window = gw;
    

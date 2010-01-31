@@ -202,7 +202,9 @@ struct _Evas_GL_Image
          void     (*free)   (void *data, void *image);
          void      *data;
       } func;
-      unsigned char yinvert : 1;
+      int           yinvert;
+      int           target;
+      int           mipmap;
       unsigned char loose : 1;
    } native;
    

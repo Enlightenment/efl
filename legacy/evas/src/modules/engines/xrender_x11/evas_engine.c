@@ -265,9 +265,9 @@ _output_xlib_setup(int           width,
                     }
                   else
                     re->xr.dpi = atoi(str) * 1000;
+                  evas_common_font_dpi_set(re->xr.dpi / 1000);
                }
           }
-        evas_common_font_dpi_set(re->xr.dpi / 1000);
      }
    
    return re;

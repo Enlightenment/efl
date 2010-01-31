@@ -30,7 +30,7 @@ typedef void (*_eng_fn) (void);
 _eng_fn  (*glsym_glXGetProcAddress)  (const char *a) = NULL;
 void     (*glsym_glXBindTexImage)    (Display *a, GLXDrawable b, int c, int *d) = NULL;
 void     (*glsym_glXReleaseTexImage) (Display *a, GLXDrawable b, int c) = NULL;
-int      (*glsym_glXGetVideoSync)    (Display *a) = NULL;
+int      (*glsym_glXGetVideoSync)    (unsigned int *a) = NULL;
 int      (*glsym_glXWaitVideoSync)   (int a, int b, unsigned int *c) = NULL;
 #endif
                 
@@ -215,9 +215,9 @@ eng_setup(Evas *e, void *in)
                          }
                        else
                          re->xr.dpi = atoi(str) * 1000;
+                       evas_common_font_dpi_set(re->xr.dpi / 1000);
                     }
                }
-             evas_common_font_dpi_set(re->xr.dpi / 1000);
           }
         
 	evas_common_cpu_init();
@@ -461,7 +461,7 @@ eng_output_flush(void *data)
 # endif
    if (re->info->callback.pre_swap)
      {
-        glXWaitGL();
+        glFinish();
         re->info->callback.pre_swap(re->info->callback.data, re->evas);
      }
    glXSwapBuffers(re->win->disp, re->win->win);
@@ -1086,7 +1086,7 @@ struct _Native
 // why is this the case? does anyone know? has anyone tried it on other gfx
 // drivers?
 // 
-#define GLX_TEX_PIXMAP_RECREATE 1
+//#define GLX_TEX_PIXMAP_RECREATE 1
 
 static void
 _native_bind_cb(void *data, void *image)
@@ -1127,9 +1127,8 @@ _native_bind_cb(void *data, void *image)
         n->glx_pixmap = glXCreatePixmap(re->win->disp, n->fbc, 
                                         n->pixmap, pixmap_att);
 #endif        
-        if (!im->native.loose)
-          glsym_glXBindTexImage(re->win->disp, n->glx_pixmap, 
-                                GLX_FRONT_LEFT_EXT, NULL);
+        glsym_glXBindTexImage(re->win->disp, n->glx_pixmap, 
+                              GLX_FRONT_LEFT_EXT, NULL);
      }
 # endif
 #endif
@@ -1154,9 +1153,8 @@ _native_unbind_cb(void *data, void *image)
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
    if (glsym_glXReleaseTexImage)
      {
-        if (!im->native.loose)
-          glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap, 
-                                   GLX_FRONT_LEFT_EXT);
+        glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap, 
+                                 GLX_FRONT_LEFT_EXT);
 #ifdef GLX_TEX_PIXMAP_RECREATE        
         glXDestroyPixmap(re->win->disp, n->glx_pixmap);
         n->glx_pixmap = 0;
@@ -1316,90 +1314,101 @@ eng_image_native_set(void *data, void *image, void *native)
      }
    if (native)
      {
-        VisualID vid;
-        GLXFBConfig *fbc;
-        int i, num;
-        int yinvert = 0;
+        int dummy;
+        unsigned int w, h, depth = 32, border;
+        Window wdummy;
+        Native *n;
         
-        vid = XVisualIDFromVisual(vis);
-        fbc = glXGetFBConfigs(re->win->disp,
-                              0 /* FIXME: screen 0 assumption */,
-                              &num);
-        if (fbc)
+        XGetGeometry(re->win->disp, pm, &wdummy, &dummy, &dummy, 
+                     &w, &h, &border, &depth);
+        n = calloc(1, sizeof(Native));
+        if (n)
           {
-             for (i = 0; i < num; i++)
+#ifndef GLX_TEX_PIXMAP_RECREATE        
+             int pixmap_att[20];
+             int target = 0;
+             int i = 0;
+             
+             if ((re->win->depth_cfg[depth].tex_target &
+                  GLX_TEXTURE_2D_BIT_EXT) &&
+                 (1) // we assume npo2 for now
+                 // size is pow2 || mnpo2 supported
+                 )
                {
-                  XVisualInfo *vi;
-                  int val;
-                  
-                  vi = glXGetVisualFromFBConfig(re->win->disp, fbc[i]);
-                  if ((!vi) || (vi->visualid != vid))
-                    continue;
-                  
-                  glXGetFBConfigAttrib(re->win->disp, fbc[i], 
-                                       GLX_DRAWABLE_TYPE, &val);
-                  if (!(val & GLX_PIXMAP_BIT)) continue;
-                  
-                  glXGetFBConfigAttrib(re->win->disp, fbc[i],
-                                       GLX_BIND_TO_TEXTURE_TARGETS_EXT, &val);
-                  if (!(val & GLX_TEXTURE_2D_BIT_EXT)) continue;
-                  
-                  glXGetFBConfigAttrib(re->win->disp, fbc[i],
-                                       GLX_BIND_TO_TEXTURE_RGBA_EXT, &val);
-                  if (!val)
-                    {
-                       glXGetFBConfigAttrib(re->win->disp, fbc[i],
-                                            GLX_BIND_TO_TEXTURE_RGB_EXT, &val);
-                       if (!val) continue;
-                    }
-                  
-                  glXGetFBConfigAttrib(re->win->disp, fbc[i],
-                                       GLX_Y_INVERTED_EXT, &val);
-                  if (val) yinvert = 1;
-                  break;
+                  printf("2d\n");
+                  target = GLX_TEXTURE_2D_EXT;
                }
-             if (i == num)
+             else if ((re->win->depth_cfg[depth].tex_target &
+                      GLX_TEXTURE_RECTANGLE_BIT_EXT))
                {
-                  printf("  err \n");
-                  // error
+                  printf("rect\n");
+                  target = GLX_TEXTURE_RECTANGLE_EXT;
+               }
+             if (!target)
+               {
+                  printf("broken text-from-pixmap\n");
+                  if (!(re->win->depth_cfg[depth].tex_target &
+                        GLX_TEXTURE_2D_BIT_EXT))
+                    {
+                       target = GLX_TEXTURE_RECTANGLE_EXT;
+                    }
+                  else if (!(re->win->depth_cfg[depth].tex_target &
+                             GLX_TEXTURE_RECTANGLE_BIT_EXT))
+                    {
+                       target = GLX_TEXTURE_2D_EXT;
+                    }
+               }
+             
+             
+             pixmap_att[i++] = GLX_TEXTURE_FORMAT_EXT;
+             pixmap_att[i++] = re->win->depth_cfg[depth].tex_format;
+             pixmap_att[i++] = GLX_MIPMAP_TEXTURE_EXT;
+             pixmap_att[i++] = re->win->depth_cfg[depth].mipmap;
+             
+             if (target)
+               {
+                  pixmap_att[i++] = GLX_TEXTURE_TARGET_EXT;
+                  pixmap_att[i++] = target;
+               }
+             
+             pixmap_att[i++] = 0;
+#endif
+             memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
+             n->pixmap = pm;
+             n->visual = vis;
+             n->fbc = re->win->depth_cfg[depth].fbc;
+             im->native.yinvert     = re->win->depth_cfg[depth].yinvert;
+             im->native.target      = GL_TEXTURE_2D;
+             im->native.loose       = 0;
+             im->native.data        = n;
+             im->native.func.data   = re;
+             im->native.func.bind   = _native_bind_cb;
+             im->native.func.unbind = _native_unbind_cb;
+             im->native.func.free   = _native_free_cb;
+#ifndef GLX_TEX_PIXMAP_RECREATE
+             n->glx_pixmap = glXCreatePixmap(re->win->disp, n->fbc, 
+                                             n->pixmap, pixmap_att);
+             if (!target)
+               {
+                  printf("notgt\n");
+                  glXQueryDrawable(re->win->disp, n->pixmap, GLX_TEXTURE_TARGET_EXT, &target);
+               }
+             if (target == GLX_TEXTURE_2D_EXT)
+               {
+                  im->native.target = GL_TEXTURE_2D;
+                  im->native.mipmap = re->win->depth_cfg[depth].mipmap;
+               }
+             else if (target == GLX_TEXTURE_RECTANGLE_EXT)
+               {
+                  im->native.target = GL_TEXTURE_RECTANGLE_ARB;
+                  im->native.mipmap = 0;
                }
              else
                {
-                  Native *n;
-                  
-                  n = calloc(1, sizeof(Native));
-                  if (n)
-                    {
-#ifndef GLX_TEX_PIXMAP_RECREATE        
-                       const int pixmap_att[] =
-                         {
-                            GLX_TEXTURE_TARGET_EXT, 
-                              GLX_TEXTURE_2D_EXT,
-                              GLX_TEXTURE_FORMAT_EXT, 
-//                              GLX_TEXTURE_FORMAT_RGBA_EXT,
-                              GLX_TEXTURE_FORMAT_RGB_EXT,
-                              0
-                         };
-#endif        
-                       memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
-                       n->pixmap = pm;
-                       n->visual = vis;
-                       memcpy(&(n->fbc), fbc, sizeof(GLXFBConfig));
-                       n->fbc = *fbc;
-                       im->native.yinvert     = yinvert;
-                       im->native.loose       = 0;
-                       im->native.data        = n;
-                       im->native.func.data   = re;
-                       im->native.func.bind   = _native_bind_cb;
-                       im->native.func.unbind = _native_unbind_cb;
-                       im->native.func.free   = _native_free_cb;
-#ifndef GLX_TEX_PIXMAP_RECREATE
-                       n->glx_pixmap = glXCreatePixmap(re->win->disp, n->fbc, 
-                                                       n->pixmap, pixmap_att);
-#endif                       
-                       evas_gl_common_image_native_enable(im);
-                    }
+                  printf("still unknown target\n");
                }
+#endif                       
+             evas_gl_common_image_native_enable(im);
           }
      }
 # endif   

@@ -916,9 +916,12 @@ shader_array_flush(Evas_GL_Context *gc)
      }
    if (gc->array.im)
      {
-        if (gc->array.im->native.func.bind)
-          gc->array.im->native.func.bind(gc->array.im->native.func.data, 
-                                         gc->array.im);
+        if (!gc->array.im->native.func.bind)
+          {
+             if (gc->array.im->native.func.bind)
+               gc->array.im->native.func.bind(gc->array.im->native.func.data, 
+                                              gc->array.im);
+          }
      }
    if (gc->shader.render_op != gc->shader.current.render_op)
      {
@@ -1051,9 +1054,12 @@ shader_array_flush(Evas_GL_Context *gc)
      }
    if (gc->array.im)
      {
-        if (gc->array.im->native.func.unbind)
-          gc->array.im->native.func.unbind(gc->array.im->native.func.data, 
-                                           gc->array.im);
+        if (!gc->array.im->native.func.bind)
+          {
+             if (gc->array.im->native.func.unbind)
+               gc->array.im->native.func.unbind(gc->array.im->native.func.data, 
+                                                gc->array.im);
+          }
 /*        
         gc->shader.cur_tex = 0;
         glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);

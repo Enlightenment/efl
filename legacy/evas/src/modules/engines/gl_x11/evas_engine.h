@@ -94,6 +94,13 @@ struct _Evas_GL_X11_Window
    EGLDisplay       egl_disp;
 #else   
    GLXContext       context;
+   struct {
+      GLXFBConfig   fbc;
+      int           tex_format;
+      int           tex_target;
+      int           mipmap;
+      unsigned char yinvert : 1;
+   } depth_cfg[33]; // config for all 32 possible depths!
 #endif
 
 };
