@@ -34,18 +34,60 @@
 
 #include "eina_private.h"
 
-static int eina_str_has_suffix_helper(const char *str, const char *suffix,
-		int (*cmp)(const char *, const char *));
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
 /**
- * @param dst the destination
- * @param src the source
- * @param siz the size of the destination
- * @return the length of the source string
- * @brief copy a c-string
+ * @cond LOCAL
+ */
+
+/*
+ * Internal helper function used by eina_str_has_suffix() and
+ * eina_str_has_extension()
+ */
+static Eina_Bool
+eina_str_has_suffix_helper(const char *str,
+			   const char *suffix,
+			   int (*cmp)(const char *, const char *))
+{
+   size_t str_len;
+   size_t suffix_len;
+
+   str_len = strlen(str);
+   suffix_len = strlen(suffix);
+   if (suffix_len > str_len)
+     return EINA_FALSE;
+
+   return cmp(str + str_len - suffix_len, suffix) == 0;
+}
+
+/**
+ * @endcond
+ */
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+
+/**
+ * @brief Copy a c-string to another.
  *
- * Copy src to string dst of size siz.  At most siz-1 characters
- * will be copied.  Always NUL terminates (unless siz == 0).
- * Returns strlen(src); if retval >= siz, truncation occurred.
+ * @param dst The destination string.
+ * @param src The source string.
+ * @param siz The size of the destination string.
+ * @return The length of the source string.
+ *
+ * This function copies up to @p siz - 1 characters from the
+ * NUL-terminated string @p src to @p dst, NUL-terminating the result
+ * (unless @p siz is equal to 0). The returned value is the length of
+ * @p src. If the returned value is greater than @p siz, truncation
+ * occured.
  */
 EAPI size_t
 eina_strlcpy(char *dst, const char *src, size_t siz)
@@ -81,17 +123,19 @@ eina_strlcpy(char *dst, const char *src, size_t siz)
 }
 
 /**
- * @param dst the destination
- * @param src the source
- * @param siz the size of the destination
- * @return the length of the source string plus MIN(siz, strlen(initial dst))
- * @brief append a c-string
+ * @brief Append a c-string.
  *
- * Appends src to string dst of size siz (unlike strncat, siz is the
- * full size of dst, not space left).  At most siz-1 characters
- * will be copied.  Always NUL terminates (unless siz <= strlen(dst)).
- * Returns strlen(src) + MIN(siz, strlen(initial dst)).
- * If retval >= siz, truncation occurred.
+ * @param dst The destination string.
+ * @param src The source string.
+ * @param siz The size of the destination string.
+ * @return The length of the source string plus MIN(siz, strlen(initial dst))
+ *
+ * This function appends @p src to @p dst of size @p siz (unlike
+ * strncat, @p siz is the full size of @p dst, not space left).  At
+ * most @p siz - 1 characters will be copied.  Always NUL terminates
+ * (unless @p siz <= strlen(dst)). This function returns strlen(src) +
+ * MIN(siz, strlen(initial dst)). If the returned value is greater or
+ * equal than @p siz, truncation occurred.
  */
 EAPI size_t
 eina_strlcat(char *dst, const char *src, size_t siz)
@@ -122,12 +166,17 @@ eina_strlcat(char *dst, const char *src, size_t siz)
 }
 
 /**
- * @param str the string to work with
- * @param prefix the prefix to check for
- * @return true if str has the given prefix
- * @brief checks if the string has the given prefix
+ * @brief Check if the given string has the given prefix.
+ *
+ * @param str The string to work with.
+ * @param prefix The prefix to check for.
+ * @return #EINA_TRUE if the string has the given prefix, #EINA_FALSE otherwise.
+ *
+ * This function returns #EINA_TRUE if @p str has the prefix
+ * @p prefix, #EINA_FALSE otherwise. If the length of @p prefix is
+ * greater than @p str, #EINA_FALSE is returned.
  */
-EAPI int
+EAPI Eina_Bool
 eina_str_has_prefix(const char *str, const char *prefix)
 {
    size_t str_len;
@@ -136,71 +185,66 @@ eina_str_has_prefix(const char *str, const char *prefix)
    str_len = strlen(str);
    prefix_len = strlen(prefix);
    if (prefix_len > str_len)
-     return 0;
+     return EINA_FALSE;
 
    return (strncmp(str, prefix, prefix_len) == 0);
 }
 
+/**
+ * @brief Check if the given string has the given suffix.
+ *
+ * @param str The string to work with.
+ * @param suffix The suffix to check for.
+ * @return #EINA_TRUE if the string has the given suffix, #EINA_FALSE otherwise.
+ *
+ * This function returns #EINA_TRUE if @p str has the suffix
+ * @p suffix, #EINA_FALSE otherwise. If the length of @p suffix is
+ * greater than @p str, #EINA_FALSE is returned.
+ */
 /**
  * @param str the string to work with
  * @param suffix the suffix to check for
  * @return true if str has the given suffix
  * @brief checks if the string has the given suffix
  */
-EAPI int
+EAPI Eina_Bool
 eina_str_has_suffix(const char *str, const char *suffix)
 {
    return eina_str_has_suffix_helper(str, suffix, strcmp);
 }
 
 /**
+ * @brief Check if the given string has the given suffix.
+ *
+ * @param str The string to work with.
+ * @param ext The  extension to check for.
+ * @return #EINA_TRUE if the string has the given extension, #EINA_FALSE otherwise.
+ *
  * This function does the same like eina_str_has_suffix(), but with a
  * case insensitive compare.
- *
- * @param str the string to work with
- * @param ext the  extension to check for
- * @return true if str has the given extension
- * @brief checks if the string has the given extension
  */
-EAPI int
+EAPI Eina_Bool
 eina_str_has_extension(const char *str, const char *ext)
 {
    return eina_str_has_suffix_helper(str, ext, strcasecmp);
 }
 
-/*
- * Internal helper function used by eina_str_has_suffix() and
- * eina_str_has_extension()
- */
-static int
-eina_str_has_suffix_helper(const char *str, const char *suffix,
-		int (*cmp)(const char *, const char *))
-{
-   size_t str_len;
-   size_t suffix_len;
-
-   str_len = strlen(str);
-   suffix_len = strlen(suffix);
-   if (suffix_len > str_len)
-     return 0;
-
-   return cmp(str + str_len - suffix_len, suffix) == 0;
-}
-
 /**
- * Splits a string into a maximum of max_tokens pieces, using the given
- * delimiter. If max_tokens is reached, the final string in the returned
- * string array contains the remainder of string.
+ * @brief Split a string using a delimiter.
  *
- * @param str         A string to split.
- * @param delim       A string which specifies the places at which to split the
- *                    string. The delimiter is not included in any of the
- *                    resulting strings, unless max_tokens is reached.
- * @param max_tokens  The maximum number of strings to split string into.
- *                    If this is less than 1, the string is split completely.
- * @return            A newly-allocated NULL-terminated array of strings.
- *                    To free it: free the first element of the array
- *                    and the array itself.
+ * @param str The string to split.
+ * @param delim The string which specifies the places at which to split the string.
+ * @param max_tokens The maximum number of strings to split string into.
+ * @return A newly-allocated NULL-terminated array of strings.
+ *
+ * This functin splits @p str into a maximum of @p max_tokens pieces,
+ * using the given delimiter @p delim. @p delim is not included in any
+ * of the resulting strings, unless @p max_tokens is reached. If
+ * @p max_tokens is less than @c 1, the string is splitted completely. If
+ * @p max_tokens is reached, the last string in the returned string
+ * array contains the remainder of string. The returned value is a
+ * newly allocated NUL-terminated array of string. To free it, free
+ * the first element of the array and the array itself.
  */
 EAPI char **
 eina_str_split(const char *str, const char *delim, int max_tokens)
@@ -232,24 +276,30 @@ eina_str_split(const char *str, const char *delim, int max_tokens)
 }
 
 /**
- * Join two strings of known length and store the result in @a dst buffer.
+ * @brief Join two strings of known length.
  *
- * @param dst where to store the result.
- * @param size byte size of dst, will write at most (size - 1)
- *     characters and then the '\0' (null terminator).
- * @param sep separator character to use.
- * @param a first string to use, before @a sep.
- * @param a_len length of @a a, not including '\0' (strlen()-like)
- * @param b second string to use, after @a sep.
- * @param b_len length of @a b, not including '\0' (strlen()-like)
+ * @param dst The buffer to store the result.
+ * @param size Size (in byte) of the buffer.
+ * @param sep The separator character to use.
+ * @param a First string to use, before @p sep.
+ * @param a_len length of @p a.
+ * @param b Second string to use, after @p sep.
+ * @param b_len length of @p b.
+ * @return The number of characters printed.
  *
- * @return the number of characters printed (not including the
- *     trailing '\0' used to end output to strings). Just like
- *     snprintf(), it will not write more than @a size bytes, thus a
- *     return value of @a size or more means that the output was
- *     truncated.
+ * This function joins the strings @p a and @p b (in that order) and
+ * separate them with @p sep. The result is stored in the buffer
+ * @p dst and at most @p size - 1 characters will be written and the
+ * string is NULL-terminated. @p a_len is the length of @p a (not
+ * including '\0') and @p b_len is the length of @p b (not including
+ * '\0'). This function returns the number of characters printed (not
+ * including the trailing '\0' used to end output to strings). Just
+ * like snprintf(), it will not write more than @p size bytes, thus a
+ * returned value of @p size or more means that the output was
+ * truncated.
  *
- * @see eina_str_join() and eina_str_join_static()
+ * @see eina_str_join()
+ * @see eina_str_join_static()
  */
 EAPI size_t
 eina_str_join_len(char *dst, size_t size, char sep, const char *a, size_t a_len, const char *b, size_t b_len)

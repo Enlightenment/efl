@@ -15,10 +15,10 @@
 EAPI size_t eina_strlcpy(char *dst, const char *src, size_t siz);
 EAPI size_t eina_strlcat(char *dst, const char *src, size_t siz);
 
-EAPI int eina_str_has_prefix(const char *str, const char *prefix);
+EAPI Eina_Bool eina_str_has_prefix(const char *str, const char *prefix);
 
-EAPI int eina_str_has_suffix(const char *str, const char *suffix);
-EAPI int eina_str_has_extension(const char *str, const char *ext);
+EAPI Eina_Bool eina_str_has_suffix(const char *str, const char *suffix);
+EAPI Eina_Bool eina_str_has_extension(const char *str, const char *ext);
 
 EAPI char **eina_str_split(const char *string, const char *delimiter, 
                             int max_tokens);
@@ -27,25 +27,20 @@ EAPI size_t eina_str_join_len(char *dst, size_t size, char sep, const char *a, s
 
 
 /**
- * Join two strings and store the result in @a dst buffer.
+ * @brief Join two strings of known length.
  *
- * Similar to eina_str_join_len(), but will compute the length of @a
- * and @a b using strlen().
+ * @param dst The buffer to store the result.
+ * @param size Size (in byte) of the buffer.
+ * @param sep The separator character to use.
+ * @param a First string to use, before @p sep.
+ * @param b Second string to use, after @p sep.
+ * @return The number of characters printed.
  *
- * @param dst where to store the result.
- * @param size byte size of dst, will write at most (size - 1)
- *     characters and then the '\0' (null terminator).
- * @param sep separator character to use.
- * @param a first string to use, before @a sep.
- * @param b second string to use, after @a sep.
+ * This function is similar to eina_str_join_len(), but will compute
+ * the length of @p a  and @p b using strlen().
  *
- * @return the number of characters printed (not including the
- *     trailing '\0' used to end output to strings). Just like
- *     snprintf(), it will not write more than @a size bytes, thus a
- *     return value of @a size or more means that the output was
- *     truncated.
- *
- * @see eina_str_join_len() and eina_str_join_static()
+ * @see eina_str_join_len()
+ * @see eina_str_join_static()
  */
 static inline size_t eina_str_join(char *dst, size_t size, char sep, const char *a, const char *b)
 {
@@ -53,23 +48,20 @@ static inline size_t eina_str_join(char *dst, size_t size, char sep, const char 
 }
 
 /**
- * Join two static strings and store the result in static @a dst buffer.
+ * @brief Join two static strings and store the result in a static buffer.
  *
- * Similar to eina_str_join_len(), but will assume string sizes are
- * know using sizeof(X).
+ * @param dst The buffer to store the result.
+ * @param size Size (in byte) of the buffer.
+ * @param sep The separator character to use.
+ * @param a First string to use, before @p sep.
+ * @param b Second string to use, after @p sep.
+ * @return The number of characters printed.
  *
- * @param dst where to store the result.
- * @param sep separator character to use.
- * @param a first string to use, before @a sep.
- * @param b second string to use, after @a sep.
+ * This function is similar to eina_str_join_len(), but will assume
+ * string sizes are know using sizeof(X).
  *
- * @return the number of characters printed (not including the
- *     trailing '\0' used to end output to strings). Just like
- *     snprintf(), it will not write more than @a size bytes, thus a
- *     return value of @a size or more means that the output was
- *     truncated.
- *
- * @see eina_str_join() and eina_str_join_static()
+ * @see eina_str_join()
+ * @see eina_str_join_static()
  */
 #define eina_str_join_static(dst, sep, a, b) eina_str_join_len(dst, sizeof(dst), sep, a, (sizeof(a) > 0) ? sizeof(a) - 1 : 0, b, (sizeof(b) > 0) ? sizeof(b) - 1 : 0)
 
