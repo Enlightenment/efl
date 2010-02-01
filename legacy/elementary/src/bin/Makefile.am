@@ -73,7 +73,8 @@ test_label.c \
 test_conform.c \
 test_multi.c \
 test_floating.c \
-test_launcher.c
+test_launcher.c \
+test_anim.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@
 elementary_test_LDFLAGS =

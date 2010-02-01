@@ -622,6 +622,15 @@ Evas_Object *gl3_icon_get(const void *data, Evas_Object *obj, const char *part)
    char buf[PATH_MAX];
    if (!strcmp(part, "elm.swallow.icon"))
      {
+        Evas_Object *lb;
+        
+        lb = elm_label_add(obj);
+        elm_label_line_wrap_set(lb, 1);
+        elm_label_wrap_width_set(lb, 201);
+        elm_label_label_set(lb, "ashj ascjscjh n asjkl hcjlh ls hzshnn zjh sh zxjcjsnd h dfw sdv edev efe fwefvv vsd cvs ws wf  fvwf wd fwe f  we wef we wfe rfwewef wfv wswf wefg sdfws w wsdcfwcf wsc vdv  sdsd sdcd cv wsc sdcv wsc d sdcdcsd sdcdsc wdvd sdcsd wscxcv wssvd sd");
+        evas_object_show(lb);
+        return lb;
+        
 	Evas_Object *bx = elm_box_add(obj);
 	Evas_Object *ic;
 	ic = elm_icon_add(obj);
