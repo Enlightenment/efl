@@ -79,10 +79,11 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN \
 	     ecore-quartz.pc.in \
 	     ecore-input.pc.in \
 	     ecore-wince.pc.in \
+	     ecore-data.pc.in \
 	     ecore.spec.in ecore.spec
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = ecore.pc
+pkgconfig_DATA = ecore.pc ecore-data.pc
 
 if BUILD_ECORE_CON
 pkgconfig_DATA += ecore-con.pc
