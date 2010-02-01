@@ -118,7 +118,16 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
      {
 	/* unclip */
 	obj->cur.clipper->clip.clipees = eina_list_remove(obj->cur.clipper->clip.clipees, obj);
-	if (!obj->cur.clipper->clip.clipees) obj->cur.clipper->cur.have_clipees = 0;
+	if (!obj->cur.clipper->clip.clipees)
+	  {
+	     obj->cur.clipper->cur.have_clipees = 0;
+	     if (obj->cur.clipper->cur.visible)
+	       evas_damage_rectangle_add(obj->cur.clipper->layer->evas,
+					 obj->cur.clipper->cur.geometry.x,
+					 obj->cur.clipper->cur.geometry.y,
+					 obj->cur.clipper->cur.geometry.w,
+					 obj->cur.clipper->cur.geometry.h);
+	  }
 	evas_object_change(obj->cur.clipper);
 	evas_object_change(obj);
 	obj->cur.clipper = NULL;
@@ -226,7 +235,15 @@ evas_object_clip_unset(Evas_Object *obj)
      {
         obj->cur.clipper->clip.clipees = eina_list_remove(obj->cur.clipper->clip.clipees, obj);
 	if (!obj->cur.clipper->clip.clipees)
-	  obj->cur.clipper->cur.have_clipees = 0;
+	  {
+	     obj->cur.clipper->cur.have_clipees = 0;
+	     if (obj->cur.clipper->cur.visible)
+	       evas_damage_rectangle_add(obj->cur.clipper->layer->evas,
+					 obj->cur.clipper->cur.geometry.x,
+					 obj->cur.clipper->cur.geometry.y,
+					 obj->cur.clipper->cur.geometry.w,
+					 obj->cur.clipper->cur.geometry.h);
+	  }
 	evas_object_change(obj->cur.clipper);
      }
    obj->cur.clipper = NULL;
