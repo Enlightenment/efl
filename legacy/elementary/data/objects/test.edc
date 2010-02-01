@@ -122,7 +122,7 @@ collections {
             after: "anim1";
          }
          program { name: "anim3";
-            signal: "show";
+            signal: "load";
             source: "";
             action: STATE_SET "drift" 0.0;
             transition: LINEAR 40.0;
