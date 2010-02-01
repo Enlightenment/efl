@@ -196,7 +196,8 @@ main(int argc, char **argv)
 	exit(-1);
      }
 
-   edje_init();
+   if (!edje_init())
+     exit(-1);
 
    edje_file = mem_alloc(SZ(Edje_File));
    edje_file->compiler = strdup("edje_cc");

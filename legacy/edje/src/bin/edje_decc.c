@@ -58,7 +58,8 @@ main(int argc, char **argv)
    int i;
 
    setlocale(LC_NUMERIC, "C");
-   eina_init();
+   if (!eina_init())
+     exit(-1);
    _edje_cc_log_dom = eina_log_domain_register("edje_decc", EDJE_CC_DEFAULT_LOG_COLOR);
    if(_edje_cc_log_dom < 0)
      {
@@ -89,15 +90,15 @@ main(int argc, char **argv)
 	exit(-1);
      }
 
-   edje_init();
-   eet_init();
+   if (!edje_init())
+     exit(-1);
    source_edd();
 
    if (!decomp()) return -1;
    output();
 
    eet_close(ef);
-   eet_shutdown();
+   edje_shutdown();
    eina_log_domain_unregister(_edje_cc_log_dom);
    _edje_cc_log_dom = -1;
    eina_shutdown();
