@@ -545,10 +545,11 @@ ecore_x_e_comp_sync_counter_get(Ecore_X_Window win)
 }
 
 EAPI void
-ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window win)
+ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window root, Ecore_X_Window win)
 {
    XEvent xev;
    
+   if (!root) root = DefaultRootWindow(_ecore_x_disp);
    xev.xclient.type = ClientMessage;
    xev.xclient.display = _ecore_x_disp;
    xev.xclient.window = win;
@@ -560,8 +561,9 @@ ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window win)
    xev.xclient.data.l[3] = 0; // later
    xev.xclient.data.l[4] = 0; // later
    
-   XSendEvent(_ecore_x_disp, win, False,
-              SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+   XSendEvent(_ecore_x_disp, root, False,
+              SubstructureRedirectMask | SubstructureNotifyMask, 
+              &xev);
 }
 
 EAPI void
@@ -569,6 +571,7 @@ ecore_x_e_comp_sync_supported_set(Ecore_X_Window root, Eina_Bool enabled)
 {
    Ecore_X_Window win;
 
+   if (!root) root = DefaultRootWindow(_ecore_x_disp);
    if (enabled)
      {
         win = ecore_x_window_new(root, 1, 2, 3, 4);
@@ -600,6 +603,7 @@ ecore_x_e_comp_sync_supported_get(Ecore_X_Window root)
    Ecore_X_Window win, win2;
    int ret;
    
+   if (!root) root = DefaultRootWindow(_ecore_x_disp);
    ret = 
      ecore_x_window_prop_xid_get(root, 
                                  ECORE_X_ATOM_E_COMP_SYNC_SUPPORTED,
@@ -637,7 +641,8 @@ ecore_x_e_comp_sync_begin_send(Ecore_X_Window win)
    xev.xclient.data.l[4] = 0; // later
    
    XSendEvent(_ecore_x_disp, win, False,
-              SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+              NoEventMask, //SubstructureRedirectMask | SubstructureNotifyMask, 
+              &xev);
 }
 
 EAPI void
@@ -657,6 +662,28 @@ ecore_x_e_comp_sync_end_send(Ecore_X_Window win)
    xev.xclient.data.l[4] = 0; // later
    
    XSendEvent(_ecore_x_disp, win, False,
-              SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+              NoEventMask, //SubstructureRedirectMask | SubstructureNotifyMask, 
+              &xev);
+}
+
+EAPI void
+ecore_x_e_comp_sync_cancel_send(Ecore_X_Window win)
+{
+   XEvent xev;
+   
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_E_COMP_SYNC_CANCEL;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = win;
+   xev.xclient.data.l[1] = 0; // later
+   xev.xclient.data.l[2] = 0; // later
+   xev.xclient.data.l[3] = 0; // later
+   xev.xclient.data.l[4] = 0; // later
+   
+   XSendEvent(_ecore_x_disp, win, False,
+              NoEventMask, //SubstructureRedirectMask | SubstructureNotifyMask, 
+              &xev);
 }
 

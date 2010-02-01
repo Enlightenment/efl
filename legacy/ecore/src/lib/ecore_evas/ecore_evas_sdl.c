@@ -426,8 +426,6 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
 
    ecore_event_window_register(0, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
 
-   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
-
    SDL_ShowCursor(SDL_DISABLE);
 
    ee->engine.func->fn_render = _ecore_evas_sdl_render;
@@ -435,6 +433,9 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    
    sdl_ee = ee;
    
+   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
+   evas_focus_in(ee->evas);
+
    return ee;
 }
 #endif

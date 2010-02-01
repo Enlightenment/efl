@@ -655,12 +655,13 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
    evas_key_lock_add(ee->evas, "Num_Lock");
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
-   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
-
    ee->engine.func->fn_render = _ecore_evas_buffer_render;
    _ecore_evas_register(ee);
    fb_ee = ee;
    
+   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
+   evas_focus_in(ee->evas);
+
    return ee;
 }
 #else

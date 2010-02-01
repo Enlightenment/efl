@@ -200,11 +200,14 @@ struct _Ecore_Evas_Engine
       Ecore_X_GC     gc;
       Ecore_X_XRegion *damages;
       Ecore_X_Sync_Counter sync_counter;
+      int            sync_val; // bigger! this will screw up at 2 billion frames (414 days of continual rendering @ 60fps)
       int            screen_num;
       int            px, py, pw, ph;
       unsigned char  direct_resize : 1;
       unsigned char  using_bg_pixmap : 1;
       unsigned char  managed : 1;
+      unsigned char  sync_began : 1;
+      unsigned char  sync_cancel : 1;
       struct {
 	   unsigned char modal : 1;
 	   unsigned char sticky : 1;
@@ -336,6 +339,7 @@ struct _Ecore_Evas
    unsigned char ignore_events : 1;
    unsigned char manual_render : 1;
    unsigned char registered : 1;
+   unsigned char no_comp_sync  : 1;
 };
 
 #ifdef BUILD_ECORE_EVAS_X11
@@ -365,5 +369,7 @@ void _ecore_evas_register(Ecore_Evas *ee);
 void _ecore_evas_free(Ecore_Evas *ee);
 void _ecore_evas_idle_timeout_update(Ecore_Evas *ee);
 void _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp);
+
+extern int _ecore_evas_app_comp_sync;
 
 #endif

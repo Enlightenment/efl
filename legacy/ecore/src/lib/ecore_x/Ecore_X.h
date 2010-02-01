@@ -1600,19 +1600,20 @@ EAPI int                 ecore_x_e_illume_bottom_panel_geometry_get(Ecore_X_Wind
 
 EAPI void                 ecore_x_e_comp_sync_counter_set(Ecore_X_Window win, Ecore_X_Sync_Counter counter);
 EAPI Ecore_X_Sync_Counter ecore_x_e_comp_sync_counter_get(Ecore_X_Window win);
-EAPI void                 ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window win);
+EAPI void                 ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window root, Ecore_X_Window win);
 EAPI void                 ecore_x_e_comp_sync_supported_set(Ecore_X_Window root, Eina_Bool enabled);
 EAPI Eina_Bool            ecore_x_e_comp_sync_supported_get(Ecore_X_Window root);
 EAPI void                 ecore_x_e_comp_sync_begin_send(Ecore_X_Window win);
 EAPI void                 ecore_x_e_comp_sync_end_send(Ecore_X_Window win);
+EAPI void                 ecore_x_e_comp_sync_cancel_send(Ecore_X_Window win);
        
 EAPI Ecore_X_Sync_Alarm   ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter);
 EAPI int                  ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm);
 EAPI int                  ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val);
 EAPI Ecore_X_Sync_Counter ecore_x_sync_counter_new(int val);
 EAPI void                 ecore_x_sync_counter_free(Ecore_X_Sync_Counter counter);
-EAPI void                 ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter, int val);
-EAPI void                 ecore_x_sync_counter_inc_wait(Ecore_X_Sync_Counter counter, int val);
+EAPI void                 ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter, int by);
+EAPI void                 ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter, int val);
        
 EAPI void                ecore_x_xinerama_query_screens_prefetch(void);
 EAPI void                ecore_x_xinerama_query_screens_fetch(void);

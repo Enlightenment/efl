@@ -85,26 +85,27 @@ ecore_x_sync_counter_free(Ecore_X_Sync_Counter counter)
 }
 
 EAPI void
-ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter, int val)
+ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter, int by)
 {
    XSyncValue v;
    
-   XSyncIntToValue(&v, val);
+   XSyncIntToValue(&v, by);
    XSyncChangeCounter(_ecore_x_disp, counter, v);
 }
 
 EAPI void
-ecore_x_sync_counter_inc_wait(Ecore_X_Sync_Counter counter, int val)
+ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter, int val)
 {
    XSyncWaitCondition cond;
    XSyncValue v, v2;
-   
+
+   XSyncQueryCounter(_ecore_x_disp, counter, &v);
    XSyncIntToValue(&v, val);
-   XSyncIntToValue(&v2, val + 2);
+   XSyncIntToValue(&v2, val + 1);
    cond.trigger.counter = counter;
-   cond.trigger.value_type = XSyncRelative;
+   cond.trigger.value_type = XSyncAbsolute;
    cond.trigger.wait_value = v;
-   cond.trigger.test_type = XSyncPositiveTransition;
+   cond.trigger.test_type = XSyncPositiveComparison;
    cond.event_threshold = v2;
    XSyncAwait(_ecore_x_disp, &cond, 1);
    XSync(_ecore_x_disp, False);

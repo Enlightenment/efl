@@ -22,7 +22,7 @@
 #ifdef BUILD_ECORE_EVAS_X11
 static int _ecore_evas_init_count = 0;
 
-static Ecore_Event_Handler *ecore_evas_event_handlers[12];
+static Ecore_Event_Handler *ecore_evas_event_handlers[13];
 
 static void
 _ecore_evas_x_protocols_set(Ecore_Evas *ee)
@@ -39,8 +39,18 @@ _ecore_evas_x_protocols_set(Ecore_Evas *ee)
 static void
 _ecore_evas_x_sync_set(Ecore_Evas *ee)
 {
-   if (!ee->engine.x.sync_counter)
-     ee->engine.x.sync_counter = ecore_x_sync_counter_new(0);
+   if ((ecore_x_e_comp_sync_supported_get(ee->engine.x.win_root)) &&
+       (!ee->no_comp_sync) && (_ecore_evas_app_comp_sync))
+     {
+        if (!ee->engine.x.sync_counter)
+          ee->engine.x.sync_counter = ecore_x_sync_counter_new(0);
+     }
+   else
+     {
+        if (ee->engine.x.sync_counter)
+          ecore_x_sync_counter_free(ee->engine.x.sync_counter);
+        ee->engine.x.sync_counter = 0;
+     }
    ecore_x_e_comp_sync_counter_set(ee->prop.window, ee->engine.x.sync_counter);
 }
 
@@ -177,6 +187,11 @@ _ecore_evas_x_render(Ecore_Evas *ee)
    Eina_List *ll;
    Ecore_Evas *ee2;
 
+   if ((!ee->no_comp_sync) && (_ecore_evas_app_comp_sync) &&
+       (ee->engine.x.sync_counter) && (!ee->engine.x.sync_began) &&
+       (!ee->engine.x.sync_cancel))
+     return 0;
+   
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
 	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
@@ -336,6 +351,24 @@ _ecore_evas_x_render(Ecore_Evas *ee)
    else
      evas_norender(ee->evas);
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+/*   
+   if (rend)
+     {
+        static int frames = 0;
+        static double t0 = 0.0;
+        double t, td;
+        
+        t = ecore_time_get();
+        frames++;
+        if ((t - t0) > 1.0)
+          {
+             td = t - t0;
+             printf("FPS: %3.3f\n", (double)frames / td);
+             frames = 0;
+             t0 = t;
+          }
+     }
+ */
    return rend;
 }
 
@@ -539,6 +572,41 @@ _ecore_evas_x_event_visibility_change(void *data __UNUSED__, int type __UNUSED__
 }
 
 static int
+_ecore_evas_x_event_client_message(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_X_Event_Client_Message *e;
+
+   e = event;
+   if (e->format != 32) return 1;
+   if (e->message_type == ECORE_X_ATOM_E_COMP_SYNC_BEGIN)
+     {
+        ee = ecore_event_window_match(e->data.l[0]);
+        if (!ee) return 1; /* pass on event */
+        if (e->data.l[0] != ee->prop.window) return;
+        ee->engine.x.sync_began = 1;
+        ee->engine.x.sync_cancel = 0;
+     }
+   else if (e->message_type == ECORE_X_ATOM_E_COMP_SYNC_END)
+     {
+        ee = ecore_event_window_match(e->data.l[0]);
+        if (!ee) return 1; /* pass on event */
+        if (e->data.l[0] != ee->prop.window) return;
+        ee->engine.x.sync_began = 0;
+        ee->engine.x.sync_cancel = 0;
+     }
+   else if (e->message_type == ECORE_X_ATOM_E_COMP_SYNC_CANCEL)
+     {
+        ee = ecore_event_window_match(e->data.l[0]);
+        if (!ee) return 1; /* pass on event */
+        if (e->data.l[0] != ee->prop.window) return;
+        ee->engine.x.sync_began = 0;
+        ee->engine.x.sync_cancel = 1;
+     }
+   return 1;
+}
+
+static int
 _ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -654,7 +722,9 @@ _ecore_evas_x_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, 
    ee = ecore_event_window_match(e->win);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    if (e->win != ee->prop.window) return 1;
+   if (e->mode == ECORE_X_EVENT_MODE_UNGRAB) return 1;
    ee->prop.focused = 1;
+   evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
    return 1;
 }
@@ -669,8 +739,10 @@ _ecore_evas_x_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__,
    ee = ecore_event_window_match(e->win);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    if (e->win != ee->prop.window) return 1;
-   if (ee->prop.fullscreen)
-     ecore_x_window_focus(ee->prop.window);
+   if (e->mode == ECORE_X_EVENT_MODE_GRAB) return 1;
+//   if (ee->prop.fullscreen)
+//     ecore_x_window_focus(ee->prop.window);
+   evas_focus_out(ee->evas);
    ee->prop.focused = 0;
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
    return 1;
@@ -755,6 +827,7 @@ _ecore_evas_x_event_window_destroy(void *data __UNUSED__, int type __UNUSED__, v
    if (!ee) return 1; /* pass on event */
    if (e->win != ee->prop.window) return 1;
    if (ee->func.fn_destroy) ee->func.fn_destroy(ee);
+   _ecore_evas_x_sync_clear(ee);
    ecore_evas_free(ee);
    return 1;
 }
@@ -1043,6 +1116,7 @@ _ecore_evas_x_init(void)
    ecore_evas_event_handlers[9] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_HIDE, _ecore_evas_x_event_window_hide, NULL);
    ecore_evas_event_handlers[10] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROPERTY, _ecore_evas_x_event_property_change, NULL);
    ecore_evas_event_handlers[11] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_VISIBILITY_CHANGE, _ecore_evas_x_event_visibility_change, NULL);
+   ecore_evas_event_handlers[12] = ecore_event_handler_add(ECORE_X_EVENT_CLIENT_MESSAGE, _ecore_evas_x_event_client_message, NULL);
    ecore_event_evas_init();
    return _ecore_evas_init_count;
 }
@@ -2180,7 +2254,10 @@ _ecore_evas_x_shutdown(void)
 	unsigned int i;
 
 	for (i = 0; i < sizeof(ecore_evas_event_handlers) / sizeof(Ecore_Event_Handler*); i++)
-	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
+          {
+             if (ecore_evas_event_handlers[i])
+               ecore_event_handler_del(ecore_evas_event_handlers[i]);
+          }
 	ecore_event_evas_shutdown();
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
@@ -2244,6 +2321,39 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
  * ecore_x_init in 2 functions and supress some round trips.
  */
 
+static void
+_ecore_evas_x_flush_pre(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Ecore_Evas *ee = data;
+
+   if (ee->no_comp_sync) return;
+   if (!_ecore_evas_app_comp_sync) return;
+   if (ee->engine.x.sync_counter)
+     {
+        if (ee->engine.x.sync_began)
+          {
+             ee->engine.x.sync_val++;
+             if (!ee->engine.x.sync_cancel)
+               ecore_x_sync_counter_val_wait(ee->engine.x.sync_counter,
+                                             ee->engine.x.sync_val);
+          }
+     }
+}
+
+static void
+_ecore_evas_x_flush_post(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Ecore_Evas *ee = data;
+   
+   if (ee->no_comp_sync) return;
+   if (!_ecore_evas_app_comp_sync) return;
+   if (ee->engine.x.sync_counter)
+     {
+        ecore_x_e_comp_sync_draw_done_send(ee->engine.x.win_root, 
+                                           ee->prop.window);
+     }
+}
+
 /**
  * To be documented.
  *
@@ -2291,6 +2401,8 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 
    /* init evas here */
    ee->evas = evas_new();
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _ecore_evas_x_flush_pre, ee);
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST, _ecore_evas_x_flush_post, ee);
    evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
    evas_output_size_set(ee->evas, w, h);
@@ -2646,6 +2758,8 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 
    /* init evas here */
    ee->evas = evas_new();
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _ecore_evas_x_flush_pre, ee);
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST, _ecore_evas_x_flush_post, ee);
    evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
    evas_output_size_set(ee->evas, w, h);
@@ -2841,6 +2955,8 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 
    /* init evas here */
    ee->evas = evas_new();
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _ecore_evas_x_flush_pre, ee);
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST, _ecore_evas_x_flush_post, ee);
    evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
    evas_output_size_set(ee->evas, w, h);
@@ -3090,6 +3206,8 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
 
    /* init evas here */
    ee->evas = evas_new();
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _ecore_evas_x_flush_pre, ee);
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST, _ecore_evas_x_flush_post, ee);
    evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
    evas_output_size_set(ee->evas, w, h);

@@ -249,7 +249,8 @@ _ecore_x_atoms_init(void)
         { "_E_COMP_SYNC_DRAW_DONE", &ECORE_X_ATOM_E_COMP_SYNC_DRAW_DONE },
         { "_E_COMP_SYNC_SUPPORTED", &ECORE_X_ATOM_E_COMP_SYNC_SUPPORTED },
         { "_E_COMP_SYNC_BEGIN", &ECORE_X_ATOM_E_COMP_SYNC_BEGIN },
-        { "_E_COMP_SYNC_END", &ECORE_X_ATOM_E_COMP_SYNC_END }
+        { "_E_COMP_SYNC_END", &ECORE_X_ATOM_E_COMP_SYNC_END },
+        { "_E_COMP_SYNC_CANCEL", &ECORE_X_ATOM_E_COMP_SYNC_CANCEL }
      };
    Atom *atoms;
    char **names;

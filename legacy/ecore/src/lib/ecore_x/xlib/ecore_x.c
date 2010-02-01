@@ -1018,7 +1018,8 @@ ecore_x_window_client_manage(Ecore_X_Window win)
 		FocusChangeMask |
 		ColormapChangeMask |
 		VisibilityChangeMask |
-		StructureNotifyMask
+		StructureNotifyMask |
+                SubstructureNotifyMask
 		);
    XShapeSelectInput(_ecore_x_disp, win, ShapeNotifyMask);
 }
@@ -1039,7 +1040,8 @@ ecore_x_window_client_sniff(Ecore_X_Window win)
 		FocusChangeMask |
 		ColormapChangeMask |
 		VisibilityChangeMask |
-		StructureNotifyMask);
+		StructureNotifyMask |
+                SubstructureNotifyMask);
    XShapeSelectInput(_ecore_x_disp, win, ShapeNotifyMask);
 }
 

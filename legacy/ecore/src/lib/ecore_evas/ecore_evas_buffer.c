@@ -389,6 +389,7 @@ _ecore_evas_buffer_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 
    ee = data;
    ee->prop.focused = 1;
+   evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
 }
 
@@ -399,6 +400,7 @@ _ecore_evas_buffer_cb_focus_out(void *data, Evas *e __UNUSED__, Evas_Object *obj
 
    ee = data;
    ee->prop.focused = 0;
+   evas_focus_out(ee->evas);
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
 }
 

@@ -437,9 +437,10 @@ ecore_evas_quartz_new(const char* name, int w, int h)
    einfo->info.context = [[evas_view context] retain];
    evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 
-   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
-
    ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+
+   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
+   evas_focus_in(ee->evas);
 
    return ee;
 

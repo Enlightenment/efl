@@ -146,6 +146,7 @@ _ecore_evas_win32_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, voi
    /* FIXME to do */
 /*    _ecore_evas_x_modifier_locks_update(ee, e->modifiers); */
    evas_event_feed_mouse_in(ee->evas, e->time, NULL);
+   evas_focus_in(ee->evas);
    _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
 
    return 1;

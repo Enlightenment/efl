@@ -137,6 +137,9 @@ EAPI int         ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type eng
 EAPI int         ecore_evas_init(void);
 EAPI int         ecore_evas_shutdown(void);
 
+EAPI void        ecore_evas_app_comp_sync_set(int do_sync);
+EAPI int         ecore_evas_app_comp_sync_get(void);
+   
 EAPI Eina_List  *ecore_evas_engines_get(void);
 EAPI void        ecore_evas_engines_free(Eina_List *engines);
 EAPI Ecore_Evas *ecore_evas_new(const char *engine_name, int x, int y, int w, int h, const char *extra_options);
@@ -327,6 +330,8 @@ EAPI int         ecore_evas_ignore_events_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_manual_render_set(Ecore_Evas *ee, int manual_render);
 EAPI int         ecore_evas_manual_render_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_manual_render(Ecore_Evas *ee);
+EAPI void        ecore_evas_comp_sync_set(Ecore_Evas *ee, int do_sync);
+EAPI int         ecore_evas_comp_sync_get(const Ecore_Evas *ee);
        
 EAPI Ecore_Window ecore_evas_window_get(const Ecore_Evas *ee);
 

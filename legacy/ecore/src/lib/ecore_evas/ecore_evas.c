@@ -280,6 +280,20 @@ ecore_evas_shutdown(void)
    return _ecore_evas_init_count;
 }
 
+int _ecore_evas_app_comp_sync = 1;
+
+EAPI void
+ecore_evas_app_comp_sync_set(int do_sync)
+{
+   _ecore_evas_app_comp_sync = do_sync;
+}
+
+EAPI int
+ecore_evas_app_comp_sync_get(void)
+{
+   return _ecore_evas_app_comp_sync;
+}
+
 struct ecore_evas_engine {
    const char *name;
    Ecore_Evas *(*constructor)(int x, int y, int w, int h, const char *extra_options);
@@ -2501,6 +2515,30 @@ ecore_evas_manual_render(Ecore_Evas *ee)
      }
    if (ee->engine.func->fn_render)
      ee->engine.func->fn_render(ee);
+}
+
+EAPI void
+ecore_evas_comp_sync_set(Ecore_Evas *ee, int do_sync)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_comp_sync_set");
+        return;
+     }
+   ee->no_comp_sync = !do_sync;
+}
+
+EAPI int
+ecore_evas_comp_sync_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_comp_sync_get");
+        return 0;
+     }
+   return !ee->no_comp_sync;
 }
 
 EAPI Ecore_Window
