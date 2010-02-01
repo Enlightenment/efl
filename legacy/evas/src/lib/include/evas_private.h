@@ -303,7 +303,9 @@ struct _Evas
    Eina_Array     temporary_objects;
    Eina_Array     calculate_objects;
    Eina_Array     clip_changes;
-
+   
+   Evas_Callbacks *callbacks;
+   
    int            delete_grabs;
    int            walking_grabs;
    Eina_List     *grabs;
@@ -322,6 +324,7 @@ struct _Evas
    unsigned char  delete_me : 1;
    unsigned char  invalidate : 1;
    unsigned char  cleanup : 1;
+   unsigned char  focus : 1;
 };
 
 struct _Evas_Layer
@@ -758,6 +761,7 @@ int evas_object_was_opaque(Evas_Object *obj);
 int evas_object_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 int evas_object_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 int evas_object_clippers_was_visible(Evas_Object *obj);
+void evas_event_callback_call(Evas *e, Evas_Callback_Type type, void *event_info);
 void evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void *event_info);
 Eina_List *evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y);
 int evas_mem_free(int mem_required);
@@ -783,6 +787,7 @@ void evas_object_smart_member_stack_below(Evas_Object *member, Evas_Object *othe
 const Eina_Inlist *evas_object_smart_members_get_direct(const Evas_Object *obj);
 void evas_call_smarts_calculate(Evas *e);
 void *evas_mem_calloc(int size);
+void evas_event_callback_list_post_free(Eina_Inlist **list);
 void evas_object_event_callback_all_del(Evas_Object *obj);
 void evas_object_event_callback_cleanup(Evas_Object *obj);
 void evas_object_inform_call_show(Evas_Object *obj);

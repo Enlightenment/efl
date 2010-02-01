@@ -1,11 +1,10 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static void evas_object_event_callback_list_post_free(Eina_Inlist **list);
 static void evas_object_event_callback_clear(Evas_Object *obj);
 
-static void
-evas_object_event_callback_list_post_free(Eina_Inlist **list)
+void
+evas_event_callback_list_post_free(Eina_Inlist **list)
 {
    Eina_Inlist *l;
 
@@ -30,7 +29,7 @@ evas_object_event_callback_clear(Evas_Object *obj)
    if (!obj->callbacks) return;
    if (!obj->callbacks->deletions_waiting) return;
    obj->callbacks->deletions_waiting = 0;
-   evas_object_event_callback_list_post_free(&obj->callbacks->callbacks);
+   evas_event_callback_list_post_free(&obj->callbacks->callbacks);
    if (!obj->callbacks->callbacks)
      {
         free(obj->callbacks);
@@ -53,9 +52,38 @@ evas_object_event_callback_cleanup(Evas_Object *obj)
 {
    /* MEM OK */
    if (!obj->callbacks) return;
-   evas_object_event_callback_list_post_free(&obj->callbacks->callbacks);
+   evas_event_callback_list_post_free(&obj->callbacks->callbacks);
    free(obj->callbacks);
    obj->callbacks = NULL;
+}
+
+void
+evas_event_callback_call(Evas *e, Evas_Callback_Type type, void *event_info)
+{
+   Eina_Inlist **l_mod = NULL, *l;
+   
+   _evas_walk(e);
+   if (e->callbacks)
+     {
+	l_mod = &e->callbacks->callbacks;
+        e->callbacks->walking_list++;
+        for (l = *l_mod; l; l = l->next)
+          {
+	     Evas_Func_Node *fn;
+
+	     fn = (Evas_Func_Node *)l;
+	     if ((fn->type == type) && (!fn->delete_me))
+	       {
+	          if (fn->func)
+	            fn->func(fn->data, e, NULL, event_info);
+	       }
+	     if (e->delete_me) break;
+          }
+        e->callbacks->walking_list--;
+        if (!e->callbacks->walking_list)
+          l_mod = NULL;
+     }
+   _evas_unwalk(e);
 }
 
 void
@@ -461,6 +489,93 @@ evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, v
 	     obj->callbacks->deletions_waiting = 1;
 	     if (!obj->callbacks->walking_list)
 	       evas_object_event_callback_clear(obj);
+	     return data;
+	  }
+     }
+   return NULL;
+}
+
+EAPI void
+evas_event_callback_add(Evas *e, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data)
+{
+   /* MEM OK */
+   Evas_Func_Node *fn;
+
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   if (!func) return;
+
+   fn = evas_mem_calloc(sizeof(Evas_Func_Node));
+   if (!fn) return;
+   fn->func = func;
+   fn->data = (void *)data;
+   fn->type = type;
+
+   if (!e->callbacks)
+     e->callbacks = evas_mem_calloc(sizeof(Evas_Callbacks));
+   if (!e->callbacks)
+     {
+	free(fn);
+	return;
+     }
+   e->callbacks->callbacks =
+     eina_inlist_prepend(e->callbacks->callbacks, EINA_INLIST_GET(fn));
+}
+
+EAPI void *
+evas_event_callback_del(Evas *e, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info))
+{
+   /* MEM OK */
+   Evas_Func_Node *fn;
+
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return NULL;
+   MAGIC_CHECK_END();
+
+   if (!func) return NULL;
+
+   if (!e->callbacks) return NULL;
+
+   EINA_INLIST_FOREACH(e->callbacks->callbacks, fn)
+     {
+	if ((fn->func == func) && (fn->type == type) && (!fn->delete_me))
+	  {
+	     void *data;
+
+	     data = fn->data;
+	     fn->delete_me = 1;
+	     e->callbacks->deletions_waiting = 1;
+	     return data;
+	  }
+     }
+   return NULL;
+}
+
+EAPI void *
+evas_event_callback_del_full(Evas *e, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data)
+{
+   /* MEM OK */
+   Evas_Func_Node *fn;
+
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return NULL;
+   MAGIC_CHECK_END();
+
+   if (!func) return NULL;
+
+   if (!e->callbacks) return NULL;
+
+   EINA_INLIST_FOREACH(e->callbacks->callbacks, fn)
+     {
+	if ((fn->func == func) && (fn->type == type) && (fn->data == data) && (!fn->delete_me))
+	  {
+	     void *data;
+
+	     data = fn->data;
+	     fn->delete_me = 1;
+	     e->callbacks->deletions_waiting = 1;
 	     return data;
 	  }
      }

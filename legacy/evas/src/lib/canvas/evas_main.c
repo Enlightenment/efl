@@ -181,6 +181,17 @@ evas_free(Evas *e)
    if (e->walking_list == 0) evas_render_idle_flush(e);
 
    if (e->walking_list > 0) return;
+   
+   if (!e->callbacks) return;
+   if (!e->callbacks->deletions_waiting) return;
+   e->callbacks->deletions_waiting = 0;
+   evas_event_callback_list_post_free(&e->callbacks->callbacks);
+   if (!e->callbacks->callbacks)
+     {
+        free(e->callbacks);
+	e->callbacks = NULL;
+     }
+   
    del = 1;
    e->walking_list++;
    e->cleanup = 1;
@@ -1063,6 +1074,37 @@ evas_data_attach_get(const Evas *e)
    return NULL;
    MAGIC_CHECK_END();
    return e->attach_data;
+}
+
+EAPI void
+evas_focus_in(Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   if (e->focus) return;
+   e->focus = 1;
+   evas_event_callback_call(e, EVAS_CALLBACK_CANVAS_FOCUS_IN, NULL);
+}
+
+EAPI void
+evas_focus_out(Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   if (!e->focus) return;
+   e->focus = 0;
+   evas_event_callback_call(e, EVAS_CALLBACK_CANVAS_FOCUS_OUT, NULL);
+}
+
+EAPI Eina_Bool
+evas_focus_state_get(const Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return 0;
+   MAGIC_CHECK_END();
+   return e->focus;
 }
 
 void
