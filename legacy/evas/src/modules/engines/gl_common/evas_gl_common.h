@@ -24,7 +24,11 @@
 # include <OpenGL/glext.h>
 #else
 # ifdef _EVAS_ENGINE_SDL_H
-#  include <SDL/SDL_opengles.h>
+#  if defined(GLES_VARIETY_S3C6410) || defined(GLES_VARIETY_SGX)
+#   include <SDL/SDL_opengles.h>
+#  else
+#   include <SDL/SDL_opengl.h>
+#  endif
 # else
 #  if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 #   if defined(GLES_VARIETY_S3C6410)
