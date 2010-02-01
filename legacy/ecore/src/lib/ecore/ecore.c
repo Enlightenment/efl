@@ -154,6 +154,18 @@ ecore_shutdown(void)
 }
 
 EAPI void
+ecore_print_warning(const char *function, const char *sparam)
+{
+   WRN("***** Developer Warning ***** :\n"
+       "\tThis program is calling:\n\n"
+       "\t%s();\n\n"
+       "\tWith the parameter:\n\n"
+       "\t%s\n\n"
+       "\tbeing NULL. Please fix your program.", function, sparam);
+   if (getenv("ECORE_ERROR_ABORT")) abort();
+}
+
+EAPI void
 _ecore_magic_fail(const void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname)
 {
    ERR("\n"

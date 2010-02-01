@@ -1167,6 +1167,7 @@ ecore-sdl.pc
 ecore-quartz.pc
 ecore-wince.pc
 ecore.pc
+ecore-data.pc
 doc/ecore.dox
 doc/Makefile
 src/Makefile
@@ -1192,6 +1193,7 @@ src/lib/ecore_file/Makefile
 src/lib/ecore_directfb/Makefile
 src/lib/ecore_win32/Makefile
 src/lib/ecore_wince/Makefile
+src/lib/ecore_data/Makefile
 README
 ecore.spec
 po/Makefile.in

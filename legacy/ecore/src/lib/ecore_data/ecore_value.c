@@ -50,18 +50,6 @@ EAPI const unsigned int ecore_prime_table[] =
      2097143, 4194301, 8388617, 16777213
 };
 
-EAPI void
-ecore_print_warning(const char *function, const char *sparam)
-{
-   WRN("***** Developer Warning ***** :\n"
-       "\tThis program is calling:\n\n"
-       "\t%s();\n\n"
-       "\tWith the parameter:\n\n"
-       "\t%s\n\n"
-       "\tbeing NULL. Please fix your program.", function, sparam);
-   if (getenv("ECORE_ERROR_ABORT")) abort();
-}
-
 /**
  * Just casts the key to an unsigned int
  * @param  key The key to return compute a hash value
