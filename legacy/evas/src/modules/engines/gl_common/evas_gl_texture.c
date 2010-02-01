@@ -319,11 +319,13 @@ _pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
    if (!pt) return NULL;
    pt->gc = gc;
+#ifdef GL_TEXTURE_RECTANGLE_ARB   
    if (im->native.target == GL_TEXTURE_RECTANGLE_ARB)
      {
         printf("REEEEEEEEECT\n");
      }
    else
+#endif     
      {
         printf("%i %i\n", w, h);
         // FIXME: handle npo2
