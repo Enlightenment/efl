@@ -430,7 +430,7 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
    re->win->draw.drew = 1;
    evas_gl_common_context_flush(re->win->gl_context);
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   eglWaitGL(); // previous rendering should be done and swapped
+   eglWaitNative(EGL_CORE_NATIVE_ENGINE); // previous rendering should be done and swapped
 #else
    glXWaitGL();
 #endif
@@ -450,7 +450,6 @@ eng_output_flush(void *data)
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
-   eglWaitGL(); // excessive - swapbuffers should wait in windowed mode
 #else
 #ifdef VSYNC_TO_SCREEN   
    if (re->info->vsync) 
