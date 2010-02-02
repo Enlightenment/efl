@@ -7,8 +7,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @EINA_CPPFLAGS@ \
-@EFL_EINA_BUILD@ \
-@iconv_cflags@
+@EFL_EINA_BUILD@
 
 base_sources = \
 eina_error.c \
@@ -128,9 +127,9 @@ else
 libeina_la_SOURCES = $(base_sources)
 endif
 
-libeina_la_LIBADD = @EINA_LIBS@ @dlopen_libs@
-libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@ @EFL_PTHREAD_LIBS@ @iconv_libs@
-libeina_la_CFLAGS = @EINA_CFLAGS@ @EFL_PTHREAD_CFLAGS@ @iconv_cflags@
+libeina_la_LIBADD = @EINA_LIBS@ @dlopen_libs@ @iconv_libs@
+libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@ @EFL_PTHREAD_LIBS@
+libeina_la_CFLAGS = @EINA_CFLAGS@ @EFL_PTHREAD_CFLAGS@
 
 clean-local:
 	rm -rf *.gcno eina_amalgamation.c

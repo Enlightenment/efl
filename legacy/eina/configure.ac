@@ -380,7 +380,6 @@ fi
 AC_SUBST(fnmatch_libs)
 
 # iconv library
-iconv_cflags=""
 iconv_libs=""
 have_iconv="no"
 AC_ARG_WITH([iconv-link],
@@ -405,7 +404,6 @@ if test "x${have_iconv}" = "xno" ; then
    fi
 fi
 
-AC_SUBST(iconv_cflags)
 AC_SUBST(iconv_libs)
 
 
