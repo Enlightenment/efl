@@ -59,9 +59,6 @@
 #include "Ecore_X.h"
 #include "Ecore_Input.h"
 
-/* FIXME: this is for simulation only */
-#include "Ecore_Txt.h"
-
 extern int _ecore_xlib_log_dom;
 #ifdef ECORE_XLIB_DEFAULT_LOG_COLOR
 # undef ECORE_XLIB_DEFAULT_LOG_COLOR

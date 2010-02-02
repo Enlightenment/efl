@@ -58,9 +58,6 @@
 #include "ecore_private.h"
 #include "Ecore_X.h"
 
-/* FIXME: this is for simulation only */
-#include "Ecore_Txt.h"
-
 extern int _ecore_x11xcb_log_dom ;
 
 #ifdef ECORE_XLIB_XCB_DEFAULT_LOG_COLOR

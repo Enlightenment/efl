@@ -292,7 +292,7 @@ _ecore_key_press(int event, XKeyEvent *xevent)
 		  tmp[val] = 0;
 
 #ifndef X_HAVE_UTF8_STRING
-		  compose = ecore_txt_convert(nl_langinfo(CODESET), "UTF-8", tmp);
+		  compose = eina_str_convert(nl_langinfo(CODESET), "UTF-8", tmp);
 		  free(tmp);
 		  tmp = compose;
 #endif
@@ -306,7 +306,7 @@ _ecore_key_press(int event, XKeyEvent *xevent)
 #ifdef X_HAVE_UTF8_STRING
 	       compose = compose_buffer;
 #else
-	       compose = ecore_txt_convert(nl_langinfo(CODESET), "UTF-8", compose_buffer);
+	       compose = eina_str_convert(nl_langinfo(CODESET), "UTF-8", compose_buffer);
 	       tmp = compose;
 #endif
 	    }
@@ -317,7 +317,7 @@ _ecore_key_press(int event, XKeyEvent *xevent)
 	if (val > 0)
 	  {
 	     compose_buffer[val] = 0;
-	     compose = ecore_txt_convert(nl_langinfo(CODESET), "UTF-8", compose_buffer);
+	     compose = eina_str_convert(nl_langinfo(CODESET), "UTF-8", compose_buffer);
 	     tmp = compose;
 	  }
      }
