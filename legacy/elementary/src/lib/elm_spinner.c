@@ -167,7 +167,7 @@ _value_set(Evas_Object *obj, double delta)
           new_val = wd->val_max;
      }
 
-   if (new_val == wd->val) 0;
+   if (new_val == wd->val) return 0;
    wd->val = new_val;
 
    evas_object_smart_callback_call(obj, "changed", NULL);
@@ -307,6 +307,7 @@ _toggle_entry(void *data, Evas_Object *obj, const char *emission, const char *so
 	edje_object_signal_emit(wd->spinner, "elm,state,active", "elm");
         _entry_show(wd);
         elm_entry_select_all(wd->ent);
+	elm_widget_focus_set(wd->ent, 1);
         wd->entry_visible = 1;
      }
 }
@@ -424,7 +425,15 @@ _button_dec_stop(void *data, Evas_Object *obj, const char *emission, const char 
 static void
 _entry_activated(void *data, Evas_Object *obj, void *event_info)
 {
+   Widget_Data *wd = elm_widget_data_get(data);
+
+   if (!wd) return;
+
    _apply_entry_value(data);
+
+   evas_object_smart_callback_call(data, "changed", NULL);
+   if (wd->delay) ecore_timer_del(wd->delay);
+   wd->delay = ecore_timer_add(0.2, _delay_change, data);
 }
 
 static void
