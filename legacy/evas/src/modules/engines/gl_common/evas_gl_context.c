@@ -916,7 +916,7 @@ shader_array_flush(Evas_GL_Context *gc)
      }
    if (gc->array.im)
      {
-        if (!gc->array.im->native.func.bind)
+        if (!gc->array.im->native.loose)
           {
              if (gc->array.im->native.func.bind)
                gc->array.im->native.func.bind(gc->array.im->native.func.data, 
@@ -1054,7 +1054,7 @@ shader_array_flush(Evas_GL_Context *gc)
      }
    if (gc->array.im)
      {
-        if (!gc->array.im->native.func.bind)
+        if (!gc->array.im->native.loose)
           {
              if (gc->array.im->native.func.unbind)
                gc->array.im->native.func.unbind(gc->array.im->native.func.data, 

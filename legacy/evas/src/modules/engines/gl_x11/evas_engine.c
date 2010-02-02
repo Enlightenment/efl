@@ -429,6 +429,11 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
    re->win->draw.redraw = 0;
    re->win->draw.drew = 1;
    evas_gl_common_context_flush(re->win->gl_context);
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   eglWaitGL(); // previous rendering should be done and swapped
+#else
+   glXWaitGL();
+#endif
 //x//   printf("frame -> push\n");
 }
 
@@ -444,8 +449,8 @@ eng_output_flush(void *data)
    eng_window_use(re->win);
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-//   glFlush();
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
+   eglWaitGL(); // excessive - swapbuffers should wait in windowed mode
 #else
 #ifdef VSYNC_TO_SCREEN   
    if (re->info->vsync) 
@@ -461,13 +466,11 @@ eng_output_flush(void *data)
 # endif
    if (re->info->callback.pre_swap)
      {
-        glFinish();
         re->info->callback.pre_swap(re->info->callback.data, re->evas);
      }
    glXSwapBuffers(re->win->disp, re->win->win);
    if (re->info->callback.post_swap)
      {
-        glXWaitGL();
         re->info->callback.post_swap(re->info->callback.data, re->evas);
      }
 #endif   
@@ -1285,6 +1288,8 @@ eng_image_native_set(void *data, void *image, void *native)
              im->native.func.bind   = _native_bind_cb;
              im->native.func.unbind = _native_unbind_cb;
              im->native.func.free   = _native_free_cb;
+             im->native.target      = GL_TEXTURE_2D;
+             im->native.mipmap      = 0;
 #if 0 // old texfrompixmap             
              n->egl_surface = eglCreatePixmapSurface(re->win->egl_disp, 
                                                      egl_config, pm, 
