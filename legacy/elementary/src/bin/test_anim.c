@@ -68,8 +68,8 @@ test_anim(void *data, Evas_Object *obj, void *event_info)
    char buf[PATH_MAX];
    int i;
    
-   win = elm_win_add(NULL, "floating", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Floaating");
+   win = elm_win_add(NULL, "animation", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Animation");
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);
