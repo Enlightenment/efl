@@ -14,7 +14,8 @@ multip.edc \
 over.png \
 under.png \
 sky.jpg \
-clo.png
+clo.png \
+cross.png
 
 test.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
