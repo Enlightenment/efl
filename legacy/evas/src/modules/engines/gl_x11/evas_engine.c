@@ -1099,40 +1099,16 @@ _native_bind_cb(void *data, void *image)
    Native *n = im->native.data;
    
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-# if 0 // old texfrompixmap 
-   if (n->egl_surface)
-     {
-        if (glsym_eglBindTexImage)
-          glsym_eglBindTexImage(re->win->egl_disp, n->egl_surface, EGL_SINGLE_BUFFER);
-     }
-# else   
    if (n->egl_surface)
      {
         if (glsym_glEGLImageTargetTexture2DOES)
           glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->egl_surface);
      }
-# endif   
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
    if (glsym_glXBindTexImage)
-     {
-#ifdef GLX_TEX_PIXMAP_RECREATE        
-        const int pixmap_att[] =
-          {
-             GLX_TEXTURE_TARGET_EXT, 
-               GLX_TEXTURE_2D_EXT,
-               GLX_TEXTURE_FORMAT_EXT, 
-//               GLX_TEXTURE_FORMAT_RGBA_EXT,
-               GLX_TEXTURE_FORMAT_RGB_EXT,
-               0
-          };
-        
-        n->glx_pixmap = glXCreatePixmap(re->win->disp, n->fbc, 
-                                        n->pixmap, pixmap_att);
-#endif        
-        glsym_glXBindTexImage(re->win->disp, n->glx_pixmap, 
-                              GLX_FRONT_LEFT_EXT, NULL);
-     }
+     glsym_glXBindTexImage(re->win->disp, n->glx_pixmap, 
+                           GLX_FRONT_LEFT_EXT, NULL);
 # endif
 #endif
 }
@@ -1145,24 +1121,12 @@ _native_unbind_cb(void *data, void *image)
    Native *n = im->native.data;
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-# if 0 // old texfrompixmap 
-   if (n->egl_surface)
-     {
-        if (glsym_eglReleaseTexImage)
-          glsym_eglReleaseTexImage(re->win->egl_disp, n->egl_surface, EGL_SINGLE_BUFFER);
-     }
-# endif   
+   // nothing
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
    if (glsym_glXReleaseTexImage)
-     {
-        glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap, 
-                                 GLX_FRONT_LEFT_EXT);
-#ifdef GLX_TEX_PIXMAP_RECREATE        
-        glXDestroyPixmap(re->win->disp, n->glx_pixmap);
-        n->glx_pixmap = 0;
-#endif        
-     }
+     glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap, 
+                              GLX_FRONT_LEFT_EXT);
 # endif
 #endif
 }
@@ -1175,20 +1139,12 @@ _native_free_cb(void *data, void *image)
    Native *n = im->native.data;
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-# if 0 // old texfrompixmap 
-   if (n->egl_surface)
-     {
-        eglDestroySurface(re->win->egl_disp, n->egl_surface);
-        n->egl_surface = 0;
-     }
-# else
    if (n->egl_surface)
      {
         if (glsym_eglDestroyImage)
           glsym_eglDestroyImage(re->win->egl_disp,
                                 n->egl_surface);
      }
-# endif
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
    if (n->glx_pixmap)
@@ -1290,18 +1246,12 @@ eng_image_native_set(void *data, void *image, void *native)
              im->native.func.free   = _native_free_cb;
              im->native.target      = GL_TEXTURE_2D;
              im->native.mipmap      = 0;
-#if 0 // old texfrompixmap             
-             n->egl_surface = eglCreatePixmapSurface(re->win->egl_disp, 
-                                                     egl_config, pm, 
-                                                     NULL);
-#else
              if (glsym_eglCreateImage)
                n->egl_surface = glsym_eglCreateImage(re->win->egl_disp,
                                                      EGL_NO_CONTEXT,
                                                      EGL_NATIVE_PIXMAP_KHR,
                                                      (void *)pm,
                                                      NULL);
-#endif
              if (!n->egl_surface)
                {
                   printf("ERROR: eglCreatePixmapSurface() for 0x%x failed\n", (unsigned int)pm);
@@ -1329,7 +1279,6 @@ eng_image_native_set(void *data, void *image, void *native)
         n = calloc(1, sizeof(Native));
         if (n)
           {
-#ifndef GLX_TEX_PIXMAP_RECREATE        
              int pixmap_att[20];
              int target = 0;
              int i = 0;
@@ -1377,20 +1326,19 @@ eng_image_native_set(void *data, void *image, void *native)
                }
              
              pixmap_att[i++] = 0;
-#endif
+
              memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
              n->pixmap = pm;
              n->visual = vis;
              n->fbc = re->win->depth_cfg[depth].fbc;
              im->native.yinvert     = re->win->depth_cfg[depth].yinvert;
-             im->native.target      = GL_TEXTURE_2D;
              im->native.loose       = 0;
              im->native.data        = n;
              im->native.func.data   = re;
              im->native.func.bind   = _native_bind_cb;
              im->native.func.unbind = _native_unbind_cb;
              im->native.func.free   = _native_free_cb;
-#ifndef GLX_TEX_PIXMAP_RECREATE
+
              n->glx_pixmap = glXCreatePixmap(re->win->disp, n->fbc, 
                                              n->pixmap, pixmap_att);
              if (!target)
@@ -1410,9 +1358,11 @@ eng_image_native_set(void *data, void *image, void *native)
                }
              else
                {
+                  im->native.target = GL_TEXTURE_2D;
+                  im->native.mipmap = 0;
                   printf("still unknown target\n");
                }
-#endif                       
+
              evas_gl_common_image_native_enable(im);
           }
      }

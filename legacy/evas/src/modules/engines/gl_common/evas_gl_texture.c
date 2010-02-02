@@ -327,8 +327,7 @@ _pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    else
 #endif     
      {
-        printf("%i %i\n", w, h);
-        // FIXME: handle npo2
+        // FIXME: handle po2 only textures
         pt->w = w;
         pt->h = h;
      }
