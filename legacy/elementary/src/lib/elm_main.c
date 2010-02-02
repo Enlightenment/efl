@@ -833,7 +833,7 @@ elm_quicklaunch_init(int argc, char **argv)
 
    s = getenv("ELM_SCALE");
    if (s) _elm_config->scale = atof(s);
-
+   
    _elm_config->finger_size =
      (double)_elm_config->finger_size * _elm_config->scale;
    s = getenv("ELM_FINGER_SIZE");
@@ -900,6 +900,7 @@ elm_quicklaunch_sub_init(int argc, char **argv)
 		       // FIXME: hack until e export finger size too
 		       if (getenv("ELM_FINGER_SIZE"))
 			 _elm_config->finger_size = 40.0 * _elm_config->scale;
+                       edje_scale_set(_elm_config->scale);
 		    }
 	       }
 	  }
