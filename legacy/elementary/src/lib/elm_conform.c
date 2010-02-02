@@ -51,6 +51,7 @@ _sizing_eval(Evas_Object *obj)
 static int 
 _prop_change(void *data, int type, void *event) 
 {
+#ifdef HAVE_ELEMENTARY_X
    Ecore_X_Event_Window_Property *ev;
    Widget_Data *wd = elm_widget_data_get(data);
 
@@ -58,7 +59,6 @@ _prop_change(void *data, int type, void *event)
    if (ev->win != ecore_x_window_root_first_get()) return 1;
    if (ev->atom == ECORE_X_ATOM_E_ILLUME_TOP_SHELF_GEOMETRY) 
      {
-#ifdef HAVE_ELEMENTARY_X
         int sh = -1;
 
         ecore_x_e_illume_top_shelf_geometry_get(ecore_x_window_root_first_get(), 
@@ -66,11 +66,9 @@ _prop_change(void *data, int type, void *event)
         if (sh < 0) sh = 0;
         evas_object_size_hint_min_set(wd->shelf, -1, sh);
         evas_object_size_hint_max_set(wd->shelf, -1, sh);
-#endif
      }
    if (ev->atom == ECORE_X_ATOM_E_ILLUME_BOTTOM_PANEL_GEOMETRY) 
      {
-#ifdef HAVE_ELEMENTARY_X
         int sh = -1;
 
         ecore_x_e_illume_bottom_panel_geometry_get(ecore_x_window_root_first_get(), 
@@ -78,8 +76,8 @@ _prop_change(void *data, int type, void *event)
         if (sh < 0) sh = 0;
         evas_object_size_hint_min_set(wd->panel, -1, sh);
         evas_object_size_hint_max_set(wd->panel, -1, sh);
-#endif
      }
+#endif
 
    return 1;
 }
@@ -129,10 +127,10 @@ elm_conformant_add(Evas_Object *parent)
    evas_object_size_hint_min_set(wd->panel, -1, sh);
    evas_object_size_hint_max_set(wd->panel, -1, sh);
    edje_object_part_swallow(wd->base, "elm.swallow.panel", wd->panel);
-#endif
 
    wd->prop_hdl = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROPERTY, 
                                           _prop_change, obj);
+#endif
 
    _sizing_eval(obj);
    return obj;
