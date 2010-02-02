@@ -397,12 +397,12 @@ else
    AC_MSG_RESULT([$iconv_libs])
 fi
 
-AM_ICONV
+if test "x${have_iconv}" = "xno" ; then
+   AC_CHECK_HEADERS([iconv.h], [have_iconv="yes"])
 
-if test "x${have_iconv}" = "xno" && test "x${am_cv_func_iconv}" = "xyes" ; then
-   iconv_cflags=${LIBICONV}
-   iconv_libs=${LTLIBICONV}
-   have_iconv="yes"
+   if test "x${have_iconv}" = "xyes" ; then
+      AC_SEARCH_LIBS([iconv], [iconv iconv_plug], [], [have_iconv="no"])
+   fi
 fi
 
 AC_SUBST(iconv_cflags)
@@ -418,9 +418,6 @@ else
    enable_chained_pool="static"
    enable_pass_through="no"
 fi
-
-AC_MSG_WARN([cp : $enable_chained_pool])
-AC_MSG_WARN([pt : $enable_pass_through])
 
 EINA_CHECK_MODULE([chained-pool],   [${enable_chained_pool}], [chained pool])
 EINA_CHECK_MODULE([ememoa-fixed],   [${enable_ememoa}],       [ememoa fixed])

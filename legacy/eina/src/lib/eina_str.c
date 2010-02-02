@@ -32,7 +32,7 @@
 #include <string.h>
 #include <limits.h>
 
-#ifdef HAVE_ICONV
+#ifdef HAVE_ICONV_H
 # include <errno.h>
 # include <iconv.h>
 #endif
@@ -356,7 +356,7 @@ eina_str_join_len(char *dst, size_t size, char sep, const char *a, size_t a_len,
 EAPI char *
 eina_str_convert(const char *enc_from, const char *enc_to, const char *text)
 {
-#ifdef HAVE_ICONV
+#ifdef HAVE_ICONV_H
    iconv_t ic;
    char *new_txt, *inp, *outp;
    size_t inb, outb, outlen, tob, outalloc;
