@@ -1515,7 +1515,7 @@ ecore_x_screen_is_composited(int screen)
    char buf[32];
 
    snprintf(buf, sizeof(buf), "_NET_WM_CM_S%i", screen);
-   if (atom == None) atom = XInternAtom(_ecore_x_disp, buf, True);
+   if (atom == None) atom = XInternAtom(_ecore_x_disp, buf, False);
    if (atom == None) return 0;
 
    win = XGetSelectionOwner(_ecore_x_disp, atom);
@@ -1530,7 +1530,7 @@ ecore_x_screen_is_composited_set(int screen, Ecore_X_Window win)
    char buf[32];
 
    snprintf(buf, sizeof(buf), "_NET_WM_CM_S%i", screen);
-   if (atom == None) atom = XInternAtom(_ecore_x_disp, buf, True);
+   if (atom == None) atom = XInternAtom(_ecore_x_disp, buf, False);
    if (atom == None) return;
    XSetSelectionOwner(_ecore_x_disp, atom, win, _ecore_x_event_last_time);
 }
