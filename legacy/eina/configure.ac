@@ -379,6 +379,36 @@ if test "x$res" = "xno"; then
 fi
 AC_SUBST(fnmatch_libs)
 
+# iconv library
+iconv_cflags=""
+iconv_libs=""
+have_iconv="no"
+AC_ARG_WITH([iconv-link],
+   AC_HELP_STRING([--with-iconv-link=ICONV_LINK], [explicitly specify an iconv link option]),
+   [
+    iconv_libs=$withval
+    have_iconv="yes"
+   ])
+
+AC_MSG_CHECKING(for explicit iconv link options)
+if test "x${iconv_libs}" = "x" ; then
+   AC_MSG_RESULT([no explicit iconv link option])
+else
+   AC_MSG_RESULT([$iconv_libs])
+fi
+
+AM_ICONV
+
+if test "x${have_iconv}" = "xno" && test "x${am_cv_func_iconv}" = "xyes" ; then
+   iconv_cflags=${LIBICONV}
+   iconv_libs=${LTLIBICONV}
+   have_iconv="yes"
+fi
+
+AC_SUBST(iconv_cflags)
+AC_SUBST(iconv_libs)
+
+
 ### Modules
 
 if test "x${have_default_mempool}" = "xyes" ; then
@@ -477,6 +507,7 @@ echo "  Report string usage..: ${have_stringshare_usage}"
 echo "  Default mempool......: ${have_default_mempool}"
 echo "  Thread Support.......: ${have_pthread} (spinlock: ${have_pthread_spinlock})"
 echo "  Amalgamation.........: ${do_amalgamation}"
+echo "  Iconv support........: ${have_iconv}"
 echo
 echo "  Documentation........: ${build_doc}"
 echo "  Tests................: ${enable_tests}"

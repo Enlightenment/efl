@@ -25,6 +25,8 @@ EAPI char **eina_str_split(const char *string, const char *delimiter,
 
 EAPI size_t eina_str_join_len(char *dst, size_t size, char sep, const char *a, size_t a_len, const char *b, size_t b_len);
 
+EAPI char *eina_str_convert(const char *enc_from, const char *enc_to, const char *text);
+
 
 /**
  * @brief Join two strings of known length.

@@ -32,6 +32,11 @@
 #include <string.h>
 #include <limits.h>
 
+#ifdef HAVE_ICONV
+# include <errno.h>
+# include <iconv.h>
+#endif
+
 #include "eina_private.h"
 
 /*============================================================================*
@@ -338,4 +343,80 @@ eina_str_join_len(char *dst, size_t size, char sep, const char *a, size_t a_len,
    memcpy(dst + off, b, b_len);
    dst[off + b_len] = '\0';
    return ret;
+}
+
+/**
+ * @brief Use iconv to convert a text string from one encoding to another
+ *
+ * @param enc_from encoding to convert from
+ * @param enc_to   encoding to convert to
+ * @param text     text to convert
+ *
+ */
+EAPI char *
+eina_str_convert(const char *enc_from, const char *enc_to, const char *text)
+{
+#ifdef HAVE_ICONV
+   iconv_t ic;
+   char *new_txt, *inp, *outp;
+   size_t inb, outb, outlen, tob, outalloc;
+   
+   if (!text) return NULL;
+   ic = iconv_open(enc_to, enc_from);
+   if (ic == (iconv_t)(-1)) return NULL;
+   new_txt  = malloc(64);
+   inb      = strlen(text);
+   outb     = 64;
+   inp      = (char*)text;
+   outp     = new_txt;
+   outalloc = 64;
+   outlen   = 0;
+
+   for (;;)
+     {
+	size_t count;
+
+	tob = outb;
+	count = iconv(ic, &inp, &inb, &outp, &outb);
+	outlen += tob - outb;
+	if (count == (size_t)(-1))
+	  {
+	     if (errno == E2BIG)
+	       {
+		  new_txt = realloc(new_txt, outalloc + 64);
+		  outp = new_txt + outlen;
+		  outalloc += 64;
+		  outb += 64;
+	       }
+	     else if (errno == EILSEQ)
+	       {
+		  if (new_txt) free(new_txt);
+		  new_txt = NULL;
+		  break;
+	       }
+	     else if (errno == EINVAL)
+	       {
+		  if (new_txt) free(new_txt);
+		  new_txt = NULL;
+		  break;
+	       }
+	     else
+	       {
+		  if (new_txt) free(new_txt);
+		  new_txt = NULL;
+		  break;
+	       }
+	  }
+	if (inb == 0)
+	  {
+	     if (outalloc == outlen) new_txt = realloc(new_txt, outalloc + 1);
+	     new_txt[outlen] = 0;
+	     break;
+	  }
+     }
+   iconv_close(ic);
+   return new_txt;
+#else
+   return NULL;
+#endif
 }
