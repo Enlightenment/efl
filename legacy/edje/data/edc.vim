@@ -16,7 +16,7 @@ syn keyword	cStructure	images data fonts collections group
 syn keyword	cStructure	part parts dragable description rel1 rel2
 syn keyword	cStatement	text image font fill origin size tag
 syn keyword	cStructure	programs program script script_only lua_script lua_script_only styles style base
-syn keyword	cStructure	spectra spectrum
+syn keyword	cStructure	spectra spectrum box
 syn match	cType		"+ + +;" contained
 
 syn keyword	cLabel		item name min max type effect
@@ -29,21 +29,28 @@ syn keyword	cLabel		signal source action transition in target after
 syn keyword	cLabel		text smooth inherit scale middle ignore_flags
 syn keyword	cLabel		alias events entry_mode select_mode multiline
 syn keyword	cLabel		source1 source2 source3 source4 source5 source6
-syn keyword	cLabel		text_source transitions
+syn keyword	cLabel		text_source transitions layout padding
 syn keyword	cLabel		size_w size_h size_max_w size_max_h size_min_w size_min_w
+syn keyword	cLabel		spread scale_hint text_elipsis pointer_mode prefer
+syn keyword	cLabel		precise_is_inside use_alternate_font_metrics options
+syn keyword	cLabel		aspect_mode position span angle repch api
 
 syn keyword	cConditional	if else switch
 syn keyword	cRepeat		while for do
-syn keyword	cConstant 	COMP RAW LOSSY
-syn keyword	cConstant 	TEXT TEXTBLOCK IMAGE RECT SWALLOW SOLID
-syn keyword	cConstant 	NONE PLAIN OUTLINE SOFT_OUTLINE SHADOW
-syn keyword	cConstant 	SOFT_SHADOW OUTLINE_SHADOW OUTLINE_SOFT_SHADOW
-syn keyword	cConstant 	STATE_SET ACTION_STOP SIGNAL_EMIT
-syn keyword	cConstant 	SCRIPT LUA_SCRIPT
+syn keyword	cConstant	COMP RAW LOSSY USER
+syn keyword	cConstant	RECT TEXT IMAGE SWALLOW TEXTBLOCK GRADIENT
+syn keyword	cConstant	GROUP BOX TABLE EXTERNAL ITEM
+syn keyword	cConstant	SOLID AUTOGRAB NOGRAB
+syn keyword	cConstant	NONE PLAIN OUTLINE SOFT_OUTLINE SHADOW
+syn keyword	cConstant	SOFT_SHADOW OUTLINE_SHADOW OUTLINE_SOFT_SHADOW
+syn keyword	cConstant	FAR_SOFT_SHADOW FAR_SHADOW GLOW
+syn keyword	cConstant	STATE_SET ACTION_STOP SIGNAL_EMIT
+syn keyword	cConstant	SCRIPT LUA_SCRIPT
 syn keyword	cConstant	DRAG_VAL_SET DRAG_VAL_STEP DRAG_VAL_PAGE
 syn keyword	cConstant	LINEAR SINUSOIDAL ACCELERATE DECELERATE
 syn keyword	cConstant	VERTICAL HORIZONTAL ON_HOLD BOTH EDITABLE EXPLICIT
-syn keyword	cConstant	FOCUS_SET "default"
+syn keyword	cConstant	FOCUS_SET "default" NEITHER
+syn keyword	cConstant	DYNAMIC STATIC
 
 syn keyword	cTodo		contained TODO FIXME XXX
 
