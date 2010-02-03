@@ -884,35 +884,36 @@ _format_color_parse(const char *str, unsigned char *r, unsigned char *g, unsigne
    *b = (*b * *a) / 255;
 }
 
-static const char *fontstr;
-static const char *font_fallbacksstr;
-static const char *font_sizestr;
-static const char *font_sourcestr;
-static const char *colorstr;
-static const char *underline_colorstr;
-static const char *underline2_colorstr;
-static const char *outline_colorstr;
-static const char *shadow_colorstr;
-static const char *glow_colorstr;
-static const char *glow2_colorstr;
-static const char *backing_colorstr;
-static const char *strikethrough_colorstr;
-static const char *alignstr;
-static const char *valignstr;
-static const char *wrapstr;
-static const char *left_marginstr;
-static const char *right_marginstr;
-static const char *underlinestr;
-static const char *strikethroughstr;
-static const char *backingstr;
-static const char *stylestr;
-static const char *tabstopsstr;
-static const char *linesizestr;
-static const char *linerelsizestr;
+static const char *fontstr = NULL;
+static const char *font_fallbacksstr = NULL;
+static const char *font_sizestr = NULL;
+static const char *font_sourcestr = NULL;
+static const char *colorstr = NULL;
+static const char *underline_colorstr = NULL;
+static const char *underline2_colorstr = NULL;
+static const char *outline_colorstr = NULL;
+static const char *shadow_colorstr = NULL;
+static const char *glow_colorstr = NULL;
+static const char *glow2_colorstr = NULL;
+static const char *backing_colorstr = NULL;
+static const char *strikethrough_colorstr = NULL;
+static const char *alignstr = NULL;
+static const char *valignstr = NULL;
+static const char *wrapstr = NULL;
+static const char *left_marginstr = NULL;
+static const char *right_marginstr = NULL;
+static const char *underlinestr = NULL;
+static const char *strikethroughstr = NULL;
+static const char *backingstr = NULL;
+static const char *stylestr = NULL;
+static const char *tabstopsstr = NULL;
+static const char *linesizestr = NULL;
+static const char *linerelsizestr = NULL;
 
 static void
 _format_command_init(void)
 {
+   if (fontstr) return;
    fontstr = eina_stringshare_add("font");
    font_fallbacksstr = eina_stringshare_add("font_fallbacks");
    font_sizestr = eina_stringshare_add("font_size");
@@ -943,6 +944,7 @@ _format_command_init(void)
 static void
 _format_command_shutdown(void)
 {
+   return;
    eina_stringshare_del(fontstr);
    eina_stringshare_del(font_fallbacksstr);
    eina_stringshare_del(font_sizestr);
@@ -1863,6 +1865,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	str = n->text;
 	tbase = str;
      }
+//   printf("add: wrap: %i|%i, width: %i '%s'\n", fmt->wrap_word, fmt->wrap_char, c->w, str);
    new_line = 0;
    empty_item = 0;
    while (str)
@@ -5207,13 +5210,26 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
         pline = 0; \
         pline2 = 0; \
 	pstrike = 0; \
+        if ((obj->cur.geometry.y + ln->y + ln->h) < \
+               (obj->layer->evas->viewport.y - 20)) \
+          continue; \
+        if ((obj->cur.geometry.y + ln->y) > \
+               (obj->layer->evas->viewport.y + obj->layer->evas->viewport.h + 20)) \
+          break; \
 	EINA_INLIST_FOREACH(ln->items, it) \
 	  { \
 	     int yoff; \
 	     \
 	     yoff = ln->baseline; \
 	     if (it->format->valign != -1.0) \
-	       yoff = (it->format->valign * (double)(ln->h - it->h)) + it->baseline;
+	       yoff = (it->format->valign * (double)(ln->h - it->h)) + it->baseline; \
+             if ((obj->cur.geometry.x + ln->x + it->x - it->inset + it->w) < \
+                    (obj->layer->evas->viewport.x - 20)) \
+               continue; \
+             if ((obj->cur.geometry.x + ln->x + it->x - it->inset) > \
+                    (obj->layer->evas->viewport.x + obj->layer->evas->viewport.w + 20)) \
+               break; \
+             
 #define ITEM_WALK_END() \
 	  } \
      }
