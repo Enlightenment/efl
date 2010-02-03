@@ -255,11 +255,6 @@ fi
 ### Checks for header files
 AC_HEADER_STDC
 
-# fnmatch.h
-AC_CHECK_HEADER([fnmatch.h],
-   [dummy="yes"],
-   [AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file])])
-
 
 ### Checks for types
 
@@ -310,16 +305,7 @@ AC_SUBST(lt_enable_auto_import)
 AC_FUNC_ALLOCA
 
 # fnmatch
-AC_CHECK_FUNCS([fnmatch], [res="yes"], [res="no"])
-if test "x$res" = "xno"; then
-   AC_SEARCH_LIBS([fnmatch],
-      [fnmatch evil iberty],
-      [res="yes"],
-      [res="no"])
-   if test "x$res" = "xno"; then
-      AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty, nor libevil])
-   fi
-fi
+EFL_CHECK_FNMATCH([], [AC_MSG_ERROR([Cannot find fnmatch()])])
 
 # dlopen
 dlopen_libs=""

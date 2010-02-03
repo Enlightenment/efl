@@ -8,5 +8,5 @@ Description: Evas canvas display library
 @pkgconfig_requires_private@: @requirement_evas@
 Version: @VERSION@
 Libs: -L${libdir} -levas
-Libs.private: @pthread_libs@
+Libs.private: @EFL_FNMATCH_LIBS@ @pthread_libs@
 Cflags: -I${includedir}
