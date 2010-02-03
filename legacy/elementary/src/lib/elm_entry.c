@@ -537,7 +537,7 @@ _getbase(Evas_Object *obj)
 	     else
 	       {
 		  if (wd->linewrap) return "base";
-        else if (wd->char_linewrap) return "base-charwrap";
+                  else if (wd->char_linewrap) return "base-charwrap";
 		  else  return "base-nowrap";
 	       }
 	  }
@@ -551,7 +551,7 @@ _getbase(Evas_Object *obj)
 	     else
 	       {
 		  if (wd->linewrap) return "base-noedit";
-        else if (wd->char_linewrap) return "base-noedit-charwrap";
+                  else if (wd->char_linewrap) return "base-noedit-charwrap";
 		  else  return "base-nowrap-noedit";
 	       }
 	  }
@@ -749,6 +749,8 @@ _signal_entry_changed(void *data, Evas_Object *obj, const char *emission, const 
 
    wd->changed = EINA_TRUE;
    _sizing_eval(data);
+   if (wd->stripped) eina_stringshare_del(wd->stripped);
+   wd->stripped = NULL;
    evas_object_smart_callback_call(data, "changed", NULL);
 }
 
@@ -1228,14 +1230,13 @@ EAPI const char *
 elm_entry_entry_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   const char *text, *s;
+   const char *text, *s = NULL;
 
    if (!wd) return NULL;
    // Strip ending <br> that is added by the textblock
    // need to check if <br> is present? seems it is always there
    text = edje_object_part_text_get(wd->ent, "elm.text");
-   s = eina_stringshare_add_length(text, strlen(text) - 4);
-
+   if (text) s = eina_stringshare_add_length(text, strlen(text) - 4);
    if (wd->stripped) eina_stringshare_del(wd->stripped);
    wd->stripped = s;
    return s;
