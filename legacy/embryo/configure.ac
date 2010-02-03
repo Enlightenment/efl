@@ -86,10 +86,6 @@ AC_SUBST(EFL_EMBRYO_BUILD)
 
 ### Checks for header files
 
-AC_CHECK_HEADER([fnmatch.h],
-   [dummy="yes"],
-   [AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file])])
-
 
 ### Checks for types
 
@@ -133,7 +129,12 @@ AC_SUBST(lt_enable_auto_import)
 
 
 ### Checks for library functions
+
+# alloca
 AC_FUNC_ALLOCA
+
+# fnmatch
+EFL_CHECK_FNMATCH([], [AC_MSG_ERROR([Cannot find fnmatch()])])
 
 case "$host_os" in
    mingw* | cegcc*)
@@ -143,20 +144,6 @@ case "$host_os" in
       AC_CHECK_FUNCS(gettimeofday)
       ;;
 esac
-
-fnmatch_libs=""
-AC_CHECK_FUNCS([fnmatch], [res="yes"], [res="no"])
-if test "x$res" = "xno"; then
-   AC_SEARCH_LIBS([fnmatch],
-      [fnmatch evil iberty],
-      [res="yes"],
-      [res="no"])
-   if test "x$res" = "xno"; then
-      AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty, nor libevil])
-   fi
-   fnmatch_libs="${ac_cv_search_fnmatch}"
-fi
-AC_SUBST(fnmatch_libs)
 
 
 AC_SUBST(requirement_embryo)
