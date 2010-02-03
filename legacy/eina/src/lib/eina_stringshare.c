@@ -140,8 +140,8 @@ struct _Eina_Stringshare_Node
 
    EINA_MAGIC
 
-   unsigned short         length;
-   unsigned short         references;
+   unsigned int           length;
+   unsigned int           references;
    char                   str[];
 };
 
@@ -1021,7 +1021,7 @@ eina_stringshare_add_length(const char *str, unsigned int slen)
 
    _eina_stringshare_population_add(slen);
 
-   if (slen == 0)
+   if (slen <= 0)
      return "";
    else if (slen == 1)
      return (const char *)_eina_stringshare_single + ((*str) << 1);
