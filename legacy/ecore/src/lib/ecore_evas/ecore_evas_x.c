@@ -30,9 +30,9 @@ _ecore_evas_x_protocols_set(Ecore_Evas *ee)
    Ecore_X_Atom protos[10];
    int num = 0;
    
-   protos[num++] = ECORE_X_ATOM_NET_WM_PING;
    if (ee->func.fn_delete_request)
      protos[num++] = ECORE_X_ATOM_WM_DELETE_WINDOW;
+   protos[num++] = ECORE_X_ATOM_NET_WM_PING;
    ecore_x_icccm_protocol_atoms_set(ee->prop.window, protos, num);
 }
 
