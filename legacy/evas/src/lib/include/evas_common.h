@@ -853,11 +853,47 @@ struct _RGBA_Polygon_Point
    int               x, y;
 };
 
+// for fonts...
+/////
+typedef struct _Fash_Item_Index_Map Fash_Item_Index_Map;
+typedef struct _Fash_Int_Map Fash_Int_Map;
+typedef struct _Fash_Int Fash_Int;
+struct _Fash_Item_Index_Map
+{
+   RGBA_Font_Int *fint;
+   int            index;
+};
+struct _Fash_Int_Map
+{
+  Fash_Item_Index_Map item[256];
+};
+struct _Fash_Int
+{
+   Fash_Int_Map *bucket[256];
+   void (*freeme) (Fash_Int *fash);
+};
+
+/////
+typedef struct _Fash_Glyph_Map Fash_Glyph_Map;
+typedef struct _Fash_Glyph Fash_Glyph;
+struct _Fash_Glyph_Map
+{
+   RGBA_Font_Glyph *item[256];
+};
+struct _Fash_Glyph
+{
+   Fash_Glyph_Map *bucket[256];
+   void (*freeme) (Fash_Glyph *fash);
+};
+/////
+
 struct _RGBA_Font
 {
    Eina_List *fonts;
    Font_Hint_Flags hinting;
    int references;
+   Fash_Int *fash;
+   unsigned char sizeok : 1;
    LK(lock);
 };
 
@@ -873,18 +909,20 @@ struct _RGBA_Font_Int
       FT_Size       size;
    } ft;
 
-   Eina_Hash       *glyphs;
+//   Eina_Hash       *glyphs;
 
    LK(ft_mutex);
 
    Eina_Hash       *kerning;
-   Eina_Hash       *indexes;
+//   Eina_Hash       *indexes;
 
    int              usage;
    Font_Hint_Flags hinting;
 
    int              references;
 
+   Fash_Glyph *fash;
+   unsigned char sizeok : 1;
 };
 
 struct _RGBA_Font_Source
@@ -895,10 +933,7 @@ struct _RGBA_Font_Source
    void             *data;
    int               data_size;
    int               current_size;
-#if 0 /* FIXME: charmap user is disabled and use a deprecated data type. */
-   Evas_Array_Hash  *charmap;
-#endif
-
+   
    struct {
       int           orig_upem;
       FT_Face       face;

@@ -46,8 +46,13 @@ evas_common_font_ascent_get(RGBA_Font *fn)
    int ret;
    RGBA_Font_Int *fi;
 
-   evas_common_font_size_use(fn);
+//   evas_common_font_size_use(fn);
    fi = fn->fonts->data;
+   if (fi->src->current_size != fi->size)
+     {
+        FT_Activate_Size(fi->ft.size);
+        fi->src->current_size = fi->size;
+     }
    val = (int)fi->src->ft.face->size->metrics.ascender;
    if (fi->src->ft.face->units_per_EM == 0)
      return val;
@@ -63,8 +68,13 @@ evas_common_font_descent_get(RGBA_Font *fn)
    int ret;
    RGBA_Font_Int *fi;
 
-   evas_common_font_size_use(fn);
+//   evas_common_font_size_use(fn);
    fi = fn->fonts->data;
+   if (fi->src->current_size != fi->size)
+     {
+        FT_Activate_Size(fi->ft.size);
+        fi->src->current_size = fi->size;
+     }
    val = -(int)fi->src->ft.face->size->metrics.descender;
    if (fi->src->ft.face->units_per_EM == 0)
      return val;
@@ -80,8 +90,13 @@ evas_common_font_max_ascent_get(RGBA_Font *fn)
    int ret;
    RGBA_Font_Int *fi;
 
-   evas_common_font_size_use(fn);
+//   evas_common_font_size_use(fn);
    fi = fn->fonts->data;
+   if (fi->src->current_size != fi->size)
+     {
+        FT_Activate_Size(fi->ft.size);
+        fi->src->current_size = fi->size;
+     }
    val = (int)fi->src->ft.face->bbox.yMax;
    if (fi->src->ft.face->units_per_EM == 0)
      return val;
@@ -97,8 +112,13 @@ evas_common_font_max_descent_get(RGBA_Font *fn)
    int ret;
    RGBA_Font_Int *fi;
 
-   evas_common_font_size_use(fn);
+//   evas_common_font_size_use(fn);
    fi = fn->fonts->data;
+   if (fi->src->current_size != fi->size)
+     {
+        FT_Activate_Size(fi->ft.size);
+        fi->src->current_size = fi->size;
+     }
    val = -(int)fi->src->ft.face->bbox.yMin;
    if (fi->src->ft.face->units_per_EM == 0)
      return val;
@@ -114,8 +134,13 @@ evas_common_font_get_line_advance(RGBA_Font *fn)
    int ret;
    RGBA_Font_Int *fi;
 
-   evas_common_font_size_use(fn);
+//   evas_common_font_size_use(fn);
    fi = fn->fonts->data;
+   if (fi->src->current_size != fi->size)
+     {
+        FT_Activate_Size(fi->ft.size);
+        fi->src->current_size = fi->size;
+     }
    val = (int)fi->src->ft.face->size->metrics.height;
    if (fi->src->ft.face->units_per_EM == 0)
      return val;

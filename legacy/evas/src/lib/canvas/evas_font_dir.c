@@ -63,8 +63,16 @@ evas_font_dir_cache_free(void)
    font_dirs = NULL;
 
 #ifdef HAVE_FONTCONFIG
-   fc_init--;
-   if (fc_init == 0) FcFini();
+/* this is bad i got a:
+ * fccache.c:512: FcCacheFini: Assertion fcCacheChains[i] == ((void *)0)' failed.   
+ * 
+ * all i can do for now is shut this puppy down. butthat breaks, so disable
+ * it as in reality - there is little reason to care about the memory not
+ * being freed etc.
+ * 
+ *   fc_init--;
+ *   if (fc_init == 0) FcFini();
+ */
 #endif
 }
 
