@@ -38,6 +38,7 @@ case "$host_os" in
    *)
       ecore_config_release_info="-release $release"
       ecore_con_release_info="-release $release"
+      ecore_data_release_info="-release $release"
       ecore_directfb_release_info="-release $release"
       ecore_evas_release_info="-release $release"
       ecore_fb_release_info="-release $release"
@@ -57,6 +58,7 @@ case "$host_os" in
 esac
 AC_SUBST(ecore_config_release_info)
 AC_SUBST(ecore_con_release_info)
+AC_SUBST(ecore_data_release_info)
 AC_SUBST(ecore_directfb_release_info)
 AC_SUBST(ecore_evas_release_info)
 AC_SUBST(ecore_fb_release_info)
@@ -198,6 +200,7 @@ esac
 requirements_ecore=""
 requirements_ecore_con=""
 requirements_ecore_config=""
+requirements_ecore_data=""
 requirements_ecore_directfb=""
 requirements_ecore_evas=""
 requirements_ecore_fb=""
@@ -366,6 +369,7 @@ PKG_CHECK_MODULES(EINA, [eina-0])
 requirements_ecore="eina-0 ${requirements_ecore}"
 requirements_ecore_con="ecore eina-0 ${requirements_ecore_con}"
 requirements_ecore_config="ecore eina-0 ${requirements_ecore_config}"
+requirements_ecore_data="ecore eina-0 ${requirements_ecore_data}"
 requirements_ecore_directfb="ecore eina-0 ${requirements_ecore_directfb}"
 requirements_ecore_evas="ecore eina-0 ${requirements_ecore_evas}"
 requirements_ecore_fb="ecore eina-0 ${requirements_ecore_fb}"
@@ -1131,6 +1135,7 @@ ECORE_EVAS_CHECK_MODULE([software-16-wince],
 AC_SUBST(requirements_ecore)
 AC_SUBST(requirements_ecore_con)
 AC_SUBST(requirements_ecore_config)
+AC_SUBST(requirements_ecore_data)
 AC_SUBST(requirements_ecore_directfb)
 AC_SUBST(requirements_ecore_evas)
 AC_SUBST(requirements_ecore_fb)
@@ -1151,49 +1156,49 @@ AC_OUTPUT([
 Makefile
 ecore-con.pc
 ecore-config.pc
+ecore-data.pc
 ecore-directfb.pc
 ecore-evas.pc
 ecore-fb.pc
 ecore-file.pc
+ecore-quartz.pc
 ecore-imf.pc
 ecore-imf-evas.pc
 ecore-ipc.pc
-ecore-txt.pc
 ecore-x.pc
 ecore-input.pc
 ecore-input-evas.pc
 ecore-win32.pc
 ecore-sdl.pc
-ecore-quartz.pc
+ecore-txt.pc
 ecore-wince.pc
 ecore.pc
-ecore-data.pc
 doc/ecore.dox
 doc/Makefile
 src/Makefile
 src/bin/Makefile
 src/lib/Makefile
 src/lib/ecore/Makefile
-src/lib/ecore_x/Makefile
-src/lib/ecore_x/xlib/Makefile
-src/lib/ecore_x/xcb/Makefile
-src/lib/ecore_fb/Makefile
-src/lib/ecore_sdl/Makefile
-src/lib/ecore_quartz/Makefile
-src/lib/ecore_evas/Makefile
 src/lib/ecore_con/Makefile
+src/lib/ecore_config/Makefile
+src/lib/ecore_data/Makefile
+src/lib/ecore_directfb/Makefile
+src/lib/ecore_evas/Makefile
+src/lib/ecore_fb/Makefile
+src/lib/ecore_file/Makefile
+src/lib/ecore_quartz/Makefile
+src/lib/ecore_sdl/Makefile
 src/lib/ecore_imf/Makefile
 src/lib/ecore_imf_evas/Makefile
 src/lib/ecore_input/Makefile
 src/lib/ecore_input_evas/Makefile
 src/lib/ecore_ipc/Makefile
 src/lib/ecore_txt/Makefile
-src/lib/ecore_config/Makefile
-src/lib/ecore_file/Makefile
-src/lib/ecore_directfb/Makefile
 src/lib/ecore_win32/Makefile
 src/lib/ecore_wince/Makefile
-src/lib/ecore_data/Makefile
+src/lib/ecore_x/Makefile
+src/lib/ecore_x/xlib/Makefile
+src/lib/ecore_x/xcb/Makefile
 README
 ecore.spec
 po/Makefile.in
