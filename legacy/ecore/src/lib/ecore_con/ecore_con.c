@@ -1044,12 +1044,6 @@ static Ecore_Con_State svr_try_connect(Ecore_Con_Server *svr)
     }
 }
 
-#define NIPQUAD(addr)					      \
-		    ((unsigned char *)&(addr))[0],	      \
-		      ((unsigned char *)&(addr))[1],          \
-		      ((unsigned char *)&(addr))[2],          \
-		      ((unsigned char *)&(addr))[3]
-
 static char *
 _ecore_con_pretty_ip(struct sockaddr *client_addr, socklen_t size)
 {
@@ -1064,7 +1058,10 @@ _ecore_con_pretty_ip(struct sockaddr *client_addr, socklen_t size)
 	if (IN6_IS_ADDR_V4MAPPED(&sa6->sin6_addr))
 	  {
 	     snprintf(ipbuf, sizeof (ipbuf), "%u.%u.%u.%u",
-		      NIPQUAD(sa6->sin6_addr.s6_addr32[3]));
+		      sa6->sin6_addr.s6_addr[12],
+		      sa6->sin6_addr.s6_addr[13],
+		      sa6->sin6_addr.s6_addr[14],
+		      sa6->sin6_addr.s6_addr[15]);
 	     return strdup(ipbuf);
 	  }
      }

@@ -304,7 +304,7 @@ _ecore_con_info_readdata(CB_Data *cbdata)
 	  {
 	    recv = (Ecore_Con_Info *)torecv;
 
-	    recv->info.ai_addr = (char *)torecv + sizeof(Ecore_Con_Info);
+	    recv->info.ai_addr = (struct sockaddr *)((char *)torecv + sizeof(Ecore_Con_Info));
 	    if (torecv_len != (sizeof(Ecore_Con_Info) + recv->info.ai_addrlen))
 	      recv->info.ai_canonname = (char *)torecv + sizeof(Ecore_Con_Info) + recv->info.ai_addrlen;
 	    else
