@@ -22,8 +22,7 @@ efreet_ini.c \
 efreet_desktop.c \
 efreet_menu.c \
 efreet_utils.c \
-efreet_uri.c \
-efreet_cache.c
+efreet_uri.c
 
 
 installed_headersdir = $(includedir)/efreet

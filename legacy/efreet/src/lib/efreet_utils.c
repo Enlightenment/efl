@@ -570,7 +570,6 @@ efreet_util_cache_fill(__UNUSED__ void *data)
         free(fill);
         idler = NULL;
         fill = NULL;
-        efreet_cache_clear();
         ecore_event_add(EFREET_EVENT_DESKTOP_LIST_CHANGE, NULL, NULL, NULL);
 
         return 0;
@@ -596,7 +595,6 @@ efreet_util_cache_fill(__UNUSED__ void *data)
             eina_hash_foreach(file_id_by_desktop_path, dump, NULL);
             DBG("%d", eina_hash_population(desktop_by_file_id));
 #endif
-            efreet_cache_clear();
             ecore_event_add(EFREET_EVENT_DESKTOP_LIST_CHANGE, NULL, NULL, NULL);
 
             return 0;
@@ -702,7 +700,6 @@ efreet_util_cache_add(const char *path, const char *file_id, int priority, int e
             ev->current = desktop;
             efreet_desktop_ref(ev->current);
             ev->change = EFREET_DESKTOP_CHANGE_ADD;
-            efreet_cache_clear();
             ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, efreet_event_desktop_change_free, NULL);
         }
     }
@@ -723,7 +720,6 @@ efreet_util_cache_add(const char *path, const char *file_id, int priority, int e
             ev->change = EFREET_DESKTOP_CHANGE_UPDATE;
             efreet_desktop_free(ud->desktop);
             ud->desktop = desktop;
-            efreet_cache_clear();
             ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, efreet_event_desktop_change_free, NULL);
         }
         else
@@ -755,7 +751,6 @@ efreet_util_cache_remove(const char *path, const char *file_id, int priority)
         ev->current = ud->desktop;
         efreet_desktop_ref(ev->current);
         ev->change = EFREET_DESKTOP_CHANGE_REMOVE;
-        efreet_cache_clear();
         ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, efreet_event_desktop_change_free, NULL);
 
         eina_hash_del(desktop_by_file_id, file_id, ud);
@@ -804,7 +799,6 @@ efreet_util_cache_reload(const char *path, const char *file_id, int priority)
         ev->previous = ud->desktop;
         efreet_desktop_ref(ev->previous);
         ev->change = EFREET_DESKTOP_CHANGE_UPDATE;
-        efreet_cache_clear();
         ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, efreet_event_desktop_change_free, NULL);
 
         efreet_desktop_free(ud->desktop);
@@ -826,7 +820,6 @@ efreet_util_cache_reload(const char *path, const char *file_id, int priority)
         ev->current = desktop;
         efreet_desktop_ref(ev->current);
         ev->change = EFREET_DESKTOP_CHANGE_ADD;
-        efreet_cache_clear();
         ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, efreet_event_desktop_change_free, NULL);
     }
 }

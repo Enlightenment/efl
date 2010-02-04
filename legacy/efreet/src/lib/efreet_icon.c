@@ -368,15 +368,9 @@ efreet_icon_find_theme_check(const char *theme_name)
 EAPI char *
 efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int size)
 {
-    const char *cached;
     char *value;
     Efreet_Icon_Theme *theme;
 
-    if ((cached = efreet_icon_hash_get(theme_name, icon, size)) != NULL)
-    {
-        if (cached == NON_EXISTING) return NULL;
-        return strdup(cached);
-    }
     theme = efreet_icon_find_theme_check(theme_name);
 
 #ifdef SLOPPY_SPEC
@@ -396,8 +390,6 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
      */
     if (!value || (value == NON_EXISTING)) value = efreet_icon_fallback_icon(icon);
 
-    efreet_icon_hash_put(theme_name, icon, size, value);
-   
     if (value == NON_EXISTING) value = NULL;
     return value;
 }
@@ -1637,5 +1629,5 @@ efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, unsigned int s
     if (!l) eina_hash_add(efreet_icon_cache, theme, list);
     else eina_hash_modify(efreet_icon_cache, theme, list);
 
-    efreet_icon_cache_flush(theme, list);
+    //efreet_icon_cache_flush(theme, list);
 }
