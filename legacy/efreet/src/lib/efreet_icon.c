@@ -97,10 +97,10 @@ static Efreet_Icon_Theme *fake_null = NULL;
 static void
 _efreet_icon_cache_list_destroy(Eina_List *list)
 {
-   Efreet_Icon_Cache *cache;
+    Efreet_Icon_Cache *cache;
 
-   EINA_LIST_FREE(list, cache)
-     efreet_icon_cache_free(cache);
+    EINA_LIST_FREE(list, cache)
+        efreet_icon_cache_free(cache);
 }
 
 /**
@@ -151,11 +151,11 @@ efreet_icon_shutdown(void)
 
     IF_FREE_HASH(efreet_icon_cache);
 
-   if (fake_null)
-   {
-       efreet_icon_theme_free(fake_null);
-       fake_null = NULL;
-   }
+    if (fake_null)
+    {
+        efreet_icon_theme_free(fake_null);
+        fake_null = NULL;
+    }
 
     ecore_shutdown();
 }
@@ -224,8 +224,8 @@ efreet_icon_extra_list_get(void)
 static Eina_Bool
 _hash_keys(Eina_Hash *hash __UNUSED__, const void *key, void *list)
 {
-  *(Eina_List**)list = eina_list_append(*(Eina_List**)list, key);
-  return EINA_TRUE;
+    *(Eina_List**)list = eina_list_append(*(Eina_List**)list, key);
+    return EINA_TRUE;
 }
 /**
  * @return Returns a list of Efreet_Icon structs for all the non-hidden icon
@@ -342,17 +342,17 @@ efreet_icon_find_theme_check(const char *theme_name)
         if ((fake_null) && (!theme_name)) return fake_null;
         theme = efreet_icon_theme_new();
         theme->fake = 1;
-	if (theme_name)
-	  {
-	     theme->name.internal = eina_stringshare_add(theme_name);
-	     eina_hash_del(efreet_icon_themes, (void *)theme->name.internal, NULL);
-	     eina_hash_add(efreet_icon_themes, (void *)theme->name.internal, theme);
-	  }
-	else
-	  {
-	     theme->name.internal = NULL;
-	     fake_null = theme;
-	  }
+        if (theme_name)
+        {
+            theme->name.internal = eina_stringshare_add(theme_name);
+            eina_hash_del(efreet_icon_themes, (void *)theme->name.internal, NULL);
+            eina_hash_add(efreet_icon_themes, (void *)theme->name.internal, theme);
+        }
+        else
+        {
+            theme->name.internal = NULL;
+            fake_null = theme;
+        }
     }
 
     return theme;
@@ -374,8 +374,8 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
 
     if ((cached = efreet_icon_hash_get(theme_name, icon, size)) != NULL)
     {
-       if (cached == NON_EXISTING) return NULL;
-       return strdup(cached);
+        if (cached == NON_EXISTING) return NULL;
+        return strdup(cached);
     }
     theme = efreet_icon_find_theme_check(theme_name);
 
@@ -433,7 +433,7 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
             tmps = eina_list_append(tmps, efreet_icon_remove_extension(icon));
 
         value = efreet_icon_list_find_helper(theme, tmps, size);
-	EINA_LIST_FREE(tmps, data)
+        EINA_LIST_FREE(tmps, data)
             free(data);
     }
 #else
@@ -830,7 +830,7 @@ efreet_icon_fallback_icon(const char *icon_name)
             icon = efreet_icon_fallback_dir_scan(dir, icon_name);
             if (icon)
             {
-	       efreet_icon_cache_add(efreet_icon_find_theme_check(NULL), icon_name, 0, icon);
+                efreet_icon_cache_add(efreet_icon_find_theme_check(NULL), icon_name, 0, icon);
                 return icon;
             }
         }
@@ -1554,9 +1554,9 @@ efreet_icon_cache_flush(Efreet_Icon_Theme *theme, Eina_List *list)
     while (eina_list_count(list) > 100)
     {
         Efreet_Icon_Cache *cache;
-	Eina_List *last;
+        Eina_List *last;
 
-	last = eina_list_last(list);
+        last = eina_list_last(list);
         cache = eina_list_data_get(last);
         efreet_icon_cache_free(cache);
         list = eina_list_remove_list(list, last);
@@ -1593,19 +1593,19 @@ efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, unsigned int
         if (!cache->path)
         {
             list = eina_list_promote_list(list, eina_list_data_find_list(list, cache));
-	    eina_hash_modify(efreet_icon_cache, theme, list);
+            eina_hash_modify(efreet_icon_cache, theme, list);
             return NON_EXISTING;
         }
         else if (!stat(cache->path, &st) && st.st_mtime == cache->lasttime)
         {
             list = eina_list_promote_list(list, eina_list_data_find_list(list, cache));
-	    eina_hash_modify(efreet_icon_cache, theme, list);
+            eina_hash_modify(efreet_icon_cache, theme, list);
             return strdup(cache->path);
         }
         efreet_icon_cache_free(cache);
-	list = eina_list_remove(list, cache);
-	if (list != NULL) eina_hash_modify(efreet_icon_cache, theme, list);
-	else eina_hash_del(efreet_icon_cache, theme, NULL);
+        list = eina_list_remove(list, cache);
+        if (list != NULL) eina_hash_modify(efreet_icon_cache, theme, list);
+        else eina_hash_del(efreet_icon_cache, theme, NULL);
     }
     return NULL;
 }

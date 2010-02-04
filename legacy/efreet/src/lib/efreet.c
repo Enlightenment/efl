@@ -38,42 +38,42 @@ efreet_init(void)
     {
         printf("Efreet could create a general log domain.\n");
 
-	goto shutdown_eina;
+        goto shutdown_eina;
     }
 
     if (!efreet_base_init())
-      goto unregister_log_domain;
+        goto unregister_log_domain;
 
     if (!efreet_xml_init())
-      goto shutdown_efreet_base;
+        goto shutdown_efreet_base;
 
     if (!efreet_icon_init())
-      goto shutdown_efreet_xml;
+        goto shutdown_efreet_xml;
 
     if (!efreet_ini_init())
-      goto shutdown_efreet_icon;
+        goto shutdown_efreet_icon;
 
     if (!efreet_desktop_init())
-      goto shutdown_efreet_ini;
+        goto shutdown_efreet_ini;
 
     if (!efreet_menu_init())
-      goto shutdown_efreet_desktop;
+        goto shutdown_efreet_desktop;
 
     return _efreet_init_count;
 
- shutdown_efreet_desktop:
+shutdown_efreet_desktop:
     efreet_desktop_shutdown();
- shutdown_efreet_ini:
+shutdown_efreet_ini:
     efreet_ini_shutdown();
- shutdown_efreet_icon:
+shutdown_efreet_icon:
     efreet_icon_shutdown();
- shutdown_efreet_xml:
+shutdown_efreet_xml:
     efreet_xml_shutdown();
- shutdown_efreet_base:
+shutdown_efreet_base:
     efreet_base_shutdown();
- unregister_log_domain:
+unregister_log_domain:
     eina_log_domain_unregister(_efreet_log_domain_global);
- shutdown_eina:
+shutdown_eina:
     eina_shutdown();
 
     return --_efreet_init_count;
@@ -89,7 +89,7 @@ EAPI int
 efreet_shutdown(void)
 {
     if (--_efreet_init_count != 0)
-      return _efreet_init_count;
+        return _efreet_init_count;
 
     efreet_menu_shutdown();
     efreet_desktop_shutdown();

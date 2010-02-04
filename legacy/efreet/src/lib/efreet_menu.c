@@ -266,16 +266,17 @@ static int efreet_menu_app_dir_scan(Efreet_Menu_Internal *internal,
                                         int legacy);
 static int efreet_menu_directory_dirs_process(Efreet_Menu_Internal *internal);
 static int efreet_menu_directory_dir_scan(const char *path,
-					  const char *relative_path,
-					  Eina_Hash *cache);
+                                            const char *relative_path,
+                                            Eina_Hash *cache);
 static Efreet_Desktop *efreet_menu_directory_get(Efreet_Menu_Internal *internal,
                                                     const char *path);
 static void efreet_menu_process_filters(Efreet_Menu_Internal *internal,
                                             unsigned int only_unallocated);
-static Eina_List * efreet_menu_process_app_pool(Eina_List *pool, Eina_List *applications,
-					 Eina_Hash *matches,
-                                        Efreet_Menu_Filter *filter,
-                                        unsigned int only_unallocated);
+static Eina_List * efreet_menu_process_app_pool(Eina_List *pool,
+                                                Eina_List *applications,
+                                                Eina_Hash *matches,
+                                                Efreet_Menu_Filter *filter,
+                                                unsigned int only_unallocated);
 static int efreet_menu_filter_matches(Efreet_Menu_Filter_Op *op,
                                         Efreet_Menu_Desktop *md);
 static int efreet_menu_filter_or_matches(Efreet_Menu_Filter_Op *op,
@@ -463,14 +464,14 @@ efreet_menu_init(void)
     _efreet_menu_log_dom = eina_log_domain_register("Efreet_menu", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_menu_log_dom < 0)
     {
-	ERROR("Efreet: Could not create a log domain for Efreet_menu");
-	return 0;
+        ERROR("Efreet: Could not create a log domain for Efreet_menu");
+        return 0;
     }
     if (!efreet_xml_init())
     {
-	ERROR("Efreet: Could not init xml module");
+        ERROR("Efreet: Could not init xml module");
         eina_log_domain_unregister(_efreet_menu_log_dom);
-	return 0;
+        return 0;
     }
 
     efreet_menu_handle_cbs = eina_hash_string_superfast_new(NULL);
@@ -482,7 +483,7 @@ efreet_menu_init(void)
     {
         efreet_xml_shutdown();
         eina_log_domain_unregister(_efreet_menu_log_dom);
-	return 0;
+        return 0;
     }
 
     /* set Menu into it's own so we can check the XML is valid before trying
@@ -490,41 +491,41 @@ efreet_menu_init(void)
     efreet_tag_menu = eina_stringshare_add(menu_cbs[0].key);
 
     for (i = 0; menu_cbs[i].key != NULL; i++)
-      {
-	 eina_hash_del(efreet_menu_handle_cbs,
-	       menu_cbs[i].key,
-	       NULL);
-	 eina_hash_add(efreet_menu_handle_cbs,
-	       menu_cbs[i].key,
-	       menu_cbs[i].cb);
-      }
+    {
+        eina_hash_del(efreet_menu_handle_cbs,
+                        menu_cbs[i].key,
+                        NULL);
+        eina_hash_add(efreet_menu_handle_cbs,
+                        menu_cbs[i].key,
+                        menu_cbs[i].cb);
+    }
     for (i = 0; filter_cbs[i].key != NULL; i++)
-      {
-	 eina_hash_del(efreet_menu_filter_cbs,
-	       filter_cbs[i].key,
-	       NULL);
-	 eina_hash_add(efreet_menu_filter_cbs,
-	       filter_cbs[i].key,
-	       filter_cbs[i].cb);
-      }
+    {
+        eina_hash_del(efreet_menu_filter_cbs,
+                        filter_cbs[i].key,
+                        NULL);
+        eina_hash_add(efreet_menu_filter_cbs,
+                        filter_cbs[i].key,
+                        filter_cbs[i].cb);
+    }
     for (i = 0; move_cbs[i].key != NULL; i++)
-      {
-	 eina_hash_del(efreet_menu_move_cbs,
-	       move_cbs[i].key,
-	       NULL);
-	 eina_hash_add(efreet_menu_move_cbs,
-	       move_cbs[i].key,
-	       move_cbs[i].cb);
-      }
+    {
+        eina_hash_del(efreet_menu_move_cbs,
+                        move_cbs[i].key,
+                        NULL);
+        eina_hash_add(efreet_menu_move_cbs,
+                        move_cbs[i].key,
+                        move_cbs[i].cb);
+    }
     for (i = 0; layout_cbs[i].key != NULL; i++)
-      {
-	 eina_hash_del(efreet_menu_layout_cbs,
-	       layout_cbs[i].key,
-	       NULL);
-	 eina_hash_add(efreet_menu_layout_cbs,
-	       layout_cbs[i].key,
-	       layout_cbs[i].cb);
-      }
+    {
+        eina_hash_del(efreet_menu_layout_cbs,
+                        layout_cbs[i].key,
+                        NULL);
+        eina_hash_add(efreet_menu_layout_cbs,
+                        layout_cbs[i].key,
+                        layout_cbs[i].cb);
+    }
     return 1;
 }
 
@@ -1216,7 +1217,7 @@ efreet_menu_handle_default_app_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *xm
 
         prepend = eina_list_append(prepend, app_dir);
 
-	free(dir);
+        free(dir);
     }
     parent->app_dirs = eina_list_merge(prepend, parent->app_dirs);
 
@@ -1673,10 +1674,10 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
 
     /* don't merge the same path twice */
     if (eina_hash_find(efreet_merged_menus, realpath)) 
-     {
+    {
         FREE(realpath);
         return 1;
-     }
+    }
 
     eina_hash_add(efreet_merged_menus, realpath, (void *)1);
 
@@ -2791,9 +2792,8 @@ efreet_menu_process_filters(Efreet_Menu_Internal *internal, unsigned int only_un
  */
 static Eina_List *
 efreet_menu_process_app_pool(Eina_List *pool, Eina_List *applications,
-				  Eina_Hash *matches,
-				  Efreet_Menu_Filter *filter,
-				  unsigned int only_unallocated)
+                                Eina_Hash *matches, Efreet_Menu_Filter *filter,
+                                unsigned int only_unallocated)
 {
     Efreet_Menu_Desktop *md;
     Eina_List *l;
@@ -3021,7 +3021,7 @@ efreet_menu_concatenate(Efreet_Menu_Internal *dest, Efreet_Menu_Internal *src)
     {
         efreet_menu_create_app_dirs_list(dest);
         dest->app_dirs = eina_list_merge(src->app_dirs, dest->app_dirs);
-       src->app_dirs = NULL;
+        src->app_dirs = NULL;
     }
 
     if (src->directory_dirs)
@@ -3399,10 +3399,10 @@ efreet_menu_app_dirs_process(Efreet_Menu_Internal *internal)
     Eina_List *l;
 
     EINA_LIST_FREE(internal->app_pool, md)
-      efreet_menu_desktop_free(md);
+        efreet_menu_desktop_free(md);
 
     EINA_LIST_FOREACH(internal->app_dirs, l, app_dir)
-            efreet_menu_app_dir_scan(internal, app_dir->path, app_dir->prefix, app_dir->legacy);
+        efreet_menu_app_dir_scan(internal, app_dir->path, app_dir->prefix, app_dir->legacy);
 
     return 1;
 }
@@ -3481,7 +3481,7 @@ efreet_menu_directory_dirs_process(Efreet_Menu_Internal *internal)
     if (internal->directory_dirs)
     {
         internal->directory_cache =
-	  eina_hash_string_superfast_new(EINA_FREE_CB(efreet_desktop_free));
+            eina_hash_string_superfast_new(EINA_FREE_CB(efreet_desktop_free));
 
         EINA_LIST_REVERSE_FOREACH(internal->directory_dirs, l, path)
             efreet_menu_directory_dir_scan(path, NULL, internal->directory_cache);
@@ -3514,7 +3514,7 @@ efreet_menu_directory_dirs_process(Efreet_Menu_Internal *internal)
  */
 static int
 efreet_menu_directory_dir_scan(const char *path, const char *relative_path,
-			       Eina_Hash *cache)
+                                Eina_Hash *cache)
 {
     Efreet_Desktop *desktop;
     DIR *files;
@@ -3549,7 +3549,7 @@ efreet_menu_directory_dir_scan(const char *path, const char *relative_path,
                 continue;
             }
 
-	    eina_hash_del(cache, buf2, NULL);
+            eina_hash_del(cache, buf2, NULL);
             eina_hash_add(cache, buf2, desktop);
         }
     }

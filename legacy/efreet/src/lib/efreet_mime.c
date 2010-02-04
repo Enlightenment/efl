@@ -219,8 +219,8 @@ efreet_mime_init(void)
 
     if (_efreet_mime_log_dom < 0) 
     {
-	ERROR("Efreet: Could not create a log domain for Efreet_mime.");
-	goto shutdown_efreet;
+        ERROR("Efreet: Could not create a log domain for Efreet_mime.");
+        goto shutdown_efreet;
     }
 
     efreet_mime_endianess = efreet_mime_endian_check();
@@ -234,13 +234,13 @@ efreet_mime_init(void)
 
     return _efreet_mime_init_count;
 
- unregister_log_domain:
+unregister_log_domain:
     eina_log_domain_unregister(_efreet_mime_log_dom);
- shutdown_efreet:
+shutdown_efreet:
     efreet_shutdown();
- shutdown_ecore_file:
+shutdown_ecore_file:
     ecore_file_shutdown();
- shutdown_ecore:
+shutdown_ecore:
     ecore_shutdown();
 
     return --_efreet_mime_init_count;
@@ -769,7 +769,7 @@ efreet_mime_fallback_check(const char *file)
     int i;
 
     if (ecore_file_can_exec(file))
-      return "application/x-executable";
+        return "application/x-executable";
     
     if (!(f = fopen(file, "r"))) return NULL;
 
@@ -864,7 +864,7 @@ efreet_mime_mime_types_load(const char *file)
             strncpy(ext, pp, (p - pp));
             ext[p - pp] = 0;
 
-	    eina_hash_del(wild, ext, NULL);
+            eina_hash_del(wild, ext, NULL);
             eina_hash_add(wild, ext, (void*)eina_stringshare_add(mimetype));
         }
         while ((*p != '\n') && (*p != 0));
@@ -924,7 +924,7 @@ efreet_mime_shared_mimeinfo_globs_load(const char *file)
         {
             eina_hash_del(wild, &(ext[2]), NULL);
             eina_hash_add(wild, &(ext[2]),
-			  (void*)eina_stringshare_add(mimetype));
+                            (void*)eina_stringshare_add(mimetype));
         }
         else
         {
@@ -1103,7 +1103,7 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
                 entry->value = NULL;
 
                 mime->entries = eina_list_append(mime->entries, entry);
-           }
+            }
 
             switch(*ptr)
             {
@@ -1136,9 +1136,9 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
                     ptr++;
                     entry->word_size = atoi(ptr);
                     if ((entry->word_size != 0) && (((entry->word_size != 1)
-						     && (entry->word_size != 2)
-						     && (entry->word_size != 4))
-						     || (entry->value_len % entry->word_size)))
+                                    && (entry->word_size != 2)
+                                    && (entry->word_size != 4))
+                                || (entry->value_len % entry->word_size)))
                     {
                         /* Invalid, Destroy */
                         FREE(entry->value);
@@ -1583,7 +1583,7 @@ efreet_mime_icons_debug(void)
         }
 
         DBG("mime-icon entry: '%s' last used: %s",
-               entry->mime, ctime(&entry->timestamp));
+            entry->mime, ctime(&entry->timestamp));
 
         EINA_INLIST_FOREACH(entry->list, n)
             DBG("\tsize: %3u theme: '%s' icon: '%s'",

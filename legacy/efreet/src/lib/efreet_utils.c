@@ -126,11 +126,11 @@ efreet_util_init(void)
 
     if (init++) return init;
     _efreet_utils_log_dom = eina_log_domain_register("Efreet_util",EFREET_DEFAULT_LOG_COLOR);
-    if(_efreet_utils_log_dom < 0)
-      {
-	ERROR("Efreet: Could not create a log domain for efreet_util");
-	return 0;
-      }
+    if (_efreet_utils_log_dom < 0)
+    {
+        ERROR("Efreet: Could not create a log domain for efreet_util");
+        return 0;
+    }
     if (!EFREET_EVENT_DESKTOP_LIST_CHANGE)
         EFREET_EVENT_DESKTOP_LIST_CHANGE = ecore_event_type_new();
     if (!EFREET_EVENT_DESKTOP_CHANGE)
@@ -220,11 +220,11 @@ efreet_util_path_in_default(const char *section, const char *path)
             ret = dir;
             break;
         }
-	free(dir);
+        free(dir);
     }
 
     EINA_LIST_FREE(dirs, dir)
-      if (ret != dir) free(dir);
+        if (ret != dir) free(dir);
 
     return ret;
 }
@@ -307,10 +307,10 @@ efreet_util_desktop_wm_class_find(const char *wmname, const char *wmclass)
     ud = search.result;
 
     if (ud)
-      {
-	 efreet_desktop_ref(ud->desktop);
-	 return ud->desktop;
-      }
+    {
+        efreet_desktop_ref(ud->desktop);
+        return ud->desktop;
+    }
     return NULL;
 }
 
@@ -522,17 +522,17 @@ _hash_keys(Eina_Hash *hash __UNUSED__, const void *key, void *fdata)
 EAPI Eina_List *
 efreet_util_desktop_categories_list(void)
 {
-   Eina_Iterator *it;
-   Eina_List *list = NULL;
-   
-   it = eina_hash_iterator_key_new(desktops_by_category);
-   if (it)
-     {
+    Eina_Iterator *it;
+    Eina_List *list = NULL;
+
+    it = eina_hash_iterator_key_new(desktops_by_category);
+    if (it)
+    {
         eina_iterator_foreach(it, EINA_EACH(_hash_keys), &list);
         eina_iterator_free(it);
-     }
-   
-   return list;
+    }
+
+    return list;
 }
 
 /**
@@ -677,12 +677,12 @@ efreet_util_cache_add(const char *path, const char *file_id, int priority, int e
     }
 
     if (!eina_hash_find(file_id_by_desktop_path, desktop->orig_path))
-      {
-	 eina_hash_add(file_id_by_desktop_path,
-	       desktop->orig_path,
-	       (void *)eina_stringshare_add(file_id));
+    {
+        eina_hash_add(file_id_by_desktop_path,
+                        desktop->orig_path,
+                        (void *)eina_stringshare_add(file_id));
 
-      }
+    }
 
     ud = eina_hash_find(desktop_by_file_id, file_id);
     if (!ud)
@@ -855,9 +855,9 @@ efreet_util_cache_search_mime(__UNUSED__ const Eina_Hash *hash, void *value, voi
 
     if (!ud->desktop->mime_types) return EINA_TRUE;
     EINA_LIST_FOREACH(ud->desktop->mime_types, l, mime)
-      if (search->what == mime)
+        if (search->what == mime)
         {
-	    efreet_desktop_ref(ud->desktop);
+            efreet_desktop_ref(ud->desktop);
             search->list = eina_list_append(search->list, ud->desktop);
             break;
         }
@@ -876,15 +876,15 @@ efreet_util_cache_search_wm_class(__UNUSED__ const Eina_Hash *hash, void *value,
     if (!ud->desktop) return EINA_TRUE;
     if (!ud->desktop->startup_wm_class) return EINA_TRUE;
     if ((search->what2) && (!strcmp(ud->desktop->startup_wm_class, search->what2)))
-      {
-	  search->result = ud;
-          return EINA_FALSE;
-      }
+    {
+        search->result = ud;
+        return EINA_FALSE;
+    }
     else if ((search->what1) && (!strcmp(ud->desktop->startup_wm_class, search->what1)))
-      {
-	  search->result = ud;
-	  return EINA_FALSE;
-      }
+    {
+        search->result = ud;
+        return EINA_FALSE;
+    }
     return EINA_TRUE;
 }
 
@@ -904,17 +904,17 @@ efreet_util_cache_search_exec(__UNUSED__ const Eina_Hash *hash, void *value, voi
     if (!exec) return EINA_TRUE;
     if (!strcmp(exec, search->what1))
     {
-       free(exec);
-       search->result = ud;
-       return EINA_FALSE;
+        free(exec);
+        search->result = ud;
+        return EINA_FALSE;
     }
 
     file = ecore_file_file_get(exec);
     if (file && !strcmp(file, search->what1))
     {
-       free(exec);
-       search->result = ud;
-       return EINA_FALSE;
+        free(exec);
+        search->result = ud;
+        return EINA_FALSE;
     }
     free(exec);
     return EINA_TRUE;
@@ -931,10 +931,10 @@ efreet_util_cache_search_name(__UNUSED__ const Eina_Hash *hash, void *value, voi
 
     if (!ud->desktop->name) return EINA_TRUE;
     if (!strcmp(ud->desktop->name, search->what1))
-      {
-	 search->result = ud;
-	 return EINA_FALSE;
-      }
+    {
+        search->result = ud;
+        return EINA_FALSE;
+    }
     return EINA_TRUE;
 }
 
@@ -949,10 +949,10 @@ efreet_util_cache_search_generic_name(__UNUSED__ const Eina_Hash *hash, void *va
 
     if (!ud->desktop->generic_name) return EINA_TRUE;
     if (!strcmp(ud->desktop->generic_name, search->what1))
-      {
-	 search->result = ud;
-	 return EINA_FALSE;
-      }
+    {
+        search->result = ud;
+        return EINA_FALSE;
+    }
     return EINA_TRUE;
 }
 
@@ -967,10 +967,10 @@ efreet_util_cache_search_name_glob(__UNUSED__ const Eina_Hash *hash, void *value
 
     if (!ud->desktop) return EINA_TRUE;
     if (efreet_util_glob_match(ud->desktop->name, search->what))
-      {
-	 efreet_desktop_ref(ud->desktop);
-	 search->list = eina_list_append(search->list, ud->desktop);
-      }
+    {
+        efreet_desktop_ref(ud->desktop);
+        search->list = eina_list_append(search->list, ud->desktop);
+    }
     return EINA_TRUE;
 }
 
@@ -988,10 +988,10 @@ efreet_util_cache_search_exec_glob(__UNUSED__ const Eina_Hash *hash, void *value
     exec = ecore_file_app_exe_get(ud->desktop->exec);
     if (!exec) return EINA_TRUE;
 
-        if (efreet_util_glob_match(exec, search->what))
-      {
-	 efreet_desktop_ref(ud->desktop);
-	 search->list = eina_list_append(search->list, ud->desktop);
+    if (efreet_util_glob_match(exec, search->what))
+    {
+        efreet_desktop_ref(ud->desktop);
+        search->list = eina_list_append(search->list, ud->desktop);
     }
     free(exec);
     return EINA_TRUE;
@@ -1007,10 +1007,10 @@ efreet_util_cache_search_generic_name_glob(__UNUSED__ const Eina_Hash *hash, voi
     ud = value;
 
     if (efreet_util_glob_match(ud->desktop->generic_name, search->what))
-      {
-	 efreet_desktop_ref(ud->desktop);
-	 search->list = eina_list_append(search->list, ud->desktop);
-      }
+    {
+        efreet_desktop_ref(ud->desktop);
+        search->list = eina_list_append(search->list, ud->desktop);
+    }
     return EINA_TRUE;
 }
 
@@ -1024,10 +1024,10 @@ efreet_util_cache_search_comment_glob(__UNUSED__ const Eina_Hash *hash, void *va
     ud = value;
 
     if (efreet_util_glob_match(ud->desktop->comment, search->what))
-      {
-	 efreet_desktop_ref(ud->desktop);
-	 search->list = eina_list_append(search->list, ud->desktop);
-      }
+    {
+        efreet_desktop_ref(ud->desktop);
+        search->list = eina_list_append(search->list, ud->desktop);
+    }
     return EINA_TRUE;
 }
 
@@ -1172,46 +1172,46 @@ efreet_util_menus_find_helper(Eina_List *menus, const char *config_dir)
 static void
 efreet_util_desktops_by_category_add(Efreet_Desktop *desktop)
 {
-   Eina_List *l;
-   const char *category;
-   
-   if (!desktop->categories) return;
-   
-   EINA_LIST_FOREACH(desktop->categories, l, category)
-     {
+    Eina_List *l;
+    const char *category;
+
+    if (!desktop->categories) return;
+
+    EINA_LIST_FOREACH(desktop->categories, l, category)
+    {
         Eina_List *list;
         int newlist = 0;
         list = eina_hash_find(desktops_by_category, category);
         if (!list) newlist = 1;
         if (!eina_list_data_find(list, desktop))
-          list = eina_list_append(list, desktop);
+            list = eina_list_append(list, desktop);
         if (newlist)
-          eina_hash_add(desktops_by_category, category, list);
+            eina_hash_add(desktops_by_category, category, list);
         else
-          eina_hash_modify(desktops_by_category, category, list);
-     }
+            eina_hash_modify(desktops_by_category, category, list);
+    }
 }
 
 static void
 efreet_util_desktops_by_category_remove(Efreet_Desktop *desktop)
 {
-   Eina_List *l;
-   const char *category;
-   
-   if (!desktop->categories) return;
-   
-   EINA_LIST_FOREACH(desktop->categories, l, category)
-     {
+    Eina_List *l;
+    const char *category;
+
+    if (!desktop->categories) return;
+
+    EINA_LIST_FOREACH(desktop->categories, l, category)
+    {
         Eina_List *list;
         list = eina_hash_find(desktops_by_category, category);
         if (!list) continue;
         if (eina_list_data_find(list, desktop))
-          list = eina_list_remove(list, desktop);
+            list = eina_list_remove(list, desktop);
         if (!list)
-	  eina_hash_del(desktops_by_category, category, list);
+            eina_hash_del(desktops_by_category, category, list);
         else
-          eina_hash_modify(desktops_by_category, category, list);
-     }
+            eina_hash_modify(desktops_by_category, category, list);
+    }
 }
 
 static void

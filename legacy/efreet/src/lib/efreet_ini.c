@@ -56,8 +56,8 @@ efreet_ini_init(void)
     _efreet_ini_log_dom = eina_log_domain_register("Efreet_init", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_ini_log_dom < 0)
     {
-	    ERROR("Efreet: Could not create a log domain for efreet_init");
-	    return 0;
+        ERROR("Efreet: Could not create a log domain for efreet_init");
+        return 0;
     }
     return 1;
 }
@@ -342,7 +342,7 @@ efreet_ini_section_add(Efreet_Ini *ini, const char *section)
     if (!ini || !section) return;
 
     if (!ini->data)
-      ini->data = eina_hash_string_small_new(EINA_FREE_CB(eina_hash_free));
+        ini->data = eina_hash_string_small_new(EINA_FREE_CB(eina_hash_free));
     if (eina_hash_find(ini->data, section)) return;
 
     hash = eina_hash_string_small_new(free);

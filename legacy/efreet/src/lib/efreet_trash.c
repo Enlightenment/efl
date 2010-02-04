@@ -42,10 +42,10 @@ efreet_trash_init(void)
     _efreet_trash_log_dom = eina_log_domain_register("Efreet_trash", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_trash_log_dom < 0)
     {
-	ERROR("Efreet: Could not create a log domain for Efreet_trash");
+        ERROR("Efreet: Could not create a log domain for Efreet_trash");
         eina_shutdown();
         return --_efreet_trash_init_count;
-      }
+    }
     return _efreet_trash_init_count;
 }
 
@@ -126,7 +126,7 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
     /* search for a free filename */
     while (ecore_file_exists(dest))
         snprintf(dest, sizeof(dest), "%s/files/%s$%d",
-                 efreet_trash_dir_get(), fname, i++);
+                    efreet_trash_dir_get(), fname, i++);
     fname = ecore_file_file_get(dest);
 
     /* move file to trash dir */
@@ -150,7 +150,7 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
 
     /* create info file */
     snprintf(dest, sizeof(dest), "%s/info/%s.trashinfo",
-             efreet_trash_dir_get(), fname);
+                efreet_trash_dir_get(), fname);
 
     if ((f = fopen(dest, "w")))
     {

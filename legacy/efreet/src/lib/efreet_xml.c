@@ -55,16 +55,16 @@ static int _efreet_xml_log_dom = -1;
 int
 efreet_xml_init(void)
 {
-   _efreet_xml_init_count++;
-   if (_efreet_xml_init_count > 1) return _efreet_xml_init_count;
-   _efreet_xml_log_dom = eina_log_domain_register("Efreet_xml", EFREET_DEFAULT_LOG_COLOR);
-   if (_efreet_xml_log_dom < 0)
-     {
+    _efreet_xml_init_count++;
+    if (_efreet_xml_init_count > 1) return _efreet_xml_init_count;
+    _efreet_xml_log_dom = eina_log_domain_register("Efreet_xml", EFREET_DEFAULT_LOG_COLOR);
+    if (_efreet_xml_log_dom < 0)
+    {
         _efreet_xml_init_count--;
-	ERROR("Efreet: Could not create a log domain for Efreet_xml.");
-	return _efreet_xml_init_count;
-     }
-   return _efreet_xml_init_count;
+        ERROR("Efreet: Could not create a log domain for Efreet_xml.");
+        return _efreet_xml_init_count;
+    }
+    return _efreet_xml_init_count;
 }
 
 /**
@@ -75,9 +75,9 @@ efreet_xml_init(void)
 void
 efreet_xml_shutdown(void)
 {
-   _efreet_xml_init_count--;
-   if (_efreet_xml_init_count > 0) return;
-   eina_log_domain_unregister(_efreet_xml_log_dom);
+    _efreet_xml_init_count--;
+    if (_efreet_xml_init_count > 0) return;
+    eina_log_domain_unregister(_efreet_xml_log_dom);
 }
 
 /**
@@ -366,7 +366,7 @@ efreet_xml_attributes_parse(char **data, int *size,
             buf_size = end - start + 1;
             if (buf_size <= 1)
             {
-	        ERR("zero length key");
+                ERR("zero length key");
                 goto efreet_error;
             }
 
@@ -390,7 +390,7 @@ efreet_xml_attributes_parse(char **data, int *size,
 
             if (!start)
             {
-	        ERR("missing value for attribute!");
+                ERR("missing value for attribute!");
                 goto efreet_error;
             }
 
@@ -440,7 +440,7 @@ efreet_xml_attributes_parse(char **data, int *size,
             buf_size = end - start + 1;
             if (buf_size <= 1)
             {
-	        ERR("zero length value");
+                ERR("zero length value");
                 goto efreet_error;
             }
 
@@ -565,7 +565,7 @@ efreet_xml_tag_close(char **data, int *size, const char *tag)
                 (*data) += 2;
                 if ((int)strlen(tag) > *size)
                 {
-		    ERR("wrong end tag");
+                    ERR("wrong end tag");
                     error = 1;
                     return 1;
                 }

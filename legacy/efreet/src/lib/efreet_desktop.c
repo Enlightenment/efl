@@ -87,13 +87,13 @@ static int efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop,
 static void efreet_desktop_generic_fields_save(Efreet_Desktop *desktop,
                                                 Efreet_Ini *ini);
 static Eina_Bool efreet_desktop_x_fields_parse(const Eina_Hash *hash,
-					       const void *key,
-					       void *data,
-					       void *fdata);
+                                                const void *key,
+                                                void *data,
+                                                void *fdata);
 static Eina_Bool efreet_desktop_x_fields_save(const Eina_Hash *hash,
-					      const void *key,
-					      void *value,
-					      void *fdata);
+                                                const void *key,
+                                                void *value,
+                                                void *fdata);
 static int efreet_desktop_environment_check(Efreet_Ini *ini);
 static char *efreet_string_append(char *dest, int *size,
                                     int *len, const char *src);
@@ -144,8 +144,8 @@ efreet_desktop_init(void)
     _efreet_desktop_log_dom = eina_log_domain_register("Efreet_desktop", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_desktop_log_dom < 0)
     {
-	ERROR("Efreet: Could not create a log domain for Efreet_desktop");
-	return 0;
+        ERROR("Efreet: Could not create a log domain for Efreet_desktop");
+        return 0;
     }
     if (!ecore_file_init())
     {
@@ -206,7 +206,7 @@ efreet_desktop_cache_check(Efreet_Desktop *desktop)
     /* have we modified this file since we last read it in? */
     if ((desktop->cache_flush != cache_flush) ||
         (ecore_file_mod_time(desktop->orig_path) != desktop->load_time))
-     return 0;
+        return 0;
 
     return 1;
 }
@@ -370,7 +370,7 @@ efreet_desktop_read(Efreet_Desktop *desktop)
     if (!error && !efreet_desktop_environment_check(ini)) error = 1;
     if (!error && !efreet_desktop_generic_fields_parse(desktop, ini)) error = 1;
     if (!error)
-       eina_hash_foreach(ini->section, efreet_desktop_x_fields_parse, desktop);
+        eina_hash_foreach(ini->section, efreet_desktop_x_fields_parse, desktop);
 
     efreet_ini_free(ini);
 
@@ -528,7 +528,7 @@ efreet_desktop_free(Efreet_Desktop *desktop)
     if (desktop->ref > 0) return;
 
     if (desktop->cached && efreet_desktop_cache)
-      eina_hash_del(efreet_desktop_cache, desktop->orig_path, NULL);
+        eina_hash_del(efreet_desktop_cache, desktop->orig_path, NULL);
 
     IF_FREE(desktop->orig_path);
 
@@ -1037,7 +1037,7 @@ efreet_desktop_generic_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
     efreet_ini_boolean_set(ini, "Hidden", desktop->hidden);
 
     if (desktop->x) eina_hash_foreach(desktop->x, efreet_desktop_x_fields_save,
-				      ini);
+                                        ini);
 }
 
 /**
@@ -1056,7 +1056,7 @@ efreet_desktop_x_fields_parse(const Eina_Hash *hash __UNUSED__, const void *key,
     if (strncmp(key, "X-", 2)) return EINA_TRUE;
 
     if (!desktop->x)
-      desktop->x = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
+        desktop->x = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
     eina_hash_del(desktop->x, key, NULL);
     eina_hash_add(desktop->x, key, (void *)eina_stringshare_add(value));
 
@@ -1095,30 +1095,30 @@ efreet_desktop_environment_check(Efreet_Ini *ini)
     char *val;
 
     if (!desktop_environment)
-      return 1;
+        return 1;
 
     list = efreet_desktop_string_list_parse(efreet_ini_string_get(ini, "OnlyShowIn"));
     if (list)
     {
-       EINA_LIST_FREE(list, val)
-            {
-                if (!strcmp(val, desktop_environment))
-                    found = 1;
-	    eina_stringshare_del(val);
+        EINA_LIST_FREE(list, val)
+        {
+            if (!strcmp(val, desktop_environment))
+                found = 1;
+            eina_stringshare_del(val);
         }
 
         return found;
     }
 
-        list = efreet_desktop_string_list_parse(efreet_ini_string_get(ini, "NotShowIn"));
+    list = efreet_desktop_string_list_parse(efreet_ini_string_get(ini, "NotShowIn"));
     EINA_LIST_FREE(list, val)
-            {
-                if (!strcmp(val, desktop_environment))
-                    found = 1;
-	 eina_stringshare_del(val);
-        }
+    {
+        if (!strcmp(val, desktop_environment))
+            found = 1;
+        eina_stringshare_del(val);
+    }
 
-        return !found;
+    return !found;
 }
 
 
@@ -1283,14 +1283,14 @@ efreet_desktop_command_flags_get(Efreet_Desktop *desktop)
         p = strchr(p, '%');
     }
 #ifdef SLOPPY_SPEC   
-   /* NON-SPEC!!! this is to work around LOTS of 'broken' .desktop files that
-    * do not specify %U/%u, %F/F etc. etc. at all. just a command. this is
-    * unlikely to be fixed in distributions etc. in the long run as gnome/kde
-    * seem to have workarounds too so no one notices.
-    */
-   if (!flags) flags |= EFREET_DESKTOP_EXEC_FLAG_FULLPATH;
+    /* NON-SPEC!!! this is to work around LOTS of 'broken' .desktop files that
+     * do not specify %U/%u, %F/F etc. etc. at all. just a command. this is
+     * unlikely to be fixed in distributions etc. in the long run as gnome/kde
+     * seem to have workarounds too so no one notices.
+     */
+    if (!flags) flags |= EFREET_DESKTOP_EXEC_FLAG_FULLPATH;
 #endif
-   
+
     return flags;
 }
 
@@ -1340,12 +1340,12 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
      * will run once, removing any file field codes */
     l = command->files;
     do
-      {
+    {
         const char *p;
         int len = 0;
         int size = PATH_MAX;
         int file_added = 0;
-	Efreet_Desktop_Command_File *file = eina_list_data_get(l);
+        Efreet_Desktop_Command_File *file = eina_list_data_get(l);
 
         exec = malloc(size);
         p = command->desktop->exec;
@@ -1372,7 +1372,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
                         if (file)
                         {
                             exec = efreet_desktop_command_append_single(exec, &size,
-                                                                    &len, file, *p);
+                                    &len, file, *p);
                             file_added = 1;
                         }
                         break;
@@ -1383,26 +1383,26 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
                         if (file)
                         {
                             exec = efreet_desktop_command_append_multiple(exec, &size,
-                                                                    &len, command, *p);
+                                    &len, command, *p);
                             file_added = 1;
                         }
                         break;
                     case 'i':
                         exec = efreet_desktop_command_append_icon(exec, &size, &len,
-                                                                    command->desktop);
+                                command->desktop);
                         break;
                     case 'c':
                         exec = efreet_desktop_command_append_quoted(exec, &size, &len,
-                                                                command->desktop->name);
+                                command->desktop->name);
                         break;
                     case 'k':
                         exec = efreet_desktop_command_append_quoted(exec, &size, &len,
-                                                            command->desktop->orig_path);
+                                command->desktop->orig_path);
                         break;
                     case 'v':
                     case 'm':
                         WRN("[Efreet]: Deprecated conversion char: '%c' in file '%s'",
-                                                            *p, command->desktop->orig_path);
+                                *p, command->desktop->orig_path);
                         break;
                     case '%':
                         exec[len++] = *p;
@@ -1419,30 +1419,30 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
         }
 
 #ifdef SLOPPY_SPEC       
-       /* NON-SPEC!!! this is to work around LOTS of 'broken' .desktop files that
-	* do not specify %U/%u, %F/F etc. etc. at all. just a command. this is
-	* unlikely to be fixed in distributions etc. in the long run as gnome/kde
-	* seem to have workarounds too so no one notices.
-	*/
-       if ((file) && (!file_added))
-	 {
-	    WRN("Efreet_desktop: %s\n"
-		   "  command: %s\n"
-		   "  has no file path/uri spec info for executing this app WITH a\n"
-		   "  file/uri as a parameter. This is unlikely to be the intent.\n"
-		   "  please check the .desktop file and fix it by adding a %%U or %%F\n"
-		   "  or something appropriate.",
-		   command->desktop->orig_path, command->desktop->exec);
+        /* NON-SPEC!!! this is to work around LOTS of 'broken' .desktop files that
+         * do not specify %U/%u, %F/F etc. etc. at all. just a command. this is
+         * unlikely to be fixed in distributions etc. in the long run as gnome/kde
+         * seem to have workarounds too so no one notices.
+         */
+        if ((file) && (!file_added))
+        {
+            WRN("Efreet_desktop: %s\n"
+                "  command: %s\n"
+                "  has no file path/uri spec info for executing this app WITH a\n"
+                "  file/uri as a parameter. This is unlikely to be the intent.\n"
+                "  please check the .desktop file and fix it by adding a %%U or %%F\n"
+                "  or something appropriate.",
+                command->desktop->orig_path, command->desktop->exec);
             if (len >= size - 1)
-	      {
-		 size = len + 1024;
-		 exec = realloc(exec, size);
-	      }
-	    exec[len++] = ' ';
-	    exec = efreet_desktop_command_append_multiple(exec, &size,
-							  &len, command, 'F');
-	    file_added = 1;
-	 }
+            {
+                size = len + 1024;
+                exec = realloc(exec, size);
+            }
+            exec[len++] = ' ';
+            exec = efreet_desktop_command_append_multiple(exec, &size,
+                    &len, command, 'F');
+            file_added = 1;
+        }
 #endif
         exec[len++] = '\0';
 
@@ -1451,7 +1451,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
         /* If no file was added, then the Exec field doesn't contain any file
          * fields (fFuUdDnN). We only want to run the app once in this case. */
         if (!file_added) break;
-      }
+    }
     while ((l = eina_list_next(l)) != NULL);
 
     return execs;
@@ -1636,7 +1636,7 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
     f->command = command;
 
     /* handle uris */
-    if(!strncmp(file, "http://", 7) || !strncmp(file, "ftp://", 6))
+    if (!strncmp(file, "http://", 7) || !strncmp(file, "ftp://", 6))
     {
         uri = file;
         base = ecore_file_file_get(file);
@@ -1840,44 +1840,44 @@ efreet_desktop_command_path_absolute(const char *path)
 EAPI Eina_Bool
 efreet_desktop_x_field_set(Efreet_Desktop *desktop, const char *key, const char *data)
 {
-   if (!desktop || strncmp(key, "X-", 2))
-      return EINA_FALSE;
+    if (!desktop || strncmp(key, "X-", 2))
+        return EINA_FALSE;
 
-   if (!desktop->x)
-     desktop->x = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
-   
-   eina_hash_del(desktop->x, key, NULL);
-   eina_hash_add(desktop->x, key, eina_stringshare_add(data));
-   
-   return EINA_TRUE;
+    if (!desktop->x)
+        desktop->x = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
+
+    eina_hash_del(desktop->x, key, NULL);
+    eina_hash_add(desktop->x, key, eina_stringshare_add(data));
+
+    return EINA_TRUE;
 }
 
 EAPI const char *
 efreet_desktop_x_field_get(Efreet_Desktop *desktop, const char *key)
 {
-   const char *ret;
-   
-   if (!desktop || strncmp(key, "X-", 2))
-      return NULL;
-   
-   if (!desktop->x)
-      return NULL;
-   
-   ret = eina_hash_find(desktop->x, key);
-   if (!ret)
-      return NULL;
-   
-   return eina_stringshare_add(ret);
+    const char *ret;
+
+    if (!desktop || strncmp(key, "X-", 2))
+        return NULL;
+
+    if (!desktop->x)
+        return NULL;
+
+    ret = eina_hash_find(desktop->x, key);
+    if (!ret)
+        return NULL;
+
+    return eina_stringshare_add(ret);
 }
 
 EAPI Eina_Bool
 efreet_desktop_x_field_del(Efreet_Desktop *desktop, const char *key)
 {
-   if (!desktop || strncmp(key, "X-", 2))
-      return EINA_FALSE;
-   
-   if (!desktop->x)
-      return EINA_FALSE;
-   
-   return eina_hash_del(desktop->x, key, NULL);
+    if (!desktop || strncmp(key, "X-", 2))
+        return EINA_FALSE;
+
+    if (!desktop->x)
+        return EINA_FALSE;
+
+    return eina_hash_del(desktop->x, key, NULL);
 }
