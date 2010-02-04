@@ -883,6 +883,9 @@ extern "C" {
    EAPI Eina_Bool         elm_genlist_item_expanded_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_disabled_set(Elm_Genlist_Item *item, Eina_Bool disabled);
    EAPI Eina_Bool         elm_genlist_item_disabled_get(const Elm_Genlist_Item *item);
+   EAPI void              elm_genlist_item_display_only_set(Elm_Genlist_Item *it, Eina_Bool display_only);
+   EAPI Eina_Bool         elm_genlist_item_display_only_get(const Elm_Genlist_Item *it);
+       
    EAPI void              elm_genlist_item_show(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_bring_in(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_top_show(Elm_Genlist_Item *item);
@@ -907,16 +910,6 @@ extern "C" {
     * double_label
     * icon_top_text_bottom
     */
-   /* smart callbacks called:
-    * "clicked" - when the user double-clicked an item
-    * "selected" - when the user selected an item
-    * "unselected" - when the user selected an item
-    * "longpressed" - an item in the hoversel list is long-pressed
-    * "expanded" - when the user expanded an item
-    * "contracted" - when the user contracted an item
-    * "expand,request" - when the user requested to expand an item
-    * "contract,request" - when the user requested to expand an item
-    */
 
    EAPI Evas_Object *elm_check_add(Evas_Object *parent);
    EAPI void         elm_check_label_set(Evas_Object *obj, const char *label);
@@ -926,9 +919,6 @@ extern "C" {
    EAPI void         elm_check_state_set(Evas_Object *obj, Eina_Bool state);
    EAPI Eina_Bool    elm_check_state_get(const Evas_Object *obj);
    EAPI void         elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep);
-   /* smart callbacks called:
-    * "changed" - the user toggled the state
-    */
 
    EAPI Evas_Object *elm_radio_add(Evas_Object *parent);
    EAPI void         elm_radio_label_set(Evas_Object *obj, const char *label);
@@ -940,9 +930,6 @@ extern "C" {
    EAPI void         elm_radio_value_set(Evas_Object *obj, int value);
    EAPI int          elm_radio_value_get(const Evas_Object *obj);
    EAPI void         elm_radio_value_pointer_set(Evas_Object *obj, int *valuep);
-   /* smart callbacks called:
-    * "changed" - the user toggled the state
-    */
 
    EAPI Evas_Object *elm_pager_add(Evas_Object *parent);
    EAPI void         elm_pager_content_push(Evas_Object *obj, Evas_Object *content);
@@ -954,8 +941,6 @@ extern "C" {
     * default
     * fade
     * fade_translucide
-    */
-   /* smart callbacks called:
     */
 
    typedef struct _Elm_Slideshow_Item_Class Elm_Slideshow_Item_Class;
@@ -988,8 +973,6 @@ extern "C" {
    EAPI void *		elm_slideshow_item_data_get(Elm_Slideshow_Item *item);
    EAPI Elm_Slideshow_Item* elm_slideshow_item_current_get(Evas_Object *obj);
    EAPI Evas_Object*	elm_slideshow_item_object_get(Elm_Slideshow_Item* item);
-   /* smart callbacks called:
-    */
 
 
    EAPI Evas_Object *elm_fileselector_add(Evas_Object *parent);

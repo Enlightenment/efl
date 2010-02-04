@@ -316,6 +316,7 @@ struct _Elm_Genlist_Item
    Eina_Bool hilighted : 1;
    Eina_Bool expanded : 1;
    Eina_Bool disabled : 1;
+   Eina_Bool display_only : 1;
    Eina_Bool mincalcd : 1;
    Eina_Bool queued : 1;
    Eina_Bool showme : 1;
@@ -495,7 +496,8 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
         evas_object_smart_callback_call(it->wd->obj, "drag", it);
         return;
      }
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   if (!it->display_only)
+     elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    x = ev->cur.canvas.x - x;
    y = ev->cur.canvas.y - y;
@@ -815,10 +817,12 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
 	if (!it->mincalcd)
 	  {
 	     Evas_Coord mw = -1, mh = -1;
-
-	     elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+             
+             if (!it->display_only)
+               elm_coords_finger_size_adjust(1, &mw, 1, &mh);
 	     edje_object_size_min_restricted_calc(it->base, &mw, &mh, mw, mh);
-	     elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+             if (!it->display_only)
+               elm_coords_finger_size_adjust(1, &mw, 1, &mh);
 	     it->w = it->minw = mw;
 	     it->h = it->minh = mh;
 	     it->mincalcd = EINA_TRUE;
@@ -2385,6 +2389,51 @@ elm_genlist_item_disabled_get(const Elm_Genlist_Item *it)
    if (!it) return EINA_FALSE;
    if (it->delete_me) return EINA_FALSE;
    return it->disabled;
+}
+
+/**
+ * Sets the display only state of an item.
+ *
+ * A display only item cannot be selected or unselected. It is for display
+ * only and not selecting or otherwise clicking, dragging etc. by the user,
+ * thus finger size rules will not be applied to this item.
+ *
+ * @param it The item
+ * @param display_only The display only state
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_display_only_set(Elm_Genlist_Item *it, Eina_Bool display_only)
+{
+   if (!it) return;
+   if (!it->block) return;
+   if (it->display_only == display_only) return;
+   if (it->delete_me) return;
+   it->display_only = display_only;
+   it->mincalcd = EINA_FALSE;
+   it->updateme = EINA_TRUE;
+   it->block->updateme = EINA_TRUE;
+   if (it->wd->update_job) ecore_job_del(it->wd->update_job);
+   it->wd->update_job = ecore_job_add(_update_job, it->wd);
+}
+
+/**
+ * Get the display only state of an item
+ *
+ * This gets the display only state of the given item.
+ *
+ * @param it The item
+ * @return The display only state
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_Bool
+elm_genlist_item_display_only_get(const Elm_Genlist_Item *it)
+{
+   if (!it) return EINA_FALSE;
+   if (it->delete_me) return EINA_FALSE;
+   return it->display_only;
 }
 
 /**
