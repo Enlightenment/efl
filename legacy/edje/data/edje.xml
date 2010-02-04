@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+	<mime-type type="text/edje">
+		<comment>Edje source file</comment>
+		<glob pattern="*.edc"/>
+	</mime-type>
+	<mime-type type="application/edje">
+		<comment>Edje file</comment>
+		<glob pattern="*.edj"/>
+	</mime-type>
+</mime-info>
