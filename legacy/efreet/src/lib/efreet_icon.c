@@ -1153,7 +1153,8 @@ efreet_icon_theme_path_add(Efreet_Icon_Theme *theme, const char *path)
 {
     if (!theme || !path) return;
 
-    theme->paths = eina_list_append(theme->paths, strdup(path));
+    if (!eina_list_search_unsorted(theme->paths, EINA_COMPARE_CB(strcmp), path))
+        theme->paths = eina_list_append(theme->paths, strdup(path));
 }
 
 /**
