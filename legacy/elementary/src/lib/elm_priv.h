@@ -34,7 +34,8 @@ typedef enum _Elm_Engine
      ELM_SOFTWARE_WIN32,
      ELM_SOFTWARE_16_WINCE,
      ELM_SOFTWARE_SDL,
-     ELM_SOFTWARE_16_SDL
+     ELM_SOFTWARE_16_SDL,
+     ELM_OPENGL_SDL
 } Elm_Engine;
 
 typedef struct _Elm_Config Elm_Config;

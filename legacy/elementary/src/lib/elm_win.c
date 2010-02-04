@@ -195,6 +195,7 @@ _elm_win_xwindow_get(Elm_Win *win)
       case ELM_SOFTWARE_16_WINCE:
       case ELM_SOFTWARE_SDL:
       case ELM_SOFTWARE_16_SDL:
+      case ELM_OPENGL_SDL:
 	break;
       case ELM_SOFTWARE_16_X11:
 	if (win->ee) win->xwin = ecore_evas_software_x11_16_window_get(win->ee);
@@ -381,6 +382,9 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
       case ELM_SOFTWARE_16_SDL:
 	win->ee = ecore_evas_sdl16_new(NULL, 0, 0, 0, 0, 0, 1);
 	break;
+      case ELM_OPENGL_SDL:
+	win->ee = ecore_evas_gl_sdl_new(NULL, 1, 1, 0, 0);
+	break;
       default:
 	break;
      }
@@ -453,6 +457,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
       case ELM_SOFTWARE_WIN32:
       case ELM_SOFTWARE_SDL:
       case ELM_SOFTWARE_16_SDL:
+      case ELM_OPENGL_SDL:
       default:
 	break;
      }
