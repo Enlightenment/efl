@@ -5188,6 +5188,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    unsigned char r = 0, g = 0, b = 0, a = 0;
    unsigned char r2 = 0, g2 = 0, b2 = 0, a2 = 0;
    unsigned char r3 = 0, g3 = 0, b3 = 0, a3 = 0;
+   int cx, cy, cw, ch, clip;
    const char vals[5][5] =
      {
 	  {0, 1, 2, 1, 0},
@@ -5201,6 +5202,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    o = (Evas_Object_Textblock *)(obj->object_data);
    obj->layer->evas->engine.func->context_multiplier_unset(output,
 							   context);
+   clip = ENFN->context_clip_get(output, context, &cx, &cy, &cw, &ch);
 #define ITEM_WALK() \
    EINA_INLIST_FOREACH(o->lines, ln) \
      { \
@@ -5210,12 +5212,13 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
         pline = 0; \
         pline2 = 0; \
 	pstrike = 0; \
-        if ((obj->cur.geometry.y + ln->y + ln->h) < \
-               (obj->layer->evas->viewport.y - 20)) \
-          continue; \
-        if ((obj->cur.geometry.y + ln->y) > \
-               (obj->layer->evas->viewport.y + obj->layer->evas->viewport.h + 20)) \
-          break; \
+        if (clip) \
+          { \
+             if ((obj->cur.geometry.y + y + ln->y + ln->h) < (cy - 20)) \
+               continue; \
+             if ((obj->cur.geometry.y + y + ln->y) > (cy + ch + 20)) \
+               break; \
+          } \
 	EINA_INLIST_FOREACH(ln->items, it) \
 	  { \
 	     int yoff; \
@@ -5223,12 +5226,13 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	     yoff = ln->baseline; \
 	     if (it->format->valign != -1.0) \
 	       yoff = (it->format->valign * (double)(ln->h - it->h)) + it->baseline; \
-             if ((obj->cur.geometry.x + ln->x + it->x - it->inset + it->w) < \
-                    (obj->layer->evas->viewport.x - 20)) \
-               continue; \
-             if ((obj->cur.geometry.x + ln->x + it->x - it->inset) > \
-                    (obj->layer->evas->viewport.x + obj->layer->evas->viewport.w + 20)) \
-               break; \
+             if (clip) \
+               { \
+                  if ((obj->cur.geometry.x + x + ln->x + it->x - it->inset + it->w) < (cx - 20)) \
+                    continue; \
+                  if ((obj->cur.geometry.x + x + ln->x + it->x - it->inset) > (cx + cw + 20)) \
+                    break; \
+               }
              
 #define ITEM_WALK_END() \
 	  } \
@@ -5251,13 +5255,13 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 						 obj->cur.geometry.y + ln->y + yoff + y + (oy), \
 						 it->w, it->h, it->w, it->h, it->text);
 #if 0
-#define DRAW_TEXT(ox, oy) \
-   if (it->format->font.font) ENFN->font_draw(output, context, surface, it->format->font.font, \
-						 obj->cur.geometry.x + ln->x + it->x - it->inset + x + (ox), \
-						 obj->cur.geometry.y + ln->y + yoff + y + (oy), \
-						 obj->cur.cache.geometry.x + ln->x + it->x - it->inset + x + (ox), \
-						 obj->cur.cache.geometry.y + ln->y + yoff + y + (oy), \
-						 it->w, it->h, it->w, it->h, it->text);
+//#define DRAW_TEXT(ox, oy) \
+//   if (it->format->font.font) ENFN->font_draw(output, context, surface, it->format->font.font, \
+//						 obj->cur.geometry.x + ln->x + it->x - it->inset + x + (ox), \
+//						 obj->cur.geometry.y + ln->y + yoff + y + (oy), \
+//						 obj->cur.cache.geometry.x + ln->x + it->x - it->inset + x + (ox), \
+//						 obj->cur.cache.geometry.y + ln->y + yoff + y + (oy), \
+//						 it->w, it->h, it->w, it->h, it->text);
 #endif
 #define ITEM_WALK_LINE_SKIP_DROP() \
    if ((ln->y + ln->h) <= 0) continue; \
