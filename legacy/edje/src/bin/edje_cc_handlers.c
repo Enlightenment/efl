@@ -864,6 +864,7 @@ st_fonts_font(void)
      {
 	fnt = mem_alloc(SZ(Edje_Font_Directory_Entry));
 	fnt->entry = mem_strdup(fn->name);
+	fnt->file = mem_strdup(fn->file);
 	edje_file->font_dir->entries = eina_list_append(edje_file->font_dir->entries, fnt);
      }
 }

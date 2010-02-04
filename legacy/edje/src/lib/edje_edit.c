@@ -3773,7 +3773,7 @@ edje_edit_fonts_list_get(Evas_Object *obj)
 
    EINA_LIST_FOREACH(ed->file->font_dir->entries, l, f)
      {
-	fonts = eina_list_append(fonts, eina_stringshare_add(f->entry));
+       fonts = eina_list_append(fonts, f);
 	//printf("   Font: %s (%s) \n", f->entry, f->path);
      }
 
@@ -5929,6 +5929,7 @@ _edje_generate_source(Evas_Object *obj)
 
    Eina_List *l, *ll;
    char *entry;
+   Edje_Font_Directory_Entry *fnt;
 
    GET_ED_OR_RETURN(NULL);
    
@@ -5975,13 +5976,12 @@ _edje_generate_source(Evas_Object *obj)
      {
 	fprintf(f, I0"fonts {\n");
 
-	EINA_LIST_FOREACH(ll, l, entry)
+	EINA_LIST_FOREACH(ll, l, fnt)
 	  {
-		// TODO Fixme the filename is wrong
-		fprintf(f, I1"font: \"%s.ttf\" \"%s\";\n", entry, entry);
+		fprintf(f, I1"font: \"%s\" \"%s\";\n", fnt->file, fnt->entry);
 	  }
 	fprintf(f, I0"}\n\n");
-	edje_edit_string_list_free(ll);
+	eina_list_free(ll);
      }
 
    /* Data */
