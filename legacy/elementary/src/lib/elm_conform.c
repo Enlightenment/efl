@@ -48,6 +48,28 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
+static void
+_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   _sizing_eval(data);
+}
+
+static void
+_sub_del(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *sub = event_info;
+   
+   if (sub == wd->content)
+     {
+        evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _changed_size_hints, obj);
+        wd->content = NULL;
+        _sizing_eval(obj);
+     }
+}
+
 static int 
 _prop_change(void *data, int type, void *event) 
 {
@@ -131,7 +153,9 @@ elm_conformant_add(Evas_Object *parent)
    wd->prop_hdl = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROPERTY, 
                                           _prop_change, obj);
 #endif
-
+   
+   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+   
    _sizing_eval(obj);
    return obj;
 }
@@ -147,6 +171,9 @@ elm_conformant_content_set(Evas_Object *obj, Evas_Object *content)
    if (content) 
      {
         elm_widget_sub_object_add(obj, content);
+        evas_object_event_callback_add(content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
         edje_object_part_swallow(wd->base, "elm.swallow.content", content);
         _sizing_eval(obj);
      }

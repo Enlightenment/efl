@@ -473,8 +473,6 @@ extern "C" {
    EAPI void         elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous);
    EAPI void         elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h);
    EAPI void	     elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical);
-   /* smart callbacks called:
-    */
 
    EAPI Evas_Object *elm_clock_add(Evas_Object *parent);
    EAPI void         elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec);
@@ -491,8 +489,8 @@ extern "C" {
    EAPI Eina_Bool    elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style);
    EAPI void         elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
    EAPI Evas_Object *elm_layout_edje_get(const Evas_Object *obj);
-   EAPI void          elm_layout_sizing_eval(Evas_Object *obj);
-       /* smart callbacks called:
+   EAPI void         elm_layout_sizing_eval(Evas_Object *obj);
+   /* smart callbacks called:
     */
 
    typedef enum _Elm_Notify_Orient
@@ -516,6 +514,7 @@ extern "C" {
    EAPI void	     elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat);
    /* smart callbacks called:
     */
+   
    typedef enum _Elm_Hover_Axis
      {
 	ELM_HOVER_AXIS_NONE,
@@ -587,7 +586,6 @@ extern "C" {
    EAPI Eina_Bool    elm_entry_context_menu_disabled_get(Evas_Object *obj);
    EAPI char        *elm_entry_markup_to_utf8(const char *s);
    EAPI char        *elm_entry_utf8_to_markup(const char *s);
-
    /* smart callbacks called:
     * "changed" - the text content changed
     * "selection,start" - the user started selecting text
@@ -607,7 +605,6 @@ extern "C" {
 
    /* composite widgets - these basically put together basic widgets above
     * in convenient packages that do more than basic stuff */
-
    typedef enum _Elm_Text_Format
      {
 	ELM_TEXT_FORMAT_PLAIN_UTF8,
@@ -795,7 +792,6 @@ extern "C" {
    EAPI Elm_List_Item   *elm_list_item_next(const Elm_List_Item *it);
    EAPI void             elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
    EAPI void             elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
-
    /* smart callbacks called:
     * "clicked" - when the user double-clicked an item
     * "selected" - when the user selected an item
@@ -827,12 +823,6 @@ extern "C" {
    EAPI void         elm_slider_value_set(Evas_Object *obj, double val);
    EAPI double       elm_slider_value_get(const Evas_Object *obj);
    EAPI void         elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted);
-   /* smart callbacks called:
-    * "changed" - when the slider value changes
-    * "delay,changed" - when the slider value changed, but a small time after a change (use this if you only want to respond to a change once the slider is held still for a short while).
-    * "slider,drag,start" - dragging the slider indicator around has started
-    * "slider,drag,stop" - dragging the slider indicator around has stopped
-    */
 
    typedef enum _Elm_Genlist_Item_Flags
      {
