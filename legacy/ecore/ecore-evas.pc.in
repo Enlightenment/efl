@@ -7,5 +7,5 @@ Name: ecore-evas
 Description: E core library, Evas module
 @pkgconfig_requires_private@: @requirements_ecore_evas@
 Version: @VERSION@
-Libs: -L${libdir} -lecore_evas @ecore_evas_libs@
+Libs: -L${libdir} @ecore_evas_libs@
 Cflags: -I${includedir}
