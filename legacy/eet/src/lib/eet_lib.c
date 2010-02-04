@@ -2100,6 +2100,8 @@ eet_list(Eet_File *ef, const char *glob, int *count_ret)
 	return NULL;
      }
 
+   if (!strcmp(glob, "*")) glob = NULL;
+
    LOCK_FILE(ef);
 
    /* loop through all entries */
@@ -2112,7 +2114,7 @@ eet_list(Eet_File *ef, const char *glob, int *count_ret)
 	      * check for * explicitly, because on some systems, * isn't well
 	      * supported
 	      */
-	     if ((!strcmp (glob, "*")) || !fnmatch(glob, efn->name, 0))
+	     if ((!glob) || !fnmatch(glob, efn->name, 0))
 	       {
 		  /* add it to our list */
 		  list_count++;
