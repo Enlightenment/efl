@@ -72,6 +72,18 @@ _win_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
    printf("RESIZE - win geom: %4ix%4i\n", w, h);
 }
 
+static void
+_win_foc_in(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   printf("FOC IN\n");
+}
+
+static void
+_win_foc_out(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   printf("FOC OUT\n");
+}
+
 void
 test_win_state(void *data, Evas_Object *obj, void *event_info)
 {
@@ -83,6 +95,8 @@ test_win_state(void *data, Evas_Object *obj, void *event_info)
    elm_win_title_set(win, "Window States");
    evas_object_smart_callback_add(win, "moved", my_win_move, NULL);
    evas_object_event_callback_add(win, EVAS_CALLBACK_RESIZE, _win_resize, NULL);
+   evas_event_callback_add(evas_object_evas_get(win), EVAS_CALLBACK_CANVAS_FOCUS_IN, _win_foc_in, NULL);
+   evas_event_callback_add(evas_object_evas_get(win), EVAS_CALLBACK_CANVAS_FOCUS_OUT, _win_foc_out, NULL);
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);
