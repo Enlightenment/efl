@@ -1675,7 +1675,10 @@ _item_idler(void *data)
              it->block->changed = 0;
           }
         if (showme) it->block->showme = 1;
-        if ((t - t0) > (ecore_animator_frametime_get())) break;
+        if (eina_inlist_count(wd->blocks) > 1)
+          {
+             if ((t - t0) > (ecore_animator_frametime_get())) break;
+          }
      }
    if (n > 0)
      {
