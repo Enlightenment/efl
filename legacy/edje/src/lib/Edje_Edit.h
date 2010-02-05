@@ -248,9 +248,11 @@ edje_edit_data_list_get(
    Evas_Object *obj       ///< The edje object
 );
 
-/**Create a new data object in the given edje
- * If another data with the same name exists nothing is created and FALSE is returned.
+/** Create a new *global* data object in the given edje file. If
+ * another data entry with the same name exists, nothing is created and
+ * FALSE is returned.
  */
+
 EAPI Eina_Bool         ///@return TRUE on success
 edje_edit_data_add(
    Evas_Object *obj,       ///< The edje object
@@ -283,6 +285,54 @@ edje_edit_data_value_set(
 /** Change the name of the given data object */
 EAPI Eina_Bool        ///@return TRUE on success
 edje_edit_data_name_set(
+   Evas_Object *obj,     ///< The edje object
+   const char *itemname, ///< The name of the data item
+   const char *newname   ///< The new name to set
+);
+
+/** Create a new data object in the given edje file *belonging to the
+ * current group*. If another data entry with the same name exists,
+ * nothing is created and FALSE is returned.
+ */
+
+/** Retrieves a list with the item names inside the data block **/
+EAPI Eina_List *          ///@return An Eina_List* of string (char *) containing all the data names.
+edje_edit_group_data_list_get(
+   Evas_Object *obj       ///< The edje object
+);
+
+EAPI Eina_Bool             ///@return EINA_TRUE on success
+edje_edit_group_data_add(
+   Evas_Object *obj,       ///< The edje object
+   const char *itemname,   ///< The name for the new data
+   const char *value       ///< The value for the new data
+);
+
+/** Delete the given data object from edje */
+EAPI Eina_Bool             ///@return EINA_TRUE on success
+edje_edit_group_data_del(
+   Evas_Object *obj,       ///< The edje object
+   const char *itemname    ///< The name of the data to remove
+);
+
+/** Get the data associated with the given itemname **/
+EAPI const char *         ///@return The data value
+edje_edit_group_data_value_get(
+   Evas_Object * obj,     ///< The edje object
+   char *itemname         ///< The name of the data item
+);
+
+/** Set the data associated with the given itemname **/
+EAPI Eina_Bool            ///@return EINA_TRUE on success
+edje_edit_group_data_value_set(
+   Evas_Object * obj,     ///< The edje object
+   const char *itemname,  ///< The name of the data item
+   const char *value      ///< The new value to set
+);
+
+/** Change the name of the given data object */
+EAPI Eina_Bool           ///@return EINA_TRUE on success
+edje_edit_group_data_name_set(
    Evas_Object *obj,     ///< The edje object
    const char *itemname, ///< The name of the data item
    const char *newname   ///< The new name to set

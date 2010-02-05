@@ -592,7 +592,7 @@ _edje_edit_style_tag_get(Edje *ed, const char *style, const char *name)
       return NULL;
 
    s = _edje_edit_style_get(ed, style);
-   
+
    EINA_LIST_FOREACH(s->tags, l, t)
       if (t->key && !strcmp(t->key, name))
          return t;
@@ -952,6 +952,25 @@ edje_edit_group_max_h_set(Evas_Object *obj, int h)
 /***************/
 
 EAPI Eina_List *
+edje_edit_group_data_list_get(Evas_Object * obj)
+{
+   Eina_List *datas;
+   Eina_List *l;
+   Edje_Data *d;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if (!ed->file || !ed->collection)
+     return NULL;
+
+   datas = NULL;
+   EINA_LIST_FOREACH(ed->collection->data, l, d)
+     datas = eina_list_append(datas, eina_stringshare_add(d->key));
+
+   return datas;
+}
+
+EAPI Eina_List *
 edje_edit_data_list_get(Evas_Object * obj)
 {
    Eina_List *datas = NULL;
@@ -968,6 +987,36 @@ edje_edit_data_list_get(Evas_Object * obj)
      datas = eina_list_append(datas, eina_stringshare_add(d->key));
 
    return datas;
+}
+
+EAPI Eina_Bool
+edje_edit_group_data_add(Evas_Object *obj, const char *key, const char *value)
+{
+   Edje_Data *new;
+   Edje_Data *d;
+   Eina_List *l;
+   int len;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!key || !ed->file || !ed->collection)
+     return EINA_FALSE;
+
+   len = strlen(key);
+   EINA_LIST_FOREACH(ed->collection->data, l, d)
+     if ((d->key) && (!strncmp(d->key, key, len)))
+       return EINA_FALSE;
+
+   new = _alloc(sizeof(Edje_Data));
+   if (!new) return EINA_FALSE;
+
+   new->key = (char*)eina_stringshare_add(key);
+   if (value) new->value = (char*)eina_stringshare_add(value);
+   else new->value = NULL;
+
+   ed->collection->data = eina_list_append(ed->collection->data, new);
+
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
@@ -999,6 +1048,34 @@ edje_edit_data_add(Evas_Object *obj, const char *itemname, const char *value)
 }
 
 EAPI Eina_Bool
+edje_edit_group_data_del(Evas_Object *obj, const char *key)
+{
+   Eina_List *l;
+   Edje_Data *d;
+   int len;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!key || !ed->file || !ed->collection)
+     return EINA_FALSE;
+
+   len = strlen(key);
+   EINA_LIST_FOREACH(ed->collection->data, l, d)
+     {
+	if (strncmp(d->key, key, len) == 0)
+          {
+             _edje_if_string_free(ed, d->key);
+             _edje_if_string_free(ed, d->value);
+             ed->collection->data = eina_list_remove(ed->collection->data, d);
+             free(d);
+             return EINA_TRUE;
+          }
+     }
+
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
 edje_edit_data_del(Evas_Object *obj, const char *itemname)
 {
    Eina_List *l;
@@ -1024,6 +1101,26 @@ edje_edit_data_del(Evas_Object *obj, const char *itemname)
 }
 
 EAPI const char *
+edje_edit_group_data_value_get(Evas_Object * obj, char *key)
+{
+   Eina_List *l;
+   Edje_Data *d;
+   int len;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if (!key || !ed->file || !ed->collection)
+     return NULL;
+
+   len = strlen(key);
+   EINA_LIST_FOREACH(ed->collection->data, l, d)
+     if (strncmp(d->key, key, len) == 0)
+       return eina_stringshare_add(d->value);
+
+   return NULL;
+}
+
+EAPI const char *
 edje_edit_data_value_get(Evas_Object * obj, char *itemname)
 {
    Eina_List *l;
@@ -1039,6 +1136,30 @@ edje_edit_data_value_get(Evas_Object * obj, char *itemname)
        return eina_stringshare_add(d->value);
 
    return NULL;
+}
+
+EAPI Eina_Bool
+edje_edit_group_data_value_set(Evas_Object *obj, const char *key, const char *value)
+{
+   Eina_List *l;
+   Edje_Data *d;
+   int len;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!key || !value || !ed->file || !ed->collection)
+     return EINA_FALSE;
+
+   len = strlen(key);
+   EINA_LIST_FOREACH(ed->collection->data, l, d)
+     if (strncmp(d->key, key, len) == 0)
+       {
+	  _edje_if_string_free(ed, d->value);
+	  d->value = (char*)eina_stringshare_add(value);
+	  return EINA_TRUE;
+       }
+
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
@@ -1061,6 +1182,32 @@ edje_edit_data_value_set(Evas_Object *obj, const char *itemname, const char *val
        }
 
    return 0;
+}
+
+EAPI Eina_Bool
+edje_edit_group_data_name_set(Evas_Object *obj, const char *key,  const char *new_key)
+{
+   Eina_List *l;
+   Edje_Data *d;
+   int len;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!key || !new_key || !ed->file || !ed->collection) {
+      return EINA_FALSE;
+   }
+
+   len = strlen(key);
+   EINA_LIST_FOREACH(ed->collection->data, l, d) {
+      if (strncmp(d->key, key, len) == 0)
+	{
+	   _edje_if_string_free(ed, d->key);
+	   d->key = (char*)eina_stringshare_add(new_key);
+	   return EINA_TRUE;
+	}
+   }
+
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
@@ -1296,15 +1443,15 @@ EAPI void
 edje_edit_style_del(Evas_Object * obj, const char* style)
 {
    Edje_Style *s;
-   
+
    GET_ED_OR_RETURN();
    //printf("DEL STYLE '%s'\n", style);
-   
+
    s = _edje_edit_style_get(ed, style);
    if (!s) return;
-   
+
    ed->file->styles = eina_list_remove(ed->file->styles, s);
-   
+
    _edje_if_string_free(ed, s->name);
    //~ //s->style HOWTO FREE ???
    while (s->tags)
@@ -1312,7 +1459,7 @@ edje_edit_style_del(Evas_Object * obj, const char* style)
       Edje_Style_Tag *t;
 
       t = s->tags->data;
-      
+
       s->tags = eina_list_remove(s->tags, t);
       _edje_if_string_free(ed, t->key);
       _edje_if_string_free(ed, t->value);
@@ -1358,7 +1505,7 @@ edje_edit_style_tag_name_set(Evas_Object * obj, const char* style, const char* t
 
    if (!ed->file || !ed->file->styles || !style || !tag)
       return;
-   
+
    t = _edje_edit_style_tag_get(ed, style, tag);
    if (!t) return;
    _edje_if_string_free(ed, t->key);
@@ -1393,7 +1540,7 @@ edje_edit_style_tag_value_set(Evas_Object * obj, const char* style, const char* 
 
    if (!ed->file || !ed->file->styles || !style || !tag)
       return;
-   
+
    t = _edje_edit_style_tag_get(ed, style, tag);
    if (!t) return;
    _edje_if_string_free(ed, t->value);
@@ -1405,7 +1552,7 @@ edje_edit_style_tag_add(Evas_Object * obj, const char* style, const char* tag_na
 {
    Edje_Style *s;
    Edje_Style_Tag *t;
-   
+
    GET_ED_OR_RETURN(0);
    //printf("ADD TAG '%s' IN STYLE '%s'\n", tag_name, style);
 
@@ -1430,10 +1577,10 @@ edje_edit_style_tag_del(Evas_Object * obj, const char* style, const char* tag)
 {
    Edje_Style *s;
    Edje_Style_Tag *t;
-   
+
    GET_ED_OR_RETURN();
    //printf("DEL TAG '%s' IN STYLE '%s'\n", tag, style);
-   
+
    s = _edje_edit_style_get(ed, style);
    t = _edje_edit_style_tag_get(ed, style, tag);
 
@@ -2459,7 +2606,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name)
    if ((rp->part->type == EDJE_PART_TYPE_EXTERNAL) && (rp->part->source))
      {
 	Edje_External_Param_Info *pi;
-        
+
 	pi = (Edje_External_Param_Info *)edje_external_param_info_get(rp->part->source);
 	while (pi && pi->name)
 	  {
@@ -5586,38 +5733,38 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
    Eina_List *l, *ll;
    Edje_Real_Part *rp;
    const char *str;
-   
+
    GET_PD_OR_RETURN();
-   
+
    rp = _edje_real_part_get(ed, part);
    if (!rp) return;
-   
+
    fprintf(f, I4"description { state: \"%s\" %g;\n", pd->state.name, pd->state.value);
    //TODO Support inherit
-   
+
    if (!pd->visible)
      fprintf(f, I5"visible: 0;\n");
-   
+
    if (pd->align.x != 0.5 || pd->align.y != 0.5)
      fprintf(f, I5"align: %g %g;\n", TO_DOUBLE(pd->align.x), TO_DOUBLE(pd->align.y));
-   
+
    //TODO Support fixed
-   
+
    if (pd->min.w || pd->min.h)
      fprintf(f, I5"min: %d %d;\n", pd->min.w, pd->min.h);
    if (pd->max.w != -1 || pd->max.h != -1)
      fprintf(f, I5"max: %d %d;\n", pd->max.w, pd->max.h);
-   
+
    //TODO Support step
-   
+
    if (pd->aspect.min || pd->aspect.max)
       fprintf(f, I5"aspect: %g %g;\n", TO_DOUBLE(pd->aspect.min), TO_DOUBLE(pd->aspect.max));
    if (pd->aspect.prefer)
       fprintf(f, I5"aspect_preference: %s;\n", prefers[pd->aspect.prefer]);
-   
+
    if (pd->color_class)
       fprintf(f, I5"color_class: \"%s\";\n", pd->color_class);
-   
+
    if (pd->color.r != 255 || pd->color.g != 255 ||
        pd->color.b != 255 ||  pd->color.a != 255)
       fprintf(f, I5"color: %d %d %d %d;\n",
@@ -5630,7 +5777,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
         pd->color3.b != 0 ||  pd->color3.a != 128)
       fprintf(f, I5"color3: %d %d %d %d;\n",
               pd->color3.r, pd->color3.g, pd->color3.b, pd->color3.a);
-   
+
    //Rel1
    if (pd->rel1.relative_x || pd->rel1.relative_y || pd->rel1.offset_x ||
        pd->rel1.offset_y || pd->rel1.id_x != -1 || pd->rel1.id_y != -1)
@@ -5651,7 +5798,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	  }
 	fprintf(f, I5"}\n");//rel1
      }
-   
+
    //Rel2
    if (pd->rel2.relative_x != 1.0 || pd->rel2.relative_y != 1.0 ||
        pd->rel2.offset_x != -1 || pd->rel2.offset_y != -1 ||
@@ -5673,7 +5820,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	  }
 	fprintf(f, I5"}\n");//rel2
      }
-   
+
    //Image
    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
      {
@@ -5686,7 +5833,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	EINA_LIST_FOREACH(ll, l, data)
 	  fprintf(f, I6"tween: \"%s\";\n", data);
 	edje_edit_string_list_free(ll);
-      
+
 	if (pd->border.l || pd->border.r || pd->border.t || pd->border.b)
 	  fprintf(f, I6"border: %d %d %d %d;\n", pd->border.l, pd->border.r, pd->border.t, pd->border.b);
 	if (pd->border.no_fill == 1)
@@ -5698,7 +5845,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 
 	fprintf(f, I5"}\n");//image
      }
-   
+
    //Fill
    if (rp->part->type == EDJE_PART_TYPE_IMAGE ||
        rp->part->type == EDJE_PART_TYPE_GRADIENT)
@@ -5710,7 +5857,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	if (rp->part->type == EDJE_PART_TYPE_GRADIENT && pd->fill.angle)
 	  fprintf(f, I6"angle: %d;\n", pd->fill.angle);
         //TODO Support type
-        
+
 	if (pd->fill.pos_rel_x || pd->fill.pos_rel_y ||
             pd->fill.pos_abs_x || pd->fill.pos_abs_y)
 	  {
@@ -5732,10 +5879,10 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 		  fprintf(f, I7"offset: %d %d;\n", pd->fill.abs_x, pd->fill.abs_y);
 		fprintf(f, I6"}\n");
           }
-        
+
 	fprintf(f, I5"}\n");
      }
-      
+
    //Text
    if (rp->part->type == EDJE_PART_TYPE_TEXT)
      {
@@ -5802,7 +5949,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	     fprintf(f, I5"}\n");
 	  }
      }
-   
+
    fprintf(f, I4"}\n");//description
 }
 
@@ -5866,7 +6013,7 @@ _edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
    EINA_LIST_FOREACH(ll, l, data)
      _edje_generate_source_of_state(obj, part, data, f);
    edje_edit_string_list_free(ll);
-   
+
    fprintf(f, I3"}\n");//part
 }
 
@@ -5880,7 +6027,7 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
 
    obj = edje_object_add(ed->evas);
    if (!edje_object_file_set(obj, ed->file->path, group)) return;
-      
+
    fprintf(f, I1"group { name: \"%s\";\n", group);
    //TODO Support alias:
    w = edje_edit_group_min_w_get(obj);
@@ -5891,7 +6038,22 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
    h = edje_edit_group_max_h_get(obj);
    if ((w > -1) || (h > -1))
       fprintf(f, I2"max: %d %d;\n", w, h);
-   //TODO Support data
+
+   /* Data */
+   if ((ll = edje_edit_group_data_list_get(obj)))
+     {
+	fprintf(f, I2"data {\n");
+
+	EINA_LIST_FOREACH(ll, l, data)
+	  {
+	     fprintf(f, I3"item: \"%s\" \"%s\";\n", data,
+		     edje_edit_group_data_value_get(obj, data));
+	  }
+
+	fprintf(f, I2"}\n\n");
+	edje_edit_string_list_free(ll);
+     }
+
    //TODO Support script
 
    /* Parts */
@@ -5911,11 +6073,11 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
 	fprintf(f, I2 "}\n");
 	edje_edit_string_list_free(ll);
      }
-   
-   
+
+
    fprintf(f, "   }\n");//group
-   
-   
+
+
    evas_object_del(obj);
 }
 
@@ -5932,7 +6094,7 @@ _edje_generate_source(Evas_Object *obj)
    Edje_Font_Directory_Entry *fnt;
 
    GET_ED_OR_RETURN(NULL);
-   
+
    /* Open a temp file */
 #ifdef HAVE_EVIL
    snprintf(tmpn, PATH_MAX, "%s/edje_edit.edc-tmp-XXXXXX", evil_tmpdir_get());
@@ -5945,7 +6107,7 @@ _edje_generate_source(Evas_Object *obj)
 
    /* Write edc into file */
    //TODO Probably we need to save the file before generation
-   
+
    /* Images */
    if ((ll = edje_edit_images_list_get(obj)))
      {
@@ -6008,7 +6170,7 @@ _edje_generate_source(Evas_Object *obj)
 	fprintf(f, I0 "}\n\n");
 	edje_edit_string_list_free(ll);
      }
-   
+
    /* Spectrum */
    if ((ll = edje_edit_spectrum_list_get(obj)))
      {
@@ -6228,7 +6390,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
    if (strcmp(ef->compiler, "edje_edit"))
      {
 	_edje_if_string_free(ed, ef->compiler);
-	ef->compiler = eina_stringshare_add("edje_edit");
+	ef->compiler = (char *)eina_stringshare_add("edje_edit");
      }
 
    if (!_edje_edit_edje_file_save(eetf, ef))
@@ -6290,7 +6452,7 @@ edje_edit_print_internal_status(Evas_Object *obj)
 
    _edje_generate_source(obj);
    return;
-   
+
    INF("\n****** CHECKIN' INTERNAL STRUCTS STATUS *********");
 
    INF("*** Edje\n");
