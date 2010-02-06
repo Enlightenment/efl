@@ -97,7 +97,7 @@ eina_strbuf_append(Eina_Strbuf *buf, const char *str)
    EINA_MAGIC_CHECK_STRBUF(buf);
 
    len = strlen(str);
-   _eina_strbuf_resize(buf, buf->len + len + 1);
+   _eina_strbuf_resize(buf, buf->len + len);
    eina_strlcpy(buf->buf + buf->len, str, buf->size - buf->len);
    buf->len += len;
 }
@@ -117,10 +117,9 @@ eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, unsigned int maxlen)
 
    len = strlen(str);
    if (len > maxlen) len = maxlen;
-   len += 1; // for '\0'
    _eina_strbuf_resize(buf, buf->len + len);
 
-   eina_strlcpy(buf->buf + buf->len, str, len);
+   eina_strlcpy(buf->buf + buf->len, str, len + 1); // + 1 for '\0'
    buf->len += len;
 }
 
@@ -195,6 +194,7 @@ eina_strbuf_remove(Eina_Strbuf *buf, unsigned int start, unsigned int end)
    tail_len = buf->len - end + 1; /* includes '\0' */
    memmove(buf->buf + start, buf->buf + end, tail_len);
    buf->len -= remove_len;
+   _eina_strbuf_resize(buf, buf->len);
 }
 
 /**
@@ -405,6 +405,8 @@ _eina_strbuf_resize(Eina_Strbuf *buf, size_t size)
    char *buffer;
    size_t new_size;
    size_t new_step;
+
+   size += 1; // Add extra space for '\0'
 
    new_size = buf->size;
    new_step = buf->step;
