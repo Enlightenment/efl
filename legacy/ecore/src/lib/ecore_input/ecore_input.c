@@ -69,7 +69,7 @@ ecore_event_shutdown(void)
    ECORE_EVENT_MOUSE_OUT = 0;
    eina_log_domain_unregister(_ecore_input_log_dom);
    _ecore_input_log_dom = -1;
-   return ++_ecore_event_init_count;
+   return _ecore_event_init_count;
 }
 
 typedef struct _Ecore_Event_Modifier_Match Ecore_Event_Modifier_Match;
