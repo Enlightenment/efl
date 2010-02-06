@@ -425,15 +425,21 @@ _eina_strbuf_resize(Eina_Strbuf *buf, size_t size)
 	     new_size += new_step;
 	     if (new_step < EINA_STRBUF_MAX_STEP)
 	       new_step *= 2;
+	     if (new_step > EINA_STRBUF_MAX_STEP)
+	       new_step = EINA_STRBUF_MAX_STEP;
 	  }
      }
    else
      {
 	/* shrink the buffer */
-	/*
-	 * to be done
-	 */
-	return 1;
+	while (new_size - new_step > size)
+	  {
+	     new_size -= new_step;
+	     if (new_step > EINA_STRBUF_INIT_STEP)
+	       new_step /= 2;
+	     if (new_step < EINA_STRBUF_INIT_STEP)
+	       new_step = EINA_STRBUF_INIT_STEP;
+	  }
      }
 
    /* reallocate the buffer to the new size */
