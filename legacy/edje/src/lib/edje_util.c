@@ -1305,87 +1305,54 @@ edje_object_part_text_get(const Evas_Object *obj, const char *part)
    return NULL;
 }
 
-static Eina_Bool
-_edje_strbuf_append1(char **p_str, size_t *allocated, size_t *used, const char *news, size_t news_len)
-{
-   if (*used + news_len >= *allocated)
-     {
-	char *tmp;
-	size_t to_allocate = ((((*used + news_len) >> 4) + 1) << 4);
-
-	tmp = realloc(*p_str, to_allocate);
-	if (!tmp)
-	  {
-	     free(*p_str);
-	     *p_str = NULL;
-	     *allocated = 0;
-	     return EINA_FALSE;
-	  }
-
-	*p_str = tmp;
-	*allocated = to_allocate;
-     }
-
-   memcpy(*p_str + *used, news, news_len);
-   *used = *used + news_len;
-   return EINA_TRUE;
-}
-
 static char *
 _edje_text_escape(const char *text)
 {
+   Eina_Strbuf *txt;
    char *ret;
    const char *text_end;
-   size_t text_len, ret_len, used;
+   size_t text_len;
 
    if (!text) return NULL;
 
+   txt = eina_strbuf_new();
    text_len = strlen(text);
-   ret_len = (((text_len >> 4) + 1) << 4); /* rough guess */
-   ret = malloc(ret_len);
-   if (!ret) return NULL;
 
    text_end = text + text_len;
-   used = 0;
    while (text < text_end)
      {
-	int advance, escaped_len;
+	int advance;
 	const char *escaped = evas_textblock_string_escape_get(text, &advance);
 	if (!escaped)
 	  {
-	     escaped = text;
-	     escaped_len = 1;
+	     eina_strbuf_append_char(txt, text[0]);
 	     advance = 1;
 	  }
 	else
-	  escaped_len = strlen(escaped);
+	  eina_strbuf_append(txt, escaped);
 
-	if (!_edje_strbuf_append1(&ret, &ret_len, &used, escaped, escaped_len))
-	  return NULL;
 	text += advance;
      }
 
-   if (!_edje_strbuf_append1(&ret, &ret_len, &used, "", 1))
-     return NULL;
+   ret = eina_strbuf_string_remove(txt);
+   eina_strbuf_free(txt);
    return ret;
 }
 
 static char *
 _edje_text_unescape(const char *text)
 {
+   Eina_Strbuf *txt;
    char *ret;
    const char *text_end, *last, *escape_start;
-   size_t text_len, ret_len, used;
+   size_t text_len;
 
    if (!text) return NULL;
 
+   txt = eina_strbuf_new();
    text_len = strlen(text);
-   ret_len = text_len;
-   ret = malloc(ret_len);
-   if (!ret) return NULL;
 
    text_end = text + text_len;
-   used = 0;
    last = text;
    escape_start = NULL;
    for (; text < text_end; text++)
@@ -1407,10 +1374,7 @@ _edje_text_unescape(const char *text)
 	       }
 
 	     if (len > 0)
-	       {
-		  if (!_edje_strbuf_append1(&ret, &ret_len, &used, str, len))
-		    return NULL;
-	       }
+	       eina_strbuf_append_n(txt, str, len);
 
 	     escape_start = text;
 	     last = NULL;
@@ -1418,8 +1382,7 @@ _edje_text_unescape(const char *text)
 	else if ((*text == ';') && (escape_start))
 	  {
 	     size_t len;
-	     const char *str = evas_textblock_escape_string_range_get
-	       (escape_start, text);
+	     const char *str = evas_textblock_escape_string_range_get(escape_start, text);
 
 	     if (str)
 	       len = strlen(str);
@@ -1429,8 +1392,7 @@ _edje_text_unescape(const char *text)
 		  len = text + 1 - escape_start;
 	       }
 
-	     if (!_edje_strbuf_append1(&ret, &ret_len, &used, str, len))
-	       return NULL;
+	     eina_strbuf_append_n(txt, str, len);
 
 	     escape_start = NULL;
 	     last = text + 1;
@@ -1443,12 +1405,11 @@ _edje_text_unescape(const char *text)
    if (last && (text > last))
      {
 	size_t len = text - last;
-	if (!_edje_strbuf_append1(&ret, &ret_len, &used, last, len))
-	  return NULL;
+	eina_strbuf_append_n(txt, last, len);
      }
 
-   if (!_edje_strbuf_append1(&ret, &ret_len, &used, "", 1))
-     return NULL;
+   ret = eina_strbuf_string_remove(txt);
+   eina_strbuf_free(txt);
    return ret;
 }
 
