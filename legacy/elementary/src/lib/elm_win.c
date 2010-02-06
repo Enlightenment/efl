@@ -888,7 +888,6 @@ elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel)
           {
              Ecore_X_Window_State states[2];
 
-             ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_DOCK);
              states[0] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
              states[1] = ECORE_X_WINDOW_STATE_SKIP_PAGER;
              ecore_x_netwm_window_state_set(win->xwin, states, 2);
