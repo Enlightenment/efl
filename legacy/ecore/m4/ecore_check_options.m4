@@ -226,6 +226,18 @@ _ecore_have_tslib="no"
 TSLIB_LIBS=""
 TSLIB_CFLAGS=""
 
+AC_ARG_ENABLE([tslib],
+   [AC_HELP_STRING([--disable-tslib],
+       [disable the tslib support in ecore (currently ecore-fb).
+        @<:@default=detect@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       _ecore_want_tslib="yes"
+    else
+       _ecore_want_tslib="no"
+    fi
+   ])
+
 if test "x${_ecore_want_tslib}" = "xyes" -o "x${_ecore_want_tslib}" = "xauto" ; then
    PKG_CHECK_MODULES([TSLIB], [tslib-1.0],
      [

@@ -115,6 +115,22 @@ want_ecore_fb="no"
 want_ecore_directfb="no"
 want_ecore_wince="no"
 
+# ecore_x options (both xlib and xcb)
+want_ecore_x_composite="yes"
+want_ecore_x_damage="yes"
+want_ecore_x_dpms="yes"
+want_ecore_x_randr="yes"
+want_ecore_x_render="yes"
+want_ecore_x_screensaver="yes"
+want_ecore_x_shape="yes"
+want_ecore_x_sync="yes"
+want_ecore_x_xfixes="yes"
+want_ecore_x_xinerama="yes"
+want_ecore_x_xprint="yes"
+want_ecore_x_xtest="yes"
+want_ecore_x_cursor="yes"
+want_ecore_x_input="yes"
+
 # ecore_evas modules
 want_ecore_evas="yes"
 want_ecore_evas_software_buffer="yes"
@@ -494,9 +510,94 @@ x_libs="";
 
 ecore_x_libs_private=""
 
+AC_ARG_ENABLE(ecore-x-composite,
+   [AC_HELP_STRING([--disable-ecore-x-composite],
+       [disable the ecore_x support for Xcomposite extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_composite=$enableval])
+
+AC_ARG_ENABLE(ecore-x-damage,
+   [AC_HELP_STRING([--disable-ecore-x-damage],
+       [disable the ecore_x support for Xdamage extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_damage=$enableval])
+
+AC_ARG_ENABLE(ecore-x-dpms,
+   [AC_HELP_STRING([--disable-ecore-x-dpms],
+       [disable the ecore_x support for Xdpms extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_dpms=$enableval])
+
+AC_ARG_ENABLE(ecore-x-randr,
+   [AC_HELP_STRING([--disable-ecore-x-randr],
+       [disable the ecore_x support for Xrandr extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_randr=$enableval])
+
+AC_ARG_ENABLE(ecore-x-render,
+   [AC_HELP_STRING([--disable-ecore-x-render],
+       [disable the ecore_x support for Xrender extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_render=$enableval])
+
+AC_ARG_ENABLE(ecore-x-screensaver,
+   [AC_HELP_STRING([--disable-ecore-x-screensaver],
+       [disable the ecore_x support for Xscreensaver extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_screensaver=$enableval])
+
+AC_ARG_ENABLE(ecore-x-shape,
+   [AC_HELP_STRING([--disable-ecore-x-shape],
+       [disable the ecore_x support for Xshape extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_shape=$enableval])
+
+AC_ARG_ENABLE(ecore-x-sync,
+   [AC_HELP_STRING([--disable-ecore-x-sync],
+       [disable the ecore_x support for Xsync extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_sync=$enableval])
+
+AC_ARG_ENABLE(ecore-x-xfixes,
+   [AC_HELP_STRING([--disable-ecore-x-xfixes],
+       [disable the ecore_x support for Xfixes extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_xfixes=$enableval])
+
+AC_ARG_ENABLE(ecore-x-xinerama,
+   [AC_HELP_STRING([--disable-ecore-x-xinerama],
+       [disable the ecore_x support for Xinerama extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_xinerama=$enableval])
+
+AC_ARG_ENABLE(ecore-x-xprint,
+   [AC_HELP_STRING([--disable-ecore-x-xprint],
+       [disable the ecore_x support for Xprint extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_xprint=$enableval])
+
+AC_ARG_ENABLE(ecore-x-xtest,
+   [AC_HELP_STRING([--disable-ecore-x-xtest],
+       [disable the ecore_x support for Xtest extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_xtest=$enableval])
+
+AC_ARG_ENABLE(ecore-x-cursor,
+   [AC_HELP_STRING([--disable-ecore-x-cursor],
+       [disable the ecore_x support for Xcursor extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_cursor=$enableval])
+
+AC_ARG_ENABLE(ecore-x-input,
+   [AC_HELP_STRING([--disable-ecore-x-input],
+       [disable the ecore_x support for Xinput/Xinput2 extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_input=$enableval])
+
+
 AC_ARG_ENABLE(ecore-x-xcb,
    [AC_HELP_STRING([--enable-ecore-x-xcb],
-       [enable the ecore_x module with XCB backend. [[default=disabled]]])],
+       [enable the ecore_x module with XCB backend. @<:@default=disabled@:>@])],
    [want_ecore_x_xcb=$enableval],
    [want_ecore_x_xcb="no"])
 
@@ -510,77 +611,137 @@ if test "x$want_ecore_x_xcb" = "xyes" ; then
     [ have_ecore_x_xcb="no" ])
 
   if test "x$have_ecore_x_xcb" = "xyes" ; then
-    PKG_CHECK_MODULES(XCB_COMPOSITE, xcb-composite,
-      [ have_ecore_x_xcb_composite="yes"
-        requirements_ecore_x="xcb-composite ${requirements_ecore_x}"
-        AC_DEFINE(ECORE_XCB_COMPOSITE, 1, [Build support for XCB composite]) ],
-      [ have_ecore_x_xcb_composite="no" ])
+    if test "x$want_ecore_x_composite" != "xno"; then
+      PKG_CHECK_MODULES(XCB_COMPOSITE, xcb-composite,
+        [ have_ecore_x_xcb_composite="yes"
+          requirements_ecore_x="xcb-composite ${requirements_ecore_x}"
+          AC_DEFINE(ECORE_XCB_COMPOSITE, 1, [Build support for XCB composite]) ],
+        [ have_ecore_x_xcb_composite="no" ])
+    else
+      have_ecore_x_xcb_composite="no"
+      AC_MSG_NOTICE("composite extension explicitly disabled")
+    fi
 
-    PKG_CHECK_MODULES(XCB_DAMAGE, xcb-damage,
-      [ have_ecore_x_xcb_damage="yes"
-        requirements_ecore_x="xcb-damage ${requirements_ecore_x}"
-        AC_DEFINE(ECORE_XCB_DAMAGE, 1, [Build support for XCB damage]) ],
-      [ have_ecore_x_xcb_damage="no" ])
+    if test "x$want_ecore_x_damage" != "xno"; then
+      PKG_CHECK_MODULES(XCB_DAMAGE, xcb-damage,
+        [ have_ecore_x_xcb_damage="yes"
+          requirements_ecore_x="xcb-damage ${requirements_ecore_x}"
+          AC_DEFINE(ECORE_XCB_DAMAGE, 1, [Build support for XCB damage]) ],
+        [ have_ecore_x_xcb_damage="no" ])
+    else
+      have_ecore_x_xcb_damage="no"
+      AC_MSG_NOTICE("damage extension explicitly disabled")
+    fi
 
-    PKG_CHECK_MODULES(XCB_DPMS, xcb-dpms,
-      [ have_ecore_x_xcb_dpms="yes"
-        requirements_ecore_x="xcb-dpms ${requirements_ecore_x}"
-        AC_DEFINE(ECORE_XCB_DPMS, 1, [Build support for XCB dpms]) ],
-      [ have_ecore_x_xcb_dpms="no" ])
+    if test "x$want_ecore_x_dpms" != "xno"; then
+      PKG_CHECK_MODULES(XCB_DPMS, xcb-dpms,
+        [ have_ecore_x_xcb_dpms="yes"
+          requirements_ecore_x="xcb-dpms ${requirements_ecore_x}"
+          AC_DEFINE(ECORE_XCB_DPMS, 1, [Build support for XCB dpms]) ],
+        [ have_ecore_x_xcb_dpms="no" ])
+    else
+      have_ecore_x_xcb_dpms="no"
+      AC_MSG_NOTICE("dpms extension explicitly disabled")
+    fi
 
-    PKG_CHECK_MODULES(XCB_RANDR, xcb-randr,
-      [ have_ecore_x_xcb_randr="yes"
-        requirements_ecore_x="xcb-randr ${requirements_ecore_x}"
-        AC_DEFINE(ECORE_XCB_RANDR, 1, [Build support for XCB randr]) ],
-      [ have_ecore_x_xcb_randr="no" ])
+    if test "x$want_ecore_x_randr" != "xno"; then
+      PKG_CHECK_MODULES(XCB_RANDR, xcb-randr,
+        [ have_ecore_x_xcb_randr="yes"
+          requirements_ecore_x="xcb-randr ${requirements_ecore_x}"
+          AC_DEFINE(ECORE_XCB_RANDR, 1, [Build support for XCB randr]) ],
+        [ have_ecore_x_xcb_randr="no" ])
+    else
+      have_ecore_x_xcb_randr="no"
+      AC_MSG_NOTICE("randr extension explicitly disabled")
+    fi
 
-    PKG_CHECK_MODULES(XCB_RENDER, xcb-render,
-      [ have_ecore_x_xcb_render="yes"
-        requirements_ecore_x="xcb-render ${requirements_ecore_x}"
-        AC_DEFINE(ECORE_XCB_RENDER, 1, [Build support for XCB render]) ],
-      [ have_ecore_x_xcb_render="no" ])
+    if test "x$want_ecore_x_render" != "xno"; then
+      PKG_CHECK_MODULES(XCB_RENDER, xcb-render,
+        [ have_ecore_x_xcb_render="yes"
+          requirements_ecore_x="xcb-render ${requirements_ecore_x}"
+          AC_DEFINE(ECORE_XCB_RENDER, 1, [Build support for XCB render]) ],
+        [ have_ecore_x_xcb_render="no" ])
+    else
+      have_ecore_x_xcb_render="no"
+      AC_MSG_NOTICE("render extension explicitly disabled")
+    fi
 
-    PKG_CHECK_MODULES(XCB_SCREENSAVER, xcb-screensaver,
-      [ have_ecore_x_xcb_screensaver="yes"
-        requirements_ecore_x="xcb-screensaver ${requirements_ecore_x}"
-        AC_DEFINE(ECORE_XCB_SCREENSAVER, 1, [Build support for XCB screensaver]) ],
-      [ have_ecore_x_xcb_screensaver="no" ])
+    if test "x$want_ecore_x_screensaver" != "xno"; then
+      PKG_CHECK_MODULES(XCB_SCREENSAVER, xcb-screensaver,
+        [ have_ecore_x_xcb_screensaver="yes"
+          requirements_ecore_x="xcb-screensaver ${requirements_ecore_x}"
+          AC_DEFINE(ECORE_XCB_SCREENSAVER, 1, [Build support for XCB screensaver]) ],
+        [ have_ecore_x_xcb_screensaver="no" ])
+    else
+      have_ecore_x_xcb_screensaver="no"
+      AC_MSG_NOTICE("screensaver extension explicitly disabled")
+    fi
 
-    PKG_CHECK_MODULES(XCB_SHAPE, xcb-shape,
-      [ have_ecore_x_xcb_shape="yes"
-        requirements_ecore_x="xcb-shape ${requirements_ecore_x}"
-        AC_DEFINE(ECORE_XCB_SHAPE, 1, [Build support for XCB shape]) ],
-      [ have_ecore_x_xcb_shape="no" ])
+    if test "x$want_ecore_x_shape" != "xno"; then
+      PKG_CHECK_MODULES(XCB_SHAPE, xcb-shape,
+        [ have_ecore_x_xcb_shape="yes"
+          requirements_ecore_x="xcb-shape ${requirements_ecore_x}"
+          AC_DEFINE(ECORE_XCB_SHAPE, 1, [Build support for XCB shape]) ],
+        [ have_ecore_x_xcb_shape="no" ])
+    else
+      have_ecore_x_xcb_shape="no"
+      AC_MSG_NOTICE("shape extension explicitly disabled")
+    fi
 
-    PKG_CHECK_MODULES(XCB_SYNC, xcb-sync,
-      [ have_ecore_x_xcb_sync="yes"
-        requirements_ecore_x="xcb-sync ${requirements_ecore_x}"
-        AC_DEFINE(ECORE_XCB_SYNC, 1, [Build support for XCB sync]) ],
-      [ have_ecore_x_xcb_sync="no" ])
+    if test "x$want_ecore_x_sync" != "xno"; then
+      PKG_CHECK_MODULES(XCB_SYNC, xcb-sync,
+        [ have_ecore_x_xcb_sync="yes"
+          requirements_ecore_x="xcb-sync ${requirements_ecore_x}"
+          AC_DEFINE(ECORE_XCB_SYNC, 1, [Build support for XCB sync]) ],
+        [ have_ecore_x_xcb_sync="no" ])
+    else
+      have_ecore_x_xcb_sync="no"
+      AC_MSG_NOTICE("sync extension explicitly disabled")
+    fi
 
-    PKG_CHECK_MODULES(XCB_XFIXES, xcb-xfixes,
-      [ have_ecore_x_xcb_xfixes="yes"
-        requirements_ecore_x="xcb-xfixes ${requirements_ecore_x}"
-        AC_DEFINE(ECORE_XCB_FIXES, 1, [Build support for XCB xfixes]) ],
-      [ have_ecore_x_xcb_xfixes="no" ])
+    if test "x$want_ecore_x_xfixes" != "xno"; then
+      PKG_CHECK_MODULES(XCB_XFIXES, xcb-xfixes,
+        [ have_ecore_x_xcb_xfixes="yes"
+          requirements_ecore_x="xcb-xfixes ${requirements_ecore_x}"
+          AC_DEFINE(ECORE_XCB_FIXES, 1, [Build support for XCB xfixes]) ],
+        [ have_ecore_x_xcb_xfixes="no" ])
+    else
+      have_ecore_x_xcb_xfixes="no"
+      AC_MSG_NOTICE("xfixes extension explicitly disabled")
+    fi
 
-    PKG_CHECK_MODULES(XCB_XINERAMA, xcb-xinerama,
-      [ have_ecore_x_xcb_xinerama="yes"
-        requirements_ecore_x="xcb-xinerama ${requirements_ecore_x}"
-        AC_DEFINE(ECORE_XCB_XINERAMA, 1, [Build support for XCB xinerama]) ],
-      [ have_ecore_x_xcb_xinerama="no" ])
+    if test "x$want_ecore_x_xinerama" != "xno"; then
+      PKG_CHECK_MODULES(XCB_XINERAMA, xcb-xinerama,
+        [ have_ecore_x_xcb_xinerama="yes"
+          requirements_ecore_x="xcb-xinerama ${requirements_ecore_x}"
+          AC_DEFINE(ECORE_XCB_XINERAMA, 1, [Build support for XCB xinerama]) ],
+        [ have_ecore_x_xcb_xinerama="no" ])
+    else
+      have_ecore_x_xcb_xinerama="no"
+      AC_MSG_NOTICE("xinerama extension explicitly disabled")
+    fi
 
-    PKG_CHECK_MODULES(XCB_XPRINT, xcb-xprint,
-      [ have_ecore_x_xcb_xprint="yes"
-        requirements_ecore_x="xcb-xprint ${requirements_ecore_x}"
-        AC_DEFINE(ECORE_XCB_XPRINT, 1, [Build support for XCB xprint]) ],
-      [ have_ecore_x_xcb_xprint="no" ])
+    if test "x$want_ecore_x_xprint" != "xno"; then
+      PKG_CHECK_MODULES(XCB_XPRINT, xcb-xprint,
+        [ have_ecore_x_xcb_xprint="yes"
+          requirements_ecore_x="xcb-xprint ${requirements_ecore_x}"
+          AC_DEFINE(ECORE_XCB_XPRINT, 1, [Build support for XCB xprint]) ],
+        [ have_ecore_x_xcb_xprint="no" ])
+    else
+      have_ecore_x_xcb_xprint="no"
+      AC_MSG_NOTICE("xprint extension explicitly disabled")
+    fi
 
-    PKG_CHECK_MODULES(XCB_XTEST, xcb-xtest,
-      [ have_ecore_x_xcb_xtest="yes"
-        requirements_ecore_x="xcb-xtest ${requirements_ecore_x}"
-        AC_DEFINE(ECORE_XCB_XTEST, 1, [Build support for XCB xtest]) ],
-      [ have_ecore_x_xcb_xtest="no" ])
+    if test "x$want_ecore_x_xtest" != "xno"; then
+      PKG_CHECK_MODULES(XCB_XTEST, xcb-xtest,
+        [ have_ecore_x_xcb_xtest="yes"
+          requirements_ecore_x="xcb-xtest ${requirements_ecore_x}"
+          AC_DEFINE(ECORE_XCB_XTEST, 1, [Build support for XCB xtest]) ],
+        [ have_ecore_x_xcb_xtest="no" ])
+    else
+      have_ecore_x_xcb_xtest="no"
+      AC_MSG_NOTICE("xtest extension explicitly disabled")
+    fi
 
     AC_DEFINE(HAVE_ECORE_X_XCB, 1, [Defined to 1 if XCB is enabled.])
 
@@ -614,50 +775,58 @@ if ! test "x$have_ecore_x_xcb" = "xyes" ; then
     use_Xcursor="no"
     PCFLAGS=$CFLAGS
     CFLAGS="$x_cflags $x_includes"
-    AC_CHECK_HEADER(X11/Xcursor/Xcursor.h,
-      [
-        AC_CHECK_LIB(Xcursor, XcursorImageLoadCursor,
-          [
-            AC_DEFINE(ECORE_XCURSOR, 1, [Build support for Xcursor])
-            Xcursor_cflags=""
-            Xcursor_libs="-lXcursor"
-            use_Xcursor="yes"
-          ], [
-            Xcursor_cflags=""
-            Xcursor_libs=""
-            use_Xcursor="no"
-          ], [
-            $x_libs -lXrender
-          ]
-        )
-      ], [
-        Xcursor_cflags=""
-        Xcursor_libs=""
-        use_Xcursor="no"
-      ], [
-        #include <X11/Xlib.h>
-      ]
-    )
-    CFLAGS=$PCFLAGS
+
+    if test "x$want_ecore_x_cursor" = "xyes"; then
+      AC_CHECK_HEADER(X11/Xcursor/Xcursor.h,
+        [
+          AC_CHECK_LIB(Xcursor, XcursorImageLoadCursor,
+            [
+              AC_DEFINE(ECORE_XCURSOR, 1, [Build support for Xcursor])
+              Xcursor_cflags=""
+              Xcursor_libs="-lXcursor"
+              use_Xcursor="yes"
+            ], [
+              Xcursor_cflags=""
+              Xcursor_libs=""
+              use_Xcursor="no"
+            ], [
+              $x_libs -lXrender
+            ]
+          )
+        ], [
+          Xcursor_cflags=""
+          Xcursor_libs=""
+          use_Xcursor="no"
+        ], [
+          #include <X11/Xlib.h>
+        ]
+      )
+      CFLAGS=$PCFLAGS
+    else
+      Xcursor_cflags=""
+      Xcursor_libs=""
+      use_Xcursor="no"
+      AC_MSG_NOTICE("Xcursor explicitly disabled")
+    fi
 
     AC_SUBST(Xcursor_cflags)
     AC_SUBST(Xcursor_libs)
 
-    ECORE_CHECK_X_EXTENSION([Xkb], [XKB.h], [X11], [XkbSetDetectableAutoRepeat])
-    ECORE_CHECK_X_EXTENSION([Xcomposite], [Xcomposite.h], [Xcomposite], [XCompositeQueryExtension])
-    ECORE_CHECK_X_EXTENSION([Xdamage], [Xdamage.h], [Xdamage], [XDamageSubtract])
-    ECORE_CHECK_X_EXTENSION([Xdpms], [dpms.h], [Xdpms], [DPMSQueryExtension])
+    ECORE_CHECK_X_EXTENSION([Xkb], [XKB.h], [X11], [XkbSetDetectableAutoRepeat], [$want_ecore_x_xkb])
+    ECORE_CHECK_X_EXTENSION([Xcomposite], [Xcomposite.h], [Xcomposite], [XCompositeQueryExtension], [$want_ecore_x_composite])
+    ECORE_CHECK_X_EXTENSION([Xdamage], [Xdamage.h], [Xdamage], [XDamageSubtract], [$want_ecore_x_damage])
+    ECORE_CHECK_X_EXTENSION([Xdpms], [dpms.h], [Xdpms], [DPMSQueryExtension], [$want_ecore_x_dpms])
     if test "x$use_xdpms" = "xno" ; then
-      ECORE_CHECK_X_EXTENSION([Xdpms], [dpms.h], [Xext], [DPMSQueryExtension])
+      ECORE_CHECK_X_EXTENSION([Xdpms], [dpms.h], [Xext], [DPMSQueryExtension], [$want_ecore_x_dpms])
     fi
-    ECORE_CHECK_X_EXTENSION([Xfixes], [Xfixes.h], [Xfixes], [XFixesExpandRegion])
-    ECORE_CHECK_X_EXTENSION([Xinerama], [Xinerama.h], [Xinerama], [XineramaQueryScreens])
-    ECORE_CHECK_X_EXTENSION([Xprint], [Print.h], [Xp], [XpQueryScreens])
-    ECORE_CHECK_X_EXTENSION([Xrandr], [Xrandr.h], [Xrandr], [XRRGetScreenResourcesCurrent])
-    ECORE_CHECK_X_EXTENSION([Xrender], [Xrender.h], [Xrender], [XRenderFindVisualFormat])
-    ECORE_CHECK_X_EXTENSION([Xtest], [XTest.h], [Xtst], [XTestFakeKeyEvent])
-    ECORE_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput])
-    ECORE_CHECK_X_EXTENSION([Xi2], [XInput2.h], [Xi], [XIQueryDevice])
+    ECORE_CHECK_X_EXTENSION([Xfixes], [Xfixes.h], [Xfixes], [XFixesExpandRegion], [$want_ecore_x_xfixes])
+    ECORE_CHECK_X_EXTENSION([Xinerama], [Xinerama.h], [Xinerama], [XineramaQueryScreens], [$want_ecore_x_xinerama])
+    ECORE_CHECK_X_EXTENSION([Xprint], [Print.h], [Xp], [XpQueryScreens], [$want_ecore_x_xprint])
+    ECORE_CHECK_X_EXTENSION([Xrandr], [Xrandr.h], [Xrandr], [XRRGetScreenResourcesCurrent], [$want_ecore_x_randr])
+    ECORE_CHECK_X_EXTENSION([Xrender], [Xrender.h], [Xrender], [XRenderFindVisualFormat], [$want_ecore_x_render])
+    ECORE_CHECK_X_EXTENSION([Xtest], [XTest.h], [Xtst], [XTestFakeKeyEvent], [$want_ecore_x_xtest])
+    ECORE_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput], [$want_ecore_x_screensaver])
+    ECORE_CHECK_X_EXTENSION([Xi2], [XInput2.h], [Xi], [XIQueryDevice], [$want_ecore_x_input])
 
     ecore_x_libs_private="${Xcursor_libs} ${XKB_LIBS} ${XCOMPOSITE_LIBS} ${XDAMAGE_LIBS} ${XDPMS_LIBS} ${XFIXES_LIBS} ${XINERAMA_LIBS} ${XPRINT_LIBS} ${XRANDR_LIBS} ${XRENDER_LIBS} ${XTEST_LIBS} ${XSS_LIBS} ${XI2_LIBS}"
 
