@@ -103,6 +103,26 @@ eina_strbuf_append(Eina_Strbuf *buf, const char *str)
 }
 
 /**
+ * Append an escaped string to a buffer, reallocating as necessary.
+ * @param buf the Eina_Strbuf to append to
+ * @param str the string to append
+ */
+EAPI void
+eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str)
+{
+   size_t len;
+   char *esc;
+   EINA_MAGIC_CHECK_STRBUF(buf);
+
+   esc = eina_str_escape(str);
+   len = strlen(str);
+   _eina_strbuf_resize(buf, buf->len + len);
+   eina_strlcpy(buf->buf + buf->len, str, buf->size - buf->len);
+   buf->len += len;
+   free(esc);
+}
+
+/**
  * Append a string to a buffer, reallocating as necessary. Limited by maxlen.
  * @param buf the Eina_Strbuf to append to
  * @param str the string to append
