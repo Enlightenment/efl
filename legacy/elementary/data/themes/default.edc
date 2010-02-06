@@ -572,7 +572,7 @@ collections {
       styles
 	{
 	   style { name: "textblock_style2";
-	      base: "font=Sans:style=Bold font_size=14 align=center color=#fff wrap=word";
+	      base: "font=Sans:style=Bold font_size=10 align=center color=#fff wrap=word";
 
 	      tag:  "br" "\n";
 	      tag:  "hilight" "+ color=#ffff";

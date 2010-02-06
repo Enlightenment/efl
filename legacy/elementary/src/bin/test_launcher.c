@@ -68,10 +68,10 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
    char buf[PATH_MAX];
    const char *names[] =
      {
-        "Hello",    "World",    "Things",  "Should", 
-          "Work",     "Great",    "These",    "Days", 
-          "Lots",     "Of",       "Labels",   "Make",
-          "Everyone", "Happy",    "And",      "Calm"
+        "Hello",    "World",    "Spam",  "Egg", 
+        "Ham",      "Good",     "Bad",   "Milk", 
+        "Smell",    "Of",       "Sky",   "Gold",
+        "Hole",     "Pig",      "And",   "Calm"
      };
    Eina_List *mbs = NULL;
    
@@ -107,25 +107,26 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
         evas_object_size_hint_min_set(pad, 470, 4);
         evas_object_size_hint_weight_set(pad, 0.0, 0.0);
         evas_object_size_hint_align_set(pad, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_table_pack(tb, pad, 1, 14, 5, 1);
+        elm_table_pack(tb, pad, 1, 11, 5, 1);
         
         pad = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_size_hint_min_set(pad, 4, 4);
         evas_object_size_hint_weight_set(pad, 0.0, 0.0);
         evas_object_size_hint_align_set(pad, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_table_pack(tb, pad, 0, 1, 1, 12);
+        elm_table_pack(tb, pad, 0, 1, 1, 10);
         
         pad = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_size_hint_min_set(pad, 4, 4);
         evas_object_size_hint_weight_set(pad, 0.0, 0.0);
         evas_object_size_hint_align_set(pad, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_table_pack(tb, pad, 6, 1, 1, 12);
+        elm_table_pack(tb, pad, 6, 1, 1, 10);
         
-        for (j = 0; j < 6; j++)
+        for (j = 0; j < 5; j++)
           {
              for (i = 0; i < 5; i++)
                {
                   ic = elm_icon_add(win);
+                  elm_object_scale_set(ic, 0.5);
                   snprintf(buf, sizeof(buf), "%s/images/icon_%02i.png", PACKAGE_DATA_DIR, n);
                   elm_icon_file_set(ic, buf, NULL);
                   elm_icon_scale_set(ic, 0, 0);
@@ -176,7 +177,7 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, tb2);
    
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "Mapbuf");
+   elm_check_label_set(ck, "Map");
    elm_check_state_set(ck, 0);
    evas_object_smart_callback_add(ck, "changed", mode_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -185,7 +186,7 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(ck);
    
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "Alpha");
+   elm_check_label_set(ck, "A");
    elm_check_state_set(ck, 1);
    evas_object_smart_callback_add(ck, "changed", alpha_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -194,7 +195,7 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(ck);
    
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "Smooth");
+   elm_check_label_set(ck, "Smo");
    elm_check_state_set(ck, 1);
    evas_object_smart_callback_add(ck, "changed", smooth_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -203,7 +204,7 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(ck);
    
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "Fullscreen");
+   elm_check_label_set(ck, "FS");
    elm_check_state_set(ck, 0);
    evas_object_smart_callback_add(ck, "changed", full_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
