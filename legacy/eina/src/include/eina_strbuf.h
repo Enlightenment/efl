@@ -9,6 +9,7 @@ typedef struct _Eina_Strbuf Eina_Strbuf;
 
 EAPI Eina_Strbuf *eina_strbuf_new(void);
 EAPI void eina_strbuf_free(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
+EAPI void eina_strbuf_reset(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 EAPI void eina_strbuf_append(Eina_Strbuf *buf, const char *str) EINA_ARG_NONNULL(1, 2);
 EAPI void eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str) EINA_ARG_NONNULL(1, 2);
 EAPI void eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, unsigned int maxlen) EINA_ARG_NONNULL(1, 2);

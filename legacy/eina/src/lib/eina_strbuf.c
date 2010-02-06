@@ -86,6 +86,23 @@ eina_strbuf_free(Eina_Strbuf *buf)
 }
 
 /**
+ * Reset a string buffer
+ * @param buf the buffer to reset
+ *
+ * The buffer len is set to 0, no mem is free'd
+ */
+EAPI void
+eina_strbuf_reset(Eina_Strbuf *buf)
+{
+   EINA_MAGIC_CHECK_STRBUF(buf);
+   buf->len = 0;
+   buf->size = EINA_STRBUF_INIT_SIZE;
+   buf->step = EINA_STRBUF_INIT_STEP;
+
+   buf->buf[0] = '\0';
+}
+
+/**
  * Append a string to a buffer, reallocating as necessary.
  * @param buf the Eina_Strbuf to append to
  * @param str the string to append
