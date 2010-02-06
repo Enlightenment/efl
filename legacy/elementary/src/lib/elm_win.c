@@ -1,6 +1,11 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Win Win
+ * 
+ */
+
 typedef struct _Elm_Win Elm_Win;
 
 struct _Elm_Win
@@ -843,6 +848,14 @@ elm_win_screen_position_get(Evas_Object *obj, int *x, int *y)
    if (y) *y = win->screen.y;
 }
 
+/**
+ * Set if this window is an illume conformant window
+ * 
+ * @param obj The window object
+ * @param conformant The conformant flag (1 = conformant, 0 = non-conformant)
+ * 
+ * @ingroup Win
+ */
 EAPI void 
 elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant) 
 {
@@ -857,6 +870,14 @@ elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant)
 #endif
 }
 
+/**
+ * Get if this window is an illume conformant window
+ * 
+ * @param obj The window object
+ * @return A boolean if this window is illume conformant or not
+ * 
+ * @ingroup Win
+ */
 EAPI Eina_Bool 
 elm_win_conformant_get(Evas_Object *obj) 
 {
@@ -872,6 +893,16 @@ elm_win_conformant_get(Evas_Object *obj)
    return EINA_FALSE;
 }
 
+/**
+ * Set a window to be an illume quickpanel window
+ * 
+ * By default window objects are not quickpanel windows.
+ * 
+ * @param obj The window object
+ * @param quickpanel The quickpanel flag (1 = quickpanel, 0 = normal window)
+ * 
+ * @ingroup Win
+ */
 EAPI void 
 elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel) 
 {
@@ -897,6 +928,14 @@ elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel)
 #endif
 }
 
+/**
+ * Get if this window is a quickpanel or not
+ * 
+ * @param obj The window object
+ * @return A boolean if this window is a quickpanel or not
+ * 
+ * @ingroup Win
+ */
 EAPI Eina_Bool 
 elm_win_quickpanel_get(Evas_Object *obj) 
 {
@@ -912,6 +951,14 @@ elm_win_quickpanel_get(Evas_Object *obj)
    return EINA_FALSE;
 }
 
+/**
+ * Set the major priority of a quickpanel window
+ * 
+ * @param obj The window object
+ * @param priority The major priority for this quickpanel
+ * 
+ * @ingroup Win
+ */
 EAPI void 
 elm_win_quickpanel_priority_major_set(Evas_Object *obj, int priority) 
 {
@@ -926,6 +973,14 @@ elm_win_quickpanel_priority_major_set(Evas_Object *obj, int priority)
 #endif
 }
 
+/**
+ * Get the major priority of a quickpanel window
+ * 
+ * @param obj The window object
+ * @return The major priority of this quickpanel
+ * 
+ * @ingroup Win
+ */
 EAPI int 
 elm_win_quickpanel_priority_major_get(Evas_Object *obj) 
 {
@@ -941,6 +996,14 @@ elm_win_quickpanel_priority_major_get(Evas_Object *obj)
    return -1;
 }
 
+/**
+ * Set the minor priority of a quickpanel window
+ * 
+ * @param obj The window object
+ * @param priority The minor priority for this quickpanel
+ * 
+ * @ingroup Win
+ */
 EAPI void 
 elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority) 
 {
@@ -955,6 +1018,14 @@ elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority)
 #endif
 }
 
+/**
+ * Get the minor priority of a quickpanel window
+ * 
+ * @param obj The window object
+ * @return The minor priority of this quickpanel
+ * 
+ * @ingroup Win
+ */
 EAPI int 
 elm_win_quickpanel_priority_minor_get(Evas_Object *obj) 
 {
@@ -970,6 +1041,14 @@ elm_win_quickpanel_priority_minor_get(Evas_Object *obj)
    return -1;
 }
 
+/**
+ * Set which zone this quickpanel should appear in
+ * 
+ * @param obj The window object
+ * @param zone The requested zone for this quickpanel
+ * 
+ * @ingroup Win
+ */
 EAPI void 
 elm_win_quickpanel_zone_set(Evas_Object *obj, int zone) 
 {
