@@ -27,6 +27,8 @@ EAPI size_t eina_str_join_len(char *dst, size_t size, char sep, const char *a, s
 
 EAPI char *eina_str_convert(const char *enc_from, const char *enc_to, const char *text);
 
+EAPI char *eina_str_escape(const char *str);
+
 
 /**
  * @brief Join two strings of known length.

@@ -421,3 +421,31 @@ eina_str_convert(const char *enc_from, const char *enc_to, const char *text)
    return NULL;
 #endif
 }
+
+/**
+ * @brief Put a \ before and Space( ), \ or ' in a string.
+ *
+ * @param str the string to escape
+ *
+ * A newly allocated string is returned.
+ */
+EAPI char *
+eina_str_escape(const char *str)
+{
+   char *s2, *d;
+   const char *s;
+
+   s2 = malloc((strlen(str) * 2) + 1);
+   if (!s2) return NULL;
+   for (s = str, d = s2; *s != 0; s++, d++)
+     {
+	if ((*s == ' ') || (*s == '\\') || (*s == '\''))
+	  {
+	     *d = '\\';
+	     d++;
+	  }
+	*d = *s;
+     }
+   *d = 0;
+   return s2;
+}
