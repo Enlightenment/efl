@@ -555,16 +555,19 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
      } 
    if ((tex->im) && (tex->im->native.data))
      {
-        shader_array_flush(gc);
-        gc->array.im = tex->im;
+        if (gc->array.im != tex->im)
+          {
+             shader_array_flush(gc);
+             gc->array.im = tex->im;
+          }
      }
+   
    gc->array.line = 0;
    gc->array.use_vertex = 1;
    gc->array.use_color = 1;
    gc->array.use_texuv = 1;
    gc->array.use_texuv2 = 1;
    gc->array.use_texuv3 = 0;
-
   
    pnum = gc->array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nu2 = pnum * 2;
@@ -616,12 +619,6 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    for (i = 0; i < 6; i++)
      {
         PUSH_COLOR(r, g, b, a);
-     }
-
-   if ((tex->im) && (tex->im->native.data))
-     {
-        shader_array_flush(gc);
-        gc->array.im = NULL;
      }
 }
 
@@ -846,6 +843,14 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
         gc->shader.cw = cw;
         gc->shader.ch = ch;
      }
+   if ((tex->im) && (tex->im->native.data))
+     {
+        if (gc->array.im != tex->im)
+          {
+             shader_array_flush(gc);
+             gc->array.im = tex->im;
+          }
+     }
    gc->array.line = 0;
    gc->array.use_vertex = 1;
    gc->array.use_color = 1;
@@ -859,13 +864,16 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
    gc->array.num += 6;
    _evas_gl_common_context_array_alloc(gc);
 
-   // FIXME: handle yinvert
    for (i = 0; i < 4; i++)
      {
         tx[i] = ((double)(tex->x) + (((double)p[i].u) / FP1)) /
           (double)tex->pt->w;
         ty[i] = ((double)(tex->y) + (((double)p[i].v) / FP1)) / 
           (double)tex->pt->h;
+     }
+   if ((tex->im) && (tex->im->native.data) && (!tex->im->native.yinvert))
+     {
+        // FIXME: handle yinvert
      }
    
    if (blend) bl = 0.0;
@@ -1017,7 +1025,7 @@ shader_array_flush(Evas_GL_Context *gc)
      }
    else
      glDisableVertexAttribArray(SHAD_TEXUV);
-   
+
    if (gc->array.line)
      {
         glDisableVertexAttribArray(SHAD_TEXUV);
@@ -1060,6 +1068,7 @@ shader_array_flush(Evas_GL_Context *gc)
                gc->array.im->native.func.unbind(gc->array.im->native.func.data, 
                                                 gc->array.im);
           }
+        gc->array.im = NULL;
 /*        
         gc->shader.cur_tex = 0;
         glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);

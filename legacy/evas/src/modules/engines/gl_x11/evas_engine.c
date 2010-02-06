@@ -430,9 +430,9 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
    re->win->draw.drew = 1;
    evas_gl_common_context_flush(re->win->gl_context);
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-// no neeed - eglSwapBuffers() should waitnative at end of swap...
-// this also may flush cpu+gpu caches etc. thus performancce hit   
-//   eglWaitNative(EGL_CORE_NATIVE_ENGINE); // previous rendering should be done and swapped
+   // this is needed to make sure all previous rendering is flushed to
+   // buffers/surfaces
+   eglWaitNative(EGL_CORE_NATIVE_ENGINE); // previous rendering should be done and swapped
 #else
    glXWaitGL();
 #endif

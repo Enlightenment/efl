@@ -408,7 +408,7 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
      yuv = 1;
    
    im->tex->im = im;
-   if ((!gc->dc->cutout.rects) || (gc->dc->cutout.active > 8))
+   if ((!gc->dc->cutout.rects) || (gc->dc->cutout.active > 16))
      {
         if (gc->dc->clip.use)
           {
