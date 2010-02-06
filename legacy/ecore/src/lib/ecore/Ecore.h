@@ -1,7 +1,6 @@
 #ifndef _ECORE_H
 #define _ECORE_H
 
-#include <sys/types.h>
 #include <Eina.h>
 
 #ifdef EAPI
@@ -61,6 +60,7 @@
 # include <sys/time.h>
 # include <signal.h>
 #endif
+
 #include <sys/types.h>
 
 #ifdef __cplusplus
