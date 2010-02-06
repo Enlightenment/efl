@@ -84,7 +84,7 @@ _edje_format_is_param(char *item)
 static char *
 _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
 {
-   Eina_Strbuf *txt;
+   Eina_Strbuf *txt, *tmp = NULL;
    char *s2, *item, *ret;
    const char *s;
 
@@ -117,13 +117,12 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
 		    {
 		       if (_edje_font_is_embedded(edf, val))
 			 {
-			    Eina_Strbuf *tmp;
-
-			    tmp = eina_strbuf_new();
+			    if (!tmp)
+			      tmp = eina_strbuf_new();
 			    eina_strbuf_append(tmp, "fonts/");
 			    eina_strbuf_append(tmp, val);
 			    (*tag_ret)->font = eina_stringshare_add(eina_strbuf_string_get(tmp));
-			    eina_strbuf_free(tmp);
+			    eina_strbuf_reset(tmp);
 			 }
 		       else
 			 {
@@ -151,6 +150,8 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
 	  }
 	free(item);
      }
+   if (tmp)
+     eina_strbuf_free(tmp);
    ret = eina_strbuf_string_remove(txt);
    eina_strbuf_free(txt);
    return ret;
@@ -165,6 +166,7 @@ _edje_textblock_style_all_update(Edje *ed)
 {
    Eina_List *l, *ll;
    Edje_Style *stl;
+   Eina_Strbuf *txt = NULL;
 
    if (!ed->file) return;
 
@@ -172,7 +174,6 @@ _edje_textblock_style_all_update(Edje *ed)
      {
 	Edje_Style_Tag *tag;
 	Edje_Text_Class *tc;
-	Eina_Strbuf *txt;
 	int found = 0;
 	char *fontset = NULL, *fontsource = NULL;
 
@@ -186,7 +187,8 @@ _edje_textblock_style_all_update(Edje *ed)
 	/* No text classes , goto next style */
 	if (!found) continue;
 	found = 0;
-	txt = eina_strbuf_new();
+	if (!txt)
+	  txt = eina_strbuf_new();
 
 	if (_edje_fontset_append)
 	  fontset = eina_str_escape(_edje_fontset_append);
@@ -256,8 +258,10 @@ _edje_textblock_style_all_update(Edje *ed)
 
 	/* Configure the style */
 	evas_textblock_style_set(stl->style, eina_strbuf_string_get(txt));
-	eina_strbuf_free(txt);
+	eina_strbuf_reset(txt);
      }
+   if (txt)
+     eina_strbuf_free(txt);
 }
 
 void
@@ -311,18 +315,19 @@ _edje_textblock_styles_del(Edje *ed)
 void
 _edje_textblock_style_parse_and_fix(Edje_File *edf)
 {
+   Eina_Strbuf *txt = NULL;
    Eina_List *l, *ll;
    Edje_Style *stl;
 
    EINA_LIST_FOREACH(edf->styles, l, stl)
      {
 	Edje_Style_Tag *tag;
-	Eina_Strbuf *txt;
 	char *fontset = NULL, *fontsource = NULL, *ts;
 
 	if (stl->style) break;
 
-	txt = eina_strbuf_new();
+	if (!txt)
+	  txt = eina_strbuf_new();
 
 	stl->style = evas_textblock_style_new();
 	evas_textblock_style_set(stl->style, NULL);
@@ -387,8 +392,10 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 
 	/* Configure the style */
 	evas_textblock_style_set(stl->style, eina_strbuf_string_get(txt));
-	eina_strbuf_free(txt);
+	eina_strbuf_reset(txt);
      }
+   if (txt)
+     eina_strbuf_free(txt);
 }
 
 void
