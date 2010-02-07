@@ -98,7 +98,6 @@ eina_strbuf_reset(Eina_Strbuf *buf)
 {
    EINA_MAGIC_CHECK_STRBUF(buf);
    buf->len = 0;
-   buf->size = EINA_STRBUF_INIT_SIZE;
    buf->step = EINA_STRBUF_INIT_STEP;
 
    buf->buf[0] = '\0';
