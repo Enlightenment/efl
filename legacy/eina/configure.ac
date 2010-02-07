@@ -390,6 +390,10 @@ fi
 
 AC_SUBST(iconv_libs)
 
+if test "x${have_iconv}" = "xyes" ; then
+   AC_DEFINE([HAVE_ICONV], [1], [Set to 1 if iconv library is installed])
+fi
+
 
 ### Modules
 

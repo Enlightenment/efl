@@ -1365,7 +1365,9 @@ eina_log_print_cb_file(const Eina_Log_Domain *d, __UNUSED__ Eina_Log_Level level
      }
 #endif
    fprintf(f, "%s %s:%d %s() ", d->name, file, line, fnc);
+#ifdef EFL_HAVE_PTHREAD
  end:
+#endif
    vfprintf(f, fmt, args);
    putc('\n', f);
 }

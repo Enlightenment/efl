@@ -32,7 +32,7 @@
 #include <string.h>
 #include <limits.h>
 
-#ifdef HAVE_ICONV_H
+#ifdef HAVE_ICONV
 # include <errno.h>
 # include <iconv.h>
 #endif
@@ -354,10 +354,10 @@ eina_str_join_len(char *dst, size_t size, char sep, const char *a, size_t a_len,
  * @param text     text to convert
  *
  */
+#ifdef HAVE_ICONV
 EAPI char *
 eina_str_convert(const char *enc_from, const char *enc_to, const char *text)
 {
-#ifdef HAVE_ICONV_H
    iconv_t ic;
    char *new_txt, *inp, *outp;
    size_t inb, outb, outlen, tob, outalloc;
@@ -417,10 +417,14 @@ eina_str_convert(const char *enc_from, const char *enc_to, const char *text)
      }
    iconv_close(ic);
    return new_txt;
-#else
-   return NULL;
-#endif
 }
+#else
+EAPI char *
+eina_str_convert(const char *enc_from __UNUSED__, const char *enc_to __UNUSED__, const char *text __UNUSED__)
+{
+   return NULL;
+}
+#endif
 
 /**
  * @brief Put a \ before and Space( ), \ or ' in a string.
