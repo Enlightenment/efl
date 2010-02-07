@@ -43,7 +43,7 @@ struct _Eina_Strbuf
 static void _eina_strbuf_init(Eina_Strbuf *buf);
 static int _eina_strbuf_resize(Eina_Strbuf *buf, size_t size);
 #define _eina_strbuf_grow(buf, _size) \
-   (_size > buf->size) ? _eina_strbuf_resize(buf, _size) : EINA_FALSE
+   (_size > buf->size) ? _eina_strbuf_resize(buf, _size) : EINA_TRUE
 
 Eina_Bool
 eina_strbuf_init(void)
@@ -297,14 +297,14 @@ eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with,
    size_t pos;
 
    if (n == 0)
-     return 0;
+     return EINA_FALSE;
 
    spos = buf->buf;
    while (n--)
      {
 	spos = strstr(spos, str);
 	if (!spos || *spos == '\0')
-	  return 0;
+	  return EINA_FALSE;
 	if (n) spos++;
      }
 
@@ -315,7 +315,7 @@ eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with,
      {
 	/* resize the buffer if necessary */
 	if (!_eina_strbuf_grow(buf, buf->len - len1 + len2))
-	  return 0;
+	  return EINA_FALSE;
 	/* move the existing text */
 	memmove(buf->buf + pos + len2, buf->buf + pos + len1,
 	      buf->len - pos - len1);
@@ -325,7 +325,7 @@ eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with,
    buf->len += len2 - len1;
    buf->buf[buf->len] = 0;
 
-   return 1;
+   return EINA_TRUE;
 }
 
 /**
@@ -436,6 +436,8 @@ _eina_strbuf_init(Eina_Strbuf *buf)
  * resize the buffer
  * @param buf the buffer to resize
  * @param size the minimum size of the buffer
+ *
+ * @return true on success
  */
 static int
 _eina_strbuf_resize(Eina_Strbuf *buf, size_t size)
@@ -454,7 +456,7 @@ _eina_strbuf_resize(Eina_Strbuf *buf, size_t size)
     */
    if (size == buf->size)
      /* nothing to do */
-     return 1;
+     return EINA_TRUE;
    else if (size > buf->size)
      {
 	/* enlarge the buffer */
@@ -483,10 +485,10 @@ _eina_strbuf_resize(Eina_Strbuf *buf, size_t size)
    /* reallocate the buffer to the new size */
    buffer = realloc(buf->buf, new_size);
    if (!buffer)
-     return 0;
+     return EINA_FALSE;
 
    buf->buf = buffer;
    buf->size = new_size;
    buf->step = new_step;
-   return 1;
+   return EINA_TRUE;
 }
