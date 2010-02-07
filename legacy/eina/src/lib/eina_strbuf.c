@@ -43,7 +43,7 @@ struct _Eina_Strbuf
 static void _eina_strbuf_init(Eina_Strbuf *buf);
 static Eina_Bool _eina_strbuf_resize(Eina_Strbuf *buf, size_t size);
 #define _eina_strbuf_grow(_buf, _size) \
-   ((_size) > (_buf)->size) ? _eina_strbuf_resize((_buf), (_size)) : EINA_TRUE
+   (((_size) + 1) > (_buf)->size) ? _eina_strbuf_resize((_buf), (_size)) : EINA_TRUE
 
 Eina_Bool
 eina_strbuf_init(void)
