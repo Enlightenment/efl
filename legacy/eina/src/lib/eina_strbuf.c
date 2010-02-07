@@ -132,9 +132,9 @@ eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str)
    EINA_MAGIC_CHECK_STRBUF(buf);
 
    esc = eina_str_escape(str);
-   len = strlen(str);
+   len = strlen(esc);
    _eina_strbuf_resize(buf, buf->len + len);
-   eina_strlcpy(buf->buf + buf->len, str, buf->size - buf->len);
+   eina_strlcpy(buf->buf + buf->len, esc, buf->size - buf->len);
    buf->len += len;
    free(esc);
 }
