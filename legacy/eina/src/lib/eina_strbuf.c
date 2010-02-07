@@ -41,7 +41,7 @@ struct _Eina_Strbuf
 };
 
 static void _eina_strbuf_init(Eina_Strbuf *buf);
-static int _eina_strbuf_resize(Eina_Strbuf *buf, size_t size);
+static Eina_Bool _eina_strbuf_resize(Eina_Strbuf *buf, size_t size);
 #define _eina_strbuf_grow(buf, _size) \
    (_size > buf->size) ? _eina_strbuf_resize(buf, _size) : EINA_TRUE
 
@@ -286,7 +286,7 @@ eina_strbuf_length_get(Eina_Strbuf *buf)
  *
  * @return true on success
  */
-EAPI int
+EAPI Eina_Bool
 eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with,
                      unsigned int n)
 {
@@ -439,7 +439,7 @@ _eina_strbuf_init(Eina_Strbuf *buf)
  *
  * @return true on success
  */
-static int
+static Eina_Bool
 _eina_strbuf_resize(Eina_Strbuf *buf, size_t size)
 {
    char *buffer;

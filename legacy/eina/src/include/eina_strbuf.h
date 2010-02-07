@@ -21,7 +21,7 @@ EAPI void eina_strbuf_remove(Eina_Strbuf *buf, unsigned int start, unsigned int 
 EAPI const char *eina_strbuf_string_get(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 EAPI char *eina_strbuf_string_remove(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 EAPI size_t eina_strbuf_length_get(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
-EAPI int eina_strbuf_replace(Eina_Strbuf *buf, const char *str, 
+EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str, 
                                  const char *with, unsigned int n) EINA_ARG_NONNULL(1, 2, 3);
 #define eina_strbuf_replace_first(buf, str, with) \
 	eina_strbuf_replace(buf, str, with, 1)
