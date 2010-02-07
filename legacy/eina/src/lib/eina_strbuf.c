@@ -42,6 +42,8 @@ struct _Eina_Strbuf
 
 static void _eina_strbuf_init(Eina_Strbuf *buf);
 static int _eina_strbuf_resize(Eina_Strbuf *buf, size_t size);
+#define _eina_strbuf_grow(buf, size) \
+   if (size > buf->size) _eina_strbuf_resize(buf, size)
 
 Eina_Bool
 eina_strbuf_init(void)
@@ -114,7 +116,7 @@ eina_strbuf_append(Eina_Strbuf *buf, const char *str)
    EINA_MAGIC_CHECK_STRBUF(buf);
 
    len = strlen(str);
-   _eina_strbuf_resize(buf, buf->len + len);
+   _eina_strbuf_grow(buf, buf->len + len);
    eina_strlcpy(buf->buf + buf->len, str, buf->size - buf->len);
    buf->len += len;
 }
@@ -133,7 +135,7 @@ eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str)
 
    esc = eina_str_escape(str);
    len = strlen(esc);
-   _eina_strbuf_resize(buf, buf->len + len);
+   _eina_strbuf_grow(buf, buf->len + len);
    eina_strlcpy(buf->buf + buf->len, esc, buf->size - buf->len);
    buf->len += len;
    free(esc);
@@ -154,7 +156,7 @@ eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, unsigned int maxlen)
 
    len = strlen(str);
    if (len > maxlen) len = maxlen;
-   _eina_strbuf_resize(buf, buf->len + len);
+   _eina_strbuf_grow(buf, buf->len + len);
 
    eina_strlcpy(buf->buf + buf->len, str, len + 1); // + 1 for '\0'
    buf->len += len;
@@ -183,7 +185,7 @@ eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos)
     * resize the buffer if necessary
     */
    len = strlen(str);
-   if (!_eina_strbuf_resize(buf, buf->len + len))
+   if (!_eina_strbuf_grow(buf, buf->len + len))
      return;
    /* move the existing text */
    memmove(buf->buf + len + pos, buf->buf + pos, buf->len - pos);
@@ -203,7 +205,7 @@ eina_strbuf_append_char(Eina_Strbuf *buf, char c)
 {
    EINA_MAGIC_CHECK_STRBUF(buf);
 
-   _eina_strbuf_resize(buf, buf->len + 1);
+   _eina_strbuf_grow(buf, buf->len + 1);
    buf->buf[(buf->len)++] = c;
    buf->buf[buf->len] = '\0';
 }
@@ -313,7 +315,7 @@ eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with,
    if (len1 != len2)
      {
 	/* resize the buffer if necessary */
-	if (!_eina_strbuf_resize(buf, buf->len - len1 + len2))
+	if (!_eina_strbuf_grow(buf, buf->len - len1 + len2))
 	  return 0;
 	/* move the existing text */
 	memmove(buf->buf + pos + len2, buf->buf + pos + len1,
@@ -383,7 +385,7 @@ eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
 	n++;
 	len = (len + len2) - len1;
 	/* resize the buffer if necessary */
-	if (!_eina_strbuf_resize(buf, len))
+	if (!_eina_strbuf_grow(buf, len))
 	  {
 	     /* we have to stop replacing here, because we haven't enough
 	      * memory to go on */
