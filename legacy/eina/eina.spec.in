@@ -47,7 +47,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %defattr(-, root, root)
 %doc AUTHORS COPYING README
 %{_libdir}/*.so.*
-%{_libdir}/%{name}
+#%{_libdir}/%{name}*
 
 %files devel
 %defattr(-, root, root)
