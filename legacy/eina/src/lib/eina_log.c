@@ -294,6 +294,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <fnmatch.h>
+#include <unistd.h>
 #include <assert.h>
 
 #ifdef EFL_HAVE_PTHREAD
@@ -931,6 +932,44 @@ finish_register:
    return i;
 }
 
+static inline Eina_Bool
+eina_log_term_color_supported(const char *term)
+{
+   const char *tail;
+
+   if (!term)
+     return EINA_FALSE;
+
+   tail = term + 1;
+   switch (term[0])
+     {
+	/* list of known to support color terminals,
+	 * take from gentoo's portage.
+	 */
+
+      case 'x': /* xterm and xterm-color */
+	 return ((strncmp(tail, "term", sizeof("term") - 1) == 0) &&
+		 ((tail[sizeof("term") - 1] == '\0') ||
+		  (strcmp(tail + sizeof("term") - 1, "-color") == 0)));
+      case 'E': /* Eterm */
+      case 'a': /* aterm */
+      case 'k': /* kterm */
+	return (strcmp(tail, "term") == 0);
+      case 'r': /* xrvt or rxvt-unicode */
+	 return ((strncmp(tail, "xvt", sizeof("xvt") - 1) == 0) &&
+		 ((tail[sizeof("xvt") - 1] == '\0') ||
+		  (strcmp(tail + sizeof("xvt") - 1, "-unicode") == 0)));
+      case 's': /* screen */
+	 return (strcmp(tail, "creen") == 0);
+      case 'g': /* gnome */
+	 return (strcmp(tail, "nome") == 0);
+      case 'i': /* interix */
+	 return (strcmp(tail, "nterix") == 0);
+      default:
+	 return EINA_FALSE;
+     }
+}
+
 /**
  * @endcond
  */
@@ -959,13 +998,40 @@ Eina_Bool
 eina_log_init(void)
 {
    const char *level, *tmp;
+   int color_disable;
 
    assert((sizeof(_names)/sizeof(_names[0])) == EINA_LOG_LEVELS);
    assert((sizeof(_colors)/sizeof(_colors[0])) == EINA_LOG_LEVELS + 1);
 
-   // Check if color is disabled
-   if ((tmp = getenv(EINA_LOG_ENV_COLOR_DISABLE)) && (atoi(tmp) == 1))
+   if ((tmp = getenv(EINA_LOG_ENV_COLOR_DISABLE)))
+     color_disable = atoi(tmp);
+   else
+     color_disable = -1;
+
+   /* Check if color is explicitly disabled */
+   if (color_disable == 1)
      _disable_color = EINA_TRUE;
+
+   /* color was not explicitly disabled or enabled, guess it */
+   else if (color_disable == -1)
+     {
+	if (!eina_log_term_color_supported(getenv("TERM")))
+	  _disable_color = EINA_TRUE;
+	else {
+	   /* if not a terminal, but redirected to a file, disable color */
+	   int fd;
+
+	   if (_print_cb == eina_log_print_cb_stderr)
+	     fd = STDERR_FILENO;
+	   else if (_print_cb == eina_log_print_cb_stdout)
+	     fd = STDOUT_FILENO;
+	   else
+	     fd = -1;
+
+	   if ((fd >= 0) && (!isatty(fd)))
+	     _disable_color = EINA_TRUE;
+	}
+     }
 
    if ((tmp = getenv(EINA_LOG_ENV_FILE_DISABLE)) && (atoi(tmp) == 1))
      _disable_file = EINA_TRUE;
@@ -1288,8 +1354,16 @@ eina_log_domain_unregister(int domain)
  * Default logging method, this will output to standard error stream.
  *
  * This method will colorize output based on domain provided color and
- * message logging level. To disable color, set environment variable
- * EINA_LOG_COLOR_DISABLE=1. Similarly, to disable file and line
+ * message logging level.
+ *
+ * To disable color, set environment variable
+ * EINA_LOG_COLOR_DISABLE=1. To enable color, even if directing to a
+ * file or when using a non-supported color terminal, use
+ * EINA_LOG_COLOR_DISABLE=0. If EINA_LOG_COLOR_DISABLE is unset (or
+ * -1), then Eina will disable color if terminal ($TERM) is
+ * unsupported or if redirecting to a file.
+
+. Similarly, to disable file and line
  * information, set EINA_LOG_FILE_DISABLE=1 or
  * EINA_LOG_FUNCTION_DISABLE=1 to avoid function name in output. It is
  * not acceptable to have both EINA_LOG_FILE_DISABLE and
