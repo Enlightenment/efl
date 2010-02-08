@@ -6,7 +6,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_builddir) \
 	-DPLUGINSDIR=\"$(libdir)/ethumb/plugins\" \
-	@EVAS_CFLAGS@ @ECORE_EVAS_CFLAGS@ @ECORE_FILE_CFLAGS@ @EDJE_CFLAGS@ \
+	@EINA_CFLAGS@ @EVAS_CFLAGS@ @ECORE_EVAS_CFLAGS@ @ECORE_FILE_CFLAGS@ @EDJE_CFLAGS@ \
 	@EFL_ETHUMB_BUILD@
 
 include_HEADERS = Ethumb.h Ethumb_Plugin.h

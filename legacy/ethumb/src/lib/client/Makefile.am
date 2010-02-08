@@ -5,6 +5,7 @@ AM_CPPFLAGS = \
 	-I$(top_builddir) \
 	-I$(top_srcdir)/src/lib \
 	@EDBUS_CFLAGS@ \
+	@EINA_CFLAGS@ \
 	@EFL_ETHUMB_CLIENT_BUILD@
 
 include_HEADERS = Ethumb_Client.h
