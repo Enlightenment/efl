@@ -364,12 +364,11 @@ AC_SUBST(dlopen_libs)
 EFL_CHECK_FNMATCH([], [AC_MSG_ERROR([Cannot find fnmatch()])])
 
 # iconv library
-iconv_libs=""
 have_iconv="no"
 AC_ARG_WITH([iconv-link],
    AC_HELP_STRING([--with-iconv-link=ICONV_LINK], [explicitly specify an iconv link option]),
    [
-    iconv_libs=$withval
+    LIBS="$withval $LIBS"
     have_iconv="yes"
    ])
 
@@ -384,11 +383,65 @@ if test "x${have_iconv}" = "xno" ; then
    AC_CHECK_HEADERS([iconv.h], [have_iconv="yes"])
 
    if test "x${have_iconv}" = "xyes" ; then
-      AC_SEARCH_LIBS([iconv], [iconv iconv_plug], [], [have_iconv="no"])
+      AC_MSG_CHECKING([whether iconv() is in libc])
+      
+      AC_LINK_IFELSE(
+         [AC_LANG_PROGRAM(
+             [[
+#include <iconv.h>
+             ]],
+             [[
+iconv_t ic;
+size_t count = iconv(ic, NULL, NULL, NULL, NULL);
+             ]])],
+         [have_iconv="yes"],
+         [have_iconv="no"])
+
+      AC_MSG_RESULT([${have_iconv}])
+   fi
+
+   if test "x${have_iconv}" = "xno" ; then
+      AC_MSG_CHECKING([whether iconv() is in libiconv.a])
+
+      LIBS_save="${LIBS}"
+      LIBS="-liconv $LIBS"
+      AC_LINK_IFELSE(
+         [AC_LANG_PROGRAM(
+             [[
+#include <iconv.h>
+             ]],
+             [[
+iconv_t ic;
+size_t count;
+count = iconv(ic, NULL, NULL, NULL, NULL);
+             ]])],
+         [have_iconv="yes"],
+         [have_iconv="no"])
+
+      AC_MSG_RESULT([${have_iconv}])
+   fi
+
+   if test "x${have_iconv}" = "xno" ; then
+      AC_MSG_CHECKING([whether iconv() is in libiconv_plug.a])
+
+      LIBS_save="${LIBS}"
+      LIBS="-liconv_plug $LIBS"
+      AC_LINK_IFELSE(
+         [AC_LANG_PROGRAM(
+             [[
+#include <iconv.h>
+             ]],
+             [[
+iconv_t ic;
+size_t count = iconv(ic, NULL, NULL, NULL, NULL);
+             ]])],
+         [have_iconv="yes"],
+         [have_iconv="no"])
+      LDFLAGS="${LDFLAGS_save}"
+
+      AC_MSG_RESULT([${have_iconv}])
    fi
 fi
-
-AC_SUBST(iconv_libs)
 
 if test "x${have_iconv}" = "xyes" ; then
    AC_DEFINE([HAVE_ICONV], [1], [Set to 1 if iconv library is installed])
