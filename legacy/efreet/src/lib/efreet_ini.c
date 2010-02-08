@@ -29,6 +29,8 @@ extern "C"
 void *alloca (size_t);
 #endif
 
+#include <Ecore_File.h>
+
 #include "Efreet.h"
 #include "efreet_private.h"
 
@@ -302,9 +304,17 @@ efreet_ini_free(Efreet_Ini *ini)
 EAPI int
 efreet_ini_save(Efreet_Ini *ini, const char *file)
 {
+    char *dir;
     FILE *f;
     if (!ini || !ini->data) return 0;
 
+    dir = ecore_file_dir_get(file);
+    if (!ecore_file_mkpath(dir))
+    {
+        free(dir);
+        return 0;
+    }
+    free(dir);
     f = fopen(file, "wb");
     if (!f) return 0;
     eina_hash_foreach(ini->data, efreet_ini_section_save, f);
