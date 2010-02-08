@@ -388,6 +388,7 @@ if test "x${have_iconv}" = "xno" ; then
       AC_LINK_IFELSE(
          [AC_LANG_PROGRAM(
              [[
+#include <stdlib.h>
 #include <iconv.h>
              ]],
              [[
@@ -408,6 +409,7 @@ size_t count = iconv(ic, NULL, NULL, NULL, NULL);
       AC_LINK_IFELSE(
          [AC_LANG_PROGRAM(
              [[
+#include <stdlib.h>
 #include <iconv.h>
              ]],
              [[
@@ -416,7 +418,10 @@ size_t count;
 count = iconv(ic, NULL, NULL, NULL, NULL);
              ]])],
          [have_iconv="yes"],
-         [have_iconv="no"])
+         [
+          have_iconv="no"
+          LIBS=${LIBS_save}
+         ])
 
       AC_MSG_RESULT([${have_iconv}])
    fi
@@ -429,6 +434,7 @@ count = iconv(ic, NULL, NULL, NULL, NULL);
       AC_LINK_IFELSE(
          [AC_LANG_PROGRAM(
              [[
+#include <stdlib.h>
 #include <iconv.h>
              ]],
              [[
@@ -436,8 +442,10 @@ iconv_t ic;
 size_t count = iconv(ic, NULL, NULL, NULL, NULL);
              ]])],
          [have_iconv="yes"],
-         [have_iconv="no"])
-      LDFLAGS="${LDFLAGS_save}"
+         [
+          have_iconv="no"
+          LIBS=${LIBS_save}
+         ])
 
       AC_MSG_RESULT([${have_iconv}])
    fi
