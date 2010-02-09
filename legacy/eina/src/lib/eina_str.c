@@ -361,7 +361,7 @@ eina_str_convert(const char *enc_from, const char *enc_to, const char *text)
    iconv_t ic;
    char *new_txt, *inp, *outp;
    size_t inb, outb, outlen, tob, outalloc;
-   
+
    if (!text) return NULL;
    ic = iconv_open(enc_to, enc_from);
    if (ic == (iconv_t)(-1)) return NULL;

@@ -20,7 +20,7 @@ EAPI Eina_Bool eina_str_has_prefix(const char *str, const char *prefix);
 EAPI Eina_Bool eina_str_has_suffix(const char *str, const char *suffix);
 EAPI Eina_Bool eina_str_has_extension(const char *str, const char *ext);
 
-EAPI char **eina_str_split(const char *string, const char *delimiter, 
+EAPI char **eina_str_split(const char *string, const char *delimiter,
                             int max_tokens);
 
 EAPI size_t eina_str_join_len(char *dst, size_t size, char sep, const char *a, size_t a_len, const char *b, size_t b_len);
