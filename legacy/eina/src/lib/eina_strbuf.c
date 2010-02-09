@@ -83,6 +83,7 @@ EAPI void
 eina_strbuf_free(Eina_Strbuf *buf)
 {
    EINA_MAGIC_CHECK_STRBUF(buf);
+   EINA_MAGIC_SET(buf, EINA_MAGIC_NONE);
    free(buf->buf);
    free(buf);
 }
