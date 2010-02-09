@@ -344,6 +344,7 @@ struct _Eina_Log_Domain_Level_Pending
 {
    EINA_INLIST;
    unsigned int level;
+   unsigned int namelen;
    char name[];
 };
 
@@ -421,8 +422,8 @@ static pthread_mutex_t _log_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 // List of domains registered
 static Eina_Log_Domain *_log_domains = NULL;
-static int _log_domains_count = 0;
-static int _log_domains_allocated = 0;
+static unsigned int _log_domains_count = 0;
+static unsigned int _log_domains_allocated = 0;
 
 // Default function for printing on domains
 static Eina_Log_Print_Cb _print_cb = eina_log_print_cb_stderr;
@@ -755,11 +756,13 @@ eina_log_domain_new(Eina_Log_Domain *d, const char *name, const char *color)
 	   d->domain_str = eina_log_domain_str_get(name, NULL);
 
 	d->name = strdup(name);
+	d->namelen = strlen(name);
      }
    else
      {
 	d->domain_str = NULL;
 	d->name = NULL;
+	d->namelen = 0;
      }
 
    return d;
@@ -808,6 +811,7 @@ eina_log_domain_parse_pendings(void)
 	// Parse name
 	p = malloc(sizeof(Eina_Log_Domain_Level_Pending) + end - start + 1);
 	if (!p) break;
+	p->namelen = end - start;
 	memcpy((char *)p->name, start, end - start);
 	((char *)p->name)[end - start] = '\0';
 	p->level = level;
@@ -846,6 +850,7 @@ eina_log_domain_parse_pending_globs(void)
 	// Parse name
 	p = malloc(sizeof(Eina_Log_Domain_Level_Pending) + end - start + 1);
 	if (!p) break;
+	p->namelen = 0; /* not that useful */
 	memcpy((char *)p->name, start, end - start);
 	((char *)p->name)[end - start] = '\0';
 	p->level = level;
@@ -863,7 +868,7 @@ static inline int
 eina_log_domain_register_unlocked(const char *name, const char *color)
 {
    Eina_Log_Domain_Level_Pending *pending = NULL;
-   int i;
+   unsigned int i, namelen;
 
    for (i = 0; i < _log_domains_count; i++)
      {
@@ -904,10 +909,11 @@ eina_log_domain_register_unlocked(const char *name, const char *color)
    _log_domains_count++;
 
 finish_register:
+   namelen = _log_domains[i].namelen;
 
    EINA_INLIST_FOREACH(_pending_list, pending)
      {
-	if (!strcmp(pending->name, name))
+	if ((namelen == pending->namelen) && (strcmp(pending->name, name) == 0))
 	  {
 	     _log_domains[i].level = pending->level;
 	     _pending_list = eina_inlist_remove(_pending_list, EINA_INLIST_GET(pending));
@@ -1522,7 +1528,7 @@ eina_log_domain_unregister_unlocked(int domain)
 {
    Eina_Log_Domain *d;
 
-   if (domain >= _log_domains_count) return;
+   if ((unsigned int)domain >= _log_domains_count) return;
 
    d = &_log_domains[domain];
    eina_log_domain_free(d);
@@ -1562,15 +1568,18 @@ EAPI void
 eina_log_domain_level_set(const char *domain_name, int level)
 {
    Eina_Log_Domain_Level_Pending *pending;
-   int i, namelen;
+   unsigned int i, namelen;
 
    EINA_SAFETY_ON_NULL_RETURN(domain_name);
+
+   namelen = strlen(domain_name);
 
    for (i = 0; i < _log_domains_count; i++)
      {
 	if (_log_domains[i].deleted)
 	  continue;
-	if (strcmp(_log_domains[i].name, domain_name) != 0)
+	if ((namelen != _log_domains[i].namelen) ||
+	    (strcmp(_log_domains[i].name, domain_name) != 0))
 	  continue;
 
 	_log_domains[i].level = level;
@@ -1579,18 +1588,19 @@ eina_log_domain_level_set(const char *domain_name, int level)
 
    EINA_INLIST_FOREACH(_pending_list, pending)
      {
-	if (!strcmp(pending->name, domain_name))
+	if ((namelen == pending->namelen) &&
+	    (strcmp(pending->name, domain_name) == 0))
 	  {
 	     pending->level = level;
 	     return;
 	  }
      }
 
-   namelen = strlen(domain_name);
    pending = malloc(sizeof(Eina_Log_Domain_Level_Pending) + namelen + 1);
    if (!pending)
      return;
    pending->level = level;
+   pending->namelen = namelen;
    memcpy(pending->name, domain_name, namelen + 1);
 
    _pending_list = eina_inlist_append(_pending_list, EINA_INLIST_GET(pending));
@@ -1618,15 +1628,18 @@ EAPI int
 eina_log_domain_level_get(const char *domain_name)
 {
    Eina_Log_Domain_Level_Pending *pending;
-   int i;
+   unsigned int i, namelen;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(domain_name, EINA_LOG_LEVEL_UNKNOWN);
+
+   namelen = strlen(domain_name);
 
    for (i = 0; i < _log_domains_count; i++)
      {
 	if (_log_domains[i].deleted)
 	  continue;
-	if (strcmp(_log_domains[i].name, domain_name) != 0)
+	if ((namelen != _log_domains[i].namelen) ||
+	    (strcmp(_log_domains[i].name, domain_name) != 0))
 	  continue;
 
 	return _log_domains[i].level;
@@ -1634,7 +1647,8 @@ eina_log_domain_level_get(const char *domain_name)
 
    EINA_INLIST_FOREACH(_pending_list, pending)
      {
-	if (!strcmp(pending->name, domain_name))
+	if ((namelen == pending->namelen) &&
+	    (strcmp(pending->name, domain_name) == 0))
 	  {
 	     return pending->level;
 	  }
@@ -1666,7 +1680,7 @@ EAPI int
 eina_log_domain_registered_level_get(int domain)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(domain >= 0, EINA_LOG_LEVEL_UNKNOWN);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(domain < _log_domains_count,
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((unsigned int)domain < _log_domains_count,
 				   EINA_LOG_LEVEL_UNKNOWN);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(_log_domains[domain].deleted,
 				  EINA_LOG_LEVEL_UNKNOWN);
@@ -1775,7 +1789,7 @@ eina_log_print_unlocked(int domain, Eina_Log_Level level, const char *file, cons
    Eina_Log_Domain *d;
 
 #ifdef EINA_SAFETY_CHECKS
-   if (EINA_UNLIKELY(domain >= _log_domains_count) ||
+   if (EINA_UNLIKELY((unsigned int)domain >= _log_domains_count) ||
        EINA_UNLIKELY(domain < 0))
      {
 	if (file && fnc && fmt)
