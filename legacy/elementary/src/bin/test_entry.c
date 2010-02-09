@@ -4,14 +4,14 @@ static void
 my_entry_bt_1(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
-   elm_entry_entry_set(en, "");
+   elm_scrolled_entry_entry_set(en, "");
 }
 
 static void
 my_entry_bt_2(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
-   const char *s = elm_entry_entry_get(en);
+   const char *s = elm_scrolled_entry_entry_get(en);
    printf("ENTRY:\n");
    if (s) printf("%s\n", s);
 }
@@ -20,7 +20,7 @@ static void
 my_entry_bt_3(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
-   const char *s = elm_entry_selection_get(en);
+   const char *s = elm_scrolled_entry_selection_get(en);
    printf("SELECTION:\n");
    if (s) printf("%s\n", s);
 }
@@ -29,14 +29,14 @@ static void
 my_entry_bt_4(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
-   elm_entry_entry_insert(en, "Insert some <b>BOLD</> text");
+   elm_scrolled_entry_entry_insert(en, "Insert some <b>BOLD</> text");
 }
 
 static void
 my_entry_bt_5(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
-   const char *s = elm_entry_entry_get(en);
+   const char *s = elm_scrolled_entry_entry_get(en);
    printf("PASSWORD: '%s'\n", s ? s : "");
 }
 
@@ -44,7 +44,7 @@ static void
 anchor_test(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
-   elm_entry_entry_insert(en, "ANCHOR CLICKED");
+   elm_scrolled_entry_entry_insert(en, "ANCHOR CLICKED");
 }
 
 void
@@ -150,132 +150,93 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
-   sc = elm_scroller_add(win);
-   elm_scroller_content_min_limit(sc, 0, 1);
-   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_scroller_bounce_set(sc, 0, 0);
-   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, sc);
-
-   en = elm_entry_add(win);
-   elm_entry_single_line_set(en, 1);
-   elm_entry_entry_set(en, "Disabled entry");
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_object_disabled_set(en, 1);
-   elm_scroller_content_set(sc, en);
-   evas_object_show(en);
-
-   evas_object_show(sc);
-
-   sc = elm_scroller_add(win);
-   elm_scroller_content_min_limit(sc, 0, 1);
-   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_scroller_bounce_set(sc, 0, 0);
-   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, sc);
-
-   en = elm_entry_add(win);
-   elm_entry_password_set(en, 1);
-   elm_entry_entry_set(en, "Access denied, give up!");
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_object_disabled_set(en, 1);
-   elm_scroller_content_set(sc, en);
-   evas_object_show(en);
-
-   evas_object_show(sc);
-
-   sc = elm_scroller_add(win);
-   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
-   elm_scroller_bounce_set(sc, 0, 1);
-   elm_box_pack_end(bx, sc);
-
-   en = elm_entry_add(win);
-   elm_entry_context_menu_item_add(en, "Hello", NULL, ELM_ICON_NONE, NULL, NULL);
-   elm_entry_context_menu_item_add(en, "World", NULL, ELM_ICON_NONE, NULL, NULL);
-   elm_entry_entry_set(en,
-		       "Multi-line disabled entry widget :)<br>"
-		       "We can use markup <b>like this</> for styling and<br>"
-		       "formatting <em>like this</>, as well as<br>"
-		       "<a href=X><link>links in the text</></a>, but it won't be editable or clickable.");
+   /* disabled entry */
+   en = elm_scrolled_entry_add(win);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scrolled_entry_entry_set(en, "Disabled entry");
+   elm_scrolled_entry_single_line_set(en, 1);
    elm_object_disabled_set(en, 1);
-   elm_scroller_content_set(sc, en);
    evas_object_show(en);
+   elm_box_pack_end(bx, en);
 
-   evas_object_show(sc);
+   /* password entry */
+   en = elm_scrolled_entry_add(win);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scrolled_entry_password_set(en, 1);
+   elm_scrolled_entry_single_line_set(en, 1);
+   elm_scrolled_entry_entry_set(en, "Access denied, give up!");
+   elm_object_disabled_set(en, 1);
+   evas_object_show(en);
+   elm_box_pack_end(bx, en);
+
+   /* multi-line disable entry */
+   en = elm_scrolled_entry_add(win);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
+   elm_object_disabled_set(en, 1);
+   elm_scrolled_entry_context_menu_item_add(en, "Hello", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_scrolled_entry_context_menu_item_add(en, "World", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_scrolled_entry_entry_set(en,
+				"Multi-line disabled entry widget :)<br>"
+				"We can use markup <b>like this</> for styling and<br>"
+				"formatting <em>like this</>, as well as<br>"
+				"<a href=X><link>links in the text</></a>,"
+				"but it won't be editable or clickable.");
+   evas_object_show(en);
+   elm_box_pack_end(bx, en);
 
    sp = elm_separator_add(win);
    elm_separator_horizontal_set(sp, 1);
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
 
-   sc = elm_scroller_add(win);
-   elm_scroller_content_min_limit(sc, 0, 1);
-   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_scroller_bounce_set(sc, 0, 0);
-   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, sc);
-
-   en = elm_entry_add(win);
-   elm_entry_single_line_set(en, 1);
-   elm_entry_entry_set(en, "This is a single line");
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_entry_select_all(en);
-   elm_scroller_content_set(sc, en);
-   evas_object_show(en);
-
-   evas_object_show(sc);
-
-   sc = elm_scroller_add(win);
-   elm_scroller_content_min_limit(sc, 0, 1);
-   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_scroller_bounce_set(sc, 0, 0);
-   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, sc);
-
-   en_p = elm_entry_add(win);
-   elm_entry_password_set(en_p, 1);
-   elm_entry_entry_set(en_p, "Password here");
-   evas_object_size_hint_weight_set(en_p, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(en_p, EVAS_HINT_FILL, 0.0);
-   elm_scroller_content_set(sc, en_p);
-   evas_object_show(en_p);
-
-   evas_object_show(sc);
-
-   sc = elm_scroller_add(win);
-   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
-   elm_scroller_bounce_set(sc, 0, 1);
-   elm_box_pack_end(bx, sc);
-
-   en = elm_entry_add(win);
-   elm_entry_entry_set(en,
-		       "This is an entry widget in this window that<br>"
-		       "uses markup <b>like this</> for styling and<br>"
-		       "formatting <em>like this</>, as well as<br>"
-		       "<a href=X><link>links in the text</></a>, so enter text<br>"
-		       "in here to edit it. By the way, links are<br>"
-		       "called <a href=anc-02>Anchors</a> so you will need<br>"
-		       "to refer to them this way. At the end here is a really long line to test line wrapping to see if it works. But just in case this line is not long enough I will add more here to really test it out, as Elementary really needs some good testing to see if entry widgets work as advertised.");
-   evas_object_smart_callback_add(en, "anchor,clicked", anchor_test, en);
+   /* Single line selected entry */
+   en = elm_scrolled_entry_add(win);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_scroller_content_set(sc, en);
+   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scrolled_entry_entry_set(en, "This is a single line");
+   elm_scrolled_entry_single_line_set(en, 1);
+   elm_scrolled_entry_select_all(en);
    evas_object_show(en);
+   elm_box_pack_end(bx, en);
 
-   evas_object_show(sc);
+   /* Single line password entry */
+   en_p = elm_scrolled_entry_add(win);
+   evas_object_size_hint_weight_set(en_p, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en_p, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_scrolled_entry_scrollbar_policy_set(en_p, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scrolled_entry_entry_set(en_p, "Password here");
+   elm_scrolled_entry_single_line_set(en_p, 1);
+   elm_scrolled_entry_password_set(en_p, 1);
+   evas_object_show(en_p);
+   elm_box_pack_end(bx, en_p);
+
+   /* markup scrolled entry */
+   en = elm_scrolled_entry_add(win);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
+   elm_scrolled_entry_entry_set(en,
+				"This is an entry widget in this window that<br>"
+				"uses markup <b>like this</> for styling and<br>"
+				"formatting <em>like this</>, as well as<br>"
+				"<a href=X><link>links in the text</></a>, so enter text<br>"
+				"in here to edit it. By them way, links are<br>"
+				"called <a href=anc-02>Anchors</a> so you will need<br>"
+				"to refer to them this way. At the end here is a really long "
+				"line to test line wrapping to see if it works. But just in "
+				"case this line is not long enough I will add more here to "
+				"really test it out, as Elementary really needs some "
+				"good testing to see if entry widgets work as advertised.");
+   evas_object_smart_callback_add(en, "anchor,clicked", anchor_test, en);
+   evas_object_show(en);
+   elm_box_pack_end(bx, en);
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
