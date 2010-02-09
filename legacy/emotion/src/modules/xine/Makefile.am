@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EMOTION_CFLAGS@ \
 @EMOTION_CPPFLAGS@ \
 @XINE_CFLAGS@
 
