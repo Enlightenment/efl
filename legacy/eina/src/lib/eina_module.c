@@ -517,13 +517,13 @@ static void _dir_arch_list_db(const char *name, const char *path, void *data)
    Eina_Module *m;
    char *file;
    size_t length;
-   
-   length = strlen(path) + 1 + strlen(name) + 1 + 
+
+   length = strlen(path) + 1 + strlen(name) + 1 +
      strlen((char *)(cb_data->data)) + 1 + sizeof("module") +
      sizeof(SHARED_LIB_SUFFIX) + 1;
-   
+
    file = alloca(length);
-   snprintf(file, length, "%s/%s/%s/module" SHARED_LIB_SUFFIX, 
+   snprintf(file, length, "%s/%s/%s/module" SHARED_LIB_SUFFIX,
             path, name, (char *)(cb_data->data));
    m = eina_module_new(file);
    if (!m)
