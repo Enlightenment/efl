@@ -60,7 +60,8 @@ eina_test_mempool.c	\
 eina_test_rectangle.c	\
 eina_test_list.c	\
 eina_test_matrixsparse.c \
-eina_test_tiler.c
+eina_test_tiler.c       \
+eina_test_strbuf.c
 
 eina_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libeina.la
 
