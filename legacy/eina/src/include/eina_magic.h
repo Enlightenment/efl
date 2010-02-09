@@ -48,7 +48,7 @@ EAPI Eina_Bool eina_magic_string_static_set(Eina_Magic magic, const char *magic_
 /**
  * @def EINA_MAGIC_NONE
  * Random value for specifying that a structure using the magic
- * feature has already been freed. It is used by eina_agic_fail().
+ * feature has already been freed. It is used by eina_magic_fail().
  *
  * If the magic feature of Eina is disabled, #EINA_MAGIC_NONE is just
  * @c 0.
