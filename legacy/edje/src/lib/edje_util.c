@@ -1334,7 +1334,7 @@ _edje_text_escape(const char *text)
 	text += advance;
      }
 
-   ret = eina_strbuf_string_remove(txt);
+   ret = eina_strbuf_string_steal(txt);
    eina_strbuf_free(txt);
    return ret;
 }
@@ -1408,7 +1408,7 @@ _edje_text_unescape(const char *text)
 	eina_strbuf_append_n(txt, last, len);
      }
 
-   ret = eina_strbuf_string_remove(txt);
+   ret = eina_strbuf_string_steal(txt);
    eina_strbuf_free(txt);
    return ret;
 }

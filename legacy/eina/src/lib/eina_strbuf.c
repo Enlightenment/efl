@@ -270,11 +270,11 @@ eina_strbuf_string_get(Eina_Strbuf *buf)
 }
 
 /**
- * Remove the contents of a string buffer
+ * Steal the contents of a string buffer
  * @param buf the buffer
  */
 EAPI char *
-eina_strbuf_string_remove(Eina_Strbuf *buf)
+eina_strbuf_string_steal(Eina_Strbuf *buf)
 {
    char *ret;
    EINA_MAGIC_CHECK_STRBUF(buf, NULL);

@@ -152,7 +152,7 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
      }
    if (tmp)
      eina_strbuf_free(tmp);
-   ret = eina_strbuf_string_remove(txt);
+   ret = eina_strbuf_string_steal(txt);
    eina_strbuf_free(txt);
    return ret;
 }

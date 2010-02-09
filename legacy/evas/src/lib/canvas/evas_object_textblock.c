@@ -3025,7 +3025,7 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
 	       }
 	  }
      }
-   o->markup_text = eina_strbuf_string_remove(txt);
+   o->markup_text = eina_strbuf_string_steal(txt);
    eina_strbuf_free(txt);
    return o->markup_text;
 }
@@ -4484,7 +4484,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 	  }
 	if (n == n2) break;
      }
-   ret = eina_strbuf_string_remove(txt);
+   ret = eina_strbuf_string_steal(txt);
    eina_strbuf_free(txt);
    return ret;
 }
