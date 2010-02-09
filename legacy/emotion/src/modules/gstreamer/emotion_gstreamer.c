@@ -918,14 +918,16 @@ em_video_channel_count(void *video)
 }
 
 static void
-em_video_channel_set(void *video,
-		     int   channel)
+em_video_channel_set(void *video __UNUSED__,
+		     int   channel __UNUSED__)
 {
+#if 0
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
 
    if (channel < 0) channel = 0;
+#endif
    /* FIXME: a faire... */
 }
 
@@ -980,14 +982,16 @@ em_audio_channel_count(void *video)
 }
 
 static void
-em_audio_channel_set(void *video,
-		     int   channel)
+em_audio_channel_set(void *video __UNUSED__,
+		     int   channel __UNUSED__)
 {
+#if 0
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
 
    if (channel < -1) channel = -1;
+#endif
    /* FIXME: a faire... */
 }
 
