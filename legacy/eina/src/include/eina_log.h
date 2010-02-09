@@ -205,6 +205,8 @@ EAPI void      eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data) EINA_ARG_
 EAPI void      eina_log_level_set(int level);
 EAPI int       eina_log_level_get(void) EINA_WARN_UNUSED_RESULT;
 
+static inline Eina_Bool eina_log_level_check(int level);
+
 EAPI Eina_Bool eina_log_main_thread_check(void) EINA_CONST EINA_WARN_UNUSED_RESULT;
 
 EAPI void      eina_log_color_disable_set(Eina_Bool disabled);
@@ -221,6 +223,7 @@ EAPI int       eina_log_abort_on_critical_level_get(void) EINA_WARN_UNUSED_RESUL
 EAPI void      eina_log_domain_level_set(const char *domain_name, int level) EINA_ARG_NONNULL(1);
 EAPI int       eina_log_domain_level_get(const char *domain_name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 EAPI int       eina_log_domain_registered_level_get(int domain) EINA_WARN_UNUSED_RESULT;
+static inline Eina_Bool eina_log_domain_level_check(int domain, int level);
 
 
 /*
@@ -242,6 +245,8 @@ EAPI void eina_log_vprint(int domain, Eina_Log_Level level, const char *file, co
 EAPI void eina_log_print_cb_stdout(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args);
 EAPI void eina_log_print_cb_stderr(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args);
 EAPI void eina_log_print_cb_file(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args);
+
+#include "eina_inline_log.x"
 
 /**
  * @}

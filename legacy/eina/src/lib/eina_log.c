@@ -436,16 +436,10 @@ static Eina_Log_Level _log_level = EINA_LOG_LEVEL_CRITICAL;
 static Eina_Log_Level _log_level = EINA_LOG_LEVEL_ERR;
 #endif
 
-// Default colors and levels
-static const char *_colors[] = { // + 1 for higher than debug
-  EINA_COLOR_LIGHTRED, // EINA_LOG_LEVEL_CRITICAL
-  EINA_COLOR_RED, // EINA_LOG_LEVEL_ERR
-  EINA_COLOR_YELLOW, // EINA_LOG_LEVEL_WARN
-  EINA_COLOR_GREEN, // EINA_LOG_LEVEL_INFO
-  EINA_COLOR_LIGHTBLUE, // EINA_LOG_LEVEL_DBG
-  EINA_COLOR_BLUE, // Higher than DEBUG
-};
-
+/* NOTE: if you change this, also change:
+ *   eina_log_print_level_name_get()
+ *   eina_log_print_level_name_color_get()
+ */
 static const char *_names[] = {
   "CRI",
   "ERR",
@@ -458,12 +452,16 @@ static inline void
 eina_log_print_level_name_get(int level, const char **p_name)
 {
    static char buf[4];
+   /* NOTE: if you change this, also change
+    *    eina_log_print_level_name_color_get()
+    *    eina_log_level_name_get() (at eina_inline_log.x)
+    */
    if (EINA_UNLIKELY(level < 0))
      {
 	snprintf(buf, sizeof(buf), "%03d", level);
 	*p_name = buf;
      }
-   else if (EINA_UNLIKELY(level > EINA_LOG_LEVELS))
+   else if (EINA_UNLIKELY(level >= EINA_LOG_LEVELS))
      {
 	snprintf(buf, sizeof(buf), "%03d", level);
 	*p_name = buf;
@@ -476,23 +474,24 @@ static inline void
 eina_log_print_level_name_color_get(int level, const char **p_name, const char **p_color)
 {
    static char buf[4];
+   /* NOTE: if you change this, also change:
+    *   eina_log_print_level_name_get()
+    */
    if (EINA_UNLIKELY(level < 0))
      {
 	snprintf(buf, sizeof(buf), "%03d", level);
 	*p_name = buf;
-	*p_color = _colors[0];
      }
-   else if (EINA_UNLIKELY(level > EINA_LOG_LEVELS))
+   else if (EINA_UNLIKELY(level >= EINA_LOG_LEVELS))
      {
 	snprintf(buf, sizeof(buf), "%03d", level);
 	*p_name = buf;
-	*p_color = _colors[EINA_LOG_LEVELS];
      }
    else
      {
 	*p_name = _names[level];
-	*p_color = _colors[level];
      }
+   *p_color = eina_log_level_color_get(level);
 }
 
 #define DECLARE_LEVEL_NAME(level) const char *name; eina_log_print_level_name_get(level, &name)
@@ -1001,7 +1000,6 @@ eina_log_init(void)
    int color_disable;
 
    assert((sizeof(_names)/sizeof(_names[0])) == EINA_LOG_LEVELS);
-   assert((sizeof(_colors)/sizeof(_colors[0])) == EINA_LOG_LEVELS + 1);
 
    if ((tmp = getenv(EINA_LOG_ENV_COLOR_DISABLE)))
      color_disable = atoi(tmp);

@@ -188,6 +188,36 @@ START_TEST(eina_log_customize)
    eina_log_abort_on_critical_set(EINA_FALSE);
    fail_if(eina_log_domain_registered_level_get(d) != EINA_LOG_LEVEL_UNKNOWN);
 
+#undef test_set_get_bool
+#undef test_set_get
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_log_level_name)
+{
+   char name[4];
+
+   fail_if(!eina_init());
+
+#define tst(level, str)				\
+   eina_log_level_name_get(level, name);	\
+   fail_if(strcmp(name, str) != 0)
+
+   tst(0, "CRI");
+   tst(1, "ERR");
+   tst(2, "WRN");
+   tst(3, "INF");
+   tst(4, "DBG");
+   tst(5, "005");
+   tst(12, "012");
+   tst(369, "369");
+   tst(-1, "-01");
+   tst(-48, "-48");
+
+#undef tst
+
    eina_shutdown();
 }
 END_TEST
@@ -201,4 +231,5 @@ eina_test_log(TCase *tc)
    tcase_add_test(tc, eina_log_domains_slot_reuse);
    tcase_add_test(tc, eina_log_level_indexes);
    tcase_add_test(tc, eina_log_customize);
+   tcase_add_test(tc, eina_log_level_name);
 }

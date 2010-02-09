@@ -4,6 +4,7 @@ EINAHEADERS = \
 eina_safety_checks.h \
 eina_error.h \
 eina_log.h \
+eina_inline_log.x \
 eina_fp.h \
 eina_inline_f32p32.x \
 eina_inline_f16p16.x \
