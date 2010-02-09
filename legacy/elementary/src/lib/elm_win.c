@@ -3,7 +3,7 @@
 
 /**
  * @defgroup Win Win
- * 
+ *
  */
 
 typedef struct _Elm_Win Elm_Win;
@@ -333,7 +333,7 @@ _elm_win_subobj_callback_changed_size_hints(void *data, Evas *e, Evas_Object *ob
 void
 _elm_win_shutdown(void)
 {
-   while (_elm_win_list) 
+   while (_elm_win_list)
      evas_object_del(_elm_win_list->data);
 }
 
@@ -419,7 +419,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    evas_object_layer_set(win->win_obj, 50);
    evas_object_pass_events_set(win->win_obj, 1);
 
-   evas_object_intercept_show_callback_add(win->win_obj, 
+   evas_object_intercept_show_callback_add(win->win_obj,
                                            _elm_win_obj_intercept_show, win);
    ecore_evas_object_associate(win->ee, win->win_obj,
 			       ECORE_EVAS_OBJECT_ASSOCIATE_BASE |
@@ -479,10 +479,10 @@ elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj)
    if (!win) return;
    win->subobjs = eina_list_append(win->subobjs, subobj);
    elm_widget_sub_object_add(obj, subobj);
-   evas_object_event_callback_add(subobj, EVAS_CALLBACK_DEL, 
+   evas_object_event_callback_add(subobj, EVAS_CALLBACK_DEL,
                                   _elm_win_subobj_callback_del, obj);
-   evas_object_event_callback_add(subobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
-                                  _elm_win_subobj_callback_changed_size_hints, 
+   evas_object_event_callback_add(subobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _elm_win_subobj_callback_changed_size_hints,
                                   obj);
    ecore_evas_geometry_get(win->ee, NULL, NULL, &w, &h);
    evas_object_move(subobj, 0, 0);
@@ -497,11 +497,11 @@ elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj)
    if (strcmp(elm_widget_type_get(obj), "win")) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
-   evas_object_event_callback_del_full(subobj, 
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
-                                       _elm_win_subobj_callback_changed_size_hints, 
+   evas_object_event_callback_del_full(subobj,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _elm_win_subobj_callback_changed_size_hints,
                                        obj);
-   evas_object_event_callback_del_full(subobj, EVAS_CALLBACK_DEL, 
+   evas_object_event_callback_del_full(subobj, EVAS_CALLBACK_DEL,
                                        _elm_win_subobj_callback_del, obj);
    win->subobjs = eina_list_remove(win->subobjs, subobj);
    elm_widget_sub_object_del(obj, subobj);
@@ -850,14 +850,14 @@ elm_win_screen_position_get(Evas_Object *obj, int *x, int *y)
 
 /**
  * Set if this window is an illume conformant window
- * 
+ *
  * @param obj The window object
  * @param conformant The conformant flag (1 = conformant, 0 = non-conformant)
- * 
+ *
  * @ingroup Win
  */
-EAPI void 
-elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant) 
+EAPI void
+elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant)
 {
    Elm_Win *win;
    if (strcmp(elm_widget_type_get(obj), "win")) return;
@@ -872,14 +872,14 @@ elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant)
 
 /**
  * Get if this window is an illume conformant window
- * 
+ *
  * @param obj The window object
  * @return A boolean if this window is illume conformant or not
- * 
+ *
  * @ingroup Win
  */
-EAPI Eina_Bool 
-elm_win_conformant_get(Evas_Object *obj) 
+EAPI Eina_Bool
+elm_win_conformant_get(Evas_Object *obj)
 {
    Elm_Win *win;
    if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
@@ -895,16 +895,16 @@ elm_win_conformant_get(Evas_Object *obj)
 
 /**
  * Set a window to be an illume quickpanel window
- * 
+ *
  * By default window objects are not quickpanel windows.
- * 
+ *
  * @param obj The window object
  * @param quickpanel The quickpanel flag (1 = quickpanel, 0 = normal window)
- * 
+ *
  * @ingroup Win
  */
-EAPI void 
-elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel) 
+EAPI void
+elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel)
 {
    Elm_Win *win;
    if (strcmp(elm_widget_type_get(obj), "win")) return;
@@ -912,10 +912,10 @@ elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel)
    if (!win) return;
    _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
-   if (win->xwin) 
+   if (win->xwin)
      {
         ecore_x_e_illume_quickpanel_set(win->xwin, quickpanel);
-        if (quickpanel) 
+        if (quickpanel)
           {
              Ecore_X_Window_State states[2];
 
@@ -930,14 +930,14 @@ elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel)
 
 /**
  * Get if this window is a quickpanel or not
- * 
+ *
  * @param obj The window object
  * @return A boolean if this window is a quickpanel or not
- * 
+ *
  * @ingroup Win
  */
-EAPI Eina_Bool 
-elm_win_quickpanel_get(Evas_Object *obj) 
+EAPI Eina_Bool
+elm_win_quickpanel_get(Evas_Object *obj)
 {
    Elm_Win *win;
    if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
@@ -953,14 +953,14 @@ elm_win_quickpanel_get(Evas_Object *obj)
 
 /**
  * Set the major priority of a quickpanel window
- * 
+ *
  * @param obj The window object
  * @param priority The major priority for this quickpanel
- * 
+ *
  * @ingroup Win
  */
-EAPI void 
-elm_win_quickpanel_priority_major_set(Evas_Object *obj, int priority) 
+EAPI void
+elm_win_quickpanel_priority_major_set(Evas_Object *obj, int priority)
 {
    Elm_Win *win;
    if (strcmp(elm_widget_type_get(obj), "win")) return;
@@ -975,14 +975,14 @@ elm_win_quickpanel_priority_major_set(Evas_Object *obj, int priority)
 
 /**
  * Get the major priority of a quickpanel window
- * 
+ *
  * @param obj The window object
  * @return The major priority of this quickpanel
- * 
+ *
  * @ingroup Win
  */
-EAPI int 
-elm_win_quickpanel_priority_major_get(Evas_Object *obj) 
+EAPI int
+elm_win_quickpanel_priority_major_get(Evas_Object *obj)
 {
    Elm_Win *win;
    if (strcmp(elm_widget_type_get(obj), "win")) return -1;
@@ -998,14 +998,14 @@ elm_win_quickpanel_priority_major_get(Evas_Object *obj)
 
 /**
  * Set the minor priority of a quickpanel window
- * 
+ *
  * @param obj The window object
  * @param priority The minor priority for this quickpanel
- * 
+ *
  * @ingroup Win
  */
-EAPI void 
-elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority) 
+EAPI void
+elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority)
 {
    Elm_Win *win;
    if (strcmp(elm_widget_type_get(obj), "win")) return;
@@ -1020,14 +1020,14 @@ elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority)
 
 /**
  * Get the minor priority of a quickpanel window
- * 
+ *
  * @param obj The window object
  * @return The minor priority of this quickpanel
- * 
+ *
  * @ingroup Win
  */
-EAPI int 
-elm_win_quickpanel_priority_minor_get(Evas_Object *obj) 
+EAPI int
+elm_win_quickpanel_priority_minor_get(Evas_Object *obj)
 {
    Elm_Win *win;
    if (strcmp(elm_widget_type_get(obj), "win")) return -1;
@@ -1043,14 +1043,14 @@ elm_win_quickpanel_priority_minor_get(Evas_Object *obj)
 
 /**
  * Set which zone this quickpanel should appear in
- * 
+ *
  * @param obj The window object
  * @param zone The requested zone for this quickpanel
- * 
+ *
  * @ingroup Win
  */
-EAPI void 
-elm_win_quickpanel_zone_set(Evas_Object *obj, int zone) 
+EAPI void
+elm_win_quickpanel_zone_set(Evas_Object *obj, int zone)
 {
    Elm_Win *win;
    if (strcmp(elm_widget_type_get(obj), "win")) return;
@@ -1058,19 +1058,19 @@ elm_win_quickpanel_zone_set(Evas_Object *obj, int zone)
    if (!win) return;
    _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
-   if (win->xwin) 
+   if (win->xwin)
      {
         Ecore_X_Window *zones;
         int zcount;
 
-        zcount = 
-          ecore_x_window_prop_window_list_get(ecore_x_window_root_first_get(), 
-                                              ECORE_X_ATOM_E_ILLUME_ZONE_LIST, 
+        zcount =
+          ecore_x_window_prop_window_list_get(ecore_x_window_root_first_get(),
+                                              ECORE_X_ATOM_E_ILLUME_ZONE_LIST,
                                               &zones);
-        if ((zones) && (zcount >= (zone + 1))) 
+        if ((zones) && (zcount >= (zone + 1)))
           {
              ecore_x_e_illume_quickpanel_zone_set(win->xwin, &zones[zone]);
-             ecore_x_e_illume_quickpanel_zone_request_send(zones[zone], 
+             ecore_x_e_illume_quickpanel_zone_request_send(zones[zone],
                                                            win->xwin);
              free(zones);
           }
