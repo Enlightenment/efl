@@ -904,14 +904,6 @@ eina_log_domain_register_unlocked(const char *name, const char *color)
    _log_domains_count++;
 
 finish_register:
-   EINA_INLIST_FOREACH(_glob_list, pending) 
-     {
-        if (!fnmatch(pending->name, name, 0)) 
-          {
-             _log_domains[i].level = pending->level;
-             break;
-          }
-     }
 
    EINA_INLIST_FOREACH(_pending_list, pending)
      {
@@ -921,6 +913,18 @@ finish_register:
 	     _pending_list = eina_inlist_remove(_pending_list, EINA_INLIST_GET(pending));
 	     free(pending);
 	     break;
+	  }
+     }
+
+   if (_log_domains[i].level == EINA_LOG_LEVEL_UNKNOWN)
+     {
+	EINA_INLIST_FOREACH(_glob_list, pending)
+	  {
+	     if (!fnmatch(pending->name, name, 0))
+	       {
+		  _log_domains[i].level = pending->level;
+		  break;
+	       }
 	  }
      }
 
