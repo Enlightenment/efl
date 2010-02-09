@@ -4986,7 +4986,7 @@ st_collections_group_parts_part_description_text_text_source(void)
     @page edcref
 
     @property
-        text_elipsis
+        elipsis
     @parameters
         [point of balance]
     @effect

@@ -31,7 +31,7 @@ syn keyword	cLabel		alias events entry_mode select_mode multiline
 syn keyword	cLabel		source1 source2 source3 source4 source5 source6
 syn keyword	cLabel		text_source transitions layout padding
 syn keyword	cLabel		size_w size_h size_max_w size_max_h size_min_w size_min_w
-syn keyword	cLabel		spread scale_hint text_elipsis pointer_mode prefer
+syn keyword	cLabel		spread scale_hint elipsis pointer_mode prefer
 syn keyword	cLabel		precise_is_inside use_alternate_font_metrics options
 syn keyword	cLabel		aspect_mode position span angle repch api
 
