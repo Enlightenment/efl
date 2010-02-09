@@ -11,6 +11,7 @@
 #include "eina_str.h"
 #include "eina_strbuf.h"
 #include "eina_magic.h"
+#include "eina_error.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -40,7 +41,7 @@ struct _Eina_Strbuf
    EINA_MAGIC
 };
 
-static void _eina_strbuf_init(Eina_Strbuf *buf);
+static Eina_Bool _eina_strbuf_init(Eina_Strbuf *buf);
 static Eina_Bool _eina_strbuf_resize(Eina_Strbuf *buf, size_t size);
 #define _eina_strbuf_grow(_buf, _size) \
    ((((_size) + 1) > (_buf)->size) ? _eina_strbuf_resize((_buf), (_size)) : EINA_TRUE)
@@ -66,11 +67,20 @@ eina_strbuf_new(void)
 {
    Eina_Strbuf *buf;
 
+   eina_error_set(0);
    buf = malloc(sizeof(Eina_Strbuf));
-   if (!buf) return NULL;
+   if (EINA_UNLIKELY(!buf))
+     {
+	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+	return NULL;
+     }
    EINA_MAGIC_SET(buf, EINA_MAGIC_STRBUF);
 
-   _eina_strbuf_init(buf);
+   if (!_eina_strbuf_init(buf))
+     {
+	eina_strbuf_free(buf);
+	return NULL;
+     }
 
    return buf;
 }
@@ -109,16 +119,18 @@ eina_strbuf_reset(Eina_Strbuf *buf)
  * @param buf the Eina_Strbuf to append to
  * @param str the string to append
  */
-EAPI void
+EAPI Eina_Bool
 eina_strbuf_append(Eina_Strbuf *buf, const char *str)
 {
    size_t len;
-   EINA_MAGIC_CHECK_STRBUF(buf);
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
    len = strlen(str);
-   _eina_strbuf_grow(buf, buf->len + len);
+   if (!_eina_strbuf_grow(buf, buf->len + len))
+     return EINA_FALSE;
    eina_strlcpy(buf->buf + buf->len, str, buf->size - buf->len);
    buf->len += len;
+   return EINA_TRUE;
 }
 
 /**
@@ -126,19 +138,23 @@ eina_strbuf_append(Eina_Strbuf *buf, const char *str)
  * @param buf the Eina_Strbuf to append to
  * @param str the string to append
  */
-EAPI void
+EAPI Eina_Bool
 eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str)
 {
    size_t len;
    char *esc;
-   EINA_MAGIC_CHECK_STRBUF(buf);
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
    esc = eina_str_escape(str);
+   if (EINA_UNLIKELY(!esc))
+     return EINA_FALSE;
    len = strlen(esc);
-   _eina_strbuf_grow(buf, buf->len + len);
+   if (!_eina_strbuf_grow(buf, buf->len + len))
+     return EINA_FALSE;
    eina_strlcpy(buf->buf + buf->len, esc, buf->size - buf->len);
    buf->len += len;
    free(esc);
+   return EINA_TRUE;
 }
 
 /**
@@ -147,19 +163,21 @@ eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str)
  * @param str the string to append
  * @param maxlen maximum number of chars to append
  */
-EAPI void
+EAPI Eina_Bool
 eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, unsigned int maxlen)
 {
    size_t len;
 
-   EINA_MAGIC_CHECK_STRBUF(buf);
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
    len = strlen(str);
    if (len > maxlen) len = maxlen;
-   _eina_strbuf_grow(buf, buf->len + len);
+   if (!_eina_strbuf_grow(buf, buf->len + len))
+     return EINA_FALSE;
 
    eina_strlcpy(buf->buf + buf->len, str, len + 1); // + 1 for '\0'
    buf->len += len;
+   return EINA_TRUE;
 }
 
 /**
@@ -168,31 +186,29 @@ eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, unsigned int maxlen)
  * @param str the string to insert
  * @param pos the position to insert the string
  */
-EAPI void
+EAPI Eina_Bool
 eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos)
 {
    size_t len;
 
-   EINA_MAGIC_CHECK_STRBUF(buf);
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
    if (pos >= buf->len)
-     {
-	eina_strbuf_append(buf, str);
-	return;
-     }
+     return eina_strbuf_append(buf, str);
 
    /*
     * resize the buffer if necessary
     */
    len = strlen(str);
    if (!_eina_strbuf_grow(buf, buf->len + len))
-     return;
+     return EINA_FALSE;
    /* move the existing text */
    memmove(buf->buf + len + pos, buf->buf + pos, buf->len - pos);
    /* and now insert the given string */
    memcpy(buf->buf + pos, str, len);
    buf->len += len;
    buf->buf[buf->len] = 0;
+   return EINA_TRUE;
 }
 
 /**
@@ -200,40 +216,42 @@ eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos)
  * @param buf the Eina_Strbuf to append to
  * @param c the char to append
  */
-EAPI void
+EAPI Eina_Bool
 eina_strbuf_append_char(Eina_Strbuf *buf, char c)
 {
-   EINA_MAGIC_CHECK_STRBUF(buf);
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
-   _eina_strbuf_grow(buf, buf->len + 1);
+   if (!_eina_strbuf_grow(buf, buf->len + 1))
+     return EINA_FALSE;
    buf->buf[(buf->len)++] = c;
    buf->buf[buf->len] = '\0';
+   return EINA_TRUE;
 }
 
-EAPI void
+EAPI Eina_Bool
 eina_strbuf_remove(Eina_Strbuf *buf, unsigned int start, unsigned int end)
 {
    unsigned int remove_len, tail_len;
 
-   EINA_MAGIC_CHECK_STRBUF(buf);
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
    if (end >= buf->len)
      end = buf->len;
 
-   if (end <= start) return;
+   if (end <= start)
+     return EINA_TRUE;
 
    remove_len = end - start;
    if (remove_len == buf->len)
      {
 	free(buf->buf);
-	_eina_strbuf_init(buf);
-	return;
+	return _eina_strbuf_init(buf);
      }
 
    tail_len = buf->len - end + 1; /* includes '\0' */
    memmove(buf->buf + start, buf->buf + end, tail_len);
    buf->len -= remove_len;
-   _eina_strbuf_resize(buf, buf->len);
+   return _eina_strbuf_resize(buf, buf->len);
 }
 
 /**
@@ -262,6 +280,7 @@ eina_strbuf_string_remove(Eina_Strbuf *buf)
    EINA_MAGIC_CHECK_STRBUF(buf, NULL);
 
    ret = buf->buf;
+   // TODO: Check return value and do something clever
    _eina_strbuf_init(buf);
    return ret;
 }
@@ -372,7 +391,7 @@ eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
    pos = pos_tmp = spos - buf->buf;
    tmp_buf = buf->buf;
    buf->buf = malloc(buf->size);
-   if (!buf->buf)
+   if (EINA_UNLIKELY(!buf->buf))
      {
 	buf->buf = tmp_buf;
 	return 0;
@@ -422,15 +441,22 @@ eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
  * init the buffer
  * @param buf the buffer to init
  */
-static void
+static Eina_Bool
 _eina_strbuf_init(Eina_Strbuf *buf)
 {
    buf->len = 0;
    buf->size = EINA_STRBUF_INIT_SIZE;
    buf->step = EINA_STRBUF_INIT_STEP;
 
+   eina_error_set(0);
    buf->buf = malloc(buf->size);
+   if (EINA_UNLIKELY(!buf->buf))
+     {
+	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+	return EINA_FALSE;
+     }
    buf->buf[0] = '\0';
+   return EINA_TRUE;
 }
 
 /**
@@ -484,9 +510,13 @@ _eina_strbuf_resize(Eina_Strbuf *buf, size_t size)
      }
 
    /* reallocate the buffer to the new size */
+   eina_error_set(0);
    buffer = realloc(buf->buf, new_size);
-   if (!buffer)
-     return EINA_FALSE;
+   if (EINA_UNLIKELY(!buffer))
+     {
+	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+	return EINA_FALSE;
+     }
 
    buf->buf = buffer;
    buf->size = new_size;
