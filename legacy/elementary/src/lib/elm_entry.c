@@ -98,7 +98,7 @@ _del_hook(Evas_Object *obj)
    Elm_Entry_Context_Menu_Item *it;
 
    if ((wd->api) && (wd->api->obj_unhook)) wd->api->obj_unhook(obj); // module - unhook
-   
+
    entries = eina_list_remove(entries, obj);
 #ifdef HAVE_ELEMENTARY_X
    ecore_event_handler_del(wd->sel_notify_handler);
@@ -385,7 +385,7 @@ _long_press(void *data)
    else if (wd->context_menu)
      {
         const char *context_menu_orientation;
-        
+
         if (wd->hoversel) evas_object_del(wd->hoversel);
         else elm_widget_scroll_freeze_push(data);
         wd->hoversel = elm_hoversel_add(data);
@@ -1171,12 +1171,12 @@ elm_entry_add(Evas_Object *parent)
 #endif
 
    entries = eina_list_prepend(entries, obj);
-   
+
    // module - find module for entry
    wd->api = _module(obj);
    // if found - hook in
    if ((wd->api) && (wd->api->obj_hook)) wd->api->obj_hook(obj);
-   
+
    return obj;
 }
 
@@ -1236,7 +1236,7 @@ elm_entry_entry_get(const Evas_Object *obj)
    // Strip ending <br> that is added by the textblock
    // need to check if <br> is present? seems it is always there
    if (wd->stripped) return wd->stripped;
-   
+
    text = edje_object_part_text_get(wd->ent, "elm.text");
    if (text) s = eina_stringshare_add_length(text, strlen(text) - 4);
    if (wd->stripped) eina_stringshare_del(wd->stripped);
