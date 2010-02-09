@@ -763,14 +763,14 @@ _eina_stringshare_del_head(Eina_Stringshare_Head **p_bucket, Eina_Stringshare_He
 
 
 static inline Eina_Bool
-_eina_stringshare_node_eq(const Eina_Stringshare_Node *node, const char *str, int slen)
+_eina_stringshare_node_eq(const Eina_Stringshare_Node *node, const char *str, unsigned int slen)
 {
    return ((node->length == slen) &&
 	   (memcmp(node->str, str, slen) == 0));
 }
 
 static Eina_Stringshare_Node *
-_eina_stringshare_head_find(Eina_Stringshare_Head *head, const char *str, int slen)
+_eina_stringshare_head_find(Eina_Stringshare_Head *head, const char *str, unsigned int slen)
 {
    Eina_Stringshare_Node *node, *prev;
 
