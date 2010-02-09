@@ -142,14 +142,14 @@
  * eina_log_level_set() function.
  *
  *
- * While developing your libraries or applications, you may notice that 
- * EINA_LOG_DOM_(ERR, DBG, INFO, CRIT, WARN) macros also print out 
+ * While developing your libraries or applications, you may notice that
+ * EINA_LOG_DOM_(ERR, DBG, INFO, CRIT, WARN) macros also print out
  * messages from eina itself. Here we introduce another environment variable
  * that is a bit more special: EINA_LOG_LEVELS_GLOB.
  *
  * This variable allows you to disable the logging of any/all code in eina itself.
- * This is useful when developing your libraries or applications so that you can 
- * see your own domain's messages easier without having to sift through a lot of 
+ * This is useful when developing your libraries or applications so that you can
+ * see your own domain's messages easier without having to sift through a lot of
  * internal eina debug messages. Here's an example:
  *
  * @code
@@ -158,9 +158,9 @@
  *
  * @endcode
  *
- * This will disable eina_log output from all internal eina code thus allowing 
+ * This will disable eina_log output from all internal eina code thus allowing
  * you to see your own domain messages easier.
- * 
+ *
  * @section tutorial_log_advanced_display Advanced usage of print callbacks
  *
  * The log module allows the user to change the way
@@ -1110,7 +1110,7 @@ eina_log_shutdown(void)
    _log_domains_count = 0;
    _log_domains_allocated = 0;
 
-   while (_glob_list) 
+   while (_glob_list)
      {
         tmp = _glob_list;
         _glob_list = _glob_list->next;
@@ -1138,7 +1138,7 @@ eina_log_shutdown(void)
  *
  * @see eina_thread_init()
  */
-void 
+void
 eina_log_threads_init(void)
 {
    _main_thread = pthread_self();
@@ -1150,7 +1150,7 @@ eina_log_threads_init(void)
  * @internal
  * @brief Shut down the log mutex.
  *
- * This function shuts down the mutex in the log module. 
+ * This function shuts down the mutex in the log module.
  * It is called by eina_thread_shutdown().
  *
  * @see eina_thread_shutdown()
