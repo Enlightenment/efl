@@ -4,7 +4,7 @@
 void 
 test_conformant(void *data, Evas_Object *obj, void *event) 
 {
-   Evas_Object *win, *bg, *conform, *btn, *bx, *sc, *en;
+   Evas_Object *win, *bg, *conform, *btn, *bx, *en;
 
    win = elm_win_add(NULL, "conformant", ELM_WIN_BASIC);
    elm_win_title_set(win, "Conformant");
@@ -25,24 +25,15 @@ test_conformant(void *data, Evas_Object *obj, void *event)
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    
-   sc = elm_scroller_add(win);
-   elm_scroller_content_min_limit(sc, 0, 1);
-   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_scroller_bounce_set(sc, 1, 0);
-   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, 0.5);
-   elm_box_pack_end(bx, sc);
-
-   en = elm_entry_add(win);
-   elm_entry_single_line_set(en, 1);
-   elm_entry_entry_set(en, "This is the top entry here");
+   en = elm_scrolled_entry_add(win);
+   elm_scrolled_entry_single_line_set(en, 1);
+   elm_scrolled_entry_bounce_set(en, 1, 0);
+   elm_scrolled_entry_entry_set(en, "This is the top entry here");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_scroller_content_set(sc, en);
    evas_object_show(en);
+   elm_box_pack_end(bx, en);
   
-   evas_object_show(sc);
-   
    btn = elm_button_add(win);
    elm_button_label_set(btn, "Test Conformant");
    evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, 0.0);
@@ -50,24 +41,15 @@ test_conformant(void *data, Evas_Object *obj, void *event)
    elm_box_pack_end(bx, btn);
    evas_object_show(btn);
 
-   sc = elm_scroller_add(win);
-   elm_scroller_content_min_limit(sc, 0, 1);
-   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_scroller_bounce_set(sc, 1, 0);
-   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, 0.5);
-   elm_box_pack_end(bx, sc);
-
-   en = elm_entry_add(win);
-   elm_entry_single_line_set(en, 1);
-   elm_entry_entry_set(en, "This is the middle entry here");
+   en = elm_scrolled_entry_add(win);
+   elm_scrolled_entry_single_line_set(en, 1);
+   elm_scrolled_entry_bounce_set(en, 1, 0);
+   elm_scrolled_entry_entry_set(en, "This is the middle entry here");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_scroller_content_set(sc, en);
    evas_object_show(en);
+   elm_box_pack_end(bx, en);
   
-   evas_object_show(sc);
-   
    btn = elm_button_add(win);
    elm_button_label_set(btn, "Test Conformant");
    evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -75,16 +57,9 @@ test_conformant(void *data, Evas_Object *obj, void *event)
    elm_box_pack_end(bx, btn);
    evas_object_show(btn);
 
-   sc = elm_scroller_add(win);
-   elm_scroller_content_min_limit(sc, 0, 0);
-   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
-   elm_scroller_bounce_set(sc, 0, 1);
-   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, sc);
-
-   en = elm_entry_add(win);
-   elm_entry_entry_set(en, 
+   en = elm_scrolled_entry_add(win);
+   elm_scrolled_entry_bounce_set(en, 0, 1);
+   elm_scrolled_entry_entry_set(en, 
                        "This is a multi-line entry at the bottom<br>"
                        "This can contain more than 1 line of text and be "
                        "scrolled around to allow for entering of lots of "
@@ -96,11 +71,9 @@ test_conformant(void *data, Evas_Object *obj, void *event)
                        "it is enabled.");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_scroller_content_set(sc, en);
    evas_object_show(en);
+   elm_box_pack_end(bx, en);
   
-   evas_object_show(sc);
-   
    elm_conformant_content_set(conform, bx);
    evas_object_show(bx);
    
