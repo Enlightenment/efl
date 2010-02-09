@@ -139,6 +139,58 @@ START_TEST(eina_log_level_indexes)
 }
 END_TEST
 
+START_TEST(eina_log_customize)
+{
+   int d;
+
+   /* please don't define EINA_LOG_LEVELS for it */
+#define TEST_DOM "_Test_Log_Dom"
+
+   fail_if(!eina_init());
+
+#define test_set_get(func, val)			\
+   eina_log_##func##_set(val);			\
+   fail_if(eina_log_##func##_get() != val)
+
+   test_set_get(level, -1234);
+   test_set_get(level, 4567);
+
+#define test_set_get_bool(func)			\
+   test_set_get(func, EINA_FALSE);		\
+   test_set_get(func, EINA_TRUE)
+
+   test_set_get_bool(color_disable);
+   test_set_get_bool(file_disable);
+   test_set_get_bool(function_disable);
+   test_set_get_bool(abort_on_critical);
+
+   test_set_get(abort_on_critical_level, -1234);
+   test_set_get(abort_on_critical_level, 4567);
+
+   fail_if(eina_log_domain_level_get(TEST_DOM) != eina_log_level_get());
+
+   eina_log_domain_level_set(TEST_DOM, -123);
+   fail_if(eina_log_domain_level_get(TEST_DOM) != -123);
+
+   eina_log_domain_level_set(TEST_DOM, 890);
+   fail_if(eina_log_domain_level_get(TEST_DOM) != 890);
+
+   d = eina_log_domain_register(TEST_DOM, EINA_COLOR_GREEN);
+   fail_if(d < 0);
+
+   fail_if(eina_log_domain_level_get(TEST_DOM) != 890);
+   fail_if(eina_log_domain_registered_level_get(d) != 890);
+
+   eina_log_domain_unregister(d);
+   fputs("NOTE: You should see a failed safety check or "
+	 "a crash if compiled without safety checks support.\n",
+	 stderr);
+   eina_log_abort_on_critical_set(EINA_FALSE);
+   fail_if(eina_log_domain_registered_level_get(d) != EINA_LOG_LEVEL_UNKNOWN);
+
+   eina_shutdown();
+}
+END_TEST
 
 void
 eina_test_log(TCase *tc)
@@ -148,4 +200,5 @@ eina_test_log(TCase *tc)
    tcase_add_test(tc, eina_log_domains_registry);
    tcase_add_test(tc, eina_log_domains_slot_reuse);
    tcase_add_test(tc, eina_log_level_indexes);
+   tcase_add_test(tc, eina_log_customize);
 }

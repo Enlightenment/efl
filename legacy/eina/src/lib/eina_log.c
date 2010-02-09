@@ -1285,17 +1285,211 @@ eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data)
 }
 
 /**
- * @brief Set the default log log level.
+ * @brief Set the default log level.
  *
  * @param level The log level.
  *
- * This function sets the log log level @p level. It is used in
+ * This function sets the log level @p level. It is used in
  * eina_log_print().
+ *
+ * @note this is initially set to envvar EINA_LOG_LEVEL by eina_init().
+ *
+ * @see eina_log_level_get()
  */
 EAPI void
-eina_log_level_set(Eina_Log_Level level)
+eina_log_level_set(int level)
 {
    _log_level = level;
+}
+
+/**
+ * @brief Get the default log level.
+ *
+ * @return the log level that limits eina_log_print().
+ *
+ * @see eina_log_level_set()
+ */
+EAPI int
+eina_log_level_get(void)
+{
+   return _log_level;
+}
+
+/**
+ * Checks if current thread is the main thread.
+ *
+ * @return #EINA_TRUE if threads were enabled and the current thread
+ *         is the one that called eina_log_threads_init(). If there is
+ *         no thread support (compiled with --disable-pthreads) or
+ *         they were not enabled, then #EINA_TRUE is also
+ *         returned. The only case where #EINA_FALSE is returned is
+ *         when threads were successfully enabled but the current
+ *         thread is not the main (one that called
+ *         eina_log_threads_init()).
+ */
+EAPI Eina_Bool
+eina_log_main_thread_check(void)
+{
+#ifdef EFL_HAVE_PTHREAD
+   return ((!_threads_enabled) || pthread_equal(_main_thread, pthread_self()));
+#else
+   return EINA_TRUE;
+#endif
+}
+
+/**
+ * @brief Set if color logging should be disabled.
+ *
+ * @param disabled if #EINA_TRUE, color logging should be disabled.
+ *
+ * @note this is initially set to envvar EINA_LOG_COLOR_DISABLE by eina_init().
+ *
+ * @see eina_log_color_disable_get()
+ */
+EAPI void
+eina_log_color_disable_set(Eina_Bool disabled)
+{
+   _disable_color = disabled;
+}
+
+/**
+ * @brief Get if color logging should be disabled.
+ *
+ * @return if #EINA_TRUE, color logging should be disabled.
+ *
+ * @see eina_log_color_disable_set()
+ */
+EAPI Eina_Bool
+eina_log_color_disable_get(void)
+{
+   return _disable_color;
+}
+
+/**
+ * @brief Set if originating file name logging should be disabled.
+ *
+ * @param disabled if #EINA_TRUE, file name logging should be disabled.
+ *
+ * @note this is initially set to envvar EINA_LOG_FILE_DISABLE by eina_init().
+ *
+ * @see eina_log_file_disable_get()
+ */
+EAPI void
+eina_log_file_disable_set(Eina_Bool disabled)
+{
+   _disable_file = disabled;
+}
+
+/**
+ * @brief Get if originating file name logging should be disabled.
+ *
+ * @return if #EINA_TRUE, file name logging should be disabled.
+ *
+ * @see eina_log_file_disable_set()
+ */
+EAPI Eina_Bool
+eina_log_file_disable_get(void)
+{
+   return _disable_file;
+}
+
+/**
+ * @brief Set if originating function name logging should be disabled.
+ *
+ * @param disabled if #EINA_TRUE, function name logging should be disabled.
+ *
+ * @note this is initially set to envvar EINA_LOG_FUNCTION_DISABLE by
+ *       eina_init().
+ *
+ * @see eina_log_function_disable_get()
+ */
+EAPI void
+eina_log_function_disable_set(Eina_Bool disabled)
+{
+   _disable_function = disabled;
+}
+
+/**
+ * @brief Get if originating function name logging should be disabled.
+ *
+ * @return if #EINA_TRUE, function name logging should be disabled.
+ *
+ * @see eina_log_function_disable_set()
+ */
+EAPI Eina_Bool
+eina_log_function_disable_get(void)
+{
+   return _disable_function;
+}
+
+/**
+ * @brief Set if critical messages should abort the program.
+ *
+ * @param abort_on_critical if #EINA_TRUE, messages with level equal
+ *        or smaller than eina_log_abort_on_critical_level_get() will
+ *        abort the program.
+ *
+ * @note this is initially set to envvar EINA_LOG_ABORT by
+ *       eina_init().
+ *
+ * @see eina_log_abort_on_critical_get()
+ * @see eina_log_abort_on_critical_level_set()
+ */
+EAPI void
+eina_log_abort_on_critical_set(Eina_Bool abort_on_critical)
+{
+   _abort_on_critical = abort_on_critical;
+}
+
+/**
+ * @brief Get if critical messages should abort the program.
+ *
+ * @return if #EINA_TRUE, any messages with level equal or smaller
+ *         than eina_log_abort_on_critical_level_get() will abort the
+ *         program.
+ *
+ * @see eina_log_abort_on_critical_set()
+ * @see eina_log_abort_on_critical_level_set()
+ */
+EAPI Eina_Bool
+eina_log_abort_on_critical_get(void)
+{
+   return _abort_on_critical;
+}
+
+/**
+ * @brief Set level that triggers abort if abort-on-critical is set.
+ *
+ * @param critical_level levels equal or smaller than the given value
+ *        will trigger program abortion if
+ *        eina_log_abort_on_critical_get() returns #EINA_TRUE.
+ *
+ * @note this is initially set to envvar EINA_LOG_ABORT_LEVEL by
+ *       eina_init().
+ *
+ * @see eina_log_abort_on_critical_level_get()
+ * @see eina_log_abort_on_critical_get()
+ */
+EAPI void
+eina_log_abort_on_critical_level_set(int critical_level)
+{
+   _abort_level_on_critical = critical_level;
+}
+
+/**
+ * @brief Get level that triggers abort if abort-on-critical is set.
+ *
+ * @return critical level equal or smaller than value will trigger
+ *        program abortion if eina_log_abort_on_critical_get() returns
+ *        #EINA_TRUE.
+ *
+ * @see eina_log_abort_on_critical_level_set()
+ * @see eina_log_abort_on_critical_get()
+ */
+EAPI int
+eina_log_abort_on_critical_level_get(void)
+{
+   return _abort_level_on_critical;
 }
 
 /**
@@ -1348,6 +1542,133 @@ eina_log_domain_unregister(int domain)
    LOG_LOCK();
    eina_log_domain_unregister_unlocked(domain);
    LOG_UNLOCK();
+}
+
+/**
+ * Set the domain level given its name.
+ *
+ * This call has the same effect as setting
+ * EINA_LOG_LEVELS=<domain_name>:<level>
+ *
+ * @param domain_name domain name to change the level. It may be of a
+ *        still not registered domain. If the domain is not registered
+ *        yet, it will be saved as a pending set and applied upon
+ *        registration.
+ * @param level level to use to limit eina_log_print() for given domain.
+ */
+EAPI void
+eina_log_domain_level_set(const char *domain_name, int level)
+{
+   Eina_Log_Domain_Level_Pending *pending;
+   int i, namelen;
+
+   EINA_SAFETY_ON_NULL_RETURN(domain_name);
+
+   for (i = 0; i < _log_domains_count; i++)
+     {
+	if (_log_domains[i].deleted)
+	  continue;
+	if (strcmp(_log_domains[i].name, domain_name) != 0)
+	  continue;
+
+	_log_domains[i].level = level;
+	return;
+     }
+
+   EINA_INLIST_FOREACH(_pending_list, pending)
+     {
+	if (!strcmp(pending->name, domain_name))
+	  {
+	     pending->level = level;
+	     return;
+	  }
+     }
+
+   namelen = strlen(domain_name);
+   pending = malloc(sizeof(Eina_Log_Domain_Level_Pending) + namelen + 1);
+   if (!pending)
+     return;
+   pending->level = level;
+   memcpy(pending->name, domain_name, namelen + 1);
+
+   _pending_list = eina_inlist_append(_pending_list, EINA_INLIST_GET(pending));
+}
+
+/**
+ * Get the domain level given its name.
+ *
+ * @param domain_name domain name to retrieve the level. It may be of
+ *        a still not registered domain. If the domain is not
+ *        registered yet, but there is a pending value, either from
+ *        eina_log_domain_level_set(),EINA_LOG_LEVELS environment
+ *        variable or from EINA_LOG_LEVELS_GLOB, these are
+ *        returned. If nothing else was found, then the global/default
+ *        level (eina_log_level_get()) is returned.
+ *
+ * @return level to use to limit eina_log_print() for given
+ *         domain. On error (@p domain_name == NULL),
+ *         EINA_LOG_LEVEL_UNKNOWN is returned.
+ *
+ * @see eina_log_domain_level_set()
+ * @see eina_log_domain_registered_level_get()
+ */
+EAPI int
+eina_log_domain_level_get(const char *domain_name)
+{
+   Eina_Log_Domain_Level_Pending *pending;
+   int i;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(domain_name, EINA_LOG_LEVEL_UNKNOWN);
+
+   for (i = 0; i < _log_domains_count; i++)
+     {
+	if (_log_domains[i].deleted)
+	  continue;
+	if (strcmp(_log_domains[i].name, domain_name) != 0)
+	  continue;
+
+	return _log_domains[i].level;
+     }
+
+   EINA_INLIST_FOREACH(_pending_list, pending)
+     {
+	if (!strcmp(pending->name, domain_name))
+	  {
+	     return pending->level;
+	  }
+     }
+
+   EINA_INLIST_FOREACH(_glob_list, pending)
+     {
+	if (!fnmatch(pending->name, domain_name, 0))
+	  {
+	     return pending->level;
+	  }
+     }
+
+   return _log_level;
+}
+
+/**
+ * Get the domain level given its identifier.
+ *
+ * @param domain identifier, so it must be previously registered with
+ *        eina_log_domain_register(). It's a much faster version of
+ *        eina_log_domain_level_get(), but relies on domain being
+ *        present.
+ *
+ * @return level to use to limit eina_log_print() for given domain. On
+ *         error EINA_LOG_LEVEL_UNKNOWN is returned.
+ */
+EAPI int
+eina_log_domain_registered_level_get(int domain)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(domain >= 0, EINA_LOG_LEVEL_UNKNOWN);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(domain < _log_domains_count,
+				   EINA_LOG_LEVEL_UNKNOWN);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(_log_domains[domain].deleted,
+				  EINA_LOG_LEVEL_UNKNOWN);
+   return _log_domains[domain].level;
 }
 
 /**

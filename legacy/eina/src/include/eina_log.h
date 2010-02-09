@@ -200,8 +200,28 @@ typedef void (*Eina_Log_Print_Cb)(const Eina_Log_Domain *d, Eina_Log_Level level
 /*
  * Customization
  */
-EAPI void eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data) EINA_ARG_NONNULL(1);
-EAPI void eina_log_level_set(Eina_Log_Level level);
+EAPI void      eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data) EINA_ARG_NONNULL(1);
+
+EAPI void      eina_log_level_set(int level);
+EAPI int       eina_log_level_get(void) EINA_WARN_UNUSED_RESULT;
+
+EAPI Eina_Bool eina_log_main_thread_check(void) EINA_CONST EINA_WARN_UNUSED_RESULT;
+
+EAPI void      eina_log_color_disable_set(Eina_Bool disabled);
+EAPI Eina_Bool eina_log_color_disable_get(void) EINA_WARN_UNUSED_RESULT;
+EAPI void      eina_log_file_disable_set(Eina_Bool disabled);
+EAPI Eina_Bool eina_log_file_disable_get(void) EINA_WARN_UNUSED_RESULT;
+EAPI void      eina_log_function_disable_set(Eina_Bool disabled);
+EAPI Eina_Bool eina_log_function_disable_get(void) EINA_WARN_UNUSED_RESULT;
+EAPI void      eina_log_abort_on_critical_set(Eina_Bool abort_on_critical);
+EAPI Eina_Bool eina_log_abort_on_critical_get(void) EINA_WARN_UNUSED_RESULT;
+EAPI void      eina_log_abort_on_critical_level_set(int critical_level);
+EAPI int       eina_log_abort_on_critical_level_get(void) EINA_WARN_UNUSED_RESULT;
+
+EAPI void      eina_log_domain_level_set(const char *domain_name, int level) EINA_ARG_NONNULL(1);
+EAPI int       eina_log_domain_level_get(const char *domain_name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI int       eina_log_domain_registered_level_get(int domain) EINA_WARN_UNUSED_RESULT;
+
 
 /*
  * Logging domains
