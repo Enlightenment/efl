@@ -1,6 +1,14 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Conformant Conformant
+ * 
+ * The aim is to provide a widget that can be used in elementary apps to 
+ * account for space taken up by the indicator & softkey windows when running 
+ * the illume2 module of E17.
+ */
+
 typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data 
 {
@@ -163,6 +171,14 @@ _prop_change(void *data, int type, void *event)
    return 1;
 }
 
+/**
+ * Add a new Conformant object
+ * 
+ * @param parent The parent object
+ * @return The new conformant object or NULL if it cannot be created
+ * 
+ * @ingroup Conformant
+ */
 EAPI Evas_Object *
 elm_conformant_add(Evas_Object *parent) 
 {
@@ -220,6 +236,14 @@ elm_conformant_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the content of the conformant widget
+ * 
+ * @param obj The conformant object
+ * @param content The content that will be used inside this conformant object
+ * 
+ * @ingroup Conformant
+ */
 EAPI void 
 elm_conformant_content_set(Evas_Object *obj, Evas_Object *content) 
 {
