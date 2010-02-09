@@ -1308,6 +1308,9 @@ EAPI void
 eina_log_level_set(int level)
 {
    _log_level = level;
+   if (EINA_LIKELY((EINA_LOG_DOMAIN_GLOBAL >= 0) &&
+		   ((unsigned int)EINA_LOG_DOMAIN_GLOBAL < _log_domains_count)))
+     _log_domains[EINA_LOG_DOMAIN_GLOBAL].level = level;
 }
 
 /**
