@@ -775,6 +775,22 @@ elm_win_rotation_set(Evas_Object *obj, int rotation)
    _elm_win_xwin_update(win);
 }
 
+EAPI void
+elm_win_rotation_with_resize_set(Evas_Object *obj, int rotation)
+{
+   Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   if (win->rot == rotation) return;
+   win->rot = rotation;
+   ecore_evas_rotation_with_resize_set(win->ee, rotation);
+   evas_object_size_hint_min_set(obj, -1, -1);
+   evas_object_size_hint_max_set(obj, -1, -1);
+   _elm_win_eval_subobjs(obj);
+   _elm_win_xwin_update(win);
+}
+
 EAPI int
 elm_win_rotation_get(Evas_Object *obj)
 {

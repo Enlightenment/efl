@@ -6,6 +6,8 @@ typedef struct _Testitem
    int mode, onoff;
 } Testitem;
 
+static int rotate_with_resize = 0;
+
 static void
 my_bt_38_alpha_on(void *data, Evas_Object *obj, void *event_info)
 {
@@ -25,11 +27,21 @@ my_bt_38_alpha_off(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_ck_38_resize(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   rotate_with_resize = elm_check_state_get(obj);
+}
+
+static void
 my_bt_38_rot_0(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win = data;
    Evas_Object *bg = evas_object_data_get(win, "bg");
-   elm_win_rotation_set(win, 0);
+   if (rotate_with_resize)
+     elm_win_rotation_with_resize_set(win, 0);
+   else   	
+     elm_win_rotation_set(win, 0);
 }
 
 static void
@@ -37,7 +49,10 @@ my_bt_38_rot_90(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win = data;
    Evas_Object *bg = evas_object_data_get(win, "bg");
-   elm_win_rotation_set(win, 90);
+   if (rotate_with_resize)
+     elm_win_rotation_with_resize_set(win, 90);
+   else   	
+     elm_win_rotation_set(win, 90);
 }
 
 static void
@@ -45,7 +60,10 @@ my_bt_38_rot_180(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win = data;
    Evas_Object *bg = evas_object_data_get(win, "bg");
-   elm_win_rotation_set(win, 180);
+   if (rotate_with_resize)
+     elm_win_rotation_with_resize_set(win, 180);
+   else   	
+     elm_win_rotation_set(win, 180);
 }
 
 static void
@@ -53,7 +71,10 @@ my_bt_38_rot_270(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win = data;
    Evas_Object *bg = evas_object_data_get(win, "bg");
-   elm_win_rotation_set(win, 270);
+   if (rotate_with_resize)
+     elm_win_rotation_with_resize_set(win, 270);
+   else   	
+     elm_win_rotation_set(win, 270);
 }
 
 static void
@@ -87,7 +108,7 @@ _win_foc_out(void *data, Evas *e, Evas_Object *obj, void *event_info)
 void
 test_win_state(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *sl, *bx, *bx2, *bt;
+   Evas_Object *win, *bg, *sl, *bx, *bx2, *bt, *ck;
    static Testitem tit[3];
    int i;
 
@@ -155,6 +176,15 @@ test_win_state(void *data, Evas_Object *obj, void *event_info)
 
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
+
+   ck = elm_check_add(win);
+   elm_check_label_set(ck, "resize");
+   elm_check_state_set(ck, rotate_with_resize);
+   evas_object_smart_callback_add(ck, "changed", my_ck_38_resize, win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, 0.02, 0.99);
+   evas_object_show(ck); 
+   elm_box_pack_end(bx, ck);
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
