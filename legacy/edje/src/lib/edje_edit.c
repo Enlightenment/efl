@@ -722,7 +722,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    /* Init Edje_Part_Collection_Directory_Entry */
    //printf(" new id: %d\n", id);
    de->id = id;
-   de->entry = strdup(name);
+   de->entry = eina_stringshare_add(name);
    ed->file->collection_dir->entries = eina_list_append(ed->file->collection_dir->entries, de);
 
    /* Init Edje_Part_Collection */
@@ -749,7 +749,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
  * @param obj The pointer to the edje object.
  * @param group_name Group to delete.
  *
- * @return @c 1 on success, @c 0 on failure.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
  *
  * This function deletes the given group from the file @a obj is set to. This
  * operation can't be undone as all references to the group are removed from
@@ -766,29 +766,30 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
    Eet_File *eetf;
    Edje_Part_Collection_Directory_Entry *e;
 
-   GET_ED_OR_RETURN(0);
+   GET_ED_OR_RETURN(EINA_FALSE);
 
    if (eina_hash_find(ed->file->collection_hash, group_name))
-     return 0;
+     return EINA_FALSE;
+
    EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, e)
      {
 	if (!strcmp(e->entry, group_name))
 	  {
-	     if (e->id == ed->collection->id)
-	       return 0;
-	     ed->file->collection_dir->entries = eina_list_remove_list(ed->file->collection_dir->entries, l);
+	     if (e->id == ed->collection->id) return EINA_FALSE;
+	     ed->file->collection_dir->entries =
+	       eina_list_remove_list(ed->file->collection_dir->entries, l);
 	     break;
 	  }
 	e = NULL;
      }
-   if (!e)
-     return 0;
+   if (!e) return EINA_FALSE;
 
    EINA_LIST_FOREACH(ed->file->collection_cache, l, g)
      {
 	if (g->id == e->id)
 	  {
-	     ed->file->collection_cache = eina_list_remove_list(ed->file->collection_cache, l);
+	     ed->file->collection_cache =
+	       eina_list_remove_list(ed->file->collection_cache, l);
 	     break;
 	  }
 	g = NULL;
@@ -800,15 +801,14 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
      {
 	ERR("Edje_Edit: Error. unable to open \"%s\" "
 	    "for writing output", ed->file->path);
-	return 0;
+	return EINA_FALSE;
      }
    snprintf(buf, sizeof(buf), "collections/%d", e->id);
    eet_delete(eetf, buf);
    eet_close(eetf);
 
    /* Free Group */
-   if (g)
-     _edje_collection_free(ed->file, g);
+   if (g) _edje_collection_free(ed->file, g);
 
    _edje_if_string_free(ed, e->entry);
    free(e);
@@ -817,7 +817,7 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
     * references the next time is loaded */
    edje_edit_save_all(obj);
 
-   return 1;
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
