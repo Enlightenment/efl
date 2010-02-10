@@ -1311,7 +1311,7 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 }
 
 static void
-_ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation,
+_ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
 				    Evas_Engine_Info *einfo)
 {
    int rot_dif;
@@ -1324,18 +1324,39 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation,
 	int minw, minh, maxw, maxh, basew, baseh, stepw, steph;
 
 	evas_engine_info_set(ee->evas, einfo);
-	if (!ee->prop.fullscreen)
-	  {
-	     ecore_x_window_resize(ee->prop.window, ee->h, ee->w);
-	     ee->expecting_resize.w = ee->h;
-	     ee->expecting_resize.h = ee->w;
-	  }
-	else
-	  {
-	     int w, h;
 
+	if (!resize)
+          {
+             if (!ee->prop.fullscreen)
+               {
+                  ecore_x_window_resize(ee->prop.window, ee->h, ee->w);
+                  ee->expecting_resize.w = ee->h;
+                  ee->expecting_resize.h = ee->w;
+               }
+             else
+               {
+                  int w, h;
+                  
+                  ecore_x_window_size_get(ee->prop.window, &w, &h);
+                  ecore_x_window_resize(ee->prop.window, h, w);
+                  if ((rotation == 0) || (rotation == 180))
+                    {
+                       evas_output_size_set(ee->evas, ee->w, ee->h);
+                       evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+                    }
+                  else
+                    {
+                       evas_output_size_set(ee->evas, ee->h, ee->w);
+                       evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+                    }
+                  if (ee->func.fn_resize) ee->func.fn_resize(ee);
+               }
+          }
+	else
+          {
+	     int w, h;
+             
 	     ecore_x_window_size_get(ee->prop.window, &w, &h);
-	     ecore_x_window_resize(ee->prop.window, h, w);
 	     if ((rotation == 0) || (rotation == 180))
 	       {
 		  evas_output_size_set(ee->evas, ee->w, ee->h);
@@ -1347,7 +1368,7 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation,
 		  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
 	       }
 	     if (ee->func.fn_resize) ee->func.fn_resize(ee);
-	  }
+          }
 	ecore_evas_size_min_get(ee, &minw, &minh);
 	ecore_evas_size_max_get(ee, &maxw, &maxh);
 	ecore_evas_size_base_get(ee, &basew, &baseh);
@@ -1376,7 +1397,7 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation,
 }
 
 static void
-_ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation)
+_ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 {
    if (ee->rotation == rotation) return;
    if (!strcmp(ee->driver, "opengl_x11")) return;
@@ -1390,7 +1411,7 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation)
 	if (!einfo) return;
 	einfo->info.rotation = rotation;
 	_ecore_evas_x_rotation_set_internal
-	  (ee, rotation, (Evas_Engine_Info *)einfo);
+	  (ee, rotation, resize, (Evas_Engine_Info *)einfo);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
      }
    else if (!strcmp(ee->driver,  "software_16_x11"))
@@ -1402,7 +1423,7 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation)
 	if (!einfo) return;
 	einfo->info.rotation = rotation;
 	_ecore_evas_x_rotation_set_internal
-	  (ee, rotation, (Evas_Engine_Info *)einfo);
+	  (ee, rotation, resize, (Evas_Engine_Info *)einfo);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
      }
 }

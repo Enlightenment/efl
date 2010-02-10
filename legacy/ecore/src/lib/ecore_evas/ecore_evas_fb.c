@@ -353,7 +353,7 @@ _ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int 
 }
 
 static void
-_ecore_evas_rotation_set(Ecore_Evas *ee, int rotation)
+_ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 {
    Evas_Engine_Info_FB *einfo;
    int rot_dif;

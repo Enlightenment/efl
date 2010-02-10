@@ -157,7 +157,7 @@ struct _Ecore_Evas_Engine_Func
    void        (*fn_managed_move) (Ecore_Evas *ee, int x, int y);
    void        (*fn_resize) (Ecore_Evas *ee, int w, int h);
    void        (*fn_move_resize) (Ecore_Evas *ee, int x, int y, int w, int h);
-   void        (*fn_rotation_set) (Ecore_Evas *ee, int rot);
+   void        (*fn_rotation_set) (Ecore_Evas *ee, int rot, int resize);
    void        (*fn_shaped_set) (Ecore_Evas *ee, int shaped);
    void        (*fn_show) (Ecore_Evas *ee);
    void        (*fn_hide) (Ecore_Evas *ee);

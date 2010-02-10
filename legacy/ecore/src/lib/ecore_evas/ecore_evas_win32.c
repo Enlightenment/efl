@@ -530,7 +530,7 @@ _ecore_evas_win32_rotation_set_internal(Ecore_Evas *ee, int rotation)
 }
 
 static void
-_ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation)
+_ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 {
    INF("ecore evas rotation: %s", rotation ? "yes" : "no");
 

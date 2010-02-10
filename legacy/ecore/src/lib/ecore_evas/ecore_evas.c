@@ -1408,7 +1408,35 @@ ecore_evas_rotation_set(Ecore_Evas *ee, int rot)
    rot = rot % 360;
    while (rot < 0) rot += 360;
    while (rot >= 360) rot -= 360;
-   IFC(ee, fn_rotation_set) (ee, rot);
+   IFC(ee, fn_rotation_set) (ee, rot, 0);
+   /* make sure everything gets redrawn */
+   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+   evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+   IFE;
+}
+
+/**
+ * Set the rotation of an Ecore_Evas' window
+ *
+ * @param ee The Ecore_Evas
+ * @param rot the angle (in degrees) of rotation.
+ *
+ * The allowed values of @p rot depend on the engine being used. Most only
+ * allow multiples of 90.
+ */
+EAPI void
+ecore_evas_rotation_with_resize_set(Ecore_Evas *ee, int rot)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+			 "ecore_evas_rotation_set");
+	return;
+     }
+   rot = rot % 360;
+   while (rot < 0) rot += 360;
+   while (rot >= 360) rot -= 360;
+   IFC(ee, fn_rotation_set) (ee, rot, 1);
    /* make sure everything gets redrawn */
    evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
    evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);

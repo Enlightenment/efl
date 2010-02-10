@@ -279,6 +279,7 @@ EAPI void        ecore_evas_resize(Ecore_Evas *ee, int w, int h);
 EAPI void        ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h);
 EAPI void        ecore_evas_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
 EAPI void        ecore_evas_rotation_set(Ecore_Evas *ee, int rot);
+EAPI void        ecore_evas_rotation_with_resize_set(Ecore_Evas *ee, int rot);
 EAPI int         ecore_evas_rotation_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_shaped_set(Ecore_Evas *ee, int shaped);
 EAPI int         ecore_evas_shaped_get(const Ecore_Evas *ee);
