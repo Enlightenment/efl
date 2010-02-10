@@ -1156,7 +1156,7 @@ _native_free_cb(void *data, void *image)
                glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap,
                                         GLX_FRONT_LEFT_EXT);
           }
-        printf("free glx pixmap %p\n", n->glx_pixmap);
+//        printf("free glx pixmap %p\n", n->glx_pixmap);
         glXDestroyPixmap(re->win->disp, n->glx_pixmap);
         n->glx_pixmap = 0;
      }
@@ -1342,8 +1342,8 @@ eng_image_native_set(void *data, void *image, void *native)
              im->native.func.free   = _native_free_cb;
              n->glx_pixmap = glXCreatePixmap(re->win->disp, n->fbc, 
                                              n->pixmap, pixmap_att);
-             printf("new native texture for %x | %4i x %4i @ %2i = %p\n",
-                    pm, w, h, depth, n->glx_pixmap);
+//             printf("new native texture for %x | %4i x %4i @ %2i = %p\n",
+//                    pm, w, h, depth, n->glx_pixmap);
              if (!target)
                {
                   printf("no target :(\n");
