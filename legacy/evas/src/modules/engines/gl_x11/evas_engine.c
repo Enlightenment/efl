@@ -1156,6 +1156,7 @@ _native_free_cb(void *data, void *image)
                glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap,
                                         GLX_FRONT_LEFT_EXT);
           }
+        printf("free glx pixmap %p\n", n->glx_pixmap);
         glXDestroyPixmap(re->win->disp, n->glx_pixmap);
         n->glx_pixmap = 0;
      }
@@ -1283,20 +1284,19 @@ eng_image_native_set(void *data, void *image, void *native)
              int pixmap_att[20];
              int target = 0;
              int i = 0;
-             
+
              if ((re->win->depth_cfg[depth].tex_target &
-                  GLX_TEXTURE_2D_BIT_EXT) &&
-                 (1) // we assume npo2 for now
+                  GLX_TEXTURE_2D_BIT_EXT) 
+//                 && (1) // we assume npo2 for now
                  // size is pow2 || mnpo2 supported
                  )
                {
-                  printf("2d\n");
                   target = GLX_TEXTURE_2D_EXT;
                }
              else if ((re->win->depth_cfg[depth].tex_target &
                       GLX_TEXTURE_RECTANGLE_BIT_EXT))
                {
-                  printf("rect\n");
+                  printf("rect!!! (not handled)\n");
                   target = GLX_TEXTURE_RECTANGLE_EXT;
                }
              if (!target)
@@ -1333,18 +1333,20 @@ eng_image_native_set(void *data, void *image, void *native)
              n->visual = vis;
              n->fbc = re->win->depth_cfg[depth].fbc;
              im->native.yinvert     = re->win->depth_cfg[depth].yinvert;
+//             im->native.loose       = 1; // works well on nvidia - intel may not be happy i hear. for now.. lets make nv work 1. - because i have an nv card, 2. because it doesnt seem broken for texture-from-pixmap like fglrx has seemed, 3. its some of the best done drivers on linux
              im->native.loose       = 0;
              im->native.data        = n;
              im->native.func.data   = re;
              im->native.func.bind   = _native_bind_cb;
              im->native.func.unbind = _native_unbind_cb;
              im->native.func.free   = _native_free_cb;
-
              n->glx_pixmap = glXCreatePixmap(re->win->disp, n->fbc, 
                                              n->pixmap, pixmap_att);
+             printf("new native texture for %x | %4ix%4i@%2ibpp = %p\n",
+                    pm, w, h, depth, n->glx_pixmap);
              if (!target)
                {
-                  printf("notgt\n");
+                  printf("no target :(\n");
                   glXQueryDrawable(re->win->disp, n->pixmap, GLX_TEXTURE_TARGET_EXT, &target);
                }
              if (target == GLX_TEXTURE_2D_EXT)
@@ -1352,11 +1354,13 @@ eng_image_native_set(void *data, void *image, void *native)
                   im->native.target = GL_TEXTURE_2D;
                   im->native.mipmap = re->win->depth_cfg[depth].mipmap;
                }
+#ifdef GL_TEXTURE_RECTANGLE_ARB             
              else if (target == GLX_TEXTURE_RECTANGLE_EXT)
                {
                   im->native.target = GL_TEXTURE_RECTANGLE_ARB;
                   im->native.mipmap = 0;
                }
+#endif             
              else
                {
                   im->native.target = GL_TEXTURE_2D;

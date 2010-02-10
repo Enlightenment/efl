@@ -215,7 +215,7 @@ eng_window_new(Display *disp,
                   glXGetFBConfigAttrib(disp, fbc[j], GLX_BIND_TO_TEXTURE_TARGETS_EXT, &val);
                   gw->depth_cfg[i].tex_target = val;
                   
-                  gw->depth_cfg[i].fbc = fbc[i];
+                  gw->depth_cfg[i].fbc = fbc[j];
                }
           }
         XFree(fbc);
