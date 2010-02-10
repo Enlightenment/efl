@@ -4937,6 +4937,7 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
    epr->name = eina_stringshare_add(name);
    epr->signal = NULL;
    epr->source = NULL;
+   epr->filter_state = NULL;
    epr->in.from = 0.0;
    epr->in.range = 0.0;
    epr->action = 0;
@@ -4985,6 +4986,7 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
    _edje_if_string_free(ed, epr->name);
    _edje_if_string_free(ed, epr->signal);
    _edje_if_string_free(ed, epr->source);
+   _edje_if_string_free(ed, epr->filter_state);
    _edje_if_string_free(ed, epr->state);
    _edje_if_string_free(ed, epr->state2);
 
@@ -5146,6 +5148,32 @@ edje_edit_program_source_set(Evas_Object *obj, const char *prog, const char *sou
    if (ed->patterns.programs.sources_patterns)
       edje_match_patterns_free(ed->patterns.programs.sources_patterns);
    ed->patterns.programs.sources_patterns = edje_match_programs_source_init(ed->collection->programs);
+
+   return 1;
+}
+
+EAPI const char *
+edje_edit_program_filter_state_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(NULL);
+
+   if (!epr->filter_state) return NULL;
+   //printf("GET SOURCE for program: %s [%s]\n", prog, epr->source_state);
+   return eina_stringshare_add(epr->filter_state);
+}
+
+EAPI Eina_Bool
+edje_edit_program_filter_state_set(Evas_Object *obj, const char *prog, const char *filter_state)
+{
+   GET_ED_OR_RETURN(0);
+   GET_EPR_OR_RETURN(0);
+
+   if (!filter_state) return 0;
+
+   //printf("SET SOURCE for program: %s [%s]\n", prog, source);
+
+   _edje_if_string_free(ed, epr->filter_state);
+   epr->filter_state = eina_stringshare_add(filter_state);
 
    return 1;
 }

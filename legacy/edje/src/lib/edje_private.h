@@ -395,6 +395,7 @@ struct _Edje_Program /* a conditional program to be run */
 
    const char *signal; /* if signal emission name matches the glob here... */
    const char *source; /* if part that emitted this (name) matches this glob */
+   const char *filter_state; /* if part state that emitted this (name) matches this */
 
    struct {
       double   from;
