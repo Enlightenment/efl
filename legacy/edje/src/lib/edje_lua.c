@@ -141,7 +141,7 @@ struct _Edje_Lua_Edje_Part_Description
 };
 
 void
-_edje_lua_error(lua_State *L, int err_code)
+__edje_lua_error(const char *file, const char *fnc, int line, lua_State *L, int err_code)
 {
    char *err_type;
 
@@ -163,7 +163,9 @@ _edje_lua_error(lua_State *L, int err_code)
 	err_type = "unknown";
 	break;
      }
-   ERR("Lua %s error: %s", err_type, lua_tostring(L, -1));
+   eina_log_print
+     (_edje_default_log_dom, EINA_LOG_LEVEL_ERR,  file, fnc, line,
+      "Lua %s error: %s", err_type, lua_tostring(L, -1));
    // don't exit. this is BAD. lua script bugs will cause thngs like e to
    // exit mysteriously endig your x session. bad!
    // exit(-1);

@@ -1435,7 +1435,10 @@ void _edje_lua_script_fn_new(Edje *ed);
 void _edje_lua_group_fn_new(Edje *ed);
 void _edje_lua_init();
 void _edje_lua_shutdown();
-void _edje_lua_error(lua_State *L, int err_code);
+
+void __edje_lua_error(const char *file, const char *fnc, int line, lua_State *L, int err_code);
+#define _edje_lua_error(L, err_code)					\
+  __edje_lua_error(__FILE__, __FUNCTION__, __LINE__, L, err_code)
 
 int  _edje_lua_script_only(Edje *ed);
 void _edje_lua_script_only_init(Edje *ed);
