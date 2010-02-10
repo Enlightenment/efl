@@ -1508,6 +1508,26 @@ _edje_part_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
      }
 }
 
+static void
+_evas_focus_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Edje *ed = (Edje *)data;
+
+   if (evas_focus_get(e) == ed->obj) {
+      _edje_focus_in_cb(data, NULL, NULL, NULL);
+   }
+}
+
+static void
+_evas_focus_out_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Edje *ed = (Edje *)data;
+
+   if (evas_focus_get(e) == ed->obj) {
+      _edje_focus_out_cb(data, NULL, NULL, NULL);
+   }
+}
+
 /***************************************************************/
 void
 _edje_entry_init(Edje *ed)
@@ -1516,6 +1536,8 @@ _edje_entry_init(Edje *ed)
    evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_FOCUS_OUT, _edje_focus_out_cb, ed);
    evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_KEY_DOWN, _edje_key_down_cb, ed);
    evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_KEY_UP, _edje_key_up_cb, ed);
+   evas_event_callback_add(ed->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN, _evas_focus_in_cb, ed);
+   evas_event_callback_add(ed->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT, _evas_focus_out_cb, ed);
 }
 
 void
@@ -1525,6 +1547,8 @@ _edje_entry_shutdown(Edje *ed)
    evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_FOCUS_OUT, _edje_focus_out_cb);
    evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_KEY_DOWN, _edje_key_down_cb);
    evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_KEY_UP, _edje_key_up_cb);
+   evas_event_callback_del_full(ed->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN, _evas_focus_in_cb, ed);
+   evas_event_callback_del_full(ed->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT, _evas_focus_out_cb, ed);
 }
 
 void
