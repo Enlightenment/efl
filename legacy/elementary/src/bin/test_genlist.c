@@ -65,6 +65,18 @@ _bt1500_cb(void *data, Evas_Object *obj, void *event_info)
     elm_genlist_item_middle_bring_in(data);
 }
 
+static void
+_gl_selected(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("selected: %p\n", event_info);
+}
+
+static void
+_gl_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("clicked: %p\n", event_info);
+}
+
 void
 test_genlist(void *data, Evas_Object *obj, void *event_info)
 {
@@ -88,6 +100,8 @@ test_genlist(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bx);
 
    gl = elm_genlist_add(win);
+   evas_object_smart_callback_add(gl, "selected", _gl_selected, NULL);
+   evas_object_smart_callback_add(gl, "clicked", _gl_clicked, NULL);
    // FIXME: This causes genlist to resize the horiz axis very slowly :(
    // Reenable this and resize the window horizontally, then try to resize it back
    //elm_genlist_horizontal_mode_set(gl, ELM_LIST_LIMIT);
@@ -122,17 +136,16 @@ test_genlist(void *data, Evas_Object *obj, void *event_info)
 
    for (i = 0; i < 2000; i++)
      {
-         gli = elm_genlist_item_append(gl, &itc1,
-                 (void *)i/* item data */,
-                 NULL/* parent */,
-                 ELM_GENLIST_ITEM_NONE,
-                 gl_sel/* func */,
-                 (void *)(i * 10)/* func data */);
-
-         if(i==50)
-             evas_object_smart_callback_add(bt_50, "clicked", _bt50_cb, gli);
-         else if(i==1500)
-             evas_object_smart_callback_add(bt_1500, "clicked", _bt1500_cb, gli);
+        gli = elm_genlist_item_append(gl, &itc1,
+                                      (void *)i/* item data */,
+                                      NULL/* parent */,
+                                      ELM_GENLIST_ITEM_NONE,
+                                      gl_sel/* func */,
+                                      (void *)(i * 10)/* func data */);
+        if (i == 50)
+          evas_object_smart_callback_add(bt_50, "clicked", _bt50_cb, gli);
+        else if (i == 1500)
+          evas_object_smart_callback_add(bt_1500, "clicked", _bt1500_cb, gli);
      }
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
