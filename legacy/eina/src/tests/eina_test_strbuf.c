@@ -92,9 +92,118 @@ START_TEST(strbuf_remove)
 }
 END_TEST
 
+START_TEST(strbuf_append)
+{
+   Eina_Strbuf *buf;
+
+   eina_init();
+
+   buf = eina_strbuf_new();
+   fail_if(!buf);
+
+   eina_strbuf_append(buf, "abc");
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "abc"));
+   eina_strbuf_reset(buf);
+
+   eina_strbuf_append_escaped(buf, "abc");
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "abc"));
+   eina_strbuf_reset(buf);
+
+   eina_strbuf_append_escaped(buf, "abc '\\");
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "abc\\ \\'\\\\"));
+   eina_strbuf_reset(buf);
+
+   eina_strbuf_append_n(buf, "abc", 2);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "ab"));
+   eina_strbuf_reset(buf);
+
+   eina_strbuf_append_char(buf, 'a');
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "a"));
+   eina_strbuf_reset(buf);
+
+   eina_strbuf_free(buf);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(strbuf_insert)
+{
+   Eina_Strbuf *buf;
+
+   eina_init();
+
+   buf = eina_strbuf_new();
+   fail_if(!buf);
+
+   eina_strbuf_insert(buf, "abc", 10);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "abc"));
+
+   eina_strbuf_insert(buf, "123", 0);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "123abc"));
+
+   eina_strbuf_insert(buf, "xyz", eina_strbuf_length_get(buf));
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "123abcxyz"));
+
+   eina_strbuf_insert(buf, "xyz", 1);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "1xyz23abcxyz"));
+
+   eina_strbuf_free(buf);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(strbuf_replace)
+{
+   Eina_Strbuf *buf;
+
+   eina_init();
+
+   buf = eina_strbuf_new();
+   fail_if(!buf);
+
+   eina_strbuf_append(buf, "aaa");
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "aaa"));
+
+   eina_strbuf_replace(buf, "a", "b", 1);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "baa"));
+
+   fail_if(eina_strbuf_replace_all(buf, "a", "b") != 2);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "bbb"));
+
+   eina_strbuf_replace(buf, "b", "cc", 2);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "bccb"));
+
+   fail_if(eina_strbuf_replace_all(buf, "c", "aa") != 2);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "baaaab"));
+
+   eina_strbuf_free(buf);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_strbuf(TCase *tc)
 {
    tcase_add_test(tc, strbuf_simple);
    tcase_add_test(tc, strbuf_remove);
+   tcase_add_test(tc, strbuf_append);
+   tcase_add_test(tc, strbuf_insert);
+   tcase_add_test(tc, strbuf_replace);
 }
