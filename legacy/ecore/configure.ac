@@ -1498,18 +1498,10 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    Software 16bit WinCE.......: $have_ecore_evas_software_16_wince"
 fi
 echo
-echo " Documentation.................: ${build_doc}"
-echo
-echo " Compilation...................: make (or gmake)"
+echo "Documentation..........: ${build_doc}"
 if test "x${build_doc}" = "xyes" ; then
-   echo " Build of the documentation....: make doc"
+   echo "  Building.............: make doc"
 fi
-echo
-echo " Installation..................: make install"
-echo
-echo "    prefix.....................: $prefix"
-echo
-
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
