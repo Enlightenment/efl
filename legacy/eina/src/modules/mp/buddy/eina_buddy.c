@@ -134,7 +134,7 @@ static void _free(void *data, void *element)
 	unsigned int offset;
 	unsigned int index;
 
-	offset = element - b->heap;
+	offset = (unsigned char *)element - (unsigned char *)b->heap;
 	if (offset > b->size)
 		return;
 	index = offset >> b->min_order;
