@@ -1164,7 +1164,7 @@ elm_win_inwin_add(Evas_Object *obj)
    Widget_Data *wd;
    Elm_Win *win;
 
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
+   if (strcmp(elm_widget_type_get(obj), "win")) return NULL;
    win = elm_widget_data_get(obj);
    if (!win) return NULL;
    wd = ELM_NEW(Widget_Data);

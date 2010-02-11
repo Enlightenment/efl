@@ -84,6 +84,6 @@ EAPI Eina_Bool
 elm_separator_horizontal_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   if (!wd) return EINA_FALSE;
    return wd->horizontal;
 }

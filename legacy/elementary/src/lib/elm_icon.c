@@ -179,7 +179,7 @@ elm_icon_standard_set(Evas_Object *obj, const char *name)
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_Bool ret;
 
-   if ((!wd) || (!name)) return;
+   if ((!wd) || (!name)) return EINA_FALSE;
    if (wd->stdicon) eina_stringshare_del(wd->stdicon);
    wd->stdicon = eina_stringshare_add(name);
    ret = _elm_theme_icon_set(wd->img, name, "default");

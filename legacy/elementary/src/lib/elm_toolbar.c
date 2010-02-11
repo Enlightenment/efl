@@ -598,9 +598,9 @@ elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
 EAPI Evas_Object *
 elm_toolbar_item_menu_get(Elm_Toolbar_Item *item)
 {
-   if (!item) return;
+   if (!item) return NULL;
    Widget_Data *wd = elm_widget_data_get(item->obj);
-   if (!wd) return;
+   if (!wd) return NULL;
    elm_toolbar_item_menu_set(item, 1);
    return item->o_menu;
 }
