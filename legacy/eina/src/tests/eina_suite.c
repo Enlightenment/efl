@@ -97,6 +97,7 @@ eina_build_suite(int argc, const char **argv)
 	etc[i].build(tc);
 
 	suite_add_tcase(s, tc);
+	tcase_set_timeout(tc, 0);
      }
 
    return s;
