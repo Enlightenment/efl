@@ -265,20 +265,24 @@ static Eina_Mempool_Backend _eina_chained_mp_backend = {
 
 Eina_Bool chained_init(void)
 {
+#ifdef DEBUG
    _eina_mempool_log_dom = eina_log_domain_register("eina_mempool", EINA_LOG_COLOR_DEFAULT);
    if (_eina_mempool_log_dom < 0)
      {
 	EINA_LOG_ERR("Could not register log domain: eina_mempool");
 	return EINA_FALSE;
      }
+#endif
    return eina_mempool_register(&_eina_chained_mp_backend);
 }
 
 void chained_shutdown(void)
 {
    eina_mempool_unregister(&_eina_chained_mp_backend);
+#ifdef DEBUG
    eina_log_domain_unregister(_eina_mempool_log_dom);
    _eina_mempool_log_dom = -1;
+#endif
 }
 
 #ifndef EINA_STATIC_BUILD_CHAINED_POOL
