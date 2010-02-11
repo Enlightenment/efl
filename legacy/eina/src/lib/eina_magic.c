@@ -232,7 +232,7 @@ eina_magic_string_get(Eina_Magic magic)
 		 _eina_magic_strings_find_cmp);
    if (ems)
      return ems->string ? ems->string : "(undefined)";
-   return "(unknown);
+   return "(unknown)";
 }
 
 /**
