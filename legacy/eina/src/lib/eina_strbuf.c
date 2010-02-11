@@ -499,6 +499,8 @@ _eina_strbuf_resize(Eina_Strbuf *buf, size_t size)
    else
      {
 	/* shrink the buffer */
+	if (new_step > EINA_STRBUF_INIT_STEP)
+	  new_step /= 2;
 	while (new_size - new_step > size)
 	  {
 	     new_size -= new_step;

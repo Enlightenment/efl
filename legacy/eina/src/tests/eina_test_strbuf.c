@@ -85,6 +85,19 @@ START_TEST(strbuf_remove)
    eina_strbuf_remove(buf, 2, 4);
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    fail_if(strcmp(eina_strbuf_string_get(buf), "45789"));
+   eina_strbuf_remove(buf, 4, 1);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "45789"));
+   eina_strbuf_remove(buf, 0, eina_strbuf_length_get(buf));
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), ""));
+
+#define TEXT "This test should be so long that it is longer than the initial size of strbuf"
+   eina_strbuf_append(buf, TEXT TEXT);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   eina_strbuf_remove(buf, 0, eina_strbuf_length_get(buf) - 1);
+   fail_if(strcmp(eina_strbuf_string_get(buf), "f"));
+#undef TEXT
 
    eina_strbuf_free(buf);
 
@@ -176,7 +189,7 @@ START_TEST(strbuf_replace)
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    fail_if(strcmp(eina_strbuf_string_get(buf), "aaa"));
 
-   eina_strbuf_replace(buf, "a", "b", 1);
+   fail_if(!eina_strbuf_replace(buf, "a", "b", 1));
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    fail_if(strcmp(eina_strbuf_string_get(buf), "baa"));
 
@@ -184,13 +197,26 @@ START_TEST(strbuf_replace)
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    fail_if(strcmp(eina_strbuf_string_get(buf), "bbb"));
 
-   eina_strbuf_replace(buf, "b", "cc", 2);
+   fail_if(!eina_strbuf_replace(buf, "b", "cc", 2));
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    fail_if(strcmp(eina_strbuf_string_get(buf), "bccb"));
 
    fail_if(eina_strbuf_replace_all(buf, "c", "aa") != 2);
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    fail_if(strcmp(eina_strbuf_string_get(buf), "baaaab"));
+
+   fail_if(eina_strbuf_replace(buf, "c", "aa", 0));
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "baaaab"));
+
+   fail_if(eina_strbuf_replace(buf, "c", "aa", 2));
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "baaaab"));
+
+   fail_if(eina_strbuf_replace_all(buf, "c", "aa") != 0);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "baaaab"));
+
 
    eina_strbuf_free(buf);
 
