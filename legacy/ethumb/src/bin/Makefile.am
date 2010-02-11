@@ -40,6 +40,7 @@ ethumbd_slave_LDADD = \
 ethumbd_client_SOURCES = ethumbd_client.c
 ethumbd_client_LDADD = \
 	@EINA_LIBS@ @ECORE_LIBS@ \
+	$(top_builddir)/src/lib/libethumb.la \
 	$(top_builddir)/src/lib/client/libethumb_client.la
 ethumbd_client_DEPENDENCIES = $(top_builddir)/config.h
 
