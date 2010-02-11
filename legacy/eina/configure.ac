@@ -250,11 +250,6 @@ if test "x${enable_ememoa}" = "xyes" ; then
    )
 fi
 
-AM_CONDITIONAL(EINA_ENABLE_EMEMOA, test "x${enable_ememoa}" = "xyes")
-if test "x${enable_ememoa}" = "xyes"; then
-   AC_DEFINE(EINA_EMEMOA_SUPPORT, 1, [Use by the test suite to try ememoa mempool])
-fi
-
 ### Checks for header files
 AC_HEADER_ASSERT
 AC_HEADER_DIRENT

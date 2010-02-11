@@ -77,6 +77,7 @@ _eina_mempool_test(Eina_Mempool *mp, Eina_Bool with_realloc, Eina_Bool with_gc)
    eina_mempool_del(mp);
 }
 
+#ifdef EINA_BUILD_CHAINED_POOL
 START_TEST(eina_mempool_chained_mempool)
 {
    Eina_Mempool *mp;
@@ -89,7 +90,9 @@ START_TEST(eina_mempool_chained_mempool)
    _mempool_shutdown();
 }
 END_TEST
+#endif
 
+#ifdef EINA_BUILD_PASS_THROUGH
 START_TEST(eina_mempool_pass_through)
 {
    Eina_Mempool *mp;
@@ -102,7 +105,9 @@ START_TEST(eina_mempool_pass_through)
    _mempool_shutdown();
 }
 END_TEST
+#endif
 
+#ifdef EINA_BUILD_FIXED_BITMAP
 START_TEST(eina_mempool_fixed_bitmap)
 {
    Eina_Mempool *mp;
@@ -115,8 +120,9 @@ START_TEST(eina_mempool_fixed_bitmap)
    _mempool_shutdown();
 }
 END_TEST
+#endif
 
-#ifdef EINA_EMEMOA_SUPPORT
+#ifdef EINA_BUILD_EMEMOA_FIXED
 START_TEST(eina_mempool_ememoa_fixed)
 {
    Eina_Mempool *mp;
@@ -129,7 +135,9 @@ START_TEST(eina_mempool_ememoa_fixed)
    _mempool_shutdown();
 }
 END_TEST
+#endif
 
+#ifdef EINA_BUILD_EMEMOA_UNKNOWN
 START_TEST(eina_mempool_ememoa_unknown)
 {
    Eina_Mempool *mp;
@@ -147,11 +155,19 @@ END_TEST
 void
 eina_test_mempool(TCase *tc)
 {
+#ifdef EINA_BUILD_CHAINED_POOL
    tcase_add_test(tc, eina_mempool_chained_mempool);
+#endif
+#ifdef EINA_BUILD_PASS_THROUGH
    tcase_add_test(tc, eina_mempool_pass_through);
+#endif
+#ifdef EINA_BUILD_FIXED_BITMAP
    tcase_add_test(tc, eina_mempool_fixed_bitmap);
-#ifdef EINA_EMEMOA_SUPPORT
+#endif
+#ifdef EINA_BUILD_EMEMOA_FIXED
    tcase_add_test(tc, eina_mempool_ememoa_fixed);
+#endif
+#ifdef EINA_BUILD_EMEMOA_UNKNOWN
    tcase_add_test(tc, eina_mempool_ememoa_unknown);
 #endif
 }

@@ -54,6 +54,7 @@ _eina_mempool_bench(Eina_Mempool *mp, int request)
    eina_shutdown();
 }
 
+#ifdef EINA_BUILD_CHAINED_POOL
 static void
 eina_mempool_chained_mempool(int request)
 {
@@ -63,7 +64,9 @@ eina_mempool_chained_mempool(int request)
    _eina_mempool_bench(mp, request);
    eina_mempool_del(mp);
 }
+#endif
 
+#ifdef EINA_BUILD_PASS_THROUGH
 static void
 eina_mempool_pass_through(int request)
 {
@@ -73,7 +76,9 @@ eina_mempool_pass_through(int request)
    _eina_mempool_bench(mp, request);
    eina_mempool_del(mp);
 }
+#endif
 
+#ifdef EINA_BUILD_FIXED_BITMAP
 static void
 eina_mempool_fixed_bitmap(int request)
 {
@@ -83,8 +88,9 @@ eina_mempool_fixed_bitmap(int request)
    _eina_mempool_bench(mp, request);
    eina_mempool_del(mp);
 }
+#endif
 
-#ifdef EINA_EMEMOA_SUPPORT
+#ifdef EINA_BUILD_EMEMOA_FIXED
 static void
 eina_mempool_ememoa_fixed(int request)
 {
@@ -94,7 +100,9 @@ eina_mempool_ememoa_fixed(int request)
    _eina_mempool_bench(mp, request);
    eina_mempool_del(mp);
 }
+#endif
 
+#ifdef EINA_BUILD_EMEMOA_UNKNOWN
 static void
 eina_mempool_ememoa_unknown(int request)
 {
@@ -139,11 +147,19 @@ eina_mempool_glib(int request)
 void
 eina_bench_mempool(Eina_Benchmark *bench)
 {
+#ifdef EINA_BUILD_CHAINED_POOL
    eina_benchmark_register(bench, "chained mempool", EINA_BENCHMARK(eina_mempool_chained_mempool), 10, 1000, 10);
+#endif
+#ifdef EINA_BUILD_PASS_THROUGH
    eina_benchmark_register(bench, "pass through", EINA_BENCHMARK(eina_mempool_pass_through), 10, 1000, 10);
+#endif
+#ifdef EINA_BUILD_FIXED_BITMAP
    eina_benchmark_register(bench, "fixed bitmap", EINA_BENCHMARK(eina_mempool_fixed_bitmap), 10, 1000, 10);
-#ifdef EINA_EMEMOA_SUPPORT
+#endif
+#ifdef EINA_BUILD_EMEMOA_FIXED
    eina_benchmark_register(bench, "ememoa fixed", EINA_BENCHMARK(eina_mempool_ememoa_fixed), 10, 1000, 10);
+#endif
+#ifdef EINA_BUILD_EMEMOA_UNKNOWN
    eina_benchmark_register(bench, "ememoa unknown", EINA_BENCHMARK(eina_mempool_ememoa_unknown), 10, 1000, 10);
 #endif
 #ifdef EINA_BENCH_HAVE_GLIB

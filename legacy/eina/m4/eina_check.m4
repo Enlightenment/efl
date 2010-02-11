@@ -33,6 +33,9 @@ if test "x${enable_module}" = "xstatic" ; then
    have_static_module="yes"
    AC_DEFINE(EINA_STATIC_BUILD_[]UP, 1, [Set to 1 if $2 is statically built])
 fi
+if test "x${enable_module}" != "xno" ; then
+   AC_DEFINE(EINA_BUILD_[]UP, 1, [Set to 1 if $2 is built])
+fi
 
 AM_CONDITIONAL(EINA_BUILD_[]UP, [test "x${have_module}" = "xyes"])
 AM_CONDITIONAL(EINA_STATIC_BUILD_[]UP, [test "x${static_module}" = "xyes"])
