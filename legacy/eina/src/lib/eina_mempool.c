@@ -175,7 +175,7 @@ eina_mempool_init(void)
    _modules = eina_module_arch_list_get(_modules, path, MODULE_ARCH);
    if (path) free(path);
 
-   path = eina_module_symbol_path_get(eina_init, "/eina/modules/mp");
+   path = eina_module_symbol_path_get((const void *)eina_init, "/eina/modules/mp");
    _modules = eina_module_arch_list_get(_modules, path, MODULE_ARCH);
    if (path) free(path);
 
