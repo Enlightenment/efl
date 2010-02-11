@@ -38,6 +38,17 @@
 
 #include "eina_private.h"
 
+#ifdef DEBUG
+#include "eina_log.h"
+
+static int _eina_mempool_log_dom = -1;
+
+#ifdef INF
+#undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_eina_mempool_log_dom, __VA_ARGS__)
+#endif
+
 typedef struct _Chained_Mempool Chained_Mempool;
 struct _Chained_Mempool
 {
@@ -227,7 +238,7 @@ eina_chained_mempool_shutdown(void *data)
 
 #ifdef DEBUG
 	if (p->usage > 0)
-	  EINA_ERROR_PINFO("Bad news we are destroying not an empty mempool [%s]\n", mp->name);
+	  INF("Bad news we are destroying not an empty mempool [%s]\n", mp->name);
 #endif
 
 	mp->first = eina_inlist_remove(mp->first, mp->first);
@@ -254,12 +265,20 @@ static Eina_Mempool_Backend _eina_chained_mp_backend = {
 
 Eina_Bool chained_init(void)
 {
-	return eina_mempool_register(&_eina_chained_mp_backend);
+   _eina_mempool_log_dom = eina_log_domain_register("eina_mempool", EINA_LOG_COLOR_DEFAULT);
+   if (_eina_mempool_log_dom < 0)
+     {
+	EINA_LOG_ERR("Could not register log domain: eina_mempool");
+	return EINA_FALSE;
+     }
+   return eina_mempool_register(&_eina_chained_mp_backend);
 }
 
 void chained_shutdown(void)
 {
-	eina_mempool_unregister(&_eina_chained_mp_backend);
+   eina_mempool_unregister(&_eina_chained_mp_backend);
+   eina_log_domain_unregister(_eina_mempool_log_dom);
+   _eina_mempool_log_dom = -1;
 }
 
 #ifndef EINA_STATIC_BUILD_CHAINED_POOL
