@@ -97,7 +97,7 @@ void *alloca (size_t);
  * @param recursive Iterate recursively in the directory.
  * @param cb The callback to be called.
  * @param data The data to pass to the callback.
- * @return #EINA_TRUE on success, #EINA_FALSE oterwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function lists all the files in @p dir. To list also all the
  * sub directoris recursively, @p recursive must be set to #EINA_TRUE,
