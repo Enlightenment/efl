@@ -186,22 +186,28 @@ _ecore_x_image_shm_create(Ecore_X_Image *im)
    else im->bpp = 4;
 }
 
-EAPI void
+EAPI Eina_Bool
 ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw, 
                   int x, int y, int sx, int sy, int w, int h)
 {
+   int ret = 1;
+   XErrorHandler ph;
+   
    if (im->shm)
      {
         if (!im->xim) _ecore_x_image_shm_create(im);
-        if (!im->xim) return;
+        if (!im->xim) return 0;
+        _ecore_x_image_err = 0;
         // optimised path
+        ph = XSetErrorHandler((XErrorHandler)_ecore_x_image_error_handler);
         if ((sx == 0) && (w == im->w))
           {
              im->xim->data = 
                im->data + (im->xim->bytes_per_line * sy) + (sx * im->bpp);
              im->xim->width = w;
              im->xim->height = h;
-             XShmGetImage(_ecore_x_disp, draw, im->xim, x, y, 0xffffffff);
+             if (!XShmGetImage(_ecore_x_disp, draw, im->xim, x, y, 0xffffffff))
+               ret = 0;
              ecore_x_sync();
           }
         // unavoidable thanks to mit-shm get api - tmp shm buf + copy into it
@@ -215,28 +221,35 @@ ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw,
              tim = ecore_x_image_new(w, h, im->vis, im->depth);
              if (tim)
                {
-                  ecore_x_image_get(tim, draw, x, y, 0, 0, w, h);
-                  spixels = ecore_x_image_data_get(tim, &sbpl, &srows, &sbpp);
-                  pixels = ecore_x_image_data_get(im, &bpl, &rows, &bpp);
-                  if ((pixels) && (spixels))
+                  ret = ecore_x_image_get(tim, draw, x, y, 0, 0, w, h);
+                  if (ret)
                     {
-                       p = pixels + (sy * bpl) + (sx * bpp);
-                       sp = spixels;
-                       for (r = srows; r > 0; r--)
+                       spixels = ecore_x_image_data_get(tim, &sbpl, &srows, &sbpp);
+                       pixels = ecore_x_image_data_get(im, &bpl, &rows, &bpp);
+                       if ((pixels) && (spixels))
                          {
-                            memcpy(p, sp, sbpl);
-                            p += bpl;
-                            sp += sbpl;
+                            p = pixels + (sy * bpl) + (sx * bpp);
+                            sp = spixels;
+                            for (r = srows; r > 0; r--)
+                              {
+                                 memcpy(p, sp, sbpl);
+                                 p += bpl;
+                                 sp += sbpl;
+                              }
                          }
                     }
                   ecore_x_image_free(tim);
                }
           }
+        XSetErrorHandler((XErrorHandler)ph);
+        if (_ecore_x_image_err) ret = 0;
      }
    else
      {
         printf("currently unimplemented ecore_x_image_get without shm\n");
+        ret = 0;
      }
+   return ret;
 }
 
 EAPI void

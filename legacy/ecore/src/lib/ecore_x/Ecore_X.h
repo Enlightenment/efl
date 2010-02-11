@@ -1850,7 +1850,7 @@ typedef struct _Ecore_X_Image Ecore_X_Image;
 
 EAPI Ecore_X_Image    *ecore_x_image_new(int w, int h, Ecore_X_Visual vis, int depth);
 EAPI void              ecore_x_image_free(Ecore_X_Image *im);
-EAPI void              ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw, int x, int y, int sx, int sy, int w, int h);
+EAPI Eina_Bool         ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw, int x, int y, int sx, int sy, int w, int h);
 EAPI void              ecore_x_image_put(Ecore_X_Image *im, Ecore_X_Drawable draw, int x, int y, int sx, int sy, int w, int h);
 EAPI void             *ecore_x_image_data_get(Ecore_X_Image *im, int *bpl, int *rows, int *bpp);
 
