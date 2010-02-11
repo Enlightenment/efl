@@ -319,6 +319,8 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
    re = (Render_Engine *)data;
    evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h);
    /* smple bounding box */
+   RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, re->win->w, re->win->h);
+   if ((w <= 0) || (h <= 0)) return;
    if (!re->win->draw.redraw)
      {
 #if 0
@@ -361,13 +363,6 @@ eng_output_redraws_clear(void *data)
 //   INF("GL: finish update cycle!");
 }
 
-/* at least the nvidia drivers are so abysmal that copying from the backbuffer
- * to the front using glCopyPixels() that you literally can WATCH it draw the
- * pixels slowly across the screen with a window update taking multiple
- * seconds - so workaround by doing a full buffer render as frankly GL isn't
- * up to doing anything that isn't done by quake (etc.)
- */
-#define SLOW_GL_COPY_RECT 1
 /* vsync games - not for now though */
 #define VSYNC_TO_SCREEN 1
 
@@ -379,30 +374,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    re = (Render_Engine *)data;
    evas_gl_common_context_flush(re->win->gl_context);
    /* get the upate rect surface - return engine data as dummy */
-   if (!re->win->draw.redraw)
-     {
-//	printf("GL: NO updates!\n");
-	return NULL;
-     }
-//   printf("GL: update....!\n");
-#ifdef SLOW_GL_COPY_RECT
-   /* if any update - just return the whole canvas - works with swap
-    * buffers then */
-   if (x) *x = 0;
-   if (y) *y = 0;
-   if (w) *w = re->win->w;
-   if (h) *h = re->win->h;
-   if (cx) *cx = 0;
-   if (cy) *cy = 0;
-   if (cw) *cw = re->win->w;
-   if (ch) *ch = re->win->h;
-#else
-   /* 1 update - INCREDIBLY SLOW if combined with swap_rect in flush. a gl
-    * problem where there just is no hardware path for somethnig that
-    * obviously SHOULD be there */
-   /* only 1 update to minimise gl context games and rendering multiple update
-    * regions as evas does with other engines
-    */
+   if (!re->win->draw.redraw) return NULL;
    if (x) *x = re->win->draw.x1;
    if (y) *y = re->win->draw.y1;
    if (w) *w = re->win->draw.x2 - re->win->draw.x1 + 1;
@@ -411,11 +383,6 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    if (cy) *cy = re->win->draw.y1;
    if (cw) *cw = re->win->draw.x2 - re->win->draw.x1 + 1;
    if (ch) *ch = re->win->draw.y2 - re->win->draw.y1 + 1;
-#endif
-// clear buffer. only needed for dest alpha
-//   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-//   glClear(GL_COLOR_BUFFER_BIT);
-//x//   printf("frame -> new\n");
    return re->win->gl_context->def_surface;
 }
 
@@ -454,7 +421,7 @@ eng_output_flush(void *data)
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
 #else
 #ifdef VSYNC_TO_SCREEN   
-   if (re->info->vsync) 
+   if ((re->info->vsync)/* || (1)*/)
      {
         if ((glsym_glXGetVideoSync) && (glsym_glXWaitVideoSync))
           {
@@ -469,7 +436,35 @@ eng_output_flush(void *data)
      {
         re->info->callback.pre_swap(re->info->callback.data, re->evas);
      }
-   glXSwapBuffers(re->win->disp, re->win->win);
+   if ((re->win->draw.x1 == 0) && 
+       (re->win->draw.y1 == 0) &&
+       (re->win->draw.x2 == (re->win->w - 1)) &&
+       (re->win->draw.y2 == (re->win->h - 1)))
+     glXSwapBuffers(re->win->disp, re->win->win);
+   else
+     {
+// FIXME: this doesnt work.. why oh why?        
+        int sx, sy, sw, sh;
+        
+        // fimxe - reset when done
+//        glEnable(GL_SCISSOR_TEST);
+        glDrawBuffer(GL_FRONT);
+        
+        sx = re->win->draw.x1;
+        sy = re->win->draw.y1;
+        sw = (re->win->draw.x2 - re->win->draw.x1) + 1;
+        sh = (re->win->draw.y2 - re->win->draw.y1) + 1;
+        sy = re->win->h - sy - sh;
+
+//        glScissor(sx, sy, sw, sh);
+        glRasterPos2i(sx, re->win->h - sy);
+        glCopyPixels(sx, sy, sw, sh, GL_COLOR);
+        glRasterPos2i(0, 0);
+        
+//        glDisable(GL_SCISSOR_TEST);
+        glDrawBuffer(GL_BACK);
+        glFlush();
+     }
    if (re->info->callback.post_swap)
      {
         re->info->callback.post_swap(re->info->callback.data, re->evas);
@@ -1333,8 +1328,8 @@ eng_image_native_set(void *data, void *image, void *native)
              n->visual = vis;
              n->fbc = re->win->depth_cfg[depth].fbc;
              im->native.yinvert     = re->win->depth_cfg[depth].yinvert;
-             im->native.loose       = 1; // works well on nvidia - intel may not be happy i hear. for now.. lets make nv work 1. - because i have an nv card, 2. because it doesnt seem broken for texture-from-pixmap like fglrx has seemed, 3. its some of the best done drivers on linux
-//             im->native.loose       = 0;
+//             im->native.loose       = 1; // works well on nvidia - intel may not be happy i hear. for now.. lets make nv work 1. - because i have an nv card, 2. because it doesnt seem broken for texture-from-pixmap like fglrx has seemed, 3. its some of the best done drivers on linux
+             im->native.loose       = 0;
              im->native.data        = n;
              im->native.func.data   = re;
              im->native.func.bind   = _native_bind_cb;
