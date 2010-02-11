@@ -201,8 +201,16 @@ eina_magic_string_shutdown(void)
  * @return The string associated to the identifier.
  *
  * This function returns the string associated to @p magic. If none
- * are found, the this function returns @c NULL. The returned value
- * must not be freed.
+ * are found, the this function still returns non @c NULL, in this
+ * case an identifier such as "(none)", "(undefined)" or
+ * "(unknown)". The returned value must not be freed.
+ *
+ * The following identifiers may be returned whenever magic is
+ * invalid, with their meanings:
+ *
+ *   - (none): no magic was registered exists at all.
+ *   - (undefined): magic was registered and found, but no string associated.
+ *   - (unknown): magic was not found in the registry.
  */
 EAPI const char*
 eina_magic_string_get(Eina_Magic magic)
@@ -210,7 +218,7 @@ eina_magic_string_get(Eina_Magic magic)
    Eina_Magic_String *ems;
 
    if (!_eina_magic_strings)
-     return NULL;
+     return "(none)";
 
    if (_eina_magic_strings_dirty)
      {
@@ -223,8 +231,8 @@ eina_magic_string_get(Eina_Magic magic)
 		 _eina_magic_strings_count, sizeof(Eina_Magic_String),
 		 _eina_magic_strings_find_cmp);
    if (ems)
-     return ems->string;
-   return NULL;
+     return ems->string ? ems->string : "(undefined)";
+   return "(unknown);
 }
 
 /**
