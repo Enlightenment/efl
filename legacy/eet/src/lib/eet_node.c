@@ -621,7 +621,7 @@ eet_node_walk(void *parent, const char *name, Eet_Node *root, Eet_Node_Walk *cb,
 
    if (parent) cb->struct_add(parent, name, me, user_data);
    return me;
-};
+}
 
 int
 eet_node_init(void)
