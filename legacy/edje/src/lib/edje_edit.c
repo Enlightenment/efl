@@ -768,8 +768,10 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
-   if (eina_hash_find(ed->file->collection_hash, group_name))
-     return EINA_FALSE;
+   /* if (eina_hash_find(ed->file->collection_hash, group_name)) */
+   /*   return EINA_FALSE; */
+
+   if (strcmp(ed->group, group_name) == 0) return EINA_FALSE;
 
    EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, e)
      {
