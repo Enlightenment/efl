@@ -335,6 +335,7 @@ static Ecore_Evas_Engine_Func _ecore_sdl_engine_func =
    NULL,
    NULL,
    NULL,
+   NULL, //transparent
      
      NULL // render
 };

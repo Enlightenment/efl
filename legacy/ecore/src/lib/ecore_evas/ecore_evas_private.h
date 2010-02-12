@@ -183,6 +183,7 @@ struct _Ecore_Evas_Engine_Func
    void        (*fn_sticky_set) (Ecore_Evas *ee, int sticky);
    void        (*fn_ignore_events_set) (Ecore_Evas *ee, int ignore);
    void        (*fn_alpha_set) (Ecore_Evas *ee, int alpha);
+   void        (*fn_transparent_set) (Ecore_Evas *ee, int transparent);
 
    int         (*fn_render) (Ecore_Evas *ee);
 };
@@ -273,6 +274,7 @@ struct _Ecore_Evas
    Eina_Bool   draw_ok : 1;
    Eina_Bool   should_be_visible : 1;
    Eina_Bool   alpha  : 1;
+   Eina_Bool   transparent  : 1;
 
    Eina_Hash  *data;
 

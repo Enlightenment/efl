@@ -1795,6 +1795,27 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
      }
 }
+
+static void
+_ecore_evas_x_transparent_set(Ecore_Evas *ee, int transparent)
+{
+   if (((ee->transparent) && (transparent)) || 
+       ((!ee->transparent) && (!transparent)))
+     return;
+
+   if (!strcmp(ee->driver, "software_x11"))
+     {
+	Evas_Engine_Info_Software_X11 *einfo;
+
+	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
+	if (!einfo) return;
+
+	ee->transparent = transparent;
+	einfo->info.destination_alpha = transparent;
+	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+     }
+}
 #endif /* BUILD_ECORE_EVAS_X11 */
 
 #ifdef BUILD_ECORE_EVAS_X11
@@ -2332,6 +2353,7 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
      _ecore_evas_x_sticky_set,
      _ecore_evas_x_ignore_events_set,
      _ecore_evas_x_alpha_set,
+     _ecore_evas_x_transparent_set,
      
      NULL // render
 };

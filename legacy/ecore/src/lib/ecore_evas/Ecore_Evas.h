@@ -285,6 +285,8 @@ EAPI void        ecore_evas_shaped_set(Ecore_Evas *ee, int shaped);
 EAPI int         ecore_evas_shaped_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_alpha_set(Ecore_Evas *ee, int alpha);
 EAPI int         ecore_evas_alpha_get(const Ecore_Evas *ee);
+EAPI void        ecore_evas_transparent_set(Ecore_Evas *ee, int transparent);
+EAPI int         ecore_evas_transparent_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_show(Ecore_Evas *ee);
 EAPI void        ecore_evas_hide(Ecore_Evas *ee);
 EAPI int         ecore_evas_visibility_get(const Ecore_Evas *ee);

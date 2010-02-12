@@ -1552,6 +1552,51 @@ ecore_evas_alpha_get(const Ecore_Evas *ee)
 }
 
 /**
+ * Set whether an Ecore_Evas has an transparent window or not.
+ * @param ee The Ecore_Evas to shape
+ * @param transparent 1 to enable the transparent window, 0 to disable it
+ *
+ * This function allows you to make an Ecore_Evas translucent using an
+ * alpha channel. See ecore_evas_shaped_set() for details. The difference
+ * between a shaped window and a window with an alpha channel is that an
+ * alpha channel supports multiple levels of transpararency, as opposed to
+ * the 1 bit transparency of a shaped window (a pixel is either opaque, or
+ * it's transparent).
+ */
+EAPI void
+ecore_evas_transparent_set(Ecore_Evas *ee, int transparent)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+			 "ecore_evas_transparent_set");
+	return;
+     }
+   IFC(ee, fn_transparent_set) (ee, transparent);
+   IFE;
+}
+
+/**
+ * Query whether an Ecore_Evas has an alpha channel.
+ * @param ee The Ecore_Evas to query.
+ * @return 1 if ee has an alpha channel, 0 if it does not.
+ *
+ * This function returns 1 if @p ee has an alpha channel, and 0 if
+ * it does not.
+ */
+EAPI int
+ecore_evas_transparent_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+			 "ecore_evas_transparent_get");
+	return 0;
+     }
+   return ee->transparent ? 1:0;
+}
+
+/**
  * Show an Ecore_Evas' window
  * @param ee The Ecore_Evas to show.
  *

@@ -720,6 +720,7 @@ static Ecore_Evas_Engine_Func _ecore_wince_engine_func =
    NULL, /* _ecore_evas_x_sticky_set */
    NULL, /* _ecore_evas_x_ignore_events_set */
    NULL, /* _ecore_evas_x_alpha_set */
+   NULL, //transparent
      
      NULL // render
 };
