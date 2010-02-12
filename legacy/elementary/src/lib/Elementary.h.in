@@ -257,6 +257,8 @@ extern "C" {
    EAPI void         elm_win_shaped_set(Evas_Object *obj, Eina_Bool shaped);
    EAPI Eina_Bool    elm_win_shaped_get(Evas_Object *obj);
    EAPI void         elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha);
+   EAPI Eina_Bool    elm_win_transparent_get(Evas_Object *obj);
+   EAPI void         elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent);
    EAPI Eina_Bool    elm_win_alpha_get(Evas_Object *obj);
    EAPI void         elm_win_override_set(Evas_Object *obj, Eina_Bool override);
    EAPI Eina_Bool    elm_win_override_get(Evas_Object *obj);

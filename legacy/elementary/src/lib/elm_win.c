@@ -635,6 +635,34 @@ elm_win_alpha_get(Evas_Object *obj)
 }
 
 EAPI void
+elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent)
+{
+   Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   
+   if (win->xwin)
+     {
+       ecore_evas_transparent_set(win->ee, transparent);	  
+	_elm_win_xwin_update(win);
+     }
+   else
+     ecore_evas_transparent_set(win->ee, transparent);
+}
+
+EAPI Eina_Bool
+elm_win_transparent_get(Evas_Object *obj)
+{
+   Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+
+   return ecore_evas_transparent_get(win->ee);
+}
+
+EAPI void
 elm_win_override_set(Evas_Object *obj, Eina_Bool override)
 {
    Elm_Win *win;
