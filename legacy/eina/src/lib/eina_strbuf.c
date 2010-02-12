@@ -175,7 +175,7 @@ eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, unsigned int maxlen)
    if (!_eina_strbuf_grow(buf, buf->len + len))
      return EINA_FALSE;
 
-   memcpy(buf->buf + buf->len, str, len + 1); // + 1 for '\0'
+   memcpy(buf->buf + buf->len, str, len);
    buf->len += len;
    buf->buf[buf->len] = '\0';
    return EINA_TRUE;
