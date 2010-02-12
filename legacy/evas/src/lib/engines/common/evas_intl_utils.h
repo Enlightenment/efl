@@ -1,15 +1,17 @@
 #ifndef _EVAS_INTL_UTILS
 #define _EVAS_INTL_UTILS
 
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
 #ifdef HAVE_FRIBIDI
-#define USE_FRIBIDI
-#define INTERNATIONAL_SUPPORT
+# define USE_FRIBIDI
+# define INTERNATIONAL_SUPPORT
 #endif
 
 #ifdef USE_FRIBIDI
-#include <fribidi/fribidi.h>
+# include <fribidi/fribidi.h>
 
 /* abstract fribidi */
 typedef FriBidiChar	EvasIntlChar;
@@ -19,16 +21,16 @@ typedef FriBidiLevel	EvasIntlLevel;
 
 
 /* whether should fix arabic specifix issues */
-#define ARABIC_SUPPORT
+# define ARABIC_SUPPORT
 
-#ifdef ARABIC_SUPPORT
-#include "evas_intl/evas_intl_arabic.h"
-#endif
+# ifdef ARABIC_SUPPORT
+#  include "evas_intl/evas_intl_arabic.h"
+# endif
 
-#define evas_intl_position_logical_to_visual(list, position) \
+# define evas_intl_position_logical_to_visual(list, position) \
 		(list) ? list[position] : position;
 
-#define evas_intl_position_visual_to_logical(list, position) \
+# define evas_intl_position_visual_to_logical(list, position) \
 		(list) ? list[position] : position;
 				
 
