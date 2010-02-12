@@ -128,7 +128,7 @@ eina_strbuf_append(Eina_Strbuf *buf, const char *str)
    len = strlen(str);
    if (!_eina_strbuf_grow(buf, buf->len + len))
      return EINA_FALSE;
-   memcpy(buf->buf + buf->len, str, buf->size - buf->len + 1);
+   memcpy(buf->buf + buf->len, str, len + 1);
    buf->len += len;
    return EINA_TRUE;
 }
@@ -151,7 +151,7 @@ eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str)
    len = strlen(esc);
    if (!_eina_strbuf_grow(buf, buf->len + len))
      return EINA_FALSE;
-   memcpy(buf->buf + buf->len, esc, buf->size - buf->len + 1);
+   memcpy(buf->buf + buf->len, esc, len + 1);
    buf->len += len;
    free(esc);
    return EINA_TRUE;
