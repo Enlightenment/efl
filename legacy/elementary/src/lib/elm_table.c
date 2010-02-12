@@ -162,3 +162,34 @@ elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h
    elm_widget_sub_object_add(obj, subobj);
    evas_object_table_pack(wd->tbl, subobj, x, y, w, h);
 }
+
+/**
+ * Remove child from table.
+ *
+ * @param obj The table object
+ * @param subobj The subobject
+ *
+ * @ingroup Table
+ */
+EAPI void
+elm_table_unpack(Evas_Object *obj, Evas_Object *subobj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   elm_widget_sub_object_del(obj, subobj);
+   evas_object_table_unpack(wd->tbl, subobj);
+}
+
+/**
+ * Faster way to remove all child objects from a table object.
+ *
+ * @param obj The table object
+ * @param clear If true, it will delete just removed children
+ *
+ * @ingroup Table
+ */
+EAPI void
+elm_table_clear(Evas_Object *obj, Eina_Bool clear)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   evas_object_table_clear(wd->tbl, clear);
+}
