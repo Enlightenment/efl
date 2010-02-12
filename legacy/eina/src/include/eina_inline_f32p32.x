@@ -71,7 +71,7 @@ eina_f32p32_div(Eina_F32p32 a, Eina_F32p32 b)
    sign = a ^ b;
 
    if (b == 0)
-     return sign < 0 ? (Eina_F32p32) 0x8000000000000000ll : (Eina_F32p32) 0x7FFFFFFFFFFFFFFFll;
+     return sign < 0 ? (Eina_F32p32) 0x8000000000000000ull : (Eina_F32p32) 0x7FFFFFFFFFFFFFFFull;
 
    result = (eina_f32p32_mul(eina_fp32p32_llabs(a),  (((uint64_t) 1 << 62) / ((uint64_t)(eina_fp32p32_llabs(b)) >> 2))));
 
