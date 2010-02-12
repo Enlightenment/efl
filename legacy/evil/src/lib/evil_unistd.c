@@ -73,7 +73,7 @@ evil_gettimeofday(struct timeval *tp, void *tzp __UNUSED__)
    QueryPerformanceCounter(&count);
    diff = count.QuadPart - _evil_time_count;
    tp->tv_sec = _evil_time_second + diff / _evil_time_freq;
-   tp->tv_usec = (diff % _evil_time_freq) * 1000000000ll;
+   tp->tv_usec = ((diff % _evil_time_freq) * 1000000ll) / _evil_time_freq;
 
    return 1;
 }

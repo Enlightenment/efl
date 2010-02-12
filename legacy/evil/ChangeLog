@@ -1,3 +1,9 @@
+2010-02-12  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_unistd.c:
+	fix gettimeofday(). Thanks to Mathieu SCHROETER,
+	from the GeexBox project, for having spotted this.
+
 2010-01-30  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_fcntl.c:
