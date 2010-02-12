@@ -152,8 +152,8 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
 
    /* disabled entry */
    en = elm_scrolled_entry_add(win);
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_scrolled_entry_entry_set(en, "Disabled entry");
    elm_scrolled_entry_single_line_set(en, 1);
@@ -163,8 +163,8 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
 
    /* password entry */
    en = elm_scrolled_entry_add(win);
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_scrolled_entry_password_set(en, 1);
    elm_scrolled_entry_single_line_set(en, 1);
@@ -197,8 +197,8 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
 
    /* Single line selected entry */
    en = elm_scrolled_entry_add(win);
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_scrolled_entry_entry_set(en, "This is a single line");
    elm_scrolled_entry_single_line_set(en, 1);
@@ -208,8 +208,8 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
 
    /* Single line password entry */
    en_p = elm_scrolled_entry_add(win);
-   evas_object_size_hint_weight_set(en_p, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(en_p, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(en_p, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(en_p, EVAS_HINT_FILL, 0.5);
    elm_scrolled_entry_scrollbar_policy_set(en_p, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_scrolled_entry_entry_set(en_p, "Password here");
    elm_scrolled_entry_single_line_set(en_p, 1);
