@@ -18,9 +18,9 @@ EAPI Eina_Bool eina_strbuf_insert(Eina_Strbuf *buf, const char *str,
              	                 size_t pos) EINA_ARG_NONNULL(1, 2);
 #define eina_strbuf_prepend(buf, str) eina_strbuf_insert(buf, str, 0)
 EAPI Eina_Bool eina_strbuf_remove(Eina_Strbuf *buf, unsigned int start, unsigned int end) EINA_ARG_NONNULL(1);
-EAPI const char *eina_strbuf_string_get(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
+EAPI const char *eina_strbuf_string_get(const Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 EAPI char *eina_strbuf_string_steal(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
-EAPI size_t eina_strbuf_length_get(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
+EAPI size_t eina_strbuf_length_get(const Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str,
                                  const char *with, unsigned int n) EINA_ARG_NONNULL(1, 2, 3);
 #define eina_strbuf_replace_first(buf, str, with) \

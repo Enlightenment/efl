@@ -263,7 +263,7 @@ eina_strbuf_remove(Eina_Strbuf *buf, unsigned int start, unsigned int end)
  * the Eina_Strbuf is modified.
  */
 EAPI const char *
-eina_strbuf_string_get(Eina_Strbuf *buf)
+eina_strbuf_string_get(const Eina_Strbuf *buf)
 {
    EINA_MAGIC_CHECK_STRBUF(buf, NULL);
 
@@ -291,7 +291,7 @@ eina_strbuf_string_steal(Eina_Strbuf *buf)
  * @param buf the buffer
  */
 EAPI size_t
-eina_strbuf_length_get(Eina_Strbuf *buf)
+eina_strbuf_length_get(const Eina_Strbuf *buf)
 {
    EINA_MAGIC_CHECK_STRBUF(buf, 0);
 
