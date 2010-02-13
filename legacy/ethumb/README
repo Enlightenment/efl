@@ -1,0 +1,51 @@
+                Ethumb - Thumbnail generation library
+
+
+FEATURES
+========
+
+ * create thumbnails with a predefined frame (possibly an edje frame);
+ * have an option to create fdo-like thumbnails;
+ * have a client/server utility.
+
+
+API
+===
+
+It's possible to set the following properties of thumbnails:
+
+ * size
+ * format (jpeg, png, eet...)
+ * aspect:
+    * have crop?
+    * crop alignment?
+ * video:
+    * video_time
+ * document:
+    * page
+ * frame: edje file, group and swallow part to use when generating
+   thumbnails
+ * directory: directory where to save thumbnails
+ * category: to be used as DIRECTORY/CATEGORY/md5.format
+
+Path generation should provide the following:
+
+ * If no path to save the thumbnail is specified, the following is used:
+   * if CATEGORY, return ~/.thumbnail/CATEGORY/md5.format
+   * else if size (128x128 or 256x256), format (png), aspect (keep
+     aspect, no crop) and no frame matches, return
+     ~/.thumbnail/{normal,large}/md5.png
+   * else return WxH-FORMAT-[framed-]ASPECT
+
+Client server provides the following:
+ * multiple client support
+ * per-client configuration, avoid exchanging parameters over and over
+   again
+ * per-client queue, when client disconnect (ie: dies), remove whole
+   queue
+ * all clients have same priority, so queue is mixed for processing
+ * cancel thumb generation request
+ * communication over (for now) dbus and (future) ecore-ipc and unix
+   sockets
+ * interface of client library is independent of the communication
+   method selected
