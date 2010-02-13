@@ -10,6 +10,12 @@
 #include <string.h>
 #include <unistd.h>
 
+//#define LOGRT 1
+
+#ifdef LOGRT
+#include <dlfcn.h>
+#endif
+
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "ecore_x_private.h"
@@ -131,6 +137,62 @@ EAPI int ECORE_X_LOCK_SCROLL = 0;
 EAPI int ECORE_X_LOCK_NUM = 0;
 EAPI int ECORE_X_LOCK_CAPS = 0;
 
+#ifdef LOGRT
+static Status (*_logrt_real_reply) (Display *disp, void *rep, int extra, Bool discard) = NULL;
+static void
+_logrt_init(void)
+{
+   void *lib;
+   
+   lib = dlopen("libX11.so", RTLD_GLOBAL | RTLD_LAZY);
+   if (!lib) lib = dlopen("libX11.so.6", RTLD_GLOBAL | RTLD_LAZY);
+   if (!lib) lib = dlopen("libX11.so.6.3", RTLD_GLOBAL | RTLD_LAZY);
+   if (!lib) lib = dlopen("libX11.so.6.3.0", RTLD_GLOBAL | RTLD_LAZY);
+   _logrt_real_reply = dlsym(lib, "_XReply");
+}
+Status
+_XReply(Display *disp, void *rep, int extra, Bool discard)
+{
+   void *bt[128];
+   int i, n;
+   char **sym;
+   
+   n = backtrace(bt, 128);
+   if (n > 0)
+     {
+        sym = backtrace_symbols(bt, n);
+        printf("ROUNDTRIP: ");
+        if (sym)
+          {
+             for (i = n - 1; i > 0; i--)
+               {
+                  char *fname = strchr(sym[i], '(');
+                  if (fname)
+                    {
+                       char *tsym = alloca(strlen(fname) + 1);
+                       char *end;
+                       strcpy(tsym, fname + 1);
+                       end = strchr(tsym, '+');
+                       if (end)
+                         {
+                            *end = 0;
+                            printf("%s", tsym);
+                         }
+                       else
+                         printf("???");
+                    }
+                  else
+                    printf("???");
+                  if (i > 1) printf(" > ");
+               }
+             printf("\n");
+          }
+     }
+   // fixme: logme
+   return _logrt_real_reply(disp, rep, extra, discard);
+}
+#endif
+
 /**
  * @defgroup Ecore_X_Init_Group X Library Init and Shutdown Functions
  *
@@ -172,6 +234,11 @@ ecore_x_init(const char *name)
    
    if (++_ecore_x_init_count != 1) 
      return _ecore_x_init_count;
+
+#ifdef LOGRT
+   _logrt_init();
+#endif   
+   
    _ecore_xlib_log_dom = eina_log_domain_register("EcoreX11", ECORE_XLIB_DEFAULT_LOG_COLOR);
    if(_ecore_xlib_log_dom < 0)
      {
