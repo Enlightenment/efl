@@ -70,8 +70,8 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_CANVAS_FOCUS_IN, /**< Canvas got focus as a whole */
    EVAS_CALLBACK_CANVAS_FOCUS_OUT, /**< Canvas lost focus as a whole */
    EVAS_CALLBACK_RENDER_FLUSH_PRE, /**< Called just before rendering is updated on the canvas target */
-   EVAS_CALLBACK_RENDER_FLUSH_POST /**< Called just after rendering is updated on the canvas target */
-     
+   EVAS_CALLBACK_RENDER_FLUSH_POST, /**< Called just after rendering is updated on the canvas target */
+   EVAS_CALLBACK_LAST /**< keep as last element/sentinel -- not really an event */
 } Evas_Callback_Type; /**< The type of event to trigger the callback */
 
 typedef enum _Evas_Button_Flags
@@ -712,6 +712,7 @@ typedef enum _Evas_Object_Pointer_Mode
 } Evas_Object_Pointer_Mode;
 
 typedef void (*Evas_Smart_Cb) (void *data, Evas_Object *obj, void *event_info);
+typedef void (*Evas_Event_Cb) (void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 #ifdef __cplusplus
 extern "C" {
@@ -1245,13 +1246,13 @@ extern "C" {
    EAPI void              evas_object_precise_is_inside_set (Evas_Object *obj, Eina_Bool precise) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool         evas_object_precise_is_inside_get (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-   EAPI void              evas_object_event_callback_add    (Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data) EINA_ARG_NONNULL(1, 3);
-   EAPI void             *evas_object_event_callback_del    (Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info)) EINA_ARG_NONNULL(1, 3);
-   EAPI void             *evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data) EINA_ARG_NONNULL(1, 3);
+   EAPI void              evas_object_event_callback_add    (Evas_Object *obj, Evas_Callback_Type type, Evas_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
+  EAPI void             *evas_object_event_callback_del    (Evas_Object *obj, Evas_Callback_Type type, Evas_Event_Cb func) EINA_ARG_NONNULL(1, 3);
+   EAPI void             *evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, Evas_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
 
-   EAPI void              evas_event_callback_add           (Evas *e, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data) EINA_ARG_NONNULL(1, 3);
-   EAPI void             *evas_event_callback_del           (Evas *e, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info)) EINA_ARG_NONNULL(1, 3);
-   EAPI void             *evas_event_callback_del_full      (Evas *e, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data) EINA_ARG_NONNULL(1, 3);
+   EAPI void              evas_event_callback_add           (Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
+   EAPI void             *evas_event_callback_del           (Evas *e, Evas_Callback_Type type, Evas_Event_Cb func) EINA_ARG_NONNULL(1, 3);
+   EAPI void             *evas_event_callback_del_full      (Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
 
    EAPI int               evas_async_events_fd_get          (void) EINA_WARN_UNUSED_RESULT EINA_PURE;
    EAPI int               evas_async_events_process         (void);
