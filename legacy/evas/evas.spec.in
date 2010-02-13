@@ -21,6 +21,7 @@
 %bcond_with    module_engine_gl_x11
 %bcond_with    module_engine_quartz
 %bcond_with    module_engine_software_qtopia
+%bcond_with    module_engine_software_16_x11
 %bcond_with    module_engine_software_sdl
 %bcond_with    module_engine_software_xcb
 %bcond_with    module_engine_xrender_x11
@@ -63,13 +64,14 @@
 %define ac_with_module_saver_gif --%{?with_module_saver_gif:en}%{!?with_module_saver_gif:dis}able-image-saver-gif
 %define ac_with_module_saver_edb --%{?with_module_saver_edb:en}%{!?with_module_saver_edb:dis}able-image-saver-edb
 %define ac_with_module_saver_xpm --%{?with_module_saver_xpm:en}%{!?with_module_saver_xpm:dis}able-image-saver-xpm
-%define ac_with_module_engine_software-x11 --%{?with_module_engine_fb:en}%{!?with_module_engine_fb:dis}able-software-x11
+%define ac_with_module_engine_software-x11 --%{?with_module_engine_software_x11:en}%{!?with_module_engine_software_x11:dis}able-software-x11
 %define ac_with_module_engine_buffer --%{?with_module_engine_buffer:en}%{!?with_module_engine_buffer:dis}able-buffer
 %define ac_with_module_engine_fb --%{?with_module_engine_fb:en}%{!?with_module_engine_fb:dis}able-fb
 %define ac_with_module_engine_xrender_x11 --%{?with_module_engine_xrender_x11:en}%{!?with_module_engine_xrender_x11:dis}able-xrender-x11
 %define ac_with_module_engine_gl_x11 --%{?with_module_engine_gl_x11:en}%{!?with_module_engine_gl_x11:dis}able-gl-x11
 %define ac_with_module_engine_quartz --%{?with_module_engine_quartz:en}%{!?with_module_engine_quartz:dis}able-quartz
 %define ac_with_module_engine_directfb --%{?with_module_engine_directfb:en}%{!?with_module_engine_directfb:dis}able-directfb
+%define ac_with_module_engine_software_16_x11 --%{?with_module_engine_software_16_x11:en}%{!?with_module_engine_software_16_x11:dis}able-software-16-x11
 %define ac_with_module_engine_software_qtopia --%{?with_module_engine_software_qtopia:en}%{!?with_module_engine_software_qtopia:dis}able-software-qtopia
 %define ac_with_module_engine_software_sdl --%{?with_module_engine_software_sdl:en}%{!?with_module_engine_software_sdl:dis}able-sdl
 %define ac_with_module_engine_software_xcb --%{?with_module_engine_software_xcb:en}%{!?with_module_engine_software_xcb:dis}able-software-xcb
@@ -321,6 +323,16 @@ Requires: evas
 Qtopia rendering engine module for Evas
 %endif
 
+%if %{with module_engine_software_16_x11}
+%package module_engine_software_16_x11
+Summary: Software 16-bit X11 rendering engine module for Evas
+Group: System Environment/Libraries
+Requires: evas-module_engine_software_generic
+Requires: evas
+%description module_engine_software_16_x11
+Software 16-bit X11 rendering engine module for Evas
+%endif
+
 %if %{with module_engine_software_sdl}
 %package module_engine_software_sdl
 Summary: Software SDL X11 rendering engine module for Evas
@@ -378,9 +390,10 @@ Xrender XCB X11 rendering engine module for Evas
     %{?ac_with_module_engine_fb} \
     %{?ac_with_module_engine_xrender_x11} \
     %{?ac_with_module_engine_gl_x11} \
-	%{?ac_with_module_engine_quartz} \
+    %{?ac_with_module_engine_quartz} \
     %{?ac_with_module_engine_directfb} \
     %{?ac_with_module_engine_software_qtopia} \
+    %{?ac_with_module_engine_software_16_x11} \
     %{?ac_with_module_engine_software_sdl} \
     %{?ac_with_module_engine_software_xcb} \
     %{?ac_with_module_engine_xrender_xcb} \
@@ -404,6 +417,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-, root, root)
 %doc AUTHORS COPYING COPYING-PLAIN README
+%{_bindir}/%{name}*
 %{_libdir}/*.so.*
 
 %files devel
@@ -548,6 +562,13 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files module_engine_software_qtopia
 %defattr(-, root, root)
 %{_libdir}/evas/modules/engines/software_qtopia/*/module.so
+%endif
+
+%if %{with module_engine_software_16_x11}
+%files module_engine_software_16_x11
+%defattr(-, root, root)
+%{_libdir}/evas/modules/engines/software_16/*/module.so
+%{_libdir}/evas/modules/engines/software_16_x11/*/module.so
 %endif
 
 %if %{with module_engine_software_sdl}
