@@ -12,6 +12,7 @@
 #include "eina_strbuf.h"
 #include "eina_magic.h"
 #include "eina_error.h"
+#include "eina_safety_checks.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -123,6 +124,8 @@ EAPI Eina_Bool
 eina_strbuf_append(Eina_Strbuf *buf, const char *str)
 {
    size_t len;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
    EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
    len = strlen(str);
@@ -143,6 +146,8 @@ eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str)
 {
    size_t len;
    char *esc;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
    EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
    esc = eina_str_escape(str);
@@ -168,6 +173,7 @@ eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, unsigned int maxlen)
 {
    size_t len;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
    EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
    len = strlen(str);
@@ -192,6 +198,7 @@ eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos)
 {
    size_t len;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
    EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
    if (pos >= buf->len)
@@ -311,6 +318,8 @@ EAPI Eina_Bool
 eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with,
                      unsigned int n)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(with, EINA_FALSE);
    EINA_MAGIC_CHECK_STRBUF(buf, 0);
 
    size_t len1, len2;
@@ -360,6 +369,8 @@ eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with,
 EAPI int
 eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(with, EINA_FALSE);
    EINA_MAGIC_CHECK_STRBUF(buf, 0);
 
    size_t len1, len2, len;
