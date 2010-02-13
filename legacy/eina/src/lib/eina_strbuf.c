@@ -76,7 +76,7 @@ eina_strbuf_new(void)
      }
    EINA_MAGIC_SET(buf, EINA_MAGIC_STRBUF);
 
-   if (!_eina_strbuf_init(buf))
+   if (EINA_UNLIKELY(!_eina_strbuf_init(buf)))
      {
 	eina_strbuf_free(buf);
 	return NULL;
@@ -126,7 +126,7 @@ eina_strbuf_append(Eina_Strbuf *buf, const char *str)
    EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
    len = strlen(str);
-   if (!_eina_strbuf_grow(buf, buf->len + len))
+   if (EINA_UNLIKELY(!_eina_strbuf_grow(buf, buf->len + len)))
      return EINA_FALSE;
    memcpy(buf->buf + buf->len, str, len + 1);
    buf->len += len;
@@ -149,7 +149,7 @@ eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str)
    if (EINA_UNLIKELY(!esc))
      return EINA_FALSE;
    len = strlen(esc);
-   if (!_eina_strbuf_grow(buf, buf->len + len))
+   if (EINA_UNLIKELY(!_eina_strbuf_grow(buf, buf->len + len)))
      return EINA_FALSE;
    memcpy(buf->buf + buf->len, esc, len + 1);
    buf->len += len;
@@ -172,7 +172,7 @@ eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, unsigned int maxlen)
 
    len = strlen(str);
    if (len > maxlen) len = maxlen;
-   if (!_eina_strbuf_grow(buf, buf->len + len))
+   if (EINA_UNLIKELY(!_eina_strbuf_grow(buf, buf->len + len)))
      return EINA_FALSE;
 
    memcpy(buf->buf + buf->len, str, len);
@@ -201,7 +201,7 @@ eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos)
     * resize the buffer if necessary
     */
    len = strlen(str);
-   if (!_eina_strbuf_grow(buf, buf->len + len))
+   if (EINA_UNLIKELY(!_eina_strbuf_grow(buf, buf->len + len)))
      return EINA_FALSE;
    /* move the existing text */
    memmove(buf->buf + len + pos, buf->buf + pos, buf->len - pos);
@@ -222,7 +222,7 @@ eina_strbuf_append_char(Eina_Strbuf *buf, char c)
 {
    EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
-   if (!_eina_strbuf_grow(buf, buf->len + 1))
+   if (EINA_UNLIKELY(!_eina_strbuf_grow(buf, buf->len + 1)))
      return EINA_FALSE;
    buf->buf[(buf->len)++] = c;
    buf->buf[buf->len] = '\0';
@@ -335,7 +335,7 @@ eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with,
    if (len1 != len2)
      {
 	/* resize the buffer if necessary */
-	if (!_eina_strbuf_grow(buf, buf->len - len1 + len2))
+	if (EINA_UNLIKELY(!_eina_strbuf_grow(buf, buf->len - len1 + len2)))
 	  return EINA_FALSE;
 	/* move the existing text */
 	memmove(buf->buf + pos + len2, buf->buf + pos + len1,
@@ -405,7 +405,7 @@ eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
 	n++;
 	len = (len + len2) - len1;
 	/* resize the buffer if necessary */
-	if (!_eina_strbuf_grow(buf, len))
+	if (EINA_UNLIKELY(!_eina_strbuf_grow(buf, len)))
 	  {
 	     /* we have to stop replacing here, because we haven't enough
 	      * memory to go on */
