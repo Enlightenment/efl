@@ -28,13 +28,8 @@
 # include <glib.h>
 #endif
 
-#ifdef EINA_BENCH_HAVE_EVAS
-# include <Evas.h>
-#endif
-
-#ifdef EINA_BENCH_HAVE_ECORE
-# include <Ecore_Data.h>
-#endif
+#include "Evas_Data.h"
+#include "Ecore_Data.h"
 
 #include "Eina.h"
 
@@ -60,17 +55,14 @@ static Eina_Stringshare_Test eina_str = {
   eina_shutdown
 };
 
-#ifdef EINA_BENCH_HAVE_EVAS
 static Eina_Stringshare_Test evas_str = {
   "evas",
-  evas_init,
+  evas_stringshare_init,
   evas_stringshare_add,
   evas_stringshare_del,
-  evas_shutdown
+  evas_stringshare_shutdown
 };
-#endif
 
-#ifdef EINA_BENCH_HAVE_ECORE
 static Eina_Stringshare_Test ecore_str = {
   "ecore",
   ecore_string_init,
@@ -78,16 +70,11 @@ static Eina_Stringshare_Test ecore_str = {
   ecore_string_release,
   ecore_string_shutdown
 };
-#endif
 
 static Eina_Stringshare_Test* str[] = {
   &eina_str,
-#ifdef EINA_BENCH_HAVE_EVAS
   &evas_str,
-#endif
-#ifdef EINA_BENCH_HAVE_ECORE
   &ecore_str,
-#endif
   NULL
 };
 

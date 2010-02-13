@@ -27,14 +27,13 @@
 # include <glib.h>
 #endif
 
-#ifdef EINA_BENCH_HAVE_EVAS
-# include <Evas.h>
-#endif
-
-# include "Ecore_Data.h"
+#include "Evas_Data.h"
+#include "Ecore_Data.h"
 
 #include "eina_bench.h"
-#include "Eina.h"
+#include "eina_convert.h"
+#include "eina_list.h"
+#include "eina_main.h"
 
 static int
 _eina_cmp_str(const char *a, const char *b)
@@ -72,15 +71,11 @@ eina_bench_sort_eina(int request)
    eina_shutdown();
 }
 
-#ifdef EINA_BENCH_HAVE_EVAS
-#if 0
 static void
 eina_bench_sort_evas(int request)
 {
    Evas_List *list = NULL;
    int i;
-
-   evas_init();
 
    srand(time(NULL));
 
@@ -100,11 +95,7 @@ eina_bench_sort_evas(int request)
 	free(evas_list_data(list));
 	list = evas_list_remove_list(list, list);
      }
-
-   evas_shutdown();
 }
-#endif
-#endif
 
 #ifdef EINA_BENCH_HAVE_GLIB
 static void
@@ -212,11 +203,7 @@ void eina_bench_sort(Eina_Benchmark *bench)
    eina_benchmark_register(bench, "ecore", EINA_BENCHMARK(eina_bench_sort_ecore_default), 10, 10000, 100);
    eina_benchmark_register(bench, "ecore-merge", EINA_BENCHMARK(eina_bench_sort_ecore_merge), 10, 10000, 100);
    eina_benchmark_register(bench, "ecore-heap", EINA_BENCHMARK(eina_bench_sort_ecore_heap), 10, 10000, 100);
-#ifdef EINA_BENCH_HAVE_EVAS
-#if 0
    eina_benchmark_register(bench, "evas", EINA_BENCHMARK(eina_bench_sort_evas), 10, 10000, 100);
-#endif
-#endif
 }
 
 

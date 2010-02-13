@@ -294,7 +294,6 @@ if ! test "x${VMIC}" = "x" ; then
 fi
 
 EFL_COMPILER_FLAG([-Wshadow])
-EFL_COMPILER_FLAG([-fno-strict-aliasing])
 
 AC_SUBST(EINA_CPPFLAGS)
 AC_SUBST(EINA_CFLAGS)
@@ -326,6 +325,8 @@ case "${host_os}" in
 esac
 AC_SUBST(EINA_LIBS)
 AC_SUBST(lt_enable_auto_import)
+
+EFL_LINKER_FLAG([-fno-strict-aliasing])
 
 
 ### Checks for library functions
@@ -483,7 +484,6 @@ if test "x$enable_coverage" = "xyes" ; then
 fi
 
 EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
-EINA_BENCH_MODULE([evas], [${enable_benchmark}], [evas], [enable_benchmark_evas="yes"], [enable_benchmark_evas="no"])
 EINA_BENCH_MODULE([glib], [${enable_benchmark}], [glib-2.0], [enable_benchmark_glib="yes"], [enable_benchmark_glib="no"])
 
 AC_SUBST(requirement_eina)
@@ -554,7 +554,6 @@ echo "  Coverage.............: ${enable_coverage}"
 echo "  Benchmark............: ${enable_benchmark}"
 if test "x${enable_benchmark}" = "xyes" ; then
 echo "    Glib...............: ${enable_benchmark_glib}"
-echo "    Evas...............: ${enable_benchmark_evas}"
 echo "    E17 real data......: ${enable_benchmark_e17}"
 fi
 echo

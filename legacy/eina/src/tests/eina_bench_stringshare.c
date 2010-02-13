@@ -28,15 +28,13 @@
 # include <glib.h>
 #endif
 
-#ifdef EINA_BENCH_HAVE_EVAS
-# include <Evas.h>
-#endif
-
-# include "Ecore_Data.h"
+#include "Evas_Data.h"
+#include "Ecore_Data.h"
 
 #include "eina_stringshare.h"
 #include "eina_bench.h"
 #include "eina_convert.h"
+#include "eina_main.h"
 
 static void
 eina_bench_stringshare_job(int request)
@@ -102,17 +100,12 @@ eina_bench_stringchunk_job(int request)
 }
 #endif
 
-#ifdef EINA_BENCH_HAVE_EVAS
-#if 0
 static void
 eina_bench_evas_job(int request)
 {
    const char *tmp;
    unsigned int j;
    int i;
-
-   evas_init();
-/*    evas_stringshare_init(); */
 
    for (i = 0; i < request; ++i)
      {
@@ -132,12 +125,7 @@ eina_bench_evas_job(int request)
 	  eina_convert_xtoa(rand() % request, build + 7);
 	  tmp = evas_stringshare_add(build);
        }
-
-/*    evas_stringshare_shutdown(); */
-   evas_shutdown();
 }
-#endif
-#endif
 
 static void
 eina_bench_ecore_job(int request)
@@ -176,10 +164,6 @@ void eina_bench_stringshare(Eina_Benchmark *bench)
 #ifdef EINA_BENCH_HAVE_GLIB
    eina_benchmark_register(bench, "stringchunk (glib)", EINA_BENCHMARK(eina_bench_stringchunk_job), 100, 20100, 500);
 #endif
-#ifdef EINA_BENCH_HAVE_EVAS
-#if 0
    eina_benchmark_register(bench, "stringshare (evas)", EINA_BENCHMARK(eina_bench_evas_job), 100, 20100, 500);
-#endif
-#endif
    eina_benchmark_register(bench, "stringshare (ecore)", EINA_BENCHMARK(eina_bench_ecore_job), 100, 20100, 500);
 }
