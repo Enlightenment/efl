@@ -108,5 +108,5 @@ ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter, int val)
    cond.trigger.test_type = XSyncPositiveComparison;
    cond.event_threshold = v2;
    XSyncAwait(_ecore_x_disp, &cond, 1);
-   XSync(_ecore_x_disp, False);
+//   XSync(_ecore_x_disp, False); // dont need this
 }
