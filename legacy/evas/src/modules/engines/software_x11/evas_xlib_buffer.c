@@ -297,16 +297,22 @@ evas_software_xlib_x_output_buffer_new(Display *d, Visual *v, int depth, int w, 
 		       if (xob->shm_info->shmaddr != NULL)
 			 {
 			    XErrorHandler ph;
-
-			    XSync(d, False);
-			    _x_err = 0;
-			    ph = XSetErrorHandler((XErrorHandler)
-						  x_output_tmp_x_err);
+                            
+                            if (try_shm == 2) // only needed during testing
+                              {
+                                 XSync(d, False);
+                                 _x_err = 0;
+                                 ph = XSetErrorHandler((XErrorHandler)
+                                                       x_output_tmp_x_err);
+                              }
 			    XShmAttach(d, xob->shm_info);
-			    XSync(d, False);
-			    XSetErrorHandler((XErrorHandler)ph);
-			    if (!_x_err)
-			      {
+                            if (try_shm == 2) // only needed during testing
+                              {
+                                 XSync(d, False); 
+                                 XSetErrorHandler((XErrorHandler)ph);
+                              }
+                            if (!_x_err)
+                              {
 //				 printf("SHM++ ID=%i -> %i bytes [%i creates]\n",
 //					xob->shm_info->shmid,
 //					xob->xim->bytes_per_line * xob->xim->height,
