@@ -3016,6 +3016,10 @@ collections {
            image: "bt_dis_base.png" COMP;
            image: "bt_dis_hilight.png" COMP;
        }
+       script {
+            public menu_text_visible; //0:hide (default), 1:visible
+            public menu_disable; //0:enable, 1:disable
+       }
        parts {
            part { name: "item_image";
                mouse_events: 1;
@@ -3073,21 +3077,19 @@ collections {
            part {
                name:          "elm.text";
                type:          TEXT;
-               effect:        SOFT_SHADOW;
                mouse_events:  0;
                scale: 1;
                description { state: "default" 0.0;
                    visible: 0;
                    rel1.to_x: "elm.swallow.content";
                    rel1.relative: 1.0 0.0;
-                   rel1.offset: 0 4;
-                   rel2.offset: -5 -5;
-                   color: 224 224 224 255;
-                   color3: 0 0 0 64;
+                   rel1.offset: 5 7;
+                   rel2.offset: -10 -8;
+                   color: 0 0 0 255;
                    text {
                        font:     "Sans,Edje-Vera";
                        size:     10;
-                       min:      0 0;
+                       min:      1 1;
                        align:    0.0 0.5;
                    }
                }
@@ -3096,17 +3098,19 @@ collections {
                    visible: 1;
                    text.min: 1 1;
                }
+               description { state: "selected" 0.0;
+                   inherit: "default" 0.0;
+                   inherit: "visible" 0.0;
+                   color: 254 254 254 255;
+               }
                description { state: "disabled" 0.0;
                    inherit: "default" 0.0;
                    color: 0 0 0 128;
-                   color3: 0 0 0 0;
                }
                description { state: "disabled_visible" 0.0;
                    inherit: "default" 0.0;
+                   inherit: "visible" 0.0;
                    color: 0 0 0 128;
-                   color3: 0 0 0 0;
-                   visible: 1;
-                   text.min: 1 1;
                }
            }
            part {	  name: "over1";
@@ -3187,29 +3191,77 @@ collections {
            }
        }
        programs {
+          //
            program {
                name:   "item_mouse_in";
                signal: "mouse,in";
                source: "over2";
                action: SIGNAL_EMIT "elm,action,activate" "";
                after: "item_mouse_in_2";
+               after: "item_mouse_in_3";
            }
            program {
                name:   "item_mouse_in_2";
-               action: STATE_SET "visible" 0.0;
+               transition: DECELERATE 0.5;
+               script {
+                   new v, d;
+                   v = get_int(menu_text_visible);
+                   d = get_int(menu_disable);
+
+                   if (v==1 && d==0)
+                        run_program(PROGRAM:"selected_text");
+               }
+           }
+           program {
+               name:   "item_mouse_in_3";
+               action : STATE_SET "visible" 0.0;
                target: "item_image";
                target: "over1";
                transition: DECELERATE 0.5;
            }
            program {
+               name:   "selected_text";
+               action: STATE_SET "selected" 0.0;
+               target: "elm.text";
+               transition: DECELERATE 0.5;
+           }
+           //
+
+           //
+           program {
                name:   "item_mouse_out";
                signal: "mouse,out";
                source: "over2";
+               after: "item_mouse_out_2";
+               after: "item_mouse_out_3";
+           }
+           program {
+               name:   "item_mouse_out_2";
+               transition: DECELERATE 0.5;
+               script {
+                   new v, d;
+                   v = get_int(menu_text_visible);
+                   d = get_int(menu_disable);
+
+                   if (v==1 && d==0)
+                        run_program(PROGRAM:"visible_text");
+               }
+           }
+           program {
+               name:   "item_mouse_out_3";
                action: STATE_SET "default" 0.0;
                target: "item_image";
                target: "over1";
                transition: DECELERATE 0.5;
            }
+           program {
+               name:   "visible_text";
+               action: STATE_SET "visible" 0.0;
+               target: "elm.text";
+               transition: DECELERATE 0.5;
+           }
+           //
+
            program {
                name:   "item_unclick";
                signal: "mouse,up,1";
@@ -3242,9 +3294,7 @@ collections {
                signal: "elm,state,text,visible";
                source: "elm";
                script {
-                   new st[31];
-                   new Float:vl;
-                   get_state(PART:"elm.swallow.content", st, 30, vl);
+                   set_int(menu_text_visible, 1);
                    set_state(PART:"elm.text", "visible", 0.0);
                }
            }
@@ -3252,10 +3302,7 @@ collections {
                signal: "elm,state,text,hidden";
                source: "elm";
                script {
-                   new st[31];
-                   new Float:vl;
-                   get_state(PART:"elm.swallow.content", st, 30, vl);
-                   if (!strcmp(st, "visible"))
+                   set_int(menu_text_visible, 0);
                    set_state(PART:"elm.text", "default", 0.0);
                }
            }
@@ -3273,13 +3320,13 @@ collections {
            }
            program { name: "disable_text";
                script {
-                   new st[31];
-                   new Float:vl;
-                   get_state(PART:"elm.text", st, 30, vl);
-                   if (!strcmp(st, "visible"))
-                   set_state(PART:"elm.text", "disabled_visible", 0.0);
-                   else if (!strcmp(st, "default"))
-                   set_state(PART:"elm.text", "disabled", 0.0);
+                   new v;
+                   v = get_int(menu_text_visible);
+                   if (v==1)
+                    set_state(PART:"elm.text", "disabled_visible", 0.0);
+                   else if (v==0)
+                    set_state(PART:"elm.text", "disabled", 0.0);
+                   set_int(menu_disable, 1);
                }
            }
            program { name: "enable";
@@ -3296,13 +3343,13 @@ collections {
            }
            program { name: "enable_text";
                script {
-                   new st[31];
-                   new Float:vl;
-                   get_state(PART:"elm.text", st, 30, vl);
-                   if (!strcmp(st, "disabled_visible"))
-                   set_state(PART:"elm.text", "visible", 0.0);
-                   else  if (!strcmp(st, "disabled"))
-                   set_state(PART:"elm.text", "default", 0.0);
+                   new v;
+                   v = get_int(menu_text_visible);
+                   if (v==1)
+                    set_state(PART:"elm.text", "visible", 0.0);
+                   else  if (v==0)
+                    set_state(PART:"elm.text", "default", 0.0);
+                   set_int(menu_disable, 0);
                }
            }
        }
@@ -3318,6 +3365,10 @@ collections {
            image: "bt_dis_base.png" COMP;
            image: "bt_dis_hilight.png" COMP;
            image: "arrow_right.png" COMP;
+       }
+       script {
+            public menu_text_visible; //0:hide (default), 1:visible
+            public menu_disable; //0:enable, 1:disable
        }
        parts {
            part { name: "item_image";
@@ -3388,23 +3439,19 @@ collections {
            part {
                name:          "elm.text";
                type:          TEXT;
-               effect:        SOFT_SHADOW;
                mouse_events:  0;
                scale: 1;
                description { state: "default" 0.0;
                    visible: 0;
                    rel1.to_x: "elm.swallow.content";
                    rel1.relative: 1.0 0.0;
-                   rel1.offset: 0 4;
-                   rel2.to_x: "arrow";
-                   rel2.relative: 0.0 1.0;
-                   rel2.offset: -5 -5;
-                   color: 224 224 224 255;
-                   color3: 0 0 0 64;
+                   rel1.offset: 5 7;
+                   rel2.offset: -10 -8;
+                   color: 0 0 0 255;
                    text {
                        font:     "Sans,Edje-Vera";
                        size:     10;
-                       min:      0 0;
+                       min:      1 1;
                        align:    0.0 0.5;
                    }
                }
@@ -3413,17 +3460,19 @@ collections {
                    visible: 1;
                    text.min: 1 1;
                }
+               description { state: "selected" 0.0;
+                   inherit: "default" 0.0;
+                   inherit: "visible" 0.0;
+                   color: 254 254 254 255;
+               }
                description { state: "disabled" 0.0;
                    inherit: "default" 0.0;
                    color: 0 0 0 128;
-                   color3: 0 0 0 0;
                }
                description { state: "disabled_visible" 0.0;
                    inherit: "default" 0.0;
+                   inherit: "visible" 0.0;
                    color: 0 0 0 128;
-                   color3: 0 0 0 0;
-                   visible: 1;
-                   text.min: 1 1;
                }
            }
            part {	  name: "over1";
@@ -3504,29 +3553,77 @@ collections {
            }
        }
        programs {
+           //
            program {
                name:   "item_mouse_in";
                signal: "mouse,in";
                source: "over2";
                action: SIGNAL_EMIT "elm,action,activate" "";
                after: "item_mouse_in_2";
+               after: "item_mouse_in_3";
            }
            program {
                name:   "item_mouse_in_2";
-               action: STATE_SET "visible" 0.0;
+               transition: DECELERATE 0.5;
+               script {
+                   new v, d;
+                   v = get_int(menu_text_visible);
+                   d = get_int(menu_disable);
+
+                   if (v==1 && d==0)
+                        run_program(PROGRAM:"selected_text");
+               }
+           }
+           program {
+               name:   "item_mouse_in_3";
+               action : STATE_SET "visible" 0.0;
                target: "item_image";
                target: "over1";
                transition: DECELERATE 0.5;
            }
            program {
+               name:   "selected_text";
+               action: STATE_SET "selected" 0.0;
+               target: "elm.text";
+               transition: DECELERATE 0.5;
+           }
+           //
+
+           //
+           program {
                name:   "item_mouse_out";
                signal: "mouse,out";
                source: "over2";
+               after: "item_mouse_out_2";
+               after: "item_mouse_out_3";
+           }
+           program {
+               name:   "item_mouse_out_2";
+               transition: DECELERATE 0.5;
+               script {
+                   new v, d;
+                   v = get_int(menu_text_visible);
+                   d = get_int(menu_disable);
+
+                   if (v==1 && d==0)
+                        run_program(PROGRAM:"visible_text");
+               }
+           }
+           program {
+               name:   "item_mouse_out_3";
                action: STATE_SET "default" 0.0;
                target: "item_image";
                target: "over1";
                transition: DECELERATE 0.5;
            }
+           program {
+               name:   "visible_text";
+               action: STATE_SET "visible" 0.0;
+               target: "elm.text";
+               transition: DECELERATE 0.5;
+           }
+           //
+
            program {
                name:   "item_unclick";
                signal: "mouse,up,1";
@@ -3561,13 +3658,11 @@ collections {
                source: "over2";
                action: SIGNAL_EMIT "elm,action,open" "";
            }
-           program { name: "text_show";
+            program { name: "text_show";
                signal: "elm,state,text,visible";
                source: "elm";
                script {
-                   new st[31];
-                   new Float:vl;
-                   get_state(PART:"elm.swallow.content", st, 30, vl);
+                   set_int(menu_text_visible, 1);
                    set_state(PART:"elm.text", "visible", 0.0);
                }
            }
@@ -3575,10 +3670,7 @@ collections {
                signal: "elm,state,text,hidden";
                source: "elm";
                script {
-                   new st[31];
-                   new Float:vl;
-                   get_state(PART:"elm.swallow.content", st, 30, vl);
-                   if (!strcmp(st, "visible"))
+                   set_int(menu_text_visible, 0);
                    set_state(PART:"elm.text", "default", 0.0);
                }
            }
@@ -3613,19 +3705,19 @@ collections {
                target: "item_image_disabled";
                target: "over1";
                target: "over2";
-               target: "disabler";
                target: "over_disabled";
+               target: "disabler";
                after: "enable_text";
            }
            program { name: "enable_text";
                script {
-                   new st[31];
-                   new Float:vl;
-                   get_state(PART:"elm.text", st, 30, vl);
-                   if (!strcmp(st, "disabled_visible"))
-                   set_state(PART:"elm.text", "visible", 0.0);
-                   else if (!strcmp(st, "disabled"))
-                   set_state(PART:"elm.text", "default", 0.0);
+                   new v;
+                   v = get_int(menu_text_visible);
+                   if (v==1)
+                    set_state(PART:"elm.text", "visible", 0.0);
+                   else  if (v==0)
+                    set_state(PART:"elm.text", "default", 0.0);
+                   set_int(menu_disable, 0);
                }
            }
        }
@@ -4917,7 +5009,7 @@ collections {
                signal: "elm,action,slot,bottom,show";
                source: "elm";
                action: STATE_SET "visible" 0.0;
-               transition: DECELERATE 0.5;
+               transition: DECELERATE 0.3;
                target: "bottom";
                target: "elm.swallow.slot.bottom";
            }
@@ -5072,7 +5164,7 @@ collections {
                signal: "elm,action,slot,bottom,show";
                source: "elm";
                action: STATE_SET "visible" 0.0;
-               transition: DECELERATE 0.5;
+               transition: DECELERATE 0.3;
                target: "bottom";
                target: "elm.swallow.slot.bottom";
            }
