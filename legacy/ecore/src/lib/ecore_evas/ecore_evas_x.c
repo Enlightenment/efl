@@ -583,7 +583,7 @@ _ecore_evas_x_event_client_message(void *data __UNUSED__, int type __UNUSED__, v
      {
         ee = ecore_event_window_match(e->data.l[0]);
         if (!ee) return 1; /* pass on event */
-        if (e->data.l[0] != ee->prop.window) return;
+        if (e->data.l[0] != ee->prop.window) return 1;
         ee->engine.x.sync_began = 1;
         ee->engine.x.sync_cancel = 0;
      }
@@ -591,7 +591,7 @@ _ecore_evas_x_event_client_message(void *data __UNUSED__, int type __UNUSED__, v
      {
         ee = ecore_event_window_match(e->data.l[0]);
         if (!ee) return 1; /* pass on event */
-        if (e->data.l[0] != ee->prop.window) return;
+        if (e->data.l[0] != ee->prop.window) return 1;
         ee->engine.x.sync_began = 0;
         ee->engine.x.sync_cancel = 0;
      }
@@ -599,7 +599,7 @@ _ecore_evas_x_event_client_message(void *data __UNUSED__, int type __UNUSED__, v
      {
         ee = ecore_event_window_match(e->data.l[0]);
         if (!ee) return 1; /* pass on event */
-        if (e->data.l[0] != ee->prop.window) return;
+        if (e->data.l[0] != ee->prop.window) return 1;
         ee->engine.x.sync_began = 0;
         ee->engine.x.sync_cancel = 1;
      }
