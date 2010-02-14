@@ -144,6 +144,10 @@ eng_window_new(Display *disp,
           context = glXCreateContext(disp, gw->visualinfo, NULL, GL_FALSE);
         else
           context = glXCreateContext(disp, gw->visualinfo, NULL, GL_TRUE);
+        if (!context)
+          context = glXCreateContext(disp, gw->visualinfo, NULL, GL_TRUE);
+        if (!context)
+          context = glXCreateContext(disp, gw->visualinfo, NULL, GL_FALSE);
      }
    gw->context = context;
 
