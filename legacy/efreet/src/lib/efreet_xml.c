@@ -92,7 +92,7 @@ efreet_xml_new(const char *file)
 {
     Efreet_Xml *xml = NULL;
     int size, fd = -1;
-    char *data = (void *)-1;
+    char *data = MAP_FAILED;
 
     if (!file) return NULL;
 
@@ -103,7 +103,7 @@ efreet_xml_new(const char *file)
     if (fd == -1) goto efreet_error;
 
     data = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
-    if (data == (void *)-1) goto efreet_error;
+    if (data == MAP_FAILED) goto efreet_error;
 
     error = 0;
     xml = efreet_xml_parse(&data, &size);
@@ -115,7 +115,7 @@ efreet_xml_new(const char *file)
 
 efreet_error:
     ERR("could not parse xml file");
-    if (data != (void *)-1) munmap(data, size);
+    if (data != MAP_FAILED) munmap(data, size);
     if (fd != -1) close(fd);
     if (xml) efreet_xml_del(xml);
     return NULL;
