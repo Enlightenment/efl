@@ -9,10 +9,10 @@
 
 #include "eina_private.h"
 #include "eina_str.h"
-#include "eina_strbuf.h"
 #include "eina_magic.h"
 #include "eina_error.h"
 #include "eina_safety_checks.h"
+#include "eina_strbuf.h"
 
 #include <stdlib.h>
 #include <string.h>
