@@ -32,6 +32,9 @@ void     (*glsym_glXBindTexImage)    (Display *a, GLXDrawable b, int c, int *d) 
 void     (*glsym_glXReleaseTexImage) (Display *a, GLXDrawable b, int c) = NULL;
 int      (*glsym_glXGetVideoSync)    (unsigned int *a) = NULL;
 int      (*glsym_glXWaitVideoSync)   (int a, int b, unsigned int *c) = NULL;
+XID      (*glsym_glXCreatePixmap)    (Display *a, void *b, Pixmap c, const int *d) = NULL;
+void     (*glsym_glXDestroyPixmap)   (Display *a, XID b) = NULL;
+void     (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d) = NULL;
 #endif
                 
 static void
@@ -93,6 +96,18 @@ _sym_init(void)
    FINDSYM(glsym_glXGetVideoSync, "glXGetVideoSyncSGI");
    
    FINDSYM(glsym_glXWaitVideoSync, "glXWaitVideoSyncSGI");
+
+   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmap");
+   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmapEXT");
+   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmapARB");
+   
+   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap");
+   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmapEXT");
+   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmapARB");
+   
+   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable");
+   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableEXT");
+   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableARB");
 #endif
 }
 
@@ -166,7 +181,8 @@ eng_setup(Evas *e, void *in)
 				 info->info.colormap,
 				 info->info.depth,
 				 e->output.w,
-				 e->output.h);
+				 e->output.h,
+                                 info->indirect);
 	if (!re->win)
 	  {
 	     free(re);
@@ -252,7 +268,8 @@ eng_setup(Evas *e, void *in)
                                       info->info.colormap,
                                       info->info.depth,
                                       e->output.w,
-                                      e->output.h);
+                                      e->output.h,
+                                      info->indirect);
           }
         else if ((re->win->w != e->output.w) ||
                  (re->win->h != e->output.h))
@@ -436,11 +453,15 @@ eng_output_flush(void *data)
      {
         re->info->callback.pre_swap(re->info->callback.data, re->evas);
      }
-   if ((re->win->draw.x1 == 0) && 
-       (re->win->draw.y1 == 0) &&
-       (re->win->draw.x2 == (re->win->w - 1)) &&
-       (re->win->draw.y2 == (re->win->h - 1)))
-     glXSwapBuffers(re->win->disp, re->win->win);
+   if ((1)
+//       (re->win->draw.x1 == 0) && 
+//       (re->win->draw.y1 == 0) &&
+//       (re->win->draw.x2 == (re->win->w - 1)) &&
+//       (re->win->draw.y2 == (re->win->h - 1))
+       )
+     {
+        glXSwapBuffers(re->win->disp, re->win->win);
+     }
    else
      {
 // FIXME: this doesnt work.. why oh why?        
@@ -1071,10 +1092,8 @@ struct _Native
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    void      *egl_surface;
 #else
-# ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
-   GLXFBConfig fbc;
-   GLXPixmap   glx_pixmap;
-# endif
+   void  *fbc;
+   XID    glx_pixmap;
 #endif
 };
 
@@ -1152,7 +1171,8 @@ _native_free_cb(void *data, void *image)
                                         GLX_FRONT_LEFT_EXT);
           }
 //        printf("free glx pixmap %p\n", n->glx_pixmap);
-        glXDestroyPixmap(re->win->disp, n->glx_pixmap);
+        if (glsym_glXDestroyPixmap)
+          glsym_glXDestroyPixmap(re->win->disp, n->glx_pixmap);
         n->glx_pixmap = 0;
      }
 # endif
@@ -1335,32 +1355,37 @@ eng_image_native_set(void *data, void *image, void *native)
              im->native.func.bind   = _native_bind_cb;
              im->native.func.unbind = _native_unbind_cb;
              im->native.func.free   = _native_free_cb;
-             n->glx_pixmap = glXCreatePixmap(re->win->disp, n->fbc, 
-                                             n->pixmap, pixmap_att);
+             if (glsym_glXCreatePixmap)
+               n->glx_pixmap = glsym_glXCreatePixmap(re->win->disp, n->fbc, 
+                                                     n->pixmap, pixmap_att);
+             if (n->glx_pixmap)
+               {
 //             printf("new native texture for %x | %4i x %4i @ %2i = %p\n",
 //                    pm, w, h, depth, n->glx_pixmap);
-             if (!target)
-               {
-                  printf("no target :(\n");
-                  glXQueryDrawable(re->win->disp, n->pixmap, GLX_TEXTURE_TARGET_EXT, &target);
-               }
-             if (target == GLX_TEXTURE_2D_EXT)
-               {
-                  im->native.target = GL_TEXTURE_2D;
-                  im->native.mipmap = re->win->depth_cfg[depth].mipmap;
-               }
+                  if (!target)
+                    {
+                       printf("no target :(\n");
+                       if (glsym_glXQueryDrawable)
+                         glsym_glXQueryDrawable(re->win->disp, n->pixmap, GLX_TEXTURE_TARGET_EXT, &target);
+                    }
+                  if (target == GLX_TEXTURE_2D_EXT)
+                    {
+                       im->native.target = GL_TEXTURE_2D;
+                       im->native.mipmap = re->win->depth_cfg[depth].mipmap;
+                    }
 #ifdef GL_TEXTURE_RECTANGLE_ARB             
-             else if (target == GLX_TEXTURE_RECTANGLE_EXT)
-               {
-                  im->native.target = GL_TEXTURE_RECTANGLE_ARB;
-                  im->native.mipmap = 0;
-               }
+                  else if (target == GLX_TEXTURE_RECTANGLE_EXT)
+                    {
+                       im->native.target = GL_TEXTURE_RECTANGLE_ARB;
+                       im->native.mipmap = 0;
+                    }
 #endif             
-             else
-               {
-                  im->native.target = GL_TEXTURE_2D;
-                  im->native.mipmap = 0;
-                  printf("still unknown target\n");
+                  else
+                    {
+                       im->native.target = GL_TEXTURE_2D;
+                       im->native.mipmap = 0;
+                       printf("still unknown target\n");
+                    }
                }
 
              evas_gl_common_image_native_enable(im);

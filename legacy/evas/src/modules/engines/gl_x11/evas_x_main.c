@@ -20,7 +20,8 @@ eng_window_new(Display *disp,
 	       Colormap cmap,
 	       int      depth,
 	       int      w,
-	       int      h)
+	       int      h,
+               int      indirect)
 {
    Evas_GL_X11_Window *gw;
    int context_attrs[3];
@@ -138,7 +139,12 @@ eng_window_new(Display *disp,
 // GLX   
 #else
    if (!context)
-     context = glXCreateContext(disp, gw->visualinfo, NULL, GL_TRUE);
+     {
+        if (indirect)
+          context = glXCreateContext(disp, gw->visualinfo, NULL, GL_FALSE);
+        else
+          context = glXCreateContext(disp, gw->visualinfo, NULL, GL_TRUE);
+     }
    gw->context = context;
 
    if (gw->context)
