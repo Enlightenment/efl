@@ -828,6 +828,12 @@ _edje_swallows_collect(Edje *ed)
 void
 _edje_file_del(Edje *ed)
 {
+   if (ed->freeze_calc)
+     {
+        _edje_freeze_calc_list = eina_list_remove(_edje_freeze_calc_list, ed);
+        ed->freeze_calc = 0;
+        _edje_freeze_calc_count--;
+     }
    _edje_message_del(ed);
    _edje_block_violate(ed);
    _edje_var_shutdown(ed);

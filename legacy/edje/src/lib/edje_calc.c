@@ -197,7 +197,15 @@ _edje_recalc(Edje *ed)
 	ed->recalc = 1;
 	if (!ed->calc_only)
 	  {
-	     if (_edje_freeze_val > 0) _edje_freeze_calc_count++;
+	     if (_edje_freeze_val > 0)
+               {
+                  if (!ed->freeze_calc)
+                    {
+                       _edje_freeze_calc_count++;
+                       _edje_freeze_calc_list = eina_list_append(_edje_freeze_calc_list, ed);
+                       ed->freeze_calc = 1;
+                    }
+               }
 	     return;
 	  }
      }

@@ -778,22 +778,23 @@ struct _Edje
 
    int			 preload_count;
 
-   unsigned short        dirty : 1;
-   unsigned short        recalc : 1;
-   unsigned short        walking_callbacks : 1;
-   unsigned short        delete_callbacks : 1;
-   unsigned short        just_added_callbacks : 1;
-   unsigned short        have_objects : 1;
-   unsigned short        paused : 1;
-   unsigned short        no_anim : 1;
-   unsigned short        calc_only : 1;
-   unsigned short        walking_actions : 1;
-   unsigned short        block_break : 1;
-   unsigned short        delete_me : 1;
-   unsigned short        postponed : 1;
+   unsigned int          dirty : 1;
+   unsigned int          recalc : 1;
+   unsigned int          walking_callbacks : 1;
+   unsigned int          delete_callbacks : 1;
+   unsigned int          just_added_callbacks : 1;
+   unsigned int          have_objects : 1;
+   unsigned int          paused : 1;
+   unsigned int          no_anim : 1;
+   unsigned int          calc_only : 1;
+   unsigned int          walking_actions : 1;
+   unsigned int          block_break : 1;
+   unsigned int          delete_me : 1;
+   unsigned int          postponed : 1;
+   unsigned int          freeze_calc : 1;
 #ifdef EDJE_CALC_CACHE
-   unsigned short        text_part_change : 1;
-   unsigned short        all_part_change : 1;
+   unsigned int          text_part_change : 1;
+   unsigned int          all_part_change : 1;
 #endif
    lua_State *L;
 };
@@ -1169,6 +1170,7 @@ extern char            *_edje_fontset_append;
 extern FLOAT_T          _edje_scale;
 extern int              _edje_freeze_val;
 extern int              _edje_freeze_calc_count;
+extern Eina_List       *_edje_freeze_calc_list;
 
 extern Eina_Mempool *_edje_real_part_mp;
 extern Eina_Mempool *_edje_real_part_state_mp;

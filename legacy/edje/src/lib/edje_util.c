@@ -30,6 +30,7 @@ char *_edje_fontset_append = NULL;
 FLOAT_T _edje_scale = ZERO;
 int _edje_freeze_val = 0;
 int _edje_freeze_calc_count = 0;
+Eina_List *_edje_freeze_calc_list = NULL;
 
 typedef struct _Edje_List_Foreach_Data Edje_List_Foreach_Data;
 struct _Edje_List_Foreach_Data
@@ -46,7 +47,7 @@ Edje_Real_Part *_edje_real_part_recursive_get_helper(Edje *ed, char **path);
 
 /************************** API Routines **************************/
 
-//#define FASTFREEZE 1
+#define FASTFREEZE 1
 
 /**
  * @brief Freeze Edje objects.
@@ -114,15 +115,13 @@ edje_thaw(void)
    INF("fr -- ->%i", _edje_freeze_val);
    if ((_edje_freeze_val <= 0) && (_edje_freeze_calc_count > 0))
      {
-	Eina_List *l;
+        Edje *ed;
 
 	_edje_freeze_calc_count = 0;
-	EINA_LIST_FOREACH(_edje_edjes, l, data)
+	EINA_LIST_FREE(_edje_freeze_calc_list, ed)
 	  {
-	     Edje *ed;
-
-	     ed = _edje_fetch(data);
-	     if (ed) _edje_thaw_edje(ed);
+	     _edje_thaw_edje(ed);
+             ed->freeze_calc = 0;
 	  }
      }
 #else   
