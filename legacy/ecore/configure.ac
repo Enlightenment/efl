@@ -96,6 +96,7 @@ want_tslib="no"
 want_glib="no"
 
 # core modules
+want_ecore_data="yes"
 want_ecore_txt="no"
 want_ecore_con="no"
 want_ecore_ipc="no"
@@ -321,7 +322,6 @@ case "$host_os" in
       requirements_ecore_file="evil ${requirements_ecore_file}"
       requirements_ecore_imf="evil ${requirements_ecore_imf}"
       requirements_ecore_imf_evas="evil ${requirements_ecore_imf_evas}"
-      requirements_ecore_txt="evil ${requirements_ecore_txt}"
       EFL_ECORE_BUILD="-DEFL_ECORE_BUILD"
       EFL_ECORE_TXT_BUILD="-DEFL_ECORE_TXT_BUILD"
       EFL_ECORE_FILE_BUILD="-DEFL_ECORE_FILE_BUILD"
@@ -968,6 +968,9 @@ fi
 
 ## Core modules
 
+# ecore_data
+ECORE_CHECK_MODULE([data], [${want_ecore_data}], [Data])
+
 # ecore_txt
 ECORE_CHECK_MODULE([txt], [${want_ecore_txt}], [Txt], [$have_iconv])
 
@@ -1383,6 +1386,7 @@ echo
 echo "  Ecore........................: always"
 echo "    Thread support.............: $have_pthread"
 echo "    GLib support...............: $have_glib"
+echo "  Ecore_Data...................: $have_ecore_data"
 echo "  Ecore_Txt....................: $have_ecore_txt"
 echo "  Ecore_Con....................: $have_ecore_con"
 if test "x$have_ecore_con" = "xyes" ; then
