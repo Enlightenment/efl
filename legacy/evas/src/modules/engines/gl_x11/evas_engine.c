@@ -1348,8 +1348,7 @@ eng_image_native_set(void *data, void *image, void *native)
              n->visual = vis;
              n->fbc = re->win->depth_cfg[depth].fbc;
              im->native.yinvert     = re->win->depth_cfg[depth].yinvert;
-//             im->native.loose       = 1; // works well on nvidia - intel may not be happy i hear. for now.. lets make nv work 1. - because i have an nv card, 2. because it doesnt seem broken for texture-from-pixmap like fglrx has seemed, 3. its some of the best done drivers on linux
-             im->native.loose       = 0;
+             im->native.loose       = re->win->detected.loose_binding;
              im->native.data        = n;
              im->native.func.data   = re;
              im->native.func.bind   = _native_bind_cb;

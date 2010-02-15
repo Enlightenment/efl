@@ -155,8 +155,28 @@ eng_window_new(Display *disp,
      {
         int i, j,  num;
         GLXFBConfig *fbc;
+        const GLubyte *vendor, *renderer, *version;
         
         glXMakeCurrent(gw->disp, gw->win, gw->context);
+        
+        // FIXME: move this up to context creation
+
+        vendor = glGetString(GL_VENDOR);
+        renderer = glGetString(GL_RENDERER);
+        version = glGetString(GL_VERSION);
+        
+        printf("vendor: %s\n", vendor);
+        printf("renderer: %s\n", renderer);
+        printf("version: %s\n", version);
+        
+        if (strstr(vendor, "NVIDIA"))
+          {
+             gw->detected.loose_binding = 1;
+          }
+        else
+          {
+             // noothing yet. add more cases and options over time
+          }
         
         fbc = glXGetFBConfigs(disp, 0/* FIXME: assume screen 0 */, &num);
         for (i = 0; i <= 32; i++)

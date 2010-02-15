@@ -101,6 +101,10 @@ struct _Evas_GL_X11_Window
       int           mipmap;
       unsigned char yinvert : 1;
    } depth_cfg[33]; // config for all 32 possible depths!
+   
+   struct {
+      unsigned int loose_binding : 1;
+   } detected;
 #endif
 
 };

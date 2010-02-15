@@ -165,7 +165,6 @@ evas_gl_common_context_new(void)
 {
    Evas_GL_Context *gc;
 
-   gl_symbols();
 #if 1
    if (_evas_gl_common_context)
      {
@@ -176,6 +175,8 @@ evas_gl_common_context_new(void)
    gc = calloc(1, sizeof(Evas_GL_Context));
    if (!gc) return NULL;
 
+   gl_symbols();
+   
    gc->references = 1;
    
    _evas_gl_common_context = gc;
