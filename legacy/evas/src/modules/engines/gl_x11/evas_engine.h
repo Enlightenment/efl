@@ -114,8 +114,8 @@ Evas_GL_X11_Window *eng_window_new(Display *disp, Window win, int screen,
                                    int depth, int w, int h, int indirect);
 void      eng_window_free(Evas_GL_X11_Window *gw);
 void      eng_window_use(Evas_GL_X11_Window *gw);
-Visual   *eng_best_visual_get(Display *disp, int screen);
-Colormap  eng_best_colormap_get(Display *disp, int screen);
-int       eng_best_depth_get(Display *disp, int screen);
+Visual   *eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo);
+Colormap  eng_best_colormap_get(Evas_Engine_Info_GL_X11 *einfo);
+int       eng_best_depth_get(Evas_Engine_Info_GL_X11 *einfo);
 
 #endif

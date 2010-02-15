@@ -18,13 +18,14 @@ struct _Evas_Engine_Info_GL_X11
       Visual   *visual;
       Colormap  colormap;
       int       depth;
+      int       screen;
    } info;
    /* engine specific function calls to query stuff about the destination */
    /* engine (what visual & colormap & depth to use, performance info etc. */
    struct {
-      Visual *  (*best_visual_get)   (Display *disp, int screen);
-      Colormap  (*best_colormap_get) (Display *disp, int screen);
-      int       (*best_depth_get)    (Display *disp, int screen);
+      Visual *  (*best_visual_get)   (Evas_Engine_Info_GL_X11 *einfo);
+      Colormap  (*best_colormap_get) (Evas_Engine_Info_GL_X11 *einfo);
+      int       (*best_depth_get)    (Evas_Engine_Info_GL_X11 *einfo);
    } func;
    
    struct {

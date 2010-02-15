@@ -309,59 +309,88 @@ eng_window_use(Evas_GL_X11_Window *gw)
 }
 
 Visual *
-eng_best_visual_get(Display *disp, int screen)
+eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
 {
-   if (!disp) return NULL;
+   if (!einfo) return NULL;
+   if (!einfo->info.display) return NULL;
    if (!_evas_gl_x11_vi)
      {
 // EGL / GLES
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-        int depth = DefaultDepth(disp, screen);
+        int depth = DefaultDepth(einfo->info.display,
+                                 einfo->info.screen);
         _evas_gl_x11_vi = calloc(1, sizeof(XVisualInfo));
-        XMatchVisualInfo(disp, screen, depth, TrueColor, _evas_gl_x11_vi);
+        XMatchVisualInfo(einfo->info.display,
+                         einfo->info.screen, depth, TrueColor,
+                         _evas_gl_x11_vi);
 // GLX
 #else
 
-#if 0 // use this if we want alpha
-        int config_attrs[20];
+#if 1
+        int config_attrs[40];
         GLXFBConfig *configs = NULL, config = 0;
         int i, num;
+
+        i = 0;
+        config_attrs[i++] = GLX_DRAWABLE_TYPE;
+        config_attrs[i++] = GLX_WINDOW_BIT;
+        config_attrs[i++] = GLX_DOUBLEBUFFER;
+        config_attrs[i++] = 1;
+        config_attrs[i++] = GLX_RED_SIZE;
+        config_attrs[i++] = 4;
+        config_attrs[i++] = GLX_GREEN_SIZE;
+        config_attrs[i++] = 4;
+        config_attrs[i++] = GLX_BLUE_SIZE;
+        config_attrs[i++] = 4;
+        config_attrs[i++] = GLX_ALPHA_SIZE;
+        config_attrs[i++] = 0;
+        config_attrs[i++] = GLX_RENDER_TYPE;
+        config_attrs[i++] = 0;//GLX_RGBA_BIT;
+        config_attrs[i++] = GLX_DEPTH_SIZE;
+        config_attrs[i++] = 0;
+        config_attrs[i++] = GLX_STENCIL_SIZE;
+        config_attrs[i++] = 0;
+        config_attrs[i++] = GLX_AUX_BUFFERS;
+        config_attrs[i++] = 0;
+        config_attrs[i++] = GLX_STEREO;
+        config_attrs[i++] = 0;
+        config_attrs[i++] = GLX_TRANSPARENT_TYPE;
+        config_attrs[i++] = GLX_NONE;//GLX_TRANSPARENT_RGB;
+//        config_attrs[i++] = GLX_TRANSPARENT_TYPE;
+//        config_attrs[i++] = GLX_NONE;//GLX_TRANSPARENT_INDEX;
+        config_attrs[i++] = 0;
         
-        config_attrs[0] = GLX_DRAWABLE_TYPE;
-        config_attrs[1] = GLX_WINDOW_BIT;
-        config_attrs[2] = GLX_DOUBLEBUFFER;
-        config_attrs[3] = 1;
-        config_attrs[4] = GLX_RED_SIZE;
-        config_attrs[5] = 1;
-        config_attrs[6] = GLX_GREEN_SIZE;
-        config_attrs[7] = 1;
-        config_attrs[8] = GLX_BLUE_SIZE;
-        config_attrs[9] = 1;
-        config_attrs[10] = None;
-        
-        // if rgba
-        config_attrs[10] = GLX_ALPHA_SIZE;
-        config_attrs[11] = 1;
-        config_attrs[12] = GLX_RENDER_TYPE;
-        config_attrs[13] = GLX_RGBA_BIT;
-        config_attrs[14] = None;
-        
-        configs = glXChooseFBConfig(disp, 0, config_attrs, &num);
+        configs = glXChooseFBConfig(einfo->info.display, 
+                                    einfo->info.screen,
+                                    config_attrs, &num);
         for (i = 0; i < num; i++)
           {
              XVisualInfo *visinfo;
              XRenderPictFormat *format;
              
-             visinfo = glXGetVisualFromFBConfig(disp, configs[i]);
+             visinfo = glXGetVisualFromFBConfig(einfo->info.display, 
+                                                configs[i]);
              if (!visinfo) continue;
-             format = XRenderFindVisualFormat(disp, visinfo->visual);
-             if (!format) continue;
-             
-             if (format->direct.alphaMask > 0)
+             if (1) // non argb
                {
                   config = configs[i];
                   _evas_gl_x11_vi = visinfo;
                   break;
+               }
+             else
+               {
+                  format = XRenderFindVisualFormat(einfo->info.display, visinfo->visual);
+                  if (!format)
+                    {
+                       XFree(visinfo);
+                       continue;
+                    }
+                  if (format->direct.alphaMask > 0)
+                    {
+                       config = configs[i];
+                       _evas_gl_x11_vi = visinfo;
+                       break;
+                    }
                }
              XFree(visinfo);
           }
@@ -377,7 +406,8 @@ eng_best_visual_get(Display *disp, int screen)
                GLX_BLUE_SIZE, 1,
                None
           };
-        _evas_gl_x11_vi = glXChooseVisual(disp, screen,
+        _evas_gl_x11_vi = glXChooseVisual(einfo->info.display,
+                                          einfo->info.screen,
                                           _evas_gl_x11_configuration);
 #endif
         
@@ -388,15 +418,17 @@ eng_best_visual_get(Display *disp, int screen)
 }
 
 Colormap
-eng_best_colormap_get(Display *disp, int screen)
+eng_best_colormap_get(Evas_Engine_Info_GL_X11 *einfo)
 {
-   if (!disp) return 0;
-   if (!_evas_gl_x11_vi) eng_best_visual_get(disp, screen);
+   if (!einfo) return 0;
+   if (!einfo->info.display) return 0;
+   if (!_evas_gl_x11_vi) eng_best_visual_get(einfo);
    if (!_evas_gl_x11_vi) return 0;
    if (!_evas_gl_x11_cmap)
      {
-        _evas_gl_x11_cmap = XCreateColormap(disp, 
-                                            RootWindow(disp, screen),
+        _evas_gl_x11_cmap = XCreateColormap(einfo->info.display,
+                                            RootWindow(einfo->info.display,
+                                                       einfo->info.screen),
                                             _evas_gl_x11_vi->visual, 
                                             0);
      }
@@ -404,10 +436,11 @@ eng_best_colormap_get(Display *disp, int screen)
 }
                                  
 int
-eng_best_depth_get(Display *disp, int screen)
+eng_best_depth_get(Evas_Engine_Info_GL_X11 *einfo)
 {
-   if (!disp) return 0;
-   if (!_evas_gl_x11_vi) eng_best_visual_get(disp, screen);
+   if (!einfo) return 0;
+   if (!einfo->info.display) return 0;
+   if (!_evas_gl_x11_vi) eng_best_visual_get(einfo);
    if (!_evas_gl_x11_vi) return 0;
    return _evas_gl_x11_vi->depth;
 }

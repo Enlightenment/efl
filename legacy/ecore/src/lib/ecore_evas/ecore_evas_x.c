@@ -92,7 +92,7 @@ xcb_visualtype_get(xcb_screen_t *screen, xcb_visualid_t visual)
 /* noop */
 # else
 static Ecore_X_Window
-_ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y, int w, int h, int override)
+_ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y, int w, int h, int override, int *opt)
 {
    Evas_Engine_Info_GL_X11 *einfo;
    Ecore_X_Window win;
@@ -103,7 +103,21 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
 	XSetWindowAttributes attr;
 	int screen;
 
-	/* FIXME: this is inefficient as its a round trip */
+        if (opt)
+          {
+             int op;
+             
+             for (op = 0; opt[op]; op++)
+               {
+                  if (opt[op] == ECORE_EVAS_GL_X11_OPT_INDIRECT)
+                    {
+                       op++;
+                       einfo->indirect = opt[op];
+                    }
+               }
+          }
+        
+	/* FIXME: this is inefficient as its 1 or more round trips */
 	screen = DefaultScreen(ecore_x_display_get());
 	if (ScreenCount(ecore_x_display_get()) > 1)
 	  {
@@ -131,9 +145,15 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
 		  free(roots);
 	       }
 	  }
+	einfo->info.display  = ecore_x_display_get();
+        einfo->info.screen   = screen;
+	einfo->info.visual   = einfo->func.best_visual_get(einfo);
+	einfo->info.colormap = einfo->func.best_colormap_get(einfo);
+	einfo->info.depth    = einfo->func.best_depth_get(einfo);
+        
 	attr.backing_store = NotUseful;
 	attr.override_redirect = override;
-	attr.colormap = einfo->func.best_colormap_get(ecore_x_display_get(), screen);
+	attr.colormap = einfo->info.colormap;
 	attr.border_pixel = 0;
 	attr.background_pixmap = None;
 	attr.event_mask =
@@ -145,23 +165,12 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
 	attr.bit_gravity = ForgetGravity;
 
 	win =
-	  XCreateWindow(ecore_x_display_get(),
-			parent,
-			x, y,
-			w, h, 0,
-			einfo->func.best_depth_get(ecore_x_display_get(), screen),
-			InputOutput,
-			einfo->func.best_visual_get(ecore_x_display_get(), screen),
-			CWBackingStore | CWColormap |
-			CWBackPixmap | CWBorderPixel |
-			CWBitGravity | CWEventMask |
-			CWOverrideRedirect,
-			&attr);
-	einfo->info.display  = ecore_x_display_get();
-	einfo->info.visual   = einfo->func.best_visual_get(ecore_x_display_get(), screen);
-	einfo->info.colormap = einfo->func.best_colormap_get(ecore_x_display_get(), screen);
+	  XCreateWindow(einfo->info.display, parent, x, y, w, h, 0,
+			einfo->info.depth, InputOutput, einfo->info.visual,
+			CWBackingStore | CWColormap | CWBackPixmap | 
+                        CWBorderPixel | CWBitGravity | CWEventMask |
+			CWOverrideRedirect, &attr);
 	einfo->info.drawable = win;
-	einfo->info.depth    = einfo->func.best_depth_get(ecore_x_display_get(), screen);
         
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
         ecore_x_window_defaults_set(win);
@@ -2766,6 +2775,13 @@ EAPI Ecore_Evas *
 ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 		      int x, int y, int w, int h)
 {
+   return ecore_evas_gl_x11_options_new(disp_name, parent, x, y, w, h, NULL);
+}
+
+EAPI Ecore_Evas *
+ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
+                              int x, int y, int w, int h, int *opt)
+{
 # ifdef HAVE_ECORE_X_XCB
    Ecore_Evas *ee = NULL;
 # else
@@ -2813,7 +2829,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
    if (parent == 0) parent = DefaultRootWindow(ecore_x_display_get());
    ee->engine.x.win_root = parent;
 
-   ee->prop.window = _ecore_evas_x_gl_window_new(ee, ee->engine.x.win_root, x, y, w, h, 0);
+   ee->prop.window = _ecore_evas_x_gl_window_new(ee, ee->engine.x.win_root, x, y, w, h, 0, opt);
 
    if (getenv("DESKTOP_STARTUP_ID"))
      {
