@@ -96,7 +96,7 @@ want_tslib="no"
 want_glib="no"
 
 # core modules
-want_ecore_txt="yes"
+want_ecore_txt="no"
 want_ecore_con="no"
 want_ecore_ipc="no"
 want_ecore_file="yes"
