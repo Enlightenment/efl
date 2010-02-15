@@ -341,29 +341,18 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	    ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
 	    ((ee->should_be_visible) && (ee->prop.override)))
      {
-	if (ee->shaped)
-	  {
-	     updates = evas_render_updates(ee->evas);
-	     if (updates)
-	       {
-		  ecore_x_window_shape_mask_set(ee->prop.window, ee->engine.x.mask);
-		  evas_render_updates_free(updates);
-		  _ecore_evas_idle_timeout_update(ee);
-                  rend = 1;
-	       }
-	  }
-	else
-	  {
-	     updates = evas_render_updates(ee->evas);
-	     if (updates)
-	       {
-		  evas_render_updates_free(updates);
-		  if (ee->alpha)
-		    ecore_x_window_shape_input_mask_set(ee->prop.window, ee->engine.x.mask);
-		  _ecore_evas_idle_timeout_update(ee);
-                  rend = 1;
-	       }
-	  }
+
+        updates = evas_render_updates(ee->evas);
+        if (updates) 
+          {
+             if (ee->shaped) 
+               ecore_x_window_shape_mask_set(ee->prop.window, ee->engine.x.mask);
+             if (ee->alpha)
+               ecore_x_window_shape_input_mask_set(ee->prop.window, ee->engine.x.mask);
+             evas_render_updates_free(updates);
+             _ecore_evas_idle_timeout_update(ee);
+             rend = 1;
+          }
      }
    else
      evas_norender(ee->evas);
