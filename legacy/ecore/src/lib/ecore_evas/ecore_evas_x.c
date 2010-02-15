@@ -92,7 +92,7 @@ xcb_visualtype_get(xcb_screen_t *screen, xcb_visualid_t visual)
 /* noop */
 # else
 static Ecore_X_Window
-_ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y, int w, int h, int override, int *opt)
+_ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y, int w, int h, int override, const int *opt)
 {
    Evas_Engine_Info_GL_X11 *einfo;
    Ecore_X_Window win;
@@ -150,6 +150,14 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
 	einfo->info.visual   = einfo->func.best_visual_get(einfo);
 	einfo->info.colormap = einfo->func.best_colormap_get(einfo);
 	einfo->info.depth    = einfo->func.best_depth_get(einfo);
+
+        if ((!einfo->info.visual) ||
+            (!einfo->info.colormap) ||
+            (!einfo->info.depth))
+          {
+             evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+             return 0;
+          }
         
 	attr.backing_store = NotUseful;
 	attr.override_redirect = override;
@@ -2780,7 +2788,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 
 EAPI Ecore_Evas *
 ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
-                              int x, int y, int w, int h, int *opt)
+                              int x, int y, int w, int h, const int *opt)
 {
 # ifdef HAVE_ECORE_X_XCB
    Ecore_Evas *ee = NULL;
@@ -2830,7 +2838,11 @@ ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
    ee->engine.x.win_root = parent;
 
    ee->prop.window = _ecore_evas_x_gl_window_new(ee, ee->engine.x.win_root, x, y, w, h, 0, opt);
-
+   if (!ee->prop.window)
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
    if (getenv("DESKTOP_STARTUP_ID"))
      {
 	ecore_x_netwm_startup_id_set(ee->prop.window,
