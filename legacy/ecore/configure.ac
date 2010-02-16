@@ -97,7 +97,7 @@ want_glib="no"
 
 # core modules
 want_ecore_data="yes"
-want_ecore_txt="yes"
+want_ecore_txt="no"
 want_ecore_con="no"
 want_ecore_ipc="no"
 want_ecore_file="yes"
@@ -323,7 +323,6 @@ case "$host_os" in
       requirements_ecore_imf="evil ${requirements_ecore_imf}"
       requirements_ecore_imf_evas="evil ${requirements_ecore_imf_evas}"
       EFL_ECORE_BUILD="-DEFL_ECORE_BUILD"
-      EFL_ECORE_TXT_BUILD="-DEFL_ECORE_TXT_BUILD"
       EFL_ECORE_FILE_BUILD="-DEFL_ECORE_FILE_BUILD"
       EFL_ECORE_EVAS_BUILD="-DEFL_ECORE_EVAS_BUILD"
       EFL_ECORE_IMF_BUILD="-DEFL_ECORE_IMF_BUILD"
@@ -349,7 +348,6 @@ case "$host_os" in
 esac
 
 AC_SUBST(EFL_ECORE_BUILD)
-AC_SUBST(EFL_ECORE_TXT_BUILD)
 AC_SUBST(EFL_ECORE_FILE_BUILD)
 AC_SUBST(EFL_ECORE_EVAS_BUILD)
 AC_SUBST(EFL_ECORE_IMF_BUILD)
@@ -1075,15 +1073,14 @@ ECORE_CHECK_MODULE([input-evas], [${want_ecore_input}], [Input_Evas], [${have_ev
 
 ecore_x_deps="no"
 if test "x${have_x}" = "xyes" -a \
-        "x${have_ecore_input}" = "xyes" -a \
-        "x${have_ecore_txt}" = "xyes" ; then
+        "x${have_ecore_input}" = "xyes" ; then
    ecore_x_deps="yes"
 fi
 
 ECORE_CHECK_MODULE([x], [${want_ecore_x}], [X], [${ecore_x_deps}],
   [
    ecore_x_libs="$ecore_x_libs $x_libs"
-   requirements_ecore_x="ecore-input ecore-txt ${requirements_ecore_x}"
+   requirements_ecore_x="ecore-input ${requirements_ecore_x}"
   ])
 
 # ecore_win32
