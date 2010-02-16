@@ -2374,7 +2374,7 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
 
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_OPENGL_X11) || defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB) || defined (BUILD_ECORE_EVAS_SOFTWARE_16_X11)
 static void
-_ecore_evas_x_flush_pre(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ecore_evas_x_flush_pre(void *data, Evas *e, void *event_info)
 {
    Ecore_Evas *ee = data;
 
@@ -2393,7 +2393,7 @@ _ecore_evas_x_flush_pre(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_ecore_evas_x_flush_post(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ecore_evas_x_flush_post(void *data, Evas *e, void *event_info)
 {
    Ecore_Evas *ee = data;
    
