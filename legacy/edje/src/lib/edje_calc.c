@@ -2111,6 +2111,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                }
              evas_object_map_set(mo, map);
              evas_object_map_enable_set(mo, 1);
+             if (ep->param1.description->map.backcull)
+               {
+                  if (pf->visible)
+                    {
+                       if (evas_map_util_clockwise_get(map))
+                         evas_object_show(mo);
+                       else
+                         evas_object_hide(mo);
+                    }
+               }
              evas_map_free(map);
           }
         else

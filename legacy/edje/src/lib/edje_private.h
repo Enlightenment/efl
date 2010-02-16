@@ -671,6 +671,7 @@ struct _Edje_Part_Description
          int id_center;
          FLOAT_T x, y, z;
       } rot;
+      unsigned char backcull;
       unsigned char on;
    } map;
    
