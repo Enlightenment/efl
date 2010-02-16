@@ -1811,6 +1811,7 @@ _ecore_evas_x_transparent_set(Ecore_Evas *ee, int transparent)
 
    if (!strcmp(ee->driver, "software_x11"))
      {
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
 	Evas_Engine_Info_Software_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
@@ -1820,6 +1821,7 @@ _ecore_evas_x_transparent_set(Ecore_Evas *ee, int transparent)
 	einfo->info.destination_alpha = transparent;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+#endif        
      }
 }
 #endif /* BUILD_ECORE_EVAS_X11 */

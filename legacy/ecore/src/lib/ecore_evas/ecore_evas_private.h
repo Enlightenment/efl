@@ -192,7 +192,7 @@ struct _Ecore_Evas_Engine
 {
    Ecore_Evas_Engine_Func *func;
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
+#ifdef BUILD_ECORE_EVAS_X11
    struct {
       Ecore_X_Window win_root;
       Eina_List     *win_extra;
