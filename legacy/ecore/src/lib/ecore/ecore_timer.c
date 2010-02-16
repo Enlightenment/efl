@@ -406,8 +406,7 @@ _ecore_timer_enable_new(void)
 
    if (!timers_added) return;
    timers_added = 0;
-   EINA_INLIST_FOREACH(timers, timer)
-	timer->just_added = 0;
+   EINA_INLIST_FOREACH(timers, timer) timer->just_added = 0;
 }
 
 static inline Ecore_Timer *
@@ -465,16 +464,19 @@ _ecore_timer_call(double when)
    if (last_check > when)
      {
 	/* User set time backwards */
-	EINA_INLIST_FOREACH(timers, timer)
-	     timer->at -= (last_check - when);
+	EINA_INLIST_FOREACH(timers, timer) timer->at -= (last_check - when);
      }
    last_check = when;
    for (l = timers; l;)
      {
 	timer = l;
 	l = (Ecore_Timer *) EINA_INLIST_GET(l)->next;
+//        printf("_ecore_timer_call %3.3f <= %3.3f %i %i %p\n", 
+//               timer->at, when, timer->just_added, timer->delete_me, timer);
 	if ((timer->at <= when) &&
-	    (timer->just_added == 0) &&
+// hmm this ends up pausing some edje program iterators... disable for now
+// and see what the fallout is - if any?            
+//	    (timer->just_added == 0) &&
 	    (timer->delete_me == 0))
 	  {
 	     timer->running = EINA_TRUE;
