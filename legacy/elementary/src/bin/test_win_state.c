@@ -94,13 +94,13 @@ _win_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_win_foc_in(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_win_foc_in(void *data, Evas *e, void *event_info)
 {
    printf("FOC IN\n");
 }
 
 static void
-_win_foc_out(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_win_foc_out(void *data, Evas *e, void *event_info)
 {
    printf("FOC OUT\n");
 }
