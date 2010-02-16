@@ -201,6 +201,15 @@ static void st_collections_group_parts_part_description_box_min(void);
 static void st_collections_group_parts_part_description_table_homogeneous(void);
 static void st_collections_group_parts_part_description_table_align(void);
 static void st_collections_group_parts_part_description_table_padding(void);
+static void st_collections_group_parts_part_description_map_perspective(void);
+static void st_collections_group_parts_part_description_map_light(void);
+static void st_collections_group_parts_part_description_map_rotation_center(void);
+static void st_collections_group_parts_part_description_map_rotation_x(void);
+static void st_collections_group_parts_part_description_map_rotation_y(void);
+static void st_collections_group_parts_part_description_map_rotation_z(void);
+static void st_collections_group_parts_part_description_map_on(void);
+static void st_collections_group_parts_part_description_perspective_zplane(void);
+static void st_collections_group_parts_part_description_perspective_focal(void);
 static void st_collections_group_parts_part_api(void);
 
 /* external part parameters */
@@ -413,6 +422,15 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.table.homogeneous", st_collections_group_parts_part_description_table_homogeneous},
      {"collections.group.parts.part.description.table.align", st_collections_group_parts_part_description_table_align},
      {"collections.group.parts.part.description.table.padding", st_collections_group_parts_part_description_table_padding},
+     {"collections.group.parts.part.description.map.perspective", st_collections_group_parts_part_description_map_perspective},
+     {"collections.group.parts.part.description.map.light", st_collections_group_parts_part_description_map_light},
+     {"collections.group.parts.part.description.map.rotation.center", st_collections_group_parts_part_description_map_rotation_center},
+     {"collections.group.parts.part.description.map.rotation.x", st_collections_group_parts_part_description_map_rotation_x},
+     {"collections.group.parts.part.description.map.rotation.y", st_collections_group_parts_part_description_map_rotation_y},
+     {"collections.group.parts.part.description.map.rotation.z", st_collections_group_parts_part_description_map_rotation_z},
+     {"collections.group.parts.part.description.map.on", st_collections_group_parts_part_description_map_on},
+     {"collections.group.parts.part.description.perspective.zplane", st_collections_group_parts_part_description_perspective_zplane},
+     {"collections.group.parts.part.description.perspective.focal", st_collections_group_parts_part_description_perspective_focal},
      {"collections.group.parts.part.description.params.int", st_collections_group_parts_part_description_params_int},
      {"collections.group.parts.part.description.params.double", st_collections_group_parts_part_description_params_double},
      {"collections.group.parts.part.description.params.string", st_collections_group_parts_part_description_params_string},
@@ -590,6 +608,9 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.gradient.rel2", NULL},
      {"collections.group.parts.part.description.box", NULL},
      {"collections.group.parts.part.description.table", NULL},
+     {"collections.group.parts.part.description.map", NULL},
+     {"collections.group.parts.part.description.map.rotation", NULL},
+     {"collections.group.parts.part.description.perspective", NULL},
      {"collections.group.parts.part.description.params", NULL},
      {"collections.group.parts.part.description.color_classes", NULL}, /* dup */
      {"collections.group.parts.part.description.color_classes.color_class", ob_color_class}, /* dup */
@@ -3064,6 +3085,15 @@ ob_collections_group_parts_part_description(void)
    ed->table.align.y = FROM_DOUBLE(0.5);
    ed->table.padding.x = 0;
    ed->table.padding.y = 0;
+   ed->map.id_persp = -1;
+   ed->map.id_light = -1;
+   ed->map.rot.id_center = -1;
+   ed->map.rot.x = FROM_DOUBLE(0.0);
+   ed->map.rot.y = FROM_DOUBLE(0.0);
+   ed->map.rot.z = FROM_DOUBLE(0.0);
+   ed->map.on = 0;
+   ed->persp.zplane = 0;
+   ed->persp.focal = 1000;
    ed->external_params = NULL;
 }
 
@@ -5585,6 +5615,177 @@ static void st_collections_group_parts_part_description_table_padding(void)
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
    ed->table.padding.x = parse_int_range(0, 0, 0x7fffffff);
    ed->table.padding.y = parse_int_range(1, 0, 0x7fffffff);
+}
+
+static void
+st_collections_group_parts_part_description_map_perspective(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+     {
+	char *name;
+
+	name = parse_str(0);
+	data_queue_part_lookup(pc, name, &(ed->map.id_persp));
+	free(name);
+     }
+}
+
+static void
+st_collections_group_parts_part_description_map_light(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+     {
+	char *name;
+
+	name = parse_str(0);
+	data_queue_part_lookup(pc, name, &(ed->map.id_light));
+	free(name);
+     }
+}
+
+static void
+st_collections_group_parts_part_description_map_rotation_center(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+     {
+	char *name;
+
+	name = parse_str(0);
+	data_queue_part_lookup(pc, name, &(ed->map.rot.id_center));
+	free(name);
+     }
+}
+
+static void
+st_collections_group_parts_part_description_map_rotation_x(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->map.rot.x = FROM_DOUBLE(parse_float(0));
+}
+
+static void
+st_collections_group_parts_part_description_map_rotation_y(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->map.rot.y = FROM_DOUBLE(parse_float(0));
+}
+
+static void
+st_collections_group_parts_part_description_map_rotation_z(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->map.rot.z = FROM_DOUBLE(parse_float(0));
+}
+
+static void
+st_collections_group_parts_part_description_map_on(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->map.on = parse_bool(0);
+}
+
+static void
+st_collections_group_parts_part_description_perspective_zplane(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->persp.zplane = parse_int(0);
+}
+
+static void
+st_collections_group_parts_part_description_perspective_focal(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->persp.focal = parse_int_range(0, 1, 0x7fffffff);
 }
 
 static void

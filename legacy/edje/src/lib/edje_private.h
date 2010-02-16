@@ -125,6 +125,14 @@ EAPI extern int _edje_default_log_dom ;
  * ? all unsafe calls that may result in callbacks must be marked and dealt with
  */
 
+struct _Edje_Perspective
+{
+   Evas       *e;
+   Evas_Coord  px, py;
+   Evas_Coord  z0, foc;
+   Eina_List  *users;
+};
+
 struct _Edje_Position_Scale
 {
    FLOAT_T x, y;
@@ -656,17 +664,20 @@ struct _Edje_Part_Description
       } padding;
    } table;
    
-#if 0
-   // // // // //
    struct {
+      int id_persp;
+      int id_light;
       struct {
-         double ax, ay, az;
+         int id_center;
+         FLOAT_T x, y, z;
       } rot;
-      // FIXME: center point is another part id
-      // FIXME: perspective should other part or global value/obj
+      unsigned char on;
    } map;
-   // // // // //
-#endif
+   
+   struct {
+      int zplane;
+      int focal;
+   } persp;
    
    Edje_Color color, color2, color3;  /* color for rect or text, shadow etc. */
    Eina_List *external_params; /* parameters for external objects */
@@ -831,7 +842,7 @@ struct _Edje_Calc_Params
       } text; // 36
    } type; // 40
    unsigned char    visible : 1;
-   unsigned char    smooth : 1; // 4
+   unsigned char    smooth : 1; // 1
 }; // 96
 
 struct _Edje_Real_Part_State
@@ -928,9 +939,9 @@ struct _Edje_Real_Part
    unsigned char             calculated; // 1
    unsigned char             calculating; // 1
 
-   unsigned char             still_in   : 1; // 2
+   unsigned char             still_in   : 1; // 1
 #ifdef EDJE_CALC_CACHE
-   unsigned char             invalidate : 1;
+   unsigned char             invalidate : 1; // 0
 #endif
 }; //  260
 // WITH EDJE_CALC_CACHE: 400
@@ -1056,7 +1067,6 @@ struct _Edje_Var
    } data;
    unsigned char type;
 };
-
 
 typedef enum _Edje_Queue
 {

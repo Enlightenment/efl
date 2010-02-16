@@ -1927,6 +1927,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
      }
    if (!ed->calc_only)
      {
+        Evas_Object *mo;
+        
 	/* Common move, resize and color_set for all part. */
 	switch (ep->part->type)
 	  {
@@ -2010,9 +2012,112 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 		  evas_object_resize(ep->swallowed_object, pf->w, pf->h);
 		  evas_object_show(ep->swallowed_object);
 	       }
-	     else
-	       evas_object_hide(ep->swallowed_object);
+	     else evas_object_hide(ep->swallowed_object);
+             mo = ep->swallowed_object;
 	  }
+        else mo = ep->object;
+        if (chosen_desc->map.on)
+          {
+             Evas_Map *map;
+             Evas_Coord cx, cy, px, py, zplane, foc, lx, ly, lz;
+             double rx, ry, rz;
+             int lr, lg, lb, lar, lag, lab;
+
+             map = evas_map_new(4);
+             evas_map_util_points_populate_from_geometry
+               (map, ed->x + pf->x, ed->y + pf->y, pf->w, pf->h, 0);
+             
+             cx = ed->x + pf->x + (pf->w / 2);
+             cy = ed->y + pf->y + (pf->h / 2);
+             if ((chosen_desc->map.rot.id_center >= 0) &&
+                 (chosen_desc->map.rot.id_center != ep->part->id))
+               {
+                  Edje_Real_Part *ep2 =
+                    ed->table_parts[chosen_desc->map.rot.id_center % 
+                                    ed->table_parts_size];
+                  if (ep2)
+                    {
+                       if (!ep2->calculated)
+                         _edje_part_recalc(ed, ep2, flags);
+                       cx = ed->x + ep2->x + (ep2->w / 2);
+                       cy = ed->y + ep2->y + (ep2->h / 2);
+                    }
+               }
+             if ((ep->param2) && (ep->description_pos != ZERO))
+               {
+                  rx = TO_DOUBLE(ep->param1.description->map.rot.x +
+                                 SCALE(ep->description_pos, 
+                                       SUB(ep->param2->description->map.rot.x,
+                                           ep->param1.description->map.rot.x)));
+                  ry = TO_DOUBLE(ep->param1.description->map.rot.y +
+                                 SCALE(ep->description_pos, 
+                                       SUB(ep->param2->description->map.rot.y,
+                                           ep->param1.description->map.rot.y)));
+                  rz = TO_DOUBLE(ep->param1.description->map.rot.z +
+                                 SCALE(ep->description_pos, 
+                                       SUB(ep->param2->description->map.rot.z,
+                                           ep->param1.description->map.rot.z)));
+               }
+             else
+               {
+                  rx = TO_DOUBLE(ep->param1.description->map.rot.x);
+                  ry = TO_DOUBLE(ep->param1.description->map.rot.y);
+                  rz = TO_DOUBLE(ep->param1.description->map.rot.z);
+               }
+             evas_map_util_3d_rotate(map, rx, ry, rz, cx, cy, 0);
+             if ((chosen_desc->map.id_light >= 0) &&
+                 (chosen_desc->map.id_light != ep->part->id))
+               {
+                  Edje_Real_Part *ep2 =
+                    ed->table_parts[chosen_desc->map.id_light %
+                                    ed->table_parts_size];
+                  if (ep2)
+                    {
+                       if (!ep2->calculated)
+                         _edje_part_recalc(ed, ep2, flags);
+                       lx = ed->x + ep2->x + (ep2->w / 2);
+                       ly = ed->y + ep2->y + (ep2->h / 2);
+                       lz = ep2->param1.description->persp.zplane;
+                       lr = ep2->param1.description->color.r;
+                       lg = ep2->param1.description->color.g;
+                       lb = ep2->param1.description->color.b;
+                       lar = ep2->param1.description->color2.r;
+                       lag = ep2->param1.description->color2.g;
+                       lab = ep2->param1.description->color2.b;
+                       evas_map_util_3d_lighting(map, lx, ly, lz,
+                                                 lr, lg, lb, lar, lag, lab);
+                    }
+               }
+             px = ed->x + (ed->w / 2);
+             py = ed->y + (ed->h / 2);
+             zplane = 0;
+             foc = 1000;
+             if ((chosen_desc->map.id_persp >= 0) &&
+                 (chosen_desc->map.id_persp != ep->part->id))
+               {
+                  Edje_Real_Part *ep2 =
+                    ed->table_parts[chosen_desc->map.id_persp %
+                                    ed->table_parts_size];
+                  if (ep2)
+                    {
+                       if (!ep2->calculated)
+                         _edje_part_recalc(ed, ep2, flags);
+                       px = ed->x + ep2->x + (ep2->w / 2);
+                       py = ed->y + ep2->y + (ep2->h / 2);
+                       zplane = ep2->param1.description->persp.zplane;
+                       foc = ep2->param1.description->persp.focal;
+                    }
+                  evas_map_util_3d_perspective(map, px, py, zplane, foc);
+               }
+             evas_object_map_set(mo, map);
+             evas_object_map_enable_set(mo, 1);
+             evas_map_free(map);
+          }
+        else
+          {
+             evas_object_map_enable_set(mo, 0);
+             evas_object_map_set(mo, NULL);
+          }
      }
 
    ep->x = pf->x;

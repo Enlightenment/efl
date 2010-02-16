@@ -514,28 +514,38 @@ extern "C" {
    EAPI void         edje_message_signal_process        (void);
 
    /* edje_external.c */
-  EAPI Eina_Bool edje_external_type_register(const char *type_name, const Edje_External_Type *type_info);
-  EAPI Eina_Bool edje_external_type_unregister(const char *type_name);
+   EAPI Eina_Bool edje_external_type_register(const char *type_name, const Edje_External_Type *type_info);
+   EAPI Eina_Bool edje_external_type_unregister(const char *type_name);
+   
+   EAPI void      edje_external_type_array_register(const Edje_External_Type_Info *array);
+   EAPI void      edje_external_type_array_unregister(const Edje_External_Type_Info *array);
+   
+   EAPI unsigned int edje_external_type_abi_version_get(void) EINA_CONST;
+   
+   
+   EAPI Eina_Iterator *edje_external_iterator_get(void);
+   EAPI Edje_External_Param *edje_external_param_find(const Eina_List *params, const char *key);
+   EAPI Eina_Bool edje_external_param_int_get(const Eina_List *params, const char *key, int *ret);
+   EAPI Eina_Bool edje_external_param_double_get(const Eina_List *params, const char *key, double *ret);
+   EAPI Eina_Bool edje_external_param_string_get(const Eina_List *params, const char *key, const char **ret);
+   EAPI Eina_Bool edje_external_param_bool_get(const Eina_List *params, const char *key, Eina_Bool *ret);
+   EAPI const Edje_External_Param_Info *edje_external_param_info_get(const char *type_name);
+   
+   /* edje_module.c */
+   EAPI Eina_Bool edje_module_load(const char *module);
+   EAPI const Eina_List *edje_available_modules_get(void);
 
-  EAPI void      edje_external_type_array_register(const Edje_External_Type_Info *array);
-  EAPI void      edje_external_type_array_unregister(const Edje_External_Type_Info *array);
-
-  EAPI unsigned int edje_external_type_abi_version_get(void) EINA_CONST;
-
-
-  EAPI Eina_Iterator *edje_external_iterator_get(void);
-  EAPI Edje_External_Param *edje_external_param_find(const Eina_List *params, const char *key);
-  EAPI Eina_Bool edje_external_param_int_get(const Eina_List *params, const char *key, int *ret);
-  EAPI Eina_Bool edje_external_param_double_get(const Eina_List *params, const char *key, double *ret);
-  EAPI Eina_Bool edje_external_param_string_get(const Eina_List *params, const char *key, const char **ret);
-  EAPI Eina_Bool edje_external_param_bool_get(const Eina_List *params, const char *key, Eina_Bool *ret);
-  EAPI const Edje_External_Param_Info *edje_external_param_info_get(const char *type_name);
-
-  /* edje_module.c */
-  EAPI Eina_Bool edje_module_load(const char *module);
-  EAPI const Eina_List *edje_available_modules_get(void);
-
-
+   /* perspective info for maps inside edje objects */
+#if 1 // WORKING ONಈIT! these will work later. first perspectivg within 1 object
+   typedef struct _Edje_Perspective Edje_Perspective;
+   
+   EAPI Edje_Perspective       *edje_perspective_new       (Evas *e);
+   EAPI void                    edje_perspective_free      (Edje_Perspective *ps);
+   EAPI void                    edje_perspective_set       (Edje_Perspective *ps, Evas_Coord px, Evas_Coord py, Evas_Coord z0, Evas_Coord foc);
+   EAPI void                    edje_object_perspective_set(Evas_Object *obj, Edje_Perspective *persp);
+   EAPI const Edje_Perspective *edje_object_perspective_get(Evas_Object *obj);
+#endif
+   
 #ifdef __cplusplus
 }
 #endif
