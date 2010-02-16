@@ -61,7 +61,7 @@ void
 evas_event_callback_call(Evas *e, Evas_Callback_Type type, void *event_info)
 {
    Eina_Inlist **l_mod = NULL, *l;
-   
+
    _evas_walk(e);
    if (e->callbacks)
      {
@@ -74,8 +74,9 @@ evas_event_callback_call(Evas *e, Evas_Callback_Type type, void *event_info)
 	     fn = (Evas_Func_Node *)l;
 	     if ((fn->type == type) && (!fn->delete_me))
 	       {
-	          if (fn->func)
-	            fn->func(fn->data, e, NULL, event_info);
+		  Evas_Event_Cb func = fn->func;
+	          if (func)
+	            func(fn->data, e, event_info);
 	       }
 	     if (e->delete_me) break;
           }
@@ -140,8 +141,9 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
 	     fn = (Evas_Func_Node *)l;
 	     if ((fn->type == type) && (!fn->delete_me))
 	       {
-	          if (fn->func)
-	            fn->func(fn->data, obj->layer->evas, obj, event_info);
+		  Evas_Object_Event_Cb func = fn->func;
+	          if (func)
+	            func(fn->data, obj->layer->evas, obj, event_info);
 	       }
 	     if (obj->delete_me) break;
           }
@@ -355,7 +357,7 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  * @endcode
  */
 EAPI void
-evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data)
+evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, Evas_Object_Event_Cb func, const void *data)
 {
    /* MEM OK */
    Evas_Func_Node *fn;
@@ -408,7 +410,7 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
  * @endcode
  */
 EAPI void *
-evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info))
+evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, Evas_Object_Event_Cb func)
 {
    /* MEM OK */
    Evas_Func_Node *fn;
@@ -465,7 +467,7 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (
  * @endcode
  */
 EAPI void *
-evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data)
+evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, Evas_Object_Event_Cb func, const void *data)
 {
    /* MEM OK */
    Evas_Func_Node *fn;
@@ -496,7 +498,7 @@ evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, v
 }
 
 EAPI void
-evas_event_callback_add(Evas *e, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data)
+evas_event_callback_add(Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data)
 {
    /* MEM OK */
    Evas_Func_Node *fn;
@@ -525,7 +527,7 @@ evas_event_callback_add(Evas *e, Evas_Callback_Type type, void (*func) (void *da
 }
 
 EAPI void *
-evas_event_callback_del(Evas *e, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info))
+evas_event_callback_del(Evas *e, Evas_Callback_Type type, Evas_Event_Cb func)
 {
    /* MEM OK */
    Evas_Func_Node *fn;
@@ -554,7 +556,7 @@ evas_event_callback_del(Evas *e, Evas_Callback_Type type, void (*func) (void *da
 }
 
 EAPI void *
-evas_event_callback_del_full(Evas *e, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data)
+evas_event_callback_del_full(Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data)
 {
    /* MEM OK */
    Evas_Func_Node *fn;
