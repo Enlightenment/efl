@@ -126,6 +126,14 @@ typedef enum _Evas_Object_Table_Homogeneous_Mode
 
 typedef struct _Evas_Transform Evas_Transform; /**< An Evas projective or affine transform */
 typedef struct _Evas_Coord_Rectangle  Evas_Coord_Rectangle; /**< A generic rectangle handle */
+typedef struct _Evas_Point                   Evas_Point; /**< integer point */
+
+typedef struct _Evas_Coord_Point             Evas_Coord_Point;  /**< Evas_Coord point */
+typedef struct _Evas_Coord_Precision_Point   Evas_Coord_Precision_Point; /**< Evas_Coord point with sub-pixel precision */
+
+typedef struct _Evas_Position                Evas_Position; /**< associates given point in Canvas and Output */
+typedef struct _Evas_Precision_Position      Evas_Precision_Position; /**< associates given point in Canvas and Output, with sub-pixel precision */
+
 typedef struct _Evas_Smart_Class      Evas_Smart_Class; /**< A smart object base class */
 typedef struct _Evas_Smart_Cb_Description Evas_Smart_Cb_Description; /**< A smart object callback description, used to provide introspection */
 typedef struct _Evas_Map              Evas_Map; /**< An array of map points */
@@ -156,6 +164,34 @@ struct _Evas_Coord_Rectangle /** A rectangle in Evas_Coord */
    Evas_Coord y; /**< top-left y co-ordinate of rectangle */
    Evas_Coord w; /**< width of rectangle */
    Evas_Coord h; /**< height of rectangle */
+};
+
+struct _Evas_Point
+{
+   int x, y;
+};
+
+struct _Evas_Coord_Point
+{
+   Evas_Coord x, y;
+};
+
+struct _Evas_Coord_Precision_Point
+{
+   Evas_Coord x, y;
+   double xsub, ysub;
+};
+
+struct _Evas_Position
+{
+    Evas_Point output;
+    Evas_Coord_Point canvas;
+};
+
+struct _Evas_Precision_Position
+{
+    Evas_Point output;
+    Evas_Coord_Precision_Point canvas;
 };
 
 typedef enum _Evas_Aspect_Control
@@ -504,12 +540,10 @@ struct _Evas_Engine_Info /** Generic engine information. Generic info is useless
 struct _Evas_Event_Mouse_Down /** Mouse button press event */
 {
    int button; /**< Mouse button number that went down (1 - 32) */
-   struct {
-      int x, y;
-   } output;
-   struct {
-      Evas_Coord x, y;
-   } canvas;
+
+   Evas_Point output;
+   Evas_Coord_Point canvas;
+
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
@@ -523,12 +557,10 @@ struct _Evas_Event_Mouse_Down /** Mouse button press event */
 struct _Evas_Event_Mouse_Up /** Mouse button release event */
 {
    int button; /**< Mouse button number that was raised (1 - 32) */
-   struct {
-      int x, y;
-   } output;
-   struct {
-      Evas_Coord x, y;
-   } canvas;
+
+   Evas_Point output;
+   Evas_Coord_Point canvas;
+
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
@@ -542,12 +574,10 @@ struct _Evas_Event_Mouse_Up /** Mouse button release event */
 struct _Evas_Event_Mouse_In /** Mouse enter event */
 {
    int buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
-   struct {
-      int x, y;
-   } output;
-   struct {
-      Evas_Coord x, y;
-   } canvas;
+
+   Evas_Point output;
+   Evas_Coord_Point canvas;
+
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
@@ -559,12 +589,11 @@ struct _Evas_Event_Mouse_In /** Mouse enter event */
 struct _Evas_Event_Mouse_Out /** Mouse leave event */
 {
    int buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
-   struct {
-      int x, y;
-   } output;
-   struct {
-      Evas_Coord x, y;
-   } canvas;
+
+
+   Evas_Point output;
+   Evas_Coord_Point canvas;
+
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
@@ -576,14 +605,9 @@ struct _Evas_Event_Mouse_Out /** Mouse leave event */
 struct _Evas_Event_Mouse_Move /** Mouse button down event */
 {
    int buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
-   struct {
-      struct {
-	 int x, y;
-      } output;
-      struct {
-	 Evas_Coord x, y;
-      } canvas;
-   } cur, prev;
+
+   Evas_Position cur, prev;
+
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
@@ -597,13 +621,8 @@ struct _Evas_Event_Mouse_Wheel /** Wheel event */
    int direction; /* 0 = default up/down wheel FIXME: more wheel types */
    int z; /* ...,-2,-1 = down, 1,2,... = up */
 
-   struct {
-      int x, y;
-   } output;
-
-   struct {
-      Evas_Coord x, y;
-   } canvas;
+   Evas_Point output;
+   Evas_Coord_Point canvas;
 
    void          *data;
    Evas_Modifier *modifiers;
@@ -618,13 +637,10 @@ struct _Evas_Event_Multi_Down /** Multi button press event */
    int device; /**< Multi device number that went down (1 or more for extra touches) */
    double radius, radius_x, radius_y;
    double pressure, angle;
-   struct {
-      int x, y;
-   } output;
-   struct {
-      Evas_Coord x, y;
-      double xsub, ysub;
-   } canvas;
+
+   Evas_Point output;
+   Evas_Coord_Precision_Point canvas;
+
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
@@ -640,13 +656,10 @@ struct _Evas_Event_Multi_Up /** Multi button release event */
    int device; /**< Multi device number that went up (1 or more for extra touches) */
    double radius, radius_x, radius_y;
    double pressure, angle;
-   struct {
-      int x, y;
-   } output;
-   struct {
-      Evas_Coord x, y;
-      double xsub, ysub;
-   } canvas;
+
+   Evas_Point output;
+   Evas_Coord_Precision_Point canvas;
+
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
@@ -662,15 +675,9 @@ struct _Evas_Event_Multi_Move /** Multi button down event */
    int device; /**< Multi device number that moved (1 or more for extra touches) */
    double radius, radius_x, radius_y;
    double pressure, angle;
-   struct {
-      struct {
-	 int x, y;
-      } output;
-      struct {
-	 Evas_Coord x, y;
-         double xsub, ysub;
-      } canvas;
-   } cur;
+
+   Evas_Precision_Position cur;
+
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
