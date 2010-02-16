@@ -1509,7 +1509,7 @@ _edje_part_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
-_evas_focus_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_evas_focus_in_cb(void *data, Evas *e, void *event_info)
 {
    Edje *ed = (Edje *)data;
 
@@ -1519,7 +1519,7 @@ _evas_focus_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_evas_focus_out_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_evas_focus_out_cb(void *data, Evas *e, void *event_info)
 {
    Edje *ed = (Edje *)data;
 
