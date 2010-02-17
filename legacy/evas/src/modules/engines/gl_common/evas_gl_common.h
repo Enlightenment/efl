@@ -88,6 +88,7 @@ struct _Evas_GL_Shared
    struct {
       GLint max_texture_units;
       GLint max_texture_size;
+      GLfloat anisotropic;
       Eina_Bool tex_npo2 : 1;
       Eina_Bool tex_rect : 1;
    } info;
@@ -340,7 +341,7 @@ void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);
 void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e);
 void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
 
-#define GL_ERRORS 1
+//#define GL_ERRORS 1
 
 #ifdef GL_ERRORS
 # define GLERR(fn, fl, ln, op) \

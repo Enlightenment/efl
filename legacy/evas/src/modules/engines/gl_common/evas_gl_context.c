@@ -209,6 +209,14 @@ evas_gl_common_context_new(void)
                  (strstr((char*) ext, "GL_ARB_texture_rectangle"))
                  )
                shared->info.tex_rect = 1;
+#ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
+             if ((strstr((char*) ext, "GL_EXT_texture_filter_anisotropic")))
+               {
+                  glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, 
+                              &(shared->info.anisotropic));
+                  printf("max aniso: %3.3f\n", shared->info.anisotropic);
+               }
+#endif             
           }
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,
                       &(shared->info.max_texture_units));
@@ -248,9 +256,12 @@ evas_gl_common_context_new(void)
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-#ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT        
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+#ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
+        if (shared->info.anisotropic > 0.0)
+          {
+             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+          }
 #endif
         
         glEnableVertexAttribArray(SHAD_VERTEX);
@@ -1023,8 +1034,11 @@ shader_array_flush(Evas_GL_Context *gc)
         if (gc->shader.smooth)
           {
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
-             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+             if (shared->info.anisotropic > 0.0)
+               {
+                  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
 #endif
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -1038,8 +1052,11 @@ shader_array_flush(Evas_GL_Context *gc)
         else
           {
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
-             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+             if (shared->info.anisotropic > 0.0)
+               {
+                  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
 #endif
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
