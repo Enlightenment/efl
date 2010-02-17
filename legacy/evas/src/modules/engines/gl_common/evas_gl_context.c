@@ -504,8 +504,6 @@ evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
    if (a < 255) blend = 1;
    if (gc->dc->render_op == EVAS_RENDER_COPY) blend = 0;
    
-   gc->shader.blend = 1;
-   
    if ((gc->shader.cur_tex != 0)
        || (gc->shader.cur_prog != gc->shared->shader.rect.prog)
 //       || (gc->shader.blend != blend)
