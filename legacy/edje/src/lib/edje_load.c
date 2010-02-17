@@ -281,7 +281,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    Eina_List *parts = NULL;
    Eina_List *old_swallows;
    int group_path_started = 0;
-   int entries = 0;
 
    ed = _edje_fetch(obj);
    if (!ed) return 0;
@@ -291,8 +290,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 	(ed->group) && (!strcmp(group, ed->group)))
      return 1;
 
-   //**//
-   _edje_entry_shutdown(ed);
    old_swallows = _edje_swallows_collect(ed);
 
    if (_edje_script_only(ed)) _edje_script_only_shutdown(ed);
@@ -320,6 +317,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
    _edje_textblock_styles_add(ed);
    _edje_textblock_style_all_update(ed);
+
+   ed->has_entries = EINA_FALSE;
 
    if (ed->collection)
      {
@@ -529,7 +528,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                          {
                             _edje_entry_real_part_init(rp);
-                            entries++;
+                            if (!ed->has_entries)
+                                ed->has_entries = EINA_TRUE;
                          }
 		    }
 	       }
@@ -777,14 +777,13 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                     }
                }
 	  }
-        //**//
-        if (entries > 0) _edje_entry_init(ed);
+        _edje_entry_init(ed);
 	return 1;
      }
    else
      return 0;
    ed->load_error = EDJE_LOAD_ERROR_NONE;
-   if (entries > 0) _edje_entry_init(ed);
+   _edje_entry_init(ed);
    return 1;
 }
 
@@ -834,6 +833,7 @@ _edje_file_del(Edje *ed)
         ed->freeze_calc = 0;
         _edje_freeze_calc_count--;
      }
+   _edje_entry_shutdown(ed);
    _edje_message_del(ed);
    _edje_block_violate(ed);
    _edje_var_shutdown(ed);

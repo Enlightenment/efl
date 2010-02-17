@@ -1532,6 +1532,12 @@ _evas_focus_out_cb(void *data, Evas *e, void *event_info)
 void
 _edje_entry_init(Edje *ed)
 {
+   if (!ed->has_entries)
+     return;
+   if (ed->entries_inited)
+     return;
+   ed->entries_inited = EINA_TRUE;
+
    evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_FOCUS_IN, _edje_focus_in_cb, ed);
    evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_FOCUS_OUT, _edje_focus_out_cb, ed);
    evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_KEY_DOWN, _edje_key_down_cb, ed);
@@ -1543,12 +1549,20 @@ _edje_entry_init(Edje *ed)
 void
 _edje_entry_shutdown(Edje *ed)
 {
+   if (!ed->has_entries)
+     return;
+   if (!ed->entries_inited)
+     return;
+   ed->entries_inited = EINA_FALSE;
+
    evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_FOCUS_IN, _edje_focus_in_cb);
    evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_FOCUS_OUT, _edje_focus_out_cb);
    evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_KEY_DOWN, _edje_key_down_cb);
    evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_KEY_UP, _edje_key_up_cb);
-   evas_event_callback_del_full(ed->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN, _evas_focus_in_cb, ed);
-   evas_event_callback_del_full(ed->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT, _evas_focus_out_cb, ed);
+   if (evas_event_callback_del_full(ed->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN, _evas_focus_in_cb, ed) != ed)
+     ERR("could not unregister EVAS_CALLBACK_FOCUS_IN");
+   if (evas_event_callback_del_full(ed->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT, _evas_focus_out_cb, ed) != ed)
+     ERR("could not unregister EVAS_CALLBACK_FOCUS_OUT");
 }
 
 void

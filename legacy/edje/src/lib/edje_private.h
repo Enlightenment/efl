@@ -804,6 +804,8 @@ struct _Edje
    unsigned int          delete_me : 1;
    unsigned int          postponed : 1;
    unsigned int          freeze_calc : 1;
+   unsigned int          has_entries : 1;
+   unsigned int          entries_inited : 1;
 #ifdef EDJE_CALC_CACHE
    unsigned int          text_part_change : 1;
    unsigned int          all_part_change : 1;
