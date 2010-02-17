@@ -1607,7 +1607,7 @@ EAPI void
 elm_object_focus(Evas_Object *obj)
 {
    if (!elm_widget_can_focus_get(obj)) return;
-   elm_widget_focus_set(obj, 1);
+   elm_widget_focus_steal(obj);
 }
 
 /**
