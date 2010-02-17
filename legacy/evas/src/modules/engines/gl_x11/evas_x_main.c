@@ -337,15 +337,16 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
         config_attrs[i++] = GLX_DOUBLEBUFFER;
         config_attrs[i++] = 1;
         config_attrs[i++] = GLX_RED_SIZE;
-        config_attrs[i++] = 4;
+        config_attrs[i++] = 1;
         config_attrs[i++] = GLX_GREEN_SIZE;
-        config_attrs[i++] = 4;
+        config_attrs[i++] =1;
         config_attrs[i++] = GLX_BLUE_SIZE;
-        config_attrs[i++] = 4;
+        config_attrs[i++] = 1;
         config_attrs[i++] = GLX_ALPHA_SIZE;
         config_attrs[i++] = 0;
-        config_attrs[i++] = GLX_RENDER_TYPE;
-        config_attrs[i++] = 0;//GLX_RGBA_BIT;
+//// only needed if we want argb        
+//        config_attrs[i++] = GLX_RENDER_TYPE;
+//        config_attrs[i++] = 0;//GLX_RGBA_BIT;
         config_attrs[i++] = GLX_DEPTH_SIZE;
         config_attrs[i++] = 0;
         config_attrs[i++] = GLX_STENCIL_SIZE;
@@ -394,6 +395,7 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
                }
              XFree(visinfo);
           }
+        printf("ecore_evas_gl_x11_new = %p\n", _evas_gl_x11_vi);
 #else   
         int _evas_gl_x11_configuration[] =
           {
