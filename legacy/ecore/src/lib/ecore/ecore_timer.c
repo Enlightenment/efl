@@ -475,8 +475,11 @@ _ecore_timer_call(double when)
 //               timer->at, when, timer->just_added, timer->delete_me, timer);
 	if ((timer->at <= when) &&
 // hmm this ends up pausing some edje program iterators... disable for now
-// and see what the fallout is - if any?            
-//	    (timer->just_added == 0) &&
+// and see what the fallout is - if any?
+// ...
+// ok - this does cause problems if disabled. i will need to dig into the
+// bottom of this. no quick fixes here :(
+	    (timer->just_added == 0) &&
 	    (timer->delete_me == 0))
 	  {
 	     timer->running = EINA_TRUE;
