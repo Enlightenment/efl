@@ -368,12 +368,27 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 	break;
       case ELM_SOFTWARE_16_X11:
 	win->ee = ecore_evas_software_x11_16_new(NULL, 0, 0, 0, 1, 1);
+        if (!win->ee)
+          {
+             CRITICAL("Software-16 engine create failed. Try software.");
+             win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
+          }
 	break;
       case ELM_XRENDER_X11:
 	win->ee = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, 1, 1);
+        if (!win->ee)
+          {
+             CRITICAL("XRender engine create failed. Try software.");
+             win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
+          }
 	break;
       case ELM_OPENGL_X11:
 	win->ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 1, 1);
+        if (!win->ee)
+          {
+             CRITICAL("OpenGL engine create failed. Try software.");
+             win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
+          }
 	break;
       case ELM_SOFTWARE_WIN32:
 	win->ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
@@ -383,12 +398,27 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 	break;
       case ELM_SOFTWARE_SDL:
 	win->ee = ecore_evas_sdl_new(NULL, 0, 0, 0, 0, 0, 1);
+        if (!win->ee)
+          {
+             CRITICAL("Software SDL engine create failed. Try software.");
+             win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
+          }
 	break;
       case ELM_SOFTWARE_16_SDL:
 	win->ee = ecore_evas_sdl16_new(NULL, 0, 0, 0, 0, 0, 1);
+        if (!win->ee)
+          {
+             CRITICAL("Sofware-16-SDL engine create failed. Try software.");
+             win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
+          }
 	break;
       case ELM_OPENGL_SDL:
 	win->ee = ecore_evas_gl_sdl_new(NULL, 1, 1, 0, 0);
+        if (!win->ee)
+          {
+             CRITICAL("OpenGL SDL engine create failed. Try software.");
+             win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
+          }
 	break;
       default:
 	break;
