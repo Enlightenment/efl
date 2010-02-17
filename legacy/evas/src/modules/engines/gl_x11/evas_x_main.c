@@ -179,6 +179,10 @@ eng_window_new(Display *disp,
           }
         
         fbc = glXGetFBConfigs(disp, 0/* FIXME: assume screen 0 */, &num);
+        if (!fbc)
+          {
+             printf("ERROR: glXGetFBConfigs() returned no fb configs\n");
+          }
         for (i = 0; i <= 32; i++)
           {
              for (j = 0; j < num; j++)
@@ -364,6 +368,10 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
         configs = glXChooseFBConfig(einfo->info.display, 
                                     einfo->info.screen,
                                     config_attrs, &num);
+        if ((!configs) || (num < 1))
+          {
+             printf("ERROR: glXChooseFBConfig returned no configs\n");
+          }
         for (i = 0; i < num; i++)
           {
              XVisualInfo *visinfo;
@@ -395,7 +403,6 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
                }
              XFree(visinfo);
           }
-        printf("ecore_evas_gl_x11_new = %p\n", _evas_gl_x11_vi);
 #else   
         int _evas_gl_x11_configuration[] =
           {

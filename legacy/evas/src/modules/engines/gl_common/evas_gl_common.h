@@ -340,4 +340,12 @@ void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);
 void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e);
 void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
 
+#define GL_ERRORS 1
+
+#ifdef GL_ERRORS
+# define GLERR(fn, fl, ln, op) if (glGetError()) glerr(fn, fl, ln, op)
+#else
+# define GLERR(fn, fl, ln, op)
+#endif
+
 #endif

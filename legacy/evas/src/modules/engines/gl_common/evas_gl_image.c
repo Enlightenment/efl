@@ -363,8 +363,6 @@ evas_gl_common_image_map4_draw(Evas_GL_Context *gc, Evas_GL_Image *im,
    
    _evas_gl_common_image_update(gc, im);
 
-   glFlush();
-   
    c = gc->dc->clip.use; 
    cx = gc->dc->clip.x; cy = gc->dc->clip.y; 
    cw = gc->dc->clip.w; ch = gc->dc->clip.h;

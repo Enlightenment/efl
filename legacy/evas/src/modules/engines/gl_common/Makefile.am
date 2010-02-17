@@ -43,11 +43,6 @@ evas_gl_font.c \
 evas_gl_polygon.c \
 evas_gl_line.c
 
-#evas_gl_misc.c \
-#evas_gl_gradient.c \
-#evas_gl_polygon.c \
-#
-
 libevas_engine_gl_common_la_LIBADD = @EINA_LIBS@ @evas_engine_gl_common_libs@ @dlopen_libs@
 endif
 

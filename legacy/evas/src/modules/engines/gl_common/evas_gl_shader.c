@@ -235,12 +235,17 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
    p->frag = glCreateShader(GL_FRAGMENT_SHADER);
 #if defined (GLES_VARIETY_S3C6410)
    glShaderBinary(1, &(p->vert), 0, vert->bin, vert->bin_size);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glShaderBinary(1, &(p->frag), 0, frag->bin, frag->bin_size);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #else 
    glShaderSource(p->vert, 1,
                   (const char **)&(vert->src), NULL);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glCompileShader(p->vert);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glGetShaderiv(p->vert, GL_COMPILE_STATUS, &ok);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!ok)
      {
         gl_compile_link_error(p->vert, "compile vertex shader");
@@ -249,8 +254,11 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
      }
    glShaderSource(p->frag, 1,
                   (const char **)&(frag->src), NULL);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glCompileShader(p->frag);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glGetShaderiv(p->frag, GL_COMPILE_STATUS, &ok);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!ok)
      {
         gl_compile_link_error(p->frag, "compile fragment shader");
@@ -260,16 +268,25 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
 #endif
    p->prog = glCreateProgram();
    glAttachShader(p->prog, p->vert);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glAttachShader(p->prog, p->frag);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    
    glBindAttribLocation(p->prog, SHAD_VERTEX, "vertex");
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_COLOR, "color");
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_TEXUV, "tex_coord");
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_TEXUV2, "tex_coord2");
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_TEXUV3, "tex_coord3");
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    
    glLinkProgram(p->prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glGetProgramiv(p->prog, GL_LINK_STATUS, &ok);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!ok)
      {
         gl_compile_link_error(p->prog, "link fragment and vertex shaders");

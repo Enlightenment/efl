@@ -417,6 +417,10 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
    // this is needed to make sure all previous rendering is flushed to
    // buffers/surfaces
    eglWaitNative(EGL_CORE_NATIVE_ENGINE); // previous rendering should be done and swapped
+   if (eglGetError() != EGL_SUCCESS)
+     {
+        printf("Error:  eglWaitNative(EGL_CORE_NATIVE_ENGINE) fail.\n");
+     }
 #else
    glXWaitGL();
 #endif
@@ -436,6 +440,10 @@ eng_output_flush(void *data)
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
+   if (eglGetError() != EGL_SUCCESS)
+     {
+        printf("Error:  eglSwapBuffers() fail.\n");
+     }
 #else
 #ifdef VSYNC_TO_SCREEN   
    if ((re->info->vsync)/* || (1)*/)
@@ -1117,13 +1125,30 @@ _native_bind_cb(void *data, void *image)
    if (n->egl_surface)
      {
         if (glsym_glEGLImageTargetTexture2DOES)
-          glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->egl_surface);
+          {
+             glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->egl_surface);
+             if (eglGetError() != EGL_SUCCESS)
+               {
+                  printf("Error:  glEGLImageTargetTexture2DOES() fail.\n");
+               }
+          }
+        else
+          {
+             printf("Try glEGLImageTargetTexture2DOES on EGL with no support\n");
+          }
      }
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
    if (glsym_glXBindTexImage)
-     glsym_glXBindTexImage(re->win->disp, n->glx_pixmap, 
-                           GLX_FRONT_LEFT_EXT, NULL);
+     {
+        glsym_glXBindTexImage(re->win->disp, n->glx_pixmap, 
+                              GLX_FRONT_LEFT_EXT, NULL);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+     }
+   else
+     {
+        printf("Try glXBindTexImage on GLX with no support\n");
+     }
 # endif
 #endif
 }
@@ -1140,8 +1165,15 @@ _native_unbind_cb(void *data, void *image)
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
    if (glsym_glXReleaseTexImage)
-     glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap, 
-                              GLX_FRONT_LEFT_EXT);
+     {
+        glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap, 
+                                 GLX_FRONT_LEFT_EXT);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+     }
+   else
+     {
+        printf("Try glXReleaseTexImage on GLX with no support\n");
+     }
 # endif
 #endif
 }
@@ -1157,8 +1189,18 @@ _native_free_cb(void *data, void *image)
    if (n->egl_surface)
      {
         if (glsym_eglDestroyImage)
-          glsym_eglDestroyImage(re->win->egl_disp,
-                                n->egl_surface);
+          {
+             glsym_eglDestroyImage(re->win->egl_disp,
+                                   n->egl_surface);
+             if (eglGetError() != EGL_SUCCESS)
+               {
+                  printf("Error:  eglDestroyImage() fail.\n");
+               }
+          }
+        else
+          {
+             printf("Try eglDestroyImage on EGL with no support\n");
+          }
      }
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
@@ -1167,12 +1209,25 @@ _native_free_cb(void *data, void *image)
         if (im->native.loose)
           {
              if (glsym_glXReleaseTexImage)
-               glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap,
-                                        GLX_FRONT_LEFT_EXT);
+               {
+                  glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap,
+                                           GLX_FRONT_LEFT_EXT);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
+             else
+               {
+                  printf("Try glXReleaseTexImage on GLX with no support\n");
+               }
           }
-//        printf("free glx pixmap %p\n", n->glx_pixmap);
         if (glsym_glXDestroyPixmap)
-          glsym_glXDestroyPixmap(re->win->disp, n->glx_pixmap);
+          {
+             glsym_glXDestroyPixmap(re->win->disp, n->glx_pixmap);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+          }
+        else
+          {
+             printf("Try glXDestroyPixmap on GLX with no support\n");
+          }
         n->glx_pixmap = 0;
      }
 # endif
@@ -1264,11 +1319,17 @@ eng_image_native_set(void *data, void *image, void *native)
              im->native.target      = GL_TEXTURE_2D;
              im->native.mipmap      = 0;
              if (glsym_eglCreateImage)
-               n->egl_surface = glsym_eglCreateImage(re->win->egl_disp,
-                                                     EGL_NO_CONTEXT,
-                                                     EGL_NATIVE_PIXMAP_KHR,
-                                                     (void *)pm,
-                                                     NULL);
+               {
+                  n->egl_surface = glsym_eglCreateImage(re->win->egl_disp,
+                                                        EGL_NO_CONTEXT,
+                                                        EGL_NATIVE_PIXMAP_KHR,
+                                                        (void *)pm,
+                                                        NULL);
+               }
+             else
+               {
+                  printf("Try eglCreateImage on EGL with no support\n");
+               }
              if (!n->egl_surface)
                {
                   printf("ERROR: eglCreatePixmapSurface() for 0x%x failed\n", (unsigned int)pm);
@@ -1290,7 +1351,8 @@ eng_image_native_set(void *data, void *image, void *native)
         unsigned int w, h, depth = 32, border;
         Window wdummy;
         Native *n;
-        
+
+        // fixme: round trip :(
         XGetGeometry(re->win->disp, pm, &wdummy, &dummy, &dummy, 
                      &w, &h, &border, &depth);
         n = calloc(1, sizeof(Native));
@@ -1355,8 +1417,14 @@ eng_image_native_set(void *data, void *image, void *native)
              im->native.func.unbind = _native_unbind_cb;
              im->native.func.free   = _native_free_cb;
              if (glsym_glXCreatePixmap)
-               n->glx_pixmap = glsym_glXCreatePixmap(re->win->disp, n->fbc, 
-                                                     n->pixmap, pixmap_att);
+               {
+                  n->glx_pixmap = glsym_glXCreatePixmap(re->win->disp, n->fbc, 
+                                                        n->pixmap, pixmap_att);
+               }
+             else
+               {
+                  printf("Try glXCreatePixmap on GLX with no support\n");
+               }
              if (n->glx_pixmap)
                {
 //             printf("new native texture for %x | %4i x %4i @ %2i = %p\n",
@@ -1385,6 +1453,10 @@ eng_image_native_set(void *data, void *image, void *native)
                        im->native.mipmap = 0;
                        printf("still unknown target\n");
                     }
+               }
+             else
+               {
+                  printf("ERROR: GLX Pixmap create fail\n");
                }
 
              evas_gl_common_image_native_enable(im);

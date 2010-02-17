@@ -137,27 +137,39 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
    gc->change.size = 0;
    
    glViewport(0, 0, w, h);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    
    matrix_ident(proj);
    if (m == 1) matrix_ortho(proj, 0, w, 0, h, -1.0, 1.0);
    else matrix_ortho(proj, 0, w, h, 0, -1.0, 1.0);
    
    glUseProgram(gc->shared->shader.rect.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.rect.prog, "mvp"), 1,
                       GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glUseProgram(gc->shared->shader.img.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.img.prog, "mvp"), 1,
                       GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glUseProgram(gc->shared->shader.font.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.font.prog, "mvp"), 1,
                       GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glUseProgram(gc->shared->shader.yuv.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.yuv.prog, "mvp"), 1,
                       GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glUseProgram(gc->shared->shader.tex.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.tex.prog, "mvp"), 1,
                       GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glUseProgram(gc->shader.cur_prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 }
 
 Evas_GL_Context *
@@ -219,24 +231,36 @@ evas_gl_common_context_new(void)
                 );
         
         glDisable(GL_DEPTH_TEST);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glEnable(GL_DITHER);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glDisable(GL_BLEND);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         // no dest alpha
 //        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // dest alpha
 //        glBlendFunc(GL_SRC_ALPHA, GL_ONE); // ???
         glDepthMask(GL_FALSE);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT        
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #endif
         
         glEnableVertexAttribArray(SHAD_VERTEX);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glEnableVertexAttribArray(SHAD_COLOR);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         
         evas_gl_common_shader_program_init(&(shared->shader.rect), 
                                            &(shader_rect_vert_src), 
@@ -259,10 +283,15 @@ evas_gl_common_context_new(void)
                                            &(shader_tex_frag_src),
                                            "tex");
         glUseProgram(shared->shader.yuv.prog);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "tex"), 0);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "texu"), 1);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "texv"), 2);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glUseProgram(gc->shader.cur_prog);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         // in shader:
         // uniform sampler2D tex[8];
         // 
@@ -363,9 +392,15 @@ evas_gl_common_context_target_surface_set(Evas_GL_Context *gc,
 # endif   
 #endif   
    if (gc->shader.surface == gc->def_surface)
-     glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+     {
+        glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+     }
    else
-     glsym_glBindFramebuffer(GL_FRAMEBUFFER, surface->tex->pt->fb);
+     {
+        glsym_glBindFramebuffer(GL_FRAMEBUFFER, surface->tex->pt->fb);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+     }
    _evas_gl_common_viewport_set(gc);
 }
 
@@ -914,14 +949,27 @@ shader_array_flush(Evas_GL_Context *gc)
 
 //   fprintf(stderr, "  flush array %i\n", gc->array.num);
    if (gc->shader.cur_prog != gc->shader.current.cur_prog)
-     glUseProgram(gc->shader.cur_prog);
+     {
+        glUseProgram(gc->shader.cur_prog);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+     }
 
    if (gc->shader.cur_tex != gc->shader.current.cur_tex)
      {
-        if (gc->shader.cur_tex) glEnable(GL_TEXTURE_2D);
-        else glDisable(GL_TEXTURE_2D);
+        if (gc->shader.cur_tex)
+          {
+             glEnable(GL_TEXTURE_2D);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+          }
+        else
+          {
+             glDisable(GL_TEXTURE_2D);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+          }
         glActiveTexture(GL_TEXTURE0);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
    if (gc->array.im)
      {
@@ -938,10 +986,12 @@ shader_array_flush(Evas_GL_Context *gc)
           {
           case EVAS_RENDER_BLEND: /**< default op: d = d*(1-sa) + s */
              glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              break;
           case EVAS_RENDER_COPY: /**< d = s */
              gc->shader.blend = 0;
              glBlendFunc(GL_ONE, GL_ONE);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              break;
              // FIXME: fix blend funcs below!
           case EVAS_RENDER_BLEND_REL: /**< d = d*(1 - sa) + s*da */
@@ -956,13 +1006,22 @@ shader_array_flush(Evas_GL_Context *gc)
           case EVAS_RENDER_MUL: /**< d = d*s */
           default:
              glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              break;
           }
      }
    if (gc->shader.blend != gc->shader.current.blend)
      {
-        if (gc->shader.blend) glEnable(GL_BLEND);
-        else  glDisable(GL_BLEND);
+        if (gc->shader.blend)
+          {
+             glEnable(GL_BLEND);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+          }
+        else
+          {
+             glDisable(GL_BLEND);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+          }
      }
    if (gc->shader.smooth != gc->shader.current.smooth)
      {
@@ -970,21 +1029,31 @@ shader_array_flush(Evas_GL_Context *gc)
           {
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #endif
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
           }
         else
           {
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #endif
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
           }
      }
 /* hmmm this breaks things. must find out why!   
@@ -1018,48 +1087,73 @@ shader_array_flush(Evas_GL_Context *gc)
      }
  */
    glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, gc->array.vertex);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, gc->array.color);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (gc->array.use_texuv)
      {
         glEnableVertexAttribArray(SHAD_TEXUV);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
    else
-     glDisableVertexAttribArray(SHAD_TEXUV);
+     {
+        glDisableVertexAttribArray(SHAD_TEXUV);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+     }
 
    if (gc->array.line)
      {
         glDisableVertexAttribArray(SHAD_TEXUV);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glDisableVertexAttribArray(SHAD_TEXUV2); 
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glDisableVertexAttribArray(SHAD_TEXUV3);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glDrawArrays(GL_LINES, 0, gc->array.num);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
    else
      {
         if ((gc->array.use_texuv2) && (gc->array.use_texuv3))
           {
              glEnableVertexAttribArray(SHAD_TEXUV2);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glEnableVertexAttribArray(SHAD_TEXUV3);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv2);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glVertexAttribPointer(SHAD_TEXUV3, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv3);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glActiveTexture(GL_TEXTURE1);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texu);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glActiveTexture(GL_TEXTURE2);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texv);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glActiveTexture(GL_TEXTURE0);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
           }
         else if (gc->array.use_texuv2)
           {
              glEnableVertexAttribArray(SHAD_TEXUV2);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv2);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
           }
         else
           {
              glDisableVertexAttribArray(SHAD_TEXUV2);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glDisableVertexAttribArray(SHAD_TEXUV3);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
           }
    
         glDrawArrays(GL_TRIANGLES, 0, gc->array.num);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
    if (gc->array.im)
      {
