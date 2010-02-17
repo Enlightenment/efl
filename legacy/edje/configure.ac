@@ -35,7 +35,7 @@ case "$host_os" in
 esac
 AC_SUBST(release_info)
 
-AC_DEFINE_UNQUOTED(SHARED_LIB_SUFFIX, "$shrext_cmds", [Suffix for shared objects])
+AC_DEFINE_UNQUOTED([SHARED_LIB_SUFFIX], ["$shrext_cmds"], [Suffix for shared objects])
 
 EFL_CHECK_PATH_MAX
 
@@ -67,7 +67,7 @@ AC_ARG_ENABLE([amalgamation],
    ],
    [do_amalgamation="no"]
 )
-AM_CONDITIONAL(EDJE_AMALGAMATION, test "x${do_amalgamation}" = "xyes")
+AM_CONDITIONAL([EDJE_AMALGAMATION], [test "x${do_amalgamation}" = "xyes"])
 
 EFL_ENABLE_BIN([edje-cc])
 EFL_ENABLE_BIN([edje-decc])
@@ -83,10 +83,10 @@ AC_ARG_ENABLE([edje-program-cache],
     )],
    [want_edje_program_cache=$enableval]
 )
-AM_CONDITIONAL(EDJE_PROGRAM_CACHE, test "x${want_edje_program_cache}" = "xyes")
+AM_CONDITIONAL([EDJE_PROGRAM_CACHE], [test "x${want_edje_program_cache}" = "xyes"])
 
 if test "x${want_edje_program_cache}" = "xyes" ; then
-   AC_DEFINE(EDJE_PROGRAM_CACHE, 1, [Cache result of program glob matches - this uses up extra ram with the gain of faster program matching])
+   AC_DEFINE([EDJE_PROGRAM_CACHE], [1], [Cache result of program glob matches - this uses up extra ram with the gain of faster program matching])
 fi
 
 # Optional EDJE_CALC_CACHE (use more ram, but increase speed by reducing the need to recalculate static stuff)
@@ -99,10 +99,10 @@ AC_ARG_ENABLE([edje-calc-cache],
     )],
    [want_edje_calc_cache=$enableval]
 )
-AM_CONDITIONAL(EDJE_CALC_CACHE, test "x${want_edje_calc_cache}" = "xyes")
+AM_CONDITIONAL([EDJE_CALC_CACHE], [test "x${want_edje_calc_cache}" = "xyes"])
 
 if test "x${want_edje_calc_cache}" = "xyes" ; then
-   AC_DEFINE(EDJE_CALC_CACHE, 1, [Cache result of edje_part_recalc - this uses up extra ram with the gain of reducing CPU usage when edje object are not resized])
+   AC_DEFINE([EDJE_CALC_CACHE], [1], [Cache result of edje_part_recalc - this uses up extra ram with the gain of reducing CPU usage when edje object are not resized])
 fi
 
 # Enable Fixed Point use
@@ -115,10 +115,10 @@ AC_ARG_ENABLE([fixed-point],
     )],
     [want_fixed_point=$enableval]
 )
-AM_CONDITIONAL(BUILD_EDJE_FP, test "x${want_fixed_point}" = "xyes")
+AM_CONDITIONAL([BUILD_EDJE_FP], [test "x${want_fixed_point}" = "xyes"])
 
 if test "x${want_fixed_point}" = "xyes" ; then
-   AC_DEFINE(BUILD_EDJE_FP, 1, [Use Fixed Point instead of FPU])
+   AC_DEFINE([BUILD_EDJE_FP], [1], [Use Fixed Point instead of FPU])
 fi
 
 install_vim="yes"
@@ -189,7 +189,7 @@ EFL_EDJE_BUILD=""
 case "$host_os" in
    mingw* | cegcc*)
       PKG_CHECK_MODULES([EVIL], [evil])
-      AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if Evil library is installed])
+      AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil library is installed])
       requirement_edje="evil ${requirement_edje}"
       EFL_EDJE_BUILD="-DEFL_EDJE_BUILD"
    ;;
@@ -233,7 +233,7 @@ PKG_CHECK_MODULES([ECORE_IMF],
     ecore-imf-evas >= 0.9.9
    ],
    [
-    AC_DEFINE(HAVE_ECORE_IMF, 1, [Input Method Support for Edje Entry])
+    AC_DEFINE([HAVE_ECORE_IMF], [1], [Input Method Support for Edje Entry])
     have_ecore_imf="yes"
     requirement_edje="ecore-imf-evas ecore-imf ${requirement_edje}"
    ],
@@ -290,7 +290,7 @@ AC_FUNC_ALLOCA
 
 case "$host_os" in
    mingw* | cegcc*)
-      AC_DEFINE(HAVE_REALPATH, 1, [Define to 1 if you have the `realpath' function.])
+      AC_DEFINE([HAVE_REALPATH], [1], [Define to 1 if you have the `realpath' function.])
       ;;
    *)
       AC_CHECK_FUNCS([realpath])
