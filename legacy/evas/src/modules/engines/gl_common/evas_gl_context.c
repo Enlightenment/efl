@@ -53,29 +53,25 @@ static Evas_GL_Context *_evas_gl_common_context = NULL;
 static Evas_GL_Shared *shared = NULL;
 
 void
-glerr(const char *file, const char *func, int line, const char *op)
+glerr(int err, const char *file, const char *func, int line, const char *op)
 {
-   GLenum err = glGetError();
-   if (err != GL_NO_ERROR)
+   fprintf(stderr, "GLERR: %s:%i %s(), %s: ", file, line, func, op);
+   switch (err)
      {
-        fprintf(stderr, "GLERR: %s:%i %s(), %s: ", file, line, func, op);
-        switch (err)
-          {
-          case GL_INVALID_ENUM:
-             fprintf(stderr, "GL_INVALID_ENUM\n");
-             break;
-          case GL_INVALID_VALUE:
-             fprintf(stderr, "GL_INVALID_VALUE\n");
-             break;
-          case GL_INVALID_OPERATION:
-             fprintf(stderr, "GL_INVALID_OPERATION\n");
-             break;
-          case GL_OUT_OF_MEMORY:
-             fprintf(stderr, "GL_OUT_OF_MEMORY\n");
-             break;
-          default:
-             fprintf(stderr, "0x%x\n", err);
-          }
+     case GL_INVALID_ENUM:
+        fprintf(stderr, "GL_INVALID_ENUM\n");
+        break;
+     case GL_INVALID_VALUE:
+        fprintf(stderr, "GL_INVALID_VALUE\n");
+        break;
+     case GL_INVALID_OPERATION:
+        fprintf(stderr, "GL_INVALID_OPERATION\n");
+        break;
+     case GL_OUT_OF_MEMORY:
+        fprintf(stderr, "GL_OUT_OF_MEMORY\n");
+        break;
+     default:
+        fprintf(stderr, "0x%x\n", err);
      }
 }
 

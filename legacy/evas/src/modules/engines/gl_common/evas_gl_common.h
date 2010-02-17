@@ -255,7 +255,7 @@ extern Evas_GL_Program_Source shader_yuv_vert_src;
 extern Evas_GL_Program_Source shader_tex_frag_src;
 extern Evas_GL_Program_Source shader_tex_vert_src;
 
-void glerr(const char *file, const char *func, int line, const char *op);
+void glerr(int err, const char *file, const char *func, int line, const char *op);
  
 Evas_GL_Context  *evas_gl_common_context_new(void);
 void              evas_gl_common_context_free(Evas_GL_Context *gc);
@@ -343,7 +343,11 @@ void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
 #define GL_ERRORS 1
 
 #ifdef GL_ERRORS
-# define GLERR(fn, fl, ln, op) if (glGetError()) glerr(fn, fl, ln, op)
+# define GLERR(fn, fl, ln, op) \
+   { \
+      int __gl_err = glGetError(); \
+      if (__gl_err != GL_NO_ERROR) glerr(__gl_err, fn, fl, ln, op); \
+   }
 #else
 # define GLERR(fn, fl, ln, op)
 #endif
