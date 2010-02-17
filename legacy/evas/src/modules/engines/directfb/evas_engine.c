@@ -946,7 +946,7 @@ evas_engine_dfb_output_redraws_next_update_get(void *data, int *x, int *y, int *
 	re->end = 1;
      }
 
-   return re->screen_image->surface;
+   return re->screen_image;
 }
 
 static void
@@ -1043,12 +1043,13 @@ evas_engine_dfb_output_idle_flush(void *data)
 static void
 evas_engine_dfb_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const char *text)
 {
+   DirectFB_Engine_Image_Entry *eim = surface;
+   IDirectFBSurface *screen;
    Render_Engine *re = data;
    RGBA_Image *im;
-   IDirectFBSurface *screen = surface;
 
-   im = (RGBA_Image *)re->screen_image->cache_entry.src;
-
+   im = (RGBA_Image *)eim->cache_entry.src;
+   screen = eim->surface;
    if (!_dfb_lock_and_sync_image(screen, im, DSLF_READ | DSLF_WRITE))
      return;
 
@@ -1072,14 +1073,14 @@ _cb_draw_line(IDirectFBSurface *surface, RGBA_Draw_Context *dc __UNUSED__, const
 static void
 evas_engine_dfb_line_draw(void *data __UNUSED__, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
-   IDirectFBSurface *screen = surface;
+   DirectFB_Engine_Image_Entry *eim = surface;
    Eina_Rectangle r;
 
-   if (!_dfb_surface_set_color_from_context(screen, context))
+   if (!_dfb_surface_set_color_from_context(eim->surface, context))
      return;
 
    EINA_RECTANGLE_SET(&r, x1, y1, x2, y2); /* x2, y2 (ab)used as w, h */
-   _dfb_surface_for_each_cutout(screen, context, _cb_draw_line, &r);
+   _dfb_surface_for_each_cutout(eim->surface, context, _cb_draw_line, &r);
 }
 
 #ifndef DFB_USE_EVAS_RECT_DRAW
@@ -1094,16 +1095,18 @@ _cb_draw_rectangle(IDirectFBSurface *surface, RGBA_Draw_Context *dc __UNUSED__, 
 static void
 evas_engine_dfb_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
-   IDirectFBSurface *screen = surface;
+   DirectFB_Engine_Image_Entry *eim = surface;
+   IDirectFBSurface *screen;
    Render_Engine *re = data;
    RGBA_Draw_Context *dc = context;
    Eina_Rectangle r;
 
+   screen = eim->surface;
    if (!_dfb_surface_set_color_from_context(screen, context))
      {
 	if (dc->render_op != EVAS_RENDER_COPY)
 	  return;
-	if (!re->screen_image->cache_entry.src->flags.alpha)
+	if (!eim->cache_entry.src->flags.alpha)
 	  return;
 	screen->SetColor(screen, 0, 0, 0, 0);
 	screen->SetDrawingFlags(screen, DSDRAW_NOFX);
@@ -1116,11 +1119,13 @@ evas_engine_dfb_rectangle_draw(void *data, void *context, void *surface, int x, 
 static void
 evas_engine_dfb_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
+   DirectFB_Engine_Image_Entry *eim = surface;
+   IDirectFBSurface *screen;
    Render_Engine *re = data;
-   IDirectFBSurface *screen = surface;
    RGBA_Image *dst;
 
-   dst = (RGBA_Image *)re->screen_image->cache_entry.src;
+   dst = (RGBA_Image *)eim->cache_entry.src;
+   screen = eim->surface;
    if (!_dfb_lock_and_sync_image(screen, dst, DSLF_READ | DSLF_WRITE))
      return;
 
@@ -1143,11 +1148,13 @@ evas_engine_dfb_polygon_draw(void *data __UNUSED__, void *context, void *surface
 static void
 evas_engine_dfb_polygon_draw(void *data, void *context, void *surface, void *polygon)
 {
+   DirectFB_Engine_Image_Entry *eim = surface;
+   IDirectFBSurface *screen;
    Render_Engine *re = data;
-   IDirectFBSurface *screen = surface;
    RGBA_Image *dst;
 
-   dst = (RGBA_Image *)re->screen_image->cache_entry.src;
+   dst = (RGBA_Image *)eim->cache_entry.src;
+   screen = eim->surface;
    if (!_dfb_lock_and_sync_image(screen, dst, DSLF_READ | DSLF_WRITE))
      return;
 
@@ -1163,11 +1170,13 @@ evas_engine_dfb_polygon_draw(void *data, void *context, void *surface, void *pol
 static void
 evas_engine_dfb_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h)
 {
+   DirectFB_Engine_Image_Entry *eim = surface;
+   IDirectFBSurface *screen;
    Render_Engine *re = data;
    RGBA_Image *dst, *src;
-   IDirectFBSurface *screen = surface;
 
-   dst = (RGBA_Image *)re->screen_image->cache_entry.src;
+   dst = (RGBA_Image *)eim->cache_entry.src;
+   screen = eim->surface;
    if (!_dfb_lock_and_sync_image(screen, dst, DSLF_READ | DSLF_WRITE))
      return;
 
@@ -1495,18 +1504,20 @@ _cb_draw_image_scaled(IDirectFBSurface *surface, RGBA_Draw_Context *dc __UNUSED_
 static void
 evas_engine_dfb_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth __UNUSED__)
 {
+   DirectFB_Engine_Image_Entry *eim = surface;
    Render_Engine *re = data;
-   IDirectFBSurface *screen = surface;
+   IDirectFBSurface *screen;
    DirectFB_Engine_Image_Entry *deie = image;
    struct _for_each_cutout_image p;
    _cb_for_each_cutout_t cb;
 
+   screen = eim->surface;
    if (deie->cache_entry.src->space == EVAS_COLORSPACE_ARGB8888)
      evas_cache_engine_image_load_data(&deie->cache_entry);
 
    evas_common_image_colorspace_normalize((RGBA_Image *)deie->cache_entry.src);
 
-   _dfb_surface_set_blit_params(re->screen_image, deie, context);
+   _dfb_surface_set_blit_params(eim, deie, context);
 
    _dfb_rect_set(&p.src, src_x, src_y, src_w, src_h);
    _dfb_rect_set(&p.dst, dst_x, dst_y, dst_w, dst_h);
@@ -1525,16 +1536,18 @@ static void
 evas_engine_dfb_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    DirectFB_Engine_Image_Entry *deie = image;
+   DirectFB_Engine_Image_Entry *eim = surface;
    Render_Engine *re = data;
    RGBA_Image *dst, *src;
-   IDirectFBSurface *screen = surface;
+   IDirectFBSurface *screen;
 
+   screen = eim->surface;
    if (deie->cache_entry.src->space == EVAS_COLORSPACE_ARGB8888)
      evas_cache_engine_image_load_data(&deie->cache_entry);
 
    evas_common_image_colorspace_normalize((RGBA_Image *)deie->cache_entry.src);
 
-   dst = (RGBA_Image *)re->screen_image->cache_entry.src;
+   dst = (RGBA_Image *)eim->cache_entry.src;
    if (!_dfb_lock_and_sync_image(screen, dst, DSLF_READ | DSLF_WRITE))
      return;
 
@@ -1563,6 +1576,58 @@ evas_engine_dfb_image_draw(void *data, void *context, void *surface, void *image
    screen->Unlock(screen);
 }
 #endif
+
+static void
+evas_engine_dfb_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
+{
+   Render_Engine *re = (Render_Engine*) data;
+   DirectFB_Engine_Image_Entry *deie = image;
+   DirectFB_Engine_Image_Entry *eim = surface;
+   IDirectFBSurface *screen;
+   RGBA_Image *dst, *src;
+
+   if (!deie || !eim) return ;
+
+   screen = eim->surface;
+   dst = (RGBA_Image *) eim->cache_entry.src;
+   if (!_dfb_lock_and_sync_image(screen, dst, DSLF_READ | DSLF_WRITE))
+     return;
+
+   src = (RGBA_Image *)deie->cache_entry.src;
+   if (!_dfb_lock_and_sync_image(deie->surface, src, DSLF_READ))
+     goto error_src;
+
+   evas_common_map4_rgba(src, dst, context, p, smooth, level);
+   evas_common_cpu_end_opt();
+
+   screen->Unlock(screen);
+   deie->surface->Unlock(deie->surface);
+
+   return ;
+
+ error_src:
+   screen->Unlock(screen);
+}
+
+static void *
+evas_engine_dfb_image_map_surface_new(void *data, int w, int h, int alpha)
+{
+   Render_Engine *re = (Render_Engine*) data;
+   void *surface;
+
+   surface = evas_cache_engine_image_copied_data(re->cache,
+						 w, h, NULL, alpha,
+						 EVAS_COLORSPACE_ARGB8888,
+						 NULL);
+   return surface;
+}
+
+static void
+evas_engine_dfb_image_map_surface_free(void *data __UNUSED__, void *surface)
+{
+   evas_cache_engine_image_drop(surface);
+}
+
 
 static void
 evas_engine_dfb_image_cache_flush(void *data)
@@ -1680,9 +1745,9 @@ module_open(Evas_Module *em)
    ORD(image_scale_hint_set);
    ORD(image_scale_hint_get);
 
-//   ORD(image_map4_draw);
-//   ORD(image_map_surface_new);
-//   ORD(image_map_surface_free);
+   ORD(image_map4_draw);
+   ORD(image_map_surface_new);
+   ORD(image_map_surface_free);
 
    /* now advertise out own api */
    em->functions = (void *)(&func);

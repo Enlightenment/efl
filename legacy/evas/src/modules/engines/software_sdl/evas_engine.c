@@ -658,7 +658,6 @@ evas_engine_sdl_image_map_surface_new(void *data, int w, int h, int alpha)
 {
    Render_Engine *re = (Render_Engine*) data;
    void *surface;
-   DATA32 *pixels;
 
    surface = evas_cache_engine_image_copied_data(re->cache,
 						 w, h, NULL, alpha,
