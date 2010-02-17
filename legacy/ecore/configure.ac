@@ -323,6 +323,7 @@ case "$host_os" in
       requirements_ecore_imf="evil ${requirements_ecore_imf}"
       requirements_ecore_imf_evas="evil ${requirements_ecore_imf_evas}"
       EFL_ECORE_BUILD="-DEFL_ECORE_BUILD"
+      EFL_ECORE_TXT_BUILD="-DEFL_ECORE_TXT_BUILD"
       EFL_ECORE_FILE_BUILD="-DEFL_ECORE_FILE_BUILD"
       EFL_ECORE_EVAS_BUILD="-DEFL_ECORE_EVAS_BUILD"
       EFL_ECORE_IMF_BUILD="-DEFL_ECORE_IMF_BUILD"
@@ -348,6 +349,7 @@ case "$host_os" in
 esac
 
 AC_SUBST(EFL_ECORE_BUILD)
+AC_SUBST(EFL_ECORE_TXT_BUILD)
 AC_SUBST(EFL_ECORE_FILE_BUILD)
 AC_SUBST(EFL_ECORE_EVAS_BUILD)
 AC_SUBST(EFL_ECORE_IMF_BUILD)
