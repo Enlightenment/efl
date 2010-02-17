@@ -2026,18 +2026,18 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
              map = evas_map_new(4);
              evas_map_util_points_populate_from_geometry
                (map, ed->x + pf->x, ed->y + pf->y, pf->w, pf->h, 0);
-             
+
              cx = ed->x + pf->x + (pf->w / 2);
              cy = ed->y + pf->y + (pf->h / 2);
              if ((chosen_desc->map.rot.id_center >= 0) &&
                  (chosen_desc->map.rot.id_center != ep->part->id))
                {
                   Edje_Real_Part *ep2 =
-                    ed->table_parts[chosen_desc->map.rot.id_center % 
+                    ed->table_parts[chosen_desc->map.rot.id_center %
                                     ed->table_parts_size];
                   if (ep2)
                     {
-                       if (!ep2->calculated)
+                      if (!ep2->calculated)
                          _edje_part_recalc(ed, ep2, flags);
                        cx = ed->x + ep2->x + (ep2->w / 2);
                        cy = ed->y + ep2->y + (ep2->h / 2);
@@ -2045,18 +2045,18 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                }
              if ((ep->param2) && (ep->description_pos != ZERO))
                {
-                  rx = TO_DOUBLE(ep->param1.description->map.rot.x +
-                                 SCALE(ep->description_pos, 
-                                       SUB(ep->param2->description->map.rot.x,
-                                           ep->param1.description->map.rot.x)));
-                  ry = TO_DOUBLE(ep->param1.description->map.rot.y +
-                                 SCALE(ep->description_pos, 
-                                       SUB(ep->param2->description->map.rot.y,
-                                           ep->param1.description->map.rot.y)));
-                  rz = TO_DOUBLE(ep->param1.description->map.rot.z +
-                                 SCALE(ep->description_pos, 
-                                       SUB(ep->param2->description->map.rot.z,
-                                           ep->param1.description->map.rot.z)));
+                  rx = TO_DOUBLE(ADD(ep->param1.description->map.rot.x,
+				     MUL(ep->description_pos,
+					 SUB(ep->param2->description->map.rot.x,
+					     ep->param1.description->map.rot.x))));
+                  ry = TO_DOUBLE(ADD(ep->param1.description->map.rot.y,
+				     MUL(ep->description_pos,
+					 SUB(ep->param2->description->map.rot.y,
+					     ep->param1.description->map.rot.y))));
+                  rz = TO_DOUBLE(ADD(ep->param1.description->map.rot.z,
+				     MUL(ep->description_pos,
+					 SUB(ep->param2->description->map.rot.z,
+					     ep->param1.description->map.rot.z))));
                }
              else
                {
