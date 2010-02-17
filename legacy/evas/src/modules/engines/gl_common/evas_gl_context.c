@@ -942,6 +942,7 @@ shader_array_flush(Evas_GL_Context *gc)
    if (gc->array.num <= 0) return;
 
 //   fprintf(stderr, "  flush array %i\n", gc->array.num);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "<flush err>");
    if (gc->shader.cur_prog != gc->shader.current.cur_prog)
      {
         glUseProgram(gc->shader.cur_prog);

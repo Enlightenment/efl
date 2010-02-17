@@ -346,7 +346,7 @@ void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
 # define GLERR(fn, fl, ln, op) \
    { \
       int __gl_err = glGetError(); \
-      if (__gl_err != GL_NO_ERROR) glerr(__gl_err, fn, fl, ln, op); \
+      if (__gl_err != GL_NO_ERROR) glerr(__gl_err, fl, fn, ln, op); \
    }
 #else
 # define GLERR(fn, fl, ln, op)
