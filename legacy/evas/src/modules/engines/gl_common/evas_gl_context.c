@@ -510,14 +510,14 @@ evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
                                       int r, int g, int b, int a)
 {
    int pnum, nv, nc, nu, nt, i;
-   Eina_Bool blend = 0;
+   Eina_Bool blend = 1;
    
-   if (a < 255) blend = 1;
+//   if (a < 255) blend = 1;
    if (gc->dc->render_op == EVAS_RENDER_COPY) blend = 0;
    
    if ((gc->shader.cur_tex != 0)
        || (gc->shader.cur_prog != gc->shared->shader.rect.prog)
-//       || (gc->shader.blend != blend)
+       || (gc->shader.blend != blend)
        || (gc->shader.render_op != gc->dc->render_op)
        || (gc->shader.clip != 0)
        )
@@ -525,7 +525,7 @@ evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
         shader_array_flush(gc);
         gc->shader.cur_tex = 0;
         gc->shader.cur_prog = gc->shared->shader.rect.prog;
-        gc->shader.blend = 1;
+        gc->shader.blend = blend;
         gc->shader.render_op = gc->dc->render_op;
         gc->shader.clip = 0;
 
