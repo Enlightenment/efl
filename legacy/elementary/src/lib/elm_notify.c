@@ -163,6 +163,7 @@ _calc(Evas_Object *obj)
 	  }
         evas_object_resize(wd->notify, minw, minh);
      }
+    _sizing_eval(obj);
 }
 
 static int
@@ -294,15 +295,15 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 
    if (content)
      {
-	wd->content = content;
 	elm_widget_sub_object_add(obj, content);
-
+	wd->content = content;
 	evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints, obj);
 	evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE,
                                        _content_resize, obj);
 	edje_object_part_swallow(wd->notify, "elm.swallow.content", content);
+
 	_sizing_eval(obj);
      }
    _calc(obj);
@@ -376,7 +377,7 @@ elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient)
         break;
       case ELM_NOTIFY_ORIENT_CENTER:
         _elm_theme_set(wd->notify, "notify", "base", "center");
-        break;		
+        break;
       case ELM_NOTIFY_ORIENT_BOTTOM:
         _elm_theme_set(wd->notify, "notify", "base", "bottom");
         break;
