@@ -417,10 +417,10 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
    // this is needed to make sure all previous rendering is flushed to
    // buffers/surfaces
    eglWaitNative(EGL_CORE_NATIVE_ENGINE); // previous rendering should be done and swapped
-   if (eglGetError() != EGL_SUCCESS)
-     {
-        printf("Error:  eglWaitNative(EGL_CORE_NATIVE_ENGINE) fail.\n");
-     }
+//   if (eglGetError() != EGL_SUCCESS)
+//     {
+//        printf("Error:  eglWaitNative(EGL_CORE_NATIVE_ENGINE) fail.\n");
+//     }
 #else
    glXWaitGL();
 #endif
@@ -440,10 +440,10 @@ eng_output_flush(void *data)
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
-   if (eglGetError() != EGL_SUCCESS)
-     {
-        printf("Error:  eglSwapBuffers() fail.\n");
-     }
+//   if (eglGetError() != EGL_SUCCESS)
+//     {
+//        printf("Error:  eglSwapBuffers() fail.\n");
+//     }
 #else
 #ifdef VSYNC_TO_SCREEN   
    if ((re->info->vsync)/* || (1)*/)
