@@ -1249,6 +1249,7 @@ eng_image_native_set(void *data, void *image, void *native)
    Visual *vis = NULL;
    Pixmap pm = 0;
 
+   if (!im) return;
    if (ns)
      {
         vis = ns->data.x11.visual;
@@ -1263,7 +1264,6 @@ eng_image_native_set(void *data, void *image, void *native)
           }
      }
    if ((!ns) && (!im->native.data)) return;
-   if (!im) return;
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    if (im->native.data)
      {
