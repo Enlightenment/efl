@@ -2700,6 +2700,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, const
    PD_COPY(rel2.offset_y);
    PD_COPY(rel2.id_x);
    PD_COPY(rel2.id_y);
+   PD_COPY(image.id);
    EINA_LIST_FREE(pdto->image.tween_list, i)
       free(i);
    EINA_LIST_FOREACH(pdfrom->image.tween_list, l, i)
