@@ -934,11 +934,20 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
 
    if (!tex->alpha) blend = 0;
    if (a < 255) blend = 1;
+   if ((A_VAL(&(p[0].col)) < 0xff) || (A_VAL(&(p[1].col)) < 0xff) ||
+       (A_VAL(&(p[2].col)) < 0xff) || (A_VAL(&(p[3].col)) < 0xff))
+     blend = 1;
    
    if (tex_only)
      {
         if ((a == 255) && (r == 255) && (g == 255) && (b == 255))
-          prog = gc->shared->shader.tex_nomul.prog;
+          {
+             if ((p[0].col == 0xffffffff) && (p[1].col == 0xffffffff) &&
+                 (p[2].col == 0xffffffff) && (p[3].col == 0xffffffff))
+               prog = gc->shared->shader.tex_nomul.prog;
+             else
+               prog = gc->shared->shader.tex.prog;
+          }
         else
           prog = gc->shared->shader.tex.prog;
      }
@@ -947,14 +956,26 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
         if (tex->gc->shared->info.bgra)
           {
              if ((a == 255) && (r == 255) && (g == 255) && (b == 255))
-               prog = gc->shared->shader.img_bgra_nomul.prog;
+               {
+                  if ((p[0].col == 0xffffffff) && (p[1].col == 0xffffffff) &&
+                      (p[2].col == 0xffffffff) && (p[3].col == 0xffffffff))
+                    prog = gc->shared->shader.img_bgra_nomul.prog;
+                  else
+                    prog = gc->shared->shader.img_bgra.prog;
+               }
              else
                prog = gc->shared->shader.img_bgra.prog;
           }
         else
           {
              if ((a == 255) && (r == 255) && (g == 255) && (b == 255))
-               prog = gc->shared->shader.img_nomul.prog;
+               {
+                  if ((p[0].col == 0xffffffff) && (p[1].col == 0xffffffff) &&
+                      (p[2].col == 0xffffffff) && (p[3].col == 0xffffffff))
+                    prog = gc->shared->shader.img_nomul.prog;
+                  else
+                    prog = gc->shared->shader.img.prog;
+               }
              else
                prog = gc->shared->shader.img.prog;
           }
