@@ -149,14 +149,26 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.font.prog, "mvp"), 1,
                       GL_FALSE, proj);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   
    glUseProgram(gc->shared->shader.yuv.prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.yuv.prog, "mvp"), 1,
                       GL_FALSE, proj);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.yuv_nomul.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.yuv_nomul.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   
    glUseProgram(gc->shared->shader.tex.prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.tex.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.tex_nomul.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.tex_nomul.prog, "mvp"), 1,
                       GL_FALSE, proj);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    
@@ -170,16 +182,6 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.img_nomul.prog, "mvp"), 1,
                       GL_FALSE, proj);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glUseProgram(gc->shared->shader.img_solid.prog);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.img_solid.prog, "mvp"), 1,
-                      GL_FALSE, proj);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glUseProgram(gc->shared->shader.img_solid_nomul.prog);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.img_solid_nomul.prog, "mvp"), 1,
-                      GL_FALSE, proj);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    glUseProgram(gc->shared->shader.img_bgra.prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -189,16 +191,6 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
    glUseProgram(gc->shared->shader.img_bgra_nomul.prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.img_bgra_nomul.prog, "mvp"), 1,
-                      GL_FALSE, proj);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glUseProgram(gc->shared->shader.img_bgra_solid.prog);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.img_bgra_solid.prog, "mvp"), 1,
-                      GL_FALSE, proj);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glUseProgram(gc->shared->shader.img_bgra_solid_nomul.prog);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.img_bgra_solid_nomul.prog, "mvp"), 1,
                       GL_FALSE, proj);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
@@ -312,40 +304,6 @@ evas_gl_common_context_new(void)
         glEnableVertexAttribArray(SHAD_COLOR);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         
-        evas_gl_common_shader_program_init(&(shared->shader.img),
-                                           &(shader_img_vert_src),
-                                           &(shader_img_frag_src),
-                                           "img");
-        evas_gl_common_shader_program_init(&(shared->shader.img_nomul),
-                                           &(shader_img_nomul_vert_src),
-                                           &(shader_img_nomul_frag_src),
-                                           "img_nomul");
-        evas_gl_common_shader_program_init(&(shared->shader.img_solid),
-                                           &(shader_img_solid_vert_src),
-                                           &(shader_img_solid_frag_src),
-                                           "img_solid");
-        evas_gl_common_shader_program_init(&(shared->shader.img_solid_nomul),
-                                           &(shader_img_solid_nomul_vert_src),
-                                           &(shader_img_solid_nomul_frag_src),
-                                           "img_solid_nomul");
-
-        evas_gl_common_shader_program_init(&(shared->shader.img_bgra),
-                                           &(shader_img_bgra_vert_src),
-                                           &(shader_img_bgra_frag_src),
-                                           "img_bgra");
-        evas_gl_common_shader_program_init(&(shared->shader.img_bgra_nomul),
-                                           &(shader_img_bgra_nomul_vert_src),
-                                           &(shader_img_bgra_nomul_frag_src),
-                                           "img_bgra_nomul");
-        evas_gl_common_shader_program_init(&(shared->shader.img_bgra_solid),
-                                           &(shader_img_bgra_solid_vert_src),
-                                           &(shader_img_bgra_solid_frag_src),
-                                           "img_bgra_solid");
-        evas_gl_common_shader_program_init(&(shared->shader.img_bgra_solid_nomul),
-                                           &(shader_img_bgra_solid_nomul_vert_src),
-                                           &(shader_img_bgra_solid_nomul_frag_src),
-                                           "img_bgra_solid_nomul");
-        
         evas_gl_common_shader_program_init(&(shared->shader.rect), 
                                            &(shader_rect_vert_src), 
                                            &(shader_rect_frag_src),
@@ -354,15 +312,39 @@ evas_gl_common_context_new(void)
                                            &(shader_font_vert_src), 
                                            &(shader_font_frag_src),
                                            "font");
+        evas_gl_common_shader_program_init(&(shared->shader.img),
+                                           &(shader_img_vert_src),
+                                           &(shader_img_frag_src),
+                                           "img");
+        evas_gl_common_shader_program_init(&(shared->shader.img_nomul),
+                                           &(shader_img_nomul_vert_src),
+                                           &(shader_img_nomul_frag_src),
+                                           "img_nomul");
+        evas_gl_common_shader_program_init(&(shared->shader.img_bgra),
+                                           &(shader_img_bgra_vert_src),
+                                           &(shader_img_bgra_frag_src),
+                                           "img_bgra");
+        evas_gl_common_shader_program_init(&(shared->shader.img_bgra_nomul),
+                                           &(shader_img_bgra_nomul_vert_src),
+                                           &(shader_img_bgra_nomul_frag_src),
+                                           "img_bgra_nomul");
         evas_gl_common_shader_program_init(&(shared->shader.tex),
                                            &(shader_tex_vert_src), 
                                            &(shader_tex_frag_src),
                                            "tex");
-        
+        evas_gl_common_shader_program_init(&(shared->shader.tex_nomul),
+                                           &(shader_tex_nomul_vert_src), 
+                                           &(shader_tex_nomul_frag_src),
+                                           "tex_nomul");
         evas_gl_common_shader_program_init(&(shared->shader.yuv),
                                            &(shader_yuv_vert_src), 
                                            &(shader_yuv_frag_src),
                                            "yuv");
+        evas_gl_common_shader_program_init(&(shared->shader.yuv_nomul),
+                                           &(shader_yuv_nomul_vert_src), 
+                                           &(shader_yuv_nomul_frag_src),
+                                           "yuv_nomul");
+        
         glUseProgram(shared->shader.yuv.prog);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "tex"), 0);
@@ -371,6 +353,16 @@ evas_gl_common_context_new(void)
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "texv"), 2);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        
+        glUseProgram(shared->shader.yuv_nomul.prog);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        glUniform1i(glGetUniformLocation(shared->shader.yuv_nomul.prog, "tex"), 0);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        glUniform1i(glGetUniformLocation(shared->shader.yuv_nomul.prog, "texu"), 1);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        glUniform1i(glGetUniformLocation(shared->shader.yuv_nomul.prog, "texv"), 2);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        
         glUseProgram(gc->shader.cur_prog);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         // in shader:
@@ -642,7 +634,6 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
 {
    int pnum, nv, nc, nu, nu2, nt, i;
    GLfloat tx1, tx2, ty1, ty2;
-   GLfloat bl = 1.0;
    Eina_Bool blend = 1;
    GLuint prog = gc->shared->shader.img.prog;
 
@@ -652,7 +643,7 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    if (tex_only)
      {
         if ((a == 255) && (r == 255) && (g == 255) && (b == 255))
-          prog = gc->shared->shader.tex.prog; // fixme: nomul
+          prog = gc->shared->shader.tex_nomul.prog;
         else
           prog = gc->shared->shader.tex.prog;
      }
@@ -704,8 +695,7 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    // if nomul... dont need this
    gc->array.use_color = 1;
    gc->array.use_texuv = 1;
-   // if not solid, don't need this
-   gc->array.use_texuv2 = 1;
+   gc->array.use_texuv2 = 0;
    gc->array.use_texuv3 = 0;
   
    pnum = gc->array.num;
@@ -728,7 +718,6 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
         tx2 = ((double)(tex->x) + sx + sw) / (double)tex->pt->w;
         ty2 = ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
      }
-   if (blend) bl = 0.0;
 
    PUSH_VERTEX(x    , y    , 0);
    PUSH_VERTEX(x + w, y    , 0);
@@ -738,10 +727,6 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    PUSH_TEXUV(tx2, ty1);
    PUSH_TEXUV(tx1, ty2);
    
-   PUSH_TEXUV2(bl, 0.0);
-   PUSH_TEXUV2(bl, 0.0);
-   PUSH_TEXUV2(bl, 0.0);
-   
    PUSH_VERTEX(x + w, y    , 0);
    PUSH_VERTEX(x + w, y + h, 0);
    PUSH_VERTEX(x    , y + h, 0);
@@ -749,10 +734,6 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    PUSH_TEXUV(tx2, ty1);
    PUSH_TEXUV(tx2, ty2);
    PUSH_TEXUV(tx1, ty2);
-
-   PUSH_TEXUV2(bl, 0.0);
-   PUSH_TEXUV2(bl, 0.0);
-   PUSH_TEXUV2(bl, 0.0);
 
    // if nomul... dont need this
    for (i = 0; i < 6; i++)
@@ -847,11 +828,17 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
    int pnum, nv, nc, nu, nu2, nu3, nt, i;
    GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
    Eina_Bool blend = 0;
+   GLuint prog = gc->shared->shader.yuv.prog;
 
    if (a < 255) blend = 1;
    
+   if ((a == 255) && (r == 255) && (g == 255) && (b == 255))
+     prog = gc->shared->shader.yuv_nomul.prog;
+   else
+     prog = gc->shared->shader.yuv.prog;
+   
    if ((gc->shader.cur_tex != tex->pt->texture)
-       || (gc->shader.cur_prog != gc->shared->shader.yuv.prog)
+       || (gc->shader.cur_prog != prog)
        || (gc->shader.smooth != smooth)
        || (gc->shader.blend != blend)
        || (gc->shader.render_op != gc->dc->render_op)
@@ -862,7 +849,7 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
         gc->shader.cur_tex = tex->pt->texture;
         gc->shader.cur_texu = tex->ptu->texture;
         gc->shader.cur_texv = tex->ptv->texture;
-        gc->shader.cur_prog = gc->shared->shader.yuv.prog;
+        gc->shader.cur_prog = prog;
         gc->shader.smooth = smooth;
         gc->shader.blend = blend;
         gc->shader.render_op = gc->dc->render_op;
@@ -940,7 +927,6 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
    int pnum, nv, nc, nu, nu2, nt, i;
    const int points[6] = { 0, 1, 2, 0, 2, 3 };
    GLfloat tx[4], ty[4];
-   GLfloat bl = 1.0;
    Eina_Bool blend = 1;
    RGBA_Map_Point *pt;
    DATA32 cmul;
@@ -952,7 +938,7 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
    if (tex_only)
      {
         if ((a == 255) && (r == 255) && (g == 255) && (b == 255))
-          prog = gc->shared->shader.tex.prog; // fixme: nomul
+          prog = gc->shared->shader.tex_nomul.prog;
         else
           prog = gc->shared->shader.tex.prog;
      }
@@ -1031,8 +1017,6 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
         // FIXME: handle yinvert
      }
    
-   if (blend) bl = 0.0;
-   
    cmul = ARGB_JOIN(a, r, g, b);
    for (i = 0; i < 6; i++)
      {
@@ -1040,13 +1024,9 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
         PUSH_VERTEX((p[points[i]].x >> FP), 
                     (p[points[i]].y >> FP),
                     0);
-//                    (p[points[i]].y >> FP) + 4096);
-//                    (p[points[i]].z >> FP));
         PUSH_TEXUV(tx[points[i]],
                    ty[points[i]]);
         
-        PUSH_TEXUV2(bl, 0.0);
-   
         PUSH_COLOR(R_VAL(&cl),
                    G_VAL(&cl),
                    B_VAL(&cl),

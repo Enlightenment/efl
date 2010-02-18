@@ -103,17 +103,13 @@ struct _Evas_GL_Shared
    } tex;
    
    struct {
-      // ADD: tex_nomul, tex_solid, tex_solid_nomul, yuv_nomul
-      Evas_GL_Program  img,            img_nomul;
-      Evas_GL_Program  img_solid,      img_solid_nomul;
-      
-      Evas_GL_Program  img_bgra,       img_bgra_nomul;
-      Evas_GL_Program  img_bgra_solid, img_bgra_solid_nomul;
-
       Evas_GL_Program  rect;
       Evas_GL_Program  font;
-      Evas_GL_Program  yuv;
-      Evas_GL_Program  tex;
+      
+      Evas_GL_Program  img,            img_nomul;
+      Evas_GL_Program  img_bgra,       img_bgra_nomul;
+      Evas_GL_Program  yuv,            yuv_nomul;
+      Evas_GL_Program  tex,            tex_nomul;
    } shader;
    int references;
    int w, h;
@@ -263,33 +259,26 @@ extern Evas_GL_Program_Source shader_rect_frag_src;
 extern Evas_GL_Program_Source shader_rect_vert_src;
 extern Evas_GL_Program_Source shader_font_frag_src;
 extern Evas_GL_Program_Source shader_font_vert_src;
-extern Evas_GL_Program_Source shader_yuv_frag_src;
-extern Evas_GL_Program_Source shader_yuv_vert_src;
 
 extern Evas_GL_Program_Source shader_img_frag_src;
 extern Evas_GL_Program_Source shader_img_vert_src;
-
 extern Evas_GL_Program_Source shader_img_nomul_frag_src;
 extern Evas_GL_Program_Source shader_img_nomul_vert_src;
-extern Evas_GL_Program_Source shader_img_solid_frag_src;
-extern Evas_GL_Program_Source shader_img_solid_vert_src;
-extern Evas_GL_Program_Source shader_img_solid_nomul_frag_src;
-extern Evas_GL_Program_Source shader_img_solid_nomul_vert_src;
 extern Evas_GL_Program_Source shader_img_bgra_frag_src;
 extern Evas_GL_Program_Source shader_img_bgra_vert_src;
 extern Evas_GL_Program_Source shader_img_bgra_nomul_frag_src;
 extern Evas_GL_Program_Source shader_img_bgra_nomul_vert_src;
-extern Evas_GL_Program_Source shader_img_bgra_solid_frag_src;
-extern Evas_GL_Program_Source shader_img_bgra_solid_vert_src;
-extern Evas_GL_Program_Source shader_img_bgra_solid_nomul_frag_src;
-extern Evas_GL_Program_Source shader_img_bgra_solid_nomul_vert_src;
 
-// fixme: more yuv shaders
+extern Evas_GL_Program_Source shader_yuv_frag_src;
+extern Evas_GL_Program_Source shader_yuv_vert_src;
+extern Evas_GL_Program_Source shader_yuv_nomul_frag_src;
+extern Evas_GL_Program_Source shader_yuv_nomul_vert_src;
 
 extern Evas_GL_Program_Source shader_tex_frag_src;
 extern Evas_GL_Program_Source shader_tex_vert_src;
-// fixme: more tex shaders
-// 
+extern Evas_GL_Program_Source shader_tex_nomul_frag_src;
+extern Evas_GL_Program_Source shader_tex_nomul_vert_src;
+
 void glerr(int err, const char *file, const char *func, int line, const char *op);
  
 Evas_GL_Context  *evas_gl_common_context_new(void);
