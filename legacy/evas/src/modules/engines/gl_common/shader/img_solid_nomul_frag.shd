@@ -1,0 +1,11 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+uniform sampler2D tex;
+varying vec2 tex_c;
+varying vec2 tex_c2;
+void main()
+{
+   vec4 t = texture2D(tex, tex_c.xy).bgra;
+   gl_FragColor = vec4(t.r, t.g, t.b, t.a + tex_c2.x);
+}

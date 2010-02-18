@@ -42,46 +42,6 @@ Evas_GL_Program_Source shader_rect_vert_src =
 
 /////////////////////////////////////////////
 #if defined (GLES_VARIETY_S3C6410)
-const unsigned int img_frag_bin[] =
-{
-# include "shader/img_frag_bin_s3c6410.h"
-};
-#endif
-
-const char img_frag_glsl[] =
-#include "shader/img_frag.h"
-  ;
-Evas_GL_Program_Source shader_img_frag_src =
-{
-   img_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     img_frag_bin, sizeof(img_frag_bin)
-#else     
-     NULL, 0
-#endif     
-};
-
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int img_vert_bin[] =
-{
-# include "shader/img_vert_bin_s3c6410.h"
-};
-#endif
-const char img_vert_glsl[] =
-#include "shader/img_vert.h"
-  ;
-Evas_GL_Program_Source shader_img_vert_src =
-{
-   img_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     img_vert_bin, sizeof(img_vert_bin)
-#else     
-     NULL, 0
-#endif     
-};
-
-/////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
 const unsigned int font_frag_bin[] =
 {
 # include "shader/font_frag_bin_s3c6410.h"
@@ -206,6 +166,339 @@ Evas_GL_Program_Source shader_tex_vert_src =
 
 
 
+
+/////////////////////////////////////////////
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_frag_bin[] =
+{
+# include "shader/img_frag_bin_s3c6410.h"
+};
+#endif
+
+const char img_frag_glsl[] =
+#include "shader/img_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_frag_src =
+{
+   img_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_frag_bin, sizeof(img_frag_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_vert_bin[] =
+{
+# include "shader/img_vert_bin_s3c6410.h"
+};
+#endif
+const char img_vert_glsl[] =
+#include "shader/img_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_vert_src =
+{
+   img_vert_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_vert_bin, sizeof(img_vert_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+/////////////////////////////////////////////
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_nomul_frag_bin[] =
+{
+# include "shader/img_nomul_frag_bin_s3c6410.h"
+};
+#endif
+
+const char img_nomul_frag_glsl[] =
+#include "shader/img_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_nomul_frag_src =
+{
+   img_nomul_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_nomul_frag_bin, sizeof(img_nomul_frag_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_nomul_vert_bin[] =
+{
+# include "shader/img_nomul_vert_bin_s3c6410.h"
+};
+#endif
+const char img_nomul_vert_glsl[] =
+#include "shader/img_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_nomul_vert_src =
+{
+   img_nomul_vert_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_nomul_vert_bin, sizeof(img_nomul_vert_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+/////////////////////////////////////////////
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_solid_frag_bin[] =
+{
+# include "shader/img_solid_frag_bin_s3c6410.h"
+};
+#endif
+
+const char img_solid_frag_glsl[] =
+#include "shader/img_solid_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_solid_frag_src =
+{
+   img_solid_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_solid_frag_bin, sizeof(img_solid_frag_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_solid_vert_bin[] =
+{
+# include "shader/img_solid_vert_bin_s3c6410.h"
+};
+#endif
+const char img_solid_vert_glsl[] =
+#include "shader/img_solid_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_solid_vert_src =
+{
+   img_solid_vert_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_solid_vert_bin, sizeof(img_solid_vert_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+/////////////////////////////////////////////
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_solid_nomul_frag_bin[] =
+{
+# include "shader/img_solid_nomul_frag_bin_s3c6410.h"
+};
+#endif
+
+const char img_solid_nomul_frag_glsl[] =
+#include "shader/img_solid_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_solid_nomul_frag_src =
+{
+   img_solid_nomul_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_solid_nomul_frag_bin, sizeof(img_solid_nomul_frag_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_solid_nomul_vert_bin[] =
+{
+# include "shader/img_solid_nomul_vert_bin_s3c6410.h"
+};
+#endif
+const char img_solid_nomul_vert_glsl[] =
+#include "shader/img_solid_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_solid_nomul_vert_src =
+{
+   img_solid_nomul_vert_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_solid_nomul_vert_bin, sizeof(img_solid_nomul_vert_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+
+
+
+
+
+
+/////////////////////////////////////////////
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_bgra_frag_bin[] =
+{
+# include "shader/img_bgra_frag_bin_s3c6410.h"
+};
+#endif
+
+const char img_bgra_frag_glsl[] =
+#include "shader/img_bgra_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_bgra_frag_src =
+{
+   img_bgra_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_bgra_frag_bin, sizeof(img_bgra_frag_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_bgra_vert_bin[] =
+{
+# include "shader/img_bgra_vert_bin_s3c6410.h"
+};
+#endif
+const char img_bgra_vert_glsl[] =
+#include "shader/img_bgra_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_bgra_vert_src =
+{
+   img_bgra_vert_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_bgra_vert_bin, sizeof(img_bgra_vert_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+/////////////////////////////////////////////
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_bgra_nomul_frag_bin[] =
+{
+# include "shader/img_bgra_nomul_frag_bin_s3c6410.h"
+};
+#endif
+
+const char img_bgra_nomul_frag_glsl[] =
+#include "shader/img_bgra_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_bgra_nomul_frag_src =
+{
+   img_bgra_nomul_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_bgra_nomul_frag_bin, sizeof(img_bgra_nomul_frag_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_bgra_nomul_vert_bin[] =
+{
+# include "shader/img_bgra_nomul_vert_bin_s3c6410.h"
+};
+#endif
+const char img_bgra_nomul_vert_glsl[] =
+#include "shader/img_bgra_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_bgra_nomul_vert_src =
+{
+   img_bgra_nomul_vert_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_bgra_nomul_vert_bin, sizeof(img_bgra_nomul_vert_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+/////////////////////////////////////////////
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_bgra_solid_frag_bin[] =
+{
+# include "shader/img_bgra_solid_frag_bin_s3c6410.h"
+};
+#endif
+
+const char img_bgra_solid_frag_glsl[] =
+#include "shader/img_bgra_solid_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_bgra_solid_frag_src =
+{
+   img_bgra_solid_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_bgra_solid_frag_bin, sizeof(img_bgra_solid_frag_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_bgra_solid_vert_bin[] =
+{
+# include "shader/img_bgra_solid_vert_bin_s3c6410.h"
+};
+#endif
+const char img_bgra_solid_vert_glsl[] =
+#include "shader/img_bgra_solid_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_bgra_solid_vert_src =
+{
+   img_bgra_solid_vert_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_bgra_solid_vert_bin, sizeof(img_bgra_solid_vert_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+/////////////////////////////////////////////
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_bgra_solid_nomul_frag_bin[] =
+{
+# include "shader/img_bgra_solid_nomul_frag_bin_s3c6410.h"
+};
+#endif
+
+const char img_bgra_solid_nomul_frag_glsl[] =
+#include "shader/img_bgra_solid_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_bgra_solid_nomul_frag_src =
+{
+   img_bgra_solid_nomul_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_bgra_solid_nomul_frag_bin, sizeof(img_bgra_solid_nomul_frag_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_bgra_solid_nomul_vert_bin[] =
+{
+# include "shader/img_bgra_solid_nomul_vert_bin_s3c6410.h"
+};
+#endif
+const char img_bgra_solid_nomul_vert_glsl[] =
+#include "shader/img_bgra_solid_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_bgra_solid_nomul_vert_src =
+{
+   img_bgra_solid_nomul_vert_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_bgra_solid_nomul_vert_bin, sizeof(img_bgra_solid_nomul_vert_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+
+
+
+
+
+
 /////////////////////////////////////////////
 static void
 gl_compile_link_error(GLuint target, const char *action)
@@ -274,9 +567,9 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
    
    glBindAttribLocation(p->prog, SHAD_VERTEX, "vertex");
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glBindAttribLocation(p->prog, SHAD_COLOR, "color");
+   glBindAttribLocation(p->prog, SHAD_COLOR,  "color");
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glBindAttribLocation(p->prog, SHAD_TEXUV, "tex_coord");
+   glBindAttribLocation(p->prog, SHAD_TEXUV,  "tex_coord");
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_TEXUV2, "tex_coord2");
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");

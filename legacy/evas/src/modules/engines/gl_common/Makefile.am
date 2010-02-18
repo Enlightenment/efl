@@ -16,6 +16,12 @@ evas_gl_private.h \
 evas_gl_common.h \
 evas_gl_context.c \
 evas_gl_shader.c \
+evas_gl_rectangle.c \
+evas_gl_texture.c \
+evas_gl_image.c \
+evas_gl_font.c \
+evas_gl_polygon.c \
+evas_gl_line.c \
 shader/font_frag.h \
 shader/font_frag_bin_s3c6410.h \
 shader/font_vert.h \
@@ -24,6 +30,34 @@ shader/img_frag.h \
 shader/img_frag_bin_s3c6410.h \
 shader/img_vert.h \
 shader/img_vert_bin_s3c6410.h \
+shader/img_nomul_frag.h \
+shader/img_nomul_frag_bin_s3c6410.h \
+shader/img_nomul_vert.h \
+shader/img_nomul_vert_bin_s3c6410.h \
+shader/img_solid_frag.h \
+shader/img_solid_frag_bin_s3c6410.h \
+shader/img_solid_vert.h \
+shader/img_solid_vert_bin_s3c6410.h \
+shader/img_solid_nomul_frag.h \
+shader/img_solid_nomul_frag_bin_s3c6410.h \
+shader/img_solid_nomul_vert.h \
+shader/img_solid_nomul_vert_bin_s3c6410.h \
+shader/img_bgra_frag.h \
+shader/img_bgra_frag_bin_s3c6410.h \
+shader/img_bgra_vert.h \
+shader/img_bgra_vert_bin_s3c6410.h \
+shader/img_bgra_nomul_frag.h \
+shader/img_bgra_nomul_frag_bin_s3c6410.h \
+shader/img_bgra_nomul_vert.h \
+shader/img_bgra_nomul_vert_bin_s3c6410.h \
+shader/img_bgra_solid_frag.h \
+shader/img_bgra_solid_frag_bin_s3c6410.h \
+shader/img_bgra_solid_vert.h \
+shader/img_bgra_solid_vert_bin_s3c6410.h \
+shader/img_bgra_solid_nomul_frag.h \
+shader/img_bgra_solid_nomul_frag_bin_s3c6410.h \
+shader/img_bgra_solid_nomul_vert.h \
+shader/img_bgra_solid_nomul_vert_bin_s3c6410.h \
 shader/rect_frag.h \
 shader/rect_frag_bin_s3c6410.h \
 shader/rect_vert.h \
@@ -35,13 +69,7 @@ shader/yuv_vert_bin_s3c6410.h \
 shader/tex_frag.h \
 shader/tex_frag_bin_s3c6410.h \
 shader/tex_vert.h \
-shader/tex_vert_bin_s3c6410.h \
-evas_gl_rectangle.c \
-evas_gl_texture.c \
-evas_gl_image.c \
-evas_gl_font.c \
-evas_gl_polygon.c \
-evas_gl_line.c
+shader/tex_vert_bin_s3c6410.h
 
 libevas_engine_gl_common_la_LIBADD = @EINA_LIBS@ @evas_engine_gl_common_libs@ @dlopen_libs@
 endif
@@ -54,6 +82,21 @@ shader/make-c-str.sh \
 shader/img_frag.shd \
 shader/img_frag_s3c6410.asm \
 shader/img_vert.shd \
+shader/img_nomul_frag.shd \
+shader/img_nomul_vert.shd \
+shader/img_solid_frag.shd \
+shader/img_solid_vert.shd \
+shader/img_solid_nomul_frag.shd \
+shader/img_solid_nomul_vert.shd \
+shader/img_bgra_vert.shd \
+shader/img_bgra_frag.shd \
+shader/img_bgra_vert.shd \
+shader/img_bgra_nomul_frag.shd \
+shader/img_bgra_nomul_vert.shd \
+shader/img_bgra_solid_frag.shd \
+shader/img_bgra_solid_vert.shd \
+shader/img_bgra_solid_nomul_frag.shd \
+shader/img_bgra_solid_nomul_vert.shd \
 shader/rect_frag.shd \
 shader/rect_frag_s3c6410.asm \
 shader/rect_vert.shd \

@@ -1,29 +1,24 @@
 #include "evas_gl_private.h"
 
-#if 1
 static const GLenum rgba_fmt   = GL_RGBA;
 static const GLenum rgba_ifmt  = GL_RGBA;
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+//#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+//static const GLenum rgb_fmt    = GL_RGBA;
+//static const GLenum rgb_ifmt   = GL_RGBA;
+//#else
 static const GLenum rgb_fmt    = GL_RGBA;
-static const GLenum rgb_ifmt   = GL_RGBA;
-#else
-static const GLenum rgb_fmt    = GL_RGB;
 static const GLenum rgb_ifmt   = GL_RGB;
+//#endif
+#ifdef GL_BGRA
+static const GLenum bgra_fmt   = GL_BGRA;
+static const GLenum bgra_ifmt  = GL_RGBA;
+static const GLenum bgr_fmt    = GL_BGRA;
+static const GLenum bgr_ifmt   = GL_RGB;
 #endif
 static const GLenum alpha_fmt  = GL_ALPHA;
 static const GLenum alpha_ifmt = GL_ALPHA;
 static const GLenum lum_fmt    = GL_LUMINANCE;
 static const GLenum lum_ifmt   = GL_LUMINANCE;
-#else
-static const GLenum rgba_fmt   = GL_RGBA;
-static const GLenum rgba_ifmt  = GL_COMPRESSED_RGBA;
-static const GLenum rgb_fmt    = GL_RGBA;
-static const GLenum rgb_ifmt   = GL_COMPRESSED_RGBA;
-static const GLenum alpha_fmt  = GL_ALPHA;
-static const GLenum alpha_ifmt = GL_COMPRESSED_ALPHA;
-static const GLenum lum_fmt    = GL_LUMINANCE;
-static const GLenum lum_ifmt   = GL_COMPRESSED_LUMINANCE;
-#endif
 
 static int
 _nearest_pow2(int num)
@@ -62,27 +57,18 @@ _tex_format_index(GLuint format)
    switch (format)
      {
      case GL_RGBA:
-#ifdef GL_COMPRESSED_RGBA
-     case GL_COMPRESSED_RGBA:
+#ifdef GL_BGRA
+     case GL_BGRA:
 #endif        
         return 0;
      case GL_RGB:
-#ifdef GL_COMPRESSED_RGB        
-     case GL_COMPRESSED_RGB:
-#endif        
         return 1;
      case GL_ALPHA:
-#ifdef GL_COMPRESSED_ALPHA        
-     case GL_COMPRESSED_ALPHA:
-#endif        
         return 2;
      case GL_LUMINANCE:
-#ifdef GL_COMPRESSED_LUMINANCE        
-     case GL_COMPRESSED_LUMINANCE:
-#endif        
         return 3;
      default:
-        break;
+        return 0;
      }
    return 0;
 }
@@ -203,7 +189,7 @@ _pool_tex_find(Evas_GL_Context *gc, int w, int h,
      }
    
    th = _tex_round_slot(gc, h);
-   th2 = _tex_format_index(format);
+   th2 = _tex_format_index(intformat);
    EINA_LIST_FOREACH(gc->shared->tex.atlas[th][th2], l, pt)
      {
         if (_pool_tex_alloc(pt, w, h, u, v, l_after))
@@ -241,15 +227,27 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im)
 
    if (im->cache_entry.flags.alpha)
      {
-        tex->pt = _pool_tex_find(gc, im->cache_entry.w + 2,
-                                 im->cache_entry.h + 1, rgba_ifmt, rgba_fmt, 
-                                 &u, &v, &l_after, 1024);
+        if (gc->shared->info.bgra)
+          tex->pt = _pool_tex_find(gc, im->cache_entry.w + 2,
+                                   im->cache_entry.h + 1, bgra_ifmt, bgra_fmt, 
+                                   &u, &v, &l_after, 1024);
+        else
+          tex->pt = _pool_tex_find(gc, im->cache_entry.w + 2,
+                                   im->cache_entry.h + 1, rgba_ifmt, rgba_fmt, 
+                                   &u, &v, &l_after, 1024);
         tex->alpha = 1;
      }
    else
-     tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
-                              im->cache_entry.h + 1, rgb_ifmt, rgb_fmt,
-                              &u, &v, &l_after, 1024);
+     {
+        if (gc->shared->info.bgra)
+          tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
+                                 im->cache_entry.h + 1, bgr_ifmt, bgr_fmt,
+                                 &u, &v, &l_after, 1024);
+        else
+          tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
+                                 im->cache_entry.h + 1, rgb_ifmt, rgb_fmt,
+                                 &u, &v, &l_after, 1024);
+     }
    if (!tex->pt)
      {
         memset(tex, 0x11, sizeof(Evas_GL_Texture)); // mark as freed
@@ -424,9 +422,19 @@ evas_gl_common_texture_native_new(Evas_GL_Context *gc, int w, int h, int alpha, 
    tex->references = 1;
    tex->alpha = alpha;
    if (alpha)
-     tex->pt = _pool_tex_native_new(gc, w, h, rgba_ifmt, rgba_fmt, im);
+     {
+        if (gc->shared->info.bgra)
+          tex->pt = _pool_tex_native_new(gc, w, h, rgba_ifmt, rgba_fmt, im);
+        else
+          tex->pt = _pool_tex_native_new(gc, w, h, rgba_ifmt, rgba_fmt, im);
+     }
    else
-     tex->pt = _pool_tex_native_new(gc, w, h, rgb_ifmt, rgb_fmt, im);
+     {
+        if (gc->shared->info.bgra)
+          tex->pt = _pool_tex_native_new(gc, w, h, rgb_ifmt, rgb_fmt, im);
+        else
+          tex->pt = _pool_tex_native_new(gc, w, h, rgb_ifmt, rgb_fmt, im);
+     }
    if (!tex->pt)
      {
         memset(tex, 0x33, sizeof(Evas_GL_Texture)); // mark as freed
@@ -455,9 +463,19 @@ evas_gl_common_texture_render_new(Evas_GL_Context *gc, int w, int h, int alpha)
    tex->references = 1;
    tex->alpha = alpha;
    if (alpha)
-     tex->pt = _pool_tex_render_new(gc, w, h, rgba_ifmt, rgba_fmt);
+     {
+        if (gc->shared->info.bgra)
+          tex->pt = _pool_tex_render_new(gc, w, h, rgba_ifmt, rgba_fmt);
+        else
+          tex->pt = _pool_tex_render_new(gc, w, h, rgba_ifmt, rgba_fmt);
+     }
    else
-     tex->pt = _pool_tex_render_new(gc, w, h, rgb_ifmt, rgb_fmt);
+     {
+        if (gc->shared->info.bgra)
+          tex->pt = _pool_tex_render_new(gc, w, h, rgb_ifmt, rgb_fmt);
+        else
+          tex->pt = _pool_tex_render_new(gc, w, h, rgb_ifmt, rgb_fmt);
+     }
    if (!tex->pt)
      {
         memset(tex, 0x44, sizeof(Evas_GL_Texture)); // mark as freed
@@ -475,17 +493,30 @@ evas_gl_common_texture_render_new(Evas_GL_Context *gc, int w, int h, int alpha)
 void
 evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 {
+   GLuint fmt;
+   
    if (tex->alpha != im->cache_entry.flags.alpha)
      {
         tex->pt->allocations = eina_list_remove(tex->pt->allocations, tex);
         pt_unref(tex->pt);
         tex->alpha = im->cache_entry.flags.alpha;
         if (tex->alpha)
-          tex->pt = _pool_tex_render_new(tex->gc, tex->w, tex->h, rgba_ifmt, rgba_fmt);
+          {
+             if (tex->gc->shared->info.bgra)
+               tex->pt = _pool_tex_render_new(tex->gc, tex->w, tex->h, bgra_ifmt, bgra_fmt);
+             else
+               tex->pt = _pool_tex_render_new(tex->gc, tex->w, tex->h, rgba_ifmt, rgba_fmt);
+          }
         else
-          tex->pt = _pool_tex_render_new(tex->gc, tex->w, tex->h, rgb_ifmt, rgb_fmt);
+          {
+             if (tex->gc->shared->info.bgra)
+               tex->pt = _pool_tex_render_new(tex->gc, tex->w, tex->h, bgr_ifmt, bgr_fmt);
+             else
+               tex->pt = _pool_tex_render_new(tex->gc, tex->w, tex->h, rgb_ifmt, rgb_fmt);
+          }
      }
    if (!tex->pt) return;
+   fmt = tex->pt->format;
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #ifdef GL_UNPACK_ROW_LENGTH   
@@ -500,48 +531,42 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
    // 
    _tex_sub_2d(tex->x, tex->y, 
                im->cache_entry.w, im->cache_entry.h,
-//               tex->pt->format, tex->pt->dataformat,
-               rgba_fmt, tex->pt->dataformat,
+               fmt, tex->pt->dataformat,
                im->image.data);
    // |xxx
    // |xxx
    // 
    _tex_sub_2d(tex->x - 1, tex->y, 
                1, im->cache_entry.h,
-//               tex->pt->format, tex->pt->dataformat,
-               rgba_fmt, tex->pt->dataformat,
+               fmt, tex->pt->dataformat,
                im->image.data);
    //  xxx|
    //  xxx|
    // 
    _tex_sub_2d(tex->x + im->cache_entry.w, tex->y, 
                1, im->cache_entry.h,
-//               tex->pt->format, tex->pt->dataformat,
-               rgba_fmt, tex->pt->dataformat,
+               fmt, tex->pt->dataformat,
                im->image.data + (im->cache_entry.w - 1));
    //  xxx
    //  xxx
    //  ---
    _tex_sub_2d(tex->x, tex->y + im->cache_entry.h,
                im->cache_entry.w, 1,
-//               tex->pt->format, tex->pt->dataformat,
-               rgba_fmt, tex->pt->dataformat,
+               fmt, tex->pt->dataformat,
                im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w));
    //  xxx
    //  xxx
    // o
    _tex_sub_2d(tex->x - 1, tex->y + im->cache_entry.h,
                1, 1,
-//               tex->pt->format, tex->pt->dataformat,
-               rgba_fmt, tex->pt->dataformat,
+               fmt, tex->pt->dataformat,
                im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w));
    //  xxx
    //  xxx
    //     o
    _tex_sub_2d(tex->x + im->cache_entry.w, tex->y + im->cache_entry.h,
                1, 1,
-//               tex->pt->format, tex->pt->dataformat,
-               rgba_fmt, tex->pt->dataformat,
+               fmt, tex->pt->dataformat,
                im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w) + (im->cache_entry.w - 1));
    if (tex->pt->texture != tex->gc->shader.cur_tex)
      {

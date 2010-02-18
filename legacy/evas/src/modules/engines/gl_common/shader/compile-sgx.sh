@@ -9,6 +9,13 @@ function compile()
 
 compile rect
 compile img
+compile img_nomul
+compile img_solid
+compile img_solid_nomul
+compile img_bgra
+compile img_bgra_nomul
+compile img_bgra_solid
+compile img_bgra_solid_nomul
 compile font
 compile yuv
 compile tex

@@ -6,5 +6,5 @@
 "varying vec2 tex_c;\n"
 "void main()\n"
 "{\n"
-"   gl_FragColor = texture2D(tex, tex_c.xy).bgra * col;\n"
+"   gl_FragColor = texture2D(tex, tex_c.xy) * col;\n"
 "}\n"

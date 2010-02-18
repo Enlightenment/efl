@@ -796,7 +796,11 @@ eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *i
        (p[2].u == (im->cache_entry.w << FP)) &&
        (p[2].v == (im->cache_entry.h << FP)) &&
        (p[3].u == 0) &&
-       (p[3].v == (im->cache_entry.h << FP)))
+       (p[3].v == (im->cache_entry.h << FP)) &&
+       (p[0].col == 0xffffffff) &&
+       (p[1].col == 0xffffffff) &&
+       (p[2].col == 0xffffffff) &&
+       (p[3].col == 0xffffffff))
      {
         int dx, dy, dw, dh;
         

@@ -47,7 +47,9 @@
 #ifndef GL_TEXTURE_RECTANGLE_NV
 #define GL_TEXTURE_RECTANGLE_NV 0x84F5
 #endif
-
+#ifndef GL_BGRA
+#define GL_BGRA 0x80E1
+#endif
 
 #define SHAD_VERTEX 0
 #define SHAD_COLOR  1
@@ -89,6 +91,8 @@ struct _Evas_GL_Shared
       GLint max_texture_units;
       GLint max_texture_size;
       GLfloat anisotropic;
+      Eina_Bool rgb : 1;
+      Eina_Bool bgra : 1;
       Eina_Bool tex_npo2 : 1;
       Eina_Bool tex_rect : 1;
    } info;
@@ -99,7 +103,17 @@ struct _Evas_GL_Shared
    } tex;
    
    struct {
-      Evas_GL_Program  rect, img, font, yuv, tex;
+      // ADD: tex_nomul, tex_solid, tex_solid_nomul, yuv_nomul
+      Evas_GL_Program  img,            img_nomul;
+      Evas_GL_Program  img_solid,      img_solid_nomul;
+      
+      Evas_GL_Program  img_bgra,       img_bgra_nomul;
+      Evas_GL_Program  img_bgra_solid, img_bgra_solid_nomul;
+
+      Evas_GL_Program  rect;
+      Evas_GL_Program  font;
+      Evas_GL_Program  yuv;
+      Evas_GL_Program  tex;
    } shader;
    int references;
    int w, h;
@@ -247,15 +261,35 @@ struct _Evas_GL_Gradient
 
 extern Evas_GL_Program_Source shader_rect_frag_src;
 extern Evas_GL_Program_Source shader_rect_vert_src;
-extern Evas_GL_Program_Source shader_img_frag_src;
-extern Evas_GL_Program_Source shader_img_vert_src;
 extern Evas_GL_Program_Source shader_font_frag_src;
 extern Evas_GL_Program_Source shader_font_vert_src;
 extern Evas_GL_Program_Source shader_yuv_frag_src;
 extern Evas_GL_Program_Source shader_yuv_vert_src;
+
+extern Evas_GL_Program_Source shader_img_frag_src;
+extern Evas_GL_Program_Source shader_img_vert_src;
+
+extern Evas_GL_Program_Source shader_img_nomul_frag_src;
+extern Evas_GL_Program_Source shader_img_nomul_vert_src;
+extern Evas_GL_Program_Source shader_img_solid_frag_src;
+extern Evas_GL_Program_Source shader_img_solid_vert_src;
+extern Evas_GL_Program_Source shader_img_solid_nomul_frag_src;
+extern Evas_GL_Program_Source shader_img_solid_nomul_vert_src;
+extern Evas_GL_Program_Source shader_img_bgra_frag_src;
+extern Evas_GL_Program_Source shader_img_bgra_vert_src;
+extern Evas_GL_Program_Source shader_img_bgra_nomul_frag_src;
+extern Evas_GL_Program_Source shader_img_bgra_nomul_vert_src;
+extern Evas_GL_Program_Source shader_img_bgra_solid_frag_src;
+extern Evas_GL_Program_Source shader_img_bgra_solid_vert_src;
+extern Evas_GL_Program_Source shader_img_bgra_solid_nomul_frag_src;
+extern Evas_GL_Program_Source shader_img_bgra_solid_nomul_vert_src;
+
+// fixme: more yuv shaders
+
 extern Evas_GL_Program_Source shader_tex_frag_src;
 extern Evas_GL_Program_Source shader_tex_vert_src;
-
+// fixme: more tex shaders
+// 
 void glerr(int err, const char *file, const char *func, int line, const char *op);
  
 Evas_GL_Context  *evas_gl_common_context_new(void);
@@ -341,7 +375,7 @@ void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);
 void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e);
 void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
 
-//#define GL_ERRORS 1
+#define GL_ERRORS 1
 
 #ifdef GL_ERRORS
 # define GLERR(fn, fl, ln, op) \
