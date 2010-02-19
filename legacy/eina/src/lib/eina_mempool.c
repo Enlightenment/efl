@@ -261,6 +261,31 @@ eina_mempool_shutdown(void)
  *
  * @brief These functions provide memory pool management.
  *
+ * Several mempool are available:
+ *
+ * @li @c buddy: It uses the
+ * <a href="http://en.wikipedia.org/wiki/Buddy_memory_allocation">"buddy
+ * allocator" algorithm</a> but the Eina implementation differs in the
+ * sense that the chunk information is not stored on the chunk itself,
+ * but on another memory area. This is useful for cases where the
+ * momery to manage might be slower to access, or limited (like video
+ * memory).
+ * @li @c chained_pool: It is the default one. It allocates a big
+ * chunk of memory with malloc() and split the result in chnks of the
+ * requested size that are pushed inside a stack. When requested, t
+ * takes this pointer from the stack to give them to whoever wants
+ * them.
+ * @li @c ememoa_fixed and @c ememoa_unknown: experimental allocators
+ * which could be useful when a fixed amount of memory is needed.
+ * @li @c fixed_bitmap: It alocates with malloc) 32* the requested
+ * size and push the pool pointer in an rbtree. To find empty space in
+ * a pool, it will just search for the first bit set in an int (32
+ * bits). Then, when a pointer is freed, it will do a search inside
+ * the rbtree.
+ * @li @c pass_through: it just call malloc() and free(). It may be
+ * faster on some computers than using our own allocators (like having
+ * a huge L2 cache, over 4MB).
+ *
  * @{
  */
 
