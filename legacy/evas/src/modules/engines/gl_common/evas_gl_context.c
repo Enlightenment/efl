@@ -105,6 +105,94 @@ matrix_ortho(GLfloat *m,
    m[15] = 1.0;
 }
 
+static int
+_evas_gl_common_version_check()
+{
+   char *version;
+   char *tmp;
+   char *tmp2;
+   int major;
+   int minor;
+
+  /*
+   * glGetString returns a string describing the current GL connection.
+   * GL_VERSION is used to get the version of the connection
+   */
+
+   version = glGetString(GL_VERSION);
+
+  /*
+   * OpengL ES
+   *
+   * 1.* : The form is:
+   *
+   * OpenGL ES-<profile> <major>.<minor>
+   *
+   * where <profile> is either "CM" or "CL". The minor can be followed by the vendor
+   * specific information
+   *
+   * 2.0 : The form is:
+   *
+   * OpenGL<space>ES<space><version number><space><vendor-specific information>
+   */
+
+   /* OpenGL ES 1.* ? */
+
+   if ((tmp = strstr(version, "OpenGL ES-CM ")) || (tmp = strstr(version, "OpenGL ES-CL ")))
+     {
+        /* Not supported */
+        return 0;
+     }
+
+   /* OpenGL ES 2.* ? */
+
+   if ((tmp = strstr(version, "OpenGL ES ")))
+     {
+        /* Supported */
+        return 1;
+     }
+
+  /*
+   * OpenGL
+   *
+   * The GL_VERSION and GL_SHADING_LANGUAGE_VERSION strings begin with a
+   * version number. The version number uses one of these forms:
+   *
+   * major_number.minor_number
+   * major_number.minor_number.release_number
+   *
+   * Vendor-specific information may follow the version number. Its format
+   * depends on the implementation, but a space always separates the
+   * version number and the vendor-specific information.
+   */
+
+   /* glGetString() returns a static string, and we are going to */
+   /* modify it, so we get a copy first */
+   version = strdup(version);
+   if (!version)
+     return 0;
+
+   tmp = strchr(version, '.');
+   /* the first '.' always exists */
+   *tmp = '\0';
+   major = atoi(version);
+   /* FIXME: maybe we can assume that minor in only a cipher */
+   tmp2 = ++tmp;
+   while ((*tmp != '.') && (*tmp != ' ') && (*tmp != '\0'))
+     tmp++;
+   /* *tmp is '\0' : version is major_number.minor_number */
+   /* *tmp is '.'  : version is major_number.minor_number.release_number */
+   /* *tmp is ' '  : version is major_number.minor_number followed by vendor */
+   *tmp = '\0';
+   minor = atoi(tmp2);
+   free(version);
+
+   if (((major == 1) && (minor >= 4)) || (major >= 2))
+     return 1;
+
+   return 0;
+}
+
 static void
 _evas_gl_common_viewport_set(Evas_GL_Context *gc)
 {
@@ -209,7 +297,9 @@ evas_gl_common_context_new(void)
 	_evas_gl_common_context->references++;
 	return _evas_gl_common_context;
      }
-#endif   
+#endif
+   if (!_evas_gl_common_version_check())
+     return NULL;
    gc = calloc(1, sizeof(Evas_GL_Context));
    if (!gc) return NULL;
 
