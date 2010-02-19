@@ -2384,7 +2384,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                             const Edje_Perspective *ps;
                             
                             // fixme: a tad inefficient as this is a has lookup
-                            ps = edje_object_perspective_get(ed->evas);
+                            ps = edje_object_perspective_get(ed->obj);
                             if (ps)
                               {
                                  px = ps->px; py = ps->py;
