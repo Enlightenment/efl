@@ -167,9 +167,9 @@ _ecore_x_e_illume_atom_get(Ecore_X_Illume_Mode mode)
       case ECORE_X_ILLUME_MODE_DUAL_LEFT:
         return ECORE_X_ATOM_E_ILLUME_MODE_DUAL_LEFT;
       default:
-        return 0;
+        return ECORE_X_ILLUME_MODE_UNKNOWN;;
      }
-   return 0;
+   return ECORE_X_ILLUME_MODE_UNKNOWN;
 }
 
 static Ecore_X_Illume_Mode 
@@ -185,10 +185,20 @@ _ecore_x_e_illume_mode_get(Ecore_X_Atom atom)
 }
 
 EAPI void 
-ecore_x_e_illume_zone_list_set(Ecore_X_Window win, Ecore_X_Window *p_zones, unsigned int n_zones) 
+ecore_x_e_illume_zone_set(Ecore_X_Window win, Ecore_X_Window zone) 
 {
-   ecore_x_window_prop_window_set(win, ECORE_X_ATOM_E_ILLUME_ZONE_LIST, 
-                                  p_zones, n_zones);
+   ecore_x_window_prop_window_set(win, ECORE_X_ATOM_E_ILLUME_ZONE, 
+                                  &zone, 1);
+}
+
+EAPI Ecore_X_Window 
+ecore_x_e_illume_zone_get(Ecore_X_Window win) 
+{
+   Ecore_X_Window zone;
+
+   if (!ecore_x_window_prop_window_get(win, ECORE_X_ATOM_E_ILLUME_ZONE, 
+                                       &zone, 1)) return 0;
+   return zone;
 }
 
 EAPI void 
@@ -215,7 +225,7 @@ ecore_x_e_illume_mode_set(Ecore_X_Window win, Ecore_X_Illume_Mode mode)
    Ecore_X_Atom atom = 0;
 
    atom = _ecore_x_e_illume_atom_get(mode);
-   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_MODE,
+   ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_E_ILLUME_MODE,
 				  &atom, 1);
 }
 
@@ -224,7 +234,7 @@ ecore_x_e_illume_mode_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
 
-   if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_MODE, &atom, 1))
+   if (!ecore_x_window_prop_atom_get(win, ECORE_X_ATOM_E_ILLUME_MODE, &atom, 1))
      return ECORE_X_ILLUME_MODE_UNKNOWN;
    return _ecore_x_e_illume_mode_get(atom);
 }
@@ -239,9 +249,25 @@ ecore_x_e_illume_mode_send(Ecore_X_Window win, Ecore_X_Illume_Mode mode)
 }
 
 EAPI void 
-ecore_x_e_illume_back_send(Ecore_X_Window win) 
+ecore_x_e_illume_focus_back_send(Ecore_X_Window win) 
 {
-   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_BACK,
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_FOCUS_BACK,
+				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+				 1, 0, 0, 0, 0);
+}
+
+EAPI void 
+ecore_x_e_illume_focus_forward_send(Ecore_X_Window win) 
+{
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_FOCUS_FORWARD,
+				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+				 1, 0, 0, 0, 0);
+}
+
+EAPI void 
+ecore_x_e_illume_focus_home_send(Ecore_X_Window win) 
+{
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_FOCUS_HOME,
 				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
 				 1, 0, 0, 0, 0);
 }
@@ -255,9 +281,17 @@ ecore_x_e_illume_close_send(Ecore_X_Window win)
 }
 
 EAPI void 
-ecore_x_e_illume_home_send(Ecore_X_Window win) 
+ecore_x_e_illume_home_new_send(Ecore_X_Window win) 
 {
-   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_HOME,
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_HOME_NEW,
+				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE, 
+				 1, 0, 0, 0, 0);
+}
+
+EAPI void 
+ecore_x_e_illume_home_del_send(Ecore_X_Window win) 
+{
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_HOME_DEL,
 				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE, 
 				 1, 0, 0, 0, 0);
 }
@@ -310,6 +344,68 @@ ecore_x_e_illume_drag_end_send(Ecore_X_Window win)
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_DRAG_END,
 				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
 				 1, 0, 0, 0, 0);
+}
+
+EAPI void 
+ecore_x_e_illume_indicator_geometry_set(Ecore_X_Window win, int x, int y, int w, int h) 
+{
+   unsigned int geom[4];
+
+   geom[0] = x;
+   geom[1] = y;
+   geom[2] = w;
+   geom[3] = h;
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY, 
+                                  geom, 4);
+}
+
+EAPI int 
+ecore_x_e_illume_indicator_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h) 
+{
+   int ret = 0;
+   unsigned int geom[4];
+
+   ret = 
+     ecore_x_window_prop_card32_get(win, 
+                                    ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY, 
+                                    geom, 4);
+   if (ret != 4) return 0;
+   if (x) *x = geom[0];
+   if (y) *y = geom[1];
+   if (w) *w = geom[2];
+   if (h) *h = geom[3];
+   return 1;
+}
+
+EAPI void 
+ecore_x_e_illume_softkey_geometry_set(Ecore_X_Window win, int x, int y, int w, int h) 
+{
+   unsigned int geom[4];
+
+   geom[0] = x;
+   geom[1] = y;
+   geom[2] = w;
+   geom[3] = h;
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY, 
+                                  geom, 4);
+}
+
+EAPI int 
+ecore_x_e_illume_softkey_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h) 
+{
+   int ret = 0;
+   unsigned int geom[4];
+
+   ret = 
+     ecore_x_window_prop_card32_get(win, 
+                                    ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY, 
+                                    geom, 4);
+   if (ret != 4) return 0;
+   if (x) *x = geom[0];
+   if (y) *y = geom[1];
+   if (w) *w = geom[2];
+   if (h) *h = geom[3];
+   return 1;
 }
 
 static Ecore_X_Atom
@@ -424,28 +520,22 @@ ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_Window win)
 }
 
 EAPI void 
-ecore_x_e_illume_quickpanel_zone_set(Ecore_X_Window win, Ecore_X_Window *zone) 
+ecore_x_e_illume_quickpanel_zone_set(Ecore_X_Window win, unsigned int zone) 
 {
-   ecore_x_window_prop_window_set(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE, 
-                                  zone, 1);
+   ecore_x_window_prop_card32_set(win, 
+                                  ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE, 
+                                  &zone, 1);
 }
 
-EAPI Ecore_X_Window 
+EAPI int 
 ecore_x_e_illume_quickpanel_zone_get(Ecore_X_Window win) 
 {
-   Ecore_X_Window zone;
+   unsigned int val = 0;
 
-   if (!ecore_x_window_prop_window_get(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE, 
-                                       &zone, 1)) return 0;
-   return zone;
-}
-
-EAPI void 
-ecore_x_e_illume_quickpanel_zone_request_send(Ecore_X_Window win, Ecore_X_Window qp) 
-{
-   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE_REQUEST,
-				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
-				 1, qp, 0, 0, 0);
+   if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE, 
+                                       &val, 1))
+     return 0;
+   return val;
 }
 
 EAPI void 
@@ -455,68 +545,6 @@ ecore_x_e_illume_quickpanel_position_update_send(Ecore_X_Window win)
                                  ECORE_X_ATOM_E_ILLUME_QUICKPANEL_POSITION_UPDATE,
 				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
 				 1, 0, 0, 0, 0);
-}
-
-EAPI void 
-ecore_x_e_illume_top_shelf_geometry_set(Ecore_X_Window win, int x, int y, int w, int h) 
-{
-   unsigned int geom[4];
-
-   geom[0] = x;
-   geom[1] = y;
-   geom[2] = w;
-   geom[3] = h;
-   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_TOP_SHELF_GEOMETRY, 
-                                  geom, 4);
-}
-
-EAPI int 
-ecore_x_e_illume_top_shelf_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h) 
-{
-   int ret = 0;
-   unsigned int geom[4];
-
-   ret = 
-     ecore_x_window_prop_card32_get(win, 
-                                    ECORE_X_ATOM_E_ILLUME_TOP_SHELF_GEOMETRY, 
-                                    geom, 4);
-   if (ret != 4) return 0;
-   if (x) *x = geom[0];
-   if (y) *y = geom[1];
-   if (w) *w = geom[2];
-   if (h) *h = geom[3];
-   return 1;
-}
-
-EAPI void 
-ecore_x_e_illume_bottom_panel_geometry_set(Ecore_X_Window win, int x, int y, int w, int h) 
-{
-   unsigned int geom[4];
-
-   geom[0] = x;
-   geom[1] = y;
-   geom[2] = w;
-   geom[3] = h;
-   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_BOTTOM_PANEL_GEOMETRY, 
-                                  geom, 4);
-}
-
-EAPI int 
-ecore_x_e_illume_bottom_panel_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h) 
-{
-   int ret = 0;
-   unsigned int geom[4];
-
-   ret = 
-     ecore_x_window_prop_card32_get(win, 
-                                    ECORE_X_ATOM_E_ILLUME_BOTTOM_PANEL_GEOMETRY, 
-                                    geom, 4);
-   if (ret != 4) return 0;
-   if (x) *x = geom[0];
-   if (y) *y = geom[1];
-   if (w) *w = geom[2];
-   if (h) *h = geom[3];
-   return 1;
 }
 
 EAPI void 

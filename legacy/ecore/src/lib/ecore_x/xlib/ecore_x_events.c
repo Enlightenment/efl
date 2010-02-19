@@ -1261,7 +1261,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
    {
       Ecore_X_Event_Window_Property *e;
 
-      e = calloc(1,sizeof(Ecore_X_Event_Window_Property));
+      e = calloc(1, sizeof(Ecore_X_Event_Window_Property));
       if (!e) return;
       e->win = xevent->xproperty.window;
       e->atom = xevent->xproperty.atom;
