@@ -1133,22 +1133,7 @@ elm_win_quickpanel_zone_set(Evas_Object *obj, int zone)
    _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
    if (win->xwin)
-     {
-        Ecore_X_Window *zones;
-        int zcount;
-
-        zcount =
-          ecore_x_window_prop_window_list_get(ecore_x_window_root_first_get(),
-                                              ECORE_X_ATOM_E_ILLUME_ZONE_LIST,
-                                              &zones);
-        if ((zones) && (zcount >= (zone + 1)))
-          {
-             ecore_x_e_illume_quickpanel_zone_set(win->xwin, &zones[zone]);
-             ecore_x_e_illume_quickpanel_zone_request_send(zones[zone],
-                                                           win->xwin);
-             free(zones);
-          }
-     }
+     ecore_x_e_illume_quickpanel_zone_set(win->xwin, zone);
 #endif
 }
 

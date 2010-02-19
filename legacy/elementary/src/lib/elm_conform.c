@@ -144,27 +144,46 @@ _prop_change(void *data, int type, void *event)
    Widget_Data *wd = elm_widget_data_get(data);
 
    ev = event;
-   if (ev->win != ecore_x_window_root_first_get()) return 1;
-   if (ev->atom == ECORE_X_ATOM_E_ILLUME_TOP_SHELF_GEOMETRY) 
+
+   if (ev->atom == ECORE_X_ATOM_E_ILLUME_ZONE) 
      {
+        Ecore_X_Window zone;
         int sh = -1;
 
-        ecore_x_e_illume_top_shelf_geometry_get(ecore_x_window_root_first_get(), 
-                                                NULL, NULL, NULL, &sh);
+        zone = ecore_x_e_illume_zone_get(ev->win);
+        ecore_x_e_illume_indicator_geometry_get(zone, NULL, NULL, NULL, &sh);
         if (sh < 0) sh = 0;
         evas_object_size_hint_min_set(wd->shelf, -1, sh);
         evas_object_size_hint_max_set(wd->shelf, -1, sh);
-     }
-   if (ev->atom == ECORE_X_ATOM_E_ILLUME_BOTTOM_PANEL_GEOMETRY) 
-     {
-        int sh = -1;
-
-        ecore_x_e_illume_bottom_panel_geometry_get(ecore_x_window_root_first_get(), 
-                                                   NULL, NULL, NULL, &sh);
+        sh = -1;
+        ecore_x_e_illume_softkey_geometry_get(zone, NULL, NULL, NULL, &sh);
         if (sh < 0) sh = 0;
         evas_object_size_hint_min_set(wd->panel, -1, sh);
         evas_object_size_hint_max_set(wd->panel, -1, sh);
      }
+   else if (ev->atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY) 
+     {
+        Ecore_X_Window zone;
+        int sh = -1;
+
+        zone = ecore_x_e_illume_zone_get(ev->win);
+        ecore_x_e_illume_indicator_geometry_get(zone, NULL, NULL, NULL, &sh);
+        if (sh < 0) sh = 0;
+        evas_object_size_hint_min_set(wd->shelf, -1, sh);
+        evas_object_size_hint_max_set(wd->shelf, -1, sh);
+     }
+   else if (ev->atom == ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY) 
+     {
+        Ecore_X_Window zone;
+        int sh = -1;
+
+        zone = ecore_x_e_illume_zone_get(ev->win);
+        ecore_x_e_illume_softkey_geometry_get(zone, NULL, NULL, NULL, &sh);
+        if (sh < 0) sh = 0;
+        evas_object_size_hint_min_set(wd->panel, -1, sh);
+        evas_object_size_hint_max_set(wd->panel, -1, sh);
+     }
+
    // FIXME: listen to kbd region property changes too.
 #endif
 
@@ -202,12 +221,14 @@ elm_conformant_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->base);
 
 #ifdef HAVE_ELEMENTARY_X
+   Ecore_X_Window zone, xwin;
    int sh = -1;
 
-   ecore_x_e_illume_top_shelf_geometry_get(ecore_x_window_root_first_get(), 
-                                           NULL, NULL, NULL, &sh);
-   if (sh < 0) sh = 0;
+   xwin = elm_win_xwindow_get(parent);
+   zone = ecore_x_e_illume_zone_get(xwin);
 
+   ecore_x_e_illume_indicator_geometry_get(zone, NULL, NULL, NULL, &sh);
+   if (sh < 0) sh = 0;
    wd->shelf = evas_object_rectangle_add(evas);
    evas_object_color_set(wd->shelf, 0, 0, 0, 0);
    evas_object_size_hint_min_set(wd->shelf, -1, sh);
@@ -215,10 +236,8 @@ elm_conformant_add(Evas_Object *parent)
    edje_object_part_swallow(wd->base, "elm.swallow.shelf", wd->shelf);
 
    sh = -1;
-   ecore_x_e_illume_bottom_panel_geometry_get(ecore_x_window_root_first_get(), 
-                                              NULL, NULL, NULL, &sh);
+   ecore_x_e_illume_softkey_geometry_get(zone, NULL, NULL, NULL, &sh);
    if (sh < 0) sh = 0;
-
    wd->panel = evas_object_rectangle_add(evas);
    evas_object_color_set(wd->panel, 0, 0, 0, 0);
    evas_object_size_hint_min_set(wd->panel, -1, sh);
@@ -229,9 +248,9 @@ elm_conformant_add(Evas_Object *parent)
                                           _prop_change, obj);
    // FIXME: get kbd region prop
 #endif
-   
+
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-   
+
    _sizing_eval(obj);
    return obj;
 }
