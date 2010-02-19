@@ -4940,7 +4940,8 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
    epr->name = eina_stringshare_add(name);
    epr->signal = NULL;
    epr->source = NULL;
-   epr->filter_state = NULL;
+   epr->filter.part = NULL;
+   epr->filter.state = NULL;
    epr->in.from = 0.0;
    epr->in.range = 0.0;
    epr->action = 0;
@@ -4989,7 +4990,8 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
    _edje_if_string_free(ed, epr->name);
    _edje_if_string_free(ed, epr->signal);
    _edje_if_string_free(ed, epr->source);
-   _edje_if_string_free(ed, epr->filter_state);
+   _edje_if_string_free(ed, epr->filter.part);
+   _edje_if_string_free(ed, epr->filter.state);
    _edje_if_string_free(ed, epr->state);
    _edje_if_string_free(ed, epr->state2);
 
@@ -5156,13 +5158,35 @@ edje_edit_program_source_set(Evas_Object *obj, const char *prog, const char *sou
 }
 
 EAPI const char *
+edje_edit_program_filter_part_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(NULL);
+
+   if (!epr->filter.part) return NULL;
+   return eina_stringshare_add(epr->filter.part);
+}
+
+EAPI Eina_Bool
+edje_edit_program_filter_part_set(Evas_Object *obj, const char *prog, const char *filter_part)
+{
+   GET_ED_OR_RETURN(0);
+   GET_EPR_OR_RETURN(0);
+
+   if (!filter_part) return 0;
+
+   _edje_if_string_free(ed, epr->filter.part);
+   epr->filter.part = eina_stringshare_add(filter_part);
+
+   return 1;
+}
+
+EAPI const char *
 edje_edit_program_filter_state_get(Evas_Object *obj, const char *prog)
 {
    GET_EPR_OR_RETURN(NULL);
 
-   if (!epr->filter_state) return NULL;
-   //printf("GET SOURCE for program: %s [%s]\n", prog, epr->source_state);
-   return eina_stringshare_add(epr->filter_state);
+   if (!epr->filter.state) return NULL;
+   return eina_stringshare_add(epr->filter.state);
 }
 
 EAPI Eina_Bool
@@ -5173,10 +5197,8 @@ edje_edit_program_filter_state_set(Evas_Object *obj, const char *prog, const cha
 
    if (!filter_state) return 0;
 
-   //printf("SET SOURCE for program: %s [%s]\n", prog, source);
-
-   _edje_if_string_free(ed, epr->filter_state);
-   epr->filter_state = eina_stringshare_add(filter_state);
+   _edje_if_string_free(ed, epr->filter.state);
+   epr->filter.state = eina_stringshare_add(filter_state);
 
    return 1;
 }

@@ -223,7 +223,7 @@ static void st_collections_group_programs_program_name(void);
 static void st_collections_group_parts_part_description_params_string(void);
 static void st_collections_group_programs_program_signal(void);
 static void st_collections_group_programs_program_source(void);
-static void st_collections_group_programs_program_filter_state(void);
+static void st_collections_group_programs_program_filter(void);
 static void st_collections_group_programs_program_in(void);
 static void st_collections_group_programs_program_action(void);
 static void st_collections_group_programs_program_transition(void);
@@ -508,7 +508,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.program.name", st_collections_group_programs_program_name}, /* dup */
      {"collections.group.parts.program.signal", st_collections_group_programs_program_signal}, /* dup */
      {"collections.group.parts.program.source", st_collections_group_programs_program_source}, /* dup */
-     {"collections.group.parts.program.filter_state", st_collections_group_programs_program_filter_state}, /* dup */
+     {"collections.group.parts.program.filter", st_collections_group_programs_program_filter}, /* dup */
      {"collections.group.parts.program.in", st_collections_group_programs_program_in}, /* dup */
      {"collections.group.parts.program.action", st_collections_group_programs_program_action}, /* dup */
      {"collections.group.parts.program.transition", st_collections_group_programs_program_transition}, /* dup */
@@ -518,7 +518,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.program.name", st_collections_group_programs_program_name}, /* dup */
      {"collections.group.program.signal", st_collections_group_programs_program_signal}, /* dup */
      {"collections.group.program.source", st_collections_group_programs_program_source}, /* dup */
-     {"collections.group.program.filter_state", st_collections_group_programs_program_filter_state}, /* dup */
+     {"collections.group.program.filter", st_collections_group_programs_program_filter}, /* dup */
      {"collections.group.program.in", st_collections_group_programs_program_in}, /* dup */
      {"collections.group.program.action", st_collections_group_programs_program_action}, /* dup */
      {"collections.group.program.transition", st_collections_group_programs_program_transition}, /* dup */
@@ -528,7 +528,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.programs.program.name", st_collections_group_programs_program_name},
      {"collections.group.programs.program.signal", st_collections_group_programs_program_signal},
      {"collections.group.programs.program.source", st_collections_group_programs_program_source},
-     {"collections.group.programs.program.filter_state", st_collections_group_programs_program_filter_state}, /* dup */
+     {"collections.group.programs.program.filter", st_collections_group_programs_program_filter}, /* dup */
      {"collections.group.programs.program.in", st_collections_group_programs_program_in},
      {"collections.group.programs.program.action", st_collections_group_programs_program_action},
      {"collections.group.programs.program.transition", st_collections_group_programs_program_transition},
@@ -5956,7 +5956,7 @@ st_collections_group_parts_part_description_params_string(void)
                      name: "programname";
                      signal: "signalname";
                      source: "partname";
-                     filter_state: "statename";
+                     filter: "partname" "statename";
                      in: 0.3 0.0;
                      action: STATE_SET "statename" state_value;
                      transition: LINEAR 0.5;
@@ -6080,27 +6080,32 @@ st_collections_group_programs_program_source(void)
 /**
     @page edcref
     @property
-        filter_state
+        filter
     @parameters
-        [filter_state name]
+        [filter part state]
     @effect
-        State of the source part that should accept signal. Only one source state
-        keyword per program may be used. ex:state: "default"; (Signals from
-        a part currently in state named "default" are accepted).
+        The part [part] should be in state [state] for the signal to be accepted. Only one source state
+        keyword per program may be used. ex:state: "button" "default"; (Signals are accepted
+        if part button is currently in state named "default").
     @endproperty
 */
 static void
-st_collections_group_programs_program_filter_state(void)
+st_collections_group_programs_program_filter(void)
 {
    Edje_Part_Collection *pc;
    Edje_Program *ep;
 
-   check_arg_count(1);
+   check_min_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
    ep = eina_list_data_get(eina_list_last(pc->programs));
 
-   ep->filter_state = parse_str(0);
+   if(is_param(1)) {
+	   ep->filter.part = parse_str(0);
+	   ep->filter.state = parse_str(1);
+   } else {
+	   ep->filter.state = parse_str(0);
+   }
 }
 
 /**

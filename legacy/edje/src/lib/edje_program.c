@@ -1023,16 +1023,16 @@ static int _edje_glob_callback(Edje_Program *pr, void *dt)
    data->matched++;
 #endif
 
-   if (pr->filter_state)
-   {
-     rp = _edje_real_part_get(data->ed, data->source);
-     if (rp)
-       exec = (rp->chosen_description->state.name == pr->filter_state);
-   }
+   if (pr->filter.state)
+     {
+	rp = _edje_real_part_get(data->ed, pr->filter.part ? pr->filter.part : data->source);
+	if (rp)
+	  exec = (rp->chosen_description->state.name == pr->filter.state);
+     }
 
    if (exec)
      _edje_program_run(data->ed, pr, 0, data->signal, data->source);
- 
+
    if (_edje_block_break(data->ed))
      {
 #ifdef EDJE_PROGRAM_CACHE

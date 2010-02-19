@@ -1102,7 +1102,8 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
              if (pr->name) eina_stringshare_del(pr->name);
              if (pr->signal) eina_stringshare_del(pr->signal);
              if (pr->source) eina_stringshare_del(pr->source);
-             if (pr->filter_state) eina_stringshare_del(pr->filter_state);
+             if (pr->filter.part) eina_stringshare_del(pr->filter.part);
+             if (pr->filter.state) eina_stringshare_del(pr->filter.state);
              if (pr->state) eina_stringshare_del(pr->state);
              if (pr->state2) eina_stringshare_del(pr->state2);
           }
