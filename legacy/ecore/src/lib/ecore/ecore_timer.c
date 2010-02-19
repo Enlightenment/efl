@@ -474,18 +474,12 @@ _ecore_timer_call(double when)
 //        printf("_ecore_timer_call %3.3f <= %3.3f %i %i %p\n", 
 //               timer->at, when, timer->just_added, timer->delete_me, timer);
 	if ((timer->at <= when) &&
-// hmm this ends up pausing some edje program iterators... disable for now
-// and see what the fallout is - if any?
-// ...
-// ok - this does cause problems if disabled. i will need to dig into the
-// bottom of this. no quick fixes here :(
 	    (timer->just_added == 0) &&
 	    (timer->delete_me == 0))
 	  {
 	     timer->running = EINA_TRUE;
 
 	     timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
-	     _ecore_timer_call(when);
 	     if ((!timer->delete_me) && (timer->func(timer->data)))
 	       {
 		  /* if the timer would have gone off more than 15 seconds ago,
@@ -514,6 +508,7 @@ _ecore_timer_call(double when)
 	       }
 	     else
 	       free(timer);
+	     _ecore_timer_call(when);
 	     return 1;
 	  }
      }

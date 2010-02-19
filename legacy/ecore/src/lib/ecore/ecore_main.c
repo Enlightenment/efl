@@ -687,50 +687,54 @@ _ecore_main_loop_iterate_internal(int once_only)
 
    in_main_loop++;
    /* expire any timers */
-     {
-	double now;
+   while (_ecore_timer_call(_ecore_loop_time));
+   _ecore_timer_cleanup();
 
-	now = ecore_loop_time_get();
-        while (_ecore_timer_call(now));
-	_ecore_timer_cleanup();
-     }
    /* process signals into events .... */
    while (_ecore_signal_count_get()) _ecore_signal_call();
    if (_ecore_event_exist())
      {
+        _ecore_idle_enterer_call();
 	have_event = 1;
 	_ecore_main_select(0.0);
+        _ecore_loop_time = ecore_time_get();
+        _ecore_timer_enable_new();
 	goto process_events;
      }
    /* call idle enterers ... */
-   if (!once_only)
-     _ecore_idle_enterer_call();
+   if (!once_only) _ecore_idle_enterer_call();
    else
      {
 	have_event = have_signal = 0;
 
 	if (_ecore_main_select(0.0) > 0) have_event = 1;
-
 	if (_ecore_signal_count_get() > 0) have_signal = 1;
-
 	if (have_signal || have_event)
-	  goto process_events;
+          {
+             _ecore_loop_time = ecore_time_get();
+             _ecore_timer_enable_new();
+             goto process_events;
+          }
      }
 
    /* if these calls caused any buffered events to appear - deal with them */
-   while (_ecore_main_fd_handlers_buf_call());
+   _ecore_main_fd_handlers_buf_call();
 
    /* if ther are any - jump to processing them */
    if (_ecore_event_exist())
      {
 	have_event = 1;
 	_ecore_main_select(0.0);
+        _ecore_loop_time = ecore_time_get();
+        _ecore_timer_enable_new();
 	goto process_events;
      }
    if (once_only)
      {
 	_ecore_idle_enterer_call();
 	in_main_loop--;
+        _ecore_loop_time = ecore_time_get();
+        _ecore_timer_enable_new();
 	return;
      }
 
@@ -745,7 +749,9 @@ _ecore_main_loop_iterate_internal(int once_only)
    _ecore_timer_enable_new();
    if (do_quit)
      {
+        _ecore_loop_time = ecore_time_get();
 	in_main_loop--;
+        _ecore_timer_enable_new();
 	return;
      }
    if (!_ecore_event_exist())
@@ -775,7 +781,6 @@ _ecore_main_loop_iterate_internal(int once_only)
 		       if (next_time >= 0) goto start_loop;
 		       if (do_quit) break;
 		    }
-                  _ecore_loop_time = ecore_time_get();
 	       }
 	  }
 	/* timers */
@@ -800,9 +805,9 @@ _ecore_main_loop_iterate_internal(int once_only)
 		       if (next_time <= 0) break;
 		       if (do_quit) break;
 		    }
-                  _ecore_loop_time = ecore_time_get();
 	       }
 	  }
+        _ecore_loop_time = ecore_time_get();
      }
    if (_ecore_fps_debug)
      {
@@ -815,22 +820,25 @@ _ecore_main_loop_iterate_internal(int once_only)
    /* this should read or write any data to the monitored fd and then */
    /* post events onto the ecore event pipe if necessary */
    process_events:
-   if (have_event) _ecore_main_fd_handlers_call();
-   do
-     {
+//   if (have_event) 
+   _ecore_main_fd_handlers_call();
+   _ecore_main_fd_handlers_buf_call();
+//   do
+//     {
 	/* process signals into events .... */
 	while (_ecore_signal_count_get()) _ecore_signal_call();
 	/* handle events ... */
 	_ecore_event_call();
 	_ecore_main_fd_handlers_cleanup();
-     }
-   while (_ecore_main_fd_handlers_buf_call());
+//     }
+//   while (_ecore_main_fd_handlers_buf_call());
 
 /* ok - too much optimising. let's call idle enterers more often. if we
  * have events that place more events or jobs etc. on the event queue
  * we may never get to call an idle enterer
    if (once_only)
  */
+   if (once_only)
      _ecore_idle_enterer_call();
    in_main_loop--;
 }
