@@ -21,11 +21,10 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-#ifndef _WIN32_WCE
-
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
+#include <process.h>
 
 #define ECORE_EXE_WIN32_TIMEOUT 3000
 
@@ -53,19 +52,33 @@ struct _Ecore_Exe
    Ecore_Exe_Flags flags;
    Ecore_Exe_Win32_Signal sig;
    Ecore_Win32_Handler *h_close;
-   Ecore_Win32_Handler *h_read;
-   Ecore_Win32_Handler *h_write;
-   Ecore_Win32_Handler *h_error;
-   HANDLE child_pipe_read;
-   HANDLE child_pipe_write;
-   HANDLE child_pipe_error;
-   HANDLE child_pipe_read_x;
-   HANDLE child_pipe_write_x;
-   HANDLE child_pipe_error_x;
-   void  *read_data_buf;
-   void  *error_data_buf;
-   int    read_data_size;
-   int    error_data_size;
+   struct
+   {
+      HANDLE child_pipe;
+      HANDLE child_pipe_x;
+      HANDLE thread;
+      Ecore_Win32_Handler *h;
+      void  *data_buf;
+      int    data_size;
+      int pending;
+   } pipe_read;
+   struct
+   {
+      HANDLE child_pipe;
+      HANDLE child_pipe_x;
+      HANDLE thread;
+      Ecore_Win32_Handler *h;
+   } pipe_write;
+   struct
+   {
+      HANDLE child_pipe;
+      HANDLE child_pipe_x;
+      HANDLE thread;
+      Ecore_Win32_Handler *h;
+      void  *data_buf;
+      int    data_size;
+      int pending;
+   } pipe_error;
    int    close_stdin;
    int    is_suspended : 1;
 
@@ -73,6 +86,9 @@ struct _Ecore_Exe
 };
 
 static Ecore_Exe *exes = NULL;
+
+static int           _ecore_exe_win32_pipes_set(Ecore_Exe *exe);
+static void          _ecore_exe_win32_pipes_close(Ecore_Exe *exe);
 
 static BOOL CALLBACK _ecore_exe_enum_windows_procedure(HWND window, LPARAM data);
 static void          _ecore_exe_event_add_free(void *data, void *ev);
@@ -83,7 +99,6 @@ static int           _ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh);
 static int           _ecore_exe_pipe_read_cb(void *data, Ecore_Win32_Handler *wh);
 static int           _ecore_exe_pipe_write_cb(void *data, Ecore_Win32_Handler *wh);
 static int           _ecore_exe_pipe_error_cb(void *data, Ecore_Win32_Handler *wh);
-
 
 EAPI int ECORE_EXE_EVENT_ADD = 0;
 EAPI int ECORE_EXE_EVENT_DEL = 0;
@@ -127,7 +142,6 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 {
    STARTUPINFO          si;
    PROCESS_INFORMATION  pi;
-   SECURITY_ATTRIBUTES  sa;
    Ecore_Exe_Event_Add *e;
    Ecore_Exe           *exe;
    char                *ret = NULL;
@@ -141,42 +155,22 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
      /* We need something to auto pipe. */
      flags |= ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR;
 
-   exe->child_pipe_read = NULL;
-   exe->child_pipe_write = NULL;
-   exe->child_pipe_error = NULL;
-   exe->child_pipe_read_x = NULL;
-   exe->child_pipe_write_x = NULL;
-   exe->child_pipe_error_x = NULL;
+   printf ("create pipes...\n");
+   exe->flags = flags;
+   if (exe->flags & ECORE_EXE_PIPE_READ)
+     if (!_ecore_exe_win32_pipes_set(exe))
+       goto free_exe;
+  
+   if (exe->flags & ECORE_EXE_PIPE_WRITE)
+     if (!_ecore_exe_win32_pipes_set(exe))
+       goto close_pipes;
 
-   sa.nLength = sizeof(SECURITY_ATTRIBUTES);
-   sa.bInheritHandle = TRUE;
-   sa.lpSecurityDescriptor = NULL;
+   if (exe->flags & ECORE_EXE_PIPE_ERROR)
+     if (!_ecore_exe_win32_pipes_set(exe))
+       goto close_pipes;
+   printf ("create pipes finished\n");
 
-   if (flags & ECORE_EXE_PIPE_READ)
-     {
-        if (!CreatePipe(&exe->child_pipe_read, &exe->child_pipe_read_x, &sa, 0))
-          goto free_exe;
-        if (!SetHandleInformation(exe->child_pipe_read, HANDLE_FLAG_INHERIT, 0))
-          goto free_exe;
-     }
-
-   if (flags & ECORE_EXE_PIPE_WRITE)
-     {
-        if (!CreatePipe(&exe->child_pipe_write, &exe->child_pipe_write_x, &sa, 0))
-          goto close_pipe_read;
-        if (!SetHandleInformation(exe->child_pipe_write_x, HANDLE_FLAG_INHERIT, 0))
-          goto close_pipe_read;
-     }
-
-   if (flags & ECORE_EXE_PIPE_ERROR)
-     {
-        if (!CreatePipe(&exe->child_pipe_error, &exe->child_pipe_error_x, &sa, 0))
-          goto close_pipe_write;
-        if (!SetHandleInformation(exe->child_pipe_error, HANDLE_FLAG_INHERIT, 0))
-          goto close_pipe_write;
-     }
-
-   if ((flags & ECORE_EXE_USE_SH) ||
+   if ((exe->flags & ECORE_EXE_USE_SH) ||
        ((ret = strrstr(exe_cmd, ".bat")) && (ret[4] == '\0')))
      {
         char buf[PATH_MAX];
@@ -187,15 +181,15 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
      exe->cmd = strdup(exe_cmd);
 
    if (!exe->cmd)
-     goto close_pipe_error;
+     goto close_pipes;
 
    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
 
    ZeroMemory(&si, sizeof(STARTUPINFO));
    si.cb = sizeof(STARTUPINFO);
-   si.hStdOutput = exe->child_pipe_read_x;
-   si.hStdInput = exe->child_pipe_write;
-   si.hStdError = exe->child_pipe_error_x;
+   si.hStdOutput = exe->pipe_read.child_pipe_x;
+   si.hStdInput = exe->pipe_write.child_pipe;
+   si.hStdError = exe->pipe_error.child_pipe_x;
    si.dwFlags |= STARTF_USESTDHANDLES;
 
    /* FIXME: gerer la priorite */
@@ -215,37 +209,20 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    exe->process_id = pi.dwProcessId;
    exe->thread_id = pi.dwThreadId;
    exe->data = (void *)data;
-   exe->flags = flags;
 
    if (!(exe->process2 = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_SUSPEND_RESUME | PROCESS_TERMINATE | SYNCHRONIZE,
                                      FALSE, pi.dwProcessId)))
      goto close_thread;
 
+   printf (" * 10\n");
    exe->h_close = ecore_main_win32_handler_add(exe->process2, _ecore_exe_close_cb, exe);
    if (!exe->h_close) goto close_process2;
-
-   if (flags & ECORE_EXE_PIPE_READ)
-     {
-        exe->h_read = ecore_main_win32_handler_add(exe->child_pipe_read, _ecore_exe_pipe_read_cb, exe);
-        if (!exe->h_read) goto delete_h_close;
-     }
-
-   if (flags & ECORE_EXE_PIPE_WRITE)
-     {
-        exe->h_write = ecore_main_win32_handler_add(exe->child_pipe_write_x, _ecore_exe_pipe_write_cb, exe);
-        if (!exe->h_write) goto delete_h_read;
-     }
-
-   if (flags & ECORE_EXE_PIPE_ERROR)
-     {
-        exe->h_error = ecore_main_win32_handler_add(exe->child_pipe_error, _ecore_exe_pipe_error_cb, exe);
-        if (!exe->h_error) goto delete_h_write;
-     }
+   printf (" * 11\n");
 
    exes = (Ecore_Exe *)eina_inlist_append(EINA_INLIST_GET(exes), EINA_INLIST_GET(exe));
 
    e = (Ecore_Exe_Event_Add *)calloc(1, sizeof(Ecore_Exe_Event_Add));
-   if (!e) goto delete_h_error;
+   if (!e) goto delete_h_close;
 
    e->exe = exe;
    ecore_event_add(ECORE_EXE_EVENT_ADD, e,
@@ -253,15 +230,6 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 
    return exe;
 
- delete_h_error:
-   if (exe->h_error)
-     ecore_main_win32_handler_del(exe->h_error);
- delete_h_write:
-   if (exe->h_write)
-     ecore_main_win32_handler_del(exe->h_write);
- delete_h_read:
-   if (exe->h_read)
-     ecore_main_win32_handler_del(exe->h_read);
  delete_h_close:
    ecore_main_win32_handler_del(exe->h_close);
  close_process2:
@@ -271,15 +239,8 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    CloseHandle(exe->process);
  free_exe_cmd:
    free(exe->cmd);
- close_pipe_error:
-   CloseHandle(exe->child_pipe_error);
-   CloseHandle(exe->child_pipe_error_x);
- close_pipe_write:
-   CloseHandle(exe->child_pipe_write);
-   CloseHandle(exe->child_pipe_write_x);
- close_pipe_read:
-   CloseHandle(exe->child_pipe_read);
-   CloseHandle(exe->child_pipe_read_x);
+ close_pipes:
+   _ecore_exe_win32_pipes_close(exe);
  free_exe:
    free(exe);
    return NULL;
@@ -322,8 +283,8 @@ EAPI Ecore_Exe_Event_Data *
 ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags)
 {
    Ecore_Exe_Event_Data *e = NULL;
-   unsigned char      *inbuf;
-   int                 inbuf_num;
+   unsigned char        *inbuf;
+   int                   inbuf_num;
 
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -335,21 +296,17 @@ ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags)
    /* And get the data. */
    if (flags & ECORE_EXE_PIPE_READ)
      {
-	flags = ECORE_EXE_PIPE_READ;
-
-	inbuf = exe->read_data_buf;
-	inbuf_num = exe->read_data_size;
-	exe->read_data_buf = NULL;
-	exe->read_data_size = 0;
+	inbuf = exe->pipe_read.data_buf;
+	inbuf_num = exe->pipe_read.data_size;
+	exe->pipe_read.data_buf = NULL;
+	exe->pipe_read.data_size = 0;
      }
    else
      {
-	flags = ECORE_EXE_PIPE_ERROR;
-
-	inbuf = exe->error_data_buf;
-	inbuf_num = exe->error_data_size;
-	exe->error_data_buf = NULL;
-	exe->error_data_size = 0;
+	inbuf = exe->pipe_error.data_buf;
+	inbuf_num = exe->pipe_error.data_size;
+	exe->pipe_error.data_buf = NULL;
+	exe->pipe_error.data_size = 0;
      }
 
    e = calloc(1, sizeof(Ecore_Exe_Event_Data));
@@ -388,23 +345,12 @@ ecore_exe_free(Ecore_Exe *exe)
    if (exe->pre_free_cb)
      exe->pre_free_cb(data, exe);
 
-   if (exe->h_error)
-     ecore_main_win32_handler_del(exe->h_error);
-   if (exe->h_write)
-     ecore_main_win32_handler_del(exe->h_write);
-   if (exe->h_read)
-     ecore_main_win32_handler_del(exe->h_read);
    ecore_main_win32_handler_del(exe->h_close);
    CloseHandle(exe->process2);
    CloseHandle(exe->thread);
    CloseHandle(exe->process);
    free(exe->cmd);
-   CloseHandle(exe->child_pipe_error);
-   CloseHandle(exe->child_pipe_error_x);
-   CloseHandle(exe->child_pipe_write);
-   CloseHandle(exe->child_pipe_write_x);
-   CloseHandle(exe->child_pipe_read);
-   CloseHandle(exe->child_pipe_read_x);
+   _ecore_exe_win32_pipes_close(exe);
    exes = (Ecore_Exe *)eina_inlist_remove(EINA_INLIST_GET(exes), EINA_INLIST_GET(exe));
    ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
    if (exe->tag) free(exe->tag);
@@ -597,6 +543,206 @@ ecore_exe_hup(Ecore_Exe *exe)
    /* does nothing */
 }
 
+/* FIXME: manage error mode */
+DWORD WINAPI _ecore_exe_win32_pipe_thread_cb(void *data)
+{
+#define BUFSIZE 256
+   char       buf[BUFSIZE];
+   Ecore_Exe *exe;
+   char      *current_buf = NULL;
+   HANDLE     child_pipe;
+   DWORD      size;
+   DWORD      current_size = 0;
+
+   exe = (Ecore_Exe *)data;
+
+   /* Sort out what sort of handler we are. */
+   /* And get any left over data from last time. */
+   if (exe->flags & ECORE_EXE_PIPE_READ)
+     {
+	child_pipe = exe->pipe_read.child_pipe;
+     }
+   else
+     {
+	child_pipe = exe->pipe_error.child_pipe;
+     }
+
+   while (1)
+     {
+        BOOL res;
+ 
+        res = ReadFile(child_pipe, buf, sizeof(buf), &size, NULL);
+        if (res)
+          {
+            exe->pipe_read.pending = -123;
+            if (!buf)
+              {
+                current_size += size;
+                current_buf = (char *)malloc(current_size);
+                memcpy(current_buf, buf, current_size);
+              }
+            else
+              {
+                current_buf = realloc(current_buf, current_size + size);
+                memcpy(current_buf + current_size, buf, size);
+                current_size += size;
+              }
+            break;
+          }
+        else
+          {
+            DWORD res;
+            res = GetLastError();
+            if (res == ERROR_IO_PENDING)
+               {
+                  exe->pipe_read.pending = res;
+                  break;
+               }
+            if (res == ERROR_BROKEN_PIPE)
+               {
+                  exe->pipe_read.pending = res;
+                  break;
+               }
+            if (res == ERROR_MORE_DATA)
+               {
+                  exe->pipe_error.pending = -456;
+                  continue;
+               }
+          }
+     }
+
+   if (exe->flags & ECORE_EXE_PIPE_READ)
+     {
+        if (exe->pipe_read.data_buf) free(exe->pipe_read.data_buf);
+        exe->pipe_read.data_size = 0;
+        exe->pipe_read.data_buf = malloc(current_size);
+        if (exe->pipe_read.data_buf)
+          {
+             memcpy(exe->pipe_read.data_buf, current_buf, current_size);
+             exe->pipe_read.data_size = current_size;
+          }
+     }
+   else
+     {
+        if (exe->pipe_error.data_buf) free(exe->pipe_error.data_buf);
+        exe->pipe_error.data_size = 0;
+        exe->pipe_error.data_buf = malloc(current_size);
+        if (exe->pipe_error.data_buf)
+          {
+             memcpy(exe->pipe_error.data_buf, current_buf, current_size);
+             exe->pipe_error.data_size = current_size;
+          }
+     }
+
+   return 0;
+}
+
+static int
+_ecore_exe_win32_pipes_set(Ecore_Exe *exe)
+{
+   SECURITY_ATTRIBUTES sa;
+   HANDLE child_pipe;
+   HANDLE child_pipe_x;
+
+   sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+   sa.bInheritHandle = TRUE;
+   sa.lpSecurityDescriptor = NULL;
+
+   if (!CreatePipe(&child_pipe, &child_pipe_x, &sa, 0))
+     return 0;
+   if (exe->flags & ECORE_EXE_PIPE_WRITE)
+     {
+        if (!SetHandleInformation(child_pipe_x, HANDLE_FLAG_INHERIT, 0))
+          goto close_pipe;
+     }
+   else
+     {
+        if (!SetHandleInformation(child_pipe, HANDLE_FLAG_INHERIT, 0))
+          goto close_pipe;
+     }
+
+   if (exe->flags & ECORE_EXE_PIPE_READ)
+     {
+        exe->pipe_read.child_pipe = child_pipe;
+        exe->pipe_read.child_pipe_x = child_pipe_x;
+        exe->pipe_read.thread = CreateThread(NULL, 0,
+                                             _ecore_exe_win32_pipe_thread_cb,
+                                             exe, 0, NULL);
+        exe->pipe_read.h = ecore_main_win32_handler_add(exe->pipe_read.thread, _ecore_exe_pipe_read_cb, exe);
+     }
+   else if (exe->flags & ECORE_EXE_PIPE_WRITE)
+     {
+        exe->pipe_write.child_pipe = child_pipe;
+        exe->pipe_write.child_pipe_x = child_pipe_x;
+/*         exe->pipe_write.thread = CreateThread(NULL, 0, */
+/*                                              _ecore_exe_win32_pipe_thread_cb, */
+/*                                              exe, 0, NULL); */
+     }
+   else
+     {
+        exe->pipe_error.child_pipe = child_pipe;
+        exe->pipe_error.child_pipe_x = child_pipe_x;
+        exe->pipe_error.thread = CreateThread(NULL, 0,
+                                             _ecore_exe_win32_pipe_thread_cb,
+                                             exe, 0, NULL);
+        exe->pipe_error.h = ecore_main_win32_handler_add(exe->pipe_error.thread, _ecore_exe_pipe_error_cb, exe);
+     }
+
+   return 1;
+
+ close_pipe:
+   CloseHandle(child_pipe);
+   CloseHandle(child_pipe_x);
+
+   return 0;
+}
+
+static void
+_ecore_exe_win32_pipes_close(Ecore_Exe *exe)
+{
+   if (exe->flags & ECORE_EXE_PIPE_READ)
+     {
+       if (exe->pipe_read.child_pipe)
+         {
+            CloseHandle(exe->pipe_read.child_pipe);
+            exe->pipe_read.child_pipe = NULL;
+         }
+       if (exe->pipe_read.child_pipe_x)
+         {
+           CloseHandle(exe->pipe_read.child_pipe_x);
+           exe->pipe_read.child_pipe_x = NULL;
+         }
+     }
+
+   if (exe->flags & ECORE_EXE_PIPE_WRITE)
+     {
+       if (exe->pipe_write.child_pipe)
+         {
+            CloseHandle(exe->pipe_write.child_pipe);
+            exe->pipe_write.child_pipe = NULL;
+         }
+       if (exe->pipe_write.child_pipe_x)
+         {
+           CloseHandle(exe->pipe_write.child_pipe_x);
+           exe->pipe_write.child_pipe_x = NULL;
+         }
+     }
+
+   if (exe->flags & ECORE_EXE_PIPE_ERROR)
+     {
+       if (exe->pipe_error.child_pipe)
+         {
+            CloseHandle(exe->pipe_error.child_pipe);
+            exe->pipe_error.child_pipe = NULL;
+         }
+       if (exe->pipe_error.child_pipe_x)
+         {
+           CloseHandle(exe->pipe_error.child_pipe_x);
+           exe->pipe_error.child_pipe_x = NULL;
+         }
+     }
+}
+
 static DWORD WINAPI
 _ecore_exe_thread_procedure(LPVOID data __UNUSED__)
 {
@@ -735,80 +881,69 @@ _ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
 }
 
 static int
-_ecore_exe_generic_cb(void *data, Ecore_Win32_Handler *wh, Ecore_Exe_Flags flags)
+_ecore_exe_generic_cb(void *data, Ecore_Win32_Handler *wh)
 {
-   char       buf[READBUFSIZ];
-   Ecore_Exe *exe;
-   HANDLE     child_pipe;
-   int        event_type;
-   DWORD      num_exe;
+   Ecore_Exe            *exe;
+   Ecore_Exe_Event_Data *e;
+   Ecore_Win32_Handler  *h;
+   HANDLE                thread;
+   int                   event_type;
+   Ecore_Exe_Flags       flags;
 
    if (!wh)
      return 1;
 
    exe = (Ecore_Exe *)data;
 
+   printf ("%s : **%d** **%d**\n", __FUNCTION__, exe->pipe_read.pending, exe->pipe_error.pending);
+
    /* Sort out what sort of handler we are. */
    /* And get any left over data from last time. */
-   if (flags & ECORE_EXE_PIPE_READ)
+   if (exe->flags & ECORE_EXE_PIPE_READ)
      {
 	flags = ECORE_EXE_PIPE_READ;
 	event_type = ECORE_EXE_EVENT_DATA;
-	child_pipe = exe->child_pipe_read;
+        thread = exe->pipe_read.thread;
+        h = exe->pipe_read.h;
      }
    else
      {
 	flags = ECORE_EXE_PIPE_ERROR;
 	event_type = ECORE_EXE_EVENT_ERROR;
-	child_pipe = exe->child_pipe_error;
+        thread = exe->pipe_error.thread;
+        h = exe->pipe_error.h;
      }
 
-   for (;;)
+   e = ecore_exe_event_data_get(exe, flags);
+   if (e)
+     ecore_event_add(event_type, e,
+                     _ecore_exe_event_exe_data_free,
+                     NULL);
+
+   if (thread)
+     CloseHandle(thread);
+   if (exe->pipe_read.h)
+     ecore_main_win32_handler_del(h);
+   thread = CreateThread(NULL, 0,
+                         _ecore_exe_win32_pipe_thread_cb,
+                         exe, 0, NULL);
+   if (exe->flags & ECORE_EXE_PIPE_READ)
      {
-        Ecore_Exe_Event_Data *e;
-        BOOL                  res;
-
-        res = ReadFile(child_pipe, buf, READBUFSIZ, &num_exe, NULL);
-        if (!res || num_exe == 0) continue;
-
-        if (flags & ECORE_EXE_PIPE_READ)
-          {
-             if (exe->read_data_buf) free(exe->read_data_buf);
-             exe->read_data_size = 0;
-             exe->read_data_buf = malloc(num_exe);
-             if (exe->read_data_buf)
-               {
-                  memcpy(exe->read_data_buf, buf, num_exe);
-                  exe->read_data_size = num_exe;
-               }
-          }
-        else
-          {
-             if (exe->error_data_buf) free(exe->error_data_buf);
-             exe->error_data_size = 0;
-             exe->error_data_buf = malloc(num_exe);
-             if (exe->error_data_buf)
-               {
-                  memcpy(exe->error_data_buf, buf, num_exe);
-                  exe->error_data_size = num_exe;
-               }
-          }
-
-        e = ecore_exe_event_data_get(exe, flags);
-        if (e)
-          ecore_event_add(event_type, e,
-                          _ecore_exe_event_exe_data_free,
-                          NULL);
-        break;
+        exe->pipe_read.thread = thread;
      }
+   else
+     {
+        exe->pipe_error.thread = thread;
+     }
+/*    exe->pipe_read.h = ecore_main_win32_handler_add(exe->pipe_read.thread, _ecore_exe_pipe_read_cb, exe); */
 
-   return 1;
+   return 0;
 }
 
 static int
 _ecore_exe_pipe_read_cb(void *data, Ecore_Win32_Handler *wh)
 {
-   return _ecore_exe_generic_cb(data, wh, ECORE_EXE_PIPE_READ);
+   return _ecore_exe_generic_cb(data, wh);
 }
 
 static int
@@ -821,7 +956,7 @@ _ecore_exe_pipe_write_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
 
    exe = (Ecore_Exe *)data;
 
-   res = WriteFile(exe->child_pipe_write_x, buf, READBUFSIZ, &num_exe, NULL);
+   res = WriteFile(exe->pipe_write.child_pipe_x, buf, READBUFSIZ, &num_exe, NULL);
    if (!res || num_exe == 0)
      {
        /* FIXME: what to do here ?? */
@@ -829,11 +964,11 @@ _ecore_exe_pipe_write_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
 
    if (exe->close_stdin == 1)
      {
-        if (exe->h_write)
-          ecore_main_win32_handler_del(exe->h_write);
-        exe->h_write = NULL;
-        CloseHandle(exe->child_pipe_write);
-        exe->child_pipe_write = NULL;
+        if (exe->pipe_write.h)
+          ecore_main_win32_handler_del(exe->pipe_write.h);
+        exe->pipe_write.h = NULL;
+        CloseHandle(exe->pipe_write.child_pipe);
+        exe->pipe_write.child_pipe = NULL;
      }
 
    return 1;
@@ -842,19 +977,5 @@ _ecore_exe_pipe_write_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
 static int
 _ecore_exe_pipe_error_cb(void *data, Ecore_Win32_Handler *wh)
 {
-   return _ecore_exe_generic_cb(data, wh, ECORE_EXE_PIPE_ERROR);
+   return _ecore_exe_generic_cb(data, wh);
 }
-
-#else
-
-void
-_ecore_exe_init(void)
-{
-}
-
-void
-_ecore_exe_shutdown(void)
-{
-}
-
-#endif
