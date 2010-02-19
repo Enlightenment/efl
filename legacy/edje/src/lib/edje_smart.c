@@ -97,6 +97,7 @@ _edje_smart_del(Evas_Object * obj)
    evas_object_smart_data_set(obj, NULL);
    if (_edje_script_only(ed)) _edje_script_only_shutdown(ed);
    if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
+   if (ed->persp) edje_object_perspective_set(obj, NULL);
    _edje_file_del(ed);
    _edje_clean_objects(ed);
    _edje_unref(ed);

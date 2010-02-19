@@ -127,10 +127,11 @@ EAPI extern int _edje_default_log_dom ;
 
 struct _Edje_Perspective
 {
-   Evas       *e;
-   Evas_Coord  px, py;
-   Evas_Coord  z0, foc;
-   Eina_List  *users;
+   Evas_Object *obj;
+   Evas        *e;
+   Evas_Coord   px, py, z0, foc;
+   Eina_List   *users;
+   Eina_Bool    global : 1;
 };
 
 struct _Edje_Position_Scale
@@ -673,6 +674,7 @@ struct _Edje_Part_Description
       } rot;
       unsigned char backcull;
       unsigned char on;
+      unsigned char persp_on;
    } map;
    
    struct {
@@ -762,6 +764,8 @@ struct _Edje
    void                 *script_only_data;
    int                   table_programs_size;
    int                   table_parts_size;
+   
+   Edje_Perspective     *persp;
 
    struct {
       Edje_Signals_Sources_Patterns callbacks;

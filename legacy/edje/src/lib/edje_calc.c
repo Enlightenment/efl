@@ -2019,108 +2019,395 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
         if (chosen_desc->map.on)
           {
              Evas_Map *map;
-             Evas_Coord cx, cy, px, py, zplane, foc, lx, ly, lz;
+             Evas_Coord cx, cy;
              double rx, ry, rz;
-             int lr, lg, lb, lar, lag, lab;
+             Edje_Part_Description *desc1, *desc2;
+             
+             desc1 = ep->param1.description;
+             desc2 = NULL;
+             if (ep->param2) desc2 = ep->param2->description;
+             pos = ep->description_pos;
 
+             // create map and populate with part geometry
              map = evas_map_new(4);
              evas_map_util_points_populate_from_geometry
                (map, ed->x + pf->x, ed->y + pf->y, pf->w, pf->h, 0);
 
+             // default center - center of part
              cx = ed->x + pf->x + (pf->w / 2);
              cy = ed->y + pf->y + (pf->h / 2);
-             if ((chosen_desc->map.rot.id_center >= 0) &&
-                 (chosen_desc->map.rot.id_center != ep->part->id))
+             
+             // if another center is specified - find it and caculate it
+             if ((desc1) &&
+                 (desc1->map.rot.id_center >= 0) &&
+                 (desc1->map.rot.id_center != ep->part->id))
                {
+                  Evas_Coord cx1, cy1, cx2, cy2;
                   Edje_Real_Part *ep2 =
-                    ed->table_parts[chosen_desc->map.rot.id_center %
+                    ed->table_parts[desc1->map.rot.id_center %
                                     ed->table_parts_size];
+                  // get center for desc1
                   if (ep2)
                     {
-                      if (!ep2->calculated)
-                         _edje_part_recalc(ed, ep2, flags);
-                       cx = ed->x + ep2->x + (ep2->w / 2);
-                       cy = ed->y + ep2->y + (ep2->h / 2);
+                      if (!ep2->calculated) _edje_part_recalc(ed, ep2, flags);
+                       cx1 = ed->x + ep2->x + (ep2->w / 2);
+                       cy1 = ed->y + ep2->y + (ep2->h / 2);
                     }
+                  // if we have a desc2 and are on a partiual position to it
+                  if ((pos != ZERO) && (desc2) &&
+                      (desc2->map.rot.id_center >= 0) &&
+                      (desc2->map.rot.id_center != ep->part->id))
+                    {
+                       ep2 = ed->table_parts[desc2->map.rot.id_center %
+                                             ed->table_parts_size];
+                       // get 2nd center & merge with pos with center 1
+                       if (ep2)
+                         {
+                            if (!ep2->calculated) _edje_part_recalc(ed, ep2, flags);
+                            cx2 = ed->x + ep2->x + (ep2->w / 2);
+                            cy2 = ed->y + ep2->y + (ep2->h / 2);
+                            cx1 += SCALE(pos, cx2 - cx1);
+                            cy1 += SCALE(pos, cy2 - cy1);
+                         }
+                    }
+                  cx = cx1;
+                  cy = cy1;
                }
-             if ((ep->param2) && (ep->description_pos != ZERO))
+
+             // rotation - interpolate wit pos, if appropriate
+             if ((pos != ZERO) && (desc2))
                {
-                  rx = TO_DOUBLE(ADD(ep->param1.description->map.rot.x,
-				     MUL(ep->description_pos,
-					 SUB(ep->param2->description->map.rot.x,
-					     ep->param1.description->map.rot.x))));
-                  ry = TO_DOUBLE(ADD(ep->param1.description->map.rot.y,
-				     MUL(ep->description_pos,
-					 SUB(ep->param2->description->map.rot.y,
-					     ep->param1.description->map.rot.y))));
-                  rz = TO_DOUBLE(ADD(ep->param1.description->map.rot.z,
-				     MUL(ep->description_pos,
-					 SUB(ep->param2->description->map.rot.z,
-					     ep->param1.description->map.rot.z))));
+                  rx = TO_DOUBLE(ADD(desc1->map.rot.x,
+                                     MUL(pos, SUB(desc2->map.rot.x,
+                                                  desc1->map.rot.x))));
+                  ry = TO_DOUBLE(ADD(desc1->map.rot.y,
+				     MUL(pos, SUB(desc2->map.rot.y,
+                                                  desc1->map.rot.y))));
+                  rz = TO_DOUBLE(ADD(desc1->map.rot.z,
+				     MUL(pos, SUB(desc2->map.rot.z,
+                                                  desc1->map.rot.z))));
                }
              else
                {
-                  rx = TO_DOUBLE(ep->param1.description->map.rot.x);
-                  ry = TO_DOUBLE(ep->param1.description->map.rot.y);
-                  rz = TO_DOUBLE(ep->param1.description->map.rot.z);
+                  // no 2 descriptions - just use rot
+                  rx = TO_DOUBLE(desc1->map.rot.x);
+                  ry = TO_DOUBLE(desc1->map.rot.y);
+                  rz = TO_DOUBLE(desc1->map.rot.z);
                }
              evas_map_util_3d_rotate(map, rx, ry, rz, cx, cy, 0);
-             if ((chosen_desc->map.id_light >= 0) &&
-                 (chosen_desc->map.id_light != ep->part->id))
+
+             // calculate light color & position etc. if there is one
+             if (((desc1) &&
+                  (desc1->map.id_light >= 0) &&
+                  (desc1->map.id_light != ep->part->id)) ||
+                 ((desc2) &&
+                  (desc2->map.id_light >= 0) &&
+                  (desc2->map.id_light != ep->part->id)))
                {
-                  Edje_Real_Part *ep2 =
-                    ed->table_parts[chosen_desc->map.id_light %
-                                    ed->table_parts_size];
-                  if (ep2)
+                  Evas_Coord lx, ly, lz;
+                  int lr, lg, lb, lar, lag, lab;
+                  Evas_Coord lx1, ly1, lz1;
+                  int lr1, lg1, lb1, lar1, lag1, lab1, do1;
+                  Evas_Coord lx2, ly2, lz2;
+                  int lr2, lg2, lb2, lar2, lag2, lab2, do2;
+                  
+                  do1 = do2 = 0;
+                  
+                  if ((desc1) &&
+                      (desc1->map.id_light >= 0) &&
+                      (desc1->map.id_light != ep->part->id))
                     {
-                       if (!ep2->calculated)
-                         _edje_part_recalc(ed, ep2, flags);
-                       lx = ed->x + ep2->x + (ep2->w / 2);
-                       ly = ed->y + ep2->y + (ep2->h / 2);
-                       lz = ep2->param1.description->persp.zplane;
-                       lr = ep2->param1.description->color.r;
-                       lg = ep2->param1.description->color.g;
-                       lb = ep2->param1.description->color.b;
-                       lar = ep2->param1.description->color2.r;
-                       lag = ep2->param1.description->color2.g;
-                       lab = ep2->param1.description->color2.b;
-                       evas_map_util_3d_lighting(map, lx, ly, lz,
-                                                 lr, lg, lb, lar, lag, lab);
+                       Edje_Real_Part *ep2 =
+                         ed->table_parts[desc1->map.id_light %
+                                         ed->table_parts_size];
+                       // get light part
+                       if (ep2)
+                         {
+                            Edje_Part_Description *ep2desc1, *ep2desc2;
+                            FLOAT_T ep2pos;
+                            
+                            do1 = 1;
+                            if (!ep2->calculated)
+                              _edje_part_recalc(ed, ep2, flags);
+                            ep2desc1 = ep2->param1.description;
+                            ep2desc2 = NULL;
+                            if (ep2->param2) ep2desc2 = ep2->param2->description;
+                            ep2pos = ep2->description_pos;
+                            
+                            // light x and y are already interpolated in part geom
+                            lx1 = ed->x + ep2->x + (ep2->w / 2);
+                            ly1 = ed->y + ep2->y + (ep2->h / 2);
+                            // if light is transitioning - interpolate it
+                            if ((ep2pos != ZERO) && (ep2desc2))
+                              {
+                                 lz1 = ep2desc1->persp.zplane + 
+                                   TO_INT(SCALE(ep2pos, ep2desc2->persp.zplane -
+                                                ep2desc1->persp.zplane));
+                                 lr1 = ep2desc1->color.r +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color.r -
+                                                ep2desc1->color.r));
+                                 lg1 = ep2desc1->color.g +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
+                                                ep2desc1->color.b));
+                                 lb1 = ep2desc1->color.b +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
+                                                ep2desc1->color.b));
+                                 lar1 = ep2desc1->color2.r +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.r -
+                                                ep2desc1->color2.r));
+                                 lag1 = ep2desc1->color2.g +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
+                                                ep2desc1->color2.b));
+                                 lab1 = ep2desc1->color2.b +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
+                                                ep2desc1->color2.b));
+                              }
+                            else
+                              {
+                                 lz1 = ep2desc1->persp.zplane;
+                                 lr1 = ep2desc1->color.r;
+                                 lg1 = ep2desc1->color.g;
+                                 lb1 = ep2desc1->color.b;
+                                 lar1 = ep2desc1->color2.r;
+                                 lag1 = ep2desc1->color2.g;
+                                 lab1 = ep2desc1->color2.b;
+                              }
+                         }
                     }
-               }
-             px = ed->x + (ed->w / 2);
-             py = ed->y + (ed->h / 2);
-             zplane = 0;
-             foc = 1000;
-             if ((chosen_desc->map.id_persp >= 0) &&
-                 (chosen_desc->map.id_persp != ep->part->id))
-               {
-                  Edje_Real_Part *ep2 =
-                    ed->table_parts[chosen_desc->map.id_persp %
-                                    ed->table_parts_size];
-                  if (ep2)
+                  if ((desc2) &&
+                      (desc2->map.id_light >= 0) &&
+                      (desc2->map.id_light != ep->part->id))
                     {
-                       if (!ep2->calculated)
-                         _edje_part_recalc(ed, ep2, flags);
-                       px = ed->x + ep2->x + (ep2->w / 2);
-                       py = ed->y + ep2->y + (ep2->h / 2);
-                       zplane = ep2->param1.description->persp.zplane;
-                       foc = ep2->param1.description->persp.focal;
+                       Edje_Real_Part *ep2 =
+                         ed->table_parts[desc2->map.id_light %
+                                         ed->table_parts_size];
+                       // get light part
+                       if (ep2)
+                         {
+                            Edje_Part_Description *ep2desc1, *ep2desc2;
+                            FLOAT_T ep2pos;
+                            
+                            do2 = 1;
+                            if (!ep2->calculated)
+                              _edje_part_recalc(ed, ep2, flags);
+                            ep2desc1 = ep2->param1.description;
+                            ep2desc2 = NULL;
+                            if (ep2->param2) ep2desc2 = ep2->param2->description;
+                            ep2pos = ep2->description_pos;
+                            
+                            // light x and y are already interpolated in part geom
+                            lx2 = ed->x + ep2->x + (ep2->w / 2);
+                            ly2 = ed->y + ep2->y + (ep2->h / 2);
+                            // if light is transitioning - interpolate it
+                            if ((ep2pos != ZERO) && (ep2desc2))
+                              {
+                                 lz2 = ep2desc1->persp.zplane + 
+                                   TO_INT(SCALE(ep2pos, ep2desc2->persp.zplane -
+                                                ep2desc1->persp.zplane));
+                                 lr2 = ep2desc1->color.r +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color.r -
+                                                ep2desc1->color.r));
+                                 lg2 = ep2desc1->color.g +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
+                                                ep2desc1->color.b));
+                                 lb2 = ep2desc1->color.b +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
+                                                ep2desc1->color.b));
+                                 lar2 = ep2desc1->color2.r +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.r -
+                                                ep2desc1->color2.r));
+                                 lag2 = ep2desc1->color2.g +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
+                                                ep2desc1->color2.b));
+                                 lab2 = ep2desc1->color2.b +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
+                                                ep2desc1->color2.b));
+                              }
+                            else
+                              {
+                                 lz2 = ep2desc1->persp.zplane;
+                                 lr2 = ep2desc1->color.r;
+                                 lg2 = ep2desc1->color.g;
+                                 lb2 = ep2desc1->color.b;
+                                 lar2 = ep2desc1->color2.r;
+                                 lag2 = ep2desc1->color2.g;
+                                 lab2 = ep2desc1->color2.b;
+                              }
+                         }
+                    }
+                  if ((do1 && do2))
+                    {
+                       lx = lx1 + TO_INT(SCALE(pos, lx2 - lx1));
+                       ly = ly1 + TO_INT(SCALE(pos, ly2 - ly1));
+                       lz = lz1 + TO_INT(SCALE(pos, lz2 - lz1));
+                       lr = lr1 + TO_INT(SCALE(pos, lr2 - lr1));
+                       lg = lg1 + TO_INT(SCALE(pos, lg2 - lg1));
+                       lb = lb1 + TO_INT(SCALE(pos, lb2 - lb1));
+                       lar = lar1 + TO_INT(SCALE(pos, lar2 - lar1));
+                       lag = lag1 + TO_INT(SCALE(pos, lag2 - lag1));
+                       lab = lab1 + TO_INT(SCALE(pos, lab2 - lab1));
+                    }
+                  else if (do1)
+                    {
+                       lx = lx1; ly = ly1; lz = lz1;
+                       lr = lr1; lg = lg1; lb = lb1;
+                       lar = lar1; lag = lag1; lab = lab1;
+                    }
+                  else
+                    {
+                       lx = lx2; ly = ly2; lz = lz2;
+                       lr = lr2; lg = lg2; lb = lb2;
+                       lar = lar2; lag = lag2; lab = lab2;
+                    }
+                  evas_map_util_3d_lighting(map,
+                                            lx, ly, lz,
+                                            lr, lg, lb, 
+                                            lar, lag, lab);
+               }
+             
+             // calculate perspective point
+             if (chosen_desc->map.persp_on)
+               {
+                  Evas_Coord px, py, zplane, foc;
+                  Evas_Coord px1, py1, zplane1, foc1;
+                  Evas_Coord px2, py2, zplane2, foc2;
+                  int do1, do2;
+
+                  do1 = do2 = 0;
+                  
+                  // default perspective point
+                  px = ed->x + (ed->w / 2);
+                  py = ed->y + (ed->h / 2);
+                  zplane = 0;
+                  foc = 1000;
+                  
+                  if ((desc1) &&
+                      (desc1->map.id_persp >= 0) &&
+                      (desc1->map.id_persp != ep->part->id))
+                    {
+                       Edje_Real_Part *ep2 = ed->table_parts[desc1->map.id_persp %
+                                                             ed->table_parts_size];
+                       if (ep2)
+                         {
+                            Edje_Part_Description *ep2desc1, *ep2desc2;
+                            FLOAT_T ep2pos;
+                            
+                            do1 = 1;
+                            if (!ep2->calculated)
+                              _edje_part_recalc(ed, ep2, flags);
+                            ep2desc1 = ep2->param1.description;
+                            ep2desc2 = NULL;
+                            if (ep2->param2) ep2desc2 = ep2->param2->description;
+                            ep2pos = ep2->description_pos;
+                            
+                            px1 = ed->x + ep2->x + (ep2->w / 2);
+                            py1 = ed->y + ep2->y + (ep2->h / 2);
+                            if ((ep2pos != ZERO) && (ep2desc2))
+                              {
+                                 zplane1 = ep2desc1->persp.zplane + 
+                                   TO_INT(SCALE(ep2pos, ep2desc2->persp.zplane -
+                                                ep2desc1->persp.zplane));
+                                 foc1 = ep2desc1->persp.focal + 
+                                   TO_INT(SCALE(ep2pos, ep2desc2->persp.focal -
+                                                ep2desc1->persp.focal));
+                              }
+                            else
+                              {
+                                 zplane1 = ep2desc1->persp.zplane;
+                                 foc1 = ep2desc1->persp.focal;
+                              }
+                         }
+                    }
+                  
+                  if ((desc2) &&
+                      (desc2->map.id_persp >= 0) &&
+                      (desc2->map.id_persp != ep->part->id))
+                    {
+                       Edje_Real_Part *ep2 = ed->table_parts[desc2->map.id_persp %
+                                                             ed->table_parts_size];
+                       if (ep2)
+                         {
+                            Edje_Part_Description *ep2desc1, *ep2desc2;
+                            FLOAT_T ep2pos;
+                            
+                            do2 = 1;
+                            if (!ep2->calculated)
+                              _edje_part_recalc(ed, ep2, flags);
+                            ep2desc1 = ep2->param1.description;
+                            ep2desc2 = NULL;
+                            if (ep2->param2) ep2desc2 = ep2->param2->description;
+                            ep2pos = ep2->description_pos;
+                            
+                            px2 = ed->x + ep2->x + (ep2->w / 2);
+                            py2 = ed->y + ep2->y + (ep2->h / 2);
+                            if ((ep2pos != ZERO) && (ep2desc2))
+                              {
+                                 zplane2 = ep2desc1->persp.zplane + 
+                                   TO_INT(SCALE(ep2pos, ep2desc2->persp.zplane -
+                                                ep2desc1->persp.zplane));
+                                 foc2 = ep2desc1->persp.focal + 
+                                   TO_INT(SCALE(ep2pos, ep2desc2->persp.focal -
+                                                ep2desc1->persp.focal));
+                              }
+                            else
+                              {
+                                 zplane2 = ep2desc1->persp.zplane;
+                                 foc2 = ep2desc1->persp.focal;
+                              }
+                         }
+                    }
+                  
+                  if ((do1) && (do2))
+                    {
+                       px = px1 + TO_INT(SCALE(pos, px2 - px1));
+                       py = py1 + TO_INT(SCALE(pos, py2 - py1));
+                       zplane = zplane1 + TO_INT(SCALE(pos, zplane2 - zplane1));
+                       foc = foc1 + TO_INT(SCALE(pos, foc2 - foc1));
+                    }
+                  else if (do1)
+                    {
+                       px = px1; py = py1; zplane = zplane1; foc = foc1;
+                    }
+                  else if (do2)
+                    {
+                       px = px2; py = py2; zplane = zplane2; foc = foc2;
+                    }
+                  else
+                    {
+                       if (ed->persp)
+                         {
+                            px = ed->persp->px; py = ed->persp->py;
+                            zplane = ed->persp->z0; foc = ed->persp->foc;
+                         }
+                       else
+                         {
+                            const Edje_Perspective *ps;
+                            
+                            // fixme: a tad inefficient as this is a has lookup
+                            ps = edje_object_perspective_get(ed->evas);
+                            if (ps)
+                              {
+                                 px = ps->px; py = ps->py;
+                                 zplane = ps->z0; foc = ps->foc;
+                              }
+                         }
                     }
                   evas_map_util_3d_perspective(map, px, py, zplane, foc);
                }
-             evas_object_map_set(mo, map);
-             evas_object_map_enable_set(mo, 1);
-             if (ep->param1.description->map.backcull)
+             
+             // handle backface culling (object is facing away from view
+             if (chosen_desc->map.backcull)
                {
                   if (pf->visible)
                     {
                        if (evas_map_util_clockwise_get(map))
                          evas_object_show(mo);
-                       else
-                         evas_object_hide(mo);
+                       else evas_object_hide(mo);
                     }
                }
+             
+             evas_object_map_set(mo, map);
+             evas_object_map_enable_set(mo, 1);
              evas_map_free(map);
           }
         else

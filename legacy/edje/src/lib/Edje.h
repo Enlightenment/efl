@@ -536,15 +536,16 @@ extern "C" {
    EAPI const Eina_List *edje_available_modules_get(void);
 
    /* perspective info for maps inside edje objects */
-#if 1 // WORKING ONಈIT! these will work later. first perspectivg within 1 object
    typedef struct _Edje_Perspective Edje_Perspective;
    
-   EAPI Edje_Perspective       *edje_perspective_new       (Evas *e);
-   EAPI void                    edje_perspective_free      (Edje_Perspective *ps);
-   EAPI void                    edje_perspective_set       (Edje_Perspective *ps, Evas_Coord px, Evas_Coord py, Evas_Coord z0, Evas_Coord foc);
-   EAPI void                    edje_object_perspective_set(Evas_Object *obj, Edje_Perspective *persp);
-   EAPI const Edje_Perspective *edje_object_perspective_get(Evas_Object *obj);
-#endif
+   EAPI Edje_Perspective       *edje_perspective_new            (Evas *e);
+   EAPI void                    edje_perspective_free           (Edje_Perspective *ps);
+   EAPI void                    edje_perspective_set            (Edje_Perspective *ps, Evas_Coord px, Evas_Coord py, Evas_Coord z0, Evas_Coord foc);
+   EAPI void                    edje_perspective_global_set     (Edje_Perspective *ps, Eina_Bool global);
+   EAPI Eina_Bool               edje_perspective_global_get     (const Edje_Perspective *ps);
+   EAPI const Edje_Perspective *edje_evas_global_perspective_get(const Evas *e);
+   EAPI void                    edje_object_perspective_set     (Evas_Object *obj, Edje_Perspective *ps);
+   EAPI const Edje_Perspective *edje_object_perspective_get     (const Evas_Object *obj);
    
 #ifdef __cplusplus
 }

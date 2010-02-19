@@ -3688,6 +3688,183 @@ edje_object_part_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear
    return EINA_TRUE;
 }
 
+
+
+
+
+
+
+
+
+static void
+_edje_perspective_obj_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Edje_Perspective *ps = data;   
+   Evas_Object *o;
+   
+   EINA_LIST_FREE(ps->users, o)
+     {
+        Edje *ed;
+        
+        ed = evas_object_smart_data_get(o);
+        if (!ed) continue;
+        ed->persp = NULL;
+        ed->dirty = 1;
+        _edje_recalc_do(ed);
+     }
+   free(ps);
+}
+
+EAPI Edje_Perspective *
+edje_perspective_new(Evas *e)
+{
+   Edje_Perspective *ps;
+   Evas_Coord vx, vy, vw, vh;
+   
+   if (!e) return NULL;
+   ps = calloc(1, sizeof(Edje_Perspective));
+   ps->obj = evas_object_rectangle_add(e);
+   evas_object_data_set(ps->obj, "_edje_perspective", ps);
+   evas_object_event_callback_add(ps->obj, EVAS_CALLBACK_DEL, _edje_perspective_obj_del, ps);
+   evas_output_viewport_get(e, &vx, &vy, &vw, &vh);
+   ps->e = e;
+   ps->px = vx + (vw / 2);
+   ps->py = vy + (vh / 2);
+   ps->z0 = 0;
+   ps->foc = 1000;
+   return ps;
+}
+
+EAPI void
+edje_perspective_free(Edje_Perspective *ps)
+{
+   if (!ps) return;
+   evas_object_del(ps->obj);
+}
+
+EAPI void
+edje_perspective_set(Edje_Perspective *ps, Evas_Coord px, Evas_Coord py, Evas_Coord z0, Evas_Coord foc)
+{
+   Eina_List *l;
+   Evas_Object *o;
+   
+   if (!ps) return;
+   if ((ps->px == px) && (ps->py == py) && (ps->z0 == z0) && (ps->foc == foc)) return;
+   ps->px = px;
+   ps->py = py;
+   ps->z0 = z0;
+   ps->foc = foc;
+   EINA_LIST_FOREACH(ps->users, l, o)
+     {
+        Edje *ed;
+        
+        ed = evas_object_smart_data_get(o);
+        if (!ed) continue;
+        if (!ed->persp)
+          {
+             ed->dirty = 1;
+             _edje_recalc_do(ed);
+          }
+     }
+   if (ps->global)
+     {
+        EINA_LIST_FOREACH(_edje_edjes, l, o)
+          {
+             Edje *ed;
+             
+             ed = evas_object_smart_data_get(o);
+             if (!ed) continue;
+             if (!ed->persp)
+               {
+                  ed->dirty = 1;
+                  _edje_recalc_do(ed);
+               }
+          }
+     }
+}
+
+EAPI void
+edje_perspective_global_set(Edje_Perspective *ps, Eina_Bool global)
+{
+   Evas_Object *o;
+   Eina_List *l;
+   
+   if (!ps) return;
+   if (ps->global == global) return;
+   if (global)
+     {
+        o = evas_object_name_find(evas_object_evas_get(ps->obj), 
+                                  "_edje_perspective");
+        if (o) evas_object_name_set(o, NULL);
+        evas_object_name_set(ps->obj, "_edje_perspective");
+     }
+   else
+     evas_object_name_set(ps->obj, NULL);
+   ps->global = global;
+   EINA_LIST_FOREACH(_edje_edjes, l, o)
+     {
+        Edje *ed;
+        
+        ed = evas_object_smart_data_get(o);
+        if (!ed) continue;
+        if (!ed->persp)
+          {
+             ed->dirty = 1;
+             _edje_recalc_do(ed);
+          }
+     }
+}
+
+EAPI Eina_Bool
+edje_perspective_global_get(const Edje_Perspective *ps)
+{
+   if (!ps) return 0;
+   return ps->global;
+}
+
+EAPI const Edje_Perspective *
+edje_evas_global_perspective_get(const Evas *e)
+{
+   Evas_Object *obj;
+   
+   if (!e) return NULL;
+   obj = evas_object_name_find(e, "_edje_perspective");
+   if (!obj) return NULL;
+   return evas_object_data_get(obj, "_edje_perspective");
+}
+
+EAPI void
+edje_object_perspective_set(Evas_Object *obj, Edje_Perspective *ps)
+{
+   Edje *ed;
+   
+   ed = evas_object_smart_data_get(obj);
+   if (!ed) return;
+   if (ed->persp == ps) return;
+   if (ed->persp != ps)
+     {
+        if (ed->persp)
+          ed->persp->users = eina_list_remove(ed->persp->users, obj);
+     }
+   ed->persp = ps;
+   if (ps) ps->users = eina_list_append(ps->users, obj);
+   ed->dirty = 1;
+   _edje_recalc_do(ed);
+}
+
+EAPI const Edje_Perspective *
+edje_object_perspective_get(const Evas_Object *obj)
+{
+   Edje *ed;
+   
+   ed = evas_object_smart_data_get(obj);
+   if (!ed) return NULL;
+   return ed->persp;
+}
+
+
+
+
 #define EDJE_PRELOAD_EMISSION "preload,done"
 #define EDJE_PRELOAD_SOURCE NULL
 
