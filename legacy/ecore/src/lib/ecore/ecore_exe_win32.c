@@ -6,6 +6,8 @@
  * TODO:
  * - manage I/O pipes (several ones, and stdin)
  * - manage SetConsoleCtrlHandler ?
+ * - the child process seems to still run after the DEL event
+ * - add log messages
  */
 
 #ifdef HAVE_CONFIG_H
@@ -256,10 +258,8 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    if (ResumeThread(exe->thread) == ((DWORD)-1))
      goto close_process2;
 
-   printf (" * 10\n");
    exe->h_close = ecore_main_win32_handler_add(exe->process2, _ecore_exe_close_cb, exe);
    if (!exe->h_close) goto close_process2;
-   printf (" * 11\n");
 
    exes = (Ecore_Exe *)eina_inlist_append(EINA_INLIST_GET(exes), EINA_INLIST_GET(exe));
 
@@ -316,8 +316,9 @@ ecore_exe_close_stdin(Ecore_Exe *exe)
    exe->close_stdin = 1;
 }
 
+/* Not used on Windows */
 EAPI void
-ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int start_lines, int end_lines)
+ecore_exe_auto_limits_set(Ecore_Exe *exe __UNUSED__, int start_bytes __UNUSED__, int end_bytes __UNUSED__, int start_lines __UNUSED__, int end_lines __UNUSED__)
 {
 }
 

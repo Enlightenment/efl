@@ -792,7 +792,8 @@ ecore_exe_close_stdin(Ecore_Exe *exe)
 }
 
 /**
- * Sets the auto pipe limits for the given process handle
+ * Sets the auto pipe limits for the given process handle. On Windows
+ * this function does nothing.
  *
  * @param   exe The given process handle.
  * @param   start_bytes limit of bytes at start of output to buffer.
