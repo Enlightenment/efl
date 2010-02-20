@@ -54,6 +54,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#ifdef _WIN32
+# include <ws2tcpip.h>
+#endif
+
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_Con.h"

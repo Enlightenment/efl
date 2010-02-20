@@ -11,9 +11,18 @@
 #include <unistd.h>
 #include <time.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+
+#ifndef _WIN32
 #include <sys/socket.h>
 #include <sys/un.h>
-#include <sys/stat.h>
+#else
+# include <ws2tcpip.h>
+#endif
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
 
 #include <Ecore.h>
 #include <ecore_private.h>
@@ -89,7 +98,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
    if (svr->fd < 0) return 0;
    if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) return 0;
    if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) return 0;
-   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0) return 0;
+   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate, sizeof(curstate)) < 0) return 0;
    socket_unix.sun_family = AF_UNIX;
 
    if (svr->type == ECORE_CON_LOCAL_ABSTRACT)
@@ -193,7 +202,7 @@ ecore_con_local_listen(Ecore_Con_Server *svr,
    if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error_umask;
    lin.l_onoff = 1;
    lin.l_linger = 0;
-   if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0) goto error_umask;
+   if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, (const void *)&lin, sizeof(struct linger)) < 0) goto error_umask;
    socket_unix.sun_family = AF_UNIX;
    if (svr->type == ECORE_CON_LOCAL_ABSTRACT)
      {

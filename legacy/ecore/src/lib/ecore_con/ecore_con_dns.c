@@ -39,11 +39,19 @@
 #ifdef __OpenBSD__
 # include <sys/types.h>
 #endif
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <arpa/nameser.h>
+
+#ifndef _WIN32
+# include <sys/socket.h>
+# include <arpa/inet.h>
+# include <arpa/nameser.h>
 #include <netdb.h>
+#else
+# include <ws2tcpip.h>
+#endif
+
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
 
 #include "Ecore.h"
 #include "ecore_private.h"

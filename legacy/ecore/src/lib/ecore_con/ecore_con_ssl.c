@@ -12,6 +12,10 @@
 # include <openssl/ssl.h>
 #endif
 
+#ifdef _WIN32
+# include <ws2tcpip.h>
+#endif
+
 #include "Ecore.h"
 #include "ecore_con_private.h"
 

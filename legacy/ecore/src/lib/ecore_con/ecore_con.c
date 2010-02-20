@@ -10,22 +10,31 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <arpa/inet.h>
-#include <netinet/tcp.h>
-#include <sys/socket.h>
-#include <sys/un.h>
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#ifndef _WIN32
+# include <arpa/inet.h>
+# include <netinet/tcp.h>
+# include <sys/socket.h>
+# include <sys/un.h>
+#else
+# include <ws2tcpip.h>
+#endif
+
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
 
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
-
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
 
 static void _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *info);
 static void _ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *info);
@@ -815,7 +824,7 @@ _ecore_con_cb_tcp_listen(void *data, Ecore_Con_Info *net_info)
    if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
    lin.l_onoff = 1;
    lin.l_linger = 0;
-   if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0) goto error;
+   if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, (const void *)&lin, sizeof(struct linger)) < 0) goto error;
    if (svr->type == ECORE_CON_REMOTE_NODELAY)
      {
 	int flag = 1;
@@ -861,15 +870,15 @@ _ecore_con_cb_udp_listen(void *data, Ecore_Con_Info *net_info)
 	 {
 	   if (!inet_pton(net_info->info.ai_family, net_info->ip, &mreq.imr_multiaddr)) goto error;
 	   mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-	   if (setsockopt(svr->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq,sizeof(mreq)) != 0) goto error;
+	   if (setsockopt(svr->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (const void *)&mreq,sizeof(mreq)) != 0) goto error;
 	 }
        else if (net_info->info.ai_family == AF_INET6)
 	 {
 	   if (!inet_pton(net_info->info.ai_family, net_info->ip, &mreq6.ipv6mr_multiaddr)) goto error;
 	   mreq6.ipv6mr_interface = htonl(INADDR_ANY);
-	   if (setsockopt(svr->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq6,sizeof(mreq6)) != 0) goto error;
+	   if (setsockopt(svr->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (const void *)&mreq6,sizeof(mreq6)) != 0) goto error;
 	 }
-       if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &on,sizeof(on)) != 0) goto error;
+       if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&on, sizeof(on)) != 0) goto error;
      }
 
    if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
@@ -892,6 +901,7 @@ static void
 _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *net_info)
 {
    Ecore_Con_Server   *svr;
+   int                 res;
    int                 curstate = 0;
 
    svr = data;
@@ -901,7 +911,7 @@ _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *net_info)
    if (svr->fd < 0) goto error;
    if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
    if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
-   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0)
+   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate, sizeof(curstate)) < 0)
      goto error;
    if (svr->type == ECORE_CON_REMOTE_NODELAY)
      {
@@ -910,10 +920,18 @@ _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *net_info)
 	if (setsockopt(svr->fd, IPPROTO_TCP, TCP_NODELAY, (char *) &flag, sizeof(int)) < 0)
 	  goto error;
      }
-   if (connect(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0)
+   res = connect(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen);
+#ifdef _WIN32
+   if (res == SOCKET_ERROR)
+     {
+       if (WSAGetLastError() != WSAEINPROGRESS)
+	 goto error;
+#else
+   if (res < 0)
      {
        if (errno != EINPROGRESS)
 	 goto error;
+#endif
        svr->connecting = 1;
        svr->fd_handler =
 	 ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ | ECORE_FD_WRITE,
@@ -954,11 +972,11 @@ _ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *net_info)
 
    if(svr->type == ECORE_CON_REMOTE_BROADCAST)
      {
-       if (setsockopt(svr->fd, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast)) < 0) goto error;
+       if (setsockopt(svr->fd, SOL_SOCKET, SO_BROADCAST, (const void *)&broadcast, sizeof(broadcast)) < 0) goto error;
      }
    else
      {
-       if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0) goto error;
+       if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate, sizeof(curstate)) < 0) goto error;
      }
 
    if (connect(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0)
@@ -980,14 +998,24 @@ _ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *net_info)
 static Ecore_Con_State
 svr_try_connect_plain(Ecore_Con_Server *svr)
 {
-   int so_err = 0;
+   int          res;
+   int          so_err = 0;
    unsigned int size = sizeof(int);
 
-   if (getsockopt(svr->fd, SOL_SOCKET, SO_ERROR, &so_err, &size) < 0)
+   res = getsockopt(svr->fd, SOL_SOCKET, SO_ERROR, (void *)&so_err, &size);
+#ifdef _WIN32
+   if (res == SOCKET_ERROR)
+     so_err = -1;
+
+   if (so_err == WSAEINPROGRESS && !svr->dead)
+     return ECORE_CON_INPROGRESS;
+#else
+   if (res < 0)
      so_err = -1;
 
    if (so_err == EINPROGRESS && !svr->dead)
      return ECORE_CON_INPROGRESS;
+#endif
 
    if (so_err != 0)
      {
@@ -1097,8 +1125,6 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    if (new_fd >= 0)
      {
 	Ecore_Con_Client *cl;
-	char buf[64];
-	uint32_t ip;
 
 	if ((svr->client_limit >= 0) && (svr->reject_excess_clients))
 	  {
@@ -1296,7 +1322,13 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
        int num;
 
        errno = 0;
+#ifdef _WIN32
+       num = fcntl(svr->fd, F_SETFL, O_NONBLOCK);
+       if (num >= 0)
+         num = recvfrom(svr->fd, buf, sizeof(buf), 0, (struct sockaddr*) &client_addr, &client_addr_len);
+#else
        num = recvfrom(svr->fd, buf, sizeof(buf), MSG_DONTWAIT, (struct sockaddr*) &client_addr, &client_addr_len);
+#endif
 
        if (num > 0)
 	 {
