@@ -864,9 +864,13 @@ case "$host_os" in
       AC_DEFINE(HAVE_SYS_TIME_H, 1, [Define to 1 if you have the <sys/time.h> header file.])
       ;;
    *)
-      AC_CHECK_HEADERS([dlfcn.h features.h langinfo.h locale.h netdb.h netinet/in.h sys/time.h sys/mman.h signal.h sys/resource.h])
+      AC_CHECK_HEADERS([dlfcn.h features.h langinfo.h locale.h netdb.h sys/time.h sys/mman.h signal.h sys/resource.h])
       ;;
 esac
+
+# ecore_con
+
+AC_CHECK_HEADERS([arpa/inet.h netinet/tcp.h netinet/in.h sys/socket.h sys/un.h ws2tcpip.h])
 
 # Framebuffer (ecore_fb)
 have_fb="no"
@@ -921,7 +925,7 @@ case "$host_os" in
       WIN32_CFLAGS="-mwin32"
       ;;
    mingw*)
-      WIN32_CPPFLAGS="-D_WIN32_WINNT=0x0500"
+      WIN32_CPPFLAGS="-D_WIN32_WINNT=0x0501"
       ;;
 esac
 AC_SUBST(WIN32_CPPFLAGS)

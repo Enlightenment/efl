@@ -12,7 +12,7 @@
 # include <openssl/ssl.h>
 #endif
 
-#ifdef _WIN32
+#ifdef HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>
 #endif
 

@@ -14,17 +14,28 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#ifndef _WIN32
+#ifdef HAVE_ARPA_INET_H
 # include <arpa/inet.h>
+#endif
+
+#ifdef HAVE_NETINET_TCP_H
 # include <netinet/tcp.h>
-# include <sys/socket.h>
-# include <sys/un.h>
-#else
-# include <ws2tcpip.h>
 #endif
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
+#endif
+
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+
+#ifdef HAVE_SYS_UN_H
+# include <sys/un.h>
+#endif
+
+#ifdef HAVE_WS2TCPIP_H
+# include <ws2tcpip.h>
 #endif
 
 #ifdef HAVE_EVIL

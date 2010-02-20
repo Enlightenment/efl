@@ -13,10 +13,15 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-#ifndef _WIN32
-#include <sys/socket.h>
-#include <sys/un.h>
-#else
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+
+#ifdef HAVE_SYS_UN_H
+# include <sys/un.h>
+#endif
+
+#ifdef HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>
 #endif
 
