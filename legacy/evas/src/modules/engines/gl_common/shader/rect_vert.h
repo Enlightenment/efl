@@ -3,7 +3,6 @@
 "#endif\n"
 "attribute vec4 vertex;\n"
 "attribute vec4 color;\n"
-"attribute vec2 tex_coord;\n"
 "uniform mat4 mvp;\n"
 "varying vec4 col;\n"
 "void main()\n"

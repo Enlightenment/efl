@@ -11,8 +11,7 @@ void main()
                               0.00000, -0.34410,  1.77200, 0.00000,
                               1.40200, -0.71410,  0.00000, 0.00000,
                              -0.77380,  0.45630, -0.95880, 1.00000);
-   vec4 yuv = vec4(texture2D(tex, tex_c.xy).r,
-                   texture2D(texu, tex_c2.xy).r,
-                   texture2D(texv, tex_c3.xy).r, 1.0);
-   gl_FragColor = (yuv2rgb * yuv);
+   gl_FragColor = yuv2rgb * vec4(texture2D(tex, tex_c.xy).r,
+                                 texture2D(texu, tex_c2.xy).r,
+                                 texture2D(texv, tex_c3.xy).r, 1.0);
 }
