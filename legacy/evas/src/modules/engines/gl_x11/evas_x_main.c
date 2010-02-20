@@ -165,9 +165,9 @@ eng_window_new(Display *disp,
         renderer = glGetString(GL_RENDERER);
         version = glGetString(GL_VERSION);
         
-        printf("vendor: %s\n", vendor);
-        printf("renderer: %s\n", renderer);
-        printf("version: %s\n", version);
+        fprintf(stderr, "vendor: %s\n", vendor);
+        fprintf(stderr, "renderer: %s\n", renderer);
+        fprintf(stderr, "version: %s\n", version);
         
         if (strstr(vendor, "NVIDIA"))
           {
