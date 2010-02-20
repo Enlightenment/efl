@@ -4,9 +4,7 @@
 
 /*
  * TODO:
- * - manage priority
- * - manage I/O pipes
- * - add events for data and error
+ * - manage I/O pipes (several ones, and stdin)
  * - manage SetConsoleCtrlHandler ?
  */
 
@@ -121,14 +119,57 @@ _ecore_exe_shutdown(void)
       ecore_exe_free(exes);
 }
 
+static int run_pri = NORMAL_PRIORITY_CLASS;
+
 EAPI void
 ecore_exe_run_priority_set(int pri)
 {
+   switch (pri)
+     {
+     case ECORE_EXE_WIN32_PRIORITY_IDLE:
+       run_pri = IDLE_PRIORITY_CLASS;
+       break;
+     case ECORE_EXE_WIN32_PRIORITY_BELOW_NORMAL:
+       run_pri = BELOW_NORMAL_PRIORITY_CLASS;
+       break;
+     case ECORE_EXE_WIN32_PRIORITY_NORMAL:
+       run_pri = NORMAL_PRIORITY_CLASS;
+       break;
+     case ECORE_EXE_WIN32_PRIORITY_ABOVE_NORMAL:
+       run_pri = ABOVE_NORMAL_PRIORITY_CLASS;
+       break;
+     case ECORE_EXE_WIN32_PRIORITY_HIGH:
+       run_pri = HIGH_PRIORITY_CLASS;
+       break;
+     case ECORE_EXE_WIN32_PRIORITY_REALTIME:
+       run_pri = REALTIME_PRIORITY_CLASS;
+       break;
+     default:
+       break;
+     }
 }
 
 EAPI int
 ecore_exe_run_priority_get(void)
 {
+   switch (run_pri)
+     {
+     case IDLE_PRIORITY_CLASS:
+       return ECORE_EXE_WIN32_PRIORITY_IDLE;
+     case BELOW_NORMAL_PRIORITY_CLASS:
+       return ECORE_EXE_WIN32_PRIORITY_BELOW_NORMAL;
+     case NORMAL_PRIORITY_CLASS:
+       return ECORE_EXE_WIN32_PRIORITY_NORMAL;
+     case ABOVE_NORMAL_PRIORITY_CLASS:
+       return ECORE_EXE_WIN32_PRIORITY_ABOVE_NORMAL;
+     case HIGH_PRIORITY_CLASS:
+       return ECORE_EXE_WIN32_PRIORITY_HIGH;
+     case REALTIME_PRIORITY_CLASS:
+       return ECORE_EXE_WIN32_PRIORITY_REALTIME;
+       /* default should not be reached */
+     default:
+       return ECORE_EXE_WIN32_PRIORITY_NORMAL;
+     }
 }
 
 EAPI Ecore_Exe *
@@ -155,7 +196,6 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
      /* We need something to auto pipe. */
      flags |= ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR;
 
-   printf ("create pipes...\n");
    exe->flags = flags;
    if (exe->flags & ECORE_EXE_PIPE_READ)
      if (!_ecore_exe_win32_pipes_set(exe))
@@ -168,7 +208,6 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    if (exe->flags & ECORE_EXE_PIPE_ERROR)
      if (!_ecore_exe_win32_pipes_set(exe))
        goto close_pipes;
-   printf ("create pipes finished\n");
 
    if ((exe->flags & ECORE_EXE_USE_SH) ||
        ((ret = strrstr(exe_cmd, ".bat")) && (ret[4] == '\0')))
@@ -195,7 +234,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    /* FIXME: gerer la priorite */
 
    if (!CreateProcess(NULL, exe->cmd, NULL, NULL, TRUE,
-                      0, NULL, NULL, &si, &pi))
+                      run_pri | CREATE_SUSPENDED, NULL, NULL, &si, &pi))
      goto free_exe_cmd;
 
    /* be sure that the child process is running */
@@ -213,6 +252,9 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    if (!(exe->process2 = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_SUSPEND_RESUME | PROCESS_TERMINATE | SYNCHRONIZE,
                                      FALSE, pi.dwProcessId)))
      goto close_thread;
+
+   if (ResumeThread(exe->thread) == ((DWORD)-1))
+     goto close_process2;
 
    printf (" * 10\n");
    exe->h_close = ecore_main_win32_handler_add(exe->process2, _ecore_exe_close_cb, exe);

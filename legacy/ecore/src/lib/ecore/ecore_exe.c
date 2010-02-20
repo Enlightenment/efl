@@ -315,10 +315,17 @@ static int run_pri = ECORE_EXE_PRIORITY_INHERIT;
  * Sets the priority at which to launch processes
  *
  * This sets the priority of processes run by ecore_exe_run() and
- * ecore_exe_pipe_run(). If set to ECORE_EXE_PRIORITY_INHERIT child processes
- * inherit the priority of their parent. This is the default.
+ * ecore_exe_pipe_run().
+ * @li On Windows, the child process is created by default with the
+ * #ECORE_EXE_WIN32_PRIORITY_NORMAL priority, unless the calling
+ * process is in #ECORE_EXE_WIN32_PRIORITY_IDLE or
+ * #ECORE_EXE_WIN32_PRIORITY_BELOW_NORMAL priority. In that case, the
+ * child process inherits this priority.
+ * @li On other platforms, if set to #ECORE_EXE_PRIORITY_INHERIT child
+ * processes inherits the priority of their parent. This is the default.
  *
- * @param   pri value -20 to 19 or ECORE_EXE_PRIORITY_INHERIT
+ * @param   pri value a Ecore_Exe_Win32_Priority value on Windows, -20
+ * to 19 or ECORE_EXE_PRIORITY_INHERIT on other OS.
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void

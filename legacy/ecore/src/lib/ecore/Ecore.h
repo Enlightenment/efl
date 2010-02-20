@@ -107,6 +107,17 @@ extern "C" {
      };
    typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
 
+   enum _Ecore_Exe_Win32_Priority
+     {
+       ECORE_EXE_WIN32_PRIORITY_IDLE, /**< Idle priority, for monitoring the system */
+       ECORE_EXE_WIN32_PRIORITY_BELOW_NORMAL, /**< Below default priority */
+       ECORE_EXE_WIN32_PRIORITY_NORMAL, /**< Default priority */
+       ECORE_EXE_WIN32_PRIORITY_ABOVE_NORMAL, /**< Above default priority */
+       ECORE_EXE_WIN32_PRIORITY_HIGH, /**< High priority, use with care as other threads in the system will not get processor time */
+       ECORE_EXE_WIN32_PRIORITY_REALTIME /**< Realtime priority, should be almost never used as it can interrupt system threads that manage mouse input, keyboard input, and background disk flushing */
+     };
+   typedef enum _Ecore_Exe_Win32_Priority Ecore_Exe_Win32_Priority;
+
    enum _Ecore_Poller_Type /* Poller types */
      {
 	ECORE_POLLER_CORE = 0 /**< The core poller interval */
