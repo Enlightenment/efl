@@ -5664,6 +5664,30 @@ static void st_collections_group_parts_part_description_table_padding(void)
    ed->table.padding.y = parse_int_range(1, 0, 0x7fffffff);
 }
 
+/**
+    @page edcref
+    @property
+        perspective
+    @context
+        description {
+            ..
+            map {
+                perspective: "name";
+            }
+            ..
+        }
+    @parameters
+        [another part's name]
+    @effect
+        This sets the part that is used as the "perspective point" for giving
+        a part a "3d look". The perspective point should have a perspective
+        section that provides zplane and focal properties. The center of this
+        part will be used as the focal point, so size, color and visibility
+        etc. are not relevant just center point, zplane and focal are used.
+        This also implicitly enables perspective transforms (see the on
+        parameter for the map section).
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_map_perspective(void)
 {
@@ -5688,6 +5712,32 @@ st_collections_group_parts_part_description_map_perspective(void)
    ed->map.persp_on = 1;
 }
 
+/**
+    @page edcref
+    @property
+        light
+    @context
+        description {
+            ..
+            map {
+                light: "name";
+            }
+            ..
+        }
+    @parameters
+        [another part's name]
+    @effect
+        This sets the part that is used as the "light" for calculating the
+        brightness (based on how directly the part's surface is facing the
+        lightsource point). Like the perspective point part, the center point
+        is used and zplane is used for the z position (0 being th zero-plane
+        where all 2d objects normally live) and positive values being further
+        away into the distance. The light part color is used as the light
+        color (alpha not used for light color). The color2 color is used for
+        the ambient lighting when calculating brightness (alpha also not
+        used).
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_map_light(void)
 {
@@ -5711,6 +5761,30 @@ st_collections_group_parts_part_description_map_light(void)
      }
 }
 
+/**
+    @page edcref
+    @property
+        center
+    @context
+        description {
+            ..
+            map {
+                rotation {
+                    center: "name";
+                }
+            }
+            ..
+        }
+    @parameters
+        [another part's name]
+    @effect
+        This sets the part that is used as the center of rotation when
+        rotating the part with this description. The part's center point
+        is used as the rotation center when applying rotation around the
+        x, y and z axes. If no center is given, the parts original center
+        itself is used for the rotation center.
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_map_rotation_center(void)
 {
@@ -5734,6 +5808,26 @@ st_collections_group_parts_part_description_map_rotation_center(void)
      }
 }
 
+/**
+    @page edcref
+    @property
+        x
+    @context
+        description {
+            ..
+            map {
+                rotation {
+                    x: 45.0;
+                }
+            }
+            ..
+        }
+    @parameters
+        rotation in degrees around the x axis
+    @effect
+        This sets the rotation of the part around the center set in degrees
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_map_rotation_x(void)
 {
@@ -5751,6 +5845,26 @@ st_collections_group_parts_part_description_map_rotation_x(void)
    ed->map.rot.x = FROM_DOUBLE(parse_float(0));
 }
 
+/**
+    @page edcref
+    @property
+        y
+    @context
+        description {
+            ..
+            map {
+                rotation {
+                    y: 45.0;
+                }
+            }
+            ..
+        }
+    @parameters
+        rotation in degrees around the y axis
+    @effect
+        This sets the rotation of the part around the center set in degrees
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_map_rotation_y(void)
 {
@@ -5768,6 +5882,26 @@ st_collections_group_parts_part_description_map_rotation_y(void)
    ed->map.rot.y = FROM_DOUBLE(parse_float(0));
 }
 
+/**
+    @page edcref
+    @property
+        z
+    @context
+        description {
+            ..
+            map {
+                rotation {
+                    z: 45.0;
+                }
+            }
+            ..
+        }
+    @parameters
+        rotation in degrees around the z axis
+    @effect
+        This sets the rotation of the part around the center set in degrees
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_map_rotation_z(void)
 {
@@ -5785,6 +5919,24 @@ st_collections_group_parts_part_description_map_rotation_z(void)
    ed->map.rot.z = FROM_DOUBLE(parse_float(0));
 }
 
+/**
+    @page edcref
+    @property
+        on
+    @context
+        description {
+            ..
+            map {
+                on: 1;
+            }
+            ..
+        }
+    @parameters
+        enable map at all (1/0)
+    @effect
+        This enables mapping for the part.
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_map_on(void)
 {
@@ -5802,6 +5954,26 @@ st_collections_group_parts_part_description_map_on(void)
    ed->map.on = parse_bool(0);
 }
 
+/**
+    @page edcref
+    @property
+        backface_cull
+    @context
+        description {
+            ..
+            map {
+                backface_cull: 1;
+            }
+            ..
+        }
+    @parameters
+        enable backface culling (1/0)
+    @effect
+        This enables backface culling (when the rotated part that normally
+        faces the camera is facing away after being rotated etc.). This means
+        that the object will be hidden when "backface culled".
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_map_backface_cull(void)
 {
@@ -5819,6 +5991,27 @@ st_collections_group_parts_part_description_map_backface_cull(void)
    ed->map.backcull = parse_bool(0);
 }
 
+/**
+    @page edcref
+    @property
+        perspective_on
+    @context
+        description {
+            ..
+            map {
+                perspective_on: 1;
+            }
+            ..
+        }
+    @parameters
+        enable perspective when rotating
+    @effect
+        This enables perspective even without a perspective point object.
+        This would use perspective set for the object itself or for the
+        canvas as a whole as the global perspective with 
+        edje_perspective_set() and edje_perspective_global_set().
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_map_perspective_on(void)
 {
@@ -5836,6 +6029,26 @@ st_collections_group_parts_part_description_map_perspective_on(void)
    ed->map.persp_on = parse_bool(0);
 }
 
+
+/**
+    @page edcref
+    @property
+        z
+    @context
+        description {
+            ..
+            perspective {
+                zplane: 0;
+            }
+            ..
+        }
+    @parameters
+        the z value that will be "unscaled".
+    @effect
+        This sets the z value that wil not be scaled. Normally this is 0 as
+        that is the z distance that all objects are at normally.
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_perspective_zplane(void)
 {
@@ -5853,6 +6066,26 @@ st_collections_group_parts_part_description_perspective_zplane(void)
    ed->persp.zplane = parse_int(0);
 }
 
+
+/**
+    @page edcref
+    @property
+        focal
+    @context
+        description {
+            ..
+            perspective {
+                focal: 1000;
+            }
+            ..
+        }
+    @parameters
+        focal distance from camera to focal plane
+    @effect
+        This sets the distance from the focal z plane (zplane) and the
+        camera - i.e. very much equating to focal length of the camera
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_perspective_focal(void)
 {

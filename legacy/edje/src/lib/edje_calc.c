@@ -2023,7 +2023,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
         if (chosen_desc->map.on)
           {
              Evas_Map *map;
-             Evas_Coord cx, cy;
+             Evas_Coord cx, cy, cz;
              double rx, ry, rz;
              Edje_Part_Description *desc1, *desc2;
              
@@ -2040,13 +2040,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
              // default center - center of part
              cx = ed->x + pf->x + (pf->w / 2);
              cy = ed->y + pf->y + (pf->h / 2);
+             cz = 0;
              
              // if another center is specified - find it and caculate it
              if ((desc1) &&
                  (desc1->map.rot.id_center >= 0) &&
                  (desc1->map.rot.id_center != ep->part->id))
                {
-                  Evas_Coord cx1, cy1, cx2, cy2;
+                  Evas_Coord cx1, cy1, cz1, cx2, cy2, cz2;
                   Edje_Real_Part *ep2 =
                     ed->table_parts[desc1->map.rot.id_center %
                                     ed->table_parts_size];
@@ -2056,6 +2057,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                       if (!ep2->calculated) _edje_part_recalc(ed, ep2, flags);
                        cx1 = ed->x + ep2->x + (ep2->w / 2);
                        cy1 = ed->y + ep2->y + (ep2->h / 2);
+                       cz1 = 0;
                     }
                   // if we have a desc2 and are on a partiual position to it
                   if ((pos != ZERO) && (desc2) &&
@@ -2070,12 +2072,15 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                             if (!ep2->calculated) _edje_part_recalc(ed, ep2, flags);
                             cx2 = ed->x + ep2->x + (ep2->w / 2);
                             cy2 = ed->y + ep2->y + (ep2->h / 2);
+                            cz2 = 0;
                             cx1 += SCALE(pos, cx2 - cx1);
                             cy1 += SCALE(pos, cy2 - cy1);
+                            cz1 += SCALE(pos, cz2 - cz1);
                          }
                     }
                   cx = cx1;
                   cy = cy1;
+                  cz = cz1;
                }
 
              // rotation - interpolate wit pos, if appropriate
@@ -2098,7 +2103,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                   ry = TO_DOUBLE(desc1->map.rot.y);
                   rz = TO_DOUBLE(desc1->map.rot.z);
                }
-             evas_map_util_3d_rotate(map, rx, ry, rz, cx, cy, 0);
+             evas_map_util_3d_rotate(map, rx, ry, rz, cx, cy, cz);
 
              // calculate light color & position etc. if there is one
              if (((desc1) &&
