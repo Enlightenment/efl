@@ -286,6 +286,7 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 AC_OUTPUT([
 Makefile
+elementary.spec
 elementary.pc
 doc/elementary.dox
 doc/Makefile

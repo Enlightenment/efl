@@ -7,7 +7,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       ltconfig ltmain.sh missing mkinstalldirs \
 		       stamp-h.in acconfig.h depcomp
 
-EXTRA_DIST = README AUTHORS COPYING autogen.sh elementary.pc.in
+EXTRA_DIST = README AUTHORS COPYING autogen.sh elementary.pc.in elementary.spec elementary.spec.in
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = elementary.pc
