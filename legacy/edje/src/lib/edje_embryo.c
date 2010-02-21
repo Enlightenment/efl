@@ -179,7 +179,18 @@ void *alloca (size_t);
  * text[fit_x,fit_y]
  * text[min_x,min_y]
  * text[align_x,align_y]
- * visible
+ * visible[on]
+ * map_on[on]
+ * map_persp[part_id]
+ * map_light[part_id]
+ * map_rot_center[part_id]
+ * map_rot_x[deg]
+ * map_rot_y[deg]
+ * map_rot_z[deg]
+ * map_back_cull[on]
+ * map_persp_on[on]
+ * persp_zplane[z]
+ * persp_focal[z]
  *
  * ** part_id and program_id need to be able to be "found" from strings
  *
@@ -1886,6 +1897,72 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 GETINT(rp->custom->description->visible, params[3]);
 
 	 break;
+      case EDJE_STATE_PARAM_MAP_OM:
+        CHKPARAM(3);
+        
+        GETINT(rp->custom->description->map.on, params[3]);
+        
+        break;
+      case EDJE_STATE_PARAM_MAP_PERSP:
+        CHKPARAM(3);
+        
+        GETINT(rp->custom->description->map.id_persp, params[3]);
+        
+        break;
+      case EDJE_STATE_PARAM_MAP_LIGNT:
+        CHKPARAM(3);
+        
+        GETINT(rp->custom->description->map.id_light, params[3]);
+        
+        break;
+      case EDJE_STATE_PARAM_MAP_ROT_CENTER:
+        CHKPARAM(3);
+        
+        GETINT(rp->custom->description->map.rot.id_center, params[3]);
+        
+        break;
+      case EDJE_STATE_PARAM_MAP_ROT_X:
+        CHKPARAM(3);
+
+        GETFLOAT_T(rp->custom->description->map.rot.x, params[3]);
+
+        break;
+      case EDJE_STATE_PARAM_MAP_ROT_Y:
+        CHKPARAM(3);
+        
+        GETFLOAT_T(rp->custom->description->map.rot.y, params[3]);
+        
+        break;
+      case EDJE_STATE_PARAM_MAP_ROT_Z:
+        CHKPARAM(3);
+        
+        GETFLOAT_T(rp->custom->description->map.rot.z, params[3]);
+
+        break;
+      case EDJE_STATE_PARAM_MAP_BACK_CULL:
+        CHKPARAM(3);
+        
+        GETINT(rp->custom->description->map.backcull, params[3]);
+        
+        break;
+      case EDJE_STATE_PARAM_MAP_PERSP_ON:
+        CHKPARAM(3);
+        
+        GETINT(rp->custom->description->map.persp_on, params[3]);
+        
+        break;
+      case EDJE_STATE_PARAM_PERSP_ZPLANE:
+        CHKPARAM(3);
+        
+        GETINT(rp->custom->description->persp.zplane, params[3]);
+        
+        break;
+      case EDJE_STATE_PARAM_PERSP_FOCAL:
+        CHKPARAM(3);
+        
+        GETINT(rp->custom->description->persp.focal, params[3]);
+        
+        break;
       default:
 	 break;
      }
