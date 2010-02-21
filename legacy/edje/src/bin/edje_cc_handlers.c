@@ -162,6 +162,7 @@ static void st_collections_group_parts_part_description_image_normal(void);
 static void st_collections_group_parts_part_description_image_tween(void);
 static void st_collections_group_parts_part_description_image_border(void);
 static void st_collections_group_parts_part_description_image_middle(void);
+static void st_collections_group_parts_part_description_image_border_scale(void);
 static void st_collections_group_parts_part_description_image_scale_hint(void);
 static void st_collections_group_parts_part_description_fill_smooth(void);
 static void st_collections_group_parts_part_description_fill_origin_relative(void);
@@ -383,6 +384,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.image.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.image.border", st_collections_group_parts_part_description_image_border},
      {"collections.group.parts.part.description.image.middle", st_collections_group_parts_part_description_image_middle},
+     {"collections.group.parts.part.description.image.border_scale", st_collections_group_parts_part_description_image_border_scale},
      {"collections.group.parts.part.description.image.scale_hint", st_collections_group_parts_part_description_image_scale_hint},
      {"collections.group.parts.part.description.fill.smooth", st_collections_group_parts_part_description_fill_smooth},
      {"collections.group.parts.part.description.fill.origin.relative", st_collections_group_parts_part_description_fill_origin_relative},
@@ -4109,6 +4111,45 @@ st_collections_group_parts_part_description_image_middle(void)
                                     "NONE", 1,
                                     "SOLID", 2,
                                     NULL);
+}
+
+/**
+    @page edcref
+    @property
+        scale
+    @parameters
+        0, 1
+    @effect
+        If border is set, this value tells Edje if the border should be scaled
+        by the object/global edje scale factors
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_image_border_scale(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
+     {
+	ERR("%s: Error. parse error %s:%i. "
+	    "image attributes in non-IMAGE part.",
+	    progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->border.scale =  parse_enum(0,
+                                  "1", 0,
+                                  "0", 1,
+                                  NULL);
 }
 
 /**
