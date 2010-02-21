@@ -6,8 +6,8 @@ Version: @VERSION@
 Release: 0.%(date '+%Y%m%d')
 License: Lesser GPL
 Group: System Environment/Libraries
-URL: http://www.enlightenment.org/
-Source: ftp://ftp.enlightenment.org/pub/evoak/%{name}-%{version}.tar.gz
+URL: http://trac.enlightenment.org/e/wiki/Elementary
+Source: %{name}-%{version}.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Rui Miguel Silva Seabra <rms@1407.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
