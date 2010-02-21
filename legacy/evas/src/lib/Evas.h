@@ -852,6 +852,8 @@ extern "C" {
    EAPI Evas_Border_Fill_Mode evas_object_image_border_center_fill_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void              evas_object_image_filled_set      (Evas_Object *obj, Eina_Bool setting) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool         evas_object_image_filled_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+   EAPI void              evas_object_image_border_scale_set(Evas_Object *obj, double scale);
+   EAPI double            evas_object_image_border_scale_get(const Evas_Object *obj);
    EAPI void              evas_object_image_fill_set        (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_image_fill_get        (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_image_fill_spread_set   (Evas_Object *obj, int tile_mode) EINA_ARG_NONNULL(1);
