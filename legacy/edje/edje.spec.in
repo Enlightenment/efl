@@ -75,7 +75,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-, root, root)
 %doc AUTHORS COPYING README
-%{_libdir}/libedje.so.*
+%{_libdir}/libedje*.so.*
 
 %files devel
 %defattr(-, root, root)
@@ -91,6 +91,8 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_bindir}/edje_cc
 %{_bindir}/edje_decc
 %{_bindir}/edje_recc
+%{_bindir}/inkscape2edc
 %{_datadir}/edje/include/edje.inc
+%{_datadir}/mime/packages/edje.xml
 
 %changelog
