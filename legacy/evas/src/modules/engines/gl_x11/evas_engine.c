@@ -999,8 +999,9 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
      }
    else
      evas_gl_common_image_dirty(im, 0, 0, 0, 0);
-   im->im->cache_entry.flags.alpha = has_alpha ? 1 : 0;
-   return image;
+   return evas_gl_common_image_alpha_set(im, has_alpha ? 1 : 0);
+//   im->im->cache_entry.flags.alpha = has_alpha ? 1 : 0;
+//   return image;
 }
 
 static void *

@@ -341,6 +341,7 @@ Evas_GL_Image    *evas_gl_common_image_load(Evas_GL_Context *gc, const char *fil
 Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, DATA32 *data, int alpha, int cspace);
 Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, DATA32 *data, int alpha, int cspace);
 Evas_GL_Image    *evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, int alpha, int cspace);
+Evas_GL_Image    *evas_gl_common_image_alpha_set(Evas_GL_Image *im, int alpha);
 void              evas_gl_common_image_native_enable(Evas_GL_Image *im);
 void              evas_gl_common_image_native_disable(Evas_GL_Image *im);
 void              evas_gl_common_image_free(Evas_GL_Image *im);

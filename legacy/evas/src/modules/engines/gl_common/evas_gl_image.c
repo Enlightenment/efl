@@ -174,6 +174,24 @@ evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, int alpha, int cspac
    return im;
 }
 
+Evas_GL_Image *
+evas_gl_common_image_alpha_set(Evas_GL_Image *im, int alpha)
+{
+   if (!im) return NULL;
+   if (im->alpha == alpha) return im;
+   im->alpha = alpha;
+   if (!im->im) return im;
+   im->im->cache_entry.flags.alpha = alpha ? 1 : 0;
+   if (im->tex)
+     {
+        evas_gl_common_texture_free(im->tex);
+        im->tex = NULL;
+     }
+   if (!im->tex)
+     im->tex = evas_gl_common_texture_new(im->gc, im->im);
+   return im;
+}
+
 void
 evas_gl_common_image_native_enable(Evas_GL_Image *im)
 {
@@ -224,6 +242,8 @@ evas_gl_common_image_native_disable(Evas_GL_Image *im)
    im->cs.space = EVAS_COLORSPACE_ARGB8888;
    evas_cache_image_colorspace(&im->im->cache_entry, im->cs.space);
    im->im = (RGBA_Image *)evas_cache_image_size_set(&im->im->cache_entry, im->w, im->h);
+   if (!im->tex)
+     im->tex = evas_gl_common_texture_new(im->gc, im->im);
 }
 
 void
@@ -308,9 +328,7 @@ _evas_gl_common_image_update(Evas_GL_Context *gc, Evas_GL_Image *im)
       case EVAS_COLORSPACE_ARGB8888:
         evas_cache_image_load_data(&im->im->cache_entry);
 	if ((im->tex) && (im->dirty))
-	  {
-	     evas_gl_common_texture_update(im->tex, im->im);
-	  }
+          evas_gl_common_texture_update(im->tex, im->im);
 	if (!im->tex)
 	  im->tex = evas_gl_common_texture_new(gc, im->im);
         im->dirty = 0;
