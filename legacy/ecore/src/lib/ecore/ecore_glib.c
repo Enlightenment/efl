@@ -174,13 +174,14 @@ _ecore_glib_select(int ecore_fds, fd_set *rfds, fd_set *wfds, fd_set *efds, stru
 
    if (g_main_context_acquire(ctx))
      g_mutex_lock(mutex);
-   else {
-      if (!_ecore_glib_cond)
-	_ecore_glib_cond = g_cond_new();
+   else
+     {
+	if (!_ecore_glib_cond)
+	  _ecore_glib_cond = g_cond_new();
 
-      while (!g_main_context_wait(ctx, _ecore_glib_cond, mutex))
-	g_thread_yield();
-   }
+	while (!g_main_context_wait(ctx, _ecore_glib_cond, mutex))
+	  g_thread_yield();
+     }
 
    ret = _ecore_glib_select__locked
      (ctx, ecore_fds, rfds, wfds, efds, ecore_timeout);
