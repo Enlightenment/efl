@@ -60,8 +60,8 @@ ecore_config_dst(Ecore_Config_Prop * e)
    Ecore_Config_Listener_List *l;
 
    p = NULL;
-   c = e;
    t = __ecore_config_bundle_local;
+   c = t->data;
 
    if (!e || !e->key)
       return NULL;
