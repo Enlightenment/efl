@@ -167,13 +167,10 @@ _ecore_glib_select__locked(GMainContext *ctx, int ecore_fds, fd_set *rfds, fd_se
 static int
 _ecore_glib_select(int ecore_fds, fd_set *rfds, fd_set *wfds, fd_set *efds, struct timeval *ecore_timeout)
 {
-   static GStaticMutex lock = G_STATIC_MUTEX_INIT;
-   static GMutex *mutex = NULL;
+   GStaticMutex lock = G_STATIC_MUTEX_INIT;
+   GMutex *mutex = g_static_mutex_get_mutex(&lock);
    GMainContext *ctx = g_main_context_default();
    int ret;
-
-   if (!mutex)
-     mutex = g_static_mutex_get_mutex(&lock);
 
    if (g_main_context_acquire(ctx))
      g_mutex_lock(mutex);
