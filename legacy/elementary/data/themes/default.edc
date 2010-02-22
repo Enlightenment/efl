@@ -7209,6 +7209,14 @@ collections {
                }
            }
        }
+	   programs {
+		   program {
+				name: "block_clicked";
+				signal: "mouse,clicked,1";
+				source: "block_events";
+				action: SIGNAL_EMIT "elm,action,clicked" "elm";
+		   }
+	   }
    }
    group { name: "elm/notify/base/default";
        //this group is a design similar to the inwin group

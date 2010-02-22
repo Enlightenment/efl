@@ -32,6 +32,7 @@ static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
+static void _signal_block_clicked(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _calc(Evas_Object *obj);
 static void _content_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _show(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -102,6 +103,14 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 
    if (event_info == wd->content)
      wd->content = NULL;
+}
+
+static void
+_signal_block_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+   evas_object_smart_callback_call(data, "block,clicked", NULL);
 }
 
 static void
@@ -183,7 +192,7 @@ _show(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    evas_object_show(wd->notify);
-   if(!wd->repeat_events)
+   if (!wd->repeat_events)
      evas_object_show(wd->block_events);
    if (wd->timer)
      {
@@ -200,7 +209,7 @@ _hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    evas_object_hide(wd->notify);
-   if(!wd->repeat_events)
+   if (!wd->repeat_events)
      evas_object_hide(wd->block_events);
    if (wd->timer)
      {
@@ -451,13 +460,13 @@ elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (repeat == wd->repeat_events) return;
-
    wd->repeat_events = repeat;
-   if(!repeat)
+   if (!repeat)
      {
 	wd->block_events = edje_object_add(evas_object_evas_get(obj));
 	_elm_theme_set(wd->block_events, "notify", "block_events", "default");
         elm_widget_resize_object_set(obj, wd->block_events);
+	edje_object_signal_callback_add(wd->block_events, "elm,action,clicked", "elm", _signal_block_clicked, obj);
      }
    else
      evas_object_del(wd->block_events);
