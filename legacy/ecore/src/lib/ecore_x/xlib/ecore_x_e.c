@@ -202,6 +202,13 @@ ecore_x_e_illume_zone_get(Ecore_X_Window win)
 }
 
 EAPI void 
+ecore_x_e_illume_zone_list_set(Ecore_X_Window win, Ecore_X_Window *zones, unsigned int n_zones) 
+{
+   ecore_x_window_prop_window_set(win, ECORE_X_ATOM_E_ILLUME_ZONE_LIST, 
+                                  zones, n_zones);
+}
+
+EAPI void 
 ecore_x_e_illume_conformant_set(Ecore_X_Window win, unsigned int is_conformant) 
 {
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_CONFORMANT,
