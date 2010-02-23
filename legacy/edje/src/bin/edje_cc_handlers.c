@@ -6520,6 +6520,7 @@ st_collections_group_programs_program_action(void)
 			   "SCRIPT", EDJE_ACTION_TYPE_SCRIPT,
 			   "LUA_SCRIPT", EDJE_ACTION_TYPE_LUA_SCRIPT,
 			   "FOCUS_SET", EDJE_ACTION_TYPE_FOCUS_SET,
+			   "FOCUS_OBJECT", EDJE_ACTION_TYPE_FOCUS_OBJECT,
 			   NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
@@ -6546,7 +6547,7 @@ st_collections_group_programs_program_action(void)
 	ep->value = parse_float(1);
 	ep->value2 = parse_float(2);
      }
-   
+
    switch (ep->action)
      {
       case EDJE_ACTION_TYPE_ACTION_STOP:
@@ -6560,6 +6561,7 @@ st_collections_group_programs_program_action(void)
 	/* this is implicitly set by lua_script {} so this is here just for
 	 * completeness */
 	break;
+      case EDJE_ACTION_TYPE_FOCUS_OBJECT:
       case EDJE_ACTION_TYPE_FOCUS_SET:
 	check_arg_count(1);
 	break;

@@ -1229,7 +1229,9 @@ void  _edje_mouse_wheel_cb(void *data, Evas * e, Evas_Object * obj, void *event_
 int   _edje_timer_cb(void *data);
 int   _edje_pending_timer_cb(void *data);
 void  _edje_callbacks_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp);
-void  _edje_callbacks_del(Evas_Object *obj);
+void  _edje_callbacks_focus_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp);
+void  _edje_callbacks_del(Evas_Object *obj, Edje *ed);
+void  _edje_callbacks_focus_del(Evas_Object *obj, Edje *ed);
 
 void  _edje_edd_init(void);
 void  _edje_edd_shutdown(void);

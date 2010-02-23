@@ -882,7 +882,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	  }
 	else
 	  {
-	    EINA_LIST_FOREACH(pr->targets, l, pt)
+	     EINA_LIST_FOREACH(pr->targets, l, pt)
 	       {
 		  if (pt->id >= 0)
 		    {
@@ -899,6 +899,44 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 					    ed->focused_part->part->name);
 			      }
  			 }
+		    }
+	       }
+	  }
+     }
+   else if (pr->action == EDJE_ACTION_TYPE_FOCUS_OBJECT)
+     {
+	if (!pr->targets)
+	  {
+	     Evas_Object *focused;
+
+	     focused = evas_focus_get(evas_object_evas_get(ed->obj));
+	     if (focused)
+	       {
+		  int i;
+
+		  /* Check if the current swallowed object is one of my child. */
+		  for (i = 0; i < ed->table_parts_size; ++i)
+		    {
+		       rp = ed->table_parts[i];
+		       if (rp && rp->swallowed_object == focused)
+			 {
+			    evas_object_focus_set(focused, EINA_FALSE);
+			    break;
+			 }
+		    }
+	       }
+	  }
+	else
+	  {
+	     EINA_LIST_FOREACH(pr->targets, l, pt)
+	       {
+		  if (pt->id >= 0)
+		    {
+		       rp = ed->table_parts[pt->id % ed->table_parts_size];
+		       if (rp && rp->swallowed_object)
+			 {
+			    evas_object_focus_set(rp->swallowed_object, EINA_TRUE);
+			 }
 		    }
 	       }
 	  }

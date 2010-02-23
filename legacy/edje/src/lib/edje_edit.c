@@ -172,7 +172,7 @@ _edje_real_part_free(Edje_Real_Part *rp)
 
    if (rp->object)
      {
-	_edje_callbacks_del(rp->object);
+	_edje_callbacks_del(rp->object, rp->edje);
 	evas_object_del(rp->object);
      }
 
@@ -185,7 +185,7 @@ _edje_real_part_free(Edje_Real_Part *rp)
 	evas_object_clip_unset(rp->swallowed_object);
 	evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
 	if (rp->part->mouse_events)
-	  _edje_callbacks_del(rp->swallowed_object);
+	  _edje_callbacks_del(rp->swallowed_object, rp->edje);
 
 	if (rp->part->type == EDJE_PART_TYPE_GROUP ||
 	    rp->part->type == EDJE_PART_TYPE_EXTERNAL)
@@ -2148,7 +2148,7 @@ edje_edit_part_mouse_events_set(Evas_Object *obj, const char *part, Eina_Bool mo
    else
      {
 	evas_object_pass_events_set(rp->object, 1);
-	_edje_callbacks_del(rp->object);
+	_edje_callbacks_del(rp->object, ed);
      }
 }
 

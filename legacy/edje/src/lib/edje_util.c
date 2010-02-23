@@ -2406,7 +2406,8 @@ edje_object_part_unswallow(Evas_Object *obj __UNUSED__, Evas_Object *obj_swallow
 	evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
 
 	if (rp->part->mouse_events)
-	  _edje_callbacks_del(rp->swallowed_object);
+	  _edje_callbacks_del(rp->swallowed_object, rp->edje);
+	_edje_callbacks_focus_del(rp->swallowed_object, rp->edje);
 
 	rp->swallowed_object = NULL;
 	rp->swallow_params.min.w = 0;
@@ -4453,6 +4454,7 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
      }
    else
      evas_object_pass_events_set(obj_swallow, 1);
+   _edje_callbacks_focus_add(rp->swallowed_object, rp->edje, rp);
 
    if (rp->part->precise_is_inside)
      evas_object_precise_is_inside_set(obj_swallow, 1);
@@ -4476,7 +4478,8 @@ _edje_real_part_swallow_clear(Edje_Real_Part *rp)
    evas_object_clip_unset(rp->swallowed_object);
    evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
    if (rp->part->mouse_events)
-     _edje_callbacks_del(rp->swallowed_object);
+     _edje_callbacks_del(rp->swallowed_object, rp->edje);
+   _edje_callbacks_focus_del(rp->swallowed_object, rp->edje);
 }
 
 static void

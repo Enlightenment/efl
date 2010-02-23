@@ -414,6 +414,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			evas_object_color_set(rp->object, 0, 0, 0, 0);
 			evas_object_pass_events_set(rp->object, 1);
 			evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+			_edje_callbacks_focus_add(rp->object, ed, rp);
 			break;
 		     case EDJE_PART_TYPE_TEXTBLOCK:
 			rp->object = evas_object_textblock_add(ed->evas);
@@ -680,7 +681,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       
 		       group_path = eina_list_remove(group_path, group_path_entry);
 		       eina_stringshare_del(group_path_entry);
-		       
+
 		       edje_object_signal_callback_add(child_obj, "*", "*", _cb_signal_repeat, obj);
 		       if (rp->part->type == EDJE_PART_TYPE_GROUP)
 			 {
@@ -852,7 +853,8 @@ _edje_file_del(Edje *ed)
 	       _edje_entry_real_part_shutdown(rp);
 	     if (rp->object)
 	       {
-		  _edje_callbacks_del(rp->object);
+		  _edje_callbacks_del(rp->object, ed);
+		  _edje_callbacks_focus_del(rp->object, ed);
 		  evas_object_del(rp->object);
 	       }
 	     if (rp->swallowed_object)

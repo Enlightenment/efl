@@ -24,6 +24,38 @@ _edje_hold_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 }
 
 void
+_edje_focus_in_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = data;
+   rp = evas_object_data_get(obj, "real_part");
+   if ((!rp) || (!ed))
+     return;
+
+   _edje_emit(ed, "focus,part,in", rp->part->name);
+   return;
+   e = NULL;
+}
+
+void
+_edje_focus_out_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = data;
+   rp = evas_object_data_get(obj, "real_part");
+   if ((!rp) || (!ed))
+     return;
+
+   _edje_emit(ed, "focus,part,out", rp->part->name);
+   return;
+   e = NULL;
+}
+
+void
 _edje_mouse_in_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 {
    Evas_Event_Mouse_In *ev;
@@ -466,28 +498,62 @@ _edje_callbacks_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp)
 }
 
 void
-_edje_callbacks_del(Evas_Object *obj)
+_edje_callbacks_del(Evas_Object *obj, Edje *ed)
 {
-   evas_object_event_callback_del(obj,
-                                  EVAS_CALLBACK_HOLD,
-                                  _edje_hold_cb);
-   evas_object_event_callback_del(obj,
-                                  EVAS_CALLBACK_MOUSE_IN,
-                                  _edje_mouse_in_cb);
-   evas_object_event_callback_del(obj,
-                                  EVAS_CALLBACK_MOUSE_OUT,
-                                  _edje_mouse_out_cb);
-   evas_object_event_callback_del(obj,
-                                  EVAS_CALLBACK_MOUSE_DOWN,
-                                  _edje_mouse_down_cb);
-   evas_object_event_callback_del(obj,
-                                  EVAS_CALLBACK_MOUSE_UP,
-                                  _edje_mouse_up_cb);
-   evas_object_event_callback_del(obj,
-                                  EVAS_CALLBACK_MOUSE_MOVE,
-                                  _edje_mouse_move_cb);
-   evas_object_event_callback_del(obj,
-                                  EVAS_CALLBACK_MOUSE_WHEEL,
-                                  _edje_mouse_wheel_cb);
+   evas_object_event_callback_del_full(obj,
+				       EVAS_CALLBACK_HOLD,
+				       _edje_hold_cb,
+				       ed);
+   evas_object_event_callback_del_full(obj,
+				       EVAS_CALLBACK_MOUSE_IN,
+				       _edje_mouse_in_cb,
+				       ed);
+   evas_object_event_callback_del_full(obj,
+				       EVAS_CALLBACK_MOUSE_OUT,
+				       _edje_mouse_out_cb,
+				       ed);
+   evas_object_event_callback_del_full(obj,
+				       EVAS_CALLBACK_MOUSE_DOWN,
+				       _edje_mouse_down_cb,
+				       ed);
+   evas_object_event_callback_del_full(obj,
+				       EVAS_CALLBACK_MOUSE_UP,
+				       _edje_mouse_up_cb,
+				       ed);
+   evas_object_event_callback_del_full(obj,
+				       EVAS_CALLBACK_MOUSE_MOVE,
+				       _edje_mouse_move_cb,
+				       ed);
+   evas_object_event_callback_del_full(obj,
+				       EVAS_CALLBACK_MOUSE_WHEEL,
+				       _edje_mouse_wheel_cb,
+				       ed);
    evas_object_data_del(obj, "real_part");
+}
+
+void
+_edje_callbacks_focus_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp)
+{
+   evas_object_event_callback_add(obj,
+				  EVAS_CALLBACK_FOCUS_IN,
+				  _edje_focus_in_cb,
+				  ed);
+   evas_object_event_callback_add(obj,
+				  EVAS_CALLBACK_FOCUS_OUT,
+				  _edje_focus_out_cb,
+				  ed);
+   evas_object_data_set(obj, "real_part", rp);
+}
+
+void
+_edje_callbacks_focus_del(Evas_Object *obj, Edje *ed)
+{
+   evas_object_event_callback_del_full(obj,
+				       EVAS_CALLBACK_FOCUS_IN,
+				       _edje_focus_in_cb,
+				       ed);
+   evas_object_event_callback_del_full(obj,
+				       EVAS_CALLBACK_FOCUS_OUT,
+				       _edje_focus_out_cb,
+				       ed);
 }
