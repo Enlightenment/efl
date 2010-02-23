@@ -1973,6 +1973,7 @@ _ecore_x_event_handle_randr_notify_output_change(const XRRNotifyEvent *xevent)
    e->rotation = randr_event->rotation;
    e->connection = randr_event->connection;
    e->subpixel_order = randr_event->subpixel_order;
+   ecore_event_add(ECORE_X_EVENT_RANDR_OUTPUT_CHANGE, e, NULL, NULL);
 }
 
 static void
@@ -1990,6 +1991,7 @@ _ecore_x_event_handle_randr_notify_output_property(const XRRNotifyEvent *xevent)
    e->property = randr_event->property;
    e->time = randr_event->timestamp;
    e->state = randr_event->state;
+   ecore_event_add(ECORE_X_EVENT_RANDR_OUTPUT_PROPERTY_NOTIFY, e, NULL, NULL);
 }
 
 void
