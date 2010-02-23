@@ -79,8 +79,8 @@ struct _Ecore_Exe
       int    data_size;
       int pending;
    } pipe_error;
-   int    close_stdin;
-   int    is_suspended : 1;
+   Eina_Bool    close_stdin : 1;
+   Eina_Bool    is_suspended : 1;
 
    void (*pre_free_cb)(void *data, const Ecore_Exe *exe);
 };

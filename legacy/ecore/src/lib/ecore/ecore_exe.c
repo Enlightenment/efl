@@ -114,7 +114,7 @@ struct _Ecore_Exe
    int child_fd_write_x;	/* fd to write TO to send data to the child */
    int child_fd_read_x;	/* fd to read FROM when child has sent us (the parent) data */
    int child_fd_error_x;	/* fd to read FROM when child has sent us (the parent) errors */
-   int close_stdin;
+   Eina_Bool close_stdin : 1;
 
    int start_bytes, end_bytes, start_lines, end_lines; /* Number of bytes/lines to auto pipe at start/end of stdout/stderr. */
 
