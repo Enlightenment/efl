@@ -2036,6 +2036,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
              map = evas_map_new(4);
              evas_map_util_points_populate_from_geometry
                (map, ed->x + pf->x, ed->y + pf->y, pf->w, pf->h, 0);
+             if (ep->part->type == EDJE_PART_TYPE_IMAGE)
+               {
+                  int iw = 1, ih = 1;
+                  
+                  evas_object_image_size_get(mo, &iw, &ih);
+                  evas_map_point_image_uv_set(map, 0, 0.0, 0.0);
+                  evas_map_point_image_uv_set(map, 1, iw , 0.0);
+                  evas_map_point_image_uv_set(map, 2, iw , ih );
+                  evas_map_point_image_uv_set(map, 3, 0.0, ih );
+               }
 
              // default center - center of part
              cx = ed->x + pf->x + (pf->w / 2);
