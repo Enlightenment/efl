@@ -122,26 +122,34 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 	return;
      }
    if (_edje_lua_script_only(ed))
-   {
-      _edje_lua_script_only_move(ed);
-      return;
-   }
-   
-   for (i = 0; i < ed->table_parts_size; i++)
      {
-	Edje_Real_Part *ep;
-	Evas_Coord ox, oy;
+        _edje_lua_script_only_move(ed);
+        return;
+     }
 
-	ep = ed->table_parts[i];
-	evas_object_geometry_get(ep->object, &ox, &oy, NULL, NULL);
-	evas_object_move(ep->object, ed->x + ep->x + ep->text.offset.x, ed->y + ep->y + ep->text.offset.y);
-	if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-	  _edje_entry_real_part_configure(ep);
-	if (ep->swallowed_object)
-	  {
-	     evas_object_geometry_get(ep->swallowed_object, &ox, &oy, NULL, NULL);
-	     evas_object_move(ep->swallowed_object, ed->x + ep->x + ep->text.offset.x, ed->y + ep->y + ep->text.offset.y);
-	  }
+   if (ed->have_mapped_part)
+     {
+        ed->dirty = 1;
+        _edje_recalc_do(ed);
+     }
+   else
+     {
+        for (i = 0; i < ed->table_parts_size; i++)
+          {
+             Edje_Real_Part *ep;
+             Evas_Coord ox, oy;
+             
+             ep = ed->table_parts[i];
+             evas_object_geometry_get(ep->object, &ox, &oy, NULL, NULL);
+             evas_object_move(ep->object, ed->x + ep->x + ep->text.offset.x, ed->y + ep->y + ep->text.offset.y);
+             if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+               _edje_entry_real_part_configure(ep);
+             if (ep->swallowed_object)
+               {
+                  evas_object_geometry_get(ep->swallowed_object, &ox, &oy, NULL, NULL);
+                  evas_object_move(ep->swallowed_object, ed->x + ep->x + ep->text.offset.x, ed->y + ep->y + ep->text.offset.y);
+               }
+          }
      }
 //   _edje_emit(ed, "move", NULL);
 }
@@ -191,10 +199,10 @@ _edje_smart_show(Evas_Object * obj)
 	return;
      }
    if (_edje_lua_script_only(ed))
-   {
-      _edje_lua_script_only_show(ed);
-      return;
-   }
+     {
+        _edje_lua_script_only_show(ed);
+        return;
+     }
    _edje_emit(ed, "show", NULL);
 }
 
@@ -214,10 +222,10 @@ _edje_smart_hide(Evas_Object * obj)
 	return;
      }
    if (_edje_lua_script_only(ed))
-   {
-      _edje_lua_script_only_hide(ed);
-      return;
-   }
+     {
+        _edje_lua_script_only_hide(ed);
+        return;
+     }
    _edje_emit(ed, "hide", NULL);
 }
 

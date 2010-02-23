@@ -832,6 +832,7 @@ struct _Edje
    unsigned int          text_part_change : 1;
    unsigned int          all_part_change : 1;
 #endif
+   unsigned int          have_mapped_part : 1;
    lua_State *L;
 };
 
@@ -1215,6 +1216,7 @@ Edje_Part_Description *_edje_part_description_find(Edje *ed, Edje_Real_Part *rp,
 void  _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char  *d1, double v1, const char *d2, double v2);
 void  _edje_recalc(Edje *ed);
 void  _edje_recalc_do(Edje *ed);
+void  _edje_part_recalc_1(Edje *ed, Edje_Real_Part *ep);
 int   _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, FLOAT_T *x, FLOAT_T *y);
 void  _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y);
 

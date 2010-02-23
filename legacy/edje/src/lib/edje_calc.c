@@ -221,10 +221,8 @@ _edje_recalc_do(Edje *ed)
 
    ed->postponed = 0;
    evas_object_smart_need_recalculate_set(ed->obj, 0);
-   if (!ed->dirty)
-     {
-	return;
-     }
+   if (!ed->dirty) return;
+   ed->have_mapped_part = 0;
    ed->dirty = 0;
    ed->state++;
    for (i = 0; i < ed->table_parts_size; i++)
@@ -248,6 +246,12 @@ _edje_recalc_do(Edje *ed)
    ed->all_part_change = 0;
    ed->text_part_change = 0;
 #endif
+}
+
+void
+_edje_part_recalc_1(Edje *ed, Edje_Real_Part *ep)
+{
+   _edje_part_recalc(ed, ep, FLAG_XY);
 }
 
 int
@@ -2032,6 +2036,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
              if (ep->param2) desc2 = ep->param2->description;
              pos = ep->description_pos;
 
+             ed->have_mapped_part = 1;
              // create map and populate with part geometry
              map = evas_map_new(4);
              evas_map_util_points_populate_from_geometry
