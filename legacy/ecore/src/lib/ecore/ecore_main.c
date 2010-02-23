@@ -777,8 +777,7 @@ _ecore_main_loop_iterate_internal(int once_only)
 		       if (_ecore_main_select(0.0) > 0) have_event = 1;
 		       if (_ecore_signal_count_get() > 0) have_signal = 1;
 		       if (have_event || have_signal) break;
-		       next_time = _ecore_timer_next_get();
-		       if (next_time >= 0) goto start_loop;
+		       if (_ecore_timers_exists()) goto start_loop;
 		       if (do_quit) break;
 		    }
 	       }

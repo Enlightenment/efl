@@ -409,6 +409,17 @@ _ecore_timer_enable_new(void)
    EINA_INLIST_FOREACH(timers, timer) timer->just_added = 0;
 }
 
+int
+_ecore_timers_exists(void)
+{
+   Ecore_Timer *timer = timers;
+
+   while ((timer) && (timer->delete_me))
+     timer = (Ecore_Timer *)EINA_INLIST_GET(timer)->next;
+
+   return !!timer;
+}
+
 static inline Ecore_Timer *
 _ecore_timer_first_get(void)
 {

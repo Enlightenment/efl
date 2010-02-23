@@ -119,6 +119,7 @@ void          _ecore_timer_shutdown(void);
 void          _ecore_timer_cleanup(void);
 void          _ecore_timer_enable_new(void);
 double        _ecore_timer_next_get(void);
+int           _ecore_timers_exists(void);
 int           _ecore_timer_call(double when);
 
 void          _ecore_idler_shutdown(void);
