@@ -209,6 +209,8 @@ static void st_collections_group_parts_part_description_map_rotation_x(void);
 static void st_collections_group_parts_part_description_map_rotation_y(void);
 static void st_collections_group_parts_part_description_map_rotation_z(void);
 static void st_collections_group_parts_part_description_map_on(void);
+static void st_collections_group_parts_part_description_map_smooth(void);
+static void st_collections_group_parts_part_description_map_alpha(void);
 static void st_collections_group_parts_part_description_map_backface_cull(void);
 static void st_collections_group_parts_part_description_map_perspective_on(void);
 static void st_collections_group_parts_part_description_perspective_zplane(void);
@@ -433,6 +435,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.map.rotation.y", st_collections_group_parts_part_description_map_rotation_y},
      {"collections.group.parts.part.description.map.rotation.z", st_collections_group_parts_part_description_map_rotation_z},
      {"collections.group.parts.part.description.map.on", st_collections_group_parts_part_description_map_on},
+     {"collections.group.parts.part.description.map.smooth", st_collections_group_parts_part_description_map_smooth},
+     {"collections.group.parts.part.description.map.alpha", st_collections_group_parts_part_description_map_alpha},
      {"collections.group.parts.part.description.map.backface_cull", st_collections_group_parts_part_description_map_backface_cull},
      {"collections.group.parts.part.description.map.perspective_on", st_collections_group_parts_part_description_map_perspective_on},
      {"collections.group.parts.part.description.perspective.zplane", st_collections_group_parts_part_description_perspective_zplane},
@@ -3098,6 +3102,8 @@ ob_collections_group_parts_part_description(void)
    ed->map.rot.y = FROM_DOUBLE(0.0);
    ed->map.rot.z = FROM_DOUBLE(0.0);
    ed->map.on = 0;
+   ed->map.smooth = 1;
+   ed->map.alpha = 1;
    ed->map.backcull = 0;
    ed->map.persp_on = 0;
    ed->persp.zplane = 0;
@@ -5934,7 +5940,7 @@ st_collections_group_parts_part_description_map_rotation_z(void)
     @parameters
         enable map at all (1/0)
     @effect
-        This enables mapping for the part.
+        This enables mapping for the part. Default is 0.
     @endproperty
 */
 static void
@@ -5952,6 +5958,79 @@ st_collections_group_parts_part_description_map_on(void)
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
    ed->map.on = parse_bool(0);
+}
+
+/**
+    @page edcref
+    @property
+        smooth
+    @context
+        description {
+            ..
+            map {
+                smooth: 1;
+            }
+            ..
+        }
+    @parameters
+        enable map smooth rendering (linear interpolation) (1/0)
+    @effect
+        This enable smooth map rendering. This may be linear interpolation,
+        asinortopic filtering or anything the engine decides is "smooth".
+        This is a best-effort hint and may not produce precisely the same
+        results in all engines and situations. Default is 1
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_map_smooth(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->map.smooth = parse_bool(0);
+}
+
+/**
+    @page edcref
+    @property
+        alpha
+    @context
+        description {
+            ..
+            map {
+                alpha: 1;
+            }
+            ..
+        }
+    @parameters
+        enable map alpha rendering (1/0)
+    @effect
+        This enable alpha channel when map rendering. Default is 1
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_map_alpha(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->map.alpha = parse_bool(0);
 }
 
 /**

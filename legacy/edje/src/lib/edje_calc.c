@@ -2415,6 +2415,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                     }
                }
              
+             // handle smooth
+             if (chosen_desc->map.smooth) evas_map_smooth_set(map, 1);
+             else evas_map_smooth_set(map, 0);
+             // handle alpha
+             if (chosen_desc->map.alpha) evas_map_alpha_set(map, 1);
+             else evas_map_alpha_set(map, 0);
+             
              evas_object_map_set(mo, map);
              evas_object_map_enable_set(mo, 1);
              evas_map_free(map);

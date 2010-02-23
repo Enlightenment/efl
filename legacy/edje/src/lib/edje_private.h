@@ -691,6 +691,8 @@ struct _Edje_Part_Description
       unsigned char backcull;
       unsigned char on;
       unsigned char persp_on;
+      unsigned char smooth;
+      unsigned char alpha;
    } map;
    
    struct {
