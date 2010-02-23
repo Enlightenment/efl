@@ -183,8 +183,16 @@ _prop_change(void *data, int type, void *event)
         evas_object_size_hint_min_set(wd->panel, -1, sh);
         evas_object_size_hint_max_set(wd->panel, -1, sh);
      }
+   else if (ev->atom == ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY) 
+     {
+        Ecore_X_Window zone;
+        int ky = -1;
 
-   // FIXME: listen to kbd region property changes too.
+        printf("Keyboard Geometry Changed\n");
+        zone = ecore_x_e_illume_zone_get(ev->win);
+        ecore_x_e_illume_keyboard_geometry_get(zone, NULL, &ky, NULL, NULL);
+        printf("\tGeom: %d\n", ky);
+     }
 #endif
 
    return 1;
