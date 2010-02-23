@@ -12,19 +12,19 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
    int error = 1;
 
 //   return 0;
-//   key[0] = prev;
-//   key[1] = index;
+   key[0] = prev;
+   key[1] = index;
 
 #ifdef HAVE_PTHREAD
-//   pthread_mutex_lock(&fi->ft_mutex);
+   pthread_mutex_lock(&fi->ft_mutex);
 #endif
 
-//   result = eina_hash_find(fi->kerning, key);
-//   if (result)
-//     {
-//	*kerning = result[2];
-//	goto on_correct;
-//     }
+   result = eina_hash_find(fi->kerning, key);
+   if (result)
+     {
+	*kerning = result[2];
+	goto on_correct;
+     }
 
    /* NOTE: ft2 seems to have a bug. and sometimes returns bizarre
     * values to kern by - given same font, same size and same
@@ -34,18 +34,18 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
 		      key[0], key[1],
 		      ft_kerning_default, &delta) == 0)
      {
-//	int *push;
+	int *push;
 
 	*kerning = delta.x >> 6;
 
-//	push = malloc(sizeof (int) * 3);
-//	if (!push) return 1;
+	push = malloc(sizeof (int) * 3);
+	if (!push) return 1;
 
-//	push[0] = key[0];
-//	push[1] = key[1];
-//	push[2] = *kerning;
+	push[0] = key[0];
+	push[1] = key[1];
+	push[2] = *kerning;
 
-//	eina_hash_direct_add(fi->kerning, push, push);
+	eina_hash_direct_add(fi->kerning, push, push);
 
 	goto on_correct;
      }
@@ -54,7 +54,7 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
 
  on_correct:
 #ifdef HAVE_PTHREAD
-//   pthread_mutex_unlock(&fi->ft_mutex);
+   pthread_mutex_unlock(&fi->ft_mutex);
 #endif
    return error;
 }

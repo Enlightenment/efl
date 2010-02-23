@@ -79,7 +79,7 @@ _evas_common_font_int_free(RGBA_Font_Int *fi)
 //   eina_hash_foreach(fi->glyphs, font_flush_free_glyph_cb, NULL);
 //   eina_hash_free(fi->glyphs);
 
-//   eina_hash_free(fi->kerning);
+  eina_hash_free(fi->kerning);
 //   eina_hash_free(fi->indexes);
 
 #ifdef HAVE_PTHREAD
@@ -276,10 +276,10 @@ _evas_common_font_int_cache_init(RGBA_Font_Int *fi)
 //			       EINA_KEY_CMP(_evas_common_font_int_cmp),
 //			       EINA_KEY_HASH(eina_hash_int32),
 //			       free, 3);
-//   fi->kerning = eina_hash_new(NULL,
-//			       EINA_KEY_CMP(_evas_common_font_double_int_cmp),
-//			       EINA_KEY_HASH(_evas_common_font_double_int_hash),
-//			       free, 3);
+  fi->kerning = eina_hash_new(NULL,
+			       EINA_KEY_CMP(_evas_common_font_double_int_cmp),
+			       EINA_KEY_HASH(_evas_common_font_double_int_hash),
+			       free, 3);
 #ifdef HAVE_PTHREAD
    pthread_mutex_init(&fi->ft_mutex, NULL);
 #endif
