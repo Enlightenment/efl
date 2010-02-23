@@ -1220,12 +1220,6 @@ void  _edje_part_recalc_1(Edje *ed, Edje_Real_Part *ep);
 int   _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, FLOAT_T *x, FLOAT_T *y);
 void  _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y);
 
-void  _edje_mouse_in_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
-void  _edje_mouse_out_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
-void  _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
-void  _edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
-void  _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
-void  _edje_mouse_wheel_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
 int   _edje_timer_cb(void *data);
 int   _edje_pending_timer_cb(void *data);
 void  _edje_callbacks_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp);
