@@ -415,6 +415,37 @@ ecore_x_e_illume_softkey_geometry_get(Ecore_X_Window win, int *x, int *y, int *w
    return 1;
 }
 
+EAPI void 
+ecore_x_e_illume_keyboard_geometry_set(Ecore_X_Window win, int x, int y, int w, int h) 
+{
+   unsigned int geom[4];
+
+   geom[0] = x;
+   geom[1] = y;
+   geom[2] = w;
+   geom[3] = h;
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY, 
+                                  geom, 4);
+}
+
+EAPI int 
+ecore_x_e_illume_keyboard_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h) 
+{
+   int ret = 0;
+   unsigned int geom[4];
+
+   ret = 
+     ecore_x_window_prop_card32_get(win, 
+                                    ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY, 
+                                    geom, 4);
+   if (ret != 4) return 0;
+   if (x) *x = geom[0];
+   if (y) *y = geom[1];
+   if (w) *w = geom[2];
+   if (h) *h = geom[3];
+   return 1;
+}
+
 static Ecore_X_Atom
 _ecore_x_e_quickpanel_atom_get(Ecore_X_Illume_Quickpanel_State state)
 {

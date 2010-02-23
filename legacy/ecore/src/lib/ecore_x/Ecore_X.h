@@ -1590,6 +1590,8 @@ EAPI void ecore_x_e_illume_indicator_geometry_set(Ecore_X_Window win, int x, int
 EAPI int ecore_x_e_illume_indicator_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h);
 EAPI void ecore_x_e_illume_softkey_geometry_set(Ecore_X_Window win, int x, int y, int w, int h);
 EAPI int ecore_x_e_illume_softkey_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h);
+EAPI void ecore_x_e_illume_keyboard_geometry_set(Ecore_X_Window win, int x, int y, int w, int h);
+EAPI int ecore_x_e_illume_keyboard_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h);
 EAPI void ecore_x_e_illume_quickpanel_set(Ecore_X_Window win, unsigned int is_quickpanel);
 EAPI int ecore_x_e_illume_quickpanel_get(Ecore_X_Window win);
 EAPI void ecore_x_e_illume_quickpanel_state_set(Ecore_X_Window win, Ecore_X_Illume_Quickpanel_State state);
