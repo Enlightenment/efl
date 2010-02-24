@@ -54,6 +54,7 @@ struct _Ecore_Fd_Handler
    void                    *buf_data;
    void                   (*prep_func) (void *data, Ecore_Fd_Handler *fd_handler);
    void                    *prep_data;
+   int                      references;
    Eina_Bool                read_active : 1;
    Eina_Bool                write_active : 1;
    Eina_Bool                error_active : 1;
@@ -68,6 +69,7 @@ struct _Ecore_Win32_Handler
    HANDLE         h;
    int          (*func) (void *data, Ecore_Win32_Handler *win32_handler);
    void          *data;
+   int            references;
    Eina_Bool      delete_me : 1;
 };
 #endif
@@ -91,9 +93,11 @@ static void _ecore_main_win32_handlers_cleanup(void);
 static int               in_main_loop = 0;
 static int               do_quit = 0;
 static Ecore_Fd_Handler *fd_handlers = NULL;
+static Ecore_Fd_Handler *fd_handler_current = NULL;
 static int               fd_handlers_delete_me = 0;
 #ifdef _WIN32
 static Ecore_Win32_Handler *win32_handlers = NULL;
+static Ecore_Win32_Handler *win32_handler_current = NULL;
 static int                  win32_handlers_delete_me = 0;
 #endif
 
@@ -432,6 +436,7 @@ _ecore_main_shutdown(void)
 	free(fdh);
      }
    fd_handlers_delete_me = 0;
+   fd_handler_current = NULL;
 
 #ifdef _WIN32
    while (win32_handlers)
@@ -445,6 +450,7 @@ _ecore_main_shutdown(void)
 	free(wh);
      }
    win32_handlers_delete_me = 0;
+   win32_handler_current = NULL;
 #endif
 }
 
@@ -488,7 +494,11 @@ _ecore_main_select(double timeout)
    /* call the prepare callback for all handlers */
    EINA_INLIST_FOREACH(fd_handlers, fdh)
      if (!fdh->delete_me && fdh->prep_func)
-       fdh->prep_func (fdh->prep_data, fdh);
+       {
+	  fdh->references++;
+	  fdh->prep_func (fdh->prep_data, fdh);
+	  fdh->references--;
+       }
    EINA_INLIST_FOREACH(fd_handlers, fdh)
      if (!fdh->delete_me)
        {
@@ -562,12 +572,14 @@ _ecore_main_fd_handlers_bads_rem(void)
 	     if (fdh->flags & ECORE_FD_ERROR)
 	       {
 		  ERR("Fd set for error! calling user");
-	         if (!fdh->func(fdh->data, fdh))
-		   {
-		     ERR("Fd function err returned 0, remove it");
-		     fdh->delete_me = 1;
-		     fd_handlers_delete_me = 1;
-		   }
+		  fdh->references++;
+		  if (!fdh->func(fdh->data, fdh))
+		    {
+		       ERR("Fd function err returned 0, remove it");
+		       fdh->delete_me = 1;
+		       fd_handlers_delete_me = 1;
+		    }
+		  fdh->references--;
 	       }
 	     else
 	       {
@@ -587,6 +599,7 @@ _ecore_main_fd_handlers_cleanup(void)
 {
    Ecore_Fd_Handler *fdh;
    Eina_Inlist *l;
+   int deleted_in_use = 0;
 
    if (!fd_handlers_delete_me) return;
    for (l = EINA_INLIST_GET(fd_handlers); l; )
@@ -597,13 +610,21 @@ _ecore_main_fd_handlers_cleanup(void)
 	if (fdh->delete_me)
 	  {
 //	     ERR("Removing fd %d", fdh->fd);
+
+	     if (fdh->references)
+	       {
+		  deleted_in_use++;
+		  continue;
+	       }
+
 	     fd_handlers = (Ecore_Fd_Handler *) eina_inlist_remove(EINA_INLIST_GET(fd_handlers),
 								   EINA_INLIST_GET(fdh));
 	     ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
 	     free(fdh);
 	  }
      }
-   fd_handlers_delete_me = 0;
+   if (!deleted_in_use)
+     fd_handlers_delete_me = 0;
 }
 
 #ifdef _WIN32
@@ -612,6 +633,7 @@ _ecore_main_win32_handlers_cleanup(void)
 {
    Ecore_Win32_Handler *wh;
    Eina_Inlist *l;
+   int deleted_in_use = 0;
 
    if (!win32_handlers_delete_me) return;
    for (l = EINA_INLIST_GET(win32_handlers); l; )
@@ -621,38 +643,64 @@ _ecore_main_win32_handlers_cleanup(void)
         l = l->next;
         if (wh->delete_me)
           {
+	     if (wh->references)
+	       {
+		  deleted_in_use++;
+		  continue;
+	       }
+
              win32_handlers = (Ecore_Win32_Handler *)eina_inlist_remove(EINA_INLIST_GET(win32_handlers),
                                                                         EINA_INLIST_GET(wh));
              ECORE_MAGIC_SET(wh, ECORE_MAGIC_NONE);
              free(wh);
           }
      }
-   win32_handlers_delete_me = 0;
+   if (!deleted_in_use)
+     win32_handlers_delete_me = 0;
 }
 #endif
 
 static void
 _ecore_main_fd_handlers_call(void)
 {
-   Ecore_Fd_Handler *fdh;
+   if (!fd_handler_current)
+     {
+	/* regular main loop, start from head */
+	fd_handler_current = fd_handlers;
+     }
+   else
+     {
+	/* recursive main loop, continue from where we were */
+	fd_handler_current = (Ecore_Fd_Handler *)EINA_INLIST_GET(fd_handler_current)->next;
+     }
 
-   EINA_INLIST_FOREACH(fd_handlers, fdh)
-     if (!fdh->delete_me)
-       {
-	  if ((fdh->read_active) ||
-	      (fdh->write_active) ||
-	      (fdh->error_active))
-	    {
-	       if (!fdh->func(fdh->data, fdh))
-		 {
-		    fdh->delete_me = 1;
-		    fd_handlers_delete_me = 1;
-		 }
-	       fdh->read_active = 0;
+   while (fd_handler_current)
+     {
+	Ecore_Fd_Handler *fdh = fd_handler_current;
+
+	if (!fdh->delete_me)
+	  {
+	     if ((fdh->read_active) ||
+		 (fdh->write_active) ||
+		 (fdh->error_active))
+	       {
+		  fdh->references++;
+		  if (!fdh->func(fdh->data, fdh))
+		    {
+		       fdh->delete_me = 1;
+		       fd_handlers_delete_me = 1;
+		    }
+		  fdh->references--;
+
+		  fdh->read_active = 0;
 		  fdh->write_active = 0;
 		  fdh->error_active = 0;
-	    }
-       }
+	       }
+	  }
+
+	if (fd_handler_current) /* may have changed in recursive main loops */
+	  fd_handler_current = (Ecore_Fd_Handler *)EINA_INLIST_GET(fd_handler_current)->next;
+     }
 }
 
 static int
@@ -667,11 +715,13 @@ _ecore_main_fd_handlers_buf_call(void)
        {
 	  if (fdh->buf_func)
 	    {
+	       fdh->references++;
 	       if (fdh->buf_func(fdh->buf_data, fdh))
 		 {
 		    ret |= fdh->func(fdh->data, fdh);
 		    fdh->read_active = 1;
 		 }
+	       fdh->references--;
 	    }
        }
 
@@ -957,15 +1007,33 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
      }
    else if ((result >= WAIT_OBJECT_0 + events_nbr) && (result < WAIT_OBJECT_0 + objects_nbr))
      {
-        EINA_INLIST_FOREACH(win32_handlers, wh)
-          {
+
+	if (!win32_handler_current)
+	  {
+	     /* regular main loop, start from head */
+	     win32_handler_current = win32_handlers;
+	  }
+	else
+	  {
+	     /* recursive main loop, continue from where we were */
+	     win32_handler_current = (Ecore_Win32_Handler *)EINA_INLIST_GET(win32_handler_current)->next;
+	  }
+
+	while (win32_handler_current)
+	  {
+	     wh = win32_handler_current;
+
              if (objects[result - WAIT_OBJECT_0] == wh->h)
                if (!wh->delete_me)
-                 if (!wh->func(wh->data, wh))
-                   {
-                      wh->delete_me = 1;
-                      win32_handlers_delete_me = 1;
-                   }
+		 {
+		    wh->references++;
+		    if (!wh->func(wh->data, wh))
+		      {
+			 wh->delete_me = 1;
+			 win32_handlers_delete_me = 1;
+		      }
+		    wh->references--;
+		 }
           }
         res = 1;
      }
