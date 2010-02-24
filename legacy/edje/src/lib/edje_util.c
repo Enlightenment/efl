@@ -2204,9 +2204,9 @@ _edje_box_layout_external_node_cmp(const Eina_Rbtree *left, const Eina_Rbtree *r
    Edje_Box_Layout *r = (Edje_Box_Layout *)right;
 
    if (strcmp(l->name, r->name) < 0)
-     return EINA_RBTREE_LEFT;
-   else
      return EINA_RBTREE_RIGHT;
+   else
+     return EINA_RBTREE_LEFT;
 }
 
 static int
