@@ -242,14 +242,14 @@ ecore_evas_init(void)
 EAPI int
 ecore_evas_shutdown(void)
 {
+   if (--_ecore_evas_init_count != 0)
+     return _ecore_evas_init_count;
+
    while (ecore_evases) _ecore_evas_free(ecore_evases);
 
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
    ecore_idle_enterer_del(ecore_evas_idle_enterer);
    ecore_evas_idle_enterer = NULL;
-   
-   if (--_ecore_evas_init_count != 0)
-     return _ecore_evas_init_count;
 
 #ifdef BUILD_ECORE_EVAS_X11
    while (_ecore_evas_x_shutdown());
