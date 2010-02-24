@@ -138,6 +138,7 @@ EAPI int ECORE_X_LOCK_NUM = 0;
 EAPI int ECORE_X_LOCK_CAPS = 0;
 
 #ifdef LOGRT
+static double t0 = 0.0;
 static Status (*_logrt_real_reply) (Display *disp, void *rep, int extra, Bool discard) = NULL;
 static void
 _logrt_init(void)
@@ -149,6 +150,7 @@ _logrt_init(void)
    if (!lib) lib = dlopen("libX11.so.6.3", RTLD_GLOBAL | RTLD_LAZY);
    if (!lib) lib = dlopen("libX11.so.6.3.0", RTLD_GLOBAL | RTLD_LAZY);
    _logrt_real_reply = dlsym(lib, "_XReply");
+   t0 = ecore_time_get();
 }
 Status
 _XReply(Display *disp, void *rep, int extra, Bool discard)
@@ -161,7 +163,7 @@ _XReply(Display *disp, void *rep, int extra, Bool discard)
    if (n > 0)
      {
         sym = backtrace_symbols(bt, n);
-        printf("ROUNDTRIP: ");
+        printf("ROUNDTRIP: %4.4f :", ecore_time_get() - t0);
         if (sym)
           {
              for (i = n - 1; i > 0; i--)
@@ -1265,23 +1267,15 @@ EAPI void
 ecore_x_grab(void)
 {
    _ecore_x_grab_count++;
-   
-   if (_ecore_x_grab_count == 1)
-      XGrabServer(_ecore_x_disp);
+   if (_ecore_x_grab_count == 1) XGrabServer(_ecore_x_disp);
 }
 
 EAPI void
 ecore_x_ungrab(void)
 {
    _ecore_x_grab_count--;
-   if (_ecore_x_grab_count < 0)
-      _ecore_x_grab_count = 0;
-
-   if (_ecore_x_grab_count == 0)
-   {
-      XUngrabServer(_ecore_x_disp);
-      XSync(_ecore_x_disp, False);
-   }
+   if (_ecore_x_grab_count < 0) _ecore_x_grab_count = 0;
+   if (_ecore_x_grab_count == 0) XUngrabServer(_ecore_x_disp);
 }
 
 int      _ecore_window_grabs_num = 0;

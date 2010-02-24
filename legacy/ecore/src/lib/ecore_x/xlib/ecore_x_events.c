@@ -1776,7 +1776,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	    && (xevent->xclient.format == 32))
      {
 	Ecore_X_Event_Ping *e;
-        Ecore_X_Window root;
+        Ecore_X_Window root = 0;
 
 	e = calloc(1, sizeof(Ecore_X_Event_Ping));
 	if (!e) return;
@@ -1784,9 +1784,13 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	e->time = xevent->xclient.data.l[1];
 	e->event_win = xevent->xclient.data.l[2];
 
-	ecore_event_add(ECORE_X_EVENT_PING, e, NULL, NULL);
         /* send a reply anyway - we are alive... eventloop at least */
-        root = ecore_x_window_root_get(e->win);
+	ecore_event_add(ECORE_X_EVENT_PING, e, NULL, NULL);
+        if (ScreenCount(_ecore_x_disp) > 1)
+          root = ecore_x_window_root_get(e->win);
+        else
+          root = DefaultRootWindow(_ecore_x_disp);
+
         if (xevent->xclient.window != root)
           {
              xevent->xclient.window = root;
