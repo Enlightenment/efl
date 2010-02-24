@@ -6599,7 +6599,7 @@ st_collections_group_programs_program_transition(void)
 			       "ACCELERATE", EDJE_TWEEN_MODE_ACCELERATE,
 			       "DECELERATE", EDJE_TWEEN_MODE_DECELERATE,
 			       NULL);
-   ep->tween.time = parse_float_range(1, 0.0, 999999999.0);
+   ep->tween.time = FROM_DOUBLE(parse_float_range(1, 0.0, 999999999.0));
 }
 
 /**

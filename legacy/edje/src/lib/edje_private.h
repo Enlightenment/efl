@@ -434,7 +434,7 @@ struct _Edje_Program /* a conditional program to be run */
 
    struct {
       int      mode; /* how to tween - linear, sinusoidal etc. */
-      double   time; /* time to graduate between current and new state */
+      FLOAT_T  time; /* time to graduate between current and new state */
    } tween;
 
    Eina_List  *targets; /* list of target parts to apply the state to */
@@ -1211,7 +1211,7 @@ extern Eina_List       *_edje_freeze_calc_list;
 extern Eina_Mempool *_edje_real_part_mp;
 extern Eina_Mempool *_edje_real_part_state_mp;
 
-void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
+void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos);
 Edje_Part_Description *_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name, double val);
 void  _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char  *d1, double v1, const char *d2, double v2);
 void  _edje_recalc(Edje *ed);

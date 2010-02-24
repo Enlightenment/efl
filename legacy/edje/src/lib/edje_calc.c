@@ -16,14 +16,14 @@ static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep, Edje_Part_Des
 static void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags);
 
 void
-_edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos)
+_edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos)
 {
    FLOAT_T fp_pos;
    FLOAT_T npos;
 
-   pos = CLAMP(pos, 0.0, 1.0);
+   pos = CLAMP(pos, ZERO, FROM_INT(1));
 
-   fp_pos = FROM_DOUBLE(pos);
+   fp_pos = pos;
 
    npos = ZERO;
    /* take linear pos along timescale and use interpolation method */

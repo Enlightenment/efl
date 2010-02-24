@@ -379,7 +379,7 @@ edje_object_animation_set(Evas_Object *obj, int on)
 
 	     runp = eina_list_data_get(newl);
 	     newl = eina_list_remove(newl, eina_list_data_get(newl));
-	     _edje_program_run_iterate(runp, runp->start_time + runp->program->tween.time);
+	     _edje_program_run_iterate(runp, runp->start_time + TO_DOUBLE(runp->program->tween.time));
 	     if (_edje_block_break(ed))
 	       {
 		  eina_list_free(newl);
@@ -440,7 +440,7 @@ edje_object_animation_get(const Evas_Object *obj)
 int
 _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 {
-   double t, total;
+   FLOAT_T t, total;
    Eina_List *l;
    Edje *ed;
    Edje_Program_Target *pt;
@@ -451,10 +451,10 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
    _edje_block(ed);
    _edje_ref(ed);
    _edje_freeze(ed);
-   t = tim - runp->start_time;
+   t = FROM_DOUBLE(tim - runp->start_time);
    total = runp->program->tween.time;
-   t /= total;
-   if (t > 1.0) t = 1.0;
+   t = DIV(t, total);
+   if (t > FROM_INT(1)) t = FROM_INT(1);
    EINA_LIST_FOREACH(runp->program->targets, l, pt)
      {
 	if (pt->id >= 0)
@@ -464,7 +464,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 					runp->program->tween.mode, t);
 	  }
      }
-   if (t >= 1.0)
+   if (t >= FROM_INT(1))
      {
         Edje_Program_After *pa;
 
@@ -481,7 +481,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 						    NULL,
 						    0.0);
 		       _edje_part_pos_set(ed, rp,
-					  runp->program->tween.mode, 0.0);
+					  runp->program->tween.mode, ZERO);
 		       rp->program = NULL;
 		    }
 	       }
@@ -556,7 +556,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 					       NULL,
 					       0.0);
 		  _edje_part_pos_set(ed, rp,
-				     runp->program->tween.mode, 0.0);
+				     runp->program->tween.mode, ZERO);
 		  rp->program = NULL;
 	       }
 	  }
@@ -626,7 +626,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
    _edje_freeze(ed);
    if (pr->action == EDJE_ACTION_TYPE_STATE_SET)
      {
-	if ((pr->tween.time > 0.0) && (!ed->no_anim))
+	if ((pr->tween.time > ZERO) && (!ed->no_anim))
 	  {
 	     Edje_Running_Program *runp;
 
@@ -645,7 +645,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 							 rp->param1.description->state.value,
 							 pr->state,
 							 pr->value);
-			    _edje_part_pos_set(ed, rp, pr->tween.mode, 0.0);
+			    _edje_part_pos_set(ed, rp, pr->tween.mode, ZERO);
 			    rp->program = runp;
 			 }
 		    }
@@ -682,7 +682,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 							 pr->value,
 							 NULL,
 							 0.0);
-			    _edje_part_pos_set(ed, rp, pr->tween.mode, 0.0);
+			    _edje_part_pos_set(ed, rp, pr->tween.mode, ZERO);
 			 }
 		    }
 	       }
@@ -948,7 +948,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
      }
    if (!((pr->action == EDJE_ACTION_TYPE_STATE_SET)
 	 /* hmm this fucks somethgin up. must look into it later */
-	 /* && (pr->tween.time > 0.0) && (!ed->no_anim))) */
+	 /* && (pr->tween.time > ZERO) && (!ed->no_anim))) */
 	 ))
      {
         EINA_LIST_FOREACH(pr->after, l, pa)

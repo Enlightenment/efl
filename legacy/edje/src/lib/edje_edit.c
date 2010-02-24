@@ -4950,7 +4950,7 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
    epr->state2 = NULL;
    epr->value2 = 0.0;
    epr->tween.mode = 1;
-   epr->tween.time = 0.0;
+   epr->tween.time = ZERO;
    epr->targets = NULL;
    epr->after = NULL;
 
@@ -5383,7 +5383,7 @@ edje_edit_program_transition_time_get(Evas_Object *obj, const char *prog)
    GET_EPR_OR_RETURN(-1);
 
    //printf("GET TRANSITION_TIME for program: %s [%.4f]\n", prog, epr->tween.time);
-   return epr->tween.time;
+   return TO_DOUBLE(epr->tween.time);
 }
 
 EAPI Eina_Bool
@@ -5392,7 +5392,7 @@ edje_edit_program_transition_time_set(Evas_Object *obj, const char *prog, double
    GET_EPR_OR_RETURN(0);
 
    //printf("GET TRANSITION_TIME for program: %s [%.4f]\n", prog, epr->tween.time);
-   epr->tween.time = seconds;
+   epr->tween.time = FROM_DOUBLE(seconds);
    return 1;
 }
 
