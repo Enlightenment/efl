@@ -52,7 +52,7 @@ if test "x${_efl_have_pthread}" = "xyes" ; then
    case "$host_os" in
       mingw*)
          EFL_PTHREAD_CFLAGS=""
-         EFL_PTHREAD_LIBS="-lpthreadGCE2"
+         EFL_PTHREAD_LIBS="-lpthreadGC2"
          ;;
       solaris*)
          EFL_PTHREAD_CFLAGS="-mt"
