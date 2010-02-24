@@ -137,7 +137,6 @@ int           _ecore_idle_exiter_exist(void);
 void          _ecore_event_shutdown(void);
 int           _ecore_event_exist(void);
 Ecore_Event  *_ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), void *data);
-void         *_ecore_event_del(Ecore_Event *event);
 void          _ecore_event_call(void);
 
 Ecore_Timer  *_ecore_exe_doomsday_clock_get(Ecore_Exe *exe);

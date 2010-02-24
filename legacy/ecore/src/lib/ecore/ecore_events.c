@@ -19,6 +19,7 @@ struct _Ecore_Event_Handler
    int type;
    int (*func) (void *data, int type, void *event);
    void  *data;
+   int       references;
    Eina_Bool delete_me : 1;
 };
 
@@ -31,6 +32,7 @@ struct _Ecore_Event_Filter
    void (*func_end) (void *data, void *loop_data);
    void *loop_data;
    void *data;
+   int       references;
    Eina_Bool delete_me : 1;
 };
 
@@ -42,6 +44,7 @@ struct _Ecore_Event
    void *event;
    void (*func_free) (void *data, void *ev);
    void *data;
+   int       references;
    Eina_Bool delete_me : 1;
 };
 
@@ -59,6 +62,9 @@ static int event_filters_delete_me = 0;
 static int event_id_max = ECORE_EVENT_COUNT;
 static int ecore_raw_event_type = ECORE_EVENT_NONE;
 static void *ecore_raw_event_event =  NULL;
+
+
+static void _ecore_event_purge_deleted(void);
 
 
 /**
@@ -328,7 +334,7 @@ _ecore_event_shutdown(void)
    Ecore_Event_Handler *eh;
    Ecore_Event_Filter *ef;
 
-   while (events) _ecore_event_del(events);
+   _ecore_event_purge_deleted();
    for (i = 0; i < event_handlers_num; i++)
      {
 	while ((eh = event_handlers[i]))
@@ -391,18 +397,34 @@ _ecore_event_del(Ecore_Event *event)
    return data;
 }
 
+static void
+_ecore_event_purge_deleted(void)
+{
+   Ecore_Event *itr = events;
+
+   while (itr)
+     {
+	Ecore_Event *next = (Ecore_Event *)EINA_INLIST_GET(itr)->next;
+	if (!itr->references)
+	  _ecore_event_del(itr);
+	itr = next;
+     }
+}
+
 void
 _ecore_event_call(void)
 {
    Ecore_Event *e;
    Ecore_Event_Filter *ef;
    Ecore_Event_Handler *eh;
-   int handle_count;
+   Eina_List *l, *l_next;
 
    EINA_INLIST_FOREACH(event_filters, ef)
      {
 	if (!ef->delete_me)
 	  {
+	     ef->references++;
+
 	     if (ef->func_start)
 	       ef->loop_data = ef->func_start(ef->data);
 	     EINA_INLIST_FOREACH(events, e)
@@ -416,10 +438,13 @@ _ecore_event_call(void)
 	       }
 	     if (ef->func_end)
 	       ef->func_end(ef->data, ef->loop_data);
+
+	     ef->references--;
 	  }
      }
    if (event_filters_delete_me)
      {
+	int deleted_in_use = 0;
      	Ecore_Event_Filter *l;
 	EINA_INLIST_FOREACH(event_filters, l)
 	  {
@@ -427,19 +452,26 @@ _ecore_event_call(void)
 	     l = (Ecore_Event_Filter *) EINA_INLIST_GET(l)->next;
 	     if (ef->delete_me)
 	       {
+		  if (ef->references)
+		    {
+		       deleted_in_use++;
+		       continue;
+		    }
+
 		  event_filters = (Ecore_Event_Filter *) eina_inlist_remove(EINA_INLIST_GET(event_filters), EINA_INLIST_GET(ef));
 		  ECORE_MAGIC_SET(ef, ECORE_MAGIC_NONE);
 		  free(ef);
 	       }
 	  }
-	event_filters_delete_me = 0;
+	if (!deleted_in_use)
+	  event_filters_delete_me = 0;
      }
 //   printf("EVENT BATCH...\n");
    EINA_INLIST_FOREACH(events, e)
      {
 	if (!e->delete_me)
 	  {
-	     handle_count = 0;
+	     int handle_count = 0;
 	     ecore_raw_event_type = e->type;
 	     ecore_raw_event_event = e->event;
 //	     printf("HANDLE ev type %i, %p\n", e->type, e->event);
@@ -449,8 +481,15 @@ _ecore_event_call(void)
 		    {
 		       if (!eh->delete_me)
 			 {
+			    int ret;
+
 			    handle_count++;
-			    if (!eh->func(eh->data, e->type, e->event))
+
+			    eh->references++;
+			    ret = eh->func(eh->data, e->type, e->event);
+			    eh->references--;
+
+			    if (!ret)
 			      break;  /* 0 == "call no further handlers" */
 			 }
 		    }
@@ -465,11 +504,14 @@ _ecore_event_call(void)
    ecore_raw_event_type = ECORE_EVENT_NONE;
    ecore_raw_event_event = NULL;
 
-   while (events) _ecore_event_del((Ecore_Event *) events);
-   EINA_LIST_FREE(event_handlers_delete_list, eh)
+   _ecore_event_purge_deleted();
+   EINA_LIST_FOREACH_SAFE(event_handlers_delete_list, l, l_next, eh)
      {
+	if (eh->references) continue;
+
+	event_handlers_delete_list = eina_list_remove_list(event_handlers_delete_list, l);
+
 	event_handlers[eh->type] = (Ecore_Event_Handler *) eina_inlist_remove(EINA_INLIST_GET(event_handlers[eh->type]), EINA_INLIST_GET(eh));
-	event_handlers_delete_list = eina_list_remove(event_handlers_delete_list, eh);
 	ECORE_MAGIC_SET(eh, ECORE_MAGIC_NONE);
 	free(eh);
      }
