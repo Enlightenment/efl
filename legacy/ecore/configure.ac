@@ -464,7 +464,7 @@ AC_ARG_WITH([sdl-config],
 
 AC_PATH_PROG([SDL_CONFIG], ["sdl-config"], [""], [$PATH])
 
-if test -z "$SDL_CONFIG" ; then
+if test -n "$SDL_CONFIG" ; then
    SDL_CFLAGS=`$SDL_CONFIG --cflags`
    SDL_LIBS=`$SDL_CONFIG --libs`
    AC_SUBST(SDL_CFLAGS)
