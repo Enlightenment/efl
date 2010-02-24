@@ -268,16 +268,16 @@ eina_mempool_shutdown(void)
  * allocator" algorithm</a> but the Eina implementation differs in the
  * sense that the chunk information is not stored on the chunk itself,
  * but on another memory area. This is useful for cases where the
- * momery to manage might be slower to access, or limited (like video
+ * memory to manage might be slower to access, or limited (like video
  * memory).
  * @li @c chained_pool: It is the default one. It allocates a big
- * chunk of memory with malloc() and split the result in chnks of the
- * requested size that are pushed inside a stack. When requested, t
+ * chunk of memory with malloc() and split the result in chunks of the
+ * requested size that are pushed inside a stack. When requested, it
  * takes this pointer from the stack to give them to whoever wants
  * them.
  * @li @c ememoa_fixed and @c ememoa_unknown: experimental allocators
  * which could be useful when a fixed amount of memory is needed.
- * @li @c fixed_bitmap: It alocates with malloc) 32* the requested
+ * @li @c fixed_bitmap: It allocates with malloc) 32* the requested
  * size and push the pool pointer in an rbtree. To find empty space in
  * a pool, it will just search for the first bit set in an int (32
  * bits). Then, when a pointer is freed, it will do a search inside
