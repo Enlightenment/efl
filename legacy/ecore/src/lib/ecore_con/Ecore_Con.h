@@ -6,7 +6,9 @@
 
 #include <time.h>
 #include <libgen.h>
-#ifdef HAVE_NETDB_H
+#ifdef _WIN32
+# include <ws2tcpip.h>
+#else
 # include <netdb.h>
 #endif
 #include <Eina.h>

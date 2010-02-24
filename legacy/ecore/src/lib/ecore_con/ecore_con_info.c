@@ -37,11 +37,26 @@ void *alloca (size_t);
 #ifdef __OpenBSD__
 # include <sys/types.h>
 #endif
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <arpa/nameser.h>
-#include <netdb.h>
+
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
+
+#ifdef HAVE_ARPA_NAMESER_H
+# include <arpa/nameser.h>
+#endif
+
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+
+#ifdef HAVE_NETDB_H
+# include <netdb.h>
+#endif
 
 #include "Ecore.h"
 #include "ecore_private.h"

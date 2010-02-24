@@ -857,20 +857,26 @@ PKG_CHECK_MODULES([EVAS], [evas >= 0.9.9],
 
 AC_HEADER_SYS_WAIT
 
+have_addrinfo="no"
 case "$host_os" in
    mingw* | cegcc*)
       AC_DEFINE(HAVE_DLFCN_H, 1, [Define to 1 if you have the <dlfcn.h> header file.])
       AC_DEFINE(HAVE_SYS_MMAN_H, 1, [Define to 1 if you have the <sys/mman.h> header file.])
       AC_DEFINE(HAVE_SYS_TIME_H, 1, [Define to 1 if you have the <sys/time.h> header file.])
+      have_addrinfo="yes"
       ;;
    *)
-      AC_CHECK_HEADERS([dlfcn.h features.h langinfo.h locale.h netdb.h sys/time.h sys/mman.h signal.h sys/resource.h])
+      AC_CHECK_HEADERS([dlfcn.h features.h langinfo.h locale.h sys/time.h sys/mman.h signal.h sys/resource.h])
       ;;
 esac
 
 # ecore_con
 
-AC_CHECK_HEADERS([arpa/inet.h netinet/tcp.h netinet/in.h sys/socket.h sys/un.h ws2tcpip.h])
+AC_CHECK_HEADERS([arpa/inet.h arpa/nameser.h netinet/tcp.h netinet/in.h sys/socket.h sys/un.h ws2tcpip.h netdb.h])
+
+if test "x${ac_cv_header_netdb_h}" = "xyes" ; then
+   have_addrinfo="yes"
+fi
 
 # Framebuffer (ecore_fb)
 have_fb="no"
@@ -979,7 +985,7 @@ ECORE_CHECK_MODULE([data], [${want_ecore_data}], [Data])
 ECORE_CHECK_MODULE([txt], [${want_ecore_txt}], [Txt], [$have_iconv])
 
 # ecore_con
-ECORE_CHECK_MODULE([con], [${want_ecore_con}], [Con])
+ECORE_CHECK_MODULE([con], [${want_ecore_con}], [Con], [${have_addrinfo}])
 
 have_curl="no"
 have_gnutls="no"
