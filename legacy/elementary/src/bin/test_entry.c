@@ -4,14 +4,14 @@ static void
 my_entry_bt_1(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
-   elm_scrolled_entry_entry_set(en, "");
+   elm_entry_entry_set(en, "");
 }
 
 static void
 my_entry_bt_2(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
-   const char *s = elm_scrolled_entry_entry_get(en);
+   const char *s = elm_entry_entry_get(en);
    printf("ENTRY:\n");
    if (s) printf("%s\n", s);
 }
@@ -20,7 +20,7 @@ static void
 my_entry_bt_3(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
-   const char *s = elm_scrolled_entry_selection_get(en);
+   const char *s = elm_entry_selection_get(en);
    printf("SELECTION:\n");
    if (s) printf("%s\n", s);
 }
@@ -29,29 +29,13 @@ static void
 my_entry_bt_4(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
-   elm_scrolled_entry_entry_insert(en, "Insert some <b>BOLD</> text");
-}
-
-static void
-my_entry_bt_5(void *data, Evas_Object *obj, void *event_info)
-{
-   Evas_Object *en = data;
-   const char *s = elm_scrolled_entry_entry_get(en);
-   printf("PASSWORD: '%s'\n", s ? s : "");
-}
-
-static void
-anchor_test(void *data, Evas_Object *obj, void *event_info)
-{
-   Evas_Object *en = data;
-   elm_scrolled_entry_entry_insert(en, "ANCHOR CLICKED");
+   elm_entry_entry_insert(en, "Insert some <b>BOLD</> text");
 }
 
 void
 test_entry(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *bx2, *bt, *en;
-   char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
    elm_win_title_set(win, "Entry");
@@ -130,11 +114,57 @@ test_entry(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(win);
 }
 
+static void
+my_scrolled_entry_bt_1(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *en = data;
+   elm_scrolled_entry_entry_set(en, "");
+}
+
+static void
+my_scrolled_entry_bt_2(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *en = data;
+   const char *s = elm_scrolled_entry_entry_get(en);
+   printf("ENTRY:\n");
+   if (s) printf("%s\n", s);
+}
+
+static void
+my_scrolled_entry_bt_3(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *en = data;
+   const char *s = elm_scrolled_entry_selection_get(en);
+   printf("SELECTION:\n");
+   if (s) printf("%s\n", s);
+}
+
+static void
+my_scrolled_entry_bt_4(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *en = data;
+   elm_scrolled_entry_entry_insert(en, "Insert some <b>BOLD</> text");
+}
+
+static void
+my_scrolled_entry_bt_5(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *en = data;
+   const char *s = elm_scrolled_entry_entry_get(en);
+   printf("PASSWORD: '%s'\n", s ? s : "");
+}
+
+static void
+scrolled_anchor_test(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *en = data;
+   elm_scrolled_entry_entry_insert(en, "ANCHOR CLICKED");
+}
+
 void
 test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *bx, *bx2, *bt, *en, *en_p, *sc, *sp;
-   char buf[PATH_MAX];
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *en, *en_p, *sp;
 
    win = elm_win_add(NULL, "entry-scrolled", ELM_WIN_BASIC);
    elm_win_title_set(win, "Entry Scrolled");
@@ -234,7 +264,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
 				"case this line is not long enough I will add more here to "
 				"really test it out, as Elementary really needs some "
 				"good testing to see if entry widgets work as advertised.");
-   evas_object_smart_callback_add(en, "anchor,clicked", anchor_test, en);
+   evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
@@ -245,7 +275,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Clear");
-   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_1, en);
+   evas_object_smart_callback_add(bt, "clicked", my_scrolled_entry_bt_1, en);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
@@ -253,7 +283,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Print");
-   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_2, en);
+   evas_object_smart_callback_add(bt, "clicked", my_scrolled_entry_bt_2, en);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
@@ -261,7 +291,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Print pwd");
-   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_5, en_p);
+   evas_object_smart_callback_add(bt, "clicked", my_scrolled_entry_bt_5, en_p);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
@@ -269,7 +299,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Selection");
-   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_3, en);
+   evas_object_smart_callback_add(bt, "clicked", my_scrolled_entry_bt_3, en);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
@@ -277,7 +307,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Insert");
-   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_4, en);
+   evas_object_smart_callback_add(bt, "clicked", my_scrolled_entry_bt_4, en);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
