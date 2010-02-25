@@ -2492,8 +2492,8 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
      {
 	o->style = NULL;
      }
-   if (o->markup_text)
-     evas_object_textblock_text_markup_set(obj, o->markup_text);
+
+   evas_object_textblock_text_markup_set(obj, o->markup_text);
 }
 
 /**
