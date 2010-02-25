@@ -210,53 +210,89 @@ PKG_CHECK_MODULES([ELEMENTARY_WINCE],
 
 ELM_EDBUS_DEF="#undef"
 have_elementary_edbus="no"
-PKG_CHECK_MODULES([ELEMENTARY_EDBUS],
-   [
-    edbus
-    ehal
-   ],
-   [
-    AC_DEFINE(HAVE_ELEMENTARY_EDBUS, 1, [EDBus support for Elementary])
-    have_elementary_edbus="yes"
-    ELM_EDBUS_DEF="#define"
-    requirement_elm="ehal edbus ${requirement_elm}"
-   ],
-   [have_elementary_edbus="no"]
-)
+want_elementary_edbus="auto"
+AC_ARG_ENABLE([edbus],
+   [AC_HELP_STRING([--disable-edbus], [disable edbus support. @<:@default=detect@:>@])],
+   [want_elementary_edbus=$enableval], [])
+
+if test "x$want_elementary_edbus" != "xno"; then
+    PKG_CHECK_MODULES([ELEMENTARY_EDBUS],
+       [
+        edbus
+        ehal
+       ],
+       [
+        AC_DEFINE(HAVE_ELEMENTARY_EDBUS, 1, [EDBus support for Elementary])
+        have_elementary_edbus="yes"
+        ELM_EDBUS_DEF="#define"
+        requirement_elm="ehal edbus ${requirement_elm}"
+       ],
+       [have_elementary_edbus="no"]
+    )
+else
+    have_elementary_edbus="no"
+fi
+if test "x$want_elementary_edbus" = "xyes" -a "x$have_elementary_edbus" = "xno"; then
+    AC_MSG_ERROR([E_DBus support requested, but no edbus/ehal found by pkg-config.])
+fi
 AC_SUBST(ELM_EDBUS_DEF)
 
 ELM_EFREET_DEF="#undef"
 have_elementary_efreet="no"
-PKG_CHECK_MODULES([ELEMENTARY_EFREET],
-   [
-    efreet
-    efreet-mime
-    efreet-trash
-   ],
-   [
-    AC_DEFINE(HAVE_ELEMENTARY_EFREET, 1, [Efreet support for Elementary])
-    have_elementary_efreet="yes"
-    ELM_EFREET_DEF="#define"
-    requirement_elm="efreet efreet-mime efreet-trash ${requirement_elm}"
-   ],
-   [have_elementary_efreet="no"]
-)
+want_elementary_efreet="auto"
+AC_ARG_ENABLE([efreet],
+   [AC_HELP_STRING([--disable-efreet], [disable efreet support. @<:@default=detect@:>@])],
+   [want_elementary_efreet=$enableval], [])
+
+if test "x$want_elementary_efreet" != "xno"; then
+    PKG_CHECK_MODULES([ELEMENTARY_EFREET],
+       [
+        efreet
+        efreet-mime
+        efreet-trash
+       ],
+       [
+        AC_DEFINE(HAVE_ELEMENTARY_EFREET, 1, [Efreet support for Elementary])
+        have_elementary_efreet="yes"
+        ELM_EFREET_DEF="#define"
+        requirement_elm="efreet efreet-mime efreet-trash ${requirement_elm}"
+       ],
+       [have_elementary_efreet="no"]
+    )
+else
+    have_elementary_efreet="no"
+fi
+if test "x$want_elementary_efreet" = "xyes" -a "x$have_elementary_efreet" = "xno"; then
+    AC_MSG_ERROR([Efreet support requested, but no efreet/efreet-mime/efreet-trash found by pkg-config.])
+fi
 AC_SUBST(ELM_EFREET_DEF)
 
 ELM_EWEATHER_DEF="#undef"
 have_elementary_eweather="no"
-PKG_CHECK_MODULES([ELEMENTARY_EWEATHER],
-   [
-    eweather
-   ],
-   [
-    AC_DEFINE(HAVE_ELEMENTARY_EWEATHER, 1, [EWeather support for Elementary])
-    have_elementary_eweather="yes"
-    ELM_EWEATHER_DEF="#define"
-    requirement_elm="eweather ${requirement_elm}"
-   ],
-   [have_elementary_eweather="no"]
-)
+want_elementary_eweather="auto"
+AC_ARG_ENABLE([eweather],
+   [AC_HELP_STRING([--disable-eweather], [disable eweather support. @<:@default=detect@:>@])],
+   [want_elementary_eweather=$enableval], [])
+
+if test "x$want_elementary_eweather" != "xno"; then
+    PKG_CHECK_MODULES([ELEMENTARY_EWEATHER],
+       [
+        eweather
+       ],
+       [
+        AC_DEFINE(HAVE_ELEMENTARY_EWEATHER, 1, [EWeather support for Elementary])
+        have_elementary_eweather="yes"
+        ELM_EWEATHER_DEF="#define"
+        requirement_elm="eweather ${requirement_elm}"
+       ],
+       [have_elementary_eweather="no"]
+    )
+else
+    have_elementary_eweather="no"
+fi
+if test "x$want_elementary_eweather" = "xyes" -a "x$have_elementary_eweather" = "xno"; then
+    AC_MSG_ERROR([Eweather support requested, but no eweather found by pkg-config.])
+fi
 AC_SUBST(ELM_EWEATHER_DEF)
 
 ELM_ALLOCA_H_DEF="#undef"
