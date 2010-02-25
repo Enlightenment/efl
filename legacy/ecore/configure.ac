@@ -78,6 +78,22 @@ AC_SUBST(ecore_x_release_info)
 
 AC_DEFINE_UNQUOTED(SHARED_LIB_SUFFIX, "$shrext_cmds", [Suffix for shared objects])
 
+with_max_log_level="<unset>"
+AC_ARG_WITH(internal-maximum-log-level,
+   [AC_HELP_STRING([--with-internal-maximum-log-level=NUMBER],
+                   [limit ecore internal log level to the given number, any call to EINA_LOG() with values greater than this will be compiled out, ignoring runtime settings, but saving function calls.])],
+   [
+    if test "x${withval}" != "xno"; then
+       if echo "${withval}" | grep '^[[0-9]]\+$' >/dev/null 2>/dev/null; then
+          AC_MSG_NOTICE([ignoring any EINA_LOG() with level greater than ${withval}])
+          AC_DEFINE_UNQUOTED(EINA_LOG_LEVEL_MAXIMUM, ${withval}, [if set, logging is limited to this amount.])
+          with_max_log_level="${withval}"
+       else
+          AC_MSG_ERROR([--with-internal-maximum-log-level takes a decimal number, got "${withval}" instead.])
+       fi
+    fi
+    ], [:])
+
 
 ### Default options with respect to host
 
@@ -1517,11 +1533,8 @@ if test "x${have_ecore_evas}" = "xyes" ; then
 fi
 echo
 echo "  Tests................: ${enable_tests}"
-echo
+echo "  Maximum log level....: ${with_max_log_level}"
 echo "Documentation..........: ${build_doc}"
-if test "x${build_doc}" = "xyes" ; then
-   echo "  Building.............: make doc"
-fi
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
