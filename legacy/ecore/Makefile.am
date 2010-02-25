@@ -159,7 +159,22 @@ endif
 
 .PHONY: doc
 
+# Documentation
+
 doc:
 	@echo "entering doc/"
 	make -C doc doc
 
+# Unit tests
+
+if EFL_ENABLE_TESTS
+
+check-local:
+	@./src/tests/ecore_suite
+
+else
+
+check-local:
+	@echo "reconfigure with --enable-tests"
+
+endif

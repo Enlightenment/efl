@@ -274,6 +274,10 @@ if test "x${want_xim}" = "xyes" ; then
    AC_DEFINE([ENABLE_XIM], [1], [Enable X Input Method])
 fi
 
+# Unit tests
+
+EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
+
 
 ### Checks for programs
 
@@ -1380,6 +1384,7 @@ src/lib/ecore_wince/Makefile
 src/lib/ecore_x/Makefile
 src/lib/ecore_x/xlib/Makefile
 src/lib/ecore_x/xcb/Makefile
+src/tests/Makefile
 README
 ecore.spec
 po/Makefile.in
@@ -1510,6 +1515,8 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    Software 16bit DirectDraw..: $have_ecore_evas_software_16_ddraw"
   echo "    Software 16bit WinCE.......: $have_ecore_evas_software_16_wince"
 fi
+echo
+echo "  Tests................: ${enable_tests}"
 echo
 echo "Documentation..........: ${build_doc}"
 if test "x${build_doc}" = "xyes" ; then
