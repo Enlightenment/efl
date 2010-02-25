@@ -316,6 +316,6 @@ ecore_thread_cancel(Ecore_Thread *thread)
    work->cancel = EINA_TRUE;
    return EINA_FALSE;
 #else
-   return EINA_FALSE;
+   return EINA_TRUE;
 #endif
 }
