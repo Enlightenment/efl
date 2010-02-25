@@ -691,10 +691,10 @@ AC_CHECK_HEADERS(pthread.h sched.h,
 )
 
 #######################################
-## Threaded rendering
+## Pthread
 AC_MSG_CHECKING(whether to build pthread code)
-AC_ARG_ENABLE(threaded-rendering,
-  AC_HELP_STRING([--enable-threaded-rendering], [enable threaded rendering]),
+AC_ARG_ENABLE(pthreads,
+  AC_HELP_STRING([--enable-pthreads], [enable threaded rendering]),
   [
       if test "x$enableval" = "xyes" ; then
         if test "x$build_pthreads" = "xyes"; then
