@@ -114,6 +114,7 @@ ecore_x_image_new(int w, int h, Ecore_X_Visual vis, int depth)
    
    im = calloc(1, sizeof(Ecore_X_Image));
    if (!im) return NULL;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    im->w = w;
    im->h = h;
    im->vis = vis;
@@ -126,6 +127,7 @@ ecore_x_image_new(int w, int h, Ecore_X_Visual vis, int depth)
 EAPI void
 ecore_x_image_free(Ecore_X_Image *im)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (im->shm)
      {
         if (im->xim)
@@ -193,6 +195,7 @@ ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw,
    int ret = 1;
    XErrorHandler ph;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (im->shm)
      {
         if (!im->xim) _ecore_x_image_shm_create(im);
@@ -256,12 +259,14 @@ EAPI void
 ecore_x_image_put(Ecore_X_Image *im, Ecore_X_Drawable draw, 
                   int x, int y, int sx, int sy, int w, int h)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    printf("ecore_x_image_put: unimplemented!\n");
 }
 
 EAPI void *
 ecore_x_image_data_get(Ecore_X_Image *im, int *bpl, int *rows, int *bpp)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!im->xim) _ecore_x_image_shm_create(im);
    if (!im->xim) return NULL;
    

@@ -40,6 +40,7 @@ _ecore_x_randr_init(void)
 EAPI int
 ecore_x_randr_query(void)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return _randr_available;
 }
 
@@ -49,6 +50,7 @@ ecore_x_randr_events_select(Ecore_X_Window win, int on)
 #ifdef ECORE_XRANDR
    int mask;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!on)
      mask = 0;
    else
@@ -74,6 +76,7 @@ ecore_x_randr_screen_rotations_get(Ecore_X_Window root)
 #ifdef ECORE_XRANDR
    Rotation rot, crot;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    rot = XRRRotations(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &crot);
    return rot;
 #else
@@ -87,6 +90,7 @@ ecore_x_randr_screen_rotation_get(Ecore_X_Window root)
 #ifdef ECORE_XRANDR
    Rotation crot = 0;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XRRRotations(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &crot);
    return crot;
 #else
@@ -102,6 +106,7 @@ ecore_x_randr_screen_rotation_set(Ecore_X_Window root, Ecore_X_Randr_Rotation ro
    SizeID sizeid;
    Rotation crot;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    xrrcfg = XRRGetScreenInfo(_ecore_x_disp, root);
    if (!xrrcfg) return;
    sizeid = XRRConfigCurrentConfiguration(xrrcfg, &crot);
@@ -118,6 +123,7 @@ ecore_x_randr_screen_sizes_get(Ecore_X_Window root, int *num)
    XRRScreenSize *sizes;
    int i, n;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (num) *num = 0;
 
    /* we don't have to free sizes, no idea why not */
@@ -149,6 +155,7 @@ ecore_x_randr_current_screen_size_get(Ecore_X_Window root)
    Rotation rotation;
    int n;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    sc = XRRGetScreenInfo(_ecore_x_disp, root);
    if (!sc)
      {
@@ -176,6 +183,7 @@ ecore_x_randr_screen_size_set(Ecore_X_Window root, Ecore_X_Screen_Size size)
    XRRScreenSize *sizes;
    int i, n, size_index = -1;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    sizes = XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &n);
    for (i = 0; i < n; i++)
      {
@@ -210,6 +218,7 @@ ecore_x_randr_current_screen_refresh_rate_get(Ecore_X_Window root)
 #ifdef ECORE_XRANDR
    XRRScreenConfiguration *sc;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    sc = XRRGetScreenInfo(_ecore_x_disp, root);
    if (!sc)
      {
@@ -231,6 +240,7 @@ ecore_x_randr_screen_refresh_rates_get(Ecore_X_Window root, int size_id, int *nu
    short *rates;
    int i, n;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (num) *num = 0;
 
    sc = XRRGetScreenInfo(_ecore_x_disp, root);
@@ -269,6 +279,7 @@ ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window root, Ecore_X_Screen_Size s
    XRRScreenSize *sizes;
    int i, n, size_index = -1;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    sizes = XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &n);
    for (i = 0; i < n; i++)
      {

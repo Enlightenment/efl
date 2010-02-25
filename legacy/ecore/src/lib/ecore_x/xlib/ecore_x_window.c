@@ -41,6 +41,7 @@ ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
    Window               win;
    XSetWindowAttributes attr;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (parent == 0) parent = DefaultRootWindow(_ecore_x_disp);
    attr.backing_store         = NotUseful;
    attr.override_redirect     = False;
@@ -101,6 +102,7 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
    Window               win;
    XSetWindowAttributes attr;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (parent == 0) parent = DefaultRootWindow(_ecore_x_disp);
    attr.backing_store         = NotUseful;
    attr.override_redirect     = True;
@@ -159,6 +161,7 @@ ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
    Window               win;
    XSetWindowAttributes attr;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (parent == 0) parent = DefaultRootWindow(_ecore_x_disp);
    attr.override_redirect     = True;
    attr.do_not_propagate_mask = NoEventMask;
@@ -216,6 +219,7 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
    char **argv;
    XTextProperty xprop;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    /*
     * Set WM_CLIENT_MACHINE.
     */
@@ -253,8 +257,9 @@ ecore_x_window_configure(Ecore_X_Window win,
 {
    XWindowChanges xwc;
 
-   if (!win)
-      return;
+   if (!win) return;
+   
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xwc.x = x;
    xwc.y = y;
@@ -284,8 +289,8 @@ ecore_x_window_free(Ecore_X_Window win)
    /* sorry sir, deleting the root window doesn't sound like
     * a smart idea.
     */
-   if (win)
-      XDestroyWindow(_ecore_x_disp, win);
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (win) XDestroyWindow(_ecore_x_disp, win);
 }
 
 /**
@@ -298,6 +303,7 @@ ecore_x_window_ignore_set(Ecore_X_Window win, int ignore)
 {
    int i, j;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (ignore)
      {
 	if (ignore_list)
@@ -357,9 +363,9 @@ ecore_x_window_delete_request_send(Ecore_X_Window win)
    /* sorry sir, deleting the root window doesn't sound like
     * a smart idea.
     */
-   if (!win)
-      return;
+   if (!win) return;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    xev.xclient.type = ClientMessage;
    xev.xclient.display = _ecore_x_disp;
    xev.xclient.window = win;
@@ -388,6 +394,7 @@ ecore_x_window_delete_request_send(Ecore_X_Window win)
 EAPI void
 ecore_x_window_show(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XMapWindow(_ecore_x_disp, win);
 }
 
@@ -408,6 +415,7 @@ ecore_x_window_hide(Ecore_X_Window win)
    unsigned int uidum;
 
    /* ICCCM: SEND unmap event... */
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    root = win;
    if (ScreenCount(_ecore_x_disp) == 1)
      root = DefaultRootWindow(_ecore_x_disp);
@@ -445,6 +453,7 @@ ecore_x_window_hide(Ecore_X_Window win)
 EAPI void
 ecore_x_window_move(Ecore_X_Window win, int x, int y)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XMoveWindow(_ecore_x_disp, win, x, y);
 }
 
@@ -458,6 +467,7 @@ ecore_x_window_move(Ecore_X_Window win, int x, int y)
 EAPI void
 ecore_x_window_resize(Ecore_X_Window win, int w, int h)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    XResizeWindow(_ecore_x_disp, win, w, h);
@@ -475,6 +485,7 @@ ecore_x_window_resize(Ecore_X_Window win, int w, int h)
 EAPI void
 ecore_x_window_move_resize(Ecore_X_Window win, int x, int y, int w, int h)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    XMoveResizeWindow(_ecore_x_disp, win, x, y, w, h);
@@ -494,6 +505,7 @@ ecore_x_window_move_resize(Ecore_X_Window win, int x, int y, int w, int h)
 EAPI void
 ecore_x_window_focus(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);   
 //   XSetInputFocus(_ecore_x_disp, win, RevertToNone, CurrentTime);
 //   XSetInputFocus(_ecore_x_disp, win, RevertToPointerRoot, CurrentTime);
@@ -509,6 +521,7 @@ ecore_x_window_focus(Ecore_X_Window win)
 EAPI void
 ecore_x_window_focus_at_time(Ecore_X_Window win, Ecore_X_Time t)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);   
 //   XSetInputFocus(_ecore_x_disp, win, RevertToNone, t);
 //   XSetInputFocus(_ecore_x_disp, win, PointerRoot, t);
@@ -526,8 +539,8 @@ ecore_x_window_focus_get(void)
    Window win;
    int revert_mode;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    win = 0;
-   
    XGetInputFocus(_ecore_x_disp, &win, &revert_mode);
    return win;
 }
@@ -546,6 +559,7 @@ ecore_x_window_focus_get(void)
 EAPI void
 ecore_x_window_raise(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XRaiseWindow(_ecore_x_disp, win);
 }
 
@@ -557,6 +571,7 @@ ecore_x_window_raise(Ecore_X_Window win)
 EAPI void
 ecore_x_window_lower(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XLowerWindow(_ecore_x_disp, win);
 }
 
@@ -577,6 +592,7 @@ ecore_x_window_lower(Ecore_X_Window win)
 EAPI void
 ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window new_parent, int x, int y)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (new_parent == 0) new_parent = DefaultRootWindow(_ecore_x_disp);   
    XReparentWindow(_ecore_x_disp, win, new_parent, x, y);
 }
@@ -593,9 +609,8 @@ ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h)
 {
    int dummy_x, dummy_y;
    
-   if (win == 0) 
-      win = DefaultRootWindow(_ecore_x_disp);
-
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (win == 0)  win = DefaultRootWindow(_ecore_x_disp);
    ecore_x_drawable_geometry_get(win, &dummy_x, &dummy_y, w, h);
 }
 
@@ -611,9 +626,8 @@ ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h)
 EAPI void
 ecore_x_window_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h)
 {
-   if (!win)
-      win = DefaultRootWindow(_ecore_x_disp);
-
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!win) win = DefaultRootWindow(_ecore_x_disp);
    ecore_x_drawable_geometry_get(win, x, y, w, h);
 }
 
@@ -626,10 +640,9 @@ ecore_x_window_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h)
 EAPI int
 ecore_x_window_border_width_get(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    /* doesn't make sense to call this on a root window */
-   if (!win)
-      return 0;
-
+   if (!win) return 0;
    return ecore_x_drawable_border_width_get(win);
 }
 
@@ -642,10 +655,9 @@ ecore_x_window_border_width_get(Ecore_X_Window win)
 EAPI void
 ecore_x_window_border_width_set(Ecore_X_Window win, int width)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    /* doesn't make sense to call this on a root window */
-   if (!win)
-      return;
-
+   if (!win) return;
    XSetWindowBorderWidth (_ecore_x_disp, win, width);
 }
 
@@ -657,6 +669,7 @@ ecore_x_window_border_width_set(Ecore_X_Window win, int width)
 EAPI int
 ecore_x_window_depth_get(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return ecore_x_drawable_depth_get(win);
 }
   
@@ -668,6 +681,7 @@ ecore_x_window_depth_get(Ecore_X_Window win)
 EAPI void
 ecore_x_window_cursor_show(Ecore_X_Window win, int show)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);
    if (!show)
      {
@@ -698,6 +712,7 @@ ecore_x_window_cursor_show(Ecore_X_Window win, int show)
 EAPI void
 ecore_x_window_cursor_set(Ecore_X_Window win, Ecore_X_Cursor c)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (c == 0)
      XUndefineCursor(_ecore_x_disp, win);
    else
@@ -715,6 +730,7 @@ ecore_x_window_visible_get(Ecore_X_Window win)
 {
    XWindowAttributes attr;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return (XGetWindowAttributes(_ecore_x_disp, win, &attr) &&
            (attr.map_state == IsViewable));
 }
@@ -976,6 +992,7 @@ _ecore_x_window_shadow_tree_at_xy_get(Window base, int bx, int by, int x, int y,
 EAPI Ecore_X_Window
 ecore_x_window_shadow_tree_at_xy_with_skip_get(Ecore_X_Window base, int x, int y, Ecore_X_Window *skip, int skip_num)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return _ecore_x_window_shadow_tree_at_xy_get(base, 0, 0, x, y, skip, skip_num);
 }
 
@@ -993,6 +1010,7 @@ ecore_x_window_shadow_parent_get(Ecore_X_Window root, Ecore_X_Window win)
    Shadow *s;
    int i;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!shadow_base)
      {
 	_ecore_x_window_tree_shadow_populate();
@@ -1018,6 +1036,7 @@ ecore_x_window_shadow_parent_get(Ecore_X_Window root, Ecore_X_Window win)
 EAPI void
 ecore_x_window_shadow_tree_flush(void)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_x_window_tree_shadow_free();
 }
 
@@ -1032,6 +1051,7 @@ ecore_x_window_root_get(Ecore_X_Window win)
 {
    XWindowAttributes att;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!XGetWindowAttributes(_ecore_x_disp, win, &att)) return 0;
    return att.root;
 }
@@ -1045,9 +1065,11 @@ _ecore_x_window_at_xy_get(Window base, int bx, int by, int x, int y,
    int               i, j, wx, wy, ww, wh;
    unsigned int      num;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_visible_get(base))
      return 0;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_geometry_get(base, &wx, &wy, &ww, &wh);
    wx += bx;
    wy += by;
@@ -1055,6 +1077,7 @@ _ecore_x_window_at_xy_get(Window base, int bx, int by, int x, int y,
    if (!((x >= wx) && (y >= wy) && (x < (wx + ww)) && (y < (wy + wh))))
      return 0;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!XQueryTree(_ecore_x_disp, base, &root_win, &parent_win, &list, &num))
      return base;
 
@@ -1104,6 +1127,7 @@ ecore_x_window_at_xy_get(int x, int y)
 {
    Ecore_X_Window    win, root;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    /* FIXME: Proper function to determine current root/virtual root
     * window missing here */
    root = DefaultRootWindow(_ecore_x_disp);
@@ -1128,6 +1152,7 @@ ecore_x_window_at_xy_with_skip_get(int x, int y, Ecore_X_Window *skip, int skip_
 {
    Ecore_X_Window    win, root;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    /* FIXME: Proper function to determine current root/virtual root
     * window missing here */
    root = DefaultRootWindow(_ecore_x_disp);
@@ -1144,6 +1169,7 @@ ecore_x_window_at_xy_begin_get(Ecore_X_Window begin, int x, int y)
 {
    Ecore_X_Window    win;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_grab();
    win = _ecore_x_window_at_xy_get(begin, 0, 0, x, y, NULL, 0);
    ecore_x_ungrab();
@@ -1163,6 +1189,7 @@ ecore_x_window_parent_get(Ecore_X_Window win)
    Window         root, parent, *children = NULL;
    unsigned int   num;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!XQueryTree(_ecore_x_disp, win, &root, &parent, &children, &num))
       return 0;
    if (children)
@@ -1186,6 +1213,7 @@ ecore_x_window_background_color_set(Ecore_X_Window win, unsigned short r,
    Colormap map;
    XColor col;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    col.red = r;
    col.green = g;
    col.blue = b;
@@ -1202,6 +1230,7 @@ ecore_x_window_gravity_set(Ecore_X_Window win, Ecore_X_Gravity grav)
 {
    XSetWindowAttributes att;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    att.win_gravity = grav;
    XChangeWindowAttributes(_ecore_x_disp, win, CWWinGravity, &att);
 }
@@ -1211,6 +1240,7 @@ ecore_x_window_pixel_gravity_set(Ecore_X_Window win, Ecore_X_Gravity grav)
 {
    XSetWindowAttributes att;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    att.bit_gravity = grav;
    XChangeWindowAttributes(_ecore_x_disp, win, CWBitGravity, &att);
 }
@@ -1218,18 +1248,21 @@ ecore_x_window_pixel_gravity_set(Ecore_X_Window win, Ecore_X_Gravity grav)
 EAPI void
 ecore_x_window_pixmap_set(Ecore_X_Window win, Ecore_X_Pixmap pmap)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSetWindowBackgroundPixmap(_ecore_x_disp, win, pmap);
 }
 
 EAPI void
 ecore_x_window_area_clear(Ecore_X_Window win, int x, int y, int w, int h)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XClearArea(_ecore_x_disp, win, x, y, w, h, False);
 }
 
 EAPI void
 ecore_x_window_area_expose(Ecore_X_Window win, int x, int y, int w, int h)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XClearArea(_ecore_x_disp, win, x, y, w, h, True);
 }
 
@@ -1238,6 +1271,7 @@ ecore_x_window_override_set(Ecore_X_Window win, int override)
 {
    XSetWindowAttributes att;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    att.override_redirect = override;
    XChangeWindowAttributes(_ecore_x_disp, win, CWOverrideRedirect, &att);
 }
@@ -1374,6 +1408,7 @@ EAPI Ecore_X_Window
 ecore_x_window_manager_argb_new(Ecore_X_Window parent, int x, int y, int w, int h)
 {
 #ifdef ECORE_XRENDER   
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return _ecore_x_window_argb_internal_new(parent, x, y, w, h, 1, 0);
 #else
    return 0;
@@ -1395,6 +1430,7 @@ EAPI Ecore_X_Window
 ecore_x_window_argb_new(Ecore_X_Window parent, int x, int y, int w, int h)
 {
 #ifdef ECORE_XRENDER   
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return _ecore_x_window_argb_internal_new(parent, x, y, w, h, 0, 0);
 #else
    return 0;
@@ -1416,6 +1452,7 @@ EAPI Ecore_X_Window
 ecore_x_window_override_argb_new(Ecore_X_Window parent, int x, int y, int w, int h)
 {
 #ifdef ECORE_XRENDER   
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return _ecore_x_window_argb_internal_new(parent, x, y, w, h, 1, 0);
 #else
    return 0;

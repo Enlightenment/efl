@@ -237,6 +237,7 @@ ecore_x_init(const char *name)
    if (++_ecore_x_init_count != 1) 
      return _ecore_x_init_count;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 #ifdef LOGRT
    _logrt_init();
 #endif   
@@ -572,6 +573,7 @@ _ecore_x_shutdown(int close_display)
      return _ecore_x_init_count;
 
    if (!_ecore_x_disp) return _ecore_x_init_count;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
 #ifdef ENABLE_XIM
    if (_ecore_x_ic)
@@ -656,6 +658,7 @@ ecore_x_display_get(void)
 EAPI int
 ecore_x_fd_get(void)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return ConnectionNumber(_ecore_x_disp);
 }
 
@@ -667,6 +670,7 @@ ecore_x_fd_get(void)
 EAPI Ecore_X_Screen*
 ecore_x_default_screen_get(void)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return (Ecore_X_Screen*) DefaultScreenOfDisplay(_ecore_x_disp);
 }
 
@@ -715,6 +719,7 @@ ecore_x_double_click_time_get(void)
 EAPI void
 ecore_x_flush(void)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFlush(_ecore_x_disp);
 }
 
@@ -726,6 +731,7 @@ ecore_x_flush(void)
 EAPI void
 ecore_x_sync(void)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSync(_ecore_x_disp, False);
 }
 
@@ -747,6 +753,7 @@ ecore_x_killall(Ecore_X_Window root)
    Window *children_r = NULL;
    unsigned int num_children = 0;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XGrabServer(_ecore_x_disp);
    /* Tranverse window tree starting from root, and drag each
     * before the firing squad */
@@ -774,6 +781,7 @@ ecore_x_killall(Ecore_X_Window root)
 EAPI void
 ecore_x_kill(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XKillClient(_ecore_x_disp, win);
 }
 
@@ -800,6 +808,7 @@ ecore_x_dpi_get(void)
 {
    Screen *s;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    s = DefaultScreenOfDisplay(_ecore_x_disp);
    if (s->mwidth <= 0) return 75;
    return (((s->width * 254) / s->mwidth) + 5) / 10;
@@ -932,6 +941,7 @@ ecore_x_window_root_list(int *num_ret)
    if (!num_ret) return NULL;
    *num_ret = 0;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 #ifdef ECORE_XPRINT
    num = ScreenCount(_ecore_x_disp);
    if (XpQueryExtension(_ecore_x_disp, &xp_base, &xp_err_base))
@@ -1016,14 +1026,15 @@ ecore_x_window_root_first_get(void)
    int num;
    Ecore_X_Window root, *roots = NULL;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    roots = ecore_x_window_root_list(&num);
-   if(!(roots)) return 0;
+   if (!(roots)) return 0;
    
    if (num > 0)
-      root = roots[0];
+     root = roots[0];
    else
-      root = 0;
-
+     root = 0;
+   
    free(roots);
    return root;
 }
@@ -1045,6 +1056,7 @@ ecore_x_window_manage(Ecore_X_Window win)
 {
    XWindowAttributes   att;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (XGetWindowAttributes(_ecore_x_disp, win, &att) != True) return 0;
    ecore_x_sync();
    _ecore_x_window_manage_failed = 0;
@@ -1073,6 +1085,7 @@ ecore_x_window_manage(Ecore_X_Window win)
 EAPI void
 ecore_x_window_container_manage(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSelectInput(_ecore_x_disp, win, 
 		SubstructureRedirectMask | 
 		SubstructureNotifyMask);
@@ -1081,6 +1094,7 @@ ecore_x_window_container_manage(Ecore_X_Window win)
 EAPI void
 ecore_x_window_client_manage(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSelectInput(_ecore_x_disp, win, 
 		PropertyChangeMask | 
 //		ResizeRedirectMask |
@@ -1096,6 +1110,7 @@ ecore_x_window_client_manage(Ecore_X_Window win)
 EAPI void
 ecore_x_window_sniff(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSelectInput(_ecore_x_disp, win,
 		PropertyChangeMask |
 		SubstructureNotifyMask);
@@ -1104,6 +1119,7 @@ ecore_x_window_sniff(Ecore_X_Window win)
 EAPI void
 ecore_x_window_client_sniff(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSelectInput(_ecore_x_disp, win,
 		PropertyChangeMask |
 		FocusChangeMask |
@@ -1124,6 +1140,7 @@ ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att
 {
    XWindowAttributes att;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!XGetWindowAttributes(_ecore_x_disp, win, &att)) return 0;
    memset(att_ret, 0, sizeof(Ecore_X_Window_Attributes));
    att_ret->root = att.root;
@@ -1151,12 +1168,14 @@ ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att
 EAPI void
 ecore_x_window_save_set_add(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XAddToSaveSet(_ecore_x_disp, win);
 }
 
 EAPI void
 ecore_x_window_save_set_del(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XRemoveFromSaveSet(_ecore_x_disp, win);
 }
 
@@ -1167,6 +1186,7 @@ ecore_x_window_children_get(Ecore_X_Window win, int *num)
    Window              root_ret = 0, parent_ret = 0, *children_ret = NULL;
    unsigned int        children_ret_num = 0;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!XQueryTree(_ecore_x_disp, win, &root_ret, &parent_ret, &children_ret,
 		   &children_ret_num))
      {
@@ -1191,6 +1211,7 @@ ecore_x_window_children_get(Ecore_X_Window win, int *num)
 EAPI int
 ecore_x_pointer_control_set(int accel_num, int accel_denom, int threshold)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XChangePointerControl(_ecore_x_disp, 1, 1, 
 				accel_num, accel_denom, threshold);
 }
@@ -1198,6 +1219,7 @@ ecore_x_pointer_control_set(int accel_num, int accel_denom, int threshold)
 EAPI int
 ecore_x_pointer_control_get(int *accel_num, int *accel_denom, int *threshold)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XGetPointerControl(_ecore_x_disp, 
 				accel_num, accel_denom, threshold);
 }
@@ -1205,18 +1227,21 @@ ecore_x_pointer_control_get(int *accel_num, int *accel_denom, int *threshold)
 EAPI int
 ecore_x_pointer_mapping_set(unsigned char *map, int nmap)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XSetPointerMapping(_ecore_x_disp, map, nmap);
 }
 
 EAPI int
 ecore_x_pointer_mapping_get(unsigned char *map, int nmap)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XGetPointerMapping(_ecore_x_disp, map, nmap);
 }
 
 EAPI int
 ecore_x_pointer_grab(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (XGrabPointer(_ecore_x_disp, win, False,
 		    ButtonPressMask | ButtonReleaseMask | 
 		    EnterWindowMask | LeaveWindowMask | PointerMotionMask,
@@ -1228,6 +1253,7 @@ ecore_x_pointer_grab(Ecore_X_Window win)
 EAPI int
 ecore_x_pointer_confine_grab(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (XGrabPointer(_ecore_x_disp, win, False,
 		    ButtonPressMask | ButtonReleaseMask | 
 		    EnterWindowMask | LeaveWindowMask | PointerMotionMask,
@@ -1239,18 +1265,21 @@ ecore_x_pointer_confine_grab(Ecore_X_Window win)
 EAPI void
 ecore_x_pointer_ungrab(void)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XUngrabPointer(_ecore_x_disp, CurrentTime);
 }
 
 EAPI int
 ecore_x_pointer_warp(Ecore_X_Window win, int x, int y)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XWarpPointer(_ecore_x_disp, None, win, 0, 0, 0, 0, x, y);
 }
 
 EAPI int
 ecore_x_keyboard_grab(Ecore_X_Window win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (XGrabKeyboard(_ecore_x_disp, win, False,
 		     GrabModeAsync, GrabModeAsync,
 		     CurrentTime) == GrabSuccess) return 1;
@@ -1260,12 +1289,14 @@ ecore_x_keyboard_grab(Ecore_X_Window win)
 EAPI void
 ecore_x_keyboard_ungrab(void)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XUngrabKeyboard(_ecore_x_disp, CurrentTime);   
 }
 
 EAPI void
 ecore_x_grab(void)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_x_grab_count++;
    if (_ecore_x_grab_count == 1) XGrabServer(_ecore_x_disp);
 }
@@ -1273,6 +1304,7 @@ ecore_x_grab(void)
 EAPI void
 ecore_x_ungrab(void)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_x_grab_count--;
    if (_ecore_x_grab_count < 0) _ecore_x_grab_count = 0;
    if (_ecore_x_grab_count == 0) XUngrabServer(_ecore_x_disp);
@@ -1286,6 +1318,7 @@ void    *_ecore_window_grab_replay_data;
 EAPI void
 ecore_x_passive_grab_replay_func_set(int (*func) (void *data, int event_type, void *event), void *data)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_window_grab_replay_func = func;
    _ecore_window_grab_replay_data = data;
 }
@@ -1300,6 +1333,7 @@ ecore_x_window_button_grab(Ecore_X_Window win, int button,
    unsigned int        locks[8];
    int                 i, ev;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    b = button;
    if (b == 0) b = AnyButton;
    m = _ecore_x_event_modifier(mod);
@@ -1371,6 +1405,7 @@ ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
    unsigned int        locks[8];
    int                 i;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    b = button;
    if (b == 0) b = AnyButton;
    m = _ecore_x_event_modifier(mod);
@@ -1401,6 +1436,7 @@ ecore_x_window_key_grab(Ecore_X_Window win, const char *key,
    unsigned int        locks[8];
    int                 i;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!strncmp(key, "Keycode-", 8))
      keycode = atoi(key + 8);
    else
@@ -1462,6 +1498,7 @@ ecore_x_window_key_ungrab(Ecore_X_Window win, const char *key,
    unsigned int        locks[8];
    int                 i;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!strncmp(key, "Keycode-", 8))
      keycode = atoi(key + 8);
    else
@@ -1505,19 +1542,20 @@ ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type,
 			      Ecore_X_Event_Mask mask,
 			      long d0, long d1, long d2, long d3, long d4)
 {
-    XEvent xev;
+   XEvent xev;
 
-    xev.xclient.window = win;
-    xev.xclient.type = ClientMessage;
-    xev.xclient.message_type = type;
-    xev.xclient.format = 32;
-    xev.xclient.data.l[0] = d0;
-    xev.xclient.data.l[1] = d1;
-    xev.xclient.data.l[2] = d2;
-    xev.xclient.data.l[3] = d3;
-    xev.xclient.data.l[4] = d4;
-
-    return XSendEvent(_ecore_x_disp, win, False, mask, &xev);
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   xev.xclient.window = win;
+   xev.xclient.type = ClientMessage;
+   xev.xclient.message_type = type;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = d0;
+   xev.xclient.data.l[1] = d1;
+   xev.xclient.data.l[2] = d2;
+   xev.xclient.data.l[3] = d3;
+   xev.xclient.data.l[4] = d4;
+   
+   return XSendEvent(_ecore_x_disp, win, False, mask, &xev);
 }
 
 /**
@@ -1534,18 +1572,18 @@ EAPI int
 ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type,
 			     const void *data, int len)
 {
-    XEvent xev;
-
-    xev.xclient.window = win;
-    xev.xclient.type = ClientMessage;
-    xev.xclient.message_type = type;
-    xev.xclient.format = 8;
-    if (len > 20)
-        len = 20;
-    memcpy(xev.xclient.data.b, data, len);
-    memset(xev.xclient.data.b + len, 0, 20 - len);
-
-    return XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
+   XEvent xev;
+   
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   xev.xclient.window = win;
+   xev.xclient.type = ClientMessage;
+   xev.xclient.message_type = type;
+   xev.xclient.format = 8;
+   if (len > 20) len = 20;
+   memcpy(xev.xclient.data.b, data, len);
+   memset(xev.xclient.data.b + len, 0, 20 - len);
+   
+   return XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
 }
 
 EAPI int
@@ -1556,6 +1594,7 @@ ecore_x_mouse_move_send(Ecore_X_Window win, int x, int y)
    Window tw;
    int rx, ry;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XGetWindowAttributes(_ecore_x_disp, win, &att);
    XTranslateCoordinates(_ecore_x_disp, win, att.root, x, y, &rx, &ry, &tw);
    xev.xmotion.type = MotionNotify;
@@ -1581,6 +1620,7 @@ ecore_x_mouse_down_send(Ecore_X_Window win, int x, int y, int b)
    Window tw;
    int rx, ry;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XGetWindowAttributes(_ecore_x_disp, win, &att);
    XTranslateCoordinates(_ecore_x_disp, win, att.root, x, y, &rx, &ry, &tw);
    xev.xbutton.type = ButtonPress;
@@ -1606,6 +1646,7 @@ ecore_x_mouse_up_send(Ecore_X_Window win, int x, int y, int b)
    Window tw;
    int rx, ry;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XGetWindowAttributes(_ecore_x_disp, win, &att);
    XTranslateCoordinates(_ecore_x_disp, win, att.root, x, y, &rx, &ry, &tw);
    xev.xbutton.type = ButtonRelease;
@@ -1626,12 +1667,14 @@ ecore_x_mouse_up_send(Ecore_X_Window win, int x, int y, int b)
 EAPI void
 ecore_x_focus_reset(void)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSetInputFocus(_ecore_x_disp, PointerRoot, RevertToPointerRoot, CurrentTime);
 }
 
 EAPI void
 ecore_x_events_allow_all(void)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XAllowEvents(_ecore_x_disp, AsyncBoth, CurrentTime);
 }
 
@@ -1649,6 +1692,7 @@ ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y)
    int rx, ry, wx, wy, ret;
    unsigned int mask;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ret = XQueryPointer(_ecore_x_disp, win, &rwin, &cwin, &rx, &ry, &wx, &wy, &mask);
    if (!ret) wx = wy = -1;
    if (x) *x = wx;

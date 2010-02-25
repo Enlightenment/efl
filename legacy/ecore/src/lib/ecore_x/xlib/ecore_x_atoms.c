@@ -277,6 +277,7 @@ EAPI Ecore_X_Atom
 ecore_x_atom_get(const char *name)
 {
    if (!_ecore_x_disp) return 0;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XInternAtom(_ecore_x_disp, name, False);
 }
 
@@ -287,6 +288,7 @@ ecore_x_atoms_get(const char **names, int num, Ecore_X_Atom *atoms)
    int i;
 
    if (!_ecore_x_disp) return;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    atoms_int = alloca(num * sizeof(Atom));
    XInternAtoms(_ecore_x_disp, (char **)names, num, False, atoms_int);
    for (i = 0; i < num; i++)
@@ -300,6 +302,7 @@ ecore_x_atom_name_get(Ecore_X_Atom atom)
    char *xname;
 
    if (!_ecore_x_disp) return NULL;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xname = XGetAtomName(_ecore_x_disp, atom);
    if (!xname) return NULL;

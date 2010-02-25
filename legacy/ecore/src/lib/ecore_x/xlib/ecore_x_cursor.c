@@ -21,6 +21,7 @@ EAPI Ecore_X_Cursor
 ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int hot_y)
 {
 #ifdef ECORE_XCURSOR
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (_ecore_x_xcursor)
      {
 	Cursor c;
@@ -197,6 +198,7 @@ ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int
 EAPI void
 ecore_x_cursor_free(Ecore_X_Cursor c)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFreeCursor(_ecore_x_disp, c);
 }
 
@@ -208,6 +210,7 @@ ecore_x_cursor_free(Ecore_X_Cursor c)
 EAPI Ecore_X_Cursor
 ecore_x_cursor_shape_get(int shape)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    /* Shapes are defined in Ecore_X_Cursor.h */
    return XCreateFontCursor(_ecore_x_disp, shape);
 }
@@ -216,6 +219,7 @@ EAPI void
 ecore_x_cursor_size_set(int size)
 {
 #ifdef ECORE_XCURSOR
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XcursorSetDefaultSize(_ecore_x_disp, size);
 #else
    size = 0;
@@ -226,6 +230,7 @@ EAPI int
 ecore_x_cursor_size_get(void)
 {
 #ifdef ECORE_XCURSOR
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XcursorGetDefaultSize(_ecore_x_disp);
 #else
    return 0;

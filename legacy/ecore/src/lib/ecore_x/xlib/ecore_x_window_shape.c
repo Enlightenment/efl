@@ -29,18 +29,21 @@
 EAPI void
 ecore_x_window_shape_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XShapeCombineMask(_ecore_x_disp, win, ShapeBounding, 0, 0, mask, ShapeSet);
 }
 
 EAPI void
 ecore_x_window_shape_window_set(Ecore_X_Window win, Ecore_X_Window shape_win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XShapeCombineShape(_ecore_x_disp, win, ShapeBounding, 0, 0, shape_win, ShapeBounding, ShapeSet);
 }
 
 EAPI void
 ecore_x_window_shape_window_set_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XShapeCombineShape(_ecore_x_disp, win, ShapeBounding, x, y, shape_win, ShapeBounding, ShapeSet);
 }
 
@@ -49,6 +52,7 @@ ecore_x_window_shape_rectangle_set(Ecore_X_Window win, int x, int y, int w, int 
 {
    XRectangle rect;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    rect.x = x;
    rect.y = y;
    rect.width = w;
@@ -62,6 +66,7 @@ ecore_x_window_shape_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle *rects
    XRectangle *rect = NULL;
    int i;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (num > 0)
      {
 	rect = malloc(sizeof(XRectangle) * num);
@@ -85,12 +90,14 @@ ecore_x_window_shape_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle *rects
 EAPI void
 ecore_x_window_shape_window_add(Ecore_X_Window win, Ecore_X_Window shape_win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XShapeCombineShape(_ecore_x_disp, win, ShapeBounding, 0, 0, shape_win, ShapeBounding, ShapeUnion);
 }
 
 EAPI void
 ecore_x_window_shape_window_add_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XShapeCombineShape(_ecore_x_disp, win, ShapeBounding, x, y, shape_win, ShapeBounding, ShapeUnion);
 }
 
@@ -99,6 +106,7 @@ ecore_x_window_shape_rectangle_add(Ecore_X_Window win, int x, int y, int w, int 
 {
    XRectangle rect;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    rect.x = x;
    rect.y = y;
    rect.width = w;
@@ -111,6 +119,7 @@ ecore_x_window_shape_rectangle_clip(Ecore_X_Window win, int x, int y, int w, int
 {
    XRectangle rect;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    rect.x = x;
    rect.y = y;
    rect.width = w;
@@ -124,6 +133,7 @@ ecore_x_window_shape_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle *rects
    XRectangle *rect = NULL;
    int i;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (num > 0)
      {
 	rect = malloc(sizeof(XRectangle) * num);
@@ -151,6 +161,7 @@ ecore_x_window_shape_rectangles_get(Ecore_X_Window win, int *num_ret)
    Ecore_X_Rectangle *rects = NULL;
    int i, num = 0, ord;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    rect = XShapeGetRectangles(_ecore_x_disp, win, ShapeBounding, &num, &ord);
    if (rect)
      {
@@ -174,6 +185,7 @@ ecore_x_window_shape_rectangles_get(Ecore_X_Window win, int *num_ret)
 EAPI void
 ecore_x_window_shape_events_select(Ecore_X_Window win, int on)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (on)
      XShapeSelectInput(_ecore_x_disp, win, ShapeNotifyMask);
    else
@@ -190,6 +202,7 @@ ecore_x_window_shape_events_select(Ecore_X_Window win, int on)
 EAPI void
 ecore_x_window_shape_input_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 #ifdef ShapeInput
    XShapeCombineMask(_ecore_x_disp, win, ShapeInput, 0, 0, mask, ShapeSet);
 #else   

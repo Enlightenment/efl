@@ -135,6 +135,7 @@ ecore_x_input_multi_select(Ecore_X_Window win)
 
    if (!_ecore_x_xi2_devs) return 0;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    for (i = 0; i < _ecore_x_xi2_num; i++)
      {
         XIDeviceInfo *dev = &(_ecore_x_xi2_devs[i]);

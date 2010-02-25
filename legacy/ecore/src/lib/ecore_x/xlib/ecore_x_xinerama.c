@@ -26,6 +26,7 @@ ecore_x_xinerama_screen_count_get(void)
 #ifdef ECORE_XINERAMA
    int event_base, error_base;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (_xin_info) XFree(_xin_info);
    _xin_info = NULL;
    if (XineramaQueryExtension(_ecore_x_disp, &event_base, &error_base))
@@ -40,6 +41,7 @@ ecore_x_xinerama_screen_count_get(void)
 EAPI int
 ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 #ifdef ECORE_XINERAMA
    if (_xin_info)
      {

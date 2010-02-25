@@ -46,6 +46,7 @@ ecore_x_mwm_hints_get(Ecore_X_Window win,
    int                 num;
    int                 ret;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ret = 0;
    if (!ecore_x_window_prop_property_get(win,
 					 ECORE_X_ATOM_MOTIF_WM_HINTS,
@@ -93,6 +94,7 @@ ecore_x_mwm_borderless_set(Ecore_X_Window win, int borderless)
    data[0] = 2; /* just set the decorations hint! */
    data[2] = !borderless;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_property_set(win, 
 				    ECORE_X_ATOM_MOTIF_WM_HINTS,
 				    ECORE_X_ATOM_MOTIF_WM_HINTS,
