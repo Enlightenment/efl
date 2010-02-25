@@ -424,7 +424,7 @@ requirements_ecore_x="ecore eina-0 ${requirements_ecore_x}"
 
 # glib support (main loop integration)
 AC_ARG_ENABLE([glib],
-   [AC_HELP_STRING([--disable-glib], [enable glib support. @<:@default=detect@:>@])],
+   [AC_HELP_STRING([--disable-glib], [disable glib support. @<:@default=detect@:>@])],
    [want_glib=$enableval], [])
 
 if test "x$want_glib" != "xno"; then
