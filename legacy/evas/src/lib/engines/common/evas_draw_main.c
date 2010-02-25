@@ -4,6 +4,7 @@
 
 #include "evas_common.h"
 #include "evas_convert_main.h"
+#include "evas_private.h"
 
 EAPI Cutout_Rects*
 evas_common_draw_context_cutouts_new(void)
@@ -22,27 +23,6 @@ EAPI void
 evas_common_draw_context_cutouts_free(Cutout_Rects* rects)
 {
    rects->active = 0;
-}
-
-static Cutout_Rect*
-evas_common_draw_context_cutouts_add(Cutout_Rects* rects,
-                                     int x, int y, int w, int h)
-{
-   Cutout_Rect* rect;
-
-   rects->active++;
-   if (rects->max < rects->active)
-     {
-	rects->max += 1024;
-	rects->rects = realloc(rects->rects, sizeof(Cutout_Rect) * rects->max);
-     }
-   rect = rects->rects + rects->active - 1;
-   rect->x = x;
-   rect->y = y;
-   rect->w = w;
-   rect->h = h;
-
-   return rect;
 }
 
 EAPI void
