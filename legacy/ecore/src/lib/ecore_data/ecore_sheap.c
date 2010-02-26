@@ -53,12 +53,12 @@ ecore_sheap_new(Ecore_Compare_Cb compare, int size)
  * @param heap    The heap to initialize
  * @param compare The function for comparing keys, NULL for direct comparison
  * @param size    The number of elements to allow in the heap
- * @return        TRUE on success, FALSE on failure
+ * @return        EINA_TRUE on success, EINA_FALSE on failure
  */
 EAPI int
 ecore_sheap_init(Ecore_Sheap *heap, Ecore_Compare_Cb compare, int size)
 {
-   CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
+   CHECK_PARAM_POINTER_RETURN("heap", heap, EINA_FALSE);
 
    heap->space = size;
    if (!compare)
@@ -69,10 +69,10 @@ ecore_sheap_init(Ecore_Sheap *heap, Ecore_Compare_Cb compare, int size)
 
    heap->data = (void **)malloc(heap->space * sizeof(void *));
    if (!heap->data)
-     return FALSE;
+     return EINA_FALSE;
    memset(heap->data, 0, heap->space * sizeof(void *));
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -107,23 +107,23 @@ ecore_sheap_destroy(Ecore_Sheap *heap)
  * @param  heap      The heap that will use this function when nodes are
  *                   destroyed.
  * @param  free_func The function that will free the key data.
- * @return @c TRUE on successful set, @c FALSE otherwise.
+ * @return @c EINA_TRUE on successful set, @c EINA_FALSE otherwise.
  */
 EAPI int
 ecore_sheap_free_cb_set(Ecore_Sheap *heap, Ecore_Free_Cb free_func)
 {
-   CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
+   CHECK_PARAM_POINTER_RETURN("heap", heap, EINA_FALSE);
 
    heap->free_func = free_func;
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
  * Insert new data into the heap.
  * @param  heap The heap to insert @a data.
  * @param  data The data to add to @a heap.
- * @return TRUE on success, NULL on failure. Increases the size of the heap if
+ * @return EINA_TRUE on success, NULL on failure. Increases the size of the heap if
  *         it becomes larger than available space.
  */
 EAPI int
@@ -134,16 +134,16 @@ ecore_sheap_insert(Ecore_Sheap *heap, void *data)
    int parent;
    int position;
 
-   CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
+   CHECK_PARAM_POINTER_RETURN("heap", heap, EINA_FALSE);
 
    /*
     * Increase the size of the allocated data area if there isn't enough
     * space available to add this data
     */
    if (heap->size >= heap->space)
-     return FALSE;
+     return EINA_FALSE;
 
-   heap->sorted = FALSE;
+   heap->sorted = EINA_FALSE;
 
    /*
     * Place the data at the end of the heap initially. Then determine the
@@ -209,7 +209,7 @@ ecore_sheap_insert(Ecore_Sheap *heap, void *data)
 	  }
      }
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -227,7 +227,7 @@ ecore_sheap_extract(Ecore_Sheap *heap)
    if (heap->size < 1)
      return NULL;
 
-   heap->sorted = FALSE;
+   heap->sorted = EINA_FALSE;
 
    extreme = heap->data[0];
    heap->size--;
@@ -258,7 +258,7 @@ ecore_sheap_extreme(Ecore_Sheap *heap)
  * @param heap   The heap to search for the item to change
  * @param item   The item in the heap to change
  * @param newval The new value assigned to the item in the heap
- * @return       TRUE on success, FALSE on failure.
+ * @return       EINA_TRUE on success, EINA_FALSE on failure.
  * @note         The heap does not free the old data since it must be passed
  *               in, so the caller can perform the free if desired.
  */
@@ -267,28 +267,28 @@ ecore_sheap_change(Ecore_Sheap *heap, void *item, void *newval)
 {
    int i;
 
-   CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
+   CHECK_PARAM_POINTER_RETURN("heap", heap, EINA_FALSE);
 
    for (i = 0; i < heap->size && heap->compare(heap->data[i], item); i++);
 
    if (i < heap->size)
      heap->data[i] = newval;
    else
-     return FALSE;
+     return EINA_FALSE;
 
    /*
     * FIXME: This is not the correct procedure when a change occurs.
     */
    _ecore_sheap_heapify(heap, 1);
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
  * Change the comparison function for the heap
  * @param  heap    The heap to change comparison function
  * @param  compare The new function for comparing nodes
- * @return TRUE on success, FALSE on failure.
+ * @return EINA_TRUE on success, EINA_FALSE on failure.
  *
  * The comparison function is changed to @compare and the heap is heapified
  * by the new comparison.
@@ -296,7 +296,7 @@ ecore_sheap_change(Ecore_Sheap *heap, void *item, void *newval)
 EAPI int
 ecore_sheap_compare_set(Ecore_Sheap *heap, Ecore_Compare_Cb compare)
 {
-   CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
+   CHECK_PARAM_POINTER_RETURN("heap", heap, EINA_FALSE);
 
    if (!compare)
      heap->compare = ecore_direct_compare;
@@ -305,7 +305,7 @@ ecore_sheap_compare_set(Ecore_Sheap *heap, Ecore_Compare_Cb compare)
 
    _ecore_sheap_update_data(heap);
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -356,7 +356,7 @@ ecore_sheap_sort(Ecore_Sheap *heap)
    FREE(heap->data);
    heap->data = new_data;
    heap->size = i;
-   heap->sorted = TRUE;
+   heap->sorted = EINA_TRUE;
 }
 
 /*

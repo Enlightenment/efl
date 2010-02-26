@@ -235,7 +235,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 
    /* FIXME: gerer la priorite */
 
-   if (!CreateProcess(NULL, exe->cmd, NULL, NULL, TRUE,
+   if (!CreateProcess(NULL, exe->cmd, NULL, NULL, EINA_TRUE,
                       run_pri | CREATE_SUSPENDED, NULL, NULL, &si, &pi))
      goto free_exe_cmd;
 
@@ -252,7 +252,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    exe->data = (void *)data;
 
    if (!(exe->process2 = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_SUSPEND_RESUME | PROCESS_TERMINATE | SYNCHRONIZE,
-                                     FALSE, pi.dwProcessId)))
+                                     EINA_FALSE, pi.dwProcessId)))
      goto close_thread;
 
    if (ResumeThread(exe->thread) == ((DWORD)-1))
@@ -688,7 +688,7 @@ _ecore_exe_win32_pipes_set(Ecore_Exe *exe)
    HANDLE child_pipe_x;
 
    sa.nLength = sizeof(SECURITY_ATTRIBUTES);
-   sa.bInheritHandle = TRUE;
+   sa.bInheritHandle = EINA_TRUE;
    sa.lpSecurityDescriptor = NULL;
 
    if (!CreatePipe(&child_pipe, &child_pipe_x, &sa, 0))
@@ -811,14 +811,14 @@ _ecore_exe_enum_windows_procedure(HWND window, LPARAM data)
                                0, NULL))
           {
             printf ("remote thread\n");
-            return FALSE;
+            return EINA_FALSE;
           }
 
         if ((exe->sig == ECORE_EXE_WIN32_SIGINT) ||
             (exe->sig == ECORE_EXE_WIN32_SIGQUIT))
           {
             printf ("int or quit\n");
-            return FALSE;
+            return EINA_FALSE;
           }
 
         /* WM_CLOSE message */
@@ -826,7 +826,7 @@ _ecore_exe_enum_windows_procedure(HWND window, LPARAM data)
         if (WaitForSingleObject(exe->process, ECORE_EXE_WIN32_TIMEOUT) == WAIT_OBJECT_0)
           {
             printf ("CLOSE\n");
-            return FALSE;
+            return EINA_FALSE;
           }
 
         /* WM_QUIT message */
@@ -834,7 +834,7 @@ _ecore_exe_enum_windows_procedure(HWND window, LPARAM data)
         if (WaitForSingleObject(exe->process, ECORE_EXE_WIN32_TIMEOUT) == WAIT_OBJECT_0)
           {
             printf ("QUIT\n");
-            return FALSE;
+            return EINA_FALSE;
           }
 
         /* Exit process */
@@ -843,21 +843,21 @@ _ecore_exe_enum_windows_procedure(HWND window, LPARAM data)
                                0, NULL))
           {
             printf ("remote thread 2\n");
-            return FALSE;
+            return EINA_FALSE;
           }
 
         if (exe->sig == ECORE_EXE_WIN32_SIGTERM)
           {
             printf ("term\n");
-            return FALSE;
+            return EINA_FALSE;
           }
 
         TerminateProcess(exe->process, 0);
 
-        return FALSE;
+        return EINA_FALSE;
      }
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 static void

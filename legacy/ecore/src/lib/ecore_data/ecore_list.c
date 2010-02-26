@@ -95,17 +95,17 @@ ecore_list_new(void)
 /**
  * Initialize a list to some sane starting values.
  * @param   list The list to initialize.
- * @return  @c TRUE if successful, @c FALSE if an error occurs.
+ * @return  @c EINA_TRUE if successful, @c EINA_FALSE if an error occurs.
  * @ingroup Ecore_Data_List_Creation_Group
  */
 EAPI int
 ecore_list_init(Ecore_List *list)
 {
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    memset(list, 0, sizeof(Ecore_List));
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -135,32 +135,32 @@ ecore_list_destroy(Ecore_List *list)
  * @param  list      The list that will use this function when nodes are
  *                   destroyed.
  * @param  free_func The function that will free the key data.
- * @return @c TRUE on successful set, @c FALSE otherwise.
+ * @return @c EINA_TRUE on successful set, @c EINA_FALSE otherwise.
  */
 EAPI int
 ecore_list_free_cb_set(Ecore_List *list, Ecore_Free_Cb free_func)
 {
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    list->free_func = free_func;
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
  * Checks the list for any nodes.
  * @param  list  The list to check for nodes
- * @return @c TRUE if no nodes in list, @c FALSE if the list contains nodes
+ * @return @c EINA_TRUE if no nodes in list, @c EINA_FALSE if the list contains nodes
  */
 EAPI int
 ecore_list_empty_is(Ecore_List *list)
 {
-   int ret = TRUE;
+   int ret = EINA_TRUE;
 
-   CHECK_PARAM_POINTER_RETURN("list", list, TRUE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_TRUE);
 
    if (list->nodes)
-     ret = FALSE;
+     ret = EINA_FALSE;
 
    return ret;
 }
@@ -175,7 +175,7 @@ ecore_list_index(Ecore_List *list)
 {
    int ret;
 
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    ret = list->index;
 
@@ -192,7 +192,7 @@ ecore_list_count(Ecore_List *list)
 {
    int ret = 0;
 
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    ret = list->nodes;
 
@@ -209,7 +209,7 @@ Functions that are used to add nodes to an Ecore_List.
  * Append data to the list.
  * @param   list The list.
  * @param   data The data to append.
- * @return  @c FALSE if an error occurs, @c TRUE if appended successfully
+ * @return  @c EINA_FALSE if an error occurs, @c EINA_TRUE if appended successfully
  * @ingroup Ecore_Data_List_Add_Item_Group
  */
 EAPI inline int
@@ -218,7 +218,7 @@ ecore_list_append(Ecore_List *list, void *data)
    int ret;
    Ecore_List_Node *node;
 
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    node = ecore_list_node_new();
    node->data = data;
@@ -249,14 +249,14 @@ _ecore_list_append_0(Ecore_List *list, Ecore_List_Node *end)
 
    list->nodes++;
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
  * Prepend data to the beginning of the list.
  * @param  list The list.
  * @param  data The data to prepend.
- * @return @c FALSE if an error occurs, @c TRUE if prepended successfully.
+ * @return @c EINA_FALSE if an error occurs, @c EINA_TRUE if prepended successfully.
  * @ingroup Ecore_Data_List_Add_Item_Group
  */
 EAPI inline int
@@ -265,7 +265,7 @@ ecore_list_prepend(Ecore_List *list, void *data)
    int ret;
    Ecore_List_Node *node;
 
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    node = ecore_list_node_new();
    node->data = data;
@@ -291,14 +291,14 @@ _ecore_list_prepend_0(Ecore_List *list, Ecore_List_Node *start)
    list->nodes++;
    list->index++;
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
  * Insert data in front of the current point in the list.
  * @param   list The list to hold the inserted @p data.
  * @param   data The data to insert into @p list.
- * @return  @c FALSE if there is an error, @c TRUE on success
+ * @return  @c EINA_FALSE if there is an error, @c EINA_TRUE on success
  * @ingroup Ecore_Data_List_Add_Item_Group
  */
 EAPI inline int
@@ -307,7 +307,7 @@ ecore_list_insert(Ecore_List *list, void *data)
    int ret;
    Ecore_List_Node *node;
 
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    node = ecore_list_node_new();
    node->data = data;
@@ -350,23 +350,23 @@ _ecore_list_insert(Ecore_List *list, Ecore_List_Node *new_node)
    list->current = new_node;
    list->nodes++;
 
-   return TRUE;
+   return EINA_TRUE;
 }
 /**
  * Append a list to the list.
  * @param   list The list.
  * @param   append The list to append.
- * @return  @c FALSE if an error occurs, @c TRUE if appended successfully
+ * @return  @c EINA_FALSE if an error occurs, @c EINA_TRUE if appended successfully
  * @ingroup Ecore_Data_List_Add_Item_Group
  */
 
 EAPI int
 ecore_list_append_list(Ecore_List *list, Ecore_List *append)
 {
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
-   CHECK_PARAM_POINTER_RETURN("append", append, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
+   CHECK_PARAM_POINTER_RETURN("append", append, EINA_FALSE);
 
-   if (ecore_list_empty_is(append)) return TRUE;
+   if (ecore_list_empty_is(append)) return EINA_TRUE;
 
    if (ecore_list_empty_is(list))
      {
@@ -382,23 +382,23 @@ ecore_list_append_list(Ecore_List *list, Ecore_List *append)
 	list->nodes += append->nodes;
      }
    ecore_list_init(append);
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
  * Prepend a list to the beginning of the list.
  * @param  list The list.
  * @param  prepend The list to prepend.
- * @return @c FALSE if an error occurs, @c TRUE if prepended successfully.
+ * @return @c EINA_FALSE if an error occurs, @c EINA_TRUE if prepended successfully.
  * @ingroup Ecore_Data_List_Add_Item_Group
  */
 EAPI int
 ecore_list_prepend_list(Ecore_List *list, Ecore_List *prepend)
 {
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
-   CHECK_PARAM_POINTER_RETURN("prepend", prepend, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
+   CHECK_PARAM_POINTER_RETURN("prepend", prepend, EINA_FALSE);
 
-   if (ecore_list_empty_is(prepend)) return TRUE;
+   if (ecore_list_empty_is(prepend)) return EINA_TRUE;
 
    if (ecore_list_empty_is(list))
      {
@@ -415,7 +415,7 @@ ecore_list_prepend_list(Ecore_List *list, Ecore_List *prepend)
 	list->index += prepend->nodes;
      }
    ecore_list_init(prepend);
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -484,7 +484,7 @@ _ecore_list_remove_0(Ecore_List *list)
 /**
  * Remove and free the data in lists current position.
  * @param   list The list to remove and free the current item.
- * @return  @c TRUE on success, @c FALSE on error
+ * @return  @c EINA_TRUE on success, @c EINA_FALSE on error
  * @ingroup Ecore_Data_List_Remove_Item_Group
  */
 EAPI int
@@ -492,13 +492,13 @@ ecore_list_remove_destroy(Ecore_List *list)
 {
    void *data;
 
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    data = _ecore_list_remove_0(list);
    if (list->free_func)
      list->free_func(data);
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -888,26 +888,26 @@ _ecore_list_next(Ecore_List *list)
 /**
  * Remove all nodes from @p list.
  * @param  list The list.
- * @return Returns @c TRUE on success, @c FALSE on error.
+ * @return Returns @c EINA_TRUE on success, @c EINA_FALSE on error.
  * @note The data for each item on the list is not freed by
  *       @c ecore_list_clear().
  */
 EAPI int
 ecore_list_clear(Ecore_List *list)
 {
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    while (!ecore_list_empty_is(list))
      _ecore_list_first_remove(list);
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
  * Execute function for each node in @p list.
  * @param   list     The list.
  * @param   function The function to pass each node from @p list to.
- * @return  Returns @c TRUE on success, @c FALSE on failure.
+ * @return  Returns @c EINA_TRUE on success, @c EINA_FALSE on failure.
  * @ingroup Ecore_Data_List_Traverse_Group
  */
 EAPI int
@@ -915,7 +915,7 @@ ecore_list_for_each(Ecore_List *list, Ecore_For_Each function, void *user_data)
 {
    int ret;
 
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    ret = _ecore_list_for_each(list, function, user_data);
 
@@ -929,13 +929,13 @@ _ecore_list_for_each(Ecore_List *list, Ecore_For_Each function, void *user_data)
    void *value;
 
    if (!list || !function)
-     return FALSE;
+     return EINA_FALSE;
 
    _ecore_list_first_goto(list);
    while ((value = _ecore_list_next(list)) != NULL)
      function(value, user_data);
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -1213,12 +1213,12 @@ ecore_list_heapsort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
 EAPI int
 ecore_list_node_init(Ecore_List_Node *node)
 {
-   CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
+   CHECK_PARAM_POINTER_RETURN("node", node, EINA_FALSE);
 
    node->next = NULL;
    node->data = NULL;
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -1253,20 +1253,20 @@ ecore_list_node_new()
  * Calls the function to free the data and the node.
  * @param   node      Node to destroy.
  * @param   free_func Function to call if @p node points to data to free.
- * @return  @c TRUE.
+ * @return  @c EINA_TRUE.
  * @ingroup Ecore_Data_List_Node_Group
  */
 EAPI int
 ecore_list_node_destroy(Ecore_List_Node *node, Ecore_Free_Cb free_func)
 {
-   CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
+   CHECK_PARAM_POINTER_RETURN("node", node, EINA_FALSE);
 
    if (free_func && node->data)
      free_func(node->data);
 
    FREE(node);
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -1302,17 +1302,17 @@ ecore_dlist_new()
 /**
  * Initialises a list to some sane starting values.
  * @param   list The doubly linked list to initialise.
- * @return  @c TRUE if successful, @c FALSE if an error occurs.
+ * @return  @c EINA_TRUE if successful, @c EINA_FALSE if an error occurs.
  * @ingroup Ecore_Data_DList_Creation_Group
  */
 EAPI int
 ecore_dlist_init(Ecore_DList *list)
 {
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    memset(list, 0, sizeof(Ecore_DList));
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -1341,13 +1341,13 @@ ecore_dlist_destroy(Ecore_DList *list)
  * @param   list      The doubly linked list that will use this function when
  *                    nodes are destroyed.
  * @param   free_func The function that will free the key data
- * @return  @c TRUE on success, @c FALSE on failure.
+ * @return  @c EINA_TRUE on success, @c EINA_FALSE on failure.
  * @ingroup Ecore_Data_DList_Creation_Group
  */
 EAPI int
 ecore_dlist_free_cb_set(Ecore_DList *list, Ecore_Free_Cb free_func)
 {
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    return ecore_list_free_cb_set(ECORE_LIST(list), free_func);
 }
@@ -1355,12 +1355,12 @@ ecore_dlist_free_cb_set(Ecore_DList *list, Ecore_Free_Cb free_func)
 /**
  * Returns whether there is anything in the given doubly linked list.
  * @param  list The given doubly linked list.
- * @return @c TRUE if there are nodes, @c FALSE otherwise.
+ * @return @c EINA_TRUE if there are nodes, @c EINA_FALSE otherwise.
  */
 EAPI int
 ecore_dlist_empty_is(Ecore_DList *list)
 {
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    return ecore_list_empty_is(ECORE_LIST(list));
 }
@@ -1373,7 +1373,7 @@ ecore_dlist_empty_is(Ecore_DList *list)
 EAPI inline int
 ecore_dlist_index(Ecore_DList *list)
 {
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    return ecore_list_index(ECORE_LIST(list));
 }
@@ -1388,7 +1388,7 @@ ecore_dlist_index(Ecore_DList *list)
  * Appends data to the given doubly linked list.
  * @param   list The given doubly linked list.
  * @param   data The data to append.
- * @return  @c TRUE if the data is successfully appended, @c FALSE otherwise.
+ * @return  @c EINA_TRUE if the data is successfully appended, @c EINA_FALSE otherwise.
  * @ingroup Ecore_Data_DList_Add_Item_Group
  */
 EAPI int
@@ -1398,7 +1398,7 @@ ecore_dlist_append(Ecore_DList *list, void *data)
    Ecore_DList_Node *prev;
    Ecore_DList_Node *node;
 
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    node = ecore_dlist_node_new();
    ECORE_LIST_NODE(node)->data = data;
@@ -1415,7 +1415,7 @@ ecore_dlist_append(Ecore_DList *list, void *data)
  * Adds data to the very beginning of the given doubly linked list.
  * @param   list The given doubly linked list.
  * @param   data The data to prepend.
- * @return  @c TRUE if the data is successfully prepended, @c FALSE otherwise.
+ * @return  @c EINA_TRUE if the data is successfully prepended, @c EINA_FALSE otherwise.
  * @ingroup Ecore_Data_DList_Add_Item_Group
  */
 EAPI int
@@ -1425,7 +1425,7 @@ ecore_dlist_prepend(Ecore_DList *list, void *data)
    Ecore_DList_Node *prev;
    Ecore_DList_Node *node;
 
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    node = ecore_dlist_node_new();
    ECORE_LIST_NODE(node)->data = data;
@@ -1442,17 +1442,17 @@ ecore_dlist_prepend(Ecore_DList *list, void *data)
  * Inserts data at the current point in the given doubly linked list.
  * @param   list The given doubly linked list.
  * @param   data The data to be inserted.
- * @return  @c TRUE on success, @c FALSE otherwise.
+ * @return  @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  * @ingroup Ecore_Data_DList_Add_Item_Group
  */
 EAPI int
 ecore_dlist_insert(Ecore_DList *list, void *data)
 {
-   int ret = TRUE;
+   int ret = EINA_TRUE;
    Ecore_DList_Node *prev;
    Ecore_DList_Node *node;
 
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    /*
     * Identify and shortcut the end cases.
@@ -1485,16 +1485,16 @@ ecore_dlist_insert(Ecore_DList *list, void *data)
  * Appends a list to the given doubly linked list.
  * @param   list The given doubly linked list.
  * @param   append The list to append.
- * @return  @c TRUE if the data is successfully appended, @c FALSE otherwise.
+ * @return  @c EINA_TRUE if the data is successfully appended, @c EINA_FALSE otherwise.
  * @ingroup Ecore_Data_DList_Add_Item_Group
  */
 EAPI int
 ecore_dlist_append_list(Ecore_DList *list, Ecore_DList *append)
 {
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
-   CHECK_PARAM_POINTER_RETURN("append", append, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
+   CHECK_PARAM_POINTER_RETURN("append", append, EINA_FALSE);
 
-   if (ecore_dlist_empty_is(append)) return TRUE;
+   if (ecore_dlist_empty_is(append)) return EINA_TRUE;
 
    if (ecore_dlist_empty_is(list))
      {
@@ -1511,23 +1511,23 @@ ecore_dlist_append_list(Ecore_DList *list, Ecore_DList *append)
 	list->nodes += append->nodes;
      }
    ecore_dlist_init(append);
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
  * Adds a list to the very beginning of the given doubly linked list.
  * @param   list The given doubly linked list.
  * @param   prepend The list to prepend.
- * @return  @c TRUE if the data is successfully prepended, @c FALSE otherwise.
+ * @return  @c EINA_TRUE if the data is successfully prepended, @c EINA_FALSE otherwise.
  * @ingroup Ecore_Data_DList_Add_Item_Group
  */
 EAPI int
 ecore_dlist_prepend_list(Ecore_DList *list, Ecore_DList *prepend)
 {
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
-   CHECK_PARAM_POINTER_RETURN("prepend", prepend, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
+   CHECK_PARAM_POINTER_RETURN("prepend", prepend, EINA_FALSE);
 
-   if (ecore_dlist_empty_is(prepend)) return TRUE;
+   if (ecore_dlist_empty_is(prepend)) return EINA_TRUE;
 
    if (ecore_dlist_empty_is(list))
      {
@@ -1545,7 +1545,7 @@ ecore_dlist_prepend_list(Ecore_DList *list, Ecore_DList *prepend)
 	list->index += prepend->nodes;
      }
    ecore_dlist_init(prepend);
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -1602,7 +1602,7 @@ ecore_dlist_first_remove(Ecore_DList *list)
  * Removes and frees the data at the current position in the given doubly
  * linked list.
  * @param   list The given doubly linked list.
- * @return  @c TRUE on success, @c FALSE otherwise.
+ * @return  @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  * @ingroup Ecore_Data_DList_Remove_Item_Group
  */
 EAPI int
@@ -1610,16 +1610,16 @@ ecore_dlist_remove_destroy(Ecore_DList *list)
 {
    void *data;
 
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    data = ecore_dlist_remove(list);
    if (!data)
-     return FALSE;
+     return EINA_FALSE;
 
    if (list->free_func)
      list->free_func(data);
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 static void *
@@ -1850,16 +1850,16 @@ _ecore_dlist_previous(Ecore_DList *list)
  * @brief Remove all nodes from the list.
  * @param list: the list to remove all nodes from
  *
- * @return Returns TRUE on success, FALSE on errors
+ * @return Returns EINA_TRUE on success, EINA_FALSE on errors
  */
 EAPI int
 ecore_dlist_clear(Ecore_DList *list)
 {
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    ecore_list_clear(ECORE_LIST(list));
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -2064,14 +2064,14 @@ _ecore_dlist_node_merge(Ecore_List_Node *first, Ecore_List_Node *second,
 /*
  * @brief Initialize a node to sane starting values
  * @param node: the node to initialize
- * @return Returns TRUE on success, FALSE on errors
+ * @return Returns EINA_TRUE on success, EINA_FALSE on errors
  */
 EAPI int
 ecore_dlist_node_init(Ecore_DList_Node *node)
 {
    int ret;
 
-   CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
+   CHECK_PARAM_POINTER_RETURN("node", node, EINA_FALSE);
 
    ret = ecore_list_node_init(ECORE_LIST_NODE(node));
    if (ret)
@@ -2107,12 +2107,12 @@ ecore_dlist_node_new()
  * @brief Call the data's free callback function, then free the node
  * @param node: the node to be freed
  * @param free_func: the callback function to execute on the data
- * @return Returns TRUE on success, FALSE on error
+ * @return Returns EINA_TRUE on success, EINA_FALSE on error
  */
 EAPI int
 ecore_dlist_node_destroy(Ecore_DList_Node * node, Ecore_Free_Cb free_func)
 {
-   CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
+   CHECK_PARAM_POINTER_RETURN("node", node, EINA_FALSE);
 
    return ecore_list_node_destroy(ECORE_LIST_NODE(node), free_func);
 }

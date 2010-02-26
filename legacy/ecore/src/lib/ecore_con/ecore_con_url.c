@@ -263,7 +263,7 @@ ecore_con_url_new(const char *url)
    curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSFUNCTION, 
                     _ecore_con_url_progress_cb);
    curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSDATA, url_con);
-   curl_easy_setopt(url_con->curl_easy, CURLOPT_NOPROGRESS, FALSE);
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_NOPROGRESS, EINA_FALSE);
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_HEADERFUNCTION, _ecore_con_url_header_cb);
    curl_easy_setopt(url_con->curl_easy, CURLOPT_HEADERDATA, url_con);
@@ -837,7 +837,7 @@ ecore_con_url_verbose_set(Ecore_Con_Url *url_con, int verbose)
 
    if (url_con->active) return;
    if (!url_con->url) return;
-   if (verbose == TRUE)
+   if (verbose == EINA_TRUE)
      curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, 1);
    else
      curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, 0);
@@ -861,7 +861,7 @@ ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, int use_epsv)
 
    if (url_con->active) return;
    if (!url_con->url) return;
-   if (use_epsv == TRUE)
+   if (use_epsv == EINA_TRUE)
      curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV, 1);
    else
      curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV, 0);

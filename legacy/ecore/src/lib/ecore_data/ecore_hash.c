@@ -24,10 +24,10 @@
 
 #define ECORE_HASH_INCREASE(hash) ((hash && ecore_prime_table[hash->size] < PRIME_MAX) ? \
 		(hash->nodes / ecore_prime_table[hash->size]) > \
-		ECORE_HASH_CHAIN_MAX : FALSE)
+		ECORE_HASH_CHAIN_MAX : EINA_FALSE)
 #define ECORE_HASH_REDUCE(hash) ((hash && ecore_prime_table[hash->size] > PRIME_MIN) ? \
 		(double)hash->nodes / (double)ecore_prime_table[hash->size-1] \
-		< ((double)ECORE_HASH_CHAIN_MAX * 0.375) : FALSE)
+		< ((double)ECORE_HASH_CHAIN_MAX * 0.375) : EINA_FALSE)
 
 /* Private hash manipulation functions */
 static int _ecore_hash_node_add(Ecore_Hash *hash, Ecore_Hash_Node *node);
@@ -79,13 +79,13 @@ ecore_hash_new(Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare)
  * @param   hash       The given hash.
  * @param   hash_func  The function used for hashing node keys.
  * @param   compare    The function used for comparing node keys.
- * @return  @c TRUE on success, @c FALSE on an error.
+ * @return  @c EINA_TRUE on success, @c EINA_FALSE on an error.
  * @ingroup Ecore_Data_Hash_ADT_Creation_Group
  */
 EAPI int
 ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare)
 {
-   CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
+   CHECK_PARAM_POINTER_RETURN("hash", hash, EINA_FALSE);
 
    memset(hash, 0, sizeof(Ecore_Hash));
 
@@ -95,7 +95,7 @@ ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compare_Cb comp
    hash->buckets = (Ecore_Hash_Node **)calloc(ecore_prime_table[0],
 					      sizeof(Ecore_Hash_Node *));
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -109,17 +109,17 @@ ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compare_Cb comp
  * @param   hash     The given hash.
  * @param   function The function used to free the node keys. NULL is a
  *          valid value and means that no function will be called.
- * @return  @c TRUE on success, @c FALSE on error.
+ * @return  @c EINA_TRUE on success, @c EINA_FALSE on error.
  * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
 EAPI int
 ecore_hash_free_key_cb_set(Ecore_Hash *hash, Ecore_Free_Cb function)
 {
-   CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
+   CHECK_PARAM_POINTER_RETURN("hash", hash, EINA_FALSE);
 
    hash->free_key = function;
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -127,17 +127,17 @@ ecore_hash_free_key_cb_set(Ecore_Hash *hash, Ecore_Free_Cb function)
  * @param   hash     The given hash.
  * @param   function The function that will free the node values. NULL is a
  *          valid value and means that no function will be called.
- * @return  @c TRUE on success, @c FALSE on error
+ * @return  @c EINA_TRUE on success, @c EINA_FALSE on error
  * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
 EAPI int
 ecore_hash_free_value_cb_set(Ecore_Hash *hash, Ecore_Free_Cb function)
 {
-   CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
+   CHECK_PARAM_POINTER_RETURN("hash", hash, EINA_FALSE);
 
    hash->free_value = function;
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -151,16 +151,16 @@ ecore_hash_free_value_cb_set(Ecore_Hash *hash, Ecore_Free_Cb function)
  * @param   hash    The given hash table.
  * @param   key     The key.
  * @param   value   The value.
- * @return  @c TRUE if successful, @c FALSE if not.
+ * @return  @c EINA_TRUE if successful, @c EINA_FALSE if not.
  * @ingroup Ecore_Data_Hash_ADT_Data_Group
  */
 EAPI int
 ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 {
-   int ret = FALSE;
+   int ret = EINA_FALSE;
    Ecore_Hash_Node *node;
 
-   CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
+   CHECK_PARAM_POINTER_RETURN("hash", hash, EINA_FALSE);
 
    node = _ecore_hash_node_get(hash, key);
    if (node)
@@ -168,7 +168,7 @@ ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 	if (hash->free_key) hash->free_key(key);
 	if (node->value && hash->free_value) hash->free_value(node->value);
 	node->value = value;
-	ret = TRUE;
+	ret = EINA_TRUE;
      }
    else
      {
@@ -184,7 +184,7 @@ ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
  * Sets all key-value pairs from set in the given hash table.
  * @param   hash    The given hash table.
  * @param   set     The hash table to import.
- * @return  @c TRUE if successful, @c FALSE if not.
+ * @return  @c EINA_TRUE if successful, @c EINA_FALSE if not.
  * @ingroup Ecore_Data_Hash_ADT_Data_Group
  */
 EAPI int
@@ -193,8 +193,8 @@ ecore_hash_hash_set(Ecore_Hash *hash, Ecore_Hash *set)
    unsigned int i;
    Ecore_Hash_Node *node, *old;
 
-   CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
-   CHECK_PARAM_POINTER_RETURN("set", set, FALSE);
+   CHECK_PARAM_POINTER_RETURN("hash", hash, EINA_FALSE);
+   CHECK_PARAM_POINTER_RETURN("set", set, EINA_FALSE);
 
    for (i = 0; i < ecore_prime_table[set->size]; i++)
      {
@@ -220,13 +220,13 @@ ecore_hash_hash_set(Ecore_Hash *hash, Ecore_Hash *set)
      }
    FREE(set->buckets);
    ecore_hash_init(set, set->hash_func, set->compare);
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
  * Frees the hash table and the data contained inside it.
  * @param   hash The hash table to destroy.
- * @return  @c TRUE on success, @c FALSE on error.
+ * @return  @c EINA_TRUE on success, @c EINA_FALSE on error.
  * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
 EAPI void
@@ -289,7 +289,7 @@ ecore_hash_count(Ecore_Hash *hash)
  * @param   hash          The given hash.
  * @param   for_each_func The function that each entry is passed to.
  * @param		user_data			a pointer passed to calls of for_each_func
- * @return  TRUE on success, FALSE otherwise.
+ * @return  EINA_TRUE on success, EINA_FALSE otherwise.
  * @ingroup Ecore_Data_Hash_ADT_Traverse_Group
  */
 EAPI int
@@ -297,8 +297,8 @@ ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func, void *u
 {
    unsigned int i = 0;
 
-   CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
-   CHECK_PARAM_POINTER_RETURN("for_each_func", for_each_func, FALSE);
+   CHECK_PARAM_POINTER_RETURN("hash", hash, EINA_FALSE);
+   CHECK_PARAM_POINTER_RETURN("for_each_func", for_each_func, EINA_FALSE);
 
    while (i < ecore_prime_table[hash->size])
      {
@@ -314,7 +314,7 @@ ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func, void *u
 	i++;
      }
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -404,7 +404,7 @@ _ecore_hash_bucket_destroy(Ecore_Hash_Node *list, Ecore_Free_Cb keyd, Ecore_Free
 {
    Ecore_Hash_Node *node;
 
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, EINA_FALSE);
 
    for (node = list; node; node = list)
      {
@@ -412,22 +412,22 @@ _ecore_hash_bucket_destroy(Ecore_Hash_Node *list, Ecore_Free_Cb keyd, Ecore_Free
 	_ecore_hash_node_destroy(node, keyd, valued);
      }
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /*
  * @brief Add the node to the hash table
  * @param hash: the hash table to add the key
  * @param node: the node to add to the hash table
- * @return Returns FALSE on error, TRUE on success
+ * @return Returns EINA_FALSE on error, EINA_TRUE on success
  */
 static int
 _ecore_hash_node_add(Ecore_Hash *hash, Ecore_Hash_Node *node)
 {
    unsigned long hash_val;
 
-   CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
-   CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
+   CHECK_PARAM_POINTER_RETURN("hash", hash, EINA_FALSE);
+   CHECK_PARAM_POINTER_RETURN("node", node, EINA_FALSE);
 
    /* Check to see if the hash needs to be resized */
    if (ECORE_HASH_INCREASE(hash))
@@ -444,7 +444,7 @@ _ecore_hash_node_add(Ecore_Hash *hash, Ecore_Hash_Node *node)
    hash->buckets[hash_val] = node;
    hash->nodes++;
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /**
@@ -676,18 +676,18 @@ _ecore_hash_bucket_get(Ecore_Hash *hash, Ecore_Hash_Node *bucket, const void *ke
 /*
  * @brief Increase the size of the hash table by approx.  2 * current size
  * @param hash: the hash table to increase the size of
- * @return Returns TRUE on success, FALSE on error
+ * @return Returns EINA_TRUE on success, EINA_FALSE on error
  */
 static int
 _ecore_hash_increase(Ecore_Hash *hash)
 {
    void *old;
 
-   CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
+   CHECK_PARAM_POINTER_RETURN("hash", hash, EINA_FALSE);
 
-   /* Max size reached so return FALSE */
+   /* Max size reached so return EINA_FALSE */
    if ((ecore_prime_table[hash->size] == PRIME_MAX) || (hash->size == PRIME_TABLE_MAX))
-     return FALSE;
+     return EINA_FALSE;
 
    /*
     * Increase the size of the hash and save a pointer to the old data
@@ -708,7 +708,7 @@ _ecore_hash_increase(Ecore_Hash *hash)
      {
 	hash->buckets = old;
 	hash->size--;
-	return FALSE;
+	return EINA_FALSE;
      }
    hash->nodes = 0;
 
@@ -718,7 +718,7 @@ _ecore_hash_increase(Ecore_Hash *hash)
    if (_ecore_hash_rehash(hash, old, hash->size - 1))
      {
 	FREE(old);
-	return TRUE;
+	return EINA_TRUE;
      }
 
    /*
@@ -726,23 +726,23 @@ _ecore_hash_increase(Ecore_Hash *hash)
     */
    FREE(old);
 
-   return FALSE;
+   return EINA_FALSE;
 }
 
 /*
  * @brief Decrease the size of the hash table by < 1/2 * current size
  * @param hash: the hash table to decrease the size of
- * @return Returns TRUE on success, FALSE on error
+ * @return Returns EINA_TRUE on success, EINA_FALSE on error
  */
 static int
 _ecore_hash_decrease(Ecore_Hash *hash)
 {
    Ecore_Hash_Node **old;
 
-   CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
+   CHECK_PARAM_POINTER_RETURN("hash", hash, EINA_FALSE);
 
    if (ecore_prime_table[hash->size] == PRIME_MIN)
-     return FALSE;
+     return EINA_FALSE;
 
    /*
     * Decrease the hash size and store a pointer to the old data
@@ -764,7 +764,7 @@ _ecore_hash_decrease(Ecore_Hash *hash)
      {
 	hash->buckets = old;
 	hash->size++;
-	return FALSE;
+	return EINA_FALSE;
      }
 
    hash->nodes = 0;
@@ -772,17 +772,17 @@ _ecore_hash_decrease(Ecore_Hash *hash)
    if (_ecore_hash_rehash(hash, old, hash->size + 1))
      {
 	FREE(old);
-	return TRUE;
+	return EINA_TRUE;
      }
 
-   return FALSE;
+   return EINA_FALSE;
 }
 
 /*
  * @brief Rehash the nodes of a table into the hash table
  * @param hash: the hash to place the nodes of the table
  * @param table: the table to remove the nodes from and place in hash
- * @return Returns TRUE on success, FALSE on error
+ * @return Returns EINA_TRUE on success, EINA_FALSE on error
  */
 static inline int
 _ecore_hash_rehash(Ecore_Hash *hash, Ecore_Hash_Node **old_table, int old_size)
@@ -790,8 +790,8 @@ _ecore_hash_rehash(Ecore_Hash *hash, Ecore_Hash_Node **old_table, int old_size)
    unsigned int i;
    Ecore_Hash_Node *old;
 
-   CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
-   CHECK_PARAM_POINTER_RETURN("old_table", old_table, FALSE);
+   CHECK_PARAM_POINTER_RETURN("hash", hash, EINA_FALSE);
+   CHECK_PARAM_POINTER_RETURN("old_table", old_table, EINA_FALSE);
 
    for (i = 0; i < ecore_prime_table[old_size]; i++)
      {
@@ -804,7 +804,7 @@ _ecore_hash_rehash(Ecore_Hash *hash, Ecore_Hash_Node **old_table, int old_size)
 	  }
      }
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /*
@@ -836,17 +836,17 @@ _ecore_hash_node_new(void *key, void *value)
  * @param node: the node to set the values
  * @param key: the key to reference this node
  * @param value: the value that key refers to
- * @return Returns TRUE on success, FALSE on error
+ * @return Returns EINA_TRUE on success, EINA_FALSE on error
  */
 static int
 _ecore_hash_node_init(Ecore_Hash_Node *node, void *key, void *value)
 {
-   CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
+   CHECK_PARAM_POINTER_RETURN("node", node, EINA_FALSE);
 
    node->key = key;
    node->value = value;
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
 /*
@@ -854,12 +854,12 @@ _ecore_hash_node_init(Ecore_Hash_Node *node, void *key, void *value)
  * @param node: the node to be destroyed
  * @param keyd: the function to free the key
  * @param valued: the function  to free the value
- * @return Returns TRUE on success, FALSE on error
+ * @return Returns EINA_TRUE on success, EINA_FALSE on error
  */
 static int
 _ecore_hash_node_destroy(Ecore_Hash_Node *node, Ecore_Free_Cb keyd, Ecore_Free_Cb valued)
 {
-   CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
+   CHECK_PARAM_POINTER_RETURN("node", node, EINA_FALSE);
 
    if (keyd)
      keyd(node->key);
@@ -869,5 +869,5 @@ _ecore_hash_node_destroy(Ecore_Hash_Node *node, Ecore_Free_Cb keyd, Ecore_Free_C
 
    FREE(node);
 
-   return TRUE;
+   return EINA_TRUE;
 }

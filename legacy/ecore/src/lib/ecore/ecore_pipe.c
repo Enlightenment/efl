@@ -385,7 +385,7 @@ ecore_pipe_write_close(Ecore_Pipe *p)
  * @param p      The Ecore_Pipe object.
  * @param buffer The data to write into the pipe.
  * @param nbytes The size of the @p buffer in bytes
- * @return       Returns TRUE on a successful write, FALSE on an error
+ * @return       Returns EINA_TRUE on a successful write, EINA_FALSE on an error
  * @ingroup Ecore_Pipe_Group
  */
 EAPI int
@@ -398,10 +398,10 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
 	ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_write");
-	return FALSE;
+	return EINA_FALSE;
      }
 
-   if (p->fd_write == PIPE_FD_INVALID) return FALSE;
+   if (p->fd_write == PIPE_FD_INVALID) return EINA_FALSE;
 
    /* First write the len into the pipe */
    do
@@ -417,13 +417,13 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 	     /* XXX What should we do here? */
 	     ERR("The length of the data was not written complete"
 		 " to the pipe");
-	     return FALSE;
+	     return EINA_FALSE;
 	  }
 	else if (ret == PIPE_FD_ERROR && errno == EPIPE)
 	  {
 	     pipe_close(p->fd_write);
 	     p->fd_write = PIPE_FD_INVALID;
-	     return FALSE;
+	     return EINA_FALSE;
 	  }
 	else if (ret == PIPE_FD_ERROR && errno == EINTR)
 	  /* try it again */
@@ -437,7 +437,7 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
      }
    while (retry--);
 
-   if (retry != ECORE_PIPE_WRITE_RETRY) return FALSE;
+   if (retry != ECORE_PIPE_WRITE_RETRY) return EINA_FALSE;
 
    /* and now pass the data to the pipe */
    do
@@ -447,7 +447,7 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
                          nbytes - already_written);
         
 	if (ret == (ssize_t)(nbytes - already_written))
-	  return TRUE;
+	  return EINA_TRUE;
 	else if (ret >= 0)
 	  {
 	     already_written -= ret;
@@ -457,7 +457,7 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 	  {
 	     pipe_close(p->fd_write);
 	     p->fd_write = PIPE_FD_INVALID;
-	     return FALSE;
+	     return EINA_FALSE;
 	  }
 	else if (ret == PIPE_FD_ERROR && errno == EINTR)
 	  /* try it again */
@@ -471,7 +471,7 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
      }
    while (retry--);
 
-   return FALSE;
+   return EINA_FALSE;
 }
 
 /* Private function */
