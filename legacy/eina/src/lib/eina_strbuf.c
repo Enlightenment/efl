@@ -117,8 +117,16 @@ eina_strbuf_reset(Eina_Strbuf *buf)
 
 /**
  * Append a string to a buffer, reallocating as necessary.
+ *
+ * This is slightly slower than eina_strbuf_append_length(), as it
+ * needs to strlen() the given pointer. If you know the size
+ * beforehand, consider using that variant.
+ *
  * @param buf the Eina_Strbuf to append to
  * @param str the string to append
+ *
+ * @see eina_strbuf_append()
+ * @see eina_strbuf_append_length()
  */
 EAPI Eina_Bool
 eina_strbuf_append(Eina_Strbuf *buf, const char *str)
@@ -167,6 +175,9 @@ eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str)
  * @param buf the Eina_Strbuf to append to
  * @param str the string to append
  * @param maxlen maximum number of chars to append
+ *
+ * @see eina_strbuf_append()
+ * @see eina_strbuf_append_length()
  */
 EAPI Eina_Bool
 eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, unsigned int maxlen)
@@ -183,6 +194,36 @@ eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, unsigned int maxlen)
 
    memcpy(buf->buf + buf->len, str, len);
    buf->len += len;
+   buf->buf[buf->len] = '\0';
+   return EINA_TRUE;
+}
+
+/**
+ * Append a string of exact length to a buffer, reallocating as necessary.
+ *
+ * This is a slightly faster version that does not need to strlen()
+ * the whole string to know its size. Useful when dealing with strings
+ * of known size, such as eina_stringshare, see
+ * eina_stringshare_length().
+ *
+ * @param buf the Eina_Strbuf to append to
+ * @param str the string to append
+ * @param length the exact length to use.
+ *
+ * @see eina_strbuf_append()
+ * @see eina_strbuf_append_n()
+ */
+EAPI Eina_Bool
+eina_strbuf_append_length(Eina_Strbuf *buf, const char *str, unsigned int length)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
+
+   if (EINA_UNLIKELY(!_eina_strbuf_grow(buf, buf->len + length)))
+     return EINA_FALSE;
+
+   memcpy(buf->buf + buf->len, str, length);
+   buf->len += length;
    buf->buf[buf->len] = '\0';
    return EINA_TRUE;
 }

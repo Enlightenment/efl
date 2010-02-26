@@ -139,6 +139,16 @@ START_TEST(strbuf_append)
    fail_if(strcmp(eina_strbuf_string_get(buf), "a"));
    eina_strbuf_reset(buf);
 
+   eina_strbuf_append_length(buf, "something", strlen("something"));
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "something"));
+   eina_strbuf_reset(buf);
+
+   eina_strbuf_append_length(buf, "somethingELSE", strlen("something"));
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "something"));
+   eina_strbuf_reset(buf);
+
    eina_strbuf_free(buf);
 
    eina_shutdown();

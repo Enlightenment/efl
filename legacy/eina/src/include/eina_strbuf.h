@@ -13,6 +13,7 @@ EAPI void eina_strbuf_reset(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_strbuf_append(Eina_Strbuf *buf, const char *str) EINA_ARG_NONNULL(1, 2);
 EAPI Eina_Bool eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str) EINA_ARG_NONNULL(1, 2);
 EAPI Eina_Bool eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, unsigned int maxlen) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool eina_strbuf_append_length(Eina_Strbuf *buf, const char *str, unsigned int length) EINA_ARG_NONNULL(1, 2);
 EAPI Eina_Bool eina_strbuf_append_char(Eina_Strbuf *buf, char c) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_strbuf_insert(Eina_Strbuf *buf, const char *str,
              	                 size_t pos) EINA_ARG_NONNULL(1, 2);
