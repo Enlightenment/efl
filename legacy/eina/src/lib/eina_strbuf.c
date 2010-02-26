@@ -47,6 +47,17 @@ static Eina_Bool _eina_strbuf_resize(Eina_Strbuf *buf, size_t size);
 #define _eina_strbuf_grow(_buf, _size) \
    ((((_size) + 1) > (_buf)->size) ? _eina_strbuf_resize((_buf), (_size)) : EINA_TRUE)
 
+/**
+ * @internal
+ * @brief Initialize the strbuf module.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function sets up the strbuf module of Eina. It is called by
+ * eina_init().
+ *
+ * @see eina_init()
+ */
 Eina_Bool
 eina_strbuf_init(void)
 {
@@ -54,6 +65,17 @@ eina_strbuf_init(void)
    return EINA_TRUE;
 }
 
+/**
+ * @internal
+ * @brief Shut down the strbuf module.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function shuts down the strbuf module set up by
+ * eina_strbuf_init(). It is called by eina_shutdown().
+ *
+ * @see eina_shutdown()
+ */
 Eina_Bool
 eina_strbuf_shutdown(void)
 {
