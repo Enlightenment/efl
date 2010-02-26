@@ -900,7 +900,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
      {
         eina_hash_del(_edje_text_class_hash, text_class, tc);
 	free(tc);
-	return FALSE;
+	return EINA_FALSE;
      }
    tc->size = size;
 
