@@ -872,6 +872,12 @@ item_drag_stop(void *data, Evas_Object *obj, void *event_info)
    printf("drag stop\n");
 }
 
+static void
+item_longpress(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("longpress\n");
+}
+
 void
 test_genlist5(void *data, Evas_Object *obj, void *event_info)
 {
@@ -926,6 +932,7 @@ test_genlist5(void *data, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_add(gl, "drag,start,right", item_drag_right, NULL);
    evas_object_smart_callback_add(gl, "drag", item_drag, NULL);
    evas_object_smart_callback_add(gl, "drag,stop", item_drag_stop, NULL);
+   evas_object_smart_callback_add(gl, "longpressed", item_longpress, NULL);
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);

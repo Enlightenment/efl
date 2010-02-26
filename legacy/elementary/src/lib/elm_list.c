@@ -398,6 +398,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) wd->on_hold = EINA_TRUE;
    else wd->on_hold = EINA_FALSE;
+   wd->longpressed = EINA_FALSE;
    if (it->long_timer)
      {
         ecore_timer_del(it->long_timer);
@@ -410,7 +411,6 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
      }
    if (wd->longpressed)
      {
-        wd->longpressed = EINA_FALSE;
         if (!wd->wasselected) _item_unselect(it);
         wd->wasselected = 0;
         return;

@@ -477,16 +477,7 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 	     _item_unselect(it);
 	  }
      }
-   if ((!it->down) || (it->wd->on_hold) || (it->wd->longpressed))
-     {
-        if (it->long_timer)
-          {
-             ecore_timer_del(it->long_timer);
-             it->long_timer = NULL;
-          }
-        return;
-     }
-   if (it->dragging)
+   if ((it->dragging) && (it->down))
      {
         if (it->long_timer)
           {
@@ -494,6 +485,15 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
              it->long_timer = NULL;
           }
         evas_object_smart_callback_call(it->wd->obj, "drag", it);
+        return;
+     }
+   if ((!it->down)/* || (it->wd->on_hold)*/ || (it->wd->longpressed))
+     {
+        if (it->long_timer)
+          {
+             ecore_timer_del(it->long_timer);
+             it->long_timer = NULL;
+          }
         return;
      }
    if (!it->display_only)
@@ -577,6 +577,7 @@ _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    it->dx = ev->canvas.x - x;
    it->dy = ev->canvas.y - y;
+   it->wd->longpressed = EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = EINA_TRUE;
    else it->wd->on_hold = EINA_FALSE;
    it->wd->wasselected = it->selected;
@@ -599,6 +600,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    it->down = 0;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = EINA_TRUE;
    else it->wd->on_hold = EINA_FALSE;
+   it->wd->longpressed = EINA_FALSE;
    if (it->long_timer)
      {
         ecore_timer_del(it->long_timer);
@@ -612,7 +614,6 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
      }
    if (it->wd->on_hold)
      {
-        it->wd->longpressed = EINA_FALSE;
 	it->wd->on_hold = EINA_FALSE;
 	return;
      }
