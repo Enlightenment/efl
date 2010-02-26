@@ -31,6 +31,8 @@ struct _Evas_Object_Style_Tag
    EINA_INLIST;
    char *tag;
    char *replace;
+   size_t tag_len;
+   size_t replace_len;
 };
 
 struct _Evas_Object_Textblock_Node
@@ -245,27 +247,39 @@ _style_clear(Evas_Textblock_Style *ts)
    ts->tags = NULL;
 }
 
-static const char *
-_style_match_replace(Evas_Textblock_Style *ts, const char *s)
+static inline const char *
+_style_match_replace(Evas_Textblock_Style *ts, const char *s, size_t replace_len, size_t *tag_len)
 {
    Evas_Object_Style_Tag *tag;
 
    EINA_INLIST_FOREACH(ts->tags, tag)
      {
-	if (!strcmp(tag->replace, s)) return tag->tag;
+	if (tag->replace_len != replace_len) continue;
+	if (!strcmp(tag->replace, s))
+	  {
+	     *tag_len = tag->tag_len;
+	     return tag->tag;
+	  }
      }
+   *tag_len = 0;
    return NULL;
 }
 
-static char *
-_style_match_tag(Evas_Textblock_Style *ts, char *s)
+static inline const char *
+_style_match_tag(Evas_Textblock_Style *ts, const char *s, size_t tag_len, size_t *replace_len)
 {
    Evas_Object_Style_Tag *tag;
 
    EINA_INLIST_FOREACH(ts->tags, tag)
      {
-	if (!strcmp(tag->tag, s)) return tag->replace;
+	if (tag->tag_len != tag_len) continue;
+	if (!strcmp(tag->tag, s))
+	  {
+	     *replace_len = tag->replace_len;
+	     return tag->replace;
+	  }
      }
+   *replace_len = 0;
    return NULL;
 }
 
@@ -2373,21 +2387,21 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
 	       {
 		  char *tags, *replaces;
 		  Evas_Object_Style_Tag *tag;
+		  size_t tag_len = key_stop - key_start;
+		  size_t replace_len = val_stop - val_start;
 
-		  tags = malloc(key_stop - key_start + 1);
+		  tags = malloc(tag_len + 1);
 		  if (tags)
 		    {
-		       tags[key_stop - key_start] = 0;
-		       strncpy(tags, key_start, key_stop - key_start);
-		       tags[key_stop - key_start] = 0;
+		       memcpy(tags, key_start, tag_len);
+		       tags[tag_len] = 0;
 		    }
 
-		  replaces = malloc(val_stop - val_start + 1);
+		  replaces = malloc(replace_len + 1);
 		  if (replaces)
 		    {
-		       replaces[val_stop - val_start] = 0;
-		       strncpy(replaces, val_start, val_stop - val_start);
-		       replaces[val_stop - val_start] = 0;
+		       memcpy(replaces, val_start, replace_len);
+		       replaces[replace_len] = 0;
 		    }
 		  if ((tags) && (replaces))
 		    {
@@ -2403,6 +2417,8 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
 			      {
 				 tag->tag = tags;
 				 tag->replace = replaces;
+				 tag->tag_len = tag_len;
+				 tag->replace_len = replace_len;
 				 ts->tags = (Evas_Object_Style_Tag *)eina_inlist_append(EINA_INLIST_GET(ts->tags), EINA_INLIST_GET(tag));
 			      }
 			    else
@@ -2732,21 +2748,25 @@ evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
 	       {
 		  if (tag_end)
 		    {
-		       char *ttag, *match;
+		       char *ttag;
+		       size_t ttag_len = tag_end - tag_start -1;
 
-		       ttag = malloc(tag_end - tag_start);
+		       ttag = malloc(ttag_len + 1);
 		       if (ttag)
 			 {
-			    strncpy(ttag, tag_start + 1, tag_end - tag_start - 1);
-			    ttag[tag_end - tag_start - 1] = 0;
-			    match = _style_match_tag(o->style, ttag);
+			    const char *match;
+			    size_t replace_len;
+
+			    memcpy(ttag, tag_start + 1, ttag_len);
+			    ttag[ttag_len] = 0;
+			    match = _style_match_tag(o->style, ttag, ttag_len, &replace_len);
 			    if (match)
 			      evas_textblock_cursor_format_append(o->cursor, match);
 			    else
 			      {
 				 char *ttag2;
 
-				 ttag2 = malloc(strlen(ttag) + 2 + 1);
+				 ttag2 = malloc(ttag_len + 2 + 1);
 				 if (ttag2)
 				   {
 				      if (ttag[0] == '/')
@@ -2869,21 +2889,25 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
 	       {
 		  if (tag_end)
 		    {
-		       char *ttag, *match;
+		       char *ttag;
+		       size_t ttag_len = tag_end - tag_start - 1;
 
-		       ttag = malloc(tag_end - tag_start);
+		       ttag = malloc(ttag_len + 1);
 		       if (ttag)
 			 {
-			    strncpy(ttag, tag_start + 1, tag_end - tag_start - 1);
-			    ttag[tag_end - tag_start - 1] = 0;
-			    match = _style_match_tag(o->style, ttag);
+			    const char *match;
+			    size_t replace_len;
+
+			    strncpy(ttag, tag_start + 1, ttag_len);
+			    ttag[ttag_len] = 0;
+			    match = _style_match_tag(o->style, ttag, ttag_len, &replace_len);
 			    if (match)
 			      evas_textblock_cursor_format_prepend(cur, match);
 			    else
 			      {
 				 char *ttag2;
 
-				 ttag2 = malloc(strlen(ttag) + 2 + 1);
+				 ttag2 = malloc(ttag_len + 2 + 1);
 				 if (ttag2)
 				   {
 				      if (ttag[0] == '/')
@@ -2974,14 +2998,16 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
    txt = eina_strbuf_new();
    EINA_INLIST_FOREACH(o->nodes, n)
      {
-        if ((n->type == NODE_FORMAT) && eina_strbuf_length_get(n->text))
+	size_t replace_len = eina_strbuf_length_get(n->text);
+        if ((n->type == NODE_FORMAT) && replace_len)
 	  {
-	     const char *tag = _style_match_replace(o->style, eina_strbuf_string_get(n->text));
+	     size_t tag_len;
+	     const char *tag = _style_match_replace(o->style, eina_strbuf_string_get(n->text), replace_len, &tag_len);
 	     eina_strbuf_append_char(txt, '<');
 	     if (tag)
 	       {
 		  // FIXME: need to escape
-		  eina_strbuf_append(txt, tag);
+		  eina_strbuf_append_length(txt, tag, tag_len);
 	       }
 	     else
 	       {
@@ -4452,12 +4478,13 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 	       }
 	     else if (format == EVAS_TEXTBLOCK_TEXT_MARKUP)
 	       {
-		  const char *tag = _style_match_replace(o->style, eina_strbuf_string_get(n->text));
+		  size_t tag_len, replace_len = eina_strbuf_string_get(n->text);
+		  const char *tag = _style_match_replace(o->style, eina_strbuf_string_get(n->text), replace_len, &tag_len);
 		  eina_strbuf_append_char(txt, '<');
 		  if (tag)
 		    {
 		       // FIXME: need to escape
-		       eina_strbuf_append(txt, tag);
+		       eina_strbuf_append_length(txt, tag, tag_len);
 		    }
 		  else
 		    {
