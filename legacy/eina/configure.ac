@@ -579,10 +579,3 @@ echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...............: $prefix"
 echo
-if test "x${have_static_module}" = "xyes" ; then
-echo -e "\0033\01331;31mWarning\0033\01331;0m: You are trying to link statically one or more modules to Eina."
-echo "         You must know what you are doing, or else you will have a lot of problems."
-echo "         And dolphins will disappear from the earth."
-echo "         Think about that."
-echo
-fi
