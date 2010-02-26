@@ -120,7 +120,7 @@ START_TEST(eina_inlist_simple)
 
    tmp = EINA_INLIST_CONTAINER_GET(eina_inlist_find(lst, EINA_INLIST_GET(prev)), Eina_Test_Inlist);
    lst = eina_inlist_remove(lst, EINA_INLIST_GET(tmp));
-   prev = eina_inlist_find(lst, EINA_INLIST_GET(tmp));
+   prev = (Eina_Test_Inlist *)eina_inlist_find(lst, EINA_INLIST_GET(tmp));
    tmp = prev ? EINA_INLIST_CONTAINER_GET(prev, Eina_Test_Inlist) : NULL;
    fail_if(tmp != NULL);
 

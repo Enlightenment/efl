@@ -130,7 +130,6 @@ START_TEST(eina_test_tiler_all)
 {
    Eina_Tiler *tl;
    Eina_Iterator *it;
-   Eina_Rectangle *rc;
    Eina_Rectangle r;
    int i = 0;
 

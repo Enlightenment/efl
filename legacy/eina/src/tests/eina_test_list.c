@@ -114,22 +114,18 @@ START_TEST(eina_test_simple)
 
    for (tmp = list, i = 0; tmp != NULL; tmp = eina_list_next(tmp), ++i)
      {
-	int *data;
-
-	data = eina_list_data_get(tmp);
-	fail_if(data == NULL);
-	fail_if(*data != result[i]);
+	int *d = eina_list_data_get(tmp);
+	fail_if(d == NULL);
+	fail_if(*d != result[i]);
      }
 
    list = eina_list_reverse(list);
 
    for (tmp = list; tmp != NULL; tmp = eina_list_next(tmp), --i)
      {
-	int *data;
-
-	data = eina_list_data_get(tmp);
-	fail_if(data == NULL);
-	fail_if(*data != result[i - 1]);
+	int *d = eina_list_data_get(tmp);
+	fail_if(d == NULL);
+	fail_if(*d != result[i - 1]);
      }
 
    list = eina_list_append_relative(list, &data[7], &data[7]);
@@ -171,12 +167,10 @@ START_TEST(eina_test_simple)
    test1 = eina_list_nth(list, 0);
    for (tmp = list; tmp != NULL; tmp = eina_list_next(tmp))
      {
-	int *data;
+	int *d = eina_list_data_get(tmp);
+	fail_if(*test1 > *d);
 
-	data = eina_list_data_get(tmp);
-	fail_if(*test1 > *data);
-
-	test1 = data;
+	test1 = d;
      }
 
    test3 = eina_list_nth(list, 5);
