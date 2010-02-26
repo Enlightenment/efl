@@ -24,6 +24,7 @@ EAPI Eina_Bool eina_strbuf_insert_length(Eina_Strbuf *buf, const char *str, size
 EAPI Eina_Bool eina_strbuf_insert_char(Eina_Strbuf *buf, char c, size_t pos) EINA_ARG_NONNULL(1);
 
 #define eina_strbuf_prepend(buf, str) eina_strbuf_insert(buf, str, 0)
+#define eina_strbuf_prepend_escaped(buf, str) eina_strbuf_insert_escaped(buf, str, 0)
 #define eina_strbuf_prepend_n(buf, str, maxlen) eina_strbuf_insert_n(buf, str, maxlen, 0)
 #define eina_strbuf_prepend_length(buf, str, length) eina_strbuf_insert_length(buf, str, length, 0)
 #define eina_strbuf_prepend_char(buf, c) eina_strbuf_insert_char(buf, c, 0)
