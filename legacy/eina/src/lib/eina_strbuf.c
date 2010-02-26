@@ -62,6 +62,12 @@ eina_strbuf_shutdown(void)
 
 /**
  * Create a new string buffer
+ *
+ * @return newly allocated instance. Free using eina_strbuf_free()
+ *
+ * @see eina_strbuf_free()
+ * @see eina_strbuf_append()
+ * @see eina_strbuf_string_get()
  */
 EAPI Eina_Strbuf *
 eina_strbuf_new(void)
@@ -125,6 +131,8 @@ eina_strbuf_reset(Eina_Strbuf *buf)
  * @param buf the Eina_Strbuf to append to
  * @param str the string to append
  *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
  * @see eina_strbuf_append()
  * @see eina_strbuf_append_length()
  */
@@ -148,6 +156,8 @@ eina_strbuf_append(Eina_Strbuf *buf, const char *str)
  * Append an escaped string to a buffer, reallocating as necessary.
  * @param buf the Eina_Strbuf to append to
  * @param str the string to append
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  */
 EAPI Eina_Bool
 eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str)
@@ -175,6 +185,8 @@ eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str)
  * @param buf the Eina_Strbuf to append to
  * @param str the string to append
  * @param maxlen maximum number of chars to append
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * @see eina_strbuf_append()
  * @see eina_strbuf_append_length()
@@ -210,6 +222,8 @@ eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, unsigned int maxlen)
  * @param str the string to append
  * @param length the exact length to use.
  *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
  * @see eina_strbuf_append()
  * @see eina_strbuf_append_n()
  */
@@ -233,6 +247,8 @@ eina_strbuf_append_length(Eina_Strbuf *buf, const char *str, unsigned int length
  * @param buf the Eina_Strbuf to insert
  * @param str the string to insert
  * @param pos the position to insert the string
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  */
 EAPI Eina_Bool
 eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos)
@@ -264,6 +280,8 @@ eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos)
  * Append a character to a string buffer, reallocating as necessary.
  * @param buf the Eina_Strbuf to append to
  * @param c the char to append
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  */
 EAPI Eina_Bool
 eina_strbuf_append_char(Eina_Strbuf *buf, char c)
@@ -309,6 +327,13 @@ eina_strbuf_remove(Eina_Strbuf *buf, unsigned int start, unsigned int end)
  *
  * This pointer must not be modified, and will no longer be valid if
  * the Eina_Strbuf is modified.
+ *
+ * @return pointer to current string buffer. Do not modify this buffer
+ *         and it is just valid while no other eina_strbuf operation
+ *         is done. In other words, any eina_strbuf_append() or
+ *         similar will make that pointer invalid.
+ *
+ * @see eina_strbuf_string_steal()
  */
 EAPI const char *
 eina_strbuf_string_get(const Eina_Strbuf *buf)
@@ -321,6 +346,11 @@ eina_strbuf_string_get(const Eina_Strbuf *buf)
 /**
  * Steal the contents of a string buffer
  * @param buf the buffer
+ *
+ * @return the current string buffer, that is now owned by caller and
+ *         must be released with free().
+ *
+ * @see eina_strbuf_string_get()
  */
 EAPI char *
 eina_strbuf_string_steal(Eina_Strbuf *buf)
@@ -337,6 +367,8 @@ eina_strbuf_string_steal(Eina_Strbuf *buf)
 /**
  * Retrieve the length of the string buffer content
  * @param buf the buffer
+ *
+ * @return the current length of the string, in bytes.
  */
 EAPI size_t
 eina_strbuf_length_get(const Eina_Strbuf *buf)
@@ -353,7 +385,7 @@ eina_strbuf_length_get(const Eina_Strbuf *buf)
  * @param with the replaceing string
  * @param n the number of the fitting string
  *
- * @return true on success
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  */
 EAPI Eina_Bool
 eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with,
@@ -410,8 +442,8 @@ eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with,
 EAPI int
 eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(with, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(str, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(with, 0);
    EINA_MAGIC_CHECK_STRBUF(buf, 0);
 
    size_t len1, len2, len;
@@ -491,8 +523,12 @@ eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
 }
 
 /**
+ * @internal
+ *
  * init the buffer
  * @param buf the buffer to init
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  */
 static Eina_Bool
 _eina_strbuf_init(Eina_Strbuf *buf)
@@ -513,11 +549,13 @@ _eina_strbuf_init(Eina_Strbuf *buf)
 }
 
 /**
+ * @internal
+ *
  * resize the buffer
  * @param buf the buffer to resize
  * @param size the minimum size of the buffer
  *
- * @return true on success
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  */
 static Eina_Bool
 _eina_strbuf_resize(Eina_Strbuf *buf, size_t size)
