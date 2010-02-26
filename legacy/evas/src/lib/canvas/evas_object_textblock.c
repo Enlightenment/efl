@@ -955,21 +955,18 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
 	else if (!strcmp(tmp_param, "center")) fmt->halign = 0.5;
 	else if (!strcmp(tmp_param, "left")) fmt->halign = 0.0;
 	else if (!strcmp(tmp_param, "right")) fmt->halign = 1.0;
-	else if (strchr(tmp_param, '%'))
-	  {
-	     char *ts, *p;
-
-	     ts = alloca(strlen(tmp_param) + 1);
-	     strcpy(ts, tmp_param);
-	     p = strchr(ts, '%');
-	     *p = 0;
-	     fmt->halign = ((double)atoi(ts)) / 100.0;
-	     if (fmt->halign < 0.0) fmt->halign = 0.0;
-	     else if (fmt->halign > 1.0) fmt->halign = 1.0;
-	  }
 	else
 	  {
-	     fmt->halign = atof(tmp_param);
+	     char *endptr = NULL;
+	     double val = strtod(tmp_param, &endptr);
+	     if (endptr)
+	       {
+		  while (*endptr && _is_white(*endptr))
+		    endptr++;
+		  if (*endptr == '%')
+		    val /= 100.0;
+	       }
+	     fmt->halign = val;;
 	     if (fmt->halign < 0.0) fmt->halign = 0.0;
 	     else if (fmt->halign > 1.0) fmt->halign = 1.0;
 	  }
@@ -982,21 +979,18 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
 	else if (!strcmp(tmp_param, "bottom")) fmt->valign = 1.0;
 	else if (!strcmp(tmp_param, "baseline")) fmt->valign = -1.0;
 	else if (!strcmp(tmp_param, "base")) fmt->valign = -1.0;
-	else if (strchr(tmp_param, '%'))
-	  {
-	     char *ts, *p;
-
-	     ts = alloca(strlen(tmp_param) + 1);
-	     strcpy(ts, tmp_param);
-	     p = strchr(ts, '%');
-	     *p = 0;
-	     fmt->valign = ((double)atoi(ts)) / 100.0;
-	     if (fmt->valign < 0.0) fmt->valign = 0.0;
-	     else if (fmt->valign > 1.0) fmt->valign = 1.0;
-	  }
 	else
 	  {
-	     fmt->valign = atof(tmp_param);
+	     char *endptr = NULL;
+	     double val = strtod(tmp_param, &endptr);
+	     if (endptr)
+	       {
+		  while (*endptr && _is_white(*endptr))
+		    endptr++;
+		  if (*endptr == '%')
+		    val /= 100.0;
+	       }
+	     fmt->valign = val;
 	     if (fmt->valign < 0.0) fmt->valign = 0.0;
 	     else if (fmt->valign > 1.0) fmt->valign = 1.0;
 	  }
@@ -1110,17 +1104,18 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
      }
    else if (cmd == linerelsizestr)
      {
-        if (strchr(tmp_param, '%'))
-          {
-	     char *ts, *p;
-
-	     ts = alloca(strlen(tmp_param) + 1);
-	     strcpy(ts, tmp_param);
-	     p = strchr(ts, '%');
-	     *p = 0;
-	     fmt->linerelsize = ((double)atoi(ts)) / 100.0;
-             fmt->linesize = 0;
-	     if (fmt->linerelsize < 0.0) fmt->linerelsize = 0.0;
+	char *endptr = NULL;
+	double val = strtod(tmp_param, &endptr);
+	if (endptr)
+	  {
+	     while (*endptr && _is_white(*endptr))
+	       endptr++;
+	     if (*endptr == '%')
+	       {
+		  fmt->linerelsize = val / 100.0;
+		  fmt->linesize = 0;
+		  if (fmt->linerelsize < 0.0) fmt->linerelsize = 0.0;
+	       }
           }
      }
 
