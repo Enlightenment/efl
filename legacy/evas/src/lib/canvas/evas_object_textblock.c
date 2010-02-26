@@ -245,7 +245,7 @@ _style_clear(Evas_Textblock_Style *ts)
    ts->tags = NULL;
 }
 
-static char *
+static const char *
 _style_match_replace(Evas_Textblock_Style *ts, const char *s)
 {
    Evas_Object_Style_Tag *tag;
@@ -353,7 +353,8 @@ _nodes_adjacent_merge(const Evas_Object *obj, Evas_Object_Textblock_Node *n1)
    if ((n0) && (n0->type == NODE_TEXT))
      {
 	plen = eina_strbuf_length_get(n0->text);
-	eina_strbuf_append(n0->text, eina_strbuf_string_get(n1->text));
+	eina_strbuf_append_length(n0->text, eina_strbuf_string_get(n1->text),
+				  eina_strbuf_length_get(n1->text));
 	(EINA_INLIST_GET(n0))->next = EINA_INLIST_GET(n2);
 	if (n2) (EINA_INLIST_GET(n2))->prev = EINA_INLIST_GET(n0);
 	// fix any cursors in n1
@@ -380,7 +381,8 @@ _nodes_adjacent_merge(const Evas_Object *obj, Evas_Object_Textblock_Node *n1)
 	n1 = n2;
 	n2 = (Evas_Object_Textblock_Node *)(EINA_INLIST_GET(n1))->next;
 	plen = eina_strbuf_length_get(n0->text);
-	eina_strbuf_append(n0->text, eina_strbuf_string_get(n1->text));
+	eina_strbuf_append_length(n0->text, eina_strbuf_string_get(n1->text),
+				  eina_strbuf_length_get(n1->text));
 	(EINA_INLIST_GET(n0))->next = EINA_INLIST_GET(n2);
 	if (n2) (EINA_INLIST_GET(n2))->prev = EINA_INLIST_GET(n0);
 	// fix any cursors in n1
@@ -2974,8 +2976,8 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
      {
         if ((n->type == NODE_FORMAT) && eina_strbuf_length_get(n->text))
 	  {
-	     char *tag = _style_match_replace(o->style, eina_strbuf_string_get(n->text));
-	     eina_strbuf_append(txt, "<");
+	     const char *tag = _style_match_replace(o->style, eina_strbuf_string_get(n->text));
+	     eina_strbuf_append_char(txt, '<');
 	     if (tag)
 	       {
 		  // FIXME: need to escape
@@ -2992,11 +2994,11 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
 		  if (*s == '+') push = 1;
 		  if (*s == '-') pop = 1;
 		  while ((*s == ' ') || (*s == '+') || (*s == '-')) s++;
-		  if (pop) eina_strbuf_append(txt, "/");
+		  if (pop) eina_strbuf_append_char(txt, '/');
 		  if (push) eina_strbuf_append(txt, "+ ");
 		  eina_strbuf_append(txt, s);
 	       }
-	     eina_strbuf_append(txt, ">");
+	     eina_strbuf_append_char(txt, '>');
 	  }
 	else if ((n->type == NODE_TEXT) && eina_strbuf_length_get(n->text))
 	  {
@@ -3015,11 +3017,7 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
 		    }
 		  else
 		    {
-		       char str[2];
-
-		       str[0] = *p;
-		       str[1] = 0;
-		       eina_strbuf_append(txt, str);
+		       eina_strbuf_append_char(txt, *p);
 		       p++;
 		    }
 	       }
@@ -4410,11 +4408,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 			      }
 			    else
 			      {
-				 char str[2];
-
-				 str[0] = *p;
-				 str[1] = 0;
-				 eina_strbuf_append(txt, str);
+				 eina_strbuf_append_char(txt, *p);
 				 p++;
 			      }
 			 }
@@ -4450,16 +4444,16 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 		  while (*s)
 		    {
 		       if (*s == '\n')
-			 eina_strbuf_append(txt, "\n");
+			 eina_strbuf_append_char(txt, '\n');
 		       else if (*s == '\t')
-			 eina_strbuf_append(txt, "\t");
+			 eina_strbuf_append_char(txt, '\t');
 		       s++;
 		    }
 	       }
 	     else if (format == EVAS_TEXTBLOCK_TEXT_MARKUP)
 	       {
-		  char *tag = _style_match_replace(o->style, eina_strbuf_string_get(n->text));
-		  eina_strbuf_append(txt, "<");
+		  const char *tag = _style_match_replace(o->style, eina_strbuf_string_get(n->text));
+		  eina_strbuf_append_char(txt, '<');
 		  if (tag)
 		    {
 		       // FIXME: need to escape
@@ -4475,11 +4469,11 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 		       if (*s == '+') push = 1;
 		       if (*s == '-') pop = 1;
 		       while ((*s == ' ') || (*s == '+') || (*s == '-')) s++;
-		       if (pop) eina_strbuf_append(txt, "/");
+		       if (pop) eina_strbuf_append_char(txt, '/');
 		       if (push) eina_strbuf_append(txt, "+ ");
 		       eina_strbuf_append(txt, s);
 		    }
-		  eina_strbuf_append(txt, ">");
+		  eina_strbuf_append_char(txt, '>');
 	       }
 	  }
 	if (n == n2) break;
