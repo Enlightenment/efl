@@ -180,6 +180,24 @@ START_TEST(strbuf_insert)
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    fail_if(strcmp(eina_strbuf_string_get(buf), "1xyz23abcxyz"));
 
+   eina_strbuf_insert_n(buf, "ABCDEF", 2, 1);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "1ABxyz23abcxyz"));
+
+   eina_strbuf_insert_n(buf, "EINA", 2, 3);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(eina_strbuf_string_get(buf), "1ABEIxyz23abcxyz"));
+
+   eina_strbuf_insert_escaped(buf, "678", 3);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strncmp(eina_strbuf_string_get(buf) + 3, "678", 3));
+
+   eina_strbuf_insert_escaped(buf, "089 '\\", 9);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strncmp(eina_strbuf_string_get(buf) + 9, "089\\ \\'\\\\",
+		   strlen("089\\ \\'\\\\")));
+   eina_strbuf_reset(buf);
+
    eina_strbuf_free(buf);
 
    eina_shutdown();
@@ -234,6 +252,76 @@ START_TEST(strbuf_replace)
 }
 END_TEST
 
+START_TEST(strbuf_append_realloc)
+{
+   Eina_Strbuf *buf;
+   const size_t runs = 40960;
+   const char target_pattern[] = "stringstrsstr";
+   const char *str;
+   size_t i, target_pattern_size;
+
+   eina_init();
+
+   buf = eina_strbuf_new();
+   fail_if(!buf);
+
+   for (i = 0; i < runs; i++)
+     {
+	fail_if(!eina_strbuf_append(buf, "string"));
+	fail_if(!eina_strbuf_append_n(buf, "string", 3));
+	fail_if(!eina_strbuf_append_char(buf, 's'));
+	fail_if(!eina_strbuf_append_length(buf, "string", 3));
+     }
+
+   target_pattern_size = strlen(target_pattern);
+   fail_if(eina_strbuf_length_get(buf) != (runs * target_pattern_size));
+
+   str = eina_strbuf_string_get(buf);
+   fail_if(str == NULL);
+   for (i = 0; i < runs; i++, str += target_pattern_size)
+     fail_if(memcmp(str, target_pattern, target_pattern_size));
+
+   eina_strbuf_free(buf);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(strbuf_prepend_realloc)
+{
+   Eina_Strbuf *buf;
+   const size_t runs = 40960;
+   const char target_pattern[] = "strsstrstring";
+   const char *str;
+   size_t i, target_pattern_size;
+
+   eina_init();
+
+   buf = eina_strbuf_new();
+   fail_if(!buf);
+
+   for (i = 0; i < runs; i++)
+     {
+	fail_if(!eina_strbuf_prepend(buf, "string"));
+	fail_if(!eina_strbuf_prepend_n(buf, "string", 3));
+	fail_if(!eina_strbuf_prepend_char(buf, 's'));
+	fail_if(!eina_strbuf_prepend_length(buf, "string", 3));
+     }
+
+   target_pattern_size = strlen(target_pattern);
+   fail_if(eina_strbuf_length_get(buf) != (runs * target_pattern_size));
+
+   str = eina_strbuf_string_get(buf);
+   fail_if(str == NULL);
+   for (i = 0; i < runs; i++, str += target_pattern_size)
+     fail_if(memcmp(str, target_pattern, target_pattern_size));
+
+   eina_strbuf_free(buf);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_strbuf(TCase *tc)
 {
@@ -242,4 +330,6 @@ eina_test_strbuf(TCase *tc)
    tcase_add_test(tc, strbuf_append);
    tcase_add_test(tc, strbuf_insert);
    tcase_add_test(tc, strbuf_replace);
+   tcase_add_test(tc, strbuf_append_realloc);
+   tcase_add_test(tc, strbuf_prepend_realloc);
 }
