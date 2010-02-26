@@ -144,7 +144,6 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_log.h" /* remove me when eina_error_print is removed! */
 
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
@@ -152,8 +151,6 @@
 #include "eina_error.h"
 
 /* TODO
- * + printing errors to stdout or stderr can be implemented
- * using a queue, useful for multiple threads printing
  * + add a wrapper for assert?
  * + add common error numbers, messages
  * + add a calltrace of errors, not only store the last error but a list of them
@@ -413,49 +410,6 @@ EAPI void
 eina_error_set(Eina_Error err)
 {
    _eina_last_error = err;
-}
-
-/**
- * @deprecated use eina_log_print() instead.
- */
-EAPI void eina_error_print(int level, const char *file,
-		const char *fnc, int line, const char *fmt, ...)
-{
-	va_list args;
-
-	EINA_SAFETY_ON_NULL_RETURN(file);
-	EINA_SAFETY_ON_NULL_RETURN(fnc);
-	EINA_SAFETY_ON_NULL_RETURN(fmt);
-
-	EINA_LOG_WARN("this function is deprecated!");
-
-	va_start(args, fmt);
-	eina_log_vprint(EINA_LOG_DOMAIN_GLOBAL, level, file, fnc, line, fmt, args);
-	va_end(args);
-}
-
-/**
- * @deprecated use eina_log_vprint() instead.
- */
-EAPI void eina_error_vprint(int level, const char *file,
-		const char *fnc, int line, const char *fmt, va_list args)
-{
-	EINA_SAFETY_ON_NULL_RETURN(file);
-	EINA_SAFETY_ON_NULL_RETURN(fnc);
-	EINA_SAFETY_ON_NULL_RETURN(fmt);
-
-	EINA_LOG_WARN("this function is deprecated!");
-
-	eina_log_vprint(EINA_LOG_DOMAIN_GLOBAL, level, file, fnc, line, fmt, args);
-}
-
-/**
- * @deprecated use eina_log_level_set() instead.
- */
-EAPI void eina_error_log_level_set(int level)
-{
-   EINA_LOG_WARN("this function is deprecated!");
-   eina_log_level_set(level);
 }
 
 /**
