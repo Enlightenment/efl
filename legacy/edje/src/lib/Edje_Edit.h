@@ -250,10 +250,10 @@ edje_edit_data_list_get(
 
 /** Create a new *global* data object in the given edje file. If
  * another data entry with the same name exists, nothing is created and
- * FALSE is returned.
+ * EINA_FALSE is returned.
  */
 
-EAPI Eina_Bool         ///@return TRUE on success
+EAPI Eina_Bool         ///@return EINA_TRUE on success
 edje_edit_data_add(
    Evas_Object *obj,       ///< The edje object
    const char *itemname,   ///< The name for the new data
@@ -261,7 +261,7 @@ edje_edit_data_add(
 );
 
 /**Delete the given data object from edje */
-EAPI Eina_Bool         ///@return TRUE on success
+EAPI Eina_Bool         ///@return EINA_TRUE on success
 edje_edit_data_del(
    Evas_Object *obj,       ///< The edje object
    const char *itemname    ///< The name of the data to remove
@@ -275,7 +275,7 @@ edje_edit_data_value_get(
 );
 
 /** Set the data associated with the given itemname **/
-EAPI Eina_Bool        ///@return TRUE on success
+EAPI Eina_Bool        ///@return EINA_TRUE on success
 edje_edit_data_value_set(
    Evas_Object * obj,     ///< The edje object
    const char *itemname,  ///< The name of the data item
@@ -283,7 +283,7 @@ edje_edit_data_value_set(
 );
 
 /** Change the name of the given data object */
-EAPI Eina_Bool        ///@return TRUE on success
+EAPI Eina_Bool        ///@return EINA_TRUE on success
 edje_edit_data_name_set(
    Evas_Object *obj,     ///< The edje object
    const char *itemname, ///< The name of the data item
@@ -292,7 +292,7 @@ edje_edit_data_name_set(
 
 /** Create a new data object in the given edje file *belonging to the
  * current group*. If another data entry with the same name exists,
- * nothing is created and FALSE is returned.
+ * nothing is created and EINA_FALSE is returned.
  */
 
 /** Retrieves a list with the item names inside the data block **/
@@ -355,16 +355,16 @@ edje_edit_color_classes_list_get(
 );
 
 /** Create a new color class object in the given edje
- *  If another class with the same name exists nothing is created and FALSE is returned.
+ *  If another class with the same name exists nothing is created and EINA_FALSE is returned.
  */
-EAPI Eina_Bool        ///@return TRUE on success
+EAPI Eina_Bool        ///@return EINA_TRUE on success
 edje_edit_color_class_add(
    Evas_Object *obj,      ///< The edje object
    const char *name       ///< The name of the new color class
 );
 
 /** Delete the given class object from edje */
-EAPI Eina_Bool        ///@return TRUE on success
+EAPI Eina_Bool        ///@return EINA_TRUE on success
 edje_edit_color_class_del(
    Evas_Object *obj,      ///< The edje object
    const char *name       ///< The name of the color class to delete
@@ -373,7 +373,7 @@ edje_edit_color_class_del(
 /** Get all the colors that compose the class.
  *  You can pass NULL to colors you are not intrested in
  */
-EAPI Eina_Bool         ///@return TRUE on success
+EAPI Eina_Bool         ///@return EINA_TRUE on success
 edje_edit_color_class_colors_get(
    Evas_Object *obj,       ///< The edje object
    const char *class_name, ///< The name of the color class
@@ -394,7 +394,7 @@ edje_edit_color_class_colors_get(
 /** Set the colors for the given color class.
  *  If you set a color to -1 it will not be touched
  */
-EAPI Eina_Bool         ///@return TRUE on success
+EAPI Eina_Bool         ///@return EINA_TRUE on success
 edje_edit_color_class_colors_set(
    Evas_Object *obj,       ///< The edje object
    const char *class_name, ///< The name of the color class
@@ -413,7 +413,7 @@ edje_edit_color_class_colors_set(
 );
 
 /** Change the name of a color class */
-EAPI Eina_Bool        ///@return TRUE on success
+EAPI Eina_Bool        ///@return EINA_TRUE on success
 edje_edit_color_class_name_set(
    Evas_Object *obj,      ///< The edje object
    const char *name,      ///< The name of the color class
@@ -437,9 +437,9 @@ edje_edit_styles_list_get(
 );
 
 /** Create a new text style object in the given edje
- *  If another style with the same name exists nothing is created and FALSE is returned.
+ *  If another style with the same name exists nothing is created and EINA_FALSE is returned.
  */
-EAPI Eina_Bool        ///@return TRUE on success, FALSE if the tag can't be created
+EAPI Eina_Bool        ///@return EINA_TRUE on success, EINA_FALSE if the tag can't be created
 edje_edit_style_add(
    Evas_Object *obj,      ///< The edje object
    const char *style      ///< The new name for the style
@@ -490,9 +490,9 @@ edje_edit_style_tag_name_set(
 );
 
 /** Add a new tag to the given text style.
- *  If another tag with the same name exists nothing is created and FALSE is returned.
+ *  If another tag with the same name exists nothing is created and EINA_FALSE is returned.
  */
-EAPI Eina_Bool         ///@return TRUE on success, FALSE if the tag can't be created
+EAPI Eina_Bool         ///@return EINA_TRUE on success, EINA_FALSE if the tag can't be created
 edje_edit_style_tag_add(
    Evas_Object *obj,       ///< The edje object
    const char *style,      ///< The name of the style
@@ -524,9 +524,9 @@ edje_edit_externals_list_get(
 );
 
 /** Add an external module to be requested on edje load
- *  If one with the same name exists nothing is created and FALSE is returned.
+ *  If one with the same name exists nothing is created and EINA_FALSE is returned.
  */
-EAPI Eina_Bool        ///@return TRUE on success, FALSE otherwise
+EAPI Eina_Bool        ///@return EINA_TRUE on success, EINA_FALSE otherwise
 edje_edit_external_add(
    Evas_Object *obj,      ///< The edje object
    const char *external   ///< The new name for the extermal
@@ -556,10 +556,10 @@ edje_edit_parts_list_get(
 );
 
 /**Create a new part in the given edje
- * If another part with the same name just exists nothing is created and FALSE is returned.
+ * If another part with the same name just exists nothing is created and EINA_FALSE is returned.
  * Note that this function also create a default description for the part.
  */
-EAPI Eina_Bool         ///@return TRUE on success, FALSE if the part can't be created
+EAPI Eina_Bool         ///@return EINA_TRUE on success, EINA_FALSE if the part can't be created
 edje_edit_part_add(
    Evas_Object *obj,       ///< The edje object
    const char *name,       ///< The name for the new part
@@ -567,10 +567,10 @@ edje_edit_part_add(
 );
 
 /**Create a new part of type EXTERNAL in the given edje
- * If another part with the same name just exists nothing is created and FALSE is returned.
+ * If another part with the same name just exists nothing is created and EINA_FALSE is returned.
  * Note that this function also create a default description for the part.
  */
-EAPI Eina_Bool         ///@return TRUE on success, FALSE if the part can't be created
+EAPI Eina_Bool         ///@return EINA_TRUE on success, EINA_FALSE if the part can't be created
 edje_edit_part_external_add(
    Evas_Object *obj,       ///< The edje object
    const char *name,       ///< The name for the new part
@@ -1459,7 +1459,7 @@ edje_edit_state_fill_size_offset_y_set(
 );
 
 /**Get the visibility of a part state.*/
-EAPI Eina_Bool         ///@return TRUE if the state is visible
+EAPI Eina_Bool         ///@return EINA_TRUE if the state is visible
 edje_edit_state_visible_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1472,7 +1472,7 @@ edje_edit_state_visible_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
    const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
-   Eina_Bool visible   ///< TRUE to set the state visible
+   Eina_Bool visible   ///< EINA_TRUE to set the state visible
 );
 
 /**Get the color class of the given part state. Remember to free the string with edje_edit_string_free()*/
@@ -1720,9 +1720,9 @@ edje_edit_fonts_list_get(
 
 /**Add a new ttf font to the edje file.
  * The newly created font will be available to all the groups in the edje, not only the current one.
- * If font can't be load FALSE is returned.
+ * If font can't be load EINA_FALSE is returned.
  */
-EAPI Eina_Bool         ///@return TRUE on success or FALSE on failure
+EAPI Eina_Bool         ///@return EINA_TRUE on success or EINA_FALSE on failure
 edje_edit_font_add(
    Evas_Object *obj,       ///< The edje object
    const char* path        ///< The file path to load the ttf font from
@@ -1772,7 +1772,7 @@ edje_edit_images_list_get(
  *
  * The format of the image files that can be loaded depend on the evas engine on your system
  */
-EAPI Eina_Bool         ///@return TRUE on success or FALSE on failure
+EAPI Eina_Bool         ///@return EINA_TRUE on success or EINA_FALSE on failure
 edje_edit_image_add(
    Evas_Object *obj,       ///< The edje object
    const char* path        ///< The name of the image file to include in the edje
@@ -1786,7 +1786,7 @@ edje_edit_image_add(
  * "name". Note that all the parts in the edje share the same image collection,
  * thus you can/must use the same image for different part.
  */
-EAPI Eina_Bool        /// @return TRUE on success or FALSE on failure
+EAPI Eina_Bool        /// @return EINA_TRUE on success or EINA_FALSE on failure
 edje_edit_image_data_add(
    Evas_Object *obj,      ///< The edje object
    const char *name,      ///< The image entry name
