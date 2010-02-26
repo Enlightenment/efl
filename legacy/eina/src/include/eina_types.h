@@ -214,25 +214,13 @@
 #endif /* ! __GNUC__ && ! _WIN32 && ! __SUNPRO_C */
 
 
-/* remove this TRUE/FALSE redifinitions */
-
-/**
- * @deprecated Use #EINA_TRUE instead.
- */
-#ifndef TRUE
-# define TRUE 1
-#endif
-
-/**
- * @deprecated Use #EINA_FALSE instead.
- */
-#ifndef FALSE
-# define FALSE 0
-#endif
-
 /**
  * @typedef Eina_Bool
  * Type to mimic a boolean.
+ *
+ * @note it differs from stdbool.h as this is defined as an unsigned
+ *       char to make it usable by bitfields (Eina_Bool name:1) and
+ *       also take as few bytes as possible.
  */
 typedef unsigned char Eina_Bool;
 
