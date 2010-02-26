@@ -1285,7 +1285,7 @@ eina_stringshare_del(const char *str)
  *        give NULL, in that case -1 is returned.
  *
  * This function is a cheap way to known the length of a shared
- * string. Note that if the given pointer is not shared or NULL, bad
+ * string. Note that if the given pointer is not shared, bad
  * things will happen, likely a segmentation fault. If in doubt, try
  * strlen().
  */

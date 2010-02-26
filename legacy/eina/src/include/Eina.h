@@ -1,5 +1,20 @@
 /* EINA - EFL data type library
- * Copyright (C) 2008 Jorge Luis Zapata Muga, Cedric Bail
+ * Copyright (C) 2008-2010 Enlightenment Developers:
+ *           Albin "Lutin" Tonnerre <albin.tonnerre@gmail.com>
+ *           Alexandre "diaxen" Becoulet <diaxen@free.fr>
+ *           Andre Dieb <andre.dieb@gmail.com>
+ *           Arnaud de Turckheim "quarium" <quarium@gmail.com>
+ *           Carsten Haitzler <raster@rasterman.com>
+ *           Cedric Bail <cedric.bail@free.fr>
+ *           Corey "atmos" Donohoe <atmos@atmos.org>
+ *           Fabiano Fidêncio <fidencio@profusion.mobi>
+ *           Gustavo Chaves <glima@profusion.mobi>
+ *           Gustavo Sverzut Barbieri <barbieri@gmail.com>
+ *           Jorge Luis "turran" Zapata <jorgeluis.zapata@gmail.com>
+ *           Peter "pfritz" Wehrfritz <peter.wehrfritz@web.de>
+ *           Raphael Kubo da Costa <kubo@profusion.mobi>
+ *           Tilman Sauerbeck <tilman@code-monkey.de>
+ *           Vincent "caro" Torri  <vtorri at univ-evry dot fr>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,9 +36,23 @@
 
 /**
  * @mainpage Eina
- * @author Jorge Luis Zapata Muga
- * @author Cedric Bail
- * @date 2008
+ *
+ * @author Albin "Lutin" Tonnerre <albin.tonnerre@gmail.com>
+ * @author Alexandre "diaxen" Becoulet <diaxen@free.fr>
+ * @author Andre Dieb <andre.dieb@gmail.com>
+ * @author Arnaud de Turckheim "quarium" <quarium@gmail.com>
+ * @author Carsten Haitzler <raster@rasterman.com>
+ * @author Cedric Bail <cedric.bail@free.fr>
+ * @author Corey "atmos" Donohoe <atmos@atmos.org>
+ * @author Fabiano Fidêncio <fidencio@profusion.mobi>
+ * @author Gustavo Chaves <glima@profusion.mobi>
+ * @author Gustavo Sverzut Barbieri <barbieri@gmail.com>
+ * @author Jorge Luis "turran" Zapata <jorgeluis.zapata@gmail.com>
+ * @author Peter "pfritz" Wehrfritz <peter.wehrfritz@web.de>
+ * @author Raphael Kubo da Costa <kubo@profusion.mobi>
+ * @author Tilman Sauerbeck <tilman@code-monkey.de>
+ * @author Vincent "caro" Torri  <vtorri at univ-evry dot fr>
+ * @date 2008-2010
  *
  * @section eina_toc_sec Table of contents
  *

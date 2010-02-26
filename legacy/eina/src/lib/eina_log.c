@@ -19,7 +19,7 @@
 
 
 /**
- * @page tutorial_log_page log Tutorial
+ * @page tutorial_log_page Log Tutorial
  *
  * @section tutorial_log_introduction Introduction
  *
@@ -108,7 +108,7 @@
  *
  * EINA_LOG_LEVELS=mymodule1:5,mymodule2:2,mymodule3:0 ./myapp
  *
- * @encode
+ * @endcode
  *
  * This line would set mymodule1 level to 5, mymodule2 level to 2 and mymodule3
  * level to 0.
