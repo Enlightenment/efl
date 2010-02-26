@@ -530,7 +530,7 @@ eina_strbuf_length_get(const Eina_Strbuf *buf)
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  */
 EAPI Eina_Bool
-eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with, size_t n)
+eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with, unsigned int n)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(with, EINA_FALSE);
