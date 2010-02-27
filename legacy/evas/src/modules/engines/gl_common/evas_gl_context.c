@@ -334,9 +334,9 @@ evas_gl_common_context_new(void)
                            &(shared->info.anisotropic));
 #endif
 #ifdef GL_BGRA
-//             if ((strstr((char*) ext, "GL_EXT_bgra")) ||
-//                 (strstr((char*) ext, "GL_EXT_texture_format_BGRA8888")))
-//               shared->info.bgra = 1;
+             if ((strstr((char*) ext, "GL_EXT_bgra")) ||
+                 (strstr((char*) ext, "GL_EXT_texture_format_BGRA8888")))
+               shared->info.bgra = 1;
 #endif             
           }
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,
