@@ -43,6 +43,7 @@
 size_t
 ecore_strlcpy(char *dst, const char *src, size_t siz)
 {
+   EINA_LOG_ERR("use eina_strlcpy() instead!");
    return eina_strlcpy(dst, src, siz);
 }
 
@@ -64,6 +65,7 @@ ecore_strlcpy(char *dst, const char *src, size_t siz)
 size_t
 ecore_strlcat(char *dst, const char *src, size_t siz)
 {
+   EINA_LOG_ERR("use eina_strlcat() instead!");
    return eina_strlcat(dst, src, siz);
 }
 
@@ -78,6 +80,7 @@ ecore_strlcat(char *dst, const char *src, size_t siz)
 int
 ecore_str_has_prefix(const char *str, const char *prefix)
 {
+   EINA_LOG_ERR("use eina_str_has_prefix() instead!");
    return eina_str_has_prefix(str, prefix);
 }
 
@@ -92,6 +95,7 @@ ecore_str_has_prefix(const char *str, const char *prefix)
 int
 ecore_str_has_suffix(const char *str, const char *suffix)
 {
+   EINA_LOG_ERR("use eina_str_has_suffix() instead!");
    return eina_str_has_suffix(str, suffix);
 }
 
@@ -109,6 +113,7 @@ ecore_str_has_suffix(const char *str, const char *suffix)
 int
 ecore_str_has_extension(const char *str, const char *ext)
 {
+   EINA_LOG_ERR("use eina_str_has_extension() instead!");
    return eina_str_has_extension(str, ext);
 }
 
@@ -132,6 +137,7 @@ ecore_str_has_extension(const char *str, const char *ext)
 char **
 ecore_str_split(const char *str, const char *delim, int max_tokens)
 {
+   EINA_LOG_ERR("use eina_str_split() instead!");
    return eina_str_split(str, delim, max_tokens);
 }
 
@@ -160,5 +166,6 @@ ecore_str_split(const char *str, const char *delim, int max_tokens)
 size_t
 ecore_str_join_len(char *dst, size_t size, char sep, const char *a, size_t a_len, const char *b, size_t b_len)
 {
+   EINA_LOG_ERR("use eina_str_join_len() instead!");
    return eina_str_join_len(dst, size, sep, a, a_len, b, b_len);
 }

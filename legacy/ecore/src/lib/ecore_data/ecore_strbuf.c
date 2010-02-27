@@ -16,6 +16,7 @@
 EAPI Ecore_Strbuf *
 ecore_strbuf_new(void)
 {
+   EINA_LOG_ERR("use eina_strbuf_new() instead!");
    return eina_strbuf_new();
 }
 
