@@ -244,9 +244,15 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im)
                                  im->cache_entry.h + 1, bgr_ifmt, bgr_fmt,
                                  &u, &v, &l_after, 1024);
         else
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+          tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
+                                 im->cache_entry.h + 1, rgba_ifmt, rgba_fmt,
+                                 &u, &v, &l_after, 1024);
+#else
           tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
                                  im->cache_entry.h + 1, rgb_ifmt, rgb_fmt,
                                  &u, &v, &l_after, 1024);
+#endif
      }
    if (!tex->pt)
      {
