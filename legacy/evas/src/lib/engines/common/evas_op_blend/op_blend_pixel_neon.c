@@ -18,7 +18,7 @@ _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 #ifdef NEON_INSTRINSICS_OK
 #else
    DATA32 *e = d + l;
-#if 0   
+#if 1
    if (l >= 4)
      {
         e -= 4;
