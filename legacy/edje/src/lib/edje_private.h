@@ -17,6 +17,7 @@
 #endif
 #include <Eet.h>
 #include <Embryo.h>
+#include <time.h>
 
 #include "Edje.h"
 #include "Edje_Edit.h"
@@ -288,6 +289,7 @@ typedef struct _Edje_Patterns                        Edje_Patterns;
 struct _Edje_File
 {
    const char                     *path;
+   time_t                          mtime;
 
    Edje_External_Directory        *external_dir;
    Edje_Font_Directory            *font_dir;
@@ -311,6 +313,7 @@ struct _Edje_File
    Eet_File                       *ef;
 
    unsigned int                    free_strings : 1;
+   unsigned int                    dangling : 1;
 };
 
 struct _Edje_Style

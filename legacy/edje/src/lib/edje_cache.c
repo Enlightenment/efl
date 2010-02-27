@@ -189,6 +189,7 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
    edf->free_strings = eet_dictionary_get(ef) ? 0 : 1;
 
    edf->ef = ef;
+   edf->mtime = st.st_mtime;
 
    if (edf->version != EDJE_FILE_VERSION)
      {
@@ -231,6 +232,20 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
    return edf;
 }
 
+static void
+_edje_file_dangling(Edje_File *edf)
+{
+   if (edf->dangling) return;
+   edf->dangling = EINA_TRUE;
+
+   eina_hash_del(_edje_file_hash, edf->path, edf);
+   if (!eina_hash_population(_edje_file_hash))
+     {
+       eina_hash_free(_edje_file_hash);
+       _edje_file_hash = NULL;
+     }
+}
+
 Edje_File *
 _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret)
 {
@@ -238,6 +253,12 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
    Eina_List *l, *hist;
    Edje_Part_Collection *edc;
    Edje_Part *ep;
+   struct stat st;
+
+   if (stat(file, &st) != 0)
+     {
+	return NULL;
+     }
 
    if (!_edje_file_hash)
      _edje_file_hash = eina_hash_string_small_new(NULL);
@@ -245,6 +266,13 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 
    if (edf)
      {
+	if (edf->mtime != st.st_mtime)
+	  {
+	     _edje_file_dangling(edf);
+	     edf = NULL;
+	     goto open_new;
+	  }
+
 	edf->references++;
      }
    else
@@ -253,6 +281,14 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 	  {
 	     if (!strcmp(edf->path, file))
 	       {
+		  if (edf->mtime != st.st_mtime)
+		    {
+		       _edje_file_cache = eina_list_remove_list(_edje_file_cache, l);
+		       _edje_file_free(edf);
+		       edf = NULL;
+		       goto open_new;
+		    }
+
 		  edf->references = 1;
 		  _edje_file_cache = eina_list_remove_list(_edje_file_cache, l);
 		  eina_hash_add(_edje_file_hash, file, edf);
@@ -261,6 +297,8 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 	     edf = NULL;
 	  }
      }
+
+ open_new:
    if (!edf)
      {
 	edf = _edje_file_open(file, coll, error_ret, edc_ret);
@@ -443,6 +481,12 @@ _edje_cache_file_unref(Edje_File *edf)
 {
    edf->references--;
    if (edf->references != 0) return;
+
+   if (edf->dangling)
+     {
+	_edje_file_free(edf);
+	return;
+     }
 
    eina_hash_del(_edje_file_hash, edf->path, edf);
    if (!eina_hash_population(_edje_file_hash))
