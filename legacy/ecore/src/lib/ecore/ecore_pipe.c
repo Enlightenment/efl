@@ -238,8 +238,8 @@ static int _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler);
  *     printf ("no sink");
  *     goto failure;
  *   }
- *   g_object_set (G_OBJECT (sink), "sync", TRUE, NULL);
- *   g_object_set (G_OBJECT (sink), "signal-handoffs", TRUE, NULL);
+ *   g_object_set (G_OBJECT (sink), "sync", EINA_TRUE, NULL);
+ *   g_object_set (G_OBJECT (sink), "signal-handoffs", EINA_TRUE, NULL);
  *   g_signal_connect (sink, "handoff",
  *                     G_CALLBACK (handoff), pipe);
  *

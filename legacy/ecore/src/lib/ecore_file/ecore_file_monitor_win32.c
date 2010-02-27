@@ -68,7 +68,7 @@ _ecore_file_monitor_win32_data_new(Ecore_File_Monitor *monitor, int type)
    if (md->handle == INVALID_HANDLE_VALUE)
      goto free_md;
 
-   md->event = CreateEvent(NULL, FALSE, FALSE, NULL);
+   md->event = CreateEvent(NULL, EINA_FALSE, EINA_FALSE, NULL);
    if (!md->event)
      goto close_handle;
 
@@ -87,7 +87,7 @@ _ecore_file_monitor_win32_data_new(Ecore_File_Monitor *monitor, int type)
    if (!ReadDirectoryChangesW(md->handle,
                               md->buffer,
                               ECORE_FILE_MONITOR_WIN32_BUFFER_SIZE,
-                              FALSE,
+                              EINA_FALSE,
                               filter,
                               &md->buf_length,
                               &md->overlapped,
@@ -140,7 +140,7 @@ _ecore_file_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh)
 
    md = (Ecore_File_Monitor_Win32_Data *)data;
 
-   if (!GetOverlappedResult (md->handle, &md->overlapped, &buf_length, TRUE))
+   if (!GetOverlappedResult (md->handle, &md->overlapped, &buf_length, EINA_TRUE))
      return 1;
 
    fni = (PFILE_NOTIFY_INFORMATION)md->buffer;
@@ -216,7 +216,7 @@ _ecore_file_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh)
     ReadDirectoryChangesW(md->handle,
                           md->buffer,
                           ECORE_FILE_MONITOR_WIN32_BUFFER_SIZE,
-                          FALSE,
+                          EINA_FALSE,
                           filter,
                           &md->buf_length,
                           &md->overlapped,
