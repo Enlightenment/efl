@@ -5,6 +5,9 @@
 #ifndef _ECORE_TXT_H
 #define _ECORE_TXT_H
 
+#include <Eina.h>
+#warning "this file is deprecated. use Eina.h instead."
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -40,7 +43,7 @@
 extern "C" {
 #endif
 
-EAPI char *ecore_txt_convert(const char *enc_from, const char *enc_to, const char *text);
+EAPI char *ecore_txt_convert(const char *enc_from, const char *enc_to, const char *text) EINA_DEPRECATED;
 
 #ifdef __cplusplus
 }

@@ -4,7 +4,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore \
 @EFL_ECORE_TXT_BUILD@ \
-@iconv_cflags@
+@EINA_CFLAGS@
 
 if BUILD_ECORE_TXT
 
@@ -16,7 +16,7 @@ Ecore_Txt.h
 libecore_txt_la_SOURCES = \
 ecore_txt.c
 
-libecore_txt_la_LIBADD = @iconv_libs@
+libecore_txt_la_LIBADD =  @EINA_LIBS@
 
 libecore_txt_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_txt_release_info@
 

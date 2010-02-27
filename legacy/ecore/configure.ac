@@ -438,37 +438,6 @@ elif test "x$have_glib" = "xyes"; then
 fi
 
 
-# iconv library (ecore_txt)
-
-iconv_cflags=""
-iconv_libs=""
-have_iconv="no"
-AC_ARG_WITH([iconv-link],
-   AC_HELP_STRING([--with-iconv-link=ICONV_LINK], [explicitly specify an iconv link option]),
-   [
-    iconv_libs=$withval
-    have_iconv="yes"
-   ])
-
-AC_MSG_CHECKING(for explicit iconv link options)
-if test "x${iconv_libs}" = "x" ; then
-   AC_MSG_RESULT([no explicit iconv link option])
-else
-   AC_MSG_RESULT([$iconv_libs])
-fi
-
-AM_ICONV
-
-if test "x${have_iconv}" = "xno" && test "x${am_cv_func_iconv}" = "xyes" ; then
-   iconv_cflags=${LIBICONV}
-   iconv_libs=${LTLIBICONV}
-   have_iconv="yes"
-fi
-
-AC_SUBST(iconv_cflags)
-AC_SUBST(iconv_libs)
-
-
 # SDL library (ecore_sdl)
 
 have_sdl="no"
@@ -1000,7 +969,7 @@ fi
 ECORE_CHECK_MODULE([data], [${want_ecore_data}], [Data])
 
 # ecore_txt
-ECORE_CHECK_MODULE([txt], [${want_ecore_txt}], [Txt], [$have_iconv])
+ECORE_CHECK_MODULE([txt], [${want_ecore_txt}], [Txt], [yes])
 
 # ecore_con
 ECORE_CHECK_MODULE([con], [${want_ecore_con}], [Con], [${have_addrinfo}])
