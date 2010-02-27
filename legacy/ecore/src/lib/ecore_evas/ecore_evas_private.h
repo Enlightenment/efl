@@ -279,6 +279,10 @@ struct _Ecore_Evas
    Eina_Hash  *data;
 
    struct {
+      int      x, y, w, h;
+   } req;
+   
+   struct {
       int      x, y;
    } mouse;
 

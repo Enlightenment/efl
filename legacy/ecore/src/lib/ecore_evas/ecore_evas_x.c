@@ -856,6 +856,8 @@ _ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__,
 	  {
 	     ee->x = e->x;
 	     ee->y = e->y;
+             ee->req.x = ee->x;
+             ee->req.y = ee->y;
 	     if (ee->func.fn_move) ee->func.fn_move(ee);
 	  }
      }
@@ -863,6 +865,8 @@ _ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__,
      {
 	ee->w = e->w;
 	ee->h = e->h;
+        ee->req.w = ee->w;
+        ee->req.h = ee->h;
 	if ((ee->rotation == 90) || (ee->rotation == 270))
 	  {
 	     evas_output_size_set(ee->evas, ee->h, ee->w);
@@ -1165,6 +1169,8 @@ _ecore_evas_x_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Ev
 static void
 _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
 {
+   ee->req.x = x;
+   ee->req.y = y;
    if (ee->engine.x.direct_resize)
      {
 	if (!ee->engine.x.managed)
@@ -1204,6 +1210,8 @@ _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
 static void
 _ecore_evas_x_managed_move(Ecore_Evas *ee, int x, int y)
 {
+   ee->req.x = x;
+   ee->req.y = y;
    if (ee->engine.x.direct_resize)
      {
 	ee->engine.x.managed = 1;
@@ -1219,6 +1227,8 @@ _ecore_evas_x_managed_move(Ecore_Evas *ee, int x, int y)
 static void
 _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
 {
+   ee->req.w = w;
+   ee->req.h = h;
    if (ee->engine.x.direct_resize)
      {
 	if ((ee->w != w) || (ee->h != h))
@@ -1256,6 +1266,10 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
 static void
 _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 {
+   ee->req.x = x;
+   ee->req.y = y;
+   ee->req.w = w;
+   ee->req.h = h;
    if (ee->engine.x.direct_resize)
      {
 	if ((ee->w != w) || (ee->h != h) || (x != ee->x) || (y != ee->y))
@@ -1335,7 +1349,7 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
           {
              if (!ee->prop.fullscreen)
                {
-                  ecore_x_window_resize(ee->prop.window, ee->h, ee->w);
+                  ecore_x_window_resize(ee->prop.window, ee->req.h, ee->req.w);
                   ee->expecting_resize.w = ee->h;
                   ee->expecting_resize.h = ee->w;
                }
@@ -1347,16 +1361,20 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
                   ecore_x_window_resize(ee->prop.window, h, w);
                   if ((rotation == 0) || (rotation == 180))
                     {
-                       evas_output_size_set(ee->evas, ee->w, ee->h);
-                       evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+                       evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
+                       evas_output_viewport_set(ee->evas, 0, 0, ee->req.w, ee->req.h);
                     }
                   else
                     {
-                       evas_output_size_set(ee->evas, ee->h, ee->w);
-                       evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+                       evas_output_size_set(ee->evas, ee->req.h, ee->req.w);
+                       evas_output_viewport_set(ee->evas, 0, 0, ee->req.h, ee->req.w);
                     }
                   if (ee->func.fn_resize) ee->func.fn_resize(ee);
                }
+             if ((ee->rotation == 90) || (ee->rotation == 270))
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h, ee->req.w);
+             else
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
           }
 	else
           {
@@ -1374,6 +1392,10 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
 		  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
 	       }
 	     if (ee->func.fn_resize) ee->func.fn_resize(ee);
+             if ((ee->rotation == 90) || (ee->rotation == 270))
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+             else
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
           }
 	ecore_evas_size_min_get(ee, &minw, &minh);
 	ecore_evas_size_max_get(ee, &maxw, &maxh);
@@ -1394,12 +1416,12 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
 	_ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
 				       ecore_x_current_time_get());
 	if (ee->func.fn_resize) ee->func.fn_resize(ee);
+        
+        if ((ee->rotation == 90) || (ee->rotation == 270))
+          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+        else
+          evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
      }
-
-   if ((ee->rotation == 90) || (ee->rotation == 270))
-     evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-   else
-     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 }
 
 static void
@@ -1588,18 +1610,18 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	if (ee->alpha)
 	  {
 	     if (ee->prop.override)
-	       ee->prop.window = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	       ee->prop.window = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
 	     else
-	       ee->prop.window = ecore_x_window_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	       ee->prop.window = ecore_x_window_argb_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
 	     if (!ee->engine.x.mask)
-	       ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
+	       ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->req.w, ee->req.h, 1);
 	  }
 	else
 	  {
 	     if (ee->prop.override)
-	       ee->prop.window = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	       ee->prop.window = ecore_x_window_override_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
 	     else
-	       ee->prop.window = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	       ee->prop.window = ecore_x_window_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
 	     if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 	     ee->engine.x.mask = 0;
 	     ecore_x_window_shape_input_mask_set(ee->prop.window, 0);
@@ -1630,7 +1652,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	einfo->info.mask = ee->engine.x.mask;
 	einfo->info.drawable = ee->prop.window;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+	evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
 	ecore_x_window_shape_mask_set(ee->prop.window, 0);
         ecore_x_input_multi_select(ee->prop.window);
 	ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
@@ -1671,18 +1693,18 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	if (ee->alpha)
 	  {
 	     if (ee->prop.override)
-	       ee->prop.window = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	       ee->prop.window = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
 	     else
-	       ee->prop.window = ecore_x_window_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	       ee->prop.window = ecore_x_window_argb_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
 	     if (!ee->engine.x.mask)
-	       ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
+	       ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->req.w, ee->req.h, 1);
 	  }
 	else
 	  {
 	     if (ee->prop.override)
-	       ee->prop.window = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	       ee->prop.window = ecore_x_window_override_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
 	     else
-	       ee->prop.window = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	       ee->prop.window = ecore_x_window_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
 	     if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 	     ee->engine.x.mask = 0;
 	     ecore_x_window_shape_input_mask_set(ee->prop.window, 0);
@@ -1706,7 +1728,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         einfo->info.mask = ee->engine.x.mask;
 	einfo->info.drawable = ee->prop.window;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+	evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
 	ecore_x_window_shape_mask_set(ee->prop.window, 0);
         ecore_x_input_multi_select(ee->prop.window);
 	ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
@@ -1746,18 +1768,18 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	if (ee->alpha)
 	  {
 	     if (ee->prop.override)
-	       ee->prop.window = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	       ee->prop.window = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
 	     else
-	       ee->prop.window = ecore_x_window_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	       ee->prop.window = ecore_x_window_argb_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
 	     if (!ee->engine.x.mask)
-	       ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
+	       ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->req.w, ee->req.h, 1);
 	  }
 	else
 	  {
 	     if (ee->prop.override)
-	       ee->prop.window = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	       ee->prop.window = ecore_x_window_override_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
 	     else
-	       ee->prop.window = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	       ee->prop.window = ecore_x_window_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
 	     if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 	     ee->engine.x.mask = 0;
 	     ecore_x_window_shape_input_mask_set(ee->prop.window, 0);
@@ -1775,7 +1797,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 
 	einfo->info.drawable = ee->prop.window;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+	evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
 	ecore_x_window_shape_mask_set(ee->prop.window, 0);
         ecore_x_input_multi_select(ee->prop.window);
 	ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
@@ -2444,6 +2466,10 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
    ee->y = y;
    ee->w = w;
    ee->h = h;
+   ee->req.x = ee->x;
+   ee->req.y = ee->y;
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
 
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
@@ -2808,6 +2834,10 @@ ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
    ee->y = y;
    ee->w = w;
    ee->h = h;
+   ee->req.x = ee->x;
+   ee->req.y = ee->y;
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
 
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
@@ -3009,6 +3039,10 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
    ee->y = y;
    ee->w = w;
    ee->h = h;
+   ee->req.x = ee->x;
+   ee->req.y = ee->y;
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
 
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
@@ -3260,6 +3294,10 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
    ee->y = y;
    ee->w = w;
    ee->h = h;
+   ee->req.x = ee->x;
+   ee->req.y = ee->y;
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
 
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
