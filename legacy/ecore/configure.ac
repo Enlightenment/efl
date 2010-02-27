@@ -456,7 +456,7 @@ if test -n "$SDL_CONFIG" ; then
    SDL_LIBS=`$SDL_CONFIG --libs`
    AC_SUBST(SDL_CFLAGS)
    AC_SUBST(SDL_LIBS)
-   have_sdl="no"
+   have_sdl="yes"
 else
    PKG_CHECK_MODULES([SDL], [sdl >= 1.2.0], [have_sdl="yes"], [have_sdl="no"])
 fi
