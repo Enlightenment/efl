@@ -704,6 +704,8 @@ statement_handler_num(void)
         external
     @parameters
         [external filename]
+    @effect
+        Used to add a file to the externals list.
     @endproperty
  */
 static void
@@ -1962,7 +1964,6 @@ st_collections_group_parts_part_scale(void)
                 signals emitted, even outside the object, until the button is
                 released.
             @li NOGRAB, the effect will be limited to the part's container.
-        container.
     @endproperty
 */
 static void
@@ -2275,12 +2276,13 @@ st_collections_group_parts_part_effect(void)
     @property
         entry_mode
     @parameters
+        [MODE]
+    @effect
         Sets the edit mode for a textblock part to one of:
         @li NONE
         @li PLAIN
         @li EDITABLE
         @li PASSWORD
-    @effect
         It causes the part be editable if the edje object has the keyboard
         focus AND the part has the edje focus (or selectable always
         regardless of focus) and in the event of password mode, not
@@ -2311,10 +2313,11 @@ st_collections_group_parts_part_entry_mode(void)
     @property
         select_mode
     @parameters
+        [MODE]
+    @effect
         Sets the selection mode for a textblock part to one of:
         @li DEFAULT
         @li EXPLICIT
-    @effect
         DEFAULT selection mode is what you would expect on any desktop. Press
         mouse, drag and release to end. EXPLICIT mode requires the application
         controlling the edje object has to explicitly begin and end selection
@@ -2342,7 +2345,7 @@ st_collections_group_parts_part_select_mode(void)
     @property
         multiline
     @parameters
-        0 or 1 (boolean) off/on
+        [1 or 0]
     @effect
         It causes a textblock that is editable to allow multiple lines for
         editing.
@@ -2394,7 +2397,7 @@ st_collections_group_parts_part_multiline(void)
         used to enable (1 or -1) and disable (0) dragging along the axis. When
         enabled, 1 will set the starting point at 0.0 and -1 at 1.0. The second
         parameter takes any integer and will limit movement to values
-        divisibles by it, causing the part to jump from position to position.
+        divisible by it, causing the part to jump from position to position.
         The third parameter, (question from the author: What is count for?).
     @endproperty
 */
@@ -4165,8 +4168,8 @@ st_collections_group_parts_part_description_image_border_scale(void)
     @parameters
         0, NONE, DYNAMIC, STATIC
     @effect
-      Sets the evas image scale hint letting the engine more efectively save
-      cached copies of the scaled image if it maks sense
+        Sets the evas image scale hint letting the engine more effectively save
+        cached copies of the scaled image if it makes sense
     @endproperty
 */
 static void
@@ -4304,7 +4307,7 @@ st_collections_group_parts_part_description_fill_spread(void)
         [angle]
     @effect
         The angle of rotation of a GRADIENT part. It is invalid in any other
-        part type. The angle is espressed as an int, in the range 0 - 360.
+        part type. The angle is expressed as an int, in the range 0 - 360.
     @endproperty
 */
 static void
@@ -5672,16 +5675,32 @@ static void st_collections_group_parts_part_description_table_padding(void)
 
 /**
     @page edcref
+    @block
+        map
+    @context
+    description {
+        ..
+        map {
+            perspective: "name";
+            light: "name";
+            on: 1;
+            smooth: 1;
+            perspective_on: 1;
+            backface_cull: 1;
+            alpha: 1;
+            
+            rotation {
+                ..
+            }
+        }
+        ..
+    }
+    
+    @description
+    @endblock
+    
     @property
         perspective
-    @context
-        description {
-            ..
-            map {
-                perspective: "name";
-            }
-            ..
-        }
     @parameters
         [another part's name]
     @effect
@@ -5722,22 +5741,14 @@ st_collections_group_parts_part_description_map_perspective(void)
     @page edcref
     @property
         light
-    @context
-        description {
-            ..
-            map {
-                light: "name";
-            }
-            ..
-        }
     @parameters
         [another part's name]
     @effect
         This sets the part that is used as the "light" for calculating the
         brightness (based on how directly the part's surface is facing the
-        lightsource point). Like the perspective point part, the center point
-        is used and zplane is used for the z position (0 being th zero-plane
-        where all 2d objects normally live) and positive values being further
+        light source point). Like the perspective point part, the center point
+        is used and zplane is used for the z position (0 being the zero-plane
+        where all 2D objects normally live) and positive values being further
         away into the distance. The light part color is used as the light
         color (alpha not used for light color). The color2 color is used for
         the ambient lighting when calculating brightness (alpha also not
@@ -5769,18 +5780,25 @@ st_collections_group_parts_part_description_map_light(void)
 
 /**
     @page edcref
+    @block
+        rotation
+    @context
+    map {
+        ..
+        rotation {
+            center: "name";
+            x: 45.0;
+            y: 45.0;
+            z: 45.0;
+        }
+        ..
+    }
+    @description
+        Rotates the part, optionally with the center on another part.
+    @endblock
+    
     @property
         center
-    @context
-        description {
-            ..
-            map {
-                rotation {
-                    center: "name";
-                }
-            }
-            ..
-        }
     @parameters
         [another part's name]
     @effect
@@ -5818,20 +5836,11 @@ st_collections_group_parts_part_description_map_rotation_center(void)
     @page edcref
     @property
         x
-    @context
-        description {
-            ..
-            map {
-                rotation {
-                    x: 45.0;
-                }
-            }
-            ..
-        }
     @parameters
-        rotation in degrees around the x axis
+        [X degrees]
     @effect
-        This sets the rotation of the part around the center set in degrees
+        This sets the rotation around the x axis of the part considering
+        the center set. In degrees.
     @endproperty
 */
 static void
@@ -5855,20 +5864,11 @@ st_collections_group_parts_part_description_map_rotation_x(void)
     @page edcref
     @property
         y
-    @context
-        description {
-            ..
-            map {
-                rotation {
-                    y: 45.0;
-                }
-            }
-            ..
-        }
     @parameters
-        rotation in degrees around the y axis
+        [Y degrees]
     @effect
-        This sets the rotation of the part around the center set in degrees
+        This sets the rotation around the u axis of the part considering
+        the center set. In degrees.
     @endproperty
 */
 static void
@@ -5892,20 +5892,11 @@ st_collections_group_parts_part_description_map_rotation_y(void)
     @page edcref
     @property
         z
-    @context
-        description {
-            ..
-            map {
-                rotation {
-                    z: 45.0;
-                }
-            }
-            ..
-        }
     @parameters
-        rotation in degrees around the z axis
+        [Z degrees]
     @effect
-        This sets the rotation of the part around the center set in degrees
+        This sets the rotation around the z axis of the part considering
+        the center set. In degrees.
     @endproperty
 */
 static void
@@ -5929,16 +5920,8 @@ st_collections_group_parts_part_description_map_rotation_z(void)
     @page edcref
     @property
         on
-    @context
-        description {
-            ..
-            map {
-                on: 1;
-            }
-            ..
-        }
     @parameters
-        enable map at all (1/0)
+        [1 or 0]
     @effect
         This enables mapping for the part. Default is 0.
     @endproperty
@@ -5964,19 +5947,11 @@ st_collections_group_parts_part_description_map_on(void)
     @page edcref
     @property
         smooth
-    @context
-        description {
-            ..
-            map {
-                smooth: 1;
-            }
-            ..
-        }
     @parameters
-        enable map smooth rendering (linear interpolation) (1/0)
+        [1 or 0]
     @effect
         This enable smooth map rendering. This may be linear interpolation,
-        asinortopic filtering or anything the engine decides is "smooth".
+        anisotropic filtering or anything the engine decides is "smooth".
         This is a best-effort hint and may not produce precisely the same
         results in all engines and situations. Default is 1
     @endproperty
@@ -6002,18 +5977,10 @@ st_collections_group_parts_part_description_map_smooth(void)
     @page edcref
     @property
         alpha
-    @context
-        description {
-            ..
-            map {
-                alpha: 1;
-            }
-            ..
-        }
     @parameters
-        enable map alpha rendering (1/0)
+        [1 or 0]
     @effect
-        This enable alpha channel when map rendering. Default is 1
+        This enable alpha channel when map rendering. Default is 1.
     @endproperty
 */
 static void
@@ -6037,16 +6004,8 @@ st_collections_group_parts_part_description_map_alpha(void)
     @page edcref
     @property
         backface_cull
-    @context
-        description {
-            ..
-            map {
-                backface_cull: 1;
-            }
-            ..
-        }
     @parameters
-        enable backface culling (1/0)
+        [1 or 0]
     @effect
         This enables backface culling (when the rotated part that normally
         faces the camera is facing away after being rotated etc.). This means
@@ -6074,18 +6033,10 @@ st_collections_group_parts_part_description_map_backface_cull(void)
     @page edcref
     @property
         perspective_on
-    @context
-        description {
-            ..
-            map {
-                perspective_on: 1;
-            }
-            ..
-        }
     @parameters
-        enable perspective when rotating
+       [1 or 0]
     @effect
-        This enables perspective even without a perspective point object.
+        Enable perspective when rotating even without a perspective point object.
         This would use perspective set for the object itself or for the
         canvas as a whole as the global perspective with 
         edje_perspective_set() and edje_perspective_global_set().
@@ -6108,23 +6059,30 @@ st_collections_group_parts_part_description_map_perspective_on(void)
    ed->map.persp_on = parse_bool(0);
 }
 
-
 /**
     @page edcref
-    @property
-        z
+    @block
+        perspective
     @context
-        description {
-            ..
-            perspective {
-                zplane: 0;
-            }
-            ..
+    description {
+        ..
+        perspective {
+            zplane: 0;
+            focal: 1000;
         }
+        ..
+    }
+    @description
+        Adds focal and plane perspective to the part. Active if perspective_on is true.
+        Must be provided if the part is being used by other part as it's perspective target.
+    @endblock
+    
+    @property
+        zplane
     @parameters
-        the z value that will be "unscaled".
+        [unscaled Z value]
     @effect
-        This sets the z value that wil not be scaled. Normally this is 0 as
+        This sets the z value that will not be scaled. Normally this is 0 as
         that is the z distance that all objects are at normally.
     @endproperty
 */
@@ -6150,16 +6108,8 @@ st_collections_group_parts_part_description_perspective_zplane(void)
     @page edcref
     @property
         focal
-    @context
-        description {
-            ..
-            perspective {
-                focal: 1000;
-            }
-            ..
-        }
     @parameters
-        focal distance from camera to focal plane
+        [distance]
     @effect
         This sets the distance from the focal z plane (zplane) and the
         camera - i.e. very much equating to focal length of the camera
@@ -6182,6 +6132,25 @@ st_collections_group_parts_part_description_perspective_focal(void)
    ed->persp.focal = parse_int_range(0, 1, 0x7fffffff);
 }
 
+/**
+    @page edcref
+    @block
+        params
+    @context
+    description {
+        ..
+        params {
+            int: "name" 0;
+            double: "other_name" 0.0;
+            string: "another_name" "some text";
+        }
+        ..
+    }
+    @description
+        Set parameters for EXTERNAL parts. The value overwrites previous
+        definitions with the same name.
+    @endblock
+*/
 static void
 _st_collections_group_parts_part_description_params(Edje_External_Param_Type type)
 {
@@ -6252,11 +6221,11 @@ _st_collections_group_parts_part_description_params(Edje_External_Param_Type typ
 /**
     @page edcref
     @property
-        inherit
+        int
     @parameters
         [param_name] [int_value]
     @effect
-	Adds an integer parameter for an external object
+        Adds an integer parameter for an external object
     @endproperty
 */
 static void
@@ -6268,11 +6237,11 @@ st_collections_group_parts_part_description_params_int(void)
 /**
     @page edcref
     @property
-        inherit
+        double
     @parameters
         [param_name] [double_value]
     @effect
-	Adds a double parameter for an external object
+        Adds a double parameter for an external object
     @endproperty
 */
 static void
@@ -6284,11 +6253,11 @@ st_collections_group_parts_part_description_params_double(void)
 /**
     @page edcref
     @property
-        inherit
+        string
     @parameters
         [param_name] [string_value]
     @effect
-	Adds a string parameter for an external object
+        Adds a string parameter for an external object
     @endproperty
 */
 static void
@@ -6435,11 +6404,11 @@ st_collections_group_programs_program_source(void)
     @property
         filter
     @parameters
-        [filter part state]
+        [part] [state]
     @effect
-        The part [part] should be in state [state] for the signal to be accepted. Only one source state
-        keyword per program may be used. ex:state: "button" "default"; (Signals are accepted
-        if part button is currently in state named "default").
+        Filter signals to be only accepted if the part [part] is in state named [state].
+        Only one filter per program can be used. If [state] is not given, the source of
+        the event will be used instead.
     @endproperty
 */
 static void
@@ -6577,9 +6546,9 @@ st_collections_group_programs_program_action(void)
     @parameters
         [type] [length]
     @effect
-        Defines how transistions occur using STATE_SET action.\n
-        Where 'type' is the style of the transistion and 'length' is a double
-        specifying the number of seconds in which to preform the transistion.\n
+        Defines how transitions occur using STATE_SET action.\n
+        Where 'type' is the style of the transition and 'length' is a double
+        specifying the number of seconds in which to preform the transition.\n
         Valid types are: LINEAR, SINUSOIDAL, ACCELERATE, and DECELERATE.
     @endproperty
 */
@@ -6724,19 +6693,6 @@ st_collections_group_programs_program_api(void)
      }
 }
 
-/**
-    @page edcref
-    @property
-        api
-    @parameters
-        [name] [description]
-    @effect
-        Specifies a hint to let applications (or IDE's) know how to bind
-	things. The parameter name should contain the name of the function that
-	the application should use, and description describes how it should
-	be used.
-    @endproperty
-*/
 static void
 st_collections_group_parts_part_api(void)
 {
