@@ -43,11 +43,9 @@ struct _Eina_Strbuf
 };
 
 static Eina_Bool _eina_strbuf_init(Eina_Strbuf *buf);
-static Eina_Bool _eina_strbuf_resize(Eina_Strbuf *buf, size_t size);
+static inline Eina_Bool _eina_strbuf_grow(Eina_Strbuf *buf, size_t size);
+static inline Eina_Bool _eina_strbuf_resize(Eina_Strbuf *buf, size_t size);
 static inline Eina_Bool _eina_strbuf_insert_length(Eina_Strbuf *buf, const char *str, size_t len, size_t pos);
-
-#define _eina_strbuf_grow(_buf, _size) \
-   ((((_size) + 1) > (_buf)->size) ? _eina_strbuf_resize((_buf), (_size)) : EINA_TRUE)
 
 /**
  * @internal
@@ -692,13 +690,31 @@ _eina_strbuf_init(Eina_Strbuf *buf)
 /**
  * @internal
  *
+ * If required, enlarge the buffer to fit the new size.
+ *
+ * @param buf the buffer to resize
+ * @param size the minimum size of the buffer
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ */
+static inline Eina_Bool
+_eina_strbuf_grow(Eina_Strbuf *buf, size_t size)
+{
+   if ((size + 1) < buf->size)
+     return EINA_TRUE;
+   return _eina_strbuf_resize(buf, size);
+}
+
+/**
+ * @internal
+ *
  * resize the buffer
  * @param buf the buffer to resize
  * @param size the minimum size of the buffer
  *
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  */
-static Eina_Bool
+static inline Eina_Bool
 _eina_strbuf_resize(Eina_Strbuf *buf, size_t size)
 {
    char *buffer;
