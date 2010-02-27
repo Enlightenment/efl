@@ -1,6 +1,9 @@
 #ifndef _ECORE_STR_H
 # define _ECORE_STR_H
 
+#include <Eina.h>
+#warning "this file is deprecated. use Eina.h instead."
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -34,6 +37,8 @@
 /**
  * @file Ecore_Str.h
  * @brief Contains useful C string functions.
+ *
+ * @deprecated use Eina.h instead
  */
 
 # ifdef __cplusplus
@@ -49,19 +54,20 @@ extern "C" {
 
 
 /* strlcpy implementation for libc's lacking it */
-EAPI size_t ecore_strlcpy(char *dst, const char *src, size_t siz);
-EAPI size_t ecore_strlcat(char *dst, const char *src, size_t siz);
+EAPI size_t ecore_strlcpy(char *dst, const char *src, size_t siz) EINA_DEPRECATED;
+EAPI size_t ecore_strlcat(char *dst, const char *src, size_t siz) EINA_DEPRECATED;
 
-EAPI int ecore_str_has_prefix(const char *str, const char *prefix);
+EAPI int ecore_str_has_prefix(const char *str, const char *prefix) EINA_DEPRECATED;
 
-EAPI int ecore_str_has_suffix(const char *str, const char *suffix);
-EAPI int ecore_str_has_extension(const char *str, const char *ext);
+EAPI int ecore_str_has_suffix(const char *str, const char *suffix) EINA_DEPRECATED;
+EAPI int ecore_str_has_extension(const char *str, const char *ext) EINA_DEPRECATED;
 
-EAPI char **ecore_str_split(const char *string, const char *delimiter, 
-                            int max_tokens);
+EAPI char **ecore_str_split(const char *string, const char *delimiter, int max_tokens) EINA_DEPRECATED;
 
-EAPI size_t ecore_str_join_len(char *dst, size_t size, char sep, const char *a, size_t a_len, const char *b, size_t b_len);
+EAPI size_t ecore_str_join_len(char *dst, size_t size, char sep, const char *a, size_t a_len, const char *b, size_t b_len) EINA_DEPRECATED;
 
+
+static inline size_t ecore_str_join(char *dst, size_t size, char sep, const char *a, const char *b) EINA_DEPRECATED;
 
 /**
  * Join two strings and store the result in @a dst buffer.

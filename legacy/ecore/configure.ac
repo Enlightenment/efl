@@ -112,7 +112,7 @@ want_tslib="no"
 want_glib="no"
 
 # core modules
-want_ecore_data="yes"
+want_ecore_data="no"
 want_ecore_txt="no"
 want_ecore_con="yes"
 want_ecore_ipc="no"
@@ -1414,7 +1414,7 @@ echo
 echo "  Ecore........................: always"
 echo "    Thread support.............: $have_pthread"
 echo "    GLib support...............: $have_glib"
-echo "  Ecore_Data...................: $have_ecore_data"
+echo "  Ecore_Data...................: $have_ecore_data (deprecated)"
 echo "  Ecore_Txt....................: $have_ecore_txt (deprecated)"
 echo "  Ecore_Con....................: $have_ecore_con"
 if test "x$have_ecore_con" = "xyes" ; then

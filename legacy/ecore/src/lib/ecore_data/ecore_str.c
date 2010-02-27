@@ -25,17 +25,8 @@
 # include <config.h>
 #endif
 
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
-#include <sys/types.h>
-
-#include "Ecore.h"
-#include "ecore_private.h"
 #include "Ecore_Str.h"
 
-static int ecore_str_has_suffix_helper(const char *str, const char *suffix,
-		int (*cmp)(const char *, const char *));
 /**
  * @param dst the destination
  * @param src the source
@@ -46,38 +37,13 @@ static int ecore_str_has_suffix_helper(const char *str, const char *suffix,
  * Copy src to string dst of size siz.  At most siz-1 characters
  * will be copied.  Always NUL terminates (unless siz == 0).
  * Returns strlen(src); if retval >= siz, truncation occurred.
+ *
+ * @deprecated use eina_strlcpy() instead.
  */
 size_t
 ecore_strlcpy(char *dst, const char *src, size_t siz)
 {
-#ifdef HAVE_STRLCPY
-   return strlcpy(dst, src, siz);
-#else
-   char *d = dst;
-   const char *s = src;
-   size_t n = siz;
-
-   /* Copy as many bytes as will fit */
-   if (n != 0)
-     {
-        while (--n != 0)
-          {
-             if ((*d++ = *s++) == '\0')
-               break;
-          }
-     }
-
-   /* Not enough room in dst, add NUL and traverse rest of src */
-   if (n == 0)
-     {
-        if (siz != 0)
-          *d = '\0';                /* NUL-terminate dst */
-        while (*s++)
-          ;
-     }
-
-   return(s - src - 1);        /* count does not include NUL */
-#endif
+   return eina_strlcpy(dst, src, siz);
 }
 
 /**
@@ -92,33 +58,13 @@ ecore_strlcpy(char *dst, const char *src, size_t siz)
  * will be copied.  Always NUL terminates (unless siz <= strlen(dst)).
  * Returns strlen(src) + MIN(siz, strlen(initial dst)).
  * If retval >= siz, truncation occurred.
+ *
+ * @deprecated use eina_strlcat() instead.
  */
 size_t
 ecore_strlcat(char *dst, const char *src, size_t siz)
 {
-        char *d = dst;
-        const char *s = src;
-        size_t n = siz;
-        size_t dlen;
-
-        /* Find the end of dst and adjust bytes left but don't go past end */
-        while (n-- != 0 && *d != '\0')
-                d++;
-        dlen = d - dst;
-        n = siz - dlen;
-
-        if (n == 0)
-                return(dlen + strlen(s));
-        while (*s != '\0') {
-                if (n != 1) {
-                        *d++ = *s;
-                        n--;
-                }
-                s++;
-        }
-        *d = '\0';
-
-        return(dlen + (s - src));        /* count does not include NUL */
+   return eina_strlcat(dst, src, siz);
 }
 
 /**
@@ -126,22 +72,13 @@ ecore_strlcat(char *dst, const char *src, size_t siz)
  * @param prefix the prefix to check for
  * @return true if str has the given prefix
  * @brief checks if the string has the given prefix
+ *
+ * @deprecated use eina_str_has_prefix() instead.
  */
 int
 ecore_str_has_prefix(const char *str, const char *prefix)
 {
-   size_t str_len;
-   size_t prefix_len;
-
-   CHECK_PARAM_POINTER_RETURN("str", str, 0);
-   CHECK_PARAM_POINTER_RETURN("prefix", prefix, 0);
-
-   str_len = strlen(str);
-   prefix_len = strlen(prefix);
-   if (prefix_len > str_len)
-     return 0;
-
-   return (strncmp(str, prefix, prefix_len) == 0);
+   return eina_str_has_prefix(str, prefix);
 }
 
 /**
@@ -149,14 +86,13 @@ ecore_str_has_prefix(const char *str, const char *prefix)
  * @param suffix the suffix to check for
  * @return true if str has the given suffix
  * @brief checks if the string has the given suffix
+ *
+ * @deprecated use eina_str_has_suffix() instead.
  */
 int
 ecore_str_has_suffix(const char *str, const char *suffix)
 {
-   CHECK_PARAM_POINTER_RETURN("str", str, 0);
-   CHECK_PARAM_POINTER_RETURN("suffix", suffix, 0);
-
-   return ecore_str_has_suffix_helper(str, suffix, strcmp);
+   return eina_str_has_suffix(str, suffix);
 }
 
 /**
@@ -167,33 +103,13 @@ ecore_str_has_suffix(const char *str, const char *suffix)
  * @param ext the  extension to check for
  * @return true if str has the given extension
  * @brief checks if the string has the given extension
+ *
+ * @deprecated use eina_str_has_extension() instead.
  */
 int
 ecore_str_has_extension(const char *str, const char *ext)
 {
-   CHECK_PARAM_POINTER_RETURN("str", str, 0);
-   CHECK_PARAM_POINTER_RETURN("ext", ext, 0);
-
-   return ecore_str_has_suffix_helper(str, ext, strcasecmp);
-}
-
-/*
- * Internal helper function used by ecore_str_has_suffix() and
- * ecore_str_has_extension()
- */
-static int
-ecore_str_has_suffix_helper(const char *str, const char *suffix,
-		int (*cmp)(const char *, const char *))
-{
-   size_t str_len;
-   size_t suffix_len;
-
-   str_len = strlen(str);
-   suffix_len = strlen(suffix);
-   if (suffix_len > str_len)
-     return 0;
-
-   return cmp(str + str_len - suffix_len, suffix) == 0;
+   return eina_str_has_extension(str, ext);
 }
 
 /**
@@ -210,37 +126,13 @@ ecore_str_has_suffix_helper(const char *str, const char *suffix,
  * @return            A newly-allocated NULL-terminated array of strings.
  *                    To free it: free the first element of the array
  *                    and the array itself.
+ *
+ * @deprecated eina_str_split()
  */
 char **
 ecore_str_split(const char *str, const char *delim, int max_tokens)
 {
-   char *s, *sep, **str_array;
-   size_t len, dlen;
-   int i;
-
-   CHECK_PARAM_POINTER_RETURN("str", str, NULL);
-   CHECK_PARAM_POINTER_RETURN("delim", delim, NULL);
-
-   if (*delim == '\0')
-      return NULL;
-
-   max_tokens = ((max_tokens <= 0) ? (INT_MAX) : (max_tokens - 1));
-   len = strlen(str);
-   dlen = strlen(delim);
-   s = strdup(str);
-   str_array = malloc(sizeof(char *) * (len + 1));
-   for (i = 0; (i < max_tokens) && (sep = strstr(s, delim)); i++)
-      {
-          str_array[i] = s;
-          s = sep + dlen;
-          *sep = 0;
-      }
-
-   str_array[i++] = s;
-   str_array = realloc(str_array, sizeof(char *) * (i + 1));
-   str_array[i] = NULL;
-
-   return str_array;
+   return eina_str_split(str, delim, max_tokens);
 }
 
 /**
@@ -262,42 +154,11 @@ ecore_str_split(const char *str, const char *delim, int max_tokens)
  *     truncated.
  *
  * @see ecore_str_join() and ecore_str_join_static()
+ *
+ * @deprecated use eina_str_join_len() instead.
  */
 size_t
 ecore_str_join_len(char *dst, size_t size, char sep, const char *a, size_t a_len, const char *b, size_t b_len)
 {
-   size_t ret = a_len + b_len + 1;
-   size_t off;
-
-   if (size < 1) return ret;
-
-   if (size <= a_len)
-     {
-	memcpy(dst, a, size - 1);
-	dst[size - 1] = '\0';
-	return ret;
-     }
-
-   memcpy(dst, a, a_len);
-   off = a_len;
-
-   if (size <= off + 1)
-     {
-	dst[size - 1] = '\0';
-	return ret;
-     }
-
-   dst[off] = sep;
-   off++;
-
-   if (size <= off + b_len + 1)
-     {
-	memcpy(dst + off, b, size - off - 1);
-	dst[size - 1] = '\0';
-	return ret;
-     }
-
-   memcpy(dst + off, b, b_len);
-   dst[off + b_len] = '\0';
-   return ret;
+   return eina_str_join_len(dst, size, sep, a, a_len, b, b_len);
 }
