@@ -154,7 +154,7 @@ ecore_wince_shutdown()
    if (task_bar)
      {
         ShowWindow(task_bar, SW_SHOW);
-        EnableWindow(task_bar, EINA_TRUE);
+        EnableWindow(task_bar, TRUE);
      }
 
    if (!UnregisterClass(ECORE_WINCE_WINDOW_CLASS, _ecore_wince_instance))

@@ -381,7 +381,7 @@ _ecore_win32_window_procedure(HWND   window,
        return 0;
      case WM_MOVING:
        printf (" * ecore message : moving\n");
-       return EINA_TRUE;
+       return TRUE;
      case WM_MOVE:
        printf (" * ecore message : moved\n");
        return 0;
@@ -389,7 +389,7 @@ _ecore_win32_window_procedure(HWND   window,
        printf (" * ecore message : sizing\n");
        _ecore_win32_event_handle_resize(data);
        _ecore_win32_event_handle_configure_notify(data);
-       return EINA_TRUE;
+       return TRUE;
      case WM_SIZE:
        printf (" * ecore message : sized\n");
        return 0;
@@ -416,7 +416,7 @@ _ecore_win32_window_procedure(HWND   window,
        {
          RECT rect;
 
-         if (GetUpdateRect(window, &rect, EINA_FALSE))
+         if (GetUpdateRect(window, &rect, FALSE))
            {
               PAINTSTRUCT ps;
               HDC         hdc;

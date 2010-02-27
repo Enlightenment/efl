@@ -50,7 +50,7 @@ ecore_wince_window_new(Ecore_WinCE_Window *parent,
    rect.top = 0;
    rect.right = width;
    rect.bottom = height;
-   if (!AdjustWindowRectEx(&rect, WS_CAPTION | WS_SYSMENU | WS_VISIBLE, EINA_FALSE, WS_EX_TOPMOST))
+   if (!AdjustWindowRectEx(&rect, WS_CAPTION | WS_SYSMENU | WS_VISIBLE, FALSE, WS_EX_TOPMOST))
      {
         ERR("AdjustWindowRectEx() failed");
         free(w);
@@ -139,7 +139,7 @@ ecore_wince_window_move(Ecore_WinCE_Window *window,
    if (!MoveWindow(w, x, y,
                    rect.right - rect.left,
                    rect.bottom - rect.top,
-                   EINA_TRUE))
+                   TRUE))
      {
         ERR("MoveWindow() failed");
      }
@@ -185,7 +185,7 @@ ecore_wince_window_resize(Ecore_WinCE_Window *window,
         ERR("GetWindowLong() failed");
         return;
      }
-   if (!AdjustWindowRectEx(&rect, style, EINA_FALSE, exstyle))
+   if (!AdjustWindowRectEx(&rect, style, FALSE, exstyle))
      {
         ERR("AdjustWindowRectEx() failed");
         return;
@@ -194,7 +194,7 @@ ecore_wince_window_resize(Ecore_WinCE_Window *window,
    if (!MoveWindow(w->window, x, y,
                    rect.right - rect.left,
                    rect.bottom - rect.top,
-                   EINA_FALSE))
+                   FALSE))
      {
         ERR("MoveWindow() failed");
      }
@@ -232,7 +232,7 @@ ecore_wince_window_move_resize(Ecore_WinCE_Window *window,
         ERR("GetWindowLong() failed");
         return;
      }
-   if (!AdjustWindowRectEx(&rect, style, EINA_FALSE, exstyle))
+   if (!AdjustWindowRectEx(&rect, style, FALSE, exstyle))
      {
         ERR("AdjustWindowRectEx() failed");
         return;
@@ -241,7 +241,7 @@ ecore_wince_window_move_resize(Ecore_WinCE_Window *window,
    if (!MoveWindow(w->window, x, y,
               rect.right - rect.left,
               rect.bottom - rect.top,
-              EINA_TRUE))
+              TRUE))
      {
         ERR("MoveWindow() failed");
      }
@@ -478,7 +478,7 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
           {
              INF("ShowWindow(): task bar already hidden");
           }
-        if (!EnableWindow(task_bar, EINA_FALSE))
+        if (!EnableWindow(task_bar, FALSE))
           {
              INF("EnableWindow(): input already disabled");
           }
@@ -505,7 +505,7 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
         if (!MoveWindow(w,
                         0, 0,
                         GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
-                        EINA_TRUE))
+                        TRUE))
           {
              INF("MoveWindow() failed");
           }
@@ -522,7 +522,7 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
           {
              INF("ShowWindow(): task bar already visible");
           }
-        if (!EnableWindow(task_bar, EINA_TRUE))
+        if (!EnableWindow(task_bar, TRUE))
           {
              INF("EnableWindow():  input already enabled");
           }
@@ -552,7 +552,7 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
                         ew->rect.top,
                         ew->rect.right - ew->rect.left,
                         ew->rect.bottom - ew->rect.top,
-                        EINA_TRUE))
+                        TRUE))
           {
              INF("MoveWindow() failed");
           }
