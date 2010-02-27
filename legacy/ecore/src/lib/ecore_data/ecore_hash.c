@@ -62,6 +62,7 @@ EAPI Ecore_Hash *
 ecore_hash_new(Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare)
 {
    Ecore_Hash *new_hash = (Ecore_Hash *)malloc(sizeof(Ecore_Hash));
+   EINA_LOG_ERR("use eina_hash_* instead. See eina's documentation examples.");
    if (!new_hash)
      return NULL;
 

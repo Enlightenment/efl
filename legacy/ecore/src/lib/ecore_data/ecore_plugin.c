@@ -57,6 +57,8 @@ ecore_plugin_load(Ecore_Path_Group *group, const char *plugin_name, const char *
    Ecore_Plugin *plugin;
    void *handle = NULL;
 
+   EINA_LOG_ERR("use eina_module instead. See eina's documentation examples.");
+
    CHECK_PARAM_POINTER_RETURN("plugin_name", plugin_name, NULL);
 
    if (!version || *version == '\0')

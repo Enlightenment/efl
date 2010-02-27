@@ -79,6 +79,7 @@ ecore_list_new(void)
 {
    Ecore_List *list;
 
+   EINA_LOG_ERR("use eina_list_* instead. See eina's documentation examples.");
    list = (Ecore_List *)malloc(sizeof(Ecore_List));
    if (!list)
      return NULL;

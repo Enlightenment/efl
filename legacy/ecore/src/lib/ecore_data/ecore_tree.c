@@ -42,6 +42,8 @@ ecore_tree_new(Ecore_Compare_Cb compare_func)
 {
    Ecore_Tree *new_tree;
 
+   EINA_LOG_ERR("use eina_rbtree instead. See eina's documentation examples.");
+
    new_tree = ECORE_TREE(malloc(sizeof(Ecore_Tree)));
    if (!new_tree)
      return NULL;
