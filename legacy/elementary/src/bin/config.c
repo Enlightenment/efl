@@ -21,7 +21,7 @@ sc_round(void *data, Evas_Object *obj, void *event_info)
    double val = elm_slider_value_get(obj);
    double v;
    
-   v = round(val * 10.0) / 10.0;
+   v = ((double)((int)(val * 10.0))) / 10.0;
    if (v != val) elm_slider_value_set(obj, v);
 }
 
@@ -41,7 +41,7 @@ fs_round(void *data, Evas_Object *obj, void *event_info)
    double val = elm_slider_value_get(obj);
    double v;
    
-   v = round(val / 5.0) * 5.0;
+   v = ((double)((int)(val * 5.0))) / 5.0;
    if (v != val) elm_slider_value_set(obj, v);
 }
 

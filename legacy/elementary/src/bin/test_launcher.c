@@ -60,10 +60,22 @@ close_cb(void *data, Evas_Object *obj, void *event_info)
    evas_object_del(data);
 }
 
+static void
+ic_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   evas_object_color_set(data, 128, 0, 0, 128);
+}
+
+static void
+ic_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   evas_object_color_set(data, 255, 255, 255, 255);
+}
+
 void
 test_launcher(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *sc, *tb, *pad, *bt, *ic, *lb, *tb2, *mb, *ck, *bx;
+   Evas_Object *win, *bg, *sc, *tb, *pad, *bt, *ic, *lb, *tb2, *mb, *ck, *bx, *rc;
    int i, j, k, n, m;
    char buf[PATH_MAX];
    const char *names[] =
@@ -96,7 +108,7 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
         tb = elm_table_add(win);
         evas_object_size_hint_weight_set(tb, 0.0, 0.0);
         evas_object_size_hint_align_set(tb, 0.5, 0.5);
-        
+
         pad = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_size_hint_min_set(pad, 470, 4);
         evas_object_size_hint_weight_set(pad, 0.0, 0.0);
@@ -120,7 +132,7 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
         evas_object_size_hint_weight_set(pad, 0.0, 0.0);
         evas_object_size_hint_align_set(pad, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_table_pack(tb, pad, 6, 1, 1, 10);
-        
+
         for (j = 0; j < 5; j++)
           {
              for (i = 0; i < 5; i++)
@@ -142,6 +154,19 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
                   evas_object_size_hint_align_set(lb, 0.5, 0.5);
                   elm_table_pack(tb, lb, 1 + i, 1 + (j * 2) + 1, 1, 1);
                   evas_object_show(lb);
+                  
+                  rc = evas_object_rectangle_add(evas_object_evas_get(win));
+                  evas_object_color_set(rc, 0, 0, 0, 0);
+                  evas_object_size_hint_weight_set(rc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+                  evas_object_size_hint_align_set(rc, EVAS_HINT_FILL, EVAS_HINT_FILL);
+                  elm_table_pack(tb, rc, 1 + i, 1 + (j * 2), 1, 2);
+                  evas_object_show(rc);
+                  
+                  evas_object_event_callback_add(rc, EVAS_CALLBACK_MOUSE_DOWN, ic_down_cb, lb);
+                  evas_object_event_callback_add(rc, EVAS_CALLBACK_MOUSE_UP,   ic_up_cb,   lb);
+                  
+                  evas_object_event_callback_add(rc, EVAS_CALLBACK_MOUSE_DOWN, ic_down_cb, ic);
+                  evas_object_event_callback_add(rc, EVAS_CALLBACK_MOUSE_UP,   ic_up_cb,   ic);
                   
                   n++; if (n > 23) n = 0;
                   m++; if (m > 15) m = 0;
@@ -171,7 +196,7 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
    
    elm_scroller_page_relative_set(sc, 1.0, 1.0);
    evas_object_show(sc);
-   
+
    tb2 = elm_table_add(win);
    evas_object_size_hint_weight_set(tb2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, tb2);
@@ -221,7 +246,7 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bt);
    
    evas_object_show(tb2);
-   
+
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
 }
