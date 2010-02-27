@@ -658,8 +658,6 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
                   ev.cur.canvas.x = e->pointer.x;
                   ev.cur.canvas.y = e->pointer.y;
                   _evas_event_havemap_adjust(obj, &ev.cur.canvas.x, &ev.cur.canvas.y);
-                  e->pointer.x = ev.cur.canvas.x;
-                  e->pointer.y = ev.cur.canvas.y;
 		  if ((obj->cur.visible) &&
 		      (evas_object_clippers_is_visible(obj)) &&
 		      (!evas_event_passes_through(obj)) &&
