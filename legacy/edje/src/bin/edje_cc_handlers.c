@@ -5780,144 +5780,6 @@ st_collections_group_parts_part_description_map_light(void)
 
 /**
     @page edcref
-    @block
-        rotation
-    @context
-    map {
-        ..
-        rotation {
-            center: "name";
-            x: 45.0;
-            y: 45.0;
-            z: 45.0;
-        }
-        ..
-    }
-    @description
-        Rotates the part, optionally with the center on another part.
-    @endblock
-    
-    @property
-        center
-    @parameters
-        [another part's name]
-    @effect
-        This sets the part that is used as the center of rotation when
-        rotating the part with this description. The part's center point
-        is used as the rotation center when applying rotation around the
-        x, y and z axes. If no center is given, the parts original center
-        itself is used for the rotation center.
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_map_rotation_center(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(1);
-   
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = eina_list_data_get(eina_list_last(pc->parts));
-   
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-     {
-	char *name;
-
-	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(ed->map.rot.id_center));
-	free(name);
-     }
-}
-
-/**
-    @page edcref
-    @property
-        x
-    @parameters
-        [X degrees]
-    @effect
-        This sets the rotation around the x axis of the part considering
-        the center set. In degrees.
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_map_rotation_x(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(1);
-   
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = eina_list_data_get(eina_list_last(pc->parts));
-   
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->map.rot.x = FROM_DOUBLE(parse_float(0));
-}
-
-/**
-    @page edcref
-    @property
-        y
-    @parameters
-        [Y degrees]
-    @effect
-        This sets the rotation around the u axis of the part considering
-        the center set. In degrees.
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_map_rotation_y(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(1);
-   
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = eina_list_data_get(eina_list_last(pc->parts));
-   
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->map.rot.y = FROM_DOUBLE(parse_float(0));
-}
-
-/**
-    @page edcref
-    @property
-        z
-    @parameters
-        [Z degrees]
-    @effect
-        This sets the rotation around the z axis of the part considering
-        the center set. In degrees.
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_map_rotation_z(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(1);
-   
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = eina_list_data_get(eina_list_last(pc->parts));
-   
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->map.rot.z = FROM_DOUBLE(parse_float(0));
-}
-
-/**
-    @page edcref
     @property
         on
     @parameters
@@ -6057,6 +5919,143 @@ st_collections_group_parts_part_description_map_perspective_on(void)
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
    ed->map.persp_on = parse_bool(0);
+}
+/**
+    @page edcref
+    @block
+        rotation
+    @context
+    map {
+        ..
+        rotation {
+            center: "name";
+            x: 45.0;
+            y: 45.0;
+            z: 45.0;
+        }
+        ..
+    }
+    @description
+        Rotates the part, optionally with the center on another part.
+    @endblock
+    
+    @property
+        center
+    @parameters
+        [another part's name]
+    @effect
+        This sets the part that is used as the center of rotation when
+        rotating the part with this description. The part's center point
+        is used as the rotation center when applying rotation around the
+        x, y and z axes. If no center is given, the parts original center
+        itself is used for the rotation center.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_map_rotation_center(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+     {
+	char *name;
+
+	name = parse_str(0);
+	data_queue_part_lookup(pc, name, &(ed->map.rot.id_center));
+	free(name);
+     }
+}
+
+/**
+    @page edcref
+    @property
+        x
+    @parameters
+        [X degrees]
+    @effect
+        This sets the rotation around the x axis of the part considering
+        the center set. In degrees.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_map_rotation_x(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->map.rot.x = FROM_DOUBLE(parse_float(0));
+}
+
+/**
+    @page edcref
+    @property
+        y
+    @parameters
+        [Y degrees]
+    @effect
+        This sets the rotation around the u axis of the part considering
+        the center set. In degrees.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_map_rotation_y(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->map.rot.y = FROM_DOUBLE(parse_float(0));
+}
+
+/**
+    @page edcref
+    @property
+        z
+    @parameters
+        [Z degrees]
+    @effect
+        This sets the rotation around the z axis of the part considering
+        the center set. In degrees.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_map_rotation_z(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->map.rot.z = FROM_DOUBLE(parse_float(0));
 }
 
 /**
