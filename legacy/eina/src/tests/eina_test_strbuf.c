@@ -252,6 +252,74 @@ START_TEST(strbuf_replace)
 }
 END_TEST
 
+START_TEST(strbuf_realloc)
+{
+   Eina_Strbuf *buf;
+   char pattern[1024 * 16];
+   unsigned int i;
+   size_t sz;
+
+   for (i = 0; i < sizeof(pattern) - 1; i++)
+     pattern[i] = 'a' + (i % 26);
+   pattern[i] = '\0';
+
+   eina_init();
+
+   buf = eina_strbuf_new();
+   fail_if(!buf);
+
+   sz = 0;
+
+   eina_strbuf_append_length(buf, pattern, 1);
+   fail_if(eina_strbuf_length_get(buf) != sz + 1);
+   fail_if(memcmp(eina_strbuf_string_get(buf) + sz, pattern, 1));
+   sz += 1;
+
+   eina_strbuf_append_length(buf, pattern, 32);
+   fail_if(eina_strbuf_length_get(buf) != sz + 32);
+   fail_if(memcmp(eina_strbuf_string_get(buf) + sz, pattern, 32));
+   sz += 32;
+
+   eina_strbuf_append_length(buf, pattern, 64);
+   fail_if(eina_strbuf_length_get(buf) != sz + 64);
+   fail_if(memcmp(eina_strbuf_string_get(buf) + sz, pattern, 64));
+   sz += 64;
+
+   eina_strbuf_append_length(buf, pattern, 128);
+   fail_if(eina_strbuf_length_get(buf) != sz + 128);
+   fail_if(memcmp(eina_strbuf_string_get(buf) + sz, pattern, 128));
+   sz += 128;
+
+   eina_strbuf_append_length(buf, pattern, 4096);
+   fail_if(eina_strbuf_length_get(buf) != sz + 4096);
+   fail_if(memcmp(eina_strbuf_string_get(buf) + sz, pattern, 4096));
+   sz += 4096;
+
+   eina_strbuf_append_length(buf, pattern, sizeof(pattern) - 1);
+   fail_if(eina_strbuf_length_get(buf) != sz + sizeof(pattern) - 1);
+   fail_if(memcmp(eina_strbuf_string_get(buf) + sz, pattern, sizeof(pattern) - 1));
+   sz += sizeof(pattern) - 1;
+
+
+   eina_strbuf_remove(buf, 1024, 1024 + 1234);
+   fail_if(eina_strbuf_length_get(buf) != sz - 1234);
+   sz -= 1234;
+
+   eina_strbuf_remove(buf, 0, 0 + 8192);
+   fail_if(eina_strbuf_length_get(buf) != sz - 8192);
+   sz -= 8192;
+
+   eina_strbuf_remove(buf, 0, 0 + 32);
+   fail_if(eina_strbuf_length_get(buf) != sz - 32);
+   sz -= 32;
+
+
+   eina_strbuf_free(buf);
+
+   eina_shutdown();
+}
+END_TEST
+
 START_TEST(strbuf_append_realloc)
 {
    Eina_Strbuf *buf;
@@ -330,6 +398,7 @@ eina_test_strbuf(TCase *tc)
    tcase_add_test(tc, strbuf_append);
    tcase_add_test(tc, strbuf_insert);
    tcase_add_test(tc, strbuf_replace);
+   tcase_add_test(tc, strbuf_realloc);
    tcase_add_test(tc, strbuf_append_realloc);
    tcase_add_test(tc, strbuf_prepend_realloc);
 }

@@ -717,50 +717,34 @@ _eina_strbuf_grow(Eina_Strbuf *buf, size_t size)
 static inline Eina_Bool
 _eina_strbuf_resize(Eina_Strbuf *buf, size_t size)
 {
+   size_t new_size, new_step, delta;
    char *buffer;
-   size_t new_size;
-   size_t new_step;
 
    size += 1; // Add extra space for '\0'
 
-   new_size = buf->size;
-   new_step = buf->step;
-
-   /*
-    * first we have to determine the new buffer size
-    */
    if (size == buf->size)
      /* nothing to do */
      return EINA_TRUE;
    else if (size > buf->size)
-     {
-	/* enlarge the buffer */
-	while (size > new_size)
-	  {
-	     new_size += new_step;
-	     if (new_step < EINA_STRBUF_MAX_STEP)
-	       new_step *= 2;
-	     if (new_step > EINA_STRBUF_MAX_STEP)
-	       new_step = EINA_STRBUF_MAX_STEP;
-	  }
-     }
+     delta = size - buf->size;
+   else
+     delta = buf->size - size;
+
+   /* check if should keep the same step (just used while growing) */
+   if ((delta <= buf->step) && (size > buf->size))
+     new_step = buf->step;
    else
      {
-	/* shrink the buffer */
-	if (new_step > EINA_STRBUF_INIT_STEP)
-	  new_step /= 2;
-	while (new_size - new_step > size)
-	  {
-	     new_size -= new_step;
-	     if (new_step > EINA_STRBUF_INIT_STEP)
-	       new_step /= 2;
-	     if (new_step < EINA_STRBUF_INIT_STEP)
-	       new_step = EINA_STRBUF_INIT_STEP;
-	  }
+	new_step = (((delta / EINA_STRBUF_INIT_STEP) + 1)
+		    * EINA_STRBUF_INIT_STEP);
+
+	if (new_step > EINA_STRBUF_MAX_STEP)
+	  new_step = EINA_STRBUF_MAX_STEP;
      }
 
+   new_size = (((size / new_step) + 1) * new_step);
+
    /* reallocate the buffer to the new size */
-   eina_error_set(0);
    buffer = realloc(buf->buf, new_size);
    if (EINA_UNLIKELY(!buffer))
      {
@@ -771,6 +755,7 @@ _eina_strbuf_resize(Eina_Strbuf *buf, size_t size)
    buf->buf = buffer;
    buf->size = new_size;
    buf->step = new_step;
+   eina_error_set(0);
    return EINA_TRUE;
 }
 
