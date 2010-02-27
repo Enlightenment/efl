@@ -56,6 +56,7 @@ static const Eina_Test_Case etc[] = {
   { "Matrix Sparse", eina_test_matrixsparse },
   { "Eina Tiler", eina_test_tiler },
   { "Eina Strbuf", eina_test_strbuf },
+  { "String", eina_test_str },
   { NULL, NULL }
 };
 

@@ -28,6 +28,7 @@
 # include "config.h"
 #endif
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
@@ -52,7 +53,7 @@
  * Internal helper function used by eina_str_has_suffix() and
  * eina_str_has_extension()
  */
-static Eina_Bool
+static inline Eina_Bool
 eina_str_has_suffix_helper(const char *str,
 			   const char *suffix,
 			   int (*cmp)(const char *, const char *))
@@ -61,11 +62,100 @@ eina_str_has_suffix_helper(const char *str,
    size_t suffix_len;
 
    str_len = strlen(str);
-   suffix_len = strlen(suffix);
-   if (suffix_len > str_len)
+   suffix_len = eina_strlen_bounded(suffix, str_len);
+   if (suffix_len == (size_t)-1)
      return EINA_FALSE;
 
    return cmp(str + str_len - suffix_len, suffix) == 0;
+}
+
+static inline char **
+eina_str_split_full_helper(const char *str, const char *delim, int max_tokens, unsigned int *elements)
+{
+   char *s, **str_array;
+   const char *src;
+   size_t len, dlen;
+   unsigned int tokens;
+
+   dlen = strlen(delim);
+   if (dlen == 0)
+     {
+	if (elements) *elements = 0;
+	return NULL;
+     }
+
+   tokens = 0;
+   src = str;
+   /* count tokens and check strlen(str) */
+   while (*src != '\0')
+     {
+	const char *d = delim, *d_end = d + dlen;
+	const char *tmp = src;
+	for (; (d < d_end) && (*tmp != '\0'); d++, tmp++)
+	  {
+	     if (EINA_LIKELY(*d != *tmp))
+	       break;
+	  }
+	if (EINA_UNLIKELY(d == d_end))
+	  {
+	     src = tmp;
+	     tokens++;
+	  }
+	else
+	  src++;
+     }
+   len = src - str;
+
+   if ((max_tokens > 0) && (tokens > (unsigned int)max_tokens))
+     tokens = max_tokens;
+
+   str_array = malloc(sizeof(char *) * (tokens + 2));
+   if (!str_array)
+     {
+	if (elements) *elements = 0;
+	return NULL;
+     }
+
+   s = malloc(len + 1);
+   if (!s)
+     {
+	free(str_array);
+	if (elements) *elements = 0;
+	return NULL;
+     }
+
+   /* copy tokens and string */
+   tokens = 0;
+   str_array[0] = s;
+   src = str;
+   while (*src != '\0')
+     {
+	const char *d = delim, *d_end = d + dlen;
+	const char *tmp = src;
+	for (; (d < d_end) && (*tmp != '\0'); d++, tmp++)
+	  {
+	     if (EINA_LIKELY(*d != *tmp))
+	       break;
+	  }
+	if (EINA_UNLIKELY(d == d_end))
+	  {
+	     src = tmp;
+	     *s = '\0';
+	     s += dlen;
+	     tokens++;
+	     str_array[tokens] = s;
+	  }
+	else
+	  {
+	     *s = *src;
+	     s++;
+	     src++;
+	  }
+     }
+   *s = '\0';
+   str_array[tokens + 1] = NULL;
+   if (elements) *elements = (tokens + 1);
+   return str_array;
 }
 
 /**
@@ -189,8 +279,8 @@ eina_str_has_prefix(const char *str, const char *prefix)
    size_t prefix_len;
 
    str_len = strlen(str);
-   prefix_len = strlen(prefix);
-   if (prefix_len > str_len)
+   prefix_len = eina_strlen_bounded(prefix, str_len);
+   if (prefix_len == (size_t)-1)
      return EINA_FALSE;
 
    return (strncmp(str, prefix, prefix_len) == 0);
@@ -236,6 +326,34 @@ eina_str_has_extension(const char *str, const char *ext)
 }
 
 /**
+ * @brief Split a string using a delimiter and returns number of elements.
+ *
+ * @param str The string to split.
+ * @param delim The string which specifies the places at which to split the string.
+ * @param max_tokens The maximum number of strings to split string into.
+ * @param elements Where to return the number of elements in returned
+ *        array (not counting the terminating @c NULL). May be @c NULL.
+ * @return A newly-allocated NULL-terminated array of strings.
+ *
+ * This functin splits @p str into a maximum of @p max_tokens pieces,
+ * using the given delimiter @p delim. @p delim is not included in any
+ * of the resulting strings, unless @p max_tokens is reached. If
+ * @p max_tokens is less than @c 1, the string is splitted completely. If
+ * @p max_tokens is reached, the last string in the returned string
+ * array contains the remainder of string. The returned value is a
+ * newly allocated NUL-terminated array of string. To free it, free
+ * the first element of the array and the array itself.
+ *
+ * @see eina_str_split()
+ */
+EAPI char **
+eina_str_split_full(const char *str, const char *delim, int max_tokens, unsigned int *elements)
+{
+   return eina_str_split_full_helper(str, delim, max_tokens, elements);
+}
+
+
+/**
  * @brief Split a string using a delimiter.
  *
  * @param str The string to split.
@@ -255,30 +373,7 @@ eina_str_has_extension(const char *str, const char *ext)
 EAPI char **
 eina_str_split(const char *str, const char *delim, int max_tokens)
 {
-   char *s, *sep, **str_array;
-   size_t len, dlen;
-   int i;
-
-   if (*delim == '\0')
-     return NULL;
-
-   max_tokens = ((max_tokens <= 0) ? (INT_MAX) : (max_tokens - 1));
-   len = strlen(str);
-   dlen = strlen(delim);
-   s = strdup(str);
-   str_array = malloc(sizeof(char *) * (len + 1));
-   for (i = 0; (i < max_tokens) && (sep = strstr(s, delim)); i++)
-     {
-	str_array[i] = s;
-	s = sep + dlen;
-	*sep = 0;
-     }
-
-   str_array[i++] = s;
-   str_array = realloc(str_array, sizeof(char *) * (i + 1));
-   str_array[i] = NULL;
-
-   return str_array;
+   return eina_str_split_full_helper(str, delim, max_tokens, NULL);
 }
 
 /**

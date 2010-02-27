@@ -44,6 +44,7 @@ eina_hamster.h \
 eina_matrixsparse.h \
 eina_inline_tiler.x \
 eina_str.h \
+eina_inline_str.x \
 eina_strbuf.h
 
 installed_mainheaderdir = $(includedir)/eina-@VMAJ@
