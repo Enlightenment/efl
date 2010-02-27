@@ -89,7 +89,7 @@ _mapbuf(Evas_Object *obj)
      {
         Evas_Map *m;
         Evas_Coord cx, cy, cz, px, py, foc;
-        
+
         m = evas_map_new(4);
         evas_map_util_points_populate_from_geometry(m, x, y, w, h, 0);
         evas_map_smooth_set(m, wd->smooth);
@@ -111,10 +111,11 @@ static void
 _configure(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord x, y, w, h;
-   evas_object_geometry_get(obj, &x, &y, &w, &h);
    if (wd->content)
      {
+        Evas_Coord x, y, w, h;
+        
+        evas_object_geometry_get(obj, &x, &y, &w, &h);
         if (!wd->enabled) evas_object_move(wd->content, x, y);
         evas_object_resize(wd->content, w, h);
         _mapbuf(obj);
@@ -182,6 +183,7 @@ elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
+   if (wd->content == content) return;
    if ((wd->content != content) && (wd->content))
      {
         elm_widget_sub_object_del(obj, wd->content);
@@ -191,7 +193,7 @@ elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content)
    if (content)
      {
 	elm_widget_sub_object_add(content, obj);
-        evas_object_smart_member_add(obj, content);
+        evas_object_smart_member_add(content, obj);
 	evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);

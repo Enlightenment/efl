@@ -303,6 +303,7 @@ elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
+   if (wd->front.content == content) return;
    if ((wd->front.content != content) && (wd->front.content))
      {
         elm_widget_sub_object_del(obj, wd->front.content);
@@ -312,7 +313,7 @@ elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
    if (content)
      {
 	elm_widget_sub_object_add(content, obj);
-        evas_object_smart_member_add(obj, content);
+        evas_object_smart_member_add(content, obj);
 	evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
@@ -336,6 +337,7 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
+   if (wd->back.content == content) return;
    if ((wd->back.content != content) && (wd->back.content))
      {
         elm_widget_sub_object_del(obj, wd->back.content);
@@ -345,7 +347,7 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
    if (content)
      {
 	elm_widget_sub_object_add(content, obj);
-        evas_object_smart_member_add(obj, content);
+        evas_object_smart_member_add(content, obj);
 	evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);

@@ -1351,7 +1351,7 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
                        ay = ev->canvas.y;
                        at = 0.0;
 #ifdef SCROLLDBG
-                       printf("------\n");
+                       printf("------ %i %i\n", ev->canvas.x, ev->canvas.y);
 #endif
                        for (i = 0; i < 20; i++)
                          {
@@ -1486,6 +1486,9 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	  {
              int faildir = 0;
 
+#ifdef SCROLLDBG
+             printf("::: %i %i\n", ev->cur.canvas.x, ev->cur.canvas.y);
+#endif
 	     memmove(&(sd->down.history[1]), &(sd->down.history[0]),
 		     sizeof(sd->down.history[0]) * 19);
 #ifdef EVTIME
