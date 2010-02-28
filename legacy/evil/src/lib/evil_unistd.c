@@ -1,3 +1,4 @@
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
@@ -32,7 +33,7 @@ _evil_systemtime_to_time(SYSTEMTIME st)
      -1, 30, 58, 89, 119, 150, 180, 211, 242, 272, 303, 333, 364
    };
    int day;
-   time_t time;
+   time_t t;
 
    st.wYear -= 1900;
    if ((st.wYear < 70) || (st.wYear > 138))
@@ -43,10 +44,10 @@ _evil_systemtime_to_time(SYSTEMTIME st)
   if (!(st.wYear & 3) && (st.wMonth > 2) )
     day++;
 
-  time = ((st.wYear - 70) * 365 + ((st.wYear - 1) >> 2) - 17 + day) * 24 + st.wHour;
-  time = (time * 60 + st.wMinute) * 60 + st.wSecond;
+  t = ((st.wYear - 70) * 365 + ((st.wYear - 1) >> 2) - 17 + day) * 24 + st.wHour;
+  t = (t * 60 + st.wMinute) * 60 + st.wSecond;
 
-  return (long)time;
+  return (long)t;
 }
 
 /*
@@ -148,7 +149,7 @@ evil_getcwd(char *buffer, size_t size)
 #endif /* ! _WIN32_WCE */
 }
 
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+#ifdef _WIN32_WCE
 
 int
 evil_stat(const char *file_name, struct stat *st)
@@ -189,7 +190,6 @@ evil_stat(const char *file_name, struct stat *st)
    if (*f != '\\')
      {
         char  buf[PATH_MAX];
-        char *tmp;
         int   l1;
         int   l2;
 
@@ -277,7 +277,7 @@ evil_stat(const char *file_name, struct stat *st)
   return 0;
 }
 
-#endif /* _WIN32_WCE && ! __CEGCC__ */
+#endif /* _WIN32_WCE */
 
 
 
@@ -416,11 +416,11 @@ evil_pipe(int *fds)
  *
  */
 
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+#ifdef _WIN32_WCE
 
 int execvp (const char *file __UNUSED__, char *const argv[] __UNUSED__)
 {
    return 1;
 }
 
-#endif /* _WIN32_WCE && ! __CEGCC__ */
+#endif /* _WIN32_WCE */

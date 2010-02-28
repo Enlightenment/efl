@@ -1,3 +1,4 @@
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
@@ -5,7 +6,7 @@
 #include "Evil.h"
 
 
-#if ! (defined(__CEGCC__) || defined(__MINGW32CE__))
+#ifndef __MINGW32CE__
 
 static char *
 replace(char *prev, char *value)
@@ -51,4 +52,4 @@ nl_langinfo(nl_item index)
    return nothing;
 }
 
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* ! __MINGW32CE__ */

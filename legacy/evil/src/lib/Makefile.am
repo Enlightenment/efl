@@ -17,21 +17,16 @@ evil_string.h \
 evil_unistd.h \
 evil_util.h
 
-nobase_include_HEADERS = pwd.h sys/mman.h
+nobase_include_HEADERS = pwd.h sys/mman.h fnmatch.h
 
-if EVIL_HAVE_MINGW32CE
+if EVIL_HAVE_WINCE
 
 nobase_include_HEADERS += errno.h dirent.h
 
 endif
 
-if ! EVIL_HAVE_CEGCC
-
-nobase_include_HEADERS += fnmatch.h
-
-endif
-
 libevil_la_SOURCES = \
+evil_dirent.c \
 evil_errno.c \
 evil_fcntl.c \
 evil_fnmatch.c \
@@ -48,12 +43,6 @@ evil_time.c \
 evil_unistd.c \
 evil_util.c \
 evil_uuid.c
-
-if ! EVIL_HAVE_CEGCC
-
-libevil_la_SOURCES += evil_dirent.c
-
-endif
 
 if EVIL_HAVE_WINCE
 

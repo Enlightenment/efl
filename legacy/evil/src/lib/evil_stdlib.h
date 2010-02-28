@@ -100,9 +100,6 @@ EAPI int setenv(const char *name,
                 const char *value,
                 int         overwrite);
 
-
-#if ! defined(__CEGCC__)
-
 /**
  * @brief Remove environment variables.
  *
@@ -122,8 +119,6 @@ EAPI int setenv(const char *name,
  * faked by storing a value in a key in the base registry.
  */
 EAPI int unsetenv(const char *name);
-
-#endif /* ! __CEGCC__ */
 
 
 /*

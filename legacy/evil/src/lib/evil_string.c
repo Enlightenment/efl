@@ -5,7 +5,7 @@
 #include "Evil.h"
 
 
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+#ifdef _WIN32_WCE
 
 /*
  * Error related functions
@@ -17,10 +17,8 @@ char *strerror (int errnum __UNUSED__)
    return "[Windows CE] error\n";
 }
 
-#endif /* _WIN32_WCE && ! __CEGCC__ */
+#endif /* _WIN32_WCE */
 
-
-#ifndef __CEGCC__
 
 /*
  * bit related functions
@@ -42,8 +40,6 @@ int ffs(int i)
 
    return x;
 }
-
-#endif /* ! __CEGCC__ */
 
 
 #ifdef _WIN32_WCE

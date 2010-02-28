@@ -13,7 +13,7 @@
  */
 
 
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+#ifdef _WIN32_WCE
 
 /*
  * Environment variable related functions
@@ -35,9 +35,7 @@
  */
 EAPI char *strerror (int errnum);
 
-#endif /* _WIN32_WCE && ! __CEGCC__ */
-
-#ifndef __CEGCC__
+#endif /* _WIN32_WCE */
 
 /*
  * bit related functions
@@ -61,8 +59,6 @@ EAPI char *strerror (int errnum);
  * Supported OS: Windows XP, Windows CE (not cegcc).
  */
 EAPI int ffs(int i);
-
-#endif /* ! __CEGCC__ */
 
 
 #ifdef _WIN32_WCE

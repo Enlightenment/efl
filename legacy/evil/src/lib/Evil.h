@@ -125,7 +125,7 @@ typedef unsigned long  gid_t;
 #include "evil_util.h"
 
 
-#if (defined(_WIN32) && !defined(_UWIN) && !defined(__CYGWIN__) && !defined(__CEGCC__))
+#if (defined(_WIN32) && !defined(_UWIN) && !defined(__CYGWIN__))
 # if defined(_MSC_VER) || defined(__MINGW32__)
 
 # ifdef S_ISDIR

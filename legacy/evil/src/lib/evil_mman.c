@@ -1,3 +1,8 @@
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
 #include <stdio.h>
 #include <sys/types.h>
 
@@ -9,21 +14,13 @@
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
-#ifndef __CEGCC__
 # include <io.h>
-#endif /* ! __CEGCC__ */
-
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif /* HAVE_CONFIG_H */
 
 #include "sys/mman.h"
 
-#if defined(__CEGCC__)
-# define _get_osfhandle get_osfhandle
-# elif defined (__MINGW32CE__)
+#ifdef __MINGW32CE__
 # define _get_osfhandle(FILEDES) ((long)FILEDES)
-#endif /* ! __CEGCC__ && ! __MINGW32CE__ */
+#endif /* __MINGW32CE__ */
 
 
 /***** API *****/
@@ -87,7 +84,7 @@ mmap(void  *addr __UNUSED__,
      {
         HANDLE fm;
         DWORD  protect = PAGE_NOACCESS;
-        DWORD  access = 0;
+        DWORD  acs = 0;
         HANDLE handle;
         void  *data;
 
@@ -146,23 +143,23 @@ mmap(void  *addr __UNUSED__,
           }
 
         if (protect & PAGE_READWRITE)
-          access = FILE_MAP_ALL_ACCESS;
+          acs = FILE_MAP_ALL_ACCESS;
         if (protect & PAGE_WRITECOPY)
-          access = FILE_MAP_COPY;
+          acs = FILE_MAP_COPY;
 #if 0
         if (protect & (PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_READ))
-          access = FILE_MAP_EXECUTE;
+          acs = FILE_MAP_EXECUTE;
 #endif
         if (protect & (PAGE_READWRITE | PAGE_READONLY))
-          access = FILE_MAP_READ;
+          acs = FILE_MAP_READ;
         else
           {
              if (protect & PAGE_READWRITE)
-               access = FILE_MAP_WRITE;
+               acs = FILE_MAP_WRITE;
           }
 
         data = MapViewOfFile(fm,
-                             access,
+                             acs,
                              offset & 0xffff0000,
                              offset & 0x0000ffff,
                              len);

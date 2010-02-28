@@ -1,11 +1,11 @@
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
 #include <stdio.h>
-#ifndef __CEGCC__
 # include <io.h>
-#endif /* __CEGCC__ */
+
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif /* HAVE_ERRNO_H */
@@ -127,7 +127,7 @@ setenv(const char *name,
        const char *value,
        int         overwrite)
 {
-#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
+#ifndef __MINGW32CE__
 
    char  *old_name;
    char  *str;
@@ -170,7 +170,7 @@ setenv(const char *name,
 
    return res;
 
-#else /* __CEGCC__ || __MINGW32CE__ */
+#else /* __MINGW32CE__ */
 
    HKEY     key;
    LONG     res;
@@ -254,18 +254,14 @@ setenv(const char *name,
 
    return 0;
 
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* ! __MINGW32CE__ */
 }
-
-#if ! defined(__CEGCC__)
 
 int
 unsetenv(const char *name)
 {
    return setenv(name, NULL, 1);
 }
-
-#endif /* ! __CEGCC__ */
 
 
 /*
@@ -320,9 +316,9 @@ mkstemp(char *__template)
         suffix[5] = lookup[v % 62];
         v /= 62;
 
-#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
+#ifndef __MINGW32CE__
         fd = _open(__template, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
-#else /* _WIN32_WCE */
+#else /* ! __MINGW32CE__ */
         {
            FILE    *f;
            wchar_t *wtemplate;
@@ -334,14 +330,14 @@ mkstemp(char *__template)
            free(wtemplate);
            if (!f)
              {
-#ifdef HAVE_ERRNO_H
+# ifdef HAVE_ERRNO_H
                 errno = EEXIST;
-#endif /* HAVE_ERRNO_H */
+# endif /* HAVE_ERRNO_H */
                 return -1;
              }
            fd = (int)_fileno(f);
         }
-#endif /* _WIN32_WCE */
+#endif /* __MINGW32CE__ */
         if (fd >= 0)
           return fd;
 
@@ -358,7 +354,7 @@ mkstemp(char *__template)
 char *
 realpath(const char *file_name, char *resolved_name)
 {
-#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
+#ifndef __MINGW32CE__
    return _fullpath(resolved_name, file_name, PATH_MAX);
 #else
    char   cwd[PATH_MAX];
@@ -384,5 +380,5 @@ realpath(const char *file_name, char *resolved_name)
    resolved_name[l] = '\0';
 
    return resolved_name;
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* __MINGW32CE__ */
 }

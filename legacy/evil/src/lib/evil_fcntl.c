@@ -9,20 +9,16 @@
 # include <io.h>   /* for _get_osfhandle _lseek and _locking */
 #endif
 
-#ifndef __CEGCC__
 # include <sys/locking.h>
-#endif /* __CEGCC__ */
 
 #include <winsock2.h> /* for ioctlsocket */
 
 #include "Evil.h"
 
 
-#if defined(__CEGCC__)
-# define _get_osfhandle get_osfhandle
-# elif defined (__MINGW32CE__)
+#ifdef __MINGW32CE__
 # define _get_osfhandle(FILEDES) ((HANDLE)FILEDES)
-#endif /* ! __CEGCC__ && ! __MINGW32CE__ */
+#endif /* __MINGW32CE__ */
 
 
 /*
@@ -44,14 +40,14 @@ int fcntl(int fd, int cmd, ...)
 
    if (cmd == F_GETFD)
      {
-#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
+#ifndef __MINGW32CE__
         DWORD flag;
 
 	if (!GetHandleInformation(h, &flag))
 	  return -1;
 
 	res = 0;
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* ! __MINGW32CE__ */
      }
 
    if (cmd == F_SETFD)
@@ -61,10 +57,10 @@ int fcntl(int fd, int cmd, ...)
         flag = va_arg(va, long);
         if (flag == FD_CLOEXEC)
           {
-#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
+#ifndef __MINGW32CE__
              if (SetHandleInformation(h, HANDLE_FLAG_INHERIT, 0))
                res = 0;
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* ! __MINGW32CE__ */
           }
      }
    else if (cmd == F_SETFL)
@@ -88,7 +84,7 @@ int fcntl(int fd, int cmd, ...)
                }
           }
      }
-#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
+#ifndef __MINGW32CE__
    else if ((cmd == F_SETLK) || (cmd == F_SETLKW))
      {
         struct flock *fl;
@@ -124,7 +120,7 @@ int fcntl(int fd, int cmd, ...)
           res = _locking(fd, _LK_UNLCK, fl->l_len);
      }
 
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* ! __MINGW32CE__ */
 
    va_end(va);
 

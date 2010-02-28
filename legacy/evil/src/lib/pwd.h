@@ -12,9 +12,6 @@ extern "C" {
 #endif
 
 
-#ifndef __CEGCC__
-
-
 struct passwd {
    char    *pw_name;       /* user name */
    char    *pw_passwd;     /* encrypted password */
@@ -30,9 +27,6 @@ struct passwd {
 };
 
 EAPI struct passwd * getpwuid (uid_t uid);
-
-
-#endif /* ! __CEGCC__ */
 
 
 #ifdef __cplusplus

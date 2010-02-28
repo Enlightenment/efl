@@ -20,8 +20,6 @@ struct DIR
 };
 
 
-#ifndef __CEGCC__
-
 DIR *opendir(char const *name)
 {
    DIR     *dir;
@@ -193,5 +191,3 @@ struct dirent *readdir(DIR *dir)
 
    return &dir->dirent;
 }
-
-#endif /* ! __CEGCC__ */

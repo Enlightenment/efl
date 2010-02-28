@@ -147,7 +147,7 @@ EAPI ssize_t readlink(const char *path, char *buf, size_t bufsiz);
  */
 
 
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+#ifdef _WIN32_WCE
 
 /**
  * @brief Return information about a file.
@@ -173,7 +173,7 @@ EAPI int evil_stat(const char *file_name, struct stat *st);
  */
 # define stat(f,st) evil_stat((f),(st))
 
-#endif /* _WIN32_WCE && ! __CEGCC__ */
+#endif /* _WIN32_WCE */
 
 /**
  * @brief Get the current directory.
@@ -270,7 +270,7 @@ EAPI int evil_pipe(int *fds);
  */
 
 
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+#ifdef _WIN32_WCE
 
 /**
  * @brief Replace the current process image with a new process image.
@@ -288,7 +288,7 @@ EAPI int evil_pipe(int *fds);
  */
 EAPI int execvp( const char *file, char *const argv[]);
 
-#endif /* _WIN32_WCE && ! __CEGCC__ */
+#endif /* _WIN32_WCE */
 
 
 /**

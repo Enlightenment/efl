@@ -8,7 +8,10 @@ AC_CANONICAL_HOST
 
 dnl If the host is not Windows, we exit
 case "$host_os" in
-  mingw* | cegcc*)
+  cegcc*)
+    AC_MSG_ERROR([ceGCC compiler is not supported anymore. Exiting...])
+    ;;
+  mingw*)
     ;;
   *)
     AC_MSG_ERROR([OS must be Windows. Exiting...])
@@ -46,14 +49,11 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 win32_libs=""
 case "$host_os" in
-  mingw | mingw32 | mingw32msvc)
-    win32_libs="-lole32 -lws2_32 -lsecur32"
-    ;;
-  cegcc*)
-    win32_libs="-lws2"
-    ;;
   mingw32ce*)
     win32_libs="-lws2"
+    ;;
+  *)
+    win32_libs="-lole32 -lws2_32 -lsecur32"
     ;;
 esac
 AC_SUBST(win32_libs)
@@ -76,21 +76,12 @@ AC_C_CONST
 AC_C___ATTRIBUTE__
 
 win32_cppflags="-DEFL_EVIL_BUILD"
-win32_cflags=""
+win32_cflags="-Wall -W -Wshadow"
 win32_cxxflags=""
 have_wince="no"
-have_mingw32ce="no"
-have_cegcc="no"
 case "$host_os" in
-  cegcc*)
-    have_wince="yes"
-    have_cegcc="yes"
-    win32_cflags="-mwin32"
-    win32_cppflags="${win32_cppflags} -D_WIN32_WCE=0x0420"
-    ;;
   mingw32ce*)
     have_wince="yes"
-    have_mingw32ce="yes"
     win32_cppflags="${win32_cppflags} -D_WIN32_WCE=0x0420"
     ;;
   *)
@@ -104,8 +95,6 @@ AC_SUBST(win32_cflags)
 AC_SUBST(win32_cxxflags)
 
 AM_CONDITIONAL(EVIL_HAVE_WINCE, test "x${have_wince}" = "xyes")
-AM_CONDITIONAL(EVIL_HAVE_MINGW32CE, test "x${have_mingw32ce}" = "xyes")
-AM_CONDITIONAL(EVIL_HAVE_CEGCC, test "x${have_cegcc}" = "xyes")
 
 
 ### Checks for linker characteristics

@@ -13,7 +13,7 @@
  */
 
 
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+#ifdef _WIN32_WCE
 
 /*
  * Error related functions
@@ -39,7 +39,7 @@ EAPI int evil_remove(const char *path);
 
 # define remove(p) evil_remove(p)
 
-#endif /* _WIN32_WCE && ! __CEGCC__ */
+#endif /* _WIN32_WCE */
 
 
 #ifdef _WIN32_WCE

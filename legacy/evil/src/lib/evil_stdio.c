@@ -1,3 +1,4 @@
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
@@ -8,7 +9,7 @@
 #undef fopen
 
 
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+#ifdef _WIN32_WCE
 
 /*
  * Error related functions
@@ -99,7 +100,7 @@ int evil_remove(const char *path)
 }
 
 
-#endif /* _WIN32_WCE && ! __CEGCC__ */
+#endif /* _WIN32_WCE */
 
 
 #ifdef _WIN32_WCE
@@ -110,7 +111,7 @@ FILE *evil_fopen_native(const char *path, const char *mode)
    char    *filename;
    char    *tmp;
    wchar_t *wfilename;
-   DWORD    access = GENERIC_READ;
+   DWORD    acs = GENERIC_READ;
    DWORD    creation;
 
    if (!path || !*path || !mode || !*mode)
@@ -155,17 +156,17 @@ FILE *evil_fopen_native(const char *path, const char *mode)
 
    if (*mode == 'r')
      {
-        access = GENERIC_READ;
+        acs = GENERIC_READ;
         creation = OPEN_EXISTING;
      }
    if (*mode == 'w')
      {
-        access = GENERIC_WRITE;
+        acs = GENERIC_WRITE;
         creation = CREATE_ALWAYS;
      }
 
    handle = CreateFile(wfilename,
-                       access,
+                       acs,
                        0, NULL,
                        creation,
                        FILE_ATTRIBUTE_NORMAL,

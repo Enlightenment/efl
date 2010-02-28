@@ -2,7 +2,7 @@
 #define __EVIL_LANGINFO_H__
 
 
-#if ! (defined(__CEGCC__) || defined(__MINGW32CE__))
+#ifndef __MINGW32CE__
 
 #include <locale.h>
 
@@ -35,7 +35,7 @@ enum {
 
 EAPI char *nl_langinfo(nl_item index);
 
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* __MINGW32CE__ */
 
 
 #endif /*__EVIL_LANGINFO_H__ */

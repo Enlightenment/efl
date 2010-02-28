@@ -1,8 +1,7 @@
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
-
-#if defined (_MSC_VER) || defined (__MINGW32__) || defined (__MINGW32CE__)
 
 #include <assert.h>
 #include <stdlib.h>
@@ -77,5 +76,3 @@ fnmatch_list_of_states_clear(struct list_of_states *list)
   list->size = 0;
   memset(list->has, 0, list->reserved * sizeof (*list->has));
 }
-
-#endif /* _MSC_VER || __MINGWCE__  || __MINGW32CE__ */

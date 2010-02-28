@@ -1,3 +1,4 @@
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
@@ -7,9 +8,6 @@
 
 #include "Evil.h"
 #include "pwd.h"
-
-
-#ifndef __CEGCC__
 
 
 static struct passwd pw;
@@ -26,7 +24,6 @@ getpwuid (uid_t uid)
 # endif /* UNICODE */
 
    length = PATH_MAX;
-   /* get from USERPROFILE for win 98 ? */
 #ifdef _WIN32_WINNT
    res = GetUserNameEx(NameDisplay, name, &length);
 #else
@@ -38,13 +35,13 @@ getpwuid (uid_t uid)
         a_name = evil_wchar_to_char(name);
         if (a_name)
           {
-             int length;
+             int l;
 
-             length = strlen(a_name);
-             if (length >= PATH_MAX)
-               length = PATH_MAX;
-             memcpy(user_name, a_name, length);
-             user_name[length] = '\0';
+             l = strlen(a_name);
+             if (l >= PATH_MAX)
+               l = PATH_MAX;
+             memcpy(user_name, a_name, l);
+             user_name[l] = '\0';
              free(a_name);
           }
         else
@@ -67,6 +64,3 @@ getpwuid (uid_t uid)
 
    return &pw;
 }
-
-
-#endif /* ! __CEGCC__ */
