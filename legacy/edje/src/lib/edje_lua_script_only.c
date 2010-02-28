@@ -25,13 +25,13 @@ void *alloca(size_t);
 
 #include "edje_private.h"
 
-int
+Eina_Bool
 _edje_lua_script_only(Edje * ed)
 {
    if ((ed->collection) && (ed->collection->L) &&
        (ed->collection->lua_script_only))
-      return 1;
-   return 0;
+      return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 void

@@ -278,7 +278,7 @@ edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *sour
  *
  */
 EAPI void
-edje_object_play_set(Evas_Object *obj, int play)
+edje_object_play_set(Evas_Object *obj, Eina_Bool play)
 {
    Edje *ed;
    double t;
@@ -300,7 +300,7 @@ edje_object_play_set(Evas_Object *obj, int play)
    else
      {
 	if (ed->paused) return;
-	ed->paused = 1;
+	ed->paused = EINA_TRUE;
 	ed->paused_at = ecore_time_get();
      }
 
@@ -317,8 +317,8 @@ edje_object_play_set(Evas_Object *obj, int play)
  * @brief Get the edje object's play/pause state.
  *
  * @param obj A valid Evas_Object handle.
- * @return @c 0 if the object is not connected, its @c delete_me flag
- * is set, or it is at paused state; @c 1 if the object is at playing
+ * @return @c EINA_FALSE if the object is not connected, its @c delete_me flag
+ * is set, or it is at paused state; @c EINA_TRUE if the object is at playing
  * state.
  *
  * This function tells if an edje object is playing or not. This state
@@ -327,16 +327,16 @@ edje_object_play_set(Evas_Object *obj, int play)
  * @see edje_object_play_set().
  *
  */
-EAPI int
+EAPI Eina_Bool
 edje_object_play_get(const Evas_Object *obj)
 {
    Edje *ed;
 
    ed = _edje_fetch(obj);
-   if (!ed) return 0;
-   if (ed->delete_me) return 0;
-   if (ed->paused) return 0;
-   return 1;
+   if (!ed) return EINA_FALSE;
+   if (ed->delete_me) return EINA_FALSE;
+   if (ed->paused) return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 /* FIXDOC: Verify/Expand */
@@ -354,7 +354,7 @@ edje_object_play_get(const Evas_Object *obj)
  *
  */
 EAPI void
-edje_object_animation_set(Evas_Object *obj, int on)
+edje_object_animation_set(Evas_Object *obj, Eina_Bool on)
 {
    Edje *ed;
    Eina_List *l;
@@ -414,7 +414,8 @@ edje_object_animation_set(Evas_Object *obj, int on)
  * @brief Get the edje object's animation state.
  *
  * @param obj A valid Evas_Object handle.
- * @return @c 0 on error or if object is not animated; @c 1 if animated.
+ * @return @c EINA_FALSE on error or if object is not animated;
+ * @c EINA_TRUE if animated.
  *
  * This function returns if the animation is playing or not. The
  * animation state is set by edje_object_play_set().
@@ -423,21 +424,21 @@ edje_object_animation_set(Evas_Object *obj, int on)
  *
  */
 
-EAPI int
+EAPI Eina_Bool
 edje_object_animation_get(const Evas_Object *obj)
 {
    Edje *ed;
 
    ed = _edje_fetch(obj);
-   if (!ed) return 0;
-   if (ed->delete_me) return 0;
-   if (ed->no_anim) return 0;
-   return 1;
+   if (!ed) return EINA_FALSE;
+   if (ed->delete_me) return EINA_FALSE;
+   if (ed->no_anim) return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 /* Private Routines */
 
-int
+Eina_Bool
 _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 {
    FLOAT_T t, total;
@@ -581,7 +582,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 }
 
 void
-_edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const char *ssrc)
+_edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig, const char *ssrc)
 {
    Eina_List *l;
    Edje_Real_Part *rp;
@@ -1051,7 +1052,7 @@ struct _Edje_Program_Data
   const char    *source;
 };
 
-static int _edje_glob_callback(Edje_Program *pr, void *dt)
+static Eina_Bool _edje_glob_callback(Edje_Program *pr, void *dt)
 {
    struct _Edje_Program_Data *data = dt;
    Edje_Real_Part *rp = NULL;
@@ -1077,14 +1078,14 @@ static int _edje_glob_callback(Edje_Program *pr, void *dt)
         eina_list_free(data->matches);
         data->matches = NULL;
 #endif
-        return 1;
+        return EINA_TRUE;
      }
 
 #ifdef EDJE_PROGRAM_CACHE
    data->matches = eina_list_append(data->matches, pr);
 #endif
 
-   return 0;
+   return EINA_FALSE;
 }
 
 

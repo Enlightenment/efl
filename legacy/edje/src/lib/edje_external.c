@@ -309,7 +309,7 @@ _edje_external_signal_emit(Evas_Object *obj, const char *emission, const char *s
 }
 
 void
-_edje_external_params_free(Eina_List *external_params, unsigned int free_strings)
+_edje_external_params_free(Eina_List *external_params, Eina_Bool free_strings)
 {
    Edje_External_Param *param;
 

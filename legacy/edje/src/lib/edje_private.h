@@ -1153,14 +1153,14 @@ Edje_Patterns   *edje_match_programs_source_init(Eina_List *lst);
 Edje_Patterns   *edje_match_callback_signal_init(Eina_List *lst);
 Edje_Patterns   *edje_match_callback_source_init(Eina_List *lst);
 
-int              edje_match_collection_dir_exec(const Edje_Patterns      *ppat,
+Eina_Bool        edje_match_collection_dir_exec(const Edje_Patterns      *ppat,
 						const char               *string);
-int              edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
+Eina_Bool        edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
 					  const Edje_Patterns    *ppat_source,
 					  const char             *signal,
 					  const char             *source,
 					  Eina_List              *programs,
-					  int (*func)(Edje_Program *pr, void *data),
+					  Eina_Bool (*func)(Edje_Program *pr, void *data),
 					  void                   *data);
 int              edje_match_callback_exec(const Edje_Patterns    *ppat_signal,
 					  const Edje_Patterns    *ppat_source,
@@ -1238,7 +1238,7 @@ void  _edje_file_del(Edje *ed);
 void  _edje_file_free(Edje_File *edf);
 void  _edje_file_cache_shutdown(void);
 void  _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec);
-void  _edje_collection_free_part_description_free(Edje_Part_Description *desc, unsigned int free_strings);
+void  _edje_collection_free_part_description_free(Edje_Part_Description *desc, Eina_Bool free_strings);
 
 
 Edje *_edje_add(Evas_Object *obj);
@@ -1249,9 +1249,9 @@ void  _edje_clean_objects(Edje *ed);
 void  _edje_ref(Edje *ed);
 void  _edje_unref(Edje *ed);
 
-int   _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
+Eina_Bool _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
 void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
-void  _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const char *ssrc);
+void  _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig, const char *ssrc);
 void _edje_programs_patterns_clean(Edje *ed);
 void _edje_programs_patterns_init(Edje *ed);
 void  _edje_emit(Edje *ed, const char *sig, const char *src);
@@ -1454,7 +1454,7 @@ void _edje_embryo_globals_init(Edje *ed);
    if ((___cptr = (int *)embryo_data_address_get(ep, (par)))) { \
       *___cptr = (int)val; } }
 
-int _edje_script_only(Edje *ed);
+Eina_Bool _edje_script_only(Edje *ed);
 void _edje_script_only_init(Edje *ed);
 void _edje_script_only_shutdown(Edje *ed);
 void _edje_script_only_show(Edje *ed);
@@ -1478,7 +1478,7 @@ void __edje_lua_error(const char *file, const char *fnc, int line, lua_State *L,
 #define _edje_lua_error(L, err_code)					\
   __edje_lua_error(__FILE__, __FUNCTION__, __LINE__, L, err_code)
 
-int  _edje_lua_script_only(Edje *ed);
+Eina_Bool  _edje_lua_script_only(Edje *ed);
 void _edje_lua_script_only_init(Edje *ed);
 void _edje_lua_script_only_shutdown(Edje *ed);
 void _edje_lua_script_only_show(Edje *ed);
@@ -1523,7 +1523,7 @@ void _edje_external_init();
 void _edje_external_shutdown();
 Evas_Object *_edje_external_type_add(const char *type_name, Evas *evas, Evas_Object *parent, const Eina_List *params);
 void _edje_external_signal_emit(Evas_Object *obj, const char *emission, const char *source);
-void _edje_external_params_free(Eina_List *params, unsigned int free_strings);
+void _edje_external_params_free(Eina_List *params, Eina_Bool free_strings);
 void _edje_external_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
 void *_edje_external_params_parse(Evas_Object *obj, const Eina_List *params);
 void _edje_external_parsed_params_free(Evas_Object *obj, void *params);

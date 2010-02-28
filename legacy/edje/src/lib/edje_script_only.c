@@ -442,13 +442,13 @@ _exp_e_signal_emit(Embryo_Program * ep, Embryo_Cell * params)
 
 /**********/
 
-int
+Eina_Bool
 _edje_script_only(Edje * ed)
 {
    if ((ed->collection) && (ed->collection->script) &&
        (ed->collection->script_only))
-      return 1;
-   return 0;
+      return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 void

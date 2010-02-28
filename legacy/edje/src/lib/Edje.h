@@ -431,10 +431,10 @@ extern "C" {
    EAPI void         edje_object_signal_callback_add (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
    EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
    EAPI void         edje_object_signal_emit         (Evas_Object *obj, const char *emission, const char *source);
-   EAPI void         edje_object_play_set            (Evas_Object *obj, int play);
-   EAPI int          edje_object_play_get            (const Evas_Object *obj);
-   EAPI void         edje_object_animation_set       (Evas_Object *obj, int on);
-   EAPI int          edje_object_animation_get       (const Evas_Object *obj);
+   EAPI void         edje_object_play_set            (Evas_Object *obj, Eina_Bool play);
+   EAPI Eina_Bool    edje_object_play_get            (const Evas_Object *obj);
+   EAPI void         edje_object_animation_set       (Evas_Object *obj, Eina_Bool on);
+   EAPI Eina_Bool    edje_object_animation_get       (const Evas_Object *obj);
 
    /* edje_util.c */
    EAPI int          edje_object_freeze              (Evas_Object *obj);
