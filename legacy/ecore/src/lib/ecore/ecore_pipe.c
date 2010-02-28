@@ -305,9 +305,7 @@ ecore_pipe_add(void (*handler) (void *data, void *buffer, unsigned int nbyte),
    p->handler = handler;
    p->data = data;
 
-#ifndef _WIN32
    fcntl(p->fd_read, F_SETFL, O_NONBLOCK);
-#endif /* _WIN32 */
    p->fd_handler = ecore_main_fd_handler_add(p->fd_read,
                                           ECORE_FD_READ,
                                           _ecore_pipe_read,
