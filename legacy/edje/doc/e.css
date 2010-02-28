@@ -271,3 +271,20 @@ td.nav_active {
 	width: 100%;
 }
 
+table.edcref tr td.block {
+        vertical-align: top;
+        padding-top: 10px;
+}
+
+table.edcref tr.section td.section {
+        color: #888;
+        font-size: 16pt;
+        padding: 15px;
+        border-top: 1px solid #ccc;
+        text-align: center;
+}
+
+table.edcref tr.section td.section a {
+        color: #888;
+        text-decoration: none;
+}

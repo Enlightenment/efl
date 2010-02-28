@@ -49,6 +49,22 @@
  * The syntax for the edje data collection files follows a simple structure of
  * "blocks { .. }" that can contain "properties: ..", more blocks, or both.
  *
+ * @anchor sec_quickaccess Quick access to block descriptions:
+ * <ul>
+ *    <li>@ref sec_toplevel "Top-Level"</li>
+ *    <li>@ref sec_group "Group"</li>
+ *    <li>@ref sec_description "State description"</li>
+ *    <ul>
+ *      <li>@ref sec_description_image "Image"</li>
+ *      <li>@ref sec_description_text "Text"</li>
+ *      <li>@ref sec_description_gradient "Gradient"</li>
+ *      <li>@ref sec_description_box "Box"</li>
+ *      <li>@ref sec_description_table "Table"</li>
+ *      <li>@ref sec_description_map "Map (3d/transformations)"</li>
+ *    </ul>
+ *    <li>@ref sec_program "Program block"</li>
+ * </ul>
+ *
  * @author Andres Blanc (dresb) andresblanc@gmail.com
  *
  * <table class="edcref" border="0">
@@ -685,6 +701,10 @@ statement_handler_num(void)
 }
 
 /*****/
+
+/**
+   @edcsection{toplevel,Top-Level blocks}
+ */
 
 /**
     @page edcref
@@ -1383,6 +1403,10 @@ ob_collections(void)
    if (!edje_file->collection_dir)
      edje_file->collection_dir = mem_alloc(SZ(Edje_Part_Collection_Directory));
 }
+
+/**
+   @edcsection{group,Group sub blocks}
+ */
 
 /**
     @page edcref
@@ -2985,6 +3009,10 @@ static void st_collections_group_parts_part_table_items_item_span(void)
 }
 
 /**
+   @edcsection{description,State description sub blocks}
+ */
+
+/**
     @page edcref
     @block
         description
@@ -3933,6 +3961,10 @@ st_collections_group_parts_part_description_rel2_to_y(void)
 }
 
 /**
+   @edcsection{description_image,Image state description sub blocks}
+ */
+
+/**
     @page edcref
     @block
         image
@@ -4563,6 +4595,11 @@ st_collections_group_parts_part_description_fill_size_offset(void)
    ed->fill.abs_y = parse_int(1);
 }
 
+
+/**
+   @edcsection{description_text,Text state description sub blocks}
+ */
+
 /**
     @page edcref
 
@@ -5110,6 +5147,11 @@ st_collections_group_parts_part_description_text_elipsis(void)
    ed->text.elipsis = parse_float_range(0, 0.0, 1.0);
 }
 
+
+/**
+   @edcsection{description_gradient,Gradient state description sub blocks}
+ */
+
 /**
     @page edcref
 
@@ -5370,6 +5412,11 @@ st_collections_group_parts_part_description_gradient_rel2_offset(void)
      }
 }
 
+
+/**
+   @edcsection{description_box,Box state description sub blocks}
+ */
+
 /**
     @page edcref
 
@@ -5544,6 +5591,11 @@ st_collections_group_parts_part_description_box_min(void)
    ed->box.min.v = parse_bool(1);
 }
 
+
+/**
+   @edcsection{description_table,Table state description sub blocks}
+ */
+
 /**
     @page edcref
 
@@ -5672,6 +5724,11 @@ static void st_collections_group_parts_part_description_table_padding(void)
    ed->table.padding.x = parse_int_range(0, 0, 0x7fffffff);
    ed->table.padding.y = parse_int_range(1, 0, 0x7fffffff);
 }
+
+
+/**
+   @edcsection{description_map,Map state description sub blocks}
+ */
 
 /**
     @page edcref
@@ -6131,6 +6188,11 @@ st_collections_group_parts_part_description_perspective_focal(void)
    ed->persp.focal = parse_int_range(0, 1, 0x7fffffff);
 }
 
+
+/**
+   @edcsection{description_params,Params state description sub blocks}
+ */
+
 /**
     @page edcref
     @block
@@ -6264,6 +6326,11 @@ st_collections_group_parts_part_description_params_string(void)
 {
    _st_collections_group_parts_part_description_params(EDJE_EXTERNAL_PARAM_TYPE_STRING);
 }
+
+
+/**
+   @edcsection{program, Program block}
+ */
 
 /**
     @page edcref
