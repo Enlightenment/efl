@@ -1,4 +1,4 @@
-/* EINA - EFL data type library
+b/* EINA - EFL data type library
  * Copyright (C) 2008-2010 Enlightenment Developers:
  *           Albin "Lutin" Tonnerre <albin.tonnerre@gmail.com>
  *           Alexandre "diaxen" Becoulet <diaxen@free.fr>
@@ -37,58 +37,26 @@
 /**
  * @mainpage Eina
  *
- * @author Albin "Lutin" Tonnerre <albin.tonnerre@gmail.com>
- * @author Alexandre "diaxen" Becoulet <diaxen@free.fr>
- * @author Andre Dieb <andre.dieb@gmail.com>
- * @author Arnaud de Turckheim "quarium" <quarium@gmail.com>
- * @author Carsten Haitzler <raster@rasterman.com>
- * @author Cedric Bail <cedric.bail@free.fr>
- * @author Corey "atmos" Donohoe <atmos@atmos.org>
- * @author Fabiano Fidêncio <fidencio@profusion.mobi>
- * @author Gustavo Chaves <glima@profusion.mobi>
- * @author Gustavo Sverzut Barbieri <barbieri@gmail.com>
- * @author Jorge Luis "turran" Zapata <jorgeluis.zapata@gmail.com>
- * @author Peter "pfritz" Wehrfritz <peter.wehrfritz@web.de>
- * @author Raphael Kubo da Costa <kubo@profusion.mobi>
- * @author Tilman Sauerbeck <tilman@code-monkey.de>
+ * @author Albin "Lutin" Tonnerre <albin.tonnerre@@gmail.com>
+ * @author Alexandre "diaxen" Becoulet <diaxen@@free.fr>
+ * @author Andre Dieb <andre.dieb@@gmail.com>
+ * @author Arnaud de Turckheim "quarium" <quarium@@gmail.com>
+ * @author Carsten Haitzler <raster@@rasterman.com>
+ * @author Cedric Bail <cedric.bail@@free.fr>
+ * @author Corey "atmos" Donohoe <atmos@@atmos.org>
+ * @author Fabiano Fidêncio <fidencio@@profusion.mobi>
+ * @author Gustavo Chaves <glima@@profusion.mobi>
+ * @author Gustavo Sverzut Barbieri <barbieri@@profusion.mobi>
+ * @author Jorge Luis "turran" Zapata <jorgeluis.zapata@@gmail.com>
+ * @author Peter "pfritz" Wehrfritz <peter.wehrfritz@@web.de>
+ * @author Raphael Kubo da Costa <kubo@@profusion.mobi>
+ * @author Tilman Sauerbeck <tilman@@code-monkey.de>
  * @author Vincent "caro" Torri  <vtorri at univ-evry dot fr>
  * @date 2008-2010
  *
- * @section eina_toc_sec Table of contents
- *
- * <ul>
- *   <li> @ref eina_intro_sec
- *   <li> @ref eina_data_types_sec
- *   <ul>
- *     <li> @ref eina_container_subsec
- *     <ul>
- *       <li> @ref eina_array_subsubsec
- *       <li> @ref eina_hash_subsubsec
- *       <li> @ref eina_inlist_subsubsec
- *       <li> @ref eina_rbtree_subsubsec
- *       <li> @ref eina_trash_subsubsec
- *       <li> @ref eina_list_subsubsec
- *     </ul>
- *     <li> @ref eina_stringshare_subsec
- *   </ul>
- *   <li> @ref eina_access_contents_sec
- *   <ul>
- *     <li> @ref eina_iterators_subsec
- *     <li> @ref eina_accessors_subsec
- *   </ul>
- *   <li> @ref eina_tools_sec
- *   <ul>
- *     <li> @ref eina_convert_subsec
- *     <li> @ref eina_counter_subsec
- *     <li> @ref eina_error_subsec
- *   </ul>
- *   <li> @ref thread_safety_sec
- *   <li> @ref debugging_sec
- * </ul>
- *
  * @section eina_intro_sec Introduction
  *
- * The Eina library is a library that implemente an API for data types
+ * The Eina library is a library that implements an API for data types
  * in an efficient way. It also provides some useful tools like
  * openin shared libraries, errors management, type conversion,
  * time accounting and memory pool.
@@ -96,85 +64,47 @@
  * This library is cross-platform and can be compiled and used on
  * Linux and Windows (XP and CE).
  *
- * The data types that are available are
- * @li array
- * @li hash table
- * @li inlined list
- * @li inlined red black tree
- * @li list
- * @li shared string
+ * The data types that are available are (see @ref Eina_Data_Types_Group):
+ * @li @ref Eina_Array_Group standard array of @c void* data.
+ * @li @ref Eina_Hash_Group standard hash of @c void* data.
+ * @li @ref Eina_Inline_List_Group list with nodes inlined into user type.
+ * @li @ref Eina_List_Group standard list of @c void* data.
+ * @li @ref Eina_Matrixsparse_Group sparse matrix of @c void* data.
+ * @li @ref Eina_Rbtree_Group red-black tree with nodes inlined into user type.
+ * @li @ref Eina_Stringshare_Group saves memory by sharing read-only string references.
+ * @li @ref Eina_Tiler_Group split, merge and navigates into 2D tiled regions.
+ * @li @ref Eina_Trash_Group container of unused but allocated data.
  *
- * This document describes each data type by providing the algorithms
- * used in the implementation, the performance, a short tutorial and
- * the API.
+ * The tools that are available are (see @ref Eina_Tools_Group):
+ * @li @ref Eina_Benchmark_Group helper to write benchmarks.
+ * @li @ref Eina_Convert_Group faster conversion from strings to integers, double, etc.
+ * @li @ref Eina_Counter_Group measures number of calls and their time.
+ * @li @ref Eina_Error_Group error identifiers.
+ * @li @ref Eina_File_Group simple file list and path split.
+ * @li @ref Eina_Lalloc_Group simple lazy allocator.
+ * @li @ref Eina_Log_Group full-featured logging system.
+ * @li @ref Eina_Magic_Group provides runtime type checking.
+ * @li @ref Eina_Memory_Pool_Group abstraction for various memory allocators.
+ * @li @ref Eina_Module_Group lists, loads and share modules using Eina_Module standard.
+ * @li @ref Eina_Rectangle_Group rectangle structure and standard manipulation methods.
+ * @li @ref Eina_Safety_Checks_Group extra checks that will report unexpected conditions and can be disabled at compile time.
  *
- * @section eina_data_types_sec Eina Data Types
+ * @defgroup Eina_Data_Types_Group
  *
- * @subsection eina_container_subsec Containers
+ * Eina provide easy to use and optimized data types and structures.
+ *
+ *
+ * @defgroup Eina_Containers_Group Containers
  *
  * Containers are data types that hold data and allow iteration over
- * their elements with an @ref eina_iterators_subsec, or eventually an
- * @ref eina_accessors_subsec. The only data type that is not a container (in
- * that sense) is the @ref eina_stringshare_subsec.
- *
- * @subsubsection eina_array_subsubsec Array
- *
- * @subsubsection eina_hash_subsubsec Hash Table
- *
- * @subsubsection eina_inlist_subsubsec Inlined List
- *
- * @subsubsection eina_rbtree_subsubsec Inlined Red Black Tree
- *
- * @subsubsection eina_trash_subsubsec Trash
- *
- * @subsubsection eina_trash_subsubsec Trash
- *
- * @subsubsection eina_list_subsubsec List
- *
- * @subsection eina_stringshare_subsec Shared String
- *
- * @section eina_access_contents_sec Accessing Data Struct Contents
- *
- * For the container data types, you can access to the elements
- * sequentially with iterators, or randomly with accessors. They are
- * created from the data types themselves and allow a generic way to
- * traverse these data types.
- *
- * @subsection eina_iterators_subsec Iterator
- *
- * Iterators allow a sequential access of the data of a
- * container. They can only access the next element. To look at the
- * API, go to @ref Eina_Iterator_Group.
- *
- * @subsection eina_accessors_subsec Accessor
- *
- * Accessors allow a random access of the data of a container. They
- * can access an element at any position. To look at the API, go to
+ * their elements with an @ref Eina_Iterator_Group, or eventually an
  * @ref Eina_Accessor_Group.
  *
- * @section eina_tools_sec Eina Tools
  *
- * @subsection eina_convert_subsec Convert Functions
+ * @defgroup Eina_Tools_Group Tools
  *
- * @subsection eina_counter_subsec Timing Functions
- *
- * @subsection eina_error_subsec Error Functions
- *
- * Take a look at the API of @ref Eina_Error_Group.
- *
- * Take a look at the @ref tutorial_error_page.
- *
- * @section thread_safety_sec Thread safety
- *
- * Add some stuff for thread safety doc
- *
- * @section debugging_sec Debugging
- *
- * Add some stuff for the debug doc
- *
- * @todo add debug function
- * @todo add magic function
- * @todo add other todo items :)
+ * Eina tools aims to help application development, providing ways to
+ * make it safer, log errors, manage memory more efficiently and more.
  */
 
 #ifdef __cplusplus

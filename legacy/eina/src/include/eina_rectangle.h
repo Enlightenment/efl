@@ -34,8 +34,7 @@
  */
 
 /**
- * To be documented
- * FIXME: To be fixed
+ * Simple rectangle structure.
  */
 typedef struct _Eina_Rectangle
 {

@@ -255,35 +255,6 @@
  * }
  * @endcode
  *
- * @addtogroup Eina_Log_Group Log
- *
- * @{
- *
- * The default log level value is set by default to
- * #EINA_LOG_LEVEL_DBG if Eina is compiled with debug mode, or to
- * #EINA_LOG_LEVEL_ERR otherwise. That value can be overwritten by
- * setting the environment variable EINA_LOG_LEVEL. This function
- * checks the value of that environment variable in the first
- * call. Its value must be a number between 0 and 4, to match the log
- * levels #EINA_LOG_LEVEL_CRITICAL, #EINA_LOG_LEVEL_ERR,
- * #EINA_LOG_LEVEL_WARN, #EINA_LOG_LEVEL_INFO and
- * #EINA_LOG_LEVEL_DBG. That value can also be set later with
- * eina_log_log_level_set(). When logging domains are created, they
- * will get either this value or specific value given with
- * EINA_LOG_LEVELS that takes the format
- * 'domain_name:level,another_name:other_level'.
- *
- * Format and verbosity of messages depend on the logging method, see
- * eina_log_print_cb_set(). The default logging method is
- * eina_log_print_cb_stderr(), which will output fancy colored
- * messages to standard error stream. See its documentation on how to
- * disable coloring, function or file/line print.
- *
- * This module will optionally abort program execution if message
- * level is below or equal to @c EINA_LOG_LEVEL_CRITICAL and
- * @c EINA_LOG_ABORT=1.
- *
- * @}
  */
 
 #ifdef HAVE_CONFIG_H
@@ -1172,15 +1143,45 @@ eina_log_threads_shutdown(void)
 /**
  * @addtogroup Eina_Log_Group Log
  *
- * @brief These functions provide log management for projects.
+ * @brief Full-featured logging system.
+ *
+ * Eina provides eina_log_print(), a standard function to manage all
+ * logging messages. This function may be called directly or using the
+ * helper macros such as EINA_LOG_DBG(), EINA_LOG_ERR() or those that
+ * take a specific domain as argument EINA_LOG_DOM_DBG(),
+ * EINA_LOG_DOM_ERR().  Internally, eina_log_print() will call the
+ * function defined with eina_log_print_cb_set(), that defaults to
+ * eina_log_print_cb_stderr(), but may be changed to do whatever you
+ * need, such as networking or syslog logging.
+ *
+ * The logging system is thread safe once initialized with
+ * eina_log_threads_enable(). The thread that calls this function
+ * first is considered "main thread" and other threads will have their
+ * thread id (pthread_self()) printed in the log message so it is easy
+ * to detect from where it is coming.
+ *
+ * Log domains is the Eina way to differentiate messages. There might
+ * be different domains to represent different modules, different
+ * feature-set, different categories and so on. Filtering can be
+ * applied to domain names by means of @c EINA_LOG_LEVELS environment
+ * variable or eina_log_domain_level_set().
+ *
+ * The different logging levels serve to customize the amount of
+ * debugging one want to take and may be used to automatically call
+ * abort() once some given level message is printed. This is
+ * controlled by environment variable @c EINA_LOG_ABORT and the level
+ * to be considered critical with @c EINA_LOG_ABORT_LEVEL. These can
+ * be changed with eina_log_abort_on_critical_set() and
+ * eina_log_abort_on_critical_level_set().
+ *
+ * The default maximum level to print is defined by environment
+ * variable @c EINA_LOG_LEVEL, but may be set per-domain with @c
+ * EINA_LOG_LEVELS. It will default to #EINA_LOG_ERR. This can be
+ * changed with eina_log_level_set().
  *
  * To use the log system Eina must be initialized with eina_init() and
- * later shut down with eina_shutdown(). The most generic way to print
- * logs is to use eina_log_print() but the helper macros
- * EINA_LOG_ERR(), EINA_LOG_INFO(), EINA_LOG_WARN() and EINA_LOG_DBG()
- * should be used instead.
- *
- * Here is a straightforward example:
+ * later shut down with eina_shutdown(). Here is a straightforward
+ * example:
  *
  * @code
  * #include <stdlib.h>
@@ -1215,12 +1216,7 @@ eina_log_threads_shutdown(void)
  * gcc -Wall -o test_Eina_Log test_eina.c `pkg-config --cflags --libs eina`
  * @endcode
  *
- * If Eina is compiled without debug mode, then executing the
- * resulting program displays nothing because the default log level
- * is #EINA_LOG_LEVEL_ERR and we want to display a warning
- * message, which level is strictly greater than the log level (see
- * eina_log_print() for more informations). Now execute the program
- * with:
+ * Now execute the program with:
  *
  * @code
  * EINA_LOG_LEVEL=2 ./test_eina_log

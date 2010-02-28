@@ -189,7 +189,88 @@ eina_magic_string_shutdown(void)
 /**
  * @addtogroup Eina_Magic_Group Magic
  *
- * @brief These functions provide magic checks management for projects.
+ * @brief These functions provide runtime type-checking (magic checks)
+ * management for projects.
+ *
+ * C is a weak statically typed language, in other words, it will just
+ * check for types during compile time and any cast will make the
+ * compiler believe the type is correct.
+ *
+ * In real world projects we often need to deal with casts, either
+ * explicit or implicit by means of @c void*. We also need to resort
+ * to casts when doing inheritance in C, as seen in the example below:
+ *
+ * @code
+ * struct base {
+ *    int id;
+ *    char *name;
+ * };
+ * int base_id_get(struct base *ptr) {
+ *    return ptr->id;
+ * }
+ *
+ * struct subtype {
+ *    struct base base;
+ *    time_t date;
+ * };
+ * @endcode
+ *
+ * It is perfectly valid to use @c{struct subtype} blobs for functions
+ * that expect @c{struct base}, since the fields will have the same
+ * offset (as base member is the first, at offset 0). We could give
+ * the functions the @c{&subtype->base} and avoid the cast, but often
+ * we just cast.
+ *
+ * In any case, we might be safe and check if the given pointer is
+ * actually of the expected type. We can do so by using eina_magic,
+ * that is nothing more than attaching an unique type identifier to
+ * the members and check for it elsewhere.
+ *
+ * @code
+ * #define BASE_MAGIC 0x12345
+ * #define SUBTYPE_MAGIC 0x3333
+ * struct base {
+ *    int id;
+ *    char *name;
+ *    EINA_MAGIC;
+ * };
+ * int base_id_get(struct base *ptr) {
+ *    if (!EINA_MAGIC_CHECK(ptr, BASE_MAGIC)) {
+ *       EINA_MAGIC_FAIL(ptr, BASE_MAGIC);
+ *       return -1;
+ *    }
+ *    return ptr->id;
+ * }
+ * void base_free(struct base *ptr) {
+ *    if (!EINA_MAGIC_CHECK(ptr, BASE_MAGIC)) {
+ *       EINA_MAGIC_FAIL(ptr, BASE_MAGIC);
+ *       return;
+ *    }
+ *    EINA_MAGIC_SET(ptr, EINA_MAGIC_NONE);
+ *    free(ptr->name);
+ *    free(ptr);
+ * }
+ *
+ * struct subtype {
+ *    struct base base;
+ *    EINA_MAGIC;
+ *    time_t date;
+ * };
+ *
+ * int my_init(void) {
+ *    eina_init();
+ *    eina_magic_string_set(BASE_MAGIC, "base type");
+ *    eina_magic_string_set(SUBTYPE_MAGIC, "subtype");
+ * }
+ * @endcode
+ *
+ * This code also shows that it is a good practice to set magic to
+ * #EINA_MAGIC_NONE before freeing pointer. Sometimes the pointers are
+ * in pages that are still live in memory, so kernel will not send
+ * SEGV signal to the process and it may go unnoticed that you're
+ * using already freed pointers. By setting them to #EINA_MAGIC_NONE
+ * you avoid using the bogus pointer any further and gets a nice error
+ * message.
  *
  * @{
  */
