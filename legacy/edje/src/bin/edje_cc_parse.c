@@ -806,6 +806,7 @@ is_num(int n)
 {
    char *str;
    char *end;
+   long val;
 
    str = eina_list_nth(params, n);
    if (!str)
@@ -816,7 +817,7 @@ is_num(int n)
      }
    if (str[0] == 0) return 0;
    end = str;
-   strtol(str, &end, 0);
+   val = strtol(str, &end, 0);
    if ((end != str) && (end[0] == 0)) return 1;
    return 0;
 }

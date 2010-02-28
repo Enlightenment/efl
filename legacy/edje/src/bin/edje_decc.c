@@ -14,6 +14,7 @@
 #include <locale.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 
 #include <Ecore_File.h>
@@ -305,7 +306,8 @@ output(void)
 		       exit (-1);
 		    }
 		  f = fopen(out, "wb");
-		  fwrite(font, fontsize, 1, f);
+		  if (fwrite(font, fontsize, 1, f) != 1)
+		    ERR("Could not write font: %s", strerror(errno));
 		  fclose(f);
 		  free(font);
 	       }
