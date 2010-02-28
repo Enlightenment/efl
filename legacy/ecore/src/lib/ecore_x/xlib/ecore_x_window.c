@@ -748,7 +748,6 @@ struct _Shadow
    unsigned short  w, h;
 };
 
-static int shadow_count = 0;
 static Shadow **shadow_base = NULL;
 static int shadow_num = 0;
 
@@ -757,7 +756,6 @@ _ecore_x_window_tree_walk(Window win)
 {
    Window           *list = NULL;
    Window            parent_win = 0, root_win = 0;
-   int               i, j;
    unsigned int      num;
    Shadow           *s, **sl;
    XWindowAttributes att;
@@ -779,6 +777,7 @@ _ecore_x_window_tree_walk(Window win)
 	s->children = calloc(1, sizeof(Shadow *) * num);
 	if (s->children)
 	  {
+	     size_t i, j;
 	     s->children_num = num;
 	     for (i = 0; i < num; i++)
 	       {
@@ -867,6 +866,9 @@ _ecore_x_window_tree_shadow_populate(void)
      }
 }
 
+/*
+static int shadow_count = 0;
+
 static void
 _ecore_x_window_tree_shadow_start(void)
 {
@@ -882,6 +884,7 @@ _ecore_x_window_tree_shadow_stop(void)
    if (shadow_count != 0) return;
    _ecore_x_window_tree_shadow_free();
 }
+*/
 
 static Shadow *
 _ecore_x_window_shadow_tree_find_shadow(Shadow *s, Window win)
@@ -1005,7 +1008,7 @@ ecore_x_window_shadow_tree_at_xy_with_skip_get(Ecore_X_Window base, int x, int y
  * @ingroup Ecore_X_Window_Geometry_Group
  */
 EAPI Ecore_X_Window
-ecore_x_window_shadow_parent_get(Ecore_X_Window root, Ecore_X_Window win)
+ecore_x_window_shadow_parent_get(Ecore_X_Window root __UNUSED__, Ecore_X_Window win)
 {
    Shadow *s;
    int i;

@@ -1731,7 +1731,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	e->state[0] = _ecore_x_netwm_state_get(xevent->xclient.data.l[1]);
 	if (e->state[0] == ECORE_X_WINDOW_STATE_UNKNOWN)
 	  {
-	     char *name;
+//	     char *name;
 
              LOGFN(__FILE__, __LINE__, __FUNCTION__);
 //	     name = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[1]);
@@ -1741,7 +1741,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	e->state[1] = _ecore_x_netwm_state_get(xevent->xclient.data.l[2]);
 	if (e->state[1] == ECORE_X_WINDOW_STATE_UNKNOWN)
 	  {
-	     char *name;
+//	     char *name;
 
              LOGFN(__FILE__, __LINE__, __FUNCTION__);
 //	     name = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[2]);

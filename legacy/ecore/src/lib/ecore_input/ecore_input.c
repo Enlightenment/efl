@@ -96,7 +96,7 @@ static const Ecore_Event_Modifier_Match matchs[] = {
 EAPI unsigned int
 ecore_event_modifier_mask(Ecore_Event_Modifier modifier)
 {
-   int i;
+   size_t i;
 
    for (i = 0; i < sizeof (matchs) / sizeof (Ecore_Event_Modifier_Match); i++)
      if (matchs[i].modifier == modifier)
@@ -108,7 +108,7 @@ ecore_event_modifier_mask(Ecore_Event_Modifier modifier)
 EAPI Ecore_Event_Modifier
 ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, int inc)
 {
-   int i;
+   size_t i;
 
    for (i = 0; i < sizeof (matchs) / sizeof (Ecore_Event_Modifier_Match); i++)
      if (strcmp(matchs[i].key, key) == 0)

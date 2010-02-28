@@ -60,7 +60,7 @@ ecore_imf_module_shutdown(void)
 }
 
 static Eina_Bool
-_hash_module_available_get(const Eina_Hash *hash, int *data, void *list)
+_hash_module_available_get(const Eina_Hash *hash __UNUSED__, int *data, void *list)
 {
   *(Eina_List**)list = eina_list_append(*(Eina_List**)list, data);
   return EINA_TRUE;
@@ -114,7 +114,7 @@ ecore_imf_module_context_create(const char *ctx_id)
 }
 
 static Eina_Bool
-_hash_ids_get(const Eina_Hash *hash, const char *key, void *list)
+_hash_ids_get(const Eina_Hash *hash __UNUSED__, const char *key, void *list)
 {
   *(Eina_List**)list = eina_list_append(*(Eina_List**)list, key);
   return EINA_TRUE;
@@ -139,7 +139,7 @@ ecore_imf_module_context_ids_get(void)
 }
 
 static Eina_Bool
-_hash_ids_by_canvas_type_get(const Eina_Hash *hash, void *data, void *fdata)
+_hash_ids_by_canvas_type_get(const Eina_Hash *hash __UNUSED__, void *data, void *fdata)
 {
    Ecore_IMF_Module *module = data;
    Ecore_IMF_Selector *selector = fdata;

@@ -589,7 +589,7 @@ _ecore_evas_x_event_client_message(void *data __UNUSED__, int type __UNUSED__, v
      {
         ee = ecore_event_window_match(e->data.l[0]);
         if (!ee) return 1; /* pass on event */
-        if (e->data.l[0] != ee->prop.window) return 1;
+        if (e->data.l[0] != (long)ee->prop.window) return 1;
         ee->engine.x.sync_began = 1;
         ee->engine.x.sync_cancel = 0;
      }
@@ -597,7 +597,7 @@ _ecore_evas_x_event_client_message(void *data __UNUSED__, int type __UNUSED__, v
      {
         ee = ecore_event_window_match(e->data.l[0]);
         if (!ee) return 1; /* pass on event */
-        if (e->data.l[0] != ee->prop.window) return 1;
+        if (e->data.l[0] != (long)ee->prop.window) return 1;
         ee->engine.x.sync_began = 0;
         ee->engine.x.sync_cancel = 0;
      }
@@ -605,7 +605,7 @@ _ecore_evas_x_event_client_message(void *data __UNUSED__, int type __UNUSED__, v
      {
         ee = ecore_event_window_match(e->data.l[0]);
         if (!ee) return 1; /* pass on event */
-        if (e->data.l[0] != ee->prop.window) return 1;
+        if (e->data.l[0] != (long)ee->prop.window) return 1;
         ee->engine.x.sync_began = 0;
         ee->engine.x.sync_cancel = 1;
      }
@@ -2396,7 +2396,7 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
 
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_OPENGL_X11) || defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB) || defined (BUILD_ECORE_EVAS_SOFTWARE_16_X11)
 static void
-_ecore_evas_x_flush_pre(void *data, Evas *e, void *event_info)
+_ecore_evas_x_flush_pre(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee = data;
 
@@ -2415,7 +2415,7 @@ _ecore_evas_x_flush_pre(void *data, Evas *e, void *event_info)
 }
 
 static void
-_ecore_evas_x_flush_post(void *data, Evas *e, void *event_info)
+_ecore_evas_x_flush_post(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee = data;
    

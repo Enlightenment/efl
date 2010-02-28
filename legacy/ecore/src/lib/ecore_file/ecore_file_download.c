@@ -195,7 +195,7 @@ _ecore_file_download_url_compare_job(const void *data1, const void *data2)
 }
 
 static int
-_ecore_file_download_url_complete_cb(void *data, int type, void *event)
+_ecore_file_download_url_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Con_Event_Url_Complete	*ev = event;
    Ecore_File_Download_Job	*job;
@@ -216,7 +216,7 @@ _ecore_file_download_url_complete_cb(void *data, int type, void *event)
 }
 
 static int
-_ecore_file_download_url_progress_cb(void *data, int type, void *event)
+_ecore_file_download_url_progress_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
 /* this reports the downloads progress. if we return 0, then download
  * continues, if we return anything else, then the download stops */

@@ -315,12 +315,12 @@ _ecore_con_info_readdata(CB_Data *cbdata)
 
 	size = read(ecore_main_fd_handler_fd_get(cbdata->fdh), (char *)torecv + sizeof(Ecore_Con_Info),
 		    torecv_len - sizeof(Ecore_Con_Info));
-	if (size == torecv_len - sizeof(Ecore_Con_Info))
+	if ((size > 0) && ((size_t)size == torecv_len - sizeof(Ecore_Con_Info)))
 	  {
 	    recv = (Ecore_Con_Info *)torecv;
 
 	    recv->info.ai_addr = (struct sockaddr *)((char *)torecv + sizeof(Ecore_Con_Info));
-	    if (torecv_len != (sizeof(Ecore_Con_Info) + recv->info.ai_addrlen))
+	    if ((size_t)torecv_len != (sizeof(Ecore_Con_Info) + recv->info.ai_addrlen))
 	      recv->info.ai_canonname = (char *)torecv + sizeof(Ecore_Con_Info) + recv->info.ai_addrlen;
 	    else
 	      recv->info.ai_canonname = NULL;

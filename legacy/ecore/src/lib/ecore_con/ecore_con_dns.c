@@ -36,6 +36,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <errno.h>
 #ifdef __OpenBSD__
 # include <sys/types.h>
 #endif
@@ -74,6 +75,7 @@ static void _ecore_con_dns_readdata(CB_Data *cbdata);
 static void _ecore_con_dns_slave_free(CB_Data *cbdata);
 static int _ecore_con_dns_data_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_dns_exit_handler(void *data, int type __UNUSED__, void *event);
+static Eina_Bool _ecore_con_write_safe(int fd, void *data, size_t length);
 
 static int dns_init = 0;
 static CB_Data *dns_slaves = NULL;
@@ -138,11 +140,11 @@ ecore_con_dns_lookup(const char *name,
 
 	     memcpy((struct in_addr *)&addr, he->h_addr,
 		    sizeof(struct in_addr));
-	     write(fd[1], &(addr.s_addr), sizeof(in_addr_t));
+	     _ecore_con_write_safe(fd[1], &(addr.s_addr), sizeof(in_addr_t));
 	  }
 	else
 	  {
-	     write(fd[1], "", 1);
+	     _ecore_con_write_safe(fd[1], "", 1);
 	  }
 	close(fd[1]);
 # ifdef __USE_ISOC99
@@ -230,4 +232,29 @@ _ecore_con_dns_exit_handler(void *data, int type __UNUSED__, void *event)
    return 0;
    _ecore_con_dns_slave_free(cbdata);
    return 0;
+}
+
+static Eina_Bool
+_ecore_con_write_safe(int fd, void *data, size_t length)
+{
+   char *buf = data;
+   ssize_t todo = (ssize_t)length;
+
+   while (todo > 0)
+     {
+	ssize_t r = write(fd, buf, todo);
+	if (r > 0)
+	  {
+	     todo -= r;
+	     buf += r;
+	  }
+	else if ((r < 0) && (errno == EINTR))
+	  continue;
+	else
+	  {
+	     ERR("could not write to fd %d: %s", fd, strerror(errno));
+	     return EINA_FALSE;
+	  }
+     }
+   return EINA_TRUE;
 }

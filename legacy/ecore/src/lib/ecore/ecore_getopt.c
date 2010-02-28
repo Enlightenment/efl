@@ -46,7 +46,8 @@ _ecore_getopt_help_print_replace_program(FILE *fp, const Ecore_Getopt *parser __
 	     break;
 	  }
 
-	fwrite(text, 1, d - text, fp);
+	if (fwrite(text, 1, d - text, fp) != (size_t)(d - text))
+	  return;
 	d++;
 	if (strncmp(d, "prog", sizeof("prog") - 1) == 0)
 	  {
@@ -115,7 +116,7 @@ _ecore_getopt_help_line(FILE *fp, const int base, const int total, int used, con
 
 	     if (space)
 	       {
-		  fwrite(text, 1, i, fp);
+		  i = fwrite(text, 1, i, fp);
 		  i++;
 		  text += i;
 		  len -= i;
@@ -152,7 +153,7 @@ _ecore_getopt_help_line(FILE *fp, const int base, const int total, int used, con
 	       }
 	     else
 	       {
-		  fwrite(text, 1, i, fp);
+		  i = fwrite(text, 1, i, fp);
 		  text += i;
 		  len -= i;
 		  used += i;

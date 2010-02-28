@@ -330,7 +330,7 @@ ecore_event_evas_init(void)
 EAPI int
 ecore_event_evas_shutdown(void)
 {
-   int i;
+   size_t i;
 
    if (--_ecore_event_evas_init_count != 0)
      return _ecore_event_evas_init_count;

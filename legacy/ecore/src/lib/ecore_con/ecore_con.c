@@ -1126,7 +1126,8 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    if (svr->delete_me) return 1;
    if ((svr->client_limit >= 0) && (!svr->reject_excess_clients))
      {
-	if (eina_list_count(svr->clients) >= svr->client_limit) return 1;
+	if (eina_list_count(svr->clients) >= (unsigned int)svr->client_limit)
+	  return 1;
      }
    /* a new client */
    size_in = sizeof(incoming);
@@ -1139,7 +1140,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 
 	if ((svr->client_limit >= 0) && (svr->reject_excess_clients))
 	  {
-	    if (eina_list_count(svr->clients) >= svr->client_limit)
+	    if (eina_list_count(svr->clients) >= (unsigned int)svr->client_limit)
 	      {
 		close(new_fd);
 		return 1;

@@ -9,6 +9,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include "Ecore.h"
 #include "ecore_private.h"
@@ -2651,8 +2652,28 @@ _ecore_evas_fps_debug_init(void)
    if (_ecore_evas_fps_debug_fd >= 0)
      {
 	unsigned int zero = 0;
+	char *buf = (char *)&zero;
+	ssize_t todo = sizeof(unsigned int);
 
-	write(_ecore_evas_fps_debug_fd, &zero, sizeof(unsigned int));
+	while (todo > 0)
+	  {
+	     ssize_t r = write(_ecore_evas_fps_debug_fd, buf, todo);
+	     if (r > 0)
+	       {
+		  todo -= r;
+		  buf += r;
+	       }
+	     else if ((r < 0) && (errno == EINTR))
+	       continue;
+	     else
+	       {
+		  ERR("could not write to file '%s' fd %d: %s",
+		      buf, _ecore_evas_fps_debug_fd, strerror(errno));
+		  close(_ecore_evas_fps_debug_fd);
+		  _ecore_evas_fps_debug_fd = -1;
+		  return;
+	       }
+	  }
 	_ecore_evas_fps_rendertime_mmap = mmap(NULL, sizeof(unsigned int),
 					       PROT_READ | PROT_WRITE,
 					       MAP_SHARED,

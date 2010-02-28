@@ -124,7 +124,7 @@ ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type)
 	while (p)
 	  {
 	     const char *q = strchr(p, ':');
-	     int goodness = _ecore_imf_context_match_locale(locale, p, q ? q - p : strlen (p));
+	     int goodness = _ecore_imf_context_match_locale(locale, p, q ? (size_t)(q - p) : strlen (p));
 
 	      if (goodness > best_goodness)
 		{

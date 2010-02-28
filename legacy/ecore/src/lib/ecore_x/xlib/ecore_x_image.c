@@ -15,13 +15,11 @@
 #include <sys/shm.h>
 #include <string.h>
 
-static int _composite_available;
-
 static int _ecore_x_image_shm_can = -1;
 static int _ecore_x_image_err = 0;
 
 static void
-_ecore_x_image_error_handler(Display * d, XErrorEvent * ev)
+_ecore_x_image_error_handler(Display * d __UNUSED__, XErrorEvent * ev __UNUSED__)
 {
    _ecore_x_image_err = 1;
 }
@@ -179,7 +177,7 @@ _ecore_x_image_shm_create(Ecore_X_Image *im)
      } 
    XShmAttach(_ecore_x_disp, &im->shminfo);
    
-   im->data = im->xim->data;
+   im->data = (unsigned char *)im->xim->data;
 
    im->bpl = im->xim->bytes_per_line;
    im->rows = im->xim->height;
@@ -205,7 +203,7 @@ ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw,
         ph = XSetErrorHandler((XErrorHandler)_ecore_x_image_error_handler);
         if ((sx == 0) && (w == im->w))
           {
-             im->xim->data = 
+             im->xim->data = (char *)
                im->data + (im->xim->bytes_per_line * sy) + (sx * im->bpp);
              im->xim->width = w;
              im->xim->height = h;
@@ -256,8 +254,7 @@ ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw,
 }
 
 EAPI void
-ecore_x_image_put(Ecore_X_Image *im, Ecore_X_Drawable draw, 
-                  int x, int y, int sx, int sy, int w, int h)
+ecore_x_image_put(Ecore_X_Image *im __UNUSED__, Ecore_X_Drawable draw __UNUSED__, int x __UNUSED__, int y __UNUSED__, int sx __UNUSED__, int sy __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    printf("ecore_x_image_put: unimplemented!\n");

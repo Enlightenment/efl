@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
@@ -261,8 +262,28 @@ _ecore_fps_debug_init(void)
    if (_ecore_fps_debug_fd >= 0)
      {
 	unsigned int zero = 0;
+	char *buf = (char *)&zero;
+	ssize_t todo = sizeof(unsigned int);
 
-	write(_ecore_fps_debug_fd, &zero, sizeof(unsigned int));
+	while (todo > 0)
+	  {
+	     ssize_t r = write(_ecore_fps_debug_fd, buf, todo);
+	     if (r > 0)
+	       {
+		  todo -= r;
+		  buf += r;
+	       }
+	     else if ((r < 0) && (errno == EINTR))
+	       continue;
+	     else
+	       {
+		  ERR("could not write to file '%s' fd %d: %s",
+		      tmp, _ecore_fps_debug_fd, strerror(errno));
+		  close(_ecore_fps_debug_fd);
+		  _ecore_fps_debug_fd = -1;
+		  return;
+	       }
+	  }
 	_ecore_fps_runtime_mmap = mmap(NULL, sizeof(unsigned int),
 				       PROT_READ | PROT_WRITE,
 				       MAP_SHARED,
