@@ -1,3 +1,10 @@
+2010-02-28  Vincent Torri  <doursse at users dot sf dot net>
+
+	* remove cegcc compiler support, only mingw32ce
+	is supported
+
+	* remove shadow declarations
+
 2010-02-12  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_unistd.c:
