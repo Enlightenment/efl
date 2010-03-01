@@ -221,7 +221,7 @@ struct Efreet_Menu_Desktop
     unsigned char allocated:1; /**< If this desktop has been allocated */
 };
 
-static char *efreet_menu_prefix = NULL; /**< The $XDG_MENU_PREFIX env var */
+static const char *efreet_menu_prefix = NULL; /**< The $XDG_MENU_PREFIX env var */
 Eina_List *efreet_menu_kde_legacy_dirs = NULL; /**< The directories to use for KDELegacy entries */
 static const char *efreet_tag_menu = NULL;
 static char *efreet_menu_file = NULL; /**< A menu file set explicityl as default */
@@ -580,7 +580,6 @@ efreet_menu_kde_legacy_init(void)
 void
 efreet_menu_shutdown(void)
 {
-    IF_FREE(efreet_menu_prefix);
     IF_FREE(efreet_menu_file);
 
     IF_FREE_HASH(efreet_menu_handle_cbs);
@@ -978,8 +977,10 @@ efreet_menu_dump(Efreet_Menu *menu, const char *indent)
  * @return Returns the list of directories
  * @brief Creates the list of directories based on the user
  * dir, system dirs and given suffix.
+ *
+ * Needs EAPI because of helper binaries
  */
-Eina_List *
+EAPI Eina_List *
 efreet_default_dirs_get(const char *user_dir, Eina_List *system_dirs,
                                                     const char *suffix)
 {
@@ -1063,13 +1064,10 @@ efreet_menu_internal_free(Efreet_Menu_Internal *internal)
 static const char *
 efreet_menu_prefix_get(void)
 {
-    char *prefix;
-
     if (efreet_menu_prefix) return efreet_menu_prefix;
 
-    prefix = getenv("XDG_MENU_PREFIX");
-    if (prefix) efreet_menu_prefix = strdup(prefix);
-    else efreet_menu_prefix = strdup("");
+    efreet_menu_prefix = getenv("XDG_MENU_PREFIX");
+    if (!efreet_menu_prefix) efreet_menu_prefix = "";
 
     return efreet_menu_prefix;
 }

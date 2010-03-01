@@ -17,10 +17,16 @@ ef_cb_utils(void)
 
     desktop = efreet_util_desktop_file_id_find("kde-kresources.desktop");
     printf("kde-kresources.desktop: %p\n", desktop);
+    efreet_desktop_free(desktop);
+
     desktop = efreet_util_desktop_file_id_find("mplayer.desktop");
     printf("mplayer.desktop: %p\n", desktop);
+    efreet_desktop_free(desktop);
+
     desktop = efreet_util_desktop_file_id_find("nautilus-computer.desktop");
     printf("nautilus-computer.desktop: %p\n", desktop);
+    efreet_desktop_free(desktop);
+
     efreet_util_shutdown();
     return 1;
 }

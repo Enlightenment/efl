@@ -278,6 +278,13 @@ next_line:
     munmap((char*) buffer, file_stat.st_size);
     fclose(f);
 
+#if 0
+    if (!eina_hash_population(data))
+    {
+        eina_hash_free(data);
+        return NULL;
+    }
+#endif
     return data;
 }
 

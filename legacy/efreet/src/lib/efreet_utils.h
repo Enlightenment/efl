@@ -2,22 +2,6 @@
 #ifndef EFREET_UTILS_H
 #define EFREET_UTILS_H
 
-typedef enum _Efreet_Desktop_Change
-{
-    EFREET_DESKTOP_CHANGE_ADD,
-    EFREET_DESKTOP_CHANGE_REMOVE,
-    EFREET_DESKTOP_CHANGE_UPDATE
-} Efreet_Desktop_Change;
-
-typedef struct _Efreet_Event_Desktop_Change Efreet_Event_Desktop_Change;
-
-struct _Efreet_Event_Desktop_Change
-{
-    Efreet_Desktop *current;
-    Efreet_Desktop *previous;
-    Efreet_Desktop_Change change;
-};
-
 EAPI int efreet_util_init(void);
 EAPI int efreet_util_shutdown(void);
 
@@ -40,8 +24,5 @@ EAPI Eina_List *efreet_util_desktop_categories_list(void);
 EAPI Eina_List *efreet_util_desktop_category_list(const char *category);
 
 EAPI Eina_List *efreet_util_menus_find(void);
-
-EAPI extern int EFREET_EVENT_DESKTOP_LIST_CHANGE;
-EAPI extern int EFREET_EVENT_DESKTOP_CHANGE;
 
 #endif

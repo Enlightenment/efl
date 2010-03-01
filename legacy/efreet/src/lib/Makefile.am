@@ -31,6 +31,7 @@ dist_installed_headers_DATA = $(EFREETHEADERS) Efreet_Mime.h Efreet_Trash.h
 libefreet_la_SOURCES = $(EFREETSOURCES)
 libefreet_la_CPPFLAGS =  \
 -DPACKAGE_DATA_DIR=\"$(datadir)\" \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -I$(top_builddir)/src/lib \
 -I$(top_srcdir)/src/lib \
 @EFL_EFREET_BUILD@ \

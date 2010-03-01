@@ -2,6 +2,8 @@
 #ifndef EFREET_PRIVATE_H
 #define EFREET_PRIVATE_H
 
+#include <Eet.h>
+
 /**
  * @file efreet_private.h
  * @brief Contains methods and defines that are private to the Efreet
@@ -177,9 +179,9 @@ void efreet_icon_shutdown(void);
 
 int efreet_menu_init(void);
 void efreet_menu_shutdown(void);
-Eina_List *efreet_default_dirs_get(const char *user_dir,
-                                    Eina_List *system_dirs,
-                                    const char *suffix);
+EAPI Eina_List *efreet_default_dirs_get(const char *user_dir,
+                                        Eina_List *system_dirs,
+                                        const char *suffix);
 
 int efreet_ini_init(void);
 void efreet_ini_shutdown(void);
@@ -187,15 +189,21 @@ void efreet_ini_shutdown(void);
 int efreet_desktop_init(void);
 void efreet_desktop_shutdown(void);
 
-const char *efreet_home_dir_get(void);
+EAPI const char *efreet_home_dir_get(void);
 
-EAPI const char *efreet_lang_get(void);
-EAPI const char *efreet_lang_country_get(void);
-EAPI const char *efreet_lang_modifier_get(void);
+const char *efreet_lang_get(void);
+const char *efreet_lang_country_get(void);
+const char *efreet_lang_modifier_get(void);
 
 size_t efreet_array_cat(char *buffer, size_t size, const char *strs[]);
 
 const char *efreet_desktop_environment_get(void);
+
+EAPI Eet_Data_Descriptor *efreet_desktop_edd_init(void);
+EAPI void efreet_desktop_edd_shutdown(Eet_Data_Descriptor *edd);
+
+EAPI const char *efreet_util_cache_file(void);
+EAPI const char *efreet_desktop_cache_file(void);
 
 #define NON_EXISTING (void *)-1
 

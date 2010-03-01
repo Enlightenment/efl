@@ -33,12 +33,14 @@ efreet_init(void)
 
     if (!eina_init())
         return --_efreet_init_count;
+    if (!eet_init())
+        goto shutdown_eina;
     _efreet_log_domain_global = eina_log_domain_register("Efreet", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_log_domain_global < 0) 
     {
         printf("Efreet could create a general log domain.\n");
 
-        goto shutdown_eina;
+        goto shutdown_eet;
     }
 
     if (!efreet_base_init())
@@ -73,6 +75,8 @@ shutdown_efreet_base:
     efreet_base_shutdown();
 unregister_log_domain:
     eina_log_domain_unregister(_efreet_log_domain_global);
+shutdown_eet:
+    eet_shutdown();
 shutdown_eina:
     eina_shutdown();
 
@@ -98,6 +102,7 @@ efreet_shutdown(void)
     efreet_xml_shutdown();
     efreet_base_shutdown();
     eina_log_domain_unregister(_efreet_log_domain_global);
+    eet_shutdown();
     eina_shutdown();
 
     IF_FREE(efreet_lang);
@@ -234,6 +239,7 @@ efreet_parse_locale_setting(const char *env)
 size_t
 efreet_array_cat(char *buffer, size_t size, const char *strs[])
 {
+    /* TODO: Most functions calling this use static strings. Make a version which handles this, use sizeof and memcpy */
     int i;
     size_t n;
     for (i = 0, n = 0; n < size && strs[i]; i++)

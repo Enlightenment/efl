@@ -44,7 +44,9 @@ static Eina_List *efreet_desktop_types = NULL;
  */
 static int efreet_desktop_command_file_id = 0;
 
-static int cache_flush = 0;
+static char *cache_file = NULL;
+static Eet_File *cache = NULL;
+static Eet_Data_Descriptor *edd = NULL;
 
 #ifdef EFREET_MODULE_LOG_DOM 
 #undef EFREET_MODULE_LOG_DOM
@@ -72,7 +74,9 @@ struct Efreet_Desktop_Type_Info
 };
 
 static int efreet_desktop_read(Efreet_Desktop *desktop);
+#if 0
 static void efreet_desktop_clear(Efreet_Desktop *desktop);
+#endif
 static Efreet_Desktop_Type_Info *efreet_desktop_type_parse(const char *type_str);
 static void *efreet_desktop_application_fields_parse(Efreet_Desktop *desktop,
                                                     Efreet_Ini *ini);
@@ -148,10 +152,10 @@ efreet_desktop_init(void)
         return 0;
     }
     if (!ecore_file_init())
-    {
-        eina_log_domain_unregister(_efreet_desktop_log_dom);
-        return 0;
-    }
+        goto ecore_error;
+    edd = efreet_desktop_edd_init();
+    if (!edd)
+        goto edd_error;
 
     efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
     efreet_desktop_types = NULL;
@@ -166,7 +170,26 @@ efreet_desktop_init(void)
     EFREET_DESKTOP_TYPE_DIRECTORY = efreet_desktop_type_add("Directory", NULL,
                                                                 NULL, NULL);
 
+    /* TODO:
+     * Should add a lock here, so that several programs starting at the same
+     * time wont run several copies of efreet_desktop_cache_create
+     *
+     * Or do the right thing and run the exe with ecore_exe
+     */
+    if (!ecore_file_exists(efreet_desktop_cache_file()))
+        system(PACKAGE_BIN_DIR "/efreet_desktop_cache_create");
+    /* TODO: Need file monitor on cache in case it is updated */
+    cache = eet_open(efreet_desktop_cache_file(), EET_FILE_MODE_READ);
+    //if (!cache) goto error;
     return 1;
+
+error:
+    efreet_desktop_edd_shutdown(edd);
+edd_error:
+    ecore_file_shutdown();
+ecore_error:
+    eina_log_domain_unregister(_efreet_desktop_log_dom);
+    return 0;
 }
 
 /**
@@ -188,8 +211,40 @@ efreet_desktop_shutdown(void)
         efreet_desktop_types = eina_list_remove_list(efreet_desktop_types,
                                                      efreet_desktop_types);
     }
+    if (cache) eet_close(cache);
+    efreet_desktop_edd_shutdown(edd);
     ecore_file_shutdown();
     eina_log_domain_unregister(_efreet_desktop_log_dom);
+    IF_FREE(cache_file);
+}
+
+/*
+ * Needs EAPI because of helper binaries
+ */
+EAPI const char *
+efreet_desktop_cache_file(void)
+{
+    char tmp[PATH_MAX] = { '\0' };
+    const char *home, *lang, *country, *modifier;
+
+    if (cache_file) return cache_file;
+
+    home = efreet_home_dir_get();
+    lang = efreet_lang_get();
+    country = efreet_lang_country_get();
+    modifier = efreet_lang_modifier_get();
+
+    if (lang && country && modifier)
+        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s_%s@%s.cache", home, lang, country, modifier);
+    else if (lang && country)
+        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s_%s.cache", home, lang, country);
+    else if (lang)
+        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s.cache", home, lang);
+    else
+        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop.cache", home);
+
+    cache_file = strdup(tmp);
+    return cache_file;
 }
 
 /**
@@ -203,9 +258,13 @@ efreet_desktop_cache_check(Efreet_Desktop *desktop)
 {
     if (!desktop) return 0;
 
+    /* TODO:
+     * We always accept files in cache, but we should update cache
+     * when a file has changed on disk
+     */
+    if (desktop->eet) return 1;
     /* have we modified this file since we last read it in? */
-    if ((desktop->cache_flush != cache_flush) ||
-        (ecore_file_mod_time(desktop->orig_path) != desktop->load_time))
+    if (ecore_file_mod_time(desktop->orig_path) != desktop->load_time)
         return 0;
 
     return 1;
@@ -234,14 +293,16 @@ efreet_desktop_get(const char *file)
                 return desktop;
             }
 
+#if 0
             efreet_desktop_clear(desktop);
             if (efreet_desktop_read(desktop))
             {
                 desktop->ref++;
-                desktop->cache_flush = cache_flush;
                 return desktop;
             }
+#endif
 
+            /* TODO: Submit event to signal that this file has changed */
             desktop->cached = 0;
             eina_hash_del(efreet_desktop_cache, file, NULL);
         }
@@ -250,7 +311,7 @@ efreet_desktop_get(const char *file)
     desktop = efreet_desktop_new(file);
     if (!desktop) return NULL;
 
-    eina_hash_add(efreet_desktop_cache, file, desktop);
+    if (efreet_desktop_cache) eina_hash_add(efreet_desktop_cache, file, desktop);
     desktop->cached = 1;
     return desktop;
 }
@@ -298,7 +359,20 @@ efreet_desktop_empty_new(const char *file)
 EAPI Efreet_Desktop *
 efreet_desktop_new(const char *file)
 {
-    Efreet_Desktop *desktop;
+    /* TODO: Need file monitor on file and events to notify change */
+    Efreet_Desktop *desktop = NULL;
+
+    if (cache)
+    {
+        /* TODO: Check if the cached version is out of date */
+        desktop = eet_data_read(cache, edd, file);
+        if (desktop)
+        {
+            desktop->ref = 1;
+            desktop->eet = 1;
+            return desktop;
+        }
+    }
 
     if (!ecore_file_exists(file)) return NULL;
 
@@ -314,7 +388,6 @@ efreet_desktop_new(const char *file)
     }
 
     desktop->ref = 1;
-    desktop->cache_flush = cache_flush;
 
     return desktop;
 }
@@ -387,6 +460,7 @@ efreet_desktop_read(Efreet_Desktop *desktop)
  * @return Returns no value
  * @brief Frees the Efreet_Desktop's data
  */
+#if 0
 static void
 efreet_desktop_clear(Efreet_Desktop *desktop)
 {
@@ -428,6 +502,7 @@ efreet_desktop_clear(Efreet_Desktop *desktop)
             info->free_func(desktop->type_data);
     }
 }
+#endif
 
 /**
  * @param desktop: The desktop file to save
@@ -477,6 +552,7 @@ efreet_desktop_save(Efreet_Desktop *desktop)
         efreet_ini_string_set(ini, "Version", DESKTOP_VERSION);
 
         if (!efreet_ini_save(ini, desktop->orig_path)) ok = 0;
+#if 0
         else
         {
             if (desktop != eina_hash_find(efreet_desktop_cache, desktop->orig_path))
@@ -487,6 +563,7 @@ efreet_desktop_save(Efreet_Desktop *desktop)
                               desktop);
             }
         }
+#endif
     }
     efreet_ini_free(ini);
     return ok;
@@ -501,7 +578,8 @@ efreet_desktop_save(Efreet_Desktop *desktop)
 EAPI int
 efreet_desktop_save_as(Efreet_Desktop *desktop, const char *file)
 {
-    if (desktop == eina_hash_find(efreet_desktop_cache, desktop->orig_path))
+    if (desktop->cached && efreet_desktop_cache &&
+        desktop == eina_hash_find(efreet_desktop_cache, desktop->orig_path))
     {
         desktop->cached = 0;
         eina_hash_del(efreet_desktop_cache, desktop->orig_path, NULL);
@@ -520,8 +598,6 @@ efreet_desktop_save_as(Efreet_Desktop *desktop, const char *file)
 EAPI void
 efreet_desktop_free(Efreet_Desktop *desktop)
 {
-    char *str;
-
     if (!desktop) return;
 
     desktop->ref--;
@@ -530,36 +606,49 @@ efreet_desktop_free(Efreet_Desktop *desktop)
     if (desktop->cached && efreet_desktop_cache)
         eina_hash_del(efreet_desktop_cache, desktop->orig_path, NULL);
 
-    IF_FREE(desktop->orig_path);
-
-    IF_FREE(desktop->version);
-    IF_FREE(desktop->name);
-    IF_FREE(desktop->generic_name);
-    IF_FREE(desktop->comment);
-    IF_FREE(desktop->icon);
-    IF_FREE(desktop->url);
-
-    IF_FREE(desktop->try_exec);
-    IF_FREE(desktop->exec);
-    IF_FREE(desktop->path);
-    IF_FREE(desktop->startup_wm_class);
-
-    IF_FREE_LIST(desktop->only_show_in, free);
-    IF_FREE_LIST(desktop->not_show_in, free);
-
-    EINA_LIST_FREE(desktop->categories, str)
-        eina_stringshare_del(str);
-    EINA_LIST_FREE(desktop->mime_types, str)
-        eina_stringshare_del(str);
-
-    IF_FREE_HASH(desktop->x);
-
-    if (desktop->type_data)
+    if (desktop->eet)
     {
-        Efreet_Desktop_Type_Info *info;
-        info = eina_list_nth(efreet_desktop_types, desktop->type);
-        if (info->free_func)
-            info->free_func(desktop->type_data);
+        eina_list_free(desktop->only_show_in);
+        eina_list_free(desktop->not_show_in);
+        eina_list_free(desktop->categories);
+        eina_list_free(desktop->mime_types);
+        IF_FREE_HASH(desktop->x);
+    }
+    else
+    {
+        char *str;
+
+        IF_FREE(desktop->orig_path);
+
+        IF_FREE(desktop->version);
+        IF_FREE(desktop->name);
+        IF_FREE(desktop->generic_name);
+        IF_FREE(desktop->comment);
+        IF_FREE(desktop->icon);
+        IF_FREE(desktop->url);
+
+        IF_FREE(desktop->try_exec);
+        IF_FREE(desktop->exec);
+        IF_FREE(desktop->path);
+        IF_FREE(desktop->startup_wm_class);
+
+        IF_FREE_LIST(desktop->only_show_in, free);
+        IF_FREE_LIST(desktop->not_show_in, free);
+
+        EINA_LIST_FREE(desktop->categories, str)
+            eina_stringshare_del(str);
+        EINA_LIST_FREE(desktop->mime_types, str)
+            eina_stringshare_del(str);
+
+        IF_FREE_HASH(desktop->x);
+
+        if (desktop->type_data)
+        {
+            Efreet_Desktop_Type_Info *info;
+            info = eina_list_nth(efreet_desktop_types, desktop->type);
+            if (info->free_func)
+                info->free_func(desktop->type_data);
+        }
     }
 
     FREE(desktop);
@@ -835,19 +924,6 @@ efreet_desktop_string_list_join(Eina_List *list)
         pos += 1;
     }
     return string;
-}
-
-/**
- * @brief Tell Efreet to flush any cached desktop entries so it reloads on get.
- *
- * This flags the cache to be invalid, so next time a desktop file is fetched
- * it will force it to be re-read off disk next time efreet_desktop_get() is
- * called.
- */
-EAPI void
-efreet_desktop_cache_flush(void)
-{
-    cache_flush++;
 }
 
 /**
@@ -1881,3 +1957,50 @@ efreet_desktop_x_field_del(Efreet_Desktop *desktop, const char *key)
 
     return eina_hash_del(desktop->x, key, NULL);
 }
+
+/*
+ * Needs EAPI because of helper binaries
+ */
+EAPI Eet_Data_Descriptor *
+efreet_desktop_edd_init(void)
+{
+    Eet_Data_Descriptor *edd;
+
+    Eet_Data_Descriptor_Class eddc;
+    if (!eet_eina_file_data_descriptor_class_set(&eddc, "cache", sizeof(Efreet_Desktop))) return NULL;
+    edd = eet_data_descriptor_file_new(&eddc);
+    if (!edd) return NULL;
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "type", type, EET_T_INT);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "version", version, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "orig_path", orig_path, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "load_time", load_time, EET_T_LONG_LONG);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "name", name, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "generic_name", generic_name, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "comment", comment, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "icon", icon, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "try_exec", try_exec, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "exec", exec, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "path", path, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "startup_wm_class", startup_wm_class, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "url", url, EET_T_STRING);
+    eet_data_descriptor_element_add(edd, "only_show_in", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, only_show_in), 0, NULL, NULL);
+    eet_data_descriptor_element_add(edd, "not_show_in", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, not_show_in), 0, NULL, NULL);
+    eet_data_descriptor_element_add(edd, "categories", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, categories), 0, NULL, NULL);
+    eet_data_descriptor_element_add(edd, "mime_types", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, mime_types), 0, NULL, NULL);
+    eet_data_descriptor_element_add(edd, "x", EET_T_STRING, EET_G_HASH, offsetof(Efreet_Desktop, x), 0, NULL, NULL);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "no_display", no_display, EET_T_UCHAR);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "hidden", hidden, EET_T_UCHAR);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "terminal", terminal, EET_T_UCHAR);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "startup_notify", startup_notify, EET_T_UCHAR);
+    return edd;
+}
+
+/*
+ * Needs EAPI because of helper binaries
+ */
+EAPI void
+efreet_desktop_edd_shutdown(Eet_Data_Descriptor *edd)
+{
+    eet_data_descriptor_free(edd);
+}
+

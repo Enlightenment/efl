@@ -73,7 +73,7 @@ AC_FUNC_ALLOCA
 
 AC_CHECK_HEADERS([arpa/inet.h])
 
-PKG_CHECK_MODULES(EFREET, [eina-0 ecore >= 0.9.9 ecore-file >= 0.9.9])
+PKG_CHECK_MODULES(EFREET, [eet eina-0 ecore >= 0.9.9 ecore-file >= 0.9.9])
 PKG_CHECK_MODULES(EINA, [eina-0])
 
 requirements="ecore-file ecore eina-0"
@@ -92,15 +92,16 @@ if test "x$enable_sloppy_spec" = "xyes" ; then
     AC_DEFINE(SLOPPY_SPEC, 1, [Sloppy Spec Compliance])
 fi
 
-AC_ARG_ENABLE(hidden-visibility,
-	[AC_HELP_STRING([--enable-hidden-visibility],[Enable hidden visibility])],
-	[enable_hidden_visibility=$enableval], [enable_hidden_visibility="auto"])
-if test "x$enable_hidden_visibility" = "xyes" ; then
-    CPPFLAGS="$CPPFLAGS -fvisibility=hidden"
-else
-    AC_DEFINE(DEFAULT_VISIBLITY, 1, [Default visibility])
-fi
-AM_CONDITIONAL(DEFAULT_VISIBILITY, test "x$enable_hidden_visibility" != "xyes")
+#AC_ARG_ENABLE(hidden-visibility,
+#	[AC_HELP_STRING([--enable-hidden-visibility],[Enable hidden visibility])],
+#	[enable_hidden_visibility=$enableval], [enable_hidden_visibility="auto"])
+#if test "x$enable_hidden_visibility" = "xyes" ; then
+#    CPPFLAGS="$CPPFLAGS -fvisibility=hidden"
+#else
+#    AC_DEFINE(DEFAULT_VISIBLITY, 1, [Default visibility])
+#fi
+#AM_CONDITIONAL(DEFAULT_VISIBILITY, test "x$enable_hidden_visibility" != "xyes")
+AM_CONDITIONAL(DEFAULT_VISIBILITY, 0)
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 AC_SUBST(requirements)
@@ -114,10 +115,11 @@ doc/Makefile
 doc/Doxyfile
 src/Makefile
 src/lib/Makefile
+src/tests/Makefile
+src/tests/data/Makefile
+src/tests/data/sub/Makefile
+src/tests/compare/Makefile
 src/bin/Makefile
-src/bin/data/Makefile
-src/bin/data/sub/Makefile
-src/bin/compare/Makefile
 ], []
 )
 

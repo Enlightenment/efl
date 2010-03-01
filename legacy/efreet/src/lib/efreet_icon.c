@@ -87,7 +87,9 @@ static int efreet_icon_theme_cache_check_dir(Efreet_Icon_Theme *theme,
                                                         const char *dir);
 
 static int efreet_icon_cache_find(Efreet_Icon_Cache *value, const char *key);
+#if 0
 static void efreet_icon_cache_flush(Efreet_Icon_Theme *theme, Eina_List *list);
+#endif
 static void efreet_icon_cache_free(Efreet_Icon_Cache *value);
 static char *efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, unsigned int size);
 static void efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, unsigned int size, const char *value);
@@ -1537,6 +1539,7 @@ efreet_icon_cache_find(Efreet_Icon_Cache *value, const char *key)
     return strcmp(value->key, key);
 }
 
+#if 0
 static void
 efreet_icon_cache_flush(Efreet_Icon_Theme *theme, Eina_List *list)
 {
@@ -1557,6 +1560,7 @@ efreet_icon_cache_flush(Efreet_Icon_Theme *theme, Eina_List *list)
 
     eina_hash_modify(efreet_icon_cache, theme, list);
 }
+#endif
 
 static void
 efreet_icon_cache_free(Efreet_Icon_Cache *value)

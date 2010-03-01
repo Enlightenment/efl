@@ -213,6 +213,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_free(expected);
 
     /* test single dir */
+#if 0
     info->type = 'd';
     IF_FREE(desktop->exec);
     desktop->exec = strdup("app %d");
@@ -224,9 +225,11 @@ ef_cb_desktop_command_get(void)
     info->expected = expected;
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     expected = eina_list_free(expected);
+#endif
 
 
     /* test single names */
+#if 0
     info->type = 'n';
     IF_FREE(desktop->exec);
     desktop->exec = strdup("app %n");
@@ -238,6 +241,7 @@ ef_cb_desktop_command_get(void)
     info->expected = expected;
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     expected = eina_list_free(expected);
+#endif
 
     /* test multiple fullpaths */
     info->type = 'F';
@@ -260,6 +264,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_free(expected);
 
     /* test multiple dirs */
+#if 0
     info->type = 'D';
     IF_FREE(desktop->exec);
     desktop->exec = strdup("app %D");
@@ -268,8 +273,10 @@ ef_cb_desktop_command_get(void)
     info->expected = expected;
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     expected = eina_list_free(expected);
+#endif
 
     /* test multiple names */
+#if 0
     info->type = 'N';
     IF_FREE(desktop->exec);
     desktop->exec = strdup("app %N");
@@ -278,6 +285,7 @@ ef_cb_desktop_command_get(void)
     info->expected = expected;
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     expected = eina_list_free(expected);
+#endif
 
     /* test icon appending */
     info->type = 'i';

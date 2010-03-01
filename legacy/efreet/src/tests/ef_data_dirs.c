@@ -166,7 +166,7 @@ ef_cb_efreet_data_dirs(void)
     int ret = 1, i;
     char dirs[128], *val;
     char *vals[] = {"/var/tmp/a", "/tmp/b", "/usr/local/share", "/etc", NULL};
-    char *def_vals[] = {"/usr/local/share", "/usr/share", NULL};
+    char *def_vals[] = {PACKAGE_DATA_DIR, "/usr/share", "/usr/local/share", NULL};
 
     dirs[0] = '\0';
     for (i = 0; vals[i] != NULL; i++)
@@ -207,7 +207,7 @@ ef_cb_efreet_data_dirs(void)
 
     i = 0;
     tmp = efreet_data_dirs_get();
-    if (eina_list_count(tmp) != 2)
+    if (eina_list_count(tmp) != 3)
     {
         printf("efreet_data_dirs_get() nodes is differnet from expected default\n");
         ret = 0;
@@ -226,7 +226,7 @@ ef_cb_efreet_data_dirs(void)
         if (strcmp(val, def_vals[i]))
         {
             printf("efreet_data_dirs_get() returned incorrect value (%s) when "
-                    "XDG_DATA_DIRS= is set\n", val);
+                    "XDG_DATA_DIRS= is set %s\n", val, def_vals[i]);
             ret = 0;
         }
 
