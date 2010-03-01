@@ -1231,6 +1231,7 @@ elm_entry_entry_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *text, *s = NULL;
+   size_t len;
 
    if (!wd) return NULL;
    // Strip ending <br> that is added by the textblock
@@ -1238,7 +1239,18 @@ elm_entry_entry_get(const Evas_Object *obj)
    if (wd->stripped) return wd->stripped;
 
    text = edje_object_part_text_get(wd->ent, "elm.text");
-   if (text) s = eina_stringshare_add_length(text, strlen(text) - 4);
+   if (!text)
+     {
+	ERR("text=NULL for edje %p, part 'elm.text'", wd->ent);
+	return NULL;
+     }
+   len = strlen(text);
+   if (len < 4)
+     {
+	ERR("text='%s' is smaller than 4 chars, missing '<br>'?", text);
+	return NULL;
+     }
+   if (text) s = eina_stringshare_add_length(text, len - 4);
    if (wd->stripped) eina_stringshare_del(wd->stripped);
    wd->stripped = s;
    return s;
