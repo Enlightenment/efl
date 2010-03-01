@@ -92,7 +92,7 @@ xcb_visualtype_get(xcb_screen_t *screen, xcb_visualid_t visual)
 /* noop */
 # else
 static Ecore_X_Window
-_ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y, int w, int h, int override, const int *opt)
+_ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y, int w, int h, int override, int argb, const int *opt)
 {
    Evas_Engine_Info_GL_X11 *einfo;
    Ecore_X_Window win;
@@ -147,9 +147,13 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
 	  }
 	einfo->info.display  = ecore_x_display_get();
         einfo->info.screen   = screen;
+        
+        einfo->info.destination_alpha = argb;
+        
 	einfo->info.visual   = einfo->func.best_visual_get(einfo);
 	einfo->info.colormap = einfo->func.best_colormap_get(einfo);
 	einfo->info.depth    = einfo->func.best_depth_get(einfo);
+        
 
         if ((!einfo->info.visual) ||
             (!einfo->info.colormap) ||
@@ -228,8 +232,8 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 		    ecore_x_window_area_clear(ee->prop.window, r->x, r->y, r->w, r->h);
 		  if ((ee->shaped) && (updates))
 		    ecore_x_window_shape_mask_set(ee->prop.window, ee->engine.x.mask);
-		  if ((ee->alpha) && (updates))
-		    ecore_x_window_shape_input_mask_set(ee->prop.window, ee->engine.x.mask);
+//		  if ((ee->alpha) && (updates))
+//		    ecore_x_window_shape_input_mask_set(ee->prop.window, ee->engine.x.mask);
 		  evas_render_updates_free(updates);
 		  _ecore_evas_idle_timeout_update(ee);
                   rend = 1;
@@ -347,8 +351,8 @@ _ecore_evas_x_render(Ecore_Evas *ee)
           {
              if (ee->shaped) 
                ecore_x_window_shape_mask_set(ee->prop.window, ee->engine.x.mask);
-             if (ee->alpha)
-               ecore_x_window_shape_input_mask_set(ee->prop.window, ee->engine.x.mask);
+//             if (ee->alpha)
+//               ecore_x_window_shape_input_mask_set(ee->prop.window, ee->engine.x.mask);
              evas_render_updates_free(updates);
              _ecore_evas_idle_timeout_update(ee);
              rend = 1;
@@ -1676,6 +1680,119 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_sync_set(ee);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
+        if (getenv("DESKTOP_STARTUP_ID"))
+          {
+             ecore_x_netwm_startup_id_set(ee->prop.window,
+                                          getenv("DESKTOP_STARTUP_ID"));
+             /* NB: on linux this may simply empty the env as opposed to completely
+              * unset it to being empty - unsure as solartis libc crashes looking
+              * for the '=' char */
+             //	putenv((char*)"DESKTOP_STARTUP_ID=");
+          }
+     }
+   else if (!strcmp(ee->driver, "opengl_x11"))
+     {
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
+	Evas_Engine_Info_GL_X11 *einfo;
+
+	einfo = (Evas_Engine_Info_GL_X11 *)evas_engine_info_get(ee->evas);
+	if (!einfo) return;
+
+	if (!ecore_x_composite_query()) return;
+
+	ee->shaped = 0;
+	ee->alpha = alpha;
+	ecore_x_window_free(ee->prop.window);
+	ecore_event_window_unregister(ee->prop.window);
+        
+	einfo->info.destination_alpha = alpha;
+        
+        if (ee->engine.x.win_root != 0)
+          {
+             /* FIXME: round trip in ecore_x_window_argb_get */
+             if (ecore_x_window_argb_get(ee->engine.x.win_root))
+               {
+                  ee->prop.window = _ecore_evas_x_gl_window_new
+                    (ee, ee->engine.x.win_root, 
+                     ee->req.x, ee->req.y, ee->req.w, ee->req.h,
+                     ee->prop.override, 1, NULL);
+               }
+             else
+               ee->prop.window = _ecore_evas_x_gl_window_new
+               (ee, ee->engine.x.win_root,
+                ee->req.x, ee->req.y, ee->req.w, ee->req.h,
+                ee->prop.override, ee->alpha, NULL);
+          }
+        else
+          ee->prop.window = _ecore_evas_x_gl_window_new
+          (ee, ee->engine.x.win_root, 
+           ee->req.x, ee->req.y, ee->req.w, ee->req.h,
+           ee->prop.override, ee->alpha, NULL);
+/*        
+	if (ee->alpha)
+	  {
+	     if (ee->prop.override)
+	       ee->prop.window = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
+	     else
+	       ee->prop.window = ecore_x_window_argb_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
+	     if (!ee->engine.x.mask)
+	       ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->req.w, ee->req.h, 1);
+	  }
+	else
+	  {
+	     if (ee->prop.override)
+	       ee->prop.window = ecore_x_window_override_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
+	     else
+	       ee->prop.window = ecore_x_window_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
+	     if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
+	     ee->engine.x.mask = 0;
+	     ecore_x_window_shape_input_mask_set(ee->prop.window, 0);
+	  }
+ */
+
+	XGetWindowAttributes(ecore_x_display_get(), ee->prop.window, &att);
+	einfo->info.visual = att.visual;
+	einfo->info.colormap = att.colormap;
+	einfo->info.depth = att.depth;
+
+//	if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
+//	ee->engine.x.mask = 0;
+//	einfo->info.mask = ee->engine.x.mask;
+	einfo->info.drawable = ee->prop.window;
+	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+	evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
+//	ecore_x_window_shape_mask_set(ee->prop.window, 0);
+        ecore_x_input_multi_select(ee->prop.window);
+	ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
+	if (ee->prop.borderless)
+	  ecore_x_mwm_borderless_set(ee->prop.window, ee->prop.borderless);
+	if (ee->visible) ecore_x_window_show(ee->prop.window);
+	if (ee->prop.focused) ecore_x_window_focus(ee->prop.window);
+	if (ee->prop.title)
+	  {
+	     ecore_x_icccm_title_set(ee->prop.window, ee->prop.title);
+	     ecore_x_netwm_name_set(ee->prop.window, ee->prop.title);
+	  }
+	ecore_x_icccm_hints_set(ee->prop.window,
+				1 /* accepts_focus */,
+				ECORE_X_WINDOW_STATE_HINT_NORMAL /* initial_state */,
+				0 /* icon_pixmap */,
+				0 /* icon_mask */,
+				0 /* icon_window */,
+				0 /* window_group */,
+				0 /* is_urgent */);
+        _ecore_evas_x_protocols_set(ee);
+        _ecore_evas_x_sync_set(ee);
+#endif /* BUILD_ECORE_EVAS_OPENGL_X11 */
+        if (getenv("DESKTOP_STARTUP_ID"))
+          {
+             ecore_x_netwm_startup_id_set(ee->prop.window,
+                                          getenv("DESKTOP_STARTUP_ID"));
+             /* NB: on linux this may simply empty the env as opposed to completely
+              * unset it to being empty - unsure as solartis libc crashes looking
+              * for the '=' char */
+             //	putenv((char*)"DESKTOP_STARTUP_ID=");
+          }
      }
    else if (!strcmp(ee->driver, "xrender_x11"))
      {
@@ -1752,6 +1869,15 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_sync_set(ee);
 #endif /* BUILD_ECORE_EVAS_XRENDER_X11 || BUILD_ECORE_EVAS_XRENDER_XCB */
+        if (getenv("DESKTOP_STARTUP_ID"))
+          {
+             ecore_x_netwm_startup_id_set(ee->prop.window,
+                                          getenv("DESKTOP_STARTUP_ID"));
+             /* NB: on linux this may simply empty the env as opposed to completely
+              * unset it to being empty - unsure as solartis libc crashes looking
+              * for the '=' char */
+             //	putenv((char*)"DESKTOP_STARTUP_ID=");
+          }
      }
    else if (!strcmp(ee->driver, "software_16_x11"))
      {
@@ -1821,6 +1947,15 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_sync_set(ee);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
+        if (getenv("DESKTOP_STARTUP_ID"))
+          {
+             ecore_x_netwm_startup_id_set(ee->prop.window,
+                                          getenv("DESKTOP_STARTUP_ID"));
+             /* NB: on linux this may simply empty the env as opposed to completely
+              * unset it to being empty - unsure as solartis libc crashes looking
+              * for the '=' char */
+             //	putenv((char*)"DESKTOP_STARTUP_ID=");
+          }
      }
 }
 
@@ -2858,7 +2993,22 @@ ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
    if (parent == 0) parent = DefaultRootWindow(ecore_x_display_get());
    ee->engine.x.win_root = parent;
 
-   ee->prop.window = _ecore_evas_x_gl_window_new(ee, ee->engine.x.win_root, x, y, w, h, 0, opt);
+   if (ee->engine.x.win_root != 0)
+     {
+        ee->engine.x.screen_num = 1; /* FIXME: get real scren # */
+       /* FIXME: round trip in ecore_x_window_argb_get */
+	if (ecore_x_window_argb_get(ee->engine.x.win_root))
+	  {
+             ee->prop.window = _ecore_evas_x_gl_window_new
+               (ee, ee->engine.x.win_root, x, y, w, h, 0, 1, opt);
+	  }
+	else
+          ee->prop.window = _ecore_evas_x_gl_window_new
+          (ee, ee->engine.x.win_root, x, y, w, h, 0, 0, opt);
+     }
+   else
+     ee->prop.window = _ecore_evas_x_gl_window_new
+     (ee, ee->engine.x.win_root, x, y, w, h, 0, 0, opt);
    if (!ee->prop.window)
      {
         ecore_evas_free(ee);
