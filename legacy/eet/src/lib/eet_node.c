@@ -626,8 +626,8 @@ eet_node_walk(void *parent, const char *name, Eet_Node *root, Eet_Node_Walk *cb,
 int
 eet_node_init(void)
 {
-   char *choice;
-   char *tmp;
+   const char *choice;
+   const char *tmp;
 
    choice = "chained_mempool";
    tmp = getenv("EET_MEMPOOL");

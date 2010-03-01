@@ -299,7 +299,7 @@
 2010-01-04  Carsten Haitzler (The Rasterman)
 
         * Fix another thread deadlock in mutex handling even in a single-threaded app.
-        
+
 2010-01-12  Cedric BAIL
 
 	* Rewrite Eet_Data. Now you can do list/hash/array of strings and all
@@ -334,3 +334,6 @@
 
 	* Improve security by zeroying cipher material as soon as possible.
 
+2010-03-01  Albin Tonnerre
+
+	* Fix override of global symbols.

@@ -81,7 +81,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed, const char *string)
    Eet_String   *current;
    char         *str;
    int           hash;
-   int           index;
+   int           idx;
    int           len;
 
    if (!ed)
@@ -89,19 +89,19 @@ eet_dictionary_string_add(Eet_Dictionary *ed, const char *string)
 
    hash = _eet_hash_gen(string, 8);
 
-   index = _eet_dictionary_lookup(ed, string, hash);
+   idx = _eet_dictionary_lookup(ed, string, hash);
 
-   if (index != -1)
+   if (idx != -1)
      {
-        if (ed->all[index].str)
+        if (ed->all[idx].str)
           {
-             if (strcmp(ed->all[index].str, string) == 0)
-               return index;
+             if (strcmp(ed->all[idx].str, string) == 0)
+               return idx;
           }
-        if (ed->all[index].mmap)
+        if (ed->all[idx].mmap)
           {
-             if (strcmp(ed->all[index].mmap, string) == 0)
-               return index;
+             if (strcmp(ed->all[idx].mmap, string) == 0)
+               return idx;
           }
      }
 
@@ -135,7 +135,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed, const char *string)
    current->len = len;
    current->mmap = NULL;
 
-   if (index == -1)
+   if (idx == -1)
      {
         current->next = ed->hash[hash];
         current->prev = -1;
@@ -143,8 +143,8 @@ eet_dictionary_string_add(Eet_Dictionary *ed, const char *string)
      }
    else
      {
-        current->next = index;
-        current->prev = ed->all[index].prev;
+        current->next = idx;
+        current->prev = ed->all[idx].prev;
 
         if (current->next != -1)
           ed->all[current->next].prev = ed->count;
@@ -158,44 +158,44 @@ eet_dictionary_string_add(Eet_Dictionary *ed, const char *string)
 }
 
 int
-eet_dictionary_string_get_size(const Eet_Dictionary *ed, int index)
+eet_dictionary_string_get_size(const Eet_Dictionary *ed, int idx)
 {
    if (!ed) return 0;
-   if (index < 0) return 0;
-   if (index < ed->count)
-     return ed->all[index].len;
+   if (idx < 0) return 0;
+   if (idx < ed->count)
+     return ed->all[idx].len;
    return 0;
 }
 
 int
-eet_dictionary_string_get_hash(const Eet_Dictionary *ed, int index)
+eet_dictionary_string_get_hash(const Eet_Dictionary *ed, int idx)
 {
    if (!ed) return -1;
-   if (index < 0) return -1;
-   if (index < ed->count)
-     return ed->all[index].hash;
+   if (idx < 0) return -1;
+   if (idx < ed->count)
+     return ed->all[idx].hash;
    return -1;
 }
 
 const char *
-eet_dictionary_string_get_char(const Eet_Dictionary *ed, int index)
+eet_dictionary_string_get_char(const Eet_Dictionary *ed, int idx)
 {
    if (!ed) return NULL;
-   if (index < 0) return NULL;
-   if (index < ed->count)
+   if (idx < 0) return NULL;
+   if (idx < ed->count)
      {
 #ifdef _WIN32
 	/* Windows file system could change the mmaped file when replacing a file. So we need to copy all string in memory to avoid bugs. */
-	if (ed->all[index].str == NULL)
+	if (ed->all[idx].str == NULL)
 	  {
-	     ed->all[index].str = strdup(ed->all[index].mmap);
-	     ed->all[index].mmap = NULL;
+	     ed->all[idx].str = strdup(ed->all[idx].mmap);
+	     ed->all[idx].mmap = NULL;
 	  }
 #else
-        if (ed->all[index].mmap)
-          return ed->all[index].mmap;
+        if (ed->all[idx].mmap)
+          return ed->all[idx].mmap;
 #endif
-        return ed->all[index].str;
+        return ed->all[idx].str;
      }
    return NULL;
 }
@@ -246,93 +246,93 @@ _eet_dictionary_string_get_double_cache(const char *s, int len, double *result)
 }
 
 static inline Eina_Bool
-_eet_dictionary_test(const Eet_Dictionary *ed, int index, void *result)
+_eet_dictionary_test(const Eet_Dictionary *ed, int idx, void *result)
 {
    if (!result) return EINA_FALSE;
    if (!ed) return EINA_FALSE;
-   if (index < 0) return EINA_FALSE;
-   if (!(index < ed->count)) return EINA_FALSE;
+   if (idx < 0) return EINA_FALSE;
+   if (!(idx < ed->count)) return EINA_FALSE;
    return EINA_TRUE;
 }
 
 Eina_Bool
-eet_dictionary_string_get_float(const Eet_Dictionary *ed, int index, float *result)
+eet_dictionary_string_get_float(const Eet_Dictionary *ed, int idx, float *result)
 {
-   if (!_eet_dictionary_test(ed, index, result)) return EINA_FALSE;
+   if (!_eet_dictionary_test(ed, idx, result)) return EINA_FALSE;
 
-   if (!(ed->all[index].type & EET_D_FLOAT))
+   if (!(ed->all[idx].type & EET_D_FLOAT))
      {
 	const char      *str;
 
-	str = ed->all[index].str ? ed->all[index].str : ed->all[index].mmap;
+	str = ed->all[idx].str ? ed->all[idx].str : ed->all[idx].mmap;
 
-	if (!_eet_dictionary_string_get_float_cache(str, ed->all[index].len, &ed->all[index].f))
+	if (!_eet_dictionary_string_get_float_cache(str, ed->all[idx].len, &ed->all[idx].f))
 	  {
 	     long long    mantisse = 0;
 	     long         exponent = 0;
 
-	     if (eina_convert_atod(str, ed->all[index].len, &mantisse, &exponent) == EINA_FALSE)
+	     if (eina_convert_atod(str, ed->all[idx].len, &mantisse, &exponent) == EINA_FALSE)
 	       return EINA_FALSE;
 
-	     ed->all[index].f = ldexpf((float) mantisse, exponent);
+	     ed->all[idx].f = ldexpf((float) mantisse, exponent);
 	  }
 
-	ed->all[index].type |= EET_D_FLOAT;
+	ed->all[idx].type |= EET_D_FLOAT;
      }
 
-   *result = ed->all[index].f;
+   *result = ed->all[idx].f;
    return EINA_TRUE;
 }
 
 Eina_Bool
-eet_dictionary_string_get_double(const Eet_Dictionary *ed, int index, double *result)
+eet_dictionary_string_get_double(const Eet_Dictionary *ed, int idx, double *result)
 {
-   if (!_eet_dictionary_test(ed, index, result)) return EINA_FALSE;
+   if (!_eet_dictionary_test(ed, idx, result)) return EINA_FALSE;
 
-   if (!(ed->all[index].type & EET_D_DOUBLE))
+   if (!(ed->all[idx].type & EET_D_DOUBLE))
      {
 	const char      *str;
 
-	str = ed->all[index].str ? ed->all[index].str : ed->all[index].mmap;
+	str = ed->all[idx].str ? ed->all[idx].str : ed->all[idx].mmap;
 
-	if (!_eet_dictionary_string_get_double_cache(str, ed->all[index].len, &ed->all[index].d))
+	if (!_eet_dictionary_string_get_double_cache(str, ed->all[idx].len, &ed->all[idx].d))
 	  {
 	     long long    mantisse = 0;
 	     long         exponent = 0;
 
-	     if (eina_convert_atod(str, ed->all[index].len, &mantisse, &exponent) == EINA_FALSE)
+	     if (eina_convert_atod(str, ed->all[idx].len, &mantisse, &exponent) == EINA_FALSE)
 	       return EINA_FALSE;
 
-	     ed->all[index].d = ldexp((double) mantisse, exponent);
+	     ed->all[idx].d = ldexp((double) mantisse, exponent);
 	  }
 
-	ed->all[index].type |= EET_D_DOUBLE;
+	ed->all[idx].type |= EET_D_DOUBLE;
      }
 
-   *result = ed->all[index].d;
+   *result = ed->all[idx].d;
    return EINA_TRUE;
 }
 
 Eina_Bool
-eet_dictionary_string_get_fp(const Eet_Dictionary *ed, int index, Eina_F32p32 *result)
+eet_dictionary_string_get_fp(const Eet_Dictionary *ed, int idx, Eina_F32p32 *result)
 {
-   if (!_eet_dictionary_test(ed, index, result)) return EINA_FALSE;
+   if (!_eet_dictionary_test(ed, idx, result)) return EINA_FALSE;
 
-   if (!(ed->all[index].type & EET_D_FIXED_POINT))
+   if (!(ed->all[idx].type & EET_D_FIXED_POINT))
      {
 	const char *str;
 	Eina_F32p32 fp;
 
-	str = ed->all[index].str ? ed->all[index].str : ed->all[index].mmap;
+	str = ed->all[idx].str ? ed->all[idx].str : ed->all[idx].mmap;
 
-	if (!eina_convert_atofp(str,  ed->all[index].len, &fp))
+	if (!eina_convert_atofp(str,  ed->all[idx].len, &fp))
 	  return EINA_FALSE;
 
-	ed->all[index].fp = fp;
-	ed->all[index].type |= EET_D_FIXED_POINT;
+	ed->all[idx].fp = fp;
+	ed->all[idx].type |= EET_D_FIXED_POINT;
      }
 
-   *result = ed->all[index].fp;
+   *result = ed->all[idx].fp;
    return EINA_TRUE;
 }
 

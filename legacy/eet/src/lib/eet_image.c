@@ -753,7 +753,7 @@ eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, u
 
      {
 	const int *ptr;
-	void *d = NULL;
+	void *dst = NULL;
 	size_t sz = 0;
 	struct _JPEG_error_mgr jerr;
 	JSAMPROW *jbuf;
@@ -769,7 +769,7 @@ eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, u
 	if (setjmp(jerr.setjmp_buffer)) return NULL;
 
 	jpeg_create_compress(&cinfo);
-	if (eet_jpeg_membuf_dst(&cinfo, &d, &sz))
+	if (eet_jpeg_membuf_dst(&cinfo, &dst, &sz))
 	  {
 	     jpeg_destroy_compress(&cinfo);
 	     return NULL;
@@ -812,12 +812,12 @@ eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, u
 	jpeg_finish_compress(&cinfo);
 	jpeg_destroy_compress(&cinfo);
 
-	d1 = d;
+	d1 = dst;
 	sz1 = sz;
      }
      {
 	const int *ptr;
-	void *d = NULL;
+	void *dst = NULL;
 	size_t sz = 0;
 	struct _JPEG_error_mgr jerr;
 	JSAMPROW *jbuf;
@@ -837,7 +837,7 @@ eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, u
 	  }
 
 	jpeg_create_compress(&cinfo);
-	if (eet_jpeg_membuf_dst(&cinfo, &d, &sz))
+	if (eet_jpeg_membuf_dst(&cinfo, &dst, &sz))
 	  {
 	     jpeg_destroy_compress(&cinfo);
 	     free(d1);
@@ -879,7 +879,7 @@ eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, u
 	jpeg_finish_compress(&cinfo);
 	jpeg_destroy_compress(&cinfo);
 
-	d2 = d;
+	d2 = dst;
 	sz2 = sz;
      }
    d = malloc(12 + sz1 + sz2);
@@ -911,12 +911,12 @@ eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, u
 EAPI int
 eet_data_image_write_cipher(Eet_File *ef, const char *name, const char *key,
 			    const void *data, unsigned int w, unsigned int h, int alpha,
-			    int compress, int quality, int lossy)
+			    int comp, int quality, int lossy)
 {
    void *d = NULL;
    int size = 0;
 
-   d = eet_data_image_encode(data, &size, w, h, alpha, compress, quality, lossy);
+   d = eet_data_image_encode(data, &size, w, h, alpha, comp, quality, lossy);
    if (d)
      {
 	int v;
@@ -931,16 +931,16 @@ eet_data_image_write_cipher(Eet_File *ef, const char *name, const char *key,
 EAPI int
 eet_data_image_write(Eet_File *ef, const char *name,
 		     const void *data, unsigned int w, unsigned int h, int alpha,
-		     int compress, int quality, int lossy)
+		     int comp, int quality, int lossy)
 {
-   return eet_data_image_write_cipher(ef, name, NULL, data, w, h, alpha, compress, quality, lossy);
+   return eet_data_image_write_cipher(ef, name, NULL, data, w, h, alpha, comp, quality, lossy);
 }
 
 
 EAPI void *
 eet_data_image_read_cipher(Eet_File *ef, const char *name, const char *key,
 			   unsigned int *w, unsigned int *h, int *alpha,
-			   int *compress, int *quality, int *lossy)
+			   int *comp, int *quality, int *lossy)
 {
    unsigned int *d = NULL;
    void		*data = NULL;
@@ -956,7 +956,7 @@ eet_data_image_read_cipher(Eet_File *ef, const char *name, const char *key,
 	if (!data) return NULL;
      }
 
-   d = eet_data_image_decode(data, size, w, h, alpha, compress, quality, lossy);
+   d = eet_data_image_decode(data, size, w, h, alpha, comp, quality, lossy);
 
    if (free_data)
      free(data);
@@ -967,15 +967,15 @@ eet_data_image_read_cipher(Eet_File *ef, const char *name, const char *key,
 EAPI void *
 eet_data_image_read(Eet_File *ef, const char *name,
 		    unsigned int *w, unsigned int *h, int *alpha,
-		    int *compress, int *quality, int *lossy)
+		    int *comp, int *quality, int *lossy)
 {
-   return eet_data_image_read_cipher(ef, name, NULL, w, h, alpha, compress, quality, lossy);
+   return eet_data_image_read_cipher(ef, name, NULL, w, h, alpha, comp, quality, lossy);
 }
 
 EAPI int
 eet_data_image_read_to_surface_cipher(Eet_File *ef, const char *name, const char *key, unsigned int src_x, unsigned int src_y,
 				      unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride,
-				      int *alpha, int *compress, int *quality, int *lossy)
+				      int *alpha, int *comp, int *quality, int *lossy)
 {
    void		*data = NULL;
    int		 free_data = 0;
@@ -991,7 +991,7 @@ eet_data_image_read_to_surface_cipher(Eet_File *ef, const char *name, const char
        if (!data) return 0;
      }
 
-   res = eet_data_image_decode_to_surface(data, size, src_x, src_y, d, w, h, row_stride, alpha, compress, quality, lossy);
+   res = eet_data_image_decode_to_surface(data, size, src_x, src_y, d, w, h, row_stride, alpha, comp, quality, lossy);
 
    if (free_data)
      free(data);
@@ -1002,15 +1002,15 @@ eet_data_image_read_to_surface_cipher(Eet_File *ef, const char *name, const char
 EAPI int
 eet_data_image_read_to_surface(Eet_File *ef, const char *name, unsigned int src_x, unsigned int src_y,
 			       unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride,
-			       int *alpha, int *compress, int *quality, int *lossy)
+			       int *alpha, int *comp, int *quality, int *lossy)
 {
-   return eet_data_image_read_to_surface_cipher(ef, name, NULL, src_x, src_y, d, w, h, row_stride, alpha, compress, quality, lossy);
+   return eet_data_image_read_to_surface_cipher(ef, name, NULL, src_x, src_y, d, w, h, row_stride, alpha, comp, quality, lossy);
 }
 
 EAPI int
 eet_data_image_header_read_cipher(Eet_File *ef, const char *name, const char *key,
 				  unsigned int *w, unsigned int *h, int *alpha,
-				  int *compress, int *quality, int *lossy)
+				  int *comp, int *quality, int *lossy)
 {
    void	*data = NULL;
    int	size = 0;
@@ -1026,7 +1026,7 @@ eet_data_image_header_read_cipher(Eet_File *ef, const char *name, const char *ke
 	if (!data) return 0;
      }
 
-   d = eet_data_image_header_decode(data, size, w, h, alpha, compress, quality, lossy);
+   d = eet_data_image_header_decode(data, size, w, h, alpha, comp, quality, lossy);
    if (free_data)
      free(data);
 
@@ -1036,14 +1036,14 @@ eet_data_image_header_read_cipher(Eet_File *ef, const char *name, const char *ke
 EAPI int
 eet_data_image_header_read(Eet_File *ef, const char *name,
 			   unsigned int *w, unsigned int *h, int *alpha,
-			   int *compress, int *quality, int *lossy)
+			   int *comp, int *quality, int *lossy)
 {
-   return eet_data_image_header_read_cipher(ef, name, NULL, w, h, alpha, compress, quality, lossy);
+   return eet_data_image_header_read_cipher(ef, name, NULL, w, h, alpha, comp, quality, lossy);
 }
 
 
 EAPI void *
-eet_data_image_encode_cipher(const void *data, const char *key, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy, int *size_ret)
+eet_data_image_encode_cipher(const void *data, const char *key, unsigned int w, unsigned int h, int alpha, int comp, int quality, int lossy, int *size_ret)
 {
    void *d = NULL;
    void *ciphered_d = NULL;
@@ -1052,12 +1052,12 @@ eet_data_image_encode_cipher(const void *data, const char *key, unsigned int w, 
 
    if (lossy == 0)
      {
-	if (compress > 0)
-	  d = eet_data_image_lossless_compressed_convert(&size, data, w, h, alpha, compress);
+	if (comp > 0)
+	  d = eet_data_image_lossless_compressed_convert(&size, data, w, h, alpha, comp);
 
 	/* eet_data_image_lossless_compressed_convert will refuse to compress something
 	   if the result is bigger than the entry. */
-	if (compress <= 0 || d == NULL)
+	if (comp <= 0 || d == NULL)
 	  d = eet_data_image_lossless_convert(&size, data, w, h, alpha);
      }
    else
@@ -1084,13 +1084,13 @@ eet_data_image_encode_cipher(const void *data, const char *key, unsigned int w, 
 }
 
 EAPI void *
-eet_data_image_encode(const void *data, int *size_ret, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy)
+eet_data_image_encode(const void *data, int *size_ret, unsigned int w, unsigned int h, int alpha, int comp, int quality, int lossy)
 {
-   return eet_data_image_encode_cipher(data, NULL, w, h, alpha, compress, quality, lossy, size_ret);
+   return eet_data_image_encode_cipher(data, NULL, w, h, alpha, comp, quality, lossy, size_ret);
 }
 
 EAPI int
-eet_data_image_header_decode_cipher(const void *data, const char *key, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy)
+eet_data_image_header_decode_cipher(const void *data, const char *key, int size, unsigned int *w, unsigned int *h, int *alpha, int *comp, int *quality, int *lossy)
 {
    int header[8];
    void *deciphered_d = NULL;
@@ -1138,7 +1138,7 @@ eet_data_image_header_decode_cipher(const void *data, const char *key, int size,
 	if (w) *w = iw;
 	if (h) *h = ih;
 	if (alpha) *alpha = al ? 1 : 0;
-	if (compress) *compress = cp;
+	if (comp) *comp = cp;
 	if (lossy) *lossy = 0;
 	if (quality) *quality = 100;
 	return 1;
@@ -1160,7 +1160,7 @@ eet_data_image_header_decode_cipher(const void *data, const char *key, int size,
 	     if (w) *w = iw;
 	     if (h) *h = ih;
 	     if (alpha) *alpha = 1;
-	     if (compress) *compress = 0;
+	     if (comp) *comp = 0;
 	     if (lossy) *lossy = 1;
 	     if (quality) *quality = 75;
 	     return 1;
@@ -1177,7 +1177,7 @@ eet_data_image_header_decode_cipher(const void *data, const char *key, int size,
 	     if (w) *w = iw;
 	     if (h) *h = ih;
 	     if (alpha) *alpha = 0;
-	     if (compress) *compress = 0;
+	     if (comp) *comp = 0;
 	     if (lossy) *lossy = 1;
 	     if (quality) *quality = 75;
 	     return 1;
@@ -1187,9 +1187,9 @@ eet_data_image_header_decode_cipher(const void *data, const char *key, int size,
 }
 
 EAPI int
-eet_data_image_header_decode(const void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy)
+eet_data_image_header_decode(const void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *comp, int *quality, int *lossy)
 {
-   return eet_data_image_header_decode_cipher(data, NULL, size, w, h, alpha, compress, quality, lossy);
+   return eet_data_image_header_decode_cipher(data, NULL, size, w, h, alpha, comp, quality, lossy);
 }
 
 static void
@@ -1217,14 +1217,14 @@ static int
 _eet_data_image_decode_inside(const void *data, int size, unsigned int src_x, unsigned int src_y,
 			      unsigned int src_w, unsigned int src_h,
 			      unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride,
-			      int alpha, int compress, int quality, int lossy)
+			      int alpha, int comp, int quality, int lossy)
 {
    if (lossy == 0 && quality == 100)
      {
 	unsigned int *body;
 
 	body = ((unsigned int *)data) + 8;
-	if (!compress)
+	if (!comp)
 	  {
 	     _eet_data_image_copy_buffer(body, src_x, src_y, src_w, d, w, h, row_stride);
 	  }
@@ -1263,7 +1263,7 @@ _eet_data_image_decode_inside(const void *data, int size, unsigned int src_x, un
 	     for (x = 0; x < (w * h); x++) SWAP32(d[x]);
 	  }
      }
-   else if (compress == 0 && lossy == 1)
+   else if (comp == 0 && lossy == 1)
      {
 	if (alpha)
 	  {
@@ -1306,7 +1306,7 @@ _eet_data_image_decode_inside(const void *data, int size, unsigned int src_x, un
 }
 
 EAPI void *
-eet_data_image_decode_cipher(const void *data, const char *key, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy)
+eet_data_image_decode_cipher(const void *data, const char *key, int size, unsigned int *w, unsigned int *h, int *alpha, int *comp, int *quality, int *lossy)
 {
    unsigned int *d = NULL;
    unsigned int iw, ih;
@@ -1341,7 +1341,7 @@ eet_data_image_decode_cipher(const void *data, const char *key, int size, unsign
    if (w) *w = iw;
    if (h) *h = ih;
    if (alpha) *alpha = ialpha;
-   if (compress) *compress = icompress;
+   if (comp) *comp = icompress;
    if (quality) *quality = iquality;
    if (lossy) *lossy = ilossy;
 
@@ -1349,15 +1349,15 @@ eet_data_image_decode_cipher(const void *data, const char *key, int size, unsign
 }
 
 EAPI void *
-eet_data_image_decode(const void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy)
+eet_data_image_decode(const void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *comp, int *quality, int *lossy)
 {
-   return eet_data_image_decode_cipher(data, NULL, size, w, h, alpha, compress, quality, lossy);
+   return eet_data_image_decode_cipher(data, NULL, size, w, h, alpha, comp, quality, lossy);
 }
 
 EAPI int
 eet_data_image_decode_to_surface_cipher(const void *data, const char *key, int size, unsigned int src_x, unsigned int src_y,
 					unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride,
-					int *alpha, int *compress, int *quality, int *lossy)
+					int *alpha, int *comp, int *quality, int *lossy)
 {
    unsigned int iw, ih;
    int ialpha, icompress, iquality, ilossy;
@@ -1387,7 +1387,7 @@ eet_data_image_decode_to_surface_cipher(const void *data, const char *key, int s
      return 0;
 
    if (alpha) *alpha = ialpha;
-   if (compress) *compress = icompress;
+   if (comp) *comp = icompress;
    if (quality) *quality = iquality;
    if (lossy) *lossy = ilossy;
 
@@ -1397,7 +1397,7 @@ eet_data_image_decode_to_surface_cipher(const void *data, const char *key, int s
 EAPI int
 eet_data_image_decode_to_surface(const void *data, int size, unsigned int src_x, unsigned int src_y,
 				 unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride,
-				 int *alpha, int *compress, int *quality, int *lossy)
+				 int *alpha, int *comp, int *quality, int *lossy)
 {
-   return eet_data_image_decode_to_surface_cipher(data, NULL, size, src_x, src_y, d, w, h, row_stride, alpha, compress, quality, lossy);
+   return eet_data_image_decode_to_surface_cipher(data, NULL, size, src_x, src_y, d, w, h, row_stride, alpha, comp, quality, lossy);
 }

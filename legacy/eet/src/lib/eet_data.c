@@ -448,11 +448,11 @@ eet_data_get_string_hash(const Eet_Dictionary *ed, const void *src, const void *
 {
    if (ed)
      {
-        int               index;
+        int               idx;
 
-        if (eet_data_get_int(ed, src, src_end, &index) < 0) return -1;
+        if (eet_data_get_int(ed, src, src_end, &idx) < 0) return -1;
 
-        return eet_dictionary_string_get_hash(ed, index);
+        return eet_dictionary_string_get_hash(ed, idx);
      }
 
    return -1;
@@ -468,16 +468,16 @@ eet_data_get_string(const Eet_Dictionary *ed, const void *src, const void *src_e
    if (ed)
      {
         const char       *str;
-        int               index;
+        int               idx;
 
-        if (eet_data_get_int(ed, src, src_end, &index) < 0) return -1;
+        if (eet_data_get_int(ed, src, src_end, &idx) < 0) return -1;
 
-        str = eet_dictionary_string_get_char(ed, index);
+        str = eet_dictionary_string_get_char(ed, idx);
         if (str == NULL)
           return -1;
 
         *d = (char *) str;
-        return eet_dictionary_string_get_size(ed, index);
+        return eet_dictionary_string_get_size(ed, idx);
      }
 
    s = (char *)src;
@@ -500,15 +500,15 @@ eet_data_put_string(Eet_Dictionary *ed, const void *src, int *size_ret)
    if (ed)
      {
         const char      *str;
-        int              index;
+        int              idx;
 
         str = *((const char **) src);
         if (!str) return NULL;
 
-        index = eet_dictionary_string_add(ed, str);
-        if (index == -1) return NULL;
+        idx = eet_dictionary_string_add(ed, str);
+        if (idx == -1) return NULL;
 
-        return eet_data_put_int(ed, &index, size_ret);
+        return eet_data_put_int(ed, &idx, size_ret);
      }
 
    s = (char *)(*((char **)src));
@@ -598,7 +598,7 @@ static int
 eet_data_get_float(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dst)
 {
    float        *d;
-   int           index;
+   int           idx;
 
    d = (float *) dst;
    if (!ed)
@@ -621,9 +621,9 @@ eet_data_get_float(const Eet_Dictionary *ed, const void *src, const void *src_en
         return len + 1;
      }
 
-   if (eet_data_get_int(ed, src, src_end, &index) < 0) return -1;
+   if (eet_data_get_int(ed, src, src_end, &idx) < 0) return -1;
 
-   if (!eet_dictionary_string_get_float(ed, index, d))
+   if (!eet_dictionary_string_get_float(ed, idx, d))
      return -1;
    return 1;
 }
@@ -632,7 +632,7 @@ static void *
 eet_data_put_float(Eet_Dictionary *ed, const void *src, int *size_ret)
 {
    char  buf[128];
-   int   index;
+   int   idx;
 
    eina_convert_dtoa((double)(*(float *)src), buf);
 
@@ -649,10 +649,10 @@ eet_data_put_float(Eet_Dictionary *ed, const void *src, int *size_ret)
         return d;
      }
 
-   index = eet_dictionary_string_add(ed, buf);
-   if (index == -1) return NULL;
+   idx = eet_dictionary_string_add(ed, buf);
+   if (idx == -1) return NULL;
 
-   return eet_data_put_int(ed, &index, size_ret);
+   return eet_data_put_int(ed, &idx, size_ret);
 }
 
 /* DOUBLE TYPE */
@@ -660,7 +660,7 @@ static int
 eet_data_get_double(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dst)
 {
    double       *d;
-   int           index;
+   int           idx;
 
    d = (double *) dst;
 
@@ -684,9 +684,9 @@ eet_data_get_double(const Eet_Dictionary *ed, const void *src, const void *src_e
         return len + 1;
      }
 
-   if (eet_data_get_int(ed, src, src_end, &index) < 0) return -1;
+   if (eet_data_get_int(ed, src, src_end, &idx) < 0) return -1;
 
-   if (!eet_dictionary_string_get_double(ed, index, d))
+   if (!eet_dictionary_string_get_double(ed, idx, d))
      return -1;
    return 1;
 }
@@ -695,7 +695,7 @@ static void *
 eet_data_put_double(Eet_Dictionary *ed, const void *src, int *size_ret)
 {
    char  buf[128];
-   int   index;
+   int   idx;
 
    eina_convert_dtoa((double)(*(double *)src), buf);
 
@@ -713,25 +713,25 @@ eet_data_put_double(Eet_Dictionary *ed, const void *src, int *size_ret)
         return d;
      }
 
-   index = eet_dictionary_string_add(ed, buf);
-   if (index == -1) return NULL;
+   idx = eet_dictionary_string_add(ed, buf);
+   if (idx == -1) return NULL;
 
-   return eet_data_put_int(ed, &index, size_ret);
+   return eet_data_put_int(ed, &idx, size_ret);
 }
 
 static int
 eet_data_get_f32p32(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dst)
 {
    Eina_F32p32 *fp;
-   int index;
+   int idx;
 
    fp = (Eina_F32p32*) dst;
 
    if (!ed) return -1;
 
-   if (eet_data_get_int(ed, src, src_end, &index) < 0) return -1;
+   if (eet_data_get_int(ed, src, src_end, &idx) < 0) return -1;
 
-   if (!eet_dictionary_string_get_fp(ed, index, fp))
+   if (!eet_dictionary_string_get_fp(ed, idx, fp))
      return -1;
    return 1;
 }
@@ -740,16 +740,16 @@ static void *
 eet_data_put_f32p32(Eet_Dictionary *ed, const void *src, int *size_ret)
 {
    char  buf[128];
-   int   index;
+   int   idx;
 
    if (!ed) return NULL;
 
    eina_convert_fptoa((Eina_F32p32)(*(Eina_F32p32 *)src), buf);
 
-   index = eet_dictionary_string_add(ed, buf);
-   if (index == -1) return NULL;
+   idx = eet_dictionary_string_add(ed, buf);
+   if (idx == -1) return NULL;
 
-   return eet_data_put_int(ed, &index, size_ret);
+   return eet_data_put_int(ed, &idx, size_ret);
 }
 
 static int
@@ -2744,8 +2744,6 @@ eet_data_get_array(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data
 
 	if (IS_POINTER_TYPE(echnk->type))
 	  {
-	     int ret;
-
 	     ret = eet_data_get_unknown(context, ed, edd, ede, echnk, echnk->type, EET_G_UNKNOWN,
 					&data_ret, p, size);
 	     if (!ret) goto on_error;

@@ -898,7 +898,7 @@ eet_internal_read2(Eet_File *ef)
 {
    const int    *data = (const int*) ef->data;
    const char   *start = (const char*) ef->data;
-   int           index = 0;
+   int           idx = 0;
    int           num_directory_entries;
    int           bytes_directory_entries;
    int           num_dictionary_entries;
@@ -906,7 +906,7 @@ eet_internal_read2(Eet_File *ef)
    int           signature_base_offset;
    int           i;
 
-   index += sizeof(int);
+   idx += sizeof(int);
    if (eet_test_close((int) ntohl(*data) != EET_MAGIC_FILE2, ef))
      return NULL;
    data++;
@@ -919,9 +919,9 @@ eet_internal_read2(Eet_File *ef)
    }
 
    /* get entries count and byte count */
-   GET_INT(num_directory_entries, data, index);
+   GET_INT(num_directory_entries, data, idx);
    /* get dictionary count and byte count */
-   GET_INT(num_dictionary_entries, data, index);
+   GET_INT(num_dictionary_entries, data, idx);
 
    bytes_directory_entries = EET_FILE2_DIRECTORY_ENTRY_SIZE * num_directory_entries + EET_FILE2_HEADER_SIZE;
    bytes_dictionary_entries = EET_FILE2_DICTIONARY_ENTRY_SIZE * num_dictionary_entries;
@@ -972,12 +972,12 @@ eet_internal_read2(Eet_File *ef)
           return NULL;
 
         /* get entrie header */
-        GET_INT(efn->offset, data, index);
-        GET_INT(efn->size, data, index);
-        GET_INT(efn->data_size, data, index);
-        GET_INT(name_offset, data, index);
-        GET_INT(name_size, data, index);
-        GET_INT(flag, data, index);
+        GET_INT(efn->offset, data, idx);
+        GET_INT(efn->size, data, idx);
+        GET_INT(efn->data_size, data, idx);
+        GET_INT(name_offset, data, idx);
+        GET_INT(name_size, data, idx);
+        GET_INT(flag, data, idx);
 
 	efn->compression = flag & 0x1 ? 1 : 0;
 	efn->ciphered = flag & 0x2 ? 1 : 0;
@@ -1035,7 +1035,7 @@ eet_internal_read2(Eet_File *ef)
         const int       *dico = (const int*) ef->data + EET_FILE2_DIRECTORY_ENTRY_COUNT * num_directory_entries + EET_FILE2_HEADER_COUNT;
         int              j;
 
-        if (eet_test_close((num_dictionary_entries * (int) EET_FILE2_DICTIONARY_ENTRY_SIZE + index) > (bytes_dictionary_entries + bytes_directory_entries), ef))
+        if (eet_test_close((num_dictionary_entries * (int) EET_FILE2_DICTIONARY_ENTRY_SIZE + idx) > (bytes_dictionary_entries + bytes_directory_entries), ef))
             return NULL;
 
         ef->ed = calloc(1, sizeof (Eet_Dictionary));
@@ -1054,11 +1054,11 @@ eet_internal_read2(Eet_File *ef)
              int   hash;
              int   offset;
 
-             GET_INT(hash, dico, index);
-             GET_INT(offset, dico, index);
-             GET_INT(ef->ed->all[j].len, dico, index);
-             GET_INT(ef->ed->all[j].prev, dico, index);
-             GET_INT(ef->ed->all[j].next, dico, index);
+             GET_INT(hash, dico, idx);
+             GET_INT(offset, dico, idx);
+             GET_INT(ef->ed->all[j].len, dico, idx);
+             GET_INT(ef->ed->all[j].prev, dico, idx);
+             GET_INT(ef->ed->all[j].next, dico, idx);
 
              /* Hash value could be stored on 8bits data, but this will break alignment of all the others data.
                 So stick to int and check the value. */
@@ -1120,7 +1120,7 @@ eet_internal_read1(Eet_File *ef)
 {
    const unsigned char	*dyn_buf = NULL;
    const unsigned char	*p = NULL;
-   int			 index = 0;
+   int			 idx = 0;
    int			 num_entries;
    int			 byte_entries;
    int			 i;
@@ -1129,7 +1129,7 @@ eet_internal_read1(Eet_File *ef)
 
    /* build header table if read mode */
    /* geat header */
-   index += sizeof(int);
+   idx += sizeof(int);
    if (eet_test_close((int)ntohl(*((int *)ef->data)) != EET_MAGIC_FILE, ef))
      return NULL;
 
@@ -1142,8 +1142,8 @@ eet_internal_read1(Eet_File *ef)
         }
 
    /* get entries count and byte count */
-   EXTRACT_INT(num_entries, ef->data, index);
-   EXTRACT_INT(byte_entries, ef->data, index);
+   EXTRACT_INT(num_entries, ef->data, idx);
+   EXTRACT_INT(byte_entries, ef->data, idx);
 
    /* we cant have <= 0 values here - invalid */
    if (eet_test_close((num_entries <= 0) || (byte_entries <= 0), ef))
@@ -1177,7 +1177,7 @@ eet_internal_read1(Eet_File *ef)
      return NULL;
 
    /* actually read the directory block - all of it, into ram */
-   dyn_buf = ef->data + index;
+   dyn_buf = ef->data + idx;
 
    /* parse directory block */
    p = dyn_buf;
@@ -1844,7 +1844,7 @@ eet_read_direct(Eet_File *ef, const char *name, int *size_ret)
 }
 
 EAPI int
-eet_write_cipher(Eet_File *ef, const char *name, const void *data, int size, int compress, const char *cipher_key)
+eet_write_cipher(Eet_File *ef, const char *name, const void *data, int size, int comp, const char *cipher_key)
 {
    Eet_File_Node	*efn;
    void			*data2 = NULL;
@@ -1895,16 +1895,16 @@ eet_write_cipher(Eet_File *ef, const char *name, const void *data, int size, int
    /* figure hash bucket */
    hash = _eet_hash_gen(name, ef->header->directory->size);
 
-   data_size = compress ? 12 + ((size * 101) / 100) : size;
+   data_size = comp ? 12 + ((size * 101) / 100) : size;
 
-   if (compress || !cipher_key)
+   if (comp || !cipher_key)
      {
        data2 = malloc(data_size);
        if (!data2) goto on_error;
      }
 
    /* if we want to compress */
-   if (compress)
+   if (comp)
      {
 	uLongf buflen;
 
@@ -1920,7 +1920,7 @@ eet_write_cipher(Eet_File *ef, const char *name, const void *data, int size, int
 	data_size = (int)buflen;
 	if (data_size < 0 || data_size >= size)
 	  {
-	     compress = 0;
+	     comp = 0;
 	     data_size = size;
 	  }
 	else
@@ -1954,7 +1954,7 @@ eet_write_cipher(Eet_File *ef, const char *name, const void *data, int size, int
 	 }
      }
    else
-     if (!compress)
+     if (!comp)
        memcpy(data2, data, size);
 
    /* Does this node already exist? */
@@ -1965,7 +1965,7 @@ eet_write_cipher(Eet_File *ef, const char *name, const void *data, int size, int
 	  {
 	     free(efn->data);
 	     efn->ciphered = cipher_key ? 1 : 0;
-	     efn->compression = !!compress;
+	     efn->compression = !!comp;
 	     efn->size = data_size;
 	     efn->data_size = size;
 	     efn->data = data2;
@@ -1990,7 +1990,7 @@ eet_write_cipher(Eet_File *ef, const char *name, const void *data, int size, int
 	ef->header->directory->nodes[hash] = efn;
 	efn->offset = -1;
 	efn->ciphered = cipher_key ? 1 : 0;
-	efn->compression = !!compress;
+	efn->compression = !!comp;
 	efn->size = data_size;
 	efn->data_size = size;
 	efn->data = data2;
@@ -2007,9 +2007,9 @@ eet_write_cipher(Eet_File *ef, const char *name, const void *data, int size, int
 }
 
 EAPI int
-eet_write(Eet_File *ef, const char *name, const void *data, int size, int compress)
+eet_write(Eet_File *ef, const char *name, const void *data, int size, int comp)
 {
-   return eet_write_cipher(ef, name, data, size, compress, NULL);
+   return eet_write_cipher(ef, name, data, size, comp, NULL);
 }
 
 EAPI int
