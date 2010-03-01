@@ -19,6 +19,7 @@ static Eet_File *ef = NULL;
 static Eet_File *util_ef = NULL;
 
 static Eina_Hash *file_ids = NULL;
+static Eina_Hash *paths = NULL;
 
 static int
 cache_add(const char *path, const char *file_id, int priority)
@@ -35,8 +36,12 @@ cache_add(const char *path, const char *file_id, int priority)
         if (desk) efreet_desktop_free(desk);
         return 1;
     }
-    if (!eet_data_write(ef, edd, desk->orig_path, desk, 0))
-        return 0;
+    if (!eina_hash_find(paths, desk->orig_path))
+    {
+        if (!eet_data_write(ef, edd, desk->orig_path, desk, 0))
+            return 0;
+        eina_hash_add(paths, desk->orig_path, (void *)1);
+    }
     if (!eina_hash_find(file_ids, file_id))
     {
         int id;
@@ -218,8 +223,9 @@ main(int argc, char **argv)
     if (!util_ef) goto error;
 
     file_ids = eina_hash_string_superfast_new(NULL);
-
     if (!file_ids) goto error;
+    paths = eina_hash_string_superfast_new(NULL);
+    if (!paths) goto error;
 
     dirs = efreet_default_dirs_get(efreet_data_home_get(), efreet_data_dirs_get(),
                                                                     "applications");
@@ -238,6 +244,7 @@ main(int argc, char **argv)
         dirs = eina_list_remove_list(dirs, dirs);
     }
     eina_hash_free(file_ids);
+    eina_hash_free(paths);
  
     /* cleanup */
     eet_close(util_ef);
