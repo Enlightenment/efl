@@ -119,7 +119,7 @@ eng_window_new(Display *disp,
    config_attrs[n++] = EGL_WINDOW_BIT;
    config_attrs[n++] = EGL_RENDERABLE_TYPE;
    config_attrs[n++] = EGL_OPENGL_ES2_BIT;
-#if 0   
+#if 0
 // FIXME: n900 - omap3 sgx libs break here
    config_attrs[n++] = EGL_RED_SIZE;
    config_attrs[n++] = 1;
