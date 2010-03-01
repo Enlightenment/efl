@@ -339,6 +339,8 @@ struct _Edje_External_Type
   void *(*params_parse) (void *data, Evas_Object *obj, const Eina_List *params);
   void (*params_free) (void *params);
 
+  /* The following callbacks aren't used by Edje itself, but by UI design
+     tools instead */
   const char *(*label_get) (void *data);
   const char *(*description_get) (void *data);
   Evas_Object *(*icon_add) (void *data, Evas *e);
