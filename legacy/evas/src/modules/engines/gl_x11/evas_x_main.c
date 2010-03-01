@@ -18,6 +18,7 @@ static GLXFBConfig rgba_fbconf = 0;
 XVisualInfo *_evas_gl_x11_vi = NULL;
 XVisualInfo *_evas_gl_x11_rgba_vi = NULL;
 Colormap     _evas_gl_x11_cmap = 0;
+Colormap     _evas_gl_x11_rgba_cmap = 0;
 
 Evas_GL_X11_Window *
 eng_window_new(Display *disp,
@@ -37,6 +38,7 @@ eng_window_new(Display *disp,
    int major_version, minor_version;
    int num_config, n = 0;
    XVisualInfo *vi_use;
+   const GLubyte *vendor, *renderer, *version;
    
    if (!_evas_gl_x11_vi) return NULL;
    
@@ -49,7 +51,7 @@ eng_window_new(Display *disp,
    gw->colormap = cmap;
    gw->depth = depth;
    gw->alpha = alpha;
-   
+
    vi_use = _evas_gl_x11_vi;
    if (alpha)
      {
@@ -57,14 +59,12 @@ eng_window_new(Display *disp,
         if (_evas_gl_x11_rgba_vi)
           {
              vi_use = _evas_gl_x11_rgba_vi;
-             printf("argb vis!!!!!!!!!1\n");
           }
 #else
 #ifdef NEWGL
         if (_evas_gl_x11_rgba_vi)
           {
              vi_use = _evas_gl_x11_rgba_vi;
-             printf("argb vis!!!!!!!!!1\n");
           }
 #endif        
 #endif        
@@ -119,14 +119,14 @@ eng_window_new(Display *disp,
    config_attrs[n++] = EGL_WINDOW_BIT;
    config_attrs[n++] = EGL_RENDERABLE_TYPE;
    config_attrs[n++] = EGL_OPENGL_ES2_BIT;
-   /* FIXME: SGx EGL breaks here - it SHOULD work - but it doesnt
+// FIXME: n900 - omap3 sgx libs break here
    config_attrs[n++] = EGL_RED_SIZE;
    config_attrs[n++] = 1;
    config_attrs[n++] = EGL_GREEN_SIZE;
    config_attrs[n++] = 1;
    config_attrs[n++] = EGL_BLUE_SIZE;
    config_attrs[n++] = 1;
-    */
+// FIXME: end n900 breakage   
    if (alpha)
      {
         config_attrs[n++] = EGL_ALPHA_SIZE;
@@ -143,33 +143,48 @@ eng_window_new(Display *disp,
    config_attrs[n++] = 0;
    config_attrs[n++] = EGL_NONE;
 # endif
+   
+   vendor = glGetString(GL_VENDOR);
+   renderer = glGetString(GL_RENDERER);
+   version = glGetString(GL_VERSION);
+   if (!vendor) vendor = "-UNKNOWN-";
+   if (!renderer) renderer = "-UNKNOWN-";
+   if (!version) version = "-UNKNOWN-";
+   fprintf(stderr, "vendor: %s\n", vendor);
+   fprintf(stderr, "renderer: %s\n", renderer);
+   fprintf(stderr, "version: %s\n", version);
+        
    gw->egl_disp= eglGetDisplay((EGLNativeDisplayType)(gw->disp));
    if (!gw->egl_disp)
      {
         printf("Error: eglGetDisplay() fail.\n");
+        printf("Error: error # was: 0x%x\n", eglGetError());
      }
    if (!eglInitialize(gw->egl_disp, &major_version, &minor_version))
      {
         printf("Error: eglInitialize() fail.\n");
+        printf("Error: error # was: 0x%x\n", eglGetError());
      }
    eglBindAPI(EGL_OPENGL_ES_API);
    if (eglGetError() != EGL_SUCCESS)
      {
         printf("Error: eglBindAPI() fail.\n");
+        printf("Error: error # was: 0x%x\n", eglGetError());
      }
    num_config = 0;
    if (!eglChooseConfig(gw->egl_disp, config_attrs, &gw->egl_config,
                         1, &num_config) || (num_config != 1))
      {
         printf("Error: eglChooseConfig() fail.\n");
+        printf("Error: error # was: 0x%x\n", eglGetError());
      }
    gw->egl_surface[0] = eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                                                (EGLNativeWindowType)gw->win,
                                                NULL);
    if (gw->egl_surface[0] == EGL_NO_SURFACE)
      {
-        printf("ERR: %x, num_config = %i\n", eglGetError(), num_config);
         printf("Error: eglCreateWindowSurface() fail for 0x%x.\n", (unsigned int)gw->win);
+        printf("Error: error # was: 0x%x\n", eglGetError());
      }
    if (context == EGL_NO_CONTEXT)
      context = eglCreateContext(gw->egl_disp, gw->egl_config, NULL, 
@@ -178,6 +193,7 @@ eng_window_new(Display *disp,
    if (gw->egl_context[0] == EGL_NO_CONTEXT)
      {
         printf("Error: eglCreateContext() fail.\n");
+        printf("Error: error # was: 0x%x\n", eglGetError());
      }
    if (eglMakeCurrent(gw->egl_disp, 
                       gw->egl_surface[0], 
@@ -185,13 +201,13 @@ eng_window_new(Display *disp,
                       gw->egl_context[0]) == EGL_FALSE)
      {
         printf("Error: eglMakeCurrent() fail.\n");
+        printf("Error: error # was: 0x%x\n", eglGetError());
      }
 // GLX   
 #else
    if (!context)
      {
 #ifdef NEWGL        
-        printf("fbconf %p\n", fbconf);
         if (indirect)
           context = glXCreateNewContext(disp, fbconf, 
                                         GLX_RGBA_TYPE, NULL, 
@@ -200,7 +216,6 @@ eng_window_new(Display *disp,
           context = glXCreateNewContext(disp, fbconf, 
                                         GLX_RGBA_TYPE, NULL, 
                                         GL_FALSE);
-        printf("context = %p\n", context);
 #else
         if (indirect)
           context = glXCreateContext(disp, gw->visualinfo, NULL, GL_FALSE);
@@ -219,7 +234,6 @@ eng_window_new(Display *disp,
           rgba_context = glXCreateNewContext(disp, rgba_fbconf, 
                                              GLX_RGBA_TYPE, context, 
                                              GL_FALSE);
-        printf("rgba_context = %p, from fbconf %p, context %p\n", rgba_context, rgba_fbconf, context);
      }
    if (alpha)
      gw->glxwin = glXCreateWindow(disp, rgba_fbconf, gw->win, NULL);
@@ -236,7 +250,6 @@ eng_window_new(Display *disp,
      {
         int i, j,  num;
         GLXFBConfig *fbc;
-        const GLubyte *vendor, *renderer, *version;
 
         if (gw->glxwin)
           {
@@ -350,7 +363,7 @@ eng_window_new(Display *disp,
         XFree(fbc);
         if (!gw->depth_cfg[DefaultDepth(disp, screen)].fbc)
           {
-             printf("text from pixmap not going to work\n");
+             printf("texture from pixmap not going to work\n");
           }
      }
 #endif
@@ -569,22 +582,13 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
      {
 // EGL / GLES
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-        if (_evas_gl_x11_rgba_vi)
-          {
-             printf("argb vis %x\n", _evas_gl_x11_rgba_vi->visual);
-             return _evas_gl_x11_rgba_vi->visual;
-          }
+        if (_evas_gl_x11_rgba_vi) return _evas_gl_x11_rgba_vi->visual;
 #else        
 # ifdef NEWGL
-        if (_evas_gl_x11_rgba_vi)
-          {
-             printf("argb vis %x\n", _evas_gl_x11_rgba_vi->visual);
-             return _evas_gl_x11_rgba_vi->visual;
-          }
+        if (_evas_gl_x11_rgba_vi) return _evas_gl_x11_rgba_vi->visual;
 # endif
 #endif        
      }
-   printf("vis %x\n", _evas_gl_x11_vi->visual);
    return _evas_gl_x11_vi->visual;
 }
 
@@ -595,14 +599,22 @@ eng_best_colormap_get(Evas_Engine_Info_GL_X11 *einfo)
    if (!einfo->info.display) return 0;
    if (!_evas_gl_x11_vi) eng_best_visual_get(einfo);
    if (!_evas_gl_x11_vi) return 0;
-   if (!_evas_gl_x11_cmap)
+   if (einfo->info.destination_alpha)
      {
-        _evas_gl_x11_cmap = XCreateColormap(einfo->info.display,
-                                            RootWindow(einfo->info.display,
-                                                       einfo->info.screen),
-                                            _evas_gl_x11_vi->visual, 
-                                            0);
+        if (!_evas_gl_x11_rgba_cmap)
+          _evas_gl_x11_rgba_cmap = XCreateColormap(einfo->info.display,
+                                                   RootWindow(einfo->info.display,
+                                                              einfo->info.screen),
+                                                   _evas_gl_x11_rgba_vi->visual, 
+                                                   0);
+        return _evas_gl_x11_rgba_cmap;
      }
+   if (!_evas_gl_x11_cmap)
+     _evas_gl_x11_cmap = XCreateColormap(einfo->info.display,
+                                         RootWindow(einfo->info.display,
+                                                    einfo->info.screen),
+                                         _evas_gl_x11_vi->visual, 
+                                         0);
    return _evas_gl_x11_cmap;
 }
                                  
@@ -613,5 +625,9 @@ eng_best_depth_get(Evas_Engine_Info_GL_X11 *einfo)
    if (!einfo->info.display) return 0;
    if (!_evas_gl_x11_vi) eng_best_visual_get(einfo);
    if (!_evas_gl_x11_vi) return 0;
+   if (einfo->info.destination_alpha)
+     {
+        if (_evas_gl_x11_rgba_vi) return _evas_gl_x11_rgba_vi->depth;
+     }
    return _evas_gl_x11_vi->depth;
 }
