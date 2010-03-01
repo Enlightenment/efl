@@ -441,7 +441,7 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
                   vi_in.screen = einfo->info.screen;
                   vi_in.depth = 32;
                   vi_in.class = TrueColor;
-                  xvi = XGetVisualInfo(einfo->info.display
+                  xvi = XGetVisualInfo(einfo->info.display,
                                        VisualScreenMask | VisualDepthMask |
                                        VisualClassMask,
                                        &vi_in, &nvi);
@@ -556,8 +556,8 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
                     }
                   XFree(visinfo);
                }
-#endif
           }
+#endif
      }
    if (!_evas_gl_x11_vi) return NULL;
    if (einfo->info.destination_alpha)
