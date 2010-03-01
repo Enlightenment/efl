@@ -191,6 +191,10 @@ main(int argc, char **argv)
         goto efreet_error;
     }
 
+    /* truncate old cache so that we don't read cached values */
+    if (truncate(efreet_desktop_cache_file(), 0) < 0) goto efreet_error;
+    if (truncate(efreet_util_cache_file(), 0) < 0) goto efreet_error;
+
     /* finish efreet init */
     if (!efreet_init()) goto efreet_error;
     edd = efreet_desktop_edd_init();
