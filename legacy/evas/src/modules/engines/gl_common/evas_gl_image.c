@@ -123,7 +123,8 @@ evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, DAT
         if (im->tex) evas_gl_common_texture_free(im->tex);
         im->tex = NULL;
 	im->cs.no_free = 0;
-        im->cs.data = calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
+        if (im->im->cache_entry.h > 0)
+          im->cs.data = calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
         if ((data) && (im->cs.data))
 	  memcpy(im->cs.data, data, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
 	break;
@@ -165,7 +166,8 @@ evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, int alpha, int cspac
 //        if (im->tex) evas_gl_common_texture_free(im->tex);
 	im->tex = NULL;
 	im->cs.no_free = 0;
-        im->cs.data = calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
+        if (im->im->cache_entry.h > 0)
+          im->cs.data = calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
 	break;
       default:
 	abort();
