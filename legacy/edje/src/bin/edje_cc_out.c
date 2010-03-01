@@ -858,8 +858,8 @@ data_write_scripts(Eet_File *ef)
 
    for (i = 0, l = codes; l; l = eina_list_next(l), i++)
      {
-	char tmpn[4096];
-	char tmpo[4096];
+	char tmpn[PATH_MAX];
+	char tmpo[PATH_MAX];
 	int fd;
 	Code *cd = eina_list_data_get(l);
 	
