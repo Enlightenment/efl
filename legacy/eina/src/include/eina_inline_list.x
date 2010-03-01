@@ -55,6 +55,16 @@ eina_list_data_get(const Eina_List *list)
    return list->data;
 }
 
+static inline void *
+eina_list_data_set(Eina_List *list, const void *data)
+{
+   void *tmp;
+   if (!list) return NULL;
+   tmp = list->data;
+   list->data = (void*) data;
+   return tmp;
+}
+
 static inline unsigned int
 eina_list_count(const Eina_List *list)
 {
