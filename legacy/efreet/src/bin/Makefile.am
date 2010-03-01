@@ -12,8 +12,6 @@ AM_CPPFLAGS = \
 bin_PROGRAMS = \
 efreet_desktop_cache_create
 
-efreet_desktop_cache_create_DEPENDENCIES = \
-$(top_builddir)/src/lib/libefreet.la
 efreet_desktop_cache_create_LDADD = \
 $(top_builddir)/src/lib/libefreet.la \
 @EFREET_LIBS@

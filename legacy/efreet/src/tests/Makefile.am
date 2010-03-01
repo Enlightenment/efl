@@ -13,8 +13,6 @@ AM_CPPFLAGS = \
 
 bin_PROGRAMS = efreet_test efreet_spec_test efreet_cache_test
 
-efreet_test_DEPENDENCIES = $(top_builddir)/src/lib/libefreet.la \
-                           $(top_builddir)/src/lib/libefreet_mime.la
 efreet_test_LDADD = $(top_builddir)/src/lib/libefreet.la \
                     $(top_builddir)/src/lib/libefreet_mime.la \
                     @EFREET_LIBS@

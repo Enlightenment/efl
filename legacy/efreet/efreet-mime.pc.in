@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: efreet-mime
 Description: Freedesktop Shared Mime Info standard implementation for the EFL
-@pkgconfig_requires_private@: @requirements@
+@pkgconfig_requires_private@: @requirement_efreet@
 Version: @VERSION@
 Libs: -L${libdir} -lefreet_mime
 Cflags: -I${includedir}/efreet

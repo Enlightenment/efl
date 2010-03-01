@@ -13,13 +13,6 @@ AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 AM_CONFIG_HEADER([config.h])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-AC_ISC_POSIX
-AC_PROG_CC
-AM_PROG_CC_STDC
-AC_HEADER_STDC
-AC_C_CONST
-AC_C___ATTRIBUTE__
-
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
@@ -38,58 +31,40 @@ AC_SUBST(efreet_release_info)
 AC_SUBST(efreet_mime_release_info)
 AC_SUBST(efreet_trash_release_info)
 
-EFL_CHECK_PATH_MAX
 
-PKG_PROG_PKG_CONFIG
+### Needed information
 
-# Check whether pkg-config supports Requires.private
-if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
-   pkgconfig_requires_private="Requires.private"
-else
-   pkgconfig_requires_private="Requires"
-fi
-AC_SUBST(pkgconfig_requires_private)
 
-EFL_EFREET_BUILD=""
-EFL_EFREET_MIME_BUILD=""
-EFL_EFREET_TRASH_BUILD=""
-win32_libs=""
-case "$host_os" in
-   mingw* | cegcc*)
-      PKG_CHECK_MODULES([EVIL], [evil])
-      AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if Evil library is installed])
-      EFL_EFREET_BUILD="-DEFL_EFREET_BUILD"
-      EFL_EFREET_MIME_BUILD="-DEFL_EFREET_MIME_BUILD"
-      EFL_EFREET_TRASH_BUILD="-DEFL_EFREET_TRASH_BUILD"
-      win32_libs="-lws2_32"
-   ;;
-esac
-AC_SUBST(EFL_EFREET_BUILD)
-AC_SUBST(EFL_EFREET_MIME_BUILD)
-AC_SUBST(EFL_EFREET_TRASH_BUILD)
-AC_SUBST(win32_libs)
+### Additional options to configure
 
-AC_FUNC_ALLOCA
+AC_ARG_ENABLE([strict-spec],
+   [AC_HELP_STRING([--enable-strict-spec], [Enable strict spec compliance @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       enable_strict_spec="yes"
+    else
+       enable_strict_spec="no"
+    fi
+   ],
+   [enable_strict_spec="no"])
 
-AC_CHECK_HEADERS([arpa/inet.h])
-
-PKG_CHECK_MODULES(EFREET, [eet eina-0 ecore >= 0.9.9 ecore-file >= 0.9.9])
-PKG_CHECK_MODULES(EINA, [eina-0])
-
-requirements="ecore-file ecore eina-0"
-
-AC_ARG_ENABLE(strict-spec,
-	[AC_HELP_STRING([--enable-strict-spec],[Enable strict spec compliance])],
-	[enable_strict_spec=$enableval], [enable_strict_spec="auto"])
-if test "x$enable_strict_spec" = "xyes" ; then
-    AC_DEFINE(STRICT_SPEC, 1, [Strict Spec Compliance])
+if test "x${enable_strict_spec}" = "xyes" ; then
+   AC_DEFINE([STRICT_SPEC], [1], [Strict Spec Compliance])
 fi
 
-AC_ARG_ENABLE(sloppy-spec,
-	[AC_HELP_STRING([--disable-sloppy-spec],[Enable sloppy spec compliance])],
-	[enable_sloppy_spec=$enableval], [enable_sloppy_spec="yes"])
-if test "x$enable_sloppy_spec" = "xyes" ; then
-    AC_DEFINE(SLOPPY_SPEC, 1, [Sloppy Spec Compliance])
+AC_ARG_ENABLE([sloppy-spec],
+   [AC_HELP_STRING([--disable-sloppy-spec], [Enable sloppy spec compliance @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       enable_sloppy_spec="yes"
+    else
+       enable_sloppy_spec="no"
+    fi
+   ],
+   [enable_sloppy_spec="yes"])
+
+if test "x${enable_sloppy_spec}" = "xyes" ; then
+   AC_DEFINE([SLOPPY_SPEC], [1], [Sloppy Spec Compliance])
 fi
 
 #AC_ARG_ENABLE(hidden-visibility,
@@ -102,9 +77,105 @@ fi
 #fi
 #AM_CONDITIONAL(DEFAULT_VISIBILITY, test "x$enable_hidden_visibility" != "xyes")
 AM_CONDITIONAL(DEFAULT_VISIBILITY, 0)
+
+
+### Checks for programs
+AC_PROG_CC
+
+# pkg-config
+PKG_PROG_PKG_CONFIG
+
+# Check whether pkg-config supports Requires.private
+if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
+   pkgconfig_requires_private="Requires.private"
+else
+   pkgconfig_requires_private="Requires"
+fi
+AC_SUBST(pkgconfig_requires_private)
+
+# doxygen program for documentation building
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
-AC_SUBST(requirements)
+
+### Checks for libraries
+
+# Evil library for compilation on Windows CE
+
+EFL_EFREET_BUILD=""
+EFL_EFREET_MIME_BUILD=""
+EFL_EFREET_TRASH_BUILD=""
+case "$host_os" in
+   mingw*)
+      PKG_CHECK_MODULES([EVIL], [evil])
+      AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
+      requirement_efreet="evil"
+      EFL_EFREET_BUILD="-DEFL_EFREET_BUILD"
+      EFL_EFREET_MIME_BUILD="-DEFL_EFREET_MIME_BUILD"
+      EFL_EFREET_TRASH_BUILD="-DEFL_EFREET_TRASH_BUILD"
+   ;;
+esac
+AC_SUBST(EFL_EFREET_BUILD)
+AC_SUBST(EFL_EFREET_MIME_BUILD)
+AC_SUBST(EFL_EFREET_TRASH_BUILD)
+
+PKG_CHECK_MODULES(EFREET, [eina-0 eet ecore >= 0.9.9 ecore-file >= 0.9.9])
+PKG_CHECK_MODULES(EINA, [eina-0])
+
+requirement_efreet="ecore-file ecore eet eina-0 ${requirement_efreet}"
+
+### Checks for header files
+
+AC_CHECK_HEADERS([arpa/inet.h])
+
+### Checks for types
+
+
+### Checks for structures
+
+
+### Checks for compiler characteristics
+
+AC_C_CONST
+AC_ISC_POSIX
+AC_C___ATTRIBUTE__
+AM_PROG_CC_STDC
+AC_HEADER_STDC
+
+case "${host_os}" in
+   mingw*)
+      EFREET_CFLAGS="${EFREET_CFLAGS} ${EVIL_CFLAGS}"
+   ;;
+esac
+
+if ! test "x${VMIC}" = "x" ; then
+   EFL_COMPILER_FLAG([-Wall])
+   EFL_COMPILER_FLAG([-W])
+fi
+
+EFL_COMPILER_FLAG([-Wshadow])
+
+EFL_CHECK_PATH_MAX
+
+
+### Checks for linker characteristics
+lt_enable_auto_import=""
+WIN32_LIBS=""
+case "${host_os}" in
+   mingw*)
+      WIN32_LIBS="-lws2_32"
+      lt_enable_auto_import="-Wl,--enable-auto-import"
+   ;;
+esac
+AC_SUBST(WIN32_LIBS)
+AC_SUBST(lt_enable_auto_import)
+
+
+### Checks for library functions
+AC_FUNC_ALLOCA
+AC_CHECK_FUNCS(strlcpy)
+
+AC_SUBST(requirement_efreet)
+
 AC_OUTPUT([
 efreet.spec
 efreet.pc
@@ -120,8 +191,7 @@ src/tests/data/Makefile
 src/tests/data/sub/Makefile
 src/tests/compare/Makefile
 src/bin/Makefile
-], []
-)
+])
 
 
 #####################################################################
@@ -135,6 +205,10 @@ echo "$PACKAGE $VERSION"
 echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
+echo
+echo "  Specification compliance:"
+echo "    Strict.............: ${enable_strict_spec}"
+echo "    Sloppy.............: ${enable_sloppy_spec}"
 echo
 echo "  Documentation........: ${build_doc}"
 echo

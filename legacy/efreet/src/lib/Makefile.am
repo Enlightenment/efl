@@ -36,8 +36,8 @@ libefreet_la_CPPFLAGS =  \
 -I$(top_srcdir)/src/lib \
 @EFL_EFREET_BUILD@ \
 @EFREET_CFLAGS@
-libefreet_la_LIBADD = @EFREET_LIBS@ @win32_libs@
-libefreet_la_LDFLAGS = -no-undefined -version-info @version_info@ @efreet_release_info@
+libefreet_la_LIBADD = @EFREET_LIBS@ @WIN32_LIBS@
+libefreet_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @efreet_release_info@
 
 
 libefreet_mime_la_SOURCES = efreet_mime.c
@@ -46,8 +46,8 @@ libefreet_mime_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 @EFL_EFREET_MIME_BUILD@ \
 @EFREET_CFLAGS@
-libefreet_mime_la_LIBADD = @EFREET_LIBS@ libefreet.la @win32_libs@
-libefreet_mime_la_LDFLAGS = -no-undefined -version-info @version_info@ @efreet_mime_release_info@
+libefreet_mime_la_LIBADD = @EFREET_LIBS@ libefreet.la @WIN32_LIBS@
+libefreet_mime_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @efreet_mime_release_info@
 
 
 libefreet_trash_la_SOURCES = efreet_trash.c
@@ -57,6 +57,6 @@ libefreet_trash_la_CPPFLAGS = \
 @EFL_EFREET_TRASH_BUILD@ \
 @EFREET_CFLAGS@
 libefreet_trash_la_LIBADD = @EFREET_LIBS@ libefreet.la
-libefreet_trash_la_LDFLAGS = -no-undefined -version-info @version_info@ @efreet_trash_release_info@
+libefreet_trash_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @efreet_trash_release_info@
 
 EXTRA_DIST = efreet_private.h efreet_xml.h

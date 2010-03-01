@@ -11,6 +11,7 @@ AC_DEFUN([EFL_CHECK_PATH_MAX],
 [
 
 default_max=m4_default([$1], "4096")
+
 AC_LANG_PUSH([C])
 
 AC_MSG_CHECKING([for PATH_MAX in limits.h])
