@@ -48,7 +48,62 @@
  * @{
  */
 
+/**
+ * EINA_LOG_DOMAIN_GLOBAL is the general purpose log domain to be
+ * used, it is always registered and available everywhere.
+ */
 EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
+
+/**
+ * @def EINA_LOG_DOMAIN_DEFAULT
+ * This macro defines the domain to use with the macros EINA_LOG_DOM_DBG(),
+ * EINA_LOG_DOM_INFO(), EINA_LOG_DOM_WARN(), EINA_LOG_DOM_ERR() and
+ * EINA_LOG_DOM_CRIT().
+ *
+ * If not defined prior to the inclusion of this header, then it
+ * defaults to #EINA_LOG_DOMAIN_GLOBAL.
+ *
+ * @note One may like to redefine this in its code to avoid typing too
+ *       much. In this case the recomended way is:
+ *
+ * @code
+ * #include <Eina.h>
+ * #undef EINA_LOG_DOMAIN_DEFAULT
+ * #define EINA_LOG_DOMAIN_DEFAULT _log_dom
+ * static int _log_dom = -1;
+ *
+ * int main(void)
+ * {
+ *    eina_init();
+ *    _log_dom = eina_log_domain_register("mydom", EINA_COLOR_CYAN);
+ *    EINA_LOG_ERR("using my own domain");
+ *    return 0;
+ * }
+ * @endcode
+ *
+ * @warning If one defines the domain prior to inclusion of this
+ *          header, the defined log domain symbol must be defined
+ *          prior as well, otherwise the inlined functions defined by
+ *          Eina will fail to find the symbol, causing build failure.
+ *
+ * @code
+ * #define EINA_LOG_DOMAIN_DEFAULT _log_dom
+ * static int _log_dom = -1; // must come before inclusion of Eina.h!
+ * #include <Eina.h>
+ *
+ * int main(void)
+ * {
+ *    eina_init();
+ *    _log_dom = eina_log_domain_register("mydom", EINA_COLOR_CYAN);
+ *    EINA_LOG_ERR("using my own domain");
+ *    return 0;
+ * }
+ * @endcode
+ *
+ */
+#ifndef EINA_LOG_DOMAIN_DEFAULT
+#define EINA_LOG_DOMAIN_DEFAULT EINA_LOG_DOMAIN_GLOBAL
+#endif
 
 
 /**
@@ -114,43 +169,43 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
 
 /**
  * @def EINA_LOG_CRIT(fmt, ...)
- * Logs a message with level CRITICAL on the global domain with the specified
+ * Logs a message with level CRITICAL on the default domain with the specified
  * format.
  */
 #define EINA_LOG_CRIT(fmt, ...) \
-	EINA_LOG(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_CRITICAL, fmt, ##__VA_ARGS__)
+	EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_CRITICAL, fmt, ##__VA_ARGS__)
 
 /**
  * @def EINA_LOG_ERR(fmt, ...)
- * Logs a message with level ERROR on the global domain with the specified
+ * Logs a message with level ERROR on the default domain with the specified
  * format.
  */
 #define EINA_LOG_ERR(fmt, ...) \
-	EINA_LOG(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_ERR, fmt, ##__VA_ARGS__)
+	EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_ERR, fmt, ##__VA_ARGS__)
 
 /**
  * @def EINA_LOG_INFO(fmt, ...)
- * Logs a message with level INFO on the global domain with the specified
+ * Logs a message with level INFO on the default domain with the specified
  * format.
  */
 #define EINA_LOG_INFO(fmt, ...) \
-	EINA_LOG(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_INFO, fmt, ##__VA_ARGS__)
+	EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_INFO, fmt, ##__VA_ARGS__)
 
 /**
  * @def EINA_LOG_WARN(fmt, ...)
- * Logs a message with level WARN on the global domain with the specified
+ * Logs a message with level WARN on the default domain with the specified
  * format.
  */
 #define EINA_LOG_WARN(fmt, ...) \
-	EINA_LOG(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_WARN, fmt, ##__VA_ARGS__)
+	EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_WARN, fmt, ##__VA_ARGS__)
 
 /**
  * @def EINA_LOG_DBG(fmt, ...)
- * Logs a message with level DEBUG on the global domain with the specified
+ * Logs a message with level DEBUG on the default domain with the specified
  * format.
  */
 #define EINA_LOG_DBG(fmt, ...) \
-	EINA_LOG(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_DBG, fmt, ##__VA_ARGS__)
+	EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_DBG, fmt, ##__VA_ARGS__)
 
 /**
  * @typedef Eina_Log_Domain
