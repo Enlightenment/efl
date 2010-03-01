@@ -182,7 +182,8 @@ eng_setup(Evas *e, void *in)
 				 info->info.depth,
 				 e->output.w,
 				 e->output.h,
-                                 info->indirect);
+                                 info->indirect,
+                                 info->info.destination_alpha);
 	if (!re->win)
 	  {
 	     free(re);
@@ -258,7 +259,8 @@ eng_setup(Evas *e, void *in)
             (0 != re->win->screen) || /* FIXME: screen 0 assumption */
             (info->info.visual != re->win->visual) ||
             (info->info.colormap != re->win->colormap) ||
-            (info->info.depth != re->win->depth))
+            (info->info.depth != re->win->depth) ||
+            (info->info.destination_alpha != re->win->alpha))
           {
              eng_window_free(re->win);
              re->win = eng_window_new(info->info.display,
@@ -269,7 +271,8 @@ eng_setup(Evas *e, void *in)
                                       info->info.depth,
                                       e->output.w,
                                       e->output.h,
-                                      info->indirect);
+                                      info->indirect,
+                                      info->info.destination_alpha);
           }
         else if ((re->win->w != e->output.w) ||
                  (re->win->h != e->output.h))
@@ -286,6 +289,12 @@ eng_setup(Evas *e, void *in)
      e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
    eng_window_use(re->win);
+   
+   if (re->win->alpha)
+     {
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+     }
    
    _sym_init();
    
@@ -498,7 +507,13 @@ eng_output_flush(void *data)
      {
         re->info->callback.post_swap(re->info->callback.data, re->evas);
      }
-#endif   
+#endif
+   
+   if (re->win->alpha)
+     {
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+     }
 }
 
 static void

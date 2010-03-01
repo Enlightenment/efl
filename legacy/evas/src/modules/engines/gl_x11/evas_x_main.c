@@ -7,9 +7,16 @@ static EGLContext context = EGL_NO_CONTEXT;
 #else
 // FIXME: this will only work for 1 display connection (glx land can have > 1)
 static GLXContext context = 0;
+static GLXContext rgba_context = 0;
+static GLXFBConfig fbconf = 0;
+static GLXFBConfig rgba_fbconf = 0;
 #endif
 
+// fixme: something is up/wrong here - dont know what tho...
+//#define NEWGL 1
+
 XVisualInfo *_evas_gl_x11_vi = NULL;
+XVisualInfo *_evas_gl_x11_rgba_vi = NULL;
 Colormap     _evas_gl_x11_cmap = 0;
 
 Evas_GL_X11_Window *
@@ -21,13 +28,15 @@ eng_window_new(Display *disp,
 	       int      depth,
 	       int      w,
 	       int      h,
-               int      indirect)
+               int      indirect,
+               int      alpha)
 {
    Evas_GL_X11_Window *gw;
    int context_attrs[3];
    int config_attrs[20];
    int major_version, minor_version;
    int num_config;
+   XVisualInfo *vi_use;
    
    if (!_evas_gl_x11_vi) return NULL;
    
@@ -39,16 +48,36 @@ eng_window_new(Display *disp,
    gw->visual = vis;
    gw->colormap = cmap;
    gw->depth = depth;
-
-   gw->visualinfo = _evas_gl_x11_vi;
-
+   gw->alpha = alpha;
+   
+   vi_use = _evas_gl_x11_vi;
+   if (alpha)
+     {
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+        if (_evas_gl_x11_rgba_vi)
+          {
+             vi_use = _evas_gl_x11_rgba_vi;
+             printf("argb vis!!!!!!!!!1\n");
+          }
+#else
+#ifdef NEWGL
+        if (_evas_gl_x11_rgba_vi)
+          {
+             vi_use = _evas_gl_x11_rgba_vi;
+             printf("argb vis!!!!!!!!!1\n");
+          }
+#endif        
+#endif        
+     }
+   gw->visualinfo = vi_use;
+   
 // EGL / GLES
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
    context_attrs[1] = 2;
    context_attrs[2] = EGL_NONE;
 # if defined(GLES_VARIETY_S3C6410)
-   if (_evas_gl_x11_vi->depth == 16) // 16bpp
+   if (gw->visualinfo->depth == 16) // 16bpp
      {
         config_attrs[0]  = EGL_SURFACE_TYPE;
         config_attrs[1]  = EGL_WINDOW_BIT;
@@ -85,15 +114,31 @@ eng_window_new(Display *disp,
         config_attrs[14] = EGL_NONE;
      }
 # elif defined(GLES_VARIETY_SGX)
-   context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
-   context_attrs[1] = 2;
-   context_attrs[2] = EGL_NONE;
-   
    config_attrs[0] = EGL_SURFACE_TYPE;
    config_attrs[1] = EGL_WINDOW_BIT;
    config_attrs[2] = EGL_RENDERABLE_TYPE;
    config_attrs[3] = EGL_OPENGL_ES2_BIT;
-   config_attrs[4] = EGL_NONE;
+   config_attrs[4] = EGL_RED_SIZE;
+   config_attrs[5] = 1;
+   config_attrs[6] = EGL_GREEN_SIZE;
+   config_attrs[7] = 1;
+   config_attrs[8] = EGL_BLUE_SIZE;
+   config_attrs[9] = 1;
+   if (alpha)
+     {
+        config_attrs[10] = EGL_ALPHA_SIZE;
+        config_attrs[11] = 1;
+     }
+   else
+     {
+        config_attrs[10] = EGL_ALPHA_SIZE;
+        config_attrs[11] = 0;
+     }
+   config_attrs[12] = EGL_DEPTH_SIZE;
+   config_attrs[13] = 0;
+   config_attrs[14] = EGL_STENCIL_SIZE;
+   config_attrs[15] = 0;
+   config_attrs[16] = EGL_NONE;
 # endif
    gw->egl_disp= eglGetDisplay((EGLNativeDisplayType)(gw->disp));
    if (!gw->egl_disp)
@@ -140,24 +185,69 @@ eng_window_new(Display *disp,
 #else
    if (!context)
      {
+#ifdef NEWGL        
+        printf("fbconf %p\n", fbconf);
+        if (indirect)
+          context = glXCreateNewContext(disp, fbconf, 
+                                        GLX_RGBA_TYPE, NULL, 
+                                        GL_TRUE);
+        else
+          context = glXCreateNewContext(disp, fbconf, 
+                                        GLX_RGBA_TYPE, NULL, 
+                                        GL_FALSE);
+        printf("context = %p\n", context);
+#else
         if (indirect)
           context = glXCreateContext(disp, gw->visualinfo, NULL, GL_FALSE);
         else
           context = glXCreateContext(disp, gw->visualinfo, NULL, GL_TRUE);
-        if (!context)
-          context = glXCreateContext(disp, gw->visualinfo, NULL, GL_TRUE);
-        if (!context)
-          context = glXCreateContext(disp, gw->visualinfo, NULL, GL_FALSE);
+#endif
      }
+#ifdef NEWGL
+   if ((alpha) && (!rgba_context))
+     {
+        if (indirect)
+          rgba_context = glXCreateNewContext(disp, rgba_fbconf, 
+                                             GLX_RGBA_TYPE, context, 
+                                             GL_TRUE);
+        else
+          rgba_context = glXCreateNewContext(disp, rgba_fbconf, 
+                                             GLX_RGBA_TYPE, context, 
+                                             GL_FALSE);
+        printf("rgba_context = %p, from fbconf %p, context %p\n", rgba_context, rgba_fbconf, context);
+     }
+   if (alpha)
+     gw->glxwin = glXCreateWindow(disp, rgba_fbconf, gw->win, NULL);
+   else
+     gw->glxwin = glXCreateWindow(disp, fbconf, gw->win, NULL);
+   
+   if (alpha) gw->context = rgba_context;
+   else gw->context = context;
+#else   
    gw->context = context;
+#endif
 
    if (gw->context)
      {
         int i, j,  num;
         GLXFBConfig *fbc;
         const GLubyte *vendor, *renderer, *version;
-        
-        glXMakeCurrent(gw->disp, gw->win, gw->context);
+
+        if (gw->glxwin)
+          {
+             if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin, 
+                                        gw->context))
+               {
+                  printf("Error: glXMakeContextCurrent(%p, %p, %p, %p)\n", gw->disp, gw->win, gw->win, gw->context);
+               }
+          }
+        else
+          {
+             if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
+               {
+                  printf("Error: glXMakeCurrent(%p, 0x%x, %p) failed\n", gw->disp, gw->win, gw->context);
+               }
+          }
         
         // FIXME: move this up to context creation
 
@@ -178,10 +268,10 @@ eng_window_new(Display *disp,
              // noothing yet. add more cases and options over time
           }
         
-        fbc = glXGetFBConfigs(disp, 0/* FIXME: assume screen 0 */, &num);
+        fbc = glXGetFBConfigs(disp, screen, &num);
         if (!fbc)
           {
-             printf("ERROR: glXGetFBConfigs() returned no fb configs\n");
+             printf("Error: glXGetFBConfigs() returned no fb configs\n");
           }
         for (i = 0; i <= 32; i++)
           {
@@ -253,7 +343,7 @@ eng_window_new(Display *disp,
                }
           }
         XFree(fbc);
-        if (!gw->depth_cfg[DefaultDepth(disp, 0/* FIXMEL assume screen 0*/)].fbc)
+        if (!gw->depth_cfg[DefaultDepth(disp, screen)].fbc)
           {
              printf("text from pixmap not going to work\n");
           }
@@ -281,6 +371,7 @@ eng_window_free(Evas_GL_X11_Window *gw)
    if (gw->egl_surface[0] != EGL_NO_SURFACE)
      eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
 #else
+   if (gw->glxwin) glXDestroyWindow(gw->disp, gw->glxwin);
    // FIXME: refcount context   
    //   glXDestroyContext(gw->disp, gw->context);
 #endif
@@ -306,7 +397,21 @@ eng_window_use(Evas_GL_X11_Window *gw)
           }
 // GLX        
 #else
-        glXMakeCurrent(gw->disp, gw->win, gw->context);
+        if (gw->glxwin)
+          {
+             if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin, 
+                                        gw->context))
+               {
+                  printf("Error: glXMakeContextCurrent(%p, %p, %p, %p)\n", gw->disp, gw->win, gw->win, gw->context);
+               }
+          }
+        else
+          {
+             if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
+               {
+                  printf("Error: glXMakeCurrent(%p, 0x%x, %p) failed\n", gw->disp, gw->win, gw->context);
+               }
+          }
 #endif
      }
    evas_gl_common_context_use(gw->gl_context);
@@ -319,110 +424,162 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
    if (!einfo->info.display) return NULL;
    if (!_evas_gl_x11_vi)
      {
+        int alpha;
+        
 // EGL / GLES
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-        int depth = DefaultDepth(einfo->info.display,
-                                 einfo->info.screen);
-        _evas_gl_x11_vi = calloc(1, sizeof(XVisualInfo));
-        XMatchVisualInfo(einfo->info.display,
-                         einfo->info.screen, depth, TrueColor,
-                         _evas_gl_x11_vi);
-// GLX
-#else
-
-#if 1
-        int config_attrs[40];
-        GLXFBConfig *configs = NULL, config = 0;
-        int i, num;
-
-        i = 0;
-        config_attrs[i++] = GLX_DRAWABLE_TYPE;
-        config_attrs[i++] = GLX_WINDOW_BIT;
-        config_attrs[i++] = GLX_DOUBLEBUFFER;
-        config_attrs[i++] = 1;
-        config_attrs[i++] = GLX_RED_SIZE;
-        config_attrs[i++] = 1;
-        config_attrs[i++] = GLX_GREEN_SIZE;
-        config_attrs[i++] =1;
-        config_attrs[i++] = GLX_BLUE_SIZE;
-        config_attrs[i++] = 1;
-        config_attrs[i++] = GLX_ALPHA_SIZE;
-        config_attrs[i++] = 0;
-//// only needed if we want argb        
-//        config_attrs[i++] = GLX_RENDER_TYPE;
-//        config_attrs[i++] = 0;//GLX_RGBA_BIT;
-        config_attrs[i++] = GLX_DEPTH_SIZE;
-        config_attrs[i++] = 0;
-        config_attrs[i++] = GLX_STENCIL_SIZE;
-        config_attrs[i++] = 0;
-        config_attrs[i++] = GLX_AUX_BUFFERS;
-        config_attrs[i++] = 0;
-        config_attrs[i++] = GLX_STEREO;
-        config_attrs[i++] = 0;
-        config_attrs[i++] = GLX_TRANSPARENT_TYPE;
-        config_attrs[i++] = GLX_NONE;//GLX_TRANSPARENT_RGB;
-//        config_attrs[i++] = GLX_TRANSPARENT_TYPE;
-//        config_attrs[i++] = GLX_NONE;//GLX_TRANSPARENT_INDEX;
-        config_attrs[i++] = 0;
-        
-        configs = glXChooseFBConfig(einfo->info.display, 
-                                    einfo->info.screen,
-                                    config_attrs, &num);
-        if ((!configs) || (num < 1))
+        for (alpha = 0; alpha < 2; alpha++)
           {
-             printf("ERROR: glXChooseFBConfig returned no configs\n");
-          }
-        for (i = 0; i < num; i++)
-          {
-             XVisualInfo *visinfo;
-             XRenderPictFormat *format;
-             
-             visinfo = glXGetVisualFromFBConfig(einfo->info.display, 
-                                                configs[i]);
-             if (!visinfo) continue;
-             if (1) // non argb
+             int depth = DefaultDepth(einfo->info.display,
+                                      einfo->info.screen);
+             if (alpha)
                {
-                  config = configs[i];
-                  _evas_gl_x11_vi = visinfo;
-                  break;
+                  XVisualInfo *xvi, vi_in;
+                  int nvi, i;
+                  XRenderPictFormat *fmt;
+                  
+                  vi_in.screen = einfo->info.screen;
+                  vi_in.depth = 32;
+                  vi_in.class = TrueColor;
+                  xvi = XGetVisualInfo(einfo->info.display
+                                       VisualScreenMask | VisualDepthMask |
+                                       VisualClassMask,
+                                       &vi_in, &nvi);
+                  if (xvi)
+                    {
+                       for (i = 0; i < nvi; i++)
+                         {  
+                            fmt = XRenderFindVisualFormat(einfo->info.display, 
+                                                          xvi[i].visual);
+                            if ((fmt->type == PictTypeDirect) && 
+                                (fmt->direct.alphaMask))
+                              {
+                                 _evas_gl_x11_rgba_vi = 
+                                   calloc(1, sizeof(XVisualInfo));
+                                 if (_evas_gl_x11_rgba_vi)
+                                   memcpy(_evas_gl_x11_rgba_vi, 
+                                          &(xvi[i]), sizeof(XVisualInfo));
+                                 break;
+                              }
+                         }
+                       XFree (xvi);
+                    }
                }
              else
                {
-                  format = XRenderFindVisualFormat(einfo->info.display, visinfo->visual);
-                  if (!format)
-                    {
-                       XFree(visinfo);
-                       continue;
-                    }
-                  if (format->direct.alphaMask > 0)
+                  _evas_gl_x11_vi = calloc(1, sizeof(XVisualInfo));
+                  XMatchVisualInfo(einfo->info.display,
+                                   einfo->info.screen, depth, TrueColor,
+                                   _evas_gl_x11_vi);
+               }
+          }
+// GLX
+#else
+        for (alpha = 0; alpha < 2; alpha++)
+          {
+             int config_attrs[40];
+             GLXFBConfig *configs = NULL, config = 0;
+             int i, num;
+             
+             i = 0;
+             config_attrs[i++] = GLX_DRAWABLE_TYPE;
+             config_attrs[i++] = GLX_WINDOW_BIT;
+             config_attrs[i++] = GLX_DOUBLEBUFFER;
+             config_attrs[i++] = 1;
+             config_attrs[i++] = GLX_RED_SIZE;
+             config_attrs[i++] = 1;
+             config_attrs[i++] = GLX_GREEN_SIZE;
+             config_attrs[i++] =1;
+             config_attrs[i++] = GLX_BLUE_SIZE;
+             config_attrs[i++] = 1;
+             if (alpha)
+               {
+                  config_attrs[i++] = GLX_RENDER_TYPE;
+                  config_attrs[i++] = GLX_RGBA_BIT;
+                  config_attrs[i++] = GLX_ALPHA_SIZE;
+                  config_attrs[i++] = 1;
+               }
+             else
+               {
+                  config_attrs[i++] = GLX_ALPHA_SIZE;
+                  config_attrs[i++] = 0;
+               }
+             config_attrs[i++] = GLX_DEPTH_SIZE;
+             config_attrs[i++] = 0;
+             config_attrs[i++] = GLX_STENCIL_SIZE;
+             config_attrs[i++] = 0;
+             config_attrs[i++] = GLX_AUX_BUFFERS;
+             config_attrs[i++] = 0;
+             config_attrs[i++] = GLX_STEREO;
+             config_attrs[i++] = 0;
+             config_attrs[i++] = GLX_TRANSPARENT_TYPE;
+             config_attrs[i++] = GLX_NONE;//GLX_NONE;//GLX_TRANSPARENT_INDEX//GLX_TRANSPARENT_RGB;
+             config_attrs[i++] = 0;
+        
+             configs = glXChooseFBConfig(einfo->info.display, 
+                                         einfo->info.screen,
+                                         config_attrs, &num);
+             if ((!configs) || (num < 1))
+               {
+                  printf("Error: glXChooseFBConfig returned no configs\n");
+               }
+             for (i = 0; i < num; i++)
+               {
+                  XVisualInfo *visinfo;
+                  XRenderPictFormat *format;
+                  
+                  visinfo = glXGetVisualFromFBConfig(einfo->info.display, 
+                                                     configs[i]);
+                  if (!visinfo) continue;
+                  if (!alpha)
                     {
                        config = configs[i];
                        _evas_gl_x11_vi = visinfo;
+                       fbconf = config;
                        break;
                     }
+                  else
+                    {
+                       format = XRenderFindVisualFormat(einfo->info.display, visinfo->visual);
+                       if (!format)
+                         {
+                            XFree(visinfo);
+                            continue;
+                         }
+                       if (format->direct.alphaMask > 0)
+                         {
+                            config = configs[i];
+                            _evas_gl_x11_rgba_vi = visinfo;
+                            rgba_fbconf = config;
+                            break;
+                         }
+                    }
+                  XFree(visinfo);
                }
-             XFree(visinfo);
+#endif
           }
-#else   
-        int _evas_gl_x11_configuration[] =
-          {
-             GLX_RGBA, GLX_DOUBLEBUFFER,
-               GLX_LEVEL, 0,
-               GLX_DEPTH_SIZE, 0,
-               GLX_STENCIL_SIZE, 0,
-               GLX_RED_SIZE, 1,
-               GLX_GREEN_SIZE,1,
-               GLX_BLUE_SIZE, 1,
-               None
-          };
-        _evas_gl_x11_vi = glXChooseVisual(einfo->info.display,
-                                          einfo->info.screen,
-                                          _evas_gl_x11_configuration);
-#endif
-        
-#endif
      }
    if (!_evas_gl_x11_vi) return NULL;
+   if (einfo->info.destination_alpha)
+     {
+// EGL / GLES
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+        if (_evas_gl_x11_rgba_vi)
+          {
+             printf("argb vis %x\n", _evas_gl_x11_rgba_vi->visual);
+             return _evas_gl_x11_rgba_vi->visual;
+          }
+#else        
+# ifdef NEWGL
+        if (_evas_gl_x11_rgba_vi)
+          {
+             printf("argb vis %x\n", _evas_gl_x11_rgba_vi->visual);
+             return _evas_gl_x11_rgba_vi->visual;
+          }
+# endif
+#endif        
+     }
+   printf("vis %x\n", _evas_gl_x11_vi->visual);
    return _evas_gl_x11_vi->visual;
 }
 

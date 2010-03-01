@@ -13,12 +13,14 @@ struct _Evas_Engine_Info_GL_X11
 
    /* engine specific data & parameters it needs to set up */
    struct {
-      Display  *display;
-      Drawable  drawable;
-      Visual   *visual;
-      Colormap  colormap;
-      int       depth;
-      int       screen;
+      Display     *display;
+      Drawable     drawable;
+      Visual      *visual;
+      Colormap     colormap;
+      int          depth;
+      int          screen;
+      int          rotation;
+      unsigned int destination_alpha  : 1;
    } info;
    /* engine specific function calls to query stuff about the destination */
    /* engine (what visual & colormap & depth to use, performance info etc. */
