@@ -118,14 +118,14 @@ eina_tile_grid_slicer_next(Eina_Tile_Grid_Slicer *slc, const Eina_Tile_Grid_Info
 static inline Eina_Bool
 eina_tile_grid_slicer_setup(Eina_Tile_Grid_Slicer *slc, int x, int y, int w, int h, int tile_w, int tile_h)
 {
-   int x1, x2, y1, y2;
+   int tx1, tx2, ty1, ty2;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(slc, 0);
 
-   x1 = x;
-   y1 = y;
-   x2 = x + w - 1;
-   y2 = y + h - 1;
+   tx1 = x;
+   ty1 = y;
+   tx2 = x + w - 1;
+   ty2 = y + h - 1;
 
    if (x < 0 || y < 0 || w <= 0 || h <= 0 || tile_w <= 0 || tile_h <= 0)
      {
@@ -137,16 +137,16 @@ eina_tile_grid_slicer_setup(Eina_Tile_Grid_Slicer *slc, int x, int y, int w, int
 	return EINA_TRUE;
      }
 
-   slc->col1 = x1 / tile_w;
-   slc->row1 = y1 / tile_h;
-   slc->col2 = (x2 - 0) / tile_w;
-   slc->row2 = (y2 - 0) / tile_h;
-   slc->x_rel = x1 % tile_w;
-   slc->y_rel = y1 % tile_h;
+   slc->col1 = tx1 / tile_w;
+   slc->row1 = ty1 / tile_h;
+   slc->col2 = (tx2 - 0) / tile_w;
+   slc->row2 = (ty2 - 0) / tile_h;
+   slc->x_rel = tx1 % tile_w;
+   slc->y_rel = ty1 % tile_h;
    slc->w1_rel = tile_w - slc->x_rel;
    slc->h1_rel = tile_h - slc->y_rel;
-   slc->w2_rel = x2 % tile_w + 1;
-   slc->h2_rel = y2 % tile_h + 1;
+   slc->w2_rel = tx2 % tile_w + 1;
+   slc->h2_rel = ty2 % tile_h + 1;
 
    slc->tile_w = tile_w;
    slc->tile_h = tile_h;
