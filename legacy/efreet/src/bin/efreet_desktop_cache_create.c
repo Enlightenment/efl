@@ -1,4 +1,7 @@
 /* vim: set sw=4 ts=4 sts=4 et: */
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include <limits.h>
 #include <stdio.h>
 #include <dirent.h>
@@ -22,7 +25,7 @@ static Eina_Hash *file_ids = NULL;
 static Eina_Hash *paths = NULL;
 
 static int
-cache_add(const char *path, const char *file_id, int priority)
+cache_add(const char *path, const char *file_id, int priority __UNUSED__)
 {
     Efreet_Desktop *desk;
     char *ext;
@@ -42,6 +45,7 @@ cache_add(const char *path, const char *file_id, int priority)
             return 0;
         eina_hash_add(paths, desk->orig_path, (void *)1);
     }
+    /* TODO: We should check priority, and not just hope we search in right order */
     if (file_id && !eina_hash_find(file_ids, file_id))
     {
         int id;
@@ -146,7 +150,7 @@ cache_scan(const char *path, const char *base_id, int priority)
 }
 
 int
-main(int argc, char **argv)
+main()
 {
     /* TODO:
      * - Add file monitor on files, so that we catch changes on files

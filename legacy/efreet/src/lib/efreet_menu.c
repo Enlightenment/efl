@@ -1656,40 +1656,40 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
 {
     Efreet_Xml *merge_xml;
     Efreet_Menu_Internal *internal;
-    char *realpath;
+    char *rp;
 
     if (!parent || !xml || !path) return 0;
 
     /* do nothing if the file doesn't exist */
     if (!ecore_file_exists(path)) return 1;
 
-    realpath = ecore_file_realpath(path);
-    if (realpath[0] == '\0')
+    rp = ecore_file_realpath(path);
+    if (rp[0] == '\0')
     {
         INF("efreet_menu_merge() unable to get real path for %s", path);
         return 0;
     }
 
     /* don't merge the same path twice */
-    if (eina_hash_find(efreet_merged_menus, realpath)) 
+    if (eina_hash_find(efreet_merged_menus, rp)) 
     {
-        FREE(realpath);
+        FREE(rp);
         return 1;
     }
 
-    eina_hash_add(efreet_merged_menus, realpath, (void *)1);
+    eina_hash_add(efreet_merged_menus, rp, (void *)1);
 
-    merge_xml = efreet_xml_new(realpath);
+    merge_xml = efreet_xml_new(rp);
 
     if (!merge_xml)
     {
         INF("efreet_menu_merge() failed to read in the "
-                "merge file (%s)", realpath);
-        FREE(realpath);
+                "merge file (%s)", rp);
+        FREE(rp);
         return 0;
     }
 
-    FREE(realpath);
+    FREE(rp);
 
     internal = efreet_menu_internal_new();
     efreet_menu_path_set(internal, path);
@@ -2761,8 +2761,7 @@ efreet_menu_process_filters(Efreet_Menu_Internal *internal, unsigned int only_un
      * be done once per menu.*/
     if (eina_list_count(internal->applications))
     {
-        Efreet_Menu_Desktop *md;
-        Eina_List           *l, *l2;
+        Eina_List           *l2;
 
         EINA_LIST_FOREACH_SAFE(internal->applications, l, l2, md)
         {

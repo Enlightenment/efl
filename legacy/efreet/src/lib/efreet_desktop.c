@@ -46,7 +46,7 @@ static int efreet_desktop_command_file_id = 0;
 
 static char *cache_file = NULL;
 static Eet_File *cache = NULL;
-static Eet_Data_Descriptor *edd = NULL;
+static Eet_Data_Descriptor *desktop_edd = NULL;
 
 #ifdef EFREET_MODULE_LOG_DOM 
 #undef EFREET_MODULE_LOG_DOM
@@ -153,8 +153,8 @@ efreet_desktop_init(void)
     }
     if (!ecore_file_init())
         goto ecore_error;
-    edd = efreet_desktop_edd_init();
-    if (!edd)
+    desktop_edd = efreet_desktop_edd_init();
+    if (!desktop_edd)
         goto edd_error;
 
     efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
@@ -209,7 +209,7 @@ efreet_desktop_shutdown(void)
                                                      efreet_desktop_types);
     }
     if (cache) eet_close(cache);
-    efreet_desktop_edd_shutdown(edd);
+    efreet_desktop_edd_shutdown(desktop_edd);
     ecore_file_shutdown();
     eina_log_domain_unregister(_efreet_desktop_log_dom);
     IF_FREE(cache_file);
@@ -362,7 +362,7 @@ efreet_desktop_new(const char *file)
     if (cache)
     {
         /* TODO: Check if the cached version is out of date */
-        desktop = eet_data_read(cache, edd, file);
+        desktop = eet_data_read(cache, desktop_edd, file);
         if (desktop)
         {
             desktop->ref = 1;
@@ -1751,15 +1751,15 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
     }
     else
     {
-        char *abs = efreet_desktop_command_path_absolute(file);
+        char *absol = efreet_desktop_command_path_absolute(file);
         /* process local uri/path */
         if (command->flags & EFREET_DESKTOP_EXEC_FLAG_FULLPATH)
-            f->fullpath = strdup(abs);
+            f->fullpath = strdup(absol);
 
         if (command->flags & EFREET_DESKTOP_EXEC_FLAG_URI)
         {
             char buf[PATH_MAX];
-            snprintf(buf, sizeof(buf), "file://%s", abs);
+            snprintf(buf, sizeof(buf), "file://%s", absol);
             f->uri = strdup(buf);
         }
 

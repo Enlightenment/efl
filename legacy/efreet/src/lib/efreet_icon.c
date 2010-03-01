@@ -467,11 +467,11 @@ efreet_icon_find(const char *theme_name, const char *icon, unsigned int size)
     path = efreet_icon_path_find(theme_name, icon, size);
     if (path)
     {
-        Efreet_Icon *icon;
+        Efreet_Icon *ic;
 
-        icon = efreet_icon_new(path);
+        ic = efreet_icon_new(path);
         free(path);
-        return icon;
+        return ic;
     }
 
     return NULL;
