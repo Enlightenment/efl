@@ -143,11 +143,11 @@ fi
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xyes" ; then
-      x_libs="${x_libs} -lX11 -lXext"
+      x_libs="${x_libs} -lX11 -lXext -lXrender"
    else
       x_dir=${x_dir:-/usr/X11R6}
       x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11"
+      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext -lXrender"
    fi
    evas_engine_[]$1[]_cflags="-I/usr/include ${x_cflags}"
    evas_engine_[]$1[]_libs="${x_libs} -lGL -lpthread"
