@@ -180,11 +180,8 @@ efreet_desktop_init(void)
         system(PACKAGE_BIN_DIR "/efreet_desktop_cache_create");
     /* TODO: Need file monitor on cache in case it is updated */
     cache = eet_open(efreet_desktop_cache_file(), EET_FILE_MODE_READ);
-    //if (!cache) goto error;
     return 1;
 
-error:
-    efreet_desktop_edd_shutdown(edd);
 edd_error:
     ecore_file_shutdown();
 ecore_error:
