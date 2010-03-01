@@ -1704,6 +1704,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	ee->alpha = alpha;
 	ecore_x_window_free(ee->prop.window);
 	ecore_event_window_unregister(ee->prop.window);
+        ee->prop.window = 0;
         
 	einfo->info.destination_alpha = alpha;
         
