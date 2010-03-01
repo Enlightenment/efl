@@ -146,14 +146,13 @@ main(int argc, char **argv)
     /* TODO:
      * - Add file monitor on files, so that we catch changes on files
      *   during whilst this program runs.
-     * - When creating new cache, do it on a tmp file, then rename tmp file
-     *   to cache file.
      */
     char file[PATH_MAX];
+    char util_file[PATH_MAX];
     Eina_List *dirs;
     int priority = 0;
     char *dir = NULL;
-    int fd = 0;
+    int fd = 0, tmpfd;
 
     /* init external subsystems */
     if (!eet_init()) goto eet_error;
@@ -201,9 +200,18 @@ main(int argc, char **argv)
     if (!edd) goto edd_error;
 
     /* create cache */
-    ef = eet_open(efreet_desktop_cache_file(), EET_FILE_MODE_WRITE);
+    snprintf(file, sizeof(file), "%s.XXXXXX", efreet_desktop_cache_file());
+    tmpfd = mkstemp(file);
+    if (tmpfd < 0) goto error;
+    close(tmpfd);
+    ef = eet_open(file, EET_FILE_MODE_WRITE);
     if (!ef) goto error;
-    util_ef = eet_open(efreet_util_cache_file(), EET_FILE_MODE_WRITE);
+
+    snprintf(util_file, sizeof(util_file), "%s.XXXXXX", efreet_util_cache_file());
+    tmpfd = mkstemp(util_file);
+    if (tmpfd < 0) goto error;
+    close(tmpfd);
+    util_ef = eet_open(util_file, EET_FILE_MODE_WRITE);
     if (!util_ef) goto error;
 
     file_ids = eina_hash_string_superfast_new(NULL);
@@ -232,6 +240,10 @@ main(int argc, char **argv)
     eet_close(util_ef);
     eet_close(ef);
 
+    /* rename tmp files to real files */
+    if (rename(file, efreet_desktop_cache_file()) < 0) goto error;
+    if (rename(util_file, efreet_util_cache_file()) < 0) goto error;
+
     efreet_desktop_edd_shutdown(edd);
     efreet_shutdown();
     eet_shutdown();
@@ -239,20 +251,15 @@ main(int argc, char **argv)
     close(fd);
     return 0;
 error:
-    printf("error\n");
     IF_FREE(dir);
     efreet_desktop_edd_shutdown(edd);
 edd_error:
-    printf("error\n");
     efreet_shutdown();
 efreet_error:
-    printf("error\n");
     eina_shutdown();
 eina_error:
-    printf("error\n");
     eet_shutdown();
 eet_error:
-    printf("error\n");
     if (fd > 0) close(fd);
     return 1;
 }
