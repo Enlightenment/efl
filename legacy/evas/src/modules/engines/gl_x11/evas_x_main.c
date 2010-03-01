@@ -15,10 +15,10 @@ static GLXFBConfig rgba_fbconf = 0;
 // fixme: something is up/wrong here - dont know what tho...
 //#define NEWGL 1
 
-XVisualInfo *_evas_gl_x11_vi = NULL;
-XVisualInfo *_evas_gl_x11_rgba_vi = NULL;
-Colormap     _evas_gl_x11_cmap = 0;
-Colormap     _evas_gl_x11_rgba_cmap = 0;
+static XVisualInfo *_evas_gl_x11_vi = NULL;
+static XVisualInfo *_evas_gl_x11_rgba_vi = NULL;
+static Colormap     _evas_gl_x11_cmap = 0;
+static Colormap     _evas_gl_x11_rgba_cmap = 0;
 
 Evas_GL_X11_Window *
 eng_window_new(Display *disp,
@@ -34,7 +34,7 @@ eng_window_new(Display *disp,
 {
    Evas_GL_X11_Window *gw;
    int context_attrs[3];
-   int config_attrs[20];
+   int config_attrs[40];
    int major_version, minor_version;
    int num_config, n = 0;
    XVisualInfo *vi_use;
@@ -548,21 +548,24 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
              for (i = 0; i < num; i++)
                {
                   XVisualInfo *visinfo;
-                  XRenderPictFormat *format;
-                  
+                  XRenderPictFormat *format = NULL;
+  
                   visinfo = glXGetVisualFromFBConfig(einfo->info.display, 
                                                      configs[i]);
                   if (!visinfo) continue;
                   if (!alpha)
                     {
                        config = configs[i];
-                       _evas_gl_x11_vi = visinfo;
+                       _evas_gl_x11_vi = malloc(sizeof(XVisualInfo));
+                       memcpy(_evas_gl_x11_vi, visinfo, sizeof(XVisualInfo));
                        fbconf = config;
+                       XFree(visinfo);
                        break;
                     }
                   else
                     {
-                       format = XRenderFindVisualFormat(einfo->info.display, visinfo->visual);
+                       format = XRenderFindVisualFormat
+                         (einfo->info.display, visinfo->visual);
                        if (!format)
                          {
                             XFree(visinfo);
@@ -571,8 +574,10 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
                        if (format->direct.alphaMask > 0)
                          {
                             config = configs[i];
-                            _evas_gl_x11_rgba_vi = visinfo;
+                            _evas_gl_x11_rgba_vi = malloc(sizeof(XVisualInfo));
+                            memcpy(_evas_gl_x11_rgba_vi, visinfo, sizeof(XVisualInfo));
                             rgba_fbconf = config;
+                            XFree(visinfo);
                             break;
                          }
                     }
@@ -606,19 +611,21 @@ eng_best_colormap_get(Evas_Engine_Info_GL_X11 *einfo)
    if (einfo->info.destination_alpha)
      {
         if (!_evas_gl_x11_rgba_cmap)
-          _evas_gl_x11_rgba_cmap = XCreateColormap(einfo->info.display,
-                                                   RootWindow(einfo->info.display,
-                                                              einfo->info.screen),
-                                                   _evas_gl_x11_rgba_vi->visual, 
-                                                   0);
+          _evas_gl_x11_rgba_cmap = 
+          XCreateColormap(einfo->info.display,
+                          RootWindow(einfo->info.display,
+                                     einfo->info.screen),
+                          _evas_gl_x11_rgba_vi->visual, 
+                          0);
         return _evas_gl_x11_rgba_cmap;
      }
    if (!_evas_gl_x11_cmap)
-     _evas_gl_x11_cmap = XCreateColormap(einfo->info.display,
-                                         RootWindow(einfo->info.display,
-                                                    einfo->info.screen),
-                                         _evas_gl_x11_vi->visual, 
-                                         0);
+     _evas_gl_x11_cmap = 
+     XCreateColormap(einfo->info.display,
+                     RootWindow(einfo->info.display,
+                                einfo->info.screen),
+                     _evas_gl_x11_vi->visual, 
+                     0);
    return _evas_gl_x11_cmap;
 }
                                  
