@@ -36,12 +36,11 @@ XID      (*glsym_glXCreatePixmap)    (Display *a, void *b, Pixmap c, const int *
 void     (*glsym_glXDestroyPixmap)   (Display *a, XID b) = NULL;
 void     (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d) = NULL;
 #endif
-                
+
 static void
 _sym_init(void)
 {
    static int done = 0;
-   
    
    if (done) return;
    

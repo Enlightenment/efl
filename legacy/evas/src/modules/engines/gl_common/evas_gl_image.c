@@ -143,7 +143,7 @@ evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, int alpha, int cspac
    im = calloc(1, sizeof(Evas_GL_Image));
    if (!im) return NULL;
    im->references = 1;
-   im->im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
+   im->im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
    if (!im->im)
      {
 	free(im);
@@ -153,10 +153,12 @@ evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, int alpha, int cspac
    im->im->cache_entry.flags.alpha = alpha ? 1 : 0;
    im->cs.space = cspace;
    im->alpha = im->im->cache_entry.flags.alpha;
+   im->im->cache_entry.w = w;
+   im->im->cache_entry.h = h;
    im->w = im->im->cache_entry.w;
    im->h = im->im->cache_entry.h;
    evas_cache_image_colorspace(&im->im->cache_entry, cspace);
-   im->im = (RGBA_Image *) evas_cache_image_size_set(&im->im->cache_entry, w, h);
+   im->im = (RGBA_Image *)evas_cache_image_size_set(&im->im->cache_entry, w, h);
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:

@@ -408,12 +408,15 @@ gl_compile_link_error(GLuint target, const char *action)
    char *logtxt;
    
    glGetProgramiv(target, GL_INFO_LOG_LENGTH, &loglen);
-   logtxt = calloc(loglen, sizeof(char));
-   if (logtxt)
+   if (loglen > 0)
      {
-        glGetProgramInfoLog(target, loglen, &chars, logtxt);
-        printf("Failed to %s: %s\n", action, logtxt);
-        free(logtxt);
+        logtxt = calloc(loglen, sizeof(char));
+        if (logtxt)
+          {
+             glGetProgramInfoLog(target, loglen, &chars, logtxt);
+             printf("Failed to %s: %s\n", action, logtxt);
+             free(logtxt);
+          }
      }
 }
 
