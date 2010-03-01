@@ -1092,7 +1092,11 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
 	  {
 	     if (!im->cs.no_free) free(im->cs.data);
 	  }
-	im->cs.data = calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
+        if (im->im->cache_entry.h > 0)
+          im->cs.data = 
+          calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
+        else
+          im->cs.data = NULL;
 	im->cs.no_free = 0;
 	break;
       default:
