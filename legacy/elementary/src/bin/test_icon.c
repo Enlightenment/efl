@@ -21,6 +21,9 @@ test_icon(void *data, Evas_Object *obj, void *event_info)
    snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
+   elm_icon_no_scale_set(ic, 1);
+   evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(ic, 0.5, 0.5);
    elm_win_resize_object_add(win, ic);
    evas_object_show(ic);
 
