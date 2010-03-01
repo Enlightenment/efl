@@ -81,7 +81,7 @@
  * in order to just calculate what to re-draw, it needs to walk through many
  * many many objects. Thus, the more objects you keep active, the more
  * overhead Evas has in just doing its work. It is advisable to keep your
- 8 active objects to the minimum working set you need. Also remember that
+ * active objects to the minimum working set you need. Also remember that
  * object creation and deletion carries an overhead, so there is a
  * middle-ground, which is not easily determined. But don't keep massive lists
  * of objects you can't see or use. Genlist does this with list objects. It
