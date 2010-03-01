@@ -146,16 +146,6 @@ eng_window_new(Display *disp,
    config_attrs[n++] = EGL_NONE;
 # endif
    
-   vendor = glGetString(GL_VENDOR);
-   renderer = glGetString(GL_RENDERER);
-   version = glGetString(GL_VERSION);
-   if (!vendor) vendor = "-UNKNOWN-";
-   if (!renderer) renderer = "-UNKNOWN-";
-   if (!version) version = "-UNKNOWN-";
-   fprintf(stderr, "vendor: %s\n", vendor);
-   fprintf(stderr, "renderer: %s\n", renderer);
-   fprintf(stderr, "version: %s\n", version);
-        
    gw->egl_disp= eglGetDisplay((EGLNativeDisplayType)(gw->disp));
    if (!gw->egl_disp)
      {
@@ -173,6 +163,7 @@ eng_window_new(Display *disp,
         printf("Error: eglBindAPI() fail.\n");
         printf("Error: error # was: 0x%x\n", eglGetError());
      }
+   
    num_config = 0;
    if (!eglChooseConfig(gw->egl_disp, config_attrs, &gw->egl_config,
                         1, &num_config) || (num_config != 1))
@@ -205,6 +196,17 @@ eng_window_new(Display *disp,
         printf("Error: eglMakeCurrent() fail.\n");
         printf("Error: error # was: 0x%x\n", eglGetError());
      }
+
+   vendor = glGetString(GL_VENDOR);
+   renderer = glGetString(GL_RENDERER);
+   version = glGetString(GL_VERSION);
+   if (!vendor) vendor = "-UNKNOWN-";
+   if (!renderer) renderer = "-UNKNOWN-";
+   if (!version) version = "-UNKNOWN-";
+   fprintf(stderr, "vendor: %s\n", vendor);
+   fprintf(stderr, "renderer: %s\n", renderer);
+   fprintf(stderr, "version: %s\n", version);
+   
 // GLX   
 #else
    if (!context)
