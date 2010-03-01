@@ -42,7 +42,7 @@ cache_add(const char *path, const char *file_id, int priority)
             return 0;
         eina_hash_add(paths, desk->orig_path, (void *)1);
     }
-    if (!eina_hash_find(file_ids, file_id))
+    if (file_id && !eina_hash_find(file_ids, file_id))
     {
         int id;
         char key[PATH_MAX];
