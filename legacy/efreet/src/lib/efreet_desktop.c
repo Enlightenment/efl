@@ -373,6 +373,10 @@ efreet_desktop_new(const char *file)
             return desktop;
         }
     }
+    /* TODO:
+     * Add .desktop file path to a cache file, so that
+     * efreet_desktop_cache_create can add it to the cache
+     */
 
     if (!ecore_file_exists(file)) return NULL;
 

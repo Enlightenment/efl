@@ -146,6 +146,9 @@ main(int argc, char **argv)
     /* TODO:
      * - Add file monitor on files, so that we catch changes on files
      *   during whilst this program runs.
+     * - Only update cache, don't recreate everything.
+     * - Use return value to signal calling process wheter cache was
+     *   updated or not.
      */
     char file[PATH_MAX];
     char util_file[PATH_MAX];
