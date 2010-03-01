@@ -35,7 +35,7 @@ eng_window_new(Display *disp,
    int context_attrs[3];
    int config_attrs[20];
    int major_version, minor_version;
-   int num_config;
+   int num_config, n = 0;
    XVisualInfo *vi_use;
    
    if (!_evas_gl_x11_vi) return NULL;
@@ -76,69 +76,72 @@ eng_window_new(Display *disp,
    context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
    context_attrs[1] = 2;
    context_attrs[2] = EGL_NONE;
+
 # if defined(GLES_VARIETY_S3C6410)
    if (gw->visualinfo->depth == 16) // 16bpp
      {
-        config_attrs[0]  = EGL_SURFACE_TYPE;
-        config_attrs[1]  = EGL_WINDOW_BIT;
-        config_attrs[2]  = EGL_RENDERABLE_TYPE;
-        config_attrs[3]  = EGL_OPENGL_ES2_BIT;
-        config_attrs[4]  = EGL_RED_SIZE;
-        config_attrs[5]  = 5;
-        config_attrs[6]  = EGL_GREEN_SIZE;
-        config_attrs[7]  = 6;
-        config_attrs[8]  = EGL_BLUE_SIZE;
-        config_attrs[9]  = 5;
-        config_attrs[10] = EGL_DEPTH_SIZE;
-        config_attrs[11] = 0;
-        config_attrs[12] = EGL_STENCIL_SIZE;
-        config_attrs[13] = 0;
-        config_attrs[14] = EGL_NONE;
+        config_attrs[n++] = EGL_SURFACE_TYPE;
+        config_attrs[n++] = EGL_WINDOW_BIT;
+        config_attrs[n++] = EGL_RENDERABLE_TYPE;
+        config_attrs[n++] = EGL_OPENGL_ES2_BIT;
+        config_attrs[n++] = EGL_RED_SIZE;
+        config_attrs[n++] = 5;
+        config_attrs[n++] = EGL_GREEN_SIZE;
+        config_attrs[n++] = 6;
+        config_attrs[n++] = EGL_BLUE_SIZE;
+        config_attrs[n++] = 5;
+        config_attrs[n++] = EGL_DEPTH_SIZE;
+        config_attrs[n++] = 0;
+        config_attrs[n++] = EGL_STENCIL_SIZE;
+        config_attrs[n++] = 0;
+        config_attrs[n++] = EGL_NONE;
      }
    else // 24/32bit. no one does 8bpp anymore. and 15bpp... dead
      {
-        config_attrs[0]  = EGL_SURFACE_TYPE;
-        config_attrs[1]  = EGL_WINDOW_BIT;
-        config_attrs[2]  = EGL_RENDERABLE_TYPE;
-        config_attrs[3]  = EGL_OPENGL_ES2_BIT;
-        config_attrs[4]  = EGL_RED_SIZE;
-        config_attrs[5]  = 8;
-        config_attrs[6]  = EGL_GREEN_SIZE;
-        config_attrs[7]  = 8;
-        config_attrs[8]  = EGL_BLUE_SIZE;
-        config_attrs[9]  = 8;
-        config_attrs[10] = EGL_DEPTH_SIZE;
-        config_attrs[11] = 0;
-        config_attrs[12] = EGL_STENCIL_SIZE;
-        config_attrs[13] = 0;
-        config_attrs[14] = EGL_NONE;
+        config_attrs[n++] = EGL_SURFACE_TYPE;
+        config_attrs[n++] = EGL_WINDOW_BIT;
+        config_attrs[n++] = EGL_RENDERABLE_TYPE;
+        config_attrs[n++] = EGL_OPENGL_ES2_BIT;
+        config_attrs[n++] = EGL_RED_SIZE;
+        config_attrs[n++] = 8;
+        config_attrs[n++] = EGL_GREEN_SIZE;
+        config_attrs[n++] = 8;
+        config_attrs[n++] = EGL_BLUE_SIZE;
+        config_attrs[n++] = 8;
+        config_attrs[n++] = EGL_DEPTH_SIZE;
+        config_attrs[n++] = 0;
+        config_attrs[n++] = EGL_STENCIL_SIZE;
+        config_attrs[n++] = 0;
+        config_attrs[n++] = EGL_NONE;
      }
 # elif defined(GLES_VARIETY_SGX)
-   config_attrs[0] = EGL_SURFACE_TYPE;
-   config_attrs[1] = EGL_WINDOW_BIT;
-   config_attrs[2] = EGL_RENDERABLE_TYPE;
-   config_attrs[3] = EGL_OPENGL_ES2_BIT;
-   config_attrs[4] = EGL_RED_SIZE;
-   config_attrs[5] = 1;
-   config_attrs[6] = EGL_GREEN_SIZE;
-   config_attrs[7] = 1;
-   config_attrs[8] = EGL_BLUE_SIZE;
-   config_attrs[9] = 1;
+   config_attrs[n++] = EGL_SURFACE_TYPE;
+   config_attrs[n++] = EGL_WINDOW_BIT;
+   config_attrs[n++] = EGL_RENDERABLE_TYPE;
+   config_attrs[n++] = EGL_OPENGL_ES2_BIT;
+   /* FIXME: SGx EGL breaks here - it SHOULD work - but it doesnt
+   config_attrs[n++] = EGL_RED_SIZE;
+   config_attrs[n++] = 1;
+   config_attrs[n++] = EGL_GREEN_SIZE;
+   config_attrs[n++] = 1;
+   config_attrs[n++] = EGL_BLUE_SIZE;
+   config_attrs[n++] = 1;
+    */
    if (alpha)
      {
-        config_attrs[10] = EGL_ALPHA_SIZE;
-        config_attrs[11] = 1;
+        config_attrs[n++] = EGL_ALPHA_SIZE;
+        config_attrs[n++] = 1;
      }
    else
      {
-        config_attrs[10] = EGL_ALPHA_SIZE;
-        config_attrs[11] = 0;
+        config_attrs[n++] = EGL_ALPHA_SIZE;
+        config_attrs[n++] = 0;
      }
-   config_attrs[12] = EGL_DEPTH_SIZE;
-   config_attrs[13] = 0;
-   config_attrs[14] = EGL_STENCIL_SIZE;
-   config_attrs[15] = 0;
-   config_attrs[16] = EGL_NONE;
+   config_attrs[n++] = EGL_DEPTH_SIZE;
+   config_attrs[n++] = 0;
+   config_attrs[n++] = EGL_STENCIL_SIZE;
+   config_attrs[n++] = 0;
+   config_attrs[n++] = EGL_NONE;
 # endif
    gw->egl_disp= eglGetDisplay((EGLNativeDisplayType)(gw->disp));
    if (!gw->egl_disp)
@@ -154,6 +157,7 @@ eng_window_new(Display *disp,
      {
         printf("Error: eglBindAPI() fail.\n");
      }
+   num_config = 0;
    if (!eglChooseConfig(gw->egl_disp, config_attrs, &gw->egl_config,
                         1, &num_config) || (num_config != 1))
      {
@@ -164,6 +168,7 @@ eng_window_new(Display *disp,
                                                NULL);
    if (gw->egl_surface[0] == EGL_NO_SURFACE)
      {
+        printf("ERR: %x, num_config = %i\n", eglGetError(), num_config);
         printf("Error: eglCreateWindowSurface() fail for 0x%x.\n", (unsigned int)gw->win);
      }
    if (context == EGL_NO_CONTEXT)
