@@ -418,6 +418,7 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
                   obj->cur.map = NULL;
                   return;
                }
+             _evas_map_free(obj->cur.map);
              obj->cur.map = NULL;
              if (!obj->cur.usemap) _evas_map_calc_geom_change(obj);
              else _evas_map_calc_map_geometry(obj);
