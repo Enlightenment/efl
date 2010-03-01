@@ -39,3 +39,16 @@ efreet_spec_test.c
 efreet_cache_test_LDADD = $(top_builddir)/src/lib/libefreet.la @EFREET_LIBS@
 efreet_cache_test_SOURCES = \
 ef_cache.c
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS = efreet_suite
+
+efreet_suite_SOURCES = \
+efreet_suite.c \
+efreet_test_efreet.c \
+efreet_test_efreet_cache.c
+
+efreet_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libefreet.la
+
+endif
