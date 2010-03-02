@@ -563,6 +563,7 @@ img_free(Img *img)
         if (tmp) strshr_freeme = tmp;
         else
           {
+             printf("realloc of strshr_freeme failed for %i items\n", strshr_freeme_alloc);
              strshr_freeme_alloc -= 32;
              strshr_freeme_count -= 3;
              return;
