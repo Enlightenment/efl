@@ -309,6 +309,7 @@ struct _Elm_Genlist_Item
 
    Elm_Genlist_Item *rel;
    int relcount;
+   int walking;
    Eina_Bool before : 1;
 
    Eina_Bool realized : 1;
@@ -424,6 +425,89 @@ _item_hilight(Elm_Genlist_Item *it)
 }
 
 static void
+_item_block_del(Elm_Genlist_Item *it)
+{
+   Eina_Inlist *il;
+   Item_Block *itb = it->block;
+
+   itb->items = eina_list_remove(itb->items, it);
+   itb->count--;
+   itb->changed = EINA_TRUE;
+   if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
+   it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
+   if (itb->count < 1)
+     {
+	il = EINA_INLIST_GET(itb);
+	Item_Block *itbn = (Item_Block *)(il->next);
+	if (it->parent)
+	  it->parent->items = eina_list_remove(it->parent->items, it);
+	else
+	  it->wd->blocks = eina_inlist_remove(it->wd->blocks, il);
+	free(itb);
+	if (itbn) itbn->changed = EINA_TRUE;
+     }
+   else
+     {
+	if (itb->count < 16)
+	  {
+	     il = EINA_INLIST_GET(itb);
+	     Item_Block *itbp = (Item_Block *)(il->prev);
+	     Item_Block *itbn = (Item_Block *)(il->next);
+	     if ((itbp) && ((itbp->count + itb->count) < 48))
+	       {
+		  Elm_Genlist_Item *it2;
+
+		  EINA_LIST_FREE(itb->items, it2)
+		    {
+		       it2->block = itbp;
+		       itbp->items = eina_list_append(itbp->items, it2);
+		       itbp->count++;
+		       itbp->changed = EINA_TRUE;
+		    }
+		  it->wd->blocks = eina_inlist_remove(it->wd->blocks, EINA_INLIST_GET(itb));
+		  free(itb);
+	       }
+	     else if ((itbn) && ((itbn->count + itb->count) < 48))
+	       {
+		  while (itb->items)
+		    {
+		       Eina_List *last = eina_list_last(itb->items);
+		       Elm_Genlist_Item *it2 = last->data;
+
+		       it2->block = itbn;
+		       itb->items = eina_list_remove_list(itb->items, last);
+		       itbn->items = eina_list_prepend(itbn->items, it2);
+		       itbn->count++;
+		       itbn->changed = EINA_TRUE;
+		    }
+		  it->wd->blocks = 
+                    eina_inlist_remove(it->wd->blocks, EINA_INLIST_GET(itb));
+		  free(itb);
+	       }
+	  }
+     }
+}
+
+static void
+_item_del(Elm_Genlist_Item *it)
+{
+   elm_genlist_item_subitems_clear(it);
+   if (it->wd->show_item == it) it->wd->show_item = NULL;
+   if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
+   if (it->realized) _item_unrealize(it);
+   if (it->block) _item_block_del(it);
+   if ((!it->delete_me) && (it->itc->func.del)) 
+     it->itc->func.del(it->data, it->wd->obj);
+   it->delete_me = EINA_TRUE;
+   if (it->queued)
+     it->wd->queue = eina_list_remove(it->wd->queue, it);
+   it->wd->items = eina_inlist_remove(it->wd->items, EINA_INLIST_GET(it));
+   if (it->parent)
+     it->parent->items = eina_list_remove(it->parent->items, it);
+   free(it);
+}
+
+static void
 _item_select(Elm_Genlist_Item *it)
 {
    if ((it->wd->no_select) || (it->delete_me)) return;
@@ -435,8 +519,15 @@ _item_select(Elm_Genlist_Item *it)
    it->selected = EINA_TRUE;
    it->wd->selected = eina_list_append(it->wd->selected, it);
    call:
+   it->walking++;
    if (it->func.func) it->func.func((void *)it->func.data, it->wd->obj, it);
-   evas_object_smart_callback_call(it->wd->obj, "selected", it);
+   if (!it->delete_me)
+     evas_object_smart_callback_call(it->wd->obj, "selected", it);
+   it->walking--;
+   if ((it->walking == 0) && (it->delete_me))
+     {
+        if (it->relcount == 0) _item_del(it);
+     }
 }
 
 static void
@@ -1422,89 +1513,6 @@ _item_new(Widget_Data *wd, const Elm_Genlist_Item_Class *itc,
    it->func.func = func;
    it->func.data = func_data;
    return it;
-}
-
-static void
-_item_block_del(Elm_Genlist_Item *it)
-{
-   Eina_Inlist *il;
-   Item_Block *itb = it->block;
-
-   itb->items = eina_list_remove(itb->items, it);
-   itb->count--;
-   itb->changed = EINA_TRUE;
-   if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
-   it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
-   if (itb->count < 1)
-     {
-	il = EINA_INLIST_GET(itb);
-	Item_Block *itbn = (Item_Block *)(il->next);
-	if (it->parent)
-	  it->parent->items = eina_list_remove(it->parent->items, it);
-	else
-	  it->wd->blocks = eina_inlist_remove(it->wd->blocks, il);
-	free(itb);
-	if (itbn) itbn->changed = EINA_TRUE;
-     }
-   else
-     {
-	if (itb->count < 16)
-	  {
-	     il = EINA_INLIST_GET(itb);
-	     Item_Block *itbp = (Item_Block *)(il->prev);
-	     Item_Block *itbn = (Item_Block *)(il->next);
-	     if ((itbp) && ((itbp->count + itb->count) < 48))
-	       {
-		  Elm_Genlist_Item *it2;
-
-		  EINA_LIST_FREE(itb->items, it2)
-		    {
-		       it2->block = itbp;
-		       itbp->items = eina_list_append(itbp->items, it2);
-		       itbp->count++;
-		       itbp->changed = EINA_TRUE;
-		    }
-		  it->wd->blocks = eina_inlist_remove(it->wd->blocks, EINA_INLIST_GET(itb));
-		  free(itb);
-	       }
-	     else if ((itbn) && ((itbn->count + itb->count) < 48))
-	       {
-		  while (itb->items)
-		    {
-		       Eina_List *last = eina_list_last(itb->items);
-		       Elm_Genlist_Item *it2 = last->data;
-
-		       it2->block = itbn;
-		       itb->items = eina_list_remove_list(itb->items, last);
-		       itbn->items = eina_list_prepend(itbn->items, it2);
-		       itbn->count++;
-		       itbn->changed = EINA_TRUE;
-		    }
-		  it->wd->blocks = 
-                    eina_inlist_remove(it->wd->blocks, EINA_INLIST_GET(itb));
-		  free(itb);
-	       }
-	  }
-     }
-}
-
-static void
-_item_del(Elm_Genlist_Item *it)
-{
-   elm_genlist_item_subitems_clear(it);
-   if (it->wd->show_item == it) it->wd->show_item = NULL;
-   if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
-   if (it->realized) _item_unrealize(it);
-   if (it->block) _item_block_del(it);
-   if ((!it->delete_me) && (it->itc->func.del)) 
-     it->itc->func.del(it->data, it->wd->obj);
-   it->delete_me = EINA_TRUE;
-   if (it->queued)
-     it->wd->queue = eina_list_remove(it->wd->queue, it);
-   it->wd->items = eina_inlist_remove(it->wd->items, EINA_INLIST_GET(it));
-   if (it->parent)
-     it->parent->items = eina_list_remove(it->parent->items, it);
-   free(it);
 }
 
 static void
@@ -2668,7 +2676,7 @@ EAPI void
 elm_genlist_item_del(Elm_Genlist_Item *it)
 {
    if (!it) return;
-   if (it->relcount > 0)
+   if ((it->relcount > 0) || (it->walking > 0))
      {
 	elm_genlist_item_subitems_clear(it);
 	it->delete_me = EINA_TRUE;
