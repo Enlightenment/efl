@@ -127,9 +127,9 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
 	w = (w * ie->load_opts.dpi) / 90.0;
 	h = (h * ie->load_opts.dpi) / 90.0;
      }
-   else if ((ie->load_opts.w) && (ie->load_opts.h))
+   else if ((ie->load_opts.w > 0) && (ie->load_opts.h > 0))
      {
-	int w2, h2;
+	int w2 = w, h2 = h;
 	if (ie->load_opts.w > 0)
 	  {
 	     w2 = ie->load_opts.w;
