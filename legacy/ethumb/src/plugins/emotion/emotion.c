@@ -317,7 +317,6 @@ _generate_thumb(Ethumb *e)
    _plugin->video = o;
 
    ethumb_file_get(e, &file, NULL);
-   ethumb_video_start_get(e);
    f = ethumb_thumb_format_get(e);
 
    emotion_object_file_set(o, file);

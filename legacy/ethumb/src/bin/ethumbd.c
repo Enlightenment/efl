@@ -48,6 +48,7 @@
 #define INF(...) EINA_LOG_INFO(__VA_ARGS__)
 #define WRN(...) EINA_LOG_WARN(__VA_ARGS__)
 #define ERR(...) EINA_LOG_ERR(__VA_ARGS__)
+#define CRIT(...) EINA_LOG_CRIT(__VA_ARGS__)
 
 static const char _ethumb_dbus_bus_name[] = "org.enlightenment.Ethumb";
 static const char _ethumb_dbus_interface[] = "org.enlightenment.Ethumb";
@@ -354,6 +355,28 @@ _generated_cb(struct _Ethumbd *ed, Eina_Bool success, const char *thumb_path, co
    ed->processing = NULL;
 }
 
+static Eina_Bool
+_write_safe(int fd, void *data, size_t size)
+{
+   unsigned char *buf = data;
+   size_t todo = size;
+   while (todo > 0)
+     {
+	size_t r = write(fd, buf, todo);
+	if (r > 0)
+	  {
+	     todo -= r;
+	     buf += r;
+	  }
+	else if ((r < 0) && (errno != EINTR))
+	  {
+	     ERR("could not write to fd=%d: %s", fd, strerror(errno));
+	     return EINA_FALSE;
+	  }
+     }
+   return EINA_TRUE;
+}
+
 static void
 _ethumbd_slave_cmd_ready(struct _Ethumbd *ed)
 {
@@ -369,7 +392,7 @@ _ethumbd_slave_cmd_ready(struct _Ethumbd *ed)
    size_path = (int *)bufcmd;
    bufcmd += sizeof(*size_path);
 
-   write(STDERR_FILENO, bufcmd, ed->slave.scmd);
+   _write_safe(STDERR_FILENO, bufcmd, ed->slave.scmd);
 
    thumb_path = bufcmd;
    bufcmd += *size_path;
@@ -423,7 +446,8 @@ _ethumbd_slave_data_read_cb(void *data, int type, void *event)
    ssize = ev->size;
    sdata = ev->data;
 
-   write(STDERR_FILENO, sdata, ssize);
+   if (!_write_safe(STDERR_FILENO, sdata, ssize))
+     return 0;
 
    while (ssize > 0)
      {
@@ -713,13 +737,29 @@ _ethumb_table_append(struct _Ethumbd *ed)
      {
 	int new_max = q->max_count + 5;
 	int start, size;
+	void *tmp;
 
 	start = q->max_count;
 	size = new_max - q->max_count;
 
-	q->table = realloc(q->table, new_max * sizeof(struct _Ethumb_Object));
-	q->list = realloc(q->list, new_max * sizeof(int));
+	tmp = realloc(q->table, new_max * sizeof(struct _Ethumb_Object));
+	if (!tmp)
+	  {
+	     CRIT("could not realloc q->table to %zd bytes: %s",
+		  new_max * sizeof(struct _Ethumb_Object), strerror(errno));
+	     return -1;
+	  }
+	q->table = tmp;
 	memset(&q->table[start], 0, size * sizeof(struct _Ethumb_Object));
+
+	tmp = realloc(q->list, new_max * sizeof(int));
+	if (!tmp)
+	  {
+	     CRIT("could not realloc q->list to %zd bytes: %s",
+		  new_max * sizeof(int), strerror(errno));
+	     return -1;
+	  }
+	q->list = tmp;
 
 	q->max_count = new_max;
      }
@@ -874,6 +914,8 @@ _ethumb_dbus_ethumb_new_cb(E_DBus_Object *object, DBusMessage *msg)
      goto end_new;
 
    i = _ethumb_table_append(ed);
+   if (i < 0)
+     goto end_new;
 
    odata = calloc(1, sizeof(*odata));
    odata->index = i;

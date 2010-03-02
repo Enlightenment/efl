@@ -910,6 +910,12 @@ _ethumb_file_generate_path(Ethumb *e)
 	  category = eina_stringshare_ref(_thumb_category_normal);
 	else if (e->tw == THUMB_SIZE_LARGE)
 	  category = eina_stringshare_ref(_thumb_category_large);
+	else
+	  {
+	     ERR("fdo_format but size %d is not NORMAL (%d) or LARGE (%d)?",
+		 e->tw, THUMB_SIZE_NORMAL, THUMB_SIZE_LARGE);
+	     category = "unknown";
+	  }
      }
 
    if (e->format == ETHUMB_THUMB_FDO)

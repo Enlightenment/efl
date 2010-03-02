@@ -223,7 +223,7 @@ main(int argc, char *argv[])
 {
    Ethumb_Client *c;
    Eina_Bool quit_option = 0;
-   const char *format_str, *aspect_str;
+   const char *format_str = NULL, *aspect_str;
    struct options opts = {
      {-1, -1, -1, -1},
      0, 0,
