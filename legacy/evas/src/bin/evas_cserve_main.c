@@ -556,8 +556,17 @@ img_free(Img *img)
    strshr_freeme_count +=  3;
    if (strshr_freeme_count > strshr_freeme_alloc)
      {
+        const char **tmp;
+        
         strshr_freeme_alloc += 32;
-        strshr_freeme = realloc(strshr_freeme, strshr_freeme_alloc * sizeof(const char **));
+        tmp = realloc(strshr_freeme, strshr_freeme_alloc * sizeof(const char **));
+        if (tmp) strshr_freeme = tmp;
+        else
+          {
+             strshr_freeme_alloc -= 32;
+             strshr_freeme_count -= 3;
+             return;
+          }
      }
    strshr_freeme[strshr_freeme_count - 3] = img->key;
    strshr_freeme[strshr_freeme_count - 2] = img->file.file;
