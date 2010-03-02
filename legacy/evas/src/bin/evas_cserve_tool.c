@@ -85,7 +85,6 @@ main(int argc, char **argv)
         else if ((!strcmp(argv[i], "getinfo")))
           {
              Op_Getinfo_Reply *info;
-             Op_Getinfo_Item *itt;
              unsigned char *p;
              int i, j;
              
@@ -109,8 +108,7 @@ main(int argc, char **argv)
                   char *file, *key, buf[512];
                   struct tm *ltm;
                   
-                  itt = (Op_Getinfo_Item *)p;
-                  memcpy(&it, itt, sizeof(Op_Getinfo_Item));
+                  memcpy(&it, p, sizeof(Op_Getinfo_Item));
                   file = (char*) (p + sizeof(Op_Getinfo_Item));
                   key = file + strlen(file) + 1;
                   printf("-IMAGE- [#%i]\n", i);
