@@ -954,6 +954,10 @@ load_data_thread(void *data)
 static int
 message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *data)
 {
+   // copy data into  local aligned buffer... in case.
+   unsigned char *tdata = alloca(size + 16);
+   memcpy(tdata, data, size);
+   
    t_now = time(NULL);
    DBG("message @ %i...", (int)t_now);
    switch (opcode)
@@ -967,7 +971,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              msg.pid = getpid();
              msg.server_id = server_id;
              msg.handle = c;
-             rep = (Op_Init *)data;
+             rep = (Op_Init *)tdata;
              c->pid = rep->pid;
              if (rep->server_id == 1) // 2nd channel conn
                {
@@ -989,7 +993,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              char *file = NULL, *key = NULL;
              
              DBG("OP_LOAD %i", c->pid);
-             rep = (Op_Load *)data;
+             rep = (Op_Load *)tdata;
              file = (char*) (data + sizeof(Op_Load));
              key = file + strlen(file) + 1;
              if (key[0] == 0) key = NULL;
@@ -1045,7 +1049,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Img *img;
              
              DBG("OP_UNLOAD %i", c->pid);
-             rep = (Op_Unload *)data;
+             rep = (Op_Unload *)tdata;
              img = rep->handle;
              if ((img) && (rep->server_id == server_id))
                {
@@ -1076,7 +1080,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Img *img;
              
              DBG("OP_LOADDATA %i", c->pid);
-             rep = (Op_Loaddata *)data;
+             rep = (Op_Loaddata *)tdata;
              img = rep->handle;
              if ((img) && (rep->server_id == server_id))
                {
@@ -1149,7 +1153,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Img *img;
              
              DBG("OP_UNLOADDATA %i", c->pid);
-             rep = (Op_Unloaddata *)data;
+             rep = (Op_Unloaddata *)tdata;
              img = rep->handle;
              if ((img) && (rep->server_id == server_id))
                {
@@ -1169,7 +1173,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Img *img;
              
              DBG("OP_USELESSDATA %i", c->pid);
-             rep = (Op_Unloaddata *)data;
+             rep = (Op_Unloaddata *)tdata;
              img = rep->handle;
              if ((img) && (rep->server_id == server_id))
                {
@@ -1189,7 +1193,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Img *img;
              
              DBG("OP_PRELOAD %i", c->pid);
-             rep = (Op_Preload *)data;
+             rep = (Op_Preload *)tdata;
              img = rep->handle;
              if ((img) && (rep->server_id == server_id))
                {
@@ -1209,7 +1213,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Img *img;
              
              DBG("OP_FORCEDUNLOAD %i", c->pid);
-             rep = (Op_Forcedunload *)data;
+             rep = (Op_Forcedunload *)tdata;
              img = rep->handle;
              if ((img) && (rep->server_id == server_id))
                {
@@ -1250,7 +1254,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Op_Setconfig *rep;
              
              DBG("OP_SETCONFIG %i", c->pid);
-             rep = (Op_Setconfig *)data;
+             rep = (Op_Setconfig *)tdata;
              cache_max_usage = rep->cache_max_usage;
              cache_item_timeout = rep->cache_item_timeout;
              cache_item_timeout_check = rep->cache_item_timeout_check;
