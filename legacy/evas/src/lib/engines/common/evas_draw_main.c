@@ -11,11 +11,7 @@ evas_common_draw_context_cutouts_new(void)
 {
    Cutout_Rects *rects;
 
-   rects = malloc(sizeof(Cutout_Rects));
-   rects->rects = NULL;
-   rects->active = 0;
-   rects->max = 0;
-
+   rects = calloc(1, sizeof(Cutout_Rects));
    return rects;
 }
 
