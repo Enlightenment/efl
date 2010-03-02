@@ -10,6 +10,7 @@
 #include <sys/file.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <Eina.h>
 #include <Ecore_File.h>
@@ -174,24 +175,6 @@ main()
     snprintf(file, sizeof(file), "%s/.efreet", efreet_home_dir_get());
     if (!ecore_file_mkpath(file)) goto efreet_error;
 
-    /* create dir for desktop cache */
-    dir = ecore_file_dir_get(efreet_desktop_cache_file());
-    if (!ecore_file_mkpath(dir)) goto efreet_error;
-    free(dir);
-    /* create desktop cache file, so that efreet_init wont run another instance of this program */
-    fd = open(efreet_desktop_cache_file(), O_CREAT | O_TRUNC | O_RDONLY, S_IRUSR | S_IWUSR);
-    if (fd < 0) goto efreet_error;
-    close(fd);
-
-    /* create dir for util cache */
-    dir = ecore_file_dir_get(efreet_util_cache_file());
-    if (!ecore_file_mkpath(dir)) goto efreet_error;
-    free(dir);
-    /* create util cache file */
-    fd = open(efreet_util_cache_file(), O_CREAT | O_TRUNC | O_RDONLY, S_IRUSR | S_IWUSR);
-    if (fd < 0) goto efreet_error;
-    close(fd);
-
     /* lock process, so that we only run one copy of this program */
     snprintf(file, sizeof(file), "%s/.efreet/lock", efreet_home_dir_get());
     fd = open(file, O_CREAT | O_TRUNC | O_RDONLY, S_IRUSR | S_IWUSR);
@@ -202,9 +185,34 @@ main()
         goto efreet_error;
     }
 
-    /* truncate old cache so that we don't read cached values */
-    if (truncate(efreet_desktop_cache_file(), 0) < 0) goto efreet_error;
-    if (truncate(efreet_util_cache_file(), 0) < 0) goto efreet_error;
+    /* create dir for desktop cache */
+    dir = ecore_file_dir_get(efreet_desktop_cache_file());
+    if (!ecore_file_mkpath(dir)) goto efreet_error;
+    free(dir);
+    /* unlink old cache file */
+    if (unlink(efreet_desktop_cache_file()) < 0)
+    {
+        if (errno != ENOENT) goto efreet_error;
+    }
+    /* create desktop cache file, so that efreet_init wont run another instance of this program */
+    fd = open(efreet_desktop_cache_file(), O_CREAT | O_TRUNC | O_RDONLY, S_IRUSR | S_IWUSR);
+    if (fd < 0) goto efreet_error;
+    close(fd);
+
+    /* create dir for util cache */
+    dir = ecore_file_dir_get(efreet_util_cache_file());
+    if (!ecore_file_mkpath(dir)) goto efreet_error;
+    free(dir);
+    /* unlink old cache file */
+    if (unlink(efreet_util_cache_file()) < 0)
+    {
+        if (errno != ENOENT) goto efreet_error;
+    }
+    /* create util cache file */
+    fd = open(efreet_util_cache_file(), O_CREAT | O_TRUNC | O_RDONLY, S_IRUSR | S_IWUSR);
+    if (fd < 0) goto efreet_error;
+    close(fd);
+
 
     /* finish efreet init */
     if (!efreet_init()) goto efreet_error;
