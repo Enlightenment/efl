@@ -358,15 +358,18 @@ efreet_desktop_new(const char *file)
 {
     /* TODO: Need file monitor on file and events to notify change */
     Efreet_Desktop *desktop = NULL;
+    char *rp = NULL;
 
+    rp = ecore_file_realpath(file);
     if (cache)
     {
         /* TODO: Check if the cached version is out of date */
-        desktop = eet_data_read(cache, desktop_edd, file);
+        desktop = eet_data_read(cache, desktop_edd, rp);
         if (desktop)
         {
             desktop->ref = 1;
             desktop->eet = 1;
+            free(rp);
             return desktop;
         }
     }
@@ -375,22 +378,22 @@ efreet_desktop_new(const char *file)
      * efreet_desktop_cache_create can add it to the cache
      */
 
-    if (!ecore_file_exists(file)) return NULL;
+    if (!ecore_file_exists(rp)) goto error;
 
     desktop = NEW(Efreet_Desktop, 1);
-    if (!desktop) return NULL;
+    if (!desktop) goto error;
 
-    desktop->orig_path = strdup(file);
+    desktop->orig_path = rp;
 
-    if (!efreet_desktop_read(desktop))
-    {
-        efreet_desktop_free(desktop);
-        return NULL;
-    }
+    if (!efreet_desktop_read(desktop)) goto error;
 
     desktop->ref = 1;
 
     return desktop;
+error:
+    if (desktop) efreet_desktop_free(desktop);
+    if (rp) free(rp);
+    return NULL;
 }
 
 /**

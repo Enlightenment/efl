@@ -35,7 +35,6 @@ static int _efreet_base_log_dom = -1;
 static const char *efreet_dir_get(const char *key, const char *fallback);
 static Eina_List  *efreet_dirs_get(const char *key,
                                         const char *fallback);
-static const char *efreet_path_clean(const char *path);
 
 /**
  * @internal
@@ -93,7 +92,7 @@ efreet_home_dir_get(void)
     if (!efreet_home_dir || efreet_home_dir[0] == '\0')
         efreet_home_dir = "/tmp";
 
-    efreet_home_dir = efreet_path_clean(efreet_home_dir);
+    efreet_home_dir = eina_stringshare_add(efreet_home_dir);
 
     return efreet_home_dir;
 }
@@ -204,10 +203,10 @@ efreet_dir_get(const char *key, const char *fallback)
         dir = malloc(sizeof(char) * len);
         snprintf(dir, len, "%s%s", user, fallback);
 
-        t = efreet_path_clean(dir);
+        t = eina_stringshare_add(dir);
         FREE(dir);
     }
-    else t = efreet_path_clean(dir);
+    else t = eina_stringshare_add(dir);
 
     return t;
 }
@@ -240,37 +239,14 @@ efreet_dirs_get(const char *key, const char *fallback)
     {
         *p = '\0';
         if (!eina_list_search_unsorted(dirs, EINA_COMPARE_CB(strcmp), s))
-            dirs = eina_list_append(dirs, (void *)efreet_path_clean(s));
+            dirs = eina_list_append(dirs, (void *)eina_stringshare_add(s));
 
         s = ++p;
         p = strchr(s, EFREET_PATH_SEP);
     }
     if (!eina_list_search_unsorted(dirs, EINA_COMPARE_CB(strcmp), s))
-        dirs = eina_list_append(dirs, (void *)efreet_path_clean(s));
+        dirs = eina_list_append(dirs, (void *)eina_stringshare_add(s));
     FREE(tmp);
 
     return dirs;
-}
-
-static const char *
-efreet_path_clean(const char *path)
-{
-    char *p, *pp;
-    const char *ret;
-
-    if (!path) return eina_stringshare_add("");
-    if (!*path) return eina_stringshare_add("");
-
-    p = strdup(path);
-    if (!p) return eina_stringshare_add("");
-    for (pp = p; *pp; pp++)
-    {
-        if (*pp == '/' && *(pp + 1) == '/')
-            memmove(pp, pp + 1, strlen(pp + 1) + 1);
-        if (*pp == '/' && *(pp + 1) == '\0')
-            *pp = '\0';
-    }
-    ret = eina_stringshare_add(p);
-    free(p);
-    return ret;
 }
