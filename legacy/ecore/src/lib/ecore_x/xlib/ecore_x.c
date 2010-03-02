@@ -1023,7 +1023,7 @@ ecore_x_window_root_list(int *num_ret)
 EAPI Ecore_X_Window
 ecore_x_window_root_first_get(void)
 {
-   return RootWindow(_ecore_x_disp, 1);
+   return RootWindow(_ecore_x_disp, 0);
 /*   
    int num;
    Ecore_X_Window root, *roots = NULL;
