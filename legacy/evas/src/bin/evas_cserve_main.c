@@ -1325,23 +1325,22 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                   DBG("...   walk all imgs");
                   EINA_LIST_FOREACH(imgs, l, img)
                     {
-                       Op_Getinfo_Item *itt, it;
+                       Op_Getinfo_Item it;
 
                        LKL(img->lock); 
                        DBG("...   img %p", img);
                        memset(&it, 0, sizeof(Op_Getinfo_Item));
-                       itt = (Op_Getinfo_Item *)p;
                        it.file_key_size = 0;
                        if (img->file.file)
                          {
-			    strcpy((char*) p + sizeof(Op_Getinfo_Item) + it.file_key_size, img->file.file);
+			    strcpy((char *)p + sizeof(Op_Getinfo_Item) + it.file_key_size, img->file.file);
                             it.file_key_size += strlen(img->file.file);
                          }
                        p[sizeof(Op_Getinfo_Item) + it.file_key_size] = 0;
                        it.file_key_size += 1;
                        if (img->file.key)
                          {
-			    strcpy((char*) p + sizeof(Op_Getinfo_Item) + it.file_key_size, img->file.key);
+			    strcpy((char *)p + sizeof(Op_Getinfo_Item) + it.file_key_size, img->file.key);
                             it.file_key_size += strlen(img->file.key);
                          }
                        p[sizeof(Op_Getinfo_Item) + it.file_key_size] = 0;
@@ -1379,8 +1378,8 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                        it.dead = img->dead;
                        it.useless = img->useless;
                        DBG("...   memcpy %p %p %zu ", 
-                         itt, &it, sizeof(Op_Getinfo_Item));
-                       memcpy(itt, &it, sizeof(Op_Getinfo_Item));
+                         p, &it, sizeof(Op_Getinfo_Item));
+                       memcpy(p, &it, sizeof(Op_Getinfo_Item));
                        DBG("...   memcpy done %p", img);
                        p += sizeof(Op_Getinfo_Item) + it.file_key_size;
                        LKU(img->lock); 
