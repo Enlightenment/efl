@@ -1245,7 +1245,7 @@ eet_internal_read1(Eet_File *ef)
 	     efn->name = malloc(sizeof(char) * name_size + 1);
 	     if (eet_test_close(efn->name == NULL, ef))
 	       {
-		  free (efn);
+		  free(efn);
 		  return NULL;
 	       }
 
