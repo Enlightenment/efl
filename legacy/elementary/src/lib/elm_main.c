@@ -1170,7 +1170,7 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (voi
    // so ps etc. report what you'd expect. for other unixes and os's this
    // may just not work
    save_env();
-   if (real_argv)
+   if (argv)
      {
 	char *lastarg, *p;
 
