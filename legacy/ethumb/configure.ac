@@ -8,6 +8,7 @@ AC_ISC_POSIX
 
 AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 AM_CONFIG_HEADER(config.h)
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 _XTERM_COLORS
 
 AC_PROG_CC
@@ -19,7 +20,9 @@ dnl AC_C_CONST is bogus, its tests fails on -Wall -O1 ( uninitialized values)
 dnl AC_C_CONST
 
 AC_LIBTOOL_WIN32_DLL
-define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
+define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])
+define([AC_LIBTOOL_LANG_GCJ_CONFIG], [:])
+define([AC_LIBTOOL_LANG_F77_CONFIG], [:])
 AC_PROG_LIBTOOL
 
 VMAJ=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $1);}'`
