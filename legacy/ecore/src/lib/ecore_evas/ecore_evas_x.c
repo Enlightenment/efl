@@ -2938,7 +2938,6 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 {
    return ecore_evas_gl_x11_options_new(disp_name, parent, x, y, w, h, NULL);
 }
-
 EAPI Ecore_Evas *
 ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
                               int x, int y, int w, int h, const int *opt)
@@ -3046,6 +3045,12 @@ ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
 EAPI Ecore_Evas *
 ecore_evas_gl_x11_new(const char *disp_name __UNUSED__, Ecore_X_Window parent __UNUSED__,
 		      int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+{
+   return NULL;
+}
+EAPI Ecore_Evas *
+ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
+                              int x, int y, int w, int h, const int *opt)
 {
    return NULL;
 }
