@@ -2506,7 +2506,15 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
 	o->style = NULL;
      }
 
-   evas_object_textblock_text_markup_set(obj, o->markup_text);
+   o->formatted.valid = 0;
+   o->native.valid = 0;
+   o->changed = 1;
+   if (o->markup_text)
+     {
+	free(o->markup_text);
+	o->markup_text = NULL;
+     }
+   evas_object_change(obj);
 }
 
 /**
