@@ -285,7 +285,7 @@ _ethumbd_write_safe(struct _Ethumbd *ed, const void *buf, ssize_t size)
 
    if (!ed->slave.exe)
      {
-	ERR("slave process isn't running.\n");
+	ERR("slave process isn't running.");
 	return 0;
      }
 
@@ -342,7 +342,7 @@ _generated_cb(struct _Ethumbd *ed, Eina_Bool success, const char *thumb_path, co
 {
    int i = ed->queue.current;
 
-   DBG("thumbnail ready at: \"%s:%s\"\n", thumb_path, thumb_key);
+   DBG("thumbnail ready at: \"%s:%s\"", thumb_path, thumb_key);
 
    if (ed->queue.table[i].used)
      _ethumb_dbus_generated_signal
@@ -419,7 +419,7 @@ _ethumbd_slave_alloc_cmd(struct _Ethumbd *ed, int ssize, char *sdata)
 
    scmd = (int *)sdata;
    if (ssize < sizeof(*scmd)) {
-	ERR("could not read size of command.\n");
+	ERR("could not read size of command.");
 	return 0;
    }
    ed->slave.bufcmd = malloc(*scmd);
@@ -439,7 +439,7 @@ _ethumbd_slave_data_read_cb(void *data, int type, void *event)
 
    if (ev->exe != ed->slave.exe)
      {
-	ERR("PARENT ERROR: slave != ev->exe\n");
+	ERR("PARENT ERROR: slave != ev->exe");
 	return 0;
      }
 
@@ -489,15 +489,15 @@ _ethumbd_slave_del_cb(void *data, int type, void *event)
      return 1;
 
    if (ev->exited)
-     ERR("slave exited with code: %d\n", ev->exit_code);
+     ERR("slave exited with code: %d", ev->exit_code);
    else if (ev->signalled)
-     ERR("slave exited by signal: %d\n", ev->exit_signal);
+     ERR("slave exited by signal: %d", ev->exit_signal);
 
    if (!ed->processing)
      goto end;
 
    i = ed->queue.current;
-   ERR("failed to generate thumbnail for: \"%s:%s\"\n",
+   ERR("failed to generate thumbnail for: \"%s:%s\"",
        ed->processing->file, ed->processing->key);
 
    if (ed->queue.table[i].used)
@@ -559,7 +559,7 @@ _ethumbd_pipe_write_setup(struct _Ethumbd *ed, int type, const void *data)
       case ETHUMBD_SETUP_FINISHED:
 	 break;
       default:
-	 ERR("wrong ethumb setup parameter.\n");
+	 ERR("wrong ethumb setup parameter.");
      }
 }
 
@@ -690,7 +690,7 @@ _process_queue_cb(void *data)
    request = eina_list_data_get(eobject->queue);
    eobject->queue = eina_list_remove_list(eobject->queue, eobject->queue);
    ed->queue.current = i;
-   DBG("processing file: \"%s:%s\"...\n", request->file,
+   DBG("processing file: \"%s:%s\"...", request->file,
        request->key);
    ed->processing = request;
 
@@ -777,7 +777,7 @@ _ethumb_table_append(struct _Ethumbd *ed)
    q->table[i].min_id = -1;
    q->list[q->count] = i;
    q->count++;
-   DBG("new object: %s, index = %d, count = %d\n", buf, i, q->count);
+   DBG("new object: %s, index = %d, count = %d", buf, i, q->count);
 
    return i;
 }
@@ -866,13 +866,13 @@ _name_owner_changed_cb(void *data, DBusMessage *msg)
 			      DBUS_TYPE_STRING, &to,
 			      DBUS_TYPE_INVALID))
      {
-	ERR("could not get NameOwnerChanged arguments: %s: %s\n",
+	ERR("could not get NameOwnerChanged arguments: %s: %s",
 	    err.name, err.message);
 	dbus_error_free(&err);
 	return;
      }
 
-   DBG("NameOwnerChanged: name = %s, from = %s, to = %s\n", name, from, to);
+   DBG("NameOwnerChanged: name = %s, from = %s, to = %s", name, from, to);
 
    if (from[0] == '\0' || to[0] != '\0')
      return;
@@ -883,7 +883,7 @@ _name_owner_changed_cb(void *data, DBusMessage *msg)
 	if (q->table[i].used && q->table[i].client == from)
 	  {
 	     _ethumb_table_del(ed, i);
-	     DBG("deleting [%d] from queue table.\n", i);
+	     DBG("deleting [%d] from queue table.", i);
 	  }
      }
 }
@@ -927,7 +927,7 @@ _ethumb_dbus_ethumb_new_cb(E_DBus_Object *object, DBusMessage *msg)
    dbus_object = e_dbus_object_add(ed->conn, return_path, odata);
    if (!dbus_object)
      {
-	ERR("could not create dbus_object.\n");
+	ERR("could not create dbus_object.");
 	free(odata);
 	return_path = "";
 	goto end_new;
@@ -964,7 +964,7 @@ _ethumb_dbus_get_bytearray(DBusMessageIter *iter)
    el_type = dbus_message_iter_get_element_type(iter);
    if (el_type != DBUS_TYPE_BYTE)
      {
-	ERR("not an byte array element.\n");
+	ERR("not an byte array element.");
 	return NULL;
      }
 
@@ -1017,14 +1017,14 @@ _ethumb_dbus_queue_add_cb(E_DBus_Object *object, DBusMessage *msg)
 
    if (!file)
      {
-	ERR("no filename given.\n");
+	ERR("no filename given.");
 	goto end;
      }
 
    odata = e_dbus_object_data_get(object);
    if (!odata)
      {
-	ERR("could not get dbus_object data.\n");
+	ERR("could not get dbus_object data.");
 	goto end;
      }
 
@@ -1071,7 +1071,7 @@ _ethumb_dbus_queue_remove_cb(E_DBus_Object *object, DBusMessage *msg)
    odata = e_dbus_object_data_get(object);
    if (!odata)
      {
-	ERR("could not get dbus_object data.\n");
+	ERR("could not get dbus_object data.");
 	goto end;
      }
 
@@ -1119,7 +1119,7 @@ _ethumb_dbus_queue_clear_cb(E_DBus_Object *object, DBusMessage *msg)
    odata = e_dbus_object_data_get(object);
    if (!odata)
      {
-	ERR("could not get dbus_object data.\n");
+	ERR("could not get dbus_object data.");
 	goto end;
      }
 
@@ -1158,7 +1158,7 @@ _ethumb_dbus_delete_cb(E_DBus_Object *object, DBusMessage *msg)
    odata = e_dbus_object_data_get(object);
    if (!odata)
      {
-	ERR("could not get dbus_object data for del_cb.\n");
+	ERR("could not get dbus_object data for del_cb.");
 	return reply;
      }
    ed = odata->ed;
@@ -1177,12 +1177,12 @@ _ethumb_dbus_fdo_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter 
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_INT32)
      {
-	ERR("invalid param for fdo_set.\n");
+	ERR("invalid param for fdo_set.");
 	return 0;
      }
 
    dbus_message_iter_get_basic(iter, &fdo);
-   DBG("setting fdo to: %d\n", fdo);
+   DBG("setting fdo to: %d", fdo);
 
    return 1;
 }
@@ -1197,7 +1197,7 @@ _ethumb_dbus_size_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_STRUCT)
      {
-	ERR("invalid param for size_set.\n");
+	ERR("invalid param for size_set.");
 	return 0;
      }
 
@@ -1205,7 +1205,7 @@ _ethumb_dbus_size_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter
    dbus_message_iter_get_basic(&oiter, &w);
    dbus_message_iter_next(&oiter);
    dbus_message_iter_get_basic(&oiter, &h);
-   DBG("setting size to: %dx%d\n", w, h);
+   DBG("setting size to: %dx%d", w, h);
    request->setup.flags.size = 1;
    request->setup.tw = w;
    request->setup.th = h;
@@ -1222,12 +1222,12 @@ _ethumb_dbus_format_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIt
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_INT32)
      {
-	ERR("invalid param for format_set.\n");
+	ERR("invalid param for format_set.");
 	return 0;
      }
 
    dbus_message_iter_get_basic(iter, &format);
-   DBG("setting format to: %d\n", format);
+   DBG("setting format to: %d", format);
    request->setup.flags.format = 1;
    request->setup.format = format;
 
@@ -1243,12 +1243,12 @@ _ethumb_dbus_aspect_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIt
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_INT32)
      {
-	ERR("invalid param for aspect_set.\n");
+	ERR("invalid param for aspect_set.");
 	return 0;
      }
 
    dbus_message_iter_get_basic(iter, &aspect);
-   DBG("setting aspect to: %d\n", aspect);
+   DBG("setting aspect to: %d", aspect);
    request->setup.flags.aspect = 1;
    request->setup.aspect = aspect;
 
@@ -1265,7 +1265,7 @@ _ethumb_dbus_crop_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_STRUCT)
      {
-	ERR("invalid param for crop_set.\n");
+	ERR("invalid param for crop_set.");
 	return 0;
      }
 
@@ -1273,7 +1273,7 @@ _ethumb_dbus_crop_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter
    dbus_message_iter_get_basic(&oiter, &x);
    dbus_message_iter_next(&oiter);
    dbus_message_iter_get_basic(&oiter, &y);
-   DBG("setting crop to: %3.2f,%3.2f\n", x, y);
+   DBG("setting crop to: %3.2f,%3.2f", x, y);
    request->setup.flags.crop = 1;
    request->setup.cx = x;
    request->setup.cy = y;
@@ -1290,12 +1290,12 @@ _ethumb_dbus_quality_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageI
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_INT32)
      {
-	ERR("invalid param for quality_set.\n");
+	ERR("invalid param for quality_set.");
 	return 0;
      }
 
    dbus_message_iter_get_basic(iter, &quality);
-   DBG("setting quality to: %d\n", quality);
+   DBG("setting quality to: %d", quality);
    request->setup.flags.quality = 1;
    request->setup.quality = quality;
 
@@ -1312,12 +1312,12 @@ _ethumb_dbus_compress_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessage
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_INT32)
      {
-	ERR("invalid param for compress_set.\n");
+	ERR("invalid param for compress_set.");
 	return 0;
      }
 
    dbus_message_iter_get_basic(iter, &compress);
-   DBG("setting compress to: %d\n", compress);
+   DBG("setting compress to: %d", compress);
    request->setup.flags.compress = 1;
    request->setup.compress = compress;
 
@@ -1334,7 +1334,7 @@ _ethumb_dbus_frame_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIte
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_STRUCT)
      {
-	ERR("invalid param for frame_set.\n");
+	ERR("invalid param for frame_set.");
 	return 0;
      }
 
@@ -1344,7 +1344,7 @@ _ethumb_dbus_frame_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIte
    group = _ethumb_dbus_get_bytearray(&oiter);
    dbus_message_iter_next(&oiter);
    swallow = _ethumb_dbus_get_bytearray(&oiter);
-   DBG("setting frame to \"%s:%s:%s\"\n", file, group, swallow);
+   DBG("setting frame to \"%s:%s:%s\"", file, group, swallow);
    request->setup.flags.frame = 1;
    request->setup.theme_file = eina_stringshare_add(file);
    request->setup.group = eina_stringshare_add(group);
@@ -1362,12 +1362,12 @@ _ethumb_dbus_directory_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessag
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_ARRAY)
      {
-	ERR("invalid param for dir_path_set.\n");
+	ERR("invalid param for dir_path_set.");
 	return 0;
      }
 
    directory = _ethumb_dbus_get_bytearray(iter);
-   DBG("setting directory to: %s\n", directory);
+   DBG("setting directory to: %s", directory);
    request->setup.flags.directory = 1;
    request->setup.directory = eina_stringshare_add(directory);
 
@@ -1383,12 +1383,12 @@ _ethumb_dbus_category_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessage
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_ARRAY)
      {
-	ERR("invalid param for category.\n");
+	ERR("invalid param for category.");
 	return 0;
      }
 
    category = _ethumb_dbus_get_bytearray(iter);
-   DBG("setting category to: %s\n", category);
+   DBG("setting category to: %s", category);
    request->setup.flags.category = 1;
    request->setup.category = eina_stringshare_add(category);
 
@@ -1404,12 +1404,12 @@ _ethumb_dbus_video_time_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessa
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_DOUBLE)
      {
-	ERR("invalid param for video_time_set.\n");
+	ERR("invalid param for video_time_set.");
 	return 0;
      }
 
    dbus_message_iter_get_basic(iter, &video_time);
-   DBG("setting video_time to: %3.2f\n", video_time);
+   DBG("setting video_time to: %3.2f", video_time);
    request->setup.flags.video_time = 1;
    request->setup.video_time = video_time;
 
@@ -1425,12 +1425,12 @@ _ethumb_dbus_video_start_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMess
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_DOUBLE)
      {
-	ERR("invalid param for video_start_set.\n");
+	ERR("invalid param for video_start_set.");
 	return 0;
      }
 
    dbus_message_iter_get_basic(iter, &video_start);
-   DBG("setting video_start to: %3.2f\n", video_start);
+   DBG("setting video_start to: %3.2f", video_start);
    request->setup.flags.video_start = 1;
    request->setup.video_start = video_start;
 
@@ -1446,12 +1446,12 @@ _ethumb_dbus_video_interval_set(struct _Ethumb_Object *eobject __UNUSED__, DBusM
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_DOUBLE)
      {
-	ERR("invalid param for video_interval_set.\n");
+	ERR("invalid param for video_interval_set.");
 	return 0;
      }
 
    dbus_message_iter_get_basic(iter, &video_interval);
-   DBG("setting video_interval to: %3.2f\n", video_interval);
+   DBG("setting video_interval to: %3.2f", video_interval);
    request->setup.flags.video_interval = 1;
    request->setup.video_interval = video_interval;
 
@@ -1467,12 +1467,12 @@ _ethumb_dbus_video_ntimes_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMes
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_UINT32)
      {
-	ERR("invalid param for video_ntimes_set.\n");
+	ERR("invalid param for video_ntimes_set.");
 	return 0;
      }
 
    dbus_message_iter_get_basic(iter, &video_ntimes);
-   DBG("setting video_ntimes to: %3.2d\n", video_ntimes);
+   DBG("setting video_ntimes to: %3.2d", video_ntimes);
    request->setup.flags.video_ntimes = 1;
    request->setup.video_ntimes = video_ntimes;
 
@@ -1488,12 +1488,12 @@ _ethumb_dbus_video_fps_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessag
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_UINT32)
      {
-	ERR("invalid param for video_fps_set.\n");
+	ERR("invalid param for video_fps_set.");
 	return 0;
      }
 
    dbus_message_iter_get_basic(iter, &video_fps);
-   DBG("setting video_fps to: %3.2d\n", video_fps);
+   DBG("setting video_fps to: %3.2d", video_fps);
    request->setup.flags.video_fps = 1;
    request->setup.video_fps = video_fps;
 
@@ -1509,12 +1509,12 @@ _ethumb_dbus_document_page_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMe
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_UINT32)
      {
-	ERR("invalid param for document_page_set.\n");
+	ERR("invalid param for document_page_set.");
 	return 0;
      }
 
    dbus_message_iter_get_basic(iter, &document_page);
-   DBG("setting document_page to: %d\n", document_page);
+   DBG("setting document_page to: %d", document_page);
    request->setup.flags.document_page = 1;
    request->setup.document_page = document_page;
 
@@ -1566,7 +1566,7 @@ _ethumb_dbus_ethumb_setup_parse_element(struct _Ethumb_Object *eobject, DBusMess
 
    if (!r)
      {
-	ERR("ethumb_setup invalid option: %s\n", option);
+	ERR("ethumb_setup invalid option: %s", option);
 	return 0;
      }
 
@@ -1589,14 +1589,14 @@ _ethumb_dbus_ethumb_setup_cb(E_DBus_Object *object, DBusMessage *msg)
    dbus_message_iter_init(msg, &iter);
    if (dbus_message_iter_get_arg_type(&iter) != DBUS_TYPE_ARRAY)
      {
-	ERR("wrong parameters.\n");
+	ERR("wrong parameters.");
 	goto end;
      }
 
    odata = e_dbus_object_data_get(object);
    if (!odata)
      {
-	ERR("could not get dbus_object data for setup_cb.\n");
+	ERR("could not get dbus_object data for setup_cb.");
 	goto end;
      }
 
@@ -1701,7 +1701,7 @@ _ethumb_dbus_request_name_cb(void *data, DBusMessage *msg __UNUSED__, DBusError 
 
    if (dbus_error_is_set(err))
      {
-	ERR("request name error: %s\n", err->message);
+	ERR("request name error: %s", err->message);
 	dbus_error_free(err);
 	e_dbus_connection_close(ed->conn);
 	return;
@@ -1714,14 +1714,14 @@ _ethumb_dbus_request_name_cb(void *data, DBusMessage *msg __UNUSED__, DBusError 
    ed->eiface = e_dbus_interface_new(_ethumb_dbus_interface);
    if (!ed->eiface)
      {
-	ERR("could not create interface.\n");
+	ERR("could not create interface.");
 	return;
      }
    r = _ethumb_dbus_interface_elements_add(ed->eiface,
 					   _ethumb_dbus_methods, NULL);
    if (!r)
      {
-	ERR("could not add methods to the interface.\n");
+	ERR("could not add methods to the interface.");
 	e_dbus_interface_unref(ed->eiface);
 	return;
      }
@@ -1730,7 +1730,7 @@ _ethumb_dbus_request_name_cb(void *data, DBusMessage *msg __UNUSED__, DBusError 
    ed->objects_iface = e_dbus_interface_new(_ethumb_dbus_objects_interface);
    if (!ed->objects_iface)
      {
-	ERR("could not create interface.\n");
+	ERR("could not create interface.");
 	return;
      }
 
@@ -1739,7 +1739,7 @@ _ethumb_dbus_request_name_cb(void *data, DBusMessage *msg __UNUSED__, DBusError 
 					   _ethumb_dbus_objects_signals);
    if (!r)
      {
-	ERR("ERROR: could not setup objects interface methods.\n");
+	ERR("ERROR: could not setup objects interface methods.");
 	e_dbus_interface_unref(ed->objects_iface);
 	return;
      }
@@ -1787,7 +1787,7 @@ _ethumbd_slave_spawn(struct _Ethumbd *ed)
       ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_WRITE, ed);
    if (!ed->slave.exe)
      {
-	ERR("could not create slave.\n");
+	ERR("could not create slave.");
 	return 0;
      }
 
@@ -1825,7 +1825,7 @@ main(int argc, char *argv[])
 
    if (!e_dbus_init())
      {
-	ERR("could not init e_dbus.\n");
+	ERR("could not init e_dbus.");
 	exit_value = -1;
 	goto finish;
      }
@@ -1842,7 +1842,7 @@ main(int argc, char *argv[])
    arg_index = ecore_getopt_parse(&optdesc, values, argc, argv);
    if (arg_index < 0)
      {
-	ERR("Could not parse arguments.\n");
+	ERR("Could not parse arguments.");
 	exit_value = -2;
 	goto finish;
      }
@@ -1853,7 +1853,7 @@ main(int argc, char *argv[])
    ed.conn = e_dbus_bus_get(DBUS_BUS_SESSION);
    if (!ed.conn)
      {
-	ERR("could not connect to session bus.\n");
+	ERR("could not connect to session bus.");
 	exit_value = -3;
 	goto finish_edbus;
      }
@@ -1863,7 +1863,7 @@ main(int argc, char *argv[])
    if (!_ethumb_dbus_setup(&ed))
      {
 	e_dbus_connection_close(ed.conn);
-	ERR("could not setup dbus connection.\n");
+	ERR("could not setup dbus connection.");
 	exit_value = -5;
 	goto finish_edbus;
      }

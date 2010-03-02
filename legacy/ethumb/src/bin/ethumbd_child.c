@@ -189,7 +189,7 @@ _ec_op_new(struct _Ethumbd_Child *ec)
    if (!r)
      return 0;
 
-   DBG("ethumbd new(). index = %d\n", index);
+   DBG("ethumbd new(). index = %d", index);
 
    ec->ethumbt[index] = ethumb_new();
    return 1;
@@ -205,7 +205,7 @@ _ec_op_del(struct _Ethumbd_Child *ec)
    if (!r)
      return 0;
 
-   DBG("ethumbd del(). index = %d\n", index);
+   DBG("ethumbd del(). index = %d", index);
 
    ethumb_free(ec->ethumbt[index]);
    ec->ethumbt[index] = NULL;
@@ -218,8 +218,8 @@ _ec_op_generated_cb(void *data, Ethumb *e, Eina_Bool success)
    const char *thumb_path, *thumb_key;
    int size_path, size_key, size_cmd;
 
-   fprintf(stderr, "thumbnail generated!\n");
-   DBG("thumb generated!\n");
+   fprintf(stderr, "thumbnail generated!");
+   DBG("thumb generated!");
    ethumb_thumb_path_get(e, &thumb_path, &thumb_key);
 
    if (!thumb_path)
@@ -291,7 +291,7 @@ _ec_fdo_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_thumb_fdo_set(e, value);
-   DBG("fdo = %d\n", value);
+   DBG("fdo = %d", value);
 
    return 1;
 }
@@ -313,7 +313,7 @@ _ec_size_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_thumb_size_set(e, w, h);
-   DBG("size = %dx%d\n", w, h);
+   DBG("size = %dx%d", w, h);
 
    return 1;
 }
@@ -328,7 +328,7 @@ _ec_format_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_thumb_format_set(e, value);
-   DBG("format = %d\n", value);
+   DBG("format = %d", value);
 
    return 1;
 }
@@ -343,7 +343,7 @@ _ec_aspect_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_thumb_aspect_set(e, value);
-   DBG("aspect = %d\n", value);
+   DBG("aspect = %d", value);
 
    return 1;
 }
@@ -365,7 +365,7 @@ _ec_crop_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_thumb_crop_align_set(e, x, y);
-   DBG("crop = %fx%f\n", x, y);
+   DBG("crop = %fx%f", x, y);
 
    return 1;
 }
@@ -380,7 +380,7 @@ _ec_quality_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_thumb_quality_set(e, value);
-   DBG("quality = %d\n", value);
+   DBG("quality = %d", value);
 
    return 1;
 }
@@ -395,7 +395,7 @@ _ec_compress_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_thumb_compress_set(e, value);
-   DBG("compress = %d\n", value);
+   DBG("compress = %d", value);
 
    return 1;
 }
@@ -422,7 +422,7 @@ _ec_frame_set(struct _Ethumbd_Child *ec, Ethumb *e)
    r = _ec_pipe_str_read(ec, &swallow);
    if (!r)
      return 0;
-   DBG("frame = %s:%s:%s\n", theme_file, group, swallow);
+   DBG("frame = %s:%s:%s", theme_file, group, swallow);
    ethumb_frame_set(e, theme_file, group, swallow);
    free(theme_file);
    free(group);
@@ -441,7 +441,7 @@ _ec_directory_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_thumb_dir_path_set(e, directory);
-   DBG("directory = %s\n", directory);
+   DBG("directory = %s", directory);
    free(directory);
 
    return 1;
@@ -457,7 +457,7 @@ _ec_category_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_thumb_category_set(e, category);
-   DBG("category = %s\n", category);
+   DBG("category = %s", category);
    free(category);
 
    return 1;
@@ -473,7 +473,7 @@ _ec_video_time_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_video_time_set(e, value);
-   DBG("video_time = %f\n", value);
+   DBG("video_time = %f", value);
 
    return 1;
 }
@@ -488,7 +488,7 @@ _ec_video_start_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_video_start_set(e, value);
-   DBG("video_start = %f\n", value);
+   DBG("video_start = %f", value);
 
    return 1;
 }
@@ -503,7 +503,7 @@ _ec_video_interval_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_video_interval_set(e, value);
-   DBG("video_interval = %f\n", value);
+   DBG("video_interval = %f", value);
 
    return 1;
 }
@@ -518,7 +518,7 @@ _ec_video_ntimes_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_video_ntimes_set(e, value);
-   DBG("video_ntimes = %d\n", value);
+   DBG("video_ntimes = %d", value);
 
    return 1;
 }
@@ -533,7 +533,7 @@ _ec_video_fps_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_video_fps_set(e, value);
-   DBG("video_fps = %d\n", value);
+   DBG("video_fps = %d", value);
 
    return 1;
 }
@@ -548,7 +548,7 @@ _ec_document_page_set(struct _Ethumbd_Child *ec, Ethumb *e)
    if (!r)
      return 0;
    ethumb_document_page_set(e, value);
-   DBG("document_page = %d\n", value);
+   DBG("document_page = %d", value);
 
    return 1;
 }
@@ -611,7 +611,7 @@ _ec_setup_process(struct _Ethumbd_Child *ec, int index, int type)
 	 _ec_document_page_set(ec, e);
 	 break;
       default:
-	 ERR("wrong type!\n");
+	 ERR("wrong type!");
      }
 }
 
@@ -649,7 +649,7 @@ _ec_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
      {
-	ERR("error on pipein! child exiting...\n");
+	ERR("error on pipein! child exiting...");
 	ec->fd_handler = NULL;
 	ecore_main_loop_quit();
 	return 0;
@@ -658,13 +658,13 @@ _ec_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
    r = _ec_read_safe(STDIN_FILENO, &op_id, sizeof(op_id));
    if (!r)
      {
-	DBG("ethumbd exited! child exiting...\n");
+	DBG("ethumbd exited! child exiting...");
 	ec->fd_handler = NULL;
 	ecore_main_loop_quit();
 	return 0;
      }
 
-   DBG("received op: %d\n", op_id);
+   DBG("received op: %d", op_id);
 
    switch (op_id)
      {
@@ -681,13 +681,13 @@ _ec_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	 r = _ec_op_del(ec);
 	 break;
       default:
-	 ERR("invalid operation: %d\n", op_id);
+	 ERR("invalid operation: %d", op_id);
 	 r = 0;
      }
 
    if (!r)
      {
-	ERR("ethumbd exited! child exiting...\n");
+	ERR("ethumbd exited! child exiting...");
 	ec->fd_handler = NULL;
 	ecore_main_loop_quit();
      }
@@ -714,9 +714,9 @@ main(int argc, const char *argv[])
 
    _ec_setup(ec);
 
-   DBG("child started!\n");
+   DBG("child started!");
    ecore_main_loop_begin();
-   DBG("child finishing.\n");
+   DBG("child finishing.");
 
    _ec_free(ec);
 
