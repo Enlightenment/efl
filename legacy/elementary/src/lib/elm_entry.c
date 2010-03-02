@@ -647,10 +647,8 @@ _mkup_to_text(const char *mkup)
 		       str = _str_append(str, ts, &str_len, &str_alloc);
 		       free(ts);
 		    }
-		  s = NULL;
+                  break;
 	       }
-	     if (*p == 0)
-	       break;
 	  }
 	if (*p == '<')
 	  {
