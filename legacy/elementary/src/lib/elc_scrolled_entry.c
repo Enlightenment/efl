@@ -76,6 +76,60 @@ _entry_clicked_double(void *data, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_call(data, "clicked,double", NULL);
 }
 
+static void
+_entry_cursor_changed(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "cursor,changed", NULL);
+}
+
+static void
+_entry_anchor_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "anchor,clicked", NULL);
+}
+
+static void
+_entry_selection_start(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "selection,start", NULL);
+}
+
+static void
+_entry_selection_changed(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "selection,changed", NULL);
+}
+
+static void
+_entry_selection_cleared(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "selection,cleared", NULL);
+}
+
+static void
+_entry_selection_paste(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "selection,paste", NULL);
+}
+
+static void
+_entry_selection_copy(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "selection,copy", NULL);
+}
+
+static void
+_entry_selection_cut(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "selection,cut", NULL);
+}
+
+static void
+_entry_longpressed(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "longpressed", NULL);
+}
+
 EAPI Evas_Object *
 elm_scrolled_entry_add(Evas_Object *parent)
 {
@@ -108,6 +162,15 @@ elm_scrolled_entry_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->entry, "press", _entry_press, obj);
    evas_object_smart_callback_add(wd->entry, "clicked", _entry_clicked, obj);
    evas_object_smart_callback_add(wd->entry, "clicked,double", _entry_clicked_double, obj);
+   evas_object_smart_callback_add(wd->entry, "cursor,changed", _entry_cursor_changed, obj);
+   evas_object_smart_callback_add(wd->entry, "anchor,clicked", _entry_anchor_clicked, obj);
+   evas_object_smart_callback_add(wd->entry, "selection,start", _entry_selection_start, obj);
+   evas_object_smart_callback_add(wd->entry, "selection,changed", _entry_selection_changed, obj);
+   evas_object_smart_callback_add(wd->entry, "selection,cleared", _entry_selection_cleared, obj);
+   evas_object_smart_callback_add(wd->entry, "selection,paste", _entry_selection_paste, obj);
+   evas_object_smart_callback_add(wd->entry, "selection,copy", _entry_selection_copy, obj);
+   evas_object_smart_callback_add(wd->entry, "selection,cut", _entry_selection_cut, obj);
+   evas_object_smart_callback_add(wd->entry, "longpressed", _entry_longpressed, obj);
 
    _sizing_eval(obj);
 
