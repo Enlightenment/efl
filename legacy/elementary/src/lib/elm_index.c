@@ -107,7 +107,7 @@ _theme_hook(Evas_Object *obj)
      {
         if (!wd->event[1])
           {
-             Evas_Coord minw, minh;
+             Evas_Coord minw = 0, minh = 0;
 
              wd->event[1] = evas_object_rectangle_add(evas_object_evas_get(wd->base));
              evas_object_color_set(wd->event[1], 0, 0, 0, 0);

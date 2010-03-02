@@ -311,8 +311,11 @@ elm_slideshow_next(Evas_Object *obj)
 
    if (!wd) return;
 
-   if(wd->current)
+   if (wd->current)
      next = eina_list_data_get(eina_list_next(wd->current->l));
+   else
+     next = NULL;
+
    if(wd->current && !next && wd->loop)
      next = eina_list_data_get(wd->items);
 
@@ -352,6 +355,9 @@ elm_slideshow_previous(Evas_Object *obj)
 
    if(wd->current)
      prev = eina_list_data_get(eina_list_prev(wd->current->l));
+   else
+     prev = NULL;
+
    if(wd->current && !prev && wd->loop)
      prev = eina_list_data_get(eina_list_last(wd->items));
 

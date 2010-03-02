@@ -69,13 +69,12 @@ void
 test_progressbar(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *pb, *bx, *pbx, *hbx, *bt, *bt_bx, *ic1, *ic2;
-   Progressbar *test;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "progressbar", ELM_WIN_BASIC);
    elm_win_title_set(win, "Progressbar");
    evas_object_smart_callback_add(win, "delete,request", 
-                                  my_progressbar_destroy, test);
+                                  my_progressbar_destroy, NULL);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);

@@ -572,7 +572,7 @@ test_genlist3(void *data, Evas_Object *obj, void *event_info)
 					 NULL/* func data */);
 
    elm_box_pack_end(bx, gl);
-   evas_object_show(bx2);
+   evas_object_show(bx);
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
@@ -728,7 +728,7 @@ test_genlist4(void *data, Evas_Object *obj, void *event_info)
 					 NULL/* func data */);
 
    elm_box_pack_end(bx, gl);
-   evas_object_show(bx2);
+   evas_object_show(bx);
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
@@ -924,7 +924,7 @@ test_genlist5(void *data, Evas_Object *obj, void *event_info)
 					 NULL/* func data */);
 
    elm_box_pack_end(bx, gl);
-   evas_object_show(bx2);
+   evas_object_show(bx);
 
    evas_object_smart_callback_add(gl, "drag,start,up", item_drag_up, NULL);
    evas_object_smart_callback_add(gl, "drag,start,down", item_drag_down, NULL);
@@ -1097,7 +1097,7 @@ test_genlist6(void *data, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_add(gl, "contracted", gl4_con, gl);
 
    elm_box_pack_end(bx, gl);
-   evas_object_show(bx2);
+   evas_object_show(bx);
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);

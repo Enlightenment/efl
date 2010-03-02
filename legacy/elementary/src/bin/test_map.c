@@ -260,14 +260,11 @@ my_bt_add(void *data, Evas_Object *obj, void *event_info)
             d = &data_parking;
         }
 
-        if(!style || style == 1)
-        {
-            style = rand() % 2;
-            if(!style)
-                g_clas = itc_group1;
-            else if(style == 1)
-                g_clas = itc_group2;
-        }
+	style = rand() % 2;
+	if (!style)
+	  g_clas = itc_group1;
+	else
+	  g_clas = itc_group2;
 
        elm_map_marker_add(data, r1/100., r2/100., m_clas, g_clas, d); 
     }

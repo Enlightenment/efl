@@ -68,7 +68,6 @@ main(int argc, char **argv)
 	if (path)
 	  {
 	     const char *p, *pp, *s;
-	     int exelen;
 
 	     p = path;
 	     pp = p;

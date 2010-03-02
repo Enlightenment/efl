@@ -230,6 +230,11 @@ _els_smart_icon_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
 	 w = -w;
 	 hw = hw + 1;
 	 break;
+      default:
+	 ERR("unknown orient %d", orient);
+	 evas_object_del(tmp);
+	 evas_object_image_data_set(sd->obj, data); // give it back
+	 return;
      }
    from = data2;
    for (x = iw; --x >= 0;)

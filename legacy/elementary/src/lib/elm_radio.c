@@ -161,7 +161,7 @@ static void
 _state_set_all(Widget_Data *wd)
 {
    const Eina_List *l;
-   Evas_Object *child, *selected;
+   Evas_Object *child, *selected = NULL;
    Eina_Bool disabled = EINA_FALSE;
 
    EINA_LIST_FOREACH(wd->group->radios, l, child)
@@ -176,7 +176,7 @@ _state_set_all(Widget_Data *wd)
 	else _state_set(child, 0);
      }
 
-   if (disabled) _state_set(selected, 1);
+   if (disabled && selected) _state_set(selected, 1);
 }
 
 static void

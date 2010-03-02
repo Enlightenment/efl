@@ -135,7 +135,7 @@ _load(Evas_Object *obj)
 	break;
       default:
 	elm_entry_entry_set(wd->entry, "Unknown Text Format");
-	break;
+	text = NULL;
      }
    if (text)
      {
