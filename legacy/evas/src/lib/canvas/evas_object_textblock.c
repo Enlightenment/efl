@@ -2522,7 +2522,7 @@ evas_object_textblock_style_get(const Evas_Object *obj)
 }
 
 /**
- * @brief Change the charset in use inside the given textblock object.
+ * @brief Set the "replacement character" to use for the given textblock object.
  *
  * @param obj The given textblock object.
  * @param ch The charset name.
@@ -2546,9 +2546,11 @@ evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch)
 }
 
 /**
- * to be documented.
- * @param obj  to be documented.
- * @return to be documented.
+ * @brief Get the "replacement character" for given textblock object. Returns
+ * NULL if no replacement character is in use.
+ *
+ * @param obj The given textblock object
+ * @return replacement character or NULL
  */
 EAPI const char *
 evas_object_textblock_replace_char_get(Evas_Object *obj)
