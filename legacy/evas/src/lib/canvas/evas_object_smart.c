@@ -497,7 +497,7 @@ evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, const Evas_Smart_
 {
    const Evas_Smart_Cb_Description *d;
    Evas_Object_Smart *o;
-   unsigned int i, count;
+   unsigned int i, count = 0;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
