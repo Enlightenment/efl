@@ -46,7 +46,6 @@ evas_cserve_image_cache_contents_get(Evas_Cserve_Image_Cache *cache)
 {
 #ifdef EVAS_CSERVE
    Op_Getinfo_Reply *info;
-   Op_Getinfo_Item *itt;
    unsigned char *p;
    int i, j;
 
@@ -70,8 +69,7 @@ evas_cserve_image_cache_contents_get(Evas_Cserve_Image_Cache *cache)
         Op_Getinfo_Item it;
         char *file, *key;
 
-        itt = (Op_Getinfo_Item *)p;
-        memcpy(&it, itt, sizeof(Op_Getinfo_Item));
+        memcpy(&it, p, sizeof(Op_Getinfo_Item));
         file = (char*) (p + sizeof(Op_Getinfo_Item));
         key = file + strlen(file) + 1;
         im = calloc(1, sizeof(Evas_Cserve_Image));
