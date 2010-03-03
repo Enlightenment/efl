@@ -154,59 +154,120 @@ AC_SUBST(eet_eet)
 requirement_elm="edje ecore-file ecore-evas ecore evas eet eina-0 ${requirement_elm}"
 
 have_elementary_x="no"
-PKG_CHECK_MODULES([ELEMENTARY_X],
-   [ecore-x],
-   [
-    AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
-    have_elementary_x="yes"
-    requirement_elm="ecore-x ${requirement_elm}"
-   ],
-   [have_elementary_x="no"]
-)
+want_elementary_x="auto"
+AC_ARG_ENABLE([ecore-x],
+   [AC_HELP_STRING([--disable-ecore-x], [disable ecore-x support. @<:@default=detect@:>@])],
+   [want_elementary_x=$enableval], [])
+
+if test "x$want_elementary_x" != "xno"; then
+   PKG_CHECK_MODULES([ELEMENTARY_X],
+      [ecore-x],
+      [
+       AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
+       have_elementary_x="yes"
+       requirement_elm="ecore-x ${requirement_elm}"
+      ],
+      [have_elementary_x="no"]
+   )
+else
+    have_elementary_x="no"
+fi
+if test "x$want_elementary_x" = "xyes" -a "x$have_elementary_x" = "xno"; then
+    AC_MSG_ERROR([ecore-x support requested, but not found by pkg-config.])
+fi
+
 
 have_elementary_fb="no"
-PKG_CHECK_MODULES([ELEMENTARY_FB],
-   [ecore-fb],
-   [
-    AC_DEFINE(HAVE_ELEMENTARY_FB, 1, [FB support for Elementary])
-    have_elementary_fb="yes"
-    requirement_elm="ecore-fb ${requirement_elm}"
-   ],
-   [have_elementary_fb="no"]
-)
+want_elementary_fb="auto"
+AC_ARG_ENABLE([ecore-fb],
+   [AC_HELP_STRING([--disable-ecore-fb], [disable ecore-fb support. @<:@default=detect@:>@])],
+   [want_elementary_fb=$enableval], [])
+
+if test "x$want_elementary_fb" != "xno"; then
+   PKG_CHECK_MODULES([ELEMENTARY_FB],
+      [ecore-fb],
+      [
+       AC_DEFINE(HAVE_ELEMENTARY_FB, 1, [FB support for Elementary])
+       have_elementary_fb="yes"
+       requirement_elm="ecore-fb ${requirement_elm}"
+      ],
+      [have_elementary_fb="no"]
+   )
+else
+    have_elementary_fb="no"
+fi
+if test "x$want_elementary_fb" = "xyes" -a "x$have_elementary_fb" = "xno"; then
+    AC_MSG_ERROR([ecore-fb support requested, but not found by pkg-config.])
+fi
 
 have_elementary_sdl="no"
-PKG_CHECK_MODULES([ELEMENTARY_SDL],
-   [ecore-sdl],
-   [
-    AC_DEFINE(HAVE_ELEMENTARY_SDL, 1, [SDL support for Elementary])
-    have_elementary_sdl="yes"
-    requirement_elm="ecore-sdl ${requirement_elm}"
-   ],
-   [have_elementary_sdl="no"]
-)
+want_elementary_sdl="auto"
+AC_ARG_ENABLE([ecore-sdl],
+   [AC_HELP_STRING([--disable-ecore-sdl], [disable ecore-sdl support. @<:@default=detect@:>@])],
+   [want_elementary_sdl=$enableval], [])
+
+if test "x$want_elementary_sdl" != "xno"; then
+   PKG_CHECK_MODULES([ELEMENTARY_SDL],
+      [ecore-sdl],
+      [
+       AC_DEFINE(HAVE_ELEMENTARY_SDL, 1, [SDL support for Elementary])
+       have_elementary_sdl="yes"
+       requirement_elm="ecore-sdl ${requirement_elm}"
+      ],
+      [have_elementary_sdl="no"]
+   )
+else
+    have_elementary_sdl="no"
+fi
+if test "x$want_elementary_sdl" = "xyes" -a "x$have_elementary_sdl" = "xno"; then
+    AC_MSG_ERROR([ecore-sdl support requested, but not found by pkg-config.])
+fi
 
 have_elementary_win32="no"
-PKG_CHECK_MODULES([ELEMENTARY_WIN32],
-   [ecore-win32],
-   [
-    AC_DEFINE(HAVE_ELEMENTARY_WIN32, 1, [Windows XP support for Elementary])
-    have_elementary_win32="yes"
-    requirement_elm="ecore-win32 ${requirement_elm}"
-   ],
-   [have_elementary_win32="no"]
-)
+want_elementary_win32="auto"
+AC_ARG_ENABLE([ecore-win32],
+   [AC_HELP_STRING([--disable-ecore-win32], [disable ecore-win32 support. @<:@default=detect@:>@])],
+   [want_elementary_win32=$enableval], [])
+
+if test "x$want_elementary_win32" != "xno"; then
+   PKG_CHECK_MODULES([ELEMENTARY_WIN32],
+      [ecore-win32],
+      [
+       AC_DEFINE(HAVE_ELEMENTARY_WIN32, 1, [Windows XP support for Elementary])
+       have_elementary_win32="yes"
+       requirement_elm="ecore-win32 ${requirement_elm}"
+      ],
+      [have_elementary_win32="no"]
+   )
+else
+    have_elementary_win32="no"
+fi
+if test "x$want_elementary_win32" = "xyes" -a "x$have_elementary_win32" = "xno"; then
+    AC_MSG_ERROR([ecore-win32 support requested, but not found by pkg-config.])
+fi
 
 have_elementary_wince="no"
-PKG_CHECK_MODULES([ELEMENTARY_WINCE],
-   [ecore-wince],
-   [
-    AC_DEFINE(HAVE_ELEMENTARY_WINCE, 1, [Windows CE support for Elementary])
-    have_elementary_wince="yes"
-    requirement_elm="ecore-wince ${requirement_elm}"
-   ],
-   [have_elementary_wince="no"]
-)
+want_elementary_wince="auto"
+AC_ARG_ENABLE([ecore-wince],
+   [AC_HELP_STRING([--disable-ecore-wince], [disable ecore-wince support. @<:@default=detect@:>@])],
+   [want_elementary_wince=$enableval], [])
+
+if test "x$want_elementary_wince" != "xno"; then
+   PKG_CHECK_MODULES([ELEMENTARY_WINCE],
+      [ecore-wince],
+      [
+       AC_DEFINE(HAVE_ELEMENTARY_WINCE, 1, [Windows CE support for Elementary])
+       have_elementary_wince="yes"
+       requirement_elm="ecore-wince ${requirement_elm}"
+      ],
+      [have_elementary_wince="no"]
+   )
+else
+    have_elementary_wince="no"
+fi
+if test "x$want_elementary_wince" = "xyes" -a "x$have_elementary_wince" = "xno"; then
+    AC_MSG_ERROR([ecore-wince support requested, but not found by pkg-config.])
+fi
 
 ELM_EDBUS_DEF="#undef"
 have_elementary_edbus="no"
