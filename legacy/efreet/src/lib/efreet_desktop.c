@@ -319,6 +319,7 @@ efreet_desktop_cache_check(Efreet_Desktop *desktop)
 EAPI Efreet_Desktop *
 efreet_desktop_get(const char *file)
 {
+    /* TODO: Check if we need to differentiate between desktop_new and desktop_get */
     Efreet_Desktop *desktop;
 
     if (efreet_desktop_cache)
