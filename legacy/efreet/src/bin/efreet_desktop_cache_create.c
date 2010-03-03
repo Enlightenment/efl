@@ -196,16 +196,16 @@ main()
     close(fd);
 
     /* create dir for util cache */
-    dir = ecore_file_dir_get(efreet_util_cache_file());
+    dir = ecore_file_dir_get(efreet_desktop_util_cache_file());
     if (!ecore_file_mkpath(dir)) goto efreet_error;
     free(dir);
     /* unlink old cache file */
-    if (unlink(efreet_util_cache_file()) < 0)
+    if (unlink(efreet_desktop_util_cache_file()) < 0)
     {
         if (errno != ENOENT) goto efreet_error;
     }
     /* create util cache file */
-    fd = open(efreet_util_cache_file(), O_CREAT | O_EXCL | O_RDONLY, S_IRUSR | S_IWUSR);
+    fd = open(efreet_desktop_util_cache_file(), O_CREAT | O_EXCL | O_RDONLY, S_IRUSR | S_IWUSR);
     if (fd < 0) goto efreet_error;
     close(fd);
 
@@ -223,7 +223,7 @@ main()
     ef = eet_open(file, EET_FILE_MODE_WRITE);
     if (!ef) goto error;
 
-    snprintf(util_file, sizeof(util_file), "%s.XXXXXX", efreet_util_cache_file());
+    snprintf(util_file, sizeof(util_file), "%s.XXXXXX", efreet_desktop_util_cache_file());
     tmpfd = mkstemp(util_file);
     if (tmpfd < 0) goto error;
     close(tmpfd);
@@ -260,7 +260,7 @@ main()
 
     /* rename tmp files to real files */
     if (rename(file, efreet_desktop_cache_file()) < 0) goto error;
-    if (rename(util_file, efreet_util_cache_file()) < 0) goto error;
+    if (rename(util_file, efreet_desktop_util_cache_file()) < 0) goto error;
 
     efreet_desktop_edd_shutdown(edd);
     efreet_shutdown();

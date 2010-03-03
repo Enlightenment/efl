@@ -69,7 +69,7 @@ efreet_util_init(void)
     }
 
     /* TODO: Need file monitor on cache in case it is updated */
-    cache = eet_open(efreet_util_cache_file(), EET_FILE_MODE_READ);
+    cache = eet_open(efreet_desktop_util_cache_file(), EET_FILE_MODE_READ);
     if (!cache) goto cache_error;
     file_id_by_desktop_path = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
 
@@ -97,7 +97,7 @@ efreet_util_shutdown(void)
  * Needs EAPI because of helper binaries
  */
 EAPI const char *
-efreet_util_cache_file(void)
+efreet_desktop_util_cache_file(void)
 {
     char tmp[PATH_MAX] = { '\0' };
     const char *home, *lang, *country, *modifier;
