@@ -179,11 +179,7 @@ main()
     snprintf(file, sizeof(file), "%s/.efreet/lock", efreet_home_dir_get());
     fd = open(file, O_CREAT | O_TRUNC | O_RDONLY, S_IRUSR | S_IWUSR);
     if (fd < 0) goto efreet_error;
-    if (flock(fd, LOCK_EX | LOCK_NB) < 0)
-    {
-        close(fd);
-        goto efreet_error;
-    }
+    if (flock(fd, LOCK_EX | LOCK_NB) < 0) goto efreet_error;
 
     /* create dir for desktop cache */
     dir = ecore_file_dir_get(efreet_desktop_cache_file());
