@@ -7336,7 +7336,9 @@ collections {
                mouse_events: 1;
                description { state: "default" 0.0;
                    rel1.to: "elm.swallow.content";
+                   rel1.offset: -5 -5;
                    rel2.to: "elm.swallow.content";
+                   rel2.offset: 4 4;
                    image {
                        normal: "bt_dis_base.png";
                        border: 4 4 4 4;
