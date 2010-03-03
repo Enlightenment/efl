@@ -165,7 +165,7 @@ main()
     Eina_List *dirs;
     int priority = 0;
     char *dir = NULL;
-    int fd = 0, tmpfd;
+    int fd = -1, tmpfd;
 
     /* init external subsystems */
     if (!eet_init()) goto eet_error;
