@@ -447,21 +447,15 @@ efreet_desktop_new(const char *file)
 
     desktop = NEW(Efreet_Desktop, 1);
     if (!desktop) goto error;
-
-    desktop->orig_path = rp;
-
     if (!efreet_desktop_read(desktop)) goto error;
 
+    desktop->orig_path = rp;
     desktop->ref = 1;
 
     return desktop;
 error:
     if (desktop) efreet_desktop_free(desktop);
-   // this is not ideal as it will leak, but we are getting a double-free here 
-   // for some reason that I can't see right now. so disable the free call 
-   // here until this gets investigated. Better than having the desktop die 
-   // because someone tried to open the menu - dh
-//    if (rp) free(rp);
+    if (rp) free(rp);
     return NULL;
 }
 
