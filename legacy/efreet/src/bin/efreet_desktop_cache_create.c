@@ -237,6 +237,10 @@ main()
 
     dirs = efreet_default_dirs_get(efreet_data_home_get(), efreet_data_dirs_get(),
                                                                     "applications");
+    /* TODO:
+     * - read dirs cache
+     * - skip dirs/subdirs in default dirs
+     */
     if (!dirs) goto error;
     while (dirs)
     {

@@ -312,6 +312,9 @@ efreet_desktop_cache_check(Efreet_Desktop *desktop)
  * on failure. This reference should not be freed.
  * @brief Gets a reference to an Efreet_Desktop structure representing the
  * contents of @a file or NULL if @a file is not a valid .desktop file.
+ *
+ * By using efreet_desktop_get the Efreet_Desktop will be saved in an internal
+ * cache, and changes will be signalled by events.
  */
 EAPI Efreet_Desktop *
 efreet_desktop_get(const char *file)
@@ -347,8 +350,29 @@ efreet_desktop_get(const char *file)
     desktop = efreet_desktop_new(file);
     if (!desktop) return NULL;
 
+    if (!desktop->eet)
+    {
+        char buf[PATH_MAX];
+        char *p;
+
+        /*
+         * Read file from disk, save path in cache so it will be included in next
+         * cache update
+         */
+        strncpy(buf, desktop->orig_path, PATH_MAX);
+        buf[PATH_MAX - 1] = '\0';
+        p = dirname(buf);
+        if (!eina_list_search_unsorted(efreet_desktop_dirs, EINA_COMPARE_CB(strcmp), p))
+        {
+            efreet_desktop_dirs = eina_list_append(efreet_desktop_dirs, strdup(p));
+            if (efreet_desktop_job) ecore_job_del(efreet_desktop_job);
+            efreet_desktop_job = ecore_job_add(efreet_desktop_update_cache_dirs, NULL);
+        }
+    }
+
     if (efreet_desktop_cache) eina_hash_add(efreet_desktop_cache, file, desktop);
     desktop->cached = 1;
+    /* TODO: Need file monitor on file and events to notify change */
     return desktop;
 }
 
@@ -386,20 +410,20 @@ efreet_desktop_empty_new(const char *file)
 }
 
 /**
- * @internal
  * @param file: The file to create the Efreet_Desktop from
  * @return Returns a new Efreet_Desktop on success, NULL on failure
  * @brief Creates a new Efreet_Desktop structure initialized from the
  * contents of @a file or NULL on failure
+ *
+ * By using efreet_desktop_new the caller will get a unique copy of a
+ * Efreet_Desktop. The Efreet_Desktop should immidiatly after use be free'd,
+ * as there is no guarantee how long the pointers will be valid.
  */
 EAPI Efreet_Desktop *
 efreet_desktop_new(const char *file)
 {
-    /* TODO: Need file monitor on file and events to notify change */
     Efreet_Desktop *desktop = NULL;
     char *rp = NULL;
-    char *p;
-    char buf[PATH_MAX];
 
     rp = ecore_file_realpath(file);
     if (cache)
@@ -429,16 +453,6 @@ efreet_desktop_new(const char *file)
     if (!efreet_desktop_read(desktop)) goto error;
 
     desktop->ref = 1;
-
-    strncpy(buf, rp, PATH_MAX);
-    buf[PATH_MAX - 1] = '\0';
-    p = dirname(buf);
-    if (!eina_list_search_unsorted(efreet_desktop_dirs, EINA_COMPARE_CB(strcmp), p))
-    {
-        efreet_desktop_dirs = eina_list_append(efreet_desktop_dirs, strdup(p));
-        if (efreet_desktop_job) ecore_job_del(efreet_desktop_job);
-        efreet_desktop_job = ecore_job_add(efreet_desktop_update_cache_dirs, NULL);
-    }
 
     return desktop;
 error:
