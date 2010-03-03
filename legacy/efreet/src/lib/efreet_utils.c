@@ -70,13 +70,10 @@ efreet_util_init(void)
 
     /* TODO: Need file monitor on cache in case it is updated */
     cache = eet_open(efreet_desktop_util_cache_file(), EET_FILE_MODE_READ);
-    if (!cache) goto cache_error;
     file_id_by_desktop_path = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
 
     return init;
 
-cache_error:
-    eina_log_domain_unregister(_efreet_utils_log_dom);
 log_error:
     return 0;
 }
@@ -211,6 +208,7 @@ efreet_util_desktop_exec_find(const char *exec)
     int num, i;
     Efreet_Desktop *ret = NULL;
 
+    if (!cache) return NULL;
     if (!exec) return NULL;
 
     keys = eet_list(cache, "*::e", &num);
@@ -271,6 +269,7 @@ efreet_util_desktop_exec_glob_list(const char *glob)
     int num, i;
     Eina_List *ret = NULL;
 
+    if (!cache) return NULL;
     if (!glob) return NULL;
 
     keys = eet_list(cache, "*::e", &num);
@@ -331,6 +330,7 @@ efreet_util_desktop_categories_list(void)
     int num, i;
     Eina_List *ret = NULL;
 
+    if (!cache) return NULL;
     keys = eet_list(cache, "*::ca", &num);
     if (!keys) return NULL;
     for (i = 0; i < num; i++)
@@ -425,6 +425,7 @@ efreet_util_cache_find(const char *search, const char *what1, const char *what2)
     int num, i;
     Efreet_Desktop *ret = NULL;
 
+    if (!cache) return NULL;
     if ((!what1) && (!what2)) return NULL;
 
     keys = eet_list(cache, search, &num);
@@ -458,6 +459,7 @@ efreet_util_cache_list(const char *search, const char *what)
     int num, i;
     Eina_List *ret = NULL;
 
+    if (!cache) return NULL;
     if (!what) return NULL;
 
     keys = eet_list(cache, search, &num);
@@ -492,6 +494,7 @@ efreet_util_cache_glob_list(const char *search, const char *what)
     int num, i;
     Eina_List *ret = NULL;
 
+    if (!cache) return NULL;
     if (!what) return NULL;
 
     keys = eet_list(cache, search, &num);
