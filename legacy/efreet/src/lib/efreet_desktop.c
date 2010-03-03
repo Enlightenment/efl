@@ -10,6 +10,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <limits.h>
+#include <libgen.h>
+#include <sys/file.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
 
 #ifdef _WIN32
 # include <winsock2.h>
@@ -40,9 +44,19 @@ static Eina_Hash *efreet_desktop_cache = NULL;
 static Eina_List *efreet_desktop_types = NULL;
 
 /**
+ * A cache of all unknown desktop dirs
+ */
+static Eina_List *efreet_desktop_dirs = NULL;
+
+/**
  * A unique id for each tmp file created while building a command
  */
 static int efreet_desktop_command_file_id = 0;
+
+/**
+ * A job pointer for cache updates
+ */
+static Ecore_Job *efreet_desktop_job = NULL;
 
 static char *cache_file = NULL;
 static Eet_File *cache = NULL;
@@ -137,6 +151,8 @@ static void efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info);
 static int efreet_desktop_command_flags_get(Efreet_Desktop *desktop);
 static void *efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Eina_List *execs);
 
+static void efreet_desktop_update_cache_dirs(void *data);
+
 /**
  * @internal
  * @return Returns > 0 on success or 0 on failure
@@ -198,6 +214,7 @@ void
 efreet_desktop_shutdown(void)
 {
     Efreet_Desktop_Type_Info *info;
+    char *dir;
 
     IF_RELEASE(desktop_environment);
     IF_FREE_HASH(efreet_desktop_cache);
@@ -208,11 +225,15 @@ efreet_desktop_shutdown(void)
         efreet_desktop_types = eina_list_remove_list(efreet_desktop_types,
                                                      efreet_desktop_types);
     }
+    EINA_LIST_FREE(efreet_desktop_dirs, dir)
+        free(dir);
     if (cache) eet_close(cache);
     efreet_desktop_edd_shutdown(desktop_edd);
     ecore_file_shutdown();
     eina_log_domain_unregister(_efreet_desktop_log_dom);
     IF_FREE(cache_file);
+    if (efreet_desktop_job) ecore_job_del(efreet_desktop_job);
+    efreet_desktop_job = NULL;
 }
 
 /*
@@ -359,6 +380,8 @@ efreet_desktop_new(const char *file)
     /* TODO: Need file monitor on file and events to notify change */
     Efreet_Desktop *desktop = NULL;
     char *rp = NULL;
+    char *p;
+    char buf[PATH_MAX];
 
     rp = ecore_file_realpath(file);
     if (cache)
@@ -388,6 +411,16 @@ efreet_desktop_new(const char *file)
     if (!efreet_desktop_read(desktop)) goto error;
 
     desktop->ref = 1;
+
+    strncpy(buf, rp, PATH_MAX);
+    buf[PATH_MAX - 1] = '\0';
+    p = dirname(buf);
+    if (!eina_list_search_unsorted(efreet_desktop_dirs, EINA_COMPARE_CB(strcmp), p))
+    {
+        efreet_desktop_dirs = eina_list_append(efreet_desktop_dirs, strdup(p));
+        if (efreet_desktop_job) ecore_job_del(efreet_desktop_job);
+        efreet_desktop_job = ecore_job_add(efreet_desktop_update_cache_dirs, NULL);
+    }
 
     return desktop;
 error:
@@ -2012,3 +2045,64 @@ efreet_desktop_edd_shutdown(Eet_Data_Descriptor *edd)
     eet_data_descriptor_free(edd);
 }
 
+static void
+efreet_desktop_update_cache_dirs(void *data __UNUSED__)
+{
+    char file[PATH_MAX];
+    int fd = -1;
+    int cachefd = -1;
+    char *map = MAP_FAILED;
+    char *dir;
+    struct stat st;
+
+    snprintf(file, sizeof(file), "%s/.efreet", efreet_home_dir_get());
+    if (!ecore_file_mkpath(file)) return;
+
+    snprintf(file, sizeof(file), "%s/.efreet/lock", efreet_home_dir_get());
+    fd = open(file, O_CREAT | O_TRUNC | O_RDONLY, S_IRUSR | S_IWUSR);
+    if (fd < 0) return;
+    /* TODO: Retry update cache later */
+    if (flock(fd, LOCK_EX | LOCK_NB) < 0) goto error;
+
+    snprintf(file, sizeof(file), "%s/.efreet/desktop_dirs.cache", efreet_home_dir_get());
+    cachefd = open(file, O_CREAT | O_APPEND | O_RDWR, S_IRUSR | S_IWUSR);
+    if (cachefd < 0) goto error;
+    if (fstat(cachefd, &st) < 0) goto error;
+    if (st.st_size > 0)
+    {
+        Eina_List *l, *ln;
+        char *p;
+
+        map = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, cachefd, 0);
+        if (map == MAP_FAILED) goto error;
+        p = map;
+        while (p < map + st.st_size)
+        {
+            unsigned int size = *(unsigned int *)p;
+            p += sizeof(unsigned int);
+            EINA_LIST_FOREACH_SAFE(efreet_desktop_dirs, l, ln, dir)
+            {
+                if (!strcmp(dir, p))
+                {
+                    efreet_desktop_dirs = eina_list_remove_list(efreet_desktop_dirs, l);
+                    free(dir);
+                    break;
+                }
+            }
+            p += size;
+        }
+    }
+    EINA_LIST_FREE(efreet_desktop_dirs, dir)
+    {
+        unsigned int size = strlen(dir) + 1;
+        write(cachefd, &size, sizeof(int));
+        write(cachefd, dir, size);
+    }
+    efreet_desktop_dirs = NULL;
+
+error:
+    if (map != MAP_FAILED) munmap(map, st.st_size);
+    if (fd > 0) close(fd);
+    if (cachefd > 0) close(cachefd);
+    efreet_desktop_job = NULL;
+}

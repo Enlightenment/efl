@@ -129,6 +129,8 @@ check(void)
     }
     printf("time: %.3f\n", (ecore_time_get() - start));
 
+    desktop = efreet_desktop_get("/opt/google/chrome/google-chrome.desktop");
+    if (desktop) efreet_desktop_free(desktop);
 }
 
 int
@@ -137,6 +139,7 @@ main(int argc __UNUSED__, char **argv __UNUSED__)
     if (!efreet_init()) return 1;
     if (!efreet_util_init()) return 1;
     check();
+    ecore_main_loop_begin();
     efreet_util_shutdown();
     efreet_shutdown();
     return 0;
