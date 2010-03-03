@@ -59,6 +59,7 @@ static int efreet_desktop_command_file_id = 0;
 static Ecore_Job *efreet_desktop_job = NULL;
 
 static char *cache_file = NULL;
+static char *cache_dirs = NULL;
 static Eet_File *cache = NULL;
 static Eet_Data_Descriptor *desktop_edd = NULL;
 
@@ -232,6 +233,7 @@ efreet_desktop_shutdown(void)
     ecore_file_shutdown();
     eina_log_domain_unregister(_efreet_desktop_log_dom);
     IF_FREE(cache_file);
+    IF_FREE(cache_dirs);
     if (efreet_desktop_job) ecore_job_del(efreet_desktop_job);
     efreet_desktop_job = NULL;
 }
@@ -263,6 +265,22 @@ efreet_desktop_cache_file(void)
 
     cache_file = strdup(tmp);
     return cache_file;
+}
+
+/*
+ * Needs EAPI because of helper binaries
+ */
+EAPI const char *
+efreet_desktop_cache_dirs(void)
+{
+    char tmp[PATH_MAX] = { '\0' };
+
+    if (cache_dirs) return cache_dirs;
+
+    snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_dirs.cache", efreet_home_dir_get());
+
+    cache_dirs = strdup(tmp);
+    return cache_dirs;
 }
 
 /**
@@ -2064,8 +2082,7 @@ efreet_desktop_update_cache_dirs(void *data __UNUSED__)
     /* TODO: Retry update cache later */
     if (flock(fd, LOCK_EX | LOCK_NB) < 0) goto error;
 
-    snprintf(file, sizeof(file), "%s/.efreet/desktop_dirs.cache", efreet_home_dir_get());
-    cachefd = open(file, O_CREAT | O_APPEND | O_RDWR, S_IRUSR | S_IWUSR);
+    cachefd = open(efreet_desktop_cache_dirs(), O_CREAT | O_APPEND | O_RDWR, S_IRUSR | S_IWUSR);
     if (cachefd < 0) goto error;
     if (fstat(cachefd, &st) < 0) goto error;
     if (st.st_size > 0)

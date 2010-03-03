@@ -204,6 +204,7 @@ EAPI void efreet_desktop_edd_shutdown(Eet_Data_Descriptor *edd);
 
 EAPI const char *efreet_desktop_util_cache_file(void);
 EAPI const char *efreet_desktop_cache_file(void);
+EAPI const char *efreet_desktop_cache_dirs(void);
 
 #define NON_EXISTING (void *)-1
 
