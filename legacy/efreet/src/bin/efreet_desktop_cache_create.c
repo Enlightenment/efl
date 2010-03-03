@@ -191,7 +191,7 @@ main()
         if (errno != ENOENT) goto efreet_error;
     }
     /* create desktop cache file, so that efreet_init wont run another instance of this program */
-    fd = open(efreet_desktop_cache_file(), O_CREAT | O_TRUNC | O_RDONLY, S_IRUSR | S_IWUSR);
+    fd = open(efreet_desktop_cache_file(), O_CREAT | O_EXCL | O_RDONLY, S_IRUSR | S_IWUSR);
     if (fd < 0) goto efreet_error;
     close(fd);
 
@@ -205,7 +205,7 @@ main()
         if (errno != ENOENT) goto efreet_error;
     }
     /* create util cache file */
-    fd = open(efreet_util_cache_file(), O_CREAT | O_TRUNC | O_RDONLY, S_IRUSR | S_IWUSR);
+    fd = open(efreet_util_cache_file(), O_CREAT | O_EXCL | O_RDONLY, S_IRUSR | S_IWUSR);
     if (fd < 0) goto efreet_error;
     close(fd);
 
