@@ -426,6 +426,7 @@ efreet_desktop_new(const char *file)
     Efreet_Desktop *desktop = NULL;
     char *rp = NULL;
 
+   if (!file) return NULL;
     rp = ecore_file_realpath(file);
     if (cache)
     {
@@ -448,6 +449,7 @@ efreet_desktop_new(const char *file)
 
     desktop = NEW(Efreet_Desktop, 1);
     if (!desktop) goto error;
+    desktop->orig_path = strdup(file);
     if (!efreet_desktop_read(desktop)) goto error;
 
     desktop->orig_path = rp;

@@ -168,8 +168,8 @@ main()
     int fd = -1, tmpfd;
 
     /* init external subsystems */
-    if (!eet_init()) goto eet_error;
     if (!eina_init()) goto eina_error;
+    if (!eet_init()) goto eet_error;
 
     /* create homedir */
     snprintf(file, sizeof(file), "%s/.efreet", efreet_home_dir_get());
@@ -278,10 +278,10 @@ error:
 edd_error:
     efreet_shutdown();
 efreet_error:
-    eina_shutdown();
-eina_error:
     eet_shutdown();
 eet_error:
+    eina_shutdown();
+eina_error:
     if (fd > 0) close(fd);
     return 1;
 }
