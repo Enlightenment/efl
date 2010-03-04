@@ -449,6 +449,7 @@ extern "C" {
    EAPI void         edje_object_size_max_get        (const Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh);
    EAPI void         edje_object_calc_force          (Evas_Object *obj);
    EAPI void         edje_object_size_min_calc       (Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
+   EAPI Eina_Bool    edje_object_parts_extends_calc(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    EAPI void         edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh);
    EAPI Eina_Bool    edje_object_part_exists         (const Evas_Object *obj, const char *part);
    EAPI const Evas_Object *edje_object_part_object_get     (const Evas_Object *obj, const char *part);

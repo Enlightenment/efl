@@ -2567,6 +2567,68 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
    edje_object_size_min_restricted_calc(obj, minw, minh, 0, 0);
 }
 
+/** Calculate the geometry used by all parts
+ * @param obj A valid Evas_Object handle
+ * @param x The x coordinate pointer
+ * @param y The y coordinate pointer
+ * @param w The width pointer
+ * @param h The height pointer
+ *
+ * Calculates the geometry used by all object parts. Including out of bounds parts.
+ */
+EAPI Eina_Bool
+edje_object_parts_extends_calc(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   Edje *ed;
+   Evas_Coord x1 = INT_MAX, y1 = INT_MAX;
+   Evas_Coord x2 = 0, y2 = 0;
+   int i;
+
+   ed = _edje_fetch(obj);
+   if (!ed)
+     {
+	if (x) *x = 0;
+	if (y) *y = 0;
+	if (w) *w = 0;
+	if (h) *h = 0;
+	return EINA_FALSE;
+     }
+
+   ed->calc_only = 1;
+
+   /* Need to recalc before providing the object. */
+   ed->dirty = 1;
+   _edje_recalc_do(ed);
+
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        Edje_Real_Part *rp;
+        Evas_Coord rpx1, rpy1;
+        Evas_Coord rpx2, rpy2;
+
+        rp = ed->table_parts[i];
+
+	rpx1 = rp->x;
+	rpy1 = rp->y;
+	rpx2 = rpx1 + rp->w;
+	rpy2 = rpy1 + rp->h;
+
+	if (x1 > rpx1) x1 = rpx1;
+	if (y1 > rpy1) y1 = rpy1;
+	if (x2 < rpx2) x2 = rpx2;
+	if (y2 < rpy2) y2 = rpy2;
+     }
+
+   ed->calc_only = 0;
+
+   *x = x1;
+   *y = y1;
+   *w = x2 - x1;
+   *h = y2 - y1;
+
+   return EINA_TRUE;
+}
+
 /** Calculate minimum size
  * @param obj A valid Evas_Object handle
  * @param minw Minimum width pointer
