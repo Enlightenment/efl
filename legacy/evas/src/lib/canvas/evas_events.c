@@ -295,6 +295,8 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
 
+   _evas_object_event_new();
+
    ev.button = b;
    ev.output.x = e->pointer.x;
    ev.output.y = e->pointer.y;
@@ -368,6 +370,8 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	Evas_Event_Mouse_Up ev;
 	Evas_Object *obj;
 
+	_evas_object_event_new();
+
 	ev.button = b;
 	ev.output.x = e->pointer.x;
 	ev.output.y = e->pointer.y;
@@ -409,6 +413,8 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	     Evas_Event_Mouse_Out ev;
 	     Evas_Object *obj;
 
+	     _evas_object_event_new();
+
 	     ev.buttons = e->pointer.button;
 	     ev.output.x = e->pointer.x;
 	     ev.output.y = e->pointer.y;
@@ -445,6 +451,8 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	  {
 	     Evas_Event_Mouse_In ev;
 	     Evas_Object *obj;
+
+	     _evas_object_event_new();
 
 	     ev.buttons = e->pointer.button;
 	     ev.output.x = e->pointer.x;
@@ -558,6 +566,8 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, unsigned int timestam
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
 
+   _evas_object_event_new();
+
    ev.direction = direction;
    ev.z = z;
    ev.output.x = e->pointer.x;
@@ -638,6 +648,8 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	     Evas_Event_Mouse_Move ev;
 	     Evas_Object *obj;
 
+	     _evas_object_event_new();
+
 	     ev.buttons = e->pointer.button;
 	     ev.cur.output.x = e->pointer.x;
 	     ev.cur.output.y = e->pointer.y;
@@ -676,6 +688,8 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	  }
 	  {
 	     Evas_Event_Mouse_Out ev;
+
+	     _evas_object_event_new();
 
 	     ev.buttons = e->pointer.button;
 	     ev.output.x = e->pointer.x;
@@ -716,6 +730,8 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	Evas_Event_Mouse_Out ev2;
 	Evas_Event_Mouse_In ev3;
 	Evas_Object *obj;
+
+	_evas_object_event_new();
 
 	ev.buttons = e->pointer.button;
 	ev.cur.output.x = e->pointer.x;
@@ -794,6 +810,9 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	       }
 	     if (e->delete_me) break;
 	  }
+
+	_evas_object_event_new();
+
 	if (copy) copy = eina_list_free(copy);
 	/* go thru our current list of ins */
 	EINA_LIST_FOREACH(ins, l, obj)
@@ -848,6 +867,8 @@ evas_event_feed_mouse_in(Evas *e, unsigned int timestamp, const void *data)
    e->last_timestamp = timestamp;
 
    if (e->pointer.mouse_grabbed != 0) return;
+
+   _evas_object_event_new();
 
    ev.buttons = e->pointer.button;
    ev.output.x = e->pointer.x;
@@ -910,6 +931,8 @@ evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
 
+   _evas_object_event_new();
+
    ev.buttons = e->pointer.button;
    ev.output.x = e->pointer.x;
    ev.output.y = e->pointer.y;
@@ -967,6 +990,8 @@ evas_event_feed_multi_down(Evas *e,
 
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
+
+   _evas_object_event_new();
 
    ev.device = d;
    ev.output.x = x;
@@ -1027,6 +1052,8 @@ evas_event_feed_multi_up(Evas *e,
 
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
+
+   _evas_object_event_new();
 
    ev.device = d;
    ev.output.x = x;
@@ -1095,6 +1122,8 @@ evas_event_feed_multi_move(Evas *e,
         Evas_Event_Multi_Move ev;
         Evas_Object *obj;
 
+	_evas_object_event_new();
+
         ev.device = d;
         ev.cur.output.x = x;
         ev.cur.output.y = y;
@@ -1142,6 +1171,8 @@ evas_event_feed_multi_move(Evas *e,
 	Eina_List *l, *copy;
 	Evas_Event_Multi_Move ev;
 	Evas_Object *obj;
+
+	_evas_object_event_new();
 
 	ev.device = d;
 	ev.cur.output.x = x;
@@ -1232,6 +1263,8 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
      {
 	Evas_Event_Key_Down ev;
 	int exclusive;
+
+	_evas_object_event_new();
 
 	exclusive = 0;
 	ev.keyname = (char *)keyname;
@@ -1325,6 +1358,8 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 	Evas_Event_Key_Up ev;
 	int exclusive;
 
+	_evas_object_event_new();
+
 	exclusive = 0;
 	ev.keyname = (char *)keyname;
 	ev.data = (void *)data;
@@ -1411,6 +1446,8 @@ evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data
 
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
+
+   _evas_object_event_new();
 
    ev.hold = hold;
    ev.data = (void *)data;

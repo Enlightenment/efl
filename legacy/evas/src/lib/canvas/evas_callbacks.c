@@ -2,6 +2,7 @@
 #include "evas_private.h"
 
 static void evas_object_event_callback_clear(Evas_Object *obj);
+int _evas_event_counter = 0;
 
 void
 evas_event_callback_list_post_free(Eina_Inlist **list)
@@ -94,6 +95,9 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    Eina_Inlist **l_mod = NULL, *l;
    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
    Evas *e;
+
+   if (obj->last_event == _evas_event_counter) return ;
+   obj->last_event = _evas_event_counter;
 
    if (obj->delete_me) return;
    e = evas_object_evas_get(obj);

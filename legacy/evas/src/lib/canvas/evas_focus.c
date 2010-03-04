@@ -31,6 +31,8 @@ evas_object_focus_set(Evas_Object *obj, Eina_Bool focus)
    return;
    MAGIC_CHECK_END();
 
+   _evas_object_event_new();
+
    if (focus)
      {
 	if (obj->focused) return;

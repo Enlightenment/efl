@@ -461,6 +461,8 @@ struct _Evas_Object
    int                         last_mouse_up_counter;
    int                         mouse_grabbed;
 
+   int                         last_event;
+
    Evas_Object_Pointer_Mode    pointer_mode : 1;
 
    Eina_Bool                   store : 1;
@@ -827,6 +829,7 @@ void _evas_object_text_rehint(Evas_Object *obj);
 void _evas_object_textblock_rehint(Evas_Object *obj);
 
 extern int _evas_alloc_error;
+extern int _evas_event_counter;
 
 struct _Evas_Imaging_Image
 {

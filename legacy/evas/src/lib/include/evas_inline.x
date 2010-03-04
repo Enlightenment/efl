@@ -1,6 +1,12 @@
 #ifndef EVAS_INLINE_H
 #define EVAS_INLINE_H
 
+static inline void
+_evas_object_event_new(void)
+{
+   _evas_event_counter++;
+}
+
 static inline int
 evas_object_was_visible(Evas_Object *obj)
 {
