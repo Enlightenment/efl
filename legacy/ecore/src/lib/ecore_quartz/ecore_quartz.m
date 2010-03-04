@@ -6,8 +6,8 @@
 
 #include <Eina.h>
 
-#include <ecore_private.h>
 #include <Ecore.h>
+#include <ecore_private.h>
 #include <Ecore_Input.h>
 
 #include "Ecore_Quartz.h"
