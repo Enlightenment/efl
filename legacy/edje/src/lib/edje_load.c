@@ -436,7 +436,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		    {
 		       evas_object_smart_member_add(rp->object, ed->obj);
 //		       evas_object_layer_set(rp->object, evas_object_layer_get(ed->obj));
-		       if (ep->type != EDJE_PART_TYPE_SWALLOW && ep->type != EDJE_PART_TYPE_GROUP)
+		       if (ep->type != EDJE_PART_TYPE_SWALLOW && ep->type != EDJE_PART_TYPE_GROUP && ep->type != EDJE_PART_TYPE_EXTERNAL)
 			 {
 			    if (ep->mouse_events)
 			      {
