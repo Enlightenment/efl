@@ -126,7 +126,14 @@ struct _Evas_Object_Textblock
 {
    DATA32                       magic;
    Evas_Textblock_Style        *style;
+
+   /*
+    * Dedicated first cursor, immune to deletion and returned by
+    * evas_object_textblock_cursor_get(). For the sake of consistency (and
+    * avoiding code duplication) it is stored in cursors list as first element.
+    */
    Evas_Textblock_Cursor       *cursor;
+
    Eina_List                   *cursors;
    Evas_Object_Textblock_Node  *nodes;
    Evas_Object_Textblock_Line  *lines;
@@ -382,10 +389,6 @@ _nodes_next_merge(const Evas_Object *obj, Evas_Object_Textblock_Node *cur)
 
     /* Fixup cursors */
     o = obj->object_data;
-    if (next == o->cursor->node) {
-       o->cursor->node = cur;
-       o->cursor->pos += cur_len;
-    }
     EINA_LIST_FOREACH(o->cursors, l, cursor) {
         if (next == cursor->node) {
             cursor->node = cur;
@@ -2834,11 +2837,10 @@ evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
      }
      {
 	Eina_List *l;
-	Evas_Textblock_Cursor *data;
+	Evas_Textblock_Cursor *cursor;
 
-	evas_textblock_cursor_node_first(o->cursor);
-	EINA_LIST_FOREACH(o->cursors, l, data)
-	  evas_textblock_cursor_node_first(data);
+	EINA_LIST_FOREACH(o->cursors, l, cursor)
+	  evas_textblock_cursor_node_first(cursor);
      }
 }
 
@@ -3552,14 +3554,6 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
 	Eina_List *l;
 	Evas_Textblock_Cursor *data;
 
-	if (cur != o->cursor)
-	  {
-	     if (cur->node == o->cursor->node)
-	       {
-		  if (o->cursor->pos > cur->pos)
-		    o->cursor->pos += strlen(text);
-	       }
-	  }
 	EINA_LIST_FOREACH(o->cursors, l, data)
 	  {
 	     if (data != cur)
@@ -3630,16 +3624,6 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text)
 	Eina_List *l;
 	Evas_Textblock_Cursor *data;
 
-	if (cur != o->cursor)
-	  {
-	     if (cur->node == o->cursor->node)
-	       {
-		  if ((o->cursor->node) &&
-		      (o->cursor->node->type == NODE_TEXT) &&
-		      (o->cursor->pos >= cur->pos))
-		    o->cursor->pos += strlen(text);
-	       }
-	  }
 	EINA_LIST_FOREACH(o->cursors, l, data)
 	  {
 	     if (data != cur)
@@ -3866,15 +3850,6 @@ evas_textblock_cursor_node_delete(Evas_Textblock_Cursor *cur)
 	Eina_List *l;
 	Evas_Textblock_Cursor *data;
 
-	if (cur != o->cursor)
-	  {
-	     if (n == o->cursor->node)
-	       {
-		  o->cursor->node = cur->node;
-		  o->cursor->pos = cur->pos;
-                  o->cursor->eol = cur->eol;
-	       }
-	  }
 	EINA_LIST_FOREACH(o->cursors, l, data)
 	  {
 	     if (data != cur)
@@ -3955,14 +3930,6 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
 	Eina_List *l;
 	Evas_Textblock_Cursor *data;
 
-	if (cur != o->cursor)
-	  {
-	     if ((n == o->cursor->node) &&
-		 (o->cursor->pos > ppos))
-	       {
-		  o->cursor->pos -= (index - ppos);
-	       }
-	  }
 	EINA_LIST_FOREACH(o->cursors, l, data)
 	  {
 	     if (data != cur)
@@ -4232,10 +4199,6 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 	Eina_List *l;
 	Evas_Textblock_Cursor *data;
 
-	if ((cur1 != o->cursor) && (cur2 != o->cursor))
-	  {
-	     evas_textblock_cursor_copy(cur1, o->cursor);
-	  }
 	EINA_LIST_FOREACH(o->cursors, l, data)
 	  {
 	     if ((data != cur1) && (data != cur2))
@@ -4888,9 +4851,6 @@ evas_object_textblock_clear(Evas_Object *obj)
 
    TB_HEAD();
    _nodes_clear(obj);
-   o->cursor->node = NULL;
-   o->cursor->pos = 0;
-   o->cursor->eol = 0;
    EINA_LIST_FOREACH(o->cursors, l, cur)
      {
 	cur->node = NULL;
@@ -5014,6 +4974,7 @@ evas_object_textblock_new(void)
    o = calloc(1, sizeof(Evas_Object_Textblock));
    o->magic = MAGIC_OBJ_TEXTBLOCK;
    o->cursor = calloc(1, sizeof(Evas_Textblock_Cursor));
+   o->cursors = eina_list_append(NULL, o->cursor);
    return o;
 }
 
@@ -5025,7 +4986,6 @@ evas_object_textblock_free(Evas_Object *obj)
    evas_object_textblock_clear(obj);
    evas_object_textblock_style_set(obj, NULL);
    o = (Evas_Object_Textblock *)(obj->object_data);
-   free(o->cursor);
    while (o->cursors)
      {
 	Evas_Textblock_Cursor *cur;
