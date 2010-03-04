@@ -1725,6 +1725,10 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
    const char *tbase;
    Evas_Object_Textblock_Item *it;
 
+   /*
+    * If there is replacement character and text in node is non-empty, replace
+    * text with replacement characters.
+    */
    if ((repch) && (eina_strbuf_length_get(n->text)))
      {
 	int i, len, chlen;
@@ -1733,21 +1737,24 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	len = evas_common_font_utf8_get_len((unsigned char *) eina_strbuf_string_get(n->text));
 	chlen = strlen(repch);
 	str = alloca((len * chlen) + 1);
-	tbase = str;
 	for (i = 0, ptr = str; i < len; ptr += chlen, i++)
 	  memcpy(ptr, repch, chlen);
 	*ptr = 0;
      }
    else
-     {
 	str = (char *)eina_strbuf_string_get(n->text);
-	tbase = str;
-     }
-//   printf("add: wrap: %i|%i, width: %i '%s'\n", fmt->wrap_word, fmt->wrap_char, c->w, str);
+
+   /* Keep beginning of string to calculate offsets later */
+   tbase = str;
+
+   /*
+    * Layout the string piece-by-piece
+    */
    new_line = 0;
    empty_item = 0;
    while (str)
      {
+	/* FIXME: next comment is probably obsolete */
 	/* if this is the first line item and it starts with spaces - remove them */
 	wrap = 0;
 	white_stripped = 0;
@@ -1764,21 +1771,42 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	     str = str + twrap;
 	  }
  */
+        /*
+         * Create new Textblock_Item for current part of string and format it
+         * with current format
+         *
+         * FIXME: why not fmt is attached to Textblock_Node instead?
+         */
 	it = _layout_item_new(c, fmt, str);
+
+        /*
+         * Fill Textblock_Item with data pointing back to Textblock_Node
+         */
 	it->source_node = n;
 	it->source_pos = str - tbase;
+
+        /* Get width/height of text being rasterized "as if there were no constraints" */
 	tw = th = 0;
 	if (fmt->font.font)
 	  c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
+
+        /*
+         * Split text to fill the current line
+         */
 	if ((c->w >= 0) &&
 	    ((fmt->wrap_word) || (fmt->wrap_char)) &&
 	    ((c->x + tw) >
 	     (c->w - c->o->style_pad.l - c->o->style_pad.r -
 	      c->marginl - c->marginr)))
 	  {
+             /*
+              * This branch: text needs to be wrapped, and does not fit single
+              * line.
+              */
 	     wrap = _layout_text_cutoff_get(c, fmt, it);
              if (wrap == 0)
                evas_common_font_utf8_get_next((unsigned char *)str, &wrap);
+
 	     if (wrap > 0)
 	       {
 		  if (fmt->wrap_word)
@@ -1921,6 +1949,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 		       new_line = 1;
 		    }
 	       }
+
 	     if (!empty_item)
 	       {
 		  tw = th = 0;
@@ -1929,25 +1958,52 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	       }
 	  }
 	else
-	  str = NULL;
-	if (empty_item) empty_item = 0;
-	else
+          {
+             /*
+              * Either string is empty, or line wrapping was not requested or
+              * string fits the line.  Anyway, just process this line and break
+              * out of loop.
+              */
+             str = NULL;
+          }
+
+        /* Handle non-empty items */
+	if (!empty_item)
 	  {
+             /*
+              * Store width and height of Textblock_Item as got from
+              * font_string_size_get
+              */
 	     it->w = tw;
 	     it->h = th;
+
+             /* Adjust for insets. Will be useful later while drawing characters */
 	     inset = 0;
 	     if (fmt->font.font)
 	       inset = c->ENFN->font_inset_get(c->ENDT, fmt->font.font, it->text);
 	     it->inset = inset;
+
+             /*
+              * Store horizontal position of Textblock_Item and adjust c->x
+              * according to data retrieved from font system.
+              *
+              * FIXME: why it->h might be != adv?
+              */
 	     it->x = c->x;
 	     adv = 0;
 	     if (fmt->font.font)
 	       adv = c->ENFN->font_h_advance_get(c->ENDT, fmt->font.font, it->text);
 	     c->x += adv;
+
+             /* Add the Textblock_Item to items in current line */
 	     c->ln->items = (Evas_Object_Textblock_Item *)eina_inlist_append(EINA_INLIST_GET(c->ln->items), EINA_INLIST_GET(it));
 	  }
+        empty_item = 0;
+
+        /* Handle "newline requested" */
 	if (new_line)
 	  {
+              /* Skip single (?) whitespace character from str */
 	     if (str)
 	       {
 		  if (!white_stripped)
@@ -1957,9 +2013,10 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 		       if (_is_white(ch)) str += index;
 		    }
 	       }
-	     new_line = 0;
+             /* Format current line and advance to new one */
 	     _layout_line_advance(c, fmt);
 	  }
+        new_line = 0;
      }
 }
 
