@@ -1278,7 +1278,6 @@ struct _Ctxt
    int x, y;
    int w, h;
    int wmax, hmax;
-   int maxascent, maxdescent;
    int marginl, marginr;
    int line_no;
    int underline_extend;
@@ -1287,7 +1286,8 @@ struct _Ctxt
 };
 
 static void
-_layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
+_layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt,
+                                     int *maxascent, int *maxdescent)
 {
    int ascent, descent;
 
@@ -1308,8 +1308,8 @@ _layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
              descent = ((ascent + descent) * fmt->linerelsize) - (ascent * fmt->linerelsize);
              ascent = ascent * fmt->linerelsize;
           }
-	if (c->maxascent < ascent) c->maxascent = ascent;
-	if (c->maxdescent < descent) c->maxdescent = descent;
+	if (*maxascent < ascent) *maxascent = ascent;
+	if (*maxdescent < descent) *maxdescent = descent;
      }
 }
 
@@ -1322,9 +1322,7 @@ _layout_line_new(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    c->marginr = fmt->margin.r;
    c->lines = (Evas_Object_Textblock_Line *)eina_inlist_append(EINA_INLIST_GET(c->lines), EINA_INLIST_GET(c->ln));
    c->x = 0;
-   c->maxascent = c->maxdescent = 0;
    c->ln->line_no = -1;
-   _layout_format_ascent_descent_adjust(c, fmt);
 }
 
 static Evas_Object_Textblock_Format *
@@ -1377,52 +1375,72 @@ _layout_format_value_handle(Ctxt *c, Evas_Object_Textblock_Format *fmt, char *it
 }
 
 static void
-_layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
+_layout_line_finish(Ctxt* c, Evas_Object_Textblock_Format *fmt)
 {
    Evas_Object_Textblock_Item *it;
 
-   c->maxascent = c->maxdescent = 0;
-   if (!c->ln->items)
-     _layout_format_ascent_descent_adjust(c, fmt);
-   EINA_INLIST_FOREACH(c->ln->items, it)
-     {
-	int endx;
+   /* Calculate maxascent, maxdescent for current line */
+   int maxascent = 0;
+   int maxdescent = 0;
 
-	if (it->format->font.font)
-	  it->baseline = c->ENFN->font_max_ascent_get(c->ENDT, it->format->font.font);
-	_layout_format_ascent_descent_adjust(c, it->format);
-	endx = it->x + it->w;
-	if (endx > c->ln->w) c->ln->w = endx;
-     }
+   if (!c->ln->items)
+      _layout_format_ascent_descent_adjust(c, fmt, &maxascent, &maxdescent);
+   EINA_INLIST_FOREACH(c->ln->items, it)
+      _layout_format_ascent_descent_adjust(c, it->format, &maxascent, &maxdescent);
+
+   /* Fill in baseline for each textblock item */
+   EINA_INLIST_FOREACH(c->ln->items, it)
+      if (it->format->font.font)
+         it->baseline = c->ENFN->font_max_ascent_get(c->ENDT, it->format->font.font);
+
+   /* Calculate width of line */
+   EINA_INLIST_FOREACH(c->ln->items, it)
+      if (it->x + it->w + c->ln->w) c->ln->w = it->x + it->w;
+
+   /* Adjust (?) line vertical position */
    c->ln->y = c->y + c->o->style_pad.t;
-   c->ln->h = c->maxascent + c->maxdescent;
-   c->ln->baseline = c->maxascent;
+
+   /* Calculate line height */
+   c->ln->h = maxascent + maxdescent;
+
+   /* Calculate (???) line baseline */
+   c->ln->baseline = maxascent;
+
+   /* Calculate adjustments for underline */
    if (c->have_underline2)
      {
-	if (c->maxdescent < 4) c->underline_extend = 4 - c->maxdescent;
+	if (maxdescent < 4) c->underline_extend = 4 - maxdescent;
      }
    else if (c->have_underline)
      {
-	if (c->maxdescent < 2) c->underline_extend = 2 - c->maxdescent;
+	if (maxdescent < 2) c->underline_extend = 2 - maxdescent;
      }
+
+   /* Store current line number */
    c->ln->line_no = c->line_no;
    c->line_no++;
-   c->y += c->maxascent + c->maxdescent;
-   if (c->w >= 0)
-     {
-	c->ln->x = c->marginl + c->o->style_pad.l +
-	  ((c->w - c->ln->w -
-	    c->o->style_pad.l - c->o->style_pad.r -
-	    c->marginl - c->marginr) * c->align);
-	if ((c->ln->x + c->ln->w + c->marginr - c->o->style_pad.l) > c->wmax)
-	  c->wmax = c->ln->x + c->ln->w + c->marginl + c->marginr - c->o->style_pad.l;
-     }
-   else
-     {
-	c->ln->x = c->marginl + c->o->style_pad.l;
-	if ((c->ln->x + c->ln->w + c->marginr - c->o->style_pad.l) > c->wmax)
-	  c->wmax = c->ln->x + c->ln->w + c->marginl + c->marginr - c->o->style_pad.l;
-     }
+
+   /* Calculate current position in context for next line */
+   c->y += c->ln->h;
+
+   /* Calculate line horizontal position and c->wmax */
+
+     /* If there is no width, align left */
+   double align = c->w >= 0 ? c->align : 0.0;
+
+   c->ln->x = c->marginl + c->o->style_pad.l +
+      ((c->w - c->ln->w -
+        c->o->style_pad.l - c->o->style_pad.r -
+        c->marginl - c->marginr) * c->align);
+   if ((c->ln->x + c->ln->w + c->marginr - c->o->style_pad.l) > c->wmax)
+      c->wmax = c->ln->x + c->ln->w + c->marginl + c->marginr - c->o->style_pad.l;
+}
+
+
+static void
+_layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
+{
+   _layout_line_finish(c, fmt);
    _layout_line_new(c, fmt);
 }
 
@@ -1980,7 +1998,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    c->w = w;
    c->h = h;
    c->wmax = c->hmax = 0;
-   c->maxascent = c->maxdescent = 0;
    c->marginl = c->marginr = 0;
    c->have_underline = 0;
    c->have_underline2 = 0;
