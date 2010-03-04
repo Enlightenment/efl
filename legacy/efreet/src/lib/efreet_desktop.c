@@ -449,15 +449,18 @@ efreet_desktop_new(const char *file)
 
     desktop = NEW(Efreet_Desktop, 1);
     if (!desktop) goto error;
-    desktop->orig_path = strdup(file);
+    desktop->orig_path = rp;
     if (!efreet_desktop_read(desktop)) goto error;
 
-    desktop->orig_path = rp;
     desktop->ref = 1;
 
     return desktop;
 error:
-    if (desktop) efreet_desktop_free(desktop);
+    if (desktop)
+    {
+        desktop->orig_path = NULL;
+        efreet_desktop_free(desktop);
+    }
     if (rp) free(rp);
     return NULL;
 }
