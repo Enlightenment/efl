@@ -352,71 +352,59 @@ _lines_clear(const Evas_Object *obj, Evas_Object_Textblock_Line *lines)
 }
 
 static void
-_nodes_adjacent_merge(const Evas_Object *obj, Evas_Object_Textblock_Node *n1)
+_nodes_next_merge(const Evas_Object *obj, Evas_Object_Textblock_Node *cur)
 {
-   Evas_Object_Textblock *o;
-   Evas_Object_Textblock_Node *n0, *n2;
-   Eina_List *l;
-   Evas_Textblock_Cursor *data;
-   int plen;
+    Evas_Object_Textblock *o;
+    Evas_Object_Textblock_Node *next;
+    Evas_Object_Textblock_Node *nextnext;
+    Eina_List *l;
+    Evas_Textblock_Cursor *cursor;
+    int cur_len;
 
-   if (n1->type != NODE_TEXT) return;
-   o = (Evas_Object_Textblock *)(obj->object_data);
-   n0 = (Evas_Object_Textblock_Node *)(EINA_INLIST_GET(n1))->prev;
-   n2 = (Evas_Object_Textblock_Node *)(EINA_INLIST_GET(n1))->next;
-   if ((n0) && (n0->type == NODE_TEXT))
-     {
-	plen = eina_strbuf_length_get(n0->text);
-	eina_strbuf_append_length(n0->text, eina_strbuf_string_get(n1->text),
-				  eina_strbuf_length_get(n1->text));
-	(EINA_INLIST_GET(n0))->next = EINA_INLIST_GET(n2);
-	if (n2) (EINA_INLIST_GET(n2))->prev = EINA_INLIST_GET(n0);
-	// fix any cursors in n1
-	if (n1 == o->cursor->node)
-	  {
-	     o->cursor->node = n0;
-	     o->cursor->pos += plen;
-	  }
-	EINA_LIST_FOREACH(o->cursors, l, data)
-	  {
-	     if (n1 == data->node)
-	       {
-		  data->node = n0;
-		  data->pos += plen;
-	       }
-	  }
-	if (n1->text) eina_strbuf_free(n1->text);
-	free(n1);
-	n1 = n0;
-     }
-   if ((n2) && (n2->type == NODE_TEXT))
-     {
-	n0 = n1;
-	n1 = n2;
-	n2 = (Evas_Object_Textblock_Node *)(EINA_INLIST_GET(n1))->next;
-	plen = eina_strbuf_length_get(n0->text);
-	eina_strbuf_append_length(n0->text, eina_strbuf_string_get(n1->text),
-				  eina_strbuf_length_get(n1->text));
-	(EINA_INLIST_GET(n0))->next = EINA_INLIST_GET(n2);
-	if (n2) (EINA_INLIST_GET(n2))->prev = EINA_INLIST_GET(n0);
-	// fix any cursors in n1
-	if (n1 == o->cursor->node)
-	  {
-	     o->cursor->node = n0;
-	     o->cursor->pos += plen;
-	  }
-	EINA_LIST_FOREACH(o->cursors, l, data)
-	  {
-	     if (n1 == data->node)
-	       {
-		  data->node = n0;
-		  data->pos += plen;
-	       }
-	  }
-	if (n1->text) eina_strbuf_free(n1->text);
-	free(n1);
-	n1 = n0;
-     }
+    if (!cur || cur->type != NODE_TEXT)
+        return;
+
+    next = (Evas_Object_Textblock_Node*)(EINA_INLIST_GET(cur))->next;
+
+    if (!next || next->type != NODE_TEXT)
+        return;
+
+    /* Merge text */
+    cur_len = eina_strbuf_length_get(cur->len);
+    eina_strbuf_append_length(cur->text, eina_strbuf_string_get(next->text),
+			      eina_strbuf_length_get(next->text));
+
+    /* Remove "next" from list */
+    nextnext = (Evas_Object_Textblock_Node*)EINA_INLIST_GET(next)->next;
+    if (nextnext)
+        EINA_INLIST_GET(nextnext)->prev = (void *)cur;
+    EINA_INLIST_GET(cur)->next = (void *)nextnext;
+
+    /* Fixup cursors */
+    o = obj->object_data;
+    if (next == o->cursor->node) {
+       o->cursor->node = cur;
+       o->cursor->pos += cur_len;
+    }
+    EINA_LIST_FOREACH(o->cursors, l, cursor) {
+        if (next == cursor->node) {
+            cursor->node = cur;
+            cursor->pos += cur_len;
+        }
+    }
+
+    /* Free next */
+    if (next->text) free(next->text);
+    free(next);
+}
+
+static void
+_nodes_adjacent_merge(const Evas_Object *obj, Evas_Object_Textblock_Node *cur)
+{
+    Evas_Object_Textblock_Node *prev;
+    prev = (Evas_Object_Textblock_Node *)EINA_INLIST_GET(cur)->prev;
+    _nodes_next_merge(obj, cur);
+    _nodes_next_merge(obj, prev);
 }
 
 /* table of html escapes (that i can find) this should be ordered with the
