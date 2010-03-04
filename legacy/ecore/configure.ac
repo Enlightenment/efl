@@ -171,6 +171,7 @@ want_ecore_evas_software_16_wince="no"
 
 case "$host_os" in
    mingw32ce* | cegcc*)
+      want_ecore_con="no"
       want_ecore_wince="yes"
       want_ecore_evas_software_16_wince="yes"
       ;;
@@ -178,6 +179,7 @@ case "$host_os" in
       want_notify_win32="yes"
       want_curl="yes"
       want_glib="auto"
+      want_ecore_con="no"
       want_ecore_imf="yes"
       want_ecore_win32="yes"
       want_ecore_evas_software_gdi="yes"
