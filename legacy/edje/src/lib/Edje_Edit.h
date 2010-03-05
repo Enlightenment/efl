@@ -533,7 +533,7 @@ edje_edit_external_add(
 );
 
 /** Delete the given external from the list. */
-EAPI void
+EAPI Eina_Bool
 edje_edit_external_del(
    Evas_Object *obj,      ///< The edje object
    const char *external   ///< The name for the external to delete

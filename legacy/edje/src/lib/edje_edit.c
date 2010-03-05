@@ -1621,32 +1621,34 @@ EAPI Eina_Bool
 edje_edit_external_add(Evas_Object *obj, const char *external)
 {
    Edje_External_Directory_Entry *e;
-   GET_ED_OR_RETURN(0);
+   GET_ED_OR_RETURN(EINA_FALSE);
 
    e = _edje_edit_external_get(ed, external);
-   if (e) return 0;
+   if (e) return EINA_FALSE;
 
    e = _alloc(sizeof(Edje_External_Directory_Entry));
-   if (!e) return 0;
+   if (!e) return EINA_FALSE;
    e->entry = (char*)eina_stringshare_add(external);
 
    if (!ed->file->external_dir)
      ed->file->external_dir = _alloc(sizeof(Edje_External_Directory));
-   ed->file->external_dir->entries = eina_list_append(ed->file->external_dir->entries, e);
-   return 1;
+   ed->file->external_dir->entries = \
+     eina_list_append(ed->file->external_dir->entries, e);
+   return EINA_TRUE;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_external_del(Evas_Object *obj, const char *external)
 {
    Edje_External_Directory_Entry *e;
 
-   GET_ED_OR_RETURN();
+   GET_ED_OR_RETURN(EINA_FALSE);
 
    e = _edje_edit_external_get(ed, external);
-   if (!e) return;
+   if (!e) return EINA_FALSE;
 
-   ed->file->external_dir->entries = eina_list_remove(ed->file->external_dir->entries, e);
+   ed->file->external_dir->entries = \
+     eina_list_remove(ed->file->external_dir->entries, e);
    if (!ed->file->external_dir->entries)
      {
 	free(ed->file->external_dir);
@@ -1655,6 +1657,8 @@ edje_edit_external_del(Evas_Object *obj, const char *external)
 
    _edje_if_string_free(ed, e->entry);
    free(e);
+
+   return EINA_TRUE;
 }
 
 /***************/
