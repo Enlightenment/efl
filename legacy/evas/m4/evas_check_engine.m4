@@ -387,13 +387,24 @@ dnl use: EVAS_CHECK_ENGINE_DEP_QUARTZ(engine, simple, want_static[, ACTION-IF-FO
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_QUARTZ],
 [
 
+have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
-AC_CHECK_HEADERS([/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h],
-   [have_dep="yes"],
-   [have_dep="no"]
-)
+AC_REQUIRE([EVAS_MAYBE_GET_OBJCPP])
+
+AS_IF([test "x${rw_cv_prog_objc_works}" = "xyes"],
+[
+   AC_LANG_PUSH([Objective C]) 
+   AC_CHECK_HEADERS([/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h],
+      [
+       have_dep="yes"
+       evas_engine_[]$1[]_libs="-framework Cocoa"
+      ],
+      [have_dep="no"])
+   AC_LANG_POP([Objective C]) 
+
+])
 
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
@@ -404,6 +415,13 @@ else
   m4_default([$5], [:])
 fi
 
+])
+
+dnl Helper macro for EVAS_CHECK_ENGINE_DEP_QUARTZ
+
+AC_DEFUN([EVAS_MAYBE_GET_OBJCPP],
+[AS_IF([test "x${rw_cv_prog_objc_works}" = "xyes"],
+       [AC_PROG_OBJCPP])
 ])
 
 dnl use: EVAS_CHECK_ENGINE_DEP_GL_GLEW(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])

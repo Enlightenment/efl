@@ -1,6 +1,19 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
+# rw_PROG_OBJC_WORKS
+# Check whether the Objective C compiler works.
+AC_DEFUN([rw_PROG_OBJC_WORKS],
+[AC_REQUIRE([AC_PROG_OBJC])dnl
+AC_CACHE_CHECK([whether the Objective C compiler works],
+               [rw_cv_prog_objc_works],
+               [AC_LANG_PUSH([Objective C])
+                AC_LINK_IFELSE([AC_LANG_PROGRAM([], [])],
+                               [rw_cv_prog_objc_works=yes],
+                               [rw_cv_prog_objc_works=no])
+                AC_LANG_POP([Objective C])])
+])
+
 AC_INIT([evas], [0.9.9.063], [enlightenment-devel@lists.sourceforge.net])
 release="ver-pre-svn-05"
 AC_PREREQ([2.52])
@@ -138,6 +151,7 @@ AC_ARG_ENABLE([simple-x11],
 
 
 ### Checks for programs
+
 m4_ifdef([AC_PROG_OBJC],
    [
     AC_PROG_OBJC
@@ -147,8 +161,10 @@ m4_ifdef([AC_PROG_OBJC],
     AC_CHECK_TOOL([OBJC], [gcc])
     AC_SUBST([OBJC])
     AC_SUBST([OBJCFLAGS])
-   ]
-)
+   ])
+
+rw_PROG_OBJC_WORKS
+
 AC_PROG_CXX
 AC_PROG_CC
 
