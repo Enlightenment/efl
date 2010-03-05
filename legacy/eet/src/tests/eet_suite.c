@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <pthread.h>
 
 #include <check.h>
 
@@ -1410,6 +1411,65 @@ START_TEST(eet_cipher_decipher_simple)
 }
 END_TEST
 
+static Eina_Bool open_worker_stop;
+static void*
+open_close_worker(void* path)
+{
+   while (!open_worker_stop)
+     {
+	Eet_File* ef = eet_open((char const*)path, EET_FILE_MODE_READ);
+	if (ef == NULL)
+	  {
+	     pthread_exit("eet_open() failed");
+	  }
+	else
+	  {
+	     Eet_Error err_code = eet_close(ef);
+	     if (err_code != EET_ERROR_NONE)
+	       pthread_exit("eet_close() failed");
+	  }
+     }
+
+   pthread_exit(NULL);
+}
+
+START_TEST(eet_cache_concurrency)
+{
+   char *file = strdup("/tmp/eet_suite_testXXXXXX");
+   const char *buffer = "test data";
+   Eet_File *ef;
+   void *thread_ret;
+   unsigned int n;
+
+   eet_init();
+
+   /* create a file to test with */
+   fail_if(!mktemp(file));
+   ef = eet_open(file, EET_FILE_MODE_WRITE);
+   fail_if(!ef);
+   fail_if(!eet_write(ef, "keys/tests", buffer, strlen(buffer) + 1, 0));
+
+   /* start a thread that repeatedly opens and closes a file */
+   open_worker_stop = 0;
+   pthread_t thread;
+   pthread_create(&thread, NULL, open_close_worker, file);
+
+   /* clear the cache repeatedly in this thread */
+   for (n = 0; n < 100000; ++n)
+     {
+	eet_clearcache();
+     }
+
+   /* join the other thread, and fail if it returned an error message */
+   open_worker_stop = 1;
+   fail_if(pthread_join(thread, &thread_ret) != 0);
+   fail_unless(thread_ret == NULL, (char const*)thread_ret);
+
+   fail_if(unlink(file) != 0);
+   eet_shutdown();
+}
+END_TEST
+
 
 Suite *
 eet_suite(void)
@@ -1454,6 +1514,10 @@ eet_suite(void)
    tcase_add_test(tc, eet_cipher_decipher_simple);
    suite_add_tcase(s, tc);
 #endif
+
+   tc = tcase_create("Eet Cache");
+   tcase_add_test(tc, eet_cache_concurrency);
+   suite_add_tcase(s, tc);
 
    return s;
 }

@@ -280,7 +280,7 @@ eet_test_close(int test, Eet_File *ef)
    if (test)
      {
 	ef->delete_me_now = 1;
-        eet_internal_close(ef, 0);
+        eet_internal_close(ef, 1);
      }
    return test;
 }
@@ -307,6 +307,7 @@ eet_cache_find(const char *path, Eet_File **cache, int cache_num)
 }
 
 /* add to end of cache */
+/* this should only be called when the cache lock is already held */
 static void
 eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 {
@@ -358,6 +359,7 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 }
 
 /* delete from cache */
+/* this should only be called when the cache lock is already held */
 static void
 eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 {
@@ -849,6 +851,7 @@ eet_clearcache(void)
     * We need to compute the list of eet file to close separately from the cache,
     * due to eet_close removing them from the cache after each call.
     */
+   LOCK_CACHE;
    for (i = 0; i < eet_writers_num; i++)
      {
 	if (eet_writers[i]->references <= 0) num++;
@@ -887,9 +890,10 @@ eet_clearcache(void)
 
 	for (i = 0; i < num; i++)
 	  {
-	     eet_close(closelist[i]);
+	     eet_internal_close(closelist[i], 1);
 	  }
      }
+   UNLOCK_CACHE;
 }
 
 /* FIXME: MMAP race condition in READ_WRITE_MODE */
@@ -1281,6 +1285,12 @@ eet_internal_read1(Eet_File *ef)
 }
 #endif
 
+/*
+ * this should only be called when the cache lock is already held
+ * (We could drop this restriction if we add a parameter to eet_test_close
+ * that indicates if the lock is held or not.  For now it is easiest
+ * to just require that it is always held.)
+ */
 static Eet_File *
 eet_internal_read(Eet_File *ef)
 {
@@ -1317,6 +1327,9 @@ eet_internal_close(Eet_File *ef, Eina_Bool locked)
    /* check to see its' an eet file pointer */
    if (eet_check_pointer(ef))
      return EET_ERROR_BAD_OBJECT;
+
+   if (!locked) LOCK_CACHE;
+
    /* deref */
    ef->references--;
    /* if its still referenced - dont go any further */
@@ -1329,17 +1342,18 @@ eet_internal_close(Eet_File *ef, Eina_Bool locked)
 
    /* if not urgent to delete it - dont free it - leave it in cache */
    if ((!ef->delete_me_now) && (ef->mode == EET_FILE_MODE_READ))
-     return EET_ERROR_NONE;
+     {
+	if (!locked) UNLOCK_CACHE;
+	return EET_ERROR_NONE;
+     }
 
    /* remove from cache */
-   if (!locked)
-     {
-        LOCK_CACHE;
-     }
    if (ef->mode == EET_FILE_MODE_READ)
      eet_cache_del(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
    else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_READ_WRITE))
      eet_cache_del(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
+
+   /* we can unlock the cache now */
    if (!locked)
      {
         UNLOCK_CACHE;
@@ -1425,7 +1439,11 @@ eet_memopen_read(const void *data, size_t size)
    ef->sha1 = NULL;
    ef->sha1_length = 0;
 
-   return eet_internal_read(ef);
+   /* eet_internal_read expects the cache lock to be held when it is called */
+   LOCK_CACHE;
+   ef = eet_internal_read(ef);
+   UNLOCK_CACHE;
+   return ef;
 }
 
 EAPI Eet_File *
@@ -1466,7 +1484,6 @@ eet_open(const char *file, Eet_File_Mode mode)
 	  }
 	ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
      }
-   UNLOCK_CACHE;
    
     /* try open the file based on mode */
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
@@ -1475,23 +1492,23 @@ eet_open(const char *file, Eet_File_Mode mode)
 	file_stat.st_mtime = 0;
 
 	fp = fopen(file, "rb");
-	if (!fp) goto on_error;
+	if (!fp) goto open_error;
 	if (fstat(fileno(fp), &file_stat))
 	  {
 	     fclose(fp);
 	     fp = NULL;
-	     goto on_error;
+	     goto open_error;
 	  }
 	if ((mode == EET_FILE_MODE_READ) &&
 	    (file_stat.st_size < ((int) sizeof(int) * 3)))
 	  {
 	     fclose(fp);
 	     fp = NULL;
-	     goto on_error;
+	     goto open_error;
 	  }
 
-     on_error:
-	if (fp == NULL && mode == EET_FILE_MODE_READ) return NULL;
+     open_error:
+	if (fp == NULL && mode == EET_FILE_MODE_READ) goto on_error;
      }
    else
      {
@@ -1503,7 +1520,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	unlink(file);
 	fd = open(file, O_CREAT | O_TRUNC | O_RDWR, S_IRUSR | S_IWUSR);
 	fp = fdopen(fd, "wb");
-	if (!fp) return NULL;
+	if (!fp) goto on_error;
      }
 
    /* We found one */
@@ -1520,6 +1537,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	/* reference it up and return it */
 	if (fp != NULL) fclose(fp);
 	ef->references++;
+	UNLOCK_CACHE;
 	return ef;
      }
 
@@ -1528,7 +1546,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    /* Allocate struct for eet file and have it zero'd out */
    ef = malloc(sizeof(Eet_File) + file_len);
    if (!ef)
-     return NULL;
+     goto on_error;
 
    /* fill some of the members */
    INIT_FILE(ef);
@@ -1557,7 +1575,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 
    /* if we can't open - bail out */
    if (eet_test_close(!ef->fp, ef))
-     return NULL;
+     goto on_error;
 
    fcntl(fileno(ef->fp), F_SETFD, FD_CLOEXEC);
    /* if we opened for read or read-write */
@@ -1567,10 +1585,10 @@ eet_open(const char *file, Eet_File_Mode mode)
 	ef->data = mmap(NULL, ef->data_size, PROT_READ,
 			MAP_SHARED, fileno(ef->fp), 0);
 	if (eet_test_close((ef->data == MAP_FAILED), ef))
-	  return NULL;
+	  goto on_error;
 	ef = eet_internal_read(ef);
 	if (!ef)
-	  return NULL;
+	  goto on_error;
      }
 
  empty_file:
@@ -1584,16 +1602,19 @@ eet_open(const char *file, Eet_File_Mode mode)
    /* add to cache */
    if (ef->references == 1)
      {
-	LOCK_CACHE;
 	if (ef->mode == EET_FILE_MODE_READ)
 	  eet_cache_add(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
 	else
 	  if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_READ_WRITE))
 	    eet_cache_add(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
-	UNLOCK_CACHE;
      }
 
+   UNLOCK_CACHE;
    return ef;
+
+on_error:
+   UNLOCK_CACHE;
+   return NULL;
 }
 
 EAPI Eet_File_Mode
