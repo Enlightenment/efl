@@ -1333,7 +1333,7 @@ eet_internal_close(Eet_File *ef, Eina_Bool locked)
    /* deref */
    ef->references--;
    /* if its still referenced - dont go any further */
-   if (ef->references > 0) return EET_ERROR_NONE;
+   if (ef->references > 0) goto on_error;
    /* flush any writes */
    err = eet_flush2(ef);
 
@@ -1342,10 +1342,7 @@ eet_internal_close(Eet_File *ef, Eina_Bool locked)
 
    /* if not urgent to delete it - dont free it - leave it in cache */
    if ((!ef->delete_me_now) && (ef->mode == EET_FILE_MODE_READ))
-     {
-	if (!locked) UNLOCK_CACHE;
-	return EET_ERROR_NONE;
-     }
+     goto on_error;
 
    /* remove from cache */
    if (ef->mode == EET_FILE_MODE_READ)
@@ -1354,10 +1351,7 @@ eet_internal_close(Eet_File *ef, Eina_Bool locked)
      eet_cache_del(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
 
    /* we can unlock the cache now */
-   if (!locked)
-     {
-        UNLOCK_CACHE;
-     }
+   if (!locked) UNLOCK_CACHE;
 
    DESTROY_FILE(ef);
 
@@ -1408,6 +1402,10 @@ eet_internal_close(Eet_File *ef, Eina_Bool locked)
    /* free it */
    free(ef);
    return err;
+
+ on_error:
+   if (!locked) UNLOCK_CACHE;
+   return EET_ERROR_NONE;
 }
 
 EAPI Eet_File *
