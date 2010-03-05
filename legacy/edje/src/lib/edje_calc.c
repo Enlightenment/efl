@@ -1329,7 +1329,7 @@ _edje_part_recalc_single(Edje *ed,
      _edje_part_recalc_single_fill(ep, desc, params, flags);
 
    /* colors */
-   if (desc->color_class)
+   if ((desc->color_class) && (*desc->color_class))
      cc = _edje_color_class_find(ed, desc->color_class);
 
    if (cc)
