@@ -94,6 +94,12 @@ dnl managed by evil
       have_socket="yes"
       AC_CHECK_LIB([socket], [connect], [], [have_socket="no"])
       ;;
+   darwin*)
+      ELM_UNIX_DEF="#define"
+      have_socket="yes"
+      AC_CHECK_HEADERS([crt_externs.h])
+      AC_DEFINE([environ], [(*_NSGetEnviron())], [apple doesn't follow POSIX in this case.])
+      ;;
    *)
       ELM_UNIX_DEF="#define"
       AC_CHECK_FUNCS(dlopen, res=yes, res=no)
