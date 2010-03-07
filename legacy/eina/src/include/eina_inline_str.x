@@ -20,21 +20,23 @@
 #define EINA_STR_INLINE_H_
 
 /**
- * @addtogroup Eina_Str_Group Str
+ * @addtogroup Eina_String_Group String
  *
  * @{
  */
 
 /**
- * strlen() that will count up to maxlen bytes.
+ * @brief Count up to a given amount of bytes of the given string.
  *
- * If one wants to know the size of @a str, but it should not be
- * greater than @a maxlen, then use this function and avoid needless
- * iterations after that size.
- *
- * @param str the string pointer, must be valid and not @c NULL.
- * @param maxlen the maximum length to allow.
+ * @param str The string pointer.
+ * @param maxlen The maximum length to allow.
  * @return the string size or (size_t)-1 if greater than @a maxlen.
+ *
+ * This function returns the size of @p str, up to @p maxlen
+ * characters. It avoid needless iterations after that size. @p str
+ * must be a valid pointer and MUST not be @c NULL, otherwise this
+ * function will crash. This function returns the string size, or
+ * (size_t)-1 if the size is greater than @a maxlen.
  */
 static inline size_t
 eina_strlen_bounded(const char *str, size_t maxlen)

@@ -170,6 +170,14 @@ eina_str_split_full_helper(const char *str, const char *delim, int max_tokens, u
  *                                   API                                      *
  *============================================================================*/
 
+/**
+ * @addtogroup Eina_String_Group String
+ *
+ * @brief These functions provide useful C string management.
+ *
+ * @{
+ */
+
 
 /**
  * @brief Copy a c-string to another.
@@ -392,9 +400,9 @@ eina_str_split(const char *str, const char *delim, int max_tokens)
  * separate them with @p sep. The result is stored in the buffer
  * @p dst and at most @p size - 1 characters will be written and the
  * string is NULL-terminated. @p a_len is the length of @p a (not
- * including '\0') and @p b_len is the length of @p b (not including
- * '\0'). This function returns the number of characters printed (not
- * including the trailing '\0' used to end output to strings). Just
+ * including '\\0') and @p b_len is the length of @p b (not including
+ * '\\0'). This function returns the number of characters printed (not
+ * including the trailing '\\0' used to end output to strings). Just
  * like snprintf(), it will not write more than @p size bytes, thus a
  * returned value of @p size or more means that the output was
  * truncated.
@@ -548,3 +556,7 @@ eina_str_escape(const char *str)
    *d = 0;
    return s2;
 }
+
+/**
+ * @}
+ */
