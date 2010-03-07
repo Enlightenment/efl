@@ -426,7 +426,7 @@ efreet_desktop_new(const char *file)
     Efreet_Desktop *desktop = NULL;
     char *rp = NULL;
 
-   if (!file) return NULL;
+    if (!file) return NULL;
     rp = ecore_file_realpath(file);
     if (cache)
     {
