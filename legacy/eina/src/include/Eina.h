@@ -88,6 +88,7 @@
  * @li @ref Eina_Module_Group lists, loads and share modules using Eina_Module standard.
  * @li @ref Eina_Rectangle_Group rectangle structure and standard manipulation methods.
  * @li @ref Eina_Safety_Checks_Group extra checks that will report unexpected conditions and can be disabled at compile time.
+ * @li @ref Eina_String_Group a set of functions that manages C strings.
  *
  * @defgroup Eina_Data_Types_Group
  *
