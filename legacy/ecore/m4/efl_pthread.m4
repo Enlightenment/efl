@@ -99,7 +99,7 @@ fi
 
 AC_MSG_CHECKING([whether to build POSIX threads spinlock code])
 AC_MSG_RESULT([${_efl_have_pthread_spinlock}])
-if test "$x{_efl_enable_pthread}" = "xyes" && test "x${_efl_have_pthread_spinlock}" = "xno"; then
+if test "$x{_efl_enable_pthread}" = "xyes" && test "x${_efl_have_pthread_spinlock}" = "xno" && test "x$1" = "xyes" ; then
    AC_MSG_ERROR([pthread support requested but spinlocks are not supported])
 fi
 
