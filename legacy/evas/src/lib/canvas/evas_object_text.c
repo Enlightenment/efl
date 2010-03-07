@@ -783,6 +783,7 @@ evas_object_text_shadow_color_set(Evas_Object *obj, int r, int g, int b, int a)
    o->cur.shadow.g = g;
    o->cur.shadow.b = b;
    o->cur.shadow.a = a;
+   o->changed = 1;
    evas_object_change(obj);
 }
 
@@ -835,6 +836,7 @@ evas_object_text_glow_color_set(Evas_Object *obj, int r, int g, int b, int a)
    o->cur.glow.g = g;
    o->cur.glow.b = b;
    o->cur.glow.a = a;
+   o->changed = 1;
    evas_object_change(obj);
 }
 
@@ -887,6 +889,7 @@ evas_object_text_glow2_color_set(Evas_Object *obj, int r, int g, int b, int a)
    o->cur.glow2.g = g;
    o->cur.glow2.b = b;
    o->cur.glow2.a = a;
+   o->changed = 1;
    evas_object_change(obj);
 }
 
@@ -939,6 +942,7 @@ evas_object_text_outline_color_set(Evas_Object *obj, int r, int g, int b, int a)
    o->cur.outline.g = g;
    o->cur.outline.b = b;
    o->cur.outline.a = a;
+   o->changed = 1;
    evas_object_change(obj);
 }
 
