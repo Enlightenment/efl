@@ -179,6 +179,7 @@ TAB_SIZE               = 8
 # will result in a user-defined paragraph with heading "Side Effects:".
 # You can put \n's in the value part of an alias to insert newlines.
 
+# Aliases used by edcref
 ALIASES                = block="<tr><td class=\"block\"><b>"
 ALIASES               += context="</b></td><td class=\"context\" colspan=2>\code"
 ALIASES               += description="\endcode</td></tr><tr><td>&nbsp;</td><td class=\"description\" colspan=2>"
@@ -188,6 +189,14 @@ ALIASES               += parameters="</tt></td><td class=\"parameters\"><tt>"
 ALIASES               += effect="</tt></td></tr><tr><td>&nbsp;</td><td class=\"effect\">"
 ALIASES               += endproperty="</td></tr></table></td></tr>"
 ALIASES               += edcsection{2}="<tr class=\"section\"><td class=\"section\" colspan=\"2\">\anchor sec_\1 \ref sec_quickaccess \"\2\"</td></tr>"
+
+# Aliases used by luaref
+ALIASES               += luaclass{2}="\anchor \1 \n<div class=\"luaclass\">\2</div>"
+ALIASES               += attributes="<div class=\"luaattrib\">Attributes:</div>"
+ALIASES               += methods="<div class=\"luaattrib\">Methods:</div>"
+ALIASES               += setters="<div class=\"luaattrib\">Setters:</div>"
+ALIASES               += seealso{2}="<b>See also:</b> <a href='\2'>\1</a>\n"
+ALIASES               += seealso{1}="<b>See also:</b> \1\n"
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C
 # sources only. Doxygen will then generate output that is more tailored for C.
@@ -633,7 +642,7 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           =
+EXAMPLE_PATH           = examples/
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp

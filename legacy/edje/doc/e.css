@@ -276,7 +276,7 @@ table.edcref tr td.block {
         padding-top: 10px;
 }
 
-table.edcref tr.section td.section {
+table.edcref tr.section td.section, div.luaclass {
         color: #888;
         font-size: 16pt;
         padding: 15px;
@@ -287,4 +287,9 @@ table.edcref tr.section td.section {
 table.edcref tr.section td.section a {
         color: #888;
         text-decoration: none;
+}
+
+div.luaattrib {
+        color: #888;
+        border: 1px solid #ccc;
 }

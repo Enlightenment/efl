@@ -2,6 +2,79 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+/**
+@page luaref Edje LUA scripting
+
+
+@section intro Introduction
+
+Lua scripts are declared in edc files with the @a lua_script keyword. Like this:
+@code
+group {
+   name: "mygroup";
+   lua_script {
+       print("LUA: on-load script");
+   }
+   parts {
+      ...
+   }
+   programs {
+      program {
+         signal: "a_signal";
+         source: "a_part";
+         lua_script {
+            print("LUA: 'mouse,down,1' on 'button'");
+         }
+      }
+   }
+}
+@endcode
+
+Inside a lua_script code block, there's a reference to your edje @ref Group named
+@a ed, which you may use for accessing your parts (e.g. a part named "label"
+is accessed through @a ed.label). This is the main object that is used to
+access every parts and is also used to create @ref Timer, @ref poller and
+@ref animator; to emit signal, send messagges, run/stop programs and more.
+Look at the @ref Group class to see all the methods and properties.
+
+Classes hierarchy:
+- @ref Timer
+- @ref Animator
+- @ref Poller
+- @ref Object
+  - @ref Group
+  - @ref Part
+  - @ref Rectangle
+  - @ref Image
+  - @ref Line
+  - @ref Poligon
+  - @ref Table
+  - @ref Description
+
+References:
+@li For general LUA documentations look at the official LUA manual
+(http://www.lua.org/manual/5.1/)
+@li Examples of edc files that use LUA can be found in the doc/examples folder
+in the edje sources.
+ 
+
+Lua snippets:
+@code
+// print one or more values in console in a tabbed way
+print("something to say", val1, val2)
+
+// string concat
+print("string1" .. "string2" .. val1)
+ 
+// var to string
+tostring(var)
+ 
+// Print the type of a variable 
+print(type(var))
+@endcode
+
+*/
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -29,10 +102,6 @@ void *alloca(size_t);
 
 #include <lauxlib.h>
 #include <lualib.h>
-
-/*
- * Edje_Lua framework definitions
- */
 
 #define EDJE_LUA_GET 1
 #define EDJE_LUA_SET 2
@@ -686,9 +755,31 @@ const luaL_Reg lClass_fn[] = {
    {NULL, NULL}			// sentinel
 };
 
-/*
- * Lua Edje Timer bindings
- */
+/**
+@page luaref
+@luaclass{Timer,Timer Class}
+
+The timer class is a wrapper around ecore_timer. You can create a timer using
+the @a timer(secs,callback) method of the @ref Group class.
+The callback function will be called every @a secs seconds until it will
+return CALLBACK_RENEW. If CALLBACK_CANCEL is returned the timer will stop.
+
+Example:
+@code
+lua_script {
+   function timer_cb()
+      print("timer_cb")
+      return CALLBACK_RENEW
+   end
+
+   timer = ed:timer(0.5, timer_cb)
+}
+@endcode
+
+A more detailed example can be found in doc/examples/lua_timer.edc
+
+@seealso{Ecore Timer Docs,http://docs.enlightenment.org/auto/ecore/group__Ecore__Timer__Group.html}
+*/
 
 const luaL_Reg lTimer_get[];
 
@@ -776,6 +867,13 @@ _edje_lua_timer_get_interval(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@attributes
+@li Timer.pending
+@li Timer.precision
+@li Timer.interval
+*/
 const luaL_Reg lTimer_get[] = {
    {"pending", _edje_lua_timer_get_pending},
    {"precision", _edje_lua_timer_get_precision},
@@ -791,6 +889,12 @@ _edje_lua_timer_set_interval(lua_State *L)
       ecore_timer_interval_set(obj->et, luaL_checknumber(L, 2));
    return 0;
 }
+
+/**
+@page luaref
+@setters
+@li Timer.interval
+*/
 
 const luaL_Reg lTimer_set[] = {
    {"interval", _edje_lua_timer_set_interval},
@@ -842,6 +946,14 @@ _edje_lua_timer_fn_delay(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@methods
+@li Timer:del()
+@li Timer:freeze()
+@li Timer:thaw()
+@li Timer:delay(secs)
+*/
 const luaL_Reg lTimer_fn[] = {
    {"del", _edje_lua_timer_fn_del},
    {"freeze", _edje_lua_timer_fn_freeze},
@@ -1215,6 +1327,15 @@ const luaL_Reg lTransition_fn[] = {
 /*
  * Lua Evas Object bindings
  */
+/**
+@page luaref
+@luaclass{Object,Generic Object Class}
+
+Within the lua_script scope, Edje objects (groups, parts, etc) have the
+following basic attributes and methods:
+
+@seealso{Evas Object Docs,http://docs.enlightenment.org/auto/evas/group__Evas__Object__Group.html}
+*/
 
 const luaL_Reg lObject_get[];
 
@@ -1336,6 +1457,20 @@ _edje_lua_object_fn_clip_unset(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@methods
+@li Object:del()
+@li Object:show()
+@li Object:hide()
+@li Object:move(x, y)
+@li Object:resize(w, h)
+@li Object:raise()
+@li Object:lower()
+@li Object:stack_above()
+@li Object:stack_below()
+@li Object:clip_unset()
+*/
 const luaL_Reg lObject_fn[] = {
    {"del", _edje_lua_object_fn_del},
    {"show", _edje_lua_object_fn_show},
@@ -1668,6 +1803,39 @@ _edje_lua_object_get_mouse_events(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@attributes
+@li Object.name
+@li Object.geometry: (x, y, width, height)
+@li Object.type: object type (RECT=1, TEXT, IMAGE, SWALLOW, TEXTBLOCK, GRADIENT, GROUP, BOX, TABLE, EXTERNAL)
+@li Object.layer
+@li Object.above
+@li Object.below
+@li Object.size_hint_min: (w,h)
+@li Object.size_hint_max: (w,h)
+@li Object.size_hint_request: (w,h)
+@li Object.size_hint_aspect: (aspect, w, h)
+@li Object.size_hint_align: (w,h)
+@li Object.size_hint_weight: (w,h)
+@li Object.size_hint_padding: (l,r,t,b)
+@li Object.visible
+@li Object.render_op
+@li Object.anti_alias
+@li Object.scale
+@li Object.color: (r, g, b, alpha)
+@li Object.color_interpolation
+@li Object.clip
+@li Object.clipees
+@li Object.evas (not implemeted, always return nil)
+@li Object.pass_events
+@li Object.repeat_events
+@li Object.propagate_events
+@li Object.focus
+@li Object.pointer_mode
+@li Object.precise_is_inside
+@li Object.mouse_events
+*/
 const luaL_Reg lObject_get[] = {
    {"name", _edje_lua_object_get_name},
    {"geometry", _edje_lua_object_get_geometry},
@@ -2065,6 +2233,32 @@ _edje_lua_object_set_mouse_events(lua_State *L)
    return 0;
 }
 
+/**
+ @page luaref
+ @setters
+ @li Object.name
+ @li Object.layer
+ @li Object.size_hint_min
+ @li Object.size_hint_max
+ @li Object.size_hint_request
+ @li Object.size_hint_aspect
+ @li Object.size_hint_align
+ @li Object.size_hint_weight
+ @li Object.size_hint_padding
+ @li Object.render_op
+ @li Object.anti_alias
+ @li Object.scale
+ @li Object.color
+ @li Object.color_interpolation
+ @li Object.clip
+ @li Object.pass_events
+ @li Object.repeat_events
+ @li Object.propagate_events
+ @li Object.focus
+ @li Object.pointer_mode
+ @li Object.precise_is_inside
+ @li Object.mouse_events
+*/
 const luaL_Reg lObject_set[] = {
    {"name", _edje_lua_object_set_name},
    {"layer", _edje_lua_object_set_layer},
@@ -4118,7 +4312,14 @@ const luaL_Reg lPart_fn[] = {
 /*
  * Group
  */
+/**
+@page luaref
+@luaclass{Group,Group Class}
 
+Groups are objects, that is, they inherit the methods from the general
+@ref Object Class.
+They also contain the following methods and attributes:
+*/
 const luaL_Reg lGroup_mt[];
 
 const luaL_Reg lGroup_get[];
@@ -4306,6 +4507,21 @@ _edje_lua_group_get_frametime(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@attributes
+@li EdjeGroup.group
+@li EdjeGroup.mouse: (x,y)
+@li EdjeGroup.mouse_buttons
+@li EdjeGroup.size_min: (w,h)
+@li EdjeGroup.size_max: (w,h)
+@li EdjeGroup.scale
+@li EdjeGroup.load_error
+@li EdjeGroup.load_error_str
+@li EdjeGroup.play
+@li EdjeGroup.animation
+@li EdjeGroup.frametime 
+*/
 const luaL_Reg lGroup_get[] = {
    {"group", _edje_lua_group_get_group},
    {"mouse", _edje_lua_group_get_mouse},
@@ -4411,7 +4627,18 @@ _edje_lua_group_set_frametime(lua_State *L)
    edje_frametime_set(luaL_checknumber(L, 2));
    return 0;
 }
-
+/**
+@page luaref
+@setters
+@li EdjeGroup.group
+@li EdjeGroup.size_min
+@li EdjeGroup.size_max
+@li EdjeGroup.scale
+@li EdjeGroup.play
+@li EdjeGroup.animation
+@li EdjeGroup.text_change_cb
+@li EdjeGroup.frametime
+*/
 const luaL_Reg lGroup_set[] = {
    {"group", _edje_lua_group_set_group},
    {"size_min", _edje_lua_group_set_size_min},
@@ -4765,6 +4992,22 @@ _edje_lua_group_fn_thaw(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@methods
+@li @ref Timer EdjeGroup:timer(secs, callback)
+@li @ref Animator EdjeGroup:animator(func)
+@li @ref Poller EdjeGroup:poller(interval, callback)
+@li @ref Transform EdjeGroup:transform()
+@li EdjeGroup:signal_emit(emission, source)
+@li EdjeGroup:message_send(message_type, id, msg)
+@li EdjeGroup:program_run(name)
+@li EdjeGroup:program_stop(name)
+@li EdjeGroup:signal_callback_add(emission, source, callback)
+@li EdjeGroup:signal_callback_del(emission, source)
+@li EdjeGroup:freeze()
+@li EdjeGroup:thaw()
+*/
 const luaL_Reg lGroup_fn[] = {
    {"timer", _edje_lua_group_fn_timer},
    {"animator", _edje_lua_group_fn_animator},
