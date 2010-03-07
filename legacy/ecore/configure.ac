@@ -890,7 +890,7 @@ AC_SUBST(quartz_ldflags)
 
 # basic pthread support
 
-EFL_CHECK_PTHREAD([have_pthread="yes"], [have_pthread="no"])
+EFL_CHECK_PTHREAD([no], [have_pthread="yes"], [have_pthread="no"])
 
 ### Checks for types
 AC_CHECK_SIZEOF(int, 4)
