@@ -57,7 +57,8 @@ struct _Evas_Object_Image
       void             *get_pixels_data;
    } func;
 
-   Evas_Image_Scale_Hint scale_hint;
+   Evas_Image_Scale_Hint   scale_hint;
+   Evas_Image_Content_Hint content_hint;
 
    void             *engine_data;
 
@@ -2020,6 +2021,53 @@ evas_object_image_scale_hint_get(const Evas_Object *obj)
    return EVAS_IMAGE_SCALE_HINT_NONE;
    MAGIC_CHECK_END();
    return o->scale_hint;
+}
+
+/**
+ * Set the content hint of a given image of the canvas.
+ *
+ * @param obj The given canvas pointer.
+ * @param hint The content hint value.
+ *
+ * This function sets the content hint value of the given image of the canvas.
+ *
+ */
+EAPI void
+evas_object_image_content_hint_set(Evas_Object *obj, Evas_Image_Content_Hint hint)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   o->content_hint = hint;
+}
+
+/**
+ * Get the content hint of a given image of the canvas.
+ *
+ * @param obj The given canvas pointer.
+ *
+ * This function returns the content hint value of the given image of the canvas.
+ *
+ */
+EAPI Evas_Image_Content_Hint
+evas_object_image_content_hint_get(const Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return EVAS_IMAGE_CONTENT_HINT_NONE;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return EVAS_IMAGE_CONTENT_HINT_NONE;
+   MAGIC_CHECK_END();
+   return o->content_hint;
 }
 
 /**
