@@ -2679,7 +2679,7 @@ static void st_collections_group_parts_part_box_items_item_name(void)
     @property
         source
     @parameters
-        [another groups name]
+        [another group's name]
     @effect
         Sets the group this object will be made from.
     @endproperty
@@ -4157,7 +4157,7 @@ st_collections_group_parts_part_description_image_middle(void)
 /**
     @page edcref
     @property
-        scale
+        border_scale
     @parameters
         0, 1
     @effect
