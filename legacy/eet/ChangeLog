@@ -337,7 +337,3 @@
 2010-03-01  Albin Tonnerre
 
 	* Fix override of global symbols.
-
-2010-03-05  Adam Simpkins
-
-	* Fix clearcache race condition.
