@@ -403,10 +403,6 @@ _eina_stringshare_head_free(Eina_Stringshare_Head *ed, __UNUSED__ void *data)
    MAGIC_FREE(ed);
 }
 
-/**
- * @endcond
- */
-
 
 static Eina_Stringshare_Small _eina_small_share;
 
@@ -837,6 +833,98 @@ _eina_stringshare_node_alloc(int slen)
    return node;
 }
 
+static Eina_Stringshare_Node *
+_eina_stringshare_node_from_str(const char *str)
+{
+   Eina_Stringshare_Node *node, t;
+   const size_t offset = (char *)&(t.str) - (char *)&t;
+
+   node = (Eina_Stringshare_Node *)(str - offset);
+   EINA_MAGIC_CHECK_STRINGSHARE_NODE(node, );
+   return node;
+}
+
+struct dumpinfo
+{
+   int used, saved, dups, unique;
+};
+
+static void
+_eina_stringshare_small_bucket_dump(Eina_Stringshare_Small_Bucket *bucket, struct dumpinfo *di)
+{
+   const char **s = bucket->strings;
+   unsigned char *l = bucket->lengths;
+   unsigned short *r = bucket->references;
+   int i;
+
+   di->used += sizeof(*bucket);
+   di->used += bucket->count * sizeof(*s);
+   di->used += bucket->count * sizeof(*l);
+   di->used += bucket->count * sizeof(*r);
+   di->unique += bucket->count;
+
+   for (i = 0; i < bucket->count; i++, s++, l++, r++)
+     {
+	int dups;
+	printf("DDD: %5hhu %5hu '%s'\n", *l, *r, *s);
+
+	dups = (*r - 1);
+
+	di->used += *l;
+	di->saved += *l * dups;
+	di->dups += dups;
+     }
+}
+
+static void
+_eina_stringshare_small_dump(struct dumpinfo *di)
+{
+   Eina_Stringshare_Small_Bucket **p_bucket, **p_bucket_end;
+
+   p_bucket = _eina_small_share.buckets;
+   p_bucket_end = p_bucket + 256;
+
+   for (; p_bucket < p_bucket_end; p_bucket++)
+     {
+	Eina_Stringshare_Small_Bucket *bucket = *p_bucket;
+
+	if (!bucket)
+	  continue;
+
+	_eina_stringshare_small_bucket_dump(bucket, di);
+     }
+}
+
+static Eina_Bool
+eina_iterator_array_check(const Eina_Rbtree *rbtree __UNUSED__, Eina_Stringshare_Head *head, struct dumpinfo *fdata)
+{
+   Eina_Stringshare_Node *node;
+
+   STRINGSHARE_LOCK_SMALL();
+   STRINGSHARE_LOCK_BIG();
+
+   fdata->used += sizeof(Eina_Stringshare_Head);
+   for (node = head->head; node; node = node->next)
+     {
+	printf("DDD: %5i %5i ", node->length, node->references);
+	printf("'%s'\n", ((char *)node) + sizeof(Eina_Stringshare_Node));
+	fdata->used += sizeof(Eina_Stringshare_Node);
+	fdata->used += node->length;
+	fdata->saved += (node->references - 1) * node->length;
+	fdata->dups += node->references - 1;
+	fdata->unique++;
+     }
+
+   STRINGSHARE_UNLOCK_BIG();
+   STRINGSHARE_UNLOCK_SMALL();
+
+   return EINA_TRUE;
+}
+
+/**
+ * @endcond
+ */
+
 
 /*============================================================================*
  *                                 Global                                     *
@@ -1116,17 +1204,6 @@ eina_stringshare_add(const char *str)
    return eina_stringshare_add_length(str, slen);
 }
 
-static Eina_Stringshare_Node *
-_eina_stringshare_node_from_str(const char *str)
-{
-   Eina_Stringshare_Node *node, t;
-   const size_t offset = (char *)&(t.str) - (char *)&t;
-
-   node = (Eina_Stringshare_Node *)(str - offset);
-   EINA_MAGIC_CHECK_STRINGSHARE_NODE(node, );
-   return node;
-}
-
 /**
  * Increment references of the given shared string.
  *
@@ -1305,83 +1382,6 @@ eina_stringshare_strlen(const char *str)
 
    node = _eina_stringshare_node_from_str(str);
    return node->length;
-}
-
-struct dumpinfo
-{
-   int used, saved, dups, unique;
-};
-
-static void
-_eina_stringshare_small_bucket_dump(Eina_Stringshare_Small_Bucket *bucket, struct dumpinfo *di)
-{
-   const char **s = bucket->strings;
-   unsigned char *l = bucket->lengths;
-   unsigned short *r = bucket->references;
-   int i;
-
-   di->used += sizeof(*bucket);
-   di->used += bucket->count * sizeof(*s);
-   di->used += bucket->count * sizeof(*l);
-   di->used += bucket->count * sizeof(*r);
-   di->unique += bucket->count;
-
-   for (i = 0; i < bucket->count; i++, s++, l++, r++)
-     {
-	int dups;
-	printf("DDD: %5hhu %5hu '%s'\n", *l, *r, *s);
-
-	dups = (*r - 1);
-
-	di->used += *l;
-	di->saved += *l * dups;
-	di->dups += dups;
-     }
-}
-
-static void
-_eina_stringshare_small_dump(struct dumpinfo *di)
-{
-   Eina_Stringshare_Small_Bucket **p_bucket, **p_bucket_end;
-
-   p_bucket = _eina_small_share.buckets;
-   p_bucket_end = p_bucket + 256;
-
-   for (; p_bucket < p_bucket_end; p_bucket++)
-     {
-	Eina_Stringshare_Small_Bucket *bucket = *p_bucket;
-
-	if (!bucket)
-	  continue;
-
-	_eina_stringshare_small_bucket_dump(bucket, di);
-     }
-}
-
-static Eina_Bool
-eina_iterator_array_check(const Eina_Rbtree *rbtree __UNUSED__, Eina_Stringshare_Head *head, struct dumpinfo *fdata)
-{
-   Eina_Stringshare_Node *node;
-
-   STRINGSHARE_LOCK_SMALL();
-   STRINGSHARE_LOCK_BIG();
-
-   fdata->used += sizeof(Eina_Stringshare_Head);
-   for (node = head->head; node; node = node->next)
-     {
-	printf("DDD: %5i %5i ", node->length, node->references);
-	printf("'%s'\n", ((char *)node) + sizeof(Eina_Stringshare_Node));
-	fdata->used += sizeof(Eina_Stringshare_Node);
-	fdata->used += node->length;
-	fdata->saved += (node->references - 1) * node->length;
-	fdata->dups += node->references - 1;
-	fdata->unique++;
-     }
-
-   STRINGSHARE_UNLOCK_BIG();
-   STRINGSHARE_UNLOCK_SMALL();
-
-   return EINA_TRUE;
 }
 
 /**

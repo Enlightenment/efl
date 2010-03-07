@@ -60,10 +60,10 @@ static inline size_t eina_str_join(char *dst, size_t size, char sep, const char 
 }
 
 /**
+ * @def eina_str_join_static(dst, sep, a, b)
  * @brief Join two static strings and store the result in a static buffer.
  *
  * @param dst The buffer to store the result.
- * @param size Size (in byte) of the buffer.
  * @param sep The separator character to use.
  * @param a First string to use, before @p sep.
  * @param b Second string to use, after @p sep.
