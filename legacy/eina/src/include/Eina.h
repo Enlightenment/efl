@@ -62,7 +62,7 @@
  * time accounting and memory pool.
  *
  * This library is cross-platform and can be compiled and used on
- * Linux and Windows (XP and CE).
+ * Linux, BSD, Opensolaris and Windows (XP and CE).
  *
  * The data types that are available are (see @ref Eina_Data_Types_Group):
  * @li @ref Eina_Array_Group standard array of @c void* data.
