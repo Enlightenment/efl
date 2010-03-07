@@ -54,6 +54,7 @@ Classes hierarchy:
 References:
 @li For general LUA documentations look at the official LUA manual
 (http://www.lua.org/manual/5.1/)
+@li The lua-users wiki is also full of lua info (http://lua-users.org/wiki/)
 @li Examples of edc files that use LUA can be found in the doc/examples folder
 in the edje sources.
  
@@ -1324,12 +1325,9 @@ const luaL_Reg lTransition_fn[] = {
    {NULL, NULL}			// sentinel
 };
 
-/*
- * Lua Evas Object bindings
- */
 /**
 @page luaref
-@luaclass{Object,Generic Object Class}
+@luaclass{Object,General Object Class}
 
 Within the lua_script scope, Edje objects (groups, parts, etc) have the
 following basic attributes and methods:
