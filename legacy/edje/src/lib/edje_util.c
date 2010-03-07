@@ -661,10 +661,14 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
    else if (b > 255) b = 255;
    if (a < 0)        a = 0;
    else if (a > 255) a = 255;
+   color_class = eina_stringshare_add(color_class);
+   if (!color_class) return EINA_FALSE;
    EINA_LIST_FOREACH(ed->color_classes, l, cc)
      {
-	if ((cc->name) && (!strcmp(cc->name, color_class)))
+	if (cc->name == color_class)
 	  {
+	     eina_stringshare_del(color_class);
+
 	     if ((cc->r == r) && (cc->g == g) &&
 		 (cc->b == b) && (cc->a == a) &&
 		 (cc->r2 == r2) && (cc->g2 == g2) &&
@@ -693,13 +697,12 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
 	  }
      }
    cc = malloc(sizeof(Edje_Color_Class));
-   if (!cc) return EINA_FALSE;
-   cc->name = eina_stringshare_add(color_class);
-   if (!cc->name)
+   if (!cc)
      {
-	free(cc);
+	eina_stringshare_del(color_class);
 	return EINA_FALSE;
      }
+   cc->name = color_class;
    cc->r = r;
    cc->g = g;
    cc->b = b;
