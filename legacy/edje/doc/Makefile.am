@@ -30,4 +30,5 @@ doc:
 
 endif
 
-EXTRA_DIST = Doxyfile e.css foot.html head.html $(wildcard img/*.*) edje.dox.in
+EXTRA_DIST = Doxyfile e.css foot.html head.html $(wildcard img/*.*) \
+             edje.dox.in $(wildcard examples/*.*)
