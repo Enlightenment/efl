@@ -28,7 +28,7 @@ if exists('&ofu')
 endif
 
 syntax/edc.vim	[[[1
-234
+235
 " Vim syntax file
 " Language:	EDC
 " Maintainer:	Viktor Kojouharov
@@ -49,30 +49,33 @@ syn keyword	edcBlock	text font fill origin size image contained
 syn keyword	edcBlock	programs program styles style contained
 syn keyword 	edcBlock 	gradient spectra spectrum contained
 syn keyword 	edcBlock 	color_classes color_class rel1 rel2 contained
-syn keyword 	edcBlock 	items item script script_only contained
-syn keyword 	edcBlock 	lua_script lua_script_only contained
+syn keyword 	edcBlock 	items item file params externals contained
+syn keyword 	edcBlock 	map rotation perspective script lua_script contained
 
 syn keyword	edcLabel	item name alias min max type effect contained
 syn keyword	edcLabel	mouse_events repeat_events clip_to contained
-syn keyword	edcLabel	x y confine events scale scale_hint contained
+syn keyword	edcLabel	x y z confine events scale contained
 syn keyword	edcLabel	ignore_flags precise_is_inside contained
 syn keyword	edcLabel	use_alternate_font_metrics entry_mode contained
-syn keyword	edcLabel	source source2 source3 source4 source5 source6 contained
+syn keyword	edcLabel	source source2 source3 source4 contained
 syn keyword	edcLabel	source5 source6 multiline pointer_mode contained
 syn keyword	edcLabel	state visible step aspect fixed middle contained
 syn keyword	edcLabel	aspect_preference elipsis image contained
-syn keyword	edcLabel	relative offset to to_x to_y select_mode contained
-syn keyword	edcLabel	border color color2 color3 font size contained
-syn keyword	edcLabel	signal action transition in contained
+syn keyword	edcLabel	relative offset to to_x to_y contained
+syn keyword	edcLabel	border border_scale scale_hint color color2 color3 font size contained
+syn keyword	edcLabel	signal action transition in filter contained
 syn keyword	edcLabel	target after fit align contained
 syn keyword	edcLabel	text smooth inherit tag base style contained
-syn keyword	edcLabel	text_source color_class text_class repch contained
+syn keyword	edcLabel	text_source color_class text_class contained
 syn keyword	edcLabel	spectrum angle spread normal tween contained
 syn keyword	edcLabel	padding prefer weight aspect_mode contained
 syn keyword	edcLabel	options layout position span contained
 syn keyword	edcLabel	homogeneous contained
+syn keyword	edcLabel	on perspective light perspective_on contained
+syn keyword	edcLabel	backface_cull alpha center focus zplane contained
+syn keyword	edcLabel	int double string external script_only contained
 
-syn keyword	edcConstant 	COMP RAW LOSSY USER NONE ON_HOLD AUTOGRAB NOGRAB
+syn keyword	edcConstant 	COMP RAW LOSSY NONE ON_HOLD AUTOGRAB NOGRAB
 syn keyword	edcConstant 	TEXT IMAGE RECT TEXTBLOCK SWALLOW GRADIENT GROUP
 syn keyword	edcConstant 	NONE PLAIN OUTLINE SOFT_OUTLINE SHADOW
 syn keyword	edcConstant 	SOFT_SHADOW OUTLINE_SHADOW OUTLINE_SOFT_SHADOW
@@ -80,10 +83,8 @@ syn keyword	edcConstant	GLOW FAR_SHADOW FAR_SOFT_SHADOW
 syn keyword	edcConstant 	STATE_SET ACTION_STOP SIGNAL_EMIT FOCUS_SET
 syn keyword	edcConstant	DRAG_VAL_SET DRAG_VAL_STEP DRAG_VAL_PAGE
 syn keyword	edcConstant	LINEAR SINUSOIDAL ACCELERATE DECELERATE
-syn keyword	edcConstant	NEITHER VERTICAL HORIZONTAL BOTH BOX TABLE
-syn keyword	edcConstant	DEFAULT EXPLICIT SOLID DYNAMIC STATIC
-syn keyword	edcConstant	EDITABLE PASSWORD SCALE TILE TABLE ITEM
-syn keyword	edcConstant	SCRIPT LUA_SCRIPT "default"
+syn keyword	edcConstant	VERTICAL HORIZONTAL BOTH BOX TABLE
+syn keyword	edcConstant	EDITABLE PASSWORD "default"
 
 syn keyword	edcTodo		contained TODO FIXME XXX
 
@@ -194,7 +195,7 @@ syn keyword     edcScriptTag    contained script
 syn include 	@edcLua 	syntax/lua.vim
 unlet b:current_syntax
 syn region 	edcLuaScript	matchgroup=edcLuaScriptTag start="\<lua_script\_s*{" end="}" contains=@edcLua,edcLuaScriptTag
-syn keyword     edcLuaScriptTag    contained script
+syn keyword     edcLuaScriptTag contained script
 
 if exists("edc_minlines")
   let b:edc_minlines = edc_minlines
@@ -354,7 +355,7 @@ au BufRead,BufNewFile *.edc	set filetype=edc
 au BufRead,BufNewFile *.sma	set filetype=embryo
 au BufRead,BufNewFile *.embryo	set filetype=embryo
 autoload/edccomplete.vim	[[[1
-827
+892
 " Vim completion script
 " Language:	EDC
 " Maintainer:	Viktor Kojouharov
@@ -429,17 +430,17 @@ function! edccomplete#Complete(findstart, base)
       call edccomplete#AddLabel(res, line, a:base, s:partLabel)
       call edccomplete#AddStatement(res, line, a:base, s:partStatement)
       if line =~ 'type:\s*'
-	call edccomplete#AddKeyword(res, a:base, s:partTypes)
+        call edccomplete#AddKeyword(res, a:base, s:partTypes)
       elseif line =~ 'effect:\s*'
-	call edccomplete#AddKeyword(res, a:base, s:partEffects)
+        call edccomplete#AddKeyword(res, a:base, s:partEffects)
+      elseif line =~ 'select_mode:\s*'
+	call edccomplete#AddKeyword(res, a:base, s:partSelectMode)
       elseif line =~ 'ignore_flags:\s*'
 	call edccomplete#AddKeyword(res, a:base, s:partIgnoreFlags)
       elseif line =~ 'pointer_mode:\s*'
 	call edccomplete#AddKeyword(res, a:base, s:partPointerMode)
       elseif line =~ 'editable_mode:\s*'
 	call edccomplete#AddKeyword(res, a:base, s:partEditableMode)
-      elseif line =~ 'select_mode:\s*'
-	call edccomplete#AddKeyword(res, a:base, s:partSelectMode)
       endif
       if line =~ 'image:\s*".\{-}"'
 	call edccomplete#AddKeyword(res, a:base, s:imageStorageMethod)
@@ -460,18 +461,30 @@ function! edccomplete#Complete(findstart, base)
     elseif b:scontext == 'rel1' || b:scontext == 'rel2'
       call edccomplete#AddLabel(res, line, a:base, s:relLabel)
       if line =~ 'to\%(_[xy]\)\?:\s*"\?'
-	call edccomplete#FindNamesIn(res, a:base, 'parts')
+        call edccomplete#FindNamesIn(res, a:base, 'parts')
       endif
+
+    elseif b:scontext == 'map'
+      call edccomplete#AddLabel(res, line, a:base, s:mapLabel)
+      call edccomplete#AddStatement(res, line, a:base, s:mapStatement)
+
+    elseif b:scontext == 'rotation'
+      call edccomplete#AddLabel(res, line, a:base, s:rotationLabel)
+
+    elseif b:scontext == 'perspective'
+      call edccomplete#AddLabel(res, line, a:base, s:perspectiveLabel)
+
+    elseif b:scontext == 'params'
+      call edccomplete#AddLabel(res, line, a:base, s:paramsLabel)
 
     elseif b:scontext == 'image'
       call edccomplete#AddLabel(res, line, a:base, s:imageLabel)
-      call edccomplete#AddStatement(res, line, a:base, s:imageStatement)
       if line =~ 'image:\s*".\{-}"'
-	call edccomplete#AddKeyword(res, a:base, s:imageStorageMethod)
+        call edccomplete#AddKeyword(res, a:base, s:imageStorageMethod)
       elseif line =~ 'middle:\s*'
-	call edccomplete#AddKeyword(res, a:base, s:middleTypes)
+        call edccomplete#AddKeyword(res, a:base, s:imageMiddleTypes)
       elseif line =~ 'scale_hint:\s*'
-	call edccomplete#AddKeyword(res, a:base, s:scaleHintTypes)
+        call edccomplete#AddKeyword(res, a:base, s:imageScaleHint)
       endif
 
     elseif b:scontext == 'fill'
@@ -565,6 +578,9 @@ function! edccomplete#Complete(findstart, base)
     elseif b:scontext == 'gradient'
       call edccomplete#AddLabel(res, line, a:base, s:gradientLabel)
       call edccomplete#AddStatement(res, line, a:base, s:gradientStatement)
+      if line =~ 'type:\s*'
+	call edccomplete#AddKeyword(res, a:base, s:gradientTypes)
+      endif
 
     elseif b:scontext == 'styles'
       call edccomplete#AddStatement(res, line, a:base, s:stylesStatement)
@@ -590,6 +606,9 @@ function! edccomplete#Complete(findstart, base)
       if line =~ 'image:\s*".\{-}"'
 	call edccomplete#AddKeyword(res, a:base, s:imageStorageMethod)
       endif
+
+    elseif b:scontext == 'externals'
+      call edccomplete#AddLabel(res, line, a:base, s:externalsLabel)
 
     elseif strlen(b:scontext) == 0
       call edccomplete#AddStatement(res, line, a:base, s:topStatement)
@@ -727,28 +746,28 @@ endfunction
 
 " part
 let s:partLabel = {
-      \ 'name': 		        '"string"',
-      \ 'type':			        '"keyword"',
-      \ 'effect':		        '"keyword"',
-      \ 'ignore_flags':		        '"keyword" ...',
-      \ 'pointer_mode':		        '"keyword"',
-      \ 'mouse_events':		        '"bool"',
-      \ 'repeat_events':	        '"bool"',
-      \ 'scale':	                '"bool"',
-      \ 'precise_is_inside':	        '"bool"',
-      \ 'use_alternate_font_metrics':	'"bool"',
-      \ 'clip_to':		        '"string"',
-      \ 'source':		        '"string"',
-      \ 'source2':		        '"string" (only for TEXTAREA)',
-      \ 'source3':		        '"string" (only for TEXTAREA)',
-      \ 'source4':		        '"string" (only for TEXTAREA)',
-      \ 'source5':		        '"string" (only for TEXTAREA)',
-      \ 'source6':		        '"string" (only for TEXTAREA)',
-      \ 'image':		        '"string" "keyword"',
-      \ 'font':			        '"string" "string"',
-      \ 'entry_mode':		        '"keyword"',
-      \ 'select_mode':		        '"keyword"',
-      \ 'multiline':		        '"bool"',
+      \ 'name': 		        '"name"',
+      \ 'type':			        'keyword',
+      \ 'effect':		        'keyword',
+      \ 'clip_to':		        '"part_name"',
+      \ 'scale':	                '0-1',
+      \ 'mouse_events':		        '0-1',
+      \ 'repeat_events':	        '0-1',
+      \ 'ignore_flags':		        'keyword ...',
+      \ 'pointer_mode':		        'keyword',
+      \ 'select_mode':		        'keyword',
+      \ 'precise_is_inside':	        '0-1',
+      \ 'use_alternate_font_metrics':	'0-1',
+      \ 'image':	                '"filename" keyword',
+      \ 'font':		                '"filename" "name"',
+      \ 'entry_mode':		        'keyword',
+      \ 'multiline':    	        '0-1 (TEXTBLOCK only)',
+      \ 'source':		        '"group_name" (GROUP or TEXTBLOCK only)',
+      \ 'source2':		        '"group_name" (TEXTBLOCK only)',
+      \ 'source3':		        '"group_name" (TEXTBLOCK only)',
+      \ 'source4':		        '"group_name" (TEXTBLOCK only)',
+      \ 'source5':		        '"group_name" (TEXTBLOCK only)',
+      \ 'source6':		        '"group_name" (TEXTBLOCK only)',
       \ }
 let s:partStatement = [
       \ 'dragable',
@@ -764,29 +783,29 @@ let s:partStatement = [
 
 " dragable
 let s:dragableLabel = {
-      \ 'x':		'"bool" "int" "int"',
-      \ 'y':		'"bool" "int" "int"',
-      \ 'confine':	'"string"',
-      \ 'events':	'"string"',
+      \ 'x':		'0-1 int int',
+      \ 'y':		'0-1 int int',
+      \ 'confine':	'"part_name"',
+      \ 'events':	'"draggable_part_name"',
       \ }
 
 " description
 let s:descriptionLabel = {
-      \ 'state':		'"string" "float"',
-      \ 'inherit':		'"string" "float"',
-      \ 'visible':		'"bool"',
-      \ 'align':		'"float" "float"',
-      \ 'fixed': 		'"float" "float"',
-      \ 'min':			'"int" "int"',
-      \ 'max':			'"int" "int"',
-      \ 'step':			'"int" "int"',
-      \ 'aspect':		'"float" "float"',
-      \ 'aspect_preference':	'"keyword"',
-      \ 'color_class':		'"string"',
-      \ 'color':		'"int" "int" "int" "int"',
-      \ 'color2':		'"int" "int" "int" "int"',
-      \ 'color3':		'"int" "int" "int" "int"',
-      \ 'font':			'"string" "string"',
+      \ 'state':		'"name" index (float)',
+      \ 'inherit':		'"description" index (float)',
+      \ 'visible':		'0-1',
+      \ 'align':		'x y (float)',
+      \ 'fixed': 		'width height (0-1)',
+      \ 'min':			'width height (int)',
+      \ 'max':			'width height (int)',
+      \ 'step':			'width height (int)',
+      \ 'aspect':		'min max (float)',
+      \ 'aspect_preference':	'keyword',
+      \ 'color_class':		'"name"',
+      \ 'color':	        '0-255 0-255 0-255 0-255',
+      \ 'color2':	        '0-255 0-255 0-255 0-255',
+      \ 'color3':	        '0-255 0-255 0-255 0-255',
+      \ 'font': 		'"filename" "name"',
       \ }
 let s:descriptionStatement = [
       \ 'rel1',
@@ -802,36 +821,69 @@ let s:descriptionStatement = [
       \ 'program',
       \ 'programs',
       \ 'box',
+      \ 'map',
       \ ]
 
 " rel
 let s:relLabel = {
-      \ 'relative':	'"float" "float"',
-      \ 'offset':	'"int" "int"',
-      \ 'to':		'"string"',
-      \ 'to_x':		'"string"',
-      \ 'to_y':		'"string"',
+      \ 'relative':	'x y (float)',
+      \ 'offset':	'x y (int)',
+      \ 'to':		'"part_name"',
+      \ 'to_x':		'"part_name"',
+      \ 'to_y':		'"part_name"',
+      \ }
+" map
+let s:mapLabel = {
+      \ 'on':		'0-1',
+      \ 'perspective':	'"part_name"',
+      \ 'light':	'"part_name"',
+      \ 'smooth':	'0-1',
+      \ 'pespective_on':'0-1',
+      \ 'backface_cull':'0-1',
+      \ 'alpha':	'0-1',
+      \ }
+let s:mapStatement = [
+      \ 'rotation',
+      \ ]
+
+let s:rotationLabel = {
+      \ 'center':	'"part_name"',
+      \ 'x':	        '"degrees (float)"',
+      \ 'y':	        '"degrees (float)"',
+      \ 'z':	        '"degrees (float)"',
       \ }
 
+" params
+let s:paramsLabel = {
+      \ 'int':	        '"name" int',
+      \ 'double':       '"name" double',
+      \ 'string':       '"name" "string"',
+      \ }
+
+" perspective
+let s:perspectiveLabel = {
+      \ 'zplane':	'int',
+      \ 'focal':        'int',
+      \ }
+
+
 " image
-let s:imageStatement = [
-      \ 'images',
-      \ ]
 let s:imageLabel = {
-      \ 'image':	'"string" "keyword"',
-      \ 'normal':	'"string"',
-      \ 'tween':	'"string"',
-      \ 'border':	'"int" "int" "int" "int"',
-      \ 'middle':	'"bool"',
-      \ 'scale_hint':	'"keyword"',
+      \ 'image':	'"filename" keyword',
+      \ 'normal':	'"filename"',
+      \ 'tween':	'"filename"',
+      \ 'border':	'left right top bottom (int)',
+      \ 'middle':	'keyword',
+      \ 'border_scale': '0-1',
+      \ 'scale_hint':	'keyword',
       \ }
 
 " fill
 let s:fillLabel = {
-      \ 'smooth':	'"bool"',
-      \ 'angle':	'"0-360"',
-      \ 'spread':	'"bool"',
-      \ 'type':	        '"keyword"',
+      \ 'smooth':	'0-1',
+      \ 'angle':	'0-360 (GRADIENT)',
+      \ 'spread':	'0-1',
+      \ 'type':	        'keyword',
       \ }
 let s:fillStatement = [
       \ 'origin',
@@ -839,25 +891,30 @@ let s:fillStatement = [
       \ ]
 " fill origin/size
 let s:fillInnerStatement = {
-      \ 'relative':	'"float" "float"',
-      \ 'offset':	'"int" "int"',
+      \ 'relative':	'width height (float)',
+      \ 'offset':	'x y (int)',
+      \ }
+" fill types
+let s:fillTypes = {
+      \ 'SCALE':    '',
+      \ 'TILE':	    '',
       \ }
 
 " text
 let s:textLabel = {
       \ 'text':		'"string"',
-      \ 'text_class':	'"string"',
-      \ 'font':		'"string"',
-      \ 'style':	'"string"',
-      \ 'size':		'"int"',
-      \ 'fit':		'"bool" "bool"',
-      \ 'min':		'"bool" "bool"',
-      \ 'max':		'"bool" "bool"',
-      \ 'align':	'"float" "float"',
-      \ 'elipsis':	'"float"',
-      \ 'source':	'"string"',
-      \ 'text_source':	'"string"',
-      \ 'repch':	'"char"',
+      \ 'font':		'"font_name"',
+      \ 'size':		'size (int)',
+      \ 'text_class':	'"class_name"',
+      \ 'fit':		'x y (0-1)',
+      \ 'min':		'x y (0-1)',
+      \ 'max':		'x y (0-1)',
+      \ 'align':	'x y (float)',
+      \ 'source':	'"part_name"',
+      \ 'text_source':	'"text_part_name"',
+      \ 'style':	'"style_name"',
+      \ 'elipsis':	'0.0-1.0',
+      \ 'repch':	'"string" (PASSWORD mode)',
       \ }
 let s:textStatement = [
       \ 'fonts',
@@ -865,14 +922,15 @@ let s:textStatement = [
 
 " program
 let s:programLabel = {
-      \ 'name':		'"string"',
-      \ 'signal':	'"string"',
-      \ 'source':	'"string"',
-      \ 'action':	'"keyword" ...',
-      \ 'transition':	'"keyword" "float"',
-      \ 'target':	'"string"',
-      \ 'after':	'"string"',
-      \ 'in':		'"float" "float"',
+      \ 'name':		'"name"',
+      \ 'signal':	'"signal_name"',
+      \ 'source':	'"part_name"',
+      \ 'action':	'keyword ...',
+      \ 'transition':	'keyword time (float)',
+      \ 'filter':	'"part_name" "state_name"',
+      \ 'in':		'from range (float)',
+      \ 'target':	'"part_name"',
+      \ 'after':	'"program_name"',
       \ }
 let s:programStatement = [
       \ 'script',
@@ -882,8 +940,8 @@ let s:programStatement = [
 
 " programs
 let s:programsLabel = {
-      \ 'image':	'"string" "keyword"',
-      \ 'font':		'"string" "string"',
+      \ 'image':	'"filename" keyword',
+      \ 'font':		'"filename" "name"',
       \ }
 let s:programsStatement = [
       \ 'images',
@@ -899,44 +957,43 @@ let s:boxItemsStatement = [
       \ 'item',
       \ ]
 let s:boxItemLabel = {
-      \ 'type':	        '"keyword"',
-      \ 'name':	        '"string"',
-      \ 'source':	'"string"   # Group name',
-      \ 'min':		'"int" "int"',
-      \ 'prefer':	'"int" "int"',
-      \ 'max':		'"int" "int"',
-      \ 'padding':      '"int" "int" "int" "int"',
-      \ 'align':	'"float" "float"',
-      \ 'weight':	'"float" "float"',
-      \ 'aspect':	'"float" "float"',
-      \ 'aspect_mode':  '"keyword"',
-      \ 'options':      '"string"',
+      \ 'type':	        'keyword',
+      \ 'name':	        '"name"',
+      \ 'source':	'"group_name"',
+      \ 'min':		'width height (int)',
+      \ 'prefer':	'width height (int)',
+      \ 'max':		'width height (int)',
+      \ 'padding':      'left right top bottom (int)',
+      \ 'align':	'x y (float)',
+      \ 'weight':	'x y (float)',
+      \ 'aspect':	'w h (float)',
+      \ 'aspect_mode':  'keyword',
+      \ 'options':      '"extra options"',
       \ }
 let s:boxDescLabel = {
       \ 'layout':       '"string" ["string"]',
-      \ 'align':	'"float" "float"',
-      \ 'padding':      '"int" "int"',
+      \ 'align':	'float float',
+      \ 'padding':      'int int',
       \ }
 let s:tableItemLabel = {
-      \ 'position':	'"int" "int"',
-      \ 'span':	        '"int" "int"',
+      \ 'position':     'col row (int)',
+      \ 'span':	        'col row (int)',
       \ }
 let s:tableDescLabel = {
-      \ 'homogeneous':	'"keyword"',
-      \ 'align':	'"float" "float"',
-      \ 'padding':      '"int" "int"',
+      \ 'homogeneous':	'keyword',
+      \ 'align':	'float float',
+      \ 'padding':      'int int',
       \ }
 
 " group
 let s:groupLabel = {
-      \ 'name':		        '"string"',
-      \ 'alias':	        '"string"',
-      \ 'min':		        '"int" "int"',
-      \ 'max':		        '"int" "int"',
-      \ 'image':	        '"string" "keyword"',
-      \ 'font':		        '"string" "string"',
-      \ 'script_only':	        '"bool"',
-      \ 'lua_script_only':	'"bool"',
+      \ 'name':		'"name"',
+      \ 'alias':	'"alias"',
+      \ 'min':		'width height',
+      \ 'max':		'width height',
+      \ 'image':	'"filename" keyword',
+      \ 'font':		'"filename" "name"',
+      \ 'script_only':	'0-1',
       \ }
 let s:groupStatement = [
       \ 'data',
@@ -949,6 +1006,7 @@ let s:groupStatement = [
       \ 'color_classes',
       \ 'program',
       \ 'programs',
+      \ 'externals',
       \ ]
 
 " parts
@@ -962,23 +1020,24 @@ let s:partsStatement = [
       \ 'programs',
       \ ]
 let s:partsLabel = {
-      \ 'image':	'"string" "keyword"',
-      \ 'font':		'"string" "string"',
+      \ 'image':	'"filename" keyword',
+      \ 'font':		'"filename" "name"',
       \ }
 
 " data
 let s:dataLabel = {
-      \ 'item':		'"string" "string" ...',
+      \ 'item':		'"key" "value"',
+      \ 'file':		'"key" "filename"',
       \ }
 
 " fonts
 let s:fontsLabel = {
-      \ 'font':		'"string" "string"',
+      \ 'font':		'"filename" "name"',
       \ }
 
 "images
 let s:imagesLabel = {
-      \ 'image':	'"string" "keyword"',
+      \ 'image':	'"filename" keyword',
       \ }
 
 "collections
@@ -988,10 +1047,16 @@ let s:collectionsStatement = [
       \ 'fonts',
       \ 'styles',
       \ 'color_classes',
+      \ 'externals',
       \ ]
 let s:collectionsLabel = {
-      \ 'image':	'"string" "keyword"',
-      \ 'font':		'"string" "string"',
+      \ 'image':	'"filename" keyword',
+      \ 'font':		'"filename" "name"',
+      \ }
+
+" externals
+let s:externalsLabel = {
+      \ 'external':		'"name"',
       \ }
 
 " spectra
@@ -1000,18 +1065,26 @@ let s:spectraStatement = [
       \ ]
 " spectrum
 let s:spectrumLabel = {
-      \ 'name':		'"string"',
-      \ 'color': 	'"int" "int" "int" "int" "int"',
+      \ 'name':		'"name"',
+      \ 'color':	'0-255 0-255 0-255 0-255',
       \ }
 " gradient
 let s:gradientLabel = {
-      \ 'type':		'"string"',
-      \ 'spectrum':	'"string"',
+      \ 'type':		'"keyword"',
+      \ 'spectrum':	'"spectrum_name"',
       \ }
 let s:gradientStatement = [
       \ 'rel1',
       \ 'rel2',
       \ ]
+" gradient types
+let s:gradientTypes = {
+      \ '"linear"':		'',
+      \ '"radial"':		'',
+      \ '"rectangular"':	'',
+      \ '"angular"':		'',
+      \ '"sinusoidal"':		'',
+      \ }
 
 " styles
 let s:stylesStatement = [
@@ -1019,9 +1092,9 @@ let s:stylesStatement = [
       \ ]
 " style
 let s:styleLabel = {
-      \ 'name':		'"string"',
-      \ 'base': 	'"string"',
-      \ 'tag': 		'"string"',
+      \ 'name':		'"name"',
+      \ 'base': 	'".. default style properties .."',
+      \ 'tag': 		'"tagname" "style properties"',
       \ }
 
 " color_classes
@@ -1030,10 +1103,10 @@ let s:color_classesStatement = [
       \ ]
 " color_class
 let s:color_classLabel = {
-      \ 'name':		'"string"',
-      \ 'color':	'"int" "int" "int" "int"',
-      \ 'color2':	'"int" "int" "int" "int"',
-      \ 'color3':	'"int" "int" "int" "int"',
+      \ 'name':		'"name"',
+      \ 'color':	'0-255 0-255 0-255 0-255',
+      \ 'color2':	'0-255 0-255 0-255 0-255',
+      \ 'color3':	'0-255 0-255 0-255 0-255',
       \ }
 
 " toplevel
@@ -1045,14 +1118,30 @@ let s:topStatement = [
       \ 'spectra',
       \ 'styles',
       \ 'color_classes',
+      \ 'externals',
       \ ]
 
 " images image storage method
 let s:imageStorageMethod = {
       \ 'COMP':		'',
       \ 'RAW':		'',
+      \ 'USER':		'',
       \ 'LOSSY':	'0-100',
-      \ 'USER':	        '',
+      \ }
+" image middle types
+let s:imageMiddleTypes = {
+      \ '0':		'',
+      \ '1':		'',
+      \ 'NONE':		'',
+      \ 'DEFAULT':	'',
+      \ 'SOLID':	'',
+      \ }
+" image scale hint
+let s:imageScaleHint = {
+      \ '0':		'',
+      \ 'NONE':		'',
+      \ 'DYNAMIC':	'',
+      \ 'STATIC':	'',
       \ }
 
 " part types
@@ -1066,6 +1155,7 @@ let s:partTypes = {
       \ 'GROUP':	'',
       \ 'BOX':	        '',
       \ 'TABLE':        '',
+      \ 'EXTERNAL':     '',
       \ }
 " part effects
 let s:partEffects = {
@@ -1080,6 +1170,11 @@ let s:partEffects = {
       \ 'FAR_SHADOW':	'',
       \ 'FAR_SOFT_SHADOW':	'',
       \ 'GLOW':	'',
+      \ }
+" part select_mode
+let s:partSelectMode = {
+      \ 'DEFAULT':		'',
+      \ 'EXPLICIT':		'',
       \ }
 " part ignore flags 
 let s:partIgnoreFlags = {
@@ -1098,41 +1193,12 @@ let s:partEditableMode = {
       \ 'EDITABLE':	'',
       \ 'PASSWORD':	'',
       \ }
-" part effects
-let s:partSelectMode = {
-      \ 'DEFAULT':		'',
-      \ 'EXPLICIT':		'',
-      \ }
 
 " aspect_preference types
 let s:aspectPrefTypes = {
-      \ 'NONE':	        '',
       \ 'VERTICAL':	'',
       \ 'HORIZONTAL':	'',
       \ 'BOTH':		'',
-      \	}
-
-" image middle types
-let s:middleTypes = {
-      \ 'NONE':	        '',
-      \ 'DEFAULT':	'',
-      \ 'SOLID':	'',
-      \ '0':		'',
-      \ '1':		'',
-      \	}
-
-" image scale_hint types
-let s:scaleHintTypes = {
-      \ 'NONE':	        '',
-      \ 'DYNAMIC':	'',
-      \ 'STATIC':	'',
-      \ '0':		'',
-      \	}
-
-" fill types
-let s:fillTypes = {
-      \ 'SCALE':        '',
-      \ 'TILE':	        '',
       \	}
 
 " program transition types
@@ -1147,9 +1213,9 @@ let s:actionTypes = {
       \ 'STATE_SET':		'"string" "0.0 - 1.0"',
       \ 'ACTION_STOP':		'',
       \ 'SIGNAL_EMIT':		'"string" "string"',
-      \ 'DRAG_VAL_SET':		'"float" "float"',
-      \ 'DRAG_VAL_STEP':	'"float" "float"',
-      \ 'DRAG_VAL_PAGE':	'"float" "float"',
+      \ 'DRAG_VAL_SET':		'float float',
+      \ 'DRAG_VAL_STEP':	'float float',
+      \ 'DRAG_VAL_PAGE':	'float float',
       \ 'FOCUS_SET':	        '',
       \ }
 " box item types
