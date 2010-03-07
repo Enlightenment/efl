@@ -1,0 +1,39 @@
+collections {
+   group { name: "main";
+      parts {
+         part { name: "bg";
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "label";
+            type: TEXT;
+            description { state: "default" 0.0;
+               color: 0 0 0 255;
+               text {
+                  text: "Click me.";
+                  font: "Sans";
+                  size: 12;
+               }
+            }
+         }
+      }
+      programs {
+         program {
+            signal: "mouse,down,1";
+            source: "label";
+            lua_script {
+               ed.label.text = "Clicked!"
+            }
+         }
+         program {
+            signal: "mouse,up,1";
+            source: "label";
+            lua_script {
+               ed.label.text = "Click me."
+            }
+         }
+      }
+   }
+}

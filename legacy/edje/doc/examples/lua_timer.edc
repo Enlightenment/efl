@@ -1,0 +1,108 @@
+collections {
+   group { name: "main";
+      parts {
+         part { name: "bg";
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "label1";
+            type: TEXT;
+            description { state: "default" 0.0;
+               color: 0 0 0 255;
+               text {
+                  text: "Timer delayed...";
+                  font: "Sans";
+                  size: 12;
+                  align: 0.0 0.7;
+               }
+            }
+         }
+         part { name: "label2";
+            type: TEXT;
+            description { state: "default" 0.0;
+               color: 0 0 0 255;
+               text {
+                  font: "Sans";
+                  size: 12;
+                  align: 0.0 0.8;
+               }
+            }
+         }
+         part { name: "label3";
+            type: TEXT;
+            description { state: "default" 0.0;
+               color: 0 0 0 255;
+               text {
+                  font: "Sans";
+                  size: 12;
+                  align: 0.0 0.9;
+               }
+            }
+         }
+         part { name: "red_rect";
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 255 0 0 255;
+               max: 30 30;
+               align: 0.1 0.2;
+            }
+            description { state: "default" 1.0;
+               inherit: "default" 0.0;
+               color: 0 0 255 255;
+               align: 0.9 0.2;
+            }
+         }
+      }
+      programs {
+         /* Move the red rect back an forth in a loop */
+         program { name: "init";
+            signal: "load";
+            source: "";
+            action: STATE_SET "default" 1.0;
+            transition: SINUSOIDAL 1.0;
+            target: "red_rect";
+            after: "loop";
+         }
+         program { name: "loop";
+            action: STATE_SET "default" 0.0;
+            transition: SINUSOIDAL 1.0;
+            target: "red_rect";
+            after: "init";
+         }
+         program { name: "lua_init";
+            signal: "load";
+            source: "";
+            lua_script {
+               function timer_cb()
+                  /* Print Timer attributes */
+                  print("## timer_cb")
+                  print("   timer.pending:", timer.pending)
+                  print("   timer.precision:", timer.precision)
+                  print("   timer.interval:", timer.interval)
+
+                  /* Slow down the timer */
+                  timer.interval = timer.interval + 0.005
+
+                  /* Set labels with object info */
+                  ed.label1.text = "timer interval: " .. timer.interval
+                  ed.label2.text = "object x: " .. ed.red_rect.geometry[1]
+                  ed.label3.text = "object color: " .. ed.red_rect.color[1] .. " "
+                                                    .. ed.red_rect.color[2] .. " "
+                                                    .. ed.red_rect.color[3]
+
+                  /* or return CALLBACK_CANCEL to stop the timer*/
+                  return CALLBACK_RENEW
+               end
+
+               /* Start a new timer that will call timer_cb every 0.01s */
+               timer = ed:timer(0.01, timer_cb)
+               
+               /* Delay the timer execution by 2s */
+               timer:delay(2)
+            }
+         }
+      }
+   }
+}
