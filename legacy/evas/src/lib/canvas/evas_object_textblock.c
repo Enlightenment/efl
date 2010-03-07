@@ -1306,7 +1306,7 @@ _layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 	descent = c->ENFN->font_max_descent_get(c->ENDT, fmt->font.font);
         if (fmt->linesize > 0)
           {
-             if ((ascent + descent) > 0)
+             if ((ascent + descent) < fmt->linesize)
                {
                   ascent = ((fmt->linesize * ascent) / (ascent + descent));
                   descent = fmt->linesize - ascent;
@@ -1317,8 +1317,8 @@ _layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
              descent = ((ascent + descent) * fmt->linerelsize) - (ascent * fmt->linerelsize);
              ascent = ascent * fmt->linerelsize;
           }
-	c->maxascent = ascent;
-	c->maxdescent = descent;
+	if (c->maxascent < ascent) c->maxascent = ascent;
+	if (c->maxdescent < descent) c->maxdescent = descent;
      }
 }
 
