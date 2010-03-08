@@ -69,7 +69,7 @@ _hash_module_available_get(const Eina_Hash *hash __UNUSED__, int *data, void *li
 Eina_List *
 ecore_imf_module_available_get(void)
 {
-   Eina_List *values;
+   Eina_List *values = NULL;
    Eina_Iterator *it = NULL;
 
    if (!modules) return NULL;
