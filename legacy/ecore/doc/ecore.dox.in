@@ -31,7 +31,6 @@ The Ecore library provides the following modules:
 @li @link Ecore_Evas.h   Ecore_Evas - Evas convenience functions. @endlink
 @li @link Ecore_Fb.h     Ecore_FB - Frame buffer convenience functions. @endlink
 @li @link Ecore_Ipc.h    Ecore_IPC - Inter Process Communication functions. @endlink
-@li @link Ecore_Txt.h    Ecore_Txt - Text encoding conversion. @endlink
 @li @link Ecore_X.h      Ecore_X - X Windows System wrapper. @endlink
 
 @section compiling How to compile using Ecore?
@@ -59,8 +58,7 @@ Suggested configure options for evas for a Linux desktop X display:
 --enable-ecore-evas-gl \
 --enable-ecore-job \
 --enable-ecore-con \
---enable-ecore-ipc \
---enable-ecore-txt
+--enable-ecore-ipc
 make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
 @endverbatim
 
