@@ -129,7 +129,7 @@ elm_panel_add(Evas_Object *parent)
    elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_OFF, 
                                  ELM_SMART_SCROLLER_POLICY_OFF);
 
-   wd->hidden = FALSE;
+   wd->hidden = EINA_FALSE;
    wd->orient = ELM_PANEL_ORIENT_LEFT;
 
    wd->bx = evas_object_box_add(evas);
