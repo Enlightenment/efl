@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecore\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2010-01-16 17:27+0800\n"
+"POT-Creation-Date: 2010-03-08 09:04+0100\n"
 "PO-Revision-Date: 2009-12-15 00:56+0200\n"
 "Last-Translator: Giorgos Koutsikos <ragecryx@yahoo.gr>\n"
 "Language-Team: Greek\n"
@@ -14,159 +14,159 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/ecore/ecore_getopt.c:73
+#: src/lib/ecore/ecore_getopt.c:74
 msgid "Version:"
 msgstr "Έκδοση:"
 
-#: src/lib/ecore/ecore_getopt.c:81
+#: src/lib/ecore/ecore_getopt.c:82
 msgid "Usage:"
 msgstr "Χρήση:"
 
-#: src/lib/ecore/ecore_getopt.c:86
+#: src/lib/ecore/ecore_getopt.c:87
 #, c-format
 msgid "%s [options]\n"
 msgstr "%s [επιλογές]\n"
 
-#: src/lib/ecore/ecore_getopt.c:234
+#: src/lib/ecore/ecore_getopt.c:235
 msgid "Copyright:"
 msgstr "Πνευματικά δικαιώματα:"
 
-#: src/lib/ecore/ecore_getopt.c:245
+#: src/lib/ecore/ecore_getopt.c:246
 msgid "License:"
 msgstr "Άδεια:"
 
-#: src/lib/ecore/ecore_getopt.c:397
+#: src/lib/ecore/ecore_getopt.c:398
 msgid "Type: "
 msgstr "Τύπος:"
 
-#: src/lib/ecore/ecore_getopt.c:464
+#: src/lib/ecore/ecore_getopt.c:465
 msgid "Default: "
 msgstr "Προκαθορισμένο:"
 
-#: src/lib/ecore/ecore_getopt.c:487
+#: src/lib/ecore/ecore_getopt.c:488
 msgid "Choices: "
 msgstr "Επιλογές:"
 
-#: src/lib/ecore/ecore_getopt.c:584
+#: src/lib/ecore/ecore_getopt.c:585
 msgid "Options:\n"
 msgstr "Επιλογές:\n"
 
-#: src/lib/ecore/ecore_getopt.c:703
+#: src/lib/ecore/ecore_getopt.c:704
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
 msgstr "ΣΦΑΛΜΑ: άγνωστη παράμετρος --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:705
+#: src/lib/ecore/ecore_getopt.c:706
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
 msgstr "ΣΦΑΛΜΑ: άγνωστη παράμετρος -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:761
+#: src/lib/ecore/ecore_getopt.c:762
 msgid "ERROR: "
 msgstr "ΣΦΑΛΜΑ:"
 
-#: src/lib/ecore/ecore_getopt.c:838 src/lib/ecore/ecore_getopt.c:954
-#: src/lib/ecore/ecore_getopt.c:967 src/lib/ecore/ecore_getopt.c:979
-#: src/lib/ecore/ecore_getopt.c:993 src/lib/ecore/ecore_getopt.c:1037
-#: src/lib/ecore/ecore_getopt.c:1146 src/lib/ecore/ecore_getopt.c:1183
+#: src/lib/ecore/ecore_getopt.c:839 src/lib/ecore/ecore_getopt.c:955
+#: src/lib/ecore/ecore_getopt.c:968 src/lib/ecore/ecore_getopt.c:980
+#: src/lib/ecore/ecore_getopt.c:994 src/lib/ecore/ecore_getopt.c:1038
+#: src/lib/ecore/ecore_getopt.c:1147 src/lib/ecore/ecore_getopt.c:1184
 msgid "value has no pointer set.\n"
 msgstr "η τιμή δεν έχει δείκτη ορισμένο.\n"
 
-#: src/lib/ecore/ecore_getopt.c:867 src/lib/ecore/ecore_getopt.c:1057
+#: src/lib/ecore/ecore_getopt.c:868 src/lib/ecore/ecore_getopt.c:1058
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "άγνωστη τιμή boolean %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:911 src/lib/ecore/ecore_getopt.c:1137
+#: src/lib/ecore/ecore_getopt.c:912 src/lib/ecore/ecore_getopt.c:1138
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "άγνωστη μορφή αριθμού %s\n"
 
-#: src/lib/ecore/ecore_getopt.c:1006
+#: src/lib/ecore/ecore_getopt.c:1007
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
 msgstr "μη-έγκυρη επιλογή \"%s\". Οι τιμές είναι: "
 
-#: src/lib/ecore/ecore_getopt.c:1031
+#: src/lib/ecore/ecore_getopt.c:1032
 msgid "missing parameter to append.\n"
 msgstr "ελλιπής παράμετρος προς επισύναψη.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1127
+#: src/lib/ecore/ecore_getopt.c:1128
 msgid "could not parse value.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1176
+#: src/lib/ecore/ecore_getopt.c:1177
 msgid "missing parameter.\n"
 msgstr "ελλιπής παράμετρος.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1190
+#: src/lib/ecore/ecore_getopt.c:1191
 msgid "missing callback function!\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1213
+#: src/lib/ecore/ecore_getopt.c:1214
 msgid "no version was defined.\n"
 msgstr "δεν έχει οριστεί έκδοση.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1227
+#: src/lib/ecore/ecore_getopt.c:1228
 msgid "no copyright was defined.\n"
 msgstr "δεν έχουν οριστεί πνευματικά δικαιώματα.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1241
+#: src/lib/ecore/ecore_getopt.c:1242
 msgid "no license was defined.\n"
 msgstr "δεν έχει οριστεί άδεια.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1295
+#: src/lib/ecore/ecore_getopt.c:1296
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1328
+#: src/lib/ecore/ecore_getopt.c:1329
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1364
+#: src/lib/ecore/ecore_getopt.c:1365
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1402
+#: src/lib/ecore/ecore_getopt.c:1403
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1605
+#: src/lib/ecore/ecore_getopt.c:1606
 msgid "ERROR: no parser provided.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1610
+#: src/lib/ecore/ecore_getopt.c:1611
 msgid "ERROR: no values provided.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1619
+#: src/lib/ecore/ecore_getopt.c:1620
 msgid "ERROR: no arguments provided.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1645
+#: src/lib/ecore/ecore_getopt.c:1646
 msgid "ERROR: invalid options found."
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1651
+#: src/lib/ecore/ecore_getopt.c:1652
 #, c-format
 msgid " See --%s.\n"
 msgstr " Δες --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1653
+#: src/lib/ecore/ecore_getopt.c:1654
 #, c-format
 msgid " See -%c.\n"
 msgstr " Δες -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1690
+#: src/lib/ecore/ecore_getopt.c:1691
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1713
+#: src/lib/ecore/ecore_getopt.c:1714
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr ""
