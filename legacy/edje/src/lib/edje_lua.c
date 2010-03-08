@@ -60,10 +60,9 @@ Classes hierarchy:
 - @ref Object
   - @ref Group
   - @ref Part
-  - @ref Rectangle
   - @ref Image
   - @ref Line
-  - @ref Poligon
+  - @ref Polygon
   - @ref Table
   - @ref Description
 
