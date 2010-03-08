@@ -62,7 +62,7 @@ Summary: Ecore headers and development libraries.
 Group: Development/Libraries
 Requires: %{name} = %{version}
 Requires: curl-devel, openssl-devel, evas-devel, eet-devel
-Requires: ecore-bin, ecore-con, ecore-config, ecore-evas, ecore-file, ecore-ipc, ecore-job, ecore-txt
+Requires: ecore-bin, ecore-con, ecore-config, ecore-evas, ecore-file, ecore-ipc
 Requires: ecore-x %{?with_lib_ecore_fb:ecore-fb} %{?with_lib_ecore_directfb:ecore-directfb}
 
 %description devel
@@ -142,22 +142,6 @@ Requires: %{name} = %{version}
 
 %description ipc
 Ecore inter-process communication functions
-
-%package job
-Summary: Ecore job dealing functions
-Group: Development/Libraries
-Requires: %{name} = %{version}
-
-%description job
-Ecore job dealing functions
-
-%package txt
-Summary: Ecore text encoding conversion functions
-Group: Development/Libraries
-Requires: %{name} = %{version}
-
-%description txt
-Ecore text encoding conversion functions
 
 %package x
 Summary: Ecore functions for dealing with the X Windows System
@@ -250,14 +234,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files ipc
 %defattr(-, root, root)
 %{_libdir}/libecore_ipc.so.*
-
-%files job
-%defattr(-, root, root)
-%{_libdir}/libecore_job.so.*
-
-%files txt
-%defattr(-, root, root)
-%{_libdir}/libecore_txt.so.*
 
 %files x
 %defattr(-, root, root)
