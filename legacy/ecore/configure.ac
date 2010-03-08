@@ -38,7 +38,6 @@ case "$host_os" in
    *)
       ecore_config_release_info="-release $release"
       ecore_con_release_info="-release $release"
-      ecore_data_release_info="-release $release"
       ecore_directfb_release_info="-release $release"
       ecore_evas_release_info="-release $release"
       ecore_fb_release_info="-release $release"
@@ -57,7 +56,6 @@ case "$host_os" in
 esac
 AC_SUBST(ecore_config_release_info)
 AC_SUBST(ecore_con_release_info)
-AC_SUBST(ecore_data_release_info)
 AC_SUBST(ecore_directfb_release_info)
 AC_SUBST(ecore_evas_release_info)
 AC_SUBST(ecore_fb_release_info)
@@ -110,7 +108,6 @@ want_tslib="no"
 want_glib="no"
 
 # core modules
-want_ecore_data="no"
 want_ecore_con="yes"
 want_ecore_ipc="no"
 want_ecore_file="yes"
@@ -228,7 +225,6 @@ esac
 requirements_ecore=""
 requirements_ecore_con=""
 requirements_ecore_config=""
-requirements_ecore_data=""
 requirements_ecore_directfb=""
 requirements_ecore_evas=""
 requirements_ecore_fb=""
@@ -397,7 +393,6 @@ PKG_CHECK_MODULES(EINA, [eina-0])
 requirements_ecore="eina-0 ${requirements_ecore}"
 requirements_ecore_con="ecore eina-0 ${requirements_ecore_con}"
 requirements_ecore_config="ecore eina-0 ${requirements_ecore_config}"
-requirements_ecore_data="ecore eina-0 ${requirements_ecore_data}"
 requirements_ecore_directfb="ecore eina-0 ${requirements_ecore_directfb}"
 requirements_ecore_evas="ecore eina-0 ${requirements_ecore_evas}"
 requirements_ecore_fb="ecore eina-0 ${requirements_ecore_fb}"
@@ -959,9 +954,6 @@ fi
 
 ## Core modules
 
-# ecore_data
-ECORE_CHECK_MODULE([data], [${want_ecore_data}], [Data])
-
 # ecore_con
 ECORE_CHECK_MODULE([con], [${want_ecore_con}], [Con], [${have_addrinfo}])
 
@@ -1294,7 +1286,6 @@ ECORE_EVAS_CHECK_MODULE([software-16-wince],
 AC_SUBST(requirements_ecore)
 AC_SUBST(requirements_ecore_con)
 AC_SUBST(requirements_ecore_config)
-AC_SUBST(requirements_ecore_data)
 AC_SUBST(requirements_ecore_directfb)
 AC_SUBST(requirements_ecore_evas)
 AC_SUBST(requirements_ecore_fb)
@@ -1314,7 +1305,6 @@ AC_OUTPUT([
 Makefile
 ecore-con.pc
 ecore-config.pc
-ecore-data.pc
 ecore-directfb.pc
 ecore-evas.pc
 ecore-fb.pc
@@ -1338,7 +1328,6 @@ src/lib/Makefile
 src/lib/ecore/Makefile
 src/lib/ecore_con/Makefile
 src/lib/ecore_config/Makefile
-src/lib/ecore_data/Makefile
 src/lib/ecore_directfb/Makefile
 src/lib/ecore_evas/Makefile
 src/lib/ecore_fb/Makefile
@@ -1371,7 +1360,6 @@ echo
 echo "  Ecore........................: always"
 echo "    Thread support.............: $have_pthread"
 echo "    GLib support...............: $have_glib"
-echo "  Ecore_Data...................: $have_ecore_data (deprecated)"
 echo "  Ecore_Con....................: $have_ecore_con"
 if test "x$have_ecore_con" = "xyes" ; then
   echo $ECHO_N "    OpenSSL....................: $have_openssl $ECHO_C"
