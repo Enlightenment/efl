@@ -88,9 +88,8 @@ collections {
                   /* Set labels with object info */
                   ed.label1.text = "timer interval: " .. timer.interval
                   ed.label2.text = "object x: " .. ed.red_rect.geometry[1]
-                  ed.label3.text = "object color: " .. ed.red_rect.color[1] .. " "
-                                                    .. ed.red_rect.color[2] .. " "
-                                                    .. ed.red_rect.color[3]
+                  r, g, b, a = unpack(ed.red_rect.color)
+                  ed.label3.text = "object color: "..r.." "..g.." ".. b
 
                   /* or return CALLBACK_CANCEL to stop the timer*/
                   return CALLBACK_RENEW

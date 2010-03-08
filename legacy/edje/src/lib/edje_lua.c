@@ -37,6 +37,22 @@ access every parts and is also used to create @ref Timer, @ref poller and
 @ref animator; to emit signal, send messagges, run/stop programs and more.
 Look at the @ref Group class to see all the methods and properties.
 
+Some object attributes return a table of values, the @ref Object attribute
+@a geometry for example return a table of 4 values (x,y,w,h). This tables don't
+have named index thus you can access the fields only using: geometry[1] for the
+x value. NOTE that you can NOT use gemetry.x or .geometry["x"]. But
+you can use the lua unpack function in this way:
+@code
+x, y, w, h = unpack(ed.part_name.geometry)
+print("geometry: ", x, y, w, h)
+// the same for state names:
+state, val = unpack(ed.part_name.state)
+print("state: ", state, val)
+// and for setting tables attributes:
+custom.color = { 255, 255, 255, 255 }
+ed.part_name.state = { 'custom', 0.0 }
+@endcode
+
 Classes hierarchy:
 - @ref Timer
 - @ref Animator
@@ -61,8 +77,10 @@ in the edje sources.
 
 Lua snippets:
 @code
-// print one or more values in console in a tabbed way
+// print one or more values in console in a tabbed way or using printf style
 print("something to say", val1, val2)
+s = string.format("%d %d", 3, 4)
+print(s)
 
 // string concat
 print("string1" .. "string2" .. val1)
@@ -72,6 +90,7 @@ tostring(var)
  
 // Print the type of a variable 
 print(type(var))
+
 @endcode
 
 */
@@ -963,10 +982,13 @@ const luaL_Reg lTimer_fn[] = {
    {NULL, NULL}			// sentinel
 };
 
-/*
- * Lua Edje Animator bindings
- */
+/**
+@page luaref
+@luaclass{Animator,Animator Class}
 
+The animator class is a wrapper around ecore_animator. Animator are used the
+same way as @ref Timer.
+*/
 const luaL_Reg lAnimator_get[];
 
 const luaL_Reg lAnimator_fn[];
@@ -1027,6 +1049,11 @@ _edje_lua_animator_get_frametime(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@attributes
+@li Animator.frametime
+*/
 const luaL_Reg lAnimator_get[] = {
     {"frametime", _edje_lua_animator_get_frametime},
     {NULL, NULL}
@@ -1050,15 +1077,23 @@ _edje_lua_animator_fn_del(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@methods
+@li Animator:del()
+*/
 const luaL_Reg lAnimator_fn[] = {
    {"del", _edje_lua_animator_fn_del},
    {NULL, NULL}			// sentinel
 };
 
-/*
- * Lua Edje Poller Bindings
- */
+/**
+@page luaref
+@luaclass{Poller,Poller Class}
 
+The poller class is a wrapper around ecore_poller.
+
+*/
 const luaL_Reg lPoller_get[];
 
 const luaL_Reg lPoller_fn[];
@@ -1119,6 +1154,11 @@ _edje_lua_poller_get_interval(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@attributes
+@li Poller.interval
+*/
 const luaL_Reg lPoller_get[] = {
    {"interval", _edje_lua_poller_get_interval},
    {NULL, NULL}
@@ -1144,6 +1184,11 @@ _edje_lua_poller_fn_del(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@methods
+@li Poller:del()
+*/
 const luaL_Reg lPoller_fn[] = {
    {"del", _edje_lua_poller_fn_del},
    {NULL, NULL}
@@ -2232,30 +2277,30 @@ _edje_lua_object_set_mouse_events(lua_State *L)
 }
 
 /**
- @page luaref
- @setters
- @li Object.name
- @li Object.layer
- @li Object.size_hint_min
- @li Object.size_hint_max
- @li Object.size_hint_request
- @li Object.size_hint_aspect
- @li Object.size_hint_align
- @li Object.size_hint_weight
- @li Object.size_hint_padding
- @li Object.render_op
- @li Object.anti_alias
- @li Object.scale
- @li Object.color
- @li Object.color_interpolation
- @li Object.clip
- @li Object.pass_events
- @li Object.repeat_events
- @li Object.propagate_events
- @li Object.focus
- @li Object.pointer_mode
- @li Object.precise_is_inside
- @li Object.mouse_events
+@page luaref
+@setters
+@li Object.name
+@li Object.layer
+@li Object.size_hint_min: (w,h)
+@li Object.size_hint_max: (w,h)
+@li Object.size_hint_request: (w,h)
+@li Object.size_hint_aspect: (w,h)
+@li Object.size_hint_align: (w,h)
+@li Object.size_hint_weight: (w,h)
+@li Object.size_hint_padding: (l,r,t,b)
+@li Object.render_op
+@li Object.anti_alias
+@li Object.scale
+@li Object.color: (r, g, b, alpha)
+@li Object.color_interpolation
+@li Object.clip
+@li Object.pass_events
+@li Object.repeat_events
+@li Object.propagate_events
+@li Object.focus
+@li Object.pointer_mode
+@li Object.precise_is_inside
+@li Object.mouse_events
 */
 const luaL_Reg lObject_set[] = {
    {"name", _edje_lua_object_set_name},
@@ -2289,10 +2334,11 @@ const Edje_Lua_Reg *cRectangle[] = {
    NULL				// sentinel
 };
 
-/*
- * Image
- */
-
+/**
+@page luaref
+@luaclass{Image,Image Class}
+@seealso{Evas Object Image Docs,http://docs.enlightenment.org/auto/evas/group__Evas__Object__Image.html}
+*/
 const luaL_Reg lImage_get[];
 
 const luaL_Reg lImage_set[];
@@ -2325,6 +2371,11 @@ _edje_lua_image_get_size(lua_State *L)
    return 1;
 };
 
+/**
+@page luaref
+@attributes
+@li Image.size: (w,h)
+*/
 const luaL_Reg lImage_get[] = {
    {"size", _edje_lua_image_get_size},
    {NULL, NULL}			// sentinel
@@ -2374,6 +2425,14 @@ _edje_lua_image_set_alpha(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@setters
+@li Image.file
+@li Image.fill: (x,y,w,h)
+@li Image.fill_transform
+@li Image.alpha
+*/
 const luaL_Reg lImage_set[] = {
    {"file", _edje_lua_image_set_file},
    {"fill", _edje_lua_image_set_fill},
@@ -2382,10 +2441,11 @@ const luaL_Reg lImage_set[] = {
    {NULL, NULL}			// sentinel
 };
 
-/*
- * Line
- */
-
+/**
+@page luaref
+@luaclass{Line,Line Class}
+@seealso{Evas Object Line Docs,http://docs.enlightenment.org/auto/evas/group__Evas__Line__Group.html}
+*/
 const luaL_Reg lLine_get[];
 const luaL_Reg lLine_set[];
 
@@ -2417,6 +2477,11 @@ _edje_lua_line_get_xy(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@attributes
+@li Line.xy: (x1,y1,x2,y2)
+*/
 const luaL_Reg lLine_get[] = {
    {"xy", _edje_lua_line_get_xy},
    {NULL, NULL}			// sentinel
@@ -2439,15 +2504,21 @@ _edje_lua_line_set_xy(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@setters
+@li Line.xy: (x1,y1,x2,y2)
+*/
 const luaL_Reg lLine_set[] = {
    {"xy", _edje_lua_line_set_xy},
    {NULL, NULL}			// sentinel
 };
 
-/*
- * Polygon
- */
-
+/**
+@page luaref
+@luaclass{Polygon,Polygon Class}
+@seealso{Evas Object Polygon Docs,http://docs.enlightenment.org/auto/evas/group__Evas__Object__Polygon.html}
+*/
 const luaL_Reg lPolygon_fn[];
 
 const Edje_Lua_Reg mPolygon = {
@@ -2482,16 +2553,23 @@ _edje_lua_polygon_fn_points_clear(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@methods
+@li Polygon:point_add(x,y)
+@li Polygon:points_clear()
+*/
 const luaL_Reg lPolygon_fn[] = {
    {"point_add", _edje_lua_polygon_fn_point_add},
    {"points_clear", _edje_lua_polygon_fn_points_clear},
    {NULL, NULL}			// sentinel
 };
 
-/*
- * Table
- */
-
+/**
+@page luaref
+@luaclass{Table,Table Class}
+@seealso{Evas Object Table Docs,http://docs.enlightenment.org/auto/evas/group__Evas__Object__Table.html}
+*/
 const luaL_Reg lTable_get[];
 
 const luaL_Reg lTable_set[];
@@ -2580,6 +2658,15 @@ _edje_lua_table_get_children(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@attributes
+@li Table.homogeneous
+@li Table.padding: (horiz,vert)
+@li Table.align: (horiz,vert)
+@li Table.col_row_size: (cols,rows)
+@li Table.children
+*/
 const luaL_Reg lTable_get[] = {
    {"homogeneous", _edje_lua_table_get_homogeneous},
    {"padding", _edje_lua_table_get_padding},
@@ -2624,6 +2711,13 @@ _edje_lua_table_set_align(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@setters
+@li Table.homogeneous
+@li Table.padding: (horiz,vert)
+@li Table.align: (horiz,vert)
+*/
 const luaL_Reg lTable_set[] = {
    {"homogeneous", _edje_lua_table_set_homogeneous},
    {"padding", _edje_lua_table_set_padding},
@@ -2663,6 +2757,13 @@ _edje_lua_table_fn_clear(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@methods
+@li Table.pack(child,col,row,colspan,rowspan)
+@li Table.unpack(child)
+@li Table.clear(clear)
+*/
 const luaL_Reg lTable_fn[] = {
    {"pack", _edje_lua_table_fn_pack},
    {"unpack", _edje_lua_table_fn_unpack},
@@ -2670,9 +2771,10 @@ const luaL_Reg lTable_fn[] = {
    {NULL, NULL}			// sentinel
 };
 
-/*
- * Description
- */
+/**
+@page luaref
+@luaclass{Description,Description Class}
+*/
 
 const luaL_Reg lDescription_get[];
 
@@ -3143,6 +3245,41 @@ _edje_lua_description_get_visible(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@attributes
+@li Description.alignment: (x,y)
+@li Description.min: (w,h)
+@li Description.max: (w,h)
+@li Description.step: (w,h)
+@li Description.aspect: (x,y)
+@li Description.aspect_pref
+@li Description.color: (r,g,b,a)
+@li Description.color2: (r,g,b,a)
+@li Description.color3: (r,g,b,a)
+@li Description.color_class
+@li Description.rel1: (x,y)
+@li Description.rel1_to: (to_x,to_y)
+@li Description.rel1_offset: (x,y)
+@li Description.rel2: (x,y)
+@li Description.rel2_to: (to_x,to_y)
+@li Description.rel2_offset: (x,y)
+@li Description.image (not yet implemented)
+@li Description.border: (l,r,t,b)
+@li Description.fill_smooth
+@li Description.fill_pos: (rel_x,rel_y,offset_x,offset_y)
+@li Description.fill_size: (rel_x,rel_y,offset_x,offset_y)
+@li Description.text
+@li Description.text_class
+@li Description.text_font
+@li Description.text_style
+@li Description.text_size
+@li Description.text_fit: (x,y)
+@li Description.text_min: (x,y)
+@li Description.text_max: (x,y)
+@li Description.text_align: (x,y)
+@li Description.visible
+*/
 const luaL_Reg lDescription_get[] = {
    {"alignment", _edje_lua_description_get_alignment},
    {"min", _edje_lua_description_get_min},
@@ -3634,6 +3771,41 @@ _edje_lua_description_set_visible(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@setters
+@li Description.alignment: (x,y)
+@li Description.min: (w,h)
+@li Description.max: (w,h)
+@li Description.step: (w,h)
+@li Description.aspect: (x,y)
+@li Description.aspect_pref
+@li Description.color: (r,g,b,a)
+@li Description.color2: (r,g,b,a)
+@li Description.color3: (r,g,b,a)
+@li Description.color_class
+@li Description.rel1: (x,y)
+@li Description.rel1_to: (to_x,to_y)
+@li Description.rel1_offset: (x,y)
+@li Description.rel2: (x,y)
+@li Description.rel2_to: (to_x,to_y)
+@li Description.rel2_offset: (x,y)
+@li Description.image
+@li Description.border: (l,r,t,b)
+@li Description.fill_smooth
+@li Description.fill_pos: (rel_x,rel_y,offset_x,offset_y)
+@li Description.fill_size: (rel_x,rel_y,offset_x,offset_y)
+@li Description.text
+@li Description.text_class
+@li Description.text_font
+@li Description.text_style
+@li Description.text_size
+@li Description.text_fit: (x,y)
+@li Description.text_min: (x,y)
+@li Description.text_max: (x,y)
+@li Description.text_align: (x,y)
+@li Description.visible
+*/
 const luaL_Reg lDescription_set[] = {
    {"alignment", _edje_lua_description_set_alignment},
    {"min", _edje_lua_description_set_min},
@@ -3669,10 +3841,14 @@ const luaL_Reg lDescription_set[] = {
    {NULL, NULL}			// sentinel
 };
 
-/*
- * Part
- */
+/**
+@page luaref
+@luaclass{Part,Part Class}
 
+Parts are objects, that is, they inherit the methods from the @ref Object class.
+They also contain the following methods and attributes: 
+
+*/
 const luaL_Reg lPart_get[];
 
 const luaL_Reg lPart_set[];
@@ -3912,9 +4088,29 @@ _edje_lua_part_get_table_col_row_size(lua_State *L)
 
 static int _edje_lua_part_fn_custom_state(lua_State *L);
 
+/**
+@page luaref
+@attributes
+@li @ref Object Part.swallow
+@li Part.drag_dir
+@li Part.drag_value: (dx,dy)
+@li Part.drag_size: (dx,dy)
+@li Part.drag_step: (dx,dy)
+@li Part.drag_page: (dx,dy)
+@li Part.type
+@li Part.effect
+@li Part.mouse_events
+@li Part.states_list
+@li Part.state: (state,value)
+@li Part.text
+@li Part.text_selection
+@li Part.text_cursor_geometry: (x,y,w,h)
+@li Part.geometry: (x,y,w,h)
+@li Part.part_col_row_size: (cols,rows)
+*/
 const luaL_Reg lPart_get[] = {
    {"custom_state", _edje_lua_part_fn_custom_state},
-   {"Swallow", _edje_lua_part_get_swallow},
+   {"Swallow", _edje_lua_part_get_swallow}, //TODO it the capital S correct?
 
    {"drag_dir", _edje_lua_part_get_drag_dir},
    {"drag_value", _edje_lua_part_get_drag_value},
@@ -4053,6 +4249,20 @@ _edje_lua_part_set_drag_page(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@setters
+@li Part.drag_value: (dx,dy)
+@li Part.drag_size: (dx,dy)
+@li Part.drag_step: (dx,dy)
+@li Part.drag_page: (dx,dy)
+@li Part.effect
+@li Part.mouse_events
+@li Part.repeat_events
+@li Part.state: (state,value)
+@li Part.tween_state
+@li Part.text
+*/
 const luaL_Reg lPart_set[] = {
    {"drag_value", _edje_lua_part_set_drag_value},
    {"drag_size", _edje_lua_part_set_drag_size},
@@ -4283,6 +4493,26 @@ _edje_lua_part_fn_box_remove_all(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@methods
+@li Part:swallow(obj)
+@li Part:unswallow()
+@li @ref PartDescription Part:custom_state(state_name, state_val)
+@li Part:text_select_none
+@li Part:text_select_all
+@li Part:text_insert(text)
+@li Part:table_pack(child, row, colspan, rowspan)
+@li Part:table_unpack(child)
+@li Part:table_clear(clear)
+@li Part:box_append(item)
+@li Part:box_prepend(item)
+@li Part:box_insert_before(item, before)
+@li Part:box_insert_at(item, index)
+@li Part:box_remove(item)
+@li Part:box_remove_at(item, index)
+@li Part:box_remove_all(clear)
+*/
 const luaL_Reg lPart_fn[] = {
    {"swallow", _edje_lua_part_fn_swallow},
    {"unswallow", _edje_lua_part_fn_unswallow},
@@ -4307,9 +4537,6 @@ const luaL_Reg lPart_fn[] = {
    {NULL, NULL}			// sentinel
 };
 
-/*
- * Group
- */
 /**
 @page luaref
 @luaclass{Group,Group Class}
@@ -4508,17 +4735,17 @@ _edje_lua_group_get_frametime(lua_State *L)
 /**
 @page luaref
 @attributes
-@li EdjeGroup.group
-@li EdjeGroup.mouse: (x,y)
-@li EdjeGroup.mouse_buttons
-@li EdjeGroup.size_min: (w,h)
-@li EdjeGroup.size_max: (w,h)
-@li EdjeGroup.scale
-@li EdjeGroup.load_error
-@li EdjeGroup.load_error_str
-@li EdjeGroup.play
-@li EdjeGroup.animation
-@li EdjeGroup.frametime 
+@li Group.group
+@li Group.mouse: (x,y)
+@li Group.mouse_buttons
+@li Group.size_min: (w,h)
+@li Group.size_max: (w,h)
+@li Group.scale
+@li Group.load_error
+@li Group.load_error_str
+@li Group.play
+@li Group.animation
+@li Group.frametime 
 */
 const luaL_Reg lGroup_get[] = {
    {"group", _edje_lua_group_get_group},
@@ -4628,14 +4855,14 @@ _edje_lua_group_set_frametime(lua_State *L)
 /**
 @page luaref
 @setters
-@li EdjeGroup.group
-@li EdjeGroup.size_min
-@li EdjeGroup.size_max
-@li EdjeGroup.scale
-@li EdjeGroup.play
-@li EdjeGroup.animation
-@li EdjeGroup.text_change_cb
-@li EdjeGroup.frametime
+@li Group.group
+@li Group.size_min: (w,h)
+@li Group.size_max: (w,h)
+@li Group.scale
+@li Group.play
+@li Group.animation
+@li Group.text_change_cb
+@li Group.frametime
 */
 const luaL_Reg lGroup_set[] = {
    {"group", _edje_lua_group_set_group},
@@ -4993,18 +5220,18 @@ _edje_lua_group_fn_thaw(lua_State *L)
 /**
 @page luaref
 @methods
-@li @ref Timer EdjeGroup:timer(secs, callback)
-@li @ref Animator EdjeGroup:animator(func)
-@li @ref Poller EdjeGroup:poller(interval, callback)
-@li @ref Transform EdjeGroup:transform()
-@li EdjeGroup:signal_emit(emission, source)
-@li EdjeGroup:message_send(message_type, id, msg)
-@li EdjeGroup:program_run(name)
-@li EdjeGroup:program_stop(name)
-@li EdjeGroup:signal_callback_add(emission, source, callback)
-@li EdjeGroup:signal_callback_del(emission, source)
-@li EdjeGroup:freeze()
-@li EdjeGroup:thaw()
+@li @ref Timer Group:timer(secs, callback)
+@li @ref Animator Group:animator(func)
+@li @ref Poller Group:poller(interval, callback)
+@li @ref Transform Group:transform()
+@li Group:signal_emit(emission, source)
+@li Group:message_send(message_type, id, msg)
+@li Group:program_run(name)
+@li Group:program_stop(name)
+@li Group:signal_callback_add(emission, source, callback)
+@li Group:signal_callback_del(emission, source)
+@li Group:freeze()
+@li Group:thaw()
 */
 const luaL_Reg lGroup_fn[] = {
    {"timer", _edje_lua_group_fn_timer},
