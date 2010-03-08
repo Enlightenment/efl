@@ -42,7 +42,7 @@ Ecore modules at once.
 gcc *.c \
 -I/usr/local/include -I/usr/X11R6/include \
 -L/usr/local/lib -L/usr/X11R6/lib \
--lecore -lecore_evas -lecore_x -lecore_fb -lecore_job \
+-lecore -lecore_evas -lecore_x -lecore_fb \
 `pkg-config evas --cflags --libs`
 @endverbatim
 
@@ -56,7 +56,6 @@ Suggested configure options for evas for a Linux desktop X display:
 --enable-ecore-fb \
 --enable-ecore-evas \
 --enable-ecore-evas-gl \
---enable-ecore-job \
 --enable-ecore-con \
 --enable-ecore-ipc
 make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
