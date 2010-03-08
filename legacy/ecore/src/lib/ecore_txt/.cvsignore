@@ -1,6 +1,0 @@
-.deps
-.libs
-Makefile
-Makefile.in
-ecore_txt.lo
-libecore_txt.la

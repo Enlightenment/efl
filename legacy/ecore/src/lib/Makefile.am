@@ -4,7 +4,6 @@ SUBDIRS = \
 ecore \
 ecore_input \
 ecore_input_evas \
-ecore_txt \
 ecore_fb \
 ecore_directfb \
 ecore_con \

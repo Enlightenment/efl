@@ -6,6 +6,7 @@
 # include <config.h>
 #endif
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -312,7 +313,7 @@ _ecore_key_press(int                  event,
 #ifdef X_HAVE_UTF8_STRING
 	       compose = compose_buffer;
 #else
-	       compose = ecore_txt_convert(nl_langinfo(CODESET), "UTF-8", compose_buffer);
+	       compose = eina_str_convert(nl_langinfo(CODESET), "UTF-8", compose_buffer);
 	       tmp = compose;
 #endif
 	    }
@@ -323,7 +324,7 @@ _ecore_key_press(int                  event,
 	if (val > 0)
 	  {
 	     compose_buffer[val] = 0;
-	     compose = ecore_txt_convert(nl_langinfo(CODESET), "UTF-8", compose_buffer);
+	     compose = eina_str_convert(nl_langinfo(CODESET), "UTF-8", compose_buffer);
 	     tmp = compose;
 	  }
      }
@@ -1913,7 +1914,7 @@ _ecore_x_event_handle_client_message(xcb_generic_event_t *event)
      }
    else if ((ev->type == ECORE_X_ATOM_WM_CHANGE_STATE)
 	    && (ev->format == 32)
-	    && (ev->data.data32[0] == XCB_WM_ICONIC_STATE))
+	    && (ev->data.data32[0] == XCB_WM_HINT_STATE))
      {
 	Ecore_X_Event_Window_State_Request *e;
 

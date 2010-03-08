@@ -51,7 +51,6 @@ case "$host_os" in
       ecore_quartz_release_info="-release $release"
       ecore_release_info="-release $release"
       ecore_sdl_release_info="-release $release"
-      ecore_txt_release_info="-release $release"
       ecore_win32_release_info="-release $release"
       ecore_x_release_info="-release $release"
       ;;
@@ -71,7 +70,6 @@ AC_SUBST(ecore_ipc_release_info)
 AC_SUBST(ecore_quartz_release_info)
 AC_SUBST(ecore_release_info)
 AC_SUBST(ecore_sdl_release_info)
-AC_SUBST(ecore_txt_release_info)
 AC_SUBST(ecore_win32_release_info)
 AC_SUBST(ecore_wince_release_info)
 AC_SUBST(ecore_x_release_info)
@@ -113,7 +111,6 @@ want_glib="no"
 
 # core modules
 want_ecore_data="no"
-want_ecore_txt="no"
 want_ecore_con="yes"
 want_ecore_ipc="no"
 want_ecore_file="yes"
@@ -243,7 +240,6 @@ requirements_ecore_input_evas=""
 requirements_ecore_ipc=""
 requirements_ecore_quartz=""
 requirements_ecore_sdl=""
-requirements_ecore_txt=""
 requirements_ecore_x=""
 requirements_ecore_win32=""
 requirements_ecore_wince=""
@@ -341,7 +337,6 @@ case "$host_os" in
       requirements_ecore_imf="evil ${requirements_ecore_imf}"
       requirements_ecore_imf_evas="evil ${requirements_ecore_imf_evas}"
       EFL_ECORE_BUILD="-DEFL_ECORE_BUILD"
-      EFL_ECORE_TXT_BUILD="-DEFL_ECORE_TXT_BUILD"
       EFL_ECORE_FILE_BUILD="-DEFL_ECORE_FILE_BUILD"
       EFL_ECORE_EVAS_BUILD="-DEFL_ECORE_EVAS_BUILD"
       EFL_ECORE_IMF_BUILD="-DEFL_ECORE_IMF_BUILD"
@@ -367,7 +362,6 @@ case "$host_os" in
 esac
 
 AC_SUBST(EFL_ECORE_BUILD)
-AC_SUBST(EFL_ECORE_TXT_BUILD)
 AC_SUBST(EFL_ECORE_FILE_BUILD)
 AC_SUBST(EFL_ECORE_EVAS_BUILD)
 AC_SUBST(EFL_ECORE_IMF_BUILD)
@@ -968,9 +962,6 @@ fi
 # ecore_data
 ECORE_CHECK_MODULE([data], [${want_ecore_data}], [Data])
 
-# ecore_txt
-ECORE_CHECK_MODULE([txt], [${want_ecore_txt}], [Txt], [yes])
-
 # ecore_con
 ECORE_CHECK_MODULE([con], [${want_ecore_con}], [Con], [${have_addrinfo}])
 
@@ -1315,7 +1306,6 @@ AC_SUBST(requirements_ecore_input_evas)
 AC_SUBST(requirements_ecore_ipc)
 AC_SUBST(requirements_ecore_quartz)
 AC_SUBST(requirements_ecore_sdl)
-AC_SUBST(requirements_ecore_txt)
 AC_SUBST(requirements_ecore_x)
 AC_SUBST(requirements_ecore_win32)
 AC_SUBST(requirements_ecore_wince)
@@ -1338,7 +1328,6 @@ ecore-input.pc
 ecore-input-evas.pc
 ecore-win32.pc
 ecore-sdl.pc
-ecore-txt.pc
 ecore-wince.pc
 ecore.pc
 doc/ecore.dox
@@ -1361,7 +1350,6 @@ src/lib/ecore_imf_evas/Makefile
 src/lib/ecore_input/Makefile
 src/lib/ecore_input_evas/Makefile
 src/lib/ecore_ipc/Makefile
-src/lib/ecore_txt/Makefile
 src/lib/ecore_win32/Makefile
 src/lib/ecore_wince/Makefile
 src/lib/ecore_x/Makefile
@@ -1384,7 +1372,6 @@ echo "  Ecore........................: always"
 echo "    Thread support.............: $have_pthread"
 echo "    GLib support...............: $have_glib"
 echo "  Ecore_Data...................: $have_ecore_data (deprecated)"
-echo "  Ecore_Txt....................: $have_ecore_txt (deprecated)"
 echo "  Ecore_Con....................: $have_ecore_con"
 if test "x$have_ecore_con" = "xyes" ; then
   echo $ECHO_N "    OpenSSL....................: $have_openssl $ECHO_C"
