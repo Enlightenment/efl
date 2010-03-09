@@ -42,6 +42,7 @@ struct _Widget_Data
    Evas_Coord pagesize_h, pagesize_v;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _show_region_hook(void *data, Evas_Object *obj);
@@ -51,6 +52,7 @@ static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void
 _del_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    free(wd);
@@ -59,6 +61,7 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_smart_scroller_theme_set(wd->scr, "scroller", "base", elm_widget_style_get(obj));
@@ -69,6 +72,7 @@ _theme_hook(Evas_Object *obj)
 static void
 _show_region_hook(void *data, Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord x, y, w, h;
    if (!wd) return;
@@ -79,6 +83,7 @@ _show_region_hook(void *data, Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord  vw, vh, minw, minh, maxw, maxh, w, h, vmw, vmh;
    double xw, xy;
@@ -118,6 +123,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
 
@@ -135,6 +141,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 static void
 _hold_on(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -144,6 +151,7 @@ _hold_on(void *data, Evas_Object *obj, void *event_info)
 static void
 _hold_off(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -153,6 +161,7 @@ _hold_off(void *data, Evas_Object *obj, void *event_info)
 static void
 _freeze_on(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -162,6 +171,7 @@ _freeze_on(void *data, Evas_Object *obj, void *event_info)
 static void
 _freeze_off(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -247,6 +257,7 @@ elm_scroller_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "scroller");
    elm_widget_type_set(obj, "scroller");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -296,6 +307,7 @@ elm_scroller_add(Evas_Object *parent)
 EAPI void
 elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if ((wd->content != content) && (wd->content))
@@ -328,6 +340,7 @@ elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
 EAPI void
 elm_scroller_content_min_limit(Evas_Object *obj, Eina_Bool w, Eina_Bool h)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->min_w = w;
@@ -353,6 +366,7 @@ elm_scroller_content_min_limit(Evas_Object *obj, Eina_Bool w, Eina_Bool h)
 EAPI void
 elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
@@ -376,6 +390,7 @@ elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coor
 EAPI void
 elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    const Elm_Scroller_Policy map[3] =
      {
@@ -407,6 +422,7 @@ elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scro
 EAPI void
 elm_scroller_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if ((x) && (y)) elm_smart_scroller_child_pos_get(wd->scr, x, y);
@@ -429,6 +445,7 @@ elm_scroller_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coo
 EAPI void
 elm_scroller_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    evas_object_geometry_get(wd->content, NULL, NULL, w, h);
@@ -455,6 +472,7 @@ elm_scroller_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 EAPI void
 elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
@@ -483,6 +501,7 @@ elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce
 EAPI void
 elm_scroller_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->pagerel_h = h_pagerel;
@@ -507,6 +526,7 @@ elm_scroller_page_relative_set(Evas_Object *obj, double h_pagerel, double v_page
 EAPI void
 elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->pagesize_h = h_pagesize;
@@ -537,6 +557,7 @@ elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v
 EAPI void
 elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_smart_scroller_region_bring_in(wd->scr, x, y, w, h);

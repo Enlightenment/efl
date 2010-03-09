@@ -25,6 +25,7 @@ struct _Widget_Data
    Eina_Bool homogeneous:1;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -105,6 +106,7 @@ elm_box_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "box");
    elm_widget_type_set(obj, "box");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -140,6 +142,7 @@ elm_box_add(Evas_Object *parent)
 EAPI void
 elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->horizontal = !!horizontal;
    evas_object_smart_calculate(wd->box);
@@ -177,6 +180,7 @@ elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 EAPI void
 elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->homogeneous = !!homogenous;
    evas_object_smart_calculate(wd->box);
@@ -214,6 +218,7 @@ elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 EAPI void
 elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_prepend(wd->box, subobj);
@@ -233,6 +238,7 @@ elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj)
 EAPI void
 elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_append(wd->box, subobj);
@@ -255,6 +261,7 @@ elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj)
 EAPI void
 elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_insert_before(wd->box, subobj, before);
@@ -277,6 +284,7 @@ elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before)
 EAPI void
 elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_insert_after(wd->box, subobj, after);
@@ -294,6 +302,7 @@ elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after)
 EAPI void
 elm_box_clear(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    evas_object_box_remove_all(wd->box, 1);
 }
@@ -311,6 +320,7 @@ elm_box_clear(Evas_Object *obj)
 EAPI void
 elm_box_unpack(Evas_Object *obj, Evas_Object *subobj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    evas_object_box_remove(wd->box, subobj);
 }
@@ -328,6 +338,7 @@ elm_box_unpack(Evas_Object *obj, Evas_Object *subobj)
 EAPI void
 elm_box_unpack_all(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    evas_object_box_remove_all(wd->box, 0);
 }

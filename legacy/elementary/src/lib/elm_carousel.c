@@ -21,6 +21,7 @@ struct _Elm_Carousel_Item
    Eina_Bool selected : 1;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -159,6 +160,7 @@ elm_carousel_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "carousel");
    elm_widget_type_set(obj, "carousel");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -192,6 +194,7 @@ elm_carousel_add(Evas_Object *parent)
 EAPI Elm_Carousel_Item *
 elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw, mh;
    Elm_Carousel_Item *it = calloc(1, sizeof(Elm_Carousel_Item));

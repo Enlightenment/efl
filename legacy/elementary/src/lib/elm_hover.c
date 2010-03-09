@@ -18,6 +18,7 @@ struct _Subinfo
    Evas_Object *obj;
 };
 
+static const char *widtype = NULL;
 static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
@@ -168,6 +169,7 @@ _hov_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
    const Eina_List *l;
    const Subinfo *si;
@@ -193,6 +195,7 @@ _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _target_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
 
    wd->target = NULL;
@@ -201,6 +204,7 @@ _target_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _signal_dismiss(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
 
    evas_object_hide(data);
@@ -222,12 +226,14 @@ _parent_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _parent_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
 }
 
 static void
 _parent_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
 
    if (wd) evas_object_hide(wd->cov);
@@ -236,6 +242,7 @@ _parent_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
 
    elm_hover_parent_set(data, NULL);
@@ -252,6 +259,7 @@ elm_hover_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "hover");
    elm_widget_type_set(obj, "hover");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -296,6 +304,7 @@ elm_hover_add(Evas_Object *parent)
 EAPI void
 elm_hover_target_set(Evas_Object *obj, Evas_Object *target)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->target)
@@ -314,6 +323,7 @@ elm_hover_target_set(Evas_Object *obj, Evas_Object *target)
 EAPI void
 elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->parent)
@@ -350,6 +360,7 @@ elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 EAPI void
 elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Subinfo *si;
    const Eina_List *l;
@@ -387,6 +398,7 @@ elm_hover_style_set(Evas_Object *obj, const char *style)
 EAPI const char *
 elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord x = 0, y = 0, w = 0, h = 0, x2 = 0, y2 = 0, w2 = 0, h2 = 0;
    Evas_Coord spc_l, spc_r, spc_t, spc_b;

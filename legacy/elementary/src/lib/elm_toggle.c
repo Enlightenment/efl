@@ -13,6 +13,7 @@ struct _Widget_Data
    const char *ontext, *offtext;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
@@ -25,6 +26,7 @@ static void _signal_toggle_on(void *data, Evas_Object *obj, const char *emission
 static void
 _del_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->label) eina_stringshare_del(wd->label);
    if (wd->ontext) eina_stringshare_del(wd->ontext);
@@ -35,6 +37,7 @@ _del_hook(Evas_Object *obj)
 static void
 _disable_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (elm_widget_disabled_get(obj))
      edje_object_signal_emit(wd->tgl, "elm,state,disabled", "elm");
@@ -45,6 +48,7 @@ _disable_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    _elm_theme_set(wd->tgl, "toggle", "base", elm_widget_style_get(obj));
    if (wd->icon)
@@ -70,6 +74,7 @@ _theme_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
 
@@ -83,6 +88,7 @@ _sizing_eval(Evas_Object *obj)
 static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
    if (obj != wd->icon) return;
    _sizing_eval(data);
@@ -91,6 +97,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
 
@@ -107,6 +114,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 static void
 _signal_toggle_off(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
 
    wd->state = 0;
@@ -117,6 +125,7 @@ _signal_toggle_off(void *data, Evas_Object *obj, const char *emission, const cha
 static void
 _signal_toggle_on(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
 
    wd->state = 1;
@@ -134,6 +143,7 @@ elm_toggle_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "toggle");
    elm_widget_type_set(obj, "toggle");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -162,6 +172,7 @@ elm_toggle_add(Evas_Object *parent)
 EAPI void
 elm_toggle_label_set(Evas_Object *obj, const char *label)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->label) eina_stringshare_del(wd->label);
@@ -183,6 +194,7 @@ elm_toggle_label_set(Evas_Object *obj, const char *label)
 EAPI const char*
 elm_toggle_label_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return NULL;
@@ -192,6 +204,7 @@ elm_toggle_label_get(Evas_Object *obj)
 EAPI void
 elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if ((wd->icon != icon) && (wd->icon))
@@ -209,6 +222,7 @@ elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon)
 EAPI Evas_Object *
 elm_toggle_icon_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return NULL;
@@ -218,6 +232,7 @@ elm_toggle_icon_get(Evas_Object *obj)
 EAPI void
 elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->ontext) eina_stringshare_del(wd->ontext);
@@ -234,6 +249,7 @@ elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *
 EAPI void
 elm_toggle_state_set(Evas_Object *obj, Eina_Bool state)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (state != wd->state)
@@ -250,6 +266,7 @@ elm_toggle_state_set(Evas_Object *obj, Eina_Bool state)
 EAPI Eina_Bool
 elm_toggle_state_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    return wd->state;
@@ -258,6 +275,7 @@ elm_toggle_state_get(const Evas_Object *obj)
 EAPI void
 elm_toggle_state_pointer_set(Evas_Object *obj, Eina_Bool *statep)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (statep)

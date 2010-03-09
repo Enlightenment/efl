@@ -9,6 +9,7 @@ struct _Widget_Data
    Eina_Bool hidden : 1;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -19,6 +20,7 @@ static void _toggle_panel(void *data, Evas_Object *obj, const char *emission, co
 static void 
 _del_hook(Evas_Object *obj) 
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    free(wd);
@@ -27,6 +29,7 @@ _del_hook(Evas_Object *obj)
 static void 
 _theme_hook(Evas_Object *obj) 
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    int scale = 0;
 
@@ -38,6 +41,7 @@ _theme_hook(Evas_Object *obj)
 static void 
 _sizing_eval(Evas_Object *obj) 
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw = -1, mh = -1;
    Evas_Coord vw = 0, vh = 0;
@@ -66,6 +70,7 @@ _sizing_eval(Evas_Object *obj)
 static void 
 _resize(void *data, Evas *evas, Evas_Object *obj, void *event) 
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord mw, mh, vw, vh, w, h;
 
@@ -89,6 +94,7 @@ _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 static void 
 _toggle_panel(void *data, Evas_Object *obj, const char *emission, const char *source) 
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
 
    if (wd->hidden) 
@@ -115,6 +121,7 @@ elm_panel_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    evas = evas_object_evas_get(parent);
    obj = elm_widget_add(evas);
+   ELM_SET_WIDTYPE(widtype, "panel");
    elm_widget_type_set(obj, "panel");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -152,6 +159,7 @@ elm_panel_add(Evas_Object *parent)
 EAPI void 
 elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient) 
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    wd->orient = orient;
@@ -173,6 +181,7 @@ elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient)
 EAPI void 
 elm_panel_content_set(Evas_Object *obj, Evas_Object *content) 
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    evas_object_box_remove_all(wd->bx, EINA_TRUE);

@@ -22,6 +22,7 @@ struct _Widget_Data
    const char *hover_style;
 };
 
+static const char *widtype = NULL;
 static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -138,6 +139,7 @@ elm_anchorview_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "anchorview");
    elm_widget_type_set(obj, "anchorview");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -180,6 +182,7 @@ elm_anchorview_add(Evas_Object *parent)
 EAPI void
 elm_anchorview_text_set(Evas_Object *obj, const char *text)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_entry_entry_set(wd->entry, text);
    if (wd->hover) evas_object_del(wd->hover);
@@ -203,6 +206,7 @@ elm_anchorview_text_set(Evas_Object *obj, const char *text)
 EAPI void
 elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->hover_parent)
      evas_object_event_callback_del_full(wd->hover_parent, EVAS_CALLBACK_DEL, _parent_del, obj);
@@ -225,6 +229,7 @@ elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 EAPI void
 elm_anchorview_hover_style_set(Evas_Object *obj, const char *style)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->hover_style) eina_stringshare_del(wd->hover_style);
    wd->hover_style = NULL;
@@ -243,6 +248,7 @@ elm_anchorview_hover_style_set(Evas_Object *obj, const char *style)
 EAPI void
 elm_anchorview_hover_end(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->hover) evas_object_del(wd->hover);
    if (wd->pop) evas_object_del(wd->pop);
@@ -265,6 +271,7 @@ elm_anchorview_hover_end(Evas_Object *obj)
 EAPI void
 elm_anchorview_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_scroller_bounce_set(wd->scroller, h_bounce, v_bounce);
 }

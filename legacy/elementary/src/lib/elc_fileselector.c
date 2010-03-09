@@ -32,6 +32,7 @@ struct _Widget_Data
 
 Elm_Genlist_Item_Class itc;
 
+static const char *widtype = NULL;
 static void _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent);
 static void _do_anchors(Evas_Object *obj, const char *path);
 
@@ -336,6 +337,7 @@ elm_fileselector_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    wd->expand = EINA_FALSE;
    obj = elm_widget_add(evas_object_evas_get(parent));
+   ELM_SET_WIDTYPE(widtype, "fileselector");
    elm_widget_type_set(obj, "fileselector");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -438,6 +440,7 @@ elm_fileselector_add(Evas_Object *parent)
 EAPI void
 elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (is_save)
@@ -462,6 +465,7 @@ elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save)
 EAPI Eina_Bool
 elm_fileselector_is_save_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->entry2 ? EINA_TRUE : EINA_FALSE;
 }
@@ -469,6 +473,7 @@ elm_fileselector_is_save_get(Evas_Object *obj)
 EAPI void
 elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if(wd->only_folder == only) return ;
@@ -479,6 +484,7 @@ elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only)
 EAPI Eina_Bool
 elm_fileselector_only_folder_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->only_folder;
 }
@@ -486,6 +492,7 @@ elm_fileselector_only_folder_get(Evas_Object *obj)
 EAPI void
 elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool only)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *box, *bt;
 
@@ -530,6 +537,7 @@ elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool only)
 EAPI Eina_Bool
 elm_fileselector_ok_cancel_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->buttons.bx ? EINA_TRUE : EINA_FALSE;
 }
@@ -537,6 +545,7 @@ elm_fileselector_ok_cancel_get(Evas_Object *obj)
 EAPI void
 elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->expand = expand;
 }
@@ -550,6 +559,7 @@ elm_fileselector_path_set(Evas_Object *obj, const char *path)
 EAPI const char *
 elm_fileselector_path_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->path;
 }
@@ -557,6 +567,7 @@ elm_fileselector_path_get(Evas_Object *obj)
 EAPI const char*
 elm_fileselector_selected_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Genlist_Item *it;
 

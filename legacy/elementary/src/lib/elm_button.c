@@ -26,6 +26,7 @@ struct _Widget_Data
    Ecore_Timer *timer;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
@@ -210,6 +211,7 @@ elm_button_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "button");
    elm_widget_type_set(obj, "button");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_on_focus_hook_set( obj, _on_focus_hook, NULL );
@@ -246,6 +248,7 @@ elm_button_add(Evas_Object *parent)
 EAPI void
 elm_button_label_set(Evas_Object *obj, const char *label)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw, mh;
 
@@ -269,6 +272,7 @@ elm_button_label_set(Evas_Object *obj, const char *label)
 EAPI const char*
 elm_button_label_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->label;
@@ -285,6 +289,7 @@ elm_button_label_get(Evas_Object *obj)
 EAPI void
 elm_button_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if ((wd->icon != icon) && (wd->icon))
@@ -307,6 +312,7 @@ elm_button_icon_set(Evas_Object *obj, Evas_Object *icon)
 EAPI Evas_Object *
 elm_button_icon_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->icon;
@@ -339,6 +345,7 @@ elm_button_style_set(Evas_Object *obj, const char *style)
 EAPI void
 elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
@@ -360,6 +367,7 @@ elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on)
 EAPI void
 elm_button_autorepeat_initital_timeout_set(Evas_Object *obj, double t)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
@@ -386,6 +394,7 @@ elm_button_autorepeat_initital_timeout_set(Evas_Object *obj, double t)
 EAPI void         
 elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 

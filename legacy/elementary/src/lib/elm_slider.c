@@ -57,6 +57,7 @@ struct _Widget_Data
    Evas_Coord size;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -68,6 +69,7 @@ static void _indicator_set(Evas_Object *obj);
 static void
 _del_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->label) eina_stringshare_del(wd->label);
    if (wd->indicator) eina_stringshare_del(wd->units);
@@ -78,6 +80,7 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->horizontal)
      _elm_theme_set(wd->slider, "slider", "horizontal", elm_widget_style_get(obj));
@@ -114,6 +117,7 @@ _theme_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
@@ -127,6 +131,7 @@ _sizing_eval(Evas_Object *obj)
 static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
    if (obj != wd->icon) return;
    _sizing_eval(data);
@@ -135,6 +140,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
    if (sub == wd->icon)
@@ -150,6 +156,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 static int
 _delay_change(void *data)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
    wd->delay = NULL;
    evas_object_smart_callback_call(data, "delay,changed", NULL);
@@ -159,6 +166,7 @@ _delay_change(void *data)
 static void
 _val_fetch(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
 
@@ -180,6 +188,7 @@ _val_fetch(Evas_Object *obj)
 static void
 _val_set(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    double pos;
    if (wd->val_max > wd->val_min)
@@ -195,6 +204,7 @@ _val_set(Evas_Object *obj)
 static void
 _units_set(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->units)
      {
@@ -210,6 +220,7 @@ _units_set(Evas_Object *obj)
 static void
 _indicator_set(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->indicator_format_func)
      {
@@ -273,6 +284,7 @@ elm_slider_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "slider");
    elm_widget_type_set(obj, "slider");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -318,6 +330,7 @@ elm_slider_add(Evas_Object *parent)
 EAPI void
 elm_slider_label_set(Evas_Object *obj, const char *label)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->label) eina_stringshare_del(wd->label);
@@ -348,6 +361,7 @@ elm_slider_label_set(Evas_Object *obj, const char *label)
 EAPI const char*
 elm_slider_label_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
@@ -370,6 +384,7 @@ elm_slider_label_get(Evas_Object *obj)
 EAPI void
 elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((wd->icon != icon) && (wd->icon))
      elm_widget_sub_object_del(obj, wd->icon);
@@ -396,6 +411,7 @@ elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
 EAPI Evas_Object *
 elm_slider_icon_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->icon;
@@ -417,6 +433,7 @@ elm_slider_icon_get(Evas_Object *obj)
 EAPI void
 elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->size == size) return;
    wd->size = size;
@@ -444,6 +461,7 @@ elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
 EAPI void
 elm_slider_unit_format_set(Evas_Object *obj, const char *units)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->units) eina_stringshare_del(wd->units);
    if (units)
@@ -478,6 +496,7 @@ elm_slider_unit_format_set(Evas_Object *obj, const char *units)
 EAPI void
 elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->indicator) eina_stringshare_del(wd->indicator);
    if (indicator) wd->indicator = eina_stringshare_add(indicator);
@@ -496,6 +515,7 @@ elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator)
 EAPI void
 elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    horizontal = !!horizontal;
    if (wd->horizontal == horizontal) return;
@@ -517,6 +537,7 @@ elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 EAPI void
 elm_slider_min_max_set(Evas_Object *obj, double min, double max)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((wd->val_min == min) && (wd->val_max == max)) return;
    wd->val_min = min;
@@ -539,6 +560,7 @@ elm_slider_min_max_set(Evas_Object *obj, double min, double max)
 EAPI void
 elm_slider_value_set(Evas_Object *obj, double val)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->val == val) return;
    wd->val = val;
@@ -560,6 +582,7 @@ elm_slider_value_set(Evas_Object *obj, double val)
 EAPI double
 elm_slider_value_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->val;
 }
@@ -580,6 +603,7 @@ elm_slider_value_get(const Evas_Object *obj)
 EAPI void
 elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    inverted = !!inverted;
    if (wd->inverted == inverted) return;
@@ -609,6 +633,7 @@ elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 EAPI void
 elm_slider_indicator_format_function_set(Evas_Object *obj, const char *(*func)(double val))
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->indicator_format_func = func;
    _indicator_set(obj);

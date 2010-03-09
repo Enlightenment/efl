@@ -29,6 +29,7 @@ struct _Widget_Data
    const char *label;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
@@ -169,6 +170,7 @@ elm_check_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "check");
    elm_widget_type_set(obj, "check");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -203,6 +205,7 @@ elm_check_add(Evas_Object *parent)
 EAPI void
 elm_check_label_set(Evas_Object *obj, const char *label)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw, mh;
 
@@ -233,6 +236,7 @@ elm_check_label_set(Evas_Object *obj, const char *label)
 EAPI const char*
 elm_check_label_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->label;
@@ -254,6 +258,7 @@ elm_check_label_get(Evas_Object *obj)
 EAPI void
 elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((wd->icon != icon) && (wd->icon))
      elm_widget_sub_object_del(obj, wd->icon);
@@ -280,6 +285,7 @@ elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
 EAPI Evas_Object *
 elm_check_icon_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->icon;
@@ -299,6 +305,7 @@ elm_check_icon_get(Evas_Object *obj)
 EAPI void
 elm_check_state_set(Evas_Object *obj, Eina_Bool state)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (state != wd->state)
      {
@@ -322,6 +329,7 @@ elm_check_state_set(Evas_Object *obj, Eina_Bool state)
 EAPI Eina_Bool
 elm_check_state_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->state;
 }
@@ -344,6 +352,7 @@ elm_check_state_get(const Evas_Object *obj)
 EAPI void
 elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (statep)
      {

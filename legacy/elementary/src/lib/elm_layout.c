@@ -26,6 +26,7 @@ struct _Subinfo
    Evas_Object *obj;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -35,6 +36,7 @@ static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void
 _del_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Subinfo *si;
 
@@ -49,6 +51,7 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    edje_object_scale_set(wd->lay, elm_widget_scale_get(obj) *
@@ -59,6 +62,7 @@ _theme_hook(Evas_Object *obj)
 static void
 _changed_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->needs_size_calc)
      {
@@ -70,6 +74,7 @@ _changed_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
 
@@ -81,6 +86,7 @@ _sizing_eval(Evas_Object *obj)
 static void
 _request_sizing_eval(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->needs_size_calc) return;
    wd->needs_size_calc = 1;
@@ -96,6 +102,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
    Eina_List *l;
@@ -141,6 +148,7 @@ elm_layout_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "layout");
    elm_widget_type_set(obj, "layout");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -173,6 +181,7 @@ elm_layout_add(Evas_Object *parent)
 EAPI Eina_Bool
 elm_layout_file_set(Evas_Object *obj, const char *file, const char *group)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_Bool ret = edje_object_file_set(wd->lay, file, group);
 
@@ -195,6 +204,7 @@ elm_layout_file_set(Evas_Object *obj, const char *file, const char *group)
 EAPI Eina_Bool
 elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_Bool ret = _elm_theme_set(wd->lay, clas, group, style);
 
@@ -214,6 +224,7 @@ elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, cons
 EAPI void
 elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Subinfo *si;
    const Eina_List *l;
@@ -261,6 +272,7 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
 EAPI Evas_Object *
 elm_layout_edje_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    return wd->lay;
@@ -281,6 +293,7 @@ elm_layout_edje_get(const Evas_Object *obj)
 EAPI void
 elm_layout_sizing_eval(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    _request_sizing_eval(obj);
 }

@@ -44,6 +44,7 @@ struct _Widget_Data
    Evas_Coord xloc, yloc;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -58,6 +59,7 @@ static void _menu_hide(void *data, Evas_Object *obj, void *event_info);
 static void
 _del_pre_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_RESIZE, _parent_resize, obj);
@@ -68,6 +70,7 @@ _del_hook(Evas_Object *obj)
 {
    Eina_List *l, *ll = NULL;
    Elm_Menu_Item *item;
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -96,6 +99,7 @@ _theme_hook(Evas_Object *obj)
 {
    Eina_List *l, *_l, *ll = NULL;
    Elm_Menu_Item *item;
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -141,6 +145,7 @@ _sizing_eval(Evas_Object *obj)
    Eina_List *l;
    Elm_Menu_Item *item;
    Evas_Coord x_p,y_p,w_p,h_p,x2,y2,w2,h2,bx,by,bw,bh;
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if ((!wd) || (!wd->parent)) return;
@@ -234,6 +239,7 @@ _item_sizing_eval(Elm_Menu_Item *item)
 static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
 //   Widget_Data *wd = elm_widget_data_get(data);
 
    _sizing_eval(data);
@@ -242,6 +248,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _menu_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
 //   Widget_Data *wd = elm_widget_data_get(data);
 
    _sizing_eval(data);
@@ -250,6 +257,7 @@ _menu_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _parent_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
 //   Widget_Data *wd = elm_widget_data_get(data);
 
    _sizing_eval(data);
@@ -276,6 +284,7 @@ _menu_hide(void *data, Evas_Object *obj, void *event_info)
 {
    Eina_List *l;
    Elm_Menu_Item *item2;
+   
    Widget_Data *wd = elm_widget_data_get(data);
 
    evas_object_hide(wd->hv);
@@ -360,6 +369,7 @@ _submenu_open(void *data, Evas_Object *obj, const char *emission, const char *so
 static void
 _show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
    evas_object_show(wd->hv);
 }
@@ -439,6 +449,7 @@ elm_menu_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "menu");
    elm_widget_type_set(obj, "menu");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -483,6 +494,7 @@ elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
    Eina_List *l, *_l, *ll = NULL;
    Elm_Menu_Item *item;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -518,6 +530,7 @@ elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
 EAPI void
 elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -555,6 +568,7 @@ EAPI Elm_Menu_Item *
 elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
    Elm_Menu_Item *subitem;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return NULL;
@@ -652,6 +666,7 @@ EAPI Elm_Menu_Item *
 elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
 {
    Elm_Menu_Item *subitem;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return NULL;

@@ -38,6 +38,7 @@ struct _Elm_List_Item
    Eina_Bool dummy_end : 1;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -156,6 +157,7 @@ _elm_list_unwalk(Widget_Data *wd)
 static void
 _del_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_List_Item *it;
    Eina_List *n;
@@ -183,6 +185,7 @@ _del_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
@@ -195,6 +198,7 @@ _sizing_eval(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_List_Item *it;
    Eina_List *n;
@@ -212,6 +216,7 @@ _theme_hook(Evas_Object *obj)
 static void
 _on_focus_hook(void *data, Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 //   if (elm_widget_focus_get(obj))
 //     elm_widget_focus_steal(wd->entry);
@@ -220,6 +225,7 @@ _on_focus_hook(void *data, Evas_Object *obj)
 static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
 //   _fix_items(data);
 //   _sizing_eval(data);
@@ -228,6 +234,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
    const Eina_List *l;
@@ -454,6 +461,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 static Elm_List_Item *
 _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_List_Item *it;
 
@@ -491,6 +499,7 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
 static void
 _fix_items(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    const Eina_List *l;
    Elm_List_Item *it;
@@ -640,6 +649,7 @@ _fix_items(Evas_Object *obj)
 static void
 _hold_on(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -649,6 +659,7 @@ _hold_on(void *data, Evas_Object *obj, void *event_info)
 static void
 _hold_off(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -658,6 +669,7 @@ _hold_off(void *data, Evas_Object *obj, void *event_info)
 static void
 _freeze_on(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -667,6 +679,7 @@ _freeze_on(void *data, Evas_Object *obj, void *event_info)
 static void
 _freeze_off(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -683,6 +696,7 @@ elm_list_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    wd->self = obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "list");
    elm_widget_type_set(obj, "list");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
@@ -718,6 +732,7 @@ elm_list_add(Evas_Object *parent)
 EAPI Elm_List_Item *
 elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
 
@@ -730,6 +745,7 @@ elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Eva
 EAPI Elm_List_Item *
 elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
 
@@ -748,6 +764,7 @@ elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char 
    if ((!before) || (!before->node)) return NULL;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(before, NULL);
 
+   ELM_CHECK_WIDTYPE(obj, widtype);
    wd = elm_widget_data_get(obj);
    it = _item_new(obj, label, icon, end, func, data);
    wd->items = eina_list_prepend_relative_list(wd->items, it, before->node);
@@ -765,6 +782,7 @@ elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *l
    if ((!after) || (!after->node)) return NULL;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(after, NULL);
 
+   ELM_CHECK_WIDTYPE(obj, widtype);
    wd = elm_widget_data_get(obj);
    it = _item_new(obj, label, icon, end, func, data);
    wd->items = eina_list_append_relative_list(wd->items, it, after->node);
@@ -776,6 +794,7 @@ elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *l
 EAPI void
 elm_list_clear(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_List_Item *it;
 
@@ -816,6 +835,7 @@ elm_list_clear(Evas_Object *obj)
 EAPI void
 elm_list_go(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    _fix_items(obj);
@@ -824,6 +844,7 @@ elm_list_go(Evas_Object *obj)
 EAPI void
 elm_list_multi_select_set(Evas_Object *obj, Eina_Bool multi)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    wd->multi = multi;
@@ -832,6 +853,7 @@ elm_list_multi_select_set(Evas_Object *obj, Eina_Bool multi)
 EAPI Eina_Bool
 elm_list_multi_select_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    return wd->multi;
@@ -840,6 +862,7 @@ elm_list_multi_select_get(Evas_Object *obj)
 EAPI void
 elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->mode == mode) return;
@@ -853,6 +876,7 @@ elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
 EAPI Elm_List_Mode
 elm_list_horizontal_mode_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    return wd->mode;
@@ -861,6 +885,7 @@ elm_list_horizontal_mode_get(Evas_Object *obj)
 EAPI void
 elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    wd->always_select = always_select;
@@ -869,6 +894,7 @@ elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
 EAPI const Eina_List *
 elm_list_items_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    return wd->items;
@@ -877,6 +903,7 @@ elm_list_items_get(const Evas_Object *obj)
 EAPI Elm_List_Item *
 elm_list_selected_item_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->selected) return wd->selected->data;
@@ -886,6 +913,7 @@ elm_list_selected_item_get(const Evas_Object *obj)
 EAPI const Eina_List *
 elm_list_selected_items_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    return wd->selected;
@@ -1113,6 +1141,7 @@ elm_list_item_next(const Elm_List_Item *it)
 EAPI void
 elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
 }
@@ -1135,6 +1164,7 @@ elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 EAPI void
 elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_scroller_policy_set(wd->scr, policy_h, policy_v);
 }

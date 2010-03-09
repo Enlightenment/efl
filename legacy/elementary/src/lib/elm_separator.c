@@ -9,6 +9,7 @@ struct _Widget_Data
    Eina_Bool horizontal;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -16,6 +17,7 @@ static void _sizing_eval(Evas_Object *obj);
 static void
 _del_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    free(wd);
 }
@@ -23,6 +25,7 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->horizontal)
      _elm_theme_set(wd->sep, "separator", "horizontal", elm_widget_style_get(obj));
@@ -35,6 +38,7 @@ _theme_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
@@ -54,6 +58,7 @@ elm_separator_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "separator");
    wd->horizontal = EINA_FALSE;
    elm_widget_type_set(obj, "separator");
    elm_widget_sub_object_add(parent, obj);
@@ -72,6 +77,7 @@ elm_separator_add(Evas_Object *parent)
 EAPI void
 elm_separator_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    horizontal = !!horizontal;
@@ -83,6 +89,7 @@ elm_separator_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 EAPI Eina_Bool
 elm_separator_horizontal_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->horizontal;

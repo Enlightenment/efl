@@ -25,6 +25,7 @@ struct _Widget_Data
 };
 
 /* local function prototypes */
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -218,6 +219,7 @@ elm_conformant_add(Evas_Object *parent)
    evas = evas_object_evas_get(parent);
 
    obj = elm_widget_add(evas);
+   ELM_SET_WIDTYPE(widtype, "conform");
    elm_widget_type_set(obj, "conformant");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -274,6 +276,7 @@ elm_conformant_add(Evas_Object *parent)
 EAPI void 
 elm_conformant_content_set(Evas_Object *obj, Evas_Object *content) 
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if ((wd->content != content) && (wd->content))

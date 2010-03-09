@@ -30,6 +30,7 @@ struct _Widget_Data
    Eina_Bool no_scale : 1;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -119,6 +120,7 @@ elm_image_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "image");
    elm_widget_type_set(obj, "image");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -157,6 +159,7 @@ elm_image_add(Evas_Object *parent)
 EAPI Eina_Bool
 elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_Bool ret;
    const char *p;
@@ -182,6 +185,7 @@ elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
 EAPI void
 elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -192,6 +196,7 @@ elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 EAPI void
 elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    _els_smart_icon_size_get(wd->img, w, h);
@@ -209,6 +214,7 @@ elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
 EAPI void
 elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -229,6 +235,7 @@ elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
 EAPI void
 elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -249,6 +256,7 @@ elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down)
 EAPI void
 elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -267,6 +275,7 @@ elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 EAPI void
 elm_image_prescale_set(Evas_Object *obj, int size)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -288,6 +297,7 @@ elm_image_prescale_set(Evas_Object *obj, int size)
 EAPI void
 elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;

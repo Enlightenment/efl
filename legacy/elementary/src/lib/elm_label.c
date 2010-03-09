@@ -21,6 +21,7 @@ struct _Widget_Data
    Eina_Bool changed : 1;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -110,6 +111,7 @@ _sizing_eval(Evas_Object *obj)
 static void 
 _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
    
    if (wd->linewrap)
@@ -135,6 +137,7 @@ elm_label_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "label");
    elm_widget_type_set(obj, "label");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -168,6 +171,7 @@ elm_label_add(Evas_Object *parent)
 EAPI void
 elm_label_label_set(Evas_Object *obj, const char *label)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!label) label = "";
@@ -188,6 +192,7 @@ elm_label_label_set(Evas_Object *obj, const char *label)
 EAPI const char *
 elm_label_label_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return NULL;
@@ -204,6 +209,7 @@ elm_label_label_get(Evas_Object *obj)
 EAPI void
 elm_label_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *t;
    if (wd->linewrap == wrap) return;
@@ -229,6 +235,7 @@ elm_label_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
 EAPI Eina_Bool
 elm_label_line_wrap_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->linewrap;
 }
@@ -243,6 +250,7 @@ elm_label_line_wrap_get(const Evas_Object *obj)
 EAPI void
 elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->wrap_w == w) return;
    wd->wrap_w = w;
@@ -259,6 +267,7 @@ elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w)
 EAPI Evas_Coord
 elm_label_wrap_width_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->wrap_w;
 }

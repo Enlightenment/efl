@@ -28,6 +28,7 @@ struct _Widget_Data
    Eina_Bool auto_write : 1;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _on_focus_hook(void *data, Evas_Object *obj);
@@ -269,6 +270,7 @@ elm_notepad_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "notepad");
    elm_widget_type_set(obj, "notepad");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
@@ -313,6 +315,7 @@ elm_notepad_add(Evas_Object *parent)
 EAPI void
 elm_notepad_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->delay_write)
      {
@@ -342,6 +345,7 @@ elm_notepad_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 EAPI void
 elm_notepad_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_scroller_bounce_set(wd->scr, h_bounce, v_bounce);
 }

@@ -31,6 +31,7 @@ struct _Widget_Data
      } cur;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static int _ticker(void *data);
@@ -389,6 +390,7 @@ elm_clock_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "clock");
    elm_widget_type_set(obj, "clock");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -424,6 +426,7 @@ elm_clock_add(Evas_Object *parent)
 EAPI void
 elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->hrs = hrs;
    wd->min = min;
@@ -450,6 +453,7 @@ elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec)
 EAPI void
 elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (hrs) *hrs = wd->hrs;
    if (min) *min = wd->min;
@@ -469,6 +473,7 @@ elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec)
 EAPI void
 elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->edit = edit;
    _time_update(obj);
@@ -491,6 +496,7 @@ elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit)
 EAPI void
 elm_clock_show_am_pm_set(Evas_Object *obj, Eina_Bool am_pm)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->am_pm = am_pm;
    _time_update(obj);
@@ -511,6 +517,7 @@ elm_clock_show_am_pm_set(Evas_Object *obj, Eina_Bool am_pm)
 EAPI void
 elm_clock_show_seconds_set(Evas_Object *obj, Eina_Bool seconds)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->seconds = seconds;
    _time_update(obj);

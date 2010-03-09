@@ -22,6 +22,7 @@ struct _Widget_Data
    int size;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -30,6 +31,7 @@ static void _mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void
 _del_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    free(wd);
 }
@@ -37,6 +39,7 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    edje_object_scale_set(wd->frm, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
@@ -45,6 +48,7 @@ _theme_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
@@ -85,6 +89,7 @@ elm_photo_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "photo");
    elm_widget_type_set(obj, "photo");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -128,6 +133,7 @@ elm_photo_add(Evas_Object *parent)
 EAPI Eina_Bool
 elm_photo_file_set(Evas_Object *obj, const char *file)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!_els_smart_icon_file_key_set(wd->img, file, NULL))
      return 0;
@@ -146,6 +152,7 @@ elm_photo_file_set(Evas_Object *obj, const char *file)
 EAPI void
 elm_photo_size_set(Evas_Object *obj, int size)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (size < 0) size = 0;
    wd->size = size;

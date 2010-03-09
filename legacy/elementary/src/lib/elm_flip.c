@@ -21,6 +21,7 @@ struct _Widget_Data
    Eina_Bool state : 1;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -276,6 +277,7 @@ elm_flip_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "flip");
    elm_widget_type_set(obj, "flip");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -317,6 +319,7 @@ elm_flip_add(Evas_Object *parent)
 EAPI void
 elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->front.content == content) return;
@@ -355,6 +358,7 @@ elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
 EAPI void
 elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->back.content == content) return;
@@ -393,6 +397,7 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
 EAPI Eina_Bool
 elm_flip_front_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->state;
 }
@@ -400,12 +405,14 @@ elm_flip_front_get(Evas_Object *obj)
 EAPI void
 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc, Evas_Coord x, Evas_Coord y)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 }
 
 EAPI void
 elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd->animator) wd->animator = ecore_animator_add(_animate, obj);
    wd->mode = mode;

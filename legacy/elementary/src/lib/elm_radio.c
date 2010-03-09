@@ -50,6 +50,7 @@ struct _Widget_Data
    Group *group;
 };
 
+static const char *widtype = NULL;
 static void _state_set(Evas_Object *obj, Eina_Bool state);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
@@ -63,6 +64,7 @@ static void _signal_radio_toggle(void *data, Evas_Object *obj, const char *emiss
 static void
 _del_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->label) eina_stringshare_del(wd->label);
    wd->group->radios = eina_list_remove(wd->group->radios, obj);
@@ -74,6 +76,7 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    _elm_theme_set(wd->chk, "radio", "base", elm_widget_style_get(obj));
    if (wd->icon)
@@ -97,6 +100,7 @@ _theme_hook(Evas_Object *obj)
 static void
 _disable_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (elm_widget_disabled_get(obj))
      {
@@ -110,6 +114,7 @@ _disable_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
 
@@ -123,6 +128,7 @@ _sizing_eval(Evas_Object *obj)
 static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
    if (obj != wd->icon) return;
    _sizing_eval(data);
@@ -131,6 +137,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
    if (sub == wd->icon)
@@ -146,6 +153,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 static void
 _state_set(Evas_Object *obj, Eina_Bool state)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((state != wd->state) && (!elm_widget_disabled_get(obj)))
      {
@@ -182,6 +190,7 @@ _state_set_all(Widget_Data *wd)
 static void
 _signal_radio_on(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
    if (wd->group->value == wd->value) return;
    wd->group->value = wd->value;
@@ -208,6 +217,7 @@ elm_radio_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "radio");
    elm_widget_type_set(obj, "radio");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -242,6 +252,7 @@ elm_radio_add(Evas_Object *parent)
 EAPI void
 elm_radio_label_set(Evas_Object *obj, const char *label)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw, mh;
 
@@ -273,6 +284,7 @@ elm_radio_label_set(Evas_Object *obj, const char *label)
 EAPI const char*
 elm_radio_label_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
@@ -295,6 +307,7 @@ elm_radio_label_get(Evas_Object *obj)
 EAPI void
 elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((wd->icon != icon) && (wd->icon))
      elm_widget_sub_object_del(obj, wd->icon);
@@ -321,6 +334,7 @@ elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon)
 EAPI Evas_Object *
 elm_radio_icon_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->icon;
@@ -342,6 +356,7 @@ elm_radio_icon_get(Evas_Object *obj)
 EAPI void
 elm_radio_group_add(Evas_Object *obj, Evas_Object *group)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Widget_Data *wd2 = elm_widget_data_get(group);
    Eina_Bool state = EINA_FALSE;
@@ -378,6 +393,7 @@ elm_radio_group_add(Evas_Object *obj, Evas_Object *group)
 EAPI void
 elm_radio_state_value_set(Evas_Object *obj, int value)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 //   if (wd->value == value) return;
    wd->value = value;
@@ -399,6 +415,7 @@ elm_radio_state_value_set(Evas_Object *obj, int value)
 EAPI void
 elm_radio_value_set(Evas_Object *obj, int value)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    const Eina_List *l;
    Evas_Object *child;
@@ -419,6 +436,7 @@ elm_radio_value_set(Evas_Object *obj, int value)
 EAPI int
 elm_radio_value_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->group->value;
 }
@@ -441,6 +459,7 @@ elm_radio_value_get(const Evas_Object *obj)
 EAPI void
 elm_radio_value_pointer_set(Evas_Object *obj, int *valuep)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (valuep)

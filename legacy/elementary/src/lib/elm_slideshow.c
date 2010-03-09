@@ -47,6 +47,7 @@ struct _Widget_Data
    int timeout;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -56,6 +57,7 @@ static int _timer_cb(void *data);
 static void
 _del_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    elm_slideshow_clear(obj);
@@ -68,6 +70,7 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if(!wd) return;
@@ -80,6 +83,7 @@ _theme_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
 
@@ -104,6 +108,7 @@ static void
 _end(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Elm_Slideshow_Item *item;
+   
    Widget_Data *wd = elm_widget_data_get(data);
 
    item = wd->previous;
@@ -127,6 +132,7 @@ static int
 _timer_cb(void *data)
 {
    Evas_Object *obj = data;
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    wd->timer = NULL;
@@ -139,6 +145,7 @@ _item_realize(Elm_Slideshow_Item *item)
 {
    Elm_Slideshow_Item *_item;
    Evas_Object *obj = item->obj;
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord w, h;
 
@@ -217,6 +224,7 @@ elm_slideshow_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "slideshow");
    elm_widget_type_set(obj, "slideshow");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -256,6 +264,7 @@ EAPI Elm_Slideshow_Item*
 elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data)
 {
    Elm_Slideshow_Item *item;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if(!wd) return NULL;
@@ -307,6 +316,7 @@ elm_slideshow_next(Evas_Object *obj)
 {
    char buf[1024];
    Elm_Slideshow_Item *next = NULL;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -349,6 +359,7 @@ elm_slideshow_previous(Evas_Object *obj)
 {
    char buf[1024];
    Elm_Slideshow_Item *prev;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -390,6 +401,7 @@ elm_slideshow_previous(Evas_Object *obj)
 const Eina_List *
 elm_slideshow_transitions_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if(!wd) return NULL;
@@ -405,6 +417,7 @@ elm_slideshow_transitions_get(Evas_Object *obj)
 EAPI void
 elm_slideshow_transition_set(Evas_Object *obj, const char *transition)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if(!wd) return;
@@ -422,6 +435,7 @@ elm_slideshow_transition_set(Evas_Object *obj, const char *transition)
 EAPI void
 elm_slideshow_timeout_set(Evas_Object *obj ,int timeout)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if(!wd) return;
@@ -441,6 +455,7 @@ elm_slideshow_timeout_set(Evas_Object *obj ,int timeout)
 EAPI int
 elm_slideshow_timeout_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if(!wd) return -1;
@@ -456,6 +471,7 @@ elm_slideshow_timeout_get(Evas_Object *obj)
 EAPI void
 elm_slideshow_loop_set(Evas_Object *obj, int loop)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if(!wd) return;
@@ -471,6 +487,7 @@ EAPI void
 elm_slideshow_clear(Evas_Object *obj)
 {
    Elm_Slideshow_Item *item;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if(!wd) return;
@@ -536,6 +553,7 @@ elm_slideshow_item_del(Elm_Slideshow_Item *item)
 EAPI const Eina_List*
 elm_slideshow_items_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return NULL;
@@ -552,6 +570,7 @@ elm_slideshow_items_get(const Evas_Object *obj)
 EAPI Elm_Slideshow_Item*
 elm_slideshow_item_current_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return NULL;

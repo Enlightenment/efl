@@ -16,6 +16,7 @@ struct _Widget_Data
    Evas_Object *tbl;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -24,6 +25,7 @@ static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void
 _del_pre_hook(Evas_Object *obj)
 {
+   
     Widget_Data *wd = elm_widget_data_get(obj);
 
     evas_object_event_callback_del_full
@@ -34,6 +36,7 @@ _del_pre_hook(Evas_Object *obj)
 static void
 _del_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    free(wd);
 }
@@ -41,6 +44,7 @@ _del_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Evas_Coord w, h;
@@ -67,6 +71,7 @@ static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    /* We do not add this callback, consequently we do not need to delete it
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    evas_Object *sub = event_info;
 
@@ -94,6 +99,7 @@ elm_table_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "table");
    elm_widget_type_set(obj, "table");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -123,6 +129,7 @@ elm_table_add(Evas_Object *parent)
 EAPI void
 elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    evas_object_table_homogeneous_set(wd->tbl, homogenous);
 }
@@ -139,6 +146,7 @@ elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 EAPI void
 elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    evas_object_table_padding_set(wd->tbl, horizontal, vertical);
 }
@@ -158,6 +166,7 @@ elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertic
 EAPI void
 elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_widget_sub_object_add(obj, subobj);
    evas_object_table_pack(wd->tbl, subobj, x, y, w, h);
@@ -174,6 +183,7 @@ elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h
 EAPI void
 elm_table_unpack(Evas_Object *obj, Evas_Object *subobj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_widget_sub_object_del(obj, subobj);
    evas_object_table_unpack(wd->tbl, subobj);
@@ -190,6 +200,7 @@ elm_table_unpack(Evas_Object *obj, Evas_Object *subobj)
 EAPI void
 elm_table_clear(Evas_Object *obj, Eina_Bool clear)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    evas_object_table_clear(wd->tbl, clear);
 }

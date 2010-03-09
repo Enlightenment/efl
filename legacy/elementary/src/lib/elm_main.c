@@ -263,6 +263,7 @@ static int _elm_signal_exit(void *data, int ev_type, void *ev);
 #ifdef HAVE_ELEMENTARY_X
 static int _elm_window_property_change(void *data, int ev_type, void *ev);
 #endif
+static const char *widtype = NULL;
 static void _elm_rescale(void);
 
 char *_elm_appname = NULL;

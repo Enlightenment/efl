@@ -333,6 +333,7 @@ struct _Pan
    Widget_Data *wd;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _show_region_hook(void *data, Evas_Object *obj);
@@ -1439,6 +1440,7 @@ elm_genlist_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "genlist");
    elm_widget_type_set(obj, "genlist");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -1734,6 +1736,7 @@ elm_genlist_item_append(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
 			Elm_Genlist_Item_Flags flags,
 			void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Genlist_Item *it = _item_new(wd, itc, data, parent, flags, func, func_data);
 
@@ -1785,6 +1788,7 @@ elm_genlist_item_prepend(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
 			 Elm_Genlist_Item_Flags flags,
 			 void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Genlist_Item *it = _item_new(wd, itc, data, parent, flags, func, func_data);
 
@@ -1824,6 +1828,7 @@ elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *i
 			       Elm_Genlist_Item_Flags flags,
 			       void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Genlist_Item *it = _item_new(wd, itc, data, NULL, flags, func, func_data);
 
@@ -1865,6 +1870,7 @@ elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *it
 			      Elm_Genlist_Item_Flags flags,
 			      void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Genlist_Item *it = _item_new(wd, itc, data, NULL, flags, func, func_data);
 
@@ -1895,6 +1901,7 @@ elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *it
 EAPI void
 elm_genlist_clear(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    while (wd->items)
@@ -1958,6 +1965,7 @@ elm_genlist_clear(Evas_Object *obj)
 EAPI void
 elm_genlist_multi_select_set(Evas_Object *obj, Eina_Bool multi)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    wd->multi = multi;
@@ -1980,6 +1988,7 @@ elm_genlist_multi_select_set(Evas_Object *obj, Eina_Bool multi)
 EAPI Elm_Genlist_Item *
 elm_genlist_selected_item_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->selected) return wd->selected->data;
@@ -2001,6 +2010,7 @@ elm_genlist_selected_item_get(const Evas_Object *obj)
 EAPI const Eina_List *
 elm_genlist_selected_items_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    return wd->selected;
@@ -2023,6 +2033,7 @@ elm_genlist_selected_items_get(const Evas_Object *obj)
 EAPI Eina_List *
 elm_genlist_realized_items_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *list = NULL;
    Item_Block *itb;
@@ -2072,6 +2083,7 @@ elm_genlist_realized_items_get(const Evas_Object *obj)
 EAPI Elm_Genlist_Item *
 elm_genlist_at_xy_item_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *posret)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord ox, oy, ow, oh;
    Item_Block *itb;
@@ -2128,6 +2140,7 @@ elm_genlist_at_xy_item_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, i
 EAPI Elm_Genlist_Item *
 elm_genlist_first_item_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd->items) return NULL;
    Elm_Genlist_Item *it = (Elm_Genlist_Item *)(wd->items);
@@ -2149,6 +2162,7 @@ elm_genlist_first_item_get(const Evas_Object *obj)
 EAPI Elm_Genlist_Item *
 elm_genlist_last_item_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd->items) return NULL;
    Elm_Genlist_Item *it = (Elm_Genlist_Item *)(wd->items->last);
@@ -2797,6 +2811,7 @@ elm_genlist_item_update(Elm_Genlist_Item *it)
 EAPI void
 elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->mode == mode) return;
@@ -2823,6 +2838,7 @@ elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
 EAPI void
 elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->always_select = always_select;
 }
@@ -2841,6 +2857,7 @@ elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
 EAPI void
 elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->no_select = no_select;
 }
@@ -2859,6 +2876,7 @@ elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select)
 EAPI void
 elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->compress = compress;
 }
@@ -2878,6 +2896,7 @@ elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress)
 EAPI void
 elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
 }
@@ -2896,6 +2915,7 @@ elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 EAPI void
 elm_genlist_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (homogeneous)
@@ -2916,6 +2936,7 @@ elm_genlist_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous)
 EAPI void
 elm_genlist_block_count_set(Evas_Object *obj, int n)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->max_items_per_block = n;
 }

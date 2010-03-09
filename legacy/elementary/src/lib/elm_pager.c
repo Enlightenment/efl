@@ -37,6 +37,7 @@ struct _Item
    Eina_Bool popme : 1;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -46,6 +47,7 @@ static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void
 _del_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    free(wd);
@@ -54,6 +56,7 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
    Item *it;
@@ -67,6 +70,7 @@ _theme_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
    Eina_List *l;
@@ -98,6 +102,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _eval_top(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it, *ittop;
 
@@ -135,6 +140,7 @@ _eval_top(Evas_Object *obj)
 static void
 _move(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord x, y;
    Eina_List *l;
@@ -148,6 +154,7 @@ _move(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Object *sub = event_info;
    Eina_List *l;
@@ -171,6 +178,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 static void
 _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord w, h;
    Eina_List *l;
@@ -213,6 +221,7 @@ elm_pager_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "pager");
    elm_widget_type_set(obj, "pager");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -251,6 +260,7 @@ elm_pager_add(Evas_Object *parent)
 EAPI void
 elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it = ELM_NEW(Item);
    Evas_Coord x, y, w, h;
@@ -294,6 +304,7 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
 EAPI void
 elm_pager_content_pop(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *ll;
    Item *it;
@@ -344,6 +355,7 @@ elm_pager_content_pop(Evas_Object *obj)
 EAPI void
 elm_pager_content_promote(Evas_Object *obj, Evas_Object *content)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
    Item *it;
@@ -371,6 +383,7 @@ elm_pager_content_promote(Evas_Object *obj, Evas_Object *content)
 EAPI Evas_Object *
 elm_pager_content_bottom_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
 
@@ -390,6 +403,7 @@ elm_pager_content_bottom_get(Evas_Object *obj)
 EAPI Evas_Object *
 elm_pager_content_top_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
 

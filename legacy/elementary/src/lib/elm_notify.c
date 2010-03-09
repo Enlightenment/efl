@@ -27,6 +27,7 @@ struct _Widget_Data
    Ecore_Timer *timer;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -51,6 +52,7 @@ _del_pre_hook(Evas_Object *obj)
 static void
 _del_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    elm_notify_content_set(obj, NULL);
@@ -67,6 +69,7 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -81,6 +84,7 @@ _theme_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord x,y,w,h;
 
@@ -99,6 +103,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (event_info == wd->content)
@@ -108,6 +113,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 static void
 _signal_block_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
+   
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    evas_object_smart_callback_call(data, "block,clicked", NULL);
@@ -128,6 +134,7 @@ _content_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _calc(Evas_Object *obj)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord x, y, w, h;
@@ -179,6 +186,7 @@ static int
 _timer_cb(void *data)
 {
    Evas_Object *obj = data;
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    wd->timer = NULL;
@@ -189,6 +197,7 @@ _timer_cb(void *data)
 static void
 _show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    evas_object_show(wd->notify);
@@ -206,6 +215,7 @@ _show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    evas_object_hide(wd->notify);
@@ -221,6 +231,7 @@ _hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    wd->parent = NULL;
@@ -230,6 +241,7 @@ _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _parent_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    wd->parent = NULL;
@@ -254,6 +266,7 @@ elm_notify_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "notify");
    elm_widget_type_set(obj, "notify");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -289,6 +302,7 @@ elm_notify_add(Evas_Object *parent)
 EAPI void
 elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->content)
@@ -329,6 +343,7 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 EAPI void
 elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if(wd->parent)
@@ -376,6 +391,7 @@ elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
 EAPI void
 elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    wd->orient = orient;
@@ -423,6 +439,7 @@ elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient)
 EAPI void
 elm_notify_timeout_set(Evas_Object *obj, int timeout)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    wd->timeout = timeout;
@@ -436,6 +453,7 @@ elm_notify_timeout_set(Evas_Object *obj, int timeout)
 EAPI void
 elm_notify_timer_init(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->timer) ecore_timer_del(wd->timer);
@@ -457,6 +475,7 @@ elm_notify_timer_init(Evas_Object *obj)
 EAPI void
 elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (repeat == wd->repeat_events) return;

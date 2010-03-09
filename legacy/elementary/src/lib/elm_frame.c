@@ -16,6 +16,7 @@ struct _Widget_Data
    Evas_Object *content;
 };
 
+static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -94,6 +95,7 @@ elm_frame_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   ELM_SET_WIDTYPE(widtype, "frame");
    elm_widget_type_set(obj, "frame");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
@@ -121,6 +123,7 @@ elm_frame_add(Evas_Object *parent)
 EAPI void
 elm_frame_label_set(Evas_Object *obj, const char *label)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    edje_object_part_text_set(wd->frm, "elm.text", label);
@@ -139,6 +142,7 @@ elm_frame_label_set(Evas_Object *obj, const char *label)
 EAPI const char*
 elm_frame_label_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if ((!wd) || (!wd->frm)) return NULL;
@@ -156,6 +160,7 @@ elm_frame_label_get(Evas_Object *obj)
 EAPI void
 elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if ((wd->content != content) && (wd->content))
