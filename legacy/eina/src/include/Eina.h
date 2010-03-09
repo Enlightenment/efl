@@ -71,6 +71,7 @@
  * @li @ref Eina_List_Group standard list of @c void* data.
  * @li @ref Eina_Matrixsparse_Group sparse matrix of @c void* data.
  * @li @ref Eina_Rbtree_Group red-black tree with nodes inlined into user type.
+ * @li @ref Eina_String_Buffer_Group mutable string to prepend, insert or append strings to a buffer.
  * @li @ref Eina_Stringshare_Group saves memory by sharing read-only string references.
  * @li @ref Eina_Tiler_Group split, merge and navigates into 2D tiled regions.
  * @li @ref Eina_Trash_Group container of unused but allocated data.

@@ -17,6 +17,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
 static const char EINA_MAGIC_STRBUF_STR[] = "Eina Strbuf";
 
 #define EINA_MAGIC_CHECK_STRBUF(d, ...)				\
@@ -42,10 +50,145 @@ struct _Eina_Strbuf
    EINA_MAGIC
 };
 
-static Eina_Bool _eina_strbuf_init(Eina_Strbuf *buf);
-static inline Eina_Bool _eina_strbuf_grow(Eina_Strbuf *buf, size_t size);
-static inline Eina_Bool _eina_strbuf_resize(Eina_Strbuf *buf, size_t size);
-static inline Eina_Bool _eina_strbuf_insert_length(Eina_Strbuf *buf, const char *str, size_t len, size_t pos);
+/**
+ * @internal
+ *
+ * init the buffer
+ * @param buf the buffer to init
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ */
+static Eina_Bool
+_eina_strbuf_init(Eina_Strbuf *buf)
+{
+   buf->len = 0;
+   buf->size = EINA_STRBUF_INIT_SIZE;
+   buf->step = EINA_STRBUF_INIT_STEP;
+
+   eina_error_set(0);
+   buf->buf = malloc(buf->size);
+   if (EINA_UNLIKELY(!buf->buf))
+     {
+	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+	return EINA_FALSE;
+     }
+   buf->buf[0] = '\0';
+   return EINA_TRUE;
+}
+
+/**
+ * @internal
+ *
+ * resize the buffer
+ * @param buf the buffer to resize
+ * @param size the minimum size of the buffer
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ */
+static inline Eina_Bool
+_eina_strbuf_resize(Eina_Strbuf *buf, size_t size)
+{
+   size_t new_size, new_step, delta;
+   char *buffer;
+
+   size += 1; // Add extra space for '\0'
+
+   if (size == buf->size)
+     /* nothing to do */
+     return EINA_TRUE;
+   else if (size > buf->size)
+     delta = size - buf->size;
+   else
+     delta = buf->size - size;
+
+   /* check if should keep the same step (just used while growing) */
+   if ((delta <= buf->step) && (size > buf->size))
+     new_step = buf->step;
+   else
+     {
+	new_step = (((delta / EINA_STRBUF_INIT_STEP) + 1)
+		    * EINA_STRBUF_INIT_STEP);
+
+	if (new_step > EINA_STRBUF_MAX_STEP)
+	  new_step = EINA_STRBUF_MAX_STEP;
+     }
+
+   new_size = (((size / new_step) + 1) * new_step);
+
+   /* reallocate the buffer to the new size */
+   buffer = realloc(buf->buf, new_size);
+   if (EINA_UNLIKELY(!buffer))
+     {
+	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+	return EINA_FALSE;
+     }
+
+   buf->buf = buffer;
+   buf->size = new_size;
+   buf->step = new_step;
+   eina_error_set(0);
+   return EINA_TRUE;
+}
+
+/**
+ * @internal
+ *
+ * If required, enlarge the buffer to fit the new size.
+ *
+ * @param buf the buffer to resize
+ * @param size the minimum size of the buffer
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ */
+static inline Eina_Bool
+_eina_strbuf_grow(Eina_Strbuf *buf, size_t size)
+{
+   if ((size + 1) < buf->size)
+     return EINA_TRUE;
+   return _eina_strbuf_resize(buf, size);
+}
+
+/**
+ * @internal
+ *
+ * insert string of known length at random within existing strbuf limits.
+ *
+ * @param buf the buffer to resize, must be valid.
+ * @param str the string to copy, must be valid (!NULL and smaller than @a len)
+ * @param len the amount of bytes in @a str to copy, must be valid.
+ * @param pos the position inside buffer to insert, must be valid (smaller
+ *        than eina_strbuf_length_get())
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ */
+static inline Eina_Bool
+_eina_strbuf_insert_length(Eina_Strbuf *buf, const char *str, size_t len, size_t pos)
+{
+   if (EINA_UNLIKELY(!_eina_strbuf_grow(buf, buf->len + len)))
+     return EINA_FALSE;
+
+   /* move the existing text */
+   memmove(buf->buf + len + pos, buf->buf + pos, buf->len - pos);
+
+   /* and now insert the given string */
+   memcpy(buf->buf + pos, str, len);
+
+   buf->len += len;
+   buf->buf[buf->len] = '\0';
+   return EINA_TRUE;
+}
+
+/**
+ * @endcond
+ */
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
 
 /**
  * @internal
@@ -83,9 +226,32 @@ eina_strbuf_shutdown(void)
 }
 
 /**
- * Create a new string buffer
+ * @endcond
+ */
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Eina_String_Buffer_Group String Buffer
  *
- * @return newly allocated instance. Free using eina_strbuf_free()
+ * @brief These functions provide string buffers management.
+ *
+ * The String Buffer data type is designed to be a mutable string,
+ * allowing to append, prepend or insert a string to a buffer. 
+ *
+ * @{
+ */
+
+/**
+ * @brief Create a new string buffer.
+ *
+ * @return Newly allocated string buffer instance.
+ *
+ * This function creates a new string buffer. On error, @c NULL is
+ * returned and Eina error is set to #EINA_ERROR_OUT_OF_MEMORY. To
+ * free the resources, use eina_strbuf_free().
  *
  * @see eina_strbuf_free()
  * @see eina_strbuf_append()
@@ -115,8 +281,12 @@ eina_strbuf_new(void)
 }
 
 /**
- * Free a string buffer
- * @param buf the buffer to free
+ * @brief Free a string buffer.
+ *
+ * @param buf The string buffer to free.
+ *
+ * This function frees the memory of @p buf. @p buf must have been
+ * created by eina_strbuf_new().
  */
 EAPI void
 eina_strbuf_free(Eina_Strbuf *buf)
@@ -128,10 +298,12 @@ eina_strbuf_free(Eina_Strbuf *buf)
 }
 
 /**
- * Reset a string buffer
- * @param buf the buffer to reset
+ * @brief Reset a string buffer.
  *
- * The buffer len is set to 0, no mem is free'd
+ * @param buf The string buffer to reset.
+ *
+ * This function reset @p buf: the buffer len is set to 0, and the
+ * string is set to '\\0'. No memory is free'd.
  */
 EAPI void
 eina_strbuf_reset(Eina_Strbuf *buf)
@@ -144,16 +316,17 @@ eina_strbuf_reset(Eina_Strbuf *buf)
 }
 
 /**
- * Append a string to a buffer, reallocating as necessary.
+ * @brief Append a string to a buffer, reallocating as necessary.
  *
- * This is slightly slower than eina_strbuf_append_length(), as it
- * needs to strlen() the given pointer. If you know the size
- * beforehand, consider using that variant.
- *
- * @param buf the Eina_Strbuf to append to
- * @param str the string to append
- *
+ * @param buf The string buffer to append to.
+ * @param str The string to append.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function appends @p str to @p buf. It computes the length of
+ * @p str, so is slightly slower than eina_strbuf_append_length(). If
+ * the length is known beforehand, consider using that variant. If
+ * @p buf can't append it, #EINA_FALSE is returned, otherwise
+ * #EINA_TRUE is returned.
  *
  * @see eina_strbuf_append()
  * @see eina_strbuf_append_length()
@@ -175,11 +348,15 @@ eina_strbuf_append(Eina_Strbuf *buf, const char *str)
 }
 
 /**
- * Append an escaped string to a buffer, reallocating as necessary.
- * @param buf the Eina_Strbuf to append to
- * @param str the string to append
+ * @brief Append an escaped string to a buffer, reallocating as necessary.
  *
+ * @param buf The string buffer to append to.
+ * @param str The string to append.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function appends the escaped string @p str to @p buf. If @p
+ * str can not be appended, #EINA_FALSE is returned, otherwise,
+ * #EINA_TRUE is returned.
  */
 EAPI Eina_Bool
 eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str)
@@ -206,18 +383,22 @@ eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str)
 }
 
 /**
- * Append a string to a buffer, reallocating as necessary. Limited by maxlen.
+ * @brief Append a string to a buffer, reallocating as necessary,
+ * limited by the given length.
  *
- * This is slightly slower than eina_strbuf_append_length(), as it
- * needs to strlen() the given pointer. If you know the size
- * beforehand, consider using that variant (of course, you need to
- * check if the maxlen is greater than the string size yourself).
- *
- * @param buf the Eina_Strbuf to append to
- * @param str the string to append
- * @param maxlen maximum number of chars to append
- *
+ * @param buf The string buffer to append to.
+ * @param str The string to append.
+ * @param maxlen The maximum number of characters to append.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function appends at most @p maxlen characters of @p str to
+ * @p buf. It can't appends more than the length of @p str. It
+ * computes the length of @p str, so is slightly slower than
+ * eina_strbuf_append_length(). If the length is known beforehand,
+ * consider using that variant (@p maxlen should then be checked so
+ * that it is greater than the size of @p str). If @p str can not be
+ * appended, #EINA_FALSE is returned, otherwise, #EINA_TRUE is
+ * returned.
  *
  * @see eina_strbuf_append()
  * @see eina_strbuf_append_length()
@@ -242,19 +423,21 @@ eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, size_t maxlen)
 }
 
 /**
- * Append a string of exact length to a buffer, reallocating as necessary.
+ * @brief Append a string of exact length to a buffer, reallocating as necessary.
  *
- * This is a slightly faster version that does not need to strlen()
- * the whole string to know its size. Useful when dealing with strings
- * of known size, such as eina_stringshare, see
- * eina_stringshare_length().
- *
- * @param buf the Eina_Strbuf to append to
- * @param str the string to append
- * @param length the exact length to use.
- *
+ * @param buf The string buffer to append to.
+ * @param str The string to append.
+ * @param length The exact length to use.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
+ * This function appends @p str to @p buf. @p str must be of size at
+ * most @p length. It is slightly faster than eina_strbuf_append() as
+ * it does not compute the size of @p str. It is useful when dealing
+ * with strings of known size, such as eina_strngshare. If @p buf
+ * can't append it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * returned.
+ *
+ * @see eina_stringshare_length()
  * @see eina_strbuf_append()
  * @see eina_strbuf_append_n()
  */
@@ -274,17 +457,18 @@ eina_strbuf_append_length(Eina_Strbuf *buf, const char *str, size_t length)
 }
 
 /**
- * Insert a string to a buffer, reallocating as necessary.
+ * @brief Insert a string to a buffer, reallocating as necessary.
  *
- * This is slightly slower than eina_strbuf_insert_length(), as it
- * needs to strlen() the given pointer. If you know the size
- * beforehand, consider using that variant.
- *
- * @param buf the Eina_Strbuf to insert
- * @param str the string to insert
- * @param pos the position to insert the string
- *
+ * @param buf The string buffer to insert.
+ * @param str The string to insert.
+ * @param pos The position to insert the string.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function inserts @p str to @p buf at position @p pos. It
+ * computes the length of @p str, so is slightly slower than
+ * eina_strbuf_insert_length(). If  the length is known beforehand,
+ * consider using that variant. If @p buf can't insert it, #EINA_FALSE
+ * is returned, otherwise #EINA_TRUE is returned.
  */
 EAPI Eina_Bool
 eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos)
@@ -302,12 +486,17 @@ eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos)
 }
 
 /**
- * Insert an escaped string to a buffer, reallocating as necessary.
- * @param buf the Eina_Strbuf to insert to
- * @param str the string to insert
- * @param pos the position to insert the string
+ * @brief Insert an escaped string to a buffer, reallocating as
+ * necessary.
  *
+ * @param buf The string buffer to insert to.
+ * @param str The string to insert.
+ * @param pos The position to insert the string.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function inserts the escaped string @p str to @p buf at
+ * position @p pos. If @p buf can't insert @p str, #EINA_FALSE is
+ * returned, otherwise #EINA_TRUE is returned.
  */
 EAPI Eina_Bool
 eina_strbuf_insert_escaped(Eina_Strbuf *buf, const char *str, size_t pos)
@@ -329,19 +518,22 @@ eina_strbuf_insert_escaped(Eina_Strbuf *buf, const char *str, size_t pos)
 }
 
 /**
- * Insert a string to a buffer, reallocating as necessary. Limited by maxlen.
+ * @brief Insert a string to a buffer, reallocating as necessary. Limited by maxlen.
  *
- * This is slightly slower than eina_strbuf_insert_length(), as it
- * needs to strlen() the given pointer. If you know the size
- * beforehand, consider using that variant (of course, you need to
- * check if the maxlen is greater than the string size yourself).
- *
- * @param buf the Eina_Strbuf to insert
- * @param str the string to insert
- * @param maxlen maximum number of chars to insert
- * @param pos the position to insert the string
- *
+ * @param buf The string buffer to insert to.
+ * @param str The string to insert.
+ * @param maxlen The maximum number of chars to insert.
+ * @param pos The position to insert the string.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function inserts @p str ot @p buf at position @p pos, with at
+ * most @p maxlen bytes. The number of inserted characters can not be
+ * greater than the length of @p str. It computes the length of
+ * @p str, so is slightly slower than eina_strbuf_insert_length(). If the
+ * length is known beforehand, consider using that variant (@p maxlen
+ * should then be checked so that it is greater than the size of
+ * @p str). If @p str can not be inserted, #EINA_FALSE is returned,
+ * otherwise, #EINA_TRUE is returned.
  */
 EAPI Eina_Bool
 eina_strbuf_insert_n(Eina_Strbuf *buf, const char *str, size_t maxlen, size_t pos)
@@ -360,19 +552,24 @@ eina_strbuf_insert_n(Eina_Strbuf *buf, const char *str, size_t maxlen, size_t po
 }
 
 /**
- * Insert a string of exact length to a buffer, reallocating as necessary.
+ * @brief Insert a string of exact length to a buffer, reallocating as necessary.
  *
- * This is a slightly faster version that does not need to strlen()
- * the whole string to know its size. Useful when dealing with strings
- * of known size, such as eina_stringshare, see
- * eina_stringshare_length().
- *
- * @param buf the Eina_Strbuf to insert
- * @param str the string to insert
- * @param length the exact length to use.
- * @param pos the position to insert the string
- *
+ * @param buf The string buffer to insert to.
+ * @param str The string to insert.
+ * @param length The exact length to use.
+ * @param pos The position to insert the string.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function inserts @p str to @p buf. @p str must be of size at
+ * most @p length. It is slightly faster than eina_strbuf_insert() as
+ * it does not compute the size of @p str. It is useful when dealing
+ * with strings of known size, such as eina_strngshare. If @p buf
+ * can't insert it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * returned.
+ *
+ * @see eina_stringshare_length()
+ * @see eina_strbuf_insert()
+ * @see eina_strbuf_insert_n()
  */
 EAPI Eina_Bool
 eina_strbuf_insert_length(Eina_Strbuf *buf, const char *str, size_t length, size_t pos)
@@ -387,11 +584,15 @@ eina_strbuf_insert_length(Eina_Strbuf *buf, const char *str, size_t length, size
 }
 
 /**
- * Append a character to a string buffer, reallocating as necessary.
- * @param buf the Eina_Strbuf to append to
- * @param c the char to append
+ * @brief Append a character to a string buffer, reallocating as
+ * necessary.
  *
+ * @param buf The string buffer to append to.
+ * @param c The char to append.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function inserts @p c to @p buf. If it can not insert it,
+ * #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
  */
 EAPI Eina_Bool
 eina_strbuf_append_char(Eina_Strbuf *buf, char c)
@@ -406,12 +607,17 @@ eina_strbuf_append_char(Eina_Strbuf *buf, char c)
 }
 
 /**
- * Insert a character to a string buffer, reallocating as necessary.
- * @param buf the Eina_Strbuf to insert to
- * @param c the char to insert
- * @param pos the position to insert the char
+ * @brief Insert a character to a string buffer, reallocating as
+ * necessary.
  *
+ * @param buf The string buffer to insert to.
+ * @param c The char to insert.
+ * @param pos The position to insert the char.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function inserts @p c to @p buf at position @p pos. If @p buf
+ * can't append it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * returned.
  */
 EAPI Eina_Bool
 eina_strbuf_insert_char(Eina_Strbuf *buf, char c, size_t pos)
@@ -425,15 +631,18 @@ eina_strbuf_insert_char(Eina_Strbuf *buf, char c, size_t pos)
 }
 
 /**
- * Remove slice of string buffer.
+ * @brief Remove a slice of the given string buffer.
  *
- * @param buf the Eina_Strbuf to remove a slice.
- * @param start the initial (inclusive) slice position to start
+ * @param buf The string buffer to remove a slice.
+ * @param start The initial (inclusive) slice position to start
  *        removing, in bytes.
- * @param end the final (non-inclusive) slice position to finish
+ * @param end The final (non-inclusive) slice position to finish
  *        removing, in bytes.
- *
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function removes a slice of @p buf, starting at @p start
+ * (inclusive) and ending at @p end (non-inclusive). Both values are
+ * in bytes. It returns #EINA_FALSE on failure, #EINA_TRUE otherwise.
  */
 EAPI Eina_Bool
 eina_strbuf_remove(Eina_Strbuf *buf, size_t start, size_t end)
@@ -462,16 +671,15 @@ eina_strbuf_remove(Eina_Strbuf *buf, size_t start, size_t end)
 }
 
 /**
- * Retrieve a pointer to the contents of a string buffer
- * @param buf the buffer
+ * @brief Retrieve a pointer to the contents of a string buffer
  *
- * This pointer must not be modified, and will no longer be valid if
- * the Eina_Strbuf is modified.
+ * @param buf The string buffer.
+ * @return The current string in the string buffer.
  *
- * @return pointer to current string buffer. Do not modify this buffer
- *         and it is just valid while no other eina_strbuf operation
- *         is done. In other words, any eina_strbuf_append() or
- *         similar will make that pointer invalid.
+ * This function returns the string contained in @p buf. The returned
+ * value must not be modified and will no longer be valid if @p buf is
+ * modified. In other words, any eina_strbuf_append() or similar will
+ * make that pointer invalid.
  *
  * @see eina_strbuf_string_steal()
  */
@@ -484,11 +692,15 @@ eina_strbuf_string_get(const Eina_Strbuf *buf)
 }
 
 /**
- * Steal the contents of a string buffer
- * @param buf the buffer
+ * @brief Steal the contents of a string buffer.
  *
- * @return the current string buffer, that is now owned by caller and
- *         must be released with free().
+ * @param buf The string buffer to steal.
+ * @return The current string in the string buffer.
+ *
+ * This function returns the string contained in @p buf. @p buf is
+ * then initialized and does not own anymore the returned string. The
+ * caller must release the memory of the returned string by calling
+ * free(). 
  *
  * @see eina_strbuf_string_get()
  */
@@ -505,10 +717,12 @@ eina_strbuf_string_steal(Eina_Strbuf *buf)
 }
 
 /**
- * Retrieve the length of the string buffer content
- * @param buf the buffer
+ * @brief Retrieve the length of the string buffer content.
  *
- * @return the current length of the string, in bytes.
+ * @param buf The string buffer.
+ * @return The current length of the string, in bytes.
+ *
+ * This function returns the length of @p buf.
  */
 EAPI size_t
 eina_strbuf_length_get(const Eina_Strbuf *buf)
@@ -519,13 +733,16 @@ eina_strbuf_length_get(const Eina_Strbuf *buf)
 }
 
 /**
- * Replace the n-th string with an other string.
- * @param buf the Eina_Strbuf to work with
- * @param str the string to replace
- * @param with the replaceing string
- * @param n the number of the fitting string
+ * @ brief Replace the n-th string with an other string.
  *
+ * @param buf The string buffer to work with.
+ * @param str The string to replace.
+ * @param with The replaceing string.
+ * @param n The number of the fitting string.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function replaces the n-th occurence of @p str in @p buf with
+ * @p with. It returns #EINA_FALSE on failure, #EINA_TRUE otherwise.
  */
 EAPI Eina_Bool
 eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with, unsigned int n)
@@ -571,12 +788,16 @@ eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with, unsigne
 }
 
 /**
- * Replace all strings with an other string.
- * @param buf the Eina_Strbuf to work with
- * @param str the string to replace
- * @param with the replaceing string
+ * @brief Replace all strings with an other string.
+
+ * @param buf the string buffer to work with.
+ * @param str The string to replace.
+ * @param with The replaceing string.
+ * @return How often the string was replaced.
  *
- * @return how often the string was replaced
+ * This function replaces all the occurences of @p str in @ buf with
+ * the string @p with. This function returns the number of times @p str
+ * has been replaced. On failure, it returns 0.
  */
 EAPI int
 eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
@@ -662,129 +883,5 @@ eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
 }
 
 /**
- * @internal
- *
- * init the buffer
- * @param buf the buffer to init
- *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @}
  */
-static Eina_Bool
-_eina_strbuf_init(Eina_Strbuf *buf)
-{
-   buf->len = 0;
-   buf->size = EINA_STRBUF_INIT_SIZE;
-   buf->step = EINA_STRBUF_INIT_STEP;
-
-   eina_error_set(0);
-   buf->buf = malloc(buf->size);
-   if (EINA_UNLIKELY(!buf->buf))
-     {
-	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-	return EINA_FALSE;
-     }
-   buf->buf[0] = '\0';
-   return EINA_TRUE;
-}
-
-/**
- * @internal
- *
- * If required, enlarge the buffer to fit the new size.
- *
- * @param buf the buffer to resize
- * @param size the minimum size of the buffer
- *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
- */
-static inline Eina_Bool
-_eina_strbuf_grow(Eina_Strbuf *buf, size_t size)
-{
-   if ((size + 1) < buf->size)
-     return EINA_TRUE;
-   return _eina_strbuf_resize(buf, size);
-}
-
-/**
- * @internal
- *
- * resize the buffer
- * @param buf the buffer to resize
- * @param size the minimum size of the buffer
- *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
- */
-static inline Eina_Bool
-_eina_strbuf_resize(Eina_Strbuf *buf, size_t size)
-{
-   size_t new_size, new_step, delta;
-   char *buffer;
-
-   size += 1; // Add extra space for '\0'
-
-   if (size == buf->size)
-     /* nothing to do */
-     return EINA_TRUE;
-   else if (size > buf->size)
-     delta = size - buf->size;
-   else
-     delta = buf->size - size;
-
-   /* check if should keep the same step (just used while growing) */
-   if ((delta <= buf->step) && (size > buf->size))
-     new_step = buf->step;
-   else
-     {
-	new_step = (((delta / EINA_STRBUF_INIT_STEP) + 1)
-		    * EINA_STRBUF_INIT_STEP);
-
-	if (new_step > EINA_STRBUF_MAX_STEP)
-	  new_step = EINA_STRBUF_MAX_STEP;
-     }
-
-   new_size = (((size / new_step) + 1) * new_step);
-
-   /* reallocate the buffer to the new size */
-   buffer = realloc(buf->buf, new_size);
-   if (EINA_UNLIKELY(!buffer))
-     {
-	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-	return EINA_FALSE;
-     }
-
-   buf->buf = buffer;
-   buf->size = new_size;
-   buf->step = new_step;
-   eina_error_set(0);
-   return EINA_TRUE;
-}
-
-/**
- * @internal
- *
- * insert string of known length at random within existing strbuf limits.
- *
- * @param buf the buffer to resize, must be valid.
- * @param str the string to copy, must be valid (!NULL and smaller than @a len)
- * @param len the amount of bytes in @a str to copy, must be valid.
- * @param pos the position inside buffer to insert, must be valid (smaller
- *        than eina_strbuf_length_get())
- *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
- */
-static inline Eina_Bool
-_eina_strbuf_insert_length(Eina_Strbuf *buf, const char *str, size_t len, size_t pos)
-{
-   if (EINA_UNLIKELY(!_eina_strbuf_grow(buf, buf->len + len)))
-     return EINA_FALSE;
-
-   /* move the existing text */
-   memmove(buf->buf + len + pos, buf->buf + pos, buf->len - pos);
-
-   /* and now insert the given string */
-   memcpy(buf->buf + pos, str, len);
-
-   buf->len += len;
-   buf->buf[buf->len] = '\0';
-   return EINA_TRUE;
-}
