@@ -1373,8 +1373,28 @@ const luaL_Reg lTransition_fn[] = {
 @page luaref
 @luaclass{Object,General Object Class}
 
-Within the lua_script scope, Edje objects (groups, parts, etc) have the
-following basic attributes and methods:
+This is the base class, many other classes are children of this.
+
+You can attach event callbacks to this class using a classic c approach:
+@code
+function mouse_move_cb(self, ...)
+    print("mouse_move", ...)
+end
+
+rect = ed:rectangle()
+rect.mouse_events = true
+rect.mouse_move = mouse_move_cb
+@endcode
+or you can also do the same in a more lua-fashion style
+@code
+rect = ed:rectangle {
+    mouse_events = true,
+    mouse_move = function (self, ...)
+                    print ('mouse_move', ...)
+                 end
+}
+@endcode
+
 
 @seealso{Evas Object Docs,http://docs.enlightenment.org/auto/evas/group__Evas__Object__Group.html}
 */
@@ -2326,6 +2346,16 @@ const luaL_Reg lObject_set[] = {
    {"mouse_events", _edje_lua_object_set_mouse_events},
    {NULL, NULL}			// sentinel
 };
+/**
+@page luaref
+@events
+@li Object.mouse_in: func(self,output_x,output_y,canvas_x,canvas_y)
+@li Object.mouse_out: func(self,output_x,output_y,canvas_x,canvas_y)
+@li Object.mouse_down: func(self,button,output_x,output_y,canvas_x,canvas_y)
+@li Object.mouse_up: func(self,button,output_x,output_y,canvas_x,canvas_y)
+@li Object.mouse_move: func(self,buttons,output_x,output_y,canvas_x,canvas_y)
+@li Object.mouse_wheel: func(self,z,output_x,output_y,canvas_x,canvas_y)
+*/
 
 const Edje_Lua_Reg *cRectangle[] = {
    &mClass,

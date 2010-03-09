@@ -194,6 +194,7 @@ ALIASES               += edcsection{2}="<tr class=\"section\"><td class=\"sectio
 ALIASES               += luaclass{2}="\anchor \1 \n<div class=\"luaclass\">\2</div>"
 ALIASES               += attributes="<div class=\"luaattrib\">Attributes:</div>"
 ALIASES               += methods="<div class=\"luaattrib\">Methods:</div>"
+ALIASES               += events="<div class=\"luaattrib\">Events:</div>"
 ALIASES               += setters="<div class=\"luaattrib\">Setters:</div>"
 ALIASES               += seealso{2}="<b>See also:</b> <a href='\2'>\1</a>\n"
 ALIASES               += seealso{1}="<b>See also:</b> \1\n"
