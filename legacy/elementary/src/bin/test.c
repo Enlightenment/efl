@@ -57,6 +57,7 @@ void test_panel(void *data, Evas_Object *obj, void *event_info);
 void test_map(void *data, Evas_Object *obj, void *event_info);
 void test_weather(void *data, Evas_Object *obj, void *event_info);
 void test_flip(void *data, Evas_Object *obj, void *event_info);
+void test_flip2(void *data, Evas_Object *obj, void *event_info);
 void test_label(void *data, Evas_Object *obj, void *event_info);
 void test_conformant(void *data, Evas_Object *obj, void *event_info);
 void test_multi(void *data, Evas_Object *obj, void *event_info);
@@ -202,6 +203,7 @@ my_win_main(void)
    elm_list_item_append(li, "Map", NULL, NULL, test_map, NULL);
    elm_list_item_append(li, "Weather", NULL, NULL, test_weather, NULL);
    elm_list_item_append(li, "Flip", NULL, NULL, test_flip, NULL);
+   elm_list_item_append(li, "Flip 2", NULL, NULL, test_flip2, NULL);
    elm_list_item_append(li, "Label", NULL, NULL, test_label, NULL);
    elm_list_item_append(li, "Conformant", NULL, NULL, test_conformant, NULL);
    elm_list_item_append(li, "Multi Touch", NULL, NULL, test_multi, NULL);
