@@ -114,19 +114,19 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _sizing_eval(data);
 }
 
 static void
-_hover_clicked(void *data, Evas_Object *obj, void *event_info)
+_hover_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_hoversel_hover_end(data);
 }
 
 static void
-_item_clicked(void *data, Evas_Object *obj, void *event_info)
+_item_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Hoversel_Item *it = data;
    Evas_Object *obj2 = it->obj;
@@ -211,13 +211,13 @@ _activate(Evas_Object *obj)
 }
 
 static void
-_button_clicked(void *data, Evas_Object *obj, void *event_info)
+_button_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
   _activate(data);
 }
 
 static void
-_parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_parent_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
 

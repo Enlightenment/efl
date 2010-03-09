@@ -95,13 +95,13 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _sizing_eval(data);
 }
 
 static void
-_sub_del(void *data, Evas_Object *obj, void *event_info)
+_sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -111,7 +111,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_signal_block_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_block_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    
    Widget_Data *wd = elm_widget_data_get(data);
@@ -120,13 +120,13 @@ _signal_block_clicked(void *data, Evas_Object *obj, const char *emission, const 
 }
 
 static void
-_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    _calc(obj);
 }
 
 static void
-_content_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_content_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _calc(data);
 }
@@ -195,7 +195,7 @@ _timer_cb(void *data)
 }
 
 static void
-_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -213,7 +213,7 @@ _show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -229,7 +229,7 @@ _hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_parent_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -239,7 +239,7 @@ _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_parent_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_parent_hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    
    Widget_Data *wd = elm_widget_data_get(obj);

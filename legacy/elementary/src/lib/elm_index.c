@@ -236,7 +236,7 @@ _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level)
 }
 
 static void
-_index_box_clear(Evas_Object *obj, Evas_Object *box, int level)
+_index_box_clear(Evas_Object *obj, Evas_Object *box __UNUSED__, int level)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
@@ -379,7 +379,7 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
 }
 
 static void 
-_wheel(void *data, Evas *e, Evas_Object *o, void *event_info)
+_wheel(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
 //   Evas_Event_Mouse_Wheel *ev = event_info;
@@ -388,7 +388,7 @@ _wheel(void *data, Evas *e, Evas_Object *o, void *event_info)
 }
 
 static void 
-_mouse_down(void *data, Evas *e, Evas_Object *o, void *event_info)
+_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Down *ev = event_info;
@@ -406,7 +406,7 @@ _mouse_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 }
 
 static void 
-_mouse_up(void *data, Evas *e, Evas_Object *o, void *event_info)
+_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Up *ev = event_info;
@@ -421,7 +421,7 @@ _mouse_up(void *data, Evas *e, Evas_Object *o, void *event_info)
 }
 
 static void 
-_mouse_move(void *data, Evas *e, Evas_Object *o, void *event_info)
+_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Move *ev = event_info;
@@ -793,7 +793,7 @@ elm_index_item_clear(Evas_Object *obj)
  * @ingroup Index
  */
 EAPI void
-elm_index_item_go(Evas_Object *obj, int level)
+elm_index_item_go(Evas_Object *obj, int level __UNUSED__)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);

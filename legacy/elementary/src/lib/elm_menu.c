@@ -218,25 +218,25 @@ _item_sizing_eval(Elm_Menu_Item *item)
 }
 
 static void
-_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _sizing_eval(data);
 }
 
 static void
-_menu_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_menu_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _sizing_eval(data);
 }
 
 static void
-_parent_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_parent_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _sizing_eval(data);
 }
 
 static void
-_item_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_item_move_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Menu_Item *item = data;
    if (item->open) _submenu_sizing_eval(item);
@@ -250,7 +250,7 @@ _hover_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_menu_hide(void *data, Evas_Object *obj, void *event_info)
+_menu_hide(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Eina_List *l;
    Elm_Menu_Item *item2;
@@ -279,7 +279,7 @@ _submenu_hide(Elm_Menu_Item *item)
 }
 
 static void
-_menu_item_select(void *data, Evas_Object *obj, const char *emission, const char *source)
+_menu_item_select(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Elm_Menu_Item *it = data;
    if (it->items)
@@ -294,7 +294,7 @@ _menu_item_select(void *data, Evas_Object *obj, const char *emission, const char
 }
 
 static void
-_menu_item_activate(void *data, Evas_Object *obj, const char *emission, const char *source)
+_menu_item_activate(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Eina_List *l;
    Elm_Menu_Item *item2;
@@ -317,7 +317,7 @@ _menu_item_activate(void *data, Evas_Object *obj, const char *emission, const ch
 }
 
 static void
-_submenu_open(void *data, Evas_Object *obj, const char *emission, const char *source)
+_submenu_open(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Elm_Menu_Item *it = data;
    it->open = EINA_TRUE;
@@ -326,7 +326,7 @@ _submenu_open(void *data, Evas_Object *obj, const char *emission, const char *so
 }
 
 static void
-_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;

@@ -214,7 +214,7 @@ _val_set(Evas_Object *obj)
 }
 
 static void
-_drag(void *data, Evas_Object *obj, const char *emission, const char *source)
+_drag(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    double pos = 0.0, offset, delta;
@@ -230,7 +230,7 @@ _drag(void *data, Evas_Object *obj, const char *emission, const char *source)
 }
 
 static void
-_drag_start(void *data, Evas_Object *obj, const char *emission, const char *source)
+_drag_start(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    double pos;
@@ -241,7 +241,7 @@ _drag_start(void *data, Evas_Object *obj, const char *emission, const char *sour
 }
 
 static void
-_drag_stop(void *data, Evas_Object *obj, const char *emission, const char *source)
+_drag_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -285,7 +285,7 @@ _apply_entry_value(Evas_Object *obj)
 }
 
 static void
-_toggle_entry(void *data, Evas_Object *obj, const char *emission, const char *source)
+_toggle_entry(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -365,7 +365,7 @@ _val_dec_stop(Evas_Object *obj)
 }
 
 static void
-_button_inc_start(void *data, Evas_Object *obj, const char *emission, const char *source)
+_button_inc_start(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -378,7 +378,7 @@ _button_inc_start(void *data, Evas_Object *obj, const char *emission, const char
 }
 
 static void
-_button_inc_stop(void *data, Evas_Object *obj, const char *emission, const char *source)
+_button_inc_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -386,7 +386,7 @@ _button_inc_stop(void *data, Evas_Object *obj, const char *emission, const char 
 }
 
 static void
-_button_dec_start(void *data, Evas_Object *obj, const char *emission, const char *source)
+_button_dec_start(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -399,7 +399,7 @@ _button_dec_start(void *data, Evas_Object *obj, const char *emission, const char
 }
 
 static void
-_button_dec_stop(void *data, Evas_Object *obj, const char *emission, const char *source)
+_button_dec_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -407,7 +407,7 @@ _button_dec_stop(void *data, Evas_Object *obj, const char *emission, const char 
 }
 
 static void
-_entry_activated(void *data, Evas_Object *obj, void *event_info)
+_entry_activated(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -418,7 +418,7 @@ _entry_activated(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_entry_event_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_entry_event_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    Widget_Data *wd = elm_widget_data_get(data);
@@ -429,7 +429,7 @@ _entry_event_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_entry_event_key_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_entry_event_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    Widget_Data *wd = elm_widget_data_get(data);

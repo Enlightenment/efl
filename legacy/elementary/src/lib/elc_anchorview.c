@@ -55,13 +55,13 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _sizing_eval(data);
 }
 
 static void
-_hover_clicked(void *data, Evas_Object *obj, void *event_info)
+_hover_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_anchorview_hover_end(data);
 }
@@ -115,7 +115,7 @@ _anchor_clicked(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_parent_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    wd->hover_parent = NULL;

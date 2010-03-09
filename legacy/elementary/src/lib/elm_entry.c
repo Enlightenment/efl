@@ -73,7 +73,7 @@ struct _Mod_Api
 };
 
 static Mod_Api *
-_module(Evas_Object *obj)
+_module(Evas_Object *obj __UNUSED__)
 {
    static Elm_Module *m = NULL;
    if (m) goto ok; // already found - just use
@@ -200,7 +200,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_on_focus_hook(void *data, Evas_Object *obj)
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *top = elm_widget_top_get(obj);
@@ -245,7 +245,7 @@ _hoversel_position(Evas_Object *obj)
 }
 
 static void
-_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
 
@@ -253,7 +253,7 @@ _move(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -267,7 +267,7 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_dismissed(void *data, Evas_Object *obj, void *event_info)
+_dismissed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -278,7 +278,7 @@ _dismissed(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_select(void *data, Evas_Object *obj, void *event_info)
+_select(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -290,7 +290,7 @@ _select(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_paste(void *data, Evas_Object *obj, void *event_info)
+_paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -323,7 +323,7 @@ _store_selection(Evas_Object *obj)
 }
 
 static void
-_cut(void *data, Evas_Object *obj, void *event_info)
+_cut(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
 
@@ -337,7 +337,7 @@ _cut(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_copy(void *data, Evas_Object *obj, void *event_info)
+_copy(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -350,7 +350,7 @@ _copy(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_cancel(void *data, Evas_Object *obj, void *event_info)
+_cancel(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -362,7 +362,7 @@ _cancel(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_item_clicked(void *data, Evas_Object *obj, void *event_info)
+_item_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Entry_Context_Menu_Item *it = data;
    Evas_Object *obj2 = it->obj;
@@ -443,7 +443,7 @@ _long_press(void *data)
 }
 
 static void
-_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Down *ev = event_info;
@@ -458,7 +458,7 @@ _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 }
 
 static void
-_mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Up *ev = event_info;
@@ -472,7 +472,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 }
 
 static void
-_mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Move *ev = event_info;
@@ -740,7 +740,7 @@ _text_to_mkup(const char *text)
 }
 
 static void
-_signal_entry_changed(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_entry_changed(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -752,7 +752,7 @@ _signal_entry_changed(void *data, Evas_Object *obj, const char *emission, const 
 }
 
 static void
-_signal_selection_start(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_selection_start(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    const Eina_List *l;
@@ -784,7 +784,7 @@ _signal_selection_start(void *data, Evas_Object *obj, const char *emission, cons
 }
 
 static void
-_signal_selection_changed(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_selection_changed(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -810,7 +810,7 @@ _signal_selection_changed(void *data, Evas_Object *obj, const char *emission, co
 }
 
 static void
-_signal_selection_cleared(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_selection_cleared(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -855,7 +855,7 @@ _signal_selection_cleared(void *data, Evas_Object *obj, const char *emission, co
 }
 
 static void
-_signal_entry_paste_request(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -877,7 +877,7 @@ _signal_entry_paste_request(void *data, Evas_Object *obj, const char *emission, 
 }
 
 static void
-_signal_entry_copy_notify(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_entry_copy_notify(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -885,7 +885,7 @@ _signal_entry_copy_notify(void *data, Evas_Object *obj, const char *emission, co
 }
 
 static void
-_signal_entry_cut_notify(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_entry_cut_notify(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    char *txt;
@@ -905,7 +905,7 @@ _signal_entry_cut_notify(void *data, Evas_Object *obj, const char *emission, con
 }
 
 static void
-_signal_cursor_changed(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_cursor_changed(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord cx, cy, cw, ch;
@@ -926,14 +926,14 @@ _signal_cursor_changed(void *data, Evas_Object *obj, const char *emission, const
 }
 
 static void
-_signal_anchor_down(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_anchor_down(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 }
 
 static void
-_signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_anchor_up(void *data, Evas_Object *obj __UNUSED__, const char *emission, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Elm_Entry_Anchor_Info ei;
@@ -987,28 +987,28 @@ _signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char
 }
 
 static void
-_signal_anchor_move(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_anchor_move(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 }
 
 static void
-_signal_anchor_in(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_anchor_in(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 }
 
 static void
-_signal_anchor_out(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_anchor_out(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 }
 
 static void
-_signal_key_enter(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_key_enter(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -1016,7 +1016,7 @@ _signal_key_enter(void *data, Evas_Object *obj, const char *emission, const char
 }
 
 static void
-_signal_mouse_down(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_mouse_down(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -1024,7 +1024,7 @@ _signal_mouse_down(void *data, Evas_Object *obj, const char *emission, const cha
 }
 
 static void
-_signal_mouse_up(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_mouse_up(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -1032,7 +1032,7 @@ _signal_mouse_up(void *data, Evas_Object *obj, const char *emission, const char 
 }
 
 static void
-_signal_mouse_double(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_mouse_double(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -1041,7 +1041,7 @@ _signal_mouse_double(void *data, Evas_Object *obj, const char *emission, const c
 
 #ifdef HAVE_ELEMENTARY_X
 static int
-_event_selection_notify(void *data, int type, void *event)
+_event_selection_notify(void *data, int type __UNUSED__, void *event)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Ecore_X_Event_Selection_Notify *ev = event;
@@ -1072,7 +1072,7 @@ _event_selection_notify(void *data, int type, void *event)
 }
 
 static int
-_event_selection_clear(void *data, int type, void *event)
+_event_selection_clear(void *data, int type __UNUSED__, void *event)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Ecore_X_Event_Selection_Clear *ev = event;

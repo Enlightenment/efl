@@ -115,13 +115,13 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _sizing_eval(data);
 }
 
 static void
-_sub_del(void *data, Evas_Object *obj, void *event_info)
+_sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -139,7 +139,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_hold_on(void *data, Evas_Object *obj, void *event_info)
+_hold_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -149,7 +149,7 @@ _hold_on(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_hold_off(void *data, Evas_Object *obj, void *event_info)
+_hold_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -159,7 +159,7 @@ _hold_off(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_freeze_on(void *data, Evas_Object *obj, void *event_info)
+_freeze_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -169,7 +169,7 @@ _freeze_on(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_freeze_off(void *data, Evas_Object *obj, void *event_info)
+_freeze_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -179,61 +179,61 @@ _freeze_off(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _sizing_eval(data);
 }
 
 static void
-_edge_left(void *data, Evas_Object *obj, void *event_info)
+_edge_left(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "edge,left", NULL);
 }
 
 static void
-_edge_right(void *data, Evas_Object *obj, void *event_info)
+_edge_right(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "edge,right", NULL);
 }
 
 static void
-_edge_top(void *data, Evas_Object *obj, void *event_info)
+_edge_top(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "edge,top", NULL);
 }
 
 static void
-_edge_bottom(void *data, Evas_Object *obj, void *event_info)
+_edge_bottom(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "edge,bottom", NULL);
 }
 
 static void
-_scroll(void *data, Evas_Object *obj, void *event_info)
+_scroll(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "scroll", NULL);
 }
 
 static void
-_scroll_anim_start(void *data, Evas_Object *obj, void *event_info)
+_scroll_anim_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "scroll,anim,start", NULL);
 }
 
 static void
-_scroll_anim_stop(void *data, Evas_Object *obj, void *event_info)
+_scroll_anim_stop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "scroll,anim,stop", NULL);
 }
 
 static void
-_scroll_drag_start(void *data, Evas_Object *obj, void *event_info)
+_scroll_drag_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "scroll,drag,start", NULL);
 }
 
 static void
-_scroll_drag_stop(void *data, Evas_Object *obj, void *event_info)
+_scroll_drag_stop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "scroll,drag,stop", NULL);
 }

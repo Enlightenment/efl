@@ -132,7 +132,7 @@ _elm_smart_pan_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 
 /* local subsystem functions */
 static void
-_smart_child_del_hook(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_smart_child_del_hook(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Smart_Data *sd;
 
@@ -142,7 +142,7 @@ _smart_child_del_hook(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_smart_child_resize_hook(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_smart_child_resize_hook(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Smart_Data *sd;
    Evas_Coord w, h;

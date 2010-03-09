@@ -58,7 +58,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_on_focus_hook(void *data, Evas_Object *obj)
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (elm_widget_focus_get(obj))
@@ -208,7 +208,7 @@ _delay_write(void *data)
 }
 
 static void
-_entry_changed(void *data, Evas_Object *obj, void *event_info)
+_entry_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (wd->delay_write)
@@ -221,7 +221,7 @@ _entry_changed(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_hold_on(void *data, Evas_Object *obj, void *event_info)
+_hold_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -229,7 +229,7 @@ _hold_on(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_hold_off(void *data, Evas_Object *obj, void *event_info)
+_hold_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -237,7 +237,7 @@ _hold_off(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_freeze_on(void *data, Evas_Object *obj, void *event_info)
+_freeze_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -245,7 +245,7 @@ _freeze_on(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_freeze_off(void *data, Evas_Object *obj, void *event_info)
+_freeze_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;

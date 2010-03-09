@@ -206,7 +206,7 @@ _theme_hook(Evas_Object *obj)
 }
 
 static void
-_on_focus_hook(void *data, Evas_Object *obj)
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -215,7 +215,7 @@ _on_focus_hook(void *data, Evas_Object *obj)
 }
 
 static void
-_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -224,7 +224,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_sub_del(void *data, Evas_Object *obj, void *event_info)
+_sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
@@ -327,7 +327,7 @@ _item_unselect(Elm_List_Item *it)
 }
 
 static void
-_mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_List_Item *it = data;
    Widget_Data *wd = elm_widget_data_get(it->obj);
@@ -365,7 +365,7 @@ _long_press(void *data)
 }
 
 static void
-_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_List_Item *it = data;
    Widget_Data *wd = elm_widget_data_get(it->obj);
@@ -387,7 +387,7 @@ _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 }
 
 static void
-_mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_List_Item *it = data;
    Widget_Data *wd = elm_widget_data_get(it->obj);
@@ -640,7 +640,7 @@ _fix_items(Evas_Object *obj)
 }
 
 static void
-_hold_on(void *data, Evas_Object *obj, void *event_info)
+_hold_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -648,7 +648,7 @@ _hold_on(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_hold_off(void *data, Evas_Object *obj, void *event_info)
+_hold_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -656,7 +656,7 @@ _hold_off(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_freeze_on(void *data, Evas_Object *obj, void *event_info)
+_freeze_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -664,7 +664,7 @@ _freeze_on(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_freeze_off(void *data, Evas_Object *obj, void *event_info)
+_freeze_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;

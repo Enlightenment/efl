@@ -120,7 +120,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord mw, mh, vw, vh, w, h;
@@ -146,7 +146,7 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_select(void *data, Evas_Object *obj, const char *emission, const char *source)
+_select(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    _item_select(data);
 }

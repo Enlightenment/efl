@@ -89,7 +89,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;

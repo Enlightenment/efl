@@ -283,7 +283,7 @@ static Ecore_X_Atom _elm_atom_enlightenment_theme = 0;
 #endif
 
 static int
-_elm_signal_exit(void *data, int ev_type, void *ev)
+_elm_signal_exit(void *data __UNUSED__, int ev_type __UNUSED__, void *ev __UNUSED__)
 {
    elm_exit();
    return 1;
@@ -291,7 +291,7 @@ _elm_signal_exit(void *data, int ev_type, void *ev)
 
 #ifdef HAVE_ELEMENTARY_X
 static int
-_elm_window_property_change(void *data, int ev_type, void *ev)
+_elm_window_property_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_X_Event_Window_Property *event = ev;
 
@@ -1041,7 +1041,7 @@ static void *qr_handle = NULL;
 static int (*qr_main) (int argc, char **argv) = NULL;
 
 EAPI Eina_Bool
-elm_quicklaunch_prepare(int argc, char **argv)
+elm_quicklaunch_prepare(int argc __UNUSED__, char **argv)
 {
 #ifdef HAVE_FORK
    char *exe = elm_quicklaunch_exe_path_get(argv[0]);

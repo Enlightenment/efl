@@ -65,7 +65,7 @@ static void _smart_init(void);
 static Evas_Smart *_e_smart = NULL;
 
 static void
-_sub_obj_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_sub_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Smart_Data *sd = data;
 
@@ -79,7 +79,7 @@ _sub_obj_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_sub_obj_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_sub_obj_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *o;
    const char *s;

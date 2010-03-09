@@ -128,7 +128,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -137,7 +137,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_sub_del(void *data, Evas_Object *obj, void *event_info)
+_sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
@@ -237,7 +237,7 @@ _indicator_set(Evas_Object *obj)
 }
 
 static void
-_drag(void *data, Evas_Object *obj, const char *emission, const char *source)
+_drag(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    _val_fetch(data);
    _units_set(data);
@@ -245,7 +245,7 @@ _drag(void *data, Evas_Object *obj, const char *emission, const char *source)
 }
 
 static void
-_drag_start(void *data, Evas_Object *obj, const char *emission, const char *source)
+_drag_start(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    _val_fetch(data);
    evas_object_smart_callback_call(data, "slider,drag,start", NULL);
@@ -254,7 +254,7 @@ _drag_start(void *data, Evas_Object *obj, const char *emission, const char *sour
 }
 
 static void
-_drag_stop(void *data, Evas_Object *obj, const char *emission, const char *source)
+_drag_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    _val_fetch(data);
    evas_object_smart_callback_call(data, "slider,drag,stop", NULL);

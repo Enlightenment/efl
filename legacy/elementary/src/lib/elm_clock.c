@@ -92,7 +92,7 @@ _ticker(void *data)
 }
 
 static void
-_signal_clock_val_up(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_clock_val_up(void *data, Evas_Object *obj, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -137,7 +137,7 @@ _signal_clock_val_up(void *data, Evas_Object *obj, const char *emission, const c
 }
 
 static void
-_signal_clock_val_down(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_clock_val_down(void *data, Evas_Object *obj, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;

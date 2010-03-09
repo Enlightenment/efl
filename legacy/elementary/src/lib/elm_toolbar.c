@@ -97,14 +97,14 @@ _item_select(Elm_Toolbar_Item *it)
 }
 
 static void
-_menu_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_menu_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Toolbar_Item *it = data;
    elm_toolbar_item_unselect_all(it->obj);
 }
 
 static void
-_menu_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_menu_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    // avoid hide being emitted during object deletion
    evas_object_event_callback_del_full
@@ -112,7 +112,7 @@ _menu_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_menu_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_menu_move_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
     Elm_Toolbar_Item *it = data;
     Evas_Coord x,y,w,h;
@@ -246,7 +246,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord mw, mh, vw, vh, w, h;
@@ -272,7 +272,7 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_select(void *data, Evas_Object *obj, const char *emission, const char *source)
+_select(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    _item_select(data);
 }

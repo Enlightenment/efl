@@ -588,7 +588,7 @@ _tile_update(Grid_Item *gi)
 
 
 static void
-_tile_downloaded(void *data, const char *file, int status)
+_tile_downloaded(void *data, const char *file __UNUSED__, int status)
 {
    Grid_Item *gi = data;
 
@@ -894,7 +894,7 @@ _scr_timeout(void *data)
 }
 
 static void
-_scr(void *data, Evas_Object *obj, void *event_info)
+_scr(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -994,7 +994,7 @@ _long_press(void *data)
 }
 
 static void
-_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Down *ev = event_info;
@@ -1012,7 +1012,7 @@ _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 }
 
 static void
-_mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Up *ev = event_info;
@@ -1252,7 +1252,7 @@ _pan_calculate(Evas_Object *obj)
 }
 
 static void
-_pan_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+_pan_move(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 {
    Pan *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
@@ -1261,7 +1261,7 @@ _pan_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 }
 
 static void
-_hold_on(void *data, Evas_Object *obj, void *event_info)
+_hold_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -1269,7 +1269,7 @@ _hold_on(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_hold_off(void *data, Evas_Object *obj, void *event_info)
+_hold_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -1277,7 +1277,7 @@ _hold_off(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_freeze_on(void *data, Evas_Object *obj, void *event_info)
+_freeze_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -1285,7 +1285,7 @@ _freeze_on(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_freeze_off(void *data, Evas_Object *obj, void *event_info)
+_freeze_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -1293,19 +1293,19 @@ _freeze_off(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_scr_anim_start(void *data, Evas_Object *obj, void *event_info)
+_scr_anim_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "scroll,anim,start", NULL);
 }
 
 static void
-_scr_anim_stop(void *data, Evas_Object *obj, void *event_info)
+_scr_anim_stop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "scroll,anim,stop", NULL);
 }
 
 static void
-_scr_drag_start(void *data, Evas_Object *obj, void *event_info)
+_scr_drag_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    
    Widget_Data *wd = elm_widget_data_get(data);
@@ -1314,13 +1314,13 @@ _scr_drag_start(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_scr_drag_stop(void *data, Evas_Object *obj, void *event_info)
+_scr_drag_stop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "scroll,drag,stop", NULL);
 }
 
 static void
-_scr_scroll(void *data, Evas_Object *obj, void *event_info)
+_scr_scroll(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "scroll", NULL);
 }
@@ -1410,7 +1410,7 @@ _group_object_free(Marker_Group *group)
 }
 
 static void
-_group_bubble_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_group_bubble_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Marker_Group *group = data;
 
@@ -1453,7 +1453,7 @@ _group_bubble_create(Marker_Group *group)
    _group_bubble_place(group);
 }
 
-static void _bubble_sc_hits_changed_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+static void _bubble_sc_hits_changed_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _group_bubble_place(data);
 }
@@ -1566,7 +1566,7 @@ _group_bubble_place(Marker_Group *group)
 }
 
 static void
-_group_bringin_cb(void *data, Evas_Object *obj, const char *emission, const char *soure)
+_group_bringin_cb(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *soure __UNUSED__)
 {
    Marker_Group *group = data;
    Elm_Map_Marker *marker = eina_list_data_get(group->markers);
@@ -1576,7 +1576,7 @@ _group_bringin_cb(void *data, Evas_Object *obj, const char *emission, const char
 }
 
 static void
-_group_open_cb(void *data, Evas_Object *obj, const char *emission, const char *soure)
+_group_open_cb(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *soure __UNUSED__)
 {
    Marker_Group *group = data;
 

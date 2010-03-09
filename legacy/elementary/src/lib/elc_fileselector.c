@@ -60,7 +60,7 @@ _sizing_eval(Evas_Object *obj)
 
 /***  GENLIST "MODEL"  ***/
 static char*
-_itc_label_get(const void *data, Evas_Object *obj, const char *source)
+_itc_label_get(const void *data, Evas_Object *obj __UNUSED__, const char *source __UNUSED__)
 {
    //~ printf("LABEL_GET: %s\n", (char*) data);
    return strdup(ecore_file_file_get(data)); // NOTE this will be free() by the caller
@@ -89,20 +89,20 @@ _itc_icon_get(const void *data, Evas_Object *obj, const char *source)
 }
 
 static Eina_Bool
-_itc_state_get(const void *data, Evas_Object *obj, const char *source)
+_itc_state_get(const void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *source __UNUSED__)
 {
    return EINA_FALSE;
 }
 
 static void
-_itc_del(const void *data, Evas_Object *obj)
+_itc_del(const void *data, Evas_Object *obj __UNUSED__)
 {
    //~ printf("DEL DATA [%s]\n", (char*)data);
    eina_stringshare_del(data);
 }
 
 static void
-_expand_done(void *data, Evas_Object *obj, void *event_info)
+_expand_done(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    const char *path = elm_genlist_item_data_get(it);
@@ -112,7 +112,7 @@ _expand_done(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_contract_done(void *data, Evas_Object *obj, void *event_info)
+_contract_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    const char *path = elm_genlist_item_data_get(it);
@@ -122,14 +122,14 @@ _contract_done(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_expand_req(void *data, Evas_Object *obj, void *event_info)
+_expand_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    elm_genlist_item_expanded_set(it, 1);
 }
 
 static void
-_contract_req(void *data, Evas_Object *obj, void *event_info)
+_contract_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    elm_genlist_item_expanded_set(it, 0);
@@ -137,7 +137,7 @@ _contract_req(void *data, Evas_Object *obj, void *event_info)
 
 /***  PRIVATES  ***/
 static void
-_sel(void *data, Evas_Object *obj, void *event_info)
+_sel(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Object *fs = data;
    Widget_Data *wd = elm_widget_data_get(fs);
@@ -172,7 +172,7 @@ _sel(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_up(void *data, Evas_Object *obj, void *event_info)
+_up(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs = data;
    Widget_Data *wd = elm_widget_data_get(fs);
@@ -183,14 +183,14 @@ _up(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_home(void *data, Evas_Object *obj, void *event_info)
+_home(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs = data;
    _populate(fs, getenv("HOME"), NULL);
 }
 
 static void
-_ok(void *data, Evas_Object *obj, void *event_info)
+_ok(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs = data;
    evas_object_smart_callback_call(fs, "done",
@@ -198,14 +198,14 @@ _ok(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_canc(void *data, Evas_Object *obj, void *event_info)
+_canc(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs = data;
    evas_object_smart_callback_call(fs, "done", NULL);
 }
 
 static void
-_anchor_clicked(void *data, Evas_Object *obj, void *event_info)
+_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Object *fs = data;
    Widget_Data *wd = elm_widget_data_get(fs);

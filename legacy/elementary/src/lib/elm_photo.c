@@ -65,7 +65,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "clicked", NULL);
 }

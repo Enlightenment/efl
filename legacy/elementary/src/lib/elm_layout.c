@@ -91,13 +91,13 @@ _request_sizing_eval(Evas_Object *obj)
 }
 
 static void
-_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _request_sizing_eval(data);
 }
 
 static void
-_sub_del(void *data, Evas_Object *obj, void *event_info)
+_sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
@@ -121,7 +121,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_signal_size_eval(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_size_eval(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    _request_sizing_eval(data);
 }

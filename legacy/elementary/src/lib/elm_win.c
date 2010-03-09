@@ -106,7 +106,7 @@ _deferred_ecore_evas_free(void *data)
 }
 
 static void
-_elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_elm_win_obj_callback_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_Win *win = data;
    Evas_Object *child;
@@ -147,7 +147,7 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
 }
 
 static void
-_elm_win_obj_intercept_show(void *data, Evas_Object *obj)
+_elm_win_obj_intercept_show(void *data __UNUSED__, Evas_Object *obj)
 {
    // this is called to make sure all smart containers have calculated their
    // sizes BEFORE we show the window to make sure it initially appears at
@@ -326,13 +326,13 @@ _elm_win_eval_subobjs(Evas_Object *obj)
 }
 
 static void
-_elm_win_subobj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_elm_win_subobj_callback_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    elm_win_resize_object_del(data, obj);
 }
 
 static void
-_elm_win_subobj_callback_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_elm_win_subobj_callback_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _elm_win_eval_subobjs(data);
 }
@@ -1191,13 +1191,13 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _sizing_eval(data);
 }
 
 static void
-_sub_del(void *data, Evas_Object *obj, void *event_info)
+_sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;

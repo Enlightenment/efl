@@ -48,7 +48,7 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
-_on_focus_hook(void *data, Evas_Object *obj)
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -106,7 +106,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -115,7 +115,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_sub_del(void *data, Evas_Object *obj, void *event_info)
+_sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
@@ -165,7 +165,7 @@ _autorepeat_initial_send(void *data)
 }
 
 static void
-_signal_pressed(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_pressed(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -180,7 +180,7 @@ _signal_pressed(void *data, Evas_Object *obj, const char *emission, const char *
 }
 
 static void
-_signal_unpressed(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_unpressed(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
