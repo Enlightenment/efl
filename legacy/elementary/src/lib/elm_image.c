@@ -159,7 +159,7 @@ elm_image_add(Evas_Object *parent)
 EAPI Eina_Bool
 elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_Bool ret;
    const char *p;
@@ -199,6 +199,7 @@ elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
+   if (!wd) return;
    _els_smart_icon_size_get(wd->img, w, h);
 }
 

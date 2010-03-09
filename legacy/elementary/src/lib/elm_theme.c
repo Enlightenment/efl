@@ -50,7 +50,6 @@ _elm_theme_group_file_find(const char *group)
 {
    const Eina_List *l;
    const char *f;
-   char *p;
    static const char *home = NULL;
    const char *file = eina_hash_find(cache, group);
 
@@ -178,7 +177,7 @@ _elm_theme_icon_set(Evas_Object *o, const char *group, const char *style)
 {
    const char *file;
    char buf2[1024];
-   int w, h, ok;
+   int w, h;
 
    snprintf(buf2, sizeof(buf2), "elm/icon/%s/%s", group, style);
    file = _elm_theme_group_file_find(buf2);

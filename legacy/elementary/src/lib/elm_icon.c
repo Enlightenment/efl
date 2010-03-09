@@ -150,12 +150,12 @@ elm_icon_add(Evas_Object *parent)
 EAPI Eina_Bool
 elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_Bool ret;
    const char *p;
 
-   if ((!wd) || (!file)) return 0;
+   if ((!wd) || (!file)) return EINA_FALSE;
    if (wd->stdicon) eina_stringshare_del(wd->stdicon);
    wd->stdicon = NULL;
    if (((p = strrchr(file, '.'))) && (!strcasecmp(p, ".edj")))
@@ -179,7 +179,7 @@ elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
 EAPI Eina_Bool
 elm_icon_standard_set(Evas_Object *obj, const char *name)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_Bool ret;
 

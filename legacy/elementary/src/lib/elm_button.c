@@ -51,8 +51,7 @@ static void
 _on_focus_hook(void *data, Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *top = elm_widget_top_get(obj);
-   
+   if (!wd) return;
    if (elm_widget_focus_get(obj))
      edje_object_signal_emit(wd->btn, "elm,action,focus", "elm");
    else
@@ -85,6 +84,7 @@ static void
 _disable_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (elm_widget_disabled_get(obj))
      edje_object_signal_emit(wd->btn, "elm,state,disabled", "elm");
    else
@@ -250,8 +250,6 @@ elm_button_label_set(Evas_Object *obj, const char *label)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord mw, mh;
-
    if (!wd) return;
    if (wd->label) eina_stringshare_del(wd->label);
    if (label)
@@ -269,10 +267,10 @@ elm_button_label_set(Evas_Object *obj, const char *label)
    _sizing_eval(obj);
 }
 
-EAPI const char*
+EAPI const char *
 elm_button_label_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->label;
@@ -309,10 +307,18 @@ elm_button_icon_set(Evas_Object *obj, Evas_Object *icon)
      wd->icon = icon;
 }
 
+/**
+ * Get the icon used for the button
+ *
+ * @param obj The button object
+ * @return The image for the button
+ *
+ * @ingroup Button
+ */
 EAPI Evas_Object *
 elm_button_icon_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->icon;
@@ -348,11 +354,11 @@ elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-
-   if (wd->timer) {
-	   ecore_timer_del(wd->timer);
-	   wd->timer = NULL;
-   }
+   if (wd->timer)
+     {
+        ecore_timer_del(wd->timer);
+        wd->timer = NULL;
+     }
    wd->autorepeat = on;
 }
 
@@ -370,16 +376,12 @@ elm_button_autorepeat_initital_timeout_set(Evas_Object *obj, double t)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-
-   if (wd->ar_threshold == t)
-     return;
-
+   if (wd->ar_threshold == t) return;
    if (wd->timer)
      {
 	ecore_timer_del(wd->timer);
 	wd->timer = NULL;
      }
-
    wd->ar_threshold = t;
 }
 
@@ -397,20 +399,14 @@ elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-
-   if (wd->ar_interval == t)
-     return;
-
+   if (wd->ar_interval == t) return;
    if (wd->timer)
      {
 	ecore_timer_del(wd->timer);
 	wd->timer = NULL;
      }
-
    wd->ar_interval = t;
    if (wd->repeating)
-     {
-	wd->timer = ecore_timer_add(t, _autorepeat_send, obj);
-     }
+     wd->timer = ecore_timer_add(t, _autorepeat_send, obj);
 }
 

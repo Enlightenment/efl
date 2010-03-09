@@ -48,7 +48,6 @@ struct _Smart_Data
 };
 
 /* local subsystem functions */
-static const char *widtype = NULL;
 static void _smart_reconfigure(Smart_Data *sd);
 static void _smart_add(Evas_Object *obj);
 static void _smart_del(Evas_Object *obj);
@@ -82,7 +81,6 @@ _sub_obj_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _sub_obj_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   Smart_Data *sd = data;
    Evas_Object *o;
    const char *s;
    

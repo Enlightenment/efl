@@ -252,7 +252,7 @@ elm_scroller_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   Evas_Coord vw, vh, minw, minh;
+   Evas_Coord minw, minh;
 
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);

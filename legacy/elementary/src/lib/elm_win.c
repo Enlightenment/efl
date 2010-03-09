@@ -49,8 +49,8 @@ _elm_win_move(Ecore_Evas *ee)
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
    Elm_Win *win;
    int x, y;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    
+   if (!obj) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
@@ -64,8 +64,8 @@ _elm_win_resize(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    
+   if (!obj) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
    if (win->deferred_resize_job) ecore_job_del(win->deferred_resize_job);
@@ -77,8 +77,8 @@ _elm_win_focus_in(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    
+   if (!obj) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
    /*NB: Why two different "focus signals" here ??? */
@@ -91,8 +91,8 @@ _elm_win_focus_out(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    
+   if (!obj) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
    evas_object_smart_callback_call(win->win_obj, "focus-out", NULL); // FIXME: remove me
@@ -512,7 +512,6 @@ elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj)
 {
    Evas_Coord w, h;
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -533,7 +532,6 @@ EAPI void
 elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -552,7 +550,6 @@ EAPI void
 elm_win_title_set(Evas_Object *obj, const char *title)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -563,7 +560,6 @@ EAPI void
 elm_win_autodel_set(Evas_Object *obj, Eina_Bool autodel)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -574,7 +570,6 @@ EAPI void
 elm_win_activate(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -585,7 +580,6 @@ EAPI void
 elm_win_lower(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -596,7 +590,6 @@ EAPI void
 elm_win_raise(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -607,7 +600,6 @@ EAPI void
 elm_win_borderless_set(Evas_Object *obj, Eina_Bool borderless)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -619,8 +611,7 @@ EAPI Eina_Bool
 elm_win_borderless_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
    return ecore_evas_borderless_get(win->ee);
@@ -630,7 +621,6 @@ EAPI void
 elm_win_shaped_set(Evas_Object *obj, Eina_Bool shaped)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -642,8 +632,7 @@ EAPI Eina_Bool
 elm_win_shaped_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
    return ecore_evas_shaped_get(win->ee);
@@ -653,7 +642,6 @@ EAPI void
 elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -678,8 +666,7 @@ EAPI Eina_Bool
 elm_win_alpha_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
    return ecore_evas_alpha_get(win->ee);
@@ -689,7 +676,6 @@ EAPI void
 elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -707,8 +693,7 @@ EAPI Eina_Bool
 elm_win_transparent_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
 
@@ -719,7 +704,6 @@ EAPI void
 elm_win_override_set(Evas_Object *obj, Eina_Bool override)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -731,8 +715,7 @@ EAPI Eina_Bool
 elm_win_override_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
    return ecore_evas_override_get(win->ee);
@@ -742,7 +725,6 @@ EAPI void
 elm_win_fullscreen_set(Evas_Object *obj, Eina_Bool fullscreen)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -763,8 +745,7 @@ EAPI Eina_Bool
 elm_win_fullscreen_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
    switch (_elm_config->engine)
@@ -785,7 +766,6 @@ EAPI void
 elm_win_maximized_set(Evas_Object *obj, Eina_Bool maximized)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -797,8 +777,7 @@ EAPI Eina_Bool
 elm_win_maximized_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
    return ecore_evas_maximized_get(win->ee);
@@ -808,7 +787,6 @@ EAPI void
 elm_win_iconified_set(Evas_Object *obj, Eina_Bool iconified)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -820,8 +798,7 @@ EAPI Eina_Bool
 elm_win_iconified_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
    return ecore_evas_iconified_get(win->ee);
@@ -831,7 +808,6 @@ EAPI void
 elm_win_layer_set(Evas_Object *obj, int layer)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -843,8 +819,7 @@ EAPI int
 elm_win_layer_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return -1;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) -1;
    win = elm_widget_data_get(obj);
    if (!win) return -1;
    return ecore_evas_layer_get(win->ee);
@@ -854,7 +829,6 @@ EAPI void
 elm_win_rotation_set(Evas_Object *obj, int rotation)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -871,7 +845,6 @@ EAPI void
 elm_win_rotation_with_resize_set(Evas_Object *obj, int rotation)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -888,8 +861,7 @@ EAPI int
 elm_win_rotation_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return -1;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) -1;
    win = elm_widget_data_get(obj);
    if (!win) return -1;
    return win->rot;
@@ -899,7 +871,6 @@ EAPI void
 elm_win_sticky_set(Evas_Object *obj, Eina_Bool sticky)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -911,8 +882,7 @@ EAPI Eina_Bool
 elm_win_sticky_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
    return ecore_evas_sticky_get(win->ee);
@@ -922,7 +892,6 @@ EAPI void
 elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -940,7 +909,6 @@ EAPI void
 elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -955,7 +923,6 @@ EAPI void
 elm_win_screen_position_get(Evas_Object *obj, int *x, int *y)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -975,7 +942,6 @@ EAPI void
 elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -998,8 +964,7 @@ EAPI Eina_Bool
 elm_win_conformant_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
    _elm_win_xwindow_get(win);
@@ -1024,7 +989,6 @@ EAPI void
 elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -1058,8 +1022,7 @@ EAPI Eina_Bool
 elm_win_quickpanel_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
    _elm_win_xwindow_get(win);
@@ -1082,7 +1045,6 @@ EAPI void
 elm_win_quickpanel_priority_major_set(Evas_Object *obj, int priority)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -1105,8 +1067,7 @@ EAPI int
 elm_win_quickpanel_priority_major_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return -1;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) -1;
    win = elm_widget_data_get(obj);
    if (!win) return -1;
    _elm_win_xwindow_get(win);
@@ -1129,7 +1090,6 @@ EAPI void
 elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -1152,8 +1112,7 @@ EAPI int
 elm_win_quickpanel_priority_minor_get(Evas_Object *obj)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return -1;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) -1;
    win = elm_widget_data_get(obj);
    if (!win) return -1;
    _elm_win_xwindow_get(win);
@@ -1176,7 +1135,6 @@ EAPI void
 elm_win_quickpanel_zone_set(Evas_Object *obj, int zone)
 {
    Elm_Win *win;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -1200,6 +1158,8 @@ static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
+
+static const char *widtype2 = NULL;
 
 static void
 _del_hook(Evas_Object *obj)
@@ -1257,13 +1217,13 @@ elm_win_inwin_add(Evas_Object *obj)
    Widget_Data *wd;
    Elm_Win *win;
 
-   if (strcmp(elm_widget_type_get(obj), "win")) return NULL;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    win = elm_widget_data_get(obj);
    if (!win) return NULL;
    wd = ELM_NEW(Widget_Data);
    obj2 = elm_widget_add(win->evas);
    elm_widget_type_set(obj2, "inwin");
+   ELM_SET_WIDTYPE(widtype2, "inwin");
    elm_widget_sub_object_add(obj, obj2);
    evas_object_size_hint_weight_set(obj2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(obj2, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1293,8 +1253,9 @@ elm_win_inwin_style_set(Evas_Object *obj, const char *style)
 EAPI void
 elm_win_inwin_activate(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype2);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    evas_object_raise(obj);
    evas_object_show(obj);
    edje_object_signal_emit(wd->frm, "elm,action,show", "elm");
@@ -1304,8 +1265,9 @@ elm_win_inwin_activate(Evas_Object *obj)
 EAPI void
 elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype2);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if ((wd->content) && (wd->content != content))
      elm_widget_sub_object_del(obj, wd->content);
    wd->content = content;
@@ -1325,7 +1287,8 @@ elm_win_xwindow_get(const Evas_Object *obj)
 {
    Ecore_X_Window xwin = 0;
    Ecore_Evas *ee = NULL;
-
+   
+   if (!obj) return 0;
    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
    if (ee) xwin = (Ecore_X_Window)ecore_evas_window_get(ee);
    return xwin;

@@ -30,9 +30,9 @@ static void
 _elm_win_recalc_job(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord minw = -1, minh = -1, maxh = -1;
    Evas_Coord resw, resh, minminw;
-   
+   if (!wd) return;
    wd->deferred_recalc_job = NULL;
    evas_object_geometry_get(wd->lbl, NULL, NULL, &resw, &resh);
    resh = 0;
@@ -59,7 +59,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
    if (wd->label) eina_stringshare_del(wd->label);
    free(wd);
@@ -69,7 +69,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    if (wd->linewrap)
      _elm_theme_set(wd->lbl, "label", "base_wrap", elm_widget_style_get(obj));
    else
@@ -85,8 +85,8 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-   Evas_Coord resw, resh, minminw;
-
+   Evas_Coord resw, resh;
+   if (!wd) return;
    if (wd->linewrap)
      {
         evas_object_geometry_get(wd->lbl, NULL, NULL, &resw, &resh);
@@ -111,13 +111,9 @@ _sizing_eval(Evas_Object *obj)
 static void 
 _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
-   
-   if (wd->linewrap)
-     {
-        _sizing_eval(data);
-     }
+   if (!wd) return;
+   if (wd->linewrap) _sizing_eval(data);
 }
 /**
  * Add a new label to the parent
@@ -173,7 +169,7 @@ elm_label_label_set(Evas_Object *obj, const char *label)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    if (!label) label = "";
    if (wd->label) eina_stringshare_del(wd->label);
    wd->label = eina_stringshare_add(label);
@@ -192,9 +188,8 @@ elm_label_label_set(Evas_Object *obj, const char *label)
 EAPI const char *
 elm_label_label_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-
    if (!wd) return NULL;
    return wd->label;
 }
@@ -211,6 +206,7 @@ elm_label_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    const char *t;
    if (wd->linewrap == wrap) return;
    wd->linewrap = wrap;
@@ -235,8 +231,9 @@ elm_label_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
 EAPI Eina_Bool
 elm_label_line_wrap_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
    return wd->linewrap;
 }
 
@@ -252,6 +249,7 @@ elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->wrap_w == w) return;
    wd->wrap_w = w;
    _sizing_eval(obj);
@@ -267,7 +265,8 @@ elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w)
 EAPI Evas_Coord
 elm_label_wrap_width_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
    return wd->wrap_w;
 }

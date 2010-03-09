@@ -40,7 +40,6 @@ _theme_hook(Evas_Object *obj)
 static void
 _custom_resize(void *data, Evas *a, Evas_Object *obj, void *event_info)
 {
-   Widget_Data *wd = data;
    int iw = 0, ih = 0;
    Evas_Coord x, y, w, h, ow = 0, oh = 0;
 

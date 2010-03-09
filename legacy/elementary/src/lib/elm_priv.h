@@ -151,8 +151,8 @@ EAPI const char  *elm_widget_type_get(const Evas_Object *obj);
 EAPI Eina_List   *_stringlist_get(const char *str);
 EAPI void         _stringlist_free(Eina_List *list);
 
-#define ELM_SET_WIDTYPE(widtype, type) if (!widtype) widtype = eina_stringshare_add(type);
-#define ELM_CHECK_WIDTYPE(obj, widtype) if (elm_widget_type_get(obj) != widtype) return;
+#define ELM_SET_WIDTYPE(widtype, type) if (!widtype) widtype = eina_stringshare_add(type)
+#define ELM_CHECK_WIDTYPE(obj, widtype) if (elm_widget_type_get(obj) != widtype) return
 
 extern char *_elm_appname;
 extern Elm_Config *_elm_config;

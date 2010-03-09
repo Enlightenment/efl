@@ -263,7 +263,6 @@ static int _elm_signal_exit(void *data, int ev_type, void *ev);
 #ifdef HAVE_ELEMENTARY_X
 static int _elm_window_property_change(void *data, int ev_type, void *ev);
 #endif
-static const char *widtype = NULL;
 static void _elm_rescale(void);
 
 char *_elm_appname = NULL;
@@ -300,7 +299,7 @@ _elm_window_property_change(void *data, int ev_type, void *ev)
      {
 	if (event->atom == _elm_atom_enlightenment_scale)
 	  {
-	     int val = 1000;
+	     unsigned int val = 1000;
 
 	     if (ecore_x_window_prop_card32_get(event->win,
 						event->atom,
@@ -315,7 +314,7 @@ _elm_window_property_change(void *data, int ev_type, void *ev)
 	  }
 	else if (event->atom == _elm_atom_enlightenment_finger_size)
 	  {
-	     int val = 1000;
+	     unsigned int val = 1000;
 
 	     if (ecore_x_window_prop_card32_get(event->win,
 						event->atom,
@@ -468,7 +467,6 @@ _elm_unneed_efreet(void)
 EAPI void
 elm_quicklaunch_init(int argc, char **argv)
 {
-   int i;
    char buf[PATH_MAX], *s;
    
    eina_init();
@@ -880,7 +878,7 @@ elm_quicklaunch_sub_init(int argc, char **argv)
        (_elm_config->engine == ELM_OPENGL_X11))
      {
 #ifdef HAVE_ELEMENTARY_X
-	int val = 1000;
+	unsigned int val = 1000;
 
 	if (!ecore_x_init(NULL))
 	  {
@@ -1231,7 +1229,7 @@ elm_quicklaunch_exe_path_get(const char *exe)
    if ((exe[0] == '.') && (exe[1] == '.') && (exe[2] == '/')) return strdup(exe);
    if (!path)
      {
-	const char *p, *pp, *s;
+	const char *p, *pp;
 	char *buf;
 	path = getenv("PATH");
 	buf = alloca(strlen(path) + 1);
@@ -1502,7 +1500,7 @@ elm_scale_all_set(double scale)
 {
 #ifdef HAVE_ELEMENTARY_X
    static Ecore_X_Atom atom = 0;
-   int scale_i = (int)(scale * 1000.0);
+   unsigned int scale_i = (unsigned int)(scale * 1000.0);
 
    if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_SCALE");
    ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
@@ -1562,7 +1560,7 @@ elm_finger_size_all_set(Evas_Coord size)
 {
 #ifdef HAVE_ELEMENTARY_X
    static Ecore_X_Atom atom = 0;
-   int size_i = (int)size;
+   unsigned int size_i = (unsigned int)size;
 
    if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_FINGER_SIZE");
    ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
