@@ -20,7 +20,6 @@ Ecore_Con.h
 
 libecore_con_la_SOURCES = \
 ecore_con.c \
-ecore_con_dns.c \
 ecore_con_ssl.c \
 ecore_con_url.c \
 ecore_con_local.c

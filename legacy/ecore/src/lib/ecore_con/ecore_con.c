@@ -125,7 +125,6 @@ ecore_con_init(void)
 
    /* TODO Remember return value, if it fails, use gethostbyname() */
    ecore_con_ssl_init();
-   ecore_con_dns_init();
    ecore_con_info_init();
 
    return _ecore_con_init_count;
@@ -147,7 +146,6 @@ ecore_con_shutdown(void)
      _ecore_con_server_free(eina_list_data_get(servers));
 
    ecore_con_info_shutdown();
-   ecore_con_dns_shutdown();
    ecore_con_ssl_shutdown();
    eina_log_domain_unregister(_ecore_con_log_dom);
    _ecore_con_log_dom = -1;

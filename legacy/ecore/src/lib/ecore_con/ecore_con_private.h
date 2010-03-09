@@ -162,9 +162,6 @@ struct _Ecore_Con_Info
    char		   service[NI_MAXSERV];
 };
 
-/* from ecore_con_dns.c */
-int ecore_con_dns_init(void);
-int ecore_con_dns_shutdown(void);
 /* from ecore_local.c */
 int ecore_con_local_init(void);
 int ecore_con_local_shutdown(void);
