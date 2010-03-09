@@ -44,6 +44,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->label) eina_stringshare_del(wd->label);
    free(wd);
 }
@@ -52,6 +53,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    _elm_theme_set(wd->chk, "check", "base", elm_widget_style_get(obj));
    if (wd->icon)
      edje_object_signal_emit(wd->chk, "elm,state,icon,visible", "elm");
@@ -75,6 +77,7 @@ static void
 _disable_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (elm_widget_disabled_get(obj))
      edje_object_signal_emit(wd->chk, "elm,state,disabled", "elm");
    else
@@ -86,7 +89,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-
+   if (!wd) return;
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc(wd->chk, &minw, &minh, minw, minh);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -98,6 +101,7 @@ static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    if (obj != wd->icon) return;
    Evas_Coord mw, mh;
    evas_object_size_hint_min_get(obj, &mw, &mh);
@@ -109,6 +113,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
+   if (!wd) return;
    if (sub == wd->icon)
      {
 	edje_object_signal_emit(wd->chk, "elm,state,icon,hidden", "elm");
@@ -123,6 +128,7 @@ static void
 _signal_check_off(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    wd->state = EINA_FALSE;
    if (wd->statep) *wd->statep = wd->state;
    edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
@@ -133,6 +139,7 @@ static void
 _signal_check_on(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    wd->state = EINA_TRUE;
    if (wd->statep) *wd->statep = wd->state;
    edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
@@ -143,6 +150,7 @@ static void
 _signal_check_toggle(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    wd->state = !wd->state;
    if (wd->statep) *wd->statep = wd->state;
    if (wd->state)
@@ -207,8 +215,7 @@ elm_check_label_set(Evas_Object *obj, const char *label)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord mw, mh;
-
+   if (!wd) return;
    if (wd->label) eina_stringshare_del(wd->label);
    if (label)
      {
@@ -233,10 +240,10 @@ elm_check_label_set(Evas_Object *obj, const char *label)
  *
  * @ingroup Check
  */
-EAPI const char*
+EAPI const char *
 elm_check_label_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->label;
@@ -260,6 +267,7 @@ elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if ((wd->icon != icon) && (wd->icon))
      elm_widget_sub_object_del(obj, wd->icon);
    wd->icon = icon;
@@ -285,7 +293,7 @@ elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
 EAPI Evas_Object *
 elm_check_icon_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->icon;
@@ -307,6 +315,7 @@ elm_check_state_set(Evas_Object *obj, Eina_Bool state)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (state != wd->state)
      {
 	wd->state = state;
@@ -329,8 +338,9 @@ elm_check_state_set(Evas_Object *obj, Eina_Bool state)
 EAPI Eina_Bool
 elm_check_state_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
    return wd->state;
 }
 
@@ -354,6 +364,7 @@ elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (statep)
      {
 	wd->statep = statep;

@@ -47,20 +47,18 @@ static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void
 _del_hook(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    free(wd);
 }
 
 static void
 _theme_hook(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
    Item *it;
-
+   if (!wd) return;
    EINA_LIST_FOREACH(wd->stack, l, it)
      edje_object_scale_set(it->base, elm_widget_scale_get(obj) * 
                            _elm_config->scale);
@@ -70,12 +68,11 @@ _theme_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
    Eina_List *l;
    Item *it;
-
+   if (!wd) return;
    EINA_LIST_FOREACH(wd->stack, l, it)
      {
 	if (it->minw > minw) minw = it->minw;
@@ -90,7 +87,6 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Item *it = data;
    Evas_Coord minw = -1, minh = -1;
-
    evas_object_size_hint_min_get(it->content, &minw, &minh);
    // FIXME: why is this needed? how does edje get this unswallowed or
    // lose its callbacks to edje
@@ -102,10 +98,9 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _eval_top(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
-   Item *it, *ittop;
-
+   Item *ittop;
+   if (!wd) return;
    if (!wd->stack) return;
    ittop = eina_list_last(wd->stack)->data;
    if (ittop != wd->top)
@@ -140,12 +135,11 @@ _eval_top(Evas_Object *obj)
 static void
 _move(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord x, y;
    Eina_List *l;
    Item *it;
-
+   if (!wd) return;
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    EINA_LIST_FOREACH(wd->stack, l, it)
      evas_object_move(it->base, x, y);
@@ -154,12 +148,11 @@ _move(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Object *sub = event_info;
    Eina_List *l;
    Item *it;
-
+   if (!wd) return;
    EINA_LIST_FOREACH(wd->stack, l, it)
      {
 	if (it->content == sub)
@@ -177,16 +170,14 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 
 static void
 _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
-{
-   
+{   
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord w, h;
    Eina_List *l;
    Item *it;
-
+   if (!wd) return;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   EINA_LIST_FOREACH(wd->stack, l, it)
-     evas_object_resize(it->base, w, h);
+   EINA_LIST_FOREACH(wd->stack, l, it) evas_object_resize(it->base, w, h);
 }
 
 static void
@@ -194,7 +185,6 @@ _signal_hide_finished(void *data, Evas_Object *obj, const char *emission, const 
 {
    Item *it = data;
    Evas_Object *obj2 = it->obj;
-
    evas_object_hide(it->base);
    edje_object_signal_emit(it->base, "elm,action,reset", "elm");
    evas_object_smart_callback_call(obj2, "hide,finished", it->content);
@@ -264,7 +254,7 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it = ELM_NEW(Item);
    Evas_Coord x, y, w, h;
-
+   if (!wd) return;
    if (!it) return;
    it->obj = obj;
    it->content = content;
@@ -308,7 +298,7 @@ elm_pager_content_pop(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *ll;
    Item *it;
-
+   if (!wd) return;
    if (!wd->stack) return;
    it = eina_list_last(wd->stack)->data;
    it->popme = EINA_TRUE;
@@ -359,7 +349,7 @@ elm_pager_content_promote(Evas_Object *obj, Evas_Object *content)
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
    Item *it;
-
+   if (!wd) return;
    EINA_LIST_FOREACH(wd->stack, l, it)
      {
 	if (it->content == content)
@@ -383,10 +373,10 @@ elm_pager_content_promote(Evas_Object *obj, Evas_Object *content)
 EAPI Evas_Object *
 elm_pager_content_bottom_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
-
+   if (!wd) return NULL;
    if (!wd->stack) return NULL;
    it = wd->stack->data;
    return it->content;
@@ -403,10 +393,10 @@ elm_pager_content_bottom_get(Evas_Object *obj)
 EAPI Evas_Object *
 elm_pager_content_top_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
-
+   if (!wd) return NULL;
    if (!wd->stack) return NULL;
    it = eina_list_last(wd->stack)->data;
    return it->content;

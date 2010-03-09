@@ -55,14 +55,11 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
    Eina_List *l, *clear = NULL;
-
    if (!wd) return;
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
    _index_box_clear(obj, wd->bx[0], 0);
-   EINA_LIST_FOREACH(wd->items, l, it)
-     clear = eina_list_append(clear, it);
-   EINA_LIST_FREE(clear, it)
-     _item_free(it);
+   EINA_LIST_FOREACH(wd->items, l, it) clear = eina_list_append(clear, it);
+   EINA_LIST_FREE(clear, it) _item_free(it);
    if (wd->delay) ecore_timer_del(wd->delay);
    free(wd);
 }
@@ -71,7 +68,7 @@ static void
 _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    Widget_Data *wd = data;
-
+   if (!wd) return;
    _els_box_layout(o, priv, wd->horizontal, 1);
 }
 
@@ -79,7 +76,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    _index_box_clear(obj, wd->bx[0], 0);
    _index_box_clear(obj, wd->bx[1], 1);
    if (wd->horizontal)
@@ -138,7 +135,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-
+   if (!wd) return;
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc(wd->base, &minw, &minh, minw, minh);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -151,7 +148,7 @@ _item_new(Evas_Object *obj, const char *letter, const void *item)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
-
+   if (!wd) return NULL;
    it = calloc(1, sizeof(Item));
    if (!it) return NULL;
    it->obj = obj;
@@ -167,7 +164,7 @@ _item_find(Evas_Object *obj, const void *item)
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
    Item *it;
-
+   if (!wd) return NULL;
    EINA_LIST_FOREACH(wd->items, l, it)
      if (it->data == item) return it;
    return NULL;
@@ -177,7 +174,7 @@ static void
 _item_free(Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
-
+   if (!wd) return;
    wd->items = eina_list_remove(wd->items, it);
    if (it->base) evas_object_del(it->base);
    eina_stringshare_del(it->letter);
@@ -190,10 +187,10 @@ _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
-   Item *it, **itfit = NULL;
+   Item *it;
    Evas_Coord mw, mh, w, h;
    int i = 0;
-
+   if (!wd) return;
    if (wd->level_active[level]) return;
    evas_object_geometry_get(box, NULL, NULL, &w, &h);
    EINA_LIST_FOREACH(wd->items, l, it)
@@ -244,7 +241,7 @@ _index_box_clear(Evas_Object *obj, Evas_Object *box, int level)
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
    Item *it;
-
+   if (!wd) return;
    if (!wd->level_active[level]) return;
    EINA_LIST_FOREACH(wd->items, l, it)
      {
@@ -259,10 +256,9 @@ _index_box_clear(Evas_Object *obj, Evas_Object *box, int level)
 static int
 _delay_change(void *data)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
    void *d;
-
+   if (!wd) return 0;
    wd->delay = NULL;
    d = (void *)elm_index_item_selected_get(data, wd->level);
    if (d) evas_object_smart_callback_call(data, "delay,changed", d);
@@ -281,7 +277,7 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
    Eina_Bool change = 0;
    char *label = NULL, *last = NULL;
    int i;
-
+   if (!wd) return;
    for (i = 0; i <= wd->level; i++)
      {
         it_last = NULL;
@@ -385,20 +381,19 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
 static void 
 _wheel(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Event_Mouse_Wheel *ev = event_info;
-   Evas_Object *obj = o;
+//   Evas_Event_Mouse_Wheel *ev = event_info;
+//   Evas_Object *obj = o;
+   if (!wd) return;
 }
 
 static void 
 _mouse_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_Coord x, y;
-
+   if (!wd) return;
    if (ev->button != 1) return;
    wd->down = 1;
    evas_object_geometry_get(wd->base, &x, &y, NULL, NULL);
@@ -413,11 +408,10 @@ _mouse_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 static void 
 _mouse_up(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Up *ev = event_info;
    void *d;
-
+   if (!wd) return;
    if (ev->button != 1) return;
    wd->down = 0;
    d = (void *)elm_index_item_selected_get(data, wd->level);
@@ -429,14 +423,11 @@ _mouse_up(void *data, Evas *e, Evas_Object *o, void *event_info)
 static void 
 _mouse_move(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord minw = 0, minh = 0, x, y, dx, dy, adx, ady;
-   Eina_List *l;
-   Item *it;
    char buf[1024];
-
+   if (!wd) return;
    if (!wd->down) return;
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_geometry_get(wd->base, &x, &y, NULL, NULL);
@@ -566,7 +557,6 @@ elm_index_active_set(Evas_Object *obj, Eina_Bool active)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
    if (!wd) return;
    if (wd->active == active) return;
    wd->active = active;
@@ -594,7 +584,6 @@ elm_index_item_level_set(Evas_Object *obj, int level)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
    if (!wd) return;
    if (wd->level == level) return;
    wd->level = level;
@@ -610,9 +599,8 @@ elm_index_item_level_set(Evas_Object *obj, int level)
 EAPI int
 elm_index_item_level_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
-
    if (!wd) return 0;
    return wd->level;
 }
@@ -628,11 +616,10 @@ elm_index_item_level_get(Evas_Object *obj)
 EAPI const void *
 elm_index_item_selected_get(Evas_Object *obj, int level)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
    Item *it;
-
    if (!wd) return NULL;
    EINA_LIST_FOREACH(wd->items, l, it)
      if ((it->selected) && (it->level == level)) return it->data;
@@ -654,7 +641,6 @@ elm_index_item_append(Evas_Object *obj, const char *letter, const void *item)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
-
    if (!wd) return;
    it = _item_new(obj, letter, item);
    if (!it) return;
@@ -701,7 +687,6 @@ elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void 
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it, *it_rel;
-
    if (!wd) return;
    if (!relative)
      {
@@ -736,7 +721,6 @@ elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it, *it_rel;
-
    if (!wd) return;
    if (!relative)
      {
@@ -769,7 +753,6 @@ elm_index_item_del(Evas_Object *obj, const void *item)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
-
    if (!wd) return;
    it = _item_find(obj, item);
    if (!it) return;
@@ -791,7 +774,6 @@ elm_index_item_clear(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
    Eina_List *l, *clear = NULL;
-
    if (!wd) return;
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
    EINA_LIST_FOREACH(wd->items, l, it)
@@ -799,8 +781,7 @@ elm_index_item_clear(Evas_Object *obj)
         if (it->level != wd->level) continue;
         clear = eina_list_append(clear, it);
      }
-   EINA_LIST_FREE(clear, it)
-     _item_free(it);
+   EINA_LIST_FREE(clear, it) _item_free(it);
 }
 
 /**
@@ -816,10 +797,7 @@ elm_index_item_go(Evas_Object *obj, int level)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Item *it;
-
    if (!wd) return;
    _index_box_auto_fill(obj, wd->bx[0], 0);
-   if (wd->level == 1)
-     _index_box_auto_fill(obj, wd->bx[1], 1);
+   if (wd->level == 1) _index_box_auto_fill(obj, wd->bx[1], 1);
 }

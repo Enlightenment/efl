@@ -55,8 +55,8 @@ static void _val_set(Evas_Object *obj);
 static void
 _del_hook(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->label) eina_stringshare_del(wd->label);
    if (wd->units) eina_stringshare_del(wd->units);
    free(wd);
@@ -65,11 +65,9 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
-
-   edje_object_part_unswallow(NULL, wd->spacer); 
-
+   if (!wd) return;
+   edje_object_part_unswallow(NULL, wd->spacer);
    if (wd->horizontal)
      _elm_theme_set(wd->progressbar, "progressbar", "horizontal", elm_widget_style_get(obj));
    else
@@ -112,10 +110,9 @@ _theme_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
-
+   if (!wd) return;
    edje_object_size_min_restricted_calc(wd->progressbar, &minw, &minh, minw, minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
@@ -124,8 +121,8 @@ _sizing_eval(Evas_Object *obj)
 static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    if (obj != wd->icon) return;
    _sizing_eval(data);
 }
@@ -133,9 +130,9 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
+   if (!wd) return;
    if (sub == wd->icon)
      {
 	edje_object_signal_emit(wd->progressbar, "elm,state,icon,hidden", "elm");
@@ -149,10 +146,9 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 static void
 _val_fetch(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    double posx = MIN_RATIO_LVL, posy = MIN_RATIO_LVL, pos = MIN_RATIO_LVL;
-
+   if (!wd) return;
    edje_object_part_drag_value_get(wd->progressbar, "elm.cur.progressbar",
                                    &posx, &posy);
    if (wd->horizontal) pos = posx;
@@ -168,9 +164,9 @@ _val_fetch(Evas_Object *obj)
 static void
 _val_set(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    double pos;
+   if (!wd) return;
    pos = wd->val;
    if (wd->inverted) pos = MAX_RATIO_LVL - pos;
    edje_object_part_drag_value_set(wd->progressbar, "elm.cur.progressbar", pos, pos);
@@ -179,12 +175,11 @@ _val_set(Evas_Object *obj)
 static void
 _units_set(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->units)
      {
         char buf[1024];
-
         snprintf(buf, sizeof(buf), wd->units, 100 * wd->val);
         edje_object_part_text_set(wd->progressbar, "elm.text.status", buf);
      }
@@ -256,6 +251,7 @@ elm_progressbar_pulse_set (Evas_Object *obj, Eina_Bool pulse)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    pulse = !!pulse;
    if (wd->pulse == pulse) return;
    wd->pulse = pulse;
@@ -277,6 +273,7 @@ elm_progressbar_pulse (Evas_Object *obj, Eina_Bool state)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    state = !!state;
    if (!wd->pulse && wd->pulse_state == state) return;
    wd->pulse_state = state;
@@ -299,6 +296,7 @@ elm_progressbar_value_set (Evas_Object *obj, double val)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->val == val) return;
    wd->val = val;
    if (wd->val < MIN_RATIO_LVL) wd->val = MIN_RATIO_LVL;
@@ -319,8 +317,9 @@ elm_progressbar_value_set (Evas_Object *obj, double val)
 EAPI double
 elm_progressbar_value_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0.0;
    return wd->val;
 }
 
@@ -337,7 +336,7 @@ elm_progressbar_label_set(Evas_Object *obj, const char *label)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    if (wd->label) eina_stringshare_del(wd->label);
    if (label)
      {
@@ -373,6 +372,7 @@ elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if ((wd->icon != icon) && (wd->icon))
      elm_widget_sub_object_del(obj, wd->icon);
    wd->icon = icon;
@@ -405,6 +405,7 @@ elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->size == size) return;
    wd->size = size;
    if (wd->horizontal)
@@ -433,6 +434,7 @@ elm_progressbar_unit_format_set(Evas_Object *obj, const char *units)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->units) eina_stringshare_del(wd->units);
    if (units)
      {
@@ -463,6 +465,7 @@ elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    horizontal = !!horizontal;
    if (wd->horizontal == horizontal) return;
    wd->horizontal = horizontal;
@@ -487,6 +490,7 @@ elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    inverted = !!inverted;
    if (wd->inverted == inverted) return;
    wd->inverted = inverted;

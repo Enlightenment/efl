@@ -31,7 +31,7 @@ _item_show(Elm_Carousel_Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Coord x, y, w, h, bx, by;
-
+   if (!wd) return;
    evas_object_geometry_get(wd->bx, &bx, &by, NULL, NULL);
    evas_object_geometry_get(it->base, &x, &y, &w, &h);
    elm_smart_scroller_child_region_show(wd->scr, x - bx, y - by, w, h);
@@ -44,7 +44,7 @@ _item_select(Elm_Carousel_Item *it)
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Object *obj2;
    const Eina_List *l;
-
+   if (!wd) return;
    if (it->selected) return;
    EINA_LIST_FOREACH(wd->items, l, it2)
      {
@@ -67,6 +67,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    free(wd);
 }
 
@@ -76,7 +77,7 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    const Eina_List *l;
    const Elm_Carousel_Item *it;
-
+   if (!wd) return;
    EINA_LIST_FOREACH(wd->items, l, it)
      {
         Evas_Coord mw, mh;
@@ -106,7 +107,7 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Evas_Coord vw = 0, vh = 0;
-
+   if (!wd) return;
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &minw, &minh);
    evas_object_resize(wd->scr, 500, 500);
    evas_object_size_hint_min_get(wd->bx, &minw, &minh);
@@ -125,7 +126,7 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Evas_Coord mw, mh, vw, vh, w, h;
    const Eina_List *l;
    Elm_Carousel_Item *it;
-
+   if (!wd) return;
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
    evas_object_size_hint_min_get(wd->bx, &mw, &mh);
    evas_object_geometry_get(wd->bx, NULL, NULL, &w, &h);
@@ -194,8 +195,9 @@ elm_carousel_add(Evas_Object *parent)
 EAPI Elm_Carousel_Item *
 elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
    Evas_Coord mw, mh;
    Elm_Carousel_Item *it = calloc(1, sizeof(Elm_Carousel_Item));
 
@@ -237,7 +239,7 @@ elm_carousel_item_del(Elm_Carousel_Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Object *obj2 = it->obj;
-
+   if (!wd) return;
    wd->items = eina_list_remove(wd->items, it);
    eina_stringshare_del(it->label);
    if (it->icon) evas_object_del(it->icon);
