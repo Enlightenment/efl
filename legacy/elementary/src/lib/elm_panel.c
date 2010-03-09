@@ -20,19 +20,17 @@ static void _toggle_panel(void *data, Evas_Object *obj, const char *emission, co
 static void 
 _del_hook(Evas_Object *obj) 
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    free(wd);
 }
 
 static void 
 _theme_hook(Evas_Object *obj) 
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    int scale = 0;
-
+   if (!wd) return;
    scale = (elm_widget_scale_get(obj) * _elm_config->scale);
    edje_object_scale_set(wd->scr, scale);
    _sizing_eval(obj);
@@ -41,12 +39,11 @@ _theme_hook(Evas_Object *obj)
 static void 
 _sizing_eval(Evas_Object *obj) 
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw = -1, mh = -1;
    Evas_Coord vw = 0, vh = 0;
    Evas_Coord w, h;
-
+   if (!wd) return;
    evas_object_smart_calculate(wd->bx);
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), 
                              &mw, &mh);
@@ -70,10 +67,9 @@ _sizing_eval(Evas_Object *obj)
 static void 
 _resize(void *data, Evas *evas, Evas_Object *obj, void *event) 
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord mw, mh, vw, vh, w, h;
-
+   if (!wd) return;
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
    evas_object_size_hint_min_get(wd->bx, &mw, &mh);
    evas_object_geometry_get(wd->bx, NULL, NULL, &w, &h);
@@ -87,16 +83,15 @@ static void
 _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data) 
 {
    Widget_Data *wd = data;
-
+   if (!wd) return;
    _els_box_layout(o, priv, EINA_TRUE, EINA_FALSE);
 }
 
 static void 
 _toggle_panel(void *data, Evas_Object *obj, const char *emission, const char *source) 
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
-
+   if (!wd) return;
    if (wd->hidden) 
      {
         edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr), 
@@ -161,18 +156,18 @@ elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    wd->orient = orient;
    switch (orient) 
      {
-      case ELM_PANEL_ORIENT_TOP:
-      case ELM_PANEL_ORIENT_BOTTOM:
+     case ELM_PANEL_ORIENT_TOP:
+     case ELM_PANEL_ORIENT_BOTTOM:
         break;
-      case ELM_PANEL_ORIENT_LEFT:
+     case ELM_PANEL_ORIENT_LEFT:
         elm_smart_scroller_theme_set(wd->scr, "panel", "base", "left");
-      case ELM_PANEL_ORIENT_RIGHT:
+     case ELM_PANEL_ORIENT_RIGHT:
         break;
-      default:
+     default:
         break;
      }
    _sizing_eval(obj);
@@ -183,7 +178,7 @@ elm_panel_content_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    evas_object_box_remove_all(wd->bx, EINA_TRUE);
    if (!content) return;
    evas_object_box_append(wd->bx, content);

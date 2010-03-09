@@ -36,6 +36,7 @@ static void
 _del_hook(Evas_Object *obj) 
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->prop_hdl) ecore_event_handler_del(wd->prop_hdl);
    free(wd);
 }
@@ -44,7 +45,7 @@ static void
 _theme_hook(Evas_Object *obj) 
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    _elm_theme_set(wd->base, "conformant", "base", elm_widget_style_get(obj));
    if (wd->content)
      edje_object_part_swallow(wd->base, "elm.swallow.content", wd->content);
@@ -57,7 +58,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw = -1, mh = -1;
-
+   if (!wd) return;
    edje_object_size_min_calc(wd->base, &mw, &mh);
    evas_object_size_hint_min_set(obj, mw, mh);
    evas_object_size_hint_max_set(obj, -1, -1);
@@ -67,6 +68,7 @@ static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    _sizing_eval(data);
 }
 
@@ -75,7 +77,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
-   
+   if (!wd) return;
    if (sub == wd->content)
      {
         evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -143,9 +145,8 @@ _prop_change(void *data, int type, void *event)
 #ifdef HAVE_ELEMENTARY_X
    Ecore_X_Event_Window_Property *ev;
    Widget_Data *wd = elm_widget_data_get(data);
-
+   if (!wd) return 1;
    ev = event;
-
    if (ev->atom == ECORE_X_ATOM_E_ILLUME_ZONE) 
      {
         Ecore_X_Window zone;
@@ -278,7 +279,7 @@ elm_conformant_content_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    if ((wd->content != content) && (wd->content))
      elm_widget_sub_object_del(obj, wd->content);
    wd->content = content;

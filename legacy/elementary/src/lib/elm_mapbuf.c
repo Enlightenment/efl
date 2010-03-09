@@ -1,8 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-#if 1 // working on it
-
 /**
  * @defgroup Mapbuf Mapbuf
  *
@@ -29,33 +27,31 @@ static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void
 _del_hook(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    free(wd);
 }
 
 static void
 _theme_hook(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    _sizing_eval(obj);
 }
 
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord minw = -1, minh = -1, minw2 = -1, minh2 = -1;
-   Evas_Coord maxw = -1, maxh = -1, maxw2 = -1, maxh2 = -1;
-   
+   Evas_Coord minw = -1, minh = -1;
+   Evas_Coord maxw = -1, maxh = -1;
+   if (!wd) return;
    if (wd->content)
      {
         evas_object_size_hint_min_get(wd->content, &minw, &minh);
         evas_object_size_hint_max_get(wd->content, &maxw, &maxh);
      }
-   
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
@@ -63,18 +59,17 @@ _sizing_eval(Evas_Object *obj)
 static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    _sizing_eval(data);
 }
 
 static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
-
+   if (!wd) return;
    if (sub == wd->content)
      {
 	evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -87,15 +82,13 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 static void
 _mapbuf(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord x, y, w, h;
-
+   if (!wd) return;
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    if (wd->enabled)
      {
         Evas_Map *m;
-        Evas_Coord cx, cy, cz, px, py, foc;
 
         m = evas_map_new(4);
         evas_map_util_points_populate_from_geometry(m, x, y, w, h, 0);
@@ -117,8 +110,8 @@ _mapbuf(Evas_Object *obj)
 static void
 _configure(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->content)
      {
         Evas_Coord x, y, w, h;
@@ -192,7 +185,7 @@ elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    if (wd->content == content) return;
    if ((wd->content != content) && (wd->content))
      {
@@ -217,6 +210,7 @@ elm_mapbuf_enabled_set(Evas_Object *obj, Eina_Bool enabled)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->enabled == enabled) return;
    wd->enabled = enabled;
    _configure(obj);
@@ -225,8 +219,9 @@ elm_mapbuf_enabled_set(Evas_Object *obj, Eina_Bool enabled)
 EAPI Eina_Bool
 elm_mapbuf_enabled_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
    return wd->enabled;
 }
     
@@ -235,6 +230,7 @@ elm_mapbuf_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->smooth == smooth) return;
    wd->smooth = smooth;
    _configure(obj);
@@ -243,8 +239,9 @@ elm_mapbuf_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 EAPI Eina_Bool
 elm_mapbuf_smooth_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
    return wd->smooth;
 }
     
@@ -253,6 +250,7 @@ elm_mapbuf_alpha_set(Evas_Object *obj, Eina_Bool alpha)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->alpha == alpha) return;
    wd->alpha = alpha;
    _configure(obj);
@@ -261,9 +259,8 @@ elm_mapbuf_alpha_set(Evas_Object *obj, Eina_Bool alpha)
 EAPI Eina_Bool
 elm_mapbuf_alpha_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
    return wd->alpha;
 }
-    
-#endif

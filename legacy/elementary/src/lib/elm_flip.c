@@ -34,6 +34,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->animator) ecore_animator_del(wd->animator);
    free(wd);
 }
@@ -42,6 +43,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    _sizing_eval(obj);
 }
 
@@ -51,7 +53,7 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, minw2 = -1, minh2 = -1;
    Evas_Coord maxw = -1, maxh = -1, maxw2 = -1, maxh2 = -1;
-   
+   if (!wd) return;
    if (wd->front.content)
      evas_object_size_hint_min_get(wd->front.content, &minw, &minh);
    if (wd->back.content)
@@ -74,6 +76,7 @@ static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    _sizing_eval(data);
 }
 
@@ -82,7 +85,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
-
+   if (!wd) return;
    if (sub == wd->front.content)
      {
 	evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -109,14 +112,14 @@ _flip(Evas_Object *obj)
    Evas_Coord x, y, w, h;
    double p, deg;
    Evas_Map *mf, *mb;
-   Evas_Coord cx, cy, cz, px, py, foc;
+   Evas_Coord cx, cy, px, py, foc;
    int lx, ly, lz, lr, lg, lb, lar, lag, lab;
    if (!wd->animator) return 0;
    t = t / wd->len;
    if (t > 1.0) t = 1.0;
 
+   if (!wd) return 0;
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   
 
    mf = evas_map_new(4);
    evas_map_smooth_set(mf, 0);
@@ -225,6 +228,7 @@ _configure(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord x, y, w, h;
+   if (!wd) return;
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    if (wd->front.content)
      {
@@ -321,7 +325,7 @@ elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    if (wd->front.content == content) return;
    if ((wd->front.content != content) && (wd->front.content))
      {
@@ -360,7 +364,7 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    if (wd->back.content == content) return;
    if ((wd->back.content != content) && (wd->back.content))
      {
@@ -397,8 +401,9 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
 EAPI Eina_Bool
 elm_flip_front_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
    return wd->state;
 }
 
@@ -407,6 +412,7 @@ elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc, Evas_Coord x, Evas_Co
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
 }
 
 EAPI void
@@ -414,6 +420,7 @@ elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (!wd->animator) wd->animator = ecore_animator_add(_animate, obj);
    wd->mode = mode;
    wd->start = ecore_loop_time_get();
