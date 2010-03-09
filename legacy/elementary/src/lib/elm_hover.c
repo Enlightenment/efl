@@ -36,7 +36,7 @@ _del_pre_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Subinfo *si;
-
+   if (!wd) return;
    if (evas_object_visible_get(obj))
      evas_object_smart_callback_call(obj, "clicked", NULL);
    elm_hover_target_set(obj, NULL);
@@ -57,7 +57,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    free(wd);
 }
 
@@ -65,7 +65,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    // FIXME: hover contents doesnt seem to propagate resizes properly
    _elm_theme_set(wd->cov, "hover", "base", elm_widget_style_get(obj));
    edje_object_scale_set(wd->cov, elm_widget_scale_get(obj) *
@@ -81,7 +81,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord x = 0, y = 0, w = 0, h = 0, x2 = 0, y2 = 0, w2 = 0, h2 = 0;
-
+   if (!wd) return;
    if (wd->parent) evas_object_geometry_get(wd->parent, &x, &y, &w, &h);
    if (wd->hov) evas_object_geometry_get(wd->hov, &x2, &y2, &w2, &h2);
    evas_object_move(wd->cov, x, y);
@@ -98,7 +98,7 @@ _reval_content(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    const Eina_List *l;
    const Subinfo *si;
-
+   if (!wd) return;
    EINA_LIST_FOREACH(wd->subs, l, si)
      edje_object_part_swallow(wd->cov, si->swallow, si->obj);
 }
@@ -110,7 +110,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *sub = event_info;
    Eina_List *l;
    Subinfo *si;
-
+   if (!wd) return;
    EINA_LIST_FOREACH(wd->subs, l, si)
      {
 	if (si->obj == sub)
@@ -129,7 +129,7 @@ _hov_show_do(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    const Eina_List *l;
    const Subinfo *si;
-
+   if (!wd) return;
    if (wd->cov)
      {
 	evas_object_show(wd->cov);
@@ -173,7 +173,7 @@ _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(data);
    const Eina_List *l;
    const Subinfo *si;
-
+   if (!wd) return;
    if (wd->cov)
      {
 	edje_object_signal_emit(wd->cov, "elm,action,hide", "elm");
@@ -195,18 +195,16 @@ _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _target_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
-
+   if (!wd) return;
    wd->target = NULL;
 }
 
 static void
 _signal_dismiss(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
-
+   if (!wd) return;
    evas_object_hide(data);
    evas_object_smart_callback_call(data, "clicked", NULL);
 }
@@ -226,25 +224,21 @@ _parent_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _parent_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   
-   Widget_Data *wd = elm_widget_data_get(data);
 }
 
 static void
 _parent_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
-
+   if (!wd) return;
    if (wd) evas_object_hide(wd->cov);
 }
 
 static void
 _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
-
+   if (!wd) return;
    elm_hover_parent_set(data, NULL);
    _sizing_eval(data);
 }
@@ -365,7 +359,7 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
    Subinfo *si;
    const Eina_List *l;
    char buf[1024];
-
+   if (!wd) return;
    snprintf(buf, sizeof(buf), "elm.swallow.slot.%s", swallow);
    EINA_LIST_FOREACH(wd->subs, l, si)
      {
@@ -398,11 +392,11 @@ elm_hover_style_set(Evas_Object *obj, const char *style)
 EAPI const char *
 elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) "left";
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord x = 0, y = 0, w = 0, h = 0, x2 = 0, y2 = 0, w2 = 0, h2 = 0;
    Evas_Coord spc_l, spc_r, spc_t, spc_b;
-
+   if (!wd) return "left";
    if (wd->parent) evas_object_geometry_get(wd->parent, &x, &y, &w, &h);
    if (wd->target) evas_object_geometry_get(wd->target, &x2, &y2, &w2, &h2);
    spc_l = x2 - x;

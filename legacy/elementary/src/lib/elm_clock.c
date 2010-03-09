@@ -43,6 +43,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    int i;
    for (i = 0; i < 6; i++)
      {
@@ -57,6 +58,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    wd->cur.am_pm = !wd->cur.am_pm; /* hack - force update */
    _time_update(obj);
 }
@@ -69,7 +71,7 @@ _ticker(void *data)
    struct timeval timev;
    struct tm *tm;
    time_t tt;
-
+   if (!wd) return 0;
    gettimeofday(&timev, NULL);
    t = ((double)(1000000 - timev.tv_usec)) / 1000000.0;
    wd->ticker = ecore_timer_add(t, _ticker, data);
@@ -93,7 +95,7 @@ static void
 _signal_clock_val_up(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-
+   if (!wd) return;
    if (!wd->edit) return;
    if (obj == wd->digit[0])
      {
@@ -138,7 +140,7 @@ static void
 _signal_clock_val_down(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-
+   if (!wd) return;
    if (!wd->edit) return;
    if (obj == wd->digit[0])
      {
@@ -186,7 +188,7 @@ _time_update(Evas_Object *obj)
    Edje_Message_Int msg;
    int ampm = 0;
    const char *style = elm_widget_style_get(obj);
-
+   if (!wd) return;
    if ((wd->cur.seconds != wd->seconds) || (wd->cur.am_pm != wd->am_pm) ||
        (wd->cur.edit != wd->edit))
      {
@@ -356,8 +358,6 @@ _time_update(Evas_Object *obj)
 	if (wd->hrs >= 12) ampm = 1;
 	if (ampm != wd->cur.ampm)
 	  {
-	     int d1, d2, dc1, dc2;
-
 	     if (wd->cur.ampm != ampm)
 	       {
 		  msg.val = ampm;
@@ -428,6 +428,7 @@ elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    wd->hrs = hrs;
    wd->min = min;
    wd->sec = sec;
@@ -455,6 +456,7 @@ elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (hrs) *hrs = wd->hrs;
    if (min) *min = wd->min;
    if (sec) *sec = wd->sec;
@@ -475,6 +477,7 @@ elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    wd->edit = edit;
    _time_update(obj);
 }
@@ -498,6 +501,7 @@ elm_clock_show_am_pm_set(Evas_Object *obj, Eina_Bool am_pm)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    wd->am_pm = am_pm;
    _time_update(obj);
 }
@@ -519,6 +523,7 @@ elm_clock_show_seconds_set(Evas_Object *obj, Eina_Bool seconds)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    wd->seconds = seconds;
    _time_update(obj);
 }

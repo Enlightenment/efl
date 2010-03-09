@@ -28,6 +28,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->label) eina_stringshare_del(wd->label);
    if (wd->info) eina_stringshare_del(wd->info);
    free(wd);
@@ -37,6 +38,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    _elm_theme_set(wd->bbl, "bubble", "base", elm_widget_style_get(obj));
    edje_object_part_text_set(wd->bbl, "elm.text", wd->label);
    edje_object_part_text_set(wd->bbl, "elm.info", wd->info);
@@ -49,7 +51,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-
+   if (!wd) return;
    edje_object_size_min_calc(wd->bbl, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
@@ -59,6 +61,7 @@ static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    _sizing_eval(data);
 }
 
@@ -67,7 +70,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
-
+   if (!wd) return;
    evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _changed_size_hints, obj);
    if (sub == wd->content) wd->content = NULL;
@@ -128,6 +131,7 @@ elm_bubble_label_set(Evas_Object *obj, const char *label)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->label) eina_stringshare_del(wd->label);
    if (label) wd->label = eina_stringshare_add(label);
    else wd->label = NULL;
@@ -138,7 +142,7 @@ elm_bubble_label_set(Evas_Object *obj, const char *label)
 EAPI const char*
 elm_bubble_label_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->label;
@@ -162,6 +166,7 @@ elm_bubble_info_set(Evas_Object *obj, const char *info)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->info) eina_stringshare_del(wd->info);
    if (info) wd->info = eina_stringshare_add(info);
    else wd->info = NULL;
@@ -185,6 +190,7 @@ elm_bubble_content_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if ((wd->content != content) && (wd->content))
      elm_widget_sub_object_del(obj, wd->content);
    wd->content = content;
@@ -214,6 +220,7 @@ elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if ((wd->icon != icon) && (wd->icon))
      elm_widget_sub_object_del(obj, wd->icon);
    wd->icon = icon;
@@ -230,7 +237,7 @@ elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon)
 EAPI Evas_Object *
 elm_bubble_icon_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->icon;
@@ -251,6 +258,7 @@ elm_bubble_corner_set(Evas_Object *obj, const char *corner)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    _elm_theme_set(wd->bbl, "bubble", corner, elm_widget_style_get(obj));
    if (wd->icon)
      edje_object_part_swallow(wd->bbl, "elm.swallow.icon", wd->icon);

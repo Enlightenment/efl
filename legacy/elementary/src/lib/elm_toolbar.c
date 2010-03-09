@@ -64,9 +64,8 @@ _item_select(Elm_Toolbar_Item *it)
 {
    Elm_Toolbar_Item *it2;
    Widget_Data *wd = elm_widget_data_get(it->obj);
-   Evas_Object *obj2, *bt, *hv, *bx, *ic;
+   Evas_Object *obj2;
    const Eina_List *l;
-   Evas_Coord x,y,w,h;
 
    if (!wd) return;
    if ((it->selected) || (it->disabled) || (it->separator)) return;
@@ -141,7 +140,6 @@ _item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled)
 static void
 _del_pre_hook(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Toolbar_Item *it;
 
@@ -160,7 +158,6 @@ _del_pre_hook(Evas_Object *obj)
 static void
 _del_hook(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -170,7 +167,6 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    const Eina_List *l;
    Elm_Toolbar_Item *it;
@@ -221,7 +217,6 @@ _theme_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord vw = 0, vh = 0;
@@ -253,9 +248,8 @@ _sizing_eval(Evas_Object *obj)
 static void
 _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Coord mw, mh, vw, vh, x, y, w, h;
+   Evas_Coord mw, mh, vw, vh, w, h;
    const Eina_List *l;
    Elm_Toolbar_Item *it;
 
@@ -287,7 +281,7 @@ static void
 _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    Widget_Data *wd = data;
-
+   if (!wd) return;
    _els_box_layout(o, priv, 1, wd->homogeneous);
 }
 
@@ -341,7 +335,6 @@ elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
    if (!wd) return;
    if (icon_size > 48) return;
    if (wd->icon_size == icon_size) return;
@@ -352,9 +345,8 @@ elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size)
 EAPI int
 elm_toolbar_icon_size_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
-
    if (!wd) return 0;
    return wd->icon_size;
 }
@@ -362,7 +354,7 @@ elm_toolbar_icon_size_get(Evas_Object *obj)
 EAPI Elm_Toolbar_Item *
 elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw, mh;
    Elm_Toolbar_Item *it;
@@ -574,15 +566,13 @@ elm_toolbar_item_unselect_all(Evas_Object *obj)
 EAPI void
 elm_toolbar_align_set(Evas_Object *obj, double align)
 {
-   Eina_List *l;
-   Elm_Toolbar_Item *it;
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   if(wd->align != align)
+   if (wd->align != align)
      evas_object_size_hint_align_set(wd->bx, align, 0.5);
-    wd->align = align;
+   wd->align = align;
 }
 
 EAPI void
@@ -593,8 +583,7 @@ elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
    if ((!wd) || (!item)) return;
    if (item->menu == menu) return;
    item->menu = menu;
-
-   if(menu)
+   if (menu)
      {
 	item->o_menu = elm_menu_add(item->base);
 	if (wd->menu_parent)

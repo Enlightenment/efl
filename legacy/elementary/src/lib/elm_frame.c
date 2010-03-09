@@ -27,6 +27,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    free(wd);
 }
 
@@ -34,7 +35,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    _elm_theme_set(wd->frm, "frame", "base", elm_widget_style_get(obj));
    if (wd->content)
      edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->content);
@@ -47,6 +48,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
+   if (!wd) return;
    edje_object_size_min_calc(wd->frm, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
@@ -58,6 +60,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(data);
    // FIXME: why is this needed? how does edje get this unswallowed or
    // lose its callbacks to edje
+   if (!wd) return;
    edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->content);
    _sizing_eval(data);
 }
@@ -67,7 +70,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
-
+   if (!wd) return;
    if (sub == wd->content)
      {
 	evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -125,7 +128,7 @@ elm_frame_label_set(Evas_Object *obj, const char *label)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    edje_object_part_text_set(wd->frm, "elm.text", label);
    _sizing_eval(obj);
 }
@@ -139,12 +142,11 @@ elm_frame_label_set(Evas_Object *obj, const char *label)
  *
  * @ingroup Frame
  */
-EAPI const char*
+EAPI const char *
 elm_frame_label_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-
    if ((!wd) || (!wd->frm)) return NULL;
    return edje_object_part_text_get(wd->frm, "elm.text");
 }
@@ -162,7 +164,7 @@ elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    if ((wd->content != content) && (wd->content))
      elm_widget_sub_object_del(obj, wd->content);
    wd->content = content;
