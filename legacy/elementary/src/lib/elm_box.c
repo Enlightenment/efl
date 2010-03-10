@@ -35,7 +35,7 @@ static void
 _del_pre_hook(Evas_Object *obj)
 {
     Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
     evas_object_event_callback_del_full
         (wd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
     evas_object_box_remove_all(wd->box, 0);
@@ -45,6 +45,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    free(wd);
 }
 
@@ -54,7 +55,7 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Evas_Coord w, h;
-
+   if (!wd) return;
    evas_object_size_hint_min_get(wd->box, &minw, &minh);
    evas_object_size_hint_max_get(wd->box, &maxw, &maxh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -83,7 +84,7 @@ static void
 _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    Widget_Data *wd = data;
-
+   if (!wd) return;
    _els_box_layout(o, priv, wd->horizontal, wd->homogeneous);
 }
 
@@ -144,6 +145,7 @@ elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    wd->horizontal = !!horizontal;
    evas_object_smart_calculate(wd->box);
    /*if (wd->horizontal)
@@ -182,6 +184,7 @@ elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    wd->homogeneous = !!homogenous;
    evas_object_smart_calculate(wd->box);
    /*if (wd->horizontal)
@@ -220,6 +223,7 @@ elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_prepend(wd->box, subobj);
 }
@@ -240,6 +244,7 @@ elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_append(wd->box, subobj);
 }
@@ -263,6 +268,7 @@ elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_insert_before(wd->box, subobj, before);
 }
@@ -286,6 +292,7 @@ elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_insert_after(wd->box, subobj, after);
 }
@@ -304,6 +311,7 @@ elm_box_clear(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    evas_object_box_remove_all(wd->box, 1);
 }
 
@@ -322,6 +330,7 @@ elm_box_unpack(Evas_Object *obj, Evas_Object *subobj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    evas_object_box_remove(wd->box, subobj);
 }
 
@@ -340,5 +349,6 @@ elm_box_unpack_all(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    evas_object_box_remove_all(wd->box, 0);
 }

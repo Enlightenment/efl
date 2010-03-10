@@ -25,30 +25,28 @@ static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void
 _del_pre_hook(Evas_Object *obj)
 {
-   
-    Widget_Data *wd = elm_widget_data_get(obj);
-
-    evas_object_event_callback_del_full
-        (wd->tbl, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   evas_object_event_callback_del_full
+     (wd->tbl, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
    evas_object_del(wd->tbl);
 }
 
 static void
 _del_hook(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    free(wd);
 }
 
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Evas_Coord w, h;
-
+   if (!wd) return;
    evas_object_size_hint_min_get(wd->tbl, &minw, &minh);
    evas_object_size_hint_max_get(wd->tbl, &maxw, &maxh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -131,6 +129,7 @@ elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    evas_object_table_homogeneous_set(wd->tbl, homogenous);
 }
 
@@ -148,6 +147,7 @@ elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertic
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    evas_object_table_padding_set(wd->tbl, horizontal, vertical);
 }
 
@@ -168,6 +168,7 @@ elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    elm_widget_sub_object_add(obj, subobj);
    evas_object_table_pack(wd->tbl, subobj, x, y, w, h);
 }
@@ -185,6 +186,7 @@ elm_table_unpack(Evas_Object *obj, Evas_Object *subobj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    elm_widget_sub_object_del(obj, subobj);
    evas_object_table_unpack(wd->tbl, subobj);
 }
@@ -202,5 +204,6 @@ elm_table_clear(Evas_Object *obj, Eina_Bool clear)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    evas_object_table_clear(wd->tbl, clear);
 }

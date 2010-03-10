@@ -15,6 +15,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    free(wd);
 }
 
@@ -23,7 +24,6 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw, minh;
-
    if (!wd) return;
    evas_object_size_hint_min_get(wd->scroller, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -34,6 +34,7 @@ static void
 _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (elm_widget_focus_get(obj))
      elm_widget_focus_steal(wd->entry);
 }
@@ -42,7 +43,7 @@ static void
 _disable_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    elm_object_disabled_set(wd->entry, elm_widget_disabled_get(obj));
 }
 
@@ -219,7 +220,7 @@ elm_scrolled_entry_entry_set(Evas_Object *obj, const char *entry)
 EAPI const char *
 elm_scrolled_entry_entry_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return elm_entry_entry_get(wd->entry);
@@ -228,7 +229,7 @@ elm_scrolled_entry_entry_get(const Evas_Object *obj)
 EAPI const char *
 elm_scrolled_entry_selection_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return elm_entry_selection_get(wd->entry);
@@ -291,7 +292,7 @@ elm_scrolled_entry_select_all(Evas_Object *obj)
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_next(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
    return elm_entry_cursor_next(wd->entry);
@@ -300,7 +301,7 @@ elm_scrolled_entry_cursor_next(Evas_Object *obj)
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_prev(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
    return elm_entry_cursor_prev(wd->entry);
@@ -309,7 +310,7 @@ elm_scrolled_entry_cursor_prev(Evas_Object *obj)
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_up(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
    return elm_entry_cursor_up(wd->entry);
@@ -318,7 +319,7 @@ elm_scrolled_entry_cursor_up(Evas_Object *obj)
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_down(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
    return elm_entry_cursor_down(wd->entry);
@@ -381,7 +382,7 @@ elm_scrolled_entry_cursor_selection_end(Evas_Object *obj)
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_is_format_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
    return elm_entry_cursor_is_format_get(wd->entry);
@@ -390,7 +391,7 @@ elm_scrolled_entry_cursor_is_format_get(Evas_Object *obj)
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_is_visible_format_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
    return elm_entry_cursor_is_visible_format_get(wd->entry);
@@ -399,7 +400,7 @@ elm_scrolled_entry_cursor_is_visible_format_get(Evas_Object *obj)
 EAPI const char *
 elm_scrolled_entry_cursor_content_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return elm_entry_cursor_content_get(wd->entry);
@@ -462,7 +463,7 @@ elm_scrolled_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disable
 EAPI Eina_Bool
 elm_scrolled_entry_context_menu_disabled_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
    return elm_entry_context_menu_disabled_get(wd->entry);

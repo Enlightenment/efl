@@ -52,9 +52,8 @@ _del_pre_hook(Evas_Object *obj)
 static void
 _del_hook(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    elm_notify_content_set(obj, NULL);
    elm_notify_parent_set(obj, NULL);
    elm_notify_repeat_events_set(obj, EINA_TRUE);
@@ -69,9 +68,7 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
-
    if (!wd) return;
    _elm_theme_set(wd->notify, "notify", "base", "default");
    if (wd->block_events)
@@ -84,10 +81,9 @@ _theme_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord x,y,w,h;
-
+   if (!wd) return;
    if (!wd->parent) return;
    evas_object_geometry_get(wd->parent, &x, &y, &w, &h);
    evas_object_move(obj, x, y);
@@ -103,17 +99,14 @@ _changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 static void
 _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (event_info == wd->content)
-     wd->content = NULL;
+   if (!wd) return;
+   if (event_info == wd->content) wd->content = NULL;
 }
 
 static void
 _signal_block_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    evas_object_smart_callback_call(data, "block,clicked", NULL);
@@ -134,11 +127,10 @@ _content_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
 static void
 _calc(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord x, y, w, h;
-
+   if (!wd) return;
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    edje_object_size_min_calc(wd->notify, &minw, &minh);
 
@@ -186,9 +178,8 @@ static int
 _timer_cb(void *data)
 {
    Evas_Object *obj = data;
-   
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return 0;
    wd->timer = NULL;
    evas_object_hide(obj);
    return 0;
@@ -197,9 +188,8 @@ _timer_cb(void *data)
 static void
 _show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    evas_object_show(wd->notify);
    if (!wd->repeat_events)
      evas_object_show(wd->block_events);
@@ -215,9 +205,8 @@ _show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
 static void
 _hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    evas_object_hide(wd->notify);
    if (!wd->repeat_events)
      evas_object_hide(wd->block_events);
@@ -231,9 +220,8 @@ _hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
 static void
 _parent_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    wd->parent = NULL;
    evas_object_hide(obj);
 }
@@ -241,9 +229,8 @@ _parent_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *e
 static void
 _parent_hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    wd->parent = NULL;
    evas_object_hide(obj);
 }
@@ -304,7 +291,7 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    if (wd->content)
      {
 	evas_object_event_callback_del_full(wd->content,
@@ -315,7 +302,7 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 	evas_object_del(wd->content);
 	wd->content = NULL;
      }
-
+   
    if (content)
      {
 	elm_widget_sub_object_add(obj, content);
@@ -326,7 +313,7 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 	evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE,
                                        _content_resize, obj);
 	edje_object_part_swallow(wd->notify, "elm.swallow.content", content);
-
+        
 	_sizing_eval(obj);
      }
    _calc(obj);
@@ -345,8 +332,8 @@ elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
-   if(wd->parent)
+   if (!wd) return;
+   if (wd->parent)
      {
 	evas_object_event_callback_del_full(wd->parent,
                                             EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -361,7 +348,7 @@ elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
                                             _parent_hide, obj);
 	wd->parent = NULL;
      }
-
+   
    if (parent)
      {
 	wd->parent = parent;
@@ -393,39 +380,38 @@ elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    wd->orient = orient;
    switch (orient)
      {
-      case ELM_NOTIFY_ORIENT_TOP:
+     case ELM_NOTIFY_ORIENT_TOP:
         _elm_theme_set(wd->notify, "notify", "base", "default");
         break;
-      case ELM_NOTIFY_ORIENT_CENTER:
+     case ELM_NOTIFY_ORIENT_CENTER:
         _elm_theme_set(wd->notify, "notify", "base", "center");
         break;
-      case ELM_NOTIFY_ORIENT_BOTTOM:
+     case ELM_NOTIFY_ORIENT_BOTTOM:
         _elm_theme_set(wd->notify, "notify", "base", "bottom");
         break;
-      case ELM_NOTIFY_ORIENT_LEFT:
+     case ELM_NOTIFY_ORIENT_LEFT:
         _elm_theme_set(wd->notify, "notify", "base", "left");
         break;
-      case ELM_NOTIFY_ORIENT_RIGHT:
+     case ELM_NOTIFY_ORIENT_RIGHT:
         _elm_theme_set(wd->notify, "notify", "base", "right");
         break;
-      case ELM_NOTIFY_ORIENT_TOP_LEFT:
+     case ELM_NOTIFY_ORIENT_TOP_LEFT:
         _elm_theme_set(wd->notify, "notify", "base", "top_left");
         break;
-      case ELM_NOTIFY_ORIENT_TOP_RIGHT:
+     case ELM_NOTIFY_ORIENT_TOP_RIGHT:
         _elm_theme_set(wd->notify, "notify", "base", "top_right");
         break;
-      case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
+     case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
         _elm_theme_set(wd->notify, "notify", "base", "bottom_left");
         break;
-      case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
+     case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
         _elm_theme_set(wd->notify, "notify", "base", "bottom_right");
         break;
      }
-
    _resize(obj, NULL, obj, NULL);
 }
 
@@ -441,7 +427,7 @@ elm_notify_timeout_set(Evas_Object *obj, int timeout)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    wd->timeout = timeout;
    elm_notify_timer_init(obj);
 }
@@ -455,7 +441,7 @@ elm_notify_timer_init(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    if (wd->timer) ecore_timer_del(wd->timer);
    wd->timer = NULL;
    if (wd->timeout > 0)
@@ -477,7 +463,7 @@ elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    if (repeat == wd->repeat_events) return;
    wd->repeat_events = repeat;
    if (!repeat)

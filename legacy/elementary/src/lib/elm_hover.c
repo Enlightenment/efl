@@ -169,7 +169,6 @@ _hov_show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 static void
 _hov_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
    const Eina_List *l;
    const Subinfo *si;
@@ -319,7 +318,7 @@ elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    if (wd->parent)
      {
 	evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_MOVE,
