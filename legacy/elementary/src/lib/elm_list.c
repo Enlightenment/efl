@@ -511,7 +511,6 @@ _fix_items(Evas_Object *obj)
 
    EINA_LIST_FOREACH(wd->items, l, it)
      {
-	Evas_Coord mw, mh;
 	if (it->deleted) continue;
 	if (it->icon)
 	  {
@@ -794,7 +793,7 @@ elm_list_clear(Evas_Object *obj)
    if (wd->walking > 0)
      {
 	Eina_List *n;
-	Elm_List_Item *it;
+        
 	EINA_LIST_FOREACH(wd->items, n, it)
 	  {
 	     if (it->deleted) continue;

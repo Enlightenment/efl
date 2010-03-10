@@ -661,7 +661,7 @@ grid_load(Evas_Object *obj, Grid *g)
    
    EINA_ITERATOR_FOREACH(it, cell)
      {
-	Grid_Item *gi = eina_matrixsparse_cell_data_get(cell);
+	gi = eina_matrixsparse_cell_data_get(cell);
 
 	xx = gi->out.x;
 	yy = gi->out.y;
@@ -2291,7 +2291,7 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	clas->priv.set = EINA_TRUE;
      }
 
-   for (i=clas_group->zoom_displayed; i<=ZOOM_MAX; i++)
+   for (i = clas_group->zoom_displayed; i <= ZOOM_MAX; i++)
      {
 	elm_map_utils_convert_geo_into_coord(lon, lat, pow(2.0, i)*wd->tsize,
                                              &(marker->x[i]), &(marker->y[i]));
@@ -2368,13 +2368,13 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 
 	     if (!group->cell)
 	       {
-		  Eina_List *l = eina_list_append(NULL, group);
+		  l = eina_list_append(NULL, group);
 		  eina_matrixsparse_data_idx_set(wd->markers[i], mpj, mpi, l);
 		  eina_matrixsparse_cell_idx_get(wd->markers[i], mpj, mpi, &(group->cell));
 	       }
 	     else
 	       {
-		  Eina_List *l = eina_matrixsparse_cell_data_get(group->cell);
+		  l = eina_matrixsparse_cell_data_get(group->cell);
 		  l = eina_list_append(l, group);
 		  eina_matrixsparse_cell_data_set(group->cell, l);
 	       }

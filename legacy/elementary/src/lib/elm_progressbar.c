@@ -144,24 +144,6 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 }
 
 static void
-_val_fetch(Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   double posx = MIN_RATIO_LVL, posy = MIN_RATIO_LVL, pos = MIN_RATIO_LVL;
-   if (!wd) return;
-   edje_object_part_drag_value_get(wd->progressbar, "elm.cur.progressbar",
-                                   &posx, &posy);
-   if (wd->horizontal) pos = posx;
-   else pos = posy;
-   if (wd->inverted) pos = MAX_RATIO_LVL - pos;
-   if (pos != wd->val)
-     {
-        wd->val = pos;
-        evas_object_smart_callback_call(obj, "changed", NULL);
-     }
-}
-
-static void
 _val_set(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);

@@ -464,6 +464,119 @@ _elm_unneed_efreet(void)
 #endif   
 }
 
+static void
+_config_init(void)
+{
+   Eet_Data_Descriptor_Class eddc;
+   Eet_Data_Descriptor *edd = NULL;
+   Eet_File *ef = NULL;
+   int len = 0;
+   char buf[PATH_MAX], *p, *s;
+   const char *home = NULL;
+   char *profile = strdup("default");
+   
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Config);
+   
+   eddc.func.str_direct_alloc = NULL;
+   eddc.func.str_direct_free = NULL;
+   
+   edd = eet_data_descriptor_file_new(&eddc);
+   if (edd)
+     {
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "engine", engine, EET_T_INT);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_enable", thumbscroll_enable, EET_T_INT);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_threshhold", thumbscroll_threshhold, EET_T_INT);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_momentum_threshhold", thumbscroll_momentum_threshhold, EET_T_DOUBLE);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_friction", thumbscroll_friction, EET_T_DOUBLE);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_bounce_friction", thumbscroll_bounce_friction, EET_T_DOUBLE);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "page_scroll_friction", page_scroll_friction, EET_T_DOUBLE);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "bring_in_scroll_friction", bring_in_scroll_friction, EET_T_DOUBLE);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "zoom_friction", zoom_friction, EET_T_DOUBLE);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_bounce_enable", thumbscroll_bounce_enable, EET_T_INT);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "scale", scale, EET_T_DOUBLE);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "bgpixmap", bgpixmap, EET_T_INT);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "compositing", compositing, EET_T_INT);
+        // EET_DATA_DESCRIPTOR_ADD_LIST(edd, Elm_Config, "font_dirs", font_dirs, sub_edd);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "font_hinting", font_hinting, EET_T_INT);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "image_cache", image_cache, EET_T_INT);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "font_cache", font_cache, EET_T_INT);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "finger_size", finger_size, EET_T_INT);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "fps", fps, EET_T_DOUBLE);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "theme", theme, EET_T_STRING);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "modules", modules, EET_T_STRING);
+     }
+   else
+     {
+        printf("EEEK! eet_data_descriptor_file_new() failed\n");
+     }
+   
+   home = getenv("HOME");
+   if (!home) home = "/";
+   
+   snprintf(buf, sizeof(buf), "%s/.elementary/config/profile.cfg", home);
+   ef = eet_open(buf, EET_FILE_MODE_READ);
+   if (ef)
+     {
+        p = eet_read(ef, "config", &len);
+        if (p)
+          {
+             free(profile);
+             profile = malloc(len + 1);
+             memcpy(profile, p, len);
+             profile[len] = 0;
+             free(p);
+          }
+        eet_close(ef);
+        if (!p) ef = NULL;
+     }
+   if (!ef)
+     {
+        snprintf(buf, sizeof(buf), "%s/config/profile.cfg", _elm_data_dir);
+        ef = eet_open(buf, EET_FILE_MODE_READ);
+        if (ef)
+          {
+             p = eet_read(ef, "config", &len);
+             if (p)
+               {
+                  free(profile);
+                  profile = malloc(len + 1);
+                  memcpy(profile, p, len);
+                  profile[len] = 0;
+                  free(p);
+               }
+             eet_close(ef);
+          }
+     }
+   
+   s = getenv("ELM_PROFILE");
+   if (s)
+     {
+        free(profile);
+        profile = strdup(s);
+     }
+   
+   snprintf(buf, sizeof(buf), "%s/.elementary/config/%s/base.cfg", home, profile);
+   ef = eet_open(buf, EET_FILE_MODE_READ);
+   if (ef)
+     {
+        _elm_config = eet_data_read(ef, edd, "config");
+        eet_close(ef);
+     }
+   if (!_elm_config)
+     {
+        snprintf(buf, sizeof(buf), "%s/config/%s/base.cfg", _elm_data_dir, profile);
+        ef = eet_open(buf, EET_FILE_MODE_READ);
+        if (ef)
+          {
+             _elm_config = eet_data_read(ef, edd, "config");
+             eet_close(ef);
+          }
+     }
+   
+   if (edd) eet_data_descriptor_free(edd);
+   if (profile) free(profile);
+}
+
 EAPI void
 elm_quicklaunch_init(int argc, char **argv)
 {
@@ -565,119 +678,8 @@ elm_quicklaunch_init(int argc, char **argv)
    if (!_elm_lib_dir)
      _elm_lib_dir = eina_stringshare_add("/");
 
-
-   // yes - this should be a function. do it later
-     {
-        Eet_Data_Descriptor_Class eddc;
-        Eet_Data_Descriptor *edd = NULL;
-        Eet_File *ef = NULL;
-        int len = 0;
-        char buf[PATH_MAX], *p;
-        const char *home = NULL;
-        char *profile = strdup("default");
-        
-        EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Config);
-        
-        eddc.func.str_direct_alloc = NULL;
-        eddc.func.str_direct_free = NULL;
-        
-        edd = eet_data_descriptor_file_new(&eddc);
-        if (edd)
-          {
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "engine", engine, EET_T_INT);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_enable", thumbscroll_enable, EET_T_INT);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_threshhold", thumbscroll_threshhold, EET_T_INT);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_momentum_threshhold", thumbscroll_momentum_threshhold, EET_T_DOUBLE);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_friction", thumbscroll_friction, EET_T_DOUBLE);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_bounce_friction", thumbscroll_bounce_friction, EET_T_DOUBLE);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "page_scroll_friction", page_scroll_friction, EET_T_DOUBLE);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "bring_in_scroll_friction", bring_in_scroll_friction, EET_T_DOUBLE);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "zoom_friction", zoom_friction, EET_T_DOUBLE);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "thumbscroll_bounce_enable", thumbscroll_bounce_enable, EET_T_INT);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "scale", scale, EET_T_DOUBLE);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "bgpixmap", bgpixmap, EET_T_INT);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "compositing", compositing, EET_T_INT);
-             // EET_DATA_DESCRIPTOR_ADD_LIST(edd, Elm_Config, "font_dirs", font_dirs, sub_edd);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "font_hinting", font_hinting, EET_T_INT);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "image_cache", image_cache, EET_T_INT);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "font_cache", font_cache, EET_T_INT);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "finger_size", finger_size, EET_T_INT);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "fps", fps, EET_T_DOUBLE);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "theme", theme, EET_T_STRING);
-             EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Elm_Config, "modules", modules, EET_T_STRING);
-          }
-        else
-          {
-             printf("EEEK! eet_data_descriptor_file_new() failed\n");
-          }
-        
-        home = getenv("HOME");
-        if (!home) home = "/";
-        
-        snprintf(buf, sizeof(buf), "%s/.elementary/config/profile.cfg", home);
-        ef = eet_open(buf, EET_FILE_MODE_READ);
-        if (ef)
-          {
-             p = eet_read(ef, "config", &len);
-             if (p)
-               {
-                  free(profile);
-                  profile = malloc(len + 1);
-                  memcpy(profile, p, len);
-                  profile[len] = 0;
-                  free(p);
-               }
-             eet_close(ef);
-             if (!p) ef = NULL;
-          }
-        if (!ef)
-          {
-             snprintf(buf, sizeof(buf), "%s/config/profile.cfg", _elm_data_dir);
-             ef = eet_open(buf, EET_FILE_MODE_READ);
-             if (ef)
-               {
-                  p = eet_read(ef, "config", &len);
-                  if (p)
-                    {
-                       free(profile);
-                       profile = malloc(len + 1);
-                       memcpy(profile, p, len);
-                       profile[len] = 0;
-                       free(p);
-                    }
-                  eet_close(ef);
-               }
-          }
-        
-        s = getenv("ELM_PROFILE");
-        if (s)
-          {
-             free(profile);
-             profile = strdup(s);
-          }
-        
-        snprintf(buf, sizeof(buf), "%s/.elementary/config/%s/base.cfg", home, profile);
-        ef = eet_open(buf, EET_FILE_MODE_READ);
-        if (ef)
-          {
-             _elm_config = eet_data_read(ef, edd, "config");
-             eet_close(ef);
-          }
-        if (!_elm_config)
-          {
-             snprintf(buf, sizeof(buf), "%s/config/%s/base.cfg", _elm_data_dir, profile);
-             ef = eet_open(buf, EET_FILE_MODE_READ);
-             if (ef)
-               {
-                  _elm_config = eet_data_read(ef, edd, "config");
-                  eet_close(ef);
-               }
-          }
-        
-        if (edd) eet_data_descriptor_free(edd);
-        if (profile) free(profile);
-     }
-
+   _config_init();
+   
    if (!_elm_config)
      {
         _elm_config = ELM_NEW(Elm_Config);
@@ -799,14 +801,14 @@ elm_quicklaunch_init(int argc, char **argv)
    if (s)
      {
 	const char *p, *pp;
-	char *buf;
+	char *buf2;
 
         EINA_LIST_FREE(_elm_config->font_dirs, p)
           {
              eina_stringshare_del(p);
           }
         
-	buf = alloca(strlen(s) + 1);
+	buf2 = alloca(strlen(s) + 1);
 	p = s;
 	pp = p;
 	for (;;)
@@ -816,11 +818,11 @@ elm_quicklaunch_init(int argc, char **argv)
 		  int len;
 
 		  len = p - pp;
-		  strncpy(buf, pp, len);
-		  buf[len] = 0;
+		  strncpy(buf2, pp, len);
+		  buf2[len] = 0;
 		  _elm_config->font_dirs = 
                     eina_list_append(_elm_config->font_dirs, 
-                                     eina_stringshare_add(buf));
+                                     eina_stringshare_add(buf2));
 		  if (*p == 0) break;
 		  p++;
 		  pp = p;
@@ -1230,9 +1232,9 @@ elm_quicklaunch_exe_path_get(const char *exe)
    if (!path)
      {
 	const char *p, *pp;
-	char *buf;
+	char *buf2;
 	path = getenv("PATH");
-	buf = alloca(strlen(path) + 1);
+	buf2 = alloca(strlen(path) + 1);
 	p = path;
 	pp = p;
 	for (;;)
@@ -1242,9 +1244,9 @@ elm_quicklaunch_exe_path_get(const char *exe)
 		  int len;
 
 		  len = p - pp;
-		  strncpy(buf, pp, len);
-		  buf[len] = 0;
-		  pathlist = eina_list_append(pathlist, eina_stringshare_add(buf));
+		  strncpy(buf2, pp, len);
+		  buf2[len] = 0;
+		  pathlist = eina_list_append(pathlist, eina_stringshare_add(buf2));
 		  if (*p == 0) break;
 		  p++;
 		  pp = p;

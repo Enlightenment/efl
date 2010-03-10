@@ -59,7 +59,6 @@ static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _signal_radio_on(void *data, Evas_Object *obj, const char *emission, const char *source);
-static void _signal_radio_toggle(void *data, Evas_Object *obj, const char *emission, const char *source);
 
 static void
 _del_hook(Evas_Object *obj)

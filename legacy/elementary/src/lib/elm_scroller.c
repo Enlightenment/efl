@@ -399,8 +399,7 @@ elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scro
 	  ELM_SMART_SCROLLER_POLICY_OFF
      };
    if (!wd) return;
-   if ((policy_h < 0) || (policy_h >= 3) || (policy_v < 0) || (policy_v >= 3))
-     return;
+   if ((policy_h >= 3) || (policy_v >= 3)) return;
    elm_smart_scroller_policy_set(wd->scr, map[policy_h], map[policy_v]);
 }
 

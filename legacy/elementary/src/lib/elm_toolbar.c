@@ -44,7 +44,6 @@ static void _sizing_eval(Evas_Object *obj);
 static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _menu_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _menu_hide(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _menu_item_select(void *data, Evas_Object *obj, void *event_info);
 static void _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
 
 static void

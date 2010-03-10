@@ -70,14 +70,6 @@ _changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_hover_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-   wd->hover = NULL;
-}
-
-static void
 _hover_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_anchorblock_hover_end(data);

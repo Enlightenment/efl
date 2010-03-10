@@ -342,7 +342,7 @@ static void _item_unrealize(Elm_Genlist_Item *it);
 static void _item_block_unrealize(Item_Block *itb);
 static void _calc_job(void *data);
 
-static Evas_Smart_Class _pan_sc = {NULL};
+static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_VERSION;
 
 static void
 _del_hook(Evas_Object *obj)
