@@ -18,6 +18,7 @@ void test_hover(void *data, Evas_Object *obj, void *event_info);
 void test_hover2(void *data, Evas_Object *obj, void *event_info);
 void test_entry(void *data, Evas_Object *obj, void *event_info);
 void test_entry_scrolled(void *data, Evas_Object *obj, void *event_info);
+void test_entry3(void *data, Evas_Object *obj, void *event_info);
 void test_notepad(void *data, Evas_Object *obj, void *event_info);
 void test_anchorview(void *data, Evas_Object *obj, void *event_info);
 void test_anchorblock(void *data, Evas_Object *obj, void *event_info);
@@ -163,6 +164,7 @@ my_win_main(void)
    elm_list_item_append(li, "Hover 2", NULL, NULL, test_hover2, NULL);
    elm_list_item_append(li, "Entry", NULL, NULL, test_entry, NULL);
    elm_list_item_append(li, "Entry Scrolled", NULL, NULL, test_entry_scrolled, NULL);
+   elm_list_item_append(li, "Entry 3", NULL, NULL, test_entry3, NULL);
    elm_list_item_append(li, "Notepad", NULL, NULL, test_notepad, NULL);
    elm_list_item_append(li, "Anchorview", NULL, NULL, test_anchorview, NULL);
    elm_list_item_append(li, "Anchorblock", NULL, NULL, test_anchorblock, NULL);
