@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/file.h>
+#include <sys/mman.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
@@ -24,6 +25,12 @@ static Eet_File *util_ef = NULL;
 
 static Eina_Hash *file_ids = NULL;
 static Eina_Hash *paths = NULL;
+
+static int
+strcmplen(const void *data1, const void *data2)
+{
+    return strncmp(data1, data2, strlen(data2));
+}
 
 static int
 cache_add(const char *path, const char *file_id, int priority __UNUSED__)
@@ -162,10 +169,12 @@ main()
      */
     char file[PATH_MAX];
     char util_file[PATH_MAX];
-    Eina_List *dirs;
+    Eina_List *dirs = NULL, *user_dirs = NULL;
     int priority = 0;
     char *dir = NULL;
-    int fd = -1, tmpfd;
+    char *map = MAP_FAILED;
+    int fd = -1, tmpfd, dirsfd = -1;
+    struct stat st;
 
     /* init external subsystems */
     if (!eina_init()) goto eina_error;
@@ -237,23 +246,58 @@ main()
 
     dirs = efreet_default_dirs_get(efreet_data_home_get(), efreet_data_dirs_get(),
                                                                     "applications");
-    /* TODO:
-     * - read dirs cache
-     * - skip dirs/subdirs in default dirs
-     */
     if (!dirs) goto error;
+
+    dirsfd = open(efreet_desktop_cache_dirs(), O_APPEND | O_RDWR, S_IRUSR | S_IWUSR);
+    if ((dirsfd > 0) && (fstat(dirsfd, &st) == 0) && (st.st_size > 0))
+    {
+        char *p;
+
+        map = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, dirsfd, 0);
+        if (map == MAP_FAILED) goto error;
+        p = map;
+        while (p < map + st.st_size)
+        {
+            unsigned int size = *(unsigned int *)p;
+            p += sizeof(unsigned int);
+            user_dirs = eina_list_append(user_dirs, strdup(p));
+            p += size;
+        }
+        munmap(map, st.st_size);
+        map = MAP_FAILED;
+        if (ftruncate(dirsfd, 0) < 0) goto error;
+    }
+
     while (dirs)
     {
         char file_id[PATH_MAX] = { '\0' };
         char *path;
+        Eina_List *l;
 
         path = eina_list_data_get(dirs);
         if (path)
         {
             if (!cache_scan(path, file_id, priority++)) goto error;
+            l = eina_list_search_unsorted_list(user_dirs, strcmplen, path);
+            if (l)
+            {
+                free(eina_list_data_get(l));
+                user_dirs = eina_list_remove_list(user_dirs, l);
+            }
             free(path);
         }
         dirs = eina_list_remove_list(dirs, dirs);
+    }
+    EINA_LIST_FREE(user_dirs, dir)
+    {
+        /* TODO: Scan dir not recursively and without file id */
+        if (dirsfd > 0)
+        {
+            unsigned int size = strlen(dir) + 1;
+            write(dirsfd, &size, sizeof(int));
+            write(dirsfd, dir, size);
+        }
+        free(dir);
     }
     eina_hash_free(file_ids);
     eina_hash_free(paths);
@@ -271,8 +315,11 @@ main()
     eet_shutdown();
     eina_shutdown();
     close(fd);
+    if (dirsfd > 0) close(dirsfd);
     return 0;
 error:
+    if (map != MAP_FAILED) munmap(map, st.st_size);
+    if (dirsfd > 0) close(dirsfd);
     IF_FREE(dir);
     efreet_desktop_edd_shutdown(edd);
 edd_error:
