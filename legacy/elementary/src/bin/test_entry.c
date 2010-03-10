@@ -340,7 +340,7 @@ static void
 my_ent_bt_clr(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
-   elm_entry_entry_set(en, "");
+   elm_scrolled_entry_entry_set(en, "");
 }
 
 static void
@@ -356,7 +356,7 @@ static void
 my_ent_bt_sel(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
-   const char *s = elm_entry_selection_get(en);
+   const char *s = elm_scrolled_entry_selection_get(en);
    printf("SELECTION:\n");
    if (s) printf("%s\n", s);
 }
