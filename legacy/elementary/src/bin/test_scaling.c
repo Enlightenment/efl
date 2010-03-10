@@ -4,7 +4,6 @@ void
 test_scaling(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *bt;
-   char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "scaling", ELM_WIN_BASIC);
    elm_win_title_set(win, "Scaling");
@@ -64,7 +63,6 @@ void
 test_scaling2(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *fr, *lb;
-   char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "scaling-2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Scaling 2");

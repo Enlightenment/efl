@@ -102,7 +102,7 @@ handle_run(int fd, unsigned long bytes)
    close(fd);
    argc = ((unsigned long *)(buf))[0];
    argv = (char **)(&(((unsigned long *)(buf))[1]));
-   for (i = 0; i < argc; i++) argv[i] = buf + (unsigned long)argv[i];
+   for (i = 0; i < argc; i++) argv[i] = (char *)(buf + (unsigned long)argv[i]);
    cwd = argv[argc - 1] + strlen(argv[argc - 1]) + 1;
    elm_quicklaunch_prepare(argc, argv);
    elm_quicklaunch_fork(argc, argv, cwd, post_fork, NULL);
@@ -271,7 +271,6 @@ main(int argc, char **argv)
 	if (fd >= 0)
 	  {
 	     unsigned long bytes;
-	     char line[4096];
 	     int num;
 
 	     num = read(fd, &bytes, sizeof(unsigned long));

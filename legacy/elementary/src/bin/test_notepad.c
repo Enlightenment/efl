@@ -3,26 +3,25 @@
 static void
 my_notepad_bt_1(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *np = data;
+//   Evas_Object *np = data;
 }
 
 static void
 my_notepad_bt_2(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *np = data;
+//   Evas_Object *np = data;
 }
 
 static void
 my_notepad_bt_3(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *np = data;
+//   Evas_Object *np = data;
 }
 
 void
 test_notepad(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *bx2, *bt, *ic, *np;
-   char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "notepad", ELM_WIN_BASIC);
    elm_win_title_set(win, "Notepad");

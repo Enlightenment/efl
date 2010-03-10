@@ -6,61 +6,62 @@
 # include "EWeather_Smart.h"
 #endif
 
+#ifdef HAVE_ELEMENTARY_EWEATHER
 static Evas_Object *en, *hv, *fl;
 static Evas_Object *weather[2];
 static int current = 0;
 static Eina_Module *module[2];
 
-static void _first_city_cb(void *data, Evas_Object *o, void *event_info)
+static void
+_first_city_cb(void *data, Evas_Object *o, void *event_info)
 {
-    if(!current) return ;
-    current = 0;
-    elm_flip_go(fl, ELM_FLIP_ROTATE_YZ_CENTER_AXIS);
+   if (!current) return;
+   current = 0;
+   elm_flip_go(fl, ELM_FLIP_ROTATE_YZ_CENTER_AXIS);
 }
 
-static void _second_city_cb(void *data, Evas_Object *o, void *event_info)
+static void
+_second_city_cb(void *data, Evas_Object *o, void *event_info)
 {
-    if(current) return ;
-    current = 1;
-    elm_flip_go(fl, ELM_FLIP_ROTATE_XZ_CENTER_AXIS);
+   if (current) return;
+   current = 1;
+   elm_flip_go(fl, ELM_FLIP_ROTATE_XZ_CENTER_AXIS);
 }
 
 static void _apply_cb(void *data, Evas_Object *o, void *event_info)
 {
-#ifdef HAVE_ELEMENTARY_EWEATHER
    EWeather *eweather = eweather_object_eweather_get(weather[current]);
-
+   
    if (module[current])
      eweather_plugin_set(eweather, module[current]);
    eweather_code_set(eweather, elm_entry_entry_get(en));
    printf("CURRENT %d %p %p\n", current, module[current], eweather);
-#endif
 }
 
 static void
 _hover_select_cb(void *data, Evas_Object *obj, void *event_info)
 {
-#ifdef HAVE_ELEMENTARY_EWEATHER
    EWeather *eweather = eweather_object_eweather_get(weather[0]);
    module[0] = eweather_plugin_search(eweather, elm_hoversel_item_label_get(event_info));
    
    eweather = eweather_object_eweather_get(weather[1]);
    module[1] = eweather_plugin_search(eweather, elm_hoversel_item_label_get(event_info));
    printf("%p %p\n", module[0], module[1]);
-#endif
 }
+#endif
 
 void
 test_weather(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *bx, *bx0, *bt;
+   Evas_Object *win, *bg;
 #ifdef HAVE_ELEMENTARY_EWEATHER
+   Evas_Object *bx, *bx0, *bt;
    EWeather *eweather;
-#endif
    Eina_Array_Iterator it;
    Eina_Array *array;
    Eina_Module *m;
    int i;
+#endif
 
    win = elm_win_add(NULL, "weather", ELM_WIN_BASIC);
    elm_win_title_set(win, "Weather");
@@ -140,9 +141,7 @@ test_weather(void *data, Evas_Object *obj, void *event_info)
    array = eweather_plugins_list_get(eweather);
    
    EINA_ARRAY_ITER_NEXT(array, i, m, it)
-     {
-        elm_hoversel_item_add(hv, eweather_plugin_name_get(eweather, i), NULL, ELM_ICON_NONE, _hover_select_cb, NULL);
-     }
+     elm_hoversel_item_add(hv, eweather_plugin_name_get(eweather, i), NULL, ELM_ICON_NONE, _hover_select_cb, NULL);
    
    en = elm_entry_add(win);
    elm_entry_line_wrap_set(en, 0);

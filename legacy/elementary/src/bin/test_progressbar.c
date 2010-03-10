@@ -68,7 +68,7 @@ my_progressbar_destroy(void *data, Evas_Object *obj, void *event_info)
 void
 test_progressbar(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *pb, *bx, *pbx, *hbx, *bt, *bt_bx, *ic1, *ic2;
+   Evas_Object *win, *bg, *pb, *bx, *hbx, *bt, *bt_bx, *ic1, *ic2;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "progressbar", ELM_WIN_BASIC);

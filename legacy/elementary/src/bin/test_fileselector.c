@@ -46,7 +46,6 @@ void
 test_fileselector(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *fs, *bg, *vbox, *hbox, *bt;
-   char buf[PATH_MAX];
 
    /* Set the locale according to the system pref.
     * If you dont do so the file selector will order the files list in

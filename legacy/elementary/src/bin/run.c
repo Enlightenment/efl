@@ -67,7 +67,7 @@ main(int argc, char **argv)
 	int exelen = strlen(argv[0]);
 	if (path)
 	  {
-	     const char *p, *pp, *s;
+	     const char *p, *pp;
 
 	     p = path;
 	     pp = p;
@@ -149,11 +149,12 @@ main(int argc, char **argv)
      {
 	((unsigned long *)(sbuf))[2 + i] =
 	  (unsigned long)pos - ((unsigned long)sbuf + sizeof(unsigned long));
-	strcpy(pos, sargv[i]);
+	strcpy((char *)pos, sargv[i]);
 	pos += strlen(sargv[i]) + 1;
      }
-   strcpy(pos, cwd);
-   write(sock, sbuf, slen);
+   strcpy((char *)pos, cwd);
+   if (write(sock, sbuf, slen) < 0)
+     printf("elementary_quicklaunch: cannot write to socket '%s'\n", buf);
    close(sock);
    return 0;
 }

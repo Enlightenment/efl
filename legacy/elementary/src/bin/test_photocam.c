@@ -6,112 +6,112 @@ static Evas_Object *rect;
 static void
 my_ph_clicked(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("clicked\n");
 }
 
 static void
 my_ph_press(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("press\n");
 }
 
 static void
 my_ph_longpressed(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("longpressed\n");
 }
 
 static void
 my_ph_clicked_double(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("clicked,double\n");
 }
 
 static void
 my_ph_load(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("load\n");
 }
 
 static void
 my_ph_loaded(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("loaded\n");
 }
 
 static void
 my_ph_load_details(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("load,details\n");
 }
 
 static void
 my_ph_loaded_details(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("loaded,details\n");
 }
 
 static void
 my_ph_zoom_start(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("zoom,start\n");
 }
 
 static void
 my_ph_zoom_stop(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("zoom,stop\n");
 }
 
 static void
 my_ph_zoom_change(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("zoom,change\n");
 }
 
 static void
 my_ph_anim_start(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("anim,start\n");
 }
 
 static void
 my_ph_anim_stop(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("anim,stop\n");
 }
 
 static void
 my_ph_drag_start(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("drag,start\n");
 }
 
 static void
 my_ph_drag_stop(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("drag_stop\n");
 }
 
 static void
 my_ph_scroll(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    int x, y, w, h;
    elm_photocam_region_get(obj, &x, &y, &w, &h);
    printf("scroll %i %i %ix%i\n", x, y, w, h);
@@ -207,7 +207,6 @@ static void
 _photocam_mouse_wheel_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Evas_Object *photocam = data;
-   Evas_Object *ph = data;
    Evas_Event_Mouse_Wheel *ev = (Evas_Event_Mouse_Wheel*) event_info;
    int zoom;
    double val;
@@ -248,7 +247,6 @@ void
 test_photocam(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *ph, *tb2, *bt;
-   char buf[PATH_MAX];
    // these were just testing - use the "select photo" browser to select one
    const char *img[5] =
      {

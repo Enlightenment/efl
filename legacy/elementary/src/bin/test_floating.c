@@ -63,7 +63,6 @@ void
 test_floating(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *gl;
-   Evas_Object *over;
    Elm_Genlist_Item *gli;
    int i;
    Ecore_Animator *ani;

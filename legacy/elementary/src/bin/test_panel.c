@@ -100,7 +100,6 @@ _fill_list(Evas_Object *obj)
 {
    DIR *d;
    struct dirent *de;
-   char buff[PATH_MAX];
    Eina_List *dirs = NULL, *l;
    char *real;
 
@@ -141,7 +140,6 @@ _dir_has_subs(const char *path)
 {
    DIR *d;
    struct dirent *de;
-   char buff[PATH_MAX];
    Eina_Bool result = EINA_FALSE;
 
    if (!path) return result;

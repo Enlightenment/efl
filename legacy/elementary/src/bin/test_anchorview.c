@@ -71,7 +71,6 @@ void
 test_anchorview(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *av;
-   char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "anchorview", ELM_WIN_BASIC);
    elm_win_title_set(win, "Anchorview");

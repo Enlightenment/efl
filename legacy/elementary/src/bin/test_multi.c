@@ -9,7 +9,7 @@ static void
 _mouse_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    
    if (ev->button != 1) return;
    printf("MOUSE: down @ %4i %4i\n", ev->canvas.x, ev->canvas.y);
@@ -22,7 +22,7 @@ static void
 _mouse_up(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    if (ev->button != 1) return;
    printf("MOUSE: up   @ %4i %4i\n", ev->canvas.x, ev->canvas.y);
    evas_object_hide(indicator[0]);
@@ -32,7 +32,7 @@ static void
 _mouse_move(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("MOUSE: move @ %4i %4i\n", ev->cur.canvas.x, ev->cur.canvas.y);
    evas_object_move(indicator[0], ev->cur.canvas.x, ev->cur.canvas.y);
    evas_object_resize(indicator[0], 1, 1);
@@ -45,7 +45,7 @@ static void
 _multi_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Evas_Event_Multi_Down *ev = event_info;
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("MULTI: down @ %4i %4i | dev: %i\n", ev->canvas.x, ev->canvas.y, ev->device);
    if (ev->device >= IND_NUM) return;
    evas_object_move(indicator[ev->device], ev->canvas.x, ev->canvas.y);
@@ -57,7 +57,7 @@ static void
 _multi_up(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Evas_Event_Multi_Up *ev = event_info;
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("MULTI: up    @ %4i %4i | dev: %i\n", ev->canvas.x, ev->canvas.y, ev->device);
    if (ev->device >= IND_NUM) return;
    evas_object_hide(indicator[ev->device]);
@@ -67,7 +67,7 @@ static void
 _multi_move(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Evas_Event_Multi_Move *ev = event_info;
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    printf("MULTI: move @ %4i %4i | dev: %i\n", ev->cur.canvas.x, ev->cur.canvas.y, ev->device);
    if (ev->device >= IND_NUM) return;
    evas_object_move(indicator[ev->device], ev->cur.canvas.x, ev->cur.canvas.y);

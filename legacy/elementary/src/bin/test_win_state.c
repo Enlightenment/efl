@@ -29,7 +29,7 @@ my_bt_38_alpha_off(void *data, Evas_Object *obj, void *event_info)
 static void
 my_ck_38_resize(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
+//   Evas_Object *win = data;
    rotate_with_resize = elm_check_state_get(obj);
 }
 
@@ -37,7 +37,6 @@ static void
 my_bt_38_rot_0(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win = data;
-   Evas_Object *bg = evas_object_data_get(win, "bg");
    if (rotate_with_resize)
      elm_win_rotation_with_resize_set(win, 0);
    else   	
@@ -48,7 +47,6 @@ static void
 my_bt_38_rot_90(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win = data;
-   Evas_Object *bg = evas_object_data_get(win, "bg");
    if (rotate_with_resize)
      elm_win_rotation_with_resize_set(win, 90);
    else   	
@@ -59,7 +57,6 @@ static void
 my_bt_38_rot_180(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win = data;
-   Evas_Object *bg = evas_object_data_get(win, "bg");
    if (rotate_with_resize)
      elm_win_rotation_with_resize_set(win, 180);
    else   	
@@ -70,7 +67,6 @@ static void
 my_bt_38_rot_270(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win = data;
-   Evas_Object *bg = evas_object_data_get(win, "bg");
    if (rotate_with_resize)
      elm_win_rotation_with_resize_set(win, 270);
    else   	
@@ -109,8 +105,6 @@ void
 test_win_state(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *sl, *bx, *bx2, *bt, *ck;
-   static Testitem tit[3];
-   int i;
 
    win = elm_win_add(NULL, "window-state", ELM_WIN_BASIC);
    elm_win_title_set(win, "Window States");

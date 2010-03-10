@@ -311,7 +311,6 @@ test_genlist2(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *win, *bg, *gl, *bx, *bx2, *bx3, *bt;
    Elm_Genlist_Item *gli[10];
    char buf[PATH_MAX];
-   int i;
 
    win = elm_win_add(NULL, "genlist-2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist 2");
@@ -531,7 +530,6 @@ test_genlist3(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
    static Testitem tit[3];
-   int i;
 
    win = elm_win_add(NULL, "genlist-3", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist 3");
@@ -686,7 +684,6 @@ test_genlist4(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
    static Testitem tit[3];
-   int i;
 
    win = elm_win_add(NULL, "genlist-4", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist 4");
@@ -883,7 +880,6 @@ test_genlist5(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
    static Testitem tit[3];
-   int i;
 
    win = elm_win_add(NULL, "genlist-5", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist 5");

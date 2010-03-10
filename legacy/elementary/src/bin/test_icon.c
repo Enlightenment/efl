@@ -9,7 +9,7 @@ icon_clicked(void *data, Evas_Object *obj, void *event_info)
 void
 test_icon(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *ic;
+   Evas_Object *win, *ic;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "icon-transparent", ELM_WIN_BASIC);

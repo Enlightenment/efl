@@ -56,7 +56,6 @@ smooth_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 close_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
    evas_object_del(data);
 }
 
