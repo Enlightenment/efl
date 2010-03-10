@@ -122,9 +122,10 @@ cache_add(const char *path, const char *file_id, int priority __UNUSED__)
 
 
 static int
-cache_scan(const char *path, const char *base_id, int priority)
+cache_scan(const char *path, const char *base_id, int priority, int recurse)
 {
-    char file_id[PATH_MAX];
+    char *file_id = NULL;
+    char id[PATH_MAX];
     char buf[PATH_MAX];
     DIR *files;
     struct dirent *file;
@@ -132,21 +133,26 @@ cache_scan(const char *path, const char *base_id, int priority)
     if (!ecore_file_is_dir(path)) return 1;
 
     files = opendir(path);
-    file_id[0] = '\0';
+    id[0] = '\0';
     while ((file = readdir(files)))
     {
         if (!file) break;
         if (!strcmp(file->d_name, ".") || !strcmp(file->d_name, "..")) continue;
 
-        snprintf(buf, sizeof(buf), "%s/%s", path, file->d_name);
-        if (*base_id)
-            snprintf(file_id, sizeof(file_id), "%s-%s", base_id, file->d_name);
-        else
-            strcpy(file_id, file->d_name);
+        if (base_id)
+        {
+            if (*base_id)
+                snprintf(id, sizeof(id), "%s-%s", base_id, file->d_name);
+            else
+                strcpy(id, file->d_name);
+            file_id = id;
+        }
 
+        snprintf(buf, sizeof(buf), "%s/%s", path, file->d_name);
         if (ecore_file_is_dir(buf))
         {
-            cache_scan(buf, file_id, priority);
+            if (recurse)
+                cache_scan(buf, file_id, priority, recurse);
         }
         else
         {
@@ -277,7 +283,7 @@ main()
         path = eina_list_data_get(dirs);
         if (path)
         {
-            if (!cache_scan(path, file_id, priority++)) goto error;
+            if (!cache_scan(path, file_id, priority++, 1)) goto error;
             l = eina_list_search_unsorted_list(user_dirs, strcmplen, path);
             if (l)
             {
@@ -290,13 +296,13 @@ main()
     }
     EINA_LIST_FREE(user_dirs, dir)
     {
-        /* TODO: Scan dir not recursively and without file id */
         if (dirsfd > 0)
         {
             unsigned int size = strlen(dir) + 1;
             write(dirsfd, &size, sizeof(int));
             write(dirsfd, dir, size);
         }
+        if (!cache_scan(dir, NULL, priority, 0)) goto error;
         free(dir);
     }
     eina_hash_free(file_ids);
