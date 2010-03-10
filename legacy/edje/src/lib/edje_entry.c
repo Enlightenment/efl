@@ -1828,6 +1828,7 @@ _edje_entry_select_all(Edje_Real_Part *rp)
    _sel_start(en->cursor, rp->object, en);
    _curs_end(en->cursor, rp->object, en);
    _sel_extend(en->cursor, rp->object, en);
+   _edje_entry_real_part_configure(rp);
 }
 
 const Eina_List *
