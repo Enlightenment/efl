@@ -36,8 +36,9 @@ static void
 _del_pre_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    evas_object_event_callback_del_full(wd->entry, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				  _changed_size_hints, obj);
+                                       _changed_size_hints, obj);
    elm_anchorblock_hover_end(obj);
    elm_anchorblock_hover_parent_set(obj, NULL);
 }
@@ -46,7 +47,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    if (wd->hover_style) eina_stringshare_del(wd->hover_style);
    free(wd);
 }
@@ -56,7 +57,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-
+   if (!wd) return;
    evas_object_size_hint_min_get(wd->entry, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
@@ -72,7 +73,7 @@ static void
 _hover_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-
+   if (!wd) return;
    wd->hover = NULL;
 }
 
@@ -90,11 +91,10 @@ _anchor_clicked(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *hover_parent;
    Elm_Entry_Anchorblock_Info ei;
    Evas_Coord x, w, y, h, px, py;
-
+   if (!wd) return;
    wd->pop = elm_icon_add(obj);
    evas_object_move(wd->pop, info->x, info->y);
    evas_object_resize(wd->pop, info->w, info->h);
-
    wd->hover = elm_hover_add(obj);
    if (wd->hover_style)
      elm_object_style_set(wd->hover, wd->hover_style);
@@ -102,7 +102,6 @@ _anchor_clicked(void *data, Evas_Object *obj, void *event_info)
    if (!hover_parent) hover_parent = obj;
    elm_hover_parent_set(wd->hover, hover_parent);
    elm_hover_target_set(wd->hover, wd->pop);
-
    ei.name = info->name;
    ei.button = info->button;
    ei.hover = wd->hover;
@@ -134,6 +133,7 @@ static void
 _parent_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    wd->hover_parent = NULL;
 }
 
@@ -197,6 +197,7 @@ elm_anchorblock_text_set(Evas_Object *obj, const char *text)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    elm_entry_entry_set(wd->entry, text);
    if (wd->hover) evas_object_del(wd->hover);
    if (wd->pop) evas_object_del(wd->pop);
@@ -221,6 +222,7 @@ elm_anchorblock_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->hover_parent)
      evas_object_event_callback_del_full(wd->hover_parent, EVAS_CALLBACK_DEL, _parent_del, obj);
    wd->hover_parent = parent;
@@ -244,6 +246,7 @@ elm_anchorblock_hover_style_set(Evas_Object *obj, const char *style)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->hover_style) eina_stringshare_del(wd->hover_style);
    wd->hover_style = NULL;
    if (style) wd->hover_style = eina_stringshare_add(style);
@@ -263,6 +266,7 @@ elm_anchorblock_hover_end(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->hover) evas_object_del(wd->hover);
    if (wd->pop) evas_object_del(wd->pop);
    wd->hover = NULL;

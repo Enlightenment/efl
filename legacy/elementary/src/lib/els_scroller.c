@@ -487,7 +487,7 @@ static int
 _smart_bounce_x_animator(void *data)
 {
    Smart_Data *sd;
-   Evas_Coord x, y, dx, dy/*, ox, oy*/;
+   Evas_Coord x, y, dx;
    double t, p, dt;
 
    sd = data;
@@ -519,7 +519,7 @@ static int
 _smart_bounce_y_animator(void *data)
 {
    Smart_Data *sd;
-   Evas_Coord x, y, dx, dy;
+   Evas_Coord x, y, dy;
    double t, p, dt;
 
    sd = data;
@@ -1446,7 +1446,7 @@ _smart_onhold_animator(void *data)
    Smart_Data *sd;
    double t, td;
    double vx, vy;
-   Evas_Coord x, y, ox, oy, dx, dy;
+   Evas_Coord x, y, ox, oy;
 
    sd = data;
    t = ecore_loop_time_get();

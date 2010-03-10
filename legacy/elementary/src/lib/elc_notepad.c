@@ -39,6 +39,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->file) eina_stringshare_del(wd->file);
    if (wd->delay_write)
      {
@@ -52,7 +53,7 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    evas_object_size_hint_min_set(obj, -1, -1);
    evas_object_size_hint_max_set(obj, -1, -1);
 }
@@ -61,8 +62,8 @@ static void
 _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (elm_widget_focus_get(obj))
-     elm_widget_focus_steal(wd->entry);
+   if (!wd) return;
+   if (elm_widget_focus_get(obj)) elm_widget_focus_steal(wd->entry);
 }
 
 static char *
@@ -120,7 +121,7 @@ _load(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    char *text;
-
+   if (!wd) return;
    if (!wd->file)
      {
 	elm_entry_entry_set(wd->entry, "");
@@ -128,13 +129,13 @@ _load(Evas_Object *obj)
      }
    switch (wd->format)
      {
-      case ELM_TEXT_FORMAT_PLAIN_UTF8:
+     case ELM_TEXT_FORMAT_PLAIN_UTF8:
 	text = _load_plain(wd->file);
 	break;
-      case ELM_TEXT_FORMAT_MARKUP_UTF8:
+     case ELM_TEXT_FORMAT_MARKUP_UTF8:
 	text = _load_file(wd->file);
 	break;
-      default:
+     default:
 	elm_entry_entry_set(wd->entry, "Unknown Text Format");
 	text = NULL;
      }
@@ -151,7 +152,7 @@ static void
 _save_markup_utf8(const char *file, const char *text)
 {
    FILE *f;
-
+   
    if ((!text) || (text[0] == 0))
      {
 	ecore_file_unlink(file);
@@ -171,7 +172,7 @@ static void
 _save_plain_utf8(const char *file, const char *text)
 {
    char *text2;
-
+   
    text2 = elm_entry_markup_to_utf8(text);
    if (text2)
      {
@@ -184,6 +185,7 @@ static void
 _save(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (!wd->file) return;
    switch (wd->format)
      {
@@ -202,6 +204,7 @@ static int
 _delay_write(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return 0;
    _save(data);
    wd->delay_write = NULL;
    return 0;
@@ -211,6 +214,7 @@ static void
 _entry_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    if (wd->delay_write)
      {
 	ecore_timer_del(wd->delay_write);
@@ -317,6 +321,7 @@ elm_notepad_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->delay_write)
      {
 	ecore_timer_del(wd->delay_write);
@@ -347,5 +352,6 @@ elm_notepad_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    elm_scroller_bounce_set(wd->scr, h_bounce, v_bounce);
 }
