@@ -1243,13 +1243,6 @@ elm_win_inwin_add(Evas_Object *obj)
    return obj2;
 }
 
-/** DEPRECATED. use elm_object_style_set() instead */
-EAPI void
-elm_win_inwin_style_set(Evas_Object *obj, const char *style)
-{
-   elm_widget_style_set(obj, style);
-}
-
 EAPI void
 elm_win_inwin_activate(Evas_Object *obj)
 {

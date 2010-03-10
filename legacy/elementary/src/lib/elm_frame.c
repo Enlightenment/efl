@@ -178,19 +178,3 @@ elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
 	_sizing_eval(obj);
      }
 }
-
-/**
- * Set the frame style
- *
- * @param obj The frame object
- * @param style The style will be applied in this frame
- *
- * DEPRECATED. use elm_object_style_set() instead
- *
- * @ingroup Frame
- */
-EAPI void
-elm_frame_style_set(Evas_Object *obj, const char *style)
-{
-   elm_widget_style_set(obj, style);
-}

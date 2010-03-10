@@ -325,22 +325,6 @@ elm_button_icon_get(Evas_Object *obj)
 }
 
 /**
- * Set the button style
- *
- * @param obj The button object
- * @param style The style for the button
- *
- * DEPRECATED. use elm_object_style_set() instead
- *
- * @ingroup Button
- */
-EAPI void
-elm_button_style_set(Evas_Object *obj, const char *style)
-{
-   elm_widget_style_set(obj, style);
-}
-
-/**
  * Turn on/off the autorepeat event generated when the user keeps pressing on the button
  *
  * @param obj The button object

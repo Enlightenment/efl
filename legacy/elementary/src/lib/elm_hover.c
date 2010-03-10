@@ -381,13 +381,6 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
      }
 }
 
-/** DEPRECATED. use elm_object_style_set() instead */
-EAPI void
-elm_hover_style_set(Evas_Object *obj, const char *style)
-{
-   elm_widget_style_set(obj, style);
-}
-
 EAPI const char *
 elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis)
 {
