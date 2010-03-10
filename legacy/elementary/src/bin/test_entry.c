@@ -77,6 +77,7 @@ test_entry(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
    elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
@@ -86,6 +87,7 @@ test_entry(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
    elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
@@ -95,6 +97,7 @@ test_entry(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
    elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
@@ -104,6 +107,7 @@ test_entry(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
    elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
@@ -279,6 +283,8 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -287,6 +293,8 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -295,6 +303,8 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -303,6 +313,8 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -311,6 +323,8 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    elm_box_pack_end(bx, bx2);
@@ -522,6 +536,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -530,6 +546,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -538,6 +556,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -546,6 +566,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -554,6 +576,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -562,6 +586,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    elm_box_pack_end(bx, bx2);
@@ -578,6 +604,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -586,6 +614,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -594,6 +624,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -602,6 +634,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -610,6 +644,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -618,6 +654,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    elm_box_pack_end(bx, bx2);
@@ -634,6 +672,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -642,6 +682,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -650,6 +692,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -658,6 +702,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -666,6 +712,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -674,6 +722,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    elm_box_pack_end(bx, bx2);
@@ -690,6 +740,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -698,6 +750,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -706,6 +760,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -714,6 +770,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    elm_box_pack_end(bx, bx2);
@@ -739,7 +797,7 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
-
+   
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
@@ -751,6 +809,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -759,6 +819,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -767,6 +829,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -775,6 +839,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -783,6 +849,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -791,6 +859,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    elm_box_pack_end(bx, bx2);
@@ -807,6 +877,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -815,6 +887,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -823,6 +897,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -831,6 +907,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -839,6 +917,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -847,6 +927,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    elm_box_pack_end(bx, bx2);
@@ -863,6 +945,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -871,6 +955,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -879,6 +965,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -887,6 +975,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -895,6 +985,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -903,6 +995,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    elm_box_pack_end(bx, bx2);
@@ -919,6 +1013,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -927,6 +1023,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -935,6 +1033,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -942,7 +1042,9 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_add(bt, "clicked", my_ent_bt_pas, en);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
-   elm_box_pack_end(bx2, bt);
+   elm_box_pack_end(bx2, bt); 
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
 
    elm_box_pack_end(bx, bx2);
