@@ -1,5 +1,11 @@
 2010-03-11  Vincent Torri  <doursse at users dot sf dot net>
 
+	* src/lib/Evil.h:
+	actually, ssize_t is defined with all mingw versions
+	but not with vc++. So move it in vc++ part of Evil.h
+
+2010-03-11  Vincent Torri  <doursse at users dot sf dot net>
+
 	* configure.ac:
 	add comment
 

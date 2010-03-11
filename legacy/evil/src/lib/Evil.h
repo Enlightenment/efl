@@ -95,6 +95,7 @@ typedef unsigned int uint32_t;
 typedef signed int int32_t;
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
+typedef SSIZE_T ssize_t;
 
 # define strdup(s) _strdup(s)
 # define unlink(filename) _unlink(filename)
@@ -160,8 +161,6 @@ typedef unsigned long  gid_t;
 #  define mkdir(p,m) _mkdir(p)
 //#  define lstat(f,s) _stat((f),(s))
 //#  define hypot(x,y) _hypot((x),(y))
-
-typedef SSIZE_T ssize_t;
 
 # endif
 #endif
