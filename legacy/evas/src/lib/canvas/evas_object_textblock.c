@@ -3215,8 +3215,13 @@ evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
         int pos;
 
 	_find_layout_item_line_match(cur->obj, cur->node, cur->pos, cur->eol, &ln, &it);
-        pos = cur->pos - it->source_pos;
-        if (pos <= 0) index -= pos;
+        if (it)
+          {
+             pos = cur->pos - it->source_pos;
+             if (pos <= 0) index -= pos;
+          }
+        else
+          printf("TB: 'it' not found\n");
      }
 
    ch = evas_common_font_utf8_get_next((unsigned char *)eina_strbuf_string_get(cur->node->text), &index);
@@ -3405,6 +3410,9 @@ evas_textblock_cursor_line_last(Evas_Textblock_Cursor *cur)
 	cur->pos = it->source_pos;
 	cur->node = it->source_node;
 	index = evas_common_font_utf8_get_last((unsigned char *)it->text, strlen(it->text));
+        if ((index >= 0) && (it->text[0] != 0))
+          evas_common_font_utf8_get_next((unsigned char *)(it->text), &index);
+        printf("%i+%i\n", cur->pos, index);
 	if (index >= 0) cur->pos += index;
      }
    else if (fi)
@@ -3681,10 +3689,23 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text)
 	  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_prepend(EINA_INLIST_GET(o->nodes), EINA_INLIST_GET(n));
      }
    cur->node = n;
+   printf("ins '%s' in '%s' @ %i/%i @c: '%c'\n", 
+          text,
+          eina_strbuf_string_get(n->text),
+          cur->pos,
+          (eina_strbuf_length_get(n->text) - 1),
+          eina_strbuf_string_get(n->text)[cur->pos]
+          );
    if (cur->pos > (eina_strbuf_length_get(n->text) - 1))
-     eina_strbuf_append(n->text, (char *)text);
+     {
+        printf("apnd\n");
+        eina_strbuf_append(n->text, (char *)text);
+     }
    else
-     eina_strbuf_insert(n->text, (char *)text, cur->pos);
+     {
+        printf("ins\n");
+        eina_strbuf_insert(n->text, (char *)text, cur->pos);
+     }
    cur->pos += strlen(text);
    o->formatted.valid = 0;
    o->native.valid = 0;
