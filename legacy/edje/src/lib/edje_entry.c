@@ -1763,6 +1763,7 @@ _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text)
    // set text as markup
    _sel_clear(en->cursor, rp->object, en);
    evas_object_textblock_text_markup_set(rp->object, text); 
+/*   
    evas_textblock_cursor_node_last(en->cursor);
    if (!evas_textblock_cursor_node_format_get(en->cursor))
      {
@@ -1773,6 +1774,7 @@ _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text)
      {
 	evas_textblock_cursor_format_append(en->cursor, "\n");
      }
+ */
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
    _edje_entry_set_cursor_start(rp);
