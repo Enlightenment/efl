@@ -15,7 +15,7 @@ struct _Widget_Data
    Ecore_Event_Handler *sel_clear_handler;
    Ecore_Timer *longpress_timer;
    const char *cut_sel;
-   const char *stripped;
+   const char *text;
    Evas_Coord lastw;
    Evas_Coord downx, downy;
    Evas_Coord cx, cy, cw, ch;
@@ -105,7 +105,7 @@ _del_hook(Evas_Object *obj)
    ecore_event_handler_del(wd->sel_clear_handler);
 #endif
    if (wd->cut_sel) eina_stringshare_del(wd->cut_sel);
-   if (wd->stripped) eina_stringshare_del(wd->stripped);
+   if (wd->text) eina_stringshare_del(wd->text);
    if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
    if (wd->longpress_timer) ecore_timer_del(wd->longpress_timer);
    EINA_LIST_FREE(wd->items, it)
@@ -746,8 +746,8 @@ _signal_entry_changed(void *data, Evas_Object *obj __UNUSED__, const char *emiss
    if (!wd) return;
    wd->changed = EINA_TRUE;
    _sizing_eval(data);
-   if (wd->stripped) eina_stringshare_del(wd->stripped);
-   wd->stripped = NULL;
+   if (wd->text) eina_stringshare_del(wd->text);
+   wd->text = NULL;
    evas_object_smart_callback_call(data, "changed", NULL);
 }
 
@@ -1158,7 +1158,7 @@ elm_entry_add(Evas_Object *parent)
                                    _signal_mouse_up, obj);
    edje_object_signal_callback_add(wd->ent, "mouse,down,1,double", "elm.text",
                                    _signal_mouse_double, obj);
-   edje_object_part_text_set(wd->ent, "elm.text", "<br>");
+   edje_object_part_text_set(wd->ent, "elm.text", "");
    elm_widget_resize_object_set(obj, wd->ent);
    _sizing_eval(obj);
 
@@ -1228,8 +1228,10 @@ elm_entry_entry_set(Evas_Object *obj, const char *entry)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (!entry) entry = "<br>";
+   if (!entry) entry = "";
    edje_object_part_text_set(wd->ent, "elm.text", entry);
+   if (wd->text) eina_stringshare_del(wd->text);
+   wd->text = NULL;
    wd->changed = EINA_TRUE;
    _sizing_eval(obj);
 }
@@ -1242,26 +1244,17 @@ elm_entry_entry_get(const Evas_Object *obj)
    const char *text, *s = NULL;
    size_t len;
    if (!wd) return NULL;
-   // Strip ending <br> that is added by the textblock
-   // need to check if <br> is present? seems it is always there
-   if (wd->stripped) return wd->stripped;
-
+   if (wd->text) return wd->text;
    text = edje_object_part_text_get(wd->ent, "elm.text");
    if (!text)
      {
 	ERR("text=NULL for edje %p, part 'elm.text'", wd->ent);
 	return NULL;
      }
-   len = strlen(text);
-   if (len < 4)
-     {
-	ERR("text='%s' is smaller than 4 chars, missing '<br>'?", text);
-	return NULL;
-     }
-   if (text) s = eina_stringshare_add_length(text, len - 4);
-   if (wd->stripped) eina_stringshare_del(wd->stripped);
-   wd->stripped = s;
-   return s;
+   if (wd->text) eina_stringshare_del(wd->text);
+   wd->text = NULL;
+   if (text) wd->text = eina_stringshare_add(text);
+   return wd->text;
 }
 
 EAPI const char *
