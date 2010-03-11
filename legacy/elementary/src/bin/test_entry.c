@@ -781,7 +781,6 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    en = elm_scrolled_entry_add(win);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
    elm_scrolled_entry_entry_set(en,
 				"This is an entry widget in this window that<br>"
 				"uses markup <b>like this</> for styling and<br>"
@@ -793,7 +792,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
 				"line to test line wrapping to see if it works. But just in "
 				"case this line is not long enough I will add more here to "
 				"really test it out, as Elementary really needs some "
-				"good testing to see if entry widgets work as advertised.");
+				"good testing to see if entry widgets work as advertised."
+                                );
    evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
