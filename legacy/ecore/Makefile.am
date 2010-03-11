@@ -78,7 +78,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN \
 	     ecore-quartz.pc.in \
 	     ecore-input.pc.in \
 	     ecore-wince.pc.in \
-	     ecore-data.pc.in \
 	     ecore.spec.in ecore.spec
 
 pkgconfigdir = $(libdir)/pkgconfig
