@@ -1,3 +1,12 @@
+2010-03-11  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	add comment
+
+	* win32/vs8/libevil.vcproj:
+	clean up Visual Studio output (less useless warnings)
+	add missing library
+
 2010-02-28  Vincent Torri  <doursse at users dot sf dot net>
 
 	* remove cegcc compiler support, only mingw32ce

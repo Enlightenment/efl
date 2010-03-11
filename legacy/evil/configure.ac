@@ -6,7 +6,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 AC_CANONICAL_HOST
 
-dnl If the host is not Windows, we exit
+dnl If the host is not Windows, or is ceGCC, we exit
 case "$host_os" in
   cegcc*)
     AC_MSG_ERROR([ceGCC compiler is not supported anymore. Exiting...])
