@@ -1831,6 +1831,27 @@ _edje_entry_select_all(Edje_Real_Part *rp)
    _edje_entry_real_part_configure(rp);
 }
 
+void
+_edje_entry_select_begin(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return;
+   _sel_clear(en->cursor, rp->object, en);
+   _sel_enable(en->cursor, rp->object, en);
+   _sel_start(en->cursor, rp->object, en);
+   _sel_extend(en->cursor, rp->object, en);
+   _edje_entry_real_part_configure(rp);
+}
+
+void
+_edje_entry_select_extend(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return;
+   _sel_extend(en->cursor, rp->object, en);
+   _edje_entry_real_part_configure(rp);
+}
+
 const Eina_List *
 _edje_entry_anchor_geometry_get(Edje_Real_Part *rp, const char *anchor)
 {
@@ -2044,6 +2065,7 @@ _edje_entry_cursor_copy(Edje_Real_Part *rp, Edje_Cursor cur, Edje_Cursor dst)
    if (!c) return;
    Evas_Textblock_Cursor *d = _cursor_get(rp, dst);
    if (!d) return;
+   printf("copy %p to %p\n", c, d);
    evas_textblock_cursor_copy(c, d);
    _curs_update_from_curs(c, rp->object, rp->entry_data);
    _sel_update(c, rp->object, rp->entry_data);

@@ -1501,6 +1501,8 @@ void _edje_entry_set_cursor_end(Edje_Real_Part *rp);
 void _edje_entry_cursor_copy(Edje_Real_Part *rp, Edje_Cursor cur, Edje_Cursor dst);
 void _edje_entry_select_none(Edje_Real_Part *rp);
 void _edje_entry_select_all(Edje_Real_Part *rp);
+void _edje_entry_select_begin(Edje_Real_Part *rp);
+void _edje_entry_select_extend(Edje_Real_Part *rp);
 const Eina_List *_edje_entry_anchor_geometry_get(Edje_Real_Part *rp, const char *anchor);
 const Eina_List *_edje_entry_anchors_list(Edje_Real_Part *rp);
 void _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);

@@ -469,7 +469,9 @@ extern "C" {
    EAPI void             edje_object_part_text_cursor_geometry_get     (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    EAPI void             edje_object_part_text_select_allow_set        (const Evas_Object *obj, const char *part, Eina_Bool allow);
    EAPI void             edje_object_part_text_select_abort            (const Evas_Object *obj, const char *part);
-
+   EAPI void             edje_object_part_text_select_begin            (const Evas_Object *obj, const char *part);
+   EAPI void             edje_object_part_text_select_extend           (const Evas_Object *obj, const char *part);
+       
    EAPI Eina_Bool        edje_object_part_text_cursor_next(const Evas_Object *obj, const char *part, Edje_Cursor cur);
    EAPI Eina_Bool        edje_object_part_text_cursor_prev(const Evas_Object *obj, const char *part, Edje_Cursor cur);
    EAPI Eina_Bool        edje_object_part_text_cursor_up(const Evas_Object *obj, const char *part, Edje_Cursor cur);

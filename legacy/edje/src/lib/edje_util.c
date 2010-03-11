@@ -1736,6 +1736,46 @@ edje_object_part_text_select_abort(const Evas_Object *obj, const char *part)
 }
 
 /**
+ * @brief Starts selecting at current cursor position
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI void
+edje_object_part_text_select_begin(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     _edje_entry_select_begin(rp);
+}
+
+/**
+ * @brief Extends the current selection to the current cursor position
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI void
+edje_object_part_text_select_extend(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     _edje_entry_select_extend(rp);
+}
+
+/**
  * @brief XX
  * 
  * @param obj A valid Evas_Object handle
