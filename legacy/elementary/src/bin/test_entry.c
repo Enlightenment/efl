@@ -442,7 +442,6 @@ static void
 my_ent_bt_sbe(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
-   // broken
    elm_scrolled_entry_cursor_selection_begin(en);
 }
 
@@ -450,7 +449,6 @@ static void
 my_ent_bt_sen(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
-   // broken
    elm_scrolled_entry_cursor_selection_end(en);
 }
 

@@ -1446,9 +1446,7 @@ elm_entry_cursor_selection_begin(Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   edje_object_part_text_select_all(wd->ent, "elm.text");
-   edje_object_part_text_cursor_copy(wd->ent, "elm.text", EDJE_CURSOR_MAIN, EDJE_CURSOR_SELECTION_BEGIN);
-   edje_object_part_text_cursor_copy(wd->ent, "elm.text", EDJE_CURSOR_MAIN, EDJE_CURSOR_SELECTION_END);
+   edje_object_part_text_select_begin(wd->ent, "elm.text");
 }
 
 EAPI void
@@ -1457,7 +1455,7 @@ elm_entry_cursor_selection_end(Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   edje_object_part_text_cursor_copy(wd->ent, "elm.text", EDJE_CURSOR_MAIN, EDJE_CURSOR_SELECTION_END);
+   edje_object_part_text_select_extend(wd->ent, "elm.text");
 }
 
 EAPI Eina_Bool
