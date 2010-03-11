@@ -1835,7 +1835,7 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
             f->uri = strdup(buf);
         }
 
-        free(abs);
+        free(absol);
     }
 #if 0
     INF("  fullpath: %s", f->fullpath);
