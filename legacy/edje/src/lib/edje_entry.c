@@ -1195,7 +1195,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 	if (ev->string)
 	  {
             if (en->have_selection)
-	       _range_del(en->cursor, rp->object, en);
+               _range_del(en->cursor, rp->object, en);
+             printf("add '%s'\n", ev->string);
 	     evas_textblock_cursor_text_prepend(en->cursor, ev->string);
 	     _sel_clear(en->cursor, rp->object, en);
 	     _curs_update_from_curs(en->cursor, rp->object, en);
@@ -1305,7 +1306,10 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
              if (en->cx <= lx)
                _curs_lin_start(en->cursor, rp->object, en);
              else
-               _curs_lin_end(en->cursor, rp->object, en);
+               {
+                  printf("linend down\n");
+                  _curs_lin_end(en->cursor, rp->object, en);
+               }
           }
         line = evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
      }
