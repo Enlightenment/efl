@@ -2141,7 +2141,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
      }
    EINA_INLIST_FOREACH(c->lines, ln)
      {
-        printf("%p - \n", ln->line_no);
+        printf("%i - %p\n", ln->line_no, ln);
 	if (ln->line_no == -1)
 	  {
              printf("remove line! %p\n", ln);
@@ -4594,11 +4594,22 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
    int pos, ret;
 
    if (!cur) return -1;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!cur->node)
      {
-	return -1;
+        if (!o->nodes)
+          {
+             ln = o->lines;
+             if (!ln) return -1;
+             if (cx) *cx = ln->x;
+             if (cy) *cy = ln->y;
+             if (cw) *cw = ln->w;
+             if (ch) *ch = ln->h;
+             return ln->line_no;
+          }
+        else
+          return -1;
      }
-   o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
    if (cur->node->type == NODE_FORMAT)
      {
