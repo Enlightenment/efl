@@ -106,13 +106,8 @@ typedef SSIZE_T ssize_t;
 
 #endif /* _MSC_VER */
 
-
-#ifndef __CEGCC__
-
 typedef unsigned long  uid_t;
 typedef unsigned long  gid_t;
-
-#endif /* ! __CEGCC__ */
 
 
 #include "evil_fcntl.h"

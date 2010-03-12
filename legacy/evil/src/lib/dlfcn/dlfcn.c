@@ -1,14 +1,14 @@
-#include <stdlib.h>
-
-#if defined(__CEGCC__) || defined(__MINGW32CE__) || defined(_MSC_VER)
-# include <limits.h>
-#endif /* __CEGCC__ || __MINGW32CE__ || _MSC_VER */
-
-#include "../Evil.h"
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
+
+#include <stdlib.h>
+
+#if defined(__MINGW32CE__) || defined(_MSC_VER)
+# include <limits.h>
+#endif /* __MINGW32CE__ || _MSC_VER */
+
+#include "../Evil.h"
 
 #include "dlfcn.h"
 

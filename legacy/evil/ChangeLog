@@ -1,3 +1,15 @@
+2010-03-12  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Makefile.am:
+	* src/lib/evil_time.c (deleted):
+	remove evil_time.c as tzset is defined with mingw
+	and as _tzset is defined with vc++
+
+	* src/lib/Evil.h:
+	* src/lib/dlfcn/dlfcn.c:
+	* src/lib/dlfcn/dlfcn.h:
+	remove __CEGCC__ occurences
+
 2010-03-11  Vincent Torri  <doursse at users dot sf dot net>
 
 	* win32/vs8/libdlfcn.vcproj:

@@ -39,7 +39,6 @@ evil_pwd.c \
 evil_stdlib.c \
 evil_stdio.c \
 evil_string.c \
-evil_time.c \
 evil_unistd.c \
 evil_util.c \
 evil_uuid.c

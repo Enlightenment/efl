@@ -2,11 +2,7 @@
 #define __EVIL_DLFCN_H__
 
 
-#if defined(__CEGCC__)
-# include <sys/syslimits.h>
-#else
-# include <limits.h>
-#endif /* ! __CEGCC__ || ! __MINGW32CE__ */
+#include <limits.h>
 
 
 #ifdef EAPI
