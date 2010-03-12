@@ -1397,6 +1397,7 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
      {
 	int endx;
 
+        printf("  %p->%p\n", it, it->format->font.font);
 	if (it->format->font.font)
 	  it->baseline = c->ENFN->font_max_ascent_get(c->ENDT, it->format->font.font);
 	_layout_format_ascent_descent_adjust(c, it->format);
@@ -1406,6 +1407,7 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    c->ln->y = c->y + c->o->style_pad.t;
    c->ln->h = c->maxascent + c->maxdescent;
    c->ln->baseline = c->maxascent;
+   printf("  %p: %i %i %i\n", c->ln, c->ln->y, c->ln->h, c->ln->baseline);
    if (c->have_underline2)
      {
 	if (c->maxdescent < 4) c->underline_extend = 4 - c->maxdescent;
@@ -1716,24 +1718,29 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
    const char *tbase;
    Evas_Object_Textblock_Item *it;
 
-   if ((repch) && (eina_strbuf_length_get(n->text)))
+   if (n)
      {
-	int i, len, chlen;
-	char *ptr;
-
-	len = evas_common_font_utf8_get_len((unsigned char *) eina_strbuf_string_get(n->text));
-	chlen = strlen(repch);
-	str = alloca((len * chlen) + 1);
-	tbase = str;
-	for (i = 0, ptr = str; i < len; ptr += chlen, i++)
-	  memcpy(ptr, repch, chlen);
-	*ptr = 0;
+        if ((repch) && (eina_strbuf_length_get(n->text)))
+          {
+             int i, len, chlen;
+             char *ptr;
+             
+             len = evas_common_font_utf8_get_len((unsigned char *) eina_strbuf_string_get(n->text));
+             chlen = strlen(repch);
+             str = alloca((len * chlen) + 1);
+             tbase = str;
+             for (i = 0, ptr = str; i < len; ptr += chlen, i++)
+               memcpy(ptr, repch, chlen);
+             *ptr = 0;
+          }
+        else
+          {
+             str = (char *)eina_strbuf_string_get(n->text);
+             tbase = str;
+          }
      }
    else
-     {
-	str = (char *)eina_strbuf_string_get(n->text);
-	tbase = str;
-     }
+     str = "";
 //   printf("add: wrap: %i|%i, width: %i '%s'\n", fmt->wrap_word, fmt->wrap_char, c->w, str);
    new_line = 0;
    empty_item = 0;
@@ -2012,6 +2019,32 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 	return;
      }
    /* run through all text and format nodes generating lines */
+   if (!c->o->nodes)
+     {
+        if (!c->ln)
+          {
+             int tw, th;
+             
+             _layout_line_new(c, fmt);
+             _layout_text_append(c, fmt, NULL, NULL);
+             _layout_line_advance(c, fmt);
+//             printf("bl:%i | %ix%i\n", c->ln->baseline, c->ln->w, c->ln->h);
+             /*
+             tw = th = 0;
+             if (fmt->font.font)
+               {
+                  c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, "", &tw, &th);
+                  c->ln->x = 0;
+                  c->ln->y = 0;
+                  c->ln->w = tw;
+                  c->ln->h = th;
+                  c->wmax = tw;
+                  c->hmax = th;
+                  _layout_format_ascent_descent_adjust(c, fmt);
+               }
+              */
+          }
+     }
    EINA_INLIST_FOREACH(c->o->nodes, n)
      {
 	if (!c->ln) _layout_line_new(c, fmt);
@@ -2108,8 +2141,10 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
      }
    EINA_INLIST_FOREACH(c->lines, ln)
      {
+        printf("%p - \n", ln->line_no);
 	if (ln->line_no == -1)
 	  {
+             printf("remove line! %p\n", ln);
 	     removes = eina_list_append(removes, ln);
 	  }
 	else
@@ -2125,6 +2160,8 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 	_line_free(obj, ln);
      }
 
+   printf("     max: %ix%i\n", c->wmax, c->hmax);
+   
    if (w_ret) *w_ret = c->wmax;
    if (h_ret) *h_ret = c->hmax;
    if ((o->style_pad.l != style_pad_l) || (o->style_pad.r != style_pad_r) ||
@@ -4413,11 +4450,12 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
    n1 = cur1->node;
    n2 = cur2->node;
    index = cur2->pos;
-   evas_common_font_utf8_get_next((unsigned char *)eina_strbuf_string_get(n2->text), &index);
+   if (n2->text)
+     evas_common_font_utf8_get_next((unsigned char *)eina_strbuf_string_get(n2->text), &index);
    txt = eina_strbuf_new();
    EINA_INLIST_FOREACH(n1, n)
      {
-	if (n->type == NODE_TEXT)
+	if ((n->type == NODE_TEXT) && (n->text))
 	  {
 	     s = (char *)eina_strbuf_string_get(n->text);
 	     if (format == EVAS_TEXTBLOCK_TEXT_MARKUP)
@@ -4488,7 +4526,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 		    }
 	       }
 	  }
-	else
+	else if (n->text)
 	  {
 	     if (format == EVAS_TEXTBLOCK_TEXT_PLAIN)
 	       {
