@@ -250,7 +250,9 @@ eina_counter_shutdown(void)
  *    test_malloc();
  *    eina_counter_stop(counter, 1);
  *
- *    eina_counter_dump(counter);
+ *    char* result = eina_counter_dump(counter);
+ *    printf("%s", result);
+ *    free(result);
  *
  *    eina_counter_free(counter);
  *    eina_shutdown();
@@ -261,16 +263,16 @@ eina_counter_shutdown(void)
  *
  * Compile this code with the following commant:
  *
- * @code
+ * @verbatim
  * gcc -Wall -o test_eina_counter test_eina.c `pkg-config --cflags --libs eina`
- * @endcode
+ * @endverbatim
  *
  * The result should be something like that:
  *
- * @code
- * # specimen	experiment time	starting time	ending time
- * 1	9794125	783816	10577941
- * @endcode
+ * @verbatim
+ * \# specimen    experiment time    starting time    ending time
+ * 1              9794125            783816           10577941
+ * @endverbatim
  *
  * Note that the displayed time is in nanosecond.
  *
@@ -415,14 +417,15 @@ eina_counter_stop(Eina_Counter *counter, int specimen)
  * @return A string with a summary of the test.
  * @param counter The counter.
  *
- * This function dump all the valid clocks of @p counter to the stream
- * @p out. If @p counter or @p out are @c NULL, the functions exits
+ * This function returns an malloc'd string containing the dump of
+ * all the valid clocks of @p counter.
+ * If @p counter @c NULL, the functions exits
  * immediatly. Otherwise, the output is formattted like that:
  *
- * @code
+ * @verbatim
  * \# specimen    experiment time    starting time    ending time
  * 1              208                120000           120208
- * @endcode
+ * @endverbatim
  *
  * The unit of time is the nanosecond.
 */
