@@ -2,6 +2,8 @@
 
 	* src/lib/Makefile.am:
 	* src/lib/evil_time.c (deleted):
+	* win32/vs8/libevil.vcproj:
+	* win32/vs9/libevil.vcproj:
 	remove evil_time.c as tzset is defined with mingw
 	and as _tzset is defined with vc++
 
