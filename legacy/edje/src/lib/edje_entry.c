@@ -219,6 +219,13 @@ _curs_next(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
                {
                   evas_textblock_cursor_char_prev(c);
                   evas_textblock_cursor_eol_set(c, 1);
+                  _curs_update_from_curs(c, o, en);
+                  return;
+               }
+             if (!evas_textblock_cursor_node_next(c))
+               {
+                  evas_textblock_cursor_line_last(c);
+                  _curs_update_from_curs(c, o, en);
                   return;
                }
           }
@@ -250,6 +257,7 @@ _curs_next(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
                     {
                        evas_textblock_cursor_node_prev(c);
                        evas_textblock_cursor_line_last(c);
+                       _curs_update_from_curs(c, o, en);
                        return;
                     }
                }
@@ -263,6 +271,7 @@ _curs_next(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
                     {
                        evas_textblock_cursor_char_prev(c);
                        evas_textblock_cursor_eol_set(c, 1);
+                       _curs_update_from_curs(c, o, en);
                        return;
                     }
                }
@@ -912,14 +921,27 @@ _backspace(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 	  }
      }
    else
-     evas_textblock_cursor_copy(c, c1);
+     {
+        evas_textblock_cursor_copy(c, c1);
+     }
    c2 = evas_object_textblock_cursor_new(o);
    evas_textblock_cursor_copy(c, c2);
-   if (!nodel) evas_textblock_cursor_range_delete(c1, c2);
+   if (!nodel)
+     {
+        evas_textblock_cursor_range_delete(c1, c2);
+     }
    evas_textblock_cursor_copy(c, c1);
    _curs_back(c, o, en);
-   if (evas_textblock_cursor_compare(c, c1))
-     _curs_next(c, o, en);
+   evas_textblock_cursor_copy(c, c2);
+   if ((!evas_textblock_cursor_char_next(c2)) &&
+       (!evas_textblock_cursor_node_next(c2)))
+     {
+        _curs_end(c, o, en);
+     }
+   else if (evas_textblock_cursor_compare(c, c1))
+     {
+        _curs_next(c, o, en);
+     }
    
    evas_textblock_cursor_free(c1);
    evas_textblock_cursor_free(c2);
@@ -1196,7 +1218,6 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 	  {
             if (en->have_selection)
                _range_del(en->cursor, rp->object, en);
-             printf("add '%s'\n", ev->string);
 	     evas_textblock_cursor_text_prepend(en->cursor, ev->string);
 	     _sel_clear(en->cursor, rp->object, en);
 	     _curs_update_from_curs(en->cursor, rp->object, en);
@@ -1306,10 +1327,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
              if (en->cx <= lx)
                _curs_lin_start(en->cursor, rp->object, en);
              else
-               {
-                  printf("linend down\n");
-                  _curs_lin_end(en->cursor, rp->object, en);
-               }
+               _curs_lin_end(en->cursor, rp->object, en);
           }
         line = evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
      }
