@@ -7,21 +7,24 @@ msgstr ""
 "Project-Id-Version: Ecore\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2010-03-08 09:04+0100\n"
-"PO-Revision-Date: 2009-10-27 19:36+0100\n"
-"Last-Translator: quaker66 <quaker66@gmail.com>\n"
-"Language-Team: French <Enlightenment i18n French>\n"
+"PO-Revision-Date: 2010-03-13 14:04+0400\n"
+"Last-Translator: batden <batden@orange.fr>\n"
+"Language-Team: Enlightenment French Team <pourunmondesansgourou@gmail.com>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n>1;\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Poedit-SourceCharset: utf-8\n"
 
 #: src/lib/ecore/ecore_getopt.c:74
 msgid "Version:"
-msgstr "Version:"
+msgstr "Version :"
 
 #: src/lib/ecore/ecore_getopt.c:82
 msgid "Usage:"
-msgstr "Usage:"
+msgstr "Usage :"
 
 #: src/lib/ecore/ecore_getopt.c:87
 #, c-format
@@ -30,55 +33,61 @@ msgstr "%s [options]\n"
 
 #: src/lib/ecore/ecore_getopt.c:235
 msgid "Copyright:"
-msgstr "Copyright:"
+msgstr "Copyright :"
 
 #: src/lib/ecore/ecore_getopt.c:246
 msgid "License:"
-msgstr "Licence:"
+msgstr "Licence :"
 
 #: src/lib/ecore/ecore_getopt.c:398
 msgid "Type: "
-msgstr "Type: "
+msgstr "Type : "
 
 #: src/lib/ecore/ecore_getopt.c:465
 msgid "Default: "
-msgstr "Par défaut:"
+msgstr "Par défaut :"
 
 #: src/lib/ecore/ecore_getopt.c:488
 msgid "Choices: "
-msgstr "Choix:"
+msgstr "Choix :"
 
 #: src/lib/ecore/ecore_getopt.c:585
 msgid "Options:\n"
-msgstr "Options:\n"
+msgstr "Options :\n"
 
 #: src/lib/ecore/ecore_getopt.c:704
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
-msgstr "ERREUR: option inconnue --%s.\n"
+msgstr "ERREUR : option inconnue --%s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:706
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
-msgstr "ERREUR: option inconnue -%c.\n"
+msgstr "ERREUR : option inconnue -%c.\n"
 
 #: src/lib/ecore/ecore_getopt.c:762
 msgid "ERROR: "
-msgstr "ERREUR:"
+msgstr "ERREUR :"
 
-#: src/lib/ecore/ecore_getopt.c:839 src/lib/ecore/ecore_getopt.c:955
-#: src/lib/ecore/ecore_getopt.c:968 src/lib/ecore/ecore_getopt.c:980
-#: src/lib/ecore/ecore_getopt.c:994 src/lib/ecore/ecore_getopt.c:1038
-#: src/lib/ecore/ecore_getopt.c:1147 src/lib/ecore/ecore_getopt.c:1184
+#: src/lib/ecore/ecore_getopt.c:839
+#: src/lib/ecore/ecore_getopt.c:955
+#: src/lib/ecore/ecore_getopt.c:968
+#: src/lib/ecore/ecore_getopt.c:980
+#: src/lib/ecore/ecore_getopt.c:994
+#: src/lib/ecore/ecore_getopt.c:1038
+#: src/lib/ecore/ecore_getopt.c:1147
+#: src/lib/ecore/ecore_getopt.c:1184
 msgid "value has no pointer set.\n"
 msgstr "la valeur n'a aucun pointeur défini.\n"
 
-#: src/lib/ecore/ecore_getopt.c:868 src/lib/ecore/ecore_getopt.c:1058
+#: src/lib/ecore/ecore_getopt.c:868
+#: src/lib/ecore/ecore_getopt.c:1058
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "valeur booléenne inconnue %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:912 src/lib/ecore/ecore_getopt.c:1138
+#: src/lib/ecore/ecore_getopt.c:912
+#: src/lib/ecore/ecore_getopt.c:1138
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "format du nombre non valide %s\n"
@@ -86,11 +95,11 @@ msgstr "format du nombre non valide %s\n"
 #: src/lib/ecore/ecore_getopt.c:1007
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
-msgstr "choix non valide \"%s\". Les valeurs valides sont: "
+msgstr "choix non valide \"%s\". Les valeurs valides sont : "
 
 #: src/lib/ecore/ecore_getopt.c:1032
 msgid "missing parameter to append.\n"
-msgstr "paramètre à ajouter manquant.\n"
+msgstr "paramètre manquant à ajouter.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1128
 msgid "could not parse value.\n"
@@ -119,38 +128,38 @@ msgstr "aucune licence n'est définie.\n"
 #: src/lib/ecore/ecore_getopt.c:1296
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
-msgstr "ERREUR: option inconnue --%s, non prise en compte.\n"
+msgstr "ERREUR : option inconnue --%s, non prise en compte.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1329
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
-msgstr "ERREUR: l'option --%s requiert un argument !\n"
+msgstr "ERREUR : l'option --%s requiert un argument !\n"
 
 #: src/lib/ecore/ecore_getopt.c:1365
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
-msgstr "ERREUR: option inconnue -%c, non prise en compte.\n"
+msgstr "ERREUR : option inconnue -%c, non prise en compte.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1403
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
-msgstr "ERREUR: l'option -%c requiert un argument !\n"
+msgstr "ERREUR : l'option -%c requiert un argument !\n"
 
 #: src/lib/ecore/ecore_getopt.c:1606
 msgid "ERROR: no parser provided.\n"
-msgstr "ERREUR: aucun analyseur n'est fourni.\n"
+msgstr "ERREUR : aucun analyseur n'est fourni.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1611
 msgid "ERROR: no values provided.\n"
-msgstr "ERREUR: aucune valeur n'est fournie.\n"
+msgstr "ERREUR : aucune valeur n'est fournie.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1620
 msgid "ERROR: no arguments provided.\n"
-msgstr "ERREUR: aucun argument n'est fourni.\n"
+msgstr "ERREUR : aucun argument n'est fourni.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1646
 msgid "ERROR: invalid options found."
-msgstr "ERREUR: options non valides détectées."
+msgstr "ERREUR : options non valides détectées."
 
 #: src/lib/ecore/ecore_getopt.c:1652
 #, c-format
@@ -165,12 +174,12 @@ msgstr " Voir -%c.\n"
 #: src/lib/ecore/ecore_getopt.c:1691
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
-msgstr "ERREUR: valeur géométrique incorrecte '%s'\n"
+msgstr "ERREUR : valeur géométrique incorrecte '%s'\n"
 
 #: src/lib/ecore/ecore_getopt.c:1714
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
-msgstr "ERREUR: valeur de taille incorrecte '%s'\n"
+msgstr "ERREUR : valeur de taille incorrecte '%s'\n"
 
 #~ msgid ""
 #~ "\n"
@@ -178,27 +187,20 @@ msgstr "ERREUR: valeur de taille incorrecte '%s'\n"
 #~ msgstr ""
 #~ "\n"
 #~ "   "
-
 #~ msgid "true"
 #~ msgstr "true"
-
 #~ msgid "false"
 #~ msgstr "false"
-
 #~ msgid "f"
 #~ msgstr "f"
-
 #~ msgid "no"
 #~ msgstr "no"
-
 #~ msgid "off"
 #~ msgstr "off"
-
 #~ msgid "t"
 #~ msgstr "t"
-
 #~ msgid "yes"
 #~ msgstr "yes"
-
 #~ msgid "on"
 #~ msgstr "on"
+
