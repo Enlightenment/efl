@@ -102,13 +102,14 @@ efreet_shutdown(void)
     efreet_xml_shutdown();
     efreet_base_shutdown();
     eina_log_domain_unregister(_efreet_log_domain_global);
-    eet_shutdown();
-    eina_shutdown();
 
     IF_RELEASE(efreet_lang);
     IF_RELEASE(efreet_lang_country);
     IF_RELEASE(efreet_lang_modifier);
     efreet_parsed_locale = 0;  /* reset this in case they init efreet again */
+
+    eet_shutdown();
+    eina_shutdown();
 
     return _efreet_init_count;
 }
