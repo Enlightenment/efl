@@ -39,10 +39,11 @@ cache_add(const char *path, const char *file_id, int priority __UNUSED__)
     char *ext;
 
     ext = strrchr(path, '.');
-    if (!ext || strcmp(ext, ".desktop")) return 1;
+    if (!ext || (strcmp(ext, ".desktop") && strcmp(ext, ".directory"))) return 1;
     desk = efreet_desktop_new(path);
 
-    if (!desk || desk->type != EFREET_DESKTOP_TYPE_APPLICATION)
+    if (!desk || (desk->type != EFREET_DESKTOP_TYPE_APPLICATION &&
+                  desk->type != EFREET_DESKTOP_TYPE_DIRECTORY))
     {
         if (desk) efreet_desktop_free(desk);
         return 1;
@@ -54,7 +55,8 @@ cache_add(const char *path, const char *file_id, int priority __UNUSED__)
         eina_hash_add(paths, desk->orig_path, (void *)1);
     }
     /* TODO: We should check priority, and not just hope we search in right order */
-    if (file_id && !eina_hash_find(file_ids, file_id))
+    if (desk->type == EFREET_DESKTOP_TYPE_APPLICATION &&
+        file_id && !eina_hash_find(file_ids, file_id))
     {
         int id;
         char key[PATH_MAX];
