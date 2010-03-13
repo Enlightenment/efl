@@ -681,11 +681,11 @@ efreet_desktop_free(Efreet_Desktop *desktop)
 
     if (desktop->eet)
     {
-        eina_list_free(desktop->only_show_in);
-        eina_list_free(desktop->not_show_in);
-        eina_list_free(desktop->categories);
-        eina_list_free(desktop->mime_types);
-        IF_FREE_HASH(desktop->x);
+        //eina_list_free(desktop->only_show_in);
+        //eina_list_free(desktop->not_show_in);
+        //eina_list_free(desktop->categories);
+        //eina_list_free(desktop->mime_types);
+        //IF_FREE_HASH(desktop->x);
     }
     else
     {
@@ -722,9 +722,8 @@ efreet_desktop_free(Efreet_Desktop *desktop)
             if (info->free_func)
                 info->free_func(desktop->type_data);
         }
+        FREE(desktop);
     }
-
-    FREE(desktop);
 }
 
 /**
