@@ -1397,7 +1397,6 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
      {
 	int endx;
 
-        printf("  %p->%p\n", it, it->format->font.font);
 	if (it->format->font.font)
 	  it->baseline = c->ENFN->font_max_ascent_get(c->ENDT, it->format->font.font);
 	_layout_format_ascent_descent_adjust(c, it->format);
@@ -1407,7 +1406,6 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    c->ln->y = c->y + c->o->style_pad.t;
    c->ln->h = c->maxascent + c->maxdescent;
    c->ln->baseline = c->maxascent;
-   printf("  %p: %i %i %i\n", c->ln, c->ln->y, c->ln->h, c->ln->baseline);
    if (c->have_underline2)
      {
 	if (c->maxdescent < 4) c->underline_extend = 4 - c->maxdescent;
@@ -2141,10 +2139,8 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
      }
    EINA_INLIST_FOREACH(c->lines, ln)
      {
-        printf("%i - %p\n", ln->line_no, ln);
 	if (ln->line_no == -1)
 	  {
-             printf("remove line! %p\n", ln);
 	     removes = eina_list_append(removes, ln);
 	  }
 	else
@@ -2160,8 +2156,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 	_line_free(obj, ln);
      }
 
-   printf("     max: %ix%i\n", c->wmax, c->hmax);
-   
    if (w_ret) *w_ret = c->wmax;
    if (h_ret) *h_ret = c->hmax;
    if ((o->style_pad.l != style_pad_l) || (o->style_pad.r != style_pad_r) ||
@@ -3449,7 +3443,6 @@ evas_textblock_cursor_line_last(Evas_Textblock_Cursor *cur)
 	index = evas_common_font_utf8_get_last((unsigned char *)it->text, strlen(it->text));
         if ((index >= 0) && (it->text[0] != 0))
           evas_common_font_utf8_get_next((unsigned char *)(it->text), &index);
-        printf("%i+%i\n", cur->pos, index);
 	if (index >= 0) cur->pos += index;
      }
    else if (fi)
@@ -3726,21 +3719,12 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text)
 	  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_prepend(EINA_INLIST_GET(o->nodes), EINA_INLIST_GET(n));
      }
    cur->node = n;
-   printf("ins '%s' in '%s' @ %i/%i @c: '%c'\n", 
-          text,
-          eina_strbuf_string_get(n->text),
-          cur->pos,
-          (eina_strbuf_length_get(n->text) - 1),
-          eina_strbuf_string_get(n->text)[cur->pos]
-          );
    if (cur->pos > (eina_strbuf_length_get(n->text) - 1))
      {
-        printf("apnd\n");
         eina_strbuf_append(n->text, (char *)text);
      }
    else
      {
-        printf("ins\n");
         eina_strbuf_insert(n->text, (char *)text, cur->pos);
      }
    cur->pos += strlen(text);
