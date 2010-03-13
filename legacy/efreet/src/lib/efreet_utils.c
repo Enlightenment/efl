@@ -52,7 +52,7 @@ static Eina_List *efreet_util_cache_list(const char *search, const char *what);
 static Eina_List *efreet_util_cache_glob_list(const char *search, const char *what);
 
 static Eina_Hash *file_id_by_desktop_path = NULL;
-static char *cache_file = NULL;
+static const char *cache_file = NULL;
 static Eet_File *cache = NULL;
 
 static int init = 0;
@@ -86,7 +86,7 @@ efreet_util_shutdown(void)
     eina_log_domain_unregister(_efreet_utils_log_dom);
     IF_FREE_HASH(file_id_by_desktop_path);
     if (cache) eet_close(cache);
-    IF_FREE(cache_file);
+    IF_RELEASE(cache_file);
     return init;
 }
 
@@ -115,7 +115,7 @@ efreet_desktop_util_cache_file(void)
     else
         snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_util.cache", home);
 
-    cache_file = strdup(tmp);
+    cache_file = eina_stringshare_add(tmp);
     return cache_file;
 }
 

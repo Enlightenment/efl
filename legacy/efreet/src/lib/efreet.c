@@ -14,9 +14,9 @@
 
 static int _efreet_init_count = 0;
 static int efreet_parsed_locale = 0;
-static char *efreet_lang = NULL;
-static char *efreet_lang_country = NULL;
-static char *efreet_lang_modifier = NULL;
+static const char *efreet_lang = NULL;
+static const char *efreet_lang_country = NULL;
+static const char *efreet_lang_modifier = NULL;
 int _efreet_log_domain_global = -1;
 static void efreet_parse_locale(void);
 static int efreet_parse_locale_setting(const char *env);
@@ -105,9 +105,9 @@ efreet_shutdown(void)
     eet_shutdown();
     eina_shutdown();
 
-    IF_FREE(efreet_lang);
-    IF_FREE(efreet_lang_country);
-    IF_FREE(efreet_lang_modifier);
+    IF_RELEASE(efreet_lang);
+    IF_RELEASE(efreet_lang_country);
+    IF_RELEASE(efreet_lang_modifier);
     efreet_parsed_locale = 0;  /* reset this in case they init efreet again */
 
     return _efreet_init_count;
@@ -199,7 +199,7 @@ efreet_parse_locale_setting(const char *env)
     if (p)
     {
         *p = '\0';
-        efreet_lang_modifier = strdup(p + 1);
+        efreet_lang_modifier = eina_stringshare_add(p + 1);
         found = 1;
     }
 
@@ -212,13 +212,13 @@ efreet_parse_locale_setting(const char *env)
     if (p)
     {
         *p = '\0';
-        efreet_lang_country = strdup(p + 1);
+        efreet_lang_country = eina_stringshare_add(p + 1);
         found = 1;
     }
 
     if (setting && (*setting != '\0'))
     {
-        efreet_lang = strdup(setting);
+        efreet_lang = eina_stringshare_add(setting);
         found = 1;
     }
 
