@@ -45,7 +45,7 @@ static char *efreet_util_path_in_default(const char *section, const char *path);
 
 static int  efreet_util_glob_match(const char *str, const char *glob);
 
-static void efreet_util_menus_find_helper(Eina_List *menus, const char *config_dir);
+static Eina_List *efreet_util_menus_find_helper(Eina_List *menus, const char *config_dir);
 
 static Efreet_Desktop *efreet_util_cache_find(const char *search, const char *what1, const char *what2);
 static Eina_List *efreet_util_cache_list(const char *search, const char *what);
@@ -385,16 +385,16 @@ efreet_util_menus_find(void)
     Eina_List *dirs, *l;
     const char *dir;
 
-    efreet_util_menus_find_helper(menus, efreet_config_home_get());
+    menus = efreet_util_menus_find_helper(menus, efreet_config_home_get());
 
     dirs = efreet_config_dirs_get();
     EINA_LIST_FOREACH(dirs, l, dir)
-        efreet_util_menus_find_helper(menus, dir);
+        menus = efreet_util_menus_find_helper(menus, dir);
 
     return menus;
 }
 
-static void
+static Eina_List *
 efreet_util_menus_find_helper(Eina_List *menus, const char *config_dir)
 {
     DIR *files = NULL;
@@ -403,7 +403,7 @@ efreet_util_menus_find_helper(Eina_List *menus, const char *config_dir)
 
     snprintf(dbuf, sizeof(dbuf), "%s/menus", config_dir);
     files = opendir(dbuf);
-    if (!files) return;
+    if (!files) return menus;
     while ((file = readdir(files))) {
         const char *exten;
         exten = strrchr(file->d_name, '.');
@@ -416,6 +416,7 @@ efreet_util_menus_find_helper(Eina_List *menus, const char *config_dir)
         menus = eina_list_append(menus, strdup(fbuf));
     }
     closedir(files);
+    return menus;
 }
 
 static Efreet_Desktop *
