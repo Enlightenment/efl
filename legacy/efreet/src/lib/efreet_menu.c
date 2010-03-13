@@ -44,8 +44,8 @@ struct Efreet_Menu_Internal
 {
     struct
     {
-        char *path;         /**< The base file path */
-        char *name;         /**< The filename for this menu */
+        const char *path;         /**< The base file path */
+        const char *name;         /**< The filename for this menu */
     } file;                 /**< The menu file information */
 
     struct
@@ -1031,8 +1031,8 @@ efreet_menu_internal_free(Efreet_Menu_Internal *internal)
 {
     if (!internal) return;
 
-    IF_FREE(internal->file.path);
-    IF_FREE(internal->file.name);
+    IF_RELEASE(internal->file.path);
+    IF_RELEASE(internal->file.name);
 
     IF_RELEASE(internal->name.internal);
     internal->name.name = NULL;
@@ -1123,7 +1123,7 @@ efreet_menu_handle_sub_menu(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     efreet_menu_create_sub_menu_list(parent);
 
     internal = efreet_menu_internal_new();
-    internal->file.path = strdup(parent->file.path);
+    internal->file.path = eina_stringshare_add(parent->file.path);
     if (!efreet_menu_handle_menu(internal, xml))
     {
         efreet_menu_internal_free(internal);
@@ -1578,7 +1578,6 @@ efreet_menu_handle_merge_file(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     {
         Eina_List *search_dirs;
         const char *dir, *p;
-        int len = 0;
 
         if (!parent->file.path)
         {
@@ -1597,12 +1596,11 @@ efreet_menu_handle_merge_file(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
          * from that point */
 
         dir = efreet_config_home_get();
-        len = strlen(dir);
-        if (strncmp(dir, parent->file.path, len))
+        if (strncmp(dir, parent->file.path, eina_stringshare_strlen(dir)))
         {
             EINA_LIST_FOREACH(search_dirs, l, dir)
             {
-                if (!strncmp(dir, parent->file.path, len))
+                if (!strncmp(dir, parent->file.path, eina_stringshare_strlen(dir)))
                     break;
             }
         }
@@ -1616,7 +1614,7 @@ efreet_menu_handle_merge_file(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
         /* the parent file path may have more path then just the base
          * directory so we need to append that as well */
-        p = parent->file.path + len;
+        p = parent->file.path + eina_stringshare_strlen(dir);
 
         /* whatever dirs are left in the search dir we need to look for the
          * menu with the same relative filename */
@@ -3208,8 +3206,8 @@ efreet_menu_path_set(Efreet_Menu_Internal *internal, const char *path)
         *p = '\0';
         p++;
 
-        internal->file.path = strdup(tmp);
-        internal->file.name = strdup(p);
+        internal->file.path = eina_stringshare_add(tmp);
+        internal->file.name = eina_stringshare_add(p);
     }
     FREE(tmp);
 }
