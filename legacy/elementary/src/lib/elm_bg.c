@@ -117,12 +117,8 @@ elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
 	wd->custom_img = NULL;
      }
    if (!file) return;
-   if (wd->file) eina_stringshare_del(wd->file);
-   if (file) wd->file = eina_stringshare_add(file);
-   else wd->file = NULL;
-   if (wd->group) eina_stringshare_del(wd->group);
-   if (group) wd->group = eina_stringshare_add(group);
-   else wd->group = NULL;
+   eina_stringshare_replace(&wd->file, file);
+   eina_stringshare_replace(&wd->group, group);
    if (((p = strrchr(file, '.'))) && (!strcasecmp(p, ".edj")))
      {
 	wd->custom_img = edje_object_add(evas_object_evas_get(wd->img));

@@ -251,17 +251,11 @@ elm_button_label_set(Evas_Object *obj, const char *label)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->label) eina_stringshare_del(wd->label);
+   eina_stringshare_replace(&wd->label, label);
    if (label)
-     {
-	wd->label = eina_stringshare_add(label);
-	edje_object_signal_emit(wd->btn, "elm,state,text,visible", "elm");
-     }
+     edje_object_signal_emit(wd->btn, "elm,state,text,visible", "elm");
    else
-     {
-	wd->label = NULL;
-	edje_object_signal_emit(wd->btn, "elm,state,text,hidden", "elm");
-     }
+     edje_object_signal_emit(wd->btn, "elm,state,text,hidden", "elm");
    edje_object_message_signal_process(wd->btn);
    edje_object_part_text_set(wd->btn, "elm.text", label);
    _sizing_eval(obj);

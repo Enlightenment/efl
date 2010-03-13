@@ -558,17 +558,13 @@ elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *icon, co
 EAPI void
 elm_menu_item_label_set(Elm_Menu_Item *item, const char *label)
 {
-   if (item->label) eina_stringshare_del(item->label);
+   eina_stringshare_replace(&item->label, label);
+
    if (label)
-     {
-	item->label = eina_stringshare_add(label);
-	edje_object_signal_emit(item->o, "elm,state,text,visible", "elm");
-     }
+     edje_object_signal_emit(item->o, "elm,state,text,visible", "elm");
    else
-     {
-	item->label = NULL;
-	edje_object_signal_emit(item->o, "elm,state,text,hidden", "elm");
-     }
+     edje_object_signal_emit(item->o, "elm,state,text,hidden", "elm");
+
    edje_object_message_signal_process(item->o);
    edje_object_part_text_set(item->o, "elm.text", label);
    _sizing_eval(item->menu);

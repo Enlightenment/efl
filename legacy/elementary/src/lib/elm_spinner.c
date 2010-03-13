@@ -533,8 +533,7 @@ elm_spinner_label_format_set(Evas_Object *obj, const char *fmt)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->label) eina_stringshare_del(wd->label);
-   wd->label = eina_stringshare_add(fmt);
+   eina_stringshare_replace(&wd->label, fmt);
    _write_label(obj);
    _sizing_eval(obj);
 }

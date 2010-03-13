@@ -266,8 +266,7 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
    if (!parent)
      {
 	elm_genlist_clear(wd->list);
-	if (wd->path) eina_stringshare_del(wd->path);
-	wd->path = eina_stringshare_add(path);
+	eina_stringshare_replace(&wd->path, path);
 	_do_anchors(obj, path);
      }
 
@@ -568,8 +567,7 @@ elm_fileselector_selected_get(Evas_Object *obj)
 	name = elm_entry_entry_get(wd->entry2);
 	//TODO remove <br>
 	snprintf(buf, sizeof(buf), "%s/%s", wd->path, name);
-	if (wd->selection) eina_stringshare_del(wd->selection);
-	wd->selection = eina_stringshare_add(buf);
+	eina_stringshare_replace(&wd->selection, buf);
 	return wd->selection;
      }
    

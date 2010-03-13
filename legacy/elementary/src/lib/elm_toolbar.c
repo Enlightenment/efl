@@ -418,8 +418,7 @@ elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label)
    Evas_Coord mw = -1, mh = -1;
 
    if (!item) return;
-   eina_stringshare_del(item->label);
-   item->label = eina_stringshare_add(label);
+   eina_stringshare_replace(&item->label, label);
    edje_object_part_text_set(item->base, "elm.text", item->label);
 
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);

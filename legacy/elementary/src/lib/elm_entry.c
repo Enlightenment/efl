@@ -318,8 +318,7 @@ _store_selection(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *sel = edje_object_part_text_selection_get(wd->ent, "elm.text");
    if (!wd) return;
-   if (wd->cut_sel) eina_stringshare_del(wd->cut_sel);
-   wd->cut_sel = eina_stringshare_add(sel);
+   eina_stringshare_replace(&wd->cut_sel, sel);
 }
 
 static void
@@ -891,14 +890,9 @@ _signal_entry_cut_notify(void *data, Evas_Object *obj __UNUSED__, const char *em
    char *txt;
    if (!wd) return;
    evas_object_smart_callback_call(data, "selection,cut", NULL);
-   if (wd->cut_sel) eina_stringshare_del(wd->cut_sel);
-   wd->cut_sel = NULL;
    txt = _mkup_to_text(elm_entry_selection_get(data));
-   if (txt)
-     {
-	wd->cut_sel = eina_stringshare_add(txt);
-	free(txt);
-     }
+   eina_stringshare_replace(&wd->cut_sel, txt);
+   if (txt) free(txt);
    edje_object_part_text_insert(wd->ent, "elm.text", "");
    wd->changed = EINA_TRUE;
    _sizing_eval(data);
@@ -1251,9 +1245,7 @@ elm_entry_entry_get(const Evas_Object *obj)
 	ERR("text=NULL for edje %p, part 'elm.text'", wd->ent);
 	return NULL;
      }
-   if (wd->text) eina_stringshare_del(wd->text);
-   wd->text = NULL;
-   if (text) wd->text = eina_stringshare_add(text);
+   eina_stringshare_replace(&wd->text, text);
    return wd->text;
 }
 

@@ -172,17 +172,11 @@ elm_toggle_label_set(Evas_Object *obj, const char *label)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->label) eina_stringshare_del(wd->label);
+   eina_stringshare_replace(&wd->label, label);
    if (label)
-     {
-	wd->label = eina_stringshare_add(label);
-	edje_object_signal_emit(wd->tgl, "elm,state,text,visible", "elm");
-     }
+     edje_object_signal_emit(wd->tgl, "elm,state,text,visible", "elm");
    else
-     {
-	wd->label = NULL;
-	edje_object_signal_emit(wd->tgl, "elm,state,text,hidden", "elm");
-     }
+     edje_object_signal_emit(wd->tgl, "elm,state,text,hidden", "elm");
    edje_object_message_signal_process(wd->tgl);
    edje_object_part_text_set(wd->tgl, "elm.text", label);
    _sizing_eval(obj);
@@ -230,12 +224,8 @@ elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->ontext) eina_stringshare_del(wd->ontext);
-   if (wd->offtext) eina_stringshare_del(wd->offtext);
-   if (onlabel) wd->ontext = eina_stringshare_add(onlabel);
-   else wd->ontext = NULL;
-   if (offlabel) wd->offtext = eina_stringshare_add(offlabel);
-   else wd->offtext = NULL;
+   eina_stringshare_replace(&wd->ontext, onlabel);
+   eina_stringshare_replace(&wd->offtext, offlabel);
    edje_object_part_text_set(wd->tgl, "elm.ontext", onlabel);
    edje_object_part_text_set(wd->tgl, "elm.offtext", offlabel);
    _sizing_eval(obj);

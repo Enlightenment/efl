@@ -409,8 +409,7 @@ elm_slideshow_transition_set(Evas_Object *obj, const char *transition)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   eina_stringshare_del(wd->transition);
-   wd->transition = eina_stringshare_add(transition);
+   eina_stringshare_replace(&wd->transition, transition);
 }
 
 /**

@@ -132,9 +132,7 @@ elm_bubble_label_set(Evas_Object *obj, const char *label)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->label) eina_stringshare_del(wd->label);
-   if (label) wd->label = eina_stringshare_add(label);
-   else wd->label = NULL;
+   eina_stringshare_replace(&wd->label, label);
    edje_object_part_text_set(wd->bbl, "elm.text", label);
    _sizing_eval(obj);
 }
@@ -167,9 +165,7 @@ elm_bubble_info_set(Evas_Object *obj, const char *info)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->info) eina_stringshare_del(wd->info);
-   if (info) wd->info = eina_stringshare_add(info);
-   else wd->info = NULL;
+   eina_stringshare_replace(&wd->info, info);
    edje_object_part_text_set(wd->bbl, "elm.info", info);
    _sizing_eval(obj);
 }

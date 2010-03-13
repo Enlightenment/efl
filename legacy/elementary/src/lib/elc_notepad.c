@@ -328,9 +328,7 @@ elm_notepad_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 	wd->delay_write = NULL;
      }
    _save(obj);
-   if (wd->file) eina_stringshare_del(wd->file);
-   wd->file = NULL;
-   if (file) wd->file = eina_stringshare_add(file);
+   eina_stringshare_replace(&wd->file, file);
    wd->format = format;
    _load(obj);
 }

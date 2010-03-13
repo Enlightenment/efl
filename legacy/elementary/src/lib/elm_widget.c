@@ -814,13 +814,10 @@ elm_widget_scale_get(const Evas_Object *obj)
 EAPI void
 elm_widget_style_set(Evas_Object *obj, const char *style)
 {
-   const char *old;
    API_ENTRY return;
 
-   old = sd->style;
-   sd->style = eina_stringshare_add(style);
-   if (old) eina_stringshare_del(old);
-   if (old != sd->style) elm_widget_theme(obj);
+   if (eina_stringshare_replace(&sd->style, style))
+     elm_widget_theme(obj);
 }
 
 EAPI const char *
@@ -834,11 +831,8 @@ elm_widget_style_get(const Evas_Object *obj)
 EAPI void
 elm_widget_type_set(Evas_Object *obj, const char *type)
 {
-   const char *old;
    API_ENTRY return;
-   old = sd->type;
-   sd->type = eina_stringshare_add(type);
-   if (old) eina_stringshare_del(old);
+   eina_stringshare_replace(&sd->type, type);
 }
 
 EAPI const char *

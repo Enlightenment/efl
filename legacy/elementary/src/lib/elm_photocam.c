@@ -1063,8 +1063,7 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
    Widget_Data *wd = elm_widget_data_get(obj);
    int w, h;
    if (!wd) return EVAS_LOAD_ERROR_GENERIC;
-   if (wd->file) eina_stringshare_del(wd->file);
-   wd->file = eina_stringshare_add(file);
+   if (!eina_stringshare_replace(&wd->file, file)) return EVAS_LOAD_ERROR_NONE;
    evas_object_hide(wd->img);
    evas_object_image_smooth_scale_set(wd->img, (wd->nosmooth == 0));
    evas_object_image_file_set(wd->img, NULL, NULL);

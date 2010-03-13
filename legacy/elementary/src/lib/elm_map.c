@@ -795,9 +795,7 @@ grid_load(Evas_Object *obj, Grid *g)
                   
 		  source = map_sources_tab[wd->source].url_cb(x, y, g->zoom);
                   
-		  if (gi->file)
-		    eina_stringshare_del(gi->file);
-		  gi->file = eina_stringshare_add(buf2);
+		  eina_stringshare_replace(&gi->file, buf2);
 
 		  if (ecore_file_exists(buf2) || g == eina_list_data_get(wd->grids))
 		    {
@@ -2646,9 +2644,7 @@ EAPI void
 elm_map_group_class_style_set(Elm_Map_Group_Class *clas, const char *style)
 {
    if (!clas) return;
-   if (clas->style) eina_stringshare_del(clas->style);
-   clas->style = NULL;
-   if (style) clas->style = eina_stringshare_add(style);
+   eina_stringshare_replace(&clas->style, style);
 }
 
 /*
@@ -2767,9 +2763,7 @@ EAPI void
 elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style)
 {
    if (!clas) return;
-   if (clas->style) eina_stringshare_del(clas->style);
-   clas->style = NULL;
-   if (style) clas->style = eina_stringshare_add(style);
+   eina_stringshare_replace(&clas->style, style);
 }
 
 /*

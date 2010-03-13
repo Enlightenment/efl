@@ -583,10 +583,8 @@ EAPI void
 elm_hoversel_item_icon_set(Elm_Hoversel_Item *it, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type)
 {
    if (!it) return;
-   if (it->icon_file) eina_stringshare_del(it->icon_file);
-   it->icon_file = eina_stringshare_add(icon_file);
-   if (it->icon_group) eina_stringshare_del(it->icon_group);
-   it->icon_group = eina_stringshare_add(icon_group);
+   eina_stringshare_replace(&it->icon_file, icon_file);
+   eina_stringshare_replace(&it->icon_group, icon_group);
    it->icon_type = icon_type;
 }
 

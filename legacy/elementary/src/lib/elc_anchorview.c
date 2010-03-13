@@ -233,9 +233,7 @@ elm_anchorview_hover_style_set(Evas_Object *obj, const char *style)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->hover_style) eina_stringshare_del(wd->hover_style);
-   wd->hover_style = NULL;
-   if (style) wd->hover_style = eina_stringshare_add(style);
+   eina_stringshare_replace(&wd->hover_style, style);
 }
 
 /**

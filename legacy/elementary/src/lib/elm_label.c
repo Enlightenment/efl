@@ -171,8 +171,7 @@ elm_label_label_set(Evas_Object *obj, const char *label)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (!label) label = "";
-   if (wd->label) eina_stringshare_del(wd->label);
-   wd->label = eina_stringshare_add(label);
+   eina_stringshare_replace(&wd->label, label);
    edje_object_part_text_set(wd->lbl, "elm.text", label);
    wd->changed = 1;
    _sizing_eval(obj);

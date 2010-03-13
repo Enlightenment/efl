@@ -333,18 +333,13 @@ _elm_window_property_change(void *data __UNUSED__, int ev_type __UNUSED__, void 
              
              val = ecore_x_window_prop_string_get(event->win,
                                                   event->atom);
-             if (_elm_config->theme)
-               {
-                  eina_stringshare_del(_elm_config->theme);
-                  _elm_config->theme = NULL;
-               }
-             if (val)
-               {
-                  _elm_config->theme = eina_stringshare_add(val);
-                  _elm_theme_parse(val);
-                  free(val);
-                  _elm_rescale();
-               }
+	     eina_stringshare_replace(&_elm_config->theme, val);
+	     if (val)
+	       {
+		  _elm_theme_parse(val);
+		  free(val);
+		  _elm_rescale();
+	       }
 	  }
      }
    return 1;
@@ -777,14 +772,7 @@ elm_quicklaunch_init(int argc, char **argv)
 
    s = getenv("ELM_THEME");
    if (s)
-     {
-        if (_elm_config->theme)
-          {
-             eina_stringshare_del(_elm_config->theme);
-             _elm_config->theme = NULL;
-          }
-        _elm_config->theme = eina_stringshare_add(s);
-     }
+     eina_stringshare_replace(&_elm_config->theme, s);
    
    _elm_theme_parse(_elm_config->theme);
 
@@ -859,14 +847,7 @@ elm_quicklaunch_init(int argc, char **argv)
 
    s = getenv("ELM_MODULES");
    if (s)
-     {
-        if (_elm_config->modules)
-          {
-             eina_stringshare_del(_elm_config->modules);
-             _elm_config->modules = NULL;
-          }
-        _elm_config->modules = eina_stringshare_add(s);
-     }
+     eina_stringshare_replace(&_elm_config->modules, s);
    if (_elm_config->modules) _elm_module_parse(_elm_config->modules);
 }
 
@@ -934,12 +915,7 @@ elm_quicklaunch_sub_init(int argc, char **argv)
                                                 _elm_atom_enlightenment_theme);
              if (s)
 	       {
-                  if (_elm_config->theme)
-                    {
-                       eina_stringshare_del(_elm_config->theme);
-                       _elm_config->theme = NULL;
-                    }
-                  _elm_config->theme = eina_stringshare_add(s);
+		  eina_stringshare_replace(&_elm_config->theme, s);
                   _elm_theme_parse(s);
                   free(s);
 	       }
