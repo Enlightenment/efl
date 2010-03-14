@@ -25,15 +25,32 @@
  * @{
  */
 
+/**
+ * Replace the previously stringshared pointer with a new content.
+ *
+ * The string pointed by @a p_str should be previously stringshared or
+ * @c NULL and it will be eina_stringshare_del(). The new string will
+ * be eina_stringshare_add() and then assigned to @c *p_str.
+ *
+ * @param p_str pointer to the stringhare to be replaced. Must not be
+ *        @c NULL, but @c *p_str may be @c NULL as it is a valid
+ *        stringshare handle.
+ * @param news new string to be stringshared, may be @c NULL.
+ *
+ * @return #EINA_TRUE if the strings were different and thus replaced,
+ *         #EINA_FALSE if the strings were the same after shared.
+ */
 static inline Eina_Bool
 eina_stringshare_replace(const char **p_str, const char *news)
 {
+   if (*p_str == news) return EINA_FALSE;
+
    news = eina_stringshare_add(news);
    eina_stringshare_del(*p_str);
    if (*p_str == news)
-     return 0;
+     return EINA_FALSE;
    *p_str = news;
-   return 1;
+   return EINA_TRUE;
 }
 
 /**
