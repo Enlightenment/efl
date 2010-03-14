@@ -4557,7 +4557,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 	       }
 	     else if (format == EVAS_TEXTBLOCK_TEXT_MARKUP)
 	       {
-		  size_t tag_len, replace_len = eina_strbuf_string_get(n->text);
+		  size_t tag_len, replace_len = eina_strbuf_length_get(n->text);
 		  const char *tag = _style_match_replace(o->style, eina_strbuf_string_get(n->text), replace_len, &tag_len);
 		  eina_strbuf_append_char(txt, '<');
 		  if (tag)
