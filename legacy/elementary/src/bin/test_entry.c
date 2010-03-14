@@ -1056,3 +1056,12 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(win);
 }
 #endif
+
+/* broken things right now that neex fixing:
+ * 
+ * * select all then hit any key doesnt delete selection (which is all) (somethnig to do with end sel being at end of text)
+ * * end goes to end of line, but then when @ end, hitting home fails (cursor vanishes or goes to beginning of next line)
+ * * print selection doesnt reversemarkup properly liek print entry
+ * * cursor beginning/end doesnt trigger auto-scroll (no cursor changed signal)
+ * 
+ */
