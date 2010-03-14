@@ -4497,6 +4497,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 			    const char *escape;
 			    int adv;
 
+                            if (!*p) break;
 			    escape = _escaped_char_match(p, &adv);
 			    if (escape)
 			      {
