@@ -1060,7 +1060,6 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
 /* broken things right now that neex fixing:
  * 
  * * end goes to end of line, but then when @ end, hitting home fails (cursor vanishes or goes to beginning of next line)
- * * print selection doesnt reversemarkup properly liek print entry
  * * cursor beginning/end doesnt trigger auto-scroll (no cursor changed signal)
  * * multi-line - hit enter and new line at end - cursor vanishes.
  * 
