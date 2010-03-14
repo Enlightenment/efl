@@ -82,7 +82,7 @@ test_button(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, bt);
    evas_object_smart_callback_add(bt, "repeated", _bt_repeated, NULL);
    elm_button_autorepeat_set(bt, 1);
-   elm_button_autorepeat_initital_timeout_set(bt, 2.0);
+   elm_button_autorepeat_initial_timeout_set(bt, 2.0);
    elm_button_autorepeat_gap_timeout_set(bt, 0.5);
    evas_object_show(bt);
 

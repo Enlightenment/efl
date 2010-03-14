@@ -349,7 +349,7 @@ elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on)
  * @ingroup Button
  */
 EAPI void
-elm_button_autorepeat_initital_timeout_set(Evas_Object *obj, double t)
+elm_button_autorepeat_initial_timeout_set(Evas_Object *obj, double t)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
