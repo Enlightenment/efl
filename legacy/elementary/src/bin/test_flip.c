@@ -68,7 +68,7 @@ test_flip(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_flip_content_back_set(fl, ly);
-//   evas_object_show(ly);
+   evas_object_show(ly);
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button 1");

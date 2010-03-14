@@ -860,7 +860,7 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
 	     const Eina_List *l;
 	     const char *key;
 
-	     it->labels = _stringlist_get(edje_object_data_get(it->base, "labels"));
+	     it->labels = _elm_stringlist_get(edje_object_data_get(it->base, "labels"));
 	     EINA_LIST_FOREACH(it->labels, l, key)
 	       {
 		  char *s = it->itc->func.label_get(it->data, it->wd->obj, l->data);
@@ -877,7 +877,7 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
 	     const Eina_List *l;
 	     const char *key;
 
-	     it->icons = _stringlist_get(edje_object_data_get(it->base, "icons"));
+	     it->icons = _elm_stringlist_get(edje_object_data_get(it->base, "icons"));
 	     EINA_LIST_FOREACH(it->icons, l, key)
 	       {
 		  Evas_Object *ic = it->itc->func.icon_get(it->data, it->wd->obj, l->data);
@@ -896,7 +896,7 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
 	     const Eina_List *l;
 	     const char *key;
 
-	     it->states = _stringlist_get(edje_object_data_get(it->base, "states"));
+	     it->states = _elm_stringlist_get(edje_object_data_get(it->base, "states"));
 	     EINA_LIST_FOREACH(it->states, l, key)
 	       {
 		  Eina_Bool on = it->itc->func.state_get(it->data, it->wd->obj, l->data);
@@ -943,11 +943,11 @@ _item_unrealize(Elm_Genlist_Item *it)
    it->base = NULL;
    evas_object_del(it->spacer);
    it->spacer = NULL;
-   _stringlist_free(it->labels);
+   _elm_stringlist_free(it->labels);
    it->labels = NULL;
-   _stringlist_free(it->icons);
+   _elm_stringlist_free(it->icons);
    it->icons = NULL;
-   _stringlist_free(it->states);
+   _elm_stringlist_free(it->states);
 
    EINA_LIST_FREE(it->icon_objs, icon) 
      evas_object_del(icon);

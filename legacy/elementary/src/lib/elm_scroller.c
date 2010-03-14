@@ -64,8 +64,11 @@ _theme_hook(Evas_Object *obj)
    
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_smart_scroller_theme_set(wd->scr, "scroller", "base", elm_widget_style_get(obj));
-   edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
+   if (wd->scr)
+     {
+        elm_smart_scroller_theme_set(wd->scr, "scroller", "base", elm_widget_style_get(obj));
+        edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
+     }
    _sizing_eval(obj);
 }
 
@@ -77,7 +80,8 @@ _show_region_hook(void *data, Evas_Object *obj)
    Evas_Coord x, y, w, h;
    if (!wd) return;
    elm_widget_show_region_get(obj, &x, &y, &w, &h);
-   elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
+   if (wd->scr)
+     elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
 }
 
 static void
@@ -92,26 +96,29 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_min_get(wd->content, &minw, &minh);
    evas_object_size_hint_max_get(wd->content, &maxw, &maxh);
    evas_object_size_hint_weight_get(wd->content, &xw, &xy);
-   elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
-   if (xw > 0.0)
+   if (wd->scr)
      {
-	if ((minw > 0) && (vw < minw)) vw = minw;
-	else if ((maxw > 0) && (vw > maxw)) vw = maxw;
+        elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
+        if (xw > 0.0)
+          {
+             if ((minw > 0) && (vw < minw)) vw = minw;
+             else if ((maxw > 0) && (vw > maxw)) vw = maxw;
+          }
+        else if (minw > 0) vw = minw;
+        if (xy > 0.0)
+          {
+             if ((minh > 0) && (vh < minh)) vh = minh;
+             else if ((maxh > 0) && (vh > maxh)) vh = maxh;
+          }
+        else if (minh > 0) vh = minh;
+        evas_object_resize(wd->content, vw, vh);
+        w = -1;
+        h = -1;
+        edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
+        if (wd->min_w) w = vmw + minw;
+        if (wd->min_h) h = vmh + minh;
+        evas_object_size_hint_min_set(obj, w, h);
      }
-   else if (minw > 0) vw = minw;
-   if (xy > 0.0)
-     {
-	if ((minh > 0) && (vh < minh)) vh = minh;
-	else if ((maxh > 0) && (vh > maxh)) vh = maxh;
-     }
-   else if (minh > 0) vh = minh;
-   evas_object_resize(wd->content, vw, vh);
-   w = -1;
-   h = -1;
-   edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
-   if (wd->min_w) w = vmw + minw;
-   if (wd->min_h) h = vmh + minh;
-   evas_object_size_hint_min_set(obj, w, h);
 }
 
 static void
@@ -136,6 +143,8 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 	wd->content = NULL;
 	_sizing_eval(obj);
      }
+   else if (sub == wd->scr)
+     wd->scr = NULL;
 }
 
 static void
@@ -145,7 +154,8 @@ _hold_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   elm_smart_scroller_hold_set(wd->scr, 1);
+   if (wd->scr)
+     elm_smart_scroller_hold_set(wd->scr, 1);
 }
 
 static void
@@ -155,7 +165,8 @@ _hold_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   elm_smart_scroller_hold_set(wd->scr, 0);
+   if (wd->scr)
+     elm_smart_scroller_hold_set(wd->scr, 0);
 }
 
 static void
@@ -165,7 +176,8 @@ _freeze_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   elm_smart_scroller_freeze_set(wd->scr, 1);
+   if (wd->scr)
+     elm_smart_scroller_freeze_set(wd->scr, 1);
 }
 
 static void
@@ -175,7 +187,8 @@ _freeze_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   elm_smart_scroller_freeze_set(wd->scr, 0);
+   if (wd->scr)
+     elm_smart_scroller_freeze_set(wd->scr, 0);
 }
 
 static void
@@ -317,7 +330,8 @@ elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
      {
 	elm_widget_on_show_region_hook_set(content, _show_region_hook, obj);
 	elm_widget_sub_object_add(obj, content);
-	elm_smart_scroller_child_set(wd->scr, content);
+        if (wd->scr)
+          elm_smart_scroller_child_set(wd->scr, content);
 	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
 	_sizing_eval(obj);
@@ -369,7 +383,8 @@ elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coor
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
+   if (wd->scr)
+     elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
 }
 
 /**
@@ -400,7 +415,8 @@ elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scro
      };
    if (!wd) return;
    if ((policy_h >= 3) || (policy_v >= 3)) return;
-   elm_smart_scroller_policy_set(wd->scr, map[policy_h], map[policy_v]);
+   if (wd->scr)
+     elm_smart_scroller_policy_set(wd->scr, map[policy_h], map[policy_v]);
 }
 
 /**
@@ -424,8 +440,11 @@ elm_scroller_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coo
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((x) && (y)) elm_smart_scroller_child_pos_get(wd->scr, x, y);
-   if ((w) && (h)) elm_smart_scroller_child_viewport_size_get(wd->scr, w, h);
+   if (wd->scr)
+     {
+        if ((x) && (y)) elm_smart_scroller_child_pos_get(wd->scr, x, y);
+        if ((w) && (h)) elm_smart_scroller_child_viewport_size_get(wd->scr, w, h);
+     }
 }
 
 /**
@@ -474,7 +493,8 @@ elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
+   if (wd->scr)
+     elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
 }
 
 /**
@@ -505,8 +525,9 @@ elm_scroller_page_relative_set(Evas_Object *obj, double h_pagerel, double v_page
    if (!wd) return;
    wd->pagerel_h = h_pagerel;
    wd->pagerel_v = v_pagerel;
-   elm_smart_scroller_paging_set(wd->scr, wd->pagerel_h, wd->pagerel_v,
-                                 wd->pagesize_h, wd->pagesize_v);
+   if (wd->scr)
+     elm_smart_scroller_paging_set(wd->scr, wd->pagerel_h, wd->pagerel_v,
+                                   wd->pagesize_h, wd->pagesize_v);
 }
 
 /**
@@ -530,8 +551,9 @@ elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v
    if (!wd) return;
    wd->pagesize_h = h_pagesize;
    wd->pagesize_v = v_pagesize;
-   elm_smart_scroller_paging_set(wd->scr, wd->pagerel_h, wd->pagerel_v,
-                                 wd->pagesize_h, wd->pagesize_v);
+   if (wd->scr)
+     elm_smart_scroller_paging_set(wd->scr, wd->pagerel_h, wd->pagerel_v,
+                                   wd->pagesize_h, wd->pagesize_v);
 }
 
 /**
@@ -559,5 +581,6 @@ elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_smart_scroller_region_bring_in(wd->scr, x, y, w, h);
+   if (wd->scr)
+     elm_smart_scroller_region_bring_in(wd->scr, x, y, w, h);
 }

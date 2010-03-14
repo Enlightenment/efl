@@ -236,6 +236,7 @@ EAPI void
 elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
 {
    API_ENTRY return;
+   if (!sobj) return;
    sd->subobjs = eina_list_remove(sd->subobjs, sobj);
    if (!sd->child_can_focus)
      {
@@ -887,7 +888,7 @@ _smart_del(Evas_Object *obj)
 	sobj = sd->resize_obj;
 	sd->resize_obj = NULL;
 	evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
-	evas_object_smart_callback_call(sd->obj, "sub-object-del", sd->resize_obj);
+	evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
 	evas_object_del(sobj);
      }
    if (sd->hover_obj)
@@ -1001,9 +1002,10 @@ _smart_init(void)
      }
 }
 
+/* utilities */
 
 Eina_List *
-_stringlist_get(const char *str)
+_elm_stringlist_get(const char *str)
 {
    Eina_List *list = NULL;
    const char *s, *b;
@@ -1028,9 +1030,32 @@ _stringlist_get(const char *str)
 }
 
 void
-_stringlist_free(Eina_List *list)
+_elm_stringlist_free(Eina_List *list)
 {
    const char *s;
-   EINA_LIST_FREE(list, s)
-     eina_stringshare_del(s);
+   EINA_LIST_FREE(list, s) eina_stringshare_del(s);
+}
+
+Eina_Bool
+_elm_widget_type_check(Evas_Object *obj, const char *type)
+{
+   const char *provided, *expected = "(unknown)";
+   static int abort_on_warn = -1;
+   if (EINA_LIKELY(elm_widget_type_get(obj) == type)) return 1;
+   if (type) expected = type;
+   provided = elm_widget_type_get(obj);
+   if ((!provided) || (provided[0] == 0))
+     {
+        provided = evas_object_type_get(obj);
+        if ((!provided) || (provided[0] == 0))
+          provided = "(unknown)";
+     }
+   ERR("Passing Object: %p, of type: '%s' when expecting type: '%s'", obj, provided, expected);
+   if (abort_on_warn == -1)
+     {
+        if (getenv("ELM_ERROR_ABORT")) abort_on_warn = 1;
+        else abort_on_warn = 0;
+     }
+   if (abort_on_warn == 1) abort();
+   return 1;
 }
