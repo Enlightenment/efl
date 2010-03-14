@@ -1738,7 +1738,10 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
           }
      }
    else
-     str = "";
+     {
+        str = "";
+        tbase = str;
+     }
 //   printf("add: wrap: %i|%i, width: %i '%s'\n", fmt->wrap_word, fmt->wrap_char, c->w, str);
    new_line = 0;
    empty_item = 0;
@@ -3598,6 +3601,7 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
 
    if (!cur) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (text)
      {
 	Eina_List *l;
 	Evas_Textblock_Cursor *data;
@@ -3607,7 +3611,9 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
 	     if (cur->node == o->cursor->node)
 	       {
 		  if (o->cursor->pos > cur->pos)
-		    o->cursor->pos += strlen(text);
+                    {
+                       o->cursor->pos += strlen(text);
+                    }
 	       }
 	  }
 	EINA_LIST_FOREACH(o->cursors, l, data)
@@ -3617,7 +3623,9 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
 		  if (cur->node == data->node)
 		    {
 		       if (data->pos > cur->pos)
-			 data->pos += strlen(text);
+                         {
+                            data->pos += strlen(text);
+                         }
 		    }
 	       }
 	  }
@@ -3642,14 +3650,19 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
      {
 	ch = evas_common_font_utf8_get_next((unsigned char *)eina_strbuf_string_get(n->text), &index);
 	if (ch != 0)
-	  cur->pos = index;
+          {
+             cur->pos = index;
+          }
      }
    if (cur->pos >= (eina_strbuf_length_get(n->text) - 1))
      eina_strbuf_append(n->text, (char *)text);
    else
      eina_strbuf_insert(n->text, (char *)text, cur->pos);
 // XXX: This makes no sense?
-   cur->pos += strlen(text);
+   if (text)
+     {
+        cur->pos += strlen(text);
+     }
    o->formatted.valid = 0;
    o->native.valid = 0;
    o->changed = 1;
@@ -3687,7 +3700,9 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text)
 		  if ((o->cursor->node) &&
 		      (o->cursor->node->type == NODE_TEXT) &&
 		      (o->cursor->pos >= cur->pos))
-		    o->cursor->pos += strlen(text);
+                    {
+                       o->cursor->pos += strlen(text);
+                    }
 	       }
 	  }
 	EINA_LIST_FOREACH(o->cursors, l, data)
@@ -3699,7 +3714,9 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text)
 		       if (data->node &&
 			   (data->node->type == NODE_TEXT) &&
 			   (data->pos >= cur->pos))
-			 data->pos += strlen(text);
+                         {
+                            data->pos += strlen(text);
+                         }
 		    }
 	       }
 	  }
@@ -3718,16 +3735,21 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text)
 	else
 	  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_prepend(EINA_INLIST_GET(o->nodes), EINA_INLIST_GET(n));
      }
+   if (!n->text) n->text = eina_strbuf_new();
    cur->node = n;
-   if (cur->pos > (eina_strbuf_length_get(n->text) - 1))
+   
+   if (text)
      {
-        eina_strbuf_append(n->text, (char *)text);
+        if (cur->pos > (eina_strbuf_length_get(n->text) - 1))
+          {
+             eina_strbuf_append(n->text, (char *)text);
+          }
+        else
+          {
+             eina_strbuf_insert(n->text, (char *)text, cur->pos);
+          }
+        cur->pos += strlen(text);
      }
-   else
-     {
-        eina_strbuf_insert(n->text, (char *)text, cur->pos);
-     }
-   cur->pos += strlen(text);
    o->formatted.valid = 0;
    o->native.valid = 0;
    o->changed = 1;
