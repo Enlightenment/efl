@@ -3527,6 +3527,12 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
         cur->eol = 0;
 	cur->node = fi->source_node;
      }
+   else
+     {
+        cur->pos = 0;
+        cur->eol = 0;
+        cur->node = o->nodes;
+     }
    cur->eol = 0;
    return EINA_TRUE;
 }
@@ -4093,7 +4099,8 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
    if ((!n1) || (!n2)) return;
    index = cur2->pos;
    chr = evas_common_font_utf8_get_next((unsigned char *)eina_strbuf_string_get(n2->text), &index);
-   if (chr == 0) return;
+// XXX: why was this added? this stops sel to end and 
+//   if (chr == 0) return;
    if (n1 == n2)
      {
         if (n1->type == NODE_TEXT)
@@ -4704,13 +4711,19 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
    int x, y, w, h;
 
    if (!cur) return -1;
-   if (!cur->node) return -1;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
-   if (cur->node->type == NODE_FORMAT)
-     _find_layout_format_item_line_match(cur->obj, cur->node, &ln, &fi);
+   if (!cur->node)
+     {
+        ln = o->lines;
+     }
    else
-     _find_layout_item_line_match(cur->obj, cur->node, cur->pos, cur->eol, &ln, &it);
+     {
+        if (cur->node->type == NODE_FORMAT)
+          _find_layout_format_item_line_match(cur->obj, cur->node, &ln, &fi);
+        else
+          _find_layout_item_line_match(cur->obj, cur->node, cur->pos, cur->eol, &ln, &it);
+     }
    if (!ln) return -1;
    x = ln->x;
    y = ln->y;
