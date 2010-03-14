@@ -96,15 +96,19 @@ ecore_file_download_abort_all(void)
  * Download @p url to the given @p dst
  * @param  url The complete url to download
  * @param  dst The local file to save the downloaded to
- * @param  job_ret If the protocol use is http or ftp, this parameter will be fill
- *	with the job. Then you can use ecore_file_download_abort() to cancel it.
  * @param  completion_cb A callback called on download complete
  * @param  progress_cb A callback called during the download operation
+ * @param  data User data passed to both callbacks
+ * @param  job_ret If the protocol in use is http or ftp, this parameter will be
+ * filled with the job. Then you can use ecore_file_download_abort() to cancel it.
+ * 
  * @return 1 if the download start or 0 on failure
  *
  * You must provide the full url, including 'http://', 'ftp://' or 'file://'.\n
  * If @p dst already exist it will not be overwritten and the function will fail.\n
- * Ecore must be compiled with CURL to download using http and ftp protocols.
+ * Ecore must be compiled with CURL to download using http and ftp protocols.\n
+ * The @p status param in the @p completion_cb() will be 0 if the download goes well or
+ * 1 in case of failure.
  */
 EAPI int
 ecore_file_download(const char *url, const char *dst,
@@ -287,6 +291,11 @@ _ecore_file_download_curl(const char *url, const char *dst,
 }
 # endif
 #endif
+
+/**
+ * Abort the given download job
+ * @param  job The download job to abort
+ */
 
 EAPI void
 ecore_file_download_abort(Ecore_File_Download_Job *job)
