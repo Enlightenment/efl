@@ -4464,6 +4464,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
    n1 = cur1->node;
    n2 = cur2->node;
    index = cur2->pos;
+   if ((!n1) || (!n2)) return NULL;
    if (n2->text)
      evas_common_font_utf8_get_next((unsigned char *)eina_strbuf_string_get(n2->text), &index);
    txt = eina_strbuf_new();
