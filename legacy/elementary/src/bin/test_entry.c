@@ -1062,5 +1062,6 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
  * * end goes to end of line, but then when @ end, hitting home fails (cursor vanishes or goes to beginning of next line)
  * * cursor beginning/end doesnt trigger auto-scroll (no cursor changed signal)
  * * multi-line - hit enter and new line at end - cursor vanishes.
+ * * click on last letter on line with a newline on it (<br>). type a letter. now hit right arrow - cursor doesnt go to end of line - it jumps to next line.
  * 
  */
