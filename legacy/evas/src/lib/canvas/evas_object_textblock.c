@@ -4068,6 +4068,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
      }
    n1 = cur1->node;
    n2 = cur2->node;
+   if ((!n1) || (!n2)) return;
    index = cur2->pos;
    chr = evas_common_font_utf8_get_next((unsigned char *)eina_strbuf_string_get(n2->text), &index);
    if (chr == 0) return;
