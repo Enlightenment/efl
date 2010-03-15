@@ -365,18 +365,30 @@ AC_SUBST(ELM_EWEATHER_DEF)
 
 ELM_ETHUMB_DEF="#undef"
 have_elementary_ethumb="no"
-PKG_CHECK_MODULES([ELEMENTARY_ETHUMB],
-   [
-    ethumb_client
-   ],
-   [
-    AC_DEFINE(HAVE_ELEMENTARY_ETHUMB, 1, [Ethumb support for Elementary])
-    have_elementary_ethumb="yes"
-    ELM_ETHUMB_DEF="#define"
-    requirement_elm="ethumb ${requirement_elm}"
-   ],
-   [have_elementary_ethumb="no"]
-)
+want_elementary_ethumb="auto"
+AC_ARG_ENABLE([ethumb],
+   [AC_HELP_STRING([--disable-ethumb], [disable ethumb support. @<:@default=detect@:>@])],
+   [want_elementary_ethumb=$enableval], [])
+
+if test "x$want_elementary_ethumb" != "xno"; then
+    PKG_CHECK_MODULES([ELEMENTARY_ETHUMB],
+       [
+        ethumb_client
+       ],
+       [
+        AC_DEFINE(HAVE_ELEMENTARY_ETHUMB, 1, [Ethumb support for Elementary])
+        have_elementary_ethumb="yes"
+        ELM_ETHUMB_DEF="#define"
+        requirement_elm="ethumb ${requirement_elm}"
+       ],
+       [have_elementary_ethumb="no"]
+    )
+else
+    have_elementary_ethumb="no"
+fi
+if test "x$want_elementary_ethumb" = "xyes" -a "x$have_elementary_ethumb" = "xno"; then
+    AC_MSG_ERROR([Ethumb support requested, but no ethumb found by pkg-config.])
+fi
 AC_SUBST(ELM_ETHUMB_DEF)
 
 ELM_ALLOCA_H_DEF="#undef"
