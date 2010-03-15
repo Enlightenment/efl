@@ -15,7 +15,8 @@ AM_CPPFLAGS = \
 @ELEMENTARY_WINCE_CFLAGS@ \
 @ELEMENTARY_EDBUS_CFLAGS@ \
 @ELEMENTARY_EFREET_CFLAGS@ \
-@ELEMENTARY_EWEATHER_CFLAGS@
+@ELEMENTARY_EWEATHER_CFLAGS@ \
+@ELEMENTARY_ETHUMB_CFLAGS@
 
 if ELEMENTARY_WINDOWS_BUILD
 AM_CPPFLAGS += -DELEMENTARY_BUILD
@@ -61,6 +62,7 @@ test_spinner.c \
 test_index.c \
 test_photocam.c \
 test_photo.c \
+test_thumb.c \
 test_icon_desktops.c \
 test_notify.c \
 test_slideshow.c \

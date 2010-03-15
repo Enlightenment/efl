@@ -17,6 +17,7 @@
 @ELM_WINCE_DEF@ ELM_WINCE
 @ELM_EDBUS_DEF@ ELM_EDBUS
 @ELM_EFREET_DEF@ ELM_EFREET
+@ELM_ETHUMB_DEF@ ELM_ETHUMB
 @ELM_ALLOCA_H_DEF@ ELM_ALLOCA_H
 @ELM_LIBINTL_H_DEF@ ELM_LIBINTL_H
 
@@ -81,6 +82,10 @@
 # include <Efreet_Trash.h>
 #endif
 
+#ifdef ELM_ETHUMB
+# include <Ethumb_Client.h>
+#endif
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -118,6 +123,8 @@ extern "C" {
 #define ELM_PI 3.14159265358979323846
 
 /**************************************************************************/
+   EAPI extern int ELM_ECORE_EVENT_ETHUMB_CONNECT;
+
    /* Objects */
    typedef enum _Elm_Win_Type
      {
@@ -181,6 +188,13 @@ extern "C" {
       ELM_POLICY_QUIT_LAST_WINDOW_CLOSED /**< quit when last window is closed */
     } Elm_Policy_Quit;
 
+  typedef enum _Elm_Thumb_Animation_Setting
+    {
+       ELM_THUMB_ANIMATION_START = 0, /* Play animation once */
+       ELM_THUMB_ANIMATION_LOOP,      /* Keep playing animation until stop is requested */
+       ELM_THUMB_ANIMATION_STOP
+    } Elm_Thumb_Animation_Setting;
+
 #ifndef ELM_LIB_QUICKLAUNCH
 #define ELM_MAIN() int main(int argc, char **argv) {elm_init(argc, argv); return elm_main(argc, argv);}
 #else
@@ -207,6 +221,7 @@ extern "C" {
 
    EAPI void         elm_need_efreet(void);
    EAPI void         elm_need_e_dbus(void);
+   EAPI void	     elm_need_ethumb(void);
 
    EAPI Eina_Bool    elm_policy_set(unsigned int policy, int value);
    EAPI int          elm_policy_get(unsigned int policy);
@@ -680,6 +695,29 @@ extern "C" {
    EAPI void         elm_photo_size_set(Evas_Object *obj, int size);
    /* smart callbacks called:
     * "clicked" - the user clicked the icon
+    */
+
+   EAPI Evas_Object *elm_thumb_add(Evas_Object *parent);
+   EAPI void	     elm_thumb_file_set(Evas_Object *obj, const char *file, const char *key);
+   EAPI void	     elm_thumb_file_get(Evas_Object *obj, const char **file, const char **key);
+   EAPI void	     elm_thumb_keep_aspect_set(Evas_Object *obj, Eina_Bool setting);
+   EAPI void	     elm_thumb_align_set(Evas_Object *obj, float x_align, float y_align);
+   EAPI void	     elm_thumb_align_get(Evas_Object *obj, float *x, float *y);
+   EAPI void	     elm_thumb_animate(Evas_Object *obj, Elm_Thumb_Animation_Setting s);
+   EAPI Eina_Bool    elm_thumb_ethumb_client_connected(void);
+#ifdef ELM_ETHUMB
+   EAPI Ethumb_Client *elm_thumb_ethumb_client_get(void);
+#else
+   EAPI void	    *elm_thumb_ethumb_client_get(void);
+#endif
+   /* smart callbacks called:
+    * "clicked" - the user clicked the thumb
+    * "clicked,double" - the user double clicked the thumb
+    * "press" - the user pressed the thumb
+    * "generate,start" - the thumbnail generation started
+    * "generate,stop" - the thumbnail generation stopped
+    * "generate,error" - the thumbnail generation failed
+    * "load,error" - the thumbnail image loading failed
     */
 
    EAPI Evas_Object *elm_hoversel_add(Evas_Object *parent);

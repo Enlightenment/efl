@@ -1,0 +1,68 @@
+#include <Elementary.h>
+#ifndef ELM_LIB_QUICKLAUNCH
+void
+test_thumb(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *sc, *tb, *th;
+   int i, j, n;
+   char buf[PATH_MAX];
+   const char *img[9] =
+     {
+	"panel_01.jpg",
+	"plant_01.jpg",
+	"rock_01.jpg",
+	"rock_02.jpg",
+	"sky_01.jpg",
+	"sky_02.jpg",
+	"sky_03.jpg",
+	"sky_04.jpg",
+	"wood_01.jpg",
+     };
+
+   elm_need_ethumb();
+
+   win = elm_win_add(NULL, "thumb", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Thumb");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bg);
+   evas_object_show(bg);
+
+   tb = elm_table_add(win);
+   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+   n = 0;
+   for (j = 0; j < 12; j++)
+     {
+        for (i = 0; i < 12; i++)
+          {
+             th = elm_thumb_add(win);
+             snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR,
+		      img[n]);
+	     n = (n + 1) % 9;
+             elm_thumb_file_set(th, buf, img[n]);
+             evas_object_size_hint_weight_set(th, EVAS_HINT_EXPAND,
+                                              EVAS_HINT_EXPAND);
+	     evas_object_size_hint_align_set(th, EVAS_HINT_FILL,
+					     EVAS_HINT_FILL);
+	     elm_thumb_align_set(th, 0.5, 0.5);
+	     elm_thumb_keep_aspect_set(th, EINA_TRUE);
+             elm_table_pack(tb, th, i, j, 1, 1);
+             evas_object_show(th);
+          }
+     }
+
+   sc = elm_scroller_add(win);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, sc);
+
+   elm_scroller_content_set(sc, tb);
+   evas_object_show(tb);
+   evas_object_show(sc);
+
+   evas_object_resize(win, 600, 600);
+   evas_object_show(win);
+}
+#endif

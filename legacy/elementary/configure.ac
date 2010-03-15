@@ -363,6 +363,22 @@ if test "x$want_elementary_eweather" = "xyes" -a "x$have_elementary_eweather" = 
 fi
 AC_SUBST(ELM_EWEATHER_DEF)
 
+ELM_ETHUMB_DEF="#undef"
+have_elementary_ethumb="no"
+PKG_CHECK_MODULES([ELEMENTARY_ETHUMB],
+   [
+    ethumb_client
+   ],
+   [
+    AC_DEFINE(HAVE_ELEMENTARY_ETHUMB, 1, [Ethumb support for Elementary])
+    have_elementary_ethumb="yes"
+    ELM_ETHUMB_DEF="#define"
+    requirement_elm="ethumb ${requirement_elm}"
+   ],
+   [have_elementary_ethumb="no"]
+)
+AC_SUBST(ELM_ETHUMB_DEF)
+
 ELM_ALLOCA_H_DEF="#undef"
 AC_CHECK_HEADER(alloca.h, [ELM_ALLOCA_H_DEF="#define"])
 AC_SUBST(ELM_ALLOCA_H_DEF)
@@ -436,6 +452,7 @@ echo "  Features:"
 echo "    EDBus..............: ${have_elementary_edbus}"
 echo "    EFreet.............: ${have_elementary_efreet}"
 echo "    EWeather...........: ${have_elementary_eweather}"
+echo "    Ethumb.............: ${have_elementary_ethumb}"
 echo
 echo "  edje_cc..............: ${edje_cc}"
 echo
