@@ -3376,12 +3376,12 @@ evas_textblock_cursor_line_first(Evas_Textblock_Cursor *cur)
    if (!cur->node) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
-   cur->eol = 0;
    if (cur->node->type == NODE_FORMAT)
      _find_layout_format_item_line_match(cur->obj, cur->node, &ln, &fi);
    else
      _find_layout_item_line_match(cur->obj, cur->node, cur->pos, cur->eol, &ln, &it);
    if (!ln) return;
+   cur->eol = 0;
    it = (Evas_Object_Textblock_Item *)ln->items;
    fi = (Evas_Object_Textblock_Format_Item *)ln->format_items;
    if ((it) && (fi))
