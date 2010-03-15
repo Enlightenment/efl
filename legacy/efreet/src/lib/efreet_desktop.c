@@ -322,9 +322,13 @@ efreet_desktop_get(const char *file)
     /* TODO: Check if we need to differentiate between desktop_new and desktop_get */
     Efreet_Desktop *desktop;
 
+    if (!file) return NULL;
     if (efreet_desktop_cache)
     {
-        desktop = eina_hash_find(efreet_desktop_cache, file);
+        char rp[PATH_MAX];
+
+        if (!realpath(file, rp)) return NULL;
+        desktop = eina_hash_find(efreet_desktop_cache, rp);
         if (desktop)
         {
             if (efreet_desktop_cache_check(desktop))
@@ -344,7 +348,7 @@ efreet_desktop_get(const char *file)
 
             /* TODO: Submit event to signal that this file has changed */
             desktop->cached = 0;
-            eina_hash_del(efreet_desktop_cache, file, NULL);
+            eina_hash_del(efreet_desktop_cache, rp, NULL);
         }
     }
 
@@ -424,11 +428,10 @@ EAPI Efreet_Desktop *
 efreet_desktop_new(const char *file)
 {
     Efreet_Desktop *desktop = NULL;
-    char *rp = NULL;
+    char rp[PATH_MAX];
 
     if (!file) return NULL;
-    //rp = ecore_file_realpath(file);
-    rp = strdup(file);
+    if (!realpath(file, rp)) return NULL;
     if (cache)
     {
         /* TODO: Check if the cached version is out of date */
@@ -437,7 +440,6 @@ efreet_desktop_new(const char *file)
         {
             desktop->ref = 1;
             desktop->eet = 1;
-            free(rp);
             return desktop;
         }
     }
@@ -450,19 +452,14 @@ efreet_desktop_new(const char *file)
 
     desktop = NEW(Efreet_Desktop, 1);
     if (!desktop) goto error;
-    desktop->orig_path = rp;
+    desktop->orig_path = strdup(rp);
     if (!efreet_desktop_read(desktop)) goto error;
 
     desktop->ref = 1;
 
     return desktop;
 error:
-    if (desktop)
-    {
-        desktop->orig_path = NULL;
-        efreet_desktop_free(desktop);
-    }
-    if (rp) free(rp);
+    if (desktop) efreet_desktop_free(desktop);
     return NULL;
 }
 
