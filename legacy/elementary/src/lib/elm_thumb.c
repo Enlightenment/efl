@@ -64,8 +64,6 @@ Eina_Bool _elm_ethumb_connected = EINA_FALSE;
 
 EAPI int ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
 
-static void _thumb_geometry_set(Widget_Data *wd);
-
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -85,6 +83,8 @@ _theme_hook(Evas_Object *obj)
 }
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
+static void _thumb_geometry_set(Widget_Data *wd);
+
 static void
 _mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
@@ -640,7 +640,9 @@ elm_thumb_align_set(Evas_Object *obj, float x_align, float y_align)
      y_align = 0.0;
    wd->children.align.y = y_align;
 
+#ifdef HAVE_ELEMENTARY_ETHUMB
    _thumb_geometry_set(wd);
+#endif
 }
 
 /**
