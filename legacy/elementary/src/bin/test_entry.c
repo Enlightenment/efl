@@ -1060,6 +1060,5 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
 /* broken things right now that neex fixing:
  * 
  * * multi-line - hit enter and new line at end - cursor vanishes.
- * * click on last letter on line with a newline on it (<br>). type a letter. now hit right arrow - cursor doesnt go to end of line - it jumps to next line.
  * 
  */
