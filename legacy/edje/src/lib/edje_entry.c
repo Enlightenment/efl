@@ -228,6 +228,7 @@ _curs_next(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
                   _curs_update_from_curs(c, o, en);
                   return;
                }
+             return;
           }
         evas_textblock_cursor_eol_set(c, 0);
 	if (evas_textblock_cursor_node_next(c))
