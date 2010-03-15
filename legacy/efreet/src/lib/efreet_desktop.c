@@ -622,7 +622,7 @@ efreet_desktop_save(Efreet_Desktop *desktop)
          * latest version that we support! */
         efreet_ini_string_set(ini, "Version", DESKTOP_VERSION);
 
-	if (!efreet_ini_save(ini, desktop->orig_path)) ok = 0;
+        if (!efreet_ini_save(ini, desktop->orig_path)) ok = 0;
 #if 0
         else
         {
