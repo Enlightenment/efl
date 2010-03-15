@@ -428,12 +428,13 @@ EAPI Efreet_Desktop *
 efreet_desktop_new(const char *file)
 {
     Efreet_Desktop *desktop = NULL;
-    char rp[PATH_MAX];
 
     if (!file) return NULL;
-    if (!realpath(file, rp)) return NULL;
     if (cache)
     {
+        char rp[PATH_MAX];
+        if (!realpath(file, rp)) return NULL;
+
         /* TODO: Check if the cached version is out of date */
         desktop = eet_data_read(cache, desktop_edd, rp);
         if (desktop)
@@ -443,24 +444,40 @@ efreet_desktop_new(const char *file)
             return desktop;
         }
     }
-    /* TODO:
-     * Add .desktop file path to a cache file, so that
-     * efreet_desktop_cache_create can add it to the cache
-     */
+    return efreet_desktop_uncached_new(file);
+}
 
-    if (!ecore_file_exists(rp)) goto error;
+/**
+ * @param file: The file to create the Efreet_Desktop from
+ * @return Returns a new Efreet_Desktop on success, NULL on failure
+ * @brief Creates a new Efreet_Desktop structure initialized from the
+ * contents of @a file or NULL on failure
+ *
+ * By using efreet_desktop_uncached_new the Efreet_Desktop structure will be
+ * read from disk, and not from any cache.
+ */
+EAPI Efreet_Desktop *
+efreet_desktop_uncached_new(const char *file)
+{
+    Efreet_Desktop *desktop = NULL;
+    char rp[PATH_MAX];
+
+    if (!file) return NULL;
+    if (!realpath(file, rp)) return NULL;
+    if (!ecore_file_exists(rp)) return NULL;
 
     desktop = NEW(Efreet_Desktop, 1);
-    if (!desktop) goto error;
+    if (!desktop) return NULL;
     desktop->orig_path = strdup(rp);
-    if (!efreet_desktop_read(desktop)) goto error;
+    if (!efreet_desktop_read(desktop))
+    {
+        efreet_desktop_free(desktop);
+        return NULL;
+    }
 
     desktop->ref = 1;
 
     return desktop;
-error:
-    if (desktop) efreet_desktop_free(desktop);
-    return NULL;
 }
 
 /**
