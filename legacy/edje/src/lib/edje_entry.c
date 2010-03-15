@@ -1847,6 +1847,7 @@ _edje_entry_text_markup_insert(Edje_Real_Part *rp, const char *text)
    _curs_update_from_curs(en->cursor, rp->object, en);
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
+   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
 }
 
 void
@@ -2069,6 +2070,7 @@ _edje_entry_cursor_next(Edje_Real_Part *rp, Edje_Cursor cur)
      }
 #endif
    
+   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    _edje_entry_real_part_configure(rp);
    return 1;
 }
@@ -2097,6 +2099,7 @@ _edje_entry_cursor_prev(Edje_Real_Part *rp, Edje_Cursor cur)
      }
 #endif
    
+   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    _edje_entry_real_part_configure(rp);
    return 1;
 }
@@ -2135,6 +2138,7 @@ _edje_entry_cursor_up(Edje_Real_Part *rp, Edje_Cursor cur)
      }
 #endif
    
+   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    _edje_entry_real_part_configure(rp);
    return 1;
 }
@@ -2172,6 +2176,7 @@ _edje_entry_cursor_down(Edje_Real_Part *rp, Edje_Cursor cur)
      }
 #endif
    
+   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    _edje_entry_real_part_configure(rp);
    return 1;
 }
@@ -2195,6 +2200,7 @@ _edje_entry_cursor_begin(Edje_Real_Part *rp, Edje_Cursor cur)
      }
 #endif
    
+   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    _edje_entry_real_part_configure(rp);
 }
 
@@ -2217,6 +2223,7 @@ _edje_entry_cursor_end(Edje_Real_Part *rp, Edje_Cursor cur)
      }
 #endif
    
+   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    _edje_entry_real_part_configure(rp);
 }
 
@@ -2241,6 +2248,7 @@ _edje_entry_cursor_copy(Edje_Real_Part *rp, Edje_Cursor cur, Edje_Cursor dst)
      }
 #endif
    
+   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    _edje_entry_real_part_configure(rp);
 }
 
@@ -2263,6 +2271,7 @@ _edje_entry_cursor_line_begin(Edje_Real_Part *rp, Edje_Cursor cur)
      }
 #endif
    
+   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    _edje_entry_real_part_configure(rp);
 }
 
@@ -2285,6 +2294,7 @@ _edje_entry_cursor_line_end(Edje_Real_Part *rp, Edje_Cursor cur)
      }
 #endif
    
+   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    _edje_entry_real_part_configure(rp);
 }
 
