@@ -371,7 +371,7 @@ efreet_desktop_get(const char *file)
         }
     }
 
-    if (efreet_desktop_cache) eina_hash_add(efreet_desktop_cache, file, desktop);
+    if (efreet_desktop_cache) eina_hash_add(efreet_desktop_cache, desktop->orig_path, desktop);
     desktop->cached = 1;
     /* TODO: Need file monitor on file and events to notify change */
     return desktop;
@@ -625,7 +625,7 @@ efreet_desktop_save(Efreet_Desktop *desktop)
          * latest version that we support! */
         efreet_ini_string_set(ini, "Version", DESKTOP_VERSION);
 
-        if (!efreet_ini_save(ini, desktop->orig_path)) ok = 0;
+	if (!efreet_ini_save(ini, desktop->orig_path)) ok = 0;
 #if 0
         else
         {
