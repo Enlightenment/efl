@@ -16,7 +16,7 @@ struct _Elm_Carousel_Item
 {
    Evas_Object *obj, *base, *icon;
    const char *label;
-   void (*func) (void *data, Evas_Object *obj, void *event_info);
+   Evas_Smart_Cb func;
    const void *data;
    Eina_Bool selected : 1;
 };
@@ -193,7 +193,7 @@ elm_carousel_add(Evas_Object *parent)
 }
 
 EAPI Elm_Carousel_Item *
-elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

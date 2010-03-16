@@ -298,7 +298,7 @@ struct _Elm_Genlist_Item
    Elm_Genlist_Item_Flags flags;
    struct 
      {
-        void (*func) (void *data, Evas_Object *obj, void *event_info);
+        Evas_Smart_Cb func;
         const void *data;
      } func;
 
@@ -1496,7 +1496,7 @@ static Elm_Genlist_Item *
 _item_new(Widget_Data *wd, const Elm_Genlist_Item_Class *itc,
 	  const void *data, Elm_Genlist_Item *parent,
 	  Elm_Genlist_Item_Flags flags,
-	  void (*func) (void *data, Evas_Object *obj, void *event_info),
+	  Evas_Smart_Cb func,
           const void *func_data)
 {
    Elm_Genlist_Item *it;
@@ -1730,7 +1730,7 @@ EAPI Elm_Genlist_Item *
 elm_genlist_item_append(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
 			const void *data, Elm_Genlist_Item *parent,
 			Elm_Genlist_Item_Flags flags,
-			void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
+			Evas_Smart_Cb func, const void *func_data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1782,7 +1782,7 @@ EAPI Elm_Genlist_Item *
 elm_genlist_item_prepend(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
 			 const void *data, Elm_Genlist_Item *parent,
 			 Elm_Genlist_Item_Flags flags,
-			 void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
+			 Evas_Smart_Cb func, const void *func_data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1822,7 +1822,7 @@ EAPI Elm_Genlist_Item *
 elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
 			       const void *data, Elm_Genlist_Item *before,
 			       Elm_Genlist_Item_Flags flags,
-			       void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
+			       Evas_Smart_Cb func, const void *func_data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1864,7 +1864,7 @@ EAPI Elm_Genlist_Item *
 elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
 			      const void *data, Elm_Genlist_Item *after,
 			      Elm_Genlist_Item_Flags flags,
-			      void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
+			      Evas_Smart_Cb func, const void *func_data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

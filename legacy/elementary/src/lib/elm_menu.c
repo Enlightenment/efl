@@ -27,8 +27,8 @@ struct _Menu_Item
    Evas_Object *icon;
    const char *label;
 
-   void (*func) (void *data, Evas_Object *obj, void *event_info);
-   void (*del_cb) (void *data, Evas_Object *obj, void *event_info);
+   Evas_Smart_Cb func;
+   Evas_Smart_Cb del_cb;
    const void *data;
 
    //if submenu
@@ -521,7 +521,7 @@ elm_menu_object_get(const Elm_Menu_Item *it)
  * @ingroup Menu
  */
 EAPI Elm_Menu_Item *
-elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
    Elm_Menu_Item *subitem;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -674,7 +674,7 @@ elm_menu_item_del(Elm_Menu_Item *item)
  * @ingroup Menu
  */
 EAPI void
-elm_menu_item_del_cb_set(Elm_Menu_Item *it, void (*func) (void *data, Evas_Object *obj, void *event_info))
+elm_menu_item_del_cb_set(Elm_Menu_Item *it, Evas_Smart_Cb func)
 {
    if (!it) return;
    it->del_cb = func;

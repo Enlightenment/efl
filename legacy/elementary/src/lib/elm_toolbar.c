@@ -23,8 +23,8 @@ struct _Elm_Toolbar_Item
    Evas_Object *base;
    const char *label;
    Evas_Object *icon;
-   void (*func) (void *data, Evas_Object *obj, void *event_info);
-   void (*del_cb) (void *data, Evas_Object *obj, void *event_info);
+   Evas_Smart_Cb func;
+   Evas_Smart_Cb del_cb;
    const void *data;
    Eina_Bool selected : 1;
    Eina_Bool disabled : 1;
@@ -351,7 +351,7 @@ elm_toolbar_icon_size_get(Evas_Object *obj)
 }
 
 EAPI Elm_Toolbar_Item *
-elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -454,7 +454,7 @@ elm_toolbar_item_del(Elm_Toolbar_Item *it)
  * @ingroup Toolbar
  */
 EAPI void
-elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *it, void (*func)(void *data, Evas_Object *obj, void *event_info))
+elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *it, Evas_Smart_Cb func)
 {
    it->del_cb = func;
 }

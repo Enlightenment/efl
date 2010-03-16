@@ -36,8 +36,8 @@ struct _Elm_Hoversel_Item
    const char *icon_file;
    const char *icon_group;
    Elm_Icon_Type icon_type;
-   void (*func) (void *data, Evas_Object *obj, void *event_info);
-   void (*del_cb) (void *data, Evas_Object *obj, void *event_info);
+   Evas_Smart_Cb func;
+   Evas_Smart_Cb del_cb;
    void *data;
 };
 
@@ -472,7 +472,7 @@ elm_hoversel_items_get(Evas_Object *obj)
  * @ingroup Hoversel
  */
 EAPI Elm_Hoversel_Item *
-elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -523,7 +523,7 @@ elm_hoversel_item_del(Elm_Hoversel_Item *it)
  * @ingroup Hoversel
  */
 EAPI void
-elm_hoversel_item_del_cb_set(Elm_Hoversel_Item *it, void (*func)(void *data, Evas_Object *obj, void *event_info))
+elm_hoversel_item_del_cb_set(Elm_Hoversel_Item *it, Evas_Smart_Cb func)
 {
    if (!it) return;
    it->del_cb = func;

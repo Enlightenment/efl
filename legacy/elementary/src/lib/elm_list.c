@@ -24,8 +24,8 @@ struct _Elm_List_Item
    Evas_Object *obj, *base;
    const char *label;
    Evas_Object *icon, *end;
-   void (*func) (void *data, Evas_Object *obj, void *event_info);
-   void (*del_cb) (void *data, Evas_Object *obj, void *event_info);
+   Evas_Smart_Cb func;
+   Evas_Smart_Cb del_cb;
    const void *data;
    Ecore_Timer *long_timer;
    Eina_Bool deleted : 1;
@@ -464,7 +464,7 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
 }
 
 static Elm_List_Item *
-_item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+_item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_List_Item *it;
@@ -733,7 +733,7 @@ elm_list_add(Evas_Object *parent)
 }
 
 EAPI Elm_List_Item *
-elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -746,7 +746,7 @@ elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Eva
 }
 
 EAPI Elm_List_Item *
-elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -759,7 +759,7 @@ elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Ev
 }
 
 EAPI Elm_List_Item *
-elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
    Widget_Data *wd;
    Elm_List_Item *it;
@@ -778,7 +778,7 @@ elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char 
 }
 
 EAPI Elm_List_Item *
-elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
    Widget_Data *wd;
    Elm_List_Item *it;
@@ -1012,7 +1012,7 @@ elm_list_item_del(Elm_List_Item *it)
  * @ingroup List
  */
 EAPI void
-elm_list_item_del_cb_set(Elm_List_Item *it, void (*func)(void *data, Evas_Object *obj, void *event_info))
+elm_list_item_del_cb_set(Elm_List_Item *it, Evas_Smart_Cb func)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    it->del_cb = func;
