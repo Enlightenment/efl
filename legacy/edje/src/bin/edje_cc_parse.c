@@ -730,8 +730,9 @@ compile(void)
 	 * Redirecting the output is required for MacOS 10.3, and works fine
 	 * on other systems.
 	 *
-	 * FIXME: if C++ comments are still there, maybe doing like on
-	 * OpenSolaris: using gcc -E to remove them after using cpp.
+	 * Also, the MacOS preprocessor is not managing C++ comments, so pass gcc
+	 * preprocessor just after. Linux gcc seems to not like it, so guard the
+	 * code so that it is compiled only on MacOS
 	 *
 	 */
 	if (ret != 0)
@@ -739,6 +740,23 @@ compile(void)
 	     snprintf(buf, sizeof(buf), "cat %s | cpp -I%s %s > %s",
 		      file_in, inc, def, tmpn);
 	     ret = system(buf);
+#if defined (__MacOSX__) || ( defined (__MACH__) && defined (__APPLE__))
+             if (ret == 0)
+               {
+                  static char tmpn2[4096];
+                  
+                  snprintf (tmpn2, PATH_MAX, "%s/edje_cc.edc-tmp-XXXXXX", tmp_dir);
+                  fd = mkstemp(tmpn2);
+                  if (fd >= 0)
+                    {
+                       close(fd); 
+                       snprintf (buf, 4096, "gcc -I%s %s -E -o %s %s",
+                                 inc, def, tmpn2, tmpn);
+                       ret = system(buf);
+                       snprintf(tmpn, 4096, "%s", tmpn2);
+                    }
+               }
+#endif
 	  }
 	if (ret != 0)
 	  {
