@@ -2246,7 +2246,7 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, in
 
                   itn = (Evas_Object_Textblock_Item *)(((Eina_Inlist *)it)->next);
                   p = (int)(it->source_pos + strlen(it->text));
-		  if ((p > pos) ||
+		  if ((p >= pos) ||
                       ((p == pos) && (!lnn) &&
                        ((!itn)  |
                         ((itn) && (itn->source_node != n)))))
