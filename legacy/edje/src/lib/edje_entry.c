@@ -1055,6 +1055,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 	  }
 	_sel_clear(en->cursor, rp->object, en);
 	_curs_update_from_curs(en->cursor, rp->object, en);
+	_anchors_get(en->cursor, rp->object, en);
 	_edje_emit(ed, "entry,changed", rp->part->name);
         _edje_emit(ed, "entry,key,backspace", rp->part->name);
 	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
