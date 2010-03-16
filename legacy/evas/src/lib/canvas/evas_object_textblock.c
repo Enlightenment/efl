@@ -3875,6 +3875,9 @@ evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *for
      }
    else if (nc->type == NODE_TEXT)
      {
+        int len;
+
+        len = eina_strbuf_length_get(nc->text);
 	if (cur->pos == 0)
 	  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_prepend_relative(EINA_INLIST_GET(o->nodes),
 										EINA_INLIST_GET(n),
@@ -3883,24 +3886,35 @@ evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *for
 	  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_append_relative(EINA_INLIST_GET(o->nodes),
 									       EINA_INLIST_GET(n),
 									       EINA_INLIST_GET(nc));
-	if ((cur->pos <= eina_strbuf_length_get(nc->text)) && (cur->pos != 0))
+	if ((cur->pos < len) && (cur->pos != 0))
 	  {
 	     n2 = calloc(1, sizeof(Evas_Object_Textblock_Node));
 	     n2->type = NODE_TEXT;
 	     n2->text = eina_strbuf_new();
-	     eina_strbuf_append(n2->text, (eina_strbuf_string_get(nc->text) + cur->pos));
+	     eina_strbuf_append(n2->text, 
+                                (eina_strbuf_string_get(nc->text) + cur->pos));
 	     o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_append_relative(EINA_INLIST_GET(o->nodes),
 										  EINA_INLIST_GET(n2),
 										  EINA_INLIST_GET(n));
-
 	     eina_strbuf_remove(nc->text, cur->pos, eina_strbuf_length_get(nc->text));
 	     cur->node = n2;
 	     cur->pos = 0;
+             cur->eol = 0;
+	  }
+	else if (cur->pos == len)
+	  {
+             if (EINA_INLIST_GET(n)->next)
+               cur->node = EINA_INLIST_GET(n)->next;
+             else
+               cur->node = n;
+             cur->pos = 0;
+             cur->eol = 0;
 	  }
 	else
 	  {
 	     cur->node = nc;
 	     cur->pos = 0;
+             cur->eol = 0;
 	  }
      }
    o->formatted.valid = 0;
