@@ -67,6 +67,29 @@ void test_floating(void *data, Evas_Object *obj, void *event_info);
 void test_launcher(void *data, Evas_Object *obj, void *event_info);
 void test_anim(void *data, Evas_Object *obj, void *event_info);
 
+
+struct elm_test
+{
+   const char *name;
+   void (*cb)(void *, Evas_Object *, void *);
+};
+
+static int
+elm_test_sort(const void *pa, const void *pb)
+{
+   const struct elm_test *a = pa, *b = pb;
+   return strcasecmp(a->name, b->name);
+}
+
+static void
+elm_test_add(Eina_List **p_list, const char *name, void (*cb)(void *, Evas_Object *, void *))
+{
+   struct elm_test *t = malloc(sizeof(struct elm_test));
+   t->name = name;
+   t->cb = cb;
+   *p_list = eina_list_sorted_insert(*p_list, elm_test_sort, t);
+}
+
 static void
 my_win_del(void *data, Evas_Object *obj, void *event_info)
 {
@@ -75,9 +98,16 @@ my_win_del(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+index_changed(void *data, Evas_Object *obj, void *event_info)
+{
+   elm_list_item_show(event_info);
+}
+
+static void
 my_win_main(void)
 {
-   Evas_Object *win, *bg, *bx0, *lb, *li, *fr;
+   Evas_Object *win, *bg, *bx0, *lb, *li, *idx, *fr;
+   Eina_List *tests;
 
    /* 1 create an elm window - it returns an evas object. this is a little
     * special as the object lives in the canvas that is inside the window
@@ -150,70 +180,98 @@ my_win_main(void)
    elm_box_pack_end(bx0, li);
    evas_object_show(li);
 
-   elm_list_item_append(li, "Bg Plain", NULL, NULL, test_bg_plain, NULL);
-   elm_list_item_append(li, "Bg Image", NULL, NULL, test_bg_image, NULL);
-   elm_list_item_append(li, "Icon Transparent", NULL, NULL, test_icon, NULL);
-   elm_list_item_append(li, "Box Vert", NULL, NULL, test_box_vert, NULL);
-   elm_list_item_append(li, "Box Vert 2", NULL, NULL, test_box_vert2, NULL);
-   elm_list_item_append(li, "Box Horiz", NULL, NULL, test_box_horiz, NULL);
-   elm_list_item_append(li, "Buttons", NULL, NULL, test_button, NULL);
-   elm_list_item_append(li, "Toggles", NULL, NULL, test_toggle, NULL);
-   elm_list_item_append(li, "Table", NULL, NULL, test_table, NULL);
-   elm_list_item_append(li, "Clock", NULL, NULL, test_clock, NULL);
-   elm_list_item_append(li, "Layout", NULL, NULL, test_layout, NULL);
-   elm_list_item_append(li, "Hover", NULL, NULL, test_hover, NULL);
-   elm_list_item_append(li, "Hover 2", NULL, NULL, test_hover2, NULL);
-   elm_list_item_append(li, "Entry", NULL, NULL, test_entry, NULL);
-   elm_list_item_append(li, "Entry Scrolled", NULL, NULL, test_entry_scrolled, NULL);
-   elm_list_item_append(li, "Entry 3", NULL, NULL, test_entry3, NULL);
-   elm_list_item_append(li, "Notepad", NULL, NULL, test_notepad, NULL);
-   elm_list_item_append(li, "Anchorview", NULL, NULL, test_anchorview, NULL);
-   elm_list_item_append(li, "Anchorblock", NULL, NULL, test_anchorblock, NULL);
-   elm_list_item_append(li, "Toolbar", NULL, NULL, test_toolbar, NULL);
-   elm_list_item_append(li, "Hoversel", NULL, NULL, test_hoversel, NULL);
-   elm_list_item_append(li, "List", NULL, NULL, test_list, NULL);
-   elm_list_item_append(li, "List 2", NULL, NULL, test_list2, NULL);
-   elm_list_item_append(li, "List 3", NULL, NULL, test_list3, NULL);
-   elm_list_item_append(li, "Carousel", NULL, NULL, test_carousel, NULL);
-   elm_list_item_append(li, "Inwin", NULL, NULL, test_inwin, NULL);
-   elm_list_item_append(li, "Inwin 2", NULL, NULL, test_inwin2, NULL);
-   elm_list_item_append(li, "Scaling", NULL, NULL, test_scaling, NULL);
-   elm_list_item_append(li, "Scaling 2", NULL, NULL, test_scaling2, NULL);
-   elm_list_item_append(li, "Slider", NULL, NULL, test_slider, NULL);
-   elm_list_item_append(li, "Genlist", NULL, NULL, test_genlist, NULL);
-   elm_list_item_append(li, "Genlist 2", NULL, NULL, test_genlist2, NULL);
-   elm_list_item_append(li, "Genlist 3", NULL, NULL, test_genlist3, NULL);
-   elm_list_item_append(li, "Genlist 4", NULL, NULL, test_genlist4, NULL);
-   elm_list_item_append(li, "Genlist 5", NULL, NULL, test_genlist5, NULL);
-   elm_list_item_append(li, "Genlist Tree", NULL, NULL, test_genlist6, NULL);
-   elm_list_item_append(li, "Checks", NULL, NULL, test_check, NULL);
-   elm_list_item_append(li, "Radios", NULL, NULL, test_radio, NULL);
-   elm_list_item_append(li, "Pager", NULL, NULL, test_pager, NULL);
-   elm_list_item_append(li, "Window States", NULL, NULL, test_win_state, NULL);
-   elm_list_item_append(li, "Progressbar", NULL, NULL, test_progressbar, NULL);
-   elm_list_item_append(li, "File Selector", NULL, NULL, test_fileselector, NULL);
-   elm_list_item_append(li, "Separator", NULL, NULL, test_separator, NULL);
-   elm_list_item_append(li, "Scroller", NULL, NULL, test_scroller, NULL);
-   elm_list_item_append(li, "Spinner", NULL, NULL, test_spinner, NULL);
-   elm_list_item_append(li, "Index", NULL, NULL, test_index, NULL);
-   elm_list_item_append(li, "Photocam", NULL, NULL, test_photocam, NULL);
-   elm_list_item_append(li, "Photo", NULL, NULL, test_photo, NULL);
-   elm_list_item_append(li, "Thumb", NULL, NULL, test_thumb, NULL);
-   elm_list_item_append(li, "Icon Desktops", NULL, NULL, test_icon_desktops, NULL);
-   elm_list_item_append(li, "Notify", NULL, NULL, test_notify, NULL);
-   elm_list_item_append(li, "Slideshow", NULL, NULL, test_slideshow, NULL);
-   elm_list_item_append(li, "Menu", NULL, NULL, test_menu, NULL);
-   elm_list_item_append(li, "Panel", NULL, NULL, test_panel, NULL);
-   elm_list_item_append(li, "Map", NULL, NULL, test_map, NULL);
-   elm_list_item_append(li, "Weather", NULL, NULL, test_weather, NULL);
-   elm_list_item_append(li, "Flip", NULL, NULL, test_flip, NULL);
-   elm_list_item_append(li, "Flip 2", NULL, NULL, test_flip2, NULL);
-   elm_list_item_append(li, "Label", NULL, NULL, test_label, NULL);
-   elm_list_item_append(li, "Conformant", NULL, NULL, test_conformant, NULL);
-   elm_list_item_append(li, "Multi Touch", NULL, NULL, test_multi, NULL);
-   elm_list_item_append(li, "Floating Objects", NULL, NULL, test_floating, NULL);
-   elm_list_item_append(li, "Launcher", NULL, NULL, test_launcher, NULL);
-   elm_list_item_append(li, "Animation", NULL, NULL, test_anim, NULL);
+   idx = elm_index_add(win);
+   evas_object_smart_callback_add(idx, "delay,changed", index_changed, NULL);
+   evas_object_size_hint_weight_set(idx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, idx);
+   evas_object_show(idx);
+
+   tests = NULL;
+#define ADD_TEST(name_, cb_) elm_test_add(&tests, name_, cb_)
+   ADD_TEST("Bg Plain", test_bg_plain);
+   ADD_TEST("Bg Image", test_bg_image);
+   ADD_TEST("Icon Transparent", test_icon);
+   ADD_TEST("Box Vert", test_box_vert);
+   ADD_TEST("Box Vert 2", test_box_vert2);
+   ADD_TEST("Box Horiz", test_box_horiz);
+   ADD_TEST("Buttons", test_button);
+   ADD_TEST("Toggles", test_toggle);
+   ADD_TEST("Table", test_table);
+   ADD_TEST("Clock", test_clock);
+   ADD_TEST("Layout", test_layout);
+   ADD_TEST("Hover", test_hover);
+   ADD_TEST("Hover 2", test_hover2);
+   ADD_TEST("Entry", test_entry);
+   ADD_TEST("Entry Scrolled", test_entry_scrolled);
+   ADD_TEST("Entry 3", test_entry3);
+   ADD_TEST("Notepad", test_notepad);
+   ADD_TEST("Anchorview", test_anchorview);
+   ADD_TEST("Anchorblock", test_anchorblock);
+   ADD_TEST("Toolbar", test_toolbar);
+   ADD_TEST("Hoversel", test_hoversel);
+   ADD_TEST("List", test_list);
+   ADD_TEST("List 2", test_list2);
+   ADD_TEST("List 3", test_list3);
+   ADD_TEST("Carousel", test_carousel);
+   ADD_TEST("Inwin", test_inwin);
+   ADD_TEST("Inwin 2", test_inwin2);
+   ADD_TEST("Scaling", test_scaling);
+   ADD_TEST("Scaling 2", test_scaling2);
+   ADD_TEST("Slider", test_slider);
+   ADD_TEST("Genlist", test_genlist);
+   ADD_TEST("Genlist 2", test_genlist2);
+   ADD_TEST("Genlist 3", test_genlist3);
+   ADD_TEST("Genlist 4", test_genlist4);
+   ADD_TEST("Genlist 5", test_genlist5);
+   ADD_TEST("Genlist Tree", test_genlist6);
+   ADD_TEST("Checks", test_check);
+   ADD_TEST("Radios", test_radio);
+   ADD_TEST("Pager", test_pager);
+   ADD_TEST("Window States", test_win_state);
+   ADD_TEST("Progressbar", test_progressbar);
+   ADD_TEST("File Selector", test_fileselector);
+   ADD_TEST("Separator", test_separator);
+   ADD_TEST("Scroller", test_scroller);
+   ADD_TEST("Spinner", test_spinner);
+   ADD_TEST("Index", test_index);
+   ADD_TEST("Photocam", test_photocam);
+   ADD_TEST("Photo", test_photo);
+   ADD_TEST("Thumb", test_thumb);
+   ADD_TEST("Icon Desktops", test_icon_desktops);
+   ADD_TEST("Notify", test_notify);
+   ADD_TEST("Slideshow", test_slideshow);
+   ADD_TEST("Menu", test_menu);
+   ADD_TEST("Panel", test_panel);
+   ADD_TEST("Map", test_map);
+   ADD_TEST("Weather", test_weather);
+   ADD_TEST("Flip", test_flip);
+   ADD_TEST("Flip 2", test_flip2);
+   ADD_TEST("Label", test_label);
+   ADD_TEST("Conformant", test_conformant);
+   ADD_TEST("Multi Touch", test_multi);
+   ADD_TEST("Floating Objects", test_floating);
+   ADD_TEST("Launcher", test_launcher);
+   ADD_TEST("Animation", test_anim);
+#undef ADD_TEST
+
+   if (tests)
+     {
+	char last_letter = 0;
+	struct elm_test *t;
+	EINA_LIST_FREE(tests, t)
+	  {
+	     Elm_List_Item *it;
+	     it = elm_list_item_append(li, t->name, NULL, NULL, t->cb, NULL);
+	     if (last_letter != t->name[0])
+	       {
+		  char letter[2] = {t->name[0], '\0'};
+		  elm_index_item_append(idx, letter, it);
+		  last_letter = t->name[0];
+	       }
+	     free(t);
+	  }
+	elm_index_item_go(idx, 0);
+     }
 
    elm_list_go(li);
 
