@@ -887,18 +887,36 @@ extern "C" {
      };
 
    EAPI Evas_Object      *elm_genlist_add(Evas_Object *parent);
+   EAPI void              elm_genlist_clear(Evas_Object *obj);
+   // TODO: add getters for all functions below:
+   EAPI void              elm_genlist_multi_select_set(Evas_Object *obj, Eina_Bool multi);
+   EAPI void              elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
+   EAPI void              elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
+   EAPI void              elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
+   EAPI void              elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress);
+   EAPI void              elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+   EAPI void              elm_genlist_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous);
+   EAPI void              elm_genlist_block_count_set(Evas_Object *obj, int n);
+   /* operations to add items */
    EAPI Elm_Genlist_Item *elm_genlist_item_append(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item_Flags flags, Evas_Smart_Cb func, const void *func_data);
    EAPI Elm_Genlist_Item *elm_genlist_item_prepend(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item_Flags flags, Evas_Smart_Cb func, const void *func_data);
    EAPI Elm_Genlist_Item *elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *before, Elm_Genlist_Item_Flags flags, Evas_Smart_Cb func, const void *func_data);
    EAPI Elm_Genlist_Item *elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *after, Elm_Genlist_Item_Flags flags, Evas_Smart_Cb func, const void *func_data);
-   EAPI void              elm_genlist_clear(Evas_Object *obj);
-   EAPI void              elm_genlist_multi_select_set(Evas_Object *obj, Eina_Bool multi);
+   /* operations to retrieve existing items */
    EAPI Elm_Genlist_Item *elm_genlist_selected_item_get(const Evas_Object *obj);
    EAPI const Eina_List  *elm_genlist_selected_items_get(const Evas_Object *obj);
    EAPI Eina_List        *elm_genlist_realized_items_get(const Evas_Object *obj);
    EAPI Elm_Genlist_Item *elm_genlist_at_xy_item_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *posret);
    EAPI Elm_Genlist_Item *elm_genlist_first_item_get(const Evas_Object *obj);
    EAPI Elm_Genlist_Item *elm_genlist_last_item_get(const Evas_Object *obj);
+   /* available item styles:
+    * default
+    * default_style - The text part is a textblock
+    * double_label
+    * icon_top_text_bottom
+    */
+
+   /* Genlist Item operation */
    EAPI Elm_Genlist_Item *elm_genlist_item_next_get(const Elm_Genlist_Item *item);
    EAPI Elm_Genlist_Item *elm_genlist_item_prev_get(const Elm_Genlist_Item *item);
    EAPI Evas_Object      *elm_genlist_item_genlist_get(const Elm_Genlist_Item *item);
@@ -912,7 +930,6 @@ extern "C" {
    EAPI Eina_Bool         elm_genlist_item_disabled_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_display_only_set(Elm_Genlist_Item *it, Eina_Bool display_only);
    EAPI Eina_Bool         elm_genlist_item_display_only_get(const Elm_Genlist_Item *it);
-       
    EAPI void              elm_genlist_item_show(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_bring_in(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_top_show(Elm_Genlist_Item *item);
@@ -924,19 +941,6 @@ extern "C" {
    EAPI void              elm_genlist_item_data_set(Elm_Genlist_Item *it, const void *data);
    EAPI const Evas_Object *elm_genlist_item_object_get(const Elm_Genlist_Item *it);
    EAPI void              elm_genlist_item_update(Elm_Genlist_Item *item);
-   EAPI void              elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
-   EAPI void              elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
-   EAPI void              elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
-   EAPI void              elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress);
-   EAPI void              elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
-   EAPI void              elm_genlist_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous);
-   EAPI void              elm_genlist_block_count_set(Evas_Object *obj, int n);
-   /* available item styles:
-    * default
-    * default_style - The text part is a textblock
-    * double_label
-    * icon_top_text_bottom
-    */
 
    EAPI Evas_Object *elm_check_add(Evas_Object *parent);
    EAPI void         elm_check_label_set(Evas_Object *obj, const char *label);
