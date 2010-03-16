@@ -205,7 +205,7 @@ _curs_back(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 static void
 _curs_next(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 {
-   int ln, ln2;
+   int ln, ln2, ok;
    Eina_Bool eol;
 
    ln = evas_textblock_cursor_line_geometry_get(c, NULL, NULL, NULL, NULL);
@@ -222,12 +222,20 @@ _curs_next(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
                   _curs_update_from_curs(c, o, en);
                   return;
                }
-             if (!evas_textblock_cursor_node_next(c))
+             ok = evas_textblock_cursor_node_next(c);
+             if (!ok)
                {
                   evas_textblock_cursor_line_last(c);
                   _curs_update_from_curs(c, o, en);
                   return;
                }
+	     while (evas_textblock_cursor_node_format_get(c))
+	       {
+		  if (evas_textblock_cursor_node_format_is_visible_get(c))
+		    break;
+		  if (!evas_textblock_cursor_node_next(c))
+		    break;
+	       }
              return;
           }
         evas_textblock_cursor_eol_set(c, 0);
