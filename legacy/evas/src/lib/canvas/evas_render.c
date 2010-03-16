@@ -1068,9 +1068,12 @@ evas_render_updates_internal(Evas *e,
              RD("  ---]\n");
 	  }
 	/* flush redraws */
-        evas_event_callback_call(e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
-	e->engine.func->output_flush(e->engine.data.output);
-        evas_event_callback_call(e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
+        if (updates)
+          {
+             evas_event_callback_call(e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
+             e->engine.func->output_flush(e->engine.data.output);
+             evas_event_callback_call(e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
+          }
      }
    /* clear redraws */
    e->engine.func->output_redraws_clear(e->engine.data.output);
