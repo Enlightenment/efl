@@ -1526,7 +1526,7 @@ eet_open(const char *file, Eet_File_Mode mode)
      {
 	ef->delete_me_now = 1;
 	ef->references++;
-        eet_internal_close(ef, EINA_FALSE);
+        eet_internal_close(ef, EINA_TRUE);
 	ef = NULL;
      }
 
