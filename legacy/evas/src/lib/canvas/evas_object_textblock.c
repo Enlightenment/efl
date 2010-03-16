@@ -369,8 +369,10 @@ _nodes_adjacent_merge(const Evas_Object *obj, Evas_Object_Textblock_Node *n1)
 	plen = eina_strbuf_length_get(n0->text);
 	eina_strbuf_append_length(n0->text, eina_strbuf_string_get(n1->text),
 				  eina_strbuf_length_get(n1->text));
-	(EINA_INLIST_GET(n0))->next = EINA_INLIST_GET(n2);
-	if (n2) (EINA_INLIST_GET(n2))->prev = EINA_INLIST_GET(n0);
+        o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_remove
+          (EINA_INLIST_GET(o->nodes), EINA_INLIST_GET(n1));
+//	(EINA_INLIST_GET(n0))->next = EINA_INLIST_GET(n2);
+//	if (n2) (EINA_INLIST_GET(n2))->prev = EINA_INLIST_GET(n0);
 	// fix any cursors in n1
 	if (n1 == o->cursor->node)
 	  {
@@ -388,6 +390,7 @@ _nodes_adjacent_merge(const Evas_Object *obj, Evas_Object_Textblock_Node *n1)
 	if (n1->text) eina_strbuf_free(n1->text);
 	free(n1);
 	n1 = n0;
+        n2 = (Evas_Object_Textblock_Node *)(EINA_INLIST_GET(n1))->next;
      }
    if ((n2) && (n2->type == NODE_TEXT))
      {
@@ -397,8 +400,10 @@ _nodes_adjacent_merge(const Evas_Object *obj, Evas_Object_Textblock_Node *n1)
 	plen = eina_strbuf_length_get(n0->text);
 	eina_strbuf_append_length(n0->text, eina_strbuf_string_get(n1->text),
 				  eina_strbuf_length_get(n1->text));
-	(EINA_INLIST_GET(n0))->next = EINA_INLIST_GET(n2);
-	if (n2) (EINA_INLIST_GET(n2))->prev = EINA_INLIST_GET(n0);
+        o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_remove
+          (EINA_INLIST_GET(o->nodes), EINA_INLIST_GET(n1));
+//	(EINA_INLIST_GET(n0))->next = EINA_INLIST_GET(n2);
+//	if (n2) (EINA_INLIST_GET(n2))->prev = EINA_INLIST_GET(n0);
 	// fix any cursors in n1
 	if (n1 == o->cursor->node)
 	  {
@@ -415,7 +420,6 @@ _nodes_adjacent_merge(const Evas_Object *obj, Evas_Object_Textblock_Node *n1)
 	  }
 	if (n1->text) eina_strbuf_free(n1->text);
 	free(n1);
-	n1 = n0;
      }
 }
 
@@ -3899,7 +3903,7 @@ evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *for
 	     eina_strbuf_remove(nc->text, cur->pos, eina_strbuf_length_get(nc->text));
 	     cur->node = n2;
 	     cur->pos = 0;
-             cur->eol = 0;
+//             cur->eol = 0;
 	  }
 	else if (cur->pos == len)
 	  {
@@ -3908,13 +3912,13 @@ evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *for
              else
                cur->node = n;
              cur->pos = 0;
-             cur->eol = 0;
+//             cur->eol = 0;
 	  }
 	else
 	  {
 	     cur->node = nc;
 	     cur->pos = 0;
-             cur->eol = 0;
+//             cur->eol = 0;
 	  }
      }
    o->formatted.valid = 0;
