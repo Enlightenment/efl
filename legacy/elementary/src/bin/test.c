@@ -19,6 +19,7 @@ void test_hover2(void *data, Evas_Object *obj, void *event_info);
 void test_entry(void *data, Evas_Object *obj, void *event_info);
 void test_entry_scrolled(void *data, Evas_Object *obj, void *event_info);
 void test_entry3(void *data, Evas_Object *obj, void *event_info);
+void test_entry4(void *data, Evas_Object *obj, void *event_info);
 void test_notepad(void *data, Evas_Object *obj, void *event_info);
 void test_anchorview(void *data, Evas_Object *obj, void *event_info);
 void test_anchorblock(void *data, Evas_Object *obj, void *event_info);
@@ -204,6 +205,7 @@ my_win_main(void)
    ADD_TEST("Entry", test_entry);
    ADD_TEST("Entry Scrolled", test_entry_scrolled);
    ADD_TEST("Entry 3", test_entry3);
+   ADD_TEST("Entry 4", test_entry4);
    ADD_TEST("Notepad", test_notepad);
    ADD_TEST("Anchorview", test_anchorview);
    ADD_TEST("Anchorblock", test_anchorblock);

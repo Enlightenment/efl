@@ -522,8 +522,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_scrolled_entry_entry_set(en, "This is a single line");
    elm_scrolled_entry_single_line_set(en, 1);
-   evas_object_show(en);
    elm_box_pack_end(bx, en);
+   evas_object_show(en);
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
@@ -795,8 +795,8 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
 				"good testing to see if entry widgets work as advertised."
                                 );
    evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
-   evas_object_show(en);
    elm_box_pack_end(bx, en);
+   evas_object_show(en);
    
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
@@ -1055,11 +1055,71 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
    elm_object_focus(win);
    evas_object_show(win);
 }
-#endif
 
-/* broken things right now that neex fixing:
- * 
- * * problem switching focus between elm_entries, but in an application
- *   opening a edje layout with two or more entries
- * 
- */
+void
+test_entry4(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *ly, *en;
+   char buf[PATH_MAX];
+   
+   win = elm_win_add(NULL, "entry4", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Entry 4");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   ly = elm_layout_add(win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+   elm_layout_file_set(ly, buf, "layout");
+   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, ly);
+   evas_object_show(ly);
+   
+   en = elm_scrolled_entry_add(win);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
+   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scrolled_entry_entry_set(en, "This is a single line");
+   elm_scrolled_entry_single_line_set(en, 1);
+   elm_layout_content_set(ly, "element1", en);
+   evas_object_show(en);
+   
+   en = elm_entry_add(win);
+   elm_entry_line_wrap_set(en, 0);
+   elm_entry_entry_set(en,
+		       "This is an entry widget<br>"
+		       "that uses markup<br>"
+                       "<b>like this</> and has<br>"
+		       "no scroller, so you can<br>"
+		       "use it more flexibly.");
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_layout_content_set(ly, "element2", en);
+   evas_object_show(en);
+
+   en = elm_scrolled_entry_add(win);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_scrolled_entry_entry_set(en,
+				"This is an entry widget in this window that<br>"
+				"uses markup <b>like this</> for styling and<br>"
+				"formatting <em>like this</>, as well as<br>"
+				"<a href=X><link>links in the text</></a>, so enter text<br>"
+				"in here to edit it. By them way, links are<br>"
+				"called <a href=anc-02>Anchors</a> so you will need<br>"
+				"to refer to them this way. At the end here is a really long "
+				"line to test line wrapping to see if it works. But just in "
+				"case this line is not long enough I will add more here to "
+				"really test it out, as Elementary really needs some "
+				"good testing to see if entry widgets work as advertised."
+                                );
+   evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
+   elm_layout_content_set(ly, "element3", en);
+   evas_object_show(en);
+
+   evas_object_show(win);
+}
+#endif
