@@ -1059,7 +1059,7 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
 
 /* broken things right now that neex fixing:
  * 
- * * multi-line - at end of line with <br> hit enter, backspace then type 
- *   any letter. cursor vanishes.
+ * * problem switching focus between elm_entries, but in an application
+ *   opening a edje layout with two or more entries
  * 
  */
