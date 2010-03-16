@@ -4103,7 +4103,7 @@ collections {
                description { state:    "default" 0.0;
                    rel1.offset: 4 4;
                    rel2.to: "elm.swallow.content";
-                   rel2.offset: 4 4;
+                   rel2.offset: 5 5;
                    image {
                        normal: "frame_1.png";
                        border: 2 2 28 22;
