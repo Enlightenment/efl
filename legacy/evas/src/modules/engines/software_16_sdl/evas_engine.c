@@ -993,7 +993,7 @@ evas_engine_sdl16_rectangle_draw(void *data __UNUSED__, void *context, void *sur
 }
 
 static void
-evas_engine_sdl16_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon)
+evas_engine_sdl16_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon, int x, int y)
 {
    SDL_Engine_Image_Entry       *eim = surface;
    int                           mustlock_im = 0;
@@ -1005,7 +1005,7 @@ evas_engine_sdl16_polygon_draw(void *data __UNUSED__, void *context, void *surfa
 	_SDL_UPDATE_PIXELS(eim);
      }
 
-   soft16_polygon_draw((Soft16_Image *) eim->cache_entry.src, context, polygon);
+   soft16_polygon_draw((Soft16_Image *) eim->cache_entry.src, context, polygon, x, y);
 
    if (mustlock_im)
      SDL_UnlockSurface(eim->surface);

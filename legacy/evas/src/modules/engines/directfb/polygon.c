@@ -116,7 +116,7 @@ polygon_spans_fill(IDirectFBSurface *surface, int y, const span_t *spans, int n_
 
 
 void
-_dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Eina_Inlist *points)
+_dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Eina_Inlist *points, int px, int py)
 {
    RGBA_Polygon_Point *pt;
    RGBA_Vertex        *point;
@@ -180,8 +180,8 @@ _dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Eina_Inlist 
    k = 0;
    EINA_INLIST_FOREACH(points, pt)
      {
-	point[k].x = pt->x;
-	point[k].y = pt->y;
+	point[k].x = pt->x + px;
+	point[k].y = pt->y + py;
 	point[k].i = k;
 	k++;
      }
@@ -190,8 +190,8 @@ _dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Eina_Inlist 
    k = 0;
    EINA_INLIST_FOREACH(points, pt)
      {
-	point[k].x = pt->x;
-	point[k].y = pt->y;
+	point[k].x = pt->x + px;
+	point[k].y = pt->y + py;
 	point[k].i = k;
 	k++;
      }

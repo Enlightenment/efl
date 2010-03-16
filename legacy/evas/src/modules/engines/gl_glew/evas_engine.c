@@ -314,13 +314,13 @@ eng_polygon_points_clear(void *data, void *context, void *polygon)
 }
 
 static void
-eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
+eng_polygon_draw(void *data, void *context, void *surface, void *polygon, int x, int y)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    re->window->gl_context->dc = context;
-//--//      evas_gl_common_poly_draw(re->win->gl_context, polygon);
+//--//   evas_gl_common_poly_draw(re->window->gl_context, polygon, x, y);
 }
 
 static void

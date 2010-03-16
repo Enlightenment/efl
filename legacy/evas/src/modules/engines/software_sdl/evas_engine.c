@@ -838,7 +838,7 @@ evas_engine_sdl_rectangle_draw(void *data __UNUSED__, void *context, void *surfa
 }
 
 static void
-evas_engine_sdl_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon)
+evas_engine_sdl_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon, int x, int y)
 {
    SDL_Engine_Image_Entry       *eim = surface;
    int                           mustlock_im = 0;
@@ -850,7 +850,7 @@ evas_engine_sdl_polygon_draw(void *data __UNUSED__, void *context, void *surface
 	_SDL_UPDATE_PIXELS(eim);
      }
 
-   evas_common_polygon_draw((RGBA_Image *) eim->cache_entry.src, context, polygon);
+   evas_common_polygon_draw((RGBA_Image *) eim->cache_entry.src, context, polygon, x, y);
    evas_common_cpu_end_opt();
 
    if (mustlock_im)

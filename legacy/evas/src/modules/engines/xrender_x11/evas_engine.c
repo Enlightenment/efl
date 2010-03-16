@@ -108,7 +108,7 @@ struct _Render_Engine
    void (*render_surface_copy)(Xrender_Surface *srs, Xrender_Surface *drs, int sx, int sy, int x, int y, int w, int h);
    void (*render_surface_rectangle_draw)(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x, int y, int w, int h);
    void (*render_surface_line_draw)(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
-   void (*render_surface_polygon_draw)(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points);
+   void (*render_surface_polygon_draw)(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points, int x, int y);
 };
 
 /* internal engine routines */
@@ -709,13 +709,13 @@ eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, 
 }
 
 static void
-eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
+eng_polygon_draw(void *data, void *context, void *surface, void *polygon, int x, int y)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
 
-   re->render_surface_polygon_draw((Xrender_Surface *)surface, (RGBA_Draw_Context *)context, (RGBA_Polygon_Point *)polygon);
+   re->render_surface_polygon_draw((Xrender_Surface *)surface, (RGBA_Draw_Context *)context, (RGBA_Polygon_Point *)polygon, x, y);
 }
 
 

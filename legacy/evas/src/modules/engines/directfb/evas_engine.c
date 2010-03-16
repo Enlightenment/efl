@@ -1140,13 +1140,13 @@ evas_engine_dfb_rectangle_draw(void *data, void *context, void *surface, int x, 
 
 #ifndef DFB_USE_EVAS_POLYGON_DRAW
 static void
-evas_engine_dfb_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon)
+evas_engine_dfb_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon, int x, int y)
 {
-   _dfb_polygon_draw(surface, context, polygon);
+   _dfb_polygon_draw(surface, context, polygon, x, y);
 }
 #else
 static void
-evas_engine_dfb_polygon_draw(void *data, void *context, void *surface, void *polygon)
+evas_engine_dfb_polygon_draw(void *data, void *context, void *surface, void *polygon, int x, int y)
 {
    DirectFB_Engine_Image_Entry *eim = surface;
    IDirectFBSurface *screen;
@@ -1158,7 +1158,7 @@ evas_engine_dfb_polygon_draw(void *data, void *context, void *surface, void *pol
    if (!_dfb_lock_and_sync_image(screen, dst, DSLF_READ | DSLF_WRITE))
      return;
 
-   evas_common_polygon_draw(dst, context, polygon);
+   evas_common_polygon_draw(dst, context, polygon, x, y);
    evas_common_cpu_end_opt();
 
    dst->image.data = NULL;

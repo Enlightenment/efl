@@ -609,7 +609,7 @@ struct _Evas_Func
 
    void *(*polygon_point_add)              (void *data, void *context, void *polygon, int x, int y);
    void *(*polygon_points_clear)           (void *data, void *context, void *polygon);
-   void (*polygon_draw)                    (void *data, void *context, void *surface, void *polygon);
+   void (*polygon_draw)                    (void *data, void *context, void *surface, void *polygon, int x, int y);
 
    void (*gradient2_color_np_stop_insert)   (void *data, void *gradient, int r, int g, int b, int a, float pos);
    void (*gradient2_clear)                  (void *data, void *gradient);

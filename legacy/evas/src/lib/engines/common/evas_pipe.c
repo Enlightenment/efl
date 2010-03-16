@@ -354,16 +354,16 @@ evas_common_pipe_poly_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Threa
 	evas_common_draw_context_clip_clip(&(context), info->x, info->y, info->w, info->h);
 #endif
 	evas_common_polygon_draw(dst, &(context),
-				 op->op.poly.points);
+				 op->op.poly.points, 0, 0);
      }
    else
      evas_common_polygon_draw(dst, &(op->context),
-			      op->op.poly.points);
+			      op->op.poly.points, 0, 0);
 }
 
 EAPI void
 evas_common_pipe_poly_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
-			   RGBA_Polygon_Point *points)
+			   RGBA_Polygon_Point *points, int x, int y)
 {
    RGBA_Pipe_Op *op;
    RGBA_Polygon_Point *pts = NULL, *p, *pp;
@@ -377,8 +377,8 @@ evas_common_pipe_poly_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 	pp = calloc(1, sizeof(RGBA_Polygon_Point));
 	if (pp)
 	  {
-	     pp->x = p->x;
-	     pp->y = p->y;
+	     pp->x = p->x + x;
+	     pp->y = p->y + y;
 	     pts = (RGBA_Polygon_Point *)eina_inlist_append(EINA_INLIST_GET(pts), EINA_INLIST_GET(pp));
 	  }
      }

@@ -89,7 +89,7 @@ EAPI void                soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Cont
 /**
  * Polygon (evas_soft16_polygon.c)
  */
-EAPI void                soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points);
+  EAPI void                soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points, int x, int y);
 
 /**
  * Line (evas_soft16_line.c)

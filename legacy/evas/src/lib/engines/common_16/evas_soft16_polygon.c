@@ -76,7 +76,7 @@ polygon_edge_sorter(const void *a, const void *b)
 }
 
 void
-soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points)
+soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points, int x, int y)
 {
    RGBA_Polygon_Point *pt;
    RGBA_Vertex       *point;
@@ -84,7 +84,7 @@ soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point
    int                num_active_edges;
    int                n;
    int                i, j, k;
-   int                y0, y1, y;
+   int                y0, y1, yi;
    int                ext_x, ext_y, ext_w, ext_h;
    int               *sorted_index;
    DATA8 alpha;
@@ -140,8 +140,8 @@ soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point
    k = 0;
    EINA_INLIST_FOREACH(points, pt)
      {
-	point[k].x = pt->x;
-	point[k].y = pt->y;
+	point[k].x = pt->x + x;
+	point[k].y = pt->y + y;
 	point[k].i = k;
 	k++;
      }
@@ -153,8 +153,8 @@ soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point
    k = 0;
    EINA_INLIST_FOREACH(points, pt)
      {
-	point[k].x = pt->x;
-	point[k].y = pt->y;
+	point[k].x = pt->x + x;
+	point[k].y = pt->y + y;
 	point[k].i = k;
 	k++;
      }
@@ -165,31 +165,31 @@ soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point
    k = 0;
    num_active_edges = 0;
 
-   for (y = y0; y <= y1; y++)
+   for (yi = y0; yi <= y1; yi++)
      {
-	for (; (k < n) && (point[sorted_index[k]].y <= ((float)y + 0.5)); k++)
+	for (; (k < n) && (point[sorted_index[k]].y <= ((float)yi + 0.5)); k++)
 	  {
 	     i = sorted_index[k];
 
 	     if (i > 0) j = i - 1;
 	     else j = n - 1;
-	     if (point[j].y <= ((float)y - 0.5))
+	     if (point[j].y <= ((float)yi - 0.5))
 	       {
 		  POLY_EDGE_DEL(j)
 	       }
-	     else if (point[j].y > ((float)y + 0.5))
+	     else if (point[j].y > ((float)yi + 0.5))
 	       {
-		  POLY_EDGE_ADD(j, y)
+		  POLY_EDGE_ADD(j, yi)
 	       }
 	     if (i < (n - 1)) j = i + 1;
 	     else j = 0;
-	     if (point[j].y <= ((float)y - 0.5))
+	     if (point[j].y <= ((float)yi - 0.5))
 	       {
 		  POLY_EDGE_DEL(i)
 	       }
-	     else if (point[j].y > ((float)y + 0.5))
+	     else if (point[j].y > ((float)yi + 0.5))
 	       {
-		  POLY_EDGE_ADD(i, y)
+		  POLY_EDGE_ADD(i, yi)
 	       }
 	  }
 
@@ -213,7 +213,7 @@ soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point
 		  if (x1 >= (ext_x + ext_w)) x1 = ext_x + ext_w - 1;
 
 		  w = (x1 - x0) + 1;
-		  dst_itr = dst->pixels + (y * dst->stride) + x0;
+		  dst_itr = dst->pixels + (yi * dst->stride) + x0;
 
 		  if (alpha == 32)
 		    _soft16_scanline_fill_solid_solid(dst_itr, w, rgb565);

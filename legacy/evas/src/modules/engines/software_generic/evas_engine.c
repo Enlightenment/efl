@@ -179,15 +179,15 @@ eng_polygon_points_clear(void *data __UNUSED__, void *context __UNUSED__, void *
 }
 
 static void
-eng_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon)
+eng_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon, int x, int y)
 {
 #ifdef BUILD_PIPE_RENDER
    if (cpunum > 1)
-     evas_common_pipe_poly_draw(surface, context, polygon);
+     evas_common_pipe_poly_draw(surface, context, polygon, x, y);
    else
 #endif
      {
-	evas_common_polygon_draw(surface, context, polygon);
+	evas_common_polygon_draw(surface, context, polygon, x, y);
 	evas_common_cpu_end_opt();
      }
 }

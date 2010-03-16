@@ -677,7 +677,7 @@ _xr_xlib_render_surface_line_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, in
 }
 
 void
-_xr_xlib_render_surface_polygon_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points)
+_xr_xlib_render_surface_polygon_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points, int x, int y)
 {
    RGBA_Polygon_Point *pt;
    int i, num;
@@ -730,8 +730,8 @@ _xr_xlib_render_surface_polygon_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc,
      {
 	if (i < num)
 	  {
-	     pts[i].x = pt->x;
-	     pts[i].y = pt->y;
+	     pts[i].x = pt->x + x;
+	     pts[i].y = pt->y + y;
 	     i++;
 	  }
     }

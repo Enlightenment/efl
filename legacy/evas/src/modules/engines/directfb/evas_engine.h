@@ -66,6 +66,6 @@ struct _Render_Engine
 };
 
 int _dfb_surface_set_color_from_context(IDirectFBSurface *surface, RGBA_Draw_Context *dc);
-void _dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Eina_Inlist *points);
+void _dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Eina_Inlist *points, int x, int y);
 
 #endif

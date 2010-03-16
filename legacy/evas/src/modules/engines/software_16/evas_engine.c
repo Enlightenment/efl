@@ -191,9 +191,9 @@ eng_polygon_points_clear(void *data __UNUSED__, void *context __UNUSED__, void *
 }
 
 static void
-eng_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon)
+eng_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon, int x, int y)
 {
-   soft16_polygon_draw(surface, context, polygon);
+   soft16_polygon_draw(surface, context, polygon, x, y);
 }
 
 

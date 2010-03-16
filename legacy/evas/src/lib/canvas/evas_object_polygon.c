@@ -10,12 +10,18 @@ typedef struct _Evas_Polygon_Point       Evas_Polygon_Point;
 
 struct _Evas_Object_Polygon
 {
-   DATA32            magic;
-   Eina_List        *points;
+   DATA32               magic;
+   Eina_List           *points;
 
-   void             *engine_data;
+   void                *engine_data;
 
-   char              changed : 1;
+   struct {
+      int x, y;
+   } offset;
+
+   Evas_Coord_Rectangle	geometry;
+
+   char                 changed : 1;
 };
 
 struct _Evas_Polygon_Point
@@ -114,6 +120,7 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    Evas_Polygon_Point *p;
    Evas_Coord min_x, max_x, min_y, max_y;
    int is, was = 0;
+   int off_x, off_y;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -129,10 +136,28 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 					      obj->layer->evas->pointer.x,
 					      obj->layer->evas->pointer.y, 1, 1);
      }
+
+   if (!o->points)
+     {
+	o->offset.x = obj->cur.geometry.x - obj->prev.geometry.x;
+	o->offset.y = obj->cur.geometry.y - obj->prev.geometry.y;
+     }
+   else
+     {
+	/* Update all points and take offset into account. */
+	Eina_List *over;
+
+	EINA_LIST_FOREACH(o->points, over, p)
+	  {
+	     p->x += o->offset.x;
+	     p->y += o->offset.y;
+	  }
+     }
+
    p = malloc(sizeof(Evas_Polygon_Point));
    if (!p) return;
-   p->x = x;
-   p->y = y;
+   p->x = x + o->offset.x;
+   p->y = y + o->offset.y;
 
    if (!o->points)
      {
@@ -157,6 +182,10 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 	obj->cur.geometry.h = max_y - min_y + 2;
      }
    o->points = eina_list_append(o->points, p);
+
+   o->geometry = obj->cur.geometry;
+   o->offset.x = 0;
+   o->offset.y = 0;
 
 ////   obj->cur.cache.geometry.validity = 0;
    o->changed = 1;
@@ -307,24 +336,28 @@ evas_object_polygon_render(Evas_Object *obj, void *output, void *context, void *
 							   context);
    obj->layer->evas->engine.func->context_render_op_set(output, context,
 							obj->cur.render_op);
-   o->engine_data = obj->layer->evas->engine.func->polygon_points_clear(obj->layer->evas->engine.data.output,
-									obj->layer->evas->engine.data.context,
-									o->engine_data);
-   EINA_LIST_FOREACH(o->points, l, p)
+   if (o->changed)
      {
-	//int px, py;
-        //px = evas_coord_world_x_to_screen(obj->layer->evas, p->x);
-	//py = evas_coord_world_y_to_screen(obj->layer->evas, p->y);
-	o->engine_data = obj->layer->evas->engine.func->polygon_point_add(obj->layer->evas->engine.data.output,
-									  obj->layer->evas->engine.data.context,
-									  o->engine_data,
-									  p->x + x, p->y + y);
+	o->engine_data = obj->layer->evas->engine.func->polygon_points_clear(obj->layer->evas->engine.data.output,
+									     obj->layer->evas->engine.data.context,
+									     o->engine_data);
+	EINA_LIST_FOREACH(o->points, l, p)
+	  {
+	     //px = evas_coord_world_x_to_screen(obj->layer->evas, p->x);
+	     //py = evas_coord_world_y_to_screen(obj->layer->evas, p->y);
+	     o->engine_data = obj->layer->evas->engine.func->polygon_point_add(obj->layer->evas->engine.data.output,
+									       obj->layer->evas->engine.data.context,
+									       o->engine_data,
+									       p->x, p->y);
+	  }
      }
+
    if (o->engine_data)
      obj->layer->evas->engine.func->polygon_draw(output,
 						 context,
 						 surface,
-						 o->engine_data);
+						 o->engine_data,
+						 o->offset.x + x, o->offset.y + y);
 }
 
 static void
@@ -402,6 +435,12 @@ evas_object_polygon_render_pre(Evas_Object *obj)
 	goto done;
      }
    done:
+   if ((obj->cur.geometry.x != obj->prev.geometry.x) ||
+       (obj->cur.geometry.y != obj->prev.geometry.y))
+     {
+	o->offset.x += obj->cur.geometry.x - obj->prev.geometry.x;
+	o->offset.y += obj->cur.geometry.y - obj->prev.geometry.y;
+     }
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, obj, is_v, was_v);
 }
 

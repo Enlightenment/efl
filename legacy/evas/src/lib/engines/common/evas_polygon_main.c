@@ -123,7 +123,7 @@ polygon_edge_sorter(const void *a, const void *b)
 }
 
 EAPI void
-evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points)
+evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points, int x, int y)
 {
    RGBA_Gfx_Func      func;
    RGBA_Polygon_Point *pt;
@@ -133,7 +133,7 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
    int                num_active_edges;
    int                n;
    int                i, j, k;
-   int                y0, y1, y;
+   int                y0, y1, yi;
    int                ext_x, ext_y, ext_w, ext_h;
    int               *sorted_index;
 
@@ -187,8 +187,8 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
    k = 0;
    EINA_INLIST_FOREACH(points, pt)
      {
-	point[k].x = pt->x;
-	point[k].y = pt->y;
+	point[k].x = pt->x + x;
+	point[k].y = pt->y + y;
 	point[k].i = k;
 	k++;
      }
@@ -197,8 +197,8 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
    k = 0;
    EINA_INLIST_FOREACH(points, pt)
      {
-	point[k].x = pt->x;
-	point[k].y = pt->y;
+	point[k].x = pt->x + x;
+	point[k].y = pt->y + y;
 	point[k].i = k;
 	k++;
      }
@@ -210,31 +210,31 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
    num_active_edges = 0;
    spans = NULL;
 
-   for (y = y0; y <= y1; y++)
+   for (yi = y0; yi <= y1; yi++)
      {
-	for (; (k < n) && (point[sorted_index[k]].y <= ((double)y + 0.5)); k++)
+	for (; (k < n) && (point[sorted_index[k]].y <= ((double)yi + 0.5)); k++)
 	  {
 	     i = sorted_index[k];
 
 	     if (i > 0) j = i - 1;
 	     else j = n - 1;
-	     if (point[j].y <= ((double)y - 0.5))
+	     if (point[j].y <= ((double)yi - 0.5))
 	       {
 		  POLY_EDGE_DEL(j)
 	       }
-	     else if (point[j].y > ((double)y + 0.5))
+	     else if (point[j].y > ((double)yi + 0.5))
 	       {
-		  POLY_EDGE_ADD(j, y)
+		  POLY_EDGE_ADD(j, yi)
 	       }
 	     if (i < (n - 1)) j = i + 1;
 	     else j = 0;
-	     if (point[j].y <= ((double)y - 0.5))
+	     if (point[j].y <= ((double)yi - 0.5))
 	       {
 		  POLY_EDGE_DEL(i)
 	       }
-	     else if (point[j].y > ((double)y + 0.5))
+	     else if (point[j].y > ((double)yi + 0.5))
 	       {
-		  POLY_EDGE_ADD(i, y)
+		  POLY_EDGE_ADD(i, yi)
 	       }
 	  }
 
@@ -257,7 +257,7 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
 		  if (x1 >= (ext_x + ext_w)) x1 = ext_x + ext_w - 1;
 		  span = malloc(sizeof(RGBA_Span));
 		  spans = eina_inlist_append(spans, EINA_INLIST_GET(span));
-		  span->y = y;
+		  span->y = yi;
 		  span->x = x0;
 		  span->w = (x1 - x0) + 1;
 	       }

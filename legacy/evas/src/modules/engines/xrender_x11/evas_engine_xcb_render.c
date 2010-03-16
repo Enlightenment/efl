@@ -791,7 +791,7 @@ _xr_xcb_render_surface_line_draw(Xrender_Surface *rs __UNUSED__, RGBA_Draw_Conte
 }
 
 void
-_xr_xcb_render_surface_polygon_draw(Xrender_Surface *rs __UNUSED__, RGBA_Draw_Context *dc __UNUSED__, RGBA_Polygon_Point *points __UNUSED__)
+_xr_xcb_render_surface_polygon_draw(Xrender_Surface *rs __UNUSED__, RGBA_Draw_Context *dc __UNUSED__, RGBA_Polygon_Point *points __UNUSED__, int x, int y)
 {
 /*    RGBA_Polygon_Point *pt; */
 /*    int i, num; */
