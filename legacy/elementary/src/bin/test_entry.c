@@ -1059,8 +1059,7 @@ test_entry3(void *data, Evas_Object *obj, void *event_info)
 
 /* broken things right now that neex fixing:
  * 
- * * multi-line - hit enter and new line at end - cursor vanishes.
- * * hit end of line for "...links are". hit enter. hit backspace. anchor 
- *   vanishes.
+ * * multi-line - at end of line with <br> hit enter, backspace then type 
+ *   any letter. cursor vanishes.
  * 
  */
