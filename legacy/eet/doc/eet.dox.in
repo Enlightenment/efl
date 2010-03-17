@@ -65,7 +65,7 @@ main(int argc, char **argv)
   char      buf[32];
   char     *ret;
   int       size;
-  char    **entries =
+  char     *entries[] =
     {
       "Entry 1",
       "Big text string here compared to others",

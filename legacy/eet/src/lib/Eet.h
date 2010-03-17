@@ -191,9 +191,10 @@ extern "C" {
    /**
     * Clear eet cache
     *
-    * Eet didn't free items by default. If you are under memory presure, just
-    * call this function to recall all memory that are not yet referenced anymore.
-    * The cache take care of modification on disk.
+    * Eet didn't free items by default. If you are under memory
+    * presure, just call this function to recall all memory that are
+    * not yet referenced anymore.  The cache take care of modification
+    * on disk.
     *
     * @since 1.0.0
     */
@@ -202,7 +203,8 @@ extern "C" {
    /**
     * Open an eet file on disk, and returns a handle to it.
     * @param file The file path to the eet file. eg: "/tmp/file.eet".
-    * @param mode The mode for opening. Either EET_FILE_MODE_READ, EET_FILE_MODE_WRITE or EET_FILE_MODE_READ_WRITE.
+    * @param mode The mode for opening. Either EET_FILE_MODE_READ,
+    *        EET_FILE_MODE_WRITE or EET_FILE_MODE_READ_WRITE.
     * @return An opened eet file handle.
     *
     * This function will open an exiting eet file for reading, and build
@@ -833,13 +835,15 @@ extern "C" {
 
    /**
     * Create a new empty data structure descriptor.
-    * @param name The string name of this data structure (most be a global constant and never change).
+    * @param name The string name of this data structure (most be a
+    *        global constant and never change).
     * @param size The size of the struct (in bytes).
     * @param func_list_next The function to get the next list node.
     * @param func_list_append The function to append a member to a list.
     * @param func_list_data The function to get the data from a list node.
     * @param func_list_free The function to free an entire linked list.
-    * @param func_hash_foreach The function to iterate through all hash table entries.
+    * @param func_hash_foreach The function to iterate through all
+    *        hash table entries.
     * @param func_hash_add The function to add a member to a hash table.
     * @param func_hash_free The function to free an entire hash table.
     * @return A new empty data descriptor.
@@ -858,7 +862,7 @@ extern "C" {
     * endian-independant serialised data chunks for transmission across a
     * a network or more.
     *
-    * The function pointers to the list and hash table functions are only 
+    * The function pointers to the list and hash table functions are only
     * needed if you use those data types, else you can pass NULL instead.
     *
     * Example:
@@ -955,17 +959,17 @@ extern "C" {
     *    EET_DATA_DESCRIPTOR_ADD_SUB(edd, Blah, "blah2", blah2, edd2);
     *    EET_DATA_DESCRIPTOR_ADD_LIST(edd, Blah, "blah3", blah3, edd3);
     *
-    *    blah3.string="PANTS";
+    *    blah3.string = "PANTS";
     *
-    *    blah2.string="subtype string here!";
+    *    blah2.string = "subtype string here!";
     *
-    *    blah.character='7';
-    *    blah.sixteen=0x7777;
-    *    blah.integer=0xc0def00d;
-    *    blah.lots=0xdeadbeef31337777;
-    *    blah.floating=3.141592654;
-    *    blah.floating_lots=0.777777777777777;
-    *    blah.string="bite me like a turnip";
+    *    blah.character = '7';
+    *    blah.sixteen = 0x7777;
+    *    blah.integer = 0xc0def00d;
+    *    blah.lots = 0xdeadbeef31337777;
+    *    blah.floating = 3.141592654;
+    *    blah.floating_lots = 0.777777777777777;
+    *    blah.string = "bite me like a turnip";
     *    blah.blah2 = &blah2;
     *    blah.blah3 = eina_list_append(NULL, &blah3);
     *    blah.blah3 = eina_list_append(blah.blah3, &blah3);
@@ -1063,12 +1067,13 @@ extern "C" {
     * endian-independant serialised data chunks for transmission across a
     * a network or more.
     *
-    * This function use str_direct_alloc and str_direct_free. It is usefull when
-    * the eet_data you are reading come from a file and have a dictionnary. This
-    * will reduce memory use, improve the possibility for the OS to page this
-    * string out. But be carrefull all EET_T_STRING are pointer to a mmapped area
-    * and it will point to nowhere if you close the file. So as long as you use
-    * this strings, you need to have the Eet_File open.
+    * This function use str_direct_alloc and str_direct_free. It is
+    * usefull when the eet_data you are reading come from a file and
+    * have a dictionnary. This will reduce memory use, improve the
+    * possibility for the OS to page this string out. But be carrefull
+    * all EET_T_STRING are pointer to a mmapped area and it will point
+    * to nowhere if you close the file. So as long as you use this
+    * strings, you need to have the Eet_File open.
     *
     * @since 1.3.0
     */
@@ -1088,37 +1093,43 @@ extern "C" {
    EAPI Eina_Bool eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc, const char *name, int size);
 
    /**
-    * This macro is an helper that set all the parameter of an Eet_Data_Descriptor_Class
-    * correctly when you use Eina data type with stream.
+    * This macro is an helper that set all the parameter of an
+    * Eet_Data_Descriptor_Class correctly when you use Eina data type
+    * with stream.
     * @param class The Eet_Data_Descriptor_Class you want to set.
     * @param type The type of the structure described by this class.
-    * @return EINA_TRUE if the structure was correctly set (The only reason that could make
-    * it fail is if you did give wrong parameter).
+    * @return EINA_TRUE if the structure was correctly set (The only
+    *         reason that could make it fail is if you did give wrong
+    *         parameter).
     *
     * @since 1.3.0
     */
 #define EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(Clas, Type) (eet_eina_stream_data_descriptor_class_set(Clas, #Type , sizeof (Type)))
 
    /**
-    * This function is an helper that set all the parameter of an Eet_Data_Descriptor_Class
-    * correctly when you use Eina data type with a file.
+    * This function is an helper that set all the parameter of an
+    * Eet_Data_Descriptor_Class correctly when you use Eina data type
+    * with a file.
     * @param class The Eet_Data_Descriptor_Class you want to set.
     * @param name The name of the structure described by this class.
     * @param size The size of the structure described by this class.
-    * @return EINA_TRUE if the structure was correctly set (The only reason that could make
-    * it fail is if you did give wrong parameter).
+    * @return EINA_TRUE if the structure was correctly set (The only
+    *         reason that could make it fail is if you did give wrong
+    *         parameter).
     *
     * @since 1.3.0
     */
    EAPI Eina_Bool eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc, const char *name, int size);
 
    /**
-    * This macro is an helper that set all the parameter of an Eet_Data_Descriptor_Class
-    * correctly when you use Eina data type with file.
+    * This macro is an helper that set all the parameter of an
+    * Eet_Data_Descriptor_Class correctly when you use Eina data type
+    * with file.
     * @param class The Eet_Data_Descriptor_Class you want to set.
     * @param type The type of the structure described by this class.
-    * @return EINA_TRUE if the structure was correctly set (The only reason that could make
-    * it fail is if you did give wrong parameter).
+    * @return EINA_TRUE if the structure was correctly set (The only
+    *         reason that could make it fail is if you did give wrong
+    *         parameter).
     *
     * @since 1.3.0
     */
@@ -1196,21 +1207,22 @@ extern "C" {
     * Dump an eet encoded data structure into ascii text
     * @param data_in The pointer to the data to decode into a struct.
     * @param size_in The size of the data pointed to in bytes.
-    * @param dumpfunc The function to call passed a string when new data is converted to text
+    * @param dumpfunc The function to call passed a string when new
+    *        data is converted to text
     * @param dumpdata The data to pass to the @p dumpfunc callback.
     * @return 1 on success, 0 on failure
     *
     * This function will take a chunk of data encoded by
-    * eet_data_descriptor_encode() and convert it into human readable ascii text.
-    * It does this by calling the @p dumpfunc callback for all new text that is
-    * generated. This callback should append to any existing text buffer and
-    * will be passed the pointer @p dumpdata as a parameter as well as a string
-    * with new text to be appended.
+    * eet_data_descriptor_encode() and convert it into human readable
+    * ascii text.  It does this by calling the @p dumpfunc callback
+    * for all new text that is generated. This callback should append
+    * to any existing text buffer and will be passed the pointer @p
+    * dumpdata as a parameter as well as a string with new text to be
+    * appended.
     *
     * Example:
     *
     * @code
-    *
     * void output(void *data, const char *string)
     * {
     *   printf("%s", string);
@@ -1241,8 +1253,10 @@ extern "C" {
    /**
     * Take an ascii encoding from eet_data_text_dump() and re-encode in binary.
     * @param text The pointer to the string data to parse and encode.
-    * @param textlen The size of the string in bytes (not including 0 byte terminator).
-    * @param size_ret This gets filled in with the encoded data blob size in bytes.
+    * @param textlen The size of the string in bytes (not including 0
+    *        byte terminator).
+    * @param size_ret This gets filled in with the encoded data blob
+    *        size in bytes.
     * @return The encoded data on success, NULL on failure.
     *
     * This function will parse the string pointed to by @p text and return
@@ -1259,16 +1273,19 @@ extern "C" {
     * Dump an eet encoded data structure from an eet file into ascii text
     * @param ef A valid eet file handle.
     * @param name Name of the entry. eg: "/base/file_i_want".
-    * @param dumpfunc The function to call passed a string when new data is converted to text
+    * @param dumpfunc The function to call passed a string when new
+    *        data is converted to text
     * @param dumpdata The data to pass to the @p dumpfunc callback.
     * @return 1 on success, 0 on failure
     *
-    * This function will take an open and valid eet file from eet_open() request
-    * the data encoded by eet_data_descriptor_encode() corresponding to the key @p name
-    * and convert it into human readable ascii text. It does this by calling the
-    * @p dumpfunc callback for all new text that is generated. This callback should
-    * append to any existing text buffer and will be passed the pointer @p dumpdata
-    * as a parameter as well as a string with new text to be appended.
+    * This function will take an open and valid eet file from
+    * eet_open() request the data encoded by
+    * eet_data_descriptor_encode() corresponding to the key @p name
+    * and convert it into human readable ascii text. It does this by
+    * calling the @p dumpfunc callback for all new text that is
+    * generated. This callback should append to any existing text
+    * buffer and will be passed the pointer @p dumpdata as a parameter
+    * as well as a string with new text to be appended.
     *
     * @since 1.0.0
     */
@@ -1280,13 +1297,14 @@ extern "C" {
     * @param ef A valid eet file handle.
     * @param name Name of the entry. eg: "/base/file_i_want".
     * @param text The pointer to the string data to parse and encode.
-    * @param textlen The size of the string in bytes (not including 0 byte terminator).
+    * @param textlen The size of the string in bytes (not including 0
+    *        byte terminator).
     * @param compress Compression flags (1 == compress, 0 = don't compress).
     * @return 1 on success, 0 on failure
     *
-    * This function will parse the string pointed to by @p text, encode it the same
-    * way eet_data_descriptor_encode() takes an in-memory data struct and encodes into a
-    * binary blob.
+    * This function will parse the string pointed to by @p text,
+    * encode it the same way eet_data_descriptor_encode() takes an
+    * in-memory data struct and encodes into a binary blob.
     *
     * The data (optionally compressed) will be in ram, pending a flush to
     * disk (it will stay in ram till the eet file handle is closed though).
@@ -1327,7 +1345,7 @@ extern "C" {
     * Encode a dsata struct to memory and return that encoded data.
     * @param edd The data  descriptor to use when encoding.
     * @param data_in The pointer to the struct to encode into data.
-    * @param size_ret A pointer to the an int to be filled with the decoded size.
+    * @param size_ret pointer to the an int to be filled with the decoded size.
     * @return NULL on failure, or a valid encoded data chunk on success.
     *
     * This function takes a data structutre in memory and encodes it into a
@@ -1356,20 +1374,22 @@ extern "C" {
     * Add a basic data element to a data descriptor.
     * @param edd The data descriptor to add the type to.
     * @param struct_type The type of the struct.
-    * @param name The string name to use to encode/decode this member (must be a constant global and never change).
+    * @param name The string name to use to encode/decode this member
+    *        (must be a constant global and never change).
     * @param member The struct member itself to be encoded.
     * @param type The type of the member to encode.
     *
-    * This macro is a convenience macro provided to add a member to the data
-    * descriptor @p edd. The type of the structure is provided as the
-    * @p struct_type parameter (for example: struct my_struct). The @p name
-    * parameter defines a string that will be used to uniquely name that
-    * member of the struct (it is suggested to use the struct member itself).
-    * The @p member parameter is the actual struct member itself (for
-eet_dictionary_string_check    * example: values), and @p type is the basic data type of the member which
-    * must be one of: EET_T_CHAR, EET_T_SHORT, EET_T_INT, EET_T_LONG_LONG,
-    * EET_T_FLOAT, EET_T_DOUBLE, EET_T_UCHAR, EET_T_USHORT, EET_T_UINT,
-    * EET_T_ULONG_LONG or EET_T_STRING.
+    * This macro is a convenience macro provided to add a member to
+    * the data descriptor @p edd. The type of the structure is
+    * provided as the @p struct_type parameter (for example: struct
+    * my_struct). The @p name parameter defines a string that will be
+    * used to uniquely name that member of the struct (it is suggested
+    * to use the struct member itself).  The @p member parameter is
+    * the actual struct member itself (for eet_dictionary_string_check
+    * example: values), and @p type is the basic data type of the
+    * member which must be one of: EET_T_CHAR, EET_T_SHORT, EET_T_INT,
+    * EET_T_LONG_LONG, EET_T_FLOAT, EET_T_DOUBLE, EET_T_UCHAR,
+    * EET_T_USHORT, EET_T_UINT, EET_T_ULONG_LONG or EET_T_STRING.
     *
     * @since 1.0.0
     */
@@ -1386,7 +1406,8 @@ eet_dictionary_string_check    * example: values), and @p type is the basic data
     * Add a sub-element type to a data descriptor
     * @param edd The data descriptor to add the type to.
     * @param struct_type The type of the struct.
-    * @param name The string name to use to encode/decode this member (must be a constant global and never change).
+    * @param name The string name to use to encode/decode this member
+    *        (must be a constant global and never change).
     * @param member The struct member itself to be encoded.
     * @param subtype The type of sub-type struct to add.
     *
@@ -1411,7 +1432,8 @@ eet_dictionary_string_check    * example: values), and @p type is the basic data
     * Add a linked list type to a data descriptor
     * @param edd The data descriptor to add the type to.
     * @param struct_type The type of the struct.
-    * @param name The string name to use to encode/decode this member (must be a constant global and never change).
+    * @param name The string name to use to encode/decode this member
+    *        (must be a constant global and never change).
     * @param member The struct member itself to be encoded.
     * @param subtype The type of linked list member to add.
     *
@@ -1435,7 +1457,8 @@ eet_dictionary_string_check    * example: values), and @p type is the basic data
     * Add a hash type to a data descriptor
     * @param edd The data descriptor to add the type to.
     * @param struct_type The type of the struct.
-    * @param name The string name to use to encode/decode this member (must be a constant global and never change).
+    * @param name The string name to use to encode/decode this member
+    *        (must be a constant global and never change).
     * @param member The struct member itself to be encoded.
     * @param subtype The type of hash member to add.
     *
@@ -1459,14 +1482,16 @@ eet_dictionary_string_check    * example: values), and @p type is the basic data
     * Add a fixed size array type to a data descriptor
     * @param edd The data descriptor to add the type to.
     * @param struct_type The type of the struct.
-    * @param name The string name to use to encode/decode this member (must be a constant global and never change).
+    * @param name The string name to use to encode/decode this member
+    *        (must be a constant global and never change).
     * @param member The struct member itself to be encoded.
     * @param subtype The type of hash member to add.
     *
-    * This macro lets you easily add a fixed size array of other data types. All the
-    * parameters are the same as for EET_DATA_DESCRIPTOR_ADD_BASIC(), with the
-    * @p subtype being the exception. This must be the data descriptor of the
-    * element that is in each member of the hash to be stored.
+    * This macro lets you easily add a fixed size array of other data
+    * types. All the parameters are the same as for
+    * EET_DATA_DESCRIPTOR_ADD_BASIC(), with the @p subtype being the
+    * exception. This must be the data descriptor of the element that
+    * is in each member of the hash to be stored.
     *
     * @since 1.0.2
     */
@@ -1483,14 +1508,16 @@ eet_dictionary_string_check    * example: values), and @p type is the basic data
     * Add a variable size array type to a data descriptor
     * @param edd The data descriptor to add the type to.
     * @param struct_type The type of the struct.
-    * @param name The string name to use to encode/decode this member (must be a constant global and never change).
+    * @param name The string name to use to encode/decode this member
+    *        (must be a constant global and never change).
     * @param member The struct member itself to be encoded.
     * @param subtype The type of hash member to add.
     *
-    * This macro lets you easily add a fixed size array of other data types. All the
-    * parameters are the same as for EET_DATA_DESCRIPTOR_ADD_BASIC(), with the
-    * @p subtype being the exception. This must be the data descriptor of the
-    * element that is in each member of the hash to be stored.
+    * This macro lets you easily add a fixed size array of other data
+    * types. All the parameters are the same as for
+    * EET_DATA_DESCRIPTOR_ADD_BASIC(), with the @p subtype being the
+    * exception. This must be the data descriptor of the element that
+    * is in each member of the hash to be stored.
     *
     * @since 1.0.2
     */
