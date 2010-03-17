@@ -914,6 +914,7 @@ extern "C" {
     *    Blah2 blah2;
     *    Blah3 blah3;
     *    Eet_Data_Descriptor *edd, *edd2, *edd3;
+    *    Eet_Data_Descriptor_Class eddc, eddc2, eddc3;
     *    void *data;
     *    int size;
     *    FILE *f;
@@ -921,34 +922,16 @@ extern "C" {
     *
     *    eet_init();
     *
-    *    edd3 = eet_data_descriptor_new("blah3", sizeof(Blah3),
-    *                                   eina_list_next,
-    *                                   eina_list_append,
-    *                                   eina_list_data_get,
-    *                                   eina_list_free,
-    *                                   eina_hash_foreach,
-    *                                   eet_eina_hash_add,
-    *                                   eina_hash_free);
+    *    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc3, Blah3);
+    *    edd3 = eet_data_descriptor_stream_new(&eddc3);
     *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd3, Blah3, "string3", string, EET_T_STRING);
     *
-    *    edd2 = eet_data_descriptor_new("blah2", sizeof(Blah2),
-    *                                   eina_list_next,
-    *                                   eina_list_append,
-    *                                   eina_list_data_get,
-    *                                   eina_list_free,
-    *                                   eina_hash_foreach,
-    *                                   eet_eina_hash_add,
-    *                                   eina_hash_free);
+    *    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc2, Blah2);
+    *    edd2 = eet_data_descriptor_stream_new(&eddc2);
     *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd2, Blah2, "string2", string, EET_T_STRING);
     *
-    *    edd = eet_data_descriptor_new("blah", sizeof(Blah),
-    *                                   eina_list_next,
-    *                                   eina_list_append,
-    *                                   eina_list_data_get,
-    *                                   eina_list_free,
-    *                                   eina_hash_foreach,
-    *                                   eet_eina_hash_add,
-    *                                   eina_hash_free);
+    *    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Blah);
+    *    edd = eet_data_descriptor_stream_new(&eddc);
     *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "character", character, EET_T_CHAR);
     *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "sixteen", sixteen, EET_T_SHORT);
     *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "integer", integer, EET_T_INT);
