@@ -345,9 +345,26 @@ elm_widget_focused_object_get(const Evas_Object *obj)
 EAPI Evas_Object *
 elm_widget_top_get(const Evas_Object *obj)
 {
+#if 1 // strict way  
    API_ENTRY return NULL;
    if (sd->parent_obj) return elm_widget_top_get(sd->parent_obj);
    return (Evas_Object *)obj;
+#else // loose way
+   Smart_Data *sd = evas_object_smart_data_get(obj);
+   Evas_Object *par;
+   
+   if (!obj) return NULL;
+   if ((sd) && (!strcmp(evas_object_type_get(obj), SMART_NAME)))
+     {
+        if ((sd->type) && (!strcmp(sd->type, "win"))) 
+          return (Evas_Object *)obj;
+        if (sd->parent_obj)
+          return elm_widget_top_get(sd->parent_obj);
+     }
+   par = evas_object_smart_parent_get(obj);
+   if (!par) return (Evas_Object *)obj;
+   return elm_widget_top_get(par);
+#endif   
 }
 
 EAPI int
