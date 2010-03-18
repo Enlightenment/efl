@@ -601,7 +601,7 @@ extern "C" {
 #endif
 
 /**
- * @defgroup Evas_Group Top level functions
+ * @defgroup Evas_Group Top Level Functions
  *
  * Functions that affect Evas as a whole.
  */
@@ -615,7 +615,7 @@ extern "C" {
    EAPI Eina_Bool         evas_async_events_put             (const void *target, Evas_Callback_Type type, void *event_info, void (*func)(void *target, Evas_Callback_Type type, void *event_info)) EINA_ARG_NONNULL(1, 4);
 
 /**
- * @defgroup Evas_Canvas Canvas functions
+ * @defgroup Evas_Canvas Canvas Functions
  *
  * Functions that deal with the basic evas object.  They are the
  * functions you need to use at a minimum to get a working evas, and
