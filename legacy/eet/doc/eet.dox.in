@@ -236,7 +236,18 @@ make install
 
 @section next_steps Next Steps
 
-to be filled...
+After you understood what Eet is and installed it in your system you
+should proceed understanding the programming interface. We'd recommend
+you to take a while to learn Eina
+(http://docs.enlightenment.org/auto/eina/) as it is very convenient
+and optimized, and Eet provides integration with it.
+
+Recommended reading:
+
+@li @ref Eet_File_Group to know the basics to open and save files.
+@li @ref Eet_Data_Group to know the convenient way to serialize and
+    parse your data structures automatically. Just create your
+    descriptors and let Eet do the work for you.
 
 @section intro_example Introductory Examples
 
