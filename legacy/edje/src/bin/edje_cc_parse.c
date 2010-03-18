@@ -750,7 +750,7 @@ compile(void)
                   if (fd >= 0)
                     {
                        close(fd); 
-                       snprintf (buf, 4096, "gcc -I%s %s -E -o %s %s",
+                       snprintf (buf, 4096, "gcc -xc -I%s %s -E -o %s %s",
                                  inc, def, tmpn2, tmpn);
                        ret = system(buf);
                        snprintf(tmpn, 4096, "%s", tmpn2);
