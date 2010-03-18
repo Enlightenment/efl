@@ -81,15 +81,8 @@ static const Evas_Object_Func object_func =
 /* it has no other api calls as all properties are standard */
 
 /**
- * @defgroup Evas_Object_Text Text Object Functions
- *
- * Functions that operate on evas text objects.
- */
-
-/**
  * @addtogroup Evas_Object_Text
  * @{
- * @ingroup Evas_Object_Specific
  */
 
 /**
@@ -1006,11 +999,6 @@ evas_object_text_style_pad_get(const Evas_Object *obj, int *l, int *r, int *t, i
  * @}
  */
 
-/**
- * @defgroup Evas_Font_Path_Group Evas Font Path Functions
- *
- * Functions that edit the paths being used to load fonts.
- */
 
 /**
  * Removes all font paths loaded into memory for the given evas.
@@ -1096,6 +1084,14 @@ evas_font_object_rehint(Evas_Object *obj)
      }
 }
 
+/**
+ * Changes the font hinting for the given evas.
+ *
+ * @param e The given evas.
+ * @param hinting The hinting to use, one of #EVAS_FONT_HINTING_NONE,
+ *        #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
+ * @ingroup Evas_Font_Group
+ */
 EAPI void
 evas_font_hinting_set(Evas *e, Evas_Font_Hinting_Flags hinting)
 {
@@ -1115,6 +1111,14 @@ evas_font_hinting_set(Evas *e, Evas_Font_Hinting_Flags hinting)
      }
 }
 
+/**
+ * Retrieves the font hinting used by the given evas.
+ *
+ * @param e The given evas to query.
+ * @return The hinting in use, one of #EVAS_FONT_HINTING_NONE,
+ *         #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
+ * @ingroup Evas_Font_Group
+ */
 EAPI Evas_Font_Hinting_Flags
 evas_font_hinting_get(const Evas *e)
 {
@@ -1124,6 +1128,15 @@ evas_font_hinting_get(const Evas *e)
    return e->hinting;
 }
 
+/**
+ * Checks if the font hinting is supported by the given evas.
+ *
+ * @param e The given evas to query.
+ * @param hinting The hinting to use, one of #EVAS_FONT_HINTING_NONE,
+ *        #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
+ * @return @c EINA_TRUE if it is supported, @c EINA_FALSE otherwise.
+ * @ingroup Evas_Font_Group
+ */
 EAPI Eina_Bool
 evas_font_hinting_can_hint(const Evas *e, Evas_Font_Hinting_Flags hinting)
 {
@@ -1136,15 +1149,11 @@ evas_font_hinting_can_hint(const Evas *e, Evas_Font_Hinting_Flags hinting)
    return EINA_FALSE;
 }
 
-
-
-
-
 /**
- * To be documented.
+ * Force the given evas and associated engine to flush its font cache.
  *
- * FIXME: To be fixed.
- *
+ * @param e The given evas to flush font cache.
+ * @ingroup Evas_Font_Group
  */
 EAPI void
 evas_font_cache_flush(Evas *e)
@@ -1157,10 +1166,12 @@ evas_font_cache_flush(Evas *e)
 }
 
 /**
- * To be documented.
+ * Changes the size of font cache of the given evas.
  *
- * FIXME: To be fixed.
+ * @param e The given evas to flush font cache.
+ * @param size The size, in bytes.
  *
+ * @ingroup Evas_Font_Group
  */
 EAPI void
 evas_font_cache_set(Evas *e, int size)
@@ -1174,10 +1185,12 @@ evas_font_cache_set(Evas *e, int size)
 }
 
 /**
- * To be documented.
+ * Changes the size of font cache of the given evas.
  *
- * FIXME: To be fixed.
+ * @param e The given evas to flush font cache.
+ * @return The size, in bytes.
  *
+ * @ingroup Evas_Font_Group
  */
 EAPI int
 evas_font_cache_get(const Evas *e)
@@ -1190,10 +1203,18 @@ evas_font_cache_get(const Evas *e)
 }
 
 /**
- * To be documented.
+ * List of available font descriptions known or found by this evas.
  *
- * FIXME: To be fixed.
+ * The list depends on Evas compile time configuration, such as
+ * fontconfig support, and the paths provided at runtime as explained
+ * in @ref Evas_Font_Path_Group.
  *
+ * @param e The evas instance to query.
+ * @return a newly allocated list of strings. Do not change the
+ *         strings.  Be sure to call evas_font_available_list_free()
+ *         after you're done.
+ *
+ * @ingroup Evas_Font_Group
  */
 EAPI Eina_List *
 evas_font_available_list(const Evas *e)
@@ -1206,10 +1227,12 @@ evas_font_available_list(const Evas *e)
 }
 
 /**
- * To be documented.
+ * Free list of font descriptions returned by evas_font_dir_available_list().
  *
- * FIXME: To be fixed.
+ * @param e The evas instance that returned such list.
+ * @param available the list returned by evas_font_dir_available_list().
  *
+ * @ingroup Evas_Font_Group
  */
 EAPI void
 evas_font_available_list_free(Evas *e, Eina_List *available)
@@ -1226,6 +1249,7 @@ evas_font_available_list_free(Evas *e, Eina_List *available)
  *
  * FIXME: To be fixed.
  *
+ * @ingroup Evas_Utils
  */
 EAPI int
 evas_string_char_next_get(const char *str, int pos, int *decoded)
@@ -1246,6 +1270,7 @@ evas_string_char_next_get(const char *str, int pos, int *decoded)
  *
  * FIXME: To be fixed.
  *
+ * @ingroup Evas_Utils
  */
 EAPI int
 evas_string_char_prev_get(const char *str, int pos, int *decoded)
@@ -1265,6 +1290,7 @@ evas_string_char_prev_get(const char *str, int pos, int *decoded)
  * Get the length in characters of the string.
  * @param  str The string to get the length of.
  * @return The length in characters (not bytes)
+ * @ingroup Evas_Utils
  */
 EAPI int
 evas_string_char_len_get(const char *str)

@@ -158,10 +158,8 @@ evas_event_list_copy(Eina_List *list)
 /* public functions */
 
 /**
- * @defgroup Evas_Event_Freezing_Group Evas Event Freezing Functions
- *
- * Functions that deal with the freezing of event processing of an
- * evas.
+ * @addtogroup Evas_Event_Freezing_Group
+ * @{
  */
 
 /**
@@ -183,7 +181,6 @@ evas_event_list_copy(Eina_List *list)
  * evas_object_resize(object, 200, 200);
  * evas_event_thaw(evas);
  * @endcode
- * @ingroup Evas_Event_Freezing_Group
  */
 EAPI void
 evas_event_freeze(Evas *e)
@@ -205,7 +202,6 @@ evas_event_freeze(Evas *e)
  * invole any "missed" events to be evaluated.
  *
  * See evas_event_freeze() for an example.
- * @ingroup Evas_Event_Freezing_Group
  */
 EAPI void
 evas_event_thaw(Evas *e)
@@ -234,6 +230,15 @@ evas_event_thaw(Evas *e)
 }
 
 /**
+ * @}
+ */
+
+/**
+ * @addtogroup Evas_Event_Feeding_Group
+ * @{
+ */
+
+/**
  * Return the freeze count of a given canvas.
  * @param e The canvas to fetch the freeze count from.
  *
@@ -250,7 +255,7 @@ evas_event_thaw(Evas *e)
  *
  * while (evas_event_freeze_get(evas) > 0) evas_event_thaw(evas);
  * @endcode
- * @ingroup Evas_Event_Freezing_Group
+ *
  */
 EAPI int
 evas_event_freeze_get(const Evas *e)
@@ -1466,9 +1471,12 @@ evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data
    _evas_unwalk(e);
 }
 
+/**
+ * @}
+ */
 
 /**
- * @addtogroup Evas_Object_Group
+ * @addtogroup Evas_Object_Group_Events
  * @{
  */
 
@@ -1482,8 +1490,6 @@ evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data
  * pass events) instead.
  *
  * If @p pass is false, events will be processed as normal.
- *
- * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI void
 evas_object_pass_events_set(Evas_Object *obj, Eina_Bool pass)
@@ -1511,8 +1517,6 @@ evas_object_pass_events_set(Evas_Object *obj, Eina_Bool pass)
  * Determine whether an object is set to pass events.
  * @param obj
  * @return pass events state
- *
- * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI Eina_Bool
 evas_object_pass_events_get(const Evas_Object *obj)
@@ -1534,8 +1538,6 @@ evas_object_pass_events_get(const Evas_Object *obj)
  *
  * If @p repeat is false, events occuring on @p obj will be processed
  * normally.
- *
- * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI void
 evas_object_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
@@ -1562,8 +1564,6 @@ evas_object_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
  * Determine whether an object is set to repeat events.
  * @param obj
  * @return repeat events state
- *
- * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI Eina_Bool
 evas_object_repeat_events_get(const Evas_Object *obj)
@@ -1591,7 +1591,6 @@ evas_object_repeat_events_get(const Evas_Object *obj)
  * object, @p obj, will not be passed on to the parent smart object.
  *
  * The default value is true.
- * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI void
 evas_object_propagate_events_set(Evas_Object *obj, Eina_Bool prop)
@@ -1606,8 +1605,6 @@ evas_object_propagate_events_set(Evas_Object *obj, Eina_Bool prop)
  * Determine whether an object is set to propagate events.
  * @param obj
  * @return propogate events state
- *
- * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI Eina_Bool
 evas_object_propagate_events_get(const Evas_Object *obj)
@@ -1640,6 +1637,8 @@ evas_object_propagate_events_get(const Evas_Object *obj)
  * be emitted just when inside this object area.
  *
  * The default value is EVAS_OBJECT_POINTER_MODE_AUTOGRAB.
+ *
+ * @ingroup Evas_Object_Group_Extras
  */
 EAPI void
 evas_object_pointer_mode_set(Evas_Object *obj, Evas_Object_Pointer_Mode setting)
@@ -1654,6 +1653,7 @@ evas_object_pointer_mode_set(Evas_Object *obj, Evas_Object_Pointer_Mode setting)
  * Determine how pointer will behave.
  * @param obj
  * @return pointer behavior.
+ * @ingroup Evas_Object_Group_Extras
  */
 EAPI Evas_Object_Pointer_Mode
 evas_object_pointer_mode_get(const Evas_Object *obj)

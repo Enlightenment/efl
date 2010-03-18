@@ -8,6 +8,10 @@
 /* public calls */
 
 /**
+ * @addtogroup Evas_Object_Group_Basic
+ * @{
+ */
+/**
  * Sets focus to the given object.
  *
  * @param obj The object to be focused or unfocused.
@@ -76,6 +80,10 @@ evas_object_focus_get(const Evas_Object *obj)
 }
 
 /**
+ * @}
+ */
+
+/**
  * Retrieve the object that currently has focus.
  *
  * @param e The @c Evas canvas to query focus on.
@@ -88,6 +96,8 @@ evas_object_focus_get(const Evas_Object *obj)
  * @see evas_object_key_ungrab
  *
  * @return The object that has focus or NULL is there is not one.
+ *
+ * @ingroup Evas_Object_Group_Find
  */
 EAPI Evas_Object *
 evas_focus_get(const Evas *e)

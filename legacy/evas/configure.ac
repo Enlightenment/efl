@@ -1232,6 +1232,38 @@ if test x$want_valgrind = "xyes"; then
   )
 fi
 
+## Examples
+
+install_examples="yes"
+AC_ARG_ENABLE([install-examples],
+   AC_HELP_STRING([--disable-install-examples],
+                  [disable installing examples (compiled or just source).
+                   @<:@default==enabled@:>@]),
+   [
+    if test "x${enableval}" = "xyes" ; then
+       install_examples="yes"
+    else
+       install_examples="no"
+    fi
+   ],
+   [install_examples="yes"])
+AM_CONDITIONAL([INSTALL_EXAMPLES], [test "x${install_examples}" = "xyes"])
+
+build_examples="no"
+AC_ARG_ENABLE([build-examples],
+   AC_HELP_STRING([--enable-build-examples],
+                  [enable building examples. @<:@default==disabled@:>@]),
+   [
+    if test "x${enableval}" = "xyes" ; then
+       build_examples="yes"
+    else
+       build_examples="no"
+    fi
+   ],
+   [build_examples="no"])
+AM_CONDITIONAL([BUILD_EXAMPLES], [test "x${build_examples}" = "xyes"])
+
+
 #####################################################################
 ## Fill in flags
 
@@ -1322,6 +1354,7 @@ src/modules/savers/jpeg/Makefile
 src/modules/savers/png/Makefile
 src/modules/savers/tiff/Makefile
 src/lib/include/Makefile
+src/examples/Makefile
 README
 evas.spec
 ])
@@ -1467,6 +1500,7 @@ echo "  32bpp Rotation 180......: $conv_32_rgb_rot_180"
 echo "  32bpp Rotation 270......: $conv_32_rgb_rot_270"
 echo
 echo "Documentation.............: ${build_doc}"
+echo "Examples..................: install:${install_examples} build:${build_examples}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"

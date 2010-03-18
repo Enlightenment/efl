@@ -9,6 +9,11 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+/**
+ * @addtogroup Evas_Imaging
+ * @{
+ */
+
 EAPI int evas_imaging_image_load_error = EVAS_LOAD_ERROR_NONE;
 
 EAPI Evas_Imaging_Image *
@@ -236,3 +241,6 @@ evas_imaging_font_cache_get(void)
    return evas_common_font_cache_get();
 }
 
+/**
+ * @}
+ */

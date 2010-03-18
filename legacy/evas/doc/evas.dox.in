@@ -5,19 +5,28 @@
 @image html  e_big.png
 
 @version @PACKAGE_VERSION@
-@author Carsten Haitzler <raster\@rasterman.com>
-@author Till Adam <till\@adam-lilienthal.de>
-@author Steve Ireland <sireland\@pobox.com>
-@author Brett Nash <nash\@nash.id.au>
-@author Tilman Sauerbeck <tilman at code-monkey.de>
-@author Corey Donohoe <atmos\@atmos.org>
-@author Yuri Hudobin <glassy_ape\@users.sourceforge.net>
-@author Nathan Ingersoll <ningerso\@d.umn.edu>
-@author Willem Monsuwe <willem\@stack.nl>
-@author Vincent Torri <vtorri at univ-evry dot fr>
-@author Gustavo Barbieri <barbieri at profusion dot mobi>
-@author Cedric Bail <moa dot bluebugs at gmail dot com>
-@date 2000-2008
+@author Carsten Haitzler <raster@@rasterman.com>
+@author Till Adam <till@@adam-lilienthal.de>
+@author Steve Ireland <sireland@@pobox.com>
+@author Brett Nash <nash@@nash.id.au>
+@author Tilman Sauerbeck <tilman@@code-monkey.de>
+@author Corey Donohoe <atmos@@atmos.org>
+@author Yuri Hudobin <glassy_ape@@users.sourceforge.net>
+@author Nathan Ingersoll <ningerso@@d.umn.edu>
+@author Willem Monsuwe <willem@@stack.nl>
+@author Vincent Torri <vtorri@@univ-evry.fr>
+@author Gustavo Barbieri <barbieri@@profusion.mobi>
+@author Cedric Bail <moa.bluebugs@@gmail.com>
+@date 2000-2010
+
+@section toc Table of Contents
+
+@li @ref intro
+@li @ref work
+@li @ref compiling
+@li @ref install
+@li @ref next_steps
+@li @ref intro_example
 
 
 @section intro What is Evas?
@@ -42,6 +51,21 @@ it small and lean. It has several display back-ends, letting it display on
 several display systems, making it portable for cross-device and
 cross-platform development.
 
+@subsection intro_not_evas What Evas is not?
+
+Evas is not a widget set or widget toolkit, however it is their
+base. See Elementary (http://docs.enlightenment.org/auto/elementary/)
+for a toolkit based on Evas, Edje, Ecore and other Enlightenment
+technologies.
+
+It is not dependent or aware of main loops, input or output
+systems. Input should be polled from various sources and feed them to
+Evas. Similarly, it will not create windows or report windows updates
+to your system, rather just drawing the pixels and reporting to the
+user the areas that were changed. Of course these operations are quite
+common and thus they are ready to use in Ecore, particularly in
+Ecore_Evas (http://docs.enlightenment.org/auto/ecore/).
+
 
 @section work How does Evas work?
 
@@ -53,14 +77,16 @@ engine, and controls the target windowing system in order to produce
 rendered results of the current canvases state on the display.
 
 Immediate mode display systems retain very little, or no state. A program
-will execute a series of commands:
+will execute a series of commands, as in the pseudo code:
 
 @verbatim
-bitmap_handle = create_new_bitmap();
-draw_line(0, 0, 100, 200);
-draw_rectangle(10, 30, 50, 500);
-draw_bitmap(10, 30, bitmap_handle);
-etc.
+draw line from position (0, 0) to position (100, 200);
+
+draw rectangle from position (10, 30) to position (50, 500);
+
+bitmap_handle = create_bitmap();
+scale bitmap_handle to size 100 x 100;
+draw image bitmap_handle at position (10, 30);
 @endverbatim
 
 The series of commands is executed by the windowing system and the results
@@ -85,25 +111,61 @@ mistakes at this level and produce code that is sub optimal. Those familiar
 with this kind of programming will simply get bored by writing the same code
 again and again.
 
+For example, if in the above scene, the windowing system requires the
+application to redraw the area from 0, 0 to 50, 50 (also referred as
+"expose event"), then the programmer must calculate manually the
+updates and repaint it again:
+
+@verbatim
+Redraw from position (0, 0) to position (50, 50):
+
+// what was in area (0, 0, 50, 50)?
+
+// 1. intersection part of line (0, 0) to (100, 200)?
+      draw line from position (0, 0) to position (25, 50);
+
+// 2. intersection part of rectangle (10, 30) to (50, 500)?
+      draw rectangle from position (10, 30) to position (50, 50)
+
+// 3. intersection part of image at (10, 30), size 100 x 100?
+      bitmap_subimage = subregion from position (0, 0) to position (40, 20)
+      draw image bitmap_subimage at position (10, 30);
+@endverbatim
+
+The clever reader might have noticed that, if all elements in the
+above scene are opaque, then the system is doing useless paints: part
+of the line is behind the rectangle, and part of the rectangle is
+behind the image. These useless paints tends to be very costly, as
+pixels tend to be 4 bytes in size, thus an overlapping region of 100 x
+100 pixels is around 40000 useless writes! The developer could write
+code to calculate the overlapping areas and avoid painting then, but
+then it should be mixed with the "expose event" handling mentioned
+above and quickly one realizes the initially simpler method became
+really complex.
+
 Evas is a structural system in which the programmer creates and manages
 display objects and their properties, and as a result of this higher level
 state management, the canvas is able to redraw the set of objects when
 needed to represent the current state of the canvas.
 
-For example:
+For example, the pseudo code:
 
 @verbatim
-bitmap_handle = create_bitmap();
-move(bitmap_handle, 10, 30);
-show(bitmap_handle);
-rectangle_handle = create_rectangle();
-move(rectangle_handle, 10, 30);
-resize(rectangle_handle, 50, 500);
-show(rectangle_handle);
 line_handle = create_line();
-set_line_coords(line_handle, 0, 0, 100, 200);
-show(line_handle);
-etc.
+set line_handle from position (0, 0) to position (100, 200);
+show line_handle;
+
+rectangle_handle = create_rectangle();
+move rectangle_handle to position (10, 30);
+resize rectangle_handle to size 40 x 470;
+show rectangle_handle;
+
+bitmap_handle = create_bitmap();
+scale bitmap_handle to size 100 x 100;
+move bitmap_handle to position (10, 30);
+show bitmap_handle;
+
+render scene;
 @endverbatim
 
 This may look longer, but when the display needs to be refreshed or updated,
@@ -171,6 +233,35 @@ su -
 make install
 @endverbatim
 
+@section next_steps Next Steps
+
+After you understood what Evas is and installed it in your system you
+should proceed understanding the programming interface for all
+objects, then see the specific for the most used elements. We'd
+recommend you to take a while to learn Ecore
+(http://docs.enlightenment.org/auto/ecore/) and Edje
+(http://docs.enlightenment.org/auto/edje/) as they will likely save
+you tons of work compared to using just Evas directly.
+
+Recommended reading:
+
+@li @ref Evas_Object_Group
+@li @ref Evas_Object_Rectangle
+@li @ref Evas_Object_Image
+@li @ref Evas_Object_Text
+@li @ref Evas_Smart_Object_Group and @ref Evas_Smart_Group to define
+    an object that provides custom functions to handle clipping,
+    hiding, moving, resizing, setting the color and more. These could
+    be as simple as a group of objects that move together (see @ref
+    Evas_Smart_Object_Clipped). These smart objects can implement what
+    ends to be a widget, providing some intelligence (thus the name),
+    like a button or check box.
+
+@section intro_example Introductory Example
+
+@include evas-buffer-simple.c
+
+
 
 @todo (1.0) Need a way ot scaling an image and just PRODUCING the output (scaling direct to target buffe r- no blend/copy etc.)
 @todo (1.0) Could improve evas's scaling down code to limit multiple samples per output pixel to maybe 2x2?
@@ -186,12 +277,9 @@ make install
 @todo (1.0) Add button grabbing
 @todo (1.0) Add generic object method call system
 @todo (1.0) Add callbacks set for smart object parents to be set on all child smart objects too.
-@todo (1.0) Define image load errors (and maybe have an error to string func)
-@todo (1.0) Add text styles (outline etc.)
 @todo (1.0) Add font load query calls (so we know if a font load failed)
 @todo (1.0) Add font listing calls
 @todo (1.0) Add ability to check image comments & disk format
-@todo (1.0) Add group objects
 @todo (1.0) Add fontset support
 @todo (1.0) Export engine rendering API cleanly to Evas API
 @todo (1.0) Add smart object ability to provide rendering callback

@@ -7,13 +7,6 @@ static void _evas_smart_class_callbacks_create(Evas_Smart *s);
 /* all public */
 
 /**
- * @defgroup Evas_Smart_Group Evas Smart Functions
- *
- * Functions that deal with Evas_Smart's.
- *
- */
-
-/**
  * @addtogroup Evas_Smart_Group
  * @{
  */

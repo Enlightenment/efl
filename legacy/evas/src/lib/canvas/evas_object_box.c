@@ -22,7 +22,6 @@ struct _Evas_Object_Box_Accessor
 /**
  * @addtogroup Evas_Object_Box
  * @{
- * @ingroup Evas_Smart_Object_Group
  */
 
 #define EVAS_OBJECT_BOX_DATA_GET(o, ptr)			\

@@ -240,6 +240,11 @@ evas_object_intercept_call_clip_unset(Evas_Object *obj)
 /* public calls */
 
 /**
+ * @addtogroup Evas_Object_Group_Interceptors
+ * @{
+ */
+
+/**
  * Set the callback function that intercepts a show event of a object.
  *
  * @param obj The given canvas object pointer.
@@ -809,3 +814,7 @@ evas_object_intercept_clip_unset_callback_del(Evas_Object *obj, void (*func) (vo
    evas_object_intercept_deinit(obj);
    return data;
 }
+
+/**
+ * @}
+ */

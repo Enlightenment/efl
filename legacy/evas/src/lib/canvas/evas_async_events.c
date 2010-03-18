@@ -81,6 +81,7 @@ evas_async_events_shutdown(void)
  * asynchronous events of the canvas. Naturally, other mainloops,
  * apart from ecore, may make use of it.
  *
+ * @ingroup Evas_Group
  */
 EAPI int
 evas_async_events_fd_get(void)
@@ -103,6 +104,7 @@ evas_async_events_fd_get(void)
  * together with other event parameters, when queued, get called (with
  * those parameters), in that order.
  *
+ * @ingroup Evas_Group
  */
 EAPI int
 evas_async_events_process(void)
@@ -156,6 +158,7 @@ evas_async_events_process(void)
  * whose call is to happen after evas_async_events_process() is
  * called.
  *
+ * @ingroup Evas_Group
  */
 EAPI Eina_Bool
 evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_info, void (*func)(void *target, Evas_Callback_Type type, void *event_info))

@@ -263,6 +263,11 @@ evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y)
 
 
 /**
+ * @addtogroup Evas_Object_Group_Map
+ * @{
+ */
+
+/**
  * Enable or disable the map that is set
  * 
  * This enables the map that is set or disables it. On enable, the object
@@ -274,7 +279,7 @@ evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y)
  * disable the map with evas_object_map_enable_set() as needed.
  * 
  * @param obj object to enable the map on
- * @param enbled enabled state
+ * @param enabled enabled state
  */
 EAPI void
 evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
@@ -1136,14 +1141,14 @@ evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
  * @param lr light red value (0 - 255)
  * @param lg light green value (0 - 255)
  * @param lb light blue value (0 - 255)
- * @param lr ambient color red value (0 - 255)
- * @param lg ambient color green value (0 - 255)
- * @param lb ambient color blue value (0 - 255)
+ * @param ar ambient color red value (0 - 255)
+ * @param ag ambient color green value (0 - 255)
+ * @param ab ambient color blue value (0 - 255)
  */
 EAPI void
 evas_map_util_3d_lighting(Evas_Map *m, 
                           Evas_Coord lx, Evas_Coord ly, Evas_Coord lz,
-                          int lr, int lg, int lb, int ar, int ab, int ag)
+                          int lr, int lg, int lb, int ar, int ag, int ab)
 {
    int i;
    
@@ -1309,3 +1314,7 @@ evas_map_util_clockwise_get(Evas_Map *m)
    if (count > 0) return 1;
    return 0;
 }
+
+/**
+ * @}
+ */

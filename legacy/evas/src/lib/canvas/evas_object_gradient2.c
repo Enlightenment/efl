@@ -19,18 +19,9 @@ struct _Evas_Object_Gradient2
 };
 
 
-
-/**
- * @defgroup Evas_Object_Gradient2_Group Gradient2 Object Functions
- *
- * Functions that work on evas gradient2 objects.
- *
- */
-
 /**
  * @addtogroup Evas_Object_Gradient2_Group
  * @{
- * @ingroup Evas_Object_Specific
  */
 
 /**

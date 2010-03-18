@@ -53,6 +53,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
  * This is the function by which one tells evas that a part of the
  * canvas has to be repainted.
  *
+ * @ingroup Evas_Canvas
  */
 EAPI void
 evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
@@ -83,6 +84,7 @@ evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
  *
  * @see evas_obscured_clear().
  *
+ * @ingroup Evas_Canvas
  */
 EAPI void
 evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
@@ -107,6 +109,7 @@ evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
  * evas_obscured_rectangle_add() and makes it a region that have to be
  * repainted.
  *
+ * @ingroup Evas_Canvas
  */
 EAPI void
 evas_obscured_clear(Evas *e)
@@ -1166,6 +1169,7 @@ evas_render_updates_internal(Evas *e,
  * This function removes the region from the render updates list. It
  * makes the region doesn't be render updated anymore.
  *
+ * @ingroup Evas_Canvas
  */
 EAPI void
 evas_render_updates_free(Eina_List *updates)
@@ -1180,11 +1184,13 @@ evas_render_updates_free(Eina_List *updates)
  * Force immediate renderization of the given canvas.
  *
  * @param e The given canvas pointer.
- * @return A list of updated rectangles of the canvas.
+ * @return A newly allocated list of updated rectangles of the canvas.
+ *         Free this list with evas_render_updates_free().
  *
  * This function forces an immediate renderization update of the given
  * given canvas.
  *
+ * @ingroup Evas_Canvas
  */
 EAPI Eina_List *
 evas_render_updates(Evas *e)
@@ -1198,12 +1204,11 @@ evas_render_updates(Evas *e)
 }
 
 /**
- * Force renderization of a region
+ * Force renderization of the given canvas.
  *
  * @param e The given canvas pointer.
  *
- * This function forces renderization of the region given.
- *
+ * @ingroup Evas_Canvas
  */
 EAPI void
 evas_render(Evas *e)
@@ -1228,6 +1233,7 @@ evas_render(Evas *e)
  *
  * @see evas_render.
  *
+ * @ingroup Evas_Canvas
  */
 EAPI void
 evas_norender(Evas *e)
@@ -1247,6 +1253,7 @@ evas_norender(Evas *e)
  *
  * This function flushes the arrays of delete, active and render objects.
  *
+ * @ingroup Evas_Canvas
  */
 EAPI void
 evas_render_idle_flush(Evas *e)

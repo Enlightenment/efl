@@ -2,7 +2,7 @@
 #include "evas_private.h"
 
 /**
- * @addtogroup Evas_Smart_Object_Group
+ * @addtogroup Evas_Smart_Object_Clipped Clipped Smart Object
  * @{
  */
 

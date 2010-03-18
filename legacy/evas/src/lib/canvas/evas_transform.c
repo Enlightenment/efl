@@ -2,6 +2,17 @@
 #include "evas_private.h"
 #include <math.h>
 
+/**
+ * @addtogroup Evas_Utils
+ * @{
+ */
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
 EAPI void
 evas_transform_identity_set(Evas_Transform *t)
 {
@@ -14,6 +25,12 @@ evas_transform_identity_set(Evas_Transform *t)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
 EAPI void
 evas_transform_rotate(double angle, Evas_Transform *t)
 {
@@ -39,6 +56,12 @@ evas_transform_rotate(double angle, Evas_Transform *t)
    t->myz = (-sa * mxz) + (ca * myz);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
 EAPI void
 evas_transform_translate(float dx, float dy, Evas_Transform *t)
 {
@@ -54,6 +77,12 @@ evas_transform_translate(float dx, float dy, Evas_Transform *t)
    t->myz = dy * t->mzz;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
 EAPI void
 evas_transform_scale(float sx, float sy, Evas_Transform *t)
 {
@@ -69,6 +98,12 @@ evas_transform_scale(float sx, float sy, Evas_Transform *t)
    t->myz = sy * t->myz;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
 EAPI void
 evas_transform_shear(float sh, float sv, Evas_Transform *t)
 {
@@ -90,6 +125,12 @@ evas_transform_shear(float sh, float sv, Evas_Transform *t)
    t->myz = (sv * mxz) + myz;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
 EAPI void
 evas_transform_compose(Evas_Transform *l, Evas_Transform *t)
 {
@@ -115,3 +156,7 @@ evas_transform_compose(Evas_Transform *l, Evas_Transform *t)
    t->mzy = (l->mzx * mxy) + (l->mzy * myy) + (l->mzz * mzy);
    t->mzz = (l->mzx * mxz) + (l->mzy * myz) + (l->mzz * mzz);
 }
+
+/**
+ * @}
+ */

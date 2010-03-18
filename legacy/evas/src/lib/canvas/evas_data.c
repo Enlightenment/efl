@@ -2,7 +2,7 @@
 #include "evas_private.h"
 
 /**
- * @addtogroup Evas_Object_Group
+ * @addtogroup Evas_Object_Group_Extras
  * @{
  */
 

@@ -212,18 +212,10 @@ static const Evas_Object_Func object_func =
    return (x); \
    MAGIC_CHECK_END();
 
-/**
- * @defgroup Evas_Object_Textblock Textblock Object Functions
- *
- * Functions used to create and manipulate textblock objects.
- *
- * Note: put here some usage examples
- */
 
 /**
  * @addtogroup Evas_Object_Textblock
  * @{
- * @ingroup Evas_Object_Specific
  */
 
 /* styles */
@@ -4956,6 +4948,12 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
    return rects;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
 EAPI Eina_Bool
 evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur)
 {
@@ -4963,6 +4961,12 @@ evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur)
    return cur->eol;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
 EAPI void
 evas_textblock_cursor_eol_set(Evas_Textblock_Cursor *cur, Eina_Bool eol)
 {

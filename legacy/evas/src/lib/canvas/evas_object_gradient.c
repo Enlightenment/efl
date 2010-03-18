@@ -85,24 +85,8 @@ static const Evas_Object_Func object_func =
 /* the actual api call to add a gradient */
 
 /**
- * @defgroup Evas_Object_Gradient_Group Gradient Object Functions
- *
- * Functions that work on evas gradient objects.
- *
- * The following example shows how
- */
-
-/**
- * @defgroup Evas_Object_Specific Specific Object Functions
- *
- * Functions that work on specific objects.
- *
- */
-
-/**
  * @addtogroup Evas_Object_Gradient_Group
  * @{
- * @ingroup Evas_Object_Specific
  */
 
 /**
@@ -724,6 +708,7 @@ evas_object_gradient_type_get(const Evas_Object *obj, char **name, char **params
  * This function converts a given color in HSV color format to RGB
  * color format.
  *
+ * @ingroup Evas_Utils
  **/
 EAPI void
 evas_color_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
@@ -744,6 +729,7 @@ evas_color_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
  * This function converts a given color in RGB color format to HSV
  * color format.
  *
+ * @ingroup Evas_Utils
  **/
 EAPI void
 evas_color_rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v)
@@ -762,6 +748,7 @@ evas_color_rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v)
  * This function pre-multiplies a given rbg triplet by an alpha
  * factor. Alpha factor is used to define transparency.
  *
+ * @ingroup Evas_Utils
  **/
 EAPI void
 evas_color_argb_premul(int a, int *r, int *g, int *b)
@@ -782,6 +769,7 @@ evas_color_argb_premul(int a, int *r, int *g, int *b)
  *
  * @see evas_color_argb_premul().
  *
+ * @ingroup Evas_Utils
  **/
 EAPI void
 evas_color_argb_unpremul(int a, int *r, int *g, int *b)
@@ -798,6 +786,7 @@ evas_color_argb_unpremul(int a, int *r, int *g, int *b)
  * This function pre-multiplies a given data by an alpha
  * factor. Alpha factor is used to define transparency.
  *
+ * @ingroup Evas_Utils
  **/
 EAPI void
 evas_data_argb_premul(unsigned int *data, unsigned int len)
@@ -815,6 +804,7 @@ evas_data_argb_premul(unsigned int *data, unsigned int len)
  * This function undoes pre-multiplication of a given data by an alpha
  * factor. Alpha factor is used to define transparency.
  *
+ * @ingroup Evas_Utils
  **/
 EAPI void
 evas_data_argb_unpremul(unsigned int *data, unsigned int len)

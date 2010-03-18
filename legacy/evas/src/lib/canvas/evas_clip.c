@@ -41,7 +41,7 @@ evas_object_clippers_was_visible(Evas_Object *obj)
 /* public functions */
 
 /**
- * @addtogroup Evas_Object_Group
+ * @addtogroup Evas_Object_Group_Basic
  * @{
  */
 

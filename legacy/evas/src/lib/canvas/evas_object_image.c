@@ -120,94 +120,10 @@ static const Evas_Object_Func object_func =
      evas_object_image_can_map
 };
 
-/**
- * @defgroup Evas_Object_Image Image Object Functions
- *
- * Functions used to create and manipulate image objects.
- *
- * Note - Image objects may return or accept "image data" in multiple
- * formats.  This is based on the colorspace of an object. Here is a
- * rundown on formats:
- *
- * EVAS_COLORSPACE_ARGB8888:
- *
- * This pixel format is a linear block of pixels, starting at the
- * top-left row by row until the bottom right of the image or pixel
- * region. All pixels are 32-bit unsigned int's with the high-byte
- * being alpha and the low byte being blue in the format ARGB. Alpha
- * may or may not be used by evas depending on the alpha flag of the
- * image, but if not used, should be set to 0xff anyway.
- *
- * This colorspace uses premultiplied alpha. That means that R, G and
- * B cannot exceed A in value. The conversion from non-premultiplied
- * colorspace is:
- *
- * R = (r * a) / 255; G = (g * a) / 255; B = (b * a) / 255;
- *
- * So 50% transparent blue will be: 0x80000080. This will not be
- * "dark" - just 50% transparent. Values are 0 == black, 255 == solid
- * or full red, green or blue.
- *
- * EVAS_COLORSPACE_YCBCR422P601_PL:
- *
- * This is a pointer-list indirected set of YUV (YCbCr) pixel
- * data. This means that the data returned or set is not actual pixel
- * data, but pointers TO lines of pixel data. The list of pointers
- * will first be N rows of pointers to the Y plane - pointing to the
- * first pixel at the start of each row in the Y plane. N is the
- * height of the image data in pixels. Each pixel in the Y, U and V
- * planes is 1 byte exactly, packed. The next N / 2 pointers will
- * point to rows in the U plane, and the next N / 2 pointers will
- * point to the V plane rows. U and V planes are half the horizontal
- * and vertical resolution of the Y plane.
- *
- * Row order is top to bottom and row pixels are stored left to right.
- *
- * There is a limitation that these images MUST be a multiple of 2
- * pixels in size horizontally or vertically. This is due to the U and
- * V planes being half resolution. Also note that this assumes the
- * itu601 YUV colorspace specification. This is defined for standard
- * television and mpeg streams.  HDTV may use the itu709
- * specification.
- *
- * Values are 0 to 255, indicating full or no signal in that plane
- * respectively.
- *
- * EVAS_COLORSPACE_YCBCR422P709_PL:
- *
- * Not implemented yet.
- *
- * EVAS_COLORSPACE_RGB565_A5P:
- *
- * In the process of being implemented in 1 engine only. This may change.
- *
- * This is a pointer to image data for 16-bit half-word pixel data in
- * 16bpp RGB 565 format (5 bits red, 6 bits green, 5 bits blue), with
- * the high-byte containing red and the low byte containing blue, per
- * pixel. This data is packed row by row from the top-left to the
- * bottom right.
- *
- * If the image has an alpha channel enabled there will be an extra
- * alpha plane after the color pixel plane. If not, then this data
- * will not exist and should not be accessed in any way. This plane is
- * a set of pixels with 1 byte per pixel defining the alpha values of
- * all pixels in the image from the top-left to the bottom right of
- * the image, row by row. Even though the values of the alpha pixels
- * can be 0 to 255, only values 0 through to 32 are used, 32 being
- * solid and 0 being transparent.
- *
- * RGB values can be 0 to 31 for red and blue and 0 to 63 for green,
- * with 0 being black and 31 or 63 being full red, green or blue
- * respectively. This colorspace is also pre-multiplied like
- * EVAS_COLORSPACE_ARGB8888 so:
- *
- * R = (r * a) / 32; G = (g * a) / 32; B = (b * a) / 32;
- */
 
 /**
  * @addtogroup Evas_Object_Image
  * @{
- * @ingroup Evas_Object_Specific
  */
 
 /**
@@ -2071,6 +1987,15 @@ evas_object_image_content_hint_get(const Evas_Object *obj)
 }
 
 /**
+ * @}
+ */
+
+/**
+ * @addtogroup Evas_Image_Group
+ * @{
+ */
+
+/**
  * Flush the image cache of the canvas.
  *
  * @param e The given evas pointer.
@@ -2094,6 +2019,7 @@ evas_image_cache_flush(Evas *e)
  * @param e The given evas pointer.
  *
  * This function reloads the image cache of canvas.
+ *
  */
 EAPI void
 evas_image_cache_reload(Evas *e)

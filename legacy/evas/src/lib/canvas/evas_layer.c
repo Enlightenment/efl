@@ -136,7 +136,7 @@ evas_layer_del(Evas_Layer *lay)
 /* public functions */
 
 /**
- * @addtogroup Evas_Object_Group
+ * @addtogroup Evas_Object_Group_Basic
  * @{
  */
 
@@ -147,6 +147,7 @@ evas_layer_del(Evas_Layer *lay)
  *
  * @param   obj The given evas object.
  * @param   l   The number of the layer to place the object on.
+ *          Between #EVAS_LAYER_MIN and #EVAS_LAYER_MAX.
  */
 EAPI void
 evas_object_layer_set(Evas_Object *obj, short l)

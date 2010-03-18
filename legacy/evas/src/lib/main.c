@@ -54,6 +54,8 @@ static int _evas_debug_abort = 0;
  *     my_memory_cleanup();
  *   }
  * @endcode
+ *
+ * @ingroup Evas_Group
  */
 EAPI int
 evas_alloc_error(void)

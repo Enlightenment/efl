@@ -66,18 +66,6 @@ static const Evas_Object_Func object_func =
 
 /* public funcs */
 /**
- * @defgroup Evas_Smart_Object_Group Evas Smart Object Functions
- *
- * Functions dealing with evas smart objects.
- *
- * Smart objects are groupings of primitive evas objects that behave as a
- * cohesive group. For instance, a file manager icon may be a smart object
- * composed of an image object, a text label and two rectangles that appear
- * behind the image and text when the icon is selected. As a smart object,
- * the normal evas api could be used on the icon object.
- *
- */
-/**
  * Store a pointer to user data for a smart object.
  *
  * @param obj The smart object
@@ -534,7 +522,7 @@ evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, const Evas_Smart_
  * @a instance_count can be ignored, the terminator @c NULL is not
  * counted in these values.
  *
- * @param s the smart object.
+ * @param obj the smart object.
  * @param class_descriptions where to store class callbacks
  *        descriptions array, if any is known. If no descriptions are
  *        known, @c NULL is returned. This parameter may be @c NULL if

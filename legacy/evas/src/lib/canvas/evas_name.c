@@ -2,7 +2,7 @@
 #include "evas_private.h"
 
 /**
- * @addtogroup Evas_Object_Group
+ * @addtogroup Evas_Object_Group_Basic
  * @{
  */
 
@@ -46,11 +46,16 @@ evas_object_name_get(const Evas_Object *obj)
 }
 
 /**
+ * @}
+ */
+
+/**
  * Retrieves the object on the given evas with the given name.
  * @param   e    The given evas.
  * @param   name The given name.
  * @return  If successful, the evas object with the given name.  Otherwise,
  *          @c NULL.
+ * @ingroup Evas_Object_Group_Find
  */
 EAPI Evas_Object *
 evas_object_name_find(const Evas *e, const char *name)
@@ -61,7 +66,3 @@ evas_object_name_find(const Evas *e, const char *name)
    if (!name) return NULL;
    return (Evas_Object *)eina_hash_find(e->name_hash, name);
 }
-
-/**
- * @}
- */
