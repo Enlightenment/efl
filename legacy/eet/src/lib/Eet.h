@@ -277,7 +277,7 @@ extern "C" {
     * currently no cache for this kind of Eet_File, so it's reopen every time
     * you do use eet_memopen_read.
     *
-    * @since 2.0.0
+    * @since 1.1.0
     */
    EAPI Eet_File *eet_memopen_read(const void *data, size_t size);
 
@@ -307,7 +307,7 @@ extern "C" {
   /**
    * Callback used to request if needed the password of a private key.
    *
-   * @since 2.0.0
+   * @since 1.2.0
    */
    typedef int (*Eet_Key_Password_Callback)(char *buffer, int size, int rwflag, void *data);
 
@@ -317,7 +317,7 @@ extern "C" {
     * The certificate should provide the public that match the private key.
     * No verification is done to ensure that.
     *
-    * @since 2.0.0
+    * @since 1.2.0
     */
    EAPI Eet_Key* eet_identity_open(const char *certificate_file, const char *private_key_file, Eet_Key_Password_Callback cb);
 
@@ -326,21 +326,21 @@ extern "C" {
      * An reference counter prevent it from being freed until all file using it are
      * also closed.
      *
-     * @since 2.0.0
+     * @since 1.2.0
      */
    EAPI void eet_identity_close(Eet_Key *key);
 
     /**
      * Set a key to sign a file
      *
-     * @since 2.0.0
+     * @since 1.2.0
      */
    EAPI Eet_Error eet_identity_set(Eet_File *ef, Eet_Key *key);
 
     /**
      * Display both private and public key of an Eet_Key.
      *
-     * @since 2.0.0
+     * @since 1.2.0
      */
    EAPI void eet_identity_print(Eet_Key *key, FILE *out);
 
@@ -348,7 +348,7 @@ extern "C" {
      * Get the x509 der certificate associated with an Eet_File. Will return NULL
      * if the file is not signed.
      *
-     * @since 2.0.0
+     * @since 1.2.0
      */
    EAPI const void *eet_identity_x509(Eet_File *ef, int *der_length);
 
@@ -362,14 +362,14 @@ extern "C" {
      * Get the SHA1 associated with a file. Could be the one used to sign the data
      * or if the data where not signed, it will be the SHA1 of the file.
      *
-     * @since 2.0.0
+     * @since 1.2.0
      */
    EAPI const void *eet_identity_sha1(Eet_File *ef, int *sha1_length);
 
    /**
     * Display the x509 der certificate to out.
     *
-    * @since 2.0.0
+    * @since 1.2.0
     */
    EAPI void eet_identity_certificate_print(const unsigned char *certificate, int der_length, FILE *out);
 
@@ -1030,7 +1030,7 @@ extern "C" {
     * like network stream or ipc. It also mean that all string will be allocated
     * and duplicated in memory.
     *
-    * @since 1.3.0
+    * @since 1.2.3
     */
    EAPI Eet_Data_Descriptor *eet_data_descriptor_stream_new(const Eet_Data_Descriptor_Class *eddc);
 
@@ -1058,7 +1058,7 @@ extern "C" {
     * to nowhere if you close the file. So as long as you use this
     * strings, you need to have the Eet_File open.
     *
-    * @since 1.3.0
+    * @since 1.2.3
     */
    EAPI Eet_Data_Descriptor *eet_data_descriptor_file_new(const Eet_Data_Descriptor_Class *eddc);
 
@@ -1071,7 +1071,7 @@ extern "C" {
     * @return EINA_TRUE if the structure was correctly set (The only reason that could make
     * it fail is if you did give wrong parameter).
     *
-    * @since 1.3.0
+    * @since 1.2.3
     */
    EAPI Eina_Bool eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc, const char *name, int size);
 
@@ -1085,7 +1085,7 @@ extern "C" {
     *         reason that could make it fail is if you did give wrong
     *         parameter).
     *
-    * @since 1.3.0
+    * @since 1.2.3
     */
 #define EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(Clas, Type) (eet_eina_stream_data_descriptor_class_set(Clas, #Type , sizeof (Type)))
 
@@ -1100,7 +1100,7 @@ extern "C" {
     *         reason that could make it fail is if you did give wrong
     *         parameter).
     *
-    * @since 1.3.0
+    * @since 1.2.3
     */
    EAPI Eina_Bool eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc, const char *name, int size);
 
@@ -1114,7 +1114,7 @@ extern "C" {
     *         reason that could make it fail is if you did give wrong
     *         parameter).
     *
-    * @since 1.3.0
+    * @since 1.2.3
     */
 #define EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(Clas, Type) (eet_eina_file_data_descriptor_class_set(Clas, #Type , sizeof (Type)))
 

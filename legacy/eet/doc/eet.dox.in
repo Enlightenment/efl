@@ -184,7 +184,6 @@ specially encoded data entries in an Eet file (for now).
 
 
 
-@todo Add hash table, fixed and variable array encode/decode support.
 @todo Document data format for images and data structures.
 
 */
