@@ -1,7 +1,7 @@
 PROJECT_NAME           = Eet
 PROJECT_NUMBER         =
 OUTPUT_DIRECTORY       = .
-INPUT                  = eet.dox ../src/lib
+INPUT                  = eet.dox examples.dox ../src/lib
 IMAGE_PATH             = img
 OUTPUT_LANGUAGE        = English
 GENERATE_HTML          = YES
@@ -67,7 +67,7 @@ RECURSIVE              = NO
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
-EXAMPLE_PATH           = 
+EXAMPLE_PATH           = ../src/examples/
 EXAMPLE_PATTERNS       = 
 EXAMPLE_RECURSIVE      = NO
 INPUT_FILTER           = 

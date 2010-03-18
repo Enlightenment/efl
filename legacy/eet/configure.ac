@@ -151,6 +151,34 @@ AC_ARG_ENABLE([assert],
    [prefer_assert=$enableval]
 )
 
+# Examples
+
+AC_ARG_ENABLE([install-examples],
+   [AC_HELP_STRING([--disable-install-examples],
+       [disable installing examples (compiled or just source). @<:@default==enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       install_examples="yes"
+    else
+       install_examples="no"
+    fi
+   ],
+   [install_examples="yes"])
+AM_CONDITIONAL([INSTALL_EXAMPLES], [test "x${install_examples}" = "xyes"])
+
+AC_ARG_ENABLE([build-examples],
+   [AC_HELP_STRING([--enable-build-examples],
+       [enable building examples. @<:@default==disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       build_examples="yes"
+    else
+       build_examples="no"
+    fi
+   ],
+   [build_examples="no"])
+AM_CONDITIONAL([BUILD_EXAMPLES], [test "x${build_examples}" = "xyes"])
+
 # Unit tests, coverage and benchmarking
 
 EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
@@ -395,6 +423,7 @@ src/Makefile
 src/lib/Makefile
 src/bin/Makefile
 src/tests/Makefile
+src/examples/Makefile
 README
 eet.spec
 ])
@@ -427,6 +456,13 @@ echo
 echo "  Build eet............: $have_eet"
 echo
 echo "  Documentation........: ${build_doc}"
+if test "x${build_doc}" = "xyes" ; then
+   echo "    Building...........: make doc"
+fi
+echo "  Examples.............: ${build_examples}"
+if test "x${build_examples}" = "xyes" ; then
+   echo "    Install............: ${install_examples}"
+fi
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"

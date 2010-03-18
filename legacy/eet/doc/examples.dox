@@ -1,0 +1,34 @@
+/**
+ * @page Examples Examples
+ *
+ * Here is a page with examples.
+ *
+ * @ref Example_Eet_Data_Simple
+ *
+ * @ref Example_Eet_Data_Nested
+ *
+ * @ref Example_Eet_Data_File_Descriptor
+ *
+ * <a href="examples.html">List of examples</a>
+ */
+
+/**
+ * @page Example_Eet_Data_Simple Simple data example
+ *
+ * @includelineno eet-data-simple.c
+ * @example eet-data-simple.c
+ */
+
+/**
+ * @page Example_Eet_Data_Nested Nested data example
+ *
+ * @includelineno eet-data-nested.c
+ * @example eet-data-nested.c
+ */
+
+/**
+ * @page Example_Eet_Data_File_Descriptor File descriptor data example
+ *
+ * @includelineno eet-data-file_descriptor.c
+ * @example eet-data-file_descriptor.c
+ */
