@@ -24,11 +24,16 @@ These routines are used for Eet Library interaction
 @author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
 @author Albin "Lutin" Tonnerre <albin.tonnerre@@gmail.com>
 @author Adam Simpkins <adam@@adamsimpkins.net>
+
 @date 2000-2010
 
+@section toc Table of Contents
 
-
-
+@li @ref intro
+@li @ref example
+@li @ref format
+@li @ref next_steps
+@li @ref intro_example
 
 @section intro What is Eet?
 
@@ -50,10 +55,6 @@ data for saving to Eet files or sending across the network to other
 machines, or just writing to arbitary files on the system. All data is
 encoded in a platform independant way and can be written and read by any
 architecture.
-
-
-
-
 
 @section example A simple example on using Eet
 
@@ -105,10 +106,6 @@ main(int argc, char **argv)
   eet_shutdown();
 }
 @endcode
-
-
-
-
 
 @section format What does an Eet file look like?
 
@@ -191,9 +188,13 @@ information stored in data structures a simple 1 function call process.
 Please see src/lib/eet_data.c for information on the format of these
 specially encoded data entries in an Eet file (for now).
 
+@section next_steps Next Steps
 
+to be filled...
 
+@section intro_example Introductory Examples
 
+@ref Examples
 
 @todo Document data format for images and data structures.
 
