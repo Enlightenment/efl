@@ -32,6 +32,8 @@ These routines are used for Eet Library interaction
 @li @ref intro
 @li @ref example
 @li @ref format
+@li @ref compiling
+@li @ref install
 @li @ref next_steps
 @li @ref intro_example
 
@@ -187,6 +189,50 @@ information stored in data structures a simple 1 function call process.
 
 Please see src/lib/eet_data.c for information on the format of these
 specially encoded data entries in an Eet file (for now).
+
+
+@section compiling How to compile using Eet ?
+
+Eet is a library your application links to. The procedure for this is very
+simple. You simply have to compile your application with the appropriate
+compiler flags that the @p pkg-config script outputs. For example:
+
+Compiling C or C++ files into object files:
+
+@verbatim
+gcc -c -o main.o main.c `pkg-config --cflags eet`
+@endverbatim
+
+Linking object files into a binary executable:
+
+@verbatim
+gcc -o my_application main.o `pkg-config --libs eet`
+@endverbatim
+
+You simply have to make sure that pkg-config is in your shell's PATH (see
+the manual page for your appropriate shell) and eet.pc in /usr/lib/pkgconfig
+or its path is in the PKG_CONFIG_PATH environment variable. It's that simple
+to link and use Eet once you have written your code to use it.
+
+Since the program is linked to Eet, it is now able to use any advertised
+API calls to serialize your data.
+
+You should make sure you add any extra compile and link flags to your
+compile commands that your application may need as well. The above example
+is only guaranteed to make Eet add it's own requirements.
+
+
+@section install How is it installed?
+
+Simple:
+
+@verbatim
+./configure
+make
+su -
+...
+make install
+@endverbatim
 
 @section next_steps Next Steps
 
