@@ -198,11 +198,11 @@ but does very little high-level logic such as scrollbars, sliders, push
 buttons etc.
 
 
-@section compiling How to compile using Evas?
+@section compiling How to compile using Evas ?
 
-Evas is a library your application links to. The proceedure for this is very
+Evas is a library your application links to. The procedure for this is very
 simple. You simply have to compile your application with the appropriate
-compiler flags that the @p evas-config script outputs. For example:
+compiler flags that the @p pkg-config script outputs. For example:
 
 Compiling C or C++ files into object files:
 
