@@ -33,6 +33,19 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
+#if HAVE_MALLINFO
+#include <malloc.h>
+
+#define KEEP_MAX(Global, Local)			\
+   if (Global < (Local))			\
+     Global = Local;
+
+static int _ecore_memory_statistic(void *data);
+static int _ecore_memory_max_total = 0;
+static int _ecore_memory_max_free = 0;
+static pid_t _ecore_memory_pid = 0;
+#endif
+
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
 EAPI int _ecore_log_dom = -1;
@@ -103,9 +116,17 @@ ecore_init(void)
    _ecore_job_init();
    _ecore_loop_time = ecore_time_get();
 
+#if HAVE_MALLINFO
+   if (getenv("ECORE_MEM_STAT"))
+     {
+	_ecore_memory_pid = getpid();
+	ecore_animator_add(_ecore_memory_statistic, NULL);
+     }
+#endif
+
    return _ecore_init_count;
 
- shutdown_log_dom: 
+ shutdown_log_dom:
    eina_shutdown();
  shutdown_evil:
 #ifdef HAVE_EVIL
@@ -144,6 +165,19 @@ ecore_shutdown(void)
    _ecore_event_shutdown();
    _ecore_main_shutdown();
    _ecore_signal_shutdown();
+
+#if HAVE_MALLINFO
+   if (getenv("ECORE_MEM_STAT"))
+     {
+	_ecore_memory_statistic(NULL);
+
+	ERR("[%i] Memory MAX total: %i, free: %i",
+	    _ecore_memory_pid,
+	    _ecore_memory_max_total,
+	    _ecore_memory_max_free);
+     }
+#endif
+
    eina_log_domain_unregister(_ecore_log_dom);
    _ecore_log_dom = -1;
    eina_shutdown();
@@ -340,3 +374,37 @@ _ecore_fps_debug_runtime_add(double t)
 	*(_ecore_fps_runtime_mmap) += tm;
      }
 }
+
+#if HAVE_MALLINFO
+static int
+_ecore_memory_statistic(__UNUSED__ void *data)
+{
+   struct mallinfo mi;
+   static int uordblks = 0;
+   static int fordblks = 0;
+   Eina_Bool changed = EINA_FALSE;
+
+   mi = mallinfo();
+
+#define HAS_CHANGED(Global, Local)		\
+   if (Global != Local)				\
+     {						\
+	Global = Local;				\
+	changed = EINA_TRUE;			\
+     }
+
+   HAS_CHANGED(uordblks, mi.uordblks);
+   HAS_CHANGED(fordblks, mi.fordblks);
+
+   if (changed)
+     ERR("[%i] Memory total: %i, free: %i",
+	 _ecore_memory_pid,
+	 mi.uordblks,
+	 mi.fordblks);
+
+   KEEP_MAX(_ecore_memory_max_total, mi.uordblks);
+   KEEP_MAX(_ecore_memory_max_free, mi.fordblks);
+
+   return 1;
+}
+#endif

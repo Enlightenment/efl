@@ -950,6 +950,15 @@ if test "x$have_atfile_source" != "xno"; then
                 ])
 fi
 
+### Checks for optionnal feature
+AC_CHECK_FUNC(mallinfo,
+	[
+	  have_mallinfo=yes
+	  AC_DEFINE(HAVE_MALLINFO, 1, [Gather memory statistic])
+	], [
+	  have_mallinfo=no
+	])
+
 ### Ecore modules
 
 ## Core modules
@@ -1360,6 +1369,7 @@ echo
 echo "  Ecore........................: always"
 echo "    Thread support.............: $have_pthread"
 echo "    GLib support...............: $have_glib"
+echo "    Gathering memory statistic.: $have_mallinfo"
 echo "  Ecore_Con....................: $have_ecore_con"
 if test "x$have_ecore_con" = "xyes" ; then
   echo $ECHO_N "    OpenSSL....................: $have_openssl $ECHO_C"
