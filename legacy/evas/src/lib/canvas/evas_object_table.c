@@ -83,7 +83,6 @@ struct _Evas_Object_Table_Accessor
 /**
  * @addtogroup Evas_Object_Table
  * @{
- * @ingroup Evas_Smart_Object_Group
  */
 
 #define EVAS_OBJECT_TABLE_DATA_GET(o, ptr)			\
