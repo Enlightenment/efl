@@ -1434,7 +1434,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
 }
 
 EAPI void *
-eet_data_read_cipher(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, const char *key)
+eet_data_read_cipher(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, const char *cipher_key)
 {
    const Eet_Dictionary *ed = NULL;
    const void           *data = NULL;
@@ -1445,12 +1445,12 @@ eet_data_read_cipher(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, c
 
    ed = eet_dictionary_get(ef);
 
-   if (!key)
+   if (!cipher_key)
      data = eet_read_direct(ef, name, &size);
    if (!data)
      {
 	required_free = 1;
-	data = eet_read_cipher(ef, name, &size, key);
+	data = eet_read_cipher(ef, name, &size, cipher_key);
 	if (!data) return NULL;
      }
 
@@ -1463,7 +1463,7 @@ eet_data_read_cipher(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, c
 }
 
 EAPI Eet_Node *
-eet_data_node_read_cipher(Eet_File *ef, const char *name, const char *key)
+eet_data_node_read_cipher(Eet_File *ef, const char *name, const char *cipher_key)
 {
    const Eet_Dictionary *ed = NULL;
    const void *data = NULL;
@@ -1474,12 +1474,12 @@ eet_data_node_read_cipher(Eet_File *ef, const char *name, const char *key)
 
    ed = eet_dictionary_get(ef);
 
-   if (!key)
+   if (!cipher_key)
      data = eet_read_direct(ef, name, &size);
    if (!data)
      {
 	required_free = 1;
-	data = eet_read_cipher(ef, name, &size, key);
+	data = eet_read_cipher(ef, name, &size, cipher_key);
 	if (!data) return NULL;
      }
 
@@ -1498,7 +1498,7 @@ eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name)
 }
 
 EAPI int
-eet_data_write_cipher(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, const char *key, const void *data, int compress)
+eet_data_write_cipher(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, const char *cipher_key, const void *data, int compress)
 {
    Eet_Dictionary       *ed;
    void                 *data_enc;
@@ -1509,7 +1509,7 @@ eet_data_write_cipher(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, 
 
    data_enc = _eet_data_descriptor_encode(ed, edd, data, &size);
    if (!data_enc) return 0;
-   val = eet_write_cipher(ef, name, data_enc, size, compress, key);
+   val = eet_write_cipher(ef, name, data_enc, size, compress, cipher_key);
    free(data_enc);
    return val;
 }
@@ -1724,7 +1724,7 @@ _eet_freelist_all_unref(Eet_Free_Context *freelist_context)
 }
 
 static int
-eet_data_descriptor_encode_hash_cb(void *hash __UNUSED__, const char *key, void *hdata, void *fdata)
+eet_data_descriptor_encode_hash_cb(void *hash __UNUSED__, const char *cipher_key, void *hdata, void *fdata)
 {
    Eet_Dictionary               *ed;
    Eet_Data_Encode_Hash_Info    *edehi;
@@ -1742,7 +1742,7 @@ eet_data_descriptor_encode_hash_cb(void *hash __UNUSED__, const char *key, void 
    /* Store key */
    data = eet_data_put_type(ed,
                             EET_T_STRING,
-			    &key,
+			    &cipher_key,
 			    &size);
    if (data)
      {
@@ -3038,7 +3038,7 @@ eet_data_put_hash(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element
 
 EAPI int
 eet_data_dump_cipher(Eet_File *ef,
-		     const char *name, const char *key,
+		     const char *name, const char *cipher_key,
 		     void (*dumpfunc) (void *data, const char *str),
 		     void *dumpdata)
 {
@@ -3051,12 +3051,12 @@ eet_data_dump_cipher(Eet_File *ef,
 
    ed = eet_dictionary_get(ef);
 
-   if (!key)
+   if (!cipher_key)
      data = eet_read_direct(ef, name, &size);
    if (!data)
      {
 	required_free = 1;
-	data = eet_read_cipher(ef, name, &size, key);
+	data = eet_read_cipher(ef, name, &size, cipher_key);
 	if (!data) return 0;
      }
 
@@ -3085,7 +3085,7 @@ eet_data_dump(Eet_File *ef,
 
 EAPI int
 eet_data_text_dump_cipher(const void *data_in,
-			  const char *key, int size_in,
+			  const char *cipher_key, int size_in,
 			  void (*dumpfunc) (void *data, const char *str),
 			  void *dumpdata)
 {
@@ -3096,9 +3096,10 @@ eet_data_text_dump_cipher(const void *data_in,
 
    if (!data_in) return 0;
 
-   if (key)
+   if (cipher_key)
      {
-       if (eet_decipher(data_in, size_in, key, strlen(key), &ret, &ret_len))
+       if (eet_decipher(data_in, size_in, cipher_key,
+			strlen(cipher_key), &ret, &ret_len))
 	 {
 	   if (ret) free(ret);
 	   return 0;
@@ -3116,7 +3117,7 @@ eet_data_text_dump_cipher(const void *data_in,
    eet_node_dump(result, 0, dumpfunc, dumpdata);
 
    eet_node_del(result);
-   if (key) free(ret);
+   if (cipher_key) free(ret);
 
    return result ? 1 : 0;
 }
@@ -3132,19 +3133,20 @@ eet_data_text_dump(const void *data_in,
 
 EAPI void *
 eet_data_text_undump_cipher(const char *text,
-			    const char *key,
+			    const char *cipher_key,
 			    int textlen,
 			    int *size_ret)
 {
    void *ret = NULL;
 
    ret = _eet_data_dump_parse(NULL, size_ret, text, textlen);
-   if (ret && key)
+   if (ret && cipher_key)
      {
 	void *ciphered = NULL;
 	unsigned int ciphered_len;
 
-	if (eet_cipher(ret, *size_ret, key, strlen(key), &ciphered, &ciphered_len))
+	if (eet_cipher(ret, *size_ret, cipher_key,
+		       strlen(cipher_key), &ciphered, &ciphered_len))
 	  {
 	     if (ciphered) free(ciphered);
 	     size_ret = 0;
@@ -3169,7 +3171,7 @@ eet_data_text_undump(const char *text,
 EAPI int
 eet_data_undump_cipher(Eet_File *ef,
 		       const char *name,
-		       const char *key,
+		       const char *cipher_key,
 		       const char *text,
 		       int textlen,
 		       int compress)
@@ -3183,7 +3185,7 @@ eet_data_undump_cipher(Eet_File *ef,
 
    data_enc = _eet_data_dump_parse(ed, &size, text, textlen);
    if (!data_enc) return 0;
-   val = eet_write_cipher(ef, name, data_enc, size, compress, key);
+   val = eet_write_cipher(ef, name, data_enc, size, compress, cipher_key);
    free(data_enc);
    return val;
 }
@@ -3201,7 +3203,7 @@ eet_data_undump(Eet_File *ef,
 EAPI void *
 eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd,
 				  const void *data_in,
-				  const char *key,
+				  const char *cipher_key,
 				  int size_in)
 {
    void *deciphered = (void*) data_in;
@@ -3209,9 +3211,10 @@ eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd,
    Eet_Free_Context context;
    unsigned int deciphered_len = size_in;
 
-   if (key && data_in)
+   if (cipher_key && data_in)
      {
-       if (eet_decipher(data_in, size_in, key, strlen(key), &deciphered, &deciphered_len))
+       if (eet_decipher(data_in, size_in, cipher_key,
+			strlen(cipher_key), &deciphered, &deciphered_len))
 	 {
 	   if (deciphered) free(deciphered);
 	   return NULL;
@@ -3235,16 +3238,17 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 }
 
 EAPI void *
-eet_data_node_decode_cipher(const void *data_in, const char *key, int size_in)
+eet_data_node_decode_cipher(const void *data_in, const char *cipher_key, int size_in)
 {
    void *deciphered = (void*) data_in;
    Eet_Node *ret;
    Eet_Free_Context context;
    unsigned int deciphered_len = size_in;
 
-   if (key && data_in)
+   if (cipher_key && data_in)
      {
-       if (eet_decipher(data_in, size_in, key, strlen(key), &deciphered, &deciphered_len))
+       if (eet_decipher(data_in, size_in, cipher_key,
+			strlen(cipher_key), &deciphered, &deciphered_len))
 	 {
 	   if (deciphered) free(deciphered);
 	   return NULL;
@@ -3310,7 +3314,7 @@ _eet_data_descriptor_encode(Eet_Dictionary *ed,
 }
 
 EAPI int
-eet_data_node_write_cipher(Eet_File *ef, const char *name, const char *key, Eet_Node *node, int compress)
+eet_data_node_write_cipher(Eet_File *ef, const char *name, const char *cipher_key, Eet_Node *node, int compress)
 {
    Eet_Dictionary       *ed;
    void                 *data_enc;
@@ -3321,14 +3325,14 @@ eet_data_node_write_cipher(Eet_File *ef, const char *name, const char *key, Eet_
 
    data_enc = _eet_data_dump_encode(EET_G_UNKNOWN, ed, node, &size);
    if (!data_enc) return 0;
-   val = eet_write_cipher(ef, name, data_enc, size, compress, key);
+   val = eet_write_cipher(ef, name, data_enc, size, compress, cipher_key);
    free(data_enc);
    return val;
 }
 
 EAPI void *
 eet_data_node_encode_cipher(Eet_Node *node,
-			    const char *key,
+			    const char *cipher_key,
 			    int *size_ret)
 {
    void *ret = NULL;
@@ -3337,9 +3341,10 @@ eet_data_node_encode_cipher(Eet_Node *node,
    int size;
 
    ret = _eet_data_dump_encode(EET_G_UNKNOWN, NULL, node, &size);
-   if (key && ret)
+   if (cipher_key && ret)
      {
-	if (eet_cipher(ret, size, key, strlen(key), &ciphered, &ciphered_len))
+	if (eet_cipher(ret, size, cipher_key,
+		       strlen(cipher_key), &ciphered, &ciphered_len))
 	  {
 	     if (ciphered) free(ciphered);
 	     if (size_ret) *size_ret = 0;
@@ -3358,7 +3363,7 @@ eet_data_node_encode_cipher(Eet_Node *node,
 EAPI void *
 eet_data_descriptor_encode_cipher(Eet_Data_Descriptor *edd,
 				  const void *data_in,
-				  const char *key,
+				  const char *cipher_key,
 				  int *size_ret)
 {
    void *ret = NULL;
@@ -3367,9 +3372,10 @@ eet_data_descriptor_encode_cipher(Eet_Data_Descriptor *edd,
    int size;
 
    ret = _eet_data_descriptor_encode(NULL, edd, data_in, &size);
-   if (key && ret)
+   if (cipher_key && ret)
      {
-       if (eet_cipher(ret, size, key, strlen(key), &ciphered, &ciphered_len))
+       if (eet_cipher(ret, size, cipher_key,
+		      strlen(cipher_key), &ciphered, &ciphered_len))
 	 {
 	   if (ciphered) free(ciphered);
 	   if (size_ret) *size_ret = 0;
