@@ -254,7 +254,7 @@ EAPI Ecore_Evas     *ecore_evas_software_wince_gdi_new(Ecore_WinCE_Window *paren
 
 EAPI Ecore_WinCE_Window *ecore_evas_software_wince_window_get(const Ecore_Evas *ee);
 
-EAPI Ecore_Evas *ecore_evas_quartz_new(const char* name, int w, int h);
+EAPI Ecore_Evas *ecore_evas_cocoa_new(const char* name, int w, int h);
 
 /* generic manipulation calls */
 EAPI const char *ecore_evas_engine_name_get(const Ecore_Evas *ee);

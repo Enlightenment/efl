@@ -13,51 +13,51 @@
 #include "Ecore_Cocoa.h"
 #include "Ecore_Cocoa_Keys.h"
 
-EAPI int ECORE_QUARTZ_EVENT_GOT_FOCUS = 0;
-EAPI int ECORE_QUARTZ_EVENT_LOST_FOCUS = 0;
-EAPI int ECORE_QUARTZ_EVENT_RESIZE = 0;
-EAPI int ECORE_QUARTZ_EVENT_EXPOSE = 0;
+EAPI int ECORE_COCOA_EVENT_GOT_FOCUS = 0;
+EAPI int ECORE_COCOA_EVENT_LOST_FOCUS = 0;
+EAPI int ECORE_COCOA_EVENT_RESIZE = 0;
+EAPI int ECORE_COCOA_EVENT_EXPOSE = 0;
 
-static int _ecore_quartz_init_count = 0;
+static int _ecore_cocoa_init_count = 0;
 
 static int old_flags;
 
 EAPI int
-ecore_quartz_init(const char *name __UNUSED__)
+ecore_cocoa_init(const char *name __UNUSED__)
 {
-   if (++_ecore_quartz_init_count != 1)
-     return _ecore_quartz_init_count;
+   if (++_ecore_cocoa_init_count != 1)
+     return _ecore_cocoa_init_count;
 
    if (!ecore_event_init())
-     return --_ecore_quartz_init_count;
+     return --_ecore_cocoa_init_count;
 
-   ECORE_QUARTZ_EVENT_GOT_FOCUS         = ecore_event_type_new();
-   ECORE_QUARTZ_EVENT_LOST_FOCUS        = ecore_event_type_new();
-   ECORE_QUARTZ_EVENT_RESIZE            = ecore_event_type_new();
-   ECORE_QUARTZ_EVENT_EXPOSE            = ecore_event_type_new();
+   ECORE_COCOA_EVENT_GOT_FOCUS  = ecore_event_type_new();
+   ECORE_COCOA_EVENT_LOST_FOCUS = ecore_event_type_new();
+   ECORE_COCOA_EVENT_RESIZE     = ecore_event_type_new();
+   ECORE_COCOA_EVENT_EXPOSE     = ecore_event_type_new();
 
-   return _ecore_quartz_init_count;
+   return _ecore_cocoa_init_count;
 }
 
 /**
- * Shuts down the Ecore_Quartz library.
+ * Shuts down the Ecore_Cocoa library.
  * @return  @c The number of times the system has been initialised without
  *             being shut down.
- * @ingroup Ecore_Quartz_Library_Group
+ * @ingroup Ecore_Cocoa_Library_Group
  */
 EAPI int
-ecore_quartz_shutdown(void)
+ecore_cocoa_shutdown(void)
 {
-   if (--_ecore_quartz_init_count != 0)
-     return _ecore_quartz_init_count;
+   if (--_ecore_cocoa_init_count != 0)
+     return _ecore_cocoa_init_count;
 
    ecore_event_shutdown();
 
-   return _ecore_quartz_init_count;
+   return _ecore_cocoa_init_count;
 }
 
 EAPI void
-ecore_quartz_feed_events(void)
+ecore_cocoa_feed_events(void)
 {
    NSDate *date = [NSDate dateWithTimeIntervalSinceNow:0.001];
    NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask
@@ -156,7 +156,7 @@ ecore_quartz_feed_events(void)
          if (!ev) return;
          ev->timestamp = time;
 
-         for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_quartz_keys_s); ++i)
+         for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_cocoa_keys_s); ++i)
          {
             if (keystable[i].code == tolower([[event charactersIgnoringModifiers] characterAtIndex:0]))
             {
@@ -179,7 +179,7 @@ ecore_quartz_feed_events(void)
          if (!ev) return;
          ev->timestamp = time;
 
-         for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_quartz_keys_s); ++i)
+         for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_cocoa_keys_s); ++i)
          {
             if (keystable[i].code == tolower([[event charactersIgnoringModifiers] characterAtIndex:0]))
             {
@@ -259,9 +259,9 @@ ecore_quartz_feed_events(void)
       case NSAppKitDefined:
       {
          if ([event subtype] == NSApplicationActivatedEventType)
-            ecore_event_add(ECORE_QUARTZ_EVENT_GOT_FOCUS, NULL, NULL, NULL);
+            ecore_event_add(ECORE_COCOA_EVENT_GOT_FOCUS, NULL, NULL, NULL);
          else if ([event subtype] == NSApplicationDeactivatedEventType)
-            ecore_event_add(ECORE_QUARTZ_EVENT_LOST_FOCUS, NULL, NULL, NULL);
+            ecore_event_add(ECORE_COCOA_EVENT_LOST_FOCUS, NULL, NULL, NULL);
          [NSApp sendEvent:event]; // pass along AppKit events, for window manager
          break;
       }

@@ -1,14 +1,14 @@
-#ifndef         ECORE_QUARTZ_KEYS_H__
-#define        ECORE_QUARTZ_KEYS_H__
+#ifndef ECORE_COCOA_KEYS_H__
+#define ECORE_COCOA_KEYS_H__
 
-struct _ecore_quartz_keys_s
+struct _ecore_cocoa_keys_s
 {
    int         code;
    const char  *name;
    const char  *compose;
 };
 
-static const struct _ecore_quartz_keys_s  keystable[] =
+static const struct _ecore_cocoa_keys_s keystable[] =
 {
 
 { 0,                         "0x00",         "" },
@@ -282,4 +282,4 @@ static const struct _ecore_quartz_keys_s  keystable[] =
 
 };
 
-#endif  /* ECORE_QUARTZ_KEYS_H__ */
+#endif  /* ECORE_COCOA_KEYS_H__ */

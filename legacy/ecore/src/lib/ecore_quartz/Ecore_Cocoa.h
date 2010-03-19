@@ -2,8 +2,8 @@
 * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
 */
 
-#ifndef _ECORE_QUARTZ_H
-#define _ECORE_QUARTZ_H
+#ifndef _ECORE_COCOA_H
+#define _ECORE_COCOA_H
 
 #ifdef EAPI
 # undef EAPI
@@ -25,13 +25,13 @@ extern "C" {
 
 typedef struct _Ecore_Cocoa_Window Ecore_Cocoa_Window;
 
-EAPI extern int ECORE_QUARTZ_EVENT_GOT_FOCUS;
-EAPI extern int ECORE_QUARTZ_EVENT_LOST_FOCUS;
-EAPI extern int ECORE_QUARTZ_EVENT_RESIZE;
-EAPI extern int ECORE_QUARTZ_EVENT_EXPOSE;
+EAPI extern int ECORE_COCOA_EVENT_GOT_FOCUS;
+EAPI extern int ECORE_COCOA_EVENT_LOST_FOCUS;
+EAPI extern int ECORE_COCOA_EVENT_RESIZE;
+EAPI extern int ECORE_COCOA_EVENT_EXPOSE;
 
-typedef struct _Ecore_Quartz_Event_Video_Resize Ecore_Quartz_Event_Video_Resize;
-struct _Ecore_Quartz_Event_Video_Resize
+typedef struct _Ecore_Cocoa_Event_Video_Resize Ecore_Cocoa_Event_Video_Resize;
+struct _Ecore_Cocoa_Event_Video_Resize
 {
    int             w;
    int             h;
@@ -40,9 +40,9 @@ struct _Ecore_Quartz_Event_Video_Resize
 
 /* Core */
 
-EAPI int        ecore_quartz_init(const char *name);
-EAPI int        ecore_quartz_shutdown(void);
-EAPI void       ecore_quartz_feed_events(void);
+EAPI int  ecore_cocoa_init(const char *name);
+EAPI int  ecore_cocoa_shutdown(void);
+EAPI void ecore_cocoa_feed_events(void);
 
 /* Window */
 

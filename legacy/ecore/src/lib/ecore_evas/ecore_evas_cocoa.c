@@ -32,7 +32,7 @@ static Ecore_Event_Handler      *ecore_evas_event_handlers[4] = {
 static Ecore_Idle_Enterer       *ecore_evas_idle_enterer = NULL;
 static Ecore_Poller             *ecore_evas_event = NULL;
 
-static const char               *ecore_evas_quartz_default = "EFL Quartz";
+static const char               *ecore_evas_cocoa_default = "EFL Cocoa";
 
 @interface EvasView : NSView
 {
@@ -81,17 +81,17 @@ static NSWindow * main_window;
 @end
 
 static Ecore_Evas *
-_ecore_evas_quartz_match(void)
+_ecore_evas_cocoa_match(void)
 {
    return ecore_evases;
 }
 
 static int
-_ecore_evas_quartz_event_got_focus(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_cocoa_event_got_focus(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas                   *ee;
 
-   ee = _ecore_evas_quartz_match();
+   ee = _ecore_evas_cocoa_match();
 
    if (!ee) return 1;
    ee->prop.focused = 1;
@@ -100,11 +100,11 @@ _ecore_evas_quartz_event_got_focus(void *data __UNUSED__, int type __UNUSED__, v
 }
 
 static int
-_ecore_evas_quartz_event_lost_focus(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_cocoa_event_lost_focus(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas                   *ee;
 
-   ee = _ecore_evas_quartz_match();
+   ee = _ecore_evas_cocoa_match();
 
    if (!ee) return 1;
    ee->prop.focused = 0;
@@ -113,13 +113,13 @@ _ecore_evas_quartz_event_lost_focus(void *data __UNUSED__, int type __UNUSED__, 
 }
 
 static int
-_ecore_evas_quartz_event_video_resize(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_cocoa_event_video_resize(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   /*Ecore_Quartz_Event_Video_Resize *e;
+   /*Ecore_Cocoa_Event_Video_Resize *e;
    Ecore_Evas                   *ee;
 
    e = event;
-   ee = _ecore_evas_quartz_match();
+   ee = _ecore_evas_cocoa_match();
 
    if (!ee) return 1; // pass on event
    evas_output_size_set(ee->evas, e->w, e->h);
@@ -128,13 +128,13 @@ _ecore_evas_quartz_event_video_resize(void *data __UNUSED__, int type __UNUSED__
 }
 
 static int
-_ecore_evas_quartz_event_video_expose(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_ecore_evas_cocoa_event_video_expose(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
    Ecore_Evas                   *ee;
    int                          w;
    int                          h;
 
-   ee = _ecore_evas_quartz_match();
+   ee = _ecore_evas_cocoa_match();
 
    if (!ee) return 1;
    evas_output_size_get(ee->evas, &w, &h);
@@ -162,15 +162,15 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 }
 
 static int
-_ecore_evas_quartz_event(void *data)
+_ecore_evas_cocoa_event(void *data)
 {
-   ecore_quartz_feed_events();
+   ecore_cocoa_feed_events();
 
    return 1;
 }
 
 static int
-_ecore_evas_quartz_init(int w, int h)
+_ecore_evas_cocoa_init(int w, int h)
 {
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
@@ -181,16 +181,16 @@ _ecore_evas_quartz_init(int w, int h)
    ecore_evas_event = ecore_poller_add(ECORE_POLLER_CORE, 1, ecore_evas_event, NULL);
    ecore_poller_poll_interval_set(ECORE_POLLER_CORE, 0.006);
 
-   ecore_evas_event_handlers[0] = ecore_event_handler_add(ECORE_QUARTZ_EVENT_GOT_FOCUS, _ecore_evas_quartz_event_got_focus, NULL);
-   ecore_evas_event_handlers[1] = ecore_event_handler_add(ECORE_QUARTZ_EVENT_LOST_FOCUS, _ecore_evas_quartz_event_lost_focus, NULL);
-   ecore_evas_event_handlers[2] = ecore_event_handler_add(ECORE_QUARTZ_EVENT_RESIZE, _ecore_evas_quartz_event_video_resize, NULL);
-   ecore_evas_event_handlers[3] = ecore_event_handler_add(ECORE_QUARTZ_EVENT_EXPOSE, _ecore_evas_quartz_event_video_expose, NULL);
+   ecore_evas_event_handlers[0] = ecore_event_handler_add(ECORE_COCOA_EVENT_GOT_FOCUS, _ecore_evas_cocoa_event_got_focus, NULL);
+   ecore_evas_event_handlers[1] = ecore_event_handler_add(ECORE_COCOA_EVENT_LOST_FOCUS, _ecore_evas_cocoa_event_lost_focus, NULL);
+   ecore_evas_event_handlers[2] = ecore_event_handler_add(ECORE_COCOA_EVENT_RESIZE, _ecore_evas_cocoa_event_video_resize, NULL);
+   ecore_evas_event_handlers[3] = ecore_event_handler_add(ECORE_COCOA_EVENT_EXPOSE, _ecore_evas_cocoa_event_video_expose, NULL);
 
    return _ecore_evas_init_count;
 }
 
 static int
-_ecore_evas_quartz_shutdown(void)
+_ecore_evas_cocoa_shutdown(void)
 {
    _ecore_evas_init_count--;
    if (_ecore_evas_init_count == 0)
@@ -214,12 +214,12 @@ _ecore_evas_quartz_shutdown(void)
 }
 
 static void
-_ecore_evas_quartz_free(Ecore_Evas *ee)
+_ecore_evas_cocoa_free(Ecore_Evas *ee)
 {
    ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    ecore_event_window_unregister(0);
-   _ecore_evas_quartz_shutdown();
-   ecore_quartz_shutdown();
+   _ecore_evas_cocoa_shutdown();
+   ecore_cocoa_shutdown();
 }
 
 static void
@@ -295,9 +295,9 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
 }
 
-static Ecore_Evas_Engine_Func _ecore_quartz_engine_func =
+static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
 {
-   _ecore_evas_quartz_free,
+   _ecore_evas_cocoa_free,
    NULL,
    NULL,
    NULL,
@@ -347,7 +347,7 @@ static Ecore_Evas_Engine_Func _ecore_quartz_engine_func =
 #endif
 
 EAPI Ecore_Evas *
-ecore_evas_quartz_new(const char* name, int w, int h)
+ecore_evas_cocoa_new(const char* name, int w, int h)
 {
 #ifdef BUILD_ECORE_EVAS_QUARTZ
    Evas_Engine_Info_Quartz *einfo;
@@ -355,24 +355,24 @@ ecore_evas_quartz_new(const char* name, int w, int h)
    int                  rmethod;
 
    if (!name)
-     name = ecore_evas_quartz_default;
+     name = ecore_evas_cocoa_default;
 
    rmethod = evas_render_method_lookup("quartz");
    if (!rmethod) return NULL;
 
-   if (!ecore_quartz_init(name)) return NULL;
+   if (!ecore_cocoa_init(name)) return NULL;
 
    ee = calloc(1, sizeof(Ecore_Evas));
    if (!ee)
-     goto shutdown_ecore_quartz;
+     goto shutdown_ecore_cocoa;
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
-   _ecore_evas_quartz_init(w, h);
+   _ecore_evas_cocoa_init(w, h);
 
    ecore_event_window_register(0, ee, ee->evas, _ecore_evas_mouse_move_process);
 
-   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_quartz_engine_func;
+   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_cocoa_engine_func;
 
    ee->driver = "quartz";
    if (name) ee->name = strdup(name);
@@ -452,10 +452,10 @@ ecore_evas_quartz_new(const char* name, int w, int h)
  free_name:
    free(ee->name);
  free_ee:
-   _ecore_evas_quartz_shutdown();
+   _ecore_evas_cocoa_shutdown();
    free(ee);
- shutdown_ecore_quartz:
-   ecore_quartz_shutdown();
+ shutdown_ecore_cocoa:
+   ecore_cocoa_shutdown();
 
    return NULL;
 #else
