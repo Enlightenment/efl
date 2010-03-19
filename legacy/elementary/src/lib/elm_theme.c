@@ -30,7 +30,8 @@ _elm_theme_theme_element_try(const char *home, const char *f, const char *group)
    const char *file = NULL;
 
    if ((f[0] == '/') || ((f[0] == '.') && (f[1] == '/')) ||
-       ((f[0] == '.') && (f[1] == '.') && (f[2] == '/')))
+       ((f[0] == '.') && (f[1] == '.') && (f[2] == '/')) ||
+       (isalpha(f[0]) && f[1] == ':'))
      return _elm_theme_find_try(f, group);
    else if (((f[0] == '~') && (f[1] == '/')))
      {
