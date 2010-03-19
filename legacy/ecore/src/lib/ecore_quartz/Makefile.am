@@ -10,22 +10,22 @@ AM_CPPFLAGS = \
 
 if BUILD_ECORE_QUARTZ
 
-lib_LTLIBRARIES = libecore_quartz.la
+lib_LTLIBRARIES = libecore_cocoa.la
 include_HEADERS = \
-Ecore_Quartz.h \
-Ecore_Quartz_Keys.h
+Ecore_Cocoa.h \
+Ecore_Cocoa_Keys.h
 
-libecore_quartz_la_SOURCES = \
-ecore_quartz.m \
+libecore_cocoa_la_SOURCES = \
+ecore_cocoa.m \
 ecore_cocoa_window.m
 
-libecore_quartz_la_LIBADD = \
+libecore_cocoa_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 @EVAS_LIBS@ \
 @EINA_LIBS@
 
-libecore_quartz_la_LDFLAGS = @quartz_ldflags@ -version-info @version_info@ @ecore_quartz_release_info@
+libecore_cocoa_la_LDFLAGS = @quartz_ldflags@ -version-info @version_info@ @ecore_quartz_release_info@
 
 endif
 

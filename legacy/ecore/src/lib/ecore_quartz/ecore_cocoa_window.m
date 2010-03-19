@@ -4,7 +4,7 @@
 
 #include <Cocoa/Cocoa.h>
 
-#include "Ecore_Quartz.h"
+#include "Ecore_Cocoa.h"
 
 Ecore_Cocoa_Window *
 ecore_cocoa_window_new(int x,

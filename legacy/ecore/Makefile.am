@@ -75,7 +75,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN \
 	     ecore-x.pc.in \
 	     ecore-win32.pc.in \
 	     ecore-sdl.pc.in \
-	     ecore-quartz.pc.in \
+	     ecore-cocoa.pc.in \
 	     ecore-input.pc.in \
 	     ecore-wince.pc.in \
 	     ecore.spec.in ecore.spec
@@ -144,7 +144,7 @@ pkgconfig_DATA += ecore-sdl.pc
 endif
 
 if BUILD_ECORE_QUARTZ
-pkgconfig_DATA += ecore-quartz.pc
+pkgconfig_DATA += ecore-cocoa.pc
 endif
 
 .PHONY: doc

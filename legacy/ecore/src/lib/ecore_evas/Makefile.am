@@ -44,7 +44,7 @@ endif
 
 if BUILD_ECORE_QUARTZ
 ECORE_QUARTZ_INC = -I$(top_srcdir)/src/lib/ecore_quartz -xobjective-c
-ECORE_QUARTZ_LIB = $(top_builddir)/src/lib/ecore_quartz/libecore_quartz.la
+ECORE_QUARTZ_LIB = $(top_builddir)/src/lib/ecore_quartz/libecore_cocoa.la
 else
 ECORE_QUARTZ_INC =
 ECORE_QUARTZ_LIB =
@@ -97,7 +97,7 @@ ecore_evas_buffer.c \
 ecore_evas_directfb.c \
 ecore_evas_win32.c \
 ecore_evas_sdl.c \
-ecore_evas_quartz.c \
+ecore_evas_cocoa.c \
 ecore_evas_wince.c
 
 libecore_evas_la_LIBADD = \

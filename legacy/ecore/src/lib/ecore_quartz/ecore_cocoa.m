@@ -10,8 +10,8 @@
 #include <ecore_private.h>
 #include <Ecore_Input.h>
 
-#include "Ecore_Quartz.h"
-#include "Ecore_Quartz_Keys.h"
+#include "Ecore_Cocoa.h"
+#include "Ecore_Cocoa_Keys.h"
 
 EAPI int ECORE_QUARTZ_EVENT_GOT_FOCUS = 0;
 EAPI int ECORE_QUARTZ_EVENT_LOST_FOCUS = 0;

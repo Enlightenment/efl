@@ -19,7 +19,7 @@
 #include "Ecore_Evas.h"
 
 #ifdef BUILD_ECORE_EVAS_QUARTZ
-#include "Ecore_Quartz.h"
+#include "Ecore_Cocoa.h"
 #include "Evas_Engine_Quartz.h"
 
 // FIXME: this engine has lots of problems. only 1 window at a time, drawRect looks wrong, doesnt handle resizes and more

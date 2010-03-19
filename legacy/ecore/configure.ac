@@ -1318,7 +1318,7 @@ ecore-directfb.pc
 ecore-evas.pc
 ecore-fb.pc
 ecore-file.pc
-ecore-quartz.pc
+ecore-cocoa.pc
 ecore-imf.pc
 ecore-imf-evas.pc
 ecore-ipc.pc
