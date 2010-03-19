@@ -1,288 +1,352 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdbool.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <assert.h>
-
-#include <Ecore.h>
-#include <Evas.h>
-#include <Ecore_Evas.h>
-#include <Edje.h>
-
-#include "option_pool.h"
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-// defines
+#include <Edje.h>
+#include <Ecore_Evas.h>
+#include <Ecore.h>
+#include <Ecore_Getopt.h>
+#include <Evas.h>
 
-// function prototypes
-void resize_cb(Ecore_Evas *ee);
-void print_help (char *app_name);
-void list_engines ();
-void list_groups (const char *edje_file);
-void parse_options (int argc, char **argv);
-void show_version ();
-void option_pool_from_data_block ();
-void string_to_bool (char *str, bool *value);
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
-// variables
-Ecore_Evas *ee;
-Evas *evas;
+struct opts {
+   char *file;
+   char *group;
+   Eina_Bool list_groups;
+   char *engine;
+   Eina_Rectangle size;
+   unsigned char color[3];
+   Eina_Bool borderless;
+   Eina_Bool sticky;
+   Eina_Bool shaped;
+   Eina_Bool alpha;
+   char *title;
+};
 
-Evas_Object *o_bg;
-Evas_Object *o_edje;
-
-struct option_pool_t option_pool;
-
-void resize_cb(Ecore_Evas *ee)
+static void
+_reset_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *stack, void *event_info __UNUSED__)
 {
-  Evas_Coord x, y, w, h;
+   Evas_Coord minw, minh;
+   Evas_Object *edje = data;
 
-  ecore_evas_geometry_get (ee, &x, &y, &w, &h);
+   edje_object_size_min_get(edje, &minw, &minh);
+   if ((minw <= 0) && (minh <= 0))
+     edje_object_size_min_calc(edje, &minw, &minh);
 
-  if (w < h)
-  {
-    evas_object_resize(o_bg, w, w);
-    evas_object_resize(o_edje, w, w);
-  }
-  else
-  {
-    evas_object_resize(o_bg, h, h);
-    evas_object_resize(o_edje, h, h);
-  }
-
+   evas_object_size_hint_min_set(stack, minw, minh);
 }
 
-void print_help (char *app_name)
+static Evas_Object *
+_create_stack(Evas *evas, const struct opts *opts)
 {
-  printf("Usage: %s --help\n", app_name);
-  exit(-1);
+   Evas_Object *stack = evas_object_box_add(evas);
+   if (!stack)
+     {
+	fputs("ERROR: could not create object stack (box).\n", stderr);
+	return NULL;
+     }
+   evas_object_box_layout_set(stack, evas_object_box_layout_stack, NULL, NULL);
+   evas_object_resize(stack, opts->size.w, opts->size.h);
+   evas_object_size_hint_weight_set(stack, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(stack, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(stack);
+   return stack;
 }
+
+static Evas_Object *
+_create_bg(Evas *evas, const struct opts *opts)
+{
+   const unsigned char *color = opts->color;
+   Evas_Object *bg = evas_object_rectangle_add(evas);
+   if (!bg)
+     {
+	fputs("ERROR: could not create background.\n", stderr);
+	return NULL;
+     }
+   evas_object_resize(bg, opts->size.w, opts->size.h);
+   evas_object_color_set(bg, color[0], color[1], color[2], 255);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bg, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(bg);
+   return bg;
+}
+
+static Eina_Bool
+_edje_load_or_show_error(Evas_Object *edje, const char *file, const char *group)
+{
+   const char *errmsg;
+   int err;
+
+   if (edje_object_file_set(edje, file, group))
+     return EINA_TRUE;
+
+   err = edje_object_load_error_get(edje);
+   errmsg = edje_load_error_str(err);
+   fprintf(stderr, "ERROR: could not load edje file '%s', group '%s': %s\n",
+	   file, group, errmsg);
+   return EINA_FALSE;
+}
+
+static Evas_Object *
+_create_edje(Evas *evas, const struct opts *opts)
+{
+   Evas_Coord minw, minh, maxw, maxh;
+   Evas_Object *edje = edje_object_add(evas);
+   if (!edje)
+     {
+	fputs("ERROR: could not create edje.\n", stderr);
+	return NULL;
+     }
+
+   if (opts->group)
+     {
+	if (!_edje_load_or_show_error(edje, opts->file, opts->group))
+	  {
+	     evas_object_del(edje);
+	     return NULL;
+	  }
+     }
+   else
+     {
+	if (edje_file_group_exists(opts->file, "main"))
+	  {
+	     if (!_edje_load_or_show_error(edje, opts->file, "main"))
+	       {
+		  evas_object_del(edje);
+		  return NULL;
+	       }
+	  }
+	else
+	  {
+	     Eina_List *groups = edje_file_collection_list(opts->file);
+	     const char *group;
+	     if (!groups)
+	       {
+		  fprintf(stderr, "ERROR: file '%s' has no groups!\n",
+			  opts->file);
+		  evas_object_del(edje);
+		  return NULL;
+	       }
+	     group = groups->data;
+	     if (!_edje_load_or_show_error(edje, opts->file, group))
+	       {
+		  edje_file_collection_list_free(groups);
+		  evas_object_del(edje);
+		  return NULL;
+	       }
+	     edje_file_collection_list_free(groups);
+	  }
+     }
+
+   edje_object_size_max_get(edje, &maxw, &maxh);
+   edje_object_size_min_get(edje, &minw, &minh);
+   if ((minw <= 0) && (minh <= 0))
+     edje_object_size_min_calc(edje, &minw, &minh);
+
+   evas_object_size_hint_max_set(edje, maxw, maxh);
+   evas_object_size_hint_min_set(edje, minw, minh);
+
+   evas_object_size_hint_weight_set(edje, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(edje, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(edje);
+
+   return edje;
+}
+
+static  unsigned char _parse_color(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage)
+{
+   unsigned char *color = (unsigned char *)storage->ptrp;
+
+   if (sscanf(str, "%hhu,%hhu,%hhu", color, color + 1, color + 2) != 3)
+     {
+	fprintf(stderr, "ERROR: incorrect color value '%s'\n", str);
+	return 0;
+     }
+
+   return 1;
+}
+
+const Ecore_Getopt optdesc = {
+  "edje_player",
+  "%prog [options] <filename.edj>",
+  PACKAGE_VERSION,
+  "(C) 2010 Enlightenment",
+  "BSD with advertisement clause",
+  "Simple application to view edje files.",
+  0,
+  {
+    ECORE_GETOPT_STORE_STR
+    ('g', "group", "The edje group to view (defaults to 'main')."),
+    ECORE_GETOPT_STORE_TRUE
+    ('G', "list-groups", "The groups in the given file."),
+    ECORE_GETOPT_STORE_STR
+    ('e', "engine", "The Ecore-Evas engine to use (see --list-engines)"),
+    ECORE_GETOPT_CALLBACK_NOARGS
+    ('E', "list-engines", "list Ecore-Evas engines",
+     ecore_getopt_callback_ecore_evas_list_engines, NULL),
+    ECORE_GETOPT_CALLBACK_ARGS
+    ('Z', "size", "size to use in wxh form.", "WxH",
+     ecore_getopt_callback_size_parse, NULL),
+    ECORE_GETOPT_CALLBACK_ARGS
+    ('c', "bg-color", "Color of the background (if not shaped or alpha)",
+     "RRGGBB", _parse_color, NULL),
+    ECORE_GETOPT_STORE_TRUE
+    ('b', "borderless", "Display window without border."),
+    ECORE_GETOPT_STORE_TRUE
+    ('y', "sticky", "Display window sticky."),
+    ECORE_GETOPT_STORE_TRUE
+    ('s', "shaped", "Display window shaped."),
+    ECORE_GETOPT_STORE_TRUE
+    ('a', "alpha", "Display window with alpha channel "
+     "(needs composite manager!)"),
+    ECORE_GETOPT_STORE_STR
+    ('t', "title", "Define the window title string"),
+    ECORE_GETOPT_LICENSE('L', "license"),
+    ECORE_GETOPT_COPYRIGHT('C', "copyright"),
+    ECORE_GETOPT_VERSION('V', "version"),
+    ECORE_GETOPT_HELP('h', "help"),
+    ECORE_GETOPT_SENTINEL
+  }
+};
 
 int main(int argc, char **argv)
 {
-  int edje_w = 240;
-  int edje_h = 240;
-  bool edje_load = false;
-  
-  option_pool_constructor (&option_pool);
-  
-  switch (argc)
-  {
-    case 1:
-      print_help (argv[0]);
-      break;
-    default:
-      option_pool_parse (&option_pool, argc, argv);
-  }
+   Ecore_Evas *win;
+   Evas *evas;
+   Evas_Object *stack, *edje;
+   struct opts opts;
+   Eina_Bool quit_option = EINA_FALSE;
+   int args, ret;
+   Ecore_Getopt_Value values[] = {
+     ECORE_GETOPT_VALUE_STR(opts.group),
+     ECORE_GETOPT_VALUE_BOOL(opts.list_groups),
+     ECORE_GETOPT_VALUE_STR(opts.engine),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_PTR_CAST(opts.size),
+     ECORE_GETOPT_VALUE_PTR_CAST(opts.color),
+     ECORE_GETOPT_VALUE_BOOL(opts.borderless),
+     ECORE_GETOPT_VALUE_BOOL(opts.sticky),
+     ECORE_GETOPT_VALUE_BOOL(opts.shaped),
+     ECORE_GETOPT_VALUE_BOOL(opts.alpha),
+     ECORE_GETOPT_VALUE_STR(opts.title),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_NONE
+   };
 
-  ecore_init();
-  ecore_app_args_set(argc, (const char **)argv);
-  ecore_evas_init();
-  edje_init();
-  
-  if (option_pool.show_version)
-  {
-    show_version ();
-    exit (0);
-  }
-  
-  if (option_pool.list_engines)
-  {
-    list_engines ();
-    exit (0);
-  }  
-  
-  ee = ecore_evas_new (option_pool.engine, 0, 0, edje_w, edje_h, NULL);
+   memset(&opts, 0, sizeof(opts));
 
-  if (ee)
-  {
-    printf ("Using engine %s to create a canvas...\n", option_pool.engine);
-  }
-  else
-  {
-    fprintf (stderr, "Engine %s failed to create a canvas\n", option_pool.engine);
-    fprintf (stderr, "Exiting...\n");
-    exit (1);
-  }
-  
-  if (option_pool.list_groups_flag)
-  {
-    list_groups (option_pool.file);
-    exit (0);
-  }
-  
-  evas = ecore_evas_get(ee);
-  evas_image_cache_set(evas, 8192 * 1024);
-  evas_font_cache_set(evas, 512 * 1024);
-  
-  option_pool_from_data_block ();
+   evas_init();
+   ecore_init();
+   ecore_evas_init();
+   edje_init();
 
-  o_bg = evas_object_rectangle_add(evas);
-  evas_object_move(o_bg, 0, 0);
-  evas_object_resize(o_bg, edje_w, edje_h);
-  
-  if (option_pool.title)
-  {
-    ecore_evas_title_set (ee, option_pool.title);
-  }
+   args = ecore_getopt_parse(&optdesc, values, argc, argv);
+   if (args < 0)
+     {
+	fputs("Could not parse arguments.\n", stderr);
+	ret = -1;
+	goto end;
+     }
+   else if (quit_option)
+     {
+	ret = 0;
+	goto end;
+     }
+   else if (args >= argc)
+     {
+	fputs("Missing edje file to load.\n", stderr);
+	ret = -2;
+	goto end;
+     }
 
-  if (option_pool.borderless)
-  {
-    ecore_evas_borderless_set (ee, 1);
-  }
+   ret = 0;
+   opts.file = argv[args];
+   if (opts.list_groups)
+     {
+	Eina_List *groups, *n;
+	const char *group;
+	groups = edje_file_collection_list(opts.file);
+	printf("%d groups in file '%s':\n", eina_list_count(groups), opts.file);
+	EINA_LIST_FOREACH(groups, n, group)
+	  printf("\t'%s'\n", group);
+	edje_file_collection_list_free(groups);
+	goto end;
+     }
 
-  if (option_pool.sticky)
-  {
-    ecore_evas_sticky_set (ee, 1);
-  }
-  
-  if (option_pool.alpha || option_pool.shaped) 
-  {
-    if (option_pool.alpha)
-    {
-       ecore_evas_alpha_set(ee, 1);
-    }
-    else if (option_pool.shaped)
-    {
-       ecore_evas_shaped_set(ee, 1);
-    }
-    
-    // set alpha transparent background if window has alpha support or is shaped...
-    evas_object_color_set(o_bg, 0, 0, 0, 0);
-  } 
-  else
-  {
-    // ...and set black background in other case
-    evas_object_color_set(o_bg, 0, 0, 0, 255);
-  }
-  
-  o_edje = edje_object_add (evas);
-  
-  evas_object_focus_set(o_edje, 1);
-  
-  edje_load = edje_object_file_set(o_edje, option_pool.file, option_pool.group);
-  if (!edje_load)
-  {
-    fprintf (stderr, "The Edje file '%s' and group '%s' couldn't be set!\n", option_pool.file, option_pool.group);
-    exit (1);
-  }
-  
-  evas_object_move(o_edje, 0, 0);
-  evas_object_resize(o_edje, edje_w, edje_h);
+   win = ecore_evas_new(opts.engine, 0, 0, opts.size.w, opts.size.h, NULL);
+   if (!win)
+     {
+	fprintf(stderr,
+		"ERROR: could not create window of "
+		"size %dx%d using engine %s.\n",
+		opts.size.w, opts.size.h, opts.engine ? opts.engine : "(auto)");
+	ret = -3;
+	goto end;
+     }
 
-  evas_object_show(o_edje);
-  evas_object_show(o_bg);
+   evas = ecore_evas_get(win);
+   stack = _create_stack(evas, &opts);
+   if (!stack)
+     {
+	ret = -4;
+	goto end_win;
+     }
 
-  ecore_evas_callback_resize_set(ee, resize_cb);
-  ecore_evas_show(ee);
+   ecore_evas_object_associate(win, stack, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
-  ecore_main_loop_begin();
+   if (opts.alpha)
+     ecore_evas_alpha_set(win, EINA_TRUE);
+   else if (opts.shaped)
+     ecore_evas_shaped_set(win, EINA_TRUE);
+   else
+     {
+	Evas_Object *bg = _create_bg(evas, &opts);
+	if (bg) evas_object_box_append(stack, bg);
+     }
 
-  edje_shutdown();
-  ecore_evas_shutdown();
-  ecore_shutdown();
-  
-  option_pool_destructor (&option_pool);
+   edje = _create_edje(evas, &opts);
+   if (edje)
+     evas_object_box_append(stack, edje);
+   else
+     {
+	ret = -5;
+	goto end_win;
+     }
 
-  return 0;
-}
+   evas_object_event_callback_add(stack, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				  _reset_size_hints, edje);
 
-void option_pool_from_data_block ()
-{
-  char *tmp_str = NULL;
-  
-  if (!option_pool.alpha)
-  {
-    tmp_str = edje_file_data_get (option_pool.file, "alpha");
-    string_to_bool (tmp_str, &option_pool.alpha);
-    free (tmp_str);
-  }
-  
-  if (!option_pool.borderless)
-  {
-    tmp_str = edje_file_data_get (option_pool.file, "borderless");
-    string_to_bool (tmp_str, &option_pool.borderless);
-    free (tmp_str);
-  }
-  
-  if (!option_pool.sticky)
-  {
-    tmp_str = edje_file_data_get (option_pool.file, "sticky");
-    string_to_bool (tmp_str, &option_pool.sticky);
-    free (tmp_str);
-  }
-  
-  if (!option_pool.shaped)
-  {
-    tmp_str = edje_file_data_get (option_pool.file, "shaped");
-    string_to_bool (tmp_str, &option_pool.shaped);
-    free (tmp_str);
-  }
-  
-  if (!option_pool.title)
-  {
-    option_pool.title = edje_file_data_get (option_pool.file, "title");
-  }
-}
+   ecore_evas_borderless_set(win, opts.borderless);
+   ecore_evas_sticky_set(win, opts.sticky);
+   if (opts.title)
+     ecore_evas_title_set(win, opts.title);
+   else
+     {
+	char buf[1024];
+	snprintf(buf, sizeof(buf), "Edje_Player - %s of %s",
+		 opts.group, opts.file);
+	ecore_evas_title_set(win, buf);
+     }
 
-void list_engines ()
-{
-  Eina_List *engines_list;
-  Eina_List *l; // list element
+   if (opts.size.w <= 0) opts.size.w = 320;
+   if (opts.size.h <= 0) opts.size.h = 240;
+   ecore_evas_resize(win, opts.size.w, opts.size.h);
+   ecore_evas_show(win);
+   ecore_main_loop_begin();
 
-  printf ("supported engines:\n"); 
-  engines_list = ecore_evas_engines_get ();
-  for (l = engines_list; l; l = eina_list_next(l))
-  {
-    const char *engine = (const char*) l->data;
-    
-    printf ("\t%s\n", engine);
-  }
-}
+ end_win:
+   ecore_evas_free(win);
+ end:
+   edje_shutdown();
+   ecore_evas_shutdown();
+   ecore_shutdown();
+   evas_shutdown();
 
-void list_groups (const char *edje_file)
-{
-  Eina_List *group_list;
-  Eina_List *l; // list element
-
-  group_list = edje_file_collection_list (edje_file);
-
-  printf("Available groups in 'edje_file':\n");
-  for (l = group_list; l; l = eina_list_next(l))
-  {
-    printf("%s\n", (const char*) l->data);
-  }
-
-  edje_file_collection_list_free (group_list);
-}
-
-void show_version ()
-{
-  printf ("Package name: ");
-  printf ("%s %s\n", PACKAGE, VERSION);
-  printf ("Build information: ");
-  printf ("%s %s\n", __DATE__, __TIME__);
-}
-
-void string_to_bool (char *str, bool *value)
-{
-  if (str)
-  {
-    if ((!strncmp (str, "FALSE", 5)) || (!strncmp (str, "false", 5)) || (!strncmp (str, "0", 2)))
-    {
-      *value = false;
-    }
-    else if ((!strncmp (str, "TRUE", 5)) || (!strncmp (str, "true", 5)) || (!strncmp (str, "1", 2)))
-    {
-      *value = true;
-    }
-  }
-  
-  value = NULL;
+   return ret;
 }

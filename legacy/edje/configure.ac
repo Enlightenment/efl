@@ -72,6 +72,7 @@ AM_CONDITIONAL([EDJE_AMALGAMATION], [test "x${do_amalgamation}" = "xyes"])
 EFL_ENABLE_BIN([edje-cc])
 EFL_ENABLE_BIN([edje-decc])
 EFL_ENABLE_BIN([edje-recc])
+EFL_ENABLE_BIN([edje-player])
 
 # Optional EDJE_PROGRAM_CACHE (use much more ram, but increase speed in some cases)
 want_edje_program_cache="no"
@@ -246,6 +247,10 @@ if test "x$have_edje_cc" = "xyes"; then
    PKG_CHECK_MODULES([ECORE_EVAS], [ecore-evas >= 0.9.9])
 fi
 
+if test "x$have_edje_player" = "xyes"; then
+   PKG_CHECK_MODULES([ECORE_EVAS], [ecore-evas >= 0.9.9])
+fi
+
 
 ### Checks for header files
 AC_CHECK_HEADERS([locale.h])
@@ -336,6 +341,7 @@ echo
 echo "  Build edje_cc........: $have_edje_cc"
 echo "  Build edje_decc......: $have_edje_decc"
 echo "  Build edje_recc......: $have_edje_recc"
+echo "  Build edje_player....: $have_edje_player"
 echo
 echo "  Documentation........: ${build_doc}"
 echo
