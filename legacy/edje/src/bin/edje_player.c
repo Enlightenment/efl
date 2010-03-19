@@ -11,6 +11,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <ctype.h>
 
 struct opts {
    char *file;
@@ -23,14 +27,359 @@ struct opts {
    Eina_Bool sticky;
    Eina_Bool shaped;
    Eina_Bool alpha;
+   Eina_Bool print;
+   Eina_Bool slave_mode;
    char *title;
 };
+
+static char *
+_slave_mode_tok(char **p_arg)
+{
+   char *s, *e;
+   Eina_Bool is_quoted;
+
+   if (!*p_arg) return NULL;
+
+   s = *p_arg;
+   while (isspace(*s))
+     s++;
+
+   if (*s == '\0')
+     {
+	*p_arg = NULL;
+	return NULL;
+     }
+   else if (*s == '"')
+     {
+	is_quoted = EINA_TRUE;
+	s++;
+	*p_arg = s;
+     }
+   else
+     {
+	is_quoted = EINA_FALSE;
+	*p_arg = s;
+     }
+
+   for (e = s; *e != '\0'; e++)
+     {
+	if ((!is_quoted) && (isspace(*e)))
+	  break;
+	else if ((is_quoted) && (*e == '"'))
+	  break;
+     }
+
+   if (*e == '\0') return NULL;
+
+   *e = '\0';
+   return e + 1;
+}
+
+static void
+_slave_mode_signal(Evas_Object *edje, char *args)
+{
+   char *emission, *source;
+
+   emission = args;
+   source = _slave_mode_tok(&emission);
+   _slave_mode_tok(&source);
+
+   if ((!emission) || (!source))
+     {
+	fputs("ERROR: Invalid command arguments.\n", stderr);
+	return;
+     }
+
+   edje_object_signal_emit(edje, emission, source);
+}
+
+static void
+_slave_mode_info(Evas_Object *edje, char *args)
+{
+   _slave_mode_tok(&args);
+
+   if (!args)
+     {
+	fputs("ERROR: Invalid command arguments.\n", stderr);
+	return;
+     }
+
+   if (!edje_object_part_exists(edje, args))
+     {
+	printf("INFO: \"%s\" does not exist.\n", args);
+     }
+   else
+     {
+	Evas_Coord x, y, w, h;
+	edje_object_part_geometry_get(edje, args, &x, &y, &w, &h);
+	printf("INFO: \"%s\" %d,%d,%d,%d\n", args, x, y, w, h);
+     }
+}
+
+static void
+_slave_mode_quit(Evas_Object *edje __UNUSED__, char *args __UNUSED__)
+{
+   puts("Bye!");
+   ecore_main_loop_quit();
+}
+
+static void
+_slave_mode_help(Evas_Object *edje __UNUSED__, char *args __UNUSED__)
+{
+   puts("Help:\n"
+	"One command per line, arguments separated by space. Strings may have "
+	"spaces if enclosed in quotes (\").\n"
+	"\n"
+	"\t<command> [arguments]\n"
+	"\n"
+	"Available commands:\n"
+	"\tsignal <source> <emission>\n"
+	"\t   sends a signal to edje\n"
+	"\tinfo <part>\n"
+	"\t   Print part geometry: <x>,<y>,<w>,<h>\n"
+	"\tquit\n"
+	"\t   exit edje player.\n"
+	"\thelp\n"
+	"\t   shows this message.\n");
+   /*
+    * Extension ideas (are they useful?):
+    *  - message: send a message
+    *  - data: show data value
+    *  - color_class: set color class values (maybe also list?)
+    *  - text_class: set text class values (maybe also list?)
+    *  - play_set: change play state
+    *  - animation_set: change animation state
+    */
+}
+
+struct slave_cmd
+{
+   const char *cmd;
+   void (*func)(Evas_Object *edje, char *args);
+} _slave_mode_commands[] = {
+  {"signal", _slave_mode_signal},
+  {"info", _slave_mode_info},
+  {"quit", _slave_mode_quit},
+  {"help", _slave_mode_help},
+  {NULL, NULL}
+};
+
+static int
+_slave_mode(void *data, Ecore_Fd_Handler *fd_handler)
+{
+   Evas_Object *edje = data;
+   char buf[1024], *p;
+   const struct slave_cmd *itr;
+   size_t len;
+
+   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
+     {
+	fputs("ERROR: error on stdin! Exit.\n", stderr);
+	ecore_main_loop_quit();
+	return 0;
+     }
+   if (!ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
+     return 1;
+
+   if (!fgets(buf, sizeof(buf), stdin))
+     {
+	fputs("ERROR: end of stdin! Exit.\n", stderr);
+	ecore_main_loop_quit();
+	return 0;
+     }
+
+   len = strlen(buf);
+   if (len < 1)
+     {
+	fputs("ERROR: no input! Try: help\n", stderr);
+	return 1;
+     }
+   if (buf[len - 1] == '\n')
+     {
+	len--;
+	buf[len] = '\0';
+     }
+
+   p = strchr(buf, ' ');
+   if (p)
+     {
+	*p = '\0';
+	p++;
+
+	while (isspace(*p))
+	  p++;
+	if (*p == '\0')
+	  p = NULL;
+
+	if (p)
+	  {
+	     char *q = p + strlen(p) - 1;
+	     while (isspace(*q))
+	       {
+		  *q = '\0';
+		  q--;
+	       }
+	  }
+     }
+
+   for (itr = _slave_mode_commands; itr->cmd != NULL; itr++)
+     {
+	if (strcmp(itr->cmd, buf) == 0)
+	  {
+	     itr->func(edje, p);
+	     break;
+	  }
+     }
+
+   return 1;
+}
+
+static void
+_print_signal(void *data __UNUSED__, Evas_Object *o __UNUSED__, const char *emission, const char *source)
+{
+   printf("SIGNAL: \"%s\" \"%s\"\n", emission, source);
+}
+
+static void
+_print_message(void *data __UNUSED__, Evas_Object *edje __UNUSED__, Edje_Message_Type type, int id, void *msg)
+{
+   const char *typestr;
+   char buf[64];
+
+   switch (type)
+     {
+      case EDJE_MESSAGE_NONE:
+	 typestr = "NONE";
+	 break;
+      case EDJE_MESSAGE_SIGNAL:
+	 typestr = "SIGNAL";
+	 break;
+      case EDJE_MESSAGE_STRING:
+	 typestr = "STRING";
+	 break;
+      case EDJE_MESSAGE_INT:
+	 typestr = "INT";
+	 break;
+      case EDJE_MESSAGE_FLOAT:
+	 typestr = "FLOAT";
+	 break;
+      case EDJE_MESSAGE_STRING_SET:
+	 typestr = "STRING_SET";
+	 break;
+      case EDJE_MESSAGE_INT_SET:
+	 typestr = "INT_SET";
+	 break;
+      case EDJE_MESSAGE_FLOAT_SET:
+	 typestr = "FLOAT_SET";
+	 break;
+      case EDJE_MESSAGE_STRING_INT:
+	 typestr = "STRING_INT";
+	 break;
+      case EDJE_MESSAGE_STRING_FLOAT:
+	 typestr = "STRING_FLOAT";
+	 break;
+      case EDJE_MESSAGE_STRING_INT_SET:
+	 typestr = "INT_SET";
+	 break;
+      case EDJE_MESSAGE_STRING_FLOAT_SET:
+	 typestr = "FLOAT_SET";
+	 break;
+      default:
+	 snprintf(buf, sizeof(buf), "UNKNOWN(%d)", type);
+	 typestr = buf;
+     }
+
+   printf("MESSAGE: type=%s, id=%d", typestr, id);
+
+   switch (type)
+     {
+      case EDJE_MESSAGE_NONE: break;
+      case EDJE_MESSAGE_SIGNAL: break;
+      case EDJE_MESSAGE_STRING:
+	{
+	   Edje_Message_String *m = msg;
+	   printf(" \"%s\"", m->str);
+	}
+	break;
+      case EDJE_MESSAGE_INT:
+	{
+	   Edje_Message_Int *m = msg;
+	   printf(" %d", m->val);
+	}
+	break;
+      case EDJE_MESSAGE_FLOAT:
+	{
+	   Edje_Message_Float *m = msg;
+	   printf(" %f", m->val);
+	}
+	break;
+      case EDJE_MESSAGE_STRING_SET:
+	{
+	   Edje_Message_String_Set *m = msg;
+	   int i;
+	   for (i = 0; i < m->count; i++)
+	     printf(" \"%s\"", m->str[i]);
+	}
+	break;
+      case EDJE_MESSAGE_INT_SET:
+	{
+	   Edje_Message_Int_Set *m = msg;
+	   int i;
+	   for (i = 0; i < m->count; i++)
+	     printf(" %d", m->val[i]);
+	}
+	break;
+      case EDJE_MESSAGE_FLOAT_SET:
+	{
+	   Edje_Message_Float_Set *m = msg;
+	   int i;
+	   for (i = 0; i < m->count; i++)
+	     printf(" %f", m->val[i]);
+	}
+	break;
+      case EDJE_MESSAGE_STRING_INT:
+	{
+	   Edje_Message_String_Int *m = msg;
+	   printf(" \"%s\" %d", m->str, m->val);
+	}
+	break;
+      case EDJE_MESSAGE_STRING_FLOAT:
+	{
+	   Edje_Message_String_Float *m = msg;
+	   printf(" \"%s\" %f", m->str, m->val);
+	}
+	break;
+      case EDJE_MESSAGE_STRING_INT_SET:
+	{
+	   Edje_Message_String_Int_Set *m = msg;
+	   int i;
+	   printf(" \"%s\"", m->str);
+	   for (i = 0; i < m->count; i++)
+	     printf(" %d", m->val[i]);
+	}
+	break;
+      case EDJE_MESSAGE_STRING_FLOAT_SET:
+	{
+	   Edje_Message_String_Float_Set *m = msg;
+	   int i;
+	   printf(" \"%s\"", m->str);
+	   for (i = 0; i < m->count; i++)
+	     printf(" %f", m->val[i]);
+	}
+	break;
+      default:
+	break;
+     }
+
+   putchar('\n');
+}
 
 static void
 _reset_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *stack, void *event_info __UNUSED__)
 {
    Evas_Coord minw, minh;
    Evas_Object *edje = data;
+   char *p;
 
    edje_object_size_min_get(edje, &minw, &minh);
    if ((minw <= 0) && (minh <= 0))
@@ -204,6 +553,10 @@ const Ecore_Getopt optdesc = {
      "(needs composite manager!)"),
     ECORE_GETOPT_STORE_STR
     ('t', "title", "Define the window title string"),
+    ECORE_GETOPT_STORE_TRUE
+    ('p', "print", "Print signals and messages to stdout"),
+    ECORE_GETOPT_STORE_TRUE
+    ('S', "slave-mode", "Listen for commands on stdin"),
     ECORE_GETOPT_LICENSE('L', "license"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
     ECORE_GETOPT_VERSION('V', "version"),
@@ -232,6 +585,8 @@ int main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(opts.shaped),
      ECORE_GETOPT_VALUE_BOOL(opts.alpha),
      ECORE_GETOPT_VALUE_STR(opts.title),
+     ECORE_GETOPT_VALUE_BOOL(opts.print),
+     ECORE_GETOPT_VALUE_BOOL(opts.slave_mode),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -321,6 +676,28 @@ int main(int argc, char **argv)
 
    evas_object_event_callback_add(stack, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _reset_size_hints, edje);
+
+   if (opts.print)
+     {
+	edje_object_signal_callback_add(edje, "*", "*", _print_signal, NULL);
+	edje_object_message_handler_set(edje, _print_message, NULL);
+     }
+
+   if (opts.slave_mode)
+     {
+	int flags;
+	flags = fcntl(STDIN_FILENO, F_GETFL, 0);
+	flags |= O_NONBLOCK;
+	if (fcntl(STDIN_FILENO, F_SETFL, flags) < 0)
+	  {
+	     fprintf(stderr, "ERROR: Could not set stdin to non-block: %s\n",
+		     strerror(errno));
+	     ret = -6;
+	     goto end_win;
+	  }
+	ecore_main_fd_handler_add(STDIN_FILENO, ECORE_FD_READ | ECORE_FD_ERROR,
+				  _slave_mode, edje, NULL, NULL);
+     }
 
    ecore_evas_borderless_set(win, opts.borderless);
    ecore_evas_sticky_set(win, opts.sticky);
