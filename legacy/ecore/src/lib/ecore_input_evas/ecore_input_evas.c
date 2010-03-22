@@ -115,7 +115,7 @@ ecore_event_window_ignore_events(Ecore_Window id, int ignore_event)
    Ecore_Input_Window *lookup;
 
    lookup = eina_hash_find(_window_hash, &id);
-   if (!lookup) return ;
+   if (!lookup) return;
    lookup->ignore_event = ignore_event;
 }
 
