@@ -20,6 +20,8 @@ static XVisualInfo *_evas_gl_x11_rgba_vi = NULL;
 static Colormap     _evas_gl_x11_cmap = 0;
 static Colormap     _evas_gl_x11_rgba_cmap = 0;
 
+static int win_count = 0;
+
 Evas_GL_X11_Window *
 eng_window_new(Display *disp,
 	       Window   win,
@@ -260,14 +262,14 @@ eng_window_new(Display *disp,
              if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin, 
                                         gw->context))
                {
-                  printf("Error: glXMakeContextCurrent(%p, %p, %p, %p)\n", gw->disp, gw->win, gw->win, gw->context);
+                  printf("Error: glXMakeContextCurrent(%p, %p, %p, %p)\n", (void *)gw->disp, (void *)gw->win, (void *)gw->win, (void *)gw->context);
                }
           }
         else
           {
              if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
                {
-                  printf("Error: glXMakeCurrent(%p, 0x%x, %p) failed\n", gw->disp, gw->win, gw->context);
+                  printf("Error: glXMakeCurrent(%p, 0x%x, %p) failed\n", (void *)gw->disp, (unsigned int)gw->win, (void *)gw->context);
                }
           }
         
@@ -381,21 +383,36 @@ eng_window_new(Display *disp,
      }
    evas_gl_common_context_use(gw->gl_context);
    evas_gl_common_context_resize(gw->gl_context, w, h);
+   win_count++;
    return gw;
 }
 
 void
 eng_window_free(Evas_GL_X11_Window *gw)
 {
+   win_count--;
    if (gw == _evas_gl_x11_window) _evas_gl_x11_window = NULL;
    evas_gl_common_context_free(gw->gl_context);
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    if (gw->egl_surface[0] != EGL_NO_SURFACE)
      eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
+   if (win_count == 0)
+     {
+        if (context) eglDestroyContext(gw->disp, context);
+        eglTerminate(gw->disp);
+        context = EGL_NO_CONTEXT;
+     }
 #else
    if (gw->glxwin) glXDestroyWindow(gw->disp, gw->glxwin);
-   // FIXME: refcount context   
-   //   glXDestroyContext(gw->disp, gw->context);
+   if (win_count == 0)
+     {
+        if (context) glXDestroyContext(gw->disp, context);
+        if (rgba_context) glXDestroyContext(gw->disp, rgba_context);
+        context = 0;
+        rgba_context = 0;
+        fbconf = 0;
+        rgba_fbconf = 0;
+     }
 #endif
    free(gw);
 }
@@ -424,14 +441,14 @@ eng_window_use(Evas_GL_X11_Window *gw)
              if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin, 
                                         gw->context))
                {
-                  printf("Error: glXMakeContextCurrent(%p, %p, %p, %p)\n", gw->disp, gw->win, gw->win, gw->context);
+                  printf("Error: glXMakeContextCurrent(%p, %p, %p, %p)\n", (void *)gw->disp, (void *)gw->win, (void *)gw->win, (void *)gw->context);
                }
           }
         else
           {
              if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
                {
-                  printf("Error: glXMakeCurrent(%p, 0x%x, %p) failed\n", gw->disp, gw->win, gw->context);
+                  printf("Error: glXMakeCurrent(%p, 0x%x, %p) failed\n", gw->disp, (unsigned int)gw->win, (void *)gw->context);
                }
           }
 #endif
