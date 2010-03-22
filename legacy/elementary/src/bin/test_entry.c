@@ -14,6 +14,16 @@ my_entry_bt_2(void *data, Evas_Object *obj, void *event_info)
    const char *s = elm_entry_entry_get(en);
    printf("ENTRY:\n");
    if (s) printf("%s\n", s);
+   printf("ENTRY PLAIN UTF8:\n");
+   if (s)
+     {
+        s = elm_entry_markup_to_utf8(s);
+        if (s)
+          {
+             printf("%s\n", s);
+             free((char *)s);
+          }
+     }
 }
 
 static void
@@ -23,6 +33,16 @@ my_entry_bt_3(void *data, Evas_Object *obj, void *event_info)
    const char *s = elm_entry_selection_get(en);
    printf("SELECTION:\n");
    if (s) printf("%s\n", s);
+   printf("SELECTION PLAIN UTF8:\n");
+   if (s)
+     {
+        s = elm_entry_markup_to_utf8(s);
+        if (s)
+          {
+             printf("%s\n", s);
+             free((char *)s);
+          }
+     }
 }
 
 static void
@@ -132,6 +152,16 @@ my_scrolled_entry_bt_2(void *data, Evas_Object *obj, void *event_info)
    const char *s = elm_scrolled_entry_entry_get(en);
    printf("ENTRY:\n");
    if (s) printf("%s\n", s);
+   printf("ENTRY PLAIN UTF8:\n");
+   if (s)
+     {
+        s = elm_entry_markup_to_utf8(s);
+        if (s)
+          {
+             printf("%s\n", s);
+             free((char *)s);
+          }
+     }
 }
 
 static void
@@ -141,6 +171,16 @@ my_scrolled_entry_bt_3(void *data, Evas_Object *obj, void *event_info)
    const char *s = elm_scrolled_entry_selection_get(en);
    printf("SELECTION:\n");
    if (s) printf("%s\n", s);
+   printf("SELECTION PLAIN UTF8:\n");
+   if (s)
+     {
+        s = elm_entry_markup_to_utf8(s);
+        if (s)
+          {
+             printf("%s\n", s);
+             free((char *)s);
+          }
+     }
 }
 
 static void
@@ -350,6 +390,16 @@ my_ent_bt_pri(void *data, Evas_Object *obj, void *event_info)
    const char *s = elm_scrolled_entry_entry_get(en);
    printf("ENTRY:\n");
    if (s) printf("%s\n", s);
+   printf("ENTRY PLAIN UTF8:\n");
+   if (s)
+     {
+        s = elm_entry_markup_to_utf8(s);
+        if (s)
+          {
+             printf("%s\n", s);
+             free((char *)s);
+          }
+     }
 }
 
 static void
@@ -359,6 +409,16 @@ my_ent_bt_sel(void *data, Evas_Object *obj, void *event_info)
    const char *s = elm_scrolled_entry_selection_get(en);
    printf("SELECTION:\n");
    if (s) printf("%s\n", s);
+   printf("SELECTION PLAIN UTF8:\n");
+   if (s)
+     {
+        s = elm_entry_markup_to_utf8(s);
+        if (s)
+          {
+             printf("%s\n", s);
+             free((char *)s);
+          }
+     }
 }
 
 static void
