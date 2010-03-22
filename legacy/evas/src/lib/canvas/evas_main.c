@@ -181,11 +181,11 @@ evas_free(Evas *e)
    MAGIC_CHECK_END();
 
    if (e->walking_list == 0) evas_render_idle_flush(e);
-
-   if (e->walking_list > 0) return;
    
+   if (e->walking_list > 0) return;
    if (!e->callbacks) return;
-   if (!e->callbacks->deletions_waiting) return;
+   if (e->callbacks->deletions_waiting) return;
+   
    e->callbacks->deletions_waiting = 0;
    evas_event_callback_list_post_free(&e->callbacks->callbacks);
    if (!e->callbacks->callbacks)

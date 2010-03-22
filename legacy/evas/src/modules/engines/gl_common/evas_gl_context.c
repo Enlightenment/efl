@@ -498,8 +498,11 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
              for (j = 0; j < 3; j++)
                {
                   while (gc->shared->tex.atlas[i][j])
-                    evas_gl_common_texture_free
-                    ((Evas_GL_Texture *)gc->shared->tex.atlas[i][j]);
+                    {
+                       evas_gl_common_texture_free
+                         ((Evas_GL_Texture *)gc->shared->tex.atlas[i][j]);
+                       gc->shared->tex.atlas[i][j] = NULL;
+                    }
                }
           }
         free(gc->shared);

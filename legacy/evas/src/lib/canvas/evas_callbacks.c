@@ -2,6 +2,7 @@
 #include "evas_private.h"
 
 static void evas_object_event_callback_clear(Evas_Object *obj);
+static void evas_event_callback_clear(Evas *e);
 int _evas_event_counter = 0;
 
 void
@@ -35,6 +36,20 @@ evas_object_event_callback_clear(Evas_Object *obj)
      {
         free(obj->callbacks);
 	obj->callbacks = NULL;
+     }
+}
+
+static void
+evas_event_callback_clear(Evas *e)
+{
+   if (!e->callbacks) return;
+   if (!e->callbacks->deletions_waiting) return;
+   e->callbacks->deletions_waiting = 0;
+   evas_event_callback_list_post_free(&e->callbacks->callbacks);
+   if (!e->callbacks->callbacks)
+     {
+        free(e->callbacks);
+	e->callbacks = NULL;
      }
 }
 
@@ -83,7 +98,10 @@ evas_event_callback_call(Evas *e, Evas_Callback_Type type, void *event_info)
           }
         e->callbacks->walking_list--;
         if (!e->callbacks->walking_list)
-          l_mod = NULL;
+          {
+	     evas_event_callback_clear(e);
+             l_mod = NULL;
+          }
      }
    _evas_unwalk(e);
 }
@@ -644,6 +662,8 @@ evas_event_callback_del(Evas *e, Evas_Callback_Type type, Evas_Event_Cb func)
 	     data = fn->data;
 	     fn->delete_me = 1;
 	     e->callbacks->deletions_waiting = 1;
+	     if (!e->callbacks->walking_list)
+	       evas_event_callback_clear(e);
 	     return data;
 	  }
      }
@@ -699,6 +719,8 @@ evas_event_callback_del_full(Evas *e, Evas_Callback_Type type, Evas_Event_Cb fun
 	     data = fn->data;
 	     fn->delete_me = 1;
 	     e->callbacks->deletions_waiting = 1;
+	     if (!e->callbacks->walking_list)
+	       evas_event_callback_clear(e);
 	     return data;
 	  }
      }
