@@ -260,16 +260,9 @@ ecore_main_loop_glib_integrate(void)
 #ifdef HAVE_GLIB
    void *func;
 
-   if (_ecore_glib_active)
-     return EINA_TRUE;
-
+   if (_ecore_glib_active) return EINA_TRUE;
    func = ecore_main_loop_select_func_get();
-   if (func == _ecore_glib_select)
-     {
-	fputs("ERROR: glib already integrated.\n", stderr);
-	return EINA_FALSE;
-     }
-
+   if (func == _ecore_glib_select) return EINA_TRUE;
    _ecore_glib_select_original = func;
    ecore_main_loop_select_func_set(_ecore_glib_select);
    _ecore_glib_active = EINA_TRUE;
@@ -278,4 +271,21 @@ ecore_main_loop_glib_integrate(void)
    fputs("ERROR: no glib support in ecore.\n", stderr);
    return EINA_FALSE;
 #endif
+}
+
+Eina_Bool _ecore_glib_always_integrate = 1;
+
+/**
+ * Disable always integrating glib
+ * 
+ * If ecore is compiled with --enable-glib-integration-always (to always
+ * call ecore_main_loop_glib_integrate() when ecore_init() is called), then
+ * calling this before calling ecore_init() will disable the integration.
+ * This is for apps that explicitly do not want this to happen for whatever
+ * reasons they may have.
+ */
+EAPI void
+ecore_main_loop_glib_always_integrate_disable(void)
+{
+   _ecore_glib_always_integrate = 0;
 }

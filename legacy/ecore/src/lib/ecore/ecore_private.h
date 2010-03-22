@@ -196,5 +196,6 @@ void _ecore_job_shutdown(void);
 
 extern int    _ecore_fps_debug;
 extern double _ecore_loop_time;
+extern Eina_Bool _ecore_glib_always_integrate;
 
 #endif

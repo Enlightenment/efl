@@ -242,6 +242,15 @@ requirements_ecore_wince=""
 
 ### Additional options to configure
 
+want_glib_integration_always=no
+AC_ARG_ENABLE(glib-integration-always,
+  AC_HELP_STRING([--enable-glib-integration-always], [enable glib integration when ecore_init() is called always]),
+  [want_glib_integration_always=$enableval])
+
+if test "x${want_glib_integration_always}" = "xyes" ; then
+  AC_DEFINE([GLIB_INTEGRATION_ALWAYS], [1], [Always integrate glib if support compiled])
+fi
+
 # abstract sockets (ecore_con.c)
 AC_ARG_ENABLE([abstract-sockets],
    [AC_HELP_STRING([--disable-abstract-sockets], [disable abstract sockets.])],
@@ -1369,6 +1378,7 @@ echo
 echo "  Ecore........................: always"
 echo "    Thread support.............: $have_pthread"
 echo "    GLib support...............: $have_glib"
+echo "    Always integrate GLib......: $want_glib_integration_always"
 echo "    Gathering memory statistic.: $have_mallinfo"
 echo "  Ecore_Con....................: $have_ecore_con"
 if test "x$have_ecore_con" = "xyes" ; then
