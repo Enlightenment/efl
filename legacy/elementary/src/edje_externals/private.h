@@ -63,11 +63,13 @@ const Edje_External_Type external_##type_name##_type = {\
 
 #define DEFINE_EXTERNAL_TYPE_SIMPLE(type_name, name)    \
 static Evas_Object *                                \
-external_##type_name##_add(void *data, Evas *evas, Evas_Object *parent, const Eina_List *params) \
-{\
-    return elm_##type_name##_add(parent);   \
-}\
-\
+external_##type_name##_add(void *data, Evas *evas, Evas_Object *edje, const Eina_List *params) \
+{									\
+   Evas_Object *parent = elm_widget_parent_widget_get(edje);		\
+   if (!parent) parent = edje;						\
+   return elm_##type_name##_add(parent);				\
+}									\
+									\
 DEFINE_EXTERNAL_TYPE(type_name, name)
 
 #define DEFINE_EXTERNAL_ICON_ADD(type_name, name)                   \
