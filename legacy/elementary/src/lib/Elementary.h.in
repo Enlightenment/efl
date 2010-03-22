@@ -233,6 +233,9 @@ extern "C" {
    EAPI void         elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled);
    EAPI Eina_Bool    elm_object_disabled_get(const Evas_Object *obj);
 
+   EAPI Eina_Bool    elm_object_widget_check(const Evas_Object *obj);
+   EAPI Evas_Object *elm_object_parent_widget_get(const Evas_Object *obj);
+
    EAPI double       elm_scale_get(void);
    EAPI void         elm_scale_set(double scale);
    EAPI void         elm_scale_all_set(double scale);

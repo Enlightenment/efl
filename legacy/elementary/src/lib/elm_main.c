@@ -1711,3 +1711,37 @@ elm_object_scroll_freeze_pop(Evas_Object *obj)
 {
    elm_widget_scroll_freeze_pop(obj);
 }
+
+/**
+ * @defgroup WidgetNavigation Widget Tree Navigation.
+ *
+ * How to check if an Evas Object is an Elementary widget? How to get
+ * the first elementary widget that is parent of the given object?
+ * These are all covered in widget tree navigation.
+ */
+
+/**
+ * Check if the given Evas Object is an Elementary widget.
+ *
+ * @param obj the object to query.
+ * @return @c EINA_TRUE if it is an elementary widget variant,
+ *         @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool
+elm_object_widget_check(const Evas_Object *obj)
+{
+   return elm_widget_is(obj);
+}
+
+/**
+ * Get the first parent of the given object that is an Elementary widget.
+ *
+ * @param obj the object to query.
+ * @return the parent object that is an Elementary widget, or @c NULL
+ *         if no parent is, or no parents at all.
+ */
+EAPI Evas_Object *
+elm_object_parent_widget_get(const Evas_Object *obj)
+{
+   return elm_widget_parent_widget_get(obj);
+}

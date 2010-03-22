@@ -1,12 +1,11 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-#define SMART_NAME "elm_widget"
+static const char SMART_NAME[] = "elm_widget";
+
 #define API_ENTRY \
    Smart_Data *sd = evas_object_smart_data_get(obj); \
-   if ((!obj) || (!sd) || \
-	  (evas_object_type_get(obj) && \
-	      strcmp(evas_object_type_get(obj), SMART_NAME)))
+   if ((!obj) || (!sd) || (!_elm_widget_is(obj)))
 #define INTERNAL_ENTRY \
    Smart_Data *sd = evas_object_smart_data_get(obj); \
    if (!sd) return;
@@ -60,6 +59,7 @@ static void _smart_clip_set(Evas_Object *obj, Evas_Object * clip);
 static void _smart_clip_unset(Evas_Object *obj);
 static void _smart_calculate(Evas_Object *obj);
 static void _smart_init(void);
+static inline Eina_Bool _elm_widget_is(const Evas_Object *obj);
 
 /* local subsystem globals */
 static Evas_Smart *_e_smart = NULL;
@@ -81,14 +81,9 @@ _sub_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info 
 static void
 _sub_obj_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Evas_Object *o;
-   const char *s;
-   
-   o = obj;
+   Evas_Object *o = obj;
    do {
-      s = evas_object_type_get(o);
-      if (!s) return;
-      if (!strcmp(s, "elm_widget")) break;
+      if (_elm_widget_is(o)) break;
       o = evas_object_smart_parent_get(o);
    } while (o);
    if (!o) return;
@@ -216,7 +211,7 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
      {
 	if (elm_widget_can_focus_get(sobj)) sd->child_can_focus = 1;
      }
-   if (!strcmp(evas_object_type_get(sobj), SMART_NAME))
+   if (_elm_widget_is(sobj))
      {
 	Smart_Data *sd2 = evas_object_smart_data_get(sobj);
 	if (sd2)
@@ -226,6 +221,7 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
 	     sd2->parent_obj = obj;
 	  }
      }
+   evas_object_data_set(sobj, "elm-parent", obj);
    evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
    evas_object_smart_callback_call(obj, "sub-object-add", sobj);
    scale = elm_widget_scale_get(sobj);
@@ -235,14 +231,30 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
 EAPI void
 elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
 {
+   Evas_Object *sobj_parent;
    API_ENTRY return;
    if (!sobj) return;
+
+   sobj_parent = evas_object_data_del(sobj, "elm-parent");
+   if (sobj_parent != obj)
+     {
+	static int abort_on_warn = -1;
+	ERR("removing sub object %p from parent %p, "
+	    "but elm-parent is different %p!",
+	    sobj, obj, sobj_parent);
+	if (EINA_UNLIKELY(abort_on_warn == -1))
+	  {
+	     if (getenv("ELM_ERROR_ABORT")) abort_on_warn = 1;
+	     else abort_on_warn = 0;
+	  }
+	if (abort_on_warn == 1) abort();
+     }
    sd->subobjs = eina_list_remove(sd->subobjs, sobj);
    if (!sd->child_can_focus)
      {
 	if (elm_widget_can_focus_get(sobj)) sd->child_can_focus = 0;
      }
-   if (!strcmp(evas_object_type_get(sobj), SMART_NAME))
+   if (_elm_widget_is(sobj))
      {
 	Smart_Data *sd2 = evas_object_smart_data_get(sobj);
 	if (sd2) sd2->parent_obj = NULL;
@@ -257,7 +269,8 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
    API_ENTRY return;
    if (sd->resize_obj)
      {
-	if (!strcmp(evas_object_type_get(sd->resize_obj), SMART_NAME))
+	evas_object_data_del(sd->resize_obj, "elm-parent");
+	if (_elm_widget_is(sd->resize_obj))
 	  {
 	     Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
 	     if (sd2) sd2->parent_obj = NULL;
@@ -271,7 +284,7 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
    sd->resize_obj = sobj;
    if (sd->resize_obj)
      {
-	if (!strcmp(evas_object_type_get(sd->resize_obj), SMART_NAME))
+	if (_elm_widget_is(sd->resize_obj))
 	  {
 	     Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
 	     if (sd2) sd2->parent_obj = obj;
@@ -282,6 +295,7 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
 	evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_DOWN,
                                        _sub_obj_mouse_down, sd);
 	_smart_reconfigure(sd);
+	evas_object_data_set(sobj, "elm-parent", obj);
 	evas_object_smart_callback_call(obj, "sub-object-add", sobj);
      }
 }
@@ -354,7 +368,7 @@ elm_widget_top_get(const Evas_Object *obj)
    Evas_Object *par;
    
    if (!obj) return NULL;
-   if ((sd) && (!strcmp(evas_object_type_get(obj), SMART_NAME)))
+   if ((sd) && _elm_widget_is(obj))
      {
         if ((sd->type) && (!strcmp(sd->type, "win"))) 
           return (Evas_Object *)obj;
@@ -365,6 +379,43 @@ elm_widget_top_get(const Evas_Object *obj)
    if (!par) return (Evas_Object *)obj;
    return elm_widget_top_get(par);
 #endif   
+}
+
+EAPI Eina_Bool
+elm_widget_is(const Evas_Object *obj)
+{
+   return _elm_widget_is(obj);
+}
+
+EAPI Evas_Object *
+elm_widget_parent_widget_get(const Evas_Object *obj)
+{
+   Evas_Object *parent;
+
+   if (_elm_widget_is(obj))
+     {
+	Smart_Data *sd = evas_object_smart_data_get(obj);
+	if (!sd) return NULL;
+	parent = sd->parent_obj;
+     }
+   else
+     {
+	parent = evas_object_data_get(obj, "elm-parent");
+	if (!parent)
+	  parent = evas_object_smart_data_get(obj);
+     }
+
+   while (parent)
+     {
+	Evas_Object *elm_parent;
+	if (_elm_widget_is(parent)) break;
+	elm_parent = evas_object_data_get(parent, "elm-parent");
+	if (elm_parent)
+	  parent = elm_parent;
+	else
+	  parent = evas_object_smart_parent_get(parent);
+     }
+   return parent;
 }
 
 EAPI int
@@ -1058,9 +1109,9 @@ _elm_widget_type_check(Evas_Object *obj, const char *type)
 {
    const char *provided, *expected = "(unknown)";
    static int abort_on_warn = -1;
-   if (EINA_LIKELY(elm_widget_type_get(obj) == type)) return 1;
-   if (type) expected = type;
    provided = elm_widget_type_get(obj);
+   if (EINA_LIKELY(provided == type)) return 1;
+   if (type) expected = type;
    if ((!provided) || (provided[0] == 0))
      {
         provided = evas_object_type_get(obj);
@@ -1075,4 +1126,11 @@ _elm_widget_type_check(Evas_Object *obj, const char *type)
      }
    if (abort_on_warn == 1) abort();
    return 1;
+}
+
+static inline Eina_Bool
+_elm_widget_is(const Evas_Object *obj)
+{
+   const char *type = evas_object_type_get(obj);
+   return type == SMART_NAME;
 }

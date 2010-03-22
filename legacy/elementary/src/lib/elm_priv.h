@@ -148,6 +148,9 @@ EAPI const char  *elm_widget_style_get(const Evas_Object *obj);
 EAPI void         elm_widget_type_set(Evas_Object *obj, const char *type);
 EAPI const char  *elm_widget_type_get(const Evas_Object *obj);
 
+EAPI Eina_Bool    elm_widget_is(const Evas_Object *obj);
+EAPI Evas_Object *elm_widget_parent_widget_get(const Evas_Object *obj);
+
 EAPI Eina_List   *_elm_stringlist_get(const char *str);
 EAPI void         _elm_stringlist_free(Eina_List *list);
 
