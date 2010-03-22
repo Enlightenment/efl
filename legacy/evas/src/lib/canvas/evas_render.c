@@ -791,6 +791,7 @@ evas_render_updates_internal(Evas *e,
    int ux, uy, uw, uh;
    int cx, cy, cw, ch;
    unsigned int i, j;
+   int haveup = 0;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
@@ -897,6 +898,7 @@ evas_render_updates_internal(Evas *e,
 		  if (rect)
 		    updates = eina_list_append(updates, rect);
 	       }
+             haveup = 1;
 	     off_x = cx - ux;
 	     off_y = cy - uy;
 	     /* build obscuring objects list (in order from bottom to top) */
@@ -1071,7 +1073,7 @@ evas_render_updates_internal(Evas *e,
              RD("  ---]\n");
 	  }
 	/* flush redraws */
-        if (updates)
+        if (haveup)
           {
              evas_event_callback_call(e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
              e->engine.func->output_flush(e->engine.data.output);
