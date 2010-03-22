@@ -70,17 +70,17 @@ ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modifiers)
 EAPI void
 ecore_event_window_register(Ecore_Window id, void *window, Evas *evas, Ecore_Event_Mouse_Move_Cb move_mouse)
 {
-   Ecore_Input_Window *new;
+   Ecore_Input_Window *w;
 
-   new = malloc(sizeof (Ecore_Input_Window));
-   if (!new) return ;
+   w = calloc(1, sizeof(Ecore_Input_Window));
+   if (!w) return;
 
-   new->evas = evas;
-   new->window = window;
-   new->move_mouse = move_mouse;
-   new->ignore_event = 0;
+   w->evas = evas;
+   w->window = window;
+   w->move_mouse = move_mouse;
+   w->ignore_event = 0;
 
-   eina_hash_add(_window_hash, &id, new);
+   eina_hash_add(_window_hash, &id, w);
 
    evas_key_modifier_add(evas, "Shift");
    evas_key_modifier_add(evas, "Control");
@@ -99,7 +99,7 @@ ecore_event_window_unregister(Ecore_Window id)
    eina_hash_del(_window_hash, &id, NULL);
 }
 
-EAPI void*
+EAPI void *
 ecore_event_window_match(Ecore_Window id)
 {
    Ecore_Input_Window *lookup;
@@ -233,13 +233,13 @@ _ecore_event_evas_mouse_io(Ecore_Event_Mouse_IO *e, Ecore_Event_IO io)
 EAPI int
 ecore_event_evas_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   return _ecore_event_evas_key((Ecore_Event_Key*) event, ECORE_DOWN);
+   return _ecore_event_evas_key((Ecore_Event_Key *)event, ECORE_DOWN);
 }
 
 EAPI int
 ecore_event_evas_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   return _ecore_event_evas_key((Ecore_Event_Key*) event, ECORE_UP);
+   return _ecore_event_evas_key((Ecore_Event_Key *)event, ECORE_UP);
 }
 
 EAPI int
@@ -253,33 +253,32 @@ ecore_event_evas_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *e
    if (!lookup) return 1;
    ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
    evas_event_feed_mouse_wheel(lookup->evas, e->direction, e->z, e->timestamp, NULL);
-
    return 1;
 }
 
 EAPI int
 ecore_event_evas_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   return _ecore_event_evas_mouse_io((Ecore_Event_Mouse_IO*) event, ECORE_IN);
+   return _ecore_event_evas_mouse_io((Ecore_Event_Mouse_IO *)event, ECORE_IN);
 }
 
 EAPI int
 ecore_event_evas_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   return _ecore_event_evas_mouse_io((Ecore_Event_Mouse_IO*) event, ECORE_OUT);
+   return _ecore_event_evas_mouse_io((Ecore_Event_Mouse_IO *)event, ECORE_OUT);
 }
 
 EAPI int
 ecore_event_evas_init(void)
 {
-   if (++_ecore_event_evas_init_count != 1)
+   if (++_ecore_event_evas_init_count !=  1)
      return _ecore_event_evas_init_count;
 
-   _ecore_input_evas_log_dom = eina_log_domain_register("EcoreInputEvas", ECORE_INPUT_EVAS_DEFAULT_LOG_COLOR);
-   if(_ecore_input_evas_log_dom < 0)
+   _ecore_input_evas_log_dom = eina_log_domain_register("EcoreInputEvas",  ECORE_INPUT_EVAS_DEFAULT_LOG_COLOR);
+   if (_ecore_input_evas_log_dom < 0)
      {
-       EINA_LOG_ERR("Impossible to create a log domain for the ecore input evas_module.");
-       return --_ecore_event_evas_init_count;
+        EINA_LOG_ERR("Impossible to create a log domain for the ecore input evas_module.");
+        return --_ecore_event_evas_init_count;
      }
 
    if (!ecore_init())
@@ -316,14 +315,14 @@ ecore_event_evas_init(void)
    ecore_event_evas_handlers[7] = ecore_event_handler_add(ECORE_EVENT_MOUSE_OUT,
 							  ecore_event_evas_mouse_out,
 							  NULL);
-
+   
    _window_hash = eina_hash_pointer_new(free);
-
+   
    return _ecore_event_evas_init_count;
-
- shutdown_ecore:
+   
+   shutdown_ecore:
    ecore_shutdown();
-
+   
    return --_ecore_event_evas_init_count;
 }
 
@@ -331,25 +330,23 @@ EAPI int
 ecore_event_evas_shutdown(void)
 {
    size_t i;
-
+   
    if (--_ecore_event_evas_init_count != 0)
      return _ecore_event_evas_init_count;
-
-
+   
    eina_hash_free(_window_hash);
    _window_hash = NULL;
-   for (i = 0; i < sizeof(ecore_event_evas_handlers)/sizeof(Ecore_Event_Handler*); ++i)
+   for (i = 0; i < sizeof(ecore_event_evas_handlers) / sizeof(Ecore_Event_Handler *); i++)
      {
 	ecore_event_handler_del(ecore_event_evas_handlers[i]);
 	ecore_event_evas_handlers[i] = NULL;
      }
-
+   
    ecore_event_shutdown();
    ecore_shutdown();
-
+   
    eina_log_domain_unregister(_ecore_input_evas_log_dom);
    _ecore_input_evas_log_dom = -1;
-
+   
    return _ecore_event_evas_init_count;
 }
-
