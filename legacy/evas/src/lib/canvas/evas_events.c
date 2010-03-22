@@ -1469,6 +1469,8 @@ evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data
      }
    if (copy) copy = eina_list_free(copy);
    _evas_unwalk(e);
+
+   _evas_object_event_new();
 }
 
 /**

@@ -114,7 +114,8 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
    Evas *e;
 
-   if (obj->last_event == _evas_event_counter) return ;
+   if (obj->last_event == _evas_event_counter) return;
+
    obj->last_event = _evas_event_counter;
 
    if (obj->delete_me) return;
