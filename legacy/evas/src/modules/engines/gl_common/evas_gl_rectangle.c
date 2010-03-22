@@ -19,6 +19,13 @@ evas_gl_common_rect_draw(Evas_GL_Context *gc, int x, int y, int w, int h)
    cb = (gc->dc->col.col      ) & 0xff;
    evas_common_draw_context_clip_clip(gc->dc, 0, 0, gc->w, gc->h);
    /* no cutouts - cut right to the chase */
+   if ((gc->dc) && (gc->dc->clip.use))
+     {
+        RECTS_CLIP_TO_RECT(x, y, w, h,
+                           gc->dc->clip.x, gc->dc->clip.y,
+                           gc->dc->clip.w, gc->dc->clip.h);
+     }
+   
    if (!gc->dc->cutout.rects)
      {
         evas_gl_common_context_rectangle_push(gc, x, y, w, h, cr, cg, cb, ca);
