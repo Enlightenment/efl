@@ -371,7 +371,7 @@ _theme_hook(Evas_Object *obj)
    Item_Block *itb;
    if (!wd) return;
    elm_smart_scroller_theme_set(wd->scr, "genlist", "base", elm_widget_style_get(obj));
-   edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
+//   edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
    EINA_INLIST_FOREACH(wd->blocks, itb)
      {
 	Eina_List *l;

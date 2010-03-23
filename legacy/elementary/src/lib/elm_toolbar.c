@@ -174,7 +174,7 @@ _theme_hook(Evas_Object *obj)
 
    if (!wd) return;
    scale = (elm_widget_scale_get(obj) * _elm_config->scale);
-   edje_object_scale_set(wd->scr, scale);
+//   edje_object_scale_set(wd->scr, scale);
    EINA_LIST_FOREACH(wd->items, l, it)
      {
         Evas_Coord mw, mh;

@@ -36,6 +36,7 @@ struct _Widget_Data
 {
    Evas_Object *scr;
    Evas_Object *content;
+   const char *widget_name, *widget_base;
    Eina_Bool min_w : 1;
    Eina_Bool min_h : 1;
    double pagerel_h, pagerel_v;
@@ -61,13 +62,16 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->scr)
      {
-        elm_smart_scroller_theme_set(wd->scr, "scroller", "base", elm_widget_style_get(obj));
-        edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
+//        elm_smart_scroller_theme_set(wd->scr, "scroller", "base", elm_widget_style_get(obj));
+        elm_smart_scroller_theme_set(wd->scr, 
+                                     wd->widget_name, 
+                                     wd->widget_base,
+                                     elm_widget_style_get(obj));
+//        edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
      }
    _sizing_eval(obj);
 }
@@ -277,7 +281,14 @@ elm_scroller_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
 
+   wd->widget_name = eina_stringshare_add("scroller");
+   wd->widget_base = eina_stringshare_add("base");
+   
    wd->scr = elm_smart_scroller_add(e);
+//   elm_smart_scroller_theme_set(wd->scr, 
+//                                wd->widget_name, 
+//                                wd->widget_base,
+//                                elm_widget_style_get(obj));
    elm_widget_resize_object_set(obj, wd->scr);
    evas_object_event_callback_add(wd->scr, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _changed_size_hints, obj);
@@ -310,7 +321,7 @@ elm_scroller_add(Evas_Object *parent)
 /**
  * Set the content object
  *
- * XXX
+ * Sets the content of the scroller (the object to be scrolled around)
  *
  * @param obj The scroller object
  * @param content The new content object
@@ -336,6 +347,25 @@ elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
 				       _changed_size_hints, obj);
 	_sizing_eval(obj);
      }
+}
+
+/**
+ * Set custom theme elements for the scroller
+ * 
+ * @param obj The scroller object
+ * @param widget The widget name to use (default is "scroller")
+ * @param base The base name to use (default is "base")
+ */
+EAPI void
+elm_scroller_custom_widget_base_theme_set(Evas_Object *obj, const char *widget, const char *base)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if ((!widget) || (!base)) return;
+   if (eina_stringshare_replace(&wd->widget_name, widget) |
+       eina_stringshare_replace(&wd->widget_base, base))
+     _theme_hook(obj);
 }
 
 /**

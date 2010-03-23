@@ -200,8 +200,9 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
    if (wd->scr)
      {
-        elm_smart_scroller_theme_set(wd->scr, "list", "base", elm_widget_style_get(obj));
-        edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
+        elm_scroller_custom_widget_base_theme_set(wd->scr, "list", "base");
+        elm_object_style_set(wd->scr, elm_widget_style_get(obj));
+//        edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
      }
    EINA_LIST_FOREACH(wd->items, n, it)
      {
@@ -709,6 +710,7 @@ elm_list_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, 1);
 
    wd->scr = elm_scroller_add(parent);
+   elm_scroller_custom_widget_base_theme_set(wd->scr, "list", "base");
    elm_widget_resize_object_set(obj, wd->scr);
 
    elm_scroller_bounce_set(wd->scr, 0, 1);
