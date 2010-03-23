@@ -32,6 +32,8 @@ GSTPLUG_REQS=0.10.1
 GST_MAJORMINOR=0.10
 
 requirement=""
+have_gst_ffmpeg="no"
+have_gst_cdiocddasrc="no"
 
 PKG_CHECK_MODULES([GSTREAMER],
    [gstreamer-$GST_MAJORMINOR >= $GST_REQS gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS evas >= 0.9.9],
