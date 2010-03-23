@@ -393,7 +393,7 @@ evas_gl_common_context_new(void)
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glEnableVertexAttribArray(SHAD_COLOR);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        
+
         evas_gl_common_shader_program_init(&(shared->shader.rect), 
                                            &(shader_rect_vert_src), 
                                            &(shader_rect_frag_src),
@@ -485,6 +485,17 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
    
    if (gc->shared->references == 0)
      {
+        evas_gl_common_shader_program_shutdown(&(gc->shared->shader.rect));
+        evas_gl_common_shader_program_shutdown(&(gc->shared->shader.font));
+        evas_gl_common_shader_program_shutdown(&(gc->shared->shader.img));
+        evas_gl_common_shader_program_shutdown(&(gc->shared->shader.img_nomul));
+        evas_gl_common_shader_program_shutdown(&(gc->shared->shader.img_bgra));
+        evas_gl_common_shader_program_shutdown(&(gc->shared->shader.img_bgra_nomul));
+        evas_gl_common_shader_program_shutdown(&(gc->shared->shader.yuv));
+        evas_gl_common_shader_program_shutdown(&(gc->shared->shader.yuv_nomul));
+        evas_gl_common_shader_program_shutdown(&(gc->shared->shader.tex));
+        evas_gl_common_shader_program_shutdown(&(gc->shared->shader.tex_nomul));
+        
         while (gc->shared->images)
           {
              evas_gl_common_image_free(gc->shared->images->data);

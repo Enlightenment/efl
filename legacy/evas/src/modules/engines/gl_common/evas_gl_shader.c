@@ -492,3 +492,11 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
         return;
      }
 }
+
+void
+evas_gl_common_shader_program_shutdown(Evas_GL_Program *p)
+{
+   glDeleteShader(p->vert);
+   glDeleteShader(p->frag);
+   glDeleteProgram(p->prog);
+}

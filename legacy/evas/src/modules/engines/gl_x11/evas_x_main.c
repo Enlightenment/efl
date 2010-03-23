@@ -398,8 +398,9 @@ eng_window_free(Evas_GL_X11_Window *gw)
      eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
    if (win_count == 0)
      {
-        if (context) eglDestroyContext(gw->disp, context);
-        eglTerminate(gw->disp);
+        if (context) eglDestroyContext(gw->egl_disp, context);
+        eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        eglTerminate(gw->egl_disp);
         context = EGL_NO_CONTEXT;
      }
 #else
