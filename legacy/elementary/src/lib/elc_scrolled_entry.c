@@ -20,6 +20,15 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_theme_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_object_style_set(wd->entry, elm_widget_style_get(obj));
+   elm_object_style_set(wd->scroller, elm_widget_style_get(obj));
+}
+
+static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -150,6 +159,7 @@ elm_scrolled_entry_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_can_focus_set(obj, 1);
+   elm_widget_theme_hook_set(obj, _theme_hook);
 
    wd->scroller = elm_scroller_add(parent);
    elm_widget_resize_object_set(obj, wd->scroller);
