@@ -293,6 +293,7 @@ eina_strbuf_free(Eina_Strbuf *buf)
 {
    EINA_MAGIC_CHECK_STRBUF(buf);
    EINA_MAGIC_SET(buf, EINA_MAGIC_NONE);
+
    free(buf->buf);
    free(buf);
 }
@@ -708,6 +709,7 @@ EAPI char *
 eina_strbuf_string_steal(Eina_Strbuf *buf)
 {
    char *ret;
+
    EINA_MAGIC_CHECK_STRBUF(buf, NULL);
 
    ret = buf->buf;
@@ -747,13 +749,13 @@ eina_strbuf_length_get(const Eina_Strbuf *buf)
 EAPI Eina_Bool
 eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with, unsigned int n)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(with, EINA_FALSE);
-   EINA_MAGIC_CHECK_STRBUF(buf, 0);
-
    size_t len1, len2;
    char *spos;
    size_t pos;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(with, EINA_FALSE);
+   EINA_MAGIC_CHECK_STRBUF(buf, 0);
 
    if (n == 0)
      return EINA_FALSE;
@@ -802,16 +804,16 @@ eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with, unsigne
 EAPI int
 eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(str, 0);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(with, 0);
-   EINA_MAGIC_CHECK_STRBUF(buf, 0);
-
    size_t len1, len2, len;
    char *tmp_buf = NULL;
    char *spos;
    size_t pos, start;
    size_t pos_tmp, start_tmp;
    int n = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(str, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(with, 0);
+   EINA_MAGIC_CHECK_STRBUF(buf, 0);
 
    spos = strstr(buf->buf, str);
    if (!spos || *spos == '\0')
