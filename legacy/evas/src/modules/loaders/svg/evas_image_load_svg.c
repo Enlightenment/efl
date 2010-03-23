@@ -252,8 +252,8 @@ static void
 module_close(Evas_Module *em)
 {
    if (!rsvg_initialized) return;
-   rsvg_term();
-   rsvg_initialized = 0;
+   //rsvg_term();
+   //rsvg_initialized = 0;
 }
 
 static Evas_Module_Api evas_modapi =
