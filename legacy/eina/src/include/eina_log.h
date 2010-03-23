@@ -19,6 +19,7 @@
 #ifndef EINA_LOG_H_
 #define EINA_LOG_H_
 
+#include <stdlib.h>
 #include <stdarg.h>
 
 #include "eina_types.h"
@@ -222,7 +223,7 @@ struct _Eina_Log_Domain
    int level;              /**< Max level to log */
    const char *domain_str; /**< Formatted string with color to print */
    const char *name;       /**< Domain name */
-   unsigned int namelen;   /**< strlen(name) */
+   size_t namelen;   /**< strlen(name) */
 
    /* Private */
    Eina_Bool deleted:1;    /**< Flags deletion of domain, a free slot */

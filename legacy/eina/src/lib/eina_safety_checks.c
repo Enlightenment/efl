@@ -20,8 +20,9 @@
 # include "config.h"
 #endif
 
-#include "eina_error.h"
 #include "eina_private.h"
+#include "eina_error.h"
+#include "eina_log.h"
 #include "eina_safety_checks.h"
 
 /*============================================================================*

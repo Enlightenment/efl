@@ -38,6 +38,10 @@
 # include <iconv.h>
 #endif
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "eina_private.h"
 #include "eina_str.h"
 

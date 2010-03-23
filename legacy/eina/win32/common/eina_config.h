@@ -28,4 +28,7 @@
 # define EINA_SAFETY_CHECKS
 #endif
 
+#define MODULE_ARCH "win32-msc-x86"
+#define SHARED_LIB_SUFFIX ".dll"
+
 #endif /* EINA_CONFIG_H_ */

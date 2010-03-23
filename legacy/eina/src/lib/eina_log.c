@@ -265,8 +265,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <fnmatch.h>
-#include <unistd.h>
 #include <assert.h>
+
+#ifndef _MSC_VER
+# include <unistd.h>
+#endif
 
 #ifdef EFL_HAVE_PTHREAD
 # include <pthread.h>
@@ -315,7 +318,7 @@ struct _Eina_Log_Domain_Level_Pending
 {
    EINA_INLIST;
    unsigned int level;
-   unsigned int namelen;
+   size_t namelen;
    char name[];
 };
 
@@ -394,7 +397,7 @@ static pthread_mutex_t _log_mutex = PTHREAD_MUTEX_INITIALIZER;
 // List of domains registered
 static Eina_Log_Domain *_log_domains = NULL;
 static unsigned int _log_domains_count = 0;
-static unsigned int _log_domains_allocated = 0;
+static size_t _log_domains_allocated = 0;
 
 // Default function for printing on domains
 static Eina_Log_Print_Cb _print_cb = eina_log_print_cb_stderr;
@@ -839,7 +842,8 @@ static inline int
 eina_log_domain_register_unlocked(const char *name, const char *color)
 {
    Eina_Log_Domain_Level_Pending *pending = NULL;
-   unsigned int i, namelen;
+   size_t namelen;
+   unsigned int i;
 
    for (i = 0; i < _log_domains_count; i++)
      {
@@ -1567,7 +1571,8 @@ EAPI void
 eina_log_domain_level_set(const char *domain_name, int level)
 {
    Eina_Log_Domain_Level_Pending *pending;
-   unsigned int i, namelen;
+   size_t namelen;
+   unsigned int i;
 
    EINA_SAFETY_ON_NULL_RETURN(domain_name);
 
@@ -1627,7 +1632,8 @@ EAPI int
 eina_log_domain_level_get(const char *domain_name)
 {
    Eina_Log_Domain_Level_Pending *pending;
-   unsigned int i, namelen;
+   size_t namelen;
+   unsigned int i;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(domain_name, EINA_LOG_LEVEL_UNKNOWN);
 

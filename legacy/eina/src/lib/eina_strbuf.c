@@ -34,7 +34,7 @@ static const char EINA_MAGIC_STRBUF_STR[] = "Eina Strbuf";
 	     EINA_MAGIC_FAIL((d), EINA_MAGIC_STRBUF);		\
 	     return __VA_ARGS__;				\
 	  }							\
-   } while (0);
+   } while (0)
 
 #define EINA_STRBUF_INIT_SIZE 32
 #define EINA_STRBUF_INIT_STEP 32
