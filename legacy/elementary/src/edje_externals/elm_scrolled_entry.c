@@ -3,7 +3,7 @@
 typedef struct _Elm_Params_Entry
 {
    //const char *text;
-   int single, password;
+   int editable, single, password;
 } Elm_Params_Entry;
 
 static void
@@ -17,12 +17,14 @@ external_scrolled_entry_state_set(void *data, Evas_Object *obj, const void *from
    if (!p2)
      {
 	//elm_scrolled_entry_entry_set(obj, p1->text);
+	elm_scrolled_entry_editable_set(obj, p1->editable);
 	elm_scrolled_entry_single_line_set(obj, p1->single);
 	elm_scrolled_entry_password_set(obj, p1->password);
 	return;
      }
 
    //elm_scrolled_entry_entry_set(obj, p2->text);
+   elm_scrolled_entry_editable_set(obj, p2->editable);
    elm_scrolled_entry_single_line_set(obj, p2->single);
    elm_scrolled_entry_password_set(obj, p2->password);
 }
@@ -46,6 +48,8 @@ external_scrolled_entry_params_parse(void *data, Evas_Object *obj, const Eina_Li
 	  mem->single = param->i;
 	else if (!strcmp(param->name, "password"))
 	  mem->password = param->i;
+	else if (!strcmp(param->name, "editable"))
+	  mem->editable = param->i;
      }
 
    return mem;
@@ -63,6 +67,7 @@ external_scrolled_entry_params_free(void *params)
 
 static Edje_External_Param_Info external_scrolled_entry_params[] = {
 //   EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("text", "some text"),
+   EDJE_EXTERNAL_PARAM_INFO_BOOL("editable"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("single line"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("password"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
