@@ -726,15 +726,19 @@ _ecore_evas_new_auto_discover(int x, int y, int w, int h, const char *extra_opti
 {
    const struct ecore_evas_engine *itr;
 
+   DBG("auto discover engine");
+
    for (itr = _engines; itr->constructor != NULL; itr++)
      {
-	Ecore_Evas *ee;
-
-	ee = itr->constructor(x, y, w, h, extra_options);
+	Ecore_Evas *ee = itr->constructor(x, y, w, h, extra_options);
 	if (ee)
-	  return ee;
+	  {
+	     INF("auto discovered '%s'", itr->name);
+	     return ee;
+	  }
      }
 
+   WRN("could not auto discover.");
    return NULL;
 }
 
@@ -763,14 +767,24 @@ ecore_evas_new(const char *engine_name, int x, int y, int w, int h, const char *
    const struct ecore_evas_engine *itr;
 
    if (!engine_name)
-     engine_name = getenv("ECORE_EVAS_ENGINE");
+     {
+	engine_name = getenv("ECORE_EVAS_ENGINE");
+	if (engine_name)
+	  DBG("no engine_name provided, using ECORE_EVAS_ENGINE='%s'",
+	      engine_name);
+     }
    if (!engine_name)
      return _ecore_evas_new_auto_discover(x, y, w, h, extra_options);
 
    for (itr = _engines; itr->name != NULL; itr++)
      if (strcmp(itr->name, engine_name) == 0)
-       return itr->constructor(x, y, w, h, extra_options);
+       {
+	  INF("using engine '%s', extra_options=%s",
+	      engine_name, extra_options ? extra_options : "(null)");
+	  return itr->constructor(x, y, w, h, extra_options);
+       }
 
+   WRN("unknown engine '%s'", engine_name);
    return NULL;
 }
 
