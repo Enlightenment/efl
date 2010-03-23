@@ -814,7 +814,7 @@ _evas_object_table_smart_calculate_regular(Evas_Object *o, Evas_Object_Table_Dat
 
 EVAS_SMART_SUBCLASS_NEW("Evas_Object_Table", _evas_object_table,
 			Evas_Smart_Class, Evas_Smart_Class,
-			evas_object_smart_clipped_smart_set, NULL)
+			evas_object_smart_clipped_class_get, NULL)
 
 static void
 _evas_object_table_smart_add(Evas_Object *o)
@@ -833,7 +833,7 @@ _evas_object_table_smart_add(Evas_Object *o)
    priv->expand_h = 0;
    priv->expand_v = 0;
 
-   _evas_object_table_parent_sc.add(o);
+   _evas_object_table_parent_sc->add(o);
 }
 
 static void
@@ -855,7 +855,7 @@ _evas_object_table_smart_del(Evas_Object *o)
    if (priv->cache)
      _evas_object_table_cache_free(priv->cache);
 
-   _evas_object_table_parent_sc.del(o);
+   _evas_object_table_parent_sc->del(o);
 }
 
 static void

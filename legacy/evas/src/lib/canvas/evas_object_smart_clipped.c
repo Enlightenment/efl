@@ -233,5 +233,22 @@ evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc)
 }
 
 /**
+ * Get a pointer to the Clipped Smart Class to use for proper inheritance
+ */
+EAPI const Evas_Smart_Class *
+evas_object_smart_clipped_class_get(void)
+{
+   static Evas_Smart_Class _sc = EVAS_SMART_CLASS_INIT_NAME_VERSION("EvasObjectSmartClipped");
+   static const Evas_Smart_Class *class = NULL;
+
+   if (class)
+     return class;
+
+   evas_object_smart_clipped_smart_set(&_sc);
+   class = &_sc;
+   return class;
+}
+
+/**
  * @}
  */

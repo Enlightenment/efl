@@ -260,6 +260,35 @@ evas_object_smart_parent_get(const Evas_Object *obj)
 }
 
 /**
+ * Checks the Smart type of the object and its parents
+ * @param obj the Evas_Object to check the type of
+ * @param type the type to check for
+ * @return EINA_TRUE if @a obj or any of its parents if of type @a type, EINA_FALSE otherwise
+ * @ingroup Evas_Smart_Object_Group
+ */
+EAPI Eina_Bool
+evas_object_smart_type_check(const Evas_Object *obj, const char *type)
+{
+   const Evas_Smart_Class *sc;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
+   if (!obj->smart.smart)
+     return EINA_FALSE;
+   sc = obj->smart.smart->smart_class;
+   while (sc)
+     {
+	if (!strcmp(sc->name, type))
+	  return EINA_TRUE;
+	sc = sc->parent;
+     }
+
+   return EINA_FALSE;
+}
+
+/**
  * Gets the list of the member objects of an Evas_Object
  * @param obj the Evas_Object you want to get the list of member objects
  * @return Returns the list of the member objects of @a obj.

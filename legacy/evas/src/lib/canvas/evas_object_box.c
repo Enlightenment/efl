@@ -24,6 +24,8 @@ struct _Evas_Object_Box_Accessor
  * @{
  */
 
+static const char _evas_object_box_type[] = "Evas_Object_Box";
+
 #define EVAS_OBJECT_BOX_DATA_GET(o, ptr)			\
   Evas_Object_Box_Data *ptr = evas_object_smart_data_get(o)
 
@@ -49,9 +51,9 @@ struct _Evas_Object_Box_Accessor
        return val;							\
     }
 
-EVAS_SMART_SUBCLASS_NEW("Evas_Object_Box", _evas_object_box,
+EVAS_SMART_SUBCLASS_NEW(_evas_object_box_type, _evas_object_box,
 			Evas_Object_Box_Api, Evas_Smart_Class,
-			evas_object_smart_clipped_smart_set, NULL)
+			evas_object_smart_clipped_class_get, NULL)
 
 static Eina_Bool
 _evas_object_box_iterator_next(Evas_Object_Box_Iterator *it, void **data)
@@ -421,7 +423,7 @@ _evas_object_box_smart_add(Evas_Object *o)
 
 	evas_object_smart_data_set(o, priv);
      }
-   _evas_object_box_parent_sc.add(o);
+   _evas_object_box_parent_sc->add(o);
 
    priv->children = NULL;
    priv->align.h = 0.5;
@@ -462,7 +464,7 @@ _evas_object_box_smart_del(Evas_Object *o)
    if (priv->layout.data && priv->layout.free_data)
      priv->layout.free_data(priv->layout.data);
 
-   _evas_object_box_parent_sc.del(o);
+   _evas_object_box_parent_sc->del(o);
 }
 
 static void
@@ -548,6 +550,24 @@ evas_object_box_smart_set(Evas_Object_Box_Api *api)
    if (!api)
      return;
    _evas_object_box_smart_set(api);
+}
+
+/**
+ * Get Box Smart Class for inheritance purposes
+ */
+EAPI const Evas_Object_Box_Api *
+evas_object_box_smart_class_get(void)
+{
+   static Evas_Object_Box_Api _sc = EVAS_OBJECT_BOX_API_INIT_NAME_VERSION(_evas_object_box_type);
+   static const Evas_Object_Box_Api *class = NULL;
+
+   if (class)
+     return class;
+
+   evas_object_box_smart_set(&_sc);
+   class = &_sc;
+
+   return class;
 }
 
 /**
