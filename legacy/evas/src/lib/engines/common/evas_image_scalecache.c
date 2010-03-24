@@ -471,6 +471,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
           evas_cache_image_load_data(&im->cache_entry);
         evas_common_image_colorspace_normalize(im);
 //        noscales++;
+        LKU(im->cache.lock);
         if (im->image.data)
           {
              if (smooth)
@@ -486,7 +487,6 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
                                                             dst_region_x, dst_region_y, 
                                                             dst_region_w, dst_region_h);
           }
-        LKU(im->cache.lock);
         return;
      }
    LKL(cache_lock);
