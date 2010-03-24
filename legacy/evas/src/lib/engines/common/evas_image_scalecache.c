@@ -646,8 +646,10 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
      {
         if (!didpop)
           {
+	     LKL(cache_lock);
              cache_list = eina_inlist_remove(cache_list, (Eina_Inlist *)sci);
              cache_list = eina_inlist_append(cache_list, (Eina_Inlist *)sci);
+	     LKU(cache_lock);
           }
         else
           {
