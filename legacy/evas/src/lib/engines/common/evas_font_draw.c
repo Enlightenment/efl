@@ -358,6 +358,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 
 	if (gl == 0) break;
 	index = evas_common_font_glyph_search(fn, &fi, gl);
+	LKL(fi->ft_mutex);
         if (fi->src->current_size != fi->size)
           {
              FT_Activate_Size(fi->ft.size);
@@ -388,6 +389,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 
 	  pface = fi->src->ft.face;
 	  fg = evas_common_font_int_cache_glyph_get(fi, index);
+	  LKU(fi->ft_mutex);
 	  if (!fg) continue;
 
 	  if (dc->font_ext.func.gl_new)
