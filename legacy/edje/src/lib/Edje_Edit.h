@@ -596,6 +596,20 @@ edje_edit_part_exist(
    const char *part        ///< The name of the part
 );
 
+/** Get the name of part above this one.*/
+EAPI const char*
+edje_edit_part_above_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part        ///< The name of the part of reference
+);
+
+/** Get the name of part below this one.*/
+EAPI const char*
+edje_edit_part_below_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part        ///< The name of the part of reference
+);
+
 /**Move the given part below the previous one.*/
 EAPI Eina_Bool         ///@return 1 on success, 0 on failure
 edje_edit_part_restack_below(

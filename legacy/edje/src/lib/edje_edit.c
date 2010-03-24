@@ -1956,6 +1956,36 @@ edje_edit_part_exist(Evas_Object *obj, const char *part)
    return 1;
 }
 
+EAPI const char*
+edje_edit_part_above_get(Evas_Object *obj, const char* part)
+{
+   Edje_Part_Collection *group;
+   Edje_Real_Part *prev;
+
+   GET_RP_OR_RETURN(0);
+
+   if (rp->part->id < 1) return NULL;
+
+   prev = ed->table_parts[(rp->part->id - 1) % ed->table_parts_size];
+
+   return eina_stringshare_add(prev->part->name);
+}
+
+EAPI const char*
+edje_edit_part_below_get(Evas_Object *obj, const char* part)
+{
+   Edje_Part_Collection *group;
+   Edje_Real_Part *next;
+
+   GET_RP_OR_RETURN(0);
+
+   if (rp->part->id >= ed->table_parts_size - 1) return 0;
+
+   next = ed->table_parts[(rp->part->id + 1) % ed->table_parts_size];
+
+   return eina_stringshare_add(next->part->name);
+}
+
 EAPI Eina_Bool
 edje_edit_part_restack_below(Evas_Object *obj, const char* part)
 {
