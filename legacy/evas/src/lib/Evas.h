@@ -1765,6 +1765,7 @@ struct _Evas_Smart_Cb_Description
    EAPI void              evas_object_smart_member_del      (Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Evas_Object      *evas_object_smart_parent_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI Eina_Bool         evas_object_smart_type_check      (const Evas_Object *obj, const char *type) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
+   EAPI Eina_Bool         evas_object_smart_type_check_ptr  (const Evas_Object *obj, const char *type) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
    EAPI Eina_List        *evas_object_smart_members_get     (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI Evas_Smart       *evas_object_smart_smart_get       (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void             *evas_object_smart_data_get        (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
