@@ -656,6 +656,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
              if (sci->flop > 0) sci->flop -= FLOP_DEL;
           }
 //        INF("use cached!");
+        LKU(im->cache.lock);
         evas_common_scale_rgba_in_to_out_clip_sample
           (sci->im, dst, dc,
            0, 0,
@@ -682,7 +683,6 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
                   evas_common_rgba_image_unload(&im->cache_entry);
                }
           }
-        LKU(im->cache.lock);
      }
    else
      {
