@@ -739,9 +739,6 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
 #ifdef BUILD_PIPE_RENDER
    if (cpunum > 1)
      {
-        if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-          evas_cache_image_load_data(&im->cache_entry);
-        evas_common_image_colorspace_normalize(im);
         evas_common_rgba_image_scalecache_prepare(im, surface, context, smooth,
                                                   src_x, src_y, src_w, src_h,
                                                   dst_x, dst_y, dst_w, dst_h);
@@ -816,12 +813,7 @@ eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *i
    else
 #ifdef BUILD_PIPE_RENDER
      if (cpunum > 1)
-       {
-	 if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-	   evas_cache_image_load_data(&im->cache_entry);
-	 evas_common_image_colorspace_normalize(im);
-	 evas_common_pipe_map4_draw(im, surface, context, p, smooth, level);
-       }
+       evas_common_pipe_map4_draw(im, surface, context, p, smooth, level);
      else
 #endif
        evas_common_map4_rgba(im, surface, context, p, smooth, level);

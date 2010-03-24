@@ -427,6 +427,7 @@ typedef enum _RGBA_Image_Flags
 /*    RGBA_IMAGE_ALPHA_SPARSE  = (1 << 5), */
 /*    RGBA_IMAGE_LOADED        = (1 << 6), */
 /*    RGBA_IMAGE_NEED_DATA     = (1 << 7) */
+   RGBA_IMAGE_TODO_LOAD     = (1 << 8),
 } RGBA_Image_Flags;
 
 typedef enum _Convert_Pal_Mode

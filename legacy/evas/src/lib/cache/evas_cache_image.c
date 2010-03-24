@@ -1179,6 +1179,16 @@ evas_cache_image_load_data(Image_Entry *im)
 #endif
 }
 
+EAPI Eina_Bool
+evas_cache_image_is_loaded(Image_Entry *im)
+{
+  assert(im); 
+
+  if (im->flags.loaded)
+    return EINA_TRUE;
+  return EINA_FALSE;
+}
+
 EAPI void
 evas_cache_image_preload_data(Image_Entry *im, const void *target)
 {

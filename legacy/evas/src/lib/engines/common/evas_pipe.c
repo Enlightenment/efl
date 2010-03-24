@@ -116,7 +116,7 @@ static Thinfo            thinfo[TH_MAX];
 static pthread_barrier_t thbarrier[2];
 #endif
 
-EAPI void
+static void
 evas_common_pipe_begin(RGBA_Image *im)
 {
 #ifdef BUILD_PTHREAD
@@ -124,33 +124,6 @@ evas_common_pipe_begin(RGBA_Image *im)
 
    if (!im->pipe) return;
    if (thread_num == 1) return;
-   if (thread_num == 0)
-     {
-	int cpunum;
-
-	cpunum = eina_cpu_count();
-	thread_num = cpunum;
-	if (thread_num == 1) return;
-	pthread_barrier_init(&(thbarrier[0]), NULL, thread_num + 1);
-	pthread_barrier_init(&(thbarrier[1]), NULL, thread_num + 1);
-	for (i = 0; i < thread_num; i++)
-	  {
-	     pthread_attr_t attr;
-	     cpu_set_t cpu;
-
-	     pthread_attr_init(&attr);
-	     CPU_ZERO(&cpu);
-	     CPU_SET(i % cpunum, &cpu);
-	     pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
-	     thinfo[i].thread_num = i;
-	     thinfo[i].info = NULL;
-	     thinfo[i].barrier = thbarrier;
-	     /* setup initial locks */
-	     pthread_create(&(thinfo[i].thread_id), &attr,
-			    evas_common_pipe_thread, &(thinfo[i]));
-	     pthread_attr_destroy(&attr);
-	  }
-     }
    y = 0;
    h = im->cache_entry.h / thread_num;
    if (h < 1) h = 1;
@@ -183,7 +156,7 @@ evas_common_pipe_begin(RGBA_Image *im)
 #endif
 }
 
-EAPI void
+static void
 evas_common_pipe_flush(RGBA_Image *im)
 {
 
@@ -675,6 +648,8 @@ evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst,
    op->op_func = evas_common_pipe_image_draw_do;
    op->free_func = evas_common_pipe_op_image_free;
    evas_common_pipe_draw_context_copy(dc, op);
+
+   evas_common_pipe_image_load(src);
 }
 
 static void
@@ -743,10 +718,12 @@ evas_common_pipe_map4_draw(RGBA_Image *src, RGBA_Image *dst,
    op->op_func = evas_common_pipe_map4_draw_do;
    op->free_func = evas_common_pipe_op_map4_free;
    evas_common_pipe_draw_context_copy(dc, op);
+
+   evas_common_pipe_image_load(src);
 }
 
-EAPI void
-evas_common_pipe_map4_begin(RGBA_Image *root)
+static void
+evas_common_pipe_map4_render(RGBA_Image *root)
 {
   RGBA_Pipe *p;
   int i;
@@ -759,17 +736,176 @@ evas_common_pipe_map4_begin(RGBA_Image *root)
 	  if (p->op[i].op_func == evas_common_pipe_map4_draw_do)
 	    {
 	      if (p->op[i].op.map4.src->pipe)
-		evas_common_pipe_map4_begin(p->op[i].op.map4.src);
+		evas_common_pipe_map4_render(p->op[i].op.map4.src);
 	    }
 	  else if (p->op[i].op_func == evas_common_pipe_image_draw_do)
 	    {
 	      if (p->op[i].op.image.src->pipe)
-		evas_common_pipe_map4_begin(p->op[i].op.image.src);
+		evas_common_pipe_map4_render(p->op[i].op.image.src);
 	    }
 	}
     }
 
   evas_common_pipe_begin(root);
   evas_common_pipe_flush(root);
+}
+
+#ifdef BUILD_PTHREAD
+static Eina_List *task = NULL;
+static Thinfo task_thinfo[TH_MAX];
+static pthread_barrier_t task_thbarrier[2];
+static LK(task_mutext) = PTHREAD_MUTEX_INITIALIZER;
+#endif
+
+#ifdef BUILD_PTHREAD
+static void*
+evas_common_pipe_load(void *data)
+{
+  Thinfo *thinfo;
+
+  thinfo = data;
+  for (;;)
+    {
+      /* wait for start signal */
+      pthread_barrier_wait(&(thinfo->barrier[0]));
+
+      while (task)
+	{
+	  RGBA_Image *im = NULL;
+
+	  LKL(task_mutext);
+	  im = eina_list_data_get(task);
+	  task = eina_list_remove_list(task, task);
+	  LKU(task_mutext);
+
+	  if (im)
+	    {
+	      if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+		evas_cache_image_load_data(&im->cache_entry);
+	      evas_common_image_colorspace_normalize(im);
+
+	      im->flags &= ~RGBA_IMAGE_TODO_LOAD;
+	    }
+	}
+
+      /* send finished signal */    
+      pthread_barrier_wait(&(thinfo->barrier[1]));
+    }
+
+  return NULL;
+}
+#endif
+
+static void
+evas_common_pipe_image_load_do(void)
+{
+#ifdef BUILD_PTHREAD
+  /* Notify worker thread. */
+  pthread_barrier_wait(&(task_thbarrier[0]));
+
+  /* sync worker threads */
+  pthread_barrier_wait(&(task_thbarrier[1]));
+#endif
+}
+
+static Eina_Bool
+evas_common_pipe_init(void)
+{
+#ifdef BUILD_PTHREAD
+   if (thread_num == 0)
+     {
+	int cpunum;
+	int i;
+
+	cpunum = eina_cpu_count();
+	thread_num = cpunum;
+	if (thread_num == 1) return EINA_FALSE;
+
+	pthread_barrier_init(&(thbarrier[0]), NULL, thread_num + 1);
+	pthread_barrier_init(&(thbarrier[1]), NULL, thread_num + 1);
+	for (i = 0; i < thread_num; i++)
+	  {
+	     pthread_attr_t attr;
+	     cpu_set_t cpu;
+
+	     pthread_attr_init(&attr);
+	     CPU_ZERO(&cpu);
+	     CPU_SET(i % cpunum, &cpu);
+	     pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
+	     thinfo[i].thread_num = i;
+	     thinfo[i].info = NULL;
+	     thinfo[i].barrier = thbarrier;
+	     /* setup initial locks */
+	     pthread_create(&(thinfo[i].thread_id), &attr,
+			    evas_common_pipe_thread, &(thinfo[i]));
+	     pthread_attr_destroy(&attr);
+	  }
+
+	pthread_barrier_init(&(task_thbarrier[0]), NULL, thread_num + 1);
+	pthread_barrier_init(&(task_thbarrier[1]), NULL, thread_num + 1);
+	for (i = 0; i < thread_num; i++)
+	  {
+	     pthread_attr_t attr;
+	     cpu_set_t cpu;
+
+	     pthread_attr_init(&attr);
+	     CPU_ZERO(&cpu);
+	     CPU_SET(i % cpunum, &cpu);
+	     pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
+	     task_thinfo[i].thread_num = i;
+	     task_thinfo[i].info = NULL;
+	     task_thinfo[i].barrier = task_thbarrier;
+	     /* setup initial locks */
+	     pthread_create(&(task_thinfo[i].thread_id), &attr,
+			    evas_common_pipe_load, &(task_thinfo[i]));
+	     pthread_attr_destroy(&attr);
+	  }
+     }
+   if (thread_num == 1) return EINA_FALSE;
+   return EINA_TRUE;
+#endif
+   return EINA_FALSE;
+}
+
+EAPI void
+evas_common_pipe_image_load(RGBA_Image *im)
+{
+  if (im->flags & RGBA_IMAGE_TODO_LOAD)
+    return ;
+
+  if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888
+      && !evas_cache_image_is_loaded(&(im->cache_entry)))
+    goto add_task;
+
+  if ((!im->cs.data) || ((!im->cs.dirty) && (!(im->flags & RGBA_IMAGE_IS_DIRTY))))
+    goto add_task;
+
+  return ;
+
+ add_task:
+  task = eina_list_append(task, im);
+  im->flags |= RGBA_IMAGE_TODO_LOAD;
+}
+
+EAPI void
+evas_common_pipe_map4_begin(RGBA_Image *root)
+{
+  if (!evas_common_pipe_init())
+    {
+      RGBA_Image *im;
+
+      EINA_LIST_FREE(task, im)
+	{
+	  if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+	    evas_cache_image_load_data(&im->cache_entry);
+	  evas_common_image_colorspace_normalize(im);
+	  
+	  im->flags &= ~RGBA_IMAGE_TODO_LOAD;
+	}
+    }
+
+  evas_common_pipe_image_load_do();
+
+  evas_common_pipe_map4_render(root);
 }
 #endif
