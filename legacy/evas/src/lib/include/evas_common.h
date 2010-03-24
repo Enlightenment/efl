@@ -362,6 +362,7 @@ typedef struct _RGBA_Gradient2         RGBA_Gradient2;
 typedef struct _RGBA_Gradient2_Type    RGBA_Gradient2_Type;
 typedef struct _RGBA_Gradient2_Color_Np_Stop   RGBA_Gradient2_Color_Np_Stop;
 typedef struct _RGBA_Polygon_Point    RGBA_Polygon_Point;
+typedef struct _RGBA_Map_Point        RGBA_Map_Point;
 typedef struct _RGBA_Font             RGBA_Font;
 typedef struct _RGBA_Font_Int         RGBA_Font_Int;
 typedef struct _RGBA_Font_Source      RGBA_Font_Source;
@@ -378,6 +379,17 @@ typedef struct _Tilebuf_Tile            Tilebuf_Tile;
 typedef struct _Tilebuf_Rect		Tilebuf_Rect;
 
 typedef struct _Evas_Common_Transform        Evas_Common_Transform;
+
+// RGBA_Map_Point
+// all coords are 20.12
+// fp type - an int for now
+typedef int FPc;
+// fp # of bits of float accuracy
+#define FP 8
+// fp half (half of an fp unit)
+#define FPH (1 << (FP - 1))
+// one fp unit
+#define FP1 (1 << (FP))
 
 /*
 typedef struct _Regionbuf             Regionbuf;
@@ -652,6 +664,12 @@ struct _RGBA_Pipe_Op
 	 int                 smooth;
 	 char               *text;
       } image;
+      struct {
+	 RGBA_Image         *src;
+	 RGBA_Map_Point     *p;
+	 int                 smooth;
+	 int                 level;
+      } map4;
    } op;
 };
 
@@ -851,6 +869,14 @@ struct _RGBA_Polygon_Point
 {
    EINA_INLIST;
    int               x, y;
+};
+
+struct _RGBA_Map_Point
+{
+   FPc x, y; // x, y screenspace
+   FPc z; // z in world space. optional
+   FPc u, v; // u, v in tex coords
+   DATA32 col; // color at this point
 };
 
 // for fonts...

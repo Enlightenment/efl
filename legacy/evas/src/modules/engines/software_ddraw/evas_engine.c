@@ -287,8 +287,7 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
 
    re = (Render_Engine *)data;
 #ifdef BUILD_PIPE_RENDER
-   evas_common_pipe_begin(surface);
-   evas_common_pipe_flush(surface);
+   evas_common_pipe_map4_begin(surface);
 #endif   
    evas_software_ddraw_outbuf_push_updated_region(re->ob, surface, x, y, w, h);
    evas_software_ddraw_outbuf_free_region_for_update(re->ob, surface);

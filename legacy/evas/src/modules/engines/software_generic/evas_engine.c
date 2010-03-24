@@ -814,7 +814,12 @@ eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *i
            dx, dy, dw, dh, smooth);
      }
    else
-     evas_common_map4_rgba(im, surface, context, p, smooth, level);
+#ifdef BUILD_PIPE_RENDER
+     if (cpunum > 1)
+       evas_common_pipe_map4_draw(im, surface, context, p, smooth, level);
+     else
+#endif
+       evas_common_map4_rgba(im, surface, context, p, smooth, level);
    evas_common_cpu_end_opt();
 }
 

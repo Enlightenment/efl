@@ -676,4 +676,100 @@ evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst,
    op->free_func = evas_common_pipe_op_image_free;
    evas_common_pipe_draw_context_copy(dc, op);
 }
+
+static void
+evas_common_pipe_op_map4_free(RGBA_Pipe_Op *op)
+{
+   op->op.map4.src->ref--;
+   if (op->op.map4.src->ref == 0)
+     evas_cache_image_drop(&op->op.map4.src->cache_entry);
+   free(op->op.map4.p);
+   evas_common_pipe_op_free(op);
+}
+
+static void
+evas_common_pipe_map4_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Thread_Info *info)
+{
+   if (info)
+     {
+	RGBA_Draw_Context context;
+
+	memcpy(&(context), &(op->context), sizeof(RGBA_Draw_Context));
+#ifdef EVAS_SLI
+	evas_common_draw_context_set_sli(&(context), info->y, info->h);
+#else
+	evas_common_draw_context_clip_clip(&(context), info->x, info->y, info->w, info->h);
+#endif
+
+	evas_common_map4_rgba(op->op.map4.src, dst,
+			      &context, op->op.map4.p,
+			      op->op.map4.smooth, op->op.map4.level);
+     }
+   else
+     {
+	evas_common_map4_rgba(op->op.map4.src, dst,
+			      &(op->context), op->op.map4.p,
+			      op->op.map4.smooth, op->op.map4.level);
+     }
+}
+
+EAPI void
+evas_common_pipe_map4_draw(RGBA_Image *src, RGBA_Image *dst,
+			   RGBA_Draw_Context *dc, RGBA_Map_Point *p,
+			   int smooth, int level)
+{
+   RGBA_Pipe_Op *op;
+   RGBA_Map_Point *pts_copy;
+   int i;
+
+   if (!src) return;
+   pts_copy = malloc(sizeof (RGBA_Map_Point) * 4);
+   if (!pts_copy) return;
+   dst->pipe = evas_common_pipe_add(dst->pipe, &op);
+   if (!dst->pipe) 
+     {
+       free(pts_copy);
+       return; 
+     }
+
+   for (i = 0; i < 4; ++i)
+     pts_copy[i] = p[i];
+
+   op->op.map4.smooth = smooth;
+   op->op.map4.level = level;
+   src->ref++;
+   op->op.map4.src = src;
+   op->op.map4.p = pts_copy;
+   op->op_func = evas_common_pipe_map4_draw_do;
+   op->free_func = evas_common_pipe_op_map4_free;
+   evas_common_pipe_draw_context_copy(dc, op);
+}
+
+EAPI void
+evas_common_pipe_map4_begin(RGBA_Image *root)
+{
+  RGBA_Pipe *p;
+  int i;
+
+  /* Map imply that we need to process them recursively first. */
+  for (p = root->pipe; p; p = (RGBA_Pipe *)(EINA_INLIST_GET(p))->next)
+    {
+      for (i = 0; i < p->op_num; i++) 
+	{
+	  if (p->op[i].op_func == evas_common_pipe_map4_draw_do)
+	    {
+	      if (p->op[i].op.map4.src->pipe)
+		evas_common_pipe_map4_begin(p->op[i].op.map4.src);
+	    }
+	  else if (p->op[i].op_func == evas_common_pipe_image_draw_do)
+	    {
+	      if (p->op[i].op.image.src->pipe)
+		evas_common_pipe_map4_begin(p->op[i].op.image.src);
+	    }
+	}
+    }
+
+  evas_common_pipe_begin(root);
+  evas_common_pipe_flush(root);
+}
 #endif
