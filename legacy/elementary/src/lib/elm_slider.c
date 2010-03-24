@@ -353,7 +353,7 @@ elm_slider_label_set(Evas_Object *obj, const char *label)
  * @ingroup Slider
  */
 EAPI const char *
-elm_slider_label_get(Evas_Object *obj)
+elm_slider_label_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -403,7 +403,7 @@ elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
  * @ingroup Slider
  */
 EAPI Evas_Object *
-elm_slider_icon_get(Evas_Object *obj)
+elm_slider_icon_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

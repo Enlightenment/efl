@@ -390,7 +390,7 @@ elm_scrolled_entry_cursor_selection_end(Evas_Object *obj)
 }
 
 EAPI Eina_Bool
-elm_scrolled_entry_cursor_is_format_get(Evas_Object *obj)
+elm_scrolled_entry_cursor_is_format_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -399,7 +399,7 @@ elm_scrolled_entry_cursor_is_format_get(Evas_Object *obj)
 }
 
 EAPI Eina_Bool
-elm_scrolled_entry_cursor_is_visible_format_get(Evas_Object *obj)
+elm_scrolled_entry_cursor_is_visible_format_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -408,7 +408,7 @@ elm_scrolled_entry_cursor_is_visible_format_get(Evas_Object *obj)
 }
 
 EAPI const char *
-elm_scrolled_entry_cursor_content_get(Evas_Object *obj)
+elm_scrolled_entry_cursor_content_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -471,7 +471,7 @@ elm_scrolled_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disable
 }
 
 EAPI Eina_Bool
-elm_scrolled_entry_context_menu_disabled_get(Evas_Object *obj)
+elm_scrolled_entry_context_menu_disabled_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);

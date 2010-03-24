@@ -857,7 +857,7 @@ elm_list_multi_select_set(Evas_Object *obj, Eina_Bool multi)
 }
 
 EAPI Eina_Bool
-elm_list_multi_select_get(Evas_Object *obj)
+elm_list_multi_select_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -883,7 +883,7 @@ elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
 }
 
 EAPI Elm_List_Mode
-elm_list_horizontal_mode_get(Evas_Object *obj)
+elm_list_horizontal_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_LIST_SCROLL;
    Widget_Data *wd = elm_widget_data_get(obj);

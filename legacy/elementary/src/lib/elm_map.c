@@ -1915,7 +1915,7 @@ done:
  * @ingroup Map
  */
 EAPI double
-elm_map_zoom_get(Evas_Object *obj)
+elm_map_zoom_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 1.0;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1967,7 +1967,7 @@ elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode)
  * @ingroup Map
  */
 EAPI Elm_Map_Zoom_Mode
-elm_map_zoom_mode_get(Evas_Object *obj)
+elm_map_zoom_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_MAP_ZOOM_MODE_MANUAL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -2057,7 +2057,7 @@ elm_map_geo_region_show(Evas_Object *obj, double lon, double lat)
  * @ingroup Map
  */
 EAPI void
-elm_map_geo_region_get(Evas_Object *obj, double *lon, double *lat)
+elm_map_geo_region_get(const Evas_Object *obj, double *lon, double *lat)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -2131,7 +2131,7 @@ elm_map_paused_markers_set(Evas_Object *obj, Eina_Bool paused)
  * @return The current paused state
  */
 EAPI Eina_Bool
-elm_map_paused_get(Evas_Object *obj)
+elm_map_paused_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -2148,7 +2148,7 @@ elm_map_paused_get(Evas_Object *obj)
  * @return The current paused state
  */
 EAPI Eina_Bool
-elm_map_paused_markers_get(Evas_Object *obj)
+elm_map_paused_markers_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -2860,7 +2860,7 @@ elm_map_source_set(Evas_Object *obj, Elm_Map_Sources source)
  * @return Returns the maximum zoom of the source
  */
 EAPI Elm_Map_Sources
-elm_map_source_get(Evas_Object *obj)
+elm_map_source_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_MAP_SOURCE_MAPNIK;
    Widget_Data *wd = elm_widget_data_get(obj);

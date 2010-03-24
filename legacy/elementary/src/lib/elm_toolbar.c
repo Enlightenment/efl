@@ -342,7 +342,7 @@ elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size)
 }
 
 EAPI int
-elm_toolbar_icon_size_get(Evas_Object *obj)
+elm_toolbar_icon_size_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);

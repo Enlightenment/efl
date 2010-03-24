@@ -138,7 +138,7 @@ elm_bubble_label_set(Evas_Object *obj, const char *label)
 }
 
 EAPI const char*
-elm_bubble_label_get(Evas_Object *obj)
+elm_bubble_label_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -231,7 +231,7 @@ elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 EAPI Evas_Object *
-elm_bubble_icon_get(Evas_Object *obj)
+elm_bubble_icon_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

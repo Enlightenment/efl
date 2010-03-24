@@ -235,7 +235,7 @@ elm_check_label_set(Evas_Object *obj, const char *label)
  * @ingroup Check
  */
 EAPI const char *
-elm_check_label_get(Evas_Object *obj)
+elm_check_label_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -285,7 +285,7 @@ elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
  * @ingroup Check
  */
 EAPI Evas_Object *
-elm_check_icon_get(Evas_Object *obj)
+elm_check_icon_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

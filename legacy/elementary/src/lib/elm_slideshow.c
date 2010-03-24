@@ -389,7 +389,7 @@ elm_slideshow_previous(Evas_Object *obj)
  * @return Returns the list of transitions (list of char*)
  */
 const Eina_List *
-elm_slideshow_transitions_get(Evas_Object *obj)
+elm_slideshow_transitions_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -439,7 +439,7 @@ elm_slideshow_timeout_set(Evas_Object *obj ,int timeout)
  * @return Returns the timeout
  */
 EAPI int
-elm_slideshow_timeout_get(Evas_Object *obj)
+elm_slideshow_timeout_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) -1;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -546,7 +546,7 @@ elm_slideshow_items_get(const Evas_Object *obj)
  * @return Returns the current item displayed
  */
 EAPI Elm_Slideshow_Item *
-elm_slideshow_item_current_get(Evas_Object *obj)
+elm_slideshow_item_current_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

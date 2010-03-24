@@ -275,7 +275,7 @@ elm_radio_label_set(Evas_Object *obj, const char *label)
  * @ingroup Radio
  */
 EAPI const char *
-elm_radio_label_get(Evas_Object *obj)
+elm_radio_label_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -325,7 +325,7 @@ elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon)
  * @ingroup Radio
  */
 EAPI Evas_Object *
-elm_radio_icon_get(Evas_Object *obj)
+elm_radio_icon_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

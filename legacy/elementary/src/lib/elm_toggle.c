@@ -183,7 +183,7 @@ elm_toggle_label_set(Evas_Object *obj, const char *label)
 }
 
 EAPI const char *
-elm_toggle_label_get(Evas_Object *obj)
+elm_toggle_label_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -210,7 +210,7 @@ elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 EAPI Evas_Object *
-elm_toggle_icon_get(Evas_Object *obj)
+elm_toggle_icon_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

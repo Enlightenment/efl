@@ -29,7 +29,6 @@ static void
 _theme_hook(Evas_Object *obj) 
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   int scale = 0;
    if (!wd) return;
 //   scale = (elm_widget_scale_get(obj) * _elm_config->scale);
 //   edje_object_scale_set(wd->scr, scale);

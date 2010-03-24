@@ -327,7 +327,7 @@ elm_hoversel_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
  * @ingroup Hoversel
  */
 EAPI const char *
-elm_hoversel_label_get(Evas_Object *obj)
+elm_hoversel_label_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -367,7 +367,7 @@ elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon)
  * @ingroup Hoversel
  */
 EAPI Evas_Object *
-elm_hoversel_icon_get(Evas_Object *obj)
+elm_hoversel_icon_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -445,7 +445,7 @@ elm_hoversel_clear(Evas_Object *obj)
  * @ingroup Hoversel
  */
 EAPI const Eina_List *
-elm_hoversel_items_get(Evas_Object *obj)
+elm_hoversel_items_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

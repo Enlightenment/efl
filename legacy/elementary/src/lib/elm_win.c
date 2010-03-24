@@ -608,7 +608,7 @@ elm_win_borderless_set(Evas_Object *obj, Eina_Bool borderless)
 }
 
 EAPI Eina_Bool
-elm_win_borderless_get(Evas_Object *obj)
+elm_win_borderless_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
@@ -629,7 +629,7 @@ elm_win_shaped_set(Evas_Object *obj, Eina_Bool shaped)
 }
 
 EAPI Eina_Bool
-elm_win_shaped_get(Evas_Object *obj)
+elm_win_shaped_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
@@ -663,7 +663,7 @@ elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha)
 }
 
 EAPI Eina_Bool
-elm_win_alpha_get(Evas_Object *obj)
+elm_win_alpha_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
@@ -690,7 +690,7 @@ elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent)
 }
 
 EAPI Eina_Bool
-elm_win_transparent_get(Evas_Object *obj)
+elm_win_transparent_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
@@ -712,7 +712,7 @@ elm_win_override_set(Evas_Object *obj, Eina_Bool override)
 }
 
 EAPI Eina_Bool
-elm_win_override_get(Evas_Object *obj)
+elm_win_override_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
@@ -742,7 +742,7 @@ elm_win_fullscreen_set(Evas_Object *obj, Eina_Bool fullscreen)
 }
 
 EAPI Eina_Bool
-elm_win_fullscreen_get(Evas_Object *obj)
+elm_win_fullscreen_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
@@ -774,7 +774,7 @@ elm_win_maximized_set(Evas_Object *obj, Eina_Bool maximized)
 }
 
 EAPI Eina_Bool
-elm_win_maximized_get(Evas_Object *obj)
+elm_win_maximized_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
@@ -795,7 +795,7 @@ elm_win_iconified_set(Evas_Object *obj, Eina_Bool iconified)
 }
 
 EAPI Eina_Bool
-elm_win_iconified_get(Evas_Object *obj)
+elm_win_iconified_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
@@ -816,7 +816,7 @@ elm_win_layer_set(Evas_Object *obj, int layer)
 }
 
 EAPI int
-elm_win_layer_get(Evas_Object *obj)
+elm_win_layer_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) -1;
@@ -858,7 +858,7 @@ elm_win_rotation_with_resize_set(Evas_Object *obj, int rotation)
 }
 
 EAPI int
-elm_win_rotation_get(Evas_Object *obj)
+elm_win_rotation_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) -1;
@@ -879,7 +879,7 @@ elm_win_sticky_set(Evas_Object *obj, Eina_Bool sticky)
 }
 
 EAPI Eina_Bool
-elm_win_sticky_get(Evas_Object *obj)
+elm_win_sticky_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
@@ -920,7 +920,7 @@ elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard)
 }
 
 EAPI void
-elm_win_screen_position_get(Evas_Object *obj, int *x, int *y)
+elm_win_screen_position_get(const Evas_Object *obj, int *x, int *y)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -961,7 +961,7 @@ elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant)
  * @ingroup Win
  */
 EAPI Eina_Bool
-elm_win_conformant_get(Evas_Object *obj)
+elm_win_conformant_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
@@ -1019,7 +1019,7 @@ elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel)
  * @ingroup Win
  */
 EAPI Eina_Bool
-elm_win_quickpanel_get(Evas_Object *obj)
+elm_win_quickpanel_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
@@ -1064,7 +1064,7 @@ elm_win_quickpanel_priority_major_set(Evas_Object *obj, int priority)
  * @ingroup Win
  */
 EAPI int
-elm_win_quickpanel_priority_major_get(Evas_Object *obj)
+elm_win_quickpanel_priority_major_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) -1;
@@ -1109,7 +1109,7 @@ elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority)
  * @ingroup Win
  */
 EAPI int
-elm_win_quickpanel_priority_minor_get(Evas_Object *obj)
+elm_win_quickpanel_priority_minor_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) -1;

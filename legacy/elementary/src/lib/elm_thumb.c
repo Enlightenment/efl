@@ -86,7 +86,7 @@ _theme_hook(Evas_Object *obj)
 static void _thumb_geometry_set(Widget_Data *wd);
 
 static void
-_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = data;
    Evas_Event_Mouse_Down *ev = event_info;
@@ -103,7 +103,7 @@ _mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
 
    Widget_Data *wd = data;
@@ -181,7 +181,7 @@ err:
 }
 
 static void
-_finished_thumb_cb(void *data, Ethumb_Client *c, int id, const char *file, const char *key, const char *thumb_path, const char *thumb_key, Eina_Bool success)
+_finished_thumb_cb(void *data, Ethumb_Client *c __UNUSED__, int id, const char *file, const char *key, const char *thumb_path, const char *thumb_key, Eina_Bool success)
 {
    Widget_Data *wd = data;
 
@@ -194,7 +194,7 @@ _finished_thumb_cb(void *data, Ethumb_Client *c, int id, const char *file, const
 	return;
      }
 
-   ERR("could not generate thumbnail for %s", file);
+   ERR("could not generate thumbnail for %s (key: %s)", file, key ? key : "");
    edje_object_signal_emit(wd->children.frm, EDJE_SIGNAL_GENERATE_ERROR, "elm");
    evas_object_smart_callback_call(wd->self, "generate,error", NULL);
 }
@@ -230,7 +230,7 @@ _thumb_apply(Widget_Data *wd)
 }
 
 static int
-_thumb_apply_cb(void *data, int type, void *ev)
+_thumb_apply_cb(void *data, int type __UNUSED__, void *ev __UNUSED__)
 {
    _thumb_apply(data);
    return ECORE_CALLBACK_RENEW;
@@ -253,7 +253,7 @@ _thumb_show(Widget_Data *wd)
 }
 
 static void
-_thumb_show_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_thumb_show_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _thumb_show(data);
 }
@@ -273,7 +273,7 @@ _cancel_cb(void *data, Eina_Bool success)
 }
 
 static void
-_thumb_hide_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_thumb_hide_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = data;
 
@@ -346,13 +346,13 @@ _thumb_geometry_set(Widget_Data *wd)
 }
 
 static void
-_thumb_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_thumb_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _thumb_geometry_set(data);
 }
 
 static void
-_thumb_resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_thumb_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _thumb_geometry_set(data);
 }
@@ -364,7 +364,7 @@ static Eina_Bool _elm_need_ethumb = 0;
 static void _on_die_cb(void *, Ethumb_Client *);
 
 static void
-_connect_cb(void *data, Ethumb_Client *c, Eina_Bool success)
+_connect_cb(void *data __UNUSED__, Ethumb_Client *c, Eina_Bool success)
 {
    if (success)
      {
@@ -377,7 +377,7 @@ _connect_cb(void *data, Ethumb_Client *c, Eina_Bool success)
 }
 
 static void
-_on_die_cb(void *data, Ethumb_Client *c)
+_on_die_cb(void *data __UNUSED__, Ethumb_Client *c __UNUSED__)
 {
    ethumb_client_disconnect(_elm_ethumb_client);
    _elm_ethumb_client = NULL;
@@ -555,7 +555,7 @@ elm_thumb_file_set(Evas_Object *obj, const char *file, const char *key)
  * @ingroup Thumb
  */
 EAPI void
-elm_thumb_file_get(Evas_Object *obj, const char **file, const char **key)
+elm_thumb_file_get(const Evas_Object *obj, const char **file, const char **key)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -657,7 +657,7 @@ elm_thumb_align_set(Evas_Object *obj, float x_align, float y_align)
  * @ingroup Thumb
  */
 EAPI void
-elm_thumb_align_get(Evas_Object *obj, float *x, float *y)
+elm_thumb_align_get(const Evas_Object *obj, float *x, float *y)
 {
     ELM_CHECK_WIDTYPE(obj, widtype);
     Widget_Data *wd = elm_widget_data_get(obj);

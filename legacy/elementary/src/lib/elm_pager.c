@@ -371,7 +371,7 @@ elm_pager_content_promote(Evas_Object *obj, Evas_Object *content)
  * @ingroup Pager
  */
 EAPI Evas_Object *
-elm_pager_content_bottom_get(Evas_Object *obj)
+elm_pager_content_bottom_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -391,7 +391,7 @@ elm_pager_content_bottom_get(Evas_Object *obj)
  * @ingroup Pager
  */
 EAPI Evas_Object *
-elm_pager_content_top_get(Evas_Object *obj)
+elm_pager_content_top_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

@@ -1114,7 +1114,7 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
  * @ingroup Photocam
  */
 EAPI const char *
-elm_photocam_file_get(Evas_Object *obj)
+elm_photocam_file_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1335,7 +1335,7 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
  * @ingroup Photocam
  */
 EAPI double
-elm_photocam_zoom_get(Evas_Object *obj)
+elm_photocam_zoom_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 1.0;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1387,7 +1387,7 @@ elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode)
  * @ingroup Photocam
  */
 EAPI Elm_Photocam_Zoom_Mode
-elm_photocam_zoom_mode_get(Evas_Object *obj)
+elm_photocam_zoom_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_PHOTOCAM_ZOOM_MODE_MANUAL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1409,7 +1409,7 @@ elm_photocam_zoom_mode_get(Evas_Object *obj)
  * @ingroup Photocam
  */
 EAPI void
-elm_photocam_image_size_get(Evas_Object *obj, int *w, int *h)
+elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1425,7 +1425,7 @@ elm_photocam_image_size_get(Evas_Object *obj, int *w, int *h)
  * 
  */
 EAPI void
-elm_photocam_region_get(Evas_Object *obj, int *x, int *y, int *w, int *h)
+elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1596,7 +1596,7 @@ elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused)
  * @return The current paused state
  */
 EAPI Eina_Bool
-elm_photocam_paused_get(Evas_Object *obj)
+elm_photocam_paused_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);

@@ -597,7 +597,7 @@ elm_index_item_level_set(Evas_Object *obj, int level)
  * @ingroup Index
  */
 EAPI int
-elm_index_item_level_get(Evas_Object *obj)
+elm_index_item_level_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -614,7 +614,7 @@ elm_index_item_level_get(Evas_Object *obj)
  * @ingroup Index
  */
 EAPI const void *
-elm_index_item_selected_get(Evas_Object *obj, int level)
+elm_index_item_selected_get(const Evas_Object *obj, int level)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

@@ -185,7 +185,7 @@ elm_label_label_set(Evas_Object *obj, const char *label)
  * @ingroup Label
  */
 EAPI const char *
-elm_label_label_get(Evas_Object *obj)
+elm_label_label_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

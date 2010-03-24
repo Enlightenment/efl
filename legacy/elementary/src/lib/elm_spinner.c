@@ -547,7 +547,7 @@ elm_spinner_label_format_set(Evas_Object *obj, const char *fmt)
  * @ingroup Spinner
  */
 EAPI const char *
-elm_spinner_label_format_get(Evas_Object *obj)
+elm_spinner_label_format_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

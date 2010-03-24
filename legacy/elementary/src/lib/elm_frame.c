@@ -143,7 +143,7 @@ elm_frame_label_set(Evas_Object *obj, const char *label)
  * @ingroup Frame
  */
 EAPI const char *
-elm_frame_label_get(Evas_Object *obj)
+elm_frame_label_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
