@@ -816,7 +816,12 @@ eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *i
    else
 #ifdef BUILD_PIPE_RENDER
      if (cpunum > 1)
-       evas_common_pipe_map4_draw(im, surface, context, p, smooth, level);
+       {
+	 if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+	   evas_cache_image_load_data(&im->cache_entry);
+	 evas_common_image_colorspace_normalize(im);
+	 evas_common_pipe_map4_draw(im, surface, context, p, smooth, level);
+       }
      else
 #endif
        evas_common_map4_rgba(im, surface, context, p, smooth, level);
