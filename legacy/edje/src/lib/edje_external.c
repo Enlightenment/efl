@@ -8,6 +8,172 @@ static Eina_Hash *type_registry = NULL;
 static int init_count = 0;
 
 /**
+ * @brief Converts type identifier to string nicer representation.
+ *
+ * This may be used to debug or other informational purposes.
+ *
+ * @param type the identifier to convert.
+ * @return the string with the string representation, or @c "(unknown)".
+ */
+EAPI const char *
+edje_external_param_type_str(Edje_External_Param_Type type)
+{
+   switch (type)
+     {
+      case EDJE_EXTERNAL_PARAM_TYPE_INT:
+	 return "INT";
+      case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+	 return "DOUBLE";
+      case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+	 return "STRING";
+      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+	 return "BOOL";
+      default:
+	 return "(unknown)";
+     }
+}
+
+/**
+ * @brief Get the object created by this external part.
+ *
+ * Parts of type external creates the part object using information
+ * provided by external plugins. It's somehow like "swallow"
+ * (edje_object_part_swallow()), but it's all set automatically.
+ *
+ * This function returns the part created by such external plugins and
+ * being currently managed by this Edje.
+ *
+ * @note Almost all swallow rules apply: you should not move, resize,
+ *       hide, show, set the color or clipper of such part. It's a bit
+ *       more restrictive as one must @b never delete this object!
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @return The externally created object, or NULL if there is none or
+ *         part is not an external.
+ */
+EAPI Evas_Object *
+edje_object_part_external_object_get(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+
+   /* Need to recalc before providing the object. */
+   _edje_recalc_do(ed);
+
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp)
+     {
+	ERR("no part '%s'", part);
+	return EINA_FALSE;
+     }
+   if (rp->part->type != EDJE_PART_TYPE_EXTERNAL)
+     {
+	ERR("cannot get external object of a part '%s' that is not EXTERNAL",
+	    rp->part->name);
+	return NULL;
+     }
+   return rp->swallowed_object;
+}
+
+/**
+ * @brief Set the parameter for the external part.
+ *
+ * Parts of type external may carry extra properties that have
+ * meanings defined by the external plugin. For instance, it may be a
+ * string that defines a button label and setting this property will
+ * change that label on the fly.
+ *
+ * @note external parts have parameters set when they change
+ *       states. Those parameters will never be changed by this
+ *       function. The interpretation of how state_set parameters and
+ *       param_set will interact is up to the external plugin.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param param the parameter details, including its name, type and
+ *        actual value. This pointer should be valid, and the
+ *        parameter must exist in
+ *        #Edje_External_Type::parameters_info, with the exact type,
+ *        otherwise the operation will fail and @c EINA_FALSE will be
+ *        returned.
+ *
+ * @return @c EINA_TRUE if everything went fine, @c EINA_FALSE on errors.
+ */
+EAPI Eina_Bool
+edje_object_part_external_param_set(Evas_Object *obj, const char *part, const Edje_External_Param *param)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   if ((!param) || (!param->name)) return EINA_FALSE;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return EINA_FALSE;
+
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp)
+     {
+	ERR("no part '%s'", part);
+	return EINA_FALSE;
+     }
+
+   return _edje_external_param_set(rp->swallowed_object, param);
+}
+
+/**
+ * @brief Get the parameter for the external part.
+ *
+ * Parts of type external may carry extra properties that have
+ * meanings defined by the external plugin. For instance, it may be a
+ * string that defines a button label. This property can be modifed by
+ * state parameters, by explicit calls to
+ * edje_object_part_external_param_set() or getting the actual object
+ * with edje_object_part_external_object_get() and calling native
+ * functions.
+ *
+ * This function asks the external plugin what is the current value,
+ * independent on how it was set.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+
+ * @param param the parameter details. It is used as both input and
+ *        output variable. This pointer should be valid, and the
+ *        parameter must exist in
+ *        #Edje_External_Type::parameters_info, with the exact type,
+ *        otherwise the operation will fail and @c EINA_FALSE will be
+ *        returned.
+ *
+ * @return @c EINA_TRUE if everything went fine and @p param members
+ *         are filled with information, @c EINA_FALSE on errors and @p
+ *         param member values are not set or valid.
+ */
+EAPI Eina_Bool
+edje_object_part_external_param_get(const Evas_Object *obj, const char *part, Edje_External_Param *param)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   if ((!param) || (!param->name)) return EINA_FALSE;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return EINA_FALSE;
+
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp)
+     {
+	ERR("no part '%s'", part);
+	return EINA_FALSE;
+     }
+
+   return _edje_external_param_get(rp->swallowed_object, param);
+}
+
+/**
  * Register given type name to return the given information.
  *
  * @param type_name name to register and be known by edje's "source:"
@@ -269,7 +435,7 @@ _edje_external_shutdown()
 }
 
 Evas_Object *
-_edje_external_type_add(const char *type_name, Evas *evas, Evas_Object *parent, const Eina_List *params)
+_edje_external_type_add(const char *type_name, Evas *evas, Evas_Object *parent, const Eina_List *params, const char *part_name)
 {
    Edje_External_Type *type;
    Evas_Object *obj;
@@ -281,7 +447,7 @@ _edje_external_type_add(const char *type_name, Evas *evas, Evas_Object *parent, 
 	return NULL;
      }
 
-   obj = type->add(type->data, evas, parent, params);
+   obj = type->add(type->data, evas, parent, params, part_name);
    if (!obj)
      {
 	ERR("External type '%s' returned NULL from constructor", type_name);
@@ -306,6 +472,42 @@ _edje_external_signal_emit(Evas_Object *obj, const char *emission, const char *s
      }
 
    type->signal_emit(type->data, obj, emission, source);
+}
+
+Eina_Bool
+_edje_external_param_set(Evas_Object *obj, const Edje_External_Param *param)
+{
+   Edje_External_Type *type = evas_object_data_get(obj, "Edje_External_Type");
+   if (!type)
+     {
+	ERR("no external type for object %p", obj);
+	return EINA_FALSE;
+     }
+   if (!type->param_set)
+     {
+	ERR("external type '%s' from module '%s' does not provide param_set()",
+	    type->module_name, type->module);
+	return EINA_FALSE;
+     }
+   return type->param_set(type->data, obj, param);
+}
+
+Eina_Bool
+_edje_external_param_get(const Evas_Object *obj, Edje_External_Param *param)
+{
+   Edje_External_Type *type = evas_object_data_get(obj, "Edje_External_Type");
+   if (!type)
+     {
+	ERR("no external type for object %p", obj);
+	return EINA_FALSE;
+     }
+   if (!type->param_get)
+     {
+	ERR("external type '%s' from module '%s' does not provide param_set()",
+	    type->module_name, type->module);
+	return EINA_FALSE;
+     }
+   return type->param_get(type->data, obj, param);
 }
 
 void

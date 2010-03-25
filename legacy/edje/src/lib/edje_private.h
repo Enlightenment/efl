@@ -1523,8 +1523,10 @@ const char *_edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur);
     
 void _edje_external_init();
 void _edje_external_shutdown();
-Evas_Object *_edje_external_type_add(const char *type_name, Evas *evas, Evas_Object *parent, const Eina_List *params);
+Evas_Object *_edje_external_type_add(const char *type_name, Evas *evas, Evas_Object *parent, const Eina_List *params, const char *part_name);
 void _edje_external_signal_emit(Evas_Object *obj, const char *emission, const char *source);
+Eina_Bool _edje_external_param_set(Evas_Object *obj, const Edje_External_Param *param) EINA_ARG_NONNULL(1, 2);
+Eina_Bool _edje_external_param_get(const Evas_Object *obj, Edje_External_Param *param) EINA_ARG_NONNULL(1, 2);
 void _edje_external_params_free(Eina_List *params, Eina_Bool free_strings);
 void _edje_external_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
 void *_edje_external_params_parse(Evas_Object *obj, const Eina_List *params);

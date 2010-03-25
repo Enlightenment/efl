@@ -1782,7 +1782,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    else if (ep->type == EDJE_PART_TYPE_GRADIENT)
      rp->object = evas_object_gradient_add(ed->evas);
    else
-     printf("EDJE ERROR: wrong part type %i!\n", ep->type);
+     ERR("wrong part type %i!", ep->type);
    if (rp->object)
      {
 	evas_object_show(rp->object);
@@ -1811,7 +1811,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
 	if (ep->type == EDJE_PART_TYPE_EXTERNAL)
 	  {
 	     Evas_Object *child;
-	     child = _edje_external_type_add(source, evas_object_evas_get(ed->obj), ed->obj, NULL);
+	     child = _edje_external_type_add(source, evas_object_evas_get(ed->obj), ed->obj, NULL, name);
 	     if (child)
 	       _edje_real_part_swallow(rp, child);
 	  }
@@ -2665,8 +2665,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name)
 		     p->s = eina_stringshare_add(pi->info.s.def);
 		   break;
 		default:
-		   printf("ERROR: unknown external parameter type '%d'\n",
-			  p->type);
+		   ERR("unknown external parameter type '%d'", p->type);
 	       }
 	     pd->external_params = eina_list_append(pd->external_params, p);
 	     pi++;
@@ -3626,8 +3625,7 @@ edje_edit_state_external_param_get(Evas_Object *obj, const char *part, const cha
 		    *value = (void *)p->s;
 		    break;
 		 default:
-		    printf("ERROR: unknown external parameter type '%d'\n",
-			   p->type);
+		    ERR("unknown external parameter type '%d'", p->type);
 		}
 	   return EINA_TRUE;
 	}
@@ -3754,7 +3752,7 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
 	 p->s = eina_stringshare_add((const char *)va_arg(ap, char *));
 	 break;
       default:
-	 printf("ERROR: unknown external parameter type '%d'\n", type);
+	 ERR("unknown external parameter type '%d'", type);
      }
 
    va_end(ap);

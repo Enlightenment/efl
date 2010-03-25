@@ -428,7 +428,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			rp->object = evas_object_table_add(ed->evas);
 			break;
 		     default:
-			printf("EDJE ERROR: wrong part type %i!\n", ep->type);
+			ERR("wrong part type %i!", ep->type);
 			break;
 		    }
 
@@ -610,7 +610,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		     case EDJE_PART_TYPE_EXTERNAL:
 			  {
 			     Evas_Object *child_obj;
-			     child_obj = _edje_external_type_add(rp->part->source, evas_object_evas_get(ed->obj), ed->obj, rp->part->default_desc->external_params);
+			     child_obj = _edje_external_type_add(rp->part->source, evas_object_evas_get(ed->obj), ed->obj, rp->part->default_desc->external_params, rp->part->name);
 			     if (child_obj)
 			       {
 				  _edje_real_part_swallow(rp, child_obj);

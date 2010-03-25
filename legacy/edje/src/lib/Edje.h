@@ -250,6 +250,8 @@ enum _Edje_External_Param_Type
 };
 typedef enum _Edje_External_Param_Type Edje_External_Param_Type;
 
+EAPI const char *edje_external_param_type_str(Edje_External_Param_Type type) EINA_PURE;
+
 struct _Edje_External_Param
 {
    const char *name;
@@ -325,7 +327,7 @@ typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
 
 struct _Edje_External_Type
 {
-#define EDJE_EXTERNAL_TYPE_ABI_VERSION (1)
+#define EDJE_EXTERNAL_TYPE_ABI_VERSION (2)
   unsigned int abi_version; /**< always use:
 			     *  - #EDJE_EXTERNAL_TYPE_ABI_VERSION to declare.
 			     *  - edje_external_type_abi_version_get() to check.
@@ -333,11 +335,13 @@ struct _Edje_External_Type
 
   const char *module;
   const char *module_name;
-  Evas_Object *(*add) (void *data, Evas *evas, Evas_Object *parent, const Eina_List *params);
-  void (*state_set) (void *data, Evas_Object *obj, const void *from_params, const void *to_params, float pos);
-  void (*signal_emit) (void *data, Evas_Object *obj, const char *emission, const char *source);
-  void *(*params_parse) (void *data, Evas_Object *obj, const Eina_List *params);
-  void (*params_free) (void *params);
+  Evas_Object *(*add) (void *data, Evas *evas, Evas_Object *parent, const Eina_List *params, const char *part_name); /**< creates the object to be used by Edje as the part */
+  void (*state_set) (void *data, Evas_Object *obj, const void *from_params, const void *to_params, float pos); /**< called upon state changes, including the initial "default" 0.0 state. Parameters are the value returned by params_parse() */
+  void (*signal_emit) (void *data, Evas_Object *obj, const char *emission, const char *source); /**< Feed a signal emitted with emission originally set as part_name:signal to this object (without the "part_name:" prefix) */
+  Eina_Bool (*param_set) (void *data, Evas_Object *obj, const Edje_External_Param *param); /**< dynamically change a parameter of this external, called by scripts and user code. Returns @c EINA_TRUE on success */
+  Eina_Bool (*param_get) (void *data, const Evas_Object *obj, Edje_External_Param *param); /**< dynamically fetch a parameter of this external, called by scripts and user code. Returns @c EINA_TRUE on success. (Must check parameter name and type!) */
+  void *(*params_parse) (void *data, Evas_Object *obj, const Eina_List *params); /**< parses the list of parameters, converting into a friendly representation. Used with state_set() */
+  void (*params_free) (void *params); /**< free parameters parsed with params_parse() */
 
   /* The following callbacks aren't used by Edje itself, but by UI design
      tools instead */
@@ -345,6 +349,7 @@ struct _Edje_External_Type
   const char *(*description_get) (void *data);
   Evas_Object *(*icon_add) (void *data, Evas *e);
   Evas_Object *(*preview_add) (void *data, Evas *e);
+  const char *(*translate) (void *data, const char *orig); /**< called to translate parameters_info name properties for use in user interfaces that support internationalization (i18n) */
 
   Edje_External_Param_Info *parameters_info;
 
@@ -500,6 +505,11 @@ extern "C" {
    EAPI Eina_Bool    edje_object_part_drag_page_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
    EAPI Eina_Bool    edje_object_part_drag_step      (Evas_Object *obj, const char *part, double dx, double dy);
    EAPI Eina_Bool    edje_object_part_drag_page      (Evas_Object *obj, const char *part, double dx, double dy);
+
+   EAPI Evas_Object *edje_object_part_external_object_get(const Evas_Object *obj, const char *part);
+   EAPI Eina_Bool    edje_object_part_external_param_set(Evas_Object *obj, const char *part, const Edje_External_Param *param);
+   EAPI Eina_Bool    edje_object_part_external_param_get(const Evas_Object *obj, const char *part, Edje_External_Param *param);
+
    EAPI Eina_Bool    edje_object_part_box_append     (Evas_Object *obj, const char *part, Evas_Object *child);
    EAPI Eina_Bool    edje_object_part_box_prepend    (Evas_Object *obj, const char *part, Evas_Object *child);
    EAPI Eina_Bool    edje_object_part_box_insert_before (Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
