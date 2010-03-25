@@ -414,7 +414,7 @@ elm_slider_icon_get(const Evas_Object *obj)
 /**
  * Set the length of the dragable region of the slider
  *
- * Thois sets the minimum width or height (depending on orientation) of the
+ * This sets the minimum width or height (depending on orientation) of the
  * area of the slider that allows the slider to be dragged around. This in
  * turn affects the objects minimum size (along with icon label and unit
  * text). Note that this will also get multiplied by the scale factor.
@@ -438,6 +438,28 @@ elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
      evas_object_size_hint_min_set(wd->spacer, 1, (double)wd->size * elm_widget_scale_get(obj) * _elm_config->scale);
    edje_object_part_swallow(wd->slider, "elm.swallow.bar", wd->spacer);
    _sizing_eval(obj);
+}
+
+/**
+ * Get the length of the dragable region of the slider
+ *
+ * This gets the minimum width or height (depending on orientation) of
+ * the area of the slider that allows the slider to be dragged
+ * around. Note that this will also get multiplied by the scale
+ * factor.
+ *
+ * @param obj The slider object
+ * @return The length of the slider area
+ *
+ * @ingroup Slider
+ */
+EAPI int
+elm_slider_span_size_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+   return wd->size;
 }
 
 /**
@@ -475,7 +497,29 @@ elm_slider_unit_format_set(Evas_Object *obj, const char *units)
 }
 
 /**
- * Set the format string for the inducator area
+ * Get the format string for the unit area
+ *
+ * The slider may also display a value (the value of the slider) somewhere
+ * (for example above the slider knob that is dragged around). This sets the
+ * format string for this. See elm_slider_unit_format_set() for more
+ * information on how this works.
+ *
+ * @param obj The slider object
+ * @return The format string for the unit display.
+ *
+ * @ingroup Slider
+ */
+EAPI const char *
+elm_slider_unit_format_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->units;
+}
+
+/**
+ * Set the format string for the indicator area
  *
  * The slider may also display a value (the value of the slider) somewhere
  * (for example above the slider knob that is dragged around). This sets the
@@ -498,6 +542,28 @@ elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator)
 }
 
 /**
+ * Get the format string for the indicator area
+ *
+ * The slider may also display a value (the value of the slider) somewhere
+ * (for example above the slider knob that is dragged around). This sets the
+ * format string for this. See elm_slider_indicator_format_set() for more
+ * information on how this works.
+ *
+ * @param obj The slider object
+ * @return The format string for the indicator display.
+ *
+ * @ingroup Slider
+ */
+EAPI const char *
+elm_slider_indicator_format_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->indicator;
+}
+
+/**
  * Set orientation of the slider
  *
  * @param obj The slider object
@@ -515,6 +581,23 @@ elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
    if (wd->horizontal == horizontal) return;
    wd->horizontal = horizontal;
    _theme_hook(obj);
+}
+
+/**
+ * Get orientation of the slider
+ *
+ * @param obj The slider object
+ * @return If @c EINA_TRUE the slider will be horizontal, else it is
+ *         vertical.
+ * @ingroup Slider
+ */
+EAPI Eina_Bool
+elm_slider_horizontal_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->horizontal;
 }
 
 /**
@@ -542,6 +625,27 @@ elm_slider_min_max_set(Evas_Object *obj, double min, double max)
    _val_set(obj);
    _units_set(obj);
    _indicator_set(obj);
+}
+
+/**
+ * Get the minimum and maximum values for the slider
+ *
+ * @param obj The slider object
+ * @param min The pointer to store minimum value, may be @c NULL.
+ * @param max The pointer to store maximum value, may be @c NULL.
+ *
+ * @ingroup Slider
+ */
+EAPI void
+elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max)
+{
+   if (min) *min = 0.0;
+   if (max) *max = 0.0;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (min) *min = wd->val_min;
+   if (max) *max = wd->val_max;
 }
 
 /**
@@ -614,6 +718,22 @@ elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted)
    _val_set(obj);
    _units_set(obj);
    _indicator_set(obj);
+}
+
+/**
+ * Get if the slider display is inverted (backwards)
+ *
+ * @param obj The slider object
+ * @return If @c EINA_TRUE the slider will be inverted.
+ * @ingroup Slider
+ */
+EAPI Eina_Bool
+elm_slider_inverted_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->inverted;
 }
 
 /**

@@ -465,6 +465,7 @@ extern "C" {
    EAPI void         elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon);
    EAPI Evas_Object *elm_toggle_icon_get(const Evas_Object *obj);
    EAPI void         elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel);
+   EAPI void         elm_toggle_states_labels_get(const Evas_Object *obj, const char **onlabel, const char **offlabel);
    EAPI void         elm_toggle_state_set(Evas_Object *obj, Eina_Bool state);
    EAPI Eina_Bool    elm_toggle_state_get(const Evas_Object *obj);
    EAPI void         elm_toggle_state_pointer_set(Evas_Object *obj, Eina_Bool *statep);
@@ -572,7 +573,9 @@ extern "C" {
    typedef struct _Elm_Hoversel_Item Elm_Hoversel_Item;
    EAPI Evas_Object *elm_entry_add(Evas_Object *parent);
    EAPI void         elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line);
+   EAPI Eina_Bool    elm_entry_single_line_get(const Evas_Object *obj);
    EAPI void         elm_entry_password_set(Evas_Object *obj, Eina_Bool password);
+   EAPI Eina_Bool    elm_entry_password_get(const Evas_Object *obj);
    EAPI void         elm_entry_entry_set(Evas_Object *obj, const char *entry);
    EAPI const char  *elm_entry_entry_get(const Evas_Object *obj);
    EAPI const char  *elm_entry_selection_get(const Evas_Object *obj);
@@ -580,6 +583,7 @@ extern "C" {
    EAPI void         elm_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap);
    EAPI void         elm_entry_line_char_wrap_set(Evas_Object *obj, Eina_Bool wrap);
    EAPI void         elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable);
+   EAPI Eina_Bool    elm_entry_editable_get(const Evas_Object *obj);
    EAPI void         elm_entry_select_none(Evas_Object *obj);
    EAPI void         elm_entry_select_all(Evas_Object *obj);
    EAPI Eina_Bool    elm_entry_cursor_next(Evas_Object *obj);
@@ -856,14 +860,20 @@ extern "C" {
    EAPI void         elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon);
    EAPI Evas_Object *elm_slider_icon_get(const Evas_Object *obj);
    EAPI void         elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size);
+   EAPI int          elm_slider_span_size_get(const Evas_Object *obj);
    EAPI void         elm_slider_unit_format_set(Evas_Object *obj, const char *format);
+   EAPI const char  *elm_slider_unit_format_get(const Evas_Object *obj);
    EAPI void         elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator);
+   EAPI const char  *elm_slider_indicator_format_get(const Evas_Object *obj);
    EAPI void         elm_slider_indicator_format_function_set(Evas_Object *obj, const char *(*func)(double val));
    EAPI void         elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
+   EAPI Eina_Bool    elm_slider_horizontal_get(const Evas_Object *obj);
    EAPI void         elm_slider_min_max_set(Evas_Object *obj, double min, double max);
+   EAPI void         elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max);
    EAPI void         elm_slider_value_set(Evas_Object *obj, double val);
    EAPI double       elm_slider_value_get(const Evas_Object *obj);
    EAPI void         elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted);
+   EAPI Eina_Bool    elm_slider_inverted_get(const Evas_Object *obj);
 
    typedef enum _Elm_Genlist_Item_Flags
      {
@@ -1268,7 +1278,9 @@ extern "C" {
    
    EAPI Evas_Object *elm_scrolled_entry_add(Evas_Object *parent);
    EAPI void         elm_scrolled_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line);
+   EAPI Eina_Bool    elm_scrolled_entry_single_line_get(const Evas_Object *obj);
    EAPI void         elm_scrolled_entry_password_set(Evas_Object *obj, Eina_Bool password);
+   EAPI Eina_Bool    elm_scrolled_entry_password_get(const Evas_Object *obj);
    EAPI void         elm_scrolled_entry_entry_set(Evas_Object *obj, const char *entry);
    EAPI const char  *elm_scrolled_entry_entry_get(const Evas_Object *obj);
    EAPI const char  *elm_scrolled_entry_selection_get(const Evas_Object *obj);
@@ -1276,6 +1288,7 @@ extern "C" {
    EAPI void         elm_scrolled_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap);
    EAPI void         elm_scrolled_entry_line_char_wrap_set(Evas_Object *obj, Eina_Bool wrap);
    EAPI void         elm_scrolled_entry_editable_set(Evas_Object *obj, Eina_Bool editable);
+   EAPI Eina_Bool    elm_scrolled_entry_editable_get(const Evas_Object *obj);
    EAPI void         elm_scrolled_entry_select_none(Evas_Object *obj);
    EAPI void         elm_scrolled_entry_select_all(Evas_Object *obj);
    EAPI Eina_Bool    elm_scrolled_entry_cursor_next(Evas_Object *obj);

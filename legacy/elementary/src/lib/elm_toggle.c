@@ -232,6 +232,18 @@ elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *
 }
 
 EAPI void
+elm_toggle_states_labels_get(const Evas_Object *obj, const char **onlabel, const char **offlabel)
+{
+   if (onlabel) *onlabel = NULL;
+   if (offlabel) *offlabel = NULL;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (onlabel) *onlabel = wd->ontext;
+   if (offlabel) *offlabel = wd->offtext;
+}
+
+EAPI void
 elm_toggle_state_set(Evas_Object *obj, Eina_Bool state)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);

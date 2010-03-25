@@ -1197,6 +1197,15 @@ elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
    _sizing_eval(obj);
 }
 
+EAPI Eina_Bool
+elm_entry_single_line_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->single_line;
+}
+
 EAPI void
 elm_entry_password_set(Evas_Object *obj, Eina_Bool password)
 {
@@ -1214,6 +1223,15 @@ elm_entry_password_set(Evas_Object *obj, Eina_Bool password)
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    _sizing_eval(obj);
+}
+
+EAPI Eina_Bool
+elm_entry_password_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->password;
 }
 
 EAPI void
@@ -1318,6 +1336,15 @@ elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable)
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    _sizing_eval(obj);
+}
+
+EAPI Eina_Bool
+elm_entry_editable_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->editable;
 }
 
 EAPI void
