@@ -957,6 +957,55 @@ _backspace(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 }
 
 static void
+_delete(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+{
+   Evas_Textblock_Cursor *c1, *c2;
+   
+   c1 = evas_object_textblock_cursor_new(o);
+   c2 = evas_object_textblock_cursor_new(o);
+   evas_textblock_cursor_copy(c, c1);
+   evas_textblock_cursor_copy(c, c2);
+   evas_textblock_cursor_char_last(c2);
+   if (evas_textblock_cursor_node_format_get(c1) &&
+       (!evas_textblock_cursor_node_format_is_visible_get(c1)))
+     {
+        // non-visible format-node
+        evas_textblock_cursor_copy(c1, c2);
+        while (evas_textblock_cursor_node_next(c2))
+          {
+             if ((!evas_textblock_cursor_node_format_get(c2)) ||
+                 (evas_textblock_cursor_node_format_is_visible_get(c2)))
+               {
+                  evas_textblock_cursor_node_prev(c2);
+                  break;
+               }
+          }
+     }
+   else
+     {
+        if (evas_textblock_cursor_node_format_is_visible_get(c1))
+          {
+             // visible format node
+             // do nothing just copy c to c1/c2 and range del
+          }
+        else
+          {
+             // if it's a text node
+             if (!evas_textblock_cursor_char_next(c1))
+               {
+                  if (evas_textblock_cursor_compare(c1, c2) > 0)
+                    _curs_next(c, o, en);
+               }
+          }
+        evas_textblock_cursor_copy(c, c1);
+        evas_textblock_cursor_copy(c, c2);
+     }
+   evas_textblock_cursor_range_delete(c1, c2);
+   evas_textblock_cursor_free(c1);
+   evas_textblock_cursor_free(c2);
+}
+
+static void
 _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Edje *ed = data;
@@ -1083,16 +1132,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 	     if (en->have_selection)
 	       _range_del(en->cursor, rp->object, en);
 	     else
-	       {
-		  Evas_Textblock_Cursor *c1;
-		  
-		  c1 = evas_object_textblock_cursor_new(rp->object);
-		  evas_textblock_cursor_copy(en->cursor, c1);
-		  _curs_next(en->cursor, rp->object, en);
-		  if (evas_textblock_cursor_compare(en->cursor, c1))
-		    _backspace(en->cursor, rp->object, en);
-		  evas_textblock_cursor_free(c1);
-	       }
+               _delete(en->cursor, rp->object, en);
 	  }
 	_sel_clear(en->cursor, rp->object, en);
 	_curs_update_from_curs(en->cursor, rp->object, en);
