@@ -1957,7 +1957,7 @@ edje_edit_part_exist(Evas_Object *obj, const char *part)
 }
 
 EAPI const char*
-edje_edit_part_above_get(Evas_Object *obj, const char* part)
+edje_edit_part_below_get(Evas_Object *obj, const char* part)
 {
    Edje_Part_Collection *group;
    Edje_Real_Part *prev;
@@ -1972,7 +1972,7 @@ edje_edit_part_above_get(Evas_Object *obj, const char* part)
 }
 
 EAPI const char*
-edje_edit_part_below_get(Evas_Object *obj, const char* part)
+edje_edit_part_above_get(Evas_Object *obj, const char* part)
 {
    Edje_Part_Collection *group;
    Edje_Real_Part *next;
