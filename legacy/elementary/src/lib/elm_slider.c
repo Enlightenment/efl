@@ -262,6 +262,20 @@ _drag_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSE
    _indicator_set(data);
 }
 
+static void
+_drag_up(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   edje_object_part_drag_step(wd->slider, "elm.dragable.slider", -0.05, -0.05);
+}
+
+static void
+_drag_down(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   edje_object_part_drag_step(wd->slider, "elm.dragable.slider", 0.05, 0.05);
+}
+
 /**
  * Add a new slider to the parent
  *
@@ -301,6 +315,8 @@ elm_slider_add(Evas_Object *parent)
    edje_object_signal_callback_add(wd->slider, "drag,step", "*", _drag_stop, obj);
    edje_object_signal_callback_add(wd->slider, "drag,page", "*", _drag_stop, obj);
 //   edje_object_signal_callback_add(wd->slider, "drag,set", "*", _drag_stop, obj);
+   edje_object_signal_callback_add(wd->slider, "mouse,wheel,0,-1", "*", _drag_up, obj);
+   edje_object_signal_callback_add(wd->slider, "mouse,wheel,0,1", "*", _drag_down, obj);
    edje_object_part_drag_value_set(wd->slider, "elm.dragable.slider", 0.0, 0.0);
 
    wd->spacer = evas_object_rectangle_add(e);
