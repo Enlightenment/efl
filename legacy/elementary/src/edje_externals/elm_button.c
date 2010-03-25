@@ -9,20 +9,16 @@ typedef struct _Elm_Params_Button
 static void
 external_button_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
 {
-   const Elm_Params_Button *p1 = from_params, *p2 = to_params;
+   const Elm_Params_Button *p;
 
-   p1 = from_params;
-   p2 = to_params;
+   if (to_params) p = to_params;
+   else if (from_params) p = from_params;
+   else return;
 
-   if (!p2)
-     {
-	elm_button_label_set(obj, p1->base.label);
-	elm_button_icon_set(obj, p1->icon);
-	return;
-     }
-
-   elm_button_label_set(obj, p2->base.label);
-   elm_button_icon_set(obj, p2->icon);
+   if (p->base.label)
+     elm_button_label_set(obj, p->base.label);
+   if (p->icon)
+     elm_button_icon_set(obj, p->icon);
 }
 
 static Eina_Bool

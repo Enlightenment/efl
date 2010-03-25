@@ -6,40 +6,53 @@ typedef struct _Elm_Params_Slider
    Evas_Object *icon;
    const char *indicator, *unit;
    double min, max, value;
-   int inverted, span, horizontal;
+   Eina_Bool min_exists:1;
+   Eina_Bool max_exists:1;
+   Eina_Bool value_exists:1;
+   Eina_Bool inverted:1;
+   Eina_Bool inverted_exists:1;
+   Eina_Bool span:1;
+   Eina_Bool span_exists:1;
+   Eina_Bool horizontal:1;
+   Eina_Bool horizontal_exists:1;
 } Elm_Params_Slider;
 
 static void
 external_slider_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
 {
-   const Elm_Params_Slider *p1 = from_params, *p2 = to_params;
+   const Elm_Params_Slider *p;
 
-   p1 = from_params;
-   p2 = to_params;
+   if (to_params) p = to_params;
+   else if (from_params) p = from_params;
+   else return;
 
-   if (!p2)
+   if (p->base.label)
+     elm_slider_label_set(obj, p->base.label);
+   if (p->icon)
+     elm_slider_icon_set(obj, p->icon);
+   if (p->span_exists)
+     elm_slider_span_size_set(obj, p->span);
+   if ((p->min_exists) && (p->max_exists))
+     elm_slider_min_max_set(obj, p->min, p->max);
+   else if ((p->min_exists) || (p->max_exists))
      {
-	elm_slider_label_set(obj, p1->base.label);
-	elm_slider_icon_set(obj, p1->icon);
-	elm_slider_span_size_set(obj, p1->span);
-	elm_slider_min_max_set(obj, p1->min, p1->max);
-	elm_slider_value_set(obj, p1->value);
-	elm_slider_inverted_set(obj, p1->inverted);;
-	elm_slider_horizontal_set(obj, p1->horizontal);
-	elm_slider_indicator_format_set(obj, p1->indicator);
-	elm_slider_unit_format_set(obj, p1->unit);
-	return;
+	double min, max;
+	elm_slider_min_max_get(obj, &min, &max);
+	if (p->min_exists)
+	  elm_slider_min_max_set(obj, p->min, max);
+	else
+	  elm_slider_min_max_set(obj, min, p->max);
      }
-
-   elm_slider_label_set(obj, p2->base.label);
-   elm_slider_icon_set(obj, p2->icon);
-   elm_slider_span_size_set(obj, p2->span);
-   elm_slider_min_max_set(obj, p2->min, p2->max);
-   elm_slider_value_set(obj, p2->value);
-   elm_slider_inverted_set(obj, p2->inverted);
-   elm_slider_horizontal_set(obj, p2->horizontal);
-   elm_slider_indicator_format_set(obj, p2->indicator);
-   elm_slider_unit_format_set(obj, p2->unit);
+   if (p->value_exists)
+     elm_slider_value_set(obj, p->value);
+   if (p->inverted_exists)
+     elm_slider_inverted_set(obj, p->inverted);;
+   if (p->horizontal_exists)
+     elm_slider_horizontal_set(obj, p->horizontal);
+   if (p->indicator)
+     elm_slider_indicator_format_set(obj, p->indicator);
+   if (p->unit)
+     elm_slider_unit_format_set(obj, p->unit);
 }
 
 static Eina_Bool

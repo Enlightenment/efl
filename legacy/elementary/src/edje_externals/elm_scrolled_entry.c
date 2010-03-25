@@ -3,41 +3,36 @@
 typedef struct _Elm_Params_Entry
 {
    const char *text;
-   int editable, single, password;
    Eina_Bool text_set:1;
+   Eina_Bool editable:1;
+   Eina_Bool single:1;
+   Eina_Bool password:1;
+   Eina_Bool editable_exists:1;
+   Eina_Bool single_exists:1;
+   Eina_Bool password_exists:1;
 } Elm_Params_Entry;
 
 static void
 external_scrolled_entry_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
 {
-   const Elm_Params_Entry *p1 = from_params, *p2 = to_params;
+   const Elm_Params_Entry *p;
 
-   p1 = from_params;
-   p2 = to_params;
+   if (to_params) p = to_params;
+   else if (from_params) p = from_params;
+   else return;
 
-   if (!p2)
+   if ((!p->text_set) && (p->text))
      {
-	if (!p1->text_set)
-	  {
-	     elm_scrolled_entry_entry_set(obj, p1->text);
-	     ((Elm_Params_Entry *)p1)->text_set = EINA_TRUE;
-	  }
-	elm_scrolled_entry_editable_set(obj, p1->editable);
-	elm_scrolled_entry_single_line_set(obj, p1->single);
-	elm_scrolled_entry_password_set(obj, p1->password);
-	return;
+	elm_scrolled_entry_entry_set(obj, p->text);
+	((Elm_Params_Entry *)p)->text_set = EINA_TRUE;
      }
-
-   if (!p2->text_set)
-     {
-	elm_scrolled_entry_entry_set(obj, p2->text);
-	((Elm_Params_Entry *)p2)->text_set = EINA_TRUE;
-     }
-   elm_scrolled_entry_editable_set(obj, p2->editable);
-   elm_scrolled_entry_single_line_set(obj, p2->single);
-   elm_scrolled_entry_password_set(obj, p2->password);
+   if (p->editable_exists)
+     elm_scrolled_entry_editable_set(obj, p->editable);
+   if (p->single_exists)
+     elm_scrolled_entry_single_line_set(obj, p->single);
+   if (p->password_exists)
+     elm_scrolled_entry_password_set(obj, p->password);
 }
-
 
 static Eina_Bool
 external_scrolled_entry_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
@@ -139,11 +134,20 @@ external_scrolled_entry_params_parse(void *data __UNUSED__, Evas_Object *obj __U
 	if (!strcmp(param->name, "text"))
 	  mem->text = eina_stringshare_add(param->s);
 	else if (!strcmp(param->name, "single line"))
-	  mem->single = param->i;
+	  {
+	     mem->single = !!param->i;
+	     mem->single_exists = EINA_TRUE;
+	  }
 	else if (!strcmp(param->name, "password"))
-	  mem->password = param->i;
+	  {
+	     mem->password = !!param->i;
+	     mem->password_exists = EINA_TRUE;
+	  }
 	else if (!strcmp(param->name, "editable"))
-	  mem->editable = param->i;
+	  {
+	     mem->editable = param->i;
+	     mem->editable_exists = EINA_TRUE;
+	  }
      }
 
    return mem;

@@ -5,39 +5,29 @@ typedef struct _Elm_Params_Radio
    Elm_Params base;
    Evas_Object *icon;
    const char* group_name;
-   int state;
+   int value;
+   Eina_Bool value_exists:1;
 } Elm_Params_Radio;
 
 static void
 external_radio_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
 {
-   const Elm_Params_Radio *p1 = from_params, *p2 = to_params;
+   const Elm_Params_Radio *p;
 
-   p1 = from_params;
-   p2 = to_params;
+   if (to_params) p = to_params;
+   else if (from_params) p = from_params;
+   else return;
 
-   if (!p2)
-     {
-	elm_radio_label_set(obj, p1->base.label);
-	elm_radio_icon_set(obj, p1->icon);
-	elm_radio_state_value_set(obj, p1->state);
-	if (p1->group_name)
-	  {
-	     Evas_Object *ed = evas_object_smart_parent_get(obj);
-	     Evas_Object *group = edje_object_part_swallow_get(ed, p1->group_name);
-	     if (group)
-	       elm_radio_group_add(obj, group);
-	  }
-	return;
-     }
-
-   elm_radio_label_set(obj, p2->base.label);
-   elm_radio_icon_set(obj, p2->icon);
-   elm_radio_state_value_set(obj, p2->state);
-   if (p2->group_name)
+   if (p->base.label)
+     elm_radio_label_set(obj, p->base.label);
+   if (p->icon)
+     elm_radio_icon_set(obj, p->icon);
+   if (p->value_exists)
+     elm_radio_state_value_set(obj, p->value);
+   if (p->group_name)
      {
 	Evas_Object *ed = evas_object_smart_parent_get(obj);
-	Evas_Object *group = edje_object_part_swallow_get(ed, p2->group_name);
+	Evas_Object *group = edje_object_part_swallow_get(ed, p->group_name);
 	elm_radio_group_add(obj, group);
      }
 }
@@ -129,7 +119,10 @@ external_radio_params_parse(void *data, Evas_Object *obj, const Eina_List *param
 	if (!strcmp(param->name, "group"))
 	  mem->group_name = eina_stringshare_add(param->s);
 	else if (!strcmp(param->name, "value"))
-	  mem->state = param->i;
+	  {
+	     mem->value = param->i;
+	     mem->value_exists = EINA_TRUE;
+	  }
      }
 
    return mem;

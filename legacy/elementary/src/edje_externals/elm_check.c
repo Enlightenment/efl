@@ -4,28 +4,25 @@ typedef struct _Elm_Params_Check
 {
    Elm_Params base;
    Evas_Object *icon;
-   int state;
+   Eina_Bool state:1;
+   Eina_Bool state_exists:1;
 } Elm_Params_Check;
 
 static void
 external_check_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
 {
-   const Elm_Params_Check *p1 = from_params, *p2 = to_params;
+   const Elm_Params_Check *p;
 
-   p1 = from_params;
-   p2 = to_params;
+   if (to_params) p = to_params;
+   else if (from_params) p = from_params;
+   else return;
 
-   if (!p2)
-     {
-	elm_check_label_set(obj, p1->base.label);
-	elm_check_icon_set(obj, p1->icon);
-	elm_check_state_set(obj, p1->state);
-	return;
-     }
-
-   elm_check_label_set(obj, p2->base.label);
-   elm_check_icon_set(obj, p2->icon);
-   elm_check_state_set(obj, p2->state);
+   if (p->base.label)
+     elm_check_label_set(obj, p->base.label);
+   if (p->icon)
+     elm_check_icon_set(obj, p->icon);
+   if (p->state_exists)
+     elm_check_state_set(obj, p->state);
 }
 
 static Eina_Bool
@@ -111,7 +108,10 @@ external_check_params_parse(void *data, Evas_Object *obj, const Eina_List *param
 
    param = edje_external_param_find(params, "state");
    if (param)
-     mem->state = param->i;
+     {
+	mem->state = !!param->i;
+	mem->state_exists = EINA_TRUE;
+     }
 
    return mem;
 }

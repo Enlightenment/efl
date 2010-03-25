@@ -6,31 +6,39 @@ typedef struct _Elm_Params_Toggle
 {
    Elm_Params base;
    Evas_Object *icon;
-   const char *st_label_from, *st_label_to;
-   int state;
+   const char *on, *off;
+   Eina_Bool state:1;
+   Eina_Bool state_exists:1;
 } Elm_Params_Toggle;
 
 static void
 external_toggle_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
 {
-   const Elm_Params_Toggle *p1 = from_params, *p2 = to_params;
+   const Elm_Params_Toggle *p;
 
-   p1 = from_params;
-   p2 = to_params;
+   if (to_params) p = to_params;
+   else if (from_params) p = from_params;
+   else return;
 
-   if (!p2)
+   if (p->base.label)
+     elm_toggle_label_set(obj, p->base.label);
+   if (p->icon)
+     elm_toggle_icon_set(obj, p->icon);
+
+   if ((p->on) && (p->off))
+     elm_toggle_states_labels_set(obj, p->on, p->off);
+   else if ((p->on) || (p->off))
      {
-	elm_toggle_label_set(obj, p1->base.label);
-	elm_toggle_icon_set(obj, p1->icon);
-	elm_toggle_states_labels_set(obj, p1->st_label_from, p1->st_label_to);
-	elm_toggle_state_set(obj, p1->state);
-	return;
+	const char *on, *off;
+	elm_toggle_states_labels_get(obj, &on, &off);
+	if (p->on)
+	  elm_toggle_states_labels_set(obj, p->on, off);
+	else
+	  elm_toggle_states_labels_set(obj, on, p->off);
      }
 
-   elm_toggle_label_set(obj, p2->base.label);
-   elm_toggle_icon_set(obj, p2->icon);
-   elm_toggle_states_labels_set(obj, p2->st_label_from, p2->st_label_to);
-   elm_toggle_state_set(obj, p2->state);
+   if (p->state_exists)
+     elm_toggle_state_set(obj, p->state);
 }
 
 static Eina_Bool
@@ -160,9 +168,9 @@ external_toggle_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
 	if (!strcmp(param->name, "state"))
 	  mem->state = param->i;
 	else if (!strcmp(param->name, "label on"))
-	  mem->st_label_from = eina_stringshare_add(param->s);
+	  mem->on = eina_stringshare_add(param->s);
 	else if (!strcmp(param->name, "label off"))
-	  mem->st_label_to = eina_stringshare_add(param->s);
+	  mem->off = eina_stringshare_add(param->s);
      }
 
    return mem;
@@ -175,10 +183,10 @@ external_toggle_params_free(void *params)
 
    if (mem->icon)
      evas_object_del(mem->icon);
-   if (mem->st_label_from)
-     eina_stringshare_del(mem->st_label_from);
-   if (mem->st_label_to)
-     eina_stringshare_del(mem->st_label_to);
+   if (mem->on)
+     eina_stringshare_del(mem->on);
+   if (mem->off)
+     eina_stringshare_del(mem->off);
    external_common_params_free(params);
 }
 
