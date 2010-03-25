@@ -7,7 +7,7 @@ typedef struct _Elm_Params_Button
 } Elm_Params_Button;
 
 static void
-external_button_state_set(void *data, Evas_Object *obj, const void *from_params, const void *to_params, float pos)
+external_button_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
 {
    const Elm_Params_Button *p1 = from_params, *p2 = to_params;
 
@@ -23,6 +23,59 @@ external_button_state_set(void *data, Evas_Object *obj, const void *from_params,
 
    elm_button_label_set(obj, p2->base.label);
    elm_button_icon_set(obj, p2->icon);
+}
+
+static Eina_Bool
+external_button_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
+{
+   if (!strcmp(param->name, "label"))
+     {
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	  {
+	     elm_button_label_set(obj, param->s);
+	     return EINA_TRUE;
+	  }
+     }
+   else if (!strcmp(param->name, "icon"))
+     {
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	  {
+	     Evas_Object *icon = external_common_param_icon_get(obj, param);
+	     if (icon)
+	       {
+		  elm_button_icon_set(obj, icon);
+		  return EINA_TRUE;
+	       }
+	  }
+     }
+
+   ERR("unknown parameter '%s' of type '%s'",
+       param->name, edje_external_param_type_str(param->type));
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+external_button_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+{
+   if (!strcmp(param->name, "label"))
+     {
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	  {
+	     param->s = elm_button_label_get(obj);
+	     return EINA_TRUE;
+	  }
+     }
+   else if (!strcmp(param->name, "icon"))
+     {
+	/* not easy to get icon name back from live object */
+	return EINA_FALSE;
+     }
+
+   ERR("unknown parameter '%s' of type '%s'",
+       param->name, edje_external_param_type_str(param->type));
+
+   return EINA_FALSE;
 }
 
 static void *

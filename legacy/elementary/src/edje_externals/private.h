@@ -1,40 +1,18 @@
-#include <Elementary.h>
-
-#ifdef EAPI
-# undef EAPI
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
 #endif
-
-#define EAPI __attribute__ ((visibility("default")))
-
-/* #ifdef _WIN32 */
-/* # ifdef EFL_EDJE_BUILD */
-/* #  ifdef DLL_EXPORT */
-/* #   define EAPI __declspec(dllexport) */
-/* #  else */
-/* #   define EAPI */
-/* #  endif /\* ! DLL_EXPORT *\/ */
-/* # else */
-/* #  define EAPI __declspec(dllimport) */
-/* # endif /\* ! EFL_EDJE_BUILD *\/ */
-/* #else */
-/* # ifdef __GNUC__ */
-/* #  if __GNUC__ >= 4 */
-/* #   define EAPI __attribute__ ((visibility("default"))) */
-/* #  else */
-/* #   define EAPI */
-/* #  endif */
-/* # else */
-/* #  define EAPI */
-/* # endif */
-/* #endif */
+#include "Elementary.h"
+#include "elm_priv.h"
 
 typedef struct {
     const char *label;
 } Elm_Params;
 
 void  external_signal(void *data, Evas_Object *obj, const char *signal, const char *source);
+const char *external_translate(void *data, const char *orig);
 void  external_common_params_free(void *params);
 void *external_common_params_parse_internal(size_t params_size, void *data, Evas_Object *obj, const Eina_List *params);
+Evas_Object *external_common_param_icon_get(Evas_Object *obj, const Edje_External_Param *param);
 void  external_common_icon_param_parse(Evas_Object **icon, Evas_Object *obj, const Eina_List *params);
 #define external_common_params_parse(type, data, obj, params)   \
     external_common_params_parse_internal(sizeof(type), data, obj, params)
@@ -42,7 +20,8 @@ void  external_common_icon_param_parse(Evas_Object **icon, Evas_Object *obj, con
 
 #define DEFINE_EXTERNAL_TYPE(type_name, name)           \
 static const char *                                     \
-external_##type_name##_label_get(void *data) {          \
+external_##type_name##_label_get(void *data __UNUSED__) \
+{                                                       \
     return name;                                        \
 }                                                       \
                                                         \
@@ -51,19 +30,24 @@ const Edje_External_Type external_##type_name##_type = {\
     .module = "elm",                                    \
     .module_name = "Elementary",                        \
     .add = external_##type_name##_add,                  \
-    .signal_emit = external_signal,                     \
     .state_set = external_##type_name##_state_set,      \
+    .signal_emit = external_signal,                     \
+    .param_set = external_##type_name##_param_set,      \
+    .param_get = external_##type_name##_param_get,      \
     .params_parse = external_##type_name##_params_parse,\
     .params_free = external_##type_name##_params_free,  \
-    .icon_add = external_##type_name##_icon_add,        \
     .label_get = external_##type_name##_label_get,      \
+    .description_get = NULL,                            \
+    .icon_add = external_##type_name##_icon_add,        \
+    .preview_add = NULL,                                \
+    .translate = external_translate,                    \
     .parameters_info = external_##type_name##_params,   \
     .data = NULL                                        \
 };
 
 #define DEFINE_EXTERNAL_TYPE_SIMPLE(type_name, name)    \
 static Evas_Object *                                \
-external_##type_name##_add(void *data, Evas *evas, Evas_Object *edje, const Eina_List *params) \
+external_##type_name##_add(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *edje, const Eina_List *params __UNUSED__, const char *part_name __UNUSED__) \
 {									\
    Evas_Object *parent = elm_widget_parent_widget_get(edje);		\
    if (!parent) parent = edje;						\
@@ -74,7 +58,7 @@ DEFINE_EXTERNAL_TYPE(type_name, name)
 
 #define DEFINE_EXTERNAL_ICON_ADD(type_name, name)                   \
 Evas_Object *                                                       \
-external_##type_name##_icon_add(void *data, Evas *e) {              \
+external_##type_name##_icon_add(void *data __UNUSED__, Evas *e) {   \
    Evas_Object *ic;                                                 \
    int w = 20, h = 10;                                              \
                                                                     \
