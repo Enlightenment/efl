@@ -1552,11 +1552,15 @@ elm_entry_context_menu_disabled_get(const Evas_Object *obj)
 EAPI char *
 elm_entry_markup_to_utf8(const char *s)
 {
-   return _mkup_to_text(s);
+   char *ss = _mkup_to_text(s);
+   if (!ss) ss = strdup("");
+   return ss;
 }
 
 EAPI char *
 elm_entry_utf8_to_markup(const char *s)
 {
-   return _text_to_mkup(s);
+   char *ss = _text_to_mkup(s);
+   if (!ss) ss = strdup("");
+   return ss;
 }
