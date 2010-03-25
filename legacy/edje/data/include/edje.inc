@@ -151,6 +151,16 @@ native       set_min_size     (Float:w, Float:h);
 native       set_max_size     (Float:w, Float:h);
 native       part_swallow     (part_id, GROUP:str[]);
 
+native       external_param_get_int(id, param_name[]);
+native       external_param_set_int(id, param_name[], value);
+native Float:external_param_get_float(id, param_name[]);
+native       external_param_set_float(id, param_name[], Float:value);
+native       external_param_get_strlen(id, param_name[]);
+native       external_param_get_str(id, param_name[], value[], value_maxlen);
+native       external_param_set_str(id, param_name[], value[]);
+native       external_param_get_bool(id, param_name[]);
+native       external_param_set_bool(id, param_name[], value);
+
 enum Msg_Type
 {
    MSG_NONE = 0,
