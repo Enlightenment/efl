@@ -2362,6 +2362,17 @@ edje_edit_program_target_add(
    const char *target      ///< The name of another program or another part
 );
 
+/**Deletes a target from the list of 'targets' in the given program.
+ * If program action is EDJE_ACTION_TYPE_ACTION_STOP then 'target' must be an existing program name.
+ * If action is EDJE_ACTION_TYPE_STATE_SET then 'target' must be an existing part name.
+ */
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
+edje_edit_program_target_del(
+   Evas_Object *obj,       ///< The edje object
+   const char *prog,       ///< The program name
+   const char *target      ///< The name of another program or another part
+);
+
 /**Clear the 'targets' list of the given program */
 EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_targets_clear(

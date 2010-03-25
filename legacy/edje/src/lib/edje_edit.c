@@ -5543,6 +5543,46 @@ edje_edit_program_target_add(Evas_Object *obj, const char *prog, const char *tar
    return 1;
 }
 
+EAPI Eina_Bool
+edje_edit_program_target_del(Evas_Object *obj, const char *prog, const char *target)
+{
+   int id;
+   Eina_List *l;
+   Edje_Program_Target *t;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_EPR_OR_RETURN(EINA_FALSE);
+
+   if (epr->action == EDJE_ACTION_TYPE_STATE_SET)
+     {
+	/* the target is a part */
+	Edje_Real_Part *rp;
+
+	rp = _edje_real_part_get(ed, target);
+	if (!rp) return EINA_FALSE;
+	id = rp->part->id;
+     }
+   else if (epr->action == EDJE_ACTION_TYPE_ACTION_STOP)
+     {
+	/* the target is a program */
+	Edje_Program *tar;
+
+	tar = _edje_program_get_byname(obj, target);
+	if (!tar) return EINA_FALSE;
+	id = tar->id;
+     }
+   else
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(epr->targets, l, t)
+      if (t->id == id)
+	break;
+   epr->targets = eina_list_remove_list(epr->targets, l);
+   free(t);
+
+   return EINA_TRUE;
+}
+
 EAPI Eina_List *
 edje_edit_program_afters_get(Evas_Object *obj, const char *prog)
 {
