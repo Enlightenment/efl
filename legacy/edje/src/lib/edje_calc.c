@@ -1463,7 +1463,7 @@ _edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params
 	if ((!chosen_desc->box.alt_layout) ||
 	    (!_edje_box_layout_find(chosen_desc->box.alt_layout, &layout, &data, &free_data)))
 	  {
-	     ERR("ERROR: box layout '%s' (fallback '%s') not available, using horizontal.",
+	     ERR("box layout '%s' (fallback '%s') not available, using horizontal.",
 		 chosen_desc->box.layout, chosen_desc->box.alt_layout);
 	     layout = evas_object_box_layout_horizontal;
 	     free_data = NULL;

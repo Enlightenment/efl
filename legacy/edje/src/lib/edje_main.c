@@ -100,7 +100,7 @@ edje_init(void)
 					 sizeof (Edje_Real_Part), 128);
    if (!_edje_real_part_mp)
      {
-	ERR("ERROR: Mempool for Edje_Real_Part cannot be allocated.\n");
+	ERR("Mempool for Edje_Real_Part cannot be allocated.");
 	goto shutdown_eet;
      }
 
@@ -109,7 +109,7 @@ edje_init(void)
 					       sizeof (Edje_Real_Part_State), 256);
    if (!_edje_real_part_state_mp)
      {
-	ERR("ERROR: Mempool for Edje_Real_Part_State cannot be allocated.\n");
+	ERR("Mempool for Edje_Real_Part_State cannot be allocated.");
 	goto shutdown_eet;
      }
 
