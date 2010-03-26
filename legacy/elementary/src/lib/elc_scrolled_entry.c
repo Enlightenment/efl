@@ -19,6 +19,8 @@ static const char SIG_PRESS[] = "press";
 static const char SIG_LONGPRESSED[] = "longpressed";
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+static const char SIG_FOCUSED[] = "focused";
+static const char SIG_UNFOCUSED[] = "unfocused";
 static const char SIG_SELECTION_PASTE[] = "selection,paste";
 static const char SIG_SELECTION_COPY[] = "selection,copy";
 static const char SIG_SELECTION_CUT[] = "selection,cut";
@@ -32,6 +34,10 @@ static const Evas_Smart_Cb_Description _signals[] = {
   {SIG_ACTIVATED, ""},
   {SIG_PRESS, ""},
   {SIG_LONGPRESSED, ""},
+  {SIG_CLICKED, ""},
+  {SIG_CLICKED_DOUBLE, ""},
+  {SIG_FOCUSED, ""},
+  {SIG_UNFOCUSED, ""},
   {SIG_SELECTION_PASTE, ""},
   {SIG_SELECTION_COPY, ""},
   {SIG_SELECTION_CUT, ""},
@@ -179,13 +185,13 @@ _entry_longpressed(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 static void
 _entry_focused(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "focused", NULL);
+   evas_object_smart_callback_call(data, SIG_FOCUSED, NULL);
 }
 
 static void
 _entry_unfocused(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "unfocused", NULL);
+   evas_object_smart_callback_call(data, SIG_UNFOCUSED, NULL);
 }
 
 EAPI Evas_Object *

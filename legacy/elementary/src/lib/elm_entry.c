@@ -69,6 +69,8 @@ static const char SIG_PRESS[] = "press";
 static const char SIG_LONGPRESSED[] = "longpressed";
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+static const char SIG_FOCUSED[] = "focused";
+static const char SIG_UNFOCUSED[] = "unfocused";
 static const char SIG_SELECTION_PASTE[] = "selection,paste";
 static const char SIG_SELECTION_COPY[] = "selection,copy";
 static const char SIG_SELECTION_CUT[] = "selection,cut";
@@ -82,6 +84,10 @@ static const Evas_Smart_Cb_Description _signals[] = {
   {SIG_ACTIVATED, ""},
   {SIG_PRESS, ""},
   {SIG_LONGPRESSED, ""},
+  {SIG_CLICKED, ""},
+  {SIG_CLICKED_DOUBLE, ""},
+  {SIG_FOCUSED, ""},
+  {SIG_UNFOCUSED, ""},
   {SIG_SELECTION_PASTE, ""},
   {SIG_SELECTION_COPY, ""},
   {SIG_SELECTION_CUT, ""},
@@ -241,14 +247,14 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 	evas_object_focus_set(wd->ent, 1);
 	edje_object_signal_emit(wd->ent, "elm,action,focus", "elm");
 	if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
-	evas_object_smart_callback_call(obj, "focused", NULL);
+	evas_object_smart_callback_call(obj, SIG_FOCUSED, NULL);
      }
    else
      {
 	edje_object_signal_emit(wd->ent, "elm,action,unfocus", "elm");
 	evas_object_focus_set(wd->ent, 0);
 	if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
-	evas_object_smart_callback_call(obj, "unfocused", NULL);
+	evas_object_smart_callback_call(obj, SIG_UNFOCUSED, NULL);
      }
 }
 
