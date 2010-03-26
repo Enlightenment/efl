@@ -17,22 +17,6 @@
 #include "Efreet.h"
 #include "efreet_private.h"
 
-typedef struct Efreet_Cache_Search      Efreet_Cache_Search;
-typedef struct Efreet_Cache_Search_List Efreet_Cache_Search_List;
-
-struct Efreet_Cache_Search
-{
-    Efreet_Desktop *result;
-    const char *what1;
-    const char *what2;
-};
-
-struct Efreet_Cache_Search_List
-{
-    Eina_List *list;
-    const char *what;
-};
-
 /* define macros and variable for using the eina logging system  */
 
 #ifdef EFREET_MODULE_LOG_DOM 
