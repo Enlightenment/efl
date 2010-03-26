@@ -938,7 +938,11 @@ _item_unrealize(Elm_Genlist_Item *it)
    Evas_Object *icon;
 
    if (!it->realized) return;
-   if (it->long_timer) ecore_timer_del(it->long_timer);
+   if (it->long_timer)
+     {
+	ecore_timer_del(it->long_timer);
+	it->long_timer = NULL;
+     }
    evas_object_del(it->base);
    it->base = NULL;
    evas_object_del(it->spacer);
