@@ -614,7 +614,7 @@ extern "C" {
     * "selection,start" - the user started selecting text
     * "selection,changed" - the user modified the selection size/location
     * "selection,cleared" - the user cleared the selection
-    * "selection,paste" - the user rrequested a paste of text
+    * "selection,paste" - the user requested a paste of text
     * "selection,copy" - the user copied the text
     * "selection,cut" - the user cut the text
     * "cursor,changed" - the cursor changed position
@@ -624,6 +624,8 @@ extern "C" {
     * "clicked" - when finger/mouse is pressed and released (without a drag etc.)
     * "clicked,double" - when finger/mouse is double-pressed
     * "longpressed" - the entry has been longpressed
+    * "focused" - the entry has received keyboard focus
+    * "unfocused" - keyboard focus is gone
     */
 
    /* composite widgets - these basically put together basic widgets above

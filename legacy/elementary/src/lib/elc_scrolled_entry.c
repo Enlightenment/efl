@@ -145,6 +145,18 @@ _entry_longpressed(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    evas_object_smart_callback_call(data, "longpressed", NULL);
 }
 
+static void
+_entry_focused(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   evas_object_smart_callback_call(data, "focused", NULL);
+}
+
+static void
+_entry_unfocused(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   evas_object_smart_callback_call(data, "unfocused", NULL);
+}
+
 EAPI Evas_Object *
 elm_scrolled_entry_add(Evas_Object *parent)
 {
@@ -189,6 +201,8 @@ elm_scrolled_entry_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->entry, "selection,copy", _entry_selection_copy, obj);
    evas_object_smart_callback_add(wd->entry, "selection,cut", _entry_selection_cut, obj);
    evas_object_smart_callback_add(wd->entry, "longpressed", _entry_longpressed, obj);
+   evas_object_smart_callback_add(wd->entry, "focused", _entry_focused, obj);
+   evas_object_smart_callback_add(wd->entry, "unfocused", _entry_unfocused, obj);
 
    _sizing_eval(obj);
 
