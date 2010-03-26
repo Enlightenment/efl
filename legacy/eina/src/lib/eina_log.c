@@ -423,6 +423,73 @@ static const char *_names[] = {
   "DBG",
 };
 
+#ifdef _WIN32
+static int
+eina_log_win32_color_get(const char *domain_str)
+{
+   char *str;
+   char *tmp;
+   char *tmp2;
+   int code = -1;
+   int lighted = 0;
+   int ret = 0;
+
+   str = strdup(domain_str);
+   if (!str)
+     return 0;
+
+   /* this should not append */
+   if (str[0] != '\033')
+     return 0;
+
+   /* we skip the first char and the [ */
+   tmp = tmp2 = str + 2;
+   while (*tmp != 'm')
+     {
+	if (*tmp == ';')
+	  {
+	     *tmp = '\0';
+	     code = atol(tmp2);
+	     tmp++;
+	     tmp2 = tmp;
+	  }
+	tmp++;
+     }
+   *tmp = '\0';
+   if (code < 0)
+     code = atol(tmp2);
+   else
+     lighted = atol(tmp2);
+
+   free(str);
+
+   if (code < lighted)
+     {
+	int c;
+
+	c = code;
+	code = lighted;
+	lighted = c;
+     }
+
+   if (lighted) ret = FOREGROUND_INTENSITY;
+   if (code == 31)
+     ret |= FOREGROUND_RED;
+   else if (code == 32)
+     ret |= FOREGROUND_GREEN;
+   else if (code == 33)
+     ret |= FOREGROUND_RED | FOREGROUND_GREEN;
+   else if (code == 34)
+     ret |= FOREGROUND_BLUE;
+   else if (code == 36)
+     ret |= FOREGROUND_GREEN | FOREGROUND_BLUE;
+   else if (code == 37)
+     ret |= FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+
+   return ret;
+}
+#endif
+
 static inline void
 eina_log_print_level_name_get(int level, const char **p_name)
 {
@@ -445,6 +512,32 @@ eina_log_print_level_name_get(int level, const char **p_name)
 	*p_name = _names[level];
 }
 
+#ifdef _WIN32
+static inline void
+eina_log_print_level_name_color_get(int level, const char **p_name, int *p_color)
+{
+   static char buf[4];
+   /* NOTE: if you change this, also change:
+    *   eina_log_print_level_name_get()
+    */
+   if (EINA_UNLIKELY(level < 0))
+     {
+	snprintf(buf, sizeof(buf), "%03d", level);
+	*p_name = buf;
+     }
+   else if (EINA_UNLIKELY(level >= EINA_LOG_LEVELS))
+     {
+	snprintf(buf, sizeof(buf), "%03d", level);
+	*p_name = buf;
+     }
+   else
+     {
+	*p_name = _names[level];
+     }
+
+   *p_color = eina_log_win32_color_get(eina_log_level_color_get(level));
+}
+#else
 static inline void
 eina_log_print_level_name_color_get(int level, const char **p_name, const char **p_color)
 {
@@ -468,9 +561,14 @@ eina_log_print_level_name_color_get(int level, const char **p_name, const char *
      }
    *p_color = eina_log_level_color_get(level);
 }
+#endif
 
 #define DECLARE_LEVEL_NAME(level) const char *name; eina_log_print_level_name_get(level, &name)
-#define DECLARE_LEVEL_NAME_COLOR(level) const char *name, *color; eina_log_print_level_name_color_get(level, &name, &color)
+#ifdef _WIN32
+# define DECLARE_LEVEL_NAME_COLOR(level) const char *name; int color; eina_log_print_level_name_color_get(level, &name, &color)
+#else
+# define DECLARE_LEVEL_NAME_COLOR(level) const char *name, *color; eina_log_print_level_name_color_get(level, &name, &color)
+#endif
 
 /** No threads, No color */
 static void
@@ -499,26 +597,77 @@ static void
 eina_log_print_prefix_NOthreads_color_file_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line)
 {
    DECLARE_LEVEL_NAME_COLOR(level);
+#ifdef _WIN32
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+			   color);
+   fprintf(fp, "%s", name);
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+			   FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+   fprintf(fp, ":");
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), eina_log_win32_color_get(d->domain_str));
+   fprintf(fp, "%s", d->name);
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+			   FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+   fprintf(fp, " %s:%d ", file, line);
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+			    FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+   fprintf(fp, "%s()", fnc);
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+			    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+   fprintf(fp, " ");
+#else
    fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s %s:%d "
 	   EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
 	   color, name, d->domain_str, file, line, fnc);
+#endif
 }
 
 static void
 eina_log_print_prefix_NOthreads_color_NOfile_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file __UNUSED__, const char *fnc, int line __UNUSED__)
 {
    DECLARE_LEVEL_NAME_COLOR(level);
+#ifdef _WIN32
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+			   color);
+   fprintf(fp, "%s", name);
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+			   FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+   fprintf(fp, ":");
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), eina_log_win32_color_get(d->domain_str));
+   fprintf(fp, "%s", d->name);
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+			    FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+   fprintf(fp, "%s()", fnc);
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+			    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+   fprintf(fp, " ");
+#else
    fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s "
 	   EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
 	   color, name, d->domain_str, fnc);
+#endif
 }
 
 static void
 eina_log_print_prefix_NOthreads_color_file_NOfunc(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc __UNUSED__, int line)
 {
    DECLARE_LEVEL_NAME_COLOR(level);
+#ifdef _WIN32
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+			   color);
+   fprintf(fp, "%s", name);
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+			   FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+   fprintf(fp, ":");
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), eina_log_win32_color_get(d->domain_str));
+   fprintf(fp, "%s", d->name);
+   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+			   FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+   fprintf(fp, " %s:%d ", file, line);
+#else
    fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s %s:%d ",
 	   color, name, d->domain_str, file, line);
+#endif
 }
 
 /** threads, No color */
@@ -573,15 +722,45 @@ eina_log_print_prefix_threads_color_file_func(FILE *fp, const Eina_Log_Domain *d
    pthread_t cur = pthread_self();
    if (IS_OTHER(cur))
      {
+# ifdef _WIN32
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				color);
+	fprintf(fp, "%s", name);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, ":");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), eina_log_win32_color_get(d->domain_str));
+	fprintf(fp, "%s[T:", d->name);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, "[T:");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, "%lu", (unsigned long)cur.p);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, "] %s:%d ", file, line);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, "%s()", fnc);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, " ");
+# else
 	fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s[T:"
 		EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] %s:%d "
 		EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
 		color, name, d->domain_str, cur, file, line, fnc);
+# endif
 	return;
      }
+# ifdef _WIN32
+   eina_log_print_prefix_NOthreads_color_file_func(fp, d, level, file, fnc, line);
+# else
    fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s %s:%d "
 	   EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
 	   color, name, d->domain_str, file, line, fnc);
+# endif
 }
 
 static void
@@ -591,15 +770,42 @@ eina_log_print_prefix_threads_color_NOfile_func(FILE *fp, const Eina_Log_Domain 
    pthread_t cur = pthread_self();
    if (IS_OTHER(cur))
      {
+# ifdef _WIN32
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				color);
+	fprintf(fp, "%s", name);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, ":");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), eina_log_win32_color_get(d->domain_str));
+	fprintf(fp, "%s[T:", d->name);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, "[T:");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, "%lu", (unsigned long)cur.p);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, "%s()", fnc);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, " ");
+# else
 	fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s[T:"
 		EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] "
 		EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
 		color, name, d->domain_str, cur, fnc);
+# endif
 	return;
      }
+# ifdef _WIN32
+   eina_log_print_prefix_NOthreads_color_NOfile_func(fp, d, level, file, fnc, line);
+# else
    fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s "
 	   EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
 	   color, name, d->domain_str, fnc);
+# endif
 }
 
 static void
@@ -609,13 +815,37 @@ eina_log_print_prefix_threads_color_file_NOfunc(FILE *fp, const Eina_Log_Domain 
    pthread_t cur = pthread_self();
    if (IS_OTHER(cur))
      {
+# ifdef _WIN32
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				color);
+	fprintf(fp, "%s", name);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, ":");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), eina_log_win32_color_get(d->domain_str));
+	fprintf(fp, "%s[T:", d->name);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, "[T:");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, "%lu", (unsigned long)cur.p);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+				FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	fprintf(fp, "] %s:%d ", file, line);
+# else
 	fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s[T:"
 		EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] %s:%d ",
 		color, name, d->domain_str, cur, file, line);
+# endif
 	return;
      }
+# ifdef _WIN32
+   eina_log_print_prefix_NOthreads_color_file_NOfunc(fp, d, level, file, fnc, line);
+# else
    fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s %s:%d ",
 	   color, name, d->domain_str, file, line);
+# endif
 }
 #endif
 
@@ -995,6 +1225,7 @@ eina_log_init(void)
    if (color_disable == 1)
      _disable_color = EINA_TRUE;
 
+#ifndef _WIN32
    /* color was not explicitly disabled or enabled, guess it */
    else if (color_disable == -1)
      {
@@ -1015,6 +1246,7 @@ eina_log_init(void)
 	     _disable_color = EINA_TRUE;
 	}
      }
+#endif
 
    if ((tmp = getenv(EINA_LOG_ENV_FILE_DISABLE)) && (atoi(tmp) == 1))
      _disable_file = EINA_TRUE;
