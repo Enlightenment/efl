@@ -315,8 +315,8 @@ main()
     eet_close(ef);
 
     /* rename tmp files to real files */
-    if (rename(file, efreet_desktop_cache_file()) < 0) goto error;
     if (rename(util_file, efreet_desktop_util_cache_file()) < 0) goto error;
+    if (rename(file, efreet_desktop_cache_file()) < 0) goto error;
 
     efreet_desktop_edd_shutdown(edd);
     efreet_shutdown();
