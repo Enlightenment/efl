@@ -1891,13 +1891,23 @@ _edje_entry_text_markup_insert(Edje_Real_Part *rp, const char *text)
    if (!en) return;
    // prepend markup @ cursor pos
    if (en->have_selection)
-     evas_textblock_cursor_range_delete(en->sel_start, en->sel_end);
-   evas_object_textblock_text_markup_prepend(en->cursor, text);
+     _range_del(en->cursor, rp->object, en);
    _sel_clear(en->cursor, rp->object, en);
+   evas_object_textblock_text_markup_prepend(en->cursor, text);
    _curs_update_from_curs(en->cursor, rp->object, en);
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
    _edje_emit(rp->edje, "cursor,changed", rp->part->name);
+   
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     {
+	ecore_imf_context_reset(en->imf_context);
+	ecore_imf_context_cursor_position_set(en->imf_context,
+                                              evas_textblock_cursor_pos_get(en->cursor));
+     }
+#endif
+   _edje_entry_real_part_configure(rp);
 }
 
 void
