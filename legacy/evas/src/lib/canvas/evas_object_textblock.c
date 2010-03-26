@@ -3414,7 +3414,8 @@ evas_textblock_cursor_line_last(Evas_Textblock_Cursor *cur)
    if (!cur->node) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
-   cur->eol = 1;
+// kills "click below text" and up/downm arrow. disable   
+//   cur->eol = 1;
    if (cur->node->type == NODE_FORMAT)
      _find_layout_format_item_line_match(cur->obj, cur->node, &ln, &fi);
    else
