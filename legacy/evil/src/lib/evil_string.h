@@ -103,6 +103,12 @@ EAPI int strcoll (const char *s1, const char *s2);
  */
 EAPI char *strrstr (const char *str, const char *substr);
 
+#ifdef _MSC_VER
+
+EAPI int strcasecmp(const char *s1, const char *s2);
+
+#endif /* _MSC_VER */
+
 
 /**
  * @}

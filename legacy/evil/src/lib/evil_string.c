@@ -83,3 +83,12 @@ strrstr (const char *str, const char *substr)
 
   return ret;
 }
+
+#ifdef _MSC_VER
+
+int strcasecmp(const char *s1, const char *s2)
+{
+   return lstrcmp(s1, s2);
+}
+
+#endif /* _MSC_VER */
