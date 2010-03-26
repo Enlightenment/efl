@@ -35,30 +35,42 @@ static Efreet_Desktop *efreet_util_cache_find(const char *search, const char *wh
 static Eina_List *efreet_util_cache_list(const char *search, const char *what);
 static Eina_List *efreet_util_cache_glob_list(const char *search, const char *what);
 
+static void efreet_util_cache_update(void *data, Ecore_File_Monitor *em,
+                                     Ecore_File_Event event, const char *path);
+
 static Eina_Hash *file_id_by_desktop_path = NULL;
 static const char *cache_file = NULL;
 static Eet_File *cache = NULL;
+static Ecore_File_Monitor *cache_monitor = NULL;
 
 static int init = 0;
 
 EAPI int
 efreet_util_init(void)
 {
+    char buf[PATH_MAX];
+
     if (init++) return init;
     _efreet_utils_log_dom = eina_log_domain_register("Efreet_util", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_utils_log_dom < 0)
     {
         ERROR("Efreet: Could not create a log domain for efreet_util");
-        goto log_error;
+        return 0;
     }
 
-    /* TODO: Need file monitor on cache in case it is updated */
+    snprintf(buf, sizeof(buf), "%s/.efreet", efreet_home_dir_get());
+    if (!ecore_file_mkpath(buf)) goto log_error;
+    cache_monitor = ecore_file_monitor_add(buf,
+                                           efreet_util_cache_update,
+                                           NULL);
+
     cache = eet_open(efreet_desktop_util_cache_file(), EET_FILE_MODE_READ);
     file_id_by_desktop_path = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
 
     return init;
 
 log_error:
+    eina_log_domain_unregister(_efreet_utils_log_dom);
     return 0;
 }
 
@@ -69,6 +81,7 @@ efreet_util_shutdown(void)
     
     eina_log_domain_unregister(_efreet_utils_log_dom);
     IF_FREE_HASH(file_id_by_desktop_path);
+    if (cache_monitor) ecore_file_monitor_del(cache_monitor);
     if (cache) eet_close(cache);
     IF_RELEASE(cache_file);
     return init;
@@ -505,4 +518,16 @@ efreet_util_cache_glob_list(const char *search, const char *what)
     }
     free(keys);
     return ret;
+}
+
+static void
+efreet_util_cache_update(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
+                         Ecore_File_Event event, const char *path)
+{
+    if (strcmp(path, efreet_desktop_util_cache_file())) return;
+    if (event != ECORE_FILE_EVENT_CREATED_FILE &&
+        event != ECORE_FILE_EVENT_MODIFIED) return;
+
+    if (cache) eet_close(cache);
+    cache = eet_open(efreet_desktop_util_cache_file(), EET_FILE_MODE_READ);
 }

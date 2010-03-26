@@ -27,6 +27,16 @@
 
 #define DESKTOP_VERSION "1.0"
 
+EAPI int EFREET_EVENT_CACHE_UPDATE;
+
+typedef struct _Efreet_Event_Cache_Data Efreet_Event_Cache_Data;
+
+struct _Efreet_Event_Cache_Data
+{
+    Eina_Hash *desktop_cache;
+    Eet_File *cache;
+};
+
 /**
  * The current desktop environment (e.g. "Enlightenment" or "Gnome")
  */
@@ -62,6 +72,7 @@ static char *cache_file = NULL;
 static char *cache_dirs = NULL;
 static Eet_File *cache = NULL;
 static Eet_Data_Descriptor *desktop_edd = NULL;
+static Ecore_File_Monitor *cache_monitor = NULL;
 
 #ifdef EFREET_MODULE_LOG_DOM 
 #undef EFREET_MODULE_LOG_DOM
@@ -153,6 +164,9 @@ static int efreet_desktop_command_flags_get(Efreet_Desktop *desktop);
 static void *efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Eina_List *execs);
 
 static void efreet_desktop_update_cache_dirs(void *data);
+static void efreet_desktop_cache_update(void *data, Ecore_File_Monitor *em,
+                                        Ecore_File_Event event, const char *path);
+static void efreet_desktop_cache_update_free(void *data, void *ev);
 
 /**
  * @internal
@@ -162,6 +176,8 @@ static void efreet_desktop_update_cache_dirs(void *data);
 int
 efreet_desktop_init(void)
 {
+    char buf[PATH_MAX];
+
     _efreet_desktop_log_dom = eina_log_domain_register("Efreet_desktop", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_desktop_log_dom < 0)
     {
@@ -187,6 +203,14 @@ efreet_desktop_init(void)
     EFREET_DESKTOP_TYPE_DIRECTORY = efreet_desktop_type_add("Directory", NULL,
                                                                 NULL, NULL);
 
+    EFREET_EVENT_CACHE_UPDATE = ecore_event_type_new();
+
+    snprintf(buf, sizeof(buf), "%s/.efreet", efreet_home_dir_get());
+    if (!ecore_file_mkpath(buf)) goto edd_error;
+    cache_monitor = ecore_file_monitor_add(buf,
+                                           efreet_desktop_cache_update,
+                                           NULL);
+
     /* TODO:
      * Should add a lock here, so that several programs starting at the same
      * time wont run several copies of efreet_desktop_cache_create
@@ -195,8 +219,9 @@ efreet_desktop_init(void)
      */
     if (!ecore_file_exists(efreet_desktop_cache_file()))
         system(PACKAGE_BIN_DIR "/efreet_desktop_cache_create");
-    /* TODO: Need file monitor on cache in case it is updated */
+
     cache = eet_open(efreet_desktop_cache_file(), EET_FILE_MODE_READ);
+
     return 1;
 
 edd_error:
@@ -228,6 +253,7 @@ efreet_desktop_shutdown(void)
     }
     EINA_LIST_FREE(efreet_desktop_dirs, dir)
         free(dir);
+    if (cache_monitor) ecore_file_monitor_del(cache_monitor);
     if (cache) eet_close(cache);
     efreet_desktop_edd_shutdown(desktop_edd);
     ecore_file_shutdown();
@@ -348,7 +374,7 @@ efreet_desktop_get(const char *file)
 
             /* TODO: Submit event to signal that this file has changed */
             desktop->cached = 0;
-            eina_hash_del(efreet_desktop_cache, rp, NULL);
+            eina_hash_del_by_key(efreet_desktop_cache, rp);
         }
     }
 
@@ -670,7 +696,7 @@ efreet_desktop_save_as(Efreet_Desktop *desktop, const char *file)
         desktop == eina_hash_find(efreet_desktop_cache, desktop->orig_path))
     {
         desktop->cached = 0;
-        eina_hash_del(efreet_desktop_cache, desktop->orig_path, NULL);
+        eina_hash_del_by_key(efreet_desktop_cache, desktop->orig_path);
     }
     FREE(desktop->orig_path);
     desktop->orig_path = strdup(file);
@@ -691,8 +717,11 @@ efreet_desktop_free(Efreet_Desktop *desktop)
     desktop->ref--;
     if (desktop->ref > 0) return;
 
-    if (desktop->cached && efreet_desktop_cache)
-        eina_hash_del(efreet_desktop_cache, desktop->orig_path, NULL);
+    if (desktop->cached && efreet_desktop_cache &&
+        desktop == eina_hash_find(efreet_desktop_cache, desktop->orig_path))
+    {
+        eina_hash_del_by_key(efreet_desktop_cache, desktop->orig_path);
+    }
 
     if (desktop->eet)
     {
@@ -1220,7 +1249,7 @@ efreet_desktop_x_fields_parse(const Eina_Hash *hash __UNUSED__, const void *key,
 
     if (!desktop->x)
         desktop->x = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
-    eina_hash_del(desktop->x, key, NULL);
+    eina_hash_del_by_key(desktop->x, key);
     eina_hash_add(desktop->x, key, (void *)eina_stringshare_add(value));
 
     return EINA_TRUE;
@@ -2009,7 +2038,7 @@ efreet_desktop_x_field_set(Efreet_Desktop *desktop, const char *key, const char 
     if (!desktop->x)
         desktop->x = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
 
-    eina_hash_del(desktop->x, key, NULL);
+    eina_hash_del_by_key(desktop->x, key);
     eina_hash_add(desktop->x, key, eina_stringshare_add(data));
 
     return EINA_TRUE;
@@ -2042,7 +2071,7 @@ efreet_desktop_x_field_del(Efreet_Desktop *desktop, const char *key)
     if (!desktop->x)
         return EINA_FALSE;
 
-    return eina_hash_del(desktop->x, key, NULL);
+    return eina_hash_del_by_key(desktop->x, key);
 }
 
 /*
@@ -2150,4 +2179,51 @@ error:
     if (fd > 0) close(fd);
     if (cachefd > 0) close(cachefd);
     efreet_desktop_job = NULL;
+}
+
+static void
+efreet_desktop_cache_update(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
+                            Ecore_File_Event event, const char *path)
+{
+    Eet_File *tmp;
+    Efreet_Event_Cache_Update *ev;
+    Efreet_Event_Cache_Data *d;
+
+    if (strcmp(path, efreet_desktop_cache_file())) return;
+    if (event != ECORE_FILE_EVENT_CREATED_FILE &&
+        event != ECORE_FILE_EVENT_MODIFIED) return;
+
+    tmp = eet_open(efreet_desktop_cache_file(), EET_FILE_MODE_READ);
+    if (!tmp) return;
+    ev = NEW(Efreet_Event_Cache_Update, 1);
+    if (!ev) goto error;
+    d = NEW(Efreet_Event_Cache_Data, 1);
+    if (!d) goto error;
+
+    d->desktop_cache = efreet_desktop_cache;
+    d->cache = cache;
+
+    efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
+    cache = tmp;
+
+    ecore_event_add(EFREET_EVENT_CACHE_UPDATE, ev, efreet_desktop_cache_update_free, d);
+    return;
+error:
+    if (tmp) eet_close(tmp);
+}
+
+static void
+efreet_desktop_cache_update_free(void *data, void *ev)
+{
+    Efreet_Event_Cache_Data *d;
+
+    d = data;
+    /*
+     * All users should now had the chance to update their pointers, so we can now
+     * free the old cache
+     */
+    if (d->cache) eet_close(d->cache);
+    if (d->desktop_cache) eina_hash_free(d->desktop_cache);
+    free(d);
+    free(ev);
 }
