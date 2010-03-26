@@ -180,24 +180,56 @@ efreet_util_path_to_file_id(const char *path)
     return file_id;
 }
 
+/**
+ * Find all desktops for a given mime type
+ *
+ * This list must be freed using EINA_LIST_FREE / efreet_desktop_free
+ *
+ * @param mime the mime type
+ * @return a list of desktops
+ */
 EAPI Eina_List *
 efreet_util_desktop_mime_list(const char *mime)
 {
     return efreet_util_cache_list("*::m", mime);
 }
 
+/**
+ * Find all desktops for a given wm class
+ *
+ * This list must be freed using EINA_LIST_FREE / efreet_desktop_free
+ *
+ * @param wmclass the wm class
+ * @return a list of desktops
+ */
 EAPI Efreet_Desktop *
 efreet_util_desktop_wm_class_find(const char *wmname, const char *wmclass)
 {
     return efreet_util_cache_find("*::swc", wmname, wmclass);
 }
 
+/**
+ * Find a desktop by file id
+ *
+ * return value must be freed by efreet_desktop_free
+ *
+ * @param file_id the file id
+ * @return a desktop
+ */
 EAPI Efreet_Desktop *
 efreet_util_desktop_file_id_find(const char *file_id)
 {
     return efreet_util_cache_find("*::fi", file_id, NULL);
 }
 
+/**
+ * Find a desktop by exec
+ *
+ * return value must be freed by efreet_desktop_free
+ *
+ * @param exec the exec name
+ * @return a desktop
+ */
 EAPI Efreet_Desktop *
 efreet_util_desktop_exec_find(const char *exec)
 {
@@ -241,24 +273,56 @@ efreet_util_desktop_exec_find(const char *exec)
     return ret;
 }
 
+/**
+ * Find a desktop by name
+ *
+ * return value must be freed by efreet_desktop_free
+ *
+ * @param name the name
+ * @return a desktop
+ */
 EAPI Efreet_Desktop *
 efreet_util_desktop_name_find(const char *name)
 {
     return efreet_util_cache_find("*::n", name, NULL);
 }
 
+/**
+ * Find a desktop by generic name
+ *
+ * return value must be freed by efreet_desktop_free
+ *
+ * @param generic_name the generic name
+ * @return a desktop
+ */
 EAPI Efreet_Desktop *
 efreet_util_desktop_generic_name_find(const char *generic_name)
 {
     return efreet_util_cache_find("*::gn", generic_name, NULL);
 }
 
+/**
+ * Find all desktops where name matches a glob pattern
+ *
+ * This list must be freed using EINA_LIST_FREE / efreet_desktop_free
+ *
+ * @param glob the pattern to match
+ * @return a list of desktops
+ */
 EAPI Eina_List *
 efreet_util_desktop_name_glob_list(const char *glob)
 {
     return efreet_util_cache_glob_list("*::n", glob);
 }
 
+/**
+ * Find all desktops where exec matches a glob pattern
+ *
+ * This list must be freed using EINA_LIST_FREE / efreet_desktop_free
+ *
+ * @param glob the pattern to match
+ * @return a list of desktops
+ */
 EAPI Eina_List *
 efreet_util_desktop_exec_glob_list(const char *glob)
 {
@@ -302,12 +366,28 @@ efreet_util_desktop_exec_glob_list(const char *glob)
     return ret;
 }
 
+/**
+ * Find all desktops where generic name matches a glob pattern
+ *
+ * This list must be freed using EINA_LIST_FREE / efreet_desktop_free
+ *
+ * @param glob the pattern to match
+ * @return a list of desktops
+ */
 EAPI Eina_List *
 efreet_util_desktop_generic_name_glob_list(const char *glob)
 {
     return efreet_util_cache_glob_list("*::gn", glob);
 }
 
+/**
+ * Find all desktops where comment matches a glob pattern
+ *
+ * This list must be freed using EINA_LIST_FREE / efreet_desktop_free
+ *
+ * @param glob the pattern to match
+ * @return a list of desktops
+ */
 EAPI Eina_List *
 efreet_util_desktop_comment_glob_list(const char *glob)
 {
@@ -346,6 +426,8 @@ efreet_util_desktop_categories_list(void)
 
 /**
  * Find all desktops in a given category
+ *
+ * This list must be freed using EINA_LIST_FREE / efreet_desktop_free
  *
  * @param category the category name
  * @return a list of desktops
