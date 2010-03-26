@@ -38,6 +38,16 @@ static void _signal_pressed(void *data, Evas_Object *obj, const char *emission, 
 static void _signal_unpressed(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _on_focus_hook(void *data, Evas_Object *obj);
 
+static const char SIG_CLICKED[] = "clicked";
+static const char SIG_REPEATED[] = "repeated";
+static const char SIG_UNPRESSED[] = "unpressed";
+static const Evas_Smart_Cb_Description _signals[] = {
+  {SIG_CLICKED, ""},
+  {SIG_REPEATED, ""},
+  {SIG_UNPRESSED, ""},
+  {NULL, NULL}
+};
+
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -136,7 +146,7 @@ _signal_clicked(void *data, Evas_Object *obj, const char *emission, const char *
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_smart_callback_call(data, "clicked", NULL);
+   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
    _signal_unpressed(data, obj, emission, source); /* safe guard when the theme does not emit the 'unpress' signal */
 }
 
@@ -146,7 +156,7 @@ _autorepeat_send(void *data)
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return ECORE_CALLBACK_CANCEL;
 
-   evas_object_smart_callback_call(data, "repeated", NULL);
+   evas_object_smart_callback_call(data, SIG_REPEATED, NULL);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -184,7 +194,7 @@ _signal_unpressed(void *data, Evas_Object *obj __UNUSED__, const char *emission 
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_smart_callback_call(data, "unpressed", NULL);
+   evas_object_smart_callback_call(data, SIG_UNPRESSED, NULL);
 
    if (wd->timer)
      {
@@ -234,6 +244,10 @@ elm_button_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 
    _sizing_eval(obj);
+
+   // TODO: convert Elementary to subclassing of Evas_Smart_Class
+   // TODO: and save some bytes, making descriptions per-class and not instance!
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
 }
 

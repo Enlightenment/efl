@@ -8,12 +8,13 @@ typedef struct {
     const char *label;
 } Elm_Params;
 
-void  external_signal(void *data, Evas_Object *obj, const char *signal, const char *source);
+void external_signal(void *data, Evas_Object *obj, const char *signal, const char *source);
+void external_signals_proxy(Evas_Object *obj, Evas_Object *edje, const char *part_name);
 const char *external_translate(void *data, const char *orig);
-void  external_common_params_free(void *params);
+void external_common_params_free(void *params);
 void *external_common_params_parse_internal(size_t params_size, void *data, Evas_Object *obj, const Eina_List *params);
 Evas_Object *external_common_param_icon_get(Evas_Object *obj, const Edje_External_Param *param);
-void  external_common_icon_param_parse(Evas_Object **icon, Evas_Object *obj, const Eina_List *params);
+void external_common_icon_param_parse(Evas_Object **icon, Evas_Object *obj, const Eina_List *params);
 #define external_common_params_parse(type, data, obj, params)   \
     external_common_params_parse_internal(sizeof(type), data, obj, params)
 
@@ -47,11 +48,14 @@ const Edje_External_Type external_##type_name##_type = {\
 
 #define DEFINE_EXTERNAL_TYPE_SIMPLE(type_name, name)    \
 static Evas_Object *                                \
-external_##type_name##_add(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *edje, const Eina_List *params __UNUSED__, const char *part_name __UNUSED__) \
+external_##type_name##_add(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *edje, const Eina_List *params __UNUSED__, const char *part_name) \
 {									\
-   Evas_Object *parent = elm_widget_parent_widget_get(edje);		\
+   Evas_Object *parent, *obj;						\
+   parent = elm_widget_parent_widget_get(edje);			\
    if (!parent) parent = edje;						\
-   return elm_##type_name##_add(parent);				\
+   obj = elm_##type_name##_add(parent);				\
+   external_signals_proxy(obj, edje, part_name);			\
+   return obj;								\
 }									\
 									\
 DEFINE_EXTERNAL_TYPE(type_name, name)

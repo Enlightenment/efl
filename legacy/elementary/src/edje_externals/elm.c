@@ -15,6 +15,66 @@ external_translate(void *data __UNUSED__, const char *orig)
    return orig;
 }
 
+typedef struct {
+   const char *emission;
+   const char *source;
+   Evas_Object *edje;
+} Elm_External_Signals_Proxy_Context;
+
+static void
+_external_signal_proxy_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Elm_External_Signals_Proxy_Context *ctxt = data;
+   free(ctxt);
+}
+
+static void
+_external_signal_proxy_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Elm_External_Signals_Proxy_Context *ctxt = data;
+   // TODO: Is it worth to check Evas_Smart_Cb_Description and do something
+   // TODO: with event_info given its description?
+   edje_object_signal_emit(ctxt->edje, ctxt->emission, ctxt->source);
+}
+
+void
+external_signals_proxy(Evas_Object *obj, Evas_Object *edje, const char *part_name)
+{
+   const Evas_Smart_Cb_Description **cls_descs, **inst_descs;
+   unsigned int cls_count, inst_count, total;
+   Elm_External_Signals_Proxy_Context *ctxt;
+
+   evas_object_smart_callbacks_descriptions_get
+     (obj, &cls_descs, &cls_count, &inst_descs, &inst_count);
+
+   total = cls_count + inst_count;
+   if (!total) return;
+   ctxt = malloc(sizeof(Elm_External_Signals_Proxy_Context) * total);
+   if (!ctxt) return;
+   evas_object_event_callback_add
+     (obj, EVAS_CALLBACK_DEL, _external_signal_proxy_free_cb, ctxt);
+
+   for (; cls_count > 0; cls_count--,  cls_descs++, ctxt++)
+     {
+	const Evas_Smart_Cb_Description *d = *cls_descs;
+	ctxt->emission = d->name;
+	ctxt->source = part_name;
+	ctxt->edje = edje;
+	evas_object_smart_callback_add
+	  (obj, d->name, _external_signal_proxy_cb, ctxt);
+     }
+
+   for (; inst_count > 0; inst_count--,  inst_descs++, ctxt++)
+     {
+	const Evas_Smart_Cb_Description *d = *inst_descs;
+	ctxt->emission = d->name;
+	ctxt->source = part_name;
+	ctxt->edje = edje;
+	evas_object_smart_callback_add
+	  (obj, d->name, _external_signal_proxy_cb, ctxt);
+     }
+}
+
 void *
 external_common_params_parse_internal(size_t params_size, void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
 {

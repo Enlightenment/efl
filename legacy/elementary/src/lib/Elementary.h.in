@@ -411,6 +411,7 @@ extern "C" {
    /* smart callbacks called:
     * "clicked" - the user clicked the button
     * "repeated" - the user pressed the button without releasing it
+    * "unpressed" - when the button is unpressed (released)
     */
 
    typedef enum _Elm_Scroller_Policy
