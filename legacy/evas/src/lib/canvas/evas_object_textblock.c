@@ -2897,7 +2897,6 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
 
    if (!cur) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
-   if (!cur->node) return;
    if (o->markup_text)
      {
 	free(o->markup_text);
