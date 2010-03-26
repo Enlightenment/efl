@@ -891,7 +891,7 @@ efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
     efreet_desktop_ref(desktop);
     entry->desktop = desktop;
 
-    if (pos < 0 || pos >= eina_list_count(menu->entries))
+    if (pos < 0 || (unsigned int)pos >= eina_list_count(menu->entries))
         menu->entries = eina_list_append(menu->entries, entry);
     else
     {
@@ -3762,7 +3762,8 @@ efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *interna
                     efreet_menu_free(sub_entry);
                 else if (in_line &&
                         ((inline_limit == 0) ||
-                         (!sub_entry->entries || (eina_list_count(sub_entry->entries) <= inline_limit))))
+                         (!sub_entry->entries ||
+                          (inline_limit > 0 && eina_list_count(sub_entry->entries) <= (unsigned int)inline_limit))))
                 {
                     /* Inline */
                     if (!sub_entry->entries)
@@ -3869,7 +3870,8 @@ efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *interna
                         efreet_menu_free(sub_entry);
                     else if (internal->in_line &&
                             ((internal->inline_limit == 0) ||
-                             (!sub_entry->entries || (eina_list_count(sub_entry->entries) <= internal->inline_limit))))
+                             (!sub_entry->entries ||
+                              (internal->inline_limit > 0 && eina_list_count(sub_entry->entries) <= (unsigned int)internal->inline_limit))))
                     {
                         /* Inline */
                         if (!sub_entry->entries)
