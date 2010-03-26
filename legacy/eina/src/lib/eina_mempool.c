@@ -113,6 +113,11 @@ Eina_Bool fixed_bitmap_init(void);
 void fixed_bitmap_shutdown(void);
 #endif
 
+#ifdef EINA_STATIC_BUILD_BUDDY
+Eina_Bool buddy_init(void);
+void buddy_shutdown(void);
+#endif
+
 /**
  * @endcond
  */
