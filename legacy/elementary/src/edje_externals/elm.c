@@ -1,6 +1,8 @@
 #include "Elementary.h"
 #include "private.h"
 
+int _elm_log_dom = -1;
+
 void
 external_signal(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *signal, const char *source)
 {
@@ -152,6 +154,7 @@ static Edje_External_Type_Info elm_external_types[] =
 static Eina_Bool
 elm_mod_init(void)
 {
+   _elm_log_dom = eina_log_domain_register("elm-externals", EINA_COLOR_LIGHTBLUE);
    edje_external_type_array_register(elm_external_types);
    return EINA_TRUE;
 }
