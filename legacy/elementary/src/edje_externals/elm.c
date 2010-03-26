@@ -112,7 +112,9 @@ external_common_param_icon_get(Evas_Object *obj, const Edje_External_Param *p)
    edje_object_file_get(edje, &file, NULL);
 
    parent_widget = elm_widget_parent_widget_get(obj);
-   elm_icon_add(parent_widget);
+   if (!parent_widget)
+     parent_widget = edje;
+   icon = elm_icon_add(parent_widget);
 
    if (elm_icon_file_set(icon, file, p->s))
      return icon;
