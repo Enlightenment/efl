@@ -354,7 +354,8 @@ evas_smart_cb_descriptions_fix(Evas_Smart_Cb_Description_Array *a)
 
    fprintf(stderr, "\nDEBUG: %u callbacks\n", a->size);
    if (a->size)
-     fprintf(stderr, "DEBUG:    %20.20s  [%s]\n", a->array[0]->name, a->array[1]->type);
+     fprintf(stderr, "DEBUG:    %20.20s  [%s]\n",
+	     a->array[0]->name, a->array[0]->type);
 
    for (i = 0, j = 1; j < a->size; j++)
      {
@@ -374,9 +375,12 @@ evas_smart_cb_descriptions_fix(Evas_Smart_Cb_Description_Array *a)
 	else
 	  {
 	     if (strcmp(cur->type, prev->type) == 0)
-	       fprintf(stderr, "WARNING: duplicated smart callback description name '%s', type '%s'\n", cur->name, cur->type);
+	       fprintf(stderr, "WARNING: duplicated smart callback description"
+		       " with name '%s' and type '%s'\n", cur->name, cur->type);
 	     else
-	       fprintf(stderr, "ERROR: callback description named '%s' differ, keep '%s', ignore '%s'\n", cur->name, prev->type, cur->type);
+	       fprintf(stderr, "ERROR: callback descriptions named '%s' differ"
+		       " in type, keeping '%s', ignoring '%s'\n", cur->name,
+		       prev->type, cur->type);
 	  }
      }
 
