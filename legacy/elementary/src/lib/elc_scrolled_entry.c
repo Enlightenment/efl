@@ -8,6 +8,7 @@ struct _Widget_Data
    Evas_Object *scroller;
    Evas_Object *entry;
    Elm_Scroller_Policy policy_h, policy_v;
+   Eina_Bool single_line : 1;
 };
 
 static const char *widtype = NULL;
@@ -36,7 +37,10 @@ _sizing_eval(Evas_Object *obj)
    if (!wd) return;
    evas_object_size_hint_min_get(wd->scroller, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
+   if (wd->single_line)
+     evas_object_size_hint_max_set(obj, -1, minh);
+   else
+     evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 static void
@@ -164,6 +168,7 @@ elm_scrolled_entry_add(Evas_Object *parent)
    wd->scroller = elm_scroller_add(parent);
    elm_widget_resize_object_set(obj, wd->scroller);
    elm_scroller_bounce_set(wd->scroller, 0, 0);
+   
    wd->entry = elm_entry_add(parent);
    evas_object_size_hint_weight_set(wd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(wd->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -196,7 +201,9 @@ elm_scrolled_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   if (wd->single_line == single_line) return;
    elm_entry_single_line_set(wd->entry, single_line);
+   wd->single_line = single_line;
    if (single_line)
      {
 	elm_scroller_policy_set(wd->scroller, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
@@ -207,6 +214,7 @@ elm_scrolled_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
 	elm_scroller_policy_set(wd->scroller, wd->policy_h, wd->policy_v);
 	elm_scroller_content_min_limit(wd->scroller, 0, 0);
      }
+   _sizing_eval(obj);
 }
 
 EAPI Eina_Bool

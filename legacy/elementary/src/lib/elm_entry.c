@@ -273,7 +273,10 @@ _dismissed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    if (!wd) return;
    if (wd->hoversel) evas_object_hide(wd->hoversel);
    if (wd->selmode)
-     edje_object_part_text_select_allow_set(wd->ent, "elm.text", 1);
+     {
+        if (!wd->password)
+          edje_object_part_text_select_allow_set(wd->ent, "elm.text", 1);
+     }
    elm_widget_scroll_freeze_pop(data);
 }
 
@@ -284,7 +287,8 @@ _select(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    if (!wd) return;
    wd->selmode = EINA_TRUE;
    edje_object_part_text_select_none(wd->ent, "elm.text");
-   edje_object_part_text_select_allow_set(wd->ent, "elm.text", 1);
+   if (!wd->password)
+     edje_object_part_text_select_allow_set(wd->ent, "elm.text", 1);
    edje_object_signal_emit(wd->ent, "elm,state,select,on", "elm");
    elm_widget_scroll_hold_push(data);
 }
@@ -400,8 +404,9 @@ _long_press(void *data)
         evas_object_smart_callback_add(wd->hoversel, "dismissed", _dismissed, data);
         if (!wd->selmode)
           {
-             elm_hoversel_item_add(wd->hoversel, "Select", NULL, ELM_ICON_NONE,
-                                   _select, data);
+             if (!wd->password)
+               elm_hoversel_item_add(wd->hoversel, "Select", NULL, ELM_ICON_NONE,
+                                     _select, data);
              if (1) // need way to detect if someone has a selection
                {
                   if (wd->editable)
@@ -411,16 +416,19 @@ _long_press(void *data)
           }
         else
           {
-             if (wd->have_selection)
+             if (!wd->password)
                {
-                  elm_hoversel_item_add(wd->hoversel, "Copy", NULL, ELM_ICON_NONE,
-                                        _copy, data);
-                  if (wd->editable)
-                    elm_hoversel_item_add(wd->hoversel, "Cut", NULL, ELM_ICON_NONE,
-                                          _cut, data);
+                  if (wd->have_selection)
+                    {
+                       elm_hoversel_item_add(wd->hoversel, "Copy", NULL, ELM_ICON_NONE,
+                                             _copy, data);
+                       if (wd->editable)
+                         elm_hoversel_item_add(wd->hoversel, "Cut", NULL, ELM_ICON_NONE,
+                                               _cut, data);
+                    }
+                  elm_hoversel_item_add(wd->hoversel, "Cancel", NULL, ELM_ICON_NONE,
+                                        _cancel, data);
                }
-             elm_hoversel_item_add(wd->hoversel, "Cancel", NULL, ELM_ICON_NONE,
-                                   _cancel, data);
           }
         EINA_LIST_FOREACH(wd->items, l, it)
           {
