@@ -66,6 +66,18 @@ static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _units_set(Evas_Object *obj);
 static void _indicator_set(Evas_Object *obj);
 
+static const char SIG_CHANGED[] = "changed";
+static const char SIG_DELAY_CHANGED[] = "delay,changed";
+static const char SIG_DRAG_START[] = "slider,drag,start";
+static const char SIG_DRAG_STOP[] = "slider,drag,stop";
+static const Evas_Smart_Cb_Description _signals[] = {
+  {SIG_CHANGED, ""},
+  {SIG_DELAY_CHANGED, ""},
+  {SIG_DRAG_START, ""},
+  {SIG_DRAG_STOP, ""},
+  {NULL, NULL}
+};
+
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -158,7 +170,7 @@ _delay_change(void *data)
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return 0;
    wd->delay = NULL;
-   evas_object_smart_callback_call(data, "delay,changed", NULL);
+   evas_object_smart_callback_call(data, SIG_DELAY_CHANGED, NULL);
    return 0;
 }
 
@@ -177,7 +189,7 @@ _val_fetch(Evas_Object *obj)
    if (val != wd->val)
      {
 	wd->val = val;
-	evas_object_smart_callback_call(obj, "changed", NULL);
+	evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
 	if (wd->delay) ecore_timer_del(wd->delay);
 	wd->delay = ecore_timer_add(0.2, _delay_change, obj);
      }
@@ -248,7 +260,7 @@ static void
 _drag_start(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    _val_fetch(data);
-   evas_object_smart_callback_call(data, "slider,drag,start", NULL);
+   evas_object_smart_callback_call(data, SIG_DRAG_START, NULL);
    _units_set(data);
    _indicator_set(data);
 }
@@ -257,7 +269,7 @@ static void
 _drag_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    _val_fetch(data);
-   evas_object_smart_callback_call(data, "slider,drag,stop", NULL);
+   evas_object_smart_callback_call(data, SIG_DRAG_STOP, NULL);
    _units_set(data);
    _indicator_set(data);
 }
@@ -328,6 +340,10 @@ elm_slider_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 
    _sizing_eval(obj);
+
+   // TODO: convert Elementary to subclassing of Evas_Smart_Class
+   // TODO: and save some bytes, making descriptions per-class and not instance!
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
 }
 

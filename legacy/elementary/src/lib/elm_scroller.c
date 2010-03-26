@@ -50,6 +50,28 @@ static void _show_region_hook(void *data, Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
+static const char SIG_SCROLL[] = "scroll";
+static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
+static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
+static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
+static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
+static const char SIG_EDGE_LEFT[] = "edge,left";
+static const char SIG_EDGE_RIGHT[] = "edge,right";
+static const char SIG_EDGE_TOP[] = "edge,top";
+static const char SIG_EDGE_BOTTOM[] = "edge,bottom";
+static const Evas_Smart_Cb_Description _signals[] = {
+  {SIG_SCROLL, ""},
+  {SIG_SCROLL_ANIM_START, ""},
+  {SIG_SCROLL_ANIM_STOP, ""},
+  {SIG_SCROLL_DRAG_START, ""},
+  {SIG_SCROLL_DRAG_STOP, ""},
+  {SIG_EDGE_LEFT, ""},
+  {SIG_EDGE_RIGHT, ""},
+  {SIG_EDGE_TOP, ""},
+  {SIG_EDGE_BOTTOM, ""},
+  {NULL, NULL}
+};
+
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -204,55 +226,55 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 static void
 _edge_left(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "edge,left", NULL);
+   evas_object_smart_callback_call(data, SIG_EDGE_LEFT, NULL);
 }
 
 static void
 _edge_right(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "edge,right", NULL);
+   evas_object_smart_callback_call(data, SIG_EDGE_RIGHT, NULL);
 }
 
 static void
 _edge_top(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "edge,top", NULL);
+   evas_object_smart_callback_call(data, SIG_EDGE_TOP, NULL);
 }
 
 static void
 _edge_bottom(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "edge,bottom", NULL);
+   evas_object_smart_callback_call(data, SIG_EDGE_BOTTOM, NULL);
 }
 
 static void
 _scroll(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "scroll", NULL);
+   evas_object_smart_callback_call(data, SIG_SCROLL, NULL);
 }
 
 static void
 _scroll_anim_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "scroll,anim,start", NULL);
+   evas_object_smart_callback_call(data, SIG_SCROLL_ANIM_START, NULL);
 }
 
 static void
 _scroll_anim_stop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "scroll,anim,stop", NULL);
+   evas_object_smart_callback_call(data, SIG_SCROLL_ANIM_STOP, NULL);
 }
 
 static void
 _scroll_drag_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "scroll,drag,start", NULL);
+   evas_object_smart_callback_call(data, SIG_SCROLL_DRAG_START, NULL);
 }
 
 static void
 _scroll_drag_stop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "scroll,drag,stop", NULL);
+   evas_object_smart_callback_call(data, SIG_SCROLL_DRAG_STOP, NULL);
 }
 
 /**
@@ -314,6 +336,10 @@ elm_scroller_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "drag,stop", _scroll_drag_stop, obj);
 
    _sizing_eval(obj);
+
+   // TODO: convert Elementary to subclassing of Evas_Smart_Class
+   // TODO: and save some bytes, making descriptions per-class and not instance!
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
 }
 

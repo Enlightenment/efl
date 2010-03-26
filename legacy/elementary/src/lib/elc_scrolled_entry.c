@@ -12,6 +12,37 @@ struct _Widget_Data
 };
 
 static const char *widtype = NULL;
+
+static const char SIG_CHANGED[] = "changed";
+static const char SIG_ACTIVATED[] = "activated";
+static const char SIG_PRESS[] = "press";
+static const char SIG_LONGPRESSED[] = "longpressed";
+static const char SIG_CLICKED[] = "clicked";
+static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+static const char SIG_SELECTION_PASTE[] = "selection,paste";
+static const char SIG_SELECTION_COPY[] = "selection,copy";
+static const char SIG_SELECTION_CUT[] = "selection,cut";
+static const char SIG_SELECTION_START[] = "selection,start";
+static const char SIG_SELECTION_CHANGED[] = "selection,changed";
+static const char SIG_SELECTION_CLEARED[] = "selection,cleared";
+static const char SIG_CURSOR_CHANGED[] = "cursor,changed";
+static const char SIG_ANCHOR_CLICKED[] = "anchor,clicked";
+static const Evas_Smart_Cb_Description _signals[] = {
+  {SIG_CHANGED, ""},
+  {SIG_ACTIVATED, ""},
+  {SIG_PRESS, ""},
+  {SIG_LONGPRESSED, ""},
+  {SIG_SELECTION_PASTE, ""},
+  {SIG_SELECTION_COPY, ""},
+  {SIG_SELECTION_CUT, ""},
+  {SIG_SELECTION_START, ""},
+  {SIG_SELECTION_CHANGED, ""},
+  {SIG_SELECTION_CLEARED, ""},
+  {SIG_CURSOR_CHANGED, ""},
+  {SIG_ANCHOR_CLICKED, ""},
+  {NULL, NULL}
+};
+
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -64,85 +95,85 @@ static void
 _entry_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _sizing_eval(data);
-   evas_object_smart_callback_call(data, "changed", NULL);
+   evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
 }
 
 static void
 _entry_activated(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "activated", NULL);
+   evas_object_smart_callback_call(data, SIG_ACTIVATED, NULL);
 }
 
 static void
 _entry_press(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "press", NULL);
+   evas_object_smart_callback_call(data, SIG_PRESS, NULL);
 }
 
 static void
 _entry_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "clicked", NULL);
+   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
 static void
 _entry_clicked_double(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "clicked,double", NULL);
+   evas_object_smart_callback_call(data, SIG_CLICKED_DOUBLE, NULL);
 }
 
 static void
 _entry_cursor_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "cursor,changed", NULL);
+   evas_object_smart_callback_call(data, SIG_CURSOR_CHANGED, NULL);
 }
 
 static void
 _entry_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "anchor,clicked", NULL);
+   evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, NULL);
 }
 
 static void
 _entry_selection_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "selection,start", NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_START, NULL);
 }
 
 static void
 _entry_selection_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "selection,changed", NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_CHANGED, NULL);
 }
 
 static void
 _entry_selection_cleared(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "selection,cleared", NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_CLEARED, NULL);
 }
 
 static void
 _entry_selection_paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "selection,paste", NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_PASTE, NULL);
 }
 
 static void
 _entry_selection_copy(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "selection,copy", NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_COPY, NULL);
 }
 
 static void
 _entry_selection_cut(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "selection,cut", NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_CUT, NULL);
 }
 
 static void
 _entry_longpressed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "longpressed", NULL);
+   evas_object_smart_callback_call(data, SIG_LONGPRESSED, NULL);
 }
 
 static void
@@ -206,6 +237,9 @@ elm_scrolled_entry_add(Evas_Object *parent)
 
    _sizing_eval(obj);
 
+   // TODO: convert Elementary to subclassing of Evas_Smart_Class
+   // TODO: and save some bytes, making descriptions per-class and not instance!
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
 }
 

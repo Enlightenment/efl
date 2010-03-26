@@ -23,6 +23,12 @@ static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _signal_toggle_off(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _signal_toggle_on(void *data, Evas_Object *obj, const char *emission, const char *source);
 
+static const char SIG_CHANGED[] = "changed";
+static const Evas_Smart_Cb_Description _signals[] = {
+  {SIG_CHANGED, ""},
+  {NULL, NULL}
+};
+
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -117,7 +123,7 @@ _signal_toggle_off(void *data, Evas_Object *obj __UNUSED__, const char *emission
    if (!wd) return;
    wd->state = 0;
    if (wd->statep) *wd->statep = wd->state;
-   evas_object_smart_callback_call(data, "changed", NULL);
+   evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
 }
 
 static void
@@ -127,7 +133,7 @@ _signal_toggle_on(void *data, Evas_Object *obj __UNUSED__, const char *emission 
    if (!wd) return;
    wd->state = 1;
    if (wd->statep) *wd->statep = wd->state;
-   evas_object_smart_callback_call(data, "changed", NULL);
+   evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
 }
 
 EAPI Evas_Object *
@@ -163,6 +169,10 @@ elm_toggle_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 
    _sizing_eval(obj);
+
+   // TODO: convert Elementary to subclassing of Evas_Smart_Class
+   // TODO: and save some bytes, making descriptions per-class and not instance!
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
 }
 

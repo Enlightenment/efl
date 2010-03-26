@@ -63,6 +63,36 @@ static void _signal_entry_copy_notify(void *data, Evas_Object *obj, const char *
 static void _signal_entry_cut_notify(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _signal_cursor_changed(void *data, Evas_Object *obj, const char *emission, const char *source);
 
+static const char SIG_CHANGED[] = "changed";
+static const char SIG_ACTIVATED[] = "activated";
+static const char SIG_PRESS[] = "press";
+static const char SIG_LONGPRESSED[] = "longpressed";
+static const char SIG_CLICKED[] = "clicked";
+static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+static const char SIG_SELECTION_PASTE[] = "selection,paste";
+static const char SIG_SELECTION_COPY[] = "selection,copy";
+static const char SIG_SELECTION_CUT[] = "selection,cut";
+static const char SIG_SELECTION_START[] = "selection,start";
+static const char SIG_SELECTION_CHANGED[] = "selection,changed";
+static const char SIG_SELECTION_CLEARED[] = "selection,cleared";
+static const char SIG_CURSOR_CHANGED[] = "cursor,changed";
+static const char SIG_ANCHOR_CLICKED[] = "anchor,clicked";
+static const Evas_Smart_Cb_Description _signals[] = {
+  {SIG_CHANGED, ""},
+  {SIG_ACTIVATED, ""},
+  {SIG_PRESS, ""},
+  {SIG_LONGPRESSED, ""},
+  {SIG_SELECTION_PASTE, ""},
+  {SIG_SELECTION_COPY, ""},
+  {SIG_SELECTION_CUT, ""},
+  {SIG_SELECTION_START, ""},
+  {SIG_SELECTION_CHANGED, ""},
+  {SIG_SELECTION_CLEARED, ""},
+  {SIG_CURSOR_CHANGED, ""},
+  {SIG_ANCHOR_CLICKED, ""},
+  {NULL, NULL}
+};
+
 static Eina_List *entries = NULL;
 
 struct _Mod_Api
@@ -300,7 +330,7 @@ _paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_smart_callback_call(data, "selection,paste", NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_PASTE, NULL);
    if (wd->sel_notify_handler)
      {
 #ifdef HAVE_ELEMENTARY_X
@@ -447,7 +477,7 @@ _long_press(void *data)
         edje_object_part_text_select_abort(wd->ent, "elm.text");
      }
    wd->longpress_timer = NULL;
-   evas_object_smart_callback_call(data, "longpressed", NULL);
+   evas_object_smart_callback_call(data, SIG_LONGPRESSED, NULL);
    return 0;
 }
 
@@ -757,7 +787,7 @@ _signal_entry_changed(void *data, Evas_Object *obj __UNUSED__, const char *emiss
    _sizing_eval(data);
    if (wd->text) eina_stringshare_del(wd->text);
    wd->text = NULL;
-   evas_object_smart_callback_call(data, "changed", NULL);
+   evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
 }
 
 static void
@@ -772,7 +802,7 @@ _signal_selection_start(void *data, Evas_Object *obj __UNUSED__, const char *emi
 	if (entry != data) elm_entry_select_none(entry);
      }
    wd->have_selection = EINA_TRUE;
-   evas_object_smart_callback_call(data, "selection,start", NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_START, NULL);
    if (wd->sel_notify_handler)
      {
 	char *txt = _mkup_to_text(elm_entry_selection_get(data));
@@ -798,7 +828,7 @@ _signal_selection_changed(void *data, Evas_Object *obj __UNUSED__, const char *e
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    wd->have_selection = EINA_TRUE;
-   evas_object_smart_callback_call(data, "selection,changed", NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_CHANGED, NULL);
    if (wd->sel_notify_handler)
      {
 	char *txt = _mkup_to_text(elm_entry_selection_get(data));
@@ -825,7 +855,7 @@ _signal_selection_cleared(void *data, Evas_Object *obj __UNUSED__, const char *e
    if (!wd) return;
    if (!wd->have_selection) return;
    wd->have_selection = EINA_FALSE;
-   evas_object_smart_callback_call(data, "selection,cleared", NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_CLEARED, NULL);
    if (wd->sel_notify_handler)
      {
 	if (wd->cut_sel)
@@ -868,7 +898,7 @@ _signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char 
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_smart_callback_call(data, "selection,paste", NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_PASTE, NULL);
    if (wd->sel_notify_handler)
      {
 #ifdef HAVE_ELEMENTARY_X
@@ -890,7 +920,7 @@ _signal_entry_copy_notify(void *data, Evas_Object *obj __UNUSED__, const char *e
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_smart_callback_call(data, "selection,copy", NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_COPY, NULL);
 }
 
 static void
@@ -899,7 +929,7 @@ _signal_entry_cut_notify(void *data, Evas_Object *obj __UNUSED__, const char *em
    Widget_Data *wd = elm_widget_data_get(data);
    char *txt;
    if (!wd) return;
-   evas_object_smart_callback_call(data, "selection,cut", NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_CUT, NULL);
    txt = _mkup_to_text(elm_entry_selection_get(data));
    eina_stringshare_replace(&wd->cut_sel, txt);
    if (txt) free(txt);
@@ -914,7 +944,7 @@ _signal_cursor_changed(void *data, Evas_Object *obj __UNUSED__, const char *emis
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord cx, cy, cw, ch;
    if (!wd) return;
-   evas_object_smart_callback_call(data, "cursor,changed", NULL);
+   evas_object_smart_callback_call(data, SIG_CURSOR_CHANGED, NULL);
    edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
                                              &cx, &cy, &cw, &ch);
    if (!wd->deferred_recalc_job)
@@ -986,7 +1016,7 @@ _signal_anchor_up(void *data, Evas_Object *obj __UNUSED__, const char *emission,
 	       }
 	  }
 	if (!wd->disabled)
-	  evas_object_smart_callback_call(data, "anchor,clicked", &ei);
+	  evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, &ei);
      }
 }
 
@@ -1016,7 +1046,7 @@ _signal_key_enter(void *data, Evas_Object *obj __UNUSED__, const char *emission 
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_smart_callback_call(data, "activated", NULL);
+   evas_object_smart_callback_call(data, SIG_ACTIVATED, NULL);
 }
 
 static void
@@ -1024,7 +1054,7 @@ _signal_mouse_down(void *data, Evas_Object *obj __UNUSED__, const char *emission
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_smart_callback_call(data, "press", NULL);
+   evas_object_smart_callback_call(data, SIG_PRESS, NULL);
 }
 
 static void
@@ -1032,7 +1062,7 @@ _signal_mouse_up(void *data, Evas_Object *obj __UNUSED__, const char *emission _
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_smart_callback_call(data, "clicked", NULL);
+   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
 static void
@@ -1040,7 +1070,7 @@ _signal_mouse_double(void *data, Evas_Object *obj __UNUSED__, const char *emissi
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_smart_callback_call(data, "clicked,double", NULL);
+   evas_object_smart_callback_call(data, SIG_CLICKED_DOUBLE, NULL);
 }
 
 #ifdef HAVE_ELEMENTARY_X
@@ -1186,6 +1216,9 @@ elm_entry_add(Evas_Object *parent)
    // if found - hook in
    if ((wd->api) && (wd->api->obj_hook)) wd->api->obj_hook(obj);
 
+   // TODO: convert Elementary to subclassing of Evas_Smart_Class
+   // TODO: and save some bytes, making descriptions per-class and not instance!
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
 }
 

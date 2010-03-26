@@ -60,6 +60,12 @@ static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *eve
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _signal_radio_on(void *data, Evas_Object *obj, const char *emission, const char *source);
 
+static const char SIG_CHANGED[] = "changed";
+static const Evas_Smart_Cb_Description _signals[] = {
+  {SIG_CHANGED, ""},
+  {NULL, NULL}
+};
+
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -192,7 +198,7 @@ _signal_radio_on(void *data, Evas_Object *obj __UNUSED__, const char *emission _
    wd->group->value = wd->value;
    if (wd->group->valuep) *(wd->group->valuep) = wd->group->value;
    _state_set_all(wd);
-   evas_object_smart_callback_call(data, "changed", NULL);
+   evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
 }
 
 /**
@@ -234,6 +240,10 @@ elm_radio_add(Evas_Object *parent)
    wd->state = 0;
 
    _sizing_eval(obj);
+
+   // TODO: convert Elementary to subclassing of Evas_Smart_Class
+   // TODO: and save some bytes, making descriptions per-class and not instance!
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
 }
 
