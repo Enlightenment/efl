@@ -96,14 +96,13 @@ test_icon_desktops(void *data, Evas_Object *obj, void *event_info)
      {
         Efreet_Desktop *d;
         
-        EINA_LIST_FOREACH(desktops, l, d)
+        EINA_LIST_FREE(desktops, d)
           {
              elm_genlist_item_append(gl, &it_desk, d, 
                                      NULL, ELM_GENLIST_ITEM_NONE,
                                      desktop_sel, NULL);
-//             efreet_desktop_free(d);
+             efreet_desktop_free(d);
           }
-        eina_list_free(desktops);
      }
 #endif
    
