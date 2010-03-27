@@ -9,7 +9,6 @@ ef_cb_utils(void)
     Efreet_Desktop *desktop;
     const char *tmp2;
 
-    if (!efreet_util_init()) return 0;
     printf("\n");
 
     tmp2 = efreet_util_path_to_file_id("/usr/share/applications/this/tmp/test.desktop");
@@ -27,6 +26,5 @@ ef_cb_utils(void)
     printf("nautilus-computer.desktop: %p\n", desktop);
     efreet_desktop_free(desktop);
 
-    efreet_util_shutdown();
     return 1;
 }

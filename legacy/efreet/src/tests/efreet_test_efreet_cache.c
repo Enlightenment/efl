@@ -14,12 +14,6 @@ START_TEST(efreet_test_efreet_cache_init)
    ret = efreet_init();
    fail_if(ret != 1);
 
-   ret = efreet_util_init();
-   fail_if(ret != 1);
-
-   ret = efreet_util_shutdown();
-   fail_if(ret != 0);
-
    ret = efreet_shutdown();
    fail_if(ret != 0);
 }

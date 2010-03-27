@@ -137,10 +137,8 @@ int
 main(int argc __UNUSED__, char **argv __UNUSED__)
 {
     if (!efreet_init()) return 1;
-    if (!efreet_util_init()) return 1;
     check();
     ecore_main_loop_begin();
-    efreet_util_shutdown();
     efreet_shutdown();
     return 0;
 }
