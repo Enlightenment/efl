@@ -173,8 +173,8 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
 	return 0;
 #endif
-      case ECORE_EVAS_ENGINE_QUARTZ:
-#ifdef BUILD_ECORE_EVAS_QUARTZ
+      case ECORE_EVAS_ENGINE_COCOA:
+#ifdef BUILD_ECORE_EVAS_COCOA
 	 return 1;
 #else
 	 return 0;
@@ -392,15 +392,15 @@ _ecore_evas_constructor_software_x11(int x, int y, int w, int h, const char *ext
 }
 #endif
 
-#ifdef BUILD_ECORE_EVAS_QUARTZ
+#ifdef BUILD_ECORE_EVAS_COCOA
 static Ecore_Evas *
-_ecore_evas_constructor_quartz(int x, int y, int w, int h, const char *extra_options)
+_ecore_evas_constructor_cocoa(int x, int y, int w, int h, const char *extra_options)
 {
    char *name = NULL;
    Ecore_Evas *ee;
 
    _ecore_evas_parse_extra_options_str(extra_options, "name=", &name);
-   ee = ecore_evas_quartz_new(name, w, h);
+   ee = ecore_evas_cocoa_new(name, w, h);
    free(name);
 
    if (ee) ecore_evas_move(ee, x, y);
@@ -672,8 +672,8 @@ static const struct ecore_evas_engine _engines[] = {
 #endif
 
   /* Apple */
-#ifdef BUILD_ECORE_EVAS_QUARTZ
-  {"quartz", _ecore_evas_constructor_quartz},
+#ifdef BUILD_ECORE_EVAS_COCOA
+  {"cocoa", _ecore_evas_constructor_cocoa},
 #endif
 
   /* Last chance to have a window */

@@ -47,7 +47,7 @@ case "$host_os" in
       ecore_input_release_info="-release $release"
       ecore_input_evas_release_info="-release $release"
       ecore_ipc_release_info="-release $release"
-      ecore_quartz_release_info="-release $release"
+      ecore_cocoa_release_info="-release $release"
       ecore_release_info="-release $release"
       ecore_sdl_release_info="-release $release"
       ecore_win32_release_info="-release $release"
@@ -65,7 +65,7 @@ AC_SUBST(ecore_imf_release_info)
 AC_SUBST(ecore_input_release_info)
 AC_SUBST(ecore_input_evas_release_info)
 AC_SUBST(ecore_ipc_release_info)
-AC_SUBST(ecore_quartz_release_info)
+AC_SUBST(ecore_cocoa_release_info)
 AC_SUBST(ecore_release_info)
 AC_SUBST(ecore_sdl_release_info)
 AC_SUBST(ecore_win32_release_info)
@@ -120,7 +120,7 @@ want_evas_simple_x11="no"
 want_ecore_x_xcb="no"
 want_ecore_x="no"
 want_ecore_win32="no"
-want_ecore_quartz="no"
+want_ecore_cocoa="no"
 want_ecore_sdl="no"
 want_ecore_fb="no"
 want_ecore_directfb="no"
@@ -156,7 +156,7 @@ want_ecore_evas_software_ddraw="no"
 want_ecore_evas_direct3d="no"
 want_ecore_evas_opengl_glew="no"
 want_ecore_evas_software_16_ddraw="no"
-want_ecore_evas_quartz="no"
+want_ecore_evas_cocoa="no"
 want_ecore_evas_software_sdl="no"
 want_ecore_evas_gl_sdl="no"
 want_ecore_evas_directfb="no"
@@ -191,8 +191,8 @@ case "$host_os" in
       want_openssl="auto"
       want_ecore_ipc="yes"
       want_ecore_imf="yes"
-      want_ecore_quartz="yes"
-      want_ecore_evas_quartz="yes"
+      want_ecore_cocoa="yes"
+      want_ecore_evas_cocoa="yes"
       want_ecore_evas_software_sdl="yes"
       want_ecore_evas_gl_sdl="yes"
       ;;
@@ -234,7 +234,7 @@ requirements_ecore_imf_evas=""
 requirements_ecore_input=""
 requirements_ecore_input_evas=""
 requirements_ecore_ipc=""
-requirements_ecore_quartz=""
+requirements_ecore_cocoa=""
 requirements_ecore_sdl=""
 requirements_ecore_x=""
 requirements_ecore_win32=""
@@ -411,7 +411,7 @@ requirements_ecore_imf_evas="ecore eina-0 ${requirements_ecore_imf_evas}"
 requirements_ecore_input="ecore eina-0 ${requirements_ecore_input}"
 requirements_ecore_input_evas="ecore eina-0 ${requirements_ecore_input_evas}"
 requirements_ecore_ipc="ecore eina-0 ${requirements_ecore_ipc}"
-requirements_ecore_quartz="ecore eina-0 ${requirements_ecore_quartz}"
+requirements_ecore_cocoa="ecore eina-0 ${requirements_ecore_cocoa}"
 requirements_ecore_sdl="ecore eina-0 ${requirements_ecore_sdl}"
 requirements_ecore_win32="ecore eina-0 ${requirements_ecore_win32}"
 requirements_ecore_wince="ecore eina-0 ${requirements_ecore_wince}"
@@ -868,23 +868,23 @@ have_fb="no"
 AC_CHECK_HEADER([linux/fb.h],
    [AC_CHECK_HEADER([linux/input.h], [have_fb="yes"])])
 
-# Quartz header files (ecore_quartz)
+# Cocoa header files (ecore_cocoa)
 
-quartz_ldflags="";
-have_quartz="no"
+cocoa_ldflags="";
+have_cocoa="no"
 
 if test "x${have_gnu_objc}" = "xyes" ; then
    AC_LANG_PUSH([Objective C])
    AC_CHECK_HEADER([Cocoa/Cocoa.h],
       [
-       have_quartz="yes"
-       quartz_ldflags="-framework Cocoa"
+       have_cocoa="yes"
+       cocoa_ldflags="-framework Cocoa"
       ],
-      [have_quartz="no"])
+      [have_cocoa="no"])
    AC_LANG_POP([Objective C])
 fi
 
-AC_SUBST(quartz_ldflags)
+AC_SUBST(cocoa_ldflags)
 
 # basic pthread support
 
@@ -1092,15 +1092,15 @@ ECORE_CHECK_MODULE([win32], [${want_ecore_win32}], [Win32], [${have_ecore_input}
    ])
 AC_SUBST(ecore_win32_libs)
 
-# ecore_quartz
+# ecore_cocoa
 
-ecore_quartz_deps="no"
-if test "x${have_ecore_input}" = "xyes" -a "x${have_quartz}" = "xyes" ; then
-   ecore_quartz_deps="yes"
+ecore_cocoa_deps="no"
+if test "x${have_ecore_input}" = "xyes" -a "x${have_cocoa}" = "xyes" ; then
+   ecore_cocoa_deps="yes"
 fi
 
-ECORE_CHECK_MODULE([quartz], [${want_ecore_quartz}], [Quartz], [${ecore_quartz_deps}],
-   [requirements_ecore_quartz="ecore-input ${requirements_ecore_quartz}"])
+ECORE_CHECK_MODULE([cocoa], [${want_ecore_cocoa}], [Cocoa], [${ecore_cocoa_deps}],
+   [requirements_ecore_cocoa="ecore-input ${requirements_ecore_cocoa}"])
 
 # ecore_sdl
 
@@ -1249,13 +1249,13 @@ if test "x${have_ecore_evas_software_gdi}" = "xyes" -o \
    requirements_ecore_evas="ecore-win32 ${requirements_ecore_evas}"
 fi
 
-# ecore_evas_quartz
+# ecore_evas_cocoa
 
-ECORE_EVAS_CHECK_MODULE([quartz],
-   [${want_ecore_evas_quartz}],
-   [Quartz],
-   [${have_ecore_quartz}],
-   [requirements_ecore_evas="ecore-quartz ${requirements_ecore_evas}"])
+ECORE_EVAS_CHECK_MODULE([cocoa],
+   [${want_ecore_evas_cocoa}],
+   [Cocoa],
+   [${have_ecore_cocoa}],
+   [requirements_ecore_evas="ecore-cocoa ${requirements_ecore_evas}"])
 
 # ecore_evas_software_sdl
 
@@ -1313,7 +1313,7 @@ AC_SUBST(requirements_ecore_imf_evas)
 AC_SUBST(requirements_ecore_input)
 AC_SUBST(requirements_ecore_input_evas)
 AC_SUBST(requirements_ecore_ipc)
-AC_SUBST(requirements_ecore_quartz)
+AC_SUBST(requirements_ecore_cocoa)
 AC_SUBST(requirements_ecore_sdl)
 AC_SUBST(requirements_ecore_x)
 AC_SUBST(requirements_ecore_win32)
@@ -1350,7 +1350,7 @@ src/lib/ecore_directfb/Makefile
 src/lib/ecore_evas/Makefile
 src/lib/ecore_fb/Makefile
 src/lib/ecore_file/Makefile
-src/lib/ecore_quartz/Makefile
+src/lib/ecore_cocoa/Makefile
 src/lib/ecore_sdl/Makefile
 src/lib/ecore_imf/Makefile
 src/lib/ecore_imf_evas/Makefile
@@ -1456,7 +1456,7 @@ else
   echo "  Ecore_X......................: $have_ecore_x"
 fi
 echo "  Ecore_Win32..................: $have_ecore_win32"
-echo "  Ecore_Quartz.................: $have_ecore_quartz"
+echo "  Ecore_Cocoa..................: $have_ecore_cocoa"
 echo "  Ecore_SDL....................: $have_ecore_sdl"
 echo "  Ecore_FB.....................: $have_ecore_fb"
 if test "x${have_ecore_fb}" = "xyes" ; then
@@ -1484,7 +1484,7 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    Software DirectDraw........: $have_ecore_evas_software_ddraw"
   echo "    Direct3D...................: $have_ecore_evas_direct3d"
   echo "    OpenGL Glew................: $have_ecore_evas_opengl_glew"
-  echo "    Quartz.....................: $have_ecore_evas_quartz"
+  echo "    Cocoa......................: $have_ecore_evas_cocoa"
   echo "    Software SDL...............: $have_ecore_evas_software_sdl"
   echo "    OpenGL SDL.................: $have_ecore_evas_opengl_sdl"
   echo "    DirectFB...................: $have_ecore_evas_directfb"

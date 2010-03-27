@@ -143,7 +143,7 @@ if BUILD_ECORE_SDL
 pkgconfig_DATA += ecore-sdl.pc
 endif
 
-if BUILD_ECORE_QUARTZ
+if BUILD_ECORE_COCOA
 pkgconfig_DATA += ecore-cocoa.pc
 endif
 

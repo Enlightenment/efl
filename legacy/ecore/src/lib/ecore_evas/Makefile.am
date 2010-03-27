@@ -42,12 +42,12 @@ ECORE_SDL_LIB =
 ECORE_SDL_LIBADD =
 endif
 
-if BUILD_ECORE_QUARTZ
-ECORE_QUARTZ_INC = -I$(top_srcdir)/src/lib/ecore_quartz -xobjective-c
-ECORE_QUARTZ_LIB = $(top_builddir)/src/lib/ecore_quartz/libecore_cocoa.la
+if BUILD_ECORE_COCOA
+ECORE_COCOA_INC = -I$(top_srcdir)/src/lib/ecore_cocoa -xobjective-c
+ECORE_COCOA_LIB = $(top_builddir)/src/lib/ecore_cocoa/libecore_cocoa.la
 else
-ECORE_QUARTZ_INC =
-ECORE_QUARTZ_LIB =
+ECORE_COCOA_INC =
+ECORE_COCOA_LIB =
 endif
 
 if BUILD_ECORE_WINCE
@@ -73,7 +73,7 @@ $(ECORE_FB_INC) \
 $(ECORE_DIRECTFB_INC) \
 $(ECORE_WIN32_INC) \
 $(ECORE_SDL_INC) \
-$(ECORE_QUARTZ_INC) \
+$(ECORE_COCOA_INC) \
 $(ECORE_WINCE_INC) \
 @EVAS_CFLAGS@ \
 @XCB_CFLAGS@ \
@@ -107,7 +107,7 @@ $(ECORE_DIRECTFB_LIB) \
 $(ECORE_WIN32_LIB) \
 $(ECORE_SDL_LIB) \
 $(ECORE_SDL_LIBADD) \
-$(ECORE_QUARTZ_LIB) \
+$(ECORE_COCOA_LIB) \
 $(ECORE_WINCE_LIB) \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 $(top_builddir)/src/lib/ecore_input_evas/libecore_input_evas.la \
@@ -116,7 +116,7 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @EINA_LIBS@ \
 @EVIL_LIBS@
 
-libecore_evas_la_LDFLAGS = @quartz_ldflags@ -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_evas_release_info@
+libecore_evas_la_LDFLAGS = @cocoa_ldflags@ -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_evas_release_info@
 
 endif
 

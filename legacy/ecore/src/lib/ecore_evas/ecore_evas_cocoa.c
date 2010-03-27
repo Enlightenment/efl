@@ -6,7 +6,7 @@
 # include <config.h>
 #endif
 
-#ifdef BUILD_ECORE_EVAS_QUARTZ
+#ifdef BUILD_ECORE_EVAS_COCOA
 #import <Cocoa/Cocoa.h>
 #endif
 
@@ -18,7 +18,7 @@
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
-#ifdef BUILD_ECORE_EVAS_QUARTZ
+#ifdef BUILD_ECORE_EVAS_COCOA
 #include "Ecore_Cocoa.h"
 #include "Evas_Engine_Quartz.h"
 
@@ -349,7 +349,7 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
 EAPI Ecore_Evas *
 ecore_evas_cocoa_new(const char* name, int w, int h)
 {
-#ifdef BUILD_ECORE_EVAS_QUARTZ
+#ifdef BUILD_ECORE_EVAS_COCOA
    Evas_Engine_Info_Quartz *einfo;
    Ecore_Evas           *ee;
    int                  rmethod;
