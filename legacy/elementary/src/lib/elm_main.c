@@ -429,7 +429,6 @@ elm_need_efreet(void)
    if (_elm_need_efreet) return;
    _elm_need_efreet = 1;
    efreet_init();
-   efreet_util_init();
    efreet_mime_init();
    efreet_trash_init();
    /*
@@ -458,7 +457,6 @@ _elm_unneed_efreet(void)
         _elm_need_efreet = 0;
         efreet_trash_shutdown();
         efreet_mime_shutdown();
-        efreet_util_shutdown();
         efreet_shutdown();
      }
 #endif   
