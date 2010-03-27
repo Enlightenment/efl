@@ -2,9 +2,6 @@
 #ifndef EFREET_UTILS_H
 #define EFREET_UTILS_H
 
-EAPI int efreet_util_init(void);
-EAPI int efreet_util_shutdown(void);
-
 EAPI const char *efreet_util_path_to_file_id(const char *path);
 
 EAPI Eina_List *efreet_util_desktop_mime_list(const char *mime);

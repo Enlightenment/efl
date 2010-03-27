@@ -61,8 +61,13 @@ efreet_init(void)
     if (!efreet_menu_init())
         goto shutdown_efreet_desktop;
 
+    if (!efreet_util_init())
+        goto shutdown_efreet_menu;
+
     return _efreet_init_count;
 
+shutdown_efreet_menu:
+    efreet_menu_shutdown();
 shutdown_efreet_desktop:
     efreet_desktop_shutdown();
 shutdown_efreet_ini:
@@ -95,6 +100,7 @@ efreet_shutdown(void)
     if (--_efreet_init_count != 0)
         return _efreet_init_count;
 
+    efreet_util_shutdown();
     efreet_menu_shutdown();
     efreet_desktop_shutdown();
     efreet_ini_shutdown();

@@ -45,7 +45,7 @@ static Ecore_File_Monitor *cache_monitor = NULL;
 
 static int init = 0;
 
-EAPI int
+int
 efreet_util_init(void)
 {
     char buf[PATH_MAX];
@@ -74,7 +74,7 @@ log_error:
     return 0;
 }
 
-EAPI int
+int
 efreet_util_shutdown(void)
 {
     if (--init) return init;

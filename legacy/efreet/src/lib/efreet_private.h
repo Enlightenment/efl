@@ -189,6 +189,9 @@ void efreet_ini_shutdown(void);
 int efreet_desktop_init(void);
 void efreet_desktop_shutdown(void);
 
+int efreet_util_init(void);
+int efreet_util_shutdown(void);
+
 EAPI const char *efreet_home_dir_get(void);
 
 const char *efreet_lang_get(void);
