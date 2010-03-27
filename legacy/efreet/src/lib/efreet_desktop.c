@@ -2211,6 +2211,7 @@ efreet_desktop_cache_update(void *data __UNUSED__, Ecore_File_Monitor *em __UNUS
     efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
     cache = tmp;
 
+    efreet_util_desktop_cache_reload();
     ecore_event_add(EFREET_EVENT_CACHE_UPDATE, ev, efreet_desktop_cache_update_free, d);
     return;
 error:
