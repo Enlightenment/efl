@@ -273,6 +273,7 @@ int _elm_log_dom = -1;
 
 EAPI int ELM_EVENT_POLICY_CHANGED = 0;
 
+static int _elm_init_count = 0;
 static int _elm_policies[ELM_POLICY_LAST];
 static Ecore_Event_Handler *_elm_exit_handler = NULL;
 static Ecore_Event_Handler *_elm_event_property_change = NULL;
@@ -367,6 +368,8 @@ _elm_rescale(void)
 EAPI void
 elm_init(int argc, char **argv)
 {
+   _elm_init_count++;
+   if (_elm_init_count != 1) return;
    elm_quicklaunch_init(argc, argv);
    elm_quicklaunch_sub_init(argc, argv);
 }
@@ -383,6 +386,8 @@ elm_init(int argc, char **argv)
 EAPI void
 elm_shutdown(void)
 {
+   _elm_init_count--;
+   if (_elm_init_count != 0) return;
    elm_quicklaunch_sub_shutdown();
    elm_quicklaunch_shutdown();
 }
