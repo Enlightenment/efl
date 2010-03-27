@@ -448,6 +448,12 @@ struct _Edje_Program /* a conditional program to be run */
       const char *name;
       const char *description;
    } api;
+
+   /* used for PARAM_COPY (param names in state and state2 above!) */
+   struct {
+      int src; /* part where parameter is being retrieved */
+      int dst; /* part where parameter is being stored */
+   } param;
 };
 
 struct _Edje_Program_Target /* the target of an action */
@@ -1308,6 +1314,10 @@ Eina_Bool         _edje_real_part_table_pack(Edje_Real_Part *rp, Evas_Object *ch
 Eina_Bool         _edje_real_part_table_unpack(Edje_Real_Part *rp, Evas_Object *child_obj);
 void              _edje_real_part_table_clear(Edje_Real_Part *rp, Eina_Bool clear);
 
+Eina_Bool         _edje_object_part_text_raw_set(Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text);
+char             *_edje_text_escape(const char *text);
+char             *_edje_text_unescape(const char *text);
+
 void          _edje_embryo_script_init      (Edje *ed);
 void          _edje_embryo_script_shutdown  (Edje *ed);
 void          _edje_embryo_script_reset     (Edje *ed);
@@ -1507,6 +1517,7 @@ const Eina_List *_edje_entry_anchor_geometry_get(Edje_Real_Part *rp, const char 
 const Eina_List *_edje_entry_anchors_list(Edje_Real_Part *rp);
 void _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
 void _edje_entry_select_allow_set(Edje_Real_Part *rp, Eina_Bool allow);
+Eina_Bool _edje_entry_select_allow_get(const Edje_Real_Part *rp);
 void _edje_entry_select_abort(Edje_Real_Part *rp);
 
 Eina_Bool _edje_entry_cursor_next(Edje_Real_Part *rp, Edje_Cursor cur);

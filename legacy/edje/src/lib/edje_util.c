@@ -1224,7 +1224,7 @@ edje_object_text_change_cb_set(Evas_Object *obj, void (*func) (void *data, Evas_
      }
 }
 
-static Eina_Bool
+Eina_Bool
 _edje_object_part_text_raw_set(Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text)
 {
    if ((!rp->text.text) && (!text))
@@ -1307,7 +1307,7 @@ edje_object_part_text_get(const Evas_Object *obj, const char *part)
    return NULL;
 }
 
-static char *
+char *
 _edje_text_escape(const char *text)
 {
    Eina_Strbuf *txt;
@@ -1341,7 +1341,7 @@ _edje_text_escape(const char *text)
    return ret;
 }
 
-static char *
+char *
 _edje_text_unescape(const char *text)
 {
    Eina_Strbuf *txt;

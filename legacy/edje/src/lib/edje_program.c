@@ -32,6 +32,7 @@ void *alloca (size_t);
 #include "edje_private.h"
 
 static void _edje_emit_cb(Edje *ed, const char *sig, const char *src);
+static void _edje_param_copy(Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part *dst_part, const char *dst_param);
 
 int             _edje_anim_count = 0;
 Ecore_Animator *_edje_timer = NULL;
@@ -942,6 +943,21 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 	       }
 	  }
      }
+   else if (pr->action == EDJE_ACTION_TYPE_PARAM_COPY)
+     {
+	Edje_Real_Part *src_part, *dst_part;
+
+//	_edje_emit(ed, "program,start", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+
+	src_part = ed->table_parts[pr->param.src % ed->table_parts_size];
+	dst_part = ed->table_parts[pr->param.dst % ed->table_parts_size];
+	_edje_param_copy(src_part, pr->state, dst_part, pr->state2);
+
+	if (_edje_block_break(ed)) goto break_prog;
+//	_edje_emit(ed, "program,stop", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+     }
    else
      {
 //	_edje_emit(ed, "program,start", pr->name);
@@ -1311,6 +1327,554 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
    _edje_unblock(ed);
    _edje_thaw(ed);
    _edje_unref(ed);
+}
+
+static const Edje_External_Param_Info *
+_edje_external_param_info_get(const Evas_Object *obj, const char *name)
+{
+   const Edje_External_Type *type;
+   const Edje_External_Param_Info *info;
+
+   type = evas_object_data_get(obj, "Edje_External_Type");
+   if (!type) return NULL;
+   for (info = type->parameters_info; info->name != NULL; info++)
+     if (!strcmp(info->name, name)) return info;
+
+   return NULL;
+}
+
+static Edje_External_Param *
+_edje_param_external_get(const Evas_Object *obj, const char *name, Edje_External_Param *param)
+{
+   const Edje_External_Param_Info *info;
+
+   info = _edje_external_param_info_get(obj, name);
+   if (!info) return NULL;
+
+   memset(param, 0, sizeof(*param));
+   param->name = info->name;
+   param->type = info->type;
+   if (!_edje_external_param_get(obj, param)) return NULL;
+   return param;
+}
+
+static Edje_External_Param_Type
+_edje_param_external_type_get(const Evas_Object *obj, const char *name)
+{
+   const Edje_External_Param_Info *info;
+
+   info = _edje_external_param_info_get(obj, name);
+   if (!info) return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+
+   return info->type;
+}
+
+/* simulate external properties for native objects */
+static Edje_External_Param *
+_edje_param_native_get(Edje_Real_Part *rp, const char *name, Edje_External_Param *param, void **free_ptr)
+{
+   *free_ptr = NULL;
+   if ((rp->part->type == EDJE_PART_TYPE_TEXT) ||
+       (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK))
+     {
+	if (!strcmp(name, "text"))
+	  {
+	     param->name = name;
+	     param->type = EDJE_EXTERNAL_PARAM_TYPE_STRING;
+
+	     _edje_recalc_do(rp->edje);
+	     if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+	       param->s = _edje_entry_text_get(rp);
+	     else if (rp->part->type == EDJE_PART_TYPE_TEXT)
+		    param->s = rp->text.text;
+	     else
+	       param->s = evas_object_textblock_text_markup_get(rp->object);
+	     return param;
+	  }
+	if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+	  {
+	     if (!strcmp(name, "text_unescaped"))
+	       {
+		  param->name = name;
+		  param->type = EDJE_EXTERNAL_PARAM_TYPE_STRING;
+
+		  _edje_recalc_do(rp->edje);
+		  if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+		    {
+		       const char *tmp = _edje_entry_text_get(rp);
+		       char *unescaped = _edje_text_unescape(tmp);
+		       *free_ptr = unescaped;
+		       param->s = unescaped;
+		    }
+		  else if (rp->part->type == EDJE_PART_TYPE_TEXT)
+		    param->s = rp->text.text;
+		  else
+		    {
+		       const char *tmp;
+		       char *unescaped;
+
+		       tmp = evas_object_textblock_text_markup_get(rp->object);
+		       unescaped = _edje_text_unescape(tmp);
+		       *free_ptr = unescaped;
+		       param->s = unescaped;
+		    }
+
+		  return param;
+	       }
+
+	     if ((rp->entry_data) &&
+		 (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE) &&
+		 (!strcmp(name, "select_allow")))
+	       {
+		  param->name = name;
+		  param->type = EDJE_EXTERNAL_PARAM_TYPE_BOOL;
+		  param->i = _edje_entry_select_allow_get(rp);
+		  return param;
+	       }
+	  }
+     }
+
+   if ((rp->drag) && (rp->drag->down.count == 0))
+     {
+	if (!strncmp(name, "drag_", sizeof("drag_") - 1))
+	  {
+	     const char *sub_name = name + sizeof("drag_") - 1;
+	     if (!strcmp(sub_name, "value_x"))
+	       {
+		  double d;
+
+		  _edje_recalc_do(rp->edje);
+		  d = TO_DOUBLE(rp->drag->val.x);
+		  if (rp->part->dragable.x < 0) d = 1.0 - d;
+		  param->name = name;
+		  param->type = EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
+		  param->d = d;
+		  return param;
+	       }
+	     if (!strcmp(sub_name, "value_y"))
+	       {
+		  double d;
+
+		  _edje_recalc_do(rp->edje);
+		  d = TO_DOUBLE(rp->drag->val.y);
+		  if (rp->part->dragable.y < 0) d = 1.0 - d;
+		  param->name = name;
+		  param->type = EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
+		  param->d = d;
+		  return param;
+	       }
+
+	     if (!strcmp(sub_name, "size_w"))
+	       {
+		  _edje_recalc_do(rp->edje);
+		  param->name = name;
+		  param->type = EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
+		  param->d = TO_DOUBLE(rp->drag->size.x);
+		  return param;
+	       }
+	     if (!strcmp(sub_name, "size_h"))
+	       {
+		  _edje_recalc_do(rp->edje);
+		  param->name = name;
+		  param->type = EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
+		  param->d = TO_DOUBLE(rp->drag->size.y);
+		  return param;
+	       }
+
+	     if (!strcmp(sub_name, "step_x"))
+	       {
+		  _edje_recalc_do(rp->edje);
+		  param->name = name;
+		  param->type = EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
+		  param->d = TO_DOUBLE(rp->drag->step.x);
+		  return param;
+	       }
+	     if (!strcmp(sub_name, "step_y"))
+	       {
+		  _edje_recalc_do(rp->edje);
+		  param->name = name;
+		  param->type = EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
+		  param->d = TO_DOUBLE(rp->drag->step.y);
+		  return param;
+	       }
+
+	     if (!strcmp(sub_name, "page_x"))
+	       {
+		  _edje_recalc_do(rp->edje);
+		  param->name = name;
+		  param->type = EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
+		  param->d = TO_DOUBLE(rp->drag->page.x);
+		  return param;
+	       }
+	     if (!strcmp(sub_name, "page_y"))
+	       {
+		  _edje_recalc_do(rp->edje);
+		  param->name = name;
+		  param->type = EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
+		  param->d = TO_DOUBLE(rp->drag->page.y);
+		  return param;
+	       }
+
+	     return NULL;
+	  }
+     }
+
+   return NULL;
+}
+
+static Eina_Bool
+_edje_param_native_set(Edje_Real_Part *rp, const char *name, const Edje_External_Param *param)
+{
+   if ((rp->part->type == EDJE_PART_TYPE_TEXT) ||
+       (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK))
+     {
+	if (!strcmp(name, "text"))
+	  {
+	     if (param->type != EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	       return EINA_FALSE;
+
+	     _edje_object_part_text_raw_set
+	       (rp->edje->obj, rp, rp->part->name, param->s);
+	     return EINA_TRUE;
+	  }
+	if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+	  {
+	     if (!strcmp(name, "text_unescaped"))
+	       {
+		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_STRING)
+		    return EINA_FALSE;
+
+		  if (rp->part->type == EDJE_PART_TYPE_TEXT)
+		    _edje_object_part_text_raw_set
+		      (rp->edje->obj, rp, rp->part->name, param->s);
+		  else
+		    {
+		       char *escaped = _edje_text_escape(param->s);
+		      _edje_object_part_text_raw_set
+			 (rp->edje->obj, rp, rp->part->name, escaped);
+		       free(escaped);
+		    }
+
+		  return EINA_TRUE;
+	       }
+
+	     if ((rp->entry_data) &&
+		 (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE) &&
+		 (!strcmp(name, "select_allow")))
+	       {
+		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+		    return EINA_FALSE;
+		  _edje_entry_select_allow_set(rp, param->i);
+		  return EINA_TRUE;
+	       }
+	  }
+     }
+
+   if ((rp->drag) && (rp->drag->down.count == 0))
+     {
+	if (!strncmp(name, "drag_", sizeof("drag_") - 1))
+	  {
+	     const char *sub_name = name + sizeof("drag_") - 1;
+	     if (!strcmp(sub_name, "value_x"))
+	       {
+		  double d;
+		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+		    return EINA_FALSE;
+		  d = param->d;
+		  if (rp->part->dragable.confine_id != -1)
+		    d = CLAMP(d, 0.0, 1.0);
+		  if (rp->part->dragable.x < 0) d = 1.0 - d;
+		  if (rp->drag->val.x == FROM_DOUBLE(d)) return EINA_TRUE;
+		  rp->drag->val.x = FROM_DOUBLE(d);
+#ifdef EDJE_CALC_CACHE
+		  rp->invalidate = 1;
+#endif
+		  _edje_dragable_pos_set
+		    (rp->edje, rp, rp->drag->val.x, rp->drag->val.y);
+		  _edje_emit(rp->edje, "drag,set", rp->part->name);
+		  return EINA_TRUE;
+	       }
+	     if (!strcmp(sub_name, "value_y"))
+	       {
+		  double d;
+		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+		    return EINA_FALSE;
+		  d = param->d;
+		  if (rp->part->dragable.confine_id != -1)
+		    d = CLAMP(d, 0.0, 1.0);
+		  if (rp->part->dragable.y < 0) d = 1.0 - d;
+		  if (rp->drag->val.y == FROM_DOUBLE(d)) return EINA_TRUE;
+		  rp->drag->val.y = FROM_DOUBLE(d);
+#ifdef EDJE_CALC_CACHE
+		  rp->invalidate = 1;
+#endif
+		  _edje_dragable_pos_set
+		    (rp->edje, rp, rp->drag->val.x, rp->drag->val.y);
+		  _edje_emit(rp->edje, "drag,set", rp->part->name);
+		  return EINA_TRUE;
+	       }
+
+	     if (!strcmp(sub_name, "size_w"))
+	       {
+		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+		    return EINA_FALSE;
+		  rp->drag->size.x = FROM_DOUBLE(CLAMP(param->d, 0.0, 1.0));
+		  rp->edje->dirty = 1;
+#ifdef EDJE_CALC_CACHE
+		  rp->invalidate = 1;
+#endif
+		  _edje_recalc(rp->edje);
+		  return EINA_TRUE;
+	       }
+	     if (!strcmp(sub_name, "size_h"))
+	       {
+		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+		    return EINA_FALSE;
+		  rp->drag->size.y = FROM_DOUBLE(CLAMP(param->d, 0.0, 1.0));
+		  rp->edje->dirty = 1;
+#ifdef EDJE_CALC_CACHE
+		  rp->invalidate = 1;
+#endif
+		  _edje_recalc(rp->edje);
+		  return EINA_TRUE;
+	       }
+
+	     if (!strcmp(sub_name, "step_x"))
+	       {
+		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+		    return EINA_FALSE;
+		  rp->drag->step.x = FROM_DOUBLE(CLAMP(param->d, 0.0, 1.0));
+#ifdef EDJE_CALC_CACHE
+		  rp->invalidate = 1;
+#endif
+		  return EINA_TRUE;
+	       }
+	     if (!strcmp(sub_name, "step_y"))
+	       {
+		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+		    return EINA_FALSE;
+		  rp->drag->step.y = FROM_DOUBLE(CLAMP(param->d, 0.0, 1.0));
+#ifdef EDJE_CALC_CACHE
+		  rp->invalidate = 1;
+#endif
+		  return EINA_TRUE;
+	       }
+
+	     if (!strcmp(sub_name, "page_x"))
+	       {
+		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+		    return EINA_FALSE;
+		  rp->drag->page.x = FROM_DOUBLE(CLAMP(param->d, 0.0, 1.0));
+#ifdef EDJE_CALC_CACHE
+		  rp->invalidate = 1;
+#endif
+		  return EINA_TRUE;
+	       }
+	     if (!strcmp(sub_name, "page_y"))
+	       {
+		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+		    return EINA_FALSE;
+		  rp->drag->page.y = FROM_DOUBLE(CLAMP(param->d, 0.0, 1.0));
+#ifdef EDJE_CALC_CACHE
+		  rp->invalidate = 1;
+#endif
+		  return EINA_TRUE;
+	       }
+
+	     return EINA_FALSE;
+	  }
+     }
+
+   return EINA_FALSE;
+}
+
+static Edje_External_Param_Type
+_edje_param_native_type_get(const Edje_Real_Part *rp, const char *name)
+{
+   if ((rp->part->type == EDJE_PART_TYPE_TEXT) ||
+       (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK))
+     {
+	if (!strcmp(name, "text")) return EDJE_EXTERNAL_PARAM_TYPE_STRING;
+	if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+	  {
+	     if (!strcmp(name, "text_unescaped"))
+	       return EDJE_EXTERNAL_PARAM_TYPE_STRING;
+	     if (!strcmp(name, "select_allow"))
+	       return EDJE_EXTERNAL_PARAM_TYPE_BOOL;
+	  }
+     }
+
+   if ((rp->drag) && (rp->drag->down.count == 0))
+     {
+	if (!strncmp(name, "drag_", sizeof("drag_") - 1))
+	  {
+	     name += sizeof("drag_") - 1;
+	     if ((!strcmp(name, "value_x")) ||
+		 (!strcmp(name, "value_y")) ||
+		 (!strcmp(name, "size_w")) ||
+		 (!strcmp(name, "size_h")) ||
+		 (!strcmp(name, "step_x")) ||
+		 (!strcmp(name, "step_y")) ||
+		 (!strcmp(name, "page_x")) ||
+		 (!strcmp(name, "page_y")))
+	       return EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
+	     else
+	       return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+	  }
+     }
+
+   return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+}
+
+static Edje_External_Param *
+_edje_param_convert(Edje_External_Param *param, Edje_External_Param_Type type)
+{
+   if (param->type == type) return param;
+
+   switch (type)
+     {
+      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+      case EDJE_EXTERNAL_PARAM_TYPE_INT:
+	{
+	   int i;
+	   switch (param->type)
+	     {
+	      case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+		 i = (int)param->d;
+		 break;
+	      case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+		 i = (param->s) ? atoi(param->s) : 0;
+		 break;
+	      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+		 i = param->i;
+	      default:
+		 return NULL;
+	     }
+	   param->type = type;
+	   param->i = i;
+	   return param;
+	}
+
+      case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+	{
+	   double d;
+	   switch (param->type)
+	     {
+	      case EDJE_EXTERNAL_PARAM_TYPE_INT:
+		 d = (double)param->i;
+		 break;
+	      case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+		 d = (param->s) ? atof(param->s) : 0.0;
+		 break;
+	      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+		 d = (double)param->i;
+	      default:
+		 return NULL;
+	     }
+	   param->type = type;
+	   param->d = d;
+	   return param;
+	}
+
+      case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+	{
+	   static char s[64];
+	   switch (param->type)
+	     {
+	      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+	      case EDJE_EXTERNAL_PARAM_TYPE_INT:
+		 if (!snprintf(s, sizeof(s), "%i", param->i)) return NULL;
+		 break;
+	      case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+		 if (!snprintf(s, sizeof(s), "%f", param->d)) return NULL;
+		 break;
+	      default:
+		 return NULL;
+	     }
+	   param->type = type;
+	   param->s = s;
+	   return param;
+	}
+
+      default: return NULL;
+     }
+}
+
+static void
+_edje_param_copy(Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part *dst_part, const char *dst_param)
+{
+   Edje_External_Param val;
+   Edje_External_Param_Type dst_type;
+   void *free_ptr = NULL;
+
+   if ((!src_part) || (!src_param) || (!dst_part) || (!dst_param))
+     return;
+
+   if (dst_part->part->type == EDJE_PART_TYPE_EXTERNAL)
+     dst_type = _edje_param_external_type_get
+       (dst_part->swallowed_object, dst_param);
+   else
+     dst_type = _edje_param_native_type_get(dst_part, dst_param);
+
+   if (dst_type == EDJE_EXTERNAL_PARAM_TYPE_MAX)
+     {
+	ERR("cannot copy, invalid destination parameter '%s' of part '%s'",
+	    dst_param, dst_part->part->name);
+	return;
+     }
+
+   if (src_part->part->type == EDJE_PART_TYPE_EXTERNAL)
+     {
+	if (!_edje_param_external_get
+	    (src_part->swallowed_object, src_param, &val))
+	  {
+	     ERR("cannot get parameter '%s' of part '%s'",
+		 src_param, src_part->part->name);
+	     return;
+	  }
+     }
+   else
+     {
+	if (!_edje_param_native_get(src_part, src_param, &val, &free_ptr))
+	  {
+	     ERR("cannot get parameter '%s' of part '%s'",
+		 src_param, src_part->part->name);
+	     return;
+	  }
+     }
+
+   if (!_edje_param_convert(&val, dst_type))
+     {
+	ERR("cannot convert parameter type %s to requested type %s",
+	    edje_external_param_type_str(val.type),
+	    edje_external_param_type_str(dst_type));
+	goto end;
+     }
+
+   if (dst_part->part->type == EDJE_PART_TYPE_EXTERNAL)
+     {
+	val.name = dst_param;
+	if (!_edje_external_param_set(dst_part->swallowed_object, &val))
+	  {
+	     ERR("failed to set parameter '%s' (%s) of part '%s'",
+		 dst_param, edje_external_param_type_str(dst_type),
+		 dst_part->part->name);
+	     goto end;
+	  }
+     }
+   else
+     {
+	if (!_edje_param_native_set(dst_part, dst_param, &val))
+	  {
+	     ERR("failed to set parameter '%s' (%s) of part '%s'",
+		 dst_param, edje_external_param_type_str(dst_type),
+		 dst_part->part->name);
+	     goto end;
+	  }
+     }
+
+ end:
+   free(free_ptr);
 }
 
 /**

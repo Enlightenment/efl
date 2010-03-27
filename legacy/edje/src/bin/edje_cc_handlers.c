@@ -6530,11 +6530,17 @@ st_collections_group_programs_program_in(void)
     @effect
         Action to be performed by the program. Valid actions are: STATE_SET,
         ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, DRAG_VAL_STEP, DRAG_VAL_PAGE,
-        FOCUS_SET.
+        FOCUS_SET, PARAM_COPY
         Only one action can be specified per program. Examples:\n
            action: STATE_SET "statename" 0.5;\n
-           action: ACTION_STOP "programname";\n
-           action: SIGNAL_EMIT "signalname" "emitter";
+           action: ACTION_STOP;\n
+           action: SIGNAL_EMIT "signalname" "emitter";\n
+           action: DRAG_VAL_SET 0.5 0.0;\n
+           action: DRAG_VAL_STEP 1.0 0.0;\n
+           action: DRAG_VAL_PAGE 0.0 0.0;\n
+           action: FOCUS_SET;\n
+           action: FOCUS_OBJECT;\n
+           action: PARAM_COPY "src_part" "src_param" "dst_part" "dst_param";\n
     @endproperty
 */
 static void
@@ -6556,6 +6562,7 @@ st_collections_group_programs_program_action(void)
 			   "LUA_SCRIPT", EDJE_ACTION_TYPE_LUA_SCRIPT,
 			   "FOCUS_SET", EDJE_ACTION_TYPE_FOCUS_SET,
 			   "FOCUS_OBJECT", EDJE_ACTION_TYPE_FOCUS_OBJECT,
+			   "PARAM_COPY", EDJE_ACTION_TYPE_PARAM_COPY,
 			   NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
@@ -6582,6 +6589,21 @@ st_collections_group_programs_program_action(void)
 	ep->value = parse_float(1);
 	ep->value2 = parse_float(2);
      }
+   else if (ep->action == EDJE_ACTION_TYPE_PARAM_COPY)
+     {
+	char *src_part, *dst_part;
+
+	src_part = parse_str(1);
+	ep->state = parse_str(2);
+	dst_part = parse_str(3);
+	ep->state2 = parse_str(4);
+
+	data_queue_part_lookup(pc, src_part, &(ep->param.src));
+	data_queue_part_lookup(pc, dst_part, &(ep->param.dst));
+
+	free(src_part);
+	free(dst_part);
+     }
 
    switch (ep->action)
      {
@@ -6600,6 +6622,9 @@ st_collections_group_programs_program_action(void)
       case EDJE_ACTION_TYPE_FOCUS_SET:
 	check_arg_count(1);
 	break;
+      case EDJE_ACTION_TYPE_PARAM_COPY:
+	 check_arg_count(5);
+	 break;
       default:
 	check_arg_count(3);
      }

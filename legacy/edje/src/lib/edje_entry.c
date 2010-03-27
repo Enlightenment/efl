@@ -2117,6 +2117,13 @@ _edje_entry_select_allow_set(Edje_Real_Part *rp, Eina_Bool allow)
    en->select_allow = allow;
 }
 
+Eina_Bool
+_edje_entry_select_allow_get(const Edje_Real_Part *rp)
+{
+  const Entry *en = rp->entry_data;
+  return en->select_allow;
+}
+
 void
 _edje_entry_select_abort(Edje_Real_Part *rp)
 {
