@@ -279,6 +279,7 @@ struct _Item_Block
    Widget_Data *wd;
    Eina_List *items;
    Evas_Coord x, y, w, h, minw, minh;
+   Eina_Bool want_unrealize : 1;
    Eina_Bool realized : 1;
    Eina_Bool changed : 1;
    Eina_Bool updateme : 1;
@@ -312,6 +313,7 @@ struct _Elm_Genlist_Item
    int walking;
    Eina_Bool before : 1;
 
+   Eina_Bool want_unrealize : 1;
    Eina_Bool realized : 1;
    Eina_Bool selected : 1;
    Eina_Bool hilighted : 1;
@@ -717,6 +719,15 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
         it->wd->wasselected = 0;
         return;
      }
+   if (dragged)
+     {
+        if (it->want_unrealize)
+          {
+             _item_unrealize(it);
+             if (it->block->want_unrealize)
+               _item_block_unrealize(it->block);
+          }
+     }
    if ((it->disabled) || (dragged)) return;
    if (it->wd->multi)
      {
@@ -930,6 +941,7 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
 	if (!calc) evas_object_show(it->base);
      }
    it->realized = EINA_TRUE;
+   it->want_unrealize = EINA_FALSE;
 }
 
 static void
@@ -958,6 +970,7 @@ _item_unrealize(Elm_Genlist_Item *it)
 
    it->states = NULL;
    it->realized = EINA_FALSE;
+   it->want_unrealize = EINA_FALSE;
 }
 
 static int
@@ -1035,6 +1048,7 @@ _item_block_realize(Item_Block *itb, int in, int full)
 	in++;
      }
    itb->realized = EINA_TRUE;
+   itb->want_unrealize = EINA_FALSE;
 }
 
 static void
@@ -1050,12 +1064,18 @@ _item_block_unrealize(Item_Block *itb)
         if (it->dragging)
           {
              dragging = 1;
+             it->want_unrealize = EINA_TRUE;
           }
         else
           _item_unrealize(it);
      }
    if (!dragging)
-     itb->realized = EINA_FALSE;
+     {
+        itb->realized = EINA_FALSE;
+        itb->want_unrealize = EINA_TRUE;
+     }
+   else
+     itb->want_unrealize = EINA_FALSE;
 }
 
 static void
