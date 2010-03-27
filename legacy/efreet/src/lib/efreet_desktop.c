@@ -73,6 +73,7 @@ static char *cache_dirs = NULL;
 static Eet_File *cache = NULL;
 static Eet_Data_Descriptor *desktop_edd = NULL;
 static Ecore_File_Monitor *cache_monitor = NULL;
+static Eina_List *cache_data = NULL;
 
 #ifdef EFREET_MODULE_LOG_DOM 
 #undef EFREET_MODULE_LOG_DOM
@@ -495,13 +496,12 @@ efreet_desktop_uncached_new(const char *file)
     desktop = NEW(Efreet_Desktop, 1);
     if (!desktop) return NULL;
     desktop->orig_path = strdup(rp);
+    desktop->ref = 1;
     if (!efreet_desktop_read(desktop))
     {
         efreet_desktop_free(desktop);
         return NULL;
     }
-
-    desktop->ref = 1;
 
     return desktop;
 }
@@ -717,10 +717,29 @@ efreet_desktop_free(Efreet_Desktop *desktop)
     desktop->ref--;
     if (desktop->ref > 0) return;
 
-    if (desktop->cached && efreet_desktop_cache &&
-        desktop == eina_hash_find(efreet_desktop_cache, desktop->orig_path))
+    if (desktop->cached)
     {
-        eina_hash_del_by_key(efreet_desktop_cache, desktop->orig_path);
+       if (efreet_desktop_cache &&
+           desktop == eina_hash_find(efreet_desktop_cache, desktop->orig_path))
+       {
+           eina_hash_del_by_key(efreet_desktop_cache, desktop->orig_path);
+       }
+       else if (cache_data)
+       {
+           Efreet_Event_Cache_Data *d;
+           Efreet_Desktop *curr;
+           Eina_List *l;
+
+           EINA_LIST_FOREACH(cache_data, l, d)
+           {
+               curr = eina_hash_find(d->desktop_cache, desktop->orig_path);
+               if (curr && curr == desktop)
+               {
+                   eina_hash_del_by_key(d->desktop_cache, desktop->orig_path);
+                   break;
+               }
+           }
+       }
     }
 
     if (desktop->eet)
@@ -2200,13 +2219,9 @@ efreet_desktop_cache_update(void *data __UNUSED__, Ecore_File_Monitor *em __UNUS
     d = NEW(Efreet_Event_Cache_Data, 1);
     if (!d) goto error;
 
-    /* TODO:
-     * Create global pointer to data, so that efreet_desktop_free can
-     * clear the cache. This will make it easier to track down users
-     * which don't free their references
-     */
     d->desktop_cache = efreet_desktop_cache;
     d->cache = cache;
+    cache_data = eina_list_append(cache_data, d);
 
     efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
     cache = tmp;
@@ -2228,19 +2243,20 @@ efreet_desktop_cache_update_free(void *data, void *ev)
      * All users should now had the chance to update their pointers, so we can now
      * free the old cache
      */
-    if (d->cache) eet_close(d->cache);
     if (d->desktop_cache)
     {
         Eina_Iterator *it;
-        const char *path;
+        Eina_Hash_Tuple *tuple;
 
-        it = eina_hash_iterator_key_new(d->desktop_cache);
-        EINA_ITERATOR_FOREACH(it, path)
-            printf("Efreet: %s still in cache on cache close!\n", path);
+        it = eina_hash_iterator_tuple_new(d->desktop_cache);
+        EINA_ITERATOR_FOREACH(it, tuple)
+            printf("Efreet: %d:%s still in cache on cache close!\n", ((Efreet_Desktop *)tuple->data)->ref, tuple->key);
         eina_iterator_free(it);
 
         eina_hash_free(d->desktop_cache);
     }
+    if (d->cache) eet_close(d->cache);
+    cache_data = eina_list_remove(cache_data, d);
     free(d);
     free(ev);
 }
