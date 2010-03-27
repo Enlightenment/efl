@@ -3,9 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: ecore-quartz
-Description: E core library, Quartz module
-@pkgconfig_requires_private@: @requirements_ecore_quartz@
+Name: ecore-cocoa
+Description: E core library, Cocoa module
+@pkgconfig_requires_private@: @requirements_ecore_cocoa@
 Version: @VERSION@
-Libs: -L${libdir} -lecore_quartz
+Libs: -L${libdir} -lecore_cocoa
 Cflags: -I${includedir}
