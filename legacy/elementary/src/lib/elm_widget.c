@@ -1105,12 +1105,12 @@ _elm_stringlist_free(Eina_List *list)
 }
 
 Eina_Bool
-_elm_widget_type_check(Evas_Object *obj, const char *type)
+_elm_widget_type_check(const Evas_Object *obj, const char *type)
 {
    const char *provided, *expected = "(unknown)";
    static int abort_on_warn = -1;
    provided = elm_widget_type_get(obj);
-   if (EINA_LIKELY(provided == type)) return 1;
+   if (EINA_LIKELY(provided == type)) return EINA_TRUE;
    if (type) expected = type;
    if ((!provided) || (provided[0] == 0))
      {
@@ -1125,7 +1125,7 @@ _elm_widget_type_check(Evas_Object *obj, const char *type)
         else abort_on_warn = 0;
      }
    if (abort_on_warn == 1) abort();
-   return 1;
+   return EINA_FALSE;
 }
 
 static inline Eina_Bool
