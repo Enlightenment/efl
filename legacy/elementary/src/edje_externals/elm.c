@@ -156,6 +156,12 @@ static Edje_External_Type_Info elm_external_types[] =
 static Eina_Bool
 elm_mod_init(void)
 {
+   int argc = 0;
+   char **argv = NULL;
+
+   ecore_app_args_get(&argc, &argv);
+   elm_init(argc, argv);
+
    _elm_log_dom = eina_log_domain_register("elm-externals", EINA_COLOR_LIGHTBLUE);
    edje_external_type_array_register(elm_external_types);
    return EINA_TRUE;
