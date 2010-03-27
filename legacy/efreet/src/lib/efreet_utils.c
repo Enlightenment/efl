@@ -586,7 +586,7 @@ efreet_util_cache_glob_list(const char *search, const char *what)
 }
 
 void
-efreet_desktop_util_cache_reload(void)
+efreet_util_desktop_cache_reload(void)
 {
     if (cache) eet_close(cache);
     cache = eet_open(efreet_desktop_util_cache_file(), EET_FILE_MODE_READ);
