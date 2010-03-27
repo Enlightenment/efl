@@ -601,7 +601,7 @@ elm_quicklaunch_init(int argc, char **argv)
 
    _elm_exit_handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
 
-   _elm_appname = strdup(ecore_file_file_get(argv[0]));
+   if (argv) _elm_appname = strdup(ecore_file_file_get(argv[0]));
 
    if (!_elm_data_dir)
      {
