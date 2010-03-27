@@ -2200,6 +2200,11 @@ efreet_desktop_cache_update(void *data __UNUSED__, Ecore_File_Monitor *em __UNUS
     d = NEW(Efreet_Event_Cache_Data, 1);
     if (!d) goto error;
 
+    /* TODO:
+     * Create global pointer to data, so that efreet_desktop_free can
+     * clear the cache. This will make it easier to track down users
+     * which don't free their references
+     */
     d->desktop_cache = efreet_desktop_cache;
     d->cache = cache;
 
@@ -2223,7 +2228,18 @@ efreet_desktop_cache_update_free(void *data, void *ev)
      * free the old cache
      */
     if (d->cache) eet_close(d->cache);
-    if (d->desktop_cache) eina_hash_free(d->desktop_cache);
+    if (d->desktop_cache)
+    {
+        Eina_Iterator *it;
+        const char *path;
+
+        it = eina_hash_iterator_key_new(d->desktop_cache);
+        EINA_ITERATOR_FOREACH(it, path)
+            printf("Efreet: %s still in cache on cache close!\n", path);
+        eina_iterator_free(it);
+
+        eina_hash_free(d->desktop_cache);
+    }
     free(d);
     free(ev);
 }
