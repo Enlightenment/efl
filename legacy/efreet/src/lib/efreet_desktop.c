@@ -177,8 +177,6 @@ static void efreet_desktop_cache_update_free(void *data, void *ev);
 int
 efreet_desktop_init(void)
 {
-    char buf[PATH_MAX];
-
     _efreet_desktop_log_dom = eina_log_domain_register("Efreet_desktop", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_desktop_log_dom < 0)
     {
@@ -206,11 +204,16 @@ efreet_desktop_init(void)
 
     EFREET_EVENT_CACHE_UPDATE = ecore_event_type_new();
 
-    snprintf(buf, sizeof(buf), "%s/.efreet", efreet_home_dir_get());
-    if (!ecore_file_mkpath(buf)) goto edd_error;
-    cache_monitor = ecore_file_monitor_add(buf,
-                                           efreet_desktop_cache_update,
-                                           NULL);
+    if (efreet_cache_update)
+    {
+        char buf[PATH_MAX];
+
+        snprintf(buf, sizeof(buf), "%s/.efreet", efreet_home_dir_get());
+        if (!ecore_file_mkpath(buf)) goto edd_error;
+        cache_monitor = ecore_file_monitor_add(buf,
+                                               efreet_desktop_cache_update,
+                                               NULL);
+    }
 
     /* TODO:
      * Should add a lock here, so that several programs starting at the same

@@ -12,6 +12,8 @@
 #include "efreet_private.h"
 #include "efreet_xml.h"
 
+EAPI int efreet_cache_update = 1;
+
 static int _efreet_init_count = 0;
 static int efreet_parsed_locale = 0;
 static const char *efreet_lang = NULL;

@@ -212,6 +212,8 @@ EAPI const char *efreet_desktop_cache_dirs(void);
 
 #define NON_EXISTING (void *)-1
 
+EAPI extern int efreet_cache_update;
+
 /**
  * @}
  */

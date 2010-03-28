@@ -193,6 +193,8 @@ main()
     if (!eina_init()) goto eina_error;
     if (!eet_init()) goto eet_error;
 
+    efreet_cache_update = 0;
+
     /* create homedir */
     snprintf(file, sizeof(file), "%s/.efreet", efreet_home_dir_get());
     if (!ecore_file_mkpath(file)) goto efreet_error;
