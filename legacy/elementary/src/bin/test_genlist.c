@@ -77,6 +77,12 @@ _gl_clicked(void *data, Evas_Object *obj, void *event_info)
    printf("clicked: %p\n", event_info);
 }
 
+static void
+_gl_longpress(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("longpress %p\n", event_info);
+}
+
 void
 test_genlist(void *data, Evas_Object *obj, void *event_info)
 {
@@ -102,6 +108,7 @@ test_genlist(void *data, Evas_Object *obj, void *event_info)
    gl = elm_genlist_add(win);
    evas_object_smart_callback_add(gl, "selected", _gl_selected, NULL);
    evas_object_smart_callback_add(gl, "clicked", _gl_clicked, NULL);
+   evas_object_smart_callback_add(gl, "longpressed", _gl_longpress, NULL);
    // FIXME: This causes genlist to resize the horiz axis very slowly :(
    // Reenable this and resize the window horizontally, then try to resize it back
    //elm_genlist_horizontal_mode_set(gl, ELM_LIST_LIMIT);
