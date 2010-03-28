@@ -213,16 +213,9 @@ efreet_desktop_init(void)
         cache_monitor = ecore_file_monitor_add(buf,
                                                efreet_desktop_cache_update,
                                                NULL);
-    }
 
-    /* TODO:
-     * Should add a lock here, so that several programs starting at the same
-     * time wont run several copies of efreet_desktop_cache_create
-     *
-     * Or do the right thing and run the exe with ecore_exe
-     */
-    if (!ecore_file_exists(efreet_desktop_cache_file()))
-        system(PACKAGE_BIN_DIR "/efreet_desktop_cache_create");
+        ecore_exe_run(PACKAGE_BIN_DIR "/efreet_desktop_cache_create", NULL);
+    }
 
     cache = eet_open(efreet_desktop_cache_file(), EET_FILE_MODE_READ);
 
