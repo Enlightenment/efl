@@ -40,6 +40,7 @@
 # include <stdint.h>
 #else
 # include <stddef.h>
+# include <Evil.h>
 #endif
 
 #include "embryo_cc_amx.h"
