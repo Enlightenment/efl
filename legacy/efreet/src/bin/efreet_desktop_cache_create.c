@@ -33,7 +33,7 @@ strcmplen(const void *data1, const void *data2)
 }
 
 static int
-cache_add(const char *path, const char *file_id, int priority __UNUSED__)
+cache_add(const char *path, const char *file_id, int priority __UNUSED__, int *changed)
 {
     Efreet_Desktop *desk;
     char *ext;
@@ -42,20 +42,20 @@ cache_add(const char *path, const char *file_id, int priority __UNUSED__)
     ext = strrchr(path, '.');
     if (!ext || (strcmp(ext, ".desktop") && strcmp(ext, ".directory"))) return 1;
     desk = efreet_desktop_get(path);
-    if (!desk) return 1;
-    mtime = ecore_file_mod_time(path);
-    if (mtime != desk->load_time)
-    {
-        efreet_desktop_free(desk);
-        desk = efreet_desktop_uncached_new(path);
-    }
-
     if (!desk || (desk->type != EFREET_DESKTOP_TYPE_APPLICATION &&
                   desk->type != EFREET_DESKTOP_TYPE_DIRECTORY))
     {
         if (desk) efreet_desktop_free(desk);
         return 1;
     }
+    mtime = ecore_file_mod_time(path);
+    if (mtime != desk->load_time)
+    {
+        efreet_desktop_free(desk);
+        *changed = 1;
+        desk = efreet_desktop_uncached_new(path);
+    }
+    if (!desk) return 1;
     if (!eina_hash_find(paths, desk->orig_path))
     {
         if (!eet_data_write(ef, edd, desk->orig_path, desk, 0))
@@ -132,7 +132,7 @@ cache_add(const char *path, const char *file_id, int priority __UNUSED__)
 
 
 static int
-cache_scan(const char *path, const char *base_id, int priority, int recurse)
+cache_scan(const char *path, const char *base_id, int priority, int recurse, int *changed)
 {
     char *file_id = NULL;
     char id[PATH_MAX];
@@ -162,11 +162,11 @@ cache_scan(const char *path, const char *base_id, int priority, int recurse)
         if (ecore_file_is_dir(buf))
         {
             if (recurse)
-                cache_scan(buf, file_id, priority, recurse);
+                cache_scan(buf, file_id, priority, recurse, changed);
         }
         else
         {
-            if (!cache_add(buf, file_id, priority)) return 0;
+            if (!cache_add(buf, file_id, priority, changed)) return 0;
         }
     }
     closedir(files);
@@ -179,8 +179,6 @@ main()
     /* TODO:
      * - Add file monitor on files, so that we catch changes on files
      *   during whilst this program runs.
-     * - Use return value to signal calling process wheter cache was
-     *   updated or not.
      */
     char file[PATH_MAX];
     char util_file[PATH_MAX];
@@ -190,6 +188,7 @@ main()
     char *map = MAP_FAILED;
     int fd = -1, tmpfd, dirsfd = -1;
     struct stat st;
+    int changed = 0;
 
     /* init external subsystems */
     if (!eina_init()) goto eina_error;
@@ -275,7 +274,7 @@ main()
         path = eina_list_data_get(dirs);
         if (path)
         {
-            if (!cache_scan(path, file_id, priority++, 1)) goto error;
+            if (!cache_scan(path, file_id, priority++, 1, &changed)) goto error;
             l = eina_list_search_unsorted_list(user_dirs, strcmplen, path);
             if (l)
             {
@@ -294,7 +293,7 @@ main()
             write(dirsfd, &size, sizeof(int));
             write(dirsfd, dir, size);
         }
-        if (!cache_scan(dir, NULL, priority, 0)) goto error;
+        if (!cache_scan(dir, NULL, priority, 0, &changed)) goto error;
         free(dir);
     }
     eina_hash_free(file_ids);
@@ -305,17 +304,25 @@ main()
     eet_close(ef);
 
     /* unlink old cache files */
-    if (unlink(efreet_desktop_cache_file()) < 0)
+    if (changed)
     {
-        if (errno != ENOENT) goto error;
+        if (unlink(efreet_desktop_cache_file()) < 0)
+        {
+            if (errno != ENOENT) goto error;
+        }
+        if (unlink(efreet_desktop_util_cache_file()) < 0)
+        {
+            if (errno != ENOENT) goto error;
+        }
+        /* rename tmp files to real files */
+        if (rename(util_file, efreet_desktop_util_cache_file()) < 0) goto error;
+        if (rename(file, efreet_desktop_cache_file()) < 0) goto error;
     }
-    if (unlink(efreet_desktop_util_cache_file()) < 0)
+    else
     {
-        if (errno != ENOENT) goto error;
+        unlink(util_file);
+        unlink(file);
     }
-    /* rename tmp files to real files */
-    if (rename(util_file, efreet_desktop_util_cache_file()) < 0) goto error;
-    if (rename(file, efreet_desktop_cache_file()) < 0) goto error;
 
     efreet_desktop_edd_shutdown(edd);
     efreet_shutdown();
