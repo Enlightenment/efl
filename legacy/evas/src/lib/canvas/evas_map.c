@@ -263,19 +263,14 @@ evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y)
 
 
 /**
- * @addtogroup Evas_Object_Group_Map
- * @{
- */
-
-/**
- * Enable or disable the map that is set
+ * Enable or disable the map that is set.
  * 
  * This enables the map that is set or disables it. On enable, the object
  * geometry will be saved, and the new geometry will change (position and
  * size) to reflect the map geometry set. If none is set yet, this may be
  * an undefined geometry, unless you have already set the map with
  * evas_object_map_set(). It is suggested you first set a map with
- * evas_object_map_set() with valid useful coordinatesm then enable and
+ * evas_object_map_set() with valid useful coordinates then enable and
  * disable the map with evas_object_map_enable_set() as needed.
  * 
  * @param obj object to enable the map on
@@ -303,6 +298,9 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
           }
      }
    _evas_map_calc_map_geometry(obj);
+   /* This is a bit heavy handed, but it fixes the case of same geometry, but
+    * changed colour or UV settings. */
+   evas_object_change(obj);
 }
 
 /**
