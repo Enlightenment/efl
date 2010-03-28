@@ -37,15 +37,18 @@ cache_add(const char *path, const char *file_id, int priority __UNUSED__)
 {
     Efreet_Desktop *desk;
     char *ext;
+    long long mtime;
 
     ext = strrchr(path, '.');
     if (!ext || (strcmp(ext, ".desktop") && strcmp(ext, ".directory"))) return 1;
-    /*
-     * TODO:
-     * Get cached version first and check mtime. Only get uncached if we need
-     * to update.
-     */
-    desk = efreet_desktop_uncached_new(path);
+    desk = efreet_desktop_get(path);
+    if (!desk) return 1;
+    mtime = ecore_file_mod_time(path);
+    if (mtime != desk->load_time)
+    {
+        efreet_desktop_free(desk);
+        desk = efreet_desktop_uncached_new(path);
+    }
 
     if (!desk || (desk->type != EFREET_DESKTOP_TYPE_APPLICATION &&
                   desk->type != EFREET_DESKTOP_TYPE_DIRECTORY))
