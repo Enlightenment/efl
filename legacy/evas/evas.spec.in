@@ -427,7 +427,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.a
 %{_libdir}/pkgconfig/*
 %{_includedir}/*.h
-
+%{_datadir}/evas/examples/*.c
 %files module_engine_software_generic
 %defattr(-, root, root)
 %{_libdir}/evas/modules/engines/software_generic/*/module.so
