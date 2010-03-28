@@ -91,6 +91,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_bindir}/edje_cc
 %{_bindir}/edje_decc
 %{_bindir}/edje_recc
+%{_bindir}/edje_player
 %{_bindir}/inkscape2edc
 %{_datadir}/edje/include/edje.inc
 %{_datadir}/mime/packages/edje.xml
