@@ -248,7 +248,6 @@ efreet_parse_locale_setting(const char *env)
 size_t
 efreet_array_cat(char *buffer, size_t size, const char *strs[])
 {
-    /* TODO: Most functions calling this use static strings. Make a version which handles this, use sizeof and memcpy */
     int i;
     size_t n;
     for (i = 0, n = 0; n < size && strs[i]; i++)
