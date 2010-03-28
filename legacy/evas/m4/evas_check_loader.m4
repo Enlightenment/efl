@@ -174,12 +174,13 @@ have_dep="no"
 evas_image_loader_[]$1[]_cflags=""
 evas_image_loader_[]$1[]_libs=""
 
-PKG_CHECK_EXISTS([libpng12],
-   [PKG_CHECK_MODULES([PNG], [libpng12], [have_dep="yes" requirement="libpng12"], [have_dep="no"])],
-   [PKG_CHECK_EXISTS([libpng10],
-       [PKG_CHECK_MODULES([PNG], [libpng10], [have_dep="yes" requirement="libpng10"], [have_dep="no"])],
-       [PKG_CHECK_MODULES([PNG], [libpng], [have_dep="yes" requirement="libpng"], [have_dep="no"])])]
-)
+PKG_CHECK_EXISTS([libpng14], [PKG_CHECK_MODULES([PNG], [libpng14], [have_dep="yes" requirement="libpng14"], [have_dep="no"])],
+  [PKG_CHECK_EXISTS([libpng12], [PKG_CHECK_MODULES([PNG], [libpng12], [have_dep="yes" requirement="libpng12"], [have_dep="no"])],
+    [PKG_CHECK_EXISTS([libpng10], [PKG_CHECK_MODULES([PNG], [libpng10], [have_dep="yes" requirement="libpng10"], [have_dep="no"])],
+      [PKG_CHECK_MODULES([PNG], [libpng], [have_dep="yes" requirement="libpng"], [have_dep="no"])
+    ])
+  ])
+])
 
 evas_image_loader_[]$1[]_cflags="${PNG_CFLAGS}"
 evas_image_loader_[]$1[]_libs="${PNG_LIBS}"
