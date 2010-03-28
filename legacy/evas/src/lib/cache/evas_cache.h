@@ -37,7 +37,7 @@ struct _Evas_Cache_Image_Func
    int          (*color_space)(Image_Entry *dst, int cspace);
 
    /* This function need to update im->w and im->h. */
-   int          (*load)(Image_Entry *im);; /**< return is EVAS_LOAD_ERROR_* or EVAS_LOAD_ERROR_NONE! */
+   int          (*load)(Image_Entry *im); /**< return is EVAS_LOAD_ERROR_* or EVAS_LOAD_ERROR_NONE! */
    int          (*mem_size_get)(Image_Entry *im);
    void         (*debug)(const char *context, Image_Entry *im);
 };
