@@ -974,7 +974,7 @@ _item_unrealize(Elm_Genlist_Item *it)
 }
 
 static int
-_item_block_recalc(Item_Block *itb, int in, int qadd)
+_item_block_recalc(Item_Block *itb, int in, int qadd, int norender)
 {
    const Eina_List *l;
    Elm_Genlist_Item *it;
@@ -1023,7 +1023,7 @@ _item_block_recalc(Item_Block *itb, int in, int qadd)
    itb->minh = minh;
    itb->changed = EINA_FALSE;
    /* force an evas norender to garbage collect deleted objects */
-   evas_norender(evas_object_evas_get(itb->wd->obj));
+   if (norender) evas_norender(evas_object_evas_get(itb->wd->obj));
    return showme;
 }
 
@@ -1154,7 +1154,7 @@ _calc_job(void *data)
 	if (itb->changed)
 	  {
 	     if (itb->realized) _item_block_unrealize(itb);
-	     showme = _item_block_recalc(itb, in, 0);
+	     showme = _item_block_recalc(itb, in, 0, 1);
 	     chb = itb;
 	  }
 	itb->y = y;
@@ -1269,7 +1269,7 @@ _update_job(void *data)
           {
              position = 1;
              itb->changed = EINA_TRUE;
-             _item_block_recalc(itb, num0, 0);
+             _item_block_recalc(itb, num0, 0, 1);
              _item_block_position(itb, num0);
           }
      }
@@ -1684,9 +1684,8 @@ _item_block_add(Widget_Data *wd, Elm_Genlist_Item *it)
 }
 
 static int
-_item_idler(void *data)
+_queue_proecess(Widget_Data *wd, int norender)
 {
-   Widget_Data *wd = data;
    int n, showme = 0;
    double t0, t;
 
@@ -1702,7 +1701,7 @@ _item_idler(void *data)
         t = ecore_time_get();
         if (it->block->changed)
           {
-             showme = _item_block_recalc(it->block, it->block->num, 1);
+             showme = _item_block_recalc(it->block, it->block->num, 1, norender);
              it->block->changed = 0;
           }
         if (showme) it->block->showme = 1;
@@ -1711,7 +1710,15 @@ _item_idler(void *data)
              if ((t - t0) > (ecore_animator_frametime_get())) break;
           }
      }
-   if (n > 0)
+   return n;
+}
+
+static int
+_item_idler(void *data)
+{
+   Widget_Data *wd = data;
+   
+   if (_queue_proecess(wd, 1) > 0)
      {
 	if (wd->calc_job) ecore_job_del(wd->calc_job);
 	wd->calc_job = ecore_job_add(_calc_job, wd);
@@ -1737,7 +1744,7 @@ _item_queue(Widget_Data *wd, Elm_Genlist_Item *it)
              ecore_idler_del(wd->queue_idler);
              wd->queue_idler = NULL;
           }
-        _item_idler(wd);
+        _queue_proecess(wd, 0);
      }
    if (!wd->queue_idler) wd->queue_idler = ecore_idler_add(_item_idler, wd);
 }
