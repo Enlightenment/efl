@@ -404,6 +404,18 @@ edje_external_param_bool_get(const Eina_List *params, const char *key, Eina_Bool
    return EINA_FALSE;
 }
 
+/**
+ * Get the array of parameters information about a type given its name.
+ *
+ * @note the type names and other strings are static, that means they
+ *       @b NOT translated. One must use
+ *       Edje_External_Type::translate() to translate those.
+ *
+ * @return the NULL terminated array, or @c NULL if type is unknown or
+ *         it does not have any parameter information.
+ *
+ * @see edje_external_type_get()
+ */
 EAPI const Edje_External_Param_Info *
 edje_external_param_info_get(const char *type_name)
 {
@@ -413,6 +425,12 @@ edje_external_param_info_get(const char *type_name)
    if (!type)
      return NULL;
    return type->parameters_info;
+}
+
+EAPI const Edje_External_Type *
+edje_external_type_get(const char *type_name)
+{
+   return eina_hash_find(type_registry, type_name);
 }
 
 void
