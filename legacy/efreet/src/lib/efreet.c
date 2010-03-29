@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 
 #include "Efreet.h"
 #include "efreet_private.h"
@@ -196,12 +197,13 @@ static int
 efreet_parse_locale_setting(const char *env)
 {
     int found = 0;
-    char *setting;
+    char setting[PATH_MAX];
     char *p;
 
-    setting = getenv(env);
-    if (!setting) return 0;
-    setting = strdup(setting);
+    p = getenv(env);
+    if (!p) return 0;
+    strncpy(setting, p, sizeof(setting));
+    setting[PATH_MAX - 1] = '\0';
 
     /* pull the modifier off the end */
     p = strrchr(setting, '@');
@@ -225,13 +227,11 @@ efreet_parse_locale_setting(const char *env)
         found = 1;
     }
 
-    if (setting && (*setting != '\0'))
+    if (*setting != '\0')
     {
         efreet_lang = eina_stringshare_add(setting);
         found = 1;
     }
-
-    FREE(setting);
 
     return found;
 }

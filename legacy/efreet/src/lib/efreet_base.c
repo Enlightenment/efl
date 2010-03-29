@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 
 #include "Efreet.h"
 #include "efreet_private.h"
@@ -225,14 +226,15 @@ efreet_dirs_get(const char *key, const char *fallback)
 {
     Eina_List *dirs = NULL;
     const char *path;
-    char *tmp, *s, *p;
+    char tmp[PATH_MAX], *s, *p;
 
     path = getenv(key);
     if (!path || (path[0] == '\0')) path = fallback;
 
     if (!path) return dirs;
 
-    tmp = strdup(path);
+    strncpy(tmp, path, sizeof(tmp));
+    tmp[PATH_MAX - 1] = '\0';
     s = tmp;
     p = strchr(s, EFREET_PATH_SEP);
     while (p)
@@ -246,7 +248,6 @@ efreet_dirs_get(const char *key, const char *fallback)
     }
     if (!eina_list_search_unsorted(dirs, EINA_COMPARE_CB(strcmp), s))
         dirs = eina_list_append(dirs, (void *)eina_stringshare_add(s));
-    FREE(tmp);
 
     return dirs;
 }

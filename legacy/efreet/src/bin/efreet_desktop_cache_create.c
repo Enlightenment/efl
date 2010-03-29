@@ -29,7 +29,7 @@ static Eina_Hash *paths = NULL;
 static int
 strcmplen(const void *data1, const void *data2)
 {
-    return strncmp(data1, data2, strlen(data2));
+    return strncmp(data1, data2, eina_stringshare_strlen(data2));
 }
 
 static int
@@ -187,6 +187,7 @@ main()
     int priority = 0;
     char *dir = NULL;
     char *map = MAP_FAILED;
+    char *path;
     int fd = -1, tmpfd, dirsfd = -1;
     struct stat st;
     int changed = 0;
@@ -258,7 +259,7 @@ main()
         {
             unsigned int size = *(unsigned int *)p;
             p += sizeof(unsigned int);
-            user_dirs = eina_list_append(user_dirs, strdup(p));
+            user_dirs = eina_list_append(user_dirs, eina_stringshare_add(p));
             p += size;
         }
         munmap(map, st.st_size);
@@ -266,25 +267,19 @@ main()
         if (ftruncate(dirsfd, 0) < 0) goto error;
     }
 
-    while (dirs)
+    EINA_LIST_FREE(dirs, path)
     {
         char file_id[PATH_MAX] = { '\0' };
-        char *path;
         Eina_List *l;
 
-        path = eina_list_data_get(dirs);
-        if (path)
+        if (!cache_scan(path, file_id, priority++, 1, &changed)) goto error;
+        l = eina_list_search_unsorted_list(user_dirs, strcmplen, path);
+        if (l)
         {
-            if (!cache_scan(path, file_id, priority++, 1, &changed)) goto error;
-            l = eina_list_search_unsorted_list(user_dirs, strcmplen, path);
-            if (l)
-            {
-                free(eina_list_data_get(l));
-                user_dirs = eina_list_remove_list(user_dirs, l);
-            }
-            free(path);
+            eina_stringshare_del(eina_list_data_get(l));
+            user_dirs = eina_list_remove_list(user_dirs, l);
         }
-        dirs = eina_list_remove_list(dirs, dirs);
+        eina_stringshare_del(path);
     }
     EINA_LIST_FREE(user_dirs, dir)
     {
@@ -295,7 +290,7 @@ main()
             write(dirsfd, dir, size);
         }
         if (!cache_scan(dir, NULL, priority, 0, &changed)) goto error;
-        free(dir);
+        eina_stringshare_del(dir);
     }
     eina_hash_free(file_ids);
     eina_hash_free(paths);

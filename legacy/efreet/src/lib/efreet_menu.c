@@ -224,7 +224,7 @@ struct Efreet_Menu_Desktop
 static const char *efreet_menu_prefix = NULL; /**< The $XDG_MENU_PREFIX env var */
 Eina_List *efreet_menu_kde_legacy_dirs = NULL; /**< The directories to use for KDELegacy entries */
 static const char *efreet_tag_menu = NULL;
-static char *efreet_menu_file = NULL; /**< A menu file set explicityl as default */
+static const char *efreet_menu_file = NULL; /**< A menu file set explicityl as default */
 
 static Eina_Hash *efreet_merged_menus = NULL;
 static Eina_Hash *efreet_merged_dirs = NULL;
@@ -580,7 +580,7 @@ efreet_menu_kde_legacy_init(void)
 void
 efreet_menu_shutdown(void)
 {
-    IF_FREE(efreet_menu_file);
+    IF_RELEASE(efreet_menu_file);
 
     IF_FREE_HASH(efreet_menu_handle_cbs);
     IF_FREE_HASH(efreet_menu_filter_cbs);
@@ -623,9 +623,9 @@ efreet_menu_new(const char *name)
 EAPI void
 efreet_menu_file_set(const char *file)
 {
-    IF_FREE(efreet_menu_file);
+    IF_RELEASE(efreet_menu_file);
     efreet_menu_file = NULL;
-    if (file) efreet_menu_file = strdup(file);
+    if (file) efreet_menu_file = eina_stringshare_add(file);
 }
 
 /**
@@ -990,12 +990,12 @@ efreet_default_dirs_get(const char *user_dir, Eina_List *system_dirs,
     Eina_List *l;
 
     snprintf(dir, sizeof(dir), "%s/%s", user_dir, suffix);
-    list = eina_list_append(list, strdup(dir));
+    list = eina_list_append(list, eina_stringshare_add(dir));
 
     EINA_LIST_FOREACH(system_dirs, l, xdg_dir)
     {
         snprintf(dir, sizeof(dir), "%s/%s", xdg_dir, suffix);
-        list = eina_list_append(list, strdup(dir));
+        list = eina_list_append(list, eina_stringshare_add(dir));
     }
 
     return list;
@@ -1203,19 +1203,19 @@ efreet_menu_handle_default_app_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *xm
                                                                     "applications");
     EINA_LIST_FREE(dirs, dir)
     {
-        Efreet_Menu_App_Dir *app_dir;
+        if (!eina_list_search_unsorted(parent->app_dirs,
+                                       EINA_COMPARE_CB(efreet_menu_cb_app_dirs_compare),
+                                       dir))
+        {
+            Efreet_Menu_App_Dir *app_dir;
 
-        if (eina_list_search_unsorted(parent->app_dirs,
-                                      EINA_COMPARE_CB(efreet_menu_cb_app_dirs_compare),
-                                      dir))
-            continue;
+            app_dir = efreet_menu_app_dir_new();
+            app_dir->path = strdup(dir);
 
-        app_dir = efreet_menu_app_dir_new();
-        app_dir->path = strdup(dir);
+            prepend = eina_list_append(prepend, app_dir);
+        }
 
-        prepend = eina_list_append(prepend, app_dir);
-
-        free(dir);
+        eina_stringshare_del(dir);
     }
     parent->app_dirs = eina_list_merge(prepend, parent->app_dirs);
 
@@ -1262,7 +1262,7 @@ efreet_menu_handle_directory_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 static int
 efreet_menu_handle_default_directory_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *xml __UNUSED__)
 {
-    Eina_List *dirs, *l;
+    Eina_List *dirs;
     char *dir;
 
     if (!parent) return 0;
@@ -1270,18 +1270,11 @@ efreet_menu_handle_default_directory_dirs(Efreet_Menu_Internal *parent, Efreet_X
     efreet_menu_create_directory_dirs_list(parent);
     dirs = efreet_default_dirs_get(efreet_data_home_get(), efreet_data_dirs_get(),
                                                             "desktop-directories");
-    EINA_LIST_FOREACH(dirs, l, dir)
+    EINA_LIST_FREE(dirs, dir)
     {
-        if (eina_list_search_unsorted(parent->directory_dirs, EINA_COMPARE_CB(strcmp), dir))
-            continue;
-
-        parent->directory_dirs = eina_list_prepend(parent->directory_dirs, strdup(dir));
-    }
-
-    while (dirs)
-    {
-        free(eina_list_data_get(dirs));
-        dirs = eina_list_remove_list(dirs, dirs);
+        if (!eina_list_search_unsorted(parent->directory_dirs, EINA_COMPARE_CB(strcmp), dir))
+            parent->directory_dirs = eina_list_prepend(parent->directory_dirs, strdup(dir));
+        eina_stringshare_del(dir);
     }
 
     return 1;
@@ -1817,11 +1810,10 @@ efreet_menu_handle_default_merge_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *
     dirs = efreet_default_dirs_get(efreet_config_home_get(),
                                     efreet_config_dirs_get(), path);
 
-    while ((p = eina_list_data_get(dirs)))
+    EINA_LIST_FREE(dirs, p)
     {
-        dirs = eina_list_remove_list(dirs, dirs);
         efreet_menu_merge_dir(parent, xml, p);
-        FREE(p);
+        eina_stringshare_del(p);
     }
 #ifndef STRICT_SPEC
     /* Also check the path of the parent file */

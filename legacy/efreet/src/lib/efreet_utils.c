@@ -114,7 +114,7 @@ efreet_util_path_in_default(const char *section, const char *path)
         if (!strncmp(path, dir, strlen(dir)))
             ret = dir;
         else
-            free(dir);
+            eina_stringshare_del(dir);
     }
 
     return ret;
@@ -124,7 +124,7 @@ EAPI const char *
 efreet_util_path_to_file_id(const char *path)
 {
     size_t len;
-    char *tmp, *p;
+    char tmp[PATH_MAX], *p;
     char *base;
     const char *file_id;
 
@@ -139,25 +139,25 @@ efreet_util_path_to_file_id(const char *path)
     len = strlen(base);
     if (strlen(path) <= len)
     {
-        free(base);
+        eina_stringshare_del(base);
         return NULL;
     }
     if (strncmp(path, base, len))
     {
-        free(base);
+        eina_stringshare_del(base);
         return NULL;
     }
 
-    tmp = strdup(path + len + 1);
+    strncpy(tmp, path + len + 1, sizeof(tmp));
+    tmp[PATH_MAX - 1] = '\0';
     p = tmp;
     while (*p)
     {
         if (*p == '/') *p = '-';
         p++;
     }
-    free(base);
+    eina_stringshare_del(base);
     file_id = eina_stringshare_add(tmp);
-    free(tmp);
     eina_hash_del(file_id_by_desktop_path, path, NULL);
     eina_hash_add(file_id_by_desktop_path, path, (void *)file_id);
     return file_id;
