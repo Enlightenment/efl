@@ -41,7 +41,7 @@ cache_add(const char *path, const char *file_id, int priority __UNUSED__, int *c
 
     ext = strrchr(path, '.');
     if (!ext || (strcmp(ext, ".desktop") && strcmp(ext, ".directory"))) return 1;
-    desk = efreet_desktop_get(path);
+    desk = efreet_desktop_new(path);
     if (!desk || (desk->type != EFREET_DESKTOP_TYPE_APPLICATION &&
                   desk->type != EFREET_DESKTOP_TYPE_DIRECTORY))
     {
