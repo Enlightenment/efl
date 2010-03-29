@@ -318,7 +318,7 @@ _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
     */
    int old_id;
    Edje_Part *part;
-   Eina_List *l, *ll;
+   Eina_List *l, *ll, *l_next;
    Edje_Part *p;
    Edje_Program *epr;
 
@@ -373,12 +373,12 @@ _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
 	if (epr->action != EDJE_ACTION_TYPE_STATE_SET)
 	  continue;
 
-	EINA_LIST_FOREACH(epr->targets, ll, pt)
+	EINA_LIST_FOREACH_SAFE(epr->targets, ll, l_next, pt)
 	  {
 	     if (pt->id == old_id)
 	       {
 		  if (new_id == -1)
-		    epr->targets = eina_list_remove(epr->targets, pt);
+		    epr->targets = eina_list_remove_list(epr->targets, ll);
 		  else
 		    pt->id = new_id;
 	       }
