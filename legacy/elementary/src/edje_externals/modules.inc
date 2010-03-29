@@ -1,6 +1,7 @@
 DEFINE_TYPE(bubble)
 DEFINE_TYPE(button)
 DEFINE_TYPE(check)
+DEFINE_TYPE(notepad)
 DEFINE_TYPE(radio)
 DEFINE_TYPE(scrolled_entry)
 DEFINE_TYPE(slider)

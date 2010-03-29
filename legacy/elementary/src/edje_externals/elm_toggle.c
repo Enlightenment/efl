@@ -165,8 +165,10 @@ external_toggle_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
 
    EINA_LIST_FOREACH(params, l, param)
      {
-	if (!strcmp(param->name, "state"))
-	  mem->state = param->i;
+	if (!strcmp(param->name, "state")) {
+	   mem->state = param->i;
+	   mem->state_exists = EINA_TRUE;
+	  }
 	else if (!strcmp(param->name, "label on"))
 	  mem->on = eina_stringshare_add(param->s);
 	else if (!strcmp(param->name, "label off"))

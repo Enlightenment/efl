@@ -13,6 +13,7 @@ collections { group { name: "ico_"_name;                     \
 ICON("bubble")
 ICON("button")
 ICON("check")
+ICON("notepad")
 ICON("radio")
 ICON("scrolled_entry")
 ICON("slider")

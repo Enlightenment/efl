@@ -29,6 +29,7 @@ elm.c \
 elm_bubble.c \
 elm_button.c \
 elm_check.c \
+elm_notepad.c \
 elm_radio.c \
 elm_scrolled_entry.c \
 elm_slider.c \

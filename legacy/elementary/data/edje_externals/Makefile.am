@@ -12,6 +12,7 @@ icons.edc \
 ico_bubble.png \
 ico_button.png \
 ico_check.png \
+ico_notepad.png \
 ico_radio.png \
 ico_scrolled_entry.png \
 ico_slider.png \
