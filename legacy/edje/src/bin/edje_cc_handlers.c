@@ -240,6 +240,8 @@ static void st_collections_group_parts_part_description_params_double(void);
 
 static void st_collections_group_programs_program_name(void);
 static void st_collections_group_parts_part_description_params_string(void);
+static void st_collections_group_parts_part_description_params_bool(void);
+static void st_collections_group_parts_part_description_params_choice(void);
 static void st_collections_group_programs_program_signal(void);
 static void st_collections_group_programs_program_source(void);
 static void st_collections_group_programs_program_filter(void);
@@ -460,6 +462,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.params.int", st_collections_group_parts_part_description_params_int},
      {"collections.group.parts.part.description.params.double", st_collections_group_parts_part_description_params_double},
      {"collections.group.parts.part.description.params.string", st_collections_group_parts_part_description_params_string},
+     {"collections.group.parts.part.description.params.bool", st_collections_group_parts_part_description_params_bool},
+     {"collections.group.parts.part.description.params.choice", st_collections_group_parts_part_description_params_choice},
      {"collections.group.parts.part.description.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.fonts.font", st_fonts_font}, /* dup */
@@ -6204,6 +6208,8 @@ st_collections_group_parts_part_description_perspective_focal(void)
             int: "name" 0;
             double: "other_name" 0.0;
             string: "another_name" "some text";
+	    bool: "name" 1;
+	    choice: "some_name" "value";
         }
         ..
     }
@@ -6264,12 +6270,14 @@ _st_collections_group_parts_part_description_params(Edje_External_Param_Type typ
 
    switch (type)
      {
+      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
       case EDJE_EXTERNAL_PARAM_TYPE_INT:
 	 param->i = parse_int(1);
 	 break;
       case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
 	 param->d = parse_float(1);
 	 break;
+      case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
       case EDJE_EXTERNAL_PARAM_TYPE_STRING:
 	 param->s = parse_str(1);
 	 break;
@@ -6325,6 +6333,40 @@ static void
 st_collections_group_parts_part_description_params_string(void)
 {
    _st_collections_group_parts_part_description_params(EDJE_EXTERNAL_PARAM_TYPE_STRING);
+}
+
+/**
+    @page edcref
+    @property
+        bool
+    @parameters
+        [param_name] [bool_value]
+    @effect
+        Adds an boolean parameter for an external object. Value must be 0 or 1.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_params_bool(void)
+{
+   _st_collections_group_parts_part_description_params(EDJE_EXTERNAL_PARAM_TYPE_BOOL);
+}
+
+/**
+    @page edcref
+    @property
+        choice
+    @parameters
+        [param_name] [choice_string]
+    @effect
+        Adds a choice parameter for an external object. The possible
+        choice values are defined by external type at their register time
+        and will be validated at runtime.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_params_choice(void)
+{
+   _st_collections_group_parts_part_description_params(EDJE_EXTERNAL_PARAM_TYPE_CHOICE);
 }
 
 

@@ -28,6 +28,8 @@ edje_external_param_type_str(Edje_External_Param_Type type)
 	 return "STRING";
       case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
 	 return "BOOL";
+      case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
+	 return "CHOICE";
       default:
 	 return "(unknown)";
      }
@@ -91,6 +93,12 @@ edje_object_part_external_object_get(const Evas_Object *obj, const char *part)
  *       states. Those parameters will never be changed by this
  *       function. The interpretation of how state_set parameters and
  *       param_set will interact is up to the external plugin.
+ *
+ * @note this function will not check if parameter value is valid
+ *       using #Edje_External_Param_Info minimum, maximum, valid
+ *       choices and others. However these should be checked by the
+ *       underlying implementation provided by the external
+ *       plugin. This is done for performance reasons.
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
@@ -446,6 +454,23 @@ edje_external_param_bool_get(const Eina_List *params, const char *key, Eina_Bool
    if (param && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL && ret)
      {
 	*ret = param->i;
+	return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+edje_external_param_choice_get(const Eina_List *params, const char *key, const char **ret)
+{
+   Edje_External_Param *param;
+
+   if (!params) return EINA_FALSE;
+   param = edje_external_param_find(params, key);
+
+   if (param && param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE && ret)
+     {
+	*ret = param->s;
 	return EINA_TRUE;
      }
 

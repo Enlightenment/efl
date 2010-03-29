@@ -2660,6 +2660,10 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name)
 		case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
 		   p->d = pi->info.d.def;
 		   break;
+		case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
+		   if (pi->info.c.def)
+		     p->s = eina_stringshare_add(pi->info.c.def);
+		   break;
 		case EDJE_EXTERNAL_PARAM_TYPE_STRING:
 		   if (pi->info.s.def)
 		     p->s = eina_stringshare_add(pi->info.s.def);
@@ -2838,6 +2842,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, const
 	   case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
 	      new_p->d = p->d;
 	      break;
+	   case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
 	   case EDJE_EXTERNAL_PARAM_TYPE_STRING:
 	      new_p->s = eina_stringshare_add(p->s);
 	      break;
@@ -3621,6 +3626,7 @@ edje_edit_state_external_param_get(Evas_Object *obj, const char *part, const cha
 		 case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
 		    *value = &p->d;
 		    break;
+		 case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
 		 case EDJE_EXTERNAL_PARAM_TYPE_STRING:
 		    *value = (void *)p->s;
 		    break;
@@ -3693,12 +3699,33 @@ edje_edit_state_external_param_string_get(Evas_Object *obj, const char *part, co
    return EINA_FALSE;
 }
 
+EAPI Eina_Bool
+edje_edit_state_external_param_choice_get(Evas_Object *obj, const char *part, const char *state, const char *param, const char **value)
+{
+   Eina_List *l;
+   Edje_External_Param *p;
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   EINA_LIST_FOREACH(pd->external_params, l, p)
+      if (!strcmp(p->name, param))
+	{
+	   if (p->type != EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
+	     return EINA_FALSE;
+	   if (value)
+	     *value = p->s;
+	   return EINA_TRUE;
+	}
+
+   return EINA_FALSE;
+}
+
 /**
  * Arguments should have proper sized values matching their types:
  *   - EDJE_EXTERNAL_PARAM_TYPE_INT: int
  *   - EDJE_EXTERNAL_PARAM_TYPE_BOOL: int
  *   - EDJE_EXTERNAL_PARAM_TYPE_DOUBLE: double
  *   - EDJE_EXTERNAL_PARAM_TYPE_STRING: char*
+ *   - EDJE_EXTERNAL_PARAM_TYPE_CHOICE: char*
  */
 EAPI Eina_Bool
 edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const char *state, const char *param, Edje_External_Param_Type type, ...)
@@ -3748,6 +3775,7 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
       case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
 	 p->d = (double)va_arg(ap, double);
 	 break;
+      case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
       case EDJE_EXTERNAL_PARAM_TYPE_STRING:
 	 p->s = eina_stringshare_add((const char *)va_arg(ap, char *));
 	 break;
@@ -3784,6 +3812,12 @@ EAPI Eina_Bool
 edje_edit_state_external_param_string_set(Evas_Object *obj, const char *part, const char *state, const char *param, const char *value)
 {
    return edje_edit_state_external_param_set(obj, part, state, param, EDJE_EXTERNAL_PARAM_TYPE_STRING, value);
+}
+
+EAPI Eina_Bool
+edje_edit_state_external_param_choice_set(Evas_Object *obj, const char *part, const char *state, const char *param, const char *value)
+{
+   return edje_edit_state_external_param_set(obj, part, state, param, EDJE_EXTERNAL_PARAM_TYPE_CHOICE, value);
 }
 
 /**************/
@@ -6057,7 +6091,16 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 			break;
 		     case EDJE_EXTERNAL_PARAM_TYPE_STRING:
 			if (p->s)
-			  fprintf(f, I6"string: \"%s\" \"%s\";\n", p->name, p->s);
+			  fprintf(f, I6"string: \"%s\" \"%s\";\n",
+				  p->name, p->s);
+			break;
+		     case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+			fprintf(f, I6"bool: \"%s\" \"%d\";\n", p->name, p->i);
+			break;
+		     case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
+			if (p->s)
+			  fprintf(f, I6"choice: \"%s\" \"%s\";\n",
+				  p->name, p->s);
 			break;
 		     default:
 			break;

@@ -218,6 +218,9 @@ void *alloca (size_t);
  * external_param_get_strlen(id, param_name[])
  * external_param_get_str(id, param_name[], value[], value_maxlen)
  * external_param_set_str(id, param_name[], value[])
+ * external_param_get_choice_strlen(id, param_name[])
+ * external_param_get_choice(id, param_name[], value[], value_maxlen)
+ * external_param_set_choice(id, param_name[], value[])
  * external_param_get_bool(id, param_name[])
  * external_param_set_bool(id, param_name[], value)
  *
@@ -2496,6 +2499,107 @@ _edje_embryo_fn_external_param_set_str(Embryo_Program *ep, Embryo_Cell *params)
    if (!param_name) return 0;
    eep.name = param_name;
    eep.type = EDJE_EXTERNAL_PARAM_TYPE_STRING;
+   GETSTR(val, params[3]);
+   if (!val) return 0;
+   eep.s = val;
+   return _edje_external_param_set(rp->swallowed_object, &eep);
+}
+
+/* external_param_get_choice_strlen(id, param_name[]) */
+static Embryo_Cell
+_edje_embryo_fn_external_param_get_choice_strlen(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id;
+   Edje_Real_Part *rp;
+   Edje_External_Param eep;
+   char *param_name;
+
+   CHKPARAM(2);
+   ed = embryo_program_data_get(ep);
+
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+
+   GETSTR(param_name, params[2]);
+   if (!param_name) return 0;
+   eep.name = param_name;
+   eep.type = EDJE_EXTERNAL_PARAM_TYPE_CHOICE;
+   eep.s = NULL;
+   _edje_external_param_get(rp->swallowed_object, &eep);
+   if (!eep.s) return 0;
+   return strlen(eep.s);
+}
+
+/* external_param_get_choice(id, param_name[], val[], val_maxlen) */
+static Embryo_Cell
+_edje_embryo_fn_external_param_get_choice(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id;
+   Edje_Real_Part *rp;
+   Edje_External_Param eep;
+   char *param_name;
+   size_t src_len, dst_len;
+
+   CHKPARAM(4);
+   dst_len = params[4];
+   if (dst_len < 1) goto error;
+
+   ed = embryo_program_data_get(ep);
+
+   part_id = params[1];
+   if (part_id < 0) goto error;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+
+   GETSTR(param_name, params[2]);
+   if (!param_name) return 0;
+   eep.name = param_name;
+   eep.type = EDJE_EXTERNAL_PARAM_TYPE_CHOICE;
+   eep.s = NULL;
+   _edje_external_param_get(rp->swallowed_object, &eep);
+   if (!eep.s) goto error;
+   src_len = strlen(eep.s);
+   if (src_len < dst_len)
+     {
+	SETSTR(eep.s, params[3]);
+     }
+   else
+     {
+	char *tmp = alloca(dst_len);
+	memcpy(tmp, eep.s, dst_len - 1);
+	tmp[dst_len] = '\0';
+	SETSTR(tmp, params[3]);
+     }
+   return 1;
+
+ error:
+   SETSTR("", params[3]);
+   return 0;
+}
+
+/* external_param_set_choice(id, param_name[], val[]) */
+static Embryo_Cell
+_edje_embryo_fn_external_param_set_choice(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id;
+   Edje_Real_Part *rp;
+   Edje_External_Param eep;
+   char *param_name, *val;
+
+   CHKPARAM(3);
+   ed = embryo_program_data_get(ep);
+
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+
+   GETSTR(param_name, params[2]);
+   if (!param_name) return 0;
+   eep.name = param_name;
+   eep.type = EDJE_EXTERNAL_PARAM_TYPE_CHOICE;
    GETSTR(val, params[3]);
    if (!val) return 0;
    eep.s = val;

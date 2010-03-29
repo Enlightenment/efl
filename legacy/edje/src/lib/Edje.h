@@ -247,6 +247,7 @@ enum _Edje_External_Param_Type
   EDJE_EXTERNAL_PARAM_TYPE_DOUBLE,
   EDJE_EXTERNAL_PARAM_TYPE_STRING,
   EDJE_EXTERNAL_PARAM_TYPE_BOOL,
+  EDJE_EXTERNAL_PARAM_TYPE_CHOICE,
   EDJE_EXTERNAL_PARAM_TYPE_MAX
 };
 typedef enum _Edje_External_Param_Type Edje_External_Param_Type;
@@ -258,9 +259,9 @@ struct _Edje_External_Param
    const char *name;
    Edje_External_Param_Type type;
    // XXX these could be in a union, but eet doesn't support them (or does it?)
-   int i;
+   int i; /**< used by both integer and boolean */
    double d;
-   const char *s;
+   const char *s; /**< used by both string and choice */
 };
 typedef struct _Edje_External_Param Edje_External_Param;
 
@@ -293,6 +294,11 @@ struct _Edje_External_Param_Info
              const char *false_str;
              const char *true_str;
           } b;
+	struct
+	  {
+	     const char *def;
+	     const char **choices; /* NULL terminated array */
+	  } c;
      } info;
 };
 typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
@@ -305,6 +311,8 @@ typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
   {name, EDJE_EXTERNAL_PARAM_TYPE_STRING, {.s = {def, accept, deny}}}
 #define EDJE_EXTERNAL_PARAM_INFO_BOOL_FULL(name, def, false_str, true_str) \
   {name, EDJE_EXTERNAL_PARAM_TYPE_BOOL, {.b = {def, false_str, true_str}}}
+#define EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL(name, def, choices) \
+  {name, EDJE_EXTERNAL_PARAM_TYPE_CHOICE, {.c = {def, choices}}}
 
 #define EDJE_EXTERNAL_PARAM_INFO_INT_DEFAULT(name, def) \
    EDJE_EXTERNAL_PARAM_INFO_INT_FULL(name, def, EDJE_EXTERNAL_INT_UNSET, EDJE_EXTERNAL_INT_UNSET, EDJE_EXTERNAL_INT_UNSET)
@@ -326,6 +334,22 @@ typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
 
 #define EDJE_EXTERNAL_PARAM_INFO_SENTINEL {NULL, 0, {.s = {NULL, NULL, NULL}}}
 
+/**
+ * @struct _Edje_External_Type information about an external type to be used.
+ *
+ * This structure provides information on how to display and modify a
+ * third party Evas_Object in Edje.
+ *
+ * Some function pointers are not really used by Edje, but provide
+ * means for Edje users to better interact with such objects. For
+ * instance, an editor may use label_get() and icon_get() to list all
+ * registered external types.
+ *
+ * @note The function pointers provided in this structure must check
+ *       for errors and invalid or out-of-range values as for
+ *       performance reasons Edje will not enforce hints provided as
+ *       #Edje_External_Param_Info in the member parameters_info.
+ */
 struct _Edje_External_Type
 {
 #define EDJE_EXTERNAL_TYPE_ABI_VERSION (2)
@@ -547,6 +571,7 @@ extern "C" {
    EAPI Eina_Bool edje_external_param_double_get(const Eina_List *params, const char *key, double *ret);
    EAPI Eina_Bool edje_external_param_string_get(const Eina_List *params, const char *key, const char **ret);
    EAPI Eina_Bool edje_external_param_bool_get(const Eina_List *params, const char *key, Eina_Bool *ret);
+   EAPI Eina_Bool edje_external_param_choice_get(const Eina_List *params, const char *key, const char **ret);
    EAPI const Edje_External_Param_Info *edje_external_param_info_get(const char *type_name);
    EAPI const Edje_External_Type *edje_external_type_get(const char *type_name);
 

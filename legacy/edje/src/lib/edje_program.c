@@ -1358,17 +1358,6 @@ _edje_param_external_get(const Evas_Object *obj, const char *name, Edje_External
    return param;
 }
 
-static Edje_External_Param_Type
-_edje_param_external_type_get(const Evas_Object *obj, const char *name)
-{
-   const Edje_External_Param_Info *info;
-
-   info = _edje_external_param_info_get(obj, name);
-   if (!info) return EDJE_EXTERNAL_PARAM_TYPE_MAX;
-
-   return info->type;
-}
-
 /* simulate external properties for native objects */
 static Edje_External_Param *
 _edje_param_native_get(Edje_Real_Part *rp, const char *name, Edje_External_Param *param, void **free_ptr)
@@ -1688,19 +1677,32 @@ _edje_param_native_set(Edje_Real_Part *rp, const char *name, const Edje_External
    return EINA_FALSE;
 }
 
-static Edje_External_Param_Type
-_edje_param_native_type_get(const Edje_Real_Part *rp, const char *name)
+static const Edje_External_Param_Info *
+_edje_native_param_info_get(const Edje_Real_Part *rp, const char *name)
 {
    if ((rp->part->type == EDJE_PART_TYPE_TEXT) ||
        (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK))
      {
-	if (!strcmp(name, "text")) return EDJE_EXTERNAL_PARAM_TYPE_STRING;
+	if (!strcmp(name, "text"))
+	  {
+	     static const Edje_External_Param_Info pi =
+	       EDJE_EXTERNAL_PARAM_INFO_STRING("text");
+	     return &pi;
+	  }
 	if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
 	  {
 	     if (!strcmp(name, "text_unescaped"))
-	       return EDJE_EXTERNAL_PARAM_TYPE_STRING;
+	       {
+		  static const Edje_External_Param_Info pi =
+		    EDJE_EXTERNAL_PARAM_INFO_STRING("text_unescaped");
+		  return &pi;
+	       }
 	     if (!strcmp(name, "select_allow"))
-	       return EDJE_EXTERNAL_PARAM_TYPE_BOOL;
+	       {
+		  static const Edje_External_Param_Info pi =
+		    EDJE_EXTERNAL_PARAM_INFO_BOOL("text_unescaped");
+		  return &pi;
+	       }
 	  }
      }
 
@@ -1709,29 +1711,68 @@ _edje_param_native_type_get(const Edje_Real_Part *rp, const char *name)
 	if (!strncmp(name, "drag_", sizeof("drag_") - 1))
 	  {
 	     name += sizeof("drag_") - 1;
-	     if ((!strcmp(name, "value_x")) ||
-		 (!strcmp(name, "value_y")) ||
-		 (!strcmp(name, "size_w")) ||
-		 (!strcmp(name, "size_h")) ||
-		 (!strcmp(name, "step_x")) ||
-		 (!strcmp(name, "step_y")) ||
-		 (!strcmp(name, "page_x")) ||
-		 (!strcmp(name, "page_y")))
-	       return EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
-	     else
-	       return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+	     if (!strcmp(name, "value_x"))
+	       {
+		  static const Edje_External_Param_Info pi =
+		    EDJE_EXTERNAL_PARAM_INFO_DOUBLE("drag_value_x");
+		  return &pi;
+	       }
+	     if (!strcmp(name, "value_y"))
+	       {
+		  static const Edje_External_Param_Info pi =
+		    EDJE_EXTERNAL_PARAM_INFO_DOUBLE("drag_value_y");
+		  return &pi;
+	       }
+	     if (!strcmp(name, "size_w"))
+	       {
+		  static const Edje_External_Param_Info pi =
+		    EDJE_EXTERNAL_PARAM_INFO_DOUBLE("drag_size_w");
+		  return &pi;
+	       }
+	     if (!strcmp(name, "size_h"))
+	       {
+		  static const Edje_External_Param_Info pi =
+		    EDJE_EXTERNAL_PARAM_INFO_DOUBLE("drag_size_h");
+		  return &pi;
+	       }
+	     if (!strcmp(name, "step_x"))
+	       {
+		  static const Edje_External_Param_Info pi =
+		    EDJE_EXTERNAL_PARAM_INFO_DOUBLE("drag_step_x");
+		  return &pi;
+	       }
+	     if (!strcmp(name, "step_y"))
+	       {
+		  static const Edje_External_Param_Info pi =
+		    EDJE_EXTERNAL_PARAM_INFO_DOUBLE("drag_step_y");
+		  return &pi;
+	       }
+	     if (!strcmp(name, "page_x"))
+	       {
+		  static const Edje_External_Param_Info pi =
+		    EDJE_EXTERNAL_PARAM_INFO_DOUBLE("drag_page_x");
+		  return &pi;
+	       }
+	     if (!strcmp(name, "page_y"))
+	       {
+		  static const Edje_External_Param_Info pi =
+		    EDJE_EXTERNAL_PARAM_INFO_DOUBLE("drag_page_y");
+		  return &pi;
+	       }
+
+	     return NULL;
 	  }
      }
 
-   return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+   return NULL;
 }
 
 static Edje_External_Param *
-_edje_param_convert(Edje_External_Param *param, Edje_External_Param_Type type)
+_edje_param_convert(Edje_External_Param *param, const Edje_External_Param_Info *dst_info)
 {
-   if (param->type == type) return param;
+   if (param->type == dst_info->type) return param;
 
-   switch (type)
+   switch (dst_info->type)
      {
       case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
       case EDJE_EXTERNAL_PARAM_TYPE_INT:
@@ -1743,14 +1784,18 @@ _edje_param_convert(Edje_External_Param *param, Edje_External_Param_Type type)
 		 i = (int)param->d;
 		 break;
 	      case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+	      case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
 		 i = (param->s) ? atoi(param->s) : 0;
 		 break;
 	      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+	      case EDJE_EXTERNAL_PARAM_TYPE_INT:
 		 i = param->i;
 	      default:
 		 return NULL;
 	     }
-	   param->type = type;
+	   if (dst_info->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+	     i = !!i;
+	   param->type = dst_info->type;
 	   param->i = i;
 	   return param;
 	}
@@ -1764,6 +1809,7 @@ _edje_param_convert(Edje_External_Param *param, Edje_External_Param_Type type)
 		 d = (double)param->i;
 		 break;
 	      case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+	      case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
 		 d = (param->s) ? atof(param->s) : 0.0;
 		 break;
 	      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
@@ -1771,7 +1817,7 @@ _edje_param_convert(Edje_External_Param *param, Edje_External_Param_Type type)
 	      default:
 		 return NULL;
 	     }
-	   param->type = type;
+	   param->type = dst_info->type;
 	   param->d = d;
 	   return param;
 	}
@@ -1788,11 +1834,41 @@ _edje_param_convert(Edje_External_Param *param, Edje_External_Param_Type type)
 	      case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
 		 if (!snprintf(s, sizeof(s), "%f", param->d)) return NULL;
 		 break;
+	      case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
+		 param->type = dst_info->type;
+		 return param;
 	      default:
 		 return NULL;
 	     }
-	   param->type = type;
+	   param->type = dst_info->type;
 	   param->s = s;
+	   return param;
+	}
+
+      case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
+	{
+	   static char s[64];
+	   const char *val;
+	   switch (param->type)
+	     {
+	      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+	      case EDJE_EXTERNAL_PARAM_TYPE_INT:
+		 if (!snprintf(s, sizeof(s), "%i", param->i)) return NULL;
+		 val = s;
+		 break;
+	      case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+		 if (!snprintf(s, sizeof(s), "%f", param->d)) return NULL;
+		 val = s;
+		 break;
+	      case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+		 val = param->s;
+		 break;
+	      default:
+		 return NULL;
+	     }
+
+	   param->type = dst_info->type;
+	   if (param->s != val) param->s = val;
 	   return param;
 	}
 
@@ -1800,23 +1876,75 @@ _edje_param_convert(Edje_External_Param *param, Edje_External_Param_Type type)
      }
 }
 
+static Eina_Bool
+_edje_param_validate(const Edje_External_Param *param, const Edje_External_Param_Info *info)
+{
+   switch (info->type)
+     {
+      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+	 return ((param->i == 0) || (param->i == 1));
+
+      case EDJE_EXTERNAL_PARAM_TYPE_INT:
+	 if ((info->info.i.min != EDJE_EXTERNAL_INT_UNSET) &&
+	     (info->info.i.min > param->i))
+	   return EINA_FALSE;
+
+	 if ((info->info.i.max != EDJE_EXTERNAL_INT_UNSET) &&
+	     (info->info.i.max < param->i))
+	   return EINA_FALSE;
+
+	 return EINA_TRUE;
+
+      case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+	 if ((info->info.d.min != EDJE_EXTERNAL_DOUBLE_UNSET) &&
+	     (info->info.d.min > param->d))
+	   return EINA_FALSE;
+
+	 if ((info->info.d.max != EDJE_EXTERNAL_DOUBLE_UNSET) &&
+	     (info->info.d.max < param->d))
+	   return EINA_FALSE;
+
+	 return EINA_TRUE;
+
+      case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+	 if (!param->s) return EINA_FALSE;
+	 if (info->info.s.accept_fmt)
+	   INF("string 'accept_fmt' validation not implemented.");
+	 if (info->info.s.deny_fmt)
+	   INF("string 'deny_fmt' validation not implemented.");
+	 return EINA_TRUE;
+
+      case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
+	{
+	   const char **itr = info->info.c.choices;
+	   if (!itr) return EINA_FALSE;
+	   for (; *itr != NULL; itr++)
+	     if (!strcmp(*itr, param->s))
+	       return EINA_TRUE;
+	   return EINA_FALSE;
+	}
+
+      default: return EINA_FALSE;
+     }
+}
+
 static void
 _edje_param_copy(Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part *dst_part, const char *dst_param)
 {
    Edje_External_Param val;
-   Edje_External_Param_Type dst_type;
+   const Edje_External_Param_Info *dst_info;
    void *free_ptr = NULL;
 
    if ((!src_part) || (!src_param) || (!dst_part) || (!dst_param))
      return;
 
    if (dst_part->part->type == EDJE_PART_TYPE_EXTERNAL)
-     dst_type = _edje_param_external_type_get
+     dst_info = _edje_external_param_info_get
        (dst_part->swallowed_object, dst_param);
    else
-     dst_type = _edje_param_native_type_get(dst_part, dst_param);
+     dst_info = _edje_native_param_info_get(dst_part, dst_param);
 
-   if (dst_type == EDJE_EXTERNAL_PARAM_TYPE_MAX)
+   if (!dst_info)
      {
 	ERR("cannot copy, invalid destination parameter '%s' of part '%s'",
 	    dst_param, dst_part->part->name);
@@ -1843,11 +1971,18 @@ _edje_param_copy(Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part
 	  }
      }
 
-   if (!_edje_param_convert(&val, dst_type))
+   if (!_edje_param_convert(&val, dst_info))
      {
 	ERR("cannot convert parameter type %s to requested type %s",
 	    edje_external_param_type_str(val.type),
-	    edje_external_param_type_str(dst_type));
+	    edje_external_param_type_str(dst_info->type));
+	goto end;
+     }
+
+   if (!_edje_param_validate(&val, dst_info))
+     {
+	ERR("incorrect parameter value failed validation for type %s",
+	    edje_external_param_type_str(dst_info->type));
 	goto end;
      }
 
@@ -1857,7 +1992,7 @@ _edje_param_copy(Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part
 	if (!_edje_external_param_set(dst_part->swallowed_object, &val))
 	  {
 	     ERR("failed to set parameter '%s' (%s) of part '%s'",
-		 dst_param, edje_external_param_type_str(dst_type),
+		 dst_param, edje_external_param_type_str(dst_info->type),
 		 dst_part->part->name);
 	     goto end;
 	  }
@@ -1867,7 +2002,7 @@ _edje_param_copy(Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part
 	if (!_edje_param_native_set(dst_part, dst_param, &val))
 	  {
 	     ERR("failed to set parameter '%s' (%s) of part '%s'",
-		 dst_param, edje_external_param_type_str(dst_type),
+		 dst_param, edje_external_param_type_str(dst_info->type),
 		 dst_part->part->name);
 	     goto end;
 	  }
