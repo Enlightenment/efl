@@ -19,7 +19,7 @@ evas_event_callback_list_post_free(Eina_Inlist **list)
 	l = l->next;
 	if (fn->delete_me)
 	  {
-	    *list = eina_inlist_remove(*list, EINA_INLIST_GET(fn));
+             *list = eina_inlist_remove(*list, EINA_INLIST_GET(fn));
 	     free(fn);
 	  }
      }
@@ -71,6 +71,16 @@ evas_object_event_callback_cleanup(Evas_Object *obj)
    evas_event_callback_list_post_free(&obj->callbacks->callbacks);
    free(obj->callbacks);
    obj->callbacks = NULL;
+}
+
+void
+evas_event_callback_all_del(Evas *e)
+{
+   Evas_Func_Node *fn;
+
+   if (!e->callbacks) return;
+   EINA_INLIST_FOREACH(e->callbacks->callbacks, fn)
+     fn->delete_me = 1;
 }
 
 void

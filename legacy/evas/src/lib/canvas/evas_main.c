@@ -239,6 +239,7 @@ evas_free(Evas *e)
 
    evas_fonts_zero_free(e);
    
+   evas_event_callback_all_del(e);
    evas_event_callback_cleanup(e);
 
    if (e->engine.func)

@@ -113,6 +113,7 @@ evas_smart_free(Evas_Smart *s)
    s->delete_me = 1;
    if (s->usage > 0) return;
    if (s->class_allocated) free((void *)s->smart_class);
+   free(s->callbacks.array);
    free(s);
 }
 
@@ -340,7 +341,8 @@ evas_smart_cb_descriptions_resize(Evas_Smart_Cb_Description_Array *a, unsigned i
 static int
 _evas_smart_cb_description_cmp_sort(const void *p1, const void *p2)
 {
-   const Evas_Smart_Cb_Description * const*a = p1, * const*b = p2;
+   const Evas_Smart_Cb_Description **a = (const Evas_Smart_Cb_Description **)p1;
+   const Evas_Smart_Cb_Description **b = (const Evas_Smart_Cb_Description **)p2;
    return strcmp((*a)->name, (*b)->name);
 }
 
@@ -415,7 +417,7 @@ static int
 _evas_smart_cb_description_cmp_search(const void *p1, const void *p2)
 {
    const char *name = p1;
-   const Evas_Smart_Cb_Description * const*v = p2;
+   const Evas_Smart_Cb_Description **v = (const Evas_Smart_Cb_Description **)p2;
    /* speed up string shares searches (same pointers) */
    if (name == (*v)->name) return 0;
    return strcmp(name, (*v)->name);
