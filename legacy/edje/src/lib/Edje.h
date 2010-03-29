@@ -510,6 +510,7 @@ extern "C" {
    EAPI Evas_Object *edje_object_part_external_object_get(const Evas_Object *obj, const char *part);
    EAPI Eina_Bool    edje_object_part_external_param_set(Evas_Object *obj, const char *part, const Edje_External_Param *param);
    EAPI Eina_Bool    edje_object_part_external_param_get(const Evas_Object *obj, const char *part, Edje_External_Param *param);
+   EAPI Edje_External_Param_Type edje_object_part_external_param_type_get(const Evas_Object *obj, const char *part, const char *param);
 
    EAPI Eina_Bool    edje_object_part_box_append     (Evas_Object *obj, const char *part, Evas_Object *child);
    EAPI Eina_Bool    edje_object_part_box_prepend    (Evas_Object *obj, const char *part, Evas_Object *child);

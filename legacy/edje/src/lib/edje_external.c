@@ -174,6 +174,54 @@ edje_object_part_external_param_get(const Evas_Object *obj, const char *part, Ed
 }
 
 /**
+ * Facility to query the type of the given parameter of the given part.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param param the parameter name to use.
+ *
+ * @return @c EDJE_EXTERNAL_PARAM_TYPE_MAX on errors, or another value
+ *         from #Edje_External_Param_Type on success.
+ */
+EAPI Edje_External_Param_Type
+edje_object_part_external_param_type_get(const Evas_Object *obj, const char *part, const char *param)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+   Edje_External_Type *type;
+   Edje_External_Param_Info *info;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp)
+     {
+	ERR("no part '%s'", part);
+	return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+     }
+   type = evas_object_data_get(obj, "Edje_External_Type");
+   if (!type)
+     {
+	ERR("no external type for object %p", obj);
+	return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+     }
+   if (!type->parameters_info)
+     {
+	ERR("no parameters information for external type '%s'",
+	    type->module_name);
+	return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+     }
+   for (info = type->parameters_info; info->name != NULL; info++)
+     if (strcmp(info->name, param) == 0)
+       return info->type;
+
+   ERR("no parameter '%s' external type '%s'", param, type->module_name);
+   return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+}
+
+
+/**
  * Register given type name to return the given information.
  *
  * @param type_name name to register and be known by edje's "source:"
