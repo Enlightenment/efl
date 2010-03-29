@@ -5003,7 +5003,7 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
 EAPI Eina_Bool
 edje_edit_program_del(Evas_Object *obj, const char *prog)
 {
-   Eina_List *l;
+   Eina_List *l, *l_next;
    Edje_Part_Collection *pc;
    int id, i;
    int old_id;
@@ -5071,17 +5071,14 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
    //We also update all other programs that point to old_id and id
    for (i = 0; i < ed->table_programs_size; i++)
      {
+	Edje_Program_After *pa;
 	Edje_Program *p;
 
 	p = ed->table_programs[i];
 	// printf("Check dependencies on %s\n", p->name);
 	/* check in afters */
-	l = p->after;
-	while (l)
+	EINA_LIST_FOREACH_SAFE(p->after, l, l_next, pa)
 	  {
-	     Edje_Program_After *pa;
-
-	     pa = eina_list_data_get(l);
 	     if (pa->id == old_id)
 	       {
 		  //    printf("   dep on after old_id\n");
@@ -5090,20 +5087,16 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
 	     else if (pa->id == id)
 	       {
 		  //  printf("   dep on after id\n");
-		  p->after = eina_list_remove(p->after, pa);
+		  p->after = eina_list_remove_list(p->after, l);
 	       }
-
-	     if (l) l = eina_list_next(l);
 	  }
 	/* check in targets */
 	if (p->action == EDJE_ACTION_TYPE_ACTION_STOP)
 	  {
-	     l = p->targets;
-	     while (l)
-	       {
-		  Edje_Program_Target *pt;
+	     Edje_Program_Target *pt;
 
-		  pt = eina_list_data_get(l);
+	     EINA_LIST_FOREACH_SAFE(p->targets, l, l_next, pt)
+	       {
 		  if (pt->id == old_id)
 		    {
 		       // printf("   dep on target old_id\n");
@@ -5112,9 +5105,8 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
 		  else if (pt->id == id)
 		    {
 		       // printf("   dep on target id\n");
-		       p->targets = eina_list_remove(p->targets, pt);
+		       p->targets = eina_list_remove_list(p->targets, l);
 		    }
-		  if (l) l = eina_list_next(l);
 	       }
 	  }
      }
