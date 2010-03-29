@@ -620,6 +620,8 @@ int main(int argc, char **argv)
 	goto end;
      }
 
+   ecore_app_args_set(argc, (const char **)argv);
+
    ret = 0;
    opts.file = argv[args];
    if (opts.list_groups)
