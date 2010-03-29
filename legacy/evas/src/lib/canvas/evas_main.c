@@ -238,6 +238,8 @@ evas_free(Evas *e)
      eina_rectangle_free(r);
 
    evas_fonts_zero_free(e);
+   
+   evas_event_callback_cleanup(e);
 
    if (e->engine.func)
      {

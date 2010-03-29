@@ -74,6 +74,16 @@ evas_object_event_callback_cleanup(Evas_Object *obj)
 }
 
 void
+evas_event_callback_cleanup(Evas *e)
+{
+   /* MEM OK */
+   if (!e->callbacks) return;
+   evas_event_callback_list_post_free(&e->callbacks->callbacks);
+   free(e->callbacks);
+   e->callbacks = NULL;
+}
+
+void
 evas_event_callback_call(Evas *e, Evas_Callback_Type type, void *event_info)
 {
    Eina_Inlist **l_mod = NULL, *l;

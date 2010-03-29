@@ -792,6 +792,7 @@ void *evas_mem_calloc(int size);
 void evas_event_callback_list_post_free(Eina_Inlist **list);
 void evas_object_event_callback_all_del(Evas_Object *obj);
 void evas_object_event_callback_cleanup(Evas_Object *obj);
+void evas_event_callback_cleanup(Evas *e);
 void evas_object_inform_call_show(Evas_Object *obj);
 void evas_object_inform_call_hide(Evas_Object *obj);
 void evas_object_inform_call_move(Evas_Object *obj);
