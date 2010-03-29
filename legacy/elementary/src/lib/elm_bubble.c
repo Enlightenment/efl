@@ -169,6 +169,29 @@ elm_bubble_info_set(Evas_Object *obj, const char *info)
    edje_object_part_text_set(wd->bbl, "elm.info", info);
    _sizing_eval(obj);
 }
+
+/**
+ * Get the info of the bubble
+ *
+ * @param obj The given evas pointer
+ *
+ * @return The "info" string of the bubble
+ *
+ * This function gets the text set to be displayed at the top right of
+ * the bubble.
+ *
+ * @ingroup Bubble
+ *
+ */
+EAPI const char *
+elm_bubble_info_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->info;
+}
+
 /**
  * Set the text to be showed in the bubble
  *

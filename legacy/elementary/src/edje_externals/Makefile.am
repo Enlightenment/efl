@@ -24,14 +24,15 @@ pkgdir = $(libdir)/edje
 pkg_LTLIBRARIES = elm.la
 
 elm_la_SOURCES = private.h \
-				modules.inc \
-				elm.c \
-				elm_button.c \
-				elm_check.c \
-				elm_radio.c \
-				elm_scrolled_entry.c \
-				elm_slider.c \
-				elm_toggle.c
+modules.inc \
+elm.c \
+elm_bubble.c \
+elm_button.c \
+elm_check.c \
+elm_radio.c \
+elm_scrolled_entry.c \
+elm_slider.c \
+elm_toggle.c
 
 elm_la_LIBADD = $(top_builddir)/src/lib/libelementary.la
 elm_la_LDFLAGS = $(all_libraries) -no-undefined @lt_enable_auto_import@ -module -avoid-version -shared -fPIC

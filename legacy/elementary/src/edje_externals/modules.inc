@@ -1,3 +1,4 @@
+DEFINE_TYPE(bubble)
 DEFINE_TYPE(button)
 DEFINE_TYPE(check)
 DEFINE_TYPE(radio)

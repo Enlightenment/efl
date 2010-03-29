@@ -132,6 +132,31 @@ external_common_icon_param_parse(Evas_Object **icon, Evas_Object *obj, const Ein
    *icon = external_common_param_icon_get(obj, p);
 }
 
+Evas_Object *
+external_common_param_edje_object_get(Evas_Object *obj, const Edje_External_Param *p)
+{
+   Evas_Object *edje, *parent_widget, *ret;
+   const char *file;
+
+   if ((!p) || (!p->s) || (p->type != EDJE_EXTERNAL_PARAM_TYPE_STRING))
+       return NULL;
+
+   edje = evas_object_smart_parent_get(obj);
+   edje_object_file_get(edje, &file, NULL);
+
+   parent_widget = elm_widget_parent_widget_get(obj);
+   if (!parent_widget)
+     parent_widget = edje;
+
+   ret = edje_object_add(evas_object_evas_get(parent_widget));
+
+   if (edje_object_file_set(ret, file, p->s))
+     return ret;
+
+   evas_object_del(ret);
+   return NULL;
+}
+
 void
 external_common_params_free(void *params)
 {
