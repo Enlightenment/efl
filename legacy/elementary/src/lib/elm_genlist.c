@@ -496,6 +496,8 @@ static void
 _item_del(Elm_Genlist_Item *it)
 {
    elm_genlist_item_subitems_clear(it);
+   if (it->long_timer) ecore_timer_del(it->long_timer);
+   it->long_timer = NULL;
    if (it->wd->show_item == it) it->wd->show_item = NULL;
    if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
    if (it->realized) _item_unrealize(it);
