@@ -37,7 +37,6 @@ cache_add(const char *path, const char *file_id, int priority __UNUSED__, int *c
 {
     Efreet_Desktop *desk;
     char *ext;
-    long long mtime;
 
     ext = strrchr(path, '.');
     if (!ext || (strcmp(ext, ".desktop") && strcmp(ext, ".directory"))) return 1;
@@ -48,8 +47,12 @@ cache_add(const char *path, const char *file_id, int priority __UNUSED__, int *c
         if (desk) efreet_desktop_free(desk);
         return 1;
     }
-    mtime = ecore_file_mod_time(path);
-    if (mtime != desk->load_time)
+    if (!desk->eet)
+    {
+        /* This file isn't in cache */
+        *changed = 1;
+    }
+    else if (ecore_file_mod_time(desk->orig_path) != desk->load_time)
     {
         efreet_desktop_free(desk);
         *changed = 1;
@@ -299,12 +302,6 @@ main()
     eet_close(util_ef);
     eet_close(ef);
 
-   /* ahem - if u have no existing efreet cache - it simply deletes the new
-    * files it created and u never get anything. force changed to be 1 - quick
-    * fix.
-    */
-   changed = 1;
-   
     /* unlink old cache files */
     if (changed)
     {
