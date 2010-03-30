@@ -3965,7 +3965,8 @@ static int
 efreet_menu_cb_move_compare(Efreet_Menu_Move *move, const char *old)
 {
     if (!move->old_name || !old) return 1;
-    return strcmp(move->old_name, old);
+    if (move->old_name == old) return 0;
+    return 1;
 }
 
 static int
