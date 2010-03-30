@@ -948,7 +948,7 @@ efreet_menu_dump(Efreet_Menu *menu, const char *indent)
     {
         Efreet_Menu *entry;
         char *new_indent;
-        int len;
+        size_t len;
 
         len = strlen(indent) + 3;
         new_indent = malloc(sizeof(char *) * len);
@@ -1781,7 +1781,7 @@ static int
 efreet_menu_handle_default_merge_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 {
     Eina_List *dirs;
-    char path[PATH_MAX], p[128], *pp;
+    char path[PATH_MAX], *p, *pp;
 #ifndef STRICT_SPEC
     char parent_path[PATH_MAX];
 #endif
@@ -1793,21 +1793,23 @@ efreet_menu_handle_default_merge_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *
     if (!strcmp(prefix, "gnome-") &&
             (!strcmp(parent->file.name, "gnome-applications.menu")))
     {
-        strncpy(p, "applications", 128);
-        p[128 - 1] = '\0';
+        p = alloca(sizeof("applications"));
+        memcpy(p, "applications", sizeof("applications"));
     }
     else if ((!strcmp(prefix, "kde-") &&
             (!strcmp(parent->file.name, "kde-applications.menu"))))
     {
-        strncpy(p, "applications", 128);
-        p[128 - 1] = '\0';
+        p = alloca(sizeof("applications"));
+        memcpy(p, "applications", sizeof("applications"));
     }
     else
     {
         char *s;
+        size_t len;
 
-        strncpy(p, parent->file.name, 128);
-        p[128 - 1] = '\0';
+        len = strlen(parent->file.name) + 1;
+        p = alloca(len);
+        memcpy(p, parent->file.name, len);
         s = strrchr(p, '.');
         if (s) *s = '\0';
     }
@@ -3100,12 +3102,14 @@ efreet_menu_resolve_moves(Efreet_Menu_Internal *internal)
         dest = efreet_menu_by_name_find(internal, move->new_name, &parent);
         if (!dest)
         {
-            char *path, *tmp, t[PATH_MAX];
+            char *path, *tmp, *t;
+            size_t len;
 
             /* if the dest path has /'s in it then we need to add menus to
              * fill out the paths */
-            strncpy(t, move->new_name, PATH_MAX);
-            t[PATH_MAX - 1] = '\0';
+            len = strlen(move->new_name) + 1;
+            t = alloca(len);
+            memcpy(t, move->new_name, len);
             tmp = t;
             path = strchr(tmp, '/');
             while (path)
@@ -3152,13 +3156,15 @@ efreet_menu_resolve_moves(Efreet_Menu_Internal *internal)
 static Efreet_Menu_Internal *
 efreet_menu_by_name_find(Efreet_Menu_Internal *internal, const char *name, Efreet_Menu_Internal **parent)
 {
-    char *part, tmp[PATH_MAX], *ptr;
+    char *part, *tmp, *ptr;
+    size_t len;
 
     if (parent) *parent = internal;
 
     /* find the correct parent menu */
-    strncpy(tmp, name, PATH_MAX);
-    tmp[PATH_MAX - 1] = '\0';
+    len = strlen(name) + 1;
+    tmp = alloca(len);
+    memcpy(tmp, name, len);
     ptr = tmp;
     part = strchr(ptr, '/');
     while (part)
@@ -3192,10 +3198,12 @@ efreet_menu_by_name_find(Efreet_Menu_Internal *internal, const char *name, Efree
 static void
 efreet_menu_path_set(Efreet_Menu_Internal *internal, const char *path)
 {
-    char tmp[PATH_MAX], *p;
+    char *tmp, *p;
+    size_t len;
 
-    strncpy(tmp, path, PATH_MAX);
-    tmp[PATH_MAX - 1] = '\0';
+    len = strlen(path) + 1;
+    tmp = alloca(len);
+    memcpy(tmp, path, len);
     p = strrchr(tmp, '/');
     if (p)
     {

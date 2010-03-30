@@ -197,13 +197,15 @@ static int
 efreet_parse_locale_setting(const char *env)
 {
     int found = 0;
-    char setting[PATH_MAX];
+    char *setting;
     char *p;
+    size_t len;
 
     p = getenv(env);
     if (!p) return 0;
-    strncpy(setting, p, sizeof(setting));
-    setting[PATH_MAX - 1] = '\0';
+    len = strlen(p) + 1;
+    setting = alloca(len);
+    memcpy(setting, p, len);
 
     /* pull the modifier off the end */
     p = strrchr(setting, '@');

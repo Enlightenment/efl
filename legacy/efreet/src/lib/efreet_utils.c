@@ -124,7 +124,7 @@ EAPI const char *
 efreet_util_path_to_file_id(const char *path)
 {
     size_t len;
-    char tmp[PATH_MAX], *p;
+    char *tmp, *p;
     char *base;
     const char *file_id;
 
@@ -148,8 +148,9 @@ efreet_util_path_to_file_id(const char *path)
         return NULL;
     }
 
-    strncpy(tmp, path + len + 1, sizeof(tmp));
-    tmp[PATH_MAX - 1] = '\0';
+    len = strlen(path + len + 1) + 1;
+    tmp = alloca(len);
+    memcpy(tmp, path + len + 1, len);
     p = tmp;
     while (*p)
     {

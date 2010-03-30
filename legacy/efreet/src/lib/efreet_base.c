@@ -226,15 +226,17 @@ efreet_dirs_get(const char *key, const char *fallback)
 {
     Eina_List *dirs = NULL;
     const char *path;
-    char tmp[PATH_MAX], *s, *p;
+    char *tmp, *s, *p;
+    size_t len;
 
     path = getenv(key);
     if (!path || (path[0] == '\0')) path = fallback;
 
     if (!path) return dirs;
 
-    strncpy(tmp, path, sizeof(tmp));
-    tmp[PATH_MAX - 1] = '\0';
+    len = strlen(path) + 1;
+    tmp = alloca(len);
+    memcpy(tmp, path, len);
     s = tmp;
     p = strchr(s, EFREET_PATH_SEP);
     while (p)
