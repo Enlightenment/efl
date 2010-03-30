@@ -98,8 +98,8 @@ typedef struct Efreet_Menu_App_Dir Efreet_Menu_App_Dir;
  */
 struct Efreet_Menu_App_Dir
 {
-    char *path;                 /**< directory path */
-    char *prefix;               /**< If it's legacy it can have a prefix */
+    const char *path;           /**< directory path */
+    const char *prefix;         /**< If it's legacy it can have a prefix */
     unsigned int legacy:1;      /**< is this a legacy dir */
 };
 
@@ -1175,7 +1175,8 @@ efreet_menu_handle_app_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     }
 
     app_dir = efreet_menu_app_dir_new();
-    app_dir->path = path;
+    app_dir->path = eina_stringshare_add(path);
+    free(path);
 
     parent->app_dirs = eina_list_prepend(parent->app_dirs, app_dir);
 
@@ -1210,7 +1211,7 @@ efreet_menu_handle_default_app_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *xm
             Efreet_Menu_App_Dir *app_dir;
 
             app_dir = efreet_menu_app_dir_new();
-            app_dir->path = strdup(dir);
+            app_dir->path = eina_stringshare_ref(dir);
 
             prepend = eina_list_append(prepend, app_dir);
         }
@@ -1885,9 +1886,9 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
 
     /* add the legacy dir as an app dir */
     app_dir = efreet_menu_app_dir_new();
-    app_dir->path = strdup(path);
+    app_dir->path = eina_stringshare_add(path);
     app_dir->legacy = 1;
-    if (prefix && !strchr(prefix, '/')) app_dir->prefix = strdup(prefix);
+    if (prefix && !strchr(prefix, '/')) app_dir->prefix = eina_stringshare_add(prefix);
 
     efreet_menu_create_app_dirs_list(legacy_internal);
     legacy_internal->app_dirs = eina_list_append(legacy_internal->app_dirs, app_dir);
@@ -1896,9 +1897,9 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
     {
         /* XXX This seems wrong, but it makes efreet pass the fdo tests */
         app_dir = efreet_menu_app_dir_new();
-        app_dir->path = strdup(path);
+        app_dir->path = eina_stringshare_add(path);
         app_dir->legacy = 1;
-        if (prefix && !strchr(prefix, '/')) app_dir->prefix = strdup(prefix);
+        if (prefix && !strchr(prefix, '/')) app_dir->prefix = eina_stringshare_add(prefix);
         root->app_dirs = eina_list_append(root->app_dirs, app_dir);
     }
 #endif
@@ -3262,8 +3263,8 @@ efreet_menu_app_dir_free(Efreet_Menu_App_Dir *dir)
 {
     if (!dir) return;
 
-    IF_FREE(dir->path);
-    IF_FREE(dir->prefix);
+    IF_RELEASE(dir->path);
+    IF_RELEASE(dir->prefix);
     FREE(dir);
 }
 
