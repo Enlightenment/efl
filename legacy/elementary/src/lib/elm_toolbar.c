@@ -573,6 +573,16 @@ elm_toolbar_align_set(Evas_Object *obj, double align)
    wd->align = align;
 }
 
+EAPI double
+elm_toolbar_align_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return 0.0;
+   return wd->align;
+}
+
 EAPI void
 elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
 {

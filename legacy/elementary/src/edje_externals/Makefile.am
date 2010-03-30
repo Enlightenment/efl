@@ -36,7 +36,8 @@ elm_notepad.c \
 elm_radio.c \
 elm_scrolled_entry.c \
 elm_slider.c \
-elm_toggle.c
+elm_toggle.c \
+elm_toolbar.c
 
 elm_la_LIBADD = $(top_builddir)/src/lib/libelementary.la
 elm_la_LDFLAGS = $(all_libraries) -no-undefined @lt_enable_auto_import@ -module -avoid-version -shared -fPIC
