@@ -1781,7 +1781,7 @@ static int
 efreet_menu_handle_default_merge_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 {
     Eina_List *dirs;
-    char path[PATH_MAX], *p;
+    char path[PATH_MAX], p[128], *pp;
 #ifndef STRICT_SPEC
     char parent_path[PATH_MAX];
 #endif
@@ -1792,30 +1792,34 @@ efreet_menu_handle_default_merge_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *
     prefix = efreet_menu_prefix_get();
     if (!strcmp(prefix, "gnome-") &&
             (!strcmp(parent->file.name, "gnome-applications.menu")))
-        p = strdup("applications");
-
+    {
+        strncpy(p, "applications", 128);
+        p[128 - 1] = '\0';
+    }
     else if ((!strcmp(prefix, "kde-") &&
             (!strcmp(parent->file.name, "kde-applications.menu"))))
-        p = strdup("applications");
-
+    {
+        strncpy(p, "applications", 128);
+        p[128 - 1] = '\0';
+    }
     else
     {
         char *s;
 
-        p = strdup(parent->file.name);
+        strncpy(p, parent->file.name, 128);
+        p[128 - 1] = '\0';
         s = strrchr(p, '.');
         if (s) *s = '\0';
     }
     snprintf(path, sizeof(path), "menus/%s-merged", p);
-    FREE(p);
 
     dirs = efreet_default_dirs_get(efreet_config_home_get(),
                                     efreet_config_dirs_get(), path);
 
-    EINA_LIST_FREE(dirs, p)
+    EINA_LIST_FREE(dirs, pp)
     {
-        efreet_menu_merge_dir(parent, xml, p);
-        eina_stringshare_del(p);
+        efreet_menu_merge_dir(parent, xml, pp);
+        eina_stringshare_del(pp);
     }
 #ifndef STRICT_SPEC
     /* Also check the path of the parent file */
