@@ -500,6 +500,7 @@ _item_del(Elm_Genlist_Item *it)
    if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
    if (it->realized) _item_unrealize(it);
    if (it->block) _item_block_del(it);
+   if (it->long_timer) ecore_timer_del(it->long_timer);
    if ((!it->delete_me) && (it->itc->func.del)) 
      it->itc->func.del(it->data, it->wd->obj);
    it->delete_me = EINA_TRUE;
