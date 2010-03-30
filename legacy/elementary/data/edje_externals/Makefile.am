@@ -9,6 +9,7 @@ files_DATA = icons.edj
 
 EXTRA_DIST = \
 icons.edc \
+ico_anchorview.png \
 ico_bubble.png \
 ico_button.png \
 ico_check.png \

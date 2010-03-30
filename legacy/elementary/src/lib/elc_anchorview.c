@@ -23,6 +23,15 @@ struct _Widget_Data
 };
 
 static const char *widtype = NULL;
+
+static const char SIG_ANCHOR_CLICKED[] = "anchor,clicked";
+static const Evas_Smart_Cb_Description _signals[] = {
+  {SIG_ANCHOR_CLICKED, ""}, /* TODO: declare the type properly, as data is
+			     * being passed
+			     */
+  {NULL, NULL}
+};
+
 static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -107,7 +116,7 @@ _anchor_clicked(void *data, Evas_Object *obj, void *event_info)
    if (py < (y + (h / 3))) ei.hover_top = 0;
    ei.hover_bottom = 1;
    if (py > (y + ((h * 2) / 3))) ei.hover_bottom = 0;
-   evas_object_smart_callback_call(data, "anchor,clicked", &ei);
+   evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, &ei);
    evas_object_smart_callback_add(wd->hover, "clicked", _hover_clicked, data);
    evas_object_show(wd->hover);
 }
@@ -190,6 +199,26 @@ elm_anchorview_text_set(Evas_Object *obj, const char *text)
    wd->hover = NULL;
    wd->pop = NULL;
    _sizing_eval(obj);
+}
+
+/**
+  * Get the markup text set for the anchorview
+  *
+  * This retrieves back the string set by @c elm_anchorview_text_set().
+  *
+  * @param obj The anchorview object
+  * @return text The markup text set or @c NULL, either if it was not set
+  * or an error ocurred
+  *
+  * @ingroup Anchorview
+  */
+EAPI const char*
+elm_anchorview_text_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return elm_entry_entry_get(wd->entry);
 }
 
 /**
