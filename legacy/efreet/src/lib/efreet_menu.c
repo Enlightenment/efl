@@ -27,8 +27,8 @@ typedef struct Efreet_Menu_Move Efreet_Menu_Move;
  */
 struct Efreet_Menu_Move
 {
-    char *old_name;     /**< The menu path to move from */
-    char *new_name;     /**< The menu path to move too */
+    const char *old_name;     /**< The menu path to move from */
+    const char *new_name;     /**< The menu path to move too */
 };
 
 /**
@@ -2114,7 +2114,7 @@ efreet_menu_handle_old(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 #endif
 
     move = efreet_menu_move_new();
-    move->old_name = strdup(xml->text);
+    move->old_name = eina_stringshare_add(xml->text);
 
     parent->current_move = move;
     parent->moves = eina_list_append(parent->moves, move);
@@ -2140,7 +2140,7 @@ efreet_menu_handle_new(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
         return 0;
     }
 
-    parent->current_move->new_name = strdup(xml->text);
+    parent->current_move->new_name = eina_stringshare_add(xml->text);
     parent->current_move = NULL;
 
     return 1;
@@ -3236,8 +3236,8 @@ efreet_menu_move_free(Efreet_Menu_Move *move)
 {
     if (!move) return;
 
-    IF_FREE(move->old_name);
-    IF_FREE(move->new_name);
+    IF_RELEASE(move->old_name);
+    IF_RELEASE(move->new_name);
 
     FREE(move);
 }
