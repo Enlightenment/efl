@@ -299,6 +299,12 @@ main()
     eet_close(util_ef);
     eet_close(ef);
 
+   /* ahem - if u have no existing efreet cache - it simply deletes the new
+    * files it created and u never get anything. force changed to be 1 - quick
+    * fix.
+    */
+   changed = 1;
+   
     /* unlink old cache files */
     if (changed)
     {
