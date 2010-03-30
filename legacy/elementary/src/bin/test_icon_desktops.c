@@ -67,8 +67,8 @@ void
 test_icon_desktops(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *gl;
-   Eina_List *desktops, *l;
-   
+   Eina_List *desktops;
+
    win = elm_win_add(NULL, "icon_desktops", ELM_WIN_BASIC);
    elm_win_title_set(win, "Icon Desktops");
    elm_win_autodel_set(win, 1);
@@ -89,23 +89,20 @@ test_icon_desktops(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, gl);
    evas_object_show(gl);
 
-#ifdef ELM_EFREET   
+#ifdef ELM_EFREET
    elm_need_efreet();
    desktops = efreet_util_desktop_name_glob_list("*");
    if (desktops)
      {
         Efreet_Desktop *d;
-        
+
         EINA_LIST_FREE(desktops, d)
-          {
-             elm_genlist_item_append(gl, &it_desk, d, 
-                                     NULL, ELM_GENLIST_ITEM_NONE,
-                                     desktop_sel, NULL);
-             efreet_desktop_free(d);
-          }
+	  elm_genlist_item_append(gl, &it_desk, d,
+				  NULL, ELM_GENLIST_ITEM_NONE,
+				  desktop_sel, NULL);
      }
 #endif
-   
+
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
