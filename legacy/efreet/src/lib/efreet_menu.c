@@ -3100,11 +3100,12 @@ efreet_menu_resolve_moves(Efreet_Menu_Internal *internal)
         dest = efreet_menu_by_name_find(internal, move->new_name, &parent);
         if (!dest)
         {
-            char *path, *tmp, *t;
+            char *path, *tmp, t[PATH_MAX];
 
             /* if the dest path has /'s in it then we need to add menus to
              * fill out the paths */
-            t = strdup(move->new_name);
+            strncpy(t, move->new_name, PATH_MAX);
+            t[PATH_MAX - 1] = '\0';
             tmp = t;
             path = strchr(tmp, '/');
             while (path)
@@ -3129,8 +3130,6 @@ efreet_menu_resolve_moves(Efreet_Menu_Internal *internal)
 
             efreet_menu_create_sub_menu_list(parent);
             parent->sub_menus = eina_list_append(parent->sub_menus, origin);
-
-            FREE(t);
         }
         else
         {
@@ -3153,12 +3152,13 @@ efreet_menu_resolve_moves(Efreet_Menu_Internal *internal)
 static Efreet_Menu_Internal *
 efreet_menu_by_name_find(Efreet_Menu_Internal *internal, const char *name, Efreet_Menu_Internal **parent)
 {
-    char *part, *tmp, *ptr;
+    char *part, tmp[PATH_MAX], *ptr;
 
     if (parent) *parent = internal;
 
     /* find the correct parent menu */
-    tmp = strdup(name);
+    strncpy(tmp, name, PATH_MAX);
+    tmp[PATH_MAX - 1] = '\0';
     ptr = tmp;
     part = strchr(ptr, '/');
     while (part)
@@ -3169,7 +3169,6 @@ efreet_menu_by_name_find(Efreet_Menu_Internal *internal, const char *name, Efree
                                                    EINA_COMPARE_CB(efreet_menu_cb_compare_names),
                                                    ptr)))
         {
-            FREE(tmp);
             return NULL;
         }
 
@@ -3184,20 +3183,19 @@ efreet_menu_by_name_find(Efreet_Menu_Internal *internal, const char *name, Efree
                                                EINA_COMPARE_CB(efreet_menu_cb_compare_names),
                                                ptr)))
     {
-        FREE(tmp);
         return NULL;
     }
 
-    FREE(tmp);
     return internal;
 }
 
 static void
 efreet_menu_path_set(Efreet_Menu_Internal *internal, const char *path)
 {
-    char *tmp, *p;
+    char tmp[PATH_MAX], *p;
 
-    tmp = strdup(path);
+    strncpy(tmp, path, PATH_MAX);
+    tmp[PATH_MAX - 1] = '\0';
     p = strrchr(tmp, '/');
     if (p)
     {
@@ -3207,7 +3205,6 @@ efreet_menu_path_set(Efreet_Menu_Internal *internal, const char *path)
         internal->file.path = eina_stringshare_add(tmp);
         internal->file.name = eina_stringshare_add(p);
     }
-    FREE(tmp);
 }
 
 /**
