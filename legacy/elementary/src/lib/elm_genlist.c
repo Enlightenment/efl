@@ -496,13 +496,10 @@ static void
 _item_del(Elm_Genlist_Item *it)
 {
    elm_genlist_item_subitems_clear(it);
-   if (it->long_timer) ecore_timer_del(it->long_timer);
-   it->long_timer = NULL;
    if (it->wd->show_item == it) it->wd->show_item = NULL;
    if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
    if (it->realized) _item_unrealize(it);
    if (it->block) _item_block_del(it);
-   if (it->long_timer) ecore_timer_del(it->long_timer);
    if ((!it->delete_me) && (it->itc->func.del)) 
      it->itc->func.del(it->data, it->wd->obj);
    it->delete_me = EINA_TRUE;
@@ -511,6 +508,7 @@ _item_del(Elm_Genlist_Item *it)
    it->wd->items = eina_inlist_remove(it->wd->items, EINA_INLIST_GET(it));
    if (it->parent)
      it->parent->items = eina_list_remove(it->parent->items, it);
+   if (it->long_timer) ecore_timer_del(it->long_timer);
    free(it);
 }
 
