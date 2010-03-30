@@ -2743,6 +2743,9 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "external_param_get_strlen", _edje_embryo_fn_external_param_get_strlen);
    embryo_program_native_call_add(ep, "external_param_get_str", _edje_embryo_fn_external_param_get_str);
    embryo_program_native_call_add(ep, "external_param_set_str", _edje_embryo_fn_external_param_set_str);
+   embryo_program_native_call_add(ep, "external_param_get_choice_len", _edje_embryo_fn_external_param_get_choice_len);
+   embryo_program_native_call_add(ep, "external_param_get_choice", _edje_embryo_fn_external_param_get_choice);
+   embryo_program_native_call_add(ep, "external_param_set_choice", _edje_embryo_fn_external_param_set_choice);
    embryo_program_native_call_add(ep, "external_param_get_bool", _edje_embryo_fn_external_param_get_bool);
    embryo_program_native_call_add(ep, "external_param_set_bool", _edje_embryo_fn_external_param_set_bool);
 
