@@ -1452,7 +1452,7 @@ efreet_menu_handle_filename(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml)
 {
     if (!op || !xml) return 0;
 
-    op->filenames = eina_list_append(op->filenames, strdup(xml->text));
+    op->filenames = eina_list_append(op->filenames, eina_stringshare_add(xml->text));
 
     return 1;
 }
@@ -1470,7 +1470,7 @@ efreet_menu_handle_category(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml)
     if (!op || !xml) return 0;
 
 
-    op->categories = eina_list_append(op->categories, strdup(xml->text));
+    op->categories = eina_list_append(op->categories, eina_stringshare_add(xml->text));
 
     return 1;
 }
@@ -1986,10 +1986,10 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
         if (prefix)
         {
             snprintf(buf, sizeof(buf), "%s%s", prefix, file->d_name);
-            filter->op->filenames = eina_list_append(filter->op->filenames, strdup(buf));
+            filter->op->filenames = eina_list_append(filter->op->filenames, eina_stringshare_add(buf));
         }
         else
-            filter->op->filenames = eina_list_append(filter->op->filenames, strdup(file->d_name));
+            filter->op->filenames = eina_list_append(filter->op->filenames, eina_stringshare_add(file->d_name));
 
         count++;
         efreet_desktop_free(desktop);
@@ -2516,8 +2516,8 @@ efreet_menu_filter_op_free(Efreet_Menu_Filter_Op *op)
 {
     if (!op) return;
 
-    IF_FREE_LIST(op->categories, free);
-    IF_FREE_LIST(op->filenames, free);
+    IF_FREE_LIST(op->categories, eina_stringshare_del);
+    IF_FREE_LIST(op->filenames, eina_stringshare_del);
     IF_FREE_LIST(op->filters, efreet_menu_filter_op_free);
 
     FREE(op);
