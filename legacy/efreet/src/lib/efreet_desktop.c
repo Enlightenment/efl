@@ -745,10 +745,6 @@ efreet_desktop_free(Efreet_Desktop *desktop)
         eina_list_free(desktop->categories);
         eina_list_free(desktop->mime_types);
         IF_FREE_HASH(desktop->x);
-       // FIXME: loaded from eet. eet data descriptior is the default eina
-       // setup that means all strings are "eina_stringshare_add()"ed. this
-       // means we need to eina_stringshare_del() them here - until this is
-       // no longer the case (they are directly mmaped)
     }
     else
     {
