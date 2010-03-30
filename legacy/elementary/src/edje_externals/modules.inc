@@ -1,3 +1,4 @@
+DEFINE_TYPE(anchorblock)
 DEFINE_TYPE(anchorview)
 DEFINE_TYPE(bubble)
 DEFINE_TYPE(button)

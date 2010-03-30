@@ -10,6 +10,7 @@ collections { group { name: "ico_"_name;                     \
                image.normal: "ico_"_name".png";             \
 }}}}}
 
+ICON("anchorblock")
 ICON("anchorview")
 ICON("bubble")
 ICON("button")

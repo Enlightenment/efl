@@ -658,6 +658,8 @@ extern "C" {
      };
    EAPI Evas_Object *elm_anchorview_add(Evas_Object *parent);
    EAPI void         elm_anchorview_text_set(Evas_Object *obj, const char *text);
+   EAPI const char  *elm_anchorview_text_get(Evas_Object *obj);
+
    EAPI void         elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_anchorview_hover_style_set(Evas_Object *obj, const char *style);
    EAPI void         elm_anchorview_hover_end(Evas_Object *obj);
@@ -683,6 +685,7 @@ extern "C" {
      };
    EAPI Evas_Object *elm_anchorblock_add(Evas_Object *parent);
    EAPI void         elm_anchorblock_text_set(Evas_Object *obj, const char *text);
+   EAPI const char  *elm_anchorblock_text_get(Evas_Object *obj);
    EAPI void         elm_anchorblock_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_anchorblock_hover_style_set(Evas_Object *obj, const char *style);
    EAPI void         elm_anchorblock_hover_end(Evas_Object *obj);
