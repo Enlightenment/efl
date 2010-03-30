@@ -1042,7 +1042,7 @@ efreet_menu_internal_free(Efreet_Menu_Internal *internal)
     IF_FREE_LIST(internal->directories, free);
     IF_FREE_LIST(internal->app_dirs, efreet_menu_app_dir_free);
     IF_FREE_LIST(internal->app_pool, efreet_menu_desktop_free);
-    IF_FREE_LIST(internal->directory_dirs, free);
+    IF_FREE_LIST(internal->directory_dirs, eina_stringshare_del);
     IF_FREE_HASH(internal->directory_cache);
 
     IF_FREE_LIST(internal->moves, efreet_menu_move_free);
@@ -1248,7 +1248,8 @@ efreet_menu_handle_directory_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
         return 1;
     }
 
-    parent->directory_dirs = eina_list_prepend(parent->directory_dirs, path);
+    parent->directory_dirs = eina_list_prepend(parent->directory_dirs, eina_stringshare_add(path));
+    free(path);
 
     return 1;
 }
@@ -1274,7 +1275,7 @@ efreet_menu_handle_default_directory_dirs(Efreet_Menu_Internal *parent, Efreet_X
     EINA_LIST_FREE(dirs, dir)
     {
         if (!eina_list_search_unsorted(parent->directory_dirs, EINA_COMPARE_CB(strcmp), dir))
-            parent->directory_dirs = eina_list_prepend(parent->directory_dirs, strdup(dir));
+            parent->directory_dirs = eina_list_prepend(parent->directory_dirs, eina_stringshare_ref(dir));
         eina_stringshare_del(dir);
     }
 
@@ -1906,7 +1907,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
 
     /* add the legacy dir as a directory dir */
     efreet_menu_create_directory_dirs_list(legacy_internal);
-    legacy_internal->directory_dirs = eina_list_append(legacy_internal->directory_dirs, strdup(path));
+    legacy_internal->directory_dirs = eina_list_append(legacy_internal->directory_dirs, eina_stringshare_add(path));
 
     /* setup a filter for all the conforming .desktop files in the legacy
      * dir */
