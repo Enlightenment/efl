@@ -218,7 +218,7 @@ void *alloca (size_t);
  * external_param_get_strlen(id, param_name[])
  * external_param_get_str(id, param_name[], value[], value_maxlen)
  * external_param_set_str(id, param_name[], value[])
- * external_param_get_choice_strlen(id, param_name[])
+ * external_param_get_choice_len(id, param_name[])
  * external_param_get_choice(id, param_name[], value[], value_maxlen)
  * external_param_set_choice(id, param_name[], value[])
  * external_param_get_bool(id, param_name[])
@@ -2505,9 +2505,9 @@ _edje_embryo_fn_external_param_set_str(Embryo_Program *ep, Embryo_Cell *params)
    return _edje_external_param_set(rp->swallowed_object, &eep);
 }
 
-/* external_param_get_choice_strlen(id, param_name[]) */
+/* external_param_get_choice_len(id, param_name[]) */
 static Embryo_Cell
-_edje_embryo_fn_external_param_get_choice_strlen(Embryo_Program *ep, Embryo_Cell *params)
+_edje_embryo_fn_external_param_get_choice_len(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed;
    int part_id;

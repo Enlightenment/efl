@@ -158,7 +158,7 @@ native       external_param_set_float(id, param_name[], Float:value);
 native       external_param_get_strlen(id, param_name[]);
 native       external_param_get_str(id, param_name[], value[], value_maxlen);
 native       external_param_set_str(id, param_name[], value[]);
-native       external_param_get_choice_strlen(id, param_name[]);
+native       external_param_get_choice_len(id, param_name[]);
 native       external_param_get_choice(id, param_name[], value[], value_maxlen);
 native       external_param_set_choice(id, param_name[], value[]);
 native       external_param_get_bool(id, param_name[]);
