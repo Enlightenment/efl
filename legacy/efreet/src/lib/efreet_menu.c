@@ -2854,7 +2854,7 @@ efreet_menu_filter_or_matches(Efreet_Menu_Filter_Op *op, Efreet_Menu_Desktop *md
     if (op->filenames)
     {
         EINA_LIST_FOREACH(op->filenames, l, t)
-            if (!strcmp(t, md->id)) return 1;
+            if (t == md->id) return 1;
     }
 
     if (op->filters)
@@ -2900,7 +2900,7 @@ efreet_menu_filter_and_matches(Efreet_Menu_Filter_Op *op, Efreet_Menu_Desktop *m
     {
         EINA_LIST_FOREACH(op->filenames, l, t)
         {
-            if (strcmp(t, md->id)) return 0;
+            if (t != md->id) return 0;
         }
     }
 
@@ -2950,7 +2950,7 @@ efreet_menu_filter_not_matches(Efreet_Menu_Filter_Op *op, Efreet_Menu_Desktop *m
     {
         EINA_LIST_FOREACH(op->filenames, l, t)
         {
-            if (!strcmp(t, md->id)) return 0;
+            if (t == md->id) return 0;
         }
     }
 
