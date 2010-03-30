@@ -1039,7 +1039,7 @@ efreet_menu_internal_free(Efreet_Menu_Internal *internal)
 
     internal->applications = eina_list_free(internal->applications);
 
-    IF_FREE_LIST(internal->directories, free);
+    IF_FREE_LIST(internal->directories, eina_stringshare_del);
     IF_FREE_LIST(internal->app_dirs, efreet_menu_app_dir_free);
     IF_FREE_LIST(internal->app_pool, efreet_menu_desktop_free);
     IF_FREE_LIST(internal->directory_dirs, eina_stringshare_del);
@@ -1323,7 +1323,7 @@ efreet_menu_handle_directory(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     if (!parent || !xml) return 0;
 
     efreet_menu_create_directories_list(parent);
-    parent->directories = eina_list_prepend(parent->directories, strdup(xml->text));
+    parent->directories = eina_list_prepend(parent->directories, eina_stringshare_add(xml->text));
 
     return 1;
 }
