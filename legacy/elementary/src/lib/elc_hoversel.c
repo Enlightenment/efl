@@ -318,6 +318,15 @@ elm_hoversel_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
    wd->horizontal = !!horizontal;
 }
 
+EAPI Eina_Bool
+elm_hoversel_horizontal_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->horizontal;
+}
+
 /**
  * Get the hoversel button label
  *
