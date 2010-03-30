@@ -37,7 +37,7 @@ typedef struct Efreet_Xml Efreet_Xml;
  */
 struct Efreet_Xml
 {
-    char *text;                         /**< The XML text for this node */
+    const char *text;                   /**< The XML text for this node */
     const char *tag;                    /**< The tag for this node */
 
     Efreet_Xml_Attribute **attributes;  /**< The attributes for this node */

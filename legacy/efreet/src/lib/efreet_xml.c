@@ -27,7 +27,7 @@ static Efreet_Xml *efreet_xml_parse(char **data, int *size);
 static int efreet_xml_tag_parse(char **data, int *size, const char **tag);
 static void efreet_xml_attributes_parse(char **data, int *size,
                                         Efreet_Xml_Attribute ***attributes);
-static void efreet_xml_text_parse(char **data, int *size, char **text);
+static void efreet_xml_text_parse(char **data, int *size, const char **text);
 
 static int efreet_xml_tag_empty(char **data, int *size);
 static int efreet_xml_tag_close(char **data, int *size, const char *tag);
@@ -148,7 +148,7 @@ efreet_xml_del(Efreet_Xml *xml)
         }
         FREE(xml->attributes);
     }
-    IF_FREE(xml->text);
+    IF_RELEASE(xml->text);
     FREE(xml);
 }
 
@@ -477,7 +477,7 @@ efreet_error:
 }
 
 static void
-efreet_xml_text_parse(char **data, int *size, char **text)
+efreet_xml_text_parse(char **data, int *size, const char **text)
 {
     const char *start = NULL, *end = NULL;
     int buf_size;
@@ -516,9 +516,7 @@ efreet_xml_text_parse(char **data, int *size, char **text)
     buf_size = end - start + 1;
     if (buf_size <= 1) return;
 
-    *text = malloc(buf_size);
-    memcpy(*text, start, buf_size - 1);
-    (*text)[buf_size - 1] = '\0';
+    *text = eina_stringshare_add_length(start, buf_size - 1);
 }
 
 static int
