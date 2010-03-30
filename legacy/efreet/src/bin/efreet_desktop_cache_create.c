@@ -297,6 +297,20 @@ main()
     }
     eina_hash_free(file_ids);
     eina_hash_free(paths);
+
+    /* check if old and new caches contain the same number of entries */
+    if (!changed)
+    {
+        Eet_File *old;
+
+        old = eet_open(efreet_desktop_cache_file(), EET_FILE_MODE_READ);
+        if (!old || eet_num_entries(old) != eet_num_entries(ef)) changed = 1;
+        if (old) eet_close(old);
+        old = eet_open(efreet_desktop_util_cache_file(), EET_FILE_MODE_READ);
+        if (!old || eet_num_entries(old) != eet_num_entries(util_ef)) changed = 1;
+        if (old) eet_close(old);
+
+    }
  
     /* cleanup */
     eet_close(util_ef);
