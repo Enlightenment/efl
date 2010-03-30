@@ -2236,27 +2236,48 @@ error:
 static void
 efreet_desktop_cache_update_free(void *data, void *ev)
 {
-    Efreet_Event_Cache_Data *d;
-
-    d = data;
-    /*
-     * All users should now had the chance to update their pointers, so we can now
-     * free the old cache
-     */
-    if (d->desktop_cache)
-    {
+   Efreet_Event_Cache_Data *d;
+   int dangling = 0;
+   
+   d = data;
+   /*
+    * All users should now had the chance to update their pointers, so we can now
+    * free the old cache
+    */
+   if (d->desktop_cache)
+     {
         Eina_Iterator *it;
         Eina_Hash_Tuple *tuple;
-
+        
         it = eina_hash_iterator_tuple_new(d->desktop_cache);
         EINA_ITERATOR_FOREACH(it, tuple)
-            printf("Efreet: %d:%s still in cache on cache close!\n", ((Efreet_Desktop *)tuple->data)->ref, tuple->key);
+          {
+             printf("Efreet: %d:%s still in cache on cache close!\n", 
+                    ((Efreet_Desktop *)tuple->data)->ref, tuple->key);
+             dangling++;
+          }
         eina_iterator_free(it);
-
+        
         eina_hash_free(d->desktop_cache);
-    }
-    if (d->cache) eet_close(d->cache);
-    cache_data = eina_list_remove(cache_data, d);
-    free(d);
-    free(ev);
+     }
+   /* 
+    * If there are dangling references the eet file won't be closed - to
+    * avoid crashes, but this will leak instead.
+    */
+   if (dangling == 0)
+     {
+        if (d->cache) eet_close(d->cache);
+     }
+   else
+     {
+        printf("Efreet: ERROR. There are still %i desktop files with old\n"
+               "dangling references to desktop files. This application\n"
+               "has not handled the EFREET_EVENT_CACHE_UPDATE fully and\n"
+               "released its references. Please fix the application so\n"
+               "it does this.\n",
+               dangling);
+     }
+   cache_data = eina_list_remove(cache_data, d);
+   free(d);
+   free(ev);
 }
