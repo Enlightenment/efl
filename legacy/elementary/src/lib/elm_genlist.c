@@ -1948,6 +1948,7 @@ elm_genlist_clear(Evas_Object *obj)
 	wd->items = eina_inlist_remove(wd->items, wd->items);
 	if (it->realized) _item_unrealize(it);
 	if (it->itc->func.del) it->itc->func.del(it->data, it->wd->obj);
+	if (it->long_timer) ecore_timer_del(it->long_timer);
 	free(it);
      }
    while (wd->blocks)
