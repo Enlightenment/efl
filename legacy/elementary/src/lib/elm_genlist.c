@@ -681,7 +681,10 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      evas_object_smart_callback_call(it->wd->obj, "clicked", it);
    if (it->long_timer) ecore_timer_del(it->long_timer);
-   it->long_timer = ecore_timer_add(1.0, _long_press, it);
+   if (it->realized)
+     it->long_timer = ecore_timer_add(1.0, _long_press, it);
+   else
+     it->long_timer = NULL;
 }
 
 static void
