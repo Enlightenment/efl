@@ -726,7 +726,7 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Object_Table_Da
    Evas_Object_Table_Option *opt;
    Evas_Object_Table_Cache *c;
    Eina_List *l;
-   Evas_Coord *cols, *rows;
+   Evas_Coord *cols = NULL, *rows = NULL;
    Evas_Coord x, y, w, h;
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
@@ -746,8 +746,8 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Object_Table_Da
 	if (!cols)
 	  {
 	     ERR("Could not allocate temp columns (%d bytes): %s",
-		   size, strerror(errno));
-	     return;
+                 size, strerror(errno));
+             goto end;
 	  }
 	memcpy(cols, c->sizes.h, size);
 	_evas_object_table_sizes_calc_expand
@@ -769,7 +769,7 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Object_Table_Da
 	if (!rows)
 	  {
 	     ERR("could not allocate temp rows (%d bytes): %s",
-		     size, strerror(errno));
+                 size, strerror(errno));
 	     goto end;
 	  }
 	memcpy(rows, c->sizes.v, size);
@@ -782,26 +782,30 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Object_Table_Da
      {
 	Evas_Object *child = opt->obj;
 	Evas_Coord cx, cy, cw, ch;
-
+        
 	cx = x + opt->col * (priv->pad.h);
 	cx += _evas_object_table_sum_sizes(cols, 0, opt->col);
 	cw = _evas_object_table_sum_sizes(cols, opt->col, opt->end_col);
-
+        
 	cy = y + opt->row * (priv->pad.v);
 	cy += _evas_object_table_sum_sizes(rows, 0, opt->row);
 	ch = _evas_object_table_sum_sizes(rows, opt->row, opt->end_row);
-
+        
 	_evas_object_table_calculate_cell(opt, &cx, &cy, &cw, &ch);
-
+        
 	evas_object_move(child, cx, cy);
 	evas_object_resize(child, cw, ch);
      }
 
  end:
    if (cols != c->sizes.h)
-     free(cols);
+     {
+        if (cols) free(cols);
+     }
    if (rows != c->sizes.v)
-     free(rows);
+     {
+        if (rows) free(rows);
+     }
 }
 
 static void
@@ -853,7 +857,10 @@ _evas_object_table_smart_del(Evas_Object *o)
      }
 
    if (priv->cache)
-     _evas_object_table_cache_free(priv->cache);
+     {
+        _evas_object_table_cache_free(priv->cache);
+        priv->cache = NULL;
+     }
 
    _evas_object_table_parent_sc->del(o);
 }
