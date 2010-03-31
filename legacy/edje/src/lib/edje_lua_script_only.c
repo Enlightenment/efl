@@ -56,8 +56,8 @@ _edje_lua_script_only_init(Edje * ed)
 	      lua_setfenv(L, -2);
 	      _edje_lua_get_reg(L, ed);
 
-	      if ((err_code = lua_pcall(L, 1, 0, 0)))
-		_edje_lua_error(L, err_code);
+              if ((err_code = lua_pcall(L, 1, 0, 0)))
+                _edje_lua_error(L, err_code);
 	   }
 	 else
 	   lua_pop(L, 1);
@@ -79,8 +79,8 @@ _edje_lua_script_only_shutdown(Edje * ed)
 	     lua_setfenv(L, -2);
 	     _edje_lua_get_reg(L, ed);
 
-	     if ((err_code = lua_pcall(L, 1, 0, 0)))
-	       _edje_lua_error(L, err_code);
+             if ((err_code = lua_pcall(L, 1, 0, 0)))
+               _edje_lua_error(L, err_code);
 	  }
 	else
 	  lua_pop (L, 1);
@@ -102,8 +102,8 @@ _edje_lua_script_only_show(Edje * ed)
 	     lua_setfenv(L, -2);
 	     _edje_lua_get_reg(L, ed);
 
-	     if ((err_code = lua_pcall(L, 1, 0, 0)))
-	       _edje_lua_error(L, err_code);
+             if ((err_code = lua_pcall(L, 1, 0, 0)))
+               _edje_lua_error(L, err_code);
 	  }
 	else
 	  lua_pop (L, 1);
@@ -125,8 +125,8 @@ _edje_lua_script_only_hide(Edje * ed)
 	     lua_setfenv(L, -2);
 	     _edje_lua_get_reg(L, ed);
 
-	     if ((err_code = lua_pcall(L, 1, 0, 0)))
-	       _edje_lua_error(L, err_code);
+             if ((err_code = lua_pcall(L, 1, 0, 0)))
+               _edje_lua_error(L, err_code);
 	  }
 	else
 	  lua_pop (L, 1);
@@ -150,8 +150,8 @@ _edje_lua_script_only_move(Edje * ed)
 	     lua_pushnumber(L, ed->x);
 	     lua_pushnumber(L, ed->y);
 
-	     if ((err_code = lua_pcall(L, 3, 0, 0)))
-	       _edje_lua_error(L, err_code);
+             if ((err_code = lua_pcall(L, 3, 0, 0)))
+               _edje_lua_error(L, err_code);
 	  }
 	else
 	  lua_pop (L, 1);
@@ -175,8 +175,8 @@ _edje_lua_script_only_resize(Edje * ed)
 	     lua_pushnumber(L, ed->w);
 	     lua_pushnumber(L, ed->h);
 
-	     if ((err_code = lua_pcall(L, 3, 0, 0)))
-	       _edje_lua_error(L, err_code);
+             if ((err_code = lua_pcall(L, 3, 0, 0)))
+               _edje_lua_error(L, err_code);
 	  }
 	else
 	  lua_pop (L, 1);
@@ -286,8 +286,8 @@ _edje_lua_script_only_message(Edje * ed, Edje_Message * em)
 		   break;
 	       }
 
-	     if ((err_code = lua_pcall(L, nargs, 0, 0)))
-	       _edje_lua_error(L, err_code);
+             if ((err_code = lua_pcall(L, nargs, 0, 0)))
+               _edje_lua_error(L, err_code);
 	  }
 	else
 	  lua_pop (L, 1);

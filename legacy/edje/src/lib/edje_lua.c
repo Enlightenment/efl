@@ -228,6 +228,16 @@ struct _Edje_Lua_Edje_Part_Description
    Edje_Part_Description *pd;
 };
 
+jmp_buf _edje_lua_panic_jmp;
+
+static int
+_edje_lua_custom_panic(lua_State *L)
+{
+   printf("PANIC\n");
+   longjmp(_edje_lua_panic_jmp, 1);
+   return 1; /* longjmp() never returns, but this keep gcc happy */
+}
+
 void
 __edje_lua_error(const char *file, const char *fnc, int line, lua_State *L, int err_code)
 {
@@ -831,10 +841,20 @@ _edje_lua_timer_cb(void *data)
    _edje_lua_get_reg(L, obj);
 
    if ((err_code = lua_pcall(L, 1, 1, 0)))
-      _edje_lua_error(L, err_code);
+     {
+        _edje_lua_error(L, err_code);
+        return 0;
+     }
 
    res = luaL_checkint(L, -1);
    lua_pop(L, 1);		// -- res
+   
+/*   
+ if (_edje_lua_panic_here())
+ printf("blahc\n");
+ else
+ lua_pop(L, 1);		// -- res
+ */
    if (res == ECORE_CALLBACK_CANCEL)
      {
 	// delete object
@@ -843,8 +863,8 @@ _edje_lua_timer_cb(void *data)
 	lua_pushstring(L, "del");
 	lua_gettable(L, -2);
 	lua_insert(L, -2);
-	if ((err_code = lua_pcall(L, 1, 0, 0)))
-	   _edje_lua_error(L, err_code);
+        if ((err_code = lua_pcall(L, 1, 0, 0)))
+          _edje_lua_error(L, err_code);
      }
    return res;
 }
@@ -1016,7 +1036,10 @@ _edje_lua_animator_cb(void *data)
    _edje_lua_get_reg(L, obj);
 
    if ((err = lua_pcall(L, 1, 1, 0)))
-     _edje_lua_error(L, err);
+     {
+        _edje_lua_error(L, err);
+        return 0;
+     }
 
    res = luaL_checkint(L, -1);
    lua_pop(L, 1);		// Pop res off the stack
@@ -1028,8 +1051,8 @@ _edje_lua_animator_cb(void *data)
 	lua_pushstring(L, "del");
 	lua_gettable(L, -2);
 	lua_insert(L, -2);
-	if ((err = lua_pcall(L, 1, 0, 0)))
-	  _edje_lua_error(L, err);
+        if ((err = lua_pcall(L, 1, 0, 0)))
+          _edje_lua_error(L, err);
      }
 
    return res;
@@ -1121,7 +1144,10 @@ _edje_lua_poller_cb(void *data)
    _edje_lua_get_reg(L, obj);
 
    if ((err = lua_pcall(L, 1, 1, 0)))
-     _edje_lua_error(L, err);
+     {
+        _edje_lua_error(L, err);
+        return 0;
+     }
 
    res = luaL_checkint(L, -1);
    lua_pop(L, 1);		// Pop res off the stack
@@ -1133,8 +1159,8 @@ _edje_lua_poller_cb(void *data)
 	lua_pushstring(L, "del");
 	lua_gettable(L, -2);
 	lua_insert(L, -2);
-	if ((err = lua_pcall(L, 1, 0, 0)))
-	  _edje_lua_error(L, err);
+        if ((err = lua_pcall(L, 1, 0, 0)))
+          _edje_lua_error(L, err);
      }
 
    return res;
@@ -2175,7 +2201,7 @@ _edje_lua_object_cb_mouse_in(void *data, Evas * e, Evas_Object * obj,
    lua_pushnumber(L, ev->canvas.y);
 
    if ((err_code = lua_pcall(L, 5, 0, 0)))
-      _edje_lua_error(L, err_code);
+     _edje_lua_error(L, err_code);
 }
 
 static void
@@ -2192,7 +2218,7 @@ _edje_lua_object_cb_mouse_out(void *data, Evas * e, Evas_Object * obj,
    lua_pushnumber(L, ev->canvas.y);
 
    if ((err_code = lua_pcall(L, 5, 0, 0)))
-      _edje_lua_error(L, err_code);
+     _edje_lua_error(L, err_code);
 }
 
 static void
@@ -2210,7 +2236,7 @@ _edje_lua_object_cb_mouse_down(void *data, Evas * e, Evas_Object * obj,
    lua_pushnumber(L, ev->canvas.y);
 
    if ((err_code = lua_pcall(L, 6, 0, 0)))
-      _edje_lua_error(L, err_code);
+     _edje_lua_error(L, err_code);
 }
 
 static void
@@ -2228,7 +2254,7 @@ _edje_lua_object_cb_mouse_up(void *data, Evas * e, Evas_Object * obj,
    lua_pushnumber(L, ev->canvas.y);
 
    if ((err_code = lua_pcall(L, 6, 0, 0)))
-      _edje_lua_error(L, err_code);
+     _edje_lua_error(L, err_code);
 }
 
 static void
@@ -2246,7 +2272,7 @@ _edje_lua_object_cb_mouse_move(void *data, Evas * e, Evas_Object * obj,
    lua_pushnumber(L, ev->cur.canvas.y);
 
    if ((err_code = lua_pcall(L, 6, 0, 0)))
-      _edje_lua_error(L, err_code);
+     _edje_lua_error(L, err_code);
 }
 
 static void
@@ -2264,7 +2290,7 @@ _edje_lua_object_cb_mouse_wheel(void *data, Evas * e, Evas_Object * obj,
    lua_pushnumber(L, ev->canvas.y);
 
    if ((err_code = lua_pcall(L, 6, 0, 0)))
-      _edje_lua_error(L, err_code);
+     _edje_lua_error(L, err_code);
 }
 
 static int
@@ -5195,8 +5221,8 @@ _edje_lua_group_signal_callback(void *data, Evas_Object * edj,
 	lua_pushstring(L, signal);	// signal
 	lua_pushstring(L, source);	// source
 
-	if ((err_code = lua_pcall(L, 3, 0, 0)))
-	  _edje_lua_error(L, err_code);
+        if ((err_code = lua_pcall(L, 3, 0, 0)))
+          _edje_lua_error(L, err_code);
      }
 }
 
@@ -5330,8 +5356,8 @@ const Edje_Lua_Reg *cScript[] = {
 	  lua_getfield (L, -1, "set");					\
 	  lua_pushvalue (L, -2);					\
 	  lua_pushvalue (L, 2);						\
-	  if ((err_code = lua_pcall (L, 2, 0, 0)))			\
-	    _edje_lua_error (L, err_code);				\
+          if ((err_code = lua_pcall (L, 2, 0, 0)))			\
+            _edje_lua_error (L, err_code);				\
        }								\
      return 1;								\
   }
@@ -5556,6 +5582,8 @@ _edje_lua_init()
 	exit(-1);
      }
 
+   lua_atpanic(Ledje, _edje_lua_custom_panic);
+   
    /*
     * configure Lua garbage collector
     * TODO optimize garbage collector for typical edje use or make it configurable

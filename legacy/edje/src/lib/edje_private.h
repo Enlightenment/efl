@@ -24,6 +24,8 @@
 
 #include <lua.h>
 #include <lauxlib.h>
+#include <setjmp.h>
+
 EAPI extern int _edje_default_log_dom ; 
 
 #ifdef EDJE_DEFAULT_LOG_COLOR
@@ -1472,6 +1474,9 @@ void _edje_script_only_hide(Edje *ed);
 void _edje_script_only_move(Edje *ed);
 void _edje_script_only_resize(Edje *ed);
 void _edje_script_only_message(Edje *ed, Edje_Message *em);
+
+extern jmp_buf _edje_lua_panic_jmp;
+#define _edje_lua_panic_here() setjmp(_edje_lua_panic_jmp)
 
 lua_State *_edje_lua_state_get();
 lua_State *_edje_lua_new_thread(lua_State *L);
