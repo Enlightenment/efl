@@ -33,6 +33,7 @@ void *alloca (size_t);
 
 static void _edje_emit_cb(Edje *ed, const char *sig, const char *src);
 static void _edje_param_copy(Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part *dst_part, const char *dst_param);
+static void _edje_param_set(Edje_Real_Part *part, const char *param, const char *value);
 
 int             _edje_anim_count = 0;
 Ecore_Animator *_edje_timer = NULL;
@@ -953,6 +954,20 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 	src_part = ed->table_parts[pr->param.src % ed->table_parts_size];
 	dst_part = ed->table_parts[pr->param.dst % ed->table_parts_size];
 	_edje_param_copy(src_part, pr->state, dst_part, pr->state2);
+
+	if (_edje_block_break(ed)) goto break_prog;
+//	_edje_emit(ed, "program,stop", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+     }
+   else if (pr->action == EDJE_ACTION_TYPE_PARAM_SET)
+     {
+	Edje_Real_Part *part;
+
+//	_edje_emit(ed, "program,start", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+
+	part = ed->table_parts[pr->param.dst % ed->table_parts_size];
+	_edje_param_set(part, pr->state, pr->state2);
 
 	if (_edje_block_break(ed)) goto break_prog;
 //	_edje_emit(ed, "program,stop", pr->name);
@@ -2010,6 +2025,68 @@ _edje_param_copy(Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part
 
  end:
    free(free_ptr);
+}
+
+static void
+_edje_param_set(Edje_Real_Part *part, const char *param, const char *value)
+{
+   Edje_External_Param val;
+   const Edje_External_Param_Info *info;
+
+   if ((!part) || (!param) || (!value))
+     return;
+
+   if (part->part->type == EDJE_PART_TYPE_EXTERNAL)
+     info = _edje_external_param_info_get(part->swallowed_object, param);
+   else
+     info = _edje_native_param_info_get(part, param);
+
+   if (!info)
+     {
+	ERR("cannot copy, invalid destination parameter '%s' of part '%s'",
+	    param, part->part->name);
+	return;
+     }
+
+   val.name = "(temp)";
+   val.type = EDJE_EXTERNAL_PARAM_TYPE_STRING;
+   val.s = value;
+
+   if (!_edje_param_convert(&val, info))
+     {
+	ERR("cannot convert parameter type STRING to requested type %s",
+	    edje_external_param_type_str(info->type));
+	return;
+     }
+
+   if (!_edje_param_validate(&val, info))
+     {
+	ERR("incorrect parameter value failed validation for type %s",
+	    edje_external_param_type_str(info->type));
+	return;
+     }
+
+   if (part->part->type == EDJE_PART_TYPE_EXTERNAL)
+     {
+	val.name = param;
+	if (!_edje_external_param_set(part->swallowed_object, &val))
+	  {
+	     ERR("failed to set parameter '%s' (%s) of part '%s'",
+		 param, edje_external_param_type_str(info->type),
+		 part->part->name);
+	     return;
+	  }
+     }
+   else
+     {
+	if (!_edje_param_native_set(part, param, &val))
+	  {
+	     ERR("failed to set parameter '%s' (%s) of part '%s'",
+		 param, edje_external_param_type_str(info->type),
+		 part->part->name);
+	     return;
+	  }
+     }
 }
 
 /**

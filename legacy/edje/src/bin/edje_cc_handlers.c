@@ -6572,7 +6572,7 @@ st_collections_group_programs_program_in(void)
     @effect
         Action to be performed by the program. Valid actions are: STATE_SET,
         ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, DRAG_VAL_STEP, DRAG_VAL_PAGE,
-        FOCUS_SET, PARAM_COPY
+        FOCUS_SET, PARAM_COPY, PARAM_SET
         Only one action can be specified per program. Examples:\n
            action: STATE_SET "statename" 0.5;\n
            action: ACTION_STOP;\n
@@ -6583,6 +6583,7 @@ st_collections_group_programs_program_in(void)
            action: FOCUS_SET;\n
            action: FOCUS_OBJECT;\n
            action: PARAM_COPY "src_part" "src_param" "dst_part" "dst_param";\n
+	   action: PARAM_SET "part" "param" "value";\n
     @endproperty
 */
 static void
@@ -6605,6 +6606,7 @@ st_collections_group_programs_program_action(void)
 			   "FOCUS_SET", EDJE_ACTION_TYPE_FOCUS_SET,
 			   "FOCUS_OBJECT", EDJE_ACTION_TYPE_FOCUS_OBJECT,
 			   "PARAM_COPY", EDJE_ACTION_TYPE_PARAM_COPY,
+			   "PARAM_SET", EDJE_ACTION_TYPE_PARAM_SET,
 			   NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
@@ -6646,6 +6648,17 @@ st_collections_group_programs_program_action(void)
 	free(src_part);
 	free(dst_part);
      }
+   else if (ep->action == EDJE_ACTION_TYPE_PARAM_SET)
+     {
+	char *part;
+
+	part = parse_str(1);
+	ep->state = parse_str(2);
+	ep->state2 = parse_str(3);
+
+	data_queue_part_lookup(pc, part, &(ep->param.dst));
+	free(part);
+     }
 
    switch (ep->action)
      {
@@ -6666,6 +6679,9 @@ st_collections_group_programs_program_action(void)
 	break;
       case EDJE_ACTION_TYPE_PARAM_COPY:
 	 check_arg_count(5);
+	 break;
+      case EDJE_ACTION_TYPE_PARAM_SET:
+	 check_arg_count(4);
 	 break;
       default:
 	check_arg_count(3);
