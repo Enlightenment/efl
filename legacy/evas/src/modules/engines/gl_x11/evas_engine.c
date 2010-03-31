@@ -410,11 +410,28 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    return re->win->gl_context->def_surface;
 }
 
+//#define FRAMECOUNT 1
+
+#ifdef FRAMECOUNT
+double
+get_time(void)
+{
+   struct timeval      timev;
+   
+   gettimeofday(&timev, NULL);
+   return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
+}
+#endif
+
 static void
 eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    Render_Engine *re;
-
+#ifdef FRAMECOUNT
+   static double pt = 0.0;
+   double ta, tb;
+#endif
+   
    re = (Render_Engine *)data;
    /* put back update surface.. in this case just unflag redraw */
    re->win->draw.redraw = 0;
@@ -423,7 +440,17 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    // this is needed to make sure all previous rendering is flushed to
    // buffers/surfaces
+#ifdef FRAMECOUNT
+   double t0 = get_time();
+   ta = t0 - pt;
+   pt = t0;
+#endif
    eglWaitNative(EGL_CORE_NATIVE_ENGINE); // previous rendering should be done and swapped
+#ifdef FRAMECOUNT
+   double t1 = get_time();
+   tb = t1 - t0;
+   printf("... %1.5f -> %1.5f | ", ta, tb);
+#endif   
 //   if (eglGetError() != EGL_SUCCESS)
 //     {
 //        printf("Error:  eglWaitNative(EGL_CORE_NATIVE_ENGINE) fail.\n");
@@ -446,7 +473,14 @@ eng_output_flush(void *data)
    eng_window_use(re->win);
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef FRAMECOUNT
+   double t0 = get_time();
+#endif   
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
+#ifdef FRAMECOUNT
+   double t1 = get_time();
+   printf("%1.5f\n", t1 - t0);
+#endif   
 //   if (eglGetError() != EGL_SUCCESS)
 //     {
 //        printf("Error:  eglSwapBuffers() fail.\n");
