@@ -156,6 +156,8 @@ EAPI void         _elm_stringlist_free(Eina_List *list);
 
 Eina_Bool         _elm_widget_type_check(const Evas_Object *obj, const char *type);
 
+void		  _elm_unneed_ethumb(void);
+
 #define ELM_SET_WIDTYPE(widtype, type) if (!widtype) widtype = eina_stringshare_add(type)
 //#define ELM_CHECK_WIDTYPE(obj, widtype) if (elm_widget_type_get(obj) != widtype) return
 #define ELM_CHECK_WIDTYPE(obj, widtype) if (!_elm_widget_type_check((obj), (widtype))) return

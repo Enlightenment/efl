@@ -974,6 +974,7 @@ elm_quicklaunch_shutdown(void)
 
    _elm_unneed_efreet();
    _elm_unneed_e_dbus();
+   _elm_unneed_ethumb();
    _elm_module_shutdown();
    ecore_evas_shutdown();
    edje_shutdown();
