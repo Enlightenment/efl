@@ -10,7 +10,6 @@ typedef struct _Elm_Params_Thumb
 } Elm_Params_Thumb;
 
 static const char* choices[] = {"loop", "start", "stop"};
-/* static const char* default_anim = choices[0]; */
 
 static Elm_Thumb_Animation_Setting
 _anim_setting_get(const char *anim_str)
@@ -143,7 +142,7 @@ external_thumb_params_free(void *params)
 static Edje_External_Param_Info external_thumb_params[] =
   {
     EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("animate", "loop", choices),
-    EDJE_EXTERNAL_PARAM_INFO_BOOL("aspect"),
+    EDJE_EXTERNAL_PARAM_INFO_BOOL("keep aspect"),
     EDJE_EXTERNAL_PARAM_INFO_SENTINEL
   };
 
