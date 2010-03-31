@@ -406,10 +406,17 @@ elm_toolbar_item_icon_get(Elm_Toolbar_Item *item)
 }
 
 EAPI const char *
-elm_toolbar_item_label_get(Elm_Toolbar_Item *item)
+elm_toolbar_item_label_get(const Elm_Toolbar_Item *item)
 {
    if (!item) return NULL;
    return item->label;
+}
+
+EAPI Eina_Bool
+elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item)
+{
+   if (!item) return EINA_FALSE;
+   return item->selected;
 }
 
 EAPI void
