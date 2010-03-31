@@ -43,6 +43,7 @@ struct _Widget_Data
    const char *key;
    Ecore_Event_Handler *eeh;
    int id;
+   Elm_Thumb_Animation_Setting anim_setting;
    Eina_Bool on_hold : 1;
    Eina_Bool is_video : 1;
    Eina_Bool is_generating : 1;
@@ -566,7 +567,9 @@ elm_thumb_file_get(const Evas_Object *obj, const char **file, const char **key)
 }
 
 /**
- * Start animation if the thumbnail is an animated video.
+ * Set the animation state for the thumb object. If its content is an animated
+ * video, you may start/stop the animation or tell it to play continuously and
+ * looping.
  *
  * @param obj The thumb object.
  * @param setting The animation setting.
@@ -576,16 +579,44 @@ elm_thumb_file_get(const Evas_Object *obj, const char **file, const char **key)
  * @ingroup Thumb
  */
 EAPI void
-elm_thumb_animate(Evas_Object *obj, Elm_Thumb_Animation_Setting setting)
+elm_thumb_animate_set(Evas_Object *obj, Elm_Thumb_Animation_Setting setting)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (setting < ELM_THUMB_ANIMATION_START ||
+       setting >= ELM_THUMB_ANIMATION_LAST)
+     {
+        return;
+     }
+
+   wd->anim_setting = setting;
    if (setting == ELM_THUMB_ANIMATION_LOOP)
      edje_object_signal_emit(wd->children.view, "animate_loop", "");
    else if (setting == ELM_THUMB_ANIMATION_START)
      edje_object_signal_emit(wd->children.view, "animate", "");
    else if (setting == ELM_THUMB_ANIMATION_STOP)
      edje_object_signal_emit(wd->children.view, "animate_stop", "");
+}
+
+/**
+ * Get the animation state for the thumb object.
+ *
+ * @param obj The thumb object.
+ * @return getting The animation setting or @c ELM_THUMB_ANIMATION_LAST,
+ * on errors.
+ *
+ * @see elm_thumb_file_get()
+ *
+ * @ingroup Thumb
+ */
+EAPI Elm_Thumb_Animation_Setting
+elm_thumb_animate_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_THUMB_ANIMATION_LAST;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   return wd->anim_setting;
 }
 
 /**
@@ -608,6 +639,25 @@ elm_thumb_keep_aspect_set(Evas_Object *obj, Eina_Bool setting)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->keep_aspect = setting;
+}
+
+/**
+ * Get back the aspect info set with @c elm_thumb_keep_aspect_set().
+ *
+ * @param obj The thumb object.
+ * @return Whether the thumb object keeps or not the aspect for its content.
+ *
+ * @see elm_thumb_file_get()
+ * @see elm_thumb_align_get()
+ *
+ * @ingroup Thumb
+ */
+EAPI Eina_Bool
+elm_thumb_keep_aspect_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->keep_aspect;
 }
 
 /**

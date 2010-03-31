@@ -192,7 +192,8 @@ extern "C" {
     {
        ELM_THUMB_ANIMATION_START = 0, /* Play animation once */
        ELM_THUMB_ANIMATION_LOOP,      /* Keep playing animation until stop is requested */
-       ELM_THUMB_ANIMATION_STOP
+       ELM_THUMB_ANIMATION_STOP,
+       ELM_THUMB_ANIMATION_LAST
     } Elm_Thumb_Animation_Setting;
 
 #ifndef ELM_LIB_QUICKLAUNCH
@@ -658,7 +659,7 @@ extern "C" {
      };
    EAPI Evas_Object *elm_anchorview_add(Evas_Object *parent);
    EAPI void         elm_anchorview_text_set(Evas_Object *obj, const char *text);
-   EAPI const char  *elm_anchorview_text_get(Evas_Object *obj);
+   EAPI const char  *elm_anchorview_text_get(const Evas_Object *obj);
 
    EAPI void         elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_anchorview_hover_style_set(Evas_Object *obj, const char *style);
@@ -685,7 +686,7 @@ extern "C" {
      };
    EAPI Evas_Object *elm_anchorblock_add(Evas_Object *parent);
    EAPI void         elm_anchorblock_text_set(Evas_Object *obj, const char *text);
-   EAPI const char  *elm_anchorblock_text_get(Evas_Object *obj);
+   EAPI const char  *elm_anchorblock_text_get(const Evas_Object *obj);
    EAPI void         elm_anchorblock_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_anchorblock_hover_style_set(Evas_Object *obj, const char *style);
    EAPI void         elm_anchorblock_hover_end(Evas_Object *obj);
@@ -717,9 +718,11 @@ extern "C" {
    EAPI void	     elm_thumb_file_set(Evas_Object *obj, const char *file, const char *key);
    EAPI void	     elm_thumb_file_get(const Evas_Object *obj, const char **file, const char **key);
    EAPI void	     elm_thumb_keep_aspect_set(Evas_Object *obj, Eina_Bool setting);
+   EAPI Eina_Bool    elm_thumb_keep_aspect_get(const Evas_Object *obj);
    EAPI void	     elm_thumb_align_set(Evas_Object *obj, float x_align, float y_align);
    EAPI void	     elm_thumb_align_get(const Evas_Object *obj, float *x, float *y);
-   EAPI void	     elm_thumb_animate(Evas_Object *obj, Elm_Thumb_Animation_Setting s);
+   EAPI void	     elm_thumb_animate_set(Evas_Object *obj, Elm_Thumb_Animation_Setting s);
+   EAPI Elm_Thumb_Animation_Setting elm_thumb_animate_get(const Evas_Object *obj);
    EAPI Eina_Bool    elm_thumb_ethumb_client_connected(void);
 #ifdef ELM_ETHUMB
    EAPI Ethumb_Client *elm_thumb_ethumb_client_get(void);

@@ -19,6 +19,7 @@ ico_notepad.png \
 ico_radio.png \
 ico_scrolled_entry.png \
 ico_slider.png \
+ico_thumb.png \
 ico_toggle.png \
 ico_toolbar.png
 

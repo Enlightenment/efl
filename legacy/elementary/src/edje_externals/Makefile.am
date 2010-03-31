@@ -36,6 +36,7 @@ elm_notepad.c \
 elm_radio.c \
 elm_scrolled_entry.c \
 elm_slider.c \
+elm_thumb.c \
 elm_toggle.c \
 elm_toolbar.c
 

@@ -219,7 +219,7 @@ elm_anchorblock_text_set(Evas_Object *obj, const char *text)
   * @ingroup Anchorblock
   */
 EAPI const char*
-elm_anchorblock_text_get(Evas_Object *obj)
+elm_anchorblock_text_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
