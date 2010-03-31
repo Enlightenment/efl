@@ -31,6 +31,7 @@ elm_anchorview.c \
 elm_bubble.c \
 elm_button.c \
 elm_check.c \
+elm_fileselector.c \
 elm_hoversel.c \
 elm_notepad.c \
 elm_radio.c \

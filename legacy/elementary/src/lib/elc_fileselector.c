@@ -22,7 +22,7 @@ struct _Widget_Data
    Eina_Bool only_folder;
    Eina_Bool expand;
 
-   struct 
+   struct
    {
     Evas_Object *bx;
     Evas_Object *ok;
@@ -163,7 +163,7 @@ _sel(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 	if (wd->entry2)
 	  elm_entry_entry_set(wd->entry2, ecore_file_file_get(path));
      }
-   
+
    evas_object_smart_callback_call(fs, "selected", (void*)path);
 }
 
@@ -412,7 +412,7 @@ elm_fileselector_add(Evas_Object *parent)
    evas_object_show(wd->scr2);
 
    elm_fileselector_buttons_ok_cancel_set(obj, 1);
-   
+
    // Is this the right way to show sub-objs ?? or use the show/hide cbs ??
    //~ evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _show, obj);
    //~ evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -466,7 +466,7 @@ elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only)
 }
 
 EAPI Eina_Bool
-elm_fileselector_only_folder_get(const Evas_Object *obj)
+elm_fileselector_folder_only_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -500,7 +500,7 @@ elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool only)
         elm_box_pack_end(box, bt);
         evas_object_smart_callback_add(bt, "clicked", _canc, obj);
         evas_object_show(bt);
-        
+
         // ok btn
         bt = elm_button_add(obj);
         wd->buttons.ok = bt;
@@ -520,7 +520,7 @@ elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool only)
 }
 
 EAPI Eina_Bool
-elm_fileselector_ok_cancel_get(const Evas_Object *obj)
+elm_fileselector_buttons_ok_cancel_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -535,6 +535,15 @@ elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->expand = expand;
+}
+
+EAPI Eina_Bool
+elm_fileselector_expandable_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->expand;
 }
 
 EAPI void
@@ -563,16 +572,16 @@ elm_fileselector_selected_get(const Evas_Object *obj)
      {
 	const char *name;
 	char buf[PATH_MAX];
-        
+
 	name = elm_entry_entry_get(wd->entry2);
 	//TODO remove <br>
 	snprintf(buf, sizeof(buf), "%s/%s", wd->path, name);
 	eina_stringshare_replace(&wd->selection, buf);
 	return wd->selection;
      }
-   
+
    it = elm_genlist_selected_item_get(wd->list);
    if (it) return elm_genlist_item_data_get(it);
-   
+
    return wd->path;
 }

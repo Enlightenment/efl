@@ -14,6 +14,7 @@ ico_anchorview.png \
 ico_bubble.png \
 ico_button.png \
 ico_check.png \
+ico_fileselector.png \
 ico_hoversel.png \
 ico_notepad.png \
 ico_radio.png \
