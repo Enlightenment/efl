@@ -68,8 +68,8 @@ static int efreet_desktop_command_file_id = 0;
  */
 static Ecore_Job *efreet_desktop_job = NULL;
 
-static char *cache_file = NULL;
-static char *cache_dirs = NULL;
+static const char *cache_file = NULL;
+static const char *cache_dirs = NULL;
 static Eet_File *cache = NULL;
 static Eet_Data_Descriptor *desktop_edd = NULL;
 static Ecore_File_Monitor *cache_monitor = NULL;
@@ -94,7 +94,7 @@ typedef struct Efreet_Desktop_Type_Info Efreet_Desktop_Type_Info;
 struct Efreet_Desktop_Type_Info
 {
     int id;
-    char *type;
+    const char *type;
     Efreet_Desktop_Type_Parse_Cb parse_func;
     Efreet_Desktop_Type_Save_Cb save_func;
     Efreet_Desktop_Type_Free_Cb free_func;
@@ -249,14 +249,14 @@ efreet_desktop_shutdown(void)
                                                      efreet_desktop_types);
     }
     EINA_LIST_FREE(efreet_desktop_dirs, dir)
-        free(dir);
+        eina_stringshare_del(dir);
     if (cache_monitor) ecore_file_monitor_del(cache_monitor);
     if (cache) eet_close(cache);
     efreet_desktop_edd_shutdown(desktop_edd);
     ecore_file_shutdown();
     eina_log_domain_unregister(_efreet_desktop_log_dom);
-    IF_FREE(cache_file);
-    IF_FREE(cache_dirs);
+    IF_RELEASE(cache_file);
+    IF_RELEASE(cache_dirs);
     if (efreet_desktop_job) ecore_job_del(efreet_desktop_job);
     efreet_desktop_job = NULL;
 }
@@ -286,7 +286,7 @@ efreet_desktop_cache_file(void)
     else
         snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop.cache", home);
 
-    cache_file = strdup(tmp);
+    cache_file = eina_stringshare_add(tmp);
     return cache_file;
 }
 
@@ -302,7 +302,7 @@ efreet_desktop_cache_dirs(void)
 
     snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_dirs.cache", efreet_home_dir_get());
 
-    cache_dirs = strdup(tmp);
+    cache_dirs = eina_stringshare_add(tmp);
     return cache_dirs;
 }
 
@@ -392,7 +392,7 @@ efreet_desktop_get(const char *file)
         p = dirname(buf);
         if (!eina_list_search_unsorted(efreet_desktop_dirs, EINA_COMPARE_CB(strcmp), p))
         {
-            efreet_desktop_dirs = eina_list_append(efreet_desktop_dirs, strdup(p));
+            efreet_desktop_dirs = eina_list_append(efreet_desktop_dirs, eina_stringshare_add(p));
             if (efreet_desktop_job) ecore_job_del(efreet_desktop_job);
             efreet_desktop_job = ecore_job_add(efreet_desktop_update_cache_dirs, NULL);
         }
@@ -908,7 +908,7 @@ efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_fun
     id = eina_list_count(efreet_desktop_types);
 
     info->id = id;
-    info->type = strdup(type);
+    info->type = eina_stringshare_add(type);
     info->parse_func = parse_func;
     info->save_func = save_func;
     info->free_func = free_func;
@@ -944,7 +944,7 @@ static void
 efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info)
 {
     if (!info) return;
-    IF_FREE(info->type);
+    IF_RELEASE(info->type);
     free(info);
 }
 
@@ -2174,7 +2174,7 @@ efreet_desktop_update_cache_dirs(void *data __UNUSED__)
                 if (!strcmp(dir, p))
                 {
                     efreet_desktop_dirs = eina_list_remove_list(efreet_desktop_dirs, l);
-                    free(dir);
+                    eina_stringshare_del(dir);
                     break;
                 }
             }
@@ -2186,6 +2186,7 @@ efreet_desktop_update_cache_dirs(void *data __UNUSED__)
         unsigned int size = strlen(dir) + 1;
         write(cachefd, &size, sizeof(int));
         write(cachefd, dir, size);
+        eina_stringshare_del(dir);
     }
     efreet_desktop_dirs = NULL;
 
