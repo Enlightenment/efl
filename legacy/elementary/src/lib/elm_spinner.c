@@ -558,7 +558,7 @@ elm_spinner_label_format_get(const Evas_Object *obj)
 /**
  * Set the minimum and maximum values for the spinner
  *
- * Maximum mut be greater than minimum.
+ * Maximum must be greater than minimum.
  *
  * @param obj The spinner object
  * @param min The minimum value
@@ -582,6 +582,27 @@ elm_spinner_min_max_set(Evas_Object *obj, double min, double max)
 }
 
 /**
+ * Get the minimum and maximum values of the spinner
+ *
+ * @param obj The spinner object
+ * @param min The minimum value
+ * @param max The maximum value
+ *
+ * @ingroup Spinner
+ */
+EAPI void
+elm_spinner_min_max_get(const Evas_Object *obj, double *min, double *max)
+{
+   if (min) *min = 0.0;
+   if (max) *max = 0.0;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (min) *min = wd->val_min;
+   if (max) *max = wd->val_max;
+}
+
+/**
  * Set the step for the spinner
  *
  * @param obj The spinner object
@@ -598,6 +619,22 @@ elm_spinner_step_set(Evas_Object *obj, double step)
    wd->step = step;
 }
 
+/**
+ * Get the step of the spinner
+ *
+ * @param obj The spinner object
+ * @return The step value
+ *
+ * @ingroup Spinner
+ */
+EAPI double
+elm_spinner_step_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0.0;
+   return wd->step;
+}
 /**
  * Set the value the spinner indicates
  *
@@ -640,7 +677,7 @@ elm_spinner_value_get(const Evas_Object *obj)
 /**
  * Sets whether the spinner should wrap when it reaches its
  * minimum/maximum value
- * 
+ *
  * @param obj The spinner object
  * @param wrap True if it should wrap, false otherwise
  *
@@ -653,4 +690,23 @@ elm_spinner_wrap_set(Evas_Object *obj, Eina_Bool wrap)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->wrap = wrap;
+}
+
+/**
+ * Gets whether the spinner should wrap when it reaches its
+ * minimum/maximum value
+ *
+ * @param obj The spinner object
+ * @return Bool value of wrap option
+ * (0 = disabled, 1 = enabled)
+ *
+ * @ingroup Spinner
+ */
+EAPI Eina_Bool
+elm_spinner_wrap_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->wrap;
 }
