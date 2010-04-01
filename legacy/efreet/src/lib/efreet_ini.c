@@ -24,7 +24,7 @@
 static int _efreet_ini_log_dom = -1;
 
 static Eina_Hash *efreet_ini_parse(const char *file);
-static char *efreet_ini_unescape(const char *str);
+static const char *efreet_ini_unescape(const char *str);
 static Eina_Bool
 efreet_ini_section_save(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 static Eina_Bool
@@ -168,9 +168,9 @@ efreet_ini_parse(const char *file)
                 memcpy((char*)header, line_start + 1, header_length - 1);
                 ((char*)header)[header_length - 1] = '\0';
 
-                section = eina_hash_string_small_new(free);
+                section = eina_hash_string_small_new(EINA_FREE_CB(eina_stringshare_del));
 
-                eina_hash_del(data, header, NULL);
+                eina_hash_del_by_key(data, header);
 //                if (old) INF("[efreet] Warning: duplicate section '%s' "
   //                              "in file '%s'", header, file);
 
@@ -245,7 +245,7 @@ efreet_ini_parse(const char *file)
                     value_end - value_start);
             ((char*)value)[value_end - value_start] = '\0';
 
-            eina_hash_del(section, key, NULL);
+            eina_hash_del_by_key(section, key);
             eina_hash_add(section, key, efreet_ini_unescape(value));
         }
 //        else
@@ -345,7 +345,7 @@ efreet_ini_section_add(Efreet_Ini *ini, const char *section)
         ini->data = eina_hash_string_small_new(EINA_FREE_CB(eina_hash_free));
     if (eina_hash_find(ini->data, section)) return;
 
-    hash = eina_hash_string_small_new(free);
+    hash = eina_hash_string_small_new(EINA_FREE_CB(eina_stringshare_del));
     eina_hash_add(ini->data, section, hash);
 }
 
@@ -376,8 +376,8 @@ efreet_ini_string_set(Efreet_Ini *ini, const char *key, const char *value)
 {
     if (!ini || !key || !ini->section) return;
 
-    eina_hash_del(ini->section, key, NULL);
-    eina_hash_add(ini->section, key, strdup(value));
+    eina_hash_del_by_key(ini->section, key);
+    eina_hash_add(ini->section, key, eina_stringshare_add(value));
 }
 
 /**
@@ -613,7 +613,7 @@ efreet_ini_key_unset(Efreet_Ini *ini, const char *key)
 {
     if (!ini || !key || !ini->section) return;
 
-    eina_hash_del(ini->section, key, NULL);
+    eina_hash_del_by_key(ini->section, key);
 }
 
 /**
@@ -621,19 +621,19 @@ efreet_ini_key_unset(Efreet_Ini *ini, const char *key)
  * @return An allocated unescaped string
  * @brief Unescapes backslash escapes in a string
  */
-static char *
+static const char *
 efreet_ini_unescape(const char *str)
 {
     char *buf, *dest;
     const char *p;
 
     if (!str) return NULL;
-    if (!strchr(str, '\\')) return strdup(str);
-    buf = malloc(strlen(str) + 1);
+    if (!strchr(str, '\\')) return eina_stringshare_add(str);
+    buf = alloca(strlen(str) + 1);
 
     p = str;
     dest = buf;
-    while(*p)
+    while (*p)
     {
         if ((*p == '\\') && (p[1] != '\0'))
         {
@@ -667,7 +667,7 @@ efreet_ini_unescape(const char *str)
     }
 
     *(dest) = '\0';
-    return buf;
+    return eina_stringshare_add(buf);
 }
 
 static Eina_Bool

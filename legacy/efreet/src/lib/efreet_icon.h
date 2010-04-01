@@ -52,8 +52,8 @@ struct Efreet_Icon_Theme
         const char *name;       /**< The user visible name */
     } name;                     /**< The different names for the theme */
 
-    char *comment;        /**< String describing the theme */
-    char *example_icon;   /**< Icon to use as an example of the theme */
+    const char *comment;        /**< String describing the theme */
+    const char *example_icon;   /**< Icon to use as an example of the theme */
 
     /* An icon theme can have multiple directories that store it's icons. We
      * need to be able to find a search each one. */
@@ -82,7 +82,7 @@ typedef struct Efreet_Icon_Theme_Directory Efreet_Icon_Theme_Directory;
  */
 struct Efreet_Icon_Theme_Directory
 {
-    char *name;               /**< The directory name */
+    const char *name;               /**< The directory name */
     Efreet_Icon_Theme_Context context;  /**< The type of icons in the dir */
     Efreet_Icon_Size_Type type;     /**< The size type for the icons */
 
@@ -106,8 +106,8 @@ typedef struct Efreet_Icon Efreet_Icon;
  */
 struct Efreet_Icon
 {
-    char *path;       /**< Full path to the icon */
-    char *name;       /**< Translated UTF8 string that can
+    const char *path;       /**< Full path to the icon */
+    const char *name;       /**< Translated UTF8 string that can
                                     be used for the icon name */
 
     struct
