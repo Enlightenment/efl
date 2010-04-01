@@ -351,13 +351,18 @@ evas_smart_cb_descriptions_fix(Evas_Smart_Cb_Description_Array *a)
 {
    unsigned int i, j;
 
+   if (!a)
+     {
+	ERR("no array to fix!");
+	return;
+     }
+
    qsort(a->array, a->size, sizeof(Evas_Smart_Cb_Description *),
 	 _evas_smart_cb_description_cmp_sort);
 
-   fprintf(stderr, "\nDEBUG: %u callbacks\n", a->size);
+   DBG("%u callbacks", a->size);
    if (a->size)
-     fprintf(stderr, "DEBUG:    %20.20s  [%s]\n",
-	     a->array[0]->name, a->array[0]->type);
+     DBG("%s [type=%s]", a->array[0]->name, a->array[0]->type);
 
    for (i = 0, j = 1; j < a->size; j++)
      {
@@ -366,7 +371,7 @@ evas_smart_cb_descriptions_fix(Evas_Smart_Cb_Description_Array *a)
 	cur = a->array[j];
 	prev = a->array[i];
 
-	fprintf(stderr, "DEBUG:    %20.20s  [%s]\n", cur->name, cur->type);
+	DBG("%s [type=%s]", cur->name, cur->type);
 
 	if (strcmp(cur->name, prev->name) != 0)
 	  {
@@ -377,12 +382,12 @@ evas_smart_cb_descriptions_fix(Evas_Smart_Cb_Description_Array *a)
 	else
 	  {
 	     if (strcmp(cur->type, prev->type) == 0)
-	       fprintf(stderr, "WARNING: duplicated smart callback description"
-		       " with name '%s' and type '%s'\n", cur->name, cur->type);
+	       WRN("duplicated smart callback description"
+		   " with name '%s' and type '%s'", cur->name, cur->type);
 	     else
-	       fprintf(stderr, "ERROR: callback descriptions named '%s' differ"
-		       " in type, keeping '%s', ignoring '%s'\n", cur->name,
-		       prev->type, cur->type);
+	       ERR("callback descriptions named '%s' differ"
+		   " in type, keeping '%s', ignoring '%s'",
+		   cur->name, prev->type, cur->type);
 	  }
      }
 
