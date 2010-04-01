@@ -113,7 +113,7 @@ struct _Emotion_Video_Module
    Eina_Emotion_Plugins *plugin;
 };
 
-EAPI void *_emotion_video_get(Evas_Object *obj);
+EAPI void *_emotion_video_get(const Evas_Object *obj);
 EAPI void  _emotion_frame_new(Evas_Object *obj);
 EAPI void  _emotion_video_pos_update(Evas_Object *obj, double pos, double len);
 EAPI void  _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio);

@@ -278,7 +278,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 }
 
 EAPI const char *
-emotion_object_file_get(Evas_Object *obj)
+emotion_object_file_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -301,7 +301,7 @@ emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
 }
 
 EAPI Eina_Bool
-emotion_object_play_get(Evas_Object *obj)
+emotion_object_play_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -327,7 +327,7 @@ emotion_object_position_set(Evas_Object *obj, double sec)
 }
 
 EAPI double
-emotion_object_position_get(Evas_Object *obj)
+emotion_object_position_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -340,7 +340,7 @@ emotion_object_position_get(Evas_Object *obj)
 }
 
 EAPI Eina_Bool
-emotion_object_seekable_get(Evas_Object *obj)
+emotion_object_seekable_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -351,7 +351,7 @@ emotion_object_seekable_get(Evas_Object *obj)
 }
 
 EAPI Eina_Bool
-emotion_object_video_handled_get(Evas_Object *obj)
+emotion_object_video_handled_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -362,7 +362,7 @@ emotion_object_video_handled_get(Evas_Object *obj)
 }
 
 EAPI Eina_Bool
-emotion_object_audio_handled_get(Evas_Object *obj)
+emotion_object_audio_handled_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -373,7 +373,7 @@ emotion_object_audio_handled_get(Evas_Object *obj)
 }
 
 EAPI double
-emotion_object_play_length_get(Evas_Object *obj)
+emotion_object_play_length_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -385,7 +385,7 @@ emotion_object_play_length_get(Evas_Object *obj)
 }
 
 EAPI void
-emotion_object_size_get(Evas_Object *obj, int *iw, int *ih)
+emotion_object_size_get(const Evas_Object *obj, int *iw, int *ih)
 {
    Smart_Data *sd;
 
@@ -405,7 +405,7 @@ emotion_object_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth)
 }
 
 EAPI Eina_Bool
-emotion_object_smooth_scale_get(Evas_Object *obj)
+emotion_object_smooth_scale_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -414,7 +414,7 @@ emotion_object_smooth_scale_get(Evas_Object *obj)
 }
 
 EAPI double
-emotion_object_ratio_get(Evas_Object *obj)
+emotion_object_ratio_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -447,7 +447,7 @@ emotion_object_audio_volume_set(Evas_Object *obj, double vol)
 }
 
 EAPI double
-emotion_object_audio_volume_get(Evas_Object *obj)
+emotion_object_audio_volume_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -469,7 +469,7 @@ emotion_object_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
 }
 
 EAPI Eina_Bool
-emotion_object_audio_mute_get(Evas_Object *obj)
+emotion_object_audio_mute_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -480,7 +480,7 @@ emotion_object_audio_mute_get(Evas_Object *obj)
 }
 
 EAPI int
-emotion_object_audio_channel_count(Evas_Object *obj)
+emotion_object_audio_channel_count(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -491,7 +491,7 @@ emotion_object_audio_channel_count(Evas_Object *obj)
 }
 
 EAPI const char *
-emotion_object_audio_channel_name_get(Evas_Object *obj, int channel)
+emotion_object_audio_channel_name_get(const Evas_Object *obj, int channel)
 {
    Smart_Data *sd;
 
@@ -513,7 +513,7 @@ emotion_object_audio_channel_set(Evas_Object *obj, int channel)
 }
 
 EAPI int
-emotion_object_audio_channel_get(Evas_Object *obj)
+emotion_object_audio_channel_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -535,7 +535,7 @@ emotion_object_video_mute_set(Evas_Object *obj, Eina_Bool mute)
 }
 
 EAPI Eina_Bool
-emotion_object_video_mute_get(Evas_Object *obj)
+emotion_object_video_mute_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -546,7 +546,7 @@ emotion_object_video_mute_get(Evas_Object *obj)
 }
 
 EAPI int
-emotion_object_video_channel_count(Evas_Object *obj)
+emotion_object_video_channel_count(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -557,7 +557,7 @@ emotion_object_video_channel_count(Evas_Object *obj)
 }
 
 EAPI const char *
-emotion_object_video_channel_name_get(Evas_Object *obj, int channel)
+emotion_object_video_channel_name_get(const Evas_Object *obj, int channel)
 {
    Smart_Data *sd;
 
@@ -579,7 +579,7 @@ emotion_object_video_channel_set(Evas_Object *obj, int channel)
 }
 
 EAPI int
-emotion_object_video_channel_get(Evas_Object *obj)
+emotion_object_video_channel_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -601,7 +601,7 @@ emotion_object_spu_mute_set(Evas_Object *obj, Eina_Bool mute)
 }
 
 EAPI Eina_Bool
-emotion_object_spu_mute_get(Evas_Object *obj)
+emotion_object_spu_mute_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -612,7 +612,7 @@ emotion_object_spu_mute_get(Evas_Object *obj)
 }
 
 EAPI int
-emotion_object_spu_channel_count(Evas_Object *obj)
+emotion_object_spu_channel_count(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -623,7 +623,7 @@ emotion_object_spu_channel_count(Evas_Object *obj)
 }
 
 EAPI const char *
-emotion_object_spu_channel_name_get(Evas_Object *obj, int channel)
+emotion_object_spu_channel_name_get(const Evas_Object *obj, int channel)
 {
    Smart_Data *sd;
 
@@ -645,7 +645,7 @@ emotion_object_spu_channel_set(Evas_Object *obj, int channel)
 }
 
 EAPI int
-emotion_object_spu_channel_get(Evas_Object *obj)
+emotion_object_spu_channel_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -656,7 +656,7 @@ emotion_object_spu_channel_get(Evas_Object *obj)
 }
 
 EAPI int
-emotion_object_chapter_count(Evas_Object *obj)
+emotion_object_chapter_count(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -678,7 +678,7 @@ emotion_object_chapter_set(Evas_Object *obj, int chapter)
 }
 
 EAPI int
-emotion_object_chapter_get(Evas_Object *obj)
+emotion_object_chapter_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -689,7 +689,7 @@ emotion_object_chapter_get(Evas_Object *obj)
 }
 
 EAPI const char *
-emotion_object_chapter_name_get(Evas_Object *obj, int chapter)
+emotion_object_chapter_name_get(const Evas_Object *obj, int chapter)
 {
    Smart_Data *sd;
 
@@ -711,7 +711,7 @@ emotion_object_play_speed_set(Evas_Object *obj, double speed)
 }
 
 EAPI double
-emotion_object_play_speed_get(Evas_Object *obj)
+emotion_object_play_speed_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -733,7 +733,7 @@ emotion_object_eject(Evas_Object *obj)
 }
 
 EAPI const char *
-emotion_object_title_get(Evas_Object *obj)
+emotion_object_title_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -742,7 +742,7 @@ emotion_object_title_get(Evas_Object *obj)
 }
 
 EAPI const char *
-emotion_object_progress_info_get(Evas_Object *obj)
+emotion_object_progress_info_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -751,7 +751,7 @@ emotion_object_progress_info_get(Evas_Object *obj)
 }
 
 EAPI double
-emotion_object_progress_status_get(Evas_Object *obj)
+emotion_object_progress_status_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -760,7 +760,7 @@ emotion_object_progress_status_get(Evas_Object *obj)
 }
 
 EAPI const char *
-emotion_object_ref_file_get(Evas_Object *obj)
+emotion_object_ref_file_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -769,7 +769,7 @@ emotion_object_ref_file_get(Evas_Object *obj)
 }
 
 EAPI int
-emotion_object_ref_num_get(Evas_Object *obj)
+emotion_object_ref_num_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -778,7 +778,7 @@ emotion_object_ref_num_get(Evas_Object *obj)
 }
 
 EAPI int
-emotion_object_spu_button_count_get(Evas_Object *obj)
+emotion_object_spu_button_count_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -787,7 +787,7 @@ emotion_object_spu_button_count_get(Evas_Object *obj)
 }
 
 EAPI int
-emotion_object_spu_button_get(Evas_Object *obj)
+emotion_object_spu_button_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -796,7 +796,7 @@ emotion_object_spu_button_get(Evas_Object *obj)
 }
 
 EAPI const char *
-emotion_object_meta_info_get(Evas_Object *obj, Emotion_Meta_Info meta)
+emotion_object_meta_info_get(const Evas_Object *obj, Emotion_Meta_Info meta)
 {
    Smart_Data *sd;
 
@@ -845,7 +845,7 @@ emotion_object_vis_set(Evas_Object *obj, Emotion_Vis visualization)
 }
 
 EAPI Emotion_Vis
-emotion_object_vis_get(Evas_Object *obj)
+emotion_object_vis_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -857,7 +857,7 @@ emotion_object_vis_get(Evas_Object *obj)
 }
 
 EAPI Eina_Bool
-emotion_object_vis_supported(Evas_Object *obj, Emotion_Vis visualization)
+emotion_object_vis_supported(const Evas_Object *obj, Emotion_Vis visualization)
 {
    Smart_Data *sd;
 
@@ -875,7 +875,7 @@ emotion_object_vis_supported(Evas_Object *obj, Emotion_Vis visualization)
 /*****************************/
 
 EAPI void *
-_emotion_video_get(Evas_Object *obj)
+_emotion_video_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
@@ -1250,24 +1250,20 @@ _smart_init(void)
 	gstreamer_module_init();
 #endif
 
-	static const Evas_Smart_Class sc =
+	static Evas_Smart_Class sc =
+	  EVAS_SMART_CLASS_INIT_NAME_VERSION(E_OBJ_NAME);
+	if (!sc.add)
 	  {
-	     E_OBJ_NAME,
-	       EVAS_SMART_CLASS_VERSION,
-	       _smart_add,
-	       _smart_del,
-	       _smart_move,
-	       _smart_resize,
-	       _smart_show,
-	       _smart_hide,
-	       _smart_color_set,
-	       _smart_clip_set,
-	       _smart_clip_unset,
-	       NULL,
-	       NULL,
-	       NULL,
-	       NULL
-	  };
+	     sc.add = _smart_add;
+	     sc.del = _smart_del;
+	     sc.move = _smart_move;
+	     sc.resize = _smart_resize;
+	     sc.show = _smart_show;
+	     sc.hide = _smart_hide;
+	     sc.color_set = _smart_color_set;
+	     sc.clip_set = _smart_clip_set;
+	     sc.clip_unset = _smart_clip_unset;
+	  }
         smart = evas_smart_class_new(&sc);
      }
 }
