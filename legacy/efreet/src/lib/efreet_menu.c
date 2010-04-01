@@ -302,7 +302,7 @@ static void efreet_menu_create_move_list(Efreet_Menu_Internal *internal);
 static void efreet_menu_create_filter_list(Efreet_Menu_Internal *internal);
 static void efreet_menu_create_layout_list(Efreet_Menu_Internal *internal);
 static void efreet_menu_create_default_layout_list(Efreet_Menu_Internal *internal);
-static char *efreet_menu_path_get(Efreet_Menu_Internal *internal, const char *suffix);
+static const char *efreet_menu_path_get(Efreet_Menu_Internal *internal, const char *suffix);
 
 static Efreet_Menu_App_Dir *efreet_menu_app_dir_new(void);
 static void efreet_menu_app_dir_free(Efreet_Menu_App_Dir *dir);
@@ -1156,7 +1156,7 @@ efreet_menu_handle_sub_menu(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 static int
 efreet_menu_handle_app_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 {
-    char *path;
+    const char *path;
     Efreet_Menu_App_Dir *app_dir;
 
     if (!parent || !xml) return 0;
@@ -1170,13 +1170,12 @@ efreet_menu_handle_app_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
                                   EINA_COMPARE_CB(efreet_menu_cb_app_dirs_compare),
                                   path))
     {
-        FREE(path);
+        eina_stringshare_del(path);
         return 1;
     }
 
     app_dir = efreet_menu_app_dir_new();
-    app_dir->path = eina_stringshare_add(path);
-    free(path);
+    app_dir->path = path;
 
     parent->app_dirs = eina_list_prepend(parent->app_dirs, app_dir);
 
@@ -1233,7 +1232,7 @@ efreet_menu_handle_default_app_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *xm
 static int
 efreet_menu_handle_directory_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 {
-    char *path;
+    const char *path;
 
     if (!parent || !xml) return 0;
 
@@ -1244,12 +1243,11 @@ efreet_menu_handle_directory_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     /* we've already got this guy in our list we can skip it */
     if (eina_list_search_unsorted(parent->directory_dirs, EINA_COMPARE_CB(strcmp), path))
     {
-        FREE(path);
+        eina_stringshare_del(path);
         return 1;
     }
 
-    parent->directory_dirs = eina_list_prepend(parent->directory_dirs, eina_stringshare_add(path));
-    free(path);
+    parent->directory_dirs = eina_list_prepend(parent->directory_dirs, path);
 
     return 1;
 }
@@ -1551,7 +1549,7 @@ static int
 efreet_menu_handle_merge_file(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 {
     Eina_List *l;
-    char *path = NULL;
+    const char *path = NULL;
     const char *attr = NULL;
     int is_path = 1;
     int ret = 1;
@@ -1621,7 +1619,7 @@ efreet_menu_handle_merge_file(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
                                                         parent->file.name);
             if (ecore_file_exists(file))
             {
-                path = strdup(file);
+                path = eina_stringshare_add(file);
                 break;
             }
         }
@@ -1633,7 +1631,7 @@ efreet_menu_handle_merge_file(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     if (!efreet_menu_merge(parent, xml, path))
         ret = 0;
 
-    FREE(path);
+    eina_stringshare_del(path);
 
     return ret;
 }
@@ -1705,7 +1703,7 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
 static int
 efreet_menu_handle_merge_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 {
-    char *path;
+    const char *path;
     int ret;
 
     if (!parent || !xml || !xml->text) return 0;
@@ -1714,12 +1712,12 @@ efreet_menu_handle_merge_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     if (!path) return 1;
     if (!ecore_file_exists(path))
     {
-        FREE(path);
+        eina_stringshare_del(path);
         return 1;
     }
 
     ret = efreet_menu_merge_dir(parent, xml, path);
-    FREE(path);
+    eina_stringshare_del(path);
 
     return ret;
 }
@@ -1869,7 +1867,8 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
                                         const char *legacy_dir,
                                         const char *prefix)
 {
-    char *path, file_path[PATH_MAX];
+    const char *path;
+    char file_path[PATH_MAX];
     Efreet_Menu_Internal *legacy_internal;
     Efreet_Menu_Filter *filter;
     Efreet_Menu_App_Dir *app_dir;
@@ -1884,7 +1883,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
     /* nothing to do if the legacy path doesn't exist */
     if (!ecore_file_exists(path))
     {
-        FREE(path);
+        eina_stringshare_del(path);
         return NULL;
     }
 
@@ -1949,7 +1948,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
             if (!ret)
             {
                 efreet_menu_internal_free(legacy_internal);
-                FREE(path);
+                eina_stringshare_del(path);
                 closedir(files);
                 return NULL;
             }
@@ -2002,7 +2001,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
     }
     closedir(files);
 
-    FREE(path);
+    eina_stringshare_del(path);
     return legacy_internal;
 }
 
@@ -3356,7 +3355,7 @@ efreet_menu_create_directories_list(Efreet_Menu_Internal *internal)
     internal->directories = NULL;
 }
 
-static char *
+static const char *
 efreet_menu_path_get(Efreet_Menu_Internal *internal, const char *suffix)
 {
     char path[PATH_MAX];
@@ -3379,7 +3378,7 @@ efreet_menu_path_get(Efreet_Menu_Internal *internal, const char *suffix)
     len = strlen(path);
     while (path[len] == '/') path[len--] = '\0';
 
-    return strdup(path);
+    return eina_stringshare_add(path);
 }
 
 static int
