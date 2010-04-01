@@ -107,8 +107,8 @@ external_toolbar_params_parse(void *data, Evas_Object *obj, const Eina_List *par
 static void
 external_toolbar_params_free(void *params)
 {
-   Elm_Params_Entry *mem = params;
-
+   Elm_Params_Toolbar *mem = params;
+   if (mem->icon) evas_object_del(mem->icon);
    free(mem);
 }
 
