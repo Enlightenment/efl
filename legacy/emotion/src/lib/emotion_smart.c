@@ -163,7 +163,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 static void
 _emotion_module_close(Emotion_Video_Module *mod, void *video)
 {
-
+   if (!mod) return;
    if (mod->plugin->close && video)
      mod->plugin->close(mod, video);
    /* FIXME: we can't go dlclosing here as a thread still may be running from
@@ -207,11 +207,20 @@ EAPI Eina_Bool
 emotion_object_init(Evas_Object *obj, const char *module_filename)
 {
    Smart_Data *sd;
+   char *file;
+
+   if (!module_filename) return EINA_FALSE;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
 
-   free(sd->file);
+   if ((sd->module_name) && (!strcmp(sd->module_name, module_filename)))
+     return EINA_TRUE;
+   free(sd->module_name);
+   sd->module_name = strdup(module_filename);
+
+   file = sd->file;
    sd->file = NULL;
+
    free(sd->title);
    sd->title = NULL;
    free(sd->progress.info);
@@ -229,11 +238,16 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
 
    ecore_init();
 
-   if ((!sd->module) || (!sd->video))
+   _emotion_module_close(sd->module, sd->video);
+   sd->module = NULL;
+   sd->video = NULL;
+   if (!_emotion_module_open(module_filename, obj, &sd->module, &sd->video))
+     return EINA_FALSE;
+
+   if (file)
      {
-	if (!_emotion_module_open(module_filename, obj,
-				  &sd->module, &sd->video))
-	  return EINA_FALSE;
+	emotion_object_file_set(obj, file);
+	free(file);
      }
 
    return EINA_TRUE;
@@ -1304,6 +1318,7 @@ _smart_del(Evas_Object * obj)
    _emotion_module_close(sd->module, sd->video);
    evas_object_del(sd->obj);
    free(sd->file);
+   free(sd->module_name);
    if (sd->job) ecore_job_del(sd->job);
    free(sd->progress.info);
    free(sd->ref.file);
