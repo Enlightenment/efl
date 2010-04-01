@@ -195,7 +195,7 @@ typedef struct Efreet_Menu_Layout Efreet_Menu_Layout;
 struct Efreet_Menu_Layout
 {
     Efreet_Menu_Layout_Type  type;   /**< The type of layout */
-    char *name;                      /**< The name of the element */
+    const char *name;                /**< The name of the element */
 
     /* The items below are for Menuname Layout elements */
     signed char show_empty;    /**< Whether to show empty menus */
@@ -2263,7 +2263,7 @@ efreet_menu_handle_layout_menuname(Efreet_Menu_Internal *parent, Efreet_Xml *xml
 
     layout = efreet_menu_layout_new();
     layout->type = EFREET_MENU_LAYOUT_MENUNAME;
-    layout->name = strdup(xml->text);
+    layout->name = eina_stringshare_add(xml->text);
 
     val = efreet_xml_attribute_get(xml, "show_empty");
     if (val) layout->show_empty = !strcmp(val, "true");
@@ -2302,7 +2302,7 @@ efreet_menu_handle_layout_filename(Efreet_Menu_Internal *parent, Efreet_Xml *xml
 
     layout = efreet_menu_layout_new();
     layout->type = EFREET_MENU_LAYOUT_FILENAME;
-    layout->name = strdup(xml->text);
+    layout->name = eina_stringshare_add(xml->text);
 
     if (def) parent->default_layout = eina_list_append(parent->default_layout, layout);
     else parent->layout = eina_list_append(parent->layout, layout);
@@ -2351,7 +2351,7 @@ efreet_menu_handle_layout_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, i
 
     layout = efreet_menu_layout_new();
     layout->type = EFREET_MENU_LAYOUT_MERGE;
-    layout->name = strdup(attr);
+    layout->name = eina_stringshare_add(attr);
 
     if (def) parent->default_layout = eina_list_append(parent->default_layout, layout);
     else parent->layout = eina_list_append(parent->layout, layout);
@@ -2492,7 +2492,7 @@ efreet_menu_layout_free(Efreet_Menu_Layout *layout)
 {
     if (!layout) return;
 
-    IF_FREE(layout->name);
+    IF_RELEASE(layout->name);
     FREE(layout);
 }
 
@@ -3932,7 +3932,7 @@ efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *interna
         }
         else if (internal->sub_menus && !strcmp(layout->name, "all"))
         {
-            char *orig;
+            const char *orig;
 
             orig = layout->name;
             layout->name = "menus";
