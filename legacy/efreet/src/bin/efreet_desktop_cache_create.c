@@ -182,7 +182,7 @@ main()
     /* TODO:
      * - Add file monitor on files, so that we catch changes on files
      *   during whilst this program runs.
-     * - Fix "changed" when files are removed.
+     * - Maybe linger for a while to reduce number of cache re-creates.
      */
     char file[PATH_MAX];
     char util_file[PATH_MAX];
