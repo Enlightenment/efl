@@ -18,6 +18,7 @@ ico_clock.png \
 ico_fileselector.png \
 ico_hoversel.png \
 ico_notepad.png \
+ico_photocam.png \
 ico_progressbar.png \
 ico_radio.png \
 ico_scrolled_entry.png \
