@@ -485,7 +485,7 @@ elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
  *
  * @ingroup Slider
  */
-EAPI int
+EAPI Evas_Coord
 elm_slider_span_size_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;

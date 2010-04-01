@@ -46,7 +46,7 @@ external_slider_state_set(void *data __UNUSED__, Evas_Object *obj, const void *f
    if (p->value_exists)
      elm_slider_value_set(obj, p->value);
    if (p->inverted_exists)
-     elm_slider_inverted_set(obj, p->inverted);;
+     elm_slider_inverted_set(obj, p->inverted);
    if (p->horizontal_exists)
      elm_slider_horizontal_set(obj, p->horizontal);
    if (p->indicator)
@@ -260,17 +260,35 @@ external_slider_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    EINA_LIST_FOREACH(params, l, param)
      {
 	if (!strcmp(param->name, "span"))
-	  mem->span = param->i;
+	  {
+	     mem->span = param->i;
+	     mem->span_exists = EINA_TRUE;
+	  }
 	else if (!strcmp(param->name, "min"))
-	  mem->min = param->d;
+	  {
+	     mem->min = param->d;
+	     mem->min_exists = EINA_TRUE;
+	  }
 	else if (!strcmp(param->name, "max"))
-	  mem->max = param->d;
+	  {
+	     mem->max = param->d;
+	     mem->max_exists = EINA_TRUE;
+	  }
 	else if (!strcmp(param->name, "value"))
-	  mem->value = param->d;
+	  {
+	     mem->value = param->d;
+	     mem->value_exists = EINA_TRUE;
+	  }
 	else if (!strcmp(param->name, "inverted"))
-	  mem->inverted = param->i;
+	  {
+	     mem->inverted = param->i;
+	     mem->inverted_exists = EINA_TRUE;
+	  }
 	else if (!strcmp(param->name, "horizontal"))
-	  mem->horizontal = param->i;
+	  {
+	     mem->horizontal = param->i;
+	     mem->horizontal_exists = EINA_TRUE;
+	  }
 	else if (!strcmp(param->name, "unit format"))
 	  mem->unit = eina_stringshare_add(param->s);
 	else if (!strcmp(param->name, "indicator format"))

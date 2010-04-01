@@ -877,7 +877,7 @@ extern "C" {
    EAPI void         elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon);
    EAPI Evas_Object *elm_slider_icon_get(const Evas_Object *obj);
    EAPI void         elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size);
-   EAPI int          elm_slider_span_size_get(const Evas_Object *obj);
+   EAPI Evas_Coord   elm_slider_span_size_get(const Evas_Object *obj);
    EAPI void         elm_slider_unit_format_set(Evas_Object *obj, const char *format);
    EAPI const char  *elm_slider_unit_format_get(const Evas_Object *obj);
    EAPI void         elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator);
