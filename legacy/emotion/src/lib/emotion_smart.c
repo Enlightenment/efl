@@ -94,6 +94,37 @@ static const char *_backend_priority[] = {
   "vlc"
 };
 
+static const char SIG_FRAME_DECODE[] = "frame_decode";
+static const char SIG_POSITION_UPDATE[] = "position_update";
+static const char SIG_LENGTH_CHANGE[] = "length_change";
+static const char SIG_FRAME_RESIZE[] = "frame_resize";
+static const char SIG_DECODE_STOP[] = "decode_stop";
+static const char SIG_PLAYBACK_FINISHED[] = "playback_finished";
+static const char SIG_AUDIO_LEVEL_CHANGE[] = "audio_level_change";
+static const char SIG_CHANNELS_CHANGE[] = "channels_change";
+static const char SIG_TITLE_CHANGE[] = "title_change";
+static const char SIG_PROGRESS_CHANGE[] = "progress_change";
+static const char SIG_REF_CHANGE[] = "ref_change";
+static const char SIG_BUTTON_NUM_CHANGE[] = "button_num_change";
+static const char SIG_BUTTON_CHANGE[] = "button_change";
+static const Evas_Smart_Cb_Description _smart_callbacks[] = {
+  {SIG_FRAME_DECODE, ""},
+  {SIG_POSITION_UPDATE, ""},
+  {SIG_LENGTH_CHANGE, ""},
+  {SIG_FRAME_RESIZE, ""},
+  {SIG_DECODE_STOP, ""},
+  {SIG_PLAYBACK_FINISHED, ""},
+  {SIG_AUDIO_LEVEL_CHANGE, ""},
+  {SIG_CHANNELS_CHANGE, ""},
+  {SIG_TITLE_CHANGE, ""},
+  {SIG_PROGRESS_CHANGE, ""},
+  {SIG_REF_CHANGE, ""},
+  {SIG_BUTTON_NUM_CHANGE, ""},
+  {SIG_BUTTON_CHANGE, ""},
+  {NULL, NULL}
+};
+
+
 EAPI Eina_Bool
  _emotion_module_register(const char *name, Emotion_Module_Open open, Emotion_Module_Close close)
 {
@@ -905,7 +936,7 @@ _emotion_frame_new(Evas_Object *obj)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
 //   printf("pix get set 1 %p\n", sd->obj);
    evas_object_image_pixels_dirty_set(sd->obj, 1);
-   evas_object_smart_callback_call(obj, "frame_decode", NULL);
+   evas_object_smart_callback_call(obj, SIG_FRAME_DECODE, NULL);
 }
 
 EAPI void
@@ -919,8 +950,8 @@ _emotion_video_pos_update(Evas_Object *obj, double pos, double len)
    if (len != sd->len) nlen = 1;
    sd->pos = pos;
    sd->len = len;
-   if (npos) evas_object_smart_callback_call(obj, "position_update", NULL);
-   if (nlen) evas_object_smart_callback_call(obj, "length_change", NULL);
+   if (npos) evas_object_smart_callback_call(obj, SIG_POSITION_UPDATE, NULL);
+   if (nlen) evas_object_smart_callback_call(obj, SIG_LENGTH_CHANGE, NULL);
 }
 
 EAPI void
@@ -944,7 +975,7 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
 	sd->ratio = ratio;
 	changed = 1;
      }
-   if (changed) evas_object_smart_callback_call(obj, "frame_resize", NULL);
+   if (changed) evas_object_smart_callback_call(obj, SIG_FRAME_RESIZE, NULL);
 }
 
 EAPI void
@@ -956,20 +987,20 @@ _emotion_decode_stop(Evas_Object *obj)
    if (sd->play)
      {
 	sd->play = 0;
-	evas_object_smart_callback_call(obj, "decode_stop", NULL);
+	evas_object_smart_callback_call(obj, SIG_DECODE_STOP, NULL);
      }
 }
 
 EAPI void
 _emotion_playback_finished(Evas_Object *obj)
 {
-   evas_object_smart_callback_call(obj, "playback_finished", NULL);
+   evas_object_smart_callback_call(obj, SIG_PLAYBACK_FINISHED, NULL);
 }
 
 EAPI void
 _emotion_audio_level_change(Evas_Object *obj)
 {
-   evas_object_smart_callback_call(obj, "audio_level_change", NULL);
+   evas_object_smart_callback_call(obj, SIG_AUDIO_LEVEL_CHANGE, NULL);
 }
 
 EAPI void
@@ -978,7 +1009,7 @@ _emotion_channels_change(Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   evas_object_smart_callback_call(obj, "channels_change", NULL);
+   evas_object_smart_callback_call(obj, SIG_CHANNELS_CHANGE, NULL);
 }
 
 EAPI void
@@ -989,7 +1020,7 @@ _emotion_title_set(Evas_Object *obj, char *title)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    free(sd->title);
    sd->title = strdup(title);
-   evas_object_smart_callback_call(obj, "title_change", NULL);
+   evas_object_smart_callback_call(obj, SIG_TITLE_CHANGE, NULL);
 }
 
 EAPI void
@@ -1001,7 +1032,7 @@ _emotion_progress_set(Evas_Object *obj, char *info, double stat)
    free(sd->progress.info);
    sd->progress.info = strdup(info);
    sd->progress.stat = stat;
-   evas_object_smart_callback_call(obj, "progress_change", NULL);
+   evas_object_smart_callback_call(obj, SIG_PROGRESS_CHANGE, NULL);
 }
 
 EAPI void
@@ -1013,7 +1044,7 @@ _emotion_file_ref_set(Evas_Object *obj, const char *file, int num)
    free(sd->ref.file);
    sd->ref.file = strdup(file);
    sd->ref.num = num;
-   evas_object_smart_callback_call(obj, "ref_change", NULL);
+   evas_object_smart_callback_call(obj, SIG_REF_CHANGE, NULL);
 }
 
 EAPI void
@@ -1023,7 +1054,7 @@ _emotion_spu_button_num_set(Evas_Object *obj, int num)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    sd->spu.button_num = num;
-   evas_object_smart_callback_call(obj, "button_num_change", NULL);
+   evas_object_smart_callback_call(obj, SIG_BUTTON_NUM_CHANGE, NULL);
 }
 
 EAPI void
@@ -1033,7 +1064,7 @@ _emotion_spu_button_set(Evas_Object *obj, int button)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    sd->spu.button = button;
-   evas_object_smart_callback_call(obj, "button_change", NULL);
+   evas_object_smart_callback_call(obj, SIG_BUTTON_CHANGE, NULL);
 }
 
 
@@ -1277,6 +1308,7 @@ _smart_init(void)
 	     sc.color_set = _smart_color_set;
 	     sc.clip_set = _smart_clip_set;
 	     sc.clip_unset = _smart_clip_unset;
+	     sc.callbacks = _smart_callbacks;
 	  }
         smart = evas_smart_class_new(&sc);
      }

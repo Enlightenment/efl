@@ -140,6 +140,7 @@ fi
 enable_[]DOWN="no"
 if test "x${have_module}" = "xyes" ; then
    enable_[]DOWN=${enable_module}
+   AC_DEFINE(EMOTION_BUILD_[]UP, 1, [Set to 1 if $1 is built])
 fi
 
 AS_IF([test "x$have_module" = "xyes"], [$3], [$4])

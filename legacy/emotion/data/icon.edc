@@ -1,0 +1,14 @@
+collections {
+   images.image: "e_logo.png" COMP;
+   group { name: "icon";
+      min: 20 10;
+      parts {
+         part { name: "icon"; type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               image.normal: "e_logo.png";
+            }
+         }
+      }
+   }
+}
