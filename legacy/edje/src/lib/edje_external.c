@@ -208,7 +208,7 @@ edje_object_part_external_param_type_get(const Evas_Object *obj, const char *par
 	ERR("no part '%s'", part);
 	return EDJE_EXTERNAL_PARAM_TYPE_MAX;
      }
-   type = evas_object_data_get(obj, "Edje_External_Type");
+   type = evas_object_data_get(rp->swallowed_object, "Edje_External_Type");
    if (!type)
      {
 	ERR("no external type for object %p", obj);
