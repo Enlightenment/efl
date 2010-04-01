@@ -229,7 +229,7 @@ elm_progressbar_add(Evas_Object *parent)
  * @ingroup Progressbar
  */
 EAPI void
-elm_progressbar_pulse_set (Evas_Object *obj, Eina_Bool pulse)
+elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -246,12 +246,30 @@ elm_progressbar_pulse_set (Evas_Object *obj, Eina_Bool pulse)
  * (the cursor pulse right to left and left to right, and loop) if pulse is set to 1.
  *
  * @param obj The progressbar object
- * @param state The pulse flag. 1 == pulse, 0 == normal
+ * @return The pulse flag
+ * (1 == pulse, 0 == normal)
+ *
+ * @ingroup Progressbar
+ */
+EAPI Eina_Bool
+elm_progressbar_pulse_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->pulse;
+}
+
+/**
+ * Stat/Stop de pulse action
+ *
+ * @param obj The progressbar object
+ * @param state The pulse flag. 1 == start pulse, 0 == stop pulse
  *
  * @ingroup Progressbar
  */
 EAPI void
-elm_progressbar_pulse (Evas_Object *obj, Eina_Bool state)
+elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -274,7 +292,7 @@ elm_progressbar_pulse (Evas_Object *obj, Eina_Bool state)
  * @ingroup Progressbar
  */
 EAPI void
-elm_progressbar_value_set (Evas_Object *obj, double val)
+elm_progressbar_value_set(Evas_Object *obj, double val)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -335,6 +353,23 @@ elm_progressbar_label_set(Evas_Object *obj, const char *label)
 }
 
 /**
+ * Get the label of the progressbar
+ *
+ * @param obj The progressbar object
+ * @return The text label string in UTF-8
+ *
+ * @ingroup Progressbar
+ */
+EAPI const char *
+elm_progressbar_label_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->label;
+}
+
+/**
  * Set the icon object of the progressbar object
  *
  * Once the icon object is set, it will become a child of the progressbar object and
@@ -368,6 +403,23 @@ elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 /**
+ * Get the icon object of the progressbar object
+ *
+ * @param obj The progressbar object
+ * @return The icon object
+ *
+ * @ingroup Progressbar
+ */
+EAPI Evas_Object *
+elm_progressbar_icon_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->icon;
+}
+
+/**
  * Set the length of the progression region of the progressbar
  *
  * This sets the minimum width or height (depending on orientation) of the
@@ -394,6 +446,23 @@ elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size)
      evas_object_size_hint_min_set(wd->spacer, 1, (double)wd->size * elm_widget_scale_get(obj) * _elm_config->scale);
    edje_object_part_swallow(wd->progressbar, "elm.swallow.bar", wd->spacer);
    _sizing_eval(obj);
+}
+
+/**
+ * Get the length of the progression region of the progressbar
+ *
+ * @param obj The progressbar object
+ * @return The length of the progressbar area
+ *
+ * @ingroup Progressbar
+ */
+EAPI Evas_Coord
+elm_progressbar_span_size_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+   return wd->size;
 }
 
 /**
@@ -431,6 +500,23 @@ elm_progressbar_unit_format_set(Evas_Object *obj, const char *units)
 }
 
 /**
+ * Get the format string of the unit area
+ *
+ * @param obj The progressbar object
+ * @return The format string for the units display
+ *
+ * @ingroup Progressbar
+ */
+EAPI const char *
+elm_progressbar_unit_format_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->units;
+}
+
+/**
  * Set orientation of the progressbar
  *
  * @param obj The progressbar object
@@ -448,6 +534,24 @@ elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
    if (wd->horizontal == horizontal) return;
    wd->horizontal = horizontal;
    _theme_hook(obj);
+}
+
+/**
+ * Gets orientation of the progressbar
+ *
+ * @param obj The progressbar object
+ * @return The orientation
+ * (0 = vertical, 1 = horizontal)
+ *
+ * @ingroup Progressbar
+ */
+EAPI Eina_Bool
+elm_progressbar_horizontal_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->horizontal;
 }
 
 /**
@@ -479,4 +583,22 @@ elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted)
    edje_object_message_signal_process(wd->progressbar);
    _val_set(obj);
    _units_set(obj);
+}
+
+/**
+ * Gets if the progressbar will displayed inverted
+ *
+ * @param obj The progressbar object
+ * @return The inverted flag
+ * (1 == inverted, 0 == normal)
+ *
+ * @ingroup Progressbar
+ */
+EAPI Eina_Bool
+elm_progressbar_inverted_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->inverted;
 }
