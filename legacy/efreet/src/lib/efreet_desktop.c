@@ -1930,7 +1930,11 @@ efreet_desktop_command_file_uri_process(const char *uri)
     {
         char *tmp, *p;
         char hostname[PATH_MAX];
-        tmp = strdup(uri + 7);
+        size_t len2;
+
+        len2 = strlen(uri + 7) + 1;
+        tmp = alloca(len2);
+        memcpy(tmp, uri + 7, len2);
         p = strchr(tmp, '/');
         if (p)
         {
@@ -1946,7 +1950,6 @@ efreet_desktop_command_file_uri_process(const char *uri)
                     path = uri + strlen("file://") + strlen(hostname);
             }
         }
-        free(tmp);
     }
 
     /* uri:///foo/bar => absolute path /foo/bar on local machine */
