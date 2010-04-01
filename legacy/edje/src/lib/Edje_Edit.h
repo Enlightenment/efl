@@ -1535,6 +1535,16 @@ edje_edit_state_external_param_int_get( ///@return True if succesful, False if n
    int *value
 );
 
+/**Get external parameter of type BOOL*/
+EAPI Eina_Bool
+edje_edit_state_external_param_bool_get( ///@return True if succesful, False if not found or is of different type
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *param,      ///< The name of the parameter
+   Eina_Bool *value
+);
+
 /**Get external parameter of type DOUBLE*/
 EAPI Eina_Bool
 edje_edit_state_external_param_double_get( ///@return True if succesful, False if not found or is of different type
@@ -1548,6 +1558,16 @@ edje_edit_state_external_param_double_get( ///@return True if succesful, False i
 /**Get external parameter of type STRING*/
 EAPI Eina_Bool
 edje_edit_state_external_param_string_get( ///@return True if succesful, False if not found or is of different type
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *param,      ///< The name of the parameter
+   const char **value
+);
+
+/**Get external parameter of type CHOICE*/
+EAPI Eina_Bool
+edje_edit_state_external_param_choice_get( ///@return True if succesful, False if not found or is of different type
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
    const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
@@ -1576,6 +1596,16 @@ edje_edit_state_external_param_int_set( ///@return True if it was set
    int value
 );
 
+/**Set external parameter of type BOOL*/
+EAPI Eina_Bool
+edje_edit_state_external_param_bool_set( ///@return True if it was set
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *param,      ///< The name of the parameter
+   Eina_Bool value
+);
+
 /**Set external parameter of type DOUBLE*/
 EAPI Eina_Bool
 edje_edit_state_external_param_double_set( ///@return True if it was set
@@ -1589,6 +1619,16 @@ edje_edit_state_external_param_double_set( ///@return True if it was set
 /**Set external parameter of type STRING*/
 EAPI Eina_Bool
 edje_edit_state_external_param_string_set( ///@return True if it was set
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *param,      ///< The name of the parameter
+   const char *value
+);
+
+/**Set external parameter of type CHOICE*/
+EAPI Eina_Bool
+edje_edit_state_external_param_choice_set( ///@return True if it was set
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
    const char *state,      ///< The name of the 'part state' (ex. "default 0.00")

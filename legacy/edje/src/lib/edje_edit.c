@@ -2655,10 +2655,12 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name)
 	       {
 		case EDJE_EXTERNAL_PARAM_TYPE_INT:
 		case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
-		   p->i = pi->info.i.def;
+		   if (pi->info.i.def != EDJE_EXTERNAL_INT_UNSET)
+		     p->i = pi->info.i.def;
 		   break;
 		case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
-		   p->d = pi->info.d.def;
+		   if (pi->info.d.def != EDJE_EXTERNAL_DOUBLE_UNSET)
+		     p->d = pi->info.d.def;
 		   break;
 		case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
 		   if (pi->info.c.def)
@@ -3660,6 +3662,26 @@ edje_edit_state_external_param_int_get(Evas_Object *obj, const char *part, const
 }
 
 EAPI Eina_Bool
+edje_edit_state_external_param_bool_get(Evas_Object *obj, const char *part, const char *state, const char *param, Eina_Bool *value)
+{
+   Eina_List *l;
+   Edje_External_Param *p;
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   EINA_LIST_FOREACH(pd->external_params, l, p)
+      if (!strcmp(p->name, param))
+	{
+	   if (p->type != EDJE_EXTERNAL_PARAM_TYPE_INT)
+	     return EINA_FALSE;
+	   if (value)
+	     *value = p->i;
+	   return EINA_TRUE;
+	}
+
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
 edje_edit_state_external_param_double_get(Evas_Object *obj, const char *part, const char *state, const char *param, double *value)
 {
    Eina_List *l;
@@ -3800,6 +3822,12 @@ EAPI Eina_Bool
 edje_edit_state_external_param_int_set(Evas_Object *obj, const char *part, const char *state, const char *param, int value)
 {
    return edje_edit_state_external_param_set(obj, part, state, param, EDJE_EXTERNAL_PARAM_TYPE_INT, value);
+}
+
+EAPI Eina_Bool
+edje_edit_state_external_param_bool_set(Evas_Object *obj, const char *part, const char *state, const char *param, Eina_Bool value)
+{
+   return edje_edit_state_external_param_set(obj, part, state, param, EDJE_EXTERNAL_PARAM_TYPE_BOOL, (int)value);
 }
 
 EAPI Eina_Bool
