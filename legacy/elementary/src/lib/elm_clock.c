@@ -438,7 +438,7 @@ elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec)
 /**
  * Get clock time
  *
- * @param obj The clock object 
+ * @param obj The clock object
  * @param hrs Pointer to the variable to get the hour of this clock
  * object
  * @param min Pointer to the variable to get the minute of this clock
@@ -483,6 +483,25 @@ elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit)
 }
 
 /**
+ * Get if the clock settings can be edited
+ *
+ * @param obj The clock object
+ * @return Bool option for edited (1 = yes, 0 = no)
+ *
+ * This function gets if the clock settings can be edited or not.
+ *
+ * @ingroup Clock
+ */
+EAPI Eina_Bool
+elm_clock_edit_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->edit;
+}
+
+/**
  * Set if the clock show hours in military or am/pm mode
  *
  * @param obj The clock object
@@ -507,6 +526,29 @@ elm_clock_show_am_pm_set(Evas_Object *obj, Eina_Bool am_pm)
 }
 
 /**
+ * Get if the clock show hours in military or am/pm mode
+ *
+ * @param obj The clock object
+ * @return Bool option for the hours mode
+ * (1 = am/pm, 0 = military)
+ *
+ * This function gets if the clock show hours in military or am/pm
+ * mode. Some countries like Brazil the military mode (00-24h-format)
+ * is used in opposition to the USA where the am/pm mode is more
+ * common used.
+ *
+ * @ingroup Clock
+ */
+EAPI Eina_Bool
+elm_clock_show_am_pm_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->am_pm;
+}
+
+/**
  * Set if the clock show hour with the seconds
  *
  * @param obj The clock object
@@ -526,4 +568,25 @@ elm_clock_show_seconds_set(Evas_Object *obj, Eina_Bool seconds)
    if (!wd) return;
    wd->seconds = seconds;
    _time_update(obj);
+}
+
+/**
+ * Get if the clock show hour with the seconds
+ *
+ * @param obj The clock object
+ * @return Bool option for the show seconds
+ * (1 = show seconds, 0 = not show seconds)
+ *
+ * This function gets if the clock show or not show the elapsed
+ * seconds.
+ *
+ * @ingroup Clock
+ */
+EAPI Eina_Bool
+elm_clock_show_seconds_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->seconds;
 }
