@@ -993,10 +993,13 @@ efreet_desktop_string_list_parse(const char *string)
     Eina_List *list = NULL;
     char *tmp;
     char *s, *p;
+    size_t len;
 
     if (!string) return NULL;
 
-    tmp = strdup(string);
+    len = strlen(string) + 1;
+    tmp = alloca(len);
+    memcpy(tmp, string, len);
     s = tmp;
 
     while ((p = strchr(s, ';')))
@@ -1015,8 +1018,6 @@ efreet_desktop_string_list_parse(const char *string)
 #endif
         list = eina_list_append(list, (void *)eina_stringshare_add(s));
     }
-
-    free(tmp);
 
     return list;
 }
