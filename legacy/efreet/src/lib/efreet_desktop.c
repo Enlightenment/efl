@@ -2250,7 +2250,7 @@ efreet_desktop_cache_update_free(void *data, void *ev)
         EINA_ITERATOR_FOREACH(it, tuple)
           {
              printf("Efreet: %d:%s still in cache on cache close!\n", 
-                    ((Efreet_Desktop *)tuple->data)->ref, tuple->key);
+                    ((Efreet_Desktop *)tuple->data)->ref, (char *)tuple->key);
              dangling++;
           }
         eina_iterator_free(it);
