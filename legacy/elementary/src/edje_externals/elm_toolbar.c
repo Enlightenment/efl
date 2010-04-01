@@ -2,7 +2,6 @@
 
 typedef struct _Elm_Params_Toolbar
 {
-   Evas_Object *icon;
    int icon_size;
    Eina_Bool icon_size_exists:1;
    double align;
@@ -108,7 +107,6 @@ static void
 external_toolbar_params_free(void *params)
 {
    Elm_Params_Toolbar *mem = params;
-   if (mem->icon) evas_object_del(mem->icon);
    free(mem);
 }
 
