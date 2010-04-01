@@ -107,7 +107,9 @@ external_toolbar_params_parse(void *data, Evas_Object *obj, const Eina_List *par
 static void
 external_toolbar_params_free(void *params)
 {
-   return;
+   Elm_Params_Entry *mem = params;
+
+   free(mem);
 }
 
 static Edje_External_Param_Info external_toolbar_params[] = {
