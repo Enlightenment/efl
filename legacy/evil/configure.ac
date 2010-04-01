@@ -1,12 +1,25 @@
 
-AC_INIT([evil], [0.0.1], [enlightenment-devel@lists.sourceforge.net])
+### Version
+
+m4_define([evil_version_major], [0])
+m4_define([evil_version_minor], [0])
+m4_define([evil_version_micro], [1])
+
+m4_define([evil_version],
+   [evil_version_major.evil_version_minor.evil_version_micro])
+
+m4_define([lt_rev], m4_eval(evil_version_major + evil_version_minor))
+m4_define([lt_cur], evil_version_micro)
+m4_define([lt_age], evil_version_minor)
+
+AC_INIT([evil], [evil_version], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 AC_CANONICAL_HOST
 
-dnl If the host is not Windows, or is ceGCC, we exit
+### If the host is not Windows, or is ceGCC, we exit
 case "$host_os" in
   cegcc*)
     AC_MSG_ERROR([ceGCC compiler is not supported anymore. Exiting...])
@@ -21,15 +34,9 @@ esac
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-AC_LIBTOOL_WIN32_DLL
-define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
-AC_PROG_LIBTOOL
+LT_INIT([win32-dll])
 
-VMAJ=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $1);}'`
-VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
-VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
-SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
-version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
+version_info="lt_rev:lt_cur:lt_age"
 AC_SUBST(version_info)
 
 
@@ -76,7 +83,7 @@ AC_C_CONST
 AC_C___ATTRIBUTE__
 
 win32_cppflags="-DEFL_EVIL_BUILD"
-win32_cflags="-Wall -W -Wshadow"
+win32_cflags="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -pedantic"
 win32_cxxflags=""
 have_wince="no"
 case "$host_os" in
@@ -123,7 +130,7 @@ echo
 echo
 echo
 echo "------------------------------------------------------------------------"
-echo "$PACKAGE_NAME $PACKAGE_VERSION $PACKAGE_TARNAME"
+echo "$PACKAGE_NAME $PACKAGE_VERSION"
 echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"

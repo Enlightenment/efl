@@ -1,3 +1,26 @@
+2010-04-01  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	move version management at the beginning
+
+	* src/bin/evil_suite.c:
+	* src/bin/evil_test_dlfcn.c:
+	* src/bin/evil_test_environment.c:
+	* src/bin/evil_test_gettimeofday.c:
+	* src/bin/evil_test_link.c:
+	* src/bin/evil_test_mkstemp.c:
+	* src/bin/evil_test_pipe.c:
+	* src/bin/evil_test_realpath.c:
+	* src/lib/Evil.h:
+	* src/lib/Makefile.am:
+	* src/lib/evil_errno.c:
+	* src/lib/evil_main.c:
+	* src/lib/evil_main.h:
+	* src/lib/evil_unistd.c:
+	* src/lib/evil_unistd.h:
+	* src/lib/evil_util.c:
+	fix warnings
+
 2010-03-26  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_string.c:

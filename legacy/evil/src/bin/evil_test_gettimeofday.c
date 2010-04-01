@@ -8,6 +8,7 @@
 #include <Evil.h>
 
 #include "evil_suite.h"
+#include "evil_test_gettimeofday.h"
 
 static int
 test_time_test_gettimeofday(void)

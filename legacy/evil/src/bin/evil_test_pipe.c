@@ -12,6 +12,7 @@
 #include <Evil.h>
 
 #include "evil_suite.h"
+#include "evil_test_pipe.h"
 
 
 #define FDREAD  0
@@ -38,7 +39,8 @@ thread (void *param)
    return 0;
 }
 
-int test_pipe_test(void)
+static int
+test_pipe_test(void)
 {
    int            sockets[2];
    struct timeval t;

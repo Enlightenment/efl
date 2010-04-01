@@ -148,13 +148,15 @@ typedef unsigned long  gid_t;
 # define _S_IRUSR _S_IREAD
 
 #  define open(path, flag, ...) _open((path), _O_BINARY | (flag), ##__VA_ARGS__)
-//#  define close(fd) _close(fd)
-//#  define read(fd,buffer,count) _read((fd),(buffer),(count))
-//#  define write(fd,buffer,count) _write((fd),(buffer),(count))
-//#  define unlink(filename) _unlink((filename))
+  /*
+#  define close(fd) _close(fd)
+#  define read(fd,buffer,count) _read((fd),(buffer),(count))
+#  define write(fd,buffer,count) _write((fd),(buffer),(count))
+#  define unlink(filename) _unlink((filename))
 #  define mkdir(p,m) _mkdir(p)
-//#  define lstat(f,s) _stat((f),(s))
-//#  define hypot(x,y) _hypot((x),(y))
+#  define lstat(f,s) _stat((f),(s))
+#  define hypot(x,y) _hypot((x),(y))
+  */
 
 # endif
 #endif

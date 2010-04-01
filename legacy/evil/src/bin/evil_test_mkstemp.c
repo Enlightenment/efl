@@ -7,11 +7,16 @@
 #include <Evil.h>
 
 #include "evil_suite.h"
+#include "evil_test_mkstemp.h"
 
-int test_mkstemp_test(void)
+
+static int
+test_mkstemp_test(void)
 {
    char  _template[PATH_MAX];
+#ifdef _WIN32_WCE
    char  cwd[PATH_MAX];
+#endif
    int   fd;
 
 #ifdef _WIN32_WCE

@@ -27,7 +27,6 @@ endif
 
 libevil_la_SOURCES = \
 evil_dirent.c \
-evil_errno.c \
 evil_fcntl.c \
 evil_fnmatch.c \
 evil_fnmatch_list_of_states.c \
@@ -45,7 +44,7 @@ evil_uuid.c
 
 if EVIL_HAVE_WINCE
 
-libevil_la_SOURCES += evil_link_ce.c
+libevil_la_SOURCES += evil_errno.c evil_link_ce.c
 
 else
 

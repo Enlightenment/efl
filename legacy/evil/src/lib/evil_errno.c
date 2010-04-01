@@ -1,10 +1,9 @@
-#ifdef __MINGW32CE__
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 #include "Evil.h"
 #include "errno.h"
 
 
 int errno = 0;
-
-
-#endif /* __MINGW32CE__ */

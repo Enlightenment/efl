@@ -4,6 +4,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "Evil.h"
+#include "evil_private.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -67,7 +68,7 @@ evil_format_message(long err)
    if (!FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
                       NULL,
                       err,
-                      0, // Default language
+                      0, /* Default language */
                       (LPTSTR)&msg,
                       0,
                       NULL))

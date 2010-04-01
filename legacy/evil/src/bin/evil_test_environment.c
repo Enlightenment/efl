@@ -7,6 +7,8 @@
 #include <Evil.h>
 
 #include "evil_suite.h"
+#include "evil_test_environment.h"
+
 
 static int
 test_env_test_setenv_NULL(void)

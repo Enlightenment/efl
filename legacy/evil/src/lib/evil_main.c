@@ -17,7 +17,7 @@ extern LONGLONG _evil_time_count;
 extern long     _evil_time_second;
 
 int
-evil_init()
+evil_init(void)
 {
    SYSTEMTIME    st;
    LARGE_INTEGER freq;
@@ -61,7 +61,7 @@ evil_init()
 }
 
 int
-evil_shutdown()
+evil_shutdown(void)
 {
    if (--_evil_init_count != 0)
      return _evil_init_count;

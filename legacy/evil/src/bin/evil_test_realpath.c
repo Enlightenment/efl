@@ -7,6 +7,8 @@
 #include <Evil.h>
 
 #include "evil_suite.h"
+#include "evil_test_realpath.h"
+
 
 int test_realpath_test(void)
 {

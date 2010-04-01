@@ -56,7 +56,7 @@ _evil_systemtime_to_time(SYSTEMTIME st)
  */
 
 double
-evil_time_get()
+evil_time_get(void)
 {
    LARGE_INTEGER count;
 

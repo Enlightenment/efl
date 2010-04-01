@@ -33,7 +33,7 @@
  *
  * Supported OS: Windows XP, Windows CE.
  */
-EAPI double evil_time_get();
+EAPI double evil_time_get(void);
 
 /**
  * @brief Retrieve the time since the Evil library has been

@@ -8,12 +8,15 @@
 #include <Evil.h>
 
 #include "evil_suite.h"
+#include "evil_test_dlfcn.h"
 
-typedef int (*_evil_init)();
-typedef int (*_evil_shutdwon)();
+
+typedef int (*_evil_init)(void);
+typedef int (*_evil_shutdwon)(void);
+
 
 static int
-test_dlfcn_test_dlopen()
+test_dlfcn_test_dlopen(void)
 {
    void *handle;
 
@@ -28,7 +31,7 @@ test_dlfcn_test_dlopen()
 }
 
 static int
-test_dlfcn_test_dlsym()
+test_dlfcn_test_dlsym(void)
 {
    void          *handle;
    _evil_init     sym_init;

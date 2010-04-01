@@ -7,6 +7,7 @@
 #include <Evil.h>
 
 #include "evil_suite.h"
+#include "evil_test_link.h"
 
 static int
 test_link_test_file_create(const char *name, const char *data)

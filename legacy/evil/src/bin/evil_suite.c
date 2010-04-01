@@ -175,7 +175,7 @@ suite_show(suite *s)
 }
 
 int
-main()
+main(void)
 {
    test tests[] = {
      { "dlfcn       ",  test_dlfcn },
