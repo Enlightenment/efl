@@ -1168,8 +1168,10 @@ extern "C" {
      {
 	ELM_MAP_ZOOM_MODE_MANUAL,
 	ELM_MAP_ZOOM_MODE_AUTO_FIT,
-	ELM_MAP_ZOOM_MODE_AUTO_FILL
+	ELM_MAP_ZOOM_MODE_AUTO_FILL,
+	ELM_MAP_ZOOM_MODE_LAST
      } Elm_Map_Zoom_Mode;
+
    typedef enum _Elm_Map_Sources
      {
 	ELM_MAP_SOURCE_MAPNIK,
@@ -1182,8 +1184,10 @@ extern "C" {
 	ELM_MAP_SOURCE_CUSTOM_4,
 	ELM_MAP_SOURCE_CUSTOM_5,
 	ELM_MAP_SOURCE_CUSTOM_6,
-	ELM_MAP_SOURCE_CUSTOM_7
+	ELM_MAP_SOURCE_CUSTOM_7,
+	ELM_MAP_SOURCE_LAST
      } Elm_Map_Sources;
+
    typedef struct _Elm_Map_Marker Elm_Map_Marker;
    typedef struct _Elm_Map_Marker_Class Elm_Map_Marker_Class;
    typedef struct _Elm_Map_Group_Class Elm_Map_Group_Class;

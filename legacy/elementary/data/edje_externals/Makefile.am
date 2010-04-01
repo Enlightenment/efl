@@ -17,6 +17,7 @@ ico_check.png \
 ico_clock.png \
 ico_fileselector.png \
 ico_hoversel.png \
+ico_map.png \
 ico_notepad.png \
 ico_photocam.png \
 ico_progressbar.png \

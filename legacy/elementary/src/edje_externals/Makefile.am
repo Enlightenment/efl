@@ -34,6 +34,7 @@ elm_check.c \
 elm_clock.c \
 elm_fileselector.c \
 elm_hoversel.c \
+elm_map.c \
 elm_notepad.c \
 elm_photocam.c \
 elm_progressbar.c \
