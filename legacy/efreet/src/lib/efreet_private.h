@@ -116,60 +116,6 @@ extern int _efreet_log_dom_global;
 #undef WRN
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
-/**
- * @internal
- * The different types of commands in an Exec entry
- */
-typedef enum Efreet_Desktop_Command_Flag
-{
-    EFREET_DESKTOP_EXEC_FLAG_FULLPATH = 0x0001,
-    EFREET_DESKTOP_EXEC_FLAG_URI      = 0x0002
-} Efreet_Desktop_Command_Flag;
-
-/**
- * @internal
- * Efreet_Desktop_Command
- */
-typedef struct Efreet_Desktop_Command Efreet_Desktop_Command;
-
-/**
- * @internal
- * Holds information on a desktop Exec command entry
- */
-struct Efreet_Desktop_Command
-{
-  Efreet_Desktop *desktop;
-  int num_pending;
-
-  Efreet_Desktop_Command_Flag flags;
-
-  Efreet_Desktop_Command_Cb cb_command;
-  Efreet_Desktop_Progress_Cb cb_progress;
-  void *data;
-
-  Eina_List *files; /**< list of Efreet_Desktop_Command_File */
-};
-
-/**
- * @internal
- * Efreet_Desktop_Command_File
- */
-typedef struct Efreet_Desktop_Command_File Efreet_Desktop_Command_File;
-
-/**
- * @internal
- * Stores information on a file passed to the desktop Exec command
- */
-struct Efreet_Desktop_Command_File
-{
-  Efreet_Desktop_Command *command;
-  char *dir;
-  char *file;
-  char *fullpath;
-  char *uri;
-
-  int pending;
-};
 
 int efreet_base_init(void);
 void efreet_base_shutdown(void);
