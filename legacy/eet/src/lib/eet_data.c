@@ -1214,7 +1214,7 @@ _eet_str_direct_alloc(const char *str)
 }
 
 static void
-_eet_str_direct_free(const char *str)
+_eet_str_direct_free(__UNUSED__ const char *str)
 {
 }
 
@@ -3237,7 +3237,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
    return eet_data_descriptor_decode_cipher(edd, data_in, NULL, size_in);
 }
 
-EAPI void *
+EAPI Eet_Node *
 eet_data_node_decode_cipher(const void *data_in, const char *cipher_key, int size_in)
 {
    void *deciphered = (void*) data_in;

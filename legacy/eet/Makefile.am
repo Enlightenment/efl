@@ -85,11 +85,11 @@ clean-local:
 	@rm -rf coverage
 else
 lcov-reset:
-	@echo "reconfigure with --enable-gcov"
+	@echo "reconfigure with --enable-coverage"
 
 lcov-report:
-	@echo "reconfigure with --enable-gcov"
+	@echo "reconfigure with --enable-coverage"
 
 coverage:
-	@echo "reconfigure with --enable-tests --enable-gcov"
+	@echo "reconfigure with --enable-tests --enable-coverage"
 endif

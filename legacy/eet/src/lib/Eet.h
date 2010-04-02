@@ -2369,7 +2369,7 @@ extern "C" {
    EAPI void *eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd, const void *data_in, const char *cipher_key, int size_in);
 
    /**
-    * Encode a dsata struct to memory and return that encoded data
+    * Encode a data struct to memory and return that encoded data
     * using a cipher.
     * @param edd The data  descriptor to use when encoding.
     * @param data_in The pointer to the struct to encode into data.
@@ -2400,7 +2400,6 @@ extern "C" {
     * @ingroup Eet_Data_Cipher_Group
     */
    EAPI void *eet_data_descriptor_encode_cipher(Eet_Data_Descriptor *edd, const void *data_in, const char *cipher_key, int *size_ret);
-
 
   /**
    * @defgroup Eet_Node_Group Low-level Serialization Structures.
@@ -2604,7 +2603,7 @@ extern "C" {
    * TODO FIX ME
    * @ingroup Eet_Node_Group
    */
-   EAPI void *eet_data_node_decode_cipher(const void *data_in, const char *cipher_key, int size_in);
+   EAPI Eet_Node *eet_data_node_decode_cipher(const void *data_in, const char *cipher_key, int size_in);
 
   /**
    * TODO FIX ME
