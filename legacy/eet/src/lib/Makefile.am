@@ -27,7 +27,8 @@ eet_image.c \
 eet_cipher.c \
 eet_dictionary.c \
 eet_node.c \
-eet_utils.c
+eet_utils.c \
+eet_connection.c
 
 if EET_AMALGAMATION
 nodist_libeet_la_SOURCES = eet_amalgamation.c

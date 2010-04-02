@@ -2643,6 +2643,117 @@ extern "C" {
 
    EAPI void *eet_node_walk(void *parent, const char *name, Eet_Node *root, Eet_Node_Walk *cb, void *user_data);
 
+  /*******/
+
+  /**
+   * @defgroup Eet_Connection_Group Helper function to use eet over a network link
+   *
+   * Function that reconstruct and prepare packet of @ref Eet_Data_Group to be send.
+   *
+   */
+
+  /**
+   * @typedef Eet_Connection
+   * Opaque handle to track paquet for a specific connection.
+   *
+   * @ingroup Eet_Connection_Group
+   */
+   typedef struct _Eet_Connection Eet_Connection;
+
+  /**
+   * @typedef Eet_Read_Cb
+   * Called back when an @ref Eet_Data_Group has been received completly and could be used.
+   *
+   * @ingroup Eet_Connection_Group
+   */
+   typedef Eina_Bool Eet_Read_Cb(const void *eet_data, size_t size, void *user_data);
+
+  /**
+   * @typedef Eet_Write_Cb
+   * Called back when a packet containing @ref Eet_Data_Group data is ready to be send.
+   *
+   * @ingroup Eet_Connection_Group
+   */
+   typedef Eina_Bool Eet_Write_Cb(const void *data, size_t size, void *user_data);
+
+  /**
+   * Instanciate a new connection to track.
+   * @oaram eet_read_cb Function to call when one Eet_Data packet has been fully assemble.
+   * @param eet_write_cb Function to call when one Eet_Data packet is ready to be send over the wire.
+   * @param user_data Pointer provided to both functions to be used as a context handler.
+   * @return NULL on failure, or a valid Eet_Connection handler.
+   *
+   * For every connection to track you will need a separate Eet_Connection provider.
+   *
+   * @since 1.2.4
+   * @ingroup Eet_Connection_Group
+   */
+   Eet_Connection *eet_connection_new(Eet_Read_Cb *eet_read_cb, Eet_Write_Cb *eet_write_cb, const void *user_data);
+
+  /**
+   * Process a raw packet received over the link
+   * @oaram conn Connection handler to track.
+   * @param data Raw data packet.
+   * @param size The size of that packet.
+   * @return 0 on complete success, any other value indicate where in the stream it got wrong (It could be before that packet).
+   *
+   * Every time you receive a packet related to your connection, you should pass
+   * it to that function so that it could process and assemble packet has you
+   * receive it. It will automatically call Eet_Read_Cb when one is fully received.
+   *
+   * @since 1.2.4
+   * @ingroup Eet_Connection_Group
+   */
+   int eet_connection_received(Eet_Connection *conn, const void *data, size_t size);
+
+  /**
+   * Convert a complex structure and prepare it to be send.
+   * @oaram conn Connection handler to track.
+   * @param edd The data descriptor to use when encoding.
+   * @param data_in The pointer to the struct to encode into data.
+   * @param cipher_key The key to use as cipher.
+   * @return EINA_TRUE if the data where correctly send, EINA_FALSE if they don't.
+   *
+   * This function serialize data_in with edd, assemble the packet and call
+   * Eet_Write_Cb when ready. The data passed Eet_Write_Cb are temporary allocated
+   * and will vanish just after the return of the callback.
+   *
+   * @see eet_data_descriptor_encode_cipher
+   *
+   * @since 1.2.4
+   * @ingroup Eet_Connection_Group
+   */
+   Eina_Bool eet_connection_send(Eet_Connection *conn, Eet_Data_Descriptor *edd, const void *data_in, const char *cipher_key);
+
+  /**
+   * Convert a Eet_Node tree and prepare it to be send.
+   * @oaram conn Connection handler to track.
+   * @param node The data tree to use when encoding.
+   * @param cipher_key The key to use as cipher.
+   * @return EINA_TRUE if the data where correctly send, EINA_FALSE if they don't.
+   *
+   * This function serialize node, assemble the packet and call
+   * Eet_Write_Cb when ready. The data passed Eet_Write_Cb are temporary allocated
+   * and will vanish just after the return of the callback.
+   *
+   * @see eet_data_node_encode_cipher
+   *
+   * @since 1.2.4
+   * @ingroup Eet_Connection_Group
+   */
+   Eina_Bool eet_connection_node_send(Eet_Connection *conn, Eet_Node *node, const char *cipher_key);
+
+  /**
+   * Close a connection and lost its track.
+   * @oaram conn Connection handler to close.
+   * @param on_going Signal if a partial packet wasn't completed.
+   * @return the user_data passed to both callback.
+   *
+   * @since 1.2.4
+   * @ingroup Eet_Connection_Group
+   */
+   void *eet_connection_close(Eet_Connection *conn, Eina_Bool *on_going);
+
 /***************************************************************************/
 
 #ifdef __cplusplus

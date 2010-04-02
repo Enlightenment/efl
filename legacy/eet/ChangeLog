@@ -341,3 +341,8 @@
 2010-03-15  Adam Simpkins / Cedric BAIL
 
 	* Fix clearcache race condition.
+
+2010-04-02  Cedric BAIL
+
+	* Fix eet_data_node_read_cipher return type.
+	* Add Eet_Connection.
