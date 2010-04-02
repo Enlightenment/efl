@@ -28,8 +28,7 @@ void *alloca(size_t);
 Eina_Bool
 _edje_lua_script_only(Edje * ed)
 {
-   if ((ed->collection) && (ed->collection->L) &&
-       (ed->collection->lua_script_only))
+   if ((ed->collection) && (ed->collection->lua_script_only))
       return EINA_TRUE;
    return EINA_FALSE;
 }
@@ -37,11 +36,11 @@ _edje_lua_script_only(Edje * ed)
 void
 _edje_lua_script_only_init(Edje * ed)
 {
-   if (ed->collection && ed->collection->L)
+   if (ed->collection)
      {
-	 ed->L = _edje_lua_new_thread(ed->collection->L); // freed in _edje_lua_script_only_shutdown
-	 _edje_lua_new_reg(ed->collection->L, -1, ed->L); // freed in _edje_lua_script_only_shutdown
-	 lua_pop(ed->collection->L, 1); /* thread */
+	 ed->L = _edje_lua_new_thread(ed, _edje_lua_state_get()); // freed in _edje_lua_script_only_shutdown
+	 _edje_lua_new_reg(ed->L, -1, ed->L); // freed in _edje_lua_script_only_shutdown
+	 lua_pop(ed->L, 1); /* thread */
 
 	 lua_State *L = ed->L;
 	 _edje_lua_script_fn_new(ed);
@@ -67,7 +66,7 @@ _edje_lua_script_only_init(Edje * ed)
 void
 _edje_lua_script_only_shutdown(Edje * ed)
 {
-   if (ed->collection && ed->collection->L && ed->L)
+   if (ed->collection && ed->L)
      {
 	lua_State *L = ed->L;
 	lua_getglobal(L, "shutdown");
@@ -90,7 +89,7 @@ _edje_lua_script_only_shutdown(Edje * ed)
 void
 _edje_lua_script_only_show(Edje * ed)
 {
-   if (ed->collection && ed->collection->L && ed->L)
+   if (ed->collection && ed->L)
      {
 	lua_State *L = ed->L;
 	lua_getglobal(L, "show");
@@ -113,7 +112,7 @@ _edje_lua_script_only_show(Edje * ed)
 void
 _edje_lua_script_only_hide(Edje * ed)
 {
-   if (ed->collection && ed->collection->L && ed->L)
+   if (ed->collection && ed->L)
      {
 	lua_State *L = ed->L;
 	lua_getglobal(L, "hide");
@@ -136,7 +135,7 @@ _edje_lua_script_only_hide(Edje * ed)
 void
 _edje_lua_script_only_move(Edje * ed)
 {
-   if (ed->collection && ed->collection->L && ed->L)
+   if (ed->collection && ed->L)
      {
 	lua_State *L = ed->L;
 	lua_getglobal(L, "move");
@@ -161,7 +160,7 @@ _edje_lua_script_only_move(Edje * ed)
 void
 _edje_lua_script_only_resize(Edje * ed)
 {
-   if (ed->collection && ed->collection->L && ed->L)
+   if (ed->collection && ed->L)
      {
 	lua_State *L = ed->L;
 	lua_getglobal(L, "resize");
@@ -186,7 +185,7 @@ _edje_lua_script_only_resize(Edje * ed)
 void
 _edje_lua_script_only_message(Edje * ed, Edje_Message * em)
 {
-   if (ed->collection && ed->collection->L && ed->L)
+   if (ed->collection && ed->L)
      {
 	lua_State *L = ed->L;
 	lua_getglobal(L, "message");

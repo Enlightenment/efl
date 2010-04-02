@@ -313,7 +313,7 @@ struct _Edje_File
    Eina_Hash                      *data_cache;
 
    Eet_File                       *ef;
-
+   
    unsigned int                    free_strings : 1;
    unsigned int                    dangling : 1;
 };
@@ -533,7 +533,6 @@ struct _Edje_Part_Collection
    unsigned char    script_only;
 
    unsigned char	lua_script_only;
-   lua_State		*L;
 };
 
 struct _Edje_Part
@@ -844,7 +843,9 @@ struct _Edje
    unsigned int          all_part_change : 1;
 #endif
    unsigned int          have_mapped_part : 1;
-   lua_State *L;
+
+   lua_State            *L;
+   int                   lua_ref;
 };
 
 struct _Edje_Calc_Params
@@ -1150,6 +1151,9 @@ struct _Edje_Patterns
 
    Edje_States    *states;
 
+   int             ref;
+   Eina_Bool       delete_me : 1;
+   
    size_t          patterns_size;
    size_t          max_length;
    size_t          finals[];
@@ -1170,8 +1174,8 @@ Eina_Bool        edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
 					  Eina_List              *programs,
 					  Eina_Bool (*func)(Edje_Program *pr, void *data),
 					  void                   *data);
-int              edje_match_callback_exec(const Edje_Patterns    *ppat_signal,
-					  const Edje_Patterns    *ppat_source,
+int              edje_match_callback_exec(Edje_Patterns          *ppat_signal,
+					  Edje_Patterns          *ppat_source,
 					  const char             *signal,
 					  const char             *source,
 					  Eina_List              *callbacks,
@@ -1479,8 +1483,8 @@ extern jmp_buf _edje_lua_panic_jmp;
 #define _edje_lua_panic_here() setjmp(_edje_lua_panic_jmp)
 
 lua_State *_edje_lua_state_get();
-lua_State *_edje_lua_new_thread(lua_State *L);
-void _edje_lua_free_thread(lua_State *L);
+lua_State *_edje_lua_new_thread(Edje *ed, lua_State *L);
+void _edje_lua_free_thread(Edje *ed, lua_State *L);
 void _edje_lua_new_reg(lua_State *L, int index, void *ptr);
 void _edje_lua_get_reg(lua_State *L, void *ptr);
 void _edje_lua_free_reg(lua_State *L, void *ptr);

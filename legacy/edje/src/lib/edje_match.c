@@ -266,6 +266,8 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
                 * sizeof(*r->patterns));                        \
      if (!r) return NULL;                                       \
                                                                 \
+     r->ref = 1;						\
+     r->delete_me = 0;						\
      r->patterns_size = eina_list_count(lst);                   \
      r->max_length = 0;                                         \
      r->patterns = (const char **) r->finals + r->patterns_size + 1;    \
@@ -370,7 +372,9 @@ edje_match_programs_exec_check_finals(const size_t      *signal_finals,
 }
 
 static int
-edje_match_callback_exec_check_finals(const size_t      *signal_finals,
+edje_match_callback_exec_check_finals(const Edje_Patterns *singal_ppat,
+                                      const Edje_Patterns *source_ppat,
+                                      const size_t      *signal_finals,
                                       const size_t      *source_finals,
                                       const Edje_States *signal_states,
                                       const Edje_States *source_states,
@@ -401,6 +405,8 @@ edje_match_callback_exec_check_finals(const size_t      *signal_finals,
                         r = 2;
                      }
                    if (_edje_block_break(ed))
+                     return 0;
+                   if ((singal_ppat->delete_me) || (source_ppat->delete_me))
                      return 0;
                 }
        }
@@ -511,8 +517,8 @@ edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
 }
 
 int
-edje_match_callback_exec(const Edje_Patterns    *ppat_signal,
-                         const Edje_Patterns    *ppat_source,
+edje_match_callback_exec(Edje_Patterns          *ppat_signal,
+                         Edje_Patterns          *ppat_source,
                          const char             *signal,
                          const char             *source,
                          Eina_List              *callbacks,
@@ -522,6 +528,8 @@ edje_match_callback_exec(const Edje_Patterns    *ppat_signal,
    Edje_States  *source_result;
    int           r = 0;
 
+   ppat_signal->ref++;
+   ppat_source->ref++;
    _edje_match_patterns_exec_init_states(ppat_signal->states,
                                          ppat_signal->patterns_size,
                                          ppat_signal->max_length);
@@ -533,7 +541,9 @@ edje_match_callback_exec(const Edje_Patterns    *ppat_signal,
    source_result = _edje_match_fn(ppat_source, source, ppat_source->states);
 
    if (signal_result && source_result)
-     r = edje_match_callback_exec_check_finals(ppat_signal->finals,
+     r = edje_match_callback_exec_check_finals(ppat_signal,
+                                               ppat_source,
+                                               ppat_signal->finals,
                                                ppat_source->finals,
                                                signal_result,
                                                source_result,
@@ -541,12 +551,19 @@ edje_match_callback_exec(const Edje_Patterns    *ppat_signal,
                                                source,
                                                callbacks,
                                                ed);
+   ppat_signal->ref--;
+   ppat_source->ref--;
+   if (ppat_signal->ref <= 0) edje_match_patterns_free(ppat_signal);
+   if (ppat_source->ref <= 0) edje_match_patterns_free(ppat_source);
    return r;
 }
 
 void
 edje_match_patterns_free(Edje_Patterns *ppat)
 {
+   ppat->delete_me = 1;
+   ppat->ref--;
+   if (ppat->ref > 0) return;
    _edje_match_states_free(ppat->states, 2);
    free(ppat);
 }

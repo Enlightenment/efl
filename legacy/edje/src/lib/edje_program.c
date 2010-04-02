@@ -847,9 +847,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 	
 	if (ed->L == NULL) /* private state does not yet exist, create it */
 	  {
-	     ed->L = _edje_lua_new_thread(ed->collection->L);
-	     _edje_lua_new_reg(ed->collection->L, -1, ed->L); // freed in edje_load.c::_edje_file_del
-	     lua_pop(ed->collection->L, 1);
+	     ed->L = _edje_lua_new_thread(ed, _edje_lua_state_get());
 	  }
 	lua_State *L = ed->L;
 	lua_pushnumber(L, pr->id);

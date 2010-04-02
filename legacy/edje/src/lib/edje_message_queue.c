@@ -629,7 +629,7 @@ _edje_message_process(Edje_Message *em)
 	_edje_script_only_message(em->edje, em);
 	return;
      }
-   if (em->edje->collection->L)
+   if (em->edje->L)
      {
 	_edje_lua_script_only_message(em->edje, em);
 	return;

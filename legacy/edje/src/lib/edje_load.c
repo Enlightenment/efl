@@ -951,7 +951,7 @@ _edje_file_del(Edje *ed)
      {
 	_edje_lua_free_reg(ed->L, ed); // created in edje_lua.c::_edje_lua_script_fn_new/_edje_lua_group_fn_new
 	_edje_lua_free_reg(ed->L, ed->L); // created in edje_program.c::_edje_program_run/edje_lua_script_only.c::_edje_lua_script_only_init
-	_edje_lua_free_thread(ed->L); // created in edje_program.c::_edje_program_run/edje_lua_script_only.c::_edje_lua_script_only_init
+	_edje_lua_free_thread(ed, ed->L); // created in edje_program.c::_edje_program_run/edje_lua_script_only.c::_edje_lua_script_only_init
 	ed->L = NULL;
      }
    if (ed->table_parts) free(ed->table_parts);
@@ -1154,12 +1154,6 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
      }
 #endif
    if (ec->script) embryo_program_free(ec->script);
-   if (ec->L)
-     {
-	_edje_lua_free_reg(ec->L, ec); // created in edje_cache.c::_edje_file_coll_open
-	_edje_lua_free_thread(ec->L); // created in edje_cache.c::_edje_file_coll_open
-	ec->L = NULL;
-     }
    free(ec);
 }
 

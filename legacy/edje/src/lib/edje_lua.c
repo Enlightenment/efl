@@ -270,8 +270,19 @@ __edje_lua_error(const char *file, const char *fnc, int line, lua_State *L, int 
 }
 
 lua_State *
-_edje_lua_new_thread(lua_State *L)
+_edje_lua_new_thread(Edje *ed, lua_State *L)
 {
+#if 1 // newlua
+   lua_newtable(L);
+   ed->lua_ref = luaL_ref(L, LUA_REGISTRYINDEX);
+   /* inherit new environment from global environment */
+   lua_createtable(L, 1, 0);
+   lua_pushvalue(L, LUA_GLOBALSINDEX);
+   lua_setfield(L, -2, "__index");
+   lua_setmetatable(L, -2);
+   lua_setfenv(L, -2);
+   return L;
+#else
    /* create new thread */
    lua_State *thread = lua_newthread(L);
    //printf ("new thread %d->%d\n", L, thread);
@@ -284,11 +295,16 @@ _edje_lua_new_thread(lua_State *L)
    lua_setmetatable(L, -2);
    lua_setfenv(L, -2);
    return thread;
+#endif   
 }
 
 void
-_edje_lua_free_thread(lua_State *L)
+_edje_lua_free_thread(Edje *ed, lua_State *L)
 {
+#if 1 // newlua
+   luaL_unref(L, LUA_REGISTRYINDEX, ed->lua_ref);
+   lua_gc(L, LUA_GCCOLLECT, 0);
+#else   
    lua_pushthread(L);
    lua_getfenv(L, -1);
    lua_pushnil(L);
@@ -302,6 +318,7 @@ _edje_lua_free_thread(lua_State *L)
      }
    lua_settop(L, 0);
    lua_gc(L, LUA_GCCOLLECT, 0);
+#endif   
 }
 
 /*
@@ -1459,6 +1476,7 @@ static int
 _edje_lua_object_fn_del(lua_State *L)
 {
    Edje_Lua_Evas_Object *obj = _edje_lua_checkudata(L, 1, &mObject);
+   
    if (obj->eo)
      {
 	evas_object_del(obj->eo);
@@ -5549,6 +5567,7 @@ static void *
 _edje_lua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 {
    Edje_Lua_Alloc *ela = ud;
+   void *ptr2;
    
    ela->cur += nsize - osize;
    if (ela->cur > ela->max)
@@ -5562,9 +5581,12 @@ _edje_lua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 	free(ptr);		/* ANSI requires that free(NULL) has no effect */
 	return NULL;
      }
-   else
-      /* ANSI requires that realloc(NULL, size) == malloc(size) */
-      return realloc(ptr, nsize);
+
+   /* ANSI requires that realloc(NULL, size) == malloc(size) */
+   ptr2 = realloc(ptr, nsize);
+   if (ptr2) return ptr2;
+   ERR("Edje Lua cannot re-allocate %i bytes\n", nsize);
+   return ptr2;
 }
 
 void
