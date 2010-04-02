@@ -1455,7 +1455,7 @@ START_TEST(eet_cache_concurrency)
    pthread_create(&thread, NULL, open_close_worker, file);
 
    /* clear the cache repeatedly in this thread */
-   for (n = 0; n < 100000; ++n)
+   for (n = 0; n < 50000; ++n)
      {
 	eet_clearcache();
      }
