@@ -30,15 +30,15 @@ void *alloca (size_t);
 # include <netinet/in.h>
 #endif
 
+#ifdef _WIN32
+# include <winsock2.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <setjmp.h>
 #include <zlib.h>
 #include <jpeglib.h>
-
-#ifdef _WIN32
-# include <winsock2.h>
-#endif
 
 #include "Eet.h"
 #include "Eet_private.h"

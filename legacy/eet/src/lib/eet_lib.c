@@ -23,6 +23,10 @@ extern "C"
 void *alloca (size_t);
 #endif
 
+#ifdef _WIN32
+# include <winsock2.h>
+#endif
+
 #include <stdio.h>
 #include <errno.h>
 #include <sys/types.h>
@@ -40,10 +44,6 @@ void *alloca (size_t);
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
-#endif
-
-#ifdef _WIN32
-# include <winsock2.h>
 #endif
 
 #ifdef HAVE_EVIL
