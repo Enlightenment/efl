@@ -122,6 +122,9 @@ static int efreet_desktop_command_file_id = 0;
  * A job pointer for cache updates
  */
 static Ecore_Job *efreet_desktop_job = NULL;
+static Ecore_Exe *efreet_desktop_exe = NULL;
+static int efreet_desktop_fd = -1;
+static Ecore_Event_Handler *efreet_desktop_exe_handler = NULL;
 
 static const char *cache_file = NULL;
 static const char *cache_dirs = NULL;
@@ -219,10 +222,13 @@ static void efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info);
 static int efreet_desktop_command_flags_get(Efreet_Desktop *desktop);
 static void *efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Eina_List *execs);
 
-static void efreet_desktop_update_cache_dirs(void *data);
+static void efreet_desktop_update_cache_dirs(void);
 static void efreet_desktop_cache_update(void *data, Ecore_File_Monitor *em,
                                         Ecore_File_Event event, const char *path);
 static void efreet_desktop_cache_update_free(void *data, void *ev);
+static void efreet_desktop_update_cache(void);
+static void efreet_desktop_update_cache_job(void *data);
+static int efreet_desktop_exe_cb(void *data, int type, void *event);
 
 /**
  * @internal
@@ -269,13 +275,22 @@ efreet_desktop_init(void)
                                                efreet_desktop_cache_update,
                                                NULL);
 
+        if (!cache_monitor) goto cache_error;
         ecore_exe_run(PACKAGE_BIN_DIR "/efreet_desktop_cache_create", NULL);
+
+        efreet_desktop_exe_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
+                                                             efreet_desktop_exe_cb, NULL);
+        if (!efreet_desktop_exe_handler) goto monitor_error;
     }
 
     cache = eet_open(efreet_desktop_cache_file(), EET_FILE_MODE_READ);
 
     return 1;
 
+monitor_error:
+    if (cache_monitor) ecore_file_monitor_del(cache_monitor);
+cache_error:
+    if (efreet_desktop_cache) eina_hash_free(efreet_desktop_cache);
 edd_error:
     ecore_file_shutdown();
 ecore_error:
@@ -294,6 +309,7 @@ efreet_desktop_shutdown(void)
     Efreet_Desktop_Type_Info *info;
     char *dir;
 
+    if (efreet_desktop_exe_handler) ecore_event_handler_del(efreet_desktop_exe_handler);
     IF_RELEASE(desktop_environment);
     IF_FREE_HASH(efreet_desktop_cache);
     while (efreet_desktop_types)
@@ -448,8 +464,7 @@ efreet_desktop_get(const char *file)
         if (!eina_list_search_unsorted(efreet_desktop_dirs, EINA_COMPARE_CB(strcmp), p))
         {
             efreet_desktop_dirs = eina_list_append(efreet_desktop_dirs, eina_stringshare_add(p));
-            if (efreet_desktop_job) ecore_job_del(efreet_desktop_job);
-            efreet_desktop_job = ecore_job_add(efreet_desktop_update_cache_dirs, NULL);
+            efreet_desktop_update_cache();
         }
     }
 
@@ -2195,7 +2210,7 @@ efreet_desktop_edd_shutdown(Eet_Data_Descriptor *edd)
 }
 
 static void
-efreet_desktop_update_cache_dirs(void *data __UNUSED__)
+efreet_desktop_update_cache_dirs(void)
 {
     char file[PATH_MAX];
     int fd = -1;
@@ -2336,4 +2351,55 @@ efreet_desktop_cache_update_free(void *data, void *ev)
    cache_data = eina_list_remove(cache_data, d);
    free(d);
    free(ev);
+}
+
+static void
+efreet_desktop_update_cache(void)
+{
+    if (efreet_desktop_job) ecore_job_del(efreet_desktop_job);
+    efreet_desktop_job = ecore_job_add(efreet_desktop_update_cache_job, NULL);
+}
+
+static void
+efreet_desktop_update_cache_job(void *data __UNUSED__)
+{
+    char file[PATH_MAX];
+
+    efreet_desktop_update_cache_dirs();
+
+    snprintf(file, sizeof(file), "%s/.efreet", efreet_home_dir_get());
+    if (!ecore_file_mkpath(file)) return;
+
+    snprintf(file, sizeof(file), "%s/.efreet/desktop_exec.lock", efreet_home_dir_get());
+
+    efreet_desktop_fd = open(file, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
+    if (efreet_desktop_fd < 0) return;
+    /* TODO: Retry update cache later */
+    if (flock(efreet_desktop_fd, LOCK_EX | LOCK_NB) < 0) goto error;
+    efreet_desktop_exe = ecore_exe_run(PACKAGE_BIN_DIR "/efreet_desktop_cache_create", NULL);
+    if (!efreet_desktop_exe) goto error;
+
+    return;
+
+error:
+    if (efreet_desktop_fd > 0)
+    {
+        close(efreet_desktop_fd);
+        efreet_desktop_fd = -1;
+    }
+}
+
+static int
+efreet_desktop_exe_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+    Ecore_Exe_Event_Del *ev;
+
+    ev = event;
+    if (ev->exe != efreet_desktop_exe) return 1;
+    if (efreet_desktop_fd > 0)
+    {
+        close(efreet_desktop_fd);
+        efreet_desktop_fd = -1;
+    }
+    return 1;
 }
