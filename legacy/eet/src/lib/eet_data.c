@@ -6,12 +6,6 @@
 # include <config.h>
 #endif
 
-#if HAVE___ATTRIBUTE__
-# define __UNUSED__ __attribute__((unused))
-#else
-# define __UNUSED__
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
@@ -22,7 +16,7 @@
 # include <netinet/in.h>
 #endif
 
-#if defined(_WIN32) && ! defined(__CEGCC__)
+#ifdef _WIN32
 # include <winsock2.h>
 #endif
 

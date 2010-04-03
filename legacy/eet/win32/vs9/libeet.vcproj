@@ -192,6 +192,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\eet_connection.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\eet_data.c"
 				>
 			</File>

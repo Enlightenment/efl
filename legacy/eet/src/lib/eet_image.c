@@ -6,10 +6,6 @@
 # include <config.h>
 #endif
 
-#ifdef _WIN32
-# include <winsock2.h>
-#endif
-
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__
@@ -36,9 +32,13 @@ void *alloca (size_t);
 
 #include <stdio.h>
 #include <string.h>
+#include <setjmp.h>
 #include <zlib.h>
 #include <jpeglib.h>
-#include <setjmp.h>
+
+#ifdef _WIN32
+# include <winsock2.h>
+#endif
 
 #include "Eet.h"
 #include "Eet_private.h"
