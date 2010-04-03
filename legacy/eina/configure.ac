@@ -37,7 +37,7 @@ AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 requirement_eina=""
 
 case "$host_os" in
-   mingw32ce* | cegcc*)
+   mingw32ce*)
       MODULE_ARCH="$host_os-$host_cpu"
       ;;
    *)
@@ -217,7 +217,7 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 EFL_EINA_BUILD=""
 case "$host_os" in
-   mingw* | cegcc*)
+   mingw*)
       PKG_CHECK_MODULES([EVIL], [evil])
       AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
       requirement_eina="evil"
@@ -269,23 +269,16 @@ AC_C___ATTRIBUTE__
 AC_PROG_CC_STDC
 
 EINA_CPPFLAGS=""
+EINA_CFLAGS=""
 case "$host_os" in
-   mingw32ce* | cegcc*)
+   mingw32ce*)
       EINA_CPPFLAGS="-D_WIN32_WCE=0x0420"
-      ;;
-   mingw*)
-      EINA_CPPFLAGS="-D_WIN32_WINNT=0x0500"
-      ;;
-esac
-
-EINA_CFLAGS=
-case "${host_os}" in
-   cegcc*)
-      EINA_CFLAGS="${EVIL_CFLAGS} -mwin32"
-   ;;
-   mingw*)
       EINA_CFLAGS="${EVIL_CFLAGS}"
-   ;;
+      ;;
+   mingw*)
+      EINA_CPPFLAGS="-D_WIN32_WINNT=0x0501"
+      EINA_CFLAGS="${EVIL_CFLAGS}"
+      ;;
 esac
 
 if ! test "x${VMIC}" = "x" ; then
@@ -303,7 +296,7 @@ AC_SUBST(EINA_CFLAGS)
 EINA_LIBS=
 lt_enable_auto_import=""
 case "${host_os}" in
-   mingw* | cegcc*)
+   mingw*)
       EINA_LIBS="-ldl ${EVIL_LIBS} -lm"
       lt_enable_auto_import="-Wl,--enable-auto-import"
    ;;
@@ -336,7 +329,7 @@ AC_CHECK_FUNCS(strlcpy)
 #dlopen and dladdr
 dlopen_libs=""
 case "$host_os" in
-   mingw* | cegcc*)
+   mingw*)
 # managed by evil
       AC_DEFINE(HAVE_DLADDR)
       ;;
