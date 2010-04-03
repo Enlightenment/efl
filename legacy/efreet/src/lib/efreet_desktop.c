@@ -238,6 +238,8 @@ static int efreet_desktop_exe_cb(void *data, int type, void *event);
 int
 efreet_desktop_init(void)
 {
+    char buf[PATH_MAX];
+
     _efreet_desktop_log_dom = eina_log_domain_register("Efreet_desktop", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_desktop_log_dom < 0)
     {
@@ -265,12 +267,11 @@ efreet_desktop_init(void)
 
     EFREET_EVENT_CACHE_UPDATE = ecore_event_type_new();
 
+    snprintf(buf, sizeof(buf), "%s/.efreet", efreet_home_dir_get());
+    if (!ecore_file_mkpath(buf)) goto edd_error;
+
     if (efreet_cache_update)
     {
-        char buf[PATH_MAX];
-
-        snprintf(buf, sizeof(buf), "%s/.efreet", efreet_home_dir_get());
-        if (!ecore_file_mkpath(buf)) goto edd_error;
         cache_monitor = ecore_file_monitor_add(buf,
                                                efreet_desktop_cache_update,
                                                NULL);
@@ -2219,9 +2220,6 @@ efreet_desktop_update_cache_dirs(void)
     char *dir;
     struct stat st;
 
-    snprintf(file, sizeof(file), "%s/.efreet", efreet_home_dir_get());
-    if (!ecore_file_mkpath(file)) return;
-
     snprintf(file, sizeof(file), "%s/.efreet/desktop_data.lock", efreet_home_dir_get());
     fd = open(file, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
     if (fd < 0) return;
@@ -2366,9 +2364,6 @@ efreet_desktop_update_cache_job(void *data __UNUSED__)
     char file[PATH_MAX];
 
     efreet_desktop_update_cache_dirs();
-
-    snprintf(file, sizeof(file), "%s/.efreet", efreet_home_dir_get());
-    if (!ecore_file_mkpath(file)) return;
 
     snprintf(file, sizeof(file), "%s/.efreet/desktop_exec.lock", efreet_home_dir_get());
 
