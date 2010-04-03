@@ -206,7 +206,7 @@ main()
     if (!ecore_file_mkpath(file)) goto efreet_error;
 
     /* lock process, so that we only run one copy of this program */
-    snprintf(file, sizeof(file), "%s/.efreet/lock", efreet_home_dir_get());
+    snprintf(file, sizeof(file), "%s/.efreet/desktop_data.lock", efreet_home_dir_get());
     fd = open(file, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
     if (fd < 0) goto efreet_error;
     if (flock(fd, LOCK_EX | LOCK_NB) < 0) goto efreet_error;

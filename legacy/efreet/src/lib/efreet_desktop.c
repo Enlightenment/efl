@@ -2207,7 +2207,7 @@ efreet_desktop_update_cache_dirs(void *data __UNUSED__)
     snprintf(file, sizeof(file), "%s/.efreet", efreet_home_dir_get());
     if (!ecore_file_mkpath(file)) return;
 
-    snprintf(file, sizeof(file), "%s/.efreet/lock", efreet_home_dir_get());
+    snprintf(file, sizeof(file), "%s/.efreet/desktop_data.lock", efreet_home_dir_get());
     fd = open(file, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
     if (fd < 0) return;
     /* TODO: Retry update cache later */
