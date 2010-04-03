@@ -32,7 +32,7 @@ AC_SUBST(release_info)
 ### Default options with respect to host
 
 case "$host_os" in
-   mingw* | cegcc*)
+   mingw*)
       want_gnutls="no"
       want_openssl="no"
       want_cipher="no"
@@ -218,7 +218,7 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 EFL_EET_BUILD=""
 case "$host_os" in
-   mingw* | cegcc*)
+   mingw*)
       PKG_CHECK_MODULES([EVIL], [evil])
       AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if Evil library is installed])
       requirement_eet="evil ${requirement_eet}"
@@ -230,9 +230,6 @@ AC_SUBST(EFL_EET_BUILD)
 EET_LIBS=""
 case "$host_os" in
    mingw32ce*)
-      EET_LIBS="-lws2"
-      ;;
-   cegcc*)
       EET_LIBS="-lws2"
       ;;
    mingw*)
@@ -365,12 +362,8 @@ case "$host_os" in
    mingw32ce*)
       EET_CPPFLAGS="-D_WIN32_WCE=0x0420"
       ;;
-   cegcc*)
-      EET_CPPFLAGS="-D_WIN32_WCE=0x0420"
-      EET_CFLAGS="-mwin32"
-      ;;
    mingw*)
-      EET_CPPFLAGS="-D_WIN32_WINNT=0x0500"
+      EET_CPPFLAGS="-D_WIN32_WINNT=0x0501"
       ;;
 esac
 AC_SUBST(EET_CPPFLAGS)
@@ -383,7 +376,7 @@ AC_SUBST(EET_CFLAGS)
 
 lt_enable_auto_import=""
 case "$host_os" in
-   mingw* | cegcc*)
+   mingw*)
       lt_enable_auto_import="-Wl,--enable-auto-import"
       ;;
 esac
