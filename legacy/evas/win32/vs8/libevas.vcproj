@@ -20,7 +20,7 @@
 			OutputDirectory="$(DebugOutputDirectory)"
 			IntermediateDirectory="$(TemporaryDirectory)\$(TargetName)\$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="1"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -65,7 +65,7 @@
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
 				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="libeet.lib libevil.lib libdl.lib freetype.lib eina.lib"
+				AdditionalDependencies="libeet.lib libevil.lib libdl.lib freetype.lib libeina.lib"
 				OutputFile="$(OutDir)\libevas.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(LIB); $(DebugLibraryDirectory)"
@@ -104,7 +104,7 @@
 			OutputDirectory="$(ReleaseOutputDirectory)"
 			IntermediateDirectory="$(TemporaryDirectory)\$(TargetName)\$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="1"
+			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -147,7 +147,7 @@
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
 				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="libeet.lib libevil.lib libdl.lib freetype.lib eina.lib"
+				AdditionalDependencies="libeet.lib libevil.lib libdl.lib freetype.lib libeina.lib"
 				OutputFile="$(OutDir)\libevas.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(LIB); $(ReleaseLibraryDirectory)"
@@ -323,6 +323,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\lib\canvas\evas_main.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\lib\canvas\evas_map.c"
 					>
 				</File>
 				<File
@@ -579,6 +583,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\lib\engines\common\evas_image_save.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\lib\engines\common\evas_image_scalecache.c"
 					>
 				</File>
 				<File
