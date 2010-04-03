@@ -527,9 +527,8 @@ efreet_desktop_new(const char *file)
         char rp[PATH_MAX];
         if (!realpath(file, rp)) return NULL;
 
-        /* TODO: Check if the cached version is out of date */
         desktop = eet_data_read(cache, desktop_edd, rp);
-        if (desktop)
+        if (desktop && desktop->load_time == ecore_file_mod_time(desktop->orig_path))
         {
             desktop->ref = 1;
             desktop->eet = 1;
