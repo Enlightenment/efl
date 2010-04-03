@@ -2354,6 +2354,8 @@ efreet_desktop_cache_update_free(void *data, void *ev)
 static void
 efreet_desktop_update_cache(void)
 {
+    if (!efreet_cache_update) return;
+
     if (efreet_desktop_job) ecore_job_del(efreet_desktop_job);
     efreet_desktop_job = ecore_job_add(efreet_desktop_update_cache_job, NULL);
 }
