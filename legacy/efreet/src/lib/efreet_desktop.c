@@ -405,6 +405,9 @@ efreet_desktop_cache_check(Efreet_Desktop *desktop)
  *
  * By using efreet_desktop_get the Efreet_Desktop will be saved in an internal
  * cache, and changes will be signalled by events.
+ *
+ * Efreet will also try to save all files fetched by efreet_desktop_get in a
+ * cache to speed up further requests.
  */
 EAPI Efreet_Desktop *
 efreet_desktop_get(const char *file)
