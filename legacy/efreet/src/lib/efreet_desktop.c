@@ -389,11 +389,6 @@ efreet_desktop_cache_check(Efreet_Desktop *desktop)
 {
     if (!desktop) return 0;
 
-    /* TODO:
-     * We always accept files in cache, but we should update cache
-     * when a file has changed on disk
-     */
-    if (desktop->eet) return 1;
     /* have we modified this file since we last read it in? */
     if (ecore_file_mod_time(desktop->orig_path) != desktop->load_time)
         return 0;
