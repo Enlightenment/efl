@@ -102,6 +102,7 @@ typedef SSIZE_T ssize_t;
 # define fileno(f) _fileno(f)
 # define fdopen(fd,m) _fdopen((fd),(m))
 # define access(p,m) _access((p),(m))
+# define hypot(x,y) _hypot((x),(y))
 
 #endif /* _MSC_VER */
 
@@ -148,14 +149,13 @@ typedef unsigned long  gid_t;
 # define _S_IRUSR _S_IREAD
 
 #  define open(path, flag, ...) _open((path), _O_BINARY | (flag), ##__VA_ARGS__)
+#  define mkdir(p,m) _mkdir(p)
   /*
 #  define close(fd) _close(fd)
 #  define read(fd,buffer,count) _read((fd),(buffer),(count))
 #  define write(fd,buffer,count) _write((fd),(buffer),(count))
 #  define unlink(filename) _unlink((filename))
-#  define mkdir(p,m) _mkdir(p)
 #  define lstat(f,s) _stat((f),(s))
-#  define hypot(x,y) _hypot((x),(y))
   */
 
 # endif

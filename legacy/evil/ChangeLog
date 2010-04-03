@@ -1,3 +1,10 @@
+2010-04-03  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	mkdir() does not accept 2 arguments.
+	Define hypot to remove huge amount of warnings in
+	Evas withvc++
+
 2010-04-01  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:
