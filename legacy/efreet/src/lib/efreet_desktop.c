@@ -463,10 +463,8 @@ efreet_desktop_get(const char *file)
         buf[PATH_MAX - 1] = '\0';
         p = dirname(buf);
         if (!eina_list_search_unsorted(efreet_desktop_dirs, EINA_COMPARE_CB(strcmp), p))
-        {
             efreet_desktop_dirs = eina_list_append(efreet_desktop_dirs, eina_stringshare_add(p));
-            efreet_desktop_update_cache();
-        }
+        efreet_desktop_update_cache();
     }
 
     if (efreet_desktop_cache) eina_hash_add(efreet_desktop_cache, desktop->orig_path, desktop);
