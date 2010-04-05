@@ -51,6 +51,25 @@ struct _Widget_Data
 };
 
 static const char *widtype = NULL;
+
+static const char SIG_CLICKED[] = "clicked";
+static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+static const char SIG_GENERATE_ERROR[] = "generate,error";
+static const char SIG_GENERATE_START[] = "generate,start";
+static const char SIG_GENERATE_STOP[] = "generate,stop";
+static const char SIG_LOAD_ERROR[] = "load,error";
+static const char SIG_PRESS[]= "press";
+static const Evas_Smart_Cb_Description _signals[] = {
+  {SIG_CLICKED, ""},
+  {SIG_CLICKED_DOUBLE, ""},
+  {SIG_GENERATE_ERROR, ""},
+  {SIG_GENERATE_START, ""},
+  {SIG_GENERATE_STOP, ""},
+  {SIG_LOAD_ERROR, ""},
+  {SIG_PRESS, ""},
+  {NULL, NULL}
+};
+
 static const char EDJE_SIGNAL_GENERATE_START[] = "elm,thumb,generate,start";
 static const char EDJE_SIGNAL_GENERATE_STOP[] = "elm,thumb,generate,stop";
 static const char EDJE_SIGNAL_GENERATE_ERROR[] = "elm,thumb,generate,error";
@@ -98,9 +117,9 @@ _mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
    else
      wd->on_hold = EINA_FALSE;
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     evas_object_smart_callback_call(data, "clicked,double", NULL);
+     evas_object_smart_callback_call(data, SIG_CLICKED_DOUBLE, NULL);
    else
-     evas_object_smart_callback_call(data, "press", NULL);
+     evas_object_smart_callback_call(data, SIG_PRESS, NULL);
 }
 
 static void
@@ -116,7 +135,7 @@ _mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
    else
      wd->on_hold = EINA_FALSE;
    if (!wd->on_hold)
-     evas_object_smart_callback_call(data, "clicked", NULL);
+     evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
    wd->on_hold = EINA_FALSE;
 }
 
@@ -169,7 +188,7 @@ _finished_thumb(Widget_Data *wd, int id, const char *thumb_path, const char *thu
    edje_object_part_swallow(wd->children.frm, "elm.swallow.content",
 			    wd->children.view);
    edje_object_signal_emit(wd->children.frm, EDJE_SIGNAL_GENERATE_STOP, "elm");
-   evas_object_smart_callback_call(wd->self, "generate,stop", NULL);
+   evas_object_smart_callback_call(wd->self, SIG_GENERATE_STOP, NULL);
    _thumb_geometry_set(wd);
    return;
 
@@ -178,7 +197,7 @@ view_err:
    wd->children.view = NULL;
 err:
    edje_object_signal_emit(wd->children.frm, EDJE_SIGNAL_LOAD_ERROR, "elm");
-   evas_object_smart_callback_call(wd->self, "load,error", NULL);
+   evas_object_smart_callback_call(wd->self, SIG_LOAD_ERROR, NULL);
 }
 
 static void
@@ -197,7 +216,7 @@ _finished_thumb_cb(void *data, Ethumb_Client *c __UNUSED__, int id, const char *
 
    ERR("could not generate thumbnail for %s (key: %s)", file, key ? key : "");
    edje_object_signal_emit(wd->children.frm, EDJE_SIGNAL_GENERATE_ERROR, "elm");
-   evas_object_smart_callback_call(wd->self, "generate,error", NULL);
+   evas_object_smart_callback_call(wd->self, SIG_GENERATE_ERROR, NULL);
 }
 
 static void
@@ -219,13 +238,13 @@ _thumb_apply(Widget_Data *wd)
 				"elm");
 	edje_object_signal_emit(wd->children.frm, EDJE_SIGNAL_GENERATE_START,
 				"elm");
-	evas_object_smart_callback_call(wd->self, "generate,start", NULL);
+	evas_object_smart_callback_call(wd->self, SIG_GENERATE_START, NULL);
      }
    else
      {
 	edje_object_signal_emit(wd->children.frm, EDJE_SIGNAL_GENERATE_ERROR,
 				"elm");
-	evas_object_smart_callback_call(wd->self, "generate,error", NULL);
+	evas_object_smart_callback_call(wd->self, SIG_GENERATE_ERROR, NULL);
      }
    wd->is_generating = EINA_FALSE;
 }
@@ -269,7 +288,7 @@ _cancel_cb(void *data, Eina_Bool success)
 	wd->is_generating = EINA_FALSE;
 	edje_object_signal_emit(wd->children.frm, EDJE_SIGNAL_GENERATE_STOP,
 				"elm");
-	evas_object_smart_callback_call(wd->self, "generate,stop", NULL);
+	evas_object_smart_callback_call(wd->self, SIG_GENERATE_STOP, NULL);
      }
 }
 
@@ -487,6 +506,9 @@ elm_thumb_add(Evas_Object *parent)
 				  _thumb_move_cb, wd);
 #endif
 
+   // TODO: convert Elementary to subclassing of Evas_Smart_Class
+   // TODO: and save some bytes, making descriptions per-class and not instance!
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
 }
 
