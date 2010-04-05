@@ -162,7 +162,7 @@ extern "C" {
      const char *license; /**< if exists, --license will work */
      const char *description; /**< long description, possible multiline */
      unsigned char strict : 1; /**< fail on errors */
-     const Ecore_Getopt_Desc descs[]; /* NULL terminated. */
+     const Ecore_Getopt_Desc *descs; /* NULL terminated. */
   };
 
 #define ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar, type, arg_requirement, default_value) \

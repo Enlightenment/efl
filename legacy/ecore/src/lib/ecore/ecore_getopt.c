@@ -6,6 +6,23 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_ALLOCA_H
+# include <alloca.h>
+#elif defined __GNUC__
+# define alloca __builtin_alloca
+#elif defined _AIX
+# define alloca __alloca
+#elif defined _MSC_VER
+# include <malloc.h>
+# define alloca _alloca
+#else
+# include <stddef.h>
+# ifdef  __cplusplus
+extern "C"
+# endif
+void *alloca (size_t);
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
@@ -670,9 +687,10 @@ _ecore_getopt_parse_find_short(const Ecore_Getopt *parser, char name)
 static int
 _ecore_getopt_parse_find_nonargs_base(const Ecore_Getopt *parser, int argc, char **argv)
 {
-   char *nonargs[argc];
+   char *nonargs;
    int src, dst, used, base;
 
+   nonargs = alloca(sizeof(char) * argc);
    src = 1;
    dst = 1;
    used = 0;
