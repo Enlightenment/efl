@@ -9,9 +9,10 @@
 #include <string.h>
 
 #include "Ecore.h"
-#include "ecore_input_evas_private.h"
 #include "Ecore_Input.h"
+
 #include "Ecore_Input_Evas.h"
+#include "ecore_input_evas_private.h"
 
 int _ecore_input_evas_log_dom = -1;
 

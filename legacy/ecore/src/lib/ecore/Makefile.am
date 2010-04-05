@@ -21,7 +21,6 @@ ecore_job.c \
 ecore_main.c \
 ecore_pipe.c \
 ecore_poll.c \
-ecore_signal.c \
 ecore_time.c \
 ecore_timer.c \
 ecore_thread.c \
@@ -39,7 +38,7 @@ libecore_la_SOURCES += ecore_exe_wince.c
 
 else
 
-libecore_la_SOURCES += ecore_exe.c
+libecore_la_SOURCES += ecore_signal.c ecore_exe.c
 
 endif
 

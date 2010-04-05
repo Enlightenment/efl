@@ -14,17 +14,17 @@
 # include <config.h>
 #endif
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+#include <process.h>
+
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
 
 #include "Ecore.h"
 #include "ecore_private.h"
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#undef WIN32_LEAN_AND_MEAN
-#include <process.h>
 
 #define ECORE_EXE_WIN32_TIMEOUT 3000
 

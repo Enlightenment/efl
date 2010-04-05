@@ -7,8 +7,12 @@
 #endif
 
 #ifdef _WIN32
+# define WIN32_LEAN_AND_MEAN
 # include <winsock2.h>
-# define USER_TIMER_MINIMUM 0x0a
+# undef WIN32_LEAN_AND_MEAN
+# ifndef USER_TIMER_MINIMUM
+#  define USER_TIMER_MINIMUM 0x0a
+# endif
 #endif
 
 #ifdef __SUNPRO_C
@@ -19,16 +23,23 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <sys/time.h>
 #include <sys/types.h>
-#include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
+
+#ifndef _MSC_VER
+#include <sys/time.h>
+# include <unistd.h>
+#else
+# include <float.h>
+#endif
 
 #define FIX_HZ 1
 
 #ifdef FIX_HZ
-# include <sys/param.h>
+# ifndef _MSC_VER
+#  include <sys/param.h>
+# endif
 # ifndef HZ
 #  define HZ 100
 # endif
@@ -1039,12 +1050,12 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
      }
    else
      {
-        ERR(stderr, "unknown result...\n");
+        ERR("unknown result...\n");
         res = -1;
      }
 
    /* Remove event objects again */
-   for(i = 0; i < events_nbr; i++)
+   for(i = 0; i < (int)events_nbr; i++)
      WSACloseEvent(objects[i]);
 
    return res;

@@ -55,20 +55,18 @@ int ecore_win32_dnd_shutdown()
 int ecore_win32_dnd_begin(const char *data,
                           int         size)
 {
+   IDataObject *pDataObject = NULL;
+   IDropSource *pDropSource = NULL;
+   FORMATETC fmtetc = { CF_TEXT, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+   STGMEDIUM stgmed = { TYMED_HGLOBAL, { 0 }, 0 };
+   int res = 0;
+
    if (data == NULL)
       return 0;
    if (size < 0)
       size = strlen(data) + 1;
 
-   IDataObject *pDataObject = NULL;
-   IDropSource *pDropSource = NULL;
-
-   FORMATETC fmtetc = { CF_TEXT, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
-   STGMEDIUM stgmed = { TYMED_HGLOBAL, { 0 }, 0 };
-
    stgmed.hGlobal = DataToHandle(data, size);
-
-   int res = 0;
 
    // create the data object
    pDataObject = (IDataObject *)_ecore_win32_dnd_data_object_new((void *)&fmtetc,
@@ -112,10 +110,11 @@ int ecore_win32_dnd_begin(const char *data,
 int ecore_win32_dnd_register_drop_target(Ecore_Win32_Window                 *window,
                                          Ecore_Win32_Dnd_DropTarget_Callback callback)
 {
+   struct _Ecore_Win32_Window *wnd = (struct _Ecore_Win32_Window *)window;
+
    if (window == NULL)
       return 0;
 
-   struct _Ecore_Win32_Window *wnd = (struct _Ecore_Win32_Window *)window;
    wnd->dnd_drop_target = _ecore_win32_dnd_register_drop_window(wnd->window,
                                                                 callback,
                                                                 (void *)wnd);
@@ -124,10 +123,11 @@ int ecore_win32_dnd_register_drop_target(Ecore_Win32_Window                 *win
 
 void ecore_win32_dnd_unregister_drop_target(Ecore_Win32_Window *window)
 {
+   struct _Ecore_Win32_Window *wnd = (struct _Ecore_Win32_Window *)window;
+
    if (window == NULL)
       return;
 
-   struct _Ecore_Win32_Window *wnd = (struct _Ecore_Win32_Window *)window;
    if (wnd->dnd_drop_target != NULL)
       _ecore_win32_dnd_unregister_drop_window(wnd->window, wnd->dnd_drop_target);
 }

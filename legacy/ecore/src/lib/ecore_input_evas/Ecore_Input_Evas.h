@@ -12,7 +12,7 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_ECORE_INPUT_BUILD
+# ifdef EFL_ECORE_INPUT_EVAS_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else

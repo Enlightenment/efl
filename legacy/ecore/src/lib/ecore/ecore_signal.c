@@ -2,8 +2,6 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#ifndef _WIN32
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -624,4 +622,3 @@ _ecore_signal_exe_exit_delay(void *data)
      }
    return 0;
 }
-#endif

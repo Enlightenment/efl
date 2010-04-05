@@ -10,9 +10,10 @@
 #include <string.h>
 
 #include "Ecore.h"
-#include "ecore_input_private.h"
 #include "ecore_private.h"
+
 #include "Ecore_Input.h"
+#include "ecore_input_private.h"
 
 
 int _ecore_input_log_dom = -1;

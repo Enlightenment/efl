@@ -1,6 +1,10 @@
 #ifndef _ECORE_H
 #define _ECORE_H
 
+#ifdef _MSC_VER
+# include <Evil.h>
+#endif
+
 #include <Eina.h>
 
 #ifdef EAPI

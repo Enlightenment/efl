@@ -9,7 +9,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "Ecore_Con.h"
+#ifdef BUILD_ECORE_CON
+# include "Ecore_Con.h"
+#endif
+
 #include "ecore_file_private.h"
 
 #ifdef BUILD_ECORE_CON

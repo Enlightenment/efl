@@ -100,13 +100,13 @@ _ecore_getopt_help_line(FILE *fp, const int base, const int total, int used, con
 	/* process line considering spaces (new line and tabs are spaces!) */
 	while ((used < total) && (len > 0))
 	  {
+	     const char *space = NULL;
 	     int i, todo;
 
 	     todo = total - used;
 	     if (todo > len)
 	       todo = len;
 
-	     const char *space = NULL;
 	     for (i = 0; i < todo; i++)
 	       if (isspace(text[i]))
 		 {

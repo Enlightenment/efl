@@ -10,9 +10,12 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #include <dirent.h>
-#include <libgen.h>
+
+#ifndef _MSC_VER
+# include <unistd.h>
+# include <libgen.h>
+#endif
 
 #ifndef _FILE_OFFSET_BITS
 # define _FILE_OFFSET_BITS  64
@@ -177,9 +180,9 @@ ecore_file_mkdir(const char *dir)
 EAPI int
 ecore_file_mkdirs(const char **dirs)
 {
-   if (!dirs) return -1;
-
    int i = 0;
+
+   if (!dirs) return -1;
 
    for (; *dirs != NULL; dirs++)
      if (ecore_file_mkdir(*dirs))
@@ -417,10 +420,9 @@ ecore_file_mkpath(const char *path)
 EAPI int
 ecore_file_mkpaths(const char **paths)
 {
+   int i = 0;
 
    if (!paths) return -1;
-
-   int i = 0;
 
    for (; *paths != NULL; paths++)
      if (ecore_file_mkpath(*paths))
