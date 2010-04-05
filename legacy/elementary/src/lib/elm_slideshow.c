@@ -38,13 +38,13 @@ struct _Widget_Data
    Eina_List *items_built;
    Elm_Slideshow_Item *current;
    Elm_Slideshow_Item *previous;
-   int loop;
 
    Eina_List *transitions;
    const char *transition;
 
    Ecore_Timer *timer;
    int timeout;
+   Eina_Bool loop:1;
 };
 
 static const char *widtype = NULL;
@@ -413,6 +413,21 @@ elm_slideshow_transition_set(Evas_Object *obj, const char *transition)
 }
 
 /**
+ * Returns the transition to use
+ *
+ * @param obj The slideshow object
+ * @return the transition set
+ */
+EAPI const char *
+elm_slideshow_transition_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->transition;
+}
+
+/**
  * The slideshow can go to the next item automatically after a few seconds.
  * This method set the timeout to use. A timeout <=0 disable the timer.
  *
@@ -451,15 +466,30 @@ elm_slideshow_timeout_get(const Evas_Object *obj)
  * Set if the first item should follow the last and vice versa
  *
  * @param obj The slideshow object
- * @param loop if 1, the first item will follow the last and vice versa
+ * @param loop if EINA_TRUE, the first item will follow the last and vice versa
  */
 EAPI void
-elm_slideshow_loop_set(Evas_Object *obj, int loop)
+elm_slideshow_loop_set(Evas_Object *obj, Eina_Bool loop)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->loop = loop;
+}
+
+/**
+ * Return if the first item should follow the last and vice versa
+ *
+ * @param obj The slideshow object
+ * @returns Returns the loop flag
+ */
+EAPI Eina_Bool
+elm_slideshow_loop_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->loop;
 }
 
 /**

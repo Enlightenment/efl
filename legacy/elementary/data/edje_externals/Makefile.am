@@ -27,7 +27,8 @@ ico_slider.png \
 ico_spinner.png \
 ico_thumb.png \
 ico_toggle.png \
-ico_toolbar.png
+ico_toolbar.png \
+ico_slideshow.png
 
 icons.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

@@ -17,3 +17,5 @@ DEFINE_TYPE(spinner)
 DEFINE_TYPE(thumb)
 DEFINE_TYPE(toggle)
 DEFINE_TYPE(toolbar)
+DEFINE_TYPE(slideshow)
+
