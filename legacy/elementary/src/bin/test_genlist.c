@@ -312,6 +312,16 @@ my_gl_last(void *data, Evas_Object *obj, void *event_info)
    elm_genlist_item_selected_set(gli, 1);
 }
 
+static void
+my_gl_flush(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *gl = data;
+   evas_image_cache_flush(evas_object_evas_get(obj));
+   evas_font_cache_flush(evas_object_evas_get(obj));
+   edje_file_cache_flush();
+   edje_collection_cache_flush();
+}
+
 void
 test_genlist2(void *data, Evas_Object *obj, void *event_info)
 {
@@ -461,6 +471,14 @@ test_genlist2(void *data, Evas_Object *obj, void *event_info)
    bt = elm_button_add(win);
    elm_button_label_set(bt, "+ after");
    evas_object_smart_callback_add(bt, "clicked", my_gl_insert_after, gl);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx3, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Flush");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_flush, gl);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx3, bt);

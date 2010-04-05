@@ -29,6 +29,7 @@ struct _Elm_Win
 
 static const char *widtype = NULL;
 static void _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _elm_win_obj_callback_parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _elm_win_obj_intercept_show(void *data, Evas_Object *obj);
 static void _elm_win_move(Ecore_Evas *ee);
 static void _elm_win_resize(Ecore_Evas *ee);
@@ -111,6 +112,12 @@ _elm_win_obj_callback_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void
    Elm_Win *win = data;
    Evas_Object *child;
 
+   if (win->parent)
+     {
+        evas_object_event_callback_del_full(win->parent, EVAS_CALLBACK_DEL,
+                                            _elm_win_obj_callback_parent_del, win);
+        win->parent = NULL;
+     }
    if (win->autodel_clear) *(win->autodel_clear) = -1;
    _elm_win_list = eina_list_remove(_elm_win_list, win->win_obj);
    while (win->subobjs) elm_win_resize_object_del(obj, win->subobjs->data);
@@ -128,11 +135,11 @@ _elm_win_obj_callback_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void
      {
 	evas_object_del(child);
      }
-   evas_image_cache_flush(win->evas);
-   evas_font_cache_flush(win->evas);
 // FIXME: Why are we flushing edje on every window destroy ??
-   edje_file_cache_flush();
-   edje_collection_cache_flush();
+//   evas_image_cache_flush(win->evas);
+//   evas_font_cache_flush(win->evas);
+//   edje_file_cache_flush();
+//   edje_collection_cache_flush();
 // FIXME: we are in the del handler for the object and delete the canvas
 // that lives under it from the handler... nasty. deferring doesnt help either
    ecore_job_add(_deferred_ecore_evas_free, win->ee);
@@ -142,8 +149,19 @@ _elm_win_obj_callback_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void
    if ((!_elm_win_list) &&
        (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED))
      {
+        evas_image_cache_flush(e);
+        evas_font_cache_flush(e);
+        edje_file_cache_flush();
+        edje_collection_cache_flush();
 	elm_exit();
      }
+}
+
+static void
+_elm_win_obj_callback_parent_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Elm_Win *win = data;
+   if (obj == win->parent) win->parent = NULL;
 }
 
 static void
@@ -445,6 +463,9 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 
    win->type = type;
    win->parent = parent;
+   if (win->parent)
+     evas_object_event_callback_add(win->parent, EVAS_CALLBACK_DEL,
+                                    _elm_win_obj_callback_parent_del, win);
 
    win->evas = ecore_evas_get(win->ee);
    win->win_obj = elm_widget_add(win->evas);
