@@ -38,10 +38,9 @@ static const char SIG_DIRECTORY_OPEN[]= "directory,open";
 static const char SIG_DONE[] = "done";
 static const char SIG_SELECTED[] = "selected";
 static const Evas_Smart_Cb_Description _signals[] = {
-  {SIG_DIRECTORY_OPEN, ""}, /* FIXME: all three may be called with a
-			       path arg. */
-  {SIG_DONE, ""},
-  {SIG_SELECTED, ""},
+  {SIG_DIRECTORY_OPEN, "s"},
+  {SIG_DONE, "s"},
+  {SIG_SELECTED, "s"},
   {NULL, NULL}
 };
 
