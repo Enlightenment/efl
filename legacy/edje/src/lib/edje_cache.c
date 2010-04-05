@@ -248,7 +248,7 @@ _edje_file_dangling(Edje_File *edf)
 Edje_File *
 _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret)
 {
-   Edje_File *edf;
+   Edje_File *edf = NULL;
    Eina_List *l, *hist;
    Edje_Part_Collection *edc;
    Edje_Part *ep;
@@ -260,9 +260,12 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
      }
 
    if (!_edje_file_hash)
-     _edje_file_hash = eina_hash_string_small_new(NULL);
-   edf = eina_hash_find(_edje_file_hash, file);
+     {
+	_edje_file_hash = eina_hash_string_small_new(NULL);
+	goto open_new;
+     }
 
+   edf = eina_hash_find(_edje_file_hash, file);
    if (edf)
      {
 	if (edf->mtime != st.st_mtime)
@@ -273,38 +276,41 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 	  }
 
 	edf->references++;
+	goto open;
      }
-   else
-     {
-        EINA_LIST_FOREACH(_edje_file_cache, l, edf)
-	  {
-	     if (!strcmp(edf->path, file))
-	       {
-		  if (edf->mtime != st.st_mtime)
-		    {
-		       _edje_file_cache = eina_list_remove_list(_edje_file_cache, l);
-		       _edje_file_free(edf);
-		       edf = NULL;
-		       goto open_new;
-		    }
 
-		  edf->references = 1;
+   EINA_LIST_FOREACH(_edje_file_cache, l, edf)
+     {
+	if (!strcmp(edf->path, file))
+	  {
+	     if (edf->mtime != st.st_mtime)
+	       {
 		  _edje_file_cache = eina_list_remove_list(_edje_file_cache, l);
-		  eina_hash_add(_edje_file_hash, file, edf);
-		  break;
+		  _edje_file_free(edf);
+		  edf = NULL;
+		  goto open_new;
 	       }
-	     edf = NULL;
+
+	     edf->references = 1;
+	     _edje_file_cache = eina_list_remove_list(_edje_file_cache, l);
+	     eina_hash_add(_edje_file_hash, file, edf);
+	     break;
 	  }
+	edf = NULL;
      }
 
  open_new:
    if (!edf)
      {
+	if (!_edje_file_hash)
+	  _edje_file_hash = eina_hash_string_small_new(NULL);
 	edf = _edje_file_open(file, coll, error_ret, edc_ret);
 	if (!edf) return NULL;
 	eina_hash_add(_edje_file_hash, file, edf);
 	return edf;
      }
+
+ open:
 
    if (!coll) return edf;
 
