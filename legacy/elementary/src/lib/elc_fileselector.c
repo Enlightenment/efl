@@ -33,6 +33,18 @@ struct _Widget_Data
 Elm_Genlist_Item_Class itc;
 
 static const char *widtype = NULL;
+
+static const char SIG_DIRECTORY_OPEN[]= "directory,open";
+static const char SIG_DONE[] = "done";
+static const char SIG_SELECTED[] = "selected";
+static const Evas_Smart_Cb_Description _signals[] = {
+  {SIG_DIRECTORY_OPEN, ""}, /* FIXME: all three may be called with a
+			       path arg. */
+  {SIG_DONE, ""},
+  {SIG_SELECTED, ""},
+  {NULL, NULL}
+};
+
 static void _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent);
 static void _do_anchors(Evas_Object *obj, const char *path);
 
@@ -164,7 +176,7 @@ _sel(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 	  elm_entry_entry_set(wd->entry2, ecore_file_file_get(path));
      }
 
-   evas_object_smart_callback_call(fs, "selected", (void*)path);
+   evas_object_smart_callback_call(fs, SIG_SELECTED, (void*)path);
 }
 
 static void
@@ -189,7 +201,7 @@ static void
 _ok(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs = data;
-   evas_object_smart_callback_call(fs, "done",
+   evas_object_smart_callback_call(fs, SIG_DONE,
 				   (void*)elm_fileselector_selected_get(fs));
 }
 
@@ -197,7 +209,7 @@ static void
 _canc(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs = data;
-   evas_object_smart_callback_call(fs, "done", NULL);
+   evas_object_smart_callback_call(fs, SIG_DONE, NULL);
 }
 
 static void
@@ -212,7 +224,7 @@ _anchor_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    // keep a ref to path 'couse it will be destroyed by _populate
    p = eina_stringshare_add(info->name);
    _populate(fs, p, NULL);
-   evas_object_smart_callback_call(data, "selected", (void*)p);
+   evas_object_smart_callback_call(data, SIG_SELECTED, (void*)p);
    eina_stringshare_del(p);
 }
 
@@ -262,7 +274,7 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
    if ((!wd) || (!ecore_file_is_dir(path))) return;
    dir = opendir(path);
    if (!dir) return;
-   evas_object_smart_callback_call(obj, "directory,open", (void*)path);
+   evas_object_smart_callback_call(obj, SIG_DIRECTORY_OPEN, (void*)path);
    if (!parent)
      {
 	elm_genlist_clear(wd->list);
@@ -418,6 +430,10 @@ elm_fileselector_add(Evas_Object *parent)
    //~ evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
    //~ _changed_size_hints, obj);
    _sizing_eval(obj);
+
+   // TODO: convert Elementary to subclassing of Evas_Smart_Class
+   // TODO: and save some bytes, making descriptions per-class and not instance!
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
 }
 
