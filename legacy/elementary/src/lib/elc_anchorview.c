@@ -168,9 +168,14 @@ elm_anchorview_add(Evas_Object *parent)
 
    elm_entry_entry_set(wd->entry, "");
 
-   evas_object_smart_callback_add(wd->entry, "anchor,clicked", _anchor_clicked, obj);
+   evas_object_smart_callback_add(wd->entry, "anchor,clicked",
+				  _anchor_clicked, obj);
 
    _sizing_eval(obj);
+
+   // TODO: convert Elementary to subclassing of Evas_Smart_Class
+   // TODO: and save some bytes, making descriptions per-class and not instance!
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
 }
 
