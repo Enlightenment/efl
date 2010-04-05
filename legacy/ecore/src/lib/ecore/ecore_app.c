@@ -10,6 +10,8 @@
 
 #ifndef _MSC_VER
 # include <unistd.h>
+#else
+# include <process.h>
 #endif
 
 #ifdef HAVE_EVIL
