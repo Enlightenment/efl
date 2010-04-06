@@ -2263,6 +2263,10 @@ efreet_desktop_update_cache_dirs(void)
         unsigned int size = strlen(dir) + 1;
         write(cachefd, &size, sizeof(int));
         write(cachefd, dir, size);
+        eina_hash_add(change_monitors, dir,
+                            ecore_file_monitor_add(dir,
+                                                   efreet_desktop_listen_changes_cb,
+                                                   NULL));
         eina_stringshare_del(dir);
     }
     efreet_desktop_dirs = NULL;
@@ -2411,7 +2415,6 @@ efreet_desktop_exe_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
 static void
 efreet_desktop_listen_changes(void)
 {
-    /* TODO: Check for changes in efreet_desktop_cache_dirs() during runtime */
     int dirsfd = -1;
     Eina_List *dirs;
     char *path;
