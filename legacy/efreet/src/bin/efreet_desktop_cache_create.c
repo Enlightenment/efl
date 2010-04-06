@@ -267,7 +267,12 @@ main()
         }
         munmap(map, st.st_size);
         map = MAP_FAILED;
-        if (ftruncate(dirsfd, 0) < 0) goto error;
+    }
+    if (dirsfd > 0)
+    {
+        close(dirsfd);
+        dirsfd = -1;
+        unlink(efreet_desktop_cache_dirs());
     }
 
     EINA_LIST_FREE(dirs, path)
@@ -284,16 +289,21 @@ main()
         }
         eina_stringshare_del(path);
     }
-    EINA_LIST_FREE(user_dirs, dir)
+    if (user_dirs)
     {
-        if (dirsfd > 0)
+        dirsfd = open(efreet_desktop_cache_dirs(), O_CREAT | O_APPEND | O_WRONLY, S_IRUSR | S_IWUSR);
+        if (dirsfd < 0) goto error;
+        EINA_LIST_FREE(user_dirs, dir)
         {
             unsigned int size = strlen(dir) + 1;
             write(dirsfd, &size, sizeof(int));
             write(dirsfd, dir, size);
+
+            if (!cache_scan(dir, NULL, priority, 0, &changed)) goto error;
+            eina_stringshare_del(dir);
         }
-        if (!cache_scan(dir, NULL, priority, 0, &changed)) goto error;
-        eina_stringshare_del(dir);
+        close(dirsfd);
+        dirsfd = -1;
     }
     eina_hash_free(file_ids);
     eina_hash_free(paths);
@@ -342,7 +352,6 @@ main()
     eet_shutdown();
     eina_shutdown();
     close(fd);
-    if (dirsfd > 0) close(dirsfd);
     return 0;
 error:
     if (map != MAP_FAILED) munmap(map, st.st_size);
