@@ -121,7 +121,7 @@ edje_edit_compiler_get(
  * NOTE: for now this as 2 limitations
  *    -you will lost your #define in the edc source
  */
-EAPI int                   ///@return 1 on success, 0 on failure
+EAPI Eina_Bool             ///@return 1 on success, 0 on failure
 edje_edit_save(
    Evas_Object *obj        ///< The edje object to save
 );
@@ -130,7 +130,7 @@ edje_edit_save(
  *
  * Same limitations as edje_edit_save
  */
-EAPI int                   ///@return 1 on success, 0 on failure
+EAPI Eina_Bool             ///@return 1 on success, 0 on failure
 edje_edit_save_all(
    Evas_Object *obj        ///< The edje object to save
 );

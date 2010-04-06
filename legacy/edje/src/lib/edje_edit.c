@@ -6460,7 +6460,7 @@ _edje_edit_edje_file_save(Eet_File *eetf, Edje_File *ef)
    return 1;
 }
 
-static int
+static Eina_Bool
 _edje_edit_collection_save(Eet_File *eetf, Edje_Part_Collection *epc)
 {
    char buf[256];
@@ -6470,9 +6470,9 @@ _edje_edit_collection_save(Eet_File *eetf, Edje_Part_Collection *epc)
    if (eet_data_write(eetf, _edje_edd_edje_part_collection, buf, epc, 1) <= 0)
      {
 	ERR("Error. unable to write \"%s\" part entry", buf);
-	return 0;
+	return EINA_FALSE;
      }
-   return 1;
+   return EINA_TRUE;
 }
 
 static int
@@ -6544,23 +6544,16 @@ _edje_edit_source_save(Eet_File *eetf, Evas_Object *obj)
    return 1;
 }
 
-static Eina_Bool
-_edje_edit_coll_hash_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
-{
-   _edje_edit_collection_save((Eet_File *)fdata, (Edje_Part_Collection *)data);
-   return 1;
-}
-
-int
+Eina_Bool
 _edje_edit_internal_save(Evas_Object *obj, int current_only)
 {
    Edje_File *ef;
    Eet_File *eetf;
 
-   GET_ED_OR_RETURN(0);
+   GET_ED_OR_RETURN(EINA_FALSE);
 
    ef = ed->file;
-   if (!ef) return 0;
+   if (!ef) return EINA_FALSE;
 
    INF("***********  Saving file ******************");
    INF("** path: %s", ef->path);
@@ -6571,7 +6564,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
      {
 	ERR("Error. unable to open \"%s\" for writing output",
 	    ef->path);
-	return 0;
+	return EINA_FALSE;
      }
 
    /* Set compiler name */
@@ -6584,7 +6577,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
    if (!_edje_edit_edje_file_save(eetf, ef))
      {
 	eet_close(eetf);
-	return 0;
+	return EINA_FALSE;
      }
 
    if (current_only)
@@ -6596,7 +6589,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
 	     if (!_edje_edit_collection_save(eetf, ed->collection))
 	       {
 		  eet_close(eetf);
-		  return 0;
+		  return EINA_FALSE;
 	       }
 	  }
      }
@@ -6604,26 +6597,49 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
      {
 	Eina_List *l;
 	Edje_Part_Collection *edc;
+        Eina_Iterator *it;
 
-	eina_hash_foreach(ef->collection_hash, _edje_edit_coll_hash_cb, eetf);
+	INF("** Writing all collections");
+
+	it = eina_hash_iterator_data_new(ef->collection_hash);
+        while (eina_iterator_next(it, (void **)&edc))
+	  {
+	     INF("** Writing hash Edje_Part_Collection* ed->collection "
+		   "[id: %d]", edc->id);
+	     if(!_edje_edit_collection_save(eetf, edc))
+	       {
+		  eet_close(eetf);
+		  return EINA_FALSE;
+	       }
+	  }
+	eina_iterator_free(it);
+
 	EINA_LIST_FOREACH(ef->collection_cache, l, edc)
-	   _edje_edit_collection_save(eetf, edc);
+	  {
+	     INF("** Writing cache Edje_Part_Collection* ed->collection "
+		   "[id: %d]", edc->id);
+	     if(!_edje_edit_collection_save(eetf, edc))
+	       {
+		  eet_close(eetf);
+		  return EINA_FALSE;
+	       }
+	  }
      }
 
    _edje_edit_source_save(eetf, obj);
 
    eet_close(eetf);
    INF("***********  Saving DONE ******************");
-   return 1;
+   return EINA_TRUE;
 }
 
-EAPI int
+EAPI Eina_Bool
 edje_edit_save(Evas_Object *obj)
 {
    return _edje_edit_internal_save(obj, 1);
 }
 
-EAPI int
+EAPI Eina_Bool
 edje_edit_save_all(Evas_Object *obj)
 {
    return _edje_edit_internal_save(obj, 0);
