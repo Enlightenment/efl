@@ -1995,7 +1995,7 @@ elm_genlist_clear(Evas_Object *obj)
 /**
  * Enable or disable multi-select in the genlist
  *
- * This enables (1) or disableds (0) multi-select in the list. This allows
+ * This enables (EINA_TRUE) or disableds (EINA_FALSE) multi-select in the list. This allows
  * more than 1 item to be selected.
  *
  * @param obj The genlist object
@@ -2011,6 +2011,25 @@ elm_genlist_multi_select_set(Evas_Object *obj, Eina_Bool multi)
    if (!wd) return;
    wd->multi = multi;
 }
+
+/**
+ * Gets if multi-select in genlist is enable or disable
+ *
+ * @param obj The genlist object
+ * @return Multi-select enable/disable
+ * (EINA_TRUE = enabled/EINA_FALSE = disabled)
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_Bool
+elm_genlist_multi_select_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->multi;
+}
+
 
 /**
  * Get the selectd item in the genlist
@@ -2751,24 +2770,6 @@ elm_genlist_item_del(Elm_Genlist_Item *it)
 }
 
 /**
- * Get the data item from the genlist item
- *
- * This returns the data value passed on the elm_genlist_item_append() and
- * related item addition calls.
- *
- * @param it The item
- * @return The data pointer provided when created
- *
- * @ingroup Genlist
- */
-EAPI const void *
-elm_genlist_item_data_get(const Elm_Genlist_Item *it)
-{
-   if (!it) return NULL;
-   return it->data;
-}
-
-/**
  * Set the data item from the genlist item
  *
  * This set the data value passed on the elm_genlist_item_append() and
@@ -2787,6 +2788,24 @@ elm_genlist_item_data_set(Elm_Genlist_Item *it, const void *data)
    if (!it) return;
    it->data = data;
    elm_genlist_item_update(it);
+}
+
+/**
+ * Get the data item from the genlist item
+ *
+ * This returns the data value passed on the elm_genlist_item_append() and
+ * related item addition calls.
+ *
+ * @param it The item
+ * @return The data pointer provided when created
+ *
+ * @ingroup Genlist
+ */
+EAPI const void *
+elm_genlist_item_data_get(const Elm_Genlist_Item *it)
+{
+   if (!it) return NULL;
+   return it->data;
 }
 
 /**
@@ -2864,6 +2883,24 @@ elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
 }
 
 /**
+ * Gets the horizontal stretching mode
+ *
+ * @param obj The genlist object
+ * @return The mode to use
+ * (ELM_LIST_LIMIT, ELM_LIST_SCROLL)
+ *
+ * @ingroup Genlist
+ */
+EAPI Elm_List_Mode
+elm_genlist_horizontal_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_LIST_SCROLL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return ELM_LIST_SCROLL;
+   return wd->mode;
+}
+
+/**
  * Set the always select mode.
  *
  * Items will only call their selection func and callback when first becoming
@@ -2872,7 +2909,8 @@ elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
  * selected, every click will make the selected callbacks be called.
  *
  * @param obj The genlist object
- * @param always_select The always select mode (1 on, 2 off)
+ * @param always_select The always select mode
+ * (EINA_TRUE = on, EINA_FALSE = off)
  *
  * @ingroup Genlist
  */
@@ -2886,13 +2924,32 @@ elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
 }
 
 /**
+ * Get the always select mode.
+ *
+ * @param obj The genlist object
+ * @return The always select mode
+ * (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_Bool
+elm_genlist_always_select_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->always_select;
+}
+
+/**
  * Set no select mode
  *
  * This will turn off the ability to select items entirely and they will
  * neither appear selected nor call selected callback functions.
  *
  * @param obj The genlist object
- * @param no_select The no select mode (1 on, 2 off)
+ * @param no_select The no select mode
+ * (EINA_TRUE = on, EINA_FALSE = off)
  *
  * @ingroup Genlist
  */
@@ -2906,13 +2963,32 @@ elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select)
 }
 
 /**
+ * Gets no select mode
+ *
+ * @param obj The genlist object
+ * @return The no select mode
+ * (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_Bool
+elm_genlist_no_select_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->no_select;
+}
+
+/**
  * Set compress mode
  *
  * This will enable the compress mode where items are "compressed" horizontally
  * to fit the genlist scrollable viewport width.
  *
  * @param obj The genlist object
- * @param no_select The compress mode (1 on, 2 off)
+ * @param no_select The compress mode
+ * (EINA_TRUE = on, EINA_FALSE = off)
  *
  * @ingroup Genlist
  */
@@ -2923,6 +2999,24 @@ elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->compress = compress;
+}
+
+/**
+ * Get the compress mode
+ *
+ * @param obj The genlist object
+ * @return The compress mode
+ * (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_Bool
+elm_genlist_compress_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->compress;
 }
 
 /**
@@ -2947,6 +3041,24 @@ elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 }
 
 /**
+ * Get the bounce mode
+ *
+ * @param obj The genlist object
+ * @param h_bounce Allow bounce horizontally
+ * @param v_bounce Allow bounce vertically
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_bounce_allow_get(obj, h_bounce, v_bounce);
+}
+
+/**
  * Set homogenous mode
  *
  * This will enable the homogeneous mode where items are of the same height and width
@@ -2954,6 +3066,7 @@ elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
  *
  * @param obj The genlist object
  * @param homogeneous Assume the items within the genlist are of the same height and width
+ * (EINA_TRUE = on, EINA_FALSE = off)
  *
  * @ingroup Genlist
  */
@@ -2963,8 +3076,26 @@ elm_genlist_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (homogeneous) elm_genlist_compress_mode_set(obj, 1);
+   if (homogeneous) elm_genlist_compress_mode_set(obj, EINA_TRUE);
    wd->homogeneous = homogeneous;
+}
+
+/**
+ * Get the homogenous mode
+ *
+ * @param obj The genlist object
+ * @return Assume the items within the genlist are of the same height and width
+ * (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_Bool
+elm_genlist_homogeneous_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->homogeneous;
 }
 
 /**
@@ -2986,4 +3117,63 @@ elm_genlist_block_count_set(Evas_Object *obj, int n)
    wd->max_items_per_block = n;
 }
 
+/**
+ * Get the maximum number of items within an item block
+ *
+ * @param obj The genlist object
+ * @return Maximum number of items within an item block
+ *
+ * @ingroup Genlist
+ */
+EAPI int
+elm_genlist_block_count_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+   return wd->max_items_per_block;
+}
 
+/**
+ * Set the scrollbar policy
+ *
+ * This sets the scrollbar visibility policy for the given scroller.
+ * ELM_SMART_SCROLLER_POLICY_AUTO means the scrollber is made visible if it
+ * is needed, and otherwise kept hidden. ELM_SMART_SCROLLER_POLICY_ON turns
+ * it on all the time, and ELM_SMART_SCROLLER_POLICY_OFF always keeps it off.
+ * This applies respectively for the horizontal and vertical scrollbars.
+ *
+ * @param obj The genlist object
+ * @param policy_h Horizontal scrollbar policy
+ * @param policy_v Vertical scrollbar policy
+ *
+ * @ingroup List
+ */
+EAPI void
+elm_genlist_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->scr)
+     elm_scroller_policy_set(wd->scr, policy_h, policy_v);
+}
+
+/**
+ * Get the scrollbar policy
+ *
+ * @param obj The genlist object
+ * @param policy_h Horizontal scrollbar policy
+ * @param policy_v Vertical scrollbar policy
+ *
+ * @ingroup List
+ */
+EAPI void
+elm_genlist_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->scr)
+     elm_scroller_policy_get(wd->scr, policy_h, policy_v);
+}

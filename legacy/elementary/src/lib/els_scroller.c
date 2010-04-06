@@ -955,6 +955,14 @@ elm_smart_scroller_bounce_allow_set(Evas_Object *obj, Eina_Bool horiz, Eina_Bool
 }
 
 void
+elm_smart_scroller_bounce_allow_get(const Evas_Object *obj, Eina_Bool *horiz, Eina_Bool *vert)
+{
+   API_ENTRY return;
+   *horiz = sd->bounce_horiz;
+   *vert = sd->bounce_vert;
+}
+
+void
 elm_smart_scroller_paging_set(Evas_Object *obj, double pagerel_h, double pagerel_v, Evas_Coord pagesize_h, Evas_Coord pagesize_v)
 {
    API_ENTRY return;

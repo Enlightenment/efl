@@ -417,9 +417,10 @@ extern "C" {
 
    typedef enum _Elm_Scroller_Policy
      {
-	ELM_SCROLLER_POLICY_AUTO,
-	  ELM_SCROLLER_POLICY_ON,
-	  ELM_SCROLLER_POLICY_OFF
+	ELM_SCROLLER_POLICY_AUTO = 0,
+	ELM_SCROLLER_POLICY_ON,
+	ELM_SCROLLER_POLICY_OFF,
+	ELM_SCROLLER_POLICY_LAST
      }
    Elm_Scroller_Policy;
 
@@ -429,6 +430,7 @@ extern "C" {
    EAPI void         elm_scroller_content_min_limit(Evas_Object *obj, Eina_Bool w, Eina_Bool h);
    EAPI void         elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
    EAPI void         elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+   EAPI void         elm_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
    EAPI void         elm_scroller_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    EAPI void         elm_scroller_child_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI void         elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
@@ -817,9 +819,10 @@ extern "C" {
 
    typedef enum _Elm_List_Mode
      {
-	ELM_LIST_COMPRESS,
+	ELM_LIST_COMPRESS = 0,
 	ELM_LIST_SCROLL,
-	ELM_LIST_LIMIT
+	ELM_LIST_LIMIT,
+	ELM_LIST_LAST
      } Elm_List_Mode;
    typedef struct _Elm_List_Item Elm_List_Item;
    EAPI Evas_Object     *elm_list_add(Evas_Object *parent);
@@ -919,15 +922,25 @@ extern "C" {
 
    EAPI Evas_Object      *elm_genlist_add(Evas_Object *parent);
    EAPI void              elm_genlist_clear(Evas_Object *obj);
-   // TODO: add getters for all functions below:
    EAPI void              elm_genlist_multi_select_set(Evas_Object *obj, Eina_Bool multi);
+   EAPI Eina_Bool         elm_genlist_multi_select_get(const Evas_Object *obj);
    EAPI void              elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
+   EAPI Elm_List_Mode     elm_genlist_horizontal_mode_get(const Evas_Object *obj);
    EAPI void              elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
+   EAPI Eina_Bool         elm_genlist_always_select_mode_get(const Evas_Object *obj);
    EAPI void              elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
+   EAPI Eina_Bool         elm_genlist_no_select_mode_get(const Evas_Object *obj);
    EAPI void              elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress);
+   EAPI Eina_Bool         elm_genlist_compress_mode_get(const Evas_Object *obj);
    EAPI void              elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+   EAPI void              elm_genlist_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
    EAPI void              elm_genlist_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous);
+   EAPI Eina_Bool         elm_genlist_homogeneous_get(const Evas_Object *obj);
    EAPI void              elm_genlist_block_count_set(Evas_Object *obj, int n);
+   EAPI int               elm_genlist_block_count_get(const Evas_Object *obj);
+   EAPI void              elm_genlist_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+   EAPI void              elm_genlist_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
+
    /* operations to add items */
    EAPI Elm_Genlist_Item *elm_genlist_item_append(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item_Flags flags, Evas_Smart_Cb func, const void *func_data);
    EAPI Elm_Genlist_Item *elm_genlist_item_prepend(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item_Flags flags, Evas_Smart_Cb func, const void *func_data);
