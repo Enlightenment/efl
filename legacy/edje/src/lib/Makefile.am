@@ -24,6 +24,7 @@ edje_callbacks.c \
 edje_data.c \
 edje_embryo.c \
 edje_lua.c \
+edje_lua2.c \
 edje_load.c \
 edje_main.c \
 edje_misc.c \

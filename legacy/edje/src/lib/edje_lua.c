@@ -4953,11 +4953,41 @@ static int
 _edje_lua_group_fn_timer(lua_State *L)
 {
    Edje_Lua_Timer *tar = lua_newuserdata(L, sizeof(Edje_Lua_Timer));
+   
    _edje_lua_set_class(L, -1, cTimer);
+   /* ^^^^^^^^^^^^^^^^(L, index, class)
+   lua_newtable(L);
+   if (index < 0)
+      lua_setfenv(L, index - 1);
+   else
+      lua_setfenv(L, index);
+
+   _edje_lua_get_metatable(L, class);
+   if (index < 0)
+      lua_setmetatable(L, index - 1);
+   else
+      lua_setmetatable(L, index);
+    */
+   
    tar->et = ecore_timer_add(luaL_checknumber(L, 2), _edje_lua_timer_cb, tar);
    tar->L = L;
+   
    _edje_lua_new_reg(L, -1, tar); // freed in _edje_lua_timer_cb/del
+   /* ^^^^^^^^^^^^^^(L, index, ptr)   
+   lua_pushvalue(L, index);
+   lua_pushlightuserdata(L, ptr);
+   lua_insert(L, -2);
+   lua_rawset(L, LUA_REGISTRYINDEX); // freed in _edje_lua_free_reg
+    */
+   
    tar->cb = _edje_lua_new_ref(L, 3); // freed in _edje_lua_timer_cb/del
+   /* ^^^^^^^^^^^^^^^^^^^^^^^^(L, index)
+   lua_pushvalue(L, index);
+   Edje_Lua_Ref *ref = malloc(sizeof(Edje_Lua_Ref));
+   ref->id = luaL_ref(L, LUA_REGISTRYINDEX);
+   ref->L = L;
+   return ref;
+    */
    return 1;
 }
 
@@ -5578,7 +5608,7 @@ _edje_lua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
      }
    if (nsize == 0)
      {
-	free(ptr);		/* ANSI requires that free(NULL) has no effect */
+	free(ptr); /* ANSI requires that free(NULL) has no effect */
 	return NULL;
      }
 

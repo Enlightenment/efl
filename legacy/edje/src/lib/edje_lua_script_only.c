@@ -26,7 +26,7 @@ void *alloca(size_t);
 #include "edje_private.h"
 
 Eina_Bool
-_edje_lua_script_only(Edje * ed)
+_edje_lua_script_only(Edje *ed)
 {
    if ((ed->collection) && (ed->collection->lua_script_only))
       return EINA_TRUE;
@@ -34,10 +34,26 @@ _edje_lua_script_only(Edje * ed)
 }
 
 void
-_edje_lua_script_only_init(Edje * ed)
+_edje_lua_script_only_init(Edje *ed)
 {
    if (ed->collection)
      {
+#ifdef LUA2
+        int err;
+        
+        _edje_lua2_script_init(ed);
+        if (ed->L)
+          {
+             lua_getglobal(ed->L, "init");
+             if (!lua_isnil(ed->L, -1))
+               {
+                  if ((err = lua_pcall(ed->L, 0, 0, 0)))
+                    _edje_lua2_error(ed->L, err);
+               }
+             else
+               lua_pop(ed->L, 1);
+          }
+#else        
 	 ed->L = _edje_lua_new_thread(ed, _edje_lua_state_get()); // freed in _edje_lua_script_only_shutdown
 	 _edje_lua_new_reg(ed->L, -1, ed->L); // freed in _edje_lua_script_only_shutdown
 	 lua_pop(ed->L, 1); /* thread */
@@ -60,14 +76,31 @@ _edje_lua_script_only_init(Edje * ed)
 	   }
 	 else
 	   lua_pop(L, 1);
+#endif        
      }
 }
 
 void
-_edje_lua_script_only_shutdown(Edje * ed)
+_edje_lua_script_only_shutdown(Edje *ed)
 {
    if (ed->collection && ed->L)
      {
+#ifdef LUA2
+        int err;
+        
+        if (ed->L)
+          {
+             lua_getglobal(ed->L, "shutdown");
+             if (!lua_isnil(ed->L, -1))
+               {
+                  if ((err = lua_pcall(ed->L, 0, 0, 0)))
+                    _edje_lua2_error(ed->L, err);
+               }
+             else
+               lua_pop(ed->L, 1);
+          }
+        _edje_lua2_script_shutdown(ed);
+#else        
 	lua_State *L = ed->L;
 	lua_getglobal(L, "shutdown");
 	if (!lua_isnil (L, -1))
@@ -83,12 +116,15 @@ _edje_lua_script_only_shutdown(Edje * ed)
 	  }
 	else
 	  lua_pop (L, 1);
+#endif        
      }
 }
 
 void
 _edje_lua_script_only_show(Edje * ed)
 {
+#ifdef LUA2
+#else        
    if (ed->collection && ed->L)
      {
 	lua_State *L = ed->L;
@@ -107,11 +143,14 @@ _edje_lua_script_only_show(Edje * ed)
 	else
 	  lua_pop (L, 1);
      }
+#endif
 }
 
 void
 _edje_lua_script_only_hide(Edje * ed)
 {
+#ifdef LUA2
+#else        
    if (ed->collection && ed->L)
      {
 	lua_State *L = ed->L;
@@ -130,11 +169,14 @@ _edje_lua_script_only_hide(Edje * ed)
 	else
 	  lua_pop (L, 1);
      }
+#endif   
 }
 
 void
 _edje_lua_script_only_move(Edje * ed)
 {
+#ifdef LUA2
+#else        
    if (ed->collection && ed->L)
      {
 	lua_State *L = ed->L;
@@ -155,11 +197,14 @@ _edje_lua_script_only_move(Edje * ed)
 	else
 	  lua_pop (L, 1);
      }
+#endif   
 }
 
 void
 _edje_lua_script_only_resize(Edje * ed)
 {
+#ifdef LUA2
+#else        
    if (ed->collection && ed->L)
      {
 	lua_State *L = ed->L;
@@ -180,11 +225,14 @@ _edje_lua_script_only_resize(Edje * ed)
 	else
 	  lua_pop (L, 1);
      }
+#endif   
 }
 
 void
 _edje_lua_script_only_message(Edje * ed, Edje_Message * em)
 {
+#ifdef LUA2
+#else        
    if (ed->collection && ed->L)
      {
 	lua_State *L = ed->L;
@@ -291,5 +339,6 @@ _edje_lua_script_only_message(Edje * ed, Edje_Message * em)
 	else
 	  lua_pop (L, 1);
      }
+#endif   
 }
 

@@ -844,7 +844,10 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 
 //	_edje_emit(ed, "program,start", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
-	
+        
+#ifdef LUA2
+	_edje_lua2_script_init(ed);
+#else        
 	if (ed->L == NULL) /* private state does not yet exist, create it */
 	  {
 	     ed->L = _edje_lua_new_thread(ed, _edje_lua_state_get());
@@ -870,7 +873,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 	     if ((err_code = lua_pcall(L, 3, 0, 0)))
 	       _edje_lua_error(L, err_code);
 	  }
-
+#endif
 	//	_edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
 	_edje_recalc_do(ed);

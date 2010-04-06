@@ -23,6 +23,7 @@
 #include "Edje_Edit.h"
 
 #include <lua.h>
+#include <lualib.h>
 #include <lauxlib.h>
 #include <setjmp.h>
 
@@ -532,7 +533,7 @@ struct _Edje_Part_Collection
    
    unsigned char    script_only;
 
-   unsigned char	lua_script_only;
+   unsigned char    lua_script_only;
 };
 
 struct _Edje_Part
@@ -845,6 +846,7 @@ struct _Edje
    unsigned int          have_mapped_part : 1;
 
    lua_State            *L;
+   Eina_Inlist          *lua_objs;
    int                   lua_ref;
 };
 
@@ -1555,4 +1557,21 @@ void _edje_external_parsed_params_free(Evas_Object *obj, void *params);
 void _edje_module_init();
 void _edje_module_shutdown();
 
+
+
+
+
+
+
+
+#define LUA2 1
+
+void _edje_lua2_error_full(const char *file, const char *fnc, int line, lua_State *L, int err_code);
+#define _edje_lua2_error(L, err_code) _edje_lua2_error_full(__FILE__, __FUNCTION__, __LINE__, L, err_code)
+
+void _edje_lua2_script_init(Edje *ed);
+void _edje_lua2_script_shutdown(Edje *ed);
+void _edje_lua2_script_load(Edje_Part_Collection *edc, void *data, int size);
+void _edje_lua2_script_unload(Edje_Part_Collection *edc);
+    
 #endif

@@ -96,6 +96,9 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 
    if (data)
      {
+#ifdef LUA2
+        _edje_lua2_script_load(edc, data, size);
+#else        
 	int err_code;
 
 	//printf("lua chunk size: %d\n", size);
@@ -110,6 +113,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 	  }
 	if (lua_pcall(_edje_lua_state_get(), 0, 0, 0))
 	  ERR("lua call error: %s", lua_tostring(_edje_lua_state_get(), -1));
+#endif        
 	free(data);
      }
    
