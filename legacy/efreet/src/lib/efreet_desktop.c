@@ -133,6 +133,8 @@ static Eet_Data_Descriptor *desktop_edd = NULL;
 static Ecore_File_Monitor *cache_monitor = NULL;
 static Eina_List *cache_data = NULL;
 
+static Eina_Hash *change_monitors = NULL;
+
 #ifdef EFREET_MODULE_LOG_DOM 
 #undef EFREET_MODULE_LOG_DOM
 #endif
@@ -230,6 +232,10 @@ static void efreet_desktop_update_cache(void);
 static void efreet_desktop_update_cache_job(void *data);
 static int efreet_desktop_exe_cb(void *data, int type, void *event);
 
+static void efreet_desktop_listen_changes(void);
+static void efreet_desktop_listen_changes_cb(void *data, Ecore_File_Monitor *em,
+                                             Ecore_File_Event event, const char *path);
+
 /**
  * @internal
  * @return Returns > 0 on success or 0 on failure
@@ -275,6 +281,7 @@ efreet_desktop_init(void)
         cache_monitor = ecore_file_monitor_add(buf,
                                                efreet_desktop_cache_update,
                                                NULL);
+        efreet_desktop_listen_changes();
 
         if (!cache_monitor) goto cache_error;
         ecore_exe_run(PACKAGE_BIN_DIR "/efreet_desktop_cache_create", NULL);
@@ -323,6 +330,7 @@ efreet_desktop_shutdown(void)
     EINA_LIST_FREE(efreet_desktop_dirs, dir)
         eina_stringshare_del(dir);
     if (cache_monitor) ecore_file_monitor_del(cache_monitor);
+    if (change_monitors) eina_hash_free(change_monitors);
     if (cache) eet_close(cache);
     efreet_desktop_edd_shutdown(desktop_edd);
     ecore_file_shutdown();
@@ -2394,4 +2402,91 @@ efreet_desktop_exe_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
         efreet_desktop_exe_lock = -1;
     }
     return 1;
+}
+
+static void
+efreet_desktop_listen_changes(void)
+{
+    int dirsfd = -1;
+    Eina_List *dirs;
+    char *path;
+    struct stat st;
+
+    change_monitors = eina_hash_string_superfast_new(EINA_FREE_CB(ecore_file_monitor_del));
+    if (!change_monitors) return;
+
+    dirs = efreet_default_dirs_get(efreet_data_home_get(),
+                                   efreet_data_dirs_get(), "applications");
+
+    EINA_LIST_FREE(dirs, path)
+    {
+        eina_hash_add(change_monitors, path,
+                            ecore_file_monitor_add(path,
+                                                   efreet_desktop_listen_changes_cb,
+                                                   NULL));
+        eina_stringshare_del(path);
+    }
+
+    dirsfd = open(efreet_desktop_cache_dirs(), O_RDONLY, S_IRUSR | S_IWUSR);
+    if ((dirsfd > 0) && (fstat(dirsfd, &st) == 0) && (st.st_size > 0))
+    {
+        char *p;
+        char *map;
+
+        map = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, dirsfd, 0);
+        if (map == MAP_FAILED) goto error;
+        p = map;
+        while (p < map + st.st_size)
+        {
+            unsigned int size = *(unsigned int *)p;
+            p += sizeof(unsigned int);
+            eina_hash_add(change_monitors, p,
+                                ecore_file_monitor_add(p,
+                                                       efreet_desktop_listen_changes_cb,
+                                                       NULL));
+            p += size;
+        }
+        munmap(map, st.st_size);
+    }
+    if (dirsfd > 0) close(dirsfd);
+
+    return;
+error:
+    if (dirsfd > 0) close(dirsfd);
+}
+
+static void
+efreet_desktop_listen_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
+                                 Ecore_File_Event event, const char *path)
+{
+    Ecore_File_Monitor *fm;
+
+    switch (event)
+    {
+        case ECORE_FILE_EVENT_NONE:
+            /* noop */
+            break;
+
+        case ECORE_FILE_EVENT_CREATED_FILE:
+        case ECORE_FILE_EVENT_DELETED_FILE:
+        case ECORE_FILE_EVENT_MODIFIED:
+            efreet_desktop_update_cache();
+            break;
+
+        case ECORE_FILE_EVENT_DELETED_SELF:
+        case ECORE_FILE_EVENT_DELETED_DIRECTORY:
+            fm = eina_hash_find(change_monitors, path);
+            if (fm) ecore_file_monitor_del(fm);
+            eina_hash_del_by_key(change_monitors, path);
+            efreet_desktop_update_cache();
+            break;
+
+        case ECORE_FILE_EVENT_CREATED_DIRECTORY:
+            eina_hash_add(change_monitors, path,
+                                ecore_file_monitor_add(path,
+                                                       efreet_desktop_listen_changes_cb,
+                                                       NULL));
+            efreet_desktop_update_cache();
+            break;
+    }
 }
