@@ -2407,6 +2407,7 @@ efreet_desktop_exe_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
 static void
 efreet_desktop_listen_changes(void)
 {
+    /* TODO: Check for changes in efreet_desktop_cache_dirs() during runtime */
     int dirsfd = -1;
     Eina_List *dirs;
     char *path;
