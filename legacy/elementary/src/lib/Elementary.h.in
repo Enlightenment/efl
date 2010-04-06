@@ -1141,9 +1141,10 @@ extern "C" {
 
    typedef enum _Elm_Photocam_Zoom_Mode
      {
-	ELM_PHOTOCAM_ZOOM_MODE_MANUAL,
+	ELM_PHOTOCAM_ZOOM_MODE_MANUAL = 0,
 	ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT,
-	ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL
+	ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL,
+	ELM_PHOTOCAM_ZOOM_MODE_LAST
      } Elm_Photocam_Zoom_Mode;
    EAPI Evas_Object *elm_photocam_add(Evas_Object *parent);
    EAPI int          elm_photocam_file_set(Evas_Object *obj, const char *file);

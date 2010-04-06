@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "private.h"
 
 typedef struct _Elm_Params_Photocam
@@ -17,12 +19,14 @@ _zoom_mode_setting_get(const char *zoom_mode_str)
 {
    unsigned int i;
 
+   assert(sizeof(choices)/sizeof(choices[0]) == ELM_PHOTOCAM_ZOOM_MODE_LAST);
+
    for (i = 0; i < sizeof(choices); i++)
      {
 	if (!strcmp(zoom_mode_str, choices[i]))
 	  return i;
      }
-   return 0;
+   return ELM_PHOTOCAM_ZOOM_MODE_LAST;
 }
 
 static void
@@ -41,6 +45,7 @@ external_photocam_state_set(void *data __UNUSED__, Evas_Object *obj, const void 
    if (p->zoom_mode)
      {
 	Elm_Photocam_Zoom_Mode set = _zoom_mode_setting_get(p->zoom_mode);
+	if (set == ELM_PHOTOCAM_ZOOM_MODE_LAST) return;
 	elm_photocam_zoom_mode_set(obj, set);
      }
    if (p->paused_exists)
@@ -71,6 +76,7 @@ external_photocam_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
 	     Elm_Photocam_Zoom_Mode set = _zoom_mode_setting_get(param->s);
+	     if (set == ELM_PHOTOCAM_ZOOM_MODE_LAST) return EINA_FALSE;
 	     elm_photocam_zoom_mode_set(obj, set);
 	     return EINA_TRUE;
 	  }
@@ -103,19 +109,32 @@ external_photocam_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_
      }
    else if (!strcmp(param->name, "zoom"))
      {
-	param->d = elm_photocam_zoom_get(obj);
-	return EINA_TRUE;
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+	  {
+	     param->d = elm_photocam_zoom_get(obj);
+	     return EINA_TRUE;
+	  }
      }
    else if (!strcmp(param->name, "zoom mode"))
      {
-	Elm_Photocam_Zoom_Mode zoom_mode_set = elm_photocam_zoom_mode_get(obj);
-	param->s = choices[zoom_mode_set];
-	return EINA_TRUE;
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	  {
+	     Elm_Photocam_Zoom_Mode zoom_mode_set = elm_photocam_zoom_mode_get(obj);
+
+	     if (zoom_mode_set == ELM_PHOTOCAM_ZOOM_MODE_LAST)
+	       return EINA_FALSE;
+
+	     param->s = choices[zoom_mode_set];
+	     return EINA_TRUE;
+	  }
      }
    else if(!strcmp(param->name, "paused"))
      {
-	param->i = elm_photocam_paused_get(obj);
-	return EINA_TRUE;
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+	  {
+	     param->i = elm_photocam_paused_get(obj);
+	     return EINA_TRUE;
+	  }
      }
 
    ERR("unknown parameter '%s' of type '%s'",

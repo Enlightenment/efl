@@ -133,7 +133,7 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
 	     return EINA_TRUE;
 	  }
      }
-   else if (!strcmp(param->name, "policy horizontal"))
+   else if (!strcmp(param->name, "scroll horizontal"))
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
@@ -146,7 +146,7 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
 	     return EINA_TRUE;
 	  }
      }
-   else if (!strcmp(param->name, "policy vertical"))
+   else if (!strcmp(param->name, "scroll vertical"))
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
