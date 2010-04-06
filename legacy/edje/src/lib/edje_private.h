@@ -1563,15 +1563,16 @@ void _edje_module_shutdown();
 
 
 
+// new lua stuff - supercedes the old
+//#define LUA2 1
 
-#define LUA2 1
-
+#ifdef LUA2
 void _edje_lua2_error_full(const char *file, const char *fnc, int line, lua_State *L, int err_code);
 #define _edje_lua2_error(L, err_code) _edje_lua2_error_full(__FILE__, __FUNCTION__, __LINE__, L, err_code)
-
 void _edje_lua2_script_init(Edje *ed);
 void _edje_lua2_script_shutdown(Edje *ed);
 void _edje_lua2_script_load(Edje_Part_Collection *edc, void *data, int size);
 void _edje_lua2_script_unload(Edje_Part_Collection *edc);
-    
+#endif
+
 #endif

@@ -1162,7 +1162,9 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
      }
 #endif
    if (ec->script) embryo_program_free(ec->script);
+#ifdef LUA2   
    _edje_lua2_script_unload(ec);
+#endif
    free(ec);
 }
 
