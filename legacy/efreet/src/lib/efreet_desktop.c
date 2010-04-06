@@ -274,29 +274,31 @@ efreet_desktop_init(void)
     EFREET_EVENT_CACHE_UPDATE = ecore_event_type_new();
 
     snprintf(buf, sizeof(buf), "%s/.efreet", efreet_home_dir_get());
-    if (!ecore_file_mkpath(buf)) goto edd_error;
+    if (!ecore_file_mkpath(buf)) goto cache_error;
 
     if (efreet_cache_update)
     {
+        efreet_desktop_exe_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
+                                                             efreet_desktop_exe_cb, NULL);
+        if (!efreet_desktop_exe_handler) goto cache_error;
+
         cache_monitor = ecore_file_monitor_add(buf,
                                                efreet_desktop_cache_update,
                                                NULL);
+        if (!cache_monitor) goto handler_error;
+
         efreet_desktop_listen_changes();
 
-        if (!cache_monitor) goto cache_error;
         ecore_exe_run(PACKAGE_BIN_DIR "/efreet_desktop_cache_create", NULL);
 
-        efreet_desktop_exe_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                                                             efreet_desktop_exe_cb, NULL);
-        if (!efreet_desktop_exe_handler) goto monitor_error;
     }
 
     cache = eet_open(efreet_desktop_cache_file(), EET_FILE_MODE_READ);
 
     return 1;
 
-monitor_error:
-    if (cache_monitor) ecore_file_monitor_del(cache_monitor);
+handler_error:
+    if (efreet_desktop_exe_handler) ecore_event_handler_del(efreet_desktop_exe_handler);
 cache_error:
     if (efreet_desktop_cache) eina_hash_free(efreet_desktop_cache);
 edd_error:
@@ -2359,6 +2361,7 @@ efreet_desktop_update_cache(void)
 {
     if (!efreet_cache_update) return;
 
+    /* TODO: Make sure we don't create a lot of execs, maybe use a timer? */
     if (efreet_desktop_job) ecore_job_del(efreet_desktop_job);
     efreet_desktop_job = ecore_job_add(efreet_desktop_update_cache_job, NULL);
 }
@@ -2370,6 +2373,7 @@ efreet_desktop_update_cache_job(void *data __UNUSED__)
 
     efreet_desktop_update_cache_dirs();
 
+    if (efreet_desktop_exe_lock > 0) return;
     snprintf(file, sizeof(file), "%s/.efreet/desktop_exec.lock", efreet_home_dir_get());
 
     efreet_desktop_exe_lock = open(file, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
