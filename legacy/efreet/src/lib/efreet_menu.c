@@ -1,5 +1,7 @@
 /* vim: set sw=4 ts=4 sts=4 et: */
 
+/* TODO: Check where strcmp can be changed with == because of stringshare */
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
