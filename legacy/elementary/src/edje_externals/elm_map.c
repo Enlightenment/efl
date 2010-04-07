@@ -10,7 +10,7 @@ typedef struct _Elm_Params_Map
    Eina_Bool zoom_set:1;
 } Elm_Params_Map;
 
-static const char *zoom_choices[] = {"manual",	"auto fit", "auto fill"};
+static const char *zoom_choices[] = {"manual",	"auto fit", "auto fill", NULL};
 
 static const char *source_choices[] =
   {"Mapnik", "Osmarender", "Cycle Map", "Maplint",
