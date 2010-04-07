@@ -687,10 +687,10 @@ _ecore_getopt_parse_find_short(const Ecore_Getopt *parser, char name)
 static int
 _ecore_getopt_parse_find_nonargs_base(const Ecore_Getopt *parser, int argc, char **argv)
 {
-   char *nonargs;
+   char **nonargs;
    int src, dst, used, base;
 
-   nonargs = alloca(sizeof(char) * argc);
+   nonargs = alloca(sizeof(char*) * argc);
    src = 1;
    dst = 1;
    used = 0;
