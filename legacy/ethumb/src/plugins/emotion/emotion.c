@@ -136,9 +136,9 @@ _setup_thumbnail(struct _emotion_plugin *_plugin)
 	snprintf(buf, sizeof(buf), "images/%d", i);
 	edje_edit_image_data_add(edje, buf, i);
 	if (i == 0)
-	  edje_edit_state_image_set(edje, "image", "default 0.00", buf);
+	  edje_edit_state_image_set(edje, "image", "default", 0.00, buf);
 	else
-	  edje_edit_state_tween_add(edje, "image", "default 0.00", buf);
+	  edje_edit_state_tween_add(edje, "image", "default", 0.00, buf);
      }
 
    edje_edit_program_transition_time_set(edje, "animate",
