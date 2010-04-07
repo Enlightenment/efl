@@ -1201,6 +1201,16 @@ _eet_eina_hash_add_alloc(Eina_Hash *hash, const char *key, void *data)
    return hash;
 }
 
+static Eina_Hash *
+_eet_eina_hash_direct_add_alloc(Eina_Hash *hash, const char *key, void *data)
+{
+   if (!hash) hash = eina_hash_string_small_new(NULL);
+   if (!hash) return NULL;
+
+   eina_hash_direct_add(hash, key, data);
+   return hash;
+}
+
 static char *
 _eet_str_direct_alloc(const char *str)
 {
@@ -1257,6 +1267,7 @@ eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc, const c
 
    eddc->version = 2;
 
+   eddc->func.hash_add = (void* (*)(void *, const char *, void *)) _eet_eina_hash_direct_add_alloc;
    eddc->func.str_direct_alloc = _eet_str_direct_alloc;
    eddc->func.str_direct_free = _eet_str_direct_free;
 

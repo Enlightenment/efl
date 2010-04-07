@@ -346,3 +346,8 @@
 
 	* Fix eet_data_node_read_cipher return type.
 	* Add Eet_Connection.
+
+2010-04-07  Cedric BAIL
+
+	* Improve eet_eina_file_data_descriptor_class_set by using
+	eina_hash_direct_add to avoid duplication hash key string.
