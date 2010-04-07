@@ -66,7 +66,7 @@ external_map_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from
 	if (set == ELM_MAP_ZOOM_MODE_LAST) return;
 	elm_map_zoom_mode_set(obj, set);
      }
-   if (p->zoom_set && p->zoom) elm_map_zoom_set(obj, p->zoom);
+   if (p->zoom_set) elm_map_zoom_set(obj, p->zoom);
 }
 
 static Eina_Bool

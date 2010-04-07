@@ -25,11 +25,11 @@ external_fileselector_state_set(void *data __UNUSED__, Evas_Object *obj, const v
 
    if (p->is_save_set && p->is_save)
      elm_fileselector_is_save_set(obj, p->is_save);
-   if (p->folder_only_set && p->folder_only)
+   if (p->folder_only_set)
      elm_fileselector_folder_only_set(obj, p->folder_only);
-   if (p->show_buttons_set && p->show_buttons)
+   if (p->show_buttons_set)
      elm_fileselector_buttons_ok_cancel_set(obj, p->show_buttons);
-   if (p->expandable_set && p->expandable)
+   if (p->expandable_set)
      elm_fileselector_expandable_set(obj, p->expandable);
 }
 
