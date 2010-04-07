@@ -425,6 +425,24 @@ elm_hoversel_hover_end(Evas_Object *obj)
 }
 
 /**
+ * Returns whether the hoversel is expanded.
+ *
+ * This will return EINA_TRUE if the hoversel is expanded or
+ * EINA_FALSE if it is not expanded.
+ * @param obj The hoversel object
+ *
+ * @ingroup Hoversel
+ */
+EAPI Eina_Bool
+elm_hoversel_expanded_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return (wd->hover) ? EINA_TRUE : EINA_FALSE;
+}
+  
+/**
  * Remove all the items from the given hoversel object.
  *
  * This will remove all the children items from the hoversel. (should not be

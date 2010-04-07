@@ -754,6 +754,7 @@ extern "C" {
    EAPI Evas_Object *elm_hoversel_icon_get(const Evas_Object *obj);
    EAPI void         elm_hoversel_hover_begin(Evas_Object *obj);
    EAPI void         elm_hoversel_hover_end(Evas_Object *obj);
+   EAPI Eina_Bool    elm_hoversel_expanded_get(Evas_Object *obj);
    EAPI void         elm_hoversel_clear(Evas_Object *obj);
    EAPI const Eina_List * elm_hoversel_items_get(const Evas_Object *obj);
    EAPI Elm_Hoversel_Item *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data);
