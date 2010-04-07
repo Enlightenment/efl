@@ -9,7 +9,7 @@ typedef struct _Elm_Params_Thumb
    Eina_Bool aspect_exists:1;
 } Elm_Params_Thumb;
 
-static const char* choices[] = {"loop", "start", "stop"};
+static const char* choices[] = {"loop", "start", "stop", NULL};
 
 static Elm_Thumb_Animation_Setting
 _anim_setting_get(const char *anim_str)
