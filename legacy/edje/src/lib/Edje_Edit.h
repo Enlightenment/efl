@@ -701,7 +701,8 @@ edje_edit_part_effect_set(
 EAPI const char *          ///@return The name of the selected state including the float value. Use edje_edit_string_free() when you don't need it anymore.
 edje_edit_part_selected_state_get(
    Evas_Object *obj,       ///< The edje object
-   const char *part        ///< The name of the part
+   const char *part,       ///< The name of the part
+   double *value           ///< Returns value of the state here
 );
 
 /**Set the current state in part.*/
@@ -709,7 +710,8 @@ EAPI Eina_Bool         ///@return 1 on success, 0 otherwise.
 edje_edit_part_selected_state_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the state to set (including the float value)
+   const char *state,       ///< The name of the state to set (not including the float value)
+   double value
 );
 
 /**Get mouse_events for part.*/
@@ -904,7 +906,9 @@ edje_edit_state_name_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part that contain state
    const char *state,      ///< The current name of the state
-   const char *new_name    ///< The new name to assign (including the value)
+   double value,
+   const char *new_name,    ///< The new name to assign
+   double new_value
 );
 
 /**Create a new state to the give part
@@ -913,7 +917,8 @@ EAPI void
 edje_edit_state_add(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *name        ///< The name for the new state (not including the state value)
+   const char *name,       ///< The name for the new state (not including the state value)
+   double value            ///< State value
 );
 
 /**Delete the given part state from the edje
@@ -922,7 +927,8 @@ EAPI void
 edje_edit_state_del(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part that contain state
-   const char *state       ///< The current name of the state (including the state value)
+   const char *state,      ///< The current name of the state (not including the state value)
+   double value
 );
 
 /**Check if a part state with the given name exist.
@@ -931,7 +937,8 @@ EAPI Eina_Bool         ///< 1 if the part state exist, 0 otherwise.
 edje_edit_state_exist(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the state to check (including the state value)
+   const char *state,      ///< The name of the state to check (not including the state value)
+   double value
 );
 
 /**Copies the state @p from into @p to. If @p to doesn't exist it will be created.
@@ -940,8 +947,10 @@ EAPI Eina_Bool        ///< 1 if it could be copied, 0 if something went wrong.
 edje_edit_state_copy(
    Evas_Object *obj,      ///< The edje object
    const char *part,      ///< The name of the part
-   const char *from,      ///< State to copy from (including state value)
-   const char *to         ///< State to copy into (not including state value if new)
+   const char *from,      ///< State to copy from (not including state value)
+   double val_from,
+   const char *to,        ///< State to copy into (not including state value)
+   double val_to
 );
 
 /**Get the rel1 relative x value of state*/
@@ -949,28 +958,32 @@ EAPI double                ///@return The 'rel1 relative X' value of the part st
 edje_edit_state_rel1_relative_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the part state (ex. "default 0.00")
+   const char *state,      ///< The name of the part state (ex. "default")
+   double value
 );
 /**Get the rel1 relative y value of state*/
 EAPI double                ///@return The 'rel1 relative Y' value of the part state
 edje_edit_state_rel1_relative_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Get the rel2 relative x value of state*/
 EAPI double                ///@return The 'rel2 relative X' value of the part state
 edje_edit_state_rel2_relative_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Get the rel2 relative y value of state*/
 EAPI double                ///@return The 'rel2 relative Y' value of the part state
 edje_edit_state_rel2_relative_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the rel1 relative x value of state*/
@@ -978,7 +991,8 @@ EAPI void
 edje_edit_state_rel1_relative_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double x                ///< The new 'rel1 relative X' value to set
 );
 /**Set the rel1 relative y value of state*/
@@ -986,7 +1000,8 @@ EAPI void
 edje_edit_state_rel1_relative_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double y                ///< The new 'rel1 relative Y' value to set
 );
 /**Set the rel2 relative x value of state*/
@@ -994,7 +1009,8 @@ EAPI void
 edje_edit_state_rel2_relative_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double x                ///< The new 'rel2 relative X' value to set
 );
 /**Set the rel2 relative y value of state*/
@@ -1002,7 +1018,8 @@ EAPI void
 edje_edit_state_rel2_relative_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double y                ///< The new 'rel2 relative Y' value to set
 );
 
@@ -1011,28 +1028,32 @@ EAPI int                   /// @return The 'rel1 offset X' value of the part sta
 edje_edit_state_rel1_offset_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Get the rel1 offset y value of state*/
 EAPI int                   /// @return The 'rel1 offset Y' value of the part state
 edje_edit_state_rel1_offset_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Get the rel2 offset x value of state*/
 EAPI int                   /// @return The 'rel2 offset X' value of the part state
 edje_edit_state_rel2_offset_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Get the rel2 offset y value of state*/
 EAPI int                   /// @return The 'rel2 offset Y' value of the part state
 edje_edit_state_rel2_offset_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the rel1 offset x value of state*/
@@ -1040,7 +1061,8 @@ EAPI void
 edje_edit_state_rel1_offset_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double x                ///< The new 'rel1 offset X' value to set
 );
 /**Get the rel1 offset y value of state*/
@@ -1048,7 +1070,8 @@ EAPI void
 edje_edit_state_rel1_offset_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double y                ///< The new 'rel1 offset Y' value to set
 );
 /**Get the rel2 offset x value of state*/
@@ -1056,7 +1079,8 @@ EAPI void
 edje_edit_state_rel2_offset_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double x                ///< The new 'rel2 offset X' value to set
 );
 /**Get the rel2 offset y value of state*/
@@ -1064,7 +1088,8 @@ EAPI void
 edje_edit_state_rel2_offset_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double y                ///< The new 'rel2 offset Y' value to set
 );
 
@@ -1073,28 +1098,32 @@ EAPI const char *          ///@return The name of the part to apply the relativi
 edje_edit_state_rel1_to_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Get the part name rel1y is relative to. The function return NULL if the part is relative to the whole interface.*/
 EAPI const char *          ///@return The name of the part to apply the relativity
 edje_edit_state_rel1_to_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Get the part name rel2x is relative to. The function return NULL if the part is relative to the whole interface.*/
 EAPI const char *         ///@return The name of the part to apply the relativity
 edje_edit_state_rel2_to_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Get the part name rel2y is relative to. The function return NULL if the part is relative to the whole interface.*/
 EAPI const char *         ///@return The name of the part to apply the relativity
 edje_edit_state_rel2_to_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the part rel1x is relative to. Set rel_to to NULL make the part relative to the whole interface.*/
@@ -1102,7 +1131,8 @@ EAPI void
 edje_edit_state_rel1_to_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *rel_to      ///< The name of the part that is used as container/parent
 );
 /**Set the part rel1y is relative to. Set rel_to to NULL make the part relative to the whole interface.*/
@@ -1110,7 +1140,8 @@ EAPI void
 edje_edit_state_rel1_to_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *rel_to      ///< The name of the part that is used as container/parent
 );
 /**Set the part rel2x is relative to. Set rel_to to NULL make the part relative to the whole interface.*/
@@ -1118,7 +1149,8 @@ EAPI void
 edje_edit_state_rel2_to_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *rel_to      ///< The name of the part that is used as container/parent
 );
 /**Set the part rel2y is relative to. Set rel_to to NULL make the part relative to the whole interface.*/
@@ -1126,7 +1158,8 @@ EAPI void
 edje_edit_state_rel2_to_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *rel_to      ///< The name of the part that is used as container/parent
 );
 
@@ -1135,7 +1168,8 @@ EAPI void
 edje_edit_state_color_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int *r,                 ///< A pointer to store the red value
    int *g,                 ///< A pointer to store the green value
    int *b,                 ///< A pointer to store the blue value
@@ -1146,7 +1180,8 @@ EAPI void
 edje_edit_state_color2_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int *r,                 ///< A pointer to store the red value
    int *g,                 ///< A pointer to store the green value
    int *b,                 ///< A pointer to store the blue value
@@ -1157,7 +1192,8 @@ EAPI void
 edje_edit_state_color3_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int *r,                 ///< A pointer to store the red value
    int *g,                 ///< A pointer to store the green value
    int *b,                 ///< A pointer to store the blue value
@@ -1169,7 +1205,8 @@ EAPI void
 edje_edit_state_color_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int r,                  ///< The red value of the color
    int g,                  ///< The green value of the color
    int b,                  ///< The blue value of the color
@@ -1180,7 +1217,8 @@ EAPI void
 edje_edit_state_color2_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int r,                  ///< The red value of the color
    int g,                  ///< The green value of the color
    int b,                  ///< The blue value of the color
@@ -1191,7 +1229,8 @@ EAPI void
 edje_edit_state_color3_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int r,                  ///< The red value of the color
    int g,                  ///< The green value of the color
    int b,                  ///< The blue value of the color
@@ -1203,21 +1242,24 @@ EAPI double                ///@return The horizontal align value for the given s
 edje_edit_state_align_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Get the align_y value of a part state.*/
 EAPI double                ///@return The vertical align value for the given state
 edje_edit_state_align_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Set the align_x value of a part state.*/
 EAPI void
 edje_edit_state_align_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double align            ///< The new horizontal align to set
 );
 /**Set the align_y value of a part state.*/
@@ -1225,7 +1267,8 @@ EAPI void
 edje_edit_state_align_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double align            ///< The new vertical align to set
 );
 /**Get the min_w value of a part state.*/
@@ -1233,14 +1276,16 @@ EAPI int                   ///@return The minimum width of a part state
 edje_edit_state_min_w_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Set the min_w value of a part state.*/
 EAPI void
 edje_edit_state_min_w_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int min_w               ///< The new minimum width to set for the part state
 );
 /**Get the min_h value of a part state.*/
@@ -1248,14 +1293,16 @@ EAPI int                   ///@return The minimum height of a part state
 edje_edit_state_min_h_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Set the min_h value of a part state.*/
 EAPI void
 edje_edit_state_min_h_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int min_h               ///< The new minimum height to set for the part state
 );
 
@@ -1264,14 +1311,16 @@ EAPI int                   ///@return The maximum width of a part state
 edje_edit_state_max_w_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Set the max_w value of a part state.*/
 EAPI void
 edje_edit_state_max_w_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int max_w               ///< The new maximum width to set for the part state
 );
 /**Get the max_h value of a part state.*/
@@ -1279,14 +1328,16 @@ EAPI int                   ///@return The maximum height of a part state
 edje_edit_state_max_h_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Set the max_h value of a part state.*/
 EAPI void
 edje_edit_state_max_h_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int max_h               ///< The new maximum height to set for the part state
 );
 
@@ -1295,21 +1346,24 @@ EAPI double                ///@return The aspect minimum value of a part state
 edje_edit_state_aspect_min_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Get the maximum aspect value of a part state.*/
 EAPI double                ///@return The aspect maximum value of a part state
 edje_edit_state_aspect_max_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Set the minimum aspect value of a part state.*/
 EAPI void
 edje_edit_state_aspect_min_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double aspect           ///< The new minimum aspect value to set
 );
 /**Set the maximum aspect value of a part state.*/
@@ -1317,7 +1371,8 @@ EAPI void
 edje_edit_state_aspect_max_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double aspect           ///< The new maximum aspect value to set
 );
 /**Get the aspect preference value of a part state.*/
@@ -1325,14 +1380,16 @@ EAPI unsigned char         ///@return The aspect preference (0=none, 1=vertical,
 edje_edit_state_aspect_pref_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 /**Set the aspect preference value of a part state.*/
 EAPI void
 edje_edit_state_aspect_pref_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    unsigned char pref      ///< The new aspect preference to set (0=none, 1=vertical, 2=horizontal, 3=both)
 );
 
@@ -1341,7 +1398,8 @@ EAPI double                ///@return The fill offset x relative to area
 edje_edit_state_fill_origin_relative_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the fill origin relative y value of a part state.*/
@@ -1349,7 +1407,8 @@ EAPI double                ///@return The fill origin y relative to area
 edje_edit_state_fill_origin_relative_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the fill origin offset x value of a part state.*/
@@ -1357,7 +1416,8 @@ EAPI int                   ///@return The fill origin offset x relative to area
 edje_edit_state_fill_origin_offset_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the fill origin offset y value of a part state.*/
@@ -1365,7 +1425,8 @@ EAPI int                   ///@return The fill origin offset y relative to area
 edje_edit_state_fill_origin_offset_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the fill origin relative x value of a part state.*/
@@ -1373,7 +1434,8 @@ EAPI void
 edje_edit_state_fill_origin_relative_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double x                ///< The new value to set
 );
 
@@ -1382,7 +1444,8 @@ EAPI void
 edje_edit_state_fill_origin_relative_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double x                ///< The new value to set
 );
 
@@ -1391,7 +1454,8 @@ EAPI void
 edje_edit_state_fill_origin_offset_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double x                ///< The new value to set
 );
 
@@ -1400,7 +1464,8 @@ EAPI void
 edje_edit_state_fill_origin_offset_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double y                ///< The new value to set
 );
 
@@ -1409,7 +1474,8 @@ EAPI double                ///@return The fill size offset x relative to area
 edje_edit_state_fill_size_relative_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the fill size relative y value of a part state.*/
@@ -1417,7 +1483,8 @@ EAPI double                ///@return The fill size y relative to area
 edje_edit_state_fill_size_relative_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the fill size offset x value of a part state.*/
@@ -1425,7 +1492,8 @@ EAPI int                    ///@return The fill size offset x relative to area
 edje_edit_state_fill_size_offset_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the fill size offset y value of a part state.*/
@@ -1433,7 +1501,8 @@ EAPI int                    ///@return The fill size offset y relative to area
 edje_edit_state_fill_size_offset_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the fill size relative x value of a part state.*/
@@ -1441,7 +1510,8 @@ EAPI void
 edje_edit_state_fill_size_relative_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double x                ///< The new value to set
 );
 
@@ -1450,7 +1520,8 @@ EAPI void
 edje_edit_state_fill_size_relative_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double x                ///< The new value to set
 );
 
@@ -1459,7 +1530,8 @@ EAPI void
 edje_edit_state_fill_size_offset_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double x                ///< The new value to set
 );
 
@@ -1468,7 +1540,8 @@ EAPI void
 edje_edit_state_fill_size_offset_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double y                ///< The new value to set
 );
 
@@ -1477,7 +1550,8 @@ EAPI Eina_Bool         ///@return EINA_TRUE if the state is visible
 edje_edit_state_visible_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the visibility of a part state.*/
@@ -1485,7 +1559,8 @@ EAPI void
 edje_edit_state_visible_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    Eina_Bool visible   ///< EINA_TRUE to set the state visible
 );
 
@@ -1494,7 +1569,8 @@ EAPI const char*           ///@return The current color_class of the part state
 edje_edit_state_color_class_get(
    Evas_Object *obj,      ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the color class for the given part state.*/
@@ -1502,7 +1578,8 @@ EAPI void
 edje_edit_state_color_class_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *color_class ///< The new color_class to assign
 );
 
@@ -1511,7 +1588,8 @@ EAPI const Eina_List *
 edje_edit_state_external_params_list_get( ///@return The list of Edje_External_Param
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the type and value of the paramater given*/
@@ -1519,10 +1597,11 @@ EAPI Eina_Bool
 edje_edit_state_external_param_get( ///@return True if the parameter was found, False otherwise
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *param,      ///< The name of the parameter to look for
    Edje_External_Param_Type *type, ///< Type will be stored here
-   void **value            ///< Pointer to value will be stored here. DO NOT FREE IT
+   void **val            ///< Pointer to value will be stored here. DO NOT FREE IT
 );
 
 /**Get external parameter of type INT*/
@@ -1530,9 +1609,10 @@ EAPI Eina_Bool
 edje_edit_state_external_param_int_get( ///@return True if succesful, False if not found or is of different type
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *param,      ///< The name of the parameter
-   int *value
+   int *val
 );
 
 /**Get external parameter of type BOOL*/
@@ -1541,8 +1621,9 @@ edje_edit_state_external_param_bool_get( ///@return True if succesful, False if 
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
    const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   double value,
    const char *param,      ///< The name of the parameter
-   Eina_Bool *value
+   Eina_Bool *val
 );
 
 /**Get external parameter of type DOUBLE*/
@@ -1550,9 +1631,10 @@ EAPI Eina_Bool
 edje_edit_state_external_param_double_get( ///@return True if succesful, False if not found or is of different type
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *param,      ///< The name of the parameter
-   double *value
+   double *val
 );
 
 /**Get external parameter of type STRING*/
@@ -1560,9 +1642,10 @@ EAPI Eina_Bool
 edje_edit_state_external_param_string_get( ///@return True if succesful, False if not found or is of different type
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *param,      ///< The name of the parameter
-   const char **value
+   const char **val
 );
 
 /**Get external parameter of type CHOICE*/
@@ -1571,8 +1654,9 @@ edje_edit_state_external_param_choice_get( ///@return True if succesful, False i
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
    const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   double value,
    const char *param,      ///< The name of the parameter
-   const char **value
+   const char **val
 );
 
 /**Set the external parameter type and value, adding it if it didn't exist before*/
@@ -1580,7 +1664,8 @@ EAPI Eina_Bool
 edje_edit_state_external_param_set( ///@return True if it was set
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *param,      ///< The name of the parameter to set
    Edje_External_Param_Type type, ///< The type of the parameter
    ...                     ///< Value(s) according to type
@@ -1591,9 +1676,10 @@ EAPI Eina_Bool
 edje_edit_state_external_param_int_set( ///@return True if it was set
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *param,      ///< The name of the parameter
-   int value
+   int val
 );
 
 /**Set external parameter of type BOOL*/
@@ -1602,8 +1688,9 @@ edje_edit_state_external_param_bool_set( ///@return True if it was set
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
    const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   double value,
    const char *param,      ///< The name of the parameter
-   Eina_Bool value
+   Eina_Bool val
 );
 
 /**Set external parameter of type DOUBLE*/
@@ -1611,9 +1698,10 @@ EAPI Eina_Bool
 edje_edit_state_external_param_double_set( ///@return True if it was set
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *param,      ///< The name of the parameter
-   double value
+   double val
 );
 
 /**Set external parameter of type STRING*/
@@ -1621,9 +1709,10 @@ EAPI Eina_Bool
 edje_edit_state_external_param_string_set( ///@return True if it was set
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *param,      ///< The name of the parameter
-   const char *value
+   const char *val
 );
 
 /**Set external parameter of type CHOICE*/
@@ -1632,8 +1721,9 @@ edje_edit_state_external_param_choice_set( ///@return True if it was set
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
    const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   double value,
    const char *param,      ///< The name of the parameter
-   const char *value
+   const char *val
 );
 
 
@@ -1650,7 +1740,8 @@ EAPI const char *          ///@return A newly allocated string containing the te
 edje_edit_state_text_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,       ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the text of a part state.*/
@@ -1658,7 +1749,8 @@ EAPI void
 edje_edit_state_text_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *text        ///< The new text to assign
 );
 
@@ -1667,7 +1759,8 @@ EAPI int                   ///@return The font size in pixel or -1 on errors.
 edje_edit_state_text_size_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the text size of a part state.*/
@@ -1675,7 +1768,8 @@ EAPI void
 edje_edit_state_text_size_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int size                ///< The new font size to set (in pixel)
 );
 
@@ -1684,7 +1778,8 @@ EAPI double                ///@return The text align X value
 edje_edit_state_text_align_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the text vertical align of a part state. The value range is from 0.0(top) to 1.0(bottom)*/
@@ -1692,7 +1787,8 @@ EAPI double                ///@return The text align Y value
 edje_edit_state_text_align_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the text horizontal align of a part state. The value range is from 0.0(right) to 1.0(left)*/
@@ -1700,7 +1796,8 @@ EAPI void
 edje_edit_state_text_align_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double align            ///< The new text align X value
 );
 
@@ -1709,7 +1806,8 @@ EAPI void
 edje_edit_state_text_align_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double align            ///< The new text align Y value
 );
 
@@ -1718,7 +1816,8 @@ EAPI double                ///@return The text elipsis value
 edje_edit_state_text_elipsis_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the text vertical align of a part state. The value range is from 0.0(right) to 1.0(left)*/
@@ -1726,7 +1825,8 @@ EAPI void
 edje_edit_state_text_elipsis_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double balance          ///< The position where to cut the string
 );
 
@@ -1735,7 +1835,8 @@ EAPI Eina_Bool         ///@return 1 If the part fit it's container horizontally
 edje_edit_state_text_fit_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set if the text part should fit it's container horizontally */
@@ -1743,7 +1844,8 @@ EAPI void
 edje_edit_state_text_fit_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    Eina_Bool fit       ///< 1 to make the text fit it's container
 );
 
@@ -1752,7 +1854,8 @@ EAPI Eina_Bool         ///@return 1 If the part fit it's container vertically
 edje_edit_state_text_fit_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set if the text part should fit it's container vertically */
@@ -1760,7 +1863,8 @@ EAPI void
 edje_edit_state_text_fit_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    Eina_Bool fit       ///< 1 to make the text fit it's container
 );
 
@@ -1787,7 +1891,8 @@ EAPI const char *          ///@return The name of the font used in the given par
 edje_edit_state_font_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set font name for a given part state. */
@@ -1795,7 +1900,8 @@ EAPI void
 edje_edit_state_font_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *font        ///< The name of the font to use in the given part state
 );
 
@@ -1852,7 +1958,8 @@ EAPI const char *          ///@return The name of the image used by state
 edje_edit_state_image_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set normal image for a given part state.*/
@@ -1860,7 +1967,8 @@ EAPI void
 edje_edit_state_image_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *image       ///< The name of the image for the given state (must be an image contained in the edje file)
 );
 
@@ -1890,7 +1998,8 @@ EAPI void
 edje_edit_state_image_border_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int *l,                 ///< A pointer to store the left value
    int *r,                 ///< A pointer to store the right value
    int *t,                 ///< A pointer to store the top value
@@ -1902,7 +2011,8 @@ EAPI void
 edje_edit_state_image_border_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int l,                  ///< The new left border (or -1)
    int r,                  ///< The new right border (or -1)
    int t,                  ///< The new top border (or -1)
@@ -1914,7 +2024,8 @@ EAPI unsigned char         ///@return 1 if the center of the bordered image is d
 edje_edit_state_image_border_fill_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set if the image center should be draw. 1 means to draw the center, 0 to don't draw it.*/
@@ -1922,7 +2033,8 @@ EAPI void
 edje_edit_state_image_border_fill_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    unsigned char fill      ///< If set to 0 the image center isn't draw
 );
 
@@ -1933,7 +2045,8 @@ EAPI Eina_List *           ///@return A string list containing all the image nam
 edje_edit_state_tweens_list_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Add a new tween frame to the given part state
@@ -1943,7 +2056,8 @@ EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_tween_add(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *tween       ///< The name of the image to add.
 );
 
@@ -1955,7 +2069,8 @@ EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_tween_del(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *tween       ///< The name of the image to remove from the tween list.
 );
 
@@ -2052,7 +2167,8 @@ EAPI const char *          ///@return The type of gradient used in state
 edje_edit_state_gradient_type_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the type of gradient.
@@ -2062,7 +2178,8 @@ EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_type_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char *type        ///< The type of gradient to use
 );
 
@@ -2071,7 +2188,8 @@ EAPI Eina_Bool         ///@return 1 if use fill, 0 if use gradient_rel
 edje_edit_state_gradient_use_fill_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the spectra used by part state. Remember to free the string with edje_edit_string_free()*/
@@ -2079,7 +2197,8 @@ EAPI const char *          ///@return The spectra name used in state
 edje_edit_state_gradient_spectra_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the spectra used by part state.*/
@@ -2087,7 +2206,8 @@ EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_spectra_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    const char* spectra     ///< The spectra name to assign
 );
 
@@ -2096,7 +2216,8 @@ EAPI int                   ///@return The angle of the gradient
 edje_edit_state_gradient_angle_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the angle of the gradient.*/
@@ -2104,7 +2225,8 @@ EAPI void
 edje_edit_state_gradient_angle_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int angle               ///< The angle to set
 );
 
@@ -2113,7 +2235,8 @@ EAPI double                ///@return The gradien rel1 relative x value
 edje_edit_state_gradient_rel1_relative_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the gradien rel1 relative y value */
@@ -2121,7 +2244,8 @@ EAPI double                ///@return The gradien rel1 relative y value
 edje_edit_state_gradient_rel1_relative_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the gradien rel2 relative x value */
@@ -2129,7 +2253,8 @@ EAPI double                ///@return The gradien rel2 relative x value
 edje_edit_state_gradient_rel2_relative_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the gradien rel2 relative y value */
@@ -2137,7 +2262,8 @@ EAPI double                ///@return The gradien rel2 relative y value
 edje_edit_state_gradient_rel2_relative_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the gradien rel1 relative x value */
@@ -2145,7 +2271,8 @@ EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel1_relative_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double val
 );
 
@@ -2154,7 +2281,8 @@ EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel1_relative_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double val
 );
 
@@ -2163,7 +2291,8 @@ EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel2_relative_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double val
 );
 
@@ -2172,7 +2301,8 @@ EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel2_relative_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    double val
 );
 
@@ -2181,7 +2311,8 @@ EAPI int                   ///@return The gradient rel1 offset x value
 edje_edit_state_gradient_rel1_offset_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the gradien rel1 offset y value */
@@ -2189,7 +2320,8 @@ EAPI int                   ///@return The gradient rel1 offset y value
 edje_edit_state_gradient_rel1_offset_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the gradien rel2 offset x value */
@@ -2197,7 +2329,8 @@ EAPI int                   ///@return The gradient rel2 offset x value
 edje_edit_state_gradient_rel2_offset_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Get the gradien rel2 offset y value */
@@ -2205,7 +2338,8 @@ EAPI int                   ///@return The gradient rel2 offset y value
 edje_edit_state_gradient_rel2_offset_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value
 );
 
 /**Set the gradien rel1 offset x value */
@@ -2213,7 +2347,8 @@ EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel1_offset_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int val
 );
 
@@ -2222,7 +2357,8 @@ EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel1_offset_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int val
 );
 
@@ -2231,7 +2367,8 @@ EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel2_offset_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int val
 );
 
@@ -2240,7 +2377,8 @@ EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel2_offset_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *state,      ///< The name of the 'part state' (ex. "default")
+   double value,
    int val
 );
 
