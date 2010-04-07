@@ -1,6 +1,35 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Scrolled_Entry Scrolled_Entry
+ *
+ * A scrolled entry is a convenience widget which shows
+ * a box that the user can enter text into.  Unlike an
+ * @ref Entry widget, scrolled entries scroll with user
+ * input so that the window will not expand if the length
+ * of text inside the entry exceeds the initial size of the
+ * widget.
+ *
+ * Signals that you can add callbacks for are:
+ * "changed" - The text within the entry was changed
+ * "activated" - The entry has received focus and the cursor
+ * "press" - The entry has been clicked
+ * "longpressed" - The entry has been clicked for a couple seconds
+ * "clicked" - The entry has been clicked
+ * "clicked,double" - The entry has been double clicked
+ * "focused" - The entry has received focus
+ * "unfocused" - The entry has lost focus
+ * "selection,paste" - A paste action has occurred
+ * "selection,copy" - A copy action has occurred
+ * "selection,cut" - A cut action has occurred
+ * "selection,start" - A selection has begun
+ * "selection,changed" - The selection has changed
+ * "selection,cleared" - The selection has been cleared
+ * "cursor,changed" - The cursor has changed
+ * "anchor,clicked" - The anchor has been clicked
+ */
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -194,6 +223,15 @@ _entry_unfocused(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
    evas_object_smart_callback_call(data, SIG_UNFOCUSED, NULL);
 }
 
+
+/**
+ * This adds a scrolled entry to @p parent object.
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI Evas_Object *
 elm_scrolled_entry_add(Evas_Object *parent)
 {
@@ -249,6 +287,16 @@ elm_scrolled_entry_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * This sets the scrolled entry object not to line wrap.  All input will
+ * be on a single line, and the entry box will scroll with user input.
+ *
+ * @param obj The scrolled entry object
+ * @param single_line If true, the text in the scrolled entry
+ * will be on a single line.
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
 {
@@ -271,6 +319,16 @@ elm_scrolled_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
    _sizing_eval(obj);
 }
 
+/**
+ * This returns true if the scrolled entry has been set to single line mode.
+ * See also elm_scrolled_entry_single_line_set().
+ *
+ * @param obj The scrolled entry object
+ * @return single_line If true, the text in the scrolled entry is set to display
+ * on a single line.
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI Eina_Bool
 elm_scrolled_entry_single_line_get(const Evas_Object *obj)
 {
@@ -280,6 +338,16 @@ elm_scrolled_entry_single_line_get(const Evas_Object *obj)
    return elm_entry_single_line_get(wd->entry);
 }
 
+
+/**
+ * This sets the scrolled entry object to password mode.  All text entered
+ * and/or displayed within the widget will be replaced with asterisks (*).
+ *
+ * @param obj The scrolled entry object
+ * @param password If true, password mode is enabled.
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_password_set(Evas_Object *obj, Eina_Bool password)
 {
@@ -289,6 +357,16 @@ elm_scrolled_entry_password_set(Evas_Object *obj, Eina_Bool password)
    elm_entry_password_set(wd->entry, password);
 }
 
+/**
+ * This returns whether password mode is enabled.
+ * See also elm_scrolled_entry_password_set().
+ *
+ * @param obj The scrolled entry object
+ * @return If true, the scrolled entry is set to display all characters
+ * as asterisks (*).
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI Eina_Bool
 elm_scrolled_entry_password_get(const Evas_Object *obj)
 {
@@ -298,6 +376,15 @@ elm_scrolled_entry_password_get(const Evas_Object *obj)
    return elm_entry_password_get(wd->entry);
 }
 
+
+/**
+ * This sets the text displayed within the scrolled entry to @p entry.
+ *
+ * @param obj The scrolled entry object
+ * @param entry The text to be displayed
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_entry_set(Evas_Object *obj, const char *entry)
 {
@@ -307,6 +394,15 @@ elm_scrolled_entry_entry_set(Evas_Object *obj, const char *entry)
    elm_entry_entry_set(wd->entry, entry);
 }
 
+/**
+ * This returns the text currently shown in object @p entry.
+ * See also elm_scrolled_entry_entry_set().
+ *
+ * @param obj The scrolled entry object
+ * @return The currently displayed text or NULL on failure
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI const char *
 elm_scrolled_entry_entry_get(const Evas_Object *obj)
 {
@@ -316,6 +412,14 @@ elm_scrolled_entry_entry_get(const Evas_Object *obj)
    return elm_entry_entry_get(wd->entry);
 }
 
+/**
+ * This returns all selected text within the scrolled entry.
+ *
+ * @param obj The scrolled entry object
+ * @return The selected text within the scrolled entry or NULL on failure
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI const char *
 elm_scrolled_entry_selection_get(const Evas_Object *obj)
 {
@@ -325,6 +429,15 @@ elm_scrolled_entry_selection_get(const Evas_Object *obj)
    return elm_entry_selection_get(wd->entry);
 }
 
+/**
+ * This inserts text in @p entry at the beginning of the scrolled entry
+ * object.
+ *
+ * @param obj The scrolled entry object
+ * @param entry The text to insert
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_entry_insert(Evas_Object *obj, const char *entry)
 {
@@ -334,6 +447,19 @@ elm_scrolled_entry_entry_insert(Evas_Object *obj, const char *entry)
    elm_entry_entry_insert(wd->entry, entry);
 }
 
+/**
+ * This enables word line wrapping in the scrolled entry object.  It is the opposite
+ * of elm_scrolled_entry_single_line_set().  Additionally, setting this disables
+ * character line wrapping.
+ * See also elm_scrolled_entry_line_char_wrap_set().
+ *
+ * @param obj The scrolled entry object
+ * @param wrap If true, the scrolled entry will be wrapped once it reaches the end
+ * of the object. Wrapping will occur at the end of the word before the end of the
+ * object.
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
 {
@@ -343,6 +469,18 @@ elm_scrolled_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
    elm_entry_line_wrap_set(wd->entry, wrap);
 }
 
+/**
+ * This enables character line wrapping in the scrolled entry object.  It is the opposite
+ * of elm_scrolled_entry_single_line_set().  Additionally, setting this disables
+ * word line wrapping.
+ * See also elm_scrolled_entry_line_wrap_set().
+ *
+ * @param obj The scrolled entry object
+ * @param wrap If true, the scrolled entry will be wrapped once it reaches the end
+ * of the object. Wrapping will occur immediately upon reaching the end of the object.
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_line_char_wrap_set(Evas_Object *obj, Eina_Bool wrap)
 {
@@ -352,6 +490,15 @@ elm_scrolled_entry_line_char_wrap_set(Evas_Object *obj, Eina_Bool wrap)
    elm_entry_line_char_wrap_set(wd->entry, wrap);
 }
 
+/**
+ * This sets the editable attribute of the scrolled entry.
+ *
+ * @param obj The scrolled entry object
+ * @param editable If true, the scrolled entry will be editable by the user.
+ * If false, it will be set to the disabled state.
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_editable_set(Evas_Object *obj, Eina_Bool editable)
 {
@@ -361,6 +508,16 @@ elm_scrolled_entry_editable_set(Evas_Object *obj, Eina_Bool editable)
    elm_entry_editable_set(wd->entry, editable);
 }
 
+/**
+ * This gets the editable attribute of the scrolled entry.
+ * See also elm_scrolled_entry_editable_set().
+ *
+ * @param obj The scrolled entry object
+ * @return If true, the scrolled entry is editable by the user.
+ * If false, it is not editable by the user
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI Eina_Bool
 elm_scrolled_entry_editable_get(const Evas_Object *obj)
 {
@@ -370,6 +527,14 @@ elm_scrolled_entry_editable_get(const Evas_Object *obj)
    return elm_entry_editable_get(wd->entry);
 }
 
+
+/**
+ * This drops any existing text selection within the scrolled entry.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_select_none(Evas_Object *obj)
 {
@@ -379,6 +544,13 @@ elm_scrolled_entry_select_none(Evas_Object *obj)
    elm_entry_select_none(wd->entry);
 }
 
+/**
+ * This selects all text within the scrolled entry.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_select_all(Evas_Object *obj)
 {
@@ -388,6 +560,14 @@ elm_scrolled_entry_select_all(Evas_Object *obj)
    elm_entry_select_all(wd->entry);
 }
 
+/**
+ * This moves the cursor one place to the right within the entry.
+ *
+ * @param obj The scrolled entry object
+ * @return EINA_TRUE upon success, EINA_FALSE upon failure
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_next(Evas_Object *obj)
 {
@@ -397,6 +577,14 @@ elm_scrolled_entry_cursor_next(Evas_Object *obj)
    return elm_entry_cursor_next(wd->entry);
 }
 
+/**
+ * This moves the cursor one place to the left within the entry.
+ *
+ * @param obj The scrolled entry object
+ * @return EINA_TRUE upon success, EINA_FALSE upon failure
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_prev(Evas_Object *obj)
 {
@@ -406,6 +594,14 @@ elm_scrolled_entry_cursor_prev(Evas_Object *obj)
    return elm_entry_cursor_prev(wd->entry);
 }
 
+/**
+ * This moves the cursor one line up within the entry.
+ *
+ * @param obj The scrolled entry object
+ * @return EINA_TRUE upon success, EINA_FALSE upon failure
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_up(Evas_Object *obj)
 {
@@ -415,6 +611,14 @@ elm_scrolled_entry_cursor_up(Evas_Object *obj)
    return elm_entry_cursor_up(wd->entry);
 }
 
+/**
+ * This moves the cursor one line down within the entry.
+ *
+ * @param obj The scrolled entry object
+ * @return EINA_TRUE upon success, EINA_FALSE upon failure
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_down(Evas_Object *obj)
 {
@@ -424,6 +628,13 @@ elm_scrolled_entry_cursor_down(Evas_Object *obj)
    return elm_entry_cursor_down(wd->entry);
 }
 
+/**
+ * This moves the cursor to the beginning of the entry.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_cursor_begin_set(Evas_Object *obj)
 {
@@ -433,6 +644,13 @@ elm_scrolled_entry_cursor_begin_set(Evas_Object *obj)
    elm_entry_cursor_begin_set(wd->entry);
 }
 
+/**
+ * This moves the cursor to the end of the entry.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_cursor_end_set(Evas_Object *obj)
 {
@@ -442,6 +660,13 @@ elm_scrolled_entry_cursor_end_set(Evas_Object *obj)
    elm_entry_cursor_end_set(wd->entry);
 }
 
+/**
+ * This moves the cursor to the beginning of the current line.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_cursor_line_begin_set(Evas_Object *obj)
 {
@@ -451,6 +676,13 @@ elm_scrolled_entry_cursor_line_begin_set(Evas_Object *obj)
    elm_entry_cursor_line_begin_set(wd->entry);
 }
 
+/**
+ * This moves the cursor to the end of the current line.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_cursor_line_end_set(Evas_Object *obj)
 {
@@ -460,6 +692,14 @@ elm_scrolled_entry_cursor_line_end_set(Evas_Object *obj)
    elm_entry_cursor_line_end_set(wd->entry);
 }
 
+/**
+ * This begins a selection within the scrolled entry as though
+ * the user were holding down the mouse button to make a selection.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_cursor_selection_begin(Evas_Object *obj)
 {
@@ -469,6 +709,14 @@ elm_scrolled_entry_cursor_selection_begin(Evas_Object *obj)
    elm_entry_cursor_selection_begin(wd->entry);
 }
 
+/**
+ * This ends a selection within the scrolled entry as though
+ * the user had just released the mouse button while making a selection.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_cursor_selection_end(Evas_Object *obj)
 {
@@ -478,6 +726,14 @@ elm_scrolled_entry_cursor_selection_end(Evas_Object *obj)
    elm_entry_cursor_selection_end(wd->entry);
 }
 
+/**
+ * TODO: fill this in
+ *
+ * @param obj The scrolled entry object
+ * @return TODO: fill this in
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_is_format_get(const Evas_Object *obj)
 {
@@ -487,6 +743,14 @@ elm_scrolled_entry_cursor_is_format_get(const Evas_Object *obj)
    return elm_entry_cursor_is_format_get(wd->entry);
 }
 
+/**
+ * This returns whether the cursor is visible.
+ *
+ * @param obj The scrolled entry object
+ * @return If true, the cursor is visible.
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_is_visible_format_get(const Evas_Object *obj)
 {
@@ -496,6 +760,14 @@ elm_scrolled_entry_cursor_is_visible_format_get(const Evas_Object *obj)
    return elm_entry_cursor_is_visible_format_get(wd->entry);
 }
 
+/**
+ * TODO: fill this in
+ *
+ * @param obj The scrolled entry object
+ * @return TODO: fill this in
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI const char *
 elm_scrolled_entry_cursor_content_get(const Evas_Object *obj)
 {
@@ -505,6 +777,13 @@ elm_scrolled_entry_cursor_content_get(const Evas_Object *obj)
    return elm_entry_cursor_content_get(wd->entry);
 }
 
+/**
+ * This executes a "cut" action on the selected text in the scrolled entry.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_selection_cut(Evas_Object *obj)
 {
@@ -514,6 +793,13 @@ elm_scrolled_entry_selection_cut(Evas_Object *obj)
    elm_entry_selection_cut(wd->entry);
 }
 
+/**
+ * This executes a "copy" action on the selected text in the scrolled entry.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_selection_copy(Evas_Object *obj)
 {
@@ -523,6 +809,13 @@ elm_scrolled_entry_selection_copy(Evas_Object *obj)
    elm_entry_selection_copy(wd->entry);
 }
 
+/**
+ * This executes a "paste" action in the scrolled entry.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_selection_paste(Evas_Object *obj)
 {
@@ -532,6 +825,13 @@ elm_scrolled_entry_selection_paste(Evas_Object *obj)
    elm_entry_selection_paste(wd->entry);
 }
 
+/**
+ * This clears and frees the items in a scrolled entry's contextual (right click) menu.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_context_menu_clear(Evas_Object *obj)
 {
@@ -541,6 +841,18 @@ elm_scrolled_entry_context_menu_clear(Evas_Object *obj)
    elm_entry_context_menu_clear(wd->entry);
 }
 
+/**
+ * This adds an item to the scrolled entry's contextual menu.
+ *
+ * @param obj The scrolled entry object
+ * @param label The item's text label
+ * @param icon_file The item's icon file
+ * @param icon_type The item's icon type
+ * @param func The callback to execute when the item is clicked
+ * @param data The data to associate with the item for related functions
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_context_menu_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data)
 {
@@ -550,6 +862,14 @@ elm_scrolled_entry_context_menu_item_add(Evas_Object *obj, const char *label, co
    elm_entry_context_menu_item_add(wd->entry, label, icon_file, icon_type, func, data);
 }
 
+/**
+ * This disables the scrolled entry's contextual (right click) menu.
+ *
+ * @param obj The scrolled entry object
+ * @param disabled If true, the menu is disabled
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 {
@@ -559,6 +879,14 @@ elm_scrolled_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disable
    elm_entry_context_menu_disabled_set(wd->entry, disabled);
 }
 
+/**
+ * This returns whether the scrolled entry's contextual (right click) menu is disabled.
+ *
+ * @param obj The scrolled entry object
+ * @return If true, the menu is disabled
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI Eina_Bool
 elm_scrolled_entry_context_menu_disabled_get(const Evas_Object *obj)
 {
@@ -568,6 +896,15 @@ elm_scrolled_entry_context_menu_disabled_get(const Evas_Object *obj)
    return elm_entry_context_menu_disabled_get(wd->entry);
 }
 
+/**
+ * This sets the scrolled entry's scrollbar policy (ie. enabling/disabling them).
+ *
+ * @param obj The scrolled entry object
+ * @param h The horizontal scrollbar policy to apply
+ * @param v The vertical scrollbar policy to apply
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scroller_Policy v)
 {
@@ -579,6 +916,15 @@ elm_scrolled_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h,
    elm_scroller_policy_set(wd->scroller, h, v);
 }
 
+/**
+ * This enables/disables bouncing within the entry.
+ *
+ * @param obj The scrolled entry object
+ * @param h The horizontal bounce state
+ * @param v The vertical bounce state
+ *
+ * @ingroup Scrolled_Entry
+ */
 EAPI void
 elm_scrolled_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {

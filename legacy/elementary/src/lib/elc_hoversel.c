@@ -267,7 +267,8 @@ elm_hoversel_add(Evas_Object *parent)
 /**
  * Set the Hover parent
  *
- * Sets the hover parent object. See Hover objects for more information.
+ * Sets the hover parent object. Should probably be the window that the hoversel
+ * is in.  See Hover objects for more information.
  *
  * @param obj The hoversel object
  * @param parent The parent to use
@@ -309,24 +310,6 @@ elm_hoversel_label_set(Evas_Object *obj, const char *label)
    elm_button_label_set(wd->btn, label);
 }
 
-EAPI void
-elm_hoversel_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->horizontal = !!horizontal;
-}
-
-EAPI Eina_Bool
-elm_hoversel_horizontal_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   return wd->horizontal;
-}
-
 /**
  * Get the hoversel button label
  *
@@ -342,6 +325,42 @@ elm_hoversel_label_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((!wd) || (!wd->btn)) return NULL;
    return elm_button_label_get(wd->btn);
+}
+
+/**
+ * This sets the hoversel to expand horizontally.  The initial button
+ * will display horizontally regardless of this setting.
+ *
+ * @param obj The hoversel object
+ * @param horizontal If true, the hover will expand horizontally to the right.
+ *
+ * @ingroup Hoversel
+ */
+EAPI void
+elm_hoversel_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->horizontal = !!horizontal;
+}
+
+
+/**
+ * This returns whether the hoversel is set to expand horizontally.
+ *
+ * @param obj The hoversel object
+ * @return If true, the hover will expand horizontally to the right.
+ *
+ * @ingroup Hoversel
+ */
+EAPI Eina_Bool
+elm_hoversel_horizontal_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->horizontal;
 }
 
 /**
@@ -385,9 +404,8 @@ elm_hoversel_icon_get(const Evas_Object *obj)
 }
 
 /**
- * Trigger the hoversel popup from code
- *
- * This makes the hoversel popup activate with the items added being listed.
+ * This triggers the hoversel popup from code, the same as though the
+ * user clicked the button.
  *
  * @param obj The hoversel object
  *
@@ -404,9 +422,7 @@ elm_hoversel_hover_begin(Evas_Object *obj)
 }
 
 /**
- * This ends the hoversel popup.
- *
- * This will close the hoversel popup, making it disappear, if it was active.
+ * This ends the hoversel popup as though the user clicked outside the hover.
  *
  * @param obj The hoversel object
  *
@@ -427,9 +443,9 @@ elm_hoversel_hover_end(Evas_Object *obj)
 /**
  * Returns whether the hoversel is expanded.
  *
- * This will return EINA_TRUE if the hoversel is expanded or
- * EINA_FALSE if it is not expanded.
  * @param obj The hoversel object
+ * @return  This will return EINA_TRUE if the hoversel
+ * is expanded or EINA_FALSE if it is not expanded.
  *
  * @ingroup Hoversel
  */
@@ -443,10 +459,9 @@ elm_hoversel_expanded_get(Evas_Object *obj)
 }
   
 /**
- * Remove all the items from the given hoversel object.
- *
  * This will remove all the children items from the hoversel. (should not be
- * called while the hoversel is active).
+ * called while the hoversel is active; use elm_hoversel_expanded_get()
+ * to check first).
  *
  * @param obj The hoversel object
  *
@@ -464,7 +479,7 @@ elm_hoversel_clear(Evas_Object *obj)
 }
 
 /**
- * Get the list of items.
+ * Get the list of items within the given hoversel.
  *
  * @param obj The hoversel object
  * @return Returns a list of Elm_Hoversel_Item*
@@ -488,12 +503,12 @@ elm_hoversel_items_get(const Evas_Object *obj)
  * right after the this function, and set icon_file to NULL here.
  *
  * @param obj The hoversel object
- * @param label The text abel to use for the item (NULL if not desired)
- * @param icon_file A image file path on disk to use for the icon  or standard
- * icon name(NULL if not desired)
+ * @param label The text label to use for the item (NULL if not desired)
+ * @param icon_file An image file path on disk to use for the icon or standard
+ * icon name (NULL if not desired)
  * @param icon_type The icon type if relevant
  * @param func Convenience function to call when this item is selected
- * @param data Data to pass to the conveience function
+ * @param data Data to pass to item-related functions
  * @return A handle to the item added.
  *
  * @ingroup Hoversel
@@ -520,7 +535,8 @@ elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file
  * Delete an item from the hoversel
  *
  * This deletes the item from the hoversel (should not be called while the
- * hoversel is active).
+ * hoversel is active; use elm_hoversel_expanded_get()
+ * to check first).
  *
  * @param it The item to delete
  *
@@ -542,7 +558,12 @@ elm_hoversel_item_del(Elm_Hoversel_Item *it)
 }
 
 /**
- * Set the function called when an hoversel item is freed.
+ * Set the function called when an item within the hoversel
+ * is freed. That function will receive these parameters:
+ *
+ * void *item_data
+ * Evas_Object *the_item_object
+ * Elm_Hoversel_Item *the_object_struct
  *
  * @param it The item to set the callback on
  * @param func The function called
@@ -557,10 +578,8 @@ elm_hoversel_item_del_cb_set(Elm_Hoversel_Item *it, Evas_Smart_Cb func)
 }
 
 /**
- * Get the data pointer passed to the item add function
- *
  * This returns the data pointer supplied with elm_hoversel_item_add() that
- * will be passed to the select function callback.
+ * will be passed to associated function callbacks.
  *
  * @param it The item to get the data from
  * @return The data pointer set with elm_hoversel_item_add()
@@ -575,12 +594,10 @@ elm_hoversel_item_data_get(Elm_Hoversel_Item *it)
 }
 
 /**
- * Get the text label of an hoversel item
- *
- * This returns the text of the label of the given hoversel item
+ * This returns the label text of the given hoversel item.
  *
  * @param it The item to get the label
- * @return The text label of the hoversel item
+ * @return The label text of the hoversel item
  *
  * @ingroup Hoversel
  */
@@ -592,10 +609,8 @@ elm_hoversel_item_label_get(Elm_Hoversel_Item *it)
 }
 
 /**
- * Set the icon of the hoversel item
- *
- * This set the icon for the given hoversel item. The icon can be loaded from
- * the standard set, from an image file or from an edje file.
+ * This sets the icon for the given hoversel item. The icon can be loaded from
+ * the standard set, from an image file, or from an edje file.
  *
  * @param it The item to set the icon
  * @param icon_file An image file path on disk to use for the icon or standard
@@ -620,10 +635,10 @@ elm_hoversel_item_icon_set(Elm_Hoversel_Item *it, const char *icon_file, const c
  *
  * @param it The item to get the icon from
  * @param icon_file The image file path on disk used for the icon or standard
- * icon name. return
+ * icon name
  * @param icon_group The edje group used if @p icon_file is an edje file. NULL
- * if the icon is not an edje file. return
- * @param icon_type The icon type. return
+ * if the icon is not an edje file
+ * @param icon_type The icon type
  *
  * @ingroup Hoversel
  */

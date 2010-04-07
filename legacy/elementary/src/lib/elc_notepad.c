@@ -11,9 +11,9 @@
  * NONE
  *
  * A notepad object contains a scroller and an entry. It is a convenience
- * widget that loads a text file indicated, puts it int he scrollable entry
+ * widget that loads a text file indicated, puts it in the scrollable entry
  * and allows the user to edit it. Changes are written back to the original
- * file after a short delay. The file to load and save to is specificed by
+ * file after a short delay. The file to load and save to is specified by
  * elm_notepad_file_set().
  */
 typedef struct _Widget_Data Widget_Data;
@@ -305,14 +305,13 @@ elm_notepad_add(Evas_Object *parent)
 }
 
 /**
- * Set the file to load  text from and save text back to
+ * This sets the file (and implicitly loads it) for the text to display and
+ * then edit. All changes are written back to the file after a short delay.
  *
  * @param obj The notepad object
  * @param file The path to the file to load and save
  * @param format The file format
  *
- * This sets the file (and implicitly loads it) for the text to display and
- * then edit. All changes are written back to the file after a short delay.
  *
  * @ingroup Notepad
  */
@@ -334,8 +333,6 @@ elm_notepad_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 }
 
 /**
- * Set bounce mode
- *
  * This will enable or disable the scroller bounce mode for the notepad. See
  * elm_scroller_bounce_set() for details
  *

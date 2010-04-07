@@ -1,12 +1,25 @@
-/*
+/**
+ * @defgroup Fileselector Fileselector
+ *
+ * A fileselector is a widget that allows a user to navigate through a tree
+ * of files.  It contains buttons for Home(~) and Up(..) as well as cancel/ok
+ * buttons to confirm/cancel a selection.  This widget is currently very much
+ * in progress.
+ *
  * TODO
- *  userdefined icon/label cb
- *  show/hide/add buttons ???
- *  need a background ???
- *  show/Hide hidden files
- *  double click to choose a file
- *  multiselection
- *  write docs
+ * userdefined icon/label cb
+ * show/hide/add buttons ???
+ * need a background ???
+ * show/Hide hidden files
+ * double click to choose a file
+ * multiselection
+ * make variable/function names that are sensible
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "selected" - the user clicks on a file
+ * "directory,open" - the list is populated with a new content. event_info is a directory.
+ * "done" - the user clicks on the ok or cancel button
  */
 
 #include <Elementary.h>
@@ -323,6 +336,14 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
 }
 
 /***  API  ***/
+/**
+ * Add a new Fileselector object
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Fileselector
+ */
 EAPI Evas_Object *
 elm_fileselector_add(Evas_Object *parent)
 {
@@ -436,6 +457,16 @@ elm_fileselector_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * This enables/disables the file name entry box where the user can
+ * type in the name of a file to be selected.
+ *
+ * @param obj The fileselector object
+ * @param is_save If true, creates the entry object in the fileselector.
+ * If false, deletes the entry object in the fileselector.
+ *
+ * @ingroup Fileselector
+ */
 EAPI void
 elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save)
 {
@@ -461,6 +492,16 @@ elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save)
      }
 }
 
+/**
+ * This gets the state of the file name entry box where the user can
+ * type in the name of a file to be selected.
+ *
+ * @param obj The fileselector object
+ * @return If true, the entry object exists in the fileselector.
+ * If false, it does not exist.
+ *
+ * @ingroup Fileselector
+ */
 EAPI Eina_Bool
 elm_fileselector_is_save_get(const Evas_Object *obj)
 {
@@ -470,6 +511,16 @@ elm_fileselector_is_save_get(const Evas_Object *obj)
    return wd->entry2 ? EINA_TRUE : EINA_FALSE;
 }
 
+
+/**
+ * This enables/disables folder-only view in the fileselector.
+ *
+ * @param obj The fileselector object
+ * @param only If true, the fileselector will only display directories.
+ * If false, files are displayed also.
+ *
+ * @ingroup Fileselector
+ */
 EAPI void
 elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only)
 {
@@ -480,6 +531,16 @@ elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only)
    wd->only_folder = only;
 }
 
+
+/**
+ * This gets the state of file display in the fileselector.
+ *
+ * @param obj The fileselector object
+ * @return If true, files are not being shown in the fileselector.
+ * If false, files are being shown.
+ *
+ * @ingroup Fileselector
+ */
 EAPI Eina_Bool
 elm_fileselector_folder_only_get(const Evas_Object *obj)
 {
@@ -489,6 +550,17 @@ elm_fileselector_folder_only_get(const Evas_Object *obj)
    return wd->only_folder;
 }
 
+
+/**
+ * This enables/disables the file name entry box where the user can
+ * type in the name of a file to be selected.
+ *
+ * @param obj The fileselector object
+ * @param only If true, a box containing ok and cancel buttons is created.
+ * If false, the box and the buttons are destroyed.
+ *
+ * @ingroup Fileselector
+ */
 EAPI void
 elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool only)
 {
@@ -534,6 +606,16 @@ elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool only)
      }
 }
 
+
+/**
+ * This gets the state of the box containing ok and cancel buttons.
+ *
+ * @param obj The fileselector object
+ * @return If true, the box exists.
+ * If false, the box does not exist.
+ *
+ * @ingroup Fileselector
+ */
 EAPI Eina_Bool
 elm_fileselector_buttons_ok_cancel_get(const Evas_Object *obj)
 {
@@ -543,6 +625,17 @@ elm_fileselector_buttons_ok_cancel_get(const Evas_Object *obj)
    return wd->buttons.bx ? EINA_TRUE : EINA_FALSE;
 }
 
+
+/**
+ * This enables tree view in the fileselector.  Arrows are created on the
+ * sides of directories, allowing them to expand in place.
+ *
+ * @param obj The fileselector object
+ * @param expand If true, tree view is enabled.
+ * If false, tree view is disabled.
+ *
+ * @ingroup Fileselector
+ */
 EAPI void
 elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand)
 {
@@ -552,6 +645,15 @@ elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand)
    wd->expand = expand;
 }
 
+/**
+ * This gets the state of tree view in the fileselector.
+ *
+ * @param obj The fileselector object
+ * @return If true, tree view is enabled and folders will be expandable.
+ * If false, tree view is disabled.
+ *
+ * @ingroup Fileselector
+ */
 EAPI Eina_Bool
 elm_fileselector_expandable_get(const Evas_Object *obj)
 {
@@ -561,12 +663,28 @@ elm_fileselector_expandable_get(const Evas_Object *obj)
    return wd->expand;
 }
 
+/**
+ * This sets the path that the fileselector will display.
+ *
+ * @param obj The fileselector object
+ * @param path The path of the fileselector
+ *
+ * @ingroup Fileselector
+ */
 EAPI void
 elm_fileselector_path_set(Evas_Object *obj, const char *path)
 {
    _populate(obj, path, NULL);
 }
 
+/**
+ * This gets the path that the fileselector displays.
+ *
+ * @param obj The fileselector object
+ * @return The path that the fileselector is displaying
+ *
+ * @ingroup Fileselector
+ */
 EAPI const char *
 elm_fileselector_path_get(const Evas_Object *obj)
 {
@@ -576,6 +694,14 @@ elm_fileselector_path_get(const Evas_Object *obj)
    return wd->path;
 }
 
+/**
+ * This gets the currently selected object in the fileselector.
+ *
+ * @param obj The fileselector object
+ * @return The absolute path of the selected object in the fileselector
+ *
+ * @ingroup Fileselector
+ */
 EAPI const char *
 elm_fileselector_selected_get(const Evas_Object *obj)
 {
