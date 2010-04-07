@@ -1389,9 +1389,9 @@ elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode)
 EAPI Elm_Photocam_Zoom_Mode
 elm_photocam_zoom_mode_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) ELM_PHOTOCAM_ZOOM_MODE_MANUAL;
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_PHOTOCAM_ZOOM_MODE_LAST;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return ELM_PHOTOCAM_ZOOM_MODE_MANUAL;
+   if (!wd) return ELM_PHOTOCAM_ZOOM_MODE_LAST;
    return wd->mode;
 }
 

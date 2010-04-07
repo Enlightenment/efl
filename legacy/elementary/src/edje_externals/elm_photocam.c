@@ -12,14 +12,14 @@ typedef struct _Elm_Params_Photocam
    Eina_Bool zoom_exists:1;
 } Elm_Params_Photocam;
 
-static const char* choices[] = {"manual", "auto fit", "auto fill"};
+static const char* choices[] = {"manual", "auto fit", "auto fill", NULL};
 
 static Elm_Photocam_Zoom_Mode
 _zoom_mode_setting_get(const char *zoom_mode_str)
 {
    unsigned int i;
 
-   assert(sizeof(choices)/sizeof(choices[0]) == ELM_PHOTOCAM_ZOOM_MODE_LAST);
+   assert(sizeof(choices)/sizeof(choices[0]) == ELM_PHOTOCAM_ZOOM_MODE_LAST + 1);
 
    for (i = 0; i < sizeof(choices); i++)
      {

@@ -4,7 +4,6 @@
 
 typedef struct _Elm_Params_Genlist
 {
-   const char *policy_h, *policy_v;
    const char *horizontal_mode;
    Eina_Bool multi:1;
    Eina_Bool multi_exists:1;
@@ -22,14 +21,14 @@ typedef struct _Elm_Params_Genlist
    Eina_Bool v_bounce_exists:1;
 } Elm_Params_Genlist;
 
-static const char* list_horizontal_mode_choices[] = {"compress", "scroll", "limit"};
+static const char* list_horizontal_mode_choices[] = {"compress", "scroll", "limit", NULL};
 
 static Elm_List_Mode
 _list_horizontal_mode_setting_get(const char *horizontal_mode_str)
 {
    unsigned int i;
 
-   assert(sizeof(list_horizontal_mode_choices)/sizeof(list_horizontal_mode_choices[0]) == ELM_LIST_LAST);
+   assert(sizeof(list_horizontal_mode_choices)/sizeof(list_horizontal_mode_choices[0]) == ELM_LIST_LAST + 1);
 
    for (i = 0; i < sizeof(list_horizontal_mode_choices); i++)
      {
@@ -37,23 +36,6 @@ _list_horizontal_mode_setting_get(const char *horizontal_mode_str)
 	  return i;
      }
    return ELM_LIST_LAST;
-}
-
-static const char* scroller_policy_choices[] = {"auto", "on", "off"};
-
-static Elm_Scroller_Policy
-_scroller_policy_choices_setting_get(const char *scroller_policy_str)
-{
-   unsigned int i;
-
-   assert(sizeof(scroller_policy_choices)/sizeof(scroller_policy_choices[0]) == ELM_SCROLLER_POLICY_LAST);
-
-   for (i = 0; i < sizeof(scroller_policy_choices); i++)
-     {
-	if (!strcmp(scroller_policy_str, scroller_policy_choices[i]))
-	  return i;
-     }
-   return ELM_SCROLLER_POLICY_LAST;
 }
 
 static void
@@ -71,29 +53,6 @@ external_genlist_state_set(void *data __UNUSED__, Evas_Object *obj, const void *
 
 	if (set == ELM_LIST_LAST) return;
 	elm_genlist_horizontal_mode_set(obj, set);
-     }
-   if ((p->policy_h) && (p->policy_v))
-     {
-	Elm_Scroller_Policy policy_h, policy_v;
-
-	policy_h = _scroller_policy_choices_setting_get(p->policy_h);
-	policy_v = _scroller_policy_choices_setting_get(p->policy_v);
-
-	if ((policy_h == ELM_SCROLLER_POLICY_LAST) || (policy_v == ELM_SCROLLER_POLICY_LAST)) return;
-	elm_genlist_scroller_policy_set(obj, policy_h, policy_v);
-     }
-   else if((p->policy_h) || (p->policy_v))
-     {
-	Elm_Scroller_Policy policy_h, policy_v;
-
-	elm_genlist_scroller_policy_get(obj, &policy_h, &policy_v);
-	if (p->policy_h)
-	  policy_h = _scroller_policy_choices_setting_get(p->policy_h);
-	else
-	  policy_v = _scroller_policy_choices_setting_get(p->policy_v);
-
-	if ((policy_h == ELM_SCROLLER_POLICY_LAST) || (policy_v == ELM_SCROLLER_POLICY_LAST)) return;
-	elm_genlist_scroller_policy_set(obj, policy_h, policy_v);
      }
    if (p->multi_exists)
      elm_genlist_multi_select_set(obj, p->multi);
@@ -130,32 +89,6 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
 
 	     if (set == ELM_LIST_LAST) return EINA_FALSE;
 	     elm_genlist_horizontal_mode_set(obj, set);
-	     return EINA_TRUE;
-	  }
-     }
-   else if (!strcmp(param->name, "scroll horizontal"))
-     {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     Elm_Scroller_Policy policy_h, policy_v;
-
-	     elm_genlist_scroller_policy_get(obj, &policy_h, &policy_v);
-	     policy_h = _scroller_policy_choices_setting_get(param->s);
-	     if (policy_h == ELM_SCROLLER_POLICY_LAST) return EINA_FALSE;
-	     elm_genlist_scroller_policy_set(obj, policy_h, policy_v);
-	     return EINA_TRUE;
-	  }
-     }
-   else if (!strcmp(param->name, "scroll vertical"))
-     {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     Elm_Scroller_Policy policy_h, policy_v;
-
-	     elm_genlist_scroller_policy_get(obj, &policy_h, &policy_v);
-	     policy_v = _scroller_policy_choices_setting_get(param->s);
-	     if (policy_v == ELM_SCROLLER_POLICY_LAST) return EINA_FALSE;
-	     elm_genlist_scroller_policy_set(obj, policy_h, policy_v);
 	     return EINA_TRUE;
 	  }
      }
@@ -242,35 +175,6 @@ external_genlist_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
 	     return EINA_TRUE;
 	  }
      }
-   else if (!strcmp(param->name, "scroll horizontal"))
-     {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     Elm_Scroller_Policy policy_h, policy_v;
-	     elm_genlist_scroller_policy_get(obj, &policy_h, &policy_v);
-
-	     if (policy_h == ELM_SCROLLER_POLICY_LAST)
-	       return EINA_FALSE;
-
-	     param->s = scroller_policy_choices[policy_h];
-	     return EINA_TRUE;
-	  }
-     }
-   else if (!strcmp(param->name, "scroll vertical"))
-     {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     Elm_Scroller_Policy policy_h, policy_v;
-	     elm_genlist_scroller_policy_get(obj, &policy_h, &policy_v);
-
-	     if (policy_v == ELM_SCROLLER_POLICY_LAST)
-	       return EINA_FALSE;
-
-	     param->s = scroller_policy_choices[policy_v];
-	     return EINA_TRUE;
-	  }
-     }
-
    else if (!strcmp(param->name, "multi select"))
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
@@ -353,10 +257,6 @@ external_genlist_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__
      {
 	if (!strcmp(param->name, "horizontal mode"))
 	     mem->horizontal_mode = eina_stringshare_add(param->s);
-	else if (!strcmp(param->name, "scroll horizontal"))
-	     mem->policy_h = eina_stringshare_add(param->s);
-	else if (!strcmp(param->name, "scroll vertical"))
-	     mem->policy_v = eina_stringshare_add(param->s);
 	else if (!strcmp(param->name, "multi select"))
 	  {
 	     mem->multi = !!param->i;
@@ -404,18 +304,12 @@ external_genlist_params_free(void *params)
 
    if (mem->horizontal_mode)
      eina_stringshare_del(mem->horizontal_mode);
-   if (mem->policy_h)
-     eina_stringshare_del(mem->policy_h);
-   if (mem->policy_v)
-     eina_stringshare_del(mem->policy_v);
 
    free(mem);
 }
 
 static Edje_External_Param_Info external_genlist_params[] = {
    EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("horizontal mode", "scroll", list_horizontal_mode_choices),
-   EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("scroll horizontal", "auto", scroller_policy_choices),
-   EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("scroll vertical", "auto", scroller_policy_choices),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("multi select"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("always select"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("no select"),

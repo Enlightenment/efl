@@ -2887,16 +2887,16 @@ elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
  *
  * @param obj The genlist object
  * @return The mode to use
- * (ELM_LIST_LIMIT, ELM_LIST_SCROLL)
+ * (ELM_LIST_LIMIT, ELM_LIST_SCROLL, ELM_LIST_LIMIT)
  *
  * @ingroup Genlist
  */
 EAPI Elm_List_Mode
 elm_genlist_horizontal_mode_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) ELM_LIST_SCROLL;
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_LIST_LAST;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return ELM_LIST_SCROLL;
+   if (!wd) return ELM_LIST_LAST;
    return wd->mode;
 }
 
@@ -3132,48 +3132,4 @@ elm_genlist_block_count_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
    return wd->max_items_per_block;
-}
-
-/**
- * Set the scrollbar policy
- *
- * This sets the scrollbar visibility policy for the given scroller.
- * ELM_SMART_SCROLLER_POLICY_AUTO means the scrollber is made visible if it
- * is needed, and otherwise kept hidden. ELM_SMART_SCROLLER_POLICY_ON turns
- * it on all the time, and ELM_SMART_SCROLLER_POLICY_OFF always keeps it off.
- * This applies respectively for the horizontal and vertical scrollbars.
- *
- * @param obj The genlist object
- * @param policy_h Horizontal scrollbar policy
- * @param policy_v Vertical scrollbar policy
- *
- * @ingroup List
- */
-EAPI void
-elm_genlist_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->scr)
-     elm_scroller_policy_set(wd->scr, policy_h, policy_v);
-}
-
-/**
- * Get the scrollbar policy
- *
- * @param obj The genlist object
- * @param policy_h Horizontal scrollbar policy
- * @param policy_v Vertical scrollbar policy
- *
- * @ingroup List
- */
-EAPI void
-elm_genlist_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->scr)
-     elm_scroller_policy_get(wd->scr, policy_h, policy_v);
 }
