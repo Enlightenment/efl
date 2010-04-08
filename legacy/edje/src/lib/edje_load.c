@@ -10,7 +10,6 @@ static Eina_Bool _edje_file_collection_hash_foreach(const Eina_Hash *hash, const
 #ifdef EDJE_PROGRAM_CACHE
 static Eina_Bool  _edje_collection_free_prog_cache_matches_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 #endif
-static int _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, Eina_List *group_path);
 static void _edje_object_pack_item_hints_set(Evas_Object *obj, Edje_Pack_Element *it);
 static void _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *source);
 
@@ -33,7 +32,12 @@ static Eina_List *_edje_swallows_collect(Edje *ed);
 EAPI Eina_Bool
 edje_object_file_set(Evas_Object *obj, const char *file, const char *group)
 {
-   return _edje_object_file_set_internal(obj, file, group, NULL);
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed)
+     return EINA_FALSE;
+   return ed->api->file_set(obj, file, group);
 }
 
 /* FIXDOC: Verify/expand doc. */
@@ -272,7 +276,7 @@ _edje_programs_patterns_init(Edje *ed)
    ssp->sources_patterns = edje_match_programs_source_init(ssp->globing);
 }
 
-static int
+int
 _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, Eina_List *group_path)
 {
    Edje *ed;

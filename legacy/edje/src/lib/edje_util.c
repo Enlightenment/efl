@@ -4337,11 +4337,9 @@ Edje *
 _edje_fetch(const Evas_Object *obj)
 {
    Edje *ed;
-   char *type;
 
-   type = (char *)evas_object_type_get(obj);
-   if (!type) return NULL;
-   if (strcmp(type, "edje")) return NULL;
+   if (!evas_object_smart_type_check(obj, "edje"))
+     return NULL;
    ed = evas_object_smart_data_get(obj);
    if ((ed) && (ed->delete_me)) return NULL;
    return ed;

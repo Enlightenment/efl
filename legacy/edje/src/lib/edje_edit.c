@@ -3642,7 +3642,7 @@ edje_edit_state_external_param_bool_get(Evas_Object *obj, const char *part, cons
    EINA_LIST_FOREACH(pd->external_params, l, p)
       if (!strcmp(p->name, param))
 	{
-	   if (p->type != EDJE_EXTERNAL_PARAM_TYPE_INT)
+	   if (p->type != EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	     return EINA_FALSE;
 	   if (val)
 	     *val = p->i;

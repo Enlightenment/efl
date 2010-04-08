@@ -111,6 +111,26 @@ EAPI extern int _edje_default_log_dom ;
 
 #endif
 
+/* Inheritable Edje Smart API. For now private so only Edje Edit makes
+ * use of this, but who knows what will be possible in the future */
+#define EDJE_SMART_API_VERSION 1
+
+typedef struct _Edje_Smart_Api Edje_Smart_Api;
+
+struct _Edje_Smart_Api
+{
+   Evas_Smart_Class base;
+   int version;
+   Eina_Bool (*file_set)(Evas_Object *obj, const char *file, const char *group);
+};
+
+/* Basic macro to init the Edje Smart API */
+#define EDJE_SMART_API_INIT(smart_class_init) {smart_class_init, EDJE_SMART_API_VERSION, NULL}
+
+#define EDJE_SMART_API_INIT_NULL EDJE_SMART_API_INIT(EVAS_SMART_CLASS_INIT_NULL)
+#define EDJE_SMART_API_INIT_VERSION EDJE_SMART_API_INIT(EVAS_SMART_CLASS_INIT_VERSION)
+#define EDJE_SMART_API_INIT_NAME_VERSION(name) EDJE_SMART_API_INIT(EVAS_SMART_CLASS_INIT_NAME_VERSION(name))
+
 /* increment this when the EET data descriptors have changed and old
  * EETs cannot be loaded/used correctly anymore.
  */
@@ -766,6 +786,7 @@ typedef struct _Edje_Signals_Sources_Patterns Edje_Signals_Sources_Patterns;
 
 struct _Edje
 {
+   const Edje_Smart_Api *api;
    const char           *path;
    const char           *group;
    const char           *parent;
@@ -1247,6 +1268,8 @@ void  _edje_callbacks_focus_del(Evas_Object *obj, Edje *ed);
 void  _edje_edd_init(void);
 void  _edje_edd_shutdown(void);
 
+int _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, Eina_List *group_path);
+
 void  _edje_file_add(Edje *ed);
 void  _edje_file_del(Edje *ed);
 void  _edje_file_free(Edje_File *edf);
@@ -1254,8 +1277,9 @@ void  _edje_file_cache_shutdown(void);
 void  _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec);
 void  _edje_collection_free_part_description_free(Edje_Part_Description *desc, Eina_Bool free_strings);
 
+void  _edje_object_smart_set(Edje_Smart_Api *sc);
+const Edje_Smart_Api * _edje_object_smart_class_get(void);
 
-Edje *_edje_add(Evas_Object *obj);
 void  _edje_del(Edje *ed);
 void  _edje_ref(Edje *ed);
 void  _edje_unref(Edje *ed);
