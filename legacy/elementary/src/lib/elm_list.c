@@ -900,6 +900,15 @@ elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
    wd->always_select = always_select;
 }
 
+EAPI Eina_Bool
+elm_list_always_select_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->always_select;
+}
+
 EAPI const Eina_List *
 elm_list_items_get(const Evas_Object *obj)
 {
@@ -1163,4 +1172,14 @@ elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm
    if (!wd) return;
    if (wd->scr)
      elm_scroller_policy_set(wd->scr, policy_h, policy_v);
+}
+
+EAPI void
+elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->scr)
+     elm_scroller_policy_get(wd->scr, policy_h, policy_v);
 }

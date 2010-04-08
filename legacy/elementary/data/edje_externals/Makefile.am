@@ -19,6 +19,7 @@ ico_fileselector.png \
 ico_fileselector_button.png \
 ico_genlist.png \
 ico_hoversel.png \
+ico_list.png \
 ico_map.png \
 ico_notepad.png \
 ico_photocam.png \
