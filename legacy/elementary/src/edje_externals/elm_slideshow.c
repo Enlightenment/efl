@@ -9,8 +9,8 @@ typedef struct _Elm_Params_Slideshow
    Eina_Bool loop_exists:1;
 } Elm_Params_Slideshow;
 
-static const char *transitions[] = { "fade", "black_fade", "horizontal", "vertical",
-			      "square"};
+static const char *transitions[] = { "fade", "black_fade", "horizontal",
+				     "vertical", "square", NULL};
 
 static void
 external_slideshow_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)

@@ -421,7 +421,7 @@ elm_slideshow_transition_set(Evas_Object *obj, const char *transition)
 EAPI const char *
 elm_slideshow_transition_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->transition;
@@ -486,7 +486,7 @@ elm_slideshow_loop_set(Evas_Object *obj, Eina_Bool loop)
 EAPI Eina_Bool
 elm_slideshow_loop_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->loop;
