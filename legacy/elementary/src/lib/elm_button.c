@@ -146,6 +146,12 @@ _signal_clicked(void *data, Evas_Object *obj, const char *emission, const char *
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
+   if (wd->timer)
+     {
+	ecore_timer_del(wd->timer);
+	wd->timer = NULL;
+     }
+   wd->repeating = EINA_FALSE;
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
    _signal_unpressed(data, obj, emission, source); /* safe guard when the theme does not emit the 'unpress' signal */
 }
@@ -157,6 +163,11 @@ _autorepeat_send(void *data)
    if (!wd) return ECORE_CALLBACK_CANCEL;
 
    evas_object_smart_callback_call(data, SIG_REPEATED, NULL);
+   if (!wd->repeating)
+     {
+	wd->timer = NULL;
+	return ECORE_CALLBACK_CANCEL;
+     }
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -167,9 +178,10 @@ _autorepeat_initial_send(void *data)
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return ECORE_CALLBACK_CANCEL;
 
+   if (wd->timer) ecore_timer_del(wd->timer);
+   wd->repeating = EINA_TRUE;
    _autorepeat_send(data);
    wd->timer = ecore_timer_add(wd->ar_interval, _autorepeat_send, data);
-   wd->repeating = 1;
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -180,7 +192,7 @@ _signal_pressed(void *data, Evas_Object *obj __UNUSED__, const char *emission __
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 
-   if (wd->autorepeat)
+   if (wd->autorepeat && !wd->repeating)
      {
 	if (wd->ar_threshold <= 0.0)
 	  _autorepeat_initial_send(data); /* call immediately */
@@ -194,14 +206,14 @@ _signal_unpressed(void *data, Evas_Object *obj __UNUSED__, const char *emission 
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_smart_callback_call(data, SIG_UNPRESSED, NULL);
 
    if (wd->timer)
      {
 	ecore_timer_del(wd->timer);
 	wd->timer = NULL;
      }
-   wd->repeating = 0;
+   wd->repeating = EINA_FALSE;
+   evas_object_smart_callback_call(data, SIG_UNPRESSED, NULL);
 }
 
 /**
@@ -352,6 +364,7 @@ elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on)
         wd->timer = NULL;
      }
    wd->autorepeat = on;
+   wd->repeating = EINA_FALSE;
 }
 
 /**
@@ -392,13 +405,8 @@ elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->ar_interval == t) return;
-   if (wd->timer)
-     {
-	ecore_timer_del(wd->timer);
-	wd->timer = NULL;
-     }
+
    wd->ar_interval = t;
-   if (wd->repeating)
-     wd->timer = ecore_timer_add(t, _autorepeat_send, obj);
+   if (wd->repeating && wd->timer) ecore_timer_interval_set(wd->timer, t);
 }
 
