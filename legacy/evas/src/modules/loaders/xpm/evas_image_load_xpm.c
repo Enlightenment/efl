@@ -10,6 +10,13 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+int _evas_loader_xpm_log_dom = -1;
+
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_evas_loader_xpm_log_dom, __VA_ARGS__)
+
 static Eina_Bool evas_image_load_file_head_xpm(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 static Eina_Bool evas_image_load_file_data_xpm(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
@@ -649,6 +656,12 @@ static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
+   _evas_loader_xpm_log_dom = eina_log_domain_register("EvasLoaderXpm", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_loader_xpm_log_dom < 0)
+     {
+        EINA_LOG_ERR("Impossible to create a log domain for the LoaderXpm loader.\n");
+        return 0;
+     }
    em->functions = (void *)(&evas_image_load_xpm_func);
    return 1;
 }
@@ -656,6 +669,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em)
 {
+   eina_log_domain_unregister(_evas_loader_xpm_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =
