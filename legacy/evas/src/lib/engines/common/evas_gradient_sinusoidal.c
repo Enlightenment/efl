@@ -341,10 +341,10 @@ sinusoidal_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
 }
 
 #define SETUP_SINU_FILL \
-   a00 = gdata->sp * (axx / 65536.0); \
-   a01 = gdata->sp * (axy / 65536.0); \
-   a10 = ayx / 65536.0; \
-   a11 = ayy / 65536.0; \
+   a00 = gdata->sp * (axx / 65536.0f); \
+   a01 = gdata->sp * (axy / 65536.0f); \
+   a10 = ayx / 65536.0f; \
+   a11 = ayy / 65536.0f; \
    xf = (a00 * x) + (a01 * y); \
    yf = (a10 * x) + (a11 * y);
 
