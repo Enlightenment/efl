@@ -351,3 +351,7 @@
 
 	* Improve eet_eina_file_data_descriptor_class_set by using
 	eina_hash_direct_add to avoid duplication hash key string.
+
+2010-04-08  Cedric BAIL
+
+	* Fix file corruption reported by Tiago Falcao <tiago@profusion.mobi>

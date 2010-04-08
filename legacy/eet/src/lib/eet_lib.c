@@ -1463,7 +1463,6 @@ eet_open(const char *file, Eet_File_Mode mode)
 	ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
 	if (ef)
 	  {
-	     eet_flush2(ef);
 	     ef->references++;
 	     ef->delete_me_now = 1;
              eet_internal_close(ef, EINA_TRUE);
