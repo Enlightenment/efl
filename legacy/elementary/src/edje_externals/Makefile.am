@@ -33,6 +33,7 @@ elm_button.c \
 elm_check.c \
 elm_clock.c \
 elm_fileselector.c \
+elm_fileselector_button.c \
 elm_genlist.c \
 elm_hoversel.c \
 elm_map.c \
@@ -42,11 +43,11 @@ elm_progressbar.c \
 elm_radio.c \
 elm_scrolled_entry.c \
 elm_slider.c \
+elm_slideshow.c \
 elm_spinner.c \
 elm_thumb.c \
 elm_toggle.c \
-elm_toolbar.c \
-elm_slideshow.c
+elm_toolbar.c
 
 elm_la_LIBADD = $(top_builddir)/src/lib/libelementary.la
 elm_la_LDFLAGS = $(all_libraries) -no-undefined @lt_enable_auto_import@ -module -avoid-version -shared -fPIC

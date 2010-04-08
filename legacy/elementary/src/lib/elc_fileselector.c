@@ -695,9 +695,9 @@ elm_fileselector_path_get(const Evas_Object *obj)
 }
 
 /**
- * This gets the currently selected object in the fileselector.
+ * This gets the currently selected path in the file selector.
  *
- * @param obj The fileselector object
+ * @param obj The file selector object
  * @return The absolute path of the selected object in the fileselector
  *
  * @ingroup Fileselector
@@ -725,4 +725,39 @@ elm_fileselector_selected_get(const Evas_Object *obj)
    if (it) return elm_genlist_item_data_get(it);
 
    return wd->path;
+}
+
+/**
+ * This sets the currently selected path in the file selector.
+ *
+ * @param obj The file selector object
+ * @param path The path to a file or directory
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure. The
+ * latter case occurs if the directory or file pointed to do not
+ * exist.
+ *
+ * @ingroup Fileselector
+ */
+EAPI Eina_Bool
+elm_fileselector_selected_set(Evas_Object *obj, const char *path)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_Genlist_Item *it;
+   if (!wd) return EINA_FALSE;
+
+   if (ecore_file_is_dir(path)) _populate(obj, path, NULL);
+   else
+     {
+	if (!ecore_file_exists(path)) return EINA_FALSE;
+
+	_populate(obj, ecore_file_dir_get(path), NULL);
+	if (wd->entry2)
+	  {
+	     elm_entry_entry_set(wd->entry2, ecore_file_file_get(path));
+	     eina_stringshare_replace(&wd->selection, path);
+	  }
+     }
+
+   return EINA_TRUE;
 }

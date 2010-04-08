@@ -16,6 +16,7 @@ ico_button.png \
 ico_check.png \
 ico_clock.png \
 ico_fileselector.png \
+ico_fileselector_button.png \
 ico_genlist.png \
 ico_hoversel.png \
 ico_map.png \
@@ -25,11 +26,11 @@ ico_progressbar.png \
 ico_radio.png \
 ico_scrolled_entry.png \
 ico_slider.png \
+ico_slideshow.png \
 ico_spinner.png \
 ico_thumb.png \
 ico_toggle.png \
-ico_toolbar.png \
-ico_slideshow.png
+ico_toolbar.png
 
 icons.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

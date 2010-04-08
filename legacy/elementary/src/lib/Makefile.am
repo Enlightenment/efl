@@ -74,11 +74,12 @@ elm_conform.c \
 elm_mapbuf.c \
 elm_thumb.c \
 \
-elc_notepad.c \
-elc_anchorview.c \
 elc_anchorblock.c \
-elc_hoversel.c \
+elc_anchorview.c \
 elc_fileselector.c \
+elc_fileselector_button.c \
+elc_hoversel.c \
+elc_notepad.c \
 elc_scrolled_entry.c \
 \
 els_pan.c \
