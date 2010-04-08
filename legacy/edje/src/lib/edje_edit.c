@@ -6455,7 +6455,7 @@ _edje_edit_collection_save(Eet_File *eetf, Edje_Part_Collection *epc)
    return EINA_TRUE;
 }
 
-static int
+static Eina_Bool
 _edje_edit_source_save(Eet_File *eetf, Evas_Object *obj)
 {
    SrcFile *sf;
@@ -6464,46 +6464,76 @@ _edje_edit_source_save(Eet_File *eetf, Evas_Object *obj)
    FILE *f;
    int bytes;
    long sz;
+   Eina_Bool ret = EINA_TRUE;
 
    source_file = _edje_generate_source(obj);
    if (!source_file)
      {
 	ERR("Error: can't create edc source");
-	return 0;
+	return EINA_FALSE;
      }
    INF("** Writing EDC Source [from: %s]", source_file);
 
    //open the temp file and put the contents in SrcFile
    sf = _alloc(sizeof(SrcFile));
-   if (!sf) return 0;
+   if (!sf)
+     {
+	ERR("Error. unable to create source file struct");
+	ret = EINA_FALSE;
+        goto save_free_source;
+     }
    sf->name = strdup("generated_source.edc");
+   if (!sf->name)
+     {
+	ERR("Error. unable to alloc filename");
+	ret = EINA_FALSE;
+        goto save_free_sf;
+     }
 
    f = fopen(source_file, "rb");
    if (!f)
      {
-	ERR("Error. unable to read the created edc source [%s]",
-	    source_file);
-	return 0;
+	ERR("Error. unable to open the created edc source [%s]", source_file);
+	ret = EINA_FALSE;
+        goto save_free_filename;
      }
 
    fseek(f, 0, SEEK_END);
    sz = ftell(f);
    fseek(f, 0, SEEK_SET);
 
-   sf->file = _alloc(sz + 1); //TODO check result and return nicely
+   sf->file = _alloc(sz + 1);
+   if (!sf->file)
+     {
+	ERR("Error. unable to create source file");
+	ret = EINA_FALSE;
+        goto save_free_filept;
+     }
+
+   sf->file[sz] = '\0';
    if (fread(sf->file, sz, 1, f) != 1)
      {
-        // do nothing
+	ERR("Error. unable to read the created edc source [%s]", source_file);
+	ret = EINA_FALSE;
+        goto save_free_file;
      }
-   sf->file[sz] = '\0';
-   fseek(f, 0, SEEK_SET);
-   fclose(f);
-   unlink(source_file);
 
    //create the needed list of source files (only one)
-   sfl = _alloc(sizeof(SrcFile_List)); //TODO check result and return nicely
+   sfl = _alloc(sizeof(SrcFile_List));
+   if (!sfl)
+     {
+	ERR("Error. unable to create file list");
+	ret = EINA_FALSE;
+        goto save_free_file;
+     }
    sfl->list = NULL;
    sfl->list = eina_list_append(sfl->list, sf);
+   if (!sfl->list)
+     {
+	ERR("Error. unable to append file in list");
+	ret = EINA_FALSE;
+        goto save_free_sfl;
+     }
 
    // write the sources list to the eet file
    source_edd();
@@ -6511,17 +6541,25 @@ _edje_edit_source_save(Eet_File *eetf, Evas_Object *obj)
    if (bytes <= 0)
     {
 	ERR("Error. unable to write edc source");
-	return 0;
+	ret = EINA_FALSE;
     }
 
    /* Clear stuff */
-   eina_stringshare_del(source_file);
    eina_list_free(sfl->list);
+save_free_sfl:
    free(sfl);
+save_free_file:
    free(sf->file);
+save_free_filename:
    free(sf->name);
+save_free_filept:
+   fclose(f);
+   unlink(source_file);
+save_free_sf:
    free(sf);
-   return 1;
+save_free_source:
+   eina_stringshare_del(source_file);
+   return ret;
 }
 
 Eina_Bool
@@ -6606,7 +6644,11 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
 	  }
      }
 
-   _edje_edit_source_save(eetf, obj);
+   if (!_edje_edit_source_save(eetf, obj))
+     {
+	eet_close(eetf);
+	return EINA_FALSE;
+     }
 
    eet_close(eetf);
    INF("***********  Saving DONE ******************");
