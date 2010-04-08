@@ -13,7 +13,7 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-int _evas_loader_tiff_log_dom = -1;
+static int _evas_loader_tiff_log_dom = -1;
 
 #ifdef ERR
 # undef ERR
