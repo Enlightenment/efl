@@ -663,7 +663,7 @@ START_TEST(eet_file_simple_write)
 
    eet_init();
 
-   fail_if(!mktemp(file));
+   fail_if(!(file = tmpnam(file)));
 
    fail_if(eet_mode_get(NULL) != EET_FILE_MODE_INVALID);
 
@@ -755,7 +755,7 @@ START_TEST(eet_file_data_test)
 
    _eet_build_ex_descriptor(edd);
 
-   fail_if(!mktemp(file));
+   fail_if(!(file = tmpnam(file)));
 
    /* Insert an error in etbt. */
    etbt.i = 0;
@@ -891,7 +891,7 @@ START_TEST(eet_file_data_dump_test)
 
    _eet_build_ex_descriptor(edd);
 
-   fail_if(!mktemp(file));
+   fail_if(!(file = tmpnam(file)));
 
    /* Save the encoded data in a file. */
    ef = eet_open(file, EET_FILE_MODE_WRITE);
@@ -957,7 +957,7 @@ START_TEST(eet_image)
    unsigned int w;
    unsigned int h;
 
-   fail_if(!mktemp(file));
+   fail_if(!(file = tmpnam(file)));
 
    /* Save the encoded data in a file. */
    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
@@ -1177,7 +1177,7 @@ START_TEST(eet_small_image)
 
    eet_init();
 
-   fail_if(!mktemp(file));
+   fail_if(!(file = tmpnam(file)));
 
    ef = eet_open(file, EET_FILE_MODE_WRITE);
    fail_if(!ef);
@@ -1219,7 +1219,7 @@ START_TEST(eet_identity_simple)
 
    eet_init();
 
-   fail_if(!mktemp(file));
+   fail_if(!(file = tmpnam(file)));
    fail_if(chdir("src/tests"));
 
    /* Sign an eet file. */
@@ -1371,7 +1371,7 @@ START_TEST(eet_cipher_decipher_simple)
 
    eet_init();
 
-   fail_if(!mktemp(file));
+   fail_if(!(file = tmpnam(file)));
    fail_if(chdir("src/tests"));
 
    /* Crypt an eet file. */
@@ -1444,7 +1444,7 @@ START_TEST(eet_cache_concurrency)
    eet_init();
 
    /* create a file to test with */
-   fail_if(!mktemp(file));
+   fail_if(!(file = tmpnam(file)));
    ef = eet_open(file, EET_FILE_MODE_WRITE);
    fail_if(!ef);
    fail_if(!eet_write(ef, "keys/tests", buffer, strlen(buffer) + 1, 0));
