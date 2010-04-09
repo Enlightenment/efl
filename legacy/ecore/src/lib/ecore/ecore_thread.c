@@ -313,7 +313,7 @@ ecore_thread_cancel(Ecore_Thread *thread)
    pthread_mutex_unlock(&_mutex);
 
    /* Delay the destruction */
-   work->cancel = EINA_TRUE;
+   ((Ecore_Pthread_Worker*)thread)->cancel = EINA_TRUE;
    return EINA_FALSE;
 #else
    return EINA_TRUE;
