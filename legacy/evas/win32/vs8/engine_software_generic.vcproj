@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="engine_software_generic"
 	ProjectGUID="{1E24C1AF-62F2-4EC0-AD94-7363C0534E36}"
 	RootNamespace="engine_software_generic"
@@ -20,7 +20,7 @@
 			OutputDirectory="$(DebugOutputDirectory)"
 			IntermediateDirectory="$(TemporaryDirectory)\$(ProjectName)\$(TargetName)\$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="1"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EVAS_BUILD;DLL_EXPORT;__CRT_INLINE=__inline;inline=__inline;HAVE_CONFIG_H;snprintf=_snprintf_c;strcasecmp=stricmp"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EVAS_BUILD;DLL_EXPORT;__CRT_INLINE=__inline;inline=__inline;HAVE_CONFIG_H;snprintf=_snprintf_c;strcasecmp=_stricmp;__UNUSED__="
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -65,7 +65,7 @@
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
 				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="libevas.lib"
+				AdditionalDependencies="libevas.lib libeina.lib"
 				OutputFile="$(OutDir)\engines\software_generic\module.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(LIB); $(DebugLibraryDirectory)"
@@ -104,7 +104,7 @@
 			OutputDirectory="$(ReleaseOutputDirectory)"
 			IntermediateDirectory="$(TemporaryDirectory)\$(ProjectName)\$(TargetName)\$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="1"
+			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -125,7 +125,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;EFL_EVAS_BUILD;DLL_EXPORT;__CRT_INLINE=__inline;inline=__inline;HAVE_CONFIG_H;snprintf=_snprintf_c;strcasecmp=stricmp"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;EFL_EVAS_BUILD;DLL_EXPORT;__CRT_INLINE=__inline;inline=__inline;HAVE_CONFIG_H;snprintf=_snprintf_c;strcasecmp=_stricmp;__UNUSED__="
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -147,7 +147,7 @@
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
 				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="libevas.lib"
+				AdditionalDependencies="libevas.lib libeina.lib"
 				OutputFile="$(OutDir)\engines\software_generic\module.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(LIB); $(ReleaseLibraryDirectory)"

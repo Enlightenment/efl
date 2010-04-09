@@ -3,6 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libevas", "libevas.vcproj", "{689B4F2B-666D-439F-9BF3-1203D813DE3F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "engine_buffer", "engine_buffer.vcproj", "{FF8981EF-618E-45B9-9F03-738D7E2914AF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{689B4F2B-666D-439F-9BF3-1203D813DE3F} = {689B4F2B-666D-439F-9BF3-1203D813DE3F}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "engine_software_gdi", "engine_software_gdi.vcproj", "{3367A64F-A08E-4F27-8303-54A3BBB01D5A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1E24C1AF-62F2-4EC0-AD94-7363C0534E36} = {1E24C1AF-62F2-4EC0-AD94-7363C0534E36}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "engine_software_generic", "engine_software_generic.vcproj", "{1E24C1AF-62F2-4EC0-AD94-7363C0534E36}"
+	ProjectSection(ProjectDependencies) = postProject
+		{689B4F2B-666D-439F-9BF3-1203D813DE3F} = {689B4F2B-666D-439F-9BF3-1203D813DE3F}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +28,18 @@ Global
 		{689B4F2B-666D-439F-9BF3-1203D813DE3F}.Debug|Win32.Build.0 = Debug|Win32
 		{689B4F2B-666D-439F-9BF3-1203D813DE3F}.Release|Win32.ActiveCfg = Release|Win32
 		{689B4F2B-666D-439F-9BF3-1203D813DE3F}.Release|Win32.Build.0 = Release|Win32
+		{FF8981EF-618E-45B9-9F03-738D7E2914AF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FF8981EF-618E-45B9-9F03-738D7E2914AF}.Debug|Win32.Build.0 = Debug|Win32
+		{FF8981EF-618E-45B9-9F03-738D7E2914AF}.Release|Win32.ActiveCfg = Release|Win32
+		{FF8981EF-618E-45B9-9F03-738D7E2914AF}.Release|Win32.Build.0 = Release|Win32
+		{3367A64F-A08E-4F27-8303-54A3BBB01D5A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3367A64F-A08E-4F27-8303-54A3BBB01D5A}.Debug|Win32.Build.0 = Debug|Win32
+		{3367A64F-A08E-4F27-8303-54A3BBB01D5A}.Release|Win32.ActiveCfg = Release|Win32
+		{3367A64F-A08E-4F27-8303-54A3BBB01D5A}.Release|Win32.Build.0 = Release|Win32
+		{1E24C1AF-62F2-4EC0-AD94-7363C0534E36}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1E24C1AF-62F2-4EC0-AD94-7363C0534E36}.Debug|Win32.Build.0 = Debug|Win32
+		{1E24C1AF-62F2-4EC0-AD94-7363C0534E36}.Release|Win32.ActiveCfg = Release|Win32
+		{1E24C1AF-62F2-4EC0-AD94-7363C0534E36}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

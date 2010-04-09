@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EVAS_BUILD;DLL_EXPORT;__CRT_INLINE=__inline;inline=__inline;HAVE_CONFIG_H;snprintf=_snprintf_c;strcasecmp=stricmp;_USE_MATH_DEFINES;__UNUSED__="
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EVAS_BUILD;DLL_EXPORT;__CRT_INLINE=__inline;inline=__inline;HAVE_CONFIG_H;snprintf=_snprintf_c;strcasecmp=_stricmp;_USE_MATH_DEFINES;__UNUSED__="
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -125,7 +125,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;EFL_EVAS_BUILD;DLL_EXPORT;__CRT_INLINE=__inline;inline=__inline;HAVE_CONFIG_H;snprintf=_snprintf_c;strcasecmp=stricmp;_USE_MATH_DEFINES;__UNUSED__="
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;EFL_EVAS_BUILD;DLL_EXPORT;__CRT_INLINE=__inline;inline=__inline;HAVE_CONFIG_H;snprintf=_snprintf_c;strcasecmp=_stricmp;_USE_MATH_DEFINES;__UNUSED__="
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -591,6 +591,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\lib\engines\common\evas_line_main.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\lib\engines\common\evas_map_image.c"
 					>
 				</File>
 				<File

@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
-	Name="engine_software_win32_gdi"
+	Name="engine_software_gdi"
 	ProjectGUID="{3367A64F-A08E-4F27-8303-54A3BBB01D5A}"
-	RootNamespace="engine_software_win32_gdi"
+	RootNamespace="engine_software_gdi"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -20,7 +20,7 @@
 			OutputDirectory="$(DebugOutputDirectory)"
 			IntermediateDirectory="$(TemporaryDirectory)\$(ProjectName)\$(TargetName)\$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="1"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EVAS_BUILD;DLL_EXPORT;__CRT_INLINE=__inline;inline=__inline;HAVE_CONFIG_H;snprintf=_snprintf_c;strcasecmp=stricmp"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EVAS_BUILD;DLL_EXPORT;__CRT_INLINE=__inline;inline=__inline;HAVE_CONFIG_H;snprintf=_snprintf_c;strcasecmp=_stricmp;__UNUSED__="
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -65,8 +65,8 @@
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
 				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="libevas.lib"
-				OutputFile="$(OutDir)\engines\software_win32_gdi\module.dll"
+				AdditionalDependencies="libevas.lib libeina.lib gdi32.lib user32.lib"
+				OutputFile="$(OutDir)\engines\software_gdi\module.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(LIB); $(DebugLibraryDirectory)"
 				AddModuleNamesToAssembly=""
@@ -104,7 +104,7 @@
 			OutputDirectory="$(ReleaseOutputDirectory)"
 			IntermediateDirectory="$(TemporaryDirectory)\$(ProjectName)\$(TargetName)\$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="1"
+			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -125,7 +125,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;EFL_EVAS_BUILD;DLL_EXPORT;__CRT_INLINE=__inline;inline=__inline;HAVE_CONFIG_H;snprintf=_snprintf_c;strcasecmp=stricmp"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;EFL_EVAS_BUILD;DLL_EXPORT;__CRT_INLINE=__inline;inline=__inline;HAVE_CONFIG_H;snprintf=_snprintf_c;strcasecmp=_stricmp;__UNUSED__="
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -147,8 +147,8 @@
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
 				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="libevas.lib"
-				OutputFile="$(OutDir)\engines\software_win32_gdi\module.dll"
+				AdditionalDependencies="libevas.lib libeina.lib gdi32.lib user32.lib"
+				OutputFile="$(OutDir)\engines\software_gdi\module.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(LIB); $(ReleaseLibraryDirectory)"
 				AddModuleNamesToAssembly=""
@@ -193,11 +193,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\modules\engines\software_win32_gdi\evas_engine.h"
+				RelativePath="..\..\src\modules\engines\software_gdi\evas_engine.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\modules\engines\software_win32_gdi\Evas_Engine_Software_Win32_GDI.h"
+				RelativePath="..\..\src\modules\engines\software_gdi\Evas_Engine_Software_GDI.h"
 				>
 			</File>
 		</Filter>
@@ -213,19 +213,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\modules\engines\software_win32_gdi\evas_engine.c"
+				RelativePath="..\..\src\modules\engines\software_gdi\evas_engine.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\modules\engines\software_win32_gdi\evas_outbuf.c"
+				RelativePath="..\..\src\modules\engines\software_gdi\evas_outbuf.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\modules\engines\software_win32_gdi\evas_win32_buffer.c"
+				RelativePath="..\..\src\modules\engines\software_gdi\evas_gdi_buffer.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\modules\engines\software_win32_gdi\evas_win32_main.c"
+				RelativePath="..\..\src\modules\engines\software_gdi\evas_gdi_main.c"
 				>
 			</File>
 		</Filter>
