@@ -284,7 +284,7 @@ _selection_done(void *data, Evas_Object *obj, void *event_info)
    win = evas_object_data_del(fs_btn, "win");
 
    evas_object_smart_callback_call(fs_btn, SIG_FILE_CHOSEN, file);
-   eina_stringshare_replace(&wd->fsd.path, file);
+   if (file) eina_stringshare_replace(&wd->fsd.path, file);
 
    wd->fs = NULL;
    evas_object_del(win);
