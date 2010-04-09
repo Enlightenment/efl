@@ -1943,7 +1943,6 @@ edje_edit_part_exist(Evas_Object *obj, const char *part)
 EAPI const char*
 edje_edit_part_below_get(Evas_Object *obj, const char* part)
 {
-   Edje_Part_Collection *group;
    Edje_Real_Part *prev;
 
    GET_RP_OR_RETURN(0);
@@ -1958,7 +1957,6 @@ edje_edit_part_below_get(Evas_Object *obj, const char* part)
 EAPI const char*
 edje_edit_part_above_get(Evas_Object *obj, const char* part)
 {
-   Edje_Part_Collection *group;
    Edje_Real_Part *next;
 
    GET_RP_OR_RETURN(0);
@@ -5701,98 +5699,108 @@ edje_edit_script_get(Evas_Object *obj)
 #define I6 "                  "
 #define I7 "                     "
 
+#define BUF_APPEND(STR) \
+   ret &= eina_strbuf_append(buf, STR)
+
+#define BUF_APPENDF(FMT, ...) \
+   ret &= eina_strbuf_append_printf(buf, FMT, ##__VA_ARGS__)
+
 static char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP", "BOX", "TABLE", "EXTERNAL"};
 static char *effects[] = {"NONE", "PLAIN", "OUTLINE", "SOFT_OUTLINE", "SHADOW", "SOFT_SHADOW", "OUTLINE_SHADOW", "OUTLINE_SOFT_SHADOW ", "FAR_SHADOW ", "FAR_SOFT_SHADOW", "GLOW"};
 static char *prefers[] = {"NONE", "VERTICAL", "HORIZONTAL", "BOTH"};
-static void
-_edje_generate_source_of_spectra(Edje * ed, const char *name, FILE * f)
+static Eina_Bool
+_edje_generate_source_of_spectra(Edje * ed, const char *name, Eina_Strbuf *buf)
 {
    Edje_Spectrum_Directory_Entry *d;
    Edje_Spectrum_Color *color = NULL;
    Eina_List *l;
+   Eina_Bool ret = EINA_TRUE;
 
-   if (!ed || !name || !f) return;
+   if (!ed || !name || !buf) return EINA_FALSE;
 
    if ((d = _edje_edit_spectrum_entry_get(ed, name)))
      {
-	fprintf(f, I1 "spectrum { name: \"%s\";\n", d->entry);
+	BUF_APPENDF(I1 "spectrum { name: \"%s\";\n", d->entry);
 
 	EINA_LIST_FOREACH(d->color_list, l, color)
 	  if (color)
-	    fprintf(f, I2 "color: %d %d %d %d %d;\n", color->r, color->g,
-		    color->b, color->a, color->d);
+	    BUF_APPENDF(I2 "color: %d %d %d %d %d;\n", color->r, color->g,
+			color->b, color->a, color->d);
 
-	fprintf(f, I1 "}\n");
+	BUF_APPEND(I1 "}\n");
      }
+   return ret;
 }
 
- static void
-_edje_generate_source_of_colorclass(Edje * ed, const char *name, FILE * f)
+ static Eina_Bool
+_edje_generate_source_of_colorclass(Edje * ed, const char *name, Eina_Strbuf *buf)
 {
    Eina_List *l;
    Edje_Color_Class *cc;
+   Eina_Bool ret = EINA_TRUE;
 
    EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
      if (!strcmp(cc->name, name))
        {
-	 fprintf(f, I1 "color_class { name: \"%s\";\n", cc->name);
-	 fprintf(f, I2 "color: %d %d %d %d;\n", cc->r, cc->g, cc->b, cc->a);
-	 fprintf(f, I2 "color2: %d %d %d %d;\n", cc->r2, cc->g2, cc->b2, cc->a2);
-	 fprintf(f, I2 "color3: %d %d %d %d;\n", cc->r3, cc->g3, cc->b3, cc->a3);
-	 fprintf(f, I1 "}\n");
+	 BUF_APPENDF(I1 "color_class { name: \"%s\";\n", cc->name);
+	 BUF_APPENDF(I2 "color: %d %d %d %d;\n", cc->r, cc->g, cc->b, cc->a);
+	 BUF_APPENDF(I2 "color2: %d %d %d %d;\n", cc->r2, cc->g2, cc->b2, cc->a2);
+	 BUF_APPENDF(I2 "color3: %d %d %d %d;\n", cc->r3, cc->g3, cc->b3, cc->a3);
+	 BUF_APPEND(I1 "}\n");
        }
+   return ret;
 }
 
- static void
-_edje_generate_source_of_style(Edje * ed, const char *name, FILE * f)
+ static Eina_Bool
+_edje_generate_source_of_style(Edje * ed, const char *name, Eina_Strbuf *buf)
 {
    Eina_List *l, *ll;
    Edje_Style *s;
    Edje_Style_Tag *t;
+   Eina_Bool ret = EINA_TRUE;
 
    EINA_LIST_FOREACH(ed->file->styles, l, s)
      if (!strcmp(s->name, name))
        {
 	 t = s->tags ? s->tags->data : NULL;
-	 fprintf(f, I1 "style { name:\"%s\";\n", s->name);
-	 if (t && t->value) fprintf(f, I2 "base: \"%s\";\n", t->value);
+	 BUF_APPENDF(I1 "style { name:\"%s\";\n", s->name);
+	 if (t && t->value)
+	   BUF_APPENDF(I2 "base: \"%s\";\n", t->value);
+
 	 EINA_LIST_FOREACH(s->tags, ll, t)
 	   if (ll->prev && t && t->value)
-	     fprintf(f, I2 "tag: \"%s\" \"%s\";\n", t->key, t->value); //TODO need some sort of escaping (at least for '\n')
-	 fprintf(f, I1 "}\n");
-	 return;
+	     BUF_APPENDF(I2 "tag: \"%s\" \"%s\";\n", t->key,
+			        t->value);
+	 BUF_APPEND(I1 "}\n");
+	 return ret;
        }
+   return EINA_FALSE;
 }
 
-static void
-_edje_generate_source_of_external(Edje *ed, const char *name, FILE *f)
-{
-   fprintf(f, I1 "external: \"%s\";\n", name);
-}
-
-static void
-_edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
+static Eina_Bool
+_edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Strbuf *buf)
 {
    Eina_List *l, *ll;
    const char *s, *s2;
    double db, db2;
    char *data;
+   Eina_Bool ret = EINA_TRUE;
 
-   GET_ED_OR_RETURN();
+   GET_ED_OR_RETURN(EINA_FALSE);
 
-   fprintf(f, I3"program { name: \"%s\";\n", program);
+   BUF_APPENDF(I3"program { name: \"%s\";\n", program);
 
    /* Signal */
    if ((s = edje_edit_program_signal_get(obj, program)))
      {
-	fprintf(f, I4"signal: \"%s\";\n", s);
+	BUF_APPENDF(I4"signal: \"%s\";\n", s);
 	edje_edit_string_free(s);
      }
 
    /* Source */
    if ((s = edje_edit_program_source_get(obj, program)))
      {
-	fprintf(f, I4"source: \"%s\";\n", s);
+	BUF_APPENDF(I4"source: \"%s\";\n", s);
 	edje_edit_string_free(s);
      }
 
@@ -5800,12 +5808,12 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
    switch (edje_edit_program_action_get(obj, program))
      {
      case EDJE_ACTION_TYPE_ACTION_STOP:
-	fprintf(f, I4"action: ACTION_STOP;\n");
+	BUF_APPEND(I4"action: ACTION_STOP;\n");
 	break;
      case EDJE_ACTION_TYPE_STATE_SET:
 	if ((s = edje_edit_program_state_get(obj, program)))
 	  {
-		fprintf(f, I4"action: STATE_SET \"%s\" %.2f;\n", s,
+		BUF_APPENDF(I4"action: STATE_SET \"%s\" %.2f;\n", s,
 			edje_edit_program_value_get(obj, program));
 		edje_edit_string_free(s);
 	  }
@@ -5815,21 +5823,23 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
 	s2 = edje_edit_program_state2_get(obj, program);
 	if (s && s2)
 	  {
-		fprintf(f, I4"action: SIGNAL_EMIT \"%s\" \"%s\";\n", s, s2);
+		BUF_APPENDF(I4"action: SIGNAL_EMIT \"%s\" \"%s\";\n", s, s2);
 		edje_edit_string_free(s);
 		edje_edit_string_free(s2);
 	  }
 	break;
      //TODO Support Drag
      //~ case EDJE_ACTION_TYPE_DRAG_VAL_SET:
-	//~ fprintf(f, I4"action: DRAG_VAL_SET TODO;\n");
+	//~ eina_strbuf_append(buf, I4"action: DRAG_VAL_SET TODO;\n");
 	//~ break;
      //~ case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
-	//~ fprintf(f, I4"action: DRAG_VAL_STEP TODO;\n");
+	//~ eina_strbuf_append(buf, I4"action: DRAG_VAL_STEP TODO;\n");
 	//~ break;
      //~ case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
-	//~ fprintf(f, I4"action: DRAG_VAL_PAGE TODO;\n");
+	//~ eina_strbuf_append(buf, I4"action: DRAG_VAL_PAGE TODO;\n");
 	//~ break;
+     default:
+	break;
      }
 
    /* Transition */
@@ -5837,16 +5847,18 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
    switch (edje_edit_program_transition_get(obj, program))
      {
      case EDJE_TWEEN_MODE_LINEAR:
-	fprintf(f, I4"transition: LINEAR %.5f;\n", db);
+	BUF_APPENDF(I4"transition: LINEAR %.5f;\n", db);
 	break;
      case EDJE_TWEEN_MODE_ACCELERATE:
-	fprintf(f, I4"transition: ACCELERATE %.5f;\n", db);
+	BUF_APPENDF(I4"transition: ACCELERATE %.5f;\n", db);
 	break;
      case EDJE_TWEEN_MODE_DECELERATE:
-	fprintf(f, I4"transition: DECELERATE %.5f;\n", db);
+	BUF_APPENDF(I4"transition: DECELERATE %.5f;\n", db);
 	break;
      case EDJE_TWEEN_MODE_SINUSOIDAL:
-	fprintf(f, I4"transition: SINUSOIDAL %.5f;\n", db);
+	BUF_APPENDF(I4"transition: SINUSOIDAL %.5f;\n", db);
+	break;
+     default:
 	break;
      }
 
@@ -5854,13 +5866,13 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
    db = edje_edit_program_in_from_get(obj, program);
    db2 = edje_edit_program_in_range_get(obj, program);
    if (db || db2)
-     fprintf(f, I4"in: %.5f %.5f;\n", db, db2);
+     BUF_APPENDF(I4"in: %.5f %.5f;\n", db, db2);
 
    /* Targets */
    if ((ll = edje_edit_program_targets_get(obj, program)))
      {
 	EINA_LIST_FOREACH(ll, l, data)
-	  fprintf(f, I4"target: \"%s\";\n", data);
+	  BUF_APPENDF(I4"target: \"%s\";\n", data);
 	edje_edit_string_list_free(ll);
      }
 
@@ -5868,85 +5880,87 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
    if ((ll = edje_edit_program_afters_get(obj, program)))
      {
         EINA_LIST_FOREACH(ll, l, data)
-	  fprintf(f, I4"after: \"%s\";\n", data);
+	  BUF_APPENDF(I4"after: \"%s\";\n", data);
 	edje_edit_string_list_free(ll);
      }
 
    // TODO Support script {}
 
-   fprintf(f, I3 "}\n");
+   BUF_APPEND(I3 "}\n");
+   return ret;
 }
 
-static void
-_edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *state, double value, FILE *f)
+static Eina_Bool
+_edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *state, double value, Eina_Strbuf *buf)
 {
    Eina_List *l, *ll;
    Edje_Real_Part *rp;
    const char *str;
+   Eina_Bool ret = EINA_TRUE;
 
-   GET_PD_OR_RETURN();
+   GET_PD_OR_RETURN(EINA_FALSE);
 
    rp = _edje_real_part_get(ed, part);
-   if (!rp) return;
+   if (!rp) return EINA_FALSE;
 
-   fprintf(f, I4"description { state: \"%s\" %g;\n", pd->state.name, pd->state.value);
+   BUF_APPENDF(I4"description { state: \"%s\" %g;\n", pd->state.name, pd->state.value);
    //TODO Support inherit
 
    if (!pd->visible)
-     fprintf(f, I5"visible: 0;\n");
+     BUF_APPEND(I5"visible: 0;\n");
 
    if (pd->align.x != 0.5 || pd->align.y != 0.5)
-     fprintf(f, I5"align: %g %g;\n", TO_DOUBLE(pd->align.x), TO_DOUBLE(pd->align.y));
+     BUF_APPENDF(I5"align: %g %g;\n", TO_DOUBLE(pd->align.x), TO_DOUBLE(pd->align.y));
 
    //TODO Support fixed
 
    if (pd->min.w || pd->min.h)
-     fprintf(f, I5"min: %d %d;\n", pd->min.w, pd->min.h);
+     BUF_APPENDF(I5"min: %d %d;\n", pd->min.w, pd->min.h);
    if (pd->max.w != -1 || pd->max.h != -1)
-     fprintf(f, I5"max: %d %d;\n", pd->max.w, pd->max.h);
+     BUF_APPENDF(I5"max: %d %d;\n", pd->max.w, pd->max.h);
 
    //TODO Support step
 
    if (pd->aspect.min || pd->aspect.max)
-      fprintf(f, I5"aspect: %g %g;\n", TO_DOUBLE(pd->aspect.min), TO_DOUBLE(pd->aspect.max));
+      BUF_APPENDF(I5"aspect: %g %g;\n", TO_DOUBLE(pd->aspect.min), TO_DOUBLE(pd->aspect.max));
    if (pd->aspect.prefer)
-      fprintf(f, I5"aspect_preference: %s;\n", prefers[pd->aspect.prefer]);
+      BUF_APPENDF(I5"aspect_preference: %s;\n", prefers[pd->aspect.prefer]);
 
    if (pd->color_class)
-      fprintf(f, I5"color_class: \"%s\";\n", pd->color_class);
+      BUF_APPENDF(I5"color_class: \"%s\";\n", pd->color_class);
 
    if (pd->color.r != 255 || pd->color.g != 255 ||
        pd->color.b != 255 ||  pd->color.a != 255)
-      fprintf(f, I5"color: %d %d %d %d;\n",
+      BUF_APPENDF(I5"color: %d %d %d %d;\n",
               pd->color.r, pd->color.g, pd->color.b, pd->color.a);
    if (pd->color2.r != 0 || pd->color2.g != 0 ||
         pd->color2.b != 0 ||  pd->color2.a != 255)
-      fprintf(f, I5"color2: %d %d %d %d;\n",
+      BUF_APPENDF(I5"color2: %d %d %d %d;\n",
               pd->color2.r, pd->color2.g, pd->color2.b, pd->color2.a);
    if (pd->color3.r != 0 || pd->color3.g != 0 ||
         pd->color3.b != 0 ||  pd->color3.a != 128)
-      fprintf(f, I5"color3: %d %d %d %d;\n",
+      BUF_APPENDF(I5"color3: %d %d %d %d;\n",
               pd->color3.r, pd->color3.g, pd->color3.b, pd->color3.a);
 
    //Rel1
    if (pd->rel1.relative_x || pd->rel1.relative_y || pd->rel1.offset_x ||
        pd->rel1.offset_y || pd->rel1.id_x != -1 || pd->rel1.id_y != -1)
      {
-	fprintf(f, I5"rel1 {\n");
+	BUF_APPEND(I5"rel1 {\n");
 	if (pd->rel1.relative_x || pd->rel1.relative_y)
-	   fprintf(f, I6"relative: %g %g;\n", TO_DOUBLE(pd->rel1.relative_x), TO_DOUBLE(pd->rel1.relative_y));
+	  BUF_APPENDF(I6"relative: %g %g;\n", TO_DOUBLE(pd->rel1.relative_x), TO_DOUBLE(pd->rel1.relative_y));
 	if (pd->rel1.offset_x || pd->rel1.offset_y)
-	  fprintf(f, I6"offset: %d %d;\n", pd->rel1.offset_x, pd->rel1.offset_y);
+	  BUF_APPENDF(I6"offset: %d %d;\n", pd->rel1.offset_x, pd->rel1.offset_y);
 	if (pd->rel1.id_x != -1 && pd->rel1.id_x == pd->rel1.id_y)
-	  fprintf(f, I6"to: \"%s\";\n", ed->table_parts[pd->rel1.id_x]->part->name);
+	  BUF_APPENDF(I6"to: \"%s\";\n", ed->table_parts[pd->rel1.id_x]->part->name);
 	else
 	  {
 		if (pd->rel1.id_x != -1)
-		  fprintf(f, I6"to_x: \"%s\";\n", ed->table_parts[pd->rel1.id_x]->part->name);
+		  BUF_APPENDF(I6"to_x: \"%s\";\n", ed->table_parts[pd->rel1.id_x]->part->name);
 		if (pd->rel1.id_y != -1)
-		  fprintf(f, I6"to_y: \"%s\";\n", ed->table_parts[pd->rel1.id_y]->part->name);
+		  BUF_APPENDF(I6"to_y: \"%s\";\n", ed->table_parts[pd->rel1.id_y]->part->name);
 	  }
-	fprintf(f, I5"}\n");//rel1
+	BUF_APPEND(I5"}\n");//rel1
      }
 
    //Rel2
@@ -5954,21 +5968,21 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
        pd->rel2.offset_x != -1 || pd->rel2.offset_y != -1 ||
        pd->rel2.id_x != -1 || pd->rel2.id_y != -1)
      {
-	fprintf(f, I5"rel2 {\n");
+	BUF_APPEND(I5"rel2 {\n");
 	if (TO_DOUBLE(pd->rel2.relative_x) != 1.0 || TO_DOUBLE(pd->rel2.relative_y) != 1.0)
-	  fprintf(f, I6"relative: %g %g;\n", TO_DOUBLE(pd->rel2.relative_x), TO_DOUBLE(pd->rel2.relative_y));
+	  BUF_APPENDF(I6"relative: %g %g;\n", TO_DOUBLE(pd->rel2.relative_x), TO_DOUBLE(pd->rel2.relative_y));
 	if (pd->rel2.offset_x != -1 || pd->rel2.offset_y != -1)
-	  fprintf(f, I6"offset: %d %d;\n", pd->rel2.offset_x, pd->rel2.offset_y);
+	  BUF_APPENDF(I6"offset: %d %d;\n", pd->rel2.offset_x, pd->rel2.offset_y);
 	if (pd->rel2.id_x != -1 && pd->rel2.id_x == pd->rel2.id_y)
-	  fprintf(f, I6"to: \"%s\";\n", ed->table_parts[pd->rel2.id_x]->part->name);
+	  BUF_APPENDF(I6"to: \"%s\";\n", ed->table_parts[pd->rel2.id_x]->part->name);
 	else
 	  {
 		if (pd->rel2.id_x != -1)
-		  fprintf(f, I6"to_x: \"%s\";\n", ed->table_parts[pd->rel2.id_x]->part->name);
+		  BUF_APPENDF(I6"to_x: \"%s\";\n", ed->table_parts[pd->rel2.id_x]->part->name);
 		if (pd->rel2.id_y != -1)
-		  fprintf(f, I6"to_y: \"%s\";\n", ed->table_parts[pd->rel2.id_y]->part->name);
+		  BUF_APPENDF(I6"to_y: \"%s\";\n", ed->table_parts[pd->rel2.id_y]->part->name);
 	  }
-	fprintf(f, I5"}\n");//rel2
+	BUF_APPEND(I5"}\n");//rel2
      }
 
    //Image
@@ -5976,98 +5990,98 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
      {
         char *data;
 
-	fprintf(f, I5"image {\n");
-	fprintf(f, I6"normal: \"%s\";\n", _edje_image_name_find(obj, pd->image.id));
+	BUF_APPEND(I5"image {\n");
+	BUF_APPENDF(I6"normal: \"%s\";\n", _edje_image_name_find(obj, pd->image.id));
 
 	ll = edje_edit_state_tweens_list_get(obj, part, state, value);
 	EINA_LIST_FOREACH(ll, l, data)
-	  fprintf(f, I6"tween: \"%s\";\n", data);
+	  BUF_APPENDF(I6"tween: \"%s\";\n", data);
 	edje_edit_string_list_free(ll);
 
 	if (pd->border.l || pd->border.r || pd->border.t || pd->border.b)
-	  fprintf(f, I6"border: %d %d %d %d;\n", pd->border.l, pd->border.r, pd->border.t, pd->border.b);
+	  BUF_APPENDF(I6"border: %d %d %d %d;\n", pd->border.l, pd->border.r, pd->border.t, pd->border.b);
 	if (pd->border.no_fill == 1)
-	  fprintf(f, I6"middle: NONE;\n");
+	  BUF_APPEND(I6"middle: NONE;\n");
 	else if (pd->border.no_fill == 0)
-	  fprintf(f, I6"middle: DEFAULT;\n");
+	  BUF_APPEND(I6"middle: DEFAULT;\n");
 	else if (pd->border.no_fill == 2)
-	  fprintf(f, I6"middle: SOLID;\n");
+	  BUF_APPEND(I6"middle: SOLID;\n");
 
-	fprintf(f, I5"}\n");//image
+	BUF_APPEND(I5"}\n");//image
      }
 
    //Fill
    if (rp->part->type == EDJE_PART_TYPE_IMAGE ||
        rp->part->type == EDJE_PART_TYPE_GRADIENT)
      {
-	fprintf(f, I5"fill {\n");
+	BUF_APPEND(I5"fill {\n");
 	if (rp->part->type == EDJE_PART_TYPE_IMAGE && !pd->fill.smooth)
-	  fprintf(f, I6"smooth: 0;\n");
+	  BUF_APPEND(I6"smooth: 0;\n");
         //TODO Support spread
 	if (rp->part->type == EDJE_PART_TYPE_GRADIENT && pd->fill.angle)
-	  fprintf(f, I6"angle: %d;\n", pd->fill.angle);
+	  BUF_APPENDF(I6"angle: %d;\n", pd->fill.angle);
         //TODO Support type
 
 	if (pd->fill.pos_rel_x || pd->fill.pos_rel_y ||
             pd->fill.pos_abs_x || pd->fill.pos_abs_y)
 	  {
-		fprintf(f, I6"origin {\n");
+		BUF_APPEND(I6"origin {\n");
 		if (pd->fill.pos_rel_x || pd->fill.pos_rel_y)
-		  fprintf(f, I7"relative: %g %g;\n", TO_DOUBLE(pd->fill.pos_rel_x), TO_DOUBLE(pd->fill.pos_rel_y));
+		  BUF_APPENDF(I7"relative: %g %g;\n", TO_DOUBLE(pd->fill.pos_rel_x), TO_DOUBLE(pd->fill.pos_rel_y));
 		if (pd->fill.pos_abs_x || pd->fill.pos_abs_y)
-		  fprintf(f, I7"offset: %d %d;\n", pd->fill.pos_abs_x, pd->fill.pos_abs_y);
-		fprintf(f, I6"}\n");
+		  BUF_APPENDF(I7"offset: %d %d;\n", pd->fill.pos_abs_x, pd->fill.pos_abs_y);
+		BUF_APPEND(I6"}\n");
           }
 
 	if (TO_DOUBLE(pd->fill.rel_x) != 1.0 || TO_DOUBLE(pd->fill.rel_y) != 1.0 ||
             pd->fill.abs_x || pd->fill.abs_y)
 	  {
-		fprintf(f, I6"size {\n");
+		BUF_APPEND(I6"size {\n");
 		if (pd->fill.rel_x != 1.0 || pd->fill.rel_y != 1.0)
-		  fprintf(f, I7"relative: %g %g;\n", TO_DOUBLE(pd->fill.rel_x), TO_DOUBLE(pd->fill.rel_y));
+		  BUF_APPENDF(I7"relative: %g %g;\n", TO_DOUBLE(pd->fill.rel_x), TO_DOUBLE(pd->fill.rel_y));
 		if (pd->fill.abs_x || pd->fill.abs_y)
-		  fprintf(f, I7"offset: %d %d;\n", pd->fill.abs_x, pd->fill.abs_y);
-		fprintf(f, I6"}\n");
+		  BUF_APPENDF(I7"offset: %d %d;\n", pd->fill.abs_x, pd->fill.abs_y);
+		BUF_APPEND(I6"}\n");
           }
 
-	fprintf(f, I5"}\n");
+	BUF_APPEND(I5"}\n");
      }
 
    //Text
    if (rp->part->type == EDJE_PART_TYPE_TEXT)
      {
-	fprintf(f, I5"text {\n");
+	BUF_APPEND(I5"text {\n");
 	if (pd->text.text)
-	  fprintf(f, I6"text: \"%s\";\n", pd->text.text);
-	fprintf(f, I6"font: \"%s\";\n", pd->text.font);
-	fprintf(f, I6"size: %d;\n", pd->text.size);
+	  BUF_APPENDF(I6"text: \"%s\";\n", pd->text.text);
+	BUF_APPENDF(I6"font: \"%s\";\n", pd->text.font);
+	BUF_APPENDF(I6"size: %d;\n", pd->text.size);
 	if (pd->text.text_class)
-	  fprintf(f, I6"text_class: \"%s\";\n", pd->text.text_class);
+	  BUF_APPENDF(I6"text_class: \"%s\";\n", pd->text.text_class);
 	if (pd->text.fit_x || pd->text.fit_y)
-	  fprintf(f, I6"fit: %d %d;\n", pd->text.fit_x, pd->text.fit_y);
+	  BUF_APPENDF(I6"fit: %d %d;\n", pd->text.fit_x, pd->text.fit_y);
         //TODO Support min & max
 	if (TO_DOUBLE(pd->text.align.x) != 0.5 || TO_DOUBLE(pd->text.align.y) != 0.5)
-	  fprintf(f, I6"align: %g %g;\n", TO_DOUBLE(pd->text.align.x), TO_DOUBLE(pd->text.align.y));
+	  BUF_APPENDF(I6"align: %g %g;\n", TO_DOUBLE(pd->text.align.x), TO_DOUBLE(pd->text.align.y));
         //TODO Support source
         //TODO Support text_source
 	if (pd->text.elipsis)
-	  fprintf(f, I6"elipsis: %g;\n", pd->text.elipsis);
-	fprintf(f, I5"}\n");
+	  BUF_APPENDF(I6"elipsis: %g;\n", pd->text.elipsis);
+	BUF_APPEND(I5"}\n");
      }
 
    //Gradient
    if (rp->part->type == EDJE_PART_TYPE_GRADIENT)
      {
-	fprintf(f, I5"gradient {\n");
-	fprintf(f, I6"type: \"%s\";\n", pd->gradient.type);
+	BUF_APPEND(I5"gradient {\n");
+	BUF_APPENDF(I6"type: \"%s\";\n", pd->gradient.type);
 	str = edje_edit_state_gradient_spectra_get(obj, part, state, value);
 	if (str)
 	  {
-		fprintf(f, I6"spectrum: \"%s\";\n", str);
+		BUF_APPENDF(I6"spectrum: \"%s\";\n", str);
 		edje_edit_string_free(str);
 	  }
         //TODO rel1 and 2 seems unused
-	fprintf(f, I5"}\n");
+	BUF_APPEND(I5"}\n");
      }
 
    //External
@@ -6077,54 +6091,56 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	  {
 	     Edje_External_Param *p;
 
-	     fprintf(f, I5"params {\n");
+	     BUF_APPEND(I5"params {\n");
 	     EINA_LIST_FOREACH(ll, l, p)
 	       {
 		  switch (p->type)
 		    {
 		     case EDJE_EXTERNAL_PARAM_TYPE_INT:
-			fprintf(f, I6"int: \"%s\" \"%d\";\n", p->name, p->i);
+			BUF_APPENDF(I6"int: \"%s\" \"%d\";\n", p->name, p->i);
 			break;
 		     case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
-			fprintf(f, I6"double: \"%s\" \"%g\";\n", p->name, p->d);
+			BUF_APPENDF(I6"double: \"%s\" \"%g\";\n", p->name, p->d);
 			break;
 		     case EDJE_EXTERNAL_PARAM_TYPE_STRING:
 			if (p->s)
-			  fprintf(f, I6"string: \"%s\" \"%s\";\n",
-				  p->name, p->s);
+			  BUF_APPENDF(I6"string: \"%s\" \"%s\";\n", p->name,
+				      p->s);
 			break;
 		     case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
-			fprintf(f, I6"bool: \"%s\" \"%d\";\n", p->name, p->i);
+			BUF_APPENDF(I6"bool: \"%s\" \"%d\";\n", p->name, p->i);
 			break;
 		     case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
 			if (p->s)
-			  fprintf(f, I6"choice: \"%s\" \"%s\";\n",
-				  p->name, p->s);
+			  BUF_APPENDF(I6"choice: \"%s\" \"%s\";\n", p->name,
+				      p->s);
 			break;
 		     default:
 			break;
 		    }
 	       }
-	     fprintf(f, I5"}\n");
+	     BUF_APPEND(I5"}\n");
 	  }
      }
 
-   fprintf(f, I4"}\n");//description
+   BUF_APPEND(I4"}\n");//description
+   return ret;
 }
 
-static void
-_edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
+static Eina_Bool
+_edje_generate_source_of_part(Evas_Object *obj, const char *part, Eina_Strbuf *buf)
 {
    const char *str;
    Eina_List *l, *ll;
    char *data;
+   Eina_Bool ret = EINA_TRUE;
 
-   fprintf(f, I3"part { name: \"%s\";\n", part);
-   fprintf(f, I4"type: %s;\n", types[edje_edit_part_type_get(obj, part)]);
+   BUF_APPENDF(I3"part { name: \"%s\";\n", part);
+   BUF_APPENDF(I4"type: %s;\n", types[edje_edit_part_type_get(obj, part)]);
    if (!edje_edit_part_mouse_events_get(obj, part))
-      fprintf(f, I4"mouse_events: 0;\n");
+      BUF_APPEND(I4"mouse_events: 0;\n");
    if (edje_edit_part_repeat_events_get(obj, part))
-      fprintf(f, I4"repeat_events: 1;\n");
+      BUF_APPEND(I4"repeat_events: 1;\n");
    //TODO Support ignore_flags
    //TODO Support scale
    //TODO Support pointer_mode
@@ -6132,39 +6148,42 @@ _edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
    //TODO Support use_alternate_font_metrics
    if ((str = edje_edit_part_clip_to_get(obj, part)))
      {
-        fprintf(f, I4"clip_to: \"%s\";\n", str);
+        BUF_APPENDF(I4"clip_to: \"%s\";\n", str);
         edje_edit_string_free(str);
      }
    if ((str = edje_edit_part_source_get(obj, part)))
      {
-        fprintf(f, I4"source: \"%s\";\n", str);
+        BUF_APPENDF(I4"source: \"%s\";\n", str);
         edje_edit_string_free(str);
      }
    if (edje_edit_part_effect_get(obj, part))
-     fprintf(f, I4"effect: %s;\n", effects[edje_edit_part_effect_get(obj, part)]);
+     BUF_APPENDF(I4"effect: %s;\n",
+	         effects[edje_edit_part_effect_get(obj, part)]);
 
    //Dragable
    if (edje_edit_part_drag_x_get(obj, part) ||
        edje_edit_part_drag_x_get(obj, part))
      {
-	fprintf(f, I4"dragable {\n");
-	fprintf(f, I5"x: %d %d %d;\n", edje_edit_part_drag_x_get(obj, part),
-	                               edje_edit_part_drag_step_x_get(obj, part),
-	                               edje_edit_part_drag_count_x_get(obj, part));
-	fprintf(f, I5"y: %d %d %d;\n", edje_edit_part_drag_y_get(obj, part),
-	                               edje_edit_part_drag_step_y_get(obj, part),
-	                               edje_edit_part_drag_count_y_get(obj, part));
+	BUF_APPEND(I4"dragable {\n");
+	BUF_APPENDF(I5"x: %d %d %d;\n",
+				  edje_edit_part_drag_x_get(obj, part),
+				  edje_edit_part_drag_step_x_get(obj, part),
+				  edje_edit_part_drag_count_x_get(obj, part));
+	BUF_APPENDF(I5"y: %d %d %d;\n",
+				  edje_edit_part_drag_y_get(obj, part),
+				  edje_edit_part_drag_step_y_get(obj, part),
+				  edje_edit_part_drag_count_y_get(obj, part));
 	if ((str = edje_edit_part_drag_confine_get(obj, part)))
 	  {
-		fprintf(f, I5"confine: \"%s\";\n", str);
+		BUF_APPENDF(I5"confine: \"%s\";\n", str);
 		edje_edit_string_free(str);
 	  }
 	if ((str = edje_edit_part_drag_event_get(obj, part)))
 	  {
-		fprintf(f, I5"events: \"%s\";\n", str);
+		BUF_APPENDF(I5"events: \"%s\";\n", str);
 		edje_edit_string_free(str);
 	  }
-	fprintf(f, I4"}\n");
+	BUF_APPEND(I4"}\n");
      }
 
    //Descriptions
@@ -6178,100 +6197,112 @@ _edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
 	*delim = '\0';
 	delim++;
 	value = strtod(delim, NULL);
-	_edje_generate_source_of_state(obj, part, state, value, f);
+	ret &= _edje_generate_source_of_state(obj, part, state, value, buf);
      }
    edje_edit_string_list_free(ll);
 
-   fprintf(f, I3"}\n");//part
+   BUF_APPEND(I3"}\n");//part
+   return ret;
 }
 
-static void
-_edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
+static Eina_Bool
+_edje_generate_source_of_group(Edje *ed, const char *group, Eina_Strbuf *buf)
 {
    Evas_Object *obj;
    Eina_List *l, *ll;
    int w, h;
    char *data;
+   Eina_Bool ret = EINA_TRUE;
 
    obj = edje_object_add(ed->evas);
-   if (!edje_object_file_set(obj, ed->file->path, group)) return;
+   if (!edje_object_file_set(obj, ed->file->path, group)) return EINA_FALSE;
 
-   fprintf(f, I1"group { name: \"%s\";\n", group);
+   BUF_APPENDF(I1"group { name: \"%s\";\n", group);
    //TODO Support alias:
    w = edje_edit_group_min_w_get(obj);
    h = edje_edit_group_min_h_get(obj);
    if ((w > 0) || (h > 0))
-      fprintf(f, I2"min: %d %d;\n", w, h);
+      BUF_APPENDF(I2"min: %d %d;\n", w, h);
    w = edje_edit_group_max_w_get(obj);
    h = edje_edit_group_max_h_get(obj);
    if ((w > -1) || (h > -1))
-      fprintf(f, I2"max: %d %d;\n", w, h);
+      BUF_APPENDF(I2"max: %d %d;\n", w, h);
 
    /* Data */
    if ((ll = edje_edit_group_data_list_get(obj)))
      {
-	fprintf(f, I2"data {\n");
+	BUF_APPEND(I2"data {\n");
 
 	EINA_LIST_FOREACH(ll, l, data)
 	  {
-	     fprintf(f, I3"item: \"%s\" \"%s\";\n", data,
+	     BUF_APPENDF(I3"item: \"%s\" \"%s\";\n", data,
 		     edje_edit_group_data_value_get(obj, data));
 	  }
 
-	fprintf(f, I2"}\n\n");
+	BUF_APPEND(I2"}\n\n");
 	edje_edit_string_list_free(ll);
+     }
+
+   if (!ret)
+     {
+        ERR("Generating EDC for Group[%s] data.", group);
+        return EINA_FALSE;
      }
 
    //TODO Support script
 
    /* Parts */
-   fprintf(f, I2"parts {\n");
+   BUF_APPEND(I2"parts {\n");
    ll = edje_edit_parts_list_get(obj);
    EINA_LIST_FOREACH(ll, l, data)
-     _edje_generate_source_of_part(obj, data, f);
+     ret &= _edje_generate_source_of_part(obj, data, buf);
    edje_edit_string_list_free(ll);
-   fprintf(f, I2"}\n");//parts
+   BUF_APPEND(I2"}\n");//parts
+
+   if (!ret)
+     {
+        ERR("Generating EDC for Group[%s] Parts.", group);
+        return EINA_FALSE;
+     }
 
    /* Programs */
    if ((ll = edje_edit_programs_list_get(obj)))
      {
-	fprintf(f, I2 "programs {\n");
+	BUF_APPEND(I2 "programs {\n");
 	EINA_LIST_FOREACH(ll, l, data)
-	  _edje_generate_source_of_program(obj, data, f);
-	fprintf(f, I2 "}\n");
+	  _edje_generate_source_of_program(obj, data, buf);
+	BUF_APPEND(I2 "}\n");
 	edje_edit_string_list_free(ll);
      }
+   BUF_APPEND("   }\n");//group
 
-
-   fprintf(f, "   }\n");//group
-
+   if (!ret)
+     {
+        ERR("Generating EDC for Group[%s] Programs.", group);
+        evas_object_del(obj);
+        return EINA_FALSE;
+     }
 
    evas_object_del(obj);
+   return ret;
 }
 
-static const char* //return the name of the temp file containing the edc
+static Eina_Strbuf*
 _edje_generate_source(Evas_Object *obj)
 {
-   //printf("\n****** GENERATE EDC SOURCE *********\n");
-   char tmpn[PATH_MAX];
-   int fd;
-   FILE *f;
+   Eina_Strbuf *buf;
 
    Eina_List *l, *ll;
    char *entry;
    Edje_Font_Directory_Entry *fnt;
+   Eina_Bool ret = EINA_TRUE;
 
    GET_ED_OR_RETURN(NULL);
 
-   /* Open a temp file */
-#ifdef HAVE_EVIL
-   snprintf(tmpn, PATH_MAX, "%s/edje_edit.edc-tmp-XXXXXX", evil_tmpdir_get());
-#else
-   strcpy(tmpn, "/tmp/edje_edit.edc-tmp-XXXXXX");
-#endif
-   if (!(fd = mkstemp(tmpn))) return NULL;
-   INF("*** tmp file: %s", tmpn);
-   if (!(f = fdopen(fd, "wb"))) return NULL;
+   /* Open a str buffer */
+
+   buf = eina_strbuf_new();
+   if (!buf) return NULL;
 
    /* Write edc into file */
    //TODO Probably we need to save the file before generation
@@ -6279,110 +6310,165 @@ _edje_generate_source(Evas_Object *obj)
    /* Images */
    if ((ll = edje_edit_images_list_get(obj)))
      {
-	fprintf(f, I0"images {\n");
+	BUF_APPEND(I0"images {\n");
 
 	EINA_LIST_FOREACH(ll, l, entry)
 	  {
 		int comp = edje_edit_image_compression_type_get(obj, entry);
 		if (comp < 0) continue;
 
-		fprintf(f, I1"image: \"%s\" ", entry);
+		BUF_APPENDF(I1"image: \"%s\" ", entry);
 
 		if (comp == EDJE_EDIT_IMAGE_COMP_LOSSY)
-		  fprintf(f, "LOSSY %d;\n",
+		  BUF_APPENDF("LOSSY %d;\n",
 		          edje_edit_image_compression_rate_get(obj, entry));
 		else if (comp == EDJE_EDIT_IMAGE_COMP_RAW)
-		  fprintf(f, "RAW;\n");
+		  BUF_APPEND("RAW;\n");
 		else if (comp == EDJE_EDIT_IMAGE_COMP_USER)
-		  fprintf(f, "USER;\n");
-		else fprintf(f, "COMP;\n");
+		  BUF_APPEND("USER;\n");
+		else
+		  BUF_APPEND("COMP;\n");
 	  }
-	fprintf(f, I0"}\n\n");
+	BUF_APPEND(I0"}\n\n");
 	edje_edit_string_list_free(ll);
+
+	if (!ret)
+	  {
+	     ERR("Generating EDC for Images");
+	     eina_strbuf_free(buf);
+	     return NULL;
+	  }
      }
 
    /* Fonts */
    if ((ll = edje_edit_fonts_list_get(obj)))
      {
-	fprintf(f, I0"fonts {\n");
+	BUF_APPEND(I0"fonts {\n");
 
 	EINA_LIST_FOREACH(ll, l, fnt)
-	  {
-		fprintf(f, I1"font: \"%s\" \"%s\";\n", fnt->file, fnt->entry);
-	  }
-	fprintf(f, I0"}\n\n");
+          BUF_APPENDF(I1"font: \"%s\" \"%s\";\n", fnt->file,
+			     fnt->entry);
+
+	BUF_APPEND(I0"}\n\n");
 	eina_list_free(ll);
+
+	if (!ret)
+	  {
+	     ERR("Generating EDC for Fonts");
+	     eina_strbuf_free(buf);
+	     return NULL;
+	  }
      }
 
    /* Data */
    if ((ll = edje_edit_data_list_get(obj)))
      {
-	fprintf(f, I0 "data {\n");
+	BUF_APPEND(I0 "data {\n");
 
 	EINA_LIST_FOREACH(ll, l, entry)
-	  {
-		fprintf(f, I1 "item: \"%s\" \"%s\";\n", entry,
-			edje_edit_data_value_get(obj, entry));
-	  }
+          BUF_APPENDF(I1 "item: \"%s\" \"%s\";\n", entry,
+			     edje_edit_data_value_get(obj, entry));
 
-	fprintf(f, I0 "}\n\n");
+	BUF_APPEND(I0 "}\n\n");
 	edje_edit_string_list_free(ll);
+
+	if (!ret)
+	  {
+	     ERR("Generating EDC for Data");
+	     eina_strbuf_free(buf);
+	     return NULL;
+	  }
      }
 
    /* Color Classes */
    if ((ll = edje_edit_color_classes_list_get(obj)))
      {
-	fprintf(f, I0 "color_classes {\n");
+	BUF_APPEND(I0 "color_classes {\n");
+
 	EINA_LIST_FOREACH(ll, l, entry)
-	  _edje_generate_source_of_colorclass(ed, entry, f);
-	fprintf(f, I0 "}\n\n");
+	  _edje_generate_source_of_colorclass(ed, entry, buf);
+
+	BUF_APPEND(I0 "}\n\n");
 	edje_edit_string_list_free(ll);
+
+	if (!ret)
+	  {
+	     ERR("Generating EDC for Color Classes");
+	     eina_strbuf_free(buf);
+	     return NULL;
+	  }
      }
 
    /* Spectrum */
    if ((ll = edje_edit_spectrum_list_get(obj)))
      {
-	fprintf(f, I0 "spectra {\n");
+	BUF_APPEND(I0 "spectra {\n");
 
 	EINA_LIST_FOREACH(ll, l, entry)
-	  _edje_generate_source_of_spectra(ed, entry, f);
+	  _edje_generate_source_of_spectra(ed, entry, buf);
 
-	fprintf(f, I0 "}\n\n");
+	BUF_APPEND(I0 "}\n\n");
 	edje_edit_string_list_free(ll);
+
+	if (!ret)
+	  {
+	     ERR("Generating EDC for Spectrum");
+	     eina_strbuf_free(buf);
+	     return NULL;
+	  }
      }
 
    /* Styles */
    if ((ll = edje_edit_styles_list_get(obj)))
      {
-	fprintf(f, I0 "styles {\n");
+	BUF_APPEND(I0 "styles {\n");
 	EINA_LIST_FOREACH(ll, l, entry)
-	  _edje_generate_source_of_style(ed, entry, f);
-	fprintf(f, I0 "}\n\n");
+	  _edje_generate_source_of_style(ed, entry, buf);
+	BUF_APPEND(I0 "}\n\n");
 	edje_edit_string_list_free(ll);
+
+	if (!ret)
+	  {
+	     ERR("Generating EDC for Styles");
+	     eina_strbuf_free(buf);
+	     return NULL;
+	  }
      }
 
    /* Externals */
    if ((ll = edje_edit_externals_list_get(obj)))
      {
-	fprintf(f, I0 "externals {\n");
+	BUF_APPEND(I0 "externals {\n");
 	EINA_LIST_FOREACH(ll, l, entry)
-	   _edje_generate_source_of_external(ed, entry, f);
+          BUF_APPENDF(I1 "external: \"%s\";\n", entry);
 
-	fprintf(f, I0 "}\n\n");
+	BUF_APPEND(I0 "}\n\n");
 	edje_edit_string_list_free(ll);
+
+	if (!ret)
+	  {
+	     ERR("Generating EDC for Externals");
+	     eina_strbuf_free(buf);
+	     return NULL;
+	  }
      }
 
    /* Collections */
-   fprintf(f, "collections {\n");
+   BUF_APPEND("collections {\n");
    ll = edje_file_collection_list(ed->file->path);
    EINA_LIST_FOREACH(ll, l, entry)
-     _edje_generate_source_of_group(ed, entry, f);
-   fprintf(f, "}\n\n");
+     ret &= _edje_generate_source_of_group(ed, entry, buf);
+   BUF_APPEND("}\n\n");
    edje_file_collection_list_free(ll);
 
-   fclose(f);
+   if (!ret)
+     {
+        ERR("Generating EDC for Collections");
+	eina_strbuf_free(buf);
+	return NULL;
+     }
 
-   return eina_stringshare_add(tmpn);
+   return buf;
 }
 
 
@@ -6397,7 +6483,7 @@ typedef struct _SrcFile_List          SrcFile_List;
 struct _SrcFile
 {
    char *name;
-   char *file;
+   const char *file;
 };
 
 struct _SrcFile_List
@@ -6426,18 +6512,17 @@ source_edd(void)
 }
 /////////////////////////////////////////
 
-static int
+static Eina_Bool
 _edje_edit_edje_file_save(Eet_File *eetf, Edje_File *ef)
 {
    /* Write Edje_File structure */
    INF("** Writing Edje_File* ed->file");
    if (eet_data_write(eetf, _edje_edd_edje_file, "edje_file", ef, 1) <= 0)
      {
-	ERR("Error. unable to write \"edje_file\" "
-	    "entry to \"%s\"", ef->path);
-	return 0;
+	ERR("Error. unable to write \"edje_file\" entry to \"%s\"", ef->path);
+	return EINA_FALSE;
      }
-   return 1;
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -6460,71 +6545,41 @@ _edje_edit_source_save(Eet_File *eetf, Evas_Object *obj)
 {
    SrcFile *sf;
    SrcFile_List *sfl;
-   const char *source_file;
-   FILE *f;
-   int bytes;
-   long sz;
+   Eina_Strbuf *source_file;
    Eina_Bool ret = EINA_TRUE;
 
    source_file = _edje_generate_source(obj);
    if (!source_file)
      {
-	ERR("Error: can't create edc source");
+	ERR("Can't create edc source");
 	return EINA_FALSE;
      }
-   INF("** Writing EDC Source [from: %s]", source_file);
 
    //open the temp file and put the contents in SrcFile
    sf = _alloc(sizeof(SrcFile));
    if (!sf)
      {
-	ERR("Error. unable to create source file struct");
+	ERR("Unable to create source file struct");
 	ret = EINA_FALSE;
         goto save_free_source;
      }
    sf->name = strdup("generated_source.edc");
    if (!sf->name)
      {
-	ERR("Error. unable to alloc filename");
+	ERR("Unable to alloc filename");
 	ret = EINA_FALSE;
         goto save_free_sf;
      }
 
-   f = fopen(source_file, "rb");
-   if (!f)
-     {
-	ERR("Error. unable to open the created edc source [%s]", source_file);
-	ret = EINA_FALSE;
-        goto save_free_filename;
-     }
-
-   fseek(f, 0, SEEK_END);
-   sz = ftell(f);
-   fseek(f, 0, SEEK_SET);
-
-   sf->file = _alloc(sz + 1);
-   if (!sf->file)
-     {
-	ERR("Error. unable to create source file");
-	ret = EINA_FALSE;
-        goto save_free_filept;
-     }
-
-   sf->file[sz] = '\0';
-   if (fread(sf->file, sz, 1, f) != 1)
-     {
-	ERR("Error. unable to read the created edc source [%s]", source_file);
-	ret = EINA_FALSE;
-        goto save_free_file;
-     }
+   sf->file = eina_strbuf_string_get(source_file);
 
    //create the needed list of source files (only one)
    sfl = _alloc(sizeof(SrcFile_List));
    if (!sfl)
      {
-	ERR("Error. unable to create file list");
+	ERR("Unable to create file list");
 	ret = EINA_FALSE;
-        goto save_free_file;
+        goto save_free_filename;
      }
    sfl->list = NULL;
    sfl->list = eina_list_append(sfl->list, sf);
@@ -6537,10 +6592,9 @@ _edje_edit_source_save(Eet_File *eetf, Evas_Object *obj)
 
    // write the sources list to the eet file
    source_edd();
-   bytes = eet_data_write(eetf, _srcfile_list_edd, "edje_sources", sfl, 1);
-   if (bytes <= 0)
+   if (eet_data_write(eetf, _srcfile_list_edd, "edje_sources", sfl, 1) <= 0)
     {
-	ERR("Error. unable to write edc source");
+	ERR("Unable to write edc source");
 	ret = EINA_FALSE;
     }
 
@@ -6548,17 +6602,12 @@ _edje_edit_source_save(Eet_File *eetf, Evas_Object *obj)
    eina_list_free(sfl->list);
 save_free_sfl:
    free(sfl);
-save_free_file:
-   free(sf->file);
 save_free_filename:
    free(sf->name);
-save_free_filept:
-   fclose(f);
-   unlink(source_file);
 save_free_sf:
    free(sf);
 save_free_source:
-   eina_stringshare_del(source_file);
+   eina_strbuf_free(source_file);
    return ret;
 }
 
