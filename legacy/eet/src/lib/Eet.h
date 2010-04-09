@@ -266,6 +266,20 @@ extern "C" {
    EAPI Eet_Error eet_close(Eet_File *ef);
 
    /**
+    * Sync content of an eet file handle, flushing pending writes.
+    * @param ef A valid eet file handle.
+    *
+    * This function will flush any pending writes to disk. The eet file must
+    * be opened for write.
+    *
+    * If the eet file handle is not valid nothing will be done.
+    *
+    * @since 1.2.3
+    * @ingroup Eet_File_Group
+    */
+   EAPI Eet_Error eet_sync(Eet_File *ef);
+
+   /**
     * Return a handle to the shared string dictionary of the Eet file
     * @param ef A valid eet file handle.
     * @return A handle to the dictionary of the file

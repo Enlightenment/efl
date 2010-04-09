@@ -85,7 +85,6 @@ typedef struct _Eet_File_Directory      Eet_File_Directory;
 struct _Eet_File
 {
    char                 *path;
-   FILE                 *fp;
    FILE			*readfp;
    Eet_File_Header      *header;
    Eet_Dictionary       *ed;
@@ -423,38 +422,42 @@ eet_string_match(const char *s1, const char *s2)
 static Eet_Error
 eet_flush2(Eet_File *ef)
 {
-   Eet_File_Node        *efn;
-   Eet_Error             error = EET_ERROR_NONE;
-   int                   head[EET_FILE2_HEADER_COUNT];
-   int                   num_directory_entries = 0;
-   int                   num_dictionary_entries = 0;
-   int                   bytes_directory_entries = 0;
-   int                   bytes_dictionary_entries = 0;
-   int                   bytes_strings = 0;
-   int                   data_offset = 0;
-   int                   strings_offset = 0;
-   int                   num;
-   int                   i;
-   int                   j;
+   Eet_File_Node *efn;
+   FILE *fp;
+   Eet_Error error = EET_ERROR_NONE;
+   int head[EET_FILE2_HEADER_COUNT];
+   int num_directory_entries = 0;
+   int num_dictionary_entries = 0;
+   int bytes_directory_entries = 0;
+   int bytes_dictionary_entries = 0;
+   int bytes_strings = 0;
+   int data_offset = 0;
+   int strings_offset = 0;
+   int num;
+   int i;
+   int j;
 
    if (eet_check_pointer(ef))
      return EET_ERROR_BAD_OBJECT;
    if (eet_check_header(ef))
      return EET_ERROR_EMPTY;
-   if ((ef->mode != EET_FILE_MODE_WRITE) && (ef->mode != EET_FILE_MODE_READ_WRITE))
-     return EET_ERROR_NOT_WRITABLE;
    if (!ef->writes_pending)
      return EET_ERROR_NONE;
-   if (ef->mode == EET_FILE_MODE_READ_WRITE && ef->fp == NULL)
+
+   if ((ef->mode == EET_FILE_MODE_READ_WRITE)
+       || (ef->mode == EET_FILE_MODE_WRITE))
      {
 	int fd;
 
+	/* opening for write - delete old copy of file right away */
 	unlink(ef->path);
 	fd = open(ef->path, O_CREAT | O_TRUNC | O_RDWR, S_IRUSR | S_IWUSR);
-	ef->fp = fdopen(fd, "wb");
-	if (!ef->fp) return EET_ERROR_NOT_WRITABLE;
-	fcntl(fileno(ef->fp), F_SETFD, FD_CLOEXEC);
+	fp = fdopen(fd, "wb");
+	if (!fp) return EET_ERROR_NOT_WRITABLE;
+	fcntl(fileno(fp), F_SETFD, FD_CLOEXEC);
      }
+   else
+     return EET_ERROR_NOT_WRITABLE;
 
    /* calculate string base offset and data base offset */
    num = (1 << ef->header->directory->size);
@@ -503,8 +506,8 @@ eet_flush2(Eet_File *ef)
    head[1] = (int) htonl ((unsigned int) num_directory_entries);
    head[2] = (int) htonl ((unsigned int) num_dictionary_entries);
 
-   fseek(ef->fp, 0, SEEK_SET);
-   if (fwrite(head, sizeof (head), 1, ef->fp) != 1)
+   fseek(fp, 0, SEEK_SET);
+   if (fwrite(head, sizeof (head), 1, fp) != 1)
      goto write_error;
 
    /* write directories entry */
@@ -524,7 +527,7 @@ eet_flush2(Eet_File *ef)
              ibuf[4] = (int) htonl ((unsigned int) efn->name_size);
              ibuf[5] = (int) htonl ((unsigned int) flag);
 
-             if (fwrite(ibuf, sizeof(ibuf), 1, ef->fp) != 1)
+             if (fwrite(ibuf, sizeof(ibuf), 1, fp) != 1)
                goto write_error;
           }
      }
@@ -546,7 +549,7 @@ eet_flush2(Eet_File *ef)
 
              offset += ef->ed->all[j].len;
 
-             if (fwrite(sbuf, sizeof (sbuf), 1, ef->fp) != 1)
+             if (fwrite(sbuf, sizeof (sbuf), 1, fp) != 1)
                goto write_error;
           }
      }
@@ -556,7 +559,7 @@ eet_flush2(Eet_File *ef)
      {
         for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
           {
-             if (fwrite(efn->name, efn->name_size, 1, ef->fp) != 1)
+             if (fwrite(efn->name, efn->name_size, 1, fp) != 1)
                goto write_error;
           }
      }
@@ -568,12 +571,12 @@ eet_flush2(Eet_File *ef)
 	  {
 	     if (ef->ed->all[j].str)
 	       {
-		  if (fwrite(ef->ed->all[j].str, ef->ed->all[j].len, 1, ef->fp) != 1)
+		  if (fwrite(ef->ed->all[j].str, ef->ed->all[j].len, 1, fp) != 1)
 		    goto write_error;
 	       }
 	     else
 	       {
-		  if (fwrite(ef->ed->all[j].mmap, ef->ed->all[j].len, 1, ef->fp) != 1)
+		  if (fwrite(ef->ed->all[j].mmap, ef->ed->all[j].len, 1, fp) != 1)
 		    goto write_error;
 	       }
 	  }
@@ -584,13 +587,13 @@ eet_flush2(Eet_File *ef)
      {
         for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
           {
-             if (fwrite(efn->data, efn->size, 1, ef->fp) != 1)
+             if (fwrite(efn->data, efn->size, 1, fp) != 1)
                goto write_error;
           }
      }
 
    /* flush all write to the file. */
-   fflush(ef->fp);
+   fflush(fp);
 // this is going to really cause trouble. if ANYTHING this needs to go into a
 // thread spawned off - but even then...
 // in this case... ext4 is "wrong". (yes we can jump up and down and point posix
@@ -598,12 +601,12 @@ eet_flush2(Eet_File *ef)
 // for decades and that 1000's of apps rely on daily - that is that one operation
 // to disk is committed to disk BEFORE following operations, so the fs retains
 // a consistent state
-//   fsync(fileno(ef->fp));
+//   fsync(fileno(fp));
 
    /* append signature if required */
    if (ef->key)
      {
-	error = eet_identity_sign(ef->fp, ef->key);
+	error = eet_identity_sign(fp, ef->key);
 	if (error != EET_ERROR_NONE)
 	  goto sign_error;
      }
@@ -611,10 +614,12 @@ eet_flush2(Eet_File *ef)
    /* no more writes pending */
    ef->writes_pending = 0;
 
+   fclose(fp);
+
    return EET_ERROR_NONE;
 
    write_error:
-   if (ferror(ef->fp))
+   if (ferror(fp))
      {
 	switch (errno)
 	  {
@@ -626,8 +631,7 @@ eet_flush2(Eet_File *ef)
 	  }
      }
    sign_error:
-   if (ef->fp) fclose(ef->fp);
-   ef->fp = NULL;
+   if (fp) fclose(fp);
    return error;
 }
 
@@ -713,6 +717,29 @@ eet_shutdown(void)
    eina_shutdown();
 
    return eet_init_count;
+}
+
+EAPI Eet_Error
+eet_sync(Eet_File *ef)
+{
+   Eet_Error ret;
+
+   if (eet_check_pointer(ef))
+     return EET_ERROR_BAD_OBJECT;
+
+   if ((ef->mode != EET_FILE_MODE_WRITE) &&
+       (ef->mode != EET_FILE_MODE_READ_WRITE))
+     return EET_ERROR_NOT_WRITABLE;
+
+   if (!ef->writes_pending)
+     return EET_ERROR_NONE;
+
+   LOCK_FILE(ef);
+
+   ret = eet_flush2(ef);
+
+   UNLOCK_FILE(ef);
+   return ret;
 }
 
 EAPI void
@@ -1267,7 +1294,6 @@ eet_internal_close(Eet_File *ef, Eina_Bool locked)
 
    if (ef->sha1) free(ef->sha1);
    if (ef->data) munmap((void*)ef->data, ef->data_size);
-   if (ef->fp) fclose(ef->fp);
    if (ef->readfp) fclose(ef->readfp);
 
    /* zero out ram for struct - caution tactic against stale memory use */
@@ -1304,7 +1330,6 @@ eet_memopen_read(const void *data, size_t size)
    ef->header = NULL;
    ef->mtime = 0;
    ef->delete_me_now = 1;
-   ef->fp = NULL;
    ef->readfp = NULL;
    ef->data = data;
    ef->data_size = size;
@@ -1337,6 +1362,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
 	if (ef)
 	  {
+	     eet_sync(ef);
 	     ef->references++;
 	     ef->delete_me_now = 1;
              eet_internal_close(ef, EINA_TRUE);
@@ -1355,8 +1381,8 @@ eet_open(const char *file, Eet_File_Mode mode)
 	  }
 	ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
      }
-   
-    /* try open the file based on mode */
+
+   /* try open the file based on mode */
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
      {
 	/* Prevent garbage in futur comparison. */
@@ -1383,15 +1409,10 @@ eet_open(const char *file, Eet_File_Mode mode)
      }
    else
      {
-	int fd;
-
 	if (mode != EET_FILE_MODE_WRITE) return NULL;
 	memset(&file_stat, 0, sizeof(file_stat));
-	/* opening for write - delete old copy of file right away */
-	unlink(file);
-	fd = open(file, O_CREAT | O_TRUNC | O_RDWR, S_IRUSR | S_IWUSR);
-	fp = fdopen(fd, "wb");
-	if (!fp) goto on_error;
+
+	fp = NULL;
      }
 
    /* We found one */
@@ -1421,9 +1442,8 @@ eet_open(const char *file, Eet_File_Mode mode)
 
    /* fill some of the members */
    INIT_FILE(ef);
-   ef->fp = fp;
    ef->key = NULL;
-   ef->readfp = NULL;
+   ef->readfp = fp;
    ef->path = ((char *)ef) + sizeof(Eet_File);
    memcpy(ef->path, file, file_len);
    ef->magic = EET_MAGIC_FILE;
@@ -1439,22 +1459,24 @@ eet_open(const char *file, Eet_File_Mode mode)
    ef->sha1_length = 0;
 
    ef->ed = (mode == EET_FILE_MODE_WRITE)
-     || (ef->fp == NULL && mode == EET_FILE_MODE_READ_WRITE) ?
+     || (ef->readfp == NULL && mode == EET_FILE_MODE_READ_WRITE) ?
      eet_dictionary_add() : NULL;
 
-   if (ef->fp == NULL && mode == EET_FILE_MODE_READ_WRITE) goto empty_file;
+   if (ef->readfp == NULL &&
+       (mode == EET_FILE_MODE_READ_WRITE || mode == EET_FILE_MODE_WRITE))
+     goto empty_file;
 
    /* if we can't open - bail out */
-   if (eet_test_close(!ef->fp, ef))
+   if (eet_test_close(!ef->readfp, ef))
      goto on_error;
 
-   fcntl(fileno(ef->fp), F_SETFD, FD_CLOEXEC);
+   fcntl(fileno(ef->readfp), F_SETFD, FD_CLOEXEC);
    /* if we opened for read or read-write */
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
      {
 	ef->data_size = file_stat.st_size;
 	ef->data = mmap(NULL, ef->data_size, PROT_READ,
-			MAP_SHARED, fileno(ef->fp), 0);
+			MAP_SHARED, fileno(ef->readfp), 0);
 	if (eet_test_close((ef->data == MAP_FAILED), ef))
 	  goto on_error;
 	ef = eet_internal_read(ef);
@@ -1463,13 +1485,6 @@ eet_open(const char *file, Eet_File_Mode mode)
      }
 
  empty_file:
-   /* we need to delete the original file in read-write mode and re-open for writing */
-   if (ef->mode == EET_FILE_MODE_READ_WRITE)
-     {
-	ef->readfp = ef->fp;
-	ef->fp = NULL;
-     }
-
    /* add to cache */
    if (ef->references == 1)
      {
@@ -2107,12 +2122,15 @@ read_data_from_disk(Eet_File *ef, Eet_File_Node *efn, void *buf, int len)
      }
    else
      {
+	if (!ef->readfp)
+	  return 0;
+
 	/* seek to data location */
-	if (fseek(ef->fp, efn->offset, SEEK_SET) < 0)
+	if (fseek(ef->readfp, efn->offset, SEEK_SET) < 0)
 	  return 0;
 
 	/* read it */
-	len = fread(buf, len, 1, ef->fp);
+	len = fread(buf, len, 1, ef->readfp);
      }
    return len;
 }

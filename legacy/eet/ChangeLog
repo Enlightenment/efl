@@ -355,3 +355,10 @@
 2010-04-08  Cedric BAIL
 
 	* Fix file corruption reported by Tiago Falcao <tiago@profusion.mobi>
+
+2010-04-09  Cedric BAIL
+
+	* Add eet_sync.
+	* Only delete the file at the last possible time.
+	* Reduce open file descriptor.
+
