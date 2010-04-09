@@ -32,12 +32,16 @@ EAPI Eina_Bool eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str) EIN
 EAPI Eina_Bool eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, size_t maxlen) EINA_ARG_NONNULL(1, 2);
 EAPI Eina_Bool eina_strbuf_append_length(Eina_Strbuf *buf, const char *str, size_t length) EINA_ARG_NONNULL(1, 2);
 EAPI Eina_Bool eina_strbuf_append_char(Eina_Strbuf *buf, char c) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool eina_strbuf_append_printf(Eina_Strbuf *buf, const char *fmt, ...) EINA_ARG_NONNULL(1, 2) EINA_PRINTF(2, 3);
+EAPI Eina_Bool eina_strbuf_append_vprintf(Eina_Strbuf *buf, const char *fmt, va_list args) EINA_ARG_NONNULL(1, 2);
 
 EAPI Eina_Bool eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos) EINA_ARG_NONNULL(1, 2);
 EAPI Eina_Bool eina_strbuf_insert_escaped(Eina_Strbuf *buf, const char *str, size_t pos) EINA_ARG_NONNULL(1, 2);
 EAPI Eina_Bool eina_strbuf_insert_n(Eina_Strbuf *buf, const char *str, size_t maxlen, size_t pos) EINA_ARG_NONNULL(1, 2);
 EAPI Eina_Bool eina_strbuf_insert_length(Eina_Strbuf *buf, const char *str, size_t length, size_t pos) EINA_ARG_NONNULL(1, 2);
 EAPI Eina_Bool eina_strbuf_insert_char(Eina_Strbuf *buf, char c, size_t pos) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool eina_strbuf_insert_printf(Eina_Strbuf *buf, const char *fmt, size_t pos, ...) EINA_ARG_NONNULL(1, 2) EINA_PRINTF(2, 4);
+EAPI Eina_Bool eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, size_t pos, va_list args) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @def eina_strbuf_prepend(buf, str)
@@ -110,6 +114,34 @@ EAPI Eina_Bool eina_strbuf_insert_char(Eina_Strbuf *buf, char c, size_t pos) EIN
  * #EINA_TRUE is returned.
  */
 #define eina_strbuf_prepend_char(buf, c) eina_strbuf_insert_char(buf, c, 0)
+
+/**
+ * @def eina_strbuf_prepend_printf(buf, fmt, ...)
+ * @brief Prepend the given string to the given buffer
+ *
+ * @param buf The string buffer to prepend to.
+ * @param str The string to prepend.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This macro is calling eina_strbuf_insert_printf() at position 0.If @p buf
+ * can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * returned.
+ */
+#define eina_strbuf_prepend_printf(buf, fmt, ...) eina_strbuf_insert_printf(buf, fmt, 0, ##__VA_ARGS__)
+
+/**
+ * @def eina_strbuf_prepend_vprintf(buf, fmt, args)
+ * @brief Prepend the given string to the given buffer
+ *
+ * @param buf The string buffer to prepend to.
+ * @param fmt The string to prepend.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This macro is calling eina_strbuf_insert_vprintf() at position 0.If @p buf
+ * can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * returned.
+ */
+#define eina_strbuf_prepend_vprintf(buf, fmt, args) eina_strbuf_insert_vprintf(buf, fmt, 0, args)
 
 
 EAPI Eina_Bool eina_strbuf_remove(Eina_Strbuf *buf, size_t start, size_t end) EINA_ARG_NONNULL(1);

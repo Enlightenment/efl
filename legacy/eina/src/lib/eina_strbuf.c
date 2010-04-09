@@ -14,6 +14,7 @@
 #include "eina_safety_checks.h"
 #include "eina_strbuf.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -458,6 +459,65 @@ eina_strbuf_append_length(Eina_Strbuf *buf, const char *str, size_t length)
 }
 
 /**
+ * @brief Append a string to a buffer, reallocating as necessary.
+ *
+ * @param buf The string buffer to append to.
+ * @param fmt The string to append.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @see eina_strbuf_append()
+ */
+EAPI Eina_Bool
+eina_strbuf_append_printf(Eina_Strbuf *buf, const char *fmt, ...)
+{
+   va_list args;
+   char *str;
+   Eina_Bool ret;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fmt, EINA_FALSE);
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
+
+   va_start(args, fmt);
+   vasprintf(&str, fmt, args);
+   va_end(args);
+
+   if (!str)
+     return EINA_FALSE;
+
+   ret = eina_strbuf_append(buf, str);
+   free(str);
+   return ret;
+}
+
+/**
+ * @brief Append a string to a buffer, reallocating as necessary.
+ *
+ * @param buf The string buffer to append to.
+ * @param fmt The string to append.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @see eina_strbuf_append()
+ */
+EAPI Eina_Bool
+eina_strbuf_append_vprintf(Eina_Strbuf *buf, const char *fmt, va_list args)
+{
+   char *str;
+   Eina_Bool ret;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fmt, EINA_FALSE);
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
+
+   vasprintf(&str, fmt, args);
+
+   if (!str)
+     return EINA_FALSE;
+
+   ret = eina_strbuf_append(buf, str);
+   free(str);
+   return ret;
+}
+
+/**
  * @brief Insert a string to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to insert.
@@ -629,6 +689,63 @@ eina_strbuf_insert_char(Eina_Strbuf *buf, char c, size_t pos)
      return eina_strbuf_append_char(buf, c);
 
    return _eina_strbuf_insert_length(buf, &c, 1, pos);
+}
+
+/**
+ * @brief Insert a string to a buffer, reallocating as necessary.
+ *
+ * @param buf The string buffer to insert.
+ * @param fmt The string to insert.
+ * @param pos The position to insert the string.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ */
+EAPI Eina_Bool
+eina_strbuf_insert_printf(Eina_Strbuf *buf, const char *fmt, size_t pos, ...)
+{
+   va_list args;
+   char *str;
+   Eina_Bool ret;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fmt, EINA_FALSE);
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
+
+   va_start(args, fmt);
+   vasprintf(&str, fmt, args);
+   va_end(args);
+
+   if (!str)
+     return EINA_FALSE;
+
+   ret = eina_strbuf_insert(buf, str, pos);
+   free(str);
+   return ret;
+}
+
+/**
+ * @brief Insert a string to a buffer, reallocating as necessary.
+ *
+ * @param buf The string buffer to insert.
+ * @param fmt The string to insert.
+ * @param pos The position to insert the string.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ */
+EAPI Eina_Bool
+eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, size_t pos, va_list args)
+{
+   char *str;
+   Eina_Bool ret;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fmt, EINA_FALSE);
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
+
+   vasprintf(&str, fmt, args);
+
+   if (!str)
+     return EINA_FALSE;
+
+   ret = eina_strbuf_insert(buf, str, pos);
+   free(str);
+   return ret;
 }
 
 /**
