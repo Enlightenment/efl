@@ -29,7 +29,7 @@ eina_f32p32_int_from(int32_t v)
 static inline int32_t
 eina_f32p32_int_to(Eina_F32p32 v)
 {
-   return v >> 32;
+   return (int32_t)(v >> 32);
 }
 
 static inline Eina_F32p32

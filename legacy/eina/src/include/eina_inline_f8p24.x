@@ -35,7 +35,7 @@ eina_f8p24_sub(Eina_F8p24 a, Eina_F8p24 b)
 static inline Eina_F8p24
 eina_f8p24_mul(Eina_F8p24 a, Eina_F8p24 b)
 {
-   return ((int64_t) a * (int64_t) b) >> 24;
+   return (Eina_F8p24)(((int64_t) a * (int64_t) b) >> 24);
 }
 
 static inline Eina_F8p24
