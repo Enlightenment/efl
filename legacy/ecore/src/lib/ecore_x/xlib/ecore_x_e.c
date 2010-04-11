@@ -557,6 +557,16 @@ ecore_x_e_illume_quickpanel_state_send(Ecore_X_Window win, Ecore_X_Illume_Quickp
 }
 
 EAPI void 
+ecore_x_e_illume_quickpanel_state_toggle(Ecore_X_Window win) 
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   ecore_x_client_message32_send(win, 
+                                 ECORE_X_ATOM_E_ILLUME_QUICKPANEL_STATE_TOGGLE,
+				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+				 0, 0, 0, 0, 0);
+}
+
+EAPI void 
 ecore_x_e_illume_quickpanel_priority_major_set(Ecore_X_Window win, unsigned int priority) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
