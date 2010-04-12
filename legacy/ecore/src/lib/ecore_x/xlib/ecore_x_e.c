@@ -815,3 +815,46 @@ ecore_x_e_comp_sync_cancel_send(Ecore_X_Window win)
               &xev);
 }
 
+EAPI void
+ecore_x_e_comp_flush_send(Ecore_X_Window win)
+{
+   XEvent xev;
+   
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_E_COMP_FLUSH;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = win;
+   xev.xclient.data.l[1] = 0; // later
+   xev.xclient.data.l[2] = 0; // later
+   xev.xclient.data.l[3] = 0; // later
+   xev.xclient.data.l[4] = 0; // later
+   
+   XSendEvent(_ecore_x_disp, win, False,
+              NoEventMask, //SubstructureRedirectMask | SubstructureNotifyMask, 
+              &xev);
+}
+
+EAPI void
+ecore_x_e_comp_dump_send(Ecore_X_Window win)
+{
+   XEvent xev;
+   
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_E_COMP_DUMP;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = win;
+   xev.xclient.data.l[1] = 0; // later
+   xev.xclient.data.l[2] = 0; // later
+   xev.xclient.data.l[3] = 0; // later
+   xev.xclient.data.l[4] = 0; // later
+   
+   XSendEvent(_ecore_x_disp, win, False,
+              NoEventMask, //SubstructureRedirectMask | SubstructureNotifyMask, 
+              &xev);
+}

@@ -1607,7 +1607,6 @@ EAPI int ecore_x_e_illume_quickpanel_zone_get(Ecore_X_Window win);
 EAPI void ecore_x_e_illume_quickpanel_zone_request_send(Ecore_X_Window win);
 EAPI void ecore_x_e_illume_quickpanel_position_update_send(Ecore_X_Window win);
 
-
 EAPI void                 ecore_x_e_comp_sync_counter_set(Ecore_X_Window win, Ecore_X_Sync_Counter counter);
 EAPI Ecore_X_Sync_Counter ecore_x_e_comp_sync_counter_get(Ecore_X_Window win);
 EAPI void                 ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window root, Ecore_X_Window win);
@@ -1616,6 +1615,9 @@ EAPI Eina_Bool            ecore_x_e_comp_sync_supported_get(Ecore_X_Window root)
 EAPI void                 ecore_x_e_comp_sync_begin_send(Ecore_X_Window win);
 EAPI void                 ecore_x_e_comp_sync_end_send(Ecore_X_Window win);
 EAPI void                 ecore_x_e_comp_sync_cancel_send(Ecore_X_Window win);
+
+EAPI void                 ecore_x_e_comp_flush_send(Ecore_X_Window win);
+EAPI void                 ecore_x_e_comp_dump_send(Ecore_X_Window win);
        
 EAPI Ecore_X_Sync_Alarm   ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter);
 EAPI int                  ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm);
