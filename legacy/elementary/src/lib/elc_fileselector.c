@@ -501,11 +501,10 @@ elm_fileselector_add(Evas_Object *parent)
 
 /**
  * This enables/disables the file name entry box where the user can
- * type in the name of a file to be selected.
+ * type in a name for the file to be saved as.
  *
  * @param obj The fileselector object
- * @param is_save If true, creates the entry object in the fileselector.
- * If false, deletes the entry object in the fileselector.
+ * @param is_save If true, the fileselector is a save dialog
  *
  * @ingroup Fileselector
  */
@@ -535,12 +534,10 @@ elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save)
 }
 
 /**
- * This gets the state of the file name entry box where the user can
- * type in the name of a file to be selected.
+ * This returns whether the fileselector is a "save" type fileselector
  *
  * @param obj The fileselector object
- * @return If true, the entry object exists in the fileselector.
- * If false, it does not exist.
+ * @return If true, the fileselector is a save type.
  *
  * @ingroup Fileselector
  */

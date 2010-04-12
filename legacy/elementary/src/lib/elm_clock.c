@@ -5,7 +5,7 @@
  * @defgroup Clock Clock
  *
  * It's a widget to show clock with animation. The update of time is
- * showed in an animation like a flip of a sheet.
+ * shown in an animation like the flip of a sheet.
  *
  */
 
@@ -502,7 +502,7 @@ elm_clock_edit_get(const Evas_Object *obj)
 }
 
 /**
- * Set if the clock show hours in military or am/pm mode
+ * Set if the clock shows hours in military or am/pm mode
  *
  * @param obj The clock object
  * @param am_pm Bool option for the hours mode
@@ -526,7 +526,7 @@ elm_clock_show_am_pm_set(Evas_Object *obj, Eina_Bool am_pm)
 }
 
 /**
- * Get if the clock show hours in military or am/pm mode
+ * Get if the clock shows hours in military or am/pm mode
  *
  * @param obj The clock object
  * @return Bool option for the hours mode
@@ -549,7 +549,7 @@ elm_clock_show_am_pm_get(const Evas_Object *obj)
 }
 
 /**
- * Set if the clock show hour with the seconds
+ * Set if the clock shows hour with the seconds
  *
  * @param obj The clock object
  * @param seconds Bool option for the show seconds
@@ -571,7 +571,7 @@ elm_clock_show_seconds_set(Evas_Object *obj, Eina_Bool seconds)
 }
 
 /**
- * Get if the clock show hour with the seconds
+ * Get if the clock shows hour with the seconds
  *
  * @param obj The clock object
  * @return Bool option for the show seconds

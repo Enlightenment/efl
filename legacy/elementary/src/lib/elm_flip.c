@@ -4,8 +4,18 @@
 /**
  * @defgroup Flip Flip
  *
- * This holds 2 content objects, ont on the front and one on the back and
- * allows you to flip from front to back and vice-versa given various effects
+ * This holds 2 content objects: one on the front and one on the back. It
+ * allows you to flip from front to back and vice-versa using various effects.
+ *
+ * Supported flip types:
+ * ELM_FLIP_ROTATE_Y_CENTER_AXIS
+ * ELM_FLIP_ROTATE_X_CENTER_AXIS
+ * ELM_FLIP_ROTATE_XZ_CENTER_AXIS
+ * ELM_FLIP_ROTATE_YZ_CENTER_AXIS
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "animate,done" - when a flip animation is finished
  */
 
 typedef struct _Widget_Data Widget_Data;
@@ -316,7 +326,7 @@ elm_flip_add(Evas_Object *parent)
  * Set the flip front content
  *
  * @param obj The flip object
- * @param content The content will be filled in this flip object
+ * @param content The content to be used in this flip object
  *
  * @ingroup Flip
  */
@@ -355,7 +365,7 @@ elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
  * Set the flip back content
  *
  * @param obj The flip object
- * @param content The content will be filled in this flip object
+ * @param content The content to be used in this flip object
  *
  * @ingroup Flip
  */
@@ -391,10 +401,10 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
 }
 
 /**
- * Get flip visibility state
+ * Get flip front visibility state
  *
  * @param obj The flip object
- * @return If front is showing or not currently
+ * @return If front front is showing or not currently
  *
  * @ingroup Flip
  */
@@ -407,6 +417,18 @@ elm_flip_front_get(const Evas_Object *obj)
    return wd->state;
 }
 
+/**
+ * Set flip perspective
+ *
+ * @param obj The flip object
+ * @param foc The coordinate to set the focus on
+ * @param x The X coordinate
+ * @param y The Y coordinate
+ *
+ * NOTE: This function currently does nothing.
+ *
+ * @ingroup Flip
+ */
 EAPI void
 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc __UNUSED__, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 {
@@ -415,6 +437,19 @@ elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc __UNUSED__, Evas_Coord
    if (!wd) return;
 }
 
+/**
+ * Runs the flip animation
+ *
+ * @param obj The flip object
+ * @param mode The mode type.  Currently accepted modes are:
+ *
+ * ELM_FLIP_ROTATE_Y_CENTER_AXIS
+ * ELM_FLIP_ROTATE_X_CENTER_AXIS
+ * ELM_FLIP_ROTATE_XZ_CENTER_AXIS
+ * ELM_FLIP_ROTATE_YZ_CENTER_AXIS
+ *
+ * @ingroup Flip
+ */
 EAPI void
 elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode)
 {

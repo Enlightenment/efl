@@ -118,10 +118,10 @@ elm_bubble_add(Evas_Object *parent)
 /**
  * Set the label of the bubble
  *
- * @param obj The given evas pointer
+ * @param obj The bubble object
  * @param label The string to set in the label
  *
- * This function sets the title of the bubble that is showed on top of
+ * This function sets the title of the bubble that is shown on top of
  * the bubble.
  *
  * @ingroup Bubble
@@ -137,6 +137,17 @@ elm_bubble_label_set(Evas_Object *obj, const char *label)
    _sizing_eval(obj);
 }
 
+/**
+ * Get the label of the bubble
+ *
+ * @param obj The bubble object
+ * @return The string of set in the label
+ *
+ * This function gets the title of the bubble that is shown on top of
+ * the bubble.
+ *
+ * @ingroup Bubble
+ */
 EAPI const char*
 elm_bubble_label_get(const Evas_Object *obj)
 {
@@ -149,11 +160,11 @@ elm_bubble_label_get(const Evas_Object *obj)
 /**
  * Set the info of the bubble
  *
- * @param obj The given evas pointer
+ * @param obj The bubble object
  * @param info The given info about the bubble
  *
- * This function sets the text showed on the top right of bubble In
- * the Anchorblock example of the Elementary tests application it
+ * This function sets the text shown on the top right of bubble.
+ * In the Anchorblock example of the Elementary tests application it
  * shows time.
  *
  * @ingroup Bubble
@@ -173,7 +184,7 @@ elm_bubble_info_set(Evas_Object *obj, const char *info)
 /**
  * Get the info of the bubble
  *
- * @param obj The given evas pointer
+ * @param obj The bubble object
  *
  * @return The "info" string of the bubble
  *
@@ -195,10 +206,10 @@ elm_bubble_info_get(const Evas_Object *obj)
 /**
  * Set the text to be showed in the bubble
  *
- * @param obj The given evas pointer
+ * @param obj The bubble object
  * @param content The given info about the bubble
  *
- * This function sets the text showed on the top right of bubble. In
+ * This function sets the text shown on the top right of bubble. In
  * the Anchorblock example of the Elementary tests application it
  * shows time.
  *
@@ -227,10 +238,10 @@ elm_bubble_content_set(Evas_Object *obj, Evas_Object *content)
 /**
  * Set the icon of the bubble
  *
- * @param obj The given evas pointer
+ * @param obj The bubble object
  * @param icon The given icon for the bubble
  *
- * This function sets the icon showed on the top left of bubble.
+ * This function sets the icon shown on the top left of bubble.
  *
  * @ingroup Bubble
  */
@@ -253,6 +264,16 @@ elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon)
    _sizing_eval(obj);
 }
 
+/**
+ * Get the icon of the bubble
+ *
+ * @param obj The bubble object
+ * @return The icon for the bubble
+ *
+ * This function gets the icon shown on the top left of bubble.
+ *
+ * @ingroup Bubble
+ */
 EAPI Evas_Object *
 elm_bubble_icon_get(const Evas_Object *obj)
 {
@@ -265,7 +286,7 @@ elm_bubble_icon_get(const Evas_Object *obj)
 /**
  * Set the corner of the bubble
  *
- * @param obj The given evas pointer.
+ * @param obj The bubble object.
  * @param corner The given corner for the bubble.
  *
  * This function sets the corner of the bubble.

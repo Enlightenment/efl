@@ -277,7 +277,7 @@ elm_layout_edje_get(const Evas_Object *obj)
 /**
  * Get the edje layout
  * 
- * Manually fors a sizing re-evaluation when contents changed state so that
+ * Manually forms a sizing re-evaluation when contents changed state so that
  * minimum size might have changed and needs re-evaluation. Also note that
  * a standard signal of "size,eval" "elm" emitted by the edje object will
  * cause this to happen too

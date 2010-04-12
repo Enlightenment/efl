@@ -4,13 +4,8 @@
 /**
  * @defgroup Index Index
  *
- * XXX
- *
- * Signals that you can add callbacks for are:
- *
- * xxx - XXX.
- * 
- * xxx - XXX.
+ * An index object is a type of list that categorizes items in it
+ * by letter.
  */
 
 typedef struct _Widget_Data Widget_Data;
@@ -572,7 +567,7 @@ elm_index_active_set(Evas_Object *obj, Eina_Bool active)
 }
 
 /**
- * @brief To be documented.
+ * Sets the level of the item.
  *
  * @param obj The index object.
  * @param level To be documented.
@@ -590,7 +585,7 @@ elm_index_item_level_set(Evas_Object *obj, int level)
 }
 
 /**
- * @brief To be documented.
+ * Gets the level of the item.
  *
  * @param obj The index object
  *
@@ -606,7 +601,7 @@ elm_index_item_level_get(const Evas_Object *obj)
 }
 
 /**
- * @brief To be documented.
+ * Returns the selected item.
  *
  * @param obj The index object.
  * @param level to be documented.
@@ -627,11 +622,11 @@ elm_index_item_selected_get(const Evas_Object *obj, int level)
 }
 
 /**
- * @brief To be documented.
+ * Appends a new item.
  *
  * @param obj The index object.
- * @param letter to be documented.
- * @param item to be documented.
+ * @param letter Letter under which the item should be indexed
+ * @param item The item to put in the index
  *
  * @ingroup Index
  */
@@ -649,11 +644,11 @@ elm_index_item_append(Evas_Object *obj, const char *letter, const void *item)
 }
 
 /**
- * @brief To be documented.
+ * Prepends a new item.
  *
  * @param obj The index object.
- * @param letter to be documented.
- * @param item to be documented.
+ * @param letter Letter under which the item should be indexed
+ * @param item The item to put in the index
  *
  * @ingroup Index
  */
@@ -672,12 +667,12 @@ elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item)
 }
 
 /**
- * @brief To be documented.
+ * Append an item after @p relative in letter @p letter.
  *
  * @param obj The index object
- * @param letter to be documented.
- * @param item to be documented.
- * @param relative to be documented.
+ * @param letter Letter under which the item should be indexed
+ * @param item The item to put in the index
+ * @param relative The item to put @p item after
  *
  * @ingroup Index
  */
@@ -706,12 +701,12 @@ elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void 
 }
 
 /**
- * @brief To be documented.
+ * Prepend an item before @p relative in letter @p letter.
  *
- * @param obj The index object.
- * @param letter to be documented.
- * @param item to be documented.
- * @param relative to be documented.
+ * @param obj The index object
+ * @param letter Letter under which the item should be indexed
+ * @param item The item to put in the index
+ * @param relative The item to put @p item before
  *
  * @ingroup Index
  */
@@ -740,10 +735,10 @@ elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void
 }
 
 /**
- * @brief To be documented.
+ * Remove an item from the index.
  *
  * @param obj The index object
- * @param item To be documented.
+ * @param item The item to remove from the index
  *
  * @ingroup Index
  */
@@ -761,7 +756,7 @@ elm_index_item_del(Evas_Object *obj, const void *item)
 }
 
 /**
- * @brief To be documented.
+ * Clears an index of its items.
  *
  * @param obj The index object.
  *
@@ -785,10 +780,10 @@ elm_index_item_clear(Evas_Object *obj)
 }
 
 /**
- * @brief To be documented.
+ * Go to item at @p level
  *
  * @param obj The index object
- * @param level To be documented.
+ * @param level The index level
  *
  * @ingroup Index
  */

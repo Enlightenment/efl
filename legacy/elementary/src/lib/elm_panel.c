@@ -1,6 +1,22 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Panel Panel
+ *
+ * A panel is a type of animated container that contains subobjects.  It
+ * can be expanded or contracted.
+ *
+ * Orientations are as follows:
+ * ELM_PANEL_ORIENT_TOP
+ * ELM_PANEL_ORIENT_BOTTOM
+ * ELM_PANEL_ORIENT_LEFT
+ * ELM_PANEL_ORIENT_RIGHT
+ * NOTE: Only LEFT orientation is implemented.
+ *
+ * THIS WIDGET IS UNDER CONSTRUCTION!
+ */
+
 typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data 
 {
@@ -105,6 +121,15 @@ _toggle_panel(void *data, Evas_Object *obj __UNUSED__, const char *emission __UN
      }
 }
 
+/**
+ * Adds a panel object
+ *
+ * @param parent The parent object
+ *
+ * @return The panel object, or NULL on failure
+ *
+ * @ingroup Panel
+ */
 EAPI Evas_Object *
 elm_panel_add(Evas_Object *parent) 
 {
@@ -150,6 +175,20 @@ elm_panel_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Sets the orientation of the panel
+ *
+ * @param parent The parent object
+ * @param orient The panel orientation.  Can be one of the following:
+ * ELM_PANEL_ORIENT_TOP
+ * ELM_PANEL_ORIENT_BOTTOM
+ * ELM_PANEL_ORIENT_LEFT
+ * ELM_PANEL_ORIENT_RIGHT
+ *
+ * NOTE: Currently all orientations but LEFT are unimplemented.
+ *
+ * @ingroup Panel
+ */
 EAPI void 
 elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient) 
 {
@@ -172,6 +211,15 @@ elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient)
    _sizing_eval(obj);
 }
 
+
+/**
+ * Set the content of the panel.
+ *
+ * @param obj The panel object
+ * @param content The panel content
+ *
+ * @ingroup Panel
+ */
 EAPI void 
 elm_panel_content_set(Evas_Object *obj, Evas_Object *content) 
 {

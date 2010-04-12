@@ -4,6 +4,13 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Toolbar Toolbar
+ *
+ * A toolbar is a widget that displays a list of buttons inside
+ * a box.  It is scrollable, and only one item can be selected at a time.
+ */
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -284,6 +291,15 @@ _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
    _els_box_layout(o, priv, 1, wd->homogeneous);
 }
 
+/**
+ * Add a toolbar object to @p parent.
+ *
+ * @param parent The parent object
+ *
+ * @return The created object, or NULL on failure
+ *
+ * @ingroup Toolbar
+ */
 EAPI Evas_Object *
 elm_toolbar_add(Evas_Object *parent)
 {
@@ -329,6 +345,14 @@ elm_toolbar_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the icon size (in pixels) for the toolbar.
+ *
+ * @param obj The toolbar object
+ * @param icon_size The icon size in pixels
+ *
+ * @ingroup Toolbar
+ */
 EAPI void
 elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size)
 {
@@ -341,6 +365,14 @@ elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size)
    _theme_hook(obj);
 }
 
+/**
+ * Get the icon size (in pixels) for the toolbar.
+ *
+ * @param obj The toolbar object
+ * @return The icon size in pixels
+ *
+ * @ingroup Toolbar
+ */
 EAPI int
 elm_toolbar_icon_size_get(const Evas_Object *obj)
 {
@@ -350,6 +382,19 @@ elm_toolbar_icon_size_get(const Evas_Object *obj)
    return wd->icon_size;
 }
 
+/**
+ * Add an item to the toolbar.
+ *
+ * @param obj The toolbar object
+ * @param icon The icon object of the item
+ * @param label The label of the item
+ * @param func The function to call when the item is clicked
+ * @param data The data to associate with the item
+ *
+ * @return The toolbar item, or NULL upon failure
+ *
+ * @ingroup Toolbar
+ */
 EAPI Elm_Toolbar_Item *
 elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
@@ -398,6 +443,14 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Eva
    return it;
 }
 
+/**
+ * Get the icon associated with @p item.
+ *
+ * @param item The toolbar item
+ * @return The icon object
+ *
+ * @ingroup Toolbar
+ */
 EAPI Evas_Object *
 elm_toolbar_item_icon_get(Elm_Toolbar_Item *item)
 {
@@ -405,6 +458,14 @@ elm_toolbar_item_icon_get(Elm_Toolbar_Item *item)
    return item->icon;
 }
 
+/**
+ * Get the label associated with @p item.
+ *
+ * @param item The toolbar item
+ * @return The label
+ *
+ * @ingroup Toolbar
+ */
 EAPI const char *
 elm_toolbar_item_label_get(const Elm_Toolbar_Item *item)
 {
@@ -412,6 +473,14 @@ elm_toolbar_item_label_get(const Elm_Toolbar_Item *item)
    return item->label;
 }
 
+/**
+ * Get the selected state of @p item.
+ *
+ * @param item The toolbar item
+ * @return If true, the item is selected
+ *
+ * @ingroup Toolbar
+ */
 EAPI Eina_Bool
 elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item)
 {
@@ -419,6 +488,14 @@ elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item)
    return item->selected;
 }
 
+/**
+ * Set the label associated with @p item.
+ *
+ * @param item The toolbar item
+ * @param label The label of @p item
+ *
+ * @ingroup Toolbar
+ */
 EAPI void
 elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label)
 {
@@ -436,6 +513,14 @@ elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label)
    evas_object_size_hint_min_set(item->base, mw, mh);
 }
 
+
+/**
+ * Delete a toolbar item.
+ *
+ * @param it The toolbar item
+ *
+ * @ingroup Toolbar
+ */
 EAPI void
 elm_toolbar_item_del(Elm_Toolbar_Item *it)
 {
@@ -466,6 +551,13 @@ elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *it, Evas_Smart_Cb func)
    it->del_cb = func;
 }
 
+/**
+ * Select the toolbar item @p item.
+ *
+ * @param item The toolbar item
+ *
+ * @ingroup Toolbar
+ */
 EAPI void
 elm_toolbar_item_select(Elm_Toolbar_Item *item)
 {
@@ -473,6 +565,14 @@ elm_toolbar_item_select(Elm_Toolbar_Item *item)
    _item_select(item);
 }
 
+/**
+ * Get the disabled state of @p item.
+ *
+ * @param item The toolbar item
+ * @return If true, the item is disabled
+ *
+ * @ingroup Toolbar
+ */
 EAPI Eina_Bool
 elm_toolbar_item_disabled_get(Elm_Toolbar_Item *item)
 {
@@ -480,6 +580,14 @@ elm_toolbar_item_disabled_get(Elm_Toolbar_Item *item)
    return item->disabled;
 }
 
+/**
+ * Set the disabled state of @p item.
+ *
+ * @param item The toolbar item
+ * @param disabled If true, the item is disabled
+ *
+ * @ingroup Toolbar
+ */
 EAPI void
 elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled)
 {
@@ -487,6 +595,14 @@ elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled)
    _item_disable(item, disabled);
 }
 
+/**
+ * Get the separator state of @p item.
+ *
+ * @param item The toolbar item
+ * @param separator If true, the item is a separator
+ *
+ * @ingroup Toolbar
+ */
 EAPI void
 elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator)
 {
@@ -496,6 +612,14 @@ elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator)
    _theme_hook(item->obj);
 }
 
+/**
+ * Set the separator state of @p item.
+ *
+ * @param item The toolbar item
+ * @return If true, the item is a separator
+ *
+ * @ingroup Toolbar
+ */
 EAPI Eina_Bool
 elm_toolbar_item_separator_get(Elm_Toolbar_Item *item)
 {
@@ -503,6 +627,14 @@ elm_toolbar_item_separator_get(Elm_Toolbar_Item *item)
    return item->separator;
 }
 
+/**
+ * Set the scrollable state of toolbar @p obj.
+ *
+ * @param obj The toolbar object
+ * @param scrollable If true, the toolbar will be scrollable
+ *
+ * @ingroup Toolbar
+ */
 EAPI void
 elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable)
 {
@@ -514,6 +646,14 @@ elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable)
    _sizing_eval(obj);
 }
 
+/**
+ * Set the homogenous mode of toolbar @p obj.
+ *
+ * @param obj The toolbar object
+ * @param homogenous If true, the toolbar items will be uniform in size
+ *
+ * @ingroup Toolbar
+ */
 EAPI void
 elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 {
@@ -525,6 +665,14 @@ elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
    evas_object_smart_calculate(wd->bx);
 }
 
+/**
+ * Set the parent object of the toolbar menu
+ *
+ * @param obj The toolbar object
+ * @param parent The parent of the menu object
+ *
+ * @ingroup Toolbar
+ */
 EAPI void
 elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
@@ -542,6 +690,13 @@ elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
      }
 }
 
+/**
+ * Unselect all of the items in the toolbar.
+ *
+ * @param obj The toolbar object
+ *
+ * @ingroup Toolbar
+ */
 EAPI void
 elm_toolbar_item_unselect_all(Evas_Object *obj)
 {
@@ -563,10 +718,12 @@ elm_toolbar_item_unselect_all(Evas_Object *obj)
 }
 
 /**
- * Set if the alignment of the items.
+ * Set the alignment of the items.
  *
  * @param obj The toolbar object
  * @param align The new alignment. (left) 0.0 ... 1.0 (right)
+ *
+ * @ingroup Toolbar
  */
 EAPI void
 elm_toolbar_align_set(Evas_Object *obj, double align)
@@ -580,6 +737,14 @@ elm_toolbar_align_set(Evas_Object *obj, double align)
    wd->align = align;
 }
 
+/**
+ * Get the alignment of the items.
+ *
+ * @param obj The toolbar object
+ * @return The alignment. (left) 0.0 ... 1.0 (right)
+ *
+ * @ingroup Toolbar
+ */
 EAPI double
 elm_toolbar_align_get(const Evas_Object *obj)
 {
@@ -590,6 +755,14 @@ elm_toolbar_align_get(const Evas_Object *obj)
    return wd->align;
 }
 
+/**
+ * Set whether the toolbar item opens a menu.
+ *
+ * @param item The toolbar item
+ * @param menu If true, @p item will open a menu when selected
+ *
+ * @ingroup Toolbar
+ */
 EAPI void
 elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
 {
@@ -614,6 +787,15 @@ elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
      }
 }
 
+
+/**
+ * Get whether the toolbar item opens a menu.
+ *
+ * @param item The toolbar item
+ * @return If true, @p item opens a menu when selected
+ *
+ * @ingroup Toolbar
+ */
 EAPI Evas_Object *
 elm_toolbar_item_menu_get(Elm_Toolbar_Item *item)
 {

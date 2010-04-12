@@ -7,8 +7,9 @@
 /**
  * @defgroup Menu Menu
  *
- * A menu is a list of items display on top of the window. Each item can have a sub-menu. It can be used to
- * display a menu on right click, in a toolbar ...
+ * A menu is a list of items displayed above the window. Each item can
+ * have a sub-menu. The menu object can be used to display a menu on right
+ * click, in a toolbar, anywhere.
  *
  */
 
@@ -441,7 +442,7 @@ elm_menu_add(Evas_Object *parent)
    return obj;
 }
 
-/*
+/**
  * Set the parent
  *
  * @param obj The menu object.
@@ -475,7 +476,7 @@ elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
    _sizing_eval(obj);
 }
 
-/*
+/**
  * Move the menu to a new position
  *
  * @param obj The menu object.
@@ -495,7 +496,7 @@ elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    _sizing_eval(obj);
 }
 
-/*
+/**
  * Get the Evas_Object of an Elm_Menu_Item
  * 
  * @param it The menu item object.
@@ -508,7 +509,7 @@ elm_menu_object_get(const Elm_Menu_Item *it)
    return it->o;
 }
 
-/*
+/**
  * Add an item at the end
  *
  * @param obj The menu object.
@@ -555,6 +556,14 @@ elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *icon, co
    return subitem;
 }
 
+/**
+ * Set the label of a menu item
+ *
+ * @param it The menu item object.
+ * @param label The label to set for @p item
+ *
+ * @ingroup Menu
+ */
 EAPI void
 elm_menu_item_label_set(Elm_Menu_Item *item, const char *label)
 {
@@ -570,6 +579,14 @@ elm_menu_item_label_set(Elm_Menu_Item *item, const char *label)
    _sizing_eval(item->menu);
 }
 
+/**
+ * Get the label of a menu item
+ *
+ * @param it The menu item object.
+ * @return The label of @p item
+ *
+ * @ingroup Menu
+ */
 EAPI const char *
 elm_menu_item_label_get(Elm_Menu_Item *item)
 {
@@ -577,6 +594,14 @@ elm_menu_item_label_get(Elm_Menu_Item *item)
    return item->label;
 }
 
+/**
+ * Set the icon of a menu item
+ *
+ * @param it The menu item object.
+ * @param icon The icon object to set for @p item
+ *
+ * @ingroup Menu
+ */
 EAPI void
 elm_menu_item_icon_set(Elm_Menu_Item *item, Evas_Object *icon)
 {
@@ -597,6 +622,15 @@ elm_menu_item_icon_set(Elm_Menu_Item *item, Evas_Object *icon)
      item->icon = icon;
 }
 
+
+/**
+ * Set the disabled state of @p item.
+ *
+ * @param it The menu item object.
+ * @param disabled The enabled/disabled state of the item
+ *
+ * @ingroup Menu
+ */
 EAPI void
 elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled)
 {
@@ -612,6 +646,17 @@ elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled)
    edje_object_message_signal_process(item->o);
 }
 
+
+/**
+ * Add a separator item to menu @p obj under @p parent.
+ *
+ * @param obj The menu object
+ * @param parent The item to add the separator under
+ *
+ * @return The created item or NULL on failure
+ *
+ * @ingroup Menu
+ */
 EAPI Elm_Menu_Item *
 elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
 {
@@ -638,6 +683,15 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
    _sizing_eval(obj);
    return subitem;
 }
+
+
+/**
+ * Deletes an item from the menu.
+ *
+ * @param item The item to delete
+ *
+ * @ingroup Menu
+ */
 
 EAPI void
 elm_menu_item_del(Elm_Menu_Item *item)
@@ -680,6 +734,14 @@ elm_menu_item_del_cb_set(Elm_Menu_Item *it, Evas_Smart_Cb func)
    it->del_cb = func;
 }
 
+/**
+ * Returns the data associated with menu item @p it.
+ *
+ * @param it The item
+ * @return The data associated with @p it
+ *
+ * @ingroup Menu
+ */
 EAPI void *
 elm_menu_item_data_get(const Elm_Menu_Item *it)
 {
@@ -687,6 +749,14 @@ elm_menu_item_data_get(const Elm_Menu_Item *it)
    return (void *)it->data;
 }
 
+/**
+ * Sets the data to be associated with menu item @p it.
+ *
+ * @param item The item
+ * @param data The data to be associated with @p item
+ *
+ * @ingroup Menu
+ */
 EAPI void
 elm_menu_item_data_set(Elm_Menu_Item *item, const void *data)
 {
@@ -694,6 +764,14 @@ elm_menu_item_data_set(Elm_Menu_Item *item, const void *data)
    item->data = data;
 }
 
+/**
+ * Returns a list of @p item's subitems.
+ *
+ * @param it The item
+ * @return An Eina_List* of @p item's subitems
+ *
+ * @ingroup Menu
+ */
 EAPI const Eina_List *
 elm_menu_item_subitems_get(Elm_Menu_Item *item)
 {

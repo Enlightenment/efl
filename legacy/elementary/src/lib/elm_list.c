@@ -1,6 +1,13 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup List List
+ *
+ * A list is a very simple type of list widget.  For more robust
+ * lists, @ref Genlist should probably be used.
+ */
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -690,6 +697,14 @@ _freeze_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__
      elm_widget_scroll_hold_pop(wd->scr);
 }
 
+/**
+ * Adds a list object.
+ *
+ * @param parent The parent object
+ * @return The created object or NULL upon failure
+ *
+ * @ingroup List
+ */
 EAPI Evas_Object *
 elm_list_add(Evas_Object *parent)
 {
@@ -734,6 +749,20 @@ elm_list_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Appends an item to the list object.
+ *
+ * @param obj The list object
+ * @param label The label of the list item
+ * @param icon The icon object to use for the left side of the item
+ * @param end The icon object to use for the right side of the item
+ * @param func The function to call when the item is clicked
+ * @param data The data to associate with the item for related callbacks
+ *
+ * @return The created item or NULL upon failure
+ *
+ * @ingroup List
+ */
 EAPI Elm_List_Item *
 elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
@@ -747,6 +776,20 @@ elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Eva
    return it;
 }
 
+/**
+ * Prepends an item to the list object.
+ *
+ * @param obj The list object
+ * @param label The label of the list item
+ * @param icon The icon object to use for the left side of the item
+ * @param end The icon object to use for the right side of the item
+ * @param func The function to call when the item is clicked
+ * @param data The data to associate with the item for related callbacks
+ *
+ * @return The created item or NULL upon failure
+ *
+ * @ingroup List
+ */
 EAPI Elm_List_Item *
 elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
@@ -760,6 +803,21 @@ elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Ev
    return it;
 }
 
+/**
+ * Inserts an item into the list object before @p before.
+ *
+ * @param obj The list object
+ * @param before The list item to insert before
+ * @param label The label of the list item
+ * @param icon The icon object to use for the left side of the item
+ * @param end The icon object to use for the right side of the item
+ * @param func The function to call when the item is clicked
+ * @param data The data to associate with the item for related callbacks
+ *
+ * @return The created item or NULL upon failure
+ *
+ * @ingroup List
+ */
 EAPI Elm_List_Item *
 elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
@@ -779,6 +837,21 @@ elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char 
    return it;
 }
 
+/**
+ * Inserts an item into the list object after @p after.
+ *
+ * @param obj The list object
+ * @param after The list item to insert after
+ * @param label The label of the list item
+ * @param icon The icon object to use for the left side of the item
+ * @param end The icon object to use for the right side of the item
+ * @param func The function to call when the item is clicked
+ * @param data The data to associate with the item for related callbacks
+ *
+ * @return The created item or NULL upon failure
+ *
+ * @ingroup List
+ */
 EAPI Elm_List_Item *
 elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
@@ -798,6 +871,13 @@ elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *l
    return it;
 }
 
+/**
+ * Clears a list of all items.
+ *
+ * @param obj The list object
+ *
+ * @ingroup List
+ */
 EAPI void
 elm_list_clear(Evas_Object *obj)
 {
@@ -838,6 +918,13 @@ elm_list_clear(Evas_Object *obj)
    _sizing_eval(obj);
 }
 
+/**
+ * Starts the list.  Call before running show() on the list object.
+ *
+ * @param obj The list object
+ *
+ * @ingroup List
+ */
 EAPI void
 elm_list_go(Evas_Object *obj)
 {
@@ -847,6 +934,14 @@ elm_list_go(Evas_Object *obj)
    _fix_items(obj);
 }
 
+/**
+ * Enables/disables the state of multi-select on the list object.
+ *
+ * @param obj The list object
+ * @param multi If true, multi-select is enabled
+ *
+ * @ingroup List
+ */
 EAPI void
 elm_list_multi_select_set(Evas_Object *obj, Eina_Bool multi)
 {
@@ -856,6 +951,14 @@ elm_list_multi_select_set(Evas_Object *obj, Eina_Bool multi)
    wd->multi = multi;
 }
 
+/**
+ * Gets the state of multi-select on the list object.
+ *
+ * @param obj The list object
+ * @return If true, multi-select is enabled
+ *
+ * @ingroup List
+ */
 EAPI Eina_Bool
 elm_list_multi_select_get(const Evas_Object *obj)
 {
@@ -865,6 +968,14 @@ elm_list_multi_select_get(const Evas_Object *obj)
    return wd->multi;
 }
 
+/**
+ * Enables/disables horizontal mode of the list
+ *
+ * @param obj The list object
+ * @param mode If true, horizontale mode is enabled
+ *
+ * @ingroup List
+ */
 EAPI void
 elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
 {
@@ -882,6 +993,14 @@ elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
      }
 }
 
+/**
+ * Gets the state of horizontal mode of the list
+ *
+ * @param obj The list object
+ * @return If true, horizontale mode is enabled
+ *
+ * @ingroup List
+ */
 EAPI Elm_List_Mode
 elm_list_horizontal_mode_get(const Evas_Object *obj)
 {
@@ -891,6 +1010,15 @@ elm_list_horizontal_mode_get(const Evas_Object *obj)
    return wd->mode;
 }
 
+/**
+ * Enables/disables the state of always_select, meaning that
+ * an item will always be selected.
+ *
+ * @param obj The list object
+ * @param always_select If true, always_select is enabled
+ *
+ * @ingroup List
+ */
 EAPI void
 elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
 {
@@ -900,6 +1028,15 @@ elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
    wd->always_select = always_select;
 }
 
+/**
+ * Gets the state of always_select.
+ * See also elm_list_always_select_mode_set()
+ *
+ * @param obj The list object
+ * @return If true, always_select is enabled
+ *
+ * @ingroup List
+ */
 EAPI Eina_Bool
 elm_list_always_select_mode_get(const Evas_Object *obj)
 {
@@ -909,6 +1046,14 @@ elm_list_always_select_mode_get(const Evas_Object *obj)
    return wd->always_select;
 }
 
+/**
+ * Returns a list of all the list items.
+ *
+ * @param obj The list object
+ * @return An Eina_List* of the list items, or NULL on failure
+ *
+ * @ingroup List
+ */
 EAPI const Eina_List *
 elm_list_items_get(const Evas_Object *obj)
 {
@@ -918,6 +1063,14 @@ elm_list_items_get(const Evas_Object *obj)
    return wd->items;
 }
 
+/**
+ * Returns the currently selected list item.
+ *
+ * @param obj The list object
+ * @return The selected list item, or NULL on failure
+ *
+ * @ingroup List
+ */
 EAPI Elm_List_Item *
 elm_list_selected_item_get(const Evas_Object *obj)
 {
@@ -928,6 +1081,14 @@ elm_list_selected_item_get(const Evas_Object *obj)
    return NULL;
 }
 
+/**
+ * Returns a list of the currently selected list items.
+ *
+ * @param obj The list object
+ * @return An Eina_List* of the selected list items, or NULL on failure
+ *
+ * @ingroup List
+ */
 EAPI const Eina_List *
 elm_list_selected_items_get(const Evas_Object *obj)
 {
@@ -937,6 +1098,14 @@ elm_list_selected_items_get(const Evas_Object *obj)
    return wd->selected;
 }
 
+/**
+ * Sets the selected state of @p it.
+ *
+ * @param it The list item
+ * @param selected Enables/disables the selected state
+ *
+ * @ingroup List
+ */
 EAPI void
 elm_list_item_selected_set(Elm_List_Item *it, Eina_Bool selected)
 {
@@ -964,6 +1133,14 @@ elm_list_item_selected_set(Elm_List_Item *it, Eina_Bool selected)
    _elm_list_unwalk(wd);
 }
 
+/**
+ * Gets the selected state of @p it.
+ *
+ * @param it The list item
+ * @return If true, the item is selected
+ *
+ * @ingroup List
+ */
 EAPI Eina_Bool
 elm_list_item_selected_get(Elm_List_Item *it)
 {
@@ -971,6 +1148,13 @@ elm_list_item_selected_get(Elm_List_Item *it)
    return it->selected;
 }
 
+/**
+ * Brings @p it to the center of the list view.
+ *
+ * @param it The list item
+ *
+ * @ingroup List
+ */
 EAPI void
 elm_list_item_show(Elm_List_Item *it)
 {
@@ -987,6 +1171,13 @@ elm_list_item_show(Elm_List_Item *it)
      elm_scroller_region_show(wd->scr, x, y, w, h);
 }
 
+/**
+ * Deletes item @p it from the list.
+ *
+ * @param it The list item to delete
+ *
+ * @ingroup List
+ */
 EAPI void
 elm_list_item_del(Elm_List_Item *it)
 {
@@ -1029,6 +1220,14 @@ elm_list_item_del_cb_set(Elm_List_Item *it, Evas_Smart_Cb func)
    it->del_cb = func;
 }
 
+/**
+ * Returns the data associated with the item.
+ *
+ * @param it The list item
+ * @return The data associated with @p it
+ *
+ * @ingroup List
+ */
 EAPI void *
 elm_list_item_data_get(const Elm_List_Item *it)
 {
@@ -1036,6 +1235,14 @@ elm_list_item_data_get(const Elm_List_Item *it)
    return (void *)it->data;
 }
 
+/**
+ * Returns the left side icon associated with the item.
+ *
+ * @param it The list item
+ * @return The left side icon associated with @p it
+ *
+ * @ingroup List
+ */
 EAPI Evas_Object *
 elm_list_item_icon_get(const Elm_List_Item *it)
 {
@@ -1044,6 +1251,14 @@ elm_list_item_icon_get(const Elm_List_Item *it)
    return it->icon;
 }
 
+/**
+ * Sets the left side icon associated with the item.
+ *
+ * @param it The list item
+ * @param icon The left side icon object to associate with @p it
+ *
+ * @ingroup List
+ */
 EAPI void
 elm_list_item_icon_set(Elm_List_Item *it, Evas_Object *icon)
 {
@@ -1062,6 +1277,14 @@ elm_list_item_icon_set(Elm_List_Item *it, Evas_Object *icon)
      edje_object_part_swallow(it->base, "elm.swallow.icon", icon);
 }
 
+/**
+ * Gets the right side icon associated with the item.
+ *
+ * @param it The list item
+ * @return The right side icon object associated with @p it
+ *
+ * @ingroup List
+ */
 EAPI Evas_Object *
 elm_list_item_end_get(const Elm_List_Item *it)
 {
@@ -1070,6 +1293,14 @@ elm_list_item_end_get(const Elm_List_Item *it)
    return it->end;
 }
 
+/**
+ * Gets the right side icon associated with the item.
+ *
+ * @param it The list item
+ * @param icon The right side icon object to associate with @p it
+ *
+ * @ingroup List
+ */
 EAPI void
 elm_list_item_end_set(Elm_List_Item *it, Evas_Object *end)
 {
@@ -1088,6 +1319,14 @@ elm_list_item_end_set(Elm_List_Item *it, Evas_Object *end)
      edje_object_part_swallow(it->base, "elm.swallow.end", end);
 }
 
+/**
+ * Gets the base object of the item.
+ *
+ * @param it The list item
+ * @return The base object associated with @p it
+ *
+ * @ingroup List
+ */
 EAPI Evas_Object *
 elm_list_item_base_get(const Elm_List_Item *it)
 {
@@ -1095,6 +1334,14 @@ elm_list_item_base_get(const Elm_List_Item *it)
    return it->base;
 }
 
+/**
+ * Gets the label of the item.
+ *
+ * @param it The list item
+ * @return The label of @p it
+ *
+ * @ingroup List
+ */
 EAPI const char *
 elm_list_item_label_get(const Elm_List_Item *it)
 {
@@ -1102,6 +1349,14 @@ elm_list_item_label_get(const Elm_List_Item *it)
    return it->label;
 }
 
+/**
+ * Sets the label of the item.
+ *
+ * @param it The list item
+ * @param text The label of @p it
+ *
+ * @ingroup List
+ */
 EAPI void
 elm_list_item_label_set(Elm_List_Item *it, const char *text)
 {
@@ -1111,6 +1366,14 @@ elm_list_item_label_set(Elm_List_Item *it, const char *text)
      edje_object_part_text_set(it->base, "elm.text", it->label);
 }
 
+/**
+ * Gets the item before @p it in the list.
+ *
+ * @param it The list item
+ * @return The item before @p it, or NULL on failure
+ *
+ * @ingroup List
+ */
 EAPI Elm_List_Item *
 elm_list_item_prev(const Elm_List_Item *it)
 {
@@ -1119,6 +1382,14 @@ elm_list_item_prev(const Elm_List_Item *it)
    else return NULL;
 }
 
+/**
+ * Gets the item after @p it in the list.
+ *
+ * @param it The list item
+ * @return The item after @p it, or NULL on failure
+ *
+ * @ingroup List
+ */
 EAPI Elm_List_Item *
 elm_list_item_next(const Elm_List_Item *it)
 {

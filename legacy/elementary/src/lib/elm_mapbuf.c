@@ -205,6 +205,14 @@ elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content)
    _configure(obj);
 }
 
+/**
+ * Set the mapbuf enabled state
+ *
+ * @param obj The mapbuf object
+ * @param enabled The value to set the enabled state to
+ *
+ * @ingroup Mapbuf
+ */
 EAPI void
 elm_mapbuf_enabled_set(Evas_Object *obj, Eina_Bool enabled)
 {
@@ -215,7 +223,15 @@ elm_mapbuf_enabled_set(Evas_Object *obj, Eina_Bool enabled)
    wd->enabled = enabled;
    _configure(obj);
 }
-    
+
+/**
+ * Get the mapbuf enabled state
+ *
+ * @param obj The mapbuf object
+ * @return The value that the enabled state is set to
+ *
+ * @ingroup Mapbuf
+ */
 EAPI Eina_Bool
 elm_mapbuf_enabled_get(const Evas_Object *obj)
 {
@@ -224,7 +240,15 @@ elm_mapbuf_enabled_get(const Evas_Object *obj)
    if (!wd) return EINA_FALSE;
    return wd->enabled;
 }
-    
+
+/**
+ * Sets the mapbuf smooth state
+ *
+ * @param obj The mapbuf object
+ * @param smooth The value of the smooth state of @p obj
+ *
+ * @ingroup Mapbuf
+ */
 EAPI void
 elm_mapbuf_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
@@ -235,7 +259,15 @@ elm_mapbuf_smooth_set(Evas_Object *obj, Eina_Bool smooth)
    wd->smooth = smooth;
    _configure(obj);
 }
-    
+
+/**
+ * Gets the mapbuf smooth state
+ *
+ * @param obj The mapbuf object
+ * @return The value of the smooth state of @p obj
+ *
+ * @ingroup Mapbuf
+ */
 EAPI Eina_Bool
 elm_mapbuf_smooth_get(const Evas_Object *obj)
 {
@@ -244,7 +276,15 @@ elm_mapbuf_smooth_get(const Evas_Object *obj)
    if (!wd) return EINA_FALSE;
    return wd->smooth;
 }
-    
+
+/**
+ * Enables/disables the mapbuf alpha channel
+ *
+ * @param obj The mapbuf object
+ * @param alpha The state of the alpha channel
+ *
+ * @ingroup Mapbuf
+ */
 EAPI void
 elm_mapbuf_alpha_set(Evas_Object *obj, Eina_Bool alpha)
 {
@@ -255,7 +295,15 @@ elm_mapbuf_alpha_set(Evas_Object *obj, Eina_Bool alpha)
    wd->alpha = alpha;
    _configure(obj);
 }
-    
+
+/**
+ * Gets the state of the mapbuf alpha channel
+ *
+ * @param obj The mapbuf object
+ * @return The state of the alpha channel
+ *
+ * @ingroup Mapbuf
+ */
 EAPI Eina_Bool
 elm_mapbuf_alpha_get(const Evas_Object *obj)
 {

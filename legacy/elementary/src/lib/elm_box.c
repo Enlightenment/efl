@@ -15,6 +15,8 @@
  * will set the packing weight. The weights of all items being packed are added
  * up and if items are to be sized up to fit, those with the higher weights get
  * proportionally more space.
+ *
+ * NOTE: Objects should not be added to box objects using _add() calls.
  */
 typedef struct _Widget_Data Widget_Data;
 

@@ -1,6 +1,16 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Hover Hover
+ *
+ * A Hover object will over over the @p Parent object at the @p Target
+ * location.  Anything in the background will be given a darker coloring
+ * to indicate that the hover object is on top.
+ *
+ * NOTE: The hover object will take up the entire space of @p Target object.
+ */
+
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Subinfo Subinfo;
 
@@ -242,6 +252,14 @@ _parent_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    _sizing_eval(data);
 }
 
+/**
+ * Adds a hover object to @p parent
+ *
+ * @param parent The parent object
+ * @return The hover object or NULL if one could not be created
+ *
+ * @ingroup Hover
+ */
 EAPI Evas_Object *
 elm_hover_add(Evas_Object *parent)
 {
@@ -294,6 +312,15 @@ elm_hover_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Sets the target object for the hover.
+ *
+ * @param obj The hover object
+ * @param target The object to center the hover onto. The hover
+ * will take up the entire space that the target object fills.
+ *
+ * @ingroup Hover
+ */
 EAPI void
 elm_hover_target_set(Evas_Object *obj, Evas_Object *target)
 {
@@ -313,6 +340,15 @@ elm_hover_target_set(Evas_Object *obj, Evas_Object *target)
      }
 }
 
+
+/**
+ * Sets the parent object for the hover.
+ *
+ * @param obj The hover object
+ * @param parent The object to locate the hover over.
+ *
+ * @ingroup Hover
+ */
 EAPI void
 elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
@@ -350,6 +386,21 @@ elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
    _sizing_eval(obj);
 }
 
+
+/**
+ * Sets the content of the hover object and the direction in which
+ * it will pop out.
+ *
+ * @param obj The hover object
+ * @param swallow The direction that the object will display in. Multiple
+ * objects can have the same swallow location. Objects placed in the same
+ * swallow will be placed starting at the middle of the hover and ending
+ * farther from the middle.
+ * Accepted values are "left" "right" "top" "bottom" "middle"
+ * @param content The content to place at @p swallow
+ *
+ * @ingroup Hover
+ */
 EAPI void
 elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content)
 {
@@ -381,6 +432,15 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
      }
 }
 
+/**
+ * Returns the best swallow location for content in the hover.
+ *
+ * @param obj The hover object
+ * @return The edje location to place content into the hover.
+ * See also elm_hover_content_set()
+ *
+ * @ingroup Hover
+ */
 EAPI const char *
 elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis)
 {

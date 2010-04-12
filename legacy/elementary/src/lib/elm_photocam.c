@@ -1566,6 +1566,8 @@ elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h 
  * 
  * @param obj The photocam object
  * @param paused The pause state to set
+ *
+ * @ingroup Photocam
  */
 EAPI void
 elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused)
@@ -1594,6 +1596,8 @@ elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused)
  * 
  * @param obj The photocam object
  * @return The current paused state
+ *
+ * @ingroup Photocam
  */
 EAPI Eina_Bool
 elm_photocam_paused_get(const Evas_Object *obj)
@@ -1613,6 +1617,8 @@ elm_photocam_paused_get(const Evas_Object *obj)
  *
  * @param obj The photocam object
  * @return The internal image object handle, or NULL if none exists
+ *
+ * @ingroup Photocam
  */
 EAPI Evas_Object *
 elm_photocam_internal_image_get(const Evas_Object *obj)

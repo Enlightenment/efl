@@ -4,6 +4,8 @@
 /**
  * @defgroup Win Win
  *
+ * The window class of Elementary.  Contains functions to manipulate
+ * windows.
  */
 
 typedef struct _Elm_Win Elm_Win;
@@ -372,6 +374,26 @@ _elm_win_rescale(void)
      elm_widget_theme(obj);
 }
 
+/**
+ * Adds a window object. If this is the first window created, pass NULL as
+ * @p parent.
+ *
+ * @param parent Parent object to add the window to, or NULL
+ * @param name The name of the window
+ * @param type The window type, one of the following:
+ * ELM_WIN_BASIC
+ * ELM_WIN_DIALOG_BASIC
+ * ELM_WIN_DESKTOP
+ * ELM_WIN_DOCK
+ * ELM_WIN_TOOLBAR
+ * ELM_WIN_MENU
+ * ELM_WIN_UTILITY
+ * ELM_WIN_SPLASH
+ *
+ * @return The created object, or NULL on failure
+ *
+ * @ingroup Win
+ */
 EAPI Evas_Object *
 elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 {
@@ -528,6 +550,14 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    return win->win_obj;
 }
 
+/**
+ * Add @p subobj as a resize object of window @p obj.
+ *
+ * @param obj The window object
+ * @param subobj The resize object to add
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj)
 {
@@ -549,6 +579,14 @@ elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj)
    _elm_win_eval_subobjs(obj);
 }
 
+/**
+ * Delete @p subobj as a resize object of window @p obj.
+ *
+ * @param obj The window object
+ * @param subobj The resize object to add
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj)
 {
@@ -567,6 +605,14 @@ elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj)
    _elm_win_eval_subobjs(obj);
 }
 
+/**
+ * Set the title of the window
+ *
+ * @param obj The window object
+ * @param title The title to set
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_title_set(Evas_Object *obj, const char *title)
 {
@@ -577,6 +623,14 @@ elm_win_title_set(Evas_Object *obj, const char *title)
    ecore_evas_title_set(win->ee, title);
 }
 
+/**
+ * Set the window's autodel state.
+ *
+ * @param obj The window object
+ * @param autodel If true, the window will automatically delete itself when closed
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_autodel_set(Evas_Object *obj, Eina_Bool autodel)
 {
@@ -587,6 +641,13 @@ elm_win_autodel_set(Evas_Object *obj, Eina_Bool autodel)
    win->autodel = autodel;
 }
 
+/**
+ * Activate a window object.
+ *
+ * @param obj The window object
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_activate(Evas_Object *obj)
 {
@@ -597,6 +658,13 @@ elm_win_activate(Evas_Object *obj)
    ecore_evas_activate(win->ee);
 }
 
+/**
+ * Lower a window object.
+ *
+ * @param obj The window object
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_lower(Evas_Object *obj)
 {
@@ -607,6 +675,13 @@ elm_win_lower(Evas_Object *obj)
    ecore_evas_lower(win->ee);
 }
 
+/**
+ * Raise a window object.
+ *
+ * @param obj The window object
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_raise(Evas_Object *obj)
 {
@@ -617,6 +692,14 @@ elm_win_raise(Evas_Object *obj)
    ecore_evas_raise(win->ee);
 }
 
+/**
+ * Set the borderless state of a window.
+ *
+ * @param obj The window object
+ * @param borderless If true, the window is borderless
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_borderless_set(Evas_Object *obj, Eina_Bool borderless)
 {
@@ -628,6 +711,14 @@ elm_win_borderless_set(Evas_Object *obj, Eina_Bool borderless)
    _elm_win_xwin_update(win);
 }
 
+/**
+ * Get the borderless state of a window.
+ *
+ * @param obj The window object
+ * @return If true, the window is borderless
+ *
+ * @ingroup Win
+ */
 EAPI Eina_Bool
 elm_win_borderless_get(const Evas_Object *obj)
 {
@@ -638,6 +729,14 @@ elm_win_borderless_get(const Evas_Object *obj)
    return ecore_evas_borderless_get(win->ee);
 }
 
+/**
+ * Set the shaped state of a window.
+ *
+ * @param obj The window object
+ * @param shaped If true, the window is shaped
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_shaped_set(Evas_Object *obj, Eina_Bool shaped)
 {
@@ -649,6 +748,14 @@ elm_win_shaped_set(Evas_Object *obj, Eina_Bool shaped)
    _elm_win_xwin_update(win);
 }
 
+/**
+ * Get the shaped state of a window.
+ *
+ * @param obj The window object
+ * @return If true, the window is shaped
+ *
+ * @ingroup Win
+ */
 EAPI Eina_Bool
 elm_win_shaped_get(const Evas_Object *obj)
 {
@@ -659,6 +766,14 @@ elm_win_shaped_get(const Evas_Object *obj)
    return ecore_evas_shaped_get(win->ee);
 }
 
+/**
+ * Set the alpha channel state of a window.
+ *
+ * @param obj The window object
+ * @param alpha If true, the window has an alpha channel
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha)
 {
@@ -683,6 +798,14 @@ elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha)
      ecore_evas_alpha_set(win->ee, alpha);
 }
 
+/**
+ * Get the alpha channel state of a window.
+ *
+ * @param obj The window object
+ * @return If true, the window has an alpha channel
+ *
+ * @ingroup Win
+ */
 EAPI Eina_Bool
 elm_win_alpha_get(const Evas_Object *obj)
 {
@@ -693,6 +816,14 @@ elm_win_alpha_get(const Evas_Object *obj)
    return ecore_evas_alpha_get(win->ee);
 }
 
+/**
+ * Set the transparency state of a window.
+ *
+ * @param obj The window object
+ * @param transparent If true, the window is transparent
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent)
 {
@@ -710,6 +841,14 @@ elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent)
      ecore_evas_transparent_set(win->ee, transparent);
 }
 
+/**
+ * Get the transparency state of a window.
+ *
+ * @param obj The window object
+ * @return If true, the window is transparent
+ *
+ * @ingroup Win
+ */
 EAPI Eina_Bool
 elm_win_transparent_get(const Evas_Object *obj)
 {
@@ -721,6 +860,14 @@ elm_win_transparent_get(const Evas_Object *obj)
    return ecore_evas_transparent_get(win->ee);
 }
 
+/**
+ * Set the override state of a window.
+ *
+ * @param obj The window object
+ * @param override If true, the window is overridden
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_override_set(Evas_Object *obj, Eina_Bool override)
 {
@@ -732,6 +879,14 @@ elm_win_override_set(Evas_Object *obj, Eina_Bool override)
    _elm_win_xwin_update(win);
 }
 
+/**
+ * Get the override state of a window.
+ *
+ * @param obj The window object
+ * @return If true, the window is overridden
+ *
+ * @ingroup Win
+ */
 EAPI Eina_Bool
 elm_win_override_get(const Evas_Object *obj)
 {
@@ -742,6 +897,14 @@ elm_win_override_get(const Evas_Object *obj)
    return ecore_evas_override_get(win->ee);
 }
 
+/**
+ * Set the fullscreen state of a window.
+ *
+ * @param obj The window object
+ * @param fullscreen If true, the window is fullscreen
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_fullscreen_set(Evas_Object *obj, Eina_Bool fullscreen)
 {
@@ -762,6 +925,14 @@ elm_win_fullscreen_set(Evas_Object *obj, Eina_Bool fullscreen)
      }
 }
 
+/**
+ * Get the fullscreen state of a window.
+ *
+ * @param obj The window object
+ * @return If true, the window is fullscreen
+ *
+ * @ingroup Win
+ */
 EAPI Eina_Bool
 elm_win_fullscreen_get(const Evas_Object *obj)
 {
@@ -783,6 +954,14 @@ elm_win_fullscreen_get(const Evas_Object *obj)
    return EINA_FALSE;
 }
 
+/**
+ * Set the maximized state of a window.
+ *
+ * @param obj The window object
+ * @param maximized If true, the window is maximized
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_maximized_set(Evas_Object *obj, Eina_Bool maximized)
 {
@@ -794,6 +973,14 @@ elm_win_maximized_set(Evas_Object *obj, Eina_Bool maximized)
    _elm_win_xwin_update(win);
 }
 
+/**
+ * Get the maximized state of a window.
+ *
+ * @param obj The window object
+ * @return If true, the window is maximized
+ *
+ * @ingroup Win
+ */
 EAPI Eina_Bool
 elm_win_maximized_get(const Evas_Object *obj)
 {
@@ -804,6 +991,14 @@ elm_win_maximized_get(const Evas_Object *obj)
    return ecore_evas_maximized_get(win->ee);
 }
 
+/**
+ * Set the iconified state of a window.
+ *
+ * @param obj The window object
+ * @param iconified If true, the window is iconified
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_iconified_set(Evas_Object *obj, Eina_Bool iconified)
 {
@@ -815,6 +1010,14 @@ elm_win_iconified_set(Evas_Object *obj, Eina_Bool iconified)
    _elm_win_xwin_update(win);
 }
 
+/**
+ * Get the iconified state of a window.
+ *
+ * @param obj The window object
+ * @return If true, the window is iconified
+ *
+ * @ingroup Win
+ */
 EAPI Eina_Bool
 elm_win_iconified_get(const Evas_Object *obj)
 {
@@ -825,6 +1028,14 @@ elm_win_iconified_get(const Evas_Object *obj)
    return ecore_evas_iconified_get(win->ee);
 }
 
+/**
+ * Set the layer of the window.
+ *
+ * @param obj The window object
+ * @param layer The layer of the window
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_layer_set(Evas_Object *obj, int layer)
 {
@@ -836,6 +1047,14 @@ elm_win_layer_set(Evas_Object *obj, int layer)
    _elm_win_xwin_update(win);
 }
 
+/**
+ * Get the layer of the window.
+ *
+ * @param obj The window object
+ * @return The layer of the window
+ *
+ * @ingroup Win
+ */
 EAPI int
 elm_win_layer_get(const Evas_Object *obj)
 {
@@ -846,6 +1065,14 @@ elm_win_layer_get(const Evas_Object *obj)
    return ecore_evas_layer_get(win->ee);
 }
 
+/**
+ * Set the rotation of the window.
+ *
+ * @param obj The window object
+ * @param rotation The rotation of the window, in degrees (0-360)
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_rotation_set(Evas_Object *obj, int rotation)
 {
@@ -862,6 +1089,14 @@ elm_win_rotation_set(Evas_Object *obj, int rotation)
    _elm_win_xwin_update(win);
 }
 
+/**
+ * Rotates the window and resizes it
+ *
+ * @param obj The window object
+ * @param layer The rotation of the window in degrees (0-360)
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_rotation_with_resize_set(Evas_Object *obj, int rotation)
 {
@@ -878,6 +1113,14 @@ elm_win_rotation_with_resize_set(Evas_Object *obj, int rotation)
    _elm_win_xwin_update(win);
 }
 
+/**
+ * Get the rotation of the window.
+ *
+ * @param obj The window object
+ * @return The rotation of the window in degrees (0-360)
+ *
+ * @ingroup Win
+ */
 EAPI int
 elm_win_rotation_get(const Evas_Object *obj)
 {
@@ -888,6 +1131,14 @@ elm_win_rotation_get(const Evas_Object *obj)
    return win->rot;
 }
 
+/**
+ * Set the sticky state of the window.
+ *
+ * @param obj The window object
+ * @param sticky If true, the window's sticky state is enabled
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_sticky_set(Evas_Object *obj, Eina_Bool sticky)
 {
@@ -899,6 +1150,14 @@ elm_win_sticky_set(Evas_Object *obj, Eina_Bool sticky)
    _elm_win_xwin_update(win);
 }
 
+/**
+ * Get the sticky state of the window.
+ *
+ * @param obj The window object
+ * @return If true, the window's sticky state is enabled
+ *
+ * @ingroup Win
+ */
 EAPI Eina_Bool
 elm_win_sticky_get(const Evas_Object *obj)
 {
@@ -909,6 +1168,30 @@ elm_win_sticky_get(const Evas_Object *obj)
    return ecore_evas_sticky_get(win->ee);
 }
 
+/**
+ * Sets the keyboard mode of the window.
+ *
+ * @param obj The window object
+ * @param mode The mode to set; one of:
+ * ELM_WIN_KEYBOARD_UNKNOWN
+ * ELM_WIN_KEYBOARD_OFF
+ * ELM_WIN_KEYBOARD_ON
+ * ELM_WIN_KEYBOARD_ALPHA
+ * ELM_WIN_KEYBOARD_NUMERIC
+ * ELM_WIN_KEYBOARD_PIN
+ * ELM_WIN_KEYBOARD_PHONE_NUMBER
+ * ELM_WIN_KEYBOARD_HEX
+ * ELM_WIN_KEYBOARD_TERMINAL
+ * ELM_WIN_KEYBOARD_PASSWORD
+ * ELM_WIN_KEYBOARD_IP
+ * ELM_WIN_KEYBOARD_HOST
+ * ELM_WIN_KEYBOARD_FILE
+ * ELM_WIN_KEYBOARD_URL
+ * ELM_WIN_KEYBOARD_KEYPAD
+ * ELM_WIN_KEYBOARD_J2ME
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode)
 {
@@ -926,6 +1209,14 @@ elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode)
 #endif
 }
 
+/**
+ * Sets whether the window is a keyboard.
+ *
+ * @param obj The window object
+ * @param is_keyboard If true, the window is a virtual keyboard
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard)
 {
@@ -940,6 +1231,15 @@ elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard)
 #endif
 }
 
+/**
+ * Get the screen position of a window.
+ *
+ * @param obj The window object
+ * @param x The int to store the x coordinate to
+ * @param y The int to store the y coordinate to
+ *
+ * @ingroup Win
+ */
 EAPI void
 elm_win_screen_position_get(const Evas_Object *obj, int *x, int *y)
 {
@@ -1231,6 +1531,11 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
      }
 }
 
+/**
+ * @defgroup Inwin Inwin
+ *
+ * An inwin is a window inside a window that is useful for a quick popup.  It does not hover.
+ */
 EAPI Evas_Object *
 elm_win_inwin_add(Evas_Object *obj)
 {
@@ -1264,6 +1569,13 @@ elm_win_inwin_add(Evas_Object *obj)
    return obj2;
 }
 
+/**
+ * Activates an inwin object
+ *
+ * @param obj The inwin to activate
+ *
+ * @ingroup Inwin
+ */
 EAPI void
 elm_win_inwin_activate(Evas_Object *obj)
 {
@@ -1276,6 +1588,14 @@ elm_win_inwin_activate(Evas_Object *obj)
    elm_widget_focused_object_clear(elm_widget_parent_get(obj));
 }
 
+/**
+ * Set the content of an inwin object.
+ *
+ * @param obj The inwin object
+ * @param content The object to set as content
+ *
+ * @ingroup Inwin
+ */
 EAPI void
 elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -1296,6 +1616,15 @@ elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content)
 }
 
 /* windowing spcific calls - shall we do this differently? */
+/**
+ * Get the Ecore_X_Window of an Evas_Object
+ *
+ * @param obj The object
+ *
+ * @return The Ecore_X_Window of @p obj
+ *
+ * @ingroup Win
+ */
 EAPI Ecore_X_Window
 elm_win_xwindow_get(const Evas_Object *obj)
 {

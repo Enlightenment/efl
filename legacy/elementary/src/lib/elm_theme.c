@@ -1,6 +1,12 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Theme
+ *
+ * Functions to modify the theme in the currently running app.
+ */
+
 static Eina_List *overlay = NULL;
 static Eina_List *themes = NULL;
 static Eina_List *extension = NULL;
@@ -78,6 +84,13 @@ _elm_theme_group_file_find(const char *group)
    return NULL;
 }
 
+/**
+ * Prepends a theme overlay to the list of overlays
+ *
+ * @param item The name of the theme overlay
+ *
+ * @ingroup Theme
+ */
 EAPI void
 elm_theme_overlay_add(const char *item)
 {
@@ -87,6 +100,13 @@ elm_theme_overlay_add(const char *item)
    elm_theme_flush();
 }
 
+/**
+ * Delete a theme overlay from the list of overlays
+ *
+ * @param item The name of the theme overlay
+ *
+ * @ingroup Theme
+ */
 EAPI void
 elm_theme_overlay_del(const char *item)
 {
@@ -105,6 +125,13 @@ elm_theme_overlay_del(const char *item)
    elm_theme_flush();
 }
 
+/**
+ * Prepends a theme extension to the list of extensions.
+ *
+ * @param item The name of the theme extension
+ *
+ * @ingroup Theme
+ */
 EAPI void
 elm_theme_extension_add(const char *item)
 {
@@ -114,6 +141,13 @@ elm_theme_extension_add(const char *item)
    elm_theme_flush();
 }
 
+/**
+ * Deletes a theme extension from the list of extensions.
+ *
+ * @param item The name of the theme extension
+ *
+ * @ingroup Theme
+ */
 EAPI void
 elm_theme_extension_del(const char *item)
 {
@@ -132,6 +166,11 @@ elm_theme_extension_del(const char *item)
    elm_theme_flush();
 }
 
+/**
+ * Flush the current theme.
+ *
+ * @ingroup Theme
+ */
 EAPI void
 elm_theme_flush(void)
 {
@@ -140,6 +179,13 @@ elm_theme_flush(void)
    _elm_win_rescale();
 }
 
+/**
+ * Set the theme in the current app to theme @p theme
+ *
+ * @param theme The name of the theme to use
+ *
+ * @ingroup Theme
+ */
 EAPI void
 elm_theme_all_set(const char *theme)
 {

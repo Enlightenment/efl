@@ -409,4 +409,3 @@ elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t)
    wd->ar_interval = t;
    if (wd->repeating && wd->timer) ecore_timer_interval_set(wd->timer, t);
 }
-
