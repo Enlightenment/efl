@@ -303,6 +303,8 @@ ecore_thread_cancel(Ecore_Thread *thread)
        {
 	  _ecore_thread_data = eina_list_remove_list(_ecore_thread_data, l);
 
+	  pthread_mutex_unlock(&_mutex);
+
 	  if (work->func_cancel)
 	    work->func_cancel((void*) work->data);
 	  free(work);
