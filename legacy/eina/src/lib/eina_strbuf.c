@@ -2,6 +2,7 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#define _GNU_SOURCE
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -472,19 +473,20 @@ eina_strbuf_append_printf(Eina_Strbuf *buf, const char *fmt, ...)
 {
    va_list args;
    char *str;
+   size_t len;
    Eina_Bool ret;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(fmt, EINA_FALSE);
    EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
    va_start(args, fmt);
-   vasprintf(&str, fmt, args);
+   len = vasprintf(&str, fmt, args);
    va_end(args);
 
-   if (!str)
+   if (len <= 0 || !str)
      return EINA_FALSE;
 
-   ret = eina_strbuf_append(buf, str);
+   ret = eina_strbuf_append_length(buf, str, len);
    free(str);
    return ret;
 }
@@ -502,17 +504,18 @@ EAPI Eina_Bool
 eina_strbuf_append_vprintf(Eina_Strbuf *buf, const char *fmt, va_list args)
 {
    char *str;
+   size_t len;
    Eina_Bool ret;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(fmt, EINA_FALSE);
    EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
-   vasprintf(&str, fmt, args);
+   len = vasprintf(&str, fmt, args);
 
-   if (!str)
+   if (len <= 0 || !str)
      return EINA_FALSE;
 
-   ret = eina_strbuf_append(buf, str);
+   ret = eina_strbuf_append_length(buf, str, len);
    free(str);
    return ret;
 }
@@ -704,16 +707,17 @@ eina_strbuf_insert_printf(Eina_Strbuf *buf, const char *fmt, size_t pos, ...)
 {
    va_list args;
    char *str;
+   size_t len;
    Eina_Bool ret;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(fmt, EINA_FALSE);
    EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
-   va_start(args, fmt);
-   vasprintf(&str, fmt, args);
+   va_start(args, pos);
+   len = vasprintf(&str, fmt, args);
    va_end(args);
 
-   if (!str)
+   if (len <= 0 || !str)
      return EINA_FALSE;
 
    ret = eina_strbuf_insert(buf, str, pos);
@@ -733,14 +737,15 @@ EAPI Eina_Bool
 eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, size_t pos, va_list args)
 {
    char *str;
+   size_t len;
    Eina_Bool ret;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(fmt, EINA_FALSE);
    EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
 
-   vasprintf(&str, fmt, args);
+   len = vasprintf(&str, fmt, args);
 
-   if (!str)
+   if (len <= 0 || !str)
      return EINA_FALSE;
 
    ret = eina_strbuf_insert(buf, str, pos);
