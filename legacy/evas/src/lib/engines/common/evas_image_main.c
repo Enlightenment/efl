@@ -125,6 +125,13 @@ evas_common_image_shutdown(void)
    evas_common_scalecache_shutdown();
 }
 
+EAPI void
+evas_common_image_image_all_unload(void)
+{
+   evas_common_rgba_image_scalecache_flush();
+   evas_cache_image_unload_all(eci);
+}
+
 static Image_Entry *
 _evas_common_rgba_image_new(void)
 {
@@ -174,10 +181,12 @@ evas_common_rgba_image_unload(Image_Entry *ie)
    RGBA_Image   *im = (RGBA_Image *) ie;
 
    evas_cache_image_preload_cancel(ie, NULL);
-   
+
    if (!ie->flags.loaded) return;
    if ((!ie->info.module) && (!ie->data1)) return;
    if (!ie->file) return;
+   
+   evas_common_rgba_image_scalecache_dirty(ie);
 
    ie->flags.loaded = 0;
 
@@ -274,8 +283,9 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
 }
 
 static void
-_evas_common_rgba_image_unload(Image_Entry* im __UNUSED__)
+_evas_common_rgba_image_unload(Image_Entry *im)
 {
+   evas_common_rgba_image_unload(im);
 }
 
 static void

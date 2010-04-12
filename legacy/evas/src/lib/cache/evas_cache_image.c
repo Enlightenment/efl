@@ -1179,13 +1179,56 @@ evas_cache_image_load_data(Image_Entry *im)
 #endif
 }
 
+EAPI void
+evas_cache_image_unload_data(Image_Entry *im)
+{
+   Evas_Cache_Image *cache;
+
+   assert(im);
+   assert(im->cache);
+   cache = im->cache;
+
+#ifdef BUILD_ASYNC_PRELOAD
+   LKL(im->lock);
+#endif
+   if ((!im->flags.loaded) || (!im->file) || 
+       (!im->info.module) || (im->flags.dirty))
+     {
+#ifdef BUILD_ASYNC_PRELOAD
+        LKU(im->lock);
+#endif
+	return;
+     }
+   cache->func.destructor(im);
+   
+#ifdef BUILD_ASYNC_PRELOAD
+   LKU(im->lock);
+#endif
+}
+
+static Eina_Bool
+_evas_cache_image_unload_cb(__UNUSED__ const Eina_Hash *hash, __UNUSED__ const void *key, void *data, __UNUSED__ void *fdata)
+{
+   evas_cache_image_unload_data(data);
+   return EINA_TRUE;
+}
+
+EAPI void
+evas_cache_image_unload_all(Evas_Cache_Image *cache)
+{
+   Image_Entry *im;
+
+   EINA_INLIST_FOREACH(cache->lru, im) evas_cache_image_unload_data(im);
+   EINA_INLIST_FOREACH(cache->lru_nodata, im) evas_cache_image_unload_data(im);
+   eina_hash_foreach(cache->activ, _evas_cache_image_unload_cb, NULL);
+   eina_hash_foreach(cache->inactiv, _evas_cache_image_unload_cb, NULL);
+}
+
 EAPI Eina_Bool
 evas_cache_image_is_loaded(Image_Entry *im)
 {
   assert(im); 
-
-  if (im->flags.loaded)
-    return EINA_TRUE;
+  if (im->flags.loaded) return EINA_TRUE;
   return EINA_FALSE;
 }
 

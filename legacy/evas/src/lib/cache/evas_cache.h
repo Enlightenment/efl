@@ -128,7 +128,9 @@ EAPI void                     evas_cache_image_set(Evas_Cache_Image *cache, int 
 EAPI Image_Entry*             evas_cache_image_alone(Image_Entry *im);
 EAPI Image_Entry*             evas_cache_image_dirty(Image_Entry *im, int x, int y, int w, int h);
 EAPI void                     evas_cache_image_load_data(Image_Entry *im);
+EAPI void                     evas_cache_image_unload_data(Image_Entry *im);
 EAPI Eina_Bool                evas_cache_image_is_loaded(Image_Entry *im);
+EAPI void                     evas_cache_image_unload_all(Evas_Cache_Image *cache);
 EAPI void                     evas_cache_image_surface_alloc(Image_Entry *im, int w, int h);
 EAPI DATA32*                  evas_cache_image_pixels(Image_Entry *im);
 EAPI Image_Entry*             evas_cache_image_copied_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace);

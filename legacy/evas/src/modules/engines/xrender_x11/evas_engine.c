@@ -687,6 +687,17 @@ eng_output_idle_flush(void *data)
 }
 
 static void
+eng_output_dump(void *data)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   evas_common_image_image_all_unload();
+   evas_common_font_font_all_unload();
+   // FIXME: kill pixmaps too - but... xrender engine is dead... no? :):)
+}
+
+static void
 eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
    Render_Engine *re;
@@ -1485,6 +1496,7 @@ module_open(Evas_Module *em)
    ORD(output_redraws_next_update_push);
    ORD(output_flush);
    ORD(output_idle_flush);
+   ORD(output_dump);
    ORD(rectangle_draw);
    ORD(line_draw);
    ORD(polygon_draw);

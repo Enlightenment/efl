@@ -259,6 +259,17 @@ eng_output_idle_flush(void *data __UNUSED__)
 }
 
 static void
+eng_output_dump(void *data __UNUSED__)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   evas_common_image_image_all_unload();
+   evas_common_font_font_all_unload();
+   evas_gl_common_image_all_unload(re->window->gl_context);
+}
+
+static void
 eng_context_cutout_add(void *data __UNUSED__, void *context, int x, int y, int w, int h)
 {
    evas_common_draw_context_add_cutout(context, x, y, w, h);
@@ -1042,6 +1053,7 @@ module_open(Evas_Module *em)
    ORD(context_cutout_clear);
    ORD(output_flush);
    ORD(output_idle_flush);
+   ORD(output_dump);
    ORD(rectangle_draw);
    ORD(line_draw);
    ORD(polygon_point_add);

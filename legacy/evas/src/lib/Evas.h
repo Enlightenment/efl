@@ -640,7 +640,7 @@ extern "C" {
    EAPI void              evas_render                       (Evas *e) EINA_ARG_NONNULL(1);
    EAPI void              evas_norender                     (Evas *e) EINA_ARG_NONNULL(1);
    EAPI void              evas_render_idle_flush            (Evas *e) EINA_ARG_NONNULL(1);
-
+   EAPI void              evas_render_dump                  (Evas *e) EINA_ARG_NONNULL(1);
 
 /**
  * @defgroup Evas_Output_Method Render Engine Functions

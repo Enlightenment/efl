@@ -96,6 +96,8 @@ struct _Evas_Object_Textblock_Format
    int                  tabstops;
    int                  linesize;
    double               linerelsize;
+   int                  linegap;
+   double               linerelgap;
    unsigned char        style;
    unsigned char        wrap_word : 1;
    unsigned char        wrap_char : 1;
@@ -778,6 +780,8 @@ static const char *stylestr = NULL;
 static const char *tabstopsstr = NULL;
 static const char *linesizestr = NULL;
 static const char *linerelsizestr = NULL;
+static const char *linegap = NULL;
+static const char *linerelgap = NULL;
 
 static void
 _format_command_init(void)
@@ -808,6 +812,8 @@ _format_command_init(void)
    tabstopsstr = eina_stringshare_add("tabstops");
    linesizestr = eina_stringshare_add("linesize");
    linerelsizestr = eina_stringshare_add("linerelsize");
+   linegap = eina_stringshare_add("linegap");
+   linerelgap = eina_stringshare_add("linerelgap");
 }
 
 static void
@@ -839,6 +845,8 @@ _format_command_shutdown(void)
    eina_stringshare_del(tabstopsstr);
    eina_stringshare_del(linesizestr);
    eina_stringshare_del(linerelsizestr);
+   eina_stringshare_del(linegap);
+   eina_stringshare_del(linerelgap);
 }
 
 static void
@@ -1114,6 +1122,27 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
 	       }
           }
      }
+   else if (cmd == linegap)
+     {
+        fmt->linegap = atoi(tmp_param);
+        fmt->linerelgap = 0.0;
+     }
+   else if (cmd == linerelgap)
+     {
+	char *endptr = NULL;
+	double val = strtod(tmp_param, &endptr);
+	if (endptr)
+	  {
+	     while (*endptr && _is_white(*endptr))
+	       endptr++;
+	     if (*endptr == '%')
+	       {
+		  fmt->linerelgap = val / 100.0;
+		  fmt->linegap = 0;
+		  if (fmt->linerelgap < 0.0) fmt->linerelgap = 0.0;
+	       }
+          }
+     }
 
    if (new_font)
      {
@@ -1313,6 +1342,8 @@ _layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
              descent = ((ascent + descent) * fmt->linerelsize) - (ascent * fmt->linerelsize);
              ascent = ascent * fmt->linerelsize;
           }
+        c->maxdescent += fmt->linegap;
+        c->maxdescent += ((ascent + descent) * fmt->linerelgap);
 	if (c->maxascent < ascent) c->maxascent = ascent;
 	if (c->maxdescent < descent) c->maxdescent = descent;
      }
@@ -1351,6 +1382,8 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 	fmt->tabstops = 32;
         fmt->linesize = 0;
         fmt->linerelsize = 0.0;
+        fmt->linegap = 0;
+        fmt->linerelgap = 0.0;
      }
    return fmt;
 }

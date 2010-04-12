@@ -17,8 +17,9 @@ static Eina_Hash * fonts_src = NULL;
 static Eina_Hash * fonts = NULL;
 static Eina_List * fonts_lru = NULL;
 
-static Eina_Bool font_modify_cache_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
-static Eina_Bool font_flush_free_glyph_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
+//static Eina_Bool font_modify_cache_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
+//static Eina_Bool font_flush_free_glyph_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
+static void _evas_common_font_int_clear(RGBA_Font_Int *fi);
 
 static int
 _evas_font_cache_int_cmp(const RGBA_Font_Int *k1, int k1_length __UNUSED__,
@@ -51,8 +52,7 @@ _evas_common_font_source_free(RGBA_Font_Source *fs)
    if (fs->name) eina_stringshare_del(fs->name);
    free(fs);
 }
-
-
+/*
 static Eina_Bool
 font_flush_free_glyph_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
@@ -60,7 +60,7 @@ font_flush_free_glyph_cb(const Eina_Hash *hash, const void *key, void *data, voi
 
    fg = data;
    FT_Done_Glyph(fg->glyph);
-   /* extension calls */
+   // extension calls
    if (fg->ext_dat_free) fg->ext_dat_free(fg->ext_dat);
    free(fg);
    return 1;
@@ -68,7 +68,7 @@ font_flush_free_glyph_cb(const Eina_Hash *hash, const void *key, void *data, voi
    key = 0;
    fdata = 0;
 }
-
+*/
 static void
 _evas_common_font_int_free(RGBA_Font_Int *fi)
 {
@@ -76,10 +76,11 @@ _evas_common_font_int_free(RGBA_Font_Int *fi)
 
    evas_common_font_int_modify_cache_by(fi, -1);
 
+   _evas_common_font_int_clear(fi);
 //   eina_hash_foreach(fi->glyphs, font_flush_free_glyph_cb, NULL);
 //   eina_hash_free(fi->glyphs);
 
-  eina_hash_free(fi->kerning);
+   eina_hash_free(fi->kerning);
 //   eina_hash_free(fi->indexes);
 
 #ifdef HAVE_PTHREAD
@@ -90,7 +91,7 @@ _evas_common_font_int_free(RGBA_Font_Int *fi)
 
    if (fi->references == 0)
      fonts_lru = eina_list_remove(fonts_lru, fi);
-
+   
    if (fi->fash) fi->fash->freeme(fi->fash);
    free(fi);
 }
@@ -651,6 +652,59 @@ evas_common_font_memory_hinting_add(RGBA_Font *fn, const char *name, int size, c
    return fn;
 }
 
+static void
+_evas_common_font_int_clear(RGBA_Font_Int *fi)
+{
+   int i, j;
+   
+   LKL(fi->ft_mutex);
+   if (!fi->fash)
+     {
+        LKU(fi->ft_mutex);
+        return;
+     }
+   
+   evas_common_font_int_modify_cache_by(fi, -1);
+   
+   for (j = 0; j <= 0xff; j++) // fixme: to do > 65k
+     {
+        Fash_Glyph_Map *fmap = fi->fash->bucket[j];
+        if (fmap)
+          {
+             for (i = 0; i <= 0xff; i++)
+               {
+                  RGBA_Font_Glyph *fg = fmap->item[i];
+                  if ((fg) && (fg != (void *)(-1)))
+                    {
+                       FT_Done_Glyph(fg->glyph);
+                       /* extension calls */
+                       if (fg->ext_dat_free) fg->ext_dat_free(fg->ext_dat);
+                       free(fg);
+                       fmap->item[i] = NULL;
+                    }
+               }
+          }
+     }
+   fi->fash->freeme(fi->fash);
+   fi->fash = NULL;
+   LKU(fi->ft_mutex);
+}
+
+static Eina_Bool
+_evas_common_font_all_clear_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+{
+   RGBA_Font_Int *fi = data;
+   _evas_common_font_int_clear(fi);
+   return 1;
+}
+
+EAPI void
+evas_common_font_all_clear(void)
+{
+   eina_hash_foreach(fonts, _evas_common_font_all_clear_cb, NULL);
+}
+
+/*
 static Eina_Bool
 font_modify_cache_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
@@ -661,12 +715,12 @@ font_modify_cache_cb(const Eina_Hash *hash, const void *key, void *data, void *f
    dir = fdata;
    font_cache_usage += (*dir) *
      ((fg->glyph_out->bitmap.width * fg->glyph_out->bitmap.rows) +
-      sizeof(RGBA_Font_Glyph) + sizeof(Eina_List) + 400); /* fudge values */
+      sizeof(RGBA_Font_Glyph) + sizeof(Eina_List) + 400); // fudge values
    return 1;
    hash = 0;
    key = 0;
 }
-
+*/
 /* when the fi->references == 0 we increase this instead of really deleting
  * we then check if the cache_useage size is larger than allowed
  * !If the cache is NOT too large we dont delete font_int
@@ -675,7 +729,28 @@ EAPI void
 evas_common_font_int_modify_cache_by(RGBA_Font_Int *fi, int dir)
 {
    int sz_hash = 0;
-
+   int i, j;
+   
+   if (fi->fash)
+     {
+        for (j = 0; j <= 0xff; j++) // fixme: to do > 65k
+          {
+             Fash_Glyph_Map *fmap = fi->fash->bucket[j];
+             if (fmap)
+               {
+                  for (i = 0; i <= 0xff; i++)
+                    {
+                       RGBA_Font_Glyph *fg = fmap->item[i];
+                       if ((fg) && (fg != (void *)(-1)))
+                         sz_hash += 
+                         sizeof(RGBA_Font_Glyph) + sizeof(Eina_List) + 
+                         (fg->glyph_out->bitmap.width * 
+                          fg->glyph_out->bitmap.rows) + 
+                         400;
+                    }
+               }
+          }
+     }
 //   if (fi->glyphs) sz_hash = eina_hash_population(fi->glyphs);
 //   eina_hash_foreach(fi->glyphs, font_modify_cache_cb, &dir);
    font_cache_usage += dir * (sizeof(RGBA_Font) + sz_hash +

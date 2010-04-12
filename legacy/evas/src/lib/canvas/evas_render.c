@@ -1249,11 +1249,13 @@ evas_norender(Evas *e)
 }
 
 /**
- * Make the canvas discard internally cached data used for renderization
+ * Make the canvas discard internally cached data used for rendering.
  *
  * @param e The given canvas pointer.
  *
  * This function flushes the arrays of delete, active and render objects.
+ * Other things it may also discard are: shared memory segments,
+ * temporary scratch buffers, cached data to avoid re-compute of that data etc.
  *
  * @ingroup Evas_Canvas
  */
@@ -1277,6 +1279,60 @@ evas_render_idle_flush(Evas *e)
    eina_array_flush(&e->clip_changes);
 
    e->invalidate = 1;
+}
+
+/**
+ * Make the canvas discard as much data as possible used by the engine at
+ * runtime.
+ *
+ * @param e The given canvas pointer.
+ *
+ * This function will unload images, delete textures and much more, where
+ * possible. You may also want to call evas_render_idle_flush() immediately
+ * prior to this to perhaps discard a little more, though evas_render_dump()
+ * should implicitly delete most of what evas_render_idle_flush() might
+ * discard too.
+ *
+ * @ingroup Evas_Canvas
+ */
+static void
+_evas_render_dump_map_surfaces(Evas_Object *obj)
+{
+   if ((obj->cur.map) && obj->cur.map->surface)
+     {
+        obj->layer->evas->engine.func->image_map_surface_free
+          (obj->layer->evas->engine.data.output, obj->cur.map->surface);
+        obj->cur.map->surface = NULL;
+     }
+   
+   if (obj->smart.smart)
+     {
+        Evas_Object *obj2;
+        
+        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
+          _evas_render_dump_map_surfaces(obj2);
+     }
+}
+
+EAPI void
+evas_render_dump(Evas *e)
+{
+   Evas_Layer *lay;
+   
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   EINA_INLIST_FOREACH(e->layers, lay)
+     {
+        Evas_Object *obj;
+
+        EINA_INLIST_FOREACH(lay->objects, obj)
+          _evas_render_dump_map_surfaces(obj);
+     }
+   if ((e->engine.func) && (e->engine.func->output_dump) &&
+       (e->engine.data.output))
+     e->engine.func->output_dump(e->engine.data.output);
 }
 
 void

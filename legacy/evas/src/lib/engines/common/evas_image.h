@@ -5,6 +5,8 @@
 EAPI void              evas_common_image_init                      (void);
 EAPI void              evas_common_image_shutdown                  (void);
 
+EAPI void              evas_common_image_image_all_unload          (void);
+    
 EAPI void              evas_common_rgba_image_free                 (Image_Entry *ie);
 EAPI void              evas_common_rgba_image_unload               (Image_Entry *ie);
 EAPI void              evas_common_image_colorspace_normalize      (RGBA_Image *im);

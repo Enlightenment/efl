@@ -10,7 +10,8 @@
 
 EAPI void              evas_common_font_init                 (void);
 EAPI void              evas_common_font_shutdown             (void);
-
+EAPI void              evas_common_font_font_all_unload      (void);
+    
 EAPI int               evas_common_font_ascent_get           (RGBA_Font *fn);
 EAPI int               evas_common_font_descent_get          (RGBA_Font *fn);
 EAPI int               evas_common_font_max_ascent_get       (RGBA_Font *fn);

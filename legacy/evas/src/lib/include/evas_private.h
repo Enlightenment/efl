@@ -581,6 +581,7 @@ struct _Evas_Func
    void (*output_redraws_next_update_push) (void *data, void *surface, int x, int y, int w, int h);
    void (*output_flush)                    (void *data);
    void (*output_idle_flush)               (void *data);
+   void (*output_dump)                     (void *data);
 
    void *(*context_new)                    (void *data);
    Eina_Bool (*canvas_alpha_get)           (void *data, void *context);

@@ -1,5 +1,19 @@
 #include "evas_gl_private.h"
 
+void
+evas_gl_common_image_all_unload(Evas_GL_Context *gc)
+{
+   Eina_List *l;
+   Evas_GL_Image *im;
+   
+   EINA_LIST_FOREACH(gc->shared->images, l, im)
+     {
+        if (im->im) evas_cache_image_unload_data(&im->im->cache_entry);
+        if (im->tex) evas_gl_common_texture_free(im->tex);
+        im->tex = NULL;
+     }
+}
+
 Evas_GL_Image *
 evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error)
 {
@@ -330,11 +344,18 @@ _evas_gl_common_image_update(Evas_GL_Context *gc, Evas_GL_Image *im)
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-        evas_cache_image_load_data(&im->im->cache_entry);
 	if ((im->tex) && (im->dirty))
-          evas_gl_common_texture_update(im->tex, im->im);
+          {
+             evas_cache_image_load_data(&im->im->cache_entry);
+             evas_gl_common_texture_update(im->tex, im->im);
+             evas_cache_image_unload_data(&im->im->cache_entry);
+          }
 	if (!im->tex)
-	  im->tex = evas_gl_common_texture_new(gc, im->im);
+          {
+             evas_cache_image_load_data(&im->im->cache_entry);
+             im->tex = evas_gl_common_texture_new(gc, im->im);
+             evas_cache_image_unload_data(&im->im->cache_entry);
+          }
         im->dirty = 0;
         if (!im->tex) return;
 	break;

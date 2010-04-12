@@ -10,6 +10,14 @@
  */
 static int cpunum = 0;
 static int _evas_soft_gen_log_dom = -1;
+
+static void
+eng_output_dump(void *data __UNUSED__)
+{
+   evas_common_image_image_all_unload();
+   evas_common_font_font_all_unload();
+}
+
 static void *
 eng_context_new(void *data __UNUSED__)
 {
@@ -1057,6 +1065,7 @@ static Evas_Func func =
      NULL,
      NULL,
      NULL,
+     eng_output_dump,
      /* draw context virtual methods */
      eng_context_new,
      eng_canvas_alpha_get,

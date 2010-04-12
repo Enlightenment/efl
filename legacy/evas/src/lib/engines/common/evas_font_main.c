@@ -39,6 +39,12 @@ evas_common_font_shutdown(void)
    evas_ft_lib = 0;
 }
 
+EAPI void
+evas_common_font_font_all_unload(void)
+{
+   evas_common_font_all_clear();
+}
+
 EAPI int
 evas_common_font_ascent_get(RGBA_Font *fn)
 {

@@ -111,8 +111,14 @@ _evas_map_dup(const Evas_Map *orig)
 }
 
 static inline void
-_evas_map_free(Evas_Map *m)
+_evas_map_free(Evas_Object *obj, Evas_Map *m)
 {
+   if (obj)
+     {
+        if (m->surface)
+          obj->layer->evas->engine.func->image_map_surface_free
+          (obj->layer->evas->engine.data.output, m->surface);
+     }
    free(m);
 }
 
@@ -417,11 +423,11 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
              obj->prev.geometry = obj->cur.map->normal_geometry;
              if (!obj->prev.map)
                {
-		  _evas_map_free(obj->cur.map);
+		  _evas_map_free(obj, obj->cur.map);
                   obj->cur.map = NULL;
                   return;
                }
-             _evas_map_free(obj->cur.map);
+             _evas_map_free(obj, obj->cur.map);
              obj->cur.map = NULL;
              if (!obj->cur.usemap) _evas_map_calc_geom_change(obj);
              else _evas_map_calc_map_geometry(obj);
@@ -593,7 +599,7 @@ EAPI void
 evas_map_free(Evas_Map *m)
 {
    if (!m) return;
-   _evas_map_free(m);
+   _evas_map_free(NULL, m);
 }
 
 /**
