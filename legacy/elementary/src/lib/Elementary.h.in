@@ -226,7 +226,9 @@ extern "C" {
 
    EAPI Eina_Bool    elm_policy_set(unsigned int policy, int value);
    EAPI int          elm_policy_get(unsigned int policy);
-
+   
+   EAPI void         elm_all_flush(void);
+       
    EAPI void         elm_object_scale_set(Evas_Object *obj, double scale);
    EAPI double       elm_object_scale_get(const Evas_Object *obj);
    EAPI void         elm_object_style_set(Evas_Object *obj, const char *style);

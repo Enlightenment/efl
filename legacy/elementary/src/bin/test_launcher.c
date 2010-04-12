@@ -249,4 +249,128 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
 }
+
+void
+test_launcher2(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *sc, *tb, *pad, *bt, *ic, *lb, *tb2, *mb, *ck, *bx, *rc, *ly;
+   int i, j, k, n, m;
+   char buf[PATH_MAX];
+   Eina_List *mbs = NULL;
+   
+   win = elm_win_add(NULL, "launcher", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Launcher");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", PACKAGE_DATA_DIR);
+   elm_bg_file_set(bg, buf, NULL);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bg);
+   evas_object_show(bg);
+   
+   bx = elm_box_add(win);
+   elm_box_homogenous_set(bx, 1);
+   elm_box_horizontal_set(bx, 1);
+   
+   for (k = 0 ; k < 8; k++)
+     {
+        ly = elm_layout_add(win);
+        snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+        elm_layout_file_set(ly, buf, "layout");
+        evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "Button 1");
+        elm_layout_content_set(ly, "element1", bt);
+        evas_object_show(bt);
+        
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "Button 2");
+        elm_layout_content_set(ly, "element2", bt);
+        evas_object_show(bt);
+        
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "Button 3");
+        elm_layout_content_set(ly, "element3", bt);
+        evas_object_show(bt);
+        
+        mb = elm_mapbuf_add(win);
+        elm_mapbuf_content_set(mb, ly);
+        evas_object_show(ly);
+        
+        elm_box_pack_end(bx, mb);
+        evas_object_show(mb);
+        
+        mbs = eina_list_append(mbs, mb);
+     }
+
+   // fixme: free mbs
+   evas_object_data_set(win, "mbs", mbs);
+   
+   sc = elm_scroller_add(win);
+   elm_scroller_bounce_set(sc, 1, 0);
+   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, sc);
+   
+   elm_scroller_content_set(sc, bx);
+   evas_object_show(bx);
+   
+   elm_scroller_page_relative_set(sc, 1.0, 1.0);
+   evas_object_show(sc);
+
+   tb2 = elm_table_add(win);
+   evas_object_size_hint_weight_set(tb2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, tb2);
+   
+   ck = elm_check_add(win);
+   elm_check_label_set(ck, "Map");
+   elm_check_state_set(ck, 0);
+   evas_object_smart_callback_add(ck, "changed", mode_cb, win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, 0.05, 0.99);
+   elm_table_pack(tb2, ck, 0, 0, 1, 1);
+   evas_object_show(ck);
+   
+   ck = elm_check_add(win);
+   elm_check_label_set(ck, "A");
+   elm_check_state_set(ck, 1);
+   evas_object_smart_callback_add(ck, "changed", alpha_cb, win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, 0.20, 0.99);
+   elm_table_pack(tb2, ck, 1, 0, 1, 1);
+   evas_object_show(ck);
+   
+   ck = elm_check_add(win);
+   elm_check_label_set(ck, "Smo");
+   elm_check_state_set(ck, 1);
+   evas_object_smart_callback_add(ck, "changed", smooth_cb, win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, 0.40, 0.99);
+   elm_table_pack(tb2, ck, 2, 0, 1, 1);
+   evas_object_show(ck);
+   
+   ck = elm_check_add(win);
+   elm_check_label_set(ck, "FS");
+   elm_check_state_set(ck, 0);
+   evas_object_smart_callback_add(ck, "changed", full_cb, win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, 0.5, 0.99);
+   elm_table_pack(tb2, ck, 3, 0, 1, 1);
+   evas_object_show(ck);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Close");
+   evas_object_smart_callback_add(bt, "clicked", close_cb, win);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, 0.95, 0.99);
+   elm_table_pack(tb2, bt, 4, 0, 1, 1);
+   evas_object_show(bt);
+   
+   evas_object_show(tb2);
+
+   evas_object_resize(win, 480, 800);
+   evas_object_show(win);
+}
 #endif

@@ -312,14 +312,17 @@ my_gl_last(void *data, Evas_Object *obj, void *event_info)
    elm_genlist_item_selected_set(gli, 1);
 }
 
+static int
+my_gl_flush_delay(void *data)
+{
+   elm_all_flush();
+   return 0;
+}
+
 static void
 my_gl_flush(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *gl = data;
-   evas_image_cache_flush(evas_object_evas_get(obj));
-   evas_font_cache_flush(evas_object_evas_get(obj));
-   edje_file_cache_flush();
-   edje_collection_cache_flush();
+   ecore_timer_add(1.2, my_gl_flush_delay, NULL);
 }
 
 void

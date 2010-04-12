@@ -1331,6 +1331,25 @@ elm_policy_get(unsigned int policy)
    return _elm_policies[policy];
 }
 
+/**
+ * Flush all caches & dump all data that can be to lean down to use less memory
+ */
+EAPI void
+elm_all_flush(void)
+{
+   const Eina_List *l;
+   Evas_Object *obj;
+   
+   EINA_LIST_FOREACH(_elm_win_list, l, obj)
+     {
+        Evas *e = evas_object_evas_get(obj);
+        edje_file_cache_flush();
+        edje_collection_cache_flush();
+        evas_image_cache_flush(e);
+        evas_font_cache_flush(e);
+        evas_render_dump(e);
+     }
+}
 
 /**
  * @defgroup Scaling Selective Widget Scaling

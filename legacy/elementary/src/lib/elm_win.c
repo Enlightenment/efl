@@ -16,7 +16,10 @@ struct _Elm_Win
    Evas *evas;
    Evas_Object *parent, *win_obj;
    Eina_List *subobjs;
+#ifdef HAVE_ELEMENTARY_X
    Ecore_X_Window xwin;
+   Ecore_Event_Handler *client_message_handler;
+#endif   
    Ecore_Job *deferred_resize_job;
    Ecore_Job *deferred_child_eval_job;
 
@@ -44,7 +47,7 @@ static void _elm_win_eval_subobjs(Evas_Object *obj);
 static void _elm_win_subobj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _elm_win_subobj_callback_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
-static Eina_List *_elm_win_list = NULL;
+Eina_List *_elm_win_list = NULL;
 
 static void
 _elm_win_move(Ecore_Evas *ee)
@@ -137,6 +140,10 @@ _elm_win_obj_callback_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void
      {
 	evas_object_del(child);
      }
+#ifdef HAVE_ELEMENTARY_X
+   if (win->client_message_handler)
+     ecore_event_handler_del(win->client_message_handler);
+#endif   
 // FIXME: Why are we flushing edje on every window destroy ??
 //   evas_image_cache_flush(win->evas);
 //   evas_font_cache_flush(win->evas);
@@ -212,6 +219,7 @@ _elm_win_resize_job(void *data)
      }
 }
 
+#ifdef HAVE_ELEMENTARY_X
 static void
 _elm_win_xwindow_get(Elm_Win *win)
 {
@@ -244,11 +252,12 @@ _elm_win_xwindow_get(Elm_Win *win)
 	break;
      }
 }
+#endif
 
+#ifdef HAVE_ELEMENTARY_X
 static void
 _elm_win_xwin_update(Elm_Win *win)
 {
-#ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(win);
    if (win->parent)
      {
@@ -295,8 +304,8 @@ _elm_win_xwin_update(Elm_Win *win)
      }
    ecore_x_e_virtual_keyboard_state_set
      (win->xwin, (Ecore_X_Virtual_Keyboard_State)win->kbdmode);
-#endif
 }
+#endif
 
 static void
 _elm_win_eval_subobjs(Evas_Object *obj)
@@ -374,6 +383,47 @@ _elm_win_rescale(void)
      elm_widget_theme(obj);
 }
 
+#ifdef HAVE_ELEMENTARY_X
+static int
+_elm_win_client_message(void *data, int type __UNUSED__, void *event)
+{
+   Elm_Win *win = data;
+   Ecore_X_Event_Client_Message *e = event;
+
+   if (e->format != 32) return 1;
+   if (e->message_type == ECORE_X_ATOM_E_COMP_FLUSH)
+     {
+        if (e->data.l[0] == win->xwin)
+          {
+             Evas *e = evas_object_evas_get(win->win_obj);
+             if (e)
+               {
+                  edje_file_cache_flush();
+                  edje_collection_cache_flush();
+                  evas_image_cache_flush(e);
+                  evas_font_cache_flush(e);
+               }
+          }
+     }
+   else if (e->message_type == ECORE_X_ATOM_E_COMP_DUMP)
+     {
+        if (e->data.l[0] == win->xwin)
+          {
+             Evas *e = evas_object_evas_get(win->win_obj);
+             if (e)
+               {
+                  edje_file_cache_flush();
+                  edje_collection_cache_flush();
+                  evas_image_cache_flush(e);
+                  evas_font_cache_flush(e);
+                  evas_render_dump(e);
+               }
+          }
+     }
+   return 1;
+}
+#endif
+
 /**
  * Adds a window object. If this is the first window created, pass NULL as
  * @p parent.
@@ -406,6 +456,10 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
      {
       case ELM_SOFTWARE_X11:
 	win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
+#ifdef HAVE_ELEMENTARY_X
+        win->client_message_handler = ecore_event_handler_add
+          (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
+#endif        
 	break;
       case ELM_SOFTWARE_FB:
 	win->ee = ecore_evas_fb_new(NULL, 0, 1, 1);
@@ -420,6 +474,10 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
              CRITICAL("Software-16 engine create failed. Try software.");
              win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
           }
+#ifdef HAVE_ELEMENTARY_X
+        win->client_message_handler = ecore_event_handler_add
+          (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
+#endif        
 	break;
       case ELM_XRENDER_X11:
 	win->ee = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, 1, 1);
@@ -428,6 +486,10 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
              CRITICAL("XRender engine create failed. Try software.");
              win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
           }
+#ifdef HAVE_ELEMENTARY_X
+        win->client_message_handler = ecore_event_handler_add
+          (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
+#endif        
 	break;
       case ELM_OPENGL_X11:
 	win->ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 1, 1);
@@ -436,6 +498,10 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
              CRITICAL("OpenGL engine create failed. Try software.");
              win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
           }
+#ifdef HAVE_ELEMENTARY_X
+        win->client_message_handler = ecore_event_handler_add
+          (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
+#endif        
 	break;
       case ELM_SOFTWARE_WIN32:
 	win->ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
@@ -476,7 +542,9 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 	free(win);
 	return NULL;
      }
+#ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(win);
+#endif   
    if ((_elm_config->bgpixmap) && (!_elm_config->compositing))
      ecore_evas_avoid_damage_set(win->ee, ECORE_EVAS_AVOID_DAMAGE_EXPOSE);
 // bg pixmap done by x - has other issues like can be redrawn by x before it
@@ -526,8 +594,10 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    else if (_elm_config->font_hinting == 2)
      evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_BYTECODE);
 
+#ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(win);
-
+#endif
+   
    _elm_win_list = eina_list_append(_elm_win_list, win->win_obj);
 
    switch (_elm_config->engine)
@@ -547,6 +617,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
       default:
 	break;
      }
+   
    return win->win_obj;
 }
 
@@ -708,7 +779,9 @@ elm_win_borderless_set(Evas_Object *obj, Eina_Bool borderless)
    win = elm_widget_data_get(obj);
    if (!win) return;
    ecore_evas_borderless_set(win->ee, borderless);
+#ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(win);
+#endif
 }
 
 /**
@@ -745,7 +818,9 @@ elm_win_shaped_set(Evas_Object *obj, Eina_Bool shaped)
    win = elm_widget_data_get(obj);
    if (!win) return;
    ecore_evas_shaped_set(win->ee, shaped);
+#ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(win);
+#endif
 }
 
 /**
@@ -781,6 +856,7 @@ elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha)
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
+#ifdef HAVE_ELEMENTARY_X
    if (win->xwin)
      {
 	if (alpha)
@@ -795,6 +871,7 @@ elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha)
 	_elm_win_xwin_update(win);
      }
    else
+#endif
      ecore_evas_alpha_set(win->ee, alpha);
 }
 
@@ -832,12 +909,14 @@ elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent)
    win = elm_widget_data_get(obj);
    if (!win) return;
    
+#ifdef HAVE_ELEMENTARY_X
    if (win->xwin)
      {
        ecore_evas_transparent_set(win->ee, transparent);	  
 	_elm_win_xwin_update(win);
      }
    else
+#endif
      ecore_evas_transparent_set(win->ee, transparent);
 }
 
@@ -876,7 +955,9 @@ elm_win_override_set(Evas_Object *obj, Eina_Bool override)
    win = elm_widget_data_get(obj);
    if (!win) return;
    ecore_evas_override_set(win->ee, override);
+#ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(win);
+#endif
 }
 
 /**
@@ -920,7 +1001,9 @@ elm_win_fullscreen_set(Evas_Object *obj, Eina_Bool fullscreen)
 	break;
      default:
 	ecore_evas_fullscreen_set(win->ee, fullscreen);
+#ifdef HAVE_ELEMENTARY_X
 	_elm_win_xwin_update(win);
+#endif
 	break;
      }
 }
@@ -970,7 +1053,9 @@ elm_win_maximized_set(Evas_Object *obj, Eina_Bool maximized)
    win = elm_widget_data_get(obj);
    if (!win) return;
    ecore_evas_maximized_set(win->ee, maximized);
+#ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(win);
+#endif
 }
 
 /**
@@ -1007,7 +1092,9 @@ elm_win_iconified_set(Evas_Object *obj, Eina_Bool iconified)
    win = elm_widget_data_get(obj);
    if (!win) return;
    ecore_evas_iconified_set(win->ee, iconified);
+#ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(win);
+#endif
 }
 
 /**
@@ -1043,8 +1130,10 @@ elm_win_layer_set(Evas_Object *obj, int layer)
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
-   ecore_evas_layer_set(win->ee, layer);
+   ecore_evas_layer_set(win->ee, layer); 
+#ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(win);
+#endif
 }
 
 /**
@@ -1086,7 +1175,9 @@ elm_win_rotation_set(Evas_Object *obj, int rotation)
    evas_object_size_hint_min_set(obj, -1, -1);
    evas_object_size_hint_max_set(obj, -1, -1);
    _elm_win_eval_subobjs(obj);
+#ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(win);
+#endif
 }
 
 /**
@@ -1110,7 +1201,9 @@ elm_win_rotation_with_resize_set(Evas_Object *obj, int rotation)
    evas_object_size_hint_min_set(obj, -1, -1);
    evas_object_size_hint_max_set(obj, -1, -1);
    _elm_win_eval_subobjs(obj);
+#ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(win);
+#endif
 }
 
 /**
@@ -1147,7 +1240,9 @@ elm_win_sticky_set(Evas_Object *obj, Eina_Bool sticky)
    win = elm_widget_data_get(obj);
    if (!win) return;
    ecore_evas_sticky_set(win->ee, sticky);
+#ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(win);
+#endif
 }
 
 /**
@@ -1200,7 +1295,9 @@ elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode)
    win = elm_widget_data_get(obj);
    if (!win) return;
    if (mode == win->kbdmode) return;
+#ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(win);
+#endif
    win->kbdmode = mode;
 #ifdef HAVE_ELEMENTARY_X
    if (win->xwin)
@@ -1224,8 +1321,8 @@ elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard)
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
-   _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
    if (win->xwin)
      ecore_x_e_virtual_keyboard_set(win->xwin, is_keyboard);
 #endif
@@ -1266,8 +1363,8 @@ elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant)
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
-   _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
    if (win->xwin)
      ecore_x_e_illume_conformant_set(win->xwin, conformant);
 #endif
@@ -1288,8 +1385,8 @@ elm_win_conformant_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
-   _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
    if (win->xwin)
      return ecore_x_e_illume_conformant_get(win->xwin);
 #endif
@@ -1313,8 +1410,8 @@ elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel)
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
-   _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
    if (win->xwin)
      {
         ecore_x_e_illume_quickpanel_set(win->xwin, quickpanel);
@@ -1346,8 +1443,8 @@ elm_win_quickpanel_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
-   _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
    if (win->xwin)
      return ecore_x_e_illume_quickpanel_get(win->xwin);
 #endif
@@ -1369,8 +1466,8 @@ elm_win_quickpanel_priority_major_set(Evas_Object *obj, int priority)
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
-   _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
    if (win->xwin)
      ecore_x_e_illume_quickpanel_priority_major_set(win->xwin, priority);
 #endif
@@ -1391,8 +1488,8 @@ elm_win_quickpanel_priority_major_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) -1;
    win = elm_widget_data_get(obj);
    if (!win) return -1;
-   _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
    if (win->xwin)
      return ecore_x_e_illume_quickpanel_priority_major_get(win->xwin);
 #endif
@@ -1414,8 +1511,8 @@ elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority)
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
-   _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
    if (win->xwin)
      ecore_x_e_illume_quickpanel_priority_minor_set(win->xwin, priority);
 #endif
@@ -1436,8 +1533,8 @@ elm_win_quickpanel_priority_minor_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) -1;
    win = elm_widget_data_get(obj);
    if (!win) return -1;
-   _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
    if (win->xwin)
      return ecore_x_e_illume_quickpanel_priority_minor_get(win->xwin);
 #endif
@@ -1459,8 +1556,8 @@ elm_win_quickpanel_zone_set(Evas_Object *obj, int zone)
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
-   _elm_win_xwindow_get(win);
 #ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
    if (win->xwin)
      ecore_x_e_illume_quickpanel_zone_set(win->xwin, zone);
 #endif
@@ -1630,9 +1727,12 @@ elm_win_xwindow_get(const Evas_Object *obj)
 {
    Ecore_X_Window xwin = 0;
    Ecore_Evas *ee = NULL;
-   
    if (!obj) return 0;
+#ifdef HAVE_ELEMENTARY_X
    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
    if (ee) xwin = (Ecore_X_Window)ecore_evas_window_get(ee);
    return xwin;
+#else
+   return 0;
+#endif
 }

@@ -68,6 +68,7 @@ void test_conformant(void *data, Evas_Object *obj, void *event_info);
 void test_multi(void *data, Evas_Object *obj, void *event_info);
 void test_floating(void *data, Evas_Object *obj, void *event_info);
 void test_launcher(void *data, Evas_Object *obj, void *event_info);
+void test_launcher2(void *data, Evas_Object *obj, void *event_info);
 void test_anim(void *data, Evas_Object *obj, void *event_info);
 
 
@@ -257,6 +258,7 @@ my_win_main(void)
    ADD_TEST("Multi Touch", test_multi);
    ADD_TEST("Floating Objects", test_floating);
    ADD_TEST("Launcher", test_launcher);
+   ADD_TEST("Launcher 2", test_launcher2);
    ADD_TEST("Animation", test_anim);
 #undef ADD_TEST
 
