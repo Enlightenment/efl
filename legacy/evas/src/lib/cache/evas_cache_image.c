@@ -1199,6 +1199,7 @@ evas_cache_image_unload_data(Image_Entry *im)
 #endif
 	return;
      }
+   evas_common_rgba_image_scalecache_dirty(im);
    cache->func.destructor(im);
    
 #ifdef BUILD_ASYNC_PRELOAD

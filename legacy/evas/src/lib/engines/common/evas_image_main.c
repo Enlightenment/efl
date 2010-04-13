@@ -185,8 +185,6 @@ evas_common_rgba_image_unload(Image_Entry *ie)
    if (!ie->flags.loaded) return;
    if ((!ie->info.module) && (!ie->data1)) return;
    if (!ie->file) return;
-   
-   evas_common_rgba_image_scalecache_dirty(ie);
 
    ie->flags.loaded = 0;
 
@@ -259,6 +257,8 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
 {
    RGBA_Image   *im = (RGBA_Image *) ie;
 
+   if (ie->file)
+     printf("unload: [%p] %s %s\n", ie, ie->file, ie->key);
    if ((im->cs.data) && (im->image.data))
      {
 	if (im->cs.data != im->image.data)
@@ -285,6 +285,7 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
 static void
 _evas_common_rgba_image_unload(Image_Entry *im)
 {
+//   printf("unload: [%p] %s %s\n", im, im->file, im->key);
    evas_common_rgba_image_unload(im);
 }
 
@@ -307,7 +308,7 @@ _evas_common_rgba_image_dirty(Image_Entry *ie_dst, const Image_Entry *ie_src)
    RGBA_Image   *dst = (RGBA_Image *) ie_dst;
    RGBA_Image   *src = (RGBA_Image *) ie_src;
 
-   evas_common_rgba_image_scalecache_dirty((Image_Entry*) ie_src);
+   evas_common_rgba_image_scalecache_dirty((Image_Entry *)ie_src);
    evas_common_rgba_image_scalecache_dirty(ie_dst);
    evas_cache_image_load_data(&src->cache_entry);
    if (_evas_common_rgba_image_surface_alloc(&dst->cache_entry,
