@@ -106,16 +106,16 @@ void
 _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, double v1, const char *d2, double v2)
 {
    Edje_Part_Description *epd1;
-   Edje_Part_Description *epd2;
+   Edje_Part_Description *epd2 = NULL;
 
    if (!d1) d1 = "default";
-   if (!d2) d2 = "default";
 
    epd1 = _edje_part_description_find(ed, ep, d1, v1);
    if (!epd1)
      epd1 = ep->part->default_desc; /* never NULL */
 
-   epd2 = _edje_part_description_find(ed, ep, d2, v2);
+   if (d2)
+      epd2 = _edje_part_description_find(ed, ep, d2, v2);
 
    /* There is an animation if both description are different or if description is an image with tweens */
    if (epd2 != NULL && (epd1 != epd2 || (ep->part->type == EDJE_PART_TYPE_IMAGE && epd2->image.tween_list)))
