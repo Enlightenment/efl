@@ -52,6 +52,12 @@ EAPI int evil_fclose_native(FILE *stream);
 
 #endif /* _WIN32_WCE */
 
+#ifdef _MSC_VER
+
+EAPI int vasprintf(char **strp, const char *fmt, va_list ap);
+
+#endif /* _MSC_VER */
+
 
 /**
  * @}

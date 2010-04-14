@@ -1,3 +1,9 @@
+2010-04-14  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_stdio.c:
+	* src/lib/evil_stdio.h:
+	add vasprintf() function
+
 2010-04-03  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:

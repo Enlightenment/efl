@@ -214,3 +214,21 @@ int evil_fclose_native(FILE *stream)
 }
 
 #endif /* _WIN32_WCE */
+
+#ifdef _MSC_VER
+
+int
+vasprintf(char **strp, const char *fmt, va_list ap)
+{
+   char *res;
+   int len;
+
+   len = _vsnprintf(NULL, 0, fmt, ap) + 1;
+   res = (char *)malloc(len);
+   if (!res) return -1;
+
+   *strp = res;
+   return vsprintf(res, fmt, ap);
+}
+
+#endif /* _MSC_VER */
