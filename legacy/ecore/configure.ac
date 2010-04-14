@@ -275,7 +275,7 @@ AC_ARG_ENABLE(simple-x11,
 
 # XIM
 AC_ARG_ENABLE([xim],
-   [AC_HELP_STRING([--enable-xim], [enable X Input Method.])],
+   [AC_HELP_STRING([--disable-xim], [disable X Input Method.])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_xim="yes"
@@ -283,7 +283,7 @@ AC_ARG_ENABLE([xim],
        want_xim="no"
     fi
    ],
-   [want_xim="no"])
+   [want_xim="yes"])
 
 if test "x${want_xim}" = "xyes" ; then
    AC_DEFINE([ENABLE_XIM], [1], [Enable X Input Method])
