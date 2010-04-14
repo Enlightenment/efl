@@ -2428,6 +2428,7 @@ efreet_desktop_listen_changes(void)
 
     EINA_LIST_FREE(dirs, path)
     {
+        /* TODO: recursive */
         eina_hash_add(change_monitors, path,
                             ecore_file_monitor_add(path,
                                                    efreet_desktop_listen_changes_cb,
