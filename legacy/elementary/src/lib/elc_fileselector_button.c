@@ -208,9 +208,9 @@ _new_window_add(Widget_Data *wd)
 }
 
 static void
-_fs_launch(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_fs_launch(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Evas_Object *fs_btn, *win, *iw, *fs;
+   Evas_Object *fs_btn, *win, *iw;
    Eina_Bool win_fallback;
    Widget_Data *wd;
 
@@ -283,7 +283,7 @@ _selection_done(void *data, Evas_Object *obj, void *event_info)
 
    win = evas_object_data_del(fs_btn, "win");
 
-   evas_object_smart_callback_call(fs_btn, SIG_FILE_CHOSEN, file);
+   evas_object_smart_callback_call(fs_btn, SIG_FILE_CHOSEN, event_info);
    if (file) eina_stringshare_replace(&wd->fsd.path, file);
 
    wd->fs = NULL;
@@ -578,9 +578,9 @@ elm_fileselector_button_expandable_set(Evas_Object *obj, Eina_Bool value)
 EAPI Eina_Bool
 elm_fileselector_button_expandable_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
+   if (!wd) return EINA_FALSE;
 
    return wd->fsd.expandable;
 }
@@ -615,9 +615,9 @@ elm_fileselector_button_folder_only_set(Evas_Object *obj, Eina_Bool value)
 EAPI Eina_Bool
 elm_fileselector_button_folder_only_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
+   if (!wd) return EINA_FALSE;
 
    return wd->fsd.folder_only;
 }
@@ -652,9 +652,9 @@ elm_fileselector_button_is_save_set(Evas_Object *obj, Eina_Bool value)
 EAPI Eina_Bool
 elm_fileselector_button_is_save_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
+   if (!wd) return EINA_FALSE;
 
    return wd->fsd.is_save;
 }
@@ -690,9 +690,9 @@ elm_fileselector_button_inwin_mode_set(Evas_Object *obj, Eina_Bool value)
 EAPI Eina_Bool
 elm_fileselector_button_inwin_mode_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
+   if (!wd) return EINA_FALSE;
 
    return wd->inwin_mode;
 }

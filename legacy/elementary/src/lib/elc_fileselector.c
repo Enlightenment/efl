@@ -173,25 +173,30 @@ _contract_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
 /***  PRIVATES  ***/
 static int
-_sel_do(struct sel_data *data)
+_sel_do(void *data)
 {
-   Widget_Data *wd = elm_widget_data_get(data->fs);
-   const char *path = data->path;
+   struct sel_data *sd;
+   const char *path;
+   Widget_Data *wd;
    const char *p;
+
+   sd = data;
+   wd = elm_widget_data_get(sd->fs);
+   path = sd->path;
 
    if (ecore_file_is_dir(path))
      {
 	//	printf("SELECTED DIR: %s\n", path);
         if (wd->expand)
           {
-             _do_anchors(data->fs, path);
+             _do_anchors(sd->fs, path);
              if (wd->entry2) elm_entry_entry_set(wd->entry2, "");
           }
         else
           {
              // keep a ref to path 'couse it will be destroyed by _populate
              p = eina_stringshare_add(path);
-             _populate(data->fs, p, NULL);
+             _populate(sd->fs, p, NULL);
              eina_stringshare_del(p);
           }
 	goto end;
@@ -203,11 +208,11 @@ _sel_do(struct sel_data *data)
 	  elm_entry_entry_set(wd->entry2, ecore_file_file_get(path));
      }
 
-   evas_object_smart_callback_call(data->fs, SIG_SELECTED, (void*)path);
+   evas_object_smart_callback_call(sd->fs, SIG_SELECTED, (void*)path);
 
  end:
    wd->sel_idler = NULL;
-   free(data);
+   free(sd);
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -680,7 +685,6 @@ elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd;
-   char *parent;
 
    wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -786,7 +790,6 @@ elm_fileselector_selected_set(Evas_Object *obj, const char *path)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_Genlist_Item *it;
    if (!wd) return EINA_FALSE;
 
    if (ecore_file_is_dir(path)) _populate(obj, path, NULL);
