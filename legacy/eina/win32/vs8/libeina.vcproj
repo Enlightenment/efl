@@ -304,6 +304,22 @@
 				RelativePath="..\..\src\lib\eina_value.c"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\modules\mp\buddy\eina_buddy.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\modules\mp\chained_pool\eina_chained_mempool.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\modules\mp\fixed_bitmap\eina_fixed_bitmap.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\modules\mp\pass_through\eina_pass_through.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
