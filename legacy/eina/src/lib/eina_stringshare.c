@@ -189,7 +189,7 @@ static pthread_mutex_t _mutex_big = PTHREAD_MUTEX_INITIALIZER;
 #define STRINGSHARE_LOCK_SMALL() if(_stringshare_threads_activated) pthread_mutex_lock(&_mutex_small)
 #define STRINGSHARE_UNLOCK_SMALL() if(_stringshare_threads_activated) pthread_mutex_unlock(&_mutex_small)
 #define STRINGSHARE_LOCK_BIG() if(_stringshare_threads_activated) pthread_mutex_lock(&_mutex_big)
-#define STRINGSHARE_UNLOCK_BIG() if(_stringshare_threads_activated) pthread_mutex_unlock(&_mutex_big);
+#define STRINGSHARE_UNLOCK_BIG() if(_stringshare_threads_activated) pthread_mutex_unlock(&_mutex_big)
 #else
 #define STRINGSHARE_LOCK_SMALL() do {} while (0)
 #define STRINGSHARE_UNLOCK_SMALL() do {} while (0)
