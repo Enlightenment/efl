@@ -20,6 +20,7 @@ efreet_icon.c \
 efreet_xml.c \
 efreet_ini.c \
 efreet_desktop.c \
+efreet_desktop_command.c \
 efreet_menu.c \
 efreet_utils.c \
 efreet_uri.c
