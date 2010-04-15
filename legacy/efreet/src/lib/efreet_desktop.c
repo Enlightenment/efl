@@ -102,8 +102,10 @@ struct Efreet_Desktop_Type_Info
     Efreet_Desktop_Type_Free_Cb free_func;
 };
 
+static int efreet_desktop_cache_check(Efreet_Desktop *desktop);
 static int efreet_desktop_read(Efreet_Desktop *desktop);
 static Efreet_Desktop_Type_Info *efreet_desktop_type_parse(const char *type_str);
+static void efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info);
 static void *efreet_desktop_application_fields_parse(Efreet_Desktop *desktop,
                                                     Efreet_Ini *ini);
 static void efreet_desktop_application_fields_save(Efreet_Desktop *desktop,
@@ -125,7 +127,7 @@ static Eina_Bool efreet_desktop_x_fields_save(const Eina_Hash *hash,
                                                 void *value,
                                                 void *fdata);
 static int efreet_desktop_environment_check(Efreet_Ini *ini);
-static void efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info);
+
 static void efreet_desktop_update_cache_dirs(void);
 static void efreet_desktop_cache_update(void *data, Ecore_File_Monitor *em,
                                         Ecore_File_Event event, const char *path);
@@ -243,69 +245,6 @@ efreet_desktop_shutdown(void)
     IF_RELEASE(cache_dirs);
     if (efreet_desktop_job) ecore_job_del(efreet_desktop_job);
     efreet_desktop_job = NULL;
-}
-
-/*
- * Needs EAPI because of helper binaries
- */
-EAPI const char *
-efreet_desktop_cache_file(void)
-{
-    char tmp[PATH_MAX] = { '\0' };
-    const char *home, *lang, *country, *modifier;
-
-    if (cache_file) return cache_file;
-
-    home = efreet_home_dir_get();
-    lang = efreet_lang_get();
-    country = efreet_lang_country_get();
-    modifier = efreet_lang_modifier_get();
-
-    if (lang && country && modifier)
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s_%s@%s.cache", home, lang, country, modifier);
-    else if (lang && country)
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s_%s.cache", home, lang, country);
-    else if (lang)
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s.cache", home, lang);
-    else
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop.cache", home);
-
-    cache_file = eina_stringshare_add(tmp);
-    return cache_file;
-}
-
-/*
- * Needs EAPI because of helper binaries
- */
-EAPI const char *
-efreet_desktop_cache_dirs(void)
-{
-    char tmp[PATH_MAX] = { '\0' };
-
-    if (cache_dirs) return cache_dirs;
-
-    snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_dirs.cache", efreet_home_dir_get());
-
-    cache_dirs = eina_stringshare_add(tmp);
-    return cache_dirs;
-}
-
-/**
- * @internal
- * @param desktop: The desktop to check
- * @return Returns 1 if the cache is still valid, 0 otherwise
- * @brief This will check if the desktop cache is still valid.
- */
-static int
-efreet_desktop_cache_check(Efreet_Desktop *desktop)
-{
-    if (!desktop) return 0;
-
-    /* have we modified this file since we last read it in? */
-    if (ecore_file_mod_time(desktop->orig_path) != desktop->load_time)
-        return 0;
-
-    return 1;
 }
 
 /**
@@ -469,68 +408,6 @@ efreet_desktop_uncached_new(const char *file)
     }
 
     return desktop;
-}
-
-/**
- * @internal
- * @param desktop: The desktop to fill
- * @return Returns 1 on success, 0 on failure
- * @brief initialize an Efreet_Desktop from the contents of @a file
- */
-static int
-efreet_desktop_read(Efreet_Desktop *desktop)
-{
-    Efreet_Ini *ini;
-    int error = 0;
-    int ok;
-
-    ini = efreet_ini_new(desktop->orig_path);
-    if (!ini->data)
-    {
-        efreet_ini_free(ini);
-        return 0;
-    }
-
-    ok = efreet_ini_section_set(ini, "Desktop Entry");
-    if (!ok) ok = efreet_ini_section_set(ini, "KDE Desktop Entry");
-    if (!ok)
-    {
-        ERR("efreet_desktop_new error: no Desktop Entry section");
-        error = 1;
-    }
-
-    if (!error)
-    {
-        Efreet_Desktop_Type_Info *info;
-
-        info = efreet_desktop_type_parse(efreet_ini_string_get(ini, "Type"));
-        if (info)
-        {
-            const char *val;
-
-            desktop->type = info->id;
-            val = efreet_ini_string_get(ini, "Version");
-            if (val) desktop->version = strdup(val);
-
-            if (info->parse_func)
-                desktop->type_data = info->parse_func(desktop, ini);
-        }
-        else
-            error = 1;
-    }
-
-    if (!error && !efreet_desktop_environment_check(ini)) error = 1;
-    if (!error && !efreet_desktop_generic_fields_parse(desktop, ini)) error = 1;
-    if (!error)
-        eina_hash_foreach(ini->section, efreet_desktop_x_fields_parse, desktop);
-
-    efreet_ini_free(ini);
-
-    desktop->load_time = ecore_file_mod_time(desktop->orig_path);
-
-    if (error) return 0;
-
-    return 1;
 }
 
 /**
@@ -819,16 +696,49 @@ efreet_desktop_type_alias(int from_type, const char *alias)
     return efreet_desktop_type_add(alias, info->parse_func, info->save_func, info->free_func);
 }
 
-/**
- * @internal
- * @brief Free an Efreet Desktop_Type_Info struct
- */
-static void
-efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info)
+EAPI Eina_Bool
+efreet_desktop_x_field_set(Efreet_Desktop *desktop, const char *key, const char *data)
 {
-    if (!info) return;
-    IF_RELEASE(info->type);
-    free(info);
+    if (!desktop || strncmp(key, "X-", 2))
+        return EINA_FALSE;
+
+    if (!desktop->x)
+        desktop->x = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
+
+    eina_hash_del_by_key(desktop->x, key);
+    eina_hash_add(desktop->x, key, eina_stringshare_add(data));
+
+    return EINA_TRUE;
+}
+
+EAPI const char *
+efreet_desktop_x_field_get(Efreet_Desktop *desktop, const char *key)
+{
+    const char *ret;
+
+    if (!desktop || strncmp(key, "X-", 2))
+        return NULL;
+
+    if (!desktop->x)
+        return NULL;
+
+    ret = eina_hash_find(desktop->x, key);
+    if (!ret)
+        return NULL;
+
+    return eina_stringshare_add(ret);
+}
+
+EAPI Eina_Bool
+efreet_desktop_x_field_del(Efreet_Desktop *desktop, const char *key)
+{
+    if (!desktop || strncmp(key, "X-", 2))
+        return EINA_FALSE;
+
+    if (!desktop->x)
+        return EINA_FALSE;
+
+    return eina_hash_del_by_key(desktop->x, key);
 }
 
 /**
@@ -840,29 +750,6 @@ EAPI void *
 efreet_desktop_type_data_get(Efreet_Desktop *desktop)
 {
     return desktop->type_data;
-}
-
-/**
- * @internal
- * @param type_str: the type as a string
- * @return the parsed type
- * @brief parse the type string into an Efreet_Desktop_Type
- */
-static Efreet_Desktop_Type_Info *
-efreet_desktop_type_parse(const char *type_str)
-{
-    Efreet_Desktop_Type_Info *info;
-    Eina_List *l;
-
-    if (!type_str) return NULL;
-
-    EINA_LIST_FOREACH(efreet_desktop_types, l, info)
-    {
-        if (!strcmp(info->type, type_str))
-            return info;
-    }
-
-    return NULL;
 }
 
 /**
@@ -939,6 +826,166 @@ efreet_desktop_string_list_join(Eina_List *list)
         pos += 1;
     }
     return string;
+}
+
+/*
+ * Needs EAPI because of helper binaries
+ */
+EAPI const char *
+efreet_desktop_cache_file(void)
+{
+    char tmp[PATH_MAX] = { '\0' };
+    const char *home, *lang, *country, *modifier;
+
+    if (cache_file) return cache_file;
+
+    home = efreet_home_dir_get();
+    lang = efreet_lang_get();
+    country = efreet_lang_country_get();
+    modifier = efreet_lang_modifier_get();
+
+    if (lang && country && modifier)
+        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s_%s@%s.cache", home, lang, country, modifier);
+    else if (lang && country)
+        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s_%s.cache", home, lang, country);
+    else if (lang)
+        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s.cache", home, lang);
+    else
+        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop.cache", home);
+
+    cache_file = eina_stringshare_add(tmp);
+    return cache_file;
+}
+
+/*
+ * Needs EAPI because of helper binaries
+ */
+EAPI const char *
+efreet_desktop_cache_dirs(void)
+{
+    char tmp[PATH_MAX] = { '\0' };
+
+    if (cache_dirs) return cache_dirs;
+
+    snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_dirs.cache", efreet_home_dir_get());
+
+    cache_dirs = eina_stringshare_add(tmp);
+    return cache_dirs;
+}
+
+/**
+ * @internal
+ * @param desktop: The desktop to check
+ * @return Returns 1 if the cache is still valid, 0 otherwise
+ * @brief This will check if the desktop cache is still valid.
+ */
+static int
+efreet_desktop_cache_check(Efreet_Desktop *desktop)
+{
+    if (!desktop) return 0;
+
+    /* have we modified this file since we last read it in? */
+    if (ecore_file_mod_time(desktop->orig_path) != desktop->load_time)
+        return 0;
+
+    return 1;
+}
+
+/**
+ * @internal
+ * @param desktop: The desktop to fill
+ * @return Returns 1 on success, 0 on failure
+ * @brief initialize an Efreet_Desktop from the contents of @a file
+ */
+static int
+efreet_desktop_read(Efreet_Desktop *desktop)
+{
+    Efreet_Ini *ini;
+    int error = 0;
+    int ok;
+
+    ini = efreet_ini_new(desktop->orig_path);
+    if (!ini->data)
+    {
+        efreet_ini_free(ini);
+        return 0;
+    }
+
+    ok = efreet_ini_section_set(ini, "Desktop Entry");
+    if (!ok) ok = efreet_ini_section_set(ini, "KDE Desktop Entry");
+    if (!ok)
+    {
+        ERR("efreet_desktop_new error: no Desktop Entry section");
+        error = 1;
+    }
+
+    if (!error)
+    {
+        Efreet_Desktop_Type_Info *info;
+
+        info = efreet_desktop_type_parse(efreet_ini_string_get(ini, "Type"));
+        if (info)
+        {
+            const char *val;
+
+            desktop->type = info->id;
+            val = efreet_ini_string_get(ini, "Version");
+            if (val) desktop->version = strdup(val);
+
+            if (info->parse_func)
+                desktop->type_data = info->parse_func(desktop, ini);
+        }
+        else
+            error = 1;
+    }
+
+    if (!error && !efreet_desktop_environment_check(ini)) error = 1;
+    if (!error && !efreet_desktop_generic_fields_parse(desktop, ini)) error = 1;
+    if (!error)
+        eina_hash_foreach(ini->section, efreet_desktop_x_fields_parse, desktop);
+
+    efreet_ini_free(ini);
+
+    desktop->load_time = ecore_file_mod_time(desktop->orig_path);
+
+    if (error) return 0;
+
+    return 1;
+}
+
+/**
+ * @internal
+ * @param type_str: the type as a string
+ * @return the parsed type
+ * @brief parse the type string into an Efreet_Desktop_Type
+ */
+static Efreet_Desktop_Type_Info *
+efreet_desktop_type_parse(const char *type_str)
+{
+    Efreet_Desktop_Type_Info *info;
+    Eina_List *l;
+
+    if (!type_str) return NULL;
+
+    EINA_LIST_FOREACH(efreet_desktop_types, l, info)
+    {
+        if (!strcmp(info->type, type_str))
+            return info;
+    }
+
+    return NULL;
+}
+
+/**
+ * @internal
+ * @brief Free an Efreet Desktop_Type_Info struct
+ */
+static void
+efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info)
+{
+    if (!info) return;
+    IF_RELEASE(info->type);
+    free(info);
 }
 
 /**
@@ -1210,51 +1257,6 @@ efreet_desktop_environment_check(Efreet_Ini *ini)
     }
 
     return !found;
-}
-
-EAPI Eina_Bool
-efreet_desktop_x_field_set(Efreet_Desktop *desktop, const char *key, const char *data)
-{
-    if (!desktop || strncmp(key, "X-", 2))
-        return EINA_FALSE;
-
-    if (!desktop->x)
-        desktop->x = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
-
-    eina_hash_del_by_key(desktop->x, key);
-    eina_hash_add(desktop->x, key, eina_stringshare_add(data));
-
-    return EINA_TRUE;
-}
-
-EAPI const char *
-efreet_desktop_x_field_get(Efreet_Desktop *desktop, const char *key)
-{
-    const char *ret;
-
-    if (!desktop || strncmp(key, "X-", 2))
-        return NULL;
-
-    if (!desktop->x)
-        return NULL;
-
-    ret = eina_hash_find(desktop->x, key);
-    if (!ret)
-        return NULL;
-
-    return eina_stringshare_add(ret);
-}
-
-EAPI Eina_Bool
-efreet_desktop_x_field_del(Efreet_Desktop *desktop, const char *key)
-{
-    if (!desktop || strncmp(key, "X-", 2))
-        return EINA_FALSE;
-
-    if (!desktop->x)
-        return EINA_FALSE;
-
-    return eina_hash_del_by_key(desktop->x, key);
 }
 
 /*
