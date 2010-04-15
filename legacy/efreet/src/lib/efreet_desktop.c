@@ -141,6 +141,7 @@ static int efreet_desktop_exe_cb(void *data, int type, void *event);
 
 static void efreet_desktop_changes_listen(void);
 static void efreet_desktop_changes_listen_recursive(const char *path);
+static void efreet_desktop_changes_monitor_add(const char *path);
 static void efreet_desktop_changes_cb(void *data, Ecore_File_Monitor *em,
                                              Ecore_File_Event event, const char *path);
 
@@ -1357,10 +1358,8 @@ efreet_desktop_write_cache_dirs_file(void)
         unsigned int size = strlen(dir) + 1;
         write(cachefd, &size, sizeof(int));
         write(cachefd, dir, size);
-        eina_hash_add(change_monitors, dir,
-                            ecore_file_monitor_add(dir,
-                                                   efreet_desktop_changes_cb,
-                                                   NULL));
+
+        efreet_desktop_changes_monitor_add(dir);
         eina_stringshare_del(dir);
     }
     efreet_desktop_dirs = NULL;
@@ -1540,10 +1539,7 @@ efreet_desktop_changes_listen(void)
         {
             unsigned int size = *(unsigned int *)p;
             p += sizeof(unsigned int);
-            eina_hash_add(change_monitors, p,
-                                ecore_file_monitor_add(p,
-                                                       efreet_desktop_changes_cb,
-                                                       NULL));
+            efreet_desktop_changes_monitor_add(p);
             p += size;
         }
         munmap(map, st.st_size);
@@ -1562,10 +1558,7 @@ efreet_desktop_changes_listen_recursive(const char *path)
     DIR *files;
     struct dirent *file;
 
-    eina_hash_add(change_monitors, path,
-                        ecore_file_monitor_add(path,
-                                               efreet_desktop_changes_cb,
-                                               NULL));
+    efreet_desktop_changes_monitor_add(path);
 
     files = opendir(path);
     while ((file = readdir(files)))
@@ -1577,6 +1570,19 @@ efreet_desktop_changes_listen_recursive(const char *path)
         if (ecore_file_is_dir(buf)) efreet_desktop_changes_listen_recursive(buf);
     }
     closedir(files);
+}
+
+static void
+efreet_desktop_changes_monitor_add(const char *path)
+{
+    char rp[PATH_MAX];
+
+    if (!realpath(path, rp)) return;
+    if (eina_hash_find(change_monitors, rp)) return;
+    eina_hash_add(change_monitors, rp,
+                  ecore_file_monitor_add(rp,
+                                         efreet_desktop_changes_cb,
+                                         NULL));
 }
 
 static void
@@ -1606,10 +1612,7 @@ efreet_desktop_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED
             break;
 
         case ECORE_FILE_EVENT_CREATED_DIRECTORY:
-            eina_hash_add(change_monitors, path,
-                                ecore_file_monitor_add(path,
-                                                       efreet_desktop_changes_cb,
-                                                       NULL));
+            efreet_desktop_changes_monitor_add(path);
             efreet_desktop_update_cache();
             break;
     }
