@@ -59,19 +59,22 @@ static Eina_List *efreet_desktop_dirs = NULL;
 /**
  * A job pointer for cache updates
  */
-static Ecore_Job *efreet_desktop_job = NULL;
-static Ecore_Exe *efreet_desktop_exe = NULL;
-static int efreet_desktop_exe_lock = -1;
+static Ecore_Job           *efreet_desktop_job = NULL;
+static Ecore_Exe           *efreet_desktop_exe = NULL;
+static int                  efreet_desktop_exe_lock = -1;
 static Ecore_Event_Handler *efreet_desktop_exe_handler = NULL;
 
-static const char *cache_file = NULL;
-static const char *cache_dirs = NULL;
-static Eet_File *cache = NULL;
+/**
+ * Data for cache files
+ */
+static const char          *cache_dirs = NULL;
+static const char          *cache_file = NULL;
+static Eet_File            *cache = NULL;
 static Eet_Data_Descriptor *desktop_edd = NULL;
-static Ecore_File_Monitor *cache_monitor = NULL;
-static Eina_List *cache_data = NULL;
+static Ecore_File_Monitor  *cache_monitor = NULL;
+static Eina_List           *cache_data = NULL;
 
-static Eina_Hash *change_monitors = NULL;
+static Eina_Hash           *change_monitors = NULL;
 
 #ifdef EFREET_MODULE_LOG_DOM 
 #undef EFREET_MODULE_LOG_DOM
