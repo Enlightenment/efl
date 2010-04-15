@@ -128,7 +128,7 @@ static Eina_Bool efreet_desktop_x_fields_save(const Eina_Hash *hash,
                                                 void *fdata);
 static int efreet_desktop_environment_check(Efreet_Ini *ini);
 
-static void efreet_desktop_update_cache_dirs(void);
+static void efreet_desktop_write_cache_dirs_file(void);
 static void efreet_desktop_cache_update(void *data, Ecore_File_Monitor *em,
                                         Ecore_File_Event event, const char *path);
 static void efreet_desktop_cache_update_free(void *data, void *ev);
@@ -1306,7 +1306,7 @@ efreet_desktop_edd_shutdown(Eet_Data_Descriptor *edd)
 }
 
 static void
-efreet_desktop_update_cache_dirs(void)
+efreet_desktop_write_cache_dirs_file(void)
 {
     char file[PATH_MAX];
     int fd = -1;
@@ -1465,7 +1465,7 @@ efreet_desktop_update_cache_job(void *data __UNUSED__)
 {
     char file[PATH_MAX];
 
-    efreet_desktop_update_cache_dirs();
+    efreet_desktop_write_cache_dirs_file();
 
     if (efreet_desktop_exe_lock > 0) return;
     snprintf(file, sizeof(file), "%s/.efreet/desktop_exec.lock", efreet_home_dir_get());
