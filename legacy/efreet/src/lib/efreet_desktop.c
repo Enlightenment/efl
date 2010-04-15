@@ -25,8 +25,6 @@
 
 #define DESKTOP_VERSION "1.0"
 
-EAPI int EFREET_EVENT_CACHE_UPDATE;
-
 typedef struct _Efreet_Old_Cache Efreet_Old_Cache;
 
 struct _Efreet_Old_Cache
@@ -87,6 +85,8 @@ int _efreet_desktop_log_dom = -1;
 EAPI int EFREET_DESKTOP_TYPE_APPLICATION = 0;
 EAPI int EFREET_DESKTOP_TYPE_LINK = 0;
 EAPI int EFREET_DESKTOP_TYPE_DIRECTORY = 0;
+
+EAPI int EFREET_EVENT_CACHE_UPDATE = 0;
 
 /**
  * @internal
