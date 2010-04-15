@@ -286,7 +286,6 @@ efreet_desktop_get(const char *file)
                 return desktop;
             }
 
-            /* TODO: Submit event to signal that this file has changed */
             desktop->cached = 0;
             eina_hash_del_by_key(efreet_desktop_cache, rp);
         }
@@ -314,7 +313,6 @@ efreet_desktop_get(const char *file)
 
     if (efreet_desktop_cache) eina_hash_add(efreet_desktop_cache, desktop->orig_path, desktop);
     desktop->cached = 1;
-    /* TODO: Need file monitor on file and events to notify change */
     return desktop;
 }
 
