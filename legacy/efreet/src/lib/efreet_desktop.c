@@ -129,9 +129,11 @@ static Eina_Bool efreet_desktop_x_fields_save(const Eina_Hash *hash,
 static int efreet_desktop_environment_check(Efreet_Ini *ini);
 
 static void efreet_desktop_write_cache_dirs_file(void);
-static void efreet_desktop_cache_update(void *data, Ecore_File_Monitor *em,
-                                        Ecore_File_Event event, const char *path);
+
+static void efreet_desktop_cache_update_cb(void *data, Ecore_File_Monitor *em,
+                                           Ecore_File_Event event, const char *path);
 static void efreet_desktop_cache_update_free(void *data, void *ev);
+
 static void efreet_desktop_update_cache(void);
 static void efreet_desktop_update_cache_job(void *data);
 static int efreet_desktop_exe_cb(void *data, int type, void *event);
@@ -187,7 +189,7 @@ efreet_desktop_init(void)
         if (!efreet_desktop_exe_handler) goto cache_error;
 
         cache_monitor = ecore_file_monitor_add(buf,
-                                               efreet_desktop_cache_update,
+                                               efreet_desktop_cache_update_cb,
                                                NULL);
         if (!cache_monitor) goto handler_error;
 
@@ -1369,8 +1371,8 @@ error:
 }
 
 static void
-efreet_desktop_cache_update(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
-                            Ecore_File_Event event, const char *path)
+efreet_desktop_cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
+                               Ecore_File_Event event, const char *path)
 {
     Eet_File *tmp;
     Efreet_Event_Cache_Update *ev;
@@ -1465,14 +1467,15 @@ efreet_desktop_update_cache_job(void *data __UNUSED__)
 {
     char file[PATH_MAX];
 
+    /* TODO: Retry update cache later */
+    if (efreet_desktop_exe_lock > 0) return;
+
     efreet_desktop_write_cache_dirs_file();
 
-    if (efreet_desktop_exe_lock > 0) return;
     snprintf(file, sizeof(file), "%s/.efreet/desktop_exec.lock", efreet_home_dir_get());
 
     efreet_desktop_exe_lock = open(file, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
     if (efreet_desktop_exe_lock < 0) return;
-    /* TODO: Retry update cache later */
     if (flock(efreet_desktop_exe_lock, LOCK_EX | LOCK_NB) < 0) goto error;
     efreet_desktop_exe = ecore_exe_run(PACKAGE_BIN_DIR "/efreet_desktop_cache_create", NULL);
     if (!efreet_desktop_exe) goto error;
