@@ -103,9 +103,6 @@ struct Efreet_Desktop_Type_Info
 };
 
 static int efreet_desktop_read(Efreet_Desktop *desktop);
-#if 0
-static void efreet_desktop_clear(Efreet_Desktop *desktop);
-#endif
 static Efreet_Desktop_Type_Info *efreet_desktop_type_parse(const char *type_str);
 static void *efreet_desktop_application_fields_parse(Efreet_Desktop *desktop,
                                                     Efreet_Ini *ini);
@@ -345,15 +342,6 @@ efreet_desktop_get(const char *file)
                 return desktop;
             }
 
-#if 0
-            efreet_desktop_clear(desktop);
-            if (efreet_desktop_read(desktop))
-            {
-                desktop->ref++;
-                return desktop;
-            }
-#endif
-
             /* TODO: Submit event to signal that this file has changed */
             desktop->cached = 0;
             eina_hash_del_by_key(efreet_desktop_cache, rp);
@@ -546,56 +534,6 @@ efreet_desktop_read(Efreet_Desktop *desktop)
 }
 
 /**
- * @internal
- * @param desktop: The Efreet_Desktop to work with
- * @return Returns no value
- * @brief Frees the Efreet_Desktop's data
- */
-#if 0
-static void
-efreet_desktop_clear(Efreet_Desktop *desktop)
-{
-    char *data;
-
-    IF_FREE(desktop->name);
-    IF_FREE(desktop->generic_name);
-    IF_FREE(desktop->comment);
-    IF_FREE(desktop->icon);
-    IF_FREE(desktop->url);
-
-    IF_FREE(desktop->try_exec);
-    IF_FREE(desktop->exec);
-    IF_FREE(desktop->path);
-    IF_FREE(desktop->startup_wm_class);
-
-    IF_FREE_LIST(desktop->only_show_in, free);
-    IF_FREE_LIST(desktop->not_show_in, free);
-    while (desktop->categories)
-    {
-        data = eina_list_data_get(desktop->categories);
-        eina_stringshare_del(data);
-        desktop->categories = eina_list_remove_list(desktop->categories, desktop->categories);
-    }
-    while (desktop->mime_types)
-    {
-        data = eina_list_data_get(desktop->mime_types);
-        eina_stringshare_del(data);
-        desktop->mime_types = eina_list_remove_list(desktop->mime_types, desktop->mime_types);
-    }
-
-    IF_FREE_HASH(desktop->x);
-
-    if (desktop->type_data)
-    {
-        Efreet_Desktop_Type_Info *info;
-        info = eina_list_nth(efreet_desktop_types, desktop->type);
-        if (info->free_func)
-            info->free_func(desktop->type_data);
-    }
-}
-#endif
-
-/**
  * @param desktop: The desktop file to save
  * @return Returns 1 on success or 0 on failure
  * @brief Saves any changes made to @a desktop back to the file on the
@@ -643,18 +581,6 @@ efreet_desktop_save(Efreet_Desktop *desktop)
         efreet_ini_string_set(ini, "Version", DESKTOP_VERSION);
 
         if (!efreet_ini_save(ini, desktop->orig_path)) ok = 0;
-#if 0
-        else
-        {
-            if (desktop != eina_hash_find(efreet_desktop_cache, desktop->orig_path))
-            {
-                desktop->cached = 1;
-                eina_hash_del(efreet_desktop_cache, desktop->orig_path, NULL);
-                eina_hash_add(efreet_desktop_cache, desktop->orig_path,
-                              desktop);
-            }
-        }
-#endif
     }
     efreet_ini_free(ini);
     return ok;
