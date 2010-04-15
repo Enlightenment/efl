@@ -8,16 +8,16 @@
 # include "config.h"
 #endif
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "eina_private.h"
 #include "eina_str.h"
 #include "eina_magic.h"
 #include "eina_error.h"
 #include "eina_safety_checks.h"
 #include "eina_strbuf.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 /*============================================================================*
  *                                  Local                                     *
