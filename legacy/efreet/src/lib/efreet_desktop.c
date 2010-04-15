@@ -12,6 +12,7 @@
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <dirent.h>
 
 #ifdef _WIN32
 # include <winsock2.h>
@@ -139,6 +140,7 @@ static void efreet_desktop_update_cache_job(void *data);
 static int efreet_desktop_exe_cb(void *data, int type, void *event);
 
 static void efreet_desktop_changes_listen(void);
+static void efreet_desktop_changes_listen_recursive(const char *path);
 static void efreet_desktop_changes_cb(void *data, Ecore_File_Monitor *em,
                                              Ecore_File_Event event, const char *path);
 
@@ -1521,11 +1523,7 @@ efreet_desktop_changes_listen(void)
 
     EINA_LIST_FREE(dirs, path)
     {
-        /* TODO: recursive */
-        eina_hash_add(change_monitors, path,
-                            ecore_file_monitor_add(path,
-                                                   efreet_desktop_changes_cb,
-                                                   NULL));
+        efreet_desktop_changes_listen_recursive(path);
         eina_stringshare_del(path);
     }
 
@@ -1555,6 +1553,30 @@ efreet_desktop_changes_listen(void)
     return;
 error:
     if (dirsfd > 0) close(dirsfd);
+}
+
+static void
+efreet_desktop_changes_listen_recursive(const char *path)
+{
+    char buf[PATH_MAX];
+    DIR *files;
+    struct dirent *file;
+
+    eina_hash_add(change_monitors, path,
+                        ecore_file_monitor_add(path,
+                                               efreet_desktop_changes_cb,
+                                               NULL));
+
+    files = opendir(path);
+    while ((file = readdir(files)))
+    {
+        if (!file) break;
+        if (!strcmp(file->d_name, ".") || !strcmp(file->d_name, "..")) continue;
+
+        snprintf(buf, sizeof(buf), "%s/%s", path, file->d_name);
+        if (ecore_file_is_dir(buf)) efreet_desktop_changes_listen_recursive(buf);
+    }
+    closedir(files);
 }
 
 static void
