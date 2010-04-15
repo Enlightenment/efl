@@ -112,7 +112,7 @@ static const char EINA_MAGIC_STRINGSHARE_NODE_STR[] = "Eina Stringshare Node";
         unlock;							\
         return __VA_ARGS__;					\
     }								\
-  } while (0);
+  } while (0)
 
 #define EINA_MAGIC_CHECK_STRINGSHARE_NODE(d, unlock)		\
   do {								\
@@ -121,7 +121,7 @@ static const char EINA_MAGIC_STRINGSHARE_NODE_STR[] = "Eina Stringshare Node";
       unlock;							\
       EINA_MAGIC_FAIL((d), EINA_MAGIC_STRINGSHARE_NODE);	\
     }								\
-  } while (0);
+  } while (0)
 
 typedef struct _Eina_Stringshare             Eina_Stringshare;
 typedef struct _Eina_Stringshare_Node        Eina_Stringshare_Node;
@@ -186,9 +186,9 @@ static Eina_Bool _stringshare_threads_activated = EINA_FALSE;
 static pthread_mutex_t _mutex_small = PTHREAD_MUTEX_INITIALIZER;
 //string >= 4
 static pthread_mutex_t _mutex_big = PTHREAD_MUTEX_INITIALIZER;
-#define STRINGSHARE_LOCK_SMALL() if(_stringshare_threads_activated) pthread_mutex_lock(&_mutex_small);
-#define STRINGSHARE_UNLOCK_SMALL() if(_stringshare_threads_activated) pthread_mutex_unlock(&_mutex_small);
-#define STRINGSHARE_LOCK_BIG() if(_stringshare_threads_activated) pthread_mutex_lock(&_mutex_big);
+#define STRINGSHARE_LOCK_SMALL() if(_stringshare_threads_activated) pthread_mutex_lock(&_mutex_small)
+#define STRINGSHARE_UNLOCK_SMALL() if(_stringshare_threads_activated) pthread_mutex_unlock(&_mutex_small)
+#define STRINGSHARE_LOCK_BIG() if(_stringshare_threads_activated) pthread_mutex_lock(&_mutex_big)
 #define STRINGSHARE_UNLOCK_BIG() if(_stringshare_threads_activated) pthread_mutex_unlock(&_mutex_big);
 #else
 #define STRINGSHARE_LOCK_SMALL() do {} while (0)

@@ -82,13 +82,13 @@ struct _Eina_Rectangle_Alloc
   do {							       \
      if (!EINA_MAGIC_CHECK((d), EINA_RECTANGLE_POOL_MAGIC))    \
        EINA_MAGIC_FAIL((d), EINA_RECTANGLE_POOL_MAGIC);	       \
-  } while (0);
+  } while (0)
 
 #define EINA_MAGIC_CHECK_RECTANGLE_ALLOC(d)		       \
   do {							       \
      if (!EINA_MAGIC_CHECK((d), EINA_RECTANGLE_ALLOC_MAGIC))   \
        EINA_MAGIC_FAIL((d), EINA_RECTANGLE_ALLOC_MAGIC);       \
-  } while (0);
+  } while (0)
 
 static Eina_Mempool *_eina_rectangle_alloc_mp = NULL;
 static Eina_Mempool *_eina_rectangle_mp = NULL;

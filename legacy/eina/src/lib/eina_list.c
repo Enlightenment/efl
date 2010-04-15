@@ -105,7 +105,7 @@ static const char EINA_MAGIC_LIST_ACCOUNTING_STR[] = "Eina List Accounting";
         EINA_MAGIC_FAIL(d, EINA_MAGIC_LIST);			\
         return __VA_ARGS__;					\
     }								\
-  } while(0);
+  } while(0)
 
 #define EINA_MAGIC_CHECK_LIST_ITERATOR(d, ...)			\
   do {								\
@@ -114,7 +114,7 @@ static const char EINA_MAGIC_LIST_ACCOUNTING_STR[] = "Eina List Accounting";
         EINA_MAGIC_FAIL(d, EINA_MAGIC_LIST_ITERATOR);		\
         return __VA_ARGS__;					\
     }								\
-  } while(0);
+  } while(0)
 
 #define EINA_MAGIC_CHECK_LIST_ACCESSOR(d, ...)			\
   do {								\
@@ -123,7 +123,7 @@ static const char EINA_MAGIC_LIST_ACCOUNTING_STR[] = "Eina List Accounting";
         EINA_MAGIC_FAIL(d, EINA_MAGIC_LIST_ACCESSOR);		\
         return __VA_ARGS__;					\
     }								\
-  } while(0);
+  } while(0)
 
 #define EINA_MAGIC_CHECK_LIST_ACCOUNTING(d)			\
   do {								\
@@ -132,7 +132,7 @@ static const char EINA_MAGIC_LIST_ACCOUNTING_STR[] = "Eina List Accounting";
         EINA_MAGIC_FAIL(d, EINA_MAGIC_LIST_ACCOUNTING);		\
         return;							\
     }								\
-  } while(0);
+  } while(0)
 
 #define EINA_LIST_SORT_STACK_SIZE 32
 

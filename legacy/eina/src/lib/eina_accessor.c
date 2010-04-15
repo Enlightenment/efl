@@ -46,7 +46,7 @@ static const char EINA_MAGIC_ACCESSOR_STR[] = "Eina Accessor";
   do {								\
     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ACCESSOR))		\
       EINA_MAGIC_FAIL(d, EINA_MAGIC_ACCESSOR);			\
-  } while(0);
+  } while(0)
 
 /**
  * @endcond

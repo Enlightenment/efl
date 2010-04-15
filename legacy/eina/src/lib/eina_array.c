@@ -142,7 +142,7 @@ static const char EINA_MAGIC_ARRAY_ACCESSOR_STR[] = "Eina Array Accessor";
   do {							\
      if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY))	\
        EINA_MAGIC_FAIL(d, EINA_MAGIC_ARRAY);		\
-  } while (0);
+  } while (0)
 
 #define EINA_MAGIC_CHECK_ARRAY_ITERATOR(d, ...)			\
   do {								\
@@ -151,7 +151,7 @@ static const char EINA_MAGIC_ARRAY_ACCESSOR_STR[] = "Eina Array Accessor";
           EINA_MAGIC_FAIL(d, EINA_MAGIC_ARRAY_ITERATOR);	\
           return __VA_ARGS__;					\
        }							\
-  } while (0);
+  } while (0)
 
 #define EINA_MAGIC_CHECK_ARRAY_ACCESSOR(d, ...)			\
   do {								\
@@ -160,7 +160,7 @@ static const char EINA_MAGIC_ARRAY_ACCESSOR_STR[] = "Eina Array Accessor";
           EINA_MAGIC_FAIL(d, EINA_MAGIC_ACCESSOR);		\
           return __VA_ARGS__;					\
        }							\
-  } while (0);
+  } while (0)
 
 
 typedef struct _Eina_Iterator_Array Eina_Iterator_Array;

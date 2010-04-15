@@ -73,7 +73,7 @@ static const char EINA_MAGIC_MATRIXSPARSE_CELL_ITERATOR_STR[] = "Eina Matrixspar
 	  EINA_MAGIC_FAIL(d, EINA_MAGIC_MATRIXSPARSE);	\
 	  return __VA_ARGS__;				\
        }						\
-  } while(0);
+  } while(0)
 
 #define EINA_MAGIC_CHECK_MATRIXSPARSE_ROW(d, ...)		\
   do {								\
@@ -82,7 +82,7 @@ static const char EINA_MAGIC_MATRIXSPARSE_CELL_ITERATOR_STR[] = "Eina Matrixspar
 	  EINA_MAGIC_FAIL(d, EINA_MAGIC_MATRIXSPARSE_ROW);	\
 	  return __VA_ARGS__;					\
        }							\
-  } while(0);
+  } while(0)
 
 #define EINA_MAGIC_CHECK_MATRIXSPARSE_CELL(d, ...)		\
   do {								\
@@ -91,7 +91,7 @@ static const char EINA_MAGIC_MATRIXSPARSE_CELL_ITERATOR_STR[] = "Eina Matrixspar
 	  EINA_MAGIC_FAIL(d, EINA_MAGIC_MATRIXSPARSE_CELL);	\
 	  return __VA_ARGS__;					\
        }							\
-  } while(0);
+  } while(0)
 
 #define EINA_MAGIC_CHECK_MATRIXSPARSE_ITERATOR(d, ...)			\
   do {									\
@@ -100,7 +100,7 @@ static const char EINA_MAGIC_MATRIXSPARSE_CELL_ITERATOR_STR[] = "Eina Matrixspar
 	  EINA_MAGIC_FAIL(d, EINA_MAGIC_MATRIXSPARSE_ITERATOR);		\
 	  return __VA_ARGS__;						\
        }								\
-  } while(0);
+  } while(0)
 
 struct _Eina_Matrixsparse_Cell
 {

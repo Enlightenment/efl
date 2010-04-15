@@ -70,9 +70,9 @@ static int _eina_log_dom = -1;
 #ifdef EFL_HAVE_PTHREAD
 static Eina_Bool _threads_activated = EINA_FALSE;
 static pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
-#define LOCK() if(_threads_activated) pthread_mutex_lock(&_mutex);
-#define UNLOCK() if(_threads_activated) pthread_mutex_unlock(&_mutex);
-#define UNLOCK_FORCE() pthread_mutex_unlock(&_mutex);
+#define LOCK() if(_threads_activated) pthread_mutex_lock(&_mutex)
+#define UNLOCK() if(_threads_activated) pthread_mutex_unlock(&_mutex)
+#define UNLOCK_FORCE() pthread_mutex_unlock(&_mutex)
 #else
 #define LOCK() do {} while (0)
 #define UNLOCK() do {} while (0)
