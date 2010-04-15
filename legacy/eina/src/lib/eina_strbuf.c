@@ -12,6 +12,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _MSC_VER
+# include <Evil.h>
+#endif
+
 #include "eina_private.h"
 #include "eina_str.h"
 #include "eina_magic.h"
