@@ -13,6 +13,7 @@ if not exist %EXT_DIR% (
 rem Check for basic requirements for Visual Studio 2008
 if "%VS90COMNTOOLS%" == "" (
 	echo ERROR: Microsoft Visual Studio 2008 is not installed.
+	echo ERROR: Try to launch Microsoft Visual Studio 2005.
 	pause
 	goto NOVS9
 )
@@ -33,6 +34,12 @@ if "%VS80COMNTOOLS%" == "" (
 
 set PROJECT_TYPE=vs8
 set VSCOMMONTOOLS=%VS80COMNTOOLS%vsvars32.bat
+
+rem Patching Eina
+patch.exe --binary -p1 < %cd%\patch\eina.diff
+echo INFO: Eina patched.
+
+pause
 
 :STARTVS
 
