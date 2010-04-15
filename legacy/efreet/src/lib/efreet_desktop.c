@@ -27,9 +27,9 @@
 
 EAPI int EFREET_EVENT_CACHE_UPDATE;
 
-typedef struct _Efreet_Event_Cache_Data Efreet_Event_Cache_Data;
+typedef struct _Efreet_Old_Cache Efreet_Old_Cache;
 
-struct _Efreet_Event_Cache_Data
+struct _Efreet_Old_Cache
 {
     Eina_Hash *desktop_cache;
     Eet_File *cache;
@@ -72,7 +72,8 @@ static const char          *cache_file = NULL;
 static Eet_File            *cache = NULL;
 static Eet_Data_Descriptor *desktop_edd = NULL;
 static Ecore_File_Monitor  *cache_monitor = NULL;
-static Eina_List           *cache_data = NULL;
+
+static Eina_List           *old_caches = NULL;
 
 static Eina_Hash           *change_monitors = NULL;
 
@@ -700,13 +701,13 @@ efreet_desktop_free(Efreet_Desktop *desktop)
        {
            eina_hash_del_by_key(efreet_desktop_cache, desktop->orig_path);
        }
-       else if (cache_data)
+       else if (old_caches)
        {
-           Efreet_Event_Cache_Data *d;
+           Efreet_Old_Cache *d;
            Efreet_Desktop *curr;
            Eina_List *l;
 
-           EINA_LIST_FOREACH(cache_data, l, d)
+           EINA_LIST_FOREACH(old_caches, l, d)
            {
                curr = eina_hash_find(d->desktop_cache, desktop->orig_path);
                if (curr && curr == desktop)
@@ -1445,7 +1446,7 @@ efreet_desktop_cache_update(void *data __UNUSED__, Ecore_File_Monitor *em __UNUS
 {
     Eet_File *tmp;
     Efreet_Event_Cache_Update *ev;
-    Efreet_Event_Cache_Data *d;
+    Efreet_Old_Cache *d;
 
     if (strcmp(path, efreet_desktop_cache_file())) return;
     if (event != ECORE_FILE_EVENT_CREATED_FILE &&
@@ -1455,12 +1456,12 @@ efreet_desktop_cache_update(void *data __UNUSED__, Ecore_File_Monitor *em __UNUS
     if (!tmp) return;
     ev = NEW(Efreet_Event_Cache_Update, 1);
     if (!ev) goto error;
-    d = NEW(Efreet_Event_Cache_Data, 1);
+    d = NEW(Efreet_Old_Cache, 1);
     if (!d) goto error;
 
     d->desktop_cache = efreet_desktop_cache;
     d->cache = cache;
-    cache_data = eina_list_append(cache_data, d);
+    old_caches = eina_list_append(old_caches, d);
 
     efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
     cache = tmp;
@@ -1475,7 +1476,7 @@ error:
 static void
 efreet_desktop_cache_update_free(void *data, void *ev)
 {
-   Efreet_Event_Cache_Data *d;
+   Efreet_Old_Cache *d;
    int dangling = 0;
    
    d = data;
@@ -1516,7 +1517,7 @@ efreet_desktop_cache_update_free(void *data, void *ev)
                "it does this.\n",
                dangling);
      }
-   cache_data = eina_list_remove(cache_data, d);
+   old_caches = eina_list_remove(old_caches, d);
    free(d);
    free(ev);
 }
