@@ -86,7 +86,7 @@ EAPI int EFREET_DESKTOP_TYPE_APPLICATION = 0;
 EAPI int EFREET_DESKTOP_TYPE_LINK = 0;
 EAPI int EFREET_DESKTOP_TYPE_DIRECTORY = 0;
 
-EAPI int EFREET_EVENT_CACHE_UPDATE = 0;
+EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
 
 /**
  * @internal
@@ -177,7 +177,7 @@ efreet_desktop_init(void)
     EFREET_DESKTOP_TYPE_DIRECTORY = efreet_desktop_type_add("Directory", NULL,
                                                                 NULL, NULL);
 
-    EFREET_EVENT_CACHE_UPDATE = ecore_event_type_new();
+    EFREET_EVENT_DESKTOP_CACHE_UPDATE = ecore_event_type_new();
 
     snprintf(buf, sizeof(buf), "%s/.efreet", efreet_home_dir_get());
     if (!ecore_file_mkpath(buf)) goto cache_error;
@@ -1397,7 +1397,7 @@ efreet_desktop_cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __U
     cache = tmp;
 
     efreet_util_desktop_cache_reload();
-    ecore_event_add(EFREET_EVENT_CACHE_UPDATE, ev, efreet_desktop_cache_update_free, d);
+    ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, efreet_desktop_cache_update_free, d);
     return;
 error:
     if (tmp) eet_close(tmp);
@@ -1442,9 +1442,9 @@ efreet_desktop_cache_update_free(void *data, void *ev)
      {
         printf("Efreet: ERROR. There are still %i desktop files with old\n"
                "dangling references to desktop files. This application\n"
-               "has not handled the EFREET_EVENT_CACHE_UPDATE fully and\n"
-               "released its references. Please fix the application so\n"
-               "it does this.\n",
+               "has not handled the EFREET_EVENT_DESKTOP_CACHE_UPDATE\n"
+               "fully and released its references. Please fix the application\n"
+               "so it does this.\n",
                dangling);
      }
    old_caches = eina_list_remove(old_caches, d);

@@ -21,7 +21,7 @@ EAPI extern int EFREET_DESKTOP_TYPE_DIRECTORY;
  * this event and refetch. The old eet cache will be closed and mem will
  * be invalidated.
  */
-EAPI extern int EFREET_EVENT_CACHE_UPDATE;
+EAPI extern int EFREET_EVENT_DESKTOP_CACHE_UPDATE;
 
 /**
  * Efreet_Desktop
