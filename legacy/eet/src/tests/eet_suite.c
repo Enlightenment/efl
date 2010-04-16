@@ -1147,6 +1147,8 @@ START_TEST(eet_image)
 
    eet_close(ef);
 
+   fail_if(unlink(file) != 0);
+
    eet_shutdown();
 }
 END_TEST
@@ -1194,6 +1196,8 @@ START_TEST(eet_small_image)
    fail_if(data == NULL);
 
    eet_close(ef);
+
+   fail_if(unlink(file) != 0);
 
    fail_if(data[0] != IM0);
    fail_if(data[1] != IM1);
@@ -1595,6 +1599,158 @@ START_TEST(eet_connection_check)
 }
 END_TEST
 
+struct _Eet_5FP
+{
+   Eina_F32p32 fp32;
+   Eina_F16p16 fp16;
+   Eina_F8p24  fp8;
+   Eina_F32p32 f1;
+   Eina_F32p32 f0;
+};
+typedef struct _Eet_5FP Eet_5FP;
+
+struct _Eet_5DBL
+{
+   double fp32;
+   double fp16;
+   float  fp8;
+   double f1;
+   double f0;
+};
+typedef struct _Eet_5DBL Eet_5DBL;
+
+START_TEST(eet_fp)
+{
+   Eet_Data_Descriptor_Class eddc;
+   Eet_Data_Descriptor *edd_5FP;
+   Eet_Data_Descriptor *edd_5DBL;
+   Eet_5FP origin;
+   Eet_5DBL *convert;
+   Eet_5FP *build;
+   void *blob;
+   int size;
+
+   eet_init();
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_5FP);
+   edd_5FP = eet_data_descriptor_stream_new(&eddc);
+
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5FP, Eet_5FP, "fp32", fp32, EET_T_F32P32);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5FP, Eet_5FP, "fp16", fp16, EET_T_F16P16);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5FP, Eet_5FP, "fp8", fp8, EET_T_F8P24);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5FP, Eet_5FP, "f1", f1, EET_T_F32P32);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5FP, Eet_5FP, "f0", f0, EET_T_F32P32);
+
+   eet_eina_stream_data_descriptor_class_set(&eddc, "Eet_5FP", sizeof (Eet_5DBL));
+   edd_5DBL = eet_data_descriptor_stream_new(&eddc);
+
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5DBL, Eet_5DBL, "fp32", fp32, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5DBL, Eet_5DBL, "fp16", fp16, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5DBL, Eet_5DBL, "fp8", fp8, EET_T_FLOAT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5DBL, Eet_5DBL, "f1", f1, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5DBL, Eet_5DBL, "f0", f0, EET_T_DOUBLE);
+
+   origin.fp32 = eina_f32p32_double_from(1.125);
+   origin.fp16 = eina_f16p16_int_from(2000);
+   origin.fp8 = eina_f8p24_int_from(125);
+   origin.f1 = eina_f32p32_int_from(1);
+   origin.f0 = 0;
+
+   blob = eet_data_descriptor_encode(edd_5FP, &origin, &size);
+   fail_if(!blob || size <= 0);
+
+   build = eet_data_descriptor_decode(edd_5FP, blob, size);
+   fail_if(!build);
+
+   convert = eet_data_descriptor_decode(edd_5DBL, blob, size);
+   fail_if(!convert);
+
+   fail_if(build->fp32 != eina_f32p32_double_from(1.125));
+   fail_if(build->fp16 != eina_f16p16_int_from(2000));
+   fail_if(build->fp8 != eina_f8p24_int_from(125));
+   fail_if(build->f1 != eina_f32p32_int_from(1));
+   fail_if(build->f0 != 0);
+
+   fail_if(convert->fp32 != 1.125);
+   fail_if(convert->fp16 != 2000);
+   fail_if(convert->fp8 != 125);
+   fail_if(convert->f1 != 1);
+   fail_if(convert->f0 != 0);
+
+   eet_shutdown();
+}
+END_TEST
+
+START_TEST(eet_file_fp)
+{
+   char *file = strdup("/tmp/eet_suite_testXXXXXX");
+   Eet_Data_Descriptor_Class eddc;
+   Eet_Data_Descriptor *edd_5FP;
+   Eet_Data_Descriptor *edd_5DBL;
+   Eet_File *ef;
+   Eet_5FP origin;
+   Eet_5DBL *convert;
+   Eet_5FP *build;
+
+   eet_init();
+
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_5FP);
+   edd_5FP = eet_data_descriptor_file_new(&eddc);
+
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5FP, Eet_5FP, "fp32", fp32, EET_T_F32P32);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5FP, Eet_5FP, "fp16", fp16, EET_T_F16P16);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5FP, Eet_5FP, "fp8", fp8, EET_T_F8P24);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5FP, Eet_5FP, "f1", f1, EET_T_F32P32);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5FP, Eet_5FP, "f0", f0, EET_T_F32P32);
+
+   eet_eina_file_data_descriptor_class_set(&eddc, "Eet_5FP", sizeof (Eet_5DBL));
+   edd_5DBL = eet_data_descriptor_file_new(&eddc);
+
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5DBL, Eet_5DBL, "fp32", fp32, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5DBL, Eet_5DBL, "fp16", fp16, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5DBL, Eet_5DBL, "fp8", fp8, EET_T_FLOAT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5DBL, Eet_5DBL, "f1", f1, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5DBL, Eet_5DBL, "f0", f0, EET_T_DOUBLE);
+
+   origin.fp32 = eina_f32p32_double_from(1.125);
+   origin.fp16 = eina_f16p16_int_from(2000);
+   origin.fp8 = eina_f8p24_int_from(125);
+   origin.f1 = eina_f32p32_int_from(1);
+   origin.f0 = 0;
+
+   fail_if(!(file = tmpnam(file)));
+
+   ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
+   fail_if(!ef);
+
+   fail_if(!eet_data_write(ef, edd_5FP, EET_TEST_FILE_KEY1, &origin, 1));
+
+   build = eet_data_read(ef, edd_5FP, EET_TEST_FILE_KEY1);
+   fail_if(!build);
+
+   convert = eet_data_read(ef, edd_5DBL, EET_TEST_FILE_KEY1);
+   fail_if(!convert);
+
+   fail_if(build->fp32 != eina_f32p32_double_from(1.125));
+   fail_if(build->fp16 != eina_f16p16_int_from(2000));
+   fail_if(build->fp8 != eina_f8p24_int_from(125));
+   fail_if(build->f1 != eina_f32p32_int_from(1));
+   fail_if(build->f0 != 0);
+
+   fail_if(convert->fp32 != 1.125);
+   fail_if(convert->fp16 != 2000);
+   fail_if(convert->fp8 != 125);
+   fail_if(convert->f1 != 1);
+   fail_if(convert->f0 != 0);
+
+   eet_close(ef);
+
+   fail_if(unlink(file) != 0);
+
+   eet_shutdown();
+}
+END_TEST
+
 Suite *
 eet_suite(void)
 {
@@ -1611,12 +1767,14 @@ eet_suite(void)
    tcase_add_test(tc, eet_test_basic_data_type_encoding_decoding);
    tcase_add_test(tc, eet_test_data_type_encoding_decoding);
    tcase_add_test(tc, eet_test_data_type_dump_undump);
+   tcase_add_test(tc, eet_fp);
    suite_add_tcase(s, tc);
 
    tc = tcase_create("Eet File");
    tcase_add_test(tc, eet_file_simple_write);
    tcase_add_test(tc, eet_file_data_test);
    tcase_add_test(tc, eet_file_data_dump_test);
+   tcase_add_test(tc, eet_file_fp);
    suite_add_tcase(s, tc);
 
    tc = tcase_create("Eet Image");
