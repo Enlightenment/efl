@@ -129,25 +129,25 @@ eina_f8p24_to_f32p32(Eina_F8p24 a)
 static inline Eina_F16p16
 eina_f32p32_to_f16p16(Eina_F32p32 a)
 {
-   return (Eina_F16p16) a >> 16;
+   return (Eina_F16p16) (a >> 16);
 }
 
 static inline Eina_F16p16
 eina_f8p24_to_f16p16(Eina_F8p24 a)
 {
-   return (Eina_F16p16) a >> 8;
+   return (Eina_F16p16) (a >> 8);
 }
 
 static inline Eina_F8p24
 eina_f32p32_to_f8p24(Eina_F32p32 a)
 {
-   return (Eina_F8p24) a >> 8;
+   return (Eina_F8p24) (a >> 8);
 }
 
 static inline Eina_F8p24
 eina_f16p16_to_f8p24(Eina_F16p16 a)
 {
-   return (Eina_F8p24) a << 8;
+   return (Eina_F8p24) (a << 8);
 }
 
 #endif
