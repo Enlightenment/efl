@@ -1265,11 +1265,11 @@ void              evas_font_dir_cache_free(void);
 
 /*****************************************************************************/
 
-#if defined(__ARM_ARCH__) && (__ARM_ARCH__ >= 70)
+//#if defined(__ARM_ARCH__) && (__ARM_ARCH__ >= 70)
 #ifdef BUILD_NEON
 # include <arm_neon.h>
 #endif
-#endif
+//#endif
 
 #ifdef __cplusplus
 }

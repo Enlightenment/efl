@@ -79,13 +79,13 @@ evas_common_cpu_altivec_test(void)
 void
 evas_common_cpu_neon_test(void)
 {
-#if defined(__ARM_ARCH__) && (__ARM_ARCH__ >= 70)
+//#if defined(__ARM_ARCH__) && (__ARM_ARCH__ >= 70)
 #ifdef BUILD_NEON
    asm volatile (
                  "vqadd.u8 d0, d1, d0\n"
                  );
 #endif
-#endif
+//#endif
 }
 
 void
