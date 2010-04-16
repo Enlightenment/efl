@@ -1559,6 +1559,7 @@ efreet_desktop_changes_listen_recursive(const char *path)
     efreet_desktop_changes_monitor_add(path);
 
     files = opendir(path);
+    if (!files) return;
     while ((file = readdir(files)))
     {
         if (!file) break;
