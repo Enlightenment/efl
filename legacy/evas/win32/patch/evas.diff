@@ -1,0 +1,70 @@
+--- ../../src/lib/include/evas_common.h	2010-04-15 17:50:07 +0000
++++ ../../src/lib/include/evas_common_new.h	2010-04-15 17:49:51 +0000
+@@ -312,10 +312,10 @@
+ 
+ /*****************************************************************************/
+ 
+-#define UNROLL2(op...) op op
+-#define UNROLL4(op...) UNROLL2(op) UNROLL2(op)
+-#define UNROLL8(op...) UNROLL4(op) UNROLL4(op)
+-#define UNROLL16(op...) UNROLL8(op) UNROLL8(op)
++#define UNROLL2(op) op op
++#define UNROLL4(op) UNROLL2(op) UNROLL2(op)
++#define UNROLL8(op) UNROLL4(op) UNROLL4(op)
++#define UNROLL16(op) UNROLL8(op) UNROLL8(op)
+ 
+ #define UNROLL8_PLD_WHILE(start, size, end, op)         \
+     pld(start, 0);                                      \
+@@ -726,7 +726,9 @@
+    } image;
+ 
+    struct {
++#ifdef BUILD_PTHREAD
+       LK(lock);
++#endif
+       Eina_List *list;
+       unsigned long long orig_usage;
+       unsigned long long usage_count;
+@@ -921,7 +923,9 @@
+    int references;
+    Fash_Int *fash;
+    unsigned char sizeok : 1;
++#ifdef BUILD_PTHREAD
+    LK(lock);
++#endif
+ };
+ 
+ struct _RGBA_Font_Int
+@@ -938,7 +942,9 @@
+ 
+ //   Eina_Hash       *glyphs;
+ 
++#ifdef BUILD_PTHREAD
+    LK(ft_mutex);
++#endif
+ 
+    Eina_Hash       *kerning;
+ //   Eina_Hash       *indexes;
+--- ../../src/lib/file/evas_module.h	2010-04-15 17:40:42 +0000
++++ ../../src/lib/file/evas_module_new.h	2010-04-15 17:40:21 +0000
+@@ -47,7 +47,9 @@
+    int           ref; /* how many refs */
+    int           last_used; /* the cycle count when it was last used */
+ 
++#ifdef BUILD_PTHREAD
+    LK(lock);
++#endif
+ 
+    unsigned char	loaded : 1;
+ };
+--- ../../src/lib/canvas/evas_render.c	2010-04-15 17:42:18 +0000
++++ ../../src/lib/canvas/evas_render_new.c	2010-04-15 17:41:46 +0000
+@@ -34,7 +34,7 @@
+       rend_dbg(__tmpbuf); \
+    }
+ #else
+-#define RD(args...)
++#define RD(args,...)
+ #define RDI(x)
+ #endif
+ 
