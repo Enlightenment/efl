@@ -362,3 +362,6 @@
 	* Only delete the file at the last possible time.
 	* Reduce open file descriptor.
 
+2010-04-16  Cedric BAIL
+
+	* Handle fixed point in data stream.
