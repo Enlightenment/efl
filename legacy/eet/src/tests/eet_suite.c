@@ -1216,6 +1216,7 @@ START_TEST(eet_identity_simple)
    const void *tmp;
    Eet_File *ef;
    Eet_Key *k;
+   FILE *noread;
    char *test;
    char *file = strdup("/tmp/eet_suite_testXXXXXX");
    int size;
@@ -1225,6 +1226,7 @@ START_TEST(eet_identity_simple)
 
    fail_if(!(file = tmpnam(file)));
    fail_if(chdir("src/tests"));
+   fail_if(!(noread = fopen("/dev/null", "w")));
 
    /* Sign an eet file. */
    ef = eet_open(file, EET_FILE_MODE_WRITE);
@@ -1236,6 +1238,7 @@ START_TEST(eet_identity_simple)
    fail_if(!k);
 
    fail_if(eet_identity_set(ef, k) != EET_ERROR_NONE);
+   eet_identity_print(k, noread);
 
    eet_close(ef);
 
@@ -1251,6 +1254,8 @@ START_TEST(eet_identity_simple)
 
    tmp = eet_identity_x509(ef, &size);
    fail_if(tmp == NULL);
+
+   eet_identity_certificate_print(tmp, size, noread);
 
    eet_close(ef);
 
