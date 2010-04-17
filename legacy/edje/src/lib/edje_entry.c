@@ -352,19 +352,20 @@ _curs_jump_line(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en, int ln)
      return;
    if (evas_textblock_cursor_char_coord_set(c, en->cx, ly + (lh / 2)))
      return;
+   evas_textblock_cursor_line_set(c, ln);
    if (en->cx < (lx + (lw / 2)))
      {
-//        evas_textblock_cursor_line_first(c);
         if (ln == last) _curs_end(c, o, en);
+//        evas_textblock_cursor_line_first(c);
         _curs_lin_start(c, o, en);
      }
    else
      {
-//        evas_textblock_cursor_line_last(c);
         if (ln == last)
           _curs_end(c, o, en);
         else
           _curs_lin_end(c, o, en);
+//        evas_textblock_cursor_line_last(c);
      }
 }
 
