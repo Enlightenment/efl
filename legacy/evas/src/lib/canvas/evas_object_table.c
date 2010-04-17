@@ -1358,3 +1358,22 @@ evas_object_table_children_get(const Evas_Object *o)
 
    return new_list;
 }
+
+/**
+ * Get a child from the table using its coordinates
+ *
+ * @note This does not take into account col/row spanning
+ */
+Evas_Object *
+evas_object_table_child_get(const Evas_Object *o, unsigned short col, unsigned short row)
+{
+   Eina_List *l;
+   Evas_Object_Table_Option *opt;
+
+   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
+
+   EINA_LIST_FOREACH(priv->children, l, opt)
+      if (opt->col == col && opt->row == row)
+         return opt->obj;
+   return NULL;
+}
