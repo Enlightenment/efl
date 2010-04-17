@@ -3673,6 +3673,31 @@ _edje_table_child_remove(Edje_Real_Part *rp, Evas_Object *child)
 }
 
 /**
+ * @brief Retrieve a child from a table
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param col The column of the child to get
+ * @param row The row of the child to get
+ * @return The child Evas_Object
+ */
+EAPI Evas_Object *
+edje_object_part_table_child_get(Evas_Object *obj, const char *part, unsigned int col, unsigned int row)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return NULL;
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return NULL;
+
+   return evas_object_table_child_get(rp->object, col, row);
+}
+
+/**
  * @brief Packs an object into the table.
  *
  * @param obj A valid Evas_Object handle

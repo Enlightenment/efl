@@ -544,6 +544,7 @@ extern "C" {
    EAPI Evas_Object *edje_object_part_box_remove     (Evas_Object *obj, const char *part, Evas_Object *child);
    EAPI Evas_Object *edje_object_part_box_remove_at  (Evas_Object *obj, const char *part, unsigned int pos);
    EAPI Eina_Bool    edje_object_part_box_remove_all (Evas_Object *obj, const char *part, Eina_Bool clear);
+   EAPI Evas_Object *edje_object_part_table_child_get(Evas_Object *obj, const char *part, unsigned int col, unsigned int row);
    EAPI Eina_Bool    edje_object_part_table_pack     (Evas_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
    EAPI Eina_Bool    edje_object_part_table_unpack   (Evas_Object *obj, const char *part, Evas_Object *child_obj);
    EAPI Eina_Bool    edje_object_part_table_col_row_size_get (const Evas_Object *obj, const char *part, int *cols, int *rows);
