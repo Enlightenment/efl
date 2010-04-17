@@ -73,7 +73,7 @@ ecore_file_monitor_poll_add(const char *path,
 			    void *data)
 {
    Ecore_File_Monitor *em;
-   int len;
+   size_t len;
 
    if (!path) return NULL;
    if (!func) return NULL;
