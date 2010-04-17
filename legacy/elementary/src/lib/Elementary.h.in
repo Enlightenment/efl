@@ -523,6 +523,63 @@ extern "C" {
    EAPI void         elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h);
    EAPI void	     elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical);
 
+   typedef struct _Elm_Grid_Cell_Class Elm_Grid_Cell_Class;
+   typedef struct _Elm_Grid_Cell_Class_Func Elm_Grid_Cell_Class_Func;
+   typedef struct _Elm_Grid_Cell Elm_Grid_Cell;
+   typedef char        *(*GridCellLabelGetFunc) (const void *data, Evas_Object *obj, const char *part);
+   typedef Evas_Object *(*GridCellIconGetFunc)  (const void *data, Evas_Object *obj, const char *part);
+   typedef Eina_Bool    (*GridCellStateGetFunc) (const void *data, Evas_Object *obj, const char *part);
+   typedef void         (*GridCellDelFunc)      (const void *data, Evas_Object *obj);
+
+   struct _Elm_Grid_Cell_Class
+     {
+	const char *item_style;
+	struct _Elm_Grid_Cell_Class_Func
+          {
+	     GridCellLabelGetFunc label_get;
+	     GridCellIconGetFunc icon_get;
+	     GridCellStateGetFunc state_get;
+	     GridCellDelFunc del;
+	  } func;
+     };
+
+   EAPI Evas_Object *elm_scrolled_grid_add(Evas_Object *parent);
+   EAPI void	     elm_scrolled_grid_cell_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+   EAPI void	     elm_scrolled_grid_cell_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+   EAPI void	     elm_scrolled_grid_cell_del(Elm_Grid_Cell *cell);
+   EAPI void	     elm_scrolled_grid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
+   EAPI Eina_Bool    elm_scrolled_grid_always_select_mode_get(const Evas_Object *obj);
+   EAPI void	     elm_scrolled_grid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
+   EAPI Eina_Bool    elm_scrolled_grid_no_select_mode_get(const Evas_Object *obj);
+   EAPI void	     elm_scrolled_grid_multi_select_set(Evas_Object *obj, Eina_Bool multi);
+   EAPI Eina_Bool    elm_scrolled_grid_multi_select_get(const Evas_Object *obj);
+   EAPI void	     elm_scrolled_grid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+   EAPI void	     elm_scrolled_grid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+   EAPI void	     elm_scrolled_grid_horizontal_set(Evas_Object *obj, Eina_Bool setting);
+   EAPI void	     elm_scrolled_grid_clear(Evas_Object *obj);
+   EAPI void	    *elm_scrolled_grid_cell_data_get(Elm_Grid_Cell *cell);
+   EAPI void	     elm_scrolled_grid_cell_pos_get(const Elm_Grid_Cell *cell, unsigned int *x, unsigned int *y);
+   EAPI Eina_Bool    elm_scrolled_grid_cell_selected_get(const Elm_Grid_Cell *cell);
+   EAPI const Evas_Object *elm_scrolled_grid_cell_object_get(Elm_Grid_Cell *cell);
+   EAPI const Eina_List *elm_scrolled_grid_selected_cells_get(const Evas_Object *obj);
+   EAPI Elm_Grid_Cell *elm_scrolled_grid_cell_add(Evas_Object *obj, const Elm_Grid_Cell_Class *gcc,  const void *data, Evas_Smart_Cb func, const void *func_data);
+   /* smart callbacks called:
+    *
+    * selected - User has selected a cell.
+    * unselected - User has unselected a cell.
+    * clicked - User has double-clicked a cell.
+    * realized - An evas object for a cell was built.
+    * scroll - the content has been scrolled (moved).
+    * "scroll,drag,start" - dragging the contents around has started.
+    * "scroll,drat,stop" - dragging the contents around has stopped.
+    * drag - grid is being dragged.
+    * "drag,start,up" - grid has been dragged (not scrolled) up.
+    * "drag,start,down" - grid has been dragged (not scrolled) down.
+    * "drag,start,left" - grid has been dragged (not scrolled) left.
+    * "drag,start,rigth" - grid has been dragged (nto scrolled) right.
+    * "drag,stop" - grid is not being dragged.
+    */
+
    EAPI Evas_Object *elm_clock_add(Evas_Object *parent);
    EAPI void         elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec);
    EAPI void         elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec);
