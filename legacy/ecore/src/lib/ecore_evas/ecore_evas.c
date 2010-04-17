@@ -8,8 +8,11 @@
 
 #include <string.h>
 #include <sys/types.h>
-#include <unistd.h>
 #include <errno.h>
+
+#ifndef _MSC_VER
+# include <unistd.h>
+#endif
 
 #include "Ecore.h"
 #include "ecore_private.h"
