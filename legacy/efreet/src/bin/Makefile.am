@@ -9,7 +9,8 @@ AM_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @EFREET_CFLAGS@
 
-bin_PROGRAMS = \
+internal_bindir=$(libdir)/efreet
+internal_bin_PROGRAMS = \
 efreet_desktop_cache_create
 
 efreet_desktop_cache_create_LDADD = \

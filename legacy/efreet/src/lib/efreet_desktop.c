@@ -198,7 +198,7 @@ efreet_desktop_init(void)
 
         efreet_desktop_changes_listen();
 
-        ecore_exe_run(PACKAGE_BIN_DIR "/efreet_desktop_cache_create", NULL);
+        ecore_exe_run(PACKAGE_LIB_DIR "/efreet/efreet_desktop_cache_create", NULL);
 
     }
 
@@ -1476,7 +1476,7 @@ efreet_desktop_update_cache_job(void *data __UNUSED__)
     efreet_desktop_exe_lock = open(file, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
     if (efreet_desktop_exe_lock < 0) return;
     if (flock(efreet_desktop_exe_lock, LOCK_EX | LOCK_NB) < 0) goto error;
-    efreet_desktop_exe = ecore_exe_run(PACKAGE_BIN_DIR "/efreet_desktop_cache_create", NULL);
+    efreet_desktop_exe = ecore_exe_run(PACKAGE_LIB_DIR "/efreet/efreet_desktop_cache_create", NULL);
     if (!efreet_desktop_exe) goto error;
 
     return;
