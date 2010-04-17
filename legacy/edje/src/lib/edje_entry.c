@@ -304,47 +304,6 @@ _curs_line_last_get(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *
 }
 
 static void
-_curs_jump_line(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en, int ln)
-{
-   Evas_Coord lx, ly, lw, lh;
-
-   if (ln < 0) ln = 0;
-   else
-     {
-	int last = _curs_line_last_get(c, o, en);
-	if (ln > last) ln = last;
-     }
-   if (!evas_object_textblock_line_number_geometry_get(o, ln, &lx, &ly, &lw, &lh))
-     return;
-   if (evas_textblock_cursor_char_coord_set(c, en->cx, ly + (lh / 2)))
-     return;
-   evas_textblock_cursor_line_coord_set(c, ly + (lh / 2));
-   if (en->cx < (lx + (lw / 2))) evas_textblock_cursor_line_first(c);
-   else evas_textblock_cursor_line_last(c);
-}
-
-static void
-_curs_jump_line_by(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en, int by)
-{
-   int ln;
-   
-   ln = evas_textblock_cursor_line_geometry_get(c, NULL, NULL, NULL, NULL) + by;
-   _curs_jump_line(c, o, en, ln);
-}
-
-static void
-_curs_up(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
-{
-   _curs_jump_line_by(c, o, en, -1);
-}
-
-static void
-_curs_down(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
-{
-   _curs_jump_line_by(c, o, en, 1);
-}
-
-static void
 _curs_lin_start(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 {
    evas_textblock_cursor_line_first(c);
@@ -371,12 +330,64 @@ _curs_start(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 static void
 _curs_end(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 {
-   evas_textblock_cursor_line_set(c, _curs_line_last_get(c, o, en));
+   evas_textblock_cursor_node_last(c);
    _curs_lin_end(c, o, en);
+//   evas_textblock_cursor_line_set(c, _curs_line_last_get(c, o, en));
+//   _curs_lin_end(c, o, en);
    _curs_update_from_curs(c, o, en);
 }
 
+static void
+_curs_jump_line(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en, int ln)
+{
+   Evas_Coord lx, ly, lw, lh;
+   int last = _curs_line_last_get(c, o, en);
 
+   if (ln < 0) ln = 0;
+   else
+     {
+	if (ln > last) ln = last;
+     }
+   if (!evas_object_textblock_line_number_geometry_get(o, ln, &lx, &ly, &lw, &lh))
+     return;
+   if (evas_textblock_cursor_char_coord_set(c, en->cx, ly + (lh / 2)))
+     return;
+   if (en->cx < (lx + (lw / 2)))
+     {
+//        evas_textblock_cursor_line_first(c);
+        if (ln == last) _curs_end(c, o, en);
+        _curs_lin_start(c, o, en);
+     }
+   else
+     {
+//        evas_textblock_cursor_line_last(c);
+        if (ln == last)
+          _curs_end(c, o, en);
+        else
+          _curs_lin_end(c, o, en);
+     }
+}
+
+static void
+_curs_jump_line_by(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en, int by)
+{
+   int ln;
+   
+   ln = evas_textblock_cursor_line_geometry_get(c, NULL, NULL, NULL, NULL) + by;
+   _curs_jump_line(c, o, en, ln);
+}
+
+static void
+_curs_up(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+{
+   _curs_jump_line_by(c, o, en, -1);
+}
+
+static void
+_curs_down(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+{
+   _curs_jump_line_by(c, o, en, 1);
+}
 
 static void
 _sel_start(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
