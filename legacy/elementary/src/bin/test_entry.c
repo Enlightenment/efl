@@ -1182,4 +1182,299 @@ test_entry4(void *data, Evas_Object *obj, void *event_info)
 
    evas_object_show(win);
 }
+
+void
+test_entry5(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *en, *en_p, *sp;
+
+   win = elm_win_add(NULL, "entry5", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Entry 5");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   en = elm_scrolled_entry_add(win);
+   elm_scrolled_entry_line_char_wrap_set(en, 1);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_scrolled_entry_entry_set(en,
+				"This is an entry widget in this window that "
+				"uses markup like this for styling and "
+				"formatting like this, as well as "
+				"to refer to them this way. At the end here is a really long "
+				"line to test line wrapping to see if it works. But just in "
+				"case this line is not long enough I will add more here to "
+				"really test it out, as Elementary really needs some "
+				"good testing to see if entry widgets work as advertised."
+                                );
+   evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
+   elm_box_pack_end(bx, en);
+   evas_object_show(en);
+   
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, 1);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Clr");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_clr, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Pri");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_pri, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Sel");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_sel, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "All");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_all, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Non");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_non, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Ins");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_ins, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, 1);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Lef");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_lef, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Rig");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_rig, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Up ");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_up_, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Dow");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_dow, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Beg");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_beg, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "End");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_end, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, 1);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "LBe");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_lbe, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "LEn");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_len, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "SBe");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_sbe, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "SEn");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_sen, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Fmt");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_fmt, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "VFm");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_vfm, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, 1);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Chr");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_chr, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Cut");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_cut, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Cop");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_cop, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Pas");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_pas, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt); 
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   evas_object_resize(win, 320, 480);
+
+   elm_object_focus(win);
+   evas_object_show(win);
+}
 #endif
