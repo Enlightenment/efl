@@ -1928,80 +1928,83 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
 
     path_len = strlen(path);
     files = opendir(path);
-    while ((file = readdir(files)))
+    if (files)
     {
-        Efreet_Desktop *desktop = NULL;
-        char buf[PATH_MAX];
-        char *exten;
-
-        if (!strcmp(file->d_name, ".") || !strcmp(file->d_name, "..")) continue;
-        file_path[0] = '\0';
-        eina_strlcpy(file_path, path, PATH_MAX);
-        eina_strlcpy(file_path + path_len, "/", PATH_MAX - path_len);
-        eina_strlcpy(file_path + path_len + 1, file->d_name, PATH_MAX - path_len - 1);
-
-        /* recurse into sub directories */
-        if (ecore_file_is_dir(file_path))
+        while ((file = readdir(files)))
         {
-            Efreet_Menu_Internal *ret;
+            Efreet_Desktop *desktop = NULL;
+            char buf[PATH_MAX];
+            char *exten;
 
-            ret = efreet_menu_handle_legacy_dir_helper(root ? root : legacy_internal,
-                                                        legacy_internal, file_path, prefix);
-            if (!ret)
+            if (!strcmp(file->d_name, ".") || !strcmp(file->d_name, "..")) continue;
+            file_path[0] = '\0';
+            eina_strlcpy(file_path, path, PATH_MAX);
+            eina_strlcpy(file_path + path_len, "/", PATH_MAX - path_len);
+            eina_strlcpy(file_path + path_len + 1, file->d_name, PATH_MAX - path_len - 1);
+
+            /* recurse into sub directories */
+            if (ecore_file_is_dir(file_path))
             {
-                efreet_menu_internal_free(legacy_internal);
-                eina_stringshare_del(path);
-                closedir(files);
-                return NULL;
+                Efreet_Menu_Internal *ret;
+
+                ret = efreet_menu_handle_legacy_dir_helper(root ? root : legacy_internal,
+                        legacy_internal, file_path, prefix);
+                if (!ret)
+                {
+                    efreet_menu_internal_free(legacy_internal);
+                    eina_stringshare_del(path);
+                    closedir(files);
+                    return NULL;
+                }
+
+                efreet_menu_create_sub_menu_list(legacy_internal);
+                legacy_internal->sub_menus = eina_list_prepend(legacy_internal->sub_menus, ret);
+
+                continue;
             }
 
-            efreet_menu_create_sub_menu_list(legacy_internal);
-            legacy_internal->sub_menus = eina_list_prepend(legacy_internal->sub_menus, ret);
-
-            continue;
-        }
-
-        if (!strcmp(file->d_name, ".directory"))
-        {
-            legacy_internal->directory = efreet_desktop_get(file_path);
-            if (legacy_internal->directory
-                    && legacy_internal->directory->type != EFREET_DESKTOP_TYPE_DIRECTORY)
+            if (!strcmp(file->d_name, ".directory"))
             {
-                efreet_desktop_free(legacy_internal->directory);
-                legacy_internal->directory = NULL;
+                legacy_internal->directory = efreet_desktop_get(file_path);
+                if (legacy_internal->directory
+                        && legacy_internal->directory->type != EFREET_DESKTOP_TYPE_DIRECTORY)
+                {
+                    efreet_desktop_free(legacy_internal->directory);
+                    legacy_internal->directory = NULL;
+                }
+                continue;
             }
-            continue;
-        }
 
-        exten = strrchr(file->d_name, '.');
+            exten = strrchr(file->d_name, '.');
 
-        if (exten && !strcmp(exten, ".desktop"))
-            desktop = efreet_desktop_get(file_path);
+            if (exten && !strcmp(exten, ".desktop"))
+                desktop = efreet_desktop_get(file_path);
 
-        if (!desktop) continue;
+            if (!desktop) continue;
 
-        /* if the .desktop has categories it isn't legacy */
-        if (efreet_desktop_category_count_get(desktop) != 0)
-        {
+            /* if the .desktop has categories it isn't legacy */
+            if (efreet_desktop_category_count_get(desktop) != 0)
+            {
+                efreet_desktop_free(desktop);
+                continue;
+            }
+
+            /* XXX: This will disappear when the .desktop is free'd */
+            efreet_desktop_category_add(desktop, "Legacy");
+
+            if (prefix)
+            {
+                snprintf(buf, sizeof(buf), "%s%s", prefix, file->d_name);
+                filter->op->filenames = eina_list_append(filter->op->filenames, eina_stringshare_add(buf));
+            }
+            else
+                filter->op->filenames = eina_list_append(filter->op->filenames, eina_stringshare_add(file->d_name));
+
+            count++;
             efreet_desktop_free(desktop);
-            continue;
         }
-
-        /* XXX: This will disappear when the .desktop is free'd */
-        efreet_desktop_category_add(desktop, "Legacy");
-
-        if (prefix)
-        {
-            snprintf(buf, sizeof(buf), "%s%s", prefix, file->d_name);
-            filter->op->filenames = eina_list_append(filter->op->filenames, eina_stringshare_add(buf));
-        }
-        else
-            filter->op->filenames = eina_list_append(filter->op->filenames, eina_stringshare_add(file->d_name));
-
-        count++;
-        efreet_desktop_free(desktop);
+        closedir(files);
     }
-    closedir(files);
 
     eina_stringshare_del(path);
     return legacy_internal;

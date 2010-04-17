@@ -141,6 +141,7 @@ cache_scan(const char *path, const char *base_id, int priority, int recurse, int
     if (!ecore_file_is_dir(path)) return 1;
 
     files = opendir(path);
+    if (!files) return 1;
     id[0] = '\0';
     while ((file = readdir(files)))
     {
