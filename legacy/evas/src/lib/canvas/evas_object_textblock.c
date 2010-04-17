@@ -3562,7 +3562,6 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
         cur->eol = 0;
         cur->node = o->nodes;
      }
-   cur->eol = 0;
    return EINA_TRUE;
 }
 
