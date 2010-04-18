@@ -1197,6 +1197,9 @@ extern "C" {
    EAPI double	     elm_spinner_value_get(const Evas_Object *obj);
    EAPI void         elm_spinner_wrap_set(Evas_Object *obj, Eina_Bool wrap);
    EAPI Eina_Bool    elm_spinner_wrap_get(const Evas_Object *obj);
+   EAPI void	     elm_spinner_editable_set(Evas_Object *obj, Eina_Bool editable);
+   EAPI Eina_Bool    elm_spinner_editable_get(const Evas_Object *obj);
+   EAPI void	     elm_spinner_special_value_add(Evas_Object *obj, double value, const char *label);
    /* smart callbacks called:
     * "changed" - when the spinner value changes
     * "delay,changed" - when the spinner value changed, but a small time after a change (use this if you only want to respond to a change once the spinner is held still for a short while).

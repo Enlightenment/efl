@@ -23,6 +23,7 @@
  * expensive reactions to the value change.
  */
 typedef struct _Widget_Data Widget_Data;
+typedef struct _Elm_Spinner_Special_Value Elm_Spinner_Special_Value;
 
 struct _Widget_Data
 {
@@ -31,9 +32,16 @@ struct _Widget_Data
    double val, val_min, val_max, orig_val, step;
    double drag_start_pos, spin_speed, interval;
    Ecore_Timer *delay, *spin;
+   Eina_List *special_values;
    Eina_Bool wrap : 1;
    Eina_Bool entry_visible : 1;
    Eina_Bool dragging : 1;
+   Eina_Bool editable : 1;
+};
+
+struct _Elm_Spinner_Special_Value {
+     double value;
+     const char *label;
 };
 
 static const char *widtype = NULL;
@@ -47,10 +55,17 @@ static Eina_Bool _value_set(Evas_Object *obj, double delta);
 static void
 _del_hook(Evas_Object *obj)
 {
+   Elm_Spinner_Special_Value *sv;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->label) eina_stringshare_del(wd->label);
    if (wd->delay) ecore_timer_del(wd->delay);
+   if (wd->special_values)
+       EINA_LIST_FREE(wd->special_values, sv)
+       {
+           eina_stringshare_del(sv->label);
+           free(sv);
+       }
    free(wd);
 }
 
@@ -135,13 +150,23 @@ _entry_show(Widget_Data *wd)
 static void
 _write_label(Evas_Object *obj)
 {
+   Eina_List *l;
+   Elm_Spinner_Special_Value *sv;
    Widget_Data *wd = elm_widget_data_get(obj);
    char buf[1024];
    if (!wd) return;
+   EINA_LIST_FOREACH(wd->special_values, l, sv)
+      if (sv->value == wd->val)
+	{
+	   snprintf(buf, sizeof(buf), "%s", sv->label);
+	   goto apply;
+	}
    if (wd->label)
      snprintf(buf, sizeof(buf), wd->label, wd->val);
    else
      snprintf(buf, sizeof(buf), "%.0f", wd->val);
+
+apply:
    edje_object_part_text_set(wd->spinner, "elm.text", buf);
    if (wd->entry_visible) _entry_show(wd);
 }
@@ -295,6 +320,7 @@ _toggle_entry(void *data, Evas_Object *obj __UNUSED__, const char *emission __UN
         return;
      }
    if (elm_widget_disabled_get(data)) return;
+   if (!wd->editable) return;
    if (wd->entry_visible) _apply_entry_value(data);
    else
      {
@@ -472,6 +498,7 @@ elm_spinner_add(Evas_Object *parent)
    wd->wrap = 0;
    wd->step = 1.0;
    wd->entry_visible = 0;
+   wd->editable = EINA_TRUE;
 
    wd->spinner = edje_object_add(e);
    _elm_theme_set(wd->spinner, "spinner", "base", "default");
@@ -709,4 +736,63 @@ elm_spinner_wrap_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->wrap;
+}
+
+/**
+ * Set a special value to display in the place of the numerical one.
+ *
+ * @param obj The spinner object
+ * @param value The value to be replaced
+ * @param label The label to be used
+ *
+ * @ingroup Spinner
+ */
+EAPI void
+elm_spinner_special_value_add(Evas_Object *obj, double value, const char *label)
+{
+    Elm_Spinner_Special_Value *sv;
+    ELM_CHECK_WIDTYPE(obj, widtype);
+    Widget_Data *wd = elm_widget_data_get(obj);
+    if (!wd) return;
+
+    sv = calloc(1, sizeof(*sv));
+    if (!sv) return;
+    sv->value = value;
+    sv->label = eina_stringshare_add(label);
+
+    wd->special_values = eina_list_append(wd->special_values, sv);
+    _write_label(obj);
+}
+
+/**
+ * Set whether the spinner can be directly edited by the user or not.
+ * Default is editable.
+ *
+ * @param obj The spinner object
+ * @param editable Bool value of the edit option
+ * (EINA_FALSE = not editable, EINA_TRUE = editable)
+ */
+EAPI void
+elm_spinner_editable_set(Evas_Object *obj, Eina_Bool editable)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->editable = editable;
+}
+
+/**
+ * Gets whether the spinner is editable.
+ *
+ * @param obj The spinner object
+ * @return Bool value of edit option
+ * (EINA_FALSE = not editable, EINA_TRUE = editable)
+ */
+EAPI Eina_Bool
+elm_spinner_editable_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->editable;
 }
