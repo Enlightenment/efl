@@ -95,6 +95,7 @@ efreet_xml_new(const char *file)
     char *data = MAP_FAILED;
 
     if (!file) return NULL;
+    if (!ecore_file_exists(file)) return NULL;
 
     size = ecore_file_size(file);
     if (size <= 0) goto efreet_error;
