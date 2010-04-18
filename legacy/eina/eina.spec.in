@@ -1,12 +1,13 @@
+%{!?_rel:%{expand:%%global _rel 0.r%(svnversion | sed 's/[^0-9].*$//' || echo 0000)}}
 %define _missing_doc_files_terminate_build 0
 
 Summary: Data Type Library
 Name: @PACKAGE@
 Version: @VERSION@
-Release: 0.%(date '+%Y%m%d')
-License: BSD
+Release: %{_rel}
+License: LGPLv2.1
 Group: System Environment/Libraries
-Source: %{name}-%{version}.tar.gz
+Source: http://download.enlightenment.org/releases/%{name}-%{version}.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
@@ -47,7 +48,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %defattr(-, root, root)
 %doc AUTHORS COPYING README
 %{_libdir}/*.so.*
-#%{_libdir}/%{name}*
 
 %files devel
 %defattr(-, root, root)
