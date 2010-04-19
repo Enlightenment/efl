@@ -107,6 +107,7 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
 {
    Edje_Part_Description *epd1;
    Edje_Part_Description *epd2 = NULL;
+   Edje_Part_Description *chosen_desc;
 
    if (!d1) d1 = "default";
 
@@ -115,7 +116,7 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
      epd1 = ep->part->default_desc; /* never NULL */
 
    if (d2)
-      epd2 = _edje_part_description_find(ed, ep, d2, v2);
+     epd2 = _edje_part_description_find(ed, ep, d2, v2);
 
    /* There is an animation if both description are different or if description is an image with tweens */
    if (epd2 != NULL && (epd1 != epd2 || (ep->part->type == EDJE_PART_TYPE_IMAGE && epd2->image.tween_list)))
@@ -135,6 +136,7 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
 	  ep->param2 = NULL;
        }
 
+   chosen_desc = ep->chosen_description;
    ep->param1.description = epd1;
    ep->chosen_description = epd1;
 
@@ -182,6 +184,10 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
 	if (ep->description_pos != 0.0)
 	  ep->chosen_description = epd2;
      }
+
+   if (chosen_desc != ep->chosen_description &&
+       ep->part->type == EDJE_PART_TYPE_EXTERNAL)
+     _edje_external_recalc_apply(ed, ep, NULL, chosen_desc);
 
    ed->dirty = 1;
 #ifdef EDJE_CALC_CACHE
@@ -1996,8 +2002,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	      _edje_table_recalc_apply(ed, ep, pf, chosen_desc);
 	      break;
 	   case EDJE_PART_TYPE_EXTERNAL:
-	      _edje_external_recalc_apply(ed, ep, pf, chosen_desc);
-	      break;
 	   case EDJE_PART_TYPE_RECTANGLE:
 	   case EDJE_PART_TYPE_SWALLOW:
 	   case EDJE_PART_TYPE_GROUP:

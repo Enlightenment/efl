@@ -1814,11 +1814,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
 
    /* Create default description */
    edje_edit_state_add(obj, name, "default", 0.0);
-
-   rp->param1.description = ep->default_desc;
-   rp->chosen_description = rp->param1.description;
-
-   edje_object_calc_force(obj);
+   edje_edit_part_selected_state_set(obj, name, "default", 0.0);
 
    return EINA_TRUE;
 }

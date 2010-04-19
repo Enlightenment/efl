@@ -619,6 +619,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			       {
 				  _edje_real_part_swallow(rp, child_obj);
 				  rp->param1.external_params = _edje_external_params_parse(child_obj, rp->param1.description->external_params);
+				  _edje_external_recalc_apply(ed, rp, NULL, rp->chosen_description);
 			       }
 			  }
 			continue;
