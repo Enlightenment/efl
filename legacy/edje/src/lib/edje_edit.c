@@ -2057,8 +2057,8 @@ edje_edit_part_selected_state_set(Evas_Object *obj, const char *part, const char
    pd = _edje_part_description_find_byname(ed, part, state, value);
    if (!pd) return 0;
 
-   //printf("EDJE: Set state: %s\n", pd->state.name);
-   _edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, NULL, 0); //WHAT IS NULL , 0
+   //printf("EDJE: Set state: %s %f\n", pd->state.name, pd->state.value);
+   _edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, NULL, 0.0);
 
    edje_object_calc_force(obj);
    return 1;
@@ -3779,10 +3779,20 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
    if (!found)
      pd->external_params = eina_list_append(pd->external_params, p);
 
-   _edje_external_parsed_params_free(rp->swallowed_object, rp->param1.external_params);
-   rp->param1.external_params = _edje_external_params_parse(rp->swallowed_object, pd->external_params);
+   _edje_external_parsed_params_free(rp->swallowed_object,
+				     rp->param1.external_params);
+   rp->param1.external_params = \
+			     _edje_external_params_parse(rp->swallowed_object,
+							 pd->external_params);
 
-   edje_object_calc_force(obj);
+     {
+	const char * sname;
+	double svalue;
+	sname = edje_edit_part_selected_state_get(obj, part, &svalue);
+	if (!strcmp(state, sname) && svalue == value)
+	  edje_object_part_external_param_set(obj, part, p);
+	eina_stringshare_del(sname);
+     }
 
    return EINA_TRUE;
 }

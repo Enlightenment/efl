@@ -632,9 +632,14 @@ _edje_external_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
    if (!type->state_set) return;
 
-   params1 = ep->param1.external_params ? ep->param1.external_params : ep->param1.description->external_params;
+   params1 = ep->param1.external_params ?
+		  ep->param1.external_params :
+		  ep->param1.description->external_params;
+
    if (ep->param2 && ep->param2->description)
-     params2 = ep->param2->external_params ? ep->param2->external_params : ep->param2->description->external_params;
+     params2 = ep->param2->external_params ?
+		  ep->param2->external_params :
+		  ep->param2->description->external_params;
 
    type->state_set(type->data, ep->swallowed_object,
 	 params1, params2, ep->description_pos);
