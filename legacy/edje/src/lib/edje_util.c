@@ -108,8 +108,6 @@ _edje_thaw_edje(Edje *ed)
 EAPI void
 edje_thaw(void)
 {
-  Evas_Object *data;
-
 #ifdef FASTFREEZE
    _edje_freeze_val--;
    INF("fr -- ->%i", _edje_freeze_val);
@@ -125,6 +123,8 @@ edje_thaw(void)
 	  }
      }
 #else   
+  Evas_Object *data;
+
 // FIXME: could just have a global freeze instead of per object
 // comment as above.. why?
    Eina_List *l;

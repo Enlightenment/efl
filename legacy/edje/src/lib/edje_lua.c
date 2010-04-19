@@ -1847,7 +1847,7 @@ _edje_lua_object_get_clipees(lua_State *L)
 static int
 _edje_lua_object_get_evas(lua_State *L)
 {
-   Edje_Lua_Evas_Object *obj = _edje_lua_checkudata(L, 1, &mObject);
+   //Edje_Lua_Evas_Object *obj = _edje_lua_checkudata(L, 1, &mObject);
    lua_pushnil(L);
    // FIXME implement Evas class in the first place?
    return 1;
@@ -5615,7 +5615,7 @@ _edje_lua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
    /* ANSI requires that realloc(NULL, size) == malloc(size) */
    ptr2 = realloc(ptr, nsize);
    if (ptr2) return ptr2;
-   ERR("Edje Lua cannot re-allocate %i bytes\n", nsize);
+   ERR("Edje Lua cannot re-allocate %zu bytes\n", nsize);
    return ptr2;
 }
 

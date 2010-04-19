@@ -379,7 +379,6 @@ _reset_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *stack, void *even
 {
    Evas_Coord minw, minh;
    Evas_Object *edje = data;
-   char *p;
 
    edje_object_size_min_get(edje, &minw, &minh);
    if ((minw <= 0) && (minh <= 0))

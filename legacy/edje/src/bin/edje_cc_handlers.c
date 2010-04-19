@@ -6281,6 +6281,10 @@ _st_collections_group_parts_part_description_params(Edje_External_Param_Type typ
       case EDJE_EXTERNAL_PARAM_TYPE_STRING:
 	 param->s = parse_str(1);
 	 break;
+      default:
+	 ERR("%s: Error. parse error %s:%i. Invalid param type.\n",
+	     progname, file_in, line - 1);
+	 break;
      }
 
    if (!found)
