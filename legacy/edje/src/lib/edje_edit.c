@@ -600,6 +600,49 @@ _edje_edit_external_get(Edje *ed, const char *name)
    return NULL;
 }
 
+void
+_edje_edit_group_references_update(Evas_Object *obj, const char *old_group_name, const char *new_group_name)
+{
+
+   Eina_List *gl, *pll, *pl;
+   Edje_Part_Collection *pc;
+   Edje_Part_Collection_Directory_Entry *pce;
+   char *part_name;
+   const char *source, *old;
+   Edje_Part_Type type;
+   Evas_Object *part_obj;
+
+   GET_ED_OR_RETURN();
+
+   pc = ed->collection;
+
+   part_obj = edje_object_add(ed->evas);
+
+   old = eina_stringshare_add(old_group_name);
+
+   EINA_LIST_FOREACH(ed->file->collection_dir->entries, gl, pce)
+     {
+	edje_object_file_set(part_obj, ed->file->path, pce->entry);
+
+	pl = edje_edit_parts_list_get(part_obj);
+
+	EINA_LIST_FOREACH(pl, pll, part_name)
+	  {
+	     source = edje_edit_part_source_get(part_obj, part_name);
+	     type = edje_edit_part_type_get(part_obj, part_name);
+
+	     if (type ==  EDJE_PART_TYPE_GROUP && source == old)
+	       edje_edit_part_source_set(part_obj, part_name, new_group_name);
+
+	     if (source)
+	       eina_stringshare_del(source);
+	  }
+     }
+   eina_stringshare_del(old);
+
+   evas_object_del(part_obj);
+}
+
 /*****************/
 /*  GENERAL API  */
 /*****************/
@@ -757,6 +800,8 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
 
    if (strcmp(ed->group, group_name) == 0) return EINA_FALSE;
 
+   _edje_edit_group_references_update(obj, group_name, NULL);
+
    EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, e)
      {
 	if (!strcmp(e->entry, group_name))
@@ -836,6 +881,8 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
    if (!strcmp(pc->part, new_name)) return 1;
 
    if (edje_edit_group_exist(obj, new_name)) return 0;
+
+   _edje_edit_group_references_update(obj, pc->part, new_name);
 
    //printf("Set name of current group: %s [id: %d][new name: %s]\n",
 	// pc->part, pc->id, new_name);
@@ -2234,7 +2281,8 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
 
    if (source)
      rp->part->source = eina_stringshare_add(source);
-
+   else
+     rp->part->source = NULL;
    return 1;
 }
 
