@@ -224,8 +224,10 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-//   if (elm_widget_focus_get(obj))
-//     elm_widget_focus_steal(wd->entry);
+   if (elm_widget_focus_get(obj))
+     evas_object_focus_set(wd->scr, 1);
+   else
+     evas_object_focus_set(wd->scr, 0);
 }
 
 static void
