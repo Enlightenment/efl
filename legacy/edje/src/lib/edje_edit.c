@@ -5672,6 +5672,28 @@ edje_edit_program_after_add(Evas_Object *obj, const char *prog, const char *afte
    return 1;
 }
 
+EAPI Eina_Bool
+edje_edit_program_after_del(Evas_Object *obj, const char *prog, const char *after)
+{
+   Edje_Program *af;
+   Edje_Program_After *a;
+   const Eina_List *l;
+
+   GET_EPR_OR_RETURN(EINA_FALSE);
+
+   af = _edje_program_get_byname(obj, after);
+   if (!af) return EINA_FALSE;
+
+   EINA_LIST_FOREACH(epr->after, l, a)
+      if (a->id == af->id)
+	{
+	   epr->after = eina_list_remove_list(epr->after, l);
+	   break;
+	}
+
+   return EINA_TRUE;
+}
+
 /*************************/
 /*  EMBRYO SCRIPTS  API  */
 /*************************/

@@ -2578,6 +2578,8 @@ edje_edit_program_after_add(
    const char *after       ///< The name of another program to add to the afters list
 );
 
+EAPI Eina_Bool edje_edit_program_after_del(Evas_Object *obj, const char *prog, const char *after);
+
 /**Clear the 'afters' list of the given program */
 EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_afters_clear(
