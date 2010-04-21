@@ -108,28 +108,7 @@ PKG_CHECK_EXISTS([evas-opengl-x11], [AC_DEFINE(HAVE_EVAS_OPENGL_X11, 1, [Evas Op
 
 PKG_CHECK_EXISTS([evas-fb], [AC_DEFINE(HAVE_EVAS_FB, 1, [Evas Framebuffer Engine Support])])
 
-enable_edje_external="yes"
-want_edje_external="auto"
-AC_MSG_CHECKING([if should provide Edje EXTERNAL support...])
-AC_ARG_ENABLE([edje-external],
-   [AC_HELP_STRING([--disable-edje-external], [disable providing Edje EXTERNAL support. @<:@default=detect@:>@])],
-   [want_edje_external=$enableval], [])
-AC_MSG_RESULT([${enable_edje_external}])
-if test "x$want_edje_external" != "xno"; then
-   PKG_CHECK_MODULES([EDJE_EXTERNAL],
-      [edje],
-      [enable_edje_external="yes"],
-      [enable_edje_external="no"]
-   )
-else
-    enable_edje_external="no"
-fi
-if test "x$want_edje_external" = "xyes" -a "x$enable_edje_external" = "xno"; then
-    AC_MSG_ERROR([Edje EXTERNAL support requested, but Edje not found by pkg-config.])
-fi
-AM_CONDITIONAL(ENABLE_EDJE_EXTERNAL, test "x$enable_edje_external" = "xyes")
-AC_SUBST(EDJE_EXTERNAL_CFLAGS)
-AC_SUBST(EDJE_EXTERNAL_LIBS)
+EFL_EDJE_EXTERNAL([have_edje_external="yes"], [have_edje_external="no"])
 
 
 ### Checks for header files
@@ -225,7 +204,7 @@ echo
 echo "  Build emotion_test...: $have_emotion_test"
 echo "  edje_cc..............: ${edje_cc}"
 echo
-echo "  Edje EXTERNAL support: ${enable_edje_external}"
+echo "  Edje EXTERNAL support: ${have_edje_external}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
