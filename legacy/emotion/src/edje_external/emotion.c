@@ -68,7 +68,7 @@ static const char _external_emotion_engine_def[] =
 #elif defined(EMOTION_BUILD_VLC)
   "vlc";
 #else
-  NULL;
+  "impossible";
 #endif
 
 static void
