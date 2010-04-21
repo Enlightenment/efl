@@ -275,7 +275,7 @@ _fs_launch(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSE
 }
 
 static void
-_selection_done(void *data, Evas_Object *obj, void *event_info)
+_selection_done(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Object *fs_btn, *win;
    const char *file;

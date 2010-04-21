@@ -247,7 +247,7 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
-_mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Elm_Grid_Cell *cell = data;
    Evas_Event_Mouse_Move *ev = event_info;
@@ -346,7 +346,7 @@ _long_press(void *data)
 }
 
 static void
-_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Elm_Grid_Cell *cell = data;
    Evas_Event_Mouse_Down *ev = event_info;
@@ -373,7 +373,7 @@ _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 }
 
 static void
-_mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Grid_Cell *cell = data;
    Evas_Event_Mouse_Up *ev = event_info;
@@ -831,7 +831,7 @@ _pan_calculate(Evas_Object *obj)
 }
 
 static void
-_pan_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+_pan_move(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 {
    Pan *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
@@ -840,7 +840,7 @@ _pan_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 }
 
 static void
-_hold_on(void *data, Evas_Object *obj, void *event_info)
+_hold_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -848,7 +848,7 @@ _hold_on(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_hold_off(void *data, Evas_Object *obj, void *event_info)
+_hold_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -856,7 +856,7 @@ _hold_off(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_freeze_on(void *data, Evas_Object *obj, void *event_info)
+_freeze_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -864,7 +864,7 @@ _freeze_on(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_freeze_off(void *data, Evas_Object *obj, void *event_info)
+_freeze_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -872,19 +872,19 @@ _freeze_off(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_scr_drag_start(void *data, Evas_Object *obj, void *event_info)
+_scr_drag_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "scroll,drag,start", NULL);
 }
 
 static void
-_scr_drag_stop(void *data, Evas_Object *obj, void *event_info)
+_scr_drag_stop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "scroll,drag,stop", NULL);
 }
 
 static void
-_scr_scroll(void *data, Evas_Object *obj, void *event_info)
+_scr_scroll(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, "scroll", NULL);
 }
