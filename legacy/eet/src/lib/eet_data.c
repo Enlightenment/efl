@@ -2958,6 +2958,7 @@ eet_data_get_union(Eet_Free_Context *context, const Eet_Dictionary *ed,
 	  if (strcmp(ede->subtype->elements.set[i].name, union_type) == 0)
 	    {
 	       Eet_Data_Element *sede;
+	       char *ut;
 
 	       /* Yeah we found it ! */
 	       sede = &(ede->subtype->elements.set[i]);
@@ -2979,16 +2980,16 @@ eet_data_get_union(Eet_Free_Context *context, const Eet_Dictionary *ed,
 	       /* Set union type. */
 	       if ((!ed) || (!ede->subtype->func.str_direct_alloc))
 		 {
-		    union_type = ede->subtype->func.str_alloc(union_type);
-		    _eet_freelist_str_add(context, (char*) union_type);
+		    ut = ede->subtype->func.str_alloc(union_type);
+		    _eet_freelist_str_add(context, ut);
 		 }
 	       else
 		 {
-		    union_type = ede->subtype->func.str_direct_alloc(union_type);
-		    _eet_freelist_direct_str_add(context, (char*) union_type);
+		    ut = ede->subtype->func.str_direct_alloc(union_type);
+		    _eet_freelist_direct_str_add(context, ut);
 		 }
 
-	       ede->subtype->func.type_set(union_type,
+	       ede->subtype->func.type_set(ut,
 					   ((char*) data) + ede->count - ede->offset,
 					   EINA_FALSE);
 
@@ -3142,17 +3143,19 @@ eet_data_get_variant(Eet_Free_Context *context, const Eet_Dictionary *ed,
 
    if (ede)
      {
+	char *ut;
+
 	EET_ASSERT(ede->subtype, goto on_error);
 
 	if ((!ed) || (!ede->subtype->func.str_direct_alloc))
 	  {
-	     union_type = ede->subtype->func.str_alloc(union_type);
-	     _eet_freelist_str_add(context, (char*) union_type);
+	     ut = ede->subtype->func.str_alloc(union_type);
+	     _eet_freelist_str_add(context, ut);
 	  }
 	else
 	  {
-	     union_type = ede->subtype->func.str_direct_alloc(union_type);
-	     _eet_freelist_direct_str_add(context, (char*) union_type);
+	     ut = ede->subtype->func.str_direct_alloc(union_type);
+	     _eet_freelist_direct_str_add(context, ut);
 	  }
 
 	/* Search the structure of the union to decode */
@@ -3199,7 +3202,7 @@ eet_data_get_variant(Eet_Free_Context *context, const Eet_Dictionary *ed,
 		    data_ret = (void*) data;
 
 		    /* Set variant type. */
-		    ede->subtype->func.type_set(union_type,
+		    ede->subtype->func.type_set(ut,
 						((char*) data) + ede->count - ede->offset,
 						EINA_FALSE);
 		    break;
@@ -3216,7 +3219,7 @@ eet_data_get_variant(Eet_Free_Context *context, const Eet_Dictionary *ed,
 	       *(void**) data = data_ret;
 
 	       /* Set variant type. */
-	       ede->subtype->func.type_set(union_type,
+	       ede->subtype->func.type_set(ut,
 					   ((char*) data) + ede->count - ede->offset,
 					   EINA_FALSE);
 	       break;
@@ -3237,7 +3240,7 @@ eet_data_get_variant(Eet_Free_Context *context, const Eet_Dictionary *ed,
 	     *(void**) data = evu;
 
 	     /* Set variant type. */
-	     ede->subtype->func.type_set(union_type,
+	     ede->subtype->func.type_set(ut,
 					 ((char*) data) + ede->count - ede->offset,
 					 EINA_TRUE);
 	  }
