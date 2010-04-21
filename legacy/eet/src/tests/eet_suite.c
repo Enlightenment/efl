@@ -1756,6 +1756,430 @@ START_TEST(eet_file_fp)
 }
 END_TEST
 
+typedef struct _Eet_Union_Test Eet_Union_Test;
+typedef struct _Eet_Variant_Test Eet_Variant_Test;
+typedef struct _Eet_Variant_Type Eet_Variant_Type;
+typedef struct _Eet_Inherit_Test1 Eet_Inherit_Test1;
+typedef struct _Eet_Inherit_Test2 Eet_Inherit_Test2;
+typedef struct _Eet_Inherit_Test3 Eet_Inherit_Test3;
+typedef struct _Eet_St1 Eet_St1;
+typedef struct _Eet_St2 Eet_St2;
+typedef struct _Eet_St3 Eet_St3;
+typedef struct _Eet_List Eet_List;
+
+typedef enum _Eet_Union
+{
+  EET_UNKNOWN,
+  EET_ST1,
+  EET_ST2,
+  EET_ST3
+} Eet_Union;
+
+struct {
+   Eet_Union u;
+   const char *name;
+} eet_mapping[] = {
+  { EET_ST1, "ST1" },
+  { EET_ST2, "ST2" },
+  { EET_ST3, "ST3" },
+  { EET_UNKNOWN, NULL }
+};
+
+struct _Eet_St1
+{
+   double val1;
+   int stuff;
+   char *s1;
+};
+
+struct _Eet_St2
+{
+   Eina_Bool b1;
+   unsigned long long v1;
+};
+
+struct _Eet_St3
+{
+   int boby;
+};
+
+struct _Eet_Union_Test
+{
+   Eet_Union type;
+
+   union {
+      Eet_St1 st1;
+      Eet_St2 st2;
+      Eet_St3 st3;
+   } u;
+};
+
+struct _Eet_Variant_Type
+{
+   const char *type;
+   Eina_Bool unknow : 1;
+};
+
+struct _Eet_Variant_Test
+{
+   Eet_Variant_Type t;
+
+   void *data;
+   Eina_List *data_list;
+};
+
+struct _Eet_Inherit_Test1
+{
+   Eet_Union type;
+   Eet_St1 st1;
+};
+struct _Eet_Inherit_Test2
+{
+   Eet_Union type;
+   Eet_St2 st2;
+};
+struct _Eet_Inherit_Test3
+{
+   Eet_Union type;
+   Eet_St3 st3;
+};
+
+struct _Eet_List
+{
+   Eina_List *list;
+};
+
+static const char *
+_eet_union_type_get(const void *data, Eina_Bool *unknow)
+{
+   const Eet_Union *u = data;
+   int i;
+
+   if (unknow) *unknow = EINA_FALSE;
+   for (i = 0; eet_mapping[i].name != NULL; ++i)
+     if (*u == eet_mapping[i].u)
+       return eet_mapping[i].name;
+
+   if (unknow) *unknow = EINA_TRUE;
+   return NULL;
+}
+
+static Eina_Bool
+_eet_union_type_set(const char *type, void *data, Eina_Bool unknow)
+{
+   Eet_Union *u = data;
+   int i;
+
+   if (unknow) return EINA_FALSE;
+
+   for (i = 0; eet_mapping[i].name != NULL; ++i)
+     if (strcmp(eet_mapping[i].name, type) == 0)
+       {
+	  *u = eet_mapping[i].u;
+	  return EINA_TRUE;
+       }
+
+   return EINA_FALSE;
+}
+
+static const char *
+_eet_variant_type_get(const void *data, Eina_Bool *unknow)
+{
+   const Eet_Variant_Type *type = data;
+   int i;
+
+   if (unknow) *unknow = type->unknow;
+   for (i = 0; eet_mapping[i].name != NULL; ++i)
+     if (strcmp(type->type, eet_mapping[i].name) == 0)
+       return eet_mapping[i].name;
+
+   if (unknow) *unknow = EINA_FALSE;
+   return type->type;
+}
+
+static Eina_Bool
+_eet_variant_type_set(const char *type, void *data, Eina_Bool unknow)
+{
+   Eet_Variant_Type *vt = data;
+
+   vt->type = type;
+   vt->unknow = unknow;
+   return EINA_TRUE;
+}
+
+static Eet_Data_Descriptor*
+_eet_st1_dd(void)
+{
+   Eet_Data_Descriptor_Class eddc;
+   Eet_Data_Descriptor *res;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_St1);
+   res = eet_data_descriptor_stream_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(res, Eet_St1, "val1", val1, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(res, Eet_St1, "stuff", stuff, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(res, Eet_St1, "s1", s1, EET_T_STRING);
+
+   return res;
+}
+
+static void
+_eet_st1_set(Eet_St1 *st1, int i)
+{
+   st1->val1 = EET_TEST_DOUBLE;
+   st1->stuff = EET_TEST_INT + i;
+   st1->s1 = EET_TEST_STRING;
+}
+
+static void
+_eet_st1_cmp(Eet_St1 *st1, int i)
+{
+   double tmp;
+
+   fail_if(!st1);
+
+   tmp = st1->val1 - EET_TEST_DOUBLE;
+   if (tmp < 0) tmp = -tmp;
+   fail_if(tmp > 0.005);
+   fail_if(st1->stuff != EET_TEST_INT + i);
+   fail_if(strcmp(st1->s1, EET_TEST_STRING));
+}
+
+static Eet_Data_Descriptor*
+_eet_st2_dd(void)
+{
+   Eet_Data_Descriptor_Class eddc;
+   Eet_Data_Descriptor *res;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_St2);
+   res = eet_data_descriptor_stream_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(res, Eet_St2, "b1", b1, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(res, Eet_St2, "v1", v1, EET_T_ULONG_LONG);
+
+   return res;
+}
+
+static void
+_eet_st2_set(Eet_St2 *st2, int i)
+{
+   st2->b1 = EINA_TRUE;
+   st2->v1 = EET_TEST_LONG_LONG + i;
+}
+
+static void
+_eet_st2_cmp(Eet_St2 *st2, int i)
+{
+   fail_if(!st2->b1);
+   fail_if(st2->v1 != EET_TEST_LONG_LONG + i);
+}
+
+static Eet_Data_Descriptor*
+_eet_st3_dd(void)
+{
+   Eet_Data_Descriptor_Class eddc;
+   Eet_Data_Descriptor *res;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_St3);
+   res = eet_data_descriptor_stream_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(res, Eet_St3, "boby", boby, EET_T_INT);
+
+   return res;
+}
+
+static void
+_eet_st3_set(Eet_St3 *st3, int i)
+{
+   st3->boby = EET_TEST_INT + i;
+}
+
+static void
+_eet_st3_cmp(Eet_St3 *st3, int i)
+{
+   fail_if(st3->boby != EET_TEST_INT + i);
+}
+
+START_TEST(eet_test_union)
+{
+   Eet_Union_Test *eut;
+   Eet_List *l;
+   Eet_Data_Descriptor_Class eddc;
+   Eet_Data_Descriptor *edd;
+   Eet_Data_Descriptor *unified;
+   Eet_Data_Descriptor *m;
+   void *blob;
+   int size;
+   int i;
+
+   eina_init();
+   eet_init();
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_Union_Test);
+   edd = eet_data_descriptor_stream_new(&eddc);
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_Union_Test);
+   m = eet_data_descriptor_stream_new(&eddc);
+
+   eddc.version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
+   eddc.func.type_get = _eet_union_type_get;
+   eddc.func.type_set = _eet_union_type_set;
+   unified = eet_data_descriptor_stream_new(&eddc);
+
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(unified, "ST1", _eet_st1_dd());
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(unified, "ST2", _eet_st2_dd());
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(unified, "ST3", _eet_st3_dd());
+
+   EET_DATA_DESCRIPTOR_ADD_UNION(edd, Eet_Union_Test, "u", u, type, unified);
+
+   EET_DATA_DESCRIPTOR_ADD_LIST(m, Eet_List, "list", list, edd);
+
+   l = calloc(1, sizeof (Eet_List));
+
+#define EUT_NEW(Type_Index)			\
+   eut = calloc(1, sizeof (Eet_Union_Test));	\
+   eut->type = EET_ST##Type_Index;		\
+   _eet_st##Type_Index##_set(&(eut->u.st##Type_Index), i);
+
+   for (i = 0; i < 3; ++i)
+     {
+	EUT_NEW(1);
+	l->list = eina_list_append(l->list, eut);
+
+	EUT_NEW(2);
+	l->list = eina_list_append(l->list, eut);
+
+     	EUT_NEW(3);
+	l->list = eina_list_append(l->list, eut);
+     }
+
+   blob = eet_data_descriptor_encode(m, l, &size);
+   fail_if(!blob || size <= 0);
+
+   l = eet_data_descriptor_decode(m, blob, size);
+   fail_if(!l);
+
+   fail_if(eina_list_count(l->list) != 9);
+
+#define EUT_CMP(Type_Index)					\
+   eut = eina_list_nth(l->list, i * 3 + Type_Index - 1);	\
+   fail_if(eut->type != EET_ST##Type_Index);			\
+   _eet_st##Type_Index##_cmp(&(eut->u.st##Type_Index), i);
+
+   for (i = 0; i < 3; ++i)
+     {
+	EUT_CMP(1);
+	EUT_CMP(2);
+	EUT_CMP(3);
+     }
+
+   eet_shutdown();
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eet_test_variant)
+{
+   Eet_Variant_Test *evt;
+   Eet_List *l;
+   Eet_St1 *st1;
+   Eet_St2 *st2;
+   Eet_St3 *st3;
+   Eet_Data_Descriptor_Class eddc;
+   Eet_Data_Descriptor *edd;
+   Eet_Data_Descriptor *unified;
+   Eet_Data_Descriptor *m;
+   void *blob;
+   int size;
+   int i;
+
+   eina_init();
+   eet_init();
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_Variant_Test);
+   edd = eet_data_descriptor_stream_new(&eddc);
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_Variant_Test);
+   m = eet_data_descriptor_stream_new(&eddc);
+
+   eddc.version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
+   eddc.func.type_get = _eet_variant_type_get;
+   eddc.func.type_set = _eet_variant_type_set;
+   unified = eet_data_descriptor_stream_new(&eddc);
+
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(unified, "ST1", _eet_st1_dd());
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(unified, "ST2", _eet_st2_dd());
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(unified, "ST3", _eet_st3_dd());
+
+   EET_DATA_DESCRIPTOR_ADD_VARIANT(edd, Eet_Variant_Test, "data", data, t, unified);
+
+   unified = eet_data_descriptor_stream_new(&eddc);
+   eet_data_descriptor_element_add(unified, "ST1",
+				   EET_T_UNKNOW, EET_G_LIST,
+				   0, 0, NULL, _eet_st1_dd());
+   eet_data_descriptor_element_add(unified, "ST2",
+				   EET_T_UNKNOW, EET_G_LIST,
+				   0, 0, NULL, _eet_st2_dd());
+
+   EET_DATA_DESCRIPTOR_ADD_VARIANT(edd, Eet_Variant_Test,
+				   "data_list", data_list, t, unified);
+
+   EET_DATA_DESCRIPTOR_ADD_LIST(m, Eet_List, "list", list, edd);
+
+   l = calloc(1, sizeof (Eet_List));
+
+#define EVT_NEW(Type_Index)					\
+   evt = calloc(1, sizeof (Eet_Variant_Test));			\
+   evt->t.type = eet_mapping[Type_Index - 1].name;		\
+   st##Type_Index = calloc(1, sizeof (Eet_St##Type_Index));	\
+   _eet_st##Type_Index##_set(st##Type_Index, i);		\
+   evt->data = st##Type_Index;
+
+   for (i = 0; i < 3; ++i)
+     {
+	EVT_NEW(1);
+	l->list = eina_list_append(l->list, evt);
+
+	st1 = calloc(1, sizeof (Eet_St1));
+	_eet_st1_set(st1, i);
+	evt->data_list = eina_list_append(evt->data_list, st1);
+
+	EVT_NEW(2);
+	l->list = eina_list_append(l->list, evt);
+
+     	EVT_NEW(3);
+	l->list = eina_list_append(l->list, evt);
+     }
+
+   blob = eet_data_descriptor_encode(m, l, &size);
+   fail_if(!blob || size <= 0);
+
+   l = eet_data_descriptor_decode(m, blob, size);
+   fail_if(!l);
+
+   fail_if(eina_list_count(l->list) != 9);
+
+#define EVT_CMP(Type_Index)						\
+   evt = eina_list_nth(l->list, i * 3 + Type_Index - 1);		\
+   fail_if(strcmp(evt->t.type, eet_mapping[Type_Index - 1].name) != 0);	\
+   _eet_st##Type_Index##_cmp(evt->data, i);
+
+   for (i = 0; i < 3; ++i)
+     {
+	EVT_CMP(1);
+
+	fail_if(!evt->data_list);
+	fail_if(eina_list_count(evt->data_list) != 1);
+
+	st1 = eina_list_data_get(evt->data_list);
+	_eet_st1_cmp(st1, i);
+
+	EVT_CMP(2);
+	EVT_CMP(3);
+     }
+
+   eet_shutdown();
+   eina_shutdown();
+}
+END_TEST
+
 Suite *
 eet_suite(void)
 {
@@ -1773,6 +2197,8 @@ eet_suite(void)
    tcase_add_test(tc, eet_test_data_type_encoding_decoding);
    tcase_add_test(tc, eet_test_data_type_dump_undump);
    tcase_add_test(tc, eet_fp);
+   tcase_add_test(tc, eet_test_union);
+   tcase_add_test(tc, eet_test_variant);
    suite_add_tcase(s, tc);
 
    tc = tcase_create("Eet File");

@@ -365,3 +365,7 @@
 2010-04-16  Cedric BAIL
 
 	* Handle fixed point in data stream.
+
+2010-04-21  Cedric BAIL
+
+	* Add EET_G_UNION and EET_G_VARIANT.

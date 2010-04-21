@@ -325,7 +325,7 @@ eet_dictionary_string_get_fp(const Eet_Dictionary *ed, int idx, Eina_F32p32 *res
 
 	str = ed->all[idx].str ? ed->all[idx].str : ed->all[idx].mmap;
 
-	if (!eina_convert_atofp(str,  ed->all[idx].len, &fp))
+	if (!eina_convert_atofp(str, ed->all[idx].len, &fp))
 	  return EINA_FALSE;
 
 	ed->all[idx].fp = fp;

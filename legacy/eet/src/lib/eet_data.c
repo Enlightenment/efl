@@ -74,6 +74,7 @@ typedef struct _Eet_Data_Descriptor_Hash    Eet_Data_Descriptor_Hash;
 typedef struct _Eet_Data_Encode_Hash_Info   Eet_Data_Encode_Hash_Info;
 typedef struct _Eet_Free		    Eet_Free;
 typedef struct _Eet_Free_Context	    Eet_Free_Context;
+typedef struct _Eet_Variant_Unknow	    Eet_Variant_Unknow;
 
 /*---*/
 
@@ -138,6 +139,8 @@ struct _Eet_Data_Descriptor
       void  (*hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt);
       void *(*hash_add) (void *h, const char *k, void *d);
       void  (*hash_free) (void *h);
+      const char *(*type_get) (const void *data, Eina_Bool *unknow);
+      Eina_Bool (*type_set) (const char *type, void *data, Eina_Bool unknow);
    } func;
    struct {
       int                num;
@@ -147,6 +150,8 @@ struct _Eet_Data_Descriptor
 	 Eet_Data_Descriptor_Hash       *buckets;
       } hash;
    } elements;
+
+   Eina_Bool unified_type : 1;
 //   char *strings;
 //   int   strings_len;
 };
@@ -186,6 +191,14 @@ struct _Eet_Free_Context
    Eet_Free freelist_hash;
    Eet_Free freelist_str;
    Eet_Free freelist_direct_str;
+};
+
+struct _Eet_Variant_Unknow
+{
+   EINA_MAGIC;
+
+   int size;
+   char data[1];
 };
 
 /*---*/
@@ -228,6 +241,12 @@ static int  eet_data_get_list(Eet_Free_Context *context, const Eet_Dictionary *e
 static void eet_data_put_list(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Stream *ds, void *data_in);
 static void eet_data_put_hash(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Stream *ds, void *data_in);
 static int  eet_data_get_hash(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Chunk *echnk, int type, int group_type, void *data, char **p, int *size);
+static void eet_data_put_union(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Stream *ds, void *data_in);
+static int  eet_data_get_union(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Chunk *echnk, int type, int group_type, void *data, char **p, int *size);
+static void eet_data_put_inherit(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Stream *ds, void *data_in);
+static int  eet_data_get_inherit(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Chunk *echnk, int type, int group_type, void *data, char **p, int *size);
+static void eet_data_put_variant(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Stream *ds, void *data_in);
+static int  eet_data_get_variant(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Chunk *echnk, int type, int group_type, void *data, char **p, int *size);
 
 static void            eet_data_chunk_get(const Eet_Dictionary *ed, Eet_Data_Chunk *chnk, const void *src, int size);
 static Eet_Data_Chunk *eet_data_chunk_new(void *data, int size, const char *name, int type, int group_type);
@@ -275,7 +294,10 @@ static const Eet_Data_Group_Type_Codec eet_group_codec[] =
      { eet_data_get_array,    eet_data_put_array },
      { eet_data_get_array,    eet_data_put_array },
      { eet_data_get_list,     eet_data_put_list },
-     { eet_data_get_hash,     eet_data_put_hash }
+     { eet_data_get_hash,     eet_data_put_hash },
+     { eet_data_get_union,    eet_data_put_union },
+     { eet_data_get_inherit,  eet_data_put_inherit },
+     { eet_data_get_variant,  eet_data_put_variant }
 };
 
 static int _eet_data_words_bigendian = -1;
@@ -325,6 +347,7 @@ static int _eet_data_words_bigendian = -1;
 #define EET_I_INLINED_STRING	2 << 4
 #define EET_I_NULL		3 << 4
 
+#define EET_MAGIC_VARIANT 0xF1234BC
 /*---*/
 
 /* CHAR TYPE */
@@ -1305,7 +1328,6 @@ _eet_data_descriptor_new(const Eet_Data_Descriptor_Class *eddc, int version)
    Eet_Data_Descriptor *edd;
 
    if (!eddc) return NULL;
-   if (eddc->version < version) return NULL;
 
    edd = calloc(1, sizeof (Eet_Data_Descriptor));
    if (!edd) return NULL;
@@ -1333,10 +1355,15 @@ _eet_data_descriptor_new(const Eet_Data_Descriptor_Class *eddc, int version)
    edd->func.hash_add = eddc->func.hash_add;
    edd->func.hash_free = eddc->func.hash_free;
 
-   if (version > 1)
+   if (eddc->version > 1 && version > 1)
      {
 	edd->func.str_direct_alloc = eddc->func.str_direct_alloc;
 	edd->func.str_direct_free = eddc->func.str_direct_free;
+     }
+   if (eddc->version > 2)
+     {
+	edd->func.type_get = eddc->func.type_get;
+	edd->func.type_set = eddc->func.type_set;
      }
 
    return edd;
@@ -1421,6 +1448,43 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    Eet_Data_Element *ede;
    Eet_Data_Element *tmp;
 
+   /* UNION, INHERITED or VARIANT type would not work with simple type, we need a way to map the type. */
+   if ((group_type == EET_G_INHERIT
+	|| group_type == EET_G_UNION
+	|| group_type == EET_G_VARIANT)
+       &&
+       (type != EET_T_UNKNOW
+	|| subtype == NULL
+	|| subtype->func.type_get == NULL
+	|| subtype->func.type_set == NULL))
+     return ;
+
+   /* Only one element is allowed with INHERITED type */
+   if (group_type == EET_G_INHERIT && edd->elements.num != 0)
+     return ;
+   if (edd->elements.num > 0 && edd->elements.set[0].group_type == EET_G_INHERIT)
+     return ;
+
+   /* VARIANT type will only work if the map only contains EET_G_*, but not INHERIT, UNION, VARIANT and ARRAY. */
+   if (group_type == EET_G_VARIANT)
+     {
+	int i;
+
+	for (i = 0; i < subtype->elements.num; ++i)
+	  if (subtype->elements.set[i].type != EET_T_UNKNOW
+	      && subtype->elements.set[i].group_type > EET_G_VAR_ARRAY
+	      && subtype->elements.set[i].group_type < EET_G_UNION)
+	    return ;
+
+	subtype->unified_type = EINA_TRUE;
+     }
+   if (subtype
+       && subtype->unified_type
+       && (type != EET_T_UNKNOW
+	   || group_type < EET_G_UNION))
+     return ;
+
+   /* Sanity check done, let allocate ! */
    edd->elements.num++;
    tmp = realloc(edd->elements.set, edd->elements.num * sizeof(Eet_Data_Element));
    if (!tmp) return ;
@@ -1455,7 +1519,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    ede->group_type = group_type;
    ede->offset = offset;
    ede->count = count;
-   /* FIXME: For the time being, EET_G_VAR_ARRAY will put the counter_offset in count. */
+   /* FIXME: For the time being, VAR_ARRAY, INHERIT, UNION and VARIANT  will put the counter_offset in count. */
    ede->counter_offset = count;
 /*    ede->counter_offset = counter_offset; */
    ede->counter_name = counter_name;
@@ -2440,12 +2504,14 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
 	      break;
 	   case EET_G_VAR_ARRAY:
 	      return eet_node_var_array_new(chnk.name, NULL);
+	   case EET_G_INHERIT:
+	      /* This one should work */
+	      goto error;
 	   case EET_G_LIST:
-	      goto error;
 	   case EET_G_HASH:
-	      goto error;
 	   case EET_G_ARRAY:
-	      goto error;
+	   case EET_G_UNION:
+	   case EET_G_VARIANT:
 	   default:
 	      goto error;
 	  }
@@ -2815,6 +2881,379 @@ eet_data_get_array(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data
    EINA_LIST_FREE(childs, tmp)
      eet_node_del(tmp);
 
+   return 0;
+}
+
+static void
+eet_data_put_union(Eet_Dictionary *ed,
+		   __UNUSED__ Eet_Data_Descriptor *edd,
+		   Eet_Data_Element *ede, Eet_Data_Stream *ds, void *data_in)
+{
+   const char *union_type;
+   int i;
+
+   EET_ASSERT(!((ede->type != EET_T_UNKNOW) || (!ede->subtype)), return );
+
+   union_type = ede->subtype->func.type_get(((char*) data_in) + ede->count - ede->offset,
+					    NULL);
+
+   if (!union_type) return ;
+
+   /* Search the structure of the union to encode. */
+   for (i = 0; i < ede->subtype->elements.num; ++i)
+     if (strcmp(ede->subtype->elements.set[i].name, union_type) == 0)
+       {
+	  Eet_Data_Element *sede;
+	  void *data;
+	  int size;
+
+	  /* Yeah we found it ! */
+	  data = eet_data_put_type(ed, EET_T_STRING, &union_type, &size);
+	  if (data) eet_data_encode(ed, ds, data, ede->name, size, ede->type, ede->group_type);
+
+	  sede = &(ede->subtype->elements.set[i]);
+	  data = _eet_data_descriptor_encode(ed,
+					     sede->subtype,
+					     data_in,
+					     &size);
+	  if (data) eet_data_encode(ed, ds, data, ede->name, size, ede->type, ede->group_type);
+	  break;
+       }
+}
+
+static int
+eet_data_get_union(Eet_Free_Context *context, const Eet_Dictionary *ed,
+		   __UNUSED__ Eet_Data_Descriptor *edd,
+		   Eet_Data_Element *ede, Eet_Data_Chunk *echnk,
+		   int type, int group_type, void *data,
+		   char **p, int *size)
+{
+   const char *union_type;
+   void *data_ret = NULL;
+   int ret = 0;
+   int i;
+
+   /* Read type */
+   ret = eet_data_get_type(ed,
+			   EET_T_STRING,
+			   echnk->data,
+			   ((char *)echnk->data) + echnk->size,
+			   &union_type);
+   if (ret <= 0) goto on_error;
+
+   /* Advance to next chunk */
+   NEXT_CHUNK((*p), (*size), (*echnk), ed);
+   memset(echnk, 0, sizeof(Eet_Data_Chunk));
+
+   /* Read value */
+   eet_data_chunk_get(ed, echnk, *p, *size);
+   if (!echnk->name) goto on_error;
+
+   if (ede)
+     {
+	EET_ASSERT(!(ede->group_type != group_type || ede->type != type), goto on_error);
+
+	/* Search the structure of the union to decode */
+	for (i = 0; i < ede->subtype->elements.num; ++i)
+	  if (strcmp(ede->subtype->elements.set[i].name, union_type) == 0)
+	    {
+	       Eet_Data_Element *sede;
+
+	       /* Yeah we found it ! */
+	       sede = &(ede->subtype->elements.set[i]);
+	       EET_ASSERT(sede->subtype, goto on_error);
+
+	       data_ret = _eet_data_descriptor_decode(context,
+						      ed,
+						      sede->subtype,
+						      echnk->data,
+						      echnk->size);
+	       if (!data_ret) goto on_error;
+
+	       /* Memcopy the structure content to remove pointer indirection. */
+	       memcpy(data, data_ret, sede->subtype->size);
+
+	       /* data_ret is now useless. */
+	       sede->subtype->func.mem_free(data_ret);
+
+	       /* Set union type. */
+	       if ((!ed) || (!ede->subtype->func.str_direct_alloc))
+		 {
+		    union_type = ede->subtype->func.str_alloc(union_type);
+		    _eet_freelist_str_add(context, (char*) union_type);
+		 }
+	       else
+		 {
+		    union_type = ede->subtype->func.str_direct_alloc(union_type);
+		    _eet_freelist_direct_str_add(context, (char*) union_type);
+		 }
+
+	       ede->subtype->func.type_set(union_type,
+					   ((char*) data) + ede->count - ede->offset,
+					   EINA_FALSE);
+
+	       break;
+	    }
+     }
+   else
+     {
+	/* FIXME: generate node structure. */
+	data_ret = _eet_data_descriptor_decode(context,
+					       ed, NULL,
+					       echnk->data, echnk->size);
+	goto on_error;
+     }
+
+   return 1;
+
+ on_error:
+   return 0;
+}
+
+static void
+eet_data_put_inherit(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede,
+		     Eet_Data_Stream *ds, void *data_in)
+{
+   /* FIXME */
+   fprintf(stderr, "wrong !!!\n");
+}
+
+static int
+eet_data_get_inherit(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data_Descriptor *edd,
+		     Eet_Data_Element *ede, Eet_Data_Chunk *echnk,
+		     int type, int group_type, void *data,
+		     char **p, int *size)
+{
+   /* FIXME */
+   return 0;
+}
+
+static void
+eet_data_put_variant(Eet_Dictionary *ed,
+		     __UNUSED__ Eet_Data_Descriptor *edd,
+		     Eet_Data_Element *ede, Eet_Data_Stream *ds, void *data_in)
+{
+   const char *union_type;
+   void *data;
+   Eina_Bool unknow = EINA_FALSE;
+   int size;
+   int i;
+
+   EET_ASSERT(!((ede->type != EET_T_UNKNOW) || (!ede->subtype)), return );
+
+   union_type = ede->subtype->func.type_get(((char*) data_in) + ede->count - ede->offset,
+					    &unknow);
+
+   if (!union_type && unknow == EINA_FALSE) return ;
+
+   if (unknow)
+     {
+	/* Handle opaque internal representation */
+	Eet_Variant_Unknow *evu;
+
+	data = eet_data_put_type(ed, EET_T_STRING, &union_type, &size);
+	if (data) eet_data_encode(ed, ds, data, ede->name, size, ede->type, ede->group_type);
+
+	evu = (Eet_Variant_Unknow*) data_in;
+	if (evu && EINA_MAGIC_CHECK(evu, EET_MAGIC_VARIANT))
+	  eet_data_encode(ed, ds, evu->data, ede->name, evu->size, ede->type, ede->group_type);
+     }
+   else
+     {
+	/* Search the structure of the union to encode. */
+	for (i = 0; i < ede->subtype->elements.num; ++i)
+	  if (strcmp(ede->subtype->elements.set[i].name, union_type) == 0)
+	    {
+	       Eet_Data_Element *sede;
+
+	       /* Yeah we found it ! */
+	       data = eet_data_put_type(ed, EET_T_STRING, &union_type, &size);
+	       if (data) eet_data_encode(ed, ds, data, ede->name, size, ede->type, ede->group_type);
+
+	       sede = &(ede->subtype->elements.set[i]);
+
+	       if (sede->group_type != EET_G_UNKNOWN)
+		 {
+		    Eet_Data_Stream *lds;
+
+		    lds = eet_data_stream_new();
+		    eet_group_codec[sede->group_type - 100].put(ed,
+								sede->subtype,
+								sede,
+								lds,
+								data_in);
+		    if (lds->size != 0)
+		      {
+ 			 eet_data_encode(ed, ds, lds->data, ede->name, lds->pos,
+					 ede->type, ede->group_type);
+
+			 lds->data = NULL;
+			 lds->size = 0;
+		      }
+		    else
+		      {
+			 eet_data_encode(ed, ds, NULL, ede->name, 0,
+					 EET_T_NULL, ede->group_type);
+		      }
+
+		    eet_data_stream_free(lds);
+		 }
+	       else
+		 {
+		    data = _eet_data_descriptor_encode(ed,
+						       sede->subtype,
+						       *(void**)data_in,
+						       &size);
+		    if (data) eet_data_encode(ed, ds, data, ede->name, size, ede->type, ede->group_type);
+		 }
+
+	       break;
+	    }
+     }
+}
+
+static int
+eet_data_get_variant(Eet_Free_Context *context, const Eet_Dictionary *ed,
+		     __UNUSED__ Eet_Data_Descriptor *edd,
+		     Eet_Data_Element *ede, Eet_Data_Chunk *echnk,
+		     int type, int group_type, void *data,
+		     char **p, int *size)
+{
+   const char *union_type;
+   void *data_ret = NULL;
+   int ret = 0;
+   int i;
+
+   /* Read type */
+   ret = eet_data_get_type(ed,
+			   EET_T_STRING,
+			   echnk->data,
+			   ((char *)echnk->data) + echnk->size,
+			   &union_type);
+   if (ret <= 0) goto on_error;
+
+   /* Advance to next chunk */
+   NEXT_CHUNK((*p), (*size), (*echnk), ed);
+   memset(echnk, 0, sizeof(Eet_Data_Chunk));
+
+   /* Read value */
+   eet_data_chunk_get(ed, echnk, *p, *size);
+   if (!echnk->name) goto on_error;
+
+   if (ede)
+     {
+	EET_ASSERT(ede->subtype, goto on_error);
+
+	if ((!ed) || (!ede->subtype->func.str_direct_alloc))
+	  {
+	     union_type = ede->subtype->func.str_alloc(union_type);
+	     _eet_freelist_str_add(context, (char*) union_type);
+	  }
+	else
+	  {
+	     union_type = ede->subtype->func.str_direct_alloc(union_type);
+	     _eet_freelist_direct_str_add(context, (char*) union_type);
+	  }
+
+	/* Search the structure of the union to decode */
+	for (i = 0; i < ede->subtype->elements.num; ++i)
+	  if (strcmp(ede->subtype->elements.set[i].name, union_type) == 0)
+	    {
+	       Eet_Data_Element *sede;
+
+	       /* Yeah we found it ! */
+	       sede = &(ede->subtype->elements.set[i]);
+
+	       if (sede->group_type != EET_G_UNKNOWN)
+		 {
+		    Eet_Data_Chunk chnk;
+		    char *p2;
+		    int size2;
+		    int ret;
+
+		    p2 = echnk->data;
+		    size2 = echnk->size;
+
+		    /* Didn't find a proper way to provide this
+		       without duplicating code */
+		    while (size2 > 0)
+		      {
+			 memset(&chnk, 0, sizeof(Eet_Data_Chunk));
+			 eet_data_chunk_get(ed, &chnk, p2, size2);
+
+			 if (!chnk.name) goto on_error;
+
+			 ret = eet_group_codec[sede->group_type - 100].get(context,
+									   ed, sede->subtype,
+									   sede, &chnk,
+									   sede->type, sede->group_type,
+									   data, &p2, &size2);
+
+			 if (ret <= 0) goto on_error;
+
+			 /* advance to next chunk */
+			 NEXT_CHUNK(p2, size2, chnk, ed);
+		      }
+
+		    /* Put garbage so that we will not put eet_variant_unknow in it */
+		    data_ret = (void*) data;
+
+		    /* Set variant type. */
+		    ede->subtype->func.type_set(union_type,
+						((char*) data) + ede->count - ede->offset,
+						EINA_FALSE);
+		    break;
+		 }
+
+	       data_ret = _eet_data_descriptor_decode(context,
+						      ed,
+						      sede->subtype,
+						      echnk->data,
+						      echnk->size);
+	       if (!data_ret) break;
+
+	       /* And point to the variant data. */
+	       *(void**) data = data_ret;
+
+	       /* Set variant type. */
+	       ede->subtype->func.type_set(union_type,
+					   ((char*) data) + ede->count - ede->offset,
+					   EINA_FALSE);
+	       break;
+	    }
+
+	if (!data_ret)
+	  {
+	     Eet_Variant_Unknow *evu;
+
+	     evu = calloc(1, sizeof (Eet_Variant_Unknow) + echnk->size - 1);
+	     if (!evu) goto on_error;
+
+	     evu->size = echnk->size;
+	     memcpy(evu->data, echnk->data, evu->size);
+	     EINA_MAGIC_SET(evu, EET_MAGIC_VARIANT);
+
+	     /* And point to the opaque internal data scructure */
+	     *(void**) data = evu;
+
+	     /* Set variant type. */
+	     ede->subtype->func.type_set(union_type,
+					 ((char*) data) + ede->count - ede->offset,
+					 EINA_TRUE);
+	  }
+     }
+   else
+     {
+	/* FIXME: dump node structure. */
+	data_ret = _eet_data_descriptor_decode(context,
+					       ed, NULL,
+					       echnk->data, echnk->size);
+	goto on_error;
+     }
+
+   return 1;
+
+ on_error:
    return 0;
 }
 

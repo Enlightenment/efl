@@ -274,7 +274,7 @@ extern "C" {
     *
     * If the eet file handle is not valid nothing will be done.
     *
-    * @since 1.2.3
+    * @since 1.2.4
     * @ingroup Eet_File_Group
     */
    EAPI Eet_Error eet_sync(Eet_File *ef);
@@ -1491,7 +1491,10 @@ extern "C" {
 #define EET_G_VAR_ARRAY  102 /**< Variable size array group type */
 #define EET_G_LIST       103 /**< Linked list group type */
 #define EET_G_HASH       104 /**< Hash table group type */
-#define EET_G_LAST       105 /**< Last group type */
+#define EET_G_UNION      105 /**< Union group type */
+#define EET_G_INHERIT    106 /**< Inherit object group type */
+#define EET_G_VARIANT    107 /**< Selectable subtype group */
+#define EET_G_LAST       108 /**< Last group type */
 
 #define EET_I_LIMIT      128 /**< Other type exist but are reserved for internal purpose. */
 
@@ -1518,7 +1521,7 @@ extern "C" {
     * version member so it is compatible with abi changes, or at least
     * will not crash with them.
     */
-#define EET_DATA_DESCRIPTOR_CLASS_VERSION 2
+#define EET_DATA_DESCRIPTOR_CLASS_VERSION 3
 
   /**
    * @typedef Eet_Data_Descriptor_Class
@@ -1557,6 +1560,9 @@ extern "C" {
 	   void    (*hash_free) (void *h); /**< free all entries from the hash @p h */
            char   *(*str_direct_alloc) (const char *str); /**< how to allocate a string directly from file backed/mmaped region pointed by @p str */
            void    (*str_direct_free) (const char *str); /**< how to free a string returned by str_direct_alloc */
+
+	   const char *(*type_get) (const void *data, Eina_Bool *unknow); /**< convert any kind of data type to a name that define an Eet_Data_Element. */
+	   Eina_Bool  (*type_set) (const char *type, void *data, Eina_Bool unknow); /**< set the type at a particular adress */
 	} func;
      };
 
@@ -2162,6 +2168,109 @@ extern "C" {
 					(char *)(&(___ett.member)) - (char *)(&(___ett)), \
 					(char *)(&(___ett.member ## _count)) - (char *)(&(___ett)), /* 0,  */NULL, subtype); \
      }
+
+   /**
+    * Add an union type to a data descriptor
+    * @param edd The data descriptor to add the type to.
+    * @param struct_type The type of the struct.
+    * @param name The string name to use to encode/decode this member
+    *        (must be a constant global and never change).
+    * @param member The struct member itself to be encoded.
+    * @param type_member The member that give hints on what is in the union.
+    * @param unified_type Describe all possible type the union could handle.
+    *
+    * This macro lets you easily add an union with a member that specify what is inside.
+    * The @p unified_type is an Eet_Data_Descriptor, but only the entry that match the name
+    * returned by type_get will be used for each serialized data. The type_get and type_set
+    * callback of unified_type should be defined.
+    *
+    * @since 1.2.4
+    * @ingroup Eet_Data_Group
+    * @see Eet_Data_Descriptor_Class
+    */
+#define EET_DATA_DESCRIPTOR_ADD_UNION(edd, struct_type, name, member, type_member, unified_type) \
+     { \
+        struct_type ___ett;			\
+	\
+        eet_data_descriptor_element_add(edd, name, EET_T_UNKNOW, EET_G_UNION, \
+                                        (char *) (&(___ett.member)) - (char *)(&(___ett)), \
+                                        (char *) (&(___ett.type_member)) - (char *)(&(___ett)), \
+		   		        NULL, unified_type); \
+     }
+
+   /**
+    * Make a structure variable in size/content depend on it's type
+    * @param edd The data descriptor to add the type to.
+    * @param struct_type The type of the struct.
+    * @param name The string name to use to encode/decode this member
+    *        (must be a constant global and never change).
+    * @param member The struct member itself to be encoded.
+    * @param type_member The member that give hints on what is in the union.
+    * @param unified_type Describe all possible type the union could handle.
+    *
+    * This macro lets you easily add a switch for an object oriented representation. The position
+    * of the member that define the type must be fixed for all possible type. Eet will then choose
+    * in the unified_type the structure that need to be allocated to match the detected type.
+    * The type_get and type_set callback of unified_type should be defined. This should be the only
+    * type in edd.
+    *
+    * @since 1.2.4
+    * @ingroup Eet_Data_Group
+    * @see Eet_Data_Descriptor_Class
+    */
+#define EET_DATA_DESCRIPTOR_ADD_INHERIT(edd, struct_type, name, member, type_member, unified_type) \
+     { \
+        struct_type ___ett;			\
+	\
+        eet_data_descriptor_element_add(edd, name, EET_T_UNKNOW, EET_G_INHERIT, \
+                                        (char *) (&(___ett.member)) - (char *)(&(___ett)), \
+                                        (char *) (&(___ett.type_member)) - (char *)(&(___ett)), \
+		   		        NULL, unified_type); \
+     }
+
+   /**
+    * Add a automatically selectable type to a data descriptor
+    * @param edd The data descriptor to add the type to.
+    * @param struct_type The type of the struct.
+    * @param name The string name to use to encode/decode this member
+    *        (must be a constant global and never change).
+    * @param member The struct member itself to be encoded.
+    * @param type_member The member that give hints on what is in the union.
+    * @param unified_type Describe all possible type the union could handle.
+    *
+    * This macro lets you easily define what the content of @p member points to depending of
+    * the content of @p type_member. The type_get and type_set callback of unified_type should
+    * be defined. If the the type is not know at the time of restoring it, eet will still call
+    * type_set of @p unified_type but the pointer will be set to a serialized binary representation
+    * of what eet know. This make it possible, to save this pointer again by just returning the string
+    * given previously and telling it by setting unknow to EINA_TRUE.
+    *
+    * @since 1.2.4
+    * @ingroup Eet_Data_Group
+    * @see Eet_Data_Descriptor_Class
+    */
+#define EET_DATA_DESCRIPTOR_ADD_VARIANT(edd, struct_type, name, member, type_member, unified_type) \
+     { \
+        struct_type ___ett;			\
+	\
+        eet_data_descriptor_element_add(edd, name, EET_T_UNKNOW, EET_G_VARIANT, \
+                                        (char *) (&(___ett.member)) - (char *)(&(___ett)), \
+                                        (char *) (&(___ett.type_member)) - (char *)(&(___ett)), \
+		   		        NULL, unified_type); \
+     }
+
+   /**
+    * Add a mapping to a data descriptor that will be used by union, variant or inherited type
+    * @param unified_type The data descriptor to add the mapping to.
+    * @param name The string name to get/set type.
+    * @param subtype The matching data descriptor.
+    *
+    * @since 1.2.4
+    * @ingroup Eet_Data_Group
+    * @see Eet_Data_Descriptor_Class
+    */
+#define EET_DATA_DESCRIPTOR_ADD_MAPPING(unified_type, name, subtype) \
+  eet_data_descriptor_element_add(unified_type, name, EET_T_UNKNOW, EET_G_UNKNOWN, 0, 0, NULL, subtype);
 
    /**
     * @defgroup Eet_Data_Cipher_Group Eet Data Serialization using A Ciphers
