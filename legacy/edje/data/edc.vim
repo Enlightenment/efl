@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	EDC
-" Maintainer:	no one?
-" Last Change:	2005
+" Maintainer:	billiob <billiob@gmail.com>
+" Last Change:	04/21/2010
 
 " For version 5.x: Clear all syntax items
 " For version 6.x: Quit when a syntax file was already loaded
@@ -12,7 +12,7 @@ elseif exists("b:current_syntax")
 endif
 
 " A bunch of useful C keywords
-syn keyword	cStructure	images data fonts collections group
+syn keyword	cStructure	images data fonts collections group externals
 syn keyword	cStructure	part parts dragable description rel1 rel2
 syn keyword	cStatement	text image font fill origin size tag
 syn keyword	cStructure	programs program script script_only lua_script lua_script_only styles style base
@@ -34,6 +34,7 @@ syn keyword	cLabel		size_w size_h size_max_w size_max_h size_min_w size_min_w
 syn keyword	cLabel		spread scale_hint elipsis pointer_mode prefer
 syn keyword	cLabel		precise_is_inside use_alternate_font_metrics options
 syn keyword	cLabel		aspect_mode position span angle repch api
+syn keyword	cLabel		external
 
 syn keyword	cConditional	if else switch
 syn keyword	cRepeat		while for do
