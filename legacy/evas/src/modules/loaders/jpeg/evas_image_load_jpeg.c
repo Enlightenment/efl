@@ -290,14 +290,15 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
         cinfo.region_h = ie->load_opts.region.h;
 #endif
      }
-   if ((w != ie->w) || (h != ie->h))
+   if ((!region) && ((w != ie->w) || (h != ie->h)))
      {
-        // OK. region decode happening. a sub-set of the image
-//	jpeg_destroy_decompress(&cinfo);
-//      *error = EVAS_LOAD_ERROR_GENERIC;
-//	return EINA_FALSE;
+	// race condition, the file could have change from when we call header
+	// this test will not solve the problem with region code.
+	jpeg_destroy_decompress(&cinfo);
+	*error = EVAS_LOAD_ERROR_GENERIC;
+	return EINA_FALSE;
      }
-   if ((region) && 
+   if ((region) &&
        ((ie->w != ie->load_opts.region.w) || (ie->h != ie->load_opts.region.h)))
      {
         ie->w = ie->load_opts.region.w;
