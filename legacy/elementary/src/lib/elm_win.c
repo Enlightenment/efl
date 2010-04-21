@@ -395,13 +395,13 @@ _elm_win_client_message(void *data, int type __UNUSED__, void *event)
      {
         if (e->data.l[0] == win->xwin)
           {
-             Evas *e = evas_object_evas_get(win->win_obj);
-             if (e)
+             Evas *evas = evas_object_evas_get(win->win_obj);
+             if (evas)
                {
                   edje_file_cache_flush();
                   edje_collection_cache_flush();
-                  evas_image_cache_flush(e);
-                  evas_font_cache_flush(e);
+                  evas_image_cache_flush(evas);
+                  evas_font_cache_flush(evas);
                }
           }
      }
@@ -409,14 +409,14 @@ _elm_win_client_message(void *data, int type __UNUSED__, void *event)
      {
         if (e->data.l[0] == win->xwin)
           {
-             Evas *e = evas_object_evas_get(win->win_obj);
-             if (e)
+             Evas *evas = evas_object_evas_get(win->win_obj);
+             if (evas)
                {
                   edje_file_cache_flush();
                   edje_collection_cache_flush();
-                  evas_image_cache_flush(e);
-                  evas_font_cache_flush(e);
-                  evas_render_dump(e);
+                  evas_image_cache_flush(evas);
+                  evas_font_cache_flush(evas);
+                  evas_render_dump(evas);
                }
           }
      }

@@ -2162,6 +2162,7 @@ _smart_init(void)
 	       NULL,
 	       NULL,
                NULL,
+               NULL,
                NULL
 	  };
 	_smart = evas_smart_class_new(&sc);
