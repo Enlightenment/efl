@@ -32,10 +32,10 @@ if ! test "x${_efl_want_edje_external}" = "xno" ; then
       [edje],
       [_efl_enable_edje_external="yes"],
       [_efl_enable_edje_external="no"])
-else
-   AC_SUBST(EDJE_EXTERNAL_CFLAGS)
-   AC_SUBST(EDJE_EXTERNAL_LIBS)
 fi
+
+AC_SUBST(EDJE_EXTERNAL_CFLAGS)
+AC_SUBST(EDJE_EXTERNAL_LIBS)
 
 if test "x${_efl_want_edje_external}" = "xyes" && test "x${_efl_enable_edje_external}" = "xno" ; then
    AC_MSG_ERROR([Edje EXTERNAL support requested, but Edje not found by pkg-config.])
