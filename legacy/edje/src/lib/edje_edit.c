@@ -5725,7 +5725,7 @@ edje_edit_program_after_del(Evas_Object *obj, const char *prog, const char *afte
 {
    Edje_Program *af;
    Edje_Program_After *a;
-   const Eina_List *l;
+   Eina_List *l;
 
    GET_EPR_OR_RETURN(EINA_FALSE);
 
