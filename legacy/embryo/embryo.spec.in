@@ -1,9 +1,11 @@
 %define _missing_doc_files_terminate_build 0
 
+%{!?_rel:%{expand:%%global _rel 0.r%(svnversion | sed 's/[^0-9].*$//' || echo 0000)}}
+
 Summary: A small virtual machine engine (in a library) and bytecode compiler
 Name: @PACKAGE@
 Version: @VERSION@
-Release: 0.%(date '+%Y%m%d')
+Release: %{_rel}
 License: BSD
 Group: System Environment/Libraries
 Source: %{name}-%{version}.tar.gz
