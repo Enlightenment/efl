@@ -1262,7 +1262,7 @@ _smart_init(void)
 
 	_backends = eina_hash_string_small_new(free);
 
-	_modules = eina_module_list_get(NULL, PACKAGE_LIB_DIR "/eina/mp/", 0, NULL, NULL);
+	_modules = eina_module_list_get(NULL, PACKAGE_LIB_DIR "/emotion/", 0, NULL, NULL);
 
 	path = eina_module_environment_path_get("HOME", "/.emotion/");
 	_modules = eina_module_list_get(_modules, path, 0, NULL, NULL);
