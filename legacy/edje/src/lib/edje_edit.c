@@ -824,9 +824,9 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
      }
 
    /* Search first free id */
-   id = 0;
+   id = -1;
    search = 0;
-   while (!id)
+   while (id == -1)
      {
 	Eina_Bool found = 0;
 
