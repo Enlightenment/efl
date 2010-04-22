@@ -38,30 +38,44 @@
 /* Get ed(Edje*) from obj(Evas_Object*) */
 #define GET_ED_OR_RETURN(RET) \
    Edje *ed; \
-   ed = _edje_fetch(obj); \
-   if (!ed) return RET;
+   Edje_Edit *eed; \
+   if (!evas_object_smart_type_check_ptr(obj, _edje_edit_type)) \
+     return RET; \
+   eed = evas_object_smart_data_get(obj); \
+   if (!eed) return RET; \
+   ed = (Edje *)eed;
 
 /* Get rp(Edje_Real_Part*) from obj(Evas_Object*) and part(char*) */
 #define GET_RP_OR_RETURN(RET) \
    Edje *ed; \
+   Edje_Edit *eed; \
    Edje_Real_Part *rp; \
-   ed = _edje_fetch(obj); \
-   if (!ed) return RET; \
+   if (!evas_object_smart_type_check_ptr(obj, _edje_edit_type)) \
+     return RET; \
+   eed = evas_object_smart_data_get(obj); \
+   if (!eed) return RET; \
+   ed = (Edje *)eed; \
    rp = _edje_real_part_get(ed, part); \
    if (!rp) return RET;
 
 /* Get pd(Edje_Part_Description*) from obj(Evas_Object*), part(char*) and state (char*) */
 #define GET_PD_OR_RETURN(RET) \
    Edje *ed; \
+   Edje_Edit *eed; \
    Edje_Part_Description *pd; \
-   ed = _edje_fetch(obj); \
-   if (!ed) return RET; \
-   pd = _edje_part_description_find_byname(ed, part, state, value); \
+   if (!evas_object_smart_type_check_ptr(obj, _edje_edit_type)) \
+     return RET; \
+   eed = evas_object_smart_data_get(obj); \
+   if (!eed) return RET; \
+   ed = (Edje *)eed; \
+   pd = _edje_part_description_find_byname(eed, part, state, value); \
    if (!pd) return RET;
 
 /* Get epr(Edje_Program*) from obj(Evas_Object*) and prog(char*)*/
 #define GET_EPR_OR_RETURN(RET) \
    Edje_Program *epr; \
+   if (!evas_object_smart_type_check_ptr(obj, _edje_edit_type)) \
+     return RET; \
    epr = _edje_program_get_byname(obj, prog); \
    if (!epr) return RET;
 
@@ -81,25 +95,110 @@ _alloc(size_t size)
 /* INTERNALS */
 /*************/
 
+/* Edje_Edit smart! Overloads the edje one adding some more control stuff */
+static const char _edje_edit_type[] = "edje_edit";
 
+typedef struct _Edje_Edit Edje_Edit;
+struct _Edje_Edit
+{
+   Edje base;
+};
 
+static void _edje_edit_smart_add(Evas_Object *obj);
+static void _edje_edit_smart_del(Evas_Object *obj);
+
+static Eina_Bool _edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group);
+
+EVAS_SMART_SUBCLASS_NEW(_edje_edit_type, _edje_edit, Edje_Smart_Api,
+			Edje_Smart_Api, _edje_object_smart_class_get, NULL)
+
+static void
+_edje_edit_smart_set_user(Edje_Smart_Api *sc)
+{
+   sc->base.add = _edje_edit_smart_add;
+   sc->base.del = _edje_edit_smart_del;
+   sc->file_set = _edje_edit_smart_file_set;
+}
+
+static void
+_edje_edit_smart_add(Evas_Object *obj)
+{
+   Edje_Edit *eed;
+
+   eed = evas_object_smart_data_get(obj);
+   if (!eed)
+     {
+	const Evas_Smart *smart;
+	const Evas_Smart_Class *sc;
+
+	eed = calloc(1, sizeof(Edje_Edit));
+	if (!eed) return;
+
+	smart = evas_object_smart_smart_get(obj);
+	sc = evas_smart_class_get(smart);
+	eed->base.api = (const Edje_Smart_Api *)sc;
+
+	evas_object_smart_data_set(obj, eed);
+     }
+
+   _edje_edit_parent_sc->base.add(obj);
+}
+
+static void
+_edje_edit_smart_del(Evas_Object *obj)
+{
+   Edje_Edit *eed;
+
+   eed = evas_object_smart_data_get(obj);
+   _edje_edit_parent_sc->base.del(obj);
+}
+
+static Eina_Bool
+_edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group)
+{
+   Edje_Edit *eed;
+
+   eed = evas_object_smart_data_get(obj);
+   /* Nothing custom here yet, so we just call the parent function.
+    * TODO and maybes:
+    *  * The whole point of this thing is keep track of stuff such as
+    *    strings to free and who knows what, so we need to take care
+    *    of those if the file/group changes.
+    *  * Maybe have the possibility to open just files, not always with
+    *    a group given.
+    *  * A way to skip the cache? Could help avoid some issues when editing
+    *    a group being used by the application in some other way, or multiple
+    *    opens of the same file.
+    *  * Here we probably want to allow opening groups with broken references
+    *    (GROUP parts or BOX/TABLE items pointing to non-existant/renamed
+    *    groups).
+    */
+   return _edje_edit_parent_sc->file_set(obj, file, group);
+}
+
+EAPI Evas_Object *
+edje_edit_object_add(Evas *e)
+{
+   return evas_object_smart_add(e, _edje_edit_smart_class_new());
+}
+/* End of Edje_Edit smart stuff */
 
 
 
 
 
 static Edje_Part_Description *
-_edje_part_description_find_byname(Edje *ed, const char *part, const char *state, double value)
+_edje_part_description_find_byname(Edje_Edit *eed, const char *part, const char *state, double value)
 {
    Edje_Real_Part *rp;
    Edje_Part_Description *pd;
 
-   if (!ed || !part || !state) return NULL;
+   if (!eed || !part || !state) return NULL;
 
-   rp = _edje_real_part_get(ed, part);
+   rp = _edje_real_part_get((Edje *)eed, part);
    if (!rp) return NULL;
 
-   pd = _edje_part_description_find(ed, rp, state, value);
+   pd = _edje_part_description_find((Edje *)eed, rp, state, value);
 
    return pd;
 }
@@ -616,7 +715,7 @@ _edje_edit_group_references_update(Evas_Object *obj, const char *old_group_name,
 
    pc = ed->collection;
 
-   part_obj = edje_object_add(ed->evas);
+   part_obj = edje_edit_object_add(ed->evas);
 
    old = eina_stringshare_add(old_group_name);
 
@@ -2097,7 +2196,7 @@ edje_edit_part_selected_state_set(Evas_Object *obj, const char *part, const char
 
    GET_RP_OR_RETURN(0);
 
-   pd = _edje_part_description_find_byname(ed, part, state, value);
+   pd = _edje_part_description_find_byname(eed, part, state, value);
    if (!pd) return 0;
 
    //printf("EDJE: Set state: %s %f\n", pd->state.name, pd->state.value);
@@ -2511,7 +2610,7 @@ edje_edit_part_states_list_get(Evas_Object *obj, const char *part)
    return states;
 }
 
-EAPI int
+EAPI Eina_Bool
 edje_edit_state_name_set(Evas_Object *obj, const char *part, const char *state, double value, const char *new_name, double new_value)
 {
    int part_id;
@@ -2521,7 +2620,7 @@ edje_edit_state_name_set(Evas_Object *obj, const char *part, const char *state, 
    //printf("Set name of state: %s in part: %s [new name: %s]\n",
      //     part, state, new_name);
 
-   if (!new_name) return 0;
+   if (!new_name) return EINA_FALSE;
 
    /* update programs */
    /* update the 'state' field in all programs. update only if program has
@@ -2552,7 +2651,7 @@ edje_edit_state_name_set(Evas_Object *obj, const char *part, const char *state, 
    /* set value */
    pd->state.value = new_value;
 
-   return 1;
+   return EINA_TRUE;
 }
 
 EAPI void
@@ -2564,7 +2663,7 @@ edje_edit_state_del(Evas_Object *obj, const char *part, const char *state, doubl
 
    //printf("REMOVE STATE: %s IN PART: %s\n", state, part);
 
-   pd = _edje_part_description_find_byname(ed, part, state, value);
+   pd = _edje_part_description_find_byname(eed, part, state, value);
    if (!pd) return;
 
    rp->part->other_desc = eina_list_remove(rp->part->other_desc, pd);
@@ -2710,11 +2809,11 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
    Eina_List *l;
    GET_RP_OR_RETURN(0);
 
-   pdfrom = _edje_part_description_find_byname(ed, part, from, val_from);
+   pdfrom = _edje_part_description_find_byname(eed, part, from, val_from);
    if (!pdfrom)
      return 0;
 
-   pdto = _edje_part_description_find_byname(ed, part, to, val_to);
+   pdto = _edje_part_description_find_byname(eed, part, to, val_to);
    if (!pdto)
      {
 	pdto = _alloc(sizeof(Edje_Part_Description));
@@ -2941,7 +3040,7 @@ edje_edit_state_rel2_relative_y_set(Evas_Object *obj, const char *part, const ch
 {
    GET_PD_OR_RETURN();
    //printf("Set rel2y of part: %s state: %s to: %f\n", part, state, y);
-   pd = _edje_part_description_find_byname(ed, part, state, value);
+   pd = _edje_part_description_find_byname(eed, part, state, value);
    //TODO check boudaries
    pd->rel2.relative_y = FROM_DOUBLE(y);
    edje_object_calc_force(obj);
