@@ -1492,9 +1492,8 @@ extern "C" {
 #define EET_G_LIST       103 /**< Linked list group type */
 #define EET_G_HASH       104 /**< Hash table group type */
 #define EET_G_UNION      105 /**< Union group type */
-#define EET_G_INHERIT    106 /**< Inherit object group type */
-#define EET_G_VARIANT    107 /**< Selectable subtype group */
-#define EET_G_LAST       108 /**< Last group type */
+#define EET_G_VARIANT    106 /**< Selectable subtype group */
+#define EET_G_LAST       107 /**< Last group type */
 
 #define EET_I_LIMIT      128 /**< Other type exist but are reserved for internal purpose. */
 
@@ -2193,36 +2192,6 @@ extern "C" {
         struct_type ___ett;			\
 	\
         eet_data_descriptor_element_add(edd, name, EET_T_UNKNOW, EET_G_UNION, \
-                                        (char *) (&(___ett.member)) - (char *)(&(___ett)), \
-                                        (char *) (&(___ett.type_member)) - (char *)(&(___ett)), \
-		   		        NULL, unified_type); \
-     }
-
-   /**
-    * Make a structure variable in size/content depend on it's type
-    * @param edd The data descriptor to add the type to.
-    * @param struct_type The type of the struct.
-    * @param name The string name to use to encode/decode this member
-    *        (must be a constant global and never change).
-    * @param member The struct member itself to be encoded.
-    * @param type_member The member that give hints on what is in the union.
-    * @param unified_type Describe all possible type the union could handle.
-    *
-    * This macro lets you easily add a switch for an object oriented representation. The position
-    * of the member that define the type must be fixed for all possible type. Eet will then choose
-    * in the unified_type the structure that need to be allocated to match the detected type.
-    * The type_get and type_set callback of unified_type should be defined. This should be the only
-    * type in edd.
-    *
-    * @since 1.2.4
-    * @ingroup Eet_Data_Group
-    * @see Eet_Data_Descriptor_Class
-    */
-#define EET_DATA_DESCRIPTOR_ADD_INHERIT(edd, struct_type, name, member, type_member, unified_type) \
-     { \
-        struct_type ___ett;			\
-	\
-        eet_data_descriptor_element_add(edd, name, EET_T_UNKNOW, EET_G_INHERIT, \
                                         (char *) (&(___ett.member)) - (char *)(&(___ett)), \
                                         (char *) (&(___ett.type_member)) - (char *)(&(___ett)), \
 		   		        NULL, unified_type); \

@@ -243,8 +243,6 @@ static void eet_data_put_hash(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_
 static int  eet_data_get_hash(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Chunk *echnk, int type, int group_type, void *data, char **p, int *size);
 static void eet_data_put_union(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Stream *ds, void *data_in);
 static int  eet_data_get_union(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Chunk *echnk, int type, int group_type, void *data, char **p, int *size);
-static void eet_data_put_inherit(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Stream *ds, void *data_in);
-static int  eet_data_get_inherit(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Chunk *echnk, int type, int group_type, void *data, char **p, int *size);
 static void eet_data_put_variant(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Stream *ds, void *data_in);
 static int  eet_data_get_variant(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Chunk *echnk, int type, int group_type, void *data, char **p, int *size);
 
@@ -296,7 +294,6 @@ static const Eet_Data_Group_Type_Codec eet_group_codec[] =
      { eet_data_get_list,     eet_data_put_list },
      { eet_data_get_hash,     eet_data_put_hash },
      { eet_data_get_union,    eet_data_put_union },
-     { eet_data_get_inherit,  eet_data_put_inherit },
      { eet_data_get_variant,  eet_data_put_variant }
 };
 
@@ -1448,9 +1445,8 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    Eet_Data_Element *ede;
    Eet_Data_Element *tmp;
 
-   /* UNION, INHERITED or VARIANT type would not work with simple type, we need a way to map the type. */
-   if ((group_type == EET_G_INHERIT
-	|| group_type == EET_G_UNION
+   /* UNION, VARIANT type would not work with simple type, we need a way to map the type. */
+   if ((group_type == EET_G_UNION
 	|| group_type == EET_G_VARIANT)
        &&
        (type != EET_T_UNKNOW
@@ -1459,13 +1455,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
 	|| subtype->func.type_set == NULL))
      return ;
 
-   /* Only one element is allowed with INHERITED type */
-   if (group_type == EET_G_INHERIT && edd->elements.num != 0)
-     return ;
-   if (edd->elements.num > 0 && edd->elements.set[0].group_type == EET_G_INHERIT)
-     return ;
-
-   /* VARIANT type will only work if the map only contains EET_G_*, but not INHERIT, UNION, VARIANT and ARRAY. */
+   /* VARIANT type will only work if the map only contains EET_G_*, but not UNION, VARIANT and ARRAY. */
    if (group_type == EET_G_VARIANT)
      {
 	int i;
@@ -1519,7 +1509,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    ede->group_type = group_type;
    ede->offset = offset;
    ede->count = count;
-   /* FIXME: For the time being, VAR_ARRAY, INHERIT, UNION and VARIANT  will put the counter_offset in count. */
+   /* FIXME: For the time being, VAR_ARRAY, UNION and VARIANT  will put the counter_offset in count. */
    ede->counter_offset = count;
 /*    ede->counter_offset = counter_offset; */
    ede->counter_name = counter_name;
@@ -2504,9 +2494,6 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
 	      break;
 	   case EET_G_VAR_ARRAY:
 	      return eet_node_var_array_new(chnk.name, NULL);
-	   case EET_G_INHERIT:
-	      /* This one should work */
-	      goto error;
 	   case EET_G_LIST:
 	   case EET_G_HASH:
 	   case EET_G_ARRAY:
@@ -3008,24 +2995,6 @@ eet_data_get_union(Eet_Free_Context *context, const Eet_Dictionary *ed,
    return 1;
 
  on_error:
-   return 0;
-}
-
-static void
-eet_data_put_inherit(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede,
-		     Eet_Data_Stream *ds, void *data_in)
-{
-   /* FIXME */
-   fprintf(stderr, "wrong !!!\n");
-}
-
-static int
-eet_data_get_inherit(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data_Descriptor *edd,
-		     Eet_Data_Element *ede, Eet_Data_Chunk *echnk,
-		     int type, int group_type, void *data,
-		     char **p, int *size)
-{
-   /* FIXME */
    return 0;
 }
 
