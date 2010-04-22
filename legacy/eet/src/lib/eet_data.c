@@ -340,6 +340,26 @@ static int _eet_data_words_bigendian = -1;
 #define IS_SIMPLE_TYPE(Type)    (Type > EET_T_UNKNOW && Type < EET_T_LAST)
 #define IS_POINTER_TYPE(Type)    (Type >= EET_T_STRING && Type <= EET_T_NULL)
 
+#define POINTER_TYPE_DECODE(Context, Ed, Edd, Ede, Echnk, Type, Data, P, Size, Label) \
+  {							\
+     int ___r;						\
+     ___r = eet_data_get_unknown(Context,		\
+				 Ed,			\
+				 Edd, Ede,		\
+				 Echnk,			\
+				 Type, EET_G_UNKNOWN,	\
+				 Data, P, Size);	\
+     if (!___r) goto Label;				\
+  }
+
+#define STRUCT_TYPE_DECODE(Data_Ret, Context, Ed, Ede, Data, Size, Label) \
+  Data_Ret = _eet_data_descriptor_decode(Context,			\
+					 Ed,				\
+					 Ede,				\
+					 Data,				\
+					 Size);				\
+  if (!Data_Ret) goto Label;
+
 #define EET_I_STRING		1 << 4
 #define EET_I_INLINED_STRING	2 << 4
 #define EET_I_NULL		3 << 4
@@ -2640,17 +2660,11 @@ eet_data_get_list(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data_
 
    if (IS_POINTER_TYPE(type))
      {
-	int ret;
-
-	ret = eet_data_get_unknown(context, ed, edd, ede, echnk, type, EET_G_UNKNOWN,
-				   &data_ret, p, size);
-	if (!ret) return 0;
+	POINTER_TYPE_DECODE(context, ed, edd, ede, echnk, type, &data_ret, p, size, on_error);
      }
    else
      {
-	data_ret = _eet_data_descriptor_decode(context, ed, subtype,
-					       echnk->data, echnk->size);
-	if (!data_ret) return 0;
+	STRUCT_TYPE_DECODE(data_ret, context, ed, subtype, echnk->data, echnk->size, on_error);
      }
 
    if (edd)
@@ -2665,6 +2679,9 @@ eet_data_get_list(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data_
      }
 
    return 1;
+
+ on_error:
+   return 0;
 }
 
 static int
@@ -2701,18 +2718,11 @@ eet_data_get_hash(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data_
 
    if (IS_POINTER_TYPE(echnk->type))
      {
-	ret = eet_data_get_unknown(context, ed, edd, ede, echnk, echnk->type, EET_G_UNKNOWN,
-				   &data_ret, p, size);
-	if (!ret) goto on_error;
+	POINTER_TYPE_DECODE(context, ed, edd, ede, echnk, echnk->type, &data_ret, p, size, on_error);
      }
    else
      {
-	data_ret = _eet_data_descriptor_decode(context,
-					       ed,
-					       ede ? ede->subtype : NULL,
-					       echnk->data,
-					       echnk->size);
-	if (!data_ret) goto on_error;
+	STRUCT_TYPE_DECODE(data_ret, context, ed, ede ? ede->subtype : NULL, echnk->data, echnk->size, on_error);
      }
 
    if (edd)
@@ -2827,17 +2837,13 @@ eet_data_get_array(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data
 
 	if (IS_POINTER_TYPE(echnk->type))
 	  {
-	     ret = eet_data_get_unknown(context, ed, edd, ede, echnk, echnk->type, EET_G_UNKNOWN,
-					&data_ret, p, size);
-	     if (!ret) goto on_error;
+	     POINTER_TYPE_DECODE(context, ed, edd, ede, echnk, echnk->type, &data_ret, p, size, on_error);
 	     if (dst) memcpy(dst, &data_ret, subsize);
 	     if (!edd) childs = eina_list_append(childs, data_ret);
 	  }
 	else
 	  {
-	     data_ret = _eet_data_descriptor_decode(context, ed, ede ? ede->subtype : NULL,
-						    echnk->data, echnk->size);
-	     if (!data_ret) goto on_error;
+	     STRUCT_TYPE_DECODE(data_ret, context, ed, ede ? ede->subtype : NULL, echnk->data, echnk->size, on_error);
 	     if (dst)
 	       {
 		  memcpy(dst, data_ret, subsize);
