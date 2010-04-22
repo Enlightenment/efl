@@ -6392,7 +6392,7 @@ _edje_generate_source_of_group(Edje *ed, const char *group, Eina_Strbuf *buf)
    char *data;
    Eina_Bool ret = EINA_TRUE;
 
-   obj = edje_object_add(ed->evas);
+   obj = edje_edit_object_add(ed->evas);
    if (!edje_object_file_set(obj, ed->file->path, group)) return EINA_FALSE;
 
    BUF_APPENDF(I1"group { name: \"%s\";\n", group);
