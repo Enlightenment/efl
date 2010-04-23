@@ -63,6 +63,16 @@ external_radio_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
 	     return EINA_TRUE;
 	  }
      }
+   else if (!strcmp(param->name, "group"))
+     {
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	  {
+	     Evas_Object *ed = evas_object_smart_parent_get(obj);
+	     Evas_Object *group = edje_object_part_swallow_get(ed, param->s);
+	     elm_radio_group_add(obj, group);
+	     return EINA_TRUE;
+	  }
+     }
 
    ERR("unknown parameter '%s' of type '%s'",
        param->name, edje_external_param_type_str(param->type));
@@ -93,6 +103,11 @@ external_radio_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ext
 	     param->i = elm_radio_value_get(obj);
 	     return EINA_TRUE;
 	  }
+     }
+   else if (!strcmp(param->name, "group"))
+     {
+	/* not easy to get group name back from live object */
+	return EINA_FALSE;
      }
 
    ERR("unknown parameter '%s' of type '%s'",
