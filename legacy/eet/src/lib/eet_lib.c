@@ -333,7 +333,7 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 	if (del_ef)
 	  {
 	     del_ef->delete_me_now = 1;
-             eet_internal_close(ef, EINA_TRUE);
+             eet_internal_close(del_ef, EINA_TRUE);
 	  }
      }
 
