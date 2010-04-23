@@ -1285,13 +1285,13 @@ _smart_init(void)
 	eina_module_list_load(_modules);
 
 	/* Init static module */
-#ifdef EINA_STATIC_BUILD_XINE
+#ifdef EMOTION_STATIC_BUILD_XINE
 	xine_module_init();
 #endif
-#ifdef EINA_STATIC_BUILD_VLC
+#ifdef EMOTION_STATIC_BUILD_VLC
 	vlc_module_init();
 #endif
-#ifdef EINA_STATIC_BUILD_GSTREAMER
+#ifdef EMOTION_STATIC_BUILD_GSTREAMER
 	gstreamer_module_init();
 #endif
 
