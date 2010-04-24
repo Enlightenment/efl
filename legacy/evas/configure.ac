@@ -822,6 +822,9 @@ case $host_cpu in
   x86_64)
     build_cpu_mmx="yes"
     ;;
+  amd64)
+    build_cpu_mmx="yes"
+    ;;
 esac
 AC_MSG_CHECKING(whether to build mmx code)
 AC_ARG_ENABLE(cpu-mmx,
@@ -852,6 +855,9 @@ case $host_cpu in
     build_cpu_sse="yes"
     ;;
   x86_64)
+    build_cpu_sse="yes"
+    ;;
+  amd64)
     build_cpu_sse="yes"
     ;;
 esac
