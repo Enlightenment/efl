@@ -111,7 +111,7 @@ edje_amalgamation.c: $(base_sources) Makefile
 	@echo "#include <edje_private.h>" >> edje_amalgamation.c
 
 	@for f in $(base_sources); do \
-	   if [ `expr substr $$f 1 1` != '/' ]; then \
+	   if [ `echo $$f | sed -e 's/^...\(.\).*/\1/'` != '/' ]; then \
 		  file="$(srcdir)/$$f" ; \
 	   else \
 		  file="$$f" ; \
