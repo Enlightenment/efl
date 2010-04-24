@@ -30,7 +30,7 @@ dnl check if the CPU is supporting MMX instruction sets
 _efl_build_cpu_mmx="no"
 if test "x${_efl_enable_cpu_mmx}" = "xyes" ; then
    case $host_cpu in
-      i*86 | x86_64)
+      i*86 | x86_64 | amd64)
          _efl_build_cpu_mmx="yes"
          ;;
    esac
@@ -97,7 +97,7 @@ dnl check if the CPU is supporting SSE instruction sets
 _efl_build_cpu_sse="no"
 if test "x${_efl_enable_cpu_sse}" = "xyes" ; then
    case $host_cpu in
-      i*86 | x86_64)
+      i*86 | x86_64 | amd64)
          _efl_build_cpu_sse="yes"
          ;;
    esac
@@ -167,7 +167,7 @@ dnl check if the CPU is supporting SSE2 instruction sets
 _efl_build_cpu_sse2="no"
 if test "x${_efl_enable_cpu_sse2}" = "xyes" ; then
    case $host_cpu in
-      i686 | x86_64)
+      i*86 | x86_64 | amd64)
          _efl_build_cpu_sse2="yes"
          ;;
    esac
