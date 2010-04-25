@@ -69,7 +69,11 @@ struct _Evas_Object_Textblock_Format_Item
    EINA_INLIST;
    const char                   *item;
    Evas_Object_Textblock_Node   *source_node;
-   int                           x, w;
+   int                           x, w, h, y, ascent, descent;
+   unsigned char                 vsize : 2;
+   unsigned char                 size : 2;
+   unsigned char                 formatme : 1;
+   unsigned char                 ___padding___ : 3;
 };
 
 struct _Evas_Object_Textblock_Format
@@ -780,8 +784,9 @@ static const char *stylestr = NULL;
 static const char *tabstopsstr = NULL;
 static const char *linesizestr = NULL;
 static const char *linerelsizestr = NULL;
-static const char *linegap = NULL;
-static const char *linerelgap = NULL;
+static const char *linegapstr = NULL;
+static const char *linerelgapstr = NULL;
+static const char *itemstr = NULL;
 
 static void
 _format_command_init(void)
@@ -812,8 +817,9 @@ _format_command_init(void)
    tabstopsstr = eina_stringshare_add("tabstops");
    linesizestr = eina_stringshare_add("linesize");
    linerelsizestr = eina_stringshare_add("linerelsize");
-   linegap = eina_stringshare_add("linegap");
-   linerelgap = eina_stringshare_add("linerelgap");
+   linegapstr = eina_stringshare_add("linegap");
+   linerelgapstr = eina_stringshare_add("linerelgap");
+   itemstr = eina_stringshare_add("item");
 }
 
 static void
@@ -845,8 +851,9 @@ _format_command_shutdown(void)
    eina_stringshare_del(tabstopsstr);
    eina_stringshare_del(linesizestr);
    eina_stringshare_del(linerelsizestr);
-   eina_stringshare_del(linegap);
-   eina_stringshare_del(linerelgap);
+   eina_stringshare_del(linegapstr);
+   eina_stringshare_del(linerelgapstr);
+   eina_stringshare_del(itemstr);
 }
 
 static void
@@ -1122,12 +1129,12 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
 	       }
           }
      }
-   else if (cmd == linegap)
+   else if (cmd == linegapstr)
      {
         fmt->linegap = atoi(tmp_param);
         fmt->linerelgap = 0.0;
      }
-   else if (cmd == linerelgap)
+   else if (cmd == linerelgapstr)
      {
 	char *endptr = NULL;
 	double val = strtod(tmp_param, &endptr);
@@ -1327,8 +1334,12 @@ _layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 
    if (fmt->font.font)
      {
+//        ascent = c->ENFN->font_ascent_get(c->ENDT, fmt->font.font);
+//	descent = c->ENFN->font_descent_get(c->ENDT, fmt->font.font);
+//        printf("asc: %4i     desc: %4i\n", ascent, descent);
 	ascent = c->ENFN->font_max_ascent_get(c->ENDT, fmt->font.font);
 	descent = c->ENFN->font_max_descent_get(c->ENDT, fmt->font.font);
+//        printf("  max asc: %4i     desc: %4i\n", ascent, descent);
         if (fmt->linesize > 0)
           {
              if ((ascent + descent) < fmt->linesize)
@@ -1414,10 +1425,18 @@ _layout_format_value_handle(Ctxt *c, Evas_Object_Textblock_Format *fmt, char *it
    c->marginr = fmt->margin.r;
 }
 
+#define VSIZE_FULL 0
+#define VSIZE_ASCENT 1
+
+#define SIZE 0
+#define SIZE_ABS 1
+#define SIZE_REL 2
+
 static void
 _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
    Evas_Object_Textblock_Item *it;
+   Evas_Object_Textblock_Format_Item *fi;
 
    c->maxascent = c->maxdescent = 0;
    if (!c->ln->items)
@@ -1431,6 +1450,56 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 	_layout_format_ascent_descent_adjust(c, it->format);
 	endx = it->x + it->w;
 	if (endx > c->ln->w) c->ln->w = endx;
+     }
+   EINA_INLIST_FOREACH(c->ln->format_items, fi)
+     {
+	int endx;
+
+        if (!fi->formatme) continue;
+	endx = fi->x + fi->w;
+	if (endx > c->ln->w) c->ln->w = endx;
+        switch (fi->size)
+          {
+          case SIZE:
+          case SIZE_ABS:
+             switch (fi->vsize)
+               {
+               case VSIZE_FULL:
+                  if (fi->h > (c->maxdescent + c->maxascent))
+                    {
+                       c->maxascent += fi->h - (c->maxdescent + c->maxascent);
+                       fi->y = -c->maxascent;
+                    }
+                  else
+                    fi->y = -c->maxascent;
+                  break;
+               case VSIZE_ASCENT:
+                  if (fi->h > c->maxascent)
+                    {
+                       c->maxascent = fi->h;
+                       fi->y = -c->maxascent;
+                    }
+                  else
+                    fi->y = -fi->h;
+                  break;
+               default:
+                  break;
+               }
+             break;
+          case SIZE_REL:
+             switch (fi->vsize)
+               {
+               case VSIZE_FULL:
+               case VSIZE_ASCENT:
+                  fi->y = -c->maxascent;
+                  break;
+               default:
+                  break;
+               }
+             break;
+          default:
+             break;
+          }
      }
    c->ln->y = c->y + c->o->style_pad.t;
    c->ln->h = c->maxascent + c->maxdescent;
@@ -2082,65 +2151,173 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 	  {
 	     char *s;
 	     char *item;
+             int handled = 0;
 
 	     s = (char *)eina_strbuf_string_get(n->text);
-	     if (s[0] == '+')
-	       {
-		  fmt = _layout_format_push(c, fmt);
-		  s++;
-	       }
-	     else if (s[0] == '-')
-	       {
-		  fmt = _layout_format_pop(c, fmt);
-		  s++;
-	       }
-	     while ((item = _format_parse(&s)))
-	       {
-		  char tmp_delim = *s;
-		  *s = '\0';
-		  if (_format_is_param(item))
-		    _layout_format_value_handle(c, fmt, item);
-		  else
-		    {
-		       if ((!strcmp(item, "\n")) || (!strcmp(item, "\\n")))
-			 {
-			    Evas_Object_Textblock_Format_Item *fi;
+             if (!strncmp(s, "+ item ", 7))
+               {
+                  // one of:
+                  //   item size=20x10 href=name
+                  //   item relsize=20x10 href=name
+                  //   item abssize=20x10 href=name
+                  // 
+                  // optional arguments:
+                  //   vsize=full
+                  //   vsize=ascent
+                  // 
+                  // size == item size (modifies line size) - can be multiplied by
+                  //   scale factor
+                  // relsize == relative size (height is current font height, width
+                  //   modified accordingly keeping aspect)
+                  // abssize == absolute size (modifies line size) - never mulitplied by
+                  //   scale factor
+                  // href == name of item - to be found and matched later and used for
+                  //   positioning
+                  Evas_Object_Textblock_Format_Item *fi;
+                  int x2, w = 1, h = 1, y = 0;
+                  int vsize = 0, size = 0;
+                  char *p, *href;
+                  
+                  // don't care
+                  //href = strstr(s, " href=");
+                  p = strstr(s, " vsize=");
+                  if (p)
+                    {
+                       p += 8;
+                       if (!strcmp(p, "full")) vsize = VSIZE_FULL;
+                       else if (!strcmp(p, "ascent")) vsize = VSIZE_ASCENT;
+                    }
+                  p = strstr(s, " size=");
+                  if (p)
+                    {
+                       p += 6;
+                       if (sscanf(p, "%ix%i", &w, &h) == 2)
+                         {
+                            w = w * obj->cur.scale;
+                            h = h * obj->cur.scale;
+                            size = SIZE;
+                         }
+                    }
+                  else
+                    {
+                       p = strstr(s, " absize=");
+                       if (p)
+                         {
+                            p += 8;
+                            if (sscanf(p, "%ix%i", &w, &h) == 2)
+                              {
+                                 size = SIZE_ABS;
+                              }
+                         }
+                       else
+                         {
+                            p = strstr(s, " relsize=");
+                            if (p)
+                              {
+                                 p += 9;
+                                 if (sscanf(p, "%ix%i", &w, &h) == 2)
+                                   {
+                                      int sz = 1;
+                                      size = SIZE_REL;
+                                      if (vsize == VSIZE_FULL)
+                                        {
+                                           sz = c->maxdescent + c->maxascent;
+                                        }
+                                      else if (vsize == VSIZE_ASCENT)
+                                        {
+                                           sz = c->maxascent;
+                                        }
+                                      w = (w * sz) / h;
+                                      h = sz;
+                                   }
+                              }
+                         }
+                    }
 
-			    fi = _layout_format_item_add(c, n, item);
-			    fi->x = c->x;
-			    fi->w = 0;
-			    _layout_line_advance(c, fmt);
-			 }
-		       else if ((!strcmp(item, "\t")) || (!strcmp(item, "\\t")))
-			 {
-			    Evas_Object_Textblock_Format_Item *fi;
-			    int x2;
-
-			    x2 = (fmt->tabstops * ((c->x + fmt->tabstops) / fmt->tabstops));
-			    if (x2 >
-				(c->w - c->o->style_pad.l -
-				 c->o->style_pad.r -
-				 c->marginl - c->marginr))
-			      {
-				 _layout_line_advance(c, fmt);
-				 x2 = (fmt->tabstops * ((c->x + fmt->tabstops) / fmt->tabstops));
-			      }
-			    if (c->ln->items)
-			      {
-				 Evas_Object_Textblock_Item *it;
-
-				 it = (Evas_Object_Textblock_Item *)(EINA_INLIST_GET(c->ln->items))->last;
-				 _layout_strip_trailing_whitespace(c, fmt, it);
-			      }
-			    fi = _layout_format_item_add(c, n, item);
-			    fi->x = c->x;
-			    fi->w = x2 - c->x;
-			    c->x = x2;
-			 }
-		    }
-		  *s = tmp_delim;
-	       }
-
+                  x2 = c->x + w;
+                  
+                  if (x2 >
+                      (c->w - c->o->style_pad.l -
+                       c->o->style_pad.r -
+                       c->marginl - c->marginr))
+                    {
+                       _layout_line_advance(c, fmt);
+                       x2 = w;
+                    }
+                  fi = _layout_format_item_add(c, n, item);
+                  fi->x = c->x;
+                  fi->vsize = vsize;
+                  fi->size = size;
+                  fi->formatme = 1;
+                  fi->w = w;
+                  fi->h = h;
+                  fi->ascent = c->maxascent;
+                  fi->descent = c->maxdescent;
+                  c->x = x2;
+                  handled = 1;
+               }
+             if (!handled)
+               {
+                  if (s[0] == '+')
+                    {
+                       fmt = _layout_format_push(c, fmt);
+                       s++;
+                    }
+                  else if (s[0] == '-')
+                    {
+                       fmt = _layout_format_pop(c, fmt);
+                       s++;
+                    }
+                  while ((item = _format_parse(&s)))
+                    {
+                       char tmp_delim = *s;
+                       *s = '\0';
+                       if (_format_is_param(item))
+                         {
+                            _layout_format_value_handle(c, fmt, item);
+                         }
+                       else
+                         {
+                            if ((!strcmp(item, "\n")) || (!strcmp(item, "\\n")))
+                              {
+                                 Evas_Object_Textblock_Format_Item *fi;
+                                 
+                                 fi = _layout_format_item_add(c, n, item);
+                                 fi->x = c->x;
+                                 fi->w = 0;
+                                 _layout_line_advance(c, fmt);
+                              }
+                            else if ((!strcmp(item, "\t")) || (!strcmp(item, "\\t")))
+                              {
+                                 Evas_Object_Textblock_Format_Item *fi;
+                                 int x2;
+                                 
+                                 x2 = (fmt->tabstops * ((c->x + fmt->tabstops) / fmt->tabstops));
+                                 if (x2 >
+                                     (c->w - c->o->style_pad.l -
+                                      c->o->style_pad.r -
+                                      c->marginl - c->marginr))
+                                   {
+                                      _layout_line_advance(c, fmt);
+                                      x2 = (fmt->tabstops * ((c->x + fmt->tabstops) / fmt->tabstops));
+                                   }
+                                 if (c->ln->items)
+                                   {
+                                      Evas_Object_Textblock_Item *it;
+                                      
+                                      it = (Evas_Object_Textblock_Item *)(EINA_INLIST_GET(c->ln->items))->last;
+                                      _layout_strip_trailing_whitespace(c, fmt, it);
+                                   }
+                                 fi = _layout_format_item_add(c, n, item);
+                                 fi->x = c->x;
+                                 fi->w = x2 - c->x;
+                                 c->x = x2;
+                              }
+                         }
+                       *s = tmp_delim;
+                    }
+               }
+             
 	     evas_text_style_pad_get(fmt->style, &style_pad_l, &style_pad_r, &style_pad_t, &style_pad_b);
 
 	     if (fmt->underline2)

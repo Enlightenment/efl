@@ -53,6 +53,27 @@ evas_common_font_ascent_get(RGBA_Font *fn)
    RGBA_Font_Int *fi;
 
 //   evas_common_font_size_use(fn);
+#if 0
+     {
+        Eina_List *l;
+        
+        EINA_LIST_FOREACH(fn->fonts, l, fi)
+          {
+             if (!fi->src->ft.face) continue;
+             if (fi->src->current_size != fi->size)
+               {
+                  FT_Activate_Size(fi->ft.size);
+                  fi->src->current_size = fi->size;
+               }
+             val = (int)fi->src->ft.face->size->metrics.ascender;
+             if (fi->src->ft.face->units_per_EM == 0)
+               return val;
+             dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
+             ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
+             printf(" ==== %p: %i\n", fi, ret);
+          }
+     }
+#endif   
    fi = fn->fonts->data;
    if (fi->src->current_size != fi->size)
      {
