@@ -745,12 +745,7 @@ _anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
              evas_object_smart_member_add(ob, smart);
              evas_object_stack_above(ob, o);
              evas_object_clip_set(ob, clip);
-             evas_object_repeat_events_set(ob, 1);
-             evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_DOWN, _edje_anchor_mouse_down_cb, an);
-             evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_UP, _edje_anchor_mouse_up_cb, an);
-             evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_MOVE, _edje_anchor_mouse_move_cb, an);
-             evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_IN, _edje_anchor_mouse_in_cb, an);
-             evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_OUT, _edje_anchor_mouse_out_cb, an);
+             evas_object_pass_events_set(ob, 1);
              evas_object_show(ob);
              sel->obj = ob;
           }
@@ -2167,6 +2162,7 @@ _edje_entry_anchor_geometry_get(Edje_Real_Part *rp, const char *anchor)
    if (!en) return NULL;
    EINA_LIST_FOREACH(en->anchors, l, an)
      {
+        if (an->item) continue;
 	if (!strcmp(anchor, an->name))
 	  return an->sel;
      }
@@ -2186,6 +2182,7 @@ _edje_entry_anchors_list(Edje_Real_Part *rp)
         EINA_LIST_FOREACH(en->anchors, l, an)
 	  {
 	     const char *n = an->name;
+             if (an->item) continue;
 	     if (!n) n = "";
 	     anchors = eina_list_append(anchors, strdup(n));
 	  }
