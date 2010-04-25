@@ -1471,13 +1471,13 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
                        fi->y = -c->maxascent;
                     }
                   else
-                    fi->y = -c->maxascent;
+                    fi->y = -(fi->h - c->maxdescent);
                   break;
                case VSIZE_ASCENT:
                   if (fi->h > c->maxascent)
                     {
                        c->maxascent = fi->h;
-                       fi->y = -c->maxascent;
+                       fi->y = -fi->h;
                     }
                   else
                     fi->y = -fi->h;
@@ -2183,9 +2183,9 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                   p = strstr(s, " vsize=");
                   if (p)
                     {
-                       p += 8;
-                       if (!strcmp(p, "full")) vsize = VSIZE_FULL;
-                       else if (!strcmp(p, "ascent")) vsize = VSIZE_ASCENT;
+                       p += 7;
+                       if (!strncmp(p, "full", 4)) vsize = VSIZE_FULL;
+                       else if (!strncmp(p, "ascent", 6)) vsize = VSIZE_ASCENT;
                     }
                   p = strstr(s, " size=");
                   if (p)
