@@ -1491,7 +1491,7 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
                {
                case VSIZE_FULL:
                case VSIZE_ASCENT:
-                  fi->y = -c->maxascent;
+                  fi->y = -fi->ascent;
                   break;
                default:
                   break;
