@@ -5158,6 +5158,39 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
 }
 
 /**
+ * to be documented.
+ * @param cur to be documented.
+ * @param cx to be documented.
+ * @param cy to be documented.
+ * @param cw to be documented.
+ * @param ch to be documented.
+ * @return to be documented.
+ */
+EAPI Eina_Bool
+evas_textblock_cursor_format_item_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Line *ln = NULL;
+   Evas_Object_Textblock_Format_Item *fi = NULL;
+   Evas_Coord x, y, w, h;
+
+   if (!cur) return 0;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (!o->formatted.valid) _relayout(cur->obj);
+   _find_layout_format_item_line_match(cur->obj, cur->node, &ln, &fi);
+   if ((!ln) || (!fi)) return 0;
+   x = ln->x + fi->x;
+   y = ln->y + ln->baseline + fi->y;
+   w = fi->w;
+   h = fi->h;
+   if (cx) *cx = x;
+   if (cy) *cy = y;
+   if (cw) *cw = w;
+   if (ch) *ch = h;
+   return 1;
+}
+
+/**
  * To be documented.
  *
  * FIXME: To be fixed.
