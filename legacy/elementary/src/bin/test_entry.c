@@ -84,17 +84,21 @@ test_entry(void *data, Evas_Object *obj, void *event_info)
                        "<br>"
                        
                        "Also you can stick in items with (relsize + ascent): "
-                       "<item relsize=20x10 vsize=ascent href=A></item>"
+                       "<item relsize=20x10 vsize=ascent href=A1></item>"
+                       " (full) "
+                       "<item relsize=20x10 vsize=full href=A2></item>"
                        " (to the left)<br>"
                        
-                       "Also (size + full): "
-                       "<item size=120x40 vsize=full href=B></item>"
+                       "Also (size + ascent): "
+                       "<item size=120x40 vsize=ascent href=B1></item>"
+                       " (full) "
+                       "<item size=120x40 vsize=full href=B2></item>"
                        " (before this)<br>"
                        
                        "And as well (absize + ascent): "
-                       "<item absize=80x80 vsize=ascent href=C></item>"
+                       "<item absize=80x80 vsize=ascent href=C1></item>"
                        " (full) "
-                       "<item absize=60x60 vsize=full href=C></item>"
+                       "<item absize=60x60 vsize=full href=C2></item>"
                        " ... end."
                        );
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
