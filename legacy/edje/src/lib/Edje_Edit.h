@@ -2251,6 +2251,17 @@ EAPI Eina_List * edje_edit_images_list_get(Evas_Object *obj);
  */
 EAPI Eina_Bool edje_edit_image_add(Evas_Object *obj, const char *path);
 
+/** Delete an image from the image collection
+ *
+ * It actually write directly to the file so you don't have to save.
+ *
+ * @param obj Object being edited.
+ * @param name The name of the image file to include in the edje.
+ *
+ * @return EINA_TRUE if succesful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_image_del(Evas_Object *obj, const char *name);
+
 /** Add an image entry to the image collection
  *
  * This function adds the given image entry to the edje image collection. The

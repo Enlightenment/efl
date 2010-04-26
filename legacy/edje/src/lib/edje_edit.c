@@ -4384,6 +4384,82 @@ edje_edit_image_add(Evas_Object *obj, const char* path)
 }
 
 EAPI Eina_Bool
+edje_edit_image_del(Evas_Object *obj, const char* name)
+{
+   Eina_List *l;
+   Edje_Image_Directory_Entry *de;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!name) return EINA_FALSE;
+   if (!ed->file) return EINA_FALSE;
+   if (!ed->path) return EINA_FALSE;
+
+   /* Create Image_Directory if not exist */
+   if (!ed->file->image_dir)
+     return EINA_TRUE;
+
+   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, de)
+     {
+       if (!strcmp(name, de->entry))
+         {
+           ed->file->image_dir->entries = eina_list_remove_list(
+					     ed->file->image_dir->entries, l);
+           break;
+         }
+       de = NULL;
+     }
+
+   if (!de)
+     {
+	WRN("Unable to find image entry part \"%s\"", name);
+	return EINA_TRUE;
+     }
+
+   {
+      char entry[PATH_MAX];
+      Eet_File *eetf;
+
+      /* open the eet file */
+      eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
+      if (!eetf)
+	{
+	   ERR("Unable to open \"%s\" for writing output", ed->path);
+	   ed->file->image_dir->entries =
+	       eina_list_append(ed->file->image_dir->entries, de);
+	   return EINA_FALSE;
+	}
+
+      snprintf(entry, sizeof(entry), "images/%i", de->id);
+
+      if (eet_delete(eetf, entry) <= 0)
+        {
+           ERR("Unable to delete \"%s\" font entry", entry);
+           eet_close(eetf);
+	   ed->file->image_dir->entries =
+	       eina_list_append(ed->file->image_dir->entries, de);
+           return EINA_FALSE;
+        }
+
+      /* write the edje_file */
+      if (!_edje_edit_update_edje_file(ed, eetf))
+	{
+	   eet_close(eetf);
+	   ed->file->image_dir->entries =
+	       eina_list_append(ed->file->image_dir->entries, de);
+	   return EINA_FALSE;
+	}
+
+      eet_close(eetf);
+   }
+
+   free(de->entry);
+   free(de);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 edje_edit_image_data_add(Evas_Object *obj, const char *name, int id)
 {
    Eina_List *l;
