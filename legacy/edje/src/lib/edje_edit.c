@@ -2739,10 +2739,16 @@ edje_edit_state_del(Evas_Object *obj, const char *part, const char *state, doubl
 
    GET_RP_OR_RETURN();
 
-   //printf("REMOVE STATE: %s IN PART: %s\n", state, part);
-
    pd = _edje_part_description_find_byname(eed, part, state, value);
    if (!pd) return;
+
+   /* Don't allow to delete default state, for now at least; */
+   if (pd == rp->part->default_desc)
+     return;
+
+   /* And if we are deleting the current state, go back to default first */
+   if (pd == rp->chosen_description)
+     _edje_part_description_apply(ed, rp, "default", 0.0, NULL, 0.0);
 
    rp->part->other_desc = eina_list_remove(rp->part->other_desc, pd);
 
