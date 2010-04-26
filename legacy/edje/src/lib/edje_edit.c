@@ -5408,19 +5408,34 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
 EAPI Eina_Bool
 edje_edit_program_del(Evas_Object *obj, const char *prog)
 {
-   Eina_List *l, *l_next;
+   Eina_List *l, *l_next, *rem;
    Edje_Part_Collection *pc;
+   Edje_Program *p;
    int id, i;
-   int old_id;
+   int old_id = -1;
 
-   GET_ED_OR_RETURN(0);
-   GET_EPR_OR_RETURN(0);
+   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_EPR_OR_RETURN(EINA_FALSE);
 
-   //printf("DEL PROGRAM: %s\n", prog);
+   pc = ed->collection;
+
+   rem = eina_list_nth_list(pc->programs, epr->id);
+   l = eina_list_last(pc->programs);
+   if (rem != l)
+     {
+	/* If the removed program is not the last in the list/table,
+	 * put the last one in its place and update references to it later */
+	p = eina_list_data_get(l);
+	pc->programs = eina_list_remove_list(pc->programs, l);
+	pc->programs = eina_list_append_relative_list(pc->programs, p, rem);
+
+	ed->table_programs[epr->id] = p;
+	old_id = p->id;
+	p->id = epr->id;
+     }
 
    //Remove program from programs list
    id = epr->id;
-   pc = ed->collection;
    pc->programs = eina_list_remove(pc->programs, epr);
 
    //Free Edje_Program
@@ -5450,50 +5465,24 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
      }
    free(epr);
 
-
-   //Update programs table
-   //We move the last program in place of the deleted one
-   //and realloc the table without the last element.
-   ed->table_programs[id % ed->table_programs_size] = ed->table_programs[ed->table_programs_size-1];
    ed->table_programs_size--;
    ed->table_programs = realloc(ed->table_programs,
                              sizeof(Edje_Program *) * ed->table_programs_size);
-
-   //Update the id of the moved program
-   if (id < ed->table_programs_size)
-     {
-	Edje_Program *p;
-
-	p = ed->table_programs[id % ed->table_programs_size];
-	//printf("UPDATE: %s(id:%d) with new id: %d\n",
-	  //     p->name, p->id, id);
-	old_id = p->id;
-	p->id = id;
-     }
-   else
-     old_id = -1;
 
    //We also update all other programs that point to old_id and id
    for (i = 0; i < ed->table_programs_size; i++)
      {
 	Edje_Program_After *pa;
-	Edje_Program *p;
 
 	p = ed->table_programs[i];
-	// printf("Check dependencies on %s\n", p->name);
+
 	/* check in afters */
 	EINA_LIST_FOREACH_SAFE(p->after, l, l_next, pa)
 	  {
 	     if (pa->id == old_id)
-	       {
-		  //    printf("   dep on after old_id\n");
-		  pa->id = id;
-	       }
+	       pa->id = id;
 	     else if (pa->id == id)
-	       {
-		  //  printf("   dep on after id\n");
-		  p->after = eina_list_remove_list(p->after, l);
-	       }
+	       p->after = eina_list_remove_list(p->after, l);
 	  }
 	/* check in targets */
 	if (p->action == EDJE_ACTION_TYPE_ACTION_STOP)
@@ -5503,20 +5492,14 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
 	     EINA_LIST_FOREACH_SAFE(p->targets, l, l_next, pt)
 	       {
 		  if (pt->id == old_id)
-		    {
-		       // printf("   dep on target old_id\n");
-		       pt->id = id;
-		    }
+		    pt->id = id;
 		  else if (pt->id == id)
-		    {
-		       // printf("   dep on target id\n");
-		       p->targets = eina_list_remove_list(p->targets, l);
-		    }
+		    p->targets = eina_list_remove_list(p->targets, l);
 	       }
 	  }
      }
 
-   return 1;
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
