@@ -227,10 +227,7 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    if (!wd) return;
-   evas_object_size_hint_min_get(wd->scr, &minw, &minh);
    evas_object_size_hint_max_get(wd->scr, &maxw, &maxh);
-   if (wd->horizontal) minw = -1;
-   else minh = -1;
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
@@ -1000,10 +997,6 @@ elm_scrolled_grid_add(Evas_Object *parent)
    elm_smart_scroller_extern_pan_set(wd->scr, wd->pan_smart,
 				     _pan_set, _pan_get,
 				     _pan_max_get, _pan_child_size_get);
-
-   edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr),
-			     &minw, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
 
    _sizing_eval(obj);
 
