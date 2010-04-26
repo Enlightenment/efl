@@ -742,6 +742,15 @@ edje_edit_font_add(
    const char* alias       ///< The file alias, or NULL to use filename
 );
 
+/**Remove a ttf font to the edje file.
+ * If font can't be deleted EINA_FALSE is returned.
+ */
+EAPI Eina_Bool         ///@return EINA_TRUE on success or EINA_FALSE on failure
+edje_edit_font_del(
+   Evas_Object *obj,       ///< The edje object
+   const char* alias       ///< The file alias
+);
+
 /**Get font name for a given part state. Remember to free the returned string using edje_edit_string_free().*/
 EAPI const char *          ///@return The name of the font used in the given part state
 edje_edit_state_font_get(
@@ -2222,6 +2231,17 @@ EAPI Eina_List * edje_edit_fonts_list_get(Evas_Object *obj);
  * @return EINA_TRUE if font cat be loaded, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool edje_edit_font_add(Evas_Object *obj, const char *path, const char* alias);
+
+/** Delete font from the edje file.
+ *
+ * The font will be removed from all the groups in the edje, not only the current one.
+ *
+ * @param obj Object being edited.
+ * @param alias The font alias
+ *
+ * @return EINA_TRUE if font deleted, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_font_del(Evas_Object *obj, const char* alias);
 
 /** Get font name for a given part state.
  *

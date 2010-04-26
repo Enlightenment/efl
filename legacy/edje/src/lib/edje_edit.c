@@ -4297,6 +4297,93 @@ edje_edit_font_add(Evas_Object *obj, const char* path, const char* alias)
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_font_del(Evas_Object *obj, const char* alias)
+{
+   Edje_Font_Directory_Entry *fnt;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   INF("DEL FONT: %s\n", alias);
+
+   if (!alias) return EINA_FALSE;
+   if (!ed->file) return EINA_FALSE;
+   if (!ed->path) return EINA_FALSE;
+
+   if (!ed->file->font_dir)
+     return EINA_TRUE;
+
+   fnt = eina_hash_find(ed->file->font_hash, alias);
+   if (!fnt)
+     {
+	WRN("Unable to find font entry part \"%s\"", alias);
+	return EINA_TRUE;
+     }
+
+   ed->file->font_dir->entries = eina_list_remove(
+				       ed->file->font_dir->entries,
+				       fnt);
+
+   if (!eina_hash_del_by_key(ed->file->font_hash, alias))
+     {
+	ERR("Unable to remove font \"%s\" of fonts hash", alias);
+
+	ed->file->font_dir->entries = eina_list_append(
+					  ed->file->font_dir->entries,
+					  fnt);
+	return EINA_FALSE;
+     }
+
+   /* Erase font to edje file */
+   {
+      char entry[PATH_MAX];
+      Eet_File *eetf;
+
+      /* open the eet file */
+      eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
+      if (!eetf)
+	{
+	   ERR("Unable to open \"%s\" for writing output", ed->path);
+	   eina_hash_direct_add(ed->file->font_hash, fnt->entry, fnt);
+	   ed->file->font_dir->entries = eina_list_append(
+					     ed->file->font_dir->entries,
+					     fnt);
+	   return EINA_FALSE;
+	}
+
+      snprintf(entry, sizeof(entry), "fonts/%s", alias);
+
+      if (eet_delete(eetf, entry) <= 0)
+        {
+           ERR("Unable to delete \"%s\" font entry", entry);
+           eet_close(eetf);
+	   eina_hash_direct_add(ed->file->font_hash, fnt->entry, fnt);
+	   ed->file->font_dir->entries = eina_list_append(
+					     ed->file->font_dir->entries,
+					     fnt);
+           return EINA_FALSE;
+        }
+
+      /* write the edje_file */
+      if (!_edje_edit_update_edje_file(ed, eetf))
+	{
+	   eet_close(eetf);
+	   eina_hash_direct_add(ed->file->font_hash, fnt->entry, fnt);
+	   ed->file->font_dir->entries = eina_list_append(
+					     ed->file->font_dir->entries,
+					     fnt);
+	   return EINA_FALSE;
+	}
+      eet_close(eetf);
+   }
+
+   free((char *)fnt->entry);
+   free((char *)fnt->path);
+   free(fnt);
+
+   return EINA_TRUE;
+}
+
 EAPI const char *
 edje_edit_state_font_get(Evas_Object *obj, const char *part, const char *state, double value)
 {
