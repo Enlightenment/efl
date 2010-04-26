@@ -294,9 +294,21 @@ _edje_real_part_free(Edje_Real_Part *rp)
 }
 
 static Eina_Bool
+_edje_edit_update_edje_file(Edje *ed, Eet_File *eetf)
+{
+   if (eet_data_write(eetf, _edje_edd_edje_file, "edje_file", ed->file, 1) <= 0)
+     {
+	ERR("Unable to write \"edje_file\" part entry to %s", ed->path);
+	return EINA_FALSE;
+     }
+  return EINA_TRUE;
+}
+
+
+static Eina_Bool
 _edje_import_image_file(Edje *ed, const char *path, int id)
 {
-   char buf[256];
+   char entry[PATH_MAX];
    Evas_Object *im;
    Eet_File *eetf;
    void *im_data;
@@ -306,7 +318,7 @@ _edje_import_image_file(Edje *ed, const char *path, int id)
 
    /* Try to load the file */
    im = evas_object_image_add(ed->evas);
-   if (!im) return 0;
+   if (!im) return EINA_FALSE;
 
    evas_object_image_file_set(im, path, NULL);
    if (evas_object_image_load_error_get(im) != EVAS_LOAD_ERROR_NONE)
@@ -316,10 +328,8 @@ _edje_import_image_file(Edje *ed, const char *path, int id)
 	    "file does not exist, or is not readable.", path);
         evas_object_del(im);
 	im = NULL;
-	return 0;
+	return EINA_FALSE;
      }
-
-   if (!im) return 0;
 
    /* Write the loaded image to the edje file */
 
@@ -329,50 +339,46 @@ _edje_import_image_file(Edje *ed, const char *path, int id)
    if ((!im_data) || !(im_w > 0) || !(im_h > 0))
      {
 	evas_object_del(im);
-	return 0;
+	return EINA_FALSE;
      }
 
    /* open the eet file */
    eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
    if (!eetf)
      {
-	ERR("Edje_Edit: Error. unable to open \"%s\" for writing output",
-		ed->path);
+	ERR("Unable to open \"%s\" for writing output", ed->path);
 	evas_object_del(im);
-	return 0;
+	return EINA_FALSE;
      }
 
-   snprintf(buf, sizeof(buf), "images/%i", id);
+   snprintf(entry, sizeof(entry), "images/%i", id);
 
    /* write the image data */
-   //printf("***********  Writing images/%i to edj ******************\n", id);
-   bytes = eet_data_image_write(eetf, buf,
+   bytes = eet_data_image_write(eetf, entry,
 				im_data, im_w, im_h,
 				im_alpha,
 				0, 100, 1);
    if (bytes <= 0)
      {
-	ERR("Edje_Edit: Error. unable to write image part \"%s\" "
-	    "part entry to %s", buf, ed->path);
+	ERR("Unable to write image part \"%s\" part entry to %s",
+	    entry, ed->path);
+	eet_close(eetf);
 	evas_object_del(im);
-	return 0;
+	return EINA_FALSE;
      }
 
-   /* Rewrite Edje_File to edj */
    evas_object_del(im);
 
-   //printf("***********  Writing Edje_File* ed->file ******************\n");
-   bytes = eet_data_write(eetf, _edje_edd_edje_file, "edje_file", ed->file, 1);
-   if (bytes <= 0)
+   /* write the edje_file */
+   if (!_edje_edit_update_edje_file(ed, eetf))
      {
-	ERR("Edje_Edit: Error. unable to write \"edje_file\" "
-	    "entry to \"%s\"", ed->path);
+	eet_delete(eetf, entry);
 	eet_close(eetf);
-	return 0;
+	return EINA_FALSE;
      }
 
    eet_close(eetf);
-   return 1;
+   return EINA_TRUE;
 }
 
 static int
@@ -4323,43 +4329,38 @@ edje_edit_image_add(Evas_Object *obj, const char* path)
 {
    Eina_List *l;
    Edje_Image_Directory_Entry *de;
-   Edje_Image_Directory_Entry *i;
    int free_id = 0;
    char *name;
 
-   GET_ED_OR_RETURN(0);
+   GET_ED_OR_RETURN(EINA_FALSE);
 
-   if (!path) return 0;
-   if (!ed->file) return 0;
-   if (!ed->path) return 0;
+   if (!path) return EINA_FALSE;
+   if (!ed->file) return EINA_FALSE;
+   if (!ed->path) return EINA_FALSE;
 
    /* Create Image_Directory if not exist */
    if (!ed->file->image_dir)
      {
 	ed->file->image_dir = _alloc(sizeof(Edje_Image_Directory));
-	if (!ed->file->image_dir) return 0;
+	if (!ed->file->image_dir) return EINA_FALSE;
      }
+
+   /* Image name */
+   if ((name = strrchr(path, '/'))) name++;
+   else name = (char *)path;
 
    /* Loop trough image directory to find if image exist */
-   //printf("Add Image '%s' (total %d)\n", path,
-       //   eina_list_count(ed->file->image_dir->entries));
-   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, i)
+   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, de)
      {
-	if (!i) return 0;
-	if (i->id >= free_id) free_id = i->id + 1; /*TODO search for free (hole) id*/
-	//printf("IMG: %s [%d]\n", i->entry, i->id);
+	if (!strcmp(name, de->entry))
+	  return EINA_FALSE;
+	if (de->id >= free_id)
+	  free_id = de->id + 1; /*TODO search for free (hole) id*/
      }
-   //printf("FREE ID: %d\n", free_id);
-
-   /* Import image */
-   if (!_edje_import_image_file(ed, path, free_id))
-      return 0;
 
    /* Create Image Entry */
    de = _alloc(sizeof(Edje_Image_Directory_Entry));
-   if (!de) return 0;
-   if ((name = strrchr(path, '/'))) name++;
-   else name = (char *)path;
+   if (!de) return EINA_FALSE;
    de->entry = strdup(name);
    de->id = free_id;
    de->source_type = 1;
@@ -4369,7 +4370,17 @@ edje_edit_image_add(Evas_Object *obj, const char* path)
    ed->file->image_dir->entries =
         eina_list_append(ed->file->image_dir->entries, de);
 
-   return 1;
+   /* Import image */
+   if (!_edje_import_image_file(ed, path, free_id))
+     {
+	ed->file->image_dir->entries =
+	     eina_list_remove(ed->file->image_dir->entries, de);
+	free(de->entry);
+	free(de);
+	return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool

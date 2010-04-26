@@ -2237,7 +2237,7 @@ EAPI Eina_List * edje_edit_images_list_get(Evas_Object *obj);
  *
  * This function add the given image inside the edje. Don't add a new image part
  * but only put the image inside the edje file. It actually write directly to
- * the file so you don't have to save (and you can't undo!).
+ * the file so you don't have to save.
  * After you have to create a new image_part that use this image. Note that all
  * the parts in the edje share the same image collection, thus you can/must use
  * the same image for different part.
