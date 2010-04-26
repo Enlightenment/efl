@@ -304,6 +304,75 @@ _edje_edit_update_edje_file(Edje *ed, Eet_File *eetf)
   return EINA_TRUE;
 }
 
+static Eina_Bool
+_edje_import_font_file(Edje *ed, const char *path, const char *entry)
+{
+   void *fdata = NULL;
+   long fsize = 0;
+
+   /* Read font data from file */
+   {
+      FILE *f = fopen(path, "rb");
+      if (!f)
+	{
+	   ERR("Unable to open font file \"%s\"", path);
+	   return EINA_FALSE;
+	}
+
+      fseek(f, 0, SEEK_END);
+      fsize = ftell(f);
+      rewind(f);
+      fdata = malloc(fsize);
+      if (!fdata)
+         {
+	    ERR("Unable to alloc font file \"%s\"", path);
+	    fclose(f);
+	    return EINA_FALSE;
+         }
+      if (fread(fdata, fsize, 1, f) != 1)
+	 {
+	    ERR("Unable to read all of font file \"%s\"", path);
+	    return EINA_FALSE;
+	 }
+      fclose(f);
+   }
+
+   /* Write font to edje file */
+   {
+      /* open the eet file */
+      Eet_File *eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
+      if (!eetf)
+	{
+	   ERR("Unable to open \"%s\" for writing output", ed->path);
+	   free(fdata);
+	   return EINA_FALSE;
+	}
+
+      if (eet_write(eetf, entry, fdata, fsize, 1) <= 0)
+        {
+           ERR("Unable to write font part \"%s\" as \"%s\" part entry",
+	       path, entry);
+           eet_close(eetf);
+           free(fdata);
+           return EINA_FALSE;
+        }
+
+      free(fdata);
+
+      /* write the edje_file */
+      if (!_edje_edit_update_edje_file(ed, eetf))
+	{
+	   eet_delete(eetf, entry);
+	   eet_close(eetf);
+	   return EINA_FALSE;
+	}
+
+      eet_close(eetf);
+   }
+
+   return EINA_TRUE;
+}
+
 
 static Eina_Bool
 _edje_import_image_file(Edje *ed, const char *path, int id)
@@ -4156,101 +4225,76 @@ edje_edit_fonts_list_get(Evas_Object *obj)
 }
 
 EAPI Eina_Bool
-edje_edit_font_add(Evas_Object *obj, const char* path)
+edje_edit_font_add(Evas_Object *obj, const char* path, const char* alias)
 {
-   char buf[PATH_MAX];
-   Edje_Font_Directory_Entry *fnt;
-   Eet_File *eetf;
+   char entry[PATH_MAX];
    struct stat st;
-   char *name;
-   FILE *f;
-   void *fdata = NULL;
-   int fsize = 0;
+   Edje_Font_Directory_Entry *fnt;
 
-   GET_ED_OR_RETURN(0);
+   GET_ED_OR_RETURN(EINA_FALSE);
 
-   //printf("ADD FONT: %s\n", path);
+   INF("ADD FONT: %s\n", path);
 
-   if (!path) return 0;
-   if (stat(path, &st) || !S_ISREG(st.st_mode)) return 0;
-   if (!ed->file) return 0;
-   if (!ed->path) return 0;
-
+   if (!path) return EINA_FALSE;
+   if (stat(path, &st) || !S_ISREG(st.st_mode)) return EINA_FALSE;
+   if (!ed->file) return EINA_FALSE;
+   if (!ed->path) return EINA_FALSE;
 
    /* Create Font_Directory if not exist */
    if (!ed->file->font_dir)
-   {
-     ed->file->font_dir = _alloc(sizeof(Edje_Font_Directory));
-     if (!ed->file->font_dir) return 0;
-   }
-
-   if ((name = strrchr(path, '/'))) name ++;
-   else name = (char *)path;
-
-   /* Read font data from file */
-   f = fopen(path, "rb");
-   if (f)
      {
-	long pos;
-
-	fseek(f, 0, SEEK_END);
-	pos = ftell(f);
-	rewind(f);
-	fdata = malloc(pos);
-	if (fdata)
-	  {
-	     if (fread(fdata, pos, 1, f) != 1)
-	       {
-		  ERR("Edje_Edit: Error. unable to read all of font file \"%s\"",
-		      path);
-		  return 0;
-	       }
-	     fsize = pos;
-	  }
-	fclose(f);
+	ed->file->font_dir = _alloc(sizeof(Edje_Font_Directory));
+	if (!ed->file->font_dir) return EINA_FALSE;
      }
-   /* Write font to edje file */
-   snprintf(buf, sizeof(buf), "fonts/%s", name);
-
-   if (fdata)
+   if (!ed->file->font_hash)
      {
-	/* open the eet file */
-	eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
-	if (!eetf)
-	  {
-	    ERR("Edje_Edit: Error. unable to open \"%s\" for writing output",
-		ed->path);
-	     return 0;
-	  }
-
-	if (eet_write(eetf, buf, fdata, fsize, 1) <= 0)
-	  {
-	     ERR("Edje_Edit: Error. unable to write font part \"%s\" as \"%s\" part entry",
-		 path, buf);
-	     eet_close(eetf);
-	     free(fdata);
-	     return 0;
-	  }
-
-	eet_close(eetf);
-	free(fdata);
+	ed->file->font_hash = eina_hash_string_superfast_new(NULL);
+	if (!ed->file->font_hash) return EINA_FALSE;
      }
+
+   /* Alias */
+   if (!alias)
+     {
+	if ((alias = strrchr(path, '/'))) alias ++;
+	else alias = (char *)path;
+     }
+   snprintf(entry, sizeof(entry), "fonts/%s", alias);
+
+   /* Check if exists */
+   fnt = eina_hash_find(ed->file->font_hash, alias);
+   if (fnt)
+     return EINA_FALSE;
 
    /* Create Edje_Font_Directory_Entry */
-   if (ed->file->font_dir)
+   fnt = _alloc(sizeof(Edje_Font_Directory_Entry));
+   if (!fnt)
      {
-	fnt = _alloc(sizeof(Edje_Font_Directory_Entry));
-	if (!fnt) return 0;
-	fnt->entry = strdup(name);
-	fnt->path = strdup(buf);
+	ERR("Unable to alloc font entry part \"%s\"", alias);
+	return EINA_FALSE;
+     }
+   fnt->entry = strdup(alias);
+   fnt->path = strdup(entry);
 
-	ed->file->font_dir->entries = eina_list_append(ed->file->font_dir->entries, fnt);
-	if (!ed->file->font_hash)
-	  ed->file->font_hash = eina_hash_string_superfast_new(NULL);
-	eina_hash_direct_add(ed->file->font_hash, fnt->entry, fnt);
+   ed->file->font_dir->entries = eina_list_append(
+				       ed->file->font_dir->entries,
+				       fnt);
+   eina_hash_direct_add(ed->file->font_hash, fnt->entry, fnt);
+
+   /* Import font */
+   if (!_edje_import_font_file(ed, path, entry))
+     {
+	ed->file->font_dir->entries = eina_list_remove(
+					     ed->file->font_dir->entries,
+					     fnt);
+	eina_hash_del_by_key(ed->file->font_hash, alias);
+
+	free((char *)fnt->entry);
+	free((char *)fnt->path);
+	free(fnt);
+	return EINA_FALSE;
      }
 
-   return 1;
+   return EINA_TRUE;
 }
 
 EAPI const char *
