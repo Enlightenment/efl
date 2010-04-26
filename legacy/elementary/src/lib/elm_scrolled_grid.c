@@ -180,6 +180,7 @@ struct _Widget_Data
    Eina_List *cells;
    Ecore_Job *calc_job;
    Eina_List *selected;
+   double align_x, align_y;
 
    Evas_Coord pan_x, pan_y;
    Evas_Coord cell_width, cell_height;	/* Each cell size */
@@ -588,10 +589,11 @@ static void
 _cell_place(Elm_Grid_Cell *cell, Evas_Coord cx, Evas_Coord cy)
 {
    Evas_Coord x, y, ox, oy, cvx, cvy, cvw, cvh;
+   Evas_Coord tch, tcw, alignw = 0, alignh = 0, vw, vh;
 
    cell->x = cx;
    cell->y = cy;
-   evas_object_geometry_get(cell->wd->self, &ox, &oy, NULL, NULL);
+   evas_object_geometry_get(cell->wd->self, &ox, &oy, &vw, &vh);
    evas_output_viewport_get(evas_object_evas_get(cell->wd->self),
 			    &cvx, &cvy, &cvw, &cvh);
 
@@ -601,8 +603,40 @@ _cell_place(Elm_Grid_Cell *cell, Evas_Coord cx, Evas_Coord cy)
    cvw += 2 * PRELOAD * cell->wd->cell_width;
    cvh += 2 * PRELOAD * cell->wd->cell_height;
 
-   x = cx * cell->wd->cell_width - cell->wd->pan_x + ox;
-   y = cy * cell->wd->cell_height - cell->wd->pan_y + oy;
+   tch = ((vh/cell->wd->cell_height)*cell->wd->cell_height);
+   alignh = (vh - tch)*cell->wd->align_y;
+
+   tcw = ((vw/cell->wd->cell_width)*cell->wd->cell_width);
+   alignw = (vw - tcw)*cell->wd->align_x;
+
+   if (cell->wd->horizontal && cell->wd->minw < vw)
+     {
+        int columns;
+
+        columns = eina_list_count(cell->wd->cells)/(vh/cell->wd->cell_height);
+        if (eina_list_count(cell->wd->cells) % (vh/cell->wd->cell_height))
+             columns++;
+
+        tcw = cell->wd->cell_width * columns;
+	alignw = (vw - tcw)*cell->wd->align_x;
+     }
+   else if (cell->wd->horizontal && cell->wd->minw > vw)
+        alignw = 0;   
+   if (!cell->wd->horizontal && cell->wd->minh < vh)
+     {
+        int rows;
+
+        rows = eina_list_count(cell->wd->cells)/(vw/cell->wd->cell_width);
+        if (eina_list_count(cell->wd->cells) % (vw/cell->wd->cell_width))
+             rows++;
+
+        tch = cell->wd->cell_height * rows;
+        alignh = (vh - tch)*cell->wd->align_y;
+     }
+   else if (!cell->wd->horizontal && cell->wd->minh > vh)
+        alignh = 0;
+   x = cx * cell->wd->cell_width - cell->wd->pan_x + ox + alignw;
+   y = cy * cell->wd->cell_height - cell->wd->pan_y + oy + alignh;
 
    if (ELM_RECTS_INTERSECT(x, y, cell->wd->cell_width, cell->wd->cell_height,
 			   cvx, cvy, cvw, cvh))
@@ -933,6 +967,8 @@ elm_scrolled_grid_add(Evas_Object *parent)
    elm_smart_scroller_bounce_allow_set(wd->scr, 1, 1);
 
    wd->self = obj;
+   wd->align_x = 0.5;
+   wd->align_y = 0.5;
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
@@ -1017,6 +1053,56 @@ elm_scrolled_grid_cell_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coor
    if (!wd) return;
    if (w) *w = wd->cell_width;
    if (h) *h = wd->cell_height;
+}
+
+/**
+ * Set cell's alignment within the scroller.
+ *
+ * @param obj The grid object.
+ * @param align_x The x alignment (0 <= x <= 1).
+ * @param align_y The y alignment (0 <= y <= 1).
+ *
+ * @see elm_scrolled_grid_align_get()
+ *
+ * @ingroup Grid
+ */
+EAPI void
+elm_scrolled_grid_align_set(Evas_Object *obj, double align_x, double align_y)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (align_x > 1.0)
+     align_x = 1.0;
+   else if (align_x < 0.0)
+     align_x = 0.0;
+   wd->align_x = align_x;
+
+   if (align_y > 1.0)
+     align_y = 1.0;
+   else if (align_y < 0.0)
+     align_y = 0.0;
+   wd->align_y = align_y;
+}
+
+/**
+ * Get the alignenment set for the grid object.
+ *
+ * @param obj The grid object.
+ * @param align_x Pointer to x alignenment.
+ * @param align_y Pointer to y alignenment.
+ *
+ * @see elm_scrolled_grid_align_set()
+ *
+ * @ingroup Grid
+ */
+EAPI void
+elm_scrolled_grid_align_get(const Evas_Object *obj, double *align_x, double *align_y)
+{
+    ELM_CHECK_WIDTYPE(obj, widtype);
+    Widget_Data *wd = elm_widget_data_get(obj);
+    if (align_x) *align_x = wd->align_x;
+    if (align_y) *align_y = wd->align_y;
 }
 
 /**

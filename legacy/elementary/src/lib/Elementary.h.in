@@ -546,6 +546,8 @@ extern "C" {
    EAPI Evas_Object *elm_scrolled_grid_add(Evas_Object *parent);
    EAPI void	     elm_scrolled_grid_cell_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
    EAPI void	     elm_scrolled_grid_cell_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+   EAPI void         elm_scrolled_grid_align_set(Evas_Object *obj, double align_x, double align_y);
+   EAPI void         elm_scrolled_grid_align_get(const Evas_Object *obj, double *align_x, double *align_y);
    EAPI void	     elm_scrolled_grid_cell_del(Elm_Grid_Cell *cell);
    EAPI void	     elm_scrolled_grid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
    EAPI Eina_Bool    elm_scrolled_grid_always_select_mode_get(const Evas_Object *obj);
