@@ -49,6 +49,7 @@ struct _Entry
    Eina_List *sel;
    Eina_List *anchors;
    Eina_List *anchorlist;
+   Eina_List *itemlist;
    char *selection;
    Eina_Bool selecting : 1;
    Eina_Bool have_selection : 1;
@@ -740,6 +741,7 @@ _anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
 
              sel = calloc(1, sizeof(Sel));
              an->sel = eina_list_append(an->sel, sel);
+/*             
              ob = evas_object_rectangle_add(en->rp->edje->evas);
              evas_object_color_set(ob, 0, 0, 0, 0);
              evas_object_smart_member_add(ob, smart);
@@ -747,7 +749,19 @@ _anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
              evas_object_clip_set(ob, clip);
              evas_object_pass_events_set(ob, 1);
              evas_object_show(ob);
-             sel->obj = ob;
+ */
+             if (en->rp->edje->item_provider.func)
+               {
+                  ob = en->rp->edje->item_provider.func
+                    (en->rp->edje->item_provider.data, smart, 
+                     en->rp->part->name, an->name);
+                  evas_object_smart_member_add(ob, smart);
+                  evas_object_stack_above(ob, o);
+                  evas_object_clip_set(ob, clip);
+                  evas_object_pass_events_set(ob, 1);
+                  evas_object_show(ob);
+                  sel->obj = ob;
+               }
           }
         // for link anchors
         else
@@ -853,6 +867,11 @@ _anchors_clear(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o __UNUSED__, E
      {
 	free(en->anchorlist->data);
 	en->anchorlist = eina_list_remove_list(en->anchorlist, en->anchorlist);
+     }
+   while (en->itemlist)
+     {
+	free(en->itemlist->data);
+	en->itemlist = eina_list_remove_list(en->itemlist, en->itemlist);
      }
    while (en->anchors)
      {
@@ -2189,6 +2208,48 @@ _edje_entry_anchors_list(Edje_Real_Part *rp)
 	en->anchorlist = anchors;
      }
    return en->anchorlist;
+}
+
+Eina_Bool
+_edje_entry_item_geometry_get(Edje_Real_Part *rp, const char *item, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+{
+   Entry *en = rp->entry_data;
+   Eina_List *l;
+   Anchor *an;
+   
+   if (!en) return 0;
+   EINA_LIST_FOREACH(en->anchors, l, an)
+     {
+        if (an->item) continue;
+	if (!strcmp(item, an->name))
+          {
+             evas_textblock_cursor_format_item_geometry_get(an->start, cx, cy, cw, ch);
+             return 1;
+          }
+     }
+   return 0;
+}
+
+const Eina_List *
+_edje_entry_items_list(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+   Eina_List *l, *items = NULL;
+   Anchor *an;
+
+   if (!en) return NULL;
+   if (!en->itemlist)
+     {
+        EINA_LIST_FOREACH(en->anchors, l, an)
+	  {
+	     const char *n = an->name;
+             if (an->item) continue;
+	     if (!n) n = "";
+	     items = eina_list_append(items, strdup(n));
+	  }
+	en->itemlist = items;
+     }
+   return en->itemlist;
 }
 
 void

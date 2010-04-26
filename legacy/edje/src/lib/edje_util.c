@@ -1604,6 +1604,27 @@ edje_object_part_text_insert(Evas_Object *obj, const char *part, const char *tex
 }
 
 /**
+ * @brief Set the function that provides item objects for named items in an edje entry text
+ * 
+ * @param obj A valid Evas Object handle
+ * @param func The function to call (or NULL to disable) to get item objects
+ * @param data The data pointer to pass to the @p func callback
+ * 
+ * Item objects may be deleted any time by Edje, and will be deleted when the
+ * Edje object is deleted (or file is set to a new file).
+ */
+EAPI void
+edje_object_item_provider_set(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *obj, const char *part, const char *item), void *data)
+{
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return;
+   ed->item_provider.func = func;
+   ed->item_provider.data = data;
+}
+
+/**
  * @brief Return a list of char anchor names.
  *
  * @param obj A valid Evas_Object handle
@@ -1637,7 +1658,7 @@ edje_object_part_text_anchor_list_get(const Evas_Object *obj, const char *part)
  * @param anchor The anchor name
  *
  * @return The list of anchor rects (const Evas_Textblock_Rectangle
- * *), do not modify!
+ * *), do not modify! Geometry is relative to entry part.
  *
  * This function return a list of Evas_Textblock_Rectangle anchor
  * rectangles.
@@ -1656,6 +1677,64 @@ edje_object_part_text_anchor_geometry_get(const Evas_Object *obj, const char *pa
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      return _edje_entry_anchor_geometry_get(rp, anchor);
    return NULL;
+}
+
+/**
+ * @brief Return a list of char item names.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ *
+ * @return The list of items (const char *), do not modify!
+ *
+ * This function returns a list of char item names.
+ *
+ */
+EAPI const Eina_List *
+edje_object_part_text_item_list_get(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return NULL;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     return _edje_entry_items_list(rp);
+   return NULL;
+}
+
+/**
+ * @brief Return item geometry.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param item The item name
+ * @param cx Item x return (relative to entry part)
+ * @param cy Item y return (relative to entry part)
+ * @param cw Item width return
+ * @param ch Item height return
+ *
+ * @return 1 if item exists, 0 if not
+ *
+ * This function return a list of Evas_Textblock_Rectangle item
+ * rectangles.
+ *
+ */
+EAPI Eina_Bool
+edje_object_part_text_item_geometry_get(const Evas_Object *obj, const char *part, const char *item, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return 0;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return 0;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     return _edje_entry_item_geometry_get(rp, item, cx, cy, cw, ch);
+   return 0;
 }
 
 /**

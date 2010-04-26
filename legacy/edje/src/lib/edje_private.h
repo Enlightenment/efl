@@ -869,6 +869,11 @@ struct _Edje
    lua_State            *L;
    Eina_Inlist          *lua_objs;
    int                   lua_ref;
+   
+   struct {
+      Evas_Object *(*func) (void *data, Evas_Object *obj, const char *part, const char *item);
+      void *data;
+   } item_provider;
 };
 
 struct _Edje_Calc_Params
@@ -1550,6 +1555,8 @@ void _edje_entry_select_begin(Edje_Real_Part *rp);
 void _edje_entry_select_extend(Edje_Real_Part *rp);
 const Eina_List *_edje_entry_anchor_geometry_get(Edje_Real_Part *rp, const char *anchor);
 const Eina_List *_edje_entry_anchors_list(Edje_Real_Part *rp);
+Eina_Bool _edje_entry_item_geometry_get(Edje_Real_Part *rp, const char *item, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
+const Eina_List *_edje_entry_items_list(Edje_Real_Part *rp);
 void _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
 void _edje_entry_select_allow_set(Edje_Real_Part *rp, Eina_Bool allow);
 Eina_Bool _edje_entry_select_allow_get(const Edje_Real_Part *rp);

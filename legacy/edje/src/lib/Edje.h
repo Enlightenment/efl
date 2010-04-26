@@ -495,8 +495,11 @@ extern "C" {
    EAPI void             edje_object_part_text_select_none             (const Evas_Object *obj, const char *part);
    EAPI void             edje_object_part_text_select_all              (const Evas_Object *obj, const char *part);
    EAPI void             edje_object_part_text_insert                  (Evas_Object *obj, const char *part, const char *text);
+   EAPI void             edje_object_item_provider_set                 (Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *obj, const char *part, const char *item), void *data);
    EAPI const Eina_List *edje_object_part_text_anchor_list_get         (const Evas_Object *obj, const char *part);
    EAPI const Eina_List *edje_object_part_text_anchor_geometry_get     (const Evas_Object *obj, const char *part, const char *anchor);
+   EAPI const Eina_List *edje_object_part_text_item_list_get           (const Evas_Object *obj, const char *part);
+   EAPI Eina_Bool        edje_object_part_text_item_geometry_get       (const Evas_Object *obj, const char *part, const char *item, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
    EAPI void             edje_object_part_text_cursor_geometry_get     (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    EAPI void             edje_object_part_text_select_allow_set        (const Evas_Object *obj, const char *part, Eina_Bool allow);
    EAPI void             edje_object_part_text_select_abort            (const Evas_Object *obj, const char *part);
