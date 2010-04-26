@@ -1156,6 +1156,22 @@ _event_selection_clear(void *data, int type __UNUSED__, void *event)
 }
 #endif
 
+static Evas_Object *
+_get_item(void *data, Evas_Object *edje, const char *part, const char *item)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Object *o;
+
+   // FIXME: this is a test! need to have a standard set of "emoticons" or
+   // "icons" you can inline. but first be able to set add/del callbacks from
+   // the app/user of entry to first provide one. if they return NULL, fall
+   // back to here.
+   o = edje_object_add(evas_object_evas_get(data));
+   _elm_theme_set(o, "button", "base", elm_widget_style_get(data));
+   edje_object_part_text_set(o, "elm.text", item);
+   edje_object_signal_emit(o, "elm,state,text,visible", "elm");
+   return o;
+}
 
 /**
  * This adds an entry to @p parent object.
@@ -1192,6 +1208,7 @@ elm_entry_add(Evas_Object *parent)
    wd->context_menu = EINA_TRUE;
 
    wd->ent = edje_object_add(e);
+   edje_object_item_provider_set(wd->ent, _get_item, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOVE, _move, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_RESIZE, _resize, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_DOWN,
