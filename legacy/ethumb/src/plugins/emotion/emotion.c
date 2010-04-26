@@ -116,7 +116,7 @@ _setup_thumbnail(struct _emotion_plugin *_plugin)
 	goto exit_error;
      }
 
-   edje = edje_object_add(evas);
+   edje = edje_edit_object_add(evas);
    edje_object_file_set(edje, thumb_path, "movie/thumb");
    if (!edje_object_part_exists(edje, "image"))
      {
