@@ -144,7 +144,47 @@ bt_spinner_up.png \
 bt_spinner_down.png \
 bt_spinner_hilight.png \
 up.png \
-down.png
+down.png \
+emo-angry.png \
+emo-angry-shout.png \
+emo-crazy-laugh.png \
+emo-evil-laugh.png \
+emo-evil.png \
+emo-goggle-smile.png \
+emo-grumpy.png \
+emo-grumpy-smile.png \
+emo-guilty.png \
+emo-guilty-smile.png \
+emo-haha.png \
+emo-half-smile.png \
+emo-happy-panting.png \
+emo-happy.png \
+emo-indifferent.png \
+emo-kiss.png \
+emo-knowing-grin.png \
+emo-laugh.png \
+emo-little-bit-sorry.png \
+emo-love-lots.png \
+emo-love.png \
+emo-minimal-smile.png \
+emo-not-happy.png \
+emo-not-impressed.png \
+emo-omg.png \
+emo-opensmile.png \
+emo-smile.png \
+emo-sorry.png \
+emo-squint-laugh.png \
+emo-surprised.png \
+emo-suspicious.png \
+emo-tongue-dangling.png \
+emo-tongue-poke.png \
+emo-uh.png \
+emo-unhappy.png \
+emo-very-sorry.png \
+emo-what.png \
+emo-wink.png \
+emo-worried.png \
+emo-wtf.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

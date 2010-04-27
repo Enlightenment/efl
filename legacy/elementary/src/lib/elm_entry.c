@@ -34,6 +34,7 @@ typedef struct _Mod_Api Mod_Api;
 
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Elm_Entry_Context_Menu_Item Elm_Entry_Context_Menu_Item;
+typedef struct _Elm_Entry_Item_Provider Elm_Entry_Item_Provider;
 
 struct _Widget_Data
 {
@@ -49,6 +50,7 @@ struct _Widget_Data
    Evas_Coord downx, downy;
    Evas_Coord cx, cy, cw, ch;
    Eina_List *items;
+   Eina_List *item_providers;
    Mod_Api *api; // module api if supplied
    Eina_Bool changed : 1;
    Eina_Bool linewrap : 1;
@@ -72,6 +74,12 @@ struct _Elm_Entry_Context_Menu_Item
    const char *icon_group;
    Elm_Icon_Type icon_type;
    Evas_Smart_Cb func;
+   void *data;
+};
+
+struct _Elm_Entry_Item_Provider
+{
+   Evas_Object *(*func) (void *data, Evas_Object *entry, const char *item);
    void *data;
 };
 
@@ -161,6 +169,7 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Entry_Context_Menu_Item *it;
+   Elm_Entry_Item_Provider *ip;
 
    if ((wd->api) && (wd->api->obj_unhook)) wd->api->obj_unhook(obj); // module - unhook
 
@@ -179,6 +188,10 @@ _del_hook(Evas_Object *obj)
         eina_stringshare_del(it->icon_file);
         eina_stringshare_del(it->icon_group);
         free(it);
+     }
+   EINA_LIST_FREE(wd->item_providers, ip)
+     {
+        free(ip);
      }
    free(wd);
 }
@@ -1161,15 +1174,20 @@ _get_item(void *data, Evas_Object *edje, const char *part, const char *item)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Object *o;
+   Eina_List *l;
+   Elm_Entry_Item_Provider *ip;
+   int ok = 0;
 
-   // FIXME: this is a test! need to have a standard set of "emoticons" or
-   // "icons" you can inline. but first be able to set add/del callbacks from
-   // the app/user of entry to first provide one. if they return NULL, fall
-   // back to here.
+   EINA_LIST_FOREACH(wd->item_providers, l, ip)
+     {
+        o = ip->func(ip->data, data, item);
+        if (o) return o;
+     }
    o = edje_object_add(evas_object_evas_get(data));
-   _elm_theme_set(o, "button", "base", elm_widget_style_get(data));
-   edje_object_part_text_set(o, "elm.text", item);
-   edje_object_signal_emit(o, "elm,state,text,visible", "elm");
+   if (!strncmp(item, "emoticon/", 9))
+     ok = _elm_theme_set(o, "entry", item, elm_widget_style_get(data));
+   if (!ok)
+     _elm_theme_set(o, "entry/emoticon", "wtf", elm_widget_style_get(data));
    return o;
 }
 
@@ -1967,6 +1985,94 @@ elm_entry_context_menu_disabled_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return !wd->context_menu;
+}
+
+/**
+ * This appends a custom item provider to the list for that entry
+ *
+ * This appends the given callback. The list is walked from beginning to end
+ * with each function called given the item href string in the text. If the
+ * function returns an object handle other than NULL (it should create an
+ * and object to do this), then this object is used to replace that item. If
+ * not the next provider is called until one provides an item object, or the
+ * default provider in entry does.
+ * 
+ * @param obj The entry object
+ * @param func The function called to provide the item object
+ * @param data The data passed to @p func
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *entry, const char *item), void *data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (!func) return;
+   Elm_Entry_Item_Provider *ip = calloc(1, sizeof(Elm_Entry_Item_Provider));
+   if (!ip) return;
+   ip->func = func;
+   ip->data = data;
+   wd->item_providers = eina_list_append(wd->item_providers, ip);
+}
+
+/**
+ * This prepends a custom item provider to the list for that entry
+ *
+ * This prepends the given callback. See elm_entry_item_provider_append() for
+ * more information
+ * 
+ * @param obj The entry object
+ * @param func The function called to provide the item object
+ * @param data The data passed to @p func
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *entry, const char *item), void *data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (!func) return;
+   Elm_Entry_Item_Provider *ip = calloc(1, sizeof(Elm_Entry_Item_Provider));
+   if (!ip) return;
+   ip->func = func;
+   ip->data = data;
+   wd->item_providers = eina_list_prepend(wd->item_providers, ip);
+}
+
+/**
+ * This removes a custom item provider to the list for that entry
+ *
+ * This removes the given callback. See elm_entry_item_provider_append() for
+ * more information
+ * 
+ * @param obj The entry object
+ * @param func The function called to provide the item object
+ * @param data The data passed to @p func
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *entry, const char *item), void *data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_List *l;
+   Elm_Entry_Item_Provider *ip;
+   if (!wd) return;
+   if (!func) return;
+   EINA_LIST_FOREACH(wd->item_providers, l, ip)
+     {
+        if ((ip->func == func) && (ip->data == data))
+          {
+             wd->item_providers = eina_list_remove_list(wd->item_providers, l);
+             free(ip);
+             return;
+          }
+     }
 }
 
 /**
