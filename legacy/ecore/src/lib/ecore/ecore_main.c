@@ -569,6 +569,7 @@ _ecore_main_fd_handlers_bads_rem(void)
 {
    Ecore_Fd_Handler *fdh;
    Eina_Inlist *l;
+   int found = 0;
 
    ERR("Removing bad fds");
    for (l = EINA_INLIST_GET(fd_handlers); l; )
@@ -589,6 +590,7 @@ _ecore_main_fd_handlers_bads_rem(void)
 		       ERR("Fd function err returned 0, remove it");
 		       fdh->delete_me = 1;
 		       fd_handlers_delete_me = 1;
+                       found++;
 		    }
 		  fdh->references--;
 	       }
@@ -597,10 +599,18 @@ _ecore_main_fd_handlers_bads_rem(void)
 		  ERR("Problematic fd found at %d! setting it for delete", fdh->fd);
 		  fdh->delete_me = 1;
 		  fd_handlers_delete_me = 1;
+                  found++;
 	       }
 	  }
     }
-
+   if (found == 0)
+     {
+#ifdef HAVE_GLIB
+        ERR("No bad fd found. Maybe a foreign fd from glib?\n");
+#else        
+        ERR("No bad fd found. EEEK!\n");
+#endif        
+     }
    _ecore_main_fd_handlers_cleanup();
 }
 #endif
