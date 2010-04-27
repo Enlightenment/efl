@@ -303,9 +303,9 @@ struct _Evas
    Eina_Array     temporary_objects;
    Eina_Array     calculate_objects;
    Eina_Array     clip_changes;
-   
+
    Evas_Callbacks *callbacks;
-   
+
    int            delete_grabs;
    int            walking_grabs;
    Eina_List     *grabs;
