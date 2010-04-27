@@ -409,11 +409,13 @@ ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
 
    if (url_con->active) return 0;
 
-   free(url_con->url);
+   if (url_con->url) free(url_con->url);
    url_con->url = NULL;
-   if (url)
-     url_con->url = strdup(url);
-   curl_easy_setopt(url_con->curl_easy, CURLOPT_URL, url_con->url);
+   if (url) url_con->url = strdup(url);
+   if (url_con->url)
+     curl_easy_setopt(url_con->curl_easy, CURLOPT_URL, url_con->url);
+   else
+     curl_easy_setopt(url_con->curl_easy, CURLOPT_URL, "");
    return 1;
 #else
    return 0;
