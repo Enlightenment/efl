@@ -10,7 +10,62 @@
  * input.  Entry widgets are capable of expanding past the
  * boundaries of the window, thus resizing the window to its
  * own length.
+ * 
+ * You can also insert "items" in the entry with:
+ * 
+ * <item size=16x16 vsize=full href=emoticon/haha></item>
+ * 
+ * for example. sizing can be set bu size=WxH, relsize=WxH or absize=WxH with
+ * vsize=ascent or vsize=full. the href=NAME sets the item name. Entry
+ * supports a list of emoticon names by default. These are:
+ * 
+ * emoticon/angry
+ * emoticon/angry-shout
+ * emoticon/crazy-laugh
+ * emoticon/evil-laugh
+ * emoticon/evil
+ * emoticon/goggle-smile
+ * emoticon/grumpy
+ * emoticon/grumpy-smile
+ * emoticon/guilty
+ * emoticon/guilty-smile
+ * emoticon/haha
+ * emoticon/half-smile
+ * emoticon/happy-panting
+ * emoticon/happy
+ * emoticon/indifferent
+ * emoticon/kiss
+ * emoticon/knowing-grin
+ * emoticon/laugh
+ * emoticon/little-bit-sorry
+ * emoticon/love-lots
+ * emoticon/love
+ * emoticon/minimal-smile
+ * emoticon/not-happy
+ * emoticon/not-impressed
+ * emoticon/omg
+ * emoticon/opensmile
+ * emoticon/smile
+ * emoticon/sorry
+ * emoticon/squint-laugh
+ * emoticon/surprised
+ * emoticon/suspicious
+ * emoticon/tongue-dangling
+ * emoticon/tongue-poke
+ * emoticon/uh
+ * emoticon/unhappy
+ * emoticon/very-sorry
+ * emoticon/what
+ * emoticon/wink
+ * emoticon/worried
+ * emoticon/wtf
  *
+ * These are built-in currently, but you can add your own item provieer that
+ * can create inlined objects in the text and fill the space allocated to the
+ * item with a custom object of your own.
+ * 
+ * See the entry test for some more examples of use of this.
+ * 
  * Signals that you can add callbacks for are:
  * "changed" - The text within the entry was changed
  * "activated" - The entry has received focus and the cursor
