@@ -646,6 +646,20 @@ elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled)
    edje_object_message_signal_process(item->o);
 }
 
+/**
+ * Get the disabled state of @p item.
+ * 
+ * @param it The menu item object.
+ * @return The enabled/disabled state of the item
+ * 
+ * @ingroup Menu
+ */
+EAPI Eina_Bool
+elm_menu_item_disabled_get(Elm_Menu_Item *item)
+{
+   if (!item) return 0;
+   return item->disabled;
+}
 
 /**
  * Add a separator item to menu @p obj under @p parent.
@@ -692,6 +706,36 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
  *
  * @ingroup Menu
  */
+
+/**
+ * Get the icon of a menu item
+ * 
+ * @param it The menu item object.
+ * @return The icon object of @p item or NULL
+ * 
+ * @ingroup Menu
+ */
+EAPI Evas_Object *
+elm_menu_item_icon_get(Elm_Menu_Item *item)
+{
+   if (!item) return NULL;
+   return item->icon;
+}
+
+/**
+ * Returns whether @p item is a separator.
+ *
+ * @param item The item to check
+ * @return If true, @p item is a separator
+ *
+ * @ingroup Menu
+ */
+EAPI Eina_Bool
+elm_menu_item_is_separator(Elm_Menu_Item *item)
+{
+   if (!item) return 0;
+   return item->separator;
+}
 
 EAPI void
 elm_menu_item_del(Elm_Menu_Item *item)

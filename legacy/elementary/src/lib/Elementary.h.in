@@ -635,7 +635,9 @@ extern "C" {
      } Elm_Hover_Axis;
    EAPI Evas_Object *elm_hover_add(Evas_Object *parent);
    EAPI void         elm_hover_target_set(Evas_Object *obj, Evas_Object *target);
+   EAPI Evas_Object *elm_hover_target_get(Evas_Object *obj);
    EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
+   EAPI Evas_Object *elm_hover_parent_get(Evas_Object *obj);
    EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
    EAPI const char  *elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis);
    /* available styles:
@@ -870,9 +872,20 @@ extern "C" {
    EAPI void              elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled);
    EAPI void              elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator);
    EAPI Eina_Bool         elm_toolbar_item_separator_get(Elm_Toolbar_Item *item);
+   EAPI Eina_List        *elm_toolbar_item_get_all(Evas_Object *obj);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_get_first(Evas_Object *obj);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_get_last(Evas_Object *obj);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_get_next(Evas_Object *obj);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_select_next(Evas_Object *obj);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_select_first(Evas_Object *obj);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_select_last(Evas_Object *obj);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_find_by_label(Evas_Object *obj, const char *label);
    EAPI void              elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable);
+   EAPI Eina_Bool         elm_toolbar_scrollable_get(Evas_Object *obj);
    EAPI void	          elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous);
+   EAPI Eina_Bool         elm_toolbar_homogenous_get(Evas_Object *obj);
    EAPI void	          elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
+   EAPI Evas_Object      *elm_toolbar_menu_parent_get(Evas_Object *obj);
    EAPI void              elm_toolbar_item_unselect_all(Evas_Object *obj);
    EAPI void              elm_toolbar_align_set(Evas_Object *obj, double align);
    EAPI double            elm_toolbar_align_get(const Evas_Object *obj);
@@ -891,8 +904,11 @@ extern "C" {
    EAPI void		 elm_menu_item_label_set(Elm_Menu_Item *item, const char *label);
    EAPI const char      *elm_menu_item_label_get(Elm_Menu_Item *item);
    EAPI void		 elm_menu_item_icon_set(Elm_Menu_Item *item, Evas_Object *icon);
+   EAPI Evas_Object     *elm_menu_item_icon_get(Elm_Menu_Item *item);
    EAPI void		 elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled);
+   EAPI Eina_Bool        elm_menu_item_disabled_get(Elm_Menu_Item *item);
    EAPI Elm_Menu_Item   *elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent);
+   EAPI Eina_Bool        elm_menu_item_is_separator(Elm_Menu_Item *item);
    EAPI void		 elm_menu_item_del(Elm_Menu_Item *item);
    EAPI void		 elm_menu_item_del_cb_set(Elm_Menu_Item *it, Evas_Smart_Cb func);
    EAPI void		*elm_menu_item_data_get(const Elm_Menu_Item *it);
@@ -1372,9 +1388,14 @@ extern "C" {
           ELM_PANEL_ORIENT_LEFT,
           ELM_PANEL_ORIENT_RIGHT,
      } Elm_Panel_Orient;
-   EAPI Evas_Object *elm_panel_add(Evas_Object *parent);
-   EAPI void         elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient);
-   EAPI void         elm_panel_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI Evas_Object          *elm_panel_add(Evas_Object *parent);
+   EAPI void                  elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient);
+   EAPI Elm_Panel_Orient      elm_panel_orient_get(Evas_Object *obj);
+   EAPI void                  elm_panel_content_set(Evas_Object *obj, Evas_Object *content);
+EAPI void elm_panel_hidden_set(Evas_Object *obj, Eina_Bool hidden);
+EAPI Eina_Bool elm_panel_hidden_get(Evas_Object *obj);
+EAPI void elm_panel_toggle(Evas_Object *obj);
+
 
 #if 1 // working on it
    // flip types:

@@ -211,6 +211,22 @@ elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient)
    _sizing_eval(obj);
 }
 
+/**
+ * Get the orientation of the panel.
+ *
+ * @param obj The panel object
+ * @return The Elm_Panel_Orient, or ELM_PANEL_ORIENT_LEFT on failure.
+ *
+ * @ingroup Panel
+ */
+EAPI Elm_Panel_Orient
+elm_panel_orient_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_PANEL_ORIENT_LEFT;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return ELM_PANEL_ORIENT_LEFT;
+   return wd->orient;   
+}
 
 /**
  * Set the content of the panel.
@@ -231,4 +247,57 @@ elm_panel_content_set(Evas_Object *obj, Evas_Object *content)
    evas_object_box_append(wd->bx, content);
    evas_object_show(content);
    _sizing_eval(obj);
+}
+
+/**
+ * Set the state of the panel.
+ *
+ * @param obj The panel object
+ * @param hidden If true, the panel will run the edje animation to contract
+ *
+ * @ingroup Panel
+ */
+EAPI void
+elm_panel_hidden_set(Evas_Object *obj, Eina_Bool hidden)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->hidden == hidden) return;
+   wd->hidden = hidden;
+   _toggle_panel(obj, NULL, "elm,action,panel,toggle", "*");
+}
+
+/**
+ * Get the state of the panel.
+ *
+ * @param obj The panel object
+ * @param hidden If true, the panel is in the "hide" state
+ *
+ * @ingroup Panel
+ */
+EAPI Eina_Bool
+elm_panel_hidden_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->hidden;
+}
+
+/**
+ * Toggle the state of the panel from code
+ *
+ * @param obj The panel object
+ *
+ * @ingroup Panel
+ */
+EAPI void
+elm_panel_toggle(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->hidden = !(wd->hidden);
+   _toggle_panel(obj, NULL, "elm,action,panel,toggle", "*");
 }

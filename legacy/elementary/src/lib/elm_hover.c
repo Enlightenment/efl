@@ -386,6 +386,41 @@ elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
    _sizing_eval(obj);
 }
 
+/**
+ * Gets the target object for the hover.
+ *
+ * @param obj The hover object
+ * @return The target object of the hover.
+ * 
+ * @ingroup Hover
+ */
+EAPI Evas_Object *
+elm_hover_target_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   return wd->target;
+}
+
+/**
+ * Gets the parent object for the hover.
+ *
+ * @param obj The hover object
+ * @return The parent object to locate the hover over.
+ *
+ * @ingroup Hover
+ */
+EAPI Evas_Object *
+elm_hover_parent_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   return wd->parent;
+}
 
 /**
  * Sets the content of the hover object and the direction in which

@@ -647,6 +647,24 @@ elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable)
 }
 
 /**
+ * Get the scrollable state of toolbar @p obj.
+ *
+ * @param obj The toolbar object
+ * @return If true, the toolbar is scrollable
+ *
+ * @ingroup Toolbar
+ */
+EAPI Eina_Bool
+elm_toolbar_scrollable_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return;
+   return wd->scrollable;
+}
+
+/**
  * Set the homogenous mode of toolbar @p obj.
  *
  * @param obj The toolbar object
@@ -663,6 +681,24 @@ elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
    if (!wd) return;
    wd->homogeneous = !!homogenous;
    evas_object_smart_calculate(wd->bx);
+}
+
+/**
+ * Get the homogenous mode of toolbar @p obj.
+ *
+ * @param obj The toolbar object
+ * @return If true, the toolbar items are uniform in size
+ *
+ * @ingroup Toolbar
+ */
+EAPI Eina_Bool
+elm_toolbar_homogenous_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return;
+   return wd->homogeneous;
 }
 
 /**
@@ -688,6 +724,24 @@ elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
         if (it->o_menu)
           elm_menu_parent_set(it->o_menu, wd->menu_parent);
      }
+}
+
+/**
+ * Get the parent object of the toolbar menu
+ *
+ * @param obj The toolbar object
+ * @return The parent of the menu object
+ *
+ * @ingroup Toolbar
+ */
+EAPI Evas_Object *
+elm_toolbar_menu_parent_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   return wd->menu_parent;
 }
 
 /**
@@ -804,4 +858,222 @@ elm_toolbar_item_menu_get(Elm_Toolbar_Item *item)
    if (!wd) return NULL;
    elm_toolbar_item_menu_set(item, 1);
    return item->o_menu;
+}
+
+/**
+ * Return a list of all toolbar items.
+ *
+ * @param obj The toolbar object
+ *
+ * @return An Eina_List* of the toolbar items in @p obj
+ *
+ * @ingroup Toolbar
+ */
+EAPI Eina_List *
+elm_toolbar_item_get_all(Evas_Object *obj)
+{
+   Eina_List *l;
+   Elm_Toolbar_Item *it;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   return wd->items;
+}
+
+/**
+ * Return the first toolbar item in the list of toolbar items.
+ *
+ * @param obj The toolbar object
+ *
+ * @return The first toolbar item, or NULL on failure
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_item_get_first(Evas_Object *obj)
+{
+   Eina_List *l;
+   Elm_Toolbar_Item *it;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (!(it = eina_list_data_get(wd->items))) return NULL;
+
+   return it;
+}
+
+/**
+ * Return the last toolbar item in the list of toolbar items.
+ *
+ * @param obj The toolbar object
+ *
+ * @return The last toolbar item, or NULL on failure
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_item_get_last(Evas_Object *obj)
+{
+   Eina_List *l, *last;
+   Elm_Toolbar_Item *it;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (!(last = eina_list_last(wd->items))) return NULL;
+   it = eina_list_data_get(last);
+
+   return it;
+}
+
+/**
+ * Return the next toolbar item (relative to the currently selected
+ * toolbar item) in the list of toolbar items.
+ *
+ * @param obj The toolbar object
+ *
+ * @return The next toolbar item, or NULL on failure
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_item_get_next(Evas_Object *obj)
+{
+   Eina_List *l, *l2;
+   Elm_Toolbar_Item *it, *next;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return NULL;
+   EINA_LIST_FOREACH_SAFE(wd->items, l, l2, it)
+     {
+        if (it->selected)
+          {
+	     if (!(next = eina_list_data_get(l2))) return NULL;
+	     return next;
+          }
+     }
+   return NULL;
+}
+
+/**
+ * Selects the next non-disabled, non-separator toolbar item in the list
+ * of toolbar items.
+ *
+ * @param obj The toolbar object
+ *
+ * @return The newly selected toolbar item, or NULL on failure
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_item_select_next(Evas_Object *obj)
+{
+   Eina_List *l, *l2;
+   Elm_Toolbar_Item *it, *next;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return NULL;
+   EINA_LIST_FOREACH(wd->items, l, it)
+     {
+        if (it->selected)
+          {
+             EINA_LIST_FOREACH(l, l2, next)
+               if ((!next->disabled) && (next->separator))
+                 {
+                    _item_select(next);
+                    return next;
+                 }
+          }
+     }
+  return NULL;
+}
+
+/**
+ * Selects the first non-disabled, non-separator toolbar item in the list
+ * of toolbar items.
+ *
+ * @param obj The toolbar object
+ *
+ * @return The newly selected toolbar item, or NULL on failure
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_item_select_first(Evas_Object *obj)
+{
+   Eina_List *l;
+   Elm_Toolbar_Item *it;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   EINA_LIST_FOREACH(wd->items, l, it)
+     {
+        if ((!it->disabled) && (!it->separator))
+          {
+             _item_select(it);
+             return it;
+          }
+     }
+
+   return NULL;
+}
+
+/**
+ * Selects the last non-disabled, non-separator toolbar item in the list
+ * of toolbar items.
+ *
+ * @param obj The toolbar object
+ *
+ * @return The newly selected toolbar item, or NULL on failure
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_item_select_last(Evas_Object *obj)
+{
+   Eina_List *l;
+   Elm_Toolbar_Item *it;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   EINA_LIST_REVERSE_FOREACH(wd->items, l, it)
+     {
+        if ((!it->disabled) && (!it->separator))
+          {
+             _item_select(it);
+             return it;
+          }
+     }
+ 
+   return NULL;
+}
+
+/**
+ * Returns a pointer to a toolbar item by its label
+ *
+ * @param obj The toolbar object
+ * @param label The label of the item to find
+ *
+ * @return The pointer to the toolbar item matching @p label
+ * Returns NULL on failure.
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_item_find_by_label(Evas_Object *obj, const char *label)
+{
+   Eina_List *l;
+   Elm_Toolbar_Item *it;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   
+   if (!wd) return NULL;
+   EINA_LIST_FOREACH(wd->items, l, it)
+     {
+        if (!strcmp(it->label, label)) return it;
+     }
+
+   return NULL;
 }
