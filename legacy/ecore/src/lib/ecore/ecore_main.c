@@ -539,7 +539,7 @@ _ecore_main_select(double timeout)
 #ifndef _WIN32
 	if (errno == EINTR) return -1;
 	else if (errno == EBADF)
-	     _ecore_main_fd_handlers_bads_rem();
+          _ecore_main_fd_handlers_bads_rem();
 #endif
      }
    if (ret > 0)
@@ -567,10 +567,10 @@ _ecore_main_select(double timeout)
 static void
 _ecore_main_fd_handlers_bads_rem(void)
 {
-   ERR("Removing bad fds");
    Ecore_Fd_Handler *fdh;
    Eina_Inlist *l;
 
+   ERR("Removing bad fds");
    for (l = EINA_INLIST_GET(fd_handlers); l; )
      {
 	fdh = (Ecore_Fd_Handler *) l;
