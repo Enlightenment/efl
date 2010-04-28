@@ -5479,6 +5479,10 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
+// emoticon images from:
+// Tanya - Latvia
+// http://lazycrazy.deviantart.com/
+// http://lazycrazy.deviantart.com/art/Very-Emotional-Emoticons-144461621
   group { name: "elm/entry/emoticon/angry/default"; images.image:
      "emo-angry.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
         "emo-angry.png"; } } } }
