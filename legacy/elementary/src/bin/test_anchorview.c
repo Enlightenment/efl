@@ -91,7 +91,7 @@ test_anchorview(void *data, Evas_Object *obj, void *event_info)
 		       "<a href=X><link>links in the text</></a>, so enter text<br>"
 		       "in here to edit it. By the way, links are<br>"
 		       "called <a href=anc-02>Anchors</a> so you will need<br>"
-		       "to refer to them this way.");
+		       "to refer to them this way. <item relsize=16x16 vsize=full href=emoticon/guilty-smile></item>");
    evas_object_size_hint_weight_set(av, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_smart_callback_add(av, "anchor,clicked", my_anchorview_anchor, av);
    elm_win_resize_object_add(win, av);

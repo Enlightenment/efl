@@ -481,7 +481,7 @@ extern "C" {
    EAPI Eina_Bool    elm_label_line_wrap_get(const Evas_Object *obj);
    EAPI void         elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w);
    EAPI Evas_Coord   elm_label_wrap_width_get(const Evas_Object *obj);
-/* available styles:
+   /* available styles:
     * default
     * marker
     */
@@ -759,6 +759,9 @@ extern "C" {
    EAPI void         elm_anchorview_hover_style_set(Evas_Object *obj, const char *style);
    EAPI void         elm_anchorview_hover_end(Evas_Object *obj);
    EAPI void         elm_anchorview_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+   EAPI void         elm_anchorview_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data);
+   EAPI void         elm_anchorview_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data);
+   EAPI void         elm_anchorview_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data);
    /* smart callbacks called:
     * "anchor,clicked" - achor called was clicked | event_info = Elm_Entry_Anchorview_Info
     */
@@ -784,6 +787,9 @@ extern "C" {
    EAPI void         elm_anchorblock_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_anchorblock_hover_style_set(Evas_Object *obj, const char *style);
    EAPI void         elm_anchorblock_hover_end(Evas_Object *obj);
+   EAPI void         elm_anchorblock_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorblock, const char *item), void *data);
+   EAPI void         elm_anchorblock_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorblock, const char *item), void *data);
+   EAPI void         elm_anchorblock_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorblock, const char *item), void *data);
    /* smart callbacks called:
     * "anchor,clicked" - achor called was clicked | event_info = Elm_Entry_Anchorblock_Info
     */

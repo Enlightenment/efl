@@ -185,7 +185,7 @@ test_anchorblock(void *data, Evas_Object *obj, void *event_info)
 			   "of information. This of course can be later explicitly "
 			   "done by links maybe running local apps or even being "
 			   "web URL's too that launch the web browser and point it "
-			   "to that URL.");
+			   "to that URL. <item relsize=16x16 vsize=full href=emoticon/omg></item>");
    evas_object_smart_callback_add(av, "anchor,clicked", my_anchorblock_anchor, av);
    elm_bubble_content_set(bb, av);
    evas_object_show(av);
@@ -209,7 +209,7 @@ test_anchorblock(void *data, Evas_Object *obj, void *event_info)
    av = elm_anchorblock_add(win);
    elm_anchorblock_hover_style_set(av, "popout");
    elm_anchorblock_hover_parent_set(av, win);
-   elm_anchorblock_text_set(av, "This is a short message");
+   elm_anchorblock_text_set(av, "This is a short message. <item relsize=16x16 vsize=full href=emoticon/haha></item>");
    evas_object_smart_callback_add(av, "anchor,clicked", 
                                   my_anchorblock_anchor, av);
    elm_bubble_content_set(bb, av);

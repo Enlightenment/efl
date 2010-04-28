@@ -13,7 +13,7 @@
  * 
  * You can also insert "items" in the entry with:
  * 
- * <item size=16x16 vsize=full href=emoticon/haha></item>
+ * \<item size=16x16 vsize=full href=emoticon/haha\>\</item\>
  * 
  * for example. sizing can be set bu size=WxH, relsize=WxH or absize=WxH with
  * vsize=ascent or vsize=full. the href=NAME sets the item name. Entry

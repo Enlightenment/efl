@@ -13,13 +13,21 @@
  * Elm_Entry_Anchorview_Info
  */
 typedef struct _Widget_Data Widget_Data;
+typedef struct _Elm_Anchorview_Item_Provider Elm_Anchorview_Item_Provider;
 
 struct _Widget_Data
 {
    Evas_Object *scroller, *entry;
    Evas_Object *hover_parent;
    Evas_Object *pop, *hover;
+   Eina_List *item_providers;
    const char *hover_style;
+};
+
+struct _Elm_Anchorview_Item_Provider
+{
+   Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item);
+   void *data;
 };
 
 static const char *widtype = NULL;
@@ -49,8 +57,13 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_Anchorview_Item_Provider *ip;
    if (!wd) return;
    if (wd->hover_style) eina_stringshare_del(wd->hover_style);
+   EINA_LIST_FREE(wd->item_providers, ip)
+     {
+        free(ip);
+     }
    free(wd);
 }
 
@@ -129,6 +142,22 @@ _parent_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    wd->hover_parent = NULL;
 }
 
+static Evas_Object *
+_item_provider(void *data, Evas_Object *entry, const char *item)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Object *o;
+   Eina_List *l;
+   Elm_Anchorview_Item_Provider *ip;
+   
+   EINA_LIST_FOREACH(wd->item_providers, l, ip)
+     {
+        o = ip->func(ip->data, data, item);
+        if (o) return o;
+     }
+   return NULL;
+}
+
 /**
  * Add a new Anchorview object
  *
@@ -157,6 +186,7 @@ elm_anchorview_add(Evas_Object *parent)
    wd->scroller = elm_scroller_add(parent);
    elm_widget_resize_object_set(obj, wd->scroller);
    wd->entry = elm_entry_add(parent);
+   elm_entry_item_provider_prepend(wd->entry, _item_provider, obj);
    elm_entry_editable_set(wd->entry, 0);
    evas_object_size_hint_weight_set(wd->entry, 1.0, 1.0);
    evas_object_size_hint_align_set(wd->entry, -1.0, -1.0);
@@ -310,4 +340,92 @@ elm_anchorview_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_boun
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_scroller_bounce_set(wd->scroller, h_bounce, v_bounce);
+}
+
+/**
+ * This appends a custom item provider to the list for that anchorview
+ *
+ * This appends the given callback. The list is walked from beginning to end
+ * with each function called given the item href string in the text. If the
+ * function returns an object handle other than NULL (it should create an
+ * and object to do this), then this object is used to replace that item. If
+ * not the next provider is called until one provides an item object, or the
+ * default provider in anchorview does.
+ * 
+ * @param obj The anchorview object
+ * @param func The function called to provide the item object
+ * @param data The data passed to @p func
+ *
+ * @ingroup Anchorview
+ */
+EAPI void
+elm_anchorview_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (!func) return;
+   Elm_Anchorview_Item_Provider *ip = calloc(1, sizeof(Elm_Anchorview_Item_Provider));
+   if (!ip) return;
+   ip->func = func;
+   ip->data = data;
+   wd->item_providers = eina_list_append(wd->item_providers, ip);
+}
+
+/**
+ * This prepends a custom item provider to the list for that anchorview
+ *
+ * This prepends the given callback. See elm_anchorview_item_provider_append() for
+ * more information
+ * 
+ * @param obj The anchorview object
+ * @param func The function called to provide the item object
+ * @param data The data passed to @p func
+ *
+ * @ingroup Anchorview
+ */
+EAPI void
+elm_anchorview_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (!func) return;
+   Elm_Anchorview_Item_Provider *ip = calloc(1, sizeof(Elm_Anchorview_Item_Provider));
+   if (!ip) return;
+   ip->func = func;
+   ip->data = data;
+   wd->item_providers = eina_list_prepend(wd->item_providers, ip);
+}
+
+/**
+ * This removes a custom item provider to the list for that anchorview
+ *
+ * This removes the given callback. See elm_anchorview_item_provider_append() for
+ * more information
+ * 
+ * @param obj The anchorview object
+ * @param func The function called to provide the item object
+ * @param data The data passed to @p func
+ *
+ * @ingroup Anchorview
+ */
+EAPI void
+elm_anchorview_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_List *l;
+   Elm_Anchorview_Item_Provider *ip;
+   if (!wd) return;
+   if (!func) return;
+   EINA_LIST_FOREACH(wd->item_providers, l, ip)
+     {
+        if ((ip->func == func) && (ip->data == data))
+          {
+             wd->item_providers = eina_list_remove_list(wd->item_providers, l);
+             free(ip);
+             return;
+          }
+     }
 }
