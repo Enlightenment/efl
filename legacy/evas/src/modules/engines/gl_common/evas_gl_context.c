@@ -1181,16 +1181,18 @@ shader_array_flush(Evas_GL_Context *gc)
 
    if (gc->shader.cur_tex != gc->shader.current.cur_tex)
      {
-//        if (gc->shader.cur_tex)
-//          {
-//             glEnable(GL_TEXTURE_2D);
-//             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-//          }
-//        else
-//          {
-//             glDisable(GL_TEXTURE_2D);
-//             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-//          }
+#if 1
+        if (gc->shader.cur_tex)
+          {
+             glEnable(GL_TEXTURE_2D);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+          }
+        else
+          {
+             glDisable(GL_TEXTURE_2D);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+          }
+#endif
         glActiveTexture(GL_TEXTURE0);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
