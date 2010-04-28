@@ -2449,6 +2449,7 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
 {
    GET_RP_OR_RETURN(0);
 
+   Evas_Object *child_obj;
    //printf("Set source for part: %s [source: %s]\n", part, source);
 
    if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
@@ -2456,8 +2457,19 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
 
    _edje_if_string_free(ed, rp->part->source);
 
+   if (rp->swallowed_object)
+     {
+       _edje_real_part_swallow_clear(rp);
+       evas_object_del(rp->swallowed_object);
+       rp->swallowed_object = NULL;
+     }
    if (source)
-     rp->part->source = eina_stringshare_add(source);
+     {
+	rp->part->source = eina_stringshare_add(source);
+	child_obj = edje_object_add(ed->evas);
+	edje_object_file_set(child_obj, ed->file->path, source);
+	_edje_real_part_swallow(rp, child_obj);
+     }
    else
      rp->part->source = NULL;
    return 1;
