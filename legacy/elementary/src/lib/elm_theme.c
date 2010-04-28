@@ -293,3 +293,20 @@ _elm_theme_parse(const char *theme)
    themes = names;
    return 1;
 }
+
+void
+_elm_theme_shutdown(void)
+{
+   const char *p;
+   EINA_LIST_FREE(themes, p)
+      eina_stringshare_del(p);
+   EINA_LIST_FREE(overlay, p)
+      eina_stringshare_del(p);
+   EINA_LIST_FREE(extension, p)
+      eina_stringshare_del(p);
+   if (cache)
+     {
+	eina_hash_free(cache);
+	cache = NULL;
+     }
+}

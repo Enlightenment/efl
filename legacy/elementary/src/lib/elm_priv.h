@@ -91,6 +91,7 @@ void _elm_win_rescale(void);
 int _elm_theme_set(Evas_Object *o, const char *clas, const char *group, const char *style);
 int _elm_theme_icon_set(Evas_Object *o, const char *group, const char *style);
 int _elm_theme_parse(const char *theme);
+void _elm_theme_shutdown(void);
 
 void _elm_module_init(void);
 void _elm_module_shutdown(void);

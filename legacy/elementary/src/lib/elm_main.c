@@ -957,6 +957,8 @@ elm_quicklaunch_shutdown(void)
 
    eina_stringshare_del(_elm_data_dir);
    _elm_data_dir = NULL;
+   eina_stringshare_del(_elm_lib_dir);
+   _elm_lib_dir = NULL;
 
    EINA_LIST_FREE(_elm_config->font_dirs, fontdir)
      {
@@ -967,11 +969,14 @@ elm_quicklaunch_shutdown(void)
    if (_elm_config->modules) eina_stringshare_del(_elm_config->modules);
    
    free(_elm_config);
+   _elm_config = NULL;
    free(_elm_appname);
+   _elm_appname = NULL;
    
    ecore_event_handler_del(_elm_exit_handler);
    _elm_exit_handler = NULL;
 
+   _elm_theme_shutdown();
    _elm_unneed_efreet();
    _elm_unneed_e_dbus();
    _elm_unneed_ethumb();
