@@ -606,9 +606,9 @@ _ecore_main_fd_handlers_bads_rem(void)
    if (found == 0)
      {
 #ifdef HAVE_GLIB
-        ERR("No bad fd found. Maybe a foreign fd from glib?\n");
+        ERR("No bad fd found. Maybe a foreign fd from glib?");
 #else        
-        ERR("No bad fd found. EEEK!\n");
+        ERR("No bad fd found. EEEK!");
 #endif        
      }
    _ecore_main_fd_handlers_cleanup();
