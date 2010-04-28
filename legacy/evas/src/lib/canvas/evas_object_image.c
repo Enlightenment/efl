@@ -2682,6 +2682,7 @@ evas_object_image_render_pre(Evas_Object *obj)
    /* if it changed geometry - and obviously not visibility or color */
    /* caluclate differences since we have a constant color fill */
    /* we really only need to update the differences */
+#if 0 // XXX: maybe buggy?
    if (((obj->cur.geometry.x != obj->prev.geometry.x) ||
 	(obj->cur.geometry.y != obj->prev.geometry.y) ||
 	(obj->cur.geometry.w != obj->prev.geometry.w) ||
@@ -2704,6 +2705,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 					   obj->prev.geometry.h);
 	if (!o->pixel_updates) goto done;
      }
+#endif   
    if (((obj->cur.geometry.x != obj->prev.geometry.x) ||
 	(obj->cur.geometry.y != obj->prev.geometry.y) ||
 	(obj->cur.geometry.w != obj->prev.geometry.w) ||

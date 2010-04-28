@@ -722,8 +722,21 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                     }
                }
              else
-               obj->func->render(obj, e->engine.data.output, ctx,
-                                 obj->cur.map->surface, off_x, off_y);
+               {
+                  int x = 0, y = 0, w = 0, h = 0;
+                  
+                  w = obj->cur.map->surface_w;
+                  h = obj->cur.map->surface_h;
+                  RECTS_CLIP_TO_RECT(x, y, w, h,
+                                     obj->cur.cache.clip.x + off_x,
+                                     obj->cur.cache.clip.y + off_y,
+                                     obj->cur.cache.clip.w,
+                                     obj->cur.cache.clip.h);
+                  e->engine.func->context_clip_set(e->engine.data.output,
+                                                   ctx, x, y, w, h);
+                  obj->func->render(obj, e->engine.data.output, ctx,
+                                    obj->cur.map->surface, off_x, off_y);
+               }
              e->engine.func->context_free(e->engine.data.output, ctx);
           }
 
@@ -1011,6 +1024,14 @@ evas_render_updates_internal(Evas *e,
                          }
 		       if (((w > 0) && (h > 0)) || (obj->smart.smart))
 			 {
+                            if (!obj->smart.smart)
+                              {
+                                 RECTS_CLIP_TO_RECT(x, y, w, h,
+                                                    obj->cur.cache.clip.x + off_x,
+                                                    obj->cur.cache.clip.y + off_y,
+                                                    obj->cur.cache.clip.w,
+                                                    obj->cur.cache.clip.h);
+                              }
 			    e->engine.func->context_clip_set(e->engine.data.output,
 							     e->engine.data.context,
 							     x, y, w, h);
