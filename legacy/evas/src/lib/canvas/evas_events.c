@@ -17,6 +17,11 @@ _evas_event_havemap_adjust(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
      }
    if (!pmap) return;
    evas_map_coords_get(pmap->cur.map, *x, *y, x, y, obj->mouse_grabbed);
+   if (pmap->cur.map)
+     {
+        *x += pmap->cur.map->normal_geometry.x;
+        *y += pmap->cur.map->normal_geometry.y;
+     }
 }
 
 static Eina_List *
