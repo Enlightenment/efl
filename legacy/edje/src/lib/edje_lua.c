@@ -5710,4 +5710,5 @@ _edje_lua_shutdown()
 {
    if (Ledje == NULL) return;
    lua_close(Ledje);
+   Ledje = NULL;
 }
