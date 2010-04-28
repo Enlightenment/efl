@@ -21,7 +21,9 @@ struct _Render_Engine
    Tilebuf_Rect     *rects;
    Tilebuf_Rect     *cur_rect;
    
-   XrmDatabase   xrdb; // xres - dpi
+   // TODO: maybe use these as shared global resources, acquired only once?
+   XrmDatabase   xrdb_dpy; // xres - dpi
+   XrmDatabase   xrdb_user;
    struct { // xres - dpi
       int        dpi; // xres - dpi
    } xr; // xres - dpi
@@ -186,11 +188,29 @@ eng_setup(Evas *e, void *in)
      {   
         int status;
         char *type = NULL;
+	const char *home;
         XrmValue val;
         
         re->xr.dpi = 75000; // dpy * 1000
-        re->xrdb = XrmGetDatabase(re->disp);
-        status = XrmGetResource(re->xrdb, "Xft.dpi", "Xft.Dpi", &type, &val);
+
+	if ((home = getenv("HOME")))
+	  {
+	     char tmp[PATH_MAX];
+	     snprintf(tmp, sizeof(tmp), "%s/.Xdefaults", home);
+	     re->xrdb_user = XrmGetFileDatabase(tmp);
+	     if (re->xrdb_user)
+	       status = XrmGetResource(re->xrdb_user,
+				       "Xft.dpi", "Xft.Dpi", &type, &val);
+	  }
+
+	if ((!status) || (!type))
+	  {
+	     re->xrdb_dpy = XrmGetDatabase(re->disp);
+	     if (re->xrdb_dpy)
+	       status = XrmGetResource(re->xrdb_dpy,
+				       "Xft.dpi", "Xft.Dpi", &type, &val);
+	  }
+
         if ((status) && (type))
           {
              if (!strcmp(type, "String"))
@@ -246,7 +266,8 @@ eng_output_free(void *data)
 
    re = (Render_Engine *)data;
    
-//   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
+//   if (re->xrdb_user) XrmDestroyDatabase(re->xrdb_user);
+//   if (re->xrdb_dpy) XrmDestroyDatabase(re->xrdb_dpy);
    
    if (re->shbuf) evas_software_x11_x_output_buffer_free(re->shbuf, 0);
    if (re->clip_rects) XDestroyRegion(re->clip_rects);

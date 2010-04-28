@@ -31,7 +31,9 @@ struct _Render_Engine
    unsigned char    destination_alpha : 1;
 
 #ifdef BUILD_ENGINE_XRENDER_X11
-   XrmDatabase   xrdb; // xres - dpi
+   // TODO: maybe use these as shared global resources, acquired only once?
+   XrmDatabase   xrdb_dpy; // xres - dpi
+   XrmDatabase   xrdb_user;
    struct { // xres - dpi
       int        dpi; // xres - dpi
    } xr; // xres - dpi
@@ -227,11 +229,29 @@ _output_xlib_setup(int           width,
      {   
         int status;
         char *type = NULL;
+	const char *home;
         XrmValue val;
         
         re->xr.dpi = 75000; // dpy * 1000
-        re->xrdb = XrmGetDatabase((Display *)re->x11.connection);
-        status = XrmGetResource(re->xrdb, "Xft.dpi", "Xft.Dpi", &type, &val);
+
+	if ((home = getenv("HOME")))
+	  {
+	     char tmp[PATH_MAX];
+	     snprintf(tmp, sizeof(tmp), "%s/.Xdefaults", home);
+	     re->xrdb_user = XrmGetFileDatabase(tmp);
+	     if (re->xrdb_user)
+	       status = XrmGetResource(re->xrdb_user,
+				       "Xft.dpi", "Xft.Dpi", &type, &val);
+	  }
+
+	if ((!status) || (!type))
+	  {
+	     re->xrdb_dpy = XrmGetDatabase((Display *)re->x11.connection);
+	     if (re->xrdb_dpy)
+	       status = XrmGetResource(re->xrdb_dpy,
+				       "Xft.dpi", "Xft.Dpi", &type, &val);
+	  }
+
         if ((status) && (type))
           {
              if (!strcmp(type, "String"))
@@ -501,7 +521,8 @@ eng_output_free(void *data)
    re = (Render_Engine *)data;
    
 #ifdef BUILD_ENGINE_XRENDER_X11
-//   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
+//   if (re->xrdb_user) XrmDestroyDatabase(re->xrdb_user);
+//   if (re->xrdb_dpy) XrmDestroyDatabase(re->xrdb_dpy);
 #endif
    
    evas_common_font_shutdown();
