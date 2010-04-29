@@ -82,6 +82,9 @@
 
 #define EINA_MAGIC_STRBUF 0x98761250
 
+#define EINA_MAGIC_QUADTREE 0x98761251
+#define EINA_MAGIC_QUADTREE_ROOT 0x98761252
+#define EINA_MAGIC_QUADTREE_ITEM 0x98761253
 
 /* undef the following, we want out version */
 #undef FREE

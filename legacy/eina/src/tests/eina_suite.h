@@ -45,5 +45,7 @@ void eina_test_matrixsparse(TCase *tc);
 void eina_test_tiler(TCase *tc);
 void eina_test_strbuf(TCase *tc);
 void eina_test_str(TCase *tc);
+void eina_test_quadtree(TCase *tc);
+void eina_test_fp(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */

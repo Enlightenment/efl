@@ -56,7 +56,8 @@ eina_test_list.c	\
 eina_test_matrixsparse.c \
 eina_test_tiler.c       \
 eina_test_strbuf.c	\
-eina_test_str.c
+eina_test_str.c		\
+eina_test_quadtree.c
 
 eina_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libeina.la
 
@@ -94,7 +95,8 @@ evas_hash.c \
 evas_list.c \
 evas_mempool.c \
 evas_object_list.c \
-evas_stringshare.c
+evas_stringshare.c \
+eina_bench_quad.c
 
 eina_bench_LDADD = @GLIB_LIBS@ $(top_builddir)/src/lib/libeina.la
 

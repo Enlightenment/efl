@@ -58,6 +58,7 @@ static const Eina_Test_Case etc[] = {
   { "Eina Tiler", eina_test_tiler },
   { "Eina Strbuf", eina_test_strbuf },
   { "String", eina_test_str },
+  { "QuadTree", eina_test_quadtree },
   { NULL, NULL }
 };
 

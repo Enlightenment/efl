@@ -19,6 +19,9 @@
 #ifndef EINA_MAIN_H_
 #define EINA_MAIN_H_
 
+
+#include "eina_types.h"
+
 /**
  * @addtogroup Eina_Core_Group Core
  *
