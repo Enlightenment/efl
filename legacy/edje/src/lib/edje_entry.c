@@ -1858,6 +1858,9 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_UP, _edje_part_mouse_up_cb, rp);
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_MOVE, _edje_part_mouse_move_cb, rp);
    
+   if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_DEFAULT)
+     en->select_allow = 1;
+
    if (rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD)
      {
         en->select_allow = 0;
@@ -2275,6 +2278,8 @@ void
 _edje_entry_select_allow_set(Edje_Real_Part *rp, Eina_Bool allow)
 {
    Entry *en = rp->entry_data;
+   if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_DEFAULT)
+     return;
    en->select_allow = allow;
 }
 
