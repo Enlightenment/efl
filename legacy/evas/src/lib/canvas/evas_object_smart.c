@@ -380,7 +380,7 @@ evas_object_smart_add(Evas *e, Evas_Smart *s)
    return NULL;
    MAGIC_CHECK_END();
 
-   obj = evas_object_new();
+   obj = evas_object_new(e);
    if (!obj) return NULL;
    obj->smart.smart = s;
    obj->type = s->smart_class->name;

@@ -736,7 +736,7 @@ struct _Evas_Image_Save_Func
 extern "C" {
 #endif
 
-Evas_Object *evas_object_new(void);
+Evas_Object *evas_object_new(Evas *e);
 void evas_object_free(Evas_Object *obj, int clean_layer);
 void evas_object_inject(Evas_Object *obj, Evas *e);
 void evas_object_release(Evas_Object *obj, int clean_layer);
