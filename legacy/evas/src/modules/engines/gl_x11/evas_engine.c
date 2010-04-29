@@ -114,6 +114,51 @@ int _evas_engine_GL_X11_log_dom = -1;
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
 
+struct xrdb_user
+{
+   time_t last_stat;
+   time_t last_mtime;
+   XrmDatabase db;
+};
+static struct xrdb_user xrdb_user = {0, 0, NULL};
+
+static Eina_Bool
+xrdb_user_query(const char *name, const char *cls, char **type, XrmValue *val)
+{
+   time_t last = xrdb_user.last_stat, now = time(NULL);
+
+   xrdb_user.last_stat = now;
+   if (last != now) /* don't stat() more than once every second */
+     {
+	struct stat st;
+	const char *home = getenv("HOME");
+	char tmp[PATH_MAX];
+
+	if (!home) goto failed;
+	snprintf(tmp, sizeof(tmp), "%s/.Xdefaults", home);
+	if (stat(tmp, &st) != 0) goto failed;
+	if (xrdb_user.last_mtime != st.st_mtime)
+	  {
+	     if (xrdb_user.db) XrmDestroyDatabase(xrdb_user.db);
+	     xrdb_user.db = XrmGetFileDatabase(tmp);
+	     if (!xrdb_user.db) goto failed;
+	     xrdb_user.last_mtime = st.st_mtime;
+	  }
+     }
+
+   if (!xrdb_user.db) return EINA_FALSE;
+   return XrmGetResource(xrdb_user.db, name, cls, type, val);
+
+ failed:
+   if (xrdb_user.db)
+     {
+	XrmDestroyDatabase(xrdb_user.db);
+	xrdb_user.db = NULL;
+     }
+   xrdb_user.last_mtime = 0;
+   return EINA_FALSE;
+}
+
 typedef struct _Render_Engine Render_Engine;
 
 struct _Render_Engine
@@ -123,9 +168,7 @@ struct _Render_Engine
    Evas                    *evas;
    int                      end;
    
-   // TODO: maybe use these as shared global resources, acquired only once?
-   XrmDatabase   xrdb_dpy; // xres - dpi
-   XrmDatabase   xrdb_user;
+   XrmDatabase   xrdb; // xres - dpi
    struct { // xres - dpi
       int        dpi; // xres - dpi
    } xr; // xres - dpi
@@ -195,26 +238,16 @@ eng_setup(Evas *e, void *in)
           {
              int status;
              char *type = NULL;
-	     const char *home;
              XrmValue val;
              
              re->xr.dpi = 75000; // dpy * 1000
 
-	     if ((home = getenv("HOME")))
-	       {
-		  char tmp[PATH_MAX];
-		  snprintf(tmp, sizeof(tmp), "%s/.Xdefaults", home);
-		  re->xrdb_user = XrmGetFileDatabase(tmp);
-		  if (re->xrdb_user)
-		    status = XrmGetResource(re->xrdb_user,
-					    "Xft.dpi", "Xft.Dpi", &type, &val);
-	       }
-
+	     status = xrdb_user_query("Xft.dpi", "Xft.Dpi", &type, &val);
 	     if ((!status) || (!type))
 	       {
-		  re->xrdb_dpy = XrmGetDatabase(info->info.display);
-		  if (re->xrdb_dpy)
-		    status = XrmGetResource(re->xrdb_dpy,
+		  if (!re->xrdb) re->xrdb = XrmGetDatabase(info->info.display);
+		  if (re->xrdb)
+		    status = XrmGetResource(re->xrdb,
 					    "Xft.dpi", "Xft.Dpi", &type, &val);
 	       }
 
@@ -326,9 +359,10 @@ eng_output_free(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   
-//   if (re->xrdb_user) XrmDestroyDatabase(re->xrdb_user);
-//   if (re->xrdb_dpy) XrmDestroyDatabase(re->xrdb_dpy);
+
+// NOTE: XrmGetDatabase() result is shared per connection, do not free it.
+//   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
+
    eng_window_free(re->win);
    free(re);
 
@@ -1905,6 +1939,13 @@ eng_canvas_alpha_get(void *data __UNUSED__, void *info __UNUSED__)
 static int
 module_open(Evas_Module *em)
 {
+   static Eina_Bool xrm_inited = EINA_FALSE;
+   if (!xrm_inited)
+     {
+	xrm_inited = EINA_TRUE;
+	XrmInitialize();
+     }
+
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
@@ -2022,6 +2063,13 @@ static void
 module_close(Evas_Module *em)
 {
     eina_log_domain_unregister(_evas_engine_GL_X11_log_dom);
+    if (xrdb_user.db)
+      {
+	 XrmDestroyDatabase(xrdb_user.db);
+	 xrdb_user.last_stat = 0;
+	 xrdb_user.last_mtime = 0;
+	 xrdb_user.db = NULL;
+      }
 }
 
 static Evas_Module_Api evas_modapi =
