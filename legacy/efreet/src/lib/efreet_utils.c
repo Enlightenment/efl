@@ -52,6 +52,7 @@ efreet_util_init(void)
         return 0;
     }
 
+    /* TODO: Defer eet open until we actually need it open. */
     cache = eet_open(efreet_desktop_util_cache_file(), EET_FILE_MODE_READ);
     file_id_by_desktop_path = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
 

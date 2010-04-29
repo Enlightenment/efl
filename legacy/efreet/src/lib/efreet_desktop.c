@@ -202,6 +202,7 @@ efreet_desktop_init(void)
 
     }
 
+    /* TODO: Defer eet open until we actually need it open. */
     cache = eet_open(efreet_desktop_cache_file(), EET_FILE_MODE_READ);
 
     return 1;
