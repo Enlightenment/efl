@@ -50,7 +50,7 @@ external_thumb_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
 {
    if (!strcmp(param->name, "animate"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
 	     Elm_Thumb_Animation_Setting set = _anim_setting_get(param->s);
 	     if (set == ELM_THUMB_ANIMATION_LAST) return EINA_FALSE;
@@ -78,7 +78,7 @@ external_thumb_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ext
 {
    if (!strcmp(param->name, "animate"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
 	     Elm_Thumb_Animation_Setting anim_set = elm_thumb_animate_get(obj);
 

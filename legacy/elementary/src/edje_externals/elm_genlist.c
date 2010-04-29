@@ -83,7 +83,7 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
 {
    if (!strcmp(param->name, "horizontal mode"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
 	     Elm_List_Mode set = _list_horizontal_mode_setting_get(param->s);
 
@@ -164,7 +164,7 @@ external_genlist_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
 {
    if (!strcmp(param->name, "horizontal mode"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
 	     Elm_List_Mode list_horizontal_mode_set = elm_genlist_horizontal_mode_get(obj);
 

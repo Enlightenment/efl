@@ -92,7 +92,7 @@ external_list_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Exte
 {
    if (!strcmp(param->name, "horizontal mode"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
 	     Elm_List_Mode set = _list_horizontal_mode_setting_get(param->s);
 	     if (set == ELM_LIST_LAST) return EINA_FALSE;
@@ -102,7 +102,7 @@ external_list_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Exte
      }
    else if (!strcmp(param->name, "scroll horizontal"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
 	     Elm_Scroller_Policy h, v;
 	     elm_list_scroller_policy_get(obj, &h, &v);
@@ -114,7 +114,7 @@ external_list_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Exte
      }
    else if (!strcmp(param->name, "scroll vertical"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
 	     Elm_Scroller_Policy h, v;
 	     elm_list_scroller_policy_get(obj, &h, &v);
@@ -168,7 +168,7 @@ external_list_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Exte
      }
    else if (!strcmp(param->name, "scroll horizontal"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
 	     Elm_Scroller_Policy h, v;
 	     elm_list_scroller_policy_get(obj, &h, &v);
@@ -179,7 +179,7 @@ external_list_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Exte
      }
    else if (!strcmp(param->name, "scroll vertical"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
 	     Elm_Scroller_Policy h, v;
 	     elm_list_scroller_policy_get(obj, &h, &v);
@@ -190,7 +190,7 @@ external_list_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Exte
      }
    else if (!strcmp(param->name, "horizontal mode"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
 	     Elm_List_Mode m = elm_list_horizontal_mode_get(obj);
 
