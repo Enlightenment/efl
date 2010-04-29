@@ -54,10 +54,11 @@ external_list_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fro
 
    if (p->horizontal_mode)
      {
-	Elm_List_Mode set = _list_horizontal_mode_setting_get(p->horizontal_mode
-							      );
-	if (set == ELM_LIST_LAST) return;
-	elm_list_horizontal_mode_set(obj, set);
+	Elm_List_Mode set = _list_horizontal_mode_setting_get(
+					     p->horizontal_mode);
+
+	if (set != ELM_LIST_LAST)
+	   elm_list_horizontal_mode_set(obj, set);
      }
 
    if ((p->policy_h) && (p->policy_v))

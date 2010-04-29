@@ -38,8 +38,8 @@ external_thumb_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fr
    if (p->animate)
      {
 	Elm_Thumb_Animation_Setting set = _anim_setting_get(p->animate);
-	if (set == ELM_THUMB_ANIMATION_LAST) return;
-	elm_thumb_animate_set(obj, set);
+	if (set != ELM_THUMB_ANIMATION_LAST)
+	   elm_thumb_animate_set(obj, set);
      }
    if (p->aspect_exists)
      elm_thumb_keep_aspect_set(obj, p->keep_aspect);

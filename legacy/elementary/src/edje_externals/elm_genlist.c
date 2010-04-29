@@ -51,8 +51,8 @@ external_genlist_state_set(void *data __UNUSED__, Evas_Object *obj, const void *
      {
 	Elm_List_Mode set = _list_horizontal_mode_setting_get(p->horizontal_mode);
 
-	if (set == ELM_LIST_LAST) return;
-	elm_genlist_horizontal_mode_set(obj, set);
+	if (set != ELM_LIST_LAST)
+	   elm_genlist_horizontal_mode_set(obj, set);
      }
    if (p->multi_exists)
      elm_genlist_multi_select_set(obj, p->multi);
