@@ -7087,6 +7087,15 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
      }
 
    eet_close(eetf);
+
+   /* Update mtime */
+   {
+     struct stat st;
+     if (stat(ed->path, &st) != 0)
+       return EINA_FALSE;
+     ef->mtime = st.st_mtime;
+   }
+
    INF("***********  Saving DONE ******************");
    return EINA_TRUE;
 }
