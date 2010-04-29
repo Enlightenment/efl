@@ -108,6 +108,7 @@ static void _edje_edit_smart_add(Evas_Object *obj);
 static void _edje_edit_smart_del(Evas_Object *obj);
 
 static Eina_Bool _edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group);
+static Eina_Bool _edje_edit_edje_file_save(Eet_File *eetf, Edje_File *ef);
 
 EVAS_SMART_SUBCLASS_NEW(_edje_edit_type, _edje_edit, Edje_Smart_Api,
 			Edje_Smart_Api, _edje_object_smart_class_get, NULL)
@@ -294,17 +295,6 @@ _edje_real_part_free(Edje_Real_Part *rp)
 }
 
 static Eina_Bool
-_edje_edit_update_edje_file(Edje *ed, Eet_File *eetf)
-{
-   if (eet_data_write(eetf, _edje_edd_edje_file, "edje_file", ed->file, 1) <= 0)
-     {
-	ERR("Unable to write \"edje_file\" part entry to %s", ed->path);
-	return EINA_FALSE;
-     }
-  return EINA_TRUE;
-}
-
-static Eina_Bool
 _edje_import_font_file(Edje *ed, const char *path, const char *entry)
 {
    void *fdata = NULL;
@@ -360,7 +350,7 @@ _edje_import_font_file(Edje *ed, const char *path, const char *entry)
       free(fdata);
 
       /* write the edje_file */
-      if (!_edje_edit_update_edje_file(ed, eetf))
+      if (!_edje_edit_edje_file_save(eetf, ed->file))
 	{
 	   eet_delete(eetf, entry);
 	   eet_close(eetf);
@@ -439,7 +429,7 @@ _edje_import_image_file(Edje *ed, const char *path, int id)
    evas_object_del(im);
 
    /* write the edje_file */
-   if (!_edje_edit_update_edje_file(ed, eetf))
+   if (!_edje_edit_edje_file_save(eetf, ed->file))
      {
 	eet_delete(eetf, entry);
 	eet_close(eetf);
@@ -4383,7 +4373,7 @@ edje_edit_font_del(Evas_Object *obj, const char* alias)
         }
 
       /* write the edje_file */
-      if (!_edje_edit_update_edje_file(ed, eetf))
+      if (!_edje_edit_edje_file_save(eetf, ed->file))
 	{
 	   eet_close(eetf);
 	   eina_hash_direct_add(ed->file->font_hash, fnt->entry, fnt);
@@ -4591,7 +4581,7 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
         }
 
       /* write the edje_file */
-      if (!_edje_edit_update_edje_file(ed, eetf))
+      if (!_edje_edit_edje_file_save(eetf, ed->file))
 	{
 	   eet_close(eetf);
 	   ed->file->image_dir->entries =
