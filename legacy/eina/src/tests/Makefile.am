@@ -32,6 +32,7 @@ check_PROGRAMS = eina_suite
 
 eina_suite_SOURCES = 	\
 eina_suite.c 		\
+eina_test_fp.c		\
 eina_test_stringshare.c \
 eina_test_array.c 	\
 eina_test_error.c	\
