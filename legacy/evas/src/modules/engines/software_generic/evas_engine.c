@@ -794,6 +794,8 @@ eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *i
        (p[1].x == p[2].x) &&
        (p[0].y == p[1].y) &&
        (p[3].y == p[2].y) &&
+       (p[0].x <= p[1].x) &&
+       (p[0].y <= p[2].y) &&
        (p[0].u == 0) &&
        (p[0].v == 0) &&
        (p[1].u == (im->cache_entry.w << FP)) &&
@@ -819,12 +821,14 @@ eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *i
            dx, dy, dw, dh, smooth);
      }
    else
+     {
 #ifdef BUILD_PIPE_RENDER
-     if (cpunum > 1)
-       evas_common_pipe_map4_draw(im, surface, context, p, smooth, level);
-     else
+        if (cpunum > 1)
+          evas_common_pipe_map4_draw(im, surface, context, p, smooth, level);
+        else
 #endif
-       evas_common_map4_rgba(im, surface, context, p, smooth, level);
+          evas_common_map4_rgba(im, surface, context, p, smooth, level);
+     }
    evas_common_cpu_end_opt();
 }
 
