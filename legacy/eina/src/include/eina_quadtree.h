@@ -21,7 +21,7 @@
 
 #include "eina_config.h"
 
-#include "eina_array.h"
+#include "eina_inlist.h"
 
 typedef struct _Eina_QuadTree Eina_QuadTree;
 typedef struct _Eina_QuadTree_Item Eina_QuadTree_Item;
@@ -39,6 +39,7 @@ EAPI Eina_QuadTree *eina_quadtree_new(size_t w, size_t h,
 				      Eina_Quad_Callback horizontal);
 EAPI void eina_quadtree_free(Eina_QuadTree *q);
 EAPI void eina_quadtree_resize(Eina_QuadTree *q, size_t w, size_t h);
+EAPI void eina_quadtree_cycle(Eina_QuadTree *q);
 
 EAPI Eina_QuadTree_Item *eina_quadtree_add(Eina_QuadTree *q, const void *object);
 EAPI Eina_Bool eina_quadtree_del(Eina_QuadTree_Item *object);
@@ -46,7 +47,8 @@ EAPI Eina_Bool eina_quadtree_change(Eina_QuadTree_Item *object);
 EAPI Eina_Bool eina_quadtree_hide(Eina_QuadTree_Item *object);
 EAPI Eina_Bool eina_quadtree_show(Eina_QuadTree_Item *object);
 
-EAPI void eina_quadtree_collide(Eina_Array *result, Eina_QuadTree *q,
-				int x, int y, size_t w, size_t h);
+EAPI Eina_Inlist *eina_quadtree_collide(Eina_QuadTree *q,
+					int x, int y, int w, int h);
+EAPI void *eina_quadtree_object(Eina_Inlist *list);
 
 #endif

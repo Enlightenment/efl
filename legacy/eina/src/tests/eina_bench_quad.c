@@ -159,7 +159,7 @@ static void
 eina_bench_quadtree_render_loop(int request)
 {
    Eina_List *objects = NULL;
-   Eina_Array *possibility;
+   Eina_Inlist *possibility;
    Eina_Bench_Quad *b;
    Eina_QuadTree *q;
    Eina_Mempool *mp;
@@ -189,15 +189,11 @@ eina_bench_quadtree_render_loop(int request)
 	objects = eina_list_append(objects, b);
      }
 
-   possibility = eina_array_new(64);
-
    for (j = 0; j < 100; ++j)
      {
 	Eina_Bench_Quad *collide;
 	Eina_List *changed = NULL;
 	Eina_List *collided = NULL;
-	Eina_Array_Iterator it;
-	unsigned int k;
 
 	/* Delete 25% of all objects */
 	i = request * 25 / 100;
@@ -233,15 +229,20 @@ eina_bench_quadtree_render_loop(int request)
 			   (rand() * HEIGHT) / RAND_MAX,
 			   (rand() * WIDTH / 4) / RAND_MAX,
 			   (rand() * HEIGHT / 4) / RAND_MAX);
-	eina_quadtree_collide(possibility, q,
-			      collide->r.x, collide->r.y,
-			      collide->r.w, collide->r.h);
-	EINA_ARRAY_ITER_NEXT(possibility, k, b, it)
-	  if (eina_rectangles_intersect(&b->r, &collide->r))
-	    collided = eina_list_append(collided, b);
+	possibility = eina_quadtree_collide(q,
+					    collide->r.x, collide->r.y,
+					    collide->r.w, collide->r.h);
+	while (possibility)
+	  {
+	     b = eina_quadtree_object(possibility);
+	     possibility = possibility->next;
+
+	     if (eina_rectangles_intersect(&b->r, &collide->r))
+	       collided = eina_list_append(collided, b);
+	  }
+
 	collided = eina_list_free(collided);
 	eina_mempool_free(mp, collide);
-	eina_array_clean(possibility);
 
 	/* Modify 50% of all objects */
 	i = request * 50 / 100;
@@ -265,12 +266,16 @@ eina_bench_quadtree_render_loop(int request)
 	   object with all intersecting object */
 	EINA_LIST_FREE(changed, b)
 	  {
-	     eina_quadtree_collide(possibility, q,
-				   b->r.x, b->r.y, b->r.w, b->r.h);
-	     EINA_ARRAY_ITER_NEXT(possibility, k, collide, it)
-	       if (collide != b && eina_rectangles_intersect(&b->r, &collide->r))
-		 collided = eina_list_append(collided, collide);
-	     eina_array_clean(possibility);
+	     possibility = eina_quadtree_collide(q,
+						 b->r.x, b->r.y, b->r.w, b->r.h);
+	     while (possibility)
+	       {
+		  collide = eina_quadtree_object(possibility);
+		  possibility = possibility->next;
+
+		  if (collide != b && eina_rectangles_intersect(&b->r, &collide->r))
+		    collided = eina_list_append(collided, collide);
+	       }
 
 	     collided = eina_list_append(collided, b);
 	  }

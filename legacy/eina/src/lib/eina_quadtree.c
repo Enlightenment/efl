@@ -94,6 +94,9 @@ struct _Eina_QuadTree
    Eina_Trash *root_trash;
    Eina_Mempool *root_mp;
 
+   Eina_Inlist *cached;
+   Eina_Rectangle target;
+
    size_t index;
 
    struct {
@@ -107,6 +110,7 @@ struct _Eina_QuadTree
    } geom;
 
    Eina_Bool resize : 1;
+   Eina_Bool lost : 1;
 };
 
 struct _Eina_QuadTree_Root
@@ -591,6 +595,8 @@ eina_quadtree_new(size_t w, size_t h,
    result->root_mp = eina_mempool_add("chained_mempool", "QuadTree Root", NULL,
 				      sizeof (Eina_QuadTree_Root), 32);
 
+   result->lost = EINA_TRUE;
+
    EINA_MAGIC_SET(result, EINA_MAGIC_QUADTREE);
 
    return result;
@@ -718,11 +724,19 @@ eina_quadtree_hide(Eina_QuadTree_Item *object)
 EAPI Eina_Bool
 eina_quadtree_show(Eina_QuadTree_Item *object)
 {
+   size_t index;
+
    EINA_MAGIC_CHECK_QUADTREE_ITEM(object, EINA_FALSE);
 
-   object->index = object->quad->index++;
+   index = object->quad->index++;
+   if (object->index == index
+       && object->visible)
+     return EINA_TRUE;
+
+   object->index = index;
    if (object->root)
      object->root->sorted = EINA_FALSE;
+   object->quad->lost = EINA_TRUE;
 
    if (object->visible) return EINA_TRUE;
 
@@ -733,19 +747,12 @@ eina_quadtree_show(Eina_QuadTree_Item *object)
    return EINA_TRUE;
 }
 
-EAPI void
-eina_quadtree_collide(Eina_Array *result,
-		      Eina_QuadTree *q, int x, int y, size_t w, size_t h)
+EAPI Eina_Inlist *
+eina_quadtree_collide(Eina_QuadTree *q, int x, int y, int w, int h)
 {
-   Eina_Inlist *head = NULL;
-   Eina_QuadTree_Item *current;
-   Eina_QuadTree_Item *p = NULL;
    Eina_Rectangle canvas;
-   Eina_Rectangle target;
-   Eina_Array_Iterator it;
-   unsigned int i;
 
-   EINA_MAGIC_CHECK_QUADTREE(q);
+   EINA_MAGIC_CHECK_QUADTREE(q, NULL);
 
    /* Now we need the tree to be up to date, so it's time */
    if (q->resize) /* Full rebuild needed ! */
@@ -764,15 +771,40 @@ eina_quadtree_collide(Eina_Array *result,
 					EINA_FALSE, &canvas);
      }
 
-   EINA_RECTANGLE_SET(&target, x, y, w, h);
+   if (q->target.x != x
+       || q->target.y != y
+       || q->target.w != w
+       || q->target.h != h)
+     {
+	DBG("new target");
+	EINA_RECTANGLE_SET(&q->target, x, y, w, h);
+	q->lost = EINA_TRUE;
+     }
 
-   DBG("colliding content");
-   head = _eina_quadtree_collide(NULL, q->root,
-				 EINA_FALSE, &canvas,
-				 &target);
+   if (q->lost)
+     {
+	DBG("computing collide");
+	q->cached = _eina_quadtree_collide(NULL, q->root,
+					   EINA_FALSE, &canvas,
+					   &q->target);
+     }
 
-   EINA_INLIST_FOREACH(head, current)
-     eina_array_push(result, current->object);
+   return q->cached;
+}
+
+EAPI void *
+eina_quadtree_object(Eina_Inlist *item)
+{
+   Eina_QuadTree_Item *qi;
+
+   if (!item) return NULL;
+
+   qi = EINA_INLIST_CONTAINER_GET(item, Eina_QuadTree_Item);
+   if (!qi) return NULL;
+
+   EINA_MAGIC_CHECK_QUADTREE_ITEM(qi, NULL);
+
+   return (void*) qi->object;
 }
 
 EAPI void
@@ -787,6 +819,14 @@ eina_quadtree_resize(Eina_QuadTree *q, size_t w, size_t h)
    q->resize = EINA_TRUE;
    q->geom.w = w;
    q->geom.h = h;
+}
+
+EAPI void
+eina_quadtree_cycle(Eina_QuadTree *q)
+{
+   EINA_MAGIC_CHECK_QUADTREE(q);
+
+   q->index = 0;
 }
 
 Eina_Bool
