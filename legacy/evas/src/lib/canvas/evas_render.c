@@ -609,7 +609,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
         const Evas_Map_Point *p, *p_end;
         RGBA_Map_Point pts[4], *pt;
         int sw, sh;
-        int changed = 0;
+        int changed = 0, rendered = 0;
 
         sw = obj->cur.geometry.w;
         sh = obj->cur.geometry.h;
@@ -738,11 +738,18 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                                     obj->cur.map->surface, off_x, off_y);
                }
              e->engine.func->context_free(e->engine.data.output, ctx);
+             rendered = 1;
           }
 
         RDI(level);
         RD("        draw map4\n");
 
+        if (rendered)
+          {
+             obj->cur.map->surface = e->engine.func->image_dirty_region
+               (e->engine.data.output, obj->cur.map->surface,
+                0, 0, obj->cur.map->surface_w, obj->cur.map->surface_h);
+          }
         obj->layer->evas->engine.func->image_map4_draw
           (e->engine.data.output, e->engine.data.context, surface,
            obj->cur.map->surface, pts, obj->cur.map->smooth, 0);
