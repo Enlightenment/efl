@@ -70,7 +70,7 @@ edje_object_part_external_object_get(const Evas_Object *obj, const char *part)
    if (!rp)
      {
 	ERR("no part '%s'", part);
-	return EINA_FALSE;
+	return NULL;
      }
    if (rp->part->type != EDJE_PART_TYPE_EXTERNAL)
      {
