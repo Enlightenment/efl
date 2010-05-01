@@ -678,8 +678,11 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
           }
         else
           {
-             changed = obj->changed;
-             obj->changed = 0;
+             if (obj->changed)
+               {
+                  changed = 1;
+                  obj->changed = 0;
+               }
           }
 
         // clear surface before re-render
@@ -724,14 +727,14 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              else
                {
                   int x = 0, y = 0, w = 0, h = 0;
-                  
+
                   w = obj->cur.map->surface_w;
                   h = obj->cur.map->surface_h;
                   RECTS_CLIP_TO_RECT(x, y, w, h,
-                                     obj->cur.cache.clip.x + off_x,
-                                     obj->cur.cache.clip.y + off_y,
-                                     obj->cur.cache.clip.w,
-                                     obj->cur.cache.clip.h);
+                                     obj->cur.geometry.x + off_x,
+                                     obj->cur.geometry.y + off_y,
+                                     obj->cur.geometry.w,
+                                     obj->cur.geometry.h);
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    ctx, x, y, w, h);
                   obj->func->render(obj, e->engine.data.output, ctx,

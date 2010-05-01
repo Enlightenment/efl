@@ -362,7 +362,7 @@ evas_common_map4_rgba(RGBA_Image *src, RGBA_Image *dst,
 #ifdef BUILD_MMX
    evas_common_cpu_can_do(&mmx, &sse, &sse2);
 #endif   
-   if (!dc->cutout.rects)
+   if ((!dc->cutout.rects) && (!dc->clip.use))
      {
 #ifdef BUILD_MMX
         if (mmx)
