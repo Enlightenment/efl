@@ -338,12 +338,13 @@ static Eina_Bool _abort_on_critical = EINA_FALSE;
 static int _abort_level_on_critical = EINA_LOG_LEVEL_CRITICAL;
 
 #ifdef EFL_HAVE_PTHREAD
+
 static Eina_Bool _threads_enabled = EINA_FALSE;
 static pthread_t _main_thread;
 
-#define IS_MAIN(t)  pthread_equal(t, _main_thread)
-#define IS_OTHER(t) EINA_UNLIKELY(!IS_MAIN(t))
-#define CHECK_MAIN(...)							\
+# define IS_MAIN(t)  pthread_equal(t, _main_thread)
+# define IS_OTHER(t) EINA_UNLIKELY(!IS_MAIN(t))
+# define CHECK_MAIN(...)							\
   do {									\
      if (!IS_MAIN(pthread_self())) {					\
 	fprintf(stderr,							\
@@ -353,9 +354,10 @@ static pthread_t _main_thread;
      }									\
   } while (0)
 
-#ifdef EFL_HAVE_PTHREAD_SPINLOCK
+# ifdef EFL_HAVE_PTHREAD_SPINLOCK
+
 static pthread_spinlock_t _log_lock;
-#define LOG_LOCK()								\
+#  define LOG_LOCK()								\
   if(_threads_enabled) \
   do {									\
      if (0)								\
@@ -364,7 +366,7 @@ static pthread_spinlock_t _log_lock;
      if (EINA_UNLIKELY(_threads_enabled))				\
        pthread_spin_lock(&_log_lock);					\
   } while (0)
-#define LOG_UNLOCK()							\
+#  define LOG_UNLOCK()							\
   if(_threads_enabled) \
   do {									\
      if (EINA_UNLIKELY(_threads_enabled))				\
@@ -374,24 +376,30 @@ static pthread_spinlock_t _log_lock;
 	       "---LOG LOG_UNLOCKED! [%s, %lu]\n",				\
 	       __FUNCTION__, pthread_self());				\
   } while (0)
-#define INIT() pthread_spin_init(&_log_lock, PTHREAD_PROCESS_PRIVATE);
-#define SHUTDOWN() pthread_spin_destroy(&_log_lock);
-#else
+#  define INIT() pthread_spin_init(&_log_lock, PTHREAD_PROCESS_PRIVATE);
+#  define SHUTDOWN() pthread_spin_destroy(&_log_lock);
+
+# else /* ! EFL_HAVE_PTHREAD_SPINLOCK */
+
 static pthread_mutex_t _log_mutex = PTHREAD_MUTEX_INITIALIZER;
-#define LOG_LOCK() if(_threads_enabled) pthread_mutex_lock(&_log_mutex);
-#define LOG_UNLOCK() if(_threads_enabled) pthread_mutex_unlock(&_log_mutex);
-#define INIT() do {} while (0)
-#define SHUTDOWN() do {} while (0)
-#endif
-#else
-#define LOG_LOCK() do {} while (0)
-#define LOG_UNLOCK() do {} while (0)
-#define IS_MAIN(t)  (1)
-#define IS_OTHER(t) (0)
-#define CHECK_MAIN(...) do {} while (0)
-#define INIT() do {} while (0)
-#define SHUTDOWN() do {} while (0)
-#endif
+#  define LOG_LOCK() if(_threads_enabled) pthread_mutex_lock(&_log_mutex);
+#  define LOG_UNLOCK() if(_threads_enabled) pthread_mutex_unlock(&_log_mutex);
+#  define INIT() do {} while (0)
+#  define SHUTDOWN() do {} while (0)
+
+# endif /* ! EFL_HAVE_PTHREAD_SPINLOCK */
+
+#else /* ! EFL_HAVE_PTHREAD */
+
+# define LOG_LOCK() do {} while (0)
+# define LOG_UNLOCK() do {} while (0)
+# define IS_MAIN(t)  (1)
+# define IS_OTHER(t) (0)
+# define CHECK_MAIN(...) do {} while (0)
+# define INIT() do {} while (0)
+# define SHUTDOWN() do {} while (0)
+
+#endif /* ! EFL_HAVE_PTHREAD */
 
 
 // List of domains registered
