@@ -1334,12 +1334,10 @@ _layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 
    if (fmt->font.font)
      {
-//        ascent = c->ENFN->font_ascent_get(c->ENDT, fmt->font.font);
-//	descent = c->ENFN->font_descent_get(c->ENDT, fmt->font.font);
-//        printf("asc: %4i     desc: %4i\n", ascent, descent);
-	ascent = c->ENFN->font_max_ascent_get(c->ENDT, fmt->font.font);
-	descent = c->ENFN->font_max_descent_get(c->ENDT, fmt->font.font);
-//        printf("  max asc: %4i     desc: %4i\n", ascent, descent);
+//	ascent = c->ENFN->font_max_ascent_get(c->ENDT, fmt->font.font);
+//	descent = c->ENFN->font_max_descent_get(c->ENDT, fmt->font.font);
+        ascent = c->ENFN->font_ascent_get(c->ENDT, fmt->font.font);
+	descent = c->ENFN->font_descent_get(c->ENDT, fmt->font.font);
         if (fmt->linesize > 0)
           {
              if ((ascent + descent) < fmt->linesize)
