@@ -83,7 +83,7 @@ _efl_have_pthread_spinlock="no"
 
 if test "x${_efl_have_pthread}" = "xyes" && test "x$1" = "xyes" ; then
 
-   AC_COMPILE_IFELSE(
+   AC_LINK_IFELSE(
       [AC_LANG_PROGRAM([[
 #include <pthread.h>
                        ]],
