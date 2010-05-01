@@ -4216,19 +4216,36 @@ Edje_Real_Part *
 _edje_real_part_recursive_get_helper(Edje *ed, char **path)
 {
    Edje_Real_Part *rp;
+   Evas_Object *o;
+   Eina_List *l;
 
    //printf("  lookup: %s on %s\n", path[0], ed->parent ? ed->parent : "-");
    rp = _edje_real_part_get(ed, path[0]);
    if (path[1] == NULL) return rp;
 
-   if ((!rp) || (rp->part->type != EDJE_PART_TYPE_GROUP) ||
-       (!rp->swallowed_object)) return NULL;
-
-   ed = _edje_fetch(rp->swallowed_object);
-   if (!ed) return NULL;
-
-   path++;
-   return _edje_real_part_recursive_get_helper(ed, path);
+   if (!rp) return NULL;
+   switch (rp->part->type)
+     {
+      case EDJE_PART_TYPE_GROUP:
+	if (!rp->swallowed_object) return NULL;
+	ed = _edje_fetch(rp->swallowed_object);
+	if (!ed) return NULL;
+	path++;
+	return _edje_real_part_recursive_get_helper(ed, path);
+      case EDJE_PART_TYPE_BOX: case EDJE_PART_TYPE_TABLE:
+	if (!rp->items) return NULL;
+	path++;
+	EINA_LIST_FOREACH(rp->items, l, o)
+	   {
+	      ed = _edje_fetch(o);
+	      if (!ed) return NULL;
+	      if ((rp = _edje_real_part_recursive_get_helper(ed, path)))
+		return rp;
+	   }
+	return NULL;
+      default:
+	return NULL;
+     }
 }
 
 
