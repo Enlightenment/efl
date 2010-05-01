@@ -2046,8 +2046,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
              ed->have_mapped_part = 1;
              // create map and populate with part geometry
              map = evas_map_new(4);
-             evas_map_util_points_populate_from_geometry
-               (map, ed->x + pf->x, ed->y + pf->y, pf->w, pf->h, 0);
+             evas_map_util_points_populate_from_object(map, ep->object);
              if (ep->part->type == EDJE_PART_TYPE_IMAGE)
                {
                   int iw = 1, ih = 1;
