@@ -1,15 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Widget Widget
- *
- * A widget is the base object type for Elementary objects.  These functions
- * are used by all the other widgets, and they allow for modification of
- * widget types.
- *
- */
-
 static const char SMART_NAME[] = "elm_widget";
 
 #define API_ENTRY \
@@ -100,17 +91,6 @@ _sub_obj_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
    elm_widget_focus_steal(o);
 }
 
-/* externally accessible functions */
-
-/**
- * Add a widget
- *
- * @param evas The parent evas
- *
- * @return The widget object
- *
- * @ingroup Widget
- */
 EAPI Evas_Object *
 elm_widget_add(Evas *evas)
 {
@@ -118,14 +98,6 @@ elm_widget_add(Evas *evas)
    return evas_object_smart_add(evas, _e_smart);
 }
 
-/**
- * Set the delete hook for a widget
- *
- * @param obj The widget object
- * @param func The function to call upon deletion
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_del_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
 {
@@ -133,14 +105,6 @@ elm_widget_del_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
    sd->del_func = func;
 }
 
-/**
- * Set the pre-delete hook for a widget
- *
- * @param obj The widget object
- * @param func The function to call prior to deletion
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_del_pre_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
 {
@@ -148,14 +112,6 @@ elm_widget_del_pre_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
    sd->del_pre_func = func;
 }
 
-/**
- * Set the focus change hook for a widget
- *
- * @param obj The widget object
- * @param func The function to call upon changing focus
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_focus_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
 {
@@ -163,14 +119,6 @@ elm_widget_focus_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
    sd->focus_func = func;
 }
 
-/**
- * Set the activate hook for a widget
- *
- * @param obj The widget object
- * @param func The function to call upon activation
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_activate_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
 {
@@ -178,14 +126,6 @@ elm_widget_activate_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
    sd->activate_func = func;
 }
 
-/**
- * Set the disable hook for a widget
- *
- * @param obj The widget object
- * @param func The function to call upon being disabled
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_disable_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
 {
@@ -193,14 +133,6 @@ elm_widget_disable_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
    sd->disable_func = func;
 }
 
-/**
- * Set the theme hook for a widget
- *
- * @param obj The widget object
- * @param func The function to call upon theme change
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_theme_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
 {
@@ -208,14 +140,6 @@ elm_widget_theme_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
    sd->theme_func = func;
 }
 
-/**
- * Set the change hook for a widget
- *
- * @param obj The widget object
- * @param func The function to call upon widget change
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_changed_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
 {
@@ -223,13 +147,6 @@ elm_widget_changed_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
    sd->changed_func = func;
 }
 
-/**
- * Re-apply the theme to @p obj
- *
- * @param obj The widget object
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_theme(Evas_Object *obj)
 {
@@ -244,15 +161,6 @@ elm_widget_theme(Evas_Object *obj)
    if (sd->theme_func) sd->theme_func(obj);
 }
 
-/**
- * Set the hook for a widget gaining focus
- *
- * @param obj The widget object
- * @param func The function to call upon gaining focus
- * @param data The data to associate with this function
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data)
 {
@@ -261,15 +169,6 @@ elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Ob
    sd->on_focus_data = data;
 }
 
-/**
- * Set the hook for a widget changing
- *
- * @param obj The widget object
- * @param func The function to call upon the widget changing
- * @param data The data to associate with this function
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_on_change_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data)
 {
@@ -278,15 +177,6 @@ elm_widget_on_change_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_O
    sd->on_change_data = data;
 }
 
-/**
- * Set the hook for a widget region showing
- *
- * @param obj The widget object
- * @param func The function to call upon the widget region showing
- * @param data The data to associate with this function
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data)
 {
@@ -295,14 +185,6 @@ elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func) (void *data, E
    sd->on_show_region_data = data;
 }
 
-/**
- * Set the data for a widget
- *
- * @param obj The widget object
- * @param data The data to associate with this widget
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_data_set(Evas_Object *obj, void *data)
 {
@@ -310,14 +192,6 @@ elm_widget_data_set(Evas_Object *obj, void *data)
    sd->data = data;
 }
 
-/**
- * Get the data for a widget
- *
- * @param obj The widget object
- * @return The data to associate with this widget
- *
- * @ingroup Widget
- */
 EAPI void *
 elm_widget_data_get(const Evas_Object *obj)
 {
@@ -325,14 +199,6 @@ elm_widget_data_get(const Evas_Object *obj)
    return sd->data;
 }
 
-/**
- * Add a sub-object to the widget
- *
- * @param obj The widget object
- * @param sobj The sub-object
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
 {
@@ -361,14 +227,6 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
    if (scale != pscale) elm_widget_theme(sobj);
 }
 
-/**
- * Delete a sub-object
- *
- * @param obj The widget object
- * @param sobj The sub-object to delete
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
 {
@@ -404,14 +262,6 @@ elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
    evas_object_smart_callback_call(obj, "sub-object-del", sobj);
 }
 
-/**
- * Set the resize object
- *
- * @param obj The widget object
- * @param sobj The subobject to set the resize as
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
 {
@@ -449,14 +299,6 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
      }
 }
 
-/**
- * Set a hover object for @p obj.
- *
- * @param obj The widget object
- * @param sobj The hover object
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_hover_object_set(Evas_Object *obj, Evas_Object *sobj)
 {
@@ -474,14 +316,6 @@ elm_widget_hover_object_set(Evas_Object *obj, Evas_Object *sobj)
      }
 }
 
-/**
- * Sets the ability of a widget to gain focus.
- *
- * @param obj The widget object
- * @param can_focus The ability of the widget to focus
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_can_focus_set(Evas_Object *obj, int can_focus)
 {
@@ -489,14 +323,6 @@ elm_widget_can_focus_set(Evas_Object *obj, int can_focus)
    sd->can_focus = can_focus;
 }
 
-/**
- * Gets the ability of a widget to gain focus.
- *
- * @param obj The widget object
- * @return The ability of the widget to focus
- *
- * @ingroup Widget
- */
 EAPI int
 elm_widget_can_focus_get(const Evas_Object *obj)
 {
@@ -506,14 +332,6 @@ elm_widget_can_focus_get(const Evas_Object *obj)
    return 0;
 }
 
-/**
- * Gets the focus state of a widget.
- *
- * @param obj The widget object
- * @return The focus state of the widget
- *
- * @ingroup Widget
- */
 EAPI int
 elm_widget_focus_get(const Evas_Object *obj)
 {
@@ -521,14 +339,6 @@ elm_widget_focus_get(const Evas_Object *obj)
    return sd->focused;
 }
 
-/**
- * Gets the focused object within a widget.
- *
- * @param obj The widget object
- * @return The focused object within @p obj
- *
- * @ingroup Widget
- */
 EAPI Evas_Object *
 elm_widget_focused_object_get(const Evas_Object *obj)
 {
@@ -545,14 +355,6 @@ elm_widget_focused_object_get(const Evas_Object *obj)
    return (Evas_Object *)obj;
 }
 
-/**
- * Gets the top object within a widget.
- *
- * @param obj The widget object
- * @return The top object within @p obj
- *
- * @ingroup Widget
- */
 EAPI Evas_Object *
 elm_widget_top_get(const Evas_Object *obj)
 {
@@ -578,28 +380,12 @@ elm_widget_top_get(const Evas_Object *obj)
 #endif   
 }
 
-/**
- * Returns whether the widget exists.
- *
- * @param obj The widget object
- * @return The state of the widget's existence
- *
- * @ingroup Widget
- */
 EAPI Eina_Bool
 elm_widget_is(const Evas_Object *obj)
 {
    return _elm_widget_is(obj);
 }
 
-/**
- * Returns the parent widget object of an object.
- *
- * @param obj The evas object
- * @return The widget object that @p obj belongs to
- *
- * @ingroup Widget
- */
 EAPI Evas_Object *
 elm_widget_parent_widget_get(const Evas_Object *obj)
 {
@@ -631,15 +417,6 @@ elm_widget_parent_widget_get(const Evas_Object *obj)
    return parent;
 }
 
-/**
- * Returns whether the widget exists.
- *
- * @param obj The widget object
- * @param forward Jumps the focus forward
- * @return The success of the jump
- *
- * @ingroup Widget
- */
 EAPI int
 elm_widget_focus_jump(Evas_Object *obj, int forward)
 {
@@ -796,14 +573,6 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
    return 0;
 }
 
-/**
- * Sets the focus
- *
- * @param obj The widget object
- * @param first TODO: fill this in
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_focus_set(Evas_Object *obj, int first)
 {
@@ -867,14 +636,6 @@ elm_widget_focus_set(Evas_Object *obj, int first)
      }
 }
 
-/**
- * Returns the parent object of the widget.
- *
- * @param obj The widget object
- * @return The parent Evas_Object*
- *
- * @ingroup Widget
- */
 EAPI Evas_Object *
 elm_widget_parent_get(const Evas_Object *obj)
 {
@@ -882,13 +643,6 @@ elm_widget_parent_get(const Evas_Object *obj)
    return sd->parent_obj;
 }
 
-/**
- * Clears the focus from an object.
- *
- * @param obj The object
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_focused_object_clear(Evas_Object *obj)
 {
@@ -927,13 +681,6 @@ _elm_widget_parent_focus(Evas_Object *obj)
    if (sd->focus_func) sd->focus_func(obj);
 }
 
-/**
- * Sets a widget to steal focus from its parent.
- *
- * @param obj The widget object
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_focus_steal(Evas_Object *obj)
 {
@@ -979,13 +726,6 @@ elm_widget_focus_steal(Evas_Object *obj)
    return;
 }
 
-/**
- * Activates a widget.
- *
- * @param obj The widget object
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_activate(Evas_Object *obj)
 {
@@ -994,13 +734,6 @@ elm_widget_activate(Evas_Object *obj)
    if (sd->activate_func) sd->activate_func(obj);
 }
 
-/**
- * Call the on_change function of a widget.
- *
- * @param obj The widget object
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_change(Evas_Object *obj)
 {
@@ -1009,14 +742,6 @@ elm_widget_change(Evas_Object *obj)
    if (sd->on_change_func) sd->on_change_func(sd->on_change_data, obj);
 }
 
-/**
- * Sets the disabled state of the widget.
- *
- * @param obj The widget object
- * @param disabled The disabled state to set
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_disabled_set(Evas_Object *obj, int disabled)
 {
@@ -1040,14 +765,6 @@ elm_widget_disabled_set(Evas_Object *obj, int disabled)
    if (sd->disable_func) sd->disable_func(obj);
 }
 
-/**
- * Gets the disabled state of the widget.
- *
- * @param obj The widget object
- * @return The disabled state
- *
- * @ingroup Widget
- */
 EAPI int
 elm_widget_disabled_get(const Evas_Object *obj)
 {
@@ -1055,17 +772,6 @@ elm_widget_disabled_get(const Evas_Object *obj)
    return sd->disabled;
 }
 
-/**
- * Sets the region of the widget to show.
- *
- * @param obj The widget object
- * @param x The x coordinate
- * @param x The y coordinate
- * @param x The width to show
- * @param x The height to show
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
@@ -1079,17 +785,6 @@ elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
      sd->on_show_region_func(sd->on_show_region_data, obj);
 }
 
-/**
- * Gets the region of the widget that's shown into int pointers.
- *
- * @param obj The widget object
- * @param x The x coordinate
- * @param x The y coordinate
- * @param x The width to show
- * @param x The height to show
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_show_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
@@ -1100,13 +795,6 @@ elm_widget_show_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y,
    if (h) *h = sd->rh;
 }
 
-/**
- * Simulate a scroll-hold-on event in the object.
- *
- * @param obj The widget object
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_scroll_hold_push(Evas_Object *obj)
 {
@@ -1118,13 +806,6 @@ elm_widget_scroll_hold_push(Evas_Object *obj)
    // FIXME: on delete/reparent hold pop
 }
 
-/**
- * Simulate a scroll-hold-off event in the object.
- *
- * @param obj The widget object
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_scroll_hold_pop(Evas_Object *obj)
 {
@@ -1136,13 +817,6 @@ elm_widget_scroll_hold_pop(Evas_Object *obj)
    if (sd->parent_obj) elm_widget_scroll_hold_pop(sd->parent_obj);
 }
 
-/**
- * Returns the scroll-hold state of the object
- *
- * @param obj The widget object
- *
- * @ingroup Widget
- */
 EAPI int
 elm_widget_scroll_hold_get(const Evas_Object *obj)
 {
@@ -1150,13 +824,6 @@ elm_widget_scroll_hold_get(const Evas_Object *obj)
    return sd->scroll_hold;
 }
 
-/**
- * Simulate a scroll-freeze-on event in the object.
- *
- * @param obj The widget object
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_scroll_freeze_push(Evas_Object *obj)
 {
@@ -1168,13 +835,6 @@ elm_widget_scroll_freeze_push(Evas_Object *obj)
    // FIXME: on delete/reparent freeze pop
 }
 
-/**
- * Simulate a scroll-freeze-off event in the object.
- *
- * @param obj The widget object
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_scroll_freeze_pop(Evas_Object *obj)
 {
@@ -1186,13 +846,6 @@ elm_widget_scroll_freeze_pop(Evas_Object *obj)
    if (sd->parent_obj) elm_widget_scroll_freeze_pop(sd->parent_obj);
 }
 
-/**
- * Returns the scroll-freeze state of the object
- *
- * @param obj The widget object
- *
- * @ingroup Widget
- */
 EAPI int
 elm_widget_scroll_freeze_get(const Evas_Object *obj)
 {
@@ -1200,14 +853,6 @@ elm_widget_scroll_freeze_get(const Evas_Object *obj)
    return sd->scroll_freeze;
 }
 
-/**
- * Sets the scaling of the widget.
- *
- * @param obj The widget object
- * @param scale The scale to set (between 0 and 1.0)
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_scale_set(Evas_Object *obj, double scale)
 {
@@ -1220,14 +865,6 @@ elm_widget_scale_set(Evas_Object *obj, double scale)
      }
 }
 
-/**
- * Gets the scaling of the widget.
- *
- * @param obj The widget object
- * @return The scale to set (between 0 and 1.0)
- *
- * @ingroup Widget
- */
 EAPI double
 elm_widget_scale_get(const Evas_Object *obj)
 {
@@ -1242,14 +879,6 @@ elm_widget_scale_get(const Evas_Object *obj)
    return sd->scale;
 }
 
-/**
- * Sets the style of the widget.
- *
- * @param obj The widget object
- * @param style The style to set
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_style_set(Evas_Object *obj, const char *style)
 {
@@ -1259,14 +888,6 @@ elm_widget_style_set(Evas_Object *obj, const char *style)
      elm_widget_theme(obj);
 }
 
-/**
- * Gets the style of the widget.
- *
- * @param obj The widget object
- * @return The style of the widget
- *
- * @ingroup Widget
- */
 EAPI const char *
 elm_widget_style_get(const Evas_Object *obj)
 {
@@ -1275,14 +896,6 @@ elm_widget_style_get(const Evas_Object *obj)
    return "default";
 }
 
-/**
- * Sets the type of the widget.
- *
- * @param obj The widget object
- * @param type The widget type
- *
- * @ingroup Widget
- */
 EAPI void
 elm_widget_type_set(Evas_Object *obj, const char *type)
 {
@@ -1290,14 +903,6 @@ elm_widget_type_set(Evas_Object *obj, const char *type)
    eina_stringshare_replace(&sd->type, type);
 }
 
-/**
- * Gets the type of the widget.
- *
- * @param obj The widget object
- * @return The widget type
- *
- * @ingroup Widget
- */
 EAPI const char *
 elm_widget_type_get(const Evas_Object *obj)
 {
