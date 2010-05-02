@@ -30,11 +30,30 @@ AC_MSG_RESULT([${_efl_enable_pthread}])
 
 dnl check if the compiler supports pthreads
 
+case "$host_os" in
+   mingw*)
+      _efl_pthread_cflags=""
+      _efl_pthread_libs="-lpthreadGC2"
+      ;;
+   solaris*)
+      _efl_pthread_cflags="-mt"
+      _efl_pthread_libs="-mt"
+      ;;
+   *)
+      _efl_pthread_cflags="-pthread"
+      _efl_pthread_libs="-pthread"
+      ;;
+esac
+
 _efl_have_pthread="no"
 
 if test "x${_efl_enable_pthread}" = "xyes" || test "x${_efl_enable_pthread}" = "xauto" ; then
 
-   AC_COMPILE_IFELSE(
+   SAVE_CFLAGS=${CFLAGS}
+   CFLAGS="${CFLAGS} ${_efl_pthread_cflags}"
+   SAVE_LDFLAGS=${LDFLAGS}
+   LDFLAGS="${LDFLAGS} ${_efl_pthread_libs}"
+   AC_LINK_IFELSE(
       [AC_LANG_PROGRAM([[
 #include <pthread.h>
                        ]],
@@ -44,6 +63,8 @@ id = pthread_self();
                        ]])],
       [_efl_have_pthread="yes"],
       [_efl_have_pthread="no"])
+   CFLAGS=${SAVE_CFLAGS}
+   LDFLAGS=${SAVE_LDFLAGS}
 
 fi
 
@@ -53,21 +74,11 @@ if test "$x{_efl_enable_pthread}" = "xyes" && test "x${_efl_have_pthread}" = "xn
    AC_MSG_ERROR([pthread support requested but not found.])
 fi
 
+EFL_PTHREAD_CFLAGS=""
+EFL_PTHREAD_LIBS=""
 if test "x${_efl_have_pthread}" = "xyes" ; then
-   case "$host_os" in
-      mingw*)
-         EFL_PTHREAD_CFLAGS=""
-         EFL_PTHREAD_LIBS="-lpthreadGC2"
-         ;;
-      solaris*)
-         EFL_PTHREAD_CFLAGS="-mt"
-         EFL_PTHREAD_LIBS="-mt"
-         ;;
-      *)
-         EFL_PTHREAD_CFLAGS="-pthread"
-         EFL_PTHREAD_LIBS="-pthread"
-         ;;
-   esac
+   EFL_PTHREAD_CFLAGS=${_efl_pthread_cflags}
+   EFL_PTHREAD_LIBS=${_efl_pthread_libs}
 fi
 
 AC_SUBST(EFL_PTHREAD_CFLAGS)
@@ -83,6 +94,10 @@ _efl_have_pthread_spinlock="no"
 
 if test "x${_efl_have_pthread}" = "xyes" && test "x$1" = "xyes" ; then
 
+   SAVE_CFLAGS=${CFLAGS}
+   CFLAGS="${CFLAGS} ${EFL_PTHREAD_CFLAGS}"
+   SAVE_LDFLAGS=${LDFLAGS}
+   LDFLAGS="${LDFLAGS} ${EFL_PTHREAD_LIBS}"
    AC_LINK_IFELSE(
       [AC_LANG_PROGRAM([[
 #include <pthread.h>
@@ -94,13 +109,15 @@ res = pthread_spin_init(&lock, PTHREAD_PROCESS_PRIVATE);
                        ]])],
       [_efl_have_pthread_spinlock="yes"],
       [_efl_have_pthread_spinlock="no"])
+   CFLAGS=${SAVE_CFLAGS}
+   LDFLAGS=${SAVE_LDFLAGS}
 
 fi
 
 AC_MSG_CHECKING([whether to build POSIX threads spinlock code])
 AC_MSG_RESULT([${_efl_have_pthread_spinlock}])
 if test "x${_efl_enable_pthread}" = "xyes" && test "x${_efl_have_pthread_spinlock}" = "xno" && test "x$1" = "xyes" ; then
-   AC_MSG_ERROR([pthread support requested but spinlocks are not supported])
+   AC_MSG_WARN([pthread support requested but spinlocks are not supported])
 fi
 
 if test "x${_efl_have_pthread_spinlock}" = "xyes" ; then
