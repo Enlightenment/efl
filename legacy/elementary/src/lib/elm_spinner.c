@@ -90,7 +90,22 @@ _theme_hook(Evas_Object *obj)
    _write_label(obj);
    edje_object_message_signal_process(wd->spinner);
    edje_object_scale_set(wd->spinner, elm_widget_scale_get(obj) * _elm_config->scale);
+   if (elm_widget_focus_get(obj))
+     edje_object_signal_emit(wd->spinner, "elm,action,focus", "elm");
+   else
+     edje_object_signal_emit(wd->spinner, "elm,action,unfocus", "elm");
    _sizing_eval(obj);
+}
+
+static void
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (elm_widget_focus_get(obj))
+     edje_object_signal_emit(wd->spinner, "elm,action,focus", "elm");
+   else
+     edje_object_signal_emit(wd->spinner, "elm,action,unfocus", "elm");
 }
 
 static int
@@ -489,6 +504,7 @@ elm_spinner_add(Evas_Object *parent)
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
 
