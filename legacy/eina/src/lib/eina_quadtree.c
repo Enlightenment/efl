@@ -84,16 +84,14 @@ struct _Eina_QuadTree
    Eina_QuadTree_Root *root;
 
    Eina_List *hidden;
-   Eina_Array *change;
-
-   size_t items_count;
-   Eina_Trash *items_trash;
-   Eina_Mempool *items_mp;
 
    size_t root_count;
-   Eina_Trash *root_trash;
-   Eina_Mempool *root_mp;
+   size_t items_count;
 
+   Eina_Trash *items_trash;
+   Eina_Trash *root_trash;
+
+   Eina_Inlist *change;
    Eina_Inlist *cached;
    Eina_Rectangle target;
 
@@ -145,6 +143,8 @@ struct _Eina_QuadTree_Item
 };
 
 static int _eina_log_qd_dom = -1;
+static Eina_Mempool *root_mp = NULL;
+static Eina_Mempool *items_mp = NULL;
 
 #ifdef ERR
 #undef ERR
@@ -169,24 +169,27 @@ _eina_quadtree_item_cmp(const void *a, const void *b)
 static Eina_QuadTree_Root *
 eina_quadtree_root_free(Eina_QuadTree *q, Eina_QuadTree_Root *root)
 {
+   Eina_QuadTree_Item *item;
+
    if (!root) return NULL;
 
    EINA_MAGIC_CHECK_QUADTREE_ROOT(root, NULL);
 
-   root->both = eina_list_free(root->both);
+   EINA_LIST_FREE(root->both, item)
+     eina_mempool_free(items_mp, item);
 
    root->left = eina_quadtree_root_free(q, root->left);
    root->right = eina_quadtree_root_free(q, root->right);
 
    EINA_MAGIC_SET(root, 0);
-   /* eina_quadtree_root_free is only called when the memory pool will be destroyed */
+   eina_mempool_free(root_mp, root);
 
    return NULL;
 }
 
 static Eina_QuadTree_Root *
 eina_quadtree_root_rebuild_pre(Eina_QuadTree *q,
-			       Eina_Array *change,
+			       Eina_Inlist **change,
 			       Eina_QuadTree_Root *root)
 {
    Eina_QuadTree_Item *item;
@@ -197,7 +200,7 @@ eina_quadtree_root_rebuild_pre(Eina_QuadTree *q,
      {
 	if (item->visible)
 	  {
-	     eina_array_push(change, item);
+	     *change = eina_inlist_append(*change, EINA_INLIST_GET(item));
 	  }
 	else if (!item->hidden)
 	  {
@@ -213,7 +216,7 @@ eina_quadtree_root_rebuild_pre(Eina_QuadTree *q,
    EINA_MAGIC_SET(root, 0);
    if (q->root_count > 50)
      {
-	eina_mempool_free(q->root_mp, root);
+	eina_mempool_free(root_mp, root);
      }
    else
      {
@@ -225,24 +228,25 @@ eina_quadtree_root_rebuild_pre(Eina_QuadTree *q,
 }
 
 static size_t
-_eina_quadtree_split(Eina_Array *objects,
+_eina_quadtree_split(Eina_Inlist *objects,
 		     Eina_QuadTree_Root *root,
-		     Eina_Array *left,
-		     Eina_Array *right,
+		     Eina_Inlist **left,
+		     Eina_Inlist **right,
 		     Eina_Quad_Callback func,
 		     int border,
 		     int middle)
 {
    Eina_QuadTree_Item *object;
-   Eina_Array_Iterator it;
-   unsigned int i;
 
    middle /= 2;
 
    if (middle <= 4)
      {
-	EINA_ARRAY_ITER_NEXT(objects, i, object, it)
+	while (objects)
 	  {
+	     object = EINA_INLIST_CONTAINER_GET(objects, Eina_QuadTree_Item);
+	     objects = objects->next;
+
 	     object->change = EINA_FALSE;
 	     if (!object->visible)
 	       {
@@ -281,8 +285,11 @@ _eina_quadtree_split(Eina_Array *objects,
      }
    else
      {
-	EINA_ARRAY_ITER_NEXT(objects, i, object, it)
+	while (objects)
 	  {
+	     object = EINA_INLIST_CONTAINER_GET(objects, Eina_QuadTree_Item);
+	     objects = objects->next;
+
 	     object->change = EINA_FALSE;
 	     if (!object->visible)
 	       {
@@ -304,10 +311,10 @@ _eina_quadtree_split(Eina_Array *objects,
 		  switch (func(object->object, border + middle))
 		    {
 		     case EINA_QUAD_LEFT:
-			eina_array_push(left, object);
+			*left = eina_inlist_append(*left, EINA_INLIST_GET(object));
 			break;
 		     case EINA_QUAD_RIGHT:
-			eina_array_push(right, object);
+			*right = eina_inlist_append(*right, EINA_INLIST_GET(object));
 			break;
 		     case EINA_QUAD_BOTH:
 			root->both = eina_list_append(root->both, object);
@@ -324,29 +331,27 @@ _eina_quadtree_split(Eina_Array *objects,
 	  }
      }
 
-   eina_array_clean(objects);
-
    return middle;
 }
 
 
 static Eina_QuadTree_Root *
 _eina_quadtree_update(Eina_QuadTree *q, Eina_QuadTree_Root *parent,
-		      Eina_QuadTree_Root *root, Eina_Array *objects,
+		      Eina_QuadTree_Root *root, Eina_Inlist *objects,
 		      Eina_Bool direction, Eina_Rectangle *size)
 {
-   Eina_Array right;
-   Eina_Array left;
+   Eina_Inlist *right = NULL;
+   Eina_Inlist *left = NULL;
    size_t w2;
    size_t h2;
 
-   if (!objects || eina_array_count_get(objects) == 0)
+   if (!objects)
      return root;
 
    if (!root)
      {
 	root = eina_trash_pop(&q->root_trash);
-	if (!root) root = eina_mempool_malloc(q->root_mp, sizeof (Eina_QuadTree_Root));
+	if (!root) root = eina_mempool_malloc(root_mp, sizeof (Eina_QuadTree_Root));
 	else q->root_count--;
 	if (!root)
 	  {
@@ -363,9 +368,6 @@ _eina_quadtree_update(Eina_QuadTree *q, Eina_QuadTree_Root *parent,
 	EINA_MAGIC_SET(root, EINA_MAGIC_QUADTREE_ROOT);
      }
 
-   eina_array_step_set(&right, 32);
-   eina_array_step_set(&left, 32);
-
    w2 = 0;
    h2 = 0;
 
@@ -380,17 +382,14 @@ _eina_quadtree_update(Eina_QuadTree *q, Eina_QuadTree_Root *parent,
 
    size->w -= w2; size->h -= h2;
    root->left = _eina_quadtree_update(q, root,
-				      root->left, &left,
+				      root->left, left,
 				      !direction, size);
    size->x += w2; size->y += h2;
    root->right = _eina_quadtree_update(q, root,
-				       root->right, &right,
+				       root->right, right,
 				       !direction, size);
    size->x -= w2; size->y -= h2;
    size->w += w2; size->h += h2;
-
-   eina_array_flush(&left);
-   eina_array_flush(&right);
 
    return root;
 }
@@ -557,7 +556,7 @@ _eina_quadtree_remove(Eina_QuadTree_Item *object)
 
    if (object->quad->root_count > 50)
      {
-	eina_mempool_free(object->quad->root_mp, object->root);
+	eina_mempool_free(root_mp, object->root);
      }
    else
      {
@@ -588,12 +587,7 @@ eina_quadtree_new(size_t w, size_t h,
    result->geom.w = w;
    result->geom.h = h;
 
-   result->change = eina_array_new(32);
-
-   result->items_mp = eina_mempool_add("chained_mempool", "QuadTree Item", NULL,
-				       sizeof (Eina_QuadTree_Item), 320);
-   result->root_mp = eina_mempool_add("chained_mempool", "QuadTree Root", NULL,
-				      sizeof (Eina_QuadTree_Root), 32);
+   result->change = NULL;
 
    result->lost = EINA_TRUE;
 
@@ -605,17 +599,38 @@ eina_quadtree_new(size_t w, size_t h,
 EAPI void
 eina_quadtree_free(Eina_QuadTree *q)
 {
+   Eina_QuadTree_Item *item;
+
    if (!q) return ;
 
    EINA_MAGIC_CHECK_QUADTREE(q);
 
-   eina_array_free(q->change);
-   q->hidden = eina_list_free(q->hidden);
+   while (q->change)
+     {
+	item = EINA_INLIST_CONTAINER_GET(q->change, Eina_QuadTree_Item);
+	q->change = q->change->next;
+	if (!item->hidden)
+	  eina_mempool_free(items_mp, item);
+     }
+
+   EINA_LIST_FREE(q->hidden, item)
+     eina_mempool_free(items_mp, item);
 
    eina_quadtree_root_free(q, q->root);
 
-   eina_mempool_del(q->items_mp);
-   eina_mempool_del(q->root_mp);
+   while (q->items_trash)
+     {
+	item = eina_trash_pop(&q->items_trash);
+	eina_mempool_free(items_mp, item);
+     }
+
+   while (q->root_trash)
+     {
+	Eina_QuadTree_Root *root;
+
+	root = eina_trash_pop(&q->root_trash);
+	eina_mempool_free(root_mp, root);
+     }
 
    EINA_MAGIC_SET(q, 0);
    free(q);
@@ -631,7 +646,7 @@ eina_quadtree_add(Eina_QuadTree *q, const void *object)
    if (!object) return NULL;
 
    result = eina_trash_pop(&q->items_trash);
-   if (!result) result = eina_mempool_malloc(q->items_mp, sizeof (Eina_QuadTree_Item));
+   if (!result) result = eina_mempool_malloc(items_mp, sizeof (Eina_QuadTree_Item));
    else q->items_count--;
    if (!result) return NULL;
 
@@ -639,6 +654,7 @@ eina_quadtree_add(Eina_QuadTree *q, const void *object)
    result->root = NULL;
    result->object = object;
 
+   result->index = 0;
    result->change = EINA_TRUE;
    result->delete_me = EINA_FALSE;
    result->visible = EINA_TRUE;
@@ -647,7 +663,7 @@ eina_quadtree_add(Eina_QuadTree *q, const void *object)
    EINA_MAGIC_SET(result, EINA_MAGIC_QUADTREE_ITEM);
 
    /* Insertion is delayed until we really need to use it */
-   eina_array_push(q->change, result);
+   q->change = eina_inlist_append(q->change, EINA_INLIST_GET(result));
 
    return result;
 }
@@ -679,7 +695,7 @@ eina_quadtree_del(Eina_QuadTree_Item *object)
    EINA_MAGIC_SET(object, 0);
    if (object->quad->items_count > 256)
      {
-	eina_mempool_free(object->quad->items_mp, object);
+	eina_mempool_free(items_mp, object);
      }
    else
      {
@@ -703,7 +719,8 @@ eina_quadtree_change(Eina_QuadTree_Item *object)
 
    /* Delaying change until needed */
    if (!object->change)
-     eina_array_push(object->quad->change, object);
+     object->quad->change = eina_inlist_append(object->quad->change,
+					       EINA_INLIST_GET(object));
    object->change = EINA_TRUE;
 
    _eina_quadtree_remove(object);
@@ -758,17 +775,18 @@ eina_quadtree_collide(Eina_QuadTree *q, int x, int y, int w, int h)
    if (q->resize) /* Full rebuild needed ! */
      {
 	DBG("resizing quadtree");
-	q->root = eina_quadtree_root_rebuild_pre(q, q->change, q->root);
+	q->root = eina_quadtree_root_rebuild_pre(q, &q->change, q->root);
 	q->resize = EINA_FALSE;
      }
 
    EINA_RECTANGLE_SET(&canvas, 0, 0, q->geom.w, q->geom.h);
 
-   if (eina_array_count_get(q->change) > 0)
+   if (q->change)
      {
 	DBG("updating quadtree content");
 	q->root = _eina_quadtree_update(q, NULL, q->root, q->change,
 					EINA_FALSE, &canvas);
+	q->change = NULL;
      }
 
    if (q->target.x != x
@@ -803,6 +821,8 @@ eina_quadtree_object(Eina_Inlist *item)
    if (!qi) return NULL;
 
    EINA_MAGIC_CHECK_QUADTREE_ITEM(qi, NULL);
+
+   if (!qi->visible) return NULL;
 
    return (void*) qi->object;
 }
@@ -844,6 +864,11 @@ eina_quadtree_init(void)
    EMS(EINA_MAGIC_QUADTREE_ROOT);
    EMS(EINA_MAGIC_QUADTREE_ITEM);
 #undef EMS
+
+   items_mp = eina_mempool_add("chained_mempool", "QuadTree Item", NULL,
+			       sizeof (Eina_QuadTree_Item), 320);
+   root_mp = eina_mempool_add("chained_mempool", "QuadTree Root", NULL,
+			      sizeof (Eina_QuadTree_Root), 32);
 
    return EINA_TRUE;
 }
