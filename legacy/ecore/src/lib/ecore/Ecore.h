@@ -338,6 +338,8 @@ extern "C" {
 
    EAPI Ecore_Animator *ecore_animator_add(int (*func) (void *data), const void *data);
    EAPI void           *ecore_animator_del(Ecore_Animator *animator);
+   EAPI void		ecore_animator_freeze(Ecore_Animator *animator);
+   EAPI void		ecore_animator_thaw(Ecore_Animator *animator);
    EAPI void            ecore_animator_frametime_set(double frametime);
    EAPI double          ecore_animator_frametime_get(void);
 

@@ -17,9 +17,12 @@ struct _Ecore_Animator
 {
    EINA_INLIST;
    ECORE_MAGIC;
-   unsigned char delete_me : 1;
+
    int           (*func) (void *data);
    void          *data;
+
+   Eina_Bool     delete_me : 1;
+   Eina_Bool	 suspended : 1;
 };
 
 
@@ -64,7 +67,7 @@ ecore_animator_add(int (*func) (void *data), const void *data)
         double t_loop = ecore_loop_time_get();
         double sync_0 = 0.0;
         double d = -fmod(t_loop - sync_0, animators_frametime);
-        
+
         timer = ecore_timer_loop_add(animators_frametime, _ecore_animator, NULL);
         ecore_timer_delay(timer, d);
      }
@@ -93,7 +96,7 @@ ecore_animator_del(Ecore_Animator *animator)
 	return NULL;
      }
    if (animator->delete_me) return animator->data;
-   animator->delete_me = 1;
+   animator->delete_me = EINA_TRUE;
    animators_delete_me++;
    return animator->data;
 }
@@ -131,6 +134,48 @@ ecore_animator_frametime_get(void)
    return animators_frametime;
 }
 
+/**
+ * Suspend the specified animator.
+ * @param animator The animator to delete
+ * @ingroup Ecore_Animator_Group
+ *
+ * The specified @p animator will be temporarly removed from the set of animators
+ * that are executed during main loop execution.
+ */
+EAPI void
+ecore_animator_freeze(Ecore_Animator *animator)
+{
+   if (!ECORE_MAGIC_CHECK(animator, ECORE_MAGIC_ANIMATOR))
+     {
+	ECORE_MAGIC_FAIL(animator, ECORE_MAGIC_ANIMATOR,
+			 "ecore_animator_del");
+	return NULL;
+     }
+   if (animator->delete_me) return;
+   animator->suspended = EINA_TRUE;
+}
+
+/**
+ * Restore execution of the specified animator.
+ * @param animator The animator to delete
+ * @ingroup Ecore_Animator_Group
+ *
+ * The specified @p animator will be put back in the set of animators
+ * that are executed during main loop execution.
+ */
+EAPI void
+ecore_animator_thaw(Ecore_Animator *animator)
+{
+   if (!ECORE_MAGIC_CHECK(animator, ECORE_MAGIC_ANIMATOR))
+     {
+	ECORE_MAGIC_FAIL(animator, ECORE_MAGIC_ANIMATOR,
+			 "ecore_animator_del");
+	return NULL;
+     }
+   if (animator->delete_me) return;
+   animator->suspended = EINA_FALSE;
+}
+
 void
 _ecore_animator_shutdown(void)
 {
@@ -157,11 +202,11 @@ _ecore_animator(void *data __UNUSED__)
 
    EINA_INLIST_FOREACH(animators, animator)
      {
-	if (!animator->delete_me)
+	if (!animator->delete_me && !animator->suspended)
 	  {
 	     if (!animator->func(animator->data))
 	       {
-		  animator->delete_me = 1;
+		  animator->delete_me = EINA_TRUE;
 		  animators_delete_me++;
 	       }
 	  }
