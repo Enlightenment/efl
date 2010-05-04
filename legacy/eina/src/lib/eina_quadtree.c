@@ -741,16 +741,16 @@ eina_quadtree_hide(Eina_QuadTree_Item *object)
 EAPI Eina_Bool
 eina_quadtree_show(Eina_QuadTree_Item *object)
 {
-   size_t index;
+   size_t tmp;
 
    EINA_MAGIC_CHECK_QUADTREE_ITEM(object, EINA_FALSE);
 
-   index = object->quad->index++;
-   if (object->index == index
+   tmp = object->quad->index++;
+   if (object->index == tmp
        && object->visible)
      return EINA_TRUE;
 
-   object->index = index;
+   object->index = tmp;
    if (object->root)
      object->root->sorted = EINA_FALSE;
    object->quad->lost = EINA_TRUE;
