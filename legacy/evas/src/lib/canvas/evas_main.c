@@ -194,6 +194,8 @@ evas_free(Evas *e)
 	e->callbacks = NULL;
      }
    
+   _evas_post_event_callback_free(e);
+   
    del = 1;
    e->walking_list++;
    e->cleanup = 1;

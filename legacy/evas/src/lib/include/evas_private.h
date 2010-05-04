@@ -50,6 +50,7 @@ typedef struct _Evas_Callbacks              Evas_Callbacks;
 typedef struct _Evas_Format                 Evas_Format;
 typedef struct _Evas_Map_Point              Evas_Map_Point;
 typedef struct _Evas_Smart_Cb_Description_Array Evas_Smart_Cb_Description_Array;
+typedef struct _Evas_Post_Callback          Evas_Post_Callback;
 
 #define MAGIC_EVAS                 0x70777770
 #define MAGIC_OBJ                  0x71777770
@@ -213,6 +214,14 @@ struct _Evas_Lock
    Evas_Modifier_Mask mask; /* we have a max of 64 locks */
 };
 
+struct _Evas_Post_Callback
+{
+   Evas_Object               *obj;
+   Evas_Object_Event_Post_Cb  func;
+   const void                *data;
+   unsigned char              delete_me : 1;
+};
+
 struct _Evas_Callbacks
 {
    Eina_Inlist *callbacks;
@@ -304,6 +313,8 @@ struct _Evas
    Eina_Array     calculate_objects;
    Eina_Array     clip_changes;
 
+   Eina_List     *post_events; // free me on evas_free
+   
    Evas_Callbacks *callbacks;
 
    int            delete_grabs;
@@ -790,6 +801,8 @@ void evas_object_smart_member_stack_below(Evas_Object *member, Evas_Object *othe
 const Eina_Inlist *evas_object_smart_members_get_direct(const Evas_Object *obj);
 void evas_call_smarts_calculate(Evas *e);
 void *evas_mem_calloc(int size);
+void _evas_post_event_callback_call(Evas *e);
+void _evas_post_event_callback_free(Evas *e);
 void evas_event_callback_list_post_free(Eina_Inlist **list);
 void evas_object_event_callback_all_del(Evas_Object *obj);
 void evas_object_event_callback_cleanup(Evas_Object *obj);

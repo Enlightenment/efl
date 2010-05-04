@@ -591,9 +591,10 @@ typedef enum _Evas_Object_Pointer_Mode
    EVAS_OBJECT_POINTER_MODE_NOGRAB
 } Evas_Object_Pointer_Mode; /**< How mouse pointer should be handled by Evas. */
 
-typedef void (*Evas_Smart_Cb) (void *data, Evas_Object *obj, void *event_info);
-typedef void (*Evas_Event_Cb) (void *data, Evas *e, void *event_info);
-typedef void (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj, void *event_info);
+typedef void      (*Evas_Smart_Cb) (void *data, Evas_Object *obj, void *event_info);
+typedef void      (*Evas_Event_Cb) (void *data, Evas *e, void *event_info);
+typedef Eina_Bool (*Evas_Object_Event_Post_Cb) (void *data, Evas *e);
+typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 #ifdef __cplusplus
 extern "C" {
@@ -769,10 +770,13 @@ extern "C" {
  * @ingroup Evas_Canvas
  */
 
-   EAPI void              evas_event_callback_add           (Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
-   EAPI void             *evas_event_callback_del           (Evas *e, Evas_Callback_Type type, Evas_Event_Cb func) EINA_ARG_NONNULL(1, 3);
-   EAPI void             *evas_event_callback_del_full      (Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
-
+   EAPI void              evas_event_callback_add              (Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
+   EAPI void             *evas_event_callback_del              (Evas *e, Evas_Callback_Type type, Evas_Event_Cb func) EINA_ARG_NONNULL(1, 3);
+   EAPI void             *evas_event_callback_del_full         (Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
+   EAPI void              evas_post_event_callback_push        (Evas *e, Evas_Object_Event_Post_Cb func, const void *data);
+   EAPI void              evas_post_event_callback_remove      (Evas *e, Evas_Object_Event_Post_Cb func);
+   EAPI void              evas_post_event_callback_remove_full (Evas *e, Evas_Object_Event_Post_Cb func, const void *data);
+       
 /**
  * @defgroup Evas_Image_Group Image Functions
  *

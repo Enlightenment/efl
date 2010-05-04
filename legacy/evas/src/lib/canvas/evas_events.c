@@ -343,6 +343,7 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
      }
    if (copy) eina_list_free(copy);
    e->last_mouse_down_counter++;
+   _evas_post_event_callback_call(e);
    _evas_unwalk(e);
 }
 
@@ -413,6 +414,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	  }
 	if (copy) copy = eina_list_free(copy);
 	e->last_mouse_up_counter++;
+        _evas_post_event_callback_call(e);
      }
 
    if (!e->pointer.button)
@@ -455,6 +457,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 		    }
 		  if (e->delete_me) break;
 	       }
+             _evas_post_event_callback_call(e);
 	  }
 	if (copy) copy = eina_list_free(copy);
 	if (e->pointer.inside)
@@ -489,6 +492,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 		    }
 		  if (e->delete_me) break;
 	       }
+             _evas_post_event_callback_call(e);
 	  }
 	else
 	  {
@@ -603,6 +607,7 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, unsigned int timestam
 	if (e->delete_me) break;
      }
    if (copy) copy = eina_list_free(copy);
+   _evas_post_event_callback_call(e);
 
    _evas_unwalk(e);
 }
@@ -695,6 +700,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		    outs = eina_list_append(outs, obj);
 		  if (e->delete_me) break;
 	       }
+             _evas_post_event_callback_call(e);
 	  }
 	  {
 	     Evas_Event_Mouse_Out ev;
@@ -730,6 +736,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
                          evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 		    }
 	       }
+             _evas_post_event_callback_call(e);
 	  }
      }
    else
@@ -820,6 +827,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	       }
 	     if (e->delete_me) break;
 	  }
+        _evas_post_event_callback_call(e);
 
 	_evas_object_event_new();
 
@@ -844,6 +852,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	eina_list_free(e->pointer.object.in);
 	/* and set up the new one */
 	e->pointer.object.in = ins;
+        _evas_post_event_callback_call(e);
      }
    _evas_unwalk(e);
 }
@@ -912,6 +921,7 @@ evas_event_feed_mouse_in(Evas *e, unsigned int timestamp, const void *data)
    e->pointer.object.in = eina_list_free(e->pointer.object.in);
    /* and set up the new one */
    e->pointer.object.in = ins;
+   _evas_post_event_callback_call(e);
    evas_event_feed_mouse_move(e, e->pointer.x, e->pointer.y, timestamp, data);
    _evas_unwalk(e);
 }
@@ -977,6 +987,7 @@ evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
 	if (copy) copy = eina_list_free(copy);
 	/* free our old list of ins */
 	e->pointer.object.in =  eina_list_free(e->pointer.object.in);
+        _evas_post_event_callback_call(e);
      }
    _evas_unwalk(e);
 }
@@ -1040,6 +1051,7 @@ evas_event_feed_multi_down(Evas *e,
 	if (e->delete_me) break;
      }
    if (copy) eina_list_free(copy);
+   _evas_post_event_callback_call(e);
    _evas_unwalk(e);
 }
 
@@ -1102,7 +1114,7 @@ evas_event_feed_multi_up(Evas *e,
         if (e->delete_me) break;
      }
    if (copy) copy = eina_list_free(copy);
-   
+   _evas_post_event_callback_call(e);
    _evas_unwalk(e);
 }
 
@@ -1174,6 +1186,7 @@ evas_event_feed_multi_move(Evas *e,
 	       }
              if (e->delete_me) break;
 	  }
+        _evas_post_event_callback_call(e);
      }
    else
      {
@@ -1240,6 +1253,7 @@ evas_event_feed_multi_move(Evas *e,
 	eina_list_free(e->pointer.object.in);
 	/* and set up the new one */
 	e->pointer.object.in = ins;
+        _evas_post_event_callback_call(e);
      }
    _evas_unwalk(e);
 }
@@ -1332,8 +1346,9 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
 	if ((e->focused) && (!exclusive))
 	  {
 	     if (e->events_frozen <= 0)
-	       evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_DOWN, &ev);
+               evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_DOWN, &ev);
 	  }
+        _evas_post_event_callback_call(e);
      }
    _evas_unwalk(e);
 }
@@ -1426,8 +1441,9 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 	if ((e->focused) && (!exclusive))
 	  {
 	     if (e->events_frozen <= 0)
-	       evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_UP, &ev);
+               evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_UP, &ev);
 	  }
+        _evas_post_event_callback_call(e);
      }
    _evas_unwalk(e);
 }
@@ -1473,8 +1489,8 @@ evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data
 	if (e->delete_me) break;
      }
    if (copy) copy = eina_list_free(copy);
+   _evas_post_event_callback_call(e);
    _evas_unwalk(e);
-
    _evas_object_event_new();
 }
 

@@ -6,6 +6,37 @@ static void evas_event_callback_clear(Evas *e);
 int _evas_event_counter = 0;
 
 void
+_evas_post_event_callback_call(Evas *e)
+{
+   Evas_Post_Callback *pc;
+   int skip = 0;
+
+   if (e->delete_me) return;
+   _evas_walk(e);
+   EINA_LIST_FREE(e->post_events, pc)
+     {
+        if ((!skip) && (!e->delete_me) && (!pc->delete_me))
+          {
+             if (!pc->func(e, pc->data)) skip = 1;
+          }
+        free(pc);
+     }
+   _evas_unwalk(e);
+}
+
+void
+_evas_post_event_callback_free(Evas *e)
+{
+   Evas_Post_Callback *pc;
+   
+   EINA_LIST_FREE(e->post_events, pc)
+     {
+        free(pc);
+     }
+   _evas_unwalk(e);
+}
+
+void
 evas_event_callback_list_post_free(Eina_Inlist **list)
 {
    Eina_Inlist *l;
@@ -748,6 +779,109 @@ evas_event_callback_del_full(Evas *e, Evas_Callback_Type type, Evas_Event_Cb fun
    return NULL;
 }
 
+/**
+ * Push a callback on the post-event callback stack
+ *
+ * @param e Canvas to push the callback on
+ * @param func The function that to be called when the stack is unwound
+ * @param data The data pointer to be passed to the callback
+ *
+ * Evas has a stack of callbacks that get called after all the callbacks for
+ * an event have triggered (all the objects it triggers on and al the callbacks
+ * in each object triggered). When all these have been called, the stack is
+ * unwond from most recently to least recently pushed item and removed from the
+ * stack calling the callback set for it.
+ * 
+ * This is intended for doing reverse logic-like processing, example - when a
+ * child object that happens to get the event later is meant to be able to
+ * "steal" functions from a parent and thus on unwind of this stack hav its
+ * function called first, thus being able to set flags, or return 0 from the
+ * post-callback that stops all other post-callbacks in the current stack from
+ * being called (thus basically allowing a child to take control, if the event
+ * callback prepares information ready for taking action, but the post callback
+ * actually does the action).
+ *
+ */
+EAPI void
+evas_post_event_callback_push(Evas *e, Evas_Object_Event_Post_Cb func, const void *data)
+{
+   Evas_Post_Callback *pc;
+   
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   
+   pc = evas_mem_calloc(sizeof(Evas_Post_Callback));
+   if (!pc) return;
+   if (e->delete_me) return;
+   
+   pc->func = func;
+   pc->data = data;
+   e->post_events = eina_list_prepend(e->post_events, pc);
+}
+
+/**
+ * Remove a callback from the post-event callback stack
+ * 
+ * @param e Canvas to push the callback on
+ * @param func The function that to be called when the stack is unwound
+ * 
+ * This removes a callback from the stack added with
+ * evas_post_event_callback_push(). The first instance of the function in
+ * the callback stack is removed from being executed when the stack is
+ * unwound. Further instances may still be run on unwind.
+ */
+EAPI void
+evas_post_event_callback_remove(Evas *e, Evas_Object_Event_Post_Cb func)
+{
+   Evas_Post_Callback *pc;
+   Eina_List *l;
+   
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   
+   EINA_LIST_FOREACH(e->post_events, l, pc)
+     {
+        if (pc->func == func)
+          {
+             pc->delete_me = 1;
+             return;
+          }
+     }
+}
+
+/**
+ * Remove a callback from the post-event callback stack
+ * 
+ * @param e Canvas to push the callback on
+ * @param func The function that to be called when the stack is unwound
+ * @param data The data pointer to be passed to the callback
+ * 
+ * This removes a callback from the stack added with
+ * evas_post_event_callback_push(). The first instance of the function and data
+ * in the callback stack is removed from being executed when the stack is
+ * unwound. Further instances may still be run on unwind.
+ */
+EAPI void
+evas_post_event_callback_remove_full(Evas *e, Evas_Object_Event_Post_Cb func, const void *data)
+{
+   Evas_Post_Callback *pc;
+   Eina_List *l;
+   
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   
+   EINA_LIST_FOREACH(e->post_events, l, pc)
+     {
+        if ((pc->func == func) && (pc->data == data))
+          {
+             pc->delete_me = 1;
+             return;
+          }
+     }
+}
 /**
  * @}
  */

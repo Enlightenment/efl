@@ -371,6 +371,7 @@ evas_object_del(Evas_Object *obj)
    _evas_object_event_new();
 
    evas_object_event_callback_call(obj, EVAS_CALLBACK_DEL, NULL);
+   _evas_post_event_callback_call(obj->layer->evas);
    if (obj->name) evas_object_name_set(obj, NULL);
    if (!obj->layer)
      {
@@ -383,6 +384,7 @@ evas_object_del(Evas_Object *obj)
 	obj->layer->evas->focused = NULL;
 	_evas_object_event_new();
 	evas_object_event_callback_call(obj, EVAS_CALLBACK_FOCUS_OUT, NULL);
+        _evas_post_event_callback_call(obj->layer->evas);
      }
    obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
    obj->mouse_grabbed = 0;
@@ -394,6 +396,7 @@ evas_object_del(Evas_Object *obj)
    evas_object_map_set(obj, NULL);
    _evas_object_event_new();
    evas_object_event_callback_call(obj, EVAS_CALLBACK_FREE, NULL);
+   _evas_post_event_callback_call(obj->layer->evas);
    evas_object_smart_cleanup(obj);
    obj->delete_me = 1;
    evas_object_change(obj);
@@ -1174,6 +1177,7 @@ evas_object_hide(Evas_Object *obj)
 		       ev.timestamp = obj->layer->evas->last_timestamp;
 		       ev.event_flags = EVAS_EVENT_FLAG_NONE;
                        evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
+                       _evas_post_event_callback_call(obj->layer->evas);
 		    }
 	       }
 	  }

@@ -39,7 +39,7 @@ evas_object_focus_set(Evas_Object *obj, Eina_Bool focus)
 
    if (focus)
      {
-	if (obj->focused) return;
+	if (obj->focused) goto end;
 	if (obj->layer->evas->focused)
 	  evas_object_focus_set(obj->layer->evas->focused, 0);
 	obj->focused = 1;
@@ -48,11 +48,13 @@ evas_object_focus_set(Evas_Object *obj, Eina_Bool focus)
      }
    else
      {
-	if (!obj->focused) return;
+	if (!obj->focused) goto end;
 	obj->focused = 0;
 	obj->layer->evas->focused = NULL;
 	evas_object_event_callback_call(obj, EVAS_CALLBACK_FOCUS_OUT, NULL);
      }
+   end:
+   _evas_post_event_callback_call(obj->layer->evas);
 }
 
 /**
