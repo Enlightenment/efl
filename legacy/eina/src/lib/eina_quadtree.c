@@ -787,6 +787,7 @@ eina_quadtree_collide(Eina_QuadTree *q, int x, int y, int w, int h)
 	q->root = _eina_quadtree_update(q, NULL, q->root, q->change,
 					EINA_FALSE, &canvas);
 	q->change = NULL;
+	q->lost = EINA_TRUE;
      }
 
    if (q->target.x != x
@@ -805,6 +806,7 @@ eina_quadtree_collide(Eina_QuadTree *q, int x, int y, int w, int h)
 	q->cached = _eina_quadtree_collide(NULL, q->root,
 					   EINA_FALSE, &canvas,
 					   &q->target);
+	q->lost = EINA_FALSE;
      }
 
    return q->cached;
