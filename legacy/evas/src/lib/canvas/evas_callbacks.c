@@ -17,7 +17,7 @@ _evas_post_event_callback_call(Evas *e)
      {
         if ((!skip) && (!e->delete_me) && (!pc->delete_me))
           {
-             if (!pc->func(e, pc->data)) skip = 1;
+             if (!pc->func(pc->data, e)) skip = 1;
           }
         free(pc);
      }
