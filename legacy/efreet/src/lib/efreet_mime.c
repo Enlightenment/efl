@@ -57,6 +57,17 @@ static Eina_Hash *mime_icons = NULL; /* contains cache with mime->icons */
 static Eina_Inlist *mime_icons_lru = NULL;
 static unsigned int _efreet_mime_init_count = 0;
 
+static const char *_mime_inode_symlink = NULL;
+static const char *_mime_inode_fifo = NULL;
+static const char *_mime_inode_chardevice = NULL;
+static const char *_mime_inode_blockdevice = NULL;
+static const char *_mime_inode_socket = NULL;
+static const char *_mime_inode_mountpoint = NULL;
+static const char *_mime_inode_directory = NULL;
+static const char *_mime_application_x_executable = NULL;
+static const char *_mime_application_octet_stream = NULL;
+static const char *_mime_text_plain = NULL;
+
 /**
  * @internal
  * @brief Holds whether we are big/little endian
@@ -257,6 +268,17 @@ efreet_mime_shutdown(void)
         return _efreet_mime_init_count;
 
     efreet_mime_icons_debug();
+
+    IF_RELEASE(_mime_inode_symlink);
+    IF_RELEASE(_mime_inode_fifo);
+    IF_RELEASE(_mime_inode_chardevice);
+    IF_RELEASE(_mime_inode_blockdevice);
+    IF_RELEASE(_mime_inode_socket);
+    IF_RELEASE(_mime_inode_mountpoint);
+    IF_RELEASE(_mime_inode_directory);
+    IF_RELEASE(_mime_application_x_executable);
+    IF_RELEASE(_mime_application_octet_stream);
+    IF_RELEASE(_mime_text_plain);
 
     IF_FREE_LIST(globs, efreet_mime_glob_free);
     IF_FREE_LIST(magics, efreet_mime_magic_free);
@@ -666,6 +688,17 @@ efreet_mime_init_files(void)
     efreet_mime_load_globs(datadirs, datahome);
     efreet_mime_load_magics(datadirs, datahome);
 
+    _mime_inode_symlink		   = eina_stringshare_add("inode/symlink");
+    _mime_inode_fifo		   = eina_stringshare_add("inode/fifo");
+    _mime_inode_chardevice	   = eina_stringshare_add("inode/chardevice");
+    _mime_inode_blockdevice	   = eina_stringshare_add("inode/blockdevice");
+    _mime_inode_socket		   = eina_stringshare_add("inode/socket");
+    _mime_inode_mountpoint	   = eina_stringshare_add("inode/mountpoint");
+    _mime_inode_directory	   = eina_stringshare_add("inode/directory");
+    _mime_application_x_executable = eina_stringshare_add("application/x-executable");
+    _mime_application_octet_stream = eina_stringshare_add("application/octet-stream");
+    _mime_text_plain               = eina_stringshare_add("text/plain");
+
     return 1;
 }
 
@@ -705,21 +738,21 @@ efreet_mime_special_check(const char *file)
 
 #ifndef _WIN32
         if (S_ISLNK(s.st_mode))
-            return "inode/symlink";
+	    return _mime_inode_symlink;
 #endif
 
         if (S_ISFIFO(s.st_mode))
-            return "inode/fifo";
+            return _mime_inode_fifo;
 
         if (S_ISCHR(s.st_mode))
-            return "inode/chardevice";
+            return _mime_inode_chardevice;
 
         if (S_ISBLK(s.st_mode))
-            return "inode/blockdevice";
+            return _mime_inode_blockdevice;
 
 #ifndef _WIN32
         if (S_ISSOCK(s.st_mode))
-            return "inode/socket";
+            return _mime_inode_socket;
 #endif
 
         if (S_ISDIR(s.st_mode))
@@ -742,10 +775,10 @@ efreet_mime_special_check(const char *file)
             if (!lstat(parent, &s2))
             {
                 if (s.st_dev != s2.st_dev)
-                    return "inode/mount-point";
+                    return _mime_inode_mountpoint;
             }
 
-            return "inode/directory";
+            return _mime_inode_directory;
         }
 
         return NULL;
@@ -769,14 +802,14 @@ efreet_mime_fallback_check(const char *file)
     int i;
 
     if (ecore_file_can_exec(file))
-        return "application/x-executable";
+        return _mime_application_x_executable;
     
     if (!(f = fopen(file, "r"))) return NULL;
 
     i = fread(buf, 1, sizeof(buf), f);
     fclose(f);
 
-    if (i == 0) return "application/octet-stream";
+    if (i == 0) return _mime_application_octet_stream;
 
     /*
      * Check for ASCII control characters in the first 32 bytes.
@@ -789,10 +822,10 @@ efreet_mime_fallback_check(const char *file)
             (buf[i] != '\n') &&     /* Line Feed */
             (buf[i] != '\r') &&     /* Carriage Return */
             (buf[i] != '\t'))       /* Tab */
-            return "application/octet-stream";
+            return _mime_application_octet_stream;
     }
 
-    return "text/plain";
+    return _mime_text_plain;
 }
 
 /**
