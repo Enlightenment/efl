@@ -2,6 +2,8 @@
 Encoding=UTF-8
 Name=Elementary Configuration
 Comment=Elementary Configuration
+Comment[fr]=Configuration pour Elementary
+Comment[it]=Configurazione di Elementary
 Exec=elementary_config
 Icon=elementary
 Terminal=false
