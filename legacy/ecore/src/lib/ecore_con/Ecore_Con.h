@@ -230,6 +230,7 @@ extern "C" {
    EAPI int		  ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename, const char *user, const char *pass, const char *upload_dir);
    EAPI void		  ecore_con_url_verbose_set(Ecore_Con_Url *url_con, int verbose);
    EAPI void		  ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, int use_epsv);
+   EAPI int               ecore_con_url_http_post_send(Ecore_Con_Url *url_con, void *curl_httppost);
 
 #ifdef __cplusplus
 }

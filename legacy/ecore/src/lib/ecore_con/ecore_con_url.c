@@ -359,6 +359,11 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
 	url_con->fd = -1;
 	url_con->fd_handler = NULL;
      }
+
+   if (url_con->post)
+     curl_formfree(url_con->post);
+   url_con->post = NULL;
+   
    if (url_con->curl_easy)
      {
 	// FIXME: For an unknown reason, progress continue to arrive after destruction
@@ -819,6 +824,41 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename, const cha
    user = NULL;
    pass = NULL;
    upload_dir = NULL;
+#endif
+}
+
+/**
+ * Send a Curl httppost 
+ * @return 1 on success, 0 on error.
+ * @ingroup Ecore_Con_Url_Group
+ */
+EAPI int
+ecore_con_url_http_post_send(Ecore_Con_Url *url_con, void *httppost)
+{
+#ifdef HAVE_CURL
+  int ret;
+
+  if (url_con->post)
+    curl_formfree(url_con->post);
+  url_con->post = NULL;
+
+  if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+    {
+      ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_http_post_send");
+      return 0;
+    }
+
+  url_con->post = httppost;
+  
+  if (url_con->active) return 0;
+  if (!url_con->url) return 0;  
+  
+  curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPPOST, httppost);
+  
+  return ecore_con_url_send(url_con, NULL, 0, NULL);
+#else
+  return 0;
+  url_con = NULL;
 #endif
 }
 
