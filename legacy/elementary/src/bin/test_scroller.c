@@ -126,4 +126,138 @@ test_scroller(void *data, Evas_Object *obj, void *event_info)
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
+
+void
+click_through(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("click went through on %p\n", obj);
+}
+
+void
+test_scroller2(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bt, *bx, *bx2, *bg, *sc, *tb, *tb2, *rc;
+   int i, j;
+
+   win = elm_win_add(NULL, "scroller2", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Scroller 2");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bg);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.0);
+
+   /* { */
+   for (i = 0; i < 3; i++)
+     {
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "Vertical");
+        evas_object_smart_callback_add(bt, "clicked", click_through, NULL);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
+        elm_box_pack_end(bx, bt);
+        evas_object_show(bt);
+     }
+   /* } */
+   
+   /* { */
+   sc = elm_scroller_add(win);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, 0.5);
+   elm_scroller_bounce_set(sc, 1, 0);
+   elm_scroller_content_min_limit(sc, 0, 1);
+   elm_box_pack_end(bx, sc);
+   evas_object_show(sc);
+   
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, 1);
+
+   for (i = 0; i < 10; i++)
+     {
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "... Horizontal scrolling ...");
+        evas_object_smart_callback_add(bt, "clicked", click_through, NULL);
+        elm_box_pack_end(bx2, bt);
+        evas_object_show(bt);
+     }
+   
+   elm_scroller_content_set(sc, bx2);
+   evas_object_show(bx2);
+   /* } */
+
+   /* { */
+   for (i = 0; i < 3; i++)
+     {
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "Vertical");
+        evas_object_smart_callback_add(bt, "clicked", click_through, NULL);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
+        elm_box_pack_end(bx, bt);
+        evas_object_show(bt);
+     }
+   /* } */
+   
+   /* { */
+   tb = elm_table_add(win);
+   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, tb);
+   evas_object_show(tb);
+   
+   rc = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_size_hint_min_set(rc, 200, 120);
+   elm_table_pack(tb, rc, 0, 0, 1, 1);
+   
+   sc = elm_scroller_add(win);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, sc, 0, 0, 1, 1);
+   evas_object_show(sc);
+   
+   tb2 = elm_table_add(win);
+
+   for (j = 0; j < 16; j++)
+     {
+        for (i = 0; i < 16; i++)
+          {
+             bt = elm_button_add(win);
+             elm_button_label_set(bt, "Both");
+             evas_object_smart_callback_add(bt, "clicked", click_through, NULL);
+             elm_table_pack(tb2, bt, i, j, 1, 1);
+             evas_object_show(bt);
+          }
+     }
+   
+   elm_scroller_content_set(sc, tb2);
+   evas_object_show(tb2);
+   /* } */
+   
+   for (i = 0; i < 24; i++)
+     {
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "Vertical");
+        evas_object_smart_callback_add(bt, "clicked", click_through, NULL);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
+        elm_box_pack_end(bx, bt);
+        evas_object_show(bt);
+     }
+   
+   sc = elm_scroller_add(win);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_scroller_bounce_set(sc, 0, 1);
+   elm_win_resize_object_add(win, sc);
+   elm_scroller_content_set(sc, bx);
+   evas_object_show(bx);
+   evas_object_show(sc);
+   
+   evas_object_resize(win, 320, 480);
+   evas_object_show(win);
+}
 #endif

@@ -307,6 +307,7 @@ elm_scroller_add(Evas_Object *parent)
    wd->widget_base = eina_stringshare_add("base");
    
    wd->scr = elm_smart_scroller_add(e);
+   elm_smart_scroller_widget_set(wd->scr, obj);
 //   elm_smart_scroller_theme_set(wd->scr, 
 //                                wd->widget_name, 
 //                                wd->widget_base,

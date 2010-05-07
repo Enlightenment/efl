@@ -40,10 +40,16 @@ struct _Smart_Data
    int            scroll_freeze;
    double         scale;
    const char    *style;
-   unsigned char  can_focus : 1;
-   unsigned char  child_can_focus : 1;
-   unsigned char  focused : 1;
-   unsigned char  disabled : 1;
+   
+   int            child_drag_x_locked;
+   int            child_drag_y_locked;
+   Eina_Bool      drag_x_locked : 1;
+   Eina_Bool      drag_y_locked : 1;
+   
+   Eina_Bool      can_focus : 1;
+   Eina_Bool      child_can_focus : 1;
+   Eina_Bool      focused : 1;
+   Eina_Bool      disabled : 1;
 };
 
 /* local subsystem functions */
@@ -82,10 +88,12 @@ static void
 _sub_obj_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *o = obj;
-   do {
-      if (_elm_widget_is(o)) break;
-      o = evas_object_smart_parent_get(o);
-   } while (o);
+   do 
+     {
+        if (_elm_widget_is(o)) break;
+        o = evas_object_smart_parent_get(o);
+     }
+   while (o);
    if (!o) return;
    if (!elm_widget_can_focus_get(o)) return;
    elm_widget_focus_steal(o);
@@ -910,6 +918,104 @@ elm_widget_type_get(const Evas_Object *obj)
    if (sd->type) return sd->type;
    return "";
 }
+
+
+
+
+
+
+
+
+
+static void
+_propagate_x_drag_lock(Evas_Object *obj, int dir)
+{
+   Smart_Data *sd = evas_object_smart_data_get(obj);
+   if (sd->parent_obj)
+     {
+        Smart_Data *sd2 = evas_object_smart_data_get(sd->parent_obj);
+        if (sd2)
+          {
+             sd2->child_drag_x_locked += dir;
+             _propagate_x_drag_lock(sd->parent_obj, dir);
+          }
+     }
+}
+
+static void
+_propagate_y_drag_lock(Evas_Object *obj, int dir)
+{
+   Smart_Data *sd = evas_object_smart_data_get(obj);
+   if (sd->parent_obj)
+     {
+        Smart_Data *sd2 = evas_object_smart_data_get(sd->parent_obj);
+        if (sd2)
+          {
+             sd2->child_drag_y_locked += dir;
+             _propagate_y_drag_lock(sd->parent_obj, dir);
+          }
+     }
+}
+
+EAPI void
+elm_widget_drag_lock_x_set(Evas_Object *obj, Eina_Bool lock)
+{
+   API_ENTRY return;
+   if (sd->drag_x_locked == lock) return;
+   sd->drag_x_locked = lock;
+   if (sd->drag_x_locked) _propagate_x_drag_lock(obj, 1);
+   else _propagate_x_drag_lock(obj, -1);
+}
+
+EAPI void
+elm_widget_drag_lock_y_set(Evas_Object *obj, Eina_Bool lock)
+{
+   API_ENTRY return;
+   if (sd->drag_y_locked == lock) return;
+   sd->drag_y_locked = lock;
+   if (sd->drag_y_locked) _propagate_y_drag_lock(obj, 1);
+   else _propagate_y_drag_lock(obj, -1);
+}
+
+EAPI Eina_Bool
+elm_widget_drag_lock_x_get(Evas_Object *obj)
+{
+   API_ENTRY return 0;
+   printf("check %p x lock %i\n", obj, sd->drag_x_locked);
+   return sd->drag_x_locked;
+}
+
+EAPI Eina_Bool
+elm_widget_drag_lock_y_get(Evas_Object *obj)
+{
+   API_ENTRY return 0;
+   printf("check %p y lock %i\n", obj, sd->drag_y_locked);
+   return sd->drag_y_locked;
+}
+
+EAPI int
+elm_widget_drag_child_locked_x_get(Evas_Object *obj)
+{
+   API_ENTRY return 0;
+   return sd->child_drag_x_locked;
+}
+
+EAPI int
+elm_widget_drag_child_locked_y_get(Evas_Object *obj)
+{
+   API_ENTRY return 0;
+   return sd->child_drag_y_locked;
+}
+
+
+
+
+
+
+
+
+
+
 
 /* local subsystem functions */
 static void

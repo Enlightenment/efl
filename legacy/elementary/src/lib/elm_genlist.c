@@ -412,6 +412,19 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_get(wd->scr, &maxw, &maxh);
    minh = -1;
    if (wd->mode != ELM_LIST_LIMIT) minw = -1;
+   else
+     {
+        Evas_Coord  vmw, vmh, vw, vh;
+        
+        minw = wd->minw;
+        maxw = -1;
+        elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
+        if ((minw > 0) && (vw < minw)) vw = minw;
+        else if ((maxw > 0) && (vw > maxw)) vw = maxw;
+        minw = -1;
+        edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
+        minw = vmw + minw;
+     }
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
@@ -2876,10 +2889,7 @@ elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
    if (!wd) return;
    if (wd->mode == mode) return;
    wd->mode = mode;
-   if (wd->mode == ELM_LIST_LIMIT)
-     elm_scroller_content_min_limit(wd->scr, 1, 0);
-   else
-     elm_scroller_content_min_limit(wd->scr, 0, 0);
+   _sizing_eval(obj);
 }
 
 /**

@@ -51,6 +51,7 @@ void test_progressbar(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector(void *data, Evas_Object *obj, void *event_info);
 void test_separator(void *data, Evas_Object *obj, void *event_info);
 void test_scroller(void *data, Evas_Object *obj, void *event_info);
+void test_scroller2(void *data, Evas_Object *obj, void *event_info);
 void test_spinner(void *data, Evas_Object *obj, void *event_info);
 void test_index(void *data, Evas_Object *obj, void *event_info);
 void test_photocam(void *data, Evas_Object *obj, void *event_info);
@@ -243,6 +244,7 @@ my_win_main(void)
    ADD_TEST("File Selector", test_fileselector);
    ADD_TEST("Separator", test_separator);
    ADD_TEST("Scroller", test_scroller);
+   ADD_TEST("Scroller 2", test_scroller2);
    ADD_TEST("Spinner", test_spinner);
    ADD_TEST("Index", test_index);
    ADD_TEST("Photocam", test_photocam);
