@@ -74,6 +74,7 @@ elm_flip.c \
 elm_conform.c \
 elm_mapbuf.c \
 elm_thumb.c \
+elm_config.c \
 \
 elc_anchorblock.c \
 elc_anchorview.c \
