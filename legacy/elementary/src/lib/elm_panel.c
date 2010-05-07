@@ -149,6 +149,7 @@ elm_panel_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, 0);
 
    wd->scr = elm_smart_scroller_add(evas);
+   elm_smart_scroller_widget_set(wd->scr, obj);
    elm_smart_scroller_bounce_allow_set(wd->scr, 0, 0);
    elm_smart_scroller_theme_set(wd->scr, "panel", "base", "left");
    elm_widget_resize_object_set(obj, wd->scr);

@@ -1665,6 +1665,7 @@ elm_map_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
 
    wd->scr = elm_smart_scroller_add(e);
+   elm_smart_scroller_widget_set(wd->scr, obj);
    elm_smart_scroller_theme_set(wd->scr, "map", "base", "default");
    evas_object_smart_callback_add(wd->scr, "scroll", _scr, obj);
    evas_object_smart_callback_add(wd->scr, "drag", _scr, obj);

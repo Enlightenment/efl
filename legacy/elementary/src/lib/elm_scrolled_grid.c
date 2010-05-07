@@ -954,6 +954,7 @@ elm_scrolled_grid_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
 
    wd->scr = elm_smart_scroller_add(e);
+   elm_smart_scroller_widget_set(wd->scr, obj);
    elm_smart_scroller_theme_set(wd->scr, "grid", "base", "default");
    elm_widget_resize_object_set(obj, wd->scr);
 
