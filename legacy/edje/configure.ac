@@ -205,7 +205,7 @@ PKG_CHECK_MODULES([LUA], [lua >= 5.1.0], requirement_lua="lua",
 	[PKG_CHECK_MODULES([LUA], [lua5.1 >= 5.1.0], requirement_lua="lua5.1",
 		[PKG_CHECK_MODULES([LUA], [lua-5.1 >= 5.1.0], requirement_lua="lua-5.1",
 			[PKG_CHECK_MODULES([LUA], [lua51 >= 5.1.0], requirement_lua="lua51",
-				AC_MSG_ERROR([unable to find Lua])
+				AC_MSG_ERROR([unable to find Lua >= 5.1.0])
 			)
 		])
 	])
