@@ -220,14 +220,15 @@ eng_setup(Evas *e, void *in)
 	e->engine.data.output = re;
 	re->win = eng_window_new(info->info.display,
 				 info->info.drawable,
-				 0 /* FIXME: screen 0 assumption */,
+                                 info->info.screen,
 				 info->info.visual,
 				 info->info.colormap,
 				 info->info.depth,
 				 e->output.w,
 				 e->output.h,
                                  info->indirect,
-                                 info->info.destination_alpha);
+                                 info->info.destination_alpha,
+                                 info->info.rotation);
 	if (!re->win)
 	  {
 	     free(re);
@@ -308,23 +309,25 @@ eng_setup(Evas *e, void *in)
 	re = e->engine.data.output;
         if ((info->info.display != re->win->disp) ||
             (info->info.drawable != re->win->win) ||
-            (0 != re->win->screen) || /* FIXME: screen 0 assumption */
+            (info->info.screen != re->win->screen) ||
             (info->info.visual != re->win->visual) ||
             (info->info.colormap != re->win->colormap) ||
             (info->info.depth != re->win->depth) ||
-            (info->info.destination_alpha != re->win->alpha))
+            (info->info.destination_alpha != re->win->alpha) ||
+            (info->info.rotation != re->win->rot))
           {
              eng_window_free(re->win);
              re->win = eng_window_new(info->info.display,
                                       info->info.drawable,
-                                      0,/* FIXME: screen 0 assumption */
+                                      info->info.screen,
                                       info->info.visual,
                                       info->info.colormap,
                                       info->info.depth,
                                       e->output.w,
                                       e->output.h,
                                       info->indirect,
-                                      info->info.destination_alpha);
+                                      info->info.destination_alpha,
+                                      info->info.rotation);
           }
         else if ((re->win->w != e->output.w) ||
                  (re->win->h != e->output.h))
@@ -332,7 +335,7 @@ eng_setup(Evas *e, void *in)
              re->win->w = e->output.w;
              re->win->h = e->output.h;
              eng_window_use(re->win);
-             evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h);
+             evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h, re->win->rot);
           }
         
      }
@@ -379,7 +382,7 @@ eng_output_resize(void *data, int w, int h)
    re->win->w = w;
    re->win->h = h;
    eng_window_use(re->win);
-   evas_gl_common_context_resize(re->win->gl_context, w, h);
+   evas_gl_common_context_resize(re->win->gl_context, w, h, re->win->rot);
 }
 
 static void
@@ -396,7 +399,7 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h);
+   evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h, re->win->rot);
    /* smple bounding box */
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, re->win->w, re->win->h);
    if ((w <= 0) || (h <= 0)) return;

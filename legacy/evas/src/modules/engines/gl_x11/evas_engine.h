@@ -82,6 +82,7 @@ struct _Evas_GL_X11_Window
    Colormap         colormap;
    int              depth;
    int              alpha;
+   int              rot;
    Evas_GL_Context *gl_context;
    struct {
       int              redraw : 1;
@@ -114,7 +115,7 @@ struct _Evas_GL_X11_Window
 Evas_GL_X11_Window *eng_window_new(Display *disp, Window win, int screen,
                                    Visual *vis, Colormap cmap,
                                    int depth, int w, int h, int indirect,
-                                   int alpha);
+                                   int alpha, int rot);
 void      eng_window_free(Evas_GL_X11_Window *gw);
 void      eng_window_use(Evas_GL_X11_Window *gw);
 Visual   *eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo);

@@ -32,7 +32,8 @@ eng_window_new(Display *disp,
 	       int      w,
 	       int      h,
                int      indirect,
-               int      alpha)
+               int      alpha,
+               int      rot)
 {
    Evas_GL_X11_Window *gw;
    int context_attrs[3];
@@ -53,6 +54,9 @@ eng_window_new(Display *disp,
    gw->colormap = cmap;
    gw->depth = depth;
    gw->alpha = alpha;
+   gw->w = w;
+   gw->h = h;
+   gw->rot = rot;
 
    vi_use = _evas_gl_x11_vi;
    if (alpha)
@@ -382,7 +386,7 @@ eng_window_new(Display *disp,
 	return NULL;
      }
    evas_gl_common_context_use(gw->gl_context);
-   evas_gl_common_context_resize(gw->gl_context, w, h);
+   evas_gl_common_context_resize(gw->gl_context, w, h, rot);
    win_count++;
    return gw;
 }

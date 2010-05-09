@@ -80,29 +80,83 @@ matrix_ident(GLfloat *m)
 {
    memset(m, 0, 16 * sizeof(GLfloat));
    m[0] = m[5] = m[10] = m[15] = 1.0;
+   //------------------------
+   // 1 0 0 0
+   // 0 1 0 0
+   // 0 0 1 0
+   // 0 0 0 1
 }
 
 static void
 matrix_ortho(GLfloat *m, 
              GLfloat l, GLfloat r, 
              GLfloat t, GLfloat b, 
-             GLfloat near, GLfloat far)
+             GLfloat near, GLfloat far,
+             int rot, int w, int h)
 {
-   m[0] = 2.0 / (r - l);
-   m[1] = m[2] = m[3] = 0.0;
+   GLfloat rotf;
+   GLfloat cosv, sinv;
+   GLfloat tx, ty;
    
+//   rot = 180;
+   //------------------------
+   m[0] = 2.0 / (r - l);
+   m[1] = 0.0;
+   m[2] = 0.0;
+   m[3] = 0.0;
+
+   //------------------------
    m[4] = 0.0;
    m[5] = 2.0 / (t - b);
-   m[6] = m[7] = 0.0;
+   m[6] = 0.0;
+   m[7] = 0.0;
    
-   m[8] = m[9] = 0.0;
+   //------------------------
+   m[8] = 0.0;
+   m[9] = 0.0;
    m[10] = -(2.0 / (far - near));
    m[11] = 0.0;
    
-   m[12] = -((r + l)/(r - l));
-   m[13] = -((t + b)/(t - b));
-   m[14] = -((near + far)/(far - near));
+   //------------------------
+   m[12] = -((r + l) / (r - l));
+   m[13] = -((t + b) / (t - b));
+   m[14] = -((near + far) / (far - near));
    m[15] = 1.0;
+
+   // rot
+   rotf = (((rot / 90) & 0x3) * M_PI) / 2.0;
+
+   tx = 0.0;
+   ty = 0.0;
+   if (rot == 90)
+     {
+        tx = -(w * 1.0);
+        ty = -(h * 0.0);
+     }
+   if (rot == 180)
+     {
+        tx = -(w * 1.0);
+        ty = -(h * 1.0);
+     }
+   if (rot == 270)
+     {
+        tx = -(w * 0.0);
+        ty = -(h * 1.0);
+     }
+   
+   cosv = cos(rotf);
+   sinv = sin(rotf);
+   
+   m[0] = (2.0 / (r - l)) * ( cosv);
+   m[1] = (2.0 / (r - l)) * ( sinv);
+   
+   m[4] = (2.0 / (t - b)) * (-sinv);
+   m[5] = (2.0 / (t - b)) * ( cosv);
+   
+   m[12] += (m[0] * tx) + (m[4] * ty);
+   m[13] += (m[1] * tx) + (m[5] * ty);
+   m[14] += (m[2] * tx) + (m[6] * ty);
+   m[15] += (m[3] * tx) + (m[7] * ty);
 }
 
 static int
@@ -119,7 +173,7 @@ _evas_gl_common_version_check()
    * GL_VERSION is used to get the version of the connection
    */
 
-   version = glGetString(GL_VERSION);
+   version = (char *)glGetString(GL_VERSION);
 
   /*
    * OpengL ES
@@ -197,35 +251,41 @@ static void
 _evas_gl_common_viewport_set(Evas_GL_Context *gc)
 {
    GLfloat proj[16];
-   int w = 1, h = 1, m = 1;
+   int w = 1, h = 1, m = 1, rot = 1;
 
    if ((gc->shader.surface == gc->def_surface) ||
        (!gc->shader.surface))
      {
         w = gc->w;
         h = gc->h;
+        rot = gc->rot;
      }
    else
      {
         w = gc->shader.surface->w;
         h = gc->shader.surface->h;
+        rot = 0;
         m = -1;
      }
 
    if ((!gc->change.size) || 
-       ((gc->shared->w == w) && (gc->shared->h == h)))
+       ((gc->shared->w == w) && (gc->shared->h == h) && (gc->shared->rot == rot)))
      return;
    
    gc->shared->w = w;
    gc->shared->h = h;
+   gc->shared->rot = rot;
    gc->change.size = 0;
-   
-   glViewport(0, 0, w, h);
+
+   if ((rot == 0) || (rot == 180))
+     glViewport(0, 0, w, h);
+   else
+     glViewport(0, 0, h, w);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    
    matrix_ident(proj);
-   if (m == 1) matrix_ortho(proj, 0, w, 0, h, -1.0, 1.0);
-   else matrix_ortho(proj, 0, w, h, 0, -1.0, 1.0);
+   if (m == 1) matrix_ortho(proj, 0, w, 0, h, -1.0, 1.0, rot, w, h);
+   else matrix_ortho(proj, 0, w, h, 0, -1.0, 1.0, rot, w, h);
    
    glUseProgram(gc->shared->shader.rect.prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -540,10 +600,11 @@ evas_gl_common_context_use(Evas_GL_Context *gc)
 }
 
 void
-evas_gl_common_context_resize(Evas_GL_Context *gc, int w, int h)
+evas_gl_common_context_resize(Evas_GL_Context *gc, int w, int h, int rot)
 {
-   if ((gc->w == w) && (gc->h == h)) return;
+   if ((gc->w == w) && (gc->h == h) && (gc->rot == rot)) return;
    gc->change.size = 1;
+   gc->rot = rot;
    gc->w = w;
    gc->h = h;
    if (_evas_gl_common_context == gc) _evas_gl_common_viewport_set(gc);

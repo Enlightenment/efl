@@ -113,12 +113,14 @@ struct _Evas_GL_Shared
    } shader;
    int references;
    int w, h;
+   int rot;
 };
 
 struct _Evas_GL_Context
 {
    int                references;
    int                w, h;
+   int                rot;
    RGBA_Draw_Context  *dc;
    
    Evas_GL_Shared     *shared;
@@ -284,7 +286,7 @@ void glerr(int err, const char *file, const char *func, int line, const char *op
 Evas_GL_Context  *evas_gl_common_context_new(void);
 void              evas_gl_common_context_free(Evas_GL_Context *gc);
 void              evas_gl_common_context_use(Evas_GL_Context *gc);
-void              evas_gl_common_context_resize(Evas_GL_Context *gc, int w, int h);
+void              evas_gl_common_context_resize(Evas_GL_Context *gc, int w, int h, int rot);
 void              evas_gl_common_context_target_surface_set(Evas_GL_Context *gc, Evas_GL_Image *surface);
 
 void              evas_gl_common_context_line_push(Evas_GL_Context *gc,
