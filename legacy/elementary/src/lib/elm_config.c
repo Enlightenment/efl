@@ -12,22 +12,87 @@
 Elm_Config *_elm_config = NULL;
 char *_elm_profile = NULL;
 static Eet_Data_Descriptor *_config_edd = NULL;
-static Ecore_Event_Handler *_prop_change_handler = NULL;
-#ifdef HAVE_ELEMENTARY_X
-static Ecore_X_Atom _atom_e_scale = 0;
-static Ecore_X_Atom _atom_e_finger_size = 0;
-static Ecore_X_Atom _atom_e_theme = 0;
-#endif
+
+static void _desc_init(void);
+static void _desc_shutdown(void);
+static void _profile_get(void);
+static void _config_free(void);
+static void _config_apply(void);
+static void _config_load(void);
+static void _env_get(void);
 
 #ifdef HAVE_ELEMENTARY_X
+static Ecore_Event_Handler *_prop_change_handler = NULL;
+static Ecore_X_Window _root_1st = 0;
+#define ATOM_COUNT 5
+static Ecore_X_Atom _atom[ATOM_COUNT];
+static Ecore_X_Atom _atom_config = 0;
+static Ecore_X_Atom _atom_config_specific = 0;
+static const char *_atom_names[ATOM_COUNT] =
+{
+     "ENLIGHTENMENT_SCALE",
+     "ENLIGHTENMENT_FINGER_SIZE",
+     "ENLIGHTENMENT_THEME",
+     "ENLIGHTENMENT_PROFILE",
+     "ENLIGHTENMENT_CONFIG"
+};
+#define ATOM_E_SCALE 0
+#define ATOM_E_FINGER_SIZE 1
+#define ATOM_E_THEME 2
+#define ATOM_E_PROFILE 3
+#define ATOM_E_CONFIG 4
+
+static Eina_Bool _prop_config_get(void);
+static int _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev);
+
+static Eina_Bool
+_prop_config_get(void)
+{
+   int size = 0;
+   Ecore_X_Atom atom;
+   char buf[512];
+   unsigned char *data = NULL, *config_data;
+   
+   snprintf(buf, sizeof(buf), "ENLIGHTENMENT_CONFIG_%s", _elm_profile);
+   atom = ecore_x_atom_get(buf);
+   _atom_config = atom;
+   if (!ecore_x_window_prop_property_get(_root_1st,
+                                         atom, _atom[ATOM_E_CONFIG], 
+                                         8, &data, &size))
+     {
+        if (!ecore_x_window_prop_property_get(_root_1st, 
+                                              _atom[ATOM_E_CONFIG], 
+                                              _atom[ATOM_E_CONFIG], 
+                                              8, &data, &size))
+          return 0;
+        else
+          _atom_config = _atom[ATOM_E_CONFIG];
+     }
+   else
+     _atom_config = atom;
+   if (size < 1)
+     {
+        free(data);
+        return 0;
+     }
+   config_data = eet_data_descriptor_decode(_config_edd, data, size);
+   free(data);
+   if (!config_data) return 0;
+   _config_free();
+   _elm_config = config_data;
+   _config_apply();
+   _elm_rescale();
+   return 1;
+}
+
 static int
 _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_X_Event_Window_Property *event = ev;
 
-   if (event->win == ecore_x_window_root_first_get())
+   if (event->win == _root_1st)
      {
-	if (event->atom == _atom_e_scale)
+	if (event->atom == _atom[ATOM_E_SCALE])
 	  {
 	     unsigned int val = 1000;
 
@@ -42,7 +107,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 		  if (pscale != _elm_config->scale) _elm_rescale();
 	       }
 	  }
-	else if (event->atom == _atom_e_finger_size)
+	else if (event->atom == _atom[ATOM_E_FINGER_SIZE])
 	  {
 	     unsigned int val = 1000;
 
@@ -57,7 +122,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 		  if (pfinger_size != _elm_config->finger_size) _elm_rescale();
 	       }
 	  }
-	else if (event->atom == _atom_e_theme)
+	else if (event->atom == _atom[ATOM_E_THEME])
 	  {
              char *val = NULL;
              
@@ -71,6 +136,40 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 		  _elm_rescale();
 	       }
 	  }
+	else if (event->atom == _atom[ATOM_E_PROFILE])
+          {
+             char *val = NULL;
+             
+             val = ecore_x_window_prop_string_get(event->win,
+                                                  event->atom);
+	     eina_stringshare_replace(&_elm_config->theme, val);
+	     if (val)
+	       {
+                  int changed = 0;
+                  
+                  if (_elm_profile)
+                    {
+                       if (strcmp(_elm_profile, val)) changed = 1;
+                       free(_elm_profile);
+                    }
+                  _elm_profile = val;
+                  if (changed)
+                    {
+                       if (!_prop_config_get())
+                         {
+                            _config_free();
+                            _config_load();
+                            _config_apply();
+                            _elm_rescale();
+                         }
+                    }
+	       }
+          }
+	else if (((_atom_config > 0) && (event->atom == _atom_config)) ||
+                 (event->atom == _atom[ATOM_E_CONFIG]))
+          {
+             _prop_config_get();
+          }
      }
    return 1;
 }
@@ -181,7 +280,33 @@ _profile_get(void)
      }
 }
 
-void
+static void
+_config_free(void)
+{
+   const char *fontdir;
+   
+   if (!_elm_config) return;
+   EINA_LIST_FREE(_elm_config->font_dirs, fontdir)
+     {
+        eina_stringshare_del(fontdir);
+     }
+   if (_elm_config->theme) eina_stringshare_del(_elm_config->theme);
+   if (_elm_config->modules) eina_stringshare_del(_elm_config->modules);
+   free(_elm_config);
+   _elm_config = NULL;
+}
+
+static void
+_config_apply(void)
+{
+   _elm_theme_parse(_elm_config->theme);
+   if (_elm_config->modules) _elm_module_parse(_elm_config->modules);
+   ecore_animator_frametime_set(1.0 / _elm_config->fps);
+   edje_frametime_set(1.0 / _elm_config->fps);
+   edje_scale_set(_elm_config->scale);
+}
+
+static void
 _config_load(void)
 {
    Eet_File *ef = NULL;
@@ -237,7 +362,7 @@ _config_load(void)
 }
 
 static void
-_misc_env_get(void)
+_env_get(void)
 {
    char buf[PATH_MAX], *p, *s;
    
@@ -312,8 +437,6 @@ _misc_env_get(void)
 
    s = getenv("ELM_THEME");
    if (s) eina_stringshare_replace(&_elm_config->theme, s);
-   printf("theme: %s\n", _elm_config->theme);
-   _elm_theme_parse(_elm_config->theme);
 
    s = getenv("ELM_FONT_HINTING");
    if (s)
@@ -380,7 +503,6 @@ _misc_env_get(void)
 
    s = getenv("ELM_MODULES");
    if (s) eina_stringshare_replace(&_elm_config->modules, s);
-   if (_elm_config->modules) _elm_module_parse(_elm_config->modules);
 }
 
 void
@@ -389,11 +511,8 @@ _elm_config_init(void)
    _desc_init();
    _profile_get();
    _config_load();
-   _misc_env_get();
-
-   ecore_animator_frametime_set(1.0 / _elm_config->fps);
-   edje_frametime_set(1.0 / _elm_config->fps);
-   edje_scale_set(_elm_config->scale);
+   _env_get();
+   _config_apply();
 }
 
 void
@@ -412,21 +531,20 @@ _elm_config_sub_init(void)
 	     ERR("Cannot connect to X11 display. check $DISPLAY variable");
 	     exit(1);
 	  }
+        _root_1st = ecore_x_window_root_first_get();
+        
 	if (!ecore_x_screen_is_composited(0))
 	  _elm_config->compositing = 0;
-        
-	_atom_e_scale       = ecore_x_atom_get("ENLIGHTENMENT_SCALE");
-	_atom_e_finger_size = ecore_x_atom_get("ENLIGHTENMENT_FINGER_SIZE");
-	_atom_e_theme       = ecore_x_atom_get("ENLIGHTENMENT_THEME");
-        
-	ecore_x_event_mask_set(ecore_x_window_root_first_get(),
+
+        ecore_x_atoms_get(_atom_names, ATOM_COUNT, _atom);
+	ecore_x_event_mask_set(_root_1st,
 			       ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
 	_prop_change_handler = ecore_event_handler_add
 	  (ECORE_X_EVENT_WINDOW_PROPERTY, _prop_change, NULL);
 	if (!getenv("ELM_SCALE"))
 	  {
-	     if (ecore_x_window_prop_card32_get(ecore_x_window_root_first_get(),
-						_atom_e_scale,
+	     if (ecore_x_window_prop_card32_get(_root_1st,
+						_atom[ATOM_E_SCALE],
 						&val, 1) > 0)
 	       {
 		  if (val > 0)
@@ -441,8 +559,8 @@ _elm_config_sub_init(void)
 	  }
 	if (!getenv("ELM_FINGER_SIZE"))
 	  {
-	     if (ecore_x_window_prop_card32_get(ecore_x_window_root_first_get(),
-						_atom_e_finger_size,
+	     if (ecore_x_window_prop_card32_get(_root_1st,
+						_atom[ATOM_E_FINGER_SIZE],
 						&val, 1) > 0)
 	       {
 		  if (val > 0)
@@ -455,13 +573,32 @@ _elm_config_sub_init(void)
 	  {
              char *s;
              
-             s = ecore_x_window_prop_string_get(ecore_x_window_root_first_get(),
-                                                _atom_e_theme);
+             s = ecore_x_window_prop_string_get(_root_1st,
+						_atom[ATOM_E_THEME]);
              if (s)
 	       {
 		  eina_stringshare_replace(&_elm_config->theme, s);
                   _elm_theme_parse(s);
                   free(s);
+	       }
+	  }
+	if (!getenv("ELM_PROFILE"))
+	  {
+             char *s;
+             
+             s = ecore_x_window_prop_string_get(_root_1st,
+						_atom[ATOM_E_PROFILE]);
+             if (s)
+	       {
+                  int changed = 0;
+                  
+                  if (_elm_profile)
+                    {
+                       if (strcmp(_elm_profile, s)) changed = 1;
+                       free(_elm_profile);
+                    }
+                  _elm_profile = s;
+                  if (changed) _prop_config_get();
 	       }
 	  }
 #endif
@@ -486,19 +623,7 @@ _elm_config_shutdown(void)
 	_prop_change_handler = NULL;
 #endif
      }
-   if (_elm_config)
-     {
-        const char *fontdir;
-        
-        EINA_LIST_FREE(_elm_config->font_dirs, fontdir)
-          {
-             eina_stringshare_del(fontdir);
-          }
-        if (_elm_config->theme) eina_stringshare_del(_elm_config->theme);
-        if (_elm_config->modules) eina_stringshare_del(_elm_config->modules);
-        free(_elm_config);
-        _elm_config = NULL;
-     }
+   _config_free();
    if (_elm_profile)
      {
         free(_elm_profile);
