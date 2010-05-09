@@ -1443,9 +1443,9 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 	einfo->info.rotation = rotation;
 	_ecore_evas_x_rotation_set_internal
 	  (ee, rotation, resize, (Evas_Engine_Info *)einfo);
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
+#endif /* BUILD_ECORE_EVAS_OPENGL_X11 */
      }
-   if (!strcmp(ee->driver, "software_x11"))
+   else if (!strcmp(ee->driver, "software_x11"))
      {
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
 	Evas_Engine_Info_Software_X11 *einfo;
