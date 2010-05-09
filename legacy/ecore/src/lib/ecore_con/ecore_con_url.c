@@ -667,6 +667,41 @@ ecore_con_url_response_headers_get(Ecore_Con_Url *url_con)
 }
 
 /**
+ * Sets url_con to use http auth, with given username and password, "safely" or not.
+ *
+ * @param url_con Connection object to perform a request on, previously created
+ *		  with ecore_con_url_new() or ecore_con_url_custom_new().
+ * @param username Username to use in authentication
+ * @param password Password to use in authentication
+ * @param safe Whether to use "safer" methods (eg, NOT http basic auth)
+ *
+ * @return 1 on success, 0 on error.
+ *
+ * @ingroup Ecore_Con_Url_Group
+ */
+EAPI int
+ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username, const char *password, Eina_Bool safe)
+{
+#ifdef HAVE_CURL
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_httpauth_set");
+	return 0;
+     }
+   if ((username != NULL) && (password != NULL))
+     {
+	if (safe)
+	   curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPAUTH, CURLAUTH_ANYSAFE);
+	else
+	   curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_USERNAME, username);
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_PASSWORD, password);
+     }
+   return 0;
+#endif
+}
+
+/**
  * Sends a request.
  *
  * @param url_con Connection object to perform a request on, previously created

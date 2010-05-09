@@ -222,6 +222,7 @@ extern "C" {
    EAPI int               ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url);
    EAPI void		  ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd);
    EAPI int		  ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con);
+   EAPI int		  ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username, const char *password, Eina_Bool safe);
    EAPI int               ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length, const char *content_type);
    EAPI void              ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition, time_t tm);
 
