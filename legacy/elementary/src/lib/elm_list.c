@@ -1419,7 +1419,7 @@ elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->scr)
-     elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
+     elm_scroller_bounce_set(wd->scr, h_bounce, v_bounce);
 }
 
 /**

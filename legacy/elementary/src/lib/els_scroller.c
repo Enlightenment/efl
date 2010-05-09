@@ -53,7 +53,6 @@ struct _Smart_Data
       unsigned char dragged_began : 1;
       unsigned char dir_x : 1;
       unsigned char dir_y : 1;
-//      unsigned char dir_none : 1;
       unsigned char locked : 1;
       unsigned char bounce_x_hold : 1;
       unsigned char bounce_y_hold : 1;
@@ -1310,7 +1309,6 @@ _smart_event_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 	     sd->down.dragged = 0;
 	     sd->down.dir_x = 0;
 	     sd->down.dir_y = 0;
-//	     sd->down.dir_none = 0;
 	     sd->down.x = ev->canvas.x;
 	     sd->down.y = ev->canvas.y;
 	     elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
@@ -1660,7 +1658,6 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                   if (y < 0) y = -y;
                   if ((sd->one_dir_at_a_time) &&
                       (!((sd->down.dir_x) || (sd->down.dir_y))))
-                    /* && (!sd->down.dir_none))*/
                     {
                        if (x > _elm_config->thumbscroll_threshhold)
                          {
@@ -1682,7 +1679,6 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                          }
                        if (!dodir)
                          {
-                            //sd->down.dir_none = 1;
                             sd->down.dir_x = 1;
                             sd->down.dir_y = 1;
                          }
