@@ -1432,8 +1432,19 @@ static void
 _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 {
    if (ee->rotation == rotation) return;
-   if (!strcmp(ee->driver, "opengl_x11")) return;
    if (!strcmp(ee->driver, "xrender_x11")) return;
+   if (!strcmp(ee->driver, "opengl_x11"))
+     {
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
+	Evas_Engine_Info_GL_X11 *einfo;
+
+	einfo = (Evas_Engine_Info_GL_X11 *)evas_engine_info_get(ee->evas);
+	if (!einfo) return;
+	einfo->info.rotation = rotation;
+	_ecore_evas_x_rotation_set_internal
+	  (ee, rotation, resize, (Evas_Engine_Info *)einfo);
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
+     }
    if (!strcmp(ee->driver, "software_x11"))
      {
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
