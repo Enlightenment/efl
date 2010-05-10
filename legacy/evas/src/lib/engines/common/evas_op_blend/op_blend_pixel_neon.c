@@ -4,122 +4,411 @@
 #ifdef BUILD_NEON
 static void
 _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
-   DATA32 *e = d + l;
-   while (d < e) {
-      l = 256 - (*s >> 24);
-      *d = *s++ + MUL_256(l, *d);
-      d++;
-   }
+#define AP "blend_p_dp_"
+  asm volatile (
+	//** init
+	"vmov.i8	q8,	$0x1		\n\t"
+
+	AP "loopchoose:					\n\t"
+		// If aligned already - straight to octs
+		"andS		%[tmp], %[d],$0x1f		\n\t"
+		"beq		"AP"octloops			\n\t"
+
+		"andS		%[tmp], %[d],$0xf		\n\t"
+		"beq		"AP"quadloops			\n\t"
+
+		"andS		%[tmp], %[d],$0x4		\n\t"
+		"beq		"AP"dualloop			\n\t"
+
+	// Only ever executes once, fall through to dual
+	AP "singleloop:					\n\t"
+		"vld1.32	d0[0],	[%[s]]!		\n\t"
+		"vld1.32	d4[0],  [%[d]]		\n\t"
+
+		"vmvn.u8	d8, 	d0		\n\t"
+		"vshr.u32	d8, 	d8, #24		\n\t"
+
+		"vmul.u32	d8,	d16, d8		\n\t"
+
+		"vmull.u8	q6,	d4,d8		\n\t"
+		"vshrn.u16	d8,	q6, #8		\n\t"
+		// Add to 's'
+		"vqadd.u8	q2,	q4,q0		\n\t"
+
+		"vst1.32	d4[0],	[%[d]]		\n\t"
+		"add		%[d],	#4		\n\t"
+
+		// Can we go the fast path?
+		"andS		%[tmp], %[d],$0x1f	\n\t"
+		"beq		"AP"octloops		\n\t"
+
+		"andS		%[tmp], %[d],$0x0f	\n\t"
+		"beq		"AP"quadloops		\n\t"
+
+
+	AP "dualloop:					\n\t"
+		"sub		%[tmp], %[e], %[d]	\n\t"
+		"cmp		%[tmp], #32		\n\t"
+		"blt		"AP"loopout		\n\t"
+
+	AP "dualloopint:				\n\t"
+		//** Dual Loop
+		"vldm		%[s]!, {d0}		\n\t"
+		"vldr		d4,	[%[d]]		\n\t"
+
+		"vmvn.u8	d8, 	d0		\n\t"
+		"vshr.u32	d8, 	d8, #24		\n\t"
+
+		"vmul.u32	d8,	d16, d8		\n\t"
+
+		"vmull.u8	q6,	d4,d8		\n\t"
+		"vshrn.u16	d8,	q6, #8		\n\t"
+		// Add to 's'
+		"vqadd.u8	d4,	d8,d0		\n\t"
+		"vstr		d4,	[%[d]]		\n\t"
+		"add		%[d], 	#8		\n\t"
+
+		"ands		%[tmp], %[d], $0x1f	\n\t"
+		"beq 		"AP"octloops		\n\t"
+
+	AP"quadloops:					\n\t"
+		"sub		%[tmp], %[e], %[d]	\n\t"
+		"cmp		%[tmp], #32		\n\t"
+		"blt		"AP"loopout		\n\t"
+
+		"vldm		%[s]!,	{d0,d1)		\n\t"
+		"vldm		%[d],	{d4,d5}		\n\t"
+
+
+		// Copy s.a into q2 (>> 24) & subtract from 255
+		"vmvn.u8	q4,	q0		\n\t"
+		"vshr.u32	q4,	q4,$0x18	\n\t"
+
+		// Multiply into all fields
+		"vmul.u32	q4,	q8,q4		\n\t"
+
+		// a * d  (clobbering 'd'/q7)
+		"vmull.u8	q6,	d4,d8		\n\t"
+		"vmull.u8	q2,	d5,d9		\n\t"
+
+		// Shift & narrow it
+		"vshrn.u16	d8,	q6, #8		\n\t"
+		"vshrn.u16	d9,	q2, #8		\n\t"
+
+		// Add to s
+		"vqadd.u8	q2,	q4,q0		\n\t"
+
+		// Write it
+		"vstm		%[d]!,	{d4,d5}		\n\t"
+
+	AP "octloops:					\n\t"
+		"sub		%[tmp], %[e], %[d]	\n\t"
+		"cmp		%[tmp], #32		\n\t"
+		"ble		"AP"loopout		\n\t"
+
+		"sub		%[tmp],%[e],#64	\n\t"
+
+
+	AP "octloopint:\n\t"
+		//** Oct loop
+		"vldm	%[s]!,	{d0,d1,d2,d3)		\n\t"
+		"vldm	%[d],	{d4,d5,d6,d7}		\n\t"
+
+
+		// Copy s.a into q2 (>> 24) & subtract from 255
+		"vmvn.u8	q4,	q0		\n\t"
+			"vmvn.u8	q5,	q1	\n\t"
+		"vshr.u32	q4,	q4,$0x18	\n\t"
+			"vshr.u32	q5,	q5,$0x18\n\t"
+
+		// Multiply into all fields
+		"vmul.u32	q4,	q8,q4		\n\t"
+			"vmul.u32	q5,	q8,q5	\n\t"
+
+
+		// a * d  (clobbering 'd'/q7)
+		"vmull.u8	q6,	d4,d8		\n\t"
+		"vmull.u8	q2,	d5,d9		\n\t"
+			"vmull.u8	q7,	d6,d10	\n\t"
+			"vmull.u8	q3,	d7,d11	\n\t"
+
+		"cmp	 %[tmp], %[d]\n\t"
+
+		// Shift & narrow it
+		"vshrn.u16	d8,	q6, #8		\n\t"
+		"vshrn.u16	d9,	q2, #8		\n\t"
+			"vshrn.u16	d10,	q7, #8	\n\t"
+			"vshrn.u16	d11,	q3, #8	\n\t"
+
+
+		// Add to s
+		"vqadd.u8	q2,	q4,q0		\n\t"
+			"vqadd.u8	q3,	q5,q1	\n\t"
+
+		// Write it
+		"vstm		%[d]!,	{d4,d5,d6,d7}	\n\t"
+
+                "bhi	 "AP"octloopint\n\t"
+
+	AP "loopout:					\n\t"
+//"sub %[tmp], %[d], #4\n\t"
+//"vmov.i16	d0, $0xff00 \n\t"
+//"vst1.32	d0[0],	[%[tmp]]		\n\t"
+
+		"cmp 		%[d], %[e]\n\t"
+                "beq 		"AP"done\n\t"
+		"sub		%[tmp],%[e], %[d]	\n\t"
+		"cmp		%[tmp],$0x04		\n\t"
+		"ble		"AP"singleloop2		\n\t"
+
+	AP "dualloop2:					\n\t"
+		"sub		%[tmp],%[e],$0x7	\n\t"
+	AP "dualloop2int:				\n\t"
+		//** Trailing double
+	
+		"vldm		%[s]!,	{d0}		\n\t"
+		"vldm		%[d],	{d4}		\n\t"
+
+		"vmvn.u8	d8, 	d0		\n\t"
+		"vshr.u32	d8, 	d8, #24		\n\t"
+
+		"vmul.u32	d8,	d16, d8		\n\t"
+
+		"vmull.u8	q6,	d4,d8		\n\t"
+		"vshrn.u16	d8,	q6, #8		\n\t"
+		// Add to 's'
+		"vqadd.u8	d4,	d8,d0		\n\t"
+
+		"vstr.32	d4,	[%[d]]		\n\t"
+		"add		%[d],   #8		\n\t"
+
+		"cmp 		%[tmp], %[d]		\n\t"
+		"bhi 		"AP"dualloop2int		\n\t"
+
+		// Single ??
+		"cmp 		%[e], %[d]		\n\t"
+		"beq		"AP"done		\n\t"
+
+	AP"singleloop2:					\n\t"
+		"vld1.32	d0[0],	[%[s]]		\n\t"
+		"vld1.32	d4[0],  [%[d]]		\n\t"
+
+		"vmvn.u8	d8, 	d0		\n\t"
+		"vshr.u32	d8, 	d8, #24		\n\t"
+
+		"vmul.u32	d8,	d8, d16		\n\t"
+
+		"vmull.u8	q6,	d8,d4		\n\t"
+		"vshrn.u16	d8,	q6, #8		\n\t"
+		// Add to 's'
+		"vqadd.u8	d0,	d0,d8		\n\t"
+		"vst1.32	d0[0],	[%[d]]		\n\t"
+
+		//** Trailing single
+
+	AP"done:\n\t"
+//"sub	%[tmp], %[e], #4 \n\t"
+//"vmov.i32	d0, $0xffff0000 \n\t"
+//"vst1.32	d0[0],	[%[tmp]]		\n\t"
+
+
+	  : // output regs
+	  // Input
+          :  [e] "r" (d + l), [d] "r" (d), [s] "r" (s), [c] "r" (c),
+			[tmp] "r" (7)
+          : "q0", "q1", "q2","q3", "q4","q5","q6", "q7","q8","memory" // clobbered
+   );
+#undef AP
+
 }
 
 static void
 _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
-#if 0
-#ifdef NEON_INSTRINSICS_OK
-#else
-   DATA32 *e = d + l;
-#if 1
-   if (l >= 4)
-     {
-        e -= 4;
-        asm volatile (
-//                      "vmov.i32 q3, $0xff000000\n\t"
-//                      "asmloop3:\n\t"
-//                      "vld1.32 {d0-d1}, [%[s]]!\n\t"
-//                      "vmov.32 q2, q0\n\t"
-//                      "vand.32 q2, q2, q3\n\t"
-//                      "vceq.i32 q2, q2, #0\n\t"
-//                      "beq blank\n\t"
-//                      "vmov.32 d3, d0\n\t"
-//                      "vmovl.u8 q0, d1\n\t"
-//                      "vmovl.u8 q1, d3\n\t"
-//                      "\n\t"
-//                      "vmovn.u16 d1, q0\n\t"
-//                      "vmovn.u16 d3, q1\n\t"
-//                      "vmov.32 d0, d3\n\t"
-//                      "\n\t"
-//                      "vst1.32 {d0-d1}, [%[d]]!\n\t"
-                      
-//                      "cmp %[e], %[d]\n\t" // if d < e ...
-//                      "bhi asmloop3\n\t" // (if d < e) ... goto asmloop3
-//                      "b done\n\t"
-                      
-//                      "blank:\n\t"
-//                      "add %[s], %[s], #16\n\t"
-//                      "add %[d], %[d], #16\n\t"
-//                      "cmp %[e], %[d]\n\t" // if d < e ...
-//                      "bhi asmloop3\n\t" // (if d < e) ... goto asmloop3
-                      
-//                      "done:\n\t"
-                      "asmloop3:\n\t"
-                      "vld4.8 {d0-d3}, [%[s]]\n\t" // d0-d3 = s
-                      "vld4.8 {d4-d7}, [%[d]]\n\t" // d4-d7 = d
-                      "vmvn.8  d31, d3\n\t" // d31 = 255 - s.a
-                      "vmull.u8 q4, d31, d4\n\t"
-                      "vmull.u8 q5, d31, d5\n\t"
-                      "vmull.u8 q6, d31, d6\n\t"
-                      "vmull.u8 q7, d31, d7\n\t"
-                      "vrshr.u16 q8, q4, #8\n\t"
-                      "vrshr.u16 q9, q5, #8\n\t"
-                      "vraddhn.u16 d20, q4, q8\n\t"
-                      "vrshr.u16 q8, q6, #8\n\t"
-                      "vraddhn.u16 d21, q5, q9\n\t"
-                      "vrshr.u16 q9, q7, #8\n\t"
-                      "vraddhn.u16 d22, q6, q8\n\t"
-                      "vraddhn.u16 d23, q7, q9\n\t"
-                      "vqadd.u8 d20, d0, d20\n\t"
-                      "vqadd.u8 d21, d1, d21\n\t"
-                      "vqadd.u8 d22, d2, d22\n\t"
-                      "vqadd.u8 d23, d3, d23\n\t"
-                      "vst4.8 {d20-d23}, [%[d]]!\n\t"
-                      "vst4.8 {d20-d23}, [%[d]]\n\t"
-                      "add %[s], %[s], #4\n\t" // s++
-                      "add %[d], %[d], #4\n\t" // d++
-                      "cmp %[e], %[d]\n\t" // if d < e ...
-                      "bhi asmloop3\n\t" // (if d < e) ... goto asmloop3
-                      : // output regs
-                      : [s] "r" (s), [e] "r" (e), [d] "r" (d) // input
-                      : "d0", "d1", "memory" // clobbered
-                      );
-        e += 4;
-     }
-#endif   
-   while (d < e)
-     {
-        switch (*s & 0xff000000)
-          {
-          case 0:
-             break;
-          case 0xff000000:
-             *d = *s;
-             break;
-          default :
-             l = 256 - (*s >> 24);
-             *d = *s + MUL_256(l, *d);
-             break;
-          }
-        s++;  d++;
-     }
-#endif   
-#else   
-   DATA32 *e = d + l;
-   while (d < e)
-     {
-        switch (*s & 0xff000000)
-          {
-          case 0:
-             break;
-          case 0xff000000:
-             *d = *s;
-             break;
-          default :
-             l = 256 - (*s >> 24);
-             *d = *s + MUL_256(l, *d);
-             break;
-          }
-        s++;  d++;
-     }
-#endif   
+#define AP "blend_pas_dp_"
+   DATA32 *e = d + l,*tmp  = e + 32,*pl=(void*)912;
+      asm volatile (
+		"vmov.i8	q8,	#1			\n\t"
+	AP"loopchoose:						\n\t"
+		// If aliged - go as fast we can
+		"andS	%[tmp], %[d], 	#31		\n\t"
+		"beq	"AP"quadstart				\n\t"
+
+		// See if we can at least do our double loop
+		"andS	%[tmp], %[d], $0x7			\n\t"
+		"beq	"AP"dualstart				\n\t"
+
+	// Ugly single word version
+	AP "singleloop:						\n\t"
+		"vld1.32	d0[0], [%[s]]!			\n\t"
+		"vld1.32	d4[0], [%[d]]			\n\t"
+
+		"vmvn.u8	d8,	d0			\n\t"
+
+		"vshr.u32	d8,	d8,$0x18		\n\t"
+
+		// Mulitply into all fields
+		"vmul.u32	d8,	d8, d16			\n\t"
+
+		// Multiply out
+		"vmull.u8	q6,	d8, d4			\n\t"
+
+		"vshrn.u16	d8,	q6, #8			\n\t"
+
+		// Add to s
+		"vqadd.u8	d0,	d0,d8			\n\t"
+		"vst1.32	d0[0], [%[d]]!			\n\t"
+
+	AP"dualstart:						\n\t"
+		"sub		%[tmp], %[e], %[d]		\n\t"
+		"cmp		%[tmp], #32			\n\t"
+		"blt		"AP"loopout			\n\t"
+
+		// If aligned - go as fast we can
+		"andS		%[tmp], %[d], #31 		\n\t"
+		"beq		"AP"quadstart			\n\t"
+
+
+	AP"dualloop:						\n\t"
+
+		"vldm	%[s]!,	{d0)				\n\t"
+		"vldm	%[d],	{d4}				\n\t"
+
+		// Subtract from 255 (ie negate) and extract alpha channel
+		"vmvn.u8	d8,	d0			\n\t"
+		"vshr.u32	d8,	d8,$0x18		\n\t"
+
+		// Mulitply into all fields
+		"vmul.u32	d8,	d8, d16			\n\t"
+
+		// Multiply out
+		"vmull.u8	q6,	d8, d4			\n\t"
+
+		"vshrn.u16	d8,	q6, #8			\n\t"
+
+		// Add to s
+		"vqadd.u8	d0,	d0,d8			\n\t"
+		"vstm		%[d]!,	{d0}			\n\t"
+
+		"andS		%[tmp], %[d], $0x1f		\n\t"
+		"bne		"AP"dualloop			\n\t"
+
+
+        AP"quadstart:						\n\t"
+		"sub		%[tmp], %[e], %[d]		\n\t"
+		"cmp		%[tmp], #32			\n\t"
+		"blt		"AP"loopout			\n\t"
+
+		"sub		%[tmp], %[e],  #31		\n\t"
+
+        AP"quadloop:\n\t"
+		"vldm	%[s]!,	{d0,d1,d2,d3)			\n\t"
+		"vldm	%[d],	{d4,d5,d6,d7}			\n\t"
+
+		// Subtract from 255 (ie negate) and extract alpha channel
+		"vmvn.u8	q4,	q0			\n\t"
+			"vmvn.u8	q5,	q1		\n\t"
+		"vshr.u32	q4,	q4,$0x18		\n\t"
+			"vshr.u32	q5,	q5,$0x18	\n\t"
+
+		// Prepare to preload
+		"add	%[pl], %[s], #32\n\t"
+
+		// Mulitply into all fields
+		"vmul.u32	q4,	q4, q8			\n\t"
+			"vmul.u32	q5,	q5, q8		\n\t"
+		"pld	[%[pl]]\n\t"
+
+		// Multiply out
+		"vmull.u8	q6,	d8, d4			\n\t"
+			"vmull.u8	q7,	d10, d6		\n\t"
+		"vmull.u8	q2,	d9, d5			\n\t"
+			"vmull.u8	q3,	d11, d7		\n\t"
+
+		"add	%[pl], %[d], #32\n\t"
+
+		"vshrn.u16	d8,	q6, #8			\n\t"
+			"vshrn.u16	d10,	q7, #8		\n\t"
+		"vshrn.u16	d9,	q2, #8			\n\t"
+			"vshrn.u16	d11,	q3, #8		\n\t"
+		"pld	[%[pl]]\n\t"
+
+		"cmp 		%[tmp], %[pl]			\n\t"
+		// Add to s
+		"vqadd.u8	q0,	q0,q4			\n\t"
+			"vqadd.u8	q1,	q1,q5		\n\t"
+
+		"vstm		%[d]!,	{d0,d1,d2,d3}		\n\t"
+
+		"bhi 		"AP"quadloop			\n\t"
+
+	AP "loopout:						\n\t"
+		"cmp 		%[d], %[e]			\n\t"
+                "beq 		"AP"done			\n\t"
+
+		"sub		%[tmp],%[e], %[d]		\n\t"
+		"cmp		%[tmp],$0x04			\n\t"
+		"beq		"AP"singleloop2			\n\t"
+
+		"sub		%[tmp],%[e],$0x7	\n\t"
+
+	AP"dualloop2:						\n\t"
+		"vldm	%[s]!,	{d0)				\n\t"
+		"vldm	%[d],	{d4}				\n\t"
+
+		// Subtract from 255 (ie negate) and extract alpha channel
+		"vmvn.u8	d8,	d0			\n\t"
+		"vshr.u32	d8,	d8,$0x18		\n\t"
+
+		// Mulitply into all fields
+		"vmul.u32	d8,	d8, d16			\n\t"
+
+		// Multiply out
+		"vmull.u8	q6,	d8, d4			\n\t"
+
+		"vshrn.u16	d8,	q6, #8			\n\t"
+
+		// Add to s
+		"vqadd.u8	d0,	d0,d8			\n\t"
+
+		"vstm		%[d]!,	{d0}			\n\t"
+		"cmp 		%[tmp], %[d]			\n\t"
+
+		"bhi		"AP"dualloop2			\n\t"
+
+		// Single ??
+		"cmp 		%[e], %[d]		\n\t"
+		"beq		"AP"done		\n\t"
+
+	AP "singleloop2:					\n\t"
+		"vld1.32	d0[0], [%[s]]			\n\t"
+		"vld1.32	d4[0], [%[d]]			\n\t"
+
+		"vmvn.u8	d8,	d0			\n\t"
+
+		"vshr.u32	d8,	d8,$0x18		\n\t"
+
+		// Mulitply into all fields
+		"vmul.u32	d8,	d8, d16			\n\t"
+
+		// Multiply out
+		"vmull.u8	q6,	d8, d4			\n\t"
+
+		"vshrn.u16	d8,	q6, #8			\n\t"
+
+		// Add to s
+		"vqadd.u8	d0,	d0,d8			\n\t"
+
+		"vst1.32	d0[0], [%[d]]			\n\t"
+	AP "done:\n\t"
+
+
+         : /* Out */
+         : /* In */  [s] "r" (s), [e] "r" (e), [d] "r" (d), [tmp] "r" (tmp),
+		[pl] "r" (pl)
+         : /* Clobbered */
+		 "q0","q1","q2","q3","q4","q5","q6","q7","q8","memory"
+      );
+#undef AP
 }
 
 #define _op_blend_pan_dp_neon NULL

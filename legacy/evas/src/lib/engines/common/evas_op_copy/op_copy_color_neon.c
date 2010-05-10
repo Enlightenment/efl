@@ -4,58 +4,87 @@
 #ifdef BUILD_NEON
 static void
 _op_copy_c_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
-   uint32_t *e;
-   uint32_t dalign = ((uint32_t)d) & 0xf; // get alignment
-   // handle unaligned stores - stores not aligned to 16bytes may suck
-   if (dalign > 0)
-     {
-        dalign = (16 - dalign) >> 2;
-        if (l < dalign) dalign = l;
-        l -= dalign;
-        e = d + dalign;
-        for (; d < e; d++) {
-           *d = c; // OP
-        }
-        if (l <= 0) return;
-     }
-   e = d + l;
-#ifdef NEON_INSTRINSICS_OK
-   e -= 15;
-   // expand the color in c to a 128 bit register as "cccc" i.e 4 pixels of c
-   uint32x4_t col = vdupq_n_u32(c);
-   // fill a run of 4x4 (16) pixels with the color
-   for (; d < e; d += 16) {
-      vst1q_u32(d+0, col); // OP
-      vst1q_u32(d+4, col); // OP
-      vst1q_u32(d+8, col); // OP
-      vst1q_u32(d+12, col); // OP
-   }
-   e += 15;
-#else
-   if ((e - d) >= 16)
-     {
-        e -= 31;
-        asm volatile (
-                      "vdup.32 q8, %[c]\n\t"
-                      "asmloop1:\n\t"
-//                      "pld [%[d], #128]\n\t"
-                      "cmp %[e], %[d]\n\t"
-                      "vst1.32 {d16-d17}, [%[d],:128]!\n\t"
-                      "vst1.32 {d16-d17}, [%[d],:128]!\n\t"
-                      "vst1.32 {d16-d17}, [%[d],:128]!\n\t"
-                      "vst1.32 {d16-d17}, [%[d],:128]!\n\t"
-                      "bhi asmloop1\n\t"
-                      : // output regs
-                      : [c] "r" (c), [e] "r" (e), [d] "r" (d) // input
-                      : "q8", "d16", "d17", "memory" // clobbered
-                      );
-        e += 31;
-     }
-#endif
-   // fixup any leftover pixels in the run
-   for (; d < e; d++) {
-      *d = c; // OP
-   }
+#define AP "COPY_C_DP_"
+   uint32_t *e = d + l,*tmp;
+   asm volatile (
+
+		"vdup.i32 	q0,	%[c]		\n\t"
+
+		// Can we do 32 byte?
+		"andS		%[tmp],	%[d], $0x1f	\n\t"
+		"beq		"AP"quadstart		\n\t"
+
+		// Can we do at least 16 byte?
+		"andS		%[tmp], %[d], $0x4	\n\t"
+		"beq		"AP"dualstart		\n\t"
+
+	// Only once
+	AP"singleloop:					\n\t"
+		"vst1.32	d0[0],  [%[d]]		\n\t"
+		"add		%[d], #4		\n\t"
+
+	// Up to 3 times
+	AP"dualstart:					\n\t"
+		"sub		%[tmp], %[e], %[d]	\n\t"
+		"cmp		%[tmp], #32		\n\t"
+		"blt		"AP"loopout		\n\t"
+
+	AP"dualloop:					\n\t"
+		"vstr.32	d0, [%[d]]		\n\t"
+
+		"add		%[d], #8		\n\t"
+		"andS		%[tmp], %[d], $0x1f	\n\t"
+		"bne		"AP"dualloop		\n\t"
+
+
+	AP"quadstart:					\n\t"
+		"sub		%[tmp], %[e], %[d]	\n\t"
+		"cmp		%[tmp], #32		\n\t"
+		"blt		"AP"loopout		\n\t"
+
+		"vmov		q1, q0			\n\t"
+		"sub		%[tmp],%[e],#31		\n\t"
+
+	AP "quadloop:					\n\t"
+		"vstm		%[d]!,	{d0,d1,d2,d3}	\n\t"
+
+		"cmp		%[tmp], %[d]		\n\t"
+                "bhi		"AP"quadloop		\n\t"
+
+
+	AP "loopout:					\n\t"
+		"cmp 		%[d], %[e]		\n\t"
+                "beq 		"AP"done		\n\t"
+		"sub		%[tmp],%[e], %[d]	\n\t"
+		"cmp		%[tmp],$0x04		\n\t"
+		"beq		"AP"singleloop2		\n\t"
+
+	AP "dualloop2:					\n\t"
+		"sub		%[tmp],%[e],#7		\n\t"
+	AP "dualloop2int:				\n\t"
+		"vstr.64	d0, [%[d]]		\n\t"
+
+		"add		%[d], #8		\n\t"
+		"cmp 		%[tmp], %[d]		\n\t"
+		"bhi 		"AP"dualloop2int	\n\t"
+
+		// Single ??
+		"cmp 		%[e], %[d]		\n\t"
+		"beq		"AP"done		\n\t"
+
+	AP "singleloop2:				\n\t"
+		"vst1.32	d0[0], [%[d]]		\n\t"
+
+	AP "done:\n\t"
+
+		: // No output regs
+		// Input
+		: [c] "r" (c), [e] "r" (e), [d] "r" (d),[tmp] "r" (tmp)
+		// Clobbered
+		: "q0","q1","memory"
+
+
+   );
 }
 
 #define _op_copy_cn_dp_neon _op_copy_c_dp_neon
