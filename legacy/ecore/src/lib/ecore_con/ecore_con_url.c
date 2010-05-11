@@ -688,17 +688,22 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username, const c
 	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_httpauth_set");
 	return 0;
      }
+# ifdef CURLOPT_USERNAME
+#  ifdef CURLOPT_PASSWORD   
    if ((username != NULL) && (password != NULL))
      {
 	if (safe)
-	   curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPAUTH, CURLAUTH_ANYSAFE);
+          curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPAUTH, CURLAUTH_ANYSAFE);
 	else
-	   curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+          curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
 	curl_easy_setopt(url_con->curl_easy, CURLOPT_USERNAME, username);
 	curl_easy_setopt(url_con->curl_easy, CURLOPT_PASSWORD, password);
+        return 1;
      }
-   return 0;
+#  endif
+# endif
 #endif
+   return 0;
 }
 
 /**
