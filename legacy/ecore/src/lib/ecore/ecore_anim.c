@@ -149,7 +149,7 @@ ecore_animator_freeze(Ecore_Animator *animator)
      {
 	ECORE_MAGIC_FAIL(animator, ECORE_MAGIC_ANIMATOR,
 			 "ecore_animator_del");
-	return NULL;
+	return;
      }
    if (animator->delete_me) return;
    animator->suspended = EINA_TRUE;
@@ -170,7 +170,7 @@ ecore_animator_thaw(Ecore_Animator *animator)
      {
 	ECORE_MAGIC_FAIL(animator, ECORE_MAGIC_ANIMATOR,
 			 "ecore_animator_del");
-	return NULL;
+	return;
      }
    if (animator->delete_me) return;
    animator->suspended = EINA_FALSE;
