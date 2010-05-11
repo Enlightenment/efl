@@ -4,6 +4,7 @@ void
 test_clock(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *ck;
+   unsigned int digedit;
 
    win = elm_win_add(NULL, "clock", ELM_WIN_BASIC);
    elm_win_title_set(win, "Clock");
@@ -44,6 +45,14 @@ test_clock(void *data, Evas_Object *obj, void *event_info)
    elm_clock_show_seconds_set(ck, 1);
    elm_clock_show_am_pm_set(ck, 1);
    elm_clock_time_set(ck, 10, 11, 12);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+
+   ck = elm_clock_add(win);
+   elm_clock_show_seconds_set(ck, 1);
+   elm_clock_edit_set(ck, 1);
+   digedit = ELM_CLOCK_HOUR_UNIT | ELM_CLOCK_MIN_UNIT | ELM_CLOCK_SEC_UNIT;
+   elm_clock_digit_edit_set(ck, digedit);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 

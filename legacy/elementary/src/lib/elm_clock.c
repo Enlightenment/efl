@@ -17,6 +17,7 @@ struct _Widget_Data
    Eina_Bool seconds : 1;
    Eina_Bool am_pm : 1;
    Eina_Bool edit : 1;
+   unsigned int digedit;
    int hrs, min, sec;
    Evas_Object *digit[6];
    Evas_Object *ampm;
@@ -28,6 +29,7 @@ struct _Widget_Data
         Eina_Bool seconds : 1;
         Eina_Bool am_pm : 1;
         Eina_Bool edit : 1;
+	unsigned int digedit;
      } cur;
 };
 
@@ -190,7 +192,7 @@ _time_update(Evas_Object *obj)
    const char *style = elm_widget_style_get(obj);
    if (!wd) return;
    if ((wd->cur.seconds != wd->seconds) || (wd->cur.am_pm != wd->am_pm) ||
-       (wd->cur.edit != wd->edit))
+       (wd->cur.edit != wd->edit) || (wd->cur.digedit != wd->digedit))
      {
 	int i;
 	Evas_Coord mw, mh;
@@ -229,7 +231,7 @@ _time_update(Evas_Object *obj)
 	     _elm_theme_set(wd->digit[i], "clock", "flipdigit", style);
 	     edje_object_scale_set(wd->digit[i], elm_widget_scale_get(obj) * 
                                    _elm_config->scale);
-	     if (wd->edit)
+	     if (wd->edit && (wd->digedit & (1 << i)))
 	       edje_object_signal_emit(wd->digit[i], "elm,state,edit,on", "elm");
 	     edje_object_signal_callback_add(wd->digit[i], "elm,action,up", "",
 					     _signal_clock_val_up, obj);
@@ -275,6 +277,7 @@ _time_update(Evas_Object *obj)
 	wd->cur.seconds = wd->seconds;
 	wd->cur.am_pm = wd->am_pm;
 	wd->cur.edit = wd->edit;
+	wd->cur.digedit = wd->digedit;
      }
    if (wd->hrs != wd->cur.hrs)
      {
@@ -404,6 +407,7 @@ elm_clock_add(Evas_Object *parent)
    wd->cur.seconds = EINA_TRUE;
    wd->cur.am_pm = EINA_TRUE;
    wd->cur.edit = EINA_TRUE;
+   wd->cur.digedit = ELM_CLOCK_NONE;
 
    _time_update(obj);
    _ticker(obj);
@@ -469,6 +473,9 @@ elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec)
  * @param edit Bool option for edited (1 = yes, 0 = no)
  *
  * This function sets if the clock settings can be edited or not.
+ * By default or if digit_edit option was previously set to ELM_CLOCK_NONE,
+ * all digits are editable. To choose what digits to make editable
+ * use elm_clock_digit_edit_set().
  *
  * @ingroup Clock
  */
@@ -479,7 +486,10 @@ elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->edit = edit;
-   _time_update(obj);
+   if (edit && (wd->digedit == ELM_CLOCK_NONE))
+     elm_clock_digit_edit_set(obj, ELM_CLOCK_ALL);
+   else
+     _time_update(obj);
 }
 
 /**
@@ -499,6 +509,46 @@ elm_clock_edit_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->edit;
+}
+
+/**
+ * Set what digits of the clock are editable
+ *
+ * @param obj The clock object
+ * @param digedit Bit mask indicating the digits to edit
+ *
+ * If the digedit param is ELM_CLOCK_NONE, editing will be disabled.
+ *
+ * @ingroup Clock
+ */
+EAPI void
+elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Digedit digedit)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->digedit = digedit;
+   if (digedit == ELM_CLOCK_NONE)
+     elm_clock_edit_set(obj, EINA_FALSE);
+   else
+     _time_update(obj);
+}
+
+/**
+ * Get what digits of the clock are editable
+ *
+ * @param obj The clock object
+ * @return Bit mask indicating the digits.
+ *
+ * @ingroup Clock
+ */
+EAPI unsigned int
+elm_clock_digit_edit_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+   return wd->digedit;
 }
 
 /**

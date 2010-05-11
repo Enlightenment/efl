@@ -2226,20 +2226,30 @@ collections {
 	    type: RECT;
 	    mouse_events: 1;
 	    description { state: "default" 0.0;
+	       visible: 0;
 	       rel1.to: "base";
 	       rel1.relative: 0.0 0.5;
 	       rel2.to: "base";
 	       color: 0 0 0 0;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
 	    }
 	 }
 	 part { name: "t";
 	    type: RECT;
 	    mouse_events: 1;
 	    description { state: "default" 0.0;
+	       visible: 0;
 	       rel1.to: "base";
 	       rel2.to: "base";
 	       rel2.relative: 1.0 0.5;
 	       color: 0 0 0 0;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
 	    }
 	 }
 	 part { name: "bot0";
@@ -2675,6 +2685,8 @@ collections {
 	    action: STATE_SET "visible" 0.0;
 	    target: "atop";
 	    target: "abot";
+	    target: "t";
+	    target: "b";
 	 }
 	 program { name: "edit_off";
             signal: "elm,state,edit,off";
@@ -2682,6 +2694,8 @@ collections {
 	    action: STATE_SET "default" 0.0;
 	    target: "atop";
 	    target: "abot";
+	    target: "t";
+	    target: "b";
 	 }
 	 program { name: "up";
 	    signal: "mouse,down,1";

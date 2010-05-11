@@ -196,6 +196,18 @@ extern "C" {
        ELM_THUMB_ANIMATION_LAST
     } Elm_Thumb_Animation_Setting;
 
+  typedef enum _Elm_Clock_Digedit
+    {
+       ELM_CLOCK_NONE		= 0,
+       ELM_CLOCK_HOUR_DECIMAL	= 1 << 0,
+       ELM_CLOCK_HOUR_UNIT	= 1 << 1,
+       ELM_CLOCK_MIN_DECIMAL	= 1 << 2,
+       ELM_CLOCK_MIN_UNIT	= 1 << 3,
+       ELM_CLOCK_SEC_DECIMAL	= 1 << 4,
+       ELM_CLOCK_SEC_UNIT	= 1 << 5,
+       ELM_CLOCK_ALL		= (1 << 6) - 1
+    } Elm_Clock_Digedit;
+
 #ifndef ELM_LIB_QUICKLAUNCH
 #define ELM_MAIN() int main(int argc, char **argv) {elm_init(argc, argv); return elm_main(argc, argv);}
 #else
@@ -587,6 +599,8 @@ extern "C" {
    EAPI void         elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec);
    EAPI void         elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit);
    EAPI Eina_Bool    elm_clock_edit_get(const Evas_Object *obj);
+   EAPI void	     elm_clock_digit_edit_set(Evas_Object *obj, unsigned int digedit);
+   EAPI unsigned int elm_clock_digit_edit_get(const Evas_Object *obj);
    EAPI void         elm_clock_show_am_pm_set(Evas_Object *obj, Eina_Bool am_pm);
    EAPI Eina_Bool    elm_clock_show_am_pm_get(const Evas_Object *obj);
    EAPI void         elm_clock_show_seconds_set(Evas_Object *obj, Eina_Bool seconds);
