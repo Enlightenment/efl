@@ -400,6 +400,14 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
    _configure(obj);
 }
 
+/**
+ * Get the flip front content
+ *
+ * @param obj The flip object
+ * @return The content to be used in this flip object front
+ *
+ * @ingroup Flip
+ */
 EAPI Evas_Object *
 elm_flip_content_front_get(const Evas_Object *obj)
 {
@@ -408,6 +416,14 @@ elm_flip_content_front_get(const Evas_Object *obj)
    return wd->front.content;
 }
 
+/**
+ * Get the flip back content
+ *
+ * @param obj The flip object
+ * @return The content to be used in this flip object back
+ *
+ * @ingroup Flip
+ */
 EAPI Evas_Object *
 elm_flip_content_back_get(const Evas_Object *obj)
 {
