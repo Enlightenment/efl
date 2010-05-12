@@ -85,7 +85,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _elm_theme_set(wd->spinner, "spinner", "base", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->spinner, "spinner", "base", elm_widget_style_get(obj));
    edje_object_part_swallow(wd->spinner, "elm.swallow.entry", wd->ent);
    _write_label(obj);
    edje_object_message_signal_process(wd->spinner);
@@ -517,7 +517,7 @@ elm_spinner_add(Evas_Object *parent)
    wd->editable = EINA_TRUE;
 
    wd->spinner = edje_object_add(e);
-   _elm_theme_set(wd->spinner, "spinner", "base", "default");
+   _elm_theme_object_set(obj, wd->spinner, "spinner", "base", "default");
    elm_widget_resize_object_set(obj, wd->spinner);
    edje_object_signal_callback_add(wd->spinner, "drag", "*", _drag, obj);
    edje_object_signal_callback_add(wd->spinner, "drag,start", "*", 

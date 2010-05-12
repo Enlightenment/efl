@@ -46,7 +46,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _elm_theme_set(wd->base, "conformant", "base", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->base, "conformant", "base", elm_widget_style_get(obj));
    if (wd->content)
      edje_object_part_swallow(wd->base, "elm.swallow.content", wd->content);
    edje_object_scale_set(wd->base, elm_widget_scale_get(obj) * _elm_config->scale);
@@ -228,7 +228,7 @@ elm_conformant_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
 
    wd->base = edje_object_add(evas);
-   _elm_theme_set(wd->base, "conformant", "base", "default");
+   _elm_theme_object_set(obj, wd->base, "conformant", "base", "default");
    elm_widget_resize_object_set(obj, wd->base);
 
 #ifdef HAVE_ELEMENTARY_X

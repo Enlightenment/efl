@@ -99,7 +99,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _elm_theme_set(wd->children.frm, "thumb", "base", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->children.frm, "thumb", "base", elm_widget_style_get(obj));
 }
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
@@ -473,7 +473,7 @@ elm_thumb_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
 
    wd->children.frm = edje_object_add(evas);
-   _elm_theme_set(wd->children.frm, "thumb", "base", "default");
+   _elm_theme_object_set(obj, wd->children.frm, "thumb", "base", "default");
    elm_widget_sub_object_add(obj, wd->children.frm);
 
    edje_object_size_min_calc(obj, &minw, &minh);

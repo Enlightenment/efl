@@ -84,7 +84,7 @@ _theme_hook(Evas_Object *obj)
 
 	if (it->selected)
 	  edje_object_signal_emit(it->base, "elm,state,selected", "elm");
-	_elm_theme_set(it->base, "carousel", "item", elm_widget_style_get(obj));
+	_elm_theme_object_set(obj, it->base, "carousel", "item", elm_widget_style_get(obj));
 	edje_object_scale_set(it->base, elm_widget_scale_get(obj) * _elm_config->scale);
 	if (it->icon)
 	  {
@@ -171,7 +171,7 @@ elm_carousel_add(Evas_Object *parent)
 
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
-   elm_smart_scroller_theme_set(wd->scr, "carousel", "base", "default");
+   elm_smart_scroller_object_theme_set(obj, wd->scr, "carousel", "base", "default");
    elm_widget_resize_object_set(obj, wd->scr);
    elm_smart_scroller_policy_set(wd->scr,
 				 ELM_SMART_SCROLLER_POLICY_AUTO,
@@ -210,7 +210,7 @@ elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Ev
    it->func = func;
    it->data = data;
    it->base = edje_object_add(evas_object_evas_get(obj));
-   _elm_theme_set(it->base, "carousel", "item", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, it->base, "carousel", "item", elm_widget_style_get(obj));
    edje_object_signal_callback_add(it->base, "elm,action,click", "elm",
 				   _select, it);
    elm_widget_sub_object_add(obj, it->base);

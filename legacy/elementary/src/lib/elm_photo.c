@@ -97,7 +97,7 @@ elm_photo_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, 0);
 
    wd->frm = edje_object_add(e);
-   _elm_theme_set(wd->frm, "photo", "base", "default");
+   _elm_theme_object_set(obj, wd->frm, "photo", "base", "default");
    elm_widget_resize_object_set(obj, wd->frm);
 
    wd->img = _els_smart_icon_add(e);

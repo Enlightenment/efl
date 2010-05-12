@@ -35,9 +35,9 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->horizontal)
-     _elm_theme_set(wd->sep, "separator", "horizontal", elm_widget_style_get(obj));
+     _elm_theme_object_set(obj, wd->sep, "separator", "horizontal", elm_widget_style_get(obj));
    else
-     _elm_theme_set(wd->sep, "separator", "vertical", elm_widget_style_get(obj));
+     _elm_theme_object_set(obj, wd->sep, "separator", "vertical", elm_widget_style_get(obj));
    edje_object_scale_set(wd->sep, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
@@ -83,7 +83,7 @@ elm_separator_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, 0);
 
    wd->sep = edje_object_add(e);
-   _elm_theme_set(wd->sep, "separator", "vertical", "default");
+   _elm_theme_object_set(obj, wd->sep, "separator", "vertical", "default");
    elm_widget_resize_object_set(obj, wd->sep);
    _sizing_eval(obj);
    return obj;

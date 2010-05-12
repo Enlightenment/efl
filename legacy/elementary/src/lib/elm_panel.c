@@ -46,6 +46,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   elm_smart_scroller_object_theme_set(obj, wd->scr, "panel", "base", elm_widget_style_get(obj));
 //   scale = (elm_widget_scale_get(obj) * _elm_config->scale);
 //   edje_object_scale_set(wd->scr, scale);
    _sizing_eval(obj);
@@ -150,8 +151,8 @@ elm_panel_add(Evas_Object *parent)
 
    wd->scr = elm_smart_scroller_add(evas);
    elm_smart_scroller_widget_set(wd->scr, obj);
+   elm_smart_scroller_object_theme_set(obj, wd->scr, "panel", "base", "left");
    elm_smart_scroller_bounce_allow_set(wd->scr, 0, 0);
-   elm_smart_scroller_theme_set(wd->scr, "panel", "base", "left");
    elm_widget_resize_object_set(obj, wd->scr);
    elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_OFF, 
                                  ELM_SMART_SCROLLER_POLICY_OFF);
@@ -203,7 +204,7 @@ elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient)
      case ELM_PANEL_ORIENT_BOTTOM:
         break;
      case ELM_PANEL_ORIENT_LEFT:
-        elm_smart_scroller_theme_set(wd->scr, "panel", "base", "left");
+        elm_smart_scroller_object_theme_set(obj, wd->scr, "panel", "base", "left");
      case ELM_PANEL_ORIENT_RIGHT:
         break;
      default:

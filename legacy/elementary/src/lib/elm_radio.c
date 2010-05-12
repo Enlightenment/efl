@@ -83,7 +83,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _elm_theme_set(wd->chk, "radio", "base", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->chk, "radio", "base", elm_widget_style_get(obj));
    if (wd->icon)
      edje_object_signal_emit(wd->chk, "elm,state,icon,visible", "elm");
    else
@@ -228,7 +228,7 @@ elm_radio_add(Evas_Object *parent)
    elm_widget_disable_hook_set(obj, _disable_hook);
 
    wd->chk = edje_object_add(e);
-   _elm_theme_set(wd->chk, "radio", "base", "default");
+   _elm_theme_object_set(obj, wd->chk, "radio", "base", "default");
    edje_object_signal_callback_add(wd->chk, "elm,action,radio,on", "", _signal_radio_on, obj);
    edje_object_signal_callback_add(wd->chk, "elm,action,radio,toggle", "", _signal_radio_on, obj);
    elm_widget_resize_object_set(obj, wd->chk);

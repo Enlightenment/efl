@@ -177,9 +177,10 @@ _theme_hook(Evas_Object *obj)
    const Eina_List *l;
    Elm_Toolbar_Item *it;
    const char *style = elm_widget_style_get(obj);
-   int scale = 0;
+   double scale = 0;
 
    if (!wd) return;
+   elm_smart_scroller_object_theme_set(obj, wd->scr, "toolbar", "base", elm_widget_style_get(obj));
    scale = (elm_widget_scale_get(obj) * _elm_config->scale);
 //   edje_object_scale_set(wd->scr, scale);
    EINA_LIST_FOREACH(wd->items, l, it)
@@ -193,7 +194,7 @@ _theme_hook(Evas_Object *obj)
                edje_object_signal_emit(it->base, "elm,state,selected", "elm");
              if (it->disabled)
                edje_object_signal_emit(it->base, "elm,state,disabled", "elm");
-             _elm_theme_set(it->base, "toolbar", "item", style);
+             _elm_theme_object_set(obj, it->base, "toolbar", "item", style);
              if (it->icon)
                {
                   int ms = 0;
@@ -207,7 +208,7 @@ _theme_hook(Evas_Object *obj)
              edje_object_part_text_set(it->base, "elm.text", it->label);
           }
         else
-          _elm_theme_set(it->base, "toolbar", "separator", style);
+          _elm_theme_object_set(obj, it->base, "toolbar", "separator", style);
 
 	mw = mh = -1;
 	if (!it->separator)
@@ -321,8 +322,8 @@ elm_toolbar_add(Evas_Object *parent)
 
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
+   elm_smart_scroller_object_theme_set(obj, wd->scr, "toolbar", "base", "default");
    elm_smart_scroller_bounce_allow_set(wd->scr, 1, 0);
-   elm_smart_scroller_theme_set(wd->scr, "toolbar", "base", "default");
    elm_widget_resize_object_set(obj, wd->scr);
    elm_smart_scroller_policy_set(wd->scr,
 				 ELM_SMART_SCROLLER_POLICY_AUTO,
@@ -415,7 +416,7 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Eva
    it->data = data;
    it->separator = EINA_FALSE;
    it->base = edje_object_add(evas_object_evas_get(obj));
-   _elm_theme_set(it->base, "toolbar", "item", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, it->base, "toolbar", "item", elm_widget_style_get(obj));
    edje_object_signal_callback_add(it->base, "elm,action,click", "elm",
 				   _select, it);
    elm_widget_sub_object_add(obj, it->base);

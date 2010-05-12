@@ -568,16 +568,16 @@ _fix_items(Evas_Object *obj)
 	     if (wd->mode == ELM_LIST_COMPRESS)
 	       {
 		  if (it->even)
-		    _elm_theme_set(it->base, "list", "item_compress", style);
+		    _elm_theme_object_set(obj, it->base, "list", "item_compress", style);
 		  else
-		    _elm_theme_set(it->base, "list", "item_compress_odd", style);
+		    _elm_theme_object_set(obj, it->base, "list", "item_compress_odd", style);
 	       }
 	     else
 	       {
 		  if (it->even)
-		    _elm_theme_set(it->base, "list", "item", style);
+		    _elm_theme_object_set(obj, it->base, "list", "item", style);
 		  else
-		    _elm_theme_set(it->base, "list", "item_odd", style);
+		    _elm_theme_object_set(obj, it->base, "list", "item_odd", style);
 	       }
 	     stacking = edje_object_data_get(it->base, "stacking");
 	     if (stacking)

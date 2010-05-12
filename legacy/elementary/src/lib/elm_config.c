@@ -131,7 +131,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 	     eina_stringshare_replace(&_elm_config->theme, val);
 	     if (val)
 	       {
-		  _elm_theme_parse(val);
+		  _elm_theme_parse(NULL, val);
 		  free(val);
 		  _elm_rescale();
 	       }
@@ -299,7 +299,7 @@ _config_free(void)
 static void
 _config_apply(void)
 {
-   _elm_theme_parse(_elm_config->theme);
+   _elm_theme_parse(NULL, _elm_config->theme);
    if (_elm_config->modules) _elm_module_parse(_elm_config->modules);
    ecore_animator_frametime_set(1.0 / _elm_config->fps);
    edje_frametime_set(1.0 / _elm_config->fps);
@@ -578,7 +578,7 @@ _elm_config_sub_init(void)
              if (s)
 	       {
 		  eina_stringshare_replace(&_elm_config->theme, s);
-                  _elm_theme_parse(s);
+                  _elm_theme_parse(NULL, s);
                   free(s);
 	       }
 	  }

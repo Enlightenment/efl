@@ -94,7 +94,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _elm_theme_set(wd->btn, "button", "base", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->btn, "button", "base", elm_widget_style_get(obj));
    if (wd->icon)
      edje_object_part_swallow(wd->btn, "elm.swallow.content", wd->icon);
    if (wd->btn_label)
@@ -345,7 +345,7 @@ elm_fileselector_button_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, 1);
 
    wd->btn = edje_object_add(e);
-   _elm_theme_set(wd->btn, "button", "base", "default");
+   _elm_theme_object_set(obj, wd->btn, "button", "base", "default");
    edje_object_signal_callback_add(wd->btn, "elm,action,click", "",
                                    _signal_clicked, obj);
    edje_object_signal_callback_add(wd->btn, "elm,action,click", "",

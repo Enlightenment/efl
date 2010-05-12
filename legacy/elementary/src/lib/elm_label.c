@@ -71,9 +71,9 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->linewrap)
-     _elm_theme_set(wd->lbl, "label", "base_wrap", elm_widget_style_get(obj));
+     _elm_theme_object_set(obj, wd->lbl, "label", "base_wrap", elm_widget_style_get(obj));
    else
-     _elm_theme_set(wd->lbl, "label", "base", elm_widget_style_get(obj));
+     _elm_theme_object_set(obj, wd->lbl, "label", "base", elm_widget_style_get(obj));
    edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
    edje_object_scale_set(wd->lbl, elm_widget_scale_get(obj) * 
                          _elm_config->scale);
@@ -144,7 +144,7 @@ elm_label_add(Evas_Object *parent)
    wd->linewrap = EINA_FALSE;
 
    wd->lbl = edje_object_add(e);
-   _elm_theme_set(wd->lbl, "label", "base", "default");
+   _elm_theme_object_set(obj, wd->lbl, "label", "base", "default");
    wd->label = eina_stringshare_add("<br>");
    edje_object_part_text_set(wd->lbl, "elm.text", "<br>");
    elm_widget_resize_object_set(obj, wd->lbl);
@@ -211,9 +211,9 @@ elm_label_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
    wd->linewrap = wrap;
    t = eina_stringshare_add(elm_label_label_get(obj));
    if (wd->linewrap)
-     _elm_theme_set(wd->lbl, "label", "base_wrap", elm_widget_style_get(obj));
+     _elm_theme_object_set(obj, wd->lbl, "label", "base_wrap", elm_widget_style_get(obj));
    else
-     _elm_theme_set(wd->lbl, "label", "base", elm_widget_style_get(obj));
+     _elm_theme_object_set(obj, wd->lbl, "label", "base", elm_widget_style_get(obj));
    elm_label_label_set(obj, t);
    eina_stringshare_del(t);
    wd->changed = 1;

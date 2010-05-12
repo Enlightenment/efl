@@ -258,7 +258,7 @@ _theme_hook(Evas_Object *obj)
    const char *t;
 
    t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    edje_object_scale_set(wd->ent, elm_widget_scale_get(obj) * _elm_config->scale);
@@ -1240,9 +1240,9 @@ _get_item(void *data, Evas_Object *edje, const char *part, const char *item)
      }
    o = edje_object_add(evas_object_evas_get(data));
    if (!strncmp(item, "emoticon/", 9))
-     ok = _elm_theme_set(o, "entry", item, elm_widget_style_get(data));
+     ok = _elm_theme_object_set(data, o, "entry", item, elm_widget_style_get(data));
    if (!ok)
-     _elm_theme_set(o, "entry/emoticon", "wtf", elm_widget_style_get(data));
+     _elm_theme_object_set(data, o, "entry/emoticon", "wtf", elm_widget_style_get(data));
    return o;
 }
 
@@ -1291,7 +1291,7 @@ elm_entry_add(Evas_Object *parent)
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_MOVE,
                                   _mouse_move, obj);
 
-   _elm_theme_set(wd->ent, "entry", "base", "default");
+   _elm_theme_object_set(obj, wd->ent, "entry", "base", "default");
    edje_object_signal_callback_add(wd->ent, "entry,changed", "elm.text",
                                    _signal_entry_changed, obj);
    edje_object_signal_callback_add(wd->ent, "selection,start", "elm.text",
@@ -1379,7 +1379,7 @@ elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
    wd->linewrap = EINA_FALSE;
    wd->char_linewrap = EINA_FALSE;
    t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    _sizing_eval(obj);
@@ -1426,7 +1426,7 @@ elm_entry_password_set(Evas_Object *obj, Eina_Bool password)
    wd->linewrap = EINA_FALSE;
    wd->char_linewrap = EINA_FALSE;
    t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    _sizing_eval(obj);
@@ -1563,7 +1563,7 @@ elm_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
    if(wd->linewrap)
        wd->char_linewrap = EINA_FALSE;
    t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    _sizing_eval(obj);
@@ -1593,7 +1593,7 @@ elm_entry_line_char_wrap_set(Evas_Object *obj, Eina_Bool wrap)
    if(wd->char_linewrap)
        wd->linewrap = EINA_FALSE;
    t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    _sizing_eval(obj);
@@ -1618,7 +1618,7 @@ elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable)
    if (wd->editable == editable) return;
    wd->editable = editable;
    t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    _sizing_eval(obj);

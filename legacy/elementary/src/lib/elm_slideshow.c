@@ -74,7 +74,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _elm_theme_set(wd->slideshow, "slideshow", "base", "default");
+   _elm_theme_object_set(obj, wd->slideshow, "slideshow", "base", "default");
    edje_object_scale_set(wd->slideshow, elm_widget_scale_get(obj) *
                          _elm_config->scale);
    _sizing_eval(obj);
@@ -232,7 +232,7 @@ elm_slideshow_add(Evas_Object *parent)
    wd->previous = NULL;
 
    wd->slideshow = edje_object_add(e);
-   _elm_theme_set(wd->slideshow, "slideshow", "base", "default");
+   _elm_theme_object_set(obj, wd->slideshow, "slideshow", "base", "default");
    elm_widget_resize_object_set(obj, wd->slideshow);
    evas_object_show(wd->slideshow);
 

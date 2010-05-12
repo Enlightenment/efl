@@ -1590,7 +1590,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _elm_theme_set(wd->frm, "win", "inwin", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->frm, "win", "inwin", elm_widget_style_get(obj));
    if (wd->content)
      edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->content);
    _sizing_eval(obj);
@@ -1657,7 +1657,7 @@ elm_win_inwin_add(Evas_Object *obj)
    elm_widget_theme_hook_set(obj2, _theme_hook);
 
    wd->frm = edje_object_add(win->evas);
-   _elm_theme_set(wd->frm, "win", "inwin", "default");
+   _elm_theme_object_set(obj, wd->frm, "win", "inwin", "default");
    elm_widget_resize_object_set(obj2, wd->frm);
 
    evas_object_smart_callback_add(obj2, "sub-object-del", _sub_del, obj2);

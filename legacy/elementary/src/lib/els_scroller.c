@@ -978,10 +978,10 @@ elm_smart_scroller_single_dir_get(Evas_Object *obj)
 }
 
 void
-elm_smart_scroller_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style)
+elm_smart_scroller_object_theme_set(Evas_Object *parent, Evas_Object *obj, const char *clas, const char *group, const char *style)
 {
    API_ENTRY return;
-   _elm_theme_set(sd->edje_obj, clas, group, style);
+   _elm_theme_object_set(parent, sd->edje_obj, clas, group, style);
    if (sd->pan_obj)
      edje_object_part_swallow(sd->edje_obj, "elm.swallow.content", sd->pan_obj);
    sd->vbar_visible = !sd->vbar_visible;
@@ -2305,7 +2305,8 @@ _smart_add(Evas_Object *obj)
 
    o = edje_object_add(evas_object_evas_get(obj));
    sd->edje_obj = o;
-   _elm_theme_set(o, "scroller", "base", "default");
+   // FIXME: null parent obj ... :(
+   _elm_theme_object_set(NULL, o, "scroller", "base", "default");
    edje_object_signal_callback_add(o, "drag", "elm.dragable.vbar", _smart_edje_drag_v, sd);
    edje_object_signal_callback_add(o, "drag,start", "elm.dragable.vbar", _smart_edje_drag_v_start, sd);
    edje_object_signal_callback_add(o, "drag,stop", "elm.dragable.vbar", _smart_edje_drag_v_stop, sd);

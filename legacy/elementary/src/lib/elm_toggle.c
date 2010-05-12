@@ -69,7 +69,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _elm_theme_set(wd->tgl, "toggle", "base", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->tgl, "toggle", "base", elm_widget_style_get(obj));
    if (wd->icon)
      edje_object_signal_emit(wd->tgl, "elm,state,icon,visible", "elm");
    else
@@ -177,7 +177,7 @@ elm_toggle_add(Evas_Object *parent)
    elm_widget_disable_hook_set(obj, _disable_hook);
 
    wd->tgl = edje_object_add(e);
-   _elm_theme_set(wd->tgl, "toggle", "base", "default");
+   _elm_theme_object_set(obj, wd->tgl, "toggle", "base", "default");
    wd->ontext = eina_stringshare_add("ON");
    wd->offtext = eina_stringshare_add("OFF");
    edje_object_signal_callback_add(wd->tgl, "elm,action,toggle,on", "",

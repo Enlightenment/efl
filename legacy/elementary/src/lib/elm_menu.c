@@ -105,19 +105,19 @@ _theme_hook(Evas_Object *obj)
 	  {
 	     ll = eina_list_append(ll, item->items);
 	     if (item->separator)
-	       _elm_theme_set(item->o, "menu", "separator",
-                              elm_widget_style_get(obj));
+	       _elm_theme_object_set(obj, item->o, "menu", "separator",
+                                     elm_widget_style_get(obj));
 	     else if (item->bx)
 	       {
-		  _elm_theme_set(item->o, "menu", "item_with_submenu",
-                                 elm_widget_style_get(obj));
+		  _elm_theme_object_set(obj, item->o, "menu", "item_with_submenu",
+                                        elm_widget_style_get(obj));
 		  elm_menu_item_label_set(item, item->label);
 		  elm_menu_item_icon_set(item, item->icon);
 	       }
 	     else
 	       {
-		  _elm_theme_set(item->o, "menu", "item",
-                                 elm_widget_style_get(obj));
+		  _elm_theme_object_set(obj, item->o, "menu", "item",
+                                        elm_widget_style_get(obj));
 		  elm_menu_item_label_set(item, item->label);
 		  elm_menu_item_icon_set(item, item->icon);
 	       }
@@ -342,7 +342,7 @@ _item_obj_create(Elm_Menu_Item *item)
    item->o = edje_object_add(evas_object_evas_get(wd->bx));
    evas_object_size_hint_weight_set(item->o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(item->o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   _elm_theme_set(item->o, "menu", "item",  elm_widget_style_get(item->menu));
+   _elm_theme_object_set(item->menu, item->o, "menu", "item",  elm_widget_style_get(item->menu));
    edje_object_signal_callback_add(item->o, "elm,action,click", "",
                                    _menu_item_select, item);
    edje_object_signal_callback_add(item->o, "elm,action,activate", "",
@@ -358,7 +358,7 @@ _item_separator_obj_create(Elm_Menu_Item *item)
    item->o = edje_object_add(evas_object_evas_get(wd->bx));
    evas_object_size_hint_weight_set(item->o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(item->o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   _elm_theme_set(item->o, "menu", "separator",  elm_widget_style_get(item->menu));
+   _elm_theme_object_set(item->menu, item->o, "menu", "separator",  elm_widget_style_get(item->menu));
    edje_object_signal_callback_add(item->o, "elm,action,activate", "",
                                    _menu_item_activate, item);
    evas_object_show(item->o);
@@ -380,7 +380,7 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
    evas_object_show(item->bx);
    elm_hover_content_set(item->hv, elm_hover_best_content_location_get(item->hv, ELM_HOVER_AXIS_VERTICAL), item->bx);
 
-   _elm_theme_set(item->o, "menu", "item_with_submenu",  elm_widget_style_get(item->menu));
+   _elm_theme_object_set(item->menu, item->o, "menu", "item_with_submenu",  elm_widget_style_get(item->menu));
    elm_menu_item_label_set(item, item->label);
    elm_menu_item_icon_set(item, item->icon);
 

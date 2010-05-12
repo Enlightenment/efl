@@ -203,7 +203,7 @@ elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, cons
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   Eina_Bool ret = _elm_theme_set(wd->lay, clas, group, style);
+   Eina_Bool ret = _elm_theme_object_set(obj, wd->lay, clas, group, style);
    if (ret) _request_sizing_eval(obj);
    return ret;
 }

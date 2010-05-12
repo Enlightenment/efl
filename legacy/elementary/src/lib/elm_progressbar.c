@@ -69,9 +69,9 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
    edje_object_part_unswallow(NULL, wd->spacer);
    if (wd->horizontal)
-     _elm_theme_set(wd->progressbar, "progressbar", "horizontal", elm_widget_style_get(obj));
+     _elm_theme_object_set(obj, wd->progressbar, "progressbar", "horizontal", elm_widget_style_get(obj));
    else
-     _elm_theme_set(wd->progressbar, "progressbar", "vertical", elm_widget_style_get(obj));
+     _elm_theme_object_set(obj, wd->progressbar, "progressbar", "vertical", elm_widget_style_get(obj));
    if (wd->inverted)
      edje_object_signal_emit(wd->progressbar, "elm,state,inverted,on", "elm");
    else
@@ -202,7 +202,7 @@ elm_progressbar_add(Evas_Object *parent)
    wd->val = MIN_RATIO_LVL;
 
    wd->progressbar = edje_object_add(e);
-   _elm_theme_set(wd->progressbar, "progressbar", "horizontal", "default");
+   _elm_theme_object_set(obj, wd->progressbar, "progressbar", "horizontal", "default");
    elm_widget_resize_object_set(obj, wd->progressbar);
 
    wd->spacer = evas_object_rectangle_add(e);

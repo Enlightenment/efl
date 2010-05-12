@@ -34,7 +34,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _elm_theme_set(wd->img, "bg", "base", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->img, "bg", "base", elm_widget_style_get(obj));
 }
 
 static void
@@ -86,7 +86,7 @@ elm_bg_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, 0);
 
    wd->img = edje_object_add(e);
-   _elm_theme_set(wd->img, "bg", "base", "default");
+   _elm_theme_object_set(obj, wd->img, "bg", "base", "default");
    elm_widget_resize_object_set(obj, wd->img);
    return obj;
 }

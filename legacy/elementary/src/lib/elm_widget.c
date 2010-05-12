@@ -39,6 +39,7 @@ struct _Smart_Data
    int            scroll_hold;
    int            scroll_freeze;
    double         scale;
+   Elm_Theme     *theme;
    const char    *style;
    
    int            child_drag_x_locked;
@@ -212,6 +213,7 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
 {
    API_ENTRY return;
    double scale, pscale = elm_widget_scale_get(sobj);
+   Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
 
    sd->subobjs = eina_list_append(sd->subobjs, sobj);
    if (!sd->child_can_focus)
@@ -232,7 +234,8 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
    evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
    evas_object_smart_callback_call(obj, "sub-object-add", sobj);
    scale = elm_widget_scale_get(sobj);
-   if (scale != pscale) elm_widget_theme(sobj);
+   th = elm_widget_theme_get(sobj);
+   if ((scale != pscale) || (th != pth)) elm_widget_theme(sobj);
 }
 
 EAPI void
@@ -877,6 +880,7 @@ EAPI double
 elm_widget_scale_get(const Evas_Object *obj)
 {
    API_ENTRY return 1.0;
+   // FIXME: save walking up the tree by storingcaching parent scale
    if (sd->scale == 0.0)
      {
 	if (sd->parent_obj)
@@ -885,6 +889,33 @@ elm_widget_scale_get(const Evas_Object *obj)
 	  return 1.0;
      }
    return sd->scale;
+}
+
+EAPI void
+elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th)
+{
+   API_ENTRY return;
+   if (sd->theme != th)
+     {
+        if (sd->theme) elm_theme_free(sd->theme);
+        sd->theme = th;
+        if (th) th->ref++;
+        elm_widget_theme(obj);
+     }
+}
+
+EAPI Elm_Theme *
+elm_widget_theme_get(const Evas_Object *obj)
+{
+   API_ENTRY return NULL;
+   if (!sd->theme)
+     {
+        if (sd->parent_obj)
+          return elm_widget_theme_get(sd->parent_obj);
+        else
+          return NULL;
+     }
+   return sd->theme;
 }
 
 EAPI void
@@ -1081,6 +1112,7 @@ _smart_del(Evas_Object *obj)
    if (sd->del_func) sd->del_func(obj);
    if (sd->style) eina_stringshare_del(sd->style);
    if (sd->type) eina_stringshare_del(sd->type);
+   if (sd->theme) elm_theme_free(sd->theme);
    free(sd);
 }
 

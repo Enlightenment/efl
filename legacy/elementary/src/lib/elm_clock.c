@@ -212,13 +212,13 @@ _time_update(Evas_Object *obj)
 	  }
 
 	if ((wd->seconds) && (wd->am_pm))
-	  _elm_theme_set(wd->clk, "clock", "base-all", style);
+	  _elm_theme_object_set(obj, wd->clk, "clock", "base-all", style);
 	else if (wd->seconds)
-	  _elm_theme_set(wd->clk, "clock", "base-seconds", style);
+	  _elm_theme_object_set(obj, wd->clk, "clock", "base-seconds", style);
 	else if (wd->am_pm)
-	  _elm_theme_set(wd->clk, "clock", "base-am_pm", style);
+	  _elm_theme_object_set(obj, wd->clk, "clock", "base-am_pm", style);
 	else
-	  _elm_theme_set(wd->clk, "clock", "base", style);
+	  _elm_theme_object_set(obj, wd->clk, "clock", "base", style);
 	edje_object_scale_set(wd->clk, elm_widget_scale_get(obj) * 
                               _elm_config->scale);
 
@@ -228,7 +228,7 @@ _time_update(Evas_Object *obj)
 
 	     if ((!wd->seconds) && (i >= 4)) break;
 	     wd->digit[i] = edje_object_add(evas_object_evas_get(wd->clk));
-	     _elm_theme_set(wd->digit[i], "clock", "flipdigit", style);
+	     _elm_theme_object_set(obj, wd->digit[i], "clock", "flipdigit", style);
 	     edje_object_scale_set(wd->digit[i], elm_widget_scale_get(obj) * 
                                    _elm_config->scale);
 	     if (wd->edit && (wd->digedit & (1 << i)))
@@ -249,7 +249,7 @@ _time_update(Evas_Object *obj)
 	if (wd->am_pm)
 	  {
 	     wd->ampm = edje_object_add(evas_object_evas_get(wd->clk));
-	     _elm_theme_set(wd->ampm, "clock", "flipampm", style);
+	     _elm_theme_object_set(obj, wd->ampm, "clock", "flipampm", style);
 	     edje_object_scale_set(wd->ampm, elm_widget_scale_get(obj) * 
                                    _elm_config->scale);
 	     if (wd->edit)

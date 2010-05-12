@@ -23,6 +23,16 @@
 // Why EAPI in a private header ?
 // EAPI is temporaty - that widget api will change, but makign it EAPI right now to indicate its bound for externalness
 
+struct _Elm_Theme
+{
+   Eina_List *overlay;
+   Eina_List *themes;
+   Eina_List *extension;
+   Eina_Hash *cache;
+   const char *theme;
+   int ref;
+};
+
 typedef enum _Elm_Engine
 {
    ELM_SOFTWARE_X11,
@@ -88,9 +98,11 @@ struct _Elm_Module
 void _elm_win_shutdown(void);
 void _elm_win_rescale(void);
 
-int _elm_theme_set(Evas_Object *o, const char *clas, const char *group, const char *style);
-int _elm_theme_icon_set(Evas_Object *o, const char *group, const char *style);
-int _elm_theme_parse(const char *theme);
+int _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style);
+int _elm_theme_object_icon_set(Evas_Object *parent, Evas_Object *o, const char *group, const char *style);
+int _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style);
+int _elm_theme_icon_set(Elm_Theme *th, Evas_Object *o, const char *group, const char *style);
+int _elm_theme_parse(Elm_Theme *th, const char *theme);
 void _elm_theme_shutdown(void);
 
 void _elm_module_init(void);
@@ -144,6 +156,8 @@ EAPI void         elm_widget_scroll_freeze_pop(Evas_Object *obj);
 EAPI int          elm_widget_scroll_freeze_get(const Evas_Object *obj);
 EAPI void         elm_widget_scale_set(Evas_Object *obj, double scale);
 EAPI double       elm_widget_scale_get(const Evas_Object *obj);
+EAPI void         elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th);
+EAPI Elm_Theme   *elm_widget_theme_get(const Evas_Object *obj);
 EAPI void         elm_widget_style_set(Evas_Object *obj, const char *style);
 EAPI const char  *elm_widget_style_get(const Evas_Object *obj);
 EAPI void         elm_widget_type_set(Evas_Object *obj, const char *type);

@@ -1140,7 +1140,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_smart_scroller_theme_set(wd->scr, "map", "base", elm_widget_style_get(obj));
+   elm_smart_scroller_object_theme_set(obj, wd->scr, "map", "base", elm_widget_style_get(obj));
 //   edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
@@ -1459,8 +1459,8 @@ _group_bubble_create(Marker_Group *group)
 
    group->wd->opened_bubbles = eina_list_append(group->wd->opened_bubbles, group);
    group->bubble = edje_object_add(evas_object_evas_get(group->obj));
-   _elm_theme_set(group->bubble, "map", "marker_bubble",
-                  elm_widget_style_get(group->wd->obj));
+   _elm_theme_object_set(group->wd->obj, group->bubble, "map", "marker_bubble",
+                         elm_widget_style_get(group->wd->obj));
    evas_object_smart_member_add(group->bubble,
                                 group->wd->obj);
    elm_widget_sub_object_add(group->wd->obj, group->bubble);
@@ -1476,8 +1476,7 @@ _group_bubble_create(Marker_Group *group)
    group->rect = evas_object_rectangle_add(evas_object_evas_get(group->obj));
    evas_object_color_set(group->rect, 0, 0, 0, 0);
    evas_object_repeat_events_set(group->rect, EINA_TRUE);
-   evas_object_smart_member_add(group->rect,
-                                group->wd->obj);
+   evas_object_smart_member_add(group->rect, group->wd->obj);
    elm_widget_sub_object_add(group->wd->obj, group->rect);
    
    evas_object_event_callback_add(group->rect, EVAS_CALLBACK_MOUSE_UP, _group_bubble_mouse_up_cb, group);
@@ -1666,7 +1665,7 @@ elm_map_add(Evas_Object *parent)
 
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
-   elm_smart_scroller_theme_set(wd->scr, "map", "base", "default");
+   elm_smart_scroller_object_theme_set(obj, wd->scr, "map", "base", "default");
    evas_object_smart_callback_add(wd->scr, "scroll", _scr, obj);
    evas_object_smart_callback_add(wd->scr, "drag", _scr, obj);
    elm_widget_resize_object_set(obj, wd->scr);
@@ -2315,7 +2314,7 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	  style = marker->clas_group->style;
 
 	o = edje_object_add(evas_object_evas_get(obj));
-	_elm_theme_set(o, "map/marker", style, elm_widget_style_get(obj));
+	_elm_theme_object_set(obj, o, "map/marker", style, elm_widget_style_get(obj));
 	s = edje_object_data_get(o, "size_w");
 	clas_group->priv.edje_w = atoi(s);
 	s = edje_object_data_get(o, "size_h");
@@ -2336,7 +2335,7 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	  style = marker->clas->style;
         
 	o = edje_object_add(evas_object_evas_get(obj));
-	_elm_theme_set(o, "map/marker", style, elm_widget_style_get(obj));
+	_elm_theme_object_set(obj, o, "map/marker", style, elm_widget_style_get(obj));
 	s = edje_object_data_get(o, "size_w");
 	clas->priv.edje_w = atoi(s);
 	s = edje_object_data_get(o, "size_h");

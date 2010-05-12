@@ -88,11 +88,9 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
    if (wd->scr)
      {
-//        elm_smart_scroller_theme_set(wd->scr, "scroller", "base", elm_widget_style_get(obj));
-        elm_smart_scroller_theme_set(wd->scr, 
-                                     wd->widget_name, 
-                                     wd->widget_base,
-                                     elm_widget_style_get(obj));
+        elm_smart_scroller_object_theme_set(obj, wd->scr, 
+                                            wd->widget_name, wd->widget_base,
+                                            elm_widget_style_get(obj));
 //        edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
      }
    _sizing_eval(obj);
@@ -308,10 +306,9 @@ elm_scroller_add(Evas_Object *parent)
    
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
-//   elm_smart_scroller_theme_set(wd->scr, 
-//                                wd->widget_name, 
-//                                wd->widget_base,
-//                                elm_widget_style_get(obj));
+   elm_smart_scroller_object_theme_set(obj, wd->scr, 
+                                       wd->widget_name, wd->widget_base,
+                                       elm_widget_style_get(obj));
    elm_widget_resize_object_set(obj, wd->scr);
    evas_object_event_callback_add(wd->scr, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _changed_size_hints, obj);

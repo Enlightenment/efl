@@ -75,9 +75,9 @@ _theme_hook(Evas_Object *obj)
    _index_box_clear(obj, wd->bx[0], 0);
    _index_box_clear(obj, wd->bx[1], 1);
    if (wd->horizontal)
-     _elm_theme_set(wd->base, "index", "base/horizontal", elm_widget_style_get(obj));
+     _elm_theme_object_set(obj, wd->base, "index", "base/horizontal", elm_widget_style_get(obj));
    else
-     _elm_theme_set(wd->base, "index", "base/vertical", elm_widget_style_get(obj));
+     _elm_theme_object_set(obj, wd->base, "index", "base/vertical", elm_widget_style_get(obj));
    edje_object_part_swallow(wd->base, "elm.swallow.event.0", wd->event[0]);
    edje_object_part_swallow(wd->base, "elm.swallow.index.0", wd->bx[0]);
    if (edje_object_part_exists(wd->base, "elm.swallow.index.1"))
@@ -197,9 +197,9 @@ _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level)
         o = edje_object_add(evas_object_evas_get(obj));
         it->base = o;
         if (i & 0x1)
-          _elm_theme_set(o, "index", "item_odd/vertical", "default");
+          _elm_theme_object_set(obj, o, "index", "item_odd/vertical", "default");
         else
-          _elm_theme_set(o, "index", "item/vertical", "default");
+          _elm_theme_object_set(obj, o, "index", "item/vertical", "default");
         edje_object_part_text_set(o, "elm.text", it->letter);
         edje_object_size_min_restricted_calc(o, &mw, &mh, 0, 0);
         evas_object_size_hint_min_set(o, mw, mh);
@@ -494,7 +494,7 @@ elm_index_add(Evas_Object *parent)
    wd->horizontal = EINA_FALSE;
 
    wd->base = edje_object_add(e);
-   _elm_theme_set(wd->base, "index", "base/vertical", "default");
+   _elm_theme_object_set(obj, wd->base, "index", "base/vertical", "default");
    elm_widget_resize_object_set(obj, wd->base);
 
    o = evas_object_rectangle_add(e);

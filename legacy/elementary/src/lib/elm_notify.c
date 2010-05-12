@@ -70,9 +70,9 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _elm_theme_set(wd->notify, "notify", "base", "default");
+   _elm_theme_object_set(obj, wd->notify, "notify", "base", "default");
    if (wd->block_events)
-     _elm_theme_set(wd->block_events, "notify", "block_events", "default");
+     _elm_theme_object_set(obj, wd->block_events, "notify", "block_events", "default");
    edje_object_scale_set(wd->notify, elm_widget_scale_get(obj) *
                          _elm_config->scale);
    _sizing_eval(obj);
@@ -385,31 +385,31 @@ elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient)
    switch (orient)
      {
      case ELM_NOTIFY_ORIENT_TOP:
-        _elm_theme_set(wd->notify, "notify", "base", "default");
+        _elm_theme_object_set(obj, wd->notify, "notify", "base", "default");
         break;
      case ELM_NOTIFY_ORIENT_CENTER:
-        _elm_theme_set(wd->notify, "notify", "base", "center");
+        _elm_theme_object_set(obj, wd->notify, "notify", "base", "center");
         break;
      case ELM_NOTIFY_ORIENT_BOTTOM:
-        _elm_theme_set(wd->notify, "notify", "base", "bottom");
+        _elm_theme_object_set(obj, wd->notify, "notify", "base", "bottom");
         break;
      case ELM_NOTIFY_ORIENT_LEFT:
-        _elm_theme_set(wd->notify, "notify", "base", "left");
+        _elm_theme_object_set(obj, wd->notify, "notify", "base", "left");
         break;
      case ELM_NOTIFY_ORIENT_RIGHT:
-        _elm_theme_set(wd->notify, "notify", "base", "right");
+        _elm_theme_object_set(obj, wd->notify, "notify", "base", "right");
         break;
      case ELM_NOTIFY_ORIENT_TOP_LEFT:
-        _elm_theme_set(wd->notify, "notify", "base", "top_left");
+        _elm_theme_object_set(obj, wd->notify, "notify", "base", "top_left");
         break;
      case ELM_NOTIFY_ORIENT_TOP_RIGHT:
-        _elm_theme_set(wd->notify, "notify", "base", "top_right");
+        _elm_theme_object_set(obj, wd->notify, "notify", "base", "top_right");
         break;
      case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
-        _elm_theme_set(wd->notify, "notify", "base", "bottom_left");
+        _elm_theme_object_set(obj, wd->notify, "notify", "base", "bottom_left");
         break;
      case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
-        _elm_theme_set(wd->notify, "notify", "base", "bottom_right");
+        _elm_theme_object_set(obj, wd->notify, "notify", "base", "bottom_right");
         break;
      }
    _resize(obj, NULL, obj, NULL);
@@ -469,7 +469,7 @@ elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
    if (!repeat)
      {
 	wd->block_events = edje_object_add(evas_object_evas_get(obj));
-	_elm_theme_set(wd->block_events, "notify", "block_events", "default");
+	_elm_theme_object_set(obj, wd->block_events, "notify", "block_events", "default");
         elm_widget_resize_object_set(obj, wd->block_events);
 	edje_object_signal_callback_add(wd->block_events, "elm,action,clicked", "elm", _signal_block_clicked, obj);
      }

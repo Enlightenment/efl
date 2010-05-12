@@ -95,9 +95,9 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->horizontal)
-     _elm_theme_set(wd->slider, "slider", "horizontal", elm_widget_style_get(obj));
+     _elm_theme_object_set(obj, wd->slider, "slider", "horizontal", elm_widget_style_get(obj));
    else
-     _elm_theme_set(wd->slider, "slider", "vertical", elm_widget_style_get(obj));
+     _elm_theme_object_set(obj, wd->slider, "slider", "vertical", elm_widget_style_get(obj));
    if (wd->inverted)
      edje_object_signal_emit(wd->slider, "elm,state,inverted,on", "elm");
    else
@@ -319,7 +319,7 @@ elm_slider_add(Evas_Object *parent)
    wd->val_max = 1.0;
 
    wd->slider = edje_object_add(e);
-   _elm_theme_set(wd->slider, "slider", "horizontal", "default");
+   _elm_theme_object_set(obj, wd->slider, "slider", "horizontal", "default");
    elm_widget_resize_object_set(obj, wd->slider);
    edje_object_signal_callback_add(wd->slider, "drag", "*", _drag, obj);
    edje_object_signal_callback_add(wd->slider, "drag,start", "*", _drag_start, obj);

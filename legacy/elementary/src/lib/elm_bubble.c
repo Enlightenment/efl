@@ -39,7 +39,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _elm_theme_set(wd->bbl, "bubble", "base", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->bbl, "bubble", "base", elm_widget_style_get(obj));
    edje_object_part_text_set(wd->bbl, "elm.text", wd->label);
    edje_object_part_text_set(wd->bbl, "elm.info", wd->info);
    edje_object_scale_set(wd->bbl, elm_widget_scale_get(obj) * _elm_config->scale);
@@ -106,7 +106,7 @@ elm_bubble_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
 
    wd->bbl = edje_object_add(e);
-   _elm_theme_set(wd->bbl, "bubble", "base", "default");
+   _elm_theme_object_set(obj, wd->bbl, "bubble", "base", "default");
    elm_widget_resize_object_set(obj, wd->bbl);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
@@ -299,7 +299,7 @@ elm_bubble_corner_set(Evas_Object *obj, const char *corner)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _elm_theme_set(wd->bbl, "bubble", corner, elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->bbl, "bubble", corner, elm_widget_style_get(obj));
    if (wd->icon)
      edje_object_part_swallow(wd->bbl, "elm.swallow.icon", wd->icon);
    if (wd->content)

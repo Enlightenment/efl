@@ -266,7 +266,7 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
    evas_object_clip_set(it->base, wd->clip);
    elm_widget_sub_object_add(obj, it->base);
    elm_widget_sub_object_add(obj, it->content);
-   _elm_theme_set(it->base,  "pager", "base", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, it->base,  "pager", "base", elm_widget_style_get(obj));
    edje_object_signal_callback_add(it->base, "elm,action,hide,finished", "", 
                                    _signal_hide_finished, it);
    evas_object_event_callback_add(it->content,

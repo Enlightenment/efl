@@ -36,7 +36,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _elm_theme_set(wd->frm, "frame", "base", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->frm, "frame", "base", elm_widget_style_get(obj));
    if (wd->content)
      edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->content);
    edje_object_scale_set(wd->frm, elm_widget_scale_get(obj) * _elm_config->scale);
@@ -106,7 +106,7 @@ elm_frame_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
 
    wd->frm = edje_object_add(e);
-   _elm_theme_set(wd->frm, "frame", "base", "default");
+   _elm_theme_object_set(obj, wd->frm, "frame", "base", "default");
    elm_widget_resize_object_set(obj, wd->frm);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);

@@ -216,8 +216,8 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_smart_scroller_theme_set(wd->scr, "grid", "base",
-				elm_widget_style_get(obj));
+   elm_smart_scroller_object_theme_set(obj, wd->scr, "grid", "base",
+                                       elm_widget_style_get(obj));
    _sizing_eval(obj);
 }
 
@@ -459,8 +459,8 @@ _cell_realize(Elm_Grid_Cell *cell)
 			 _elm_config->scale);
    evas_object_smart_member_add(cell->base, cell->wd->pan_smart);
    elm_widget_sub_object_add(cell->wd->self, cell->base);
-   _elm_theme_set(cell->base, "grid", "cell/default",
-		  elm_widget_style_get(cell->wd->self));
+   _elm_theme_object_set(cell->wd->self, cell->base, "grid", "cell/default",
+                         elm_widget_style_get(cell->wd->self));
    cell->spacer = evas_object_rectangle_add(evas_object_evas_get(cell->wd->self));
    evas_object_color_set(cell->spacer, 0, 0, 0, 0);
    elm_widget_sub_object_add(cell->wd->self, cell->spacer);
@@ -955,7 +955,7 @@ elm_scrolled_grid_add(Evas_Object *parent)
 
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
-   elm_smart_scroller_theme_set(wd->scr, "grid", "base", "default");
+   elm_smart_scroller_object_theme_set(obj, wd->scr, "grid", "base", "default");
    elm_widget_resize_object_set(obj, wd->scr);
 
    evas_object_smart_callback_add(wd->scr, "drag,start", _scr_drag_start, obj);
