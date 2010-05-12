@@ -874,6 +874,46 @@ elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *l
 }
 
 /**
+ * Insert a new item into the sorted list object.
+ *
+ * @param obj The list object
+ * @param label The label of the list item
+ * @param icon The icon object to use for the left side of the item
+ * @param end The icon object to use for the right side of the item
+ * @param func The function to call when the item is clicked
+ * @param data The data to associate with the item for related callbacks
+ * @param cmp_func The function called for the sort.
+ *
+ * @return The created item or NULL upon failure
+ *
+ * @ingroup List
+ */
+EAPI Elm_List_Item *
+elm_list_item_sorted_insert(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data, Eina_Compare_Cb cmp_func)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
+   Eina_List *l;
+
+   wd->items = eina_list_sorted_insert(wd->items, cmp_func, it);
+   l = eina_list_data_find_list(wd->items, it);
+   l = eina_list_next(l);
+   if (!l)
+     {
+	it->node = eina_list_last(wd->items);
+	elm_box_pack_end(wd->box, it->base);
+     }
+   else
+     {
+	Elm_List_Item *before = eina_list_data_get(l);
+	it->node = before->node->prev;
+	elm_box_pack_before(wd->box, it->base, before->base);
+     }
+   return it;
+}
+
+/**
  * Clears a list of all items.
  *
  * @param obj The list object

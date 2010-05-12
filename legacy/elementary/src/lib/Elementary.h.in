@@ -965,6 +965,7 @@ extern "C" {
    EAPI Elm_List_Item   *elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
    EAPI Elm_List_Item   *elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
    EAPI Elm_List_Item   *elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
+   EAPI Elm_List_Item   *elm_list_item_sorted_insert(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data, Eina_Compare_Cb cmp_func);
    EAPI void             elm_list_clear(Evas_Object *obj);
    EAPI void             elm_list_go(Evas_Object *obj);
    EAPI void             elm_list_multi_select_set(Evas_Object *obj, Eina_Bool multi);
