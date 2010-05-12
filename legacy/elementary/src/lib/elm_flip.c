@@ -400,6 +400,22 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
    _configure(obj);
 }
 
+EAPI Evas_Object *
+elm_flip_content_front_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->front.content;
+}
+
+EAPI Evas_Object *
+elm_flip_content_back_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->back.content;
+}
+
 /**
  * Get flip front visibility state
  *

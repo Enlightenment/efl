@@ -273,7 +273,7 @@ extern "C" {
    EAPI void         elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coord *h);
 
    EAPI Elm_Theme   *elm_theme_new(void);
-   EAPI void         elm_theme_free(Elm_Theme *th);
+  EAPI void         elm_theme_free(Elm_Theme *th);
    EAPI void         elm_theme_overlay_add(Elm_Theme *th, const char *item);
    EAPI void         elm_theme_overlay_del(Elm_Theme *th, const char *item);
    EAPI void         elm_theme_extension_add(Elm_Theme *th, const char *item);
@@ -543,9 +543,11 @@ extern "C" {
 
    EAPI Evas_Object *elm_table_add(Evas_Object *parent);
    EAPI void         elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous);
-   EAPI void         elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h);
    EAPI void	     elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical);
-
+   EAPI void         elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h);
+   EAPI void         elm_table_unpack(Evas_Object *obj, Evas_Object *subobj);
+   EAPI void         elm_table_clear(Evas_Object *obj, Eina_Bool clear);
+       
    typedef struct _Elm_Grid_Cell_Class Elm_Grid_Cell_Class;
    typedef struct _Elm_Grid_Cell_Class_Func Elm_Grid_Cell_Class_Func;
    typedef struct _Elm_Grid_Cell Elm_Grid_Cell;
@@ -1427,30 +1429,10 @@ extern "C" {
    EAPI void                  elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient);
    EAPI Elm_Panel_Orient      elm_panel_orient_get(Evas_Object *obj);
    EAPI void                  elm_panel_content_set(Evas_Object *obj, Evas_Object *content);
-EAPI void elm_panel_hidden_set(Evas_Object *obj, Eina_Bool hidden);
-EAPI Eina_Bool elm_panel_hidden_get(Evas_Object *obj);
-EAPI void elm_panel_toggle(Evas_Object *obj);
+   EAPI void                  elm_panel_hidden_set(Evas_Object *obj, Eina_Bool hidden);
+   EAPI Eina_Bool             elm_panel_hidden_get(Evas_Object *obj);
+   EAPI void                  elm_panel_toggle(Evas_Object *obj);
 
-
-#if 1 // working on it
-   // flip types:
-   //  rotate around y axis 180 degrees
-   //  rotate around x axis 180 degrees
-   // 
-   // properties
-   //  perspective focal dist, x, y
-   // 
-   // FIXME:
-   // custom value
-   //  map 1/0
-   // 
-   //  center x, y, z
-   //  angle x, y, z
-   // 
-   //  light 1/0
-   //  light rgb
-   //  light ambient rgb
-   //  light x, y, z
    typedef enum _Elm_Flip_Mode
      {
         ELM_FLIP_ROTATE_Y_CENTER_AXIS,
@@ -1462,13 +1444,14 @@ EAPI void elm_panel_toggle(Evas_Object *obj);
    EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
    EAPI void         elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content);
    EAPI void         elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content);
+   EAPI Evas_Object *elm_flip_content_front_get(const Evas_Object *obj);
+   EAPI Evas_Object *elm_flip_content_back_get(const Evas_Object *obj);
    EAPI Eina_Bool    elm_flip_front_get(const Evas_Object *obj);
    EAPI void         elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc, Evas_Coord x, Evas_Coord y);
    EAPI void         elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode);
    /* smart callbacks called:
     * "animate,done" - when a flip animation is finished
     */
-#endif
    
    EAPI Evas_Object *elm_scrolled_entry_add(Evas_Object *parent);
    EAPI void         elm_scrolled_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line);
