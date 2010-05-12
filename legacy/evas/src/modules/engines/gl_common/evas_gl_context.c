@@ -1242,7 +1242,7 @@ shader_array_flush(Evas_GL_Context *gc)
 
    if (gc->shader.cur_tex != gc->shader.current.cur_tex)
      {
-#if 1
+#if 0
         if (gc->shader.cur_tex)
           {
              glEnable(GL_TEXTURE_2D);
