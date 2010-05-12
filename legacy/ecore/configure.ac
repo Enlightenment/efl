@@ -306,6 +306,11 @@ m4_ifdef([AC_PROG_OBJC],
     AC_SUBST([OBJC])
     AC_SUBST([OBJCFLAGS])
    ])
+m4_ifndef([am__fastdepOBJC], [
+    AM_CONDITIONAL([am__fastdepOBJC], [false])
+    AC_SUBST([cocoa_ldflags])
+])
+
 AC_PROG_CXX
 AC_PROG_CC
 
@@ -874,18 +879,17 @@ AC_CHECK_HEADER([linux/fb.h],
 
 cocoa_ldflags="";
 have_cocoa="no"
-
-if test "x${have_gnu_objc}" = "xyes" ; then
-   AC_LANG_PUSH([Objective C])
-   AC_CHECK_HEADER([Cocoa/Cocoa.h],
-      [
-       have_cocoa="yes"
-       cocoa_ldflags="-framework Cocoa"
-      ],
-      [have_cocoa="no"])
-   AC_LANG_POP([Objective C])
-fi
-
+m4_ifdef([AC_PROG_OBJC], [
+    if test "x${have_gnu_objc}" = "xyes" ; then
+       AC_LANG_PUSH([Objective C])
+       AC_CHECK_HEADER([Cocoa/Cocoa.h],
+          [
+           have_cocoa="yes"
+           cocoa_ldflags="-framework Cocoa"
+          ])
+       AC_LANG_POP([Objective C])
+    fi
+])
 AC_SUBST(cocoa_ldflags)
 
 # basic pthread support

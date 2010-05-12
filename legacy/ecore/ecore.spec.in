@@ -35,10 +35,12 @@
 %define ac_with_lib_ecore_imf       --%{?with_lib_ecore_imf:en}%{!?with_lib_ecore_imf:dis}able-ecore-imf
 %define ac_with_lib_ecore_sdl       --%{?with_lib_ecore_sdl:en}%{!?with_lib_ecore_sdl:dis}able-ecore-sdl
 
+%{!?_rel:%{expand:%%global _rel 0.r%(svnversion | sed 's/[^0-9].*$//' || echo 0000)}}
+
 Summary: Enlightened Core X interface library
 Name: @PACKAGE@
 Version: @VERSION@
-Release: 0.%(date '+%Y%m%d')
+Release: %{_rel}
 License: BSD
 Group: User Interface/X
 Source: %{name}-%{version}.tar.gz
@@ -62,19 +64,11 @@ Summary: Ecore headers and development libraries.
 Group: Development/Libraries
 Requires: %{name} = %{version}
 Requires: curl-devel, openssl-devel, evas-devel, eet-devel
-Requires: ecore-bin, ecore-con, ecore-config, ecore-evas, ecore-file, ecore-ipc
+Requires: ecore-con, ecore-evas, ecore-file, ecore-ipc
 Requires: ecore-x %{?with_lib_ecore_fb:ecore-fb} %{?with_lib_ecore_directfb:ecore-directfb}
 
 %description devel
 Ecore development files
-
-%package bin
-Summary: Tools that support Ecore
-Group: Development/Libraries
-Requires: %{name} = %{version}
-
-%description bin
-Tools that support Ecore
 
 %package con
 Summary: Ecore Connection Library
@@ -83,14 +77,6 @@ Requires: %{name} = %{version}
 
 %description con
 Ecore Connection Library
-
-%package config
-Summary: Ecore Enlightened Property Library
-Group: Development/Libraries
-Requires: %{name} = %{version}
-
-%description config
-Ecore Enlightened Property Library
 
 %if %{with lib_ecore_directfb}
 %package directfb
@@ -135,6 +121,14 @@ Requires: %{name} = %{version}
 Ecore IMF functions
 %endif
 
+%package input
+Summary: Ecore input functions
+Group: Development/Libraries
+Requires: %{name} = %{version}
+
+%description input
+Ecore input functions
+
 %package ipc
 Summary: Ecore inter-process communication functions
 Group: Development/Libraries
@@ -168,6 +162,7 @@ export CFLAGS LDFLAGS
 
 %install
 %{__make} %{?mflags_install} DESTDIR=$RPM_BUILD_ROOT install
+%{find_lang} %{name}
 
 %post
 /sbin/ldconfig || :
@@ -178,10 +173,10 @@ export CFLAGS LDFLAGS
 %clean
 test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 
-%files
+%files -f %{name}.lang
 %defattr(-, root, root)
 %doc AUTHORS COPYING* README*
-%{_libdir}/libecore.so.*
+%{_libdir}/libecore*.so.*
 
 %files devel
 %defattr(-, root, root)
@@ -193,37 +188,29 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 #%{_datadir}/aclocal/*
 %{_includedir}/*.h
 
-%files bin
-%defattr(-, root, root)
-%{_bindir}/ecore_config
-
 %files con
 %defattr(-, root, root)
-%{_libdir}/libecore_con.so.*
-
-%files config
-%defattr(-, root, root)
-%{_libdir}/libecore_config.so.*
+%{_libdir}/libecore_con*.so.*
 
 %if %{with lib_ecore_directfb}
 %files directfb
 %defattr(-, root, root)
-%{_libdir}/libecore_directfb.so.*
+%{_libdir}/libecore_directfb*.so.*
 %endif
 
 %files evas
 %defattr(-, root, root)
-%{_libdir}/libecore_evas.so.*
+%{_libdir}/libecore_evas*.so.*
 
 %if %{with lib_ecore_fb}
 %files fb
 %defattr(-, root, root)
-%{_libdir}/libecore_fb.so.*
+%{_libdir}/libecore_fb*.so.*
 %endif
 
 %files file
 %defattr(-, root, root)
-%{_libdir}/libecore_file.so.*
+%{_libdir}/libecore_file*.so.*
 
 %if %{with lib_ecore_imf}
 %files imf
@@ -231,10 +218,14 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libecore_imf*.so.*
 %endif
 
+%files input
+%defattr(-, root, root)
+%{_libdir}/libecore_input*.so.*
+
 %files ipc
 %defattr(-, root, root)
-%{_libdir}/libecore_ipc.so.*
+%{_libdir}/libecore_ipc*.so.*
 
 %files x
 %defattr(-, root, root)
-%{_libdir}/libecore_x.so.*
+%{_libdir}/libecore_x*.so.*
