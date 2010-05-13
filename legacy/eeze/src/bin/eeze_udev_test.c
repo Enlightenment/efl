@@ -11,32 +11,32 @@ typedef struct kbdmouse
 
 static void
 /* event will always be a syspath starting with /sys */
-catch_events(const char *event, void *data, Eudev_Watch *watch)
+catch_events(const char *device, const char *event, void *data, Eudev_Watch *watch)
 {
    kbdmouse *akbdmouse = data;
    Eina_List *l;
    const char *name, *dev, *type;
    int new = 0;
 
-   /* the event that comes through will be prefixed by "/sys"
+   /* the device that comes through will be prefixed by "/sys"
     * but the saved name will not, so we check for the saved name
-    * inside the event name
+    * inside the device name
     */
    EINA_LIST_FOREACH(akbdmouse->kbds, l, name)
-     if (strstr(event, name)) goto end;
+     if (strstr(device, name)) goto end;
    EINA_LIST_FOREACH(akbdmouse->mice, l, name)
-     if (strstr(event, name)) goto end;
+     if (strstr(device, name)) goto end;
 
    /* check to see if the device was just plugged in */
-   if (e_udev_syspath_is_kbd(event) || e_udev_syspath_is_mouse(event))
+   if (e_udev_syspath_is_kbd(device) || e_udev_syspath_is_mouse(device))
    {
       new = 1;
       goto end;
    }
-   /* if we reach here, the event is neither a keyboard nor a mouse that we saw
+   /* if we reach here, the device is neither a keyboard nor a mouse that we saw
     * previously, so we print a moderately amusing message and bail
     */
-   printf("Sneaky sneaky!  But %s is not a keyboard or a mouse!!\n", event);
+   printf("Sneaky sneaky!  But %s is not a keyboard or a mouse!!\n", device);
    return;
 
 end:
@@ -46,7 +46,7 @@ end:
     */
    if (new)
      {
-        dev = e_udev_syspath_get_devpath(event);
+        dev = e_udev_syspath_get_devpath(device);
         type = "plugged in";
      }
    else

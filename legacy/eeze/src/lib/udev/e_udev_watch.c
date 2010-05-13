@@ -12,7 +12,7 @@ struct Eudev_Watch
 /* private */
 struct _store_data
 {
-   void(*func)(const char *, void *, Eudev_Watch *);
+   void(*func)(const char *, const char *, void *, Eudev_Watch *);
    void *data;
    struct udev_monitor *mon;
    Eudev_Type type;
@@ -28,7 +28,7 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
    struct _store_data *store = data;
    struct udev_device *device;
    const char *ret, *test;
-   void(*func)(const char *, void *, Eudev_Watch *) = store->func;
+   void(*func)(const char *, const char *, void *, Eudev_Watch *) = store->func;
    void *sdata = store->data;
    Eudev_Watch *watch = store->watch;
    int cap = 0;
@@ -89,13 +89,25 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
         default:
           break;
      }
-
+   test = eina_stringshare_add(udev_device_get_action(device));
+   if (!test)
+     {
+        udev_device_unref(device);
+        return 0;
+     }
    ret = eina_stringshare_add(udev_device_get_syspath(device));
-			if (!ret) return 0;
+			if (!ret)
+     {
+        udev_device_unref(device);
+        eina_stringshare_del(test);
+        return 0;
+     }
 
    udev_device_unref(device);
 
-   (*func)(ret, sdata, watch);
+   (*func)(ret, test, sdata, watch);
+   eina_stringshare_del(test);
+   eina_stringshare_del(ret);
 
    return 1;
 
@@ -108,7 +120,8 @@ error:
  *
  * @param subsystem The subsystem type. See @ref Subsystem_Types
  * @param device_type The device type. See @ref Device_Types
- * @param func The function to call when the watch receives data
+ * @param func The function to call when the watch receives data;
+ * must take (const char *device, const char *event_type, void *data, Eudev_Watch *watch)
  * @param user_data Data to pass to the callback function
  *
  * @return A watch struct for the watch type specified, or NULL on failure
@@ -116,7 +129,7 @@ error:
  * @ingroup udev
  */
 EAPI Eudev_Watch *
-e_udev_watch_add(Eudev_Type type, void(*func)(const char *, void *, Eudev_Watch *), void *user_data)
+e_udev_watch_add(Eudev_Type type, void(*func)(const char *, const char *, void *, Eudev_Watch *), void *user_data)
 {
    struct udev *udev;
    struct udev_monitor *mon;
