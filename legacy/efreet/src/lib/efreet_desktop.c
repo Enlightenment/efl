@@ -129,7 +129,7 @@ static Eina_Bool efreet_desktop_x_fields_save(const Eina_Hash *hash,
                                                 void *fdata);
 static int efreet_desktop_environment_check(Efreet_Ini *ini);
 
-static void efreet_desktop_write_cache_dirs_file(void);
+static int efreet_desktop_write_cache_dirs_file(void);
 
 static void efreet_desktop_cache_update_cb(void *data, Ecore_File_Monitor *em,
                                            Ecore_File_Event event, const char *path);
@@ -1309,7 +1309,7 @@ efreet_desktop_edd_shutdown(Eet_Data_Descriptor *edd)
     eet_data_descriptor_free(edd);
 }
 
-static void
+static int
 efreet_desktop_write_cache_dirs_file(void)
 {
     char file[PATH_MAX];
@@ -1319,9 +1319,11 @@ efreet_desktop_write_cache_dirs_file(void)
     char *dir;
     struct stat st;
 
+    if (!efreet_desktop_dirs) return 1;
+
     snprintf(file, sizeof(file), "%s/.efreet/desktop_data.lock", efreet_home_dir_get());
     fd = open(file, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
-    if (fd < 0) return;
+    if (fd < 0) return 0;
     /* TODO: Retry update cache later */
     if (flock(fd, LOCK_EX | LOCK_NB) < 0) goto error;
 
@@ -1362,12 +1364,14 @@ efreet_desktop_write_cache_dirs_file(void)
         eina_stringshare_del(dir);
     }
     efreet_desktop_dirs = NULL;
+    return 1;
 
 error:
     if (map != MAP_FAILED) munmap(map, st.st_size);
     if (fd > 0) close(fd);
     if (cachefd > 0) close(cachefd);
     efreet_desktop_job = NULL;
+    return 0;
 }
 
 static void
@@ -1470,7 +1474,7 @@ efreet_desktop_update_cache_job(void *data __UNUSED__)
     /* TODO: Retry update cache later */
     if (efreet_desktop_exe_lock > 0) return;
 
-    efreet_desktop_write_cache_dirs_file();
+    if (!efreet_desktop_write_cache_dirs_file()) return;
 
     snprintf(file, sizeof(file), "%s/.efreet/desktop_exec.lock", efreet_home_dir_get());
 
