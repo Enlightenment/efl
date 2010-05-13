@@ -876,8 +876,6 @@ EAPI int
 ecore_con_url_http_post_send(Ecore_Con_Url *url_con, void *httppost)
 {
 #ifdef HAVE_CURL
-  int ret;
-
   if (url_con->post)
     curl_formfree(url_con->post);
   url_con->post = NULL;
