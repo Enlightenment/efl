@@ -1342,3 +1342,22 @@ elm_object_parent_widget_get(const Evas_Object *obj)
 {
    return elm_widget_parent_widget_get(obj);
 }
+
+/**
+ * Get the string that represents this Elementary widget.
+ *
+ * @note Elementary is weird and exposes itself as a single
+ *       Evas_Object_Smart_Class of type "elm_widget", so
+ *       evas_object_type_get() always return that, making debug and
+ *       language bindings hard. This function tries to mitigate this
+ *       problem, but the solution is to change Elementary to use
+ *       proper inheritance.
+ *
+ * @param obj the object to query.
+ * @return Elementary widget name, or @c NULL if not a valid widget.
+ */
+EAPI const char *
+elm_object_widget_type_get(const Evas_Object *obj)
+{
+   return elm_widget_type_get(obj);
+}
