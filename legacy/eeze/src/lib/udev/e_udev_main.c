@@ -23,7 +23,6 @@ e_udev_init(void)
 
    return _e_eeze_udev_init_count;
 
-   unregister_log_domain:
      eina_log_domain_unregister(_e_eeze_udev_log_dom);
      _e_eeze_udev_log_dom = -1;
    shutdown_eina:

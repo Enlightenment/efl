@@ -21,10 +21,10 @@ EAPI const char *
 e_udev_syspath_rootdev_get(const char *syspath)
 {
    struct udev *udev;
-			struct udev_device *device, *parent;
-			const char *ret;
+   struct udev_device *device, *parent;
+   const char *ret;
 
-			if (!syspath) return NULL;
+   if (!syspath) return NULL;
 
    udev = udev_new();
    if (!udev) return NULL;
@@ -56,11 +56,11 @@ e_udev_find_by_type(const Eudev_Type etype, const char *name)
    struct udev *udev;
    struct udev_enumerate *en;
    struct udev_list_entry *devs, *cur;
-   struct udev_device *device, *parent;
-   const char *sysname, *devname;
+   struct udev_device *device;
+   const char *devname;
    Eina_List *ret = NULL;
 
-   if (!etype && !name) return NULL;
+   if ((!etype) && (!name)) return NULL;
 
    udev = udev_new();
    if (!udev) return NULL;
@@ -69,57 +69,57 @@ e_udev_find_by_type(const Eudev_Type etype, const char *name)
 
    switch (etype)
      {
-						  case EUDEV_TYPE_NONE:
-						    break;
-						  case EUDEV_TYPE_KEYBOARD:
-										udev_enumerate_add_match_subsystem(en, "input");
-										udev_enumerate_add_match_property(en, "ID_INPUT_KEYBOARD", "1");
-						    break;
-   			  case EUDEV_TYPE_MOUSE:
-										udev_enumerate_add_match_subsystem(en, "input");
-										udev_enumerate_add_match_property(en, "ID_INPUT_MOUSE", "1");
-										break;
-   			  case EUDEV_TYPE_TOUCHPAD:
-										udev_enumerate_add_match_subsystem(en, "input");
-										udev_enumerate_add_match_property(en, "ID_INPUT_TOUCHPAD", "1");
-   			  		break;
-   			  case EUDEV_TYPE_DRIVE_MOUNTABLE:
-   			    udev_enumerate_add_match_subsystem(en, "block");
-										udev_enumerate_add_match_property(en, "ID_FS_USAGE", "filesystem");
-										udev_enumerate_add_nomatch_sysattr(en, "capability", "52");
-										break;
-   			  case EUDEV_TYPE_DRIVE_INTERNAL:
-										udev_enumerate_add_match_subsystem(en, "block");
-										udev_enumerate_add_match_property(en, "ID_TYPE", "disk");
-										udev_enumerate_add_match_property(en, "ID_BUS", "ata");
-										udev_enumerate_add_match_sysattr(en, "removable", "0");
-   			  		break;
+        case EUDEV_TYPE_NONE:
+          break;
+        case EUDEV_TYPE_KEYBOARD:
+          udev_enumerate_add_match_subsystem(en, "input");
+          udev_enumerate_add_match_property(en, "ID_INPUT_KEYBOARD", "1");
+          break;
+        case EUDEV_TYPE_MOUSE:
+          udev_enumerate_add_match_subsystem(en, "input");
+          udev_enumerate_add_match_property(en, "ID_INPUT_MOUSE", "1");
+          break;
+        case EUDEV_TYPE_TOUCHPAD:
+          udev_enumerate_add_match_subsystem(en, "input");
+          udev_enumerate_add_match_property(en, "ID_INPUT_TOUCHPAD", "1");
+          break;
+        case EUDEV_TYPE_DRIVE_MOUNTABLE:
+          udev_enumerate_add_match_subsystem(en, "block");
+          udev_enumerate_add_match_property(en, "ID_FS_USAGE", "filesystem");
+          udev_enumerate_add_nomatch_sysattr(en, "capability", "52");
+          break;
+        case EUDEV_TYPE_DRIVE_INTERNAL:
+          udev_enumerate_add_match_subsystem(en, "block");
+          udev_enumerate_add_match_property(en, "ID_TYPE", "disk");
+          udev_enumerate_add_match_property(en, "ID_BUS", "ata");
+          udev_enumerate_add_match_sysattr(en, "removable", "0");
+          break;
         case EUDEV_TYPE_DRIVE_REMOVABLE:
-										udev_enumerate_add_match_subsystem(en, "block");
-										udev_enumerate_add_match_property(en, "ID_TYPE", "disk");
-										udev_enumerate_add_match_sysattr(en, "removable", "1");
-   			  		break;
-   			  case EUDEV_TYPE_DRIVE_CDROM:
-										udev_enumerate_add_match_subsystem(en, "block");
-										udev_enumerate_add_match_property(en, "ID_CDROM", "1");
-   			  		break;
-   			  case EUDEV_TYPE_POWER_AC:
-										udev_enumerate_add_match_subsystem(en, "power_supply");
-										udev_enumerate_add_match_property(en, "POWER_SUPPLY_TYPE", "Mains");
-   			  		break;
-   			  case EUDEV_TYPE_POWER_BAT:
-										udev_enumerate_add_match_subsystem(en, "power_supply");
-										udev_enumerate_add_match_property(en, "POWER_SUPPLY_TYPE", "Battery");
-   			  		break;
+          udev_enumerate_add_match_subsystem(en, "block");
+          udev_enumerate_add_match_property(en, "ID_TYPE", "disk");
+          udev_enumerate_add_match_sysattr(en, "removable", "1");
+          break;
+        case EUDEV_TYPE_DRIVE_CDROM:
+          udev_enumerate_add_match_subsystem(en, "block");
+          udev_enumerate_add_match_property(en, "ID_CDROM", "1");
+          break;
+        case EUDEV_TYPE_POWER_AC:
+          udev_enumerate_add_match_subsystem(en, "power_supply");
+          udev_enumerate_add_match_property(en, "POWER_SUPPLY_TYPE", "Mains");
+          break;
+        case EUDEV_TYPE_POWER_BAT:
+          udev_enumerate_add_match_subsystem(en, "power_supply");
+          udev_enumerate_add_match_property(en, "POWER_SUPPLY_TYPE", "Battery");
+          break;
 /*
-   			  case EUDEV_TYPE_ANDROID:
-										udev_enumerate_add_match_subsystem(en, "block");
-										udev_enumerate_add_match_property(en, "ID_MODEL", "Android_*");
-   			  		break;
+        case EUDEV_TYPE_ANDROID:
+          udev_enumerate_add_match_subsystem(en, "block");
+          udev_enumerate_add_match_property(en, "ID_MODEL", "Android_*");
+          break;
 */
-   			  default:
-										break;
-   		}
+        default:
+          break;
+     }
    udev_enumerate_scan_devices(en);
    devs = udev_enumerate_get_list_entry(en);
 
@@ -129,8 +129,8 @@ e_udev_find_by_type(const Eudev_Type etype, const char *name)
         device = udev_device_new_from_syspath(udev, devname);
 
         if (name)
-             if (!strstr(sysname,name))
-															goto out;
+             if (!strstr(devname,name))
+               goto out;
 
         ret = eina_list_append(ret, eina_stringshare_add(udev_device_get_property_value(device, "DEVPATH")));
 
@@ -162,11 +162,11 @@ e_udev_find_by_filter(const char *subsystem, const char *type, const char *name)
    struct udev *udev;
    struct udev_enumerate *en;
    struct udev_list_entry *devs, *cur;
-   struct udev_device *device, *parent;
-   const char *sysname, *id_type, *devname;
+   struct udev_device *device;
+   const char *devname;
    Eina_List *ret = NULL;
 
-   if (!subsystem && !type && !name) return NULL;
+   if ((!subsystem) && (!type) && (!name)) return NULL;
 
    udev = udev_new();
    if (!udev) return NULL;
@@ -186,8 +186,8 @@ e_udev_find_by_filter(const char *subsystem, const char *type, const char *name)
         device = udev_device_new_from_syspath(udev, devname);
 
         if (name)
-             if (!strstr(sysname,name))
-															goto out;
+             if (!strstr(devname,name))
+               goto out;
 
         ret = eina_list_append(ret, eina_stringshare_add(udev_device_get_property_value(device, "DEVPATH")));
 
@@ -225,8 +225,8 @@ e_udev_syspath_get_devpath(const char *syspath)
       
       sbuf = eina_strbuf_new();
       if (!strstr(syspath, "/sys/"))
-								eina_strbuf_append(sbuf, "/sys/");
-						eina_strbuf_append(sbuf, syspath);
+        eina_strbuf_append(sbuf, "/sys/");
+      eina_strbuf_append(sbuf, syspath);
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
       name = eina_stringshare_add(udev_device_get_property_value(device, "DEVNAME"));
@@ -263,8 +263,8 @@ e_udev_syspath_get_subsystem(const char *syspath)
       
       sbuf = eina_strbuf_new();
       if (!strstr(syspath, "/sys/"))
-								eina_strbuf_append(sbuf, "/sys/");
-						eina_strbuf_append(sbuf, syspath);
+        eina_strbuf_append(sbuf, "/sys/");
+      eina_strbuf_append(sbuf, syspath);
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
       subsystem = eina_stringshare_add(udev_device_get_property_value(device, "SUBSYSTEM"));
@@ -302,8 +302,8 @@ e_udev_syspath_get_property(const char *syspath, const char *property)
 
       sbuf = eina_strbuf_new();
       if (!strstr(syspath, "/sys/"))
-								eina_strbuf_append(sbuf, "/sys/");
-						eina_strbuf_append(sbuf, syspath);
+        eina_strbuf_append(sbuf, "/sys/");
+      eina_strbuf_append(sbuf, syspath);
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
       value = eina_stringshare_add(udev_device_get_property_value(device, property));
@@ -331,7 +331,7 @@ e_udev_devpath_get_syspath(const char *devpath)
    struct udev *udev;
    struct udev_enumerate *en;
    struct udev_list_entry *devs, *cur;
-   struct udev_device *device, *parent;
+   struct udev_device *device;
    const char *name, *ret;
 
    if (!devpath) return NULL;
@@ -426,8 +426,8 @@ e_udev_syspath_is_mouse(const char *syspath)
       
       sbuf = eina_strbuf_new();
       if (!strstr(syspath, "/sys/"))
-								eina_strbuf_append(sbuf, "/sys/");
-						eina_strbuf_append(sbuf, syspath);
+        eina_strbuf_append(sbuf, "/sys/");
+      eina_strbuf_append(sbuf, syspath);
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
       test = udev_device_get_property_value(device, "ID_INPUT_MOUSE");
@@ -462,8 +462,8 @@ e_udev_syspath_is_kbd(const char *syspath)
       
       sbuf = eina_strbuf_new();
       if (!strstr(syspath, "/sys/"))
-								eina_strbuf_append(sbuf, "/sys/");
-						eina_strbuf_append(sbuf, syspath);
+        eina_strbuf_append(sbuf, "/sys/");
+      eina_strbuf_append(sbuf, syspath);
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
       test = udev_device_get_property_value(device, "ID_INPUT_KEYBOARD");
@@ -498,8 +498,8 @@ e_udev_syspath_is_touchpad(const char *syspath)
       
       sbuf = eina_strbuf_new();
       if (!strstr(syspath, "/sys/"))
-								eina_strbuf_append(sbuf, "/sys/");
-						eina_strbuf_append(sbuf, syspath);
+        eina_strbuf_append(sbuf, "/sys/");
+      eina_strbuf_append(sbuf, syspath);
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
       test = udev_device_get_property_value(device, "ID_INPUT_TOUCHPAD");

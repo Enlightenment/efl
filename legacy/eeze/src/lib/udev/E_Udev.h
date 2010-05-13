@@ -89,7 +89,7 @@
 /*FIXME: these probably need to be bitmasks with categories*/
 typedef enum
 {
-	  EUDEV_TYPE_NONE,
+   EUDEV_TYPE_NONE,
    EUDEV_TYPE_KEYBOARD,
    EUDEV_TYPE_MOUSE,
    EUDEV_TYPE_TOUCHPAD,

@@ -159,4 +159,6 @@ int main()
 
    /* main loop must be started to use ecore fd polling */
    ecore_main_loop_begin();
+
+   return 0;
 }
