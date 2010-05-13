@@ -2120,8 +2120,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
      {
         if (!c->ln)
           {
-             int tw, th;
-             
              _layout_line_new(c, fmt);
              _layout_text_append(c, fmt, NULL, NULL);
              _layout_line_advance(c, fmt);
@@ -2172,9 +2170,9 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                   // href == name of item - to be found and matched later and used for
                   //   positioning
                   Evas_Object_Textblock_Format_Item *fi;
-                  int x2, w = 1, h = 1, y = 0;
+                  int x2, w = 1, h = 1;
                   int vsize = 0, size = 0;
-                  char *p, *href;
+                  char *p;
                   
                   // don't care
                   //href = strstr(s, " href=");

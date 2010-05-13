@@ -113,7 +113,6 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    Evas_Polygon_Point *p;
    Evas_Coord min_x, max_x, min_y, max_y;
    int is, was = 0;
-   int off_x, off_y;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
