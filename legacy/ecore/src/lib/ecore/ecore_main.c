@@ -915,11 +915,12 @@ _ecore_main_loop_iterate_internal(int once_only)
 
 #ifdef _WIN32
 static int
-_ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
+_ecore_main_win32_select(int nfds __UNUSED__, fd_set *readfds, fd_set *writefds,
 			 fd_set *exceptfds, struct timeval *tv)
 {
    HANDLE objects[MAXIMUM_WAIT_OBJECTS];
    int    sockets[MAXIMUM_WAIT_OBJECTS];
+   Ecore_Fd_Handler *fdh;
    Ecore_Win32_Handler *wh;
    unsigned int objects_nbr = 0;
    unsigned int handles_nbr = 0;
@@ -927,29 +928,29 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
    DWORD  result;
    DWORD  timeout;
    MSG    msg;
-   int    i;
+   unsigned int    i;
    int    res;
 
    /* Create an event object per socket */
-   for(i = 0; i < nfds; i++)
+   EINA_INLIST_FOREACH(fd_handlers, fdh)
      {
         WSAEVENT event;
         long network_event;
 
         network_event = 0;
-        if(FD_ISSET(i, readfds))
+        if(FD_ISSET(fdh->fd, readfds))
 	  network_event |= FD_READ;
-        if(FD_ISSET(i, writefds))
+        if(FD_ISSET(fdh->fd, writefds))
 	  network_event |= FD_WRITE;
-        if(FD_ISSET(i, exceptfds))
+        if(FD_ISSET(fdh->fd, exceptfds))
 	  network_event |= FD_OOB;
 
         if(network_event)
 	  {
              event = WSACreateEvent();
-	     WSAEventSelect(i, event, network_event);
+	     WSAEventSelect(fdh->fd, event, network_event);
 	     objects[objects_nbr] = event;
-	     sockets[events_nbr] = i;
+	     sockets[events_nbr] = fdh->fd;
 	     events_nbr++;
              objects_nbr++;
           }
@@ -1028,7 +1029,6 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
      }
    else if ((result >= WAIT_OBJECT_0 + events_nbr) && (result < WAIT_OBJECT_0 + objects_nbr))
      {
-
 	if (!win32_handler_current)
 	  {
 	     /* regular main loop, start from head */
@@ -1055,6 +1055,9 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
 		      }
 		    wh->references--;
 		 }
+
+             if (win32_handler_current) /* may have changed in recursive main loops */
+               win32_handler_current = (Ecore_Win32_Handler *)EINA_INLIST_GET(win32_handler_current)->next;
           }
         res = 1;
      }
@@ -1065,7 +1068,7 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
      }
 
    /* Remove event objects again */
-   for(i = 0; i < (int)events_nbr; i++)
+   for(i = 0; i < events_nbr; i++)
      WSACloseEvent(objects[i]);
 
    return res;
