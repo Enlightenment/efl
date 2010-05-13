@@ -362,6 +362,7 @@ evas_object_map_source_get(const Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   return NULL;
 }
 
 /**
