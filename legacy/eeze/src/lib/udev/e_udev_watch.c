@@ -34,9 +34,9 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
    int cap = 0;
 
    if (!ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
-     return 0;
+     return 1;
    device = udev_monitor_receive_device(store->mon);
-   if (!device) return 0;
+   if (!device) return 1;
 
 			switch (store->type)
 					{
@@ -93,14 +93,14 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
    if (!test)
      {
         udev_device_unref(device);
-        return 0;
+        return 1;
      }
    ret = eina_stringshare_add(udev_device_get_syspath(device));
 			if (!ret)
      {
         udev_device_unref(device);
         eina_stringshare_del(test);
-        return 0;
+        return 1;
      }
 
    udev_device_unref(device);
@@ -113,7 +113,7 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
 
 error:
 			udev_device_unref(device);
-			return 0;
+			return 1;
 }
 /**
  * Add a watch in a subsystem for a device type
@@ -150,31 +150,31 @@ e_udev_watch_add(Eudev_Type type, void(*func)(const char *, const char *, void *
    switch (type)
      {
 						  case EUDEV_TYPE_KEYBOARD:
-										udev_monitor_filter_add_match_subsystem_devtype(mon, "input", "usb_interface");
+										udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
 						    break;
    			  case EUDEV_TYPE_MOUSE:
-										udev_monitor_filter_add_match_subsystem_devtype(mon, "input", "usb_interface");
+										udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
 										break;
    			  case EUDEV_TYPE_TOUCHPAD:
-										udev_monitor_filter_add_match_subsystem_devtype(mon, "input", "usb_interface");
+										udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
    			  		break;
    			  case EUDEV_TYPE_DRIVE_MOUNTABLE:
-   			    udev_monitor_filter_add_match_subsystem_devtype(mon, "block", "disk");
+   			    udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
    			    break;
    			  case EUDEV_TYPE_DRIVE_INTERNAL:
-										udev_monitor_filter_add_match_subsystem_devtype(mon, "block", "disk");
+										udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
    			  		break;
         case EUDEV_TYPE_DRIVE_REMOVABLE:
-										udev_monitor_filter_add_match_subsystem_devtype(mon, "block", "disk");
+										udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
    			  		break;
    			  case EUDEV_TYPE_DRIVE_CDROM:
-										udev_monitor_filter_add_match_subsystem_devtype(mon, "block", "disk");
+										udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
    			  		break;
    			  case EUDEV_TYPE_POWER_AC:
-										udev_monitor_filter_add_match_subsystem_devtype(mon, "power_supply", "*");
+										udev_monitor_filter_add_match_subsystem_devtype(mon, "power_supply", NULL);
    			  		break;
    			  case EUDEV_TYPE_POWER_BAT:
-										udev_monitor_filter_add_match_subsystem_devtype(mon, "power_supply", "*");
+										udev_monitor_filter_add_match_subsystem_devtype(mon, "power_supply", NULL);
    			  		break;
 /*   			  		
    			  case EUDEV_TYPE_ANDROID:
@@ -233,8 +233,11 @@ e_udev_watch_del(Eudev_Watch *watch)
    udev_monitor_unref(mon);
    udev_unref(udev);
    sdata = ecore_main_fd_handler_del(handler);
-   ret = sdata->data;
-   free(sdata);
+   if (sdata)
+     {
+        ret = sdata->data;
+        free(sdata);
+     }
    free(watch);
 
    return ret;
