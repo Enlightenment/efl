@@ -1,0 +1,23 @@
+/**
+@file eeze.dox
+@brief Eeze Misc Libraries
+*/
+
+/**
+@mainpage Eeze
+@image html  eeze.png
+@version @PACKAGE_VERSION@
+@author Mike Blumenkrantz (zmike/discomfitor) <mike@zentific.com>
+@date 2010
+
+@section intro What is Eeze?
+
+Eeze is a collection of various APIs which may or may not be useful
+to developers working with EFL.  The aim is to eliminate the need to
+learn any api outside of EFL while simultaneously providing an 
+extremely easy way to manipulate external libraries.
+
+@verbatim
+Pants
+@endverbatim
+*/

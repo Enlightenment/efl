@@ -1,0 +1,9 @@
+udev: 	switch enum to bitmasks with categories probably
+	documentation for all types
+	more functions or something?
+
+TO BE ADDED
+mpd:	implement efl mpd bindings
+xen:	common xen control/info functions
+libvirt: same as above
+???
