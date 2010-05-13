@@ -72,7 +72,6 @@ AC_SUBST(ecore_win32_release_info)
 AC_SUBST(ecore_wince_release_info)
 AC_SUBST(ecore_x_release_info)
 
-AC_DEFINE_UNQUOTED(SHARED_LIB_SUFFIX, "$shrext_cmds", [Suffix for shared objects])
 
 with_max_log_level="<unset>"
 AC_ARG_WITH(internal-maximum-log-level,
