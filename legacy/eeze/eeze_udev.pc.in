@@ -3,9 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: eudev
+Name: eeze_udev
 Description: udev convenience library for efl
 @pkgconfig_requires_private@: ecore libudev
 Version: @VERSION@
-Libs: -L${libdir} -leudev
+Libs: -L${libdir} -leeze_udev
 Cflags: -I${includedir}

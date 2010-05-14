@@ -1,11 +1,11 @@
-#include "e_udev_private.h"
-#include <E_Udev.h>
+#include "eeze_udev_private.h"
+#include <Eeze_Udev.h>
 
 int _e_eeze_udev_log_dom = -1;
 int _e_eeze_udev_init_count = 0;
 
 EAPI int
-e_udev_init(void)
+eeze_udev_init(void)
 {
    if (++_e_eeze_udev_init_count != 1)
      return _e_eeze_udev_init_count;
@@ -14,10 +14,10 @@ e_udev_init(void)
      return --_e_eeze_udev_init_count;
 
    _e_eeze_udev_log_dom = eina_log_domain_register
-     ("e_udev", E_EEZE_COLOR_DEFAULT);
+     ("eeze_udev", E_EEZE_COLOR_DEFAULT);
    if (_e_eeze_udev_log_dom < 0)
      {
-        EINA_LOG_ERR("Could not register 'e_udev' log domain.");
+        EINA_LOG_ERR("Could not register 'eeze_udev' log domain.");
         goto shutdown_eina;
      }
 
@@ -32,7 +32,7 @@ e_udev_init(void)
 }
 
 EAPI int
-e_udev_shutdown(void)
+eeze_udev_shutdown(void)
 {
    if (--_e_eeze_udev_init_count != 0)
      return _e_eeze_udev_init_count;

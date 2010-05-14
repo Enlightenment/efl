@@ -10,10 +10,10 @@ MAINTAINERCLEANFILES =	Makefile.in aclocal.m4 config.guess config.h.in \
 
 pkgconfigdir = $(libdir)/pkgconfig
 
-if BUILD_EUDEV
-EUDEV_PC = eudev.pc
+if BUILD_EEZE_UDEV
+EEZE_UDEV_PC = eeze_udev.pc
 endif
-pkgconfig_DATA = $(EUDEV_PC)
+pkgconfig_DATA = $(EEZE_UDEV_PC)
 
 .PHONY: doc
 

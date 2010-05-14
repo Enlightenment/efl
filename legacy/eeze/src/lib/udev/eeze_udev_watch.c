@@ -1,5 +1,5 @@
-#include "e_udev_private.h"
-#include <E_Udev.h>
+#include "eeze_udev_private.h"
+#include <Eeze_Udev.h>
 
 /* opaque */
 struct Eudev_Watch
@@ -129,7 +129,7 @@ error:
  * @ingroup udev
  */
 EAPI Eudev_Watch *
-e_udev_watch_add(Eudev_Type type, void(*func)(const char *, const char *, void *, Eudev_Watch *), void *user_data)
+eeze_udev_watch_add(Eudev_Type type, void(*func)(const char *, const char *, void *, Eudev_Watch *), void *user_data)
 {
    struct udev *udev;
    struct udev_monitor *mon;
@@ -218,7 +218,7 @@ error:
  * @ingroup udev
  */
 EAPI void *
-e_udev_watch_del(Eudev_Watch *watch)
+eeze_udev_watch_del(Eudev_Watch *watch)
 {
    struct udev *udev;
    struct udev_monitor *mon = watch->mon;

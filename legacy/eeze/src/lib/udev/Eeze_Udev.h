@@ -1,5 +1,5 @@
-#ifndef E_UDEV_H
-#define E_UDEV_H
+#ifndef EEZE_UDEV_H
+#define EEZE_UDEV_H
 
 #include <Ecore.h>
 
@@ -109,26 +109,26 @@ typedef struct Eudev_Watch Eudev_Watch;
 extern "C" {
 #endif
 
-   EAPI int             e_udev_init(void);
-   EAPI int             e_udev_shutdown(void);
+   EAPI int             eeze_udev_init(void);
+   EAPI int             eeze_udev_shutdown(void);
 
-   EAPI Eina_List       *e_udev_find_by_type(const Eudev_Type type, const char *name);
-   EAPI Eina_List       *e_udev_find_by_filter(const char *subsystem, const char *type, const char *name);
+   EAPI Eina_List       *eeze_udev_find_by_type(const Eudev_Type type, const char *name);
+   EAPI Eina_List       *eeze_udev_find_by_filter(const char *subsystem, const char *type, const char *name);
    
-   EAPI const char      *e_udev_syspath_rootdev_get(const char *syspath);
-   EAPI const char      *e_udev_syspath_get_devpath(const char *syspath);
-   EAPI const char      *e_udev_syspath_get_subsystem(const char *syspath);
-   EAPI const char      *e_udev_syspath_get_property(const char *syspath, const char *property);
+   EAPI const char      *eeze_udev_syspath_rootdev_get(const char *syspath);
+   EAPI const char      *eeze_udev_syspath_get_devpath(const char *syspath);
+   EAPI const char      *eeze_udev_syspath_get_subsystem(const char *syspath);
+   EAPI const char      *eeze_udev_syspath_get_property(const char *syspath, const char *property);
    
-   EAPI const char      *e_udev_devpath_get_syspath(const char *devpath);
-   EAPI const char      *e_udev_devpath_get_subsystem(const char *devpath);
+   EAPI const char      *eeze_udev_devpath_get_syspath(const char *devpath);
+   EAPI const char      *eeze_udev_devpath_get_subsystem(const char *devpath);
    
-   EAPI Eina_Bool       e_udev_syspath_is_mouse(const char *syspath);
-   EAPI Eina_Bool       e_udev_syspath_is_kbd(const char *syspath);
-   EAPI Eina_Bool       e_udev_syspath_is_touchpad(const char *syspath);
+   EAPI Eina_Bool       eeze_udev_syspath_is_mouse(const char *syspath);
+   EAPI Eina_Bool       eeze_udev_syspath_is_kbd(const char *syspath);
+   EAPI Eina_Bool       eeze_udev_syspath_is_touchpad(const char *syspath);
 
-   EAPI Eudev_Watch     *e_udev_watch_add(Eudev_Type type, void(*func)(const char *, const char *, void *, Eudev_Watch *), void *user_data);
-   EAPI void            *e_udev_watch_del(Eudev_Watch *watch);
+   EAPI Eudev_Watch     *eeze_udev_watch_add(Eudev_Type type, void(*func)(const char *, const char *, void *, Eudev_Watch *), void *user_data);
+   EAPI void            *eeze_udev_watch_del(Eudev_Watch *watch);
 
 #ifdef __cplusplus
 }

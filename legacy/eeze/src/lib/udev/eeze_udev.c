@@ -1,5 +1,5 @@
-#include "e_udev_private.h"
-#include <E_Udev.h>
+#include "eeze_udev_private.h"
+#include <Eeze_Udev.h>
 
 /**
  * @defgroup udev udev
@@ -18,7 +18,7 @@
  * @ingroup udev
  */
 EAPI const char *
-e_udev_syspath_rootdev_get(const char *syspath)
+eeze_udev_syspath_rootdev_get(const char *syspath)
 {
    struct udev *udev;
    struct udev_device *device, *parent;
@@ -51,7 +51,7 @@ e_udev_syspath_rootdev_get(const char *syspath)
  * @ingroup udev
  */
 EAPI Eina_List *
-e_udev_find_by_type(const Eudev_Type etype, const char *name)
+eeze_udev_find_by_type(const Eudev_Type etype, const char *name)
 {
    struct udev *udev;
    struct udev_enumerate *en;
@@ -157,7 +157,7 @@ out:
  * @ingroup udev
  */
 EAPI Eina_List *
-e_udev_find_by_filter(const char *subsystem, const char *type, const char *name)
+eeze_udev_find_by_filter(const char *subsystem, const char *type, const char *name)
 {
    struct udev *udev;
    struct udev_enumerate *en;
@@ -212,7 +212,7 @@ out:
  * @ingroup udev
  */
 EAPI const char *
-e_udev_syspath_get_devpath(const char *syspath)
+eeze_udev_syspath_get_devpath(const char *syspath)
 {
       struct udev *udev;
       struct udev_device *device;
@@ -250,7 +250,7 @@ e_udev_syspath_get_devpath(const char *syspath)
  * @ingroup udev
  */
 EAPI const char *
-e_udev_syspath_get_subsystem(const char *syspath)
+eeze_udev_syspath_get_subsystem(const char *syspath)
 {
       struct udev *udev;
       struct udev_device *device;
@@ -289,7 +289,7 @@ e_udev_syspath_get_subsystem(const char *syspath)
  * @ingroup udev
  */
 EAPI const char *
-e_udev_syspath_get_property(const char *syspath, const char *property)
+eeze_udev_syspath_get_property(const char *syspath, const char *property)
 {
       struct udev *udev;
       struct udev_device *device;
@@ -326,7 +326,7 @@ e_udev_syspath_get_property(const char *syspath, const char *property)
  * @ingroup udev
  */
 EAPI const char *
-e_udev_devpath_get_syspath(const char *devpath)
+eeze_udev_devpath_get_syspath(const char *devpath)
 {
    struct udev *udev;
    struct udev_enumerate *en;
@@ -370,7 +370,7 @@ e_udev_devpath_get_syspath(const char *devpath)
  * @ingroup udev
  */
 EAPI const char *
-e_udev_devpath_get_subsystem(const char *devpath)
+eeze_udev_devpath_get_subsystem(const char *devpath)
 {
    struct udev *udev;
    struct udev_enumerate *en;
@@ -412,7 +412,7 @@ e_udev_devpath_get_subsystem(const char *devpath)
  * @ingroup udev
  */
 EAPI Eina_Bool
-e_udev_syspath_is_mouse(const char *syspath)
+eeze_udev_syspath_is_mouse(const char *syspath)
 {
       struct udev *udev;
       struct udev_device *device;
@@ -448,7 +448,7 @@ e_udev_syspath_is_mouse(const char *syspath)
  * @ingroup udev
  */
 EAPI Eina_Bool
-e_udev_syspath_is_kbd(const char *syspath)
+eeze_udev_syspath_is_kbd(const char *syspath)
 {
       struct udev *udev;
       struct udev_device *device;
@@ -484,7 +484,7 @@ e_udev_syspath_is_kbd(const char *syspath)
  * @ingroup udev
  */
 EAPI Eina_Bool
-e_udev_syspath_is_touchpad(const char *syspath)
+eeze_udev_syspath_is_touchpad(const char *syspath)
 {
       struct udev *udev;
       struct udev_device *device;
