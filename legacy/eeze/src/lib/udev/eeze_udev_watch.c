@@ -160,28 +160,15 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
         default:
           break;
      }
-   test = eina_stringshare_add(udev_device_get_action(device));
+   test = udev_device_get_action(device);
    if (!test)
-     {
-        udev_device_unref(device);
-        return 1;
-     }
-   ret = eina_stringshare_add(udev_device_get_syspath(device));
-   if (!ret)
-     {
-        udev_device_unref(device);
-        eina_stringshare_del(test);
-        return 1;
-     }
+     goto error;
 
-   udev_device_unref(device);
+   ret = udev_device_get_syspath(device);
+   if (!ret)
+     goto error;
 
    (*func)(ret, test, sdata, watch);
-   eina_stringshare_del(test);
-   eina_stringshare_del(ret);
-
-   return 1;
-
 error:
    udev_device_unref(device);
    return 1;
