@@ -30,7 +30,7 @@ _walk_parents_for_attr(struct udev_device *device, const char *sysattr, const ch
    struct udev_device *parent, *child = device;
    const char *test;
 
-   while ((parent = udev_device_get_parent(child)))
+   for (parent = udev_device_get_parent(child); parent; child = parent, parent = udev_device_get_parent(child))
      {
         if (!(test = udev_device_get_sysattr_value(parent, sysattr)))
           continue;
@@ -38,8 +38,6 @@ _walk_parents_for_attr(struct udev_device *device, const char *sysattr, const ch
           return 1;
         else if (!strcmp(test, value))
           return 1;
-
-        child = parent;
      }
 
    return 0;
