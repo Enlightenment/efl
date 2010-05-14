@@ -34,9 +34,8 @@ dnl Check enabled modules to build
 AC_ARG_ENABLE([eudev],[AC_HELP_STRING([--disable-eudev], [Disable eudev build])])
 AS_IF(
    [test "x$enableval" != "xno"],
-      [enable_eudev="yes"]
       modules+="udev"
-      AC_DEFINE([LIBUDEV_I_KNOW_THE_API_IS_SUBJECT_TO_CHANGE],[1],[allow udev to compile]),
+      [enable_eudev="yes"],
    [enable_eudev=no],
 )
 
