@@ -38,6 +38,8 @@ _walk_parents_for_attr(struct udev_device *device, const char *sysattr, const ch
           return 1;
         else if (!strcmp(test, value))
           return 1;
+
+        child = parent;
      }
 
    return 0;
