@@ -60,6 +60,12 @@ AS_IF(
      [PKG_CHECK_MODULES(UDEV, libudev, [], [enable_eeze_udev="no"])]
 )
 
+udev_version=$(pkg-config udev --version | cut -d. -f2)
+if test $udev_version -lt 23;then
+  EEZE_UDEV_CFLAGS="-DOLD_UDEV_RRRRRRRRRRRRRR"
+  AC_SUBST(EEZE_UDEV_CFLAGS)
+fi
+
 AM_CONDITIONAL([BUILD_EEZE_UDEV],     [test "x${enable_eeze_udev}"     = "xyes"])
 
 EFL_EDBUS_BUILD=""

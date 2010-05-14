@@ -41,18 +41,34 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
    switch (store->type)
      {
         case EUDEV_TYPE_KEYBOARD:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+          if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "input")))
+            goto error;
+#endif
           if (!udev_device_get_property_value(device, "ID_INPUT_KEYBOARD"))
             goto error;
           break;
         case EUDEV_TYPE_MOUSE:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+          if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "input")))
+            goto error;
+#endif
           if (!udev_device_get_property_value(device, "ID_INPUT_MOUSE"))
             goto error;
           break;
         case EUDEV_TYPE_TOUCHPAD:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+          if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "input")))
+            goto error;
+#endif
           if (!udev_device_get_property_value(device, "ID_INPUT_TOUCHPAD"))
             goto error;
           break;
         case EUDEV_TYPE_DRIVE_MOUNTABLE:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+          if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "block")))
+            goto error;
+#endif
           test = udev_device_get_sysattr_value(device, "capability");
           if (test) cap = atoi(test);
           if (!(test = (udev_device_get_property_value(device, "ID_FS_USAGE"))) ||
@@ -60,24 +76,44 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
             goto error;
           break;
         case EUDEV_TYPE_DRIVE_INTERNAL:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+          if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "block")))
+            goto error;
+#endif
           if (!(test = udev_device_get_property_value(device, "ID_BUS")) || (strcmp("ata", test)) ||
               !(test = udev_device_get_sysattr_value(device, "removable")) || (atoi(test)))
             goto error;
           break;
         case EUDEV_TYPE_DRIVE_REMOVABLE:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+          if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "block")))
+            goto error;
+#endif
           if ((!(test = udev_device_get_sysattr_value(device, "removable")) || (!atoi(test))) &&
               (!(test = udev_device_get_sysattr_value(device, "capability")) || (atoi(test) != 10)))
             goto error;
           break;
         case EUDEV_TYPE_DRIVE_CDROM:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+          if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "block")))
+            goto error;
+#endif
           if (!udev_device_get_property_value(device, "ID_CDROM"))
             goto error;
           break;
         case EUDEV_TYPE_POWER_AC:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+          if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "power_supply")))
+            goto error;
+#endif
           if (!(test = (udev_device_get_property_value(device, "POWER_SUPPLY_TYPE"))) ||
              (strcmp("Mains", test)))
           break;
         case EUDEV_TYPE_POWER_BAT:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+          if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "power_supply")))
+            goto error;
+#endif
           if (!(test = (udev_device_get_property_value(device, "POWER_SUPPLY_TYPE"))) ||
              (strcmp("Battery", test)))
           break;
@@ -146,6 +182,7 @@ eeze_udev_watch_add(Eudev_Type type, void(*func)(const char *, const char *, voi
      goto error;
    if (!(mon = udev_monitor_new_from_netlink(udev, "udev")))
      goto error;
+#ifndef OLD_UDEV_RRRRRRRRRRRRRR
    switch (type)
      {
         case EUDEV_TYPE_KEYBOARD:
@@ -183,6 +220,7 @@ eeze_udev_watch_add(Eudev_Type type, void(*func)(const char *, const char *, voi
         default:
           break;
      }
+#endif
    if (udev_monitor_enable_receiving(mon))
      goto error;
    
