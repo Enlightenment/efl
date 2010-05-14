@@ -29,14 +29,20 @@ eudev_release_info="-release $release"
 AC_SUBST(version_info)
 AC_SUBST(eudev_release_info)
 
+modules=""
 dnl Check enabled modules to build
 AC_ARG_ENABLE([eudev],[AC_HELP_STRING([--disable-eudev], [Disable eudev build])])
 AS_IF(
    [test "x$enableval" != "xno"],
-      [enable_eudev="yes"],
+      [enable_eudev="yes"]
+      modules+="udev"
+      AC_DEFINE([LIBUDEV_I_KNOW_THE_API_IS_SUBJECT_TO_CHANGE],[1],[allow udev to compile]),
    [enable_eudev=no],
 )
 
+if test -z $modules;then
+  AC_MSG_ERROR(you have not selected any modules to build!)
+fi
 # pkg-config
 PKG_PROG_PKG_CONFIG
 
