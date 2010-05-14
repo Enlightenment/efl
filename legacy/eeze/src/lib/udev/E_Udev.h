@@ -7,9 +7,7 @@
 #ifdef EAPI
 #undef EAPI
 #endif
-#ifdef _MSC_VER
-#error "This will not run on windows!"
-#else
+#ifndef _MSC_VER
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
 #   define EAPI __attribute__ ((visibility("default")))
