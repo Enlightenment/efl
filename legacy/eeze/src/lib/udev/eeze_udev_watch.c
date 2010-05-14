@@ -24,7 +24,7 @@ struct _store_data
  * walks up the device tree checking each node for sysattr
  * with value value
  */
-static Eina_Bool
+Eina_Bool
 _walk_parents_for_attr(struct udev_device *device, const char *sysattr, const char* value)
 {
    struct udev_device *parent, *child = device;

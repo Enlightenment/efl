@@ -1,6 +1,9 @@
 #include "eeze_udev_private.h"
 #include <Eeze_Udev.h>
 
+/* from watch.c */
+Eina_Bool _walk_parents_for_attr(struct udev_device *device, const char *sysattr, const char* value);
+
 /**
  * @defgroup udev udev
  *
@@ -430,8 +433,18 @@ eeze_udev_syspath_is_mouse(const char *syspath)
       eina_strbuf_append(sbuf, syspath);
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+      mouse = _walk_parents_for_attr(device, "bInterfaceProtocol", "02");
+      if (!mouse)
+      {
+         test = udev_device_get_property_value(device, "ID_CLASS");
+         if ((test) && (!strcmp(test, "mouse")))
+           mouse = 1;
+      }
+#else
       test = udev_device_get_property_value(device, "ID_INPUT_MOUSE");
       if (test) mouse = atoi(test);
+#endif
 
       udev_device_unref(device);
       udev_unref(udev);
@@ -466,8 +479,18 @@ eeze_udev_syspath_is_kbd(const char *syspath)
       eina_strbuf_append(sbuf, syspath);
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+      kbd = _walk_parents_for_attr(device, "bInterfaceProtocol", "01");
+      if (!kbd)
+      {
+         test = udev_device_get_property_value(device, "ID_CLASS");
+         if ((test) && (!strcmp(test, "kbd")))
+           kbd = 1;
+      }
+#else      
       test = udev_device_get_property_value(device, "ID_INPUT_KEYBOARD");
       if (test) kbd = atoi(test);
+#endif
 
       udev_device_unref(device);
       udev_unref(udev);
@@ -502,9 +525,12 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
       eina_strbuf_append(sbuf, syspath);
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+      touchpad = _walk_parents_for_attr(device, "resolution", NULL);
+#else
       test = udev_device_get_property_value(device, "ID_INPUT_TOUCHPAD");
       if (test) touchpad = atoi(test);
-
+#endif
       udev_device_unref(device);
       udev_unref(udev);
 
