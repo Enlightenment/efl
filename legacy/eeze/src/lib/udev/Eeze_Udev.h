@@ -9,16 +9,15 @@
 #ifdef EAPI
 #undef EAPI
 #endif
-#ifndef _MSC_VER
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
+
+#ifdef __GNUC__
+# if __GNUC__ >= 4
+#  define EAPI __attribute__ ((visibility("default")))
 # else
 #  define EAPI
 # endif
+#else
+# define EAPI
 #endif
 
 /**
@@ -89,21 +88,21 @@
 /*FIXME: these probably need to be bitmasks with categories*/
 typedef enum
 {
-   EUDEV_TYPE_NONE,
-   EUDEV_TYPE_KEYBOARD,
-   EUDEV_TYPE_MOUSE,
-   EUDEV_TYPE_TOUCHPAD,
-   EUDEV_TYPE_DRIVE_MOUNTABLE,
-   EUDEV_TYPE_DRIVE_INTERNAL,
-   EUDEV_TYPE_DRIVE_REMOVABLE,
-   EUDEV_TYPE_DRIVE_CDROM,
-   EUDEV_TYPE_POWER_AC,
-   EUDEV_TYPE_POWER_BAT
-/*   EUDEV_TYPE_ANDROID */
-} Eudev_Type;
+   EEZE_UDEV_TYPE_NONE,
+   EEZE_UDEV_TYPE_KEYBOARD,
+   EEZE_UDEV_TYPE_MOUSE,
+   EEZE_UDEV_TYPE_TOUCHPAD,
+   EEZE_UDEV_TYPE_DRIVE_MOUNTABLE,
+   EEZE_UDEV_TYPE_DRIVE_INTERNAL,
+   EEZE_UDEV_TYPE_DRIVE_REMOVABLE,
+   EEZE_UDEV_TYPE_DRIVE_CDROM,
+   EEZE_UDEV_TYPE_POWER_AC,
+   EEZE_UDEV_TYPE_POWER_BAT
+/*   EEZE_UDEV_TYPE_ANDROID */
+} Eeze_Udev_Type;
 
-struct Eudev_Watch;
-typedef struct Eudev_Watch Eudev_Watch;
+struct Eeze_Udev_Watch;
+typedef struct Eeze_Udev_Watch Eeze_Udev_Watch;
 
 #ifdef __cplusplus
 extern "C" {
@@ -112,7 +111,7 @@ extern "C" {
    EAPI int             eeze_udev_init(void);
    EAPI int             eeze_udev_shutdown(void);
 
-   EAPI Eina_List       *eeze_udev_find_by_type(const Eudev_Type type, const char *name);
+   EAPI Eina_List       *eeze_udev_find_by_type(const Eeze_Udev_Type type, const char *name);
    EAPI Eina_List       *eeze_udev_find_by_filter(const char *subsystem, const char *type, const char *name);
    
    EAPI const char      *eeze_udev_syspath_rootdev_get(const char *syspath);
@@ -127,8 +126,8 @@ extern "C" {
    EAPI Eina_Bool       eeze_udev_syspath_is_kbd(const char *syspath);
    EAPI Eina_Bool       eeze_udev_syspath_is_touchpad(const char *syspath);
 
-   EAPI Eudev_Watch     *eeze_udev_watch_add(Eudev_Type type, void(*func)(const char *, const char *, void *, Eudev_Watch *), void *user_data);
-   EAPI void            *eeze_udev_watch_del(Eudev_Watch *watch);
+   EAPI Eeze_Udev_Watch *eeze_udev_watch_add(Eeze_Udev_Type type, void(*func)(const char *, const char *, void *, Eeze_Udev_Watch *), void *user_data);
+   EAPI void            *eeze_udev_watch_del(Eeze_Udev_Watch *watch);
 
 #ifdef __cplusplus
 }

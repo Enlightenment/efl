@@ -11,7 +11,7 @@ typedef struct kbdmouse
 
 static void
 /* event will always be a syspath starting with /sys */
-catch_events(const char *device, const char *event, void *data, Eudev_Watch *watch)
+catch_events(const char *device, const char *event, void *data, Eeze_Udev_Watch *watch)
 {
    kbdmouse *akbdmouse = data;
    Eina_List *l;
@@ -92,8 +92,8 @@ int main()
    akbdmouse->hash = hash;
    
    printf("For my first trick, I will find all of your keyboards and return their syspaths.\n");
-   /* find all keyboards using type EUDEV_TYPE_KEYBOARD */
-   type = eeze_udev_find_by_type(EUDEV_TYPE_KEYBOARD, NULL);
+   /* find all keyboards using type EEZE_UDEV_TYPE_KEYBOARD */
+   type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_KEYBOARD, NULL);
    EINA_LIST_FOREACH(type, l, name)
      {  /* add the devpath to the hash for use in the cb later */
         eina_hash_direct_add(hash, name, eeze_udev_syspath_get_devpath(name));
@@ -106,8 +106,8 @@ int main()
    akbdmouse->kbds = type;
 
    printf("\nNext, I will find all of your mice and print the corresponding manufacturer.\n");
-   /* find all mice using type EUDEV_TYPE_MOUSE */
-   type = eeze_udev_find_by_type(EUDEV_TYPE_MOUSE, NULL);
+   /* find all mice using type EEZE_UDEV_TYPE_MOUSE */
+   type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_MOUSE, NULL);
    EINA_LIST_FOREACH(type, l, name)
      {  /* add the devpath to the hash for use in the cb later */
         eina_hash_direct_add(hash, name, eeze_udev_syspath_get_devpath(name)); /* get a property using the device's syspath */
@@ -120,8 +120,8 @@ int main()
    akbdmouse->mice = type;
 
    printf("\nNow let's try something a little more difficult.  Mountable filesystems!\n");
-   /* find all mountable drives using type EUDEV_TYPE_DRIVE_MOUNTABLE */
-   type = eeze_udev_find_by_type(EUDEV_TYPE_DRIVE_MOUNTABLE, NULL);
+   /* find all mountable drives using type EEZE_UDEV_TYPE_DRIVE_MOUNTABLE */
+   type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_MOUNTABLE, NULL);
    EINA_LIST_FOREACH(type, l, name)
    {
      printf("Found device: %s\n", name);  /* get a property using the device's syspath */
@@ -135,26 +135,26 @@ int main()
    eina_list_free(type);
 
    printf("\nInternal drives, anyone?  With serial numbers?\n");
-   /* find all internal drives using type EUDEV_TYPE_DRIVE_INTERNAL */
-   type = eeze_udev_find_by_type(EUDEV_TYPE_DRIVE_INTERNAL, NULL);
+   /* find all internal drives using type EEZE_UDEV_TYPE_DRIVE_INTERNAL */
+   type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_INTERNAL, NULL);
    EINA_LIST_FOREACH(type, l, name) /* get a property using the device's syspath */
         printf("%s: %s\n", name, eeze_udev_syspath_get_property(name, "ID_SERIAL"));
    eina_list_free(type);
 
    printf("\nGot any removables?  I'm gonna find em!\n");
-   /* find all removable media using type EUDEV_TYPE_DRIVE_REMOVABLE */
-   type = eeze_udev_find_by_type(EUDEV_TYPE_DRIVE_REMOVABLE, NULL);
+   /* find all removable media using type EEZE_UDEV_TYPE_DRIVE_REMOVABLE */
+   type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_REMOVABLE, NULL);
    EINA_LIST_FOREACH(type, l, name)  /* get a property using the device's syspath */
      printf("\tOoh, a %s attached on your %s bus!\n", eeze_udev_syspath_get_property(name, "ID_MODEL"),
        eeze_udev_syspath_get_property(name, "ID_BUS"));
    eina_list_free(type);
 
 
-   /* set a udev watch, grab all events because no EUDEV_TYPE filter is specified,
+   /* set a udev watch, grab all events because no EEZE_UDEV_TYPE filter is specified,
     * set the events to be sent to callback function catch_events(), and attach
     * kbdmouse to the watch as associated data
     */
-   eeze_udev_watch_add(EUDEV_TYPE_NONE, catch_events, akbdmouse);
+   eeze_udev_watch_add(EEZE_UDEV_TYPE_NONE, catch_events, akbdmouse);
    printf("\nAnd now for something more complicated.  Plug or unplug your keyboard or mouse for me.\n");
 
    /* main loop must be started to use ecore fd polling */

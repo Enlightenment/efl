@@ -40,9 +40,9 @@ eeze_udev_syspath_rootdev_get(const char *syspath)
 }
 
 /**
- * Find devices using a EUDEV_TYPE_* and/or a name.
+ * Find devices using a EEZE_UDEV_TYPE_* and/or a name.
  *
- * @param type A Eudev_Type or 0
+ * @param type A Eeze_Udev_Type or 0
  * @param name A filter for the device name or NULL
  * @return A Eina_List* of matched devices or NULL on failure
  * 
@@ -51,7 +51,7 @@ eeze_udev_syspath_rootdev_get(const char *syspath)
  * @ingroup udev
  */
 EAPI Eina_List *
-eeze_udev_find_by_type(const Eudev_Type etype, const char *name)
+eeze_udev_find_by_type(const Eeze_Udev_Type etype, const char *name)
 {
    struct udev *udev;
    struct udev_enumerate *en;
@@ -69,50 +69,50 @@ eeze_udev_find_by_type(const Eudev_Type etype, const char *name)
 
    switch (etype)
      {
-        case EUDEV_TYPE_NONE:
+        case EEZE_UDEV_TYPE_NONE:
           break;
-        case EUDEV_TYPE_KEYBOARD:
+        case EEZE_UDEV_TYPE_KEYBOARD:
           udev_enumerate_add_match_subsystem(en, "input");
           udev_enumerate_add_match_property(en, "ID_INPUT_KEYBOARD", "1");
           break;
-        case EUDEV_TYPE_MOUSE:
+        case EEZE_UDEV_TYPE_MOUSE:
           udev_enumerate_add_match_subsystem(en, "input");
           udev_enumerate_add_match_property(en, "ID_INPUT_MOUSE", "1");
           break;
-        case EUDEV_TYPE_TOUCHPAD:
+        case EEZE_UDEV_TYPE_TOUCHPAD:
           udev_enumerate_add_match_subsystem(en, "input");
           udev_enumerate_add_match_property(en, "ID_INPUT_TOUCHPAD", "1");
           break;
-        case EUDEV_TYPE_DRIVE_MOUNTABLE:
+        case EEZE_UDEV_TYPE_DRIVE_MOUNTABLE:
           udev_enumerate_add_match_subsystem(en, "block");
           udev_enumerate_add_match_property(en, "ID_FS_USAGE", "filesystem");
           udev_enumerate_add_nomatch_sysattr(en, "capability", "52");
           break;
-        case EUDEV_TYPE_DRIVE_INTERNAL:
+        case EEZE_UDEV_TYPE_DRIVE_INTERNAL:
           udev_enumerate_add_match_subsystem(en, "block");
           udev_enumerate_add_match_property(en, "ID_TYPE", "disk");
           udev_enumerate_add_match_property(en, "ID_BUS", "ata");
           udev_enumerate_add_match_sysattr(en, "removable", "0");
           break;
-        case EUDEV_TYPE_DRIVE_REMOVABLE:
+        case EEZE_UDEV_TYPE_DRIVE_REMOVABLE:
           udev_enumerate_add_match_subsystem(en, "block");
           udev_enumerate_add_match_property(en, "ID_TYPE", "disk");
           udev_enumerate_add_match_sysattr(en, "removable", "1");
           break;
-        case EUDEV_TYPE_DRIVE_CDROM:
+        case EEZE_UDEV_TYPE_DRIVE_CDROM:
           udev_enumerate_add_match_subsystem(en, "block");
           udev_enumerate_add_match_property(en, "ID_CDROM", "1");
           break;
-        case EUDEV_TYPE_POWER_AC:
+        case EEZE_UDEV_TYPE_POWER_AC:
           udev_enumerate_add_match_subsystem(en, "power_supply");
           udev_enumerate_add_match_property(en, "POWER_SUPPLY_TYPE", "Mains");
           break;
-        case EUDEV_TYPE_POWER_BAT:
+        case EEZE_UDEV_TYPE_POWER_BAT:
           udev_enumerate_add_match_subsystem(en, "power_supply");
           udev_enumerate_add_match_property(en, "POWER_SUPPLY_TYPE", "Battery");
           break;
 /*
-        case EUDEV_TYPE_ANDROID:
+        case EEZE_UDEV_TYPE_ANDROID:
           udev_enumerate_add_match_subsystem(en, "block");
           udev_enumerate_add_match_property(en, "ID_MODEL", "Android_*");
           break;
