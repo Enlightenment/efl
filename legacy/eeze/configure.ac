@@ -31,7 +31,7 @@ AC_SUBST(eeze_udev_release_info)
 
 modules=""
 dnl Check enabled modules to build
-AC_ARG_ENABLE([eeze_udev],[AC_HELP_STRING([--disable-udev], [Disable eeze_udev build])])
+AC_ARG_ENABLE([udev],[AC_HELP_STRING([--disable-udev], [Disable eeze_udev build])])
 AS_IF(
    [test "x$enableval" != "xno"],
       modules+="udev"
