@@ -26,18 +26,24 @@ eeze_udev_syspath_rootdev_get(const char *syspath)
    struct udev *udev;
    struct udev_device *device, *parent;
    const char *ret;
+   Eina_Strbuf *sbuf;
 
    if (!syspath) return NULL;
-
    udev = udev_new();
    if (!udev) return NULL;
+      
+   sbuf = eina_strbuf_new();
+   if (!strstr(syspath, "/sys/"))
+     eina_strbuf_append(sbuf, "/sys/");
+   eina_strbuf_append(sbuf, syspath);
 
-   device = udev_device_new_from_syspath(udev, syspath);
+   device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
    parent = udev_device_get_parent(device);
    ret = eina_stringshare_add(udev_device_get_property_value(parent, "DEVPATH"));
 
    udev_device_unref(device);
    udev_unref(udev);
+   eina_strbuf_free(sbuf);
 
    return ret;
 }
@@ -448,6 +454,7 @@ eeze_udev_syspath_is_mouse(const char *syspath)
 
       udev_device_unref(device);
       udev_unref(udev);
+      eina_strbuf_free(sbuf);
 
       return mouse;
 }
@@ -494,6 +501,7 @@ eeze_udev_syspath_is_kbd(const char *syspath)
 
       udev_device_unref(device);
       udev_unref(udev);
+      eina_strbuf_free(sbuf);
 
       return kbd;
 }
@@ -533,6 +541,7 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
 #endif
       udev_device_unref(device);
       udev_unref(udev);
+      eina_strbuf_free(sbuf);
 
       return touchpad;
 }
