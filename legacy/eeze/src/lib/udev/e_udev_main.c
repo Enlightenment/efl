@@ -1,5 +1,5 @@
-#include <E_Udev.h>
 #include "e_udev_private.h"
+#include <E_Udev.h>
 
 int _e_eeze_udev_log_dom = -1;
 int _e_eeze_udev_init_count = 0;

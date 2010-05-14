@@ -1,6 +1,6 @@
 #ifndef E_UDEV_PRIVATE_H
 #define E_UDEV_PRIVATE_H
-
+#include "config.h"
 #ifndef E_EEZE_COLOR_DEFAULT
 #define E_EEZE_COLOR_DEFAULT EINA_COLOR_CYAN
 #endif

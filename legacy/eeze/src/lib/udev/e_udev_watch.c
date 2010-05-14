@@ -1,5 +1,5 @@
-#include <E_Udev.h>
 #include "e_udev_private.h"
+#include <E_Udev.h>
 
 /* opaque */
 struct Eudev_Watch
