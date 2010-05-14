@@ -70,9 +70,10 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
           if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "input")))
             goto error;
-          if (_walk_parents_for_attr(device, "bInterfaceProtocol", "01"))
-            break;
-          goto error;
+          test = udev_device_get_property_value(device, "ID_CLASS");
+          if ((!_walk_parents_for_attr(device, "bInterfaceProtocol", "01")) && ((!test) || (strcmp(test, "kbd"))))
+            goto error;
+          break;
 #endif
           if (!udev_device_get_property_value(device, "ID_INPUT_KEYBOARD"))
             goto error;
@@ -81,9 +82,10 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
           if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "input")))
             goto error;
-          if (_walk_parents_for_attr(device, "bInterfaceProtocol", "02"))
-            break;
-          goto error;
+          test = udev_device_get_property_value(device, "ID_CLASS");
+          if ((!_walk_parents_for_attr(device, "bInterfaceProtocol", "02")) && ((!test) || (strcmp(test, "mouse"))))
+            goto error;
+          break;
 #endif
           if (!udev_device_get_property_value(device, "ID_INPUT_MOUSE"))
             goto error;
