@@ -2,9 +2,9 @@
 #define E_UDEV_H
 
 #include <Ecore.h>
-#include <libudev.h>
 
 #define LIBUDEV_I_KNOW_THE_API_IS_SUBJECT_TO_CHANGE 1
+#include <libudev.h>
 
 #ifdef EAPI
 #undef EAPI
