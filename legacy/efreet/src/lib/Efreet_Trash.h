@@ -44,7 +44,7 @@ extern "C" {
 EAPI int         efreet_trash_init(void);
 EAPI int         efreet_trash_shutdown(void);
 
-EAPI const char *efreet_trash_dir_get(void);
+EAPI const char *efreet_trash_dir_get(const char *for_file);
 EAPI int         efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete);
 EAPI Eina_List  *efreet_trash_ls(void);
 EAPI int         efreet_trash_is_empty(void);

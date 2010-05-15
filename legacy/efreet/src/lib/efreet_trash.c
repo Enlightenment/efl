@@ -8,7 +8,10 @@
 #include <errno.h>
 #include <time.h>
 #include <limits.h>
-
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <libgen.h>
 #include <Ecore_File.h>
 
 #include "Efreet.h"
@@ -68,32 +71,100 @@ efreet_trash_shutdown(void)
 
 /**
  * @return Returns the XDG Trash local directory or NULL on errors
+ * return value must be freed with eina_stringshare_del.
  * @brief Retrieves the XDG Trash local directory
  */
 EAPI const char*
-efreet_trash_dir_get(void)
+efreet_trash_dir_get(const char *file)
 {
     char buf[PATH_MAX];
+    struct stat s_dest;
+    struct stat s_src;
+    const char *trash_dir = NULL;
 
-    if (efreet_trash_dir && ecore_file_exists(efreet_trash_dir))
-        return efreet_trash_dir;
+    if (file)
+    {
+	if (stat(efreet_data_home_get(), &s_dest) != 0)
+	    return NULL;
 
-    snprintf(buf, sizeof(buf), "%s/Trash", efreet_data_home_get());
-    if (!ecore_file_exists(buf) && !ecore_file_mkpath(buf))
-        return NULL;
+	if (stat(file, &s_src) != 0)
+	    return NULL;
+    }
 
-    IF_RELEASE(efreet_trash_dir);
-    efreet_trash_dir = eina_stringshare_add(buf);
+    if (!file || s_src.st_dev == s_dest.st_dev)
+    {
+	if (efreet_trash_dir && ecore_file_exists(efreet_trash_dir))
+	{
+	    eina_stringshare_ref(efreet_trash_dir);
+	    return efreet_trash_dir;
+	}
 
-    snprintf(buf, sizeof(buf), "%s/files", efreet_trash_dir);
-    if (!ecore_file_exists(buf) && !ecore_file_mkpath(buf))
-        return NULL;
+	snprintf(buf, sizeof(buf), "%s/Trash", efreet_data_home_get());
+	if (!ecore_file_exists(buf) && !ecore_file_mkpath(buf))
+	    return NULL;
 
-    snprintf(buf, sizeof(buf), "%s/info", efreet_trash_dir);
-    if (!ecore_file_exists(buf) && !ecore_file_mkpath(buf))
-        return NULL;
+	IF_RELEASE(efreet_trash_dir);
+	efreet_trash_dir = eina_stringshare_add(buf);
+	trash_dir = eina_stringshare_ref(efreet_trash_dir);
+    }
+    else
+    {
+	char *dir;
+	char path[PATH_MAX];
 
-    return efreet_trash_dir;
+	strncpy(buf, file, PATH_MAX);
+	buf[PATH_MAX - 1] = 0;
+	path[0] = 0;
+
+	while (strlen(buf) > 1)
+	{
+	    strncpy(path, buf, PATH_MAX);
+	    dir = dirname(buf);
+
+	    if (stat(dir, &s_dest) == 0)
+	    {
+		if (s_src.st_dev == s_dest.st_dev){
+
+		    strncpy(buf, dir, PATH_MAX);
+		    continue;
+		}
+		else
+		{
+		    /* other device */
+		    break;
+		}
+	    }
+	    path[0] = 0;
+	    break;
+	}
+
+	if (path[0])
+	{
+	    snprintf(buf, sizeof(buf), "%s/.Trash-%d", path, getuid());
+	    if (!ecore_file_exists(buf) && !ecore_file_mkpath(buf))
+		return NULL;
+
+	    trash_dir = eina_stringshare_add(buf);
+	}
+    }
+    if (trash_dir)
+    {
+	snprintf(buf, sizeof(buf), "%s/files", trash_dir);
+	if (!ecore_file_exists(buf) && !ecore_file_mkpath(buf))
+	{
+	    eina_stringshare_del(trash_dir);
+	    return NULL;
+	}
+
+	snprintf(buf, sizeof(buf), "%s/info", trash_dir);
+	if (!ecore_file_exists(buf) && !ecore_file_mkpath(buf))
+	{
+	    eina_stringshare_del(trash_dir);
+	    return NULL;
+	}
+    }
+
+    return trash_dir;
 }
 
 /**
@@ -114,6 +185,7 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
     char times[64];
     const char *fname;
     const char *escaped;
+    const char *trash_dir;
     int i = 1;
     time_t now;
     FILE *f;
@@ -121,57 +193,71 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
     if (!uri || !uri->path || !ecore_file_can_write(uri->path)) return 0;
 
     fname = ecore_file_file_get(uri->path);
-    snprintf(dest, sizeof(dest), "%s/files/%s", efreet_trash_dir_get(), fname);
+
+    trash_dir = efreet_trash_dir_get(uri->path);
+    if (!trash_dir)
+    {
+	ERR("EFREET TRASH ERROR: No trash directory.");
+	return 0;
+    }
+    snprintf(dest, sizeof(dest), "%s/files/%s", trash_dir, fname);
 
     /* search for a free filename */
-    while (ecore_file_exists(dest))
-        snprintf(dest, sizeof(dest), "%s/files/%s$%d",
-                    efreet_trash_dir_get(), fname, i++);
+    while (ecore_file_exists(dest) && (i < 100))
+	snprintf(dest, sizeof(dest), "%s/files/%s$%d",
+		    trash_dir, fname, i++);
+
     fname = ecore_file_file_get(dest);
 
     /* move file to trash dir */
     if (rename(uri->path, dest))
     {
-        if (errno == EXDEV)
-        {
-            if (!force_delete) return -1;
-            if (!ecore_file_recursive_rm(uri->path))
-            {
-                ERR("EFREET TRASH ERROR: Can't delete file.");
-                return 0; 
-            }
-        }
-        else
-        {
-            ERR("EFREET TRASH ERROR: Can't move file to trash.");
-            return 0;
-        }
+	if (errno == EXDEV)
+	{
+	    if (!force_delete)
+	    {
+		eina_stringshare_del(trash_dir);
+		return -1;
+	    }
+
+	    if (!ecore_file_recursive_rm(uri->path))
+	    {
+		ERR("EFREET TRASH ERROR: Can't delete file.");
+		eina_stringshare_del(trash_dir);
+		return 0;
+	    }
+	}
+	else
+	{
+	    ERR("EFREET TRASH ERROR: Can't move file to trash.");
+	    eina_stringshare_del(trash_dir);
+	    return 0;
+	}
     }
 
     /* create info file */
-    snprintf(dest, sizeof(dest), "%s/info/%s.trashinfo",
-                efreet_trash_dir_get(), fname);
+    snprintf(dest, sizeof(dest), "%s/info/%s.trashinfo", trash_dir, fname);
 
     if ((f = fopen(dest, "w")))
     {
-        fputs("[Trash Info]\n", f); //TODO is '\n' right?? (or \r\c??)
+	fputs("[Trash Info]\n", f); //TODO is '\n' right?? (or \r\c??)
 
-        fputs("Path=", f);
-        escaped = efreet_uri_encode(uri);
-        fputs(escaped + 7, f); // +7 == don't write 'file://'
-        IF_RELEASE(escaped);
+	fputs("Path=", f);
+	escaped = efreet_uri_encode(uri);
+	fputs(escaped + 7, f); // +7 == don't write 'file://'
+	IF_RELEASE(escaped);
 
-        time(&now);
-        strftime(times, sizeof(times), "%Y-%m-%dT%H:%M:%S", localtime(&now));
-        fputs("\nDeletionDate=", f);
-        fputs(times, f);
-        fputs("\n", f);
-        fclose(f);
+	time(&now);
+	strftime(times, sizeof(times), "%Y-%m-%dT%H:%M:%S", localtime(&now));
+	fputs("\nDeletionDate=", f);
+	fputs(times, f);
+	fputs("\n", f);
+	fclose(f);
     }
     else
     {
-        ERR("EFREET TRASH ERROR: Can't create trash info file.");
-        return 0;
+	ERR("EFREET TRASH ERROR: Can't create trash info file.");
+	return 0;
     }
 
     return 1;
@@ -186,7 +272,7 @@ efreet_trash_is_empty(void)
 {
     char buf[PATH_MAX];
 
-    snprintf(buf, sizeof(buf), "%s/files", efreet_trash_dir_get());
+    snprintf(buf, sizeof(buf), "%s/files", efreet_trash_dir_get(NULL));
 
     /* TODO Check also trash in other filesystems */
     return ecore_file_dir_is_empty(buf);
@@ -201,11 +287,11 @@ efreet_trash_empty_trash(void)
 {
     char buf[PATH_MAX];
 
-    snprintf(buf, sizeof(buf), "%s/info", efreet_trash_dir_get());
+    snprintf(buf, sizeof(buf), "%s/info", efreet_trash_dir_get(NULL));
     if (!ecore_file_recursive_rm(buf)) return 0;
     ecore_file_mkdir(buf);
 
-    snprintf(buf, sizeof(buf), "%s/files", efreet_trash_dir_get());
+    snprintf(buf, sizeof(buf), "%s/files", efreet_trash_dir_get(NULL));
     if (!ecore_file_recursive_rm(buf)) return 0;
     ecore_file_mkdir(buf);
 
@@ -228,7 +314,7 @@ efreet_trash_ls(void)
     // NOTE THIS FUNCTION NOW IS NOT COMPLETE AS I DON'T NEED IT
     // TODO read the name from the infofile instead of the filename
 
-    snprintf(buf, sizeof(buf), "%s/files", efreet_trash_dir_get());
+    snprintf(buf, sizeof(buf), "%s/files", efreet_trash_dir_get(NULL));
     files = ecore_file_ls(buf);
 
     EINA_LIST_FOREACH(files, l, infofile)
