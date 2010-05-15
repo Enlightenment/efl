@@ -115,7 +115,7 @@ efreet_icon_init(void)
 {
     if (!efreet_icon_themes)
     {
-        const char *default_exts[] = {".png", ".xpm", NULL};
+        const char *default_exts[] = {".png", ".svg", ".xpm", NULL};
         int i;
 
         if (!ecore_init())
