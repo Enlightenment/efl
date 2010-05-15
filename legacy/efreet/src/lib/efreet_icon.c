@@ -115,6 +115,9 @@ efreet_icon_init(void)
 {
     if (!efreet_icon_themes)
     {
+        /* FIXME when svg and xpm with same name exist but svg
+	   loader was not built xpm icon will not be found.
+	   use sth like #ifdef EVAS_IMAGE_LOADER_SVG when possible. */
         const char *default_exts[] = {".png", ".svg", ".xpm", NULL};
         int i;
 
