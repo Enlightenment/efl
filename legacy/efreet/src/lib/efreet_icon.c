@@ -212,11 +212,11 @@ efreet_icon_extension_add(const char *ext)
     
     if ((l = eina_list_data_find_list(efreet_icon_extensions, ext)))
     {
-	eina_stringshare_del((const char *)l->data);
-	efreet_icon_extensions = eina_list_remove_list(efreet_icon_extensions, l);
+        efreet_icon_extensions = eina_list_promote_list(efreet_icon_extensions, l);
+        eina_stringshare_del(ext);
     }
-    
-    efreet_icon_extensions = eina_list_prepend(efreet_icon_extensions, ext);
+    else
+        efreet_icon_extensions = eina_list_prepend(efreet_icon_extensions, ext);
 }
 
 /**
