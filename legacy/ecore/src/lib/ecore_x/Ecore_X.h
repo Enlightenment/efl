@@ -124,6 +124,8 @@ typedef enum _Ecore_X_Composite_Update_Type {
 } Ecore_X_Composite_Update_Type;
 
 typedef enum _Ecore_X_Window_State {
+    /* Unknown state */
+    ECORE_X_WINDOW_STATE_UNKNOWN = 0,
     /** The window is iconified. */
     ECORE_X_WINDOW_STATE_ICONIFIED,
     /** The window is a modal dialog box. */
@@ -151,9 +153,7 @@ typedef enum _Ecore_X_Window_State {
     ECORE_X_WINDOW_STATE_ABOVE,
     ECORE_X_WINDOW_STATE_BELOW,
     /* FIXME: Documentation */
-    ECORE_X_WINDOW_STATE_DEMANDS_ATTENTION,
-    /* Unknown state */
-    ECORE_X_WINDOW_STATE_UNKNOWN
+    ECORE_X_WINDOW_STATE_DEMANDS_ATTENTION
 } Ecore_X_Window_State;
 
 typedef enum _Ecore_X_Window_State_Action {
@@ -971,15 +971,21 @@ typedef enum _Ecore_X_Window_State_Hint
 
 typedef enum _Ecore_X_Window_Type 
 {
-    ECORE_X_WINDOW_TYPE_DESKTOP,
-    ECORE_X_WINDOW_TYPE_DOCK,
-    ECORE_X_WINDOW_TYPE_TOOLBAR,
-    ECORE_X_WINDOW_TYPE_MENU,
-    ECORE_X_WINDOW_TYPE_UTILITY,
-    ECORE_X_WINDOW_TYPE_SPLASH,
-    ECORE_X_WINDOW_TYPE_DIALOG,
-    ECORE_X_WINDOW_TYPE_NORMAL,
-    ECORE_X_WINDOW_TYPE_UNKNOWN
+     ECORE_X_WINDOW_TYPE_UNKNOWN = 0,
+     ECORE_X_WINDOW_TYPE_DESKTOP,
+     ECORE_X_WINDOW_TYPE_DOCK,
+     ECORE_X_WINDOW_TYPE_TOOLBAR,
+     ECORE_X_WINDOW_TYPE_MENU,
+     ECORE_X_WINDOW_TYPE_UTILITY,
+     ECORE_X_WINDOW_TYPE_SPLASH,
+     ECORE_X_WINDOW_TYPE_DIALOG,
+     ECORE_X_WINDOW_TYPE_NORMAL,
+     ECORE_X_WINDOW_TYPE_DROPDOWN_MENU,
+     ECORE_X_WINDOW_TYPE_POPUP_MENU,
+     ECORE_X_WINDOW_TYPE_TOOLTIP,
+     ECORE_X_WINDOW_TYPE_NOTIFICATION,
+     ECORE_X_WINDOW_TYPE_COMBO,
+     ECORE_X_WINDOW_TYPE_DND
 } Ecore_X_Window_Type;
 
 typedef enum _Ecore_X_Action 
