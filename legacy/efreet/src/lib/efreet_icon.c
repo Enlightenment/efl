@@ -115,10 +115,7 @@ efreet_icon_init(void)
 {
     if (!efreet_icon_themes)
     {
-        /* FIXME when svg and xpm with same name exist but svg
-	   loader was not built xpm icon will not be found.
-	   use sth like #ifdef EVAS_IMAGE_LOADER_SVG when possible. */
-        const char *default_exts[] = {".png", ".svg", ".xpm", NULL};
+        const char *default_exts[] = {".png", ".xpm", NULL};
         int i;
 
         if (!ecore_init())
@@ -209,7 +206,17 @@ efreet_icon_user_dir_get(void)
 EAPI void
 efreet_icon_extension_add(const char *ext)
 {
-    efreet_icon_extensions  = eina_list_prepend(efreet_icon_extensions, eina_stringshare_add(ext));
+    Eina_List *l;
+    
+    ext = eina_stringshare_add(ext);
+    
+    if ((l = eina_list_data_find_list(efreet_icon_extensions, ext)))
+    {
+	eina_stringshare_del((const char *)l->data);
+	efreet_icon_extensions = eina_list_remove_list(efreet_icon_extensions, l);
+    }
+    
+    efreet_icon_extensions = eina_list_prepend(efreet_icon_extensions, ext);
 }
 
 /**
