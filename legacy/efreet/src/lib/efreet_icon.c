@@ -672,7 +672,7 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
     Eina_List *l;
     char *icon = NULL, *tmp = NULL;
     Efreet_Icon_Theme_Directory *dir;
-    double minimal_size = INT_MAX;
+    double minimal_distance = INT_MAX;
     unsigned int ret_size;
 
     if (!theme || (theme->paths == NULL) || !icon_name || !size)
@@ -700,9 +700,9 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
         double distance;
 
         distance = efreet_icon_directory_size_distance(dir, size);
-        if (distance > minimal_size) continue;
+        if (distance > minimal_distance) continue;
         // prefer downsizing
-        if ((distance == minimal_size) && (size < ret_size)) continue;
+        if ((distance == minimal_distance) && (size < ret_size)) continue;
 
         tmp = efreet_icon_lookup_directory(theme, dir,
                                            icon_name);
@@ -710,7 +710,7 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
         {
             FREE(icon);
             icon = tmp;
-            minimal_size = distance;
+            minimal_distance = distance;
             ret_size = size;
         }
     }
