@@ -217,24 +217,27 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 
    type = compl_type & ECORE_CON_TYPE;
 
-   if ((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM) ||
+   if ((type == ECORE_CON_LOCAL_USER) || 
+       (type == ECORE_CON_LOCAL_SYSTEM) ||
        (type == ECORE_CON_LOCAL_ABSTRACT))
      {
         /* Local */
         if (!ecore_con_local_listen(svr, _ecore_con_svr_handler, svr)) goto error;
      }
-
-   if (type == ECORE_CON_REMOTE_TCP || type == ECORE_CON_REMOTE_NODELAY)
+   
+   if ((type == ECORE_CON_REMOTE_TCP) || 
+       (type == ECORE_CON_REMOTE_NODELAY))
      {
         /* TCP */
         if (!ecore_con_info_tcp_listen(svr, _ecore_con_cb_tcp_listen, svr)) goto error;
      }
-   else if (type == ECORE_CON_REMOTE_MCAST || type == ECORE_CON_REMOTE_UDP)
+   else if ((type == ECORE_CON_REMOTE_MCAST) ||
+            (type == ECORE_CON_REMOTE_UDP))
      {
         /* UDP and MCAST */
         if (!ecore_con_info_udp_listen(svr, _ecore_con_cb_udp_listen, svr)) goto error;
      }
-
+   
    servers = eina_list_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);
 
@@ -308,22 +311,29 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
 
    type = compl_type & ECORE_CON_TYPE;
 
-   if ((type == ECORE_CON_REMOTE_TCP || type == ECORE_CON_REMOTE_NODELAY
-	|| type == ECORE_CON_REMOTE_UDP || ECORE_CON_REMOTE_BROADCAST) && (port < 0)) return NULL;
-
-   if ((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM) ||
+   if (((type == ECORE_CON_REMOTE_TCP) || 
+        (type == ECORE_CON_REMOTE_NODELAY) ||
+	(type == ECORE_CON_REMOTE_UDP) || 
+        (type == ECORE_CON_REMOTE_BROADCAST)) &&
+       (port < 0))
+     goto error;
+   
+   if ((type == ECORE_CON_LOCAL_USER) || 
+       (type == ECORE_CON_LOCAL_SYSTEM) ||
        (type == ECORE_CON_LOCAL_ABSTRACT))
      {
         /* Local */
        if (!ecore_con_local_connect(svr, _ecore_con_cl_handler, svr, _ecore_con_event_server_add_free)) goto error;
      }
 
-   if (type == ECORE_CON_REMOTE_TCP || type == ECORE_CON_REMOTE_NODELAY)
+   if ((type == ECORE_CON_REMOTE_TCP) || 
+       (type == ECORE_CON_REMOTE_NODELAY))
      {
         /* TCP */
         if (!ecore_con_info_tcp_connect(svr, _ecore_con_cb_tcp_connect, svr)) goto error;
      }
-   else if (type == ECORE_CON_REMOTE_UDP || type == ECORE_CON_REMOTE_BROADCAST)
+   else if ((type == ECORE_CON_REMOTE_UDP) || 
+            (type == ECORE_CON_REMOTE_BROADCAST))
      {
         /* UDP and MCAST */
         if (!ecore_con_info_udp_connect(svr, _ecore_con_cb_udp_connect, svr)) goto error;
