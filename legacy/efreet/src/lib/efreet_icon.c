@@ -1522,7 +1522,7 @@ efreet_icon_theme_directory_new(Efreet_Ini *ini, const char *name)
 	dir->size.max = dir->size.normal + val;
 	dir->size.min = dir->size.normal - val;	
     }
-    else
+    else if (dir->type == EFREET_ICON_SIZE_TYPE_SCALABLE)
     {
 	val = efreet_ini_int_get(ini, "MinSize");
 	if (val < 0) dir->size.min = dir->size.normal;
