@@ -19,7 +19,7 @@
 
 /* define macros and variable for using the eina logging system  */
 
-#ifdef EFREET_MODULE_LOG_DOM 
+#ifdef EFREET_MODULE_LOG_DOM
 #undef EFREET_MODULE_LOG_DOM
 #endif
 #define EFREET_MODULE_LOG_DOM _efreet_utils_log_dom
@@ -63,7 +63,7 @@ int
 efreet_util_shutdown(void)
 {
     if (--init) return init;
-    
+
     eina_log_domain_unregister(_efreet_utils_log_dom);
     IF_FREE_HASH(file_id_by_desktop_path);
     if (cache) eet_close(cache);
@@ -130,7 +130,7 @@ efreet_util_path_to_file_id(const char *path)
     const char *file_id;
 
     /* TODO: Check if searching in cache is fast enough */
-    if (!path) return NULL; 
+    if (!path) return NULL;
     file_id = eina_hash_find(file_id_by_desktop_path, path);
     if (file_id) return file_id;
 
