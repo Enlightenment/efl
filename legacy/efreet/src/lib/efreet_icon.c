@@ -56,7 +56,7 @@ static char *efreet_icon_fallback_dir_scan(const char *dir,
 static char *efreet_icon_lookup_directory(Efreet_Icon_Theme *theme,
                                           Efreet_Icon_Theme_Directory *dir,
                                           const char *icon_name);
-static int efreet_icon_directory_size_distance(Efreet_Icon_Theme_Directory *dir,
+static double efreet_icon_directory_size_distance(Efreet_Icon_Theme_Directory *dir,
                                                     unsigned int size);
 static int efreet_icon_directory_size_match(Efreet_Icon_Theme_Directory *dir,
                                                   unsigned int size);
@@ -672,7 +672,7 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
     Eina_List *l;
     char *icon = NULL, *tmp = NULL;
     Efreet_Icon_Theme_Directory *dir;
-    int minimal_size = INT_MAX;
+    double minimal_size = INT_MAX;
 
     if (!theme || (theme->paths == NULL) || !icon_name || !size)
         return NULL;
@@ -696,7 +696,7 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
     /* search for any icon that matches */
     EINA_LIST_FOREACH(theme->directories, l, dir)
     {
-        int distance;
+        double distance;
 
         distance = efreet_icon_directory_size_distance(dir, size);
         if (distance >= minimal_size) continue;
@@ -775,7 +775,7 @@ efreet_icon_directory_size_match(Efreet_Icon_Theme_Directory *dir,
  * @return Returns the distance this size is away from the desired size
  * @brief Returns the distance the given size is away from the desired size
  */
-static int
+static double
 efreet_icon_directory_size_distance(Efreet_Icon_Theme_Directory *dir,
                                     unsigned int size)
 {
@@ -794,10 +794,17 @@ efreet_icon_directory_size_distance(Efreet_Icon_Theme_Directory *dir,
 
     if (dir->type == EFREET_ICON_SIZE_TYPE_THRESHOLD)
     {
+#ifdef STRICT_SPEC
         if (size < (dir->size.normal - dir->size.threshold))
             return (dir->size.min - size);
         if ((dir->size.normal + dir->size.threshold) < size)
             return (size - dir->size.max);
+#else
+        if (size < (dir->size.normal - dir->size.threshold))
+            return (dir->size.min / (double)size);
+        if ((dir->size.normal + dir->size.threshold) < size)
+            return (size / (double)dir->size.max);
+#endif
 
         return 0;
     }
