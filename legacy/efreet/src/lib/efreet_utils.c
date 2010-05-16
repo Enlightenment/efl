@@ -108,7 +108,7 @@ efreet_util_path_in_default(const char *section, const char *path)
     char *dir;
 
     dirs = efreet_default_dirs_get(efreet_data_home_get(), efreet_data_dirs_get(),
-                                                                    section);
+                                   section);
 
     EINA_LIST_FREE(dirs, dir)
     {
@@ -130,7 +130,7 @@ efreet_util_path_to_file_id(const char *path)
     const char *file_id;
 
     /* TODO: Check if searching in cache is fast enough */
-    if (!path) return NULL;
+    if (!path) return NULL; 
     file_id = eina_hash_find(file_id_by_desktop_path, path);
     if (file_id) return file_id;
 
