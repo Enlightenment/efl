@@ -57,10 +57,10 @@ static Eina_Stringshare_Test eina_str = {
 
 static Eina_Stringshare_Test evas_str = {
   "evas",
-  evas_stringshare_init,
+/*  evas_stringshare_init, */
   evas_stringshare_add,
-  evas_stringshare_del,
-  evas_stringshare_shutdown
+  evas_stringshare_del
+/*  evas_stringshare_shutdown */
 };
 
 static Eina_Stringshare_Test ecore_str = {
