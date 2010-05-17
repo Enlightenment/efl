@@ -207,9 +207,9 @@ EAPI void
 efreet_icon_extension_add(const char *ext)
 {
     Eina_List *l;
-    
+
     ext = eina_stringshare_add(ext);
-    
+
     if ((l = eina_list_data_find_list(efreet_icon_extensions, ext)))
     {
         efreet_icon_extensions = eina_list_promote_list(efreet_icon_extensions, l);
@@ -763,7 +763,7 @@ efreet_icon_directory_size_match(Efreet_Icon_Theme_Directory *dir,
         return (dir->size.normal == size);
 
     if ((dir->type == EFREET_ICON_SIZE_TYPE_SCALABLE) ||
-	(dir->type == EFREET_ICON_SIZE_TYPE_THRESHOLD))
+        (dir->type == EFREET_ICON_SIZE_TYPE_THRESHOLD))
         return ((dir->size.min < size) && (size < dir->size.max));
 
     return 0;
@@ -784,20 +784,20 @@ efreet_icon_directory_size_distance(Efreet_Icon_Theme_Directory *dir,
         return (abs(dir->size.normal - size));
 
     if ((dir->type == EFREET_ICON_SIZE_TYPE_SCALABLE) ||
-	(dir->type == EFREET_ICON_SIZE_TYPE_THRESHOLD))
+        (dir->type == EFREET_ICON_SIZE_TYPE_THRESHOLD))
     {
 #ifdef STRICT_SPEC
-	if (size < dir->size.min)
-	    return (dir->size.min - size);
-	if (dir->size.max < size)
-	    return (size - dir->size.max);
+        if (size < dir->size.min)
+            return (dir->size.min - size);
+        if (dir->size.max < size)
+            return (size - dir->size.max);
 #else
-	if (size < dir->size.min)
-	    return (dir->size.min / (double)size);
-	if (dir->size.max < size)
-	    return (size / (double)dir->size.max);
+        if (size < dir->size.min)
+            return (dir->size.min / (double)size);
+        if (dir->size.max < size)
+            return (size / (double)dir->size.max);
 #endif
-	return 0;
+        return 0;
     }
 
     return 0;
@@ -1502,10 +1502,10 @@ efreet_icon_theme_directory_new(Efreet_Ini *ini, const char *name)
 
     /* Threshold is fallback  */
     dir->type = EFREET_ICON_SIZE_TYPE_THRESHOLD;
-    
+
     tmp = efreet_ini_string_get(ini, "Type");
     if (tmp)
-    {	
+    {
         if (!strcasecmp(tmp, "Fixed"))
             dir->type = EFREET_ICON_SIZE_TYPE_FIXED;
 
@@ -1517,22 +1517,22 @@ efreet_icon_theme_directory_new(Efreet_Ini *ini, const char *name)
 
     if (dir->type == EFREET_ICON_SIZE_TYPE_THRESHOLD)
     {
-	val = efreet_ini_int_get(ini, "Threshold");
-	if (val < 0) val = 2;
-	dir->size.max = dir->size.normal + val;
-	dir->size.min = dir->size.normal - val;	
+        val = efreet_ini_int_get(ini, "Threshold");
+        if (val < 0) val = 2;
+        dir->size.max = dir->size.normal + val;
+        dir->size.min = dir->size.normal - val;
     }
     else if (dir->type == EFREET_ICON_SIZE_TYPE_SCALABLE)
     {
-	val = efreet_ini_int_get(ini, "MinSize");
-	if (val < 0) dir->size.min = dir->size.normal;
-	else dir->size.min = val;
+        val = efreet_ini_int_get(ini, "MinSize");
+        if (val < 0) dir->size.min = dir->size.normal;
+        else dir->size.min = val;
 
-	val = efreet_ini_int_get(ini, "MaxSize");
-	if (val < 0) dir->size.max = dir->size.normal;
-	else dir->size.max = val;
+        val = efreet_ini_int_get(ini, "MaxSize");
+        if (val < 0) dir->size.max = dir->size.normal;
+        else dir->size.max = val;
     }
-    
+
     return dir;
 }
 
