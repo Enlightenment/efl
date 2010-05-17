@@ -125,6 +125,7 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
 #endif
           if (!(test = (udev_device_get_property_value(device, "POWER_SUPPLY_TYPE"))) ||
              (strcmp("Mains", test)))
+            goto error;
           break;
         case EEZE_UDEV_TYPE_POWER_BAT:
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
@@ -133,6 +134,7 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
 #endif
           if (!(test = (udev_device_get_property_value(device, "POWER_SUPPLY_TYPE"))) ||
              (strcmp("Battery", test)))
+            goto error;
           break;
 /*          
         case EEZE_UDEV_TYPE_ANDROID:
