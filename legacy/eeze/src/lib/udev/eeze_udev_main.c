@@ -18,16 +18,15 @@ eeze_udev_init(void)
    if (_e_eeze_udev_log_dom < 0)
      {
         EINA_LOG_ERR("Could not register 'eeze_udev' log domain.");
-        goto shutdown_eina;
+        goto fail;
      }
 
    return _e_eeze_udev_init_count;
 
+fail:
      eina_log_domain_unregister(_e_eeze_udev_log_dom);
      _e_eeze_udev_log_dom = -1;
-   shutdown_eina:
      eina_shutdown();
-
    return _e_eeze_udev_init_count;
 }
 
