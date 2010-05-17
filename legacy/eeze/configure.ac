@@ -1,7 +1,7 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT([eeze], [0.0.1], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([eeze], [0.1.0], [enlightenment-devel@lists.sourceforge.net])
 release="ver-pre-svn-05"
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
@@ -62,8 +62,7 @@ AS_IF(
 
 udev_version=$(pkg-config udev --version | cut -d. -f2)
 if test $udev_version -lt 23;then
-  EEZE_UDEV_CFLAGS="-DOLD_UDEV_RRRRRRRRRRRRRR"
-  AC_SUBST(EEZE_UDEV_CFLAGS)
+  AC_DEFINE([OLD_UDEV_RRRRRRRRRRRRRR],[1],[compat functionality for udev < 0.23])
 fi
 
 AM_CONDITIONAL([BUILD_EEZE_UDEV],     [test "x${enable_eeze_udev}"     = "xyes"])

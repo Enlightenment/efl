@@ -1,8 +1,9 @@
-#include "eeze_udev_private.h"
-#include <Eeze_Udev.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-/* from watch.c */
-Eina_Bool _walk_parents_for_attr(struct udev_device *device, const char *sysattr, const char* value);
+#include <Eeze_Udev.h>
+#include "eeze_udev_private.h"
 
 /**
  * @defgroup udev udev
@@ -21,7 +22,7 @@ Eina_Bool _walk_parents_for_attr(struct udev_device *device, const char *sysattr
  * @ingroup udev
  */
 EAPI const char *
-eeze_udev_syspath_rootdev_get(const char *syspath)
+eeze_udev_syspath_get_parent(const char *syspath)
 {
    struct udev *udev;
    struct udev_device *device, *parent;
@@ -49,166 +50,45 @@ eeze_udev_syspath_rootdev_get(const char *syspath)
 }
 
 /**
- * Find devices using a EEZE_UDEV_TYPE_* and/or a name.
+ * Returns a list of all parent device syspaths for @p syspath.
  *
- * @param type A Eeze_Udev_Type or 0
- * @param name A filter for the device name or NULL
- * @return A Eina_List* of matched devices or NULL on failure
- * 
- * Return a list of syspaths (/sys/$syspath) for matching udev devices.
+ * @param syspath The device to find parents of
+ * @return A list of the parent devices of @p syspath
  *
  * @ingroup udev
  */
 EAPI Eina_List *
-eeze_udev_find_by_type(const Eeze_Udev_Type etype, const char *name)
+eeze_udev_syspath_get_parents(const char *syspath)
 {
    struct udev *udev;
-   struct udev_enumerate *en;
-   struct udev_list_entry *devs, *cur;
-   struct udev_device *device;
-   const char *devname;
-   Eina_List *ret = NULL;
+   struct udev_device *child, *parent, *device;
+   const char *path;
+   Eina_Strbuf *sbuf;
+   Eina_List *devlist = NULL;
 
-   if ((!etype) && (!name)) return NULL;
-
+			if (!syspath) return NULL;
    udev = udev_new();
    if (!udev) return NULL;
-   en = udev_enumerate_new(udev);
-   if (!en) return NULL;
+      
+   sbuf = eina_strbuf_new();
+   if (!strstr(syspath, "/sys/"))
+     eina_strbuf_append(sbuf, "/sys/");
+   eina_strbuf_append(sbuf, syspath);
 
-   switch (etype)
-     {
-        case EEZE_UDEV_TYPE_NONE:
-          break;
-        case EEZE_UDEV_TYPE_KEYBOARD:
-          udev_enumerate_add_match_subsystem(en, "input");
-          udev_enumerate_add_match_property(en, "ID_INPUT_KEYBOARD", "1");
-          break;
-        case EEZE_UDEV_TYPE_MOUSE:
-          udev_enumerate_add_match_subsystem(en, "input");
-          udev_enumerate_add_match_property(en, "ID_INPUT_MOUSE", "1");
-          break;
-        case EEZE_UDEV_TYPE_TOUCHPAD:
-          udev_enumerate_add_match_subsystem(en, "input");
-          udev_enumerate_add_match_property(en, "ID_INPUT_TOUCHPAD", "1");
-          break;
-        case EEZE_UDEV_TYPE_DRIVE_MOUNTABLE:
-          udev_enumerate_add_match_subsystem(en, "block");
-          udev_enumerate_add_match_property(en, "ID_FS_USAGE", "filesystem");
-          udev_enumerate_add_nomatch_sysattr(en, "capability", "52");
-          break;
-        case EEZE_UDEV_TYPE_DRIVE_INTERNAL:
-          udev_enumerate_add_match_subsystem(en, "block");
-          udev_enumerate_add_match_property(en, "ID_TYPE", "disk");
-          udev_enumerate_add_match_property(en, "ID_BUS", "ata");
-          udev_enumerate_add_match_sysattr(en, "removable", "0");
-          break;
-        case EEZE_UDEV_TYPE_DRIVE_REMOVABLE:
-          udev_enumerate_add_match_subsystem(en, "block");
-          udev_enumerate_add_match_property(en, "ID_TYPE", "disk");
-          udev_enumerate_add_match_sysattr(en, "removable", "1");
-          break;
-        case EEZE_UDEV_TYPE_DRIVE_CDROM:
-          udev_enumerate_add_match_subsystem(en, "block");
-          udev_enumerate_add_match_property(en, "ID_CDROM", "1");
-          break;
-        case EEZE_UDEV_TYPE_POWER_AC:
-          udev_enumerate_add_match_subsystem(en, "power_supply");
-          udev_enumerate_add_match_property(en, "POWER_SUPPLY_TYPE", "Mains");
-          break;
-        case EEZE_UDEV_TYPE_POWER_BAT:
-          udev_enumerate_add_match_subsystem(en, "power_supply");
-          udev_enumerate_add_match_property(en, "POWER_SUPPLY_TYPE", "Battery");
-          break;
-/*
-        case EEZE_UDEV_TYPE_ANDROID:
-          udev_enumerate_add_match_subsystem(en, "block");
-          udev_enumerate_add_match_property(en, "ID_MODEL", "Android_*");
-          break;
-*/
-        default:
-          break;
-     }
-   udev_enumerate_scan_devices(en);
-   devs = udev_enumerate_get_list_entry(en);
-
-   udev_list_entry_foreach(cur, devs)
-     {
-        devname = udev_list_entry_get_name(cur);
-        device = udev_device_new_from_syspath(udev, devname);
-
-        if (name)
-             if (!strstr(devname,name))
-               goto out;
-
-        ret = eina_list_append(ret, eina_stringshare_add(udev_device_get_property_value(device, "DEVPATH")));
-
-out:
-        udev_device_unref(device);
-    }
-    udev_enumerate_unref(en);
-    udev_unref(udev);
-
-    return ret;
+   device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+   if (!(parent = udev_device_get_parent(device)))
+     return NULL;
+   
+			for (; parent; child = parent, parent = udev_device_get_parent(child))
+					{
+						  path = udev_device_get_syspath(parent);
+								devlist = eina_list_append(devlist, eina_stringshare_add(path));
+					}
+			udev_device_unref(device);
+			udev_unref(udev);
+			
+			return devlist;			
 }
-
-/**
- * A more advanced find, allows finds using udev properties.
- *
- * @param subsystem The udev subsystem to filter by, or NULL
- * @param type "ID_INPUT_KEY", "ID_INPUT_MOUSE", "ID_INPUT_TOUCHPAD", NULL, etc
- * @param name A filter for the device name, or NULL
- * @return A Eina_List* of matched devices or NULL on failure
- * 
- * Return a list of syspaths (/sys/$syspath) for matching udev devices.
- * Requires at least one filter.
- *
- * @ingroup udev
- */
-EAPI Eina_List *
-eeze_udev_find_by_filter(const char *subsystem, const char *type, const char *name)
-{
-   struct udev *udev;
-   struct udev_enumerate *en;
-   struct udev_list_entry *devs, *cur;
-   struct udev_device *device;
-   const char *devname;
-   Eina_List *ret = NULL;
-
-   if ((!subsystem) && (!type) && (!name)) return NULL;
-
-   udev = udev_new();
-   if (!udev) return NULL;
-   en = udev_enumerate_new(udev);
-   if (!en) return NULL;
-
-   if (subsystem)
-     udev_enumerate_add_match_subsystem(en, subsystem);
-
-   udev_enumerate_add_match_property(en, type, "1");
-   udev_enumerate_scan_devices(en);
-   devs = udev_enumerate_get_list_entry(en);
-
-   udev_list_entry_foreach(cur, devs)
-     {
-        devname = udev_list_entry_get_name(cur);
-        device = udev_device_new_from_syspath(udev, devname);
-
-        if (name)
-             if (!strstr(devname,name))
-               goto out;
-
-        ret = eina_list_append(ret, eina_stringshare_add(udev_device_get_property_value(device, "DEVPATH")));
-
-out:
-        udev_device_unref(device);
-    }
-    udev_enumerate_unref(en);
-    udev_unref(udev);
-
-    return ret;
-}
-
 
 /**
  * Get the /dev/ path from the /sys/ path.
@@ -225,7 +105,7 @@ eeze_udev_syspath_get_devpath(const char *syspath)
 {
       struct udev *udev;
       struct udev_device *device;
-      const char *name;
+      const char *name = NULL;
       Eina_Strbuf *sbuf;
 
       if (!syspath) return NULL;
@@ -238,7 +118,8 @@ eeze_udev_syspath_get_devpath(const char *syspath)
       eina_strbuf_append(sbuf, syspath);
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
-      name = eina_stringshare_add(udev_device_get_property_value(device, "DEVNAME"));
+      if ((udev_device_get_property_value(device, "DEVNAME")))
+        name = eina_stringshare_add(eina_strbuf_string_get(sbuf));
 
       udev_device_unref(device);
       udev_unref(udev);
@@ -302,7 +183,7 @@ eeze_udev_syspath_get_property(const char *syspath, const char *property)
 {
       struct udev *udev;
       struct udev_device *device;
-      const char *value;
+      const char *value = NULL, *test;
       Eina_Strbuf *sbuf;
 
       if (!syspath) return NULL;
@@ -315,7 +196,8 @@ eeze_udev_syspath_get_property(const char *syspath, const char *property)
       eina_strbuf_append(sbuf, syspath);
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
-      value = eina_stringshare_add(udev_device_get_property_value(device, property));
+      if ((test = udev_device_get_property_value(device, property)));
+        value = eina_stringshare_add(test);
 
       udev_device_unref(device);
       udev_unref(udev);
@@ -415,7 +297,7 @@ eeze_udev_devpath_get_subsystem(const char *devpath)
 /**
  * Checks whether the device is a mouse.
  *
- * @param syspath The /sys/ path of the device
+ * @param syspath The /sys/ path with or without the /sys/
  * @return If true, the device is a mouse
  * 
  * @ingroup udev
@@ -462,7 +344,7 @@ eeze_udev_syspath_is_mouse(const char *syspath)
 /**
  * Checks whether the device is a keyboard.
  *
- * @param syspath The /sys/ path of the device
+ * @param syspath The /sys/ path with or without the /sys/
  * @return If true, the device is a keyboard
  * 
  * @ingroup udev
@@ -509,7 +391,7 @@ eeze_udev_syspath_is_kbd(const char *syspath)
 /**
  * Checks whether the device is a touchpad.
  *
- * @param syspath The /sys/ path of the device
+ * @param syspath The /sys/ path with or without the /sys/
  * @return If true, the device is a touchpad
  * 
  * @ingroup udev
@@ -546,3 +428,44 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
       return touchpad;
 }
 
+/**
+ * Walks up the device chain starting at @p syspath,
+ * checking each device for @p sysattr with (optional) @p value.
+ *
+ * @param syspath The /sys/ path of the device to start at, with or without the /sys/
+ * @param sysattr The attribute to find
+ * @param value OPTIONAL: The value that @p sysattr should have, or NULL
+ *
+ * @return If the sysattr (with value) is found, returns TRUE.  Else, false.
+ */
+EAPI Eina_Bool
+eeze_udev_syspath_check_sysattr(const char *syspath, const char *sysattr, const char *value)
+{
+     struct udev *udev;
+      struct udev_device *device, *child, *parent;
+      Eina_Strbuf *sbuf;
+      const char *test = NULL;
+
+      if (!syspath) return 0;
+      udev = udev_new();
+      if (!udev) return 0;
+      
+      sbuf = eina_strbuf_new();
+      if (!strstr(syspath, "/sys/"))
+        eina_strbuf_append(sbuf, "/sys/");
+      eina_strbuf_append(sbuf, syspath);
+
+      device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+
+      for (parent = device; parent; child = parent, parent = udev_device_get_parent(child))
+        {
+           if ((test = udev_device_get_sysattr_value(parent, sysattr)))
+             if ((value) && (!strcmp(test, value)))
+               {
+                  eina_strbuf_free(sbuf);
+                  return 1;
+               }
+        }
+   eina_strbuf_free(sbuf);
+   return 0;
+}

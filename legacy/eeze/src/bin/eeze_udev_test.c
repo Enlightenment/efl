@@ -94,9 +94,15 @@ int main()
    printf("For my first trick, I will find all of your keyboards and return their syspaths.\n");
    /* find all keyboards using type EEZE_UDEV_TYPE_KEYBOARD */
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_KEYBOARD, NULL);
+   /* add all "link" devices that aren't explicitly found, but are still
+    * part of the device chain
+    */
+   eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FOREACH(type, l, name)
-     {  /* add the devpath to the hash for use in the cb later */
-        eina_hash_direct_add(hash, name, eeze_udev_syspath_get_devpath(name));
+     {
+        /* add the devpath to the hash for use in the cb later */
+        if ((check = eeze_udev_syspath_get_devpath(name)))
+          eina_hash_direct_add(hash, name, check);
         printf("Found keyboard: %s\n", name);
      }
    /* we save this list for later, because once a device is unplugged it can
@@ -108,10 +114,13 @@ int main()
    printf("\nNext, I will find all of your mice and print the corresponding manufacturer.\n");
    /* find all mice using type EEZE_UDEV_TYPE_MOUSE */
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_MOUSE, NULL);
+   eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FOREACH(type, l, name)
      {  /* add the devpath to the hash for use in the cb later */
-        eina_hash_direct_add(hash, name, eeze_udev_syspath_get_devpath(name)); /* get a property using the device's syspath */
-        printf("Found mouse %s with vendor: %s\n", name, eeze_udev_syspath_get_property(name, "ID_VENDOR"));
+        if ((check = eeze_udev_syspath_get_devpath(name)))
+          eina_hash_direct_add(hash, name, check); /* get a property using the device's syspath */
+        if ((check = eeze_udev_syspath_get_property(name, "ID_VENDOR")))
+          printf("Found mouse %s with vendor: %s\n", name, check);
      }
    /* we save this list for later, because once a device is unplugged it can
     * no longer be detected by udev, and any related properties are unusable unless
@@ -122,21 +131,26 @@ int main()
    printf("\nNow let's try something a little more difficult.  Mountable filesystems!\n");
    /* find all mountable drives using type EEZE_UDEV_TYPE_DRIVE_MOUNTABLE */
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_MOUNTABLE, NULL);
+   eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FOREACH(type, l, name)
    {
      printf("Found device: %s\n", name);  /* get a property using the device's syspath */
      printf("\tYou probably know it better as %s\n", eeze_udev_syspath_get_property(name, "DEVNAME"));
-     printf("\tIt's formatted as %s", eeze_udev_syspath_get_property(name, "ID_FS_TYPE"));
-     check = eeze_udev_syspath_get_property(name, "FSTAB_DIR");
-     if (check)
-       printf(", and gets mounted at %s", check);
-     printf("!\n");
+     if ((check = eeze_udev_syspath_get_property(name, "ID_FS_TYPE")))
+       {
+          printf("\tIt's formatted as %s", check);
+          check = eeze_udev_syspath_get_property(name, "FSTAB_DIR");
+          if (check)
+            printf(", and gets mounted at %s", check);
+          printf("!\n");
+       }
    }
    eina_list_free(type);
 
    printf("\nInternal drives, anyone?  With serial numbers?\n");
    /* find all internal drives using type EEZE_UDEV_TYPE_DRIVE_INTERNAL */
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_INTERNAL, NULL);
+   eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FOREACH(type, l, name) /* get a property using the device's syspath */
         printf("%s: %s\n", name, eeze_udev_syspath_get_property(name, "ID_SERIAL"));
    eina_list_free(type);
@@ -144,9 +158,12 @@ int main()
    printf("\nGot any removables?  I'm gonna find em!\n");
    /* find all removable media using type EEZE_UDEV_TYPE_DRIVE_REMOVABLE */
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_REMOVABLE, NULL);
+   eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FOREACH(type, l, name)  /* get a property using the device's syspath */
-     printf("\tOoh, a %s attached on your %s bus!\n", eeze_udev_syspath_get_property(name, "ID_MODEL"),
-       eeze_udev_syspath_get_property(name, "ID_BUS"));
+     {
+        if ((check = eeze_udev_syspath_get_property(name, "ID_MODEL")))
+          printf("\tOoh, a %s attached on your %s bus!\n", check, eeze_udev_syspath_get_property(name, "ID_BUS"));
+     }
    eina_list_free(type);
 
 

@@ -1,5 +1,9 @@
-#include "eeze_udev_private.h"
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <Eeze_Udev.h>
+#include "eeze_udev_private.h"
 
 /* opaque */
 struct Eeze_Udev_Watch
@@ -20,31 +24,9 @@ struct _store_data
 };
 
 
-/* private function to simulate udevadm info -a
- * walks up the device tree checking each node for sysattr
- * with value value
- */
-Eina_Bool
-_walk_parents_for_attr(struct udev_device *device, const char *sysattr, const char* value)
-{
-   struct udev_device *parent, *child = device;
-   const char *test;
-
-   for (parent = udev_device_get_parent(child); parent; child = parent, parent = udev_device_get_parent(child))
-     {
-        if (!(test = udev_device_get_sysattr_value(parent, sysattr)))
-          continue;
-        if (!value)
-          return 1;
-        else if (!strcmp(test, value))
-          return 1;
-     }
-
-   return 0;
-}
-
 /* private function to further filter watch results based on Eeze_Udev_Type
- * specified
+ * specified; helpful for new udev versions, but absolutely required for
+ * old udev, which does not implement filtering in device monitors.
  */
 static int
 _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
