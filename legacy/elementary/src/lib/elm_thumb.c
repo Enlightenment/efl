@@ -103,8 +103,6 @@ _theme_hook(Evas_Object *obj)
 }
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
-static void _thumb_geometry_set(Widget_Data *wd);
-
 static void
 _mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
@@ -189,7 +187,6 @@ _finished_thumb(Widget_Data *wd, int id, const char *thumb_path, const char *thu
 			    wd->children.view);
    edje_object_signal_emit(wd->children.frm, EDJE_SIGNAL_GENERATE_STOP, "elm");
    evas_object_smart_callback_call(wd->self, SIG_GENERATE_STOP, NULL);
-   _thumb_geometry_set(wd);
    return;
 
 view_err:
@@ -308,74 +305,6 @@ _thumb_hide_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
      }
 }
 
-static Eina_Bool
-_thumb_calc_aspect(Widget_Data *wd, int tw, int th, int *ix, int *iy, int *iw, int *ih)
-{
-   if (!wd->children.view)
-     return EINA_FALSE;
-
-   *ih = th;
-   *iw = tw;
-   *ix = *iy = 0;
-
-   if (wd->keep_aspect)
-     {
-	float a, aspect;
-	Evas_Coord w, h;
-
-	evas_object_image_size_get(wd->children.view, &w, &h);
-
-	a = (h <= 0) ? 999999 : w / (float)h;
-	aspect = (th <= 0) ? 999999 : tw / (float)th;
-
-	if ((aspect < a) && (tw > 0 || th <= 0))
-	  *ih = tw / a;
-	else if ((aspect > a) && (th > 0 || tw <= 0))
-	  *iw = th * a;
-
-	*ix = - wd->children.align.x * (*iw - tw);
-	*iy = - wd->children.align.y * (*ih - th);
-     }
-
-   return EINA_TRUE;
-}
-
-static void
-_thumb_geometry_set(Widget_Data *wd)
-{
-   Evas_Coord x, y, w, h, ix, iy, cw, ch;
-
-   evas_object_geometry_get(wd->self, &x, &y, &w, &h);
-
-   if (_thumb_calc_aspect(wd, w, h, &ix, &iy, &cw, &ch))
-     {
-	evas_object_resize(wd->children.frm, cw, ch);
-	evas_object_move(wd->children.frm, x + ix, y + iy);
-	if (wd->is_video)
-	  evas_object_resize(wd->children.view, cw, ch);
-	else
-	  evas_object_image_fill_set(wd->children.view, 0, 0, cw, ch);
-	evas_object_size_hint_min_set(wd->children.view, cw, ch);
-	evas_object_size_hint_max_set(wd->children.view, cw, ch);
-     }
-   else
-     {
-	evas_object_move(wd->children.frm, x, y);
-	evas_object_resize(wd->children.frm, w, h);
-     }
-}
-
-static void
-_thumb_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   _thumb_geometry_set(data);
-}
-
-static void
-_thumb_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   _thumb_geometry_set(data);
-}
 #endif
 
 #ifdef ELM_ETHUMB
@@ -474,7 +403,7 @@ elm_thumb_add(Evas_Object *parent)
 
    wd->children.frm = edje_object_add(evas);
    _elm_theme_object_set(obj, wd->children.frm, "thumb", "base", "default");
-   elm_widget_sub_object_add(obj, wd->children.frm);
+   elm_widget_resize_object_set(obj, wd->children.frm);
 
    edje_object_size_min_calc(obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -500,10 +429,6 @@ elm_thumb_add(Evas_Object *parent)
 				  _thumb_show_cb, wd);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE,
 				  _thumb_hide_cb, wd);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
-				  _thumb_resize_cb, wd);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE,
-				  _thumb_move_cb, wd);
 #endif
 
    // TODO: convert Elementary to subclassing of Evas_Smart_Class
@@ -711,10 +636,6 @@ elm_thumb_align_set(Evas_Object *obj, float x_align, float y_align)
    else if (y_align < 0.0)
      y_align = 0.0;
    wd->children.align.y = y_align;
-
-#ifdef HAVE_ELEMENTARY_ETHUMB
-   _thumb_geometry_set(wd);
-#endif
 }
 
 /**
