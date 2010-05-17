@@ -34,7 +34,7 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
    struct _store_data *store = data;
    struct udev_device *device;
    const char *ret, *test;
-   void(*func)(const char *, const char *, void *, Eeze_Udev_Watch *) = store->func;
+   void(*func)(const char *syspath, const char *event, void *data, Eeze_Udev_Watch *watch) = store->func;
    void *sdata = store->data;
    Eeze_Udev_Watch *watch = store->watch;
    int cap = 0;
@@ -169,7 +169,7 @@ error:
  * @ingroup udev
  */
 EAPI Eeze_Udev_Watch *
-eeze_udev_watch_add(Eeze_Udev_Type type, void(*func)(const char *, const char *, void *, Eeze_Udev_Watch *), void *user_data)
+eeze_udev_watch_add(Eeze_Udev_Type type, void(*func)(const char *syspath, const char *event, void *data, Eeze_Udev_Watch *watch), void *user_data)
 {
    struct udev *udev;
    struct udev_monitor *mon;

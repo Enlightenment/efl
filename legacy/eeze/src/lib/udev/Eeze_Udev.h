@@ -130,7 +130,7 @@ extern "C" {
    EAPI Eina_Bool       eeze_udev_syspath_is_kbd(const char *syspath);
    EAPI Eina_Bool       eeze_udev_syspath_is_touchpad(const char *syspath);
 
-   EAPI Eeze_Udev_Watch *eeze_udev_watch_add(Eeze_Udev_Type type, void(*func)(const char *, const char *, void *, Eeze_Udev_Watch *), void *user_data);
+   EAPI Eeze_Udev_Watch *eeze_udev_watch_add(Eeze_Udev_Type type, void(*func)(const char *syspath, const char *event, void *data, Eeze_Udev_Watch *watch), void *user_data);
    EAPI void            *eeze_udev_watch_del(Eeze_Udev_Watch *watch);
 
 #ifdef __cplusplus
