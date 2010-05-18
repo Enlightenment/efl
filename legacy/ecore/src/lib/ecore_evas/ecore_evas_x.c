@@ -159,6 +159,7 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
             (!einfo->info.colormap) ||
             (!einfo->info.depth))
           {
+             WRN("OpenGL X11 init engine '%s' failed - no visual, colormap or depth.", ee->driver);
              evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
              return 0;
           }
@@ -184,7 +185,12 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
 			CWOverrideRedirect, &attr);
 	einfo->info.drawable = win;
         
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+	if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+             XDestroyWindow(einfo->info.display, win);
+             return 0;
+          }
         ecore_x_window_defaults_set(win);
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_sync_set(ee);
@@ -406,7 +412,10 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
                                              0, 0, ee->w, ee->h);
              ecore_x_gc_free(gc);
 	     einfo->info.mask = ee->engine.x.mask;
-	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+             if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+               {
+                  ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+               }
 	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 	  }
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
@@ -432,7 +441,10 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
                                              0, 0, ee->w, ee->h);
              ecore_x_gc_free(gc);
 	     einfo->info.mask = ee->engine.x.mask;
-	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+             if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+               {
+                  ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+               }
 	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 
 	  }
@@ -450,7 +462,10 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	     if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 	     ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
 	     einfo->info.mask = ee->engine.x.mask;
-	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+             if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+               {
+                  ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+               }
 	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 	  }
 # endif /* XXX no shaped window support for software_16_x11 */
@@ -1347,7 +1362,10 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
      {
 	int minw, minh, maxw, maxh, basew, baseh, stepw, steph;
 
-	evas_engine_info_set(ee->evas, einfo);
+	if (!evas_engine_info_set(ee->evas, einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
 
 	if (!resize)
           {
@@ -1415,7 +1433,10 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
      }
    else
      {
-	evas_engine_info_set(ee->evas, einfo);
+	if (!evas_engine_info_set(ee->evas, einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
 	ee->rotation = rotation;
 	_ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
 				       ecore_x_current_time_get());
@@ -1501,7 +1522,10 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
                                                   0, 0, ee->w, ee->h);
                   ecore_x_gc_free(gc);
 		  einfo->info.mask = ee->engine.x.mask;
-		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+		  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    {
+                       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+                    }
 		  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 		  ecore_x_window_shape_input_mask_set(ee->prop.window, 0);
 	       }
@@ -1541,7 +1565,10 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
                                                   0, 0, ee->w, ee->h);
                   ecore_x_gc_free(gc);
 		  einfo->info.mask = ee->engine.x.mask;
-		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+		  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    {
+                       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+                    }
 		  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 		  ecore_x_window_shape_input_mask_set(ee->prop.window, 0);
 	       }
@@ -1550,7 +1577,10 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 		  ee->engine.x.mask = 0;
 		  einfo->info.mask = 0;
-		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+		  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    {
+                       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+                    }
 		  ecore_x_window_shape_mask_set(ee->prop.window, 0);
 		  ecore_x_window_shape_input_mask_set(ee->prop.window, 0);
 	       }
@@ -1574,7 +1604,10 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 
 		  ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
 		  einfo->info.mask = ee->engine.x.mask;
-		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+		  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    {
+                       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+                    }
 		  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 	       }
 	     else
@@ -1582,7 +1615,10 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 		  ee->engine.x.mask = 0;
 		  einfo->info.mask = 0;
-		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+		  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    {
+                       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+                    }
 		  ecore_x_window_shape_mask_set(ee->prop.window, 0);
 	       }
 	  }
@@ -1666,7 +1702,10 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 //	ee->engine.x.mask = 0;
 	einfo->info.mask = ee->engine.x.mask;
 	einfo->info.drawable = ee->prop.window;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
 	evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
 	ecore_x_window_shape_mask_set(ee->prop.window, 0);
         ecore_x_input_multi_select(ee->prop.window);
@@ -1740,6 +1779,10 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
           (ee, ee->engine.x.win_root, 
            ee->req.x, ee->req.y, ee->req.w, ee->req.h,
            ee->prop.override, ee->alpha, NULL);
+        if (!ee->prop.window)
+          {
+             return;
+          }
 /*        
 	if (ee->alpha)
 	  {
@@ -1771,7 +1814,10 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 //	ee->engine.x.mask = 0;
 //	einfo->info.mask = ee->engine.x.mask;
 	einfo->info.drawable = ee->prop.window;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
 	evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
 //	ecore_x_window_shape_mask_set(ee->prop.window, 0);
         ecore_x_input_multi_select(ee->prop.window);
@@ -1856,7 +1902,10 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 //	ee->engine.x.mask = 0;
         einfo->info.mask = ee->engine.x.mask;
 	einfo->info.drawable = ee->prop.window;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
 	evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
 	ecore_x_window_shape_mask_set(ee->prop.window, 0);
         ecore_x_input_multi_select(ee->prop.window);
@@ -1934,7 +1983,10 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 # endif /* XXX no shaped window support for software_16_x11 */
 
 	einfo->info.drawable = ee->prop.window;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
 	evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
 	ecore_x_window_shape_mask_set(ee->prop.window, 0);
         ecore_x_input_multi_select(ee->prop.window);
@@ -1988,7 +2040,10 @@ _ecore_evas_x_transparent_set(Ecore_Evas *ee, int transparent)
 
 	ee->transparent = transparent;
 	einfo->info.destination_alpha = transparent;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
 	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 #endif        
      }
@@ -2381,7 +2436,10 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 		  ee->engine.x.pmap = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, einfo->info.depth);
 		  ee->engine.x.gc = ecore_x_gc_new(ee->engine.x.pmap, 0, NULL);
 		  einfo->info.drawable = ee->engine.x.pmap;
-		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+                  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    {
+                       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+                    }
 		  if ((ee->rotation == 90) || (ee->rotation == 270))
 		    evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
 		  else
@@ -2413,7 +2471,10 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 		  ee->engine.x.pmap = 0;
 		  ee->engine.x.gc = 0;
 		  einfo->info.drawable = ee->prop.window;
-		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+                  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    {
+                       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+                    }
 	       }
 	  }
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
@@ -2432,7 +2493,10 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 		  ee->engine.x.pmap = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 16);
 		  ee->engine.x.gc = ecore_x_gc_new(ee->engine.x.pmap, 0, NULL);
 		  einfo->info.drawable = ee->engine.x.pmap;
-		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+                  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    {
+                       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+                    }
 		  if ((ee->rotation == 90) || (ee->rotation == 270))
 		    evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
 		  else
@@ -2457,7 +2521,10 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 		  ee->engine.x.pmap = 0;
 		  ee->engine.x.gc = 0;
 		  einfo->info.drawable = ee->prop.window;
-		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+                  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    {
+                       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+                    }
 	       }
 	  }
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
@@ -2818,7 +2885,12 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 	  }
 	einfo->info.rotation = 0;
 	einfo->info.debug    = redraw_debug;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+             ecore_evas_free(ee);
+             return NULL;
+          }
      }
    ecore_x_icccm_hints_set(ee->prop.window,
                            1 /* accepts_focus */,
@@ -3168,7 +3240,10 @@ ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Evas *ee, void *data, v
         einfo->callback.pre_swap = pre_cb;
         einfo->callback.pre_swap = post_cb;
         einfo->callback.data = data;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+	if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
      }
 }
 #else
@@ -3332,7 +3407,12 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 	einfo->info.visual = DefaultVisual(ecore_x_display_get(), screen);
 # endif /* BUILD_ECORE_EVAS_XRENDER_(XCB|X11) */
 	einfo->info.drawable = ee->prop.window;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+	if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+             ecore_evas_free(ee);
+             retrun NULL;
+          }
      }
 
    ecore_x_icccm_hints_set(ee->prop.window,
@@ -3550,7 +3630,12 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
 	einfo->info.display  = ecore_x_display_get();
 	einfo->info.drawable = ee->prop.window;
 
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+	if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+             ecore_evas_free(ee);
+             retrun NULL;
+          }
      }
 
    ecore_x_icccm_hints_set(ee->prop.window,
