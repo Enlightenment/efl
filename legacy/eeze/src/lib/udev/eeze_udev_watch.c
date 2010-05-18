@@ -272,7 +272,7 @@ eeze_udev_watch_del(Eeze_Udev_Watch *watch)
 
    udev = udev_monitor_get_udev(watch->mon);
    udev_monitor_unref(watch->mon);
-   udev_unref(watch->udev);
+   udev_unref(udev);
    sdata = ecore_main_fd_handler_del(watch->handler);
    if (sdata)
      {
