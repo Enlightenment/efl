@@ -163,7 +163,7 @@ EAPI void
 ecore_main_loop_begin(void)
 {
    in_main_loop++;
-   for (;do_quit == 0;) _ecore_main_loop_iterate_internal(0);
+   while (do_quit == 0) _ecore_main_loop_iterate_internal(0);
    do_quit = 0;
    in_main_loop--;
 }
@@ -193,7 +193,7 @@ ecore_main_loop_quit(void)
  * @ingroup Ecore_Main_Loop_Group
  */
 EAPI void
-ecore_main_loop_select_func_set(int (*func)(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout))
+ecore_main_loop_select_func_set(int (*func) (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout))
 {
    main_loop_select = func;
 }
@@ -253,9 +253,7 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (voi
 {
    Ecore_Fd_Handler *fdh;
 
-   if ((fd < 0) ||
-       (flags == 0) ||
-       (!func)) return NULL;
+   if ((fd < 0) || (flags == 0) || (!func)) return NULL;
 
    fdh = calloc(1, sizeof(Ecore_Fd_Handler));
    if (!fdh) return NULL;
@@ -270,8 +268,9 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (voi
    fdh->data = (void *)data;
    fdh->buf_func = buf_func;
    fdh->buf_data = (void *)buf_data;
-   fd_handlers = (Ecore_Fd_Handler *) eina_inlist_append(EINA_INLIST_GET(fd_handlers),
-							 EINA_INLIST_GET(fdh));
+   fd_handlers = (Ecore_Fd_Handler *)
+     eina_inlist_append(EINA_INLIST_GET(fd_handlers),
+                        EINA_INLIST_GET(fdh));
    return fdh;
 }
 
@@ -283,8 +282,7 @@ ecore_main_win32_handler_add(void *h,
 {
    Ecore_Win32_Handler *wh;
 
-   if (!h || !func)
-     return NULL;
+   if (!h || !func) return NULL;
 
    wh = calloc(1, sizeof(Ecore_Win32_Handler));
    if (!wh) return NULL;
@@ -293,8 +291,9 @@ ecore_main_win32_handler_add(void *h,
    wh->delete_me = 0;
    wh->func = func;
    wh->data = (void *)data;
-   win32_handlers = (Ecore_Win32_Handler *)eina_inlist_append(EINA_INLIST_GET(win32_handlers),
-                                                              EINA_INLIST_GET(wh));
+   win32_handlers = (Ecore_Win32_Handler *)
+     eina_inlist_append(EINA_INLIST_GET(win32_handlers),
+                        EINA_INLIST_GET(wh));
    return wh;
 }
 #else
@@ -504,31 +503,35 @@ _ecore_main_select(double timeout)
 
    /* call the prepare callback for all handlers */
    EINA_INLIST_FOREACH(fd_handlers, fdh)
-     if (!fdh->delete_me && fdh->prep_func)
-       {
-	  fdh->references++;
-	  fdh->prep_func (fdh->prep_data, fdh);
-	  fdh->references--;
-       }
+     {
+        if (!fdh->delete_me && fdh->prep_func)
+          {
+             fdh->references++;
+             fdh->prep_func (fdh->prep_data, fdh);
+             fdh->references--;
+          }
+     }
    EINA_INLIST_FOREACH(fd_handlers, fdh)
-     if (!fdh->delete_me)
-       {
-	  if (fdh->flags & ECORE_FD_READ)
-	    {
-	       FD_SET(fdh->fd, &rfds);
-	       if (fdh->fd > max_fd) max_fd = fdh->fd;
-	    }
-	  if (fdh->flags & ECORE_FD_WRITE)
-	    {
-	       FD_SET(fdh->fd, &wfds);
-	       if (fdh->fd > max_fd) max_fd = fdh->fd;
-	    }
-	  if (fdh->flags & ECORE_FD_ERROR)
-	    {
-	       FD_SET(fdh->fd, &exfds);
-	       if (fdh->fd > max_fd) max_fd = fdh->fd;
-	    }
-       }
+     {
+        if (!fdh->delete_me)
+          {
+             if (fdh->flags & ECORE_FD_READ)
+               {
+                  FD_SET(fdh->fd, &rfds);
+                  if (fdh->fd > max_fd) max_fd = fdh->fd;
+               }
+             if (fdh->flags & ECORE_FD_WRITE)
+               {
+                  FD_SET(fdh->fd, &wfds);
+                  if (fdh->fd > max_fd) max_fd = fdh->fd;
+               }
+             if (fdh->flags & ECORE_FD_ERROR)
+               {
+                  FD_SET(fdh->fd, &exfds);
+                  if (fdh->fd > max_fd) max_fd = fdh->fd;
+               }
+          }
+     }
    if (_ecore_signal_count_get()) return -1;
 
    ret = main_loop_select(max_fd + 1, &rfds, &wfds, &exfds, t);
@@ -630,22 +633,20 @@ _ecore_main_fd_handlers_cleanup(void)
 	l = l->next;
 	if (fdh->delete_me)
 	  {
-//	     ERR("Removing fd %d", fdh->fd);
-
 	     if (fdh->references)
 	       {
 		  deleted_in_use++;
 		  continue;
 	       }
 
-	     fd_handlers = (Ecore_Fd_Handler *) eina_inlist_remove(EINA_INLIST_GET(fd_handlers),
-								   EINA_INLIST_GET(fdh));
+	     fd_handlers = (Ecore_Fd_Handler *)
+               eina_inlist_remove(EINA_INLIST_GET(fd_handlers),
+                                  EINA_INLIST_GET(fdh));
 	     ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
 	     free(fdh);
 	  }
      }
-   if (!deleted_in_use)
-     fd_handlers_delete_me = 0;
+   if (!deleted_in_use) fd_handlers_delete_me = 0;
 }
 
 #ifdef _WIN32
@@ -670,14 +671,14 @@ _ecore_main_win32_handlers_cleanup(void)
 		  continue;
 	       }
 
-             win32_handlers = (Ecore_Win32_Handler *)eina_inlist_remove(EINA_INLIST_GET(win32_handlers),
-                                                                        EINA_INLIST_GET(wh));
+             win32_handlers = (Ecore_Win32_Handler *)
+               eina_inlist_remove(EINA_INLIST_GET(win32_handlers),
+                                  EINA_INLIST_GET(wh));
              ECORE_MAGIC_SET(wh, ECORE_MAGIC_NONE);
              free(wh);
           }
      }
-   if (!deleted_in_use)
-     win32_handlers_delete_me = 0;
+   if (!deleted_in_use) win32_handlers_delete_me = 0;
 }
 #endif
 
@@ -732,20 +733,21 @@ _ecore_main_fd_handlers_buf_call(void)
 
    ret = 0;
    EINA_INLIST_FOREACH(fd_handlers, fdh)
-     if (!fdh->delete_me)
-       {
-	  if (fdh->buf_func)
-	    {
-	       fdh->references++;
-	       if (fdh->buf_func(fdh->buf_data, fdh))
-		 {
-		    ret |= fdh->func(fdh->data, fdh);
-		    fdh->read_active = 1;
-		 }
-	       fdh->references--;
-	    }
-       }
-
+     {
+        if (!fdh->delete_me)
+          {
+             if (fdh->buf_func)
+               {
+                  fdh->references++;
+                  if (fdh->buf_func(fdh->buf_data, fdh))
+                    {
+                       ret |= fdh->func(fdh->data, fdh);
+                       fdh->read_active = 1;
+                    }
+                  fdh->references--;
+               }
+          }
+     }
    return ret;
 }
 
@@ -879,37 +881,22 @@ _ecore_main_loop_iterate_internal(int once_only)
 	  }
         _ecore_loop_time = ecore_time_get();
      }
-   if (_ecore_fps_debug)
-     {
-	t1 = ecore_time_get();
-     }
+   if (_ecore_fps_debug) t1 = ecore_time_get();
    /* we came out of our "wait state" so idle has exited */
-   if (!once_only)
-     _ecore_idle_exiter_call();
+   if (!once_only) _ecore_idle_exiter_call();
    /* call the fd handler per fd that became alive... */
    /* this should read or write any data to the monitored fd and then */
    /* post events onto the ecore event pipe if necessary */
    process_events:
-//   if (have_event) 
    _ecore_main_fd_handlers_call();
    _ecore_main_fd_handlers_buf_call();
-//   do
-//     {
-	/* process signals into events .... */
-	while (_ecore_signal_count_get()) _ecore_signal_call();
-	/* handle events ... */
-	_ecore_event_call();
-	_ecore_main_fd_handlers_cleanup();
-//     }
-//   while (_ecore_main_fd_handlers_buf_call());
+   /* process signals into events .... */
+   while (_ecore_signal_count_get()) _ecore_signal_call();
+   /* handle events ... */
+   _ecore_event_call();
+   _ecore_main_fd_handlers_cleanup();
 
-/* ok - too much optimising. let's call idle enterers more often. if we
- * have events that place more events or jobs etc. on the event queue
- * we may never get to call an idle enterer
-   if (once_only)
- */
-   if (once_only)
-     _ecore_idle_enterer_call();
+   if (once_only) _ecore_idle_enterer_call();
    in_main_loop--;
 }
 
@@ -918,18 +905,18 @@ static int
 _ecore_main_win32_select(int nfds __UNUSED__, fd_set *readfds, fd_set *writefds,
 			 fd_set *exceptfds, struct timeval *tv)
 {
-   HANDLE objects[MAXIMUM_WAIT_OBJECTS];
-   int    sockets[MAXIMUM_WAIT_OBJECTS];
+   HANDLE       objects[MAXIMUM_WAIT_OBJECTS];
+   int          sockets[MAXIMUM_WAIT_OBJECTS];
    Ecore_Fd_Handler *fdh;
    Ecore_Win32_Handler *wh;
    unsigned int objects_nbr = 0;
    unsigned int handles_nbr = 0;
    unsigned int events_nbr = 0;
-   DWORD  result;
-   DWORD  timeout;
-   MSG    msg;
-   unsigned int    i;
-   int    res;
+   DWORD        result;
+   DWORD        timeout;
+   MSG          msg;
+   unsigned int i;
+   int          res;
 
    /* Create an event object per socket */
    EINA_INLIST_FOREACH(fd_handlers, fdh)
@@ -938,14 +925,14 @@ _ecore_main_win32_select(int nfds __UNUSED__, fd_set *readfds, fd_set *writefds,
         long network_event;
 
         network_event = 0;
-        if(FD_ISSET(fdh->fd, readfds))
+        if (FD_ISSET(fdh->fd, readfds))
 	  network_event |= FD_READ;
-        if(FD_ISSET(fdh->fd, writefds))
+        if (FD_ISSET(fdh->fd, writefds))
 	  network_event |= FD_WRITE;
-        if(FD_ISSET(fdh->fd, exceptfds))
+        if (FD_ISSET(fdh->fd, exceptfds))
 	  network_event |= FD_OOB;
 
-        if(network_event)
+        if (network_event)
 	  {
              event = WSACreateEvent();
 	     WSAEventSelect(fdh->fd, event, network_event);
@@ -973,10 +960,10 @@ _ecore_main_win32_select(int nfds __UNUSED__, fd_set *readfds, fd_set *writefds,
 
    /* Wait for any message sent or posted to this queue */
    /* or for one of the passed handles be set to signaled. */
-   if(tv == NULL)
+   if (tv == NULL)
      timeout = INFINITE;
    else
-     timeout = (DWORD)(tv->tv_sec * 1000.0 + tv->tv_usec / 1000.0);
+     timeout = (DWORD)((tv->tv_sec * 1000.0) + (tv->tv_usec / 1000.0));
 
    if (timeout == 0) return 0;
 
@@ -1018,16 +1005,17 @@ _ecore_main_win32_select(int nfds __UNUSED__, fd_set *readfds, fd_set *writefds,
 
         WSAEnumNetworkEvents(sockets[result], objects[result], &network_event);
 
-        if(network_event.lNetworkEvents & FD_READ)
+        if (network_event.lNetworkEvents & FD_READ)
 	  FD_SET(sockets[result], readfds);
-        if(network_event.lNetworkEvents & FD_WRITE)
+        if (network_event.lNetworkEvents & FD_WRITE)
 	  FD_SET(sockets[result], writefds);
-        if(network_event.lNetworkEvents & FD_OOB)
+        if (network_event.lNetworkEvents & FD_OOB)
 	  FD_SET(sockets[result], exceptfds);
 
         res = 1;
      }
-   else if ((result >= WAIT_OBJECT_0 + events_nbr) && (result < WAIT_OBJECT_0 + objects_nbr))
+   else if ((result >= (WAIT_OBJECT_0 + events_nbr)) && 
+            (result < (WAIT_OBJECT_0 + objects_nbr)))
      {
 	if (!win32_handler_current)
 	  {
@@ -1045,17 +1033,18 @@ _ecore_main_win32_select(int nfds __UNUSED__, fd_set *readfds, fd_set *writefds,
 	     wh = win32_handler_current;
 
              if (objects[result - WAIT_OBJECT_0] == wh->h)
-               if (!wh->delete_me)
-		 {
-		    wh->references++;
-		    if (!wh->func(wh->data, wh))
-		      {
-			 wh->delete_me = 1;
-			 win32_handlers_delete_me = 1;
-		      }
-		    wh->references--;
-		 }
-
+               {
+                  if (!wh->delete_me)
+                    {
+                       wh->references++;
+                       if (!wh->func(wh->data, wh))
+                         {
+                            wh->delete_me = 1;
+                            win32_handlers_delete_me = 1;
+                         }
+                       wh->references--;
+                    }
+               }
              if (win32_handler_current) /* may have changed in recursive main loops */
                win32_handler_current = (Ecore_Win32_Handler *)EINA_INLIST_GET(win32_handler_current)->next;
           }
@@ -1068,8 +1057,7 @@ _ecore_main_win32_select(int nfds __UNUSED__, fd_set *readfds, fd_set *writefds,
      }
 
    /* Remove event objects again */
-   for(i = 0; i < events_nbr; i++)
-     WSACloseEvent(objects[i]);
+   for (i = 0; i < events_nbr; i++) WSACloseEvent(objects[i]);
 
    return res;
 }
