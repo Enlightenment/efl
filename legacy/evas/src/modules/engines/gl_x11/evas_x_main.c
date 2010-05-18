@@ -382,7 +382,7 @@ eng_window_new(Display *disp,
    gw->gl_context = evas_gl_common_context_new();
    if (!gw->gl_context)
      {
-	free(gw);
+	eng_window_free(gw);
 	return NULL;
      }
    evas_gl_common_context_use(gw->gl_context);
@@ -396,7 +396,7 @@ eng_window_free(Evas_GL_X11_Window *gw)
 {
    win_count--;
    if (gw == _evas_gl_x11_window) _evas_gl_x11_window = NULL;
-   evas_gl_common_context_free(gw->gl_context);
+   if (gw->gl_context) evas_gl_common_context_free(gw->gl_context);
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    if (gw->egl_surface[0] != EGL_NO_SURFACE)
      eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);

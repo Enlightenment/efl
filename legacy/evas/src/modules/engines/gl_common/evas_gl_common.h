@@ -322,7 +322,7 @@ void             evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
                                                         Eina_Bool tex_only);
 void              evas_gl_common_context_flush(Evas_GL_Context *gc);
 
-void              evas_gl_common_shader_program_init(Evas_GL_Program *p,
+int               evas_gl_common_shader_program_init(Evas_GL_Program *p,
                                                      Evas_GL_Program_Source *vert,
                                                      Evas_GL_Program_Source *frag,
                                                      const char *name);

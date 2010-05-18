@@ -339,7 +339,17 @@ eng_setup(Evas *e, void *in)
           }
         
      }
-   if (!e->engine.data.output) return 0;
+   if (!re->win)
+     {
+        free(re);
+        return 0;
+     }
+   if (!e->engine.data.output)
+     {
+        if (re->win) eng_window_free(re->win);
+        free(re);
+        return 0;
+     }
    if (!e->engine.data.context)
      e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
@@ -362,13 +372,15 @@ eng_output_free(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-
+   
+   if (re)
+     {
 // NOTE: XrmGetDatabase() result is shared per connection, do not free it.
 //   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
 
-   eng_window_free(re->win);
-   free(re);
-
+        if (re->win) eng_window_free(re->win);
+        free(re);
+     }
    evas_common_font_shutdown();
    evas_common_image_shutdown();
 }

@@ -454,46 +454,46 @@ evas_gl_common_context_new(void)
         glEnableVertexAttribArray(SHAD_COLOR);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
-        evas_gl_common_shader_program_init(&(shared->shader.rect), 
-                                           &(shader_rect_vert_src), 
-                                           &(shader_rect_frag_src),
-                                           "rect");
-        evas_gl_common_shader_program_init(&(shared->shader.font),
-                                           &(shader_font_vert_src), 
-                                           &(shader_font_frag_src),
-                                           "font");
-        evas_gl_common_shader_program_init(&(shared->shader.img),
-                                           &(shader_img_vert_src),
-                                           &(shader_img_frag_src),
-                                           "img");
-        evas_gl_common_shader_program_init(&(shared->shader.img_nomul),
-                                           &(shader_img_nomul_vert_src),
-                                           &(shader_img_nomul_frag_src),
-                                           "img_nomul");
-        evas_gl_common_shader_program_init(&(shared->shader.img_bgra),
-                                           &(shader_img_bgra_vert_src),
-                                           &(shader_img_bgra_frag_src),
-                                           "img_bgra");
-        evas_gl_common_shader_program_init(&(shared->shader.img_bgra_nomul),
-                                           &(shader_img_bgra_nomul_vert_src),
-                                           &(shader_img_bgra_nomul_frag_src),
-                                           "img_bgra_nomul");
-        evas_gl_common_shader_program_init(&(shared->shader.tex),
-                                           &(shader_tex_vert_src), 
-                                           &(shader_tex_frag_src),
-                                           "tex");
-        evas_gl_common_shader_program_init(&(shared->shader.tex_nomul),
-                                           &(shader_tex_nomul_vert_src), 
-                                           &(shader_tex_nomul_frag_src),
-                                           "tex_nomul");
-        evas_gl_common_shader_program_init(&(shared->shader.yuv),
-                                           &(shader_yuv_vert_src), 
-                                           &(shader_yuv_frag_src),
-                                           "yuv");
-        evas_gl_common_shader_program_init(&(shared->shader.yuv_nomul),
-                                           &(shader_yuv_nomul_vert_src), 
-                                           &(shader_yuv_nomul_frag_src),
-                                           "yuv_nomul");
+        if (!evas_gl_common_shader_program_init(&(shared->shader.rect), 
+                                                &(shader_rect_vert_src), 
+                                                &(shader_rect_frag_src),
+                                                "rect")) goto error;
+        if (!evas_gl_common_shader_program_init(&(shared->shader.font),
+                                                &(shader_font_vert_src), 
+                                                &(shader_font_frag_src),
+                                                "font")) goto error;
+        if (!evas_gl_common_shader_program_init(&(shared->shader.img),
+                                                &(shader_img_vert_src),
+                                                &(shader_img_frag_src),
+                                                "img")) goto error;
+        if (!evas_gl_common_shader_program_init(&(shared->shader.img_nomul),
+                                                &(shader_img_nomul_vert_src),
+                                                &(shader_img_nomul_frag_src),
+                                                "img_nomul")) goto error;
+        if (!evas_gl_common_shader_program_init(&(shared->shader.img_bgra),
+                                                &(shader_img_bgra_vert_src),
+                                                &(shader_img_bgra_frag_src),
+                                                "img_bgra")) goto error;
+        if (!evas_gl_common_shader_program_init(&(shared->shader.img_bgra_nomul),
+                                                &(shader_img_bgra_nomul_vert_src),
+                                                &(shader_img_bgra_nomul_frag_src),
+                                                "img_bgra_nomul")) goto error;
+        if (!evas_gl_common_shader_program_init(&(shared->shader.tex),
+                                                &(shader_tex_vert_src), 
+                                                &(shader_tex_frag_src),
+                                                "tex")) goto error;
+        if (!evas_gl_common_shader_program_init(&(shared->shader.tex_nomul),
+                                                &(shader_tex_nomul_vert_src), 
+                                                &(shader_tex_nomul_frag_src),
+                                                "tex_nomul")) goto error;
+        if (!evas_gl_common_shader_program_init(&(shared->shader.yuv),
+                                                &(shader_yuv_vert_src), 
+                                                &(shader_yuv_frag_src),
+                                                "yuv")) goto error;
+        if (!evas_gl_common_shader_program_init(&(shared->shader.yuv_nomul),
+                                                &(shader_yuv_nomul_vert_src), 
+                                                &(shader_yuv_nomul_frag_src),
+                                                "yuv_nomul")) goto error;
         
         glUseProgram(shared->shader.yuv.prog);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -530,6 +530,9 @@ evas_gl_common_context_new(void)
    gc->def_surface = evas_gl_common_image_surface_new(gc, 1, 1, 1);
    
    return gc;
+   error:
+   evas_gl_common_context_free(gc);
+   return NULL;
 }
 
 void
@@ -539,11 +542,11 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
    
    gc->references--;
    if (gc->references > 0) return;
-   gc->shared->references--;
+   if (gc->shared) gc->shared->references--;
    
-   evas_gl_common_image_free(gc->def_surface);
+   if (gc->def_surface) evas_gl_common_image_free(gc->def_surface);
    
-   if (gc->shared->references == 0)
+   if ((gc->shared) && (gc->shared->references == 0))
      {
         evas_gl_common_shader_program_shutdown(&(gc->shared->shader.rect));
         evas_gl_common_shader_program_shutdown(&(gc->shared->shader.font));

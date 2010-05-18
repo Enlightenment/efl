@@ -420,7 +420,7 @@ gl_compile_link_error(GLuint target, const char *action)
      }
 }
 
-void
+int
 evas_gl_common_shader_program_init(Evas_GL_Program *p, 
                                    Evas_GL_Program_Source *vert,
                                    Evas_GL_Program_Source *frag,
@@ -447,7 +447,7 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
      {
         gl_compile_link_error(p->vert, "compile vertex shader");
         printf("Abort compile of shader vert (%s):\n%s\n", name, vert->src);
-        return;
+        return 0;
      }
    glShaderSource(p->frag, 1,
                   (const char **)&(frag->src), NULL);
@@ -460,7 +460,7 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
      {
         gl_compile_link_error(p->frag, "compile fragment shader");
         printf("Abort compile of shader frag (%s):\n%s\n", name, frag->src);
-        return;
+        return 0;
      }
 #endif
    p->prog = glCreateProgram();
@@ -489,8 +489,9 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
         gl_compile_link_error(p->prog, "link fragment and vertex shaders");
         printf("Abort compile of shader frag (%s):\n%s\n", name, frag->src);
         printf("Abort compile of shader vert (%s):\n%s\n", name, vert->src);
-        return;
+        return 0;
      }
+   return 1;
 }
 
 void
