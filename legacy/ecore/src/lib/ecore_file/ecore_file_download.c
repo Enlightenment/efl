@@ -296,7 +296,8 @@ _ecore_file_download_curl(const char *url, const char *dst,
 #endif
 
 /**
- * Abort the given download job
+ * Abort the given download job and call the @p completion_cb function with a
+ * @status of 1 (error)
  * @param  job The download job to abort
  */
 
@@ -304,6 +305,8 @@ EAPI void
 ecore_file_download_abort(Ecore_File_Download_Job *job)
 {
 #ifdef BUILD_ECORE_CON
+   if (job->completion_cb)
+     job->completion_cb(ecore_con_url_data_get(job->url_con), job->dst, 1);
 # ifdef HAVE_CURL
    ecore_con_url_destroy(job->url_con);
 # endif
