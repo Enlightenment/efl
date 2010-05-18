@@ -265,17 +265,15 @@ EAPI void *
 eeze_udev_watch_del(Eeze_Udev_Watch *watch)
 {
    struct udev *udev;
-   struct udev_monitor *mon = watch->mon;
-   Ecore_Fd_Handler *handler = watch->handler;
    struct _store_data *sdata;
    void *ret;
 
-   if ((!watch) || (!mon) || (!handler)) return NULL;
+   if ((!watch) || (!watch->mon) || (!watch->handler)) return NULL;
 
-   udev = udev_monitor_get_udev(mon);
-   udev_monitor_unref(mon);
-   udev_unref(udev);
-   sdata = ecore_main_fd_handler_del(handler);
+   udev = udev_monitor_get_udev(watch->mon);
+   udev_monitor_unref(watch->mon);
+   udev_unref(watch->udev);
+   sdata = ecore_main_fd_handler_del(watch->handler);
    if (sdata)
      {
         ret = sdata->data;
