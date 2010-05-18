@@ -460,7 +460,7 @@ _ecore_event_call(void)
 	       {
 		  Ecore_Event *e = event_current;
 
-		  if (!ef->func_filter(ef->loop_data, ef->data,
+		  if (!ef->func_filter(ef->data, ef->loop_data,
 				       e->type, e->event))
 		    {
 //		       printf("FILTER SAID TO DEL ev %p\n", e->event);
