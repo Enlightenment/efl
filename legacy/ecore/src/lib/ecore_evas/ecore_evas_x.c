@@ -3411,7 +3411,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
           {
              WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
              ecore_evas_free(ee);
-             retrun NULL;
+             return NULL;
           }
      }
 
@@ -3634,7 +3634,7 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
           {
              WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
              ecore_evas_free(ee);
-             retrun NULL;
+             return NULL;
           }
      }
 
