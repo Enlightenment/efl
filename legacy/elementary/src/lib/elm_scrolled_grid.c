@@ -203,7 +203,6 @@ struct _Pan
 };
 
 static const char *widtype = NULL;
-static void _sizing_eval(Evas_Object *obj);
 static void _cell_hilight(Elm_Grid_Cell *cell);
 static void _cell_unrealize(Elm_Grid_Cell *cell);
 static void _cell_select(Elm_Grid_Cell *cell);
@@ -218,18 +217,6 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
    elm_smart_scroller_object_theme_set(obj, wd->scr, "grid", "base",
                                        elm_widget_style_get(obj));
-   _sizing_eval(obj);
-}
-
-static void
-_sizing_eval(Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-   if (!wd) return;
-   evas_object_size_hint_max_get(wd->scr, &maxw, &maxh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
 static void
@@ -723,8 +710,7 @@ _calc_job(void *data)
    Evas_Coord minw = 0, minh = 0, nmax = 0, cvw, cvh;
    int count;
 
-   evas_output_viewport_get(evas_object_evas_get(wd->self), NULL, NULL,
-			    &cvw, &cvh);
+   evas_object_geometry_get(wd->self, NULL, NULL, &cvw, &cvh);
    if (wd->horizontal && wd->cell_height)
      nmax = cvh / wd->cell_height;
    else if (wd->cell_width)
@@ -750,7 +736,6 @@ _calc_job(void *data)
 	wd->minh = minh;
 	wd->minw = minw;
 	evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
-	_sizing_eval(wd->self);
      }
 
    wd->nmax = nmax;
@@ -999,8 +984,6 @@ elm_scrolled_grid_add(Evas_Object *parent)
 				     _pan_set, _pan_get,
 				     _pan_max_get, _pan_child_size_get);
 
-   _sizing_eval(obj);
-
    return obj;
 }
 
@@ -1234,7 +1217,6 @@ elm_scrolled_grid_clear(Evas_Object *obj)
    wd->minh = 0;
    evas_object_size_hint_min_set(wd->pan_smart, wd->minw, wd->minh);
    evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
-   _sizing_eval(obj);
 }
 
 /**
