@@ -198,6 +198,9 @@ eng_info_free(Evas *e __UNUSED__, void *info)
    free(in);
 }
 
+static int initted = 0;
+static int gl_wins = 0;
+
 static int
 eng_setup(Evas *e, void *in)
 {
@@ -235,6 +238,7 @@ eng_setup(Evas *e, void *in)
 	     e->engine.data.output = NULL;
 	     return 0;
 	  }
+        gl_wins++;
         
           {
              int status;
@@ -289,20 +293,24 @@ eng_setup(Evas *e, void *in)
                     }
                }
           }
-        
-	evas_common_cpu_init();
-        
-	evas_common_blend_init();
-	evas_common_image_init();
-	evas_common_convert_init();
-	evas_common_scale_init();
-	evas_common_rectangle_init();
-	evas_common_gradient_init();
-	evas_common_polygon_init();
-	evas_common_line_init();
-	evas_common_font_init();
-	evas_common_draw_init();
-	evas_common_tilebuf_init();
+
+        if (!initted)
+          {
+             evas_common_cpu_init();
+             
+             evas_common_blend_init();
+             evas_common_image_init();
+             evas_common_convert_init();
+             evas_common_scale_init();
+             evas_common_rectangle_init();
+             evas_common_gradient_init();
+             evas_common_polygon_init();
+             evas_common_line_init();
+             evas_common_font_init();
+             evas_common_draw_init();
+             evas_common_tilebuf_init();
+             initted = 1;
+          }
      }
    else
      {
@@ -316,7 +324,11 @@ eng_setup(Evas *e, void *in)
             (info->info.destination_alpha != re->win->alpha) ||
             (info->info.rotation != re->win->rot))
           {
-             eng_window_free(re->win);
+             if (re->win)
+               {
+                  eng_window_free(re->win);
+                  gl_wins--;
+               }
              re->win = eng_window_new(info->info.display,
                                       info->info.drawable,
                                       info->info.screen,
@@ -328,6 +340,7 @@ eng_setup(Evas *e, void *in)
                                       info->indirect,
                                       info->info.destination_alpha,
                                       info->info.rotation);
+             if (re->win) gl_wins++;
           }
         else if ((re->win->w != e->output.w) ||
                  (re->win->h != e->output.h))
@@ -344,9 +357,14 @@ eng_setup(Evas *e, void *in)
         free(re);
         return 0;
      }
+   
    if (!e->engine.data.output)
      {
-        if (re->win) eng_window_free(re->win);
+        if (re->win)
+          {
+             eng_window_free(re->win);
+             gl_wins--;
+          }
         free(re);
         return 0;
      }
@@ -378,11 +396,30 @@ eng_output_free(void *data)
 // NOTE: XrmGetDatabase() result is shared per connection, do not free it.
 //   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
 
-        if (re->win) eng_window_free(re->win);
+        if (re->win)
+          {
+             eng_window_free(re->win);
+             gl_wins--;
+          }
         free(re);
      }
-   evas_common_font_shutdown();
-   evas_common_image_shutdown();
+   if ((initted == 1) && (gl_wins == 0))
+     {
+        evas_common_cpu_shutdown();
+        
+        evas_common_blend_shutdown();
+        evas_common_image_shutdown();
+        evas_common_convert_shutdown();
+        evas_common_scale_shutdown();
+        evas_common_rectangle_shutdown();
+        evas_common_gradient_shutdown();
+        evas_common_polygon_shutdown();
+        evas_common_line_shutdown();
+        evas_common_font_shutdown();
+        evas_common_draw_shutdown();
+        evas_common_tilebuf_shutdown();
+        initted = 0;
+     }
 }
 
 static void

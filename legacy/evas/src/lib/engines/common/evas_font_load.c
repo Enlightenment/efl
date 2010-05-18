@@ -774,7 +774,14 @@ EAPI void
 evas_common_font_flush(void)
 {
    if (font_cache_usage < font_cache) return;
-   while (font_cache_usage > font_cache) evas_common_font_flush_last();
+   while (font_cache_usage > font_cache)
+     {
+        int pfont_cache_usage;
+        
+        pfont_cache_usage = font_cache_usage;
+        evas_common_font_flush_last();
+        if (pfont_cache_usage == font_cache_usage) break;
+     }
 }
 
 /* We run this when the cache gets larger than allowed size
