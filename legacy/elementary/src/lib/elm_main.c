@@ -1174,9 +1174,24 @@ elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coor
  */
 
 /**
+ * Get the focus of the object
+ *
+ * This gets the focused property of the object.
+ *
+ * @param obj The object
+ * @return 1 if the object is focused, 0 if not.
+ * @ingroup Focus
+ */
+EAPI Eina_Bool
+elm_object_focus_get(Evas_Object *obj)
+{
+   return elm_widget_focus_get(obj);
+}
+
+/**
  * Set the focus to the object
  *
- * This sets the focus target forkeyboard input to be the object indicated.
+ * This sets the focus target for keyboard input to be the object indicated.
  *
  * @param obj The object
  * @ingroup Focus
@@ -1189,9 +1204,10 @@ elm_object_focus(Evas_Object *obj)
 }
 
 /**
- * Set the focus to the object
+ * Remove the focus from the object
  *
- * This sets the focus target forkeyboard input to be the object indicated.
+ * This removes the focus target for keyboard input from be the object
+ * indicated.
  *
  * @param obj The object
  * @ingroup Focus
