@@ -78,7 +78,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_270 (DATA32 *src, DATA8 *dst, int
 void
 evas_common_convert_rgba_to_32bpp_rgb_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
-#ifndef BUILD_NEONx
+#ifndef BUILD_NEON
    DATA32 *src_ptr;
    DATA32 *dst_ptr;
    int x, y;
