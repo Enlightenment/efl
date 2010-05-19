@@ -345,6 +345,8 @@ extern "C" {
 
    EAPI void          ecore_poller_poll_interval_set(Ecore_Poller_Type type, double poll_time);
    EAPI double        ecore_poller_poll_interval_get(Ecore_Poller_Type type);
+   EAPI Eina_Bool     ecore_poller_poller_interval_set(Ecore_Poller *poller, int interval);
+   EAPI int           ecore_poller_poller_interval_get(Ecore_Poller *poller);
    EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, int (*func) (void *data), const void *data);
    EAPI void         *ecore_poller_del(Ecore_Poller *poller);
 
