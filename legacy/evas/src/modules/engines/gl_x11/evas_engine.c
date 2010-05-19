@@ -405,9 +405,7 @@ eng_output_free(void *data)
      }
    if ((initted == 1) && (gl_wins == 0))
      {
-        evas_common_blend_shutdown();
         evas_common_image_shutdown();
-        evas_common_gradient_shutdown();
         evas_common_font_shutdown();
         initted = 0;
      }
