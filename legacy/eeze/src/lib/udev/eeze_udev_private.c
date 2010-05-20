@@ -16,7 +16,7 @@ _walk_parents_for_attr(struct udev_device *device, const char *sysattr, const ch
    struct udev_device *parent, *child = device;
    const char *test;
 
-   if ((test = udev_device_get_sysattr_value(device, sysattr))
+   if ((test = udev_device_get_sysattr_value(device, sysattr)))
      return 1;
    parent = udev_device_get_parent(child);
    for (; parent; child = parent, parent = udev_device_get_parent(child))
