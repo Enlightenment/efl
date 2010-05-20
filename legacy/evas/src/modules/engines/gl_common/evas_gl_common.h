@@ -139,7 +139,7 @@ struct _Evas_GL_Context
       Eina_Bool       clip : 1;
       struct {
          GLuint          cur_prog;
-         GLuint          cur_tex, cur_texum, cur_texv;
+         GLuint          cur_tex, cur_texu, cur_texv;
          int             render_op;
          int             cx, cy, cw, ch;
          Eina_Bool       smooth : 1;
@@ -286,6 +286,7 @@ void glerr(int err, const char *file, const char *func, int line, const char *op
 Evas_GL_Context  *evas_gl_common_context_new(void);
 void              evas_gl_common_context_free(Evas_GL_Context *gc);
 void              evas_gl_common_context_use(Evas_GL_Context *gc);
+void              evas_gl_common_context_newframe(Evas_GL_Context *gc);
 void              evas_gl_common_context_resize(Evas_GL_Context *gc, int w, int h, int rot);
 void              evas_gl_common_context_target_surface_set(Evas_GL_Context *gc, Evas_GL_Image *surface);
 

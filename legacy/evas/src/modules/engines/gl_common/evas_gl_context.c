@@ -369,6 +369,8 @@ evas_gl_common_context_new(void)
    
    _evas_gl_common_context = gc;
 
+   gc->shader.render_op = EVAS_RENDER_BLEND;
+   
    if (!shared)
      {
         GLint linked;
@@ -597,8 +599,93 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
 void
 evas_gl_common_context_use(Evas_GL_Context *gc)
 {
-//   if (_evas_gl_common_context == gc) return;
+   if (_evas_gl_common_context == gc) return;
    _evas_gl_common_context = gc;
+   _evas_gl_common_viewport_set(gc);
+}
+
+void
+evas_gl_common_context_newframe(Evas_GL_Context *gc)
+{
+   gc->clip.x = 0;
+   gc->clip.y = 0;
+   gc->clip.w = 0;
+   gc->clip.h = 0;
+   gc->clip.active = 0;
+   gc->shader.surface = NULL;
+   gc->shader.cur_prog = 0;
+   gc->shader.cur_tex = 0;
+   gc->shader.cur_texu = 0;
+   gc->shader.cur_texv = 0;
+   gc->shader.render_op = EVAS_RENDER_BLEND;
+   gc->shader.cx = 0;
+   gc->shader.cy = 0;
+   gc->shader.cw = 0;
+   gc->shader.ch = 0;
+   gc->shader.smooth = 0;
+   gc->shader.blend = 0;
+   gc->shader.clip = 0;
+   gc->shader.current.cur_prog = 0;
+   gc->shader.current.cur_tex = 0;
+   gc->shader.current.cur_texu = 0;
+   gc->shader.current.cur_texv = 0;
+   gc->shader.current.render_op = 0;
+   gc->shader.current.cx = 0;
+   gc->shader.current.cy = 0;
+   gc->shader.current.cw = 0;
+   gc->shader.current.ch = 0;
+   gc->shader.current.smooth = 0;
+   gc->shader.current.blend = 0;
+   gc->shader.current.clip = 0;
+   gc->change.size = 1;
+   
+   glDisable(GL_SCISSOR_TEST);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glScissor(0, 0, 0, 0);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   
+   glDisable(GL_DEPTH_TEST);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glEnable(GL_DITHER);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glDisable(GL_BLEND);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   // no dest alpha
+//   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // dest alpha
+//   glBlendFunc(GL_SRC_ALPHA, GL_ONE); // ???
+   glDepthMask(GL_FALSE);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+#ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
+   if (shared->info.anisotropic > 0.0)
+     {
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+     }
+#endif
+   
+   glEnableVertexAttribArray(SHAD_VERTEX);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glEnableVertexAttribArray(SHAD_COLOR);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shader.cur_prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   
+   glActiveTexture(GL_TEXTURE0);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
    _evas_gl_common_viewport_set(gc);
 }
 
