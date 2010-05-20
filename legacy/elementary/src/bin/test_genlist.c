@@ -1,5 +1,14 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
+
+/* Hint:
+ * In this example some calls to elm_genlist_item_append() are used which give the 
+ * value of an int as 'item data' and 'func data' after casting into (void*). For 
+ * sure this works only on architectures where sizeof(int)==sizeof(void*).
+ * For real world usage you should hold a data structure or value in your 
+ * application and then give only a pointer to this data as data pointer.
+ */
+
 typedef struct _Testitem
 {
    Elm_Genlist_Item *item;
