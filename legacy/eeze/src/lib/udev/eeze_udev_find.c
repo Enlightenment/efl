@@ -168,8 +168,8 @@ eeze_udev_find_by_type(const Eeze_Udev_Type etype, const char *name)
    struct udev *udev;
    struct udev_enumerate *en;
    struct udev_list_entry *devs, *cur;
-   struct udev_device *device;
-   const char *devname;
+   struct udev_device *device, *parent;
+   const char *devname, *test;
    Eina_List *ret = NULL;
 
    if ((!etype) && (!name)) return NULL;
@@ -223,6 +223,9 @@ eeze_udev_find_by_type(const Eeze_Udev_Type etype, const char *name)
           udev_enumerate_add_match_subsystem(en, "power_supply");
           udev_enumerate_add_match_property(en, "POWER_SUPPLY_TYPE", "Battery");
           break;
+        case EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR:
+          udev_enumerate_add_match_subsystem(en, "hwmon");
+          break;
 /*
         case EEZE_UDEV_TYPE_ANDROID:
           udev_enumerate_add_match_subsystem(en, "block");
@@ -240,8 +243,16 @@ eeze_udev_find_by_type(const Eeze_Udev_Type etype, const char *name)
         devname = udev_list_entry_get_name(cur);
         device = udev_device_new_from_syspath(udev, devname);
 
+        if (etype == EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR)
+          {
+             parent = udev_device_get_parent(device);/*check for right subsystem*/
+             if ((!(test = udev_device_get_subsystem(parent))) || (strcmp("platform", test)) ||
+               /*check for a temp reading*/
+               (!(test = udev_device_get_sysattr_value(parent, "temp1_input"))))
+               goto out;
+          }
         if (name)
-             if (!strstr(devname,name))
+             if (!strstr(devname, name))
                goto out;
 
         ret = eina_list_append(ret, eina_stringshare_add(devname));
