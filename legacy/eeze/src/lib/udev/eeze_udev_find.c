@@ -250,6 +250,7 @@ eeze_udev_find_by_type(const Eeze_Udev_Type etype, const char *name)
                /*check for a temp reading*/
                (!(test = udev_device_get_sysattr_value(parent, "temp1_input"))))
                goto out;
+               devname = udev_device_get_syspath(parent);
           }
         if (name)
              if (!strstr(devname, name))
