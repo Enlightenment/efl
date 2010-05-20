@@ -171,10 +171,7 @@ eeze_udev_syspath_get_subsystem(const char *syspath)
  *
  * @param syspath The /sys/ path with or without the /sys/
  * @param property The property to get; full list of these is a FIXME
- * @return A const char* with the subsystem of the device or NULL on failure
- * 
- * Takes /sys/$PATH and returns the corresponding device subsystem,
- * such as "input" for keyboards/mice.
+ * @return A const char* with the property or NULL on failure
  * 
  * @ingroup udev
  */
@@ -186,7 +183,7 @@ eeze_udev_syspath_get_property(const char *syspath, const char *property)
       const char *value = NULL, *test;
       Eina_Strbuf *sbuf;
 
-      if (!syspath) return NULL;
+      if (!syspath || !property) return NULL;
       udev = udev_new();
       if (!udev) return NULL;
 
@@ -197,6 +194,43 @@ eeze_udev_syspath_get_property(const char *syspath, const char *property)
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
       if ((test = udev_device_get_property_value(device, property)));
+        value = eina_stringshare_add(test);
+
+      udev_device_unref(device);
+      udev_unref(udev);
+      eina_strbuf_free(sbuf);
+
+      return value;
+}
+
+/**
+ * Get the sysattr value of a device from the /sys/ path.
+ *
+ * @param syspath The /sys/ path with or without the /sys/
+ * @param sysattr The sysattr to get; full list of these is a FIXME
+ * @return A const char* with the sysattr or NULL on failure
+ * 
+ * @ingroup udev
+ */
+EAPI const char *
+eeze_udev_syspath_get_sysattr(const char *syspath, const char *sysattr)
+{
+      struct udev *udev;
+      struct udev_device *device;
+      const char *value = NULL, *test;
+      Eina_Strbuf *sbuf;
+
+      if (!syspath || !sysattr) return NULL;
+      udev = udev_new();
+      if (!udev) return NULL;
+
+      sbuf = eina_strbuf_new();
+      if (!strstr(syspath, "/sys/"))
+        eina_strbuf_append(sbuf, "/sys/");
+      eina_strbuf_append(sbuf, syspath);
+
+      device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+      if ((test = udev_device_get_sysattr_value(device, sysattr)));
         value = eina_stringshare_add(test);
 
       udev_device_unref(device);

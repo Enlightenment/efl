@@ -85,6 +85,7 @@
  * @ingroup udev
  */
 
+/*bitmasks for watch events*/
 #define EEZE_UDEV_EVENT_NONE 0x0000
 #define EEZE_UDEV_EVENT_ADD 0x0001
 #define EEZE_UDEV_EVENT_REMOVE 0x0001
@@ -130,6 +131,7 @@ extern "C" {
    EAPI const char      *eeze_udev_syspath_get_devpath(const char *syspath);
    EAPI const char      *eeze_udev_syspath_get_subsystem(const char *syspath);
    EAPI const char      *eeze_udev_syspath_get_property(const char *syspath, const char *property);
+   EAPI const char      *eeze_udev_syspath_get_sysattr(const char *syspath, const char *sysattr);
    
    EAPI const char      *eeze_udev_devpath_get_syspath(const char *devpath);
    EAPI const char      *eeze_udev_devpath_get_subsystem(const char *devpath);
