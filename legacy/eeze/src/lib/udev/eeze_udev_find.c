@@ -244,13 +244,24 @@ eeze_udev_find_by_type(const Eeze_Udev_Type etype, const char *name)
         device = udev_device_new_from_syspath(udev, devname);
 
         if (etype == EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR)
-          {
-             parent = udev_device_get_parent(device);/*check for right subsystem*/
-             if ((!(test = udev_device_get_subsystem(parent))) || (strcmp("platform", test)) ||
-               /*check for a temp reading*/
-               (!(test = udev_device_get_sysattr_value(parent, "temp1_input"))))
+          {/* ensure that temp input exists somewhere in this device chain */
+             if (!_walk_parents_for_attr(device, "temp1_input", NULL))
                goto out;
-               devname = udev_device_get_syspath(parent);
+             /* if device is not the one which has the temp input, we must go up the chain */
+             if (!(test = udev_device_get_sysattr_value(device, "temp1_input")))
+               {
+                  devname = NULL;
+                  for (parent = udev_device_get_parent(device); parent; parent = udev_device_get_parent(parent))/*check for parent*/
+                    if (((test = udev_device_get_sysattr_value(parent, "temp1_input"))))
+                      {
+                         devname = udev_device_get_syspath(parent);
+                         break;
+                      }
+
+                  if (!devname)
+                    goto out;
+               }
+
           }
         if (name)
              if (!strstr(devname, name))

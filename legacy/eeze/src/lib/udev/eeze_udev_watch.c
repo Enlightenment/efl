@@ -142,11 +142,22 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
           if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "hwmon")))
             goto error;
 #endif /* have to do stuff up here since we need info from the parent */
-          if (!(parent = (udev_device_get_parent(device))) ||
-             (!(test = (udev_device_get_subsystem(parent)))) ||
-             (strcmp("platform", test)))
-            goto error;
-          if (!(test = udev_device_get_action(device)) || (!(ret = udev_device_get_syspath(parent))))
+             if (!_walk_parents_for_attr(device, "temp1_input", NULL))
+               goto error;
+             /* if device is not the one which has the temp input, we must go up the chain */
+             if (!(test = udev_device_get_sysattr_value(device, "temp1_input")))
+               {
+                  tmpdev = NULL;
+                  for (parent = udev_device_get_parent(device); parent; parent = udev_device_get_parent(parent))/*check for parent*/
+                    if (((test = udev_device_get_sysattr_value(parent, "temp1_input"))))
+                      {
+                         tmpdev = parent;
+                         break;
+                      }
+               }
+             else
+               tmpdev = device;
+          if ((!tmpdev) || !(test = udev_device_get_action(device)) || (!(ret = udev_device_get_syspath(tmpdev))))
             goto error;
             
           (*func)(eina_stringshare_add(ret), test, sdata, watch);
