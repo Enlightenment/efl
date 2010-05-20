@@ -18,6 +18,7 @@ struct _store_data
 {
    void(*func)(const char *, const char *, void *, Eeze_Udev_Watch *);
    void *data;
+   int event;
    struct udev_monitor *mon;
    Eeze_Udev_Type type;
    Eeze_Udev_Watch *watch;
@@ -32,9 +33,9 @@ static int
 _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
 {
    struct _store_data *store = data;
-   struct udev_device *device;
+   struct udev_device *device, *parent, *tmpdev;
    const char *ret, *test;
-   void(*func)(const char *syspath, const char *event, void *data, Eeze_Udev_Watch *watch) = store->func;
+   void(*func)(const char *, const char *, void *, Eeze_Udev_Watch *) = store->func;
    void *sdata = store->data;
    Eeze_Udev_Watch *watch = store->watch;
    int cap = 0;
@@ -136,6 +137,22 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
              (strcmp("Battery", test)))
             goto error;
           break;
+        case EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+          if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "hwmon")))
+            goto error;
+#endif /* have to do stuff up here since we need info from the parent */
+          if (!(parent = (udev_device_get_parent(device))) ||
+             (!(test = (udev_device_get_subsystem(parent)))) ||
+             (strcmp("platform", test)))
+            goto error;
+          if (!(test = udev_device_get_action(device)) || (!(ret = udev_device_get_syspath(parent))))
+            goto error;
+            
+          (*func)(eina_stringshare_add(ret), test, sdata, watch);
+          udev_device_unref(device);
+          return 1;          
+          break;
 /*          
         case EEZE_UDEV_TYPE_ANDROID:
           udev_monitor_filter_add_match_subsystem_devtype(mon, "input", "usb_interface");
@@ -144,23 +161,48 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
         default:
           break;
      }
-   test = udev_device_get_action(device);
-   if (!test)
-     goto error;
 
-   ret = udev_device_get_syspath(device);
-   if (!ret)
+   if ((!(test = udev_device_get_action(device))) || (!(ret = udev_device_get_syspath(device))))
      goto error;
-   (*func)(eina_stringshare_add(ret), test, sdata, watch);
+   if (store->event)
+     {
+        if (!strcmp(test, "add"))
+          {
+             if ((store->event & ~EEZE_UDEV_EVENT_ADD))
+               goto error;
+          }
+        else if (!strcmp(test, "remove"))
+          {
+             if ((store->event & ~EEZE_UDEV_EVENT_REMOVE))
+               goto error;
+          }
+        else if (!strcmp(test, "change"))
+          {
+             if ((store->event & ~EEZE_UDEV_EVENT_CHANGE))
+               goto error;
+          }
+        else if (!strcmp(test, "online"))
+          {
+             if ((store->event & ~EEZE_UDEV_EVENT_ONLINE))
+               goto error;
+          }
+        else
+          {
+             if ((store->event & ~EEZE_UDEV_EVENT_OFFLINE))
+               goto error;
+          }
+     }
+
+   (*func)(eina_stringshare_add(ret), eina_stringshare_add(test), sdata, watch);
 error:
    udev_device_unref(device);
    return 1;
 }
 /**
- * Add a watch in a subsystem for a device type
+ * Add a watch for a device type
  *
- * @param subsystem The subsystem type. See @ref Subsystem_Types
- * @param device_type The device type. See @ref Device_Types
+ * @param type The Eeze_Udev_Type to watch
+ * @param event The events to watch; an OR list of EEZE_UDEV_EVENTs (ie (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE)), or 0 for all events
  * @param func The function to call when the watch receives data;
  * must take (const char *device, const char *event_type, void *data, Eeze_Udev_Watch *watch)
  * @param user_data Data to pass to the callback function
@@ -170,7 +212,7 @@ error:
  * @ingroup udev
  */
 EAPI Eeze_Udev_Watch *
-eeze_udev_watch_add(Eeze_Udev_Type type, void(*func)(const char *syspath, const char *event, void *data, Eeze_Udev_Watch *watch), void *user_data)
+eeze_udev_watch_add(Eeze_Udev_Type type, int event, void(*func)(const char *syspath, const char *event, void *data, Eeze_Udev_Watch *watch), void *user_data)
 {
    struct udev *udev;
    struct udev_monitor *mon;
@@ -179,7 +221,7 @@ eeze_udev_watch_add(Eeze_Udev_Type type, void(*func)(const char *syspath, const 
    Eeze_Udev_Watch *watch;
    struct _store_data *store;
 
-   if (!(store = malloc(sizeof(struct _store_data)))) return NULL;
+   if (!(store = calloc(sizeof(struct _store_data), 1))) return NULL;
    if (!(watch = malloc(sizeof(Eeze_Udev_Watch))))
      goto error;
 
@@ -212,10 +254,11 @@ eeze_udev_watch_add(Eeze_Udev_Type type, void(*func)(const char *syspath, const 
           udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
           break;
         case EEZE_UDEV_TYPE_POWER_AC:
-          udev_monitor_filter_add_match_subsystem_devtype(mon, "power_supply", NULL);
-          break;
         case EEZE_UDEV_TYPE_POWER_BAT:
           udev_monitor_filter_add_match_subsystem_devtype(mon, "power_supply", NULL);
+          break;
+        case EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR:
+          udev_monitor_filter_add_match_subsystem_devtype(mon, "hwmon", NULL);
           break;
 /*          
         case EEZE_UDEV_TYPE_ANDROID:
@@ -235,6 +278,7 @@ eeze_udev_watch_add(Eeze_Udev_Type type, void(*func)(const char *syspath, const 
    store->mon = mon;
    store->type = type;
    store->watch = watch;
+   store->event = event;
    if (!(handler = ecore_main_fd_handler_add(fd, ECORE_FD_READ, _get_syspath_from_watch, store, NULL, NULL)))
      goto error;
    watch->mon = mon;

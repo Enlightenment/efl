@@ -171,7 +171,7 @@ int main()
     * set the events to be sent to callback function catch_events(), and attach
     * kbdmouse to the watch as associated data
     */
-   eeze_udev_watch_add(EEZE_UDEV_TYPE_NONE, catch_events, akbdmouse);
+   eeze_udev_watch_add(EEZE_UDEV_TYPE_NONE, (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE), catch_events, akbdmouse);
    printf("\nAnd now for something more complicated.  Plug or unplug your keyboard or mouse for me.\n");
 
    /* main loop must be started to use ecore fd polling */

@@ -85,6 +85,13 @@
  * @ingroup udev
  */
 
+#define EEZE_UDEV_EVENT_NONE 0x0000
+#define EEZE_UDEV_EVENT_ADD 0x0001
+#define EEZE_UDEV_EVENT_REMOVE 0x0001
+#define EEZE_UDEV_EVENT_CHANGE 0x0002
+#define EEZE_UDEV_EVENT_ONLINE 0x0004
+#define EEZE_UDEV_EVENT_OFFLINE 0x0010
+
 /*FIXME: these probably need to be bitmasks with categories*/
 typedef enum
 {
@@ -97,7 +104,8 @@ typedef enum
    EEZE_UDEV_TYPE_DRIVE_REMOVABLE,
    EEZE_UDEV_TYPE_DRIVE_CDROM,
    EEZE_UDEV_TYPE_POWER_AC,
-   EEZE_UDEV_TYPE_POWER_BAT
+   EEZE_UDEV_TYPE_POWER_BAT,
+   EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR
 /*   EEZE_UDEV_TYPE_ANDROID */
 } Eeze_Udev_Type;
 
@@ -130,7 +138,7 @@ extern "C" {
    EAPI Eina_Bool       eeze_udev_syspath_is_kbd(const char *syspath);
    EAPI Eina_Bool       eeze_udev_syspath_is_touchpad(const char *syspath);
 
-   EAPI Eeze_Udev_Watch *eeze_udev_watch_add(Eeze_Udev_Type type, void(*func)(const char *syspath, const char *event, void *data, Eeze_Udev_Watch *watch), void *user_data);
+   EAPI Eeze_Udev_Watch *eeze_udev_watch_add(Eeze_Udev_Type type, int event, void(*func)(const char *, const char *, void *, Eeze_Udev_Watch *), void *user_data);
    EAPI void            *eeze_udev_watch_del(Eeze_Udev_Watch *watch);
 
 #ifdef __cplusplus
