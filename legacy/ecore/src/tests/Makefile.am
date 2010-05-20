@@ -8,6 +8,8 @@ AM_CPPFLAGS = \
 
 if EFL_ENABLE_TESTS
 
+noinst_PROGRAMS = ecore_suite
+
 check_PROGRAMS = ecore_suite
 
 ecore_suite_SOURCES = \
