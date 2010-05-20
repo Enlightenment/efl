@@ -863,7 +863,7 @@ _edje_lua_timer_cb(void *data)
         return 0;
      }
 
-   res = luaL_checkint(L, -1);
+   res = luaL_optint(L, -1, ECORE_CALLBACK_CANCEL);
    lua_pop(L, 1);		// -- res
    
 /*   
