@@ -502,7 +502,7 @@ _ecore_evas_buffer_pix_free(void *data, void *pix)
 EAPI Ecore_Evas *
 ecore_evas_buffer_new(int w, int h)
 {
-    return ecore_evas_buffer_alllocfunc_new
+    return ecore_evas_buffer_allocfunc_new
      (w, h, _ecore_evas_buffer_pix_alloc, _ecore_evas_buffer_pix_free, NULL);
 }
 
