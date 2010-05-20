@@ -233,6 +233,9 @@ struct _Ecore_Evas_Engine
    struct {
       void *pixels;
       Evas_Object *image;
+      void  (*free_func) (void *data, void *pix);
+      void *(*alloc_func) (void *data, int size);
+      void *data;
    } buffer;
 #endif
 #ifdef BUILD_ECORE_EVAS_DIRECTFB

@@ -182,6 +182,7 @@ EAPI Ecore_Evas     *ecore_evas_directfb_new(const char *disp_name, int windowed
 EAPI Ecore_DirectFB_Window *ecore_evas_directfb_window_get(const Ecore_Evas *ee);
 
 EAPI Ecore_Evas     *ecore_evas_buffer_new(int w, int h);
+EAPI Ecore_Evas     *ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc_func) (void *data, int size), void (*free_func) (void *data, void *pix), const void *data);
 EAPI const void     *ecore_evas_buffer_pixels_get(Ecore_Evas *ee);
 
 EAPI Evas_Object    *ecore_evas_object_image_new(Ecore_Evas *ee_target);

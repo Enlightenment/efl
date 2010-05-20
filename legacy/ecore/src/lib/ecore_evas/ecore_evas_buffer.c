@@ -33,7 +33,8 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
      }
    else
      {
-	free(ee->engine.buffer.pixels);
+	ee->engine.buffer.free_func(ee->engine.buffer.data, 
+                                    ee->engine.buffer.pixels);
      }
    _ecore_evas_buffer_shutdown();
 }
@@ -58,8 +59,12 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
      }
    else
      {
-	if (ee->engine.buffer.pixels) free(ee->engine.buffer.pixels);
-	ee->engine.buffer.pixels = malloc(ee->w * ee->h * sizeof(int));
+	if (ee->engine.buffer.pixels)
+          ee->engine.buffer.free_func(ee->engine.buffer.data,
+                                      ee->engine.buffer.pixels);
+	ee->engine.buffer.pixels = 
+          ee->engine.buffer.alloc_func(ee->engine.buffer.data,
+                                       ee->w * ee->h * sizeof(int));
      }
 
    einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
@@ -477,6 +482,18 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 };
 #endif
 
+static void *
+_ecore_evas_buffer_pix_alloc(void *data, int size)
+{
+   return malloc(size);
+}
+
+static void *
+_ecore_evas_buffer_pix_free(void *data, void *pix)
+{
+   free(pix);
+}
+
 /**
  * To be documented.
  *
@@ -485,11 +502,19 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 EAPI Ecore_Evas *
 ecore_evas_buffer_new(int w, int h)
 {
+    return ecore_evas_buffer_alllocfunc_new
+     (w, h, _ecore_evas_buffer_pix_alloc, _ecore_evas_buffer_pix_free, NULL);
+}
+
+EAPI Ecore_Evas *
+ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc_func) (void *data, int size), void (*free_func) (void *data, void *pix), const void *data)
+{
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    Evas_Engine_Info_Buffer *einfo;
    Ecore_Evas *ee;
    int rmethod;
 
+   if ((!alloc_func) || (!free_func)) return NULL;
    rmethod = evas_render_method_lookup("buffer");
    if (!rmethod) return NULL;
    ee = calloc(1, sizeof(Ecore_Evas));
@@ -500,6 +525,9 @@ ecore_evas_buffer_new(int w, int h)
    _ecore_evas_buffer_init();
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_buffer_engine_func;
+   ee->engine.buffer.alloc_func = alloc_func;
+   ee->engine.buffer.free_func = free_func;
+   ee->engine.buffer.data = (void *)data;
 
    ee->driver = "buffer";
 
@@ -528,7 +556,9 @@ ecore_evas_buffer_new(int w, int h)
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
-   ee->engine.buffer.pixels = malloc(w * h * sizeof(int));
+   ee->engine.buffer.pixels = 
+     ee->engine.buffer.alloc_func
+     (ee->engine.buffer.data, w * h * sizeof(int));
 
    einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
    if (einfo)
