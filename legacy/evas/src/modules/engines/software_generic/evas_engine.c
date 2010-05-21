@@ -150,7 +150,11 @@ static void
 eng_rectangle_draw(void *data __UNUSED__, void *context, void *surface, int x, int y, int w, int h)
 {
 #ifdef BUILD_PIPE_RENDER
-   if (cpunum > 1)
+   if ((cpunum > 1)
+#ifdef EVAS_FRAME_QUEUING
+        && evas_common_frameq_enabled()
+#endif
+        )
      evas_common_pipe_rectangle_draw(surface, context, x, y, w, h);
    else
 #endif
@@ -164,8 +168,12 @@ static void
 eng_line_draw(void *data __UNUSED__, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
 #ifdef BUILD_PIPE_RENDER
-   if (cpunum > 1)
-     evas_common_pipe_line_draw(surface, context, x1, y1, x2, y2);
+   if ((cpunum > 1)
+ #ifdef EVAS_FRAME_QUEUING
+        && evas_common_frameq_enabled()
+#endif
+        )
+    evas_common_pipe_line_draw(surface, context, x1, y1, x2, y2);
    else
 #endif   
      {
@@ -190,7 +198,11 @@ static void
 eng_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon, int x, int y)
 {
 #ifdef BUILD_PIPE_RENDER
-   if (cpunum > 1)
+   if ((cpunum > 1)
+#ifdef EVAS_FRAME_QUEUING
+        && evas_common_frameq_enabled()
+#endif
+        )
      evas_common_pipe_poly_draw(surface, context, polygon, x, y);
    else
 #endif
@@ -284,7 +296,11 @@ static void
 eng_gradient2_linear_draw(void *data __UNUSED__, void *context, void *surface, void *linear_gradient, int x, int y, int w, int h)
 {
 #ifdef BUILD_PIPE_RENDER
-   if (cpunum > 1)
+   if ((cpunum > 1)
+#ifdef EVAS_FRAME_QUEUING
+        && evas_common_frameq_enabled()
+#endif
+        )
      evas_common_pipe_grad2_draw(surface, context, x, y, w, h, linear_gradient);
    else
 #endif
@@ -351,7 +367,11 @@ static void
 eng_gradient2_radial_draw(void *data __UNUSED__, void *context, void *surface, void *radial_gradient, int x, int y, int w, int h)
 {
 #ifdef BUILD_PIPE_RENDER
-   if (cpunum > 1)
+   if ((cpunum > 1)
+#ifdef EVAS_FRAME_QUEUING
+        && evas_common_frameq_enabled()
+#endif
+        )
      evas_common_pipe_grad2_draw(surface, context, x, y, w, h, radial_gradient);
    else
 #endif
@@ -484,7 +504,11 @@ static void
 eng_gradient_draw(void *data __UNUSED__, void *context, void *surface, void *gradient, int x, int y, int w, int h)
 {
 #ifdef BUILD_PIPE_RENDER
-   if (cpunum > 1)
+   if ((cpunum > 1)
+#ifdef EVAS_FRAME_QUEUING
+        && evas_common_frameq_enabled()
+#endif
+        )
      evas_common_pipe_grad_draw(surface, context, x, y, w, h, gradient);
    else
 #endif   
@@ -745,7 +769,11 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
    if (!image) return;
    im = image;
 #ifdef BUILD_PIPE_RENDER
-   if (cpunum > 1)
+   if ((cpunum > 1)
+#ifdef EVAS_FRAME_QUEUING
+        && evas_common_frameq_enabled()
+#endif
+        )
      {
         evas_common_rgba_image_scalecache_prepare(im, surface, context, smooth,
                                                   src_x, src_y, src_w, src_h,
@@ -810,7 +838,7 @@ eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *i
        (p[3].col == 0xffffffff))
      {
         int dx, dy, dw, dh;
-        
+
         dx = p[0].x >> FP;
         dy = p[0].y >> FP;
         dw = (p[2].x >> FP) - dx;
@@ -823,13 +851,18 @@ eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *i
    else
      {
 #ifdef BUILD_PIPE_RENDER
-        if (cpunum > 1)
+        if ((cpunum > 1)
+# ifdef EVAS_FRAME_QUEUING
+       && evas_common_frameq_enabled()
+# endif
+        )
           evas_common_pipe_map4_draw(im, surface, context, p, smooth, level);
         else
 #endif
           evas_common_map4_rgba(im, surface, context, p, smooth, level);
      }
    evas_common_cpu_end_opt();
+
 }
 
 static void *
@@ -1000,7 +1033,11 @@ static void
 eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const char *text)
 {
 #ifdef BUILD_PIPE_RENDER
-   if (cpunum > 1)
+   if ((cpunum > 1)
+#ifdef EVAS_FRAME_QUEUING
+        && evas_common_frameq_enabled()
+#endif
+        )
      evas_common_pipe_text_draw(surface, context, font, x, y, text);
    else
 #endif   

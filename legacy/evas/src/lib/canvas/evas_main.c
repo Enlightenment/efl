@@ -48,6 +48,9 @@ evas_init(void)
 #ifdef BUILD_ASYNC_PRELOAD
    _evas_preload_thread_init();
 #endif
+#ifdef EVAS_FRAME_QUEUING
+   evas_common_frameq_init();
+#endif
 
    return _evas_init_count;
 
@@ -84,6 +87,13 @@ evas_shutdown(void)
    if (--_evas_init_count != 0)
      return _evas_init_count;
 
+#ifdef EVAS_FRAME_QUEUING
+   if (evas_common_frameq_enabled())
+     {
+        evas_common_frameq_finish();
+        evas_common_frameq_destroy();
+     }
+#endif
 #ifdef BUILD_ASYNC_EVENTS
    _evas_preload_thread_shutdown();
 #endif
@@ -179,6 +189,10 @@ evas_free(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+
+#ifdef EVAS_FRAME_QUEUING
+   evas_common_frameq_flush();
+#endif
 
    if (e->walking_list == 0) evas_render_idle_flush(e);
    
@@ -424,6 +438,11 @@ evas_output_size_set(Evas *e, int w, int h)
    if ((w == e->output.w) && (h == e->output.h)) return;
    if (w < 1) w = 1;
    if (h < 1) h = 1;
+
+#ifdef EVAS_FRAME_QUEUING
+   evas_common_frameq_flush();
+#endif
+
    e->output.w = w;
    e->output.h = h;
    e->output.changed = 1;

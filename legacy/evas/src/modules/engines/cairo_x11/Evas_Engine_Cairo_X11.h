@@ -21,6 +21,9 @@ struct _Evas_Engine_Info_Cairo_X11
    } info;
    /* engine specific function calls to query stuff about the destination */
    /* engine (what visual & colormap & depth to use, performance info etc. */
+
+   /* non-blocking or blocking mode */
+   Evas_Engine_Render_Mode render_mode;
 };
 #endif
 

@@ -160,6 +160,15 @@ evas_common_gradient_free(RGBA_Gradient *gr)
    if (!gr) return;
    gr->references--;
    if (gr->references > 0) return;
+#ifdef EVAS_FRAME_QUEUING
+        LKL(gr->ref_fq_add);  LKL(gr->ref_fq_del);
+        if (gr->ref_fq[0] != gr->ref_fq[1])
+          {
+             LKU(gr->ref_fq_add); LKU(gr->ref_fq_del);
+             return;
+          }
+	LKU(gr->ref_fq_add); LKU(gr->ref_fq_del);
+#endif
    evas_common_gradient_clear(gr);
    if (gr->type.name) free(gr->type.name);
    if (gr->type.params) free(gr->type.params);

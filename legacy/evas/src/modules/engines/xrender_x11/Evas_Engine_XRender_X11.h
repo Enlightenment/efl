@@ -37,5 +37,8 @@ struct _Evas_Engine_Info_XRender_X11
       void                            *visual;
       unsigned char                    destination_alpha : 1;
    } info;
+
+   /* non-blocking or blocking mode */
+   Evas_Engine_Render_Mode render_mode;
 };
 #endif

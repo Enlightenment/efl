@@ -31,6 +31,9 @@ struct _Evas_Engine_Info_Buffer
 	 void   (*free_update_region) (int x, int y, int w, int h, void *data);
       } func;
    } info;
+
+   /* non-blocking or blocking mode */
+   Evas_Engine_Render_Mode render_mode;
 };
 #endif
 

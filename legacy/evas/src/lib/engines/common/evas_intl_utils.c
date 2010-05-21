@@ -4,6 +4,8 @@
 #include "evas_common.h"
 #include "evas_intl_utils.h"
 
+#include "evas_font_private.h"
+
 #ifdef INTERNATIONAL_SUPPORT
 #include <fribidi/fribidi.h>
 
@@ -41,10 +43,12 @@ evas_intl_utf8_to_visual(const char *text,
    if (!unicode_in)
      {
 	len = -1;
-	goto error1;
+        goto error1;
      }
 
+   FBDLOCK();
    len = fribidi_utf8_to_unicode(text, byte_len, unicode_in);
+   FBDUNLOCK();
    unicode_in[len] = 0;
 
    unicode_out = (FriBidiChar *)alloca(sizeof(FriBidiChar) * (len + 1));
@@ -109,7 +113,8 @@ evas_intl_utf8_to_visual(const char *text,
      }
 
    fribidi_unicode_to_utf8(unicode_out, len, text_out);
-
+   FBDUNLOCK();
+   
    *ret_len = len;
    return text_out;
 

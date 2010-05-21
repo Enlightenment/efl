@@ -267,6 +267,7 @@ eng_info(Evas *e)
    info = calloc(1, sizeof(Evas_Engine_Info_Cairo_X11));
    if (!info) return NULL;
    info->magic.magic = rand();   
+   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
    return info;
    e = NULL;
 }

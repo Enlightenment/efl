@@ -21,6 +21,9 @@ struct _Evas_Engine_Info_Software_DDraw
       int          rotation;
       unsigned int fullscreen : 1;
    } info;
+
+   /* non-blocking or blocking mode */
+   Evas_Engine_Render_Mode render_mode;
 };
 
 

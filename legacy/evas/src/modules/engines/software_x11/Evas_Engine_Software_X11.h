@@ -53,6 +53,8 @@ struct _Evas_Engine_Info_Software_X11
    } func;
 
    int mask_changed;
+   /* non-blocking or blocking mode */
+   Evas_Engine_Render_Mode render_mode;
 };
 
 #endif

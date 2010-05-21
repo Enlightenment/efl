@@ -147,9 +147,15 @@ evas_object_gradient_color_stop_add(Evas_Object *obj, int r, int g, int b, int a
    return;
    MAGIC_CHECK_END();
    if (o->engine_data)
-      obj->layer->evas->engine.func->gradient_color_stop_add(obj->layer->evas->engine.data.output,
-							     o->engine_data,
-							     r, g, b, a, delta);
+     {
+#ifdef EVAS_FRAME_QUEUING
+        evas_common_pipe_op_grad_flush(o->engine_data);
+#endif
+
+        obj->layer->evas->engine.func->gradient_color_stop_add(obj->layer->evas->engine.data.output,
+                           o->engine_data,
+                           r, g, b, a, delta);
+     }
    o->gradient_changed = 1;
    o->changed = 1;
    evas_object_change(obj);
@@ -180,8 +186,13 @@ evas_object_gradient_alpha_stop_add(Evas_Object *obj, int a, int delta)
    return;
    MAGIC_CHECK_END();
    if (o->engine_data)
-      obj->layer->evas->engine.func->gradient_alpha_stop_add(obj->layer->evas->engine.data.output,
-							     o->engine_data, a, delta);
+     {
+#ifdef EVAS_FRAME_QUEUING
+        evas_common_pipe_op_grad_flush(o->engine_data);
+#endif
+        obj->layer->evas->engine.func->gradient_alpha_stop_add(obj->layer->evas->engine.data.output,
+                     o->engine_data, a, delta);
+     }
    o->gradient_changed = 1;
    o->changed = 1;
    evas_object_change(obj);
@@ -204,8 +215,13 @@ evas_object_gradient_clear(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
    if (o->engine_data)
-      obj->layer->evas->engine.func->gradient_clear(obj->layer->evas->engine.data.output,
-						    o->engine_data);
+     {
+#ifdef EVAS_FRAME_QUEUING
+        evas_common_pipe_op_grad_flush(o->engine_data);
+#endif
+        obj->layer->evas->engine.func->gradient_clear(obj->layer->evas->engine.data.output,
+                        o->engine_data);
+     }
    o->gradient_changed = 1;
    o->changed = 1;
    o->cur.gradient_opaque = 0;
@@ -236,9 +252,14 @@ evas_object_gradient_color_data_set(Evas_Object *obj, void *data, int len, Eina_
    return;
    MAGIC_CHECK_END();
    if (o->engine_data)
-	obj->layer->evas->engine.func->gradient_color_data_set(obj->layer->evas->engine.data.output,
-								o->engine_data,
-								data, len, has_alpha);
+     {
+#ifdef EVAS_FRAME_QUEUING
+        evas_common_pipe_op_grad_flush(o->engine_data);
+#endif
+        obj->layer->evas->engine.func->gradient_color_data_set(obj->layer->evas->engine.data.output,
+                        o->engine_data,
+                        data, len, has_alpha);
+     }
    o->gradient_changed = 1;
    o->changed = 1;
    evas_object_change(obj);
@@ -267,9 +288,14 @@ evas_object_gradient_alpha_data_set(Evas_Object *obj, void *data, int len)
    return;
    MAGIC_CHECK_END();
    if (o->engine_data)
-	obj->layer->evas->engine.func->gradient_alpha_data_set(obj->layer->evas->engine.data.output,
-								o->engine_data,
-								data, len);
+     {
+#ifdef EVAS_FRAME_QUEUING
+        evas_common_pipe_op_grad_flush(o->engine_data);
+#endif
+        obj->layer->evas->engine.func->gradient_alpha_data_set(obj->layer->evas->engine.data.output,
+                        o->engine_data,
+                        data, len);
+     }
    o->gradient_changed = 1;
    o->changed = 1;
    evas_object_change(obj);

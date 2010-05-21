@@ -60,6 +60,9 @@ struct _Evas_Cache_Image
    int                           usage;
    int                           limit;
    int                           references;
+#ifdef EVAS_FRAME_QUEUING
+   LK(lock);
+#endif
 };
 
 struct _Evas_Cache_Engine_Image_Func

@@ -16,6 +16,9 @@ struct _Evas_Engine_Info_DirectFB
       IDirectFB                 *dfb;
       IDirectFBSurface          *surface;
    } info;
+
+   /* non-blocking or blocking mode */
+   Evas_Engine_Render_Mode render_mode;
 };
 #endif
 

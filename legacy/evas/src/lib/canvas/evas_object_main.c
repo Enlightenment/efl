@@ -368,6 +368,10 @@ evas_object_del(Evas_Object *obj)
 
    if (obj->delete_me) return;
 
+#ifdef EVAS_FRAME_QUEUING
+   evas_common_frameq_flush();
+#endif
+
    _evas_object_event_new();
 
    evas_object_event_callback_call(obj, EVAS_CALLBACK_DEL, NULL);

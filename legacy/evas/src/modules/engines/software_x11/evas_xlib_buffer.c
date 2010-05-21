@@ -305,7 +305,18 @@ evas_software_xlib_x_output_buffer_new(Display *d, Visual *v, int depth, int w, 
                                  ph = XSetErrorHandler((XErrorHandler)
                                                        x_output_tmp_x_err);
                               }
+#if defined(EVAS_FRAME_QUEUING) && defined(LIBXEXT_VERSION_LOW)
+                    /* workaround for libXext of lower then 1.1.1 */
+                    if (evas_common_frameq_enabled())
+                       XLockDisplay(d);
+#endif
 			    XShmAttach(d, xob->shm_info);
+#if defined(EVAS_FRAME_QUEUING) && defined(LIBXEXT_VERSION_LOW)
+                    /* workaround for libXext of lower then 1.1.1 */
+                    if (evas_common_frameq_enabled())
+                       XUnlockDisplay(d);
+#endif
+
                             if (try_shm == 2) // only needed during testing
                               {
                                  XSync(d, False); 

@@ -77,6 +77,7 @@ eng_info(Evas *e)
    if (!info) return NULL;
    info->magic.magic = rand();
    memset(&info->info, 0, sizeof(info->info));
+   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
    return info;
    e = NULL;
 }

@@ -7,7 +7,23 @@
 #include "evas_blend_private.h"
 
 #include "evas_intl_utils.h" /*defines INTERNATIONAL_SUPPORT if possible */
+#include "evas_font_private.h" /* for Frame-Queuing support */
 
+#ifdef EVAS_FRAME_QUEUING
+EAPI void
+evas_common_font_draw_init(void)
+{
+   LKI(lock_font_draw);
+   LKI(lock_fribidi);
+}
+
+EAPI void
+evas_common_font_draw_finish(void)
+{
+   LKD(lock_font_draw);
+   LKD(lock_fribidi);
+}
+#endif
 
 static void
 _fash_int_free(Fash_Int *fash)
@@ -123,9 +139,11 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 //   fg = eina_hash_find(fi->glyphs, &hindex);
 //   if (fg) return fg;
 
+   FTLOCK();
 //   error = FT_Load_Glyph(fi->src->ft.face, index, FT_LOAD_NO_BITMAP);
    error = FT_Load_Glyph(fi->src->ft.face, index,
 			 FT_LOAD_RENDER | hintflags[fi->hinting]);
+   FTUNLOCK();
    if (error)
      {
         if (!fi->fash) fi->fash = _fash_gl_new();
@@ -137,7 +155,9 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
    if (!fg) return NULL;
    memset(fg, 0, (sizeof(struct _RGBA_Font_Glyph)));
 
+   FTLOCK();
    error = FT_Get_Glyph(fi->src->ft.face->glyph, &(fg->glyph));
+   FTUNLOCK();
    if (error)
      {
 	free(fg);
@@ -147,15 +167,18 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
      }
    if (fg->glyph->format != FT_GLYPH_FORMAT_BITMAP)
      {
+        FTLOCK();
 	error = FT_Glyph_To_Bitmap(&(fg->glyph), FT_RENDER_MODE_NORMAL, 0, 1);
 	if (error)
 	  {
 	     FT_Done_Glyph(fg->glyph);
+        FTUNLOCK();
 	     free(fg);
              if (!fi->fash) fi->fash = _fash_gl_new();
              if (fi->fash) _fash_gl_add(fi->fash, index, (void *)(-1));
 	     return NULL;
 	  }
+   FTUNLOCK();
      }
    fg->glyph_out = (FT_BitmapGlyph)fg->glyph;
    fg->index = hindex;
@@ -180,6 +203,7 @@ static FT_UInt
 _evas_common_get_char_index(RGBA_Font_Int* fi, int gl)
 {
    Font_Char_Index result;
+   FT_UInt ret;
 
 #ifdef HAVE_PTHREAD
 ///   pthread_mutex_lock(&fi->ft_mutex);
@@ -197,7 +221,9 @@ _evas_common_get_char_index(RGBA_Font_Int* fi, int gl)
 //	return FT_Get_Char_Index(fi->src->ft.face, gl);
 //     }
 
+   FTLOCK();
    result.index = FT_Get_Char_Index(fi->src->ft.face, gl);
+   FTUNLOCK();
    result.gl = gl;
 
 //   eina_hash_direct_add(fi->indexes, &result->gl, result);
@@ -583,7 +609,9 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    if (ext_w <= 0) return;
    if (ext_h <= 0) return;
 
+#ifndef EVAS_FRAME_QUEUING
    LKL(fn->lock);
+#endif
 //   evas_common_font_size_use(fn);
    use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst, 1, dc->render_op);
@@ -616,5 +644,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
           }
         dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
      }
+#ifndef EVAS_FRAME_QUEUING
    LKU(fn->lock);
+#endif
 }

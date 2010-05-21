@@ -57,6 +57,8 @@ extern int _ecore_log_dom ;
 # define CLAMP(x, min, max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
 #endif
 
+#define EVAS_FRAME_QUEUING 1	/* for test */
+
 #define READBUFSIZ 65536
 
 #define ECORE_MAGIC_NONE            0x1234fedc

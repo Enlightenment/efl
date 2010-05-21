@@ -53,9 +53,15 @@ evas_object_gradient2_color_np_stop_insert(Evas_Object *obj, int r, int g, int b
    MAGIC_CHECK_END();
    engine_data = obj->func->engine_data_get(obj);
    if (engine_data)
-      obj->layer->evas->engine.func->gradient2_color_np_stop_insert(obj->layer->evas->engine.data.output,
-							     engine_data,
-							     r, g, b, a, pos);
+     {
+#ifdef EVAS_FRAME_QUEUING
+        evas_common_pipe_op_grad2_flush(engine_data);
+#endif
+
+        obj->layer->evas->engine.func->gradient2_color_np_stop_insert(obj->layer->evas->engine.data.output,
+                           engine_data,
+                           r, g, b, a, pos);
+     }
    og->gradient_changed = 1;
    evas_object_change(obj);
 }
@@ -79,8 +85,13 @@ evas_object_gradient2_clear(Evas_Object *obj)
    MAGIC_CHECK_END();
    engine_data = obj->func->engine_data_get(obj);
    if (engine_data)
-      obj->layer->evas->engine.func->gradient2_clear(obj->layer->evas->engine.data.output,
-						     engine_data);
+     {
+#ifdef EVAS_FRAME_QUEUING
+        evas_common_pipe_op_grad2_flush(engine_data);
+#endif
+        obj->layer->evas->engine.func->gradient2_clear(obj->layer->evas->engine.data.output,
+                        engine_data);
+     }
    og->gradient_changed = 1;
    og->cur.gradient_opaque = 0;
    evas_object_change(obj);

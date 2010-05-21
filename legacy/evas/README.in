@@ -275,3 +275,8 @@ NOTES:
 
 For the arm optimizations you want to try:
   export CFLAGS="-O2 -march=armv5te -mcpu=arm1136jf-s -fomit-frame-pointer"
+
+To enable the async renderer compile with:
+  --enable-async-render
+and also runtime set this environment variable:
+  export EVAS_RENDER_MODE=non-blocking

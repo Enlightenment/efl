@@ -27,6 +27,9 @@ struct _Evas_Engine_Info_Direct3D
       unsigned short height;
       unsigned char *mask;
    } *shape;
+
+   /* non-blocking or blocking mode */
+   Evas_Engine_Render_Mode render_mode;
 };
 
 

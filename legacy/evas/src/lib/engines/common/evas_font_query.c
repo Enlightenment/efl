@@ -1,5 +1,6 @@
 #include "evas_common.h"
 #include "evas_intl_utils.h" /*defines INTERNATIONAL_SUPPORT if possible */
+#include "evas_font_private.h" /* for Frame-Queuing support */
 
 EAPI int
 evas_common_font_query_kerning(RGBA_Font_Int* fi,
@@ -26,12 +27,14 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
     * values to kern by - given same font, same size and same
     * prev_index and index. auto/bytecode or none hinting doesnt
     * matter */
+   FTLOCK();
    if (FT_Get_Kerning(fi->src->ft.face,
 		      key[0], key[1],
 		      ft_kerning_default, &delta) == 0)
      {
 	int *push;
 
+        FTUNLOCK();
 	*kerning = delta.x >> 6;
 
 	push = malloc(sizeof (int) * 3);
@@ -46,6 +49,7 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
 	goto on_correct;
      }
 
+        FTUNLOCK();
    error = 0;
 
  on_correct:
@@ -188,7 +192,9 @@ evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int 
    pen_x = 0;
    pen_y = 0;
 //   evas_common_font_size_use(fn);
+   FTLOCK();
    use_kerning = FT_HAS_KERNING(fi->src->ft.face);
+   FTUNLOCK();
    prev_index = 0;
    for (chr = 0; text[chr];)
      {

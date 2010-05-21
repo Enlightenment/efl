@@ -462,6 +462,7 @@ eng_info(Evas *e __UNUSED__)
    info = calloc(1, sizeof(Evas_Engine_Info_XRender_X11));
    if (!info) return NULL;
    info->magic.magic = rand();
+   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
    return info;
 }
 

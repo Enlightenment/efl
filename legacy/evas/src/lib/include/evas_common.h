@@ -136,7 +136,14 @@ extern EAPI int _evas_log_dom_global;
 # include <pthread.h>
 # include <sched.h>
 # define LK(x)  pthread_mutex_t x
+#ifndef EVAS_FRAME_QUEUING
 # define LKI(x) pthread_mutex_init(&(x), NULL);
+#else
+# define LKI(x) {pthread_mutexattr_t    attr;\
+         pthread_mutexattr_init(&attr); \
+         pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);	\
+         pthread_mutex_init(&(x), &attr);}
+#endif
 # define LKD(x) pthread_mutex_destroy(&(x));
 # define LKL(x) pthread_mutex_lock(&(x));
 # define LKT(x) pthread_mutex_trylock(&(x));
@@ -144,6 +151,15 @@ extern EAPI int _evas_log_dom_global;
 # define TH(x)  pthread_t x
 # define THI(x) int x
 # define TH_MAX 8
+
+/* for rwlocks */
+#define RWLK(x) pthread_rwlock_t x
+#define RWLKI(x) pthread_rwlock_init(&(x), NULL);
+#define RWLKD(x) pthread_rwlock_destroy(&(x));
+#define RDLKL(x) pthread_rwlock_rdlock(&(x));
+#define WRLKL(x) pthread_rwlock_wrlock(&(x));
+#define RWLKU(x) pthread_rwlock_unlock(&(x));
+
 
 // even though in theory having every Nth rendered line done by a different
 // thread might even out load across threads - it actually slows things down.
@@ -159,6 +175,15 @@ extern EAPI int _evas_log_dom_global;
 # define TH(x)
 # define THI(x)
 # define TH_MAX 0
+
+/* for rwlocks */
+#define RWLK(x) 
+#define RWLKI(x) 
+#define RWLKD(x)
+#define RDLKL(x) 
+#define WRLKL(x)
+#define RWLKU(x)
+
 #endif
 
 #ifdef HAVE_ALLOCA_H
@@ -521,6 +546,9 @@ struct _Image_Entry
    time_t                 laststat;
 
    int                    references;
+#ifdef EVAS_FRAME_QUEUING
+   LK(lock_references);   // needed for accessing references
+#endif
 
    unsigned char          scale;
 
@@ -630,6 +658,8 @@ struct _RGBA_Draw_Context
 };
 
 #ifdef BUILD_PIPE_RENDER
+#include "../engines/common/evas_map_image.h"
+
 struct _RGBA_Pipe_Op
 {
    RGBA_Draw_Context         context;
@@ -707,6 +737,12 @@ struct _RGBA_Image
    void                *extended_info;
 #ifdef BUILD_PIPE_RENDER
    RGBA_Pipe           *pipe;
+#ifdef EVAS_FRAME_QUEUING
+   LK(ref_fq_add);
+   LK(ref_fq_del);
+   pthread_cond_t cond_fq_del;
+   int ref_fq[2];		// ref_fq[0] is for addition, ref_fq[1] is for deletion
+#endif
 #endif
    int                  ref;
 
@@ -790,6 +826,13 @@ struct _RGBA_Gradient
      } type;
 
    int references;
+#ifdef EVAS_FRAME_QUEUING
+   LK(ref_fq_add);
+   LK(ref_fq_del);
+   pthread_cond_t cond_fq_del;
+   int ref_fq[2];	//ref_fq[0] is for addition,
+                         //ref_fq[1] is for deletion
+#endif
 
    Eina_Bool imported_data : 1;
    Eina_Bool has_alpha : 1;
@@ -847,6 +890,13 @@ struct _RGBA_Gradient2
      } type;
 
    int references;
+#ifdef EVAS_FRAME_QUEUING
+   LK(ref_fq_add);
+   LK(ref_fq_del);
+   pthread_cond_t cond_fq_del;
+   int ref_fq[2];	//ref_fq[0] is for addition,
+                         //ref_fq[1] is for deletion
+#endif
 
    Eina_Bool has_alpha : 1;
 };
@@ -922,6 +972,12 @@ struct _RGBA_Font
    Fash_Int *fash;
    unsigned char sizeok : 1;
    LK(lock);
+#ifdef EVAS_FRAME_QUEUING
+   LK(ref_fq_add);
+   LK(ref_fq_del);
+   pthread_cond_t cond_fq_del;
+   int ref_fq[2];		//ref_fq[0] is for addition, ref_fq[1] is for deletion
+#endif
 };
 
 struct _RGBA_Font_Int

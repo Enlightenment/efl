@@ -17,6 +17,9 @@ evas_common_font_init(void)
    error = FT_Init_FreeType(&evas_ft_lib);
    if (error) return;
    evas_common_font_load_init();
+#ifdef EVAS_FRAME_QUEUING
+   evas_common_font_draw_init();
+#endif
 }
 
 EAPI void
@@ -33,6 +36,9 @@ evas_common_font_shutdown(void)
    evas_common_font_flush();
 
    error = FT_Done_FreeType(evas_ft_lib);
+#ifdef EVAS_FRAME_QUEUING
+   evas_common_font_draw_finish();
+#endif
    evas_ft_lib = 0;
 }
 

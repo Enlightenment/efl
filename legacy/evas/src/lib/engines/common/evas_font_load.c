@@ -7,6 +7,8 @@
 
 #include <assert.h>
 
+#include "evas_font_private.h" /* for Frame-Queuing support */
+
 extern FT_Library         evas_ft_lib;
 
 static int                font_cache_usage = 0;
@@ -45,7 +47,9 @@ _evas_font_cache_int_hash(const RGBA_Font_Int *key, int key_length __UNUSED__)
 static void
 _evas_common_font_source_free(RGBA_Font_Source *fs)
 {
+   FTLOCK();
    FT_Done_Face(fs->ft.face);
+   FTUNLOCK();
 #if 0 /* FIXME: Disable as it is only used by dead code using deprecated datatype. */
 //   if (fs->charmap) evas_array_hash_free(fs->charmap);
 #endif
@@ -59,7 +63,9 @@ font_flush_free_glyph_cb(const Eina_Hash *hash, const void *key, void *data, voi
    RGBA_Font_Glyph *fg;
 
    fg = data;
+   FTLOCK();
    FT_Done_Glyph(fg->glyph);
+   FTUNLOCK();
    // extension calls
    if (fg->ext_dat_free) fg->ext_dat_free(fg->ext_dat);
    free(fg);
@@ -137,7 +143,9 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
    fs->data_size = data_size;
    fs->current_size = 0;
    memcpy(fs->data, data, data_size);
+   FTLOCK();
    error = FT_New_Memory_Face(evas_ft_lib, fs->data, fs->data_size, 0, &(fs->ft.face));
+   FTUNLOCK();
    if (error)
      {
 	free(fs);
@@ -145,7 +153,9 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
      }
    fs->name = eina_stringshare_add(name);
    fs->file = NULL;
+   FTLOCK();
    error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
+   FTUNLOCK();
    fs->ft.orig_upem = fs->ft.face->units_per_EM;
    fs->references = 1;
 
@@ -183,9 +193,11 @@ evas_common_font_source_load_complete(RGBA_Font_Source *fs)
 {
    int error;
 
+   FTLOCK();
    error = FT_New_Face(evas_ft_lib, fs->file, 0, &(fs->ft.face));
    if (error)
      {
+        FTUNLOCK();
 	fs->ft.face = NULL;
 	return error;
      }
@@ -194,10 +206,12 @@ evas_common_font_source_load_complete(RGBA_Font_Source *fs)
    if (error)
      {
 	FT_Done_Face(fs->ft.face);
+   FTUNLOCK();
 	fs->ft.face = NULL;
 	return error;
      }
 
+   FTUNLOCK();
    fs->ft.orig_upem = fs->ft.face->units_per_EM;
    return error;
 }
@@ -236,7 +250,9 @@ evas_common_font_size_use(RGBA_Font *fn)
      {
 	if (fi->src->current_size != fi->size)
 	  {
+        FTLOCK();
 	     FT_Activate_Size(fi->ft.size);
+        FTUNLOCK();
 	     fi->src->current_size = fi->size;
 	  }
      }
@@ -369,6 +385,7 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
    int ret;
    int error;
 
+   FTLOCK();
    error = FT_New_Size(fi->src->ft.face, &(fi->ft.size));
    if (!error)
      {
@@ -381,6 +398,7 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
 	fi->real_size = fi->size;
 	error = FT_Set_Pixel_Sizes(fi->src->ft.face, 0, fi->real_size);
      }
+   FTUNLOCK();
    if (error)
      {
 	int i;
@@ -405,7 +423,9 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
 	     if (d == 0) break;
 	  }
 	fi->real_size = chosen_size;
+   FTLOCK();
 	error = FT_Set_Pixel_Sizes(fi->src->ft.face, chosen_width, fi->real_size);
+   FTUNLOCK();
 	if (error)
 	  {
 	     /* couldn't choose the size anyway... what now? */
@@ -457,6 +477,11 @@ evas_common_font_memory_load(const char *name, int size, const void *data, int d
    fi->hinting = fn->hinting;
    fn->references = 1;
    LKI(fn->lock);
+#ifdef EVAS_FRAME_QUEUING
+   LKI(fn->ref_fq_add);
+   LKI(fn->ref_fq_del);
+   pthread_cond_init(&(fn->cond_fq_del), NULL);
+#endif
    return fn;
 }
 
@@ -506,6 +531,11 @@ evas_common_font_load(const char *name, int size)
    fi->hinting = fn->hinting;
    fn->references = 1;
    LKI(fn->lock);
+#ifdef EVAS_FRAME_QUEUING
+   LKI(fn->ref_fq_add);
+   LKI(fn->ref_fq_del);
+   pthread_cond_init(&(fn->cond_fq_del), NULL);
+#endif
    return fn;
 }
 
@@ -552,6 +582,19 @@ evas_common_font_free(RGBA_Font *fn)
    if (!fn) return;
    fn->references--;
    if (fn->references > 0) return;
+#ifdef EVAS_FRAME_QUEUING
+   LKL(fn->ref_fq_add);
+   LKL(fn->ref_fq_del);
+   if (fn->ref_fq[0] != fn->ref_fq[1])
+     {
+        LKU(fn->ref_fq_add);
+        LKU(fn->ref_fq_del);
+        return;
+     }
+   LKU(fn->ref_fq_add);
+   LKU(fn->ref_fq_del);
+#endif
+
    EINA_LIST_FOREACH(fn->fonts, l, fi)
      {
 	fi->references--;
@@ -565,6 +608,12 @@ evas_common_font_free(RGBA_Font *fn)
    eina_list_free(fn->fonts);
    if (fn->fash) fn->fash->freeme(fn->fash);
    LKD(fn->lock);
+#ifdef EVAS_FRAME_QUEUING
+   LKD(fn->ref_fq_add);
+   LKD(fn->ref_fq_del);
+   pthread_cond_destroy(&(fn->cond_fq_del));
+#endif
+
    free(fn);
 }
 

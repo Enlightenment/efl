@@ -373,6 +373,12 @@ typedef enum _Evas_Image_Scale_Hint
    EVAS_IMAGE_SCALE_HINT_STATIC = 2
 } Evas_Image_Scale_Hint;
 
+typedef enum _Evas_Engine_Render_Mode
+{
+   EVAS_RENDER_MODE_BLOCKING = 0,
+   EVAS_RENDER_MODE_NONBLOCKING = 1,
+} Evas_Engine_Render_Mode;
+
 typedef enum _Evas_Image_Content_Hint
 {
    EVAS_IMAGE_CONTENT_HINT_NONE = 0,
@@ -721,6 +727,7 @@ extern "C" {
    EAPI void              evas_pointer_canvas_xy_get        (const Evas *e, Evas_Coord *x, Evas_Coord *y) EINA_ARG_NONNULL(1);
    EAPI int               evas_pointer_button_down_mask_get (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
    EAPI Eina_Bool         evas_pointer_inside_get           (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+   EAPI void              evas_sync(Evas *e) EINA_ARG_NONNULL(1);
 
 
 /**

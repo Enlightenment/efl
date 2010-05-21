@@ -960,6 +960,9 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+#ifdef EVAS_FRAME_QUEUING
+   evas_common_pipe_op_image_flush(o->engine_data);
+#endif
    p_data = o->engine_data;
    if (data)
      {
@@ -1031,6 +1034,10 @@ evas_object_image_data_get(const Evas_Object *obj, Eina_Bool for_writing)
    return NULL;
    MAGIC_CHECK_END();
    if (!o->engine_data) return NULL;
+#ifdef EVAS_FRAME_QUEUING
+   evas_common_pipe_op_image_flush(o->engine_data);
+#endif
+
    data = NULL;
    o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
 								  o->engine_data,
@@ -1202,9 +1209,14 @@ evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool has_alpha)
      return;
    o->cur.has_alpha = has_alpha;
    if (o->engine_data)
-     o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
+     {
+#ifdef EVAS_FRAME_QUEUING
+        evas_common_pipe_op_image_flush(o->engine_data);
+#endif
+        o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
 								     o->engine_data,
 								     o->cur.has_alpha);
+     }
    evas_object_image_data_update_add(obj, 0, 0, o->cur.image.w, o->cur.image.h);
    EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
 }
@@ -1810,6 +1822,13 @@ evas_object_image_colorspace_set(Evas_Object *obj, Evas_Colorspace cspace)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+
+#ifdef EVAS_FRAME_QUEUING
+   if (o->cur.cspace != cspace)
+      if (o->engine_data)
+         evas_common_pipe_op_image_flush(o->engine_data);
+#endif
+
    o->cur.cspace = cspace;
    if (o->engine_data)
      obj->layer->evas->engine.func->image_colorspace_set(obj->layer->evas->engine.data.output,
@@ -1913,6 +1932,11 @@ evas_object_image_scale_hint_set(Evas_Object *obj, Evas_Image_Scale_Hint hint)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+#ifdef EVAS_FRAME_QUEUING
+   if (o->scale_hint != hint)
+      if (o->engine_data)
+         evas_common_pipe_op_image_flush(o->engine_data);
+#endif
    o->scale_hint = hint;
 }
 

@@ -90,6 +90,7 @@ evas_convert_rgb_8.h \
 evas_convert_yuv.h \
 evas_draw.h \
 evas_font.h \
+evas_font_private.h \
 evas_gradient.h \
 evas_gradient_private.h \
 evas_image.h \

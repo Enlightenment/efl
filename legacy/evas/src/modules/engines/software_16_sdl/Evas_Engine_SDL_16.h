@@ -17,6 +17,9 @@ struct _Evas_Engine_Info_SDL_16
     int                         noframe : 1;
     int                         alpha : 1;
   } info;
+
+   /* non-blocking or blocking mode */
+   Evas_Engine_Render_Mode render_mode;
 };
 
 #endif

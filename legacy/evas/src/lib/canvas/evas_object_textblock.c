@@ -6027,9 +6027,14 @@ _evas_object_textblock_rehint(Evas_Object *obj)
 	EINA_INLIST_FOREACH(ln->items, it)
 	  {
 	     if (it->format->font.font)
-	       evas_font_load_hinting_set(obj->layer->evas,
-					  it->format->font.font,
+            {  
+#ifdef EVAS_FRAME_QUEUING
+               evas_common_pipe_op_text_flush(it->format->font.font);
+#endif
+	          evas_font_load_hinting_set(obj->layer->evas,
+			   		  it->format->font.font,
 					  obj->layer->evas->hinting);
+	       }
 	  }
      }
    o->formatted.valid = 0;

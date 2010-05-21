@@ -184,6 +184,7 @@ eng_info(Evas *e)
    info->func.best_visual_get = eng_best_visual_get;
    info->func.best_colormap_get = eng_best_colormap_get;
    info->func.best_depth_get = eng_best_depth_get;
+   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
    return info;
    e = NULL;
 }

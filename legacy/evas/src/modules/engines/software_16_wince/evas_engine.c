@@ -95,6 +95,7 @@ eng_info(Evas *e)
    info->magic.magic = rand();
    info->func.suspend = _suspend;
    info->func.resume = _resume;
+   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
    return info;
    e = NULL;
 }

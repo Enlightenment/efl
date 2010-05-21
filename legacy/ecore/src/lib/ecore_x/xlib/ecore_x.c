@@ -254,6 +254,9 @@ ecore_x_init(const char *name)
 	_ecore_xlib_log_dom = -1;
        return --_ecore_x_init_count;
      }
+#ifdef EVAS_FRAME_QUEUING
+   XInitThreads();
+#endif
    _ecore_x_disp = XOpenDisplay((char *)name);
    if (!_ecore_x_disp)
      goto shutdown_ecore_event;

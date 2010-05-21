@@ -25,6 +25,9 @@ struct _Evas_Engine_Info_Software_Qtopia
       QWidget *target;
       int      rotation;
    } info;
+
+   /* non-blocking or blocking mode */
+   Evas_Engine_Render_Mode render_mode;
 };
 #endif
 

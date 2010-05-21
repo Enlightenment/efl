@@ -83,5 +83,10 @@ void         evas_software_xlib_outbuf_debug_show (Outbuf  *buf,
                                                    int      h);
 
 Eina_Bool    evas_software_xlib_outbuf_alpha_get (Outbuf *buf);
+#ifdef EVAS_FRAME_QUEUING
+void         evas_software_xlib_outbuf_set_priv (Outbuf *buf,
+                                                  void *cur,
+                                                  void *prev);
+#endif
 
 #endif

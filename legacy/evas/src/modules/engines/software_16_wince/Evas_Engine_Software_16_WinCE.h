@@ -26,6 +26,9 @@ struct _Evas_Engine_Info_Software_16_WinCE
       int   (*suspend) (int backend);
       int   (*resume)  (int backend);
    } func;
+
+   /* non-blocking or blocking mode */
+   Evas_Engine_Render_Mode render_mode;
 };
 
 
