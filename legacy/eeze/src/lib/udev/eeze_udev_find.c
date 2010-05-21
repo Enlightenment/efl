@@ -220,7 +220,6 @@ eeze_udev_find_by_type(const Eeze_Udev_Type etype, const char *name)
         case EEZE_UDEV_TYPE_DRIVE_REMOVABLE:
           udev_enumerate_add_match_subsystem(en, "block");
           udev_enumerate_add_match_property(en, "ID_TYPE", "disk");
-          udev_enumerate_add_match_sysattr(en, "removable", "1");
           break;
         case EEZE_UDEV_TYPE_DRIVE_CDROM:
           udev_enumerate_add_match_subsystem(en, "block");
@@ -274,6 +273,17 @@ eeze_udev_find_by_type(const Eeze_Udev_Type etype, const char *name)
                }
 
           }
+        else if (etype == EEZE_UDEV_TYPE_DRIVE_INTERNAL)
+          {
+             if (udev_device_get_property_value(device, "ID_USB_DRIVER"))
+               goto out;
+          }
+        else if (etype == EEZE_UDEV_TYPE_DRIVE_REMOVABLE)
+          {
+             if (!(test = udev_device_get_property_value(device, "ID_USB_DRIVER")))
+               goto out;
+          }
+
         if (name)
              if (!strstr(devname, name))
                goto out;

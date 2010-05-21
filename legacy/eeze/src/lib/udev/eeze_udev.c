@@ -452,6 +452,7 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
       touchpad = _walk_parents_test_attr(device, "resolution", NULL);
 #else
+      const char *test;
       test = udev_device_get_property_value(device, "ID_INPUT_TOUCHPAD");
       if (test) touchpad = atoi(test);
 #endif

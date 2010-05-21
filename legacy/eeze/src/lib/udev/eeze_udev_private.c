@@ -32,6 +32,24 @@ _walk_parents_test_attr(struct udev_device *device, const char *sysattr, const c
    return 0;
 }
 
+const char *
+_walk_parents_get_attr(struct udev_device *device, const char *sysattr)
+{
+   struct udev_device *parent, *child = device;
+   const char *test;
+
+   if ((test = udev_device_get_sysattr_value(device, sysattr)))
+     return eina_stringshare_add(test);
+   parent = udev_device_get_parent(child);
+   for (; parent; child = parent, parent = udev_device_get_parent(child))
+     {
+        if ((test = udev_device_get_sysattr_value(parent, sysattr)))
+          return eina_stringshare_add(test);
+     }
+
+   return NULL;
+}
+
 /**
  * check a list for all parents of a device,
  * stringshare adding all devices that are not in the list
