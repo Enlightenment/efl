@@ -34,7 +34,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+   
   /**
    * @file Eet.h
    * @brief The file that provides the eet functions.
@@ -43,6 +43,41 @@ extern "C" {
    *
    */
 
+#define EET_VERSION_MAJOR 1
+#define EET_VERSION_MINOR 2
+  /**
+   * @typedef Eet_Version
+   * 
+   * This is the Eet version information structure that can be used at
+   * runtiime to detect which version of eet is being used and adapt
+   * appropriately as follows for example:
+   * 
+   * @code
+   * #if define(EET_VERSION_MAJOR) && (EET_VERSION_MAJOR >= 1) && defined(EET_VERSION_MINOR) && (EET_VERSION_MINOR > 2)
+   * printf("Eet version: %i.%i.%i\n", 
+   *        eet_version->major, 
+   *        eet_version->minor, 
+   *        eet_version->micro);
+   * if (eet_version->revision > 0)
+   *   {
+   *     printf("  Built from SVN revision # %i\n", eet_version->revision);
+   *   }
+   * #endif
+   * @endcode
+   * 
+   * Note the #if check can be dropped if your program refuses to compile or
+   * work with an Eet version less than 1.3.0. 
+   */
+   typedef struct _Eet_Version
+     { 
+        int major; /** < major (binary or source incompatible changes) */
+        int minor; /** < minor (new features, bugfixes, major improvements version) */
+        int micro; /** < micro (bugfix, internal improvements, no new features version) */
+        int revision; /** < svn revision (0 if a proper rlease or the svn revsion number Eet is built from) */
+     } Eet_Version;
+   
+   EAPI extern Eet_Version *eet_version;
+   
   /**
    * @defgroup Eet_Group Top level functions
    * Functions that affect Eet as a whole.

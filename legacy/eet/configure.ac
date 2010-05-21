@@ -22,9 +22,24 @@ VMAJ=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $1);}'`
 VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
 VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
+
+VREV="0"
+SVNVERSION=`which svnversion`
+if test -n "$SVNVERSION"; then
+  VREV=`$SVNVERSION . | awk -F : '{printf("%s\n", $1);}' | tr 'A-z' ' '`
+fi
+# When released uncomment the following
+##VREV="0"
+
+AC_SUBST(VREV)
+
+AC_DEFINE_UNQUOTED(VMAJ, $VMAJ, [Major version])
+AC_DEFINE_UNQUOTED(VMIN, $VMIN, [Minor version])
+AC_DEFINE_UNQUOTED(VMIC, $VMIC, [Micro version])
+AC_DEFINE_UNQUOTED(VREV, $VREV, [Revison])
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
-#release="ver-pre-svn-00"
-#release_info="-release $release"
+##release="ver-pre-svn-00"
+##release_info="-release $release"
 release_info=""
 AC_SUBST(version_info)
 AC_SUBST(release_info)
