@@ -24,7 +24,7 @@ extern int _e_eeze_udev_log_dom;
 #define ERR(...)   EINA_LOG_DOM_ERR(_e_eeze_udev_log_dom, __VA_ARGS__)
 
 /* from watch.c */
-Eina_Bool _walk_parents_for_attr(struct udev_device *device, const char *sysattr, const char* value);
+Eina_Bool _walk_parents_test_attr(struct udev_device *device, const char *sysattr, const char* value);
 void _get_unlisted_parents(Eina_List *list, struct udev_device *device);
 
 #endif

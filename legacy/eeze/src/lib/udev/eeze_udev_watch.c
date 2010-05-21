@@ -52,7 +52,7 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
           if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "input")))
             goto error;
           test = udev_device_get_property_value(device, "ID_CLASS");
-          if ((_walk_parents_for_attr(device, "bInterfaceProtocol", "01")) || ((test) && (!strcmp(test, "kbd"))))
+          if ((_walk_parents_test_attr(device, "bInterfaceProtocol", "01")) || ((test) && (!strcmp(test, "kbd"))))
             break;
           goto error;
 #endif
@@ -64,7 +64,7 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
           if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "input")))
             goto error;
           test = udev_device_get_property_value(device, "ID_CLASS");
-          if ((_walk_parents_for_attr(device, "bInterfaceProtocol", "02")) || ((test) && (!strcmp(test, "mouse"))))
+          if ((_walk_parents_test_attr(device, "bInterfaceProtocol", "02")) || ((test) && (!strcmp(test, "mouse"))))
             break;
           goto error;
 #endif
@@ -75,7 +75,7 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
           if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "input")))
             goto error;
-          if (_walk_parents_for_attr(device, "resolution", NULL))
+          if (_walk_parents_test_attr(device, "resolution", NULL))
             break;
           goto error;
 #endif
@@ -142,7 +142,7 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler *fd_handler)
           if ((!(test = udev_device_get_subsystem(device))) || (strcmp(test, "hwmon")))
             goto error;
 #endif /* have to do stuff up here since we need info from the parent */
-             if (!_walk_parents_for_attr(device, "temp1_input", NULL))
+             if (!_walk_parents_test_attr(device, "temp1_input", NULL))
                goto error;
              /* if device is not the one which has the temp input, we must go up the chain */
              if (!(test = udev_device_get_sysattr_value(device, "temp1_input")))

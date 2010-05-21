@@ -15,6 +15,7 @@ eeze_udev.c \
 eeze_udev_watch.c \
 eeze_udev_main.c \
 eeze_udev_find.c \
+eeze_udev_walk.c \
 eeze_udev_private.c
 
 libeeze_udev_la_LIBADD = @ECORE_LIBS@ @UDEV_LIBS@

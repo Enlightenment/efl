@@ -139,6 +139,9 @@ extern "C" {
    EAPI Eina_Bool       eeze_udev_syspath_is_mouse(const char *syspath);
    EAPI Eina_Bool       eeze_udev_syspath_is_kbd(const char *syspath);
    EAPI Eina_Bool       eeze_udev_syspath_is_touchpad(const char *syspath);
+   
+   EAPI Eina_Bool       eeze_udev_walk_check_sysattr(const char *syspath, const char *sysattr, const char *value);
+   EAPI const char     *eeze_udev_walk_get_sysattr(const char *syspath, const char *sysattr);
 
    EAPI Eeze_Udev_Watch *eeze_udev_watch_add(Eeze_Udev_Type type, int event, void(*func)(const char *, const char *, void *, Eeze_Udev_Watch *), void *user_data);
    EAPI void            *eeze_udev_watch_del(Eeze_Udev_Watch *watch);

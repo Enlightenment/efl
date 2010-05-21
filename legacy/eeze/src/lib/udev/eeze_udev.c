@@ -118,9 +118,10 @@ eeze_udev_syspath_get_devpath(const char *syspath)
       eina_strbuf_append(sbuf, syspath);
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
-      if ((udev_device_get_property_value(device, "DEVNAME")))
-        name = eina_stringshare_add(eina_strbuf_string_get(sbuf));
+      if (!(name = udev_device_get_property_value(device, "DEVNAME")))
+        return NULL;
 
+      name = eina_stringshare_add(name);
       udev_device_unref(device);
       udev_unref(udev);
       eina_strbuf_free(sbuf);
@@ -356,7 +357,7 @@ eeze_udev_syspath_is_mouse(const char *syspath)
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
-      mouse = _walk_parents_for_attr(device, "bInterfaceProtocol", "02");
+      mouse = _walk_parents_test_attr(device, "bInterfaceProtocol", "02");
       if (!mouse)
       {
          test = udev_device_get_property_value(device, "ID_CLASS");
@@ -403,7 +404,7 @@ eeze_udev_syspath_is_kbd(const char *syspath)
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
-      kbd = _walk_parents_for_attr(device, "bInterfaceProtocol", "01");
+      kbd = _walk_parents_test_attr(device, "bInterfaceProtocol", "01");
       if (!kbd)
       {
          test = udev_device_get_property_value(device, "ID_CLASS");
@@ -437,7 +438,6 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
       struct udev_device *device;
       Eina_Bool touchpad = 0;
       Eina_Strbuf *sbuf;
-      const char *test = NULL;
 
       if (!syspath) return 0;
       udev = udev_new();
@@ -450,7 +450,7 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
 
       device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
-      touchpad = _walk_parents_for_attr(device, "resolution", NULL);
+      touchpad = _walk_parents_test_attr(device, "resolution", NULL);
 #else
       test = udev_device_get_property_value(device, "ID_INPUT_TOUCHPAD");
       if (test) touchpad = atoi(test);
@@ -460,46 +460,4 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
       eina_strbuf_free(sbuf);
 
       return touchpad;
-}
-
-/**
- * Walks up the device chain starting at @p syspath,
- * checking each device for @p sysattr with (optional) @p value.
- *
- * @param syspath The /sys/ path of the device to start at, with or without the /sys/
- * @param sysattr The attribute to find
- * @param value OPTIONAL: The value that @p sysattr should have, or NULL
- *
- * @return If the sysattr (with value) is found, returns TRUE.  Else, false.
- */
-EAPI Eina_Bool
-eeze_udev_syspath_check_sysattr(const char *syspath, const char *sysattr, const char *value)
-{
-     struct udev *udev;
-      struct udev_device *device, *child, *parent;
-      Eina_Strbuf *sbuf;
-      const char *test = NULL;
-
-      if (!syspath) return 0;
-      udev = udev_new();
-      if (!udev) return 0;
-      
-      sbuf = eina_strbuf_new();
-      if (!strstr(syspath, "/sys/"))
-        eina_strbuf_append(sbuf, "/sys/");
-      eina_strbuf_append(sbuf, syspath);
-
-      device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
-
-      for (parent = device; parent; child = parent, parent = udev_device_get_parent(child))
-        {
-           if ((test = udev_device_get_sysattr_value(parent, sysattr)))
-             if ((value) && (!strcmp(test, value)))
-               {
-                  eina_strbuf_free(sbuf);
-                  return 1;
-               }
-        }
-   eina_strbuf_free(sbuf);
-   return 0;
 }

@@ -117,14 +117,15 @@ eeze_udev_find_unlisted_similar(Eina_List *list)
               return;
            }
         device = udev_device_new_from_syspath(udev, dev);
-        vendor = udev_device_get_property_value(device, "ID_VENDOR_ID");
-        if (vendor)
+        if ((vendor = udev_device_get_property_value(device, "ID_VENDOR_ID")))
           udev_enumerate_add_match_property(en, "ID_VENDOR_ID", vendor);
-        model = udev_device_get_property_value(device, "ID_MODEL_ID");
-        if (model)
+        else if ((vendor = udev_device_get_property_value(device, "ID_VENDOR")))
+          udev_enumerate_add_match_property(en, "ID_VENDOR", vendor);
+        if ((model = udev_device_get_property_value(device, "ID_MODEL_ID")))
           udev_enumerate_add_match_property(en, "ID_MODEL_ID", model);
-        revision = udev_device_get_property_value(device, "ID_REVISION");
-        if (revision)
+        else if ((model = udev_device_get_property_value(device, "ID_MODEL")))
+          udev_enumerate_add_match_property(en, "ID_MODEL", model);
+        if ((revision = udev_device_get_property_value(device, "ID_REVISION")))
           udev_enumerate_add_match_property(en, "ID_REVISION", revision);
        
         udev_enumerate_scan_devices(en);
@@ -185,15 +186,25 @@ eeze_udev_find_by_type(const Eeze_Udev_Type etype, const char *name)
           break;
         case EEZE_UDEV_TYPE_KEYBOARD:
           udev_enumerate_add_match_subsystem(en, "input");
+#ifndef OLD_UDEV_RRRRRRRRRRRRRR
           udev_enumerate_add_match_property(en, "ID_INPUT_KEYBOARD", "1");
+#else
+          udev_enumerate_add_match_property(en, "ID_CLASS", "kbd");
+#endif
           break;
         case EEZE_UDEV_TYPE_MOUSE:
           udev_enumerate_add_match_subsystem(en, "input");
+#ifndef OLD_UDEV_RRRRRRRRRRRRRR
           udev_enumerate_add_match_property(en, "ID_INPUT_MOUSE", "1");
+#else
+          udev_enumerate_add_match_property(en, "ID_CLASS", "mouse");
+#endif
           break;
         case EEZE_UDEV_TYPE_TOUCHPAD:
           udev_enumerate_add_match_subsystem(en, "input");
+#ifndef OLD_UDEV_RRRRRRRRRRRRRR
           udev_enumerate_add_match_property(en, "ID_INPUT_TOUCHPAD", "1");
+#endif
           break;
         case EEZE_UDEV_TYPE_DRIVE_MOUNTABLE:
           udev_enumerate_add_match_subsystem(en, "block");
@@ -245,7 +256,7 @@ eeze_udev_find_by_type(const Eeze_Udev_Type etype, const char *name)
 
         if (etype == EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR)
           {/* ensure that temp input exists somewhere in this device chain */
-             if (!_walk_parents_for_attr(device, "temp1_input", NULL))
+             if (!_walk_parents_test_attr(device, "temp1_input", NULL))
                goto out;
              /* if device is not the one which has the temp input, we must go up the chain */
              if (!(test = udev_device_get_sysattr_value(device, "temp1_input")))

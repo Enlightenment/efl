@@ -16,23 +16,19 @@ catch_events(const char *device, const char *event, void *data, Eeze_Udev_Watch 
    kbdmouse *akbdmouse = data;
    Eina_List *l;
    const char *name, *dev, *type;
-   int new = 0;
 
    /* the device that comes through will be prefixed by "/sys"
     * but the saved name will not, so we check for the saved name
     * inside the device name
     */
    EINA_LIST_FOREACH(akbdmouse->kbds, l, name)
-     if (strstr(device, name)) goto end;
+     if (strncmp(device + 5, name, strlen(device + 5) - 8)) goto end;
    EINA_LIST_FOREACH(akbdmouse->mice, l, name)
-     if (strstr(device, name)) goto end;
+     if (strncmp(device + 5, name, strlen(device + 5) - 8)) goto end;
 
    /* check to see if the device was just plugged in */
    if (eeze_udev_syspath_is_kbd(device) || eeze_udev_syspath_is_mouse(device))
-   {
-      new = 1;
-      goto end;
-   }
+     goto end;
    /* if we reach here, the device is neither a keyboard nor a mouse that we saw
     * previously, so we print a moderately amusing message and bail
     */
@@ -44,7 +40,7 @@ end:
     * we can retrieve them now even though the device has been removed and
     * is inaccessible to udev
     */
-   if (new)
+   if (!strcmp(event, "add"))
      {
         dev = eeze_udev_syspath_get_devpath(device);
         type = "plugged in";
@@ -119,8 +115,7 @@ int main()
      {  /* add the devpath to the hash for use in the cb later */
         if ((check = eeze_udev_syspath_get_devpath(name)))
           eina_hash_direct_add(hash, name, check); /* get a property using the device's syspath */
-        if ((check = eeze_udev_syspath_get_property(name, "ID_VENDOR")))
-          printf("Found mouse %s with vendor: %s\n", name, check);
+        printf("Found mouse %s with vendor: %s\n", name, eeze_udev_walk_get_sysattr(name, "manufacturer"));
      }
    /* we save this list for later, because once a device is unplugged it can
     * no longer be detected by udev, and any related properties are unusable unless

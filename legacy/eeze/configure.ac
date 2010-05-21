@@ -60,9 +60,11 @@ AS_IF(
      [PKG_CHECK_MODULES(UDEV, libudev, [], [enable_eeze_udev="no"])]
 )
 
-udev_version=$(pkg-config udev --version | cut -d. -f2)
-if test $udev_version -lt 23;then
-  AC_DEFINE([OLD_UDEV_RRRRRRRRRRRRRR],[1],[compat functionality for udev < 0.23])
+udev_version=$(pkg-config libudev --modversion)
+
+if test $udev_version -lt 142;then
+  AC_MSG_WARN([Old udev version detected, enabling compat code])
+  AC_DEFINE([OLD_UDEV_RRRRRRRRRRRRRR],[1],[compat functionality for udev < 142])
 fi
 
 AM_CONDITIONAL([BUILD_EEZE_UDEV],     [test "x${enable_eeze_udev}"     = "xyes"])

@@ -11,7 +11,7 @@
  * with value $value
  */
 Eina_Bool
-_walk_parents_for_attr(struct udev_device *device, const char *sysattr, const char* value)
+_walk_parents_test_attr(struct udev_device *device, const char *sysattr, const char* value)
 {
    struct udev_device *parent, *child = device;
    const char *test;
@@ -44,20 +44,22 @@ _get_unlisted_parents(Eina_List *list, struct udev_device *device)
     Eina_List *l;
     Eina_Bool found;
    
-   vendor = udev_device_get_property_value(child, "ID_VENDOR_ID");
-   model = udev_device_get_property_value(child, "ID_MODEL_ID"); 
+   if (!(vendor = udev_device_get_property_value(child, "ID_VENDOR_ID")))
+     vendor = udev_device_get_property_value(child, "ID_VENDOR");
+   if (!(model = udev_device_get_property_value(child, "ID_MODEL_ID")))
+     model = udev_device_get_property_value(child, "ID_MODEL");
    parent = udev_device_get_parent(child);
    for (; parent; child = parent, parent = udev_device_get_parent(child))
      {
         found = 0;
-        model2 = udev_device_get_property_value(parent, "ID_MODEL_ID");
-        vendor2 = udev_device_get_property_value(parent, "ID_VENDOR_ID");
-        if ((!model2 && model) || (model2 && !model))
+        if (!(vendor2 = udev_device_get_property_value(child, "ID_VENDOR_ID")))
+          vendor2 = udev_device_get_property_value(child, "ID_VENDOR");
+        if (!(model2 = udev_device_get_property_value(child, "ID_MODEL_ID")))
+          model2 = udev_device_get_property_value(child, "ID_MODEL");
+        if ((!model2 && model) || (model2 && !model) || (!vendor2 && vendor) || (vendor2 && !vendor))
             break;
-        else if ((!vendor2 && vendor) || (vendor2 && !vendor))
-            break;
-        else if (strcmp(model, model2) ||
-            strcmp(vendor, vendor2))
+        else if (((model && model2) && (strcmp(model, model2))) ||
+            ((vendor && vendor2) && (strcmp(vendor, vendor2))))
           break;
         devname = udev_device_get_syspath(parent);
         EINA_LIST_FOREACH(list, l, test)
