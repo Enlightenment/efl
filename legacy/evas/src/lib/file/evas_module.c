@@ -408,8 +408,9 @@ evas_module_unload(Evas_Module *em)
    if (em->definition == NULL)
      return ;
 
-   em->definition->func.close(em);
-   em->loaded = 0;
+// for now lets not unload modules - they may still be in use.   
+//   em->definition->func.close(em);
+//   em->loaded = 0;
 
 #ifdef BUILD_ASYNC_PRELOAD
    LKD(em->lock);
