@@ -431,6 +431,7 @@ _evas_cache_image_async_end(void *data)
 static void
 _evas_cache_image_async_cancel(void *data)
 {
+   Evas_Cache_Image *cache = NULL;
    Image_Entry *ie = (Image_Entry *) data;
 
    ie->preload = NULL;
@@ -456,11 +457,12 @@ _evas_cache_image_async_cancel(void *data)
      {
 	_evas_cache_image_remove_activ(ie->cache, ie);
 	_evas_cache_image_make_inactiv(ie->cache, ie, ie->cache_key);
-	evas_cache_image_flush(ie->cache);
+        cache = ie->cache;
      }
 #ifdef EVAS_FRAME_QUEUING
    LKU(ie->lock_references);
 #endif
+   if (cache) evas_cache_image_flush(cache);
 }
 
 static int
