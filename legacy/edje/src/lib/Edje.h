@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <math.h>
 #include <float.h>
+#include <limits.h>
 
 #include <Evas.h>
 
