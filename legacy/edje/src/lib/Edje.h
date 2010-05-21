@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <math.h>
+#include <float.h>
 
 #include <Evas.h>
 
@@ -266,8 +267,8 @@ struct _Edje_External_Param
 };
 typedef struct _Edje_External_Param Edje_External_Param;
 
-#define EDJE_EXTERNAL_INT_UNSET 0xffffffff
-#define EDJE_EXTERNAL_DOUBLE_UNSET HUGE_VAL
+#define EDJE_EXTERNAL_INT_UNSET INT_MAX
+#define EDJE_EXTERNAL_DOUBLE_UNSET DBL_MAX
 
 struct _Edje_External_Param_Info
 {
