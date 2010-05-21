@@ -961,7 +961,8 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
    return;
    MAGIC_CHECK_END();
 #ifdef EVAS_FRAME_QUEUING
-   evas_common_pipe_op_image_flush(o->engine_data);
+   if (o->engine_data)
+     evas_common_pipe_op_image_flush(o->engine_data);
 #endif
    p_data = o->engine_data;
    if (data)
@@ -1825,8 +1826,10 @@ evas_object_image_colorspace_set(Evas_Object *obj, Evas_Colorspace cspace)
 
 #ifdef EVAS_FRAME_QUEUING
    if (o->cur.cspace != cspace)
-      if (o->engine_data)
-         evas_common_pipe_op_image_flush(o->engine_data);
+     {
+        if (o->engine_data)
+          evas_common_pipe_op_image_flush(o->engine_data);
+     }
 #endif
 
    o->cur.cspace = cspace;
@@ -1934,8 +1937,10 @@ evas_object_image_scale_hint_set(Evas_Object *obj, Evas_Image_Scale_Hint hint)
    MAGIC_CHECK_END();
 #ifdef EVAS_FRAME_QUEUING
    if (o->scale_hint != hint)
-      if (o->engine_data)
-         evas_common_pipe_op_image_flush(o->engine_data);
+     {
+        if (o->engine_data)
+          evas_common_pipe_op_image_flush(o->engine_data);
+     }
 #endif
    o->scale_hint = hint;
 }
