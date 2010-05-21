@@ -53,7 +53,7 @@ extern "C" {
    * appropriately as follows for example:
    * 
    * @code
-   * #if define(EET_VERSION_MAJOR) && (EET_VERSION_MAJOR >= 1) && defined(EET_VERSION_MINOR) && (EET_VERSION_MINOR > 2)
+   * #if defined(EET_VERSION_MAJOR) && (EET_VERSION_MAJOR >= 1) && defined(EET_VERSION_MINOR) && (EET_VERSION_MINOR > 2)
    * printf("Eet version: %i.%i.%i\n", 
    *        eet_version->major, 
    *        eet_version->minor, 
