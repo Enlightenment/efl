@@ -102,7 +102,7 @@ _win_foc_out(void *data, Evas *e, void *event_info)
 }
 
 static void
-_close_win(void *data, Evas *e, void *event_info)
+_close_win(void *data, Evas_Object *obj, void *event_info)
 {
    evas_object_del(data);
 }
