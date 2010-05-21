@@ -868,11 +868,9 @@ evas_common_frameq_begin()
    pthread_attr_t attr;
    cpu_set_t cpu;
 
-   int set_cpu_affinity=1;
-	
-	if (!gframeq.initialised)
+   if (!gframeq.initialised)
      {
-        int cpunum;
+        int cpunum, set_cpu_affinity;
 
         cpunum = eina_cpu_count();
         gframeq.thread_num = cpunum;
@@ -897,7 +895,7 @@ evas_common_frameq_begin()
 
              pthread_create(&(gframeq.thinfo[i].thread_id), &attr,
                      evas_common_frameq_thread, &(gframeq.thinfo[i]));
-				
+
              pthread_attr_destroy(&attr);
              pthread_detach(gframeq.thinfo[i].thread_id);
           }
@@ -923,6 +921,10 @@ evas_common_frameq_begin()
              pthread_detach(gframeq.thinfo[i].thread_id);
           }
         gframeq.initialised = 1;	// now worker threads are created.
+
+	INF("initialised");
+	DBG("%d cpus, set_cpu_affinity=%d, frameq_sz=%d",
+	    cpunum, set_cpu_affinity, gframeq.frameq_sz);
      }
 #endif /* BUILD_PTHREAD */
 }
