@@ -1214,9 +1214,9 @@ eina_hash_modify(Eina_Hash *hash, const void *key, const void *data)
  * @code
  * extern Eina_Hash *hash;
  *
- * Eina_Bool hash_fn(Eina_Hash *hash, const char *key, void *data, void *fdata)
+ * Eina_Bool hash_fn(const Eina_Hash *hash, const void *key, void *data, void *fdata)
  * {
- *   printf("Func data: %s, Hash entry: %s / %p\n", fdata, key, data);
+ *   printf("Func data: %s, Hash entry: %s / %p\n", fdata, (const char *)key, data);
  *   return 1;
  * }
  *
