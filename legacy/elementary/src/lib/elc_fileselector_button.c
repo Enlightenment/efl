@@ -45,11 +45,12 @@ static void _selection_done(void *data, Evas_Object *obj, void *event_info);
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_UNPRESSED[] = "unpressed";
 static const char SIG_FILE_CHOSEN[] = "file,chosen";
-static const Evas_Smart_Cb_Description _signals[] = {
-  {SIG_CLICKED, ""},
-  {SIG_UNPRESSED, ""},
-  {SIG_FILE_CHOSEN, "s"},
-  {NULL, NULL}
+static const Evas_Smart_Cb_Description _signals[] = 
+{
+   {SIG_CLICKED, ""},
+   {SIG_UNPRESSED, ""},
+   {SIG_FILE_CHOSEN, "s"},
+   {NULL, NULL}
 };
 
 static void
@@ -107,8 +108,8 @@ _theme_hook(Evas_Object *obj)
      edje_object_signal_emit(wd->btn, "elm,state,icon,hidden", "elm");
    edje_object_part_text_set(wd->btn, "elm.text", wd->btn_label);
    edje_object_message_signal_process(wd->btn);
-   edje_object_scale_set(wd->btn, elm_widget_scale_get(obj) *	\
-			 _elm_config->scale);
+   edje_object_scale_set(wd->btn, 
+			 elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
 
@@ -167,7 +168,6 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 static void
 _signal_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
-
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 
@@ -245,7 +245,7 @@ _fs_launch(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSE
 	  }
      }
 
-   if (!wd->inwin_mode || win_fallback)
+   if ((!wd->inwin_mode) || (win_fallback))
      {
 	win = _new_window_add(wd);
 	evas_object_data_set(fs_btn, "win", win);
@@ -262,7 +262,7 @@ _fs_launch(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSE
    evas_object_smart_callback_add(wd->fs, "done", _selection_done, fs_btn);
    evas_object_show(wd->fs);
 
-   if (wd->inwin_mode && !win_fallback)
+   if ((wd->inwin_mode) && (!win_fallback))
      {
 	elm_win_inwin_content_set(iw, wd->fs);
 	elm_win_inwin_activate(iw);
@@ -415,7 +415,6 @@ elm_fileselector_button_selected_set(Evas_Object *obj, const char *path)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-
    eina_stringshare_replace(&wd->fsd.path, path);
 }
 
@@ -466,7 +465,7 @@ elm_fileselector_button_window_title_set(Evas_Object *obj, const char *title)
  * @ingroup File_Selector_Button
  */
 EAPI const char *
-elm_fileselector_button_window_title_get(Evas_Object *obj)
+elm_fileselector_button_window_title_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -492,7 +491,6 @@ elm_fileselector_button_window_size_set(Evas_Object *obj, Evas_Coord width, Evas
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-
    wd->w = width;
    wd->h = height;
 }
@@ -507,12 +505,11 @@ elm_fileselector_button_window_size_set(Evas_Object *obj, Evas_Coord width, Evas
  * @ingroup File_Selector_Button
  */
 EAPI void
-elm_fileselector_button_window_size_get(Evas_Object *obj, Evas_Coord *width, Evas_Coord *height)
+elm_fileselector_button_window_size_get(const Evas_Object *obj, Evas_Coord *width, Evas_Coord *height)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-
    if (width) *width = wd->w;
    if (height) *height = wd->h;
 }
@@ -544,7 +541,7 @@ elm_fileselector_button_path_set(Evas_Object *obj, const char *path)
  * @ingroup File_Selector_Button
  */
 EAPI const char *
-elm_fileselector_button_path_get(Evas_Object *obj)
+elm_fileselector_button_path_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -569,7 +566,6 @@ elm_fileselector_button_expandable_set(Evas_Object *obj, Eina_Bool value)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-
    wd->fsd.expandable = value;
 }
 
@@ -582,12 +578,11 @@ elm_fileselector_button_expandable_set(Evas_Object *obj, Eina_Bool value)
  * @ingroup File_Selector_Button
  */
 EAPI Eina_Bool
-elm_fileselector_button_expandable_get(Evas_Object *obj)
+elm_fileselector_button_expandable_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-
    return wd->fsd.expandable;
 }
 
@@ -606,7 +601,6 @@ elm_fileselector_button_folder_only_set(Evas_Object *obj, Eina_Bool value)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-
    wd->fsd.folder_only = value;
 }
 
@@ -619,12 +613,11 @@ elm_fileselector_button_folder_only_set(Evas_Object *obj, Eina_Bool value)
  * @ingroup File_Selector_Button
  */
 EAPI Eina_Bool
-elm_fileselector_button_folder_only_get(Evas_Object *obj)
+elm_fileselector_button_folder_only_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-
    return wd->fsd.folder_only;
 }
 
@@ -643,7 +636,6 @@ elm_fileselector_button_is_save_set(Evas_Object *obj, Eina_Bool value)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-
    wd->fsd.is_save = value;
 }
 
@@ -656,12 +648,11 @@ elm_fileselector_button_is_save_set(Evas_Object *obj, Eina_Bool value)
  * @ingroup File_Selector_Button
  */
 EAPI Eina_Bool
-elm_fileselector_button_is_save_get(Evas_Object *obj)
+elm_fileselector_button_is_save_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-
    return wd->fsd.is_save;
 }
 
@@ -681,7 +672,6 @@ elm_fileselector_button_inwin_mode_set(Evas_Object *obj, Eina_Bool value)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-
    wd->inwin_mode = value;
 }
 
@@ -694,12 +684,11 @@ elm_fileselector_button_inwin_mode_set(Evas_Object *obj, Eina_Bool value)
  * @ingroup File_Selector_Button
  */
 EAPI Eina_Bool
-elm_fileselector_button_inwin_mode_get(Evas_Object *obj)
+elm_fileselector_button_inwin_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-
    return wd->inwin_mode;
 }
 
