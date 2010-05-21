@@ -740,7 +740,7 @@ compile(void)
 	     snprintf(buf, sizeof(buf), "cat %s | cpp -I%s %s > %s",
 		      file_in, inc, def, tmpn);
 	     ret = system(buf);
-#if defined (__MacOSX__) || ( defined (__MACH__) && defined (__APPLE__))
+#if defined (__MacOSX__) || ( defined (__MACH__) && defined (__APPLE__) ) || defined (__OpenBSD__)
              if (ret == 0)
                {
                   static char tmpn2[4096];
