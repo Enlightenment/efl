@@ -6,11 +6,34 @@
 #include "eeze_private.h"
 #include "eeze_udev_private.h"
 
+/**
+ * @defgroup udev udev
+ *
+ * These are functions which interact directly with udev.
+ */
+
 _udev *udev;
 
 int _eeze_log_dom = -1;
 int _eeze_init_count = 0;
 
+
+/**
+ * @defgroup main main
+ * 
+ * These are general eeze functions which include init and shutdown.
+ */
+
+
+/**
+ * Initialize the eeze library.
+ * @return The number of times the function has been called, or -1 on failure.
+ * 
+ * This function should be called prior to using any eeze functions, and MUST
+ * be called prior to using any udev functions to avoid a segv.
+ * 
+ * @ingroup main
+ */
 EAPI int
 eeze_init(void)
 {
@@ -43,6 +66,15 @@ fail:
    return _eeze_init_count;
 }
 
+/**
+ * Shut down the eeze library.
+ * @return The number of times the eeze_init has been called, or -1 when 
+ * all occurrences of eeze have been shut down.
+ * 
+ * This function should be called when no further eeze functions will be called.
+ * 
+ * @ingroup main
+ */
 EAPI int
 eeze_shutdown(void)
 {

@@ -8,7 +8,7 @@
 
 extern _udev *udev;
 
-/**
+/*
  * copies a device
  */
 _udev_device *
@@ -22,7 +22,7 @@ _copy_device(_udev_device * device)
    return udev_device_new_from_syspath(udev, syspath);
 }
 
-/**
+/*
  * private function to simulate udevadm info -a
  * walks up the device tree checking each node for sysattr
  * with value $value
@@ -74,7 +74,7 @@ _walk_parents_get_attr(_udev_device * device, const char *sysattr)
    return NULL;
 }
 
-/**
+/*
  * check a list for all parents of a device,
  * stringshare adding all devices that are not in the list
  */

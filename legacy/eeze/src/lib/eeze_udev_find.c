@@ -9,13 +9,21 @@
 extern _udev *udev;
 
 /**
+ * @defgroup find Find
+ *
+ * These are functions which find/supplement lists of devices.
+ * 
+ * @ingroup udev
+ */
+
+/**
  * Returns a list of all syspaths that are (or should be) the same
  * device as the device pointed at by @p syspath.
  *
  * @param syspath The syspath of the device to find matches for
  * @return All devices which are the same as the one passed
  *
- * @ingroup udev
+ * @ingroup find
  */
 EAPI Eina_List *
 eeze_udev_find_similar_from_syspath(const char *syspath)
@@ -93,7 +101,7 @@ eeze_udev_find_similar_from_syspath(const char *syspath)
  * This function will update @p list to include all devices matching
  * devices with syspaths currently stored in @p list.
  *
- * @ingroup udev
+ * @ingroup find
  */
 EAPI void
 eeze_udev_find_unlisted_similar(Eina_List * list)
@@ -153,15 +161,15 @@ eeze_udev_find_unlisted_similar(Eina_List * list)
 }
 
 /**
- * Find devices using a EEZE_UDEV_TYPE_* and/or a name.
+ * Find devices using an @ref type and/or a name.
  *
- * @param type A Eeze_Udev_Type or 0
+ * @param type An @ref Eeze_Udev_Type or 0
  * @param name A filter for the device name or NULL
- * @return A Eina_List* of matched devices or NULL on failure
+ * @return An Eina_List of matched devices or NULL on failure
  *
  * Return a list of syspaths (/sys/$syspath) for matching udev devices.
  *
- * @ingroup udev
+ * @ingroup find
  */
 EAPI Eina_List *
 eeze_udev_find_by_type(const Eeze_Udev_Type etype, const char *name)
@@ -311,7 +319,7 @@ out:
  * Return a list of syspaths (/sys/$syspath) for matching udev devices.
  * Requires at least one filter.
  *
- * @ingroup udev
+ * @ingroup find
  */
 EAPI Eina_List *
 eeze_udev_find_by_filter(const char *subsystem, const char *type,
@@ -361,6 +369,8 @@ out:
  * @param value Optional: the value that the attribute should have
  *
  * @return A list of the devices found with the attribute
+ * 
+ * @ingroup find
  */
 EAPI Eina_List *
 eeze_udev_find_by_sysattr(const char *sysattr, const char *value)

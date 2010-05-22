@@ -6,7 +6,7 @@ lib_LTLIBRARIES = libeeze.la
 include_HEADERS = Eeze.h
 
 libeeze_la_SOURCES = \
-eeze_udev.c \
+eeze_udev_syspath.c \
 eeze_udev_watch.c \
 eeze_main.c \
 eeze_udev_find.c \

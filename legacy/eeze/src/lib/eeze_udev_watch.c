@@ -27,6 +27,14 @@ struct _store_data
    Eeze_Udev_Watch *watch;
 };
 
+/**
+ * @defgroup watch Watch
+ *
+ * These are functions which monitor udev for events.
+ * 
+ * @ingroup udev
+ */
+
 /* private function to further filter watch results based on Eeze_Udev_Type
  * specified; helpful for new udev versions, but absolutely required for
  * old udev, which does not implement filtering in device monitors.
@@ -265,15 +273,15 @@ error:
 /**
  * Add a watch for a device type
  *
- * @param type The Eeze_Udev_Type to watch
- * @param event The events to watch; an OR list of EEZE_UDEV_EVENTs (ie (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE)), or 0 for all events
+ * @param type The @ref Eeze_Udev_Type to watch
+ * @param event The events to watch; an OR list of @ref event (ie (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE)), or 0 for all events
  * @param func The function to call when the watch receives data;
  * must take (const char *device, const char *event_type, void *data, Eeze_Udev_Watch *watch)
  * @param user_data Data to pass to the callback function
  *
  * @return A watch struct for the watch type specified, or NULL on failure
  *
- * @ingroup udev
+ * @ingroup watch
  */
 EAPI Eeze_Udev_Watch *
 eeze_udev_watch_add(Eeze_Udev_Type type, int event,
@@ -372,7 +380,7 @@ error:
  *
  * Deletes a watch, closing file descriptors and freeing related udev memory.
  *
- * @ingroup udev
+ * @ingroup watch
  */
 EAPI void *
 eeze_udev_watch_del(Eeze_Udev_Watch * watch)
