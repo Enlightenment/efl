@@ -246,7 +246,7 @@ eeze_udev_devpath_get_syspath(const char *devpath)
    _udev_enumerate *en;
    _udev_list_entry *devs, *cur;
    _udev_device *device;
-   const char *name, *ret;
+   const char *name, *ret = NULL;
 
    if (!devpath)
      return NULL;
@@ -287,7 +287,7 @@ eeze_udev_devpath_get_subsystem(const char *devpath)
    _udev_enumerate *en;
    _udev_list_entry *devs, *cur;
    _udev_device *device;
-   const char *name, *ret;
+   const char *name, *ret = NULL;
 
    if (!devpath)
      return NULL;

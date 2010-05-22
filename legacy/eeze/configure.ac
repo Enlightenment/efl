@@ -1,7 +1,7 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT([eeze], [0.5.0], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([eeze], [0.1.0], [enlightenment-devel@lists.sourceforge.net])
 release="ver-pre-svn-05"
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
@@ -13,11 +13,8 @@ AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 AM_CONFIG_HEADER([config.h])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-AC_PROG_CC
-AC_HEADER_STDC
-AM_PROG_CC_C_O
-
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
+define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
 AC_PROG_LIBTOOL
 
 VMAJ=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $1);}'`
@@ -29,6 +26,17 @@ eeze_release_info="-release $release"
 AC_SUBST(version_info)
 AC_SUBST(eeze_release_info)
 
+
+### Needed information
+
+requirement_eeze="ecore libudev"
+
+
+### Checks for programs
+AC_PROG_CC
+AM_PROG_CC_C_O
+
+# pkg-config
 PKG_PROG_PKG_CONFIG
 
 # Check whether pkg-config supports Requires.private
@@ -39,8 +47,14 @@ AS_IF(
 )
 AC_SUBST(pkgconfig_requires_private)
 
-PKG_CHECK_MODULES([ECORE], [ecore])
-PKG_CHECK_MODULES(UDEV, libudev)
+# doxygen program for documentation building
+
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
+
+### Checks for libraries
+
+PKG_CHECK_MODULES([EEZE], [ecore libudev])
 
 udev_version=$(pkg-config libudev --modversion)
 
@@ -49,14 +63,30 @@ if test $udev_version -lt 142;then
   AC_DEFINE([OLD_UDEV_RRRRRRRRRRRRRR],[1],[compat functionality for udev < 142])
 fi
 
-lt_enable_auto_import=""
-AS_CASE(
-   ["$host_os"],
-      [mingw* | cegcc*],
-        AC_MSG_ERROR([THIS WILL NOT RUN ON WINDOWS!])
-)
 
-EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+### Checks for header files
+
+
+### Checks for types
+
+
+### Checks for structures
+
+
+### Checks for compiler characteristics
+
+AC_HEADER_STDC
+
+if ! test "x${VMIC}" = "x" ; then
+   EFL_COMPILER_FLAG([-Wall])
+   EFL_COMPILER_FLAG([-W])
+fi
+
+EFL_COMPILER_FLAG([-Wshadow])
+
+
+AC_SUBST(requirement_eeze)
+
 
 AC_OUTPUT([
 Makefile
@@ -81,6 +111,7 @@ echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
 echo
+echo "Documentation..........: ${build_doc}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"

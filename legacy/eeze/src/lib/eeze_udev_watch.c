@@ -280,7 +280,7 @@ eeze_udev_watch_add(Eeze_Udev_Type type, int event,
                     void (*func)(const char *syspath, int event, void *data,
                                  Eeze_Udev_Watch * watch), void *user_data)
 {
-   _udev_monitor *mon;
+   _udev_monitor *mon = NULL;
    int fd;
    Ecore_Fd_Handler *handler;
    Eeze_Udev_Watch *watch;
@@ -378,7 +378,7 @@ EAPI void *
 eeze_udev_watch_del(Eeze_Udev_Watch * watch)
 {
    struct _store_data *sdata;
-   void *ret;
+   void *ret = NULL;
 
    if ((!watch) || (!watch->mon) || (!watch->handler))
      return NULL;

@@ -7,7 +7,7 @@
 #include <libudev.h>
 
 #ifdef EAPI
-#undef EAPI
+# undef EAPI
 #endif
 
 #ifdef __GNUC__
