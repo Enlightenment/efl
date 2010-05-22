@@ -1,10 +1,10 @@
-#include <Eeze_Udev.h>
+#include <Eeze.h>
 #include <Ecore.h>
 #include <stdio.h>
 
 
 /**
- * This demo program shows how to use some eeze functions.  It roughly
+ * This demo program shows how to use some eeze_udev functions.  It roughly
  * 1kb as of now, TODO is to fix this but I'm too lazy now and it's only
  * a demo.
  */
@@ -69,7 +69,7 @@ end:
    /* and delete the watch */
    eeze_udev_watch_del(watch);
    /* and shut down eudev */
-   eeze_udev_shutdown();
+   eeze_shutdown();
    /* and quit the main loop */
    ecore_main_loop_quit();
 }
@@ -88,7 +88,7 @@ int main()
    Eina_Hash *hash;
 
    ecore_init();
-   eeze_udev_init();
+   eeze_init();
 
    hash = eina_hash_stringshared_new(hash_free);
    akbdmouse = malloc(sizeof(kbdmouse));

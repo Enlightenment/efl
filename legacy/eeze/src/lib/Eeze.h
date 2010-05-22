@@ -117,8 +117,8 @@ typedef struct Eeze_Udev_Watch Eeze_Udev_Watch;
 extern "C" {
 #endif
 
-   EAPI int             eeze_udev_init(void);
-   EAPI int             eeze_udev_shutdown(void);
+   EAPI int             eeze_init(void);
+   EAPI int             eeze_shutdown(void);
 
    EAPI Eina_List       *eeze_udev_find_similar_from_syspath(const char *syspath);
    EAPI void             eeze_udev_find_unlisted_similar(Eina_List *list);

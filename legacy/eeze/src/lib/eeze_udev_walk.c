@@ -2,7 +2,8 @@
 #include "config.h"
 #endif
 
-#include <Eeze_Udev.h>
+#include <Eeze.h>
+#include "eeze_private.h"
 #include "eeze_udev_private.h"
 
 extern _udev *udev;

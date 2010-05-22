@@ -1,6 +1,6 @@
 /**
 @file eeze.dox
-@brief Eeze Misc Libraries
+@brief Eeze Device Library
 */
 
 /**
@@ -12,10 +12,7 @@
 
 @section intro What is Eeze?
 
-Eeze is a collection of various APIs which may or may not be useful
-to developers working with EFL.  The aim is to eliminate the need to
-learn any api outside of EFL while simultaneously providing an 
-extremely easy way to manipulate external libraries.
+Eeze is a library for easily manipulating devices.
 
 @verbatim
 Pants

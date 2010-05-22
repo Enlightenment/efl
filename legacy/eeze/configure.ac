@@ -1,7 +1,7 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT([eeze], [0.4.0], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([eeze], [0.5.0], [enlightenment-devel@lists.sourceforge.net])
 release="ver-pre-svn-05"
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
@@ -25,24 +25,10 @@ VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
 VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
-eeze_udev_release_info="-release $release"
+eeze_release_info="-release $release"
 AC_SUBST(version_info)
-AC_SUBST(eeze_udev_release_info)
+AC_SUBST(eeze_release_info)
 
-modules=""
-dnl Check enabled modules to build
-AC_ARG_ENABLE([udev],[AC_HELP_STRING([--disable-udev], [Disable eeze_udev build])])
-AS_IF(
-   [test "x$enableval" != "xno"],
-      modules+="udev"
-      [enable_eeze_udev="yes"],
-   [enable_eeze_udev=no],
-)
-
-if test -z $modules;then
-  AC_MSG_ERROR(you have not selected any modules to build!)
-fi
-# pkg-config
 PKG_PROG_PKG_CONFIG
 
 # Check whether pkg-config supports Requires.private
@@ -54,11 +40,7 @@ AS_IF(
 AC_SUBST(pkgconfig_requires_private)
 
 PKG_CHECK_MODULES([ECORE], [ecore])
-
-AS_IF(
-   [test "x${enable_eeze_udev}" = "xyes"],
-     [PKG_CHECK_MODULES(UDEV, libudev, [], [enable_eeze_udev="no"])]
-)
+PKG_CHECK_MODULES(UDEV, libudev)
 
 udev_version=$(pkg-config libudev --modversion)
 
@@ -67,9 +49,6 @@ if test $udev_version -lt 142;then
   AC_DEFINE([OLD_UDEV_RRRRRRRRRRRRRR],[1],[compat functionality for udev < 142])
 fi
 
-AM_CONDITIONAL([BUILD_EEZE_UDEV],     [test "x${enable_eeze_udev}"     = "xyes"])
-
-EFL_EDBUS_BUILD=""
 lt_enable_auto_import=""
 AS_CASE(
    ["$host_os"],
@@ -85,9 +64,8 @@ doc/eeze.dox
 doc/Makefile
 src/Makefile
 src/lib/Makefile
-src/lib/udev/Makefile
 src/bin/Makefile
-eeze_udev.pc
+eeze.pc
 ])
 
 
@@ -103,9 +81,6 @@ echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
 echo
-echo "  Modules:"
-echo
-echo "    Eeze_Udev..............: $enable_eeze_udev"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
