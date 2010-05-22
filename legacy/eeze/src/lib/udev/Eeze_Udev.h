@@ -88,9 +88,9 @@
 /*bitmasks for watch events*/
 #define EEZE_UDEV_EVENT_NONE 0x0000
 #define EEZE_UDEV_EVENT_ADD 0x0001
-#define EEZE_UDEV_EVENT_REMOVE 0x0001
-#define EEZE_UDEV_EVENT_CHANGE 0x0002
-#define EEZE_UDEV_EVENT_ONLINE 0x0004
+#define EEZE_UDEV_EVENT_REMOVE 0x0002
+#define EEZE_UDEV_EVENT_CHANGE 0x0004
+#define EEZE_UDEV_EVENT_ONLINE 0x0008
 #define EEZE_UDEV_EVENT_OFFLINE 0x0010
 
 /*FIXME: these probably need to be bitmasks with categories*/
@@ -143,7 +143,7 @@ extern "C" {
    EAPI Eina_Bool       eeze_udev_walk_check_sysattr(const char *syspath, const char *sysattr, const char *value);
    EAPI const char     *eeze_udev_walk_get_sysattr(const char *syspath, const char *sysattr);
 
-   EAPI Eeze_Udev_Watch *eeze_udev_watch_add(Eeze_Udev_Type type, int event, void(*func)(const char *, const char *, void *, Eeze_Udev_Watch *), void *user_data);
+   EAPI Eeze_Udev_Watch *eeze_udev_watch_add(Eeze_Udev_Type type, int event, void(*func)(const char *, int, void *, Eeze_Udev_Watch *), void *user_data);
    EAPI void            *eeze_udev_watch_del(Eeze_Udev_Watch *watch);
 
 #ifdef __cplusplus

@@ -2,6 +2,13 @@
 #include <Ecore.h>
 #include <stdio.h>
 
+
+/**
+ * This demo program shows how to use some eeze functions.  It roughly
+ * 1kb as of now, TODO is to fix this but I'm too lazy now and it's only
+ * a demo.
+ */
+
 typedef struct kbdmouse
 {
    Eina_List *kbds;
@@ -11,7 +18,7 @@ typedef struct kbdmouse
 
 static void
 /* event will always be a syspath starting with /sys */
-catch_events(const char *device, const char *event, void *data, Eeze_Udev_Watch *watch)
+catch_events(const char *device, int event, void *data, Eeze_Udev_Watch *watch)
 {
    kbdmouse *akbdmouse = data;
    Eina_List *l;
@@ -40,7 +47,7 @@ end:
     * we can retrieve them now even though the device has been removed and
     * is inaccessible to udev
     */
-   if (!strcmp(event, "add"))
+   if ((event & EEZE_UDEV_EVENT_ADD) == EEZE_UDEV_EVENT_ADD)
      {
         dev = eeze_udev_syspath_get_devpath(device);
         type = "plugged in";
@@ -52,19 +59,19 @@ end:
      }
    printf("You %s %s!\n", type, dev);
    printf("All tests completed, exiting successfully!\n");
+   /* and the hash */
+   eina_hash_free(akbdmouse->hash);
    /* now we free the lists */
    eina_list_free(akbdmouse->kbds);
    eina_list_free(akbdmouse->mice);
-   /* and the hash */
-   eina_hash_free(akbdmouse->hash);
    /* and the random storage struct */
    free(akbdmouse);
-   /* and quit the main loop */
-   ecore_main_loop_quit();
    /* and delete the watch */
    eeze_udev_watch_del(watch);
    /* and shut down eudev */
    eeze_udev_shutdown();
+   /* and quit the main loop */
+   ecore_main_loop_quit();
 }
 
 static void

@@ -1,10 +1,10 @@
 #ifndef EEZE_UDEV_PRIVATE_H
 #define EEZE_UDEV_PRIVATE_H
 #include "Eeze_Udev.h"
-#ifndef E_EEZE_COLOR_DEFAULT
-#define E_EEZE_COLOR_DEFAULT EINA_COLOR_CYAN
+#ifndef eeze_COLOR_DEFAULT
+#define eeze_COLOR_DEFAULT EINA_COLOR_CYAN
 #endif
-extern int _e_eeze_udev_log_dom;
+extern int _eeze_udev_log_dom;
 #ifdef ERR
 #undef ERR
 #endif
@@ -18,13 +18,20 @@ extern int _e_eeze_udev_log_dom;
 #undef DBG
 #endif
 
-#define DBG(...)   EINA_LOG_DOM_DBG(_e_eeze_udev_log_dom, __VA_ARGS__)
-#define INFO(...)    EINA_LOG_DOM_INFO(_e_eeze_udev_log_dom, __VA_ARGS__)
-#define WARN(...) EINA_LOG_DOM_WARN(_e_eeze_udev_log_dom, __VA_ARGS__)
-#define ERR(...)   EINA_LOG_DOM_ERR(_e_eeze_udev_log_dom, __VA_ARGS__)
+#define DBG(...)   EINA_LOG_DOM_DBG(_eeze_udev_log_dom, __VA_ARGS__)
+#define INFO(...)    EINA_LOG_DOM_INFO(_eeze_udev_log_dom, __VA_ARGS__)
+#define WARN(...) EINA_LOG_DOM_WARN(_eeze_udev_log_dom, __VA_ARGS__)
+#define ERR(...)   EINA_LOG_DOM_ERR(_eeze_udev_log_dom, __VA_ARGS__)
 
-Eina_Bool _walk_parents_test_attr(struct udev_device *device, const char *sysattr, const char* value);
-const char *_walk_parents_get_attr(struct udev_device *device, const char *sysattr);
-void _get_unlisted_parents(Eina_List *list, struct udev_device *device);
+typedef struct udev _udev;
+typedef struct udev_list_entry _udev_list_entry;
+typedef struct udev_device _udev_device;
+typedef struct udev_enumerate _udev_enumerate;
+typedef struct udev_monitor _udev_monitor;
+
+Eina_Bool _walk_parents_test_attr(_udev_device *device, const char *sysattr, const char* value);
+const char *_walk_parents_get_attr(_udev_device *device, const char *sysattr);
+void _get_unlisted_parents(Eina_List *list, _udev_device *device);
+_udev_device *_copy_device(_udev_device *device);
 
 #endif
