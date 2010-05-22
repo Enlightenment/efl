@@ -58,9 +58,9 @@ PKG_CHECK_MODULES([EEZE], [ecore libudev])
 
 udev_version=$(pkg-config libudev --modversion)
 
-if test $udev_version -lt 142;then
+if test $udev_version -lt 148;then
   AC_MSG_WARN([Old udev version detected, enabling compat code])
-  AC_DEFINE([OLD_UDEV_RRRRRRRRRRRRRR],[1],[compat functionality for udev < 142])
+  AC_DEFINE([OLD_UDEV_RRRRRRRRRRRRRR],[1],[compat functionality for udev < 148])
 fi
 
 
