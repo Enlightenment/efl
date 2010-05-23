@@ -1367,6 +1367,40 @@ elm_scrolled_grid_selected_cells_get(const Evas_Object *obj)
 }
 
 /**
+ * Set the selected state of a cell.
+ *
+ * This sets the selected state of a cell. If multi-select is not enabled and
+ * selected is EINA_TRUE, previously selected cells are unselected.
+ *
+ * @param cell The cell
+ * @param selected The selected state.
+ *
+ * @ingroup Grid
+ */
+EAPI void
+elm_scrolled_grid_cell_selected_set(Elm_Grid_Cell *cell, Eina_Bool selected)
+{
+   Widget_Data *wd = elm_widget_data_get(cell->wd->self);
+   if (!wd) return;
+   if (!cell || cell->delete_me) return;
+   selected = !!selected;
+   if (cell->selected == selected) return;
+
+   if (selected)
+     {
+	if (!wd->multi)
+	  {
+	     while (wd->selected)
+	       _cell_unselect(wd->selected->data);
+	  }
+	_cell_hilight(cell);
+	_cell_select(cell);
+     }
+   else
+     _cell_unselect(cell);
+}
+
+/**
  * Get the selected state of a cell.
  *
  * This gets the selected state of a cell (1 selected, 0 not selected).

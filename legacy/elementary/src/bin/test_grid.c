@@ -176,6 +176,8 @@ test_grid(void *data, Evas_Object *obj, void *event_info)
 	item[i].mode = i;
 	item[i].path = eina_stringshare_add(buf);
 	item[i].cell = elm_scrolled_grid_cell_add(grid, &gcc, &(item[i]), grid_sel, NULL);
+	if (!(i % 5))
+	  elm_scrolled_grid_cell_selected_set(item[i].cell, EINA_TRUE);
      }
 
    evas_object_show(grid);

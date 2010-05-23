@@ -588,6 +588,7 @@ extern "C" {
    EAPI void	     elm_scrolled_grid_clear(Evas_Object *obj);
    EAPI void	    *elm_scrolled_grid_cell_data_get(Elm_Grid_Cell *cell);
    EAPI void	     elm_scrolled_grid_cell_pos_get(const Elm_Grid_Cell *cell, unsigned int *x, unsigned int *y);
+   EAPI void	     elm_scrolled_grid_cell_selected_set(Elm_Grid_Cell *cell, Eina_Bool selected);
    EAPI Eina_Bool    elm_scrolled_grid_cell_selected_get(const Elm_Grid_Cell *cell);
    EAPI const Evas_Object *elm_scrolled_grid_cell_object_get(Elm_Grid_Cell *cell);
    EAPI const Eina_List *elm_scrolled_grid_selected_cells_get(const Evas_Object *obj);
