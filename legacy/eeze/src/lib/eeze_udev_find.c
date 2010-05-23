@@ -96,7 +96,7 @@ eeze_udev_find_similar_from_syspath(const char *syspath)
  * Updates a list of all syspaths that are (or should be) the same
  * device.
  *
- * @param syspath The syspath of the device to find matches for.
+ * @param list The list of devices to update
  *
  * This function will update @p list to include all devices matching
  * devices with syspaths currently stored in @p list.  All strings are
@@ -164,7 +164,7 @@ eeze_udev_find_unlisted_similar(Eina_List * list)
 /**
  * Find devices using an @ref type and/or a name.
  *
- * @param type An @ref Eeze_Udev_Type or 0
+ * @param etype An @ref Eeze_Udev_Type or 0
  * @param name A filter for the device name or NULL
  * @return A stringshared Eina_List of matched devices or NULL on failure
  *

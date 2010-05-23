@@ -151,7 +151,6 @@ typedef enum
    EEZE_UDEV_TYPE_POWER_BAT,
    /** - Temperature sensor */
    EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR
-/*   EEZE_UDEV_TYPE_ANDROID */
 } Eeze_Udev_Type;
 /**@}*/
 
