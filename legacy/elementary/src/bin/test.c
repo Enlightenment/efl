@@ -54,6 +54,7 @@ void test_scroller(void *data, Evas_Object *obj, void *event_info);
 void test_scroller2(void *data, Evas_Object *obj, void *event_info);
 void test_spinner(void *data, Evas_Object *obj, void *event_info);
 void test_index(void *data, Evas_Object *obj, void *event_info);
+void test_index2(void *data, Evas_Object *obj, void *event_info);
 void test_photocam(void *data, Evas_Object *obj, void *event_info);
 void test_photo(void *data, Evas_Object *obj, void *event_info);
 void test_thumb(void *data, Evas_Object *obj, void *event_info);
@@ -247,6 +248,7 @@ my_win_main(void)
    ADD_TEST("Scroller 2", test_scroller2);
    ADD_TEST("Spinner", test_spinner);
    ADD_TEST("Index", test_index);
+   ADD_TEST("Index 2", test_index2);
    ADD_TEST("Photocam", test_photocam);
    ADD_TEST("Photo", test_photo);
    ADD_TEST("Thumb", test_thumb);
