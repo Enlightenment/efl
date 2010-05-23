@@ -23,7 +23,7 @@ extern _udev *udev;
  * @param syspath The syspath of a device, with or without "/sys/"
  * @return The syspath of the parent device
  *
- * Return a syspath (/sys/$syspath) for the parent device.
+ * Return a stringshared syspath (/sys/$syspath) for the parent device.
  *
  * @ingroup syspath
  */
@@ -55,7 +55,7 @@ eeze_udev_syspath_get_parent(const char *syspath)
  * Returns a list of all parent device syspaths for @p syspath.
  *
  * @param syspath The device to find parents of
- * @return A list of the parent devices of @p syspath
+ * @return A stringshared list of the parent devices of @p syspath
  *
  * @ingroup syspath
  */
@@ -95,7 +95,7 @@ eeze_udev_syspath_get_parents(const char *syspath)
  * Get the /dev/ path from the /sys/ path.
  *
  * @param syspath The /sys/ path with or without the /sys/
- * @return A const char* with the /dev/ path or NULL on failure
+ * @return A stringshared char* with the /dev/ path or NULL on failure
  *
  * Takes /sys/$PATH and turns it into the corresponding "/dev/x/y".
  *
@@ -132,7 +132,7 @@ eeze_udev_syspath_get_devpath(const char *syspath)
  * Get the subsystem of a device from the /sys/ path.
  *
  * @param syspath The /sys/ path with or without the /sys/
- * @return A const char* with the subsystem of the device or NULL on failure
+ * @return A stringshared char* with the subsystem of the device or NULL on failure
  *
  * Takes /sys/$PATH and returns the corresponding device subsystem,
  * such as "input" for keyboards/mice.
@@ -168,7 +168,7 @@ eeze_udev_syspath_get_subsystem(const char *syspath)
  *
  * @param syspath The /sys/ path with or without the /sys/
  * @param property The property to get; full list of these is a FIXME
- * @return A const char* with the property or NULL on failure
+ * @return A stringshared char* with the property or NULL on failure
  *
  * @ingroup syspath
  */
@@ -203,7 +203,7 @@ eeze_udev_syspath_get_property(const char *syspath, const char *property)
  *
  * @param syspath The /sys/ path with or without the /sys/
  * @param sysattr The sysattr to get; full list of these is a FIXME
- * @return A const char* with the sysattr or NULL on failure
+ * @return A stringshared char* with the sysattr or NULL on failure
  *
  * @ingroup syspath
  */
@@ -375,7 +375,7 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
  * Get the syspath of a device from the /dev/ path.
  *
  * @param devpath The /dev/ path of the device
- * @return A const char* which corresponds to the /sys/ path of the device or NULL on failure
+ * @return A stringshared char* which corresponds to the /sys/ path of the device or NULL on failure
  *
  * Takes "/dev/path" and returns the corresponding /sys/ path (without the "/sys/")
  *

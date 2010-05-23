@@ -17,7 +17,7 @@ extern _udev *udev;
  */
 
 /**
- * Returns a list of all syspaths that are (or should be) the same
+ * Returns a stringshared list of all syspaths that are (or should be) the same
  * device as the device pointed at by @p syspath.
  *
  * @param syspath The syspath of the device to find matches for
@@ -99,7 +99,8 @@ eeze_udev_find_similar_from_syspath(const char *syspath)
  * @param syspath The syspath of the device to find matches for.
  *
  * This function will update @p list to include all devices matching
- * devices with syspaths currently stored in @p list.
+ * devices with syspaths currently stored in @p list.  All strings are
+ * stringshared.
  *
  * @ingroup find
  */
@@ -165,7 +166,7 @@ eeze_udev_find_unlisted_similar(Eina_List * list)
  *
  * @param type An @ref Eeze_Udev_Type or 0
  * @param name A filter for the device name or NULL
- * @return An Eina_List of matched devices or NULL on failure
+ * @return A stringshared Eina_List of matched devices or NULL on failure
  *
  * Return a list of syspaths (/sys/$syspath) for matching udev devices.
  *
@@ -314,7 +315,7 @@ out:
  * @param subsystem The udev subsystem to filter by, or NULL
  * @param type "ID_INPUT_KEY", "ID_INPUT_MOUSE", "ID_INPUT_TOUCHPAD", NULL, etc
  * @param name A filter for the device name, or NULL
- * @return A Eina_List* of matched devices or NULL on failure
+ * @return A stringshared Eina_List* of matched devices or NULL on failure
  *
  * Return a list of syspaths (/sys/$syspath) for matching udev devices.
  * Requires at least one filter.
@@ -368,7 +369,7 @@ out:
  * @param sysattr The attribute to find
  * @param value Optional: the value that the attribute should have
  *
- * @return A list of the devices found with the attribute
+ * @return A stringshared list of the devices found with the attribute
  * 
  * @ingroup find
  */

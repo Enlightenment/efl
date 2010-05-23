@@ -30,7 +30,12 @@ struct _store_data
 /**
  * @defgroup watch Watch
  *
- * These are functions which monitor udev for events.
+ * @brief These are functions which monitor udev for events.
+ *
+ * Eeze watches are simple: you specify a type of device to watch (or all devices), some events (or all) to watch for, a callback,
+ * and some data, and then udev watches those device types for events of the type you specified.  Your callback is called with a
+ * syspath of the triggering device and the event that happened to the device, along with the data you associated with the watch and
+ * the watch object itself in case you want to stop the watch easily in a callback.
  * 
  * @ingroup udev
  */
@@ -276,10 +281,14 @@ error:
  * @param type The @ref Eeze_Udev_Type to watch
  * @param event The events to watch; an OR list of @ref event (ie (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE)), or 0 for all events
  * @param func The function to call when the watch receives data;
- * must take (const char *device, const char *event_type, void *data, Eeze_Udev_Watch *watch)
+ * must take (const char *device, int event_type, void *data, Eeze_Udev_Watch *watch)
  * @param user_data Data to pass to the callback function
  *
  * @return A watch struct for the watch type specified, or NULL on failure
+ *
+ * Eeze watches will monitor udev for changes of type(s) @p event to devices of type @p type.  When these changes occur, the stringshared
+ * syspath of the device will be sent to function @p func, along with the bitmask of the event type which can be detected through
+ * binary &.
  *
  * @ingroup watch
  */

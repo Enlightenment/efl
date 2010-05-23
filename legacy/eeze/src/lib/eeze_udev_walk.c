@@ -82,7 +82,7 @@ eeze_udev_walk_check_sysattr(const char *syspath, const char *sysattr,
  * @param syspath The /sys/ path of the device to start at, with or without the /sys/
  * @param sysattr The attribute to find
  *
- * @return The value of @p sysattr if found, or NULL
+ * @return The stringshared value of @p sysattr if found, or NULL
  * 
  * @ingroup walks
  */
