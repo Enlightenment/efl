@@ -1266,6 +1266,7 @@ extern "C" {
     * vertical (two up/down buttons at the right side and text left aligned)
     */
 
+   typedef struct _Elm_Index_Item Elm_Index_Item;
    EAPI Evas_Object *elm_index_add(Evas_Object *parent);
    EAPI void         elm_index_active_set(Evas_Object *obj, Eina_Bool active);
    EAPI void         elm_index_item_level_set(Evas_Object *obj, int level);
@@ -1275,9 +1276,14 @@ extern "C" {
    EAPI void         elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item);
    EAPI void         elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const void *relative);
    EAPI void         elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const void *relative);
+   EAPI void         elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *item, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func);
    EAPI void         elm_index_item_del(Evas_Object *obj, const void *item);
+   EAPI Elm_Index_Item *elm_index_item_find(Evas_Object *obj, const void *item);
    EAPI void         elm_index_item_clear(Evas_Object *obj);
    EAPI void         elm_index_item_go(Evas_Object *obj, int level);
+   EAPI void         *elm_index_item_data_get(const Elm_Index_Item *item);
+   EAPI void         elm_index_item_data_set(Elm_Index_Item *it, const void *data);
+   EAPI const char   *elm_index_item_letter_get(const Elm_Index_Item *item);
    /* smart callbacks called:
     * "changed" - when the selected index item changes
     * "delay,changed" - when the selected index item changes, but after some small idle period
