@@ -68,9 +68,8 @@ _op_blend_mas_c_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int
 	"	cmp		%[tmp], %[d]			\n\t"
 	"	ble		"AP"loopout			\n\t"
 	AP"quadloopint:						\n\t"
-//	"	vld1.32		d0[0],	[%[m]]!			\n\t"
-	"	ldr.32		%[x],	[%[m]]			\n\t"
-	"	add %[m], #4					\n\t"
+	"	ldr		%[x],	[%[m]]			\n\t"
+	"	add 		%[m], #4			\n\t"
 	"	cmp		%[x],	#0			\n\t"
 	"	beq		"AP"fastloop			\n\t"
 	"	vmov.32		d0[0],	%[x]			\n\t"
@@ -232,7 +231,7 @@ _op_blend_mas_can_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, i
 
 	AP"quadloopint:					\n\t"
 		// Load the mask: 4 bytes: It has d0/d1
-	"	ldr.32		%[x],	[%[m]]		\n\t"
+	"	ldr		%[x],	[%[m]]		\n\t"
 	"	add		%[m], #4		\n\t"
 	"	cmp		%[x],	#0		\n\t"
 	"	beq		"AP"fastloop		\n\t"
