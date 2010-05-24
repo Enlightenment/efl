@@ -385,8 +385,8 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
    wd->back.content = content;
    if (content)
      {
-	elm_widget_sub_object_add(content, obj);
-        evas_object_smart_member_add(obj, content);
+	elm_widget_sub_object_add(obj, content);
+        evas_object_smart_member_add(content, obj);
         evas_object_clip_set(content, wd->back.clip);
 	evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
