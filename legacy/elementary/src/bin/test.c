@@ -67,6 +67,7 @@ void test_map(void *data, Evas_Object *obj, void *event_info);
 void test_weather(void *data, Evas_Object *obj, void *event_info);
 void test_flip(void *data, Evas_Object *obj, void *event_info);
 void test_flip2(void *data, Evas_Object *obj, void *event_info);
+void test_flip3(void *data, Evas_Object *obj, void *event_info);
 void test_label(void *data, Evas_Object *obj, void *event_info);
 void test_conformant(void *data, Evas_Object *obj, void *event_info);
 void test_multi(void *data, Evas_Object *obj, void *event_info);
@@ -261,6 +262,7 @@ my_win_main(void)
    ADD_TEST("Weather", test_weather);
    ADD_TEST("Flip", test_flip);
    ADD_TEST("Flip 2", test_flip2);
+   ADD_TEST("Flip 3", test_flip3);
    ADD_TEST("Label", test_label);
    ADD_TEST("Conformant", test_conformant);
    ADD_TEST("Multi Touch", test_multi);
