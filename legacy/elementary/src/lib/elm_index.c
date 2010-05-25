@@ -744,7 +744,10 @@ elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void
  * be used when cmp_func return 0. It means the index item already exists.
  * So, to decide which data item should be pointed by the index item, a function
  * to compare them is needed. If this function is not provided, index items
- * will be duplicated.
+ * will be duplicated. If cmp_data_func returns a non-negative value, the
+ * previous index item data will be replaced by the inserted @p item. So
+ * if the previous data need to be free, it should be done in this function,
+ * because the reference will be lost.
  *
  * @ingroup Index
  */

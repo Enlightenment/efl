@@ -301,7 +301,6 @@ test_flip3(void *data, Evas_Object *obj, void *event_info)
    bx3 = elm_box_add(win);
    evas_object_size_hint_align_set(bx3, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bx3, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx3);
    evas_object_show(bx3);
 
    fl_f = elm_flip_add(win);
@@ -311,7 +310,6 @@ test_flip3(void *data, Evas_Object *obj, void *event_info)
    bx5 = elm_box_add(win);
    evas_object_size_hint_align_set(bx5, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bx5, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx5);
    evas_object_show(bx5);
 
    o = elm_bg_add(win);
@@ -334,7 +332,6 @@ test_flip3(void *data, Evas_Object *obj, void *event_info)
    bx5 = elm_box_add(win);
    evas_object_size_hint_align_set(bx5, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bx5, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx5);
    evas_object_show(bx5);
 
    o = elm_bg_add(win);
@@ -366,7 +363,6 @@ test_flip3(void *data, Evas_Object *obj, void *event_info)
 
    bx4 = elm_box_add(win);
    evas_object_size_hint_weight_set(bx4, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx4);
    evas_object_show(bx4);
 
    fl_b = elm_flip_add(win);
@@ -376,7 +372,6 @@ test_flip3(void *data, Evas_Object *obj, void *event_info)
    bx5 = elm_box_add(win);
    evas_object_size_hint_align_set(bx5, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bx5, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx5);
    evas_object_show(bx5);
 
    o = elm_bg_add(win);
@@ -399,7 +394,6 @@ test_flip3(void *data, Evas_Object *obj, void *event_info)
    bx5 = elm_box_add(win);
    evas_object_size_hint_align_set(bx5, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bx5, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx5);
    evas_object_show(bx5);
 
    o = elm_bg_add(win);
