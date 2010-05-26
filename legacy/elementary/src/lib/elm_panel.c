@@ -12,7 +12,7 @@
  * ELM_PANEL_ORIENT_BOTTOM
  * ELM_PANEL_ORIENT_LEFT
  * ELM_PANEL_ORIENT_RIGHT
- * NOTE: Only LEFT orientation is implemented.
+ * NOTE: Only LEFT and RIGHT orientations are implemented.
  *
  * THIS WIDGET IS UNDER CONSTRUCTION!
  */
@@ -187,7 +187,7 @@ elm_panel_add(Evas_Object *parent)
  * ELM_PANEL_ORIENT_LEFT
  * ELM_PANEL_ORIENT_RIGHT
  *
- * NOTE: Currently all orientations but LEFT are unimplemented.
+ * NOTE: Only LEFT and RIGHT orientations are implemented.
  *
  * @ingroup Panel
  */
@@ -205,7 +205,9 @@ elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient)
         break;
      case ELM_PANEL_ORIENT_LEFT:
         elm_smart_scroller_object_theme_set(obj, wd->scr, "panel", "base", "left");
+        break;
      case ELM_PANEL_ORIENT_RIGHT:
+        elm_smart_scroller_object_theme_set(obj, wd->scr, "panel", "base", "right");
         break;
      default:
         break;
