@@ -6,8 +6,9 @@
 
 #include "edje_private.h"
 
-static Ecore_Job *job = NULL;
-static Ecore_Timer *job_loss_timer = NULL;
+static int _injob = 0;
+static Ecore_Job *_job = NULL;
+static Ecore_Timer *_job_loss_timer = NULL;
 
 static Eina_List *msgq = NULL;
 static Eina_List *tmp_msgq = NULL;
@@ -164,20 +165,25 @@ _edje_dummy_timer(void *data __UNUSED__)
 static void
 _edje_job(void *data __UNUSED__)
 {
-   if (job_loss_timer)
+   if (_job_loss_timer)
      {
-	ecore_timer_del(job_loss_timer);
-	job_loss_timer = NULL;
+	ecore_timer_del(_job_loss_timer);
+	_job_loss_timer = NULL;
      }
+   _job = NULL;
+   _injob++;
    _edje_message_queue_process();
-   job = NULL;
+   _injob--;
 }
 
 static int
 _edje_job_loss_timer(void *data __UNUSED__)
 {
-   job_loss_timer = NULL;
-   if (job) job = NULL;
+   _job_loss_timer = NULL;
+   if (!_job)
+     {
+        _job = ecore_job_add(_edje_job, NULL);
+     }
    return 0;
 }
 
@@ -190,10 +196,16 @@ void
 _edje_message_shutdown(void)
 {
    _edje_message_queue_clear();
-   if (job_loss_timer)
-     ecore_timer_del(job_loss_timer);
-   job = NULL;
-   job_loss_timer = NULL;
+   if (_job_loss_timer)
+     {
+        ecore_timer_del(_job_loss_timer);
+        _job_loss_timer = NULL;
+     }
+   if (_job)
+     {
+        ecore_job_del(_job);
+        _job = NULL;
+     }
 }
 
 void
@@ -340,14 +352,29 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
    int i;
    unsigned char *msg = NULL;
 
-   if (!job)
-     {
-	job = ecore_job_add(_edje_job, NULL);
-	if (job_loss_timer) ecore_timer_del(job_loss_timer);
-	job_loss_timer = ecore_timer_add(0.05, _edje_job_loss_timer, NULL);
-     }
    em = _edje_message_new(ed, queue, type, id);
    if (!em) return;
+   if (_job)
+     {
+        ecore_job_del(_job);
+        _job = NULL;
+     }
+   if (_injob > 0)
+     {
+        _job_loss_timer = ecore_timer_add(0.01, _edje_job_loss_timer, NULL);
+     }
+   else
+     {
+        if (!_job)
+          {
+             _job = ecore_job_add(_edje_job, NULL);
+          }
+        if (_job_loss_timer)
+          {
+             ecore_timer_del(_job_loss_timer);
+             _job_loss_timer = NULL;
+          }
+     }
    switch (em->type)
      {
       case EDJE_MESSAGE_NONE:
@@ -368,6 +395,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
 	     Edje_Message_String *emsg2, *emsg3;
 
 	     emsg2 = (Edje_Message_String *)emsg;
+
 	     emsg3 = malloc(sizeof(Edje_Message_String));
 	     emsg3->str = strdup(emsg2->str);
 	     msg = (unsigned char *)emsg3;
