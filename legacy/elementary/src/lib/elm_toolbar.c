@@ -659,10 +659,10 @@ elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable)
 EAPI Eina_Bool
 elm_toolbar_scrollable_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!wd) return;
+   if (!wd) return 0;
    return wd->scrollable;
 }
 
@@ -696,10 +696,10 @@ elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 EAPI Eina_Bool
 elm_toolbar_homogenous_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!wd) return;
+   if (!wd) return 0;
    return wd->homogeneous;
 }
 
@@ -771,6 +771,21 @@ elm_toolbar_item_unselect_all(Evas_Object *obj)
              break;
           }
      }
+}
+
+/**
+ * Unselect the specified toolbar item.
+ *
+ * @param item The toolbar item
+ *
+ * @ingroup Toolbar
+ */
+EAPI void
+elm_toolbar_item_unselect(Elm_Toolbar_Item *item)
+{
+   if ((!item) || (!item->selected)) return;
+   item->selected = EINA_FALSE;
+   edje_object_signal_emit(item->base, "elm,state,unselected", "elm");
 }
 
 /**
@@ -874,8 +889,6 @@ elm_toolbar_item_menu_get(Elm_Toolbar_Item *item)
 EAPI Eina_List *
 elm_toolbar_item_get_all(Evas_Object *obj)
 {
-   Eina_List *l;
-   Elm_Toolbar_Item *it;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
@@ -895,7 +908,6 @@ elm_toolbar_item_get_all(Evas_Object *obj)
 EAPI Elm_Toolbar_Item *
 elm_toolbar_item_get_first(Evas_Object *obj)
 {
-   Eina_List *l;
    Elm_Toolbar_Item *it;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -917,7 +929,7 @@ elm_toolbar_item_get_first(Evas_Object *obj)
 EAPI Elm_Toolbar_Item *
 elm_toolbar_item_get_last(Evas_Object *obj)
 {
-   Eina_List *l, *last;
+   Eina_List *last;
    Elm_Toolbar_Item *it;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

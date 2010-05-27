@@ -825,7 +825,7 @@ elm_index_item_del(Evas_Object *obj, const void *item)
 EAPI Elm_Index_Item *
 elm_index_item_find(Evas_Object *obj, const void *item)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return _item_find(obj, item);

@@ -364,7 +364,7 @@ _config_load(void)
 static void
 _env_get(void)
 {
-   char buf[PATH_MAX], *p, *s;
+   char *s;
    
    s = getenv("ELM_ENGINE");
    if (s)
