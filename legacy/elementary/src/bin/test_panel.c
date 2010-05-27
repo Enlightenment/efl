@@ -3,6 +3,8 @@
 
 static Elm_Genlist_Item_Class itc;
 
+static void _bstatus(void *data, Evas_Object *obj, void *event_info);
+static void _tstatus(void *data, Evas_Object *obj, void *event_info);
 static char *_label_get(const void *data, Evas_Object *obj, const char *source);
 static Evas_Object *_icon_get(const void *data, Evas_Object *obj, const char *source);
 static Eina_Bool _state_get(const void *data, Evas_Object *obj, const char *source);
@@ -10,52 +12,28 @@ static void _item_del(const void *data, Evas_Object *obj);
 static void _fill_list(Evas_Object *obj);
 static Eina_Bool _dir_has_subs(const char *path);
 
-void 
-test_panel(void *data, Evas_Object *obj, void *event_info) 
+static void
+_tstatus(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *panel, *bx;
-   Evas_Object *list;
+   char *status;
 
-   win = elm_win_add(NULL, "panel", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Panel");
-   elm_win_autodel_set(win, 1);
+   if (elm_panel_hidden_get((Evas_Object*)data))
+     status = "hidden";
+   else status = "shown";
+   printf("The top panel is currently %s\n", status);
+   elm_toolbar_item_unselect_all(obj);
+}
 
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
+static void
+_bstatus(void *data, Evas_Object *obj, void *event_info)
+{
+   char *status;
 
-   bx = elm_box_add(win);
-   elm_win_resize_object_add(win, bx);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bx);
-
-   panel = elm_panel_add(win);
-   elm_panel_orient_set(panel, ELM_PANEL_ORIENT_LEFT);
-   evas_object_size_hint_weight_set(panel, 0.0, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(panel, 0.0, EVAS_HINT_FILL);
-
-   itc.item_style = "default";
-   itc.func.label_get = _label_get;
-   itc.func.icon_get = _icon_get;
-   itc.func.state_get = _state_get;
-   itc.func.del = _item_del;
-
-   list = elm_genlist_add(win);
-   evas_object_size_hint_min_set(list, 100, -1);
-   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(list);
-
-   elm_panel_content_set(panel, list);
-
-   elm_box_pack_end(bx, panel);
-   evas_object_show(panel);
-
-   _fill_list(list);
-
-   evas_object_resize(win, 300, 300);
-   evas_object_show(win);
+   if (elm_panel_hidden_get((Evas_Object*)data))
+     status = "hidden";
+   else status = "shown";
+   printf("The bottom panel is currently %s\n", status);
+   elm_toolbar_item_unselect_all(obj);
 }
 
 static char *
@@ -161,7 +139,7 @@ _dir_has_subs(const char *path)
 }
 
 void
-test_panel2(void *data, Evas_Object *obj, void *event_info)
+test_panel(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *panel, *bx, *vbx, *toolbar, *ic;
    char buf[PATH_MAX];
@@ -187,6 +165,27 @@ test_panel2(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(bx);
+
+   panel = elm_panel_add(win);
+   elm_panel_orient_set(panel, ELM_PANEL_ORIENT_TOP);
+   evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(panel, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   toolbar = elm_toolbar_add(win);
+   elm_toolbar_homogenous_set(toolbar, 0);
+   elm_toolbar_scrollable_set(toolbar, 0);
+   evas_object_size_hint_weight_set(toolbar, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(toolbar);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_toolbar_item_add(toolbar, ic, "Hello", _tstatus, panel);
+
+   elm_panel_content_set(panel, toolbar);
+   elm_box_pack_end(vbx, panel);
+   evas_object_show(panel);
 
    panel = elm_panel_add(win);
    elm_panel_orient_set(panel, ELM_PANEL_ORIENT_LEFT);
@@ -232,6 +231,11 @@ test_panel2(void *data, Evas_Object *obj, void *event_info)
 
    elm_box_pack_end(vbx, bx);
 
+   panel = elm_panel_add(win);
+   elm_panel_orient_set(panel, ELM_PANEL_ORIENT_BOTTOM);
+   evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(panel, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
    toolbar = elm_toolbar_add(win);
    elm_toolbar_homogenous_set(toolbar, 0);
    elm_toolbar_scrollable_set(toolbar, 0);
@@ -242,12 +246,7 @@ test_panel2(void *data, Evas_Object *obj, void *event_info)
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_add(toolbar, ic, "Hello", NULL, NULL);
-
-   panel = elm_panel_add(win);
-   elm_panel_orient_set(panel, ELM_PANEL_ORIENT_LEFT);
-   evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, 0);
-   evas_object_size_hint_align_set(panel, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_toolbar_item_add(toolbar, ic, "Hello", _bstatus, panel);
 
    elm_panel_content_set(panel, toolbar);
    elm_box_pack_end(vbx, panel);
