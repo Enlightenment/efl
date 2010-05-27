@@ -2498,8 +2498,7 @@ _edje_entry_cursor_end(Edje_Real_Part *rp, Edje_Cursor cur)
    Entry *en = rp->entry_data;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
    if (!c) return;
-   evas_textblock_cursor_node_last(c);
-   _curs_update_from_curs(c, rp->object, rp->entry_data);
+   _curs_end(c, rp->object, rp->entry_data);
    _sel_update(c, rp->object, rp->entry_data);
 
 #ifdef HAVE_ECORE_IMF
