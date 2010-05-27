@@ -367,7 +367,7 @@ _sample_theme_new(Evas_Object *win)
    elm_separator_horizontal_set(sp, 1);
    evas_object_size_hint_weight_set(sp, 1.0, 0.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
-   elm_table_pack(base, sl, 0, 2, 2, 1);
+   elm_table_pack(base, sp, 0, 2, 2, 1);
    evas_object_show(sp);
    
    sl = elm_slider_add(win);
@@ -655,6 +655,7 @@ static int
 _exit_timer(void *data)
 {
    elm_exit();
+   return 0;
 }
 
 /* this is your elementary main function - it MUSt be called IMMEDIATELY
@@ -701,7 +702,7 @@ elm_main(int argc, char **argv)
              interactive = 0;
           }
      }
-   /* put ere any init specific to this app like parsing args etc. */
+   /* put here any init specific to this app like parsing args etc. */
    if (!quiet)
      {
         status_win(); /* create main window */
