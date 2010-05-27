@@ -47,6 +47,10 @@ main_help(void)
      ("Usage:\n"
       "\t%s input_file.edj [-main-out file.edc] [-no-build-sh] [-current-dir]\n"
       "\n"
+      " -main-out\tCreate a symbolic link to the main edc \n"
+      " -no-build-sh\tDon't output build.sh \n"
+      " -current-dir\tOutput to current directory \n"
+      "\n"
       ,progname);
 }
 
@@ -72,6 +76,11 @@ main(int argc, char **argv)
    progname = argv[0];
    for (i = 1; i < argc; i++)
      {
+	if (!strcmp(argv[i], "-h"))
+	  {
+	     main_help();
+	     exit(0);
+	  }
 	if (!file_in)
 	  file_in = argv[i];
 	else if ((!strcmp(argv[i], "-main-out")) && (i < (argc - 1)))
