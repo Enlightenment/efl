@@ -344,7 +344,21 @@ static pthread_t _main_thread;
 
 # define IS_MAIN(t)  pthread_equal(t, _main_thread)
 # define IS_OTHER(t) EINA_UNLIKELY(!IS_MAIN(t))
-# define CHECK_MAIN(...)							\
+
+# ifdef _WIN32
+#  define CHECK_MAIN(...)						\
+  do {									\
+     if (!IS_MAIN(pthread_self())) {					\
+	pthread_t cur;							\
+	cur = pthread_self();						\
+	fprintf(stderr,							\
+		"ERR: not main thread! current=%p, main=%p\n",	\
+		cur.p, _main_thread.p);					\
+	return __VA_ARGS__;						\
+     }									\
+  } while (0)
+# else
+#  define CHECK_MAIN(...)						\
   do {									\
      if (!IS_MAIN(pthread_self())) {					\
 	fprintf(stderr,							\
@@ -353,15 +367,42 @@ static pthread_t _main_thread;
 	return __VA_ARGS__;						\
      }									\
   } while (0)
+# endif
 
 # ifdef EFL_HAVE_PTHREAD_SPINLOCK
 
 static pthread_spinlock_t _log_lock;
-#  define LOG_LOCK()								\
+
+#  ifdef _WIN32
+#   define LOG_LOCK()							\
+  if(_threads_enabled) \
+  do {									\
+     pthread_t cur;							\
+     cur = pthread_self();						\
+     if (0)								\
+       fprintf(stderr, "+++LOG LOG_LOCKED!   [%s, %p]\n",		\
+	       __FUNCTION__, cur.p);					\
+     if (EINA_UNLIKELY(_threads_enabled))				\
+       pthread_spin_lock(&_log_lock);					\
+  } while (0)
+#  define LOG_UNLOCK()							\
+  if(_threads_enabled) \
+  do {									\
+     pthread_t cur;							\
+     cur = pthread_self();						\
+     if (EINA_UNLIKELY(_threads_enabled))				\
+       pthread_spin_unlock(&_log_lock);					\
+     if (0)								\
+       fprintf(stderr,							\
+	       "---LOG LOG_UNLOCKED! [%s, %p]\n",			\
+	       __FUNCTION__, cur.p);					\
+  } while (0)
+#  else
+#   define LOG_LOCK()							\
   if(_threads_enabled) \
   do {									\
      if (0)								\
-       fprintf(stderr, "+++LOG LOG_LOCKED!   [%s, %lu]\n",			\
+       fprintf(stderr, "+++LOG LOG_LOCKED!   [%s, %lu]\n",		\
 	       __FUNCTION__, pthread_self());				\
      if (EINA_UNLIKELY(_threads_enabled))				\
        pthread_spin_lock(&_log_lock);					\
@@ -373,9 +414,10 @@ static pthread_spinlock_t _log_lock;
        pthread_spin_unlock(&_log_lock);					\
      if (0)								\
        fprintf(stderr,							\
-	       "---LOG LOG_UNLOCKED! [%s, %lu]\n",				\
+	       "---LOG LOG_UNLOCKED! [%s, %lu]\n",			\
 	       __FUNCTION__, pthread_self());				\
   } while (0)
+#  endif
 #  define INIT() pthread_spin_init(&_log_lock, PTHREAD_PROCESS_PRIVATE);
 #  define SHUTDOWN() pthread_spin_destroy(&_log_lock);
 
@@ -683,12 +725,19 @@ eina_log_print_prefix_NOthreads_color_file_NOfunc(FILE *fp, const Eina_Log_Domai
 static void
 eina_log_print_prefix_threads_NOcolor_file_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line)
 {
+   pthread_t cur;
+
    DECLARE_LEVEL_NAME(level);
-   pthread_t cur = pthread_self();
+   cur = pthread_self();
    if (IS_OTHER(cur))
      {
+#ifdef _WIN32
+	fprintf(fp, "%s:%s[T:%p] %s:%d %s() ",
+		name, d->domain_str, cur.p, file, line, fnc);
+#else
 	fprintf(fp, "%s:%s[T:%lu] %s:%d %s() ",
 		name, d->domain_str, cur, file, line, fnc);
+#endif
 	return;
      }
    fprintf(fp, "%s:%s %s:%d %s() ", name, d->domain_str, file, line, fnc);
@@ -697,12 +746,19 @@ eina_log_print_prefix_threads_NOcolor_file_func(FILE *fp, const Eina_Log_Domain 
 static void
 eina_log_print_prefix_threads_NOcolor_NOfile_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file __UNUSED__, const char *fnc, int line __UNUSED__)
 {
+   pthread_t cur;
+
    DECLARE_LEVEL_NAME(level);
-   pthread_t cur = pthread_self();
+   cur = pthread_self();
    if (IS_OTHER(cur))
      {
+#ifdef _WIN32
+	fprintf(fp, "%s:%s[T:%p] %s() ",
+		name, d->domain_str, cur.p, fnc);
+#else
 	fprintf(fp, "%s:%s[T:%lu] %s() ",
 		name, d->domain_str, cur, fnc);
+#endif
 	return;
      }
    fprintf(fp, "%s:%s %s() ", name, d->domain_str, fnc);
@@ -711,12 +767,19 @@ eina_log_print_prefix_threads_NOcolor_NOfile_func(FILE *fp, const Eina_Log_Domai
 static void
 eina_log_print_prefix_threads_NOcolor_file_NOfunc(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc __UNUSED__, int line)
 {
+   pthread_t cur;
+
    DECLARE_LEVEL_NAME(level);
-   pthread_t cur = pthread_self();
+   cur = pthread_self();
    if (IS_OTHER(cur))
      {
+#ifdef _WIN32
+	fprintf(fp, "%s:%s[T:%p] %s:%d ",
+		name, d->domain_str, cur.p, file, line);
+#else
 	fprintf(fp, "%s:%s[T:%lu] %s:%d ",
 		name, d->domain_str, cur, file, line);
+#endif
 	return;
      }
    fprintf(fp, "%s:%s %s:%d ", name, d->domain_str, file, line);
@@ -726,8 +789,10 @@ eina_log_print_prefix_threads_NOcolor_file_NOfunc(FILE *fp, const Eina_Log_Domai
 static void
 eina_log_print_prefix_threads_color_file_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line)
 {
+   pthread_t cur;
+ 
    DECLARE_LEVEL_NAME_COLOR(level);
-   pthread_t cur = pthread_self();
+   cur = pthread_self();
    if (IS_OTHER(cur))
      {
 # ifdef _WIN32
@@ -774,8 +839,10 @@ eina_log_print_prefix_threads_color_file_func(FILE *fp, const Eina_Log_Domain *d
 static void
 eina_log_print_prefix_threads_color_NOfile_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file __UNUSED__, const char *fnc, int line __UNUSED__)
 {
+   pthread_t cur;
+
    DECLARE_LEVEL_NAME_COLOR(level);
-   pthread_t cur = pthread_self();
+   cur = pthread_self();
    if (IS_OTHER(cur))
      {
 # ifdef _WIN32
@@ -819,8 +886,10 @@ eina_log_print_prefix_threads_color_NOfile_func(FILE *fp, const Eina_Log_Domain 
 static void
 eina_log_print_prefix_threads_color_file_NOfunc(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc __UNUSED__, int line)
 {
+   pthread_t cur;
+
    DECLARE_LEVEL_NAME_COLOR(level);
-   pthread_t cur = pthread_self();
+   cur = pthread_self();
    if (IS_OTHER(cur))
      {
 # ifdef _WIN32
@@ -2015,7 +2084,11 @@ eina_log_print_cb_file(const Eina_Log_Domain *d, __UNUSED__ Eina_Log_Level level
 	pthread_t cur = pthread_self();
 	if (IS_OTHER(cur))
 	  {
+# ifdef _WIN32
+	     fprintf(f, "%s[T:%p] %s:%d %s() ", d->name, cur.p, file, line, fnc);
+# else
 	     fprintf(f, "%s[T:%lu] %s:%d %s() ", d->name, cur, file, line, fnc);
+# endif
 	     goto end;
 	  }
      }
