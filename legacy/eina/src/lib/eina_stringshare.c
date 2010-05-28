@@ -235,6 +235,7 @@ struct _Eina_Stringshare_Small
 {
    Eina_Stringshare_Small_Bucket *buckets[256];
 };
+
 #define EINA_STRINGSHARE_SMALL_BUCKET_STEP 8
 static Eina_Stringshare_Small _eina_small_share;
 
@@ -402,9 +403,6 @@ _eina_stringshare_head_free(Eina_Stringshare_Head *ed, __UNUSED__ void *data)
      }
    MAGIC_FREE(ed);
 }
-
-
-static Eina_Stringshare_Small _eina_small_share;
 
 static inline int
 _eina_stringshare_small_cmp(const Eina_Stringshare_Small_Bucket *bucket, int i, const char *pstr, unsigned char plength)
