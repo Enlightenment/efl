@@ -450,10 +450,10 @@ EAPI const char * eina_module_file_get(const Eina_Module *m)
 
 EAPI char *eina_module_symbol_path_get(const void *symbol, const char *sub_dir)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(symbol, NULL);
-
 #ifdef HAVE_DLADDR
    Dl_info eina_dl;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(symbol, NULL);
 
    if (dladdr(symbol, &eina_dl))
      {
