@@ -1609,8 +1609,6 @@ efreet_desktop_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED
 
         case ECORE_FILE_EVENT_DELETED_SELF:
         case ECORE_FILE_EVENT_DELETED_DIRECTORY:
-            fm = eina_hash_find(change_monitors, path);
-            if (fm) ecore_file_monitor_del(fm);
             eina_hash_del_by_key(change_monitors, path);
             efreet_desktop_update_cache();
             break;
