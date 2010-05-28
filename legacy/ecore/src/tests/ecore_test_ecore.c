@@ -150,6 +150,49 @@ START_TEST(ecore_test_ecore_main_loop_timer)
 }
 END_TEST
 
+static int _timer3(void *data)
+{
+   /* timer 3, do nothing */
+   return 0;
+}
+
+static int _timer2(void *data)
+{
+   /* timer 2, quit inner mainloop */
+   ecore_main_loop_quit();
+   return 0;
+}
+
+static int _timer1(void *data)
+{
+   /* timer 1, begin inner mainloop */
+   int *times = data;
+   (*times)++;
+
+   ecore_timer_add(0.3, _timer2, NULL);
+   ecore_timer_add(0.1, _timer3, NULL);
+   ecore_main_loop_begin();
+
+   ecore_main_loop_quit();
+
+   return 0;
+}
+
+START_TEST(ecore_test_ecore_main_loop_timer_inner)
+{
+   int times = 0;
+
+   ecore_init();
+   ecore_timer_add(1.0, _timer1, &times);
+
+   /* BEGIN: outer mainloop */
+   ecore_main_loop_begin();
+   /*END: outer mainloop */
+
+   fail_if(times != 1);
+}
+END_TEST
+
 static int
 _fd_handler_cb(void *data, Ecore_Fd_Handler *handler __UNUSED__)
 {
@@ -238,4 +281,5 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop_timer);
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler);
    tcase_add_test(tc, ecore_test_ecore_main_loop_event);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_timer_inner);
 }

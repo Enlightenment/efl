@@ -485,6 +485,28 @@ _ecore_timer_next_get(void)
    return in;
 }
 
+static inline void
+_ecore_timer_reschedule(Ecore_Timer *timer, double when)
+{
+   if ((timer->delete_me) || (timer->frozen)) return;
+
+   timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
+
+   /* if the timer would have gone off more than 15 seconds ago,
+    * assume that the system hung and set the timer to go off
+    * timer->in from now. this handles system hangs, suspends
+    * and more, so ecore will only "replay" the timers while
+    * the system is suspended if it is suspended for less than
+    * 15 seconds (basically). this also handles if the process
+    * is stopped in a debugger or IO and other handling gets
+    * really slow within the main loop.
+    */
+   if ((timer->at + timer->in) < (when - 15.0))
+     _ecore_timer_set(timer, when + timer->in, timer->in, timer->func, timer->data);
+   else
+     _ecore_timer_set(timer, timer->at + timer->in, timer->in, timer->func, timer->data);
+}
+
 int
 _ecore_timer_call(double when)
 {
@@ -505,7 +527,9 @@ _ecore_timer_call(double when)
    else
      {
 	/* recursive main loop, continue from where we were */
+	Ecore_Timer *timer_old = timer_current;
 	timer_current = (Ecore_Timer *)EINA_INLIST_GET(timer_current)->next;
+	_ecore_timer_reschedule(timer_old, when);
      }
 
    while (timer_current)
@@ -531,24 +555,7 @@ _ecore_timer_call(double when)
 	if (timer_current) /* may have changed in recursive main loops */
 	  timer_current = (Ecore_Timer *)EINA_INLIST_GET(timer_current)->next;
 
-	if ((!timer->delete_me) && (!timer->frozen))
-	  {
-	     timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
-
-	     /* if the timer would have gone off more than 15 seconds ago,
-	      * assume that the system hung and set the timer to go off
-	      * timer->in from now. this handles system hangs, suspends
-	      * and more, so ecore will only "replay" the timers while
-	      * the system is suspended if it is suspended for less than
-	      * 15 seconds (basically). this also handles if the process
-	      * is stopped in a debugger or IO and other handling gets
-	      * really slow within the main loop.
-	      */
-	     if ((timer->at + timer->in) < (when - 15.0))
-	       _ecore_timer_set(timer, when + timer->in, timer->in, timer->func, timer->data);
-	     else
-	       _ecore_timer_set(timer, timer->at + timer->in, timer->in, timer->func, timer->data);
-	  }
+	_ecore_timer_reschedule(timer, when);
      }
    return 0;
 }
