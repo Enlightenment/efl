@@ -8,7 +8,8 @@ m4_ifelse(m4_len[v_rev], [0], [m4_undefine([v_rev])])
 ##--   When released, remove the dnl on the below line
 dnl m4_undefine([v_rev])
 ##--   When doing snapshots - change soname. remove dnl on below line
-m4_define([v_rel], [-release ver-pre-svn-05])
+m4_define([relname], [ver-pre-svn-05])
+m4_define([v_rel], [-release relname])
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_ifdef([v_rev], [m4_define([v_ver], [v_maj.v_min.v_mic.v_rev])],
 [m4_define([v_ver], [v_maj.v_min.v_mic])])
@@ -19,7 +20,6 @@ m4_define([lt_age], v_min)
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
  
 AC_INIT([eina], [v_ver], [enlightenment-devel@lists.sourceforge.net])
-release="ver-pre-svn-05"
 AC_PREREQ([2.59])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
@@ -53,7 +53,7 @@ AC_SUBST(release_info)
 VMAJ=v_maj
 AC_SUBST(VMAJ)
 
-MODULE_ARCH="$host_os-$host_cpu-$release"
+MODULE_ARCH="$host_os-$host_cpu-relname"
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
@@ -66,7 +66,7 @@ case "$host_os" in
       MODULE_ARCH="$host_os-$host_cpu"
       ;;
    *)
-      MODULE_ARCH="$host_os-$host_cpu-$release"
+      MODULE_ARCH="$host_os-$host_cpu-$relname"
       ;;
 esac
 AC_SUBST(MODULE_ARCH)
