@@ -68,7 +68,7 @@ EAPI int evil_gettimeofday(struct timeval * tp, void * tzp);
  *
  */
 
-
+#ifdef _MSC_VER
 /**
  * @brief Return the process identifier of the calling process.
  *
@@ -83,6 +83,7 @@ EAPI int evil_gettimeofday(struct timeval * tp, void * tzp);
  * Supported OS: Windows XP, Windows CE.
  */
 EAPI pid_t getpid(void);
+#endif
 
 
 /*

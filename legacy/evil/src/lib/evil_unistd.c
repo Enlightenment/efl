@@ -85,11 +85,13 @@ evil_gettimeofday(struct timeval *tp, void *tzp __UNUSED__)
  *
  */
 
+#ifdef _MSC_VER
 pid_t
 getpid(void)
 {
   return (pid_t)GetCurrentProcessId();
 }
+#endif
 
 /*
  * File related functions

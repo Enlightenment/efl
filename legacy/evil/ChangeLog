@@ -1,3 +1,17 @@
+2010-05-29  Vincent Torri  <doursse at users dot sf dot net>
+
+	* doc/Doxyfile:
+	define _MSC_VER so that code guarded by it can
+	be processed by doxygen
+
+	* src/lib/evil_stdio.c:
+	* src/lib/evil_stdio.h:
+	vasprintf() is also not in mingw crt
+
+	* src/lib/evil_unistd.c:
+	* src/lib/evil_unistd.h:
+	getpid is declared and defined in mingw crt
+
 2010-04-14  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_stdio.c:

@@ -1070,7 +1070,7 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator 
 # instead of the = operator.
 
-PREDEFINED             = _WIN32_WCE __MINGW32CE__
+PREDEFINED             = _WIN32_WCE __MINGW32CE__ _MSC_VER
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 
