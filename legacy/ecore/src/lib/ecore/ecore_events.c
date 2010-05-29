@@ -431,7 +431,7 @@ _ecore_event_purge_deleted(void)
      {
         Ecore_Event *e = purge_events;
         purge_events = (Ecore_Event *)eina_inlist_remove(EINA_INLIST_GET(purge_events), EINA_INLIST_GET(purge_events));
-        events = eina_inlist_append(EINA_INLIST_GET(events), EINA_INLIST_GET(e));
+        events = (Ecore_Event *)eina_inlist_append(EINA_INLIST_GET(events), EINA_INLIST_GET(e));
      }
 }
 
