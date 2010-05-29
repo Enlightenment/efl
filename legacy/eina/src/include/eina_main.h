@@ -22,6 +22,19 @@
 
 #include "eina_types.h"
 
+#define EINA_VERSION_MAJOR 0
+#define EINA_VERSION_MINOR 9
+
+typedef struct _Eina_Version
+{
+   int major;
+   int minor;
+   int micro;
+   int revision;
+} Eina_Version;
+
+EAPI extern Eina_Version *eina_version;
+
 /**
  * @addtogroup Eina_Core_Group Core
  *
