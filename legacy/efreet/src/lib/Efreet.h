@@ -59,6 +59,19 @@
 extern "C" {
 #endif
 
+#define EFREET_VERSION_MAJOR 0
+#define EFREET_VERSION_MINOR 5
+   
+   typedef struct _Efreet_Version
+     {
+        int major;
+        int minor;
+        int micro;
+        int revision;
+     } Efreet_Version;
+   
+   EAPI extern Efreet_Version *efreet_version;
+   
 #include "efreet_base.h"
 #include "efreet_ini.h"
 #include "efreet_icon.h"

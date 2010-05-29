@@ -14,6 +14,9 @@
 #include "Efreet.h"
 #include "efreet_private.h"
 
+static Efreet_Version _version = { VMAJ, VMIN, VMIC, VREV };
+EAPI Efreet_Version *efreet_version = &_version;
+
 #ifdef _WIN32
 # define EFREET_PATH_SEP ';'
 #else
