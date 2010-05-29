@@ -2,7 +2,6 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
-revision=@VREV@
 
 Name: eet
 Description: Library for speedy data storage, retrieval, and compression
