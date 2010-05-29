@@ -19,6 +19,9 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+static Elm_Version _version = { VMAJ, VMIN, VMIC, VREV };
+EAPI Elm_Version *elm_version = &_version;
+
 /**
  * @defgroup Start Getting Started
  *

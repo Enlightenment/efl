@@ -118,6 +118,19 @@
 extern "C" {
 #endif
 
+#define ELM_VERSION_MAJOR @VMAJ@
+#define ELM_VERSION_MINOR @VMIN@
+   
+   typedef struct _Elm_Version
+     {
+        int major;
+        int minor;
+        int micro;
+        int revision;
+     } Elm_Version;
+   
+   EAPI extern Elm_Version *elm_version;
+   
 /* handy macros */
 #define ELM_RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && (((x) + (w)) > (xx)) && (((y) + (h)) > (yy)))
 #define ELM_PI 3.14159265358979323846
