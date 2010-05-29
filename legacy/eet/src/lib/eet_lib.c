@@ -70,7 +70,7 @@ void *alloca (size_t);
 #include "Eet_private.h"
 
 static Eet_Version _version = { VMAJ, VMIN, VMIC, VREV };
-EAPI Eet_Version *eet_version = &_version;;
+EAPI Eet_Version *eet_version = &_version;
 
 #ifdef HAVE_REALPATH
 # undef HAVE_REALPATH
