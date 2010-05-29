@@ -33,19 +33,6 @@
 # endif
 #endif /* ! _WIN32 */
 
-#define ECORE_VERSION_MAJOR 0
-#define ECORE_VERSION_MINOR 9
-
-typedef struct _Ecore_Version
-{
-   int major;
-   int minor;
-   int micro;
-   int revision;
-} Ecore_Version;
-
-EAPI extern Ecore_Version *ecore_version;
-
 /**
  * @file Ecore.h
  * @brief The file that provides the program utility, main loop and timer
@@ -83,6 +70,19 @@ EAPI extern Ecore_Version *ecore_version;
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define ECORE_VERSION_MAJOR 0
+#define ECORE_VERSION_MINOR 9
+
+   typedef struct _Ecore_Version
+     {
+        int major;
+        int minor;
+        int micro;
+        int revision;
+     } Ecore_Version;
+   
+   EAPI extern Ecore_Version *ecore_version;
 
 #define ECORE_CALLBACK_CANCEL 0 /**< Return value to remove a callback */
 #define ECORE_CALLBACK_RENEW 1  /**< Return value to keep a callback */
