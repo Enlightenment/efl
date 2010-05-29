@@ -31,18 +31,22 @@
 # endif
 #endif /* ! _WIN32 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define EVAS_VERSION_MAJOR 0
 #define EVAS_VERSION_MINOR 9
 
-typedef struct _Evas_Version
-{
-   int major;
-   int minor;
-   int micro;
-   int revision;
-} Evas_Version;
-
-EAPI extern Evas_Version *evas_version;
+   typedef struct _Evas_Version
+     {
+        int major;
+        int minor;
+        int micro;
+        int revision;
+     } Evas_Version;
+   
+   EAPI extern Evas_Version *evas_version;
 
 /**
  * @file
@@ -613,10 +617,6 @@ typedef void      (*Evas_Smart_Cb) (void *data, Evas_Object *obj, void *event_in
 typedef void      (*Evas_Event_Cb) (void *data, Evas *e, void *event_info);
 typedef Eina_Bool (*Evas_Object_Event_Post_Cb) (void *data, Evas *e);
 typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj, void *event_info);
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /**
  * @defgroup Evas_Group Top Level Functions
