@@ -44,7 +44,7 @@
 #include "eina_safety_checks.h"
 
 static Eina_Version _version = { VMAJ, VMIN, VMIC, VREV };
-EAPI Eina_Version *eina_version = &_version;;
+EAPI Eina_Version *eina_version = &_version;
 
 /*============================================================================*
  *                                  Local                                     *
