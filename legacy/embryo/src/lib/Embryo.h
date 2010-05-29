@@ -31,6 +31,19 @@
 extern "C" {
 #endif
 
+#define EMBRYO_VERSION_MAJOR 0
+#define EMBRYO_VERSION_MINOR 9
+   
+   typedef struct _Embryo_Version
+     {
+        int major;
+        int minor;
+        int micro;
+        int revision;
+     } Embryo_Version;
+   
+   EAPI extern Embryo_Version *embryo_version;
+   
    /* potentioal error values */
    enum
      {

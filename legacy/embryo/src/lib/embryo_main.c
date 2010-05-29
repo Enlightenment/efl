@@ -12,6 +12,9 @@
 #include "Embryo.h"
 #include "embryo_private.h"
 
+static Embryo_Version _version = { VMAJ, VMIN, VMIC, VREV };
+EAPI Embryo_Version *embryo_version = &_version;
+
 static int _embryo_init_count = 0;
 
 /*** EXPORTED CALLS ***/
