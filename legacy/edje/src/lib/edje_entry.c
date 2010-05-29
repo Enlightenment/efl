@@ -177,6 +177,32 @@ _edje_focus_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 #endif
 }
 
+// need one for markup and format too - how to do it? extra type param?
+static void
+_text_filter_prepend(Entry *en, const char *text)
+{
+   char *text2;
+   Edje_Text_Insert_Filter_Callback *cb;
+   Eina_List *l;
+   
+   text2 = strdup(text);
+   EINA_LIST_FOREACH(en->rp->edje->text_insert_filter_callbacks, l, cb)
+     {
+        if (!strcmp(cb->part, en->rp->part->name))
+          {
+             cb->func(cb->data, en->rp->edje->obj, cb->part, &text2);
+             if (!text2) break;
+          }
+     }
+   if (text2)
+     {
+        evas_textblock_cursor_text_prepend(en->cursor, text2);
+//        evas_textblock_cursor_format_prepend(en->cursor, text2);
+//        evas_object_textblock_text_markup_prepend(en->cursor, text2);
+        free(text2);
+     }
+}
+
 static void
 _curs_update_from_curs(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__, Entry *en)
 {
@@ -1369,6 +1395,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 	       }
 	     else
 	       {
+                  //yy
 		  evas_textblock_cursor_format_prepend(en->cursor, "\t");
 		  _curs_update_from_curs(en->cursor, rp->object, en);
 		  _anchors_get(en->cursor, rp->object, en);
@@ -1420,6 +1447,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
              if (en->have_selection)
                _range_del(en->cursor, rp->object, en);
              _sel_clear(en->cursor, rp->object, en);
+             //yy
 	     evas_textblock_cursor_format_prepend(en->cursor, "\n");
 	     _curs_update_from_curs(en->cursor, rp->object, en);
 	     _anchors_get(en->cursor, rp->object, en);
@@ -1437,6 +1465,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
             if (en->have_selection)
                _range_del(en->cursor, rp->object, en);
 	     _sel_clear(en->cursor, rp->object, en);
+             //zz
 	     evas_textblock_cursor_text_prepend(en->cursor, ev->string);
 	     _curs_update_from_curs(en->cursor, rp->object, en);
 	     _anchors_get(en->cursor, rp->object, en);
@@ -2068,6 +2097,7 @@ _edje_entry_text_markup_insert(Edje_Real_Part *rp, const char *text)
    if (en->have_selection)
      _range_del(en->cursor, rp->object, en);
    _sel_clear(en->cursor, rp->object, en);
+   //xx
    evas_object_textblock_text_markup_prepend(en->cursor, text);
    _curs_update_from_curs(en->cursor, rp->object, en);
    _anchors_get(en->cursor, rp->object, en);
@@ -2675,6 +2705,7 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
 	en->have_composition = EINA_FALSE;
      }
 
+   //yy
    evas_textblock_cursor_text_prepend(en->cursor, ev->str);
 
    _curs_update_from_curs(en->cursor, rp->object, en);
@@ -2728,7 +2759,8 @@ _edje_entry_imf_event_changed_cb(void *data, int type __UNUSED__, void *event)
 
    en->have_composition = EINA_TRUE;
 
-   evas_object_textblock_text_markup_prepend (en->cursor, preedit_string);
+   //xx
+   evas_object_textblock_text_markup_prepend(en->cursor, preedit_string);
    
    _sel_extend(en->cursor, rp->object, en);
 

@@ -762,6 +762,7 @@ typedef struct _Edje_Var_Animator Edje_Var_Animator;
 typedef struct _Edje_Var_Timer Edje_Var_Timer;
 typedef struct _Edje_Var_Pool Edje_Var_Pool;
 typedef struct _Edje_Signal_Source_Char Edje_Signal_Source_Char;
+typedef struct _Edje_Text_Insert_Filter_Callback Edje_Text_Insert_Filter_Callback;
 
 struct _Edje_Signal_Source_Char
 {
@@ -811,6 +812,7 @@ struct _Edje
    Edje_Program        **table_programs;
    Edje_Real_Part       *focused_part;
    Eina_List            *subobjs;
+   Eina_List            *text_insert_filter_callbacks;
    void                 *script_only_data;
    int                   table_programs_size;
    int                   table_parts_size;
@@ -1028,6 +1030,13 @@ struct _Edje_Signal_Callback
    void  *data;
    unsigned char just_added : 1;
    unsigned char delete_me : 1;
+};
+
+struct _Edje_Text_Insert_Filter_Callback
+{
+   const char  *part;
+   void       (*func) (void *data, Evas_Object *obj, const char *part, char **text);
+   void        *data;
 };
 
 struct _Edje_Pending_Program

@@ -265,6 +265,15 @@ _edje_del(Edje *ed)
 	if (tc->font) eina_stringshare_del(tc->font);
 	free(tc);
      }
+   while (ed->text_insert_filter_callbacks)
+     {
+        Edje_Text_Insert_Filter_Callback *cb;
+        
+        cb = eina_list_data_get(ed->text_insert_filter_callbacks);
+        ed->text_insert_filter_callbacks = eina_list_remove(ed->text_insert_filter_callbacks, cb);
+        eina_stringshare_del(cb->part);
+        free(cb);
+     }
    free(ed);
 }
 
