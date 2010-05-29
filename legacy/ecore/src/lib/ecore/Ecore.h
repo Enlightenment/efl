@@ -33,6 +33,19 @@
 # endif
 #endif /* ! _WIN32 */
 
+#define ECORE_VERSION_MAJOR 0
+#define ECORE_VERSION_MINOR 9
+
+typedef struct _Ecore_Version
+{
+   int major;
+   int minor;
+   int micro;
+   int revision;
+} Ecore_Version;
+
+EAPI extern Ecore_Version *ecore_version;
+
 /**
  * @file Ecore.h
  * @brief The file that provides the program utility, main loop and timer

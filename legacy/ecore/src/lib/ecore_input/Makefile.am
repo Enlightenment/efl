@@ -20,7 +20,7 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @EINA_LIBS@ \
 @EVIL_LIBS@
 
-libecore_input_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_input_release_info@
+libecore_input_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
 endif
 

@@ -25,7 +25,7 @@ $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 @EINA_LIBS@ \
 @EVIL_LIBS@
 
-libecore_input_evas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_input_evas_release_info@
+libecore_input_evas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
 endif
 

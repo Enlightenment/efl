@@ -37,7 +37,7 @@ $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 @EVAS_LIBS@ \
 @EINA_LIBS@
 
-libecore_win32_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_win32_release_info@
+libecore_win32_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
 endif
 

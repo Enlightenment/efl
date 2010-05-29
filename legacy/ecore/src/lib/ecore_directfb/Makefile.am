@@ -21,7 +21,7 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @DIRECTFB_LIBS@ \
 @EINA_LIBS@
 
-libecore_directfb_la_LDFLAGS = -version-info @version_info@ @ecore_directfb_release_info@
+libecore_directfb_la_LDFLAGS = -version-info @version_info@ @release_info@
 
 libecore_directfb_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la

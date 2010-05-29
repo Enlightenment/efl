@@ -35,7 +35,7 @@ libecore_con_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 @SSL_LIBS@ @CURL_LIBS@ @EINA_LIBS@ @TLS_LIBS@ @CARES_LIBS@ @WIN32_LIBS@
 
-libecore_con_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_con_release_info@
+libecore_con_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
 endif
 

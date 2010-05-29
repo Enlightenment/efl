@@ -1,7 +1,24 @@
-# get rid of that stupid cache mechanism
-rm -f config.cache
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+m4_define([v_maj], [0])
+m4_define([v_min], [9])
+m4_define([v_mic], [9])
+m4_define([v_rev], m4_esyscmd([svnversion . | awk -F : '{printf("%s", $1);}' | tr 'A-z' ' ' | sed 's/ //g']))
+m4_ifelse(m4_len[v_rev], [0], [m4_undefine([v_rev])])
+##--   When released, remove the dnl on the below line
+dnl m4_undefine([v_rev])
+##--   When doing snapshots - change soname. remove dnl on below line
+m4_define([v_rel], [-release ver-pre-svn-05])
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+m4_ifdef([v_rev], [m4_define([v_ver], [v_maj.v_min.v_mic.v_rev])],
+[m4_define([v_ver], [v_maj.v_min.v_mic])])
+m4_define([lt_rev], m4_eval(v_maj + v_min))
+m4_define([lt_cur], v_mic)
+m4_define([lt_age], v_min)
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
-AC_INIT([ecore], [0.9.9.063], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([ecore], [v_ver], [enlightenment-devel@lists.sourceforge.net])
 release="ver-pre-svn-05"
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
@@ -20,58 +37,25 @@ AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
 AC_PROG_LIBTOOL
 
-VMAJ=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $1);}'`
-VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
-VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
-SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
-version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+m4_ifdef([v_rev], , [m4_define([v_rev], [0])])
+m4_ifdef([v_rel], , [m4_define([v_rel], [])])
+AC_DEFINE_UNQUOTED(VMAJ, [v_maj], [Major version])
+AC_DEFINE_UNQUOTED(VMIN, [v_min], [Minor version])
+AC_DEFINE_UNQUOTED(VMIC, [v_mic], [Micro version])
+AC_DEFINE_UNQUOTED(VREV, [v_rev], [Revison])
+version_info="lt_rev:lt_cur:lt_age"
+release_info="v_rel"
 AC_SUBST(version_info)
+AC_SUBST(release_info)
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
 AM_GNU_GETTEXT_VERSION([0.12.1])
 AM_GNU_GETTEXT([external])
 
 EFL_CHECK_PATH_MAX
-
-case "$host_os" in
-   mingw32ce* | cegcc*)
-      ;;
-   *)
-      ecore_config_release_info="-release $release"
-      ecore_con_release_info="-release $release"
-      ecore_directfb_release_info="-release $release"
-      ecore_evas_release_info="-release $release"
-      ecore_fb_release_info="-release $release"
-      ecore_file_release_info="-release $release"
-      ecore_imf_evas_release_info="-release $release"
-      ecore_imf_release_info="-release $release"
-      ecore_input_release_info="-release $release"
-      ecore_input_evas_release_info="-release $release"
-      ecore_ipc_release_info="-release $release"
-      ecore_cocoa_release_info="-release $release"
-      ecore_release_info="-release $release"
-      ecore_sdl_release_info="-release $release"
-      ecore_win32_release_info="-release $release"
-      ecore_x_release_info="-release $release"
-      ;;
-esac
-AC_SUBST(ecore_config_release_info)
-AC_SUBST(ecore_con_release_info)
-AC_SUBST(ecore_directfb_release_info)
-AC_SUBST(ecore_evas_release_info)
-AC_SUBST(ecore_fb_release_info)
-AC_SUBST(ecore_file_release_info)
-AC_SUBST(ecore_imf_evas_release_info)
-AC_SUBST(ecore_imf_release_info)
-AC_SUBST(ecore_input_release_info)
-AC_SUBST(ecore_input_evas_release_info)
-AC_SUBST(ecore_ipc_release_info)
-AC_SUBST(ecore_cocoa_release_info)
-AC_SUBST(ecore_release_info)
-AC_SUBST(ecore_sdl_release_info)
-AC_SUBST(ecore_win32_release_info)
-AC_SUBST(ecore_wince_release_info)
-AC_SUBST(ecore_x_release_info)
-
 
 with_max_log_level="<unset>"
 AC_ARG_WITH(internal-maximum-log-level,

@@ -25,7 +25,7 @@ $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 @EVAS_LIBS@ \
 @EINA_LIBS@
 
-libecore_cocoa_la_LDFLAGS = @cocoa_ldflags@ -version-info @version_info@ @ecore_cocoa_release_info@
+libecore_cocoa_la_LDFLAGS = @cocoa_ldflags@ -version-info @version_info@ @release_info@
 
 endif
 

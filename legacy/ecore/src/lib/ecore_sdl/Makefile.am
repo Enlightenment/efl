@@ -26,7 +26,7 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 @SDL_LIBS@ @EVIL_LIBS@ @EINA_LIBS@
 
-libecore_sdl_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_sdl_release_info@
+libecore_sdl_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
 endif
 
