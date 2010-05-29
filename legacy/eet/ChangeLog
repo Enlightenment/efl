@@ -369,3 +369,10 @@
 2010-04-21  Cedric BAIL
 
 	* Add EET_G_UNION and EET_G_VARIANT.
+
+2010-05-29  Carsten Haitzler (The Rasterman)
+
+	* Add EET_VERSION_MAJOR, EET_VERSION_MINOR.
+        * Add Eet_Version, eet_version.
+        * Make configure.ac use m4 defines for version
+        * Support SVN revision in version check
