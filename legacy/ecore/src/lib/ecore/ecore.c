@@ -39,7 +39,7 @@
 #if HAVE_MALLINFO
 #include <malloc.h>
 
-static Ecore_Version _version = { VMAJ, VERS_MIN, VMIC, VREV };
+static Ecore_Version _version = { VERS_MAJ, VERS_MIN, VERS_MIC, VERS_REV };
 EAPI Ecore_Version *ecore_version = &_version;
 
 #define KEEP_MAX(Global, Local)			\
