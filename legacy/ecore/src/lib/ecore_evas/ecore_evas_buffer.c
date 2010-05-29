@@ -488,7 +488,7 @@ _ecore_evas_buffer_pix_alloc(void *data, int size)
    return malloc(size);
 }
 
-static void *
+static void
 _ecore_evas_buffer_pix_free(void *data, void *pix)
 {
    free(pix);
