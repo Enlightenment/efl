@@ -34,6 +34,23 @@
 # endif
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+   
+#define EDJE_VERSION_MAJOR 0
+#define EDJE_VERSION_MINOR 9
+   
+   typedef struct _Edje_Version
+     {
+        int major;
+        int minor;
+        int micro;
+        int revision;
+     } Edje_Version;
+   
+   EAPI extern Edje_Version *edje_version;
+   
 /**
  * @file Edje.h
  * @brief Edje Graphical Design Library
@@ -394,10 +411,6 @@ typedef struct _Edje_External_Type_Info Edje_External_Type_Info;
 typedef void (*Edje_Signal_Cb)          (void *data, Evas_Object *obj, const char *emission, const char *source);
 typedef void (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, const char *part);
 typedef void (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
    /* edje_main.c */
    EAPI int          edje_init                       (void);
