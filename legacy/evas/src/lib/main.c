@@ -1,6 +1,9 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+static Evas_Version _version = { VMAJ, VMIN, VMIC, VREV };
+EAPI Evas_Version *evas_version = &_version;;
+
 int _evas_alloc_error = 0;
 static int _evas_debug_init = 0;
 static int _evas_debug_show = 0;

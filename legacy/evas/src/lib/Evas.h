@@ -31,6 +31,18 @@
 # endif
 #endif /* ! _WIN32 */
 
+#define EVAS_VERSION_MAJOR 0
+#define EVAS_VERSION_MINOR 9
+
+typedef struct _Evas_Version
+{
+   int major;
+   int minor;
+   int micro;
+   int revision;
+} Evas_Version;
+
+EAPI extern Evas_Version *evas_version;
 
 /**
  * @file
