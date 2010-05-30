@@ -79,7 +79,8 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
 
           goto error;
 #endif
-          if (!udev_device_get_property_value(device, "ID_INPUT_KEYBOARD"))
+          if ((!udev_device_get_property_value(device, "ID_INPUT_KEYBOARD")) &&
+              (!udev_device_get_property_value(device, "ID_INPUT_KEY")))
             goto error;
 
           break;
