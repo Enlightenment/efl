@@ -32,12 +32,13 @@ static const struct ext_loader_s loaders[] =
    { "pgm", "pmaps" },
    { "ppm", "pmaps" },
    { "pnm", "pmaps" },
-   { "bmp", "bmp" }
+   { "bmp", "bmp" },
+   { "tga", "tga" }
 };
 
 static const char *loaders_name[] =
 {
-  "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "pmaps", "edb", "bmp"
+  "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "pmaps", "edb", "bmp", "tga"
 };
 
 struct evas_image_foreach_loader_data

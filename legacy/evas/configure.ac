@@ -118,6 +118,7 @@ want_evas_image_loader_svg="yes"
 want_evas_image_loader_tiff="yes"
 want_evas_image_loader_xpm="yes"
 want_evas_image_loader_bmp="yes"
+want_evas_image_loader_tga="yes"
 
 want_evas_font_loader_eet="yes"
 
@@ -694,6 +695,8 @@ EVAS_CHECK_IMAGE_LOADER([Tiff], [${want_evas_image_loader_tiff}])
 EVAS_CHECK_IMAGE_LOADER([XPM], [${want_evas_image_loader_xpm}])
 
 EVAS_CHECK_IMAGE_LOADER([BMP], [${want_evas_image_loader_bmp}])
+
+EVAS_CHECK_IMAGE_LOADER([TGA], [${want_evas_image_loader_tga}])
 
 
 #####################################################################
@@ -1410,6 +1413,7 @@ src/modules/loaders/png/Makefile
 src/modules/loaders/tiff/Makefile
 src/modules/loaders/xpm/Makefile
 src/modules/loaders/bmp/Makefile
+src/modules/loaders/tga/Makefile
 src/modules/loaders/svg/Makefile
 src/modules/loaders/pmaps/Makefile
 src/modules/savers/Makefile

@@ -62,3 +62,9 @@ SUBDIRS += bmp
 endif
 endif
 
+if BUILD_LOADER_TGA
+if !EVAS_STATIC_BUILD_TGA
+SUBDIRS += tga
+endif
+endif
+
