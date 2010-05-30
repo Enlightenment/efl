@@ -533,16 +533,16 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
 	goto close_file;
      }
    
+   if ((w != ie->w) || (h != ie->h))
+     {
+	*error = EVAS_LOAD_ERROR_GENERIC;
+	goto close_file;
+     }
    evas_cache_image_surface_alloc(ie, w, h);
    surface = evas_cache_image_pixels(ie);
    if (!surface)
      {
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	goto close_file;
-     }
-   if ((w != ie->w) || (h != ie->h))
-     {
-	*error = EVAS_LOAD_ERROR_GENERIC;
 	goto close_file;
      }
    
@@ -1080,8 +1080,6 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
      }
    else
      goto close_file;
-     
-   if (hasa) ie->flags.alpha = 1;
    
    if (buffer) free(buffer);
    E_FCLOSE(f);
