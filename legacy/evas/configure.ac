@@ -117,6 +117,7 @@ want_evas_image_loader_png="yes"
 want_evas_image_loader_svg="yes"
 want_evas_image_loader_tiff="yes"
 want_evas_image_loader_xpm="yes"
+want_evas_image_loader_bmp="yes"
 
 want_evas_font_loader_eet="yes"
 
@@ -691,6 +692,8 @@ EVAS_CHECK_IMAGE_LOADER([SVG], [${want_evas_image_loader_svg}])
 EVAS_CHECK_IMAGE_LOADER([Tiff], [${want_evas_image_loader_tiff}])
 
 EVAS_CHECK_IMAGE_LOADER([XPM], [${want_evas_image_loader_xpm}])
+
+EVAS_CHECK_IMAGE_LOADER([BMP], [${want_evas_image_loader_bmp}])
 
 
 #####################################################################
@@ -1406,6 +1409,7 @@ src/modules/loaders/jpeg/Makefile
 src/modules/loaders/png/Makefile
 src/modules/loaders/tiff/Makefile
 src/modules/loaders/xpm/Makefile
+src/modules/loaders/bmp/Makefile
 src/modules/loaders/svg/Makefile
 src/modules/loaders/pmaps/Makefile
 src/modules/savers/Makefile
@@ -1483,6 +1487,7 @@ echo "  PNG.....................: $have_evas_image_loader_png"
 echo "  SVG.....................: $have_evas_image_loader_svg"
 echo "  TIFF....................: $have_evas_image_loader_tiff"
 echo "  XPM.....................: $have_evas_image_loader_xpm"
+echo "  BMP.....................: $have_evas_image_loader_bmp"
 # FIXME: need to add modular image loader system
 # FIXME: add more image loader modules
 echo

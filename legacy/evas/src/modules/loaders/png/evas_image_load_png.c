@@ -18,7 +18,7 @@
 #ifdef _WIN32_WCE
 # define E_FOPEN(file, mode) evil_fopen_native((file), (mode))
 # define E_FREAD(buffer, size, count, stream) evil_fread_native(buffer, size, count, stream)
-# define E_FCLOSE(stream) evil_fclose_native(stream)
+# define/ E_FCLOSE(stream) evil_fclose_native(stream)
 #else
 # define E_FOPEN(file, mode) fopen((file), (mode))
 # define E_FREAD(buffer, size, count, stream) fread(buffer, size, count, stream)
