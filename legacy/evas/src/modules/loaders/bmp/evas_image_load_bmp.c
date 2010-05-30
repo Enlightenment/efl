@@ -1122,6 +1122,6 @@ static Evas_Module_Api evas_modapi =
 
 EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_IMAGE_LOADER, image_loader, bmp);
 
-#ifndef EVAS_STATIC_BUILD_PNG
+#ifndef EVAS_STATIC_BUILD_BMP
 EVAS_EINA_MODULE_DEFINE(image_loader, bmp);
 #endif
