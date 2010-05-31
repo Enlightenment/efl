@@ -14,6 +14,6 @@ eeze_udev_walk.c \
 eeze_udev_private.c
 
 libeeze_la_LIBADD = @EEZE_LIBS@
-libeeze_la_LDFLAGS = -no-undefined -version-info @version_info@ @eeze_release_info@
+libeeze_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
 
 EXTRA_DIST = eeze_udev_private.h eeze_private.h

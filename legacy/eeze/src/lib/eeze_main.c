@@ -24,6 +24,8 @@ int _eeze_init_count = 0;
  * These are general eeze functions which include init and shutdown.
  */
 
+static Eeze_Version _version = { VMAJ, VMIN, VMIC, VREV };
+EAPI Eeze_Version *eeze_version = &_version;
 
 /**
  * Initialize the eeze library.
