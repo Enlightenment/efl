@@ -25,8 +25,8 @@ module_la_LIBTOOLFLAGS = --tag=disable-static
 else
 
 noinst_LTLIBRARIES = libevas_loader_bmp.la
-libevas_loader_png_la_SOURCES = evas_image_load_bmp.c
-libevas_loader_png_la_LIBADD = 
+libevas_loader_bmp_la_SOURCES = evas_image_load_bmp.c
+libevas_loader_bmp_la_LIBADD = 
 
 endif
 endif
