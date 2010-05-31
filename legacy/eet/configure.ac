@@ -3,8 +3,7 @@
 m4_define([v_maj], [1])
 m4_define([v_min], [2])
 m4_define([v_mic], [3])
-m4_define([v_rev], m4_esyscmd([svnversion . | awk -F : '{printf("%s", $1);}' | tr 'A-z' ' ' | sed 's/ //g']))
-m4_ifelse(m4_len(v_rev), [0], m4_undefine([v_rev]))
+m4_define([v_rev], m4_esyscmd([(svnversion . | grep -v exported || echo 0) | awk -F : '{printf("%s", $1);}' | tr 'A-z' ' ' | sed 's/ //g']))
 ##--   When released, remove the dnl on the below line
 dnl m4_undefine([v_rev])
 ##--   When doing snapshots - change soname. remove dnl on below line
@@ -25,6 +24,8 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_ISC_POSIX
+
+echo "LEN..................." m4_len(v_rev)
 
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 AM_CONFIG_HEADER([config.h])
