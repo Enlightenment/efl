@@ -36,6 +36,9 @@ evas_common_font_shutdown(void)
    initialised--;
    if (initialised != 0) return;
 
+   LKD(lock_font_draw);
+   LKD(lock_fribidi);
+   
    evas_common_font_load_shutdown();
    evas_common_font_cache_set(0);
    evas_common_font_flush();
