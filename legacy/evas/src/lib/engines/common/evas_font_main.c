@@ -7,6 +7,9 @@
 FT_Library      evas_ft_lib = 0;
 static int      initialised = 0;
 
+LK(lock_font_draw); // for freetype2 API calls
+LK(lock_fribidi); // for fribidi API calls
+
 EAPI void
 evas_common_font_init(void)
 {
@@ -20,6 +23,8 @@ evas_common_font_init(void)
 #ifdef EVAS_FRAME_QUEUING
    evas_common_font_draw_init();
 #endif
+   LKI(lock_font_draw);
+   LKI(lock_fribidi);
 }
 
 EAPI void
