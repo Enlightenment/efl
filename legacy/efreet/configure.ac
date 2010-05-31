@@ -3,9 +3,8 @@
 m4_define([v_maj], [0])
 m4_define([v_min], [5])
 m4_define([v_mic], [0])
-m4_define([v_rev], m4_esyscmd([svnversion . | awk -F : '{printf("%s",
-$1);}' | tr 'A-z' ' ' | sed 's/ //g']))
-m4_ifelse(m4_len[v_rev], [0], [m4_undefine([v_rev])])
+m4_define([v_rev], m4_esyscmd([svnversion . | awk -F : '{printf("%s", $1);}' | tr 'A-z' ' ' | sed 's/ //g']))
+m4_ifelse(m4_len(v_rev), [0], m4_undefine([v_rev]))
 ##--   When released, remove the dnl on the below line
 dnl m4_undefine([v_rev])
 ##--   When doing snapshots - change soname. remove dnl on below line
