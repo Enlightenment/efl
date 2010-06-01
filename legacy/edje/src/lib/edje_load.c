@@ -907,8 +907,14 @@ _edje_file_del(Edje *ed)
 
 	     /* Cleanup optional part. */
 	     free(rp->drag);
+	     free(rp->param1.set);
 
+	     if (rp->param2)
+	       free(rp->param2->set);
 	     eina_mempool_free(_edje_real_part_state_mp, rp->param2);
+
+	     if (rp->custom)
+	       free(rp->custom->set);
 	     eina_mempool_free(_edje_real_part_state_mp, rp->custom);
 
 	     _edje_unref(rp->edje);

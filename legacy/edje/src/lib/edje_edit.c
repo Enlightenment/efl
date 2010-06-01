@@ -287,7 +287,13 @@ _edje_real_part_free(Edje_Real_Part *rp)
      _edje_collection_free_part_description_free(rp->custom->description, 0);
 
    free(rp->drag);
+
+   if (rp->param2)
+     free(rp->param2->set);
    eina_mempool_free(_edje_real_part_state_mp, rp->param2);
+
+   if (rp->custom)
+     free(rp->custom->set);
    eina_mempool_free(_edje_real_part_state_mp, rp->custom);
 
    _edje_unref(rp->edje);

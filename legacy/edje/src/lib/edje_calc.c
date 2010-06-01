@@ -122,7 +122,10 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
    if (epd2 != NULL && (epd1 != epd2 || (ep->part->type == EDJE_PART_TYPE_IMAGE && epd2->image.tween_list)))
      {
 	if (!ep->param2)
-	  ep->param2 = eina_mempool_malloc(_edje_real_part_state_mp, sizeof (Edje_Real_Part_State));
+	  {
+	    ep->param2 = eina_mempool_malloc(_edje_real_part_state_mp, sizeof (Edje_Real_Part_State));
+	    memset(ep->param2, 0, sizeof (Edje_Real_Part_State));
+	  }
 	else if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
 	  _edje_external_parsed_params_free(ep->swallowed_object, ep->param2->external_params);
 	ep->param2->external_params = NULL;
@@ -132,6 +135,8 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
        {
 	  if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
 	    _edje_external_parsed_params_free(ep->swallowed_object, ep->param2->external_params);
+	  if (ep->param2)
+	    free(ep->param2->set);
 	  eina_mempool_free(_edje_real_part_state_mp, ep->param2);
 	  ep->param2 = NULL;
        }
@@ -1506,6 +1511,70 @@ _edje_table_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Para
      }
 }
 
+static int
+_edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps, Edje_Part_Description *st, Edje_Part_Image_Id *imid)
+{
+  Edje_Image_Directory_Set_Entry *entry;
+  Edje_Image_Directory_Set *set = NULL;
+  Eina_List *l;
+  int w = 0;
+  int h = 0;
+  int id;
+
+  if (!st && !imid)
+    return -1;
+
+  if (st && !st->image.set)
+    return st->image.id;
+
+  if (imid && !imid->set)
+    return imid->id;
+
+  if (imid)
+    id = imid->id;
+  else
+    id = st->image.id;
+
+  evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+
+  if (eps && *eps)
+    {
+      if ((*eps)->id == id)
+	set = (*eps)->set;
+      
+      if (set)
+	if ((*eps)->entry->size.min.w <= w && w <= (*eps)->entry->size.max.w)
+	  if ((*eps)->entry->size.min.h <= h && h <= (*eps)->entry->size.max.h)
+	    return (*eps)->entry->id;
+    }
+
+  if (!set)
+    set = eina_list_nth(ed->file->image_dir->sets, id);
+
+  EINA_LIST_FOREACH(set->entries, l, entry)
+    {
+      if (entry->size.min.w <= w && w <= entry->size.max.w)
+	if (entry->size.min.h <= h && h <= entry->size.max.h)
+	  {
+	    if (eps)
+	      {
+		if (!*eps)
+		  *eps = calloc(1, sizeof (Edje_Real_Part_Set));
+
+		if (*eps)
+		  {
+		    (*eps)->entry = entry;
+		    (*eps)->set = set;
+		    (*eps)->id = id;
+		  }
+	      }
+	    return entry->id;
+	  }
+    }
+
+  return -1;
+}
+
 static void
 _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc, FLOAT_T pos)
 {
@@ -1530,7 +1599,9 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
      evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_NONE);
    else if (chosen_desc->border.no_fill == 2)
      evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_SOLID);
-   image_id = ep->param1.description->image.id;
+
+   image_id = _edje_image_find(ep->object, ed,
+			       &ep->param1.set, ep->param1.description, NULL);
    if (image_id < 0)
      {
 	Edje_Image_Directory_Entry *ie;
@@ -1554,19 +1625,27 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 	if (image_num > (image_count - 1))
 	  image_num = image_count - 1;
 	if (image_num == 0)
-	  image_id = ep->param1.description->image.id;
+	  {
+	    image_id = _edje_image_find(ep->object, ed,
+					&ep->param1.set, ep->param1.description, 
+					NULL);
+	  }
 	else
 	  if (ep->param2)
 	    {
 	       if (image_num == (image_count - 1))
-		 image_id = ep->param2->description->image.id;
+		 {
+		   image_id = _edje_image_find(ep->object, ed,
+					       &ep->param2->set, ep->param2->description,
+					       NULL);
+		 }
 	       else
 		 {
 		    Edje_Part_Image_Id *imid;
 
 		    imid = eina_list_nth(ep->param2->description->image.tween_list,
 					 image_num - 1);
-		    if (imid) image_id = imid->id;
+		    image_id = _edje_image_find(ep->object, ed, NULL, NULL, imid);
 		 }
 	    }
 	if (image_id < 0)

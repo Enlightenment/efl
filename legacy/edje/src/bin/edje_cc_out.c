@@ -40,7 +40,7 @@ typedef struct _External_Lookup External_Lookup;
 typedef struct _Part_Lookup Part_Lookup;
 typedef struct _Program_Lookup Program_Lookup;
 typedef struct _Group_Lookup Group_Lookup;
-typedef struct _String_Lookup Image_Lookup;
+typedef struct _Image_Lookup Image_Lookup;
 typedef struct _String_Lookup Spectrum_Lookup;
 typedef struct _Slave_Lookup Slave_Lookup;
 typedef struct _Code_Lookup Code_Lookup;
@@ -76,6 +76,13 @@ struct _String_Lookup
    int *dest;
 };
 
+struct _Image_Lookup
+{
+   char *name;
+   int *dest;
+   Eina_Bool *set;
+};
+
 struct _Slave_Lookup
 {
    int *master;
@@ -87,6 +94,7 @@ struct _Code_Lookup
    char *ptr;
    int   len;
    int   val;
+   Eina_Bool set;
 };
 
 static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char *ptr, int len));
@@ -208,6 +216,7 @@ check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
    Eina_List *l;
    Edje_Part_Description *data;
 
+   /* FIXME: check image set and sort them. */
    if (!epd)
      error_and_abort(ef, "Collection %i: default description missing "
 		     "for part \"%s\"\n", pc->id, ep->name);
@@ -1160,7 +1169,7 @@ data_queue_program_lookup(Edje_Part_Collection *pc, char *name, int *dest)
 }
 
 void
-data_queue_image_lookup(char *name, int *dest)
+data_queue_image_lookup(char *name, int *dest, Eina_Bool *set)
 {
    Image_Lookup *il;
 
@@ -1168,6 +1177,7 @@ data_queue_image_lookup(char *name, int *dest)
    image_lookups = eina_list_append(image_lookups, il);
    il->name = mem_strdup(name);
    il->dest = dest;
+   il->set = set;
 }
 
 void
@@ -1328,8 +1338,25 @@ data_process_lookups(void)
 			 *(il->dest) = -de->id - 1;
 		       else
 			 *(il->dest) = de->id;
+		       *(il->set) = EINA_FALSE;
 		       break;
 		    }
+	       }
+
+	     if (!l)
+	       {
+		 Edje_Image_Directory_Set *set;
+
+		 EINA_LIST_FOREACH(edje_file->image_dir->sets, l, set)
+		   {
+		     if ((set->name) && (!strcmp(set->name, il->name)))
+		       {
+			 handle_slave_lookup(image_slave_lookups, il->dest, set->id);
+			 *(il->dest) = set->id;
+			 *(il->set) = EINA_TRUE;
+			 break;
+		       }
+		   }
 	       }
 	  }
 
@@ -1547,7 +1574,7 @@ _data_queue_image_pc_lookup(Edje_Part_Collection *pc __UNUSED__, char *name, cha
    cl->ptr = ptr;
    cl->len = len;
 
-   data_queue_image_lookup(name, &(cl->val));
+   data_queue_image_lookup(name, &(cl->val),  &(cl->set));
 
    code_lookups = eina_list_append(code_lookups, cl);
 }
@@ -1601,6 +1628,7 @@ data_process_script_lookups(void)
 	char buf[12];
 	int n;
 
+	/* FIXME !! Handle set in program */
 	n = eina_convert_itoa(cl->val, buf);
 	if (n > cl->len)
 	  {

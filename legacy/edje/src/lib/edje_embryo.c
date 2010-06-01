@@ -1595,6 +1595,8 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
 	return 0;
      }
 
+   memset(rp->custom, 0, sizeof (Edje_Real_Part_State));
+
    *d = *parent;
 
    d->state.name = (char *)eina_stringshare_add("custom");

@@ -73,6 +73,11 @@
 static void st_externals_external(void);
 
 static void st_images_image(void);
+static void ob_images_set(void);
+static void st_images_set_name(void);
+static void ob_images_set_image(void);
+static void st_images_set_image_image(void);
+static void st_images_set_image_size(void);
 
 static void st_fonts_font(void);
 
@@ -261,6 +266,9 @@ New_Statement_Handler statement_handlers[] =
 {
      {"externals.external", st_externals_external},
      {"images.image", st_images_image},
+     {"images.set.name", st_images_set_name},
+     {"images.set.image.image", st_images_set_image_image},
+     {"images.set.image.size", st_images_set_image_size},
      {"fonts.font", st_fonts_font},
      {"data.item", st_data_item},
      {"data.file", st_data_file},
@@ -276,7 +284,13 @@ New_Statement_Handler statement_handlers[] =
      {"spectra.spectrum.color", st_spectrum_color},
      {"collections.externals.external", st_externals_external}, /* dup */
      {"collections.image", st_images_image}, /* dup */
+     {"collections.set.name", st_images_set_name}, /* dup */
+     {"collections.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.set.image.size", st_images_set_image_size}, /* dup */
      {"collections.images.image", st_images_image}, /* dup */
+     {"collections.images.set.name", st_images_set_name}, /* dup */
+     {"collections.images.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.images.set.image.size", st_images_set_image_size}, /* dup */
      {"collections.font", st_fonts_font}, /* dup */
      {"collections.fonts.font", st_fonts_font}, /* dup */
      {"collections.styles.style.name", st_styles_style_name}, /* dup */
@@ -295,7 +309,13 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.data.item", st_collections_group_data_item},
      {"collections.group.externals.external", st_externals_external}, /* dup */
      {"collections.group.image", st_images_image}, /* dup */
+     {"collections.group.set.name", st_images_set_name},
+     {"collections.group.set.image.image", st_images_set_image_image},
+     {"collections.group.set.image.size", st_images_set_image_size},
      {"collections.group.images.image", st_images_image}, /* dup */
+     {"collections.group.images.set.name", st_images_set_name},
+     {"collections.group.images.set.image.image", st_images_set_image_image},
+     {"collections.group.images.set.image.size", st_images_set_image_size},
      {"collections.group.font", st_fonts_font}, /* dup */
      {"collections.group.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.styles.style.name", st_styles_style_name}, /* dup */
@@ -306,7 +326,13 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.color_classes.color_class.color2", st_color_class_color2}, /* dup */
      {"collections.group.color_classes.color_class.color3", st_color_class_color3}, /* dup */
      {"collections.group.parts.image", st_images_image}, /* dup */
+     {"collections.group.parts.set.name", st_images_set_name},
+     {"collections.group.parts.set.image.image", st_images_set_image_image},
+     {"collections.group.parts.set.image.size", st_images_set_image_size},
      {"collections.group.parts.images.image", st_images_image}, /* dup */
+     {"collections.group.parts.images.set.name", st_images_set_name},
+     {"collections.group.parts.images.set.image.image", st_images_set_image_image},
+     {"collections.group.parts.images.set.image.size", st_images_set_image_size},
      {"collections.group.parts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.styles.style.name", st_styles_style_name}, /* dup */
@@ -342,7 +368,13 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.select_mode", st_collections_group_parts_part_select_mode},
      {"collections.group.parts.part.multiline", st_collections_group_parts_part_multiline},
      {"collections.group.parts.part.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.set.name", st_images_set_name},
+     {"collections.group.parts.part.set.image.image", st_images_set_image_image},
+     {"collections.group.parts.part.set.image.size", st_images_set_image_size},
      {"collections.group.parts.part.images.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.images.set.name", st_images_set_name},
+     {"collections.group.parts.part.images.set.image.image", st_images_set_image_image},
+     {"collections.group.parts.part.images.set.image.size", st_images_set_image_size},
      {"collections.group.parts.part.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.styles.style.name", st_styles_style_name}, /* dup */
@@ -401,7 +433,13 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.image.normal", st_collections_group_parts_part_description_image_normal},
      {"collections.group.parts.part.description.image.tween", st_collections_group_parts_part_description_image_tween},
      {"collections.group.parts.part.description.image.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.description.image.set.name", st_images_set_name},
+     {"collections.group.parts.part.description.image.set.image.image", st_images_set_image_image},
+     {"collections.group.parts.part.description.image.set.image.size", st_images_set_image_size},
      {"collections.group.parts.part.description.image.images.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.description.image.images.set.name", st_images_set_name},
+     {"collections.group.parts.part.description.image.images.set.image.image", st_images_set_image_image},
+     {"collections.group.parts.part.description.image.images.set.image.size", st_images_set_image_size},
      {"collections.group.parts.part.description.image.border", st_collections_group_parts_part_description_image_border},
      {"collections.group.parts.part.description.image.middle", st_collections_group_parts_part_description_image_middle},
      {"collections.group.parts.part.description.image.border_scale", st_collections_group_parts_part_description_image_border_scale},
@@ -465,6 +503,9 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.params.bool", st_collections_group_parts_part_description_params_bool},
      {"collections.group.parts.part.description.params.choice", st_collections_group_parts_part_description_params_choice},
      {"collections.group.parts.part.description.images.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.description.images.set.name", st_images_set_name},
+     {"collections.group.parts.part.description.images.set.image.image", st_images_set_image_image},
+     {"collections.group.parts.part.description.images.set.image.size", st_images_set_image_size},
      {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.styles.style.name", st_styles_style_name}, /* dup */
@@ -475,7 +516,13 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.color_classes.color_class.color2", st_color_class_color2}, /* dup */
      {"collections.group.parts.part.description.color_classes.color_class.color3", st_color_class_color3}, /* dup */
      {"collections.group.parts.part.description.programs.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.description.programs.set.name", st_images_set_name},
+     {"collections.group.parts.part.description.programs.set.image.image", st_images_set_image_image},
+     {"collections.group.parts.part.description.programs.set.image.size", st_images_set_image_size},
      {"collections.group.parts.part.description.programs.images.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.description.programs.images.set.name", st_images_set_name},
+     {"collections.group.parts.part.description.programs.images.set.image.image", st_images_set_image_image},
+     {"collections.group.parts.part.description.programs.images.set.image.size", st_images_set_image_size},
      {"collections.group.parts.part.description.programs.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.programs.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.programs.program.name", st_collections_group_programs_program_name}, /* dup */
@@ -497,7 +544,13 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.program.after", st_collections_group_programs_program_after}, /* dup */
      {"collections.group.parts.part.description.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.parts.part.programs.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.programs.set.name", st_images_set_name},
+     {"collections.group.parts.part.programs.set.image.image", st_images_set_image_image},
+     {"collections.group.parts.part.programs.set.image.size", st_images_set_image_size},
      {"collections.group.parts.part.programs.images.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.programs.images.set.name", st_images_set_name},
+     {"collections.group.parts.part.programs.images.set.image.image", st_images_set_image_image},
+     {"collections.group.parts.part.programs.images.set.image.size", st_images_set_image_size},
      {"collections.group.parts.part.programs.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.programs.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.programs.program.name", st_collections_group_programs_program_name}, /* dup */
@@ -519,7 +572,13 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.program.after", st_collections_group_programs_program_after}, /* dup */
      {"collections.group.parts.part.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.parts.programs.image", st_images_image}, /* dup */
+     {"collections.group.parts.programs.set.name", st_images_set_name},
+     {"collections.group.parts.programs.set.image.image", st_images_set_image_image},
+     {"collections.group.parts.programs.set.image.size", st_images_set_image_size},
      {"collections.group.parts.programs.images.image", st_images_image}, /* dup */
+     {"collections.group.parts.programs.images.set.name", st_images_set_name},
+     {"collections.group.parts.programs.images.set.image.image", st_images_set_image_image},
+     {"collections.group.parts.programs.images.set.image.size", st_images_set_image_size},
      {"collections.group.parts.programs.font", st_fonts_font}, /* dup */
      {"collections.group.parts.programs.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.programs.program.name", st_collections_group_programs_program_name}, /* dup */
@@ -562,7 +621,13 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.programs.program.after", st_collections_group_programs_program_after},
      {"collections.group.programs.program.api", st_collections_group_programs_program_api},
      {"collections.group.programs.image", st_images_image}, /* dup */
+     {"collections.group.programs.set.name", st_images_set_name},
+     {"collections.group.programs.set.image.image", st_images_set_image_image},
+     {"collections.group.programs.set.image.size", st_images_set_image_size},
      {"collections.group.programs.images.image", st_images_image}, /* dup */
+     {"collections.group.programs.images.set.name", st_images_set_name},
+     {"collections.group.programs.images.set.image.image", st_images_set_image_image},
+     {"collections.group.programs.images.set.image.size", st_images_set_image_size},
      {"collections.group.programs.font", st_fonts_font}, /* dup */
      {"collections.group.programs.fonts.font", st_fonts_font} /* dup */
 };
@@ -571,6 +636,8 @@ New_Object_Handler object_handlers[] =
 {
      {"externals", NULL},
      {"images", NULL},
+     {"images.set", ob_images_set},
+     {"images.set.image", ob_images_set_image},
      {"fonts", NULL},
      {"data", NULL},
      {"styles", NULL},
@@ -581,7 +648,11 @@ New_Object_Handler object_handlers[] =
      {"spectra.spectrum", ob_spectrum},
      {"collections", ob_collections},
      {"collections.externals", NULL}, /* dup */
+     {"collections.set", ob_images_set}, /* dup */
+     {"collections.set.image", ob_images_set_image}, /* dup */
      {"collections.images", NULL}, /* dup */
+     {"collections.images.set", ob_images_set}, /* dup */
+     {"collections.images.set.image", ob_images_set_image}, /* dup */
      {"collections.fonts", NULL}, /* dup */
      {"collections.styles", NULL}, /* dup */
      {"collections.styles.style", ob_styles_style}, /* dup */
@@ -592,14 +663,22 @@ New_Object_Handler object_handlers[] =
      {"collections.group.script", ob_collections_group_script},
      {"collections.group.lua_script", ob_collections_group_lua_script},
      {"collections.group.externals", NULL}, /* dup */
+     {"collections.group.set", ob_images_set}, /* dup */
+     {"collections.group.set.image", ob_images_set_image}, /* dup */
      {"collections.group.images", NULL}, /* dup */
+     {"collections.group.images.set", ob_images_set}, /* dup */
+     {"collections.group.images.set.image", ob_images_set_image}, /* dup */
      {"collections.group.fonts", NULL}, /* dup */
      {"collections.group.styles", NULL}, /* dup */
      {"collections.group.styles.style", ob_styles_style}, /* dup */
      {"collections.group.color_classes", NULL}, /* dup */
      {"collections.group.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group.parts", NULL},
+     {"collections.group.parts.set", ob_images_set}, /* dup */
+     {"collections.group.parts.set.image", ob_images_set_image}, /* dup */
      {"collections.group.parts.images", NULL}, /* dup */
+     {"collections.group.parts.images.set", ob_images_set}, /* dup */
+     {"collections.group.parts.images.set.image", ob_images_set_image}, /* dup */
      {"collections.group.parts.fonts", NULL}, /* dup */
      {"collections.group.parts.styles", NULL}, /* dup */
      {"collections.group.parts.styles.style", ob_styles_style}, /* dup */
@@ -607,7 +686,11 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group.parts.part", ob_collections_group_parts_part},
      {"collections.group.parts.part.dragable", NULL},
+     {"collections.group.parts.part.set", ob_images_set}, /* dup */
+     {"collections.group.parts.part.set.image", ob_images_set_image}, /* dup */
      {"collections.group.parts.part.images", NULL}, /* dup */
+     {"collections.group.parts.part.images.set", ob_images_set}, /* dup */
+     {"collections.group.parts.part.images.set.image", ob_images_set_image}, /* dup */
      {"collections.group.parts.part.fonts", NULL}, /* dup */
      {"collections.group.parts.part.styles", NULL}, /* dup */
      {"collections.group.parts.part.styles.style", ob_styles_style}, /* dup */
@@ -623,13 +706,19 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.rel1", NULL},
      {"collections.group.parts.part.description.rel2", NULL},
      {"collections.group.parts.part.description.image", NULL}, /* dup */
+     {"collections.group.parts.part.description.image.set", ob_images_set}, /* dup */
+     {"collections.group.parts.part.description.image.set.image", ob_images_set_image}, /* dup */
      {"collections.group.parts.part.description.image.images", NULL}, /* dup */
+     {"collections.group.parts.part.description.image.images.set", ob_images_set}, /* dup */
+     {"collections.group.parts.part.description.image.images.set.image", ob_images_set_image}, /* dup */
      {"collections.group.parts.part.description.fill", NULL},
      {"collections.group.parts.part.description.fill.origin", NULL},
      {"collections.group.parts.part.description.fill.size", NULL},
      {"collections.group.parts.part.description.text", NULL},
      {"collections.group.parts.part.description.text.fonts", NULL}, /* dup */
      {"collections.group.parts.part.description.images", NULL}, /* dup */
+     {"collections.group.parts.part.description.images.set", ob_images_set}, /* dup */
+     {"collections.group.parts.part.description.images.set.image", ob_images_set_image}, /* dup */
      {"collections.group.parts.part.description.fonts", NULL}, /* dup */
      {"collections.group.parts.part.description.styles", NULL}, /* dup */
      {"collections.group.parts.part.description.styles.style", ob_styles_style}, /* dup */
@@ -648,7 +737,11 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.program.script", ob_collections_group_programs_program_script}, /* dup */
      {"collections.group.parts.part.description.program.lua_script", ob_collections_group_programs_program_lua_script}, /* dup */
      {"collections.group.parts.part.description.programs", NULL}, /* dup */
+     {"collections.group.parts.part.description.programs.set", ob_images_set}, /* dup */
+     {"collections.group.parts.part.description.programs.set.image", ob_images_set_image}, /* dup */
      {"collections.group.parts.part.description.programs.images", NULL}, /* dup */
+     {"collections.group.parts.part.description.programs.images.set", ob_images_set},
+     {"collections.group.parts.part.description.programs.images.set.image", ob_images_set_image}, /* dup */
      {"collections.group.parts.part.description.programs.fonts", NULL}, /* dup */
      {"collections.group.parts.part.description.programs.program", ob_collections_group_programs_program}, /* dup */
      {"collections.group.parts.part.description.programs.program.script", ob_collections_group_programs_program_script}, /* dup */
@@ -659,7 +752,11 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.program.script", ob_collections_group_programs_program_script}, /* dup */
      {"collections.group.parts.part.program.lua_script", ob_collections_group_programs_program_lua_script}, /* dup */
      {"collections.group.parts.part.programs", NULL}, /* dup */
+     {"collections.group.parts.part.programs.set", ob_images_set}, /* dup */
+     {"collections.group.parts.part.programs.set.image", ob_images_set_image}, /* dup */
      {"collections.group.parts.part.programs.images", NULL}, /* dup */
+     {"collections.group.parts.part.programs.images.set", ob_images_set}, /* dup */
+     {"collections.group.parts.part.programs.images.set.image", ob_images_set_image}, /* dup */
      {"collections.group.parts.part.programs.fonts", NULL}, /* dup */
      {"collections.group.parts.part.programs.program", ob_collections_group_programs_program}, /* dup */
      {"collections.group.parts.part.programs.program.script", ob_collections_group_programs_program_script}, /* dup */
@@ -670,7 +767,11 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.program.script", ob_collections_group_programs_program_script}, /* dup */
      {"collections.group.parts.program.lua_script", ob_collections_group_programs_program_lua_script}, /* dup */
      {"collections.group.parts.programs", NULL}, /* dup */
+     {"collections.group.parts.programs.set", ob_images_set}, /* dup */
+     {"collections.group.parts.programs.set.image", ob_images_set_image}, /* dup */
      {"collections.group.parts.programs.images", NULL}, /* dup */
+     {"collections.group.parts.programs.images.set", ob_images_set}, /* dup */
+     {"collections.group.parts.programs.images.set.image", ob_images_set_image}, /* dup */
      {"collections.group.parts.programs.fonts", NULL}, /* dup */
      {"collections.group.parts.programs.program", ob_collections_group_programs_program}, /* dup */
      {"collections.group.parts.programs.program.script", ob_collections_group_programs_program_script}, /* dup */
@@ -681,7 +782,11 @@ New_Object_Handler object_handlers[] =
      {"collections.group.program.script", ob_collections_group_programs_program_script}, /* dup */
      {"collections.group.program.lua_script", ob_collections_group_programs_program_lua_script}, /* dup */
      {"collections.group.programs", NULL},
+     {"collections.group.programs.set", ob_images_set}, /* dup */
+     {"collections.group.programs.set.image", ob_images_set_image}, /* dup */
      {"collections.group.programs.images", NULL}, /* dup */
+     {"collections.group.programs.images.set", ob_images_set}, /* dup */
+     {"collections.group.programs.images.set.image", ob_images_set_image}, /* dup */
      {"collections.group.programs.fonts", NULL}, /* dup */
      {"collections.group.programs.program", ob_collections_group_programs_program},
      {"collections.group.programs.program.script", ob_collections_group_programs_program_script},
@@ -778,14 +883,33 @@ st_externals_external(void)
         images {
             image: "filename1.ext" COMP;
             image: "filename2.ext" LOSSY 99;
+	    set {
+	       name: "image_name_used";
+               image {
+                  image: "filename3.ext" LOSSY 90;
+                  size: 201 201 500 500;
+               }
+               image {
+                  image: "filename4.ext" COMP;
+                  size: 51 51 200 200;
+               }
+               image {
+                  image: "filename5.ext" COMP;
+                  size: 11 11 50 50;
+               }
+               image {
+                  image: "filename6.ext" RAW;
+                  size: 0 0 10 10;
+               }
+            }
             ..
         }
     @description
         The "images" block is used to list each image file that will be used in
         the theme along with its compression method (if any).
-        Besides the domcument's root, additional "images" blocks can be
+        Besides the document's root, additional "images" blocks can be
         included inside other blocks, normally "collections", "group" and
-        "part", easing mantienance of the file list when the theme is split
+        "part", easing maintenance of the file list when the theme is split
         among multiple files.
     @endblock
 
@@ -861,6 +985,146 @@ st_images_image(void)
      {
 	img->source_param = parse_int_range(2, 0, 100);
 	check_arg_count(3);
+     }
+}
+
+/**
+    @page edcref
+
+    @block
+        set
+    @context
+    set {
+       name: "image_name_used";
+       image {
+          image: "filename3.ext" LOSSY 90;
+          size: 201 201 500 500;
+       }
+       image {
+          image: "filename4.ext" COMP;
+          size: 51 51 200 200;
+       }
+       image {
+          image: "filename5.ext" COMP;
+          size: 11 11 50 50;
+       }
+       image {
+          image: "filename6.ext" RAW;
+          size: 0 0 10 10;
+       }
+    }
+    @description
+        The "set" block is used to define an image with different content depending on their size.
+        Besides the document's root, additional "set" blocks can be
+        included inside other blocks, normally "collections", "group" and
+        "part", easing maintenance of the file list when the theme is split
+        among multiple files.
+    @endblock
+ */
+static void
+ob_images_set(void)
+{
+   Edje_Image_Directory_Set *set;
+
+   if (!edje_file->image_dir)
+     edje_file->image_dir = mem_alloc(SZ(Edje_Image_Directory));
+   set = mem_alloc(SZ(Edje_Image_Directory_Set));
+   set->id = eina_list_count(edje_file->image_dir->sets);
+   edje_file->image_dir->sets = eina_list_append(edje_file->image_dir->sets, set);
+}
+
+/**
+    @page edcref
+
+    @property
+        name
+    @parameters
+        [image name]
+    @effect
+        Define the name that refer to this image description.
+    @endproperty
+*/
+static void
+st_images_set_name(void)
+{
+   Edje_Image_Directory_Set *set;
+
+   check_arg_count(1);
+
+   set = eina_list_data_get(eina_list_last(edje_file->image_dir->sets));
+   set->name = parse_str(0);
+}
+
+static void
+ob_images_set_image(void)
+{
+   Edje_Image_Directory_Set_Entry *entry;
+   Edje_Image_Directory_Set *set;
+
+   set = eina_list_data_get(eina_list_last(edje_file->image_dir->sets));
+
+   entry = mem_alloc(SZ(Edje_Image_Directory_Set_Entry));
+
+   set->entries = eina_list_append(set->entries, entry);
+}
+
+static void
+st_images_set_image_image(void)
+{
+   Edje_Image_Directory_Set_Entry *entry;
+   Edje_Image_Directory_Set *set;
+   Edje_Image_Directory_Entry *img;
+   Eina_List *l;
+
+   set =  eina_list_data_get(eina_list_last(edje_file->image_dir->sets));
+   entry = eina_list_data_get(eina_list_last(set->entries));
+
+   /* Add the image to the global pool with the same syntax. */
+   st_images_image();
+
+   entry->name = parse_str(0);
+
+   EINA_LIST_FOREACH(edje_file->image_dir->entries, l, img)
+     if (!strcmp(img->entry, entry->name))
+       {
+	 entry->id = img->id;
+	 return;
+       }  
+}
+
+/**
+    @page edcref
+
+    @property
+        size
+    @parameters
+        [minw minh maxw mawh]
+    @effect
+        Define the minimal and maximal size that will select the specified image.
+    @endproperty
+*/
+static void
+st_images_set_image_size(void)
+{
+   Edje_Image_Directory_Set_Entry *entry;
+   Edje_Image_Directory_Set *set;
+  
+   set =  eina_list_data_get(eina_list_last(edje_file->image_dir->sets));
+   entry = eina_list_data_get(eina_list_last(set->entries));
+
+   entry->size.min.w = parse_int(0);
+   entry->size.min.h = parse_int(1);
+   entry->size.max.w = parse_int(2);
+   entry->size.max.h = parse_int(3);
+
+   if (entry->size.min.w > entry->size.max.w
+       || entry->size.min.h > entry->size.max.h)
+     {
+       ERR("%s: Error. parse error %s:%i. Image min and max size are not in the right order ([%i, %i] < [%i, %i])",
+	   progname, file_in, line - 1,
+	   entry->size.min.w, entry->size.min.h,
+	   entry->size.max.w, entry->size.max.h);
+       exit(-1);
      }
 }
 
@@ -4024,7 +4288,7 @@ st_collections_group_parts_part_description_image_normal(void)
 	char *name;
 
 	name = parse_str(0);
-	data_queue_image_lookup(name, &(ed->image.id));
+	data_queue_image_lookup(name, &(ed->image.id), &(ed->image.set));
 	free(name);
      }
 }
@@ -4070,7 +4334,7 @@ st_collections_group_parts_part_description_image_tween(void)
 	iid = mem_alloc(SZ(Edje_Part_Image_Id));
 	ed->image.tween_list = eina_list_append(ed->image.tween_list, iid);
 	name = parse_str(0);
-	data_queue_image_lookup(name, &(iid->id));
+	data_queue_image_lookup(name, &(iid->id), &(iid->set));
 	free(name);
      }
 }

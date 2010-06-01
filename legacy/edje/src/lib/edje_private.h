@@ -219,6 +219,8 @@ typedef struct _Edje_Font_Directory                  Edje_Font_Directory;
 typedef struct _Edje_Font_Directory_Entry            Edje_Font_Directory_Entry;
 typedef struct _Edje_Image_Directory                 Edje_Image_Directory;
 typedef struct _Edje_Image_Directory_Entry           Edje_Image_Directory_Entry;
+typedef struct _Edje_Image_Directory_Set             Edje_Image_Directory_Set;
+typedef struct _Edje_Image_Directory_Set_Entry       Edje_Image_Directory_Set_Entry;
 typedef struct _Edje_Spectrum_Directory              Edje_Spectrum_Directory;
 typedef struct _Edje_Spectrum_Directory_Entry        Edje_Spectrum_Directory_Entry;
 typedef struct _Edje_Program                         Edje_Program;
@@ -399,6 +401,7 @@ struct _Edje_External_Directory_Entry
 struct _Edje_Image_Directory
 {
    Eina_List *entries; /* a list of Edje_Image_Directory_Entry */
+   Eina_List *sets; /* a list of Edje_Image_Directory_Set */
 };
 
 struct _Edje_Image_Directory_Entry
@@ -407,6 +410,27 @@ struct _Edje_Image_Directory_Entry
    int   source_type; /* alternate source mode. 0 = none */
    int   source_param; /* extra params on encoding */
    int   id; /* the id no. of the image */
+};
+
+struct _Edje_Image_Directory_Set
+{
+   char *name;
+   Eina_List *entries;
+
+   int id;
+};
+
+struct _Edje_Image_Directory_Set_Entry
+{
+   char *name;
+   int id;
+
+   struct {
+     struct {
+       int w;
+       int h;
+     } min, max;
+   } size;
 };
 
 /*----------*/
@@ -601,6 +625,7 @@ struct _Edje_Part
 struct _Edje_Part_Image_Id
 {
    int id;
+   Eina_Bool set;
 };
 
 struct _Edje_Part_Description
@@ -633,6 +658,7 @@ struct _Edje_Part_Description
       Eina_List     *tween_list; /* list of Edje_Part_Image_Id */
       int            id; /* the image id to use */
       int            scale_hint; /* evas scale hint */
+      Eina_Bool      set; /* if image condition it's content */
    } image;
 
    struct {
@@ -744,6 +770,7 @@ struct _Edje_Part_Description
 typedef struct _Edje Edje;
 typedef struct _Edje_Real_Part_State Edje_Real_Part_State;
 typedef struct _Edje_Real_Part_Drag Edje_Real_Part_Drag;
+typedef struct _Edje_Real_Part_Set Edje_Real_Part_Set;
 typedef struct _Edje_Real_Part Edje_Real_Part;
 typedef struct _Edje_Running_Program Edje_Running_Program;
 typedef struct _Edje_Signal_Callback Edje_Signal_Callback;
@@ -913,6 +940,14 @@ struct _Edje_Calc_Params
    unsigned char    smooth : 1; // 1
 }; // 96
 
+struct _Edje_Real_Part_Set
+{
+  Edje_Image_Directory_Set_Entry *entry; // 4
+  Edje_Image_Directory_Set       *set; // 4
+
+  int                             id; // 4
+};
+
 struct _Edje_Real_Part_State
 {
    Edje_Part_Description *description; // 4
@@ -925,8 +960,9 @@ struct _Edje_Real_Part_State
    Edje_Calc_Params       p; // 96
 #endif
    void                  *external_params; // 4
-}; // 24
-// WITH EDJE_CALC_CACHE 124
+   Edje_Real_Part_Set    *set; // 4
+}; // 28
+// WITH EDJE_CALC_CACHE 128
 
 struct _Edje_Real_Part_Drag
 {
