@@ -2136,7 +2136,7 @@ edje_object_text_insert_filter_callback_add(Evas_Object *obj, const char *part, 
    cb = calloc(1, sizeof(Edje_Text_Insert_Filter_Callback));
    cb->part = eina_stringshare_add(part);
    cb->func = func;
-   cb->data = data;
+   cb->data = (void*) data;
    ed->text_insert_filter_callbacks = 
      eina_list_append(ed->text_insert_filter_callbacks, cb);
 }
@@ -2152,7 +2152,7 @@ edje_object_text_insert_filter_callback_del(Evas_Object *obj, const char *part, 
    if ((!ed) || (!part)) return;
    EINA_LIST_FOREACH(ed->text_insert_filter_callbacks, l, cb)
      {
-        if ((!strcmp(cb->part, part)) && (cb->func == func))
+        if ((!strcmp(cb->part, part)) && (cb->func == func) && (cb->data == data))
           {
              ed->text_insert_filter_callbacks = 
                eina_list_remove_list(ed->text_insert_filter_callbacks, l);
