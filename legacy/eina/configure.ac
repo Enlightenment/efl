@@ -52,10 +52,6 @@ AC_SUBST(release_info)
 VMAJ=v_maj
 AC_SUBST(VMAJ)
 
-MODULE_ARCH="$host_os-$host_cpu-relname"
-AC_SUBST(MODULE_ARCH)
-AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
-
 ### Needed information
 
 requirement_eina=""
