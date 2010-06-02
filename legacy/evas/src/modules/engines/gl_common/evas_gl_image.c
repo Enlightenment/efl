@@ -443,6 +443,11 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
      }
    
    _evas_gl_common_image_update(gc, im);
+   if (!im->tex)
+     {
+        evas_gl_common_rect_draw(gc, dx, dy, dw, dh);
+        return;
+     }
 
    if ((im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (im->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))
