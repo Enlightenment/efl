@@ -26,6 +26,8 @@ static Eet_File *util_ef = NULL;
 static Eina_Hash *file_ids = NULL;
 static Eina_Hash *paths = NULL;
 
+int verbose = 0;
+
 static int
 strcmplen(const void *data1, const void *data2)
 {
@@ -38,20 +40,39 @@ cache_add(const char *path, const char *file_id, int priority __UNUSED__, int *c
     Efreet_Desktop *desk;
     char *ext;
 
+    if (verbose)
+    {
+         printf("FOUND: %s\n", path);
+         if (file_id) printf(" (id): %s\n", file_id);
+    }
     ext = strrchr(path, '.');
     if (!ext || (strcmp(ext, ".desktop") && strcmp(ext, ".directory"))) return 1;
     desk = efreet_desktop_new(path);
+    if (verbose)
+    {
+        if (desk) printf("  OK\n");
+        else      printf("  FAIL\n");
+    }
     if (!desk) return 1;
     if (!desk->eet)
     {
         /* This file isn't in cache */
         *changed = 1;
+        if (verbose)
+        {
+            printf("  NEW\n");
+        }
     }
     else if (ecore_file_mod_time(desk->orig_path) != desk->load_time)
     {
         efreet_desktop_free(desk);
         *changed = 1;
         desk = efreet_desktop_uncached_new(path);
+        if (verbose)
+        {
+            if (desk) printf("  CHANGED\n");
+            else      printf("  NO UNCACHED\n");
+        }
     }
     if (!desk) return 1;
     if (!eina_hash_find(paths, desk->orig_path))
@@ -173,7 +194,7 @@ cache_scan(const char *path, const char *base_id, int priority, int recurse, int
 }
 
 int
-main()
+main(int argc, char **argv)
 {
     /* TODO:
      * - Add file monitor on files, so that we catch changes on files
@@ -190,10 +211,25 @@ main()
     int fd = -1, tmpfd, dirsfd = -1;
     struct stat st;
     int changed = 0;
+    int i;
 
+    for (i = 1; i < argc; i++)
+    {
+        if      (!strcmp(argv[i], "-v")) verbose = 1;
+        else if ((!strcmp(argv[i], "-h")) ||
+                 (!strcmp(argv[i], "-help")) ||
+                 (!strcmp(argv[i], "--h")) ||
+                 (!strcmp(argv[i], "--help")))
+        {
+            printf("Options:\n");
+            printf("  -v     Verbose mode\n");
+            exit(0);
+        }
+    }
     /* init external subsystems */
     if (!eina_init()) goto eina_error;
     if (!eet_init()) goto eet_error;
+    if (!ecore_init()) goto eet_error;
 
     efreet_cache_update = 0;
 
@@ -205,7 +241,14 @@ main()
     snprintf(file, sizeof(file), "%s/.efreet/desktop_data.lock", efreet_home_dir_get());
     fd = open(file, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
     if (fd < 0) goto efreet_error;
-    if (flock(fd, LOCK_EX | LOCK_NB) < 0) goto efreet_error;
+    if (flock(fd, LOCK_EX | LOCK_NB) < 0)
+    {
+        if (verbose)
+        {
+            printf("LOCKED! You may want to delete %s if this persists\n", file);
+        }
+        goto efreet_error;
+    }
 
     /* create dir for desktop cache */
     dir = ecore_file_dir_get(efreet_desktop_cache_file());
@@ -345,6 +388,7 @@ main()
 
     efreet_desktop_edd_shutdown(edd);
     efreet_shutdown();
+    ecore_shutdown();
     eet_shutdown();
     eina_shutdown();
     close(fd);
