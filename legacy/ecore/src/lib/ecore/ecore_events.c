@@ -575,6 +575,7 @@ _ecore_event_call(void)
 		       if (event_handler_current) /* may have changed in recursive main loops */
 			 event_handler_current = (Ecore_Event_Handler *)EINA_INLIST_GET(event_handler_current)->next;
 		    }
+		  e->delete_me = 1;
 	       }
 	     /* if no handlers were set for EXIT signal - then default is */
 	     /* to quit the main loop */

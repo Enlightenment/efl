@@ -3,9 +3,14 @@
 #endif
 
 #include <Ecore.h>
+#include <Eina.h>
 #include <unistd.h>
 
 #include "ecore_suite.h"
+
+
+static int _log_dom;
+#define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
 
 static int
 _quit_cb(void *data)
@@ -271,6 +276,70 @@ START_TEST(ecore_test_ecore_main_loop_event)
 }
 END_TEST
 
+static int
+_timer_quit_recursive(void *data)
+{
+   INF("   _timer_quit_recursive: begin");
+   ecore_main_loop_quit(); /* quits inner main loop */
+   INF("   _timer_quit_recursive: end");
+   return 0;
+}
+
+static int
+_event_recursive_cb(void *data, int type, void *event)
+{
+   Ecore_Event *e;
+   static int guard = 0;
+
+   /* If we enter this callback more than once, it's wrong! */
+   fail_if(guard != 0);
+   guard++;
+
+   INF("  event_recursive_cb: begin");
+
+   ecore_timer_add(1.0, _timer_quit_recursive, NULL);
+   INF("   add 1.0s timer (once) to trigger _timer_quit_recursive");
+
+   INF("   inner main loop begin (recurse)");
+   ecore_main_loop_begin();
+   INF("   inner main loop end (recurse)");
+
+   ecore_main_loop_quit(); /* quits outer main loop */
+
+   INF("   guard = %d", guard);
+   INF("  event_recursive_cb: end");
+   return 0;
+}
+
+
+START_TEST(ecore_test_ecore_main_loop_event_recursive)
+{
+   /* This test tests if the event handlers are really called only once when
+    * recursive main loops are used and any number of events may have occurred
+    * between the beginning and the end of recursive main loop.
+    */
+   Ecore_Event *e;
+   int type;
+
+   _log_dom = eina_log_domain_register("test", EINA_COLOR_CYAN);
+
+   INF("main: begin");
+   ecore_init();
+
+
+   type = ecore_event_type_new();
+   ecore_event_handler_add(type, _event_recursive_cb, NULL);
+   e = ecore_event_add(type, NULL, NULL, NULL);
+   INF(" add event to trigger cb1: event=%p", e);
+   INF(" main loop begin");
+   ecore_main_loop_begin();
+   INF(" main loop end");
+
+   INF("main: end");
+   ecore_shutdown();
+}
+END_TEST
+
 void ecore_test_ecore(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_init);
@@ -282,4 +351,5 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler);
    tcase_add_test(tc, ecore_test_ecore_main_loop_event);
    tcase_add_test(tc, ecore_test_ecore_main_loop_timer_inner);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_event_recursive);
 }
