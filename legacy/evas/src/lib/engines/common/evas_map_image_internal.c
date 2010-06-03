@@ -106,7 +106,7 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
           func = evas_common_gfx_func_composite_pixel_span_get(src, dst, cw, dc->render_op);
         src->cache_entry.flags.alpha = pa;
      }
-   
+    
    if (!havecol)
      {
 #undef COLMUL     

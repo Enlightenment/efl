@@ -93,10 +93,10 @@
      {
 # ifdef COLMUL
         DATA32 val1, cval; // col
-# endif        
+# endif
 # ifdef COLBLACK
         *d = 0xff000000; // col
-# else        
+# else
         s = sp + ((v >> (FP + FPI)) * sw) + 
           (u >> (FP + FPI));
 #  ifdef COLMUL
@@ -104,12 +104,12 @@
         cval = INTERP_256((cv >> 16), c2, c1); // col
         *d = MUL4_SYM(cval, val1);
         cv += cd; // col              
-#  else        
+#  else
         *d = *s;
-#  endif        
+#  endif
         u += ud;
         v += vd;
-# endif        
+# endif
         d++;
         ww--;
      }

@@ -8,7 +8,7 @@
         for (y = ystart; y <= yend; y++)
           {
              int x, w, ww;
-             FPc u, v, ud, vd, dv;
+             FPc u, v, ud, vd, dv, ue, ve;
              DATA32 *d, *s;
 #ifdef COLMUL             
              FPc cv, cd, cc; // col
@@ -39,9 +39,19 @@
                        
                        ww = w;
                        u = span->u[0] << FPI;
+                       if (u < 0) u = 0;
+                       else if (u >= swp) u = swp - 1;
                        v = span->v[0] << FPI;
-                       ud = ((span->u[1] << FPI) - u) / w;
-                       vd = ((span->v[1] << FPI) - v) / w;
+                       if (v < 0) v = 0;
+                       else if (v >= shp) v = shp - 1;
+                       ue = span->u[1] << FPI;
+                       if (ue < 0) ue = 0;
+                       else if (ue >= swp) ue = swp - 1;
+                       ve = span->v[1] << FPI;
+                       if (ve < 0) ve = 0;
+                       else if (ve >= shp) ve = shp - 1;
+                       ud = (ue - u) / w;
+                       vd = (ve - v) / w;
                        tl = (long long)ud * (w << FP);
                        tl = tl / dv;
                        ud = tl;
@@ -113,7 +123,7 @@
         for (y = ystart; y <= yend; y++)
           {
              int x, w, ww;
-             FPc u, v, ud, vd;
+             FPc u, v, ud, vd, ue, ve;
              DATA32 *d, *s;
 #ifdef COLMUL
              FPc cv, cd, cc; // col
@@ -135,12 +145,19 @@
                        if (w <= 0) continue;
                        ww = w;
                        u = span->u[0] << FPI;
+                       if (u < 0) u = 0;
+                       else if (u >= swp) u = swp - 1;
                        v = span->v[0] << FPI;
-                       ud = ((span->u[1] << FPI) - u) / w;
-                       vd = ((span->v[1] << FPI) - v) / w;
-                       if (ud < 0) u -= 1;
-                       if (vd < 0) v -= 1;
-                       
+                       if (v < 0) v = 0;
+                       else if (v >= shp) v = shp - 1;
+                       ue = span->u[1] << FPI;
+                       if (ue < 0) ue = 0;
+                       else if (ue >= swp) ue = swp - 1;
+                       ve = span->v[1] << FPI;
+                       if (ve < 0) ve = 0;
+                       else if (ve >= shp) ve = shp - 1;
+                       ud = (ue - u) / w;
+                       vd = (ve - v) / w;
                        if (direct)
                          d = dst->image.data + (y * dst->cache_entry.w) + x;
                        else
