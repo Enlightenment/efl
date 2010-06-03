@@ -2763,26 +2763,26 @@ void
 _ecore_evas_free(Ecore_Evas *ee)
 {
    if (ee->func.fn_pre_free) ee->func.fn_pre_free(ee);
-   ECORE_MAGIC_SET(ee, ECORE_MAGIC_NONE);
    while (ee->sub_ecore_evas)
      {
 	_ecore_evas_free(ee->sub_ecore_evas->data);
      }
    if (ee->data) eina_hash_free(ee->data);
-   if (ee->name) free(ee->name);
-   if (ee->prop.title) free(ee->prop.title);
-   if (ee->prop.name) free(ee->prop.name);
-   if (ee->prop.clas) free(ee->prop.clas);
-   if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
-   if (ee->evas) evas_free(ee->evas);
    ee->data = NULL;
-   ee->driver = NULL;
+   if (ee->name) free(ee->name);
    ee->name = NULL;
+   if (ee->prop.title) free(ee->prop.title);
    ee->prop.title = NULL;
+   if (ee->prop.name) free(ee->prop.name);
    ee->prop.name = NULL;
+   if (ee->prop.clas) free(ee->prop.clas);
    ee->prop.clas = NULL;
+   if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
    ee->prop.cursor.object = NULL;
+   if (ee->evas) evas_free(ee->evas);
    ee->evas = NULL;
+   ECORE_MAGIC_SET(ee, ECORE_MAGIC_NONE);
+   ee->driver = NULL;
    if (ee->engine.idle_flush_timer)
      ecore_timer_del(ee->engine.idle_flush_timer);
    if (ee->engine.func->fn_free) ee->engine.func->fn_free(ee);
