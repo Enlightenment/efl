@@ -563,64 +563,64 @@ extern "C" {
    EAPI void         elm_table_unpack(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_table_clear(Evas_Object *obj, Eina_Bool clear);
        
-   typedef struct _Elm_Grid_Cell_Class Elm_Grid_Cell_Class;
-   typedef struct _Elm_Grid_Cell_Class_Func Elm_Grid_Cell_Class_Func;
-   typedef struct _Elm_Grid_Cell Elm_Grid_Cell;
-   typedef char        *(*GridCellLabelGetFunc) (const void *data, Evas_Object *obj, const char *part);
-   typedef Evas_Object *(*GridCellIconGetFunc)  (const void *data, Evas_Object *obj, const char *part);
-   typedef Eina_Bool    (*GridCellStateGetFunc) (const void *data, Evas_Object *obj, const char *part);
-   typedef void         (*GridCellDelFunc)      (const void *data, Evas_Object *obj);
+   typedef struct _Elm_Gengrid_Item_Class Elm_Gengrid_Item_Class;
+   typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func;
+   typedef struct _Elm_Gengrid_Item Elm_Gengrid_Item;
+   typedef char        *(*GridItemLabelGetFunc) (const void *data, Evas_Object *obj, const char *part);
+   typedef Evas_Object *(*GridItemIconGetFunc)  (const void *data, Evas_Object *obj, const char *part);
+   typedef Eina_Bool    (*GridItemStateGetFunc) (const void *data, Evas_Object *obj, const char *part);
+   typedef void         (*GridItemDelFunc)      (const void *data, Evas_Object *obj);
 
-   struct _Elm_Grid_Cell_Class
+   struct _Elm_Gengrid_Item_Class
      {
 	const char *item_style;
-	struct _Elm_Grid_Cell_Class_Func
+	struct _Elm_Gengrid_Item_Class_Func
           {
-	     GridCellLabelGetFunc label_get;
-	     GridCellIconGetFunc icon_get;
-	     GridCellStateGetFunc state_get;
-	     GridCellDelFunc del;
+	     GridItemLabelGetFunc label_get;
+	     GridItemIconGetFunc icon_get;
+	     GridItemStateGetFunc state_get;
+	     GridItemDelFunc del;
 	  } func;
      };
 
-   EAPI Evas_Object *elm_scrolled_grid_add(Evas_Object *parent);
-   EAPI void	     elm_scrolled_grid_cell_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
-   EAPI void	     elm_scrolled_grid_cell_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
-   EAPI void         elm_scrolled_grid_align_set(Evas_Object *obj, double align_x, double align_y);
-   EAPI void         elm_scrolled_grid_align_get(const Evas_Object *obj, double *align_x, double *align_y);
-   EAPI void	     elm_scrolled_grid_cell_del(Elm_Grid_Cell *cell);
-   EAPI void	     elm_scrolled_grid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
-   EAPI Eina_Bool    elm_scrolled_grid_always_select_mode_get(const Evas_Object *obj);
-   EAPI void	     elm_scrolled_grid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
-   EAPI Eina_Bool    elm_scrolled_grid_no_select_mode_get(const Evas_Object *obj);
-   EAPI void	     elm_scrolled_grid_multi_select_set(Evas_Object *obj, Eina_Bool multi);
-   EAPI Eina_Bool    elm_scrolled_grid_multi_select_get(const Evas_Object *obj);
-   EAPI void	     elm_scrolled_grid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
-   EAPI void	     elm_scrolled_grid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
-   EAPI void	     elm_scrolled_grid_horizontal_set(Evas_Object *obj, Eina_Bool setting);
-   EAPI void	     elm_scrolled_grid_clear(Evas_Object *obj);
-   EAPI void	    *elm_scrolled_grid_cell_data_get(Elm_Grid_Cell *cell);
-   EAPI void	     elm_scrolled_grid_cell_pos_get(const Elm_Grid_Cell *cell, unsigned int *x, unsigned int *y);
-   EAPI void	     elm_scrolled_grid_cell_selected_set(Elm_Grid_Cell *cell, Eina_Bool selected);
-   EAPI Eina_Bool    elm_scrolled_grid_cell_selected_get(const Elm_Grid_Cell *cell);
-   EAPI const Evas_Object *elm_scrolled_grid_cell_object_get(Elm_Grid_Cell *cell);
-   EAPI const Eina_List *elm_scrolled_grid_selected_cells_get(const Evas_Object *obj);
-   EAPI Elm_Grid_Cell *elm_scrolled_grid_cell_add(Evas_Object *obj, const Elm_Grid_Cell_Class *gcc,  const void *data, Evas_Smart_Cb func, const void *func_data);
+   EAPI Evas_Object *elm_gengrid_add(Evas_Object *parent);
+   EAPI void	     elm_gengrid_item_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+   EAPI void	     elm_gengrid_item_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+   EAPI void         elm_gengrid_align_set(Evas_Object *obj, double align_x, double align_y);
+   EAPI void         elm_gengrid_align_get(const Evas_Object *obj, double *align_x, double *align_y);
+   EAPI void	     elm_gengrid_item_del(Elm_Gengrid_Item *item);
+   EAPI void	     elm_gengrid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
+   EAPI Eina_Bool    elm_gengrid_always_select_mode_get(const Evas_Object *obj);
+   EAPI void	     elm_gengrid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
+   EAPI Eina_Bool    elm_gengrid_no_select_mode_get(const Evas_Object *obj);
+   EAPI void	     elm_gengrid_multi_select_set(Evas_Object *obj, Eina_Bool multi);
+   EAPI Eina_Bool    elm_gengrid_multi_select_get(const Evas_Object *obj);
+   EAPI void	     elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+   EAPI void	     elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+   EAPI void	     elm_gengrid_horizontal_set(Evas_Object *obj, Eina_Bool setting);
+   EAPI void	     elm_gengrid_clear(Evas_Object *obj);
+   EAPI void	    *elm_gengrid_item_data_get(Elm_Gengrid_Item *item);
+   EAPI void	     elm_gengrid_item_pos_get(const Elm_Gengrid_Item *item, unsigned int *x, unsigned int *y);
+   EAPI void	     elm_gengrid_item_selected_set(Elm_Gengrid_Item *item, Eina_Bool selected);
+   EAPI Eina_Bool    elm_gengrid_item_selected_get(const Elm_Gengrid_Item *item);
+   EAPI const Evas_Object *elm_gengrid_item_object_get(Elm_Gengrid_Item *item);
+   EAPI const Eina_List *elm_gengrid_selected_items_get(const Evas_Object *obj);
+   EAPI Elm_Gengrid_Item *elm_gengrid_item_append(Evas_Object *obj, const Elm_Gengrid_Item_Class *gcc,  const void *data, Evas_Smart_Cb func, const void *func_data);
    /* smart callbacks called:
     *
-    * selected - User has selected a cell.
-    * unselected - User has unselected a cell.
-    * clicked - User has double-clicked a cell.
-    * realized - An evas object for a cell was built.
+    * selected - User has selected a item.
+    * unselected - User has unselected a item.
+    * clicked - User has double-clicked a item.
+    * realized - An evas object for a item was built.
     * scroll - the content has been scrolled (moved).
     * "scroll,drag,start" - dragging the contents around has started.
     * "scroll,drat,stop" - dragging the contents around has stopped.
-    * drag - grid is being dragged.
-    * "drag,start,up" - grid has been dragged (not scrolled) up.
-    * "drag,start,down" - grid has been dragged (not scrolled) down.
-    * "drag,start,left" - grid has been dragged (not scrolled) left.
-    * "drag,start,rigth" - grid has been dragged (nto scrolled) right.
-    * "drag,stop" - grid is not being dragged.
+    * drag - Gengrid is being dragged.
+    * "drag,start,up" - Gengrid has been dragged (not scrolled) up.
+    * "drag,start,down" - Gengrid has been dragged (not scrolled) down.
+    * "drag,start,left" - Gengrid has been dragged (not scrolled) left.
+    * "drag,start,rigth" - Gengrid has been dragged (nto scrolled) right.
+    * "drag,stop" - Gengrid is not being dragged.
     */
 
    EAPI Evas_Object *elm_clock_add(Evas_Object *parent);

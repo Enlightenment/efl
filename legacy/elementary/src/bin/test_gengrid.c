@@ -2,13 +2,13 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 typedef struct _Testitem
 {
-   Elm_Grid_Cell *cell;
+   Elm_Gengrid_Item *item;
    const char *path;
    int mode;
    int onoff;
 } Testitem;
 
-static Elm_Grid_Cell_Class gcc;
+static Elm_Gengrid_Item_Class gic;
 
 static void
 grid_drag_up(void *data, Evas_Object *obj, void *event_info)
@@ -59,31 +59,31 @@ grid_longpress(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-grid_cell_check_changed(void *data, Evas_Object *obj, void *event_info)
+grid_item_check_changed(void *data, Evas_Object *obj, void *event_info)
 {
-   Testitem *tit = data;
-   tit->onoff = elm_check_state_get(obj);
-   printf("cell %p onoff = %i\n", tit, tit->onoff);
+   Testitem *ti = data;
+   ti->onoff = elm_check_state_get(obj);
+   printf("item %p onoff = %i\n", ti, ti->onoff);
 }
 
 char *
 grid_label_get(const void *data, Evas_Object *obj, const char *part)
 {
-   const Testitem *tit = data;
+   const Testitem *ti = data;
    char buf[256];
-   snprintf(buf, sizeof(buf), "Photo %s", tit->path);
+   snprintf(buf, sizeof(buf), "Photo %s", ti->path);
    return strdup(buf);
 }
 
 Evas_Object *
 grid_icon_get(const void *data, Evas_Object *obj, const char *part)
 {
-   const Testitem *tit = data;
+   const Testitem *ti = data;
    if (!strcmp(part, "elm.swallow.icon"))
      {
 
 	Evas_Object *icon = elm_bg_add(obj);
-	elm_bg_file_set(icon, tit->path, NULL);
+	elm_bg_file_set(icon, ti->path, NULL);
 	evas_object_size_hint_aspect_set(icon, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 	evas_object_show(icon);
 	return icon;
@@ -93,8 +93,8 @@ grid_icon_get(const void *data, Evas_Object *obj, const char *part)
 	Evas_Object *ck;
 	ck = elm_check_add(obj);
 	evas_object_propagate_events_set(ck, 0);
-	elm_check_state_set(ck, tit->onoff);
-	evas_object_smart_callback_add(ck, "changed", grid_cell_check_changed, data);
+	elm_check_state_set(ck, ti->onoff);
+	evas_object_smart_callback_add(ck, "changed", grid_item_check_changed, data);
 	evas_object_show(ck);
 	return ck;
      }
@@ -119,10 +119,10 @@ grid_sel(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_grid(void *data, Evas_Object *obj, void *event_info)
+test_gengrid(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *grid;
-   static Testitem item[144];
+   static Testitem ti[144];
    int i, j, n;
    char buf[PATH_MAX];
    const char *img[9] =
@@ -147,10 +147,10 @@ test_grid(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
-   grid = elm_scrolled_grid_add(win);
-   elm_scrolled_grid_cell_size_set(grid, 150, 150);
-   elm_scrolled_grid_horizontal_set(grid, EINA_FALSE);
-   elm_scrolled_grid_multi_select_set(grid, EINA_TRUE);
+   grid = elm_gengrid_add(win);
+   elm_gengrid_item_size_set(grid, 150, 150);
+   elm_gengrid_horizontal_set(grid, EINA_FALSE);
+   elm_gengrid_multi_select_set(grid, EINA_TRUE);
    evas_object_smart_callback_add(grid, "selected", grid_selected, NULL);
    evas_object_smart_callback_add(grid, "clicked", grid_clicked, NULL);
    evas_object_smart_callback_add(grid, "longpressed", grid_longpress, NULL);
@@ -161,23 +161,22 @@ test_grid(void *data, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_add(grid, "drag,stop", grid_drag_stop, NULL);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-   gcc.item_style = "default";
-   gcc.func.label_get = grid_label_get;
-   gcc.func.icon_get = grid_icon_get;
-   gcc.func.state_get = grid_state_get;
-   gcc.func.del = grid_del;
+   gic.item_style = "default";
+   gic.func.label_get = grid_label_get;
+   gic.func.icon_get = grid_icon_get;
+   gic.func.state_get = grid_state_get;
+   gic.func.del = grid_del;
 
    n = 0;
    for (i = 0; i < 12 * 12; i++)
      {
-	snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR,
-	      img[n]);
+	snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, img[n]);
 	n = (n + 1) % 9;
-	item[i].mode = i;
-	item[i].path = eina_stringshare_add(buf);
-	item[i].cell = elm_scrolled_grid_cell_add(grid, &gcc, &(item[i]), grid_sel, NULL);
+	ti[i].mode = i;
+	ti[i].path = eina_stringshare_add(buf);
+	ti[i].item = elm_gengrid_item_append(grid, &gic, &(ti[i]), grid_sel, NULL);
 	if (!(i % 5))
-	  elm_scrolled_grid_cell_selected_set(item[i].cell, EINA_TRUE);
+	  elm_gengrid_item_selected_set(ti[i].item, EINA_TRUE);
      }
 
    evas_object_show(grid);

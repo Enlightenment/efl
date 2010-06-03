@@ -45,7 +45,7 @@ elm_label.c \
 elm_toggle.c \
 elm_frame.c \
 elm_table.c \
-elm_scrolled_grid.c \
+elm_gengrid.c \
 elm_clock.c \
 elm_layout.c \
 elm_hover.c \

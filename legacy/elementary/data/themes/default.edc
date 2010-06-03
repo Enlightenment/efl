@@ -80,7 +80,7 @@ collections {
       alias: "elm/list/base/default";
       alias: "elm/genlist/base/default";
       alias: "elm/carousel/base/default";
-      alias: "elm/grid/base/default";
+      alias: "elm/gengrid/base/default";
 
       script {
 	 public sbvis_v, sbvis_h, sbalways_v, sbalways_h, sbvis_timer;
@@ -21072,7 +21072,7 @@ collections {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   group { name: "elm/grid/cell/default/default";
+   group { name: "elm/gengrid/item/default/default";
       data.item: "labels" "elm.text";
       data.item: "icons" "elm.swallow.icon elm.swallow.end";
       images {
@@ -21338,17 +21338,17 @@ collections {
          }
       }
    }
-   group { name: "elm/grid/cell/default_style/default";
+   group { name: "elm/gengrid/item/default_style/default";
        styles
        {
-           style { name: "grid_style";
+           style { name: "gengrid_style";
                base: "font=Sans font_size=10 align=left valign=0.5 color=#000";
                tag:  "br" "\n";
                tag:  "hilight" "+ font=Sans:style=Bold";
                tag:  "b" "+ font=Sans:style=Bold";
                tag:  "tab" "\t";
            }
-           style { name: "grid_selected_style";
+           style { name: "gengrid_selected_style";
                base: "font=Sans font_size=10 align=left valign=0.5 color=#fff";
                tag:  "br" "\n";
                tag:  "hilight" "+ font=Sans:style=Bold";
@@ -21519,14 +21519,14 @@ collections {
                        offset:   -1 -5;
                    }
                    text {
-                       style: "grid_style";
+                       style: "gengrid_style";
                        min: 1 1;
                    }
                }
                description { state: "selected" 0.0;
                    inherit: "default" 0.0;
                    text {
-                       style: "grid_selected_style";
+                       style: "gengrid_selected_style";
                    }
                }
            }
