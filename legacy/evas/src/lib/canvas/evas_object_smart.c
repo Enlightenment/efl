@@ -918,6 +918,7 @@ evas_object_smart_cleanup(Evas_Object *obj)
 	     free(cb);
 	  }
 
+	evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, 0);
 	o->data = NULL;
      }
 
