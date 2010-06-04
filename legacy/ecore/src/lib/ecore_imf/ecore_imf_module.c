@@ -55,7 +55,7 @@ ecore_imf_module_shutdown(void)
    if (module_list)
      {
 	eina_module_list_free(module_list);
-	modules = NULL;
+	module_list = NULL;
      }
 }
 
