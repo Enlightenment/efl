@@ -37,11 +37,9 @@ static int _ecore_imf_init_count = 0;
 EAPI int
 ecore_imf_init(void)
 {
-   if (++_ecore_imf_init_count != 1)
-     return _ecore_imf_init_count;
+   if (++_ecore_imf_init_count != 1) return _ecore_imf_init_count;
    
-   if (!ecore_init())
-     return --_ecore_imf_init_count;
+   if (!ecore_init()) return --_ecore_imf_init_count;
    _ecore_imf_log_dom = eina_log_domain_register("EcoreIMF", ECORE_IMF_DEFAULT_LOG_COLOR);
    if (_ecore_imf_log_dom < 0) 
      {
@@ -69,12 +67,10 @@ ecore_imf_init(void)
 EAPI int
 ecore_imf_shutdown(void)
 {
-   if (--_ecore_imf_init_count != 0)
-     return _ecore_imf_init_count;
-   
-   ecore_shutdown();
+   if (--_ecore_imf_init_count != 0) return _ecore_imf_init_count;
    ecore_imf_module_shutdown();
    eina_log_domain_unregister(_ecore_imf_log_dom);
    _ecore_imf_log_dom = -1;
+   ecore_shutdown();
    return _ecore_imf_init_count;
 }
