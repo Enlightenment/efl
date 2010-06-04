@@ -2,12 +2,6 @@
 #include <config.h>
 #endif
 
-#include <Edje.h>
-#include <Ecore_Evas.h>
-#include <Ecore.h>
-#include <Ecore_Getopt.h>
-#include <Evas.h>
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -15,6 +9,12 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <ctype.h>
+
+#include <Evas.h>
+#include <Ecore.h>
+#include <Ecore_Getopt.h>
+#include <Ecore_Evas.h>
+#include <Edje.h>
 
 struct opts {
    char *file;
