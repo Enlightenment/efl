@@ -2660,15 +2660,14 @@ _edje_embryo_fn_external_param_set_bool(Embryo_Program *ep, Embryo_Cell *params)
 }
 
 void
-_edje_embryo_script_init(Edje *ed)
+_edje_embryo_script_init(Edje_Part_Collection *edc)
 {
    Embryo_Program *ep;
 
-   if (!ed) return;
-   if (!ed->collection) return;
-   if (!ed->collection->script) return;
-   ep = ed->collection->script;
-   embryo_program_data_set(ep, ed);
+   if (!edc) return;
+   if (!edc->script) return;
+   
+   ep = edc->script;
    /* first advertise all the edje "script" calls */
    embryo_program_native_call_add(ep, "get_int", _edje_embryo_fn_get_int);
    embryo_program_native_call_add(ep, "set_int", _edje_embryo_fn_set_int);
@@ -2750,21 +2749,16 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "external_param_set_choice", _edje_embryo_fn_external_param_set_choice);
    embryo_program_native_call_add(ep, "external_param_get_bool", _edje_embryo_fn_external_param_get_bool);
    embryo_program_native_call_add(ep, "external_param_set_bool", _edje_embryo_fn_external_param_set_bool);
-
-//   embryo_program_vm_push(ed->collection->script);
-//   _edje_embryo_globals_init(ed);
 }
 
 void
-_edje_embryo_script_shutdown(Edje *ed)
+_edje_embryo_script_shutdown(Edje_Part_Collection *edc)
 {
-   if (!ed) return;
-   if (!ed->collection) return;
-   if (!ed->collection->script) return;
-   if (embryo_program_recursion_get(ed->collection->script) > 0) return;
-//   embryo_program_vm_pop(ed->collection->script);
-   embryo_program_free(ed->collection->script);
-   ed->collection->script = NULL;
+   if (!edc) return;
+   if (!edc->script) return;
+   if (embryo_program_recursion_get(edc->script) > 0) return;
+   embryo_program_free(edc->script);
+   edc->script = NULL;
 }
 
 void

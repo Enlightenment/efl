@@ -558,7 +558,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 	     _edje_ref(ed);
 	     _edje_block(ed);
 	     _edje_freeze(ed);
-	     if (ed->collection->script) _edje_embryo_script_init(ed);
+//	     if (ed->collection->script) _edje_embryo_script_init(ed);
 	     _edje_var_init(ed);
 	     for (i = 0; i < ed->table_parts_size; i++)
 	       {
@@ -843,6 +843,10 @@ _edje_file_del(Edje *ed)
    _edje_block_violate(ed);
    _edje_var_shutdown(ed);
    _edje_programs_patterns_clean(ed);
+//   if (ed->collection)
+//     {
+//        if (ed->collection->script) _edje_embryo_script_shutdown(ed);
+//     }
 
    if (!((ed->file) && (ed->collection))) return;
    if (ed->table_parts)
@@ -1112,6 +1116,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
    Edje_Program *pr;
    Edje_Part *ep;
 
+   _edje_embryo_script_shutdown(ec);
    EINA_LIST_FREE(ec->programs, pr)
      {
 	Edje_Program_Target *prt;

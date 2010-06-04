@@ -1400,8 +1400,8 @@ Eina_Bool         _edje_object_part_text_raw_set(Evas_Object *obj, Edje_Real_Par
 char             *_edje_text_escape(const char *text);
 char             *_edje_text_unescape(const char *text);
 
-void          _edje_embryo_script_init      (Edje *ed);
-void          _edje_embryo_script_shutdown  (Edje *ed);
+void          _edje_embryo_script_init      (Edje_Part_Collection *edc);
+void          _edje_embryo_script_shutdown  (Edje_Part_Collection *edc);
 void          _edje_embryo_script_reset     (Edje *ed);
 void          _edje_embryo_test_run         (Edje *ed, const char *fname, const char *sig, const char *src);
 Edje_Var     *_edje_var_new                 (void);

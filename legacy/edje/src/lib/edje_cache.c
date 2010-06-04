@@ -88,6 +88,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    if (data)
      {
 	edc->script = embryo_program_new(data, size);
+        _edje_embryo_script_init(edc);
 	free(data);
      }
 
