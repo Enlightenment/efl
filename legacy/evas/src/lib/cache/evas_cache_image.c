@@ -1346,7 +1346,10 @@ evas_cache_image_load_data(Image_Entry *im)
    LKL(im->lock);
 #endif
 
+   im->flags.in_progress = EINA_TRUE;
    error = cache->func.load(im);
+   im->flags.in_progress = EINA_FALSE;
+
 #ifdef BUILD_ASYNC_PRELOAD
    LKU(im->lock);
 #endif
@@ -1377,10 +1380,14 @@ evas_cache_image_unload_data(Image_Entry *im)
    assert(im->cache);
    cache = im->cache;
 
+   if (im->flags.in_progress) return ;
+
+   evas_cache_image_preload_cancel(im, NULL);
+
 #ifdef BUILD_ASYNC_PRELOAD
    LKL(im->lock);
 #endif
-   if ((!im->flags.loaded) || (!im->file) || 
+   if ((!im->flags.loaded) || (!im->file) ||
        (!im->info.module) || (im->flags.dirty))
      {
 #ifdef BUILD_ASYNC_PRELOAD
@@ -1390,7 +1397,7 @@ evas_cache_image_unload_data(Image_Entry *im)
      }
    evas_common_rgba_image_scalecache_dirty(im);
    cache->func.destructor(im);
-   
+
 #ifdef BUILD_ASYNC_PRELOAD
    LKU(im->lock);
 #endif

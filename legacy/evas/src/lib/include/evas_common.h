@@ -507,6 +507,7 @@ struct _RGBA_Image_Loadopts
 struct _Image_Entry_Flags
 {
    Eina_Bool loaded       : 1;
+   Eina_Bool in_progress  : 1;
    Eina_Bool dirty        : 1;
    Eina_Bool activ        : 1;
    Eina_Bool need_data    : 1;
