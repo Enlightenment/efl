@@ -493,6 +493,32 @@ EAPI Eina_Bool edje_edit_color_class_name_set(Evas_Object *obj, const char *name
 
 //@}
 
+/** Add a new ttf font to the edje file.
+ *
+ * The newly created font will be available to all the groups in the edje,
+ * not only the current one.
+ *
+ * @param obj Object being edited.
+ * @param path Path to the font file to add into the Edje file.
+ * @param alias Name with which the font will be referred inside the Edje,
+ *              can be NULL to use the filename.
+ *
+ * @return EINA_TRUE if the font got succesfully added, EINA_FALSE if not.
+ */
+EAPI Eina_Bool edje_edit_font_add(Evas_Object *obj, const char *path, const char *alias);
+
+/** Remove a ttf font to the edje file.
+ *
+ * The font exists at the file level, it's not per object. So deleting it
+ * will affect every group that is using it.
+ *
+ * @param obj Object being edited.
+ * @param alias Name by which the file is identified in the Edje file.
+ *
+ * @return EINA_TRUE if succesful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_font_del(Evas_Object *obj, const char *alias);
+
 /******************************************************************************/
 /**************************   TEXT STYLES *************************************/
 /******************************************************************************/
@@ -730,45 +756,6 @@ EAPI Eina_Bool edje_edit_part_restack_above(Evas_Object *obj, const char *part);
  * @return EINA_TRUE if succesful, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool edje_edit_part_name_set(Evas_Object *obj, const char *part, const char *new_name);
-
-/**Add a new ttf font to the edje file.
- * The newly created font will be available to all the groups in the edje, not only the current one.
- * If font can't be load EINA_FALSE is returned.
- */
-EAPI Eina_Bool          ///@return EINA_TRUE on success or EINA_FALSE on failure
-edje_edit_font_add(
-   Evas_Object *obj,       ///< The edje object
-   const char* path,       ///< The file path to load the ttf font from
-   const char* alias       ///< The file alias, or NULL to use filename
-);
-
-/**Remove a ttf font to the edje file.
- * If font can't be deleted EINA_FALSE is returned.
- */
-EAPI Eina_Bool         ///@return EINA_TRUE on success or EINA_FALSE on failure
-edje_edit_font_del(
-   Evas_Object *obj,       ///< The edje object
-   const char* alias       ///< The file alias
-);
-
-/**Get font name for a given part state. Remember to free the returned string using edje_edit_string_free().*/
-EAPI const char *          ///@return The name of the font used in the given part state
-edje_edit_state_font_get(
-   Evas_Object *obj,       ///< The edje object
-   const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default")
-   double value
-);
-
-/**Set font name for a given part state. */
-EAPI void
-edje_edit_state_font_set(
-   Evas_Object *obj,       ///< The edje object
-   const char *part,       ///< The name of the part
-   const char *state,      ///< The name of the 'part state' (ex. "default")
-   double value,
-   const char *font        ///< The name of the font to use in the given part state
-);
 
 /** Get the type of a part.
  *
@@ -2071,6 +2058,31 @@ EAPI const char * edje_edit_state_text_get(Evas_Object *obj, const char *part, c
  * @param text The new text to assign.
  */
 EAPI void edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, double value,const char *text);
+
+/** Get font name for a given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part to get the font of.
+ * @param state The state of the part to get the font of.
+ * @param value Value of the state.
+ *
+ * @return Font used by the part or NULL if error or nothing is set.
+ */
+EAPI const char * edje_edit_state_font_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set font name for a given part state.
+ *
+ * Font name can be any alias of an internal font in the Edje file and,
+ * if it doesn't match any, Edje will look for a font with the given name
+ * in the system fonts.
+ *
+ * @param obj Object being edited.
+ * @param part Part to set the font of.
+ * @param state State in which the font is set.
+ * @param value Value of the state.
+ * @param font The font name to use.
+ */
+EAPI void edje_edit_state_font_set(Evas_Object *obj, const char *part, const char *state, double value, const char *font);
 
 /** Get the text size of a part state
  *
