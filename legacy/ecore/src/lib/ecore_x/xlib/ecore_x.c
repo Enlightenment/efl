@@ -63,6 +63,7 @@ int      _ecore_x_event_last_root_x = 0;
 int      _ecore_x_event_last_root_y = 0;
 int      _ecore_x_xcursor = 0;
 XIC      _ecore_x_ic = NULL; /* Input context for composed characters */
+XIM      _ecore_x_im = NULL;
 
 Ecore_X_Window _ecore_x_private_win = 0;
 
@@ -538,8 +539,11 @@ ecore_x_init(const char *name)
 	if (ret || !supported_styles)
 	  goto _im_create_error;
 	for (i = 0; i < supported_styles->count_styles; i++)
-	  if (supported_styles->supported_styles[i] == (XIMPreeditNothing | XIMStatusNothing))
-	    chosen_style = supported_styles->supported_styles[i];
+          {
+             if (supported_styles->supported_styles[i] == 
+                 (XIMPreeditNothing | XIMStatusNothing))
+               chosen_style = supported_styles->supported_styles[i];
+          }
 	XFree(supported_styles);
 	if (!chosen_style)
 	  goto _im_create_error;
@@ -547,6 +551,7 @@ ecore_x_init(const char *name)
 	if (ic)
 	  {
 	     _ecore_x_ic = ic;
+             _ecore_x_im = im;
 	     goto _im_create_end;
 	  }
 _im_create_error:
@@ -556,16 +561,15 @@ _im_create_end:
 #endif
    return _ecore_x_init_count;
 
- free_event_handlers:
+free_event_handlers:
    free(_ecore_x_event_handlers);
    _ecore_x_event_handlers = NULL;
- close_display:
+close_display:
    XCloseDisplay(_ecore_x_disp);
    _ecore_x_fd_handler_handle = NULL;
    _ecore_x_disp = NULL;
- shutdown_ecore_event:
+shutdown_ecore_event:
    ecore_event_shutdown();
-
    return --_ecore_x_init_count;
 }
 
@@ -581,11 +585,13 @@ _ecore_x_shutdown(int close_display)
 #ifdef ENABLE_XIM
    if (_ecore_x_ic)
      {
-	XIM xim;
-	xim = XIMOfIC(_ecore_x_ic);
 	XDestroyIC(_ecore_x_ic);
-	XCloseIM(xim);
 	_ecore_x_ic = NULL;
+     }
+   if (_ecore_x_im)
+     {
+	XCloseIM(_ecore_x_im);
+        _ecore_x_im = NULL;
      }
 #endif
    if (close_display)
