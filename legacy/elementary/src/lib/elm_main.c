@@ -425,6 +425,7 @@ elm_quicklaunch_init(int argc, char **argv)
    evas_init();
    edje_init();
    ecore_evas_init(); // FIXME: check errors
+   ecore_imf_init();
    _elm_module_init();
 
    _elm_exit_handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
@@ -553,6 +554,7 @@ elm_quicklaunch_shutdown(void)
    _elm_unneed_e_dbus();
    _elm_unneed_ethumb();
    _elm_module_shutdown();
+   ecore_imf_shutdown();
    ecore_evas_shutdown();
    edje_shutdown();
    evas_shutdown();
