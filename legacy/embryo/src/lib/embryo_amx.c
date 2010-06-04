@@ -409,13 +409,13 @@ embryo_program_native_call_add(Embryo_Program *ep, const char *name, Embryo_Cell
      {
 	Embryo_Native *calls;
 
-	ep->native_calls_alloc += 16;
+	ep->native_calls_alloc += 32;
 	calls = realloc(ep->native_calls,
 			ep->native_calls_alloc * sizeof(Embryo_Native));
 	if (!calls)
 	  {
 	     ep->native_calls_size--;
-	     ep->native_calls_alloc -= 16;
+	     ep->native_calls_alloc -= 32;
 	     return;
 	  }
 	ep->native_calls = calls;
