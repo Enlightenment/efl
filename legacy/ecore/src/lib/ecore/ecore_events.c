@@ -63,6 +63,7 @@ static Eina_List *event_handlers_delete_list = NULL;
 
 static Ecore_Event_Filter *event_filters = NULL;
 static Ecore_Event_Filter *event_filter_current = NULL;
+static Ecore_Event *event_filter_event_current = NULL;
 static int event_filters_delete_me = 0;
 static int event_id_max = ECORE_EVENT_COUNT;
 static int ecore_raw_event_type = ECORE_EVENT_NONE;
@@ -365,6 +366,7 @@ _ecore_event_shutdown(void)
      }
    event_filters_delete_me = 0;
    event_filter_current = NULL;
+   event_filter_event_current = NULL;
 }
 
 int
@@ -465,20 +467,20 @@ _ecore_event_call(void)
 	     if (ef->func_start)
 	       ef->loop_data = ef->func_start(ef->data);
 
-	     if (!event_current)
+	     if (!event_filter_event_current)
 	       {
 		  /* regular main loop, start from head */
-		  event_current = events;
+		  event_filter_event_current = events;
 	       }
 	     else
 	       {
 		  /* recursive main loop, continue from where we were */
-		  event_current = (Ecore_Event *)EINA_INLIST_GET(event_current)->next;
+		  event_filter_event_current = (Ecore_Event *)EINA_INLIST_GET(event_filter_event_current)->next;
 	       }
 
-	     while (event_current)
+	     while (event_filter_event_current)
 	       {
-		  Ecore_Event *e = event_current;
+		  Ecore_Event *e = event_filter_event_current;
 
 		  if (!ef->func_filter(ef->data, ef->loop_data,
 				       e->type, e->event))
@@ -487,8 +489,8 @@ _ecore_event_call(void)
 		       ecore_event_del(e);
 		    }
 
-		  if (event_current) /* may have changed in recursive main loops */
-		    event_current = (Ecore_Event *)EINA_INLIST_GET(event_current)->next;
+		  if (event_filter_event_current) /* may have changed in recursive main loops */
+		    event_filter_event_current = (Ecore_Event *)EINA_INLIST_GET(event_filter_event_current)->next;
 	       }
 	     if (ef->func_end)
 	       ef->func_end(ef->data, ef->loop_data);
