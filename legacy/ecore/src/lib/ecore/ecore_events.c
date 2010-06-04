@@ -370,7 +370,9 @@ _ecore_event_shutdown(void)
 int
 _ecore_event_exist(void)
 {
-   if (events) return 1;
+   Ecore_Event *e;
+   EINA_INLIST_FOREACH(events, e)
+      if (!e->delete_me) return 1;
    return 0;
 }
 
@@ -422,7 +424,7 @@ _ecore_event_purge_deleted(void)
    while (itr)
      {
 	Ecore_Event *next = (Ecore_Event *)EINA_INLIST_GET(itr)->next;
-	if (!itr->references)
+	if ((!itr->references) && (itr->delete_me))
 	  _ecore_event_del(itr);
 	itr = next;
      }
@@ -575,13 +577,13 @@ _ecore_event_call(void)
 		       if (event_handler_current) /* may have changed in recursive main loops */
 			 event_handler_current = (Ecore_Event_Handler *)EINA_INLIST_GET(event_handler_current)->next;
 		    }
-		  e->delete_me = 1;
 	       }
 	     /* if no handlers were set for EXIT signal - then default is */
 	     /* to quit the main loop */
 	     if ((e->type == ECORE_EVENT_SIGNAL_EXIT) && (handle_count == 0))
 	       ecore_main_loop_quit();
 	     e->references--;
+	     e->delete_me = 1;
 	  }
 
 	if (event_current) /* may have changed in recursive main loops */
