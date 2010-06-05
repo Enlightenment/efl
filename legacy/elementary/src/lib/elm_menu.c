@@ -657,7 +657,7 @@ elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled)
 EAPI Eina_Bool
 elm_menu_item_disabled_get(Elm_Menu_Item *item)
 {
-   if (!item) return 0;
+   if (!item) return EINA_FALSE;
    return item->disabled;
 }
 
@@ -733,7 +733,7 @@ elm_menu_item_icon_get(Elm_Menu_Item *item)
 EAPI Eina_Bool
 elm_menu_item_is_separator(Elm_Menu_Item *item)
 {
-   if (!item) return 0;
+   if (!item) return EINA_FALSE;
    return item->separator;
 }
 

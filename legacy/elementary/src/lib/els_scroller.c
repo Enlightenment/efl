@@ -415,8 +415,8 @@ _smart_do_page(Smart_Data *sd)
 {
    if ((sd->pagerel_h == 0.0) && (sd->pagesize_h == 0) &&
        (sd->pagerel_v == 0.0) && (sd->pagesize_v == 0))
-     return 0;
-   return 1;
+     return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static Evas_Coord
@@ -570,21 +570,21 @@ can_scroll(Smart_Data *sd, int dir)
    switch (dir)
      {
      case LEFT:
-        if (px > 0) return 1;
+        if (px > 0) return EINA_TRUE;
         break;
      case RIGHT:
-        if (px < mx) return 1;
+        if (px < mx) return EINA_TRUE;
         break;
      case UP:
-        if (py > 0) return 1;
+        if (py > 0) return EINA_TRUE;
         break;
      case DOWN:
-        if (py < my) return 1;
+        if (py < my) return EINA_TRUE;
         break;
      default:
         break;
      }
-   return 0;
+   return EINA_FALSE;
 }
 
 static int
@@ -1424,7 +1424,7 @@ _smart_event_post_up(void *data, Evas *e)
              elm_widget_drag_lock_y_set(sd->widget, 0);
           }
      }
-   return 1;
+   return EINA_TRUE;
 }
 
 static void
@@ -1694,7 +1694,7 @@ _smart_event_post_move(void *data, Evas *e)
           }
         if (start) _smart_drag_start(sd->smart_obj);
      }
-   return 1;
+   return EINA_TRUE;
 }
 
 static void

@@ -208,14 +208,14 @@ _value_set(Evas_Object *obj, double delta)
           new_val = wd->val_max;
      }
 
-   if (new_val == wd->val) return 0;
+   if (new_val == wd->val) return EINA_FALSE;
    wd->val = new_val;
 
    evas_object_smart_callback_call(obj, "changed", NULL);
    if (wd->delay) ecore_timer_del(wd->delay);
    wd->delay = ecore_timer_add(0.2, _delay_change, obj);
 
-   return 1;
+   return EINA_TRUE;
 }
 
 static void

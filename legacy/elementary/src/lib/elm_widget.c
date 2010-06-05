@@ -1011,7 +1011,7 @@ elm_widget_drag_lock_y_set(Evas_Object *obj, Eina_Bool lock)
 EAPI Eina_Bool
 elm_widget_drag_lock_x_get(Evas_Object *obj)
 {
-   API_ENTRY return 0;
+   API_ENTRY return EINA_FALSE;
    printf("check %p x lock %i\n", obj, sd->drag_x_locked);
    return sd->drag_x_locked;
 }
@@ -1019,7 +1019,7 @@ elm_widget_drag_lock_x_get(Evas_Object *obj)
 EAPI Eina_Bool
 elm_widget_drag_lock_y_get(Evas_Object *obj)
 {
-   API_ENTRY return 0;
+   API_ENTRY return EINA_FALSE;
    printf("check %p y lock %i\n", obj, sd->drag_y_locked);
    return sd->drag_y_locked;
 }

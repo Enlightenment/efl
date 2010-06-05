@@ -64,7 +64,7 @@ _prop_config_get(void)
                                               _atom[ATOM_E_CONFIG], 
                                               _atom[ATOM_E_CONFIG], 
                                               8, &data, &size))
-          return 0;
+          return EINA_FALSE;
         else
           _atom_config = _atom[ATOM_E_CONFIG];
      }
@@ -73,16 +73,16 @@ _prop_config_get(void)
    if (size < 1)
      {
         free(data);
-        return 0;
+        return EINA_FALSE;
      }
    config_data = eet_data_descriptor_decode(_config_edd, data, size);
    free(data);
-   if (!config_data) return 0;
+   if (!config_data) return EINA_FALSE;
    _config_free();
    _elm_config = config_data;
    _config_apply();
    _elm_rescale();
-   return 1;
+   return EINA_TRUE;
 }
 
 static int

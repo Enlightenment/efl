@@ -571,9 +571,9 @@ elm_scrolled_entry_select_all(Evas_Object *obj)
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_next(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0;
+   if (!wd) return EINA_FALSE;
    return elm_entry_cursor_next(wd->entry);
 }
 
@@ -588,9 +588,9 @@ elm_scrolled_entry_cursor_next(Evas_Object *obj)
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_prev(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0;
+   if (!wd) return EINA_FALSE;
    return elm_entry_cursor_prev(wd->entry);
 }
 
@@ -605,9 +605,9 @@ elm_scrolled_entry_cursor_prev(Evas_Object *obj)
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_up(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0;
+   if (!wd) return EINA_FALSE;
    return elm_entry_cursor_up(wd->entry);
 }
 
@@ -622,9 +622,9 @@ elm_scrolled_entry_cursor_up(Evas_Object *obj)
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_down(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0;
+   if (!wd) return EINA_FALSE;
    return elm_entry_cursor_down(wd->entry);
 }
 
@@ -737,9 +737,9 @@ elm_scrolled_entry_cursor_selection_end(Evas_Object *obj)
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_is_format_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0;
+   if (!wd) return EINA_FALSE;
    return elm_entry_cursor_is_format_get(wd->entry);
 }
 
@@ -754,9 +754,9 @@ elm_scrolled_entry_cursor_is_format_get(const Evas_Object *obj)
 EAPI Eina_Bool
 elm_scrolled_entry_cursor_is_visible_format_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0;
+   if (!wd) return EINA_FALSE;
    return elm_entry_cursor_is_visible_format_get(wd->entry);
 }
 
@@ -890,9 +890,9 @@ elm_scrolled_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disable
 EAPI Eina_Bool
 elm_scrolled_entry_context_menu_disabled_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0;
+   if (!wd) return EINA_FALSE;
    return elm_entry_context_menu_disabled_get(wd->entry);
 }
 

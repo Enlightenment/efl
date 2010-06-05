@@ -328,7 +328,7 @@ elm_shutdown(void)
 }
 
 #ifdef ELM_EDBUS
-static Eina_Bool _elm_need_e_dbus = 0;
+static Eina_Bool _elm_need_e_dbus = EINA_FALSE;
 #endif
 EAPI void
 elm_need_e_dbus(void)
@@ -355,7 +355,7 @@ _elm_unneed_e_dbus(void)
 }
 
 #ifdef ELM_EFREET
-static Eina_Bool _elm_need_efreet = 0;
+static Eina_Bool _elm_need_efreet = EINA_FALSE;
 #endif
 EAPI void
 elm_need_efreet(void)

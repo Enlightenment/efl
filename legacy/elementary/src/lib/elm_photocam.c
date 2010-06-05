@@ -375,7 +375,7 @@ grid_load(Evas_Object *obj, Grid *g)
         for (x = 0; x < g->gw; x++)
           {
              int tn, xx, yy, ww, hh;
-             Eina_Bool visible = 0;
+             Eina_Bool visible = EINA_FALSE;
              
              tn = (y * g->gw) + x;
              xx = g->grid[tn].out.x;

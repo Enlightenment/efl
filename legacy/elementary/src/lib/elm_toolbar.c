@@ -659,10 +659,10 @@ elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable)
 EAPI Eina_Bool
 elm_toolbar_scrollable_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!wd) return 0;
+   if (!wd) return EINA_FALSE;
    return wd->scrollable;
 }
 
@@ -696,10 +696,10 @@ elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 EAPI Eina_Bool
 elm_toolbar_homogenous_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!wd) return 0;
+   if (!wd) return EINA_FALSE;
    return wd->homogeneous;
 }
 

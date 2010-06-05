@@ -268,7 +268,7 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
    Evas_Coord x, y, w, h, bx, by, bw, bh, xx, yy;
    double cdv = 0.5;
    Evas_Coord dist;
-   Eina_Bool change = 0;
+   Eina_Bool change = EINA_FALSE;
    char *label = NULL, *last = NULL;
    int i;
    if (!wd) return;

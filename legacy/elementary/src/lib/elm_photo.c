@@ -132,13 +132,13 @@ elm_photo_add(Evas_Object *parent)
 EAPI Eina_Bool
 elm_photo_file_set(Evas_Object *obj, const char *file)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0;
+   if (!wd) return EINA_FALSE;
    if (!_els_smart_icon_file_key_set(wd->img, file, NULL))
-     return 0;
+     return EINA_FALSE;
    _sizing_eval(obj);
-   return 1;
+   return EINA_TRUE;
 }
 
 /**

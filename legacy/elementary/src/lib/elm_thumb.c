@@ -308,7 +308,7 @@ _thumb_hide_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 #endif
 
 #ifdef ELM_ETHUMB
-static Eina_Bool _elm_need_ethumb = 0;
+static Eina_Bool _elm_need_ethumb = EINA_FALSE;
 
 static void _on_die_cb(void *, Ethumb_Client *);
 

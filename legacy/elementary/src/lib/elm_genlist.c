@@ -705,7 +705,7 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
 {
    Elm_Genlist_Item *it = data;
    Evas_Event_Mouse_Up *ev = event_info;
-   Eina_Bool dragged = 0;
+   Eina_Bool dragged = EINA_FALSE;
 
    if (ev->button != 1) return;
    it->down = 0;
@@ -2112,7 +2112,7 @@ elm_genlist_realized_items_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *list = NULL;
    Item_Block *itb;
-   Eina_Bool done = 0;
+   Eina_Bool done = EINA_FALSE;
    if (!wd) return NULL;
    EINA_INLIST_FOREACH(wd->blocks, itb)
      {

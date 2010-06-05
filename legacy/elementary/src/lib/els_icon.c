@@ -48,15 +48,15 @@ _els_smart_icon_file_key_set(Evas_Object *obj, const char *file, const char *key
    Smart_Data *sd;
 
    sd = evas_object_smart_data_get(obj);
-   if (!sd) return 0;
+   if (!sd) return EINA_FALSE;
    /* smart code here */
    if (sd->size != 0)
      evas_object_image_load_size_set(sd->obj, sd->size, sd->size);
    evas_object_image_file_set(sd->obj, file, key);
    if (evas_object_image_load_error_get(sd->obj) != EVAS_LOAD_ERROR_NONE)
-     return 0;
+     return EINA_FALSE;
    _smart_reconfigure(sd);
-   return 1;
+   return EINA_TRUE;
 }
 
 Eina_Bool
@@ -65,15 +65,15 @@ _els_smart_icon_file_edje_set(Evas_Object *obj, const char *file, const char *pa
    Smart_Data *sd;
 
    sd = evas_object_smart_data_get(obj);
-   if (!sd) return 0;
+   if (!sd) return EINA_FALSE;
    /* smart code here */
    if (sd->obj) evas_object_del(sd->obj);
    sd->obj = edje_object_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(sd->obj, obj);
    if (!edje_object_file_set(sd->obj, file, part))
-     return 0;
+     return EINA_FALSE;
    _smart_reconfigure(sd);
-   return 1;
+   return EINA_TRUE;
 }
 
 void
