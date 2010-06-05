@@ -263,9 +263,6 @@ myapp_CFLAGS =
  */
 
 static int _elm_signal_exit(void *data, int ev_type, void *ev);
-#ifdef HAVE_ELEMENTARY_X
-static int _elm_window_property_change(void *data, int ev_type, void *ev);
-#endif
 
 char *_elm_appname = NULL;
 const char *_elm_data_dir = NULL;
