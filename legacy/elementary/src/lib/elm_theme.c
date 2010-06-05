@@ -443,7 +443,7 @@ elm_theme_get(Elm_Theme *th)
         len = 0;
         EINA_LIST_FOREACH(th->themes, l, f)
           {
-             len + strlen(f);
+             len += strlen(f);
              if (l->next) len += 1;
           }
         tmp = alloca(len + 1);
