@@ -1100,10 +1100,10 @@ edje_object_part_exists(const Evas_Object *obj, const char *part)
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return 0;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return 0;
-   return 1;
+   if (!rp) return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 /**
@@ -1729,12 +1729,12 @@ edje_object_part_text_item_geometry_get(const Evas_Object *obj, const char *part
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return 0;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return 0;
+   if (!rp) return EINA_FALSE;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      return _edje_entry_item_geometry_get(rp, item, cx, cy, cw, ch);
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
@@ -1867,14 +1867,14 @@ edje_object_part_text_cursor_next(const Evas_Object *obj, const char *part, Edje
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return 0;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return 0;
+   if (!rp) return EINA_FALSE;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
         return _edje_entry_cursor_next(rp, cur);
      }
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
@@ -1890,14 +1890,14 @@ edje_object_part_text_cursor_prev(const Evas_Object *obj, const char *part, Edje
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return 0;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return 0;
+   if (!rp) return EINA_FALSE;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
         return _edje_entry_cursor_prev(rp, cur);
      }
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
@@ -1913,14 +1913,14 @@ edje_object_part_text_cursor_up(const Evas_Object *obj, const char *part, Edje_C
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return 0;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return 0;
+   if (!rp) return EINA_FALSE;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
         return _edje_entry_cursor_up(rp, cur);
      }
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
@@ -1936,14 +1936,14 @@ edje_object_part_text_cursor_down(const Evas_Object *obj, const char *part, Edje
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return 0;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return 0;
+   if (!rp) return EINA_FALSE;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
         return _edje_entry_cursor_down(rp, cur);
      }
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
@@ -2069,14 +2069,14 @@ edje_object_part_text_cursor_is_format_get(const Evas_Object *obj, const char *p
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return 0;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return 0;
+   if (!rp) return EINA_FALSE;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
         return _edje_entry_cursor_is_format_get(rp, cur);
      }
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
@@ -4056,7 +4056,7 @@ edje_perspective_global_set(Edje_Perspective *ps, Eina_Bool global)
 EAPI Eina_Bool
 edje_perspective_global_get(const Edje_Perspective *ps)
 {
-   if (!ps) return 0;
+   if (!ps) return EINA_FALSE;
    return ps->global;
 }
 

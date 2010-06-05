@@ -450,7 +450,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
    Edje_Real_Part *rp;
 
    ed = runp->edje;
-   if (ed->delete_me) return 0;
+   if (ed->delete_me) return EINA_FALSE;
    _edje_block(ed);
    _edje_ref(ed);
    _edje_freeze(ed);
@@ -523,14 +523,14 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	_edje_unref(ed);
 	if (!ed->walking_actions) free(runp);
 	_edje_unblock(ed);
-	return  0;
+	return  EINA_FALSE;
      }
    break_prog:
    _edje_recalc(ed);
    _edje_thaw(ed);
    _edje_unref(ed);
    _edje_unblock(ed);
-   return 1;
+   return EINA_TRUE;
 }
 
 void

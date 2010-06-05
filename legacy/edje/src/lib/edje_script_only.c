@@ -197,7 +197,7 @@ _oid_freeall_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, vo
 
    evas_object_del(oid->obj);
    free(oid);
-   return 1;
+   return EINA_TRUE;
 }
 
 static void
@@ -217,7 +217,7 @@ _oid_moveall_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, vo
    Oid *oid = data;
 
    evas_object_move(oid->obj, oid->ed->x + oid->x, oid->ed->y + oid->y);
-   return 1;
+   return EINA_TRUE;
 }
 
 static void

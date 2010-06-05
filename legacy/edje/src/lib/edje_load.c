@@ -186,7 +186,7 @@ edje_file_group_exists(const char *file, const char *glob)
    Edje_File *edf;
    int error_ret = 0;
 
-   if ((!file) || (!*file)) return 0;
+   if ((!file) || (!*file)) return EINA_FALSE;
    edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
    if (edf != NULL)
      {
@@ -200,13 +200,13 @@ edje_file_group_exists(const char *file, const char *glob)
                {
                   edje_match_patterns_free(patterns);
                   _edje_cache_file_unref(edf);
-                  return 1;
+                  return EINA_TRUE;
                }
              edje_match_patterns_free(patterns);
 	  }
 	_edje_cache_file_unref(edf);
      }
-   return 0;
+   return EINA_FALSE;
 }
 
 
@@ -994,7 +994,7 @@ static Eina_Bool data_cache_free(const Eina_Hash *hash __UNUSED__, const void *k
 
    edf = fdata;
    if (edf->free_strings) eina_stringshare_del(data);
-   return 1;
+   return EINA_TRUE;
 }
 
 void
@@ -1219,7 +1219,7 @@ _edje_file_collection_hash_foreach(const Eina_Hash *hash __UNUSED__, const void 
        coll->part, coll->references);
    _edje_collection_free(edf, coll);
 
-   return 1;
+   return EINA_TRUE;
 }
 
 #ifdef EDJE_PROGRAM_CACHE
@@ -1227,7 +1227,7 @@ static Eina_Bool
 _edje_collection_free_prog_cache_matches_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    eina_list_free((Eina_List *)data);
-   return 1;
+   return EINA_TRUE;
    key = NULL;
    hash = NULL;
    fdata = NULL;

@@ -2250,17 +2250,17 @@ _edje_entry_item_geometry_get(Edje_Real_Part *rp, const char *item, Evas_Coord *
    Eina_List *l;
    Anchor *an;
    
-   if (!en) return 0;
+   if (!en) return EINA_FALSE;
    EINA_LIST_FOREACH(en->anchors, l, an)
      {
         if (an->item) continue;
 	if (!strcmp(item, an->name))
           {
              evas_textblock_cursor_format_item_geometry_get(an->start, cx, cy, cw, ch);
-             return 1;
+             return EINA_TRUE;
           }
      }
-   return 0;
+   return EINA_FALSE;
 }
 
 const Eina_List *
@@ -2368,12 +2368,12 @@ _edje_entry_cursor_next(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Entry *en = rp->entry_data;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
-   if (!c) return 0;
+   if (!c) return EINA_FALSE;
    if (!evas_textblock_cursor_char_next(c))
      {
         evas_textblock_cursor_eol_set(c, 0);
 	if (evas_textblock_cursor_node_next(c)) goto ok;
-        else return 0;
+        else return EINA_FALSE;
      }
    ok:
    _curs_update_from_curs(c, rp->object, rp->entry_data);
@@ -2390,7 +2390,7 @@ _edje_entry_cursor_next(Edje_Real_Part *rp, Edje_Cursor cur)
    
    _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    _edje_entry_real_part_configure(rp);
-   return 1;
+   return EINA_TRUE;
 }
 
 Eina_Bool
@@ -2398,11 +2398,11 @@ _edje_entry_cursor_prev(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Entry *en = rp->entry_data;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
-   if (!c) return 0;
+   if (!c) return EINA_FALSE;
    if (!evas_textblock_cursor_char_prev(c))
      {
 	if (evas_textblock_cursor_node_prev(c)) goto ok;
-        else return 0;
+        else return EINA_FALSE;
      }
    ok:
    _curs_update_from_curs(c, rp->object, rp->entry_data);
@@ -2419,7 +2419,7 @@ _edje_entry_cursor_prev(Edje_Real_Part *rp, Edje_Cursor cur)
    
    _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    _edje_entry_real_part_configure(rp);
-   return 1;
+   return EINA_TRUE;
 }
 
 Eina_Bool
@@ -2429,13 +2429,13 @@ _edje_entry_cursor_up(Edje_Real_Part *rp, Edje_Cursor cur)
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
    Evas_Coord lx, ly, lw, lh, cx, cy, cw, ch;
    int ln;
-   if (!c) return 0;
+   if (!c) return EINA_FALSE;
    ln = evas_textblock_cursor_line_geometry_get(c, NULL, NULL, NULL, NULL);
    ln--;
-   if (ln < 0) return 0;
+   if (ln < 0) return EINA_FALSE;
    if (!evas_object_textblock_line_number_geometry_get(rp->object, ln, 
                                                        &lx, &ly, &lw, &lh))
-     return 0;
+     return EINA_FALSE;
    evas_textblock_cursor_char_geometry_get(c, &cx, &cy, &cw, &ch);
    if (!evas_textblock_cursor_char_coord_set(c, cx, ly + (lh / 2)))
      {
@@ -2458,7 +2458,7 @@ _edje_entry_cursor_up(Edje_Real_Part *rp, Edje_Cursor cur)
    
    _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    _edje_entry_real_part_configure(rp);
-   return 1;
+   return EINA_TRUE;
 }
 
 Eina_Bool
@@ -2468,12 +2468,12 @@ _edje_entry_cursor_down(Edje_Real_Part *rp, Edje_Cursor cur)
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
    Evas_Coord lx, ly, lw, lh, cx, cy, cw, ch;
    int ln;
-   if (!c) return 0;
+   if (!c) return EINA_FALSE;
    ln = evas_textblock_cursor_line_geometry_get(c, NULL, NULL, NULL, NULL);
    ln++;
    if (!evas_object_textblock_line_number_geometry_get(rp->object, ln, 
                                                        &lx, &ly, &lw, &lh))
-     return 0;
+     return EINA_FALSE;
    evas_textblock_cursor_char_geometry_get(c, &cx, &cy, &cw, &ch);
    if (!evas_textblock_cursor_char_coord_set(c, cx, ly + (lh / 2)))
      {
@@ -2496,7 +2496,7 @@ _edje_entry_cursor_down(Edje_Real_Part *rp, Edje_Cursor cur)
    
    _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    _edje_entry_real_part_configure(rp);
-   return 1;
+   return EINA_TRUE;
 }
 
 void
@@ -2619,16 +2619,16 @@ Eina_Bool
 _edje_entry_cursor_is_format_get(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
-   if (!c) return 0;
-   if (evas_textblock_cursor_node_format_get(c)) return 1;
-   return 0;
+   if (!c) return EINA_FALSE;
+   if (evas_textblock_cursor_node_format_get(c)) return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 Eina_Bool
 _edje_entry_cursor_is_visible_format_get(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
-   if (!c) return 0;
+   if (!c) return EINA_FALSE;
    return evas_textblock_cursor_node_format_is_visible_get(c);
 }
 
