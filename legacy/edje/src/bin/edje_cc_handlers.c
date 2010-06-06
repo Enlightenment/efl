@@ -2870,7 +2870,7 @@ static void ob_collections_group_parts_part_box_items_item(void)
    item->weight.y = FROM_DOUBLE(0.0);
    item->aspect.w = 0;
    item->aspect.h = 0;
-   item->aspect.mode = EDJE_ASPECT_PREFER_NONE;
+   item->aspect.mode = EDJE_ASPECT_CONTROL_NONE;
    item->options = NULL;
    item->col = -1;
    item->row = -1;
