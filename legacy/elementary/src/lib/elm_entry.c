@@ -455,8 +455,10 @@ static void
 _store_selection(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   const char *sel = edje_object_part_text_selection_get(wd->ent, "elm.text");
+   const char *sel;
+
    if (!wd) return;
+   sel = edje_object_part_text_selection_get(wd->ent, "elm.text");
    eina_stringshare_replace(&wd->cut_sel, sel);
 }
 
