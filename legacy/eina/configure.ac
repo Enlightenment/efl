@@ -68,7 +68,16 @@ esac
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "${MODULE_ARCH}", "Module architecture")
 
-AC_DEFINE_UNQUOTED(SHARED_LIB_SUFFIX, "$shrext_cmds", [Suffix for shared objects])
+case "$host_os" in
+   mingw*)
+      MODULE_EXT=".dll"
+      ;;
+   *)
+      MODULE_EXT=".so"
+      ;;
+esac
+
+AC_DEFINE_UNQUOTED(SHARED_LIB_SUFFIX, "${MODULE_EXT}", [Suffix for shared objects])
 
 EFL_CHECK_CPU_MMX([have_mmx="yes"], [have_mmx="no"])
 EFL_CHECK_CPU_SSE([have_sse="yes"], [have_sse="no"])
@@ -300,10 +309,11 @@ case "$host_os" in
       ;;
 esac
 
-if ! test "x${VMIC}" = "x" ; then
-   EFL_COMPILER_FLAG([-Wall])
-   EFL_COMPILER_FLAG([-W])
-fi
+m4_ifdef([v_mic],
+   [
+    EFL_COMPILER_FLAG([-Wall])
+    EFL_COMPILER_FLAG([-W])
+   ])
 
 EFL_COMPILER_FLAG([-Wshadow])
 
