@@ -17,7 +17,7 @@ struct _Widget_Data
    Eina_Bool seconds : 1;
    Eina_Bool am_pm : 1;
    Eina_Bool edit : 1;
-   unsigned int digedit;
+   Elm_Clock_Digedit digedit;
    int hrs, min, sec;
    Evas_Object *digit[6];
    Evas_Object *ampm;
@@ -29,7 +29,7 @@ struct _Widget_Data
         Eina_Bool seconds : 1;
         Eina_Bool am_pm : 1;
         Eina_Bool edit : 1;
-	unsigned int digedit;
+	Elm_Clock_Digedit digedit;
      } cur;
 };
 
@@ -558,7 +558,7 @@ elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Digedit digedit)
  *
  * @ingroup Clock
  */
-EAPI unsigned int
+EAPI Elm_Clock_Digedit
 elm_clock_digit_edit_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;

@@ -628,7 +628,7 @@ extern "C" {
    EAPI void         elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec);
    EAPI void         elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit);
    EAPI Eina_Bool    elm_clock_edit_get(const Evas_Object *obj);
-   EAPI void	     elm_clock_digit_edit_set(Evas_Object *obj, unsigned int digedit);
+   EAPI void	     elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Digedit digedit);
    EAPI unsigned int elm_clock_digit_edit_get(const Evas_Object *obj);
    EAPI void         elm_clock_show_am_pm_set(Evas_Object *obj, Eina_Bool am_pm);
    EAPI Eina_Bool    elm_clock_show_am_pm_get(const Evas_Object *obj);
