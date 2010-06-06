@@ -60,6 +60,7 @@ _del_hook(Evas_Object *obj)
    if (!wd) return;
    if (wd->label) eina_stringshare_del(wd->label);
    if (wd->delay) ecore_timer_del(wd->delay);
+   if (wd->spin) ecore_timer_del(wd->spin);
    if (wd->special_values)
        EINA_LIST_FREE(wd->special_values, sv)
        {
