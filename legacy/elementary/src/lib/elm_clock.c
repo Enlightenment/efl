@@ -14,6 +14,7 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *clk;
+   double interval;
    Eina_Bool seconds : 1;
    Eina_Bool am_pm : 1;
    Eina_Bool edit : 1;
@@ -21,8 +22,9 @@ struct _Widget_Data
    int hrs, min, sec;
    Evas_Object *digit[6];
    Evas_Object *ampm;
-   Ecore_Timer *ticker;
-   struct 
+   Evas_Object *sel_obj;
+   Ecore_Timer *ticker, *spin;
+   struct
      {
         int hrs, min, sec;
         char ampm;
@@ -37,8 +39,8 @@ static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static int _ticker(void *data);
-static void _signal_clock_val_up(void *data, Evas_Object *obj, const char *emission, const char *source);
-static void _signal_clock_val_down(void *data, Evas_Object *obj, const char *emission, const char *source);
+static int _signal_clock_val_up(void *data);
+static int _signal_clock_val_down(void *data);
 static void _time_update(Evas_Object *obj);
 
 static void
@@ -53,6 +55,7 @@ _del_hook(Evas_Object *obj)
      }
    if (wd->ampm) evas_object_del(wd->ampm);
    if (wd->ticker) ecore_timer_del(wd->ticker);
+   if (wd->spin) ecore_timer_del(wd->spin);
    free(wd);
 }
 
@@ -108,94 +111,136 @@ _ticker(void *data)
    return 0;
 }
 
-static void
-_signal_clock_val_up(void *data, Evas_Object *obj, const char *emission __UNUSED__, const char *source __UNUSED__)
+static int
+_signal_clock_val_up(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    if (!wd->edit) return;
-   if (obj == wd->digit[0])
+   if (!wd->sel_obj) return;
+   if (wd->sel_obj == wd->digit[0])
      {
 	wd->hrs = wd->hrs + 10;
 	if (wd->hrs >= 24) wd->hrs -= 24;
      }
-   if (obj == wd->digit[1])
+   if (wd->sel_obj == wd->digit[1])
      {
 	wd->hrs = wd->hrs + 1;
 	if (wd->hrs >= 24) wd->hrs -= 24;
      }
-   if (obj == wd->digit[2])
+   if (wd->sel_obj == wd->digit[2])
      {
 	wd->min = wd->min + 10;
 	if (wd->min >= 60) wd->min -= 60;
      }
-   if (obj == wd->digit[3])
+   if (wd->sel_obj == wd->digit[3])
      {
 	wd->min = wd->min + 1;
 	if (wd->min >= 60) wd->min -= 60;
      }
-   if (obj == wd->digit[4])
+   if (wd->sel_obj == wd->digit[4])
      {
 	wd->sec = wd->sec + 10;
 	if (wd->sec >= 60) wd->sec -= 60;
      }
-   if (obj == wd->digit[5])
+   if (wd->sel_obj == wd->digit[5])
      {
 	wd->sec = wd->sec + 1;
 	if (wd->sec >= 60) wd->sec -= 60;
      }
-   if (obj == wd->ampm)
+   if (wd->sel_obj == wd->ampm)
      {
 	wd->hrs = wd->hrs + 12;
 	if (wd->hrs > 23) wd->hrs -= 24;
      }
+   wd->interval = wd->interval / 1.05;
+   ecore_timer_interval_set(wd->spin, wd->interval);
    _time_update(data);
    evas_object_smart_callback_call(data, "changed", NULL);
+   return ECORE_CALLBACK_RENEW;
 }
 
-static void
-_signal_clock_val_down(void *data, Evas_Object *obj, const char *emission __UNUSED__, const char *source __UNUSED__)
+static int
+_signal_clock_val_down(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    if (!wd->edit) return;
-   if (obj == wd->digit[0])
+   if (!wd->sel_obj) return;
+   if (wd->sel_obj == wd->digit[0])
      {
 	wd->hrs = wd->hrs - 10;
 	if (wd->hrs < 0) wd->hrs += 24;
      }
-   if (obj == wd->digit[1])
+   if (wd->sel_obj == wd->digit[1])
      {
 	wd->hrs = wd->hrs - 1;
 	if (wd->hrs < 0) wd->hrs += 24;
      }
-   if (obj == wd->digit[2])
+   if (wd->sel_obj == wd->digit[2])
      {
 	wd->min = wd->min - 10;
 	if (wd->min < 0) wd->min += 60;
      }
-   if (obj == wd->digit[3])
+   if (wd->sel_obj == wd->digit[3])
      {
 	wd->min = wd->min - 1;
 	if (wd->min < 0) wd->min += 60;
      }
-   if (obj == wd->digit[4])
+   if (wd->sel_obj == wd->digit[4])
      {
 	wd->sec = wd->sec - 10;
 	if (wd->sec < 0) wd->sec += 60;
      }
-   if (obj == wd->digit[5])
+   if (wd->sel_obj == wd->digit[5])
      {
 	wd->sec = wd->sec - 1;
 	if (wd->sec < 0) wd->sec += 60;
      }
-   if (obj == wd->ampm)
+   if (wd->sel_obj == wd->ampm)
      {
 	wd->hrs = wd->hrs - 12;
 	if (wd->hrs < 0) wd->hrs += 24;
      }
+   wd->interval = wd->interval / 1.05;
+   ecore_timer_interval_set(wd->spin, wd->interval);
    _time_update(data);
    evas_object_smart_callback_call(data, "changed", NULL);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_signal_clock_val_up_start(void *data, Evas_Object *obj, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+   wd->interval = 0.85;
+   wd->sel_obj = obj;
+   if (wd->spin) ecore_timer_del(wd->spin);
+   wd->spin = ecore_timer_add(wd->interval, _signal_clock_val_up, data);
+   _signal_clock_val_up(data);
+}
+
+static void
+_signal_clock_val_down_start(void *data, Evas_Object *obj, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+   wd->interval = 0.85;
+   wd->sel_obj = obj;
+   if (wd->spin) ecore_timer_del(wd->spin);
+   wd->spin = ecore_timer_add(wd->interval, _signal_clock_val_down, data);
+   _signal_clock_val_down(data);
+}
+
+static void
+_signal_clock_val_change_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+   if (wd->spin) ecore_timer_del(wd->spin);
+   wd->spin = NULL;
+   wd->sel_obj = NULL;
 }
 
 static void
@@ -248,10 +293,14 @@ _time_update(Evas_Object *obj)
                                    _elm_config->scale);
 	     if (wd->edit && (wd->digedit & (1 << i)))
 	       edje_object_signal_emit(wd->digit[i], "elm,state,edit,on", "elm");
-	     edje_object_signal_callback_add(wd->digit[i], "elm,action,up", "",
-					     _signal_clock_val_up, obj);
-	     edje_object_signal_callback_add(wd->digit[i], "elm,action,down", "",
-					     _signal_clock_val_down, obj);
+	     edje_object_signal_callback_add(wd->digit[i], "elm,action,up,start",
+					     "", _signal_clock_val_up_start, obj);
+	     edje_object_signal_callback_add(wd->digit[i], "elm,action,up,stop",
+					     "", _signal_clock_val_change_stop, obj);
+	     edje_object_signal_callback_add(wd->digit[i], "elm,action,down,start",
+					     "", _signal_clock_val_down_start, obj);
+	     edje_object_signal_callback_add(wd->digit[i], "elm,action,down,stop",
+					     "", _signal_clock_val_change_stop, obj);
 	     mw = mh = -1;
 	     elm_coords_finger_size_adjust(1, &mw, 2, &mh);
 	     edje_object_size_min_restricted_calc(wd->digit[i], &mw, &mh, mw, mh);
@@ -269,10 +318,14 @@ _time_update(Evas_Object *obj)
                                    _elm_config->scale);
 	     if (wd->edit)
 	       edje_object_signal_emit(wd->ampm, "elm,state,edit,on", "elm");
-	     edje_object_signal_callback_add(wd->ampm, "elm,action,up", "",
-					     _signal_clock_val_up, obj);
-	     edje_object_signal_callback_add(wd->ampm, "elm,action,down", "",
-					     _signal_clock_val_down, obj);
+	     edje_object_signal_callback_add(wd->ampm, "elm,action,up,start",
+					     "", _signal_clock_val_up_start, obj);
+	     edje_object_signal_callback_add(wd->ampm, "elm,action,up,stop",
+					     "", _signal_clock_val_change_stop, obj);
+	     edje_object_signal_callback_add(wd->ampm, "elm,action,down,start",
+					     "", _signal_clock_val_down_start, obj);
+	     edje_object_signal_callback_add(wd->ampm, "elm,action,down,stop",
+					     "", _signal_clock_val_change_stop, obj);
 	     mw = mh = -1;
 	     elm_coords_finger_size_adjust(1, &mw, 2, &mh);
 	     edje_object_size_min_restricted_calc(wd->ampm, &mw, &mh, mw, mh);
