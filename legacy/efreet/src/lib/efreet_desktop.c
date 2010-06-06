@@ -9,9 +9,11 @@
 #include <unistd.h>
 #include <limits.h>
 #include <libgen.h>
+#include <sys/types.h>
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <fcntl.h>
 #include <dirent.h>
 
 #ifdef _WIN32
