@@ -71,24 +71,6 @@ static Evas_Image_Load_Func evas_image_load_tga_func =
   evas_image_load_file_data_tga
 };
 
-static int
-read_short(FILE *file, short *ret)
-{
-   unsigned char b[2];
-   if (E_FREAD(b, sizeof(unsigned char), 2, file) != 2) return 0;
-   *ret = (b[1] << 8) | b[0];
-   return 1;
-}
-      
-static int
-read_int(FILE *file, int *ret)
-{
-   unsigned char       b[4];
-   if (E_FREAD(b, sizeof(unsigned char), 4, file) != 4) return 0;
-   *ret = (b[3] << 24) | (b[2] << 16) | (b[1] << 8) | b[0];
-   return 1;
-}
-
 static Eina_Bool
 evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
