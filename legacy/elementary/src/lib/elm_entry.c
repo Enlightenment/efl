@@ -19,46 +19,46 @@
  * vsize=ascent or vsize=full. the href=NAME sets the item name. Entry
  * supports a list of emoticon names by default. These are:
  * 
- * emoticon/angry
- * emoticon/angry-shout
- * emoticon/crazy-laugh
- * emoticon/evil-laugh
- * emoticon/evil
- * emoticon/goggle-smile
- * emoticon/grumpy
- * emoticon/grumpy-smile
- * emoticon/guilty
- * emoticon/guilty-smile
- * emoticon/haha
- * emoticon/half-smile
- * emoticon/happy-panting
- * emoticon/happy
- * emoticon/indifferent
- * emoticon/kiss
- * emoticon/knowing-grin
- * emoticon/laugh
- * emoticon/little-bit-sorry
- * emoticon/love-lots
- * emoticon/love
- * emoticon/minimal-smile
- * emoticon/not-happy
- * emoticon/not-impressed
- * emoticon/omg
- * emoticon/opensmile
- * emoticon/smile
- * emoticon/sorry
- * emoticon/squint-laugh
- * emoticon/surprised
- * emoticon/suspicious
- * emoticon/tongue-dangling
- * emoticon/tongue-poke
- * emoticon/uh
- * emoticon/unhappy
- * emoticon/very-sorry
- * emoticon/what
- * emoticon/wink
- * emoticon/worried
- * emoticon/wtf
+ * - emoticon/angry
+ * - emoticon/angry-shout
+ * - emoticon/crazy-laugh
+ * - emoticon/evil-laugh
+ * - emoticon/evil
+ * - emoticon/goggle-smile
+ * - emoticon/grumpy
+ * - emoticon/grumpy-smile
+ * - emoticon/guilty
+ * - emoticon/guilty-smile
+ * - emoticon/haha
+ * - emoticon/half-smile
+ * - emoticon/happy-panting
+ * - emoticon/happy
+ * - emoticon/indifferent
+ * - emoticon/kiss
+ * - emoticon/knowing-grin
+ * - emoticon/laugh
+ * - emoticon/little-bit-sorry
+ * - emoticon/love-lots
+ * - emoticon/love
+ * - emoticon/minimal-smile
+ * - emoticon/not-happy
+ * - emoticon/not-impressed
+ * - emoticon/omg
+ * - emoticon/opensmile
+ * - emoticon/smile
+ * - emoticon/sorry
+ * - emoticon/squint-laugh
+ * - emoticon/surprised
+ * - emoticon/suspicious
+ * - emoticon/tongue-dangling
+ * - emoticon/tongue-poke
+ * - emoticon/uh
+ * - emoticon/unhappy
+ * - emoticon/very-sorry
+ * - emoticon/what
+ * - emoticon/wink
+ * - emoticon/worried
+ * - emoticon/wtf
  *
  * These are built-in currently, but you can add your own item provieer that
  * can create inlined objects in the text and fill the space allocated to the
@@ -67,22 +67,22 @@
  * See the entry test for some more examples of use of this.
  * 
  * Signals that you can add callbacks for are:
- * "changed" - The text within the entry was changed
- * "activated" - The entry has received focus and the cursor
- * "press" - The entry has been clicked
- * "longpressed" - The entry has been clicked for a couple seconds
- * "clicked" - The entry has been clicked
- * "clicked,double" - The entry has been double clicked
- * "focused" - The entry has received focus
- * "unfocused" - The entry has lost focus
- * "selection,paste" - A paste action has occurred
- * "selection,copy" - A copy action has occurred
- * "selection,cut" - A cut action has occurred
- * "selection,start" - A selection has begun
- * "selection,changed" - The selection has changed
- * "selection,cleared" - The selection has been cleared
- * "cursor,changed" - The cursor has changed
- * "anchor,clicked" - The anchor has been clicked
+ * - "changed" - The text within the entry was changed
+ * - "activated" - The entry has received focus and the cursor
+ * - "press" - The entry has been clicked
+ * - "longpressed" - The entry has been clicked for a couple seconds
+ * - "clicked" - The entry has been clicked
+ * - "clicked,double" - The entry has been double clicked
+ * - "focused" - The entry has received focus
+ * - "unfocused" - The entry has lost focus
+ * - "selection,paste" - A paste action has occurred
+ * - "selection,copy" - A copy action has occurred
+ * - "selection,cut" - A cut action has occurred
+ * - "selection,start" - A selection has begun
+ * - "selection,changed" - The selection has changed
+ * - "selection,cleared" - The selection has been cleared
+ * - "cursor,changed" - The cursor has changed
+ * - "anchor,clicked" - The anchor has been clicked
  */
 
 typedef struct _Mod_Api Mod_Api;
