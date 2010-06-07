@@ -40,7 +40,8 @@ struct _Ecore_Con_CAres
       struct in6_addr v6;
    } addr;
 
-   Eina_Bool byaddr;
+   Eina_Bool byaddr : 1;
+   Eina_Bool isv6 : 1;
 };
 
 static ares_channel info_channel;
@@ -99,7 +100,7 @@ ecore_con_info_tcp_connect(Ecore_Con_Server *svr,
    struct addrinfo hints;
 
    memset(&hints, 0, sizeof(struct addrinfo));
-   hints.ai_family = AF_UNSPEC;
+   hints.ai_family = AF_INET6;
    hints.ai_socktype = SOCK_STREAM;
    hints.ai_flags = AI_CANONNAME;
    hints.ai_protocol = IPPROTO_TCP;
@@ -118,7 +119,7 @@ ecore_con_info_tcp_listen(Ecore_Con_Server *svr,
    struct addrinfo hints;
 
    memset(&hints, 0, sizeof(struct addrinfo));
-   hints.ai_family = AF_UNSPEC;
+   hints.ai_family = AF_INET6;
    hints.ai_socktype = SOCK_STREAM;
    hints.ai_flags = AI_PASSIVE;
    hints.ai_protocol = IPPROTO_TCP;
@@ -137,7 +138,7 @@ ecore_con_info_udp_connect(Ecore_Con_Server *svr,
    struct addrinfo hints;
 
    memset(&hints, 0, sizeof(struct addrinfo));
-   hints.ai_family = AF_UNSPEC;
+   hints.ai_family = AF_INET6;
    hints.ai_socktype = SOCK_DGRAM;
    hints.ai_flags = AI_CANONNAME;
    hints.ai_protocol = IPPROTO_UDP;
@@ -156,7 +157,7 @@ ecore_con_info_udp_listen(Ecore_Con_Server *svr,
    struct addrinfo hints;
 
    memset(&hints, 0, sizeof(struct addrinfo));
-   hints.ai_family = AF_UNSPEC;
+   hints.ai_family = AF_INET6;
    hints.ai_socktype = SOCK_DGRAM;
    hints.ai_flags = AI_PASSIVE;
    hints.ai_protocol = IPPROTO_UDP;
@@ -175,7 +176,7 @@ ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
    struct addrinfo hints;
 
    memset(&hints, 0, sizeof(struct addrinfo));
-   hints.ai_family = AF_UNSPEC;
+   hints.ai_family = AF_INET6;
    hints.ai_socktype = SOCK_DGRAM;
    hints.ai_flags = 0;
    hints.ai_protocol = IPPROTO_UDP;
@@ -186,6 +187,47 @@ ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
    return ecore_con_info_get(svr, done_cb, data, &hints);
 }
 
+static Eina_Bool
+_ecore_con_info_ares_getnameinfo(Ecore_Con_CAres *arg,
+				 int addrtype, const char *name,
+				 struct sockaddr *addr, int addrlen)
+{
+   int length = 0;
+
+   if (name)
+     length = strlen(name) + 1;
+   else
+     length = 1;
+
+   arg->result = malloc(sizeof (Ecore_Con_Info) + length);
+   if (!arg->result)
+     return EINA_FALSE;
+
+   /* FIXME: What to do when hint is not set ? */
+   arg->result->info.ai_flags = arg->hints.ai_flags;
+   arg->result->info.ai_socktype = arg->hints.ai_socktype;
+   arg->result->info.ai_protocol = arg->hints.ai_protocol;
+
+   arg->result->info.ai_family = addrtype;
+   arg->result->info.ai_addrlen = addrlen;
+   arg->result->info.ai_addr = addr;
+   arg->result->info.ai_canonname = (char*) (arg->result + 1);
+
+   if (!name)
+     *arg->result->info.ai_canonname = '\0';
+   else
+     strcpy(arg->result->info.ai_canonname, name);
+
+   arg->result->info.ai_next = NULL;
+
+   ares_getnameinfo(info_channel, addr, addrlen,
+		    ARES_NI_NUMERICSERV | ARES_NI_NUMERICHOST | ARES_NI_LOOKUPSERVICE | ARES_NI_LOOKUPHOST,
+		    (ares_nameinfo_callback) _ecore_con_info_ares_nameinfo, arg);
+
+   return EINA_TRUE;
+}
+
+
 EAPI int
 ecore_con_info_get(Ecore_Con_Server *svr,
 		   Ecore_Con_Info_Cb done_cb,
@@ -193,7 +235,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
 		   struct addrinfo *hints)
 {
    Ecore_Con_CAres *cares;
-   int ai_family = AF_UNSPEC;
+   int ai_family = AF_INET6;
 
    cares = calloc(1, sizeof (Ecore_Con_CAres));
    if (!cares) return 0;
@@ -211,11 +253,13 @@ ecore_con_info_get(Ecore_Con_Server *svr,
    if (inet_pton(AF_INET, svr->name, &cares->addr.v4) == 1)
      {
 	cares->byaddr = EINA_TRUE;
+	cares->isv6 = EINA_FALSE;
 	ares_gethostbyaddr(info_channel, &cares->addr.v4, sizeof (cares->addr.v4), AF_INET, (ares_host_callback) _ecore_con_info_ares_host_cb, cares);
      }
    else if (inet_pton(AF_INET6, svr->name, &cares->addr.v6) == 1)
      {
 	cares->byaddr = EINA_TRUE;
+	cares->isv6 = EINA_TRUE;
 	ares_gethostbyaddr(info_channel, &cares->addr.v6, sizeof (cares->addr.v6), AF_INET6, (ares_host_callback) _ecore_con_info_ares_host_cb, cares);
      }
    else
@@ -367,16 +411,13 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg, int status, int timeouts, str
 		 addrlen = sizeof (struct sockaddr_in);
 		 addri = malloc(addrlen);
 
-		 if (!addri)
-		   {
-		      fprintf(stderr, "Not enough memory\n");
-		      goto on_error;
-		   }
+		 if (!addri) goto on_mem_error;
 
 		 addri->sin_family = AF_INET;
 		 addri->sin_port = htons(arg->svr->port);
 
-		 memcpy(&addri->sin_addr.s_addr, arg->byaddr ? &arg->addr.v4 : (struct in_addr*)hostent->h_addr_list[0], sizeof (struct in_addr));
+		 memcpy(&addri->sin_addr.s_addr,
+			hostent->h_addr_list[0], sizeof (struct in_addr));
 
 		 addr = (struct sockaddr*) addri;
 		 break;
@@ -388,18 +429,15 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg, int status, int timeouts, str
 		 addrlen = sizeof (struct sockaddr_in6);
 		 addri6 = malloc(addrlen);
 
-		 if (!addri6)
-		   {
-		      fprintf(stderr, "Not enough memory\n");
-		      goto on_error;
-		   }
+		 if (!addri6) goto on_mem_error;
 
 		 addri6->sin6_family = AF_INET6;
 		 addri6->sin6_port = htons(arg->svr->port);
 		 addri6->sin6_flowinfo = 0;
 		 addri6->sin6_scope_id = 0;
 
-		 memcpy(&addri6->sin6_addr.s6_addr, arg->byaddr ? &arg->addr.v6 : (struct in6_addr*)hostent->h_addr_list[0], sizeof (struct in6_addr));
+		 memcpy(&addri6->sin6_addr.s6_addr,
+			hostent->h_addr_list[0], sizeof (struct in6_addr));
 
 		 addr = (struct sockaddr*) addri6;
 		 break;
@@ -409,38 +447,58 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg, int status, int timeouts, str
 	       goto on_error;
 	   }
 
-	 if (hostent->h_name)
-	   length = strlen(hostent->h_name) + 1;
-
-	 arg->result = malloc(sizeof (Ecore_Con_Info) + length);
-	 if (!arg->result)
-	   {
-	      fprintf(stderr, "Not enough memory\n");
-	      free(addr);
-	      goto on_error;
-	   }
-
-	 /* FIXME: What to do when hint is not set ? */
-	 arg->result->info.ai_flags = arg->hints.ai_flags;
-	 arg->result->info.ai_socktype = arg->hints.ai_socktype;
-	 arg->result->info.ai_protocol = arg->hints.ai_protocol;
-
-	 arg->result->info.ai_family = hostent->h_addrtype;
-	 arg->result->info.ai_addrlen = addrlen;
-	 arg->result->info.ai_addr = addr;
-	 arg->result->info.ai_canonname = (char*) (arg->result + 1);
-
-	 strcpy(arg->result->info.ai_canonname, hostent->h_name);
-
-	 arg->result->info.ai_next = NULL;
-
-	 ares_getnameinfo(info_channel, addr, addrlen,
-			  ARES_NI_NUMERICSERV | ARES_NI_NUMERICHOST | ARES_NI_LOOKUPSERVICE | ARES_NI_LOOKUPHOST,
-			  (ares_nameinfo_callback) _ecore_con_info_ares_nameinfo, arg);
+	 if (!_ecore_con_info_ares_getnameinfo(arg, hostent->h_addrtype, hostent->h_name,
+					       addr, addrlen))
+	   goto on_error;
 	 break;
+      case ARES_ENOTFOUND: /* address notfound */
+	 if (arg->byaddr)
+	   {
+	      /* This happen when host doesn't have a reverse. */
+	      if (arg->isv6)
+		{
+		   struct sockaddr_in6 *addri6;
+
+		   addrlen = sizeof (struct sockaddr_in6);
+		   addri6 = malloc(addrlen);
+
+		   if (!addri6) goto on_mem_error;
+
+		   addri6->sin6_family = AF_INET6;
+		   addri6->sin6_port = htons(arg->svr->port);
+		   addri6->sin6_flowinfo = 0;
+		   addri6->sin6_scope_id = 0;
+
+		   memcpy(&addri6->sin6_addr.s6_addr,
+			  &arg->addr.v6, sizeof (struct in6_addr));
+
+		   addr = (struct sockaddr*) addri6;
+		}
+	      else
+		{
+		   struct sockaddr_in *addri;
+
+		   addrlen = sizeof (struct sockaddr_in);
+		   addri = malloc(addrlen);
+
+		   if (!addri) goto on_mem_error;
+
+		   addri->sin_family = AF_INET;
+		   addri->sin_port = htons(arg->svr->port);
+
+		   memcpy(&addri->sin_addr.s_addr,
+			  &arg->addr.v4, sizeof (struct in_addr));
+
+		   addr = (struct sockaddr*) addri;
+		}
+
+	      if (!_ecore_con_info_ares_getnameinfo(arg, arg->isv6 ? AF_INET6 : AF_INET,
+						    NULL, addr, addrlen))
+		goto on_error;
+	      break;
+	   }
       case ARES_ENOTIMP: /* unknown family */
       case ARES_EBADNAME: /* not a valid internet address */
-      case ARES_ENOTFOUND: /* address notfound */
       case ARES_ENOMEM: /* not enough memory */
       case ARES_EDESTRUCTION: /* request canceled, shuting down */
 	 goto on_error;
@@ -450,6 +508,9 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg, int status, int timeouts, str
      }
 
    return ;
+
+ on_mem_error:
+   fprintf(stderr, "Not enough memory\n");
 
  on_error:
    arg->done_cb(arg->data, NULL);
