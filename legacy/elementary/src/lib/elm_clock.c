@@ -115,9 +115,9 @@ static int
 _signal_clock_val_up(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-   if (!wd->edit) return;
-   if (!wd->sel_obj) return;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
+   if (!wd->edit) return ECORE_CALLBACK_CANCEL;
+   if (!wd->sel_obj) return ECORE_CALLBACK_CANCEL;
    if (wd->sel_obj == wd->digit[0])
      {
 	wd->hrs = wd->hrs + 10;
@@ -164,9 +164,9 @@ static int
 _signal_clock_val_down(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-   if (!wd->edit) return;
-   if (!wd->sel_obj) return;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
+   if (!wd->edit) return ECORE_CALLBACK_CANCEL;
+   if (!wd->sel_obj) return ECORE_CALLBACK_CANCEL;
    if (wd->sel_obj == wd->digit[0])
      {
 	wd->hrs = wd->hrs - 10;
