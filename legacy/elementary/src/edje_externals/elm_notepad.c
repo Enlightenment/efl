@@ -1,18 +1,9 @@
 #include "private.h"
 
-typedef struct _Elm_Params_Notepad
-{
-} Elm_Params_Notepad;
 
 static void
 external_notepad_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
 {
-   const Elm_Params_Notepad *p;
-
-   if (to_params) p = to_params;
-   else if (from_params) p = from_params;
-   else return;
-
    /* TODO: to be expanded */
 }
 
