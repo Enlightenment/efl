@@ -115,9 +115,9 @@ static int
 _signal_clock_val_up(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return ECORE_CALLBACK_CANCEL;
-   if (!wd->edit) return ECORE_CALLBACK_CANCEL;
-   if (!wd->sel_obj) return ECORE_CALLBACK_CANCEL;
+   if (!wd) goto clock_val_up_cancel;
+   if (!wd->edit) goto clock_val_up_cancel;
+   if (!wd->sel_obj) goto clock_val_up_cancel;
    if (wd->sel_obj == wd->digit[0])
      {
 	wd->hrs = wd->hrs + 10;
@@ -158,15 +158,18 @@ _signal_clock_val_up(void *data)
    _time_update(data);
    evas_object_smart_callback_call(data, "changed", NULL);
    return ECORE_CALLBACK_RENEW;
+clock_val_up_cancel:
+   wd->spin = NULL;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static int
 _signal_clock_val_down(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return ECORE_CALLBACK_CANCEL;
-   if (!wd->edit) return ECORE_CALLBACK_CANCEL;
-   if (!wd->sel_obj) return ECORE_CALLBACK_CANCEL;
+   if (!wd) goto clock_val_down_cancel;
+   if (!wd->edit) goto clock_val_down_cancel;
+   if (!wd->sel_obj) goto clock_val_down_cancel;
    if (wd->sel_obj == wd->digit[0])
      {
 	wd->hrs = wd->hrs - 10;
@@ -207,6 +210,9 @@ _signal_clock_val_down(void *data)
    _time_update(data);
    evas_object_smart_callback_call(data, "changed", NULL);
    return ECORE_CALLBACK_RENEW;
+clock_val_down_cancel:
+   wd->spin = NULL;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
