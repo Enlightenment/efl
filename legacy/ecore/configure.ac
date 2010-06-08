@@ -53,8 +53,13 @@ AC_SUBST(release_info)
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
-AM_GNU_GETTEXT_VERSION([0.12.1])
-AM_GNU_GETTEXT([external])
+m4_ifdef([AM_GNU_GETTEXT_VERSION], [AM_GNU_GETTEXT_VERSION([0.12.1])])
+m4_ifdef([AM_GNU_GETTEXT],
+   [
+    AM_GNU_GETTEXT([external])
+    po_makefile_in=po/Makefile.in
+   ])
+AC_SUBST(LTLIBINTL)
 
 EFL_CHECK_PATH_MAX
 
@@ -1355,7 +1360,7 @@ src/lib/ecore_x/xcb/Makefile
 src/tests/Makefile
 README
 ecore.spec
-po/Makefile.in
+$po_makefile_in
 ])
 
 echo
