@@ -1222,15 +1222,16 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	    int lost_server = 1;
 	    unsigned char buf[READBUFSIZ];
 
-	    if (!(svr->type & ECORE_CON_SSL))
-	      {
-		if (((num = read(svr->fd, buf, READBUFSIZ)) < 0) &&
-		    (errno == EAGAIN))
-		  lost_server = 0;
+             if (!(svr->type & ECORE_CON_SSL))
+               {
+                  if ((num = read(svr->fd, buf, READBUFSIZ)) <= 0)
+                    {
+                       if ((num < 0) && (errno == EAGAIN))
+                         lost_server = 0;
+                    }
 	      }
-	    else
-	      if (!(num = ecore_con_ssl_server_read(svr, buf, READBUFSIZ)))
-		  lost_server = 0;
+	    else if (!(num = ecore_con_ssl_server_read(svr, buf, READBUFSIZ)))
+               lost_server = 0;
 
 	    if (num < 1)
 	      {
@@ -1470,25 +1471,26 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
      {
 	unsigned char *inbuf = NULL;
 	int            inbuf_num = 0;
-	int	       lost_client = 1;
         int            tries;
 
 	for (tries = 0; tries < 16; tries++)
 	  {
-	     unsigned char buf[65536];
-	     int num;
+	     int           num;
+             int	   lost_client = 1;
+	     unsigned char buf[READBUFSIZ];
 
 	     errno = 0;
 
 	     if (!(cl->server->type & ECORE_CON_SSL))
 	       {
-		 if (((num = read(cl->fd, buf, 65536)) < 0) &&
-		     (errno == EAGAIN))
-		   lost_client = 0;
+                  if ((num = read(cl->fd, buf, READBUFSIZ)) <= 0)
+                    {
+                       if ((num < 0) && (errno == EAGAIN))
+                         lost_client = 0;
+                    }
 	       }
-	     else
-	       if (!(num = ecore_con_ssl_client_read(cl, buf, 65536)))
-		 lost_client = 0;
+	     else if (!(num = ecore_con_ssl_client_read(cl, buf, READBUFSIZ)))
+               lost_client = 0;
 
 	     if (num < 1)
 	       {
