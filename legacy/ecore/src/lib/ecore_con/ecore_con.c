@@ -1213,11 +1213,12 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
      {
 	unsigned char *inbuf = NULL;
 	int            inbuf_num = 0;
+        int            tries;
 
 	if (svr->connecting && (svr_try_connect(svr) != ECORE_CON_CONNECTED))
 	   return 1;
 
-	for (;;)
+	for (tries = 0; tries < 16; tries++)
 	  {
 	    int num;
 	    int lost_server = 1;
@@ -1472,8 +1473,9 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	unsigned char *inbuf = NULL;
 	int            inbuf_num = 0;
 	int	       lost_client = 1;
+        int            tries;
 
-	for (;;)
+	for (tries = 0; tries < 16; tries++)
 	  {
 	     unsigned char buf[65536];
 	     int num;
