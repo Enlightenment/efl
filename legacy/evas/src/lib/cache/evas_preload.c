@@ -18,11 +18,13 @@
 typedef struct _Evas_Preload_Pthread_Worker Evas_Preload_Pthread_Worker;
 typedef struct _Evas_Preload_Pthread_Data Evas_Preload_Pthread_Data;
 
+typedef void (*_evas_preload_pthread_func)(void *data);
+
 struct _Evas_Preload_Pthread_Worker
 {
-   void (*func_heavy)(void *data);
-   void (*func_end)(void *data);
-   void (*func_cancel)(void *data);
+   _evas_preload_pthread_func func_heavy;
+   _evas_preload_pthread_func func_end;
+   _evas_preload_pthread_func func_cancel;
 
    const void *data;
 
@@ -120,7 +122,7 @@ _evas_preload_thread_worker(Evas_Preload_Pthread_Data *pth)
 
    work->data = pth;
    work->func_heavy = NULL;
-   work->func_end = (void *) _evas_preload_thread_end;
+   work->func_end = (_evas_preload_pthread_func) _evas_preload_thread_end;
    work->func_cancel = NULL;
    work->cancel = EINA_FALSE;
 
@@ -171,9 +173,9 @@ _evas_preload_thread_shutdown(void)
 }
 
 Evas_Preload_Pthread *
-evas_preload_thread_run(void (*func_heavy)(void *data),
-			void (*func_end)(void *data),
-			void (*func_cancel)(void *data),
+evas_preload_thread_run(_evas_preload_pthread_func func_heavy,
+			_evas_preload_pthread_func func_end,
+			_evas_preload_pthread_func func_cancel,
 			const void *data)
 {
 #ifdef BUILD_ASYNC_PRELOAD
