@@ -978,8 +978,6 @@ _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *net_info)
 static void
 _ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *net_info)
 {
-   char test[INET6_ADDRSTRLEN];
-   char *tmp;
    Ecore_Con_Server   *svr;
    int                 curstate = 0;
    int		       broadcast = 1;
@@ -1296,7 +1294,7 @@ _ecore_con_cl_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 
        errno = 0;
        num = read(svr->fd, buf, 65536);
-       if (num >= 0)
+       if (num > 0)
 	 {
 	   if (!svr->delete_me)
 	     {
@@ -1362,7 +1360,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
        num = recvfrom(svr->fd, buf, sizeof(buf), MSG_DONTWAIT, (struct sockaddr*) &client_addr, &client_addr_len);
 #endif
 
-       if (num >= 0)
+       if (num > 0)
 	 {
 	   if (!svr->delete_me)
 	     {
@@ -1492,7 +1490,7 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	       if (!(num = ecore_con_ssl_client_read(cl, buf, 65536)))
 		 lost_client = 0;
 
-	     if (num < 0)
+	     if (num < 1)
 	       {
 		  if (inbuf && !cl->delete_me)
 		    {
@@ -1568,7 +1566,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
      count = write(svr->fd, svr->write_buf + svr->write_buf_offset, num);
    else
      count = ecore_con_ssl_server_write(svr, svr->write_buf + svr->write_buf_offset, num);
-   if (count < 0)
+   if (count < 1)
      {
 	/* we lost our server! */
 	kill_server(svr);
@@ -1598,7 +1596,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
      count = write(cl->fd, cl->buf + cl->buf_offset, num);
    else
      count = ecore_con_ssl_client_write(cl, cl->buf + cl->buf_offset, num);
-   if (count < 0)
+   if (count < 1)
      {
 	if ((errno == EIO) || (errno == EBADF) || (errno == EPIPE) ||
 	    (errno == EINVAL) || (errno == ENOSPC) || (errno == ECONNREFUSED))
