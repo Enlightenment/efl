@@ -245,13 +245,9 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                   for (x = 0; (x < w) && ((bufptr + 4) <= bufend); x++)
                     {
                        if (hasa)
-                         *dataptr = 
-                         ((255 - bufptr[3]) << 24) | (bufptr[2] << 16) |
-                         (bufptr[1] <<  8) | (bufptr[0]      );
+                         *dataptr = ARGB_JOIN(255 - bufptr[3], bufptr[2], bufptr[1], bufptr[0]);
                        else
-                         *dataptr = 
-                         (0xff      << 24) | (bufptr[2] << 16) |
-                         (bufptr[1] <<  8) | (bufptr[0]      );
+                         *dataptr = ARGB_JOIN(0xff, bufptr[2], bufptr[1], bufptr[0]);
                        dataptr++;
                        bufptr += 4;
                     }
@@ -259,9 +255,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                case 24:
                   for (x = 0; (x < w) && ((bufptr + 3) <= bufend); x++)
                     {
-                       *dataptr = 
-                         (0xff      << 24) | (bufptr[2] << 16) |
-                         (bufptr[1] <<  8) | (bufptr[0]      );
+                       *dataptr = ARGB_JOIN(0xff, bufptr[2], bufptr[1], bufptr[0]);
                        dataptr++;
                        bufptr += 3;
                     }
@@ -280,9 +274,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                        b = (tmp << 3) & 0xf8; b |= b >> 5;
                        a = 0xff;
                        if ((hasa) && (tmp & 0x8000)) a = 0;
-                       *dataptr = 
-                         (a    << 24) | (r << 16) |
-                         (g    <<  8) | (b      );
+                       *dataptr = ARGB_JOIN(a, r, g, b);
                        dataptr++;
                        bufptr += 2;
                     }
@@ -290,9 +282,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                case 8:
                   for (x = 0; (x < w) && ((bufptr + 1) <= bufend); x++)
                     {
-                       *dataptr = 
-                         (0xff      << 24) | (bufptr[0] << 16) |
-                         (bufptr[0] <<  8) | (bufptr[0]      );
+                       *dataptr = ARGB_JOIN(0xff, bufptr[0], bufptr[0], bufptr[0]);
                        dataptr++;
                        bufptr += 1;
                     }
@@ -332,8 +322,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                             bufptr += 4;
                             for (i = 0; (i < count) && (dataptr < dataend); i++)
                               {
-                                 *dataptr = 
-                                   (a << 24) | (r << 16) | (g <<  8) | (b);
+                                 *dataptr = ARGB_JOIN(a, r, g, b);
                                  dataptr++;
                               }
                          }
@@ -349,8 +338,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                             bufptr += 3;
                             for (i = 0; (i < count) && (dataptr < dataend); i++)
                               {
-                                 *dataptr = 
-                                   (0xff << 24) | (r << 16) | (g <<  8) | (b);
+                                 *dataptr = ARGB_JOIN(0xff, r, g, b);
                                  dataptr++;
                               }
                          }
@@ -372,10 +360,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                             bufptr += 2;
                             for (i = 0; (i < count) && (dataptr < dataend); i++)
                               {
-                                 *dataptr = 
-                                   *dataptr = 
-                                   (a    << 24) | (r << 16) |
-                                   (g    <<  8) | (b      );
+                                 *dataptr = ARGB_JOIN(a, r, g, b);
                                  dataptr++;
                               }
                          }
@@ -389,8 +374,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                             bufptr += 1;
                             for (i = 0; (i < count) && (dataptr < dataend); i++)
                               {
-                                 *dataptr = 
-                                   (0xff << 24) | (g << 16) | (g <<  8) | (g);
+                                 *dataptr = ARGB_JOIN(0xff, g, g, g);
                                  dataptr++;
                               }
                          }
@@ -407,13 +391,9 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                        for (i = 0; (i < count) && (bufptr < (bufend - 4)) && (dataptr < dataend); i++)
                          {
                             if (hasa)
-                              *dataptr = 
-                              ((255 - bufptr[3]) << 24) | (bufptr[2] << 16) |
-                              (bufptr[1] <<  8) | (bufptr[0]      );
+                              *dataptr = ARGB_JOIN(255 - bufptr[3], bufptr[2], bufptr[1], bufptr[0]);
                             else
-                              *dataptr = 
-                              (0xff      << 24) | (bufptr[2] << 16) |
-                              (bufptr[1] <<  8) | (bufptr[0]      );
+                              *dataptr = ARGB_JOIN(0xff, bufptr[2], bufptr[1], bufptr[0]);
                             dataptr++;
                             bufptr += 4;
                          }
@@ -421,9 +401,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                     case 24:
                        for (i = 0; (i < count) && (bufptr < (bufend - 3)) && (dataptr < dataend); i++)
                          {
-                            *dataptr = 
-                              (0xff      << 24) | (bufptr[2] << 16) |
-                              (bufptr[1] <<  8) | (bufptr[0]      );
+                            *dataptr = ARGB_JOIN(0xff, bufptr[2], bufptr[1], bufptr[0]);
                             dataptr++;
                             bufptr += 3;
                          }
@@ -442,9 +420,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                             b = (tmp << 3) & 0xf8; b |= b >> 5;
                             a = 0xff;
                             if ((hasa) && (tmp & 0x8000)) a = 0;
-                            *dataptr = 
-                              (a    << 24) | (r << 16) |
-                              (g    <<  8) | (b      );
+                            *dataptr = ARGB_JOIN(a, r, g, b);
                             dataptr++;
                             bufptr += 2;
                          }
@@ -452,9 +428,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                     case 8:
                        for (i = 0; (i < count) && (bufptr < (bufend - 1)) && (dataptr < dataend); i++)
                          {
-                            *dataptr = 
-                              (0xff      << 24) | (bufptr[0] << 16) |
-                              (bufptr[0] <<  8) | (bufptr[0]      );
+                            *dataptr = ARGB_JOIN(0xff, bufptr[0], bufptr[0], bufptr[0]);
                             dataptr++;
                             bufptr += 1;
                          }

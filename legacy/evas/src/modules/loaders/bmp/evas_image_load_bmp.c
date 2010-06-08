@@ -40,7 +40,7 @@ read_int(FILE *file, int *ret)
 {
    unsigned char       b[4];
    if (fread(b, sizeof(unsigned char), 4, file) != 4) return 0;
-   *ret = (b[3] << 24) | (b[2] << 16) | (b[1] << 8) | b[0];
+   *ret = ARGB_JOIN(b[3], b[2], b[1], b[0]);
    return 1;
 }
 
@@ -562,7 +562,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                   if (fread(&a, 1, 1, f) != 1) goto close_file;
                }
              a = 0xff; // fillin a as solid for paletted images
-             pal[i] = (a << 24) | (r << 16) | (g << 8) | b;
+             pal[i] = ARGB_JOIN(a, r, g, b);
           }
         fseek(f, offset, SEEK_SET);
         buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
@@ -900,7 +900,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             r = (tmp >> 7) & 0xf8; r |= r >> 5;
                             g = (tmp >> 2) & 0xf8; g |= g >> 5;
                             b = (tmp << 3) & 0xf8; b |= b >> 5;
-                            *pix = 0xff000000 | (r << 16) | (g << 8) | (b);
+                            *pix = ARGB_JOIN(0xff, r, g, b);
                             p += 2;
                             if (p >= buffer_end) break;
                             pix++;
@@ -921,7 +921,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             b = p[0];
                             g = p[1];
                             r = p[2];
-                            *pix = 0xff000000 | (r << 16) | (g << 8) | (b);
+                            *pix = ARGB_JOIN(0xff, r, g, b);
                             p += 3;
                             if (p >= buffer_end) break;
                             pix++;
@@ -944,7 +944,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             r = p[2];
                             a = p[3];
                             if (!hasa) a = 0xff;
-                            *pix = (a << 24) | (r << 16) | (g << 8) | (b);
+                            *pix = ARGB_JOIN(a, r, g, b);
                             p += 4;
                             if (p >= buffer_end) break;
                             pix++;
@@ -990,7 +990,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             r = (tmp >> 8) & 0xf8; r |= r >> 5;
                             g = (tmp >> 3) & 0xfc; g |= g >> 6;
                             b = (tmp << 3) & 0xf8; b |= b >> 5;
-                            *pix = 0xff000000 | (r << 16) | (g << 8) | (b);
+                            *pix = ARGB_JOIN(0xff, r, g, b);
                             p += 2;
                             if (p >= buffer_end) break;
                             pix++;
@@ -1017,7 +1017,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             r = (tmp >> 7) & 0xf8; r |= r >> 5;
                             g = (tmp >> 2) & 0xf8; g |= g >> 5;
                             b = (tmp << 3) & 0xf8; b |= b >> 5;
-                            *pix = 0xff000000 | (r << 16) | (g << 8) | (b);
+                            *pix = ARGB_JOIN(0xff, r, g, b);
                             p += 2;
                             if (p >= buffer_end) break;
                             pix++;
@@ -1040,7 +1040,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             r = p[2];
                             a = p[3];
                             if (!hasa) a = 0xff;
-                            *pix = (a << 24) | (r << 16) | (g << 8) | (b);
+                            *pix = ARGB_JOIN(a, r, g, b);
                             p += 4;
                             if (p >= buffer_end) break;
                             pix++;

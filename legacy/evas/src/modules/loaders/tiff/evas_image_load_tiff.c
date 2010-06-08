@@ -125,7 +125,7 @@ raster(TIFFRGBAImage_Extra * img, uint32 * rast,
 		  g = (g * (a + 1)) >> 8;
 		  b = (b * (a + 1)) >> 8;
 	       }
-             (*(buffer_pixel++)) = (a << 24) | (r << 16) | (g << 8) | b;
+             (*(buffer_pixel++)) = ARGB_JOIN(a, r, g, b);
           }
      }
 }

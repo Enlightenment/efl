@@ -493,8 +493,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
                     {
                        for (x = 0; x < w; x++)
                          {
-                            *ptr2 =
-                              (0xff000000) | ((ptr[0]) << 16) | ((ptr[1]) << 8) | (ptr[2]);
+                            *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[1], ptr[2]);
                             ptr += 3;
                             ptr2++;
                          }
@@ -525,8 +524,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
                                  ptr += (3 * ie->load_opts.region.x);
                                  for (x = 0; x < ie->load_opts.region.w; x++)
                                    {
-                                      *ptr2 =
-                                        (0xff000000) | ((ptr[0]) << 16) | ((ptr[1]) << 8) | (ptr[2]);
+                                      *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[1], ptr[2]);
                                       ptr += 3;
                                       ptr2++;
                                    }
@@ -560,8 +558,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
                     {
                        for (x = 0; x < w; x++)
                          {
-                            *ptr2 =
-                              (0xff000000) | ((ptr[0]) << 16) | ((ptr[0]) << 8) | (ptr[0]);
+                            *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[0], ptr[0]);
                             ptr++;
                             ptr2++;
                          }
@@ -588,8 +585,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
                                  ptr += ie->load_opts.region.x;
                                  for (x = 0; x < ie->load_opts.region.w; x++)
                                    {
-                                      *ptr2 =
-                                        (0xff000000) | ((ptr[0]) << 16) | ((ptr[0]) << 8) | (ptr[0]);
+                                      *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[0], ptr[0]);
                                       ptr++;
                                       ptr2++;
                                    }

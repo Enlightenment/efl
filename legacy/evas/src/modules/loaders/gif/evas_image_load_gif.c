@@ -272,14 +272,14 @@ evas_image_load_file_data_gif(Image_Entry *ie, const char *file, const char *key
                r = cmap->Colors[bg].Red;
                g = cmap->Colors[bg].Green;
                b = cmap->Colors[bg].Blue;
-               *ptr++ = 0x00ffffff & ((r << 16) | (g << 8) | b);
+               *ptr++ = 0x00ffffff & RGB_JOIN(r, g, b);
              }
            else
              {
                r = cmap->Colors[rows[i][j]].Red;
                g = cmap->Colors[rows[i][j]].Green;
                b = cmap->Colors[rows[i][j]].Blue;
-               *ptr++ = (0xff << 24) | (r << 16) | (g << 8) | b;
+               *ptr++ = ARGB_JOIN(0xff, r, g, b);
              }
            per += per_inc;
          }

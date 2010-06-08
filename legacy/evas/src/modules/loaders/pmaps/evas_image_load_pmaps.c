@@ -494,7 +494,7 @@ pmaps_buffer_rgb_get(Pmaps_Buffer *b, DATA32 *color)
    if (vb > 255)
       vb = 255;
 
-   *color = 0xff000000 | (vr << 16) | (vg << 8) | vb;
+   *color = ARGB_JOIN(0xff, vr, vg, vb);
 
    return 1;
 }
@@ -511,7 +511,7 @@ pmaps_buffer_gray_get(Pmaps_Buffer *b, DATA32 *color)
       val = (val * 255) / b->max;
    if (val > 255)
       val = 255;
-   *color = 0xff000000 | (val << 16) | (val << 8) | val;
+   *color = ARGB_JOIN(0xff, val, val, val);
 
    return 1;
 }
