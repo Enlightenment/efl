@@ -297,9 +297,10 @@ void _ecore_x_input_handler(XEvent* xevent);
 void _ecore_mouse_move(unsigned int timestamp, unsigned int xmodifiers, int x, int y, int x_root, int y_root, unsigned int event_window, unsigned int window, unsigned int root_win, int same_screen, int dev, double radx, double rady, double pressure, double angle, double mx, double my, double mrx, double mry);
 Ecore_Event_Mouse_Button *_ecore_mouse_button(int event, unsigned int timestamp, unsigned int xmodifiers, unsigned int buttons, int x, int y, int x_root, int y_root, unsigned int event_window, unsigned int window, unsigned int root_win, int same_screen, int dev, double radx, double rady, double pressure, double angle, double mx, double my, double mrx, double mry);
 
-//#define LOGFNS 1
+#define LOGFNS 1
 
 #ifdef LOGFNS
+#include <stdio.h>
 #define LOGFN(fl, ln, fn) printf("-ECORE-X: %25s: %5i - %s\n", fl, ln, fn);
 #else
 #define LOGFN(fl, ln, fn)
