@@ -19,7 +19,7 @@ static Ecore_X_Selection_Intern selections[4];
 static Ecore_X_Selection_Converter *converters = NULL;
 static Ecore_X_Selection_Parser *parsers = NULL;
 
-static int _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret);
+static int _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *tprop, int *);
 static int _ecore_x_selection_data_default_free(void *data);
 static void *_ecore_x_selection_parser_files(const char *target, void *data, int size, int format);
 static int _ecore_x_selection_data_files_free(void *data);
@@ -37,10 +37,10 @@ _ecore_x_selection_data_init(void)
    memset(selections, 0, sizeof(selections));
 
    /* Initialize converters */
-   ecore_x_selection_converter_atom_add(ECORE_X_ATOM_TEXT, 
+   ecore_x_selection_converter_atom_add(ECORE_X_ATOM_TEXT,
 					_ecore_x_selection_converter_text);
 #ifdef X_HAVE_UTF8_STRING
-   ecore_x_selection_converter_atom_add(ECORE_X_ATOM_UTF8_STRING, 
+   ecore_x_selection_converter_atom_add(ECORE_X_ATOM_UTF8_STRING,
 					_ecore_x_selection_converter_text);
 #endif
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_COMPOUND_TEXT,
@@ -108,16 +108,16 @@ _ecore_x_selection_get(Ecore_X_Atom selection)
      return NULL;
 }
 
-int 
+int
 _ecore_x_selection_set(Window w, const void *data, int size, Ecore_X_Atom selection)
 {
    int in;
    unsigned char *buf = NULL;
-   
+
    XSetSelectionOwner(_ecore_x_disp, selection, w, _ecore_x_event_last_time);
    if (XGetSelectionOwner(_ecore_x_disp, selection) != w)
      return 0;
-   
+
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
      in = 0;
    else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
@@ -160,7 +160,7 @@ _ecore_x_selection_set(Window w, const void *data, int size, Ecore_X_Atom select
  * @return     Returns 1 if the ownership of the selection was successfully 
  *             claimed, or 0 if unsuccessful.
  */
-EAPI int 
+EAPI int
 ecore_x_selection_primary_set(Ecore_X_Window w, const void *data, int size)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -173,7 +173,7 @@ ecore_x_selection_primary_set(Ecore_X_Window w, const void *data, int size)
  *             or 0 if unsuccessful.
  *
  */
-EAPI int 
+EAPI int
 ecore_x_selection_primary_clear(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -188,7 +188,7 @@ ecore_x_selection_primary_clear(void)
  * @return     Returns 1 if the ownership of the selection was successfully 
  *             claimed, or 0 if unsuccessful.
  */
-EAPI int 
+EAPI int
 ecore_x_selection_secondary_set(Ecore_X_Window w, const void *data, int size)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -201,7 +201,7 @@ ecore_x_selection_secondary_set(Ecore_X_Window w, const void *data, int size)
  *             or 0 if unsuccessful.
  *
  */
-EAPI int 
+EAPI int
 ecore_x_selection_secondary_clear(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -216,7 +216,7 @@ ecore_x_selection_secondary_clear(void)
  * @return     Returns 1 if the ownership of the selection was successfully 
  *             claimed, or 0 if unsuccessful.
  */
-EAPI int 
+EAPI int
 ecore_x_selection_xdnd_set(Ecore_X_Window w, const void *data, int size)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -229,7 +229,7 @@ ecore_x_selection_xdnd_set(Ecore_X_Window w, const void *data, int size)
  *             or 0 if unsuccessful.
  *
  */
-EAPI int 
+EAPI int
 ecore_x_selection_xdnd_clear(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -247,7 +247,7 @@ ecore_x_selection_xdnd_clear(void)
  * Get the converted data from a previous CLIPBOARD selection
  * request. The buffer must be freed when done with.
  */
-EAPI int 
+EAPI int
 ecore_x_selection_clipboard_set(Ecore_X_Window w, const void *data, int size)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -260,7 +260,7 @@ ecore_x_selection_clipboard_set(Ecore_X_Window w, const void *data, int size)
  *             or 0 if unsuccessful.
  *
  */
-EAPI int 
+EAPI int
 ecore_x_selection_clipboard_clear(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -364,13 +364,13 @@ ecore_x_selection_clipboard_request(Ecore_X_Window w, const char *target)
 
 EAPI void
 ecore_x_selection_converter_atom_add(Ecore_X_Atom target,
-      int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret))
+      int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *tsize))
 {
    Ecore_X_Selection_Converter *cnv;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    cnv = converters;
-   if (converters) 
+   if (converters)
      {
 	while (1)
 	  {
@@ -398,8 +398,8 @@ ecore_x_selection_converter_atom_add(Ecore_X_Atom target,
 }
 
 EAPI void
-ecore_x_selection_converter_add(char *target, 
-      int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret))
+ecore_x_selection_converter_add(char *target,
+      int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *, int *))
 {
    Ecore_X_Atom x_target;
 
@@ -474,14 +474,14 @@ ecore_x_selection_notify_send(Ecore_X_Window requestor, Ecore_X_Atom selection, 
 
 /* Locate and run conversion callback for specified selection target */
 EAPI int
-ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **data_ret)
+ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target,
+      void **data_ret, int *size, Ecore_X_Atom *targtype, int *typesize)
 {
    Ecore_X_Selection_Intern *sel;
    Ecore_X_Selection_Converter *cnv;
    void *data;
-   int size;
    char *tgt_str;
-   
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    sel = _ecore_x_selection_get(selection);
    tgt_str = _ecore_x_selection_target_get(target);
@@ -491,7 +491,8 @@ ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **da
 	if (cnv->target == target)
 	  {
 	     int r;
-	     r = cnv->convert(tgt_str, sel->data, sel->length, &data, &size);
+	     r = cnv->convert(tgt_str, sel->data, sel->length, &data, size,
+		   targtype, typesize);
 	     free(tgt_str);
 	     if (r)
 	       {
@@ -518,7 +519,7 @@ ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **da
  * locale using Ecore_Txt functions */
 /* Converter for standard non-utf8 text targets */
 static int
-_ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret)
+_ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *targprop, int *s)
 {
    XTextProperty text_prop;
    char *mystr;
@@ -585,7 +586,7 @@ ecore_x_selection_parser_add(const char *target,
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    prs = parsers;
-   if (parsers) 
+   if (parsers)
      {
 	while (prs->next)
 	  {
@@ -645,7 +646,7 @@ _ecore_x_selection_parse(const char *target, void *data, int size, int format)
 {
    Ecore_X_Selection_Parser *prs;
    Ecore_X_Selection_Data *sel;
-   
+
    for (prs = parsers; prs; prs = prs->next)
      {
 	if (!strcmp(prs->target, target))
@@ -807,6 +808,7 @@ _ecore_x_selection_parser_targets(const char *target __UNUSED__, void *data, int
    sel->targets = malloc((size - 2) * sizeof(char *));
    for (i = 2; i < size; i++)
      sel->targets[i - 2] = XGetAtomName(_ecore_x_disp, targets[i]);
+
    free(data);
 
    ECORE_X_SELECTION_DATA(sel)->free = _ecore_x_selection_data_targets_free;

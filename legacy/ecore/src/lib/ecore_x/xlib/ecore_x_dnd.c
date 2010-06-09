@@ -80,7 +80,7 @@ _ecore_x_dnd_shutdown(void)
 }
 
 static int
-_ecore_x_dnd_converter_copy(char *target __UNUSED__, void *data, int size, void **data_ret, int *size_ret)
+_ecore_x_dnd_converter_copy(char *target __UNUSED__, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *tprop, int *count)
 {
    XTextProperty text_prop;
    char *mystr;

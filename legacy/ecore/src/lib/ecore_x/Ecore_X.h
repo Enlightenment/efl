@@ -1106,9 +1106,9 @@ EAPI void             ecore_x_selection_primary_request(Ecore_X_Window w, const 
 EAPI void             ecore_x_selection_secondary_request(Ecore_X_Window w, const char *target);
 EAPI void             ecore_x_selection_xdnd_request(Ecore_X_Window w, const char *target);
 EAPI void             ecore_x_selection_clipboard_request(Ecore_X_Window w, const char *target);
-EAPI int              ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **data_ret);
-EAPI void             ecore_x_selection_converter_add(char *target, int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret));
-EAPI void             ecore_x_selection_converter_atom_add(Ecore_X_Atom target, int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret));
+EAPI int              ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **data_ret, int *len, Ecore_X_Atom *targprop, int *targsize);
+EAPI void             ecore_x_selection_converter_add(char *target, int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *, int *));
+EAPI void             ecore_x_selection_converter_atom_add(Ecore_X_Atom target, int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *tprop, int *tsize));
 EAPI void             ecore_x_selection_converter_del(char *target);
 EAPI void             ecore_x_selection_converter_atom_del(Ecore_X_Atom target);
 EAPI void             ecore_x_selection_parser_add(const char *target, void *(*func)(const char *target, void *data, int size, int format));

@@ -1311,6 +1311,8 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
    Ecore_X_Event_Selection_Request *e;
    Ecore_X_Selection_Intern *sd;
    void *data;
+   int len;
+   int typesize;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_x_last_event_mouse_move = 0;
@@ -1335,10 +1337,16 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
 	if (si->data)
 	  {
 	     Ecore_X_Atom property;
+	     Ecore_X_Atom type;
+
+	     /* Set up defaults for strings first */
+	     type = xevent->xselectionrequest.target;
+	     typesize = 8;
+	     len = sd->length;
 
 	     if (!ecore_x_selection_convert(xevent->xselectionrequest.selection,
 					    xevent->xselectionrequest.target,
-					    &data))
+					    &data, &len, &type, &typesize))
 	       {
 		  /* Refuse selection, conversion to requested target failed */
 		  property = None;
@@ -1348,8 +1356,8 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
 		  /* FIXME: This does not properly handle large data transfers */
 		  ecore_x_window_prop_property_set(xevent->xselectionrequest.requestor,
 						   xevent->xselectionrequest.property,
-						   xevent->xselectionrequest.target,
-						   8, data, sd->length);
+						   type, typesize,
+						   data, len);
 		  property = xevent->xselectionrequest.property;
 		  free(data);
 	       }
