@@ -173,9 +173,9 @@ _evas_preload_thread_shutdown(void)
 }
 
 Evas_Preload_Pthread *
-evas_preload_thread_run(_evas_preload_pthread_func func_heavy,
-			_evas_preload_pthread_func func_end,
-			_evas_preload_pthread_func func_cancel,
+evas_preload_thread_run(void (*func_heavy) (void *data),
+			void (*func_end) (void *data),
+			void (*func_cancel) (void *data),
 			const void *data)
 {
 #ifdef BUILD_ASYNC_PRELOAD
