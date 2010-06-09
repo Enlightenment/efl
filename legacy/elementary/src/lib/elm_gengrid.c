@@ -240,10 +240,11 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
-	if (!item->wd->on_hold) {
+	if (!item->wd->on_hold) 
+	  {
 	     item->wd->on_hold = EINA_TRUE;
 	     _item_unselect(item);
-	}
+	  }
      }
    if ((item->dragging) && (item->down))
      {
@@ -388,15 +389,13 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
    if (item->wd->longpressed)
      {
 	item->wd->longpressed = EINA_FALSE;
-	if (!item->wd->wasselected)
-	  _item_unselect(item);
+	if (!item->wd->wasselected) _item_unselect(item);
 	item->wd->wasselected = EINA_FALSE;
 	return;
      }
    if (dragged)
      {
-	if (item->want_unrealize)
-	     _item_unrealize(item);
+	if (item->want_unrealize) _item_unrealize(item);
      }
    if ((item->disabled) || dragged) return;
    if (item->wd->multi)
@@ -412,7 +411,8 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
      {
 	if (!item->selected)
 	  {
-	     while (item->wd->selected) _item_unselect(item->wd->selected->data);
+	     while (item->wd->selected) 
+	       _item_unselect(item->wd->selected->data);
 	  }
 	else
 	  {
@@ -420,7 +420,7 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
 	     Elm_Gengrid_Item *item2;
 
 	     EINA_LIST_FOREACH_SAFE(item->wd->selected, l, l_next, item2)
-		if (item2 != item) _item_unselect(item2);
+	       if (item2 != item) _item_unselect(item2);
 	  }
 	_item_hilight(item);
 	_item_select(item);
@@ -505,7 +505,7 @@ _item_realize(Elm_Gengrid_Item *item)
 	EINA_LIST_FOREACH(item->states, l, key)
 	  {
 	     Eina_Bool on = item->gic->func.state_get(item->data,
-		   item->wd->self, l->data);
+						      item->wd->self, l->data);
 	     if (on)
 	       {
 		  snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
@@ -514,11 +514,11 @@ _item_realize(Elm_Gengrid_Item *item)
 	  }
      }
 
-   if (!item->wd->item_width && !item->wd->item_height)
+   if ((!item->wd->item_width) && (!item->wd->item_height))
      {
 	edje_object_size_min_restricted_calc(item->base,
-	      &item->wd->item_width, &item->wd->item_height,
-	      item->wd->item_width, item->wd->item_height);
+					     &item->wd->item_width, &item->wd->item_height,
+					     item->wd->item_width, item->wd->item_height);
 	elm_coords_finger_size_adjust(1, &item->wd->item_width,
 				      1, &item->wd->item_height);
      }
@@ -562,7 +562,7 @@ _item_unrealize(Elm_Gengrid_Item *item)
    _elm_stringlist_free(item->states);
 
    EINA_LIST_FREE(item->icon_objs, icon)
-      evas_object_del(icon);
+     evas_object_del(icon);
 
    item->states = NULL;
    item->realized = EINA_FALSE;
@@ -593,32 +593,32 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
    tcw = ((vw/item->wd->item_width)*item->wd->item_width);
    alignw = (vw - tcw)*item->wd->align_x;
 
-   if (item->wd->horizontal && item->wd->minw < vw)
+   if ((item->wd->horizontal) && (item->wd->minw < vw))
      {
         int columns;
 
         columns = eina_list_count(item->wd->items)/(vh/item->wd->item_height);
         if (eina_list_count(item->wd->items) % (vh/item->wd->item_height))
-             columns++;
+	  columns++;
 
         tcw = item->wd->item_width * columns;
 	alignw = (vw - tcw)*item->wd->align_x;
      }
-   else if (item->wd->horizontal && item->wd->minw > vw)
-        alignw = 0;   
-   if (!item->wd->horizontal && item->wd->minh < vh)
+   else if ((item->wd->horizontal) && (item->wd->minw > vw))
+     alignw = 0;   
+   if ((!item->wd->horizontal) && (item->wd->minh < vh))
      {
         int rows;
 
         rows = eina_list_count(item->wd->items)/(vw/item->wd->item_width);
         if (eina_list_count(item->wd->items) % (vw/item->wd->item_width))
-             rows++;
+	  rows++;
 
         tch = item->wd->item_height * rows;
         alignh = (vh - tch)*item->wd->align_y;
      }
-   else if (!item->wd->horizontal && item->wd->minh > vh)
-        alignh = 0;
+   else if ((!item->wd->horizontal) && (item->wd->minh > vh))
+     alignh = 0;
    x = cx * item->wd->item_width - item->wd->pan_x + ox + alignw;
    y = cy * item->wd->item_height - item->wd->pan_y + oy + alignh;
 
@@ -626,6 +626,7 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
 			   cvx, cvy, cvw, cvh))
      {
 	Eina_Bool was_realized = item->realized;
+
 	_item_realize(item);
 	if (!was_realized)
 	  evas_object_smart_callback_call(item->wd->self, "realized", item);
@@ -638,8 +639,7 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
 }
 
 static Elm_Gengrid_Item *
-_item_create(Widget_Data *wd, const Elm_Gengrid_Item_Class *gic,
-      const void *data, Evas_Smart_Cb func, const void *func_data)
+_item_create(Widget_Data *wd, const Elm_Gengrid_Item_Class *gic, const void *data, Evas_Smart_Cb func, const void *func_data)
 {
    Elm_Gengrid_Item *item;
 
@@ -680,8 +680,8 @@ _item_select(Elm_Gengrid_Item *item)
    item->wd->selected = eina_list_append(item->wd->selected, item);
 call:
    item->walking++;
-   if (item->func.func) item->func.func((void *)item->func.data, item->wd->self,
-				        item);
+   if (item->func.func) 
+     item->func.func((void *)item->func.data, item->wd->self, item);
    if (!item->delete_me)
      evas_object_smart_callback_call(item->wd->self, "selected", item);
    item->walking--;
@@ -711,7 +711,7 @@ _calc_job(void *data)
    int count;
 
    evas_object_geometry_get(wd->self, NULL, NULL, &cvw, &cvh);
-   if (wd->horizontal && wd->item_height)
+   if ((wd->horizontal) && (wd->item_height))
      nmax = cvh / wd->item_height;
    else if (wd->item_width)
      nmax = cvw / wd->item_width;
@@ -1004,7 +1004,7 @@ elm_gengrid_item_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->item_width == w && wd->item_height == h) return;
+   if ((wd->item_width == w) && (wd->item_height == h)) return;
    wd->item_width = w;
    wd->item_height = h;
    if (wd->calc_job) ecore_job_del(wd->calc_job);
@@ -1137,7 +1137,8 @@ elm_gengrid_item_del(Elm_Gengrid_Item *item)
 	item->delete_me = EINA_TRUE;
 	if (item->selected)
 	  item->wd->selected = eina_list_remove(item->wd->selected, item);
-	if (item->gic->func.del) item->gic->func.del(item->data, item->wd->self);
+	if (item->gic->func.del) 
+	  item->gic->func.del(item->data, item->wd->self);
 	return;
      }
 
@@ -1382,7 +1383,7 @@ elm_gengrid_item_selected_set(Elm_Gengrid_Item *item, Eina_Bool selected)
 {
    Widget_Data *wd = elm_widget_data_get(item->wd->self);
    if (!wd) return;
-   if (!item || item->delete_me) return;
+   if ((!item) || (item->delete_me)) return;
    selected = !!selected;
    if (item->selected == selected) return;
 
