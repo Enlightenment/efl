@@ -1355,7 +1355,7 @@ src/lib/ecore_x/xcb/Makefile
 src/tests/Makefile
 README
 ecore.spec
-po/makefile.in
+po/Makefile.in
 ])
 
 echo
