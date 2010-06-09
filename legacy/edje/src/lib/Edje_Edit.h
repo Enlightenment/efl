@@ -493,31 +493,6 @@ EAPI Eina_Bool edje_edit_color_class_name_set(Evas_Object *obj, const char *name
 
 //@}
 
-/** Add a new ttf font to the edje file.
- *
- * The newly created font will be available to all the groups in the edje,
- * not only the current one.
- *
- * @param obj Object being edited.
- * @param path Path to the font file to add into the Edje file.
- * @param alias Name with which the font will be referred inside the Edje,
- *              can be NULL to use the filename.
- *
- * @return EINA_TRUE if the font got succesfully added, EINA_FALSE if not.
- */
-EAPI Eina_Bool edje_edit_font_add(Evas_Object *obj, const char *path, const char *alias);
-
-/** Remove a ttf font to the edje file.
- *
- * The font exists at the file level, it's not per object. So deleting it
- * will affect every group that is using it.
- *
- * @param obj Object being edited.
- * @param alias Name by which the file is identified in the Edje file.
- *
- * @return EINA_TRUE if succesful, EINA_FALSE otherwise.
- */
-EAPI Eina_Bool edje_edit_font_del(Evas_Object *obj, const char *alias);
 
 /******************************************************************************/
 /**************************   TEXT STYLES *************************************/
