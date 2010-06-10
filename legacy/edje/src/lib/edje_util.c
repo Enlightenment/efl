@@ -4248,8 +4248,6 @@ _edje_children_get(Edje_Real_Part *rp, const char *partid)
    Eina_Bool number = EINA_TRUE;
    unsigned int i;
 
-   fprintf(stderr, "edje_children_get\n");
-
    for (i = 0; i < strlen(partid); ++i)
      number &= isdigit(partid[i]) ? EINA_TRUE : EINA_FALSE;
 
@@ -4291,7 +4289,6 @@ _edje_real_part_recursive_get_helper(Edje *ed, char **path)
      {
 	char *end;
 
-	fprintf(stderr, "looking for [] in `%s`\n", path[0]);
 	end = strchr(idx + 1, EDJE_PART_PATH_SEPARATOR_INDEXR);
 	if (end)
 	  {
