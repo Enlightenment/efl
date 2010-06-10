@@ -645,6 +645,7 @@ elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable)
 
    if (!wd) return;
    wd->scrollable = scrollable;
+   elm_smart_scroller_bounce_allow_set(wd->scr, wd->scrollable, 0);
    _sizing_eval(obj);
 }
 
