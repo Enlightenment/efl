@@ -3,6 +3,7 @@
  */
 
 #include <string.h>
+#include <ctype.h>
 
 #include "edje_private.h"
 
@@ -4239,39 +4240,94 @@ _edje_real_part_recursive_get(Edje *ed, const char *part)
    return rp;
 }
 
+Evas_Object *
+_edje_children_get(Edje_Real_Part *rp, const char *partid)
+{
+   Evas_Object *child;
+   Eina_List *l;
+   Eina_Bool number = EINA_TRUE;
+   unsigned int i;
+
+   fprintf(stderr, "edje_children_get\n");
+
+   for (i = 0; i < strlen(partid); ++i)
+     number &= isdigit(partid[i]) ? EINA_TRUE : EINA_FALSE;
+
+   if (rp->part->type == EDJE_PART_TYPE_BOX)
+     l = evas_object_box_children_get(rp->object);
+   else
+     if (rp->part->type == EDJE_PART_TYPE_TABLE)
+       l = evas_object_table_children_get(rp->object);
+     else
+       return NULL;
+
+   if (number)
+     {
+	child = eina_list_nth(l, atoi(partid));
+	eina_list_free(l);
+     }
+   else
+     {
+	EINA_LIST_FREE(l, child)
+	  if (!strcmp(evas_object_name_get(child), partid))
+	    break ;
+	eina_list_free(l);
+     }
+
+   return child;
+}
+
 Edje_Real_Part *
 _edje_real_part_recursive_get_helper(Edje *ed, char **path)
 {
    Edje_Real_Part *rp;
-   Evas_Object *o;
-   Eina_List *l;
+   Evas_Object *child;
+   char *idx = NULL;
 
    //printf("  lookup: %s on %s\n", path[0], ed->parent ? ed->parent : "-");
+   if (path[0])
+     idx = strchr(path[0], EDJE_PART_PATH_SEPARATOR_INDEXL);
+   if (idx)
+     {
+	char *end;
+
+	fprintf(stderr, "looking for [] in `%s`\n", path[0]);
+	end = strchr(idx + 1, EDJE_PART_PATH_SEPARATOR_INDEXR);
+	if (end)
+	  {
+	     *end = '\0';
+	     *idx = '\0';
+	     idx++;
+	  }
+     }
+
    rp = _edje_real_part_get(ed, path[0]);
    if (path[1] == NULL) return rp;
-
    if (!rp) return NULL;
+
    switch (rp->part->type)
      {
       case EDJE_PART_TYPE_GROUP:
-	if (!rp->swallowed_object) return NULL;
-	ed = _edje_fetch(rp->swallowed_object);
-	if (!ed) return NULL;
-	path++;
-	return _edje_real_part_recursive_get_helper(ed, path);
-      case EDJE_PART_TYPE_BOX: case EDJE_PART_TYPE_TABLE:
-	if (!rp->items) return NULL;
-	path++;
-	EINA_LIST_FOREACH(rp->items, l, o)
-	   {
-	      ed = _edje_fetch(o);
-	      if (!ed) return NULL;
-	      if ((rp = _edje_real_part_recursive_get_helper(ed, path)))
-		return rp;
-	   }
-	return NULL;
+	 if (!rp->swallowed_object) return NULL;
+	 ed = _edje_fetch(rp->swallowed_object);
+	 if (!ed) return NULL;
+	 path++;
+	 return _edje_real_part_recursive_get_helper(ed, path);
+      case EDJE_PART_TYPE_BOX:
+      case EDJE_PART_TYPE_TABLE:
+	 if (!idx) return rp;
+	 path++;
+
+	 child = _edje_children_get(rp, idx);
+
+	 ed = _edje_fetch(child);
+	 if (!ed) return NULL;
+	 if ((rp = _edje_real_part_recursive_get_helper(ed, path)))
+	   return rp;
+
+	 return NULL;
       default:
-	return NULL;
+	 return NULL;
      }
 }
 

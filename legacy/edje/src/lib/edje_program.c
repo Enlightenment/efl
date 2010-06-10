@@ -1012,9 +1012,14 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
 
    if (ed->delete_me) return;
 
-   sep = strchr(sig, ':');
+   sep = strchr(sig, EDJE_PART_PATH_SEPARATOR);
+
+   /* If we are not sending the signal to a part of the child, the
+    * signal if for ourself
+    */
    if (sep)
      {
+	const char *idx;
         size_t length;
         char *part;
        /* the signal contains a colon, split the signal into "part:signal",
@@ -1027,16 +1032,23 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
             char *newsig;
 	    int i;
 
-            memcpy(part, sig, length);
-            newsig = part + (sep - sig);
+	    memcpy(part, sig, length);
+
+	    /* The part contain a [index], retrieve it */
+	    idx = strchr(sig, EDJE_PART_PATH_SEPARATOR_INDEXL);
+	    if (idx == NULL || sep < idx) newsig = part + (sep - sig);
+	    else newsig = part + (idx - sig);
+
 	    *newsig = '\0';
 	    newsig++;
 
             for (i = 0; i < ed->table_parts_size; i++)
               {
                  Edje_Real_Part *rp = ed->table_parts[i];
-                 if ((rp->part->type == EDJE_PART_TYPE_GROUP || rp->part->type == EDJE_PART_TYPE_EXTERNAL) &&
-                     (rp->swallowed_object) &&
+                 if ((((rp->part->type == EDJE_PART_TYPE_GROUP
+			|| rp->part->type == EDJE_PART_TYPE_EXTERNAL)
+		       && (rp->swallowed_object))
+		      || rp->part->type == EDJE_PART_TYPE_BOX) &&
                      (rp->part) && (rp->part->name) &&
                      (strcmp(rp->part->name, part) == 0))
                    {
@@ -1054,7 +1066,37 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
 			   _edje_external_signal_emit(rp->swallowed_object, newsig, src);
 			   return;
 			}
-                   }
+		      else if (rp->part->type == EDJE_PART_TYPE_BOX
+			       || rp->part->type == EDJE_PART_TYPE_TABLE)
+			{
+			   const char *partid;
+			   Evas_Object *child;
+			   Eina_List *l;
+			   Edje *ed2 = NULL;
+			   Eina_Bool number = EINA_TRUE;
+			   unsigned int i;
+			   int id;
+
+			   idx = strchr(newsig, EDJE_PART_PATH_SEPARATOR_INDEXR);
+
+			   if (!idx) return ;
+			   if (idx[1] != ':') return ;
+			   if (!rp->object) return;
+
+			   partid = newsig;
+			   newsig = idx;
+
+			   *newsig = '\0';
+			   newsig++;
+
+			   child = _edje_children_get(rp, partid);
+
+			   if (child) ed2 = _edje_fetch(child);
+			   if (ed2) _edje_emit(ed2, newsig, src);
+
+			   return;
+			}
+		   }
               }
          }
      }

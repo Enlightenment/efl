@@ -309,6 +309,8 @@ typedef struct _Edje_Patterns                        Edje_Patterns;
 
 #define EDJE_PART_PATH_SEPARATOR ':'
 #define EDJE_PART_PATH_SEPARATOR_STRING ":"
+#define EDJE_PART_PATH_SEPARATOR_INDEXL '['
+#define EDJE_PART_PATH_SEPARATOR_INDEXR ']'
 /*----------*/
 
 struct _Edje_File
@@ -1395,6 +1397,7 @@ Eina_Bool         _edje_real_part_box_remove_all(Edje_Real_Part *rp, Eina_Bool c
 Eina_Bool         _edje_real_part_table_pack(Edje_Real_Part *rp, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
 Eina_Bool         _edje_real_part_table_unpack(Edje_Real_Part *rp, Evas_Object *child_obj);
 void              _edje_real_part_table_clear(Edje_Real_Part *rp, Eina_Bool clear);
+Evas_Object      *_edje_children_get(Edje_Real_Part *rp, const char *partid);
 
 Eina_Bool         _edje_object_part_text_raw_set(Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text);
 char             *_edje_text_escape(const char *text);
