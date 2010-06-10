@@ -386,7 +386,7 @@ ecore_pipe_write_close(Ecore_Pipe *p)
  * @return       Returns EINA_TRUE on a successful write, EINA_FALSE on an error
  * @ingroup Ecore_Pipe_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 {
    ssize_t ret;

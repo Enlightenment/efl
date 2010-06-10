@@ -326,7 +326,7 @@ extern "C" {
 
    EAPI Ecore_Pipe  *ecore_pipe_add(void (*handler) (void *data, void *buffer, unsigned int nbyte), const void *data);
    EAPI void        *ecore_pipe_del(Ecore_Pipe *p);
-   EAPI int          ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes);
+   EAPI Eina_Bool    ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes);
    EAPI void         ecore_pipe_write_close(Ecore_Pipe *p);
    EAPI void         ecore_pipe_read_close(Ecore_Pipe *p);
 

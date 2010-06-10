@@ -126,31 +126,31 @@ ecore_file_size(const char *file)
 /**
  * Check if file exists
  * @param  file The name of the file
- * @return 1 if file exists on local filesystem, 0 otherwise
+ * @return EINA_TRUE if file exists on local filesystem, EINA_FALSE otherwise
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_exists(const char *file)
 {
    struct stat st;
 
    /*Workaround so that "/" returns a true, otherwise we can't monitor "/" in ecore_file_monitor*/
-   if (stat(file, &st) < 0 && strcmp(file, "/")) return 0;
-   return 1;
+   if (stat(file, &st) < 0 && strcmp(file, "/")) return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 /**
  * Check if file is a directory
  * @param  file The name of the file
- * @return 1 if file exist and is a directory, 0 otherwise
+ * @return EINA_TRUE if file exist and is a directory, EINA_FALSE otherwise
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_is_dir(const char *file)
 {
    struct stat st;
 
-   if (stat(file, &st) < 0) return 0;
-   if (S_ISDIR(st.st_mode)) return 1;
-   return 0;
+   if (stat(file, &st) < 0) return EINA_FALSE;
+   if (S_ISDIR(st.st_mode)) return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
@@ -158,15 +158,15 @@ static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S
 /**
  * Create a new directory
  * @param  dir The name of the directory to create
- * @return 1 on successfull creation, 0 on failure
+ * @return EINA_TRUE on successfull creation, EINA_FALSE on failure
  *
  * The directory is created with the mode: S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_mkdir(const char *dir)
 {
-   if (mkdir(dir, default_mode) < 0) return 0;
-   return 1;
+   if (mkdir(dir, default_mode) < 0) return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 /**
@@ -285,47 +285,47 @@ ecore_file_mksubdirs(const char *base, const char **subdirs)
 /**
  * Delete the given dir
  * @param  dir The name of the directory to delete
- * @return 1 on success, 0 on failure
+ * @return EINA_TRUE on success, EINA_FALSE on failure
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_rmdir(const char *dir)
 {
-   if (rmdir(dir) < 0) return 0;
-   return 1;
+   if (rmdir(dir) < 0) return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 /**
  * Delete the given file
  * @param  file The name of the file to delete
- * @return 1 on success, 0 on failure
+ * @return EINA_TRUE on success, EINA_FALSE on failure
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_unlink(const char *file)
 {
-   if (unlink(file) < 0) return 0;
-   return 1;
+   if (unlink(file) < 0) return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 /**
  * Remove the given file or directory
  * @param  file The name of the file or directory to delete
- * @return 1 on success, 0 on failure
+ * @return EINA_TRUE on success, EINA_FALSE on failure
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_remove(const char *file)
 {
-   if (remove(file) < 0) return 0;
-   return 1;
+   if (remove(file) < 0) return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 /**
  * Delete a directory and all its contents
  * @param  dir The name of the directory to delete
- * @return 1 on success, 0 on failure
+ * @return EINA_TRUE on success, EINA_FALSE on failure
  *
  * If dir is a link only the link is removed
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_recursive_rm(const char *dir)
 {
    DIR *dirp;
@@ -341,7 +341,7 @@ ecore_file_recursive_rm(const char *dir)
    if ((ret == 0) && (S_ISDIR(st.st_mode)))
      {
 	ret = 1;
-	if (stat(dir, &st) == -1) return 0;
+	if (stat(dir, &st) == -1) return EINA_FALSE;
 	dirp = opendir(dir);
 	if (dirp)
 	  {
@@ -357,16 +357,19 @@ ecore_file_recursive_rm(const char *dir)
 	     closedir(dirp);
 	  }
 	if (!ecore_file_rmdir(dir)) ret = 0;
-        return ret;
+        if (ret)
+            return EINA_TRUE;
+        else
+            return EINA_FALSE;
      }
    else
      {
-	if (ret == -1) return 0;
+	if (ret == -1) return EINA_FALSE;
 	return ecore_file_unlink(dir);
      }
 }
 
-static inline int
+static inline Eina_Bool
 _ecore_file_mkpath_if_not_exists(const char *path)
 {
    struct stat st;
@@ -374,35 +377,35 @@ _ecore_file_mkpath_if_not_exists(const char *path)
    if (stat(path, &st) < 0)
      return ecore_file_mkdir(path);
    else if (!S_ISDIR(st.st_mode))
-     return 0;
+     return EINA_FALSE;
    else
-     return 1;
+     return EINA_TRUE;
 }
 
 /**
  * Create a complete path
  * @param  path The path to create
- * @return 1 on success, 0 on failure
+ * @return EINA_TRUE on success, EINA_FALSE on failure
  *
  * @see ecore_file_mkpaths() and ecore_file_mkdir()
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_mkpath(const char *path)
 {
    char ss[PATH_MAX];
    unsigned int i;
 
    if (ecore_file_is_dir(path))
-     return 1;
+     return EINA_TRUE;
 
    for (i = 0; path[i] != '\0'; ss[i] = path[i], i++)
      {
-	if (i == sizeof(ss) - 1) return 0;
+	if (i == sizeof(ss) - 1) return EINA_FALSE;
 	if ((path[i] == '/') && (i > 0))
 	  {
 	     ss[i] = '\0';
 	     if (!_ecore_file_mkpath_if_not_exists(ss))
-	       return 0;
+	       return EINA_FALSE;
 	  }
      }
    ss[i] = '\0';
@@ -434,31 +437,31 @@ ecore_file_mkpaths(const char **paths)
  * Copy a file
  * @param  src The name of the source file
  * @param  dst The name of the destination file
- * @return 1 on success, 0 on failure
+ * @return EINA_TRUE on success, EINA_FALSE on failure
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_cp(const char *src, const char *dst)
 {
    FILE *f1, *f2;
    char buf[16384];
    char realpath1[PATH_MAX], realpath2[PATH_MAX];
    size_t num;
-   int ret = 1;
+   Eina_Bool ret = EINA_TRUE;
 
-   if (!realpath(src, realpath1)) return 0;
-   if (realpath(dst, realpath2) && !strcmp(realpath1, realpath2)) return 0;
+   if (!realpath(src, realpath1)) return EINA_FALSE;
+   if (realpath(dst, realpath2) && !strcmp(realpath1, realpath2)) return EINA_FALSE;
 
    f1 = fopen(src, "rb");
-   if (!f1) return 0;
+   if (!f1) return EINA_FALSE;
    f2 = fopen(dst, "wb");
    if (!f2)
      {
 	fclose(f1);
-	return 0;
+	return EINA_FALSE;
      }
    while ((num = fread(buf, 1, sizeof(buf), f1)) > 0)
      {
-	if (fwrite(buf, 1, num, f2) != num) ret = 0;
+	if (fwrite(buf, 1, num, f2) != num) ret = EINA_FALSE;
      }
    fclose(f1);
    fclose(f2);
@@ -469,9 +472,9 @@ ecore_file_cp(const char *src, const char *dst)
  * Move a file
  * @param  src The name of the source file
  * @param  dst The name of the destination file
- * @return 1 on success, 0 on failure
+ * @return EINA_TRUE on success, EINA_FALSE on failure
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_mv(const char *src, const char *dst)
 {
    char buf[PATH_MAX];
@@ -533,24 +536,24 @@ ecore_file_mv(const char *src, const char *dst)
      }
 
 PASS:
-   return 1;
+   return EINA_TRUE;
 
 FAIL:
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
  * Create a symbolic link
  * @param  src The name of the file to link
  * @param  dest The name of link
- * @return 1 on success, 0 on failure
+ * @return EINA_TRUE on success, EINA_FALSE on failure
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_symlink(const char *src, const char *dest)
 {
-   if (!symlink(src, dest)) return 1;
+   if (!symlink(src, dest)) return EINA_TRUE;
 
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
@@ -611,40 +614,40 @@ ecore_file_dir_get(const char *file)
 /**
  * Check if file can be read
  * @param  file The name of the file
- * @return 1 if the file is readable, 0 otherwise
+ * @return EINA_TRUE if the file is readable, EINA_FALSE otherwise
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_can_read(const char *file)
 {
-   if (!file) return 0;
-   if (!access(file, R_OK)) return 1;
-   return 0;
+   if (!file) return EINA_FALSE;
+   if (!access(file, R_OK)) return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 /**
  * Check if file can be written
  * @param  file The name of the file
- * @return 1 if the file is writable, 0 otherwise
+ * @return EINA_TRUE if the file is writable, EINA_FALSE otherwise
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_can_write(const char *file)
 {
-   if (!file) return 0;
-   if (!access(file, W_OK)) return 1;
-   return 0;
+   if (!file) return EINA_FALSE;
+   if (!access(file, W_OK)) return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 /**
  * Check if file can be executed
  * @param  file The name of the file
- * @return 1 if the file can be executed, 0 otherwise
+ * @return EINA_TRUE if the file can be executed, EINA_FALSE otherwise
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_can_exec(const char *file)
 {
-   if (!file) return 0;
-   if (!access(file, X_OK)) return 1;
-   return 0;
+   if (!file) return EINA_FALSE;
+   if (!access(file, X_OK)) return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 /**
