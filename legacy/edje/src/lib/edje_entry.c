@@ -854,7 +854,8 @@ _anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
                {
                   Evas_Coord cx, cy, cw, ch;
                   
-                  evas_textblock_cursor_format_item_geometry_get(an->start, &cx, &cy, &cw, &ch);
+                  if (!evas_textblock_cursor_format_item_geometry_get(an->start, &cx, &cy, &cw, &ch))
+		    continue ;
                   evas_object_move(sel->obj, x + cx, y + cy);
                   evas_object_resize(sel->obj, cw, ch);
                }
