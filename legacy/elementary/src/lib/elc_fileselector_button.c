@@ -216,7 +216,7 @@ _new_window_add(Widget_Data *wd)
 static void
 _fs_launch(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Evas_Object *fs_btn, *win, *iw;
+   Evas_Object *fs_btn, *win = NULL, *iw = NULL;
    Eina_Bool win_fallback;
    Widget_Data *wd;
 
