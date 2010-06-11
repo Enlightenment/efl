@@ -7,13 +7,13 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/file.h>
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
 
 #include <Eina.h>
+#include <Ecore.h>
 #include <Ecore_File.h>
 
 #include "Efreet.h"
@@ -212,6 +212,7 @@ main(int argc, char **argv)
     struct stat st;
     int changed = 0;
     int i;
+    struct flock fl;
 
     for (i = 1; i < argc; i++)
     {
@@ -239,9 +240,12 @@ main(int argc, char **argv)
 
     /* lock process, so that we only run one copy of this program */
     snprintf(file, sizeof(file), "%s/.efreet/desktop_data.lock", efreet_home_dir_get());
-    fd = open(file, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
+    fd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (fd < 0) goto efreet_error;
-    if (flock(fd, LOCK_EX | LOCK_NB) < 0)
+    memset(&fl, 0, sizeof(struct flock));
+    fl.l_type = F_WRLCK;
+    fl.l_whence = SEEK_SET;
+    if (fcntl(fd, F_SETLK, &fl) < 0)
     {
         if (verbose)
         {
