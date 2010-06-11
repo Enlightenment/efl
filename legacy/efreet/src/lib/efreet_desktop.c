@@ -10,7 +10,6 @@
 #include <limits.h>
 #include <libgen.h>
 #include <sys/types.h>
-#include <sys/file.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -1320,14 +1319,18 @@ efreet_desktop_write_cache_dirs_file(void)
     char *map = MAP_FAILED;
     char *dir;
     struct stat st;
+    struct flock fl;
 
     if (!efreet_desktop_dirs) return 1;
 
     snprintf(file, sizeof(file), "%s/.efreet/desktop_data.lock", efreet_home_dir_get());
-    fd = open(file, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
+    fd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (fd < 0) return 0;
     /* TODO: Retry update cache later */
-    if (flock(fd, LOCK_EX | LOCK_NB) < 0) goto error;
+    memset(&fl, 0, sizeof(struct flock));
+    fl.l_type = F_WRLCK;
+    fl.l_whence = SEEK_SET;
+    if (fcntl(fd, F_SETLK, &fl) < 0) goto error;
 
     cachefd = open(efreet_desktop_cache_dirs(), O_CREAT | O_APPEND | O_RDWR, S_IRUSR | S_IWUSR);
     if (cachefd < 0) goto error;
@@ -1472,6 +1475,7 @@ static void
 efreet_desktop_update_cache_job(void *data __UNUSED__)
 {
     char file[PATH_MAX];
+    struct flock fl;
 
     /* TODO: Retry update cache later */
     if (efreet_desktop_exe_lock > 0) return;
@@ -1480,9 +1484,12 @@ efreet_desktop_update_cache_job(void *data __UNUSED__)
 
     snprintf(file, sizeof(file), "%s/.efreet/desktop_exec.lock", efreet_home_dir_get());
 
-    efreet_desktop_exe_lock = open(file, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
+    efreet_desktop_exe_lock = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (efreet_desktop_exe_lock < 0) return;
-    if (flock(efreet_desktop_exe_lock, LOCK_EX | LOCK_NB) < 0) goto error;
+    memset(&fl, 0, sizeof(struct flock));
+    fl.l_type = F_WRLCK;
+    fl.l_whence = SEEK_SET;
+    if (fcntl(efreet_desktop_exe_lock, F_SETLK, &fl) < 0) goto error;
     efreet_desktop_exe = ecore_exe_run(PACKAGE_LIB_DIR "/efreet/efreet_desktop_cache_create", NULL);
     if (!efreet_desktop_exe) goto error;
 
@@ -1595,8 +1602,6 @@ static void
 efreet_desktop_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
                                  Ecore_File_Event event, const char *path)
 {
-    Ecore_File_Monitor *fm;
-
     switch (event)
     {
         case ECORE_FILE_EVENT_NONE:
