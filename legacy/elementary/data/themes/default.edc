@@ -5518,124 +5518,124 @@ collections {
 // http://lazycrazy.deviantart.com/
 // http://lazycrazy.deviantart.com/art/Very-Emotional-Emoticons-144461621
   group { name: "elm/entry/emoticon/angry/default"; images.image:
-     "emo-angry.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-angry.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-angry.png"; } } } }
   group { name: "elm/entry/emoticon/angry-shout/default"; images.image:
-     "emo-angry-shout.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-angry-shout.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-angry-shout.png"; } } } }
   group { name: "elm/entry/emoticon/crazy-laugh/default"; images.image:
-     "emo-crazy-laugh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-crazy-laugh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-crazy-laugh.png"; } } } }
   group { name: "elm/entry/emoticon/evil-laugh/default"; images.image:
-     "emo-evil-laugh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-evil-laugh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-evil-laugh.png"; } } } }
   group { name: "elm/entry/emoticon/evil/default"; images.image:
-     "emo-evil.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-evil.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-evil.png"; } } } }
   group { name: "elm/entry/emoticon/goggle-smile/default"; images.image:
-     "emo-goggle-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-goggle-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-goggle-smile.png"; } } } }
   group { name: "elm/entry/emoticon/grumpy/default"; images.image:
-     "emo-grumpy.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-grumpy.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-grumpy.png"; } } } }
   group { name: "elm/entry/emoticon/grumpy-smile/default"; images.image:
-     "emo-grumpy-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-grumpy-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-grumpy-smile.png"; } } } }
   group { name: "elm/entry/emoticon/guilty/default"; images.image:
-     "emo-guilty.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-guilty.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-guilty.png"; } } } }
   group { name: "elm/entry/emoticon/guilty-smile/default"; images.image:
-     "emo-guilty-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-guilty-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-guilty-smile.png"; } } } }
   group { name: "elm/entry/emoticon/haha/default"; images.image:
-     "emo-haha.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-haha.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-haha.png"; } } } }
   group { name: "elm/entry/emoticon/half-smile/default"; images.image:
-     "emo-half-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-half-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-half-smile.png"; } } } }
   group { name: "elm/entry/emoticon/happy-panting/default"; images.image:
-     "emo-happy-panting.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-happy-panting.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-happy-panting.png"; } } } }
   group { name: "elm/entry/emoticon/happy/default"; images.image:
-     "emo-happy.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-happy.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-happy.png"; } } } }
   group { name: "elm/entry/emoticon/indifferent/default"; images.image:
-     "emo-indifferent.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-indifferent.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-indifferent.png"; } } } }
   group { name: "elm/entry/emoticon/kiss/default"; images.image:
-     "emo-kiss.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-kiss.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-kiss.png"; } } } }
   group { name: "elm/entry/emoticon/knowing-grin/default"; images.image:
-     "emo-knowing-grin.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-knowing-grin.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-knowing-grin.png"; } } } }
   group { name: "elm/entry/emoticon/laugh/default"; images.image:
-     "emo-laugh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-laugh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-laugh.png"; } } } }
   group { name: "elm/entry/emoticon/little-bit-sorry/default"; images.image:
-     "emo-little-bit-sorry.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-little-bit-sorry.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-little-bit-sorry.png"; } } } }
   group { name: "elm/entry/emoticon/love-lots/default"; images.image:
-     "emo-love-lots.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-love-lots.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-love-lots.png"; } } } }
   group { name: "elm/entry/emoticon/love/default"; images.image:
-     "emo-love.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-love.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-love.png"; } } } }
   group { name: "elm/entry/emoticon/minimal-smile/default"; images.image:
-     "emo-minimal-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-minimal-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-minimal-smile.png"; } } } }
   group { name: "elm/entry/emoticon/not-happy/default"; images.image:
-     "emo-not-happy.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-not-happy.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-not-happy.png"; } } } }
   group { name: "elm/entry/emoticon/not-impressed/default"; images.image:
-     "emo-not-impressed.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-not-impressed.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-not-impressed.png"; } } } }
   group { name: "elm/entry/emoticon/omg/default"; images.image:
-     "emo-omg.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-omg.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-omg.png"; } } } }
   group { name: "elm/entry/emoticon/opensmile/default"; images.image:
-     "emo-opensmile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-opensmile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-opensmile.png"; } } } }
   group { name: "elm/entry/emoticon/smile/default"; images.image:
-     "emo-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-smile.png"; } } } }
   group { name: "elm/entry/emoticon/sorry/default"; images.image:
-     "emo-sorry.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-sorry.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-sorry.png"; } } } }
   group { name: "elm/entry/emoticon/squint-laugh/default"; images.image:
-     "emo-squint-laugh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-squint-laugh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-squint-laugh.png"; } } } }
   group { name: "elm/entry/emoticon/surprised/default"; images.image:
-     "emo-surprised.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-surprised.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-surprised.png"; } } } }
   group { name: "elm/entry/emoticon/suspicious/default"; images.image:
-     "emo-suspicious.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-suspicious.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-suspicious.png"; } } } }
   group { name: "elm/entry/emoticon/tongue-dangling/default"; images.image:
-     "emo-tongue-dangling.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-tongue-dangling.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-tongue-dangling.png"; } } } }
   group { name: "elm/entry/emoticon/tongue-poke/default"; images.image:
-     "emo-tongue-poke.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-tongue-poke.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-tongue-poke.png"; } } } }
   group { name: "elm/entry/emoticon/uh/default"; images.image:
-     "emo-uh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-uh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-uh.png"; } } } }
   group { name: "elm/entry/emoticon/unhappy/default"; images.image:
-     "emo-unhappy.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-unhappy.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-unhappy.png"; } } } }
   group { name: "elm/entry/emoticon/very-sorry/default"; images.image:
-     "emo-very-sorry.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-very-sorry.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-very-sorry.png"; } } } }
   group { name: "elm/entry/emoticon/what/default"; images.image:
-     "emo-what.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-what.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-what.png"; } } } }
   group { name: "elm/entry/emoticon/wink/default"; images.image:
-     "emo-wink.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-wink.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-wink.png"; } } } }
   group { name: "elm/entry/emoticon/worried/default"; images.image:
-     "emo-worried.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-worried.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-worried.png"; } } } }
   group { name: "elm/entry/emoticon/wtf/default"; images.image:
-     "emo-wtf.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal: 
+     "emo-wtf.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
         "emo-wtf.png"; } } } }
 //------------------------------------------------------------
    group { name: "elm/entry/base/default";
@@ -18826,6 +18826,87 @@ collections {
                source: "elm";
                action:  STATE_SET "default" 0.0;
                target: "clip_base";
+               target: "clip";
+           }
+       }
+   }
+   group { name: "elm/pager/base/fade_invisible";
+       data.item: "onshow" "raise";
+       // other options
+       //      data.item: "onhide" "lower";
+       //      data.item: "onshow" "lower";
+       parts {
+           part { name: "clip";
+               type: RECT;
+               mouse_events: 0;
+               description { state: "default" 0.0;
+                   rel1 {
+                       offset: -9999 -9999;
+                   }
+                   rel2 {
+                       offset: 9999 9999;
+                   }
+                   color: 255 255 255 255;
+               }
+               description { state: "visible" 0.0;
+                   inherit: "default" 0.0;
+               }
+               description { state: "hidden" 0.0;
+                   inherit: "default" 0.0;
+                   color: 255 255 255 0;
+                   visible: 0;
+               }
+           }
+           part { name: "elm.swallow.content";
+               type: SWALLOW;
+               clip_to: "clip";
+               description { state: "default" 0.0;
+                   rel1 {
+                       offset: 8 8;
+                   }
+                   rel2 {
+                       offset: -9 -9;
+                   }
+               }
+           }
+       }
+       programs {
+           program { name: "show_start";
+               signal: "elm,action,show";
+               source: "elm";
+               action:  STATE_SET "hidden" 0.0;
+               target: "clip";
+               after: "show_start2";
+           }
+           program { name: "show_start2";
+               action:  STATE_SET "visible" 0.0;
+               transition: DECELERATE 0.5;
+               target: "clip";
+               after: "show_end";
+           }
+           program { name: "show_end";
+               action: SIGNAL_EMIT "elm,action,show,finished" "";
+           }
+           program { name: "hide_start";
+               signal: "elm,action,hide";
+               source: "elm";
+               action:  STATE_SET "visible" 0.0;
+               target: "clip";
+               after: "hide_start2";
+           }
+           program { name: "hide_start2";
+               action:  STATE_SET "hidden" 0.0;
+               transition: DECELERATE 0.5;
+               target: "clip";
+               after: "hide_end";
+           }
+           program { name: "hide_end";
+               action: SIGNAL_EMIT "elm,action,hide,finished" "";
+           }
+           program { name: "reset";
+               signal: "elm,action,reset";
+               source: "elm";
+               action:  STATE_SET "default" 0.0;
                target: "clip";
            }
        }

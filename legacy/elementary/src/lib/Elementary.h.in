@@ -120,7 +120,7 @@ extern "C" {
 
 #define ELM_VERSION_MAJOR @VMAJ@
 #define ELM_VERSION_MINOR @VMIN@
-   
+
    typedef struct _Elm_Version
      {
         int major;
@@ -128,9 +128,9 @@ extern "C" {
         int micro;
         int revision;
      } Elm_Version;
-   
+
    EAPI extern Elm_Version *elm_version;
-   
+
 /* handy macros */
 #define ELM_RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && (((x) + (w)) > (xx)) && (((y) + (h)) > (yy)))
 #define ELM_PI 3.14159265358979323846
@@ -208,9 +208,9 @@ extern "C" {
        ELM_THUMB_ANIMATION_STOP,
        ELM_THUMB_ANIMATION_LAST
     } Elm_Thumb_Animation_Setting;
-   
+
    typedef struct _Elm_Theme Elm_Theme;
-   
+
    typedef enum _Elm_Clock_Digedit
      {
         ELM_CLOCK_NONE         = 0,
@@ -222,7 +222,7 @@ extern "C" {
         ELM_CLOCK_SEC_UNIT     = 1 << 5,
         ELM_CLOCK_ALL	       = (1 << 6) - 1
      } Elm_Clock_Digedit;
-   
+
 #ifndef ELM_LIB_QUICKLAUNCH
 #define ELM_MAIN() int main(int argc, char **argv) {elm_init(argc, argv); return elm_main(argc, argv);}
 #else
@@ -253,9 +253,9 @@ extern "C" {
 
    EAPI Eina_Bool    elm_policy_set(unsigned int policy, int value);
    EAPI int          elm_policy_get(unsigned int policy);
-   
+
    EAPI void         elm_all_flush(void);
-       
+
    EAPI void         elm_object_scale_set(Evas_Object *obj, double scale);
    EAPI double       elm_object_scale_get(const Evas_Object *obj);
    EAPI void         elm_object_style_set(Evas_Object *obj, const char *style);
@@ -297,12 +297,12 @@ extern "C" {
    EAPI const char  *elm_theme_get(Elm_Theme *th);
    EAPI void         elm_theme_flush(Elm_Theme *th);
    EAPI void         elm_theme_full_flush(void);
-   
+
    EAPI void         elm_theme_all_set(const char *theme);
 
    EAPI void         elm_object_theme_set(Evas_Object *obj, Elm_Theme *th);
    EAPI Elm_Theme   *elm_object_theme_get(Evas_Object *obj);
-   
+
    EAPI Evas_Object *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
    EAPI void         elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj);
@@ -359,9 +359,9 @@ extern "C" {
     */
    EAPI void         elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode);
    EAPI void         elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard);
-   
+
    EAPI void         elm_win_screen_position_get(const Evas_Object *obj, int *x, int *y);
-       
+
    EAPI Evas_Object *elm_win_inwin_add(Evas_Object *obj);
    EAPI void         elm_win_inwin_activate(Evas_Object *obj);
    EAPI void         elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content);
@@ -562,7 +562,7 @@ extern "C" {
    EAPI void         elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h);
    EAPI void         elm_table_unpack(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_table_clear(Evas_Object *obj, Eina_Bool clear);
-       
+
    typedef struct _Elm_Gengrid_Item_Class Elm_Gengrid_Item_Class;
    typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func;
    typedef struct _Elm_Gengrid_Item Elm_Gengrid_Item;
@@ -668,7 +668,7 @@ extern "C" {
    EAPI void	     elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat);
    /* smart callbacks called:
     */
-   
+
    typedef enum _Elm_Hover_Axis
      {
 	ELM_HOVER_AXIS_NONE,
@@ -1171,6 +1171,7 @@ extern "C" {
     * default
     * fade
     * fade_translucide
+    * fade_invisible
     */
 
    typedef struct _Elm_Slideshow_Item_Class Elm_Slideshow_Item_Class;
@@ -1326,7 +1327,7 @@ extern "C" {
    EAPI void         elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused);
    EAPI Eina_Bool    elm_photocam_paused_get(const Evas_Object *obj);
    EAPI Evas_Object *elm_photocam_internal_image_get(const Evas_Object *obj);
-   
+
    /* smart callbacks called:
     * "clicked" - when image clicked
     * "press" - when mouse/finger held down initially on image
@@ -1419,7 +1420,7 @@ extern "C" {
 
    EAPI void         elm_map_source_set(Evas_Object *obj, Elm_Map_Sources source);
    EAPI Elm_Map_Sources elm_map_source_get(const Evas_Object *obj);
-   EAPI void         elm_map_source_custom_api_set(Elm_Map_Sources source, const char *label, 
+   EAPI void         elm_map_source_custom_api_set(Elm_Map_Sources source, const char *label,
 				int zoom_min, int zoom_max, ElmMapSourceURLFunc url_cb);
    EAPI int          elm_map_source_zoom_min_get(Elm_Map_Sources source);
    EAPI int	     elm_map_source_zoom_max_get(Elm_Map_Sources source);
@@ -1463,7 +1464,7 @@ extern "C" {
           ELM_FLIP_ROTATE_XZ_CENTER_AXIS,
           ELM_FLIP_ROTATE_YZ_CENTER_AXIS
      } Elm_Flip_Mode;
-   
+
    EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
    EAPI void         elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content);
    EAPI void         elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content);
@@ -1475,7 +1476,7 @@ extern "C" {
    /* smart callbacks called:
     * "animate,done" - when a flip animation is finished
     */
-   
+
    EAPI Evas_Object *elm_scrolled_entry_add(Evas_Object *parent);
    EAPI void         elm_scrolled_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line);
    EAPI Eina_Bool    elm_scrolled_entry_single_line_get(const Evas_Object *obj);
@@ -1525,7 +1526,7 @@ extern "C" {
    EAPI Eina_Bool    elm_mapbuf_smooth_get(const Evas_Object *obj);
    EAPI void         elm_mapbuf_alpha_set(Evas_Object *obj, Eina_Bool alpha);
    EAPI Eina_Bool    elm_mapbuf_alpha_get(const Evas_Object *obj);
-       
+
 #ifdef __cplusplus
 }
 #endif
