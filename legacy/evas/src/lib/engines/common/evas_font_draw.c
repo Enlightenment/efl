@@ -396,7 +396,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
    int char_index = 0; /* the index of the current char */
 
 #ifdef INTERNATIONAL_SUPPORT
-   int len = 0;
    /*FIXME: should get the direction by parmater */
    EvasIntlParType direction = FRIBIDI_TYPE_ON;
    EvasIntlLevel *level_list;
