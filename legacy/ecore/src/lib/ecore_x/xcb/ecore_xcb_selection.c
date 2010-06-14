@@ -11,7 +11,7 @@ static Ecore_X_Selection_Intern     selections[4];
 static Ecore_X_Selection_Converter *converters = NULL;
 static Ecore_X_Selection_Parser    *parsers = NULL;
 
-static int _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret);
+static int _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *tprop, int *);
 static int _ecore_x_selection_data_default_free(void *data);
 static void *_ecore_x_selection_parser_files(const char *target, void *data, int size, int format);
 static int _ecore_x_selection_data_files_free(void *data);
@@ -23,7 +23,7 @@ static int _ecore_x_selection_data_targets_free(void *data);
 #define ECORE_X_SELECTION_DATA(x) ((Ecore_X_Selection_Data *)(x))
 
 void
-_ecore_x_selection_init(void)
+_ecore_x_selection_data_init(void)
 {
    /* Initialize global data */
    memset(selections, 0, sizeof(selections));
@@ -567,7 +567,9 @@ ecore_x_selection_converter_atom_add(Ecore_X_Atom target,
                                                         void  *data,
                                                         int    size,
                                                         void **data_ret,
-                                                        int   *size_ret))
+                                                        int   *size_ret,
+                                                        Ecore_X_Atom *ttype,
+                                                        int *tsize))
 {
    Ecore_X_Selection_Converter *cnv;
 
@@ -605,7 +607,9 @@ ecore_x_selection_converter_add(char *target,
                                             void  *data,
                                             int    size,
                                             void **data_ret,
-                                            int   *size_ret))
+                                            int   *size_ret,
+                                            Ecore_X_Atom *,
+                                            int *))
 {
    Ecore_X_Atom x_target;
 
@@ -678,15 +682,17 @@ ecore_x_selection_notify_send(Ecore_X_Window requestor,
 
 /* Locate and run conversion callback for specified selection target */
 EAPI int
-ecore_x_selection_convert(Ecore_X_Atom selection,
-                          Ecore_X_Atom target,
-                          void       **data_ret)
+ecore_x_selection_convert(Ecore_X_Atom  selection,
+                          Ecore_X_Atom  target,
+                          void        **data_ret,
+                          int          *size,
+                          Ecore_X_Atom *targtype,
+                          int          *typesize)
 {
    Ecore_X_Selection_Intern    *sel;
    Ecore_X_Selection_Converter *cnv;
    void                        *data;
    char                        *tgt_str;
-   int                          size;
 
    sel = _ecore_x_selection_get(selection);
    tgt_str = _ecore_x_selection_target_get(target);
@@ -696,7 +702,7 @@ ecore_x_selection_convert(Ecore_X_Atom selection,
 	if (cnv->target == target)
 	  {
 	     int r;
-	     r = cnv->convert(tgt_str, sel->data, sel->length, &data, &size);
+	     r = cnv->convert(tgt_str, sel->data, sel->length, &data, size, targtype, typesize);
 	     free(tgt_str);
 	     if (r)
 	       {
@@ -719,7 +725,7 @@ ecore_x_selection_convert(Ecore_X_Atom selection,
  * locale using Ecore_Txt functions */
 /* Converter for standard non-utf8 text targets */
 static int
-_ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret)
+_ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *targprop, int *s)
 {
 
   /* FIXME: to do... */

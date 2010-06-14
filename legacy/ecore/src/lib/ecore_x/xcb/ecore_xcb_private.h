@@ -107,7 +107,8 @@ struct _Ecore_X_Selection_Converter
 {
    Ecore_X_Atom target;
    int (*convert)(char *target, void *data, int size,
-                  void **data_ret, int *size_ret);
+                  void **data_ret, int *size_ret,
+		  Ecore_X_Atom *type, int *typeseize);
    Ecore_X_Selection_Converter *next;
 };
 
