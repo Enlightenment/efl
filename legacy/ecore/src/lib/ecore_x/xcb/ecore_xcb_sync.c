@@ -157,3 +157,70 @@ ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val)
 
   return 0;
 }
+
+EAPI Ecore_X_Sync_Counter
+ecore_x_sync_counter_new(int val)
+{
+#ifdef ECORE_XCB_SYNC
+   xcb_sync_counter_t counter;
+   xcb_sync_int64_t v;
+
+   counter = xcb_generate_id(_ecore_xcb_conn);
+   v.hi = (val < 0) ? ~0 : 0;
+   v.lo = val;
+   xcb_sync_create_counter(_ecore_xcb_conn, counter, v);
+   return counter;
+#else  /* ! ECORE_XCB_SYNC */
+   return 0;
+#endif /* ! ECORE_XCB_SYNC */
+}
+
+EAPI void
+ecore_x_sync_counter_free(Ecore_X_Sync_Counter counter)
+{
+#ifdef ECORE_XCB_SYNC
+   xcb_sync_destroy_counter(_ecore_xcb_conn, counter);
+#endif /* ECORE_XCB_SYNC */
+}
+
+EAPI void
+ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter, int by)
+{
+#ifdef ECORE_XCB_SYNC
+   xcb_sync_int64_t v;
+
+   v.hi = (by < 0) ? ~0 : 0;
+   v.lo = by;
+   xcb_sync_change_counter(_ecore_xcb_conn, counter, v);
+#endif /* ECORE_XCB_SYNC */
+}
+
+EAPI void
+ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter, int val)
+{
+#ifdef ECORE_XCB_SYNC
+   xcb_sync_query_counter_cookie_t cookie;
+   xcb_sync_query_counter_reply_t *reply;
+   xcb_sync_int64_t v1;
+   xcb_sync_int64_t v2;
+   xcb_sync_waitcondition_t cond;
+
+   /* what's the purpose of that call ?? as the value is erased... */
+   cookie = xcb_sync_query_counter_unchecked(_ecore_xcb_conn, counter);
+   reply = xcb_sync_query_counter_reply(_ecore_xcb_conn, cookie, NULL);
+   v1 = reply->counter_value;
+   free(reply);
+
+   v1.hi = (val < 0) ? ~0 : 0;
+   v1.lo = val;
+   v2.hi = ((val + 1) < 0) ? ~0 : 0;
+   v2.lo = val + 1;
+   cond.trigger.counter = counter;
+   cond.trigger.wait_type = XCB_SYNC_VALUETYPE_ABSOLUTE;
+   cond.trigger.wait_value = v1;
+   cond.trigger.test_type = XCB_SYNC_TESTTYPE_POSITIVE_COMPARISON;
+   cond.event_threshold = v2;
+
+   xcb_sync_await(_ecore_xcb_conn, 1, (const xcb_sync_waitcondition_t *)&cond);
+#endif /* ECORE_XCB_SYNC */
+}
