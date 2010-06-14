@@ -1019,7 +1019,7 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
     */
    if (sep)
      {
-	const char *idx;
+	char *idx;
         size_t length;
         char *part;
        /* the signal contains a colon, split the signal into "part:signal",
