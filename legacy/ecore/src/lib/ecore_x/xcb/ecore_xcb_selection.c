@@ -23,7 +23,7 @@ static int _ecore_x_selection_data_targets_free(void *data);
 #define ECORE_X_SELECTION_DATA(x) ((Ecore_X_Selection_Data *)(x))
 
 void
-_ecore_x_selection_data_init(void)
+_ecore_x_selection_init(void)
 {
    /* Initialize global data */
    memset(selections, 0, sizeof(selections));
