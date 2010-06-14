@@ -875,8 +875,6 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const char *text, int len, RGBA_
    }
 
    return save;
-
-#endif
 }
 
 
