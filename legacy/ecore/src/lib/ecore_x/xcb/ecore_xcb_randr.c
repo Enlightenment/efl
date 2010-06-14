@@ -142,7 +142,7 @@ ecore_x_randr_get_screen_info_fetch(void)
    xcb_randr_get_screen_info_reply_t *reply;
 
    cookie.sequence = _ecore_xcb_cookie_get();
-   reply =xcb_randr_get_screen_info_reply(_ecore_xcb_conn, cookie, NULL);
+   reply = xcb_randr_get_screen_info_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
 #endif /* ECORE_XCB_RANDR */
 }
