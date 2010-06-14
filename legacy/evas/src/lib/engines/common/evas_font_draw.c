@@ -9,6 +9,45 @@
 #include "evas_intl_utils.h" /*defines INTERNATIONAL_SUPPORT if possible */
 #include "evas_font_private.h" /* for Frame-Queuing support */
 
+#define WORD_CACHE_MAXLEN	50
+/* How many to cache */
+#define WORD_CACHE_NWORDS	20
+
+struct prword {
+	EINA_INLIST;
+	/* FIXME: Need to save font/size et al */
+	int size;
+	struct cinfo *cinfo;
+	RGBA_Font *font;
+	const char *str;
+	int len;
+	DATA8 *im;
+	int roww;
+	int width;
+	int height;
+	int baseline;
+};
+
+struct cinfo {
+	int gl;
+	FT_UInt index;
+	struct { int x, y; } pos;
+	int posx;
+	char chr;
+	RGBA_Font_Glyph *fg;
+	struct {
+		int w,h;
+		int rows;
+		unsigned char *data;
+	} bm;
+};
+
+
+
+
+static Eina_Inlist *words = NULL;
+static struct prword *evas_font_word_prerender(RGBA_Draw_Context *dc, const char *text, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning);
+
 #ifdef EVAS_FRAME_QUEUING
 EAPI void
 evas_common_font_draw_init(void)
@@ -203,7 +242,7 @@ static FT_UInt
 _evas_common_get_char_index(RGBA_Font_Int* fi, int gl)
 {
    Font_Char_Index result;
-   FT_UInt ret;
+   //FT_UInt ret;
 
 #ifdef HAVE_PTHREAD
 ///   pthread_mutex_lock(&fi->ft_mutex);
@@ -349,6 +388,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
    int pen_x, pen_y;
    int chr;
    const char *text = in_text;
+   int len;
    FT_Face pface = NULL;
    FT_UInt prev_index;
    DATA32 *im;
@@ -368,6 +408,76 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
    text = (visual_text) ? visual_text : in_text;
    
 #endif
+
+#if defined(METRICCACHE) || defined(WORDCACHE)
+   /* A fast strNlen would be nice (there is a wcsnlen strangely) */
+   for (len = 0 ; text[len] && len < WORD_CACHE_MAXLEN ; len ++)
+     ;
+
+
+   if (len < WORD_CACHE_MAXLEN){
+     struct prword *word = evas_font_word_prerender(dc, text, len, fn, fi,
+	   use_kerning);
+     if (word){
+	  int j,rowstart,rowend,xstart,xrun;
+	  im = dst->image.data;
+	  xrun = word->width;
+	  y -= word->baseline;
+	  xstart = 0;
+	  rowstart = 0;
+	  rowend = word->height;
+	  /* Clip to extent */
+	  if (x + xrun > ext_x + ext_w){
+	       xrun -= x + xrun - ext_x - ext_w;
+	  }
+	  if (x < ext_x) {
+	       int excess = ext_x - x;
+	       xstart = excess - 1;
+	       xrun -= excess;
+	       x = ext_x;
+	  }
+	  if (y + rowend > ext_y + ext_h){
+	      rowend -= (y - ext_y + rowend - ext_h);
+	  }
+	  if (y < ext_y){
+	      int excess = ext_y - y;
+	      rowstart += excess;
+	      //rowend -= excess;
+	//      y = ext_y;
+	  }
+
+#ifdef WORDCACHE
+	  for (j = rowstart ; j < rowend ; j ++){
+	       func(NULL, word->im + (word->roww * j) + xstart, dc->col.col,
+		     im + ((y + j) * im_w) + x, xrun);
+	  }
+#elif defined(METRICCACHE)
+	  int ind;
+	  y += word->baseline;
+	  for (ind = 0 ; ind < len ; ind ++){
+	     // FIXME Do we need to draw?
+	     struct cinfo *ci = word->cinfo + ind;
+		 if ((ci->fg->ext_dat) && (dc->font_ext.func.gl_draw))
+			   {
+			      /* ext glyph draw */
+			      dc->font_ext.func.gl_draw(dc->font_ext.data,
+				    (void *)dst,
+				    dc, ci->fg,
+				    x + ci->pos.x,
+				    y - ci->bm.h
+				    );
+			   }
+	        else {
+		     func(NULL, word->im + (word->roww * j) + xstart, dc->col.col, im + ((y + j) * im_w) + x, xrun);
+	}
+	  }
+#endif
+	  return;
+     }
+
+}
+#endif
+
 
    pen_x = x;
    pen_y = y;
@@ -648,3 +758,126 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    LKU(fn->lock);
 #endif
 }
+
+
+
+struct prword *
+evas_font_word_prerender(RGBA_Draw_Context *dc, const char *text, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning){
+   int pen_x, pen_y;
+   struct cinfo *metrics;
+   int chr;
+   FT_Face pface = NULL;
+   FT_UInt prev_index;
+   unsigned char *im;
+   int width;
+   int height, above, below, baseline, descent;
+   int c;
+   int i,j;
+   int char_index = 0; /* the index of the current char */
+   struct prword *w;
+   int gl;
+
+   EINA_INLIST_FOREACH(words,w){
+	if (w->len == len && w->font == fn && fi->size == w->size &&
+	      (w->str == text || strcmp(w->str, text) == 0)){
+	  words = eina_inlist_promote(words, EINA_INLIST_GET(w));
+	  return w;
+	}
+   }
+
+   gl = dc->font_ext.func.gl_new ? 1: 0;
+
+   pen_x = pen_y = 0;
+   above = 0; below = 0; baseline = 0; height = 0; descent = 0;
+   metrics = malloc(sizeof(struct cinfo) * len);
+   /* First pass: Work out how big */
+   for (char_index = 0, c = 0, chr = 0 ; text[chr] ; char_index ++){
+	struct cinfo *ci = metrics + char_index;
+	ci->chr = text[chr];
+	ci->gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
+	if (ci->gl == 0) break;
+	ci->index = evas_common_font_glyph_search(fn, &fi, ci->gl);
+	if (fi->src->current_size != fi->size)
+	  {
+	     FT_Activate_Size(fi->ft.size);
+             fi->src->current_size = fi->size;
+          }
+	if (use_kerning && char_index && (pface == fi->src->ft.face))
+	  {
+	     int kern;
+	     if (evas_common_font_query_kerning(fi, prev_index,ci->index,&kern))
+		 ci->pos.x += kern;
+	  }
+       pface = fi->src->ft.face;
+       ci->fg = evas_common_font_int_cache_glyph_get(fi, ci->index);
+       if (!ci->fg) continue;
+       if (gl){
+	    ci->fg->ext_dat =dc->font_ext.func.gl_new(dc->font_ext.data,ci->fg);
+	    ci->fg->ext_dat_free = dc->font_ext.func.gl_free;
+       }
+       ci->bm.data = ci->fg->glyph_out->bitmap.buffer;
+       ci->bm.w = MAX(ci->fg->glyph_out->bitmap.pitch,
+		      ci->fg->glyph_out->bitmap.width);
+       ci->bm.rows = ci->fg->glyph_out->bitmap.rows;
+       ci->bm.h = ci->fg->glyph_out->top;
+       above = ci->bm.rows - (ci->bm.rows - ci->bm.h);
+       below = ci->bm.rows - ci->bm.h;
+       if (below > descent) descent = below;
+       if (above > baseline) baseline = above;
+       ci->pos.x = pen_x + ci->fg->glyph_out->left;
+       ci->pos.y = pen_y + ci->fg->glyph_out->top;
+       pen_x += ci->fg->glyph->advance.x >> 16;
+       prev_index = ci->index;
+  }
+
+  /* First loop done */
+  width = pen_x;
+  width = (width & 0x7) ? width + (8 - (width & 0x7)) : width;
+
+  height = baseline + descent;
+  if (!gl){
+     im = calloc(height, width);
+     for (i = 0 ; i  < char_index ; i ++){
+	  struct cinfo *ci = metrics + i;
+	  for (j = 0 ; j < ci->bm.rows ; j ++){
+	    memcpy(im + ci->pos.x + (j + baseline - ci->bm.h) * width, ci->bm.data + j * ci->bm.w, ci->bm.w);
+	  }
+
+     }
+  } else {
+       im = NULL;
+  }
+   /* Save it */
+   struct prword *save;
+
+
+   save = malloc(sizeof(struct prword));
+   save->cinfo = metrics;
+   save->str = eina_stringshare_add(text);
+   save->font = fn;
+   save->size = fi->size;
+   save->len = len;
+   save->im = im;
+   save->width = pen_x;
+   save->roww = width;
+   save->height = height;
+   save->baseline = baseline;
+   words = eina_inlist_prepend(words, EINA_INLIST_GET(save));
+
+   /* Clean up if too long */
+   if (0 && eina_inlist_count(words) > 20){
+	struct prword *last = (struct prword *)(words->last);
+	if (last->im) free(last->im);
+	if (last->cinfo) free(last->cinfo);
+	eina_stringshare_del(last->str);
+	words = eina_inlist_remove(words,EINA_INLIST_GET(last));
+	free(last);
+   }
+
+   return save;
+
+#endif
+}
+
+
+

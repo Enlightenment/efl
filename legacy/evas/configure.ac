@@ -1078,8 +1078,47 @@ AC_MSG_RESULT($want_evas_magic_debug)
 
 AM_CONDITIONAL(EVAS_MAGIC_DEBUG, test "x$want_evas_magic_debug" = "xyes")
 if test "x$want_evas_magic_debug" = "xyes"; then
-  AC_DEFINE(EVAS_MAGIC_DEBUG, 1, [complain when peole pass in wrong object types etc.])
+  AC_DEFINE(EVAS_MAGIC_DEBUG, 1, [complain when people pass in wrong object types etc.])
 fi
+
+
+#######################################
+## Word Caching
+want_word_cache="no"
+AC_MSG_CHECKING(whether to enable caching of rendered words)
+AC_ARG_ENABLE(word-cache,
+  AC_HELP_STRING(
+    [--enable-word-cache],
+    [Enable experimental word caching to speed up rendering [[default=disabled]]]
+  ),
+  [ want_word_cache="$enableval" ]
+)
+AC_MSG_RESULT($want_word_cache)
+
+AM_CONDITIONAL(WORD_CACHE, test "x$want_word_cache" = "xyes")
+if test "x$want_word_cache" = "xyes"; then
+  AC_DEFINE(WORD_CACHE, 1, [Experimental word caching to speed up text rendering.])
+fi
+
+#######################################
+## Metric Caching
+want_metric_cache="no"
+AC_MSG_CHECKING(whether to enable caching of rendered metrics)
+AC_ARG_ENABLE(metric-cache,
+  AC_HELP_STRING(
+    [--enable-metric-cache],
+    [Enable experimental metric caching to speed up rendering [[default=disabled]]]
+  ),
+  [ want_metric_cache="$enableval" ]
+)
+AC_MSG_RESULT($want_metric_cache)
+
+AM_CONDITIONAL(METRIC_CACHE, test "x$want_metric_cache" = "xyes")
+if test "x$want_metric_cache" = "xyes"; then
+  AC_DEFINE(METRIC_CACHE, 1, [Experimental metric caching to speed up text rendering.])
+fi
+
+
 
 #####################################################################
 ## ARGB engine options
@@ -1520,6 +1559,9 @@ echo "  Threaded Pipe Rendering.: $build_pipe_render"
 echo "  Async Pipe Rendering....: $build_async_render"
 echo "  Async Events............: $build_async_events"
 echo "  Async Image Preload.....: $build_async_preload"
+echo
+echo "  Word Cache..............: $want_word_cache"
+echo "  Metric Cache............: $want_metric_cache"
 echo
 echo "ARGB Software Engine Options:"
 echo "  Sampling Scaler.........: $scaler_sample"
