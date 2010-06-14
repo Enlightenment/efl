@@ -1440,7 +1440,6 @@ _ecore_x_window_at_xy_get(Ecore_X_Window  base,
                           Ecore_X_Window *skip,
                           int             skip_num)
 {
-   xcb_window_iterator_t              iter_children;
    xcb_get_window_attributes_cookie_t cookie_get_window_attributes;
    xcb_get_geometry_cookie_t          cookie_get_geometry;
    xcb_query_tree_cookie_t            cookie_query_tree;
@@ -1453,6 +1452,9 @@ _ecore_x_window_at_xy_get(Ecore_X_Window  base,
    int16_t                            win_y;
    uint16_t                           win_width;
    uint16_t                           win_height;
+   xcb_window_t                      *wins = NULL;
+   int                                tree_c_len;
+   int                                i;
 
    cookie_get_window_attributes = xcb_get_window_attributes_unchecked(_ecore_xcb_conn, base);
    cookie_get_geometry = xcb_get_geometry_unchecked(_ecore_xcb_conn, base);
@@ -1522,18 +1524,19 @@ _ecore_x_window_at_xy_get(Ecore_X_Window  base,
 	return base;
      }
 
-   iter_children = xcb_query_tree_children_iterator(reply_query_tree);
-   for (; iter_children.rem; xcb_window_next(&iter_children))
+   wins = xcb_query_tree_children(reply_query_tree);
+   tree_c_len = xcb_query_tree_children_length(reply_query_tree);
+   for(i = 0; i < tree_c_len; i++)
      {
         if (skip)
           {
              int j;
 
              for (j = 0; j < skip_num; j++)
-               if (*iter_children.data == skip[j])
+               if (wins[i] == skip[j])
                  continue;
           }
-        child = _ecore_x_window_at_xy_get(*iter_children.data, win_x, win_y, x, y, skip, skip_num);
+        child = _ecore_x_window_at_xy_get(wins[i], win_x, win_y, x, y, skip, skip_num);
         if (child)
           {
              free(reply_query_tree);
