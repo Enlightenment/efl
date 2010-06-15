@@ -924,7 +924,10 @@ _ecore_xcb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 
    /* We check if _ecore_xcb_event_buffered is NULL or not */
    if (_ecore_xcb_event_buffered)
-     handle_event(_ecore_xcb_event_buffered);
+     {
+        handle_event(_ecore_xcb_event_buffered);
+        _ecore_xcb_event_buffered = NULL;
+     }
 
    while ((ev = xcb_poll_for_event(c)))
      handle_event(ev);
