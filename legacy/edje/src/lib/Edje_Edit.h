@@ -732,6 +732,44 @@ EAPI Eina_Bool edje_edit_part_restack_above(Evas_Object *obj, const char *part);
  */
 EAPI Eina_Bool edje_edit_part_name_set(Evas_Object *obj, const char *part, const char *new_name);
 
+/** Get api's name of a part.
+ *
+ * @param obj Object being edited.
+ * @param part Name of the part.
+ *
+ * @return name of the api if succesful, NULL otherwise.
+ */
+EAPI const char * edje_edit_part_api_name_get(Evas_Object *obj, const char *part);
+
+/** Get api's description of a part.
+ *
+ * @param obj Object being edited.
+ * @param part Name of the part.
+ *
+ * @return description of the api if succesful, NULL otherwise.
+ */
+EAPI const char * edje_edit_part_api_description_get(Evas_Object *obj, const char *part);
+
+/** Set api's name of a part.
+ *
+ * @param obj Object being edited.
+ * @param part Name of the part.
+ * @param name New name for the api property.
+ *
+ * @return EINA_TRUE if succesful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_api_name_set(Evas_Object *obj, const char *part, const char *name);
+
+/** Set api's description of a part.
+ *
+ * @param obj Object being edited.
+ * @param part Name of part.
+ * @param description New description for the api property.
+ *
+ * @return EINA_TRUE if succesful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_api_description_set(Evas_Object *obj, const char *part, const char *description);
+
 /** Get the type of a part.
  *
  * @param obj Object being edited.
@@ -3101,6 +3139,44 @@ EAPI Eina_Bool edje_edit_program_afters_clear(Evas_Object *obj, const char *prog
  * @return The name of the state.
  */
 EAPI const char * edje_edit_program_state_get(Evas_Object *obj, const char *prog);
+
+/** Get api's name of a program.
+ *
+ * @param obj Object being edited.
+ * @param prog Name of program.
+ *
+ * @return name of the api if succesful, NULL otherwise.
+ */
+EAPI const char * edje_edit_program_api_name_get(Evas_Object *obj, const char *prog);
+
+/** Get api's description of a program.
+ *
+ * @param obj Object being edited.
+ * @param prog Name of program.
+ *
+ * @return description of the api if succesful, NULL otherwise.
+ */
+EAPI const char * edje_edit_program_api_description_get(Evas_Object *obj, const char *prog);
+
+/** Set api's name of a program.
+ *
+ * @param obj Object being edited.
+ * @param prog Name of the part.
+ * @param name New name for the api property.
+ *
+ * @return EINA_TRUE if succesful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_program_api_name_set(Evas_Object *obj, const char *prog, const char *name);
+
+/** Set api's description of a program.
+ *
+ * @param obj Object being edited.
+ * @param prog Name of the program.
+ * @param description New description for the api property.
+ *
+ * @return EINA_TRUE if succesful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_program_api_description_set(Evas_Object *obj, const char *prog, const char *description);
 
 /** Set the state for the given program
  *

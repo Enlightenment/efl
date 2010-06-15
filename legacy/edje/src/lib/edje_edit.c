@@ -1905,6 +1905,44 @@ edje_edit_part_name_set(Evas_Object *obj, const char* part, const char* new_name
    return EINA_TRUE;
 }
 
+EAPI const char *
+edje_edit_part_api_name_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(NULL);
+
+   return eina_stringshare_add(rp->part->api.name);
+}
+
+EAPI const char *
+edje_edit_part_api_description_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(NULL);
+
+   return eina_stringshare_add(rp->part->api.description);
+}
+
+EAPI Eina_Bool
+edje_edit_part_api_name_set(Evas_Object *obj, const char *part, const char *name)
+{
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   _edje_if_string_free(ed, rp->part->api.name);
+   rp->part->api.name = eina_stringshare_add(name);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_part_api_description_set(Evas_Object *obj, const char *part, const char *description)
+{
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   _edje_if_string_free(ed, rp->part->api.description);
+   rp->part->api.description = eina_stringshare_add(description);
+
+   return EINA_TRUE;
+}
+
 Eina_Bool
 _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type, const char *source)
 {
@@ -6059,6 +6097,46 @@ edje_edit_program_after_del(Evas_Object *obj, const char *prog, const char *afte
    return EINA_TRUE;
 }
 
+EAPI const char *
+edje_edit_program_api_name_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(NULL);
+
+   return eina_stringshare_add(epr->api.name);
+}
+
+EAPI const char *
+edje_edit_program_api_description_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(NULL);
+
+   return eina_stringshare_add(epr->api.description);
+}
+
+EAPI Eina_Bool
+edje_edit_program_api_name_set(Evas_Object *obj, const char *prog, const char* name)
+{
+   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_EPR_OR_RETURN(EINA_FALSE);
+
+   _edje_if_string_free(ed, epr->api.name);
+   epr->api.name = eina_stringshare_add(name);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_program_api_description_set(Evas_Object *obj, const char *prog, const char *description)
+{
+   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_EPR_OR_RETURN(EINA_FALSE);
+
+   _edje_if_string_free(ed, epr->api.description);
+   epr->api.description = eina_stringshare_add(description);
+
+   return EINA_TRUE;
+}
+
 /*************************/
 /*  EMBRYO SCRIPTS  API  */
 /*************************/
@@ -6178,6 +6256,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
    double db, db2;
    char *data;
    Eina_Bool ret = EINA_TRUE;
+   const char *api_name, *api_description;
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
@@ -6278,6 +6357,30 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
      }
 
    // TODO Support script {}
+   /* api */
+   api_name = edje_edit_program_api_name_get(obj, program);
+   api_description = edje_edit_program_api_description_get(obj, program);
+
+   if (api_name || api_description)
+     {
+	if (api_name && api_description)
+	  {
+	     BUF_APPENDF(I4"api: \"%s\" \"%s\";\n", api_name, api_description);
+	     edje_edit_string_free(api_name);
+	     edje_edit_string_free(api_description);
+	  }
+	else
+	  if (api_name)
+	    {
+	       BUF_APPENDF(I4"api: \"%s\" \"\";\n", api_name);
+	       edje_edit_string_free(api_name);
+	    }
+	  else
+	    {
+	       BUF_APPENDF(I4"api: \"\" \"%s\";\n", api_description);
+	       edje_edit_string_free(api_description);
+	    }
+     }
 
    BUF_APPEND(I3 "}\n");
    return ret;
@@ -6527,6 +6630,7 @@ _edje_generate_source_of_part(Evas_Object *obj, const char *part, Eina_Strbuf *b
    Eina_List *l, *ll;
    char *data;
    Eina_Bool ret = EINA_TRUE;
+   const char *api_name, *api_description;
 
    BUF_APPENDF(I3"part { name: \"%s\";\n", part);
    BUF_APPENDF(I4"type: %s;\n", types[edje_edit_part_type_get(obj, part)]);
@@ -6593,6 +6697,30 @@ _edje_generate_source_of_part(Evas_Object *obj, const char *part, Eina_Strbuf *b
 	ret &= _edje_generate_source_of_state(obj, part, state, value, buf);
      }
    edje_edit_string_list_free(ll);
+
+   api_name = edje_edit_part_api_name_get(obj, part);
+   api_description = edje_edit_part_api_description_get(obj, part);
+
+   if (api_name || api_description)
+     {
+	if (api_name && api_description)
+	  {
+	     BUF_APPENDF(I4"api: \"%s\" \"%s\";\n", api_name, api_description);
+	     edje_edit_string_free(api_name);
+	     edje_edit_string_free(api_description);
+	  }
+	else
+	  if (api_name)
+	    {
+	       BUF_APPENDF(I4"api: \"%s\" \"\";\n", api_name);
+	       edje_edit_string_free(api_name);
+	    }
+	  else
+	    {
+	       BUF_APPENDF(I4"api: \"\" \"%s\";\n", api_description);
+	       edje_edit_string_free(api_description);
+	    }
+     }
 
    BUF_APPEND(I3"}\n");//part
    return ret;
