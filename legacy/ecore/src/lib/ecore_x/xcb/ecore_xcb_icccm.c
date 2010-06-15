@@ -352,7 +352,13 @@ ecore_x_icccm_hints_get(Ecore_X_Window             window __UNUSED__,
 {
    xcb_wm_hints_t            hints;
    xcb_get_property_reply_t *reply;
-   uint32_t                  flags;
+   int32_t                   hints_flags;
+   uint32_t                  hints_input;
+   int32_t                   hints_initial_state;
+   xcb_pixmap_t              hints_icon_pixmap;
+   xcb_pixmap_t              hints_icon_mask;
+   xcb_window_t              hints_icon_window;
+   xcb_window_t              hints_window_group;
 
    if (accepts_focus)
       *accepts_focus = 1;
@@ -378,45 +384,51 @@ ecore_x_icccm_hints_get(Ecore_X_Window             window __UNUSED__,
        (reply->format != 32))
       return 0;
 
-   xcb_get_wm_hints_from_reply(&hints, reply);
+       memcpy(&hints, xcb_get_property_value(reply), reply->value_len);
+       hints_flags = hints.flags;
+       hints_input = hints.input;
+       hints_initial_state = hints.initial_state;
+       hints_icon_pixmap = hints.icon_pixmap;
+       hints_icon_mask = hints.icon_mask;
+       hints_icon_window = hints.icon_window;
+       hints_window_group = hints.window_group;
 
-   flags = xcb_wm_hints_get_flags(&hints);
-   if ((flags & XCB_WM_HINT_INPUT) && (accepts_focus))
+   if ((hints_flags & XCB_WM_HINT_INPUT) && (accepts_focus))
      {
-        if (xcb_wm_hints_get_input(hints))
+        if(hints_input)
            *accepts_focus = 1;
         else
            *accepts_focus = 0;
      }
-   if ((flags & XCB_WM_HINT_STATE) && (initial_state))
+   if ((hints_flags & XCB_WM_HINT_STATE) && (initial_state))
      {
-       if (xcb_wm_hints_get_initial_state(hints) == XCB_WM_STATE_WITHDRAWN)
+       if (hints_initial_state == XCB_WM_STATE_WITHDRAWN)
            *initial_state = ECORE_X_WINDOW_STATE_HINT_WITHDRAWN;
-        else if (xcb_wm_hints_get_initial_state(hints) == XCB_WM_STATE_NORMAL)
+        else if (hints_initial_state == XCB_WM_STATE_NORMAL)
            *initial_state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
-        else if (xcb_wm_hints_get_initial_state(hints) == XCB_WM_STATE_ICONIC)
+        else if (hints_initial_state == XCB_WM_STATE_ICONIC)
            *initial_state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
      }
-   if ((flags & XCB_WM_HINT_ICON_PIXMAP) && (icon_pixmap))
+   if ((hints_flags & XCB_WM_HINT_ICON_PIXMAP) && (icon_pixmap))
      {
-        *icon_pixmap = xcb_wm_hints_get_icon_pixmap(hints);
+        *icon_pixmap = hints_icon_pixmap;
      }
-   if ((flags & XCB_WM_HINT_ICON_MASK) && (icon_mask))
+   if ((hints_flags & XCB_WM_HINT_ICON_MASK) && (icon_mask))
      {
-        *icon_mask = xcb_wm_hints_get_icon_mask(hints);
+        *icon_mask = hints_icon_mask;
      }
-   if ((flags & XCB_WM_HINT_ICON_WINDOW) && (icon_window))
+   if ((hints_flags & XCB_WM_HINT_ICON_WINDOW) && (icon_window))
      {
-        *icon_window = xcb_wm_hints_get_icon_window(hints);
+        *icon_window = hints_icon_window;
      }
-   if ((flags & XCB_WM_HINT_WINDOW_GROUP) && (window_group))
+   if ((hints_flags & XCB_WM_HINT_WINDOW_GROUP) && (window_group))
      {
         if (reply->value_len < XCB_NUM_WM_HINTS_ELEMENTS)
            *window_group = 0;
         else
-           *window_group = xcb_wm_hints_get_window_group(hints);
+           *window_group = hints_window_group;
      }
-   if ((flags & XCB_WM_HINT_X_URGENCY) && (is_urgent))
+   if ((hints_flags & XCB_WM_HINT_X_URGENCY) && (is_urgent))
      {
         *is_urgent = 1;
      }
@@ -503,30 +515,34 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window  window,
        (reply->value_len < 15))
       return;
 
-   xcb_size_hints_set_flags(&hint, 0);
+   hint.flags = 0;
    if (request_pos)
      {
-       xcb_size_hints_set_flags(&hint, XCB_SIZE_HINT_US_POSITION);
+       hint.flags = XCB_SIZE_HINT_US_POSITION;
      }
    if (gravity != ECORE_X_GRAVITY_NW)
      {
-	xcb_size_hints_set_win_gravity(&hint, (uint8_t)gravity);
+	hint.win_gravity = (uint8_t)gravity;
      }
    if ((min_w > 0) || (min_h > 0))
      {
-	xcb_size_hints_set_min_size(&hint, min_w, min_h);
+	hint.min_width = min_w;
+	hint.min_height = min_h;
      }
    if ((max_w > 0) || (max_h > 0))
      {
-	xcb_size_hints_set_max_size(&hint, max_w, max_h);
+	hint.max_width = max_w;
+	hint.max_height = max_h;
      }
    if ((base_w > 0) || (base_h > 0))
      {
-	xcb_size_hints_set_base_size(&hint, base_w, base_h);
+	hint.base_width = base_w;
+	hint.base_height = base_h;
      }
    if ((step_x > 1) || (step_y > 1))
      {
-	xcb_size_hints_set_resize_inc(&hint, step_x, step_y);
+	hint.width_inc = step_x;
+	hint.height_inc = step_y;
      }
    if ((min_aspect > 0.0) || (max_aspect > 0.0))
      {
@@ -611,7 +627,7 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window   window __UNUSED__,
    if (!_ecore_x_icccm_size_hints_get(reply, ECORE_X_ATOM_WM_NORMAL_HINTS, &hint))
      return 0;
 
-   flags = xcb_size_hints_get_flags(hint);
+   flags = hint.flags;
      if ((flags & XCB_SIZE_HINT_US_POSITION) || (flags & XCB_SIZE_HINT_P_POSITION))
      {
 	if (request_pos)
@@ -620,15 +636,17 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window   window __UNUSED__,
    if (flags & XCB_SIZE_HINT_P_WIN_GRAVITY)
      {
 	if (gravity)
-	   *gravity = xcb_size_hints_get_win_gravity(&hint);
+	   *gravity = hint.win_gravity;
      }
    if (flags & XCB_SIZE_HINT_P_MIN_SIZE)
      {
-	xcb_size_hints_get_min_size(hint, &minw, &minh);
+	minw = hint.min_width;
+	minh = hint.min_height;
      }
    if (flags & XCB_SIZE_HINT_P_MAX_SIZE)
      {
-	xcb_size_hints_get_max_size(&hint, &maxw, &maxh);
+	maxw = hint.max_width;
+	maxh = hint.max_height;
 	if (maxw < minw)
 	   maxw = minw;
 	if (maxh < minh)
@@ -636,7 +654,8 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window   window __UNUSED__,
      }
    if (flags & XCB_SIZE_HINT_BASE_SIZE)
      {
-	xcb_size_hints_get_base_size(&hint, &basew, &baseh);
+	basew = hint.base_width;
+	baseh = hint.base_height;
 	if (basew > minw)
 	   minw = basew;
 	if (baseh > minh)
@@ -644,7 +663,8 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window   window __UNUSED__,
      }
    if (flags & XCB_SIZE_HINT_P_RESIZE_INC)
      {
-	xcb_size_hints_get_increase(&hint, &stepx, &stepy);
+        stepx = hint.width_inc;
+        stepy = hint.height_inc;
 	if (stepx < 1)
 	   stepx = 1;
 	if (stepy < 1)
@@ -652,17 +672,10 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window   window __UNUSED__,
      }
    if (flags & XCB_SIZE_HINT_P_ASPECT)
      {
-        int32_t min_aspect_num;
-        int32_t min_aspect_den;
-        int32_t max_aspect_num;
-        int32_t max_aspect_den;
-
-        xcb_size_hints_get_min_aspect(hint, &min_aspect_num, &min_aspect_den);
-	if (min_aspect_den > 0)
-	   mina = ((double)min_aspect_num) / ((double)min_aspect_den);
-        xcb_size_hints_get_max_aspect(hint, &max_aspect_num, &max_aspect_den);
-	if (max_aspect_den > 0)
-	   maxa = ((double)max_aspect_num) / ((double)max_aspect_den);
+	if (hint.min_aspect_den > 0)
+	   mina = ((double)hint.min_aspect_num) / ((double)hint.min_aspect_den);
+	if (hint.max_aspect_den > 0)
+	   maxa = ((double)hint.max_aspect_num) / ((double)hint.max_aspect_den);
      }
 
    if (min_w)
