@@ -1379,3 +1379,20 @@ elm_object_widget_type_get(const Evas_Object *obj)
 {
    return elm_widget_type_get(obj);
 }
+
+/**
+ * Send a signal to the widget edje object.
+ *
+ * This function sends a signal to the edje object of the obj. An edje program
+ * can respond to a signal by specifying matching 'signal' and
+ * 'source' fields.
+ *
+ * @param obj The object
+ * @param emission The signal's name.
+ * @param source The signal's source.
+ * @ingroup General
+ */
+EAPI void elm_object_signal_emit(Evas_Object *obj, const char *emission, const char *source)
+{
+    elm_widget_signal_emit(obj, emission, source);
+}

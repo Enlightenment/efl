@@ -82,6 +82,14 @@ _disable_hook(Evas_Object *obj)
 }
 
 static void
+_signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_signal_emit(wd->spinner, emission, source);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -508,6 +516,7 @@ elm_spinner_add(Evas_Object *parent)
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
+   elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
 
    wd->val = 0.0;
    wd->val_min = 0.0;

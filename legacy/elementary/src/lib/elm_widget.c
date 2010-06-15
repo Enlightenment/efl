@@ -27,6 +27,8 @@ struct _Smart_Data
    void         (*activate_func) (Evas_Object *obj);
    void         (*disable_func) (Evas_Object *obj);
    void         (*theme_func) (Evas_Object *obj);
+   void         (*signal_func) (Evas_Object *obj, const char *emission,
+	                        const char *source);
    void         (*changed_func) (Evas_Object *obj);
    void         (*on_focus_func) (void *data, Evas_Object *obj);
    void          *on_focus_data;
@@ -154,6 +156,13 @@ elm_widget_changed_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
 {
    API_ENTRY return;
    sd->changed_func = func;
+}
+
+EAPI void
+elm_widget_signal_emit_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source))
+{
+   API_ENTRY return;
+   sd->signal_func = func;
 }
 
 EAPI void
@@ -582,6 +591,14 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 	if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
      }
    return 0;
+}
+
+EAPI void
+elm_widget_signal_emit(Evas_Object *obj, const char *emission, const char *source)
+{
+   API_ENTRY return;
+   if (!sd->signal_func) return;
+   sd->signal_func(obj, emission, source);
 }
 
 EAPI void

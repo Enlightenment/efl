@@ -285,6 +285,8 @@ extern "C" {
    EAPI void         elm_object_scroll_freeze_push(Evas_Object *obj);
    EAPI void         elm_object_scroll_freeze_pop(Evas_Object *obj);
 
+   EAPI void         elm_object_signal_emit(Evas_Object *obj, const char *emission, const char *source);
+
    EAPI void         elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coord *h);
 
    EAPI Elm_Theme   *elm_theme_new(void);
