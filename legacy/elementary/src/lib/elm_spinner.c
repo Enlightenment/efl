@@ -207,7 +207,7 @@ _value_set(Evas_Object *obj, double delta)
         while (new_val < wd->val_min)
           new_val = wd->val_max + new_val + 1 - wd->val_min;
         while (new_val > wd->val_max)
-          new_val = wd->val_min + new_val - wd->val_max;
+          new_val = wd->val_min + new_val - wd->val_max - 1;
      }
    else
      {
