@@ -356,6 +356,14 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static void
+_signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_signal_emit(wd->ent, emission, source);
+}
+
+static void
 _hoversel_position(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1274,6 +1282,7 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
+   elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_can_focus_set(obj, 1);
 
    wd->linewrap     = EINA_TRUE;
