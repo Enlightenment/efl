@@ -125,6 +125,7 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 	evas_object_event_callback_del_full
 	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
 	wd->icon = NULL;
+	edje_object_message_signal_process(wd->tgl);
 	_sizing_eval(obj);
      }
 }
@@ -242,6 +243,8 @@ elm_toggle_label_get(const Evas_Object *obj)
 /**
  * Sets the icon to be displayed with the toggle.
  *
+ * Once the icon object is set, a previously set one will be deleted.
+ *
  * @param obj The toggle object
  * @param icon The icon object to be displayed
  *
@@ -253,15 +256,18 @@ elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((wd->icon != icon) && (wd->icon))
-     elm_widget_sub_object_del(obj, wd->icon);
+   if (wd->icon == icon) return;
+   if (wd->icon) evas_object_del(wd->icon);
    wd->icon = icon;
-   if (!icon) return;
-   elm_widget_sub_object_add(obj, icon);
-   evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                  _changed_size_hints, obj);
-   edje_object_part_swallow(wd->tgl, "elm.swallow.content", icon);
-   edje_object_signal_emit(wd->tgl, "elm,state,icon,visible", "elm");
+   if (icon)
+     {
+	elm_widget_sub_object_add(obj, icon);
+	evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+	      _changed_size_hints, obj);
+	edje_object_part_swallow(wd->tgl, "elm.swallow.content", icon);
+	edje_object_signal_emit(wd->tgl, "elm,state,icon,visible", "elm");
+	edje_object_message_signal_process(wd->tgl);
+     }
    _sizing_eval(obj);
 }
 

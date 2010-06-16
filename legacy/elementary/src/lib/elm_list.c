@@ -1296,6 +1296,10 @@ elm_list_item_icon_get(const Elm_List_Item *it)
 /**
  * Sets the left side icon associated with the item.
  *
+ * Once the icon object is set, a previously set one will be deleted.
+ * You probably don't want, then, to have the <b>same</b> icon object set
+ * for more than one item of the list.
+ *
  * @param it The list item
  * @param icon The left side icon object to associate with @p it
  *
@@ -1307,12 +1311,21 @@ elm_list_item_icon_set(Elm_List_Item *it, Evas_Object *icon)
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    if (it->icon == icon) return;
    if (it->dummy_icon && !icon) return;
-   if (it->dummy_icon) evas_object_del(it->icon);
+   if (it->dummy_icon)
+     {
+	evas_object_del(it->icon);
+	it->dummy_icon = EINA_FALSE;
+     }
    if (!icon)
      {
 	icon = evas_object_rectangle_add(evas_object_evas_get(it->obj));
 	evas_object_color_set(icon, 0, 0, 0, 0);
 	it->dummy_icon = EINA_TRUE;
+     }
+   if (it->icon)
+     {
+	evas_object_del(it->icon);
+	it->icon = NULL;
      }
    it->icon = icon;
    if (it->base)
@@ -1336,7 +1349,11 @@ elm_list_item_end_get(const Elm_List_Item *it)
 }
 
 /**
- * Gets the right side icon associated with the item.
+ * Sets the right side icon associated with the item.
+ *
+ * Once the icon object is set, a previously set one will be deleted.
+ * You probably don't want, then, to have the <b>same</b> icon object set
+ * for more than one item of the list.
  *
  * @param it The list item
  * @param icon The right side icon object to associate with @p it
@@ -1349,12 +1366,21 @@ elm_list_item_end_set(Elm_List_Item *it, Evas_Object *end)
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    if (it->end == end) return;
    if (it->dummy_end && !end) return;
-   if (it->dummy_end) evas_object_del(it->end);
+   if (it->dummy_end)
+     {
+	evas_object_del(it->end);
+	it->dummy_icon = EINA_FALSE;
+     }
    if (!end)
      {
 	end = evas_object_rectangle_add(evas_object_evas_get(it->obj));
 	evas_object_color_set(end, 0, 0, 0, 0);
 	it->dummy_end = EINA_TRUE;
+     }
+   if (it->end)
+     {
+	evas_object_del(it->end);
+	it->end = NULL;
      }
    it->end = end;
    if (it->base)

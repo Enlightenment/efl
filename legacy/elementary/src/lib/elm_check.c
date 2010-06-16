@@ -127,6 +127,7 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
                                        _changed_size_hints, obj);
 	wd->icon = NULL;
 	_sizing_eval(obj);
+	edje_object_message_signal_process(wd->chk);
      }
 }
 
@@ -256,10 +257,7 @@ elm_check_label_get(const Evas_Object *obj)
 /**
  * Set the icon object of the check object
  *
- * Once the icon object is set, it will become a child of the check object and
- * be deleted when the check object is deleted. If another icon object is set
- * then the previous one becomes orophaned and will no longer be deleted along
- * with the check.
+ * Once the icon object is set, a previously set one will be deleted.
  *
  * @param obj The check object
  * @param icon The icon object
@@ -272,8 +270,8 @@ elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((wd->icon != icon) && (wd->icon))
-     elm_widget_sub_object_del(obj, wd->icon);
+   if (wd->icon == icon) return;
+   if (wd->icon) evas_object_del(wd->icon);
    wd->icon = icon;
    if (icon)
      {
@@ -282,8 +280,9 @@ elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
 				       _changed_size_hints, obj);
 	edje_object_part_swallow(wd->chk, "elm.swallow.content", icon);
 	edje_object_signal_emit(wd->chk, "elm,state,icon,visible", "elm");
-	_sizing_eval(obj);
+	edje_object_message_signal_process(wd->chk);
      }
+   _sizing_eval(obj);
 }
 
 /**

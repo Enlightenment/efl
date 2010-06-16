@@ -20,7 +20,7 @@
 typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data 
 {
-   Evas_Object *scr, *bx;
+   Evas_Object *scr, *bx, *content;
    Elm_Panel_Orient orient;
    Eina_Bool hidden : 1;
 };
@@ -235,22 +235,55 @@ elm_panel_orient_get(Evas_Object *obj)
 /**
  * Set the content of the panel.
  *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_panel_content_unset() function.
+ *
  * @param obj The panel object
  * @param content The panel content
  *
  * @ingroup Panel
  */
-EAPI void 
-elm_panel_content_set(Evas_Object *obj, Evas_Object *content) 
+EAPI void
+elm_panel_content_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   evas_object_box_remove_all(wd->bx, EINA_TRUE);
-   if (!content) return;
-   evas_object_box_append(wd->bx, content);
-   evas_object_show(content);
+   if (wd->content == content) return;
+   if (wd->content)
+     evas_object_box_remove_all(wd->bx, EINA_TRUE);
+   wd->content = content;
+   if (content)
+     {
+	evas_object_box_append(wd->bx, wd->content);
+	evas_object_show(wd->content);
+     }
    _sizing_eval(obj);
+}
+
+/**
+ * Unset the content of the panel.
+ *
+ * Unparent and return the content object which was set for this widget.
+ *
+ * @param obj The panel object
+ * @return The content that was being used
+ *
+ * @ingroup Panel
+ */
+EAPI Evas_Object *
+elm_panel_content_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *content;
+   if (!wd) return NULL;
+   if (!wd->content) return NULL;
+   content = wd->content;
+   evas_object_box_remove_all(wd->bx, EINA_FALSE);
+   wd->content = NULL;
+   return content;
 }
 
 /**

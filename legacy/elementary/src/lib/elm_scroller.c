@@ -75,7 +75,6 @@ static const Evas_Smart_Cb_Description _signals[] = {
 static void
 _del_hook(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    free(wd);
@@ -353,9 +352,11 @@ elm_scroller_add(Evas_Object *parent)
 
 
 /**
- * Set the content object
+ * Set the content of the scroller widget (the object to be scrolled around).
  *
- * Sets the content of the scroller (the object to be scrolled around)
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_scroller_content_unset() function.
  *
  * @param obj The scroller object
  * @param content The new content object
@@ -368,8 +369,8 @@ elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((wd->content != content) && (wd->content))
-     elm_widget_sub_object_del(obj, wd->content);
+   if (wd->content == content) return;
+   if (wd->content) evas_object_del(wd->content);
    wd->content = content;
    if (content)
      {
@@ -379,8 +380,33 @@ elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
           elm_smart_scroller_child_set(wd->scr, content);
 	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
-	_sizing_eval(obj);
      }
+   _sizing_eval(obj);
+}
+
+/**
+ * Unset the content of the scroller widget
+ *
+ * Unparent and return the content object which was set for this widget
+ *
+ * @param obj The slider objecet
+ * @return The content that was being used
+ *
+ * @ingroup Scroller
+ */
+EAPI Evas_Object *
+elm_scroller_content_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *content;
+   if (!wd) return NULL;
+   if (!wd->content) return NULL;
+   content = wd->content;
+   elm_widget_sub_object_del(obj, wd->content);
+   edje_object_part_unswallow(wd->scr, wd->content);
+   wd->content = NULL;
+   return content;
 }
 
 /**
@@ -389,6 +415,8 @@ elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
  * @param obj The scroller object
  * @param widget The widget name to use (default is "scroller")
  * @param base The base name to use (default is "base")
+ *
+ * @ingroup Scroller
  */
 EAPI void
 elm_scroller_custom_widget_base_theme_set(Evas_Object *obj, const char *widget, const char *base)

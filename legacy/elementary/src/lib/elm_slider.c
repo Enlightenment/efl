@@ -160,6 +160,7 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 	evas_object_event_callback_del_full
 	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
 	wd->icon = NULL;
+	edje_object_message_signal_process(wd->slider);
 	_sizing_eval(obj);
      }
 }
@@ -396,10 +397,7 @@ elm_slider_label_get(const Evas_Object *obj)
 /**
  * Set the icon object of the slider object
  *
- * Once the icon object is set, it will become a child of the slider object and
- * be deleted when the slider object is deleted. If another icon object is set
- * then the previous one becomes orophaned and will no longer be deleted along
- * with the slider.
+ * Once the icon object is set, a previously set one will be deleted.
  *
  * @param obj The slider object
  * @param icon The icon object
@@ -412,8 +410,8 @@ elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((wd->icon != icon) && (wd->icon))
-     elm_widget_sub_object_del(obj, wd->icon);
+   if (wd->icon == icon) return;
+   if (wd->icon) evas_object_del(wd->icon);
    wd->icon = icon;
    if (icon)
      {
@@ -422,8 +420,9 @@ elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
 				       _changed_size_hints, obj);
 	edje_object_part_swallow(wd->slider, "elm.swallow.content", icon);
 	edje_object_signal_emit(wd->slider, "elm,state,icon,visible", "elm");
-	_sizing_eval(obj);
+	edje_object_message_signal_process(wd->slider);
      }
+   _sizing_eval(obj);
 }
 
 /**

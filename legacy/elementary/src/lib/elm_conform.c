@@ -268,28 +268,56 @@ elm_conformant_add(Evas_Object *parent)
 
 /**
  * Set the content of the conformant widget
- * 
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_conformat_content_unset() function.
+ *
  * @param obj The conformant object
- * @param content The content that will be used inside this conformant object
- * 
+ * @return The content that was being used
+ *
  * @ingroup Conformant
  */
-EAPI void 
-elm_conformant_content_set(Evas_Object *obj, Evas_Object *content) 
+EAPI void
+elm_conformant_content_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((wd->content != content) && (wd->content))
-     elm_widget_sub_object_del(obj, wd->content);
+   if (wd->content == content) return;
+   if (wd->content) evas_object_del(wd->content);
    wd->content = content;
-   if (content) 
+   if (content)
      {
-        elm_widget_sub_object_add(obj, content);
-        evas_object_event_callback_add(content,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-        edje_object_part_swallow(wd->base, "elm.swallow.content", content);
-        _sizing_eval(obj);
+	elm_widget_sub_object_add(obj, content);
+	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				       _changed_size_hints, obj);
+	edje_object_part_swallow(wd->base, "elm.swallow.content", content);
      }
+   _sizing_eval(obj);
+}
+
+/**
+ * Unset the content of the conformant widget
+ *
+ * Unparent and return the content object which was set for this widget;
+ *
+ * @param obj The conformant object
+ * @return The content that was being used
+ *
+ * @ingroup Conformant
+ */
+EAPI Evas_Object *
+elm_conformant_content_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *content;
+   if (!wd) return NULL;
+   if (!wd->content) return NULL;
+   content = wd->content;
+   elm_widget_sub_object_del(obj, wd->content);
+   edje_object_part_unswallow(wd->base, wd->content);
+   wd->content = NULL;
+   return content;
 }

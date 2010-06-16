@@ -367,6 +367,7 @@ extern "C" {
    EAPI Evas_Object *elm_win_inwin_add(Evas_Object *obj);
    EAPI void         elm_win_inwin_activate(Evas_Object *obj);
    EAPI void         elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI Evas_Object *elm_win_inwin_content_unset(Evas_Object *obj);
    /* available styles:
     * default
     * minimal
@@ -491,6 +492,7 @@ extern "C" {
 
    EAPI Evas_Object *elm_scroller_add(Evas_Object *parent);
    EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child);
+   EAPI Evas_Object *elm_scroller_content_unset(Evas_Object *obj);
    EAPI void         elm_scroller_custom_widget_base_theme_set(Evas_Object *obj, const char *widget, const char *base);
    EAPI void         elm_scroller_content_min_limit(Evas_Object *obj, Eina_Bool w, Eina_Bool h);
    EAPI void         elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
@@ -546,6 +548,7 @@ extern "C" {
    EAPI void         elm_frame_label_set(Evas_Object *obj, const char *label);
    EAPI const char  *elm_frame_label_get(const Evas_Object *obj);
    EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI Evas_Object *elm_frame_content_unset(Evas_Object *obj);
    /* available styles:
     * default
     * pad_small
@@ -644,6 +647,7 @@ extern "C" {
    EAPI Eina_Bool    elm_layout_file_set(Evas_Object *obj, const char *file, const char *group);
    EAPI Eina_Bool    elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style);
    EAPI void         elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
+   EAPI Evas_Object *elm_layout_content_unset(Evas_Object *obj, const char *swallow);
    EAPI Evas_Object *elm_layout_edje_get(const Evas_Object *obj);
    EAPI void         elm_layout_sizing_eval(Evas_Object *obj);
    /* smart callbacks called:
@@ -663,6 +667,7 @@ extern "C" {
      } Elm_Notify_Orient;
    EAPI Evas_Object *elm_notify_add(Evas_Object *parent);
    EAPI void         elm_notify_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI Evas_Object *elm_notify_content_unset(Evas_Object *obj);
    EAPI void	     elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void	     elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient);
    EAPI void         elm_notify_timeout_set(Evas_Object *obj, int timeout);
@@ -684,6 +689,7 @@ extern "C" {
    EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI Evas_Object *elm_hover_parent_get(Evas_Object *obj);
    EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
+   EAPI Evas_Object *elm_hover_content_unset(Evas_Object *obj, const char *swallow);
    EAPI const char  *elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis);
    /* available styles:
     * default
@@ -846,6 +852,7 @@ extern "C" {
    EAPI const char  *elm_bubble_info_get(const Evas_Object *obj);
 
    EAPI void         elm_bubble_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI Evas_Object *elm_bubble_content_unset(Evas_Object *obj);
    EAPI void         elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon);
    EAPI Evas_Object *elm_bubble_icon_get(const Evas_Object *obj);
    EAPI void         elm_bubble_corner_set(Evas_Object *obj, const char *corner);
@@ -1455,6 +1462,7 @@ extern "C" {
    EAPI void                  elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient);
    EAPI Elm_Panel_Orient      elm_panel_orient_get(Evas_Object *obj);
    EAPI void                  elm_panel_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI Evas_Object          *elm_panel_content_unset(Evas_Object *obj);
    EAPI void                  elm_panel_hidden_set(Evas_Object *obj, Eina_Bool hidden);
    EAPI Eina_Bool             elm_panel_hidden_get(Evas_Object *obj);
    EAPI void                  elm_panel_toggle(Evas_Object *obj);
@@ -1519,9 +1527,12 @@ extern "C" {
 
    EAPI Evas_Object *elm_conformant_add(Evas_Object *parent);
    EAPI void         elm_conformant_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI Evas_Object *elm_conformant_content_unset(Evas_Object *obj);
+
 
    EAPI Evas_Object *elm_mapbuf_add(Evas_Object *parent);
    EAPI void         elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI Evas_Object *elm_mapbuf_content_unset(Evas_Object *obj);
    EAPI void         elm_mapbuf_enabled_set(Evas_Object *obj, Eina_Bool enabled);
    EAPI Eina_Bool    elm_mapbuf_enabled_get(const Evas_Object *obj);
    EAPI void         elm_mapbuf_smooth_set(Evas_Object *obj, Eina_Bool smooth);

@@ -209,13 +209,17 @@ elm_bubble_info_get(const Evas_Object *obj)
 }
 
 /**
- * Set the text to be showed in the bubble
+ * Set the content to be shown in the bubble
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep the old content object, use the
+ * elm_bubble_content_unset() function.
  *
  * @param obj The bubble object
- * @param content The given info about the bubble
+ * @param content The given content of the bubble
  *
- * This function sets the text shown on the top right of bubble. In
- * the Anchorblock example of the Elementary tests application it
+ * This function sets the content shown on the middle of the bubble.
+ * In the Anchorblock example of the Elementary tests application it
  * shows time.
  *
  * @ingroup Bubble
@@ -226,14 +230,13 @@ elm_bubble_content_set(Evas_Object *obj, Evas_Object *content)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((wd->content != content) && (wd->content))
-     elm_widget_sub_object_del(obj, wd->content);
+   if (wd->content == content) return;
+   if (wd->content) evas_object_del(wd->content);
    wd->content = content;
    if (content)
      {
 	elm_widget_sub_object_add(obj, content);
-	evas_object_event_callback_add(content,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
 	edje_object_part_swallow(wd->bbl, "elm.swallow.content", content);
      }
@@ -241,12 +244,37 @@ elm_bubble_content_set(Evas_Object *obj, Evas_Object *content)
 }
 
 /**
+ * Unset the content shown in the bubble
+ *
+ * Unparent and return the content object which was set for this widget.
+ *
+ * @param obj The bubble object
+ * @return The content that was being used
+ *
+ * @ingroup Bubble
+ */
+EAPI Evas_Object *
+elm_bubble_content_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *content;
+   if (!wd) return NULL;
+   if (!wd->content) return NULL;
+   content = wd->content;
+   elm_widget_sub_object_del(obj, wd->content);
+   edje_object_part_unswallow(wd->bbl, wd->content);
+   wd->content = NULL;
+   return content;
+}
+
+/**
  * Set the icon of the bubble
+ *
+ * Once the icon object is set, a previously set one will be deleted.
  *
  * @param obj The bubble object
  * @param icon The given icon for the bubble
- *
- * This function sets the icon shown on the top left of bubble.
  *
  * @ingroup Bubble
  */
@@ -256,8 +284,8 @@ elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((wd->icon != icon) && (wd->icon))
-     elm_widget_sub_object_del(obj, wd->icon);
+   if (wd->icon == icon) return;
+   if (wd->icon) evas_object_del(wd->icon);
    wd->icon = icon;
    if (icon)
      {
@@ -267,8 +295,8 @@ elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon)
 				       _changed_size_hints, obj);
 	edje_object_signal_emit(wd->bbl, "elm,state,icon,visible", "elm");
 	edje_object_message_signal_process(wd->bbl);
-	_sizing_eval(obj);
      }
+   _sizing_eval(obj);
 }
 
 /**

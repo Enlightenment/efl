@@ -1583,6 +1583,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    free(wd);
 }
 
@@ -1688,6 +1689,10 @@ elm_win_inwin_activate(Evas_Object *obj)
 /**
  * Set the content of an inwin object.
  *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_win_inwin_content_unset() function.
+ *
  * @param obj The inwin object
  * @param content The object to set as content
  *
@@ -1699,8 +1704,8 @@ elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content)
    ELM_CHECK_WIDTYPE(obj, widtype2);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((wd->content) && (wd->content != content))
-     elm_widget_sub_object_del(obj, wd->content);
+   if (wd->content == content) return;
+   if (wd->content) evas_object_del(wd->content);
    wd->content = content;
    if (content)
      {
@@ -1708,8 +1713,32 @@ elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content)
 	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
 	edje_object_part_swallow(wd->frm, "elm.swallow.content", content);
-	_sizing_eval(obj);
      }
+   _sizing_eval(obj);
+}
+
+/**
+ * Unset the content of an inwin object.
+ *
+ * Unparent and return the content object which was set for this widget.
+ *
+ * @param obj The inwin object
+ * @return The content that was being used
+ *
+ * @ingroup Inwin
+ */
+EAPI Evas_Object *
+elm_win_inwin_content_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype2) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (!wd->content) return NULL;
+   Evas_Object *content = wd->content;
+   elm_widget_sub_object_del(obj, wd->content);
+   edje_object_part_unswallow(wd->frm, wd->content);
+   wd->content = NULL;
+   return content;
 }
 
 /* windowing spcific calls - shall we do this differently? */

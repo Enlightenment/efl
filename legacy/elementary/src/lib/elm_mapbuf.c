@@ -175,6 +175,10 @@ elm_mapbuf_add(Evas_Object *parent)
 /**
  * Set the mapbuf front content
  *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_mapbuf_content_unset() function.
+ *
  * @param obj The mapbuf object
  * @param content The content will be filled in this mapbuf object
  *
@@ -187,22 +191,42 @@ elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->content == content) return;
-   if ((wd->content != content) && (wd->content))
-     {
-        elm_widget_sub_object_del(obj, wd->content);
-        evas_object_smart_member_del(wd->content);
-     }
+   if (wd->content) evas_object_del(wd->content);
    wd->content = content;
    if (content)
      {
 	elm_widget_sub_object_add(content, obj);
-        evas_object_smart_member_add(content, obj);
-	evas_object_event_callback_add(content,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+	evas_object_smart_member_add(content, obj);
+	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
-	_sizing_eval(obj);
      }
+   _sizing_eval(obj);
    _configure(obj);
+}
+
+/**
+ * Unset the mapbuf front content
+ *
+ * Unparent and return the content object which was set for this widget.
+ *
+ * @param obj The mapbuf object
+ * @return The content that was being used
+ *
+ * @ingroup Mapbuf
+ */
+EAPI Evas_Object *
+elm_mapbuf_content_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *content;
+   if (!wd) return NULL;
+   if (!wd->content) return NULL;
+   content = wd->content;
+   elm_widget_sub_object_del(obj, wd->content);
+   evas_object_smart_member_del(wd->content);
+   wd->content = NULL;
+   return content;
 }
 
 /**

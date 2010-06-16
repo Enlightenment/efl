@@ -54,7 +54,6 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_notify_content_set(obj, NULL);
    elm_notify_parent_set(obj, NULL);
    elm_notify_repeat_events_set(obj, EINA_TRUE);
    if (wd->timer)
@@ -100,8 +99,16 @@ static void
 _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *sub = event_info;
    if (!wd) return;
-   if (event_info == wd->content) wd->content = NULL;
+   if (sub == wd->content)
+     {
+	evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+					     _changed_size_hints, obj);
+	evas_object_event_callback_del_full(sub, EVAS_CALLBACK_RESIZE,
+					     _content_resize, obj);
+	wd->content = NULL;
+     }
 }
 
 static void
@@ -279,7 +286,11 @@ elm_notify_add(Evas_Object *parent)
 }
 
 /**
- * Set the notify content
+ * Set the content of the notify widget
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_notify_content_unset() function.
  *
  * @param obj The notify object
  * @param content The content will be filled in this notify object
@@ -292,31 +303,45 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->content)
-     {
-	evas_object_event_callback_del_full(wd->content,
-                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                            _changed_size_hints, obj);
-        evas_object_event_callback_del_full(wd->content, EVAS_CALLBACK_RESIZE,
-                                            _content_resize, obj);
-	evas_object_del(wd->content);
-	wd->content = NULL;
-     }
-   
+   if (wd->content == content) return;
+   if (wd->content) evas_object_del(wd->content);
+   wd->content = content;
    if (content)
      {
 	elm_widget_sub_object_add(obj, content);
-	wd->content = content;
-	evas_object_event_callback_add(content,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
+	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				       _changed_size_hints, obj);
 	evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE,
-                                       _content_resize, obj);
+				       _content_resize, obj);
 	edje_object_part_swallow(wd->notify, "elm.swallow.content", content);
-        
-	_sizing_eval(obj);
      }
+   _sizing_eval(obj);
    _calc(obj);
+}
+
+/**
+ * Unset the content of the notify widget
+ *
+ * Unparent and return the content object which was set for this widget
+ *
+ * @param obj The notify object
+ * @return The content that was being used
+ *
+ * @ingroup Notify
+ */
+EAPI Evas_Object *
+elm_notify_content_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *content;
+   if (!wd) return NULL;
+   if (!wd->content) return NULL;
+   content = wd->content;
+   elm_widget_sub_object_del(obj, wd->content);
+   edje_object_part_unswallow(wd->notify, wd->content);
+   wd->content = NULL;
+   return content;
 }
 
 /**
