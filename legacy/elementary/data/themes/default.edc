@@ -6364,6 +6364,7 @@ collections {
         type: SWALLOW;
         description { state: "default" 0.0;
           fixed: 1 1;
+          visible: 0;
           align: 0.0 0.0;
           aspect: 1.0 1.0;
           aspect_preference: VERTICAL;
@@ -6376,6 +6377,10 @@ collections {
             relative: 0.0 1.0;
             offset: 4 -1;
           }
+        }
+        description { state: "visible" 0.0;
+          inherit: "default" 0.0;
+          visible: 1;
         }
       }
       part { name: "elm.text";
@@ -6479,6 +6484,22 @@ collections {
         }
       }
     }
+    programs {
+      program {
+        name: "icon_show";
+        signal: "elm,state,icon,visible";
+        source: "elm";
+        action: STATE_SET "visible" 0.0;
+        target: "elm.swallow.icon";
+      }
+      program {
+        name: "icon_hide";
+        signal: "elm,state,icon,hidden";
+        source: "elm";
+        action: STATE_SET "default" 0.0;
+        target: "elm.swallow.icon";
+      }
+    }
   }
 
   group { name: "elm/bubble/top_right/default";
@@ -6491,6 +6512,7 @@ collections {
         type: SWALLOW;
         description { state: "default" 0.0;
           fixed: 1 1;
+          visible: 0;
           align: 1.0 0.0;
           aspect: 1.0 1.0;
           aspect_preference: VERTICAL;
@@ -6503,6 +6525,10 @@ collections {
             relative: 1.0 1.0;
             offset: -5 -1;
           }
+        }
+        description { state: "visible" 0.0;
+          inherit: "default" 0.0;
+          visible: 1;
         }
       }
       part { name: "elm.text";
@@ -6606,6 +6632,22 @@ collections {
         }
       }
     }
+    programs {
+      program {
+        name: "icon_show";
+        signal: "elm,state,icon,visible";
+        source: "elm";
+        action: STATE_SET "visible" 0.0;
+        target: "elm.swallow.icon";
+      }
+      program {
+        name: "icon_hide";
+        signal: "elm,state,icon,hidden";
+        source: "elm";
+        action: STATE_SET "default" 0.0;
+        target: "elm.swallow.icon";
+      }
+    }
   }
 
   group { name: "elm/bubble/bottom_left/default";
@@ -6618,6 +6660,7 @@ collections {
         type: SWALLOW;
         description { state: "default" 0.0;
           fixed: 1 1;
+          visible: 0;
           align: 0.0 1.0;
           aspect: 1.0 1.0;
           aspect_preference: VERTICAL;
@@ -6630,6 +6673,10 @@ collections {
             relative: 0.0 1.0;
             offset: 4 -5;
           }
+        }
+        description { state: "visible" 0.0;
+          inherit: "default" 0.0;
+          visible: 1;
         }
       }
       part { name: "elm.text";
@@ -6733,6 +6780,22 @@ collections {
         }
       }
     }
+    programs {
+      program {
+        name: "icon_show";
+        signal: "elm,state,icon,visible";
+        source: "elm";
+        action: STATE_SET "visible" 0.0;
+        target: "elm.swallow.icon";
+      }
+      program {
+        name: "icon_hide";
+        signal: "elm,state,icon,hidden";
+        source: "elm";
+        action: STATE_SET "default" 0.0;
+        target: "elm.swallow.icon";
+      }
+    }
   }
 
   group { name: "elm/bubble/bottom_right/default";
@@ -6745,6 +6808,7 @@ collections {
         type: SWALLOW;
         description { state: "default" 0.0;
           fixed: 1 1;
+          visible: 0.0;
           align: 1.0 1.0;
           aspect: 1.0 1.0;
           aspect_preference: VERTICAL;
@@ -6757,6 +6821,10 @@ collections {
             relative: 1.0 1.0;
             offset: -5 -5;
           }
+        }
+        description { state: "visible" 0.0;
+          inherit: "default" 0.0;
+          visible: 1;
         }
       }
       part { name: "elm.text";
@@ -6858,6 +6926,22 @@ collections {
           }
           fill.smooth: 0;
         }
+      }
+    }
+    programs {
+      program {
+        name: "icon_show";
+        signal: "elm,state,icon,visible";
+        source: "elm";
+        action: STATE_SET "visible" 0.0;
+        target: "elm.swallow.icon";
+      }
+      program {
+        name: "icon_hide";
+        signal: "elm,state,icon,hidden";
+        source: "elm";
+        action: STATE_SET "default" 0.0;
+        target: "elm.swallow.icon";
       }
     }
   }

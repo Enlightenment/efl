@@ -74,7 +74,12 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _changed_size_hints, obj);
    if (sub == wd->content) wd->content = NULL;
-   else if (sub == wd->icon) wd->icon = NULL;
+   else if (sub == wd->icon)
+     {
+	edje_object_signal_emit(wd->bbl, "elm,state,icon,hidden", "elm");
+	wd->icon = NULL;
+	edje_object_message_signal_process(wd->bbl);
+     }
    _sizing_eval(obj);
 }
 
@@ -260,8 +265,10 @@ elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon)
 	edje_object_part_swallow(wd->bbl, "elm.swallow.icon", icon);
 	evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
+	edje_object_signal_emit(wd->bbl, "elm,state,icon,visible", "elm");
+	edje_object_message_signal_process(wd->bbl);
+	_sizing_eval(obj);
      }
-   _sizing_eval(obj);
 }
 
 /**
