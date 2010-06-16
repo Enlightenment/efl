@@ -48,11 +48,9 @@ external_radio_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
 	     Evas_Object *icon = external_common_param_icon_get(obj, param);
-	     if (icon)
-	       {
-		  elm_radio_icon_set(obj, icon);
-		  return EINA_TRUE;
-	       }
+	     if ((strcmp(param->s, "")) && (!icon)) return EINA_FALSE;
+	     elm_radio_icon_set(obj, icon);
+	     return EINA_TRUE;
 	  }
      }
    else if (!strcmp(param->name, "value"))
