@@ -183,8 +183,6 @@ external_toggle_params_free(void *params)
 {
    Elm_Params_Toggle *mem = params;
 
-   if (mem->icon)
-     evas_object_del(mem->icon);
    if (mem->on)
      eina_stringshare_del(mem->on);
    if (mem->off)

@@ -303,8 +303,6 @@ external_slider_params_free(void *params)
 {
    Elm_Params_Slider *mem = params;
 
-   if (mem->icon)
-     evas_object_del(mem->icon);
    if (mem->unit)
      eina_stringshare_del(mem->unit);
    if (mem->indicator)

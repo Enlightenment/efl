@@ -148,8 +148,6 @@ external_radio_params_free(void *params)
 {
    Elm_Params_Radio *mem = params;
 
-   if (mem->icon)
-     evas_object_del(mem->icon);
    if (mem->group_name)
      eina_stringshare_del(mem->group_name);
    external_common_params_free(params);

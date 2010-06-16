@@ -124,8 +124,6 @@ external_hoversel_params_free(void *params)
 {
    Elm_Params_Hoversel *mem = params;
 
-   if (mem->icon)
-     evas_object_del(mem->icon);
    external_common_params_free(params);
 }
 

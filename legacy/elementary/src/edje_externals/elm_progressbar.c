@@ -220,8 +220,6 @@ external_progressbar_params_free(void *params)
 {
    Elm_Params_Progressbar *mem = params;
 
-   if (mem->icon)
-     evas_object_del(mem->icon);
    if (mem->unit)
      eina_stringshare_del(mem->unit);
    external_common_params_free(params);

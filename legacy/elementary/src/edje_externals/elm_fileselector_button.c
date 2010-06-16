@@ -222,8 +222,6 @@ external_fileselector_button_params_free(void *params)
 {
    Elm_Params_fileselector_button *mem = params;
 
-   if (mem->icon)
-     evas_object_del(mem->icon);
    if (mem->fs.path)
      eina_stringshare_del(mem->fs.path);
    external_common_params_free(params);

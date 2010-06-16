@@ -134,15 +134,11 @@ external_bubble_params_parse(void *data, Evas_Object *obj, const Eina_List *para
    return mem;
 }
 
- static void
+static void
 external_bubble_params_free(void *params)
 {
    Elm_Params_Bubble *mem = params;
 
-   if (mem->icon)
-     evas_object_del(mem->icon);
-   if (mem->content)
-     evas_object_del(mem->content);
    if (mem->info)
      eina_stringshare_del(mem->info);
    external_common_params_free(params);
