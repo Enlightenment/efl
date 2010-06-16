@@ -14,10 +14,12 @@ static void evas_common_copy_pixels_c        (DATA32 *src, DATA32 *dst, int len)
 static void evas_common_copy_pixels_mmx      (DATA32 *src, DATA32 *dst, int len);
 static void evas_common_copy_pixels_mmx2     (DATA32 *src, DATA32 *dst, int len);
 static void evas_common_copy_pixels_sse/*NB*/ (DATA32 *src, DATA32 *dst, int len);
+static void evas_common_copy_pixels_neon     (DATA32 *src, DATA32 *dst, int len);
 
 static void evas_common_copy_pixels_rev_c           (DATA32 *src, DATA32 *dst, int len);
 static void evas_common_copy_pixels_rev_mmx         (DATA32 *src, DATA32 *dst, int len);
 static void evas_common_copy_pixels_rev_sse/*NB*/ (DATA32 *src, DATA32 *dst, int len);
+static void evas_common_copy_pixels_rev_neon        (DATA32 *src, DATA32 *dst, int len);
 
 static void evas_common_copy_rev_pixels_c           (DATA32 *src, DATA32 *dst, int len);
 
@@ -129,6 +131,110 @@ evas_common_copy_rev_pixels_c(DATA32 *src, DATA32 *dst, int len)
 	*dst++ = *src--;
 }
 
+
+#ifdef BUILD_NEON
+static void
+evas_common_copy_pixels_rev_neon(DATA32 *src, DATA32 *dst, int len)
+{
+   uint32_t *tmp = (void *)37;
+#define AP	"evas_common_copy_rev_pixels_neon_"
+   asm volatile (
+		// Can we do 32 byte?
+		"andS		%[tmp],	%[d], $0x1f	\n\t"
+		"beq		"AP"quadstart		\n\t"
+
+		// Can we do at least 16 byte?
+		"andS		%[tmp], %[d], $0x4	\n\t"
+		"beq		"AP"dualstart		\n\t"
+
+	// Only once
+	AP"singleloop:					\n\t"
+		"sub		%[s], #4		\n\t"
+		"vld1.32	d0[0],  [%[s]]		\n\t"
+		"vst1.32	d0[0],  [%[d]]!		\n\t"
+
+	// Up to 3 times
+	AP"dualstart:					\n\t"
+		"sub		%[tmp], %[e], %[d]	\n\t"
+		"cmp		%[tmp], #31		\n\t"
+		"blt		"AP"loopout		\n\t"
+
+		"andS		%[tmp], %[d], $0x1f	\n\t"
+		"beq		"AP"quadstart		\n\t"
+
+	AP"dualloop:					\n\t"
+		"sub		%[s], #8		\n\t"
+		"vldm		%[s], {d0}		\n\t"
+		"vrev64.32	d1, d0			\n\t"
+		"vstm		%[d]!, {d1}		\n\t"
+
+		"andS		%[tmp], %[d], $0x1f	\n\t"
+		"bne		"AP"dualloop		\n\t"
+
+
+	AP"quadstart:					\n\t"
+		"sub		%[tmp], %[e], %[d]	\n\t"
+		"cmp		%[tmp], #32		\n\t"
+		"blt		"AP"loopout		\n\t"
+
+		"sub		%[tmp],%[e],#32		\n\t"
+
+	AP "quadloop:					\n\t"
+		"sub		%[s],	#32		\n\t"
+		"vldm		%[s],	{d0,d1,d2,d3}	\n\t"
+
+		"vrev64.32	d7,d0			\n\t"
+		"vrev64.32	d6,d1			\n\t"
+		"vrev64.32	d5,d2			\n\t"
+		"vrev64.32	d4,d3			\n\t"
+
+		"vstm		%[d]!,	{d4,d5,d6,d7}	\n\t"
+
+		"cmp		%[tmp], %[d]		\n\t"
+                "bhi		"AP"quadloop		\n\t"
+
+
+	AP "loopout:					\n\t"
+		"cmp 		%[d], %[e]		\n\t"
+                "beq 		"AP"done		\n\t"
+		"sub		%[tmp],%[e], %[d]	\n\t"
+		"cmp		%[tmp],$0x04		\n\t"
+		"beq		"AP"singleloop2		\n\t"
+
+	AP "dualloop2:					\n\t"
+		"sub		%[tmp],%[e],$0x7	\n\t"
+	AP "dualloop2int:				\n\t"
+		"sub		%[s], #8		\n\t"
+		"vldm		%[s], {d0}		\n\t"
+		"vrev64.32	d1,d0			\n\t"
+		"vstm		%[d]!, {d1}		\n\t"
+
+		"cmp 		%[tmp], %[d]		\n\t"
+		"bhi 		"AP"dualloop2int	\n\t"
+
+		// Single ??
+		"cmp 		%[e], %[d]		\n\t"
+		"beq		"AP"done		\n\t"
+
+	AP "singleloop2:				\n\t"
+		"sub		%[s], #4		\n\t"
+		"vld1.32	d0[0], [%[s]]		\n\t"
+		"vst1.32	d0[0], [%[d]]		\n\t"
+
+	AP "done:\n\t"
+
+		: // No output regs
+		// Input
+		: [s] "r" (src + len), [e] "r" (dst + len), [d] "r" (dst),[tmp] "r" (tmp)
+		// Clobbered
+		: "q0","q1","q2","q3","0","1","memory"
+   );
+#undef AP
+
+}
+#endif
+
+
 #ifdef BUILD_C
 static void
 evas_common_copy_pixels_c(DATA32 *src, DATA32 *dst, int len)
@@ -225,6 +331,97 @@ evas_common_copy_pixels_mmx2(DATA32 *src, DATA32 *dst, int len)
 	*dst++ = *src++;
 }
 #endif
+
+#ifdef BUILD_NEON
+static void
+evas_common_copy_pixels_neon(DATA32 *src, DATA32 *dst, int len){
+   uint32_t *e,*tmp = (void *)37;
+   e = dst + len;
+#define AP	"evas_common_copy_pixels_neon_"
+   asm volatile (
+		// Can we do 32 byte?
+		"andS		%[tmp],	%[d], $0x1f	\n\t"
+		"beq		"AP"quadstart		\n\t"
+
+		// Can we do at least 16 byte?
+		"andS		%[tmp], %[d], $0x4	\n\t"
+		"beq		"AP"dualstart		\n\t"
+
+	// Only once
+	AP"singleloop:					\n\t"
+		"vld1.32	d0[0],  [%[s]]!		\n\t"
+		"vst1.32	d0[0],  [%[d]]!		\n\t"
+
+	// Up to 3 times
+	AP"dualstart:					\n\t"
+		"sub		%[tmp], %[e], %[d]	\n\t"
+		"cmp		%[tmp], #31		\n\t"
+		"blt		"AP"loopout		\n\t"
+
+		"andS		%[tmp], %[d], $0x1f	\n\t"
+		"beq		"AP"quadstart		\n\t"
+
+	AP"dualloop:					\n\t"
+		"vldm		%[s]!, {d0}		\n\t"
+		"vstm		%[d]!, {d0}		\n\t"
+
+		"andS		%[tmp], %[d], $0x1f	\n\t"
+		"bne		"AP"dualloop		\n\t"
+
+
+	AP"quadstart:					\n\t"
+		"sub		%[tmp], %[e], %[d]	\n\t"
+		"cmp		%[tmp], #64		\n\t"
+		"blt		"AP"loopout		\n\t"
+
+		"sub		%[tmp],%[e],#63		\n\t"
+
+	AP "quadloop:					\n\t"
+		"vldm		%[s]!,	{d0,d1,d2,d3}	\n\t"
+		"vldm		%[s]!,	{d4,d5,d6,d7}	\n\t"
+		"vstm		%[d]!,	{d0,d1,d2,d3}	\n\t"
+		"vstm		%[d]!,	{d4,d5,d6,d7}	\n\t"
+
+		"cmp		%[tmp], %[d]		\n\t"
+                "bhi		"AP"quadloop		\n\t"
+
+
+	AP "loopout:					\n\t"
+		"cmp 		%[d], %[e]		\n\t"
+                "beq 		"AP"done		\n\t"
+		"sub		%[tmp],%[e], %[d]	\n\t"
+		"cmp		%[tmp],$0x04		\n\t"
+		"beq		"AP"singleloop2		\n\t"
+
+	AP "dualloop2:					\n\t"
+		"sub		%[tmp],%[e],$0x7	\n\t"
+	AP "dualloop2int:				\n\t"
+		"vldm		%[s]!, {d0}		\n\t"
+		"vstm		%[d]!, {d0}		\n\t"
+
+		"cmp 		%[tmp], %[d]		\n\t"
+		"bhi 		"AP"dualloop2int	\n\t"
+
+		// Single ??
+		"cmp 		%[e], %[d]		\n\t"
+		"beq		"AP"done		\n\t"
+
+	AP "singleloop2:				\n\t"
+		"vld1.32	d0[0], [%[s]]		\n\t"
+		"vst1.32	d0[0], [%[d]]		\n\t"
+
+	AP "done:\n\t"
+
+		: // No output regs
+		// Input
+		: [s] "r" (src), [e] "r" (e), [d] "r" (dst),[tmp] "r" (tmp)
+		// Clobbered
+		: "q0","q1","q2","q3","memory"
+   );
+#undef AP
+
+}
+#endif /* BUILD_NEON */
 
 #ifdef BUILD_SSE
 static void
@@ -412,8 +609,16 @@ evas_common_draw_func_copy_get(int pixels, int reverse)
 	  if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
 	    return evas_common_copy_pixels_rev_mmx;
 #endif
+#ifdef BUILD_NEON
+# if defined(BUILD_SSE) || defined(BUILD_MMX)
+	else
+# endif
+	  if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+	    return evas_common_copy_pixels_rev_neon;
+#endif
+
 #ifdef BUILD_C
-# ifdef BUILD_MMX
+# if defined(BUILD_MMX) || defined(BUILD_NEON)
 	else
 # endif
 	  return evas_common_copy_pixels_rev_c;
@@ -438,6 +643,15 @@ evas_common_draw_func_copy_get(int pixels, int reverse)
 # endif
 		 return evas_common_copy_pixels_sse;
 # ifdef BUILD_MMX
+	     else
+# endif
+#endif
+# ifdef BUILD_NEON
+# ifdef BUILD_C
+	     if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+# endif
+	       return evas_common_copy_pixels_neon;
+# ifdef BUILD_SSE
 	     else
 # endif
 #endif
