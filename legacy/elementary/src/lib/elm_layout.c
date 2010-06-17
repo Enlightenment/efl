@@ -271,22 +271,22 @@ elm_layout_content_unset(Evas_Object *obj, const char *swallow)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    Subinfo *si;
-   Evas_Object *content;
    const Eina_List *l;
    if (!wd) return NULL;
    EINA_LIST_FOREACH(wd->subs, l, si)
      {
 	if (!strcmp(swallow, si->swallow))
 	  {
+	     Evas_Object *content;
 	     if (!si->obj) return NULL;
 	     content = si->obj;
 	     elm_widget_sub_object_del(obj, si->obj);
 	     edje_object_part_unswallow(wd->lay, si->obj);
 	     si->obj = NULL;
-	     break;
+	     return content;
 	  }
      }
-   return content;
+   return NULL;
 }
 
 /**

@@ -493,7 +493,6 @@ elm_hover_content_unset(Evas_Object *obj, const char *swallow)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Subinfo *si;
-   Evas_Object *content;
    const Eina_List *l;
    char buf[1024];
    if (!wd) return NULL;
@@ -502,15 +501,16 @@ elm_hover_content_unset(Evas_Object *obj, const char *swallow)
      {
 	if (!strcmp(buf, si->swallow))
 	  {
+	     Evas_Object *content;
 	     if (!si->obj) return NULL;
 	     content = si->obj;
 	     elm_widget_sub_object_del(obj, si->obj);
 	     edje_object_part_unswallow(wd->cov, si->obj);
 	     si->obj = NULL;
-	     break;
+	     return content;
 	  }
      }
-   return content;
+   return NULL;
 }
 
 /**
