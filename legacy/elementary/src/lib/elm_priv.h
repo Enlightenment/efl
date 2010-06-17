@@ -93,6 +93,21 @@ struct _Elm_Module
    int references;
 };
 
+
+enum _elm_sel_type {
+   ELM_SEL_PRIMARY,
+   ELM_SEL_SECONDARY,
+   ELM_SEL_CLIPBOARD,
+
+   ELM_SEL_MAX,
+};
+
+enum _elm_sel_format {
+   ELM_SEL_MARKUP	= 0x01,
+};
+
+
+
 #define ELM_NEW(t) calloc(1, sizeof(t))
 
 void _elm_win_shutdown(void);
@@ -186,6 +201,12 @@ void              _elm_rescale(void);
 void              _elm_config_init(void);
 void              _elm_config_sub_init(void);
 void              _elm_config_shutdown(void);
+
+Eina_Bool	  elm_selection_set(enum _elm_sel_type selection, Evas_Object *widget, enum _elm_sel_format format, const char *buf);
+Eina_Bool	  elm_selection_clear(enum _elm_sel_type selection, Evas_Object *widget);
+
+
+
 
 #define ELM_SET_WIDTYPE(widtype, type) if (!widtype) widtype = eina_stringshare_add(type)
 //#define ELM_CHECK_WIDTYPE(obj, widtype) if (elm_widget_type_get(obj) != widtype) return
