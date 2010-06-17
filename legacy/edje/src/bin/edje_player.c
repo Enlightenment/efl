@@ -521,6 +521,11 @@ static  unsigned char _parse_color(const Ecore_Getopt *parser, const Ecore_Getop
    return 1;
 }
 
+static void _cb_delete (Ecore_Evas *ee)
+{
+  ecore_main_loop_quit();
+}
+
 const Ecore_Getopt optdesc = {
   "edje_player",
   "%prog [options] <filename.edj>",
@@ -575,7 +580,7 @@ int main(int argc, char **argv)
    Evas_Object *stack, *edje;
    struct opts opts;
    Eina_Bool quit_option = EINA_FALSE;
-   int args, ret;
+   int args;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(opts.group),
      ECORE_GETOPT_VALUE_BOOL(opts.list_groups),
@@ -599,33 +604,29 @@ int main(int argc, char **argv)
 
    memset(&opts, 0, sizeof(opts));
 
-   evas_init();
-   ecore_init();
-   ecore_evas_init();
-   edje_init();
+   if (!ecore_evas_init())
+     return EXIT_FAILURE;
+   if (!edje_init())
+     goto shutdown_ecore_evas;
 
    args = ecore_getopt_parse(&optdesc, values, argc, argv);
    if (args < 0)
      {
 	fputs("Could not parse arguments.\n", stderr);
-	ret = -1;
-	goto end;
+	goto shutdown_edje;
      }
    else if (quit_option)
      {
-	ret = 0;
 	goto end;
      }
    else if (args >= argc)
      {
 	fputs("Missing edje file to load.\n", stderr);
-	ret = -2;
-	goto end;
+	goto shutdown_edje;
      }
 
    ecore_app_args_set(argc, (const char **)argv);
 
-   ret = 0;
    opts.file = argv[args];
    if (opts.list_groups)
      {
@@ -646,16 +647,15 @@ int main(int argc, char **argv)
 		"ERROR: could not create window of "
 		"size %dx%d using engine %s.\n",
 		opts.size.w, opts.size.h, opts.engine ? opts.engine : "(auto)");
-	ret = -3;
-	goto end;
+	goto shutdown_edje;
      }
 
+   ecore_evas_callback_delete_request_set(win, _cb_delete);
    evas = ecore_evas_get(win);
    stack = _create_stack(evas, &opts);
    if (!stack)
      {
-	ret = -4;
-	goto end_win;
+	goto free_ecore_evas;
      }
 
    ecore_evas_object_associate(win, stack, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
@@ -675,8 +675,7 @@ int main(int argc, char **argv)
      evas_object_box_append(stack, edje);
    else
      {
-	ret = -5;
-	goto end_win;
+	goto free_ecore_evas;
      }
 
    evas_object_event_callback_add(stack, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -697,8 +696,7 @@ int main(int argc, char **argv)
 	  {
 	     fprintf(stderr, "ERROR: Could not set stdin to non-block: %s\n",
 		     strerror(errno));
-	     ret = -6;
-	     goto end_win;
+	     goto free_ecore_evas;
 	  }
 	ecore_main_fd_handler_add(STDIN_FILENO, ECORE_FD_READ | ECORE_FD_ERROR,
 				  _slave_mode, edje, NULL, NULL);
@@ -727,8 +725,14 @@ int main(int argc, char **argv)
  end:
    edje_shutdown();
    ecore_evas_shutdown();
-   ecore_shutdown();
-   evas_shutdown();
 
-   return ret;
+   return 0;
+
+ free_ecore_evas:
+   ecore_evas_free(win);
+ shutdown_edje:
+   edje_shutdown();
+ shutdown_ecore_evas:
+   ecore_evas_shutdown();
+   return EXIT_FAILURE;
 }
