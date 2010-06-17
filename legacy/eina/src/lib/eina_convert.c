@@ -250,7 +250,7 @@ eina_convert_shutdown(void)
  *    char     *tmp[128];
  *    long long int m = 0;
  *    long int  e = 0;
- *    doule     r;
+ *    double    r;
  *
  *    if (!eina_init())
  *    {
