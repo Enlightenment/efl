@@ -91,7 +91,9 @@ els_scroller.h \
 els_box.c \
 els_box.h \
 els_icon.c \
-els_icon.h
+els_icon.h \
+\
+elm_cnp_helper.c
 
 
 libelementary_la_CFLAGS =
