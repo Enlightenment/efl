@@ -279,7 +279,7 @@ elm_layout_content_unset(Evas_Object *obj, const char *swallow)
 	if (!strcmp(swallow, si->swallow))
 	  {
 	     if (!si->obj) return NULL;
-	     content == si->obj;
+	     content = si->obj;
 	     elm_widget_sub_object_del(obj, si->obj);
 	     edje_object_part_unswallow(wd->lay, si->obj);
 	     si->obj = NULL;
