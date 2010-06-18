@@ -4,6 +4,11 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = doc src po
 
+if HAVE_PO
+
+SUBDIRS += po
+
+endif
 
 MAINTAINERCLEANFILES = \
 ABOUT-NLS \
@@ -47,7 +52,11 @@ m4/po.m4 \
 m4/progtest.m4 \
 m4/stdint_h.m4 \
 m4/uintmax_t.m4 \
-m4/ulonglong.m4 \
+m4/ulonglong.m4
+
+if HAVE_PO
+
+MAINTAINERCLEANFILES += \
 po/boldquot.sed \
 po/en@boldquot.header \
 po/en@quot.header \
@@ -57,6 +66,8 @@ po/Makevars.template \
 po/quot.sed \
 po/remove-potcdate.sin \
 po/Rules-quot
+
+endif
 
 bin_SCRIPTS = 
 
