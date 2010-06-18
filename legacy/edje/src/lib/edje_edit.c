@@ -3990,13 +3990,16 @@ edje_edit_state_external_param_choice_get(Evas_Object *obj, const char *part, co
  *   - EDJE_EXTERNAL_PARAM_TYPE_DOUBLE: double
  *   - EDJE_EXTERNAL_PARAM_TYPE_STRING: char*
  *   - EDJE_EXTERNAL_PARAM_TYPE_CHOICE: char*
+ *
+ * @note: The validation of the parameter will occur only if the part
+ * is in the same state as the one being modified.
  */
 EAPI Eina_Bool
 edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const char *state, double value, const char *param, Edje_External_Param_Type type, ...)
 {
    va_list ap;
    Eina_List *l;
-   Edje_External_Param *p;
+   Edje_External_Param *p, old_p;
    Edje_Real_Part *rp;
    int found = 0;
 
@@ -4010,6 +4013,7 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
       if (!strcmp(p->name, param))
 	{
 	   found = 1;
+	   old_p = *p;
 	   break;
 	}
 
@@ -4045,9 +4049,34 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
 	 break;
       default:
 	 ERR("unknown external parameter type '%d'", type);
+	 va_end(ap);
+	 if (!found) free(p);
+	 else *p = old_p;
+	 return EINA_FALSE;
      }
 
    va_end(ap);
+
+   //FIXME:
+   //For now, we're just setting the value if the state is the selected state.
+   //This is a conceptual error and is incoherent with the rest of the API!
+     {
+	const char *sname;
+	double svalue;
+	sname = edje_edit_part_selected_state_get(obj, part, &svalue);
+	if (!strcmp(state, sname) && svalue == value)
+	  if (!edje_object_part_external_param_set(obj, part, p))
+	    if ((type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE) ||
+		  (type == EDJE_EXTERNAL_PARAM_TYPE_STRING))
+	      {
+		 _edje_if_string_free(ed, p->s);
+		 if (!found) free(p);
+		 else *p = old_p;
+		 eina_stringshare_del(sname);
+		 return EINA_FALSE;
+	      }
+	eina_stringshare_del(sname);
+     }
 
    if (!found)
      pd->external_params = eina_list_append(pd->external_params, p);
@@ -4058,14 +4087,6 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
 			     _edje_external_params_parse(rp->swallowed_object,
 							 pd->external_params);
 
-     {
-	const char * sname;
-	double svalue;
-	sname = edje_edit_part_selected_state_get(obj, part, &svalue);
-	if (!strcmp(state, sname) && svalue == value)
-	  edje_object_part_external_param_set(obj, part, p);
-	eina_stringshare_del(sname);
-     }
 
    return EINA_TRUE;
 }
