@@ -180,11 +180,11 @@ eina_convert_shutdown(void)
  * #include <stdlib.h>
  * #include <stdio.h>
  *
- * #include <eina_convert.h>
+ * #include <Eina.h>
  *
  * int main(void)
  * {
- *    char *tmp[128];
+ *    char tmp[128];
  *
  *    if (!eina_init())
  *    {
@@ -243,11 +243,11 @@ eina_convert_shutdown(void)
  * #include <stdlib.h>
  * #include <stdio.h>
  *
- * #include <eina_convert.h>
+ * #include <Eina.h>
  *
  * int main(void)
  * {
- *    char     *tmp[128];
+ *    char      tmp[128];
  *    long long int m = 0;
  *    long int  e = 0;
  *    double    r;
