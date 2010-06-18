@@ -2,7 +2,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = doc src po
+SUBDIRS = doc src
 
 if HAVE_PO
 
