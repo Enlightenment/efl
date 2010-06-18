@@ -917,10 +917,30 @@ EAPI Evas_Event_Flags edje_edit_part_ignore_flags_get(Evas_Object *obj, const ch
 
 /** Set repeat_events for part.
  *
- * @param obj Object bein edited.
- * @oaram part Part to set which event flags will be ignored
+ * @param obj Object being edited.
+ * @param part Part to set which event flags will be ignored
  */
 EAPI void edje_edit_part_ignore_flags_set(Evas_Object *obj, const char *part, Evas_Event_Flags ignore_flags);
+
+/** Set scale property for the part.
+ *
+ * This property tells Edje that the given part should be scaled by the
+ * Edje scale factor.
+ *
+ * @param obj Object being edited.
+ * @param part Part to set scale for.
+ * @param scale Scale value to set.
+ */
+EAPI void edje_edit_part_scale_set(Evas_Object *obj, const char *part, Eina_Bool scale);
+
+/** Get scale for the part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to get the scale value of.
+ *
+ * @return Whether scale is on (EINA_TRUE) or not.
+ */
+EAPI Eina_Bool edje_edit_part_scale_get(Evas_Object *obj, const char *part);
 
 /** Get horizontal dragable state for part.
  *

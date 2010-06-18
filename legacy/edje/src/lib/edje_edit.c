@@ -2465,6 +2465,23 @@ edje_edit_part_ignore_flags_set(Evas_Object *obj, const char *part, Evas_Event_F
    rp->part->ignore_flags = ignore_flags;
 }
 
+EAPI void
+edje_edit_part_scale_set(Evas_Object *obj, const char *part, Eina_Bool scale)
+{
+   GET_RP_OR_RETURN();
+
+   rp->part->scale = scale;
+   edje_object_calc_force(obj);
+}
+
+EAPI Eina_Bool
+edje_edit_part_scale_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   return rp->part->scale;
+}
+
 EAPI const char *
 edje_edit_part_source_get(Evas_Object *obj, const char *part)
 {
@@ -6659,8 +6676,9 @@ _edje_generate_source_of_part(Evas_Object *obj, const char *part, Eina_Strbuf *b
       BUF_APPEND(I4"mouse_events: 0;\n");
    if (edje_edit_part_repeat_events_get(obj, part))
       BUF_APPEND(I4"repeat_events: 1;\n");
+   if (edje_edit_part_scale_get(obj, part))
+     BUF_APPEND(I4"scale: 1;\n");
    //TODO Support ignore_flags
-   //TODO Support scale
    //TODO Support pointer_mode
    //TODO Support precise_is_inside
    //TODO Support use_alternate_font_metrics
