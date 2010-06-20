@@ -204,10 +204,10 @@ eina_convert_shutdown(void)
  * }
  * @endcode
  *
- * Compile this code with the following commant:
+ * Compile this code with the following command:
  *
  * @code
- * gcc -Wall -o test_eina_convert test_eina.c `pkg-config --cflags --libs eina`
+ * gcc -Wall -o test_eina_convert test_eina.c `pkg-config --cflags --libs eina-0`
  * @endcode
  *
  * @note
@@ -242,6 +242,7 @@ eina_convert_shutdown(void)
  * @code
  * #include <stdlib.h>
  * #include <stdio.h>
+ * #include <math.h>
  *
  * #include <Eina.h>
  *
@@ -258,12 +259,13 @@ eina_convert_shutdown(void)
  *        return EXIT_FAILURE;
  *    }
  *
+ *    printf("initial value : 40.56\n");
  *    eina_convert_dtoa(40.56, tmp);
- *    printf("value: %s\n", tmp);
+ *    printf("result dtoa   : %s\n", tmp);
 
  *    eina_convert_atod(tmp, 128, &m, &e);
  *    r = ldexp((double)m, e);
- *    printf("value: %s\n", tmp);
+ *    printf("result atod   : %f\n", r);
  *
  *    eina_shutdown();
  *
@@ -271,7 +273,11 @@ eina_convert_shutdown(void)
  * }
  * @endcode
  *
- * Compile this code with the same command as above.
+ * Compile this code with the following command:
+ *
+ * @code
+ * gcc -Wall -o test_eina_convert test_eina.c `pkg-config --cflags --libs eina-0` -lm
+ * @endcode
  *
  * @{
  */
