@@ -70,6 +70,7 @@ test_notify.c \
 test_slideshow.c \
 test_menu.c \
 test_panel.c \
+test_panes.c \
 test_map.c \
 test_weather.c \
 test_flip.c \
