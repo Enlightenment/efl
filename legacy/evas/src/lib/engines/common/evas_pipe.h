@@ -9,7 +9,7 @@ typedef struct _Thinfo
    pthread_barrier_t     *barrier;
    RGBA_Pipe_Thread_Info *info;
 #ifdef EVAS_FRAME_QUEUING
-   void		 *fq_info;
+   void		         *fq_info;
 #endif
 } Thinfo;
 #endif
@@ -50,7 +50,7 @@ struct _Evas_FrameQ
    pthread_cond_t cond_done;
    LK(mutex);
 
-   int               thread_num;
+   int             thread_num;
    Thinfo          thinfo[TH_MAX];
    int		   frameq_sz;
 
@@ -65,17 +65,17 @@ struct _Evas_Frameq_Thread_Info
 };
 typedef struct _Evas_Frameq_Thread_Info Evas_Frameq_Thread_Info;
 
-EAPI Evas_Surface *evas_common_frameq_new_surface (void *surface, int x, int y, int w, int h);
+EAPI Evas_Surface *evas_common_frameq_new_surface(void *surface, int x, int y, int w, int h);
 EAPI void evas_common_frameq_add_surface(Evas_Surface *surface);
 EAPI void evas_common_frameq_set_frame_data(void *data, 
      void (*fn_output_redraws_next_update_push) (void *data, void *surface, int x, int y, int w, int h),
      void (*fn_output_flush)  (void *data),
      void (*fn_output_set_priv)(void *data, void *cur, void *prev));
-EAPI void evas_common_frameq_prepare_frame();
-EAPI void evas_common_frameq_ready_frame();
-EAPI void evas_common_frameq_init();
-EAPI void evas_common_frameq_flush();
-EAPI void evas_common_frameq_flush_ready ();
+EAPI void evas_common_frameq_prepare_frame(void);
+EAPI void evas_common_frameq_ready_frame(void);
+EAPI void evas_common_frameq_init(void);
+EAPI void evas_common_frameq_flush(void);
+EAPI void evas_common_frameq_flush_ready(void);
 #endif
 
 /* image rendering pipelines... new optional system - non-immediate and
@@ -94,6 +94,7 @@ EAPI void evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Dra
 EAPI void evas_common_pipe_map4_draw(RGBA_Image *src, RGBA_Image *dst,
 				     RGBA_Draw_Context *dc, RGBA_Map_Point *p,
 				     int smooth, int level);
+EAPI void evas_common_pipe_flush(RGBA_Image *im);
 
 #ifdef EVAS_FRAME_QUEUING
 EAPI void evas_common_pipe_op_grad_flush(RGBA_Gradient *gr);

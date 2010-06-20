@@ -102,6 +102,7 @@ struct _Evas_Object_Textblock_Format
    double               linerelsize;
    int                  linegap;
    double               linerelgap;
+   double               linefill;
    unsigned char        style;
    unsigned char        wrap_word : 1;
    unsigned char        wrap_char : 1;
@@ -787,6 +788,7 @@ static const char *linerelsizestr = NULL;
 static const char *linegapstr = NULL;
 static const char *linerelgapstr = NULL;
 static const char *itemstr = NULL;
+static const char *linefillstr = NULL;
 
 static void
 _format_command_init(void)
@@ -820,6 +822,7 @@ _format_command_init(void)
    linegapstr = eina_stringshare_add("linegap");
    linerelgapstr = eina_stringshare_add("linerelgap");
    itemstr = eina_stringshare_add("item");
+   linefillstr = eina_stringshare_add("linefill");
 }
 
 static void
@@ -854,6 +857,7 @@ _format_command_shutdown(void)
    eina_stringshare_del(linegapstr);
    eina_stringshare_del(linerelgapstr);
    eina_stringshare_del(itemstr);
+   eina_stringshare_del(linefillstr);
 }
 
 static void
@@ -1150,6 +1154,26 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
 	       }
           }
      }
+   else if (cmd == itemstr)
+     {
+        // itemstr == replacement object items in textblock - inline imges
+        // for example
+     }
+   else if (cmd == linefillstr)
+     {
+	char *endptr = NULL;
+	double val = strtod(tmp_param, &endptr);
+	if (endptr)
+	  {
+	     while (*endptr && _is_white(*endptr))
+	       endptr++;
+	     if (*endptr == '%')
+	       {
+		  fmt->linefill = val / 100.0;
+		  if (fmt->linefill < 0.0) fmt->linefill = 0.0;
+	       }
+          }
+     }
 
    if (new_font)
      {
@@ -1355,6 +1379,17 @@ _layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
         c->maxdescent += ((ascent + descent) * fmt->linerelgap);
 	if (c->maxascent < ascent) c->maxascent = ascent;
 	if (c->maxdescent < descent) c->maxdescent = descent;
+        if (fmt->linefill > 0.0)
+          {
+             int dh;
+             
+             dh = c->obj->cur.geometry.h - (c->maxascent + c->maxdescent);
+             if (dh < 0) dh = 0;
+             dh = fmt->linefill * dh;
+             c->maxdescent += dh / 2;
+             c->maxascent += dh - (dh / 2);
+             // FIXME: set flag that says "if heigh changes - reformat"
+          }
      }
 }
 
