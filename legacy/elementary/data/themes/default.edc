@@ -23186,6 +23186,8 @@ collections {
 	    description { state: "default" 0.0;
                max: 15 9999;
                min: 15 100;
+               rel1.relative: 0.0 0.5;
+               rel2.relative: 1.0 0.5;
 	       image {
 		  normal: "bt_base2.png";
 		  border: 7 7 7 7;
