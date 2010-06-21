@@ -20,6 +20,15 @@ struct _Widget_Data
 	Evas_Object *left;
 	Evas_Object *right;
      } contents;
+
+   struct
+     {
+	int x_diff;
+	int y_diff;
+	Eina_Bool move;
+     } move;
+
+   Eina_Bool clicked_double;
 };
 
 static const char *widtype = NULL;
@@ -93,6 +102,14 @@ _clicked(void *data, Evas_Object *obj __UNUSED__ , const char *emission __UNUSED
 }
 
 static void
+_clicked_double(void *data, Evas_Object *obj __UNUSED__ , const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+
+   wd->clicked_double = EINA_TRUE;
+}
+
+static void
 _press(void *data, Evas_Object *obj __UNUSED__ , const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    evas_object_smart_callback_call(data, "press", NULL);
@@ -101,7 +118,14 @@ _press(void *data, Evas_Object *obj __UNUSED__ , const char *emission __UNUSED__
    static void
 _unpress(void *data, Evas_Object *obj __UNUSED__ , const char *emission __UNUSED__, const char *source __UNUSED__)
 {
+   Widget_Data *wd = elm_widget_data_get(data);
    evas_object_smart_callback_call(data, "unpress", NULL);
+
+   if(wd->clicked_double)
+     {
+	evas_object_smart_callback_call(data, "clicked,double", NULL);
+	wd->clicked_double = EINA_FALSE;
+     }
 }
 
 /**
@@ -134,7 +158,10 @@ elm_panes_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->panes);
    evas_object_show(wd->panes);
 
+   elm_panes_left_content_size_set(obj, 0.5);
+
    edje_object_signal_callback_add(wd->panes, "elm,action,click", "", _clicked, obj);
+   edje_object_signal_callback_add(wd->panes, "elm,action,click,double", "", _clicked_double, obj);
    edje_object_signal_callback_add(wd->panes, "elm,action,press", "", _press, obj);
    edje_object_signal_callback_add(wd->panes, "elm,action,unpress", "", _unpress, obj);
 
@@ -183,4 +210,22 @@ EAPI void elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content)
 	edje_object_part_swallow(wd->panes, "elm.swallow.right", content);
      }
 }
+
+EAPI double elm_panes_left_content_size_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   double w, h;
+
+   edje_object_part_drag_value_get(wd->panes, "elm.bar", &w, &h);
+
+   return w;
+}
+
+EAPI void elm_panes_left_content_size_set(Evas_Object *obj, double size)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   edje_object_part_drag_value_set(wd->panes, "elm.bar", size, 0.0);
+}
+
 

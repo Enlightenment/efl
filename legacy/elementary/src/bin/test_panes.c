@@ -1,7 +1,7 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
-static Elm_Genlist_Item_Class itc;
+static double size = 0.0;
 
 static void
 _press(void *data, Evas_Object *obj, void *event_info)
@@ -12,7 +12,7 @@ _press(void *data, Evas_Object *obj, void *event_info)
 static void
 _unpress(void *data, Evas_Object *obj, void *event_info)
 {
-    printf("unpress\n");
+    printf("unpress, size : %f\n", elm_panes_left_content_size_get(obj));
 }
 
 static void
@@ -20,6 +20,21 @@ _clicked(void *data, Evas_Object *obj, void *event_info)
 {
     printf("clicked\n");
 }
+
+
+static void
+_clicked_double(void *data, Evas_Object *obj, void *event_info)
+{
+    printf("clicked double\n");
+    if(elm_panes_left_content_size_get(obj) > 0)
+    {
+        size = elm_panes_left_content_size_get(obj);
+        elm_panes_left_content_size_set(obj, 0.0);
+    }
+    else
+        elm_panes_left_content_size_set(obj, size);
+}
+
 
 void
 test_panes(void *data, Evas_Object *obj, void *event_info)
@@ -44,6 +59,8 @@ test_panes(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(panes);
 
    evas_object_smart_callback_add(panes, "clicked", _clicked, panes);
+   evas_object_smart_callback_add(panes, "clicked,double", _clicked_double, panes);
+
    evas_object_smart_callback_add(panes, "press", _press, panes);
    evas_object_smart_callback_add(panes, "unpress", _unpress, panes);
 

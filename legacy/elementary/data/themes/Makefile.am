@@ -140,6 +140,7 @@ busy-7.png \
 busy-8.png \
 busy-9.png \
 arrow_right.png \
+arrow_left.png \
 bt_spinner_up.png \
 bt_spinner_down.png \
 bt_spinner_hilight.png \
