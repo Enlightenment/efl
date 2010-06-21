@@ -158,7 +158,7 @@ elm_panes_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->panes);
    evas_object_show(wd->panes);
 
-   elm_panes_left_content_size_set(obj, 0.5);
+   elm_panes_content_left_size_set(obj, 0.5);
 
    edje_object_signal_callback_add(wd->panes, "elm,action,click", "", _clicked, obj);
    edje_object_signal_callback_add(wd->panes, "elm,action,click,double", "", _clicked_double, obj);
@@ -211,7 +211,7 @@ EAPI void elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content)
      }
 }
 
-EAPI double elm_panes_left_content_size_get(Evas_Object *obj)
+EAPI double elm_panes_content_left_size_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    double w, h;
@@ -221,7 +221,7 @@ EAPI double elm_panes_left_content_size_get(Evas_Object *obj)
    return w;
 }
 
-EAPI void elm_panes_left_content_size_set(Evas_Object *obj, double size)
+EAPI void elm_panes_content_left_size_set(Evas_Object *obj, double size)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 

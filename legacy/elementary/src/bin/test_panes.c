@@ -12,7 +12,7 @@ _press(void *data, Evas_Object *obj, void *event_info)
 static void
 _unpress(void *data, Evas_Object *obj, void *event_info)
 {
-    printf("unpress, size : %f\n", elm_panes_left_content_size_get(obj));
+    printf("unpress, size : %f\n", elm_panes_content_left_size_get(obj));
 }
 
 static void
@@ -26,13 +26,13 @@ static void
 _clicked_double(void *data, Evas_Object *obj, void *event_info)
 {
     printf("clicked double\n");
-    if(elm_panes_left_content_size_get(obj) > 0)
+    if(elm_panes_content_left_size_get(obj) > 0)
     {
-        size = elm_panes_left_content_size_get(obj);
-        elm_panes_left_content_size_set(obj, 0.0);
+        size = elm_panes_content_left_size_get(obj);
+        elm_panes_content_left_size_set(obj, 0.0);
     }
     else
-        elm_panes_left_content_size_set(obj, size);
+        elm_panes_content_left_size_set(obj, size);
 }
 
 
