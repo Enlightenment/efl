@@ -43,6 +43,7 @@ struct _Smart_Data
    double         scale;
    Elm_Theme     *theme;
    const char    *style;
+   unsigned int   focus_order;
    
    int            child_drag_x_locked;
    int            child_drag_y_locked;
@@ -72,6 +73,8 @@ static inline Eina_Bool _elm_widget_is(const Evas_Object *obj);
 
 /* local subsystem globals */
 static Evas_Smart *_e_smart = NULL;
+
+static unsigned int focus_order = 0;
 
 static void
 _sub_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
@@ -446,7 +449,12 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
    /* if it has a focus func its an end-point widget like a button */
    if (sd->focus_func)
      {
-	if (!sd->focused) sd->focused = 1;
+	if (!sd->focused)
+          {
+             focus_order++;
+             sd->focus_order = focus_order;
+             sd->focused = 1;
+          }
 	else sd->focused = 0;
 	if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
 	sd->focus_func(obj);
@@ -462,8 +470,6 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 	if (!sd->focused)
 	  {
 	     elm_widget_focus_set(obj, forward);
-	     sd->focused = 1;
-	     if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
 	     return 1;
 	  }
 	else
@@ -607,6 +613,8 @@ elm_widget_focus_set(Evas_Object *obj, int first)
    API_ENTRY return;
    if (!sd->focused)
      {
+        focus_order++;
+        sd->focus_order = focus_order;
 	sd->focused = 1;
 	if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
      }
@@ -704,6 +712,8 @@ _elm_widget_parent_focus(Evas_Object *obj)
 
    if (sd->focused) return;
    if (o) _elm_widget_parent_focus(o);
+   focus_order++;
+   sd->focus_order = focus_order;
    sd->focused = 1;
    if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
    if (sd->focus_func) sd->focus_func(obj);
@@ -897,7 +907,7 @@ EAPI double
 elm_widget_scale_get(const Evas_Object *obj)
 {
    API_ENTRY return 1.0;
-   // FIXME: save walking up the tree by storingcaching parent scale
+   // FIXME: save walking up the tree by storing/caching parent scale
    if (sd->scale == 0.0)
      {
 	if (sd->parent_obj)
@@ -1029,7 +1039,6 @@ EAPI Eina_Bool
 elm_widget_drag_lock_x_get(Evas_Object *obj)
 {
    API_ENTRY return EINA_FALSE;
-   printf("check %p x lock %i\n", obj, sd->drag_x_locked);
    return sd->drag_x_locked;
 }
 
@@ -1037,7 +1046,6 @@ EAPI Eina_Bool
 elm_widget_drag_lock_y_get(Evas_Object *obj)
 {
    API_ENTRY return EINA_FALSE;
-   printf("check %p y lock %i\n", obj, sd->drag_y_locked);
    return sd->drag_y_locked;
 }
 
@@ -1097,6 +1105,29 @@ _smart_add(Evas_Object *obj)
    evas_object_smart_data_set(obj, sd);
 }
 
+static Evas_Object *
+_newest_focus_order_get(Evas_Object *obj, unsigned int *newest_focus_order)
+{
+   const Eina_List *l;
+   Evas_Object *child, *ret, *best;
+   
+   API_ENTRY NULL;
+   if (!evas_object_visible_get(obj)) return NULL;
+   best = NULL;
+   if (*newest_focus_order < sd->focus_order)
+     {
+        *newest_focus_order = sd->focus_order;
+        best = obj;
+     }
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
+     {
+        ret = _newest_focus_order_get(child, newest_focus_order);
+        if (!ret) continue;
+        best = ret;
+     }
+   return best;
+}
+
 static void
 _smart_del(Evas_Object *obj)
 {
@@ -1130,6 +1161,25 @@ _smart_del(Evas_Object *obj)
    if (sd->style) eina_stringshare_del(sd->style);
    if (sd->type) eina_stringshare_del(sd->type);
    if (sd->theme) elm_theme_free(sd->theme);
+   if (sd->focused)
+     {
+        if (sd->parent_obj)
+          {
+             Evas_Object *top = elm_widget_top_get(sd->parent_obj);
+             Evas_Object *newest = NULL;
+             unsigned int newest_focus_order = 0;
+             
+             if (top)
+               {
+                  newest = _newest_focus_order_get(top, &newest_focus_order);
+                  if (newest)
+                    {
+                       elm_object_unfocus(newest);
+                       elm_object_focus(newest);
+                    }
+               }
+          }
+     }
    free(sd);
 }
 
