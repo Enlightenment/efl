@@ -395,6 +395,7 @@ void
 eng_window_free(Evas_GL_X11_Window *gw)
 {
    win_count--;
+   eng_window_use(gw);
    if (gw == _evas_gl_x11_window) _evas_gl_x11_window = NULL;
    if (gw->gl_context) evas_gl_common_context_free(gw->gl_context);
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
