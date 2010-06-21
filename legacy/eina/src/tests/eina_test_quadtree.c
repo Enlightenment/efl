@@ -20,6 +20,9 @@
 # include "config.h"
 #endif
 
+#include <assert.h>
+#include <stdio.h>
+
 #include "eina_suite.h"
 #include "Eina.h"
 
@@ -150,9 +153,12 @@ START_TEST(eina_quadtree_collision)
 
    eina_quadtree_cycle(q);
    eina_quadtree_show(objects[4].item);
+   eina_quadtree_increase(objects[4].item);
    eina_quadtree_show(objects[5].item);
+   eina_quadtree_increase(objects[5].item);
    eina_quadtree_del(objects[5].item);
    eina_quadtree_change(objects[10].item);
+   eina_quadtree_increase(objects[10].item);
 
    eina_quadtree_resize(q, 641, 480);
 

@@ -39,7 +39,9 @@ EAPI Eina_QuadTree *eina_quadtree_new(size_t w, size_t h,
 				      Eina_Quad_Callback horizontal);
 EAPI void eina_quadtree_free(Eina_QuadTree *q);
 EAPI void eina_quadtree_resize(Eina_QuadTree *q, size_t w, size_t h);
+
 EAPI void eina_quadtree_cycle(Eina_QuadTree *q);
+EAPI void eina_quadtree_increase(Eina_QuadTree_Item *object);
 
 EAPI Eina_QuadTree_Item *eina_quadtree_add(Eina_QuadTree *q, const void *object);
 EAPI Eina_Bool eina_quadtree_del(Eina_QuadTree_Item *object);

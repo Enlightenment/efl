@@ -654,7 +654,8 @@ eina_quadtree_add(Eina_QuadTree *q, const void *object)
    result->root = NULL;
    result->object = object;
 
-   result->index = 0;
+   result->index = q->index++;
+
    result->change = EINA_TRUE;
    result->delete_me = EINA_FALSE;
    result->visible = EINA_TRUE;
@@ -741,18 +742,8 @@ eina_quadtree_hide(Eina_QuadTree_Item *object)
 EAPI Eina_Bool
 eina_quadtree_show(Eina_QuadTree_Item *object)
 {
-   size_t tmp;
-
    EINA_MAGIC_CHECK_QUADTREE_ITEM(object, EINA_FALSE);
 
-   tmp = object->quad->index++;
-   if (object->index == tmp
-       && object->visible)
-     return EINA_TRUE;
-
-   object->index = tmp;
-   if (object->root)
-     object->root->sorted = EINA_FALSE;
    object->quad->lost = EINA_TRUE;
 
    if (object->visible) return EINA_TRUE;
@@ -849,6 +840,20 @@ eina_quadtree_cycle(Eina_QuadTree *q)
    EINA_MAGIC_CHECK_QUADTREE(q);
 
    q->index = 0;
+}
+
+EAPI void
+eina_quadtree_increase(Eina_QuadTree_Item *object)
+{
+   size_t tmp;
+
+   tmp = object->quad->index++;
+   if (object->index == tmp)
+     return ;
+
+   object->index = tmp;
+   if (object->root)
+     object->root->sorted = EINA_FALSE;
 }
 
 Eina_Bool
