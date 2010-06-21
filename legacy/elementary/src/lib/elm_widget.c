@@ -1111,7 +1111,7 @@ _newest_focus_order_get(Evas_Object *obj, unsigned int *newest_focus_order)
    const Eina_List *l;
    Evas_Object *child, *ret, *best;
    
-   API_ENTRY NULL;
+   API_ENTRY return NULL;
    if (!evas_object_visible_get(obj)) return NULL;
    best = NULL;
    if (*newest_focus_order < sd->focus_order)
