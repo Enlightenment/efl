@@ -108,7 +108,7 @@ static struct _elm_cnp_selection selections[ELM_SEL_MAX] = {
        .clear = ecore_x_selection_primary_clear
    },
    ARRAYINIT(ELM_SEL_SECONDARY) {
-       .debug = "Secondary: AKA WTF",
+       .debug = "Secondary",
        .ecore_sel = ECORE_X_SELECTION_SECONDARY,
        .set = ecore_x_selection_secondary_set,
        .clear = ecore_x_selection_secondary_clear
