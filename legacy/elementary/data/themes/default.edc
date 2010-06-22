@@ -23280,6 +23280,8 @@ collections {
                 rel2.offset: 45/2 45/2;
 
                 image.normal: "arrow_right.png";
+
+                fixed: 1 1;
             }
             description { state: "anim_1" 0.0;
                 inherit: "default" 0.0;
@@ -23310,6 +23312,8 @@ collections {
                 rel2.offset: -45/2 45/2;
 
                 image.normal: "arrow_left.png";
+
+                fixed: 1 1;
             }
             description { state: "anim_1" 0.0;
                 inherit: "default" 0.0;
