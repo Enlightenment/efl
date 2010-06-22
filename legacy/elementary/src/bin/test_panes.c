@@ -39,7 +39,7 @@ _clicked_double(void *data, Evas_Object *obj, void *event_info)
 void
 test_panes(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *panes, *bt;
+   Evas_Object *win, *bg, *panes, *panes_h, *bt;
    char buf[PATH_MAX];
    Evas_Object *list;
 
@@ -65,19 +65,47 @@ test_panes(void *data, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_add(panes, "unpress", _unpress, panes);
 
 
+   //
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Left");
    evas_object_size_hint_weight_set(bt, 1.0, 1.0);
    evas_object_size_hint_align_set(bt, -1.0, -1.0);
    evas_object_show(bt);
    elm_panes_content_left_set(panes, bt);
+   //
 
+   //
+   panes_h = elm_panes_add(win);
+   elm_panes_horizontal_set(panes_h, EINA_TRUE);
+   evas_object_size_hint_weight_set(panes_h, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(panes_h, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(panes_h);
+
+   evas_object_smart_callback_add(panes_h, "clicked", _clicked, panes_h);
+   evas_object_smart_callback_add(panes_h, "clicked,double", _clicked_double, panes_h);
+
+   evas_object_smart_callback_add(panes_h, "press", _press, panes_h);
+   evas_object_smart_callback_add(panes_h, "unpress", _unpress, panes_h);
+   elm_panes_content_right_set(panes, panes_h);
+   //
+
+   //
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Right");
+   elm_button_label_set(bt, "Up");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(bt);
-   elm_panes_content_right_set(panes, bt);
+   elm_panes_content_left_set(panes_h, bt);
+   //
+
+   //
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Down");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(bt);
+   elm_panes_content_right_set(panes_h, bt);
+   //
 
 
    evas_object_resize(win, 320, 400);

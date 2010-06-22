@@ -29,6 +29,7 @@ struct _Widget_Data
      } move;
 
    Eina_Bool clicked_double;
+   Eina_Bool horizontal;
 };
 
 static const char *widtype = NULL;
@@ -50,7 +51,17 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _elm_theme_object_set(obj, wd->panes, "panes", "vertical", "default");
+
+   if(wd->horizontal)
+	_elm_theme_object_set(obj, wd->panes, "panes", "horizontal", "default");
+   else
+	_elm_theme_object_set(obj, wd->panes, "panes", "vertical", "default");
+
+   if(wd->contents.left)
+	edje_object_part_swallow(wd->panes, "elm.swallow.left", wd->contents.right);
+   if(wd->contents.right)
+	edje_object_part_swallow(wd->panes, "elm.swallow.right", wd->contents.right);
+
    edje_object_scale_set(wd->panes, elm_widget_scale_get(obj) *
                          _elm_config->scale);
    _sizing_eval(obj);
@@ -215,14 +226,29 @@ EAPI double elm_panes_content_left_size_get(Evas_Object *obj)
 
    edje_object_part_drag_value_get(wd->panes, "elm.bar", &w, &h);
 
-   return w;
+   if(wd->horizontal)
+     return h;
+   else
+	return w;
 }
 
 EAPI void elm_panes_content_left_size_set(Evas_Object *obj, double size)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   edje_object_part_drag_value_set(wd->panes, "elm.bar", size, 0.0);
+   if(wd->horizontal)
+     edje_object_part_drag_value_set(wd->panes, "elm.bar", 0.0, size);
+   else
+     edje_object_part_drag_value_set(wd->panes, "elm.bar", size, 0.0);
+}
+
+EAPI void elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   wd->horizontal = horizontal;
+   _theme_hook(obj);
+   elm_panes_content_left_size_set(obj, 0.5);
 }
 
 

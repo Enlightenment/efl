@@ -1480,6 +1480,8 @@ extern "C" {
    EAPI void                  elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content);
    EAPI double		      elm_panes_content_left_size_get(Evas_Object *obj);
    EAPI void		      elm_panes_content_left_size_set(Evas_Object *obj, double size);
+   EAPI void		      elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
+
 
    typedef enum _Elm_Flip_Mode
      {
