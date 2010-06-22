@@ -202,6 +202,7 @@ eng_window_new(Display *disp,
         printf("Error: eglMakeCurrent() fail.\n");
         printf("Error: error # was: 0x%x\n", eglGetError());
      }
+    _evas_gl_x11_window = gw;
 
    vendor = glGetString(GL_VENDOR);
    renderer = glGetString(GL_RENDERER);
@@ -404,10 +405,10 @@ eng_window_free(Evas_GL_X11_Window *gw)
    if (win_count == 0)
      {
         if (context) eglDestroyContext(gw->egl_disp, context);
-        eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         eglTerminate(gw->egl_disp);
         context = EGL_NO_CONTEXT;
      }
+   eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 #else
    if (gw->glxwin) glXDestroyWindow(gw->disp, gw->glxwin);
    if (win_count == 0)
