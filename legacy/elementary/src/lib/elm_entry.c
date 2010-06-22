@@ -925,23 +925,17 @@ _signal_selection_start(void *data, Evas_Object *obj __UNUSED__, const char *emi
      }
    wd->have_selection = EINA_TRUE;
    evas_object_smart_callback_call(data, SIG_SELECTION_START, NULL);
+#ifdef HAVE_ELEMENTARY_X
    if (wd->sel_notify_handler)
      {
-	char *txt = _mkup_to_text(elm_entry_selection_get(data));
+	char *txt = elm_entry_selection_get(data);
+	Evas_Object *top;
 
-	if (txt)
-	  {
-#ifdef HAVE_ELEMENTARY_X
-	     Evas_Object *top;
-
-	     top = elm_widget_top_get(data);
-	     if ((top) && (elm_win_xwindow_get(top)))
-	       ecore_x_selection_primary_set(elm_win_xwindow_get(top), txt,
-                                             strlen(txt));
-#endif
-	     free(txt);
-	  }
+	top = elm_widget_top_get(data);
+	if ((top) && (elm_win_xwindow_get(top)))
+	     elm_selection_set(ELM_SEL_PRIMARY, data, ELM_SEL_MARKUP, txt);
      }
+#endif
 }
 
 static void
@@ -972,17 +966,8 @@ _signal_selection_cleared(void *data, Evas_Object *obj __UNUSED__, const char *e
 
 	     top = elm_widget_top_get(data);
 	     if ((top) && (elm_win_xwindow_get(top)))
-	       {
-		  char *t;
-
-		  t = _mkup_to_text(wd->cut_sel);
-		  if (t)
-		    {
-		       ecore_x_selection_primary_set(elm_win_xwindow_get(top),
-                                                     t, strlen(t));
-		       free(t);
-		    }
-	       }
+	         elm_selection_set(ELM_SEL_PRIMARY, data, ELM_SEL_MARKUP,
+				       wd->cut_sel);
 #endif
 	     eina_stringshare_del(wd->cut_sel);
 	     wd->cut_sel = NULL;

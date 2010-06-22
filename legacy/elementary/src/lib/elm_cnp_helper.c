@@ -138,7 +138,7 @@ elm_selection_set(enum _elm_sel_type selection, Evas_Object *widget,
    sel->active = 1;
    sel->widget = widget;
    sel->set(elm_win_xwindow_get(elm_widget_top_get(widget)),
-	 &selection, sizeof(void *));
+	 &selection, sizeof(int));
    sel->format = format;
    sel->selbuf = strdup(selbuf);
    return true;
