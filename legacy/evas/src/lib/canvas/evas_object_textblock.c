@@ -575,6 +575,9 @@ static const char escape_strings[] =
 	"&equiv;\0"    "\xe2\x89\xa1\0"
 	"&oplus;\0"    "\xe2\x8a\x95\0"
 	"&perp;\0"     "\xe2\x8a\xa5\0"
+	"&dagger;\0"   "\xe2\x80\xa0\0"
+	"&Dagger;\0"   "\xe2\x80\xa1\0"
+	"&bull;\0"     "\xe2\x80\xa2\0"
 ;
 
 
