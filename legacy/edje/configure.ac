@@ -216,16 +216,30 @@ AC_SUBST(EFL_EDJE_BUILD)
 # Dependencies for the library
 
 # Lua pkg-config hack for different naming conventions
+have_lua="yes"
 requirement_lua=""
+lua_libs=""
 PKG_CHECK_MODULES([LUA], [lua >= 5.1.0], requirement_lua="lua",
-	[PKG_CHECK_MODULES([LUA], [lua5.1 >= 5.1.0], requirement_lua="lua5.1",
-		[PKG_CHECK_MODULES([LUA], [lua-5.1 >= 5.1.0], requirement_lua="lua-5.1",
-			[PKG_CHECK_MODULES([LUA], [lua51 >= 5.1.0], requirement_lua="lua51",
-				AC_MSG_ERROR([unable to find Lua >= 5.1.0])
-			)
-		])
-	])
-])
+   [PKG_CHECK_MODULES([LUA], [lua5.1 >= 5.1.0], requirement_lua="lua5.1",
+      [PKG_CHECK_MODULES([LUA], [lua-5.1 >= 5.1.0], requirement_lua="lua-5.1",
+         [PKG_CHECK_MODULES([LUA], [lua51 >= 5.1.0], requirement_lua="lua51",
+            [have_lua="no])])])])
+
+if test "x${have_lua}" = "no" ; then
+   AC_MSG_CHECKING([whether lua_newstate() is in liblua])
+   AC_CHECK_LIB([lua], [lua_newstate],
+      [
+       have_lua="yes"
+       lua_libs="-llua"
+      ],
+      [have_lua="no"])
+   AC_MSG_RESULT([${have_lua}])
+fi
+AC_SUBST(lua_libs)
+
+if test "x${have_lua}" = "no" ; then
+   AC_MSG_ERROR([Cannot find lua library. Be sure that you have installed it and set CFLAGS and LDFLAGS correctly])
+fi
 
 PKG_CHECK_MODULES([EDJE],
    [
@@ -237,8 +251,8 @@ PKG_CHECK_MODULES([EDJE],
     embryo >= 0.9.1
    ])
 
-EDJE_LIBS="$EDJE_LIBS $LUA_LIBS"
-EDJE_CFLAGS="$EDJE_CFLAGS $LUA_CFLAGS"
+EDJE_LIBS="${EDJE_LIBS} ${LUA_LIBS} ${lua_libs}"
+EDJE_CFLAGS="${EDJE_CFLAGS} ${LUA_CFLAGS}"
 
 requirement_edje="embryo ecore evas eet eina-0 ${requirement_edje}"
 requirement_edje="${requirement_lua} ${requirement_edje}"

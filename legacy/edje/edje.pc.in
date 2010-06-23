@@ -10,5 +10,5 @@ Description: Enlightened graphical design and layout engine.
 @pkgconfig_requires_private@: @requirement_edje@
 Version: @VERSION@
 Libs: -L${libdir} -ledje
-Libs.private:
+Libs.private: @lua_libs@
 Cflags: -I${includedir}
