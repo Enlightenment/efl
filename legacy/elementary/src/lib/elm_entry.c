@@ -99,6 +99,7 @@ struct _Widget_Data
    Ecore_Event_Handler *sel_notify_handler;
    Ecore_Event_Handler *sel_clear_handler;
    Ecore_Timer *longpress_timer;
+   /* Only for clipboard */
    const char *cut_sel;
    const char *text;
    Evas_Coord lastw;
@@ -455,7 +456,7 @@ _paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 	top = elm_widget_top_get(data);
 	if ((top) && (elm_win_xwindow_get(top)))
 	  {
-	     ecore_x_selection_primary_request
+	     ecore_x_selection_clipboard_request
 	       (elm_win_xwindow_get(top),
 		ECORE_X_SELECTION_TARGET_UTF8_STRING);
 	     wd->selection_asked = EINA_TRUE;
@@ -474,7 +475,8 @@ _store_selection(enum _elm_sel_type seltype, Evas_Object *obj)
    if (!wd) return;
    sel = edje_object_part_text_selection_get(wd->ent, "elm.text");
    elm_selection_set(seltype, obj, ELM_SEL_MARKUP, sel);
-   eina_stringshare_replace(&wd->cut_sel, sel);
+   if (seltype == ELM_SEL_CLIPBOARD)
+	   eina_stringshare_replace(&wd->cut_sel, sel);
 }
 
 static void
@@ -928,7 +930,7 @@ _signal_selection_start(void *data, Evas_Object *obj __UNUSED__, const char *emi
 #ifdef HAVE_ELEMENTARY_X
    if (wd->sel_notify_handler)
      {
-	char *txt = elm_entry_selection_get(data);
+	const char *txt = elm_entry_selection_get(data);
 	Evas_Object *top;
 
 	top = elm_widget_top_get(data);
@@ -979,7 +981,7 @@ _signal_selection_cleared(void *data, Evas_Object *obj __UNUSED__, const char *e
 
 	     top = elm_widget_top_get(data);
 	     if ((top) && (elm_win_xwindow_get(top)))
-	       ecore_x_selection_primary_clear();
+		elm_selection_clear(ELM_SEL_PRIMARY, data);
 #endif
 	  }
      }
@@ -1021,7 +1023,6 @@ static void
 _signal_entry_cut_notify(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   char *txt;
    if (!wd) return;
    evas_object_smart_callback_call(data, SIG_SELECTION_CUT, NULL);
    elm_selection_set(ELM_SEL_CLIPBOARD, obj, ELM_SEL_MARKUP,
@@ -1174,7 +1175,7 @@ _event_selection_notify(void *data, int type __UNUSED__, void *event)
    Ecore_X_Event_Selection_Notify *ev = event;
    if (!wd) return 1;
    if (!wd->selection_asked) return 1;
- 
+
    if ((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
        (ev->selection == ECORE_X_SELECTION_PRIMARY))
      {
@@ -1213,6 +1214,7 @@ _event_selection_clear(void *data, int type __UNUSED__, void *event)
 	elm_entry_select_none(data);
      }
    return 1;*/
+   return 1;
 }
 #endif
 

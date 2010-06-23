@@ -104,6 +104,7 @@ enum _elm_sel_type {
 
 enum _elm_sel_format {
    ELM_SEL_MARKUP	= 0x01,
+   ELM_SEL_IMAGE	= 0x02,
 };
 
 
