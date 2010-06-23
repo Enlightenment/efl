@@ -225,7 +225,7 @@ PKG_CHECK_MODULES([LUA], [lua >= 5.1.0], requirement_lua="lua",
          [PKG_CHECK_MODULES([LUA], [lua51 >= 5.1.0], requirement_lua="lua51",
             [have_lua="no])])])])
 
-if test "x${have_lua}" = "no" ; then
+if test "x${have_lua}" = "xno" ; then
    AC_MSG_CHECKING([whether lua_newstate() is in liblua])
    AC_CHECK_LIB([lua], [lua_newstate],
       [
@@ -237,7 +237,7 @@ if test "x${have_lua}" = "no" ; then
 fi
 AC_SUBST(lua_libs)
 
-if test "x${have_lua}" = "no" ; then
+if test "x${have_lua}" = "xno" ; then
    AC_MSG_ERROR([Cannot find lua library. Be sure that you have installed it and set CFLAGS and LDFLAGS correctly])
 fi
 
