@@ -46,15 +46,22 @@ struct _elm_cnp_selection {
 
    Ecore_X_Selection ecore_sel;
 
+   Evas_Object *requestwidget;
+   enum _elm_sel_format requestformat;
+
    int (*set)(Ecore_X_Window, const void *data, int size);
    int (*clear)(void);
+   void (*request)(Ecore_X_Window, const char *target);
 };
 
-
+/* Optimisation: Turn this into a 256 byte table:
+ *	then can lookup in one index, not N checks */
 static const struct escapes {
    const char *escape;
    const char value;
 } escapes[] = {
+   { "<br>",	'\n' },
+   { "<\t>",	'\t' },
    { "gt;",	'>' },
    { "lt;",	'<' },
    { "amp;",'&' },
@@ -63,41 +70,55 @@ static const struct escapes {
 };
 #define N_ESCAPES ((int)(sizeof(escapes)/sizeof(escapes[0])))
 
-typedef int (*converter_fn)(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 
 static Eina_Bool _elm_cnp_init(void);
 static int selection_clear(void *udata __UNUSED__, int type, void *event);
+static int selection_notify(void *udata __UNUSED__, int type, void *event);
 static char *remove_tags(const char *p, int *len);
+static char *mark_up(const char *start, int *lenp);
+
+
+typedef int (*converter_fn)(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 
 static int targets_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 static int text_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 static int html_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 static int edje_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 
+typedef int (*response_handler)(struct _elm_cnp_selection *sel,
+      Ecore_X_Event_Selection_Notify *);
+static int response_handler_targets(struct _elm_cnp_selection *sel,
+      Ecore_X_Event_Selection_Notify *);
+static int response_handler_text(struct _elm_cnp_selection *sel,
+      Ecore_X_Event_Selection_Notify *);
+
 static struct {
    const char *name;
    enum _elm_sel_format formats;
    converter_fn converter;
+   response_handler response;
    Ecore_X_Atom atom;
 } atoms[CNP_N_ATOMS] = {
    ARRAYINIT(CNP_ATOM_TARGETS) { "TARGETS",
-		(enum _elm_sel_format)-1, targets_converter, 0 },
+		(enum _elm_sel_format)-1, targets_converter,
+		response_handler_targets, 0 },
    ARRAYINIT(CNP_ATOM_XEDJE)  { "application/x-edje-string",
-			ELM_SEL_MARKUP, edje_converter, 0},
+			ELM_SEL_MARKUP, edje_converter, NULL, 0},
    ARRAYINIT(CNP_ATOM_text_html_utf8) { "text/html;charset=utf-8",
-			ELM_SEL_MARKUP, html_converter, 0 },
-   ARRAYINIT(CNP_ATOM_text_html) { "text/html",
-			ELM_SEL_MARKUP, html_converter, 0 },
-   ARRAYINIT(CNP_ATOM_UTF8STRING) { "UTF8_STRING",
-			ELM_SEL_MARKUP, text_converter, 0 },
-   ARRAYINIT(CNP_ATOM_STRING) { "STRING",
-			ELM_SEL_MARKUP, text_converter, 0 },
-   ARRAYINIT(CNP_ATOM_TEXT) { "TEXT",
-			ELM_SEL_MARKUP, text_converter, 0 },
+			ELM_SEL_MARKUP, html_converter, NULL, 0 },
+   ARRAYINIT(CNP_ATOM_text_html) { "text/html", ELM_SEL_MARKUP,
+			html_converter, NULL, 0 },
+   ARRAYINIT(CNP_ATOM_UTF8STRING) { "UTF8_STRING", ELM_SEL_MARKUP,
+			text_converter, response_handler_text, 0 },
+   ARRAYINIT(CNP_ATOM_STRING) { "STRING", ELM_SEL_MARKUP,
+			text_converter, response_handler_text, 0 },
+   ARRAYINIT(CNP_ATOM_TEXT) { "TEXT", ELM_SEL_MARKUP,
+			text_converter, response_handler_text, 0 },
    ARRAYINIT(CNP_ATOM_text_plain_utf8) { "text/plain;charset=ut-8",
-			ELM_SEL_MARKUP, text_converter, 0 },
-   ARRAYINIT(CNP_ATOM_text_plain) { "text/plain",
-			ELM_SEL_MARKUP, text_converter, 0 },
+			ELM_SEL_MARKUP, text_converter,
+			response_handler_text, 0 },
+   ARRAYINIT(CNP_ATOM_text_plain) { "text/plain", ELM_SEL_MARKUP,
+			text_converter, response_handler_text, 0 },
 };
 
 static struct _elm_cnp_selection selections[ELM_SEL_MAX] = {
@@ -105,19 +126,22 @@ static struct _elm_cnp_selection selections[ELM_SEL_MAX] = {
        .debug = "Primary",
        .ecore_sel = ECORE_X_SELECTION_PRIMARY,
        .set = ecore_x_selection_primary_set,
-       .clear = ecore_x_selection_primary_clear
+       .clear = ecore_x_selection_primary_clear,
+       .request = ecore_x_selection_primary_request,
    },
    ARRAYINIT(ELM_SEL_SECONDARY) {
        .debug = "Secondary",
        .ecore_sel = ECORE_X_SELECTION_SECONDARY,
        .set = ecore_x_selection_secondary_set,
-       .clear = ecore_x_selection_secondary_clear
+       .clear = ecore_x_selection_secondary_clear,
+       .request = ecore_x_selection_secondary_request,
    },
    ARRAYINIT(ELM_SEL_CLIPBOARD) {
        .debug = "Clipboard",
        .ecore_sel = ECORE_X_SELECTION_CLIPBOARD,
        .set = ecore_x_selection_clipboard_set,
-       .clear = ecore_x_selection_clipboard_clear
+       .clear = ecore_x_selection_clipboard_clear,
+       .request = ecore_x_selection_clipboard_request,
    }
 };
 
@@ -163,6 +187,26 @@ elm_selection_clear(enum _elm_sel_type selection, Evas_Object *widget){
    return true;
 }
 
+Eina_Bool
+elm_selection_get(enum _elm_sel_type selection, enum _elm_sel_format format,
+			Evas_Object *widget){
+   Evas_Object *top;
+   struct _elm_cnp_selection *sel;
+
+   if ((unsigned int)selection >= (unsigned int)ELM_SEL_MAX) return false;
+   if (!_elm_cnp_init_count) _elm_cnp_init();
+
+   sel = selections + selection;
+   top = elm_widget_top_get(widget);
+   if (!top) return false;
+
+   sel->request(elm_win_xwindow_get(top), "TARGETS");
+   sel->requestformat = format;
+   sel->requestwidget = widget;
+
+   return EINA_TRUE;
+}
+
 static Eina_Bool
 _elm_cnp_init(void){
    int i;
@@ -176,7 +220,8 @@ _elm_cnp_init(void){
 	      atoms[i].converter);
      }
 
-   ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR, selection_clear, NULL);
+   ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR, selection_clear,NULL);
+   ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY,selection_notify,NULL);
 
     return true;
 }
@@ -201,6 +246,46 @@ selection_clear(void *udata __UNUSED__, int type, void *event){
 
    return true;
 }
+
+/**
+ * Response to a selection notify
+ */
+static int
+selection_notify(void *udata __UNUSED__, int type, void *event){
+   Ecore_X_Event_Selection_Notify *ev = event;
+   struct _elm_cnp_selection *sel;
+   int i;
+
+   switch (ev->selection){
+      case ECORE_X_SELECTION_CLIPBOARD:
+	 sel = selections + ELM_SEL_CLIPBOARD;
+	 break;
+
+      case ECORE_X_SELECTION_PRIMARY:
+	 sel = selections + ELM_SEL_PRIMARY;
+	 break;
+      case ECORE_X_SELECTION_SECONDARY:
+	 sel = selections + ELM_SEL_SECONDARY;
+	 break;
+      default:
+	 return 1;
+   }
+
+   for (i = 0 ; i < CNP_N_ATOMS ; i ++)
+     {
+	if (strcmp(ev->target, atoms[i].name) == 0)
+	  {
+	     if (atoms[i].response){
+		  atoms[i].response(sel, ev);
+	     } else {
+		  printf("Ignored: No handler!\n");
+	     }
+	  }
+     }
+
+   return 1;
+}
+
 
 static int
 targets_converter(char *target, void *data, int size,
@@ -229,6 +314,61 @@ targets_converter(char *target, void *data, int size,
    if (size_ret) *size_ret = count;
 
    return 1;
+}
+
+
+static int
+response_handler_targets(struct _elm_cnp_selection *sel,
+      Ecore_X_Event_Selection_Notify *notify){
+   Ecore_X_Selection_Data_Targets *targets;
+   Ecore_X_Atom *atomlist;
+   Evas_Object *top;
+   int i,j;
+   int prio, selected;
+
+   targets = notify->data;
+   atomlist = (Ecore_X_Atom *)(targets->data.data);
+
+   prio = -1;
+   selected = -1;
+   /* Start from 1: Skip targets */
+   for (j = 1 ; j < CNP_N_ATOMS ; j ++)
+     {
+	if (!(atoms[j].formats & sel->requestformat)) continue;
+	for (i = 0 ; i < targets->data.length ; i ++)
+	  {
+	     if (atoms[j].atom == atomlist[i] && atoms[j].response){
+		  /* Found a match: Use it */
+		  goto found;
+	     }
+	}
+     }
+	found:
+   if (j == CNP_N_ATOMS)
+     {
+	printf("No matching type found\n");
+	return 0;
+     }
+
+   top = elm_widget_top_get(sel->requestwidget);
+   if (!top) return 0;
+
+   sel->request(elm_win_xwindow_get(top), atoms[j].name);
+   return 0;
+}
+
+static int
+response_handler_text(struct _elm_cnp_selection *sel,
+      Ecore_X_Event_Selection_Notify *notify){
+   Ecore_X_Selection_Data_Text *text;
+   char *str;
+
+   text = notify->data;
+   str = mark_up(text->text, NULL);
+   elm_entry_entry_insert(sel->requestwidget, str);
+   free(str);
+
+   return 0;
 }
 
 
@@ -273,7 +413,6 @@ html_converter(char *target, void *data, int size, void **data_ret, int *size_re
 
 
 
-/* FIXME: Doesn't handle '<foo str='>'>' */
 static char *
 remove_tags(const char *p, int *len){
    char *q,*ret;
@@ -310,6 +449,52 @@ remove_tags(const char *p, int *len){
    *q = 0;
    if (len) *len = q - ret;
    return ret;
+}
+
+/* Mark up */
+static char *
+mark_up(const char *start, int *lenp){
+  int l,i;
+  const char *p;
+  char *q,*ret;
+
+  /* First pass: Count characters */
+  for (l = 0, p = start ; *p ; p ++)
+    {
+    for (i = 0 ; i < N_ESCAPES ; i ++)
+      {
+	 if (*p == escapes[i].value)
+	   {
+	      l += strlen(escapes[i].escape);
+	      break;
+	   }
+      }
+    if (i == N_ESCAPES)
+	 l ++;
+  }
+
+  q = ret = malloc(l + 1);
+
+  /* Second pass: Count characters */
+  for (p = start ; *p ; )
+    {
+    for (i = 0 ; i < N_ESCAPES ; i ++)
+      {
+	 if (*p == escapes[i].value)
+	   {
+	      strcpy(q, escapes[i].escape);
+	      q += strlen(escapes[i].escape);
+	      p ++;
+	      break;
+	   }
+      }
+    if (i == N_ESCAPES)
+	 *q ++ = *p ++;
+  }
+  *q = 0;
+
+  if (lenp) *lenp = l;
+  return ret;
 }
 
 /* vim: set ts=8 sw=3 sts=8 noexpandtab cino=>5n-3f0^-2{2 : */
