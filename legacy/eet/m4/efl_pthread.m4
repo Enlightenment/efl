@@ -51,8 +51,8 @@ if test "x${_efl_enable_pthread}" = "xyes" || test "x${_efl_enable_pthread}" = "
 
    SAVE_CFLAGS=${CFLAGS}
    CFLAGS="${CFLAGS} ${_efl_pthread_cflags}"
-   SAVE_LDFLAGS=${LDFLAGS}
-   LDFLAGS="${LDFLAGS} ${_efl_pthread_libs}"
+   SAVE_LIBS=${LIBS}
+   LIBS="${LIBS} ${_efl_pthread_libs}"
    AC_LINK_IFELSE(
       [AC_LANG_PROGRAM([[
 #include <pthread.h>
@@ -64,7 +64,7 @@ id = pthread_self();
       [_efl_have_pthread="yes"],
       [_efl_have_pthread="no"])
    CFLAGS=${SAVE_CFLAGS}
-   LDFLAGS=${SAVE_LDFLAGS}
+   LIBS=${SAVE_LIBS}
 
 fi
 
@@ -96,8 +96,8 @@ if test "x${_efl_have_pthread}" = "xyes" && test "x$1" = "xyes" ; then
 
    SAVE_CFLAGS=${CFLAGS}
    CFLAGS="${CFLAGS} ${EFL_PTHREAD_CFLAGS}"
-   SAVE_LDFLAGS=${LDFLAGS}
-   LDFLAGS="${LDFLAGS} ${EFL_PTHREAD_LIBS}"
+   SAVE_LIBS=${LIBS}
+   LIBS="${LIBS} ${EFL_PTHREAD_LIBS}"
    AC_LINK_IFELSE(
       [AC_LANG_PROGRAM([[
 #include <pthread.h>
@@ -110,7 +110,7 @@ res = pthread_spin_init(&lock, PTHREAD_PROCESS_PRIVATE);
       [_efl_have_pthread_spinlock="yes"],
       [_efl_have_pthread_spinlock="no"])
    CFLAGS=${SAVE_CFLAGS}
-   LDFLAGS=${SAVE_LDFLAGS}
+   LIBS=${SAVE_LIBS}
 
 fi
 
