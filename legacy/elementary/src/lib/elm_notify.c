@@ -92,7 +92,7 @@ _sizing_eval(Evas_Object *obj)
 static void
 _changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   _sizing_eval(data);
+   _calc(data);
 }
 
 static void
@@ -101,6 +101,7 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
    if (!wd) return;
+
    if (sub == wd->content)
      {
 	evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -306,6 +307,7 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
    if (wd->content == content) return;
    if (wd->content) evas_object_del(wd->content);
    wd->content = content;
+
    if (content)
      {
 	elm_widget_sub_object_add(obj, content);

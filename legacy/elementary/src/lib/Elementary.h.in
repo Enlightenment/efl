@@ -1473,7 +1473,6 @@ extern "C" {
     * TODO
     *
     * Update the minimun height of the bar in the theme. No minimun should be set in the vertical theme
-    * Add horyzontal theme
     * Add events (move, start ...)
     */
    EAPI Evas_Object          *elm_panes_add(Evas_Object *parent);
