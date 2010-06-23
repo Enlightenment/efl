@@ -809,11 +809,11 @@ _ecore_x_selection_parser_targets(const char *target __UNUSED__, void *data, int
    for (i = 2; i < size; i++)
      sel->targets[i - 2] = XGetAtomName(_ecore_x_disp, targets[i]);
 
-   free(data);
 
    ECORE_X_SELECTION_DATA(sel)->free = _ecore_x_selection_data_targets_free;
    ECORE_X_SELECTION_DATA(sel)->content = ECORE_X_SELECTION_CONTENT_TARGETS;
    ECORE_X_SELECTION_DATA(sel)->length = size;
+   ECORE_X_SELECTION_DATA(sel)->data = data;
    return sel;
 }
 
@@ -831,6 +831,7 @@ _ecore_x_selection_data_targets_free(void *data)
 	  XFree(sel->targets[i]);
 	free(sel->targets);
      }
+   free(ECORE_X_SELECTION_DATA(sel)->data);
    free(sel);
    return 1;
 }
