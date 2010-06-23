@@ -205,6 +205,7 @@ void              _elm_config_shutdown(void);
 
 Eina_Bool	  elm_selection_set(enum _elm_sel_type selection, Evas_Object *widget, enum _elm_sel_format format, const char *buf);
 Eina_Bool	  elm_selection_clear(enum _elm_sel_type selection, Evas_Object *widget);
+Eina_Bool	  elm_selection_get(enum _elm_sel_type selection, enum _elm_sel_format format, Evas_Object *widget);
 
 
 

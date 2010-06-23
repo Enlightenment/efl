@@ -451,16 +451,7 @@ _paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    if (wd->sel_notify_handler)
      {
 #ifdef HAVE_ELEMENTARY_X
-	Evas_Object *top;
-
-	top = elm_widget_top_get(data);
-	if ((top) && (elm_win_xwindow_get(top)))
-	  {
-	     ecore_x_selection_clipboard_request
-	       (elm_win_xwindow_get(top),
-		ECORE_X_SELECTION_TARGET_UTF8_STRING);
-	     wd->selection_asked = EINA_TRUE;
-	  }
+	elm_selection_get(ELM_SEL_CLIPBOARD, ELM_SEL_MARKUP, data);
 #endif
      }
 }
@@ -470,7 +461,6 @@ _store_selection(enum _elm_sel_type seltype, Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *sel;
-
 
    if (!wd) return;
    sel = edje_object_part_text_selection_get(wd->ent, "elm.text");
