@@ -1362,6 +1362,19 @@ elm_object_parent_widget_get(const Evas_Object *obj)
 }
 
 /**
+ * Get the top level parent of an Elementary widget.
+ *
+ * @param obj The object to query.
+ * @return The top level Elementary widget, or @c NULL if parent cannot be
+ * found.
+ */
+EAPI Evas_Object *
+elm_object_top_widget_get(const Evas_Object *obj)
+{
+   return elm_widget_top_get(obj);
+}
+
+/**
  * Get the string that represents this Elementary widget.
  *
  * @note Elementary is weird and exposes itself as a single

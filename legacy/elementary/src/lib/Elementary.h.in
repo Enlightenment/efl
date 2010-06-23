@@ -265,6 +265,7 @@ extern "C" {
 
    EAPI Eina_Bool    elm_object_widget_check(const Evas_Object *obj);
    EAPI Evas_Object *elm_object_parent_widget_get(const Evas_Object *obj);
+   EAPI Evas_Object *elm_object_top_widget_get(const Evas_Object *obj);
    EAPI const char  *elm_object_widget_type_get(const Evas_Object *obj);
 
    EAPI double       elm_scale_get(void);
