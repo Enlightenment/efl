@@ -44,7 +44,7 @@ struct _store_data
  * specified; helpful for new udev versions, but absolutely required for
  * old udev, which does not implement filtering in device monitors.
  */
-static int
+static Eina_Bool 
 _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
 {
    struct _store_data *store = data;
@@ -56,12 +56,12 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
    int cap = 0, event = 0;
 
    if (!ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
-     return 1;
+     return EINA_TRUE;
 
    device = udev_monitor_receive_device(store->mon);
 
    if (!device)
-     return 1;
+     return EINA_TRUE;
 
    switch (store->type)
      {
@@ -274,7 +274,7 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
   (*func)(eina_stringshare_add(ret), event, sdata, watch);
 error:
    udev_device_unref(device);
-   return 1;
+   return EINA_TRUE;
 }
 /**
  * Add a watch for a device type
