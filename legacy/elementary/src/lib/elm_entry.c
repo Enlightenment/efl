@@ -107,6 +107,7 @@ struct _Widget_Data
    Evas_Coord cx, cy, cw, ch;
    Eina_List *items;
    Eina_List *item_providers;
+   Ecore_Job *hovdeljob;
    Mod_Api *api; // module api if supplied
    Eina_Bool changed : 1;
    Eina_Bool linewrap : 1;
@@ -227,6 +228,7 @@ _del_hook(Evas_Object *obj)
    Elm_Entry_Context_Menu_Item *it;
    Elm_Entry_Item_Provider *ip;
 
+   if (wd->hovdeljob) ecore_job_del(wd->hovdeljob);
    if ((wd->api) && (wd->api->obj_unhook)) wd->api->obj_unhook(obj); // module - unhook
 
    entries = eina_list_remove(entries, obj);
@@ -411,10 +413,24 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 }
 
 static void
-_dismissed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_hover_del(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
+   
+   if (wd->hoversel)
+     {
+        evas_object_del(wd->hoversel);
+        wd->hoversel = NULL;
+     }
+   wd->hovdeljob = NULL;
+}
+
+static void
+_dismissed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return; 
    if (wd->hoversel) evas_object_hide(wd->hoversel);
    if (wd->selmode)
      {
@@ -422,11 +438,8 @@ _dismissed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
           edje_object_part_text_select_allow_set(wd->ent, "elm.text", 1);
      }
    elm_widget_scroll_freeze_pop(data);
-   if (wd->hoversel)
-     {
-        evas_object_del(wd->hoversel);
-        wd->hoversel = NULL;
-     }
+   if (wd->hovdeljob) ecore_job_del(wd->hovdeljob);
+   wd->hovdeljob = ecore_job_add(_hover_del, data);
 }
 
 static void

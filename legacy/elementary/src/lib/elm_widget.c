@@ -71,6 +71,8 @@ static void _smart_calculate(Evas_Object *obj);
 static void _smart_init(void);
 static inline Eina_Bool _elm_widget_is(const Evas_Object *obj);
 
+static void _if_focused_revert(Evas_Object *obj);
+
 /* local subsystem globals */
 static Evas_Smart *_e_smart = NULL;
 
@@ -1129,6 +1131,30 @@ _newest_focus_order_get(Evas_Object *obj, unsigned int *newest_focus_order)
 }
 
 static void
+_if_focused_revert(Evas_Object *obj)
+{
+   Evas_Object *top;
+   Evas_Object *newest = NULL;
+   unsigned int newest_focus_order = 0;
+   
+   INTERNAL_ENTRY;
+   
+   if (!sd->focused) return;
+   if (!sd->parent_obj) return;
+
+   top = elm_widget_top_get(sd->parent_obj);
+   if (top)
+     {
+        newest = _newest_focus_order_get(top, &newest_focus_order);
+        if (newest)
+          {
+             elm_object_unfocus(newest);
+             elm_object_focus(newest);
+          }
+     }
+}
+
+static void
 _smart_del(Evas_Object *obj)
 {
    Evas_Object *sobj;
@@ -1161,25 +1187,7 @@ _smart_del(Evas_Object *obj)
    if (sd->style) eina_stringshare_del(sd->style);
    if (sd->type) eina_stringshare_del(sd->type);
    if (sd->theme) elm_theme_free(sd->theme);
-   if (sd->focused)
-     {
-        if (sd->parent_obj)
-          {
-             Evas_Object *top = elm_widget_top_get(sd->parent_obj);
-             Evas_Object *newest = NULL;
-             unsigned int newest_focus_order = 0;
-             
-             if (top)
-               {
-                  newest = _newest_focus_order_get(top, &newest_focus_order);
-                  if (newest)
-                    {
-                       elm_object_unfocus(newest);
-                       elm_object_focus(newest);
-                    }
-               }
-          }
-     }
+   _if_focused_revert(obj);
    free(sd);
 }
 
@@ -1213,6 +1221,7 @@ _smart_hide(Evas_Object *obj)
 {
    INTERNAL_ENTRY;
    evas_object_hide(sd->resize_obj);
+   _if_focused_revert(obj);
 }
 
 static void
