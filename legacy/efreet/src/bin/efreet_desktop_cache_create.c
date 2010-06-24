@@ -339,8 +339,13 @@ main(int argc, char **argv)
         EINA_LIST_FREE(user_dirs, dir)
         {
             unsigned int size = strlen(dir) + 1;
-            write(dirsfd, &size, sizeof(int));
-            write(dirsfd, dir, size);
+	    size_t count;
+
+            count = write(dirsfd, &size, sizeof(int));
+            count += write(dirsfd, dir, size);
+
+	    if (count != sizeof (int) + size)
+	      printf("Didn't write all data on dirsfd");
 
             if (!cache_scan(dir, NULL, priority, 0, &changed)) goto error;
             eina_stringshare_del(dir);

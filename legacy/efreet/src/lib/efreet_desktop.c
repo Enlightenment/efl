@@ -138,7 +138,7 @@ static void efreet_desktop_cache_update_free(void *data, void *ev);
 
 static void efreet_desktop_update_cache(void);
 static void efreet_desktop_update_cache_job(void *data);
-static int efreet_desktop_exe_cb(void *data, int type, void *event);
+static Eina_Bool efreet_desktop_exe_cb(void *data, int type, void *event);
 
 static void efreet_desktop_changes_listen(void);
 static void efreet_desktop_changes_listen_recursive(const char *path);
@@ -1362,8 +1362,13 @@ efreet_desktop_write_cache_dirs_file(void)
     EINA_LIST_FREE(efreet_desktop_dirs, dir)
     {
         unsigned int size = strlen(dir) + 1;
-        write(cachefd, &size, sizeof(int));
-        write(cachefd, dir, size);
+	size_t count;
+
+        count = write(cachefd, &size, sizeof(int));
+	count += write(cachefd, dir, size);
+
+	if (count != sizeof(int) + size)
+	  DBG("Didn't write all data on cachefd");
 
         efreet_desktop_changes_monitor_add(dir);
         eina_stringshare_del(dir);
@@ -1503,19 +1508,19 @@ error:
     }
 }
 
-static int
+static Eina_Bool
 efreet_desktop_exe_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
     Ecore_Exe_Event_Del *ev;
 
     ev = event;
-    if (ev->exe != efreet_desktop_exe) return 1;
+    if (ev->exe != efreet_desktop_exe) return ECORE_CALLBACK_RENEW;
     if (efreet_desktop_exe_lock > 0)
     {
         close(efreet_desktop_exe_lock);
         efreet_desktop_exe_lock = -1;
     }
-    return 1;
+    return ECORE_CALLBACK_RENEW;
 }
 
 static void
