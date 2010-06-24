@@ -490,7 +490,7 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
 EAPI Evas_Object *
 elm_hover_content_unset(Evas_Object *obj, const char *swallow)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    Subinfo *si;
    const Eina_List *l;
