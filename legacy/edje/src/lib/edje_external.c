@@ -619,8 +619,8 @@ _edje_external_params_free(Eina_List *external_params, Eina_Bool free_strings)
 
 void
 _edje_external_recalc_apply(Edje *ed, Edje_Real_Part *ep,
-      Edje_Calc_Params *params,
-      Edje_Part_Description *chosen_desc)
+			    Edje_Calc_Params *params,
+			    Edje_Part_Description *chosen_desc)
 {
    Edje_External_Type *type;
    void *params1, *params2 = NULL;

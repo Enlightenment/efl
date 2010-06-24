@@ -291,7 +291,7 @@ _edje_embryo_fn_get_str(Embryo_Program *ep, Embryo_Cell *params)
    s = (char *)_edje_var_str_get(ed, (int)params[1]);
    if (s)
      {
-	if (strlen(s) < params[3])
+	if ((int) strlen(s) < params[3])
 	  {
 	     SETSTR(s, params[2]);
 	  }
@@ -514,7 +514,7 @@ _edje_embryo_fn_fetch_str(Embryo_Program *ep, Embryo_Cell *params)
                                            (int) params[2]);
    if (s)
      {
-	if (strlen(s) < params[4])
+	if ((int) strlen(s) < params[4])
 	  {
 	     SETSTR(s, params[3]);
 	  }
@@ -875,7 +875,7 @@ _edje_embryo_fn_get_state(Embryo_Program *ep, Embryo_Cell *params)
 	s = rp->chosen_description->state.name;
 	if (s)
 	  {
-	     if (strlen(s) < params[3])
+	     if ((int) strlen(s) < params[3])
 	       {
 		  SETSTR(s, params[2]);
 	       }
@@ -1091,7 +1091,7 @@ _edje_embryo_fn_get_text(Embryo_Program *ep, Embryo_Cell *params)
    s = (char *)edje_object_part_text_get(ed->obj, rp->part->name);
    if (s)
      {
-	if (strlen(s) < params[3])
+	if ((int) strlen(s) < params[3])
 	  {
 	     SETSTR(s, params[2]);
 	  }
@@ -1330,7 +1330,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
    int id, i, n;
    Embryo_Cell *ptr;
 
-   if (params[0] < (sizeof(Embryo_Cell) * (2))) return 0;
+   if (params[0] < (int) (sizeof(Embryo_Cell) * (2))) return 0;
    ed = embryo_program_data_get(ep);
    type = params[1];
    id = params[2];
@@ -1641,7 +1641,7 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
    char *s;
 
    /* we need at least 3 arguments */
-   if (params[0] < (sizeof(Embryo_Cell) * 3))
+   if (params[0] < (int) (sizeof(Embryo_Cell) * 3))
      return 0;
 
    if (params[1] < 0)
@@ -1998,7 +1998,7 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
    char *s;
 
    /* we need at least 3 arguments */
-   if (params[0] < (sizeof(Embryo_Cell) * 3))
+   if (params[0] < (int) (sizeof(Embryo_Cell) * 3))
      return 0;
 
    if (params[1] < 0)

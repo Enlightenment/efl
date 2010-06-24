@@ -1071,11 +1071,7 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
 			{
 			   const char *partid;
 			   Evas_Object *child;
-			   Eina_List *l;
 			   Edje *ed2 = NULL;
-			   Eina_Bool number = EINA_TRUE;
-			   unsigned int i;
-			   int id;
 
 			   idx = strchr(newsig, EDJE_PART_PATH_SEPARATOR_INDEXR);
 

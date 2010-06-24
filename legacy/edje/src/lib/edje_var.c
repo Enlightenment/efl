@@ -6,13 +6,13 @@
 
 #include "edje_private.h"
 
-static int _edje_var_timer_cb(void *data);
-static int _edje_var_anim_cb(void *data);
+static Eina_Bool _edje_var_timer_cb(void *data);
+static Eina_Bool _edje_var_anim_cb(void *data);
 
 static Ecore_Animator *_edje_animator = NULL;
 static Eina_List   *_edje_anim_list = NULL;
 
-static int
+static Eina_Bool
 _edje_var_timer_cb(void *data)
 {
    Edje_Var_Timer *et;
@@ -20,7 +20,7 @@ _edje_var_timer_cb(void *data)
    Embryo_Function fn;
 
    et = data;
-   if (!et) return 0;
+   if (!et) return ECORE_CALLBACK_CANCEL;
    ed = et->edje;
 //      _edje_embryo_script_reset(ed);
    embryo_program_vm_push(ed->collection->script);
@@ -40,10 +40,10 @@ _edje_var_timer_cb(void *data)
 	embryo_program_vm_pop(ed->collection->script);
 	_edje_recalc(ed);
      }
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
-static int
+static Eina_Bool
 _edje_var_anim_cb(void *data __UNUSED__)
 {
    Eina_List *l, *tl = NULL;

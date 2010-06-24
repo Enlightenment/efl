@@ -156,10 +156,10 @@ edje_message_signal_process(void)
 }
 
 
-static int
+static Eina_Bool
 _edje_dummy_timer(void *data __UNUSED__)
 {
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
@@ -176,7 +176,7 @@ _edje_job(void *data __UNUSED__)
    _injob--;
 }
 
-static int
+static Eina_Bool
 _edje_job_loss_timer(void *data __UNUSED__)
 {
    _job_loss_timer = NULL;
@@ -184,7 +184,7 @@ _edje_job_loss_timer(void *data __UNUSED__)
      {
         _job = ecore_job_add(_edje_job, NULL);
      }
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 void

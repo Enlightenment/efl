@@ -168,7 +168,7 @@ struct slave_cmd
   {NULL, NULL}
 };
 
-static int
+static Eina_Bool
 _slave_mode(void *data, Ecore_Fd_Handler *fd_handler)
 {
    Evas_Object *edje = data;
@@ -180,23 +180,23 @@ _slave_mode(void *data, Ecore_Fd_Handler *fd_handler)
      {
 	fputs("ERROR: error on stdin! Exit.\n", stderr);
 	ecore_main_loop_quit();
-	return 0;
+	return ECORE_CALLBACK_CANCEL;
      }
    if (!ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
-     return 1;
+     return ECORE_CALLBACK_RENEW;
 
    if (!fgets(buf, sizeof(buf), stdin))
      {
 	fputs("ERROR: end of stdin! Exit.\n", stderr);
 	ecore_main_loop_quit();
-	return 0;
+	return ECORE_CALLBACK_CANCEL;
      }
 
    len = strlen(buf);
    if (len < 1)
      {
 	fputs("ERROR: no input! Try: help\n", stderr);
-	return 1;
+	return ECORE_CALLBACK_RENEW;
      }
    if (buf[len - 1] == '\n')
      {
@@ -235,7 +235,7 @@ _slave_mode(void *data, Ecore_Fd_Handler *fd_handler)
 	  }
      }
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -508,7 +508,7 @@ _create_edje(Evas *evas, const struct opts *opts)
    return edje;
 }
 
-static  unsigned char _parse_color(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage)
+static unsigned char _parse_color(__UNUSED__ const Ecore_Getopt *parser, __UNUSED__ const Ecore_Getopt_Desc *desc, const char *str, __UNUSED__ void *data, Ecore_Getopt_Value *storage)
 {
    unsigned char *color = (unsigned char *)storage->ptrp;
 
@@ -521,7 +521,7 @@ static  unsigned char _parse_color(const Ecore_Getopt *parser, const Ecore_Getop
    return 1;
 }
 
-static void _cb_delete (Ecore_Evas *ee)
+static void _cb_delete(__UNUSED__ Ecore_Evas *ee)
 {
   ecore_main_loop_quit();
 }
@@ -720,7 +720,6 @@ int main(int argc, char **argv)
    ecore_evas_show(win);
    ecore_main_loop_begin();
 
- end_win:
    ecore_evas_free(win);
  end:
    edje_shutdown();

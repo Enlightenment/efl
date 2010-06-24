@@ -1310,8 +1310,8 @@ void  _edje_part_recalc_1(Edje *ed, Edje_Real_Part *ep);
 int   _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, FLOAT_T *x, FLOAT_T *y);
 void  _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y);
 
-int   _edje_timer_cb(void *data);
-int   _edje_pending_timer_cb(void *data);
+Eina_Bool _edje_timer_cb(void *data);
+Eina_Bool _edje_pending_timer_cb(void *data);
 void  _edje_callbacks_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp);
 void  _edje_callbacks_focus_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp);
 void  _edje_callbacks_del(Evas_Object *obj, Edje *ed);
@@ -1520,18 +1520,20 @@ void _edje_embryo_globals_init(Edje *ed);
    Embryo_Cell *___cptr; \
    if ((___cptr = embryo_data_address_get(ep, (par)))) { \
       embryo_data_string_set(ep, str, ___cptr); } }
-#define SETSTRALLOCATE(s) { \
-   if (s) { \
-      if (strlen((s)) < params[4]) { \
-	 SETSTR((s), params[3]); } \
-      else { \
-	 char *ss; \
-	 ss = alloca(strlen((s)) + 1); \
-	 strcpy(ss, (s)); \
-	 ss[params[4] - 2] = 0; \
-	 SETSTR(ss, params[3]); } } \
-   else \
-     SETSTR("", params[3]); }
+#define SETSTRALLOCATE(s)			\
+  {						\
+     if (s) {					\
+	if ((int) strlen((s)) < params[4]) {	\
+	   SETSTR((s), params[3]); }		\
+	else {					\
+	   char *ss;				\
+	   ss = alloca(strlen((s)) + 1);	\
+	   strcpy(ss, (s));			\
+	   ss[params[4] - 2] = 0;		\
+	   SETSTR(ss, params[3]); } }		\
+     else					\
+       SETSTR("", params[3]);			\
+  }
 #define SETFLOAT(val, par) { \
    float *___cptr; \
    if ((___cptr = (float *)embryo_data_address_get(ep, (par)))) { \

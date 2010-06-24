@@ -3936,15 +3936,15 @@ edje_object_part_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear
 }
 
 static void
-_edje_perspective_obj_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_perspective_obj_del(void *data, __UNUSED__ Evas *e, __UNUSED__ Evas_Object *obj, __UNUSED__ void *event_info)
 {
-   Edje_Perspective *ps = data;   
+   Edje_Perspective *ps = data;
    Evas_Object *o;
-   
+
    EINA_LIST_FREE(ps->users, o)
      {
         Edje *ed;
-        
+
         ed = evas_object_smart_data_get(o);
         if (!ed) continue;
         ed->persp = NULL;
@@ -4693,17 +4693,15 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
 }
 
 void
-_edje_object_part_swallow_changed_hints_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_object_part_swallow_changed_hints_cb(void *data, __UNUSED__ Evas *e, __UNUSED__ Evas_Object *obj, __UNUSED__ void *event_info)
 {
    Edje_Real_Part *rp;
-   
+
    rp = data;
    _edje_real_part_swallow_hints_update(rp);
    rp->edje->dirty = 1;
    _edje_recalc(rp->edje);
    return;
-   e = NULL;
-   event_info = NULL;
 }
 
 void
@@ -4734,17 +4732,17 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
      evas_object_clip_set(rp->swallowed_object, rp->clip_to->object);
    else evas_object_clip_set(rp->swallowed_object, rp->edje->clipper);
    evas_object_stack_above(rp->swallowed_object, rp->object);
-   evas_object_event_callback_add(rp->swallowed_object, 
+   evas_object_event_callback_add(rp->swallowed_object,
                                   EVAS_CALLBACK_FREE,
 				  _edje_object_part_swallow_free_cb,
 				  rp->edje->obj);
-   evas_object_event_callback_add(rp->swallowed_object, 
+   evas_object_event_callback_add(rp->swallowed_object,
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _edje_object_part_swallow_changed_hints_cb,
 				  rp);
-   
+
    _edje_real_part_swallow_hints_update(rp);
-   
+
    if (rp->part->mouse_events)
      {
         _edje_callbacks_add(obj_swallow, rp->edje, rp);
@@ -4793,7 +4791,7 @@ _edje_object_preload(Edje *ed)
 }
 
 static void
-_edje_object_image_preload_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_object_image_preload_cb(void *data, __UNUSED__ Evas *e, Evas_Object *obj, __UNUSED__ void *event_info)
 {
    Edje *ed = data;
 
@@ -4802,7 +4800,7 @@ _edje_object_image_preload_cb(void *data, Evas *e, Evas_Object *obj, void *event
 }
 
 static void
-_edje_object_signal_preload_cb(void *data, Evas_Object *obj, const char *emission, const char *source)
+_edje_object_signal_preload_cb(void *data, Evas_Object *obj, __UNUSED__ const char *emission, __UNUSED__ const char *source)
 {
    Edje *ed = data;
 

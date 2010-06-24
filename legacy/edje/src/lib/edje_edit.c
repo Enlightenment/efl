@@ -5075,7 +5075,7 @@ edje_edit_spectra_stop_num_set(Evas_Object *obj, const char* spectra, int num)
    s = _edje_edit_spectrum_entry_get(ed, spectra);
    if (!s) return EINA_FALSE;
 
-   if (num == eina_list_count(s->color_list)) return EINA_TRUE;
+   if (num == (int) eina_list_count(s->color_list)) return EINA_TRUE;
 
    //destroy all colors
    while (s->color_list)

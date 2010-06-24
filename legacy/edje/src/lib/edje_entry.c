@@ -29,9 +29,9 @@ void *alloca (size_t);
 
 #ifdef HAVE_ECORE_IMF
 static int _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos);
-static int _edje_entry_imf_event_commit_cb(void *data, int type, void *event);
-static int _edje_entry_imf_event_changed_cb(void *data, int type, void *event);
-static int _edje_entry_imf_event_delete_surrounding_cb(void *data, int type, void *event);
+static Eina_Bool _edje_entry_imf_event_commit_cb(void *data, int type, void *event);
+static Eina_Bool _edje_entry_imf_event_changed_cb(void *data, int type, void *event);
+static Eina_Bool _edje_entry_imf_event_delete_surrounding_cb(void *data, int type, void *event);
 #endif
 
 typedef struct _Entry Entry;
@@ -1814,7 +1814,7 @@ _edje_part_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
-_evas_focus_in_cb(void *data, Evas *e, void *event_info)
+_evas_focus_in_cb(void *data, Evas *e, __UNUSED__ void *event_info)
 {
    Edje *ed = (Edje *)data;
 
@@ -1824,7 +1824,7 @@ _evas_focus_in_cb(void *data, Evas *e, void *event_info)
 }
 
 static void
-_evas_focus_out_cb(void *data, Evas *e, void *event_info)
+_evas_focus_out_cb(void *data, Evas *e, __UNUSED__ void *event_info)
 {
    Edje *ed = (Edje *)data;
 
@@ -2680,7 +2680,7 @@ _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx __UNU
    return 1;
 }
 
-static int 
+static Eina_Bool
 _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
 {
    Edje* ed = data;
@@ -2688,15 +2688,15 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
    Entry *en;
    Ecore_IMF_Event_Commit *ev = event;
    int i;
-   
-   if (!rp) return 1;
-   
+
+   if (!rp) return ECORE_CALLBACK_PASS_ON;
+
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
-     return 1;
-   
-   if (en->imf_context != ev->ctx) return 1;
+     return ECORE_CALLBACK_PASS_ON;
+
+   if (en->imf_context != ev->ctx) return ECORE_CALLBACK_PASS_ON;
 
    if (en->have_composition)
      {
@@ -2713,11 +2713,11 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
    _edje_emit(ed, "cursor,changed", rp->part->name);
-   
-   return 0;
+
+   return ECORE_CALLBACK_DONE;
 }
 
-static int 
+static Eina_Bool
 _edje_entry_imf_event_changed_cb(void *data, int type __UNUSED__, void *event)
 {
    Edje* ed = data;
@@ -2728,23 +2728,23 @@ _edje_entry_imf_event_changed_cb(void *data, int type __UNUSED__, void *event)
    int i;
    char *preedit_string;
 
-   if (!rp) return 1;
+   if (!rp) return ECORE_CALLBACK_PASS_ON;
 
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
-     return 1;
-   
-   if (!en->imf_context) return 1;
-   
-   if (en->imf_context != ev->ctx) return 1;
+     return ECORE_CALLBACK_PASS_ON;
+
+   if (!en->imf_context) return ECORE_CALLBACK_PASS_ON;
+
+   if (en->imf_context != ev->ctx) return ECORE_CALLBACK_PASS_ON;
 
    ecore_imf_context_preedit_string_get(en->imf_context, &preedit_string, &length);
 
    // FIXME : check the maximum length of evas_textblock
    if ( 0 /* check the maximum length of evas_textblock */ )
-     return 1;
-   
+     return ECORE_CALLBACK_PASS_ON;
+
    if (en->have_composition)
      {
 	// delete the composing characters
@@ -2762,33 +2762,33 @@ _edje_entry_imf_event_changed_cb(void *data, int type __UNUSED__, void *event)
 
    //xx
    evas_object_textblock_text_markup_prepend(en->cursor, preedit_string);
-   
+
    _sel_extend(en->cursor, rp->object, en);
 
    _curs_update_from_curs(en->cursor, rp->object, en);
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
    _edje_emit(ed, "cursor,changed", rp->part->name);
-   
-   return 0;
+
+   return ECORE_CALLBACK_DONE;
 }
 
-static int
+static Eina_Bool
 _edje_entry_imf_event_delete_surrounding_cb(void *data, int type __UNUSED__, void *event)
 {
    Edje *ed = data;
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en;
    Ecore_IMF_Event_Delete_Surrounding *ev = event;
-   
-   if (!rp) return 1;
+
+   if (!rp) return ECORE_CALLBACK_PASS_ON;
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
-     return 1;
-   
-   if (en->imf_context != ev->ctx) return 1;
-   
-   return 0;
+     return ECORE_CALLBACK_PASS_ON;
+
+   if (en->imf_context != ev->ctx) return ECORE_CALLBACK_PASS_ON;
+
+   return ECORE_CALLBACK_DONE;
 }
 #endif
