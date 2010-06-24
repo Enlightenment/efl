@@ -18,8 +18,8 @@ struct _Ecore_Event_Handler
    EINA_INLIST;
    ECORE_MAGIC;
    int type;
-   int (*func) (void *data, int type, void *event);
-   void  *data;
+   Eina_Bool (*func) (void *data, int type, void *event);
+   void *data;
    int       references;
    Eina_Bool delete_me : 1;
 };
@@ -29,7 +29,7 @@ struct _Ecore_Event_Filter
    EINA_INLIST;
    ECORE_MAGIC;
    void *(*func_start) (void *data);
-   int (*func_filter) (void *data, void *loop_data, int type, void *event);
+   Eina_Bool (*func_filter) (void *data, void *loop_data, int type, void *event);
    void (*func_end) (void *data, void *loop_data);
    void *loop_data;
    void *data;
@@ -98,7 +98,7 @@ static void *_ecore_event_del(Ecore_Event *event);
  * been called, will not be.
  */
 EAPI Ecore_Event_Handler *
-ecore_event_handler_add(int type, int (*func) (void *data, int type, void *event), const void *data)
+ecore_event_handler_add(int type, Eina_Bool (*func) (void *data, int type, void *event), const void *data)
 {
    Ecore_Event_Handler *eh;
 
@@ -256,7 +256,7 @@ ecore_event_type_new(void)
  * and @p data pointer to clean up.
  */
 EAPI Ecore_Event_Filter *
-ecore_event_filter_add(void * (*func_start) (void *data), int (*func_filter) (void *data, void *loop_data, int type, void *event), void (*func_end) (void *data, void *loop_data), const void *data)
+ecore_event_filter_add(void * (*func_start) (void *data), Eina_Bool (*func_filter) (void *data, void *loop_data, int type, void *event), void (*func_end) (void *data, void *loop_data), const void *data)
 {
    Ecore_Event_Filter *ef;
 
@@ -570,7 +570,7 @@ _ecore_event_call(void)
 		  Ecore_Event_Handler *eh = event_handler_current;
 		  if (!eh->delete_me)
 		    {
-		       int ret;
+		       Eina_Bool ret;
 
 		       handle_count++;
 

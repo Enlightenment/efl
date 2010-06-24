@@ -78,8 +78,8 @@ struct _CB_Data
 
 static void _ecore_con_info_readdata(CB_Data *cbdata);
 static void _ecore_con_info_slave_free(CB_Data *cbdata);
-static int _ecore_con_info_data_handler(void *data, Ecore_Fd_Handler *fd_handler);
-static int _ecore_con_info_exit_handler(void *data, int type __UNUSED__, void *event);
+static Eina_Bool _ecore_con_info_data_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_con_info_exit_handler(void *data, int type __UNUSED__, void *event);
 
 static int info_init = 0;
 static CB_Data *info_slaves = NULL;
@@ -348,7 +348,7 @@ _ecore_con_info_slave_free(CB_Data *cbdata)
    free(cbdata);
 }
 
-static int
+static Eina_Bool
 _ecore_con_info_data_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    CB_Data *cbdata;
@@ -365,10 +365,10 @@ _ecore_con_info_data_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	  }
      }
    _ecore_con_info_slave_free(cbdata);
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
-static int
+static Eina_Bool
 _ecore_con_info_exit_handler(void *data, int type __UNUSED__, void *event)
 {
    CB_Data *cbdata;
@@ -376,8 +376,8 @@ _ecore_con_info_exit_handler(void *data, int type __UNUSED__, void *event)
 
    ev = event;
    cbdata = data;
-   if (cbdata->pid != ev->pid) return 1;
-   return 0;
+   if (cbdata->pid != ev->pid) return ECORE_CALLBACK_RENEW;
+   return ECORE_CALLBACK_CANCEL; /* FIXME: Woot ??? */
    _ecore_con_info_slave_free(cbdata);
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }

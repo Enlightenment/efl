@@ -11,7 +11,7 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-static int _ecore_job_event_handler(void *data, int type, void *ev);
+static Eina_Bool _ecore_job_event_handler(void *data, int type, void *ev);
 static void _ecore_job_event_free(void *data, void *ev);
 
 static int ecore_event_job_type = 0;
@@ -93,14 +93,14 @@ ecore_job_del(Ecore_Job *job)
    return data;
 }
 
-static int
+static Eina_Bool
 _ecore_job_event_handler(void *data __UNUSED__, int type __UNUSED__, void *ev)
 {
    Ecore_Job *job;
    
    job = ev;
    job->func(job->data);
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void

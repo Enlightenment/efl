@@ -497,7 +497,7 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 }
 
 /* TODO: we need to make this work for all the states, not just sticky */
-static int
+static Eina_Bool
 _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -505,8 +505,8 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
 
    e = event;
    ee = ecore_event_window_match(e->win);
-   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
-   if (e->win != ee->prop.window) return 1;
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (e->atom == ECORE_X_ATOM_NET_WM_STATE)
      {
 	unsigned int i, num;
@@ -595,10 +595,10 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
 	  }
      }
 
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_x_event_visibility_change(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -606,8 +606,8 @@ _ecore_evas_x_event_visibility_change(void *data __UNUSED__, int type __UNUSED__
 
    e = event;
    ee = ecore_event_window_match(e->win);
-   if (!ee) return 1; /* pass on event */
-   if (e->win != ee->prop.window) return 1;
+   if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 //   printf("VIS CHANGE OBSCURED: %p %i\n", ee, e->fully_obscured);
    if (e->fully_obscured)
      {
@@ -616,45 +616,45 @@ _ecore_evas_x_event_visibility_change(void *data __UNUSED__, int type __UNUSED__
           ee->draw_ok = 0;
      }
    else ee->draw_ok = 1;
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_x_event_client_message(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Client_Message *e;
 
    e = event;
-   if (e->format != 32) return 1;
+   if (e->format != 32) return ECORE_CALLBACK_PASS_ON;
    if (e->message_type == ECORE_X_ATOM_E_COMP_SYNC_BEGIN)
      {
         ee = ecore_event_window_match(e->data.l[0]);
-        if (!ee) return 1; /* pass on event */
-        if (e->data.l[0] != (long)ee->prop.window) return 1;
+        if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+        if (e->data.l[0] != (long)ee->prop.window) return ECORE_CALLBACK_PASS_ON;
         ee->engine.x.sync_began = 1;
         ee->engine.x.sync_cancel = 0;
      }
    else if (e->message_type == ECORE_X_ATOM_E_COMP_SYNC_END)
      {
         ee = ecore_event_window_match(e->data.l[0]);
-        if (!ee) return 1; /* pass on event */
-        if (e->data.l[0] != (long)ee->prop.window) return 1;
+        if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+        if (e->data.l[0] != (long)ee->prop.window) return ECORE_CALLBACK_PASS_ON;
         ee->engine.x.sync_began = 0;
         ee->engine.x.sync_cancel = 0;
      }
    else if (e->message_type == ECORE_X_ATOM_E_COMP_SYNC_CANCEL)
      {
         ee = ecore_event_window_match(e->data.l[0]);
-        if (!ee) return 1; /* pass on event */
-        if (e->data.l[0] != (long)ee->prop.window) return 1;
+        if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+        if (e->data.l[0] != (long)ee->prop.window) return ECORE_CALLBACK_PASS_ON;
         ee->engine.x.sync_began = 0;
         ee->engine.x.sync_cancel = 1;
      }
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -662,8 +662,8 @@ _ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *e
 
    e = event;
    ee = ecore_event_window_match(e->win);
-   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
-   if (e->win != ee->prop.window) return 1;
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 /*    { */
 /*       time_t t; */
 /*       char *ct; */
@@ -702,10 +702,10 @@ _ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *e
    ecore_event_evas_modifier_lock_update(ee->evas, e->modifiers);
    evas_event_feed_mouse_in(ee->evas, e->time, NULL);
    _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -713,9 +713,9 @@ _ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *
 
    e = event;
    ee = ecore_event_window_match(e->win);
-   if ((!ee) || (ee->ignore_events)) return 1;
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
    /* pass on event */
-   if (e->win != ee->prop.window) return 1;
+   if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 /*    { */
 /*       time_t t; */
 /*       char *ct; */
@@ -757,10 +757,10 @@ _ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *
    evas_event_feed_mouse_out(ee->evas, e->time, NULL);
    if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
    if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_x_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -768,16 +768,16 @@ _ecore_evas_x_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, 
 
    e = event;
    ee = ecore_event_window_match(e->win);
-   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
-   if (e->win != ee->prop.window) return 1;
-   if (e->mode == ECORE_X_EVENT_MODE_UNGRAB) return 1;
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (e->mode == ECORE_X_EVENT_MODE_UNGRAB) return ECORE_CALLBACK_PASS_ON;
    ee->prop.focused = 1;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_x_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -785,18 +785,18 @@ _ecore_evas_x_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__,
 
    e = event;
    ee = ecore_event_window_match(e->win);
-   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
-   if (e->win != ee->prop.window) return 1;
-   if (e->mode == ECORE_X_EVENT_MODE_GRAB) return 1;
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (e->mode == ECORE_X_EVENT_MODE_GRAB) return ECORE_CALLBACK_PASS_ON;
 //   if (ee->prop.fullscreen)
 //     ecore_x_window_focus(ee->prop.window);
    evas_focus_out(ee->evas);
    ee->prop.focused = 0;
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -804,9 +804,9 @@ _ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, vo
 
    e = event;
    ee = ecore_event_window_match(e->win);
-   if (!ee) return 1; /* pass on event */
-   if (e->win != ee->prop.window) return 1;
-   if (ee->engine.x.using_bg_pixmap) return 1;
+   if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (ee->engine.x.using_bg_pixmap) return ECORE_CALLBACK_PASS_ON;
 //   printf("EXPOSE %p [%i] %i %i %ix%i\n", ee, ee->prop.avoid_damage, e->x, e->y, e->w, e->h);
    if (ee->prop.avoid_damage)
      {
@@ -861,10 +861,10 @@ _ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, vo
 				    ee->w - e->x - e->w,
 				    e->h, e->w);
      }
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_x_event_window_destroy(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -872,15 +872,15 @@ _ecore_evas_x_event_window_destroy(void *data __UNUSED__, int type __UNUSED__, v
 
    e = event;
    ee = ecore_event_window_match(e->win);
-   if (!ee) return 1; /* pass on event */
-   if (e->win != ee->prop.window) return 1;
+   if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (ee->func.fn_destroy) ee->func.fn_destroy(ee);
    _ecore_evas_x_sync_clear(ee);
    ecore_evas_free(ee);
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -888,9 +888,9 @@ _ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__,
 
    e = event;
    ee = ecore_event_window_match(e->win);
-   if (!ee) return 1; /* pass on event */
-   if (e->win != ee->prop.window) return 1;
-   if (ee->engine.x.direct_resize) return 1;
+   if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (ee->engine.x.direct_resize) return ECORE_CALLBACK_PASS_ON;
 
    if ((e->from_wm) || (ee->prop.override))
      {
@@ -941,10 +941,10 @@ _ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__,
 	  }
 	if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_x_event_window_delete_request(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -952,13 +952,13 @@ _ecore_evas_x_event_window_delete_request(void *data __UNUSED__, int type __UNUS
 
    e = event;
    ee = ecore_event_window_match(e->win);
-   if (!ee) return 1; /* pass on event */
-   if (e->win != ee->prop.window) return 1;
+   if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (ee->func.fn_delete_request) ee->func.fn_delete_request(ee);
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_x_event_window_show(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -966,16 +966,16 @@ _ecore_evas_x_event_window_show(void *data __UNUSED__, int type __UNUSED__, void
 
    e = event;
    ee = ecore_event_window_match(e->win);
-   if (!ee) return 1; /* pass on event */
-   if (e->win != ee->prop.window) return 1;
-   if (ee->visible) return 0; /* dont pass it on */
+   if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (ee->visible) return ECORE_CALLBACK_DONE; /* dont pass it on */
 //   printf("SHOW EVENT %p\n", ee);
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_x_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -983,13 +983,13 @@ _ecore_evas_x_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void
 
    e = event;
    ee = ecore_event_window_match(e->win);
-   if (!ee) return 1; /* pass on event */
-   if (e->win != ee->prop.window) return 1;
-   if (!ee->visible) return 0; /* dont pass it on */
+   if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (!ee->visible) return ECORE_CALLBACK_DONE; /* dont pass it on */
 //   printf("HIDE EVENT %p\n", ee);
    ee->visible = 0;
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 /* FIXME, should be in idler */

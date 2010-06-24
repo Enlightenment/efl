@@ -225,12 +225,12 @@ _ecore_ipc_ddlt_int(int in, int prev, int mode)
    return 0;
 }
 
-static int _ecore_ipc_event_client_add(void *data, int ev_type, void *ev);
-static int _ecore_ipc_event_client_del(void *data, int ev_type, void *ev);
-static int _ecore_ipc_event_server_add(void *data, int ev_type, void *ev);
-static int _ecore_ipc_event_server_del(void *data, int ev_type, void *ev);
-static int _ecore_ipc_event_client_data(void *data, int ev_type, void *ev);
-static int _ecore_ipc_event_server_data(void *data, int ev_type, void *ev);
+static Eina_Bool _ecore_ipc_event_client_add(void *data, int ev_type, void *ev);
+static Eina_Bool _ecore_ipc_event_client_del(void *data, int ev_type, void *ev);
+static Eina_Bool _ecore_ipc_event_server_add(void *data, int ev_type, void *ev);
+static Eina_Bool _ecore_ipc_event_server_del(void *data, int ev_type, void *ev);
+static Eina_Bool _ecore_ipc_event_client_data(void *data, int ev_type, void *ev);
+static Eina_Bool _ecore_ipc_event_server_data(void *data, int ev_type, void *ev);
 static void _ecore_ipc_event_client_add_free(void *data, void *ev);
 static void _ecore_ipc_event_client_del_free(void *data, void *ev);
 static void _ecore_ipc_event_client_data_free(void *data, void *ev);
@@ -1010,20 +1010,20 @@ ecore_ipc_ssl_available_get(void)
 }
 
 
-static int
+static Eina_Bool
 _ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Client_Add *e;
 
    e = ev;
-   if (!eina_list_data_find(servers, ecore_con_server_data_get(ecore_con_client_server_get(e->client)))) return 1;
+   if (!eina_list_data_find(servers, ecore_con_server_data_get(ecore_con_client_server_get(e->client)))) return ECORE_CALLBACK_RENEW;
    /* handling code here */
      {
 	Ecore_Ipc_Client *cl;
 	Ecore_Ipc_Server *svr;
 
 	cl = calloc(1, sizeof(Ecore_Ipc_Client));
-	if (!cl) return 0;
+	if (!cl) return ECORE_CALLBACK_CANCEL;
 	svr = ecore_con_server_data_get(ecore_con_client_server_get(e->client));
 	ECORE_MAGIC_SET(cl, ECORE_MAGIC_IPC_CLIENT);
 	cl->client = e->client;
@@ -1045,16 +1045,16 @@ _ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	       }
 	  }
      }
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
-static int
+static Eina_Bool
 _ecore_ipc_event_client_del(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Client_Del *e;
 
    e = ev;
-   if (!eina_list_data_find(servers, ecore_con_server_data_get(ecore_con_client_server_get(e->client)))) return 1;
+   if (!eina_list_data_find(servers, ecore_con_server_data_get(ecore_con_client_server_get(e->client)))) return ECORE_CALLBACK_RENEW;
    /* handling code here */
      {
 	Ecore_Ipc_Client *cl;
@@ -1079,16 +1079,16 @@ _ecore_ipc_event_client_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	       }
 	  }
      }
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
-static int
+static Eina_Bool
 _ecore_ipc_event_server_add(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Server_Add *e;
 
    e = ev;
-   if (!eina_list_data_find(servers, ecore_con_server_data_get(e->server))) return 1;
+   if (!eina_list_data_find(servers, ecore_con_server_data_get(e->server))) return ECORE_CALLBACK_RENEW;
    /* handling code here */
      {
 	Ecore_Ipc_Server *svr;
@@ -1108,16 +1108,16 @@ _ecore_ipc_event_server_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	       }
 	  }
      }
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
-static int
+static Eina_Bool
 _ecore_ipc_event_server_del(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Server_Del *e;
 
    e = ev;
-   if (!eina_list_data_find(servers, ecore_con_server_data_get(e->server))) return 1;
+   if (!eina_list_data_find(servers, ecore_con_server_data_get(e->server))) return ECORE_CALLBACK_RENEW;
    /* handling code here */
      {
 	Ecore_Ipc_Server *svr;
@@ -1137,7 +1137,7 @@ _ecore_ipc_event_server_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	       }
 	  }
      }
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 #define CLSZ(_n) \
@@ -1181,13 +1181,13 @@ _ecore_ipc_event_server_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
      } \
    msg._member = _ecore_ipc_ddlt_int(d, cl->prev.i._member, md);
 
-static int
+static Eina_Bool
 _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Client_Data *e;
 
    e = ev;
-   if (!eina_list_data_find(servers, ecore_con_server_data_get(ecore_con_client_server_get(e->client)))) return 1;
+   if (!eina_list_data_find(servers, ecore_con_server_data_get(ecore_con_client_server_get(e->client)))) return ECORE_CALLBACK_RENEW;
    /* handling code here */
      {
 	Ecore_Ipc_Client *cl;
@@ -1211,7 +1211,7 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 		  free(cl->buf);
 		  cl->buf = 0;
 		  cl->buf_size  = 0;
-		  return 0;
+		  return ECORE_CALLBACK_CANCEL;
 	       }
 	     cl->buf = buf;
 	     memcpy(cl->buf + cl->buf_size, e->data, e->size);
@@ -1241,7 +1241,7 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	     if ((cl->buf_size - offset) < s)
 	       {
 		  if (offset > 0) goto scroll;
-		  return 0;
+		  return ECORE_CALLBACK_CANCEL;
 	       }
 
 	     s = 4;
@@ -1276,7 +1276,7 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 		       if (msg.size > 0)
 			 {
 			    buf = malloc(msg.size);
-			    if (!buf) return 0;
+			    if (!buf) return ECORE_CALLBACK_CANCEL;
 			    memcpy(buf, cl->buf + offset + s, msg.size);
 			 }
 		       if (!cl->delete_me)
@@ -1306,7 +1306,7 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 		       free(cl->buf);
 		       cl->buf = NULL;
 		       cl->buf_size = 0;
-		       return 0;
+		       return ECORE_CALLBACK_CANCEL;
 		    }
 		  goto redo;
 	       }
@@ -1321,7 +1321,7 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 		  free(cl->buf);
 		  cl->buf = NULL;
 		  cl->buf_size = 0;
-		  return 0;
+		  return ECORE_CALLBACK_CANCEL;
 	       }
 	     memcpy(buf, cl->buf + offset, cl->buf_size - offset);
 	     free(cl->buf);
@@ -1329,7 +1329,7 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	     cl->buf_size -= offset;
 	  }
      }
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 #define SVSZ(_n) \
@@ -1373,13 +1373,13 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
      } \
    msg._member = _ecore_ipc_ddlt_int(d, svr->prev.i._member, md);
 
-static int
+static Eina_Bool
 _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Server_Data *e;
 
    e = ev;
-   if (!eina_list_data_find(servers, ecore_con_server_data_get(e->server))) return 1;
+   if (!eina_list_data_find(servers, ecore_con_server_data_get(e->server))) return ECORE_CALLBACK_RENEW;
    /* handling code here */
      {
 	Ecore_Ipc_Server *svr;
@@ -1403,7 +1403,7 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 		  free(svr->buf);
 		  svr->buf = 0;
 		  svr->buf_size  = 0;
-		  return 0;
+		  return ECORE_CALLBACK_CANCEL;
 	       }
 	     svr->buf = buf;
 	     memcpy(svr->buf + svr->buf_size, e->data, e->size);
@@ -1433,7 +1433,7 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	     if ((svr->buf_size - offset) < s)
 	       {
 		  if (offset > 0) goto scroll;
-		  return 0;
+		  return ECORE_CALLBACK_CANCEL;
 	       }
 
 	     s = 4;
@@ -1457,7 +1457,7 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 		       if (msg.size > 0)
 			 {
 			    buf = malloc(msg.size);
-			    if (!buf) return 0;
+			    if (!buf) return ECORE_CALLBACK_CANCEL;
 			    memcpy(buf, svr->buf + offset + s, msg.size);
 			 }
 		       if (!svr->delete_me)
@@ -1487,7 +1487,7 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 		       free(svr->buf);
 		       svr->buf = NULL;
 		       svr->buf_size = 0;
-		       return 0;
+		       return ECORE_CALLBACK_CANCEL;
 		    }
 		  goto redo;
 	       }
@@ -1502,7 +1502,7 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 		  free(svr->buf);
 		  svr->buf = NULL;
 		  svr->buf_size = 0;
-		  return 0;
+		  return ECORE_CALLBACK_CANCEL;
 	       }
 	     memcpy(buf, svr->buf + offset, svr->buf_size - offset);
 	     free(svr->buf);
@@ -1510,7 +1510,7 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	     svr->buf_size -= offset;
 	  }
      }
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void

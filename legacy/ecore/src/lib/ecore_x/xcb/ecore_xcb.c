@@ -12,8 +12,8 @@
 #include "ecore_xcb_private.h"
 #include "Ecore_X_Atoms.h"
 
-static int _ecore_xcb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
-static int _ecore_xcb_fd_handler_buf(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_xcb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_xcb_fd_handler_buf(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_xcb_key_mask_get(xcb_keysym_t sym);
 static int _ecore_xcb_event_modifier(unsigned int state);
 
@@ -912,7 +912,7 @@ handle_event(xcb_generic_event_t *ev)
      }
 }
 
-static int
+static Eina_Bool
 _ecore_xcb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    xcb_connection_t    *c;
@@ -932,10 +932,10 @@ _ecore_xcb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    while ((ev = xcb_poll_for_event(c)))
      handle_event(ev);
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
-static int
+static Eina_Bool
 _ecore_xcb_fd_handler_buf(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    xcb_connection_t *c;
@@ -944,9 +944,9 @@ _ecore_xcb_fd_handler_buf(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 
    _ecore_xcb_event_buffered = xcb_poll_for_event(c);
    if (!_ecore_xcb_event_buffered)
-     return 0;
+     return ECORE_CALLBACK_CANCEL;
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 /* FIXME: possible roundtrip */
@@ -1507,13 +1507,13 @@ ecore_x_ungrab(void)
 
 int      _ecore_window_grabs_num = 0;
 Ecore_X_Window  *_ecore_window_grabs = NULL;
-int    (*_ecore_window_grab_replay_func) (void *data, int event_type, void *event);
+Eina_Bool (*_ecore_window_grab_replay_func) (void *data, int event_type, void *event);
 void    *_ecore_window_grab_replay_data;
 
 EAPI void
-ecore_x_passive_grab_replay_func_set(int (*func) (void *data,
-                                                  int   event_type,
-                                                  void *event),
+ecore_x_passive_grab_replay_func_set(Eina_Bool (*func) (void *data,
+							int   event_type,
+							void *event),
                                      void *data)
 {
    _ecore_window_grab_replay_func = func;

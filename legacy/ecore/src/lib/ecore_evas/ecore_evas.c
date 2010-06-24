@@ -24,13 +24,13 @@
 int _ecore_evas_log_dom = -1;
 static int _ecore_evas_init_count = 0;
 static Ecore_Fd_Handler *_ecore_evas_async_events_fd = NULL;
-static int _ecore_evas_async_events_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_evas_async_events_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 static Ecore_Evas *ecore_evases = NULL;
 static int _ecore_evas_fps_debug = 0;
 
-static int
+static Eina_Bool
 _ecore_evas_idle_enter(void *data __UNUSED__)
 {
    Ecore_Evas *ee;
@@ -38,7 +38,7 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
    double t2 = 0.0;
    int rend = 0;
    
-   if (!ecore_evases) return 1;
+   if (!ecore_evases) return ECORE_CALLBACK_RENEW;
    if (_ecore_evas_fps_debug)
      {
         t1 = ecore_time_get();
@@ -57,7 +57,7 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
         if (rend)
           _ecore_evas_fps_debug_rendertime_add(t2 - t1);
      }
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 /**
@@ -2794,7 +2794,7 @@ _ecore_evas_free(Ecore_Evas *ee)
    free(ee);
 }
 
-static int
+static Eina_Bool
 _ecore_evas_cb_idle_flush(void *data)
 {
    Ecore_Evas *ee;
@@ -2802,15 +2802,15 @@ _ecore_evas_cb_idle_flush(void *data)
    ee = (Ecore_Evas *)data;
    evas_render_idle_flush(ee->evas);
    ee->engine.idle_flush_timer = NULL;
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_async_events_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    evas_async_events_process();
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 void

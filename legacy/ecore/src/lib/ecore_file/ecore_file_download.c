@@ -41,8 +41,8 @@ Ecore_File_Download_Job *_ecore_file_download_curl(const char *url, const char *
 						   int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow),
 						   void *data);
 
-static int _ecore_file_download_url_complete_cb(void *data, int type, void *event);
-static int _ecore_file_download_url_progress_cb(void *data, int type, void *event);
+static Eina_Bool _ecore_file_download_url_complete_cb(void *data, int type, void *event);
+static Eina_Bool _ecore_file_download_url_progress_cb(void *data, int type, void *event);
 #endif
 
 static Ecore_Event_Handler	*_url_complete_handler = NULL;
@@ -201,15 +201,14 @@ _ecore_file_download_url_compare_job(const void *data1, const void *data2)
    return -1;
 }
 
-static int
+static Eina_Bool
 _ecore_file_download_url_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Con_Event_Url_Complete	*ev = event;
    Ecore_File_Download_Job	*job;
 
    job = eina_list_search_unsorted(_job_list, _ecore_file_download_url_compare_job, ev->url_con);
-   if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB)) return 1;
-
+   if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB)) return ECORE_CALLBACK_PASS_ON;
 
    if (job->completion_cb)
      job->completion_cb(ecore_con_url_data_get(job->url_con), job->dst, !ev->status);
@@ -219,10 +218,10 @@ _ecore_file_download_url_complete_cb(void *data __UNUSED__, int type __UNUSED__,
    free(job->dst);
    free(job);
 
-   return 0;
+   return ECORE_CALLBACK_DONE;
 }
 
-static int
+static Eina_Bool
 _ecore_file_download_url_progress_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
 /* this reports the downloads progress. if we return 0, then download
@@ -231,7 +230,7 @@ _ecore_file_download_url_progress_cb(void *data __UNUSED__, int type __UNUSED__,
    Ecore_File_Download_Job	*job;
 
    job = eina_list_search_unsorted(_job_list, _ecore_file_download_url_compare_job, ev->url_con);
-   if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB)) return 1;
+   if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB)) return ECORE_CALLBACK_PASS_ON;
 
    if (job->progress_cb)
      if (job->progress_cb(ecore_con_url_data_get(job->url_con), job->dst,
@@ -243,10 +242,10 @@ _ecore_file_download_url_progress_cb(void *data __UNUSED__, int type __UNUSED__,
 	  free(job->dst);
 	  free(job);
 
-	  return 1;
+	  return ECORE_CALLBACK_PASS_ON;
        }
 
-   return 0;
+   return ECORE_CALLBACK_DONE;
 }
 
 Ecore_File_Download_Job *

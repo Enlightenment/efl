@@ -506,7 +506,7 @@ _ecore_x_event_handle_button_press(xcb_generic_event_t *event)
 	     if ((_ecore_window_grabs[i] == ev->event) ||
 		 (_ecore_window_grabs[i] == ev->child))
 	       {
-		  int replay = 0;
+		  Eina_Bool replay = EINA_FALSE;
 
 		  if (_ecore_window_grab_replay_func)
 		    replay = _ecore_window_grab_replay_func(_ecore_window_grab_replay_data,
@@ -568,7 +568,7 @@ _ecore_x_event_handle_button_press(xcb_generic_event_t *event)
                 if ((_ecore_window_grabs[i] == ev->event) ||
                     (_ecore_window_grabs[i] == ev->child))
                   {
-                     int replay = 0;
+                     Eina_Bool replay = EINA_FALSE;
 
                      if (_ecore_window_grab_replay_func)
                        replay = _ecore_window_grab_replay_func(_ecore_window_grab_replay_data,

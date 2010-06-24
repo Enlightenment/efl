@@ -55,11 +55,11 @@ static void _ecore_con_cb_udp_listen(void *data, Ecore_Con_Info *info);
 static void _ecore_con_server_free(Ecore_Con_Server *svr);
 static void _ecore_con_client_free(Ecore_Con_Client *cl);
 
-static int _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler);
-static int _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler);
-static int _ecore_con_cl_udp_handler(void *data, Ecore_Fd_Handler *fd_handler);
-static int _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler);
-static int _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_con_cl_udp_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler);
 
 static void _ecore_con_server_flush(Ecore_Con_Server *svr);
 static void _ecore_con_client_flush(Ecore_Con_Client *cl);
@@ -1121,7 +1121,7 @@ _ecore_con_pretty_ip(struct sockaddr *client_addr, socklen_t size)
    return strdup(ipbuf);
 }
 
-static int
+static Eina_Bool
 _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Ecore_Con_Server   *svr;
@@ -1130,12 +1130,12 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    size_t              size_in;
 
    svr = data;
-   if (svr->dead) return 1;
-   if (svr->delete_me) return 1;
+   if (svr->dead) return ECORE_CALLBACK_RENEW;
+   if (svr->delete_me) return ECORE_CALLBACK_RENEW;
    if ((svr->client_limit >= 0) && (!svr->reject_excess_clients))
      {
 	if (eina_list_count(svr->clients) >= (unsigned int)svr->client_limit)
-	  return 1;
+	  return ECORE_CALLBACK_RENEW;
      }
    /* a new client */
    size_in = sizeof(incoming);
@@ -1151,7 +1151,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	    if (eina_list_count(svr->clients) >= (unsigned int)svr->client_limit)
 	      {
 		close(new_fd);
-		return 1;
+		return ECORE_CALLBACK_RENEW;
 	      }
 	  }
 
@@ -1159,7 +1159,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	if (!cl)
 	  {
 	     close(new_fd);
-	     return 1;
+	     return ECORE_CALLBACK_RENEW;
 	  }
 
 	fcntl(new_fd, F_SETFL, O_NONBLOCK);
@@ -1172,7 +1172,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	  {
 	    close(new_fd);
 	    ecore_con_ssl_client_shutdown(cl);
-	    return 1;
+	    return ECORE_CALLBACK_RENEW;
 	  }
 
 	cl->fd_handler =
@@ -1196,17 +1196,17 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	       }
 	  }
      }
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
-static int
+static Eina_Bool
 _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    Ecore_Con_Server   *svr;
 
    svr = data;
-   if (svr->dead) return 1;
-   if (svr->delete_me) return 1;
+   if (svr->dead) return ECORE_CALLBACK_RENEW;
+   if (svr->delete_me) return ECORE_CALLBACK_RENEW;
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      {
 	unsigned char *inbuf = NULL;
@@ -1214,7 +1214,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
         int            tries;
 
 	if (svr->connecting && (svr_try_connect(svr) != ECORE_CON_CONNECTED))
-	   return 1;
+	   return ECORE_CALLBACK_RENEW;
 
 	for (tries = 0; tries < 16; tries++)
 	  {
@@ -1273,21 +1273,21 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
    else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
      {
 	if (svr->connecting && !svr_try_connect (svr))
-	   return 1;
+	   return ECORE_CALLBACK_RENEW;
 	_ecore_con_server_flush(svr);
      }
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
-static int
+static Eina_Bool
 _ecore_con_cl_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    Ecore_Con_Server   *svr;
 
    svr = data;
-   if (svr->dead) return 1;
-   if (svr->delete_me) return 1;
+   if (svr->dead) return ECORE_CALLBACK_RENEW;
+   if (svr->delete_me) return ECORE_CALLBACK_RENEW;
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      {
        unsigned char buf[65536];
@@ -1333,18 +1333,18 @@ _ecore_con_cl_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
    else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
        _ecore_con_server_flush(svr);
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
-static int
+static Eina_Bool
 _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    Ecore_Con_Server   *svr;
    Ecore_Con_Client *cl = NULL;
 
    svr = data;
-   if (svr->dead) return 1;
-   if (svr->delete_me) return 1;
+   if (svr->dead) return ECORE_CALLBACK_RENEW;
+   if (svr->delete_me) return ECORE_CALLBACK_RENEW;
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      {
        unsigned char buf[READBUFSIZ];
@@ -1371,7 +1371,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	       /* Create a new client for use in the client data event */
 	       cl = calloc(1, sizeof(Ecore_Con_Client));
 	       if(cl == NULL)
-		 return 1;
+		 return ECORE_CALLBACK_RENEW;
 	       cl->buf = NULL;
 	       cl->fd = 0;
 	       cl->fd_handler = NULL;
@@ -1381,7 +1381,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	       if(cl->client_addr == NULL)
 		 {
 		   free(cl);
-		   return 1;
+		   return ECORE_CALLBACK_RENEW;
 		 }
 	       memcpy(cl->client_addr, &client_addr, client_addr_len);
 	       ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
@@ -1394,7 +1394,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 		 {
 		   free(cl->client_addr);
 		   free(cl);
-		   return 1;
+		   return ECORE_CALLBACK_RENEW;
 		 }
 
 	       memcpy(inbuf, buf, num);
@@ -1456,17 +1456,17 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
      }
    else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
      _ecore_con_client_flush(cl);
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
-static int
+static Eina_Bool
 _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    Ecore_Con_Client   *cl;
 
    cl = data;
-   if (cl->dead) return 1;
-   if (cl->delete_me) return 1;
+   if (cl->dead) return ECORE_CALLBACK_RENEW;
+   if (cl->delete_me) return ECORE_CALLBACK_RENEW;
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      {
 	unsigned char *inbuf = NULL;
@@ -1545,7 +1545,7 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
      }
    else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
      _ecore_con_client_flush(cl);
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void

@@ -53,8 +53,8 @@ static fd_set info_readers, info_writers;
 
 static void _ecore_con_info_ares_nameinfo(Ecore_Con_CAres *arg, int status, int timeouts, char *node, char *service);
 static void _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg, int status, int timeouts, struct hostent *hostent);
-static int _ecore_con_info_cares_fd_cb(void *data, Ecore_Fd_Handler *fd_handler);
-static int _ecore_con_info_cares_timeout_cb(void *data);
+static Eina_Bool _ecore_con_info_cares_fd_cb(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_con_info_cares_timeout_cb(void *data);
 static void _ecore_con_info_cares_clean(void);
 
 int
@@ -367,22 +367,22 @@ _ecore_con_info_cares_clean(void)
      }
 }
 
-static int
+static Eina_Bool
 _ecore_con_info_cares_timeout_cb(void *data)
 {
    ares_process(info_channel, &info_readers, &info_writers);
    _ecore_con_info_cares_clean();
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
-static int
+static Eina_Bool
 _ecore_con_info_cares_fd_cb(void *data, Ecore_Fd_Handler *fd_handler)
 {
    ares_process(info_channel, &info_readers, &info_writers);
    _ecore_con_info_cares_clean();
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void

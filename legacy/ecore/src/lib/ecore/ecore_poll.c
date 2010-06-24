@@ -18,7 +18,7 @@ struct _Ecore_Poller
    ECORE_MAGIC;
    int           ibit;
    unsigned char delete_me : 1;
-   int           (*func) (void *data);
+   Eina_Bool    (*func) (void *data);
    void          *data;
 };
 
@@ -45,7 +45,7 @@ static unsigned short  poller_counters[16] =
 };
 
 static void _ecore_poller_next_tick_eval(void);
-static int _ecore_poller_cb_timer(void *data);
+static Eina_Bool _ecore_poller_cb_timer(void *data);
 
 static void
 _ecore_poller_next_tick_eval(void)
@@ -106,7 +106,7 @@ _ecore_poller_next_tick_eval(void)
    poll_cur_interval = interval;
 }
 
-static int
+static Eina_Bool
 _ecore_poller_cb_timer(void *data __UNUSED__)
 {
    int i;
@@ -187,11 +187,11 @@ _ecore_poller_cb_timer(void *data __UNUSED__)
    /* if the timer was deleted then there is no point returning 1 - ambiguous
     * if we do as it im plies "keep running me" but we have been deleted
     * anyway */
-   if (!timer) return 0;
+   if (!timer) return ECORE_CALLBACK_CANCEL;
 
    /* adjust interval */
    ecore_timer_interval_set(timer, poll_cur_interval);
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 /**
@@ -282,7 +282,7 @@ ecore_poller_poll_interval_get(Ecore_Poller_Type type __UNUSED__)
  * invalid.
  */
 EAPI Ecore_Poller *
-ecore_poller_add(Ecore_Poller_Type type __UNUSED__, int interval, int (*func) (void *data), const void *data)
+ecore_poller_add(Ecore_Poller_Type type __UNUSED__, int interval, Eina_Bool (*func) (void *data), const void *data)
 {
    Ecore_Poller *poller;
    int ibit;
@@ -326,7 +326,7 @@ ecore_poller_add(Ecore_Poller_Type type __UNUSED__, int interval, int (*func) (v
  * a poll rate without deleting and re-creating a poller.
  * @ingroup Ecore_Poller_Group
  */
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_poller_poller_interval_set(Ecore_Poller *poller, int interval)
 {
    int ibit;
@@ -335,7 +335,7 @@ ecore_poller_poller_interval_set(Ecore_Poller *poller, int interval)
      {
         ECORE_MAGIC_FAIL(poller, ECORE_MAGIC_POLLER,
            "ecore_poller_poller_interval_set");
-        return 0;
+        return EINA_FALSE;
      }
 
    /* interval MUST be a power of 2, so enforce it */
@@ -350,7 +350,7 @@ ecore_poller_poller_interval_set(Ecore_Poller *poller, int interval)
    if (ibit > 15) ibit = 15;
    /* if interval specified is the same as interval set, return true without wasting time */
    if (poller->ibit == ibit)
-     return 1;
+     return EINA_TRUE;
    pollers[poller->ibit] = (Ecore_Poller *) eina_inlist_remove(EINA_INLIST_GET(pollers[poller->ibit]), EINA_INLIST_GET(poller));
    poller->ibit = ibit;
    pollers[poller->ibit] = (Ecore_Poller *) eina_inlist_prepend(EINA_INLIST_GET(pollers[poller->ibit]), EINA_INLIST_GET(poller));
@@ -358,7 +358,7 @@ ecore_poller_poller_interval_set(Ecore_Poller *poller, int interval)
      just_added_poller++;
    else
      _ecore_poller_next_tick_eval();
-   return 1;
+   return EINA_TRUE;
 }
 
 /**

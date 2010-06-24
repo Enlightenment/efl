@@ -55,11 +55,11 @@ _ecore_thread_pipe_free(void *data __UNUSED__, void *event)
    ecore_pipe_del(p);
 }
 
-static int
+static Eina_Bool
 _ecore_thread_pipe_del(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
    /* This is a hack to delay pipe destruction until we are out of it's internal loop. */
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void

@@ -51,7 +51,7 @@ struct _Ecore_File_Monitor_Inotify
 static Ecore_Fd_Handler *_fdh = NULL;
 static Ecore_File_Monitor    *_monitors = NULL;
 
-static int                 _ecore_file_monitor_inotify_handler(void *data, Ecore_Fd_Handler *fdh);
+static Eina_Bool           _ecore_file_monitor_inotify_handler(void *data, Ecore_Fd_Handler *fdh);
 static Ecore_File_Monitor *_ecore_file_monitor_inotify_monitor_find(int wd);
 static void                _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask);
 static int                 _ecore_file_monitor_inotify_monitor(Ecore_File_Monitor *em, const char *path);
@@ -147,7 +147,7 @@ ecore_file_monitor_inotify_del(Ecore_File_Monitor *em)
    free(em);
 }
 
-static int
+static Eina_Bool
 _ecore_file_monitor_inotify_handler(void *data __UNUSED__, Ecore_Fd_Handler *fdh)
 {
    Ecore_File_Monitor *em;
@@ -170,7 +170,7 @@ _ecore_file_monitor_inotify_handler(void *data __UNUSED__, Ecore_Fd_Handler *fdh
 	_ecore_file_monitor_inotify_events(em, (event->len ? event->name : NULL), event->mask);
      }
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Ecore_File_Monitor *

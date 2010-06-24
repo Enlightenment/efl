@@ -46,7 +46,7 @@ EAPI Ecore_Version *ecore_version = &_version;
    if (Global < (Local))			\
      Global = Local;
 
-static int _ecore_memory_statistic(void *data);
+static Eina_Bool _ecore_memory_statistic(void *data);
 static int _ecore_memory_max_total = 0;
 static int _ecore_memory_max_free = 0;
 static pid_t _ecore_memory_pid = 0;
@@ -386,7 +386,7 @@ _ecore_fps_debug_runtime_add(double t)
 }
 
 #if HAVE_MALLINFO
-static int
+static Eina_Bool
 _ecore_memory_statistic(__UNUSED__ void *data)
 {
    struct mallinfo mi;
@@ -415,6 +415,6 @@ _ecore_memory_statistic(__UNUSED__ void *data)
    KEEP_MAX(_ecore_memory_max_total, mi.uordblks);
    KEEP_MAX(_ecore_memory_max_free, mi.fordblks);
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 #endif

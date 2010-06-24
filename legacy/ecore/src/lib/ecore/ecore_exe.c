@@ -144,15 +144,15 @@ struct _ecore_exe_dead_exe
 };
 
 static inline void _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags);
-static int _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_Exe_Flags flags);
-static int _ecore_exe_data_error_handler(void *data, Ecore_Fd_Handler *fd_handler);
-static int _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler);
-static int _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_Exe_Flags flags);
+static Eina_Bool _ecore_exe_data_error_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static void _ecore_exe_flush(Ecore_Exe * exe);
 static void _ecore_exe_event_exe_data_free(void *data __UNUSED__, void *ev);
 static Ecore_Exe *_ecore_exe_is_it_alive(pid_t pid);
-static int _ecore_exe_make_sure_its_dead(void *data);
-static int _ecore_exe_make_sure_its_really_dead(void *data);
+static Eina_Bool _ecore_exe_make_sure_its_dead(void *data);
+static Eina_Bool _ecore_exe_make_sure_its_really_dead(void *data);
 static Ecore_Exe_Event_Add *_ecore_exe_event_add_new(void);
 static void _ecore_exe_event_add_free(void *data, void *ev);
 static void _ecore_exe_dead_attach(Ecore_Exe *exe);
@@ -744,25 +744,25 @@ ecore_exe_send(Ecore_Exe * exe, const void *data, int size)
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
 	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_send");
-	return 0;
+	return EINA_FALSE;
      }
 
    if (exe->close_stdin)
      {
 	ERR("Ecore_Exe %p stdin is closed! Cannot send %d bytes from %p",
 	    exe, size, data);
-	return 0;
+	return EINA_FALSE;
      }
 
    if (exe->child_fd_write == -1)
      {
 	ERR("Ecore_Exe %p created without ECORE_EXE_PIPE_WRITE! "
 	    "Cannot send %d bytes from %p", exe, size, data);
-	return 0;
+	return EINA_FALSE;
      }
 
    buf = realloc(exe->write_data_buf, exe->write_data_size + size);
-   if (buf == NULL) return 0;
+   if (buf == NULL) return EINA_FALSE;
 
    exe->write_data_buf = buf;
    memcpy((char *)exe->write_data_buf + exe->write_data_size, data, size);
@@ -771,7 +771,7 @@ ecore_exe_send(Ecore_Exe * exe, const void *data, int size)
    if (exe->write_fd_handler)
       ecore_main_fd_handler_active_set(exe->write_fd_handler, ECORE_FD_WRITE);
 
-   return 1;
+   return EINA_TRUE;
 }
 
 /**
@@ -1382,7 +1382,7 @@ _ecore_exe_is_it_alive(pid_t pid)
    return exe;
 }
 
-static int
+static Eina_Bool
 _ecore_exe_make_sure_its_dead(void *data)
 {
    struct _ecore_exe_dead_exe *dead;
@@ -1411,10 +1411,10 @@ _ecore_exe_make_sure_its_dead(void *data)
 	     free(dead);
 	  }
      }
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
-static int
+static Eina_Bool
 _ecore_exe_make_sure_its_really_dead(void *data)
 {
    struct _ecore_exe_dead_exe *dead;
@@ -1436,7 +1436,7 @@ _ecore_exe_make_sure_its_really_dead(void *data)
 	IF_FREE(dead->cmd);
 	free(dead);
      }
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 void
@@ -1575,7 +1575,7 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
    return;
 }
 
-static int
+static Eina_Bool
 _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_Exe_Flags flags)
 {
    Ecore_Exe *exe;
@@ -1700,24 +1700,24 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
 	  }
      }
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
-static int
+static Eina_Bool
 _ecore_exe_data_error_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    return _ecore_exe_data_generic_handler(data, fd_handler,
 					  ECORE_EXE_PIPE_ERROR);
 }
 
-static int
+static Eina_Bool
 _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    return _ecore_exe_data_generic_handler(data, fd_handler,
 					  ECORE_EXE_PIPE_READ);
 }
 
-static int
+static Eina_Bool
 _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Ecore_Exe *exe;
@@ -1744,7 +1744,7 @@ _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED_
 	IF_FREE(exe->write_data_buf);
      }
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void

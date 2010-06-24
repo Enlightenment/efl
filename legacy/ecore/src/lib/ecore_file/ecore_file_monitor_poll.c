@@ -41,7 +41,7 @@ static Ecore_Timer   *_timer = NULL;
 static Ecore_File_Monitor *_monitors = NULL;
 static int          _lock = 0;
 
-static int         _ecore_file_monitor_poll_handler(void *data);
+static Eina_Bool   _ecore_file_monitor_poll_handler(void *data);
 static void        _ecore_file_monitor_poll_check(Ecore_File_Monitor *em);
 static int         _ecore_file_monitor_poll_checking(Ecore_File_Monitor *em, char *name);
 
@@ -178,7 +178,7 @@ ecore_file_monitor_poll_del(Ecore_File_Monitor *em)
      }
 }
 
-static int
+static Eina_Bool
 _ecore_file_monitor_poll_handler(void *data __UNUSED__)
 {
    Ecore_File_Monitor *l;
@@ -202,7 +202,7 @@ _ecore_file_monitor_poll_handler(void *data __UNUSED__)
 	if (ECORE_FILE_MONITOR_POLL(em)->deleted)
 	  ecore_file_monitor_del(em);
      }
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void

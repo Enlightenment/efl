@@ -59,9 +59,9 @@ struct _Ecore_Fd_Handler
    ECORE_MAGIC;
    int                      fd;
    Ecore_Fd_Handler_Flags   flags;
-   int                    (*func) (void *data, Ecore_Fd_Handler *fd_handler);
+   Eina_Bool              (*func) (void *data, Ecore_Fd_Handler *fd_handler);
    void                    *data;
-   int                    (*buf_func) (void *data, Ecore_Fd_Handler *fd_handler);
+   Eina_Bool              (*buf_func) (void *data, Ecore_Fd_Handler *fd_handler);
    void                    *buf_data;
    void                   (*prep_func) (void *data, Ecore_Fd_Handler *fd_handler);
    void                    *prep_data;
@@ -78,7 +78,7 @@ struct _Ecore_Win32_Handler
    EINA_INLIST;
    ECORE_MAGIC;
    HANDLE         h;
-   int          (*func) (void *data, Ecore_Win32_Handler *win32_handler);
+   Eina_Bool    (*func) (void *data, Ecore_Win32_Handler *win32_handler);
    void          *data;
    int            references;
    Eina_Bool      delete_me : 1;
@@ -249,7 +249,9 @@ ecore_main_loop_select_func_get(void)
  * @ingroup Ecore_FD_Handler_Group
  */
 EAPI Ecore_Fd_Handler *
-ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data, int (*buf_func) (void *buf_data, Ecore_Fd_Handler *fd_handler), const void *buf_data)
+ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags,
+			  Eina_Bool (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data,
+			  Eina_Bool (*buf_func) (void *buf_data, Ecore_Fd_Handler *fd_handler), const void *buf_data)
 {
    Ecore_Fd_Handler *fdh;
 
@@ -277,7 +279,7 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (voi
 #ifdef _WIN32
 EAPI Ecore_Win32_Handler *
 ecore_main_win32_handler_add(void *h,
-                             int (*func) (void *data, Ecore_Win32_Handler *wh),
+                             Eina_Bool (*func) (void *data, Ecore_Win32_Handler *wh),
                              const void *data)
 {
    Ecore_Win32_Handler *wh;
@@ -299,7 +301,7 @@ ecore_main_win32_handler_add(void *h,
 #else
 EAPI Ecore_Win32_Handler *
 ecore_main_win32_handler_add(void *h __UNUSED__,
-                             int (*func) (void *data, Ecore_Win32_Handler *wh) __UNUSED__,
+                             Eina_Bool (*func) (void *data, Ecore_Win32_Handler *wh) __UNUSED__,
                              const void *data __UNUSED__)
 {
    return NULL;

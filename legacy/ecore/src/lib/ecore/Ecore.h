@@ -84,8 +84,11 @@ extern "C" {
    
    EAPI extern Ecore_Version *ecore_version;
 
-#define ECORE_CALLBACK_CANCEL 0 /**< Return value to remove a callback */
-#define ECORE_CALLBACK_RENEW 1  /**< Return value to keep a callback */
+#define ECORE_CALLBACK_CANCEL EINA_FALSE /**< Return value to remove a callback */
+#define ECORE_CALLBACK_RENEW EINA_TRUE  /**< Return value to keep a callback */
+
+#define ECORE_CALLBACK_PASS_ON EINA_TRUE /**< Return value to pass event to next handler */
+#define ECORE_CALLBACK_DONE EINA_FALSE /**< Return value to stop event handling */
 
 #define ECORE_EVENT_NONE            0
 #define ECORE_EVENT_SIGNAL_USER     1 /**< User signal event */
@@ -257,12 +260,12 @@ extern "C" {
    EAPI void ecore_app_args_get(int *argc, char ***argv);
    EAPI void ecore_app_restart(void);
 
-   EAPI Ecore_Event_Handler *ecore_event_handler_add(int type, int (*func) (void *data, int type, void *event), const void *data);
+   EAPI Ecore_Event_Handler *ecore_event_handler_add(int type, Eina_Bool (*func) (void *data, int type, void *event), const void *data);
    EAPI void                *ecore_event_handler_del(Ecore_Event_Handler *event_handler);
    EAPI Ecore_Event         *ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), void *data);
    EAPI void                *ecore_event_del(Ecore_Event *event);
    EAPI int                  ecore_event_type_new(void);
-   EAPI Ecore_Event_Filter  *ecore_event_filter_add(void * (*func_start) (void *data), int (*func_filter) (void *data, void *loop_data, int type, void *event), void (*func_end) (void *data, void *loop_data), const void *data);
+   EAPI Ecore_Event_Filter  *ecore_event_filter_add(void * (*func_start) (void *data), Eina_Bool (*func_filter) (void *data, void *loop_data, int type, void *event), void (*func_end) (void *data, void *loop_data), const void *data);
    EAPI void                *ecore_event_filter_del(Ecore_Event_Filter *ef);
    EAPI int                  ecore_event_current_type_get(void);
    EAPI void                *ecore_event_current_event_get(void);
@@ -294,14 +297,14 @@ extern "C" {
    EAPI void        ecore_exe_signal(Ecore_Exe *exe, int num);
    EAPI void        ecore_exe_hup(Ecore_Exe *exe);
 
-   EAPI Ecore_Idler *ecore_idler_add(int (*func) (void *data), const void *data);
+   EAPI Ecore_Idler *ecore_idler_add(Eina_Bool (*func) (void *data), const void *data);
    EAPI void        *ecore_idler_del(Ecore_Idler *idler);
 
-   EAPI Ecore_Idle_Enterer *ecore_idle_enterer_add(int (*func) (void *data), const void *data);
-   EAPI Ecore_Idle_Enterer *ecore_idle_enterer_before_add(int (*func) (void *data), const void *data);
+   EAPI Ecore_Idle_Enterer *ecore_idle_enterer_add(Eina_Bool (*func) (void *data), const void *data);
+   EAPI Ecore_Idle_Enterer *ecore_idle_enterer_before_add(Eina_Bool (*func) (void *data), const void *data);
    EAPI void               *ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
 
-   EAPI Ecore_Idle_Exiter *ecore_idle_exiter_add(int (*func) (void *data), const void *data);
+   EAPI Ecore_Idle_Exiter *ecore_idle_exiter_add(Eina_Bool (*func) (void *data), const void *data);
    EAPI void              *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
 
    EAPI void              ecore_main_loop_iterate(void);
@@ -314,14 +317,16 @@ extern "C" {
        
    EAPI void              ecore_main_loop_begin(void);
    EAPI void              ecore_main_loop_quit(void);
-   EAPI Ecore_Fd_Handler *ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data, int (*buf_func) (void *buf_data, Ecore_Fd_Handler *fd_handler), const void *buf_data);
+   EAPI Ecore_Fd_Handler *ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags,
+						    Eina_Bool (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data,
+						    Eina_Bool (*buf_func) (void *buf_data, Ecore_Fd_Handler *fd_handler), const void *buf_data);
    EAPI void              ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, void (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data);
    EAPI void             *ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler);
    EAPI int               ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler);
    EAPI int               ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
    EAPI void              ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
 
-   EAPI Ecore_Win32_Handler *ecore_main_win32_handler_add(void *h, int (*func) (void *data, Ecore_Win32_Handler *wh), const void *data);
+   EAPI Ecore_Win32_Handler *ecore_main_win32_handler_add(void *h, Eina_Bool (*func) (void *data, Ecore_Win32_Handler *wh), const void *data);
    EAPI void                *ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler);
 
    EAPI Ecore_Pipe  *ecore_pipe_add(void (*handler) (void *data, void *buffer, unsigned int nbyte), const void *data);
@@ -336,8 +341,8 @@ extern "C" {
    EAPI double ecore_time_get(void);
    EAPI double ecore_loop_time_get(void);
 
-   EAPI Ecore_Timer *ecore_timer_add(double in, int (*func) (void *data), const void *data);
-   EAPI Ecore_Timer *ecore_timer_loop_add(double in, int (*func) (void *data), const void *data);
+   EAPI Ecore_Timer *ecore_timer_add(double in, Eina_Bool (*func) (void *data), const void *data);
+   EAPI Ecore_Timer *ecore_timer_loop_add(double in, Eina_Bool (*func) (void *data), const void *data);
    EAPI void        *ecore_timer_del(Ecore_Timer *timer);
    EAPI void         ecore_timer_interval_set(Ecore_Timer *timer, double in);
    EAPI double       ecore_timer_interval_get(Ecore_Timer *timer);
@@ -349,7 +354,7 @@ extern "C" {
    EAPI double       ecore_timer_precision_get(void);
    EAPI void         ecore_timer_precision_set(double precision);
 
-   EAPI Ecore_Animator *ecore_animator_add(int (*func) (void *data), const void *data);
+   EAPI Ecore_Animator *ecore_animator_add(Eina_Bool (*func) (void *data), const void *data);
    EAPI void           *ecore_animator_del(Ecore_Animator *animator);
    EAPI void		ecore_animator_freeze(Ecore_Animator *animator);
    EAPI void		ecore_animator_thaw(Ecore_Animator *animator);
@@ -360,7 +365,7 @@ extern "C" {
    EAPI double        ecore_poller_poll_interval_get(Ecore_Poller_Type type);
    EAPI Eina_Bool     ecore_poller_poller_interval_set(Ecore_Poller *poller, int interval);
    EAPI int           ecore_poller_poller_interval_get(Ecore_Poller *poller);
-   EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, int (*func) (void *data), const void *data);
+   EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, Eina_Bool (*func) (void *data), const void *data);
    EAPI void         *ecore_poller_del(Ecore_Poller *poller);
 
    EAPI Ecore_Job *ecore_job_add(void (*func) (void *data), const void *data);

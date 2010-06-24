@@ -23,8 +23,8 @@
 #include "Ecore_X_Atoms.h"
 #include "Ecore_Input.h"
 
-static int _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
-static int _ecore_x_fd_handler_buf(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_x_fd_handler_buf(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_x_key_mask_get(KeySym sym);
 static int _ecore_x_event_modifier(unsigned int state);
 
@@ -823,7 +823,7 @@ ecore_x_dpi_get(void)
    return (((s->width * 254) / s->mwidth) + 5) / 10;
 }
 
-static int
+static Eina_Bool
 _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Display *d;
@@ -849,17 +849,17 @@ _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	       _ecore_x_event_handlers[ev.type] (&ev);
 	  }
      }
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
-static int
+static Eina_Bool
 _ecore_x_fd_handler_buf(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Display *d;
 
    d = data;
-   if (XPending(d)) return 1;
-   return 0;
+   if (XPending(d)) return ECORE_CALLBACK_RENEW;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static int
@@ -1324,11 +1324,11 @@ ecore_x_ungrab(void)
 
 int      _ecore_window_grabs_num = 0;
 Window  *_ecore_window_grabs = NULL;
-int    (*_ecore_window_grab_replay_func) (void *data, int event_type, void *event);
+Eina_Bool (*_ecore_window_grab_replay_func) (void *data, int event_type, void *event);
 void    *_ecore_window_grab_replay_data;
 
 EAPI void
-ecore_x_passive_grab_replay_func_set(int (*func) (void *data, int event_type, void *event), void *data)
+ecore_x_passive_grab_replay_func_set(Eina_Bool (*func) (void *data, int event_type, void *event), void *data)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_window_grab_replay_func = func;

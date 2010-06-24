@@ -76,7 +76,7 @@ int ECORE_CON_EVENT_URL_COMPLETE = 0;
 int ECORE_CON_EVENT_URL_PROGRESS = 0;
 
 #ifdef HAVE_CURL
-static int _ecore_con_url_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_con_url_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_url_perform(Ecore_Con_Url *url_con);
 static size_t _ecore_con_url_header_cb(void *ptr, size_t size, size_t nitems, void *stream);
 static size_t _ecore_con_url_data_cb(void *buffer, size_t size, size_t nitems, void *userp);
@@ -84,7 +84,7 @@ static int _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlno
 static size_t _ecore_con_url_read_cb(void *ptr, size_t size, size_t nitems, void *stream);
 static void _ecore_con_event_url_free(void *data __UNUSED__, void *ev);
 static int _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match);
-static int _ecore_con_url_idler_handler(void *data __UNUSED__);
+static Eina_Bool _ecore_con_url_idler_handler(void *data __UNUSED__);
 
 static Ecore_Idler *_fd_idler_handler = NULL;
 static Eina_List *_url_con_list = NULL;
@@ -100,7 +100,7 @@ struct _Ecore_Con_Url_Event
    void  *ev;
 };
 
-static int
+static Eina_Bool
 _url_complete_idler_cb(void *data)
 {
    Ecore_Con_Url_Event *lev;
@@ -109,7 +109,7 @@ _url_complete_idler_cb(void *data)
    ecore_event_add(lev->type, lev->ev, _ecore_con_event_url_free, NULL);
    free(lev);
 
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
@@ -1195,7 +1195,7 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
    return 1;
 }
 
-static int
+static Eina_Bool
 _ecore_con_url_idler_handler(void *data)
 {
    double start;
@@ -1219,13 +1219,13 @@ _ecore_con_url_idler_handler(void *data)
 
 	if (!_url_con_list)
 	  ecore_timer_freeze(_curl_timeout);
-	return data == (void*) 0xACE ? 1 : 0;
+	return data == (void*) 0xACE ? ECORE_CALLBACK_RENEW : ECORE_CALLBACK_CANCEL;
      }
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
-static int
+static Eina_Bool
 _ecore_con_url_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    _ecore_con_url_suspend_fd_handler();
@@ -1233,7 +1233,7 @@ _ecore_con_url_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __
    if (_fd_idler_handler == NULL)
      _fd_idler_handler = ecore_idler_add(_ecore_con_url_idler_handler, NULL);
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static int

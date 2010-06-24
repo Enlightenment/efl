@@ -62,7 +62,7 @@ ecore_con_local_shutdown(void)
 
 int
 ecore_con_local_connect(Ecore_Con_Server *svr,
-			int (*cb_done)(void *data, Ecore_Fd_Handler *fd_handler),
+			Eina_Bool (*cb_done)(void *data, Ecore_Fd_Handler *fd_handler),
 			void *data __UNUSED__,
 			void (*cb_free)(void *data, void *ev))
 {
@@ -157,7 +157,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
 
 int
 ecore_con_local_listen(Ecore_Con_Server *svr,
-		       int (*cb_listen)(void *data, Ecore_Fd_Handler *fd_handler),
+		       Eina_Bool (*cb_listen)(void *data, Ecore_Fd_Handler *fd_handler),
 		       void *data __UNUSED__)
 {
    char               buf[4096];

@@ -66,7 +66,7 @@ struct _Ecore_Pipe
 };
 
 
-static int _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler);
 
 /**
  * @defgroup Ecore_Pipe_Group Pipe wrapper
@@ -474,7 +474,7 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 
 /* Private function */
 
-static int
+static Eina_Bool
 _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Ecore_Pipe  *p;

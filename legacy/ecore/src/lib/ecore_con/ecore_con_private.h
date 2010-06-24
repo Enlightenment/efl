@@ -166,8 +166,8 @@ struct _Ecore_Con_Info
 /* from ecore_local.c */
 int ecore_con_local_init(void);
 int ecore_con_local_shutdown(void);
-int ecore_con_local_connect(Ecore_Con_Server *svr, int (*cb_done)(void *data, Ecore_Fd_Handler *fd_handler), void *data, void (*cb_free)(void *data, void *ev));
-int ecore_con_local_listen(Ecore_Con_Server *svr, int (*cb_listen)(void *data, Ecore_Fd_Handler *fd_handler), void *data);
+int ecore_con_local_connect(Ecore_Con_Server *svr, Eina_Bool (*cb_done)(void *data, Ecore_Fd_Handler *fd_handler), void *data, void (*cb_free)(void *data, void *ev));
+int ecore_con_local_listen(Ecore_Con_Server *svr, Eina_Bool (*cb_listen)(void *data, Ecore_Fd_Handler *fd_handler), void *data);
 /* from ecore_con_info.c */
 int ecore_con_info_init(void);
 int ecore_con_info_shutdown(void);

@@ -20,7 +20,7 @@ struct _Ecore_Timer
    double          in;
    double          at;
    double          pending;
-   int           (*func) (void *data);
+   Eina_Bool     (*func) (void *data);
    void           *data;
 
    int             references;
@@ -30,7 +30,7 @@ struct _Ecore_Timer
 };
 
 
-static void _ecore_timer_set(Ecore_Timer *timer, double at, double in, int (*func) (void *data), void *data);
+static void _ecore_timer_set(Ecore_Timer *timer, double at, double in, Eina_Bool (*func) (void *data), void *data);
 
 static int          timers_added = 0;
 static int          timers_delete_me = 0;
@@ -113,7 +113,7 @@ ecore_timer_precision_set(double value)
  * invalid.
  */
 EAPI Ecore_Timer *
-ecore_timer_add(double in, int (*func) (void *data), const void *data)
+ecore_timer_add(double in, Eina_Bool (*func) (void *data), const void *data)
 {
    double now;
    Ecore_Timer *timer;
@@ -142,7 +142,7 @@ ecore_timer_add(double in, int (*func) (void *data), const void *data)
  * ecore_timer_add() for more details.
  */
 EAPI Ecore_Timer *
-ecore_timer_loop_add(double in, int (*func) (void *data), const void *data)
+ecore_timer_loop_add(double in, Eina_Bool (*func) (void *data), const void *data)
 {
    double now;
    Ecore_Timer *timer;
@@ -561,7 +561,7 @@ _ecore_timer_call(double when)
 }
 
 static void
-_ecore_timer_set(Ecore_Timer *timer, double at, double in, int (*func) (void *data), void *data)
+_ecore_timer_set(Ecore_Timer *timer, double at, double in, Eina_Bool (*func) (void *data), void *data)
 {
    Ecore_Timer *t2;
 
