@@ -199,7 +199,7 @@ elm_frame_content_unset(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *content;
    if (!wd) return NULL;
-   if (!wd->content) NULL;
+   if (!wd->content) return NULL;
    content = wd->content;
    elm_widget_sub_object_del(obj, wd->content);
    edje_object_part_unswallow(wd->frm, wd->content);
