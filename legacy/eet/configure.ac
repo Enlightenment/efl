@@ -267,7 +267,7 @@ requirement_eet="eina-0 ${requirement_eet}"
 
 # Gnutls library
 have_gnutls="no"
-if test "x${want_gnutls}" = "xyes" -o "x${want_gnutls}" = "xauto" ; then
+if test "x${want_gnutls}" = "xyes" || test "x${want_gnutls}" = "xauto" ; then
    PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.7.6],
       [
        have_gnutls="yes"
@@ -287,7 +287,7 @@ fi
 
 # Openssl library
 have_openssl="no"
-if test "x${want_openssl}" = "xyes" -o "x${want_openssl}" = "xauto" ; then
+if test "x${want_openssl}" = "xyes" || test "x${want_openssl}" = "xauto" ; then
    PKG_CHECK_MODULES(OPENSSL, openssl,
       [
        have_openssl="yes"
@@ -297,11 +297,19 @@ if test "x${want_openssl}" = "xyes" -o "x${want_openssl}" = "xauto" ; then
       [have_openssl="no"])
 fi
 
+if test "x${have_gnutls}" = "xyes" ; then
+   secure_layer="gnutls"
+elif test "x${have_openssl}" = "xyes" ; then
+   secure_layer="openssl"
+else
+   secure_layer="no"
+fi
+
 have_cipher="no"
-if test "x${have_gnutls}" = "xyes" -a "x${want_cipher}" = "xyes" ; then
+if test "x${have_gnutls}" = "xyes" && test "x${want_cipher}" = "xyes" ; then
    have_cipher="yes"
    AC_DEFINE(HAVE_CIPHER, 1, [Have cipher support built in eet])
-elif test "x${have_openssl}" = "xyes" -a "x${want_cipher}" = "xyes" ; then
+elif test "x${have_openssl}" = "xyes" && test "x${want_cipher}" = "xyes" ; then
    have_cipher="yes"
    AC_DEFINE(HAVE_CIPHER, 1, [Have cipher support built in eet])
 fi
@@ -310,10 +318,10 @@ AC_MSG_CHECKING(whether to activate cipher support in eet)
 AC_MSG_RESULT(${have_cipher})
 
 have_signature="no"
-if test "x${have_gnutls}" = "xyes" -a "x${want_signature}" = "xyes" ; then
+if test "x${have_gnutls}" = "xyes" && test "x${want_signature}" = "xyes" ; then
    have_signature="yes"
    AC_DEFINE(HAVE_SIGNATURE, 1, [Have signature support for eet file])
-elif test "x${have_openssl}" = "xyes" -a "x${want_signature}" = "xyes" ; then
+elif test "x${have_openssl}" = "xyes" && test "x${want_signature}" = "xyes" ; then
    have_signature="yes"
    AC_DEFINE(HAVE_SIGNATURE, 1, [Have signature support for eet file])
 fi
@@ -457,10 +465,11 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "  Amalgamation.........: ${do_amalgamation}"
-echo "  Gnutls...............: ${have_gnutls}"
-echo "  Openssl..............: ${have_openssl}"
-echo "    Cipher support.....: ${have_cipher}"
-echo "    Signature..........: ${have_signature}"
+echo "  Secure layer.........: ${secure_layer}"
+if test "x${have_gnutls}" = "xyes" || test "x${have_openssl}" = "xyes" ; then
+   echo "    Cipher support.....: ${have_cipher}"
+   echo "    Signature..........: ${have_signature}"
+fi
 echo "  Thread Support.......: ${have_pthread}"
 echo
 echo "  Old eet file format..: ${old_eet_file_format}"
