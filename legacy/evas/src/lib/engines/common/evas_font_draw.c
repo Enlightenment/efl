@@ -408,7 +408,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
    
 #endif
 
-#if defined(METRICCACHE) || defined(WORDCACHE)
+#if defined(METRIC_CACHE) || defined(WORD_CACHE)
    /* A fast strNlen would be nice (there is a wcsnlen strangely) */
    for (len = 0 ; text[len] && len < WORD_CACHE_MAXLEN ; len ++)
      ;
@@ -445,12 +445,12 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 	//      y = ext_y;
 	  }
 
-#ifdef WORDCACHE
+#ifdef WORD_CACHE
 	  for (j = rowstart ; j < rowend ; j ++){
 	       func(NULL, word->im + (word->roww * j) + xstart, dc->col.col,
 		     im + ((y + j) * im_w) + x, xrun);
 	  }
-#elif defined(METRICCACHE)
+#elif defined(METRIC_CACHE)
 	  int ind;
 	  y += word->baseline;
 	  for (ind = 0 ; ind < len ; ind ++){
