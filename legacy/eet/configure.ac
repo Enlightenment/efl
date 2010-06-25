@@ -53,20 +53,10 @@ AC_SUBST(release_info)
 
 ### Default options with respect to host
 
-case "$host_os" in
-   mingw*)
-      want_gnutls="no"
-      want_openssl="no"
-      want_cipher="no"
-      want_signature="no"
-      ;;
-   *)
-      want_gnutls="auto"
-      want_openssl="auto"
-      want_cipher="yes"
-      want_signature="yes"
-      ;;
-esac
+want_gnutls="auto"
+want_openssl="auto"
+want_cipher="yes"
+want_signature="yes"
 
 requirement_eet=""
 
@@ -298,9 +288,9 @@ if test "x${want_openssl}" = "xyes" || test "x${want_openssl}" = "xauto" ; then
 fi
 
 if test "x${have_gnutls}" = "xyes" ; then
-   secure_layer="gnutls"
+   secure_layer="GnuTLS"
 elif test "x${have_openssl}" = "xyes" ; then
-   secure_layer="openssl"
+   secure_layer="OpenSSL"
 else
    secure_layer="no"
 fi
