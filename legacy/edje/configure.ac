@@ -223,7 +223,7 @@ PKG_CHECK_MODULES([LUA], [lua >= 5.1.0], requirement_lua="lua",
    [PKG_CHECK_MODULES([LUA], [lua5.1 >= 5.1.0], requirement_lua="lua5.1",
       [PKG_CHECK_MODULES([LUA], [lua-5.1 >= 5.1.0], requirement_lua="lua-5.1",
          [PKG_CHECK_MODULES([LUA], [lua51 >= 5.1.0], requirement_lua="lua51",
-            [have_lua="no])])])])
+            [have_lua="no"])])])])
 
 if test "x${have_lua}" = "xno" ; then
    AC_MSG_CHECKING([whether lua_newstate() is in liblua])
