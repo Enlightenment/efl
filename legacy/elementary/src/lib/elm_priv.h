@@ -139,6 +139,8 @@ EAPI void         elm_widget_disable_hook_set(Evas_Object *obj, void (*func) (Ev
 EAPI void         elm_widget_theme_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void         elm_widget_changed_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void         elm_widget_signal_emit_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source));
+EAPI void         elm_widget_signal_listen_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data));
+EAPI void         elm_widget_signal_unlisten_hook_set(Evas_Object *obj, void *(*func) (Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source)));
 EAPI void         elm_widget_theme(Evas_Object *obj);
 EAPI void         elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
 EAPI void         elm_widget_on_change_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
@@ -150,6 +152,8 @@ EAPI void         elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
 EAPI void         elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj);
 EAPI void         elm_widget_hover_object_set(Evas_Object *obj, Evas_Object *sobj);
 EAPI void         elm_widget_signal_emit(Evas_Object *obj, const char *emission, const char *source);
+EAPI void         elm_widget_signal_listen(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data);
+EAPI void         *elm_widget_signal_unlisten(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source));
 EAPI void         elm_widget_can_focus_set(Evas_Object *obj, int can_focus);
 EAPI int          elm_widget_can_focus_get(const Evas_Object *obj);
 EAPI int          elm_widget_focus_get(const Evas_Object *obj);

@@ -1409,3 +1409,45 @@ EAPI void elm_object_signal_emit(Evas_Object *obj, const char *emission, const c
 {
     elm_widget_signal_emit(obj, emission, source);
 }
+
+/**
+ * Add a callback for a signal emitted by widget edje object.
+ *
+ * This function connects a callback function to a signal emitted by the
+ * edje object of the obj.
+ * Globs can occur in either the emission or source name.
+ *
+ * @param obj The object
+ * @param emission The signal's name.
+ * @param source The signal's source.
+ * @param func The callback function to be executed when the signal is
+ * emitted.
+ * @param data A pointer to data to pass in to the callback function.
+ * @ingroup General
+ */
+EAPI void elm_object_signal_listen(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+{
+    elm_widget_signal_listen(obj, emission, source, func, data);
+}
+
+/**
+ * Remove a signal-triggered callback from an widget edje object.
+ *
+ * This function removes a callback, previoulsy attached to a signal emitted
+ * by the edje object of the obj.
+ * The parameters emission, source and func must match exactly those passed to
+ * a previous call to elm_object_signal_listen(). The data pointer that
+ * was passed to this call will be returned.
+ *
+ * @param obj The object
+ * @param emission The signal's name.
+ * @param source The signal's source.
+ * @param func The callback function to be executed when the signal is
+ * emitted.
+ * @return The data pointer
+ * @ingroup General
+ */
+EAPI void *elm_object_signal_unlisten(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
+{
+    return elm_widget_signal_unlisten(obj, emission, source, func);
+}
