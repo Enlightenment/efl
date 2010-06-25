@@ -191,7 +191,8 @@ _frame_grab_single(void *data)
      }
 
    p = emotion_object_position_get(_plugin->video);
-   if (p < _plugin->pi)
+//   if (p < _plugin->pi)
+   if (p <= 0.0)
      return EINA_TRUE;
 
    DBG("saving static thumbnail at position=%f (intended=%f)", p, _plugin->pi);
@@ -203,6 +204,7 @@ _frame_grab_single(void *data)
    emotion_object_play_set(_plugin->video, 0);
    evas_object_del(_plugin->video);
    free(_plugin);
+   
    ethumb_finished_callback_call(e, 1);
 
    return EINA_FALSE;
