@@ -142,13 +142,17 @@ static struct _elm_cnp_selection selections[ELM_SEL_MAX] = {
 
 static int _elm_cnp_init_count = 0;
 
+#endif
+
 
 Eina_Bool
 elm_selection_set(enum _elm_sel_type selection, Evas_Object *widget,
-			enum _elm_sel_format format, const char *selbuf){
+			enum _elm_sel_format format, const char *selbuf)
+{
+#ifdef HAVE_ELEMENTARY_X
    struct _elm_cnp_selection *sel;
 
-   if ((unsigned int)selection >= (unsigned int)ELM_SEL_MAX) return false;
+   if ((unsigned int)selection >= (unsigned int)ELM_SEL_MAX) return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
    if (!selbuf) return elm_selection_clear(selection, widget);
 
@@ -160,52 +164,67 @@ elm_selection_set(enum _elm_sel_type selection, Evas_Object *widget,
 	 &selection, sizeof(int));
    sel->format = format;
    sel->selbuf = strdup(selbuf);
-   return true;
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
 }
 
 Eina_Bool
-elm_selection_clear(enum _elm_sel_type selection, Evas_Object *widget){
+elm_selection_clear(enum _elm_sel_type selection, Evas_Object *widget)
+{
+#ifdef HAVE_ELEMENTARY_X
    struct _elm_cnp_selection *sel;
 
-   if ((unsigned int)selection >= (unsigned int)ELM_SEL_MAX) return false;
+   if ((unsigned int)selection >= (unsigned int)ELM_SEL_MAX) return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
 
    sel = selections + selection;
 
    /* No longer this selection: Consider it gone! */
-   if (!sel->active || sel->widget != widget) return true;
+   if (!sel->active || sel->widget != widget) return EINA_TRUE;
 
    sel->active = 0;
    sel->widget = NULL;
    sel->clear();
 
-   return true;
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
 }
 
 Eina_Bool
 elm_selection_get(enum _elm_sel_type selection, enum _elm_sel_format format,
-			Evas_Object *widget){
+			Evas_Object *widget)
+{
+#ifdef HAVE_ELEMENTARY_X
    Evas_Object *top;
    struct _elm_cnp_selection *sel;
 
-   if ((unsigned int)selection >= (unsigned int)ELM_SEL_MAX) return false;
+   if ((unsigned int)selection >= (unsigned int)ELM_SEL_MAX) return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
 
    sel = selections + selection;
    top = elm_widget_top_get(widget);
-   if (!top) return false;
+   if (!top) return EINA_FALSE;
 
    sel->request(elm_win_xwindow_get(top), "TARGETS");
    sel->requestformat = format;
    sel->requestwidget = widget;
 
    return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
 }
+
+#ifdef HAVE_ELEMENTARY_X
 
 static Eina_Bool
 _elm_cnp_init(void){
    int i;
-   if (_elm_cnp_init_count ++) return true;
+   if (_elm_cnp_init_count ++) return EINA_TRUE;
 
    /* FIXME: Handle XCB */
    for (i = 0 ; i < CNP_N_ATOMS ; i ++)
@@ -218,7 +237,7 @@ _elm_cnp_init(void){
    ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR, selection_clear,NULL);
    ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY,selection_notify,NULL);
 
-    return true;
+    return EINA_TRUE;
 }
 
 static Eina_Bool
