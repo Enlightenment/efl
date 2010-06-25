@@ -1,23 +1,18 @@
-
 #include <stdbool.h>
 
 #include <stdio.h> // debug
 
-#include <X11/X.h>
-#include <X11/Xatom.h>
-
 #include <Elementary.h>
-#include <Ecore_X.h>
 
 #include "elm_priv.h"
 
+#ifdef HAVE_ELEMENTARY_X
 
-/* this should be #ifdef 12year old compiler */
-#ifdef ELM_WIN32
-#  define ARRAYINIT(foo)
-#else
-#  define ARRAYINIT(foo)  [foo]=
-#endif
+# include <X11/X.h>
+# include <X11/Xatom.h>
+
+
+# define ARRAYINIT(foo)  [foo]=
 
 
 enum {
@@ -498,3 +493,5 @@ mark_up(const char *start, int *lenp){
 }
 
 /* vim: set ts=8 sw=3 sts=8 noexpandtab cino=>5n-3f0^-2{2 : */
+
+#endif
