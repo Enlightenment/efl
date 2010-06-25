@@ -321,11 +321,11 @@ my_gl_last(void *data, Evas_Object *obj, void *event_info)
    elm_genlist_item_selected_set(gli, 1);
 }
 
-static int
+static Eina_Bool
 my_gl_flush_delay(void *data)
 {
    elm_all_flush();
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
