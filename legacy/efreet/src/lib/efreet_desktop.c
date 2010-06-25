@@ -1362,13 +1362,13 @@ efreet_desktop_write_cache_dirs_file(void)
     EINA_LIST_FREE(efreet_desktop_dirs, dir)
     {
         unsigned int size = strlen(dir) + 1;
-	size_t count;
+        size_t count;
 
         count = write(cachefd, &size, sizeof(int));
-	count += write(cachefd, dir, size);
+        count += write(cachefd, dir, size);
 
-	if (count != sizeof(int) + size)
-	  DBG("Didn't write all data on cachefd");
+        if (count != sizeof(int) + size)
+            DBG("Didn't write all data on cachefd");
 
         efreet_desktop_changes_monitor_add(dir);
         eina_stringshare_del(dir);
