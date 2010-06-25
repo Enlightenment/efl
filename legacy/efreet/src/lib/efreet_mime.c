@@ -738,7 +738,7 @@ efreet_mime_special_check(const char *file)
 
 #ifndef _WIN32
         if (S_ISLNK(s.st_mode))
-	    return _mime_inode_symlink;
+        return _mime_inode_symlink;
 #endif
 
         if (S_ISFIFO(s.st_mode))
