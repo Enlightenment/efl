@@ -83,6 +83,49 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
      edje_object_signal_emit(wd->clk, "elm,action,unfocus", "elm");
 }
 
+static void
+_signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   int i;
+   if (!wd) return;
+   edje_object_signal_emit(wd->clk, emission, source);
+   for (i = 0; i < 6; i++)
+     {
+	if (wd->digit[i])
+	  edje_object_signal_emit(wd->digit[i], emission, source);
+     }
+}
+
+static void
+_signal_listen_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   int i;
+   if (!wd) return;
+   edje_object_signal_callback_add(wd->clk, emission, source, func_cb, data);
+   for (i = 0; i < 6; i++)
+     {
+	if (wd->digit[i])
+	  edje_object_signal_callback_add(wd->digit[i], emission, source,
+		func_cb, data);
+     }
+}
+
+static void *
+_signal_unlisten_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source))
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   int i;
+   if (!wd) return NULL;
+   for (i = 0; i < 6; i++)
+     {
+	edje_object_signal_callback_del(wd->digit[i], emission, source,
+	      func_cb);
+     }
+   return edje_object_signal_callback_del(wd->clk, emission, source, func_cb);
+}
+
 static Eina_Bool
 _ticker(void *data)
 {
@@ -474,6 +517,9 @@ elm_clock_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
+   elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
+   elm_widget_signal_listen_hook_set(obj, _signal_listen_hook);
+   elm_widget_signal_unlisten_hook_set(obj, _signal_unlisten_hook);
 
    wd->clk = edje_object_add(e);
    elm_widget_resize_object_set(obj, wd->clk);
