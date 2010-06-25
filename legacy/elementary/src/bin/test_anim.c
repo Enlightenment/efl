@@ -17,7 +17,7 @@ _del(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    ecore_animator_del(ani);
 }
 
-static int
+static Eina_Bool
 anim(void *data)
 {
    Evas_Object *win = data;
@@ -57,7 +57,7 @@ anim(void *data)
         evas_object_move(sh, x, y);
         evas_object_resize(sh, w, h);
      }
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 void

@@ -114,7 +114,7 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
      }
 }
 
-static int
+static Eina_Bool
 _flip(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -124,11 +124,11 @@ _flip(Evas_Object *obj)
    Evas_Map *mf, *mb;
    Evas_Coord cx, cy, px, py, foc;
    int lx, ly, lz, lr, lg, lb, lar, lag, lab;
-   if (!wd->animator) return 0;
+   if (!wd->animator) return ECORE_CALLBACK_CANCEL;
    t = t / wd->len;
    if (t > 1.0) t = 1.0;
 
-   if (!wd) return 0;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    evas_object_geometry_get(obj, &x, &y, &w, &h);
 
    mf = evas_map_new(4);
@@ -228,9 +228,9 @@ _flip(Evas_Object *obj)
         wd->state = !wd->state;
         _configure(obj);
         evas_object_smart_callback_call(obj, "animate,done", NULL);
-        return 0;
+        return ECORE_CALLBACK_CANCEL;
      }
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -267,7 +267,7 @@ _resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event
    _configure(obj);
 }
 
-static int
+static Eina_Bool
 _animate(void *data)
 {
    return _flip(data);

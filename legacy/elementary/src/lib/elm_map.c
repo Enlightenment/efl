@@ -914,15 +914,15 @@ _grid_raise(Grid *g)
    eina_iterator_free(it);
 }
 
-static int
+static Eina_Bool
 _scr_timeout(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return 0;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    wd->nosmooth--;
    if (wd->nosmooth == 0) _smooth_update(data);
    wd->scr_timer = NULL;
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
@@ -939,7 +939,7 @@ _scr(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    wd->scr_timer = ecore_timer_add(0.5, _scr_timeout, data);
 }
 
-static int
+static Eina_Bool
 zoom_do(Evas_Object *obj, double t)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -980,12 +980,12 @@ zoom_do(Evas_Object *obj, double t)
    wd->calc_job = ecore_job_add(_calc_job, wd);
    if (t >= 1.0)
      {
-	return 0;
+	return ECORE_CALLBACK_CANCEL;
      }
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
-static int
+static Eina_Bool
 _zoom_anim(void *data)
 {
    Evas_Object *obj = data;
@@ -993,7 +993,7 @@ _zoom_anim(void *data)
    double t;
    int go;
 
-   if (!wd) return 0;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    t = ecore_loop_time_get();
    if (t >= wd->t_end)
      t = 1.0;
@@ -1014,15 +1014,15 @@ _zoom_anim(void *data)
    return go;
 }
 
-static int
+static Eina_Bool
 _long_press(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return 0;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    wd->long_timer = NULL;
    wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(data, SIG_LONGPRESSED, NULL);
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void

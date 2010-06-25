@@ -72,8 +72,8 @@ static const struct escapes {
 
 
 static Eina_Bool _elm_cnp_init(void);
-static int selection_clear(void *udata __UNUSED__, int type, void *event);
-static int selection_notify(void *udata __UNUSED__, int type, void *event);
+static Eina_Bool selection_clear(void *udata __UNUSED__, int type, void *event);
+static Eina_Bool selection_notify(void *udata __UNUSED__, int type, void *event);
 static char *remove_tags(const char *p, int *len);
 static char *mark_up(const char *start, int *lenp);
 
@@ -226,7 +226,7 @@ _elm_cnp_init(void){
     return true;
 }
 
-static int
+static Eina_Bool
 selection_clear(void *udata __UNUSED__, int type, void *event){
    Ecore_X_Event_Selection_Clear *ev = event;
    struct _elm_cnp_selection *sel;
@@ -237,20 +237,20 @@ selection_clear(void *udata __UNUSED__, int type, void *event){
 	if (selections[i].ecore_sel == ev->selection) break;
      }
    /* Not me... Don't care */
-   if (i == ELM_SEL_MAX) return true;
+   if (i == ELM_SEL_MAX) return ECORE_CALLBACK_PASS_ON;
 
    sel = selections + i;
    sel->active = 0;
    sel->widget = NULL;
    sel->selbuf = NULL;
 
-   return true;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 /**
  * Response to a selection notify
  */
-static int
+static Eina_Bool
 selection_notify(void *udata __UNUSED__, int type, void *event){
    Ecore_X_Event_Selection_Notify *ev = event;
    struct _elm_cnp_selection *sel;
@@ -268,7 +268,7 @@ selection_notify(void *udata __UNUSED__, int type, void *event){
 	 sel = selections + ELM_SEL_SECONDARY;
 	 break;
       default:
-	 return 1;
+	 return ECORE_CALLBACK_PASS_ON;
    }
 
    for (i = 0 ; i < CNP_N_ATOMS ; i ++)
@@ -283,7 +283,7 @@ selection_notify(void *udata __UNUSED__, int type, void *event){
 	  }
      }
 
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 

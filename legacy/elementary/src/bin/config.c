@@ -651,11 +651,11 @@ status_win(void)
    evas_object_show(win);
 }
 
-static int
+static Eina_Bool
 _exit_timer(void *data)
 {
    elm_exit();
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 /* this is your elementary main function - it MUSt be called IMMEDIATELY

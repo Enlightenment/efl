@@ -319,16 +319,16 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
      }
 }
 
-static int
+static Eina_Bool
 _long_press(void *data)
 {
    Elm_Gengrid_Item *item = data;
 
    item->long_timer = NULL;
-   if ((item->disabled) || (item->dragging)) return 0;
+   if ((item->disabled) || (item->dragging)) return ECORE_CALLBACK_CANCEL;
    item->wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(item->wd->self, "longpressed", item);
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void

@@ -105,10 +105,10 @@ static void _smart_pan_changed_hook(void *data, Evas_Object *obj, void *event_in
 static void _smart_pan_pan_changed_hook(void *data, Evas_Object *obj, void *event_info);
 static void _smart_event_wheel(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _smart_event_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static int  _smart_hold_animator(void *data);
-static int  _smart_momentum_animator(void *data);
+static Eina_Bool  _smart_hold_animator(void *data);
+static Eina_Bool  _smart_momentum_animator(void *data);
 static void _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static int  _smart_onhold_animator(void *data);
+static Eina_Bool  _smart_onhold_animator(void *data);
 static void _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _smart_event_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _smart_edje_drag_v_start(void *data, Evas_Object *obj, const char *emission, const char *source);
@@ -279,7 +279,7 @@ _smart_drag_stop(Evas_Object *obj)
    evas_object_smart_callback_call(obj, "drag,stop", NULL);
 }
 
-static int
+static Eina_Bool
 _smart_scrollto_x_animator(void *data)
 {
    Smart_Data *sd = data;
@@ -300,10 +300,10 @@ _smart_scrollto_x_animator(void *data)
         sd->scrollto.x.animator = NULL;
         if (!sd->scrollto.y.animator)
           _smart_anim_stop(sd->smart_obj);
-        return 0;
+        return ECORE_CALLBACK_CANCEL;
      }
    elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -344,7 +344,7 @@ _smart_scrollto_x(Smart_Data *sd, double t_in, Evas_Coord pos_x)
    sd->bouncemex = 0;
 }
 
-static int
+static Eina_Bool
 _smart_scrollto_y_animator(void *data)
 {
    Smart_Data *sd = data;
@@ -365,11 +365,11 @@ _smart_scrollto_y_animator(void *data)
         sd->scrollto.y.animator = NULL;
         if (!sd->scrollto.x.animator)
           _smart_anim_stop(sd->smart_obj);
-        return 0;
+        return ECORE_CALLBACK_CANCEL;
      }
    elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
 
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -490,7 +490,7 @@ _smart_page_adjust(Smart_Data *sd)
    elm_smart_scroller_child_region_show(sd->smart_obj, x, y, w, h);
 }
 
-static int
+static Eina_Bool
 _smart_bounce_x_animator(void *data)
 {
    Smart_Data *sd;
@@ -517,13 +517,13 @@ _smart_bounce_x_animator(void *data)
                sd->down.bounce_x_hold = 1;
              sd->down.bounce_x_animator = NULL;
              sd->bouncemex = 0;
-             return 0;
+             return ECORE_CALLBACK_CANCEL;
           }
      }
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
-static int
+static Eina_Bool
 _smart_bounce_y_animator(void *data)
 {
    Smart_Data *sd;
@@ -550,10 +550,10 @@ _smart_bounce_y_animator(void *data)
                sd->down.bounce_y_hold = 1;
              sd->down.bounce_y_animator = NULL;
              sd->bouncemey = 0;
-             return 0;
+             return ECORE_CALLBACK_CANCEL;
           }
      }
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 #define LEFT 0
@@ -587,7 +587,7 @@ can_scroll(Smart_Data *sd, int dir)
    return EINA_FALSE;
 }
 
-static int
+static Eina_Bool
 _smart_momentum_animator(void *data)
 {
    Smart_Data *sd;
@@ -647,10 +647,10 @@ _smart_momentum_animator(void *data)
              sd->down.bounce_y_hold = 0;
              sd->down.ax = 0;
              sd->down.ay = 0;
-	     return 0;
+	     return ECORE_CALLBACK_CANCEL;
 	  }
      }
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -1385,7 +1385,7 @@ _smart_event_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
      }
 }
 
-static int
+static Eina_Bool
 _smart_hold_animator(void *data)
 {
    Smart_Data *sd = data;
@@ -1409,7 +1409,7 @@ _smart_hold_animator(void *data)
           }
      }
    elm_smart_scroller_child_pos_set(sd->smart_obj, ox, oy);
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -1589,7 +1589,7 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
      }
 }
 
-static int
+static Eina_Bool
 _smart_onhold_animator(void *data)
 {
    Smart_Data *sd;
@@ -1634,7 +1634,7 @@ _smart_onhold_animator(void *data)
 //        printf("scroll %i %i\n", sd->down.hold_x, sd->down.hold_y);
      }
    sd->down.onhold_tlast = t;
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool

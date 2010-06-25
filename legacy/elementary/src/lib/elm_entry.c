@@ -530,14 +530,14 @@ _item_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
    if (it->func) it->func(it->data, obj2, NULL);
 }
 
-static int
+static Eina_Bool
 _long_press(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Object *top;
    const Eina_List *l;
    const Elm_Entry_Context_Menu_Item *it;
-   if (!wd) return 0;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    if ((wd->api) && (wd->api->obj_longpress))
      {
         wd->api->obj_longpress(data);
@@ -604,7 +604,7 @@ _long_press(void *data)
      }
    wd->longpress_timer = NULL;
    evas_object_smart_callback_call(data, SIG_LONGPRESSED, NULL);
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
@@ -1171,13 +1171,13 @@ _signal_mouse_double(void *data, Evas_Object *obj __UNUSED__, const char *emissi
 }
 
 #ifdef HAVE_ELEMENTARY_X
-static int
+static Eina_Bool
 _event_selection_notify(void *data, int type __UNUSED__, void *event)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Ecore_X_Event_Selection_Notify *ev = event;
-   if (!wd) return 1;
-   if (!wd->selection_asked) return 1;
+   if (!wd) return ECORE_CALLBACK_PASS_ON;
+   if (!wd->selection_asked) return ECORE_CALLBACK_PASS_ON;
 
    if ((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
        (ev->selection == ECORE_X_SELECTION_PRIMARY))
@@ -1200,10 +1200,10 @@ _event_selection_notify(void *data, int type __UNUSED__, void *event)
 	  }
 	wd->selection_asked = EINA_FALSE;
      }
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _event_selection_clear(void *data, int type __UNUSED__, void *event)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -1217,7 +1217,7 @@ _event_selection_clear(void *data, int type __UNUSED__, void *event)
 	elm_entry_select_none(data);
      }
    return 1;*/
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 #endif
 

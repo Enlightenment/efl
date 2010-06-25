@@ -661,16 +661,16 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
      }
 }
 
-static int
+static Eina_Bool
 _long_press(void *data)
 {
    Elm_Genlist_Item *it = data;
 
    it->long_timer = NULL;
-   if ((it->disabled) || (it->dragging)) return 0;
+   if ((it->disabled) || (it->dragging)) return ECORE_CALLBACK_CANCEL;
    it->wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(it->wd->obj, "longpressed", it);
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
@@ -1732,7 +1732,7 @@ _queue_proecess(Widget_Data *wd, int norender)
    return n;
 }
 
-static int
+static Eina_Bool
 _item_idler(void *data)
 {
    Widget_Data *wd = data;
@@ -1745,9 +1745,9 @@ _item_idler(void *data)
    if (!wd->queue)
      {
 	wd->queue_idler = NULL;
-	return 0;
+	return ECORE_CALLBACK_CANCEL;
      }
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void

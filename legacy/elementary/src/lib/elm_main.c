@@ -262,7 +262,7 @@ myapp_CFLAGS =
  *
  */
 
-static int _elm_signal_exit(void *data, int ev_type, void *ev);
+static Eina_Bool _elm_signal_exit(void *data, int ev_type, void *ev);
 
 char *_elm_appname = NULL;
 const char *_elm_data_dir = NULL;
@@ -275,11 +275,11 @@ static int _elm_init_count = 0;
 static int _elm_policies[ELM_POLICY_LAST];
 static Ecore_Event_Handler *_elm_exit_handler = NULL;
 
-static int
+static Eina_Bool
 _elm_signal_exit(void *data __UNUSED__, int ev_type __UNUSED__, void *ev __UNUSED__)
 {
    elm_exit();
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 void

@@ -200,14 +200,14 @@ _save(Evas_Object *obj)
      }
 }
 
-static int
+static Eina_Bool
 _delay_write(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return 0;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    _save(data);
    wd->delay_write = NULL;
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void

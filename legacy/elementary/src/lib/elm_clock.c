@@ -38,9 +38,9 @@ struct _Widget_Data
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
-static int _ticker(void *data);
-static int _signal_clock_val_up(void *data);
-static int _signal_clock_val_down(void *data);
+static Eina_Bool _ticker(void *data);
+static Eina_Bool _signal_clock_val_up(void *data);
+static Eina_Bool _signal_clock_val_down(void *data);
 static void _time_update(Evas_Object *obj);
 
 static void
@@ -83,7 +83,7 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
      edje_object_signal_emit(wd->clk, "elm,action,unfocus", "elm");
 }
 
-static int
+static Eina_Bool
 _ticker(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -91,7 +91,7 @@ _ticker(void *data)
    struct timeval timev;
    struct tm *tm;
    time_t tt;
-   if (!wd) return 0;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    gettimeofday(&timev, NULL);
    t = ((double)(1000000 - timev.tv_usec)) / 1000000.0;
    wd->ticker = ecore_timer_add(t, _ticker, data);
@@ -108,10 +108,10 @@ _ticker(void *data)
 	     _time_update(data);
 	  }
      }
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
-static int
+static Eina_Bool
 _signal_clock_val_up(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -163,7 +163,7 @@ clock_val_up_cancel:
    return ECORE_CALLBACK_CANCEL;
 }
 
-static int
+static Eina_Bool
 _signal_clock_val_down(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);

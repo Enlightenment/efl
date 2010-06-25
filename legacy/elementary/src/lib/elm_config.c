@@ -43,7 +43,7 @@ static const char *_atom_names[ATOM_COUNT] =
 #define ATOM_E_CONFIG 4
 
 static Eina_Bool _prop_config_get(void);
-static int _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev);
+static Eina_Bool _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev);
 
 static Eina_Bool
 _prop_config_get(void)
@@ -51,8 +51,9 @@ _prop_config_get(void)
    int size = 0;
    Ecore_X_Atom atom;
    char buf[512];
-   unsigned char *data = NULL, *config_data;
-   
+   unsigned char *data = NULL;
+   Elm_Config *config_data;
+
    snprintf(buf, sizeof(buf), "ENLIGHTENMENT_CONFIG_%s", _elm_profile);
    atom = ecore_x_atom_get(buf);
    _atom_config = atom;
@@ -85,7 +86,7 @@ _prop_config_get(void)
    return EINA_TRUE;
 }
 
-static int
+static Eina_Bool
 _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_X_Event_Window_Property *event = ev;
@@ -171,7 +172,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
              _prop_config_get();
           }
      }
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 #endif
 

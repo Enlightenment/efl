@@ -15,7 +15,7 @@ typedef struct Progressbar
 
 static Progressbar _test_progressbar;
 
-static int
+static Eina_Bool
 _my_progressbar_value_set (void *data)
 {
    double progress;

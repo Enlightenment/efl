@@ -253,7 +253,7 @@ _thumb_apply(Widget_Data *wd)
    wd->is_generating = EINA_FALSE;
 }
 
-static int
+static Eina_Bool
 _thumb_apply_cb(void *data, int type __UNUSED__, void *ev __UNUSED__)
 {
    _thumb_apply(data);

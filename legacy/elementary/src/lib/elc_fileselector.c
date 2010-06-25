@@ -172,7 +172,7 @@ _contract_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 /***  PRIVATES  ***/
-static int
+static Eina_Bool
 _sel_do(void *data)
 {
    struct sel_data *sd;

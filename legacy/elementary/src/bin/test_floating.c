@@ -39,7 +39,7 @@ gl_sel(void *data, Evas_Object *obj, void *event_info)
    printf("sel item data [%p] on genlist obj [%p], item pointer [%p]\n", data, obj, event_info);
 }
 
-static int
+static Eina_Bool
 anim(void *data)
 {
    Evas_Object *gl = data;
@@ -48,7 +48,7 @@ anim(void *data)
    y = 0;
    x = (sin(ecore_loop_time_get()) * 500);
    evas_object_move(gl, x, y);
-   return 1;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void

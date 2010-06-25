@@ -372,18 +372,18 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
      }
 }
 
-static int
+static Eina_Bool
 _long_press(void *data)
 {
    Elm_List_Item *it = data;
    Widget_Data *wd = elm_widget_data_get(it->obj);
 
-   if (!wd) return 0;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    it->long_timer = NULL;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, 0);
    wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(it->obj, "longpressed", it);
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void

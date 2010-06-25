@@ -56,7 +56,7 @@ static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static int _timer_cb(void *data);
+static Eina_Bool _timer_cb(void *data);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -126,15 +126,15 @@ _end(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, c
 }
 
 
-static int
+static Eina_Bool
 _timer_cb(void *data)
 {
    Evas_Object *obj = data;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    wd->timer = NULL;
    elm_slideshow_next(obj);
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void

@@ -165,14 +165,14 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
      }
 }
 
-static int
+static Eina_Bool
 _delay_change(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return 0;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    wd->delay = NULL;
    evas_object_smart_callback_call(data, SIG_DELAY_CHANGED, NULL);
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void

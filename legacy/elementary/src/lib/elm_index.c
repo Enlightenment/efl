@@ -247,16 +247,16 @@ _index_box_clear(Evas_Object *obj, Evas_Object *box __UNUSED__, int level)
    wd->level_active[level] = 0;
 }
 
-static int
+static Eina_Bool
 _delay_change(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    void *d;
-   if (!wd) return 0;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    wd->delay = NULL;
    d = (void *)elm_index_item_selected_get(data, wd->level);
    if (d) evas_object_smart_callback_call(data, "delay,changed", d);
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void

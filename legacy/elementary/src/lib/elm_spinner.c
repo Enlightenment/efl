@@ -117,14 +117,14 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
      edje_object_signal_emit(wd->spinner, "elm,action,unfocus", "elm");
 }
 
-static int
+static Eina_Bool
 _delay_change(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return 0;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    wd->delay = NULL;
    evas_object_smart_callback_call(data, "delay,changed", NULL);
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
@@ -357,7 +357,7 @@ _toggle_entry(void *data, Evas_Object *obj __UNUSED__, const char *emission __UN
      }
 }
 
-static int
+static Eina_Bool
 _spin_value(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);

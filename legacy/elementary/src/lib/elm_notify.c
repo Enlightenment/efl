@@ -182,15 +182,15 @@ _calc(Evas_Object *obj)
     _sizing_eval(obj);
 }
 
-static int
+static Eina_Bool
 _timer_cb(void *data)
 {
    Evas_Object *obj = data;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    wd->timer = NULL;
    evas_object_hide(obj);
-   return 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void

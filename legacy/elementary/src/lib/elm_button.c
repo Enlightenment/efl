@@ -161,7 +161,7 @@ _signal_clicked(void *data, Evas_Object *obj, const char *emission, const char *
    _signal_unpressed(data, obj, emission, source); /* safe guard when the theme does not emit the 'unpress' signal */
 }
 
-static int
+static Eina_Bool
 _autorepeat_send(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -177,7 +177,7 @@ _autorepeat_send(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-static int
+static Eina_Bool
 _autorepeat_initial_send(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);

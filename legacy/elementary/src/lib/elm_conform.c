@@ -29,7 +29,7 @@ static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
-static int _prop_change(void *data, int type, void *event);
+static Eina_Bool _prop_change(void *data, int type, void *event);
 
 /* local functions */
 static void 
@@ -139,13 +139,13 @@ _autoscroll_mode_disable(Evas_Object *obj)
 }
 */
 
-static int 
+static Eina_Bool
 _prop_change(void *data, int type __UNUSED__, void *event) 
 {
 #ifdef HAVE_ELEMENTARY_X
    Ecore_X_Event_Window_Property *ev;
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return 1;
+   if (!wd) return ECORE_CALLBACK_PASS_ON;
    ev = event;
    if (ev->atom == ECORE_X_ATOM_E_ILLUME_ZONE) 
      {
@@ -197,7 +197,7 @@ _prop_change(void *data, int type __UNUSED__, void *event)
      }
 #endif
 
-   return 1;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 /**
