@@ -44,7 +44,7 @@ struct _Ecore_File_Monitor_Win32
 
 static Ecore_File_Monitor *_monitors = NULL;
 
-static int _ecore_file_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh);
+static Eina_Bool _ecore_file_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh);
 
 
 static Ecore_File_Monitor_Win32_Data *
@@ -125,7 +125,7 @@ _ecore_file_monitor_win32_data_free(Ecore_File_Monitor_Win32_Data *md)
    free (md);
 }
 
-static int
+static Eina_Bool
 _ecore_file_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh)
 {
    char                           filename[PATH_MAX];
