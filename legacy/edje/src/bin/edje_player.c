@@ -689,6 +689,7 @@ int main(int argc, char **argv)
 
    if (opts.slave_mode)
      {
+#ifndef _WIN32
 	int flags;
 	flags = fcntl(STDIN_FILENO, F_GETFL, 0);
 	flags |= O_NONBLOCK;
@@ -700,6 +701,11 @@ int main(int argc, char **argv)
 	  }
 	ecore_main_fd_handler_add(STDIN_FILENO, ECORE_FD_READ | ECORE_FD_ERROR,
 				  _slave_mode, edje, NULL, NULL);
+#else
+        /* TODO: port the code above to Windows */
+        fprintf (stderr, "ERROR: slave mode not working on Windows\n");
+        goto free_ecore_evas;
+#endif
      }
 
    ecore_evas_borderless_set(win, opts.borderless);
