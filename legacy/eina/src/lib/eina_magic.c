@@ -102,7 +102,11 @@ _eina_magic_strings_alloc(void)
 	tmp = realloc(_eina_magic_strings, sizeof(Eina_Magic_String) * size);
 	if (!tmp)
 	  {
+#ifdef _WIN32
+	     ERR("could not realloc magic_strings from %Iu to %Iu buckets.",
+#else
 	     ERR("could not realloc magic_strings from %zu to %zu buckets.",
+#endif
 		 _eina_magic_strings_allocated, size);
 	     return NULL;
 	  }
