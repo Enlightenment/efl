@@ -98,7 +98,7 @@ static void          _ecore_exe_event_exe_data_free(void *data,
 static int           _ecore_exe_win32_pipe_thread_generic_cb(void *data, Ecore_Exe_Flags flags);
 static DWORD WINAPI  _ecore_exe_win32_pipe_thread_read_cb(void *data);
 static DWORD WINAPI  _ecore_exe_win32_pipe_thread_error_cb(void *data);
-static int           _ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh);
+static Eina_Bool     _ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh);
 static void          _ecore_exe_pipe_read_cb(void *data, void *buf, unsigned int size);
 static int           _ecore_exe_pipe_write_cb(void *data, Ecore_Win32_Handler *wh);
 static void          _ecore_exe_pipe_error_cb(void *data, void *buf, unsigned int size);
@@ -922,7 +922,7 @@ _ecore_exe_event_exe_data_free(void *data __UNUSED__, void *ev)
    ecore_exe_event_data_free(e);
 }
 
-static int
+static Eina_Bool
 _ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
 {
    Ecore_Exe_Event_Del *e;
