@@ -70,19 +70,19 @@ edje_init(void)
 
    if (!ecore_init())
      {
-	ERR("Edje: Ecore init failed");
+	ERR("Ecore init failed");
 	goto unregister_log_domain;
      }
 
    if (!embryo_init())
      {
-	ERR("Edje: Embryo init failed");
+	ERR("Embryo init failed");
 	goto shutdown_ecore;
      }
 
    if (!eet_init())
      {
-	ERR("Edje: Eet init failed");
+	ERR("Eet init failed");
 	goto shutdown_embryo;
      }
 
