@@ -2815,7 +2815,7 @@ extern "C" {
    * @since 1.2.4
    * @ingroup Eet_Connection_Group
    */
-   Eet_Connection *eet_connection_new(Eet_Read_Cb *eet_read_cb, Eet_Write_Cb *eet_write_cb, const void *user_data);
+   EAPI Eet_Connection *eet_connection_new(Eet_Read_Cb *eet_read_cb, Eet_Write_Cb *eet_write_cb, const void *user_data);
 
   /**
    * Process a raw packet received over the link
@@ -2831,7 +2831,7 @@ extern "C" {
    * @since 1.2.4
    * @ingroup Eet_Connection_Group
    */
-   int eet_connection_received(Eet_Connection *conn, const void *data, size_t size);
+   EAPI int eet_connection_received(Eet_Connection *conn, const void *data, size_t size);
 
   /**
    * Convert a complex structure and prepare it to be send.
@@ -2850,7 +2850,7 @@ extern "C" {
    * @since 1.2.4
    * @ingroup Eet_Connection_Group
    */
-   Eina_Bool eet_connection_send(Eet_Connection *conn, Eet_Data_Descriptor *edd, const void *data_in, const char *cipher_key);
+   EAPI Eina_Bool eet_connection_send(Eet_Connection *conn, Eet_Data_Descriptor *edd, const void *data_in, const char *cipher_key);
 
   /**
    * Convert a Eet_Node tree and prepare it to be send.
@@ -2868,7 +2868,7 @@ extern "C" {
    * @since 1.2.4
    * @ingroup Eet_Connection_Group
    */
-   Eina_Bool eet_connection_node_send(Eet_Connection *conn, Eet_Node *node, const char *cipher_key);
+   EAPI Eina_Bool eet_connection_node_send(Eet_Connection *conn, Eet_Node *node, const char *cipher_key);
 
   /**
    * Close a connection and lost its track.
@@ -2879,7 +2879,7 @@ extern "C" {
    * @since 1.2.4
    * @ingroup Eet_Connection_Group
    */
-   void *eet_connection_close(Eet_Connection *conn, Eina_Bool *on_going);
+   EAPI void *eet_connection_close(Eet_Connection *conn, Eina_Bool *on_going);
 
 /***************************************************************************/
 
