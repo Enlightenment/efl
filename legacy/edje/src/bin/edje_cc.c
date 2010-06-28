@@ -199,7 +199,7 @@ main(int argc, char **argv)
    if (!edje_init())
      exit(-1);
 
-   edje_file = mem_alloc(SZ(Edje_File));
+   edje_file = mem_alloc(SZ(Old_Edje_File));
    edje_file->compiler = strdup("edje_cc");
    edje_file->version = EDJE_FILE_VERSION;
    edje_file->feature_ver = 1; /* increment this every time we add a field

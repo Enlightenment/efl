@@ -773,8 +773,8 @@ _edje_edit_external_get(Edje *ed, const char *name)
 void
 _edje_edit_group_references_update(Evas_Object *obj, const char *old_group_name, const char *new_group_name)
 {
-
-   Eina_List *gl, *pll, *pl;
+   Eina_Iterator *i;
+   Eina_List *pll, *pl;
    Edje_Part_Collection *pc;
    Edje_Part_Collection_Directory_Entry *pce;
    char *part_name;
@@ -790,7 +790,9 @@ _edje_edit_group_references_update(Evas_Object *obj, const char *old_group_name,
 
    old = eina_stringshare_add(old_group_name);
 
-   EINA_LIST_FOREACH(ed->file->collection_dir->entries, gl, pce)
+   i = eina_hash_iterator_data_new(ed->file->collection);
+
+   EINA_ITERATOR_FOREACH(i, pce)
      {
 	edje_object_file_set(part_obj, ed->file->path, pce->entry);
 
@@ -808,6 +810,9 @@ _edje_edit_group_references_update(Evas_Object *obj, const char *old_group_name,
 	       eina_stringshare_del(source);
 	  }
      }
+
+   eina_iterator_free(i);
+
    eina_stringshare_del(old);
 
    evas_object_del(part_obj);
@@ -869,7 +874,6 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    Edje_Part_Collection_Directory_Entry *de;
    Edje_Part_Collection_Directory_Entry *d;
    Edje_Part_Collection *pc;
-   Eina_List *l;
    int id;
    int search;
    //Code *cd;
@@ -879,9 +883,8 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    //printf("ADD GROUP: %s \n", name);
 
    /* check if a group with the same name already exists */
-   EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, d)
-     if (!strcmp(d->entry, name))
-       return EINA_FALSE;
+   if (eina_hash_find(ed->file->collection, name))
+     return EINA_FALSE;
 
    /* Create structs */
    de = _alloc(sizeof(Edje_Part_Collection_Directory_Entry));
@@ -899,9 +902,12 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    search = 0;
    while (id == -1)
      {
+	Eina_Iterator *i;
 	Eina_Bool found = 0;
 
-	EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, d)
+	i = eina_hash_iterator_data_new(ed->file->collection);
+
+	EINA_ITERATOR_FOREACH(i, d)
 	  {
 	     // printf("search if %d is free [id %d]\n", search, d->id);
 	     if (search == d->id)
@@ -910,17 +916,18 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
 		  break;
 	       }
 	  }
-	if (!found)
-	  id = search;
-	else
-	  search++;
+
+	eina_iterator_free(i);
+
+	if (!found) id = search;
+	else search++;
      }
 
    /* Init Edje_Part_Collection_Directory_Entry */
    //printf(" new id: %d\n", id);
    de->id = id;
    de->entry = eina_stringshare_add(name);
-   ed->file->collection_dir->entries = eina_list_append(ed->file->collection_dir->entries, de);
+   eina_hash_direct_add(ed->file->collection, de->entry, de);
 
    /* Init Edje_Part_Collection */
    pc->id = id;
@@ -957,11 +964,12 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
 EAPI Eina_Bool
 edje_edit_group_del(Evas_Object *obj, const char *group_name)
 {
-   char buf[32];
-   Eina_List *l;
-   Edje_Part_Collection *g;
-   Eet_File *eetf;
    Edje_Part_Collection_Directory_Entry *e;
+   Edje_Part_Collection *die = NULL;
+   Edje_Part_Collection *g;
+   Eina_List *l;
+   Eet_File *eetf;
+   char buf[32];
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
@@ -972,29 +980,26 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
 
    _edje_edit_group_references_update(obj, group_name, NULL);
 
-   EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, e)
-     {
-	if (!strcmp(e->entry, group_name))
-	  {
-	     if (e->id == ed->collection->id) return EINA_FALSE;
-	     ed->file->collection_dir->entries =
-	       eina_list_remove_list(ed->file->collection_dir->entries, l);
-	     break;
-	  }
-	e = NULL;
-     }
+   e = eina_hash_find(ed->file->collection, group_name);
    if (!e) return EINA_FALSE;
 
-   EINA_LIST_FOREACH(ed->file->collection_cache, l, g)
+   if (e->id == ed->collection->id) return EINA_FALSE;
+   if (e->ref)
      {
-	if (g->id == e->id)
-	  {
-	     ed->file->collection_cache =
-	       eina_list_remove_list(ed->file->collection_cache, l);
-	     break;
-	  }
-	g = NULL;
+	ERR("EEK: Group \"%s\" still in use !", group_name);
+	die = e->ref;
+	e->ref = NULL;
+	eina_hash_del(ed->file->collection, group_name, e);
      }
+
+   EINA_LIST_FOREACH(ed->file->collection_cache, l, g)
+     if (g->id == e->id)
+       {
+	  ed->file->collection_cache =
+	    eina_list_remove_list(ed->file->collection_cache, l);
+	  die = g;
+	  break;
+       }
 
    /* Remove collection/id from eet file */
    eetf = eet_open(ed->file->path, EET_FILE_MODE_READ_WRITE);
@@ -1009,10 +1014,7 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
    eet_close(eetf);
 
    /* Free Group */
-   if (g) _edje_collection_free(ed->file, g);
-
-   _edje_if_string_free(ed, e->entry);
-   free(e);
+   if (die) _edje_collection_free(ed->file, die);
 
    /* we need to save everything to make sure the file won't have broken
     * references the next time is loaded */
@@ -1024,23 +1026,18 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
 EAPI Eina_Bool
 edje_edit_group_exist(Evas_Object *obj, const char *group)
 {
-   Eina_List *l;
-   Edje_Part_Collection_Directory_Entry *e;
-
    GET_ED_OR_RETURN(EINA_FALSE);
 
-   EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, e)
-     if (e->entry && !strcmp(e->entry, group))
-       return EINA_TRUE;
+   if (eina_hash_find(ed->file->collection, group))
+     return EINA_TRUE;
    return EINA_FALSE;
 }
 
 EAPI Eina_Bool
 edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
 {
-   Eina_List *l;
-   Edje_Part_Collection *pc;
    Edje_Part_Collection_Directory_Entry *pce;
+   Edje_Part_Collection *pc;
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
@@ -1058,27 +1055,15 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
 	// pc->part, pc->id, new_name);
 
    //if (pc->part && ed->file->free_strings) eina_stringshare_del(pc->part); TODO FIXME
-   pc->part = eina_stringshare_add(new_name);
+   pce = eina_hash_find(ed->file->collection, pc->part);
 
-   EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, pce)
-     {
-	if (pc->id == pce->id)
-	  {
-	     eina_hash_del(ed->file->collection_hash,
-			   pce->entry, NULL);
-	     if (!ed->file->collection_hash)
-	       ed->file->collection_hash = eina_hash_string_superfast_new(NULL);
-	     eina_hash_add(ed->file->collection_hash,
-			   new_name, pc);
+   eina_hash_del(ed->file->collection, pce->entry, pce);
 
-	     //if (pce->entry &&  //TODO Also this cause segv
-	     //    !eet_dictionary_string_check(eet_dictionary_get(ed->file->ef), pce->entry))
-	     //   eina_stringshare_del(pce->entry);
-	     pce->entry = eina_stringshare_add(new_name);
+   pce->entry = eina_stringshare_add(new_name);
+   pc->part = pce->entry;
 
-	     return EINA_TRUE;
-	  }
-     }
+   eina_hash_add(ed->file->collection, pce->entry, pce);
+
    return EINA_FALSE;
 }
 
@@ -1176,18 +1161,21 @@ edje_edit_group_data_list_get(Evas_Object * obj)
 EAPI Eina_List *
 edje_edit_data_list_get(Evas_Object * obj)
 {
+   Eina_Iterator *i;
    Eina_List *datas = NULL;
-   Eina_List *l;
-   Edje_Data *d;
+   const char *key;
 
    GET_ED_OR_RETURN(NULL);
 
    if (!ed->file || !ed->file->data)
      return NULL;
 
-   datas = NULL;
-   EINA_LIST_FOREACH(ed->file->data, l, d)
-     datas = eina_list_append(datas, eina_stringshare_add(d->key));
+   i = eina_hash_iterator_key_new(ed->file->data);
+
+   EINA_ITERATOR_FOREACH(i, key)
+     datas = eina_list_append(datas, eina_stringshare_add(key));
+
+   eina_iterator_free(i);
 
    return datas;
 }
@@ -1225,27 +1213,15 @@ edje_edit_group_data_add(Evas_Object *obj, const char *key, const char *value)
 EAPI Eina_Bool
 edje_edit_data_add(Evas_Object *obj, const char *itemname, const char *value)
 {
-   Eina_List *l;
-   Edje_Data *d;
-   Edje_Data *dd;
-
    GET_ED_OR_RETURN(EINA_FALSE);
 
    if (!itemname || !ed->file)
      return EINA_FALSE;
 
-   EINA_LIST_FOREACH(ed->file->data, l, dd)
-     if (strcmp(dd->key, itemname) == 0)
-       return EINA_FALSE;
+   if (eina_hash_find(ed->file->data, itemname))
+     return EINA_FALSE;
 
-   d = _alloc(sizeof(Edje_Data));
-   if (!d) return EINA_FALSE;
-
-   d->key = (char*)eina_stringshare_add(itemname);
-   if (value) d->value = (char*)eina_stringshare_add(value);
-   else d->value = NULL;
-
-   ed->file->data = eina_list_append(ed->file->data, d);
+   eina_hash_add(ed->file->data, itemname, eina_stringshare_add(value));
 
    return EINA_TRUE;
 }
@@ -1281,26 +1257,12 @@ edje_edit_group_data_del(Evas_Object *obj, const char *key)
 EAPI Eina_Bool
 edje_edit_data_del(Evas_Object *obj, const char *itemname)
 {
-   Eina_List *l;
-   Edje_Data *d;
-
    GET_ED_OR_RETURN(EINA_FALSE);
 
    if (!itemname || !ed->file || !ed->file->data)
      return 0;
 
-   EINA_LIST_FOREACH(ed->file->data, l, d)
-     {
-	if (strcmp(d->key, itemname) == 0)
-          {
-             _edje_if_string_free(ed, d->key);
-             _edje_if_string_free(ed, d->value);
-             ed->file->data = eina_list_remove(ed->file->data, d);
-             free(d);
-             return EINA_TRUE;
-          }
-     }
-   return EINA_FALSE;
+   return eina_hash_del(ed->file->data, itemname, NULL);
 }
 
 EAPI const char *
@@ -1326,19 +1288,12 @@ edje_edit_group_data_value_get(Evas_Object * obj, char *key)
 EAPI const char *
 edje_edit_data_value_get(Evas_Object * obj, char *itemname)
 {
-   Eina_List *l;
-   Edje_Data *d;
-
    GET_ED_OR_RETURN(NULL);
 
    if (!itemname || !ed->file || !ed->file->data)
      return NULL;
 
-   EINA_LIST_FOREACH(ed->file->data, l, d)
-     if (strcmp(d->key, itemname) == 0)
-       return eina_stringshare_add(d->value);
-
-   return NULL;
+   return eina_stringshare_add(eina_hash_find(ed->file->data, itemname));
 }
 
 EAPI Eina_Bool
@@ -1368,22 +1323,16 @@ edje_edit_group_data_value_set(Evas_Object *obj, const char *key, const char *va
 EAPI Eina_Bool
 edje_edit_data_value_set(Evas_Object *obj, const char *itemname, const char *value)
 {
-   Eina_List *l;
-   Edje_Data *d;
+   const char *old;
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
    if (!itemname || !value || !ed->file || !ed->file->data)
      return EINA_FALSE;
 
-   EINA_LIST_FOREACH(ed->file->data, l, d)
-     if (strcmp(d->key, itemname) == 0)
-       {
-	 _edje_if_string_free(ed, d->value);
-	 d->value = (char*)eina_stringshare_add(value);
-	 return EINA_TRUE;
-       }
-
+   old = eina_hash_modify(ed->file->data, itemname, eina_stringshare_add(value));
+   if (old)
+     return EINA_TRUE;
    return EINA_FALSE;
 }
 
@@ -1416,23 +1365,22 @@ edje_edit_group_data_name_set(Evas_Object *obj, const char *key,  const char *ne
 EAPI Eina_Bool
 edje_edit_data_name_set(Evas_Object *obj, const char *itemname,  const char *newname)
 {
-   Eina_List *l;
-   Edje_Data *d;
+   const char *value;
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
    if (!itemname || !newname || !ed->file || !ed->file->data)
      return EINA_FALSE;
 
-   EINA_LIST_FOREACH(ed->file->data, l, d)
-     if (strcmp(d->key, itemname) == 0)
-       {
-	 _edje_if_string_free(ed, d->key);
-	 d->key = (char*)eina_stringshare_add(newname);
-	 return EINA_TRUE;
-       }
+   /* Get value and prevent it's destruction */
+   value = eina_hash_find(ed->file->data, itemname);
+   value = eina_stringshare_add(value);
+   if (!value) return EINA_FALSE;
 
-   return EINA_FALSE;
+   eina_hash_del(ed->file->data, itemname, NULL);
+   eina_hash_add(ed->file->data, itemname, value);
+
+   return EINA_TRUE;
 }
 
 /***********************/
@@ -4295,21 +4243,18 @@ EAPI Eina_List *
 edje_edit_fonts_list_get(Evas_Object *obj)
 {
    Edje_Font_Directory_Entry *f;
+   Eina_Iterator *i;
    Eina_List *fonts = NULL;
-   Eina_List *l;
 
    GET_ED_OR_RETURN(NULL);
 
    if (!ed->file) return NULL;
-   if (!ed->file->font_dir) return NULL;
 
    //printf("GET FONT LIST for %s\n", ed->file->path);
+   i = eina_hash_iterator_data_new(ed->file->fonts);
 
-   EINA_LIST_FOREACH(ed->file->font_dir->entries, l, f)
-     {
-       fonts = eina_list_append(fonts, f);
-	//printf("   Font: %s (%s) \n", f->entry, f->path);
-     }
+   EINA_ITERATOR_FOREACH(i, f)
+     fonts = eina_list_append(fonts, f);
 
    return fonts;
 }
@@ -4330,18 +4275,6 @@ edje_edit_font_add(Evas_Object *obj, const char* path, const char* alias)
    if (!ed->file) return EINA_FALSE;
    if (!ed->path) return EINA_FALSE;
 
-   /* Create Font_Directory if not exist */
-   if (!ed->file->font_dir)
-     {
-	ed->file->font_dir = _alloc(sizeof(Edje_Font_Directory));
-	if (!ed->file->font_dir) return EINA_FALSE;
-     }
-   if (!ed->file->font_hash)
-     {
-	ed->file->font_hash = eina_hash_string_superfast_new(NULL);
-	if (!ed->file->font_hash) return EINA_FALSE;
-     }
-
    /* Alias */
    if (!alias)
      {
@@ -4351,7 +4284,7 @@ edje_edit_font_add(Evas_Object *obj, const char* path, const char* alias)
    snprintf(entry, sizeof(entry), "fonts/%s", alias);
 
    /* Check if exists */
-   fnt = eina_hash_find(ed->file->font_hash, alias);
+   fnt = eina_hash_find(ed->file->fonts, alias);
    if (fnt)
      return EINA_FALSE;
 
@@ -4362,25 +4295,15 @@ edje_edit_font_add(Evas_Object *obj, const char* path, const char* alias)
 	ERR("Unable to alloc font entry part \"%s\"", alias);
 	return EINA_FALSE;
      }
-   fnt->entry = strdup(alias);
-   fnt->path = strdup(entry);
+   fnt->entry = eina_stringshare_add(alias);
+   fnt->path = eina_stringshare_add(entry);
 
-   ed->file->font_dir->entries = eina_list_append(
-				       ed->file->font_dir->entries,
-				       fnt);
-   eina_hash_direct_add(ed->file->font_hash, fnt->entry, fnt);
+   eina_hash_direct_add(ed->file->fonts, fnt->entry, fnt);
 
    /* Import font */
    if (!_edje_import_font_file(ed, path, entry))
      {
-	ed->file->font_dir->entries = eina_list_remove(
-					     ed->file->font_dir->entries,
-					     fnt);
-	eina_hash_del_by_key(ed->file->font_hash, alias);
-
-	free((char *)fnt->entry);
-	free((char *)fnt->path);
-	free(fnt);
+	eina_hash_del(ed->file->fonts, fnt->entry, fnt);
 	return EINA_FALSE;
      }
 
@@ -4400,28 +4323,11 @@ edje_edit_font_del(Evas_Object *obj, const char* alias)
    if (!ed->file) return EINA_FALSE;
    if (!ed->path) return EINA_FALSE;
 
-   if (!ed->file->font_dir)
-     return EINA_TRUE;
-
-   fnt = eina_hash_find(ed->file->font_hash, alias);
+   fnt = eina_hash_find(ed->file->fonts, alias);
    if (!fnt)
      {
 	WRN("Unable to find font entry part \"%s\"", alias);
 	return EINA_TRUE;
-     }
-
-   ed->file->font_dir->entries = eina_list_remove(
-				       ed->file->font_dir->entries,
-				       fnt);
-
-   if (!eina_hash_del_by_key(ed->file->font_hash, alias))
-     {
-	ERR("Unable to remove font \"%s\" of fonts hash", alias);
-
-	ed->file->font_dir->entries = eina_list_append(
-					  ed->file->font_dir->entries,
-					  fnt);
-	return EINA_FALSE;
      }
 
    /* Erase font to edje file */
@@ -4434,10 +4340,6 @@ edje_edit_font_del(Evas_Object *obj, const char* alias)
       if (!eetf)
 	{
 	   ERR("Unable to open \"%s\" for writing output", ed->path);
-	   eina_hash_direct_add(ed->file->font_hash, fnt->entry, fnt);
-	   ed->file->font_dir->entries = eina_list_append(
-					     ed->file->font_dir->entries,
-					     fnt);
 	   return EINA_FALSE;
 	}
 
@@ -4447,10 +4349,6 @@ edje_edit_font_del(Evas_Object *obj, const char* alias)
         {
            ERR("Unable to delete \"%s\" font entry", entry);
            eet_close(eetf);
-	   eina_hash_direct_add(ed->file->font_hash, fnt->entry, fnt);
-	   ed->file->font_dir->entries = eina_list_append(
-					     ed->file->font_dir->entries,
-					     fnt);
            return EINA_FALSE;
         }
 
@@ -4458,18 +4356,12 @@ edje_edit_font_del(Evas_Object *obj, const char* alias)
       if (!_edje_edit_edje_file_save(eetf, ed->file))
 	{
 	   eet_close(eetf);
-	   eina_hash_direct_add(ed->file->font_hash, fnt->entry, fnt);
-	   ed->file->font_dir->entries = eina_list_append(
-					     ed->file->font_dir->entries,
-					     fnt);
 	   return EINA_FALSE;
 	}
       eet_close(eetf);
    }
 
-   free((char *)fnt->entry);
-   free((char *)fnt->path);
-   free(fnt);
+   eina_hash_del(ed->file->fonts, alias, fnt);
 
    return EINA_TRUE;
 }
@@ -7228,7 +7120,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
 
 	INF("** Writing all collections");
 
-	it = eina_hash_iterator_data_new(ef->collection_hash);
+	it = eina_hash_iterator_data_new(ef->collection);
         while (eina_iterator_next(it, (void **)&edc))
 	  {
 	     INF("** Writing hash Edje_Part_Collection* ed->collection "

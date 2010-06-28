@@ -99,7 +99,7 @@ struct _Code_Lookup
 
 static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char *ptr, int len));
 
-Edje_File *edje_file = NULL;
+Old_Edje_File *edje_file = NULL;
 Eina_List *edje_collections = NULL;
 Eina_List *externals = NULL;
 Eina_List *fonts = NULL;

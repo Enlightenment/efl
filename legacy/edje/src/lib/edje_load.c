@@ -6,7 +6,6 @@
 
 #include "edje_private.h"
 
-static Eina_Bool _edje_file_collection_hash_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 #ifdef EDJE_PROGRAM_CACHE
 static Eina_Bool  _edje_collection_free_prog_cache_matches_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 #endif
@@ -146,14 +145,16 @@ edje_file_collection_list(const char *file)
    edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
    if (edf != NULL)
      {
-	if (edf->collection_dir)
-	  {
-	     Eina_List *l;
-	     Edje_Part_Collection_Directory_Entry *ce;
+	Eina_Iterator *i;
+	const char *key;
 
-	     EINA_LIST_FOREACH(edf->collection_dir->entries, l, ce)
-	       lst = eina_list_append(lst, eina_stringshare_add(ce->entry));
-	  }
+	i = eina_hash_iterator_key_new(edf->collection);
+
+	EINA_ITERATOR_FOREACH(i, key)
+	  lst = eina_list_append(lst, eina_stringshare_add(key));
+
+	eina_iterator_free(i);
+
 	_edje_cache_file_unref(edf);
      }
    return lst;
@@ -185,28 +186,35 @@ edje_file_group_exists(const char *file, const char *glob)
 {
    Edje_File *edf;
    int error_ret = 0;
+   Eina_Bool succeed = EINA_FALSE;
 
    if ((!file) || (!*file)) return EINA_FALSE;
    edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
    if (edf != NULL)
      {
-	if (edf->collection_dir)
-	  {
-             Edje_Patterns *patterns;
+	/* FIXME: cache the result in Edje_File structure */
+	Edje_Part_Collection_Directory_Entry *ce;
+	Eina_Iterator *i;
+	Eina_List *l = NULL;
+	Edje_Patterns *patterns;
 
-             patterns =
-               edje_match_collection_dir_init(edf->collection_dir->entries);
-             if (edje_match_collection_dir_exec(patterns, glob))
-               {
-                  edje_match_patterns_free(patterns);
-                  _edje_cache_file_unref(edf);
-                  return EINA_TRUE;
-               }
-             edje_match_patterns_free(patterns);
-	  }
+	i = eina_hash_iterator_data_new(edf->collection);
+
+	EINA_ITERATOR_FOREACH(i, ce)
+	  l = eina_list_append(l, ce);
+
+	eina_iterator_free(i);
+
+	patterns = edje_match_collection_dir_init(l);
+
+	succeed = edje_match_collection_dir_exec(patterns, glob);
+
+	edje_match_patterns_free(patterns);
+	eina_list_free(l);
+
 	_edje_cache_file_unref(edf);
      }
-   return EINA_FALSE;
+   return succeed;
 }
 
 
@@ -237,11 +245,10 @@ edje_file_data_get(const char *file, const char *key)
 	edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
 	if (edf != NULL)
 	  {
-	     if (edf->data_cache != NULL)
-	       {
-		  str = eina_hash_find(edf->data_cache, key);
-		  if (str) str = strdup(str);
-	       }
+	     str = eina_hash_find(edf->data, key);
+
+	     if (str) str = strdup(str);
+
 	     _edje_cache_file_unref(edf);
 	  }
      }
@@ -905,8 +912,9 @@ _edje_file_del(Edje *ed)
                        lua_pop(ed->L, 1);
                        _edje_lua_free_reg(ed->L, rp->custom->description); // created in edje_lua.c::_edje_lua_part_fn_custom_state
                     }
-#endif                  
-                  _edje_collection_free_part_description_free(rp->custom->description, ed->file->free_strings);
+#endif
+                  _edje_collection_free_part_description_free(rp->custom->description,
+							      ed->file->free_strings);
                }
 
 	     /* Cleanup optional part. */
@@ -984,42 +992,41 @@ _edje_file_del(Edje *ed)
    ed->table_programs = NULL;
    ed->table_programs_size = 0;
 }
-/**
- * Used to free the cached data values that are stored in the data_cache
- * hash table.
- */
-static Eina_Bool data_cache_free(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
-{
-   Edje_File    *edf;
-
-   edf = fdata;
-   if (edf->free_strings) eina_stringshare_del(data);
-   return EINA_TRUE;
-}
 
 void
 _edje_file_free(Edje_File *edf)
 {
    Edje_Color_Class *ecc;
-   Edje_Data *edt;
+   const Edje_File *prev;
 
-   if (edf->font_dir)
+   prev = _edje_file_get();
+   _edje_file_set(edf);
+
+#define HASH_FREE(Hash)				\
+   eina_hash_free(Hash);			\
+   Hash = NULL;
+
+   HASH_FREE(edf->fonts);
+   HASH_FREE(edf->collection);
+   HASH_FREE(edf->data);
+
+   if (edf->oef)
      {
-	Edje_Font_Directory_Entry *fe;
-
-	EINA_LIST_FREE(edf->font_dir->entries, fe)
+	if (edf->oef->font_dir)
 	  {
-	     eina_hash_del(edf->font_hash, fe->entry, edf);
-	     if (edf->free_strings && fe->path) eina_stringshare_del(fe->path);
-	     free(fe);
+	     eina_list_free(edf->oef->font_dir->entries);
+
+	     free(edf->oef->font_dir);
 	  }
-	free(edf->font_dir);
+
+	if (edf->oef->collection_dir)
+	  {
+	     eina_list_free(edf->oef->collection_dir->entries);
+
+	     free(edf->oef->collection_dir);
+	  }
      }
-   if (edf->font_hash)
-     {
-	eina_hash_free(edf->font_hash);
-	edf->font_hash = NULL;
-     }
+
    if (edf->image_dir)
      {
 	Edje_Image_Directory_Entry *ie;
@@ -1030,17 +1037,6 @@ _edje_file_free(Edje_File *edf)
 	     free(ie);
 	  }
 	free(edf->image_dir);
-     }
-   if (edf->collection_dir)
-     {
-	Edje_Part_Collection_Directory_Entry *ce;
-
-	EINA_LIST_FREE(edf->collection_dir->entries, ce)
-	  {
-	     if (edf->free_strings && ce->entry) eina_stringshare_del(ce->entry);
-	     free(ce);
-	  }
-	free(edf->collection_dir);
      }
    if (edf->spectrum_dir)
      {
@@ -1063,51 +1059,20 @@ _edje_file_free(Edje_File *edf)
 	free(edf->spectrum_dir);
      }
 
-   EINA_LIST_FREE(edf->data, edt)
-     {
-        if (edf->free_strings)
-          {
-             if (edt->key) eina_stringshare_del(edt->key);
-             if (edt->value) eina_stringshare_del(edt->value);
-          }
-	free(edt);
-     }
-   if (edf->data_cache)
-     {
-	eina_hash_foreach(edf->data_cache, data_cache_free, edf);
-	eina_hash_free(edf->data_cache);
-	edf->data_cache = NULL;
-     }
-
    EINA_LIST_FREE(edf->color_classes, ecc)
      {
 	if (edf->free_strings && ecc->name) eina_stringshare_del(ecc->name);
 	free(ecc);
      }
 
-   /* FIXME: free collection_hash and collection_cache */
-   if (edf->collection_hash)
-     {
-	ERR("EDJE ERROR:\n"
-	    "\n"
-	    "Naughty Programmer - spank spank!\n"
-	    "\n"
-	    "This program as probably called edje_shutdown() with active Edje objects\n"
-	    "still around.\n This can cause problems as both Evas and Edje retain\n"
-	    "references to the objects. you should shut down all canvases and objects\n"
-	    "before calling edje_shutdown().\n"
-	    "The following errors are the edje object files and parts that are still\n"
-	    "hanging around, with their reference counts");
-	eina_hash_foreach(edf->collection_hash,
-                          _edje_file_collection_hash_foreach, edf);
-	eina_hash_free(edf->collection_hash);
-     }
    if (edf->path) eina_stringshare_del(edf->path);
    if (edf->free_strings && edf->compiler) eina_stringshare_del(edf->compiler);
    if (edf->collection_cache) _edje_cache_coll_flush(edf);
    _edje_textblock_style_cleanup(edf);
    if (edf->ef) eet_close(edf->ef);
    free(edf);
+
+   _edje_file_set(prev);
 }
 
 void
@@ -1166,7 +1131,6 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 	     free(edt);
 	  }
      }
-   if (edf->free_strings && ec->part) eina_stringshare_del(ec->part);
 #ifdef EDJE_PROGRAM_CACHE
    if (ec->prog_cache.no_matches) eina_hash_free(ec->prog_cache.no_matches);
    if (ec->prog_cache.matches)
@@ -1204,22 +1168,6 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc, Eina_Bo
 	if (desc->gradient.params) eina_stringshare_del(desc->gradient.params);
      }
    free(desc);
-}
-
-static Eina_Bool
-_edje_file_collection_hash_foreach(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
-{
-   Edje_File *edf;
-   Edje_Part_Collection *coll;
-
-   edf = fdata;
-   coll = data;
-   ERR("EEK: EDJE FILE: \"%s\" ref(%i) PART: \"%s\" ref(%i) ",
-       edf->path, edf->references,
-       coll->part, coll->references);
-   _edje_collection_free(edf, coll);
-
-   return EINA_TRUE;
 }
 
 #ifdef EDJE_PROGRAM_CACHE

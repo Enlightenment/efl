@@ -236,6 +236,8 @@ typedef struct _Edje_Part_Description                Edje_Part_Description;
 typedef struct _Edje_Spectrum_Color                  Edje_Spectrum_Color;
 typedef struct _Edje_Patterns                        Edje_Patterns;
 
+typedef struct _Old_Edje_File			     Old_Edje_File;
+
 #define EDJE_INF_MAX_W 100000
 #define EDJE_INF_MAX_H 100000
 
@@ -319,28 +321,29 @@ struct _Edje_File
    time_t                          mtime;
 
    Edje_External_Directory        *external_dir;
-   Edje_Font_Directory            *font_dir;
    Edje_Image_Directory           *image_dir;
    Edje_Spectrum_Directory        *spectrum_dir;
-   Edje_Part_Collection_Directory *collection_dir;
-   Eina_List                      *data;
    Eina_List                      *styles;
    Eina_List                      *color_classes;
 
    int                             references;
-   char                           *compiler;
+   const char                     *compiler;
    int                             version;
    int                             feature_ver;
 
-   Eina_Hash                      *collection_hash;
-   Eina_Hash			  *font_hash;
-   Eina_List                      *collection_cache;
-   Eina_Hash                      *data_cache;
+   Eina_Hash                      *data;
+   Eina_Hash			  *fonts;
+
+   Eina_Hash			  *collection;
+   Eina_List			  *collection_cache;
 
    Eet_File                       *ef;
-   
-   unsigned int                    free_strings : 1;
-   unsigned int                    dangling : 1;
+
+   Old_Edje_File		  *oef;
+
+   unsigned char                   free_strings : 1;
+   unsigned char                   dangling : 1;
+   unsigned char		   warning : 1;
 };
 
 struct _Edje_Style
@@ -528,6 +531,8 @@ struct _Edje_Part_Collection_Directory_Entry
 {
    const char *entry; /* the nominal name of the part collection */
    int         id; /* the id of this named part collection */
+
+   Edje_Part_Collection *ref;
 };
 
 /*----------*/
@@ -576,10 +581,12 @@ struct _Edje_Part_Collection
 
    Embryo_Program   *script; /* all the embryo script code for this group */
    const char       *part;
-   
+
    unsigned char    script_only;
 
    unsigned char    lua_script_only;
+
+   unsigned char    checked : 1;
 };
 
 struct _Edje_Part
@@ -1656,4 +1663,5 @@ void _edje_lua2_script_load(Edje_Part_Collection *edc, void *data, int size);
 void _edje_lua2_script_unload(Edje_Part_Collection *edc);
 #endif
 
+#include "edje_convert.h"
 #endif

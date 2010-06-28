@@ -7,9 +7,9 @@
 #include "edje_private.h"
 
 static int
-_edje_font_is_embedded(Edje_File *edf, char *font __UNUSED__)
+_edje_font_is_embedded(Edje_File *edf, char *font)
 {
-   if (!edf->font_dir) return 0;
+   if (!eina_hash_find(edf->fonts, font)) return 0;
    return 1;
 }
 

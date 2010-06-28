@@ -61,34 +61,50 @@ static int          _edje_collection_cache_size = 16;
 static Edje_Part_Collection *
 _edje_file_coll_open(Edje_File *edf, const char *coll)
 {
+   Old_Edje_Part_Collection *oedc = NULL;
    Edje_Part_Collection *edc = NULL;
    Edje_Part_Collection_Directory_Entry *ce;
-   Eina_List *l = NULL;
    int id = -1, size = 0;
+   Eina_List *l;
    char buf[256];
    void *data;
 
-   EINA_LIST_FOREACH(edf->collection_dir->entries, l, ce)
+   ce = eina_hash_find(edf->collection, coll);
+
+   if (!ce) return NULL;
+
+   if (ce->ref)
      {
-	if ((ce->entry) && (!strcmp(ce->entry, coll)))
+	ce->ref->references++;
+	return ce->ref;
+     }
+
+   EINA_LIST_FOREACH(edf->collection_cache, l, edc)
+     {
+	if (!strcmp(edc->part, coll))
 	  {
-	     id = ce->id;
-	     break;
+	     edc->references = 1;
+	     ce->ref = edc;
+
+	     edf->collection_cache = eina_list_remove_list(edf->collection_cache, l);
+	     return ce->ref;
 	  }
      }
+
+   id = ce->id;
    if (id < 0) return NULL;
 
    snprintf(buf, sizeof(buf), "collections/%i", id);
-   edc = eet_data_read(edf->ef, _edje_edd_edje_part_collection, buf);
-   if (!edc) return NULL;
+   oedc = eet_data_read(edf->ef, _edje_edd_edje_part_collection, buf);
+   if (!oedc) return NULL;
 
    snprintf(buf, sizeof(buf), "scripts/%i", id);
    data = eet_read(edf->ef, buf, &size);
 
    if (data)
      {
-	edc->script = embryo_program_new(data, size);
-        _edje_embryo_script_init(edc);
+	oedc->script = embryo_program_new(data, size);
+        _edje_embryo_script_init(oedc);
 	free(data);
      }
 
@@ -98,12 +114,12 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    if (data)
      {
 #ifdef LUA2
-        _edje_lua2_script_load(edc, data, size);
+        _edje_lua2_script_load(oedc, data, size);
 #else        
 	int err_code;
 
 	//printf("lua chunk size: %d\n", size);
-	_edje_lua_new_reg(_edje_lua_state_get(), -1, edc); // gets freed in 'edje_load::_edje_collectoin_free'
+	_edje_lua_new_reg(_edje_lua_state_get(), -1, oedc); // gets freed in 'edje_load::_edje_collectoin_free'
 
 	if ((err_code = luaL_loadbuffer(_edje_lua_state_get(), data, size, "edje_lua_script")))
 	  {
@@ -117,57 +133,22 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 #endif        
 	free(data);
      }
-   
-   edc->part = eina_stringshare_add(coll);
-   edc->references = 1;
-   if (!edf->collection_hash)
-     edf->collection_hash = eina_hash_string_small_new(NULL);
-   eina_hash_add(edf->collection_hash, coll, edc);
+
+   oedc->part = ce->entry;
+   oedc->references = 1;
+
+   edc = _edje_collection_convert(edf, oedc);
+
    return edc;
-}
-
-static int
-_edje_font_hash(Edje_File *edf)
-{
-   int	count = 0;
-
-   if (!edf->font_hash)
-     edf->font_hash = eina_hash_string_small_new(NULL);
-
-   if (edf->font_dir)
-     {
-	Eina_List *l;
-	Edje_Font_Directory_Entry  *fnt;
-
-	EINA_LIST_FOREACH(edf->font_dir->entries, l, fnt)
-	  {
-	     int                         length;
-	     char                       *tmp;
-
-	     length = strlen(fnt->entry) + 7;
-	     tmp = alloca(length);
-
-	     snprintf(tmp, length, "fonts/%s", fnt->entry);
-	     fnt->path = eina_stringshare_add(tmp);
-             if (edf->free_strings)
-               eina_stringshare_del(fnt->entry);
-	     fnt->entry = fnt->path + 6;
-	     eina_hash_direct_add(edf->font_hash, fnt->entry, fnt);
-
-	     count++;
-	  }
-     }
-   return count;
 }
 
 static Edje_File *
 _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret)
 {
+   Old_Edje_File *oedf;
    Edje_File *edf;
    Edje_Part_Collection *edc;
-   Edje_Data *di;
    Eet_File *ef;
-   Eina_List *l;
    struct stat st;
 
    if (stat(file, &st) != 0)
@@ -182,15 +163,15 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
 	*error_ret = EDJE_LOAD_ERROR_UNKNOWN_FORMAT;
 	return NULL;
      }
-   edf = eet_data_read(ef, _edje_edd_edje_file, "edje_file");
-   if (!edf)
+   oedf = eet_data_read(ef, _edje_edd_edje_file, "edje_file");
+   if (!oedf)
      {
 	*error_ret = EDJE_LOAD_ERROR_CORRUPT_FILE;
 	eet_close(ef);
 	return NULL;
      }
 
-   edf->free_strings = eet_dictionary_get(ef) ? 0 : 1;
+   edf = _edje_file_convert(ef, oedf);
 
    edf->ef = ef;
    edf->mtime = st.st_mtime;
@@ -201,7 +182,7 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
 	_edje_file_free(edf);
 	return NULL;
      }
-   if (!edf->collection_dir)
+   if (!edf->collection)
      {
 	*error_ret = EDJE_LOAD_ERROR_CORRUPT_FILE;
 	_edje_file_free(edf);
@@ -211,13 +192,8 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
    edf->path = eina_stringshare_add(file);
    edf->references = 1;
 
+   /* This should be done at edje generation time */
    _edje_textblock_style_parse_and_fix(edf);
-
-   if (!edf->data_cache)
-     edf->data_cache = eina_hash_string_small_new(NULL);
-
-   EINA_LIST_FOREACH(edf->data, l, di)
-     eina_hash_add(edf->data_cache, di->key, di->value);
 
    if (coll)
      {
@@ -228,10 +204,6 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
 	  }
 	if (edc_ret) *edc_ret = edc;
      }
-
-   edf->font_hash = NULL;
-
-   _edje_font_hash(edf);
 
    return edf;
 }
@@ -319,36 +291,14 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 
    if (!coll) return edf;
 
-   if (!edf->collection_hash)
-     edf->collection_hash = eina_hash_string_small_new(NULL);
-
-   edc = eina_hash_find(edf->collection_hash, coll);
-   if (edc)
+   edc = _edje_file_coll_open(edf, coll);
+   if (!edc)
      {
-	edc->references++;
+	*error_ret = EDJE_LOAD_ERROR_UNKNOWN_COLLECTION;
      }
    else
      {
-        EINA_LIST_FOREACH(edf->collection_cache, l, edc)
-	  {
-	     if (!strcmp(edc->part, coll))
-	       {
-		  edc->references = 1;
-		  edf->collection_cache = eina_list_remove_list(edf->collection_cache, l);
-		  eina_hash_add(edf->collection_hash, coll, edc);
-		  break;
-	       }
-	     edc = NULL;
-	  }
-     }
-   if (!edc)
-     {
-	edc = _edje_file_coll_open(edf, coll);
-	if (!edc)
-	  {
-	     *error_ret = EDJE_LOAD_ERROR_UNKNOWN_COLLECTION;
-	  }
-	else
+	if (!edc->checked)
 	  {
 	    EINA_LIST_FOREACH(edc->parts, l, ep)
 	       {
@@ -412,15 +362,11 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 		  eina_list_free(hist);
 		  hist = NULL;
 	       }
+	    edc->checked = 1;
 	  }
      }
    if (edc_ret) *edc_ret = edc;
 
-   if (eina_hash_population(edf->collection_hash) == 0)
-     {
-       eina_hash_free(edf->collection_hash);
-       edf->collection_hash = NULL;
-     }
    return edf;
 }
 
@@ -457,14 +403,14 @@ _edje_cache_coll_flush(Edje_File *edf)
 void
 _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc)
 {
+   Edje_Part_Collection_Directory_Entry *ce;
+
    edc->references--;
    if (edc->references != 0) return;
-   eina_hash_del(edf->collection_hash, edc->part, edc);
-   if (eina_hash_population(edf->collection_hash) == 0)
-     {
-       eina_hash_free(edf->collection_hash);
-       edf->collection_hash = NULL;
-     }
+
+   ce = eina_hash_find(edf->collection, edc->part);
+
+   ce->ref = NULL;
    edf->collection_cache = eina_list_prepend(edf->collection_cache, edc);
    _edje_cache_coll_clean(edf);
 }

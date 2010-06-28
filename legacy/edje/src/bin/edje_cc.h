@@ -166,7 +166,7 @@ extern int                    max_quality;
 extern int                    line;
 extern Eina_List             *stack;
 extern Eina_List             *params;
-extern Edje_File             *edje_file;
+extern Old_Edje_File         *edje_file;
 extern Eina_List             *edje_collections;
 extern Eina_List             *externals;
 extern Eina_List             *fonts;
