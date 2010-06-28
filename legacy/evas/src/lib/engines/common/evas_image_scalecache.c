@@ -194,7 +194,7 @@ _sci_fix_newest(RGBA_Image *im)
 {
    Eina_List *l;
    Scaleitem *sci;
-   
+
    im->cache.newest_usage = 0;
    im->cache.newest_usage_count = 0;
    EINA_LIST_FOREACH(im->cache.list, l, sci)
