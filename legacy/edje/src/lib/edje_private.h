@@ -337,6 +337,8 @@ struct _Edje_File
    Eina_Hash			  *collection;
    Eina_List			  *collection_cache;
 
+   Edje_Patterns		  *collection_patterns;
+
    Eet_File                       *ef;
 
    Old_Edje_File		  *oef;

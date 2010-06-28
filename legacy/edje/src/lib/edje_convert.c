@@ -127,7 +127,10 @@ _edje_file_convert(Eet_File *file, Old_Edje_File *oedf)
    edf->dangling = EINA_FALSE;
    edf->warning = EINA_FALSE;
 
+   /* Below you will find all memory structure that could be cleaned when under
+      memory pressure */
    edf->collection_cache = NULL;
+   edf->collection_patterns = NULL;
 
    return edf;
 }
