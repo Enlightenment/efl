@@ -41,7 +41,11 @@ START_TEST(eina_file_split_simple)
    fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
 #endif
 
+#ifdef _WIN32
+   ea = eina_file_split(strdup("\\this\\is\\a\\small\\test"));
+#else
    ea = eina_file_split(strdup("/this/is/a/small/test"));
+#endif
 
    fail_if(!ea);
    fail_if(eina_array_count_get(ea) != 5);
@@ -53,7 +57,11 @@ START_TEST(eina_file_split_simple)
 
    eina_array_free(ea);
 
+#ifdef _WIN32
+   ea = eina_file_split(strdup("this\\\\is\\\\\\a \\more\\complex\\\\\\case\\\\\\"));
+#else
    ea = eina_file_split(strdup("this//is///a /more/complex///case///"));
+#endif
 
    fail_if(!ea);
    fail_if(eina_array_count_get(ea) != 6);
