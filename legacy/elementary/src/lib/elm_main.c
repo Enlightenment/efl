@@ -1425,9 +1425,9 @@ EAPI void elm_object_signal_emit(Evas_Object *obj, const char *emission, const c
  * @param data A pointer to data to pass in to the callback function.
  * @ingroup General
  */
-EAPI void elm_object_signal_listen(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+EAPI void elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
 {
-    elm_widget_signal_listen(obj, emission, source, func, data);
+    elm_widget_signal_callback_add(obj, emission, source, func, data);
 }
 
 /**
@@ -1436,7 +1436,7 @@ EAPI void elm_object_signal_listen(Evas_Object *obj, const char *emission, const
  * This function removes a callback, previoulsy attached to a signal emitted
  * by the edje object of the obj.
  * The parameters emission, source and func must match exactly those passed to
- * a previous call to elm_object_signal_listen(). The data pointer that
+ * a previous call to elm_object_signal_callback_add(). The data pointer that
  * was passed to this call will be returned.
  *
  * @param obj The object
@@ -1447,7 +1447,7 @@ EAPI void elm_object_signal_listen(Evas_Object *obj, const char *emission, const
  * @return The data pointer
  * @ingroup General
  */
-EAPI void *elm_object_signal_unlisten(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
+EAPI void *elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
 {
-    return elm_widget_signal_unlisten(obj, emission, source, func);
+    return elm_widget_signal_callback_del(obj, emission, source, func);
 }

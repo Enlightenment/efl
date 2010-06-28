@@ -90,7 +90,7 @@ _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
 }
 
 static void
-_signal_listen_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+_signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -99,7 +99,7 @@ _signal_listen_hook(Evas_Object *obj, const char *emission, const char *source, 
 }
 
 static void *
-_signal_unlisten_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source))
+_signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source))
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
@@ -535,8 +535,8 @@ elm_spinner_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
-   elm_widget_signal_listen_hook_set(obj, _signal_listen_hook);
-   elm_widget_signal_unlisten_hook_set(obj, _signal_unlisten_hook);
+   elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
+   elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
 
    wd->val = 0.0;
    wd->val_min = 0.0;

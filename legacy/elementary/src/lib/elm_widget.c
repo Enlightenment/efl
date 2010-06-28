@@ -29,11 +29,11 @@ struct _Smart_Data
    void         (*theme_func) (Evas_Object *obj);
    void         (*signal_func) (Evas_Object *obj, const char *emission,
 	                        const char *source);
-   void         (*listen_func) (Evas_Object *obj, const char *emission,
+   void         (*callback_add_func) (Evas_Object *obj, const char *emission,
 	                        const char *source, void (*func) (void *data,
 				   Evas_Object *o, const char *emission,
 				   const char *source), void *data);
-   void         *(*unlisten_func) (Evas_Object *obj, const char *emission,
+   void         *(*callback_del_func) (Evas_Object *obj, const char *emission,
 	                          const char *source, void (*func) (void *data,
 				     Evas_Object *o, const char *emission,
 				     const char *source));
@@ -179,17 +179,17 @@ elm_widget_signal_emit_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj
 }
 
 EAPI void
-elm_widget_signal_listen_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data))
+elm_widget_signal_callback_add_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data))
 {
    API_ENTRY return;
-   sd->listen_func = func;
+   sd->callback_add_func = func;
 }
 
 EAPI void
-elm_widget_signal_unlisten_hook_set(Evas_Object *obj, void *(*func) (Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source)))
+elm_widget_signal_callback_del_hook_set(Evas_Object *obj, void *(*func) (Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source)))
 {
    API_ENTRY return;
-   sd->unlisten_func = func;
+   sd->callback_del_func = func;
 }
 
 EAPI void
@@ -632,19 +632,19 @@ elm_widget_signal_emit(Evas_Object *obj, const char *emission, const char *sourc
 }
 
 EAPI void
-elm_widget_signal_listen(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+elm_widget_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
 {
    API_ENTRY return;
-   if (!sd->listen_func) return;
-   sd->listen_func(obj, emission, source, func, data);
+   if (!sd->callback_add_func) return;
+   sd->callback_add_func(obj, emission, source, func, data);
 }
 
 EAPI void *
-elm_widget_signal_unlisten(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
+elm_widget_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
 {
    API_ENTRY return NULL;
-   if (!sd->unlisten_func) return NULL;
-   return sd->unlisten_func(obj, emission, source, func);
+   if (!sd->callback_del_func) return NULL;
+   return sd->callback_del_func(obj, emission, source, func);
 }
 
 EAPI void
