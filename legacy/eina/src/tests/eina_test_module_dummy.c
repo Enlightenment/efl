@@ -1,5 +1,10 @@
-#include "Eina.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdio.h>
+
+#include "Eina.h"
 
 Eina_Bool dummy_module_init(void)
 {
