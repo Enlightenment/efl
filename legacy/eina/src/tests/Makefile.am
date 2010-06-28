@@ -67,6 +67,12 @@ module_dummy_LTLIBRARIES = module_dummy.la
 module_dummy_la_SOURCES = \
 eina_test_module_dummy.c
 
+module_dummy_la_CPPFLAGS = 			\
+-I$(top_srcdir)/src/lib 			\
+-I$(top_srcdir)/src/include 			\
+-I$(top_builddir)/src/include 			\
+-I$(top_builddir)/src/lib 			\
+@EFL_EINA_BUILD@
 module_dummy_la_LIBADD       = $(top_builddir)/src/lib/libeina.la @EINA_LIBS@
 module_dummy_la_LDFLAGS      = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 module_dummy_la_LIBTOOLFLAGS = --tag=disable-static
