@@ -181,7 +181,7 @@ _op_blend_mas_can_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, i
 	"	beq		"AP"quadloop		\n\t"
 
 	"	andS		%[tmp], %[d], #4	\n\t"
-	"	beq		"AP"dualloop		\n\t"
+	"	beq		"AP"dualstart		\n\t"
 
 
 	AP"singleloop:					\n\t"
@@ -198,16 +198,21 @@ _op_blend_mas_can_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, i
 	"	vqmovun.s16	d2, 	q6		\n\t"
 	"	vst1.32		d2[0],	[%[d]]!		\n\t"
 
-	"	andS		%[tmp], %[d],	#15	\n\t"
+	"	andS		%[tmp], %[d],	$0xf	\n\t"
 	"	beq		"AP"quadloop		\n\t"
 
+	AP"dualstart:					\n\t"
+	"	sub		%[tmp], %[e], %[d]	\n\t"
+	"	cmp		%[tmp],	#16		\n\t"
+	"	ble		"AP"loopout		\n\t"
+
 	AP"dualloop:					\n\t"
-	"	vld1.16	d0[0],	[%[m]]!		\n\t"
-	"	vldm		%[d],		{d8}	\n\t"
+	"	vld1.16		d0[0],	[%[m]]!		\n\t"
+	"	vldm		%[d],	{d8}		\n\t"
 	"	vmovl.u8	q0,	d0		\n\t"
 	"	vmovl.u8	q0,	d0		\n\t"
 	"	vmul.u32	d0,	d0,	d30	\n\t"
-	"	vshr.u8	d0,	d0, #1		\n\t"
+	"	vshr.u8		d0,	d0, #1		\n\t"
 	"	vmovl.u8	q0,	d0		\n\t"
 	"	vmovl.u8	q4,	d8		\n\t"
 	"	vsub.s16	q6,	q2, q4		\n\t"
@@ -277,7 +282,7 @@ _op_blend_mas_can_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, i
 	"	vqmovun.s16	d9,  q7			\n\t"
 	"	vqmovun.s16	d8,  q6			\n\t"
 
-	"	vstm		%[d]!,	{d8,d9}	\n\t"
+	"	vstm		%[d]!,	{d8,d9}		\n\t"
 
 	"	cmp		%[tmp], %[d]		\n\t"
 	"	bhi		"AP"quadloopint		\n\t"
@@ -300,7 +305,7 @@ _op_blend_mas_can_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, i
 	"	blt		"AP"onebyte		\n\t"
 
 		// Load the mask: 2 bytes: It has d0
-	"	vld1.16	d0[0],	[%[m]]!		\n\t"
+	"	vld1.16		d0[0],	[%[m]]!		\n\t"
 
 		// Load d into d8/d9 q4
 	"	vldm		%[d],		{d8}	\n\t"
@@ -310,7 +315,7 @@ _op_blend_mas_can_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, i
 	"	vmovl.u8	q0,	d0		\n\t"
 	"	vmul.u32	d0,	d0,	d30	\n\t"
 		// Lop a bit off to prevent overflow
-	"	vshr.u8	d0,	d0, #1		\n\t"
+	"	vshr.u8	d0,	d0, #1			\n\t"
 
 		// Now make it 16 bit
 	"	vmovl.u8	q0,	d0		\n\t"
@@ -338,7 +343,7 @@ _op_blend_mas_can_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, i
 		"beq		"AP"done		\n\t"
 
 	AP"onebyte:					\n\t"
-		"vld1.8	d0[0],	[%[m]]!			\n\t"
+		"vld1.8		d0[0],	[%[m]]!		\n\t"
 		"vld1.32	d8[0],	[%[d]]		\n\t"
 		"vdup.u8	d0,	d0[0]		\n\t"
 		"vshr.u8	d0,	d0, #1		\n\t"
