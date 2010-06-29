@@ -1627,7 +1627,11 @@ eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, const v
 static int
 _eet_free_hash(void *data)
 {
+#ifdef _WIN64
+   __int64 ptr = (UINT_PTR)data;
+#else
    unsigned long ptr = (unsigned long)(data);
+#endif
    int hash;
 
    hash = ptr;
@@ -1635,7 +1639,7 @@ _eet_free_hash(void *data)
    hash ^= ptr >> 16;
    hash ^= ptr >> 24;
 
-#if LONG_BIT != 32
+#if defined (_WIN64) || ( (! defined (_WIN32)) && (LONG_BIT != 32) )
    hash ^= ptr >> 32;
    hash ^= ptr >> 40;
    hash ^= ptr >> 48;
