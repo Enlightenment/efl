@@ -445,6 +445,23 @@ extern "C" {
    EAPI int eet_delete(Eet_File *ef, const char *name);
 
    /**
+    * Alias a specific section to another one. Destination may exist or not,
+    * no check are done.
+    * @param ef A valid eet file handle opened for writing.
+    * @param name Name of the entry. eg: "/base/file_i_want".
+    * @param destination Destionation of the alias. eg: "/base/the_real_stuff_i_want".
+    * @param compress Compression flags (1 == compress, 0 = don't compress).
+    * @return EINA_TRUE on success, EINA_FALSE on failure.
+    *
+    * Name and Destination must not be NULL, otherwhise EINA_FALSE will be returned.
+    *
+    * @since 1.3.3
+    * @ingroup Eet_File_Group
+    */
+   EAPI Eina_Bool eet_alias(Eet_File *ef, const char *name, const char *destination, int compress);
+
+
+   /**
     * List all entries in eet file matching shell glob.
     * @param ef A valid eet file handle.
     * @param glob A shell glob to match against.

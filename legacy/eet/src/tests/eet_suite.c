@@ -364,7 +364,7 @@ _eet_build_ex_descriptor(Eet_Data_Descriptor *edd)
 static Eet_Test_Ex_Type*
 _eet_test_ex_set(Eet_Test_Ex_Type *res, int offset)
 {
-   int i;
+   unsigned int i;
 
    if (!res) res = malloc( sizeof(Eet_Test_Ex_Type));
    if (!res) return NULL;
@@ -671,6 +671,8 @@ START_TEST(eet_file_simple_write)
    fail_if(!ef);
 
    fail_if(!eet_write(ef, "keys/tests", buffer, strlen(buffer) + 1, 1));
+   fail_if(!eet_alias(ef, "keys/alias", "keys/tests", 0));
+   fail_if(!eet_alias(ef, "keys/alias2", "keys/alias", 1));
 
    fail_if(eet_mode_get(ef) != EET_FILE_MODE_WRITE);
 
@@ -689,8 +691,14 @@ START_TEST(eet_file_simple_write)
 
    fail_if(memcmp(test, buffer, strlen(buffer) + 1) != 0);
 
+   test = eet_read(ef, "keys/alias2", &size);
+   fail_if(!test);
+   fail_if(size != (int) strlen(buffer) + 1);
+
+   fail_if(eet_read_direct(ef, "key/alias2", &size));
+
    fail_if(eet_mode_get(ef) != EET_FILE_MODE_READ);
-   fail_if(eet_num_entries(ef) != 1);
+   fail_if(eet_num_entries(ef) != 3);
 
    eet_close(ef);
 
@@ -1324,7 +1332,7 @@ static int pass_get(char *pass, int size, __UNUSED__ int rwflags, __UNUSED__ voi
 {
    memset(pass, 0, size);
 
-   if (strlen("password") > size)
+   if ((int) strlen("password") > size)
      return 0;
    snprintf(pass, size, "%s", "password");
    return strlen(pass);
@@ -1334,7 +1342,7 @@ static int badpass_get(char *pass, int size, __UNUSED__ int rwflags, __UNUSED__ 
 {
    memset(pass, 0, size);
 
-   if (strlen("bad password") > size)
+   if ((int) strlen("bad password") > size)
      return 0;
    snprintf(pass, size, "%s", "bad password");
    return strlen(pass);

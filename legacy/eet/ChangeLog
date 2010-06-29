@@ -389,3 +389,8 @@
 
         * On Windows 64, long is of size 32 bits and not 64 bits. Also
 	LONG_BIT is not defined on Windows.
+
+2010-06-29  Cedric BAIL
+
+	* Add eet_alias support.
+	* Fix possible dead lock in eet_write_cipher.
