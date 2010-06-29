@@ -59,6 +59,93 @@ _edje_collection_string_free(void *data)
    free(ce);
 }
 
+static Eina_Bool
+_edje_file_convert_external(Edje_File *edf, Old_Edje_File *oedf)
+{
+   Edje_External_Directory_Entry *ede;
+   unsigned int max;
+   unsigned int i = 0;
+
+   edf->external_dir = calloc(1, sizeof (Edje_External_Directory));
+   if (!edf->external_dir) return EINA_FALSE;
+   if (!oedf->external_dir) return EINA_TRUE;
+
+   max = eina_list_count(oedf->external_dir->entries);
+   edf->external_dir->entries = calloc(1, sizeof (Edje_External_Directory_Entry) * max);
+   edf->external_dir->entries_count = max;
+
+   if (!edf->external_dir->entries && max)
+     return EINA_FALSE;
+
+   EINA_LIST_FREE(oedf->external_dir->entries, ede)
+     {
+	edf->external_dir->entries[i++].entry = ede->entry;
+	free(ede);
+     }
+
+   free(oedf->external_dir);
+   oedf->external_dir = NULL;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_edje_file_convert_images(Edje_File *edf, Old_Edje_File *oedf)
+{
+   Edje_Image_Directory_Entry *de;
+   Edje_Image_Directory_Set *ds;
+   Eina_List *l;
+   int max;
+
+   edf->image_dir = malloc(sizeof (Edje_Image_Directory));
+   if (!edf->image_dir) return EINA_FALSE;
+   if (!oedf->image_dir) return EINA_TRUE;
+
+   max = -1;
+   EINA_LIST_FOREACH(oedf->image_dir->entries, l, de)
+     if (max < de->id)
+       max = de->id;
+
+   edf->image_dir->entries = calloc(1, sizeof (Edje_Image_Directory_Entry) * (max + 1));
+   edf->image_dir->entries_count = max + 1;
+
+   if (!edf->image_dir->entries && edf->image_dir->entries_count)
+     return EINA_FALSE;
+
+   EINA_LIST_FREE(oedf->image_dir->entries, de)
+     {
+	memcpy(edf->image_dir->entries + de->id,
+	       de,
+	       sizeof (Edje_Image_Directory_Entry));
+	free(de);
+     }
+
+   max = -1;
+   EINA_LIST_FOREACH(oedf->image_dir->sets, l, ds)
+     if (max < ds->id)
+       max = ds->id;
+
+   edf->image_dir->sets = calloc(1, sizeof (Edje_Image_Directory_Set) * (max + 1));
+   edf->image_dir->sets_count = max + 1;
+
+   if (!edf->image_dir->sets && edf->image_dir->sets_count)
+     {
+	free(edf->image_dir->entries);
+	edf->image_dir->entries = NULL;
+	return EINA_FALSE;
+     }
+
+   EINA_LIST_FREE(oedf->image_dir->sets, ds)
+     {
+	memcpy(edf->image_dir->sets + ds->id,
+	       ds,
+	       sizeof (Edje_Image_Directory_Set));
+	free(ds);
+     }
+
+   return EINA_TRUE;
+}
+
 Edje_File *
 _edje_file_convert(Eet_File *file, Old_Edje_File *oedf)
 {
@@ -68,7 +155,7 @@ _edje_file_convert(Eet_File *file, Old_Edje_File *oedf)
    Eina_List *l;
    Edje_Data *ed;
 
-   edf = malloc(sizeof (Edje_File));
+   edf = calloc(1, sizeof (Edje_File));
    if (!edf) return NULL;
 
    edf->free_strings = eet_dictionary_get(file) ? 0 : 1;
@@ -85,6 +172,9 @@ _edje_file_convert(Eet_File *file, Old_Edje_File *oedf)
 	edf->collection = eina_hash_string_small_new(free);
 	edf->data = eina_hash_string_small_new(NULL);
      }
+
+   if (!edf->fonts || !edf->collection || !edf->data)
+     goto on_error;
 
    EINA_LIST_FREE(oedf->data, ed)
      {
@@ -114,9 +204,13 @@ _edje_file_convert(Eet_File *file, Old_Edje_File *oedf)
 	  eina_hash_direct_add(edf->fonts, fnt->entry, fnt);
        }
 
+   if (!_edje_file_convert_images(edf, oedf))
+     goto on_error;
+
+   if (!_edje_file_convert_external(edf, oedf))
+     goto on_error;
+
    edf->oef = oedf;
-   edf->external_dir = oedf->external_dir;
-   edf->image_dir = oedf->image_dir;
    edf->spectrum_dir = oedf->spectrum_dir;
    edf->styles = oedf->styles;
    edf->color_classes = oedf->color_classes;
@@ -133,6 +227,15 @@ _edje_file_convert(Eet_File *file, Old_Edje_File *oedf)
    edf->collection_patterns = NULL;
 
    return edf;
+
+ on_error:
+   eina_hash_free(edf->fonts);
+   eina_hash_free(edf->collection);
+   eina_hash_free(edf->data);
+   free(edf->image_dir);
+   free(edf->external_dir);
+   free(edf);
+   return NULL;
 }
 
 Edje_Part_Collection *

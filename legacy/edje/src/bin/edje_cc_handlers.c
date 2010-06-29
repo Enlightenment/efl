@@ -846,7 +846,7 @@ st_externals_external(void)
    check_arg_count(1);
 
    if (!edje_file->external_dir)
-     edje_file->external_dir = mem_alloc(SZ(Edje_External_Directory));
+     edje_file->external_dir = mem_alloc(SZ(Old_Edje_External_Directory));
 
    ex = mem_alloc(SZ(External));
    ex->name = parse_str(0);
@@ -934,7 +934,7 @@ st_images_image(void)
    int v;
 
    if (!edje_file->image_dir)
-     edje_file->image_dir = mem_alloc(SZ(Edje_Image_Directory));
+     edje_file->image_dir = mem_alloc(SZ(Old_Edje_Image_Directory));
    img = mem_alloc(SZ(Edje_Image_Directory_Entry));
    img->entry = parse_str(0);
      {
@@ -945,7 +945,7 @@ st_images_image(void)
 	  {
 	     if (!strcmp(limg->entry, img->entry))
 	       {
-		  free(img->entry);
+		  free((char*) img->entry);
 		  free(img);
 		  return;
 	       }
@@ -1027,7 +1027,7 @@ ob_images_set(void)
    Edje_Image_Directory_Set *set;
 
    if (!edje_file->image_dir)
-     edje_file->image_dir = mem_alloc(SZ(Edje_Image_Directory));
+     edje_file->image_dir = mem_alloc(SZ(Old_Edje_Image_Directory));
    set = mem_alloc(SZ(Edje_Image_Directory_Set));
    set->id = eina_list_count(edje_file->image_dir->sets);
    edje_file->image_dir->sets = eina_list_append(edje_file->image_dir->sets, set);
@@ -1163,7 +1163,7 @@ st_fonts_font(void)
    check_arg_count(2);
 
    if (!edje_file->font_dir)
-     edje_file->font_dir = mem_alloc(SZ(Edje_Font_Directory));
+     edje_file->font_dir = mem_alloc(SZ(Old_Edje_Font_Directory));
 
    fn = mem_alloc(SZ(Font));
    fn->file = parse_str(0);

@@ -323,13 +323,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
    if (ed->file && ed->file->external_dir)
      {
-       const Edje_External_Directory_Entry *ext;
-       const Eina_List *n;
+	unsigned int i;
 
-       EINA_LIST_FOREACH(ed->file->external_dir->entries, n, ext)
-         {
-            edje_module_load(ext->entry);
-         }
+	for (i = 0; i < ed->file->external_dir->entries_count; ++i)
+	  edje_module_load(ed->file->external_dir->entries[i].entry);
      }
 
    _edje_textblock_styles_add(ed);
@@ -1036,13 +1033,26 @@ _edje_file_free(Edje_File *edf)
 
    if (edf->image_dir)
      {
-	Edje_Image_Directory_Entry *ie;
+	unsigned int i;
 
-	EINA_LIST_FREE(edf->image_dir->entries, ie)
+	if (edf->free_strings)
 	  {
-	     if (edf->free_strings && ie->entry) eina_stringshare_del(ie->entry);
-	     free(ie);
+	     for (i = 0; i < edf->image_dir->entries_count; ++i)
+	       eina_stringshare_del(edf->image_dir->entries[i].entry);
 	  }
+
+	/* Sets have been added after edje received eet dictionnary support */
+	for (i = 0; i < edf->image_dir->sets_count; ++i)
+	  {
+	     Edje_Image_Directory_Set_Entry *se;
+
+	     EINA_LIST_FREE(edf->image_dir->sets[i].entries, se)
+	       free(se);
+
+	  }
+
+	free(edf->image_dir->entries);
+	free(edf->image_dir->sets);
 	free(edf->image_dir);
      }
    if (edf->spectrum_dir)

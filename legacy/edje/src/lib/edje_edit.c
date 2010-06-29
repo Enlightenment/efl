@@ -207,8 +207,7 @@ _edje_part_description_find_byname(Edje_Edit *eed, const char *part, const char 
 static int
 _edje_image_id_find(Evas_Object *obj, const char *image_name)
 {
-   Edje_Image_Directory_Entry *i;
-   Eina_List *l;
+   unsigned int i;
 
    GET_ED_OR_RETURN(-1);
 
@@ -217,14 +216,10 @@ _edje_image_id_find(Evas_Object *obj, const char *image_name)
 
    //printf("SEARCH IMAGE %s\n", image_name);
 
-   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, i)
-     {
-	if (strcmp(image_name, i->entry) == 0)
-	  {
-	     //printf("   Found id: %d \n", i->id);
-	     return i->id;
-	  }
-     }
+   for (i = 0; i < ed->file->image_dir->entries_count; ++i)
+     if (ed->file->image_dir->entries[i].entry
+	 && !strcmp(image_name, ed->file->image_dir->entries[i].entry))
+       return i;
 
    return -1;
 }
@@ -232,21 +227,17 @@ _edje_image_id_find(Evas_Object *obj, const char *image_name)
 static const char *
 _edje_image_name_find(Evas_Object *obj, int image_id)
 {
-   Edje_Image_Directory_Entry *i;
-   Eina_List *l;
-
    GET_ED_OR_RETURN(NULL);
 
    if (!ed->file) return NULL;
    if (!ed->file->image_dir) return NULL;
 
+   /* Special case for external image */
+   if (image_id < 0) image_id = -image_id - 1;
+
    //printf("SEARCH IMAGE ID %d\n", image_id);
-
-   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, i)
-     if (image_id == i->id)
-       return i->entry;
-
-   return NULL;
+   if ((unsigned int) image_id >= ed->file->image_dir->entries_count) return NULL;
+   return ed->file->image_dir->entries[image_id].entry;
 }
 
 static void
@@ -757,15 +748,15 @@ _edje_edit_style_tag_get(Edje *ed, const char *style, const char *name)
 static Edje_External_Directory_Entry *
 _edje_edit_external_get(Edje *ed, const char *name)
 {
-   Eina_List *l;
-   Edje_External_Directory_Entry *e;
+   unsigned int i;
 
    if (!ed || !ed->file || !ed->file->external_dir || !name)
      return NULL;
 
-   EINA_LIST_FOREACH(ed->file->external_dir->entries, l, e)
-      if (e->entry && !strcmp(e->entry, name))
-	return e;
+   for (i = 0; i < ed->file->external_dir->entries_count; ++i)
+     if (ed->file->external_dir->entries[i].entry
+	 && !strcmp(ed->file->external_dir->entries[i].entry, name))
+       return ed->file->external_dir->entries + i;
 
    return NULL;
 }
@@ -1752,16 +1743,16 @@ EAPI Eina_List *
 edje_edit_externals_list_get(Evas_Object *obj)
 {
    Eina_List *externals = NULL;
-   Eina_List *l;
-   Edje_External_Directory_Entry *e;
+   unsigned int i;
 
    GET_ED_OR_RETURN(NULL);
 
    if (!ed->file || !ed->file->external_dir)
       return NULL;
    //printf("GET STYLES LIST %d\n", eina_list_count(ed->file->styles));
-   EINA_LIST_FOREACH(ed->file->external_dir->entries, l, e)
-     externals = eina_list_append(externals, eina_stringshare_add(e->entry));
+   for (i = 0; i < ed->file->external_dir->entries_count; ++i)
+     externals = eina_list_append(externals,
+				  eina_stringshare_add(ed->file->external_dir->entries[i].entry));
 
    return externals;
 }
@@ -1770,19 +1761,41 @@ EAPI Eina_Bool
 edje_edit_external_add(Evas_Object *obj, const char *external)
 {
    Edje_External_Directory_Entry *e;
+   unsigned int freeid;
+   unsigned int i;
+
    GET_ED_OR_RETURN(EINA_FALSE);
 
    e = _edje_edit_external_get(ed, external);
    if (e) return EINA_FALSE;
 
-   e = _alloc(sizeof(Edje_External_Directory_Entry));
-   if (!e) return EINA_FALSE;
-   e->entry = (char*)eina_stringshare_add(external);
-
    if (!ed->file->external_dir)
      ed->file->external_dir = _alloc(sizeof(Edje_External_Directory));
-   ed->file->external_dir->entries = \
-     eina_list_append(ed->file->external_dir->entries, e);
+
+   for (i = 0; i < ed->file->external_dir->entries_count; ++i)
+     if (!ed->file->external_dir->entries[i].entry)
+       break ;
+
+   if (i == ed->file->external_dir->entries_count)
+     {
+	Edje_External_Directory_Entry *tmp;
+	unsigned int max;
+
+	max = ed->file->external_dir->entries_count + 1;
+	tmp = realloc(ed->file->external_dir->entries,
+		      sizeof (Edje_External_Directory_Entry) * max);
+
+	if (!tmp) return EINA_FALSE;
+
+	ed->file->external_dir->entries = tmp;
+	freeid = ed->file->external_dir->entries_count;
+	ed->file->external_dir->entries_count = max;
+     }
+   else
+     freeid = i;
+
+   ed->file->external_dir->entries[freeid].entry = (char*)eina_stringshare_add(external);
+
    return EINA_TRUE;
 }
 
@@ -1796,16 +1809,8 @@ edje_edit_external_del(Evas_Object *obj, const char *external)
    e = _edje_edit_external_get(ed, external);
    if (!e) return EINA_FALSE;
 
-   ed->file->external_dir->entries = \
-     eina_list_remove(ed->file->external_dir->entries, e);
-   if (!ed->file->external_dir->entries)
-     {
-	free(ed->file->external_dir);
-	ed->file->external_dir = NULL;
-     }
-
    _edje_if_string_free(ed, e->entry);
-   free(e);
+   e->entry = NULL;
 
    return EINA_TRUE;
 }
@@ -4416,9 +4421,8 @@ edje_edit_part_effect_set(Evas_Object *obj, const char *part, Edje_Text_Effect e
 EAPI Eina_List *
 edje_edit_images_list_get(Evas_Object *obj)
 {
-   Edje_Image_Directory_Entry *i;
    Eina_List *images = NULL;
-   Eina_List *l;
+   unsigned int i;
 
    GET_ED_OR_RETURN(NULL);
 
@@ -4426,13 +4430,9 @@ edje_edit_images_list_get(Evas_Object *obj)
    if (!ed->file->image_dir) return NULL;
 
    //printf("GET IMAGES LIST for %s\n", ed->file->path);
-
-   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, i)
-     {
-	images = eina_list_append(images, eina_stringshare_add(i->entry));
-	//printf("   Image: %s (type: %d param: %d id: %d) \n",
-	//       i->entry, i->source_type, i->source_param, i->id);
-     }
+   for (i = 0; i < ed->file->image_dir->entries_count; ++i)
+     images = eina_list_append(images,
+			       eina_stringshare_add(ed->file->image_dir->entries[i].entry));
 
    return images;
 }
@@ -4440,9 +4440,9 @@ edje_edit_images_list_get(Evas_Object *obj)
 EAPI Eina_Bool
 edje_edit_image_add(Evas_Object *obj, const char* path)
 {
-   Eina_List *l;
    Edje_Image_Directory_Entry *de;
-   int free_id = 0;
+   unsigned int i;
+   int free_id = -1;
    char *name;
 
    GET_ED_OR_RETURN(EINA_FALSE);
@@ -4463,33 +4463,44 @@ edje_edit_image_add(Evas_Object *obj, const char* path)
    else name = (char *)path;
 
    /* Loop trough image directory to find if image exist */
-   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, de)
+   for (i = 0; i < ed->file->image_dir->entries_count; ++i)
      {
-	if (!strcmp(name, de->entry))
+	de = ed->file->image_dir->entries + i;
+
+	if (!de->entry)
+	  free_id = i;
+	else if (!strcmp(name, de->entry))
 	  return EINA_FALSE;
-	if (de->id >= free_id)
-	  free_id = de->id + 1; /*TODO search for free (hole) id*/
      }
 
-   /* Create Image Entry */
-   de = _alloc(sizeof(Edje_Image_Directory_Entry));
-   if (!de) return EINA_FALSE;
-   de->entry = strdup(name);
+   if (free_id == -1)
+     {
+	Edje_Image_Directory_Entry *tmp;
+	unsigned int count;
+
+	count = ed->file->image_dir->entries_count + 1;
+
+	tmp = realloc(ed->file->image_dir->entries,
+		      sizeof (Edje_Image_Directory_Entry) * count);
+	if (!tmp) return EINA_FALSE;
+
+	ed->file->image_dir->entries = tmp;
+	free_id = ed->file->image_dir->entries_count;
+	ed->file->image_dir->entries_count = count;
+     }
+
+   /* Set Image Entry */
+   de = ed->file->image_dir->entries + free_id;
+   de->entry = eina_stringshare_add(name);
    de->id = free_id;
    de->source_type = 1;
    de->source_param = 1;
 
-   /* Add image to Image Directory */
-   ed->file->image_dir->entries =
-        eina_list_append(ed->file->image_dir->entries, de);
-
    /* Import image */
    if (!_edje_import_image_file(ed, path, free_id))
      {
-	ed->file->image_dir->entries =
-	     eina_list_remove(ed->file->image_dir->entries, de);
-	free(de->entry);
-	free(de);
+	eina_stringshare_del(de->entry);
+	de->entry = NULL;
 	return EINA_FALSE;
      }
 
@@ -4499,8 +4510,8 @@ edje_edit_image_add(Evas_Object *obj, const char* path)
 EAPI Eina_Bool
 edje_edit_image_del(Evas_Object *obj, const char* name)
 {
-   Eina_List *l;
    Edje_Image_Directory_Entry *de;
+   unsigned int i;
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
@@ -4512,18 +4523,16 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
    if (!ed->file->image_dir)
      return EINA_TRUE;
 
-   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, de)
+   for (i = 0; i < ed->file->image_dir->entries_count; ++i)
      {
-       if (!strcmp(name, de->entry))
-         {
-           ed->file->image_dir->entries = eina_list_remove_list(
-					     ed->file->image_dir->entries, l);
-           break;
-         }
-       de = NULL;
+	de = ed->file->image_dir->entries + i;
+
+	if (de->entry
+	    && !strcmp(name, de->entry))
+	  break;
      }
 
-   if (!de)
+   if (i == ed->file->image_dir->entries_count)
      {
 	WRN("Unable to find image entry part \"%s\"", name);
 	return EINA_TRUE;
@@ -4538,8 +4547,6 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
       if (!eetf)
 	{
 	   ERR("Unable to open \"%s\" for writing output", ed->path);
-	   ed->file->image_dir->entries =
-	       eina_list_append(ed->file->image_dir->entries, de);
 	   return EINA_FALSE;
 	}
 
@@ -4549,8 +4556,6 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
         {
            ERR("Unable to delete \"%s\" font entry", entry);
            eet_close(eetf);
-	   ed->file->image_dir->entries =
-	       eina_list_append(ed->file->image_dir->entries, de);
            return EINA_FALSE;
         }
 
@@ -4558,16 +4563,14 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
       if (!_edje_edit_edje_file_save(eetf, ed->file))
 	{
 	   eet_close(eetf);
-	   ed->file->image_dir->entries =
-	       eina_list_append(ed->file->image_dir->entries, de);
 	   return EINA_FALSE;
 	}
 
       eet_close(eetf);
    }
 
-   free(de->entry);
-   free(de);
+   _edje_if_string_free(ed, de->entry);
+   de->entry = NULL;
 
    return EINA_TRUE;
 }
@@ -4575,9 +4578,7 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
 EAPI Eina_Bool
 edje_edit_image_data_add(Evas_Object *obj, const char *name, int id)
 {
-   Eina_List *l;
    Edje_Image_Directory_Entry *de;
-   Edje_Image_Directory_Entry *i, *t;
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
@@ -4593,33 +4594,13 @@ edje_edit_image_data_add(Evas_Object *obj, const char *name, int id)
      }
 
    /* Loop trough image directory to find if image exist */
-   t = NULL;
-   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, i)
-     {
-	if (!i) return EINA_FALSE;
-	if (i->id == id) t = i;
-     }
+   if (id < 0) id = - id - 1;
+   if ((unsigned int) id >= ed->file->image_dir->entries_count) return EINA_FALSE;
 
-   /* Create Image Entry */
-   if (!t)
-     {
-	de = _alloc(sizeof(Edje_Image_Directory_Entry));
-	if (!de) return EINA_FALSE;
-     }
-   else
-     {
-	de = t;
-	free(de->entry);
-     }
-   de->entry = strdup(name);
-   de->id = id;
+   de = ed->file->image_dir->entries + id;
+   eina_stringshare_replace(&de->entry, name);
    de->source_type = 1;
    de->source_param = 1;
-
-   /* Add image to Image Directory */
-   if (!t)
-     ed->file->image_dir->entries =
-	eina_list_append(ed->file->image_dir->entries, de);
 
    return EINA_TRUE;
 }
@@ -4633,27 +4614,29 @@ edje_edit_image_id_get(Evas_Object *obj, const char *image_name)
 EAPI Edje_Edit_Image_Comp
 edje_edit_image_compression_type_get(Evas_Object *obj, const char *image)
 {
-   Edje_Image_Directory_Entry *i = NULL;
-   Eina_List *l;
+   Edje_Image_Directory_Entry *de = NULL;
+   unsigned int i;
 
    GET_ED_OR_RETURN(-1);
 
    if (!ed->file) return -1;
    if (!ed->file->image_dir) return -1;
 
-   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, i)
+   for (i = 0; i < ed->file->image_dir->entries_count; ++i)
      {
-	if (strcmp(i->entry, image) == 0)
+	de = ed->file->image_dir->entries + i;
+
+	if (de->entry
+	    && !strcmp(image, de->entry))
 	  break;
-	i = NULL;
      }
 
-   if (!i) return -1;
+   if (i == ed->file->image_dir->entries_count) return -1;
 
-   switch(i->source_type)
+   switch(de->source_type)
      {
 	case EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT:
-		if (i->source_param == 0) // RAW
+		if (de->source_param == 0) // RAW
 		  return EDJE_EDIT_IMAGE_COMP_RAW;
 		else // COMP
 		  return EDJE_EDIT_IMAGE_COMP_COMP;
@@ -4672,22 +4655,24 @@ edje_edit_image_compression_type_get(Evas_Object *obj, const char *image)
 EAPI int
 edje_edit_image_compression_rate_get(Evas_Object *obj, const char *image)
 {
-   Eina_List *l;
-   Edje_Image_Directory_Entry *i;
+   Edje_Image_Directory_Entry *de;
+   unsigned int i;
 
    GET_ED_OR_RETURN(-1);
 
    // Gets the Image Entry
-   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, i)
+   for (i = 0; i < ed->file->image_dir->entries_count; ++i)
      {
-	if (strcmp(i->entry, image) == 0) break;
-	i = NULL;
+	de = ed->file->image_dir->entries + i;
+	if (de->entry
+	    && !strcmp(de->entry, image))
+	  break;
      }
 
-   if (!i) return -1;
-   if (i->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY) return -2;
+   if (i == ed->file->image_dir->entries_count) return -1;
+   if (de->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY) return -2;
 
-   return i->source_param;
+   return de->source_param;
 }
 
 EAPI const char *

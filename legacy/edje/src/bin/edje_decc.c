@@ -27,7 +27,7 @@ char *progname = NULL;
 char *file_in = NULL;
 char *file_out = NULL;
 
-Edje_File *edje_file = NULL;
+Old_Edje_File *edje_file = NULL;
 SrcFile_List *srcfiles = NULL;
 Font_List *fontlist = NULL;
 

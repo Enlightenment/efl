@@ -1549,7 +1549,7 @@ _edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps, Edje_Part
     }
 
   if (!set)
-    set = eina_list_nth(ed->file->image_dir->sets, id);
+    set = ed->file->image_dir->sets + id;
 
   EINA_LIST_FOREACH(set->entries, l, entry)
     {
@@ -1607,7 +1607,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 	Edje_Image_Directory_Entry *ie;
 
 	if (!ed->file->image_dir) ie = NULL;
-	else ie = eina_list_nth(ed->file->image_dir->entries, (-image_id) - 1);
+	else ie = ed->file->image_dir->entries + (-image_id) - 1;
 	if ((ie) &&
 	    (ie->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) &&
 	    (ie->entry))

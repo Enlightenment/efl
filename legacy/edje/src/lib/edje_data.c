@@ -82,7 +82,8 @@ _edje_edd_init(void)
      eet_data_descriptor_file_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_external_directory_entry, Edje_External_Directory_Entry, "entry", entry, EET_T_STRING);
 
-   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_External_Directory);
+   eet_eina_file_data_descriptor_class_set(&eddc, "Edje_External_Directory",
+					   sizeof (Old_Edje_External_Directory));
    _edje_edd_edje_external_directory =
      eet_data_descriptor_file_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_external_directory, Edje_External_Directory, "entries", entries, _edje_edd_edje_external_directory_entry);
@@ -94,10 +95,11 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_font_directory_entry, Edje_Font_Directory_Entry, "entry", entry, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_font_directory_entry, Edje_Font_Directory_Entry, "file", file, EET_T_STRING);
 
-   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Font_Directory);
+   eet_eina_file_data_descriptor_class_set(&eddc, "Edje_Font_Directory",
+					   sizeof (Old_Edje_Font_Directory));
    _edje_edd_edje_font_directory =
      eet_data_descriptor_file_new(&eddc);
-   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_font_directory, Edje_Font_Directory, "entries", entries, _edje_edd_edje_font_directory_entry);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_font_directory, Old_Edje_Font_Directory, "entries", entries, _edje_edd_edje_font_directory_entry);
 
    /* image directory */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Image_Directory_Entry);
@@ -125,11 +127,12 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_image_directory_set, Edje_Image_Directory_Set,  "id", id, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_image_directory_set, Edje_Image_Directory_Set, "entries", entries, _edje_edd_edje_image_directory_set_entry);
 
-   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Image_Directory);
+   eet_eina_file_data_descriptor_class_set(&eddc, "Edje_Image_Directory",
+					   sizeof (Old_Edje_Image_Directory));
    _edje_edd_edje_image_directory =
      eet_data_descriptor_file_new(&eddc);
-   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_image_directory, Edje_Image_Directory, "entries", entries, _edje_edd_edje_image_directory_entry);
-   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_image_directory, Edje_Image_Directory, "sets", sets, _edje_edd_edje_image_directory_set);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_image_directory, Old_Edje_Image_Directory, "entries", entries, _edje_edd_edje_image_directory_entry);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_image_directory, Old_Edje_Image_Directory, "sets", sets, _edje_edd_edje_image_directory_set);
 
    /* spectrum directory */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Spectrum_Color);
@@ -203,7 +206,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "a3", a3, EET_T_UCHAR);
 
    /* the main file directory */
-   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_File);
+   eet_eina_file_data_descriptor_class_set(&eddc, "Edje_File", sizeof (Old_Edje_File));
    _edje_edd_edje_file =
      eet_data_descriptor_file_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Old_Edje_File, "compiler", compiler, EET_T_STRING);

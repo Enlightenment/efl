@@ -215,7 +215,6 @@ typedef struct _Edje_Style_Tag                       Edje_Style_Tag;
 typedef struct _Edje_Data                            Edje_Data;
 typedef struct _Edje_External_Directory              Edje_External_Directory;
 typedef struct _Edje_External_Directory_Entry        Edje_External_Directory_Entry;
-typedef struct _Edje_Font_Directory                  Edje_Font_Directory;
 typedef struct _Edje_Font_Directory_Entry            Edje_Font_Directory_Entry;
 typedef struct _Edje_Image_Directory                 Edje_Image_Directory;
 typedef struct _Edje_Image_Directory_Entry           Edje_Image_Directory_Entry;
@@ -374,11 +373,6 @@ struct _Edje_Data
 
 /*----------*/
 
-struct _Edje_Font_Directory
-{
-   Eina_List *entries; /* a list of Edje_Font_Directory_Entry */
-};
-
 struct _Edje_Font_Directory_Entry
 {
    const char *entry; /* the name of the font */
@@ -390,7 +384,8 @@ struct _Edje_Font_Directory_Entry
 
 struct _Edje_External_Directory
 {
-   Eina_List *entries; /* a list of Edje_External_Directory_Entry */
+   Edje_External_Directory_Entry *entries; /* a list of Edje_External_Directory_Entry */
+   unsigned int entries_count;
 };
 
 struct _Edje_External_Directory_Entry
@@ -407,13 +402,16 @@ struct _Edje_External_Directory_Entry
 
 struct _Edje_Image_Directory
 {
-   Eina_List *entries; /* a list of Edje_Image_Directory_Entry */
-   Eina_List *sets; /* a list of Edje_Image_Directory_Set */
+   Edje_Image_Directory_Entry *entries; /* an array of Edje_Image_Directory_Entry */
+   unsigned int entries_count;
+
+   Edje_Image_Directory_Set *sets;
+   unsigned int sets_count; /* an array of Edje_Image_Directory_Set */
 };
 
 struct _Edje_Image_Directory_Entry
 {
-   char *entry; /* the nominal name of the image - if any */
+   const char *entry; /* the nominal name of the image - if any */
    int   source_type; /* alternate source mode. 0 = none */
    int   source_param; /* extra params on encoding */
    int   id; /* the id no. of the image */
@@ -429,7 +427,7 @@ struct _Edje_Image_Directory_Set
 
 struct _Edje_Image_Directory_Set_Entry
 {
-   char *name;
+   const char *name;
    int id;
 
    struct {
