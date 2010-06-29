@@ -1283,7 +1283,7 @@ _eet_str_direct_alloc(const char *str)
 }
 
 static void
-_eet_str_direct_free(__UNUSED__ const char *str)
+_eet_str_direct_free(const char *str __UNUSED__)
 {
 }
 
@@ -2883,7 +2883,7 @@ eet_data_get_array(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Data
 
 static void
 eet_data_put_union(Eet_Dictionary *ed,
-		   __UNUSED__ Eet_Data_Descriptor *edd,
+		   Eet_Data_Descriptor *edd __UNUSED__,
 		   Eet_Data_Element *ede, Eet_Data_Stream *ds, void *data_in)
 {
    const char *union_type;
@@ -2920,7 +2920,7 @@ eet_data_put_union(Eet_Dictionary *ed,
 
 static int
 eet_data_get_union(Eet_Free_Context *context, const Eet_Dictionary *ed,
-		   __UNUSED__ Eet_Data_Descriptor *edd,
+		   Eet_Data_Descriptor *edd __UNUSED__,
 		   Eet_Data_Element *ede, Eet_Data_Chunk *echnk,
 		   int type, int group_type, void *data,
 		   char **p, int *size)
@@ -3010,7 +3010,7 @@ eet_data_get_union(Eet_Free_Context *context, const Eet_Dictionary *ed,
 
 static void
 eet_data_put_variant(Eet_Dictionary *ed,
-		     __UNUSED__ Eet_Data_Descriptor *edd,
+		     Eet_Data_Descriptor *edd __UNUSED__,
 		     Eet_Data_Element *ede, Eet_Data_Stream *ds, void *data_in)
 {
    const char *union_type;
@@ -3094,9 +3094,9 @@ eet_data_put_variant(Eet_Dictionary *ed,
 
 static int
 eet_data_get_variant(Eet_Free_Context *context, const Eet_Dictionary *ed,
-		     __UNUSED__ Eet_Data_Descriptor *edd,
+		     Eet_Data_Descriptor *edd __UNUSED__,
 		     Eet_Data_Element *ede, Eet_Data_Chunk *echnk,
-		     int type, int group_type, void *data,
+		     int type __UNUSED__, int group_type __UNUSED__, void *data,
 		     char **p, int *size)
 {
    const char *union_type;
