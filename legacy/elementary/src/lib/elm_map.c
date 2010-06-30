@@ -197,6 +197,7 @@ struct _Widget_Data
    Evas_Object *scr;
    Evas_Object *pan_smart;
    Evas_Object *rect;
+   Evas_Object *sep_maps_markers; //map objects are below this object and marker objects are on top
    Pan *pan;
    Evas_Coord pan_x, pan_y, minw, minh;
 
@@ -796,10 +797,10 @@ grid_load(Evas_Object *obj, Grid *g)
                     (gi->img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
 		  evas_object_image_filled_set(gi->img, 1);
                   
-		  evas_object_smart_member_add(gi->img,
-                                               wd->pan_smart);
+		  evas_object_smart_member_add(gi->img, wd->pan_smart);
 		  elm_widget_sub_object_add(obj, gi->img);
 		  evas_object_pass_events_set(gi->img, 1);
+		  evas_object_stack_below(gi->img, wd->sep_maps_markers);
                   
 		  /*gi->txt = evas_object_text_add(evas_object_evas_get(obj));
                    evas_object_text_font_set(gi->txt, "Vera", 12);
@@ -1072,6 +1073,7 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
+
    EINA_LIST_FREE(wd->groups_clas, group_clas)
      {
 	if (group_clas->style)
@@ -1131,6 +1133,7 @@ _del_pre_hook(Evas_Object *obj)
 	eina_matrixsparse_free(wd->markers[i]);
      }
 
+   evas_object_del(wd->sep_maps_markers);
    evas_object_del(wd->pan_smart);
    wd->pan_smart = NULL;
 }
@@ -1397,7 +1400,8 @@ _group_object_create(Marker_Group *group)
         
 	evas_object_smart_member_add(group->obj, group->wd->pan_smart);
 	elm_widget_sub_object_add(group->wd->obj, group->obj);
-        
+	evas_object_stack_above(group->obj, group->wd->sep_maps_markers);
+
 	if (!group->delete_object)
 	  group->clas->priv.objs_used = eina_list_append(group->clas->priv.objs_used, group->obj);
      }
@@ -1742,6 +1746,9 @@ elm_map_add(Evas_Object *parent)
    _sizing_eval(obj);
 
    wd->calc_job = ecore_job_add(_calc_job, wd);
+
+   wd->sep_maps_markers = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_smart_member_add(wd->sep_maps_markers, wd->pan_smart);
 
    // TODO: convert Elementary to subclassing of Evas_Smart_Class
    // TODO: and save some bytes, making descriptions per-class and not instance!
