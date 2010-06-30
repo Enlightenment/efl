@@ -288,3 +288,5 @@ elm_icon_prescale_set(Evas_Object *obj, int size)
    if (!wd) return;
    _els_smart_icon_scale_size_set(wd->img, size);
 }
+
+
