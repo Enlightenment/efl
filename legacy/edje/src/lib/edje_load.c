@@ -435,6 +435,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			break;
 		     case EDJE_PART_TYPE_GRADIENT:
 			rp->object = evas_object_gradient_add(ed->evas);
+			ERR("SPANK ! SPANK ! SPANK !\nYOU ARE USING GRADIENT IN PART %s FROM GROUP %s INSIDE FILE %s !!\n THEY WILL BE REMOVED SHORTLY !",
+			    ep->name, group, file);
 			break;
 		     case EDJE_PART_TYPE_BOX:
 			rp->object = evas_object_box_add(ed->evas);
