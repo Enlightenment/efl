@@ -181,8 +181,9 @@ eina_iterator_next(Eina_Iterator *iterator, void **data)
  *
  * This function iterates over the elements pointed by @p iterator,
  * beginning from the current element. For Each element, the callback
- * @p cb is called with the data @p fdata.If @p iterator is @c NULL,
- * the function returns immediatly.
+ * @p cb is called with the data @p fdata. If @p iterator is @c NULL,
+ * the function returns immediatly. Also, if @p cb returns @c
+ * EINA_FALSE, the iteration stops at that point.
  */
 EAPI void
 eina_iterator_foreach(Eina_Iterator *iterator,
