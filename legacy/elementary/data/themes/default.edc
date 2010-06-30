@@ -22857,10 +22857,13 @@ collections {
    }
    group { name: "elm/map/marker/radio/default";
         data {
-            item: size_w 32;
-            item: size_h 32;
-            item: size_max_w 64;
-            item: size_max_h 64;
+            item: size_w 24;
+            item: size_h 24;
+            item: size_max_w 58;
+            item: size_max_h 58;
+        }
+        images {
+        	image: "map_item.png" COMP;
         }
         parts {
             part { name: "whole";
@@ -22870,7 +22873,7 @@ collections {
             part { name: "base";
                 ignore_flags: ON_HOLD;
                 description { state: "default" 0.0;
-                    image.normal: "radio.png";
+                    image.normal: "map_item.png";
                 }
             }
             part { name: "elm.icon";
@@ -22917,16 +22920,19 @@ collections {
    }
    group { name: "elm/map/marker/radio2/default";
         data {
-            item: size_w 32;
-            item: size_h 32;
-            item: size_max_w 64;
-            item: size_max_h 64;
+            item: size_w 24;
+            item: size_h 24;
+            item: size_max_w 58;
+            item: size_max_h 58;
+        }
+        images {
+        	image: "map_item_2.png" COMP;
         }
         parts {
             part { name: "base";
                 ignore_flags: ON_HOLD;
                 description { state: "default" 0.0;
-                    image.normal: "radio2.png";
+                    image.normal: "map_item_2.png";
                 }
             }
             part { name: "elm.text";
