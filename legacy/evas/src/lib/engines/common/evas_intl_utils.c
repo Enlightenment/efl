@@ -91,10 +91,6 @@ evas_intl_utf8_to_visual(const char *text,
  	 tmp_V_to_L_list = *position_V_to_L_list;
        }
 
-#ifdef ARABIC_SUPPORT
-   /* fix arabic context */
-   evas_intl_arabic_to_context(unicode_in);
-#endif
    LKL(fribidi_lock);
    if (!fribidi_log2vis(unicode_in, len, direction,
          unicode_out, tmp_L_to_V_list, tmp_V_to_L_list, tmp_level_list))

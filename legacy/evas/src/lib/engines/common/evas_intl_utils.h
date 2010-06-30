@@ -20,13 +20,6 @@ typedef FriBidiStrIndex EvasIntlStrIndex;
 typedef FriBidiLevel	EvasIntlLevel;
 
 
-/* whether should fix arabic specifix issues */
-# define ARABIC_SUPPORT
-
-# ifdef ARABIC_SUPPORT
-#  include "evas_intl/evas_intl_arabic.h"
-# endif
-
 # define evas_intl_position_logical_to_visual(list, position) \
 		(list) ? list[position] : position;
 
