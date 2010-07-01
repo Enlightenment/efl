@@ -286,7 +286,11 @@ extern "C" {
    EAPI void         elm_object_scroll_hold_pop(Evas_Object *obj);
    EAPI void         elm_object_scroll_freeze_push(Evas_Object *obj);
    EAPI void         elm_object_scroll_freeze_pop(Evas_Object *obj);
-
+   EAPI void         elm_object_scroll_lock_x_set(Evas_Object *obj, Eina_Bool lock);
+   EAPI void         elm_object_scroll_lock_y_set(Evas_Object *obj, Eina_Bool lock);
+   EAPI Eina_Bool    elm_object_scroll_lock_x_get(const Evas_Object *obj);
+   EAPI Eina_Bool    elm_object_scroll_lock_y_get(const Evas_Object *obj);
+       
    EAPI void         elm_object_signal_emit(Evas_Object *obj, const char *emission, const char *source);
    EAPI void         elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data);
    EAPI void         *elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source));
@@ -294,7 +298,7 @@ extern "C" {
    EAPI void         elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coord *h);
 
    EAPI Elm_Theme   *elm_theme_new(void);
-  EAPI void         elm_theme_free(Elm_Theme *th);
+   EAPI void         elm_theme_free(Elm_Theme *th);
    EAPI void         elm_theme_overlay_add(Elm_Theme *th, const char *item);
    EAPI void         elm_theme_overlay_del(Elm_Theme *th, const char *item);
    EAPI void         elm_theme_extension_add(Elm_Theme *th, const char *item);

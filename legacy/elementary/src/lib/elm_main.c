@@ -1313,6 +1313,66 @@ elm_object_scroll_freeze_push(Evas_Object *obj)
 }
 
 /**
+ * Lock the scrolling of the given widget (and thus all parents)
+ *
+ * This locks the given object from scrolling in the X axis (and implicitly
+ * also locks all parent scrollers too from doing the same).
+ *
+ * @param obj The object
+ * @param lock The lock state (1 == locked, 0 == unlocked)
+ * @ingroup Scrollhints
+ */
+EAPI void
+elm_object_scroll_lock_x_set(Evas_Object *obj, Eina_Bool lock)
+{
+   elm_widget_drag_lock_x_set(obj, lock);
+}
+
+/**
+ * Lock the scrolling of the given widget (and thus all parents)
+ *
+ * This locks the given object from scrolling in the Y axis (and implicitly
+ * also locks all parent scrollers too from doing the same).
+ *
+ * @param obj The object
+ * @param lock The lock state (1 == locked, 0 == unlocked)
+ * @ingroup Scrollhints
+ */
+EAPI void
+elm_object_scroll_lock_y_set(Evas_Object *obj, Eina_Bool lock)
+{
+   elm_widget_drag_lock_y_set(obj, lock);
+}
+
+/**
+ * Get the scrolling lock of the given widget
+ *
+ * This gets the lock for X axis scrolling.
+ *
+ * @param obj The object
+ * @ingroup Scrollhints
+ */
+EAPI Eina_Bool
+elm_object_scroll_lock_x_get(const Evas_Object *obj)
+{
+   return elm_widget_drag_lock_x_get(obj);
+}
+
+/**
+ * Get the scrolling lock of the given widget
+ *
+ * This gets the lock for X axis scrolling.
+ *
+ * @param obj The object
+ * @ingroup Scrollhints
+ */
+EAPI Eina_Bool
+elm_object_scroll_lock_y_get(const Evas_Object *obj)
+{
+   return elm_widget_drag_lock_y_get(obj);
+}
+
+/**
  * Pop the scroll freeze by 1
  *
  * This decrements the scroll freeze count by one. If it is more than 0 it will
