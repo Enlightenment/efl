@@ -4143,7 +4143,7 @@ evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *for
 	else if (cur->pos == len)
 	  {
              if (EINA_INLIST_GET(n)->next)
-               cur->node = EINA_INLIST_GET(n)->next;
+               cur->node = EINA_INLIST_CONTAINER_GET(EINA_INLIST_GET(n)->next, Evas_Object_Textblock_Node);
              else
                cur->node = n;
              cur->pos = 0;
