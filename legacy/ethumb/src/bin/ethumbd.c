@@ -44,11 +44,11 @@
 
 #define MAX_ID 2000000
 
-#define DBG(...) EINA_LOG_DBG(__VA_ARGS__)
-#define INF(...) EINA_LOG_INFO(__VA_ARGS__)
-#define WRN(...) EINA_LOG_WARN(__VA_ARGS__)
-#define ERR(...) EINA_LOG_ERR(__VA_ARGS__)
-#define CRIT(...) EINA_LOG_CRIT(__VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_log_domain, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_log_domain, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_log_domain, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_log_domain, __VA_ARGS__)
+#define CRIT(...) EINA_LOG_DOM_CRIT(_log_domain, __VA_ARGS__)
 
 static const char _ethumb_dbus_bus_name[] = "org.enlightenment.Ethumb";
 static const char _ethumb_dbus_interface[] = "org.enlightenment.Ethumb";
@@ -57,6 +57,8 @@ static const char _ethumb_dbus_path[] = "/org/enlightenment/Ethumb";
 static const char fdo_interface[] = "org.freedesktop.DBus";
 static const char fdo_bus_name[] = "org.freedesktop.DBus";
 static const char fdo_path[] = "/org/freedesktop/DBus";
+
+static int _log_domain = -1;
 
 struct _Ethumb_Setup
 {
@@ -1810,6 +1812,17 @@ main(int argc, char *argv[])
 
    ethumb_init();
 
+   if (_log_domain < 0)
+     {
+	_log_domain = eina_log_domain_register("ethumbd", NULL);
+	if (_log_domain < 0)
+	  {
+	     EINA_LOG_CRIT("could not register log domain 'ethumbd'");
+	     exit_value = -7;
+	     goto finish;
+	  }
+     }
+
    child = _ethumbd_slave_spawn(&ed);
    if (!child)
      {
@@ -1872,6 +1885,12 @@ main(int argc, char *argv[])
    _ethumb_dbus_finish(&ed);
 
  finish_edbus:
+   if (_log_domain >= 0)
+     {
+	eina_log_domain_unregister(_log_domain);
+	_log_domain = -1;
+     }
+
    e_dbus_shutdown();
  finish:
    if (ed.slave.exe)
