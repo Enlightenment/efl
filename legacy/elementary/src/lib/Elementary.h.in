@@ -1013,6 +1013,10 @@ extern "C" {
    EAPI const Eina_List *elm_list_items_get(const Evas_Object *obj);
    EAPI Elm_List_Item   *elm_list_selected_item_get(const Evas_Object *obj);
    EAPI const Eina_List *elm_list_selected_items_get(const Evas_Object *obj);
+
+   EAPI void             elm_list_item_separator_set(Elm_List_Item *it, Eina_Bool setting);
+   EAPI Eina_Bool        elm_list_item_separator_get(const Elm_List_Item *it);
+
    EAPI void             elm_list_item_selected_set(Elm_List_Item *item, Eina_Bool selected);
    EAPI Eina_Bool        elm_list_item_selected_get(Elm_List_Item *item);
    EAPI void             elm_list_item_show(Elm_List_Item *item);

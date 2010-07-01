@@ -1145,24 +1145,24 @@ elm_list_selected_items_get(const Evas_Object *obj)
 
 /**
  * Sets if item is a separator.
- * 
+ *
  * @param it The list item object
- * @param setting 
+ * @param setting
  */
 EAPI void
 elm_list_item_separator_set(Elm_List_Item *it, Eina_Bool setting)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-   it->is_separator = setting;
+   it->is_separator = !!setting;
 }
 
 /**
  * Returns EINA_TRUE if Elm_List_Item is a separator.
- * 
+ *
  * @param it The list item object
  */
 EAPI Eina_Bool
-elm_list_item_separator_get(Elm_List_Item *it)
+elm_list_item_separator_get(const Elm_List_Item *it)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    return it->is_separator;
