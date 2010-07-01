@@ -38,6 +38,7 @@ struct _Elm_List_Item
    Eina_Bool deleted : 1;
    Eina_Bool even : 1;
    Eina_Bool is_even : 1;
+   Eina_Bool is_separator : 1;
    Eina_Bool fixed : 1;
    Eina_Bool selected : 1;
    Eina_Bool hilighted : 1;
@@ -565,7 +566,9 @@ _fix_items(Evas_Object *obj)
 	  {
 	     const char *stacking;
 
-	     if (wd->mode == ELM_LIST_COMPRESS)
+	     if (it->is_separator)
+	       _elm_theme_object_set(obj, it->base, "list", "separator", style);
+	     else if (wd->mode == ELM_LIST_COMPRESS)
 	       {
 		  if (it->even)
 		    _elm_theme_object_set(obj, it->base, "list", "item_compress", style);
@@ -1139,6 +1142,32 @@ elm_list_selected_items_get(const Evas_Object *obj)
    if (!wd) return NULL;
    return wd->selected;
 }
+
+/**
+ * Sets if item is a separator.
+ * 
+ * @param it The list item object
+ * @param setting 
+ */
+EAPI void
+elm_list_item_separator_set(Elm_List_Item *it, Eina_Bool setting)
+{
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
+   it->is_separator = setting;
+}
+
+/**
+ * Returns EINA_TRUE if Elm_List_Item is a separator.
+ * 
+ * @param it The list item object
+ */
+EAPI Eina_Bool
+elm_list_item_separator_get(Elm_List_Item *it)
+{
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
+   return it->is_separator;
+}
+
 
 /**
  * Sets the selected state of @p it.
