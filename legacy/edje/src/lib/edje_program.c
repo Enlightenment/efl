@@ -119,7 +119,7 @@ edje_frametime_get(void)
  * a callback is attached using:
  *
  * @code
- * edje_object_callback_add(obj, "a_signal", "a_source", cb_signal, data);
+ * edje_object_signal_callback_add(obj, "a_signal", "a_source", cb_signal, data);
  * @endcode
  *
  * Here, @a data is an arbitrary pointer to be used as desired.  Note
@@ -130,7 +130,7 @@ edje_frametime_get(void)
  * in either the emission or source name, e.g.
  *
  * @code
- * edje_object_callback_add(obj, "mouse,down,*", "button.*", NULL);
+ * edje_object_signal_callback_add(obj, "mouse,down,*", "button.*", NULL);
  * @endcode
  *
  * Here, any mouse down events on an edje part whose name begins with
