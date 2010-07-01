@@ -640,7 +640,7 @@ _ec_op_setup(struct _Ethumbd_Child *ec)
    return 1;
 }
 
-static int
+static Eina_Bool
 _ec_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    struct _Ethumbd_Child *ec = data;

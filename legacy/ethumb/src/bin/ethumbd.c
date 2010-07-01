@@ -200,7 +200,7 @@ const Ecore_Getopt optdesc = {
 static void _ethumb_dbus_generated_signal(struct _Ethumbd *ed, int *id, const char *thumb_path, const char *thumb_key, Eina_Bool success);
 static int _ethumbd_slave_spawn(struct _Ethumbd *ed);
 
-static int
+static Eina_Bool
 _ethumbd_timeout_cb(void *data)
 {
    struct _Ethumbd *ed = data;
@@ -429,7 +429,7 @@ _ethumbd_slave_alloc_cmd(struct _Ethumbd *ed, int ssize, char *sdata)
    return sizeof(*scmd);
 }
 
-static int
+static Eina_Bool
 _ethumbd_slave_data_read_cb(void *data, int type, void *event)
 {
    struct _Ethumbd *ed = data;
@@ -478,7 +478,7 @@ _ethumbd_slave_data_read_cb(void *data, int type, void *event)
    return 1;
 }
 
-static int
+static Eina_Bool
 _ethumbd_slave_del_cb(void *data, int type, void *event)
 {
    struct _Ethumbd *ed = data;
@@ -663,7 +663,7 @@ _get_next_on_queue(struct _Ethumb_Queue *queue)
    return queue->list[i];
 }
 
-static int
+static Eina_Bool
 _process_queue_cb(void *data)
 {
    struct _Ethumb_Object *eobject;
