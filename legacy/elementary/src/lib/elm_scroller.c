@@ -584,11 +584,7 @@ elm_scroller_child_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h
  *
  * @param obj The scroller object
  * @param h_bounce Will the scroller bounce horizontally or not
- y Y coordinate of the region
- w Width of the region
- h Height of the region
-
- EAPI void elm_scroller_region_show ( Evas_Object *  obj, * @param v_bounce Will the scroller bounce vertically or not
+ * @param v_bounce Will the scroller bounce vertically or not
  *
  * @ingroup Scroller
  */
