@@ -1021,25 +1021,40 @@ case $host_cpu in
 esac
 AC_MSG_CHECKING(whether to build neon code)
 AC_ARG_ENABLE(cpu-neon,
-  AC_HELP_STRING([--enable-cpu-neon], [enable neon code]),
+  AC_HELP_STRING([--enable-cpu-neon], [enable neon code - with gcc you will need these CFLAGS for it to begin to work, and even then your gcc may have broken or non-existant support: -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon]),
   [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_NEON, 1, [Build NEON Code])
-        build_cpu_neon="yes"
+     if test "x$enableval" = "xyes" ; then
+       AC_TRY_COMPILE([arm_neon.h],
+        [asm volatile ("vqadd.u8 d0, d1, d0\n");],
+        [
+          AC_MSG_RESULT(yes)
+          AC_DEFINE(BUILD_NEON, 1, [Build NEON Code])
+          build_cpu_neon="yes"
+        ],[
+          AC_MSG_RESULT(no)
+          build_cpu_neon="no"
+        ])
       else
         AC_MSG_RESULT(no)
         build_cpu_neon="no"
       fi
   ],
   [
-    AC_MSG_RESULT($build_cpu_neon)
     if test "x$build_cpu_neon" = "xyes" ; then
-      AC_DEFINE(BUILD_NEON, 1, [Build NEON Code])
+       AC_TRY_COMPILE([arm_neon.h],
+        [asm volatile ("vqadd.u8 d0, d1, d0\n");],
+        [
+          AC_MSG_RESULT(yes)
+          AC_DEFINE(BUILD_NEON, 1, [Build NEON Code])
+          build_cpu_neon="yes"
+        ],[
+          AC_MSG_RESULT(no)
+          build_cpu_neon="no"
+        ])
     fi
   ]
 )
-
+     
 #######################################
 ## C
 build_cpu_c="yes"
