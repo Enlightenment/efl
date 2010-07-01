@@ -384,9 +384,9 @@ _ethumbd_slave_cmd_ready(struct _Ethumbd *ed)
 {
    char *bufcmd = ed->slave.bufcmd;
    Eina_Bool *success;
-   char *thumb_path, *thumb_key;
+   const char *thumb_path = NULL;
+   const char *thumb_key = NULL;
    int *size_path, *size_key;
-
 
    success = (Eina_Bool *)bufcmd;
    bufcmd += sizeof(*success);
@@ -396,13 +396,16 @@ _ethumbd_slave_cmd_ready(struct _Ethumbd *ed)
 
    _write_safe(STDERR_FILENO, bufcmd, ed->slave.scmd);
 
-   thumb_path = bufcmd;
-   bufcmd += *size_path;
+   if (*size_path)
+     {
+	thumb_path = bufcmd;
+	bufcmd += *size_path;
+     }
 
    size_key = (int *)bufcmd;
    bufcmd += sizeof(*size_key);
 
-   thumb_key = bufcmd;
+   if (*size_key) thumb_key = bufcmd;
 
    _generated_cb(ed, *success, thumb_path, thumb_key);
 

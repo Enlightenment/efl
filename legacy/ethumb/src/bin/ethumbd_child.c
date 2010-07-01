@@ -220,7 +220,6 @@ _ec_op_generated_cb(void *data, Ethumb *e, Eina_Bool success)
    const char *thumb_path, *thumb_key;
    int size_path, size_key, size_cmd;
 
-   fprintf(stderr, "thumbnail generated!");
    DBG("thumb generated!");
    ethumb_thumb_path_get(e, &thumb_path, &thumb_key);
 
