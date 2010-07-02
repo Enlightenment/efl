@@ -864,7 +864,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const char *text, int len, RGBA_
    words = eina_inlist_prepend(words, EINA_INLIST_GET(save));
 
    /* Clean up if too long */
-   if (0 && eina_inlist_count(words) > 20){
+   if (eina_inlist_count(words) > 20){
 	struct prword *last = (struct prword *)(words->last);
 	if (last->im) free(last->im);
 	if (last->cinfo) free(last->cinfo);
