@@ -10,7 +10,7 @@ struct _Ecore_Fb_Ps2_Event
 static int _ecore_fb_ps2_event_byte_count = 0;
 static Ecore_Fb_Ps2_Event _ecore_fb_ps2_event;
 static int _ecore_fb_ps2_fd = 0;
-static int _ecore_fb_ps2_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_fb_ps2_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 
 int
 ecore_fb_ps2_init(void)

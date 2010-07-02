@@ -349,7 +349,7 @@ _ecore_fb_li_device_event_syn(Ecore_Fb_Input_Device *dev, struct input_event *ie
 	}
 }
 
-static int
+static Eina_Bool
 _ecore_fb_li_device_fd_callback(void *data, Ecore_Fd_Handler *fdh)
 {
 	Ecore_Fb_Input_Device *dev;
@@ -381,7 +381,7 @@ _ecore_fb_li_device_fd_callback(void *data, Ecore_Fd_Handler *fdh)
 				break;
 		}
 	}
-	return 1;
+	return EINA_TRUE;
 }
 
 /* 

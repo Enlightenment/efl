@@ -64,7 +64,7 @@ struct _Ecore_Fb_Ts_Flite
    unsigned char brightness;
 };
 
-static int _ecore_fb_ts_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_fb_ts_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_fb_ts_fd = -1;
 static int _ecore_fb_ts_event_byte_count = 0;
 static int _ecore_fb_ts_apply_cal = 0;

@@ -107,7 +107,7 @@ _ecore_evas_fb_gain(void *data __UNUSED__)
      ecore_fb_input_device_listen(dev, 1);
 }
 
-static int
+static Eina_Bool
 _ecore_evas_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -115,12 +115,12 @@ _ecore_evas_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *eve
 
    e = event;
    ee = _ecore_evas_fb_match();
-   if (!ee) return 1; /* pass on event */
+   if (!ee) return EINA_TRUE; /* pass on event */
    evas_event_feed_key_down(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
-   return 0; /* dont pass it on */
+   return EINA_FALSE; /* dont pass it on */
 }
 
-static int
+static Eina_Bool
 _ecore_evas_event_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -128,12 +128,12 @@ _ecore_evas_event_key_up(void *data __UNUSED__, int type __UNUSED__, void *event
 
    e = event;
    ee = _ecore_evas_fb_match();
-   if (!ee) return 1; /* pass on event */
+   if (!ee) return EINA_TRUE; /* pass on event */
    evas_event_feed_key_up(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
-   return 0; /* dont pass it on */
+   return EINA_FALSE; /* dont pass it on */
 }
 
-static int
+static Eina_Bool
 _ecore_evas_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -142,15 +142,15 @@ _ecore_evas_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, 
 
    e = event;
    ee = _ecore_evas_fb_match();
-   if (!ee) return 1; /* pass on event */
+   if (!ee) return EINA_TRUE; /* pass on event */
    _ecore_evas_mouse_move_process_fb(ee, e->x, e->y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
    evas_event_feed_mouse_down(ee->evas, e->button, flags, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
-   return 0; /* dont pass it on */
+   return EINA_FALSE; /* dont pass it on */
 }
 
-static int
+static Eina_Bool
 _ecore_evas_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -158,13 +158,13 @@ _ecore_evas_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, vo
 
    e = event;
    ee = _ecore_evas_fb_match();
-   if (!ee) return 1; /* pass on event */
+   if (!ee) return EINA_TRUE; /* pass on event */
    _ecore_evas_mouse_move_process_fb(ee, e->x, e->y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
    evas_event_feed_mouse_up(ee->evas, e->button, EVAS_BUTTON_NONE, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
-   return 0; /* dont pass it on */
+   return EINA_FALSE; /* dont pass it on */
 }
 
-static int
+static Eina_Bool
 _ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -172,12 +172,12 @@ _ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *e
 
    e = event;
    ee = _ecore_evas_fb_match();
-   if (!ee) return 1; /* pass on event */
+   if (!ee) return EINA_TRUE; /* pass on event */
    _ecore_evas_mouse_move_process_fb(ee, e->x, e->y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
-   return 0; /* dont pass it on */
+   return EINA_FALSE; /* dont pass it on */
 }
 
-static int
+static Eina_Bool
 _ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -185,9 +185,9 @@ _ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *
 
    e = event;
    ee = _ecore_evas_fb_match();
-   if (!ee) return 1; /* pass on event */
+   if (!ee) return EINA_TRUE; /* pass on event */
    _ecore_evas_mouse_move_process_fb(ee, e->x, e->y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
-   return 0; /* dont pass it on */
+   return EINA_FALSE; /* dont pass it on */
 }
 
 static int

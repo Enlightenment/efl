@@ -393,15 +393,15 @@ _ecore_directfb_event_handle_lost_focus(DFBWindowEvent *evt)
  * window at a time */
 
 
-static int
+static Eina_Bool
 _ecore_directfb_input_event_fd_handler(void *data __UNUSED__,Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
 	DFBEvent evt;
 	int v = 0;
 		
 	v = read(_input_event_fd, &evt, sizeof(DFBEvent));
-	if (v < 0) return 1;
-	if (v < 1) return 1;
+	if (v < 0) return EINA_TRUE;
+	if (v < 1) return EINA_TRUE;
 	
 	/* we are getting duplicate events, only parse if we are in fullscreen */
 	//if(_ecore_directfb_fullscreen_window_id == 0) break;
@@ -416,18 +416,18 @@ _ecore_directfb_input_event_fd_handler(void *data __UNUSED__,Ecore_Fd_Handler *f
 	if(evt.input.type == DIET_AXISMOTION)
 		_ecore_directfb_event_handle_motion(&evt);
 
-	return 1;
+	return EINA_TRUE;
 }
 	
-static int
+static Eina_Bool
 _ecore_directfb_window_event_fd_handler(void *data __UNUSED__,Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
 	DFBEvent evt;
 	int v = 0;
 		
 	v = read(_window_event_fd, &evt, sizeof(DFBEvent));
-	if (v < 0) return 1;
-	if (v < 1) return 1;
+	if (v < 0) return EINA_TRUE;
+	if (v < 1) return EINA_TRUE;
 			
 	if(evt.window.type & DWET_POSITION)
 		INF("position");
@@ -457,7 +457,7 @@ _ecore_directfb_window_event_fd_handler(void *data __UNUSED__,Ecore_Fd_Handler *
 		_ecore_directfb_event_handle_leave(&evt.window);
 	if(evt.window.type & DWET_WHEEL)
 		_ecore_directfb_event_handle_wheel(&evt.window);
-	return 1;
+	return EINA_TRUE;
 }
 	
 /* api functions */

@@ -235,7 +235,7 @@ _ecore_config_ipc_ecore_handle_request(Ecore_Ipc_Server * server,
 
 /*****************************************************************************/
 
-static int
+static Eina_Bool
 _ecore_config_ipc_client_add(void *data, int type __UNUSED__, void *event)
 {
    Ecore_Ipc_Server  **server;
@@ -245,13 +245,13 @@ _ecore_config_ipc_client_add(void *data, int type __UNUSED__, void *event)
    e = (Ecore_Ipc_Event_Client_Data *) event;
 
    if (*server != ecore_ipc_client_server_get(e->client))
-      return 1;
+      return EINA_TRUE;
 
    INF("IPC/eCore: Client connected. @ %p", server);
-   return 1;
+   return EINA_TRUE;
 }
 
-static int
+static Eina_Bool
 _ecore_config_ipc_client_del(void *data, int type __UNUSED__, void *event)
 {
    Ecore_Ipc_Server  **server;
@@ -261,13 +261,13 @@ _ecore_config_ipc_client_del(void *data, int type __UNUSED__, void *event)
    e = (Ecore_Ipc_Event_Client_Data *) event;
 
    if (*server != ecore_ipc_client_server_get(e->client))
-      return 1;
+      return EINA_TRUE;
 
    INF("IPC/eCore: Client disconnected. @ %p", server);
-   return 1;
+   return EINA_TRUE;
 }
 
-static int
+static Eina_Bool
 _ecore_config_ipc_client_sent(void *data, int type __UNUSED__, void *event)
 {
    Ecore_Ipc_Server  **server;
@@ -277,10 +277,10 @@ _ecore_config_ipc_client_sent(void *data, int type __UNUSED__, void *event)
    e = (Ecore_Ipc_Event_Client_Data *) event;
 
    if (*server != ecore_ipc_client_server_get(e->client))
-      return 1;
+      return EINA_TRUE;
 
    _ecore_config_ipc_ecore_handle_request(*server, e);
-   return 1;
+   return EINA_TRUE;
 }
 
 /*****************************************************************************/

@@ -128,7 +128,7 @@ static int _ecore_fb_shift = 0;
 static int _ecore_fb_lock = 0;
 
 static Ecore_Fd_Handler *_ecore_fb_kbd_fd_handler_handle = NULL;
-static int _ecore_fb_kbd_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_fb_kbd_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 
 static void 
 _ecore_fb_event_free_key_down(void *data __UNUSED__, void *ev)
@@ -153,7 +153,7 @@ _ecore_fb_event_free_key_up(void *data __UNUSED__, void *ev)
    free(e);
 }
 
-static int
+static Eina_Bool
 _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    int v = 0;
@@ -163,8 +163,8 @@ _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 	unsigned char buf;
 	
 	v = read(_ecore_fb_kbd_fd, &buf, 1);
-	if (v < 0) return 1;
-	if (v < 1) return 1;
+	if (v < 0) return EINA_TRUE;
+	if (v < 1) return EINA_TRUE;
 	if (!(buf & 0x80))
 	  {
 	     /* DOWN */
@@ -272,7 +272,7 @@ _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 	;
      }
    while (v > 0);
-   return 1;
+   return EINA_TRUE;
 }
 
 int

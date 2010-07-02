@@ -18,7 +18,7 @@ static int _ecore_xcb_key_mask_get(xcb_keysym_t sym);
 static int _ecore_xcb_event_modifier(unsigned int state);
 
 static void *_ecore_xcb_event_filter_start(void *data);
-static int   _ecore_xcb_event_filter_filter(void *data, void *loop_data,int type, void *event);
+static Eina_Bool   _ecore_xcb_event_filter_filter(void *data, void *loop_data,int type, void *event);
 static void  _ecore_xcb_event_filter_end(void *data, void *loop_data);
 
 static Ecore_Fd_Handler *_ecore_xcb_fd_handler_handle = NULL;
@@ -1026,23 +1026,23 @@ _ecore_xcb_event_filter_start(void *data __UNUSED__)
    return filter_data;
 }
 
-static int
+static Eina_Bool
 _ecore_xcb_event_filter_filter(void *data __UNUSED__, void *loop_data,int type, void *event __UNUSED__)
 {
    Ecore_X_Filter_Data *filter_data;
 
    filter_data = loop_data;
-   if (!filter_data) return 1;
+   if (!filter_data) return EINA_TRUE;
    if (type == ECORE_EVENT_MOUSE_MOVE)
      {
 	if ((filter_data->last_event_type) == ECORE_EVENT_MOUSE_MOVE)
 	  {
 	     filter_data->last_event_type = type;
-	     return 0;
+	     return EINA_FALSE;
 	  }
      }
    filter_data->last_event_type = type;
-   return 1;
+   return EINA_TRUE;
 }
 
 static void

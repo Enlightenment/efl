@@ -19,7 +19,7 @@ static int _ecore_fb_vt_prev_vt = 0;
 static struct termios _ecore_fb_tty_prev_tio_mode;
 static struct vt_mode _ecore_fb_vt_prev_mode;
 
-static int _ecore_fb_signal_usr_handler(void *data, int type, void *ev);
+static Eina_Bool _ecore_fb_signal_usr_handler(void *data, int type, void *ev);
 static Ecore_Event_Handler *_ecore_fb_user_handler = NULL;
 static int _ecore_fb_tty_prev_mode = 0;
 static int _ecore_fb_tty_prev_kd_mode = 0;
@@ -34,7 +34,7 @@ static void *_ecore_fb_func_fb_gain_data = NULL;
 static Ecore_Event_Filter *_ecore_fb_filter_handler = NULL;
 
 static void *_ecore_fb_event_filter_start(void *data);
-static int   _ecore_fb_event_filter_filter(void *data, void *loop_data, int type, void *event);
+static Eina_Bool   _ecore_fb_event_filter_filter(void *data, void *loop_data, int type, void *event);
 static void  _ecore_fb_event_filter_end(void *data, void *loop_data);
 
 /* prototypes */
@@ -261,23 +261,23 @@ _ecore_fb_event_filter_start(void *data __UNUSED__)
    return filter_data;
 }
 
-static int
+static Eina_Bool
 _ecore_fb_event_filter_filter(void *data __UNUSED__, void *loop_data,int type, void *event __UNUSED__)
 {
    Ecore_Fb_Filter_Data *filter_data;
    
    filter_data = loop_data;
-   if (!filter_data) return 1;
+   if (!filter_data) return EINA_TRUE;
    if (type == ECORE_FB_EVENT_MOUSE_MOVE)
      {
 	if ((filter_data->last_event_type) == ECORE_FB_EVENT_MOUSE_MOVE)
 	  {
 	     filter_data->last_event_type = type;
-	     return 0;
+	     return EINA_FALSE;
 	  }
      }
    filter_data->last_event_type = type;
-   return 1;
+   return EINA_TRUE;
 }
 
 static void
