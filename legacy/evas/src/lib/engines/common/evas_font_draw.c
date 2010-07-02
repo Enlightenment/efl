@@ -395,18 +395,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
    int c;
    int char_index = 0; /* the index of the current char */
 
-#ifdef INTERNATIONAL_SUPPORT
-   /*FIXME: should get the direction by parmater */
-   EvasIntlParType direction = FRIBIDI_TYPE_ON;
-   EvasIntlLevel *level_list;
-
-   /* change the text to visual ordering and update the level list
-    * for as minimum impact on the code as possible just use text as an
-    * holder, will change in the future.*/
-   char *visual_text = evas_intl_utf8_to_visual(in_text, &len, &direction, NULL, NULL, &level_list);
-   text = (visual_text) ? visual_text : in_text;
-   
-#endif
 
 #if defined(METRIC_CACHE) || defined(WORD_CACHE)
    /* A fast strNlen would be nice (there is a wcsnlen strangely) */
@@ -474,6 +462,19 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
      }
 
 }
+#endif
+
+#ifdef INTERNATIONAL_SUPPORT
+   /*FIXME: should get the direction by parmater */
+   EvasIntlParType direction = FRIBIDI_TYPE_ON;
+   EvasIntlLevel *level_list;
+
+   /* change the text to visual ordering and update the level list
+    * for as minimum impact on the code as possible just use text as an
+    * holder, will change in the future.*/
+   char *visual_text = evas_intl_utf8_to_visual(in_text, &len, &direction, NULL, NULL, &level_list);
+   text = (visual_text) ? visual_text : in_text;
+   
 #endif
 
 
@@ -760,9 +761,10 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 
 
 struct prword *
-evas_font_word_prerender(RGBA_Draw_Context *dc, const char *text, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning){
+evas_font_word_prerender(RGBA_Draw_Context *dc, const char *in_text, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning){
    int pen_x, pen_y;
    struct cinfo *metrics;
+   const char *text;
    int chr;
    FT_Face pface = NULL;
    FT_UInt prev_index;
@@ -777,11 +779,24 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const char *text, int len, RGBA_
 
    EINA_INLIST_FOREACH(words,w){
 	if (w->len == len && w->font == fn && fi->size == w->size &&
-	      (w->str == text || strcmp(w->str, text) == 0)){
+	      (w->str == in_text || strcmp(w->str, in_text) == 0)){
 	  words = eina_inlist_promote(words, EINA_INLIST_GET(w));
 	  return w;
 	}
    }
+
+#ifdef INTERNATIONAL_SUPPORT
+   /*FIXME: should get the direction by parmater */
+   EvasIntlParType direction = FRIBIDI_TYPE_ON;
+   EvasIntlLevel *level_list;
+
+   /* change the text to visual ordering and update the level list
+    * for as minimum impact on the code as possible just use text as an
+    * holder, will change in the future.*/
+   char *visual_text = evas_intl_utf8_to_visual(in_text, &len, &direction, NULL, NULL, &level_list);
+   text = (visual_text) ? visual_text : in_text;
+   
+#endif
 
    gl = dc->font_ext.func.gl_new ? 1: 0;
 
@@ -873,6 +888,12 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const char *text, int len, RGBA_
    }
 
    return save;
+
+#ifdef INTERNATIONAL_SUPPORT
+   if (level_list) free(level_list);
+   if (visual_text) free(visual_text);
+#endif
+
 }
 
 
