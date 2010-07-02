@@ -644,6 +644,8 @@ compile(void)
    int fd;
    off_t size;
    char *data, *p;
+   Eina_List *l;
+   Edje_Style *stl;
 
    if (!tmp_dir)
 #ifdef HAVE_EVIL
@@ -807,6 +809,13 @@ compile(void)
      }
    free(data);
    close(fd);
+
+   EINA_LIST_FOREACH(edje_file->styles, l, stl)
+      if (!stl->name)
+	{
+	   ERR("%s: Error. style must have a name.", progname);
+	   exit(-1);
+	}
 }
 
 int

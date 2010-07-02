@@ -1586,7 +1586,7 @@ st_styles_style_name(void)
    stl->name = parse_str(0);
    EINA_LIST_FOREACH(edje_file->styles, l, tstl)
      {
-	if ((stl != tstl) && (!strcmp(stl->name, tstl->name)))
+	if (stl->name && tstl->name && (stl != tstl) && (!strcmp(stl->name, tstl->name)))
 	  {
 	     ERR("%s: Error. parse error %s:%i. There is already a style named \"%s\"",
 		 progname, file_in, line - 1, stl->name);
