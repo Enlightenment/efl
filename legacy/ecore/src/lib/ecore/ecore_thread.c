@@ -24,7 +24,7 @@ struct _Ecore_Pthread_Worker
       } short_run;
       struct {
 	 void (*func_heavy)(Ecore_Thread *thread, void *data);
-	 void (*func_notify)(Ecore_Thread *thread, void *data);
+	 void (*func_notify)(Ecore_Thread *thread, void *msg_data, void *data);
 
 	 Ecore_Pipe *notify;
 
@@ -119,16 +119,17 @@ _ecore_thread_handler(void *data __UNUSED__, void *buffer, unsigned int nbyte)
 }
 
 static void
-_ecore_notify_handler(void *data __UNUSED__, void *buffer, unsigned int nbyte)
+_ecore_notify_handler(void *data, void *buffer, unsigned int nbyte)
 {
-   Ecore_Pthread_Worker *work;
+   Ecore_Pthread_Worker *work = data;
+   void *user_data;
 
    if (nbyte != sizeof (Ecore_Pthread_Worker*)) return ;
 
-   work = *(Ecore_Pthread_Worker**)buffer;
+   user_data = *(void**)buffer;
 
    if (work->u.long_run.func_notify)
-     work->u.long_run.func_notify((Ecore_Thread *) work, (void*) work->data);
+     work->u.long_run.func_notify((Ecore_Thread *) work, user_data, (void*) work->data);
 }
 
 static void
@@ -466,7 +467,7 @@ ecore_thread_check(Ecore_Thread *thread)
 
 EAPI Ecore_Thread *
 ecore_long_run(void (*func_heavy)(Ecore_Thread *thread, void *data),
-	       void (*func_notify)(Ecore_Thread *thread, void *data),
+	       void (*func_notify)(Ecore_Thread *thread, void *msg_data, void *data),
 	       void (*func_end)(void *data),
 	       void (*func_cancel)(void *data),
 	       const void *data,
@@ -490,7 +491,7 @@ ecore_long_run(void (*func_heavy)(Ecore_Thread *thread, void *data),
    worker->cancel = EINA_FALSE;
    worker->long_run = EINA_TRUE;
 
-   worker->u.long_run.notify = ecore_pipe_add(_ecore_notify_handler, NULL);
+   worker->u.long_run.notify = ecore_pipe_add(_ecore_notify_handler, worker);
 
    if (!try_no_queue)
      {
@@ -577,7 +578,7 @@ ecore_thread_notify(Ecore_Thread *thread, void *data)
 #ifdef EFL_HAVE_PTHREAD
    if (worker->u.long_run.self != pthread_self()) return EINA_FALSE;
 
-   ecore_pipe_write(worker->u.long_run.notify, data, sizeof (void*));
+   ecore_pipe_write(worker->u.long_run.notify, &data, sizeof (void*));
 
    return EINA_TRUE;
 #else
