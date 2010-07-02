@@ -40,6 +40,7 @@ evas_intl_utf8_to_visual(const char *text,
    byte_len = strlen(text); /* we need the actual number of bytes, not number of chars */
 
    unicode_in = (FriBidiChar *)alloca(sizeof(FriBidiChar) * (len + 1));
+   /* FIXME: Alloca never fails */
    if (!unicode_in)
      {
 	len = -1;
@@ -52,6 +53,7 @@ evas_intl_utf8_to_visual(const char *text,
    unicode_in[len] = 0;
 
    unicode_out = (FriBidiChar *)alloca(sizeof(FriBidiChar) * (len + 1));
+   /* FIXME: Alloca never fails */
    if (!unicode_out)
      {
 	len = -1;
