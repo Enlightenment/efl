@@ -20,7 +20,7 @@ struct _Ecore_Pthread_Worker
 {
    union {
       struct {
-	 void (*func_heavy)(void *data);
+	 void (*func_blocking)(void *data);
       } short_run;
       struct {
 	 void (*func_heavy)(Ecore_Thread *thread, void *data);
@@ -152,7 +152,7 @@ _ecore_short_job(Ecore_Pipe *end_pipe)
 
 	pthread_mutex_unlock(&_mutex);
 
-	work->u.short_run.func_heavy((void*) work->data);
+	work->u.short_run.func_blocking((void*) work->data);
 
 	ecore_pipe_write(end_pipe, &work, sizeof (Ecore_Pthread_Worker*));
      }
@@ -218,7 +218,7 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
      }
 
    work->data = pth;
-   work->u.short_run.func_heavy = NULL;
+   work->u.short_run.func_blocking = NULL;
    work->func_end = (void*) _ecore_thread_end;
    work->func_cancel = NULL;
    work->cancel = EINA_FALSE;
@@ -267,7 +267,7 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
    if (!work) return NULL;
 
    work->data = pth;
-   work->u.short_run.func_heavy = NULL;
+   work->u.short_run.func_blocking = NULL;
    work->func_end = (void*) _ecore_thread_end;
    work->func_cancel = NULL;
    work->cancel = EINA_FALSE;
@@ -328,19 +328,27 @@ _ecore_thread_shutdown(void)
 }
 
 /*
- * ecore_thread_run provide a facility for easily managing heavy task in a
- * parallel thread. You should provide two function, the first one, func_heavy,
- * that will do the heavy work in another thread (so you should not use the
- * EFL in it except Eina if you are carefull), and the second one, func_end,
- * that will be called in Ecore main loop when func_heavy is done. So you
- * can use all the EFL inside this function.
+ * @brief Run some blocking code in a parrallel thread to avoid locking the main loop.
+ * @param func_blocking The function that should run in another thread.
+ * @param func_end The function that will be called in the main loop if the thread terminate correctly.
+ * @param func_cancel The function that will be called in the main loop if the thread is cancelled.
+ * @param data User context data to pass to all callback.
+ * @return A reference to the newly created thread instance, or NULL if it failed.
+ *
+ * ecore_thread_run provide a facility for easily managing blocking task in a
+ * parallel thread. You should provide three function. The first one, func_blocking,
+ * that will do the blocking work in another thread (so you should not use the
+ * EFL in it except Eina if you are carefull). The second one, func_end,
+ * that will be called in Ecore main loop when func_blocking is done. So you
+ * can use all the EFL inside this function. The last one, func_cancel, will
+ * be called in the main loop if the thread is cancelled or could not run at all.
  *
  * Be aware, that you can't make assumption on the result order of func_end
  * after many call to ecore_thread_run, as we start as much thread as the
  * host CPU can handle.
  */
 EAPI Ecore_Thread *
-ecore_thread_run(void (*func_heavy)(void *data),
+ecore_thread_run(void (*func_blocking)(void *data),
 		 void (*func_end)(void *data),
 		 void (*func_cancel)(void *data),
 		 const void *data)
@@ -349,7 +357,7 @@ ecore_thread_run(void (*func_heavy)(void *data),
    Ecore_Pthread_Worker *work;
    Ecore_Pthread_Data *pth = NULL;
 
-   if (!func_heavy) return NULL;
+   if (!func_blocking) return NULL;
 
    work = malloc(sizeof (Ecore_Pthread_Worker));
    if (!work)
@@ -358,7 +366,7 @@ ecore_thread_run(void (*func_heavy)(void *data),
 	return NULL;
      }
 
-   work->u.short_run.func_heavy = func_heavy;
+   work->u.short_run.func_blocking = func_blocking;
    work->func_end = func_end;
    work->func_cancel = func_cancel;
    work->cancel = EINA_FALSE;
@@ -406,7 +414,7 @@ ecore_thread_run(void (*func_heavy)(void *data),
      If no thread and as we don't want to break app that rely on this
      facility, we will lock the interface until we are done.
     */
-   func_heavy((void *)data);
+   func_blocking((void *)data);
    func_end((void *)data);
 
    return NULL;
@@ -414,6 +422,11 @@ ecore_thread_run(void (*func_heavy)(void *data),
 }
 
 /*
+ * @brief Cancel a running thread.
+ * @param thread The thread to cancel.
+ * @return Will return EINA_TRUE if the thread has been cancelled,
+ *         EINA_FALSE if it is pending.
+ *
  * ecore_thread_cancel give the possibility to cancel a task still running. It
  * will return EINA_FALSE, if the destruction is delayed or EINA_TRUE if it is
  * cancelled after this call.
@@ -456,15 +469,51 @@ ecore_thread_cancel(Ecore_Thread *thread)
 #endif
 }
 
+/*
+ * @brief Tell if a thread was canceled or not.
+ * @param thread The thread to test.
+ * @return EINA_TRUE if the thread is cancelled,
+ *         EINA_FALSE if it is not.
+ *
+ * You can use this function in main loop and in the thread.
+ */
 EAPI Eina_Bool
 ecore_thread_check(Ecore_Thread *thread)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker*) thread;
 
-   if (!worker) return EINA_FALSE;
+   if (!worker) return EINA_TRUE;
    return worker->cancel;
 }
 
+/*
+ * @brief Run some heavy code in a parrallel thread to avoid locking the main loop.
+ * @param func_heavy The function that should run in another thread.
+ * @param func_notify The function that will receive the data send by func_heavy in the main loop.
+ * @param func_end The function that will be called in the main loop if the thread terminate correctly.
+ * @param func_cancel The function that will be called in the main loop if the thread is cancelled.
+ * @param data User context data to pass to all callback.
+ * @param try_no_queue If you wan't to run outside of the thread pool.
+ * @return A reference to the newly created thread instance, or NULL if it failed.
+ *
+ * ecore_long_run provide a facility for easily managing heavy task in a
+ * parallel thread. You should provide four functions. The first one, func_heavy,
+ * that will do the heavy work in another thread (so you should not use the
+ * EFL in it except Eina and Eet if you are carefull). The second one, func_notify,
+ * will receive the data send from the thread function (func_heavy) by ecore_thread_notify
+ * in the main loop (and so, can use all the EFL). Tje third, func_end,
+ * that will be called in Ecore main loop when func_heavy is done. So you
+ * can use all the EFL inside this function. The last one, func_cancel, will
+ * be called in the main loop also, if the thread is cancelled or could not run at all.
+ *
+ * Be aware, that you can't make assumption on the result order of func_end
+ * after many call to ecore_long_run, as we start as much thread as the
+ * host CPU can handle.
+ *
+ * If you set try_no_queue, it will try to run outside of the thread pool, this can bring
+ * the CPU down, so be carefull with that. Of course if it can't start a new thread, it will
+ * try to use one from the pool.
+ */
 EAPI Ecore_Thread *
 ecore_long_run(void (*func_heavy)(Ecore_Thread *thread, void *data),
 	       void (*func_notify)(Ecore_Thread *thread, void *msg_data, void *data),
@@ -567,8 +616,20 @@ ecore_long_run(void (*func_heavy)(Ecore_Thread *thread, void *data),
 #endif
 }
 
+/*
+ * @brief Send data to main loop from worker thread.
+ * @param thread The current Ecore_Thread context to send data from
+ * @param data Data to be transmitted to the main loop
+ * @return EINA_TRUE if data was successfully send to main loop,
+ *         EINA_FALSE if anything goes wrong.
+ *
+ * After a succesfull call, the data should be considered owned
+ * by the main loop.
+ *
+ * You should use this function only in the func_heavy call.
+ */
 EAPI Eina_Bool
-ecore_thread_notify(Ecore_Thread *thread, void *data)
+ecore_thread_notify(Ecore_Thread *thread, const void *data)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker*) thread;
 
