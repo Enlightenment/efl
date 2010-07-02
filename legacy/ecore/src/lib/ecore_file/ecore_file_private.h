@@ -13,6 +13,10 @@
 # include <Evil.h>
 #endif
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+
 #include "Ecore.h"
 #include "ecore_private.h"
 
@@ -76,6 +80,17 @@ struct _Ecore_File_Monitor
    char               *path;
    void               *data;
    Ecore_File         *files;
+};
+
+typedef struct _Ecore_File_Iterator Ecore_File_Iterator;
+struct _Ecore_File_Iterator
+{
+   Eina_Iterator iterator;
+
+   DIR *dirp;
+   int length;
+
+   char dir[1];
 };
 
 #ifdef HAVE_INOTIFY

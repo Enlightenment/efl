@@ -90,6 +90,7 @@ extern "C" {
    EAPI Eina_Bool   ecore_file_can_exec     (const char *file);
    EAPI char       *ecore_file_readlink     (const char *link);
    EAPI Eina_List  *ecore_file_ls           (const char *dir);
+   EAPI Eina_Iterator *ecore_file_ls_iterator(const char *dir);
    EAPI char       *ecore_file_app_exe_get  (const char *app);
    EAPI char       *ecore_file_escape_name  (const char *filename);
    EAPI char       *ecore_file_strip_ext    (const char *file);
