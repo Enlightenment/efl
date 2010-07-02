@@ -1094,9 +1094,6 @@ eina_stringshare_threads_shutdown(void)
  * exact given size. This can be used to stringshare part of a larger
  * buffer or substring.
  *
- * @note it's not possible to have more than 65k references or strings
- * bigger than 65k since we use 'unsigned short' to save space.
- *
  * @see eina_stringshare_add()
  */
 EAPI const char *
@@ -1184,9 +1181,6 @@ eina_stringshare_add_length(const char *str, unsigned int slen)
  * The string @p str must be NULL terminated ('@\0') and its full
  * length will be used. To use part of the string or non-null
  * terminated, use eina_stringshare_add_length() instead.
- *
- * @note it's not possible to have more than 65k references or strings
- * bigger than 65k since we use 'unsigned short' to save space.
  *
  * @see eina_stringshare_add_length()
  */
