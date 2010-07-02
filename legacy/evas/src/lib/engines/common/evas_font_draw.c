@@ -413,8 +413,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
    for (len = 0 ; text[len] && len < WORD_CACHE_MAXLEN ; len ++)
      ;
 
-
-   if (len < WORD_CACHE_MAXLEN){
+   if (len > 2 && len < WORD_CACHE_MAXLEN){
      struct prword *word = evas_font_word_prerender(dc, text, len, fn, fi,
 	   use_kerning);
      if (word){
