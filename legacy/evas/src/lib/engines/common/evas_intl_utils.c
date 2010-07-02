@@ -40,33 +40,20 @@ evas_intl_utf8_to_visual(const char *text,
    byte_len = strlen(text); /* we need the actual number of bytes, not number of chars */
 
    unicode_in = (FriBidiChar *)alloca(sizeof(FriBidiChar) * (len + 1));
-   /* FIXME: Alloca never fails */
-   if (!unicode_in)
-     {
-	len = -1;
-        goto error1;
-     }
-
    FBDLOCK();
    len = fribidi_utf8_to_unicode(text, byte_len, unicode_in);
    FBDUNLOCK();
    unicode_in[len] = 0;
 
    unicode_out = (FriBidiChar *)alloca(sizeof(FriBidiChar) * (len + 1));
-   /* FIXME: Alloca never fails */
-   if (!unicode_out)
-     {
-	len = -1;
-	goto error2;
-     }
 
-    if (embedding_level_list)
+   if (embedding_level_list)
        {
           *embedding_level_list = (EvasIntlLevel *)malloc(sizeof(EvasIntlLevel) * len);
           if (!*embedding_level_list)
             {
  	      len = -1;
- 	      goto error3;
+ 	      goto error1;
             }
  	 tmp_level_list = *embedding_level_list;
        }
@@ -77,7 +64,7 @@ evas_intl_utf8_to_visual(const char *text,
           if (!*position_L_to_V_list)
             {
  	      len = -1;
- 	      goto error4;
+ 	      goto error2;
             }
  	 tmp_L_to_V_list = *position_L_to_V_list;
        }
@@ -88,7 +75,7 @@ evas_intl_utf8_to_visual(const char *text,
           if (!*position_V_to_L_list)
             {
  	      len = -1;
- 	      goto error5;
+ 	      goto error2;
             }
  	 tmp_V_to_L_list = *position_V_to_L_list;
        }
@@ -99,7 +86,7 @@ evas_intl_utf8_to_visual(const char *text,
      {
         LKU(fribidi_lock);
  	len = -2;
- 	goto error5;
+ 	goto error2;
      }
    LKU(fribidi_lock);
 
@@ -107,7 +94,7 @@ evas_intl_utf8_to_visual(const char *text,
    if (!text_out)
      {
  	len = -1;
- 	goto error6;
+ 	goto error2;
      }
 
    fribidi_unicode_to_utf8(unicode_out, len, text_out);
@@ -117,20 +104,14 @@ evas_intl_utf8_to_visual(const char *text,
    return text_out;
 
 /* ERROR HANDLING */
-error6:
-   free(unicode_out);
-error5:
+error1:
    free(*position_V_to_L_list);
    *position_V_to_L_list = NULL;
-error4:
+error2:
    free(*position_L_to_V_list);
    *position_L_to_V_list = NULL;
-error3:
    free(*embedding_level_list);
    *embedding_level_list = NULL;
-error2:
-   free(unicode_in);
-error1:
 
    *ret_len = len;
    return NULL;
