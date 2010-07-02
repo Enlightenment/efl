@@ -82,17 +82,6 @@ struct _Ecore_File_Monitor
    Ecore_File         *files;
 };
 
-typedef struct _Ecore_File_Iterator Ecore_File_Iterator;
-struct _Ecore_File_Iterator
-{
-   Eina_Iterator iterator;
-
-   DIR *dirp;
-   int length;
-
-   char dir[1];
-};
-
 #ifdef HAVE_INOTIFY
 int                 ecore_file_monitor_inotify_init(void);
 int                 ecore_file_monitor_inotify_shutdown(void);

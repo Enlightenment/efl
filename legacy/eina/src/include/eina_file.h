@@ -21,6 +21,7 @@
 
 #include "eina_types.h"
 #include "eina_array.h"
+#include "eina_iterator.h"
 
 /**
  * @addtogroup Eina_Tools_Group Tools
@@ -52,6 +53,7 @@ typedef void (*Eina_File_Dir_List_Cb)(const char *name, const char *path, void *
 
 EAPI Eina_Bool eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb cb, void *data) EINA_ARG_NONNULL(1, 3);
 EAPI Eina_Array *eina_file_split(char *path) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI Eina_Iterator *eina_file_ls(const char *dir);
 
 /**
  * @}

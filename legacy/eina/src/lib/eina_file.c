@@ -67,6 +67,59 @@ void *alloca (size_t);
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_file.h"
+#include "eina_stringshare.h"
+
+typedef struct _Eina_File_Iterator Eina_File_Iterator;
+struct _Eina_File_Iterator
+{
+   Eina_Iterator iterator;
+
+   DIR *dirp;
+   int length;
+
+   char dir[1];
+};
+
+static Eina_Bool
+_eina_file_ls_iterator_next(Eina_File_Iterator *it, void **data)
+{
+   struct dirent *dp;
+   char *name;
+   size_t length;
+
+   do
+     {
+	dp = readdir(it->dirp);
+	if (!dp) return EINA_FALSE;
+     }
+   while (!strcmp(dp->d_name, ".")
+	  || !strcmp(dp->d_name, ".."));
+
+   length = strlen(dp->d_name);
+   name = alloca(length + 2 + it->length);
+
+   memcpy(name, it->dir, it->length);
+   memcpy(name + it->length, "/", 1);
+   memcpy(name + it->length + 1, dp->d_name, length + 1);
+
+   *data = (char*) eina_stringshare_add(name);
+   return EINA_TRUE;
+}
+
+static char *
+_eina_file_ls_iterator_container(Eina_File_Iterator *it)
+{
+   return it->dir;
+}
+
+static void
+_eina_file_ls_iterator_free(Eina_File_Iterator *it)
+{
+   closedir(it->dirp);
+
+   EINA_MAGIC_SET(&it->iterator, 0);
+   free(it);
+}
 
 /*============================================================================*
  *                                 Global                                     *
@@ -266,6 +319,46 @@ eina_file_split(char *path)
 		eina_array_push(ea, path);
 
 	return ea;
+}
+
+/**
+ * Get an iterator to list the content of a directory. Give a chance to interrupt it
+ * and make it completly asynchrone.
+ * The iterator will walk over '.' and '..' without returning them.
+ * @param  dir The name of the directory to list
+ * @return Return an Eina_Iterator that will walk over the files and directory in the pointed
+ *         directory. On failure it will return NULL.
+ */
+EAPI Eina_Iterator *
+eina_file_ls(const char *dir)
+{
+   Eina_File_Iterator *it;
+   size_t length;
+
+   if (!dir) return NULL;
+
+   length = strlen(dir);
+
+   it = malloc(sizeof (Eina_File_Iterator) + length);
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->dirp = opendir(dir);
+   if (!it->dirp)
+     {
+	free(it);
+	return NULL;
+     }
+
+   memcpy(it->dir, dir, length + 1);
+   it->length = length;
+
+   it->iterator.next = FUNC_ITERATOR_NEXT(_eina_file_ls_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_file_ls_iterator_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_ls_iterator_free);
+
+   return &it->iterator;
 }
 
 /**
