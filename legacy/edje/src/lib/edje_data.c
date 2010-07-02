@@ -476,4 +476,13 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "id", id, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "script_only", script_only, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "lua_script_only", lua_script_only, EET_T_UCHAR);
+
+   {
+      Edje_Part_Collection epc;
+
+      eet_data_descriptor_element_add(_edje_edd_edje_part_collection,
+				      "alias", EET_T_STRING, EET_G_HASH,
+				      (char *)(&(epc.alias)) - (char *)(&(epc)),
+				      0, /* 0,  */NULL, NULL);
+   }
 }

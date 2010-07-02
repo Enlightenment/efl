@@ -114,6 +114,8 @@ static void st_collections_group_data_item(void);
 static void ob_collections_group_script(void);
 static void ob_collections_group_lua_script(void);
 
+static void st_collections_group_parts_alias(void);
+
 static void ob_collections_group_parts_part(void);
 static void st_collections_group_parts_part_name(void);
 static void st_collections_group_parts_part_type(void);
@@ -325,6 +327,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.color_classes.color_class.color", st_color_class_color}, /* dup */
      {"collections.group.color_classes.color_class.color2", st_color_class_color2}, /* dup */
      {"collections.group.color_classes.color_class.color3", st_color_class_color3}, /* dup */
+     {"collections.group.parts.alias", st_collections_group_parts_alias },
      {"collections.group.parts.image", st_images_image}, /* dup */
      {"collections.group.parts.set.name", st_images_set_name},
      {"collections.group.parts.set.image.image", st_images_set_image_image},
@@ -1990,6 +1993,36 @@ st_collections_group_data_item(void)
    di->value = parse_str(1);
    pc->data = eina_list_append(pc->data, di);
 }
+
+/**
+    @page edcref
+    @block
+        parts
+    @context
+        group {
+            parts {
+                alias: "theme_part_path" "real_part_path";
+                ..
+            }
+        }
+    @description
+        Alias of part give a chance to let the designer put the real one
+	in a box or reuse one from a GROUP or inside a BOX.
+    @endblock
+*/
+static void
+st_collections_group_parts_alias(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+
+   if (!pc->alias) pc->alias = eina_hash_string_small_new(NULL);
+   eina_hash_add(pc->alias, parse_str(0), parse_str(1));
+}
+
 
 /**
     @page edcref

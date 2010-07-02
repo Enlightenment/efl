@@ -567,6 +567,8 @@ struct _Edje_Part_Collection
 
    int        id; /* the collection id */
 
+   Eina_Hash *alias; /* aliasing part*/
+
    struct {
       Edje_Size min, max;
    } prop;

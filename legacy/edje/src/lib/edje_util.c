@@ -4280,6 +4280,7 @@ _edje_real_part_recursive_get_helper(Edje *ed, char **path)
 {
    Edje_Real_Part *rp;
    Evas_Object *child;
+   const char *alias = NULL;
    char *idx = NULL;
 
    //printf("  lookup: %s on %s\n", path[0], ed->parent ? ed->parent : "-");
@@ -4298,9 +4299,20 @@ _edje_real_part_recursive_get_helper(Edje *ed, char **path)
 	  }
      }
 
-   rp = _edje_real_part_get(ed, path[0]);
-   if (path[1] == NULL) return rp;
-   if (!rp) return NULL;
+   if (ed->file->collection)
+     alias = eina_hash_find(ed->file->collection, path[0]);
+   if (alias)
+     {
+	rp = _edje_real_part_recursive_get(ed, alias);
+	if (path[1] == NULL) return rp;
+	if (!rp) return NULL;
+     }
+   else
+     {
+	rp = _edje_real_part_get(ed, path[0]);
+	if (path[1] == NULL) return rp;
+	if (!rp) return NULL;
+     }
 
    switch (rp->part->type)
      {
