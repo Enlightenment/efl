@@ -2858,3 +2858,26 @@ _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timest
      evas_event_feed_mouse_move(ee->evas, y, ee->w - x - 1, timestamp, NULL);
 }
 
+/**
+ * Get a list of all the ecore_evases.
+ * 
+ * The returned list of ecore evases is only valid until the canvases are
+ * destroyed (and should not be cached for instance).
+ * The list can be free by just deleting the list.
+ *
+ * @return A list of ecore_evases.
+ */
+EAPI Eina_List *
+ecore_evas_ecore_evas_list_get(void){
+   Ecore_Evas *ee;
+   Eina_List *l = NULL;
+
+   EINA_INLIST_FOREACH(ecore_evases, ee)
+     {
+	l = eina_list_append(l, ee);
+     }
+
+   return l;
+}
+
+
