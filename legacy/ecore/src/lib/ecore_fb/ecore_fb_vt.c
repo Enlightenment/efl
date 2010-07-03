@@ -40,7 +40,7 @@ static void  _ecore_fb_event_filter_end(void *data, void *loop_data);
 /* prototypes */
 static void _ecore_fb_vt_switch(int vt);
 
-static int
+static Eina_Bool
 _ecore_fb_signal_usr_handler(void *data __UNUSED__, int type __UNUSED__, void *ev)
 {
 
