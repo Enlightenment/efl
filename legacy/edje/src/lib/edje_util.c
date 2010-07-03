@@ -4299,7 +4299,7 @@ _edje_real_part_recursive_get_helper(Edje *ed, char **path)
 	  }
      }
 
-   if (ed->collection->alias)
+   if (ed->collection && ed->collection->alias)
      alias = eina_hash_find(ed->collection->alias, path[0]);
    if (alias)
      {
