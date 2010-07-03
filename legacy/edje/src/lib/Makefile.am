@@ -16,7 +16,7 @@ AM_CPPFLAGS = \
 
 lib_LTLIBRARIES = libedje.la
 
-include_HEADERS = Edje.h Edje_Edit.h
+include_HEADERS = Edje.h Edje_Edit.h edje_convert.h
 
 base_sources = \
 edje_calc.c \
