@@ -6949,16 +6949,109 @@ source_edd(void)
 }
 /////////////////////////////////////////
 
+/* FIXME: error checks... not that they will help much at all though */
+static void
+_edje_edit_convert_to_old(Edje_File *ef)
+{
+   Eina_Iterator *itr;
+   Eina_Hash_Tuple *tpl;
+   int i;
+
+   itr = eina_hash_iterator_tuple_new(ef->data);
+   EINA_ITERATOR_FOREACH(itr, tpl)
+     {
+	Edje_Data *ed;
+	ed = malloc(sizeof(*ed));
+	ed->key = tpl->key;
+	ed->value = tpl->data;
+	ef->oef->data = eina_list_append(ef->oef->data, ed);
+     }
+   eina_iterator_free(itr);
+
+   itr = eina_hash_iterator_tuple_new(ef->fonts);
+   EINA_ITERATOR_FOREACH(itr, tpl)
+     {
+	if (!ef->oef->font_dir)
+	  ef->oef->font_dir = calloc(1, sizeof(Old_Edje_Font_Directory));
+	ef->oef->font_dir->entries =
+				eina_list_append(ef->oef->font_dir->entries,
+				tpl->data);
+     }
+   eina_iterator_free(itr);
+
+   if (ef->image_dir->entries || ef->image_dir->sets)
+     {
+	if (!ef->oef->image_dir)
+	  ef->oef->image_dir = calloc(1, sizeof(Old_Edje_Image_Directory));
+	for (i = 0; i < ef->image_dir->entries_count; i++)
+	  ef->oef->image_dir->entries = eina_list_append(
+						ef->oef->image_dir->entries,
+						&ef->image_dir->entries[i]);
+	for (i = 0; i < ef->image_dir->sets_count; i++)
+	  ef->oef->image_dir->sets = eina_list_append(
+						ef->oef->image_dir->sets,
+						&ef->image_dir->sets[i]);
+     }
+
+   if (ef->external_dir)
+     {
+	ef->oef->external_dir = calloc(1, sizeof(Old_Edje_External_Directory));
+	for (i = 0; i < ef->external_dir->entries_count; i++)
+	  ef->oef->external_dir->entries = eina_list_append(
+				ef->oef->external_dir->entries,
+				&ef->external_dir->entries[i]);
+     }
+
+   eina_list_free(ef->oef->collection_dir->entries);
+   ef->oef->collection_dir->entries = NULL;
+   itr = eina_hash_iterator_tuple_new(ef->collection);
+   EINA_ITERATOR_FOREACH(itr, tpl)
+      ef->oef->collection_dir->entries = eina_list_append(
+				ef->oef->collection_dir->entries,
+				tpl->data);
+   eina_iterator_free(itr);
+
+   ef->oef->compiler = ef->compiler;
+}
+
+static void
+_edje_edit_clean_old(Edje_File *ef)
+{
+   Edje_Data *ed;
+
+   EINA_LIST_FREE(ef->oef->data, ed)
+      free(ed);
+   if (ef->oef->font_dir)
+     {
+	eina_list_free(ef->oef->font_dir->entries);
+	ef->oef->font_dir = NULL;
+     }
+   if (ef->oef->image_dir)
+     {
+	eina_list_free(ef->oef->image_dir->entries);
+	eina_list_free(ef->oef->image_dir->sets);
+	ef->oef->image_dir->entries = ef->oef->image_dir->sets = NULL;
+     }
+   if (ef->oef->external_dir)
+     {
+	eina_list_free(ef->oef->external_dir->entries);
+	free(ef->oef->external_dir);
+	ef->oef->external_dir = NULL;
+     }
+}
+
 static Eina_Bool
 _edje_edit_edje_file_save(Eet_File *eetf, Edje_File *ef)
 {
    /* Write Edje_File structure */
    INF("** Writing Edje_File* ed->file");
-   if (eet_data_write(eetf, _edje_edd_edje_file, "edje_file", ef, 1) <= 0)
+   _edje_edit_convert_to_old(ef);
+   if (eet_data_write(eetf, _edje_edd_edje_file, "edje_file", ef->oef, 1) <= 0)
      {
 	ERR("Error. unable to write \"edje_file\" entry to \"%s\"", ef->path);
 	return EINA_FALSE;
      }
+   _edje_edit_clean_old(ef);
    return EINA_TRUE;
 }
 
@@ -7101,19 +7194,23 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
      {
 	Eina_List *l;
 	Edje_Part_Collection *edc;
+	Edje_Part_Collection_Directory_Entry *ce;
         Eina_Iterator *it;
 
 	INF("** Writing all collections");
 
 	it = eina_hash_iterator_data_new(ef->collection);
-        while (eina_iterator_next(it, (void **)&edc))
+        while (eina_iterator_next(it, (void **)&ce))
 	  {
-	     INF("** Writing hash Edje_Part_Collection* ed->collection "
-		   "[id: %d]", edc->id);
-	     if(!_edje_edit_collection_save(eetf, edc))
+	     if (ce->ref)
 	       {
-		  eet_close(eetf);
-		  return EINA_FALSE;
+		  INF("** Writing hash Edje_Part_Collection* ed->collection "
+			"[id: %d]", ce->id);
+		  if(!_edje_edit_collection_save(eetf, ce->ref))
+		    {
+		       eet_close(eetf);
+		       return EINA_FALSE;
+		    }
 	       }
 	  }
 	eina_iterator_free(it);

@@ -97,7 +97,7 @@ _edje_file_convert_images(Edje_File *edf, Old_Edje_File *oedf)
    Eina_List *l;
    int max;
 
-   edf->image_dir = malloc(sizeof (Edje_Image_Directory));
+   edf->image_dir = calloc(1, sizeof (Edje_Image_Directory));
    if (!edf->image_dir) return EINA_FALSE;
    if (!oedf->image_dir) return EINA_TRUE;
 
