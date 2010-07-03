@@ -316,7 +316,9 @@ ethumb_free(Ethumb *ethumb)
    if (ethumb->frame)
      _ethumb_frame_free(ethumb->frame);
    ethumb_file_free(ethumb);
+   ecore_evas_free(ethumb->o);
    ecore_evas_free(ethumb->ee);
+   ecore_evas_free(ethumb->sub_ee);
    eina_stringshare_del(ethumb->thumb_dir);
    eina_stringshare_del(ethumb->category);
    if (ethumb->finished_idler)
