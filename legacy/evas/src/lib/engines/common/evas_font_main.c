@@ -20,9 +20,7 @@ evas_common_font_init(void)
    error = FT_Init_FreeType(&evas_ft_lib);
    if (error) return;
    evas_common_font_load_init();
-#ifdef EVAS_FRAME_QUEUING
    evas_common_font_draw_init();
-#endif
    LKI(lock_font_draw);
    LKI(lock_fribidi);
 }
