@@ -40,7 +40,7 @@ ecore_fb_ps2_shutdown(void)
    _ecore_fb_ps2_fd = 0;
 }
 
-static int
+static Eina_Bool
 _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    static int prev_x = 0, prev_y = 0, prev_button = 0;
@@ -60,9 +60,9 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 	ptr += _ecore_fb_ps2_event_byte_count;
 	num = sizeof(Ecore_Fb_Ps2_Event) - _ecore_fb_ps2_event_byte_count;
 	v = read(_ecore_fb_ps2_fd, ptr, num);
-	if (v < 0) return 1;
+	if (v < 0) return EINA_TRUE;
 	_ecore_fb_ps2_event_byte_count += v;
-	if (v < num) return 1;
+	if (v < num) return EINA_TRUE;
 	t = ecore_time_get();
 	_ecore_fb_ps2_event_byte_count = 0;
 	if (_ecore_fb_ps2_event.button & 0x10)
@@ -144,7 +144,7 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 	prev_button = button;
      }
    while (v > 0);
-   return 1;
+   return EINA_TRUE;
 }
 /**
  * @defgroup Ecore_FB_Click_Group Framebuffer Double Click Functions

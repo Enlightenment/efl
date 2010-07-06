@@ -209,7 +209,7 @@ _ecore_config_ipc_bundle_label_find(Ecore_Config_Server * srv,
    return ns ? ecore_config_bundle_serial_get(ns) : -1;
 }
 
-static int
+static Eina_Bool
 _ecore_config_ipc_poll(void *data __UNUSED__)
 {
    Ecore_Config_Server *s;
@@ -221,7 +221,7 @@ _ecore_config_ipc_poll(void *data __UNUSED__)
         s = s->next;
      }
 
-   return 1;
+   return EINA_TRUE;
 }
 
 int

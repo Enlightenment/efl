@@ -78,7 +78,7 @@ _ecore_evas_directfb_match(DFBWindowID win)
    return ee;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_directfb_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -87,10 +87,10 @@ _ecore_evas_directfb_event_key_down(void *data __UNUSED__, int type __UNUSED__, 
    e = event;
    ee = _ecore_evas_directfb_match(e->win);
 
-   if (!ee) return 1; /* pass on event */
+   if (!ee) return EINA_TRUE; /* pass on event */
    evas_event_feed_key_down(ee->evas, e->name, e->name, e->string,
                             e->key_compose, e->time, NULL);
-   return 1;
+   return EINA_TRUE;
 }
 
 static Eina_Bool

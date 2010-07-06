@@ -86,17 +86,17 @@ _ecore_evas_cocoa_match(void)
    return ecore_evases;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_cocoa_event_got_focus(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas                   *ee;
 
    ee = _ecore_evas_cocoa_match();
 
-   if (!ee) return 1;
+   if (!ee) return EINA_TRUE;
    ee->prop.focused = 1;
 
-   return 0;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
