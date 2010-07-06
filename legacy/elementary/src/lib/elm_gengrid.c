@@ -1578,3 +1578,23 @@ elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v
    if (!wd) return;
    elm_smart_scroller_bounce_allow_get(wd->scr, h_bounce, v_bounce);
 }
+
+/**
+ * Get all items in the Gengrid.
+ *
+ * This returns a list of the Gengrid items. The list contains
+ * Elm_Gengrid_Item pointers.
+ *
+ * @param obj The Gengrid object.
+ * @return The list of items, or NULL if none.
+ *
+ * @ingroup Gengrid
+ */
+EAPI const Eina_List *
+elm_gengrid_items_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->items;
+}
