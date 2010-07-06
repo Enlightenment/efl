@@ -484,9 +484,9 @@ copyarray(symbol * sym, cell size)
 }
 
 void
-fillarray(symbol * sym, cell size, cell value)
+fillarray(symbol * sym, cell size, cell val)
 {
-   const1(value);		/* load value in PRI */
+   const1(val);		/* load val in PRI */
 
    assert(sym != NULL);
    /* the symbol can be a local array, a global array, or an array
@@ -640,7 +640,7 @@ ffswitch(int label)
 }
 
 void
-ffcase(cell value, char *labelname, int newtable)
+ffcase(cell val, char *labelname, int newtable)
 {
    if (newtable)
      {
@@ -648,7 +648,7 @@ ffcase(cell value, char *labelname, int newtable)
 	code_idx += opcodes(1);
      }				/* if */
    stgwrite("\tcase ");
-   outval(value, FALSE);
+   outval(val, FALSE);
    stgwrite(" ");
    stgwrite(labelname);
    stgwrite("\n");
@@ -752,17 +752,17 @@ modstk(int delta)
 
 /* set the stack to a hard offset from the frame */
 void
-setstk(cell value)
+setstk(cell val)
 {
    stgwrite("\tlctrl 5\n");	/* get FRM */
-   assert(value <= 0);		/* STK should always become <= FRM */
-   if (value < 0)
+   assert(val <= 0);		/* STK should always become <= FRM */
+   if (val < 0)
      {
 	stgwrite("\tadd.c ");
-	outval(value, TRUE);	/* add (negative) offset */
+	outval(val, TRUE);	/* add (negative) offset */
 	code_idx += opcodes(1) + opargs(1);
-	// ??? write zeros in the space between STK and the value in PRI (the new stk)
-	//     get value of STK in ALT
+	// ??? write zeros in the space between STK and the val in PRI (the new stk)
+	//     get val of STK in ALT
 	//     zero PRI
 	//     need new FILL opcode that takes a variable size
      }				/* if */
@@ -792,10 +792,10 @@ setheap_pri(void)
 }
 
 void
-setheap(cell value)
+setheap(cell val)
 {
-   stgwrite("\tconst.pri ");	/* load default value in PRI */
-   outval(value, TRUE);
+   stgwrite("\tconst.pri ");	/* load default val in PRI */
+   outval(val, TRUE);
    code_idx += opcodes(1) + opargs(1);
    setheap_pri();
 }
@@ -878,12 +878,12 @@ charalign(void)
  *  Add a constant to the primary register.
  */
 void
-addconst(cell value)
+addconst(cell val)
 {
-   if (value != 0)
+   if (val != 0)
      {
 	stgwrite("\tadd.c ");
-	outval(value, TRUE);
+	outval(val, TRUE);
 	code_idx += opcodes(1) + opargs(1);
      }				/* if */
 }
