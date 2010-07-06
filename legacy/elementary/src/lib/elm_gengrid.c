@@ -577,15 +577,15 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
 
    item->x = cx;
    item->y = cy;
-   evas_object_geometry_get(item->wd->self, &ox, &oy, &vw, &vh);
+   evas_object_geometry_get(item->wd->pan_smart, &ox, &oy, &vw, &vh);
    evas_output_viewport_get(evas_object_evas_get(item->wd->self),
 			    &cvx, &cvy, &cvw, &cvh);
 
    /* Preload rows/columns at each side of the Gengrid */
-   cvx -= PRELOAD * item->wd->item_width;
-   cvy -= PRELOAD * item->wd->item_height;
-   cvw += 2 * PRELOAD * item->wd->item_width;
-   cvh += 2 * PRELOAD * item->wd->item_height;
+   cvx = ox - PRELOAD * item->wd->item_width;
+   cvy = oy - PRELOAD * item->wd->item_height;
+   cvw = vw + 2 * PRELOAD * item->wd->item_width;
+   cvh = vh + 2 * PRELOAD * item->wd->item_height;
 
    tch = ((vh/item->wd->item_height)*item->wd->item_height);
    alignh = (vh - tch)*item->wd->align_y;
@@ -605,7 +605,7 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
 	alignw = (vw - tcw)*item->wd->align_x;
      }
    else if ((item->wd->horizontal) && (item->wd->minw > vw))
-     alignw = 0;   
+     alignw = 0;
    if ((!item->wd->horizontal) && (item->wd->minh < vh))
      {
         int rows;
@@ -710,7 +710,7 @@ _calc_job(void *data)
    Evas_Coord minw = 0, minh = 0, nmax = 0, cvw, cvh;
    int count;
 
-   evas_object_geometry_get(wd->self, NULL, NULL, &cvw, &cvh);
+   evas_object_geometry_get(wd->pan_smart, NULL, NULL, &cvw, &cvh);
    if ((wd->horizontal) && (wd->item_height))
      nmax = cvh / wd->item_height;
    else if (wd->item_width)
