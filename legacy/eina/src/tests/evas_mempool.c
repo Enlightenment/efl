@@ -26,13 +26,11 @@ struct _Pool
 
 Pool *
 _evas_mp_pool_new(Evas_Mempool *pool)
-#ifdef NOPOOL
 {
+#ifdef NOPOOL
    static Pool thepool;
    return &thepool;
-}
 #else
-{
    Pool *p;
    void **ptr;
    int item_alloc, i;
@@ -49,28 +47,23 @@ _evas_mp_pool_new(Evas_Mempool *pool)
      }
    *ptr = NULL;
    return p;
-}
 #endif
+}
 
 void
 _evas_mp_pool_free(Pool *p)
-#ifdef NOPOOL
 {
-}
-#else
-{
+#if !defined(NOPOOL)
    free(p);
-}
 #endif
+}
 
 void *
 evas_mempool_malloc(Evas_Mempool *pool, int size)
+{
 #ifdef NOPOOL
-{
    return malloc(size);
-}
 #else
-{
    Pool *p;
    void *mem;
 
@@ -118,17 +111,15 @@ evas_mempool_malloc(Evas_Mempool *pool, int size)
    p->usage++;
    pool->usage++;
    return mem;
-}
 #endif
+}
 
 void
 evas_mempool_free(Evas_Mempool *pool, void *ptr)
+{
 #ifdef NOPOOL
-{
    free(ptr);
-}
 #else
-{
    Pool *p;
    void *pmem;
    int item_alloc, psize;
@@ -168,21 +159,21 @@ evas_mempool_free(Evas_Mempool *pool, void *ptr)
 	     break;
 	  }
      }
-}
 #endif
+}
+
 
 void *
 evas_mempool_calloc(Evas_Mempool *pool, int size)
+{
 #ifdef NOPOOL
-{
    return calloc(1, size);
-}
 #else
-{
    void *mem;
 
    mem = evas_mempool_malloc(pool, size);
    memset(mem, 0, size);
    return mem;
-}
 #endif
+}
+
