@@ -678,6 +678,14 @@ int main(int argc, char **argv)
 	goto free_ecore_evas;
      }
 
+   edje = _create_edje(evas, &opts);
+   if (edje)
+     evas_object_box_append(stack, edje);
+   else
+     {
+	goto free_ecore_evas;
+     }
+
    evas_object_event_callback_add(stack, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _reset_size_hints, edje);
 

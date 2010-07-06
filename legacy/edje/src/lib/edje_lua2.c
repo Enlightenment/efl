@@ -178,32 +178,32 @@ _elua_init(void)
 {
    static Edje_Lua_Alloc ela = { MAX_LUA_MEM, 0 };
    const luaL_Reg *l;
+   lua_State *L;
    
    if (lstate) return;
-   lstate = lua_newstate(_elua_alloc, &ela); //0
-   lua_atpanic(lstate, _elua_custom_panic); //0
+   
+   lstate = L = lua_newstate(_elua_alloc, &ela);
+   lua_atpanic(L, _elua_custom_panic);
 
 // FIXME: figure out optimal gc settings later   
-//   lua_gc(lstate, LUA_GCSETPAUSE, 200); //0
-//   lua_gc(lstate, LUA_GCSETSTEPMUL, 200); //0
+//   lua_gc(L, LUA_GCSETPAUSE, 200);
+//   lua_gc(L, LUA_GCSETSTEPMUL, 200);
 
    for (l = _elua_libs; l->func; l++)
      {
-        lua_pushcfunction(lstate, l->func);
-        lua_pushstring(lstate, l->name);
-        lua_call(lstate, 1, 0);
+        lua_pushcfunction(L, l->func);
+        lua_pushstring(L, l->name);
+        lua_call(L, 1, 0);
      }
    
-   luaL_register(lstate, "edje", _elua_edje_api); //+1
+   luaL_register(L, "edje", _elua_edje_api);
+   luaL_newmetatable(L, "edje");
+   luaL_register(L, 0, _elua_edje_meta);
    
-   luaL_newmetatable(lstate, "edje"); //+1
-   
-   luaL_register(lstate, 0, _elua_edje_meta); //0
-   
-   lua_pushliteral(lstate, "__index"); //+1
-   lua_pushvalue(lstate, -3); //+1
-   lua_rawset(lstate, -3); //-2
-   lua_pop(lstate, 2);
+   lua_pushliteral(L, "__index");
+   lua_pushvalue(L, -3);
+   lua_rawset(L, -3);
+   lua_pop(L, 2);
 }
 
 
@@ -211,18 +211,18 @@ _elua_init(void)
 static void
 _elua_table_ptr_set(lua_State *L, const void *key, const void *val)
 {
-   lua_pushlightuserdata(L, (void *)key); //+1
-   lua_pushlightuserdata(L, (void *)val); //+1
-   lua_settable(L, LUA_REGISTRYINDEX); //-2
+   lua_pushlightuserdata(L, (void *)key);
+   lua_pushlightuserdata(L, (void *)val);
+   lua_settable(L, LUA_REGISTRYINDEX);
 }
 
 static const void *
 _elua_table_ptr_get(lua_State *L, const void *key)
 {
    const void *ptr;
-   lua_pushlightuserdata(L, (void *)key); //+1
-   lua_gettable(L, LUA_REGISTRYINDEX); //0
-   ptr = lua_topointer(L, -1); //0
+   lua_pushlightuserdata(L, (void *)key);
+   lua_gettable(L, LUA_REGISTRYINDEX);
+   ptr = lua_topointer(L, -1);
    lua_pop(L, 1);
    return ptr;
 }
@@ -230,15 +230,15 @@ _elua_table_ptr_get(lua_State *L, const void *key)
 static void
 _elua_table_ptr_del(lua_State *L, const void *key)
 {
-   lua_pushlightuserdata(L, (void *)key); //+1
-   lua_pushnil(L); //+1
-   lua_settable(L, LUA_REGISTRYINDEX); //-2
+   lua_pushlightuserdata(L, (void *)key);
+   lua_pushnil(L);
+   lua_settable(L, LUA_REGISTRYINDEX);
 }
 
 static void
 _elua_gc(lua_State *L)
 {
-   lua_gc(L, LUA_GCCOLLECT, 0); //0
+   lua_gc(L, LUA_GCCOLLECT, 0);
 }
 
 //-------------
@@ -247,11 +247,11 @@ _elua_obj_new(lua_State *L, Edje *ed, int size)
 {
    Edje_Lua_Obj *obj;
    
-   obj = (Edje_Lua_Obj *)lua_newuserdata(L, size); //+1
+   obj = (Edje_Lua_Obj *)lua_newuserdata(L, size);
    memset(obj, 0, size);
    ed->lua_objs = eina_inlist_append(ed->lua_objs, EINA_INLIST_GET(obj));
-   luaL_getmetatable(L, "edje"); //+1
-   lua_setmetatable(L, -2); //-1
+   luaL_getmetatable(L, "edje");
+   lua_setmetatable(L, -2);
    obj->ed = ed;
    return obj;
 }
@@ -293,27 +293,30 @@ _elua_echo(lua_State *L)
 
 
 //-------------
-static int
+static Eina_Bool
 _elua_timer_cb(void *data)
 {
    Edje_Lua_Timer *elt = data;
+   lua_State *L;
    int ret = 0;
    int err;
    
    if (!elt->obj.ed) return 0;
-   lua_rawgeti(lstate, LUA_REGISTRYINDEX, elt->fn_ref); //+1
-   if ((err = lua_pcall(lstate, 0, 1, 0))) //+1
+   L = elt->obj.ed->L;
+   if (!L) return 0;
+   lua_rawgeti(L, LUA_REGISTRYINDEX, elt->fn_ref); //+1
+   if ((err = lua_pcall(L, 0, 1, 0))) //+1
      {
-        _edje_lua2_error(lstate, err); //0
-        _elua_obj_free(lstate, (Edje_Lua_Obj *)elt);
-        _elua_gc(lstate);
+        _edje_lua2_error(L, err); //0
+        _elua_obj_free(L, (Edje_Lua_Obj *)elt);
+        _elua_gc(L);
         return 0;
      }
-   ret = luaL_checkint(lstate, -1); //0
-   lua_pop(lstate, 1);
+   ret = luaL_checkint(L, -1); //0
+   lua_pop(L, 1);
    if (ret == 0)
-     _elua_obj_free(lstate, (Edje_Lua_Obj *)elt);
-   _elua_gc(lstate);
+     _elua_obj_free(L, (Edje_Lua_Obj *)elt);
+   _elua_gc(L);
    return ret;
 }
 
@@ -321,7 +324,10 @@ static void
 _elua_timer_free(void *obj)
 {
    Edje_Lua_Timer *elt = (Edje_Lua_Timer *)obj;
-   luaL_unref(lstate, LUA_REGISTRYINDEX, elt->fn_ref); //0
+   lua_State *L;
+   if (!elt->obj.ed) return;
+   L = elt->obj.ed->L;
+   luaL_unref(L, LUA_REGISTRYINDEX, elt->fn_ref); //0
    elt->fn_ref  = 0;
    ecore_timer_del(elt->timer);
    elt->timer = NULL;
@@ -333,7 +339,7 @@ _elua_timer(lua_State *L)
    Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
    Edje_Lua_Timer *elt;
    double val;
-   
+
    val = luaL_checknumber(L, 1);
    luaL_checkany(L, 2);
   
@@ -342,8 +348,7 @@ _elua_timer(lua_State *L)
    elt->timer = ecore_timer_add(val, _elua_timer_cb, elt);
    lua_pushvalue(L, 2); //+1
    elt->fn_ref = luaL_ref(L, LUA_REGISTRYINDEX);
-//   lua_pop(ed->L, 2); // don't pop - return back to lua
-   _elua_gc(lstate);
+   _elua_gc(L);
    return 1;
 }
 
@@ -364,37 +369,75 @@ _elua_anim(lua_State *L)
 void
 _edje_lua2_script_init(Edje *ed)
 {
+   static Edje_Lua_Alloc ela = { MAX_LUA_MEM, 0 };
+   const luaL_Reg *l;
+   char buf[256];
+   void *data;
+   int size;
+   
    if (ed->L) return;
    _elua_init();
-   ed->L = lstate;
+   ed->L = lua_newstate(_elua_alloc, &ela);
+   lua_atpanic(ed->L, _elua_custom_panic);
 
-   lua_newtable(ed->L); //+1
-   ed->lua_ref = luaL_ref(ed->L, LUA_REGISTRYINDEX); //+1
-//   lua_pushvalue(ed->L, LUA_GLOBALSINDEX);
-//   lua_setfield(ed->L, -2, "__index");
-//   lua_setmetatable(ed->L, -2);
-//   lua_setfenv(ed->L, -2);
+// FIXME: figure out optimal gc settings later   
+//   lua_gc(ed->L, LUA_GCSETPAUSE, 200);
+//   lua_gc(ed->L, LUA_GCSETSTEPMUL, 200);
+
+   for (l = _elua_libs; l->func; l++)
+     {
+        lua_pushcfunction(ed->L, l->func);
+        lua_pushstring(ed->L, l->name);
+        lua_call(ed->L, 1, 0);
+     }
    
-   _elua_table_ptr_set(ed->L, _elua_key, ed); //0
-//   lua_pop(ed->L, 1); // our current script stack anyway
+   luaL_register(ed->L, "edje", _elua_edje_api);
+   luaL_newmetatable(ed->L, "edje");
+   luaL_register(ed->L, 0, _elua_edje_meta);
+
+   lua_pushliteral(ed->L, "__index");
+   lua_pushvalue(ed->L, -3);
+   lua_rawset(ed->L, -3);
+   lua_pop(ed->L, 2);
+   
+   _elua_table_ptr_set(ed->L, _elua_key, ed);
+   
+   snprintf(buf, sizeof(buf), "lua_scripts/%i", ed->collection->id);
+   data = eet_read(ed->file->ef, buf, &size);
+   
+   if (data)
+     {
+        int err;
+   
+        err = luaL_loadbuffer(ed->L, data, size, "edje_lua_script");
+        if (err)
+          {
+             if (err == LUA_ERRSYNTAX)
+               ERR("lua load syntax error: %s", 
+                   lua_tostring(ed->L, -1));
+             else if (err == LUA_ERRMEM)
+               ERR("lua load memory allocation error: %s",
+                   lua_tostring(ed->L, -1));
+          }
+        free(data);
+        if ((err = lua_pcall(ed->L, 0, 0, 0)))
+          _edje_lua2_error(ed->L, err);
+     }
 }
 
 void
 _edje_lua2_script_shutdown(Edje *ed)
 {
    if (!ed->L) return;
-   lua_getfenv(ed->L, -1);
-   lua_pushnil(ed->L);
-   luaL_unref(ed->L, LUA_REGISTRYINDEX, ed->lua_ref); //0
-   lua_gc(ed->L, LUA_GCCOLLECT, 0); //0
-   
+   lua_close(ed->L);
+   ed->L = NULL;
    while (ed->lua_objs)
      {
         Edje_Lua_Obj *obj = (Edje_Lua_Obj *)ed->lua_objs;
         if (obj->free_func)
           {
              ERR("uncollected Lua object %p", obj);
-             _elua_obj_free(ed->L, obj);
+             ed->lua_objs = eina_inlist_remove(ed->lua_objs, ed->lua_objs);
           }
         else
           {
@@ -402,33 +445,26 @@ _edje_lua2_script_shutdown(Edje *ed)
              ed->lua_objs = eina_inlist_remove(ed->lua_objs, ed->lua_objs);
           }
      }
-   
-   ed->L = NULL;
 }
 
 void
 _edje_lua2_script_load(Edje_Part_Collection *edc, void *data, int size)
 {
    int err;
-   
+   lua_State *L;
    _elua_init();
-   
-   err = luaL_loadbuffer(lstate, data, size, "edje_lua_script"); //+1
-   if (err)
-     {
-        if (err == LUA_ERRSYNTAX)
-          ERR("lua load syntax error: %s", lua_tostring(lstate, -1)); //0
-        else if (err == LUA_ERRMEM)
-          ERR("lua load memory allocation error: %s", lua_tostring(lstate, -1)); //0
-     }
-   if ((err = lua_pcall(lstate, 0, 0, 0))) //0
-     _edje_lua2_error(lstate, err); //0
+   if (!lstate) return;
+   L = lstate;
+   return;
 }
 
 void
 _edje_lua2_script_unload(Edje_Part_Collection *edc)
 {
-   lua_gc(lstate, LUA_GCCOLLECT, 0); //0
+   lua_State *L;
+   if (!lstate) return;
+   L = lstate;
+   lua_gc(L, LUA_GCCOLLECT, 0);
 }
 
 #endif

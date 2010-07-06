@@ -39,20 +39,7 @@ _edje_lua_script_only_init(Edje *ed)
    if (ed->collection)
      {
 #ifdef LUA2
-        int err;
-        
         _edje_lua2_script_init(ed);
-        if (ed->L)
-          {
-             lua_getglobal(ed->L, "init");
-             if (!lua_isnil(ed->L, -1))
-               {
-                  if ((err = lua_pcall(ed->L, 0, 0, 0)))
-                    _edje_lua2_error(ed->L, err);
-               }
-             else
-               lua_pop(ed->L, 1);
-          }
 #else        
 	 ed->L = _edje_lua_new_thread(ed, _edje_lua_state_get()); // freed in _edje_lua_script_only_shutdown
 	 _edje_lua_new_reg(ed->L, -1, ed->L); // freed in _edje_lua_script_only_shutdown

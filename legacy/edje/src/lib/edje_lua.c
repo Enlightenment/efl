@@ -343,7 +343,6 @@ _edje_lua_reg_count (lua_State *L)
 static Edje_Lua_Ref *
 _edje_lua_new_ref(lua_State *L, int index)
 {
-   //printf ("_edje_lua_new_ref %d %d %d\n", L, lua_objlen(L, LUA_REGISTRYINDEX), _edje_lua_reg_count(L));
    lua_pushvalue(L, index);
    Edje_Lua_Ref *ref = malloc(sizeof(Edje_Lua_Ref));
    ref->id = luaL_ref(L, LUA_REGISTRYINDEX);
