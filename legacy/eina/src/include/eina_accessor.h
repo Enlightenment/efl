@@ -63,7 +63,7 @@ struct _Eina_Accessor
 
 EAPI void eina_accessor_free           (Eina_Accessor *accessor) EINA_ARG_NONNULL(1);
 
-EAPI Eina_Bool eina_accessor_data_get  (Eina_Accessor *accessor, unsigned int position, void **data) EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI Eina_Bool eina_accessor_data_get  (Eina_Accessor *accessor, unsigned int position, void **data) EINA_ARG_NONNULL(1);
 EAPI void *eina_accessor_container_get (Eina_Accessor *accessor) EINA_ARG_NONNULL(1) EINA_PURE;
 
 EAPI void eina_accessor_over           (Eina_Accessor *accessor,
