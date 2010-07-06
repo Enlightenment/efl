@@ -92,8 +92,9 @@ _eina_file_ls_iterator_next(Eina_File_Iterator *it, void **data)
 	dp = readdir(it->dirp);
 	if (!dp) return EINA_FALSE;
      }
-   while (!strcmp(dp->d_name, ".")
-	  || !strcmp(dp->d_name, ".."));
+   while ((dp->d_name[0] == '.') &&
+	  ((dp->d_name[1] == '\0') ||
+	   ((dp->d_name[1] == '.') && (dp->d_name[2] == '\0'))));
 
    length = strlen(dp->d_name);
    name = alloca(length + 2 + it->length);
@@ -114,6 +115,63 @@ _eina_file_ls_iterator_container(Eina_File_Iterator *it)
 
 static void
 _eina_file_ls_iterator_free(Eina_File_Iterator *it)
+{
+   closedir(it->dirp);
+
+   EINA_MAGIC_SET(&it->iterator, 0);
+   free(it);
+}
+
+typedef struct _Eina_File_Direct_Iterator Eina_File_Direct_Iterator;
+struct _Eina_File_Direct_Iterator
+{
+   Eina_Iterator iterator;
+
+   DIR *dirp;
+   int length;
+
+   Eina_File_Direct_Info info;
+
+   char dir[1];
+};
+
+static Eina_Bool
+_eina_file_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
+{
+   struct dirent *dp;
+   size_t length;
+
+   do
+     {
+	dp = readdir(it->dirp);
+	if (!dp) return EINA_FALSE;
+
+	length = strlen(dp->d_name);
+	if (it->info.name_start + length + 1 >= PATH_MAX)
+	  continue;
+     }
+   while ((dp->d_name[0] == '.') &&
+	  ((dp->d_name[1] == '\0') ||
+	   ((dp->d_name[1] == '.') && (dp->d_name[2] == '\0'))));
+
+   memcpy(it->info.path + it->info.name_start, dp->d_name, length);
+   it->info.name_length = length;
+   it->info.path_length = it->info.name_start + length;
+   it->info.path[it->info.path_length] = '\0';
+   it->info.dirent = dp;
+
+   *data = &it->info;
+   return EINA_TRUE;
+}
+
+static char *
+_eina_file_direct_ls_iterator_container(Eina_File_Direct_Iterator *it)
+{
+   return it->dir;
+}
+
+static void
+_eina_file_direct_ls_iterator_free(Eina_File_Direct_Iterator *it)
 {
    closedir(it->dirp);
 
@@ -322,12 +380,29 @@ eina_file_split(char *path)
 }
 
 /**
- * Get an iterator to list the content of a directory. Give a chance to interrupt it
- * and make it completly asynchrone.
+ * Get an iterator to list the content of a directory.
+ *
+ * Iterators are cheap to be created and allow interruption at any
+ * iteration. At each iteration, only the next directory entry is read
+ * from the filesystem with readdir().
+ *
+ * The iterator will handle the user a stringshared value with the
+ * full path. One must call eina_stringshare_del() on it after usage
+ * to not leak!
+ *
+ * The eina_file_direct_ls() function will provide a possibly faster
+ * alternative if you need to filter the results somehow, like
+ * checking extension.
+ *
  * The iterator will walk over '.' and '..' without returning them.
+ *
  * @param  dir The name of the directory to list
- * @return Return an Eina_Iterator that will walk over the files and directory in the pointed
- *         directory. On failure it will return NULL.
+ * @return Return an Eina_Iterator that will walk over the files and
+ *         directory in the pointed directory. On failure it will
+ *         return NULL. The iterator emits stringshared value with the
+ *         full path and must be freed with eina_stringshare_del().
+ *
+ * @see eina_file_direct_ls()
  */
 EAPI Eina_Iterator *
 eina_file_ls(const char *dir)
@@ -338,6 +413,7 @@ eina_file_ls(const char *dir)
    if (!dir) return NULL;
 
    length = strlen(dir);
+   if (length < 1) return NULL;
 
    it = malloc(sizeof (Eina_File_Iterator) + length);
    if (!it) return NULL;
@@ -352,11 +428,81 @@ eina_file_ls(const char *dir)
      }
 
    memcpy(it->dir, dir, length + 1);
-   it->length = length;
+   if (dir[length - 1] != '/')
+     it->length = length;
+   else
+     it->length = length - 1;
 
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_file_ls_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_file_ls_iterator_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_ls_iterator_free);
+
+   return &it->iterator;
+}
+
+/**
+ * Get an iterator to list the content of a directory, with direct information.
+ *
+ * Iterators are cheap to be created and allow interruption at any
+ * iteration. At each iteration, only the next directory entry is read
+ * from the filesystem with readdir().
+ *
+ * The iterator returns the direct pointer to couple of useful information in
+ * #Eina_File_Direct_Info and that pointer should not be modified anyhow!
+ *
+ * The iterator will walk over '.' and '..' without returning them.
+ *
+ * @param  dir The name of the directory to list
+
+ * @return Return an Eina_Iterator that will walk over the files and
+ *         directory in the pointed directory. On failure it will
+ *         return NULL. The iterator emits #Eina_File_Direct_Info
+ *         pointers that could be used but not modified. The lifetime
+ *         of the returned pointer is until the next iteration and
+ *         while the iterator is live, deleting the iterator
+ *         invalidates the pointer.
+ *
+ * @see eina_file_ls()
+ */
+EAPI Eina_Iterator *
+eina_file_direct_ls(const char *dir)
+{
+   Eina_File_Direct_Iterator *it;
+   size_t length;
+
+   if (!dir) return NULL;
+
+   length = strlen(dir);
+   if (length < 1) return NULL;
+   if (length + NAME_MAX + 2 >= PATH_MAX) return NULL;
+
+   it = malloc(sizeof(Eina_File_Direct_Iterator) + length);
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->dirp = opendir(dir);
+   if (!it->dirp)
+     {
+	free(it);
+	return NULL;
+     }
+
+   memcpy(it->dir, dir, length + 1);
+   it->length = length;
+
+   memcpy(it->info.path, dir, length);
+   if (dir[length - 1] == '/')
+	it->info.name_start = length;
+   else
+     {
+	it->info.path[length] = '/';
+	it->info.name_start = length + 1;
+     }
+
+   it->iterator.next = FUNC_ITERATOR_NEXT(_eina_file_direct_ls_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_file_direct_ls_iterator_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_direct_ls_iterator_free);
 
    return &it->iterator;
 }
