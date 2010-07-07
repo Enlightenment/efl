@@ -18,6 +18,7 @@
 #include <Eet.h>
 #include <Embryo.h>
 #include <time.h>
+#include <sys/time.h>
 
 #include "Edje.h"
 #include "Edje_Edit.h"

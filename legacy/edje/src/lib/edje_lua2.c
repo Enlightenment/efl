@@ -82,19 +82,30 @@ static int _elua_timer(lua_State *L);
 static int _elua_animator(lua_State *L);
 static int _elua_transition(lua_State *L);
 
+static int _elua_seconds(lua_State *L);
+static int _elua_looptime(lua_State *L);
+static int _elua_date(lua_State *L);
 
 //--------------------------------------------------------------------------//
 static lua_State *lstate = NULL;
 
 static const struct luaL_reg _elua_edje_api [] =
 {
+   // add an echo too to make it more shelly
      {"echo",  _elua_echo}, // test func - echo (i know we have print. test)
    
+   // generic object methods
      {"del", _elua_obj_del}, // generic del any object created for edje
    
+   // time based "callback" systems
      {"timer", _elua_timer}, // add timer
      {"animator",  _elua_animator}, // add animator
      {"transition",  _elua_transition}, // add transition
+   
+   // system information (time, date blah blah)
+     {"seconds",  _elua_seconds}, // get seconds
+     {"looptime",  _elua_looptime}, // get loop time
+     {"date",  _elua_date}, // get date in a table
    
      {NULL, NULL} // end
 };
@@ -490,6 +501,76 @@ _elua_transition(lua_State *L)
    _elua_gc(L);
    return 1;
 }
+
+//-------------
+static int
+_elua_seconds(lua_State *L)
+{
+   double t = ecore_time_get();
+   lua_pushnumber(L, t);
+   return 1;
+}
+
+//-------------
+static int
+_elua_looptime(lua_State *L)
+{
+   double t = ecore_loop_time_get();
+   lua_pushnumber(L, t);
+   return 1;
+}
+
+//-------------
+static int
+_elua_date(lua_State *L)
+{
+   static time_t       last_tzset = 0;
+   struct timeval      timev;
+   struct tm          *tm;
+   time_t              tt;
+
+   lua_newtable(L);
+   gettimeofday(&timev, NULL);
+   tt = (time_t)(timev.tv_sec);
+   if ((tt > (last_tzset + 1)) || (tt < (last_tzset - 1)))
+     {
+        last_tzset = tt;
+        tzset();
+     }
+   tm = localtime(&tt);
+   if (tm)
+     {
+        double t;
+
+        lua_pushstring(L, "year");
+        lua_pushinteger(L, (int)(tm->tm_year + 1900));
+        lua_settable(L, -3);
+        lua_pushstring(L, "month");
+        lua_pushinteger(L, (int)(tm->tm_mon + 1));
+        lua_settable(L, -3);
+        lua_pushstring(L, "day");
+        lua_pushinteger(L, (int)(tm->tm_mday));
+        lua_settable(L, -3);
+        lua_pushstring(L, "yearday");
+        lua_pushinteger(L, (int)(tm->tm_yday));
+        lua_settable(L, -3);
+        lua_pushstring(L, "weekday");
+        lua_pushinteger(L, (int)((tm->tm_wday + 6) % 7));
+        lua_settable(L, -3);
+        lua_pushstring(L, "hour");
+        lua_pushinteger(L, (int)(tm->tm_hour));
+        lua_settable(L, -3);
+        lua_pushstring(L, "min");
+        lua_pushinteger(L, (int)(tm->tm_min));
+        lua_settable(L, -3);
+        t = (double)tm->tm_sec + (((double)timev.tv_usec) / 1000000);
+        lua_pushstring(L, "sec");
+        lua_pushnumber(L, t);
+        lua_settable(L, -3);
+     }
+   return 1;
+}
+
 //-------------
 //---------------
 //-------------------
