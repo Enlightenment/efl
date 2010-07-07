@@ -88,6 +88,7 @@ static int _elua_date(lua_State *L);
 
 //--------------------------------------------------------------------------//
 static lua_State *lstate = NULL;
+static jmp_buf panic_jmp;
 
 static const struct luaL_reg _elua_edje_api [] =
 {
@@ -106,7 +107,25 @@ static const struct luaL_reg _elua_edje_api [] =
      {"seconds",  _elua_seconds}, // get seconds
      {"looptime",  _elua_looptime}, // get loop time
      {"date",  _elua_date}, // get date in a table
+
+   // emit
+   // message
    
+   // now evas stuff (create objects, manipulate, delete etc.)
+   
+   // now more convenient layer on top for objects
+
+   // funcs to provide:
+   // // shutdown
+   // // message
+   // // resize
+   // // get dragable pos
+   // // set dragable pos
+   // // get part text
+   // // set part text
+   // // get swallow part
+   // // set swallow part
+
      {NULL, NULL} // end
 };
 static const struct luaL_reg _elua_edje_meta [] =
@@ -152,7 +171,7 @@ _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
    
    ptr2 = realloc(ptr, nsize);
    if (ptr2) return ptr2;
-   ERR("Edje Lua cannot re-allocate %i bytes\n", nsize);
+   ERR("Edje Lua cannot re-allocate %i bytes", nsize);
    return ptr2;
 }
 
@@ -330,6 +349,14 @@ _elua_timer_cb(void *data)
    L = elt->obj.ed->L;
    if (!L) return 0;
    lua_rawgeti(L, LUA_REGISTRYINDEX, elt->fn_ref);
+   if (setjmp(panic_jmp) == 1)
+     {
+        ERR("Timer callback panic");
+        _edje_lua2_error(L, err);
+        _elua_obj_free(L, (Edje_Lua_Obj *)elt);
+        _elua_gc(L);
+        return 0;
+     }
    if ((err = lua_pcall(L, 0, 1, 0)))
      {
         _edje_lua2_error(L, err);
@@ -391,6 +418,14 @@ _elua_animator_cb(void *data)
    L = ela->obj.ed->L;
    if (!L) return 0;
    lua_rawgeti(L, LUA_REGISTRYINDEX, ela->fn_ref);
+   if (setjmp(panic_jmp) == 1)
+     {
+        ERR("Animator callback panic");
+        _edje_lua2_error(L, err);
+        _elua_obj_free(L, (Edje_Lua_Obj *)ela);
+        _elua_gc(L);
+        return 0;
+     }
    if ((err = lua_pcall(L, 0, 1, 0)))
      {
         _edje_lua2_error(L, err);
@@ -452,6 +487,14 @@ _elua_transition_cb(void *data)
    if (t > 1.0) t = 1.0;
    lua_rawgeti(L, LUA_REGISTRYINDEX, elt->fn_ref);
    lua_pushnumber(L, t);
+   if (setjmp(panic_jmp) == 1)
+     {
+        ERR("Transition callback panic");
+        _edje_lua2_error(L, err);
+        _elua_obj_free(L, (Edje_Lua_Obj *)elt);
+        _elua_gc(L);
+        return 0;
+     }
    if ((err = lua_pcall(L, 1, 1, 0)))
      {
         _edje_lua2_error(L, err);
@@ -633,6 +676,11 @@ _edje_lua2_script_init(Edje *ed)
                    lua_tostring(ed->L, -1));
           }
         free(data);
+        if (setjmp(panic_jmp) == 1)
+          {
+             ERR("Script init panic");
+             return;
+          }
         if ((err = lua_pcall(ed->L, 0, 0, 0)))
           _edje_lua2_error(ed->L, err);
      }
