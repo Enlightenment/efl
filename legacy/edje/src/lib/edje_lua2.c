@@ -29,10 +29,11 @@ extern "C"
 
 
 //--------------------------------------------------------------------------//
-typedef struct _Edje_Lua_Alloc     Edje_Lua_Alloc;
-typedef struct _Edje_Lua_Obj       Edje_Lua_Obj;
-typedef struct _Edje_Lua_Timer     Edje_Lua_Timer;
-typedef struct _Edje_Lua_Animator  Edje_Lua_Animator;
+typedef struct _Edje_Lua_Alloc      Edje_Lua_Alloc;
+typedef struct _Edje_Lua_Obj        Edje_Lua_Obj;
+typedef struct _Edje_Lua_Timer      Edje_Lua_Timer;
+typedef struct _Edje_Lua_Animator   Edje_Lua_Animator;
+typedef struct _Edje_Lua_Transition Edje_Lua_Transition;
 
 //--------------------------------------------------------------------------//
 struct _Edje_Lua_Alloc
@@ -62,6 +63,14 @@ struct _Edje_Lua_Animator
    int              fn_ref;
 };
 
+struct _Edje_Lua_Transition
+{
+   Edje_Lua_Obj     obj;
+   Ecore_Animator  *animator;
+   double           transition, start;
+   int              fn_ref;
+};
+
 
 //--------------------------------------------------------------------------//
 static int _elua_obj_gc(lua_State *L);
@@ -71,6 +80,7 @@ static int _elua_echo(lua_State *L);
 
 static int _elua_timer(lua_State *L);
 static int _elua_animator(lua_State *L);
+static int _elua_transition(lua_State *L);
 
 
 //--------------------------------------------------------------------------//
@@ -84,6 +94,7 @@ static const struct luaL_reg _elua_edje_api [] =
    
      {"timer", _elua_timer}, // add timer
      {"animator",  _elua_animator}, // add animator
+     {"transition",  _elua_transition}, // add transition
    
      {NULL, NULL} // end
 };
@@ -409,6 +420,73 @@ _elua_animator(lua_State *L)
    ela->animator = ecore_animator_add(_elua_animator_cb, ela);
    lua_pushvalue(L, 1);
    ela->fn_ref = luaL_ref(L, LUA_REGISTRYINDEX);
+   _elua_gc(L);
+   return 1;
+}
+
+//-------------
+static Eina_Bool
+_elua_transition_cb(void *data)
+{
+   Edje_Lua_Transition *elt = data;
+   lua_State *L;
+   int ret = 0;
+   int err;
+   double t;
+   
+   if (!elt->obj.ed) return 0;
+   L = elt->obj.ed->L;
+   if (!L) return 0;
+   t = (ecore_loop_time_get() - elt->start) / elt->transition;
+   if (t > 1.0) t = 1.0;
+   lua_rawgeti(L, LUA_REGISTRYINDEX, elt->fn_ref);
+   lua_pushnumber(L, t);
+   if ((err = lua_pcall(L, 1, 1, 0)))
+     {
+        _edje_lua2_error(L, err);
+        _elua_obj_free(L, (Edje_Lua_Obj *)elt);
+        _elua_gc(L);
+        return 0;
+     }
+   ret = lua_toboolean(L, -1);
+   lua_pop(L, 1);
+   if (t >= 1.0) ret = 0;
+   if (ret == 0) _elua_obj_free(L, (Edje_Lua_Obj *)elt);
+   _elua_gc(L);
+   return ret;
+}
+
+static void
+_elua_transition_free(void *obj)
+{
+   Edje_Lua_Transition *elt = obj;
+   lua_State *L;
+   if (!elt->obj.ed) return;
+   L = elt->obj.ed->L;
+   luaL_unref(L, LUA_REGISTRYINDEX, elt->fn_ref); //0
+   elt->fn_ref  = 0;
+   ecore_animator_del(elt->animator);
+   elt->animator = NULL;
+}
+
+static int
+_elua_transition(lua_State *L)
+{
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   Edje_Lua_Transition *elt;
+   double val;
+
+   val = luaL_checknumber(L, 1);
+   luaL_checkany(L, 2);
+  
+   elt = (Edje_Lua_Transition *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Transition));
+   elt->obj.free_func = _elua_transition_free;
+   elt->animator = ecore_animator_add(_elua_transition_cb, elt);
+   if (val < 0.0000001) val = 0.0000001;
+   elt->transition = val;
+   elt->start = ecore_loop_time_get();
+   lua_pushvalue(L, 2);
+   elt->fn_ref = luaL_ref(L, LUA_REGISTRYINDEX);
    _elua_gc(L);
    return 1;
 }
