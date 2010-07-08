@@ -341,7 +341,8 @@ eina_str_has_extension(const char *str, const char *ext)
  * @param max_tokens The maximum number of strings to split string into.
  * @param elements Where to return the number of elements in returned
  *        array (not counting the terminating @c NULL). May be @c NULL.
- * @return A newly-allocated NULL-terminated array of strings.
+ * @return A newly-allocated NULL-terminated array of strings or NULL if it
+ * fails to allocate the array.
  *
  * This functin splits @p str into a maximum of @p max_tokens pieces,
  * using the given delimiter @p delim. @p delim is not included in any
@@ -349,8 +350,9 @@ eina_str_has_extension(const char *str, const char *ext)
  * @p max_tokens is less than @c 1, the string is splitted completely. If
  * @p max_tokens is reached, the last string in the returned string
  * array contains the remainder of string. The returned value is a
- * newly allocated NUL-terminated array of string. To free it, free
- * the first element of the array and the array itself.
+ * newly allocated NULL-terminated array of strings or NULL if it fails to
+ * allocate the array. To free it, free the first element of the array and the
+ * array itself.
  *
  * @see eina_str_split()
  */
@@ -367,7 +369,8 @@ eina_str_split_full(const char *str, const char *delim, int max_tokens, unsigned
  * @param str The string to split.
  * @param delim The string which specifies the places at which to split the string.
  * @param max_tokens The maximum number of strings to split string into.
- * @return A newly-allocated NULL-terminated array of strings.
+ * @return A newly-allocated NULL-terminated array of strings or NULL if it
+ * fails to allocate the array.
  *
  * This functin splits @p str into a maximum of @p max_tokens pieces,
  * using the given delimiter @p delim. @p delim is not included in any
@@ -375,8 +378,9 @@ eina_str_split_full(const char *str, const char *delim, int max_tokens, unsigned
  * @p max_tokens is less than @c 1, the string is splitted completely. If
  * @p max_tokens is reached, the last string in the returned string
  * array contains the remainder of string. The returned value is a
- * newly allocated NUL-terminated array of string. To free it, free
- * the first element of the array and the array itself.
+ * newly allocated NULL-terminated array of strings or NULL if it fails to
+ * allocate the array. To free it, free the first element of the array and the
+ * array itself.
  */
 EAPI char **
 eina_str_split(const char *str, const char *delim, int max_tokens)
