@@ -357,57 +357,39 @@ _generated_cb(struct _Ethumbd *ed, Eina_Bool success, const char *thumb_path, co
    ed->processing = NULL;
 }
 
-static Eina_Bool
-_write_safe(int fd, void *data, size_t size)
-{
-   unsigned char *buf = data;
-   size_t todo = size;
-   while (todo > 0)
-     {
-	size_t r = write(fd, buf, todo);
-	if (r > 0)
-	  {
-	     todo -= r;
-	     buf += r;
-	  }
-	else if ((r < 0) && (errno != EINTR))
-	  {
-	     ERR("could not write to fd=%d: %s", fd, strerror(errno));
-	     return EINA_FALSE;
-	  }
-     }
-   return EINA_TRUE;
-}
-
 static void
 _ethumbd_slave_cmd_ready(struct _Ethumbd *ed)
 {
-   char *bufcmd = ed->slave.bufcmd;
-   Eina_Bool *success;
+   const char *bufcmd = ed->slave.bufcmd;
+   Eina_Bool success;
    const char *thumb_path = NULL;
    const char *thumb_key = NULL;
-   int *size_path, *size_key;
+   int size_path, size_key;
 
-   success = (Eina_Bool *)bufcmd;
-   bufcmd += sizeof(*success);
+   /* NOTE: accessing values directly on bufcmd breaks alignment
+    * as the first item is an Eina_Bool (size 1) and second is
+    * an integer (size 4, alignment 4).
+    * Thus copy to stack values before using them, to have proper alignment.
+    */
+#define READVAL(dst)				\
+   memcpy(&dst, bufcmd, sizeof(dst));		\
+   bufcmd += sizeof(dst);
 
-   size_path = (int *)bufcmd;
-   bufcmd += sizeof(*size_path);
+   READVAL(success);
 
-   _write_safe(STDERR_FILENO, bufcmd, ed->slave.scmd);
-
-   if (*size_path)
+   READVAL(size_path);
+   if (size_path)
      {
 	thumb_path = bufcmd;
-	bufcmd += *size_path;
+	bufcmd += size_path;
      }
 
-   size_key = (int *)bufcmd;
-   bufcmd += sizeof(*size_key);
+   READVAL(size_key);
+   if (size_key) thumb_key = bufcmd;
 
-   if (*size_key) thumb_key = bufcmd;
+#undef READVAL
 
-   _generated_cb(ed, *success, thumb_path, thumb_key);
+   _generated_cb(ed, success, thumb_path, thumb_key);
 
    free(ed->slave.bufcmd);
    ed->slave.bufcmd = NULL;
@@ -423,7 +405,7 @@ _ethumbd_slave_alloc_cmd(struct _Ethumbd *ed, int ssize, char *sdata)
      return 0;
 
    scmd = (int *)sdata;
-   if (ssize < sizeof(*scmd)) {
+   if (ssize < (int)sizeof(*scmd)) {
 	ERR("could not read size of command.");
 	return 0;
    }
@@ -435,7 +417,7 @@ _ethumbd_slave_alloc_cmd(struct _Ethumbd *ed, int ssize, char *sdata)
 }
 
 static Eina_Bool
-_ethumbd_slave_data_read_cb(void *data, int type, void *event)
+_ethumbd_slave_data_read_cb(void *data, int type __UNUSED__, void *event)
 {
    struct _Ethumbd *ed = data;
    Ecore_Exe_Event_Data *ev = event;
@@ -450,9 +432,6 @@ _ethumbd_slave_data_read_cb(void *data, int type, void *event)
 
    ssize = ev->size;
    sdata = ev->data;
-
-   if (!_write_safe(STDERR_FILENO, sdata, ssize))
-     return 0;
 
    while (ssize > 0)
      {
@@ -484,7 +463,7 @@ _ethumbd_slave_data_read_cb(void *data, int type, void *event)
 }
 
 static Eina_Bool
-_ethumbd_slave_del_cb(void *data, int type, void *event)
+_ethumbd_slave_del_cb(void *data, int type __UNUSED__, void *event)
 {
    struct _Ethumbd *ed = data;
    Ecore_Exe_Event_Del *ev = event;
