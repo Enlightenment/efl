@@ -807,7 +807,7 @@ eng_image_data_preload_request(void *data __UNUSED__, void *image, const void *t
 {
    Evas_Quartz_Image *im = (Evas_Quartz_Image *)image;
 
-   if (!im && !im->im) return ;
+   if (!im || !im->im) return ;
    evas_cache_image_preload_data(&im->im->cache_entry, target);
 }
 
@@ -816,7 +816,7 @@ eng_image_data_preload_cancel(void *data __UNUSED__, void *image, const void *ta
 {
    Evas_Quartz_Image *im = (Evas_Quartz_Image *)image;
 
-   if (!im && !im->im) return ;
+   if (!im || !im->im) return ;
    evas_cache_image_preload_cancel(&im->im->cache_entry, target);
 }
 
