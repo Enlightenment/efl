@@ -1234,7 +1234,7 @@ _ethumb_image_load(Ethumb *e)
    return 1;
 }
 
-static int
+static Eina_Bool
 _ethumb_finished_idler_cb(void *data)
 {
    Ethumb *e = data;
@@ -1247,7 +1247,7 @@ _ethumb_finished_idler_cb(void *data)
    e->cb_data = NULL;
    e->cb_data_free = NULL;
 
-   return 0;
+   return EINA_FALSE;
 }
 
 void

@@ -177,7 +177,7 @@ _finish_thumb_generation(struct _emotion_plugin *_plugin, int success)
    ethumb_finished_callback_call(_plugin->e, r);
 }
 
-static int
+static Eina_Bool
 _frame_grab_single(void *data)
 {
    struct _emotion_plugin *_plugin = data;
@@ -210,7 +210,7 @@ _frame_grab_single(void *data)
    return EINA_FALSE;
 }
 
-static int
+static Eina_Bool
 _frame_grab(void *data)
 {
    struct _emotion_plugin *_plugin = data;
