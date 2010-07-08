@@ -61,10 +61,10 @@ static const char    *em_meta_get                (void *ef, int meta);
 /* internal util calls */
 static void *_em_slave         (void *par);
 static void  _em_slave_event   (void *data, int type, void *arg);
-static int   _em_fd_active     (void *data, Ecore_Fd_Handler *fdh);
+static Eina_Bool   _em_fd_active     (void *data, Ecore_Fd_Handler *fdh);
 static void  _em_event         (void *data, const xine_event_t *event);
 static void  _em_module_event  (void *data, int type);
-static int   _em_fd_ev_active  (void *data, Ecore_Fd_Handler *fdh);
+static Eina_Bool   _em_fd_ev_active  (void *data, Ecore_Fd_Handler *fdh);
 //static int   _em_timer         (void *data);
 static void *_em_get_pos_len_th(void *par);
 static void  _em_get_pos_len   (Emotion_Xine_Video *ev);
@@ -1139,7 +1139,7 @@ em_meta_get(void *ef, int meta)
    return NULL;
 }
 
-static int
+static Eina_Bool
 _em_fd_active(void *data, Ecore_Fd_Handler *fdh)
 {
    void *buf;
@@ -1171,7 +1171,7 @@ _em_fd_active(void *data, Ecore_Fd_Handler *fdh)
 	       }
 	  }
      }
-   return 1;
+   return EINA_TRUE;
 }
 
 static void
@@ -1218,7 +1218,7 @@ _em_module_event(void *data, int type)
    write(ev->fd_ev_write, buf, sizeof(buf));
 }
 
-static int
+static Eina_Bool
 _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 {
    int fd, len;
@@ -1372,7 +1372,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 	     free(eev);
 	  }
      }
-   return 1;
+   return EINA_TRUE;
 }
 
 static void *

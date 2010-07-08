@@ -12,7 +12,7 @@
 #include "Emotion.h"
 
 /* Callbacks to get the eos */
-static int  _eos_timer_fct   (void *data);
+static Eina_Bool  _eos_timer_fct   (void *data);
 static void _em_buffer_read(void *data, void *buffer, unsigned int nbyte);
 static void _for_each_tag    (GstTagList const* list, gchar const* tag, void *data);
 static void _free_metadata   (Emotion_Gstreamer_Metadata *m);
@@ -1381,7 +1381,7 @@ _em_buffer_read(void *data, void *buf, unsigned int nbyte __UNUSED__)
      }
 }
 
-static int
+static Eina_Bool
 _eos_timer_fct(void *data)
 {
    Emotion_Gstreamer_Video *ev;
@@ -1431,5 +1431,5 @@ _eos_timer_fct(void *data)
 	  }
 	gst_message_unref(msg);
      }
-   return 1;
+   return EINA_TRUE;
 }
