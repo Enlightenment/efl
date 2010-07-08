@@ -1283,12 +1283,13 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_x_last_event_mouse_move = 0;
    d = _ecore_x_selection_get(xevent->xselectionclear.selection);
+/* errr..... why? paranoia.  
    if (d && (xevent->xselectionclear.time > d->time))
      {
 	_ecore_x_selection_set(None, NULL, 0, 
 			       xevent->xselectionclear.selection);
      }
-
+ */
    /* Generate event for app cleanup */
    e = malloc(sizeof(Ecore_X_Event_Selection_Clear));
    e->win = xevent->xselectionclear.window;
