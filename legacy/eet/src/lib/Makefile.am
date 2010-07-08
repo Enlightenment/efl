@@ -16,7 +16,8 @@ AM_CPPFLAGS = \
 @OPENSSL_CFLAGS@ \
 @GNUTLS_CFLAGS@
 
-include_HEADERS = Eet.h
+includes_HEADERS = Eet.h
+includesdir = $(includedir)/eet-@VMAJ@
 
 lib_LTLIBRARIES = libeet.la
 

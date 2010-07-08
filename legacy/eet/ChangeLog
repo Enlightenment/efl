@@ -394,3 +394,8 @@
 
 	* Add eet_alias support.
 	* Fix possible dead lock in eet_write_cipher.
+
+2010-07-08  Carsten Haitzler (The Rasterman)
+
+        * Moved Eet.h into $includedir/eet-MAJOR_VERSION/
+
