@@ -12,7 +12,8 @@ evas_engine.h
 
 pkgdir = $(libdir)/evas/modules/engines/software_16_sdl/$(MODULE_ARCH)
 
-include_HEADERS = Evas_Engine_SDL_16.h
+includes_HEADERS = Evas_Engine_SDL_16.h
+includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_SDL
 

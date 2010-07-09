@@ -20,7 +20,8 @@ GL_GLEW_LIBADD = @evas_engine_gl_glew_libs@ $(top_builddir)/src/modules/engines/
 
 pkgdir = $(libdir)/evas/modules/engines/gl_glew/$(MODULE_ARCH)
 
-include_HEADERS = Evas_Engine_GL_Glew.h
+includes_HEADERS = Evas_Engine_GL_Glew.h
+includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_GL_GLEW
 

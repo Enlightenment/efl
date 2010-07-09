@@ -23,7 +23,8 @@ SOFTWARE_QTOPIA_LIBADD = @evas_engine_software_qtopia_libs@
 
 pkgdir = $(libdir)/evas/modules/engines/software_qtopia/$(MODULE_ARCH)
 
-include_HEADERS = Evas_Engine_Software_Qtopia.h
+includes_HEADERS = Evas_Engine_Software_Qtopia.h
+includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_QTOPIA
 

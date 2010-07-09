@@ -21,7 +21,8 @@ SOFTWARE_16_X11_LIBADD = @evas_engine_software_16_x11_libs@
 
 pkgdir = $(libdir)/evas/modules/engines/software_16_x11/$(MODULE_ARCH)
 
-include_HEADERS = Evas_Engine_Software_16_X11.h
+includes_HEADERS = Evas_Engine_Software_16_X11.h
+includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_16_X11
 

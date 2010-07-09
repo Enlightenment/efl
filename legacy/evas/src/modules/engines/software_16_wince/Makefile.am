@@ -24,7 +24,8 @@ SOFTWARE_16_WINCE_LIBADD = @evas_engine_software_16_wince_libs@
 
 pkgdir = $(libdir)/evas/modules/engines/software_16_wince/$(MODULE_ARCH)
 
-include_HEADERS = Evas_Engine_Software_16_WinCE.h
+includes_HEADERS = Evas_Engine_Software_16_WinCE.h
+includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_16_WINCE
 

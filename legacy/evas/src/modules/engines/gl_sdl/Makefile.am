@@ -19,7 +19,8 @@ GL_SDL_LIBADD = @evas_engine_gl_sdl_libs@ $(top_builddir)/src/modules/engines/gl
 
 pkgdir = $(libdir)/evas/modules/engines/gl_sdl/$(MODULE_ARCH)
 
-include_HEADERS = Evas_Engine_GL_SDL.h
+includes_HEADERS = Evas_Engine_GL_SDL.h
+includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_GL_SDL
 

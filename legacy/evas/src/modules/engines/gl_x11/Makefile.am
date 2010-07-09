@@ -20,7 +20,8 @@ GL_X11_LIBADD = @evas_engine_gl_x11_libs@ $(top_builddir)/src/modules/engines/gl
 
 pkgdir = $(libdir)/evas/modules/engines/gl_x11/$(MODULE_ARCH)
 
-include_HEADERS = Evas_Engine_GL_X11.h
+includes_HEADERS = Evas_Engine_GL_X11.h
+includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_GL_X11
 

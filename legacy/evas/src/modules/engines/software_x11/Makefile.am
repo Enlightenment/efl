@@ -39,7 +39,8 @@ endif
 
 pkgdir = $(libdir)/evas/modules/engines/software_x11/$(MODULE_ARCH)
 
-include_HEADERS = Evas_Engine_Software_X11.h
+includes_HEADERS = Evas_Engine_Software_X11.h
+includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_X11
 

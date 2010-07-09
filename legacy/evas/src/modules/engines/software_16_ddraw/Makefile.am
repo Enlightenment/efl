@@ -22,7 +22,8 @@ SOFTWARE_16_DDRAW_LIBADD = @evas_engine_software_16_ddraw_libs@
 
 pkgdir = $(libdir)/evas/modules/engines/software_16_ddraw/$(MODULE_ARCH)
 
-include_HEADERS = Evas_Engine_Software_16_DDraw.h
+includes_HEADERS = Evas_Engine_Software_16_DDraw.h
+includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_16_DDRAW
 

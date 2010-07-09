@@ -22,7 +22,8 @@ SOFTWARE_GDI_LIBADD = @evas_engine_software_gdi_libs@
 
 pkgdir = $(libdir)/evas/modules/engines/software_gdi/$(MODULE_ARCH)
 
-include_HEADERS = Evas_Engine_Software_Gdi.h
+includes_HEADERS = Evas_Engine_Software_Gdi.h
+includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_GDI
 

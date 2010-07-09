@@ -20,7 +20,8 @@ CAIRO_X11_LIBADD = @evas_engine_cairo_x11_libs@ $(top_builddir)/src/modules/engi
 
 pkgdir = $(libdir)/evas/modules/engines/cairo_x11/$(MODULE_ARCH)
 
-include_HEADERS = Evas_Engine_Cairo_X11.h
+includes_HEADERS = Evas_Engine_Cairo_X11.h
+includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_CAIRO_X11
 

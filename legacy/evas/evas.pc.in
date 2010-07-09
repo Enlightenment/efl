@@ -9,4 +9,4 @@ Description: Evas canvas display library
 Version: @VERSION@
 Libs: -L${libdir} -levas
 Libs.private: @EFL_FNMATCH_LIBS@ @pthread_libs@
-Cflags: -I${includedir}
+Cflags: -I${includedir}/evas-@VMAJ@

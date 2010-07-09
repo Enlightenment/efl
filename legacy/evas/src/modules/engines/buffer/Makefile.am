@@ -19,7 +19,8 @@ evas_outbuf.c
 
 pkgdir = $(libdir)/evas/modules/engines/buffer/$(MODULE_ARCH)
 
-include_HEADERS = Evas_Engine_Buffer.h
+includes_HEADERS = Evas_Engine_Buffer.h
+includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_BUFFER
 

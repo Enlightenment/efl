@@ -16,7 +16,8 @@ QUARTZ_LIBADD = @evas_engine_quartz_libs@
 
 pkgdir = $(libdir)/evas/modules/engines/quartz/$(MODULE_ARCH)
 
-include_HEADERS = Evas_Engine_Quartz.h
+includes_HEADERS = Evas_Engine_Quartz.h
+includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_QUARTZ
 

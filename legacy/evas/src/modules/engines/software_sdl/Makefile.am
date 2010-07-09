@@ -19,7 +19,8 @@ SOFTWARE_SDL_LIBADD = @evas_engine_software_sdl_libs@
 
 pkgdir = $(libdir)/evas/modules/engines/software_sdl/$(MODULE_ARCH)
 
-include_HEADERS = Evas_Engine_SDL.h
+includes_HEADERS = Evas_Engine_SDL.h
+includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_SDL
 
