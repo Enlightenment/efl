@@ -16,7 +16,7 @@ AM_CPPFLAGS = \
 
 lib_LTLIBRARIES = libedje.la
 
-includes_HEADERS = Edje.h Edje_Edit.h edje_convert.h
+includes_HEADERS = Edje.h Edje_Edit.h
 includesdir = $(includedir)/edje-@VMAJ@
 
 base_sources = \
@@ -130,7 +130,7 @@ endif
 libedje_la_LIBADD = @EDJE_LIBS@ @ECORE_IMF_LIBS@ @EVIL_LIBS@ -lm
 libedje_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
-EXTRA_DIST = edje_private.h edje_container.h
+EXTRA_DIST = edje_private.h edje_container.h edje_convert.h
 
 clean-local:
 	@rm -rf  edje_amalgamation.c
