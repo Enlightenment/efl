@@ -13,7 +13,8 @@ AM_CPPFLAGS = \
 @EMBRYO_CPPFLAGS@ \
 @EFL_EMBRYO_BUILD@
 
-include_HEADERS = Embryo.h
+includes_HEADERS = Embryo.h
+includesdir = $(includedir)/embryo-@VMAJ@
 
 lib_LTLIBRARIES = libembryo.la
 

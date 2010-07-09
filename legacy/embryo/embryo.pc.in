@@ -12,4 +12,4 @@ Description: A small virtual machine engine and bytecode compiler
 Version: @VERSION@
 Libs: -L${libdir} -lembryo
 Libs.private: @EFL_FNMATCH_LIBS@ -lm
-Cflags: -I${includedir}
+Cflags: -I${includedir}/embryo-@VMAJ@
