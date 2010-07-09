@@ -161,9 +161,6 @@ typedef struct Eeze_Udev_Watch Eeze_Udev_Watch;
 extern "C" {
 #endif
 
-#define EFREET_VERSION_MAJOR 0
-#define EFREET_VERSION_MINOR 2
-   
 typedef struct _Eeze_Version
   {
      int major;
