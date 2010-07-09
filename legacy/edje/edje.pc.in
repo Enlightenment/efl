@@ -11,4 +11,4 @@ Description: Enlightened graphical design and layout engine.
 Version: @VERSION@
 Libs: -L${libdir} -ledje
 Libs.private: @lua_libs@
-Cflags: -I${includedir}
+Cflags: -I${includedir}/edje-@VMAJ@
