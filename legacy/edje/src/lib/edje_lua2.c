@@ -86,6 +86,9 @@ static int _elua_seconds(lua_State *L);
 static int _elua_looptime(lua_State *L);
 static int _elua_date(lua_State *L);
 
+static int _elua_emit(lua_State *L);
+static int _elua_messagesend(lua_State *L);
+
 //--------------------------------------------------------------------------//
 static lua_State *lstate = NULL;
 static jmp_buf panic_jmp;
@@ -108,8 +111,9 @@ static const struct luaL_reg _elua_edje_api [] =
      {"looptime",  _elua_looptime}, // get loop time
      {"date",  _elua_date}, // get date in a table
 
-   // emit
-   // message
+   // talk to application/caller
+     {"emit",  _elua_emit}, // emit signal + src
+     {"messagesend",  _elua_messagesend}, // send a structured message
    
    // now evas stuff (create objects, manipulate, delete etc.)
    
@@ -140,7 +144,7 @@ static const luaL_Reg _elua_libs[] =
 //     {LUA_LOADLIBNAME, luaopen_package}, // disable this lib - don't want
      {LUA_TABLIBNAME, luaopen_table},
 //     {LUA_IOLIBNAME, luaopen_io}, // disable this lib - don't want
-     {LUA_OSLIBNAME, luaopen_os},
+     {LUA_OSLIBNAME, luaopen_os}, // FIXME: audit os lib - maybe not provide or only provide specific calls
      {LUA_STRLIBNAME, luaopen_string},
      {LUA_MATHLIBNAME, luaopen_math},
 //     {LUA_DBLIBNAME, luaopen_debug}, // disable this lib - don't want
@@ -331,7 +335,7 @@ _elua_obj_del(lua_State *L)
 static int
 _elua_echo(lua_State *L)
 {
-   const char *string = luaL_checkstring(L, 1); //0
+   const char *string = luaL_checkstring(L, 1);
    printf("%s\n", string);
    return 1;
 }
@@ -612,6 +616,164 @@ _elua_date(lua_State *L)
         lua_settable(L, -3);
      }
    return 1;
+}
+
+//-------------
+static int
+_elua_emit(lua_State *L)
+{
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   const char *sig = luaL_checkstring(L, 1);
+   const char *src = luaL_checkstring(L, 2);
+   if ((!sig) || (!src)) return 0;
+   _edje_emit(ed, sig, src);
+   return 0;
+}
+
+//-------------
+static int
+_elua_messagesend(lua_State *L)
+{
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   int id = luaL_checkinteger(L, 1);
+   const char *type = luaL_checkstring(L, 2);
+   if (!type) return 0;
+   if (!strcmp(type, "none"))
+     {
+        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_NONE, id, NULL);
+     }
+   else if (!strcmp(type, "sig"))
+     {
+        const char *sig = luaL_checkstring(L, 3);
+        const char *src = luaL_checkstring(L, 4);
+        _edje_emit(ed, sig, src);
+     }
+   else if (!strcmp(type, "str"))
+     {
+        Edje_Message_String *emsg;
+        const char *str = luaL_checkstring(L, 3);
+        emsg = alloca(sizeof(Edje_Message_String));
+        emsg->str = (char *)str;
+        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING, id, emsg);
+     }
+   else if (!strcmp(type, "int"))
+     {
+        Edje_Message_Int *emsg;
+        int val = luaL_checkinteger(L, 3);
+        emsg = alloca(sizeof(Edje_Message_Int));
+        emsg->val = val;
+        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_INT, id, emsg);
+     }
+   else if (!strcmp(type, "float"))
+     {
+        Edje_Message_Float *emsg;
+        float val = luaL_checknumber(L, 3);
+        emsg = alloca(sizeof(Edje_Message_Float));
+        emsg->val = val;
+        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_FLOAT, id, emsg);
+     }
+   else if (!strcmp(type, "strset"))
+     {
+        Edje_Message_String_Set *emsg;
+        int i, n, len;
+        const char *str;
+        luaL_checktype(L, 3, LUA_TTABLE);
+        n = lua_objlen(L, 3);
+        emsg = alloca(sizeof(Edje_Message_String_Set) + ((n - 1) * sizeof(char *)));
+        emsg->count = n;
+        for (i = 1; i <= n; i ++)
+          {
+             lua_rawgeti(L, 3, i);
+             str = lua_tostring(L, -1);
+             emsg->str[i - 1] = (char *)str;
+          }
+        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_SET, id, emsg);
+     }
+   else if (!strcmp(type, "intset"))
+     {
+        Edje_Message_Int_Set *emsg;
+        int i, n;
+        luaL_checktype(L, 3, LUA_TTABLE);
+        n = lua_objlen(L, 3);
+        emsg = alloca(sizeof(Edje_Message_Int_Set) + ((n - 1) * sizeof(int)));
+        emsg->count = n;
+        for (i = 1; i <= n; i ++)
+          {
+             lua_rawgeti(L, 3, i);
+             emsg->val[i - 1] = lua_tointeger(L, -1);
+          }
+        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_INT_SET, id, emsg);
+     }
+   else if (!strcmp(type, "floatset"))
+     {
+        Edje_Message_Float_Set *emsg;
+        int i, n;
+        luaL_checktype(L, 3, LUA_TTABLE);
+        n = lua_objlen(L, 3);
+        emsg = alloca(sizeof(Edje_Message_Float_Set) + ((n - 1) * sizeof(double)));
+        emsg->count = n;
+        for (i = 1; i <= n; i ++)
+          {
+             lua_rawgeti(L, 3, i);
+             emsg->val[i - 1] = lua_tonumber(L, -1);
+          }
+        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_FLOAT_SET, id, emsg);
+     }
+   else if (!strcmp(type, "strint"))
+     {
+        Edje_Message_String_Int *emsg;
+        const char *str = luaL_checkstring(L, 3);
+        emsg = alloca(sizeof(Edje_Message_String_Int));
+        emsg->str = (char *)str;
+        emsg->val =  luaL_checkinteger(L, 4);
+        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_INT, id, emsg);
+     }
+   else if (!strcmp(type, "strfloat"))
+     {
+        Edje_Message_String_Float *emsg;
+        const char *str = luaL_checkstring(L, 3);
+        emsg = alloca(sizeof(Edje_Message_String_Float));
+        emsg->str = (char *)str;
+        emsg->val =  luaL_checknumber(L, 4);
+        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_FLOAT, id, emsg);
+     }
+   else if (!strcmp(type, "strintset"))
+     {
+        Edje_Message_String_Int_Set *emsg;
+        int i, n;
+        const char *str = luaL_checkstring(L, 3);
+        if (!str) return 0;
+        luaL_checktype(L, 4, LUA_TTABLE);
+        n = lua_objlen(L, 4);
+        emsg = alloca(sizeof(Edje_Message_String_Int_Set) + ((n - 1) * sizeof(int)));
+        emsg->str = (char *)str;
+        emsg->count = n;
+        for (i = 1; i <= n; i ++)
+          {
+             lua_rawgeti(L, 4, i);
+             emsg->val[i - 1] = lua_tointeger(L, -1);
+          }
+        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_INT_SET, id, emsg);
+     }
+   else if (!strcmp(type, "strfloatset"))
+     {
+        Edje_Message_String_Float_Set *emsg;
+        int i, n;
+        const char *str = luaL_checkstring(L, 3);
+        if (!str) return 0;
+        luaL_checktype(L, 4, LUA_TTABLE);
+        n = lua_objlen(L, 4);
+        emsg = alloca(sizeof(Edje_Message_String_Float_Set) + ((n - 1) * sizeof(double)));
+        emsg->str = (char *)str;
+        emsg->count = n;
+        for (i = 1; i <= n; i ++)
+          {
+             lua_rawgeti(L, 4, i);
+             emsg->val[i - 1] = lua_tonumber(L, -1);
+          }
+        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_FLOAT_SET, id, emsg);
+     }
+   return 0;
 }
 
 //-------------
