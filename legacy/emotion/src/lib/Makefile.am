@@ -24,7 +24,9 @@ AM_CPPFLAGS += @VLC_CFLAGS@
 endif
 
 lib_LTLIBRARIES      = libemotion.la
-include_HEADERS      = Emotion.h
+includes_HEADERS      = Emotion.h
+includesdir = $(includedir)/emotion-@VMAJ@
+
 libemotion_la_SOURCES = emotion_smart.c
 
 if EMOTION_STATIC_BUILD_XINE

@@ -8,4 +8,4 @@ Description: Emotion evas based multimedia library
 @pkgconfig_requires_private@: @requirement_emotion@
 Version: @VERSION@
 Libs: -L${libdir} -lemotion
-Cflags: -I${includedir}
+Cflags: -I${includedir}/emotion-@VMAJ@
