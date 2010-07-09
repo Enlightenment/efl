@@ -25,9 +25,11 @@ efreet_menu.c \
 efreet_utils.c \
 efreet_uri.c
 
+includes_HEADERS = $(EFREETHEADERS) Efreet_Mime.h Efreet_Trash.h
+includesdir = $(includedir)/efreet-@VMAJ@
 
-installed_headersdir = $(includedir)/efreet
-dist_installed_headers_DATA = $(EFREETHEADERS) Efreet_Mime.h Efreet_Trash.h
+# Not sure if this was for 'make dist', so left it in but commented - dh
+# dist_installed_headers_DATA = $(EFREETHEADERS) Efreet_Mime.h Efreet_Trash.h
 
 libefreet_la_SOURCES = $(EFREETSOURCES)
 libefreet_la_CPPFLAGS =  \
