@@ -122,6 +122,8 @@ void *alloca(size_t);
 #include <lauxlib.h>
 #include <lualib.h>
 
+#ifndef LUA2
+
 #define EDJE_LUA_GET 1
 #define EDJE_LUA_SET 2
 #define EDJE_LUA_FN 3
@@ -5712,3 +5714,5 @@ _edje_lua_shutdown()
    lua_close(Ledje);
    Ledje = NULL;
 }
+
+#endif // not LUA2
