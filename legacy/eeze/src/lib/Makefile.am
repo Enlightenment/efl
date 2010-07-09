@@ -3,7 +3,8 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = @EEZE_CFLAGS@
 
 lib_LTLIBRARIES = libeeze.la
-include_HEADERS = Eeze.h
+includes_HEADERS = Eeze.h
+includesdir = $(includedir)/eeze-@VMAJ@
 
 libeeze_la_SOURCES = \
 eeze_udev_syspath.c \
