@@ -102,6 +102,18 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
     }									\
   while (0)
 
+#define EINA_SAFETY_ON_NULL_GOTO(exp, label)				\
+  do									\
+    {									\
+       if (EINA_UNLIKELY((exp) == NULL))				\
+	 {								\
+	    eina_error_set(EINA_ERROR_SAFETY_FAILED);			\
+	    EINA_LOG_ERR("%s", "safety check failed: " #exp " == NULL"); \
+	    goto label;							\
+	 }								\
+    }									\
+  while (0)
+
 #define EINA_SAFETY_ON_TRUE_RETURN(exp)					\
   do									\
     {									\
@@ -189,17 +201,26 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
 #define EINA_SAFETY_ON_NULL_RETURN_VAL(exp, val)			\
   do { if (0 && (exp) == NULL) (void)val; } while (0)
 
+#define EINA_SAFETY_ON_NULL_GOTO(exp, label)				\
+  do { if (0 && (exp) == NULL) goto label; } while (0)
+
 #define EINA_SAFETY_ON_TRUE_RETURN(exp)					\
   do { (void)(exp); } while (0)
 
 #define EINA_SAFETY_ON_TRUE_RETURN_VAL(exp, val)			\
   do { if (0 && (exp)) (void)val; } while (0)
 
+#define EINA_SAFETY_ON_TRUE_GOTO(exp, label)				\
+  do { if (0 && (exp)) goto label; } while (0)
+
 #define EINA_SAFETY_ON_FALSE_RETURN(exp)				\
   do { (void)(!(exp)); } while (0)
 
 #define EINA_SAFETY_ON_FALSE_RETURN_VAL(exp, val)			\
   do { if (0 && !(exp)) (void)val; } while (0)
+
+#define EINA_SAFETY_ON_FALSE_GOTO(exp, label)			\
+  do { if (0 && !(exp)) goto label; } while (0)
 
 #endif /* safety checks macros */
 #endif /* EINA_SAFETY_CHECKS_H_ */
