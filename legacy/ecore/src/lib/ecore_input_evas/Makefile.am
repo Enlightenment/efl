@@ -13,7 +13,8 @@ AM_CPPFLAGS = \
 if BUILD_ECORE_INPUT_EVAS
 
 lib_LTLIBRARIES = libecore_input_evas.la
-include_HEADERS = Ecore_Input_Evas.h
+includes_HEADERS = Ecore_Input_Evas.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_input_evas_la_SOURCES = \
 ecore_input_evas.c

@@ -9,8 +9,8 @@ AM_CPPFLAGS = \
 if BUILD_ECORE_FB
 
 lib_LTLIBRARIES = libecore_fb.la
-include_HEADERS = \
-Ecore_Fb.h
+includes_HEADERS = Ecore_Fb.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_fb_la_SOURCES = \
 ecore_fb.c \

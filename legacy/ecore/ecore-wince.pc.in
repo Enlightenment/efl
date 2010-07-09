@@ -9,4 +9,4 @@ Description: E core library, WinCE module
 Version: @VERSION@
 Libs: -L${libdir} -lecore_wince
 Libs.private: @WIN32_LIBS@
-Cflags: -I${includedir}
+Cflags: -I${includedir}/ecore-@VMAJ@

@@ -11,8 +11,8 @@ AM_CPPFLAGS = \
 AM_CFLAGS = @WIN32_CFLAGS@
 
 lib_LTLIBRARIES = libecore_imf.la
-include_HEADERS = \
-Ecore_IMF.h
+includes_HEADERS = Ecore_IMF.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_imf_la_SOURCES = \
 ecore_imf.c \

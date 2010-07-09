@@ -27,7 +27,8 @@ if BUILD_ECORE_CONFIG
 
 lib_LTLIBRARIES = libecore_config.la
 
-include_HEADERS = Ecore_Config.h
+includes_HEADERS = Ecore_Config.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_config_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
 

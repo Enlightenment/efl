@@ -23,10 +23,11 @@ libecore_x_la_LIBADD = $(DEP) @EINA_LIBS@
 libecore_x_la_LDFLAGS = -version-info @version_info@ @release_info@
 libecore_x_la_DEPENDENCIES = $(DEP)
 
-include_HEADERS = \
+includes_HEADERS = \
 Ecore_X.h \
 Ecore_X_Atoms.h \
 Ecore_X_Cursor.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 endif
 

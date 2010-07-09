@@ -8,4 +8,4 @@ Description: E core library, IMF module
 @pkgconfig_requires_private@: @requirements_ecore_imf@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_imf
-Cflags: -I${includedir}
+Cflags: -I${includedir}/ecore-@VMAJ@

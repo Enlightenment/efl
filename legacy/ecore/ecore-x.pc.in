@@ -9,4 +9,4 @@ Description: E core library, X module
 Version: @VERSION@
 Libs: -L${libdir} -lecore_x
 Libs.private: @x_libs@ @ecore_x_libs_private@
-Cflags: -I${includedir} @have_ecore_x_xcb_define@
+Cflags: -I${includedir}/ecore-@VMAJ@ @have_ecore_x_xcb_define@

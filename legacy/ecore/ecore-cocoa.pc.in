@@ -8,4 +8,4 @@ Description: E core library, Cocoa module
 @pkgconfig_requires_private@: @requirements_ecore_cocoa@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_cocoa
-Cflags: -I${includedir}
+Cflags: -I${includedir}/ecore-@VMAJ@

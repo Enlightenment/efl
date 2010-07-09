@@ -19,7 +19,8 @@ endif
 if BUILD_ECORE_FILE
 
 lib_LTLIBRARIES = libecore_file.la
-include_HEADERS = Ecore_File.h
+includes_HEADERS = Ecore_File.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_file_la_SOURCES = \
 ecore_file.c \

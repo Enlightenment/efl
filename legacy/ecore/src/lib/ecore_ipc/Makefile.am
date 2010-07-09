@@ -12,8 +12,8 @@ AM_CPPFLAGS = \
 if BUILD_ECORE_IPC
 
 lib_LTLIBRARIES = libecore_ipc.la
-include_HEADERS = \
-Ecore_Ipc.h
+includes_HEADERS = Ecore_Ipc.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_ipc_la_SOURCES = \
 ecore_ipc.c

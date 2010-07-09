@@ -11,9 +11,10 @@ AM_CPPFLAGS = \
 if BUILD_ECORE_COCOA
 
 lib_LTLIBRARIES = libecore_cocoa.la
-include_HEADERS = \
+includes_HEADERS = \
 Ecore_Cocoa.h \
 Ecore_Cocoa_Keys.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_cocoa_la_SOURCES = \
 ecore_cocoa.m \

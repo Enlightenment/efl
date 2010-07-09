@@ -10,7 +10,8 @@ AM_CPPFLAGS = \
 if BUILD_ECORE_INPUT
 
 lib_LTLIBRARIES = libecore_input.la
-include_HEADERS = Ecore_Input.h
+includes_HEADERS = Ecore_Input.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_input_la_SOURCES = \
 ecore_input.c

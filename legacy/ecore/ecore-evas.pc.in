@@ -8,4 +8,4 @@ Description: E core library, Evas module
 @pkgconfig_requires_private@: @requirements_ecore_evas@
 Version: @VERSION@
 Libs: -L${libdir} @ecore_evas_libs@
-Cflags: -I${includedir}
+Cflags: -I${includedir}/ecore-@VMAJ@

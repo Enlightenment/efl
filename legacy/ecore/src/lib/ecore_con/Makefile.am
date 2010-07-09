@@ -15,8 +15,8 @@ AM_CPPFLAGS = \
 if BUILD_ECORE_CON
 
 lib_LTLIBRARIES = libecore_con.la
-include_HEADERS = \
-Ecore_Con.h
+includes_HEADERS = Ecore_Con.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_con_la_SOURCES = \
 ecore_con.c \

@@ -8,4 +8,4 @@ Description: E core library, IPC module
 @pkgconfig_requires_private@: @requirements_ecore_ipc@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_ipc
-Cflags: -I${includedir}
+Cflags: -I${includedir}/ecore-@VMAJ@

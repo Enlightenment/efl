@@ -9,4 +9,4 @@ Description: E core library, Win32 module
 Version: @VERSION@
 Libs: -L${libdir} -lecore_win32
 Libs.private: @ddraw_libs@ @direct3d_libs@
-Cflags: -I${includedir}
+Cflags: -I${includedir}/ecore-@VMAJ@

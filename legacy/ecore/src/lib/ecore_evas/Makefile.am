@@ -85,8 +85,8 @@ AM_CFLAGS = @WIN32_CFLAGS@
 if BUILD_ECORE_EVAS
 
 lib_LTLIBRARIES = libecore_evas.la
-include_HEADERS = \
-Ecore_Evas.h
+includes_HEADERS = Ecore_Evas.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_evas_la_SOURCES = \
 ecore_evas.c \

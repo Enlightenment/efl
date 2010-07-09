@@ -8,8 +8,8 @@ AM_CPPFLAGS = \
 if BUILD_ECORE_DIRECTFB
 
 lib_LTLIBRARIES = libecore_directfb.la
-include_HEADERS = \
-Ecore_DirectFB.h
+includes_HEADERS = Ecore_DirectFB.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_directfb_la_SOURCES = \
 ecore_directfb.c \

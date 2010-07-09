@@ -9,4 +9,4 @@ Description: Ecore event abstraction library
 Version: @VERSION@
 Libs: -L${libdir} -lecore
 Libs.private: -lm
-Cflags: -I${includedir}
+Cflags: -I${includedir}/ecore-@VMAJ@

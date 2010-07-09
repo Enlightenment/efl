@@ -17,8 +17,8 @@ if BUILD_ECORE_WINCE
 
 lib_LTLIBRARIES = libecore_wince.la
 
-include_HEADERS = \
-Ecore_WinCE.h
+includes_HEADERS = Ecore_WinCE.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_wince_la_SOURCES = \
 ecore_wince.c \

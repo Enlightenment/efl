@@ -9,8 +9,8 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@
 
 lib_LTLIBRARIES = libecore_imf_evas.la
-include_HEADERS = \
-Ecore_IMF_Evas.h
+includes_HEADERS = Ecore_IMF_Evas.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_imf_evas_la_SOURCES = \
 ecore_imf_evas.c

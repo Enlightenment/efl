@@ -15,8 +15,8 @@ AM_CPPFLAGS = \
 if BUILD_ECORE_SDL
 
 lib_LTLIBRARIES = libecore_sdl.la
-include_HEADERS = \
-Ecore_Sdl.h
+includes_HEADERS = Ecore_Sdl.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_sdl_la_SOURCES = \
 ecore_sdl.c

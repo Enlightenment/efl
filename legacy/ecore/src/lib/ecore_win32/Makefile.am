@@ -15,8 +15,8 @@ if BUILD_ECORE_WIN32
 
 lib_LTLIBRARIES = libecore_win32.la
 
-include_HEADERS = \
-Ecore_Win32.h
+includes_HEADERS = Ecore_Win32.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_win32_la_SOURCES = \
 ecore_win32.c \

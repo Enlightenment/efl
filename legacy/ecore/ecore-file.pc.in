@@ -8,4 +8,4 @@ Description: E core library, File module
 @pkgconfig_requires_private@: @requirements_ecore_file@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_file
-Cflags: -I${includedir}
+Cflags: -I${includedir}/ecore-@VMAJ@

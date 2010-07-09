@@ -4,9 +4,10 @@ AM_CPPFLAGS = @GLIB_CFLAGS@ @EVIL_CFLAGS@ @EINA_CFLAGS@ @WIN32_CPPFLAGS@ @EFL_EC
 AM_CFLAGS = @WIN32_CFLAGS@ @EFL_PTHREAD_CFLAGS@
 
 lib_LTLIBRARIES = libecore.la
-include_HEADERS = \
+includes_HEADERS = \
 Ecore.h \
 Ecore_Getopt.h
+includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_la_SOURCES = \
 ecore.c \

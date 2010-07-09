@@ -8,4 +8,4 @@ Description: E core library, Input module Evas extension
 @pkgconfig_requires_private@: @requirements_ecore_input_evas@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_input_evas
-Cflags: -I${includedir}
+Cflags: -I${includedir}/ecore-@VMAJ@
