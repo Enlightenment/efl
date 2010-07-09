@@ -416,11 +416,12 @@ _edje_lua2_script_func_resize(Edje *ed)
 void
 _edje_lua2_script_func_message(Edje *ed, Edje_Message *em)
 {
-   int err;
+   int err, n, c, i;
    
    lua_getglobal(ed->L, "message");
    if (!lua_isnil(ed->L, -1))
      {
+        n = 2;
         lua_pushinteger(ed->L, em->id);
         switch (em->type)
           {
@@ -428,42 +429,95 @@ _edje_lua2_script_func_message(Edje *ed, Edje_Message *em)
              lua_pushstring(ed->L, "none");
              break;
           case EDJE_MESSAGE_SIGNAL:
-             printf("sig msg\n");
              break;
           case EDJE_MESSAGE_STRING:
              lua_pushstring(ed->L, "str"); 
+             lua_pushstring(ed->L, ((Edje_Message_String *)em->msg)->str); 
+             n += 1;
             break;
           case EDJE_MESSAGE_INT:
              lua_pushstring(ed->L, "int");
+             lua_pushinteger(ed->L, ((Edje_Message_Int *)em->msg)->val);
+             n += 1;
              break;
           case EDJE_MESSAGE_FLOAT:
              lua_pushstring(ed->L, "float");
+             lua_pushnumber(ed->L, ((Edje_Message_Float *)em->msg)->val);
+             n += 1;
              break;
           case EDJE_MESSAGE_STRING_SET:
              lua_pushstring(ed->L, "strset");
+             c = ((Edje_Message_String_Set *)em->msg)->count;
+             lua_createtable(ed->L, c, 0);
+             for (i = 0; i < c; i++)
+               {
+                  lua_pushstring(ed->L, ((Edje_Message_String_Set *)em->msg)->str[i]);
+                  lua_rawseti(ed->L, -2, i + 1);
+               }
+             n += 1;
              break;
           case EDJE_MESSAGE_INT_SET:
              lua_pushstring(ed->L, "intset");
+             c = ((Edje_Message_Int_Set *)em->msg)->count;
+             lua_createtable(ed->L, c, 0);
+             for (i = 0; i < c; i++)
+               {
+                  lua_pushinteger(ed->L, ((Edje_Message_Int_Set *)em->msg)->val[i]);
+                  lua_rawseti(ed->L, -2, i + 1);
+               }
+             n += 1;
              break;
           case EDJE_MESSAGE_FLOAT_SET:
              lua_pushstring(ed->L, "floatset");
+             c = ((Edje_Message_Float_Set *)em->msg)->count;
+             lua_createtable(ed->L, c, 0);
+             for (i = 0; i < c; i++)
+               {
+                  lua_pushnumber(ed->L, ((Edje_Message_Float_Set *)em->msg)->val[i]);
+                  lua_rawseti(ed->L, -2, i + 1);
+               }
+             n += 1;
              break;
           case EDJE_MESSAGE_STRING_INT:
              lua_pushstring(ed->L, "strint");
+             lua_pushstring(ed->L, ((Edje_Message_String_Int *)em->msg)->str);
+             lua_pushinteger(ed->L, ((Edje_Message_String_Int *)em->msg)->val);
+             n += 2;
              break;
           case EDJE_MESSAGE_STRING_FLOAT:
              lua_pushstring(ed->L, "strfloat");
+             lua_pushstring(ed->L, ((Edje_Message_String_Float *)em->msg)->str);
+             lua_pushnumber(ed->L, ((Edje_Message_String_Float *)em->msg)->val);
+             n += 2;
              break;
           case EDJE_MESSAGE_STRING_INT_SET:
              lua_pushstring(ed->L, "strintset");
+             lua_pushstring(ed->L, ((Edje_Message_String_Int_Set *)em->msg)->str);
+             c = ((Edje_Message_String_Int_Set *)em->msg)->count;
+             lua_createtable(ed->L, c, 0);
+             for (i = 0; i < c; i++)
+               {
+                  lua_pushinteger(ed->L, ((Edje_Message_String_Int_Set *)em->msg)->val[i]);
+                  lua_rawseti(ed->L, -2, i + 1);
+               }
+             n += 2;
              break;
           case EDJE_MESSAGE_STRING_FLOAT_SET:
              lua_pushstring(ed->L, "strfloatset");
+             lua_pushstring(ed->L, ((Edje_Message_String_Float_Set *)em->msg)->str);
+             c = ((Edje_Message_String_Float_Set *)em->msg)->count;
+             lua_createtable(ed->L, c, 0);
+             for (i = 0; i < c; i++)
+               {
+                  lua_pushnumber(ed->L, ((Edje_Message_String_Float_Set *)em->msg)->val[i]);
+                  lua_rawseti(ed->L, -2, i + 1);
+               }
+             n += 2;
              break;
           default:
              break;
           }
-        if ((err = lua_pcall(ed->L, 2, 0, 0)))
+        if ((err = lua_pcall(ed->L, n, 0, 0)))
           _edje_lua2_error(ed->L, err);
      }
    else
