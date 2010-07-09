@@ -73,6 +73,7 @@ ecore_idler_del(Ecore_Idler *idler)
 			 "ecore_idler_del");
 	return NULL;
      }
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(idler->delete_me, NULL);
    idler->delete_me = 1;
    idlers_delete_me = 1;
    return idler->data;

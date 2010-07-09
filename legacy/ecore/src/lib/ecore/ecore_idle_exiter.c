@@ -65,6 +65,7 @@ ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter)
 			 "ecore_idle_exiter_del");
 	return NULL;
      }
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(idle_exiter->delete_me, NULL);
    idle_exiter->delete_me = 1;
    idle_exiters_delete_me = 1;
    return idle_exiter->data;

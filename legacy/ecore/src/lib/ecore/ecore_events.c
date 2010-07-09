@@ -156,6 +156,7 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
 			 "ecore_event_handler_del");
 	return NULL;
      }
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(event_handler->delete_me, NULL);
    event_handler->delete_me = 1;
    event_handlers_delete_list = eina_list_append(event_handlers_delete_list, event_handler);
    return event_handler->data;
@@ -214,6 +215,7 @@ ecore_event_del(Ecore_Event *event)
 	ECORE_MAGIC_FAIL(event, ECORE_MAGIC_EVENT, "ecore_event_del");
 	return NULL;
      }
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(event->delete_me, NULL);
    event->delete_me = 1;
    return event->data;
 }
@@ -289,6 +291,7 @@ ecore_event_filter_del(Ecore_Event_Filter *ef)
 	ECORE_MAGIC_FAIL(ef, ECORE_MAGIC_EVENT_FILTER, "ecore_event_filter_del");
 	return NULL;
      }
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(ef->delete_me, NULL);
    ef->delete_me = 1;
    event_filters_delete_me = 1;
    return ef->data;

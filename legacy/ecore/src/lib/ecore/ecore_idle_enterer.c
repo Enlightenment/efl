@@ -89,6 +89,7 @@ ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer)
 			 "ecore_idle_enterer_del");
 	return NULL;
      }
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(idle_enterer->delete_me, NULL);
    idle_enterer->delete_me = 1;
    idle_enterers_delete_me = 1;
    return idle_enterer->data;

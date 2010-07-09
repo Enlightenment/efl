@@ -190,9 +190,9 @@ ecore_timer_del(Ecore_Timer *timer)
 	return data;
      }
 
-   if (timer->delete_me) return timer->data;
-   timers_delete_me++;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(timer->delete_me, NULL);
    timer->delete_me = 1;
+   timers_delete_me++;
    return timer->data;
 }
 
@@ -368,7 +368,7 @@ void
 _ecore_timer_cleanup(void)
 {
    Ecore_Timer *l;
-   int in_use = 0;
+   int in_use = 0, todo = timers_delete_me, done = 0;
 
    if (!timers_delete_me) return;
    for (l = timers; l;)
@@ -387,6 +387,7 @@ _ecore_timer_cleanup(void)
 	     ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
 	     free(timer);
 	     timers_delete_me--;
+	     done++;
 	     if (timers_delete_me == 0) return;
 	  }
      }
@@ -406,14 +407,17 @@ _ecore_timer_cleanup(void)
 	     ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
 	     free(timer);
 	     timers_delete_me--;
+	     done++;
 	     if (timers_delete_me == 0) return;
 	  }
      }
 
    if ((!in_use) && (timers_delete_me))
      {
-	ERR("%d timers to delete, but they were not found! reset counter.",
-	    timers_delete_me);
+	ERR("%d timers to delete, but they were not found!"
+	    "Stats: todo=%d, done=%d, pending=%d, in_use=%d. "
+	    "reset counter.",
+	    timers_delete_me, todo, done, todo - done, in_use);
 	timers_delete_me = 0;
      }
 }
