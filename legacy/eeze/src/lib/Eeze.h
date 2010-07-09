@@ -169,6 +169,9 @@ typedef struct _Eeze_Version
      int revision;
   } Eeze_Version;
 
+#define EEZE_VERSION_MAJOR 0
+#define EEZE_VERSION_MINOR 2
+
    EAPI extern Eeze_Version *eeze_version;
 
    EAPI int             eeze_init(void);
