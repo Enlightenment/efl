@@ -11,6 +11,7 @@
 #include <Eet.h>
 #include <Ecore_File.h>
 #include <Evas.h>
+#include <Ecore.h>
 #include <Edje.h>
 #include <Edje_Edit.h>
 #include <Emotion.h>

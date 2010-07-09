@@ -2,9 +2,6 @@
 #define __ETHUMB_H__ 1
 
 #include <Eina.h>
-#include <Evas.h>
-#include <Ecore.h>
-#include <Ecore_Evas.h>
 
 #ifdef EAPI
 # undef EAPI
