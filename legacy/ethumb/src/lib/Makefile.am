@@ -9,7 +9,9 @@ AM_CPPFLAGS = \
 	@EINA_CFLAGS@ @EVAS_CFLAGS@ @ECORE_EVAS_CFLAGS@ @ECORE_FILE_CFLAGS@ @EDJE_CFLAGS@ \
 	@EFL_ETHUMB_BUILD@
 
-include_HEADERS = Ethumb.h Ethumb_Plugin.h
+includes_HEADERS = Ethumb.h Ethumb_Plugin.h
+includesdir = $(includedir)/ethumb-@VMAJ@
+
 noinst_HEADERS = md5.h ethumb_private.h
 
 lib_LTLIBRARIES = libethumb.la

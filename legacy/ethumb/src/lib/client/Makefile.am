@@ -8,7 +8,8 @@ AM_CPPFLAGS = \
 	@EINA_CFLAGS@ \
 	@EFL_ETHUMB_CLIENT_BUILD@
 
-include_HEADERS = Ethumb_Client.h
+includes_HEADERS = Ethumb_Client.h
+includesdir = $(includedir)/ethumb-@VMAJ@
 
 lib_LTLIBRARIES = libethumb_client.la
 

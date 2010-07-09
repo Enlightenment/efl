@@ -8,4 +8,4 @@ Description: Thumbnail Generator Library
 Requires: @requirement_ethumb@
 Version: @VERSION@
 Libs: -L${libdir} -lethumb
-Cflags: -I${includedir}
+Cflags: -I${includedir}/ethumb-@VMAJ@

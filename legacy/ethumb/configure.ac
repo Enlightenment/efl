@@ -29,6 +29,7 @@ VMAJ=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $1);}'`
 VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
 version_info=`expr $VMAJ + $VMIN`
 AC_SUBST(version_info)
+AC_SUBST(VMAJ)
 
 #themesdir="${datadir}/ethumb/data/frames"
 #AC_SUBST(themesdir)

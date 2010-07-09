@@ -8,4 +8,4 @@ Description: Thumbnail Client Library
 Requires: @requirement_ethumb_client@
 Version: @VERSION@
 Libs: -L${libdir} -lethumb_client
-Cflags: -I${includedir}
+Cflags: -I${includedir}/ethumb-@VMAJ@
