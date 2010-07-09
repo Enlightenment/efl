@@ -234,6 +234,7 @@ _edje_smart_show(Evas_Object * obj)
 
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
+   if (evas_object_visible_get(obj)) return;
    if (evas_object_visible_get(ed->clipper)) return;
    if ((ed->collection) && (evas_object_clipees_get(ed->clipper)))
      evas_object_show(ed->clipper);
@@ -257,6 +258,7 @@ _edje_smart_hide(Evas_Object * obj)
 
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
+   if (!evas_object_visible_get(obj)) return;
    if (!evas_object_visible_get(ed->clipper)) return;
    if ((ed->collection) && (evas_object_clipees_get(ed->clipper)))
      evas_object_hide(ed->clipper);

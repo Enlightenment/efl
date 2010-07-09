@@ -332,6 +332,164 @@ _elua_obj_del(lua_State *L)
 //-------------------
 //---------------
 //-------------
+
+void
+_edje_lua2_script_func_shutdown(Edje *ed)
+{
+   int err;
+   
+   lua_getglobal(ed->L, "shutdown");
+   if (!lua_isnil(ed->L, -1))
+     {
+        if ((err = lua_pcall(ed->L, 0, 0, 0)))
+          _edje_lua2_error(ed->L, err);
+     }
+   else
+     lua_pop(ed->L, 1);
+   _edje_lua2_script_shutdown(ed);
+}
+
+void
+_edje_lua2_script_func_show(Edje *ed)
+{
+   int err;
+   
+   lua_getglobal(ed->L, "show");
+   if (!lua_isnil(ed->L, -1))
+     {
+        if ((err = lua_pcall(ed->L, 0, 0, 0)))
+          _edje_lua2_error(ed->L, err);
+     }
+   else
+     lua_pop(ed->L, 1);
+}
+
+void
+_edje_lua2_script_func_hide(Edje *ed)
+{
+   int err;
+   
+   lua_getglobal(ed->L, "hide");
+   if (!lua_isnil(ed->L, -1))
+     {
+        if ((err = lua_pcall(ed->L, 0, 0, 0)))
+          _edje_lua2_error(ed->L, err);
+     }
+   else
+     lua_pop(ed->L, 1);
+}
+
+void
+_edje_lua2_script_func_move(Edje *ed)
+{
+   int err;
+   
+   lua_getglobal(ed->L, "move");
+   if (!lua_isnil(ed->L, -1))
+     {
+        lua_pushinteger(ed->L, ed->x);
+        lua_pushinteger(ed->L, ed->y);
+        if ((err = lua_pcall(ed->L, 2, 0, 0)))
+          _edje_lua2_error(ed->L, err);
+     }
+   else
+     lua_pop(ed->L, 1);
+}
+
+void
+_edje_lua2_script_func_resize(Edje *ed)
+{
+   int err;
+   
+   lua_getglobal(ed->L, "resize");
+   if (!lua_isnil(ed->L, -1))
+     {
+        lua_pushinteger(ed->L, ed->w);
+        lua_pushinteger(ed->L, ed->h);
+        if ((err = lua_pcall(ed->L, 2, 0, 0)))
+          _edje_lua2_error(ed->L, err);
+     }
+   else
+     lua_pop(ed->L, 1);
+}
+
+void
+_edje_lua2_script_func_message(Edje *ed, Edje_Message *em)
+{
+   int err;
+   
+   lua_getglobal(ed->L, "message");
+   if (!lua_isnil(ed->L, -1))
+     {
+        lua_pushinteger(ed->L, em->id);
+        switch (em->type)
+          {
+          case EDJE_MESSAGE_NONE:
+             lua_pushstring(ed->L, "none");
+             break;
+          case EDJE_MESSAGE_SIGNAL:
+             printf("sig msg\n");
+             break;
+          case EDJE_MESSAGE_STRING:
+             lua_pushstring(ed->L, "str"); 
+            break;
+          case EDJE_MESSAGE_INT:
+             lua_pushstring(ed->L, "int");
+             break;
+          case EDJE_MESSAGE_FLOAT:
+             lua_pushstring(ed->L, "float");
+             break;
+          case EDJE_MESSAGE_STRING_SET:
+             lua_pushstring(ed->L, "strset");
+             break;
+          case EDJE_MESSAGE_INT_SET:
+             lua_pushstring(ed->L, "intset");
+             break;
+          case EDJE_MESSAGE_FLOAT_SET:
+             lua_pushstring(ed->L, "floatset");
+             break;
+          case EDJE_MESSAGE_STRING_INT:
+             lua_pushstring(ed->L, "strint");
+             break;
+          case EDJE_MESSAGE_STRING_FLOAT:
+             lua_pushstring(ed->L, "strfloat");
+             break;
+          case EDJE_MESSAGE_STRING_INT_SET:
+             lua_pushstring(ed->L, "strintset");
+             break;
+          case EDJE_MESSAGE_STRING_FLOAT_SET:
+             lua_pushstring(ed->L, "strfloatset");
+             break;
+          default:
+             break;
+          }
+        if ((err = lua_pcall(ed->L, 2, 0, 0)))
+          _edje_lua2_error(ed->L, err);
+     }
+   else
+     lua_pop(ed->L, 1);
+}
+
+void
+_edje_lua2_script_func_signal(Edje *ed, const char *sig, const char *src)
+{
+   int err;
+   
+   lua_getglobal(ed->L, "signal");
+   if (!lua_isnil(ed->L, -1))
+     {
+        lua_pushstring(ed->L, sig);
+        lua_pushstring(ed->L, src);
+        if ((err = lua_pcall(ed->L, 2, 0, 0)))
+          _edje_lua2_error(ed->L, err);
+     }
+   else
+     lua_pop(ed->L, 1);
+}
+
+//-------------
+//-------------
+//-------------
 static int
 _elua_echo(lua_State *L)
 {
