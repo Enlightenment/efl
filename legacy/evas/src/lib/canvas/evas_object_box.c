@@ -26,6 +26,9 @@ struct _Evas_Object_Box_Accessor
 
 static const char _evas_object_box_type[] = "Evas_Object_Box";
 
+
+static void _sizing_eval(Evas_Object *obj);
+
 #define EVAS_OBJECT_BOX_DATA_GET(o, ptr)			\
   Evas_Object_Box_Data *ptr = evas_object_smart_data_get(o)
 
@@ -137,6 +140,12 @@ _on_child_hints_changed(void *data, Evas *evas __UNUSED__, Evas_Object *o __UNUS
    Evas_Object *box = data;
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(box, priv);
    if (!priv->layouting) evas_object_smart_changed(box);
+}
+
+static void
+_on_hints_changed(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *o , void *einfo __UNUSED__)
+{
+   _sizing_eval(o);
 }
 
 static Evas_Object_Box_Option *
@@ -425,6 +434,9 @@ _evas_object_box_smart_add(Evas_Object *o)
      }
    _evas_object_box_parent_sc->add(o);
 
+
+   evas_object_event_callback_add
+     (o, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_hints_changed, o);
    priv->children = NULL;
    priv->align.h = 0.5;
    priv->align.v = 0.5;
