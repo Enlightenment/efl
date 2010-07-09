@@ -89,6 +89,32 @@ static int _elua_date(lua_State *L);
 static int _elua_emit(lua_State *L);
 static int _elua_messagesend(lua_State *L);
 
+static int _elua_show(lua_State *L);
+static int _elua_hide(lua_State *L);
+static int _elua_visible(lua_State *L);
+static int _elua_move(lua_State *L);
+static int _elua_resize(lua_State *L);
+static int _elua_pos(lua_State *L);
+static int _elua_size(lua_State *L);
+static int _elua_geom(lua_State *L);
+static int _elua_raise(lua_State *L);
+static int _elua_lower(lua_State *L);
+static int _elua_above(lua_State *L);
+static int _elua_below(lua_State *L);
+static int _elua_top(lua_State *L);
+static int _elua_bottom(lua_State *L);
+static int _elua_aboveget(lua_State *L);
+static int _elua_belowget(lua_State *L);
+static int _elua_color(lua_State *L);
+static int _elua_clip(lua_State *L);
+static int _elua_unclip(lua_State *L);
+static int _elua_clipees(lua_State *L);
+static int _elua_type(lua_State *L);
+static int _elua_pass(lua_State *L);
+static int _elua_repeat(lua_State *L);
+
+static int _elua_rect(lua_State *L);
+
 //--------------------------------------------------------------------------//
 static lua_State *lstate = NULL;
 static jmp_buf panic_jmp;
@@ -96,33 +122,67 @@ static jmp_buf panic_jmp;
 static const struct luaL_reg _elua_edje_api [] =
 {
    // add an echo too to make it more shelly
-     {"echo",  _elua_echo}, // test func - echo (i know we have print. test)
+     {"echo",         _elua_echo}, // test func - echo (i know we have print. test)
    
    // generic object methods
-     {"del", _elua_obj_del}, // generic del any object created for edje
+     {"del",          _elua_obj_del}, // generic del any object created for edje (evas objects, timers, animators, transitions... everything)
    
    // time based "callback" systems
-     {"timer", _elua_timer}, // add timer
-     {"animator",  _elua_animator}, // add animator
-     {"transition",  _elua_transition}, // add transition
+     {"timer",        _elua_timer}, // add timer
+     {"animator",     _elua_animator}, // add animator
+     {"transition",   _elua_transition}, // add transition
    
    // system information (time, date blah blah)
-     {"seconds",  _elua_seconds}, // get seconds
-     {"looptime",  _elua_looptime}, // get loop time
-     {"date",  _elua_date}, // get date in a table
+     {"seconds",      _elua_seconds}, // get seconds
+     {"looptime",     _elua_looptime}, // get loop time
+     {"date",         _elua_date}, // get date in a table
 
    // talk to application/caller
-     {"emit",  _elua_emit}, // emit signal + src
+     {"emit",         _elua_emit}, // emit signal + src
      {"messagesend",  _elua_messagesend}, // send a structured message
+
+   // query edje - size, pos
+   // query color classes
+   // query text classes
    
    // now evas stuff (create objects, manipulate, delete etc.)
+     {"show",         _elua_show}, // show, return current visibility
+     {"hide",         _elua_hide}, // hide, return current visibility
+     {"visible",      _elua_visible}, // get object visibility
+     {"move",         _elua_move}, // move, return current position
+     {"resize",       _elua_resize}, // resize, return current size
+     {"posget",       _elua_pos}, // move, return current position
+     {"sizeget",      _elua_size}, // resize, return current size
+     {"geom",         _elua_geom}, // move and resize and return current geometry
+     {"raise",        _elua_raise}, // raise
+     {"lower",        _elua_lower}, // lower
+     {"above",        _elua_above}, // stack above
+     {"below",        _elua_below}, // stack below
+     {"topget",       _elua_top}, // get top
+     {"bottomget",    _elua_bottom}, // get bottom
+     {"aboveget",     _elua_aboveget}, // get object above
+     {"belowget",     _elua_belowget}, // get object below
+     {"color",        _elua_color}, // set color, return color
+     {"clip",         _elua_clip}, // set clip obj, return clip object
+     {"unclip",       _elua_unclip}, // clear clip obj
+     {"clipees",      _elua_clipees}, // get clip children
+     {"type",         _elua_type}, // get object type
+     {"pass",         _elua_pass}, // set pass events, get pass events
+     {"repeat",       _elua_repeat}, // set repeat events, get repeat events
+   // need to set scale (explicit value)
+   // need to set auto-scale (same as scale: 1)
+   // set precise inside
+   // set callbacks (mouse down, up, blah blah blah)
    
-   // now more convenient layer on top for objects
-
-   // funcs to provide:
-   // // shutdown
-   // // message
-   // // resize
+   // need map api here
+   
+     {"rect",         _elua_rect}, // new rect
+   // need image(filled, normal), text, textblock, edje
+   
+   // methods lua scrupt can provide that edje will call (not done yet):
+   // // scale set
+   // // key down
+   // // key up
    // // get dragable pos
    // // set dragable pos
    // // get part text
@@ -549,7 +609,7 @@ _elua_echo(lua_State *L)
 {
    const char *string = luaL_checkstring(L, 1);
    printf("%s\n", string);
-   return 1;
+   return 0;
 }
 
 //-------------
@@ -985,6 +1045,152 @@ _elua_messagesend(lua_State *L)
           }
         _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_FLOAT_SET, id, emsg);
      }
+   return 0;
+}
+
+//-------------
+static int
+_elua_show(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_hide(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_visible(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_move(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_resize(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_pos(lua_State *L)
+{
+   return _elua_move(L);
+}
+
+static int
+_elua_size(lua_State *L)
+{
+   return _elua_resize(L);
+}
+
+static int
+_elua_geom(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_raise(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_lower(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_above(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_below(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_top(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_bottom(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_aboveget(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_belowget(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_color(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_clip(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_unclip(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_clipees(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_type(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_pass(lua_State *L)
+{
+   return 0;
+}
+
+static int
+_elua_repeat(lua_State *L)
+{
+   return 0;
+}
+
+//-------------
+static int
+_elua_rect(lua_State *L)
+{
    return 0;
 }
 
