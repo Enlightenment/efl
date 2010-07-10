@@ -607,10 +607,10 @@ ecore_long_run(void (*func_heavy)(Ecore_Thread *thread, void *data),
    worker.cancel = EINA_FALSE;
    worker.long_run = EINA_TRUE;
 
-   func_heavy((Ecore_Thread *) &worker, data);
+   func_heavy((Ecore_Thread *) &worker, (void *)data);
 
-   if (worker.cancel) func_cancel(data);
-   else func_end(data);
+   if (worker.cancel) func_cancel((void *)data);
+   else func_end((void *)data);
 
    return NULL;
 #endif
