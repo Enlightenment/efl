@@ -406,7 +406,7 @@ if test "x$want_elementary_ethumb" != "xno"; then
         AC_DEFINE(HAVE_ELEMENTARY_ETHUMB, 1, [Ethumb support for Elementary])
         have_elementary_ethumb="yes"
         ELM_ETHUMB_DEF="#define"
-        requirement_elm="ethumb ${requirement_elm}"
+        requirement_elm="ethumb_client ${requirement_elm}"
        ],
        [have_elementary_ethumb="no"]
     )
