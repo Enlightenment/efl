@@ -186,10 +186,10 @@ EAPI void         elm_widget_type_set(Evas_Object *obj, const char *type);
 EAPI const char  *elm_widget_type_get(const Evas_Object *obj);
 EAPI void         elm_widget_drag_lock_x_set(Evas_Object *obj, Eina_Bool lock);
 EAPI void         elm_widget_drag_lock_y_set(Evas_Object *obj, Eina_Bool lock);
-EAPI Eina_Bool    elm_widget_drag_lock_x_get(Evas_Object *obj);
-EAPI Eina_Bool    elm_widget_drag_lock_y_get(Evas_Object *obj);
-EAPI int          elm_widget_drag_child_locked_x_get(Evas_Object *obj);
-EAPI int          elm_widget_drag_child_locked_y_get(Evas_Object *obj);
+EAPI Eina_Bool    elm_widget_drag_lock_x_get(const Evas_Object *obj);
+EAPI Eina_Bool    elm_widget_drag_lock_y_get(const Evas_Object *obj);
+EAPI int          elm_widget_drag_child_locked_x_get(const Evas_Object *obj);
+EAPI int          elm_widget_drag_child_locked_y_get(const Evas_Object *obj);
     
 EAPI Eina_Bool    elm_widget_is(const Evas_Object *obj);
 EAPI Evas_Object *elm_widget_parent_widget_get(const Evas_Object *obj);
