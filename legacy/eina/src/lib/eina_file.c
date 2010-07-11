@@ -42,12 +42,12 @@ void *alloca (size_t);
 #endif
 
 #include <string.h>
+#include <dirent.h>
 
 #ifndef _WIN32
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <unistd.h>
-# include <dirent.h>
 #else
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
@@ -59,6 +59,7 @@ void *alloca (size_t);
 # define PATH_DELIM '/'
 #else
 # define PATH_DELIM '\\'
+# define NAME_MAX MAX_PATH
 #endif
 
 #include "eina_config.h"
