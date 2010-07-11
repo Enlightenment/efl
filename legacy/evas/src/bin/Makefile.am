@@ -25,7 +25,9 @@ evas_cserve_SOURCES = \
 evas_cserve_main.c
 
 evas_cserve_LDADD = \
-$(top_builddir)/src/lib/libevas.la
+$(top_builddir)/src/lib/libevas.la \
+@pthread_libs@ \
+@EINA_LIBS@
 
 evas_cserve_tool_LDFLAGS =
 
@@ -33,6 +35,8 @@ evas_cserve_tool_SOURCES = \
 evas_cserve_tool.c
 
 evas_cserve_tool_LDADD = \
-$(top_builddir)/src/lib/libevas.la
+$(top_builddir)/src/lib/libevas.la \
+@pthread_libs@ \
+@EINA_LIBS@
 
 endif
