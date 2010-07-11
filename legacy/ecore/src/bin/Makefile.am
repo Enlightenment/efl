@@ -28,7 +28,8 @@ ecore_config_LDADD = \
 $(ECORE_CONFIG_LIB) \
 $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
 $(top_builddir)/src/lib/ecore_con/libecore_con.la \
-$(top_builddir)/src/lib/ecore/libecore.la
+$(top_builddir)/src/lib/ecore/libecore.la \
+@EET_LIBS@
 
 ecore_config_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
