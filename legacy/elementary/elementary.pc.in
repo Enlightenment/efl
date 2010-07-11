@@ -9,4 +9,4 @@ Description: Mobile device touchscreen widget library
 Version: @VERSION@
 Libs: -L${libdir} -lelementary
 Libs.private: @dlopen_libs@ @my_libs@
-Cflags: -I${includedir} -I${includedir}/elementary-@VMAJ@
+Cflags: -I${includedir}/elementary-@VMAJ@
