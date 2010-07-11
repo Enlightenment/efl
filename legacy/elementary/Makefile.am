@@ -12,9 +12,6 @@ EXTRA_DIST = README AUTHORS COPYING autogen.sh elementary.pc.in elementary.spec 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = elementary.pc
 
-installed_headersdir = $(prefix)/include/elementary
-installed_headers_DATA = elementary_config.h
-
 .PHONY: doc
 
 doc:

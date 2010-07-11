@@ -25,7 +25,8 @@ endif
 
 lib_LTLIBRARIES = libelementary.la
 
-include_HEADERS = Elementary.h
+includes_HEADERS = Elementary.h
+includesdir = $(includedir)/elementary-@VMAJ@
 
 libelementary_la_SOURCES = \
 elm_priv.h \
