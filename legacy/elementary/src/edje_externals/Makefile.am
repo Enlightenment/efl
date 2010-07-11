@@ -49,7 +49,8 @@ elm_slideshow.c \
 elm_spinner.c \
 elm_thumb.c \
 elm_toggle.c \
-elm_toolbar.c
+elm_toolbar.c \
+elm_notify.c
 
 elm_la_LIBADD = $(top_builddir)/src/lib/libelementary.la
 elm_la_LDFLAGS = $(all_libraries) -no-undefined @lt_enable_auto_import@ -module -avoid-version -shared -fPIC

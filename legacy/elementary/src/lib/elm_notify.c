@@ -443,6 +443,19 @@ elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient)
 }
 
 /**
+ * Return the orientation
+ * @param obj the notify objects
+ */
+EAPI Elm_Notify_Orient
+elm_notify_orient_get(const Evas_Object *obj)
+{
+	ELM_CHECK_WIDTYPE(obj, widtype);
+	Widget_Data *wd = elm_widget_data_get(obj);
+	if (!wd) return;
+	return wd->orient;
+}
+
+/**
  * Set the time before the notify window is hidden. <br>
  * Set a value < 0 to disable the timer
  *
@@ -457,6 +470,19 @@ elm_notify_timeout_set(Evas_Object *obj, int timeout)
    if (!wd) return;
    wd->timeout = timeout;
    elm_notify_timer_init(obj);
+}
+
+/**
+ * Return the timeout value (in seconds)
+ * @param obj the notify object
+ */
+EAPI int
+elm_notify_timeout_get(const Evas_Object *obj)
+{
+	ELM_CHECK_WIDTYPE(obj, widtype);
+	Widget_Data *wd = elm_widget_data_get(obj);
+	if (!wd) return;
+	return wd->timeout;
 }
 
 /**
@@ -502,5 +528,18 @@ elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
      }
    else
      evas_object_del(wd->block_events);
+}
+
+/**
+ * Return true if events are repeat below the notify object
+ * @param obj the notify object
+ */
+EAPI Eina_Bool
+elm_notify_repeat_events_get(const Evas_Object *obj)
+{
+	ELM_CHECK_WIDTYPE(obj, widtype);
+	Widget_Data *wd = elm_widget_data_get(obj);
+	if (!wd) return;
+	return wd->repeat_events;
 }
 

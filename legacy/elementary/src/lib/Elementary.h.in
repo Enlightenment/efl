@@ -672,16 +672,20 @@ extern "C" {
 	 ELM_NOTIFY_ORIENT_TOP_LEFT,
 	 ELM_NOTIFY_ORIENT_TOP_RIGHT,
 	 ELM_NOTIFY_ORIENT_BOTTOM_LEFT,
-	 ELM_NOTIFY_ORIENT_BOTTOM_RIGHT
+	 ELM_NOTIFY_ORIENT_BOTTOM_RIGHT,
+	 ELM_NOTIFY_ORIENT_LAST
      } Elm_Notify_Orient;
    EAPI Evas_Object *elm_notify_add(Evas_Object *parent);
    EAPI void         elm_notify_content_set(Evas_Object *obj, Evas_Object *content);
    EAPI Evas_Object *elm_notify_content_unset(Evas_Object *obj);
    EAPI void	     elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void	     elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient);
+   EAPI Elm_Notify_Orient	    elm_notify_orient_get(const Evas_Object *obj);
    EAPI void         elm_notify_timeout_set(Evas_Object *obj, int timeout);
+   EAPI int          elm_notify_timeout_get(const Evas_Object *obj);
    EAPI void	     elm_notify_timer_init(Evas_Object *obj);
    EAPI void	     elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat);
+   EAPI Eina_Bool	 elm_notify_repeat_events_get(const Evas_Object *obj);
    /* smart callbacks called:
     */
 
