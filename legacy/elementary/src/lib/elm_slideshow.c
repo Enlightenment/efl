@@ -121,8 +121,9 @@ _end(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, c
    if (!item || !item->o) return;
 
    edje_object_part_unswallow(NULL, item->o);
-   edje_object_part_swallow(wd->slideshow, "elm.swallow.1", item->o);
    evas_object_show(item->o);
+   edje_object_signal_emit(wd->slideshow, "anim,end", "slideshow");
+   edje_object_part_swallow(wd->slideshow, "elm.swallow.1", item->o);
 }
 
 

@@ -8764,13 +8764,14 @@ collections {
             after: "square_next_2";
          }
          program { name: "end";
+            action: SIGNAL_EMIT "end" "slideshow";
+         }
+         program { name: "end_signal";
+	    signal: "anim,end";
+	    source: "slideshow";
             action: STATE_SET "default" 0.0;
             target: "image_1_whole";
             target: "image_2_whole";
-            after: "end_signal";
-         }
-         program { name: "end_signal";
-            action: SIGNAL_EMIT "end" "slideshow";
          }
       }
    }
