@@ -594,6 +594,8 @@ ecore_long_run(void (*func_heavy)(Ecore_Thread *thread, void *data),
 #else
    Ecore_Pthread_Worker worker;
 
+   (void) try_no_queue;
+
    /*
      If no thread and as we don't want to break app that rely on this
      facility, we will lock the interface until we are done.
@@ -643,7 +645,7 @@ ecore_thread_notify(Ecore_Thread *thread, const void *data)
 
    return EINA_TRUE;
 #else
-   worker->u.long_run.func_notify(thread, data);
+   worker->u.long_run.func_notify(thread, (void*) data, (void*) worker->data);
 
    return EINA_TRUE;
 #endif
