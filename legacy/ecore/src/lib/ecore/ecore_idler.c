@@ -113,7 +113,10 @@ _ecore_idler_call(void)
 	if (!ie->delete_me)
 	  {
 	     ie->references++;
-	     if (!ie->func(ie->data)) ecore_idler_del(ie);
+	     if (!ie->func(ie->data))
+	       {
+		  if (!ie->delete_me) ecore_idler_del(ie);
+	       }
 	     ie->references--;
 	  }
 	if (idler_current) /* may have changed in recursive main loops */
