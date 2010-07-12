@@ -115,7 +115,7 @@ struct _Render_Engine
    void (*gradient_type_set)(XR_Gradient *gr, char *name, char *params);
    void (*gradient_draw)(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h);
 
-   XR_Image *(*image_load)(Ximage_Info *xinf, const char *file, const char *key, Evas_Image_Load_Opts *lo);
+   XR_Image *(*image_load)(Ximage_Info *xinf, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error);
    XR_Image *(*image_new_from_data)(Ximage_Info *xinf, int w, int h, void *data, int alpha, int cspace);
    XR_Image *(*image_new_from_copied_data)(Ximage_Info *xinf, int w, int h, void *data, int alpha, int cspace);
    XR_Image *(*image_new)(Ximage_Info *xinf, int w, int h);
@@ -1202,7 +1202,7 @@ eng_image_load(void *data, const char *file, const char *key, int *error, Evas_I
 
    re = (Render_Engine *)data;
    *error = 0;
-   im = re->image_load(re->xinf, file, key, lo);
+   im = re->image_load(re->xinf, file, key, lo, error);
    return im;
 }
 
