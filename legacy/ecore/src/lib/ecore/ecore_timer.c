@@ -553,7 +553,10 @@ _ecore_timer_call(double when)
 	  }
 
 	timer->references++;
-	if (!timer->func(timer->data)) ecore_timer_del(timer);
+	if (!timer->func(timer->data))
+	  {
+	     if (!timer->delete_me) ecore_timer_del(timer);
+	  }
 	timer->references--;
 
 	if (timer_current) /* may have changed in recursive main loops */
