@@ -16,8 +16,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EINA_CFLAGS@ \
-@EET_CFLAGS@
+@EINA_CFLAGS@ @EVAS_CFLAGS@ @EET_CFLAGS@
 
 bin_PROGRAMS = $(ECORE_CONFIG_PROG)
 
@@ -29,7 +28,7 @@ $(ECORE_CONFIG_LIB) \
 $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
 $(top_builddir)/src/lib/ecore_con/libecore_con.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@EET_LIBS@
+@EINA_LIBS@ @EVAS_LIBS@ @EET_LIBS@
 
 ecore_config_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
