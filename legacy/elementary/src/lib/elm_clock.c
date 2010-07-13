@@ -211,7 +211,7 @@ static Eina_Bool
 _signal_clock_val_down(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) goto clock_val_up_exit_on_error;
+   if (!wd) goto clock_val_down_exit_on_error;
    if (!wd->edit) goto clock_val_down_cancel;
    if (!wd->sel_obj) goto clock_val_down_cancel;
    if (wd->sel_obj == wd->digit[0])
