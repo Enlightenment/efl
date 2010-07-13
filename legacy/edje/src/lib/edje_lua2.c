@@ -116,8 +116,6 @@ static int _elua_above(lua_State *L);
 static int _elua_below(lua_State *L);
 static int _elua_top(lua_State *L);
 static int _elua_bottom(lua_State *L);
-static int _elua_aboveget(lua_State *L);
-static int _elua_belowget(lua_State *L);
 static int _elua_color(lua_State *L);
 static int _elua_clip(lua_State *L);
 static int _elua_unclip(lua_State *L);
@@ -168,17 +166,16 @@ static const struct luaL_reg _elua_edje_api [] =
      {"visible",      _elua_visible}, // get object visibility
      {"move",         _elua_move}, // move, return current position
      {"resize",       _elua_resize}, // resize, return current size
-     {"posget",       _elua_pos}, // move, return current position
-     {"sizeget",      _elua_size}, // resize, return current size
+     {"pos",          _elua_pos}, // move, return current position
+     {"size",         _elua_size}, // resize, return current size
      {"geom",         _elua_geom}, // move and resize and return current geometry
-     {"raise",        _elua_raise}, // raise
-     {"lower",        _elua_lower}, // lower
-     {"above",        _elua_above}, // stack above
-     {"below",        _elua_below}, // stack below
-     {"topget",       _elua_top}, // get top
-     {"bottomget",    _elua_bottom}, // get bottom
-     {"aboveget",     _elua_aboveget}, // get object above
-     {"belowget",     _elua_belowget}, // get object below
+   
+     {"raise",        _elua_raise}, // raise to top
+     {"lower",        _elua_lower}, // lower to bottom
+     {"above",        _elua_above}, // get object above or stack obj above given obj
+     {"below",        _elua_below}, // get object below or stack obj below given obj
+     {"top",          _elua_top}, // get top
+     {"bottom",       _elua_bottom}, // get bottom
      {"color",        _elua_color}, // set color, return color
      {"clip",         _elua_clip}, // set clip obj, return clip object
      {"unclip",       _elua_unclip}, // clear clip obj
@@ -1418,19 +1415,38 @@ _elua_geom(lua_State *L)
 static int
 _elua_raise(lua_State *L)
 {
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   evas_object_raise(elo->evas_obj);
    return 0;
 }
 
 static int
 _elua_lower(lua_State *L)
 {
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   evas_object_lower(elo->evas_obj);
    return 0;
 }
 
 static int
 _elua_above(lua_State *L)
 {
-   return 0;
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   Edje_Lua_Evas_Object *elo2;
+   Evas_Object *o;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   if (!(o = evas_object_above_get(elo->evas_obj))) return 0;
+   if (!(elo2 = evas_object_data_get(o, "elo"))) return 0;
+   lua_pushlightuserdata(L, elo2);
+   return 1;
 }
 
 static int
@@ -1447,18 +1463,6 @@ _elua_top(lua_State *L)
 
 static int
 _elua_bottom(lua_State *L)
-{
-   return 0;
-}
-
-static int
-_elua_aboveget(lua_State *L)
-{
-   return 0;
-}
-
-static int
-_elua_belowget(lua_State *L)
 {
    return 0;
 }
