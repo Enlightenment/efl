@@ -7,6 +7,7 @@ EAPI Ecore_X_Atom ECORE_X_ATOM_STRING                   = 0;
 EAPI Ecore_X_Atom ECORE_X_ATOM_TEXT                     = 0;
 EAPI Ecore_X_Atom ECORE_X_ATOM_UTF8_STRING              = 0;
 EAPI Ecore_X_Atom ECORE_X_ATOM_WINDOW                   = 0;
+EAPI Ecore_X_Atom ECORE_X_ATOM_PIXMAP                   = 0;
 
 /* dnd atoms */
 EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PROP_XDND     = 0;
@@ -273,3 +274,4 @@ EAPI Ecore_X_Atom ECORE_X_ATOM_E_COMP_SYNC_CANCEL = 0;
 
 EAPI Ecore_X_Atom ECORE_X_ATOM_E_COMP_FLUSH = 0;
 EAPI Ecore_X_Atom ECORE_X_ATOM_E_COMP_DUMP = 0;
+EAPI Ecore_X_Atom ECORE_X_ATOM_E_COMP_PIXMAP = 0;

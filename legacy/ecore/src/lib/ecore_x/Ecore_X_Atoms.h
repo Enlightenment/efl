@@ -18,6 +18,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_STRING;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEXT;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_UTF8_STRING;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_WINDOW;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_PIXMAP;
 
 /* dnd atoms */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_SELECTION_XDND;
@@ -250,5 +251,6 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_COMP_SYNC_END;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_COMP_SYNC_CANCEL;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_COMP_FLUSH;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_COMP_DUMP;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_COMP_PIXMAP;
 
 #endif /* _ECORE_X_ATOMS_H */

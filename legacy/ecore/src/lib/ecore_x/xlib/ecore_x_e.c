@@ -858,3 +858,31 @@ ecore_x_e_comp_dump_send(Ecore_X_Window win)
               NoEventMask, //SubstructureRedirectMask | SubstructureNotifyMask, 
               &xev);
 }
+
+EAPI void 
+ecore_x_e_comp_pixmap_set(Ecore_X_Window win, Ecore_X_Pixmap pixmap)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (pixmap)
+     ecore_x_window_prop_xid_set(win, ECORE_X_ATOM_E_COMP_DUMP,
+                                 ECORE_X_ATOM_PIXMAP, &pixmap, 1);
+   else
+     ecore_x_window_prop_property_del(win, pixmap);
+}
+
+EAPI Ecore_X_Pixmap
+ecore_x_e_comp_pixmap_get(Ecore_X_Window win)
+{
+   int ret = 0;
+   Ecore_X_Pixmap pixmap = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   ret = 
+     ecore_x_window_prop_xid_get(win, 
+                                 ECORE_X_ATOM_E_COMP_DUMP,
+                                 ECORE_X_ATOM_PIXMAP,
+                                 &pixmap, 1);
+   if (ret != 1) return 0;
+   return pixmap;
+}
+

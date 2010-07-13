@@ -51,6 +51,7 @@ _ecore_x_atoms_init(void)
 	{ "TEXT", &ECORE_X_ATOM_TEXT },
 	{ "UTF8_STRING", &ECORE_X_ATOM_UTF8_STRING },
 	{ "WINDOW", &ECORE_X_ATOM_WINDOW },
+	{ "PIXMAP", &ECORE_X_ATOM_PIXMAP },
 
 	{ "JXSelectionWindowProperty", &ECORE_X_ATOM_SELECTION_PROP_XDND },
 	{ "XdndSelection", &ECORE_X_ATOM_SELECTION_XDND },
@@ -264,7 +265,8 @@ _ecore_x_atoms_init(void)
         { "_E_COMP_SYNC_CANCEL", &ECORE_X_ATOM_E_COMP_SYNC_CANCEL },
         
         { "_E_COMP_FLUSH", &ECORE_X_ATOM_E_COMP_FLUSH },
-        { "_E_COMP_DUMP", &ECORE_X_ATOM_E_COMP_DUMP }
+        { "_E_COMP_DUMP", &ECORE_X_ATOM_E_COMP_DUMP },
+        { "_E_COMP_PIXMAP", &ECORE_X_ATOM_E_COMP_PIXMAP }
      };
    Atom *atoms;
    char **names;
