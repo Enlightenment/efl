@@ -158,7 +158,7 @@ static Eina_Bool
 _signal_clock_val_up(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) goto clock_val_up_cancel;
+   if (!wd) goto clock_val_up_exit_on_error;
    if (!wd->edit) goto clock_val_up_cancel;
    if (!wd->sel_obj) goto clock_val_up_cancel;
    if (wd->sel_obj == wd->digit[0])
@@ -203,6 +203,7 @@ _signal_clock_val_up(void *data)
    return ECORE_CALLBACK_RENEW;
 clock_val_up_cancel:
    wd->spin = NULL;
+clock_val_up_exit_on_error:
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -210,7 +211,7 @@ static Eina_Bool
 _signal_clock_val_down(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) goto clock_val_down_cancel;
+   if (!wd) goto clock_val_up_exit_on_error;
    if (!wd->edit) goto clock_val_down_cancel;
    if (!wd->sel_obj) goto clock_val_down_cancel;
    if (wd->sel_obj == wd->digit[0])
@@ -255,6 +256,7 @@ _signal_clock_val_down(void *data)
    return ECORE_CALLBACK_RENEW;
 clock_val_down_cancel:
    wd->spin = NULL;
+clock_val_down_exit_on_error:
    return ECORE_CALLBACK_CANCEL;
 }
 
