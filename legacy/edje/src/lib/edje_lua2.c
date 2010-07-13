@@ -29,11 +29,12 @@ extern "C"
 
 
 //--------------------------------------------------------------------------//
-typedef struct _Edje_Lua_Alloc      Edje_Lua_Alloc;
-typedef struct _Edje_Lua_Obj        Edje_Lua_Obj;
-typedef struct _Edje_Lua_Timer      Edje_Lua_Timer;
-typedef struct _Edje_Lua_Animator   Edje_Lua_Animator;
-typedef struct _Edje_Lua_Transition Edje_Lua_Transition;
+typedef struct _Edje_Lua_Alloc       Edje_Lua_Alloc;
+typedef struct _Edje_Lua_Obj         Edje_Lua_Obj;
+typedef struct _Edje_Lua_Timer       Edje_Lua_Timer;
+typedef struct _Edje_Lua_Animator    Edje_Lua_Animator;
+typedef struct _Edje_Lua_Transition  Edje_Lua_Transition;
+typedef struct _Edje_Lua_Evas_Object Edje_Lua_Evas_Object;
 
 //--------------------------------------------------------------------------//
 struct _Edje_Lua_Alloc
@@ -47,6 +48,7 @@ struct _Edje_Lua_Obj
    
    Edje         *ed;
    void        (*free_func) (void *obj);
+   Eina_Bool    is_evas_obj : 1;
 };
   
 struct _Edje_Lua_Timer
@@ -71,6 +73,13 @@ struct _Edje_Lua_Transition
    int              fn_ref;
 };
 
+struct _Edje_Lua_Evas_Object
+{
+   Edje_Lua_Obj     obj;
+   Evas_Object     *evas_obj;
+   int              x, y, w, h;
+};
+
 
 //--------------------------------------------------------------------------//
 static int _elua_obj_gc(lua_State *L);
@@ -88,6 +97,10 @@ static int _elua_date(lua_State *L);
 
 static int _elua_emit(lua_State *L);
 static int _elua_messagesend(lua_State *L);
+
+static int _elua_objpos(lua_State *L);
+static int _elua_objsize(lua_State *L);
+static int _elua_objgeom(lua_State *L);
 
 static int _elua_show(lua_State *L);
 static int _elua_hide(lua_State *L);
@@ -142,10 +155,14 @@ static const struct luaL_reg _elua_edje_api [] =
      {"messagesend",  _elua_messagesend}, // send a structured message
 
    // query edje - size, pos
-   // query color classes
-   // query text classes
+     {"objpos",       _elua_objpos}, // get while edje object pos in canvas
+     {"objsize",      _elua_objsize}, // get while edje object pos in canvas
+     {"objgeom",      _elua_objgeom}, // get while edje object geometry in canvas
    
-   // now evas stuff (create objects, manipulate, delete etc.)
+   // FIXME: query color classes
+   // FIXME: query text classes
+   
+   // now evas stuff (manipulate, delete etc.)
      {"show",         _elua_show}, // show, return current visibility
      {"hide",         _elua_hide}, // hide, return current visibility
      {"visible",      _elua_visible}, // get object visibility
@@ -169,17 +186,17 @@ static const struct luaL_reg _elua_edje_api [] =
      {"type",         _elua_type}, // get object type
      {"pass",         _elua_pass}, // set pass events, get pass events
      {"repeat",       _elua_repeat}, // set repeat events, get repeat events
-   // need to set scale (explicit value)
-   // need to set auto-scale (same as scale: 1)
-   // set precise inside
-   // set callbacks (mouse down, up, blah blah blah)
+   // FIXME: set scale (explicit value)
+   // FIXME: need to set auto-scale (same as scale: 1)
+   // FIXME: set precise inside
+   // FIXME: set callbacks (mouse down, up, blah blah blah)
    
-   // need map api here
+   // FIXME: map api here
    
      {"rect",         _elua_rect}, // new rect
-   // need image(filled, normal), text, textblock, edje
+   // FIXME: need image(filled, normal), text, textblock, edje
    
-   // methods lua scrupt can provide that edje will call (not done yet):
+   // FIXME: methods lua scrupt can provide that edje will call (not done yet):
    // // scale set
    // // key down
    // // key up
@@ -189,6 +206,8 @@ static const struct luaL_reg _elua_edje_api [] =
    // // set part text
    // // get swallow part
    // // set swallow part
+   // // textclass change
+   // // colorclass change
 
      {NULL, NULL} // end
 };
@@ -375,7 +394,7 @@ static int
 _elua_obj_gc(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
-   if (!obj) return 0;
+   if (!obj) return 0; 
    _elua_obj_free(L, obj);
    return 0;
 }
@@ -1050,33 +1069,306 @@ _elua_messagesend(lua_State *L)
 
 //-------------
 static int
+_elua_objpos(lua_State *L)
+{
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   if (!lua_istable(L, 1)) lua_newtable(L);
+   lua_pushstring(L, "x");
+   lua_pushinteger(L, ed->x);
+   lua_settable(L, -3);
+   lua_pushstring(L, "y");
+   lua_pushinteger(L, ed->y);
+   lua_settable(L, -3);
+   return 1;
+}
+
+static int
+_elua_objsize(lua_State *L)
+{
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   if (!lua_istable(L, 1)) lua_newtable(L);
+   lua_pushstring(L, "w");
+   lua_pushinteger(L, ed->w);
+   lua_settable(L, -3);
+   lua_pushstring(L, "h");
+   lua_pushinteger(L, ed->h);
+   lua_settable(L, -3);
+   return 1;
+}
+
+static int
+_elua_objgeom(lua_State *L)
+{
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   if (!lua_istable(L, 1)) lua_newtable(L);
+   lua_pushstring(L, "x");
+   lua_pushinteger(L, ed->x);
+   lua_settable(L, -3);
+   lua_pushstring(L, "y");
+   lua_pushinteger(L, ed->y);
+   lua_settable(L, -3);
+   lua_pushstring(L, "w");
+   lua_pushinteger(L, ed->w);
+   lua_settable(L, -3);
+   lua_pushstring(L, "h");
+   lua_pushinteger(L, ed->h);
+   lua_settable(L, -3);
+   return 1;
+}
+
+//-------------
+//-------------
+static int
+_elua_2_int_get(lua_State *L, int i, Eina_Bool tr,
+                const char *n1, int *v1,
+                const char *n2, int *v2
+               )
+{
+   int n = 0;
+
+   if (lua_istable(L, i))
+     {
+        lua_getfield(L, i, n1);
+        if (lua_isnil(L, -1))
+          {
+             lua_pop(L, 1);
+             lua_rawgeti(L, i, 1);
+             lua_rawgeti(L, i, 2);
+          }
+        else
+          lua_getfield(L, i, n2);
+        if ((!lua_isnil(L, -1)) && (!lua_isnil(L, -2)))
+          {
+             *v1 = lua_tointeger(L, -2);
+             *v2 = lua_tointeger(L, -1);
+             n = 1;
+          }
+        if (tr) lua_settop(L, i);
+     }
+   else
+     {
+        if ((lua_isnumber(L, i + 0)) && (lua_isnumber(L, i + 1)))
+          {
+             *v1 = lua_tointeger(L, i + 0);
+             *v2 = lua_tointeger(L, i + 1);
+             n = 2;
+          }
+        if (tr) lua_newtable(L);
+     }
+   return n;
+}
+
+static int
+_elua_3_int_get(lua_State *L, int i, Eina_Bool tr,
+                const char *n1, int *v1,
+                const char *n2, int *v2,
+                const char *n3, int *v3
+               )
+{
+   int n = 0;
+
+   if (lua_istable(L, i))
+     {
+        lua_getfield(L, i, n1);
+        if (lua_isnil(L, -1))
+          {
+             lua_pop(L, 1);
+             lua_rawgeti(L, i, 1);
+             lua_rawgeti(L, i, 2);
+             lua_rawgeti(L, i, 3);
+          }
+        else
+          {
+             lua_getfield(L, i, n2);
+             lua_getfield(L, i, n3);
+          }
+        if ((!lua_isnil(L, -1)) && (!lua_isnil(L, -2)) && 
+            (!lua_isnil(L, -3)))
+          {
+             *v1 = lua_tointeger(L, -3);
+             *v2 = lua_tointeger(L, -2);
+             *v3 = lua_tointeger(L, -1);
+             n = 1;
+          }
+        if (tr) lua_settop(L, i);
+     }
+   else
+     {
+        if ((lua_isnumber(L, i + 0)) && (lua_isnumber(L, i + 1)) &&
+            (lua_isnumber(L, i + 2)))
+          {
+             *v1 = lua_tointeger(L, i + 0);
+             *v2 = lua_tointeger(L, i + 1);
+             *v3 = lua_tointeger(L, i + 2);
+             n = 3;
+          }
+        if (tr) lua_newtable(L);
+     }
+   return n;
+}
+
+static int
+_elua_4_int_get(lua_State *L, int i, Eina_Bool tr,
+                const char *n1, int *v1,
+                const char *n2, int *v2,
+                const char *n3, int *v3,
+                const char *n4, int *v4
+               )
+{
+   int n = 0;
+
+   if (lua_istable(L, i))
+     {
+        lua_getfield(L, i, n1);
+        if (lua_isnil(L, -1))
+          {
+             lua_pop(L, 1);
+             lua_rawgeti(L, i, 1);
+             lua_rawgeti(L, i, 2);
+             lua_rawgeti(L, i, 3);
+             lua_rawgeti(L, i, 4);
+          }
+        else
+          {
+             lua_getfield(L, i, n2);
+             lua_getfield(L, i, n3);
+             lua_getfield(L, i, n4);
+          }
+        if ((!lua_isnil(L, -1)) && (!lua_isnil(L, -2)) && 
+            (!lua_isnil(L, -3)) && (!lua_isnil(L, -4)))
+          {
+             *v1 = lua_tointeger(L, -4);
+             *v2 = lua_tointeger(L, -3);
+             *v3 = lua_tointeger(L, -2);
+             *v4 = lua_tointeger(L, -1);
+             n = 1;
+          }
+        if (tr) lua_settop(L, i);
+     }
+   else
+     {
+        if ((lua_isnumber(L, i + 0)) && (lua_isnumber(L, i + 1)) &&
+            (lua_isnumber(L, i + 2)) && (lua_isnumber(L, i + 3)))
+          {
+             *v1 = lua_tointeger(L, i + 0);
+             *v2 = lua_tointeger(L, i + 1);
+             *v3 = lua_tointeger(L, i + 2);
+             *v4 = lua_tointeger(L, i + 3);
+             n = 4;
+          }
+        if (tr) lua_newtable(L);
+     }
+   return n;
+}
+
+static void
+_elua_int_ret(lua_State *L, const char *n, int v)
+{
+   lua_pushstring(L, n);
+   lua_pushinteger(L, v);
+   lua_settable(L, -3);
+}
+
+static void
+_elua_color_fix(int *r, int *g, int *b, int *a)
+{
+   if (*r > *a) *r = *a;
+   if (*g > *a) *g = *a;
+   if (*b > *a) *b = *a;
+}
+
+//-------------
+//-------------
+
+static int
 _elua_show(lua_State *L)
 {
-   return 0;
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   evas_object_show(elo->evas_obj);
+   lua_pushboolean(L, evas_object_visible_get(elo->evas_obj));
+   return 1;
 }
 
 static int
 _elua_hide(lua_State *L)
 {
-   return 0;
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   evas_object_hide(elo->evas_obj);
+   lua_pushboolean(L, evas_object_visible_get(elo->evas_obj));
+   return 1;
 }
 
 static int
 _elua_visible(lua_State *L)
 {
-   return 0;
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   int n;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   n = lua_gettop(L);
+   if (n == 2)
+     {
+        if (lua_isboolean(L, 2))
+          {
+             if (lua_toboolean(L, 2)) evas_object_show(elo->evas_obj);
+             else evas_object_hide(elo->evas_obj);
+          }
+     }
+   lua_pushboolean(L, evas_object_visible_get(elo->evas_obj));
+   return 1;
 }
 
 static int
 _elua_move(lua_State *L)
 {
-   return 0;
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   int n, x, y;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   if (_elua_2_int_get(L, 2, EINA_TRUE, "x", &x, "y", &y) > 0)
+     {
+        if ((x != elo->x) || (y != elo->y))
+          {
+             elo->x = x;
+             elo->y = y;
+             evas_object_move(elo->evas_obj, 
+                              obj->ed->x + elo->x, 
+                              obj->ed->y + elo->y);
+          }
+     }
+   _elua_int_ret(L, "x", elo->x);
+   _elua_int_ret(L, "y", elo->y);
+   return 1;
 }
 
 static int
 _elua_resize(lua_State *L)
 {
-   return 0;
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   int n, w, h;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   if (_elua_2_int_get(L, 2, EINA_TRUE, "w", &w, "h", &h) > 0)
+     {
+        if ((w != elo->w) || (h != elo->h))
+          {
+             elo->w = w;
+             elo->h = h;
+             evas_object_resize(elo->evas_obj, elo->w, elo->h);
+          }
+     }
+   _elua_int_ret(L, "w", elo->w);
+   _elua_int_ret(L, "h", elo->h);
+   return 1;
 }
 
 static int
@@ -1094,7 +1386,33 @@ _elua_size(lua_State *L)
 static int
 _elua_geom(lua_State *L)
 {
-   return 0;
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   int n, x, y, w, h;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   if (_elua_4_int_get(L, 2, EINA_TRUE, "x", &x, "y", &y, "w", &w, "h", &h) > 0)
+     {
+        if ((x != elo->x) || (y != elo->y))
+          {
+             elo->x = x;
+             elo->y = y;
+             evas_object_move(elo->evas_obj, 
+                              obj->ed->x + elo->x, 
+                              obj->ed->y + elo->y);
+          }
+        if ((w != elo->w) || (h != elo->h))
+          {
+             elo->w = w;
+             elo->h = h;
+             evas_object_resize(elo->evas_obj, elo->w, elo->h);
+          }
+     }
+   _elua_int_ret(L, "x", elo->x);
+   _elua_int_ret(L, "y", elo->y);
+   _elua_int_ret(L, "w", elo->w);
+   _elua_int_ret(L, "h", elo->h);
+   return 1;
 }
 
 static int
@@ -1148,7 +1466,22 @@ _elua_belowget(lua_State *L)
 static int
 _elua_color(lua_State *L)
 {
-   return 0;
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   int n, r, g, b, a;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   if (_elua_4_int_get(L, 2, EINA_TRUE, "r", &r, "g", &g, "b", &b, "a", &a) > 0)
+     {
+        _elua_color_fix(&r, &g, &b, &a);
+        evas_object_color_set(elo->evas_obj, r, g, b, a);
+     }
+   evas_object_color_get(elo->evas_obj, &r, &g, &b, &a);
+   _elua_int_ret(L, "r", r);
+   _elua_int_ret(L, "g", g);
+   _elua_int_ret(L, "b", b);
+   _elua_int_ret(L, "a", a);
+   return 1;
 }
 
 static int
@@ -1188,10 +1521,33 @@ _elua_repeat(lua_State *L)
 }
 
 //-------------
+static void
+_elua_evas_obj_free(void *obj)
+{
+   Edje_Lua_Evas_Object *elo = obj;
+   lua_State *L;
+   if (!elo->obj.ed) return;
+   L = elo->obj.ed->L;
+   evas_object_del(elo->evas_obj);
+   elo->evas_obj = NULL;
+}
+
 static int
 _elua_rect(lua_State *L)
 {
-   return 0;
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   Edje_Lua_Evas_Object *elo;
+
+   elo = (Edje_Lua_Evas_Object *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Evas_Object));
+   elo->obj.free_func = _elua_evas_obj_free;
+   elo->obj.is_evas_obj = 1;
+   elo->evas_obj = evas_object_rectangle_add(evas_object_evas_get(ed->obj));
+   evas_object_smart_member_add(elo->evas_obj, ed->obj);
+   evas_object_clip_set(elo->evas_obj, ed->clipper);
+   evas_object_move(elo->evas_obj, ed->x, ed->y);
+   evas_object_resize(elo->evas_obj, 0, 0);
+   evas_object_data_set(elo->evas_obj, "elo", elo);
+   return 1;
 }
 
 //-------------
