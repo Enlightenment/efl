@@ -221,8 +221,6 @@ typedef struct _Edje_Image_Directory                 Edje_Image_Directory;
 typedef struct _Edje_Image_Directory_Entry           Edje_Image_Directory_Entry;
 typedef struct _Edje_Image_Directory_Set             Edje_Image_Directory_Set;
 typedef struct _Edje_Image_Directory_Set_Entry       Edje_Image_Directory_Set_Entry;
-typedef struct _Edje_Spectrum_Directory              Edje_Spectrum_Directory;
-typedef struct _Edje_Spectrum_Directory_Entry        Edje_Spectrum_Directory_Entry;
 typedef struct _Edje_Program                         Edje_Program;
 typedef struct _Edje_Program_Target                  Edje_Program_Target;
 typedef struct _Edje_Program_After                   Edje_Program_After;
@@ -233,7 +231,6 @@ typedef struct _Edje_Part_Collection                 Edje_Part_Collection;
 typedef struct _Edje_Part                            Edje_Part;
 typedef struct _Edje_Part_Image_Id                   Edje_Part_Image_Id;
 typedef struct _Edje_Part_Description                Edje_Part_Description;
-typedef struct _Edje_Spectrum_Color                  Edje_Spectrum_Color;
 typedef struct _Edje_Patterns                        Edje_Patterns;
 
 typedef struct _Old_Edje_File			     Old_Edje_File;
@@ -322,7 +319,6 @@ struct _Edje_File
 
    Edje_External_Directory        *external_dir;
    Edje_Image_Directory           *image_dir;
-   Edje_Spectrum_Directory        *spectrum_dir;
    Eina_List                      *styles;
    Eina_List                      *color_classes;
 
@@ -438,29 +434,6 @@ struct _Edje_Image_Directory_Set_Entry
      } min, max;
    } size;
 };
-
-/*----------*/
-
-struct _Edje_Spectrum_Directory
-{
-   Eina_List *entries; /* a list of Edje_Spectrum_Directory_Entry */
-};
-
-struct _Edje_Spectrum_Directory_Entry
-{
-   char      *entry;
-   /* only one of the following two should be included. filename takes precedence */
-   char      *filename; /* filename of external spectrum. */
-   Eina_List *color_list; /* list of Edje_Spectrum_Color */
-   int        id;
-};
-
-struct _Edje_Spectrum_Color
-{
-   int r, g, b, a;
-   int d;
-};
-
 
 /*----------*/
 
@@ -672,19 +645,6 @@ struct _Edje_Part_Description
       int            scale_hint; /* evas scale hint */
       Eina_Bool      set; /* if image condition it's content */
    } image;
-
-   struct {
-      char          *type; /* type of spectrum - 'linear', 'radial', etc */
-      char          *params; /* params for spectrum type */
-      int            id; /* the spectrum id to use */
-      int            use_rel; /* 1 - use rel1,rel2; 0 - use fill */
-      struct {
-         FLOAT_T     relative_x;
-         FLOAT_T     relative_y;
-         int         offset_x;
-         int         offset_y;
-      } rel1, rel2; /* linear gradient fill options */
-   } gradient;
 
    struct {
       int            l, r, t, b; /* border scaling on image fill */
@@ -935,10 +895,6 @@ struct _Edje_Calc_Params
 	    struct {
 	       int           l, r, t, b; // 16
 	    } image; // 16
-	    struct {
-	       int           id; // 4
-	       char         *type; // 4
-	    } gradient; // 8
 	 } spec; // 16
       } common; // 40
       struct {
@@ -1050,7 +1006,6 @@ struct _Edje_Real_Part
    Edje_Running_Program     *program; // 4
 
    int                       clicked_button; // 4
-   int                       gradient_id; // 4 // FIXME: only for gradient
 
    unsigned char             calculated; // 1
    unsigned char             calculating; // 1
@@ -1285,8 +1240,6 @@ EAPI extern Eet_Data_Descriptor *_edje_edd_edje_font_directory;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_image_directory;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_spectrum_directory;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_spectrum_directory_entry;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_program;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_program_target;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory;
@@ -1295,7 +1248,6 @@ EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_description;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_image_id;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_spectrum_color;
 
 extern int              _edje_anim_count;
 extern Ecore_Animator  *_edje_timer;

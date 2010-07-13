@@ -57,7 +57,6 @@
  *    <ul>
  *      <li>@ref sec_description_image "Image"</li>
  *      <li>@ref sec_description_text "Text"</li>
- *      <li>@ref sec_description_gradient "Gradient"</li>
  *      <li>@ref sec_description_box "Box"</li>
  *      <li>@ref sec_description_table "Table"</li>
  *      <li>@ref sec_description_map "Map (3d/transformations)"</li>
@@ -94,11 +93,6 @@ static void st_color_class_name(void);
 static void st_color_class_color(void);
 static void st_color_class_color2(void);
 static void st_color_class_color3(void);
-
-static void ob_spectrum(void);
-/*static void st_spectrum(void);*/
-static void st_spectrum_name(void);
-static void st_spectrum_color(void);
 
 static void ob_collections(void);
 
@@ -192,7 +186,6 @@ static void st_collections_group_parts_part_description_fill_origin_relative(voi
 static void st_collections_group_parts_part_description_fill_origin_offset(void);
 static void st_collections_group_parts_part_description_fill_size_relative(void);
 static void st_collections_group_parts_part_description_fill_size_offset(void);
-static void st_collections_group_parts_part_description_fill_angle(void);
 static void st_collections_group_parts_part_description_fill_spread(void);
 static void st_collections_group_parts_part_description_fill_type(void);
 static void st_collections_group_parts_part_description_color_class(void);
@@ -212,12 +205,6 @@ static void st_collections_group_parts_part_description_text_align(void);
 static void st_collections_group_parts_part_description_text_source(void);
 static void st_collections_group_parts_part_description_text_text_source(void);
 static void st_collections_group_parts_part_description_text_elipsis(void);
-static void st_collections_group_parts_part_description_gradient_type(void);
-static void st_collections_group_parts_part_description_gradient_spectrum(void);
-static void st_collections_group_parts_part_description_gradient_rel1_relative(void);
-static void st_collections_group_parts_part_description_gradient_rel1_offset(void);
-static void st_collections_group_parts_part_description_gradient_rel2_relative(void);
-static void st_collections_group_parts_part_description_gradient_rel2_offset(void);
 static void st_collections_group_parts_part_description_box_layout(void);
 static void st_collections_group_parts_part_description_box_align(void);
 static void st_collections_group_parts_part_description_box_padding(void);
@@ -281,9 +268,6 @@ New_Statement_Handler statement_handlers[] =
      {"color_classes.color_class.color", st_color_class_color},
      {"color_classes.color_class.color2", st_color_class_color2},
      {"color_classes.color_class.color3", st_color_class_color3},
-     /*{"spectra.spectrum", st_spectrum},*/
-     {"spectra.spectrum.name", st_spectrum_name},
-     {"spectra.spectrum.color", st_spectrum_color},
      {"collections.externals.external", st_externals_external}, /* dup */
      {"collections.image", st_images_image}, /* dup */
      {"collections.set.name", st_images_set_name}, /* dup */
@@ -452,7 +436,6 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.fill.origin.offset", st_collections_group_parts_part_description_fill_origin_offset},
      {"collections.group.parts.part.description.fill.size.relative", st_collections_group_parts_part_description_fill_size_relative},
      {"collections.group.parts.part.description.fill.size.offset", st_collections_group_parts_part_description_fill_size_offset},
-     {"collections.group.parts.part.description.fill.angle", st_collections_group_parts_part_description_fill_angle},
      {"collections.group.parts.part.description.fill.spread", st_collections_group_parts_part_description_fill_spread},
      {"collections.group.parts.part.description.fill.type", st_collections_group_parts_part_description_fill_type},
      {"collections.group.parts.part.description.color_class", st_collections_group_parts_part_description_color_class},
@@ -474,12 +457,6 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.text.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.text.elipsis", st_collections_group_parts_part_description_text_elipsis},
-     {"collections.group.parts.part.description.gradient.type", st_collections_group_parts_part_description_gradient_type},
-     {"collections.group.parts.part.description.gradient.rel1.relative", st_collections_group_parts_part_description_gradient_rel1_relative},
-     {"collections.group.parts.part.description.gradient.rel1.offset", st_collections_group_parts_part_description_gradient_rel1_offset},
-     {"collections.group.parts.part.description.gradient.rel2.relative", st_collections_group_parts_part_description_gradient_rel2_relative},
-     {"collections.group.parts.part.description.gradient.rel2.offset", st_collections_group_parts_part_description_gradient_rel2_offset},
-     {"collections.group.parts.part.description.gradient.spectrum", st_collections_group_parts_part_description_gradient_spectrum},
      {"collections.group.parts.part.description.box.layout", st_collections_group_parts_part_description_box_layout},
      {"collections.group.parts.part.description.box.align", st_collections_group_parts_part_description_box_align},
      {"collections.group.parts.part.description.box.padding", st_collections_group_parts_part_description_box_padding},
@@ -648,7 +625,6 @@ New_Object_Handler object_handlers[] =
      {"color_classes", NULL},
      {"color_classes.color_class", ob_color_class},
      {"spectra", NULL},
-     {"spectra.spectrum", ob_spectrum},
      {"collections", ob_collections},
      {"collections.externals", NULL}, /* dup */
      {"collections.set", ob_images_set}, /* dup */
@@ -725,9 +701,6 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.fonts", NULL}, /* dup */
      {"collections.group.parts.part.description.styles", NULL}, /* dup */
      {"collections.group.parts.part.description.styles.style", ob_styles_style}, /* dup */
-     {"collections.group.parts.part.description.gradient", NULL},
-     {"collections.group.parts.part.description.gradient.rel1", NULL},
-     {"collections.group.parts.part.description.gradient.rel2", NULL},
      {"collections.group.parts.part.description.box", NULL},
      {"collections.group.parts.part.description.table", NULL},
      {"collections.group.parts.part.description.map", NULL},
@@ -1458,90 +1431,6 @@ st_color_class_color3(void)
 /**
     @page edcref
     @block
-        spectra
-    @context
-        spectra {
-            spectrum {
-                name: "colorspectrumname";
-                color: [0-255] [0-255] [0-255] [0-255] [0-?]
-                color: [0-255] [0-255] [0-255] [0-255] [0-?]
-                ..
-            }
-            ..
-        }
-    @description
-        The "spectra" block contains a list of one or more "spectrum" blocks.
-        Each "spectrum" block defines a color range used to fill GRADIENT
-        parts. The colors are defined with the red, green, blue, alpha, delta
-        format.
-    @endblock
-*/
-static void
-ob_spectrum(void)
-{
-   Edje_Spectrum_Directory_Entry *se;
-
-   if (!edje_file->spectrum_dir)
-     edje_file->spectrum_dir = mem_alloc(SZ(Edje_Spectrum_Directory));
-   se = mem_alloc(SZ(Edje_Spectrum_Directory_Entry));
-   edje_file->spectrum_dir->entries = eina_list_append(edje_file->spectrum_dir->entries, se);
-   se->id = eina_list_count(edje_file->spectrum_dir->entries) - 1;
-   se->entry = NULL;
-   se->filename = NULL;
-   se->color_list = NULL;
-}
-
-/**
-    @page edcref
-    @property
-        name
-    @parameters
-        [spectrum name]
-    @effect
-        The name of the spectrum used as reference later in the theme.
-    @endproperty
-*/
-static void
-st_spectrum_name(void)
-{
-   Edje_Spectrum_Directory_Entry *se;
-
-   se = eina_list_data_get(eina_list_last(edje_file->spectrum_dir->entries));
-   se->entry = parse_str(0);
-}
-
-/**
-    @page edcref
-    @property
-        color
-    @parameters
-        [red] [green] [blue] [alpha] [delta]
-    @effect
-        Each color declaration represents a stop point in the color range. The
-        last parameter (delta) is used to set the proportion of a given stop
-        point higher or lower in contrast with the other color's delta value.
-    @endproperty
-*/
-static void
-st_spectrum_color(void)
-{
-   Edje_Spectrum_Directory_Entry *se;
-   Edje_Spectrum_Color *sc;
-
-   se = eina_list_data_get(eina_list_last(edje_file->spectrum_dir->entries));
-
-   sc = mem_alloc(SZ(Edje_Spectrum_Color));
-   se->color_list = eina_list_append(se->color_list, sc);
-   sc->r = parse_int_range(0, 0, 255);
-   sc->g = parse_int_range(1, 0, 255);
-   sc->b = parse_int_range(2, 0, 255);
-   sc->a = parse_int_range(3, 0, 255);
-   sc->d = parse_int(4);
-}
-
-/**
-    @page edcref
-    @block
         styles
     @context
         styles {
@@ -2134,7 +2023,6 @@ st_collections_group_parts_part_name(void)
             @li IMAGE
             @li SWALLOW
             @li TEXTBLOCK
-            @li GRADIENT
             @li GROUP
             @li BOX
             @li TABLE
@@ -2158,7 +2046,6 @@ st_collections_group_parts_part_type(void)
 			 "IMAGE", EDJE_PART_TYPE_IMAGE,
 			 "SWALLOW", EDJE_PART_TYPE_SWALLOW,
 			 "TEXTBLOCK", EDJE_PART_TYPE_TEXTBLOCK,
-			 "GRADIENT", EDJE_PART_TYPE_GRADIENT,
 			 "GROUP", EDJE_PART_TYPE_GROUP,
 			 "BOX", EDJE_PART_TYPE_BOX,
 			 "TABLE", EDJE_PART_TYPE_TABLE,
@@ -3408,14 +3295,6 @@ ob_collections_group_parts_part_description(void)
    ed->text.align.y = FROM_DOUBLE(0.5);
    ed->text.id_source = -1;
    ed->text.id_text_source = -1;
-   ed->gradient.rel1.relative_x = FROM_INT(0);
-   ed->gradient.rel1.relative_y = FROM_INT(0);
-   ed->gradient.rel1.offset_x = 0;
-   ed->gradient.rel1.offset_y = 0;
-   ed->gradient.rel2.relative_x = FROM_INT(1);
-   ed->gradient.rel2.relative_y = FROM_INT(1);
-   ed->gradient.rel2.offset_x = -1;
-   ed->gradient.rel2.offset_y = -1;
    ed->box.layout = NULL;
    ed->box.alt_layout = NULL;
    ed->box.align.x = FROM_DOUBLE(0.5);
@@ -3549,7 +3428,6 @@ st_collections_group_parts_part_description_inherit(void)
    data_queue_part_slave_lookup(&parent->rel2.id_x, &ed->rel2.id_x);
    data_queue_part_slave_lookup(&parent->rel2.id_y, &ed->rel2.id_y);
    data_queue_image_slave_lookup(&parent->image.id, &ed->image.id);
-   data_queue_spectrum_slave_lookup(&parent->gradient.id, &ed->gradient.id);
 
    /* make sure all the allocated memory is getting copied, not just
     * referenced
@@ -4556,8 +4434,8 @@ st_collections_group_parts_part_description_image_scale_hint(void)
             ..
         }
     @description
-        The fill method is an optional block that defines the way an IMAGE or
-        GRADIENT part is going to be displayed inside its container.
+        The fill method is an optional block that defines the way an IMAGE part
+	is going to be displayed inside its container.
     @endblock
 
     @property
@@ -4629,44 +4507,6 @@ st_collections_group_parts_part_description_fill_spread(void)
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
    ed->fill.spread = parse_int_range(0, 0, 1);
-}
-
-/**
-    @page edcref
-
-    @property
-        angle
-    @parameters
-        [angle]
-    @effect
-        The angle of rotation of a GRADIENT part. It is invalid in any other
-        part type. The angle is expressed as an int, in the range 0 - 360.
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_fill_angle(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(1);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = eina_list_data_get(eina_list_last(pc->parts));
-
-   /* XXX this will need to include IMAGES when angle support is added to evas images */
-   if (ep->type != EDJE_PART_TYPE_GRADIENT)
-     {
-	ERR("%s: Error. parse error %s:%i. "
-	    "gradient attributes in non-GRADIENT part.",
-	    progname, file_in, line - 1);
-	exit(-1);
-     }
-
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->fill.angle = parse_int_range(0, 0, 360);
 }
 
 /**
@@ -4751,7 +4591,7 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
    pc = eina_list_data_get(eina_list_last(edje_collections));
    ep = eina_list_data_get(eina_list_last(pc->parts));
 
-   if (ep->type != EDJE_PART_TYPE_IMAGE && ep->type != EDJE_PART_TYPE_GRADIENT)
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
      {
 	ERR("%s: Error. parse error %s:%i. "
 	    "fill attributes in non-IMAGE part.",
@@ -4787,7 +4627,7 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
    pc = eina_list_data_get(eina_list_last(edje_collections));
    ep = eina_list_data_get(eina_list_last(pc->parts));
 
-   if (ep->type != EDJE_PART_TYPE_IMAGE && ep->type != EDJE_PART_TYPE_GRADIENT)
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
      {
 	ERR("%s: Error. parse error %s:%i. "
 	    "fill attributes in non-IMAGE part.",
@@ -4848,7 +4688,7 @@ st_collections_group_parts_part_description_fill_size_relative(void)
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
 
-   if (ep->type != EDJE_PART_TYPE_IMAGE && ep->type != EDJE_PART_TYPE_GRADIENT)
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
      {
 	ERR("%s: Error. parse error %s:%i. "
 	    "fill attributes in non-IMAGE part.",
@@ -4884,7 +4724,7 @@ st_collections_group_parts_part_description_fill_size_offset(void)
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
 
-   if (ep->type != EDJE_PART_TYPE_IMAGE && ep->type != EDJE_PART_TYPE_GRADIENT)
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
      {
 	ERR("%s: Error. parse error %s:%i. "
 	    "fill attributes in non-IMAGE part.",
@@ -5446,271 +5286,6 @@ st_collections_group_parts_part_description_text_elipsis(void)
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
    ed->text.elipsis = parse_float_range(0, 0.0, 1.0);
-}
-
-
-/**
-   @edcsection{description_gradient,Gradient state description sub blocks}
- */
-
-/**
-    @page edcref
-
-    @block
-        gradient
-    @context
-        part {
-            description {
-                ..
-                gradient {
-                    type:    "linear";
-                    spectrum "spectrumName";
-                    rel1 {
-                        relative: 0.0 0.0;
-                        offset:     0   0;
-                    }
-                    rel2
-                        relative: 1.0 1.0;
-                        offset:    -1  -1;
-                    }
-                }
-                ..
-            }
-        }
-    @description
-        A gradient block is used to display a given "spectrum" inside a 
-        container. The container's shape is a rect but this not mean the
-        gradient is restricted to a rectangular shape.  Gradients can use 
-        "rel1" and "rel2" blocks to layout the initial and final point 
-        relatively inside the container.
-    @endblock
-
-    @property
-        type
-    @parameters
-        [the name of the type]
-    @effect
-        Alters the gradient's rendering algorithm between:
-            @li linear (default)  
-            @li radial
-            @li rectangular
-            @li angular
-            @li sinusoidal
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_gradient_type(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(1);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = eina_list_data_get(eina_list_last(pc->parts));
-
-   if (ep->type != EDJE_PART_TYPE_GRADIENT)
-     {
-	ERR("%s: Error. parse error %s:%i. "
-	    "gradient attributes in non-GRADIENT part.",
-	    progname, file_in, line - 1);
-	exit(-1);
-     }
-
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->gradient.type  = parse_str(0);
-}
-
-/**
-    @page edcref
-
-    @property
-        spectrum
-    @parameters
-        [an existing spectrum name]
-    @effect
-        Causes the gradient to display the colors as defined by a given 
-        "spectrum" in the "spectra" block.
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_gradient_spectrum(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(1);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = eina_list_data_get(eina_list_last(pc->parts));
-
-   if (ep->type != EDJE_PART_TYPE_GRADIENT)
-     {
-        ERR("%s: Error. parse error %s:%i. "
-	    "gradient attributes in non-GRADIENT part.",
-	    progname, file_in, line - 1);
-	exit(-1);
-     }
-
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-
-     {
-	char *name;
-
-	name = parse_str(0);
-	data_queue_spectrum_lookup(name, &(ed->gradient.id));
-	free(name);
-     }
-}
-
-/**
-    @page edcref
-
-    @property
-        relative
-    @parameters
-        [a relative X coordinate] [a relative Y coordinate]
-    @effect
-        Inside rel1 places the initial point, or first color, of the gradient 
-        relatively to the gradient's container. Inside rel2 places the final 
-        point, or last color.
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_gradient_rel1_relative(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(2);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = eina_list_data_get(eina_list_last(pc->parts));
-
-   if (ep->type != EDJE_PART_TYPE_GRADIENT)
-     {
-	ERR("%s: Error. parse error %s:%i. "
-	    "gradient attributes in non-GRADIENT part.",
-	    progname, file_in, line - 1);
-	exit(-1);
-     }
-
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-
-     {
-	ed->gradient.use_rel = 1;
-	ed->gradient.rel1.relative_x = parse_float(0);
-	ed->gradient.rel1.relative_y = parse_float(1);
-     }
-}
-
-/**
-    @page edcref
-
-    @property
-        offset
-    @parameters
-        [X axis] [Y axis]
-    @effect
-        Inside rel1 moves the initial point, or first color, of the gradient
-        a fixed number of pixels along either axis. Inside rel2 moves the final
-        point, or last color.
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_gradient_rel1_offset(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(2);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = eina_list_data_get(eina_list_last(pc->parts));
-
-   if (ep->type != EDJE_PART_TYPE_GRADIENT)
-     {
-	ERR("%s: Error. parse error %s:%i. "
-	    "gradient attributes in non-GRADIENT part.",
-	    progname, file_in, line - 1);
-	exit(-1);
-     }
-
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-
-     {
-	ed->gradient.use_rel = 1;
-	ed->gradient.rel1.offset_x = parse_int(0);
-	ed->gradient.rel1.offset_y = parse_int(1);
-     }
-}
-
-static void
-st_collections_group_parts_part_description_gradient_rel2_relative(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(2);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = eina_list_data_get(eina_list_last(pc->parts));
-
-   if (ep->type != EDJE_PART_TYPE_GRADIENT)
-     {
-	ERR("%s: Error. parse error %s:%i. "
-	    "gradient attributes in non-GRADIENT part.",
-	    progname, file_in, line - 1);
-	exit(-1);
-     }
-   
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-
-     {
-	ed->gradient.use_rel = 1;
-	ed->gradient.rel2.relative_x = parse_float(0);
-	ed->gradient.rel2.relative_y = parse_float(1);
-     }
-}
-
-static void
-st_collections_group_parts_part_description_gradient_rel2_offset(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(2);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = eina_list_data_get(eina_list_last(pc->parts));
-
-   if (ep->type != EDJE_PART_TYPE_GRADIENT)
-     {
-	ERR("%s: Error. parse error %s:%i. "
-	    "gradient attributes in non-GRADIENT part.",
-	    progname, file_in, line - 1);
-	exit(-1);
-     }
-
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-
-     {
-	ed->gradient.use_rel = 1;
-	ed->gradient.rel2.offset_x = parse_int(0);
-	ed->gradient.rel2.offset_y = parse_int(1);
-     }
 }
 
 

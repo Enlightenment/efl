@@ -211,7 +211,6 @@ _edje_file_convert(Eet_File *file, Old_Edje_File *oedf)
      goto on_error;
 
    edf->oef = oedf;
-   edf->spectrum_dir = oedf->spectrum_dir;
    edf->styles = oedf->styles;
    edf->color_classes = oedf->color_classes;
    edf->version = oedf->version;

@@ -433,17 +433,15 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		     case EDJE_PART_TYPE_TEXTBLOCK:
 			rp->object = evas_object_textblock_add(ed->evas);
 			break;
-		     case EDJE_PART_TYPE_GRADIENT:
-			rp->object = evas_object_gradient_add(ed->evas);
-			ERR("SPANK ! SPANK ! SPANK !\nYOU ARE USING GRADIENT IN PART %s FROM GROUP %s INSIDE FILE %s !!\n THEY WILL BE REMOVED SHORTLY !",
-			    ep->name, group, file);
-			break;
 		     case EDJE_PART_TYPE_BOX:
 			rp->object = evas_object_box_add(ed->evas);
 			break;
 		     case EDJE_PART_TYPE_TABLE:
 			rp->object = evas_object_table_add(ed->evas);
 			break;
+		     case EDJE_PART_TYPE_GRADIENT:
+			ERR("SPANK ! SPANK ! SPANK !\nYOU ARE USING GRADIENT IN PART %s FROM GROUP %s INSIDE FILE %s !!\n THEY ARE NOW REMOVED !",
+			    ep->name, group, file);
 		     default:
 			ERR("wrong part type %i!", ep->type);
 			break;
@@ -475,7 +473,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       if (rp->part->clip_to_id < 0)
 			 evas_object_clip_set(rp->object, ed->clipper);
 		    }
-		  rp->gradient_id = -1;
 	       }
 	     if (n > 0)
 	       {
@@ -1057,26 +1054,6 @@ _edje_file_free(Edje_File *edf)
 	free(edf->image_dir->sets);
 	free(edf->image_dir);
      }
-   if (edf->spectrum_dir)
-     {
-	Edje_Spectrum_Directory_Entry *se;
-
-	EINA_LIST_FREE(edf->spectrum_dir->entries, se)
-	  {
-	     Edje_Spectrum_Color *sc;
-
-	     EINA_LIST_FREE(se->color_list, sc)
-	       free(sc);
-
-             if (edf->free_strings)
-               {
-                  if (se->entry) eina_stringshare_del(se->entry);
-                  if (se->filename) eina_stringshare_del(se->filename);
-               }
-	     free(se);
-	  }
-	free(edf->spectrum_dir);
-     }
 
    EINA_LIST_FREE(edf->color_classes, ecc)
      {
@@ -1184,8 +1161,6 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc, Eina_Bo
 	if (desc->text.text_class) eina_stringshare_del(desc->text.text_class);
 	if (desc->text.style)      eina_stringshare_del(desc->text.style);
 	if (desc->text.font)       eina_stringshare_del(desc->text.font);
-	if (desc->gradient.type)   eina_stringshare_del(desc->gradient.type);
-	if (desc->gradient.params) eina_stringshare_del(desc->gradient.params);
      }
    free(desc);
 }

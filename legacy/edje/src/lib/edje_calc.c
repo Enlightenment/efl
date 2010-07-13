@@ -1103,92 +1103,37 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
 			      Edje_Calc_Params *params,
 			      int flags)
 {
-   if (ep->part->type == EDJE_PART_TYPE_GRADIENT && desc->gradient.use_rel && (!desc->gradient.type || !strcmp(desc->gradient.type, "linear")))
+   params->smooth = desc->fill.smooth;
+   if (flags & FLAG_X)
      {
-	int x2, y2;
-	int dx, dy;
-	int angle;
+	int fw;
 
-	params->type.common.fill.x = desc->gradient.rel1.offset_x
-	  + TO_INT(SCALE(desc->gradient.rel1.relative_x, params->w));
-	params->type.common.fill.y = desc->gradient.rel1.offset_y
-	  + TO_INT((SCALE(desc->gradient.rel1.relative_y, params->h)));
-
-	x2 = desc->gradient.rel2.offset_x
-	  + TO_INT(SCALE(desc->gradient.rel2.relative_x, params->w));
-
-	y2 = desc->gradient.rel2.offset_y
-	  + TO_INT(SCALE(desc->gradient.rel2.relative_y, params->h));
-
-	params->type.common.fill.w = 1; /* doesn't matter for linear grads */
-
-	dy = y2 - params->type.common.fill.y;
-	dx = x2 - params->type.common.fill.x;
-	params->type.common.fill.h = TO_INT(SQRT(FROM_INT(dx * dx + dy * dy)));
-
-	params->type.common.fill.spread = desc->fill.spread;
-
-	if (dx == 0 && dy == 0)
-	  {
-	     angle = 0;
-	  }
-	else if (dx == 0)
-	  {
-	     if (dy > 0) angle = 0;
-	     else angle = 180;
-	  }
-	else if (dy == 0)
-	  {
-	     if (dx > 0) angle = 270;
-	     else angle = 90;
-	  }
+	if (desc->fill.type == EDJE_FILL_TYPE_TILE)
+	  evas_object_image_size_get(ep->object, &fw, NULL);
 	else
-	  {
-	     double m; /* FIXME: atan isn't available atm in eina fp implementation */
-	     m = (double)dx / (double)dy;
-	     angle = atan(m) * 180 / M_PI;
-	     if (dy < 0)
-	       angle = 180 - angle;
-	     else
-	       angle = 360 - angle;
-	  }
-	params->type.common.fill.angle = angle;
+	  fw = params->w;
+
+	params->type.common.fill.x = desc->fill.pos_abs_x
+	  + TO_INT(SCALE(desc->fill.pos_rel_x, fw));
+	params->type.common.fill.w = desc->fill.abs_x
+	  + TO_INT(SCALE(desc->fill.rel_x, fw));
      }
-   else
+   if (flags & FLAG_Y)
      {
-	params->smooth = desc->fill.smooth;
-	if (flags & FLAG_X)
-	  {
-	     int fw;
+	int fh;
 
-             if (desc->fill.type == EDJE_FILL_TYPE_TILE)
-	       evas_object_image_size_get(ep->object, &fw, NULL);
-	     else
-	       fw = params->w;
+	if (desc->fill.type == EDJE_FILL_TYPE_TILE)
+	  evas_object_image_size_get(ep->object, NULL, &fh);
+	else
+	  fh = params->h;
 
-	     params->type.common.fill.x = desc->fill.pos_abs_x
-	       + TO_INT(SCALE(desc->fill.pos_rel_x, fw));
-	     params->type.common.fill.w = desc->fill.abs_x
-	       + TO_INT(SCALE(desc->fill.rel_x, fw));
-	  }
-	if (flags & FLAG_Y)
-	  {
-	     int fh;
-
-             if (desc->fill.type == EDJE_FILL_TYPE_TILE)
-	       evas_object_image_size_get(ep->object, NULL, &fh);
-	     else
-	       fh = params->h;
-
-	     params->type.common.fill.y = desc->fill.pos_abs_y
-	       + TO_INT(SCALE(desc->fill.pos_rel_y, fh));
-	     params->type.common.fill.h = desc->fill.abs_y
-	       + TO_INT(SCALE(desc->fill.rel_y, fh));
-	  }
-	params->type.common.fill.angle = desc->fill.angle;
-	params->type.common.fill.spread = desc->fill.spread;
+	params->type.common.fill.y = desc->fill.pos_abs_y
+	  + TO_INT(SCALE(desc->fill.pos_rel_y, fh));
+	params->type.common.fill.h = desc->fill.abs_y
+	  + TO_INT(SCALE(desc->fill.rel_y, fh));
      }
-
+   params->type.common.fill.angle = desc->fill.angle;
+   params->type.common.fill.spread = desc->fill.spread;
 }
 
 static void
@@ -1335,8 +1280,7 @@ _edje_part_recalc_single(Edje *ed,
      _edje_part_recalc_single_drag(ep, confine_to, params, minw, minh, maxw, maxh, flags);
 
    /* fill */
-   if (ep->part->type == EDJE_PART_TYPE_IMAGE ||
-       ep->part->type == EDJE_PART_TYPE_GRADIENT)
+   if (ep->part->type == EDJE_PART_TYPE_IMAGE)
      _edje_part_recalc_single_fill(ep, desc, params, flags);
 
    /* colors */
@@ -1375,10 +1319,6 @@ _edje_part_recalc_single(Edje *ed,
 	      params->type.common.spec.image.t = desc->border.t;
 	      params->type.common.spec.image.b = desc->border.b;
 	   }
-	 break;
-      case EDJE_PART_TYPE_GRADIENT:
-	 params->type.common.spec.gradient.id = desc->gradient.id;
-	 params->type.common.spec.gradient.type = desc->gradient.type;
 	 break;
       case EDJE_PART_TYPE_TEXT:
       case EDJE_PART_TYPE_TEXTBLOCK:
@@ -1423,41 +1363,10 @@ _edje_part_recalc_single(Edje *ed,
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
 	 break;
-     }
-}
-
-static void
-_edje_gradient_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc __UNUSED__)
-{
-   evas_object_gradient_fill_angle_set(ep->object, p3->type.common.fill.angle);
-   evas_object_gradient_fill_spread_set(ep->object, p3->type.common.fill.spread);
-   evas_object_gradient_fill_set(ep->object, p3->type.common.fill.x, p3->type.common.fill.y,
-				 p3->type.common.fill.w, p3->type.common.fill.h);
-
-   if (p3->type.common.spec.gradient.type && p3->type.common.spec.gradient.type[0])
-     evas_object_gradient_type_set(ep->object, p3->type.common.spec.gradient.type, NULL);
-
-   if (ed->file->spectrum_dir && ed->file->spectrum_dir->entries &&
-       p3->type.common.spec.gradient.id != ep->gradient_id)
-     {
-	Edje_Spectrum_Directory_Entry *se;
-	Edje_Spectrum_Color *sc;
-	Eina_List *l;
-
-	se = eina_list_nth(ed->file->spectrum_dir->entries, p3->type.common.spec.gradient.id);
-	if (se)
-	  {
-	     evas_object_gradient_clear(ep->object);
-	     EINA_LIST_FOREACH(se->color_list, l, sc)
-	       {
-		  evas_object_gradient_color_stop_add(ep->object, sc->r,
-						      sc->g, sc->b, 255,
-						      sc->d);
-		  evas_object_gradient_alpha_stop_add(ep->object,
-						      sc->a, sc->d);
-	       }
-	     ep->gradient_id = p3->type.common.spec.gradient.id;
-	  }
+      case EDJE_PART_TYPE_GRADIENT:
+	 /* FIXME: THIS ONE SHOULD NEVER BE TRIGGERED. */
+	 abort();
+	 break;
      }
 }
 
@@ -1714,6 +1623,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
    FLOAT_T pos = ZERO;
    Edje_Calc_Params lp3;
 
+   /* GRADIENT ARE GONE, WE MUST IGNORE IT FROM OLD FILE. */
+   if (ep->part->type == EDJE_PART_TYPE_GRADIENT)
+     return;
+
    if ((ep->calculated & FLAG_XY) == FLAG_XY)
      {
 	return;
@@ -1961,24 +1874,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
   	switch (part_type)
   	  {
   	   case EDJE_PART_TYPE_IMAGE:
-  	   case EDJE_PART_TYPE_GRADIENT:
  	      p3->type.common.fill.x = INTP(p1->type.common.fill.x, p2->type.common.fill.x, pos);
  	      p3->type.common.fill.y = INTP(p1->type.common.fill.y, p2->type.common.fill.y, pos);
  	      p3->type.common.fill.w = INTP(p1->type.common.fill.w, p2->type.common.fill.w, pos);
  	      p3->type.common.fill.h = INTP(p1->type.common.fill.h, p2->type.common.fill.h, pos);
-  	      if (part_type == EDJE_PART_TYPE_GRADIENT)
-  		{
- 		   p3->type.common.fill.angle = INTP(p1->type.common.fill.angle, p2->type.common.fill.angle, pos);
- 		   p3->type.common.fill.spread = (beginning_pos) ? p1->type.common.fill.spread : p2->type.common.fill.spread;
- 		   p3->type.common.spec.gradient = (beginning_pos) ? p1->type.common.spec.gradient : p2->type.common.spec.gradient;
-  		}
-  	      else
-  		{
- 		   p3->type.common.spec.image.l = INTP(p1->type.common.spec.image.l, p2->type.common.spec.image.l, pos);
- 		   p3->type.common.spec.image.r = INTP(p1->type.common.spec.image.r, p2->type.common.spec.image.r, pos);
- 		   p3->type.common.spec.image.t = INTP(p1->type.common.spec.image.t, p2->type.common.spec.image.t, pos);
- 		   p3->type.common.spec.image.b = INTP(p1->type.common.spec.image.b, p2->type.common.spec.image.b, pos);
-  		}
+	      p3->type.common.spec.image.l = INTP(p1->type.common.spec.image.l, p2->type.common.spec.image.l, pos);
+	      p3->type.common.spec.image.r = INTP(p1->type.common.spec.image.r, p2->type.common.spec.image.r, pos);
+	      p3->type.common.spec.image.t = INTP(p1->type.common.spec.image.t, p2->type.common.spec.image.t, pos);
+	      p3->type.common.spec.image.b = INTP(p1->type.common.spec.image.b, p2->type.common.spec.image.b, pos);
   	      break;
   	   case EDJE_PART_TYPE_TEXT:
  	      p3->type.text.size = INTP(p1->type.text.size, p2->type.text.size, pos);
@@ -2033,7 +1936,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                                               chosen_desc->image.scale_hint);
 	   case EDJE_PART_TYPE_RECTANGLE:
 	   case EDJE_PART_TYPE_TEXTBLOCK:
-	   case EDJE_PART_TYPE_GRADIENT:
 	   case EDJE_PART_TYPE_BOX:
 	   case EDJE_PART_TYPE_TABLE:
 	      evas_object_color_set(ep->object,
@@ -2060,6 +1962,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	   case EDJE_PART_TYPE_TEXT:
 	      /* This is correctly handle in _edje_text_recalc_apply at the moment. */
 	      break;
+	   case EDJE_PART_TYPE_GRADIENT:
+	      /* FIXME: definitivly remove this code when we switch to new format. */
+	      abort();
+	      break;
 	  }
 
 	/* Some object need special recalc. */
@@ -2070,9 +1976,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	      break;
 	   case EDJE_PART_TYPE_IMAGE:
 	      _edje_image_recalc_apply(ed, ep, pf, chosen_desc, pos);
-	      break;
-	   case EDJE_PART_TYPE_GRADIENT:
-	      _edje_gradient_recalc_apply(ed, ep, pf, chosen_desc);
 	      break;
 	   case EDJE_PART_TYPE_BOX:
 	      _edje_box_recalc_apply(ed, ep, pf, chosen_desc);
@@ -2086,6 +1989,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	   case EDJE_PART_TYPE_GROUP:
 	   case EDJE_PART_TYPE_TEXTBLOCK:
 	      /* Nothing special to do for this type of object. */
+	      break;
+	   case EDJE_PART_TYPE_GRADIENT:
+	      /* FIXME: definitivly remove this code when we switch to new format. */
+	      abort();
 	      break;
 	  }
 

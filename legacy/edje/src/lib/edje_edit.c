@@ -678,38 +678,6 @@ _edje_if_string_free(Edje *ed, const char *str)
    str = NULL;
 }
 
-static Edje_Spectrum_Directory_Entry *
-_edje_edit_spectrum_entry_get(Edje *ed, const char* spectra)
-{
-   Edje_Spectrum_Directory_Entry *s;
-   Eina_List *l;
-
-   if (!ed->file || !spectra || !ed->file->spectrum_dir)
-      return NULL;
-
-   EINA_LIST_FOREACH(ed->file->spectrum_dir->entries, l, s)
-     if (!strcmp(s->entry, spectra))
-       return s;
-
-   return NULL;
-}
-
-static Edje_Spectrum_Directory_Entry *
-_edje_edit_spectrum_entry_get_by_id(Edje *ed, int spectra_id)
-{
-   Edje_Spectrum_Directory_Entry *s;
-   Eina_List *l;
-
-   if (!ed->file || !ed->file->spectrum_dir)
-      return NULL;
-
-   EINA_LIST_FOREACH(ed->file->spectrum_dir->entries, l, s)
-     if (s->id == spectra_id)
-       return s;
-
-   return NULL;
-}
-
 static Edje_Style *
 _edje_edit_style_get(Edje *ed, const char *name)
 {
@@ -1971,8 +1939,6 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
      }
    else if (ep->type == EDJE_PART_TYPE_TEXTBLOCK)
      rp->object = evas_object_textblock_add(ed->evas);
-   else if (ep->type == EDJE_PART_TYPE_GRADIENT)
-     rp->object = evas_object_gradient_add(ed->evas);
    else
      ERR("wrong part type %i!", ep->type);
    if (rp->object)
@@ -2010,8 +1976,6 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
 	evas_object_clip_set(rp->object, ed->clipper);
 	evas_object_show(ed->clipper);
      }
-   rp->gradient_id = -1;
-
 
    /* Update table_parts */
    ed->table_parts_size++;
@@ -2841,15 +2805,6 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
    pd->text.align.y = 0.5;
    pd->text.id_source = -1;
    pd->text.id_text_source = -1;
-   pd->gradient.rel1.relative_x = 0;
-   pd->gradient.rel1.relative_y = 0;
-   pd->gradient.rel1.offset_x = 0;
-   pd->gradient.rel1.offset_y = 0;
-   pd->gradient.rel2.relative_x = 1;
-   pd->gradient.rel2.relative_y = 1;
-   pd->gradient.rel2.offset_x = -1;
-   pd->gradient.rel2.offset_y = -1;
-   pd->gradient.use_rel = 1;
 
    if ((rp->part->type == EDJE_PART_TYPE_EXTERNAL) && (rp->part->source))
      {
@@ -2962,18 +2917,6 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 	new_i->id = i->id;
 	pdto->image.tween_list = eina_list_append(pdto->image.tween_list, new_i);
      }
-   PD_STRING_COPY(gradient.type);
-   PD_STRING_COPY(gradient.params);
-   PD_COPY(gradient.id);
-   PD_COPY(gradient.use_rel);
-   PD_COPY(gradient.rel1.relative_x);
-   PD_COPY(gradient.rel1.relative_y);
-   PD_COPY(gradient.rel1.offset_x);
-   PD_COPY(gradient.rel1.offset_y);
-   PD_COPY(gradient.rel2.relative_x);
-   PD_COPY(gradient.rel2.relative_y);
-   PD_COPY(gradient.rel2.offset_x);
-   PD_COPY(gradient.rel2.offset_y);
    PD_COPY(border.l);
    PD_COPY(border.r);
    PD_COPY(border.t);
@@ -4824,457 +4767,6 @@ edje_edit_state_image_border_fill_set(Evas_Object *obj, const char *part, const 
 }
 
 /******************/
-/*  SPECTRUM API  */
-/******************/
-
-EAPI Eina_List *
-edje_edit_spectrum_list_get(Evas_Object *obj)
-{
-   Edje_Spectrum_Directory_Entry *s;
-   Eina_List *spectrum = NULL;
-   Eina_List *l;
-
-   GET_ED_OR_RETURN(NULL);
-
-   if (!ed->file) return NULL;
-   if (!ed->file->spectrum_dir) return NULL;
-
-   //printf("GET SPECTRUM LIST for %s\n", ed->file->path);
-
-   EINA_LIST_FOREACH(ed->file->spectrum_dir->entries, l, s)
-     {
-	//printf("SPECTRUM: %s [id: %d]\n", s->entry, s->id);
-	spectrum = eina_list_append(spectrum, eina_stringshare_add(s->entry));
-     }
-
-   return spectrum;
-}
-
-EAPI Eina_Bool
-edje_edit_spectra_add(Evas_Object *obj, const char* name)
-{
-   GET_ED_OR_RETURN(EINA_FALSE);
-
-   //printf("SPECTRA ADD [new name:%s]\n", name);
-
-   Edje_Spectrum_Directory_Entry *s;
-
-   if (!ed->file) return EINA_FALSE;
-
-   if (_edje_edit_spectrum_entry_get(ed, name)) return EINA_FALSE;
-
-   if (!ed->file->spectrum_dir)
-     {
-	ed->file->spectrum_dir = _alloc(sizeof(Edje_Spectrum_Directory));
-	if (!ed->file->spectrum_dir) return EINA_FALSE;
-     }
-
-   s = _alloc(sizeof(Edje_Spectrum_Directory_Entry));
-   if (!s) return EINA_FALSE;
-   ed->file->spectrum_dir->entries = eina_list_append(ed->file->spectrum_dir->entries, s);
-   s->id = eina_list_count(ed->file->spectrum_dir->entries) - 1; //TODO Search for id holes
-   s->entry = (char*)eina_stringshare_add(name);
-   s->filename = NULL;
-   s->color_list = NULL;
-
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-edje_edit_spectra_del(Evas_Object *obj, const char* spectra)
-{
-   Edje_Spectrum_Directory_Entry *s;
-
-   GET_ED_OR_RETURN(EINA_FALSE);
-
-   s = _edje_edit_spectrum_entry_get(ed, spectra);
-   if (!s) return EINA_FALSE;
-
-   //printf("SPECTRA DEL %s\n", spectra);
-
-   ed->file->spectrum_dir->entries = eina_list_remove(ed->file->spectrum_dir->entries, s);
-   _edje_if_string_free(ed, s->entry);
-   _edje_if_string_free(ed, s->filename);
-   while (s->color_list)
-     {
-        Edje_Spectrum_Color *color;
-        color = eina_list_data_get(s->color_list);
-        free(color);
-        s->color_list = eina_list_remove_list(s->color_list, s->color_list);
-     }
-   free(s);
-
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-edje_edit_spectra_name_set(Evas_Object *obj, const char* spectra, const char* name)
-{
-   Edje_Spectrum_Directory_Entry *s;
-
-   GET_ED_OR_RETURN(EINA_FALSE);
-
-   //printf("SET SPECTRA NAME for spectra: %s [new name:%s]\n", spectra, name);
-
-   s = _edje_edit_spectrum_entry_get(ed, spectra);
-   if (!s) return EINA_FALSE;
-
-   _edje_if_string_free(ed, s->entry);
-   s->entry = (char*)eina_stringshare_add(name);
-
-   return EINA_TRUE;
-}
-
-EAPI int
-edje_edit_spectra_stop_num_get(Evas_Object *obj, const char* spectra)
-{
-   Edje_Spectrum_Directory_Entry *s;
-
-   GET_ED_OR_RETURN(EINA_FALSE);
-
-   //printf("GET SPECTRA STOP NUM for spectra: %s\n", spectra);
-
-   s = _edje_edit_spectrum_entry_get(ed, spectra);
-   if (!s) return EINA_FALSE;
-
-   return eina_list_count(s->color_list);
-}
-
-EAPI Eina_Bool
-edje_edit_spectra_stop_num_set(Evas_Object *obj, const char* spectra, int num)
-{
-   Edje_Spectrum_Directory_Entry *s;
-   Edje_Spectrum_Color *color;
-   GET_ED_OR_RETURN(EINA_FALSE);
-
-   //printf("SET SPECTRA STOP NUM for spectra: %s\n", spectra);
-
-   s = _edje_edit_spectrum_entry_get(ed, spectra);
-   if (!s) return EINA_FALSE;
-
-   if (num == (int) eina_list_count(s->color_list)) return EINA_TRUE;
-
-   //destroy all colors
-   while (s->color_list)
-     {
-        color = eina_list_data_get(s->color_list);
-        free(color);
-        s->color_list = eina_list_remove_list(s->color_list, s->color_list);
-     }
-
-   //... and recreate (TODO we should optimize this function)
-   while (num)
-     {
-        color = _alloc(sizeof(Edje_Spectrum_Color));
-        if (!color) return EINA_FALSE;
-        s->color_list = eina_list_append(s->color_list, color);
-        color->r = 255;
-        color->g = 255;
-        color->b = 255;
-        color->a = 255;
-        color->d = 10;
-        num--;
-     }
-
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-edje_edit_spectra_stop_color_get(Evas_Object *obj, const char* spectra, int stop_number, int *r, int *g, int *b, int *a, int *d)
-{
-   Edje_Spectrum_Directory_Entry *s;
-   Edje_Spectrum_Color *color;
-   GET_ED_OR_RETURN(EINA_FALSE);
-
-   s = _edje_edit_spectrum_entry_get(ed, spectra);
-   if (!s) return EINA_FALSE;
-   //printf("GET SPECTRA STOP COLOR for spectra: %s stopn: %d\n", spectra, stop_number);
-
-   color = eina_list_nth(s->color_list, stop_number);
-   if (!color) return EINA_FALSE;
-   if (r) *r = color->r;
-   if (g) *g = color->g;
-   if (b) *b = color->b;
-   if (a) *a = color->a;
-   if (d) *d = color->d;
-
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-edje_edit_spectra_stop_color_set(Evas_Object *obj, const char* spectra, int stop_number, int r, int g, int b, int a, int d)
-{
-   Edje_Spectrum_Directory_Entry *s;
-   Edje_Spectrum_Color *color;
-   GET_ED_OR_RETURN(EINA_FALSE);
-
-   s = _edje_edit_spectrum_entry_get(ed, spectra);
-   if (!s) return EINA_FALSE;
-   //printf("SET SPECTRA STOP COLOR for spectra: %s stopn: %d\n", spectra, stop_number);
-
-   color = eina_list_nth(s->color_list, stop_number);
-   if (!color) return EINA_FALSE;
-   color->r = r;
-   color->g = g;
-   color->b = b;
-   color->a = a;
-   color->d = d;
-
-   edje_object_calc_force(obj);
-
-   return EINA_TRUE;
-}
-
-
-/******************/
-/*  GRADIENT API  */
-/******************/
-
-EAPI const char *
-edje_edit_state_gradient_type_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(NULL);
-
-   if (!pd->gradient.type)
-      return NULL;
-
-//   printf("GET GRADIENT TYPE for part: %s state: %s [%s]\n", part, state, pd->gradient.type);
-
-   return eina_stringshare_add(pd->gradient.type);
-}
-
-EAPI Eina_Bool
-edje_edit_state_gradient_type_set(Evas_Object *obj, const char *part, const char *state, double value, const char *type)
-{
-   GET_PD_OR_RETURN(EINA_FALSE);
-   if (!type) return EINA_FALSE;
-
-//   printf("SET GRADIENT TYPE for part: %s state: %s TO: %s\n", part, state, type);
-
-   _edje_if_string_free(ed, pd->gradient.type);
-   pd->gradient.type = (char *)eina_stringshare_add(type);
-   edje_object_calc_force(obj);
-   return EINA_TRUE;
-}
-
-
-EAPI Eina_Bool
-edje_edit_state_gradient_use_fill_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(EINA_FALSE);
-
-   if (!pd->gradient.type)
-      return EINA_FALSE;
-
-   //~ if (!strcmp(pd->gradient.type, "linear"))
-      //~ return 0;
-   return EINA_TRUE;
-}
-
-EAPI const char *
-edje_edit_state_gradient_spectra_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   Edje_Spectrum_Directory_Entry *s;
-
-   GET_PD_OR_RETURN(0);
-
-   //printf("GET GRADIENT SPECTRA for part: %s state: %s\n", part, state);
-   s = _edje_edit_spectrum_entry_get_by_id(ed, pd->gradient.id);
-   if (!s) return 0;
-
-   return eina_stringshare_add(s->entry);
-}
-
-EAPI Eina_Bool
-edje_edit_state_gradient_spectra_set(Evas_Object *obj, const char *part, const char *state, double value, const char* spectra)
-{
-   Edje_Spectrum_Directory_Entry *s;
-
-   GET_PD_OR_RETURN(EINA_FALSE);
-
-   //printf("SET GRADIENT SPECTRA for part: %s state: %s [%s]\n", part, state, spectra);
-
-   s = _edje_edit_spectrum_entry_get(ed, spectra);
-   if (!s) return EINA_FALSE;
-
-   pd->gradient.id = s->id;
-   edje_object_calc_force(obj);
-
-   return EINA_TRUE;
-}
-
-EAPI int
-edje_edit_state_gradient_angle_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   return pd->fill.angle;
-}
-
-EAPI void
-edje_edit_state_gradient_angle_set(Evas_Object *obj, const char *part, const char *state, double value, int angle)
-{
-   GET_PD_OR_RETURN();
-   pd->fill.angle = angle;
-   edje_object_calc_force(obj);
-}
-
-EAPI double
-edje_edit_state_gradient_rel1_relative_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("GET GRADIENT REL1 RELX for part: %s state: %s [%f]\n", part, state, pd->gradient.rel1.relative_x);
-
-   return TO_DOUBLE(pd->gradient.rel1.relative_x);
-}
-
-EAPI double
-edje_edit_state_gradient_rel1_relative_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("GET GRADIENT REL1 RELY for part: %s state: %s [%f]\n", part, state, pd->gradient.rel1.relative_y);
-
-   return TO_DOUBLE(pd->gradient.rel1.relative_y);
-}
-
-EAPI double
-edje_edit_state_gradient_rel2_relative_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("GET GRADIENT REL2 RELX for part: %s state: %s [%f]\n", part, state, pd->gradient.rel2.relative_x);
-
-   return TO_DOUBLE(pd->gradient.rel2.relative_x);
-}
-
-EAPI double
-edje_edit_state_gradient_rel2_relative_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("GET GRADIENT REL2 RELY for part: %s state: %s [%f]\n", part, state, pd->gradient.rel2.relative_y);
-
-   return TO_DOUBLE(pd->gradient.rel2.relative_y);
-}
-
-EAPI Eina_Bool
-edje_edit_state_gradient_rel1_relative_x_set(Evas_Object *obj, const char *part, const char *state, double value, double val)
-{
-   GET_PD_OR_RETURN(EINA_FALSE);
-   //printf("SET GRADIENT REL1 RELX for part: %s state: %s [TO %f]\n", part, state, val);
-
-   pd->gradient.rel1.relative_x = FROM_DOUBLE(val);
-   edje_object_calc_force(obj);
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-edje_edit_state_gradient_rel1_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double val)
-{
-   GET_PD_OR_RETURN(EINA_FALSE);
-   //printf("SET GRADIENT REL1 RELY for part: %s state: %s [TO %f]\n", part, state, val);
-
-   pd->gradient.rel1.relative_y = FROM_DOUBLE(val);
-   edje_object_calc_force(obj);
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-edje_edit_state_gradient_rel2_relative_x_set(Evas_Object *obj, const char *part, const char *state, double value, double val)
-{
-   GET_PD_OR_RETURN(EINA_FALSE);
-   //printf("SET GRADIENT REL2 RELX for part: %s state: %s [TO %f]\n", part, state, val);
-
-   pd->gradient.rel2.relative_x = FROM_DOUBLE(val);
-   edje_object_calc_force(obj);
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-edje_edit_state_gradient_rel2_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double val)
-{
-   GET_PD_OR_RETURN(EINA_FALSE);
-   //printf("SET GRADIENT REL2 RELY for part: %s state: %s [TO %f]\n", part, state, val);
-
-   pd->gradient.rel2.relative_y = FROM_DOUBLE(val);
-   edje_object_calc_force(obj);
-   return EINA_TRUE;
-}
-
-EAPI int
-edje_edit_state_gradient_rel1_offset_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("GET GRADIENT REL1 OFFSETX for part: %s state: %s [%f]\n", part, state, pd->gradient.rel1.offset_x);
-   return pd->gradient.rel1.offset_x;
-}
-
-EAPI int
-edje_edit_state_gradient_rel1_offset_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("GET GRADIENT REL1 OFFSETY for part: %s state: %s [%f]\n", part, state, pd->gradient.rel1.offset_y);
-   return pd->gradient.rel1.offset_y;
-}
-
-EAPI int
-edje_edit_state_gradient_rel2_offset_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("GET GRADIENT REL2 OFFSETX for part: %s state: %s [%f]\n", part, state, pd->gradient.rel2.offset_x);
-   return pd->gradient.rel2.offset_x;
-}
-
-EAPI int
-edje_edit_state_gradient_rel2_offset_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("GET GRADIENT REL2 OFFSETY for part: %s state: %s [%f]\n", part, state, pd->gradient.rel2.offset_y);
-   return pd->gradient.rel2.offset_y;
-}
-
-EAPI Eina_Bool
-edje_edit_state_gradient_rel1_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, int val)
-{
-   GET_PD_OR_RETURN(EINA_FALSE);
-   //printf("SET GRADIENT REL1 OFFSETX for part: %s state: %s [TO %d]\n", part, state, val);
-
-   pd->gradient.rel1.offset_x = val;
-   edje_object_calc_force(obj);
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-edje_edit_state_gradient_rel1_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, int val)
-{
-   GET_PD_OR_RETURN(EINA_FALSE);
-   //printf("SET GRADIENT REL1 OFFSETY for part: %s state: %s [TO %d]\n", part, state, val);
-
-   pd->gradient.rel1.offset_y = val;
-   edje_object_calc_force(obj);
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-edje_edit_state_gradient_rel2_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, int val)
-{
-   GET_PD_OR_RETURN(EINA_FALSE);
-   //printf("SET GRADIENT REL2 OFFSETX for part: %s state: %s [TO %d]\n", part, state, val);
-
-   pd->gradient.rel2.offset_x = val;
-   edje_object_calc_force(obj);
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-edje_edit_state_gradient_rel2_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, int val)
-{
-   GET_PD_OR_RETURN(EINA_FALSE);
-   //printf("SET GRADIENT REL2 OFFSETY for part: %s state: %s [TO %d]\n", part, state, val);
-
-   pd->gradient.rel2.offset_y = val;
-   edje_object_calc_force(obj);
-   return EINA_TRUE;
-}
-
-/******************/
 /*  PROGRAMS API  */
 /******************/
 Edje_Program *
@@ -6091,32 +5583,9 @@ edje_edit_script_get(Evas_Object *obj)
 #define BUF_APPENDF(FMT, ...) \
    ret &= eina_strbuf_append_printf(buf, FMT, ##__VA_ARGS__)
 
-static char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP", "BOX", "TABLE", "EXTERNAL"};
+static char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GROUP", "BOX", "TABLE", "EXTERNAL"};
 static char *effects[] = {"NONE", "PLAIN", "OUTLINE", "SOFT_OUTLINE", "SHADOW", "SOFT_SHADOW", "OUTLINE_SHADOW", "OUTLINE_SOFT_SHADOW ", "FAR_SHADOW ", "FAR_SOFT_SHADOW", "GLOW"};
 static char *prefers[] = {"NONE", "VERTICAL", "HORIZONTAL", "BOTH"};
-static Eina_Bool
-_edje_generate_source_of_spectra(Edje * ed, const char *name, Eina_Strbuf *buf)
-{
-   Edje_Spectrum_Directory_Entry *d;
-   Edje_Spectrum_Color *color = NULL;
-   Eina_List *l;
-   Eina_Bool ret = EINA_TRUE;
-
-   if (!ed || !name || !buf) return EINA_FALSE;
-
-   if ((d = _edje_edit_spectrum_entry_get(ed, name)))
-     {
-	BUF_APPENDF(I1 "spectrum { name: \"%s\";\n", d->entry);
-
-	EINA_LIST_FOREACH(d->color_list, l, color)
-	  if (color)
-	    BUF_APPENDF(I2 "color: %d %d %d %d %d;\n", color->r, color->g,
-			color->b, color->a, color->d);
-
-	BUF_APPEND(I1 "}\n");
-     }
-   return ret;
-}
 
  static Eina_Bool
 _edje_generate_source_of_colorclass(Edje * ed, const char *name, Eina_Strbuf *buf)
@@ -6422,16 +5891,12 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
      }
 
    //Fill
-   if (rp->part->type == EDJE_PART_TYPE_IMAGE ||
-       rp->part->type == EDJE_PART_TYPE_GRADIENT)
+   if (rp->part->type == EDJE_PART_TYPE_IMAGE)
      {
 	BUF_APPEND(I5"fill {\n");
 	if (rp->part->type == EDJE_PART_TYPE_IMAGE && !pd->fill.smooth)
 	  BUF_APPEND(I6"smooth: 0;\n");
         //TODO Support spread
-	if (rp->part->type == EDJE_PART_TYPE_GRADIENT && pd->fill.angle)
-	  BUF_APPENDF(I6"angle: %d;\n", pd->fill.angle);
-        //TODO Support type
 
 	if (pd->fill.pos_rel_x || pd->fill.pos_rel_y ||
             pd->fill.pos_abs_x || pd->fill.pos_abs_y)
@@ -6477,21 +5942,6 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
         //TODO Support text_source
 	if (pd->text.elipsis)
 	  BUF_APPENDF(I6"elipsis: %g;\n", pd->text.elipsis);
-	BUF_APPEND(I5"}\n");
-     }
-
-   //Gradient
-   if (rp->part->type == EDJE_PART_TYPE_GRADIENT)
-     {
-	BUF_APPEND(I5"gradient {\n");
-	BUF_APPENDF(I6"type: \"%s\";\n", pd->gradient.type);
-	str = edje_edit_state_gradient_spectra_get(obj, part, state, value);
-	if (str)
-	  {
-		BUF_APPENDF(I6"spectrum: \"%s\";\n", str);
-		edje_edit_string_free(str);
-	  }
-        //TODO rel1 and 2 seems unused
 	BUF_APPEND(I5"}\n");
      }
 
@@ -6831,25 +6281,6 @@ _edje_generate_source(Evas_Object *obj)
 	if (!ret)
 	  {
 	     ERR("Generating EDC for Color Classes");
-	     eina_strbuf_free(buf);
-	     return NULL;
-	  }
-     }
-
-   /* Spectrum */
-   if ((ll = edje_edit_spectrum_list_get(obj)))
-     {
-	BUF_APPEND(I0 "spectra {\n");
-
-	EINA_LIST_FOREACH(ll, l, entry)
-	  _edje_generate_source_of_spectra(ed, entry, buf);
-
-	BUF_APPEND(I0 "}\n\n");
-	edje_edit_string_list_free(ll);
-
-	if (!ret)
-	  {
-	     ERR("Generating EDC for Spectrum");
 	     eina_strbuf_free(buf);
 	     return NULL;
 	  }

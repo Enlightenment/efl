@@ -30,7 +30,6 @@ struct _Old_Edje_File
    Old_Edje_External_Directory    *external_dir;
    Old_Edje_Font_Directory        *font_dir;
    Old_Edje_Image_Directory       *image_dir;
-   Edje_Spectrum_Directory        *spectrum_dir;
    Edje_Part_Collection_Directory *collection_dir;
    Eina_List                      *data;
    Eina_List                      *styles;

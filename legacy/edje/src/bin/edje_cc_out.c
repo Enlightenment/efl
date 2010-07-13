@@ -41,7 +41,6 @@ typedef struct _Part_Lookup Part_Lookup;
 typedef struct _Program_Lookup Program_Lookup;
 typedef struct _Group_Lookup Group_Lookup;
 typedef struct _Image_Lookup Image_Lookup;
-typedef struct _String_Lookup Spectrum_Lookup;
 typedef struct _Slave_Lookup Slave_Lookup;
 typedef struct _Code_Lookup Code_Lookup;
 
@@ -110,8 +109,6 @@ Eina_List *aliases = NULL;
 static Eet_Data_Descriptor *edd_edje_file = NULL;
 static Eet_Data_Descriptor *edd_edje_image_directory = NULL;
 static Eet_Data_Descriptor *edd_edje_image_directory_entry = NULL;
-static Eet_Data_Descriptor *edd_edje_spectrum_directory = NULL;
-static Eet_Data_Descriptor *edd_edje_spectrum_directory_entry = NULL;
 static Eet_Data_Descriptor *edd_edje_program = NULL;
 static Eet_Data_Descriptor *edd_edje_program_target = NULL;
 static Eet_Data_Descriptor *edd_edje_part_collection_directory = NULL;
@@ -120,16 +117,13 @@ static Eet_Data_Descriptor *edd_edje_part_collection = NULL;
 static Eet_Data_Descriptor *edd_edje_part = NULL;
 static Eet_Data_Descriptor *edd_edje_part_description = NULL;
 static Eet_Data_Descriptor *edd_edje_part_image_id = NULL;
-static Eet_Data_Descriptor *edd_edje_spectrum_color = NULL;
 
 static Eina_List *part_lookups = NULL;
 static Eina_List *program_lookups = NULL;
 static Eina_List *group_lookups = NULL;
 static Eina_List *image_lookups = NULL;
-static Eina_List *spectrum_lookups = NULL;
 static Eina_List *part_slave_lookups = NULL;
 static Eina_List *image_slave_lookups= NULL;
-static Eina_List *spectrum_slave_lookups= NULL;
 
 #define ABORT_WRITE(eet_file, file) \
    eet_close(eet_file); \
@@ -155,8 +149,6 @@ data_setup(void)
    edd_edje_file = _edje_edd_edje_file;
    edd_edje_image_directory = _edje_edd_edje_image_directory;
    edd_edje_image_directory_entry = _edje_edd_edje_image_directory_entry;
-   edd_edje_spectrum_directory = _edje_edd_edje_spectrum_directory;
-   edd_edje_spectrum_directory_entry = _edje_edd_edje_spectrum_directory_entry;
    edd_edje_program = _edje_edd_edje_program;
    edd_edje_program_target = _edje_edd_edje_program_target;
    edd_edje_part_collection_directory = _edje_edd_edje_part_collection_directory;
@@ -165,7 +157,6 @@ data_setup(void)
    edd_edje_part = _edje_edd_edje_part;
    edd_edje_part_description = _edje_edd_edje_part_description;
    edd_edje_part_image_id = _edje_edd_edje_part_image_id;
-   edd_edje_spectrum_color = _edje_edd_edje_spectrum_color;
 }
 
 static void
@@ -250,16 +241,6 @@ check_program (Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
       default:
 	 break;
      }
-}
-
-static void
-check_spectrum (Edje_Spectrum_Directory_Entry *se, Eet_File *ef)
-{
-   if (!se->entry)
-     error_and_abort(ef, "Spectrum missing a name.\n");
-   else if (!se->color_list)
-     error_and_abort(ef, "Spectrum %s is empty. At least one color must be "
-		     "given.", se->entry);
 }
 
 static int
@@ -665,20 +646,6 @@ check_groups_names(Eet_File *ef)
 }
 
 static void
-check_spectra(Eet_File *ef)
-{
-   Eina_List *l;
-   Edje_Spectrum_Directory_Entry *se;
-
-   if (!edje_file->spectrum_dir)
-     return;
-
-   /* check that all spectra are valid */
-   EINA_LIST_FOREACH(edje_file->spectrum_dir->entries, l, se)
-     check_spectrum(se, ef);
-}
-
-static void
 check_groups(Eet_File *ef)
 {
    Eina_List *l;
@@ -1079,7 +1046,6 @@ data_write(void)
 				    &input_raw_bytes);
 
    check_groups_names(ef);
-   check_spectra(ef);
    check_groups(ef);
 
    total_bytes += data_write_groups(ef, &collection_num);
@@ -1181,17 +1147,6 @@ data_queue_image_lookup(char *name, int *dest, Eina_Bool *set)
 }
 
 void
-data_queue_spectrum_lookup(char *name, int *dest)
-{
-   Spectrum_Lookup *sl;
-
-   sl = mem_alloc(SZ(Spectrum_Lookup));
-   spectrum_lookups = eina_list_append(spectrum_lookups, sl);
-   sl->name = mem_strdup(name);
-   sl->dest = dest;
-}
-
-void
 data_queue_part_slave_lookup(int *master, int *slave)
 {
    Slave_Lookup *sl;
@@ -1209,17 +1164,6 @@ data_queue_image_slave_lookup(int *master, int *slave)
 
    sl = mem_alloc(SZ(Slave_Lookup));
    image_slave_lookups = eina_list_append(image_slave_lookups, sl);
-   sl->master = master;
-   sl->slave = slave;
-}
-
-void
-data_queue_spectrum_slave_lookup(int *master, int *slave)
-{
-   Slave_Lookup *sl;
-
-   sl = mem_alloc(SZ(Slave_Lookup));
-   spectrum_slave_lookups = eina_list_append(spectrum_slave_lookups, sl);
    sl->master = master;
    sl->slave = slave;
 }
@@ -1371,40 +1315,6 @@ data_process_lookups(void)
 	free(il);
      }
 
-   while (spectrum_lookups)
-     {
-	Spectrum_Lookup *il;
-	Edje_Spectrum_Directory_Entry *de;
-
-	il = eina_list_data_get(spectrum_lookups);
-
-	if (!edje_file->spectrum_dir)
-	  l = NULL;
-	else
-	  {
-	     EINA_LIST_FOREACH(edje_file->spectrum_dir->entries, l, de)
-	       {
-		  *(il->dest) = 1;
-		  if ((de->entry) && (!strcmp(de->entry, il->name)))
-		    {
-		       handle_slave_lookup(spectrum_slave_lookups, il->dest, de->id);
-		       *(il->dest) = de->id;
-		       break;
-		    }
-	       }
-	  }
-
-	if (!l)
-	  {
-	     ERR("%s: Error. unable to find spectrum name %s",
-		 progname, il->name);
-	     exit(-1);
-	  }
-	spectrum_lookups = eina_list_remove(spectrum_lookups, il);
-	free(il->name);
-	free(il);
-     }
-
    while (part_slave_lookups)
      {
         free(eina_list_data_get(part_slave_lookups));
@@ -1415,12 +1325,6 @@ data_process_lookups(void)
      {
         free(eina_list_data_get(image_slave_lookups));
 	image_slave_lookups = eina_list_remove_list(image_slave_lookups, image_slave_lookups);
-     }
-
-   while (spectrum_slave_lookups)
-     {
-        free(eina_list_data_get(spectrum_slave_lookups));
-	spectrum_slave_lookups = eina_list_remove_list(spectrum_slave_lookups, spectrum_slave_lookups);
      }
 }
 
