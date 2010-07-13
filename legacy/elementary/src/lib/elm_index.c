@@ -196,9 +196,9 @@ _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level)
         o = edje_object_add(evas_object_evas_get(obj));
         it->base = o;
         if (i & 0x1)
-          _elm_theme_object_set(obj, o, "index", "item_odd/vertical", "default");
+          _elm_theme_object_set(obj, o, "index", "item_odd/vertical", elm_widget_style_get(obj));
         else
-          _elm_theme_object_set(obj, o, "index", "item/vertical", "default");
+          _elm_theme_object_set(obj, o, "index", "item/vertical", elm_widget_style_get(obj));
         edje_object_part_text_set(o, "elm.text", it->letter);
         edje_object_size_min_restricted_calc(o, &mw, &mh, 0, 0);
         evas_object_size_hint_min_set(o, mw, mh);
