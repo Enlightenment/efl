@@ -19,12 +19,6 @@
 #ifndef EINA_FILE_H_
 #define EINA_FILE_H_
 
-#include <dirent.h>
-
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "eina_types.h"
 #include "eina_array.h"
 #include "eina_iterator.h"
