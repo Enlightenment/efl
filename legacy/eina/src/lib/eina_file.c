@@ -49,9 +49,6 @@ void *alloca (size_t);
 # include <sys/stat.h>
 # include <unistd.h>
 #else
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
 # include <Evil.h>
 #endif /* _WIN2 */
 

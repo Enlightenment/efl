@@ -288,10 +288,12 @@ if test "x${enable_ememoa}" = "xyes" ; then
    )
 fi
 
+
 ### Checks for header files
 AC_HEADER_ASSERT
 AC_HEADER_DIRENT
 AC_HEADER_TIME
+
 
 ### Checks for types
 
