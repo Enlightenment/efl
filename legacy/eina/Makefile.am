@@ -37,8 +37,9 @@ m4/efl_compiler_flag.m4 \
 m4/efl_coverage.m4 \
 m4/efl_cpu.m4 \
 m4/efl_doxygen.m4 \
-m4/efl_pthread.m4 \
+m4/efl_fnmatch.m4 \
 m4/efl_tests.m4 \
+m4/efl_threads.m4 \
 m4/eina_bench.m4 \
 m4/eina_check.m4
 

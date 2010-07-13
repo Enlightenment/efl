@@ -70,7 +70,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_POSIX_THREADS
 # include <pthread.h>
 #endif
 
@@ -180,21 +180,32 @@ static int _eina_stringshare_log_dom = -1;
 
 
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
 static Eina_Bool _stringshare_threads_activated = EINA_FALSE;
-//string < 4
+
+# ifdef EFL_HAVE_POSIX_THREADS
+/* string < 4 */
 static pthread_mutex_t _mutex_small = PTHREAD_MUTEX_INITIALIZER;
-//string >= 4
+/* string >= 4 */
 static pthread_mutex_t _mutex_big = PTHREAD_MUTEX_INITIALIZER;
-#define STRINGSHARE_LOCK_SMALL() if(_stringshare_threads_activated) pthread_mutex_lock(&_mutex_small)
-#define STRINGSHARE_UNLOCK_SMALL() if(_stringshare_threads_activated) pthread_mutex_unlock(&_mutex_small)
-#define STRINGSHARE_LOCK_BIG() if(_stringshare_threads_activated) pthread_mutex_lock(&_mutex_big)
-#define STRINGSHARE_UNLOCK_BIG() if(_stringshare_threads_activated) pthread_mutex_unlock(&_mutex_big)
-#else
-#define STRINGSHARE_LOCK_SMALL() do {} while (0)
-#define STRINGSHARE_UNLOCK_SMALL() do {} while (0)
-#define STRINGSHARE_LOCK_BIG() do {} while (0)
-#define STRINGSHARE_UNLOCK_BIG() do {} while (0)
+#  define STRINGSHARE_LOCK_SMALL() if(_stringshare_threads_activated) pthread_mutex_lock(&_mutex_small)
+#  define STRINGSHARE_UNLOCK_SMALL() if(_stringshare_threads_activated) pthread_mutex_unlock(&_mutex_small)
+#  define STRINGSHARE_LOCK_BIG() if(_stringshare_threads_activated) pthread_mutex_lock(&_mutex_big)
+#  define STRINGSHARE_UNLOCK_BIG() if(_stringshare_threads_activated) pthread_mutex_unlock(&_mutex_big)
+# else /* EFL_HAVE_WIN32_THREADS */
+static HANDLE _mutex_small = NULL;
+static HANDLE _mutex_big = NULL;
+#  define STRINGSHARE_LOCK_SMALL() if(_stringshare_threads_activated) WaitForSingleObject(_mutex_small, INFINITE)
+#  define STRINGSHARE_UNLOCK_SMALL() if(_stringshare_threads_activated) ReleaseMutex(_mutex_small)
+#  define STRINGSHARE_LOCK_BIG() if(_stringshare_threads_activated) WaitForSingleObject(_mutex_big, INFINITE)
+#  define STRINGSHARE_UNLOCK_BIG() if(_stringshare_threads_activated) ReleaseMutex(_mutex_big)
+
+# endif /* EFL_HAVE_WIN32_THREADS */
+#else /* EFL_HAVE_THREADS */
+# define STRINGSHARE_LOCK_SMALL() do {} while (0)
+# define STRINGSHARE_UNLOCK_SMALL() do {} while (0)
+# define STRINGSHARE_LOCK_BIG() do {} while (0)
+# define STRINGSHARE_UNLOCK_BIG() do {} while (0)
 #endif
 
 
@@ -1014,7 +1025,7 @@ eina_stringshare_shutdown(void)
    return EINA_TRUE;
 }
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
 
 /**
  * @internal

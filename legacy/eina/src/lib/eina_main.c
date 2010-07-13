@@ -22,8 +22,14 @@
 # include "config.h"
 #endif
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_POSIX_THREADS
 # include <pthread.h>
+#endif
+
+#ifdef EFL_HAVE_WIN32_THREADS
+# define WIN32_LEAN_AND_MEAN
+# include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
 #endif
 
 #include "eina_config.h"
@@ -55,7 +61,7 @@ EAPI Eina_Version *eina_version = &_version;
  */
 
 static int _eina_main_count = 0;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
 static int _eina_main_thread_count = 0;
 #endif
 static int _eina_log_dom = -1;
@@ -70,16 +76,23 @@ static int _eina_log_dom = -1;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_log_dom, __VA_ARGS__)
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
 static Eina_Bool _threads_activated = EINA_FALSE;
+# ifdef EFL_HAVE_POSIX_THREADS
 static pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
-#define LOCK() if(_threads_activated) pthread_mutex_lock(&_mutex)
-#define UNLOCK() if(_threads_activated) pthread_mutex_unlock(&_mutex)
-#define UNLOCK_FORCE() pthread_mutex_unlock(&_mutex)
+#  define LOCK() if(_threads_activated) pthread_mutex_lock(&_mutex)
+#  define UNLOCK() if(_threads_activated) pthread_mutex_unlock(&_mutex)
+#  define UNLOCK_FORCE() pthread_mutex_unlock(&_mutex)
+# else /* EFL_HAVE_WIN32_THREADS */
+static HANDLE _mutex = NULL;
+#  define LOCK() if(_threads_activated) WaitForSingleObject(_mutex, INFINITE)
+#  define UNLOCK() if(_threads_activated) ReleaseMutex(_mutex)
+#  define UNLOCK_FORCE() ReleaseMutex(_mutex)
+# endif
 #else
-#define LOCK() do {} while (0)
-#define UNLOCK() do {} while (0)
-#define UNLOCK_FORCE() do {} while (0)
+# define LOCK() do {} while (0)
+# define UNLOCK() do {} while (0)
+# define UNLOCK_FORCE() do {} while (0)
 #endif
 
 /* place module init/shutdown functions here to avoid other modules
@@ -262,8 +275,14 @@ eina_shutdown(void)
 EAPI int
 eina_threads_init(void)
 {
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
     int ret;
+
+# ifdef EFL_HAVE_WIN32_THREADS
+    if (!_mutex)
+      _mutex = CreateMutex(NULL, FALSE, NULL);
+    if (!_mutex) return 0;
+# endif
     
     LOCK();
     ++_eina_main_thread_count;
@@ -302,7 +321,7 @@ eina_threads_init(void)
 EAPI int
 eina_threads_shutdown(void)
 {
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
     int ret;
 
     LOCK();
@@ -319,6 +338,10 @@ eina_threads_shutdown(void)
     _threads_activated = EINA_FALSE;
 
     UNLOCK_FORCE();
+
+# ifdef EFL_HAVE_WIN32_THREADS
+    if (_mutex) CloseHandle(_mutex);
+# endif
 
     return ret;
 #else

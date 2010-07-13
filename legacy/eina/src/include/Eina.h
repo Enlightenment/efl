@@ -109,6 +109,12 @@
  * make it safer, log errors, manage memory more efficiently and more.
  */
 
+#include <dirent.h>
+
+#ifdef _WIN32
+# include <Evil.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -26,8 +26,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_POSIX_THREADS
 #include <pthread.h>
+#endif
+
+#ifdef EFL_HAVE_WIN32_THREADS
+# define WIN32_LEAN_AND_MEAN
+# include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
 #endif
 
 #include "eina_inlist.h"
@@ -57,8 +63,12 @@ struct _Chained_Mempool
    int item_size;
    int pool_size;
    int usage;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
+# ifdef EFL_HAVE_POSIX_THREADS
    pthread_mutex_t mutex;
+# else
+   HANDLE mutex;
+# endif
 #endif
 };
 
@@ -100,8 +110,12 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
    Chained_Pool *p = NULL;
    void *mem;
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
+# ifdef EFL_HAVE_POSIX_THREADS
    pthread_mutex_lock(&pool->mutex);
+# else
+   WaitForSingleObject(pool->mutex, INFINITE);
+# endif
 #endif
 
    // look 4 pool from 2nd bucket on
@@ -122,7 +136,11 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
 	if (!p)
 	  {
 #ifdef EFL_HAVE_PTHREAD
+# ifdef EFL_HAVE_POSIX_THREADS
 	     pthread_mutex_unlock(&pool->mutex);
+# else
+	     ReleaseMutex(pool->mutex);
+# endif
 #endif
 	     return NULL;
 	  }
@@ -138,9 +156,14 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
    p->usage++;
    pool->usage++;
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
+# ifdef EFL_HAVE_POSIX_THREADS
    pthread_mutex_unlock(&pool->mutex);
+# else
+   ReleaseMutex(pool->mutex);
+# endif
 #endif
+
    return mem;
 }
 
@@ -156,8 +179,12 @@ eina_chained_mempool_free(void *data, void *ptr)
    psize = item_alloc * pool->pool_size;
    // look 4 pool
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
+# ifdef EFL_HAVE_POSIX_THREADS
    pthread_mutex_lock(&pool->mutex);
+# else
+   WaitForSingleObject(pool->mutex, INFINITE);
+# endif
 #endif
 
    EINA_INLIST_FOREACH(pool->first, p)
@@ -187,8 +214,12 @@ eina_chained_mempool_free(void *data, void *ptr)
 	  }
      }
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
+# ifdef EFL_HAVE_POSIX_THREADS
    pthread_mutex_unlock(&pool->mutex);
+# else
+   ReleaseMutex(pool->mutex);
+# endif
 #endif
 }
 
@@ -218,8 +249,12 @@ eina_chained_mempool_init(const char *context, __UNUSED__ const char *option, va
 	memcpy((char*) mp->name, context, length);
      }
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
+# ifdef EFL_HAVE_POSIX_THREADS
    pthread_mutex_init(&mp->mutex, NULL);
+# else
+   mp->mutex = CreateMutex(NULL, FALSE, NULL);
+# endif
 #endif
 
    return mp;
@@ -245,8 +280,12 @@ eina_chained_mempool_shutdown(void *data)
 	_eina_chained_mp_pool_free(p);
      }
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
+# ifdef EFL_HAVE_POSIX_THREADS
    pthread_mutex_destroy(&mp->mutex);
+# else
+   CloseHandle(mp->mutex);
+# endif
 #endif
 
    free(mp);

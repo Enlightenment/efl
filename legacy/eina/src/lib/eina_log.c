@@ -271,7 +271,7 @@
 # include <unistd.h>
 #endif
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_POSIX_THREADS
 # include <pthread.h>
 #endif
 
@@ -337,27 +337,19 @@ static Eina_Bool _disable_function = EINA_FALSE;
 static Eina_Bool _abort_on_critical = EINA_FALSE;
 static int _abort_level_on_critical = EINA_LOG_LEVEL_CRITICAL;
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
 
 static Eina_Bool _threads_enabled = EINA_FALSE;
+
+# ifdef EFL_HAVE_POSIX_THREADS
+
+typedef pthread_t Thread;
+
 static pthread_t _main_thread;
 
-# define IS_MAIN(t)  pthread_equal(t, _main_thread)
-# define IS_OTHER(t) EINA_UNLIKELY(!IS_MAIN(t))
-
-# ifdef _WIN32
-#  define CHECK_MAIN(...)						\
-  do {									\
-     if (!IS_MAIN(pthread_self())) {					\
-	pthread_t cur;							\
-	cur = pthread_self();						\
-	fprintf(stderr,							\
-		"ERR: not main thread! current=%p, main=%p\n",	\
-		cur.p, _main_thread.p);					\
-	return __VA_ARGS__;						\
-     }									\
-  } while (0)
-# else
+#  define SELF() pthread_self()
+#  define IS_MAIN(t)  pthread_equal(t, _main_thread)
+#  define IS_OTHER(t) EINA_UNLIKELY(!IS_MAIN(t))
 #  define CHECK_MAIN(...)						\
   do {									\
      if (!IS_MAIN(pthread_self())) {					\
@@ -367,39 +359,12 @@ static pthread_t _main_thread;
 	return __VA_ARGS__;						\
      }									\
   } while (0)
-# endif
 
-# ifdef EFL_HAVE_PTHREAD_SPINLOCK
+#  ifdef EFL_HAVE_POSIX_THREADS_SPINLOCK
 
 static pthread_spinlock_t _log_lock;
-
-#  ifdef _WIN32
 #   define LOG_LOCK()							\
-  if(_threads_enabled) \
-  do {									\
-     pthread_t cur;							\
-     cur = pthread_self();						\
-     if (0)								\
-       fprintf(stderr, "+++LOG LOG_LOCKED!   [%s, %p]\n",		\
-	       __FUNCTION__, cur.p);					\
-     if (EINA_UNLIKELY(_threads_enabled))				\
-       pthread_spin_lock(&_log_lock);					\
-  } while (0)
-#  define LOG_UNLOCK()							\
-  if(_threads_enabled) \
-  do {									\
-     pthread_t cur;							\
-     cur = pthread_self();						\
-     if (EINA_UNLIKELY(_threads_enabled))				\
-       pthread_spin_unlock(&_log_lock);					\
-     if (0)								\
-       fprintf(stderr,							\
-	       "---LOG LOG_UNLOCKED! [%s, %p]\n",			\
-	       __FUNCTION__, cur.p);					\
-  } while (0)
-#  else
-#   define LOG_LOCK()							\
-  if(_threads_enabled) \
+  if(_threads_enabled) 							\
   do {									\
      if (0)								\
        fprintf(stderr, "+++LOG LOG_LOCKED!   [%s, %lu]\n",		\
@@ -407,8 +372,8 @@ static pthread_spinlock_t _log_lock;
      if (EINA_UNLIKELY(_threads_enabled))				\
        pthread_spin_lock(&_log_lock);					\
   } while (0)
-#  define LOG_UNLOCK()							\
-  if(_threads_enabled) \
+#   define LOG_UNLOCK()							\
+  if(_threads_enabled) 							\
   do {									\
      if (EINA_UNLIKELY(_threads_enabled))				\
        pthread_spin_unlock(&_log_lock);					\
@@ -417,31 +382,58 @@ static pthread_spinlock_t _log_lock;
 	       "---LOG LOG_UNLOCKED! [%s, %lu]\n",			\
 	       __FUNCTION__, pthread_self());				\
   } while (0)
-#  endif
-#  define INIT() pthread_spin_init(&_log_lock, PTHREAD_PROCESS_PRIVATE);
-#  define SHUTDOWN() pthread_spin_destroy(&_log_lock);
+#   define INIT() pthread_spin_init(&_log_lock, PTHREAD_PROCESS_PRIVATE)
+#   define SHUTDOWN() pthread_spin_destroy(&_log_lock)
 
-# else /* ! EFL_HAVE_PTHREAD_SPINLOCK */
+#  else /* ! EFL_HAVE_POSIX_THREADS_SPINLOCK */
 
 static pthread_mutex_t _log_mutex = PTHREAD_MUTEX_INITIALIZER;
-#  define LOG_LOCK() if(_threads_enabled) pthread_mutex_lock(&_log_mutex);
-#  define LOG_UNLOCK() if(_threads_enabled) pthread_mutex_unlock(&_log_mutex);
-#  define INIT() do {} while (0)
-#  define SHUTDOWN() do {} while (0)
+#   define LOG_LOCK() if(_threads_enabled) pthread_mutex_lock(&_log_mutex);
+#   define LOG_UNLOCK() if(_threads_enabled) pthread_mutex_unlock(&_log_mutex);
+#   define INIT() (1)
+#   define SHUTDOWN() do {} while (0)
 
-# endif /* ! EFL_HAVE_PTHREAD_SPINLOCK */
+#  endif /* ! EFL_HAVE_POSIX_THREADS_SPINLOCK */
 
-#else /* ! EFL_HAVE_PTHREAD */
+# else /* EFL_HAVE_WIN32_THREADS */
+
+typedef DWORD Thread;
+
+static DWORD _main_thread;
+
+#  define SELF() GetCurrentThreadId()
+#  define IS_MAIN(t)  (t == _main_thread)
+#  define IS_OTHER(t) EINA_UNLIKELY(!IS_MAIN(t))
+#  define CHECK_MAIN(...)						\
+  do {									\
+     if (!IS_MAIN(GetCurrentThreadId())) {				\
+	fprintf(stderr,							\
+		"ERR: not main thread! current=%lu, main=%lu\n",	\
+		GetCurrentThreadId(), _main_thread);			\
+	return __VA_ARGS__;						\
+     }									\
+  } while (0)
+
+static HANDLE _log_mutex = NULL;
+
+#  define LOG_LOCK() if(_threads_enabled) WaitForSingleObject(_log_mutex, INFINITE)
+#  define LOG_UNLOCK() if(_threads_enabled) ReleaseMutex(_log_mutex)
+#  define INIT() ((_log_mutex = CreateMutex(NULL, FALSE, NULL)) ? 1 : 0)
+#  define SHUTDOWN()  if (_log_mutex) CloseHandle(_log_mutex)
+
+# endif /* EFL_HAVE_WIN32_THREADS */
+
+#else /* ! EFL_HAVE_THREADS */
 
 # define LOG_LOCK() do {} while (0)
 # define LOG_UNLOCK() do {} while (0)
 # define IS_MAIN(t)  (1)
 # define IS_OTHER(t) (0)
 # define CHECK_MAIN(...) do {} while (0)
-# define INIT() do {} while (0)
+# define INIT() (1)
 # define SHUTDOWN() do {} while (0)
 
-#endif /* ! EFL_HAVE_PTHREAD */
+#endif /* ! EFL_HAVE_THREADS */
 
 
 // List of domains registered
@@ -721,23 +713,18 @@ eina_log_print_prefix_NOthreads_color_file_NOfunc(FILE *fp, const Eina_Log_Domai
 }
 
 /** threads, No color */
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
 static void
 eina_log_print_prefix_threads_NOcolor_file_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line)
 {
-   pthread_t cur;
+   Thread cur;
 
    DECLARE_LEVEL_NAME(level);
-   cur = pthread_self();
+   cur = SELF();
    if (IS_OTHER(cur))
      {
-#ifdef _WIN32
-	fprintf(fp, "%s:%s[T:%p] %s:%d %s() ",
-		name, d->domain_str, cur.p, file, line, fnc);
-#else
 	fprintf(fp, "%s:%s[T:%lu] %s:%d %s() ",
 		name, d->domain_str, cur, file, line, fnc);
-#endif
 	return;
      }
    fprintf(fp, "%s:%s %s:%d %s() ", name, d->domain_str, file, line, fnc);
@@ -746,19 +733,14 @@ eina_log_print_prefix_threads_NOcolor_file_func(FILE *fp, const Eina_Log_Domain 
 static void
 eina_log_print_prefix_threads_NOcolor_NOfile_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file __UNUSED__, const char *fnc, int line __UNUSED__)
 {
-   pthread_t cur;
+   Thread cur;
 
    DECLARE_LEVEL_NAME(level);
-   cur = pthread_self();
+   cur = SELF();
    if (IS_OTHER(cur))
      {
-#ifdef _WIN32
-	fprintf(fp, "%s:%s[T:%p] %s() ",
-		name, d->domain_str, cur.p, fnc);
-#else
 	fprintf(fp, "%s:%s[T:%lu] %s() ",
 		name, d->domain_str, cur, fnc);
-#endif
 	return;
      }
    fprintf(fp, "%s:%s %s() ", name, d->domain_str, fnc);
@@ -767,19 +749,14 @@ eina_log_print_prefix_threads_NOcolor_NOfile_func(FILE *fp, const Eina_Log_Domai
 static void
 eina_log_print_prefix_threads_NOcolor_file_NOfunc(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc __UNUSED__, int line)
 {
-   pthread_t cur;
+   Thread cur;
 
    DECLARE_LEVEL_NAME(level);
-   cur = pthread_self();
+   cur = SELF();
    if (IS_OTHER(cur))
      {
-#ifdef _WIN32
-	fprintf(fp, "%s:%s[T:%p] %s:%d ",
-		name, d->domain_str, cur.p, file, line);
-#else
 	fprintf(fp, "%s:%s[T:%lu] %s:%d ",
 		name, d->domain_str, cur, file, line);
-#endif
 	return;
      }
    fprintf(fp, "%s:%s %s:%d ", name, d->domain_str, file, line);
@@ -789,10 +766,10 @@ eina_log_print_prefix_threads_NOcolor_file_NOfunc(FILE *fp, const Eina_Log_Domai
 static void
 eina_log_print_prefix_threads_color_file_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line)
 {
-   pthread_t cur;
+   Thread cur;
  
    DECLARE_LEVEL_NAME_COLOR(level);
-   cur = pthread_self();
+   cur = SELF();
    if (IS_OTHER(cur))
      {
 # ifdef _WIN32
@@ -809,7 +786,7 @@ eina_log_print_prefix_threads_color_file_func(FILE *fp, const Eina_Log_Domain *d
 	fprintf(fp, "[T:");
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
 				FOREGROUND_GREEN | FOREGROUND_BLUE);
-	fprintf(fp, "%lu", (unsigned long)cur.p);
+	fprintf(fp, "%lu", (unsigned long)cur);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
 				FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 	fprintf(fp, "] %s:%d ", file, line);
@@ -839,10 +816,10 @@ eina_log_print_prefix_threads_color_file_func(FILE *fp, const Eina_Log_Domain *d
 static void
 eina_log_print_prefix_threads_color_NOfile_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file __UNUSED__, const char *fnc, int line __UNUSED__)
 {
-   pthread_t cur;
+   Thread cur;
 
    DECLARE_LEVEL_NAME_COLOR(level);
-   cur = pthread_self();
+   cur = SELF();
    if (IS_OTHER(cur))
      {
 # ifdef _WIN32
@@ -859,7 +836,7 @@ eina_log_print_prefix_threads_color_NOfile_func(FILE *fp, const Eina_Log_Domain 
 	fprintf(fp, "[T:");
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
 				FOREGROUND_GREEN | FOREGROUND_BLUE);
-	fprintf(fp, "%lu", (unsigned long)cur.p);
+	fprintf(fp, "%lu", (unsigned long)cur);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
 				FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 	fprintf(fp, "%s()", fnc);
@@ -886,10 +863,10 @@ eina_log_print_prefix_threads_color_NOfile_func(FILE *fp, const Eina_Log_Domain 
 static void
 eina_log_print_prefix_threads_color_file_NOfunc(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc __UNUSED__, int line)
 {
-   pthread_t cur;
+   Thread cur;
 
    DECLARE_LEVEL_NAME_COLOR(level);
-   cur = pthread_self();
+   cur = SELF();
    if (IS_OTHER(cur))
      {
 # ifdef _WIN32
@@ -906,7 +883,7 @@ eina_log_print_prefix_threads_color_file_NOfunc(FILE *fp, const Eina_Log_Domain 
 	fprintf(fp, "[T:");
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
 				FOREGROUND_GREEN | FOREGROUND_BLUE);
-	fprintf(fp, "%lu", (unsigned long)cur.p);
+	fprintf(fp, "%lu", (unsigned long)cur);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
 				FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 	fprintf(fp, "] %s:%d ", file, line);
@@ -924,7 +901,7 @@ eina_log_print_prefix_threads_color_file_NOfunc(FILE *fp, const Eina_Log_Domain 
 	   color, name, d->domain_str, file, line);
 # endif
 }
-#endif
+#endif /* EFL_HAVE_THREADS */
 
 static void (*_eina_log_print_prefix)(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line) = eina_log_print_prefix_NOthreads_color_file_func;
 
@@ -942,7 +919,7 @@ eina_log_print_prefix_update(void)
 #define S(NOthread, NOcolor, NOfile, NOfunc) \
    _eina_log_print_prefix = eina_log_print_prefix_##NOthread##threads_##NOcolor##color_##NOfile##file_##NOfunc##func
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    if (_threads_enabled)
      {
 	if (_disable_color)
@@ -1411,7 +1388,7 @@ eina_log_shutdown(void)
    return EINA_TRUE;
 }
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
 
 /**
  * @internal
@@ -1425,9 +1402,9 @@ eina_log_shutdown(void)
 void
 eina_log_threads_init(void)
 {
-   _main_thread = pthread_self();
-   _threads_enabled = EINA_TRUE;
-   INIT();
+   _main_thread = SELF();
+   if (INIT())
+     _threads_enabled = EINA_TRUE;
 }
 
 /**
@@ -1574,7 +1551,7 @@ EAPI int EINA_LOG_DOMAIN_GLOBAL = 0;
 EAPI void
 eina_log_threads_enable(void)
 {
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    _threads_enabled = 1;
    eina_log_print_prefix_update();
 #endif
@@ -1650,8 +1627,8 @@ eina_log_level_get(void)
 EAPI Eina_Bool
 eina_log_main_thread_check(void)
 {
-#ifdef EFL_HAVE_PTHREAD
-   return ((!_threads_enabled) || pthread_equal(_main_thread, pthread_self()));
+#ifdef EFL_HAVE_THREADS
+  return ((!_threads_enabled) || IS_MAIN(SELF()));
 #else
    return EINA_TRUE;
 #endif
@@ -2078,23 +2055,21 @@ eina_log_print_cb_file(const Eina_Log_Domain *d, __UNUSED__ Eina_Log_Level level
 		void *data, va_list args)
 {
    FILE *f = data;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    if (_threads_enabled)
      {
-	pthread_t cur = pthread_self();
+        Thread cur;
+
+        cur = SELF();
 	if (IS_OTHER(cur))
 	  {
-# ifdef _WIN32
-	     fprintf(f, "%s[T:%p] %s:%d %s() ", d->name, cur.p, file, line, fnc);
-# else
 	     fprintf(f, "%s[T:%lu] %s:%d %s() ", d->name, cur, file, line, fnc);
-# endif
 	     goto end;
 	  }
      }
 #endif
    fprintf(f, "%s %s:%d %s() ", d->name, file, line, fnc);
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
  end:
 #endif
    vfprintf(f, fmt, args);
@@ -2129,7 +2104,29 @@ eina_log_print_unlocked(int domain, Eina_Log_Level level, const char *file, cons
 
    if (level > d->level) return;
 
+#ifdef _WIN32
+   {
+      char *wfmt;
+      char *tmp;
+
+      wfmt = strdup(fmt);
+      if (!wfmt)
+        {
+           fprintf(stderr, "ERR: %s: can not allocate memory\n", __FUNCTION__);
+           return;
+        }
+      tmp = wfmt;
+      while (strchr(tmp, "%"))
+        {
+          tmp++;
+          if (*tmp == 'z')
+            *tmp = 'I';
+        }
+      _print_cb(d, level, file, fnc, line, wfmt, _print_cb_data, args);
+   }
+#else
    _print_cb(d, level, file, fnc, line, fmt, _print_cb_data, args);
+#endif
 
    if (EINA_UNLIKELY(_abort_on_critical) &&
        EINA_UNLIKELY(level <= _abort_level_on_critical))

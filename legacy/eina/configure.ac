@@ -84,11 +84,21 @@ EFL_CHECK_CPU_SSE([have_sse="yes"], [have_sse="no"])
 EFL_CHECK_CPU_SSE2([have_sse2="yes"], [have_sse2="no"])
 EFL_CHECK_CPU_ALTIVEC([have_altivec="yes"], [have_altivec="no"])
 
-EFL_CHECK_PTHREAD(["yes"],
-   [have_pthread="yes"],
-   [have_pthread="no"],
-   [have_pthread_spinlock="yes"],
-   [have_pthread_spinlock="no"])
+EFL_CHECK_THREADS(["yes"],
+   [
+    if test "x${_efl_have_posix_threads}" = "xyes" ; then
+       have_threads="POSIX"
+    else
+       if test "x${_efl_have_win32_threads}" = "xyes" ; then
+          have_threads="Win32"
+       else
+          have_threads="no"
+       fi
+    fi
+   ],
+   [have_threads="no"],
+   [have_posix_threads_spinlock="yes"],
+   [have_posix_threads_spinlock="no"])
 
 ### Additional options to configure
 
@@ -566,7 +576,12 @@ echo "  Safety checks........: ${have_safety_checks}"
 echo "  Maximum log level....: ${with_max_log_level}"
 echo "  Report string usage..: ${have_stringshare_usage}"
 echo "  Default mempool......: ${have_default_mempool}"
-echo "  Thread Support.......: ${have_pthread} (spinlock: ${have_pthread_spinlock})"
+echo $ECHO_N "  Thread Support.......: ${have_threads}$ECHO_C"
+if test "${have_threads}" = "POSIX" ; then
+   echo " (spinlock: ${have_posix_threads_spinlock})"
+else
+   echo
+fi
 echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Iconv support........: ${have_iconv}"
 echo

@@ -120,7 +120,7 @@
      }							\
   } while(0);
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
 void eina_stringshare_threads_init(void);
 void eina_stringshare_threads_shutdown(void);
 void eina_log_threads_init(void);

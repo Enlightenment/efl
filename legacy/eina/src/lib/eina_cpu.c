@@ -20,7 +20,7 @@
 # include "config.h"
 #endif
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
 # ifdef _WIN32
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
@@ -34,7 +34,9 @@
 #  define _GNU_SOURCE
 #  include <sched.h>
 # endif
-# include <pthread.h>
+# ifdef EFL_HAVE_POSIX_THREADS
+#  include <pthread.h>
+# endif
 
 # define TH_MAX 8
 #endif
@@ -126,7 +128,7 @@ EAPI Eina_Cpu_Features eina_cpu_features_get(void)
 
 EAPI int eina_cpu_count(void)
 {
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
 
 # if   defined (_WIN32)
    SYSTEM_INFO sysinfo;
