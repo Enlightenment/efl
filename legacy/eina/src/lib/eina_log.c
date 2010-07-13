@@ -2123,6 +2123,7 @@ eina_log_print_unlocked(int domain, Eina_Log_Level level, const char *file, cons
             *tmp = 'I';
         }
       _print_cb(d, level, file, fnc, line, wfmt, _print_cb_data, args);
+      free(wfmt);
    }
 #else
    _print_cb(d, level, file, fnc, line, fmt, _print_cb_data, args);
