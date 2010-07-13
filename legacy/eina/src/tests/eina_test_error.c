@@ -24,6 +24,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "eina_suite.h"
 #include "Eina.h"
 
