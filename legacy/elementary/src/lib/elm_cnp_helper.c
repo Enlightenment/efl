@@ -477,7 +477,7 @@ targets_converter(char *target, void *data, int size,
 	if (sel->format & atoms[i].formats)
 	  aret[count ++] = atoms[i].atom;
 
-   if (data_ret) *data_ret = aret;
+   *data_ret = aret;
    if (typesize) *typesize = 32 /* urk */;
    if (ttype) *ttype = XA_ATOM;
    if (size_ret) *size_ret = count;
