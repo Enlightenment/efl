@@ -165,9 +165,9 @@ static const struct luaL_reg _elua_edje_api [] =
      {"messagesend",  _elua_messagesend}, // send a structured message
 
    // query edje - size, pos
-     {"objpos",       _elua_objpos}, // get while edje object pos in canvas
-     {"objsize",      _elua_objsize}, // get while edje object pos in canvas
-     {"objgeom",      _elua_objgeom}, // get while edje object geometry in canvas
+     {"pos",          _elua_objpos}, // get while edje object pos in canvas
+     {"size",         _elua_objsize}, // get while edje object pos in canvas
+     {"geom",         _elua_objgeom}, // get while edje object geometry in canvas
    
    // FIXME: query color classes
    // FIXME: query text classes
@@ -1586,37 +1586,112 @@ _elua_color(lua_State *L)
 static int
 _elua_clip(lua_State *L)
 {
-   return 0;
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo2, *elo = (Edje_Lua_Evas_Object *)obj;
+   Evas_Object *o;
+   int n;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   n = lua_gettop(L);
+   if (n == 2)
+     {
+        Edje_Lua_Obj *obj2 = (Edje_Lua_Obj *)lua_touserdata(L, 2);
+        elo2 = (Edje_Lua_Evas_Object *)obj2;
+        evas_object_clip_set(elo->evas_obj, elo2->evas_obj);
+     }
+   o = evas_object_clip_get(elo->evas_obj);
+   if (!o) return 0;
+   if (!(elo2 = evas_object_data_get(o, ELO))) return 0;
+   _elua_ref_get(L, elo2);
+   return 1;
 }
 
 static int
 _elua_unclip(lua_State *L)
 {
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   evas_object_clip_unset(elo->evas_obj);
    return 0;
 }
 
 static int
 _elua_clipees(lua_State *L)
 {
-   return 0;
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo2, *elo = (Edje_Lua_Evas_Object *)obj;
+   Eina_List *list, *l;
+   Evas_Object *o;
+   int n = 0;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   list = (Eina_List *)evas_object_clipees_get(elo->evas_obj);
+   lua_newtable(L);
+   EINA_LIST_FOREACH(list, l, o)
+     {
+        if (!(elo2 = evas_object_data_get(o, ELO))) continue;
+        lua_pushinteger(L, n + 1);
+        _elua_ref_get(L, elo2);
+        lua_settable(L, -3);
+        n++;
+     }
+   return 1;
 }
 
 static int
 _elua_type(lua_State *L)
 {
-   return 0;
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   const char *t;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   t = evas_object_type_get(elo->evas_obj);
+   if (!t) return 0;
+   lua_pushstring(L, t);
+   return 1;
 }
 
 static int
 _elua_pass(lua_State *L)
 {
-   return 0;
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   int n;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   n = lua_gettop(L);
+   if (n == 2)
+     {
+        if (lua_isboolean(L, 2))
+          {
+             evas_object_pass_events_set(elo->evas_obj, lua_toboolean(L, 2));
+          }
+     }
+   lua_pushboolean(L, evas_object_pass_events_get(elo->evas_obj));
+   return 1;
 }
 
 static int
 _elua_repeat(lua_State *L)
 {
-   return 0;
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   int n;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   n = lua_gettop(L);
+   if (n == 2)
+     {
+        if (lua_isboolean(L, 2))
+          {
+             evas_object_repeat_events_set(elo->evas_obj, lua_toboolean(L, 2));
+          }
+     }
+   lua_pushboolean(L, evas_object_repeat_events_get(elo->evas_obj));
+   return 1;
 }
 
 //-------------
