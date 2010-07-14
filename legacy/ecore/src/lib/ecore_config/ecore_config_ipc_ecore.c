@@ -336,7 +336,7 @@ _ecore_config_ipc_ecore_init(const char *pipe_name, void **data)
    ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DATA,
 			   _ecore_config_ipc_client_sent, server);
 
-   if (server)
+   if (*server)
      {
 	INF("IPC/eCore: Server is listening on %s.", pipe_name);
      }

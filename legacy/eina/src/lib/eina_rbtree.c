@@ -177,7 +177,7 @@ _eina_rbtree_iterator_build(const Eina_Rbtree *root, unsigned char mask)
    }
 
    it->stack = eina_array_new(8);
-   if (!it->stack) goto on_error;
+   if (!it->stack) goto on_error2;
 
    first = _eina_rbtree_iterator_list_new(root);
    if (!first) goto on_error;
@@ -193,9 +193,10 @@ _eina_rbtree_iterator_build(const Eina_Rbtree *root, unsigned char mask)
 
    return &it->iterator;
 
- on_error:
-   if (it && it->stack) eina_array_free(it->stack);
-   if (it) free(it);
+on_error:
+   eina_array_free(it->stack);
+on_error2:
+   free(it);
 
    return NULL;
 }
