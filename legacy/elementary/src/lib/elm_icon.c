@@ -49,7 +49,7 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->stdicon)
-     _elm_theme_object_icon_set(obj, wd->img, wd->stdicon, "default");
+     _elm_theme_object_icon_set(obj, wd->img, wd->stdicon, elm_widget_style_get(obj));
    _sizing_eval(obj);
 }
 

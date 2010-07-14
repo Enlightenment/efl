@@ -50,17 +50,18 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   const char *style = elm_widget_style_get(obj);
    if (!wd) return;
 
-   if(wd->horizontal)
-	_elm_theme_object_set(obj, wd->panes, "panes", "horizontal", "default");
+   if (wd->horizontal)
+     _elm_theme_object_set(obj, wd->panes, "panes", "horizontal", style);
    else
-	_elm_theme_object_set(obj, wd->panes, "panes", "vertical", "default");
+     _elm_theme_object_set(obj, wd->panes, "panes", "vertical", style);
 
-   if(wd->contents.left)
-	edje_object_part_swallow(wd->panes, "elm.swallow.left", wd->contents.right);
-   if(wd->contents.right)
-	edje_object_part_swallow(wd->panes, "elm.swallow.right", wd->contents.right);
+   if (wd->contents.left)
+     edje_object_part_swallow(wd->panes, "elm.swallow.left", wd->contents.right);
+   if (wd->contents.right)
+     edje_object_part_swallow(wd->panes, "elm.swallow.right", wd->contents.right);
 
    edje_object_scale_set(wd->panes, elm_widget_scale_get(obj) *
                          _elm_config->scale);
