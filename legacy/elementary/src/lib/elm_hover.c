@@ -240,7 +240,7 @@ _parent_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   if (wd) evas_object_hide(wd->cov);
+   evas_object_hide(wd->cov);
 }
 
 static void
