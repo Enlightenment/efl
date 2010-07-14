@@ -88,6 +88,15 @@ _els_smart_icon_smooth_scale_set(Evas_Object *obj, int smooth)
    evas_object_image_smooth_scale_set(sd->obj, smooth);
 }
 
+Evas_Object *
+_els_smart_icon_object_get(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   return sd->obj;
+}
+
 void
 _els_smart_icon_size_get(Evas_Object *obj, int *w, int *h)
 {

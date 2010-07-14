@@ -40,6 +40,8 @@ icon_21.png \
 icon_22.png \
 icon_23.png \
 bubble.png \
-bubble_sh.png
+bubble_sh.png \
+mystrale.jpg \
+mystrale_2.jpg
 
 EXTRA_DIST = $(files_DATA)

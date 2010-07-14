@@ -871,10 +871,11 @@ extern "C" {
    EAPI void         elm_bubble_corner_set(Evas_Object *obj, const char *corner);
    /* smart callbacks called:
     */
-
+    
    EAPI Evas_Object *elm_photo_add(Evas_Object *parent);
    EAPI Eina_Bool    elm_photo_file_set(Evas_Object *obj, const char *file);
    EAPI void         elm_photo_size_set(Evas_Object *obj, int size);
+   EAPI void 		 elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill);
    /* smart callbacks called:
     * "clicked" - the user clicked the icon
     */

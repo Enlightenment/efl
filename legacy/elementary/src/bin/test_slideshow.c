@@ -13,6 +13,8 @@ static char *img4 = PACKAGE_DATA_DIR"/images/rock_02.jpg";
 static char *img5 = PACKAGE_DATA_DIR"/images/sky_01.jpg";
 static char *img6 = PACKAGE_DATA_DIR"/images/sky_04.jpg";
 static char *img7 = PACKAGE_DATA_DIR"/images/wood_01.jpg";
+static char *img8 = PACKAGE_DATA_DIR"/images/mystrale.jpg";
+static char *img9 = PACKAGE_DATA_DIR"/images/mystrale_2.jpg";
 
 static void
 _notify_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
@@ -93,6 +95,8 @@ _get(void *data, Evas_Object *obj)
 
    Evas_Object *photo = elm_photo_add(obj);
    elm_photo_file_set(photo, data);
+   elm_photo_fill_inside_set(photo, EINA_TRUE);
+   elm_widget_style_set(photo, "shadow");
 
    return photo;
 }
@@ -128,9 +132,11 @@ test_slideshow(void *data, Evas_Object *obj, void *event_info)
    elm_slideshow_item_add(slideshow, &itc, img2);
    elm_slideshow_item_add(slideshow, &itc, img3);
    elm_slideshow_item_add(slideshow, &itc, img4);
+   elm_slideshow_item_add(slideshow, &itc, img9);
    elm_slideshow_item_add(slideshow, &itc, img5);
    elm_slideshow_item_add(slideshow, &itc, img6);
    elm_slideshow_item_add(slideshow, &itc, img7);
+   elm_slideshow_item_add(slideshow, &itc, img8);
 
    notify = elm_notify_add(win);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);

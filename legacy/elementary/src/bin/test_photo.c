@@ -8,13 +8,13 @@ test_photo(void *data, Evas_Object *obj, void *event_info)
    char buf[PATH_MAX];
    const char *img[9] =
      {
-        "panel_01.jpg", 
-          "plant_01.jpg", 
-          "rock_01.jpg", 
+        "panel_01.jpg",
+          "mystrale.jpg",
+          "mystrale_2.jpg",
           "rock_02.jpg",
-          "sky_01.jpg", 
-          "sky_02.jpg", 
-          "sky_03.jpg", 
+          "sky_01.jpg",
+          "sky_02.jpg",
+          "sky_03.jpg",
           "sky_04.jpg",
           "wood_01.jpg"
      };
@@ -47,6 +47,10 @@ test_photo(void *data, Evas_Object *obj, void *event_info)
              evas_object_size_hint_align_set(ph, EVAS_HINT_FILL, 
                                              EVAS_HINT_FILL);
              elm_photo_size_set(ph, 80);
+             if(n == 2 || n == 3) {
+            	 elm_photo_fill_inside_set(ph, EINA_TRUE);
+            	 elm_widget_style_set(ph, "shadow");
+             }
              elm_table_pack(tb, ph, i, j, 1, 1);
              evas_object_show(ph);
           }

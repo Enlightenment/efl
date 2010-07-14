@@ -7023,6 +7023,78 @@ collections {
 	 }
      }
    }
+   
+   group { name: "elm/photo/base/shadow";
+      	images {
+			image: "shadow.png" COMP;
+			image: "black.png" COMP;
+      	}
+      	script {
+      	public message(Msg_Type:type, id, ...) {
+        	if( (type==MSG_INT_SET) && (id==0) )
+        	{
+            	new w;
+            	new h;
+           
+            	custom_state(PART:"size", "default", 0.0);
+
+            	w = getarg(2);
+            	h = getarg(3);
+            	set_state_val(PART:"size", STATE_REL1_OFFSET, - w/2, - h/2);
+            	set_state_val(PART:"size", STATE_REL2_OFFSET, w/2 + 1, h/2 + 1);
+            	set_state(PART:"size", "custom", 0.0);
+        	}
+    	}
+    	}
+      	parts {
+      	part { name: "size";
+	    	type: SWALLOW;
+	    	description { state: "default" 0.0;
+	    		rel1.relative: 0.5 0.5;
+	    		rel2.relative: 0.5 0.5;
+	    	}
+	 	}
+      	part {
+        	name: "shadow";
+        	type: IMAGE;
+        	repeat_events: 1;
+        	description {
+            	state: "default" 0.0;
+            	rel1.to: "size";
+            	rel2.to: "size";
+            	rel1.relative: -0.06 -0.06;
+            	rel2.relative: 1.07 1.07; 
+            	image.normal: "shadow.png";
+        	}
+    	}
+      	
+    	
+	 	part { name: "elm.swallow.content";
+	    	type: SWALLOW;
+	    	description { state: "default" 0.0;
+            	rel1.offset: 3 3;
+            	rel2.offset: -3 -3;
+	    		fixed: 1 1;
+	    	}
+	 	}
+	 	
+	 	part {
+        	name: "border";
+        	type: IMAGE;
+        	repeat_events: 1;
+        	description {
+            	state: "default" 0.0;
+            	visible: 1;
+            	color: 0 0 0 255;
+            	rel1.to: "size";
+            	rel2.to: "size";
+            	image.normal: "black.png";
+            	image.border: 1 1 1 1;
+            	image.middle: 0;
+        	}
+    	}
+	 	}
+   }
 
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/thumb/base/default";
@@ -8432,10 +8504,11 @@ collections {
       }
       parts {
          part { name: "whole";
+         	type: RECT;
             description {
                state: "default" 0.0;
                visible: 1;
-               color: 0 0 0 0;
+               color: 20 20 20 255;
             }
          }
          part { name: "image_1_whole";

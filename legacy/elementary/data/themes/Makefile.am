@@ -187,7 +187,9 @@ emo-wink.png \
 emo-worried.png \
 emo-wtf.png \
 map_item.png \
-map_item_2.png
+map_item_2.png \
+shadow.png \
+black.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
