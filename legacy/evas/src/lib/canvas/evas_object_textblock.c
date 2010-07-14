@@ -3806,8 +3806,8 @@ evas_textblock_cursor_compare(const Evas_Textblock_Cursor *cur1, const Evas_Text
 	else if (l2 == EINA_INLIST_GET(cur2->node)) return -1; /* cur1 < cur 2 */
 	else if (!l1) return -1; /* cur1 < cur 2 */
 	else if (!l2) return 1; /* cur2 < cur 1 */
-	if (l1) l1 = l1->prev;
-	if (l2) l2 = l2->next;
+	l1 = l1->prev;
+	l2 = l2->next;
      }
    return 0;
 }

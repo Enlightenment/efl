@@ -472,7 +472,7 @@ _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
    if (!part) return;
    //printf("CHANGE ID OF PART %s TO %d\n", part->name, new_id);
 
-   if (!ed || !part || new_id < -1) return;
+   if (!ed || new_id < -1) return;
 
    if (part->id == new_id) return;
 
@@ -6122,8 +6122,9 @@ _edje_generate_source_of_group(Edje *ed, const char *group, Eina_Strbuf *buf)
 
 	EINA_LIST_FOREACH(ll, l, data)
 	  {
-	     BUF_APPENDF(I3"item: \"%s\" \"%s\";\n", data,
-		     edje_edit_group_data_value_get(obj, data));
+	     const char *value = edje_edit_group_data_value_get(obj, data);
+	     ret &= !!value;
+	     BUF_APPENDF(I3"item: \"%s\" \"%s\";\n", data, value);
 	  }
 
 	BUF_APPEND(I2"}\n\n");
@@ -6157,7 +6158,7 @@ _edje_generate_source_of_group(Edje *ed, const char *group, Eina_Strbuf *buf)
      {
 	BUF_APPEND(I2 "programs {\n");
 	EINA_LIST_FOREACH(ll, l, data)
-	  _edje_generate_source_of_program(obj, data, buf);
+	  ret &= _edje_generate_source_of_program(obj, data, buf);
 	BUF_APPEND(I2 "}\n");
 	edje_edit_string_list_free(ll);
      }

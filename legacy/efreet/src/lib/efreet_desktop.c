@@ -1414,7 +1414,7 @@ efreet_desktop_cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __U
     ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, efreet_desktop_cache_update_free, d);
     return;
 error:
-    if (tmp) eet_close(tmp);
+    eet_close(tmp);
 }
 
 static void

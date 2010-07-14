@@ -851,7 +851,7 @@ eet_cipher(const void *data, unsigned int size, const char *key, unsigned int le
    if (opened) EVP_CIPHER_CTX_cleanup(&ctx);
 # endif
    /* General error */
-   if (ret) free(ret);
+   free(ret);
    if (result) *result = NULL;
    if (result_length) *result_length = 0;
 

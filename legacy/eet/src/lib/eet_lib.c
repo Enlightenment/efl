@@ -639,7 +639,7 @@ eet_flush2(Eet_File *ef)
 	  }
      }
    sign_error:
-   if (fp) fclose(fp);
+   fclose(fp);
    return error;
 }
 

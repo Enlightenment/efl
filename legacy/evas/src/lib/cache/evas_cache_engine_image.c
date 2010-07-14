@@ -671,14 +671,10 @@ evas_cache_engine_image_engine(Evas_Cache_Engine_Image *cache, void *engine_data
 
   on_error:
    if (!eim)
-     {
-        if (ie)
-          evas_cache_image_drop(ie);
-     }
+     evas_cache_image_drop(ie);
    else
-     {
-        evas_cache_engine_image_drop(eim);
-     }
+     evas_cache_engine_image_drop(eim);
+
    return NULL;
 }
 

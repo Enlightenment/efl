@@ -1336,8 +1336,7 @@ ecore_x_icccm_command_get(Ecore_X_Window window __UNUSED__,
 
    if (c < 1)
      {
-	if (v)
-	  free(v);
+	free(v);
 	return;
      }
 

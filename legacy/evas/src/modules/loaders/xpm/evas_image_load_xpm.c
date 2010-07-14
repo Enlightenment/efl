@@ -631,9 +631,9 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
 	  break;
      }
 
-   if (cmap) free(cmap);
-   if (line) free(line);
-   if (f) fclose(f);
+   free(cmap);
+   free(line);
+   fclose(f);
 
    xpm_parse_done();
    *error = EVAS_LOAD_ERROR_NONE;

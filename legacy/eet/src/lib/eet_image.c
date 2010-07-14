@@ -1334,7 +1334,7 @@ eet_data_image_decode_cipher(const void *data, const char *cipher_key, int size,
 
    if (!_eet_data_image_decode_inside(data, size, 0, 0, iw, ih, d, iw, ih, iw * 4, ialpha, icompress, iquality, ilossy))
      {
-	if (d) free(d);
+	free(d);
 	return NULL;
      }
 
