@@ -1204,6 +1204,7 @@ extern "C" {
    typedef struct _Elm_Slideshow_Item_Class Elm_Slideshow_Item_Class;
    typedef struct _Elm_Slideshow_Item_Class_Func Elm_Slideshow_Item_Class_Func;
    typedef struct _Elm_Slideshow_Item       Elm_Slideshow_Item;
+   typedef struct _Elm_Slideshow_Layout       Elm_Slideshow_Layout;
    typedef Evas_Object *(*SlideshowItemGetFunc) (void *data, Evas_Object *obj);
    typedef void         (*SlideshowItemDelFunc) (void *data, Evas_Object *obj);
 
@@ -1215,27 +1216,28 @@ extern "C" {
 	} func;
      };
 
-   EAPI Evas_Object *	elm_slideshow_add(Evas_Object *parent);
-   EAPI Elm_Slideshow_Item* elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data);
-   EAPI void		elm_slideshow_show(Elm_Slideshow_Item *item);
-   EAPI void		elm_slideshow_next(Evas_Object *obj);
-   EAPI void		elm_slideshow_previous(Evas_Object *obj);
-   EAPI const Eina_List *elm_slideshow_transitions_get(const Evas_Object *obj);
-   EAPI void	        elm_slideshow_transition_set(Evas_Object *obj, const char *);
-   EAPI const char     *elm_slideshow_transition_get(const Evas_Object *obj);
-   EAPI void            elm_slideshow_timeout_set(Evas_Object *obj ,int timeout);
-   EAPI int		elm_slideshow_timeout_get(const Evas_Object *obj);
-   EAPI void		elm_slideshow_loop_set(Evas_Object *obj, Eina_Bool loop);
-   EAPI Eina_Bool	elm_slideshow_loop_get(const Evas_Object *obj);
-   EAPI void		elm_slideshow_clear(Evas_Object *obj);
-   EAPI const Eina_List *elm_slideshow_items_get(const Evas_Object *obj);
-   EAPI void		elm_slideshow_item_del(Elm_Slideshow_Item *item);
-   EAPI void *		elm_slideshow_item_data_get(Elm_Slideshow_Item *item);
-   EAPI Elm_Slideshow_Item* elm_slideshow_item_current_get(const Evas_Object *obj);
-   EAPI Evas_Object*	elm_slideshow_item_object_get(Elm_Slideshow_Item* item);
-   EAPI const char * 	elm_slideshow_layout_get(const Evas_Object *obj);
-   EAPI void 			elm_slideshow_layout_set(Evas_Object *obj, const char *layout);
-   EAPI const Eina_List *elm_slideshow_layouts_get(const Evas_Object *obj);
+   EAPI Evas_Object 		*elm_slideshow_add(Evas_Object *parent);
+   EAPI Elm_Slideshow_Item	*elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data);
+   EAPI void				 elm_slideshow_show(Elm_Slideshow_Item *item);
+   EAPI void				 elm_slideshow_next(Evas_Object *obj);
+   EAPI void				 elm_slideshow_previous(Evas_Object *obj);
+   EAPI const Eina_List 	*elm_slideshow_transitions_get(const Evas_Object *obj);
+   EAPI void	        	 elm_slideshow_transition_set(Evas_Object *obj, const char *);
+   EAPI const char     		*elm_slideshow_transition_get(const Evas_Object *obj);
+   EAPI void            	 elm_slideshow_timeout_set(Evas_Object *obj ,int timeout);
+   EAPI int					 elm_slideshow_timeout_get(const Evas_Object *obj);
+   EAPI void				 elm_slideshow_loop_set(Evas_Object *obj, Eina_Bool loop);
+   EAPI Eina_Bool			 elm_slideshow_loop_get(const Evas_Object *obj);
+   EAPI void				 elm_slideshow_clear(Evas_Object *obj);
+   EAPI const Eina_List 	*elm_slideshow_items_get(const Evas_Object *obj);
+   EAPI void				 elm_slideshow_item_del(Elm_Slideshow_Item *item);
+   EAPI void 				*elm_slideshow_item_data_get(Elm_Slideshow_Item *item);
+   EAPI Elm_Slideshow_Item	*elm_slideshow_item_current_get(const Evas_Object *obj);
+   EAPI Evas_Object*		 elm_slideshow_item_object_get(Elm_Slideshow_Item* item);
+   EAPI const Elm_Slideshow_Layout *elm_slideshow_layout_get(const Evas_Object *obj);
+   EAPI void 				 elm_slideshow_layout_set(Evas_Object *obj, const Elm_Slideshow_Layout *layout);
+   EAPI const Eina_List 	*elm_slideshow_layouts_get(const Evas_Object *obj);
+   EAPI const char 			*elm_slideshow_layout_name_get(const Elm_Slideshow_Layout *layout);
 
 
    EAPI Evas_Object *elm_fileselector_add(Evas_Object *parent);

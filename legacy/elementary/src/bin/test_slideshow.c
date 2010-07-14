@@ -59,7 +59,7 @@ static void
 _layout_select(void *data, Evas_Object *obj, void *event_info)
 {
    elm_slideshow_layout_set(slideshow, data);
-   elm_hoversel_label_set(obj, data);
+   elm_hoversel_label_set(obj, elm_slideshow_layout_name_get(data));
 }
 
 static void
@@ -108,7 +108,8 @@ test_slideshow(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *notify, *bx, *bt, *hv, *spin;
    const Eina_List *l;
-   const char *transition, *layout;
+   const char *transition, *s;
+   Elm_Slideshow_Layout *layout;
 
    win = elm_win_add(NULL, "Slideshow", ELM_WIN_BASIC);
    elm_win_title_set(win, "Slideshow");
@@ -175,8 +176,9 @@ test_slideshow(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, hv);
    elm_hoversel_hover_parent_set(hv, win);
    EINA_LIST_FOREACH(elm_slideshow_layouts_get(slideshow), l, layout)
-       elm_hoversel_item_add(hv, layout, NULL, 0, _layout_select, layout);
-   elm_hoversel_label_set(hv, elm_slideshow_layout_get(slideshow));
+       elm_hoversel_item_add(hv, elm_slideshow_layout_name_get(layout),
+    		   NULL, 0, _layout_select, layout);
+   elm_hoversel_label_set(hv, elm_slideshow_layout_name_get(elm_slideshow_layout_get(slideshow)));
    evas_object_show(hv);
 
    spin = elm_spinner_add(win);
