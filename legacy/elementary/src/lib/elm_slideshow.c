@@ -49,6 +49,11 @@ struct _Widget_Data
    Ecore_Timer *timer;
    int timeout;
    Eina_Bool loop:1;
+
+   struct {
+	   const char *current;
+	   Eina_List *list; //list of const char *
+   } layout;
 };
 
 static const char *widtype = NULL;
@@ -66,6 +71,7 @@ _del_hook(Evas_Object *obj)
    elm_slideshow_clear(obj);
    _elm_stringlist_free(wd->transitions);
    if (wd->timer) ecore_timer_del(wd->timer);
+   _elm_stringlist_free(wd->layout.list);
    free(wd);
 }
 
@@ -241,6 +247,10 @@ elm_slideshow_add(Evas_Object *parent)
    if (eina_list_count(wd->transitions) > 0)
      wd->transition = eina_stringshare_add(eina_list_data_get(wd->transitions));
 
+   wd->layout.list = _elm_stringlist_get(edje_object_data_get(wd->slideshow, "layouts"));
+      if (eina_list_count(wd->layout.list) > 0)
+        wd->layout.current = eina_stringshare_add(eina_list_data_get(wd->layout.list));
+
    edje_object_signal_callback_add(wd->slideshow, "end", "slideshow", _end, obj);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
@@ -399,7 +409,7 @@ elm_slideshow_previous(Evas_Object *obj)
  * Returns the list of transitions available.
  *
  * @param obj The slideshow object
- * @return Returns the list of transitions (list of char*)
+ * @return Returns the list of transitions (list of const char*)
  *
  * @ingroup Slideshow
  */
@@ -410,6 +420,23 @@ elm_slideshow_transitions_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->transitions;
+}
+
+/**
+ * Returns the list of layouts available.
+ *
+ * @param obj The slideshow object
+ * @return Returns the list of layout (list of const char*)
+ *
+ * @ingroup Slideshow
+ */
+const Eina_List *
+elm_slideshow_layouts_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->layout.list;
 }
 
 /**
@@ -500,6 +527,44 @@ elm_slideshow_loop_set(Evas_Object *obj, Eina_Bool loop)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->loop = loop;
+}
+
+/**
+ * Returns the current layout name
+ *
+ * @param obj The slideshow object
+ * @returns Returns the layout name
+ *
+ * @ingroup Slideshow
+ */
+EAPI const char *
+elm_slideshow_layout_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->layout.current;
+}
+
+/**
+ * Set the layout
+ *
+ * @param obj The slideshow object
+ * @param layout the new layout
+ *
+ * @ingroup Slideshow
+ */
+EAPI void
+elm_slideshow_layout_set(Evas_Object *obj, const char *layout)
+{
+   char buf[PATH_MAX];
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->layout.current = eina_stringshare_add(layout);
+
+   snprintf(buf, sizeof(buf), "layout,%s", wd->layout.current);
+   edje_object_signal_emit(wd->slideshow, buf, "slideshow");
 }
 
 /**
@@ -648,4 +713,5 @@ elm_slideshow_item_data_get(Elm_Slideshow_Item * item)
    if (!item) return NULL;
    return (void *)item->data;
 }
+
 

@@ -1232,6 +1232,9 @@ extern "C" {
    EAPI void *		elm_slideshow_item_data_get(Elm_Slideshow_Item *item);
    EAPI Elm_Slideshow_Item* elm_slideshow_item_current_get(const Evas_Object *obj);
    EAPI Evas_Object*	elm_slideshow_item_object_get(Elm_Slideshow_Item* item);
+   EAPI const char * 	elm_slideshow_layout_get(const Evas_Object *obj);
+   EAPI void 			elm_slideshow_layout_set(Evas_Object *obj, const char *layout);
+   EAPI const Eina_List *elm_slideshow_layouts_get(const Evas_Object *obj);
 
 
    EAPI Evas_Object *elm_fileselector_add(Evas_Object *parent);

@@ -8428,6 +8428,7 @@ collections {
    group { name: "elm/slideshow/base/default";
       data {
          item: transitions "fade black_fade horizontal vertical square";
+         item: layouts "fullscreen not_fullscreen";
       }
       parts {
          part { name: "whole";
@@ -8591,6 +8592,14 @@ collections {
                rel2.to: "image_1_whole";
                color: 255 255 255 255;
             }
+            description {
+               state: "not_fullscreen" 0.0;
+               rel1.relative: 0.1 0.1;
+               rel1.to: "image_1_whole";
+               rel2.relative: 0.9 0.9;
+               rel2.to: "image_1_whole";
+               color: 255 255 255 255;
+            }
          }
          part { name: "elm.swallow.2";
             type: SWALLOW;
@@ -8599,6 +8608,14 @@ collections {
                state: "default" 0.0;
                color: 255 255 255 255;
                rel1.to: "image_2_whole";
+               rel2.to: "image_2_whole";
+            }
+            description {
+               state: "not_fullscreen" 0.0;
+               color: 255 255 255 255;
+               rel1.relative: 0.1 0.1;
+               rel1.to: "image_2_whole";
+               rel2.relative: 0.9 0.9;
                rel2.to: "image_2_whole";
             }
          }
@@ -8613,6 +8630,24 @@ collections {
          }
       }
       programs {
+      	//Substyle
+      	program { name: "layout_fullscreen";
+            signal: "layout,fullscreen";
+            source: "slideshow";
+            action: STATE_SET "default" 0.0;
+            target: "elm.swallow.1";
+            target: "elm.swallow.2";
+            transition: SINUSOIDAL 1.0;
+        }
+        program { name: "layout_not_fullscreen";
+            signal: "layout,not_fullscreen";
+            source: "slideshow";
+            action: STATE_SET "not_fullscreen" 0.0;
+            target: "elm.swallow.1";
+            target: "elm.swallow.2";
+            transition: SINUSOIDAL 1.0;
+         } 
+      	 //
          program { name: "fade_next";
             signal: "fade,next";
             source: "slideshow";
