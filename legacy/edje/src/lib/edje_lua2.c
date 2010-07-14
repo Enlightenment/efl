@@ -126,17 +126,29 @@ static int _elua_repeat(lua_State *L);
 
 static int _elua_rect(lua_State *L);
 
+#define ELO "|-ELO"
+
 //--------------------------------------------------------------------------//
 static lua_State *lstate = NULL;
 static jmp_buf panic_jmp;
 
+// FIXME: methods lua scrupt can provide that edje will call (not done yet):
+// // scale set
+// // key down
+// // key up
+// // get dragable pos
+// // set dragable pos
+// // get part text
+// // set part text
+// // get swallow part
+// // set swallow part
+// // textclass change
+// // colorclass change
+// 
 static const struct luaL_reg _elua_edje_api [] =
 {
    // add an echo too to make it more shelly
      {"echo",         _elua_echo}, // test func - echo (i know we have print. test)
-   
-   // generic object methods
-     {"del",          _elua_obj_del}, // generic del any object created for edje (evas objects, timers, animators, transitions... everything)
    
    // time based "callback" systems
      {"timer",        _elua_timer}, // add timer
@@ -159,6 +171,17 @@ static const struct luaL_reg _elua_edje_api [] =
    
    // FIXME: query color classes
    // FIXME: query text classes
+
+     {"rect",         _elua_rect}, // new rect
+   // FIXME: need image(filled, normal), text, textblock, edje
+   
+     {NULL, NULL} // end
+};
+
+static const struct luaL_reg _elua_edje_evas_obj [] =
+{
+   // generic object methods
+     {"del",          _elua_obj_del}, // generic del any object created for edje (evas objects, timers, animators, transitions... everything)
    
    // now evas stuff (manipulate, delete etc.)
      {"show",         _elua_show}, // show, return current visibility
@@ -189,31 +212,17 @@ static const struct luaL_reg _elua_edje_api [] =
    // FIXME: set callbacks (mouse down, up, blah blah blah)
    
    // FIXME: map api here
-   
-     {"rect",         _elua_rect}, // new rect
-   // FIXME: need image(filled, normal), text, textblock, edje
-   
-   // FIXME: methods lua scrupt can provide that edje will call (not done yet):
-   // // scale set
-   // // key down
-   // // key up
-   // // get dragable pos
-   // // set dragable pos
-   // // get part text
-   // // set part text
-   // // get swallow part
-   // // set swallow part
-   // // textclass change
-   // // colorclass change
 
      {NULL, NULL} // end
 };
+
 static const struct luaL_reg _elua_edje_meta [] =
 {
      {"__gc", _elua_obj_gc}, // garbage collector func for edje objects
    
      {NULL, NULL} // end
 };
+
 static const luaL_Reg _elua_libs[] =
 {
      {"", luaopen_base},
@@ -228,6 +237,7 @@ static const luaL_Reg _elua_libs[] =
      {NULL, NULL} // end
 };
 static const char *_elua_key = "key";
+static const char *_elua_objs = "objs";
 
 //--------------------------------------------------------------------------//
 static void *
@@ -320,10 +330,22 @@ _elua_init(void)
    luaL_newmetatable(L, "edje");
    luaL_register(L, 0, _elua_edje_meta);
    
+   luaL_register(L, "edje_evas_obj", _elua_edje_evas_obj);
+   luaL_newmetatable(L, "edje_evas_obj");
+   luaL_register(L, 0, _elua_edje_meta);
+
    lua_pushliteral(L, "__index");
    lua_pushvalue(L, -3);
    lua_rawset(L, -3);
    lua_pop(L, 2);
+
+   // weak table for our objects
+   lua_pushlightuserdata(L, &_elua_objs);
+   lua_newtable(L);
+   lua_pushstring(L, "__mode");
+   lua_pushstring(L, "v");
+   lua_rawset(L, -3);
+   lua_rawset(L, LUA_REGISTRYINDEX);
 }
 
 
@@ -362,17 +384,48 @@ _elua_gc(lua_State *L)
 }
 
 //-------------
+/**
+ * Cori: Assumes object to be saved on top of stack
+ */
+static void
+_elua_ref_set(lua_State *L, void *key)
+{
+   lua_pushlightuserdata(L, &_elua_objs);
+   lua_rawget(L, LUA_REGISTRYINDEX);
+   lua_pushlightuserdata(L, key);
+   lua_pushvalue(L,-3); // key & obj table & obj
+   lua_rawset(L, -3);
+   lua_pop(L, 1); // pop obj table
+}
+ 
+/**
+ * Cori: Get an object from the object table
+ */
+static void *
+_elua_ref_get(lua_State *L, void *key)
+{
+   lua_pushlightuserdata(L, &_elua_objs);
+   lua_rawget(L, LUA_REGISTRYINDEX);
+   lua_pushlightuserdata(L, key);
+   lua_rawget(L, -2);
+   lua_remove(L, -2); // kill obj table
+   return lua_touserdata(L, -2);
+}
+
 static Edje_Lua_Obj *
 _elua_obj_new(lua_State *L, Edje *ed, int size)
 {
    Edje_Lua_Obj *obj;
-   
+
    obj = (Edje_Lua_Obj *)lua_newuserdata(L, size);
    memset(obj, 0, size);
    ed->lua_objs = eina_inlist_append(ed->lua_objs, EINA_INLIST_GET(obj));
-   luaL_getmetatable(L, "edje");
+
+   luaL_getmetatable(L, "edje_evas_obj");
    lua_setmetatable(L, -2);
    obj->ed = ed;
+
+   _elua_ref_set(L, obj);
    return obj;
 }
 
@@ -657,8 +710,6 @@ _elua_timer_cb(void *data)
         return 0;
      }
    ret = lua_toboolean(L, -1);
-//   ret = luaL_checktype(L, -1, LUA_TBOOLEAN);
-//   ret = luaL_checkint(L, -1);
    lua_pop(L, 1);
    if (ret == 0) _elua_obj_free(L, (Edje_Lua_Obj *)elt);
    _elua_gc(L);
@@ -739,7 +790,7 @@ _elua_animator_free(void *obj)
    lua_State *L;
    if (!ela->obj.ed) return;
    L = ela->obj.ed->L;
-   luaL_unref(L, LUA_REGISTRYINDEX, ela->fn_ref); //0
+   luaL_unref(L, LUA_REGISTRYINDEX, ela->fn_ref);
    ela->fn_ref  = 0;
    ecore_animator_del(ela->animator);
    ela->animator = NULL;
@@ -1444,26 +1495,70 @@ _elua_above(lua_State *L)
    if (!obj) return 0;
    if (!obj->is_evas_obj) return 0;
    if (!(o = evas_object_above_get(elo->evas_obj))) return 0;
-   if (!(elo2 = evas_object_data_get(o, "elo"))) return 0;
-   lua_pushlightuserdata(L, elo2);
+   if (!(elo2 = evas_object_data_get(o, ELO))) return 0;
+   _elua_ref_get(L, elo2);
    return 1;
 }
 
 static int
 _elua_below(lua_State *L)
 {
-   return 0;
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   Edje_Lua_Evas_Object *elo2;
+   Evas_Object *o;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   if (!(o = evas_object_below_get(elo->evas_obj))) return 0;
+   if (!(elo2 = evas_object_data_get(o, ELO))) return 0;
+   _elua_ref_get(L, elo2);
+   return 1;
 }
 
 static int
 _elua_top(lua_State *L)
 {
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   Edje_Lua_Evas_Object *elo2;
+   Evas_Object *o;
+   Eina_List *list, *l;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   if (!(list = (Eina_List *)evas_object_smart_members_get(obj->ed->obj))) return 0;
+   if (!list) return 0;
+   for (l = eina_list_last(list); l; l = l->prev)
+     {
+        o = l->data;
+        if ((elo2 = evas_object_data_get(o, ELO)))
+          {
+             _elua_ref_get(L, elo2);
+             return 1;
+          }
+     }
    return 0;
 }
 
 static int
 _elua_bottom(lua_State *L)
 {
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   Edje_Lua_Evas_Object *elo2;
+   Evas_Object *o;
+   Eina_List *list, *l;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   if (!(list = (Eina_List *)evas_object_smart_members_get(obj->ed->obj))) return 0;
+   for (l = list; l; l = l->next)
+     {
+        o = l->data;
+        if ((elo2 = evas_object_data_get(o, ELO)))
+          {
+             _elua_ref_get(L, elo2);
+             return 1;
+          }
+     }
    return 0;
 }
 
@@ -1550,7 +1645,7 @@ _elua_rect(lua_State *L)
    evas_object_clip_set(elo->evas_obj, ed->clipper);
    evas_object_move(elo->evas_obj, ed->x, ed->y);
    evas_object_resize(elo->evas_obj, 0, 0);
-   evas_object_data_set(elo->evas_obj, "elo", elo);
+   evas_object_data_set(elo->evas_obj, ELO, elo);
    return 1;
 }
 
@@ -1570,33 +1665,47 @@ _edje_lua2_script_init(Edje *ed)
    char buf[256];
    void *data;
    int size;
+   lua_State *L;
    
    if (ed->L) return;
    _elua_init();
-   ed->L = lua_newstate(_elua_alloc, &ela);
-   lua_atpanic(ed->L, _elua_custom_panic);
+   L = ed->L = lua_newstate(_elua_alloc, &ela);
+   lua_atpanic(L, _elua_custom_panic);
 
 // FIXME: figure out optimal gc settings later   
-//   lua_gc(ed->L, LUA_GCSETPAUSE, 200);
-//   lua_gc(ed->L, LUA_GCSETSTEPMUL, 200);
+//   lua_gc(L, LUA_GCSETPAUSE, 200);
+//   lua_gc(L, LUA_GCSETSTEPMUL, 200);
 
    for (l = _elua_libs; l->func; l++)
      {
-        lua_pushcfunction(ed->L, l->func);
-        lua_pushstring(ed->L, l->name);
-        lua_call(ed->L, 1, 0);
+        lua_pushcfunction(L, l->func);
+        lua_pushstring(L, l->name);
+        lua_call(L, 1, 0);
      }
    
-   luaL_register(ed->L, "edje", _elua_edje_api);
-   luaL_newmetatable(ed->L, "edje");
-   luaL_register(ed->L, 0, _elua_edje_meta);
-
-   lua_pushliteral(ed->L, "__index");
-   lua_pushvalue(ed->L, -3);
-   lua_rawset(ed->L, -3);
-   lua_pop(ed->L, 2);
    
-   _elua_table_ptr_set(ed->L, _elua_key, ed);
+   luaL_register(L, "edje", _elua_edje_api);
+   luaL_newmetatable(L, "edje");
+   luaL_register(L, 0, _elua_edje_meta);
+
+   luaL_register(L, "edje_evas_obj", _elua_edje_evas_obj);
+   luaL_newmetatable(L, "edje_evas_obj");
+   luaL_register(L, 0, _elua_edje_meta);
+
+   lua_pushliteral(L, "__index");
+   lua_pushvalue(L, -3);
+   lua_rawset(L, -3);
+   lua_pop(L, 2);
+
+   // weak table for our objects
+   lua_pushlightuserdata(L, &_elua_objs);
+   lua_newtable(L);
+   lua_pushstring(L, "__mode");
+   lua_pushstring(L, "v");
+   lua_rawset(L, -3);
+   lua_rawset(L, LUA_REGISTRYINDEX);
+   
+   _elua_table_ptr_set(L, _elua_key, ed);
    
    snprintf(buf, sizeof(buf), "lua_scripts/%i", ed->collection->id);
    data = eet_read(ed->file->ef, buf, &size);
@@ -1605,15 +1714,15 @@ _edje_lua2_script_init(Edje *ed)
      {
         int err;
    
-        err = luaL_loadbuffer(ed->L, data, size, "edje_lua_script");
+        err = luaL_loadbuffer(L, data, size, "edje_lua_script");
         if (err)
           {
              if (err == LUA_ERRSYNTAX)
                ERR("lua load syntax error: %s", 
-                   lua_tostring(ed->L, -1));
+                   lua_tostring(L, -1));
              else if (err == LUA_ERRMEM)
                ERR("lua load memory allocation error: %s",
-                   lua_tostring(ed->L, -1));
+                   lua_tostring(L, -1));
           }
         free(data);
         if (setjmp(panic_jmp) == 1)
@@ -1621,8 +1730,8 @@ _edje_lua2_script_init(Edje *ed)
              ERR("Script init panic");
              return;
           }
-        if ((err = lua_pcall(ed->L, 0, 0, 0)))
-          _edje_lua2_error(ed->L, err);
+        if ((err = lua_pcall(L, 0, 0, 0)))
+          _edje_lua2_error(L, err);
      }
 }
 
