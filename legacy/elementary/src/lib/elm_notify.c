@@ -65,13 +65,57 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_notify_theme_apply(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const char *style = elm_widget_style_get(obj);
+   switch (wd->orient)
+     {
+      case ELM_NOTIFY_ORIENT_TOP:
+	 _elm_theme_object_set(obj, wd->notify, "notify", "top", style);
+	 break;
+      case ELM_NOTIFY_ORIENT_CENTER:
+	 _elm_theme_object_set(obj, wd->notify, "notify", "center", style);
+	 break;
+      case ELM_NOTIFY_ORIENT_BOTTOM:
+	 _elm_theme_object_set(obj, wd->notify, "notify", "bottom", style);
+	 break;
+      case ELM_NOTIFY_ORIENT_LEFT:
+	 _elm_theme_object_set(obj, wd->notify, "notify", "left", style);
+	 break;
+      case ELM_NOTIFY_ORIENT_RIGHT:
+	 _elm_theme_object_set(obj, wd->notify, "notify", "right", style);
+	 break;
+      case ELM_NOTIFY_ORIENT_TOP_LEFT:
+	 _elm_theme_object_set(obj, wd->notify, "notify", "top_left", style);
+	 break;
+      case ELM_NOTIFY_ORIENT_TOP_RIGHT:
+	 _elm_theme_object_set(obj, wd->notify, "notify", "top_right", style);
+	 break;
+      case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
+	 _elm_theme_object_set(obj, wd->notify, "notify", "bottom_left", style);
+	 break;
+      case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
+	 _elm_theme_object_set(obj, wd->notify, "notify", "bottom_right", style);
+	 break;
+     }
+}
+
+static void
+_block_events_theme_apply(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const char *style = elm_widget_style_get(obj);
+   _elm_theme_object_set(obj, wd->block_events, "notify", "block_events", style);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _elm_theme_object_set(obj, wd->notify, "notify", "base", "default");
-   if (wd->block_events)
-     _elm_theme_object_set(obj, wd->block_events, "notify", "block_events", "default");
+   _notify_theme_apply(obj);
+   if (wd->block_events) _block_events_theme_apply(obj);
    edje_object_scale_set(wd->notify, elm_widget_scale_get(obj) *
                          _elm_config->scale);
    _sizing_eval(obj);
@@ -408,37 +452,9 @@ elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   if (wd->orient == orient) return;
    wd->orient = orient;
-   switch (orient)
-     {
-     case ELM_NOTIFY_ORIENT_TOP:
-        _elm_theme_object_set(obj, wd->notify, "notify", "base", "default");
-        break;
-     case ELM_NOTIFY_ORIENT_CENTER:
-        _elm_theme_object_set(obj, wd->notify, "notify", "base", "center");
-        break;
-     case ELM_NOTIFY_ORIENT_BOTTOM:
-        _elm_theme_object_set(obj, wd->notify, "notify", "base", "bottom");
-        break;
-     case ELM_NOTIFY_ORIENT_LEFT:
-        _elm_theme_object_set(obj, wd->notify, "notify", "base", "left");
-        break;
-     case ELM_NOTIFY_ORIENT_RIGHT:
-        _elm_theme_object_set(obj, wd->notify, "notify", "base", "right");
-        break;
-     case ELM_NOTIFY_ORIENT_TOP_LEFT:
-        _elm_theme_object_set(obj, wd->notify, "notify", "base", "top_left");
-        break;
-     case ELM_NOTIFY_ORIENT_TOP_RIGHT:
-        _elm_theme_object_set(obj, wd->notify, "notify", "base", "top_right");
-        break;
-     case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
-        _elm_theme_object_set(obj, wd->notify, "notify", "base", "bottom_left");
-        break;
-     case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
-        _elm_theme_object_set(obj, wd->notify, "notify", "base", "bottom_right");
-        break;
-     }
+   _notify_theme_apply(obj);
    _resize(obj, NULL, obj, NULL);
 }
 
@@ -522,7 +538,7 @@ elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
    if (!repeat)
      {
 	wd->block_events = edje_object_add(evas_object_evas_get(obj));
-	_elm_theme_object_set(obj, wd->block_events, "notify", "block_events", "default");
+	_block_events_theme_apply(obj);
         elm_widget_resize_object_set(obj, wd->block_events);
 	edje_object_signal_callback_add(wd->block_events, "elm,action,clicked", "elm", _signal_block_clicked, obj);
      }

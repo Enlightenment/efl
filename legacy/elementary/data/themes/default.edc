@@ -7654,7 +7654,7 @@ collections {
 		   }
 	   }
    }
-   group { name: "elm/notify/base/default";
+   group { name: "elm/notify/top/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -7752,7 +7752,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/center";
+   group { name: "elm/notify/center/default";
        //this group is a design similar to the inwin group
        images {
            image: "bt_dis_base.png" COMP;
@@ -7809,7 +7809,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/bottom";
+   group { name: "elm/notify/bottom/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -7907,7 +7907,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/left";
+   group { name: "elm/notify/left/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -8005,7 +8005,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/right";
+   group { name: "elm/notify/right/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -8103,7 +8103,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/top_left";
+   group { name: "elm/notify/top_left/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -8201,7 +8201,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/top_right";
+   group { name: "elm/notify/top_right/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -8299,7 +8299,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/bottom_left";
+   group { name: "elm/notify/bottom_left/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -8397,7 +8397,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/bottom_right";
+   group { name: "elm/notify/bottom_right/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
