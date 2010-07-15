@@ -25,7 +25,7 @@ struct _Elm_Slideshow_Item
 {
    Evas_Object *obj;
 
-   Eina_List *l, *l_built;
+   Eina_List *l, *l_built, *l_built_o2;
 
    const void *data;
    const Elm_Slideshow_Item_Class *itc;
@@ -46,6 +46,8 @@ struct _Widget_Data
    // list of Elm_Slideshow_Item*
    Eina_List *items;
    Eina_List *items_built;
+   Eina_List *items_built_o2;
+
    Elm_Slideshow_Item *current;
    Elm_Slideshow_Item *previous;
 
@@ -169,26 +171,33 @@ _item_realize(Elm_Slideshow_Item *item, int num)
 		{
 			item->o_2 = item->itc->func.get((void*)item->data, obj);
 			evas_object_smart_member_add(item->o_2, obj);
+			item->l_built_o2 = eina_list_append(NULL, item);
+			wd->items_built_o2 = eina_list_merge(wd->items_built_o2, item->l_built_o2);
 			evas_object_hide(item->o_2);
 		}
 	}
 
 	//delete unused items
-	while (eina_list_count(wd->items_built) > 5 + wd->layout.current->nb_items * 2)
+	while (eina_list_count(wd->items_built) > 3 + wd->layout.current->nb_items * 2)
 	{
 		_item = eina_list_data_get(wd->items_built);
 		wd->items_built = eina_list_remove_list(wd->items_built, wd->items_built);
 		if(item->itc->func.del)
-		{
 			item->itc->func.del((void*)item->data, _item->o);
-			item->itc->func.del((void*)item->data, _item->o_2);
-		}
 		else
-		{
 			evas_object_del(_item->o);
-			evas_object_del(_item->o_2);
-		}
 		_item->o = NULL;
+	}
+	//delete unused items
+	while (eina_list_count(wd->items_built_o2) > 3 + wd->layout.current->nb_items * 2)
+	{
+		_item = eina_list_data_get(wd->items_built_o2);
+		wd->items_built_o2 = eina_list_remove_list(wd->items_built_o2, wd->items_built_o2);
+		if(item->itc->func.del)
+			item->itc->func.del((void*)item->data, _item->o_2);
+		else
+			evas_object_del(_item->o_2);
+		_item->o_2 = NULL;
 	}
 }
 
@@ -251,6 +260,8 @@ _end(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, c
 		{
 			edje_object_part_unswallow(NULL, first->o);
 			evas_object_hide(first->o);
+			edje_object_part_unswallow(NULL, first->o_2);
+			evas_object_hide(first->o_2);
 
 			if(first == last)
 				break;
@@ -274,10 +285,10 @@ _end(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, c
 		evas_object_hide(first->o_2);
 		edje_object_part_unswallow(NULL, first->o);
 		evas_object_show(first->o);
+
 		edje_object_signal_emit(wd->slideshow, "anim,end", "slideshow");
 		snprintf(buf, sizeof(buf), "elm.swallow.%d.1", i);
 		edje_object_part_swallow(wd->slideshow, buf, first->o);
-
 
 		if(first == last)
 			break;
@@ -748,16 +759,18 @@ elm_slideshow_clear(Evas_Object *obj)
 	EINA_LIST_FREE(wd->items_built, item)
 	{
 		if (item->itc->func.del)
-		{
 			item->itc->func.del((void*)item->data, item->o);
-			item->itc->func.del((void*)item->data, item->o_2);
-		}
 		else
-		{
 			evas_object_del(item->o);
-			evas_object_del(item->o_2);
-		}
 	}
+	EINA_LIST_FREE(wd->items_built_o2, item)
+	{
+		if (item->itc->func.del)
+			item->itc->func.del((void*)item->data, item->o_2);
+		else
+			evas_object_del(item->o_2);
+	}
+
 
 	EINA_LIST_FREE(wd->items, item)
 	{
@@ -793,11 +806,18 @@ elm_slideshow_item_del(Elm_Slideshow_Item *item)
 
 	wd->items = eina_list_remove_list(wd->items, item->l);
 	wd->items_built = eina_list_remove_list(wd->items_built, item->l_built);
+	wd->items_built_o2 = eina_list_remove_list(wd->items_built_o2, item->l_built_o2);
 
 	if (item->o && item->itc->func.del)
+	{
 		item->itc->func.del((void*)item->data, wd->previous->o);
+		item->itc->func.del((void*)item->data, wd->previous->o_2);
+	}
 	else if (item->o)
-		evas_object_del(item->o);
+	{
+		evas_object_del(item->o);evas_object_del(item->o_2);
+
+	}
 	free(item);
 }
 
