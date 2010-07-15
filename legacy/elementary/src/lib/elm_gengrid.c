@@ -224,10 +224,9 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->calc_job) ecore_job_del(wd->calc_job);
+   elm_gengrid_clear(obj);
    evas_object_del(wd->pan_smart);
    wd->pan_smart = NULL;
-   elm_gengrid_clear(obj);
    free(wd);
 }
 
