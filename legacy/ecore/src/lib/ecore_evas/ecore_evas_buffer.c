@@ -120,9 +120,8 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
         Eina_Rectangle *r;
 
 	EINA_LIST_FOREACH(updates, l, r)
-	  if (ee->engine.buffer.image)
-	    evas_object_image_data_update_add(ee->engine.buffer.image,
-					      r->x, r->y, r->w, r->h);
+	  evas_object_image_data_update_add(ee->engine.buffer.image,
+					    r->x, r->y, r->w, r->h);
      }
    if (updates)
      {
