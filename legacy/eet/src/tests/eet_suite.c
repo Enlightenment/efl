@@ -1,3 +1,8 @@
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdlib.h>
@@ -6,13 +11,12 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <pthread.h>
+
+#ifdef EFL_HAVE_POSIX_THREADS
+# include <pthread.h>
+#endif
 
 #include <check.h>
-
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
 
 #include <Eina.h>
 
@@ -1428,7 +1432,12 @@ START_TEST(eet_cipher_decipher_simple)
 }
 END_TEST
 
+#ifdef EFL_HAVE_THREADS
+
 static Eina_Bool open_worker_stop;
+
+# ifdef EFL_HAVE_POSIX_THREADS
+
 static void*
 open_close_worker(void* path)
 {
@@ -1450,6 +1459,31 @@ open_close_worker(void* path)
    pthread_exit(NULL);
 }
 
+# else
+
+static unsigned int __stdcall
+open_close_worker(void *path)
+{
+   while (!open_worker_stop)
+     {
+	Eet_File *ef = eet_open((char const *)path, EET_FILE_MODE_READ);
+	if (ef == NULL)
+	  {
+	     _endthreadex(-1);
+	  }
+	else
+	  {
+	     Eet_Error err_code = eet_close(ef);
+	     if (err_code != EET_ERROR_NONE)
+	       _endthreadex(-2);
+	  }
+     }
+
+   _endthreadex(0);
+}
+
+# endif
+
 START_TEST(eet_cache_concurrency)
 {
    char *file = strdup("/tmp/eet_suite_testXXXXXX");
@@ -1457,6 +1491,13 @@ START_TEST(eet_cache_concurrency)
    Eet_File *ef;
    void *thread_ret;
    unsigned int n;
+# ifdef EFL_HAVE_POSIX_THREADS
+   pthread_t thread;
+# else
+   uintptr_t thread;
+   unsigned int thread_id;
+   DWORD ret;
+# endif
 
    eet_init();
 
@@ -1468,9 +1509,11 @@ START_TEST(eet_cache_concurrency)
 
    /* start a thread that repeatedly opens and closes a file */
    open_worker_stop = 0;
-   pthread_t thread;
+# ifdef EFL_HAVE_POSIX_THREADS
    pthread_create(&thread, NULL, open_close_worker, file);
-
+# else
+   thread = _beginthreadex(NULL, 0, open_close_worker, file, 0, &thread_id);
+# endif
    /* clear the cache repeatedly in this thread */
    for (n = 0; n < 50000; ++n)
      {
@@ -1479,13 +1522,22 @@ START_TEST(eet_cache_concurrency)
 
    /* join the other thread, and fail if it returned an error message */
    open_worker_stop = 1;
+# ifdef EFL_HAVE_POSIX_THREADS
    fail_if(pthread_join(thread, &thread_ret) != 0);
    fail_unless(thread_ret == NULL, (char const*)thread_ret);
+# else
+   ret = WaitForSingleObject((HANDLE)thread, INFINITE);
+   fail_if(ret != WAIT_OBJECT_0);
+   fail_if(GetExitCoeThread((HANDLE)thread, &ret) == FALSE);
+   fail_if(ret != 0)
+# endif
 
    fail_if(unlink(file) != 0);
    eet_shutdown();
 }
 END_TEST
+
+#endif /* EFL_HAVE_THREADS */
 
 typedef struct _Eet_Connection_Data Eet_Connection_Data;
 struct _Eet_Connection_Data
@@ -2236,9 +2288,11 @@ eet_suite(void)
    suite_add_tcase(s, tc);
 #endif
 
+#ifdef EFL_HAVE_THREADS
    tc = tcase_create("Eet Cache");
    tcase_add_test(tc, eet_cache_concurrency);
    suite_add_tcase(s, tc);
+#endif
 
    tc = tcase_create("Eet Connection");
    tcase_add_test(tc, eet_connection_check);

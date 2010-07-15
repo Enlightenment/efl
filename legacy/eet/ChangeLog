@@ -399,3 +399,9 @@
 
         * Moved Eet.h into $includedir/eet-MAJOR_VERSION/
 
+2010-07-15  Vincent Torri
+
+        * Add native Windows thread support instead of using pthread
+	(less overhead). On other OS, pthread is still used by default.
+	Pass --enable-win32-threads to activate thread support on
+	Windows.

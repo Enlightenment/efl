@@ -322,7 +322,18 @@ AC_MSG_RESULT(${have_signature})
 
 # pthread library
 
-EFL_CHECK_PTHREAD(["no"], [have_pthread="yes"], [have_pthread="no"])
+EFL_CHECK_THREADS(["no"],
+   [
+    if test "x${_efl_have_posix_threads}" = "xyes" ; then
+       have_threads="POSIX"
+    else
+       if test "x${_efl_have_win32_threads}" = "xyes" ; then
+          have_threads="Win32"
+       else
+          have_threads="no"
+       fi
+    fi],
+   [have_threads="no"])
 
 
 ### Checks for header files
@@ -461,7 +472,7 @@ if test "x${have_gnutls}" = "xyes" || test "x${have_openssl}" = "xyes" ; then
    echo "    Cipher support.....: ${have_cipher}"
    echo "    Signature..........: ${have_signature}"
 fi
-echo "  Thread Support.......: ${have_pthread}"
+echo "  Thread Support.......: ${have_threads}"
 echo
 echo "  Old eet file format..: ${old_eet_file_format}"
 echo

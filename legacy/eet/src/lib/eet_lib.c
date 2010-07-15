@@ -60,7 +60,7 @@ void *alloca (size_t);
 # include <openssl/evp.h>
 #endif
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_POSIX_THREADS
 # include <pthread.h>
 #endif
 
@@ -109,8 +109,12 @@ struct _Eet_File
 
    time_t                mtime;
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
+# ifdef EFL_HAVE_POSIX_THREADS
    pthread_mutex_t	 file_lock;
+# else
+   HANDLE                file_lock;
+# endif
 #endif
 
    unsigned char         writes_pending : 1;
@@ -227,28 +231,45 @@ static int		read_data_from_disk(Eet_File *ef, Eet_File_Node *efn, void *buf, int
 
 static Eet_Error        eet_internal_close(Eet_File *ef, Eina_Bool locked);
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
+
+# ifdef EFL_HAVE_POSIX_THREADS
+
 static pthread_mutex_t eet_cache_lock = PTHREAD_MUTEX_INITIALIZER;
 
-#define LOCK_CACHE pthread_mutex_lock(&eet_cache_lock);
-#define UNLOCK_CACHE pthread_mutex_unlock(&eet_cache_lock);
+#  define LOCK_CACHE pthread_mutex_lock(&eet_cache_lock)
+#  define UNLOCK_CACHE pthread_mutex_unlock(&eet_cache_lock)
 
-#define INIT_FILE(File) pthread_mutex_init(&File->file_lock, NULL);
-#define LOCK_FILE(File) pthread_mutex_lock(&File->file_lock);
-#define UNLOCK_FILE(File) pthread_mutex_unlock(&File->file_lock);
-#define DESTROY_FILE(File) pthread_mutex_destroy(&File->file_lock);
+#  define INIT_FILE(File) pthread_mutex_init(&File->file_lock, NULL)
+#  define LOCK_FILE(File) pthread_mutex_lock(&File->file_lock)
+#  define UNLOCK_FILE(File) pthread_mutex_unlock(&File->file_lock)
+#  define DESTROY_FILE(File) pthread_mutex_destroy(&File->file_lock)
+
+# else /* EFL_HAVE_WIN32_THREADS */
+
+static HANDLE eet_cache_lock = NULL;
+
+#  define LOCK_CACHE WaitForSingleObject(eet_cache_lock, INFINITE)
+#  define UNLOCK_CACHE ReleaseMutex(eet_cache_lock)
+
+#  define INIT_FILE(File) File->file_lock = CreateMutex(NULL, FALSE, NULL)
+#  define LOCK_FILE(File) WaitForSingleObject(File->file_lock, INFINITE)
+#  define UNLOCK_FILE(File) ReleaseMutex(File->file_lock)
+#  define DESTROY_FILE(File) CloseHandle(File->file_lock)
+
+# endif /* EFL_HAVE_WIN32_THREADS */
 
 #else
 
-#define LOCK_CACHE ;
-#define UNLOCK_CACHE ;
+# define LOCK_CACHE do {} while (0)
+# define UNLOCK_CACHE do {} while (0)
 
-#define INIT_FILE(File) ;
-#define LOCK_FILE(File) ;
-#define UNLOCK_FILE(File) ;
-#define DESTROY_FILE(File) ;
+# define INIT_FILE(File) do {} while (0)
+# define LOCK_FILE(File) do {} while (0)
+# define UNLOCK_FILE(File) do {} while (0)
+# define DESTROY_FILE(File) do {} while (0)
 
-#endif
+#endif /* EFL_HAVE_THREADS */
 
 /* cache. i don't expect this to ever be large, so arrays will do */
 static int        eet_writers_num     = 0;

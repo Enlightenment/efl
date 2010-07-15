@@ -31,6 +31,14 @@ autogen.sh \
 eet.pc.in \
 eet.spec.in \
 eet.spec \
+m4/ac_attribute.m4 \
+m4/ac_path_generic.m4 \
+m4/efl_binary.m4 \
+m4/efl_coverage.m4 \
+m4/efl_doxygen.m4 \
+m4/efl_fnmatch.m4 \
+m4/efl_tests.m4 \
+m4/efl_threads.m4 \
 README.in \
 README
 
