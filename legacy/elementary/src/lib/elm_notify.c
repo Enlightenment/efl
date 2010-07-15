@@ -184,7 +184,8 @@ _calc(Evas_Object *obj)
    Evas_Coord x, y, w, h;
    if (!wd) return;
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   edje_object_size_min_calc(wd->notify, &minw, &minh);
+   edje_object_size_min_get(wd->notify, &minw, &minh);
+   edje_object_size_min_restricted_calc(wd->notify, &minw, &minh, minw, minh);
 
    if (wd->content)
      {
