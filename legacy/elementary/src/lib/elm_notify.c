@@ -316,6 +316,7 @@ elm_notify_add(Evas_Object *parent)
    wd->repeat_events = EINA_TRUE;
 
    wd->notify = edje_object_add(e);
+   wd->orient = -1;
    elm_notify_orient_set(obj, ELM_NOTIFY_ORIENT_TOP);
 
    elm_notify_parent_set(obj, parent);
