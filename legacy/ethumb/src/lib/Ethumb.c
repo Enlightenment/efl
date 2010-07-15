@@ -318,7 +318,6 @@ ethumb_free(Ethumb *ethumb)
    ethumb_file_free(ethumb);
    evas_object_del(ethumb->o);
    ecore_evas_free(ethumb->ee);
-   ecore_evas_free(ethumb->sub_ee);
    eina_stringshare_del(ethumb->thumb_dir);
    eina_stringshare_del(ethumb->category);
    if (ethumb->finished_idler)
