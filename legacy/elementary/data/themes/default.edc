@@ -8721,6 +8721,11 @@ collections {
          		rel1.relative: 0.4 0.4;
          		rel2.relative: 0.6 0.6;
          	}
+            description {
+               state: "square_prev_next" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 0;
+            } 
          }
          part { name: "position_-2";
          	description {
@@ -9148,6 +9153,7 @@ collections {
             target: "image_1_2_whole";
             target: "image_-2_2_whole";
             target: "image_2_2_whole";
+            target: "image_1_whole";
             transition: SINUSOIDAL 1.5;
             after: "end";
          }
