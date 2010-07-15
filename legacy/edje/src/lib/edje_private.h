@@ -506,6 +506,19 @@ struct _Edje_Part_Collection_Directory_Entry
    const char *entry; /* the nominal name of the part collection */
    int         id; /* the id of this named part collection */
 
+   struct
+   {
+      int      RECTANGLE;
+      int      TEXT;
+      int      IMAGE;
+      int      SWALLOW;
+      int      TEXTBLOCK;
+      int      GROUP;
+      int      BOX;
+      int      TABLE;
+      int      EXTERNAL;
+   } count;
+
    Edje_Part_Collection *ref;
 };
 

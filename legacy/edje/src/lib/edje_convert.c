@@ -242,6 +242,8 @@ _edje_collection_convert(Edje_File *file, Old_Edje_Part_Collection *oedc)
 {
    Edje_Part_Collection_Directory_Entry *ce;
    Edje_Part_Collection *edc;
+   Edje_Part *part;
+   Eina_List *l;
 
    edc = oedc;
 
@@ -249,6 +251,37 @@ _edje_collection_convert(Edje_File *file, Old_Edje_Part_Collection *oedc)
 
    ce->ref = edc;
 
-   /* FIXME : Count type part and change their structure */
+   /* Count each type part and their respective state */
+   EINA_LIST_FOREACH(oedc->parts, l, part)
+     {
+	int *count;
+	int dummy = 0;
+
+
+	switch (part->type)
+	  {
+#define CSP(Tp, Ce)						\
+	     case EDJE_PART_TYPE_##Tp :				\
+		count = &Ce->count.Tp;				\
+		break;
+
+	     CSP(RECTANGLE, ce);
+	     CSP(TEXT, ce);
+	     CSP(IMAGE, ce);
+	     CSP(SWALLOW, ce);
+	     CSP(TEXTBLOCK, ce);
+	     CSP(GROUP, ce);
+	     CSP(BOX, ce);
+	     CSP(TABLE, ce);
+	     CSP(EXTERNAL, ce);
+	   default:
+	      count = &dummy;
+	      break;
+	  }
+
+	*count += eina_list_count(part->other_desc) + 1;
+     }
+
+   /* FIXME : change structure layout */
    return edc;
 }
