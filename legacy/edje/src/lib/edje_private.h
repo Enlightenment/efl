@@ -233,6 +233,9 @@ typedef struct _Edje_Part_Image_Id                   Edje_Part_Image_Id;
 typedef struct _Edje_Part_Description                Edje_Part_Description;
 typedef struct _Edje_Part_Description_Common         Edje_Part_Description_Common;
 typedef struct _Edje_Part_Description_Spec_Image     Edje_Part_Description_Spec_Image;
+typedef struct _Edje_Part_Description_Spec_Text      Edje_Part_Description_Spec_Text;
+typedef struct _Edje_Part_Description_Spec_Box       Edje_Part_Description_Spec_Box;
+typedef struct _Edje_Part_Description_Spec_Table     Edje_Part_Description_Spec_Table;
 typedef struct _Edje_Patterns                        Edje_Patterns;
 
 typedef struct _Old_Edje_File			     Old_Edje_File;
@@ -705,58 +708,63 @@ struct _Edje_Part_Description_Spec_Image
    } fill;
 };
 
+struct _Edje_Part_Description_Spec_Text
+{
+   char          *text; /* if "" or NULL, then leave text unchanged */
+   char          *text_class; /* how to apply/modify the font */
+   char          *style; /* the text style if a textblock */
+   char          *font; /* if a specific font is asked for */
+   char          *repch; /* replacement char for password mode entry */
+
+   Edje_Alignment align; /* text alignment within bounds */
+
+   double         elipsis; /* 0.0 - 1.0 defining where the elipsis align */
+   int            size; /* 0 = use user set size */
+   int            id_source; /* -1 if none */
+   int            id_text_source; /* -1 if none */
+
+   unsigned char  fit_x; /* resize font size down to fit in x dir */
+   unsigned char  fit_y; /* resize font size down to fit in y dir */
+   unsigned char  min_x; /* if text size should be part min size */
+   unsigned char  min_y; /* if text size should be part min size */
+   unsigned char  max_x; /* if text size should be part max size */
+   unsigned char  max_y; /* if text size should be part max size */
+};
+
+struct _Edje_Part_Description_Spec_Box
+{
+   char          *layout, *alt_layout;
+   Edje_Alignment align;
+   struct {
+      int x, y;
+   } padding;
+   struct {
+      Eina_Bool h, v;
+   } min;
+};
+
+struct _Edje_Part_Description_Spec_Table
+{
+   unsigned char  homogeneous;
+   Edje_Alignment align;
+   struct {
+      int x, y;
+   } padding;
+};
+
 struct _Edje_Part_Description
 {
    Edje_Part_Description_Common common;
    Edje_Part_Description_Spec_Image image;
+   Edje_Part_Description_Spec_Text text;
+   Edje_Part_Description_Spec_Box box;
+   Edje_Part_Description_Spec_Table table;
 
    char             *color_class; /* how to modify the color */
 
-   struct {
-      char          *text; /* if "" or NULL, then leave text unchanged */
-      char          *text_class; /* how to apply/modify the font */
-      char          *style; /* the text style if a textblock */
-      char          *font; /* if a specific font is asked for */
-      char          *repch; /* replacement char for password mode entry */
-
-      Edje_Alignment align; /* text alignment within bounds */
-
-      double         elipsis; /* 0.0 - 1.0 defining where the elipsis align */
-      int            size; /* 0 = use user set size */
-      int            id_source; /* -1 if none */
-      int            id_text_source; /* -1 if none */
-
-      unsigned char  fit_x; /* resize font size down to fit in x dir */
-      unsigned char  fit_y; /* resize font size down to fit in y dir */
-      unsigned char  min_x; /* if text size should be part min size */
-      unsigned char  min_y; /* if text size should be part min size */
-      unsigned char  max_x; /* if text size should be part max size */
-      unsigned char  max_y; /* if text size should be part max size */
-   } text;
-
-   struct {
-      char          *layout, *alt_layout;
-      Edje_Alignment align;
-      struct {
-         int x, y;
-      } padding;
-      struct {
-         Eina_Bool h, v;
-      } min;
-   } box;
-   
-   struct {
-      unsigned char  homogeneous;
-      Edje_Alignment align;
-      struct {
-         int x, y;
-      } padding;
-   } table;
-   
    Edje_Color color, color2, color3;  /* color for rect or text, shadow etc. */
    Eina_List *external_params; /* parameters for external objects */
 };
-
 
 /*----------*/
 
