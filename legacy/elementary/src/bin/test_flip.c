@@ -30,6 +30,20 @@ my_fl_4(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
+my_fl_5(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *fl = data;
+   elm_flip_go(fl, ELM_FLIP_CUBE_LEFT);
+}
+
+void
+my_fl_6(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *fl = data;
+   elm_flip_go(fl, ELM_FLIP_CUBE_RIGHT);
+}
+
+void
 test_flip(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *bx2, *fl, *o, *bt, *ly;
@@ -119,6 +133,22 @@ test_flip(void *data, Evas_Object *obj, void *event_info)
    bt = elm_button_add(win);
    elm_button_label_set(bt, "4");
    evas_object_smart_callback_add(bt, "clicked", my_fl_4, fl);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "5");
+   evas_object_smart_callback_add(bt, "clicked", my_fl_5, fl);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "6");
+   evas_object_smart_callback_add(bt, "clicked", my_fl_6, fl);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);

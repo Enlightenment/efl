@@ -192,6 +192,37 @@ _flip(Evas_Object *obj)
         evas_map_util_3d_rotate(mf, 0.0, deg, deg, cx, cy, 0);
         evas_map_util_3d_rotate(mb, 0.0, deg + 180.0, deg + 180.0, cx, cy, 0);
         break;
+     case ELM_FLIP_CUBE_LEFT:
+        p = 1.0 - t;
+        p = 1.0 - (p * p);
+        deg = -90.0 * p;
+        if (wd->state)
+          {
+            evas_map_util_3d_rotate(mf, 0.0, deg, 0.0, cx, cy, w / 2);
+            evas_map_util_3d_rotate(mb, 0.0, deg + 90, 0.0, cx, cy, w / 2);
+          }
+        else
+          {
+            evas_map_util_3d_rotate(mf, 0.0, deg + 90, 0.0, cx, cy, w / 2);
+            evas_map_util_3d_rotate(mb, 0.0, deg, 0.0, cx, cy, w / 2);
+          }
+        break;
+     case ELM_FLIP_CUBE_RIGHT:
+        p = 1.0 - t;
+        p = 1.0 - (p * p);
+        deg = 90.0 * p;
+        if (wd->state)
+          {
+            evas_map_util_3d_rotate(mf, 0.0, deg, 0.0, cx, cy, w / 2);
+            evas_map_util_3d_rotate(mb, 0.0, deg - 90, 0.0, cx, cy, w / 2);
+          }
+        else
+          {
+            evas_map_util_3d_rotate(mf, 0.0, deg - 90, 0.0, cx, cy, w / 2);
+            evas_map_util_3d_rotate(mb, 0.0, deg, 0.0, cx, cy, w / 2);
+          }
+        break;
+    
      default:
         break;
      }
@@ -479,6 +510,8 @@ elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc __UNUSED__, Evas_Coord
  * ELM_FLIP_ROTATE_X_CENTER_AXIS
  * ELM_FLIP_ROTATE_XZ_CENTER_AXIS
  * ELM_FLIP_ROTATE_YZ_CENTER_AXIS
+ * ELM_FLIP_SLIDE_LEFT
+ * ELM_FLIP_SLIDE_RIGHT
  *
  * @ingroup Flip
  */
