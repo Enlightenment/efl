@@ -114,7 +114,7 @@ _sizing_eval(Evas_Object *obj)
         evas_object_size_hint_min_set(obj, minw, minh);
         maxh = minh;
         evas_object_size_hint_max_set(obj, maxw, maxh);
-
+        
         if (wd->ellipsis && _is_width_over(obj) == 1) 
           _ellipsis_label_to_width(obj);
      }
@@ -133,62 +133,62 @@ _get_value_in_key_string(const char *oldstring, char *key, char **value)
 {
    char *curlocater, *starttag, *endtag;
    int firstindex = 0, foundflag = -1;
-
+   
    curlocater = strstr(oldstring, key);
    if (curlocater)
      {
         starttag = curlocater;
         endtag = curlocater + strlen(key);
-        if (endtag == NULL || *endtag != '=') 
+        if ((endtag == NULL) || (*endtag != '='))
           {
-            foundflag = 0;
-            return -1;
+             foundflag = 0;
+             return -1;
           }
-
+        
         firstindex = abs(oldstring - curlocater);
-        firstindex += strlen(key)+1; // strlen("key") + strlen("=")
-        *value = (char*)oldstring + firstindex;
-
+        firstindex += strlen(key) + 1; // strlen("key") + strlen("=")
+        *value = (char *)oldstring + firstindex;
+        
         while (oldstring != starttag)
           {
-            if (*starttag == '>')
-              {
-                foundflag = 0;
-                break;
-              }
-            if (*starttag == '<') 
-              break;
-            else 
-              starttag--;
-            if (starttag == NULL) break;
+             if (*starttag == '>')
+               {
+                  foundflag = 0;
+                  break;
+               }
+             if (*starttag == '<') 
+               break;
+             else 
+               starttag--;
+             if (starttag == NULL) break;
           }
-
+        
         while (NULL != endtag)
           {
-            if (*endtag == '<')
-              {
-                foundflag = 0;
-                break;
-              }
-            if (*endtag == '>') 
-              break;
-            else 
-              endtag++;
-            if (endtag == NULL) break;
+             if (*endtag == '<')
+               {
+                  foundflag = 0;
+                  break;
+               }
+             if (*endtag == '>') 
+               break;
+             else 
+               endtag++;
+             if (endtag == NULL) break;
           }
-
-        if (foundflag != 0 && *starttag == '<' && *endtag == '>') 
+        
+        if ((foundflag != 0) && (*starttag == '<') && (*endtag == '>'))
           foundflag = 1;
         else 
           foundflag = 0;
      }
    else
      {
-       foundflag = 0;
+        foundflag = 0;
      }
-
+   
    if (foundflag == 1) return 0;
-
+   
    return -1;
 }
 
@@ -201,87 +201,84 @@ _strbuf_key_value_replace(Eina_Strbuf *srcbuf, char *key, const char *value, int
    char *curlocater, *replocater;
    char *starttag, *endtag;
    int tagtxtlen = 0, insertflag = 0;
-
+   
    srcstring = eina_strbuf_string_get(srcbuf);
    curlocater = strstr(srcstring, key);
-
+   
    if (curlocater == NULL)
-     {
-       insertflag = 1;
-     }
+     insertflag = 1;
    else
      {
-       do 
-         {
-           starttag = strchr(srcstring, '<');
-           endtag = strchr(srcstring, '>');
-           tagtxtlen = endtag - starttag;
-           if (tagtxtlen <= 0) tagtxtlen = 0;
-           if (starttag < curlocater && curlocater < endtag) break;
-           if (endtag != NULL && endtag+1 != NULL)
-             srcstring = endtag+1;
-           else
-             break;
-         } while (strlen(srcstring) > 1);
-
-       if (starttag && endtag && tagtxtlen > strlen(key))
-         {
-           repbuf = eina_strbuf_new();
-           diffbuf = eina_strbuf_new();
-           eina_strbuf_append_n(repbuf, starttag, tagtxtlen);
-           srcstring = eina_strbuf_string_get(repbuf);
-           curlocater = strstr(srcstring, key);
-           if (curlocater != NULL)
-             {
-               replocater = curlocater + strlen(key) + 1;
-               while (*replocater != '=' && replocater != NULL)
-                 replocater++;
-               if (replocater != NULL)
-                 {
-                   replocater++;
-                   while (*replocater != ' ' && *replocater != '>' && replocater == NULL)
-                     replocater++;
-                 }
-               if (replocater != NULL)
-                 {
-                   replocater--;
-                   eina_strbuf_append_n(diffbuf, curlocater, replocater-curlocater);
-                 }
-               else
-                 insertflag = 1;
-             }
-           else
-             {
+        do 
+          {
+             starttag = strchr(srcstring, '<');
+             endtag = strchr(srcstring, '>');
+             tagtxtlen = endtag - starttag;
+             if (tagtxtlen <= 0) tagtxtlen = 0;
+             if ((starttag < curlocater) && (curlocater < endtag)) break;
+             if ((endtag != NULL) && ((endtag + 1) != NULL))
+               srcstring = endtag + 1;
+             else
+               break;
+          } while (strlen(srcstring) > 1);
+        
+        if (starttag && endtag && tagtxtlen > strlen(key))
+          {
+             repbuf = eina_strbuf_new();
+             diffbuf = eina_strbuf_new();
+             eina_strbuf_append_n(repbuf, starttag, tagtxtlen);
+             srcstring = eina_strbuf_string_get(repbuf);
+             curlocater = strstr(srcstring, key);
+             if (curlocater != NULL)
+               {
+                  replocater = curlocater + strlen(key) + 1;
+                  while ((*replocater != '=') && (replocater != NULL))
+                    replocater++;
+                  if (replocater != NULL)
+                    {
+                       replocater++;
+                       while ((*replocater != ' ') && 
+                              (*replocater != '>') && 
+                              (replocater == NULL))
+                         replocater++;
+                    }
+                  if (replocater != NULL)
+                    {
+                       replocater--;
+                       eina_strbuf_append_n(diffbuf, curlocater, 
+                                            replocater-curlocater);
+                    }
+                  else
+                    insertflag = 1;
+               }
+             else
                insertflag = 1;
-             }
-           eina_strbuf_reset(repbuf);
-         }
-       else
-         {
-           insertflag = 1; 
-         }
+             eina_strbuf_reset(repbuf);
+          }
+        else
+          insertflag = 1; 
      }
-
+   
    if (repbuf == NULL) repbuf = eina_strbuf_new();
    if (diffbuf == NULL) diffbuf = eina_strbuf_new();
-
+   
    if (insertflag)
      {
-       eina_strbuf_append_printf(repbuf, "<%s=%s>", key, value);
-       eina_strbuf_prepend(srcbuf, eina_strbuf_string_get(repbuf));
+        eina_strbuf_append_printf(repbuf, "<%s=%s>", key, value);
+        eina_strbuf_prepend(srcbuf, eina_strbuf_string_get(repbuf));
      }
    else
      {
         if (deleteflag)
           {
-            eina_strbuf_prepend(diffbuf, "<");
-            eina_strbuf_append(diffbuf, ">");
-            eina_strbuf_replace_first(srcbuf, eina_strbuf_string_get(diffbuf), "");
+             eina_strbuf_prepend(diffbuf, "<");
+             eina_strbuf_append(diffbuf, ">");
+             eina_strbuf_replace_first(srcbuf, eina_strbuf_string_get(diffbuf), "");
           }
         else
           {
-            eina_strbuf_append_printf(repbuf, "%s=%s", key, value);
-            eina_strbuf_replace_first(srcbuf, eina_strbuf_string_get(diffbuf), eina_strbuf_string_get(repbuf));
+             eina_strbuf_append_printf(repbuf, "%s=%s", key, value);
+             eina_strbuf_replace_first(srcbuf, eina_strbuf_string_get(diffbuf), eina_strbuf_string_get(repbuf));
           }
      }
 
@@ -314,7 +311,7 @@ _is_width_over(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *ellipsis_string = "...";
    size_t ellen = strlen(ellipsis_string)+1;
-
+   
    if (!wd) return 0;
 
    edje_object_part_geometry_get(wd->lbl,"elm.text",&x,&y,&w,&h);
@@ -334,7 +331,7 @@ _ellipsis_label_to_width(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    int cur_fontsize = 0, len, showcount;
    Eina_Strbuf *fontbuf = NULL, *txtbuf = NULL;
-   char **kvalue = NULL;
+   char *kvalue = NULL;
    const char *minfont, *deffont, *maxfont;
    const char *ellipsis_string = "...";
    int minfontsize, maxfontsize, minshowcount;
@@ -354,55 +351,55 @@ _ellipsis_label_to_width(Evas_Object *obj)
 
    if (_get_value_in_key_string(wd->label, "font_size", &kvalue) == 0)
      {
-       if (*kvalue != NULL) cur_fontsize = atoi((char*)kvalue);
+        if (kvalue != NULL) cur_fontsize = atoi((char *)kvalue);
      }
-
+   
    txtbuf = eina_strbuf_new();
    eina_strbuf_append(txtbuf, wd->label);
-
+   
    while (_is_width_over(obj) == 1)
      {
-       if (cur_fontsize > minfontsize)
-         {
-           cur_fontsize--;
-           if (fontbuf != NULL)
-             {
-               eina_strbuf_free(fontbuf);
-               fontbuf = NULL;
-             }
-           fontbuf = eina_strbuf_new();
-           eina_strbuf_append_printf(fontbuf, "%d", cur_fontsize);
-           _strbuf_key_value_replace(txtbuf, "font_size", eina_strbuf_string_get(fontbuf), 0);
-           edje_object_part_text_set(wd->lbl, "elm.text", eina_strbuf_string_get(txtbuf));
-           eina_strbuf_free(fontbuf);
-           fontbuf = NULL;
-         }
-       else
-         {
-           if (txtbuf != NULL)
-             {
-               eina_strbuf_free(txtbuf);
-               txtbuf = NULL;
-             }
-           txtbuf = eina_strbuf_new();
-           eina_strbuf_append_printf(txtbuf, "%s", edje_object_part_text_get(wd->lbl, "elm.text"));
-           len = eina_strbuf_length_get(txtbuf);
-           showcount = len - 1;
-           while (showcount > minshowcount)
-             {
-               len = eina_strbuf_length_get(txtbuf);
-               eina_strbuf_remove(txtbuf, len - minshowcount, len);
-               eina_strbuf_append(txtbuf, ellipsis_string);
-               edje_object_part_text_set(wd->lbl, "elm.text", eina_strbuf_string_get(txtbuf));
-
-               if (_is_width_over(obj) == 1) 
-                 showcount--;
-               else 
-                 break;
-             }
-         }
+        if (cur_fontsize > minfontsize)
+          {
+             cur_fontsize--;
+             if (fontbuf != NULL)
+               {
+                  eina_strbuf_free(fontbuf);
+                  fontbuf = NULL;
+               }
+             fontbuf = eina_strbuf_new();
+             eina_strbuf_append_printf(fontbuf, "%d", cur_fontsize);
+             _strbuf_key_value_replace(txtbuf, "font_size", eina_strbuf_string_get(fontbuf), 0);
+             edje_object_part_text_set(wd->lbl, "elm.text", eina_strbuf_string_get(txtbuf));
+             eina_strbuf_free(fontbuf);
+             fontbuf = NULL;
+          }
+        else
+          {
+             if (txtbuf != NULL)
+               {
+                  eina_strbuf_free(txtbuf);
+                  txtbuf = NULL;
+               }
+             txtbuf = eina_strbuf_new();
+             eina_strbuf_append_printf(txtbuf, "%s", edje_object_part_text_get(wd->lbl, "elm.text"));
+             len = eina_strbuf_length_get(txtbuf);
+             showcount = len - 1;
+             while (showcount > minshowcount)
+               {
+                  len = eina_strbuf_length_get(txtbuf);
+                  eina_strbuf_remove(txtbuf, len - minshowcount, len);
+                  eina_strbuf_append(txtbuf, ellipsis_string);
+                  edje_object_part_text_set(wd->lbl, "elm.text", eina_strbuf_string_get(txtbuf));
+                  
+                  if (_is_width_over(obj) == 1) 
+                    showcount--;
+                  else 
+                    break;
+               }
+          }
      }
-
+   
    if (txtbuf) eina_strbuf_free(txtbuf);
    wd->changed = 1;
    _sizing_eval(obj);
@@ -568,7 +565,11 @@ elm_label_wrap_width_get(const Evas_Object *obj)
 }
 
 /**
- * Set the font size on the label object
+ * Set the font size on the label object.
+ * 
+ * NEVER use this. It is for hyper-special cases only. use styles instead. e.g.
+ * "big", "medium", "small" - or better name them by use:
+ * "title", "footnote", "quote" etc.
  *
  * @param obj The label object
  * @param size font size
@@ -582,25 +583,29 @@ elm_label_fontsize_set(Evas_Object *obj, int fontsize)
    Widget_Data *wd = elm_widget_data_get(obj);
    char *label, fontvalue[16];
    int len;
-
+   
    if (!wd) return;
    len = strlen(wd->label);
    if (len <= 0) return;
-   label = alloca(sizeof(char)*(len+32));
-   sprintf(fontvalue, "%d", fontsize);
-
+   label = alloca(sizeof(char) * (len + 32));
+   sprintf(fontvalue, "%i", fontsize);
+   
    if (_stringshare_key_value_replace(&wd->label, "font_size", fontvalue, 0) == 0)
      edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
-
+   
    if (fontsize == 0) // remove fontsize tag
-    _stringshare_key_value_replace(&wd->label, "font_size", fontvalue, 1);
-
+     _stringshare_key_value_replace(&wd->label, "font_size", fontvalue, 1);
+   
    wd->changed = 1;
    _sizing_eval(obj);
 }
 
 /**
  * Set the text align on the label object
+ *
+ * NEVER use this. It is for hyper-special cases only. use styles instead. e.g.
+ * "big", "medium", "small" - or better name them by use:
+ * "title", "footnote", "quote" etc.
  *
  * @param obj The label object
  * @param align align mode
@@ -614,20 +619,24 @@ elm_label_text_align_set(Evas_Object *obj, const char *alignmode)
    Widget_Data *wd = elm_widget_data_get(obj);
    char *label;
    int len;
-
+   
    if (!wd) return;
    len = strlen(wd->label);
    if (len <= 0) return;
-
+   
    if (_stringshare_key_value_replace(&wd->label, "align", alignmode, 0) == 0)
      edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
-
+   
    wd->changed = 1;
    _sizing_eval(obj);
 }
 
 /**
  * Set the text color on the label object
+ *
+ * NEVER use this. It is for hyper-special cases only. use styles instead. e.g.
+ * "big", "medium", "small" - or better name them by use:
+ * "title", "footnote", "quote" etc.
  *
  * @param obj The label object
  * @param r Red property background color of The label object 
@@ -648,20 +657,24 @@ elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsig
    if (!wd) return;
    len = strlen(wd->label);
    if (len <= 0) return;
-   label = alloca(sizeof(char)*(len+32));
-   sprintf(colorstring, "#%02X%02X%02X%02X", r, g, b, a);
+   label = alloca(sizeof(char) * (len + 32));
+   sprintf(colorstring, "#%02x%02x%02x%02x", r, g, b, a);
 
    if (_stringshare_key_value_replace(&wd->label, "color", colorstring, 0) == 0)
      {
-       edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
-       wd->changed = 1;
-       _sizing_eval(obj);
+        edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
+        wd->changed = 1;
+        _sizing_eval(obj);
      }
 }
 
 
 /**
  * Set background color of the label
+ *
+ * NEVER use this. It is for hyper-special cases only. use styles instead. e.g.
+ * "big", "medium", "small" - or better name them by use:
+ * "title", "footnote", "quote" etc.
  *
  * @param obj The label object
  * @param r Red property background color of The label object 
@@ -676,7 +689,7 @@ elm_label_background_color_set(Evas_Object *obj, unsigned int r, unsigned int g,
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    evas_object_color_set(wd->bg, r, g, b, a);
-
+   
    if (wd->bgcolor == EINA_FALSE)
      {
         wd->bgcolor = 1;
