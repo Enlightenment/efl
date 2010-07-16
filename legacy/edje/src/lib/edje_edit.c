@@ -1033,73 +1033,25 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
    return EINA_FALSE;
 }
 
-EAPI int
-edje_edit_group_min_w_get(Evas_Object *obj)
-{
-   //printf("Get min_w of group\n");
-   GET_ED_OR_RETURN(-1);
-   if (!ed->collection) return -1;
-   return ed->collection->prop.min.w;
-}
+#define FUNC_GROUP_ACCESSOR(Class, Value)			\
+  EAPI int							\
+  edje_edit_group_##Class##_##Value##_get(Evas_Object *obj)	\
+  {								\
+     GET_ED_OR_RETURN(-1);					\
+     if (!ed->collection) return -1;				\
+     return ed->collection->prop.Class.Value;			\
+  }								\
+  EAPI void							\
+  edje_edit_group_##Class##_##Value##_set(Evas_Object *obj, int v)	\
+  {								\
+     GET_ED_OR_RETURN();					\
+     ed->collection->prop.Class.Value = v;			\
+  }
 
-EAPI void
-edje_edit_group_min_w_set(Evas_Object *obj, int w)
-{
-   //printf("Set min_w of group [new w: %d]\n", w);
-   GET_ED_OR_RETURN();
-   ed->collection->prop.min.w = w;
-}
-
-EAPI int
-edje_edit_group_min_h_get(Evas_Object *obj)
-{
-   //printf("Get min_h of group\n");
-   GET_ED_OR_RETURN(-1);
-   if (!ed->collection) return -1;
-   return ed->collection->prop.min.h;
-}
-
-EAPI void
-edje_edit_group_min_h_set(Evas_Object *obj, int h)
-{
-   //printf("Set min_h of group [new h: %d]\n", h);
-   GET_ED_OR_RETURN();
-   ed->collection->prop.min.h = h;
-}
-
-EAPI int
-edje_edit_group_max_w_get(Evas_Object *obj)
-{
-   //printf("Get max_w of group\n");
-   GET_ED_OR_RETURN(-1);
-   if (!ed->collection) return -1;
-   return ed->collection->prop.max.w;
-}
-
-EAPI void
-edje_edit_group_max_w_set(Evas_Object *obj, int w)
-{
-   //printf("Set max_w of group: [new w: %d]\n", w);
-   GET_ED_OR_RETURN();
-   ed->collection->prop.max.w = w;
-}
-
-EAPI int
-edje_edit_group_max_h_get(Evas_Object *obj)
-{
-   //printf("Get max_h of group\n");
-   GET_ED_OR_RETURN(-1);
-   if (!ed->collection) return -1;
-   return ed->collection->prop.max.h;
-}
-
-EAPI void
-edje_edit_group_max_h_set(Evas_Object *obj, int h)
-{
-   //printf("Set max_h of group: [new h: %d]\n", h);
-   GET_ED_OR_RETURN();
-   ed->collection->prop.max.h = h;
-}
+FUNC_GROUP_ACCESSOR(min, w);
+FUNC_GROUP_ACCESSOR(min, h);
+FUNC_GROUP_ACCESSOR(max, w);
+FUNC_GROUP_ACCESSOR(max, h);
 
 /***************/
 /*  DATA API   */
@@ -1833,43 +1785,24 @@ edje_edit_part_name_set(Evas_Object *obj, const char* part, const char* new_name
    return EINA_TRUE;
 }
 
-EAPI const char *
-edje_edit_part_api_name_get(Evas_Object *obj, const char *part)
-{
-   GET_RP_OR_RETURN(NULL);
+#define FUNC_PART_API_STRING(Value)					\
+  EAPI const char *							\
+  edje_edit_part_api_##Value##_get(Evas_Object *obj, const char *part)	\
+  {									\
+     GET_RP_OR_RETURN(NULL);						\
+     return eina_stringshare_add(rp->part->api.Value);			\
+  }									\
+  EAPI Eina_Bool							\
+  edje_edit_part_api_##Value##_set(Evas_Object *obj, const char *part, const char *s) \
+  {									\
+     GET_RP_OR_RETURN(EINA_FALSE);					\
+     _edje_if_string_free(ed, rp->part->api.name);			\
+     rp->part->api.Value = eina_stringshare_add(s);			\
+     return EINA_TRUE;							\
+  }
 
-   return eina_stringshare_add(rp->part->api.name);
-}
-
-EAPI const char *
-edje_edit_part_api_description_get(Evas_Object *obj, const char *part)
-{
-   GET_RP_OR_RETURN(NULL);
-
-   return eina_stringshare_add(rp->part->api.description);
-}
-
-EAPI Eina_Bool
-edje_edit_part_api_name_set(Evas_Object *obj, const char *part, const char *name)
-{
-   GET_RP_OR_RETURN(EINA_FALSE);
-
-   _edje_if_string_free(ed, rp->part->api.name);
-   rp->part->api.name = eina_stringshare_add(name);
-
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-edje_edit_part_api_description_set(Evas_Object *obj, const char *part, const char *description)
-{
-   GET_RP_OR_RETURN(EINA_FALSE);
-
-   _edje_if_string_free(ed, rp->part->api.description);
-   rp->part->api.description = eina_stringshare_add(description);
-
-   return EINA_TRUE;
-}
+FUNC_PART_API_STRING(name);
+FUNC_PART_API_STRING(description);
 
 Eina_Bool
 _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type, const char *source)
@@ -1913,7 +1846,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    ep->use_alternate_font_metrics = 0;
    ep->clip_to_id = -1;
    ep->dragable.confine_id = -1;
-   ep->dragable.events_id = -1;
+   ep->dragable.event_id = -1;
    if (source)
      ep->source = eina_stringshare_add(source);
 
@@ -2512,131 +2445,58 @@ edje_edit_part_drag_y_set(Evas_Object *obj, const char *part, int drag)
    rp->drag->step.y = rp->part->dragable.step_y;
 }
 
-EAPI int
-edje_edit_part_drag_step_x_get(Evas_Object *obj, const char *part)
-{
-   GET_RP_OR_RETURN(0);
-   //printf("Get dragX_STEP for part: %s\n", part);
-   return rp->part->dragable.step_x;
-}
+#define FUNC_PART_DRAG_INT(Class, Value)				\
+  EAPI int								\
+  edje_edit_part_drag_##Class##_##Value##_get(Evas_Object *obj, const char *part) \
+  {									\
+     GET_RP_OR_RETURN(0);						\
+     return rp->part->dragable.Class##_##Value;				\
+  }									\
+  EAPI void								\
+  edje_edit_part_drag_##Class##_##Value##_set(Evas_Object *obj, const char *part, int v) \
+  {									\
+     GET_RP_OR_RETURN();						\
+     rp->part->dragable.Class##_##Value = v;				\
+  }
 
-EAPI void
-edje_edit_part_drag_step_x_set(Evas_Object *obj, const char *part, int step)
-{
-   GET_RP_OR_RETURN();
-   //printf("Set dragX_STEP for part: %s\n", part);
-   rp->part->dragable.step_x = step;
-}
+FUNC_PART_DRAG_INT(step, x);
+FUNC_PART_DRAG_INT(step, y);
+FUNC_PART_DRAG_INT(count, x);
+FUNC_PART_DRAG_INT(count, y);
 
-EAPI int
-edje_edit_part_drag_step_y_get(Evas_Object *obj, const char *part)
-{
-   GET_RP_OR_RETURN(0);
-   //printf("Get dragY_STEP for part: %s\n", part);
-   return rp->part->dragable.step_y;
-}
+#define FUNC_PART_DRAG_ID(Id)			\
+  EAPI const char*				\
+  edje_edit_part_drag_##Id##_get(Evas_Object *obj, const char *part)	\
+  {									\
+     Edje_Real_Part *p;							\
+									\
+     GET_RP_OR_RETURN(NULL);						\
+									\
+     if (rp->part->dragable.Id##_id < 0)				\
+       return NULL;							\
+     									\
+     p = ed->table_parts[rp->part->dragable.Id##_id];			\
+     return eina_stringshare_add(p->part->name);			\
+  }									\
+  EAPI void								\
+  edje_edit_part_drag_##Id##_set(Evas_Object *obj, const char *part, const char *e) \
+  {									\
+     Edje_Real_Part *e_part;						\
+									\
+     GET_RP_OR_RETURN();						\
+     if (!e)								\
+       {								\
+	  rp->part->dragable.Id##_id = -1;				\
+	  return ;							\
+       }								\
+									\
+     e_part = _edje_real_part_get(ed, e);				\
+     rp->part->dragable.Id##_id = e_part->part->id;			\
+  }
 
-EAPI void
-edje_edit_part_drag_step_y_set(Evas_Object *obj, const char *part, int step)
-{
-   GET_RP_OR_RETURN();
-   //printf("Set dragY_STEP for part: %s\n", part);
-   rp->part->dragable.step_y = step;
-}
+FUNC_PART_DRAG_ID(confine);
+FUNC_PART_DRAG_ID(event);
 
-EAPI int
-edje_edit_part_drag_count_x_get(Evas_Object *obj, const char *part)
-{
-   GET_RP_OR_RETURN(0);
-   //printf("Get dragX_COUNT for part: %s\n", part);
-   return rp->part->dragable.count_x;
-}
-
-EAPI void
-edje_edit_part_drag_count_x_set(Evas_Object *obj, const char *part, int count)
-{
-   GET_RP_OR_RETURN();
-   //printf("Set dragX_COUNT for part: %s\n", part);
-   rp->part->dragable.count_x = count;
-}
-
-EAPI int
-edje_edit_part_drag_count_y_get(Evas_Object *obj, const char *part)
-{
-   GET_RP_OR_RETURN(0);
-   //printf("Get dragY_COUNT for part: %s\n", part);
-   return rp->part->dragable.count_y;
-}
-
-EAPI void
-edje_edit_part_drag_count_y_set(Evas_Object *obj, const char *part, int count)
-{
-   GET_RP_OR_RETURN();
-   //printf("Set dragY_COUNT for part: %s\n", part);
-   rp->part->dragable.count_y = count;
-}
-
-EAPI const char*
-edje_edit_part_drag_confine_get(Evas_Object *obj, const char *part)
-{
-   Edje_Real_Part *confine;
-   //printf("******Get drag confine\n");
-   GET_RP_OR_RETURN(NULL);
-
-   if (rp->part->dragable.confine_id < 0)
-      return NULL;
-
-   confine = ed->table_parts[rp->part->dragable.confine_id];
-   return eina_stringshare_add(confine->part->name);
-}
-
-EAPI void
-edje_edit_part_drag_confine_set(Evas_Object *obj, const char *part, const char *confine)
-{
-   Edje_Real_Part *confine_part;
-   //printf("******Set drag confine to: %s\n", confine);
-   GET_RP_OR_RETURN();
-
-   if (!confine)
-     {
-      rp->part->dragable.confine_id = -1;
-      return;
-     }
-
-   confine_part = _edje_real_part_get(ed, confine);
-   rp->part->dragable.confine_id = confine_part->part->id;
-}
-
-EAPI const char*
-edje_edit_part_drag_event_get(Evas_Object *obj, const char *part)
-{
-   Edje_Real_Part *events;
-   //printf("******Get drag event part\n");
-   GET_RP_OR_RETURN(NULL);
-
-   if (rp->part->dragable.events_id < 0)
-      return NULL;
-
-   events = ed->table_parts[rp->part->dragable.events_id];
-   return eina_stringshare_add(events->part->name);
-}
-
-EAPI void
-edje_edit_part_drag_event_set(Evas_Object *obj, const char *part, const char *event)
-{
-   Edje_Real_Part *event_part;
-   //printf("******Set drag event to: %s\n", event);
-   GET_RP_OR_RETURN();
-
-   if (!event)
-     {
-      rp->part->dragable.events_id = -1;
-      return;
-     }
-
-   event_part = _edje_real_part_get(ed, event);
-   rp->part->dragable.events_id = event_part->part->id;
-}
 /*********************/
 /*  PART STATES API  */
 /*********************/
@@ -3022,553 +2882,211 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
    return EINA_TRUE;
 }
 
-//relative
-EAPI double
-edje_edit_state_rel1_relative_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("Get rel1 rel of part: %s state: %s [%f]\n", part, state, pd->rel1.relative_x);
-   return TO_DOUBLE(pd->common.rel1.relative_x);
-}
+#define FUNC_STATE_RELATIVE_DOUBLE(Sub, Value)				\
+  EAPI double								\
+  edje_edit_state_##Sub##_relative_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
+  {									\
+     GET_PD_OR_RETURN(0);						\
+     return TO_DOUBLE(pd->common.Sub.relative_##Value);			\
+  }									\
+  EAPI void								\
+  edje_edit_state_##Sub##_relative_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
+  {									\
+     GET_PD_OR_RETURN();						\
+     pd->common.Sub.relative_##Value = FROM_DOUBLE(v);			\
+     edje_object_calc_force(obj);					\
+  }
 
-EAPI double
-edje_edit_state_rel1_relative_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("Get rel1 rel of part: %s state: %s\n", part, state);
-   return TO_DOUBLE(pd->common.rel1.relative_y);
-}
+FUNC_STATE_RELATIVE_DOUBLE(rel1, x);
+FUNC_STATE_RELATIVE_DOUBLE(rel1, y);
+FUNC_STATE_RELATIVE_DOUBLE(rel2, x);
+FUNC_STATE_RELATIVE_DOUBLE(rel2, y);
 
-EAPI double
-edje_edit_state_rel2_relative_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("Get rel2 rel of part: %s state: %s\n", part, state);
-   return TO_DOUBLE(pd->common.rel2.relative_x);
-}
+#define FUNC_STATE_OFFSET_INT(Sub, Value)					\
+  EAPI int								\
+  edje_edit_state_##Sub##_offset_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
+  {									\
+     GET_PD_OR_RETURN(0);						\
+     return pd->common.Sub.offset_##Value;				\
+  }									\
+  EAPI void								\
+  edje_edit_state_##Sub##_offset_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
+  {									\
+     GET_PD_OR_RETURN();						\
+     pd->common.Sub.offset_##Value = TO_INT(FROM_DOUBLE(v));		\
+     edje_object_calc_force(obj);					\
+  }
 
-EAPI double
-edje_edit_state_rel2_relative_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("Get rel2 rel of part: %s state: %s\n", part, state);
-   return TO_DOUBLE(pd->common.rel2.relative_y);
-}
+FUNC_STATE_OFFSET_INT(rel1, x);
+FUNC_STATE_OFFSET_INT(rel1, y);
+FUNC_STATE_OFFSET_INT(rel2, x);
+FUNC_STATE_OFFSET_INT(rel2, y);
 
-EAPI void
-edje_edit_state_rel1_relative_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set rel1x of part: %s state: %s to: %f\n", part, state, x);
-   //TODO check boudaries
-   pd->common.rel1.relative_x = FROM_DOUBLE(x);
-   edje_object_calc_force(obj);
-}
-
-EAPI void
-edje_edit_state_rel1_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set rel1y of part: %s state: %s to: %f\n", part, state, y);
-   //TODO check boudaries
-   pd->common.rel1.relative_y = FROM_DOUBLE(y);
-   edje_object_calc_force(obj);
-}
-
-EAPI void
-edje_edit_state_rel2_relative_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set rel2x of part: %s state: %s to: %f\n", part, state, x);
-   //TODO check boudaries
-   pd->common.rel2.relative_x = FROM_DOUBLE(x);
-   edje_object_calc_force(obj);
-}
-
-EAPI void
-edje_edit_state_rel2_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set rel2y of part: %s state: %s to: %f\n", part, state, y);
-   pd = _edje_part_description_find_byname(eed, part, state, value);
-   //TODO check boudaries
-   pd->common.rel2.relative_y = FROM_DOUBLE(y);
-   edje_object_calc_force(obj);
-}
-
-//offset
-EAPI int
-edje_edit_state_rel1_offset_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("Get rel1 offset of part: %s state: %s\n", part, state);
-   return pd->common.rel1.offset_x;
-}
-
-EAPI int
-edje_edit_state_rel1_offset_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("Get rel1 offset of part: %s state: %s\n", part, state);
-   return pd->common.rel1.offset_y;
-}
-
-EAPI int
-edje_edit_state_rel2_offset_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("Get rel2 offset of part: %s state: %s\n", part, state);
-   return pd->common.rel2.offset_x;
-}
-
-EAPI int
-edje_edit_state_rel2_offset_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("Get rel2 offset of part: %s state: %s\n", part, state);
-   return pd->common.rel2.offset_y;
-}
-
-EAPI void
-edje_edit_state_rel1_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set rel1x offset of part: %s state: %s to: %f\n", part, state, x);
-   //TODO check boudaries
-   pd->common.rel1.offset_x = TO_INT(FROM_DOUBLE(x));
-   edje_object_calc_force(obj);
-}
-
-EAPI void
-edje_edit_state_rel1_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set rel1y offset of part: %s state: %s to: %f\n", part, state, y);
-   //TODO check boudaries
-   pd->common.rel1.offset_y = TO_INT(FROM_DOUBLE(y));
-   edje_object_calc_force(obj);
-}
-
-EAPI void
-edje_edit_state_rel2_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set rel2x offset of part: %s state: %s to: %f\n", part, state, x);
-   //TODO check boudaries
-   pd->common.rel2.offset_x = TO_INT(FROM_DOUBLE(x));
-   edje_object_calc_force(obj);
-}
-
-EAPI void
-edje_edit_state_rel2_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set rel2y offset of part: %s state: %s to: %f\n", part, state, y);
-   //TODO check boudaries
-   pd->common.rel2.offset_y = TO_INT(FROM_DOUBLE(y));
-   edje_object_calc_force(obj);
-}
-
-//relative to
-EAPI const char *
-edje_edit_state_rel1_to_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   Edje_Real_Part *rel;
-
-   GET_PD_OR_RETURN(NULL);
-
-   //printf("Get rel1x TO of part: %s state: %s\n", part, state);
-
-   if (pd->common.rel1.id_x == -1) return NULL;
-
-   rel = ed->table_parts[pd->common.rel1.id_x % ed->table_parts_size];
-
-   if (rel->part->name)
-     return eina_stringshare_add(rel->part->name);
-   else
-     return NULL;
-}
-
-EAPI const char *
-edje_edit_state_rel1_to_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   Edje_Real_Part *rel;
-
-   GET_PD_OR_RETURN(NULL);
-
-   //printf("Get rel1y TO of part: %s state: %s\n", part, state);
-
-   if (pd->common.rel1.id_y == -1) return NULL;
-
-   rel = ed->table_parts[pd->common.rel1.id_y % ed->table_parts_size];
-
-   if (rel->part->name)
-     return eina_stringshare_add(rel->part->name);
-   else
-     return NULL;
-}
-
-EAPI const char *
-edje_edit_state_rel2_to_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   Edje_Real_Part *rel;
-
-   GET_PD_OR_RETURN(NULL);
-
-   //printf("Get rel2x TO of part: %s state: %s\n", part, state);
-
-   if (pd->common.rel2.id_x == -1) return NULL;
-
-   rel = ed->table_parts[pd->common.rel2.id_x % ed->table_parts_size];
-
-   if (rel->part->name)
-     return eina_stringshare_add(rel->part->name);
-   else
-     return NULL;
-}
-
-EAPI const char *
-edje_edit_state_rel2_to_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   Edje_Real_Part *rel;
-
-   GET_PD_OR_RETURN(NULL);
-
-   //printf("Get rel2y TO of part: %s state: %s\n", part, state);
-
-   if (pd->common.rel2.id_y == -1) return NULL;
-
-   rel = ed->table_parts[pd->common.rel2.id_y % ed->table_parts_size];
-
-   if (rel->part->name)
-     return eina_stringshare_add(rel->part->name);
-   else
-     return NULL;
-}
-
-EAPI void
+#define FUNC_STATE_REL(Sub, Value)		\
+  EAPI const char *				\
+  edje_edit_state_##Sub##_to_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value)	\
+  {									\
+     Edje_Real_Part *rel;						\
+									\
+     GET_PD_OR_RETURN(NULL);						\
+									\
+     if (pd->common.Sub.id_##Value == -1) return NULL;			\
+									\
+     rel = ed->table_parts[pd->common.Sub.id_##Value % ed->table_parts_size]; \
+     									\
+     if (rel->part->name) return eina_stringshare_add(rel->part->name);	\
+     return NULL;							\
+  }									\
+  EAPI void								\
+  edje_edit_state_##Sub##_to_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, const char *to)	\
+  {									\
+     Edje_Real_Part *relp;						\
+									\
+     GET_PD_OR_RETURN();						\
+									\
+     if (to)								\
+       {								\
+	  relp = _edje_real_part_get(ed, to);				\
+	  if (!relp) return;						\
+	  pd->common.Sub.id_##Value = relp->part->id;			\
+       }								\
+     else								\
+       pd->common.Sub.id_##Value = -1;					\
+									\
+  }
 //note after this call edje_edit_part_selected_state_set() to update !! need to fix this
-edje_edit_state_rel1_to_x_set(Evas_Object *obj, const char *part, const char *state, double value, const char *rel_to)
-{
-   Edje_Real_Part *relp;
+//_edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, "state", 0.1); //Why segfault??
+// edje_object_calc_force(obj);//don't work for redraw
 
-   GET_PD_OR_RETURN();
-
-   //printf("Set rel1 to x on state: %s (to part: )\n", state);
-
-   if (rel_to)
-     {
-	relp = _edje_real_part_get(ed, rel_to);
-	if (!relp) return;
-	pd->common.rel1.id_x = relp->part->id;
-     }
-   else
-     pd->common.rel1.id_x = -1;
-
-   //_edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, "state", 0.1); //Why segfault??
-   // edje_object_calc_force(obj);//don't work for redraw
-}
-
-EAPI void
-//note after this call edje_edit_part_selected_state_set() to update !! need to fix this
-edje_edit_state_rel1_to_y_set(Evas_Object *obj, const char *part, const char *state, double value, const char *rel_to)
-{
-   Edje_Real_Part *relp;
-
-   GET_PD_OR_RETURN();
-
-   //printf("Set rel1 to y on state: %s (to part: %s)\n", state, rel_to);
-
-   if (rel_to)
-     {
-	relp = _edje_real_part_get(ed, rel_to);
-	if (!relp) return;
-	pd->common.rel1.id_y = relp->part->id;
-     }
-   else
-     pd->common.rel1.id_y = -1;
-
-   //_edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, "state", 0.1); //Why segfault??
-   // edje_object_calc_force(obj);//don't work for redraw
-}
-
-EAPI void
-//note after this call edje_edit_part_selected_state_set() to update !! need to fix this
-edje_edit_state_rel2_to_x_set(Evas_Object *obj, const char *part, const char *state, double value, const char *rel_to)
-{
-   Edje_Real_Part *relp;
-
-   GET_PD_OR_RETURN();
-
-   //printf("Set rel2 to x on state: %s (to part: )\n", state);
-
-   if (rel_to)
-     {
-	relp = _edje_real_part_get(ed, rel_to);
-	if (!relp) return;
-	pd->common.rel2.id_x = relp->part->id;
-     }
-   else
-     pd->common.rel2.id_x = -1;
-
-   //_edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, "state", 0.1); //Why segfault??
-   // edje_object_calc_force(obj);//don't work for redraw
-}
-
-EAPI void
-//note after this call edje_edit_part_selected_state_set() to update !! need to fix this
-edje_edit_state_rel2_to_y_set(Evas_Object *obj, const char *part, const char *state, double value, const char *rel_to)
-{
-   Edje_Real_Part *relp;
-
-   GET_PD_OR_RETURN();
-
-   //printf("Set rel2 to y on state: %s (to part: %s)\n", state, rel_to);
-
-   if (rel_to)
-     {
-	relp = _edje_real_part_get(ed, rel_to);
-	if (!relp) return;
-	pd->common.rel2.id_y = relp->part->id;
-     }
-   else
-      pd->common.rel2.id_y = -1;
-
-   //_edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, "state", 0.1); //Why segfault??
-   // edje_object_calc_force(obj);//don't work for redraw
-}
+FUNC_STATE_REL(rel1, x);
+FUNC_STATE_REL(rel1, y);
+FUNC_STATE_REL(rel2, x);
+FUNC_STATE_REL(rel2, y);
 
 //colors
-EAPI void
-edje_edit_state_color_get(Evas_Object *obj, const char *part, const char *state, double value, int *r, int *g, int *b, int *a)
+#define FUNC_COLOR(Code)						\
+  EAPI void								\
+  edje_edit_state_color##Code##_get(Evas_Object *obj, const char *part, const char *state, double value, int *r, int *g, int *b, int *a) \
+  {									\
+     GET_PD_OR_RETURN();						\
+									\
+     if (r) *r = pd->color##Code.r;					\
+     if (g) *g = pd->color##Code.g;					\
+     if (b) *b = pd->color##Code.b;					\
+     if (a) *a = pd->color##Code.a;					\
+  }									\
+  EAPI void								\
+  edje_edit_state_color##Code##_set(Evas_Object *obj, const char *part, const char *state, double value, int r, int g, int b, int a) \
+  {									\
+     GET_PD_OR_RETURN();						\
+     									\
+     if (r > -1 && r < 256) pd->color##Code.r = r;			\
+     if (g > -1 && g < 256) pd->color##Code.g = g;			\
+     if (b > -1 && b < 256) pd->color##Code.b = b;			\
+     if (a > -1 && a < 256) pd->color##Code.a = a;			\
+									\
+     edje_object_calc_force(obj);					\
+  }
+
+FUNC_COLOR();
+FUNC_COLOR(2);
+FUNC_COLOR(3);
+
+#define FUNC_STATE_DOUBLE(Class, Value)					\
+  EAPI double								\
+  edje_edit_state_##Class##_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
+  {									\
+     GET_PD_OR_RETURN(0);						\
+     return TO_DOUBLE(pd->common.Class.Value);				\
+  }									\
+  EAPI void								\
+  edje_edit_state_##Class##_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
+  {									\
+     GET_PD_OR_RETURN();						\
+     pd->common.Class.Value = FROM_DOUBLE(v);				\
+     edje_object_calc_force(obj);					\
+  }
+
+#define FUNC_STATE_INT(Class, Value)					\
+  EAPI int								\
+  edje_edit_state_##Class##_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
+  {									\
+     GET_PD_OR_RETURN(0);						\
+     return pd->common.Class.Value;					\
+  }									\
+  EAPI void								\
+  edje_edit_state_##Class##_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, int v) \
+  {									\
+     GET_PD_OR_RETURN();						\
+     pd->common.Class.Value = v;					\
+     edje_object_calc_force(obj);					\
+  }
+
+FUNC_STATE_DOUBLE(align, x);
+FUNC_STATE_DOUBLE(align, y);
+FUNC_STATE_INT(min, w);
+FUNC_STATE_INT(min, h);
+FUNC_STATE_INT(max, w);
+FUNC_STATE_INT(max, h);
+FUNC_STATE_DOUBLE(aspect, min);
+FUNC_STATE_DOUBLE(aspect, max);
+
+#define FUNC_STATE_DOUBLE_FILL(Class, Type, Value)			\
+  EAPI double								\
+  edje_edit_state_fill_##Type##_relative_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
+  {									\
+     GET_PD_OR_RETURN(0);						\
+     return TO_DOUBLE(pd->fill.Class##rel_##Value);			\
+  }									\
+  EAPI void								\
+  edje_edit_state_fill_##Type##_relative_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
+  {									\
+     GET_PD_OR_RETURN();						\
+     pd->fill.Class##rel_##Value = FROM_DOUBLE(v);			\
+     edje_object_calc_force(obj);					\
+  }
+
+#define FUNC_STATE_INT_FILL(Class, Type, Value)				\
+  EAPI int								\
+  edje_edit_state_fill_##Type##_offset_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
+  {									\
+     GET_PD_OR_RETURN(0);						\
+     return pd->fill.Class##abs_##Value;				\
+  }									\
+  EAPI void								\
+  edje_edit_state_fill_##Type##_offset_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
+  {									\
+     GET_PD_OR_RETURN();						\
+     pd->fill.Class##abs_##Value = FROM_DOUBLE(v);			\
+     edje_object_calc_force(obj);					\
+  }
+
+FUNC_STATE_DOUBLE_FILL(pos_, origin, x);
+FUNC_STATE_DOUBLE_FILL(pos_, origin, y);
+FUNC_STATE_INT_FILL(pos_, origin, x);
+FUNC_STATE_INT_FILL(pos_, origin, y);
+
+FUNC_STATE_DOUBLE_FILL(, size, x);
+FUNC_STATE_DOUBLE_FILL(, size, y);
+FUNC_STATE_INT_FILL(, size, x);
+FUNC_STATE_INT_FILL(, size, y);
+
+EAPI Eina_Bool
+edje_edit_state_visible_get(Evas_Object *obj, const char *part, const char *state, double value)
 {
-   GET_PD_OR_RETURN();
-
-   //printf("GET COLOR of state '%s'\n", state);
-
-   if (r) *r = pd->color.r;
-   if (g) *g = pd->color.g;
-   if (b) *b = pd->color.b;
-   if (a) *a = pd->color.a;
+   GET_PD_OR_RETURN(EINA_FALSE);
+   //printf("Get state visible flag of part: %s state: %s\n", part, state);
+   return pd->common.visible;
 }
 
 EAPI void
-edje_edit_state_color2_get(Evas_Object *obj, const char *part, const char *state, double value, int *r, int *g, int *b, int *a)
+edje_edit_state_visible_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool visible)
 {
    GET_PD_OR_RETURN();
-
-   //printf("GET COLOR2 of state '%s'\n", state);
-
-   if (r) *r = pd->color2.r;
-   if (g) *g = pd->color2.g;
-   if (b) *b = pd->color2.b;
-   if (a) *a = pd->color2.a;
-}
-
-EAPI void
-edje_edit_state_color3_get(Evas_Object *obj, const char *part, const char *state, double value, int *r, int *g, int *b, int *a)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("GET COLOR3 of state '%s'\n", state);
-
-   if (r) *r = pd->color3.r;
-   if (g) *g = pd->color3.g;
-   if (b) *b = pd->color3.b;
-   if (a) *a = pd->color3.a;
-}
-
-EAPI void
-edje_edit_state_color_set(Evas_Object *obj, const char *part, const char *state, double value, int r, int g, int b, int a)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("SET COLOR of state '%s'\n", state);
-
-   if (r > -1 && r < 256) pd->color.r = r;
-   if (g > -1 && g < 256) pd->color.g = g;
-   if (b > -1 && b < 256) pd->color.b = b;
-   if (a > -1 && a < 256) pd->color.a = a;
-
+   //printf("Set state visible flag of part: %s state: %s to: %d\n", part, state, visible);
+   if (visible) pd->common.visible = 1;
+   else         pd->common.visible = 0;
    edje_object_calc_force(obj);
-}
-
-EAPI void
-edje_edit_state_color2_set(Evas_Object *obj, const char *part, const char *state, double value, int r, int g, int b, int a)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("SET COLOR2 of state '%s'\n", state);
-
-   if (r > -1 && r < 256) pd->color2.r = r;
-   if (g > -1 && g < 256) pd->color2.g = g;
-   if (b > -1 && b < 256) pd->color2.b = b;
-   if (a > -1 && a < 256) pd->color2.a = a;
-
-   edje_object_calc_force(obj);
-}
-
-EAPI void
-edje_edit_state_color3_set(Evas_Object *obj, const char *part, const char *state, double value, int r, int g, int b, int a)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("SET COLOR3 of state '%s'\n", state);
-
-   if (r > -1 && r < 256) pd->color3.r = r;
-   if (g > -1 && g < 256) pd->color3.g = g;
-   if (b > -1 && b < 256) pd->color3.b = b;
-   if (a > -1 && a < 256) pd->color3.a = a;
-
-   edje_object_calc_force(obj);
-}
-
-//align
-EAPI double
-edje_edit_state_align_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-
-   //printf("GET ALIGN_X of state '%s' [%f]\n", state, pd->align.x);
-
-   return TO_DOUBLE(pd->common.align.x);
-}
-
-EAPI double
-edje_edit_state_align_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-
-   //printf("GET ALIGN_Y of state '%s' [%f]\n", state, pd->align.y);
-
-   return TO_DOUBLE(pd->common.align.y);
-}
-
-EAPI void
-edje_edit_state_align_x_set(Evas_Object *obj, const char *part, const char *state, double value, double align)
-{
-   GET_PD_OR_RETURN();
-   //printf("SET ALIGN_X of state '%s' [to: %f]\n", state, align);
-   pd->common.align.x = FROM_DOUBLE(align);
-}
-
-EAPI void
-edje_edit_state_align_y_set(Evas_Object *obj, const char *part, const char *state, double value, double align)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("SET ALIGN_Y of state '%s' [to: %f]\n", state, align);
-   pd->common.align.y = FROM_DOUBLE(align);
-}
-
-//min & max
-EAPI int
-edje_edit_state_min_w_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-
-   //printf("GET MIN_W of state '%s' [%d]\n", state, pd->min.w);
-   return pd->common.min.w;
-}
-
-EAPI void
-edje_edit_state_min_w_set(Evas_Object *obj, const char *part, const char *state, double value, int min_w)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("SET MIN_W of state '%s' [to: %d]\n", state, min_w);
-   pd->common.min.w = min_w;
-}
-
-EAPI int
-edje_edit_state_min_h_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-
-   //printf("GET MIN_H of state '%s' [%d]\n", state, pd->min.h);
-   return pd->common.min.h;
-}
-
-EAPI void
-edje_edit_state_min_h_set(Evas_Object *obj, const char *part, const char *state, double value, int min_h)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("SET MIN_H of state '%s' [to: %d]\n", state, min_h);
-   pd->common.min.h = min_h;
-}
-
-EAPI int
-edje_edit_state_max_w_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-
-   //printf("GET MAX_W of state '%s' [%d]\n", state, pd->max.w);
-   return pd->common.max.w;
-}
-
-EAPI void
-edje_edit_state_max_w_set(Evas_Object *obj, const char *part, const char *state, double value, int max_w)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("SET MAX_W of state '%s' [to: %d]\n", state, max_w);
-   pd->common.max.w = max_w;
-}
-
-EAPI int
-edje_edit_state_max_h_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-
-   //printf("GET MAX_H of state '%s' [%d]\n", state, pd->max.h);
-   return pd->common.max.h;
-}
-
-EAPI void
-edje_edit_state_max_h_set(Evas_Object *obj, const char *part, const char *state, double value, int max_h)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("SET MAX_H of state '%s' [to: %d]\n", state, max_h);
-   pd->common.max.h = max_h;
-}
-
-//aspect
-EAPI double
-edje_edit_state_aspect_min_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-
-   //printf("GET ASPECT_MIN of state '%s' [%f]\n", state, pd->aspect.min);
-   return TO_DOUBLE(pd->common.aspect.min);
-}
-
-EAPI double
-edje_edit_state_aspect_max_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-
-   //printf("GET ASPECT_MAX of state '%s' [%f]\n", state, pd->aspect.max);
-   return TO_DOUBLE(pd->common.aspect.max);
-}
-
-EAPI void
-edje_edit_state_aspect_min_set(Evas_Object *obj, const char *part, const char *state, double value, double aspect)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("SET ASPECT_MIN of state '%s' [to: %f]\n", state, aspect);
-   pd->common.aspect.min = FROM_DOUBLE(aspect);
-}
-
-EAPI void
-edje_edit_state_aspect_max_set(Evas_Object *obj, const char *part, const char *state, double value, double aspect)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("SET ASPECT_MAX of state '%s' [to: %f]\n", state, aspect);
-   pd->common.aspect.max = FROM_DOUBLE(aspect);
 }
 
 EAPI unsigned char
@@ -3587,162 +3105,6 @@ edje_edit_state_aspect_pref_set(Evas_Object *obj, const char *part, const char *
 
    //printf("SET ASPECT_PREF of state '%s' [to: %d]\n", state, pref);
    pd->common.aspect.prefer = pref;
-}
-
-//fill
-EAPI double
-edje_edit_state_fill_origin_relative_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("Get state fill origin of part: %s state: %s\n", part, state);
-   return TO_DOUBLE(pd->fill.pos_rel_x);
-}
-
-EAPI double
-edje_edit_state_fill_origin_relative_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("Get state fill origin of part: %s state: %s\n", part, state);
-   return TO_DOUBLE(pd->fill.pos_rel_y);
-}
-
-EAPI int
-edje_edit_state_fill_origin_offset_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("Get state fill origin offset of part: %s state: %s\n", part, state);
-   return pd->fill.pos_abs_x;
-}
-
-EAPI int
-edje_edit_state_fill_origin_offset_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("Get state fill origin offset of part: %s state: %s\n", part, state);
-   return pd->fill.pos_abs_y;
-}
-
-
-EAPI void
-edje_edit_state_fill_origin_relative_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set state fill origin of part: %s state: %s to: %f\n", part, state, x);
-   pd->fill.pos_rel_x = FROM_DOUBLE(x);
-   edje_object_calc_force(obj);
-}
-
-EAPI void
-edje_edit_state_fill_origin_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set state fill origin of part: %s state: %s to: %f\n", part, state, y);
-   pd->fill.pos_rel_y = FROM_DOUBLE(y);
-   edje_object_calc_force(obj);
-}
-
-EAPI void
-edje_edit_state_fill_origin_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set state fill origin offset x of part: %s state: %s to: %f\n", part, state, x);
-   pd->fill.pos_abs_x = FROM_DOUBLE(x);
-   edje_object_calc_force(obj);
-}
-
-EAPI void
-edje_edit_state_fill_origin_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set state fill origin offset y of part: %s state: %s to: %f\n", part, state, y);
-   pd->fill.pos_abs_y = FROM_DOUBLE(y);
-   edje_object_calc_force(obj);
-}
-
-EAPI double
-edje_edit_state_fill_size_relative_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0.0);
-   //printf("Get state fill size of part: %s state: %s\n", part, state);
-   return TO_DOUBLE(pd->fill.rel_x);
-}
-
-EAPI double
-edje_edit_state_fill_size_relative_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0.0);
-   //printf("Get state fill size of part: %s state: %s\n", part, state);
-   return TO_DOUBLE(pd->fill.rel_y);
-}
-
-EAPI int
-edje_edit_state_fill_size_offset_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("Get state fill size offset of part: %s state: %s\n", part, state);
-   return pd->fill.abs_x;
-}
-
-EAPI int
-edje_edit_state_fill_size_offset_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
-   //printf("Get state fill size offset of part: %s state: %s\n", part, state);
-   return pd->fill.abs_y;
-}
-
-EAPI void
-edje_edit_state_fill_size_relative_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set state fill size of part: %s state: %s to: %f\n", part, state, x);
-   pd->fill.rel_x = FROM_DOUBLE(x);
-   edje_object_calc_force(obj);
-}
-
-EAPI void
-edje_edit_state_fill_size_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set state fill size of part: %s state: %s to: %f\n", part, state, y);
-   pd->fill.rel_y = FROM_DOUBLE(y);
-   edje_object_calc_force(obj);
-}
-
-EAPI void
-edje_edit_state_fill_size_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set state fill size offset x of part: %s state: %s to: %f\n", part, state, x);
-   pd->fill.abs_x = FROM_DOUBLE(x);
-   edje_object_calc_force(obj);
-}
-
-EAPI void
-edje_edit_state_fill_size_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set state fill size offset y of part: %s state: %s to: %f\n", part, state, y);
-   pd->fill.abs_y = FROM_DOUBLE(y);
-   edje_object_calc_force(obj);
-}
-
-EAPI Eina_Bool
-edje_edit_state_visible_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(EINA_FALSE);
-   //printf("Get state visible flag of part: %s state: %s\n", part, state);
-   return pd->common.visible;
-}
-
-EAPI void
-edje_edit_state_visible_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool visible)
-{
-   GET_PD_OR_RETURN();
-   //printf("Set state visible flag of part: %s state: %s to: %d\n", part, state, visible);
-   if (visible) pd->common.visible = 1;
-   else         pd->common.visible = 0;
-   edje_object_calc_force(obj);
 }
 
 EAPI const char*
@@ -4096,103 +3458,42 @@ edje_edit_state_text_size_set(Evas_Object *obj, const char *part, const char *st
    edje_object_calc_force(obj);
 }
 
-EAPI double
-edje_edit_state_text_align_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0);
+#define FUNC_TEXT_DOUBLE(Name, Value)					\
+  EAPI double								\
+  edje_edit_state_text_##Name##_get(Evas_Object *obj, const char *part, const char *state, double value) \
+  {									\
+     GET_PD_OR_RETURN(0);						\
+     return TO_DOUBLE(pd->text.Value);					\
+  }									\
+  EAPI void								\
+  edje_edit_state_text_##Name##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
+  {									\
+     GET_PD_OR_RETURN();						\
+     pd->text.Value = FROM_DOUBLE(v);					\
+     edje_object_calc_force(obj);					\
+  }									\
 
-   //printf("GET TEXT_ALIGN_X of state: %s [%f]\n", state, pd->text.align.x);
-   return TO_DOUBLE(pd->text.align.x);
-}
+FUNC_TEXT_DOUBLE(align_x, align.x);
+FUNC_TEXT_DOUBLE(align_y, align.y);
+FUNC_TEXT_DOUBLE(elipsis, elipsis);
 
-EAPI void
-edje_edit_state_text_align_x_set(Evas_Object *obj, const char *part, const char *state, double value, double align)
-{
-   GET_PD_OR_RETURN();
+#define FUNC_TEXT_BOOL_FIT(Value)					\
+  EAPI Eina_Bool							\
+  edje_edit_state_text_fit_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
+  {									\
+     GET_PD_OR_RETURN(EINA_FALSE);					\
+     return pd->text.fit_##Value;					\
+  }									\
+  EAPI void								\
+  edje_edit_state_text_fit_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool fit) \
+  {									\
+     GET_PD_OR_RETURN();						\
+     pd->text.fit_##Value = fit ? 1 : 0;				\
+     edje_object_calc_force(obj);					\
+  }
 
-   //printf("SET TEXT_ALIGN_X of state: %s [%f]\n", state, align);
-
-   pd->text.align.x = FROM_DOUBLE(align);
-   edje_object_calc_force(obj);
-}
-
-EAPI double
-edje_edit_state_text_align_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0.0);
-
-   //printf("GET TEXT_ALIGN_Y of state: %s [%f]\n", state, pd->text.align.x);
-   return TO_DOUBLE(pd->text.align.y);
-}
-
-EAPI void
-edje_edit_state_text_align_y_set(Evas_Object *obj, const char *part, const char *state, double value, double align)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("SET TEXT_ALIGN_Y of state: %s [%f]\n", state, align);
-
-   pd->text.align.y = FROM_DOUBLE(align);
-   edje_object_calc_force(obj);
-}
-
-EAPI double
-edje_edit_state_text_elipsis_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(0.0);
-
-   //printf("GET TEXT_ELIPSIS of state: %s [%f]\n", state, pd->text.elipsis);
-   return pd->text.elipsis;
-}
-
-EAPI void
-edje_edit_state_text_elipsis_set(Evas_Object *obj, const char *part, const char *state, double value, double balance)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("SET TEXT_ELIPSIS of state: %s [%f]\n", state, balance);
-
-   pd->text.elipsis = balance;
-   edje_object_calc_force(obj);
-}
-
-EAPI Eina_Bool
-edje_edit_state_text_fit_x_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(EINA_FALSE);
-   //printf("GET TEXT_FIT_VERT of state: %s \n", state);
-   return pd->text.fit_x;
-}
-
-EAPI void
-edje_edit_state_text_fit_x_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool fit)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("SET TEXT_FIT_VERT of state: %s\n", state);
-
-   pd->text.fit_x = fit ? 1 : 0;
-   edje_object_calc_force(obj);
-}
-
-EAPI Eina_Bool
-edje_edit_state_text_fit_y_get(Evas_Object *obj, const char *part, const char *state, double value)
-{
-   GET_PD_OR_RETURN(EINA_FALSE);
-   //printf("GET TEXT_FIT_VERT of state: %s \n", state);
-   return pd->text.fit_y;
-}
-
-EAPI void
-edje_edit_state_text_fit_y_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool fit)
-{
-   GET_PD_OR_RETURN();
-
-   //printf("SET TEXT_FIT_VERT of state: %s\n", state);
-
-   pd->text.fit_y = fit ? 1 : 0;
-   edje_object_calc_force(obj);
-}
+FUNC_TEXT_BOOL_FIT(x);
+FUNC_TEXT_BOOL_FIT(y);
 
 EAPI Eina_List *
 edje_edit_fonts_list_get(Evas_Object *obj)

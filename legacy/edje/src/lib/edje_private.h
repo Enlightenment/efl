@@ -597,7 +597,7 @@ struct _Edje_Part
       int                 confine_id; /* dragging within this bit, -1 = no */
 
       /* davinchi */
-      int		  events_id; /* If it is used as scrollbar */
+      int		  event_id; /* If it is used as scrollbar */
 
       signed char         x; /* can u click & drag this bit in x dir */
       signed char         y; /* can u click & drag this bit in y dir */

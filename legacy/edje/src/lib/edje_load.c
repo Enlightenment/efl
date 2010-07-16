@@ -515,10 +515,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			 }
 
 		       /* replay events for dragable */
-		       if (rp->part->dragable.events_id >= 0)
+		       if (rp->part->dragable.event_id >= 0)
 			 {
 			    rp->events_to =
-			      ed->table_parts[rp->part->dragable.events_id % ed->table_parts_size];
+			      ed->table_parts[rp->part->dragable.event_id % ed->table_parts_size];
 			    /* events_to may be used only with dragable */
 			    if (!rp->events_to->part->dragable.x &&
 				!rp->events_to->part->dragable.y)

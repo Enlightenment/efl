@@ -1965,7 +1965,7 @@ ob_collections_group_parts_part(void)
    ep->use_alternate_font_metrics = 0;
    ep->clip_to_id = -1;
    ep->dragable.confine_id = -1;
-   ep->dragable.events_id = -1;
+   ep->dragable.event_id = -1;
    ep->items = NULL;
 }
 
@@ -2714,7 +2714,7 @@ st_collections_group_parts_part_dragable_events(void)
 	char *name;
 
 	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(ep->dragable.events_id));
+	data_queue_part_lookup(pc, name, &(ep->dragable.event_id));
 	free(name);
      }
 }

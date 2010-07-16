@@ -323,23 +323,23 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 		  hist = NULL;
 		  hist = eina_list_append(hist, ep);
 		  ep2 = ep;
-		  while (ep2->dragable.events_id >= 0)
+		  while (ep2->dragable.event_id >= 0)
 		    {
 		       Edje_Part* prev;
 
 		       prev = ep2;
 
-		       ep2 = eina_list_nth(edc->parts, ep2->dragable.events_id);
+		       ep2 = eina_list_nth(edc->parts, ep2->dragable.event_id);
 		       if (!ep2->dragable.x && !ep2->dragable.y)
 			 {
-			    prev->dragable.events_id = -1;
+			    prev->dragable.event_id = -1;
 			    break;
 			 }
 
 		       if (eina_list_data_find(hist, ep2))
 			 {
 			    ERR("events_to loops. invalidating loop.");
-			    ep2->dragable.events_id = -1;
+			    ep2->dragable.event_id = -1;
 			    break;
 			 }
 		       hist = eina_list_append(hist, ep2);
