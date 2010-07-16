@@ -527,18 +527,27 @@ collections {
 
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/label/base/default";
-      styles
-	{
-	   style { name: "textblock_style";
-	      base: "font=Sans font_size=10 align=left color=#000 wrap=word";
-
-	      tag:  "br" "\n";
-	      tag:  "hilight" "+ font=Sans:style=Bold";
-	      tag:  "b" "+ font=Sans:style=Bold";
-	      tag:  "tab" "\t";
+      data.item: "default_font_size" "24";
+      data.item: "min_font_size" "8";
+      data.item: "max_font_size" "60";
+      styles {
+         style { name: "textblock_style";
+            base: "font=Sans font_size=10 align=left color=#000 wrap=word";
+            tag:  "br" "\n";
+            tag:  "hilight" "+ font=Sans:style=Bold";
+            tag:  "b" "+ font=Sans:style=Bold";
+            tag:  "tab" "\t";
 	   }
 	}
       parts {
+         part { name: "label.swallow.background";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1 { relative: 0 0; to: "elm.text"; }
+               rel2 { relative: 1 1; to: "elm.text"; }
+            }
+         }
 	 part { name: "elm.text";
 	    type: TEXTBLOCK;
 	    mouse_events: 0;
@@ -554,7 +563,18 @@ collections {
    }
 
    group { name: "elm/label/base_wrap/default";
+      data.item: "default_font_size" "24";
+      data.item: "min_font_size" "8";
+      data.item: "max_font_size" "60";
       parts {
+         part { name: "label.swallow.background";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1 { relative: 0 0; to: "elm.text"; }
+               rel2 { relative: 1 1; to: "elm.text"; }
+            }
+         }
 	 part { name: "elm.text";
 	    type: TEXTBLOCK;
 	    mouse_events: 0;
@@ -570,18 +590,27 @@ collections {
    }
 
    group { name: "elm/label/base/marker";
-      styles
-	{
-	   style { name: "textblock_style2";
-	      base: "font=Sans:style=Bold font_size=10 align=center color=#fff wrap=word";
-
-	      tag:  "br" "\n";
-	      tag:  "hilight" "+ color=#ffff";
-	      tag:  "b" "+ color=#ffff";
-	      tag:  "tab" "\t";
-	   }
-	}
+      data.item: "default_font_size" "24";
+      data.item: "min_font_size" "8";
+      data.item: "max_font_size" "60";
+      styles {
+         style { name: "textblock_style2";
+	   base: "font=Sans:style=Bold font_size=10 align=center color=#fff wrap=word";
+           tag:  "br" "\n";
+	   tag:  "hilight" "+ color=#ffff";
+	   tag:  "b" "+ color=#ffff";
+	   tag:  "tab" "\t";
+	 }
+      }
       parts {
+         part { name: "label.swallow.background";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1 { relative: 0 0; to: "elm.text"; }
+               rel2 { relative: 1 1; to: "elm.text"; }
+            }
+         }
 	 part { name: "elm.text";
 	    type: TEXTBLOCK;
 	    mouse_events: 0;
@@ -597,8 +626,19 @@ collections {
    }
 
    group { name: "elm/label/base_wrap/marker";
+      data.item: "default_font_size" "24";
+      data.item: "min_font_size" "8";
+      data.item: "max_font_size" "60";
       parts {
-	 part { name: "elm.text";
+         part { name: "label.swallow.background";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1 { relative: 0 0; to: "elm.text"; }
+               rel2 { relative: 1 1; to: "elm.text"; }
+            }
+         }
+         part { name: "elm.text";
 	    type: TEXTBLOCK;
 	    mouse_events: 0;
 	    scale: 1;

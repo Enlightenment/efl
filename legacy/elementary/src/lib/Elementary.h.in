@@ -531,6 +531,11 @@ extern "C" {
    EAPI Eina_Bool    elm_label_line_wrap_get(const Evas_Object *obj);
    EAPI void         elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w);
    EAPI Evas_Coord   elm_label_wrap_width_get(const Evas_Object *obj);
+   EAPI void         elm_label_fontsize_set(Evas_Object *obj, int fontsize);
+   EAPI void         elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
+   EAPI void         elm_label_text_align_set(Evas_Object *obj, const char *alignmode);
+   EAPI void         elm_label_background_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
+   EAPI void         elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis);
    /* available styles:
     * default
     * marker
