@@ -169,6 +169,7 @@ _evas_common_load_soft16_image_from_file(Image_Entry *ie)
    sim->cache_entry.w = sim->source->cache_entry.w;
    sim->cache_entry.h = sim->source->cache_entry.h;
    ie->flags.alpha = im->cache_entry.flags.alpha;
+   sim->cache_entry.info = im->cache_entry.info;
    if (sim->stride < 0) sim->stride = _calc_stride(sim->cache_entry.w);
 
    return 0;
@@ -288,6 +289,8 @@ _evas_common_load_soft16_image_data_from_file(Image_Entry *ie)
           soft16_image_convert_from_rgb(im, sp);
      }
    evas_cache_image_drop(&im->source->cache_entry);
+   im->cache_entry.info.module = NULL;
+   im->cache_entry.info.loader = NULL;
    im->source = NULL;
 
    return 0;
