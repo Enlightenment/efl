@@ -2855,7 +2855,7 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 	     didw = 0;
 	     if (ep->chosen_description)
 	       {
-		  if (!ep->chosen_description->fixed.w)
+		  if (!ep->chosen_description->common.fixed.w)
 		    {
 		       if (w > maxw)
 			 {
@@ -2869,7 +2869,7 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 			    /* FIXME: do something */
 			 }
 		    }
-		  if (!ep->chosen_description->fixed.h)
+		  if (!ep->chosen_description->common.fixed.h)
 		    {
 		       if (!((ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
 			     (!ep->chosen_description->text.min_x) &&
@@ -2959,18 +2959,18 @@ edje_object_part_state_get(const Evas_Object *obj, const char *part, double *val
      }
    if (rp->chosen_description)
      {
-	if (val_ret) *val_ret = rp->chosen_description->state.value;
-	if (rp->chosen_description->state.name)
-	  return rp->chosen_description->state.name;
+	if (val_ret) *val_ret = rp->chosen_description->common.state.value;
+	if (rp->chosen_description->common.state.name)
+	  return rp->chosen_description->common.state.name;
 	return "default";
      }
    else
      {
 	if (rp->param1.description)
 	  {
-	     if (val_ret) *val_ret = rp->param1.description->state.value;
-	     if (rp->param1.description->state.name)
-	       return rp->param1.description->state.name;
+	     if (val_ret) *val_ret = rp->param1.description->common.state.value;
+	     if (rp->param1.description->common.state.name)
+	       return rp->param1.description->common.state.name;
 	     return "default";
 	  }
      }

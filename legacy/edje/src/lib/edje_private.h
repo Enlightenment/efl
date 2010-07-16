@@ -231,6 +231,7 @@ typedef struct _Edje_Part_Collection                 Edje_Part_Collection;
 typedef struct _Edje_Part                            Edje_Part;
 typedef struct _Edje_Part_Image_Id                   Edje_Part_Image_Id;
 typedef struct _Edje_Part_Description                Edje_Part_Description;
+typedef struct _Edje_Part_Description_Common         Edje_Part_Description_Common;
 typedef struct _Edje_Patterns                        Edje_Patterns;
 
 typedef struct _Old_Edje_File			     Old_Edje_File;
@@ -626,7 +627,7 @@ struct _Edje_Part_Image_Id
    Eina_Bool set;
 };
 
-struct _Edje_Part_Description
+struct _Edje_Part_Description_Common
 {
    struct {
       double         value; /* the value of the state (for ranges) */
@@ -651,6 +652,32 @@ struct _Edje_Part_Description
       int            id_x; /* -1 = whole part collection, or part ID */
       int            id_y; /* -1 = whole part collection, or part ID */
    } rel1, rel2;
+
+   struct {
+      int id_persp;
+      int id_light;
+      struct {
+         int id_center;
+         FLOAT_T x, y, z;
+      } rot;
+      unsigned char backcull;
+      unsigned char on;
+      unsigned char persp_on;
+      unsigned char smooth;
+      unsigned char alpha;
+   } map;
+
+   struct {
+      int zplane;
+      int focal;
+   } persp;
+
+   unsigned char     visible; /* is it shown */
+};
+
+struct _Edje_Part_Description
+{
+   Edje_Part_Description_Common common;
 
    struct {
       Eina_List     *tween_list; /* list of Edje_Part_Image_Id */
@@ -723,29 +750,8 @@ struct _Edje_Part_Description
       } padding;
    } table;
    
-   struct {
-      int id_persp;
-      int id_light;
-      struct {
-         int id_center;
-         FLOAT_T x, y, z;
-      } rot;
-      unsigned char backcull;
-      unsigned char on;
-      unsigned char persp_on;
-      unsigned char smooth;
-      unsigned char alpha;
-   } map;
-   
-   struct {
-      int zplane;
-      int focal;
-   } persp;
-   
    Edje_Color color, color2, color3;  /* color for rect or text, shadow etc. */
    Eina_List *external_params; /* parameters for external objects */
-
-   unsigned char     visible; /* is it shown */
 };
 
 

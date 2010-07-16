@@ -170,14 +170,14 @@ check_image_part_desc (Edje_Part_Collection *pc, Edje_Part *ep,
    if (epd->image.id == -1)
      error_and_abort(ef, "Collection %i: image attributes missing for "
 		     "part \"%s\", description \"%s\" %f\n",
-		     pc->id, ep->name, epd->state.name, epd->state.value);
+		     pc->id, ep->name, epd->common.state.name, epd->common.state.value);
 
    EINA_LIST_FOREACH(epd->image.tween_list, l, iid)
      {
 	if (iid->id == -1)
 	  error_and_abort(ef, "Collection %i: tween image id missing for "
 			  "part \"%s\", description \"%s\" %f\n",
-			  pc->id, ep->name, epd->state.name, epd->state.value);
+			  pc->id, ep->name, epd->common.state.name, epd->common.state.value);
     }
 }
 

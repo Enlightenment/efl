@@ -483,6 +483,7 @@ _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
    EINA_LIST_FOREACH(ed->collection->parts, l, p)
      {
 	Edje_Part_Description *d;
+	Edje_Part_Description_Common *c;
 
 	//printf("   search id: %d in %s\n", old_id, p->name);
 	if (p->clip_to_id == old_id) p->clip_to_id = new_id;
@@ -490,21 +491,24 @@ _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
 
 	/* ...in default description */
 	d = p->default_desc;
+	c = &d->common;
 	//printf("      search in %s (%s)\n", p->name, d->state.name);
-	if (d->rel1.id_x == old_id) d->rel1.id_x = new_id;
-	if (d->rel1.id_y == old_id) d->rel1.id_y = new_id;
-	if (d->rel2.id_x == old_id) d->rel2.id_x = new_id;
-	if (d->rel2.id_y == old_id) d->rel2.id_y = new_id;
+	if (c->rel1.id_x == old_id) c->rel1.id_x = new_id;
+	if (c->rel1.id_y == old_id) c->rel1.id_y = new_id;
+	if (c->rel2.id_x == old_id) c->rel2.id_x = new_id;
+	if (c->rel2.id_y == old_id) c->rel2.id_y = new_id;
 	if (d->text.id_source == old_id) d->text.id_source = new_id;
 	if (d->text.id_text_source == old_id) d->text.id_text_source = new_id;
 	/* ...and in all other descriptions */
 	EINA_LIST_FOREACH(p->other_desc, ll, d)
 	  {
+	     c = &d->common;
+
 	     //printf("      search in %s (%s)\n", p->name, d->state.name);
-	     if (d->rel1.id_x == old_id) d->rel1.id_x = new_id;
-	     if (d->rel1.id_y == old_id) d->rel1.id_y = new_id;
-	     if (d->rel2.id_x == old_id) d->rel2.id_x = new_id;
-	     if (d->rel2.id_y == old_id) d->rel2.id_y = new_id;
+	     if (c->rel1.id_x == old_id) c->rel1.id_x = new_id;
+	     if (c->rel1.id_y == old_id) c->rel1.id_y = new_id;
+	     if (c->rel2.id_x == old_id) c->rel2.id_x = new_id;
+	     if (c->rel2.id_y == old_id) c->rel2.id_y = new_id;
 	     if (d->text.id_source == old_id) d->text.id_source = new_id;
 	     if (d->text.id_text_source == old_id) d->text.id_text_source = new_id;
 	  }
@@ -570,6 +574,7 @@ _edje_parts_id_switch(Edje *ed, Edje_Real_Part *rp1, Edje_Real_Part *rp2)
      {
 	Eina_List *ll;
 	Edje_Part_Description *d;
+	Edje_Part_Description_Common *c;
 
 	//printf("   search id: %d in %s\n", old_id, p->name);
 	if (p->clip_to_id == id1) p->clip_to_id = id2;
@@ -579,15 +584,16 @@ _edje_parts_id_switch(Edje *ed, Edje_Real_Part *rp1, Edje_Real_Part *rp2)
 
 	// ...in default description
 	d = p->default_desc;
+	c = &d->common;
 	// printf("      search in %s (%s)\n", p->name, d->state.name);
-	if (d->rel1.id_x == id1) d->rel1.id_x = id2;
-	else if (d->rel1.id_x == id2) d->rel1.id_x = id1;
-	if (d->rel1.id_y == id1) d->rel1.id_y = id2;
-	else if (d->rel1.id_y == id2) d->rel1.id_y = id1;
-	if (d->rel2.id_x == id1) d->rel2.id_x = id2;
-	else if (d->rel2.id_x == id2) d->rel2.id_x = id1;
-	if (d->rel2.id_y == id1) d->rel2.id_y = id2;
-	else if (d->rel2.id_y == id2) d->rel2.id_y = id1;
+	if (c->rel1.id_x == id1) c->rel1.id_x = id2;
+	else if (c->rel1.id_x == id2) c->rel1.id_x = id1;
+	if (c->rel1.id_y == id1) c->rel1.id_y = id2;
+	else if (c->rel1.id_y == id2) c->rel1.id_y = id1;
+	if (c->rel2.id_x == id1) c->rel2.id_x = id2;
+	else if (c->rel2.id_x == id2) c->rel2.id_x = id1;
+	if (c->rel2.id_y == id1) c->rel2.id_y = id2;
+	else if (c->rel2.id_y == id2) c->rel2.id_y = id1;
 	if (d->text.id_source == id1) d->text.id_source = id2;
 	else if (d->text.id_source == id2) d->text.id_source = id1;
 	if (d->text.id_text_source == id1) d->text.id_text_source = id2;
@@ -595,15 +601,16 @@ _edje_parts_id_switch(Edje *ed, Edje_Real_Part *rp1, Edje_Real_Part *rp2)
 	// ...and in all other descriptions
 	EINA_LIST_FOREACH(p->other_desc, ll, d)
 	  {
+	     c = &d->common;
 	     //printf("      search in %s (%s)\n", p->name, d->state.name);
-	     if (d->rel1.id_x == id1) d->rel1.id_x = id2;
-	     else if (d->rel1.id_x == id2) d->rel1.id_x = id1;
-	     if (d->rel1.id_y == id1) d->rel1.id_y = id2;
-	     else if (d->rel1.id_y == id2) d->rel1.id_y = id1;
-	     if (d->rel2.id_x == id1) d->rel2.id_x = id2;
-	     else if (d->rel2.id_x == id2) d->rel2.id_x = id1;
-	     if (d->rel2.id_y == id1) d->rel2.id_y = id2;
-	     else if (d->rel2.id_y == id2) d->rel2.id_y = id1;
+	     if (c->rel1.id_x == id1) c->rel1.id_x = id2;
+	     else if (c->rel1.id_x == id2) c->rel1.id_x = id1;
+	     if (c->rel1.id_y == id1) c->rel1.id_y = id2;
+	     else if (c->rel1.id_y == id2) c->rel1.id_y = id1;
+	     if (c->rel2.id_x == id1) c->rel2.id_x = id2;
+	     else if (c->rel2.id_x == id2) c->rel2.id_x = id1;
+	     if (c->rel2.id_y == id1) c->rel2.id_y = id2;
+	     else if (c->rel2.id_y == id2) c->rel2.id_y = id1;
 	     if (d->text.id_source == id1) d->text.id_source = id2;
 	     else if (d->text.id_source == id2) d->text.id_source = id1;
 	     if (d->text.id_text_source == id1) d->text.id_text_source = id2;
@@ -2211,8 +2218,8 @@ edje_edit_part_selected_state_get(Evas_Object *obj, const char *part, double *va
 	return eina_stringshare_add("default");
      }
 
-   if (value) *value = rp->chosen_description->state.value;
-   return eina_stringshare_add(rp->chosen_description->state.name);
+   if (value) *value = rp->chosen_description->common.state.value;
+   return eina_stringshare_add(rp->chosen_description->common.state.name);
 }
 
 EAPI Eina_Bool
@@ -2226,7 +2233,7 @@ edje_edit_part_selected_state_set(Evas_Object *obj, const char *part, const char
    if (!pd) return EINA_FALSE;
 
    //printf("EDJE: Set state: %s %f\n", pd->state.name, pd->state.value);
-   _edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, NULL, 0.0);
+   _edje_part_description_apply(ed, rp, pd->common.state.name, pd->common.state.value, NULL, 0.0);
 
    edje_object_calc_force(obj);
    return EINA_TRUE;
@@ -2653,7 +2660,7 @@ edje_edit_part_states_list_get(Evas_Object *obj, const char *part)
    //append default state
    state = rp->part->default_desc;
    snprintf(state_name, PATH_MAX,
-            "%s %.2f", state->state.name, state->state.value);
+            "%s %.2f", state->common.state.name, state->common.state.value);
    states = eina_list_append(states, eina_stringshare_add(state_name));
    //printf("NEW STATE def: %s\n", state->state.name);
 
@@ -2661,7 +2668,7 @@ edje_edit_part_states_list_get(Evas_Object *obj, const char *part)
    EINA_LIST_FOREACH(rp->part->other_desc, l, state)
      {
 	snprintf(state_name, sizeof(state_name),
-	         "%s %.2f", state->state.name, state->state.value);
+	         "%s %.2f", state->common.state.name, state->common.state.value);
 	states = eina_list_append(states, eina_stringshare_add(state_name));
 	//printf("NEW STATE: %s\n", state_name);
      }
@@ -2693,8 +2700,8 @@ edje_edit_state_name_set(Evas_Object *obj, const char *part, const char *state, 
 	     Edje_Program_Target *t = eina_list_data_get(epr->targets);
 
 	     if (t->id == part_id &&
-		 !strcmp(epr->state, pd->state.name) &&
-		 pd->state.value == epr->value)
+		 !strcmp(epr->state, pd->common.state.name) &&
+		 pd->common.state.value == epr->value)
 	       {
 		  _edje_if_string_free(ed, epr->state);
 		  epr->state = eina_stringshare_add(new_name);
@@ -2704,10 +2711,10 @@ edje_edit_state_name_set(Evas_Object *obj, const char *part, const char *state, 
      }
 
    /* set name */
-   _edje_if_string_free(ed, pd->state.name);
-   pd->state.name = (char *)eina_stringshare_add(new_name);
+   _edje_if_string_free(ed, pd->common.state.name);
+   pd->common.state.name = (char *)eina_stringshare_add(new_name);
    /* set value */
-   pd->state.value = new_value;
+   pd->common.state.value = new_value;
 
    return EINA_TRUE;
 }
@@ -2752,29 +2759,29 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
    else
      rp->part->other_desc = eina_list_append(rp->part->other_desc, pd);
 
-   pd->state.name = eina_stringshare_add(name);
-   pd->state.value = value;
-   pd->visible = 1;
-   pd->align.x = 0.5;
-   pd->align.y = 0.5;
-   pd->min.w = 0;
-   pd->min.h = 0;
-   pd->fixed.w = 0;
-   pd->fixed.h = 0;
-   pd->max.w = -1;
-   pd->max.h = -1;
-   pd->rel1.relative_x = 0.0;
-   pd->rel1.relative_y = 0.0;
-   pd->rel1.offset_x = 0;
-   pd->rel1.offset_y = 0;
-   pd->rel1.id_x = -1;
-   pd->rel1.id_y = -1;
-   pd->rel2.relative_x = 1.0;
-   pd->rel2.relative_y = 1.0;
-   pd->rel2.offset_x = -1;
-   pd->rel2.offset_y = -1;
-   pd->rel2.id_x = -1;
-   pd->rel2.id_y = -1;
+   pd->common.state.name = eina_stringshare_add(name);
+   pd->common.state.value = value;
+   pd->common.visible = 1;
+   pd->common.align.x = 0.5;
+   pd->common.align.y = 0.5;
+   pd->common.min.w = 0;
+   pd->common.min.h = 0;
+   pd->common.fixed.w = 0;
+   pd->common.fixed.h = 0;
+   pd->common.max.w = -1;
+   pd->common.max.h = -1;
+   pd->common.rel1.relative_x = 0.0;
+   pd->common.rel1.relative_y = 0.0;
+   pd->common.rel1.offset_x = 0;
+   pd->common.rel1.offset_y = 0;
+   pd->common.rel1.id_x = -1;
+   pd->common.rel1.id_y = -1;
+   pd->common.rel2.relative_x = 1.0;
+   pd->common.rel2.relative_y = 1.0;
+   pd->common.rel2.offset_x = -1;
+   pd->common.rel2.offset_y = -1;
+   pd->common.rel2.id_x = -1;
+   pd->common.rel2.id_y = -1;
    pd->image.id = -1;
    pd->fill.smooth = 1;
    pd->fill.pos_rel_x = 0.0;
@@ -2876,36 +2883,36 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 	  return EINA_FALSE;
 	/* No need to check for default desc, at this point it must exist */
 	rp->part->other_desc = eina_list_append(rp->part->other_desc, pdto);
-	pdto->state.name = eina_stringshare_add(to);
-	pdto->state.value = val_to;
+	pdto->common.state.name = eina_stringshare_add(to);
+	pdto->common.state.value = val_to;
      }
 
 #define PD_COPY(_x) pdto->_x = pdfrom->_x
 #define PD_STRING_COPY(_x) _edje_if_string_free(ed, pdto->_x); \
 			   pdto->_x = (char *)eina_stringshare_add(pdfrom->_x)
-   PD_COPY(align.x);
-   PD_COPY(align.y);
-   PD_COPY(fixed.w);
-   PD_COPY(fixed.h);
-   PD_COPY(min.w);
-   PD_COPY(min.h);
-   PD_COPY(max.w);
-   PD_COPY(max.h);
-   PD_COPY(aspect.min);
-   PD_COPY(aspect.max);
-   PD_COPY(aspect.prefer);
-   PD_COPY(rel1.relative_x);
-   PD_COPY(rel1.relative_y);
-   PD_COPY(rel1.offset_x);
-   PD_COPY(rel1.offset_y);
-   PD_COPY(rel1.id_x);
-   PD_COPY(rel1.id_y);
-   PD_COPY(rel2.relative_x);
-   PD_COPY(rel2.relative_y);
-   PD_COPY(rel2.offset_x);
-   PD_COPY(rel2.offset_y);
-   PD_COPY(rel2.id_x);
-   PD_COPY(rel2.id_y);
+   PD_COPY(common.align.x);
+   PD_COPY(common.align.y);
+   PD_COPY(common.fixed.w);
+   PD_COPY(common.fixed.h);
+   PD_COPY(common.min.w);
+   PD_COPY(common.min.h);
+   PD_COPY(common.max.w);
+   PD_COPY(common.max.h);
+   PD_COPY(common.aspect.min);
+   PD_COPY(common.aspect.max);
+   PD_COPY(common.aspect.prefer);
+   PD_COPY(common.rel1.relative_x);
+   PD_COPY(common.rel1.relative_y);
+   PD_COPY(common.rel1.offset_x);
+   PD_COPY(common.rel1.offset_y);
+   PD_COPY(common.rel1.id_x);
+   PD_COPY(common.rel1.id_y);
+   PD_COPY(common.rel2.relative_x);
+   PD_COPY(common.rel2.relative_y);
+   PD_COPY(common.rel2.offset_x);
+   PD_COPY(common.rel2.offset_y);
+   PD_COPY(common.rel2.id_x);
+   PD_COPY(common.rel2.id_y);
    PD_COPY(image.id);
    EINA_LIST_FREE(pdto->image.tween_list, i)
       free(i);
@@ -3008,7 +3015,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 	  }
 	pdto->external_params = eina_list_append(pdto->external_params, new_p);
      }
-   PD_COPY(visible);
+   PD_COPY(common.visible);
 #undef PD_STRING_COPY
 #undef PD_COPY
 
@@ -3021,7 +3028,7 @@ edje_edit_state_rel1_relative_x_get(Evas_Object *obj, const char *part, const ch
 {
    GET_PD_OR_RETURN(0);
    //printf("Get rel1 rel of part: %s state: %s [%f]\n", part, state, pd->rel1.relative_x);
-   return TO_DOUBLE(pd->rel1.relative_x);
+   return TO_DOUBLE(pd->common.rel1.relative_x);
 }
 
 EAPI double
@@ -3029,7 +3036,7 @@ edje_edit_state_rel1_relative_y_get(Evas_Object *obj, const char *part, const ch
 {
    GET_PD_OR_RETURN(0);
    //printf("Get rel1 rel of part: %s state: %s\n", part, state);
-   return TO_DOUBLE(pd->rel1.relative_y);
+   return TO_DOUBLE(pd->common.rel1.relative_y);
 }
 
 EAPI double
@@ -3037,7 +3044,7 @@ edje_edit_state_rel2_relative_x_get(Evas_Object *obj, const char *part, const ch
 {
    GET_PD_OR_RETURN(0);
    //printf("Get rel2 rel of part: %s state: %s\n", part, state);
-   return TO_DOUBLE(pd->rel2.relative_x);
+   return TO_DOUBLE(pd->common.rel2.relative_x);
 }
 
 EAPI double
@@ -3045,7 +3052,7 @@ edje_edit_state_rel2_relative_y_get(Evas_Object *obj, const char *part, const ch
 {
    GET_PD_OR_RETURN(0);
    //printf("Get rel2 rel of part: %s state: %s\n", part, state);
-   return TO_DOUBLE(pd->rel2.relative_y);
+   return TO_DOUBLE(pd->common.rel2.relative_y);
 }
 
 EAPI void
@@ -3054,7 +3061,7 @@ edje_edit_state_rel1_relative_x_set(Evas_Object *obj, const char *part, const ch
    GET_PD_OR_RETURN();
    //printf("Set rel1x of part: %s state: %s to: %f\n", part, state, x);
    //TODO check boudaries
-   pd->rel1.relative_x = FROM_DOUBLE(x);
+   pd->common.rel1.relative_x = FROM_DOUBLE(x);
    edje_object_calc_force(obj);
 }
 
@@ -3064,7 +3071,7 @@ edje_edit_state_rel1_relative_y_set(Evas_Object *obj, const char *part, const ch
    GET_PD_OR_RETURN();
    //printf("Set rel1y of part: %s state: %s to: %f\n", part, state, y);
    //TODO check boudaries
-   pd->rel1.relative_y = FROM_DOUBLE(y);
+   pd->common.rel1.relative_y = FROM_DOUBLE(y);
    edje_object_calc_force(obj);
 }
 
@@ -3074,7 +3081,7 @@ edje_edit_state_rel2_relative_x_set(Evas_Object *obj, const char *part, const ch
    GET_PD_OR_RETURN();
    //printf("Set rel2x of part: %s state: %s to: %f\n", part, state, x);
    //TODO check boudaries
-   pd->rel2.relative_x = FROM_DOUBLE(x);
+   pd->common.rel2.relative_x = FROM_DOUBLE(x);
    edje_object_calc_force(obj);
 }
 
@@ -3085,7 +3092,7 @@ edje_edit_state_rel2_relative_y_set(Evas_Object *obj, const char *part, const ch
    //printf("Set rel2y of part: %s state: %s to: %f\n", part, state, y);
    pd = _edje_part_description_find_byname(eed, part, state, value);
    //TODO check boudaries
-   pd->rel2.relative_y = FROM_DOUBLE(y);
+   pd->common.rel2.relative_y = FROM_DOUBLE(y);
    edje_object_calc_force(obj);
 }
 
@@ -3095,7 +3102,7 @@ edje_edit_state_rel1_offset_x_get(Evas_Object *obj, const char *part, const char
 {
    GET_PD_OR_RETURN(0);
    //printf("Get rel1 offset of part: %s state: %s\n", part, state);
-   return pd->rel1.offset_x;
+   return pd->common.rel1.offset_x;
 }
 
 EAPI int
@@ -3103,7 +3110,7 @@ edje_edit_state_rel1_offset_y_get(Evas_Object *obj, const char *part, const char
 {
    GET_PD_OR_RETURN(0);
    //printf("Get rel1 offset of part: %s state: %s\n", part, state);
-   return pd->rel1.offset_y;
+   return pd->common.rel1.offset_y;
 }
 
 EAPI int
@@ -3111,7 +3118,7 @@ edje_edit_state_rel2_offset_x_get(Evas_Object *obj, const char *part, const char
 {
    GET_PD_OR_RETURN(0);
    //printf("Get rel2 offset of part: %s state: %s\n", part, state);
-   return pd->rel2.offset_x;
+   return pd->common.rel2.offset_x;
 }
 
 EAPI int
@@ -3119,7 +3126,7 @@ edje_edit_state_rel2_offset_y_get(Evas_Object *obj, const char *part, const char
 {
    GET_PD_OR_RETURN(0);
    //printf("Get rel2 offset of part: %s state: %s\n", part, state);
-   return pd->rel2.offset_y;
+   return pd->common.rel2.offset_y;
 }
 
 EAPI void
@@ -3128,7 +3135,7 @@ edje_edit_state_rel1_offset_x_set(Evas_Object *obj, const char *part, const char
    GET_PD_OR_RETURN();
    //printf("Set rel1x offset of part: %s state: %s to: %f\n", part, state, x);
    //TODO check boudaries
-   pd->rel1.offset_x = TO_INT(FROM_DOUBLE(x));
+   pd->common.rel1.offset_x = TO_INT(FROM_DOUBLE(x));
    edje_object_calc_force(obj);
 }
 
@@ -3138,7 +3145,7 @@ edje_edit_state_rel1_offset_y_set(Evas_Object *obj, const char *part, const char
    GET_PD_OR_RETURN();
    //printf("Set rel1y offset of part: %s state: %s to: %f\n", part, state, y);
    //TODO check boudaries
-   pd->rel1.offset_y = TO_INT(FROM_DOUBLE(y));
+   pd->common.rel1.offset_y = TO_INT(FROM_DOUBLE(y));
    edje_object_calc_force(obj);
 }
 
@@ -3148,7 +3155,7 @@ edje_edit_state_rel2_offset_x_set(Evas_Object *obj, const char *part, const char
    GET_PD_OR_RETURN();
    //printf("Set rel2x offset of part: %s state: %s to: %f\n", part, state, x);
    //TODO check boudaries
-   pd->rel2.offset_x = TO_INT(FROM_DOUBLE(x));
+   pd->common.rel2.offset_x = TO_INT(FROM_DOUBLE(x));
    edje_object_calc_force(obj);
 }
 
@@ -3158,7 +3165,7 @@ edje_edit_state_rel2_offset_y_set(Evas_Object *obj, const char *part, const char
    GET_PD_OR_RETURN();
    //printf("Set rel2y offset of part: %s state: %s to: %f\n", part, state, y);
    //TODO check boudaries
-   pd->rel2.offset_y = TO_INT(FROM_DOUBLE(y));
+   pd->common.rel2.offset_y = TO_INT(FROM_DOUBLE(y));
    edje_object_calc_force(obj);
 }
 
@@ -3172,9 +3179,9 @@ edje_edit_state_rel1_to_x_get(Evas_Object *obj, const char *part, const char *st
 
    //printf("Get rel1x TO of part: %s state: %s\n", part, state);
 
-   if (pd->rel1.id_x == -1) return NULL;
+   if (pd->common.rel1.id_x == -1) return NULL;
 
-   rel = ed->table_parts[pd->rel1.id_x % ed->table_parts_size];
+   rel = ed->table_parts[pd->common.rel1.id_x % ed->table_parts_size];
 
    if (rel->part->name)
      return eina_stringshare_add(rel->part->name);
@@ -3191,9 +3198,9 @@ edje_edit_state_rel1_to_y_get(Evas_Object *obj, const char *part, const char *st
 
    //printf("Get rel1y TO of part: %s state: %s\n", part, state);
 
-   if (pd->rel1.id_y == -1) return NULL;
+   if (pd->common.rel1.id_y == -1) return NULL;
 
-   rel = ed->table_parts[pd->rel1.id_y % ed->table_parts_size];
+   rel = ed->table_parts[pd->common.rel1.id_y % ed->table_parts_size];
 
    if (rel->part->name)
      return eina_stringshare_add(rel->part->name);
@@ -3210,9 +3217,9 @@ edje_edit_state_rel2_to_x_get(Evas_Object *obj, const char *part, const char *st
 
    //printf("Get rel2x TO of part: %s state: %s\n", part, state);
 
-   if (pd->rel2.id_x == -1) return NULL;
+   if (pd->common.rel2.id_x == -1) return NULL;
 
-   rel = ed->table_parts[pd->rel2.id_x % ed->table_parts_size];
+   rel = ed->table_parts[pd->common.rel2.id_x % ed->table_parts_size];
 
    if (rel->part->name)
      return eina_stringshare_add(rel->part->name);
@@ -3229,9 +3236,9 @@ edje_edit_state_rel2_to_y_get(Evas_Object *obj, const char *part, const char *st
 
    //printf("Get rel2y TO of part: %s state: %s\n", part, state);
 
-   if (pd->rel2.id_y == -1) return NULL;
+   if (pd->common.rel2.id_y == -1) return NULL;
 
-   rel = ed->table_parts[pd->rel2.id_y % ed->table_parts_size];
+   rel = ed->table_parts[pd->common.rel2.id_y % ed->table_parts_size];
 
    if (rel->part->name)
      return eina_stringshare_add(rel->part->name);
@@ -3253,10 +3260,10 @@ edje_edit_state_rel1_to_x_set(Evas_Object *obj, const char *part, const char *st
      {
 	relp = _edje_real_part_get(ed, rel_to);
 	if (!relp) return;
-	pd->rel1.id_x = relp->part->id;
+	pd->common.rel1.id_x = relp->part->id;
      }
    else
-     pd->rel1.id_x = -1;
+     pd->common.rel1.id_x = -1;
 
    //_edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, "state", 0.1); //Why segfault??
    // edje_object_calc_force(obj);//don't work for redraw
@@ -3276,10 +3283,10 @@ edje_edit_state_rel1_to_y_set(Evas_Object *obj, const char *part, const char *st
      {
 	relp = _edje_real_part_get(ed, rel_to);
 	if (!relp) return;
-	pd->rel1.id_y = relp->part->id;
+	pd->common.rel1.id_y = relp->part->id;
      }
    else
-     pd->rel1.id_y = -1;
+     pd->common.rel1.id_y = -1;
 
    //_edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, "state", 0.1); //Why segfault??
    // edje_object_calc_force(obj);//don't work for redraw
@@ -3299,10 +3306,10 @@ edje_edit_state_rel2_to_x_set(Evas_Object *obj, const char *part, const char *st
      {
 	relp = _edje_real_part_get(ed, rel_to);
 	if (!relp) return;
-	pd->rel2.id_x = relp->part->id;
+	pd->common.rel2.id_x = relp->part->id;
      }
    else
-     pd->rel2.id_x = -1;
+     pd->common.rel2.id_x = -1;
 
    //_edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, "state", 0.1); //Why segfault??
    // edje_object_calc_force(obj);//don't work for redraw
@@ -3322,10 +3329,10 @@ edje_edit_state_rel2_to_y_set(Evas_Object *obj, const char *part, const char *st
      {
 	relp = _edje_real_part_get(ed, rel_to);
 	if (!relp) return;
-	pd->rel2.id_y = relp->part->id;
+	pd->common.rel2.id_y = relp->part->id;
      }
    else
-      pd->rel2.id_y = -1;
+      pd->common.rel2.id_y = -1;
 
    //_edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, "state", 0.1); //Why segfault??
    // edje_object_calc_force(obj);//don't work for redraw
@@ -3424,7 +3431,7 @@ edje_edit_state_align_x_get(Evas_Object *obj, const char *part, const char *stat
 
    //printf("GET ALIGN_X of state '%s' [%f]\n", state, pd->align.x);
 
-   return TO_DOUBLE(pd->align.x);
+   return TO_DOUBLE(pd->common.align.x);
 }
 
 EAPI double
@@ -3434,7 +3441,7 @@ edje_edit_state_align_y_get(Evas_Object *obj, const char *part, const char *stat
 
    //printf("GET ALIGN_Y of state '%s' [%f]\n", state, pd->align.y);
 
-   return TO_DOUBLE(pd->align.y);
+   return TO_DOUBLE(pd->common.align.y);
 }
 
 EAPI void
@@ -3442,7 +3449,7 @@ edje_edit_state_align_x_set(Evas_Object *obj, const char *part, const char *stat
 {
    GET_PD_OR_RETURN();
    //printf("SET ALIGN_X of state '%s' [to: %f]\n", state, align);
-   pd->align.x = FROM_DOUBLE(align);
+   pd->common.align.x = FROM_DOUBLE(align);
 }
 
 EAPI void
@@ -3451,7 +3458,7 @@ edje_edit_state_align_y_set(Evas_Object *obj, const char *part, const char *stat
    GET_PD_OR_RETURN();
 
    //printf("SET ALIGN_Y of state '%s' [to: %f]\n", state, align);
-   pd->align.y = FROM_DOUBLE(align);
+   pd->common.align.y = FROM_DOUBLE(align);
 }
 
 //min & max
@@ -3461,7 +3468,7 @@ edje_edit_state_min_w_get(Evas_Object *obj, const char *part, const char *state,
    GET_PD_OR_RETURN(0);
 
    //printf("GET MIN_W of state '%s' [%d]\n", state, pd->min.w);
-   return pd->min.w;
+   return pd->common.min.w;
 }
 
 EAPI void
@@ -3470,7 +3477,7 @@ edje_edit_state_min_w_set(Evas_Object *obj, const char *part, const char *state,
    GET_PD_OR_RETURN();
 
    //printf("SET MIN_W of state '%s' [to: %d]\n", state, min_w);
-   pd->min.w = min_w;
+   pd->common.min.w = min_w;
 }
 
 EAPI int
@@ -3479,7 +3486,7 @@ edje_edit_state_min_h_get(Evas_Object *obj, const char *part, const char *state,
    GET_PD_OR_RETURN(0);
 
    //printf("GET MIN_H of state '%s' [%d]\n", state, pd->min.h);
-   return pd->min.h;
+   return pd->common.min.h;
 }
 
 EAPI void
@@ -3488,7 +3495,7 @@ edje_edit_state_min_h_set(Evas_Object *obj, const char *part, const char *state,
    GET_PD_OR_RETURN();
 
    //printf("SET MIN_H of state '%s' [to: %d]\n", state, min_h);
-   pd->min.h = min_h;
+   pd->common.min.h = min_h;
 }
 
 EAPI int
@@ -3497,7 +3504,7 @@ edje_edit_state_max_w_get(Evas_Object *obj, const char *part, const char *state,
    GET_PD_OR_RETURN(0);
 
    //printf("GET MAX_W of state '%s' [%d]\n", state, pd->max.w);
-   return pd->max.w;
+   return pd->common.max.w;
 }
 
 EAPI void
@@ -3506,7 +3513,7 @@ edje_edit_state_max_w_set(Evas_Object *obj, const char *part, const char *state,
    GET_PD_OR_RETURN();
 
    //printf("SET MAX_W of state '%s' [to: %d]\n", state, max_w);
-   pd->max.w = max_w;
+   pd->common.max.w = max_w;
 }
 
 EAPI int
@@ -3515,7 +3522,7 @@ edje_edit_state_max_h_get(Evas_Object *obj, const char *part, const char *state,
    GET_PD_OR_RETURN(0);
 
    //printf("GET MAX_H of state '%s' [%d]\n", state, pd->max.h);
-   return pd->max.h;
+   return pd->common.max.h;
 }
 
 EAPI void
@@ -3524,7 +3531,7 @@ edje_edit_state_max_h_set(Evas_Object *obj, const char *part, const char *state,
    GET_PD_OR_RETURN();
 
    //printf("SET MAX_H of state '%s' [to: %d]\n", state, max_h);
-   pd->max.h = max_h;
+   pd->common.max.h = max_h;
 }
 
 //aspect
@@ -3534,7 +3541,7 @@ edje_edit_state_aspect_min_get(Evas_Object *obj, const char *part, const char *s
    GET_PD_OR_RETURN(0);
 
    //printf("GET ASPECT_MIN of state '%s' [%f]\n", state, pd->aspect.min);
-   return TO_DOUBLE(pd->aspect.min);
+   return TO_DOUBLE(pd->common.aspect.min);
 }
 
 EAPI double
@@ -3543,7 +3550,7 @@ edje_edit_state_aspect_max_get(Evas_Object *obj, const char *part, const char *s
    GET_PD_OR_RETURN(0);
 
    //printf("GET ASPECT_MAX of state '%s' [%f]\n", state, pd->aspect.max);
-   return TO_DOUBLE(pd->aspect.max);
+   return TO_DOUBLE(pd->common.aspect.max);
 }
 
 EAPI void
@@ -3552,7 +3559,7 @@ edje_edit_state_aspect_min_set(Evas_Object *obj, const char *part, const char *s
    GET_PD_OR_RETURN();
 
    //printf("SET ASPECT_MIN of state '%s' [to: %f]\n", state, aspect);
-   pd->aspect.min = FROM_DOUBLE(aspect);
+   pd->common.aspect.min = FROM_DOUBLE(aspect);
 }
 
 EAPI void
@@ -3561,7 +3568,7 @@ edje_edit_state_aspect_max_set(Evas_Object *obj, const char *part, const char *s
    GET_PD_OR_RETURN();
 
    //printf("SET ASPECT_MAX of state '%s' [to: %f]\n", state, aspect);
-   pd->aspect.max = FROM_DOUBLE(aspect);
+   pd->common.aspect.max = FROM_DOUBLE(aspect);
 }
 
 EAPI unsigned char
@@ -3570,7 +3577,7 @@ edje_edit_state_aspect_pref_get(Evas_Object *obj, const char *part, const char *
    GET_PD_OR_RETURN(0);
 
    //printf("GET ASPECT_PREF of state '%s' [%d]\n", state, pd->aspect.prefer);
-   return pd->aspect.prefer;
+   return pd->common.aspect.prefer;
 }
 
 EAPI void
@@ -3579,7 +3586,7 @@ edje_edit_state_aspect_pref_set(Evas_Object *obj, const char *part, const char *
    GET_PD_OR_RETURN();
 
    //printf("SET ASPECT_PREF of state '%s' [to: %d]\n", state, pref);
-   pd->aspect.prefer = pref;
+   pd->common.aspect.prefer = pref;
 }
 
 //fill
@@ -3725,7 +3732,7 @@ edje_edit_state_visible_get(Evas_Object *obj, const char *part, const char *stat
 {
    GET_PD_OR_RETURN(EINA_FALSE);
    //printf("Get state visible flag of part: %s state: %s\n", part, state);
-   return pd->visible;
+   return pd->common.visible;
 }
 
 EAPI void
@@ -3733,8 +3740,8 @@ edje_edit_state_visible_set(Evas_Object *obj, const char *part, const char *stat
 {
    GET_PD_OR_RETURN();
    //printf("Set state visible flag of part: %s state: %s to: %d\n", part, state, visible);
-   if (visible) pd->visible = 1;
-   else         pd->visible = 0;
+   if (visible) pd->common.visible = 1;
+   else         pd->common.visible = 0;
    edje_object_calc_force(obj);
 }
 
@@ -5783,28 +5790,28 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
    rp = _edje_real_part_get(ed, part);
    if (!rp) return EINA_FALSE;
 
-   BUF_APPENDF(I4"description { state: \"%s\" %g;\n", pd->state.name, pd->state.value);
+   BUF_APPENDF(I4"description { state: \"%s\" %g;\n", pd->common.state.name, pd->common.state.value);
    //TODO Support inherit
 
-   if (!pd->visible)
+   if (!pd->common.visible)
      BUF_APPEND(I5"visible: 0;\n");
 
-   if (pd->align.x != 0.5 || pd->align.y != 0.5)
-     BUF_APPENDF(I5"align: %g %g;\n", TO_DOUBLE(pd->align.x), TO_DOUBLE(pd->align.y));
+   if (pd->common.align.x != 0.5 || pd->common.align.y != 0.5)
+     BUF_APPENDF(I5"align: %g %g;\n", TO_DOUBLE(pd->common.align.x), TO_DOUBLE(pd->common.align.y));
 
    //TODO Support fixed
 
-   if (pd->min.w || pd->min.h)
-     BUF_APPENDF(I5"min: %d %d;\n", pd->min.w, pd->min.h);
-   if (pd->max.w != -1 || pd->max.h != -1)
-     BUF_APPENDF(I5"max: %d %d;\n", pd->max.w, pd->max.h);
+   if (pd->common.min.w || pd->common.min.h)
+     BUF_APPENDF(I5"min: %d %d;\n", pd->common.min.w, pd->common.min.h);
+   if (pd->common.max.w != -1 || pd->common.max.h != -1)
+     BUF_APPENDF(I5"max: %d %d;\n", pd->common.max.w, pd->common.max.h);
 
    //TODO Support step
 
-   if (pd->aspect.min || pd->aspect.max)
-      BUF_APPENDF(I5"aspect: %g %g;\n", TO_DOUBLE(pd->aspect.min), TO_DOUBLE(pd->aspect.max));
-   if (pd->aspect.prefer)
-      BUF_APPENDF(I5"aspect_preference: %s;\n", prefers[pd->aspect.prefer]);
+   if (pd->common.aspect.min || pd->common.aspect.max)
+      BUF_APPENDF(I5"aspect: %g %g;\n", TO_DOUBLE(pd->common.aspect.min), TO_DOUBLE(pd->common.aspect.max));
+   if (pd->common.aspect.prefer)
+      BUF_APPENDF(I5"aspect_preference: %s;\n", prefers[pd->common.aspect.prefer]);
 
    if (pd->color_class)
       BUF_APPENDF(I5"color_class: \"%s\";\n", pd->color_class);
@@ -5823,44 +5830,44 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
               pd->color3.r, pd->color3.g, pd->color3.b, pd->color3.a);
 
    //Rel1
-   if (pd->rel1.relative_x || pd->rel1.relative_y || pd->rel1.offset_x ||
-       pd->rel1.offset_y || pd->rel1.id_x != -1 || pd->rel1.id_y != -1)
+   if (pd->common.rel1.relative_x || pd->common.rel1.relative_y || pd->common.rel1.offset_x ||
+       pd->common.rel1.offset_y || pd->common.rel1.id_x != -1 || pd->common.rel1.id_y != -1)
      {
 	BUF_APPEND(I5"rel1 {\n");
-	if (pd->rel1.relative_x || pd->rel1.relative_y)
-	  BUF_APPENDF(I6"relative: %g %g;\n", TO_DOUBLE(pd->rel1.relative_x), TO_DOUBLE(pd->rel1.relative_y));
-	if (pd->rel1.offset_x || pd->rel1.offset_y)
-	  BUF_APPENDF(I6"offset: %d %d;\n", pd->rel1.offset_x, pd->rel1.offset_y);
-	if (pd->rel1.id_x != -1 && pd->rel1.id_x == pd->rel1.id_y)
-	  BUF_APPENDF(I6"to: \"%s\";\n", ed->table_parts[pd->rel1.id_x]->part->name);
+	if (pd->common.rel1.relative_x || pd->common.rel1.relative_y)
+	  BUF_APPENDF(I6"relative: %g %g;\n", TO_DOUBLE(pd->common.rel1.relative_x), TO_DOUBLE(pd->common.rel1.relative_y));
+	if (pd->common.rel1.offset_x || pd->common.rel1.offset_y)
+	  BUF_APPENDF(I6"offset: %d %d;\n", pd->common.rel1.offset_x, pd->common.rel1.offset_y);
+	if (pd->common.rel1.id_x != -1 && pd->common.rel1.id_x == pd->common.rel1.id_y)
+	  BUF_APPENDF(I6"to: \"%s\";\n", ed->table_parts[pd->common.rel1.id_x]->part->name);
 	else
 	  {
-		if (pd->rel1.id_x != -1)
-		  BUF_APPENDF(I6"to_x: \"%s\";\n", ed->table_parts[pd->rel1.id_x]->part->name);
-		if (pd->rel1.id_y != -1)
-		  BUF_APPENDF(I6"to_y: \"%s\";\n", ed->table_parts[pd->rel1.id_y]->part->name);
+		if (pd->common.rel1.id_x != -1)
+		  BUF_APPENDF(I6"to_x: \"%s\";\n", ed->table_parts[pd->common.rel1.id_x]->part->name);
+		if (pd->common.rel1.id_y != -1)
+		  BUF_APPENDF(I6"to_y: \"%s\";\n", ed->table_parts[pd->common.rel1.id_y]->part->name);
 	  }
 	BUF_APPEND(I5"}\n");//rel1
      }
 
    //Rel2
-   if (pd->rel2.relative_x != 1.0 || pd->rel2.relative_y != 1.0 ||
-       pd->rel2.offset_x != -1 || pd->rel2.offset_y != -1 ||
-       pd->rel2.id_x != -1 || pd->rel2.id_y != -1)
+   if (pd->common.rel2.relative_x != 1.0 || pd->common.rel2.relative_y != 1.0 ||
+       pd->common.rel2.offset_x != -1 || pd->common.rel2.offset_y != -1 ||
+       pd->common.rel2.id_x != -1 || pd->common.rel2.id_y != -1)
      {
 	BUF_APPEND(I5"rel2 {\n");
-	if (TO_DOUBLE(pd->rel2.relative_x) != 1.0 || TO_DOUBLE(pd->rel2.relative_y) != 1.0)
-	  BUF_APPENDF(I6"relative: %g %g;\n", TO_DOUBLE(pd->rel2.relative_x), TO_DOUBLE(pd->rel2.relative_y));
-	if (pd->rel2.offset_x != -1 || pd->rel2.offset_y != -1)
-	  BUF_APPENDF(I6"offset: %d %d;\n", pd->rel2.offset_x, pd->rel2.offset_y);
-	if (pd->rel2.id_x != -1 && pd->rel2.id_x == pd->rel2.id_y)
-	  BUF_APPENDF(I6"to: \"%s\";\n", ed->table_parts[pd->rel2.id_x]->part->name);
+	if (TO_DOUBLE(pd->common.rel2.relative_x) != 1.0 || TO_DOUBLE(pd->common.rel2.relative_y) != 1.0)
+	  BUF_APPENDF(I6"relative: %g %g;\n", TO_DOUBLE(pd->common.rel2.relative_x), TO_DOUBLE(pd->common.rel2.relative_y));
+	if (pd->common.rel2.offset_x != -1 || pd->common.rel2.offset_y != -1)
+	  BUF_APPENDF(I6"offset: %d %d;\n", pd->common.rel2.offset_x, pd->common.rel2.offset_y);
+	if (pd->common.rel2.id_x != -1 && pd->common.rel2.id_x == pd->common.rel2.id_y)
+	  BUF_APPENDF(I6"to: \"%s\";\n", ed->table_parts[pd->common.rel2.id_x]->part->name);
 	else
 	  {
-		if (pd->rel2.id_x != -1)
-		  BUF_APPENDF(I6"to_x: \"%s\";\n", ed->table_parts[pd->rel2.id_x]->part->name);
-		if (pd->rel2.id_y != -1)
-		  BUF_APPENDF(I6"to_y: \"%s\";\n", ed->table_parts[pd->rel2.id_y]->part->name);
+		if (pd->common.rel2.id_x != -1)
+		  BUF_APPENDF(I6"to_x: \"%s\";\n", ed->table_parts[pd->common.rel2.id_x]->part->name);
+		if (pd->common.rel2.id_y != -1)
+		  BUF_APPENDF(I6"to_y: \"%s\";\n", ed->table_parts[pd->common.rel2.id_y]->part->name);
 	  }
 	BUF_APPEND(I5"}\n");//rel2
      }

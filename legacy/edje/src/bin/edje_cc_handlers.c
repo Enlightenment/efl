@@ -3244,27 +3244,27 @@ ob_collections_group_parts_part_description(void)
      ep->default_desc = ed;
    else
      ep->other_desc = eina_list_append(ep->other_desc, ed);
-   ed->visible = 1;
-   ed->align.x = FROM_DOUBLE(0.5);
-   ed->align.y = FROM_DOUBLE(0.5);
-   ed->min.w = 0;
-   ed->min.h = 0;
-   ed->fixed.w = 0;
-   ed->fixed.h = 0;
-   ed->max.w = -1;
-   ed->max.h = -1;
-   ed->rel1.relative_x = FROM_DOUBLE(0.0);
-   ed->rel1.relative_y = FROM_DOUBLE(0.0);
-   ed->rel1.offset_x = 0;
-   ed->rel1.offset_y = 0;
-   ed->rel1.id_x = -1;
-   ed->rel1.id_y = -1;
-   ed->rel2.relative_x = FROM_DOUBLE(1.0);
-   ed->rel2.relative_y = FROM_DOUBLE(1.0);
-   ed->rel2.offset_x = -1;
-   ed->rel2.offset_y = -1;
-   ed->rel2.id_x = -1;
-   ed->rel2.id_y = -1;
+   ed->common.visible = 1;
+   ed->common.align.x = FROM_DOUBLE(0.5);
+   ed->common.align.y = FROM_DOUBLE(0.5);
+   ed->common.min.w = 0;
+   ed->common.min.h = 0;
+   ed->common.fixed.w = 0;
+   ed->common.fixed.h = 0;
+   ed->common.max.w = -1;
+   ed->common.max.h = -1;
+   ed->common.rel1.relative_x = FROM_DOUBLE(0.0);
+   ed->common.rel1.relative_y = FROM_DOUBLE(0.0);
+   ed->common.rel1.offset_x = 0;
+   ed->common.rel1.offset_y = 0;
+   ed->common.rel1.id_x = -1;
+   ed->common.rel1.id_y = -1;
+   ed->common.rel2.relative_x = FROM_DOUBLE(1.0);
+   ed->common.rel2.relative_y = FROM_DOUBLE(1.0);
+   ed->common.rel2.offset_x = -1;
+   ed->common.rel2.offset_y = -1;
+   ed->common.rel2.id_x = -1;
+   ed->common.rel2.id_y = -1;
    ed->image.id = -1;
    ed->fill.smooth = 1;
    ed->fill.pos_rel_x = FROM_DOUBLE(0.0);
@@ -3306,19 +3306,19 @@ ob_collections_group_parts_part_description(void)
    ed->table.align.y = FROM_DOUBLE(0.5);
    ed->table.padding.x = 0;
    ed->table.padding.y = 0;
-   ed->map.id_persp = -1;
-   ed->map.id_light = -1;
-   ed->map.rot.id_center = -1;
-   ed->map.rot.x = FROM_DOUBLE(0.0);
-   ed->map.rot.y = FROM_DOUBLE(0.0);
-   ed->map.rot.z = FROM_DOUBLE(0.0);
-   ed->map.on = 0;
-   ed->map.smooth = 1;
-   ed->map.alpha = 1;
-   ed->map.backcull = 0;
-   ed->map.persp_on = 0;
-   ed->persp.zplane = 0;
-   ed->persp.focal = 1000;
+   ed->common.map.id_persp = -1;
+   ed->common.map.id_light = -1;
+   ed->common.map.rot.id_center = -1;
+   ed->common.map.rot.x = FROM_DOUBLE(0.0);
+   ed->common.map.rot.y = FROM_DOUBLE(0.0);
+   ed->common.map.rot.z = FROM_DOUBLE(0.0);
+   ed->common.map.on = 0;
+   ed->common.map.smooth = 1;
+   ed->common.map.alpha = 1;
+   ed->common.map.backcull = 0;
+   ed->common.map.persp_on = 0;
+   ed->common.persp.zplane = 0;
+   ed->common.persp.focal = 1000;
    ed->external_params = NULL;
 }
 
@@ -3363,7 +3363,7 @@ st_collections_group_parts_part_description_inherit(void)
 
    ed = eina_list_data_get(eina_list_last(ep->other_desc));
 
-   if (!ed->state.name)
+   if (!ed->common.state.name)
      {
         ERR("%s: Error. parse error %s:%i. "
 	    "inherit may only be used after state",
@@ -3385,16 +3385,16 @@ st_collections_group_parts_part_description_inherit(void)
 	if (!strcmp(parent_name, "default"))
 	  {
 	     parent = ep->default_desc;
-	     min_dst = ABS(ep->default_desc->state.value - parent_val);
+	     min_dst = ABS(ep->default_desc->common.state.value - parent_val);
 	  }
 
 	EINA_LIST_FOREACH(ep->other_desc, l, d)
 	  {
-	     if (!strcmp (d->state.name, parent_name))
+	     if (!strcmp (d->common.state.name, parent_name))
 	       {
 		  double dst;
 
-		  dst = ABS(d->state.value - parent_val);
+		  dst = ABS(d->common.state.value - parent_val);
 		  if (dst < min_dst)
 		    {
 		       parent = d;
@@ -3415,18 +3415,18 @@ st_collections_group_parts_part_description_inherit(void)
    free (parent_name);
 
    /* now do a full copy, only state info will be kept */
-   state_name = ed->state.name;
-   state_val = ed->state.value;
+   state_name = ed->common.state.name;
+   state_val = ed->common.state.value;
 
    *ed = *parent;
 
-   ed->state.name = state_name;
-   ed->state.value = state_val;
+   ed->common.state.name = state_name;
+   ed->common.state.value = state_val;
 
-   data_queue_part_slave_lookup(&parent->rel1.id_x, &ed->rel1.id_x);
-   data_queue_part_slave_lookup(&parent->rel1.id_y, &ed->rel1.id_y);
-   data_queue_part_slave_lookup(&parent->rel2.id_x, &ed->rel2.id_x);
-   data_queue_part_slave_lookup(&parent->rel2.id_y, &ed->rel2.id_y);
+   data_queue_part_slave_lookup(&parent->common.rel1.id_x, &ed->common.rel1.id_x);
+   data_queue_part_slave_lookup(&parent->common.rel1.id_y, &ed->common.rel1.id_y);
+   data_queue_part_slave_lookup(&parent->common.rel2.id_x, &ed->common.rel2.id_x);
+   data_queue_part_slave_lookup(&parent->common.rel2.id_y, &ed->common.rel2.id_y);
    data_queue_image_slave_lookup(&parent->image.id, &ed->image.id);
 
    /* make sure all the allocated memory is getting copied, not just
@@ -3507,8 +3507,8 @@ st_collections_group_parts_part_description_state(void)
 	exit(-1);
      }
 
-   ed->state.name = s;
-   ed->state.value = parse_float_range(1, 0.0, 1.0);
+   ed->common.state.name = s;
+   ed->common.state.value = parse_float_range(1, 0.0, 1.0);
 }
 
 /**
@@ -3535,7 +3535,7 @@ st_collections_group_parts_part_description_visible(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->visible = parse_bool(0);
+   ed->common.visible = parse_bool(0);
 }
 
 /**
@@ -3563,8 +3563,8 @@ st_collections_group_parts_part_description_align(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->align.x = FROM_DOUBLE(parse_float_range(0, 0.0, 1.0));
-   ed->align.y = FROM_DOUBLE(parse_float_range(1, 0.0, 1.0));
+   ed->common.align.x = FROM_DOUBLE(parse_float_range(0, 0.0, 1.0));
+   ed->common.align.y = FROM_DOUBLE(parse_float_range(1, 0.0, 1.0));
 }
 
 /**
@@ -3594,8 +3594,8 @@ st_collections_group_parts_part_description_fixed(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->fixed.w = parse_float_range(0, 0, 1);
-   ed->fixed.h = parse_float_range(1, 0, 1);
+   ed->common.fixed.w = parse_float_range(0, 0, 1);
+   ed->common.fixed.h = parse_float_range(1, 0, 1);
 }
 
 /**
@@ -3621,8 +3621,8 @@ st_collections_group_parts_part_description_min(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->min.w = parse_float_range(0, 0, 0x7fffffff);
-   ed->min.h = parse_float_range(1, 0, 0x7fffffff);
+   ed->common.min.w = parse_float_range(0, 0, 0x7fffffff);
+   ed->common.min.h = parse_float_range(1, 0, 0x7fffffff);
 }
 
 /**
@@ -3648,8 +3648,8 @@ st_collections_group_parts_part_description_max(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->max.w = parse_float_range(0, 0, 0x7fffffff);
-   ed->max.h = parse_float_range(1, 0, 0x7fffffff);
+   ed->common.max.w = parse_float_range(0, 0, 0x7fffffff);
+   ed->common.max.h = parse_float_range(1, 0, 0x7fffffff);
 }
 
 /**
@@ -3677,8 +3677,8 @@ st_collections_group_parts_part_description_step(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->step.x = parse_float_range(0, 0, 0x7fffffff);
-   ed->step.y = parse_float_range(1, 0, 0x7fffffff);
+   ed->common.step.x = parse_float_range(0, 0, 0x7fffffff);
+   ed->common.step.y = parse_float_range(1, 0, 0x7fffffff);
 }
 
 /**
@@ -3708,8 +3708,8 @@ st_collections_group_parts_part_description_aspect(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->aspect.min = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
-   ed->aspect.max = FROM_DOUBLE(parse_float_range(1, 0.0, 999999999.0));
+   ed->common.aspect.min = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
+   ed->common.aspect.max = FROM_DOUBLE(parse_float_range(1, 0.0, 999999999.0));
 }
 
 /**
@@ -3736,12 +3736,12 @@ st_collections_group_parts_part_description_aspect_preference(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->aspect.prefer =  parse_enum(0,
-				   "NONE", EDJE_ASPECT_PREFER_NONE,
-				   "VERTICAL", EDJE_ASPECT_PREFER_VERTICAL,
-				   "HORIZONTAL", EDJE_ASPECT_PREFER_HORIZONTAL,
-				   "BOTH", EDJE_ASPECT_PREFER_BOTH,
-				   NULL);
+   ed->common.aspect.prefer =  parse_enum(0,
+					  "NONE", EDJE_ASPECT_PREFER_NONE,
+					  "VERTICAL", EDJE_ASPECT_PREFER_VERTICAL,
+					  "HORIZONTAL", EDJE_ASPECT_PREFER_HORIZONTAL,
+					  "BOTH", EDJE_ASPECT_PREFER_BOTH,
+					  NULL);
 }
 
 /**
@@ -3906,8 +3906,8 @@ st_collections_group_parts_part_description_rel1_relative(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->rel1.relative_x = FROM_DOUBLE(parse_float(0));
-   ed->rel1.relative_y = FROM_DOUBLE(parse_float(1));
+   ed->common.rel1.relative_x = FROM_DOUBLE(parse_float(0));
+   ed->common.rel1.relative_y = FROM_DOUBLE(parse_float(1));
 }
 
 /**
@@ -3933,8 +3933,8 @@ st_collections_group_parts_part_description_rel1_offset(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->rel1.offset_x = parse_int(0);
-   ed->rel1.offset_y = parse_int(1);
+   ed->common.rel1.offset_x = parse_int(0);
+   ed->common.rel1.offset_y = parse_int(1);
 }
 
 /**
@@ -3965,8 +3965,8 @@ st_collections_group_parts_part_description_rel1_to(void)
 	char *name;
 
 	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(ed->rel1.id_x));
-	data_queue_part_lookup(pc, name, &(ed->rel1.id_y));
+	data_queue_part_lookup(pc, name, &(ed->common.rel1.id_x));
+	data_queue_part_lookup(pc, name, &(ed->common.rel1.id_y));
 	free(name);
      }
 }
@@ -3999,7 +3999,7 @@ st_collections_group_parts_part_description_rel1_to_x(void)
 	char *name;
 
 	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(ed->rel1.id_x));
+	data_queue_part_lookup(pc, name, &(ed->common.rel1.id_x));
 	free(name);
      }
 }
@@ -4033,7 +4033,7 @@ st_collections_group_parts_part_description_rel1_to_y(void)
 	char *name;
 
 	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(ed->rel1.id_y));
+	data_queue_part_lookup(pc, name, &(ed->common.rel1.id_y));
 	free(name);
      }
 }
@@ -4051,8 +4051,8 @@ st_collections_group_parts_part_description_rel2_relative(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->rel2.relative_x = FROM_DOUBLE(parse_float(0));
-   ed->rel2.relative_y = FROM_DOUBLE(parse_float(1));
+   ed->common.rel2.relative_x = FROM_DOUBLE(parse_float(0));
+   ed->common.rel2.relative_y = FROM_DOUBLE(parse_float(1));
 }
 
 static void
@@ -4068,8 +4068,8 @@ st_collections_group_parts_part_description_rel2_offset(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->rel2.offset_x = parse_int(0);
-   ed->rel2.offset_y = parse_int(1);
+   ed->common.rel2.offset_x = parse_int(0);
+   ed->common.rel2.offset_y = parse_int(1);
 }
 
 static void
@@ -4089,8 +4089,8 @@ st_collections_group_parts_part_description_rel2_to(void)
 	char *name;
 
 	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(ed->rel2.id_x));
-	data_queue_part_lookup(pc, name, &(ed->rel2.id_y));
+	data_queue_part_lookup(pc, name, &(ed->common.rel2.id_x));
+	data_queue_part_lookup(pc, name, &(ed->common.rel2.id_y));
 	free(name);
      }
 }
@@ -4112,7 +4112,7 @@ st_collections_group_parts_part_description_rel2_to_x(void)
 	char *name;
 
 	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(ed->rel2.id_x));
+	data_queue_part_lookup(pc, name, &(ed->common.rel2.id_x));
 	free(name);
      }
 }
@@ -4134,7 +4134,7 @@ st_collections_group_parts_part_description_rel2_to_y(void)
 	char *name;
 
 	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(ed->rel2.id_y));
+	data_queue_part_lookup(pc, name, &(ed->common.rel2.id_y));
 	free(name);
      }
 }
@@ -5664,10 +5664,10 @@ st_collections_group_parts_part_description_map_perspective(void)
 	char *name;
 
 	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(ed->map.id_persp));
+	data_queue_part_lookup(pc, name, &(ed->common.map.id_persp));
 	free(name);
      }
-   ed->map.persp_on = 1;
+   ed->common.map.persp_on = 1;
 }
 
 /**
@@ -5706,7 +5706,7 @@ st_collections_group_parts_part_description_map_light(void)
 	char *name;
 
 	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(ed->map.id_light));
+	data_queue_part_lookup(pc, name, &(ed->common.map.id_light));
 	free(name);
      }
 }
@@ -5735,7 +5735,7 @@ st_collections_group_parts_part_description_map_on(void)
    
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->map.on = parse_bool(0);
+   ed->common.map.on = parse_bool(0);
 }
 
 /**
@@ -5765,7 +5765,7 @@ st_collections_group_parts_part_description_map_smooth(void)
    
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->map.smooth = parse_bool(0);
+   ed->common.map.smooth = parse_bool(0);
 }
 
 /**
@@ -5792,7 +5792,7 @@ st_collections_group_parts_part_description_map_alpha(void)
    
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->map.alpha = parse_bool(0);
+   ed->common.map.alpha = parse_bool(0);
 }
 
 /**
@@ -5821,7 +5821,7 @@ st_collections_group_parts_part_description_map_backface_cull(void)
    
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->map.backcull = parse_bool(0);
+   ed->common.map.backcull = parse_bool(0);
 }
 
 /**
@@ -5851,7 +5851,7 @@ st_collections_group_parts_part_description_map_perspective_on(void)
    
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->map.persp_on = parse_bool(0);
+   ed->common.map.persp_on = parse_bool(0);
 }
 /**
     @page edcref
@@ -5902,7 +5902,7 @@ st_collections_group_parts_part_description_map_rotation_center(void)
 	char *name;
 
 	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(ed->map.rot.id_center));
+	data_queue_part_lookup(pc, name, &(ed->common.map.rot.id_center));
 	free(name);
      }
 }
@@ -5932,7 +5932,7 @@ st_collections_group_parts_part_description_map_rotation_x(void)
    
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->map.rot.x = FROM_DOUBLE(parse_float(0));
+   ed->common.map.rot.x = FROM_DOUBLE(parse_float(0));
 }
 
 /**
@@ -5960,7 +5960,7 @@ st_collections_group_parts_part_description_map_rotation_y(void)
    
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->map.rot.y = FROM_DOUBLE(parse_float(0));
+   ed->common.map.rot.y = FROM_DOUBLE(parse_float(0));
 }
 
 /**
@@ -5988,7 +5988,7 @@ st_collections_group_parts_part_description_map_rotation_z(void)
    
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->map.rot.z = FROM_DOUBLE(parse_float(0));
+   ed->common.map.rot.z = FROM_DOUBLE(parse_float(0));
 }
 
 /**
@@ -6032,7 +6032,7 @@ st_collections_group_parts_part_description_perspective_zplane(void)
    
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->persp.zplane = parse_int(0);
+   ed->common.persp.zplane = parse_int(0);
 }
 
 
@@ -6061,7 +6061,7 @@ st_collections_group_parts_part_description_perspective_focal(void)
    
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->persp.focal = parse_int_range(0, 1, 0x7fffffff);
+   ed->common.persp.focal = parse_int_range(0, 1, 0x7fffffff);
 }
 
 

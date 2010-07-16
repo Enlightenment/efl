@@ -871,8 +871,8 @@ _edje_embryo_fn_get_state(Embryo_Program *ep, Embryo_Cell *params)
    rp = ed->table_parts[part_id % ed->table_parts_size];
    if (rp->chosen_description)
      {
-	SETFLOAT(rp->chosen_description->state.value, params[4]);
-	s = rp->chosen_description->state.name;
+	SETFLOAT(rp->chosen_description->common.state.value, params[4]);
+	s = rp->chosen_description->common.state.name;
 	if (s)
 	  {
 	     if ((int) strlen(s) < params[3])
@@ -1599,8 +1599,8 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
 
    *d = *parent;
 
-   d->state.name = (char *)eina_stringshare_add("custom");
-   d->state.value = 0.0;
+   d->common.state.name = (char *)eina_stringshare_add("custom");
+   d->common.state.value = 0.0;
 
    /* make sure all the allocated memory is getting copied,
     * not just referenced
@@ -1659,42 +1659,42 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_ALIGNMENT:
 	 CHKPARAM(4);
 
-	 GETFLOAT_T(rp->custom->description->align.x, params[3]);
-	 GETFLOAT_T(rp->custom->description->align.y, params[4]);
+	 GETFLOAT_T(rp->custom->description->common.align.x, params[3]);
+	 GETFLOAT_T(rp->custom->description->common.align.y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_MIN:
 	 CHKPARAM(4);
 
-	 GETINT(rp->custom->description->min.w, params[3]);
-	 GETINT(rp->custom->description->min.h, params[4]);
+	 GETINT(rp->custom->description->common.min.w, params[3]);
+	 GETINT(rp->custom->description->common.min.h, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_MAX:
 	 CHKPARAM(4);
 
-	 GETINT(rp->custom->description->max.w, params[3]);
-	 GETINT(rp->custom->description->max.h, params[4]);
+	 GETINT(rp->custom->description->common.max.w, params[3]);
+	 GETINT(rp->custom->description->common.max.h, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_STEP:
 	 CHKPARAM(4);
 
-	 GETINT(rp->custom->description->step.x, params[3]);
-	 GETINT(rp->custom->description->step.y, params[4]);
+	 GETINT(rp->custom->description->common.step.x, params[3]);
+	 GETINT(rp->custom->description->common.step.y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_ASPECT:
 	 CHKPARAM(4);
 
-	 GETFLOAT_T(rp->custom->description->aspect.min, params[3]);
-	 GETFLOAT_T(rp->custom->description->aspect.max, params[4]);
+	 GETFLOAT_T(rp->custom->description->common.aspect.min, params[3]);
+	 GETFLOAT_T(rp->custom->description->common.aspect.max, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_ASPECT_PREF:
 	 CHKPARAM(3);
 
-	 GETINT(rp->custom->description->aspect.prefer, params[3]);
+	 GETINT(rp->custom->description->common.aspect.prefer, params[3]);
 
 	 break;
       case EDJE_STATE_PARAM_COLOR:
@@ -1734,53 +1734,53 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_REL1:
 	 CHKPARAM(4);
 
-	 GETFLOAT_T(rp->custom->description->rel1.relative_x, params[3]);
-	 GETFLOAT_T(rp->custom->description->rel1.relative_y, params[4]);
+	 GETFLOAT_T(rp->custom->description->common.rel1.relative_x, params[3]);
+	 GETFLOAT_T(rp->custom->description->common.rel1.relative_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL1_TO:
 	 CHKPARAM(4);
 
-	 GETINT(rp->custom->description->rel1.id_x, params[3]);
-	 GETINT(rp->custom->description->rel1.id_y, params[4]);
+	 GETINT(rp->custom->description->common.rel1.id_x, params[3]);
+	 GETINT(rp->custom->description->common.rel1.id_y, params[4]);
 
-	 if (rp->param1.description->rel1.id_x >= 0)
-	   rp->param1.rel1_to_x = ed->table_parts[rp->param1.description->rel1.id_x % ed->table_parts_size];
-	 if (rp->param1.description->rel1.id_y >= 0)
-	   rp->param1.rel1_to_y = ed->table_parts[rp->param1.description->rel1.id_y % ed->table_parts_size];
+	 if (rp->param1.description->common.rel1.id_x >= 0)
+	   rp->param1.rel1_to_x = ed->table_parts[rp->param1.description->common.rel1.id_x % ed->table_parts_size];
+	 if (rp->param1.description->common.rel1.id_y >= 0)
+	   rp->param1.rel1_to_y = ed->table_parts[rp->param1.description->common.rel1.id_y % ed->table_parts_size];
 
 	 break;
       case EDJE_STATE_PARAM_REL1_OFFSET:
 	 CHKPARAM(4);
 
-	 GETINT(rp->custom->description->rel1.offset_x, params[3]);
-	 GETINT(rp->custom->description->rel1.offset_y, params[4]);
+	 GETINT(rp->custom->description->common.rel1.offset_x, params[3]);
+	 GETINT(rp->custom->description->common.rel1.offset_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL2:
 	 CHKPARAM(4);
 
-	 GETFLOAT_T(rp->custom->description->rel2.relative_x, params[3]);
-	 GETFLOAT_T(rp->custom->description->rel2.relative_y, params[4]);
+	 GETFLOAT_T(rp->custom->description->common.rel2.relative_x, params[3]);
+	 GETFLOAT_T(rp->custom->description->common.rel2.relative_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL2_TO:
 	 CHKPARAM(4);
 
-	 GETINT(rp->custom->description->rel2.id_x, params[3]);
-	 GETINT(rp->custom->description->rel2.id_y, params[4]);
+	 GETINT(rp->custom->description->common.rel2.id_x, params[3]);
+	 GETINT(rp->custom->description->common.rel2.id_y, params[4]);
 
-	 if (rp->param1.description->rel2.id_x >= 0)
-	   rp->param1.rel2_to_x = ed->table_parts[rp->param1.description->rel2.id_x % ed->table_parts_size];
-	 if (rp->param1.description->rel2.id_y >= 0)
-	   rp->param1.rel2_to_y = ed->table_parts[rp->param1.description->rel2.id_y % ed->table_parts_size];
+	 if (rp->param1.description->common.rel2.id_x >= 0)
+	   rp->param1.rel2_to_x = ed->table_parts[rp->param1.description->common.rel2.id_x % ed->table_parts_size];
+	 if (rp->param1.description->common.rel2.id_y >= 0)
+	   rp->param1.rel2_to_y = ed->table_parts[rp->param1.description->common.rel2.id_y % ed->table_parts_size];
 
 	 break;
       case EDJE_STATE_PARAM_REL2_OFFSET:
 	 CHKPARAM(4);
 
-	 GETINT(rp->custom->description->rel2.offset_x, params[3]);
-	 GETINT(rp->custom->description->rel2.offset_y, params[4]);
+	 GETINT(rp->custom->description->common.rel2.offset_x, params[3]);
+	 GETINT(rp->custom->description->common.rel2.offset_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_IMAGE:
@@ -1909,73 +1909,73 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_VISIBLE:
 	 CHKPARAM(3);
 
-	 GETINT(rp->custom->description->visible, params[3]);
+	 GETINT(rp->custom->description->common.visible, params[3]);
 
 	 break;
       case EDJE_STATE_PARAM_MAP_OM:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->map.on, params[3]);
+        GETINT(rp->custom->description->common.map.on, params[3]);
         
         break;
       case EDJE_STATE_PARAM_MAP_PERSP:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->map.id_persp, params[3]);
+        GETINT(rp->custom->description->common.map.id_persp, params[3]);
         
         break;
       case EDJE_STATE_PARAM_MAP_LIGNT:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->map.id_light, params[3]);
+        GETINT(rp->custom->description->common.map.id_light, params[3]);
         
         break;
       case EDJE_STATE_PARAM_MAP_ROT_CENTER:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->map.rot.id_center, params[3]);
+        GETINT(rp->custom->description->common.map.rot.id_center, params[3]);
         
         break;
       case EDJE_STATE_PARAM_MAP_ROT_X:
         CHKPARAM(3);
 
-        GETFLOAT_T(rp->custom->description->map.rot.x, params[3]);
+        GETFLOAT_T(rp->custom->description->common.map.rot.x, params[3]);
 
         break;
       case EDJE_STATE_PARAM_MAP_ROT_Y:
         CHKPARAM(3);
         
-        GETFLOAT_T(rp->custom->description->map.rot.y, params[3]);
+        GETFLOAT_T(rp->custom->description->common.map.rot.y, params[3]);
         
         break;
       case EDJE_STATE_PARAM_MAP_ROT_Z:
         CHKPARAM(3);
         
-        GETFLOAT_T(rp->custom->description->map.rot.z, params[3]);
+        GETFLOAT_T(rp->custom->description->common.map.rot.z, params[3]);
 
         break;
       case EDJE_STATE_PARAM_MAP_BACK_CULL:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->map.backcull, params[3]);
+        GETINT(rp->custom->description->common.map.backcull, params[3]);
         
         break;
       case EDJE_STATE_PARAM_MAP_PERSP_ON:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->map.persp_on, params[3]);
+        GETINT(rp->custom->description->common.map.persp_on, params[3]);
         
         break;
       case EDJE_STATE_PARAM_PERSP_ZPLANE:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->persp.zplane, params[3]);
+        GETINT(rp->custom->description->common.persp.zplane, params[3]);
         
         break;
       case EDJE_STATE_PARAM_PERSP_FOCAL:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->persp.focal, params[3]);
+        GETINT(rp->custom->description->common.persp.focal, params[3]);
         
         break;
       default:
@@ -2016,42 +2016,42 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_ALIGNMENT:
 	 CHKPARAM(4);
 
-	 SETFLOAT_T(rp->custom->description->align.x, params[3]);
-	 SETFLOAT_T(rp->custom->description->align.y, params[4]);
+	 SETFLOAT_T(rp->custom->description->common.align.x, params[3]);
+	 SETFLOAT_T(rp->custom->description->common.align.y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_MIN:
 	 CHKPARAM(4);
 
-	 SETINT(rp->custom->description->min.w, params[3]);
-	 SETINT(rp->custom->description->min.h, params[4]);
+	 SETINT(rp->custom->description->common.min.w, params[3]);
+	 SETINT(rp->custom->description->common.min.h, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_MAX:
 	 CHKPARAM(4);
 
-	 SETINT(rp->custom->description->max.w, params[3]);
-	 SETINT(rp->custom->description->max.h, params[4]);
+	 SETINT(rp->custom->description->common.max.w, params[3]);
+	 SETINT(rp->custom->description->common.max.h, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_STEP:
 	 CHKPARAM(4);
 
-	 SETINT(rp->custom->description->step.x, params[3]);
-	 SETINT(rp->custom->description->step.y, params[4]);
+	 SETINT(rp->custom->description->common.step.x, params[3]);
+	 SETINT(rp->custom->description->common.step.y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_ASPECT:
 	 CHKPARAM(4);
 
-	 SETFLOAT_T(rp->custom->description->aspect.min, params[3]);
-	 SETFLOAT_T(rp->custom->description->aspect.max, params[4]);
+	 SETFLOAT_T(rp->custom->description->common.aspect.min, params[3]);
+	 SETFLOAT_T(rp->custom->description->common.aspect.max, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_ASPECT_PREF:
 	 CHKPARAM(3);
 
-	 SETINT(rp->custom->description->aspect.prefer, params[3]);
+	 SETINT(rp->custom->description->common.aspect.prefer, params[3]);
 
 	 break;
       case EDJE_STATE_PARAM_COLOR:
@@ -2091,43 +2091,43 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_REL1:
 	 CHKPARAM(4);
 
-	 SETFLOAT_T(rp->custom->description->rel1.relative_x, params[3]);
-	 SETFLOAT_T(rp->custom->description->rel1.relative_y, params[4]);
+	 SETFLOAT_T(rp->custom->description->common.rel1.relative_x, params[3]);
+	 SETFLOAT_T(rp->custom->description->common.rel1.relative_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL1_TO:
 	 CHKPARAM(4);
 
-	 SETINT(rp->custom->description->rel1.id_x, params[3]);
-	 SETINT(rp->custom->description->rel1.id_y, params[4]);
+	 SETINT(rp->custom->description->common.rel1.id_x, params[3]);
+	 SETINT(rp->custom->description->common.rel1.id_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL1_OFFSET:
 	 CHKPARAM(4);
 
-	 SETINT(rp->custom->description->rel1.offset_x, params[3]);
-	 SETINT(rp->custom->description->rel1.offset_y, params[4]);
+	 SETINT(rp->custom->description->common.rel1.offset_x, params[3]);
+	 SETINT(rp->custom->description->common.rel1.offset_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL2:
 	 CHKPARAM(4);
 
-	 SETFLOAT_T(rp->custom->description->rel2.relative_x, params[3]);
-	 SETFLOAT_T(rp->custom->description->rel2.relative_y, params[4]);
+	 SETFLOAT_T(rp->custom->description->common.rel2.relative_x, params[3]);
+	 SETFLOAT_T(rp->custom->description->common.rel2.relative_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL2_TO:
 	 CHKPARAM(4);
 
-	 SETINT(rp->custom->description->rel2.id_x, params[3]);
-	 SETINT(rp->custom->description->rel2.id_y, params[4]);
+	 SETINT(rp->custom->description->common.rel2.id_x, params[3]);
+	 SETINT(rp->custom->description->common.rel2.id_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL2_OFFSET:
 	 CHKPARAM(4);
 
-	 SETINT(rp->custom->description->rel2.offset_x, params[3]);
-	 SETINT(rp->custom->description->rel2.offset_y, params[4]);
+	 SETINT(rp->custom->description->common.rel2.offset_x, params[3]);
+	 SETINT(rp->custom->description->common.rel2.offset_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_IMAGE:
@@ -2256,7 +2256,7 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_VISIBLE:
 	 CHKPARAM(3);
 
-	 SETINT(rp->custom->description->visible, params[3]);
+	 SETINT(rp->custom->description->common.visible, params[3]);
 
 	 break;
       default:
