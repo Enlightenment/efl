@@ -1083,7 +1083,7 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
 			   newsig = idx;
 
 			   *newsig = '\0';
-			   newsig++;
+			   newsig += 2; /* we jump over ']' and ':' */
 
 			   child = _edje_children_get(rp, partid);
 
