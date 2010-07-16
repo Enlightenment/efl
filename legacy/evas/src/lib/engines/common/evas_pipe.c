@@ -19,9 +19,9 @@ evas_common_surface_alloc(void *surface, int x, int y, int w, int h)
 
    e_surface = calloc(1, sizeof(Evas_Surface));
    e_surface->im = surface;
-   LKL(e_surface->im->ref_fq_add);
-   e_surface->im->ref_fq[0]++;
-   LKU(e_surface->im->ref_fq_add);
+   LKL(e_surface->im->cache_entry.ref_fq_add);
+   e_surface->im->cache_entry.ref_fq[0]++;
+   LKU(e_surface->im->cache_entry.ref_fq_add);
    e_surface->x = x;
    e_surface->y = y;
    e_surface->w = w;
@@ -39,9 +39,9 @@ evas_common_surface_dealloc(Evas_Surface *surface)
      {
         d_surface = surface;
         surface = (Evas_Surface *)eina_inlist_remove(EINA_INLIST_GET(surface), EINA_INLIST_GET(d_surface));
-        LKL(d_surface->im->ref_fq_del);
-        d_surface->im->ref_fq[1]++;
-        LKU(d_surface->im->ref_fq_del);
+        LKL(d_surface->im->cache_entry.ref_fq_del);
+        d_surface->im->cache_entry.ref_fq[1]++;
+        LKU(d_surface->im->cache_entry.ref_fq_del);
 
         free(d_surface);
 
@@ -287,7 +287,7 @@ evas_common_pipe_thread(void *data)
 //   {
 //      thinfo->info = NULL;
 //      INF(" TH %i GO", thinfo->thread_num);
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(info->im->pipe), p)
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(info->im->cache_entry.pipe), p)
           {
              int i;
 
@@ -378,7 +378,7 @@ evas_common_frameq_thread(void *data)
              p_info.w = surface->im->cache_entry.w;
              p_info.h = surface->im->cache_entry.h;
 
-             EINA_INLIST_FOREACH(EINA_INLIST_GET(p_info.im->pipe), p)
+             EINA_INLIST_FOREACH(EINA_INLIST_GET(p_info.im->cache_entry.pipe), p)
                {
                   int i;
 
@@ -820,7 +820,7 @@ evas_common_pipe_begin(RGBA_Image *im)
    return;
 #endif
 
-   if (!im->pipe) return;
+   if (!im->cache_entry.pipe) return;
    if (thread_num == 1) return;
    y = 0;
    h = im->cache_entry.h / thread_num;
@@ -965,7 +965,7 @@ evas_common_pipe_flush(RGBA_Image *im)
    RGBA_Pipe *p;
    int i;
 
-   if (!im->pipe) return;
+   if (!im->cache_entry.pipe) return;
 
 #ifndef EVAS_FRAME_QUEUING
 
@@ -1002,13 +1002,13 @@ evas_common_pipe_free(RGBA_Image *im)
    RGBA_Pipe *p;
    int i;
 
-   if (!im->pipe) return;
+   if (!im->cache_entry.pipe) return;
    /* FIXME: PTHREAD join all threads here (if not finished) */
 
    /* free pipe */
-   while (im->pipe)
+   while (im->cache_entry.pipe)
      {
-        p = im->pipe;
+        p = im->cache_entry.pipe;
         for (i = 0; i < p->op_num; i++)
           {
              if (p->op[i].free_func)
@@ -1016,7 +1016,7 @@ evas_common_pipe_free(RGBA_Image *im)
                   p->op[i].free_func(&(p->op[i]));
                }
           }
-        im->pipe = (RGBA_Pipe *)eina_inlist_remove(EINA_INLIST_GET(im->pipe), EINA_INLIST_GET(p));
+        im->cache_entry.pipe = (RGBA_Pipe *)eina_inlist_remove(EINA_INLIST_GET(im->cache_entry.pipe), EINA_INLIST_GET(p));
         free(p);
      }
 }
@@ -1057,8 +1057,8 @@ evas_common_pipe_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    RGBA_Pipe_Op *op;
 
    if ((w < 1) || (h < 1)) return;
-   dst->pipe = evas_common_pipe_add(dst->pipe, &op);
-   if (!dst->pipe) return;
+   dst->cache_entry.pipe = evas_common_pipe_add(dst->cache_entry.pipe, &op);
+   if (!dst->cache_entry.pipe) return;
    op->op.rect.x = x;
    op->op.rect.y = y;
    op->op.rect.w = w;
@@ -1100,8 +1100,8 @@ evas_common_pipe_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 {
    RGBA_Pipe_Op *op;
 
-   dst->pipe = evas_common_pipe_add(dst->pipe, &op);
-   if (!dst->pipe) return;
+   dst->cache_entry.pipe = evas_common_pipe_add(dst->cache_entry.pipe, &op);
+   if (!dst->cache_entry.pipe) return;
    op->op.line.x0 = x0;
    op->op.line.y0 = y0;
    op->op.line.x1 = x1;
@@ -1158,8 +1158,8 @@ evas_common_pipe_poly_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    RGBA_Polygon_Point *pts = NULL, *p, *pp;
 
    if (!points) return;
-   dst->pipe = evas_common_pipe_add(dst->pipe, &op);
-   if (!dst->pipe) return;
+   dst->cache_entry.pipe = evas_common_pipe_add(dst->cache_entry.pipe, &op);
+   if (!dst->cache_entry.pipe) return;
    /* FIXME: copy points - maybe we should refcount? */
    for (p = points; p; p = (RGBA_Polygon_Point *)(EINA_INLIST_GET(p))->next)
      {
@@ -1244,8 +1244,8 @@ evas_common_pipe_grad_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    RGBA_Pipe_Op *op;
 
    if (!gr) return;
-   dst->pipe = evas_common_pipe_add(dst->pipe, &op);
-   if (!dst->pipe) return;
+   dst->cache_entry.pipe = evas_common_pipe_add(dst->cache_entry.pipe, &op);
+   if (!dst->cache_entry.pipe) return;
    op->op.grad.x = x;
    op->op.grad.y = y;
    op->op.grad.w = w;
@@ -1330,8 +1330,8 @@ evas_common_pipe_grad2_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    RGBA_Pipe_Op *op;
 
    if (!gr) return;
-   dst->pipe = evas_common_pipe_add(dst->pipe, &op);
-   if (!dst->pipe) return;
+   dst->cache_entry.pipe = evas_common_pipe_add(dst->cache_entry.pipe, &op);
+   if (!dst->cache_entry.pipe) return;
    op->op.grad2.x = x;
    op->op.grad2.y = y;
    op->op.grad2.w = w;
@@ -1416,8 +1416,8 @@ evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    RGBA_Pipe_Op *op;
 
    if ((!fn) || (!text)) return;
-   dst->pipe = evas_common_pipe_add(dst->pipe, &op);
-   if (!dst->pipe) return;
+   dst->cache_entry.pipe = evas_common_pipe_add(dst->cache_entry.pipe, &op);
+   if (!dst->cache_entry.pipe) return;
    op->op.text.x = x;
    op->op.text.y = y;
    op->op.text.text = strdup(text);
@@ -1439,10 +1439,10 @@ static void
 evas_common_pipe_op_image_free(RGBA_Pipe_Op *op)
 {
 #ifdef EVAS_FRAME_QUEUING
-   LKL(op->op.image.src->ref_fq_del);
-   op->op.image.src->ref_fq[1]++;
-   LKU(op->op.image.src->ref_fq_del);
-   pthread_cond_signal(&(op->op.image.src->cond_fq_del)); 
+   LKL(op->op.image.src->cache_entry.ref_fq_del);
+   op->op.image.src->cache_entry.ref_fq[1]++;
+   LKU(op->op.image.src->cache_entry.ref_fq_del);
+   pthread_cond_signal(&(op->op.image.src->cache_entry.cond_fq_del)); 
 #else
    op->op.image.src->ref--;
    if (op->op.image.src->ref == 0)
@@ -1460,14 +1460,14 @@ evas_common_pipe_op_image_flush(RGBA_Image *im)
    if (! evas_common_frameq_enabled())
       return;
    
-   LKL(im->ref_fq_add);
-   LKL(im->ref_fq_del);
+   LKL(im->cache_entry.ref_fq_add);
+   LKL(im->cache_entry.ref_fq_del);
 
-   while (im->ref_fq[0] != im->ref_fq[1])
-      pthread_cond_wait(&(im->cond_fq_del), &(im->ref_fq_del));
+   while (im->cache_entry.ref_fq[0] != im->cache_entry.ref_fq[1])
+      pthread_cond_wait(&(im->cache_entry.cond_fq_del), &(im->cache_entry.ref_fq_del));
 
-   LKU(im->ref_fq_del);
-   LKU(im->ref_fq_add);
+   LKU(im->cache_entry.ref_fq_del);
+   LKU(im->cache_entry.ref_fq_add);
 }
 #endif
 
@@ -1583,8 +1583,8 @@ evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst,
 
    if (!src) return;
 //   evas_common_pipe_flush(src);
-   dst->pipe = evas_common_pipe_add(dst->pipe, &op);
-   if (!dst->pipe) return;
+   dst->cache_entry.pipe = evas_common_pipe_add(dst->cache_entry.pipe, &op);
+   if (!dst->cache_entry.pipe) return;
    op->op.image.smooth = smooth;
    op->op.image.sx = src_region_x;
    op->op.image.sy = src_region_y;
@@ -1595,9 +1595,9 @@ evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst,
    op->op.image.dw = dst_region_w;
    op->op.image.dh = dst_region_h;
 #ifdef EVAS_FRAME_QUEUING
-   LKL(src->ref_fq_add);
-   src->ref_fq[0]++;
-   LKU(src->ref_fq_add);
+   LKL(src->cache_entry.ref_fq_add);
+   src->cache_entry.ref_fq[0]++;
+   LKU(src->cache_entry.ref_fq_add);
 #else
    src->ref++;
 #endif
@@ -1624,9 +1624,9 @@ static void
 evas_common_pipe_op_map4_free(RGBA_Pipe_Op *op)
 {
 #ifdef EVAS_FRAME_QUEUING
-   LKL(op->op.image.src->ref_fq_del);
-   op->op.image.src->ref_fq[1]++;
-   LKU(op->op.image.src->ref_fq_del);
+   LKL(op->op.image.src->cache_entry.ref_fq_del);
+   op->op.image.src->cache_entry.ref_fq[1]++;
+   LKU(op->op.image.src->cache_entry.ref_fq_del);
 #else
    op->op.map4.src->ref--;
    if (op->op.map4.src->ref == 0)
@@ -1674,8 +1674,8 @@ evas_common_pipe_map4_draw(RGBA_Image *src, RGBA_Image *dst,
    if (!src) return;
    pts_copy = malloc(sizeof (RGBA_Map_Point) * 4);
    if (!pts_copy) return;
-   dst->pipe = evas_common_pipe_add(dst->pipe, &op);
-   if (!dst->pipe) 
+   dst->cache_entry.pipe = evas_common_pipe_add(dst->cache_entry.pipe, &op);
+   if (!dst->cache_entry.pipe) 
      {
        free(pts_copy);
        return; 
@@ -1687,9 +1687,9 @@ evas_common_pipe_map4_draw(RGBA_Image *src, RGBA_Image *dst,
    op->op.map4.smooth = smooth;
    op->op.map4.level = level;
 #ifdef EVAS_FRAME_QUEUING
-   LKL(src->ref_fq_add);
-   src->ref_fq[0]++;
-   LKU(src->ref_fq_add);
+   LKL(src->cache_entry.ref_fq_add);
+   src->cache_entry.ref_fq[0]++;
+   LKU(src->cache_entry.ref_fq_add);
 #else
    src->ref++;
 #endif
@@ -1720,18 +1720,18 @@ evas_common_pipe_map4_render(RGBA_Image *root)
   int i;
 
   /* Map imply that we need to process them recursively first. */
-  for (p = root->pipe; p; p = (RGBA_Pipe *)(EINA_INLIST_GET(p))->next)
+  for (p = root->cache_entry.pipe; p; p = (RGBA_Pipe *)(EINA_INLIST_GET(p))->next)
     {
       for (i = 0; i < p->op_num; i++) 
 	{
 	  if (p->op[i].op_func == evas_common_pipe_map4_draw_do)
 	    {
-	      if (p->op[i].op.map4.src->pipe)
+	      if (p->op[i].op.map4.src->cache_entry.pipe)
 		evas_common_pipe_map4_render(p->op[i].op.map4.src);
 	    }
 	  else if (p->op[i].op_func == evas_common_pipe_image_draw_do)
 	    {
-	      if (p->op[i].op.image.src->pipe)
+	      if (p->op[i].op.image.src->cache_entry.pipe)
 		evas_common_pipe_map4_render(p->op[i].op.image.src);
 	    }
 	}

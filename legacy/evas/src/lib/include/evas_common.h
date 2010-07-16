@@ -551,6 +551,16 @@ struct _Image_Entry
    LK(lock_references);   // needed for accessing references
 #endif
 
+#ifdef BUILD_PIPE_RENDER
+   RGBA_Pipe           *pipe;
+#ifdef EVAS_FRAME_QUEUING
+   LK(ref_fq_add);
+   LK(ref_fq_del);
+   pthread_cond_t cond_fq_del;
+   int ref_fq[2];		// ref_fq[0] is for addition, ref_fq[1] is for deletion
+#endif
+#endif
+
    unsigned char          scale;
 
    RGBA_Image_Loadopts    load_opts;
@@ -736,15 +746,6 @@ struct _RGBA_Image
      } info;
 
    void                *extended_info;
-#ifdef BUILD_PIPE_RENDER
-   RGBA_Pipe           *pipe;
-#ifdef EVAS_FRAME_QUEUING
-   LK(ref_fq_add);
-   LK(ref_fq_del);
-   pthread_cond_t cond_fq_del;
-   int ref_fq[2];		// ref_fq[0] is for addition, ref_fq[1] is for deletion
-#endif
-#endif
    int                  ref;
 
 /*    unsigned char        scale; */

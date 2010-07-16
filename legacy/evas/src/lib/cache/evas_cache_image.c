@@ -935,16 +935,16 @@ evas_cache_image_drop(Image_Entry *im)
    if (references == 0)
      {
 #ifdef EVAS_FRAME_QUEUING
-        LKL(((RGBA_Image *)im)->ref_fq_add);
-        LKL(((RGBA_Image *)im)->ref_fq_del);
-        if (((RGBA_Image *)im)->ref_fq[0] != ((RGBA_Image *)im)->ref_fq[1])
+        LKL(im->ref_fq_add);
+        LKL(im->ref_fq_del);
+        if (im->ref_fq[0] != im->ref_fq[1])
           {
-             LKU(((RGBA_Image *)im)->ref_fq_add);
-             LKU(((RGBA_Image *)im)->ref_fq_del);
+             LKU(im->ref_fq_add);
+             LKU(im->ref_fq_del);
              return;
           }
-	LKU(((RGBA_Image *)im)->ref_fq_add);
-	LKU(((RGBA_Image *)im)->ref_fq_del);
+	LKU(im->ref_fq_add);
+	LKU(im->ref_fq_del);
 #endif
 
 #ifdef BUILD_ASYNC_PRELOAD
