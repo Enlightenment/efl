@@ -585,6 +585,7 @@ elm_label_fontsize_set(Evas_Object *obj, int fontsize)
    int len;
    
    if (!wd) return;
+   _elm_dangerous_call_check(__FUNCTION__);
    len = strlen(wd->label);
    if (len <= 0) return;
    label = alloca(sizeof(char) * (len + 32));
@@ -598,6 +599,7 @@ elm_label_fontsize_set(Evas_Object *obj, int fontsize)
    
    wd->changed = 1;
    _sizing_eval(obj);
+
 }
 
 /**
@@ -621,6 +623,7 @@ elm_label_text_align_set(Evas_Object *obj, const char *alignmode)
    int len;
    
    if (!wd) return;
+   _elm_dangerous_call_check(__FUNCTION__);
    len = strlen(wd->label);
    if (len <= 0) return;
    
@@ -655,6 +658,7 @@ elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsig
    int len;
 
    if (!wd) return;
+   _elm_dangerous_call_check(__FUNCTION__);
    len = strlen(wd->label);
    if (len <= 0) return;
    label = alloca(sizeof(char) * (len + 32));
@@ -690,6 +694,8 @@ elm_label_background_color_set(Evas_Object *obj, unsigned int r, unsigned int g,
    Widget_Data *wd = elm_widget_data_get(obj);
    evas_object_color_set(wd->bg, r, g, b, a);
    
+   if (!wd) return;
+   _elm_dangerous_call_check(__FUNCTION__);
    if (wd->bgcolor == EINA_FALSE)
      {
         wd->bgcolor = 1;
@@ -709,6 +715,7 @@ elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->ellipsis == ellipsis) return;
    wd->ellipsis = ellipsis;
    wd->changed = 1;

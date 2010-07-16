@@ -211,7 +211,7 @@ Eina_Bool	  elm_selection_set(enum _elm_sel_type selection, Evas_Object *widget,
 Eina_Bool	  elm_selection_clear(enum _elm_sel_type selection, Evas_Object *widget);
 Eina_Bool	  elm_selection_get(enum _elm_sel_type selection, enum _elm_sel_format format, Evas_Object *widget);
 
-
+Eina_Bool         _elm_dangerous_call_check(const char *call);
 
 
 #define ELM_SET_WIDTYPE(widtype, type) if (!widtype) widtype = eina_stringshare_add(type)
