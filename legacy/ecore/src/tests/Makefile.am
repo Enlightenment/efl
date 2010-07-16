@@ -22,6 +22,11 @@ ecore_suite_LDADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_con/libecore_con.la
 
+if BUILD_ECORE_X
+ecore_suite_LDADD += \
+$(top_builddir)/src/lib/ecore_x/libecore_x.la
+endif
+
 endif
 
 EXTRA_DIST = ecore_suite.h

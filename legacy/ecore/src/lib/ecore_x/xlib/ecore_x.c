@@ -823,6 +823,30 @@ ecore_x_dpi_get(void)
    return (((s->width * 254) / s->mwidth) + 5) / 10;
 }
 
+/**
+ * Invoke the standard system beep to alert users
+ *
+ * @param percent The volume at which the bell rings. Must be in the range
+ * [-100,+100]. If percent >= 0, the final volume will be:
+ *       base - [(base * percent) / 100] + percent
+ * Otherwise, it's calculated as:
+ *       base + [(base * percent) / 100]
+ * where @c base is the bell's base volume as set by XChangeKeyboardControl(3).
+ *
+ * @returns EINA_TRUE on success, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool
+ecore_x_bell(int percent)
+{
+   int ret;
+
+   ret = XBell(_ecore_x_disp, percent);
+   if (ret == BadValue)
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
 static Eina_Bool
 _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {

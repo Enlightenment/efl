@@ -889,6 +889,15 @@ ecore_x_kill(Ecore_X_Window window)
 }
 
 /**
+ * TODO: Invoke the standard system beep to alert users
+ */
+EAPI Eina_Bool
+ecore_x_bell(int percent)
+{
+   return 0;
+}
+
+/**
  * Return the last event time
  */
 EAPI Ecore_X_Time
