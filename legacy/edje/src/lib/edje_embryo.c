@@ -1620,7 +1620,7 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
      }
 
 #define DUP(x) x ? (char *)eina_stringshare_add(x) : NULL
-   d->color_class = DUP(d->color_class);
+   d->common.color_class = DUP(d->common.color_class);
    d->text.text = DUP(d->text.text);
    d->text.text_class = DUP(d->text.text_class);
    d->text.font = DUP(d->text.font);
@@ -1700,35 +1700,35 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_COLOR:
 	 CHKPARAM(6);
 
-	 GETINT(rp->custom->description->color.r, params[3]);
-	 GETINT(rp->custom->description->color.g, params[4]);
-	 GETINT(rp->custom->description->color.b, params[5]);
-	 GETINT(rp->custom->description->color.a, params[6]);
+	 GETINT(rp->custom->description->common.color.r, params[3]);
+	 GETINT(rp->custom->description->common.color.g, params[4]);
+	 GETINT(rp->custom->description->common.color.b, params[5]);
+	 GETINT(rp->custom->description->common.color.a, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_COLOR2:
 	 CHKPARAM(6);
 
-	 GETINT(rp->custom->description->color2.r, params[3]);
-	 GETINT(rp->custom->description->color2.g, params[4]);
-	 GETINT(rp->custom->description->color2.b, params[5]);
-	 GETINT(rp->custom->description->color2.a, params[6]);
+	 GETINT(rp->custom->description->common.color2.r, params[3]);
+	 GETINT(rp->custom->description->common.color2.g, params[4]);
+	 GETINT(rp->custom->description->common.color2.b, params[5]);
+	 GETINT(rp->custom->description->common.color2.a, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_COLOR3:
 	 CHKPARAM(6);
 
-	 GETINT(rp->custom->description->color3.r, params[3]);
-	 GETINT(rp->custom->description->color3.g, params[4]);
-	 GETINT(rp->custom->description->color3.b, params[5]);
-	 GETINT(rp->custom->description->color3.a, params[6]);
+	 GETINT(rp->custom->description->text.color3.r, params[3]);
+	 GETINT(rp->custom->description->text.color3.g, params[4]);
+	 GETINT(rp->custom->description->text.color3.b, params[5]);
+	 GETINT(rp->custom->description->text.color3.a, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_COLOR_CLASS:
 	 CHKPARAM(3);
 
 	 GETSTR(s, params[3]);
-	 GETSTREVAS(s, rp->custom->description->color_class);
+	 GETSTREVAS(s, rp->custom->description->common.color_class);
 
 	 break;
       case EDJE_STATE_PARAM_REL1:
@@ -2057,34 +2057,34 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_COLOR:
 	 CHKPARAM(6);
 
-	 SETINT(rp->custom->description->color.r, params[3]);
-	 SETINT(rp->custom->description->color.g, params[4]);
-	 SETINT(rp->custom->description->color.b, params[5]);
-	 SETINT(rp->custom->description->color.a, params[6]);
+	 SETINT(rp->custom->description->common.color.r, params[3]);
+	 SETINT(rp->custom->description->common.color.g, params[4]);
+	 SETINT(rp->custom->description->common.color.b, params[5]);
+	 SETINT(rp->custom->description->common.color.a, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_COLOR2:
 	 CHKPARAM(6);
 
-	 SETINT(rp->custom->description->color2.r, params[3]);
-	 SETINT(rp->custom->description->color2.g, params[4]);
-	 SETINT(rp->custom->description->color2.b, params[5]);
-	 SETINT(rp->custom->description->color2.a, params[6]);
+	 SETINT(rp->custom->description->common.color2.r, params[3]);
+	 SETINT(rp->custom->description->common.color2.g, params[4]);
+	 SETINT(rp->custom->description->common.color2.b, params[5]);
+	 SETINT(rp->custom->description->common.color2.a, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_COLOR3:
 	 CHKPARAM(6);
 
-	 SETINT(rp->custom->description->color3.r, params[3]);
-	 SETINT(rp->custom->description->color3.g, params[4]);
-	 SETINT(rp->custom->description->color3.b, params[5]);
-	 SETINT(rp->custom->description->color3.a, params[6]);
+	 SETINT(rp->custom->description->text.color3.r, params[3]);
+	 SETINT(rp->custom->description->text.color3.g, params[4]);
+	 SETINT(rp->custom->description->text.color3.b, params[5]);
+	 SETINT(rp->custom->description->text.color3.a, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_COLOR_CLASS:
 	 CHKPARAM(4);
 
-	 s = rp->custom->description->color_class;
+	 s = rp->custom->description->common.color_class;
 	 SETSTRALLOCATE(s);
 
 	 break;

@@ -2655,19 +2655,19 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
    pd->image.fill.angle = 0;
    pd->image.fill.spread = 0;
    pd->image.fill.type = EDJE_FILL_TYPE_SCALE;
-   pd->color_class = NULL;
-   pd->color.r = 255;
-   pd->color.g = 255;
-   pd->color.b = 255;
-   pd->color.a = 255;
-   pd->color2.r = 0;
-   pd->color2.g = 0;
-   pd->color2.b = 0;
-   pd->color2.a = 255;
-   pd->color3.r = 0;
-   pd->color3.g = 0;
-   pd->color3.b = 0;
-   pd->color3.a = 128;
+   pd->common.color_class = NULL;
+   pd->common.color.r = 255;
+   pd->common.color.g = 255;
+   pd->common.color.b = 255;
+   pd->common.color.a = 255;
+   pd->common.color2.r = 0;
+   pd->common.color2.g = 0;
+   pd->common.color2.b = 0;
+   pd->common.color2.a = 255;
+   pd->text.color3.r = 0;
+   pd->text.color3.g = 0;
+   pd->text.color3.b = 0;
+   pd->text.color3.a = 128;
    pd->text.align.x = 0.5;
    pd->text.align.y = 0.5;
    pd->text.id_source = -1;
@@ -2801,7 +2801,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
    PD_COPY(image.fill.spread);
    PD_COPY(image.fill.smooth);
    PD_COPY(image.fill.type);
-   PD_STRING_COPY(color_class);
+   PD_STRING_COPY(common.color_class);
    PD_STRING_COPY(text.text);
    PD_STRING_COPY(text.text_class);
    PD_STRING_COPY(text.style);
@@ -2832,18 +2832,18 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
    PD_COPY(table.align.y);
    PD_COPY(table.padding.x);
    PD_COPY(table.padding.y);
-   PD_COPY(color.r);
-   PD_COPY(color.g);
-   PD_COPY(color.b);
-   PD_COPY(color.a);
-   PD_COPY(color2.r);
-   PD_COPY(color2.g);
-   PD_COPY(color2.b);
-   PD_COPY(color2.a);
-   PD_COPY(color3.r);
-   PD_COPY(color3.g);
-   PD_COPY(color3.b);
-   PD_COPY(color3.a);
+   PD_COPY(common.color.r);
+   PD_COPY(common.color.g);
+   PD_COPY(common.color.b);
+   PD_COPY(common.color.a);
+   PD_COPY(common.color2.r);
+   PD_COPY(common.color2.g);
+   PD_COPY(common.color2.b);
+   PD_COPY(common.color2.a);
+   PD_COPY(text.color3.r);
+   PD_COPY(text.color3.g);
+   PD_COPY(text.color3.b);
+   PD_COPY(text.color3.a);
    /* XXX: optimize this, most likely we don't need to remove and add */
    EINA_LIST_FREE(pdto->external_params, p)
      {
@@ -2964,33 +2964,33 @@ FUNC_STATE_REL(rel2, x);
 FUNC_STATE_REL(rel2, y);
 
 //colors
-#define FUNC_COLOR(Code)						\
+#define FUNC_COLOR(Class, Code)						\
   EAPI void								\
   edje_edit_state_color##Code##_get(Evas_Object *obj, const char *part, const char *state, double value, int *r, int *g, int *b, int *a) \
   {									\
      GET_PD_OR_RETURN();						\
 									\
-     if (r) *r = pd->color##Code.r;					\
-     if (g) *g = pd->color##Code.g;					\
-     if (b) *b = pd->color##Code.b;					\
-     if (a) *a = pd->color##Code.a;					\
+     if (r) *r = pd->Class.color##Code.r;				\
+     if (g) *g = pd->Class.color##Code.g;				\
+     if (b) *b = pd->Class.color##Code.b;				\
+     if (a) *a = pd->Class.color##Code.a;				\
   }									\
   EAPI void								\
   edje_edit_state_color##Code##_set(Evas_Object *obj, const char *part, const char *state, double value, int r, int g, int b, int a) \
   {									\
      GET_PD_OR_RETURN();						\
      									\
-     if (r > -1 && r < 256) pd->color##Code.r = r;			\
-     if (g > -1 && g < 256) pd->color##Code.g = g;			\
-     if (b > -1 && b < 256) pd->color##Code.b = b;			\
-     if (a > -1 && a < 256) pd->color##Code.a = a;			\
+     if (r > -1 && r < 256) pd->Class.color##Code.r = r;		\
+     if (g > -1 && g < 256) pd->Class.color##Code.g = g;		\
+     if (b > -1 && b < 256) pd->Class.color##Code.b = b;		\
+     if (a > -1 && a < 256) pd->Class.color##Code.a = a;		\
 									\
      edje_object_calc_force(obj);					\
   }
 
-FUNC_COLOR();
-FUNC_COLOR(2);
-FUNC_COLOR(3);
+FUNC_COLOR(common, );
+FUNC_COLOR(common, 2);
+FUNC_COLOR(text, 3);
 
 #define FUNC_STATE_DOUBLE(Class, Value)					\
   EAPI double								\
@@ -3112,7 +3112,7 @@ edje_edit_state_color_class_get(Evas_Object *obj, const char *part, const char *
 {
    GET_PD_OR_RETURN(NULL);
    //printf("Get ColorClass of part: %s state: %s\n", part, state);
-   return eina_stringshare_add(pd->color_class);
+   return eina_stringshare_add(pd->common.color_class);
 }
 
 EAPI void
@@ -3120,8 +3120,8 @@ edje_edit_state_color_class_set(Evas_Object *obj, const char *part, const char *
 {
    GET_PD_OR_RETURN();
    //printf("Set ColorClass of part: %s state: %s [to: %s]\n", part, state, color_class);
-   _edje_if_string_free(ed, pd->color_class);
-   pd->color_class = (char*)eina_stringshare_add(color_class);
+   _edje_if_string_free(ed, pd->common.color_class);
+   pd->common.color_class = (char*)eina_stringshare_add(color_class);
 }
 
 EAPI const Eina_List *
@@ -5114,21 +5114,21 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
    if (pd->common.aspect.prefer)
       BUF_APPENDF(I5"aspect_preference: %s;\n", prefers[pd->common.aspect.prefer]);
 
-   if (pd->color_class)
-      BUF_APPENDF(I5"color_class: \"%s\";\n", pd->color_class);
+   if (pd->common.color_class)
+     BUF_APPENDF(I5"color_class: \"%s\";\n", pd->common.color_class);
 
-   if (pd->color.r != 255 || pd->color.g != 255 ||
-       pd->color.b != 255 ||  pd->color.a != 255)
-      BUF_APPENDF(I5"color: %d %d %d %d;\n",
-              pd->color.r, pd->color.g, pd->color.b, pd->color.a);
-   if (pd->color2.r != 0 || pd->color2.g != 0 ||
-        pd->color2.b != 0 ||  pd->color2.a != 255)
-      BUF_APPENDF(I5"color2: %d %d %d %d;\n",
-              pd->color2.r, pd->color2.g, pd->color2.b, pd->color2.a);
-   if (pd->color3.r != 0 || pd->color3.g != 0 ||
-        pd->color3.b != 0 ||  pd->color3.a != 128)
-      BUF_APPENDF(I5"color3: %d %d %d %d;\n",
-              pd->color3.r, pd->color3.g, pd->color3.b, pd->color3.a);
+   if (pd->common.color.r != 255 || pd->common.color.g != 255 ||
+       pd->common.color.b != 255 || pd->common.color.a != 255)
+     BUF_APPENDF(I5"color: %d %d %d %d;\n",
+		 pd->common.color.r, pd->common.color.g, pd->common.color.b, pd->common.color.a);
+   if (pd->common.color2.r != 0 || pd->common.color2.g != 0 ||
+       pd->common.color2.b != 0 || pd->common.color2.a != 255)
+     BUF_APPENDF(I5"color2: %d %d %d %d;\n",
+		 pd->common.color2.r, pd->common.color2.g, pd->common.color2.b, pd->common.color2.a);
+   if (pd->text.color3.r != 0 || pd->text.color3.g != 0 ||
+       pd->text.color3.b != 0 || pd->text.color3.a != 128)
+     BUF_APPENDF(I5"color3: %d %d %d %d;\n",
+		 pd->text.color3.r, pd->text.color3.g, pd->text.color3.b, pd->text.color3.a);
 
    //Rel1
    if (pd->common.rel1.relative_x || pd->common.rel1.relative_y || pd->common.rel1.offset_x ||

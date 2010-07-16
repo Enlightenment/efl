@@ -4457,12 +4457,12 @@ _edje_color_class_on_del(Edje *ed, Edje_Part *ep)
    Eina_List *tmp;
    Edje_Part_Description *desc;
 
-   if ((ep->default_desc) && (ep->default_desc->color_class))
-     _edje_color_class_member_del(ed, ep->default_desc->color_class);
+   if ((ep->default_desc) && (ep->default_desc->common.color_class))
+     _edje_color_class_member_del(ed, ep->default_desc->common.color_class);
 
    EINA_LIST_FOREACH(ep->other_desc, tmp, desc)
-     if (desc->color_class)
-       _edje_color_class_member_del(ed, desc->color_class);
+     if (desc->common.color_class)
+       _edje_color_class_member_del(ed, desc->common.color_class);
 }
 
 Edje_Text_Class *

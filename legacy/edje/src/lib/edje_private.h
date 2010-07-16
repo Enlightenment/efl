@@ -648,6 +648,10 @@ struct _Edje_Part_Description_Common
    Edje_Position step; /* size stepping by n pixels, 0 = none */
    Edje_Aspect_Prefer aspect;
 
+   char      *color_class; /* how to modify the color */
+   Edje_Color color;
+   Edje_Color color2;
+
    struct {
       FLOAT_T        relative_x;
       FLOAT_T	     relative_y;
@@ -717,6 +721,7 @@ struct _Edje_Part_Description_Spec_Text
    char          *repch; /* replacement char for password mode entry */
 
    Edje_Alignment align; /* text alignment within bounds */
+   Edje_Color     color3;
 
    double         elipsis; /* 0.0 - 1.0 defining where the elipsis align */
    int            size; /* 0 = use user set size */
@@ -760,9 +765,6 @@ struct _Edje_Part_Description
    Edje_Part_Description_Spec_Box box;
    Edje_Part_Description_Spec_Table table;
 
-   char             *color_class; /* how to modify the color */
-
-   Edje_Color color, color2, color3;  /* color for rect or text, shadow etc. */
    Eina_List *external_params; /* parameters for external objects */
 };
 

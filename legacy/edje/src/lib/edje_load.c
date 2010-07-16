@@ -362,12 +362,12 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  if (errors)
 		    break;
 		  /* Register any color classes in this parts descriptions. */
-		  if ((ep->default_desc) && (ep->default_desc->color_class))
-		    _edje_color_class_member_add(ed, ep->default_desc->color_class);
+		  if ((ep->default_desc) && (ep->default_desc->common.color_class))
+		    _edje_color_class_member_add(ed, ep->default_desc->common.color_class);
 
 		  EINA_LIST_FOREACH(ep->other_desc, hist, desc)
-		    if (desc->color_class)
-		      _edje_color_class_member_add(ed, desc->color_class);
+		    if (desc->common.color_class)
+		      _edje_color_class_member_add(ed, desc->common.color_class);
 	       }
 	     /* build real parts */
 	     for (n = 0, l = ed->collection->parts; l; l = eina_list_next(l), n++)
@@ -1156,11 +1156,11 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc, Eina_Bo
      _edje_external_params_free(desc->external_params, free_strings);
    if (free_strings)
      {
-	if (desc->color_class)     eina_stringshare_del(desc->color_class);
-	if (desc->text.text)       eina_stringshare_del(desc->text.text);
-	if (desc->text.text_class) eina_stringshare_del(desc->text.text_class);
-	if (desc->text.style)      eina_stringshare_del(desc->text.style);
-	if (desc->text.font)       eina_stringshare_del(desc->text.font);
+	if (desc->common.color_class) eina_stringshare_del(desc->common.color_class);
+	if (desc->text.text)          eina_stringshare_del(desc->text.text);
+	if (desc->text.text_class)    eina_stringshare_del(desc->text.text_class);
+	if (desc->text.style)         eina_stringshare_del(desc->text.style);
+	if (desc->text.font)          eina_stringshare_del(desc->text.font);
      }
    free(desc);
 }

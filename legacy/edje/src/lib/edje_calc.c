@@ -1284,22 +1284,22 @@ _edje_part_recalc_single(Edje *ed,
      _edje_part_recalc_single_fill(ep, &desc->image, params, flags);
 
    /* colors */
-   if ((desc->color_class) && (*desc->color_class))
-     cc = _edje_color_class_find(ed, desc->color_class);
+   if ((desc->common.color_class) && (*desc->common.color_class))
+     cc = _edje_color_class_find(ed, desc->common.color_class);
 
    if (cc)
      {
-	params->color.r = (((int)cc->r + 1) * desc->color.r) >> 8;
-	params->color.g = (((int)cc->g + 1) * desc->color.g) >> 8;
-	params->color.b = (((int)cc->b + 1) * desc->color.b) >> 8;
-	params->color.a = (((int)cc->a + 1) * desc->color.a) >> 8;
+	params->color.r = (((int)cc->r + 1) * desc->common.color.r) >> 8;
+	params->color.g = (((int)cc->g + 1) * desc->common.color.g) >> 8;
+	params->color.b = (((int)cc->b + 1) * desc->common.color.b) >> 8;
+	params->color.a = (((int)cc->a + 1) * desc->common.color.a) >> 8;
      }
    else
      {
-	params->color.r = desc->color.r;
-	params->color.g = desc->color.g;
-	params->color.b = desc->color.b;
-	params->color.a = desc->color.a;
+	params->color.r = desc->common.color.r;
+	params->color.g = desc->common.color.g;
+	params->color.b = desc->common.color.b;
+	params->color.a = desc->common.color.a;
      }
 
    /* visible */
@@ -1336,25 +1336,25 @@ _edje_part_recalc_single(Edje *ed,
 	 /* text colors */
 	 if (cc)
 	   {
-	     params->type.text.color2.r = (((int)cc->r2 + 1) * desc->color2.r) >> 8;
-	     params->type.text.color2.g = (((int)cc->g2 + 1) * desc->color2.g) >> 8;
-	     params->type.text.color2.b = (((int)cc->b2 + 1) * desc->color2.b) >> 8;
-	     params->type.text.color2.a = (((int)cc->a2 + 1) * desc->color2.a) >> 8;
-	     params->type.text.color3.r = (((int)cc->r3 + 1) * desc->color3.r) >> 8;
-	     params->type.text.color3.g = (((int)cc->g3 + 1) * desc->color3.g) >> 8;
-	     params->type.text.color3.b = (((int)cc->b3 + 1) * desc->color3.b) >> 8;
-	     params->type.text.color3.a = (((int)cc->a3 + 1) * desc->color3.a) >> 8;
+	     params->type.text.color2.r = (((int)cc->r2 + 1) * desc->common.color2.r) >> 8;
+	     params->type.text.color2.g = (((int)cc->g2 + 1) * desc->common.color2.g) >> 8;
+	     params->type.text.color2.b = (((int)cc->b2 + 1) * desc->common.color2.b) >> 8;
+	     params->type.text.color2.a = (((int)cc->a2 + 1) * desc->common.color2.a) >> 8;
+	     params->type.text.color3.r = (((int)cc->r3 + 1) * desc->text.color3.r) >> 8;
+	     params->type.text.color3.g = (((int)cc->g3 + 1) * desc->text.color3.g) >> 8;
+	     params->type.text.color3.b = (((int)cc->b3 + 1) * desc->text.color3.b) >> 8;
+	     params->type.text.color3.a = (((int)cc->a3 + 1) * desc->text.color3.a) >> 8;
 	   }
 	 else
 	   {
-	      params->type.text.color2.r = desc->color2.r;
-	      params->type.text.color2.g = desc->color2.g;
-	      params->type.text.color2.b = desc->color2.b;
-	      params->type.text.color2.a = desc->color2.a;
-	      params->type.text.color3.r = desc->color3.r;
-	      params->type.text.color3.g = desc->color3.g;
-	      params->type.text.color3.b = desc->color3.b;
-	      params->type.text.color3.a = desc->color3.a;
+	      params->type.text.color2.r = desc->common.color2.r;
+	      params->type.text.color2.g = desc->common.color2.g;
+	      params->type.text.color2.b = desc->common.color2.b;
+	      params->type.text.color2.a = desc->common.color2.a;
+	      params->type.text.color3.r = desc->text.color3.r;
+	      params->type.text.color3.g = desc->text.color3.g;
+	      params->type.text.color3.b = desc->text.color3.b;
+	      params->type.text.color3.a = desc->text.color3.a;
 	   }
 	 break;
       case EDJE_PART_TYPE_RECTANGLE:
@@ -2159,34 +2159,34 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                                  lz1 = ep2desc1->common.persp.zplane +
                                    TO_INT(SCALE(ep2pos, ep2desc2->common.persp.zplane -
                                                 ep2desc1->common.persp.zplane));
-                                 lr1 = ep2desc1->color.r +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color.r -
-                                                ep2desc1->color.r));
-                                 lg1 = ep2desc1->color.g +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
-                                                ep2desc1->color.b));
-                                 lb1 = ep2desc1->color.b +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
-                                                ep2desc1->color.b));
-                                 lar1 = ep2desc1->color2.r +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.r -
-                                                ep2desc1->color2.r));
-                                 lag1 = ep2desc1->color2.g +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
-                                                ep2desc1->color2.b));
-                                 lab1 = ep2desc1->color2.b +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
-                                                ep2desc1->color2.b));
+                                 lr1 = ep2desc1->common.color.r +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color.r -
+                                                ep2desc1->common.color.r));
+                                 lg1 = ep2desc1->common.color.g +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color.g -
+                                                ep2desc1->common.color.b));
+                                 lb1 = ep2desc1->common.color.b +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color.g -
+                                                ep2desc1->common.color.b));
+                                 lar1 = ep2desc1->common.color2.r +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color2.r -
+                                                ep2desc1->common.color2.r));
+                                 lag1 = ep2desc1->common.color2.g +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color2.g -
+                                                ep2desc1->common.color2.b));
+                                 lab1 = ep2desc1->common.color2.b +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color2.g -
+                                                ep2desc1->common.color2.b));
                               }
                             else
                               {
                                  lz1 = ep2desc1->common.persp.zplane;
-                                 lr1 = ep2desc1->color.r;
-                                 lg1 = ep2desc1->color.g;
-                                 lb1 = ep2desc1->color.b;
-                                 lar1 = ep2desc1->color2.r;
-                                 lag1 = ep2desc1->color2.g;
-                                 lab1 = ep2desc1->color2.b;
+                                 lr1 = ep2desc1->common.color.r;
+                                 lg1 = ep2desc1->common.color.g;
+                                 lb1 = ep2desc1->common.color.b;
+                                 lar1 = ep2desc1->common.color2.r;
+                                 lag1 = ep2desc1->common.color2.g;
+                                 lab1 = ep2desc1->common.color2.b;
                               }
                          }
                     }
@@ -2220,34 +2220,34 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                                  lz2 = ep2desc1->common.persp.zplane +
                                    TO_INT(SCALE(ep2pos, ep2desc2->common.persp.zplane -
                                                 ep2desc1->common.persp.zplane));
-                                 lr2 = ep2desc1->color.r +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color.r -
-                                                ep2desc1->color.r));
-                                 lg2 = ep2desc1->color.g +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
-                                                ep2desc1->color.b));
-                                 lb2 = ep2desc1->color.b +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
-                                                ep2desc1->color.b));
-                                 lar2 = ep2desc1->color2.r +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.r -
-                                                ep2desc1->color2.r));
-                                 lag2 = ep2desc1->color2.g +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
-                                                ep2desc1->color2.b));
-                                 lab2 = ep2desc1->color2.b +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
-                                                ep2desc1->color2.b));
+                                 lr2 = ep2desc1->common.color.r +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color.r -
+                                                ep2desc1->common.color.r));
+                                 lg2 = ep2desc1->common.color.g +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color.g -
+                                                ep2desc1->common.color.b));
+                                 lb2 = ep2desc1->common.color.b +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color.g -
+                                                ep2desc1->common.color.b));
+                                 lar2 = ep2desc1->common.color2.r +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color2.r -
+                                                ep2desc1->common.color2.r));
+                                 lag2 = ep2desc1->common.color2.g +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color2.g -
+                                                ep2desc1->common.color2.b));
+                                 lab2 = ep2desc1->common.color2.b +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color2.g -
+                                                ep2desc1->common.color2.b));
                               }
                             else
                               {
                                  lz2 = ep2desc1->common.persp.zplane;
-                                 lr2 = ep2desc1->color.r;
-                                 lg2 = ep2desc1->color.g;
-                                 lb2 = ep2desc1->color.b;
-                                 lar2 = ep2desc1->color2.r;
-                                 lag2 = ep2desc1->color2.g;
-                                 lab2 = ep2desc1->color2.b;
+                                 lr2 = ep2desc1->common.color.r;
+                                 lg2 = ep2desc1->common.color.g;
+                                 lb2 = ep2desc1->common.color.b;
+                                 lar2 = ep2desc1->common.color2.r;
+                                 lag2 = ep2desc1->common.color2.g;
+                                 lab2 = ep2desc1->common.color2.b;
                               }
                          }
                     }

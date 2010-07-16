@@ -3278,19 +3278,19 @@ ob_collections_group_parts_part_description(void)
    ed->image.fill.angle = 0;
    ed->image.fill.spread = 0;
    ed->image.fill.type = EDJE_FILL_TYPE_SCALE;
-   ed->color_class = NULL;
-   ed->color.r = 255;
-   ed->color.g = 255;
-   ed->color.b = 255;
-   ed->color.a = 255;
-   ed->color2.r = 0;
-   ed->color2.g = 0;
-   ed->color2.b = 0;
-   ed->color2.a = 255;
-   ed->color3.r = 0;
-   ed->color3.g = 0;
-   ed->color3.b = 0;
-   ed->color3.a = 128;
+   ed->common.color_class = NULL;
+   ed->common.color.r = 255;
+   ed->common.color.g = 255;
+   ed->common.color.b = 255;
+   ed->common.color.a = 255;
+   ed->common.color2.r = 0;
+   ed->common.color2.g = 0;
+   ed->common.color2.b = 0;
+   ed->common.color2.a = 255;
+   ed->text.color3.r = 0;
+   ed->text.color3.g = 0;
+   ed->text.color3.b = 0;
+   ed->text.color3.a = 128;
    ed->text.align.x = FROM_DOUBLE(0.5);
    ed->text.align.y = FROM_DOUBLE(0.5);
    ed->text.id_source = -1;
@@ -3445,7 +3445,7 @@ st_collections_group_parts_part_description_inherit(void)
 
 #define STRDUP(x) x ? strdup(x) : NULL
 
-   ed->color_class = STRDUP(ed->color_class);
+   ed->common.color_class = STRDUP(ed->common.color_class);
    ed->text.text = STRDUP(ed->text.text);
    ed->text.text_class = STRDUP(ed->text.text_class);
    ed->text.font = STRDUP(ed->text.font);
@@ -3769,7 +3769,7 @@ st_collections_group_parts_part_description_color_class(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->color_class = parse_str(0);
+   ed->common.color_class = parse_str(0);
 }
 
 /**
@@ -3795,10 +3795,10 @@ st_collections_group_parts_part_description_color(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->color.r = parse_int_range(0, 0, 255);
-   ed->color.g = parse_int_range(1, 0, 255);
-   ed->color.b = parse_int_range(2, 0, 255);
-   ed->color.a = parse_int_range(3, 0, 255);
+   ed->common.color.r = parse_int_range(0, 0, 255);
+   ed->common.color.g = parse_int_range(1, 0, 255);
+   ed->common.color.b = parse_int_range(2, 0, 255);
+   ed->common.color.a = parse_int_range(3, 0, 255);
 }
 
 /**
@@ -3824,10 +3824,10 @@ st_collections_group_parts_part_description_color2(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->color2.r = parse_int_range(0, 0, 255);
-   ed->color2.g = parse_int_range(1, 0, 255);
-   ed->color2.b = parse_int_range(2, 0, 255);
-   ed->color2.a = parse_int_range(3, 0, 255);
+   ed->common.color2.r = parse_int_range(0, 0, 255);
+   ed->common.color2.g = parse_int_range(1, 0, 255);
+   ed->common.color2.b = parse_int_range(2, 0, 255);
+   ed->common.color2.a = parse_int_range(3, 0, 255);
 }
 
 /**
@@ -3853,10 +3853,10 @@ st_collections_group_parts_part_description_color3(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->color3.r = parse_int_range(0, 0, 255);
-   ed->color3.g = parse_int_range(1, 0, 255);
-   ed->color3.b = parse_int_range(2, 0, 255);
-   ed->color3.a = parse_int_range(3, 0, 255);
+   ed->text.color3.r = parse_int_range(0, 0, 255);
+   ed->text.color3.g = parse_int_range(1, 0, 255);
+   ed->text.color3.b = parse_int_range(2, 0, 255);
+   ed->text.color3.a = parse_int_range(3, 0, 255);
 }
 
 /**
