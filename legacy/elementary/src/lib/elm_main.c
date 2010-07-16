@@ -28,7 +28,7 @@ _elm_dangerous_call_check(const char *call)
    char buf[256];
    const char *eval;
    
-   snprintf(buf, "%i.%i.%i.%i", VMAJ, VMIN, VMIC, VREV);
+   snprintf(buf, sizeof(buf), "%i.%i.%i.%i", VMAJ, VMIN, VMIC, VREV);
    eval = getenv("ELM_NO_FINGER_WAGGLING");
    if ((eval) && (!strcmp(eval, buf)))
      return 0;
