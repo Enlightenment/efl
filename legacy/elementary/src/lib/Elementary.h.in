@@ -1513,7 +1513,9 @@ extern "C" {
         ELM_FLIP_ROTATE_Y_CENTER_AXIS,
           ELM_FLIP_ROTATE_X_CENTER_AXIS,
           ELM_FLIP_ROTATE_XZ_CENTER_AXIS,
-          ELM_FLIP_ROTATE_YZ_CENTER_AXIS
+          ELM_FLIP_ROTATE_YZ_CENTER_AXIS,
+          ELM_FLIP_CUBE_LEFT,
+          ELM_FLIP_CUBE_RIGHT
      } Elm_Flip_Mode;
 
    EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
