@@ -232,6 +232,7 @@ typedef struct _Edje_Part                            Edje_Part;
 typedef struct _Edje_Part_Image_Id                   Edje_Part_Image_Id;
 typedef struct _Edje_Part_Description                Edje_Part_Description;
 typedef struct _Edje_Part_Description_Common         Edje_Part_Description_Common;
+typedef struct _Edje_Part_Description_Spec_Image     Edje_Part_Description_Spec_Image;
 typedef struct _Edje_Patterns                        Edje_Patterns;
 
 typedef struct _Old_Edje_File			     Old_Edje_File;
@@ -675,16 +676,12 @@ struct _Edje_Part_Description_Common
    unsigned char     visible; /* is it shown */
 };
 
-struct _Edje_Part_Description
+struct _Edje_Part_Description_Spec_Image
 {
-   Edje_Part_Description_Common common;
-
-   struct {
-      Eina_List     *tween_list; /* list of Edje_Part_Image_Id */
-      int            id; /* the image id to use */
-      int            scale_hint; /* evas scale hint */
-      Eina_Bool      set; /* if image condition it's content */
-   } image;
+   Eina_List     *tween_list; /* list of Edje_Part_Image_Id */
+   int            id; /* the image id to use */
+   int            scale_hint; /* evas scale hint */
+   Eina_Bool      set; /* if image condition it's content */
 
    struct {
       int            l, r, t, b; /* border scaling on image fill */
@@ -706,6 +703,12 @@ struct _Edje_Part_Description
       char           smooth; /* fill with smooth scaling or not */
       unsigned char  type; /* fill coordinate from container (SCALE) or from source image (TILE) */
    } fill;
+};
+
+struct _Edje_Part_Description
+{
+   Edje_Part_Description_Common common;
+   Edje_Part_Description_Spec_Image image;
 
    char             *color_class; /* how to modify the color */
 

@@ -2643,18 +2643,18 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
    pd->common.rel2.id_x = -1;
    pd->common.rel2.id_y = -1;
    pd->image.id = -1;
-   pd->fill.smooth = 1;
-   pd->fill.pos_rel_x = 0.0;
-   pd->fill.pos_abs_x = 0;
-   pd->fill.rel_x = 1.0;
-   pd->fill.abs_x = 0;
-   pd->fill.pos_rel_y = 0.0;
-   pd->fill.pos_abs_y = 0;
-   pd->fill.rel_y = 1.0;
-   pd->fill.abs_y = 0;
-   pd->fill.angle = 0;
-   pd->fill.spread = 0;
-   pd->fill.type = EDJE_FILL_TYPE_SCALE;
+   pd->image.fill.smooth = 1;
+   pd->image.fill.pos_rel_x = 0.0;
+   pd->image.fill.pos_abs_x = 0;
+   pd->image.fill.rel_x = 1.0;
+   pd->image.fill.abs_x = 0;
+   pd->image.fill.pos_rel_y = 0.0;
+   pd->image.fill.pos_abs_y = 0;
+   pd->image.fill.rel_y = 1.0;
+   pd->image.fill.abs_y = 0;
+   pd->image.fill.angle = 0;
+   pd->image.fill.spread = 0;
+   pd->image.fill.type = EDJE_FILL_TYPE_SCALE;
    pd->color_class = NULL;
    pd->color.r = 255;
    pd->color.g = 255;
@@ -2784,23 +2784,23 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 	new_i->id = i->id;
 	pdto->image.tween_list = eina_list_append(pdto->image.tween_list, new_i);
      }
-   PD_COPY(border.l);
-   PD_COPY(border.r);
-   PD_COPY(border.t);
-   PD_COPY(border.b);
-   PD_COPY(border.no_fill);
-   PD_COPY(fill.pos_rel_x);
-   PD_COPY(fill.rel_x);
-   PD_COPY(fill.pos_rel_y);
-   PD_COPY(fill.rel_y);
-   PD_COPY(fill.pos_abs_x);
-   PD_COPY(fill.abs_x);
-   PD_COPY(fill.pos_abs_y);
-   PD_COPY(fill.abs_y);
-   PD_COPY(fill.angle);
-   PD_COPY(fill.spread);
-   PD_COPY(fill.smooth);
-   PD_COPY(fill.type);
+   PD_COPY(image.border.l);
+   PD_COPY(image.border.r);
+   PD_COPY(image.border.t);
+   PD_COPY(image.border.b);
+   PD_COPY(image.border.no_fill);
+   PD_COPY(image.fill.pos_rel_x);
+   PD_COPY(image.fill.rel_x);
+   PD_COPY(image.fill.pos_rel_y);
+   PD_COPY(image.fill.rel_y);
+   PD_COPY(image.fill.pos_abs_x);
+   PD_COPY(image.fill.abs_x);
+   PD_COPY(image.fill.pos_abs_y);
+   PD_COPY(image.fill.abs_y);
+   PD_COPY(image.fill.angle);
+   PD_COPY(image.fill.spread);
+   PD_COPY(image.fill.smooth);
+   PD_COPY(image.fill.type);
    PD_STRING_COPY(color_class);
    PD_STRING_COPY(text.text);
    PD_STRING_COPY(text.text_class);
@@ -3036,13 +3036,13 @@ FUNC_STATE_DOUBLE(aspect, max);
   edje_edit_state_fill_##Type##_relative_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
   {									\
      GET_PD_OR_RETURN(0);						\
-     return TO_DOUBLE(pd->fill.Class##rel_##Value);			\
+     return TO_DOUBLE(pd->image.fill.Class##rel_##Value);		\
   }									\
   EAPI void								\
   edje_edit_state_fill_##Type##_relative_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
   {									\
      GET_PD_OR_RETURN();						\
-     pd->fill.Class##rel_##Value = FROM_DOUBLE(v);			\
+     pd->image.fill.Class##rel_##Value = FROM_DOUBLE(v);		\
      edje_object_calc_force(obj);					\
   }
 
@@ -3051,13 +3051,13 @@ FUNC_STATE_DOUBLE(aspect, max);
   edje_edit_state_fill_##Type##_offset_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
   {									\
      GET_PD_OR_RETURN(0);						\
-     return pd->fill.Class##abs_##Value;				\
+     return pd->image.fill.Class##abs_##Value;				\
   }									\
   EAPI void								\
   edje_edit_state_fill_##Type##_offset_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
   {									\
      GET_PD_OR_RETURN();						\
-     pd->fill.Class##abs_##Value = FROM_DOUBLE(v);			\
+     pd->image.fill.Class##abs_##Value = FROM_DOUBLE(v);		\
      edje_object_calc_force(obj);					\
   }
 
@@ -4032,10 +4032,10 @@ edje_edit_state_image_border_get(Evas_Object *obj, const char *part, const char 
 
    //printf("GET IMAGE_BORDER of state '%s'\n", state);
 
-   if (l) *l = pd->border.l;
-   if (r) *r = pd->border.r;
-   if (t) *t = pd->border.t;
-   if (b) *b = pd->border.b;
+   if (l) *l = pd->image.border.l;
+   if (r) *r = pd->image.border.r;
+   if (t) *t = pd->image.border.t;
+   if (b) *b = pd->image.border.b;
 }
 
 EAPI void
@@ -4045,10 +4045,10 @@ edje_edit_state_image_border_set(Evas_Object *obj, const char *part, const char 
 
    //printf("SET IMAGE_BORDER of state '%s'\n", state);
 
-   if (l > -1) pd->border.l = l;
-   if (r > -1) pd->border.r = r;
-   if (t > -1) pd->border.t = t;
-   if (b > -1) pd->border.b = b;
+   if (l > -1) pd->image.border.l = l;
+   if (r > -1) pd->image.border.r = r;
+   if (t > -1) pd->image.border.t = t;
+   if (b > -1) pd->image.border.b = b;
 
    edje_object_calc_force(obj);
 }
@@ -4057,9 +4057,9 @@ EAPI unsigned char
 edje_edit_state_image_border_fill_get(Evas_Object *obj, const char *part, const char *state, double value)
 {
    GET_PD_OR_RETURN(0);
-   if (pd->border.no_fill == 0) return 1;
-   else if (pd->border.no_fill == 1) return 0;
-   else if (pd->border.no_fill == 2) return 2;
+   if (pd->image.border.no_fill == 0) return 1;
+   else if (pd->image.border.no_fill == 1) return 0;
+   else if (pd->image.border.no_fill == 2) return 2;
    return 0;
 }
 
@@ -4067,9 +4067,9 @@ EAPI void
 edje_edit_state_image_border_fill_set(Evas_Object *obj, const char *part, const char *state, double value, unsigned char fill)
 {
    GET_PD_OR_RETURN();
-   if (fill == 0) pd->border.no_fill = 1;
-   else if (fill == 1) pd->border.no_fill = 0;
-   else if (fill == 2) pd->border.no_fill = 2;
+   if (fill == 0) pd->image.border.no_fill = 1;
+   else if (fill == 1) pd->image.border.no_fill = 0;
+   else if (fill == 2) pd->image.border.no_fill = 2;
 
    edje_object_calc_force(obj);
 }
@@ -5186,13 +5186,13 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	  BUF_APPENDF(I6"tween: \"%s\";\n", data);
 	edje_edit_string_list_free(ll);
 
-	if (pd->border.l || pd->border.r || pd->border.t || pd->border.b)
-	  BUF_APPENDF(I6"border: %d %d %d %d;\n", pd->border.l, pd->border.r, pd->border.t, pd->border.b);
-	if (pd->border.no_fill == 1)
+	if (pd->image.border.l || pd->image.border.r || pd->image.border.t || pd->image.border.b)
+	  BUF_APPENDF(I6"border: %d %d %d %d;\n", pd->image.border.l, pd->image.border.r, pd->image.border.t, pd->image.border.b);
+	if (pd->image.border.no_fill == 1)
 	  BUF_APPEND(I6"middle: NONE;\n");
-	else if (pd->border.no_fill == 0)
+	else if (pd->image.border.no_fill == 0)
 	  BUF_APPEND(I6"middle: DEFAULT;\n");
-	else if (pd->border.no_fill == 2)
+	else if (pd->image.border.no_fill == 2)
 	  BUF_APPEND(I6"middle: SOLID;\n");
 
 	BUF_APPEND(I5"}\n");//image
@@ -5202,29 +5202,29 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
      {
 	BUF_APPEND(I5"fill {\n");
-	if (rp->part->type == EDJE_PART_TYPE_IMAGE && !pd->fill.smooth)
+	if (rp->part->type == EDJE_PART_TYPE_IMAGE && !pd->image.fill.smooth)
 	  BUF_APPEND(I6"smooth: 0;\n");
         //TODO Support spread
 
-	if (pd->fill.pos_rel_x || pd->fill.pos_rel_y ||
-            pd->fill.pos_abs_x || pd->fill.pos_abs_y)
+	if (pd->image.fill.pos_rel_x || pd->image.fill.pos_rel_y ||
+            pd->image.fill.pos_abs_x || pd->image.fill.pos_abs_y)
 	  {
 		BUF_APPEND(I6"origin {\n");
-		if (pd->fill.pos_rel_x || pd->fill.pos_rel_y)
-		  BUF_APPENDF(I7"relative: %g %g;\n", TO_DOUBLE(pd->fill.pos_rel_x), TO_DOUBLE(pd->fill.pos_rel_y));
-		if (pd->fill.pos_abs_x || pd->fill.pos_abs_y)
-		  BUF_APPENDF(I7"offset: %d %d;\n", pd->fill.pos_abs_x, pd->fill.pos_abs_y);
+		if (pd->image.fill.pos_rel_x || pd->image.fill.pos_rel_y)
+		  BUF_APPENDF(I7"relative: %g %g;\n", TO_DOUBLE(pd->image.fill.pos_rel_x), TO_DOUBLE(pd->image.fill.pos_rel_y));
+		if (pd->image.fill.pos_abs_x || pd->image.fill.pos_abs_y)
+		  BUF_APPENDF(I7"offset: %d %d;\n", pd->image.fill.pos_abs_x, pd->image.fill.pos_abs_y);
 		BUF_APPEND(I6"}\n");
           }
 
-	if (TO_DOUBLE(pd->fill.rel_x) != 1.0 || TO_DOUBLE(pd->fill.rel_y) != 1.0 ||
-            pd->fill.abs_x || pd->fill.abs_y)
+	if (TO_DOUBLE(pd->image.fill.rel_x) != 1.0 || TO_DOUBLE(pd->image.fill.rel_y) != 1.0 ||
+            pd->image.fill.abs_x || pd->image.fill.abs_y)
 	  {
 		BUF_APPEND(I6"size {\n");
-		if (pd->fill.rel_x != 1.0 || pd->fill.rel_y != 1.0)
-		  BUF_APPENDF(I7"relative: %g %g;\n", TO_DOUBLE(pd->fill.rel_x), TO_DOUBLE(pd->fill.rel_y));
-		if (pd->fill.abs_x || pd->fill.abs_y)
-		  BUF_APPENDF(I7"offset: %d %d;\n", pd->fill.abs_x, pd->fill.abs_y);
+		if (pd->image.fill.rel_x != 1.0 || pd->image.fill.rel_y != 1.0)
+		  BUF_APPENDF(I7"relative: %g %g;\n", TO_DOUBLE(pd->image.fill.rel_x), TO_DOUBLE(pd->image.fill.rel_y));
+		if (pd->image.fill.abs_x || pd->image.fill.abs_y)
+		  BUF_APPENDF(I7"offset: %d %d;\n", pd->image.fill.abs_x, pd->image.fill.abs_y);
 		BUF_APPEND(I6"}\n");
           }
 

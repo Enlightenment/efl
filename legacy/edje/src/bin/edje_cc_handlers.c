@@ -3266,18 +3266,18 @@ ob_collections_group_parts_part_description(void)
    ed->common.rel2.id_x = -1;
    ed->common.rel2.id_y = -1;
    ed->image.id = -1;
-   ed->fill.smooth = 1;
-   ed->fill.pos_rel_x = FROM_DOUBLE(0.0);
-   ed->fill.pos_abs_x = 0;
-   ed->fill.rel_x = FROM_DOUBLE(1.0);
-   ed->fill.abs_x = 0;
-   ed->fill.pos_rel_y = FROM_DOUBLE(0.0);
-   ed->fill.pos_abs_y = 0;
-   ed->fill.rel_y = FROM_DOUBLE(1.0);
-   ed->fill.abs_y = 0;
-   ed->fill.angle = 0;
-   ed->fill.spread = 0;
-   ed->fill.type = EDJE_FILL_TYPE_SCALE;
+   ed->image.fill.smooth = 1;
+   ed->image.fill.pos_rel_x = FROM_DOUBLE(0.0);
+   ed->image.fill.pos_abs_x = 0;
+   ed->image.fill.rel_x = FROM_DOUBLE(1.0);
+   ed->image.fill.abs_x = 0;
+   ed->image.fill.pos_rel_y = FROM_DOUBLE(0.0);
+   ed->image.fill.pos_abs_y = 0;
+   ed->image.fill.rel_y = FROM_DOUBLE(1.0);
+   ed->image.fill.abs_y = 0;
+   ed->image.fill.angle = 0;
+   ed->image.fill.spread = 0;
+   ed->image.fill.type = EDJE_FILL_TYPE_SCALE;
    ed->color_class = NULL;
    ed->color.r = 255;
    ed->color.g = 255;
@@ -4284,10 +4284,10 @@ st_collections_group_parts_part_description_image_border(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->border.l = parse_int_range(0, 0, 0x7fffffff);
-   ed->border.r = parse_int_range(1, 0, 0x7fffffff);
-   ed->border.t = parse_int_range(2, 0, 0x7fffffff);
-   ed->border.b = parse_int_range(3, 0, 0x7fffffff);
+   ed->image.border.l = parse_int_range(0, 0, 0x7fffffff);
+   ed->image.border.r = parse_int_range(1, 0, 0x7fffffff);
+   ed->image.border.t = parse_int_range(2, 0, 0x7fffffff);
+   ed->image.border.b = parse_int_range(3, 0, 0x7fffffff);
 }
 
 /**
@@ -4324,13 +4324,13 @@ st_collections_group_parts_part_description_image_middle(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->border.no_fill =  parse_enum(0,
-                                    "1", 0,
-                                    "DEFAULT", 0,
-                                    "0", 1,
-                                    "NONE", 1,
-                                    "SOLID", 2,
-                                    NULL);
+   ed->image.border.no_fill =  parse_enum(0,
+					  "1", 0,
+					  "DEFAULT", 0,
+					  "0", 1,
+					  "NONE", 1,
+					  "SOLID", 2,
+					  NULL);
 }
 
 /**
@@ -4366,10 +4366,10 @@ st_collections_group_parts_part_description_image_border_scale(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->border.scale =  parse_enum(0,
-                                  "1", 0,
-                                  "0", 1,
-                                  NULL);
+   ed->image.border.scale =  parse_enum(0,
+					"1", 0,
+					"0", 1,
+					NULL);
 }
 
 /**
@@ -4406,11 +4406,11 @@ st_collections_group_parts_part_description_image_scale_hint(void)
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
    ed->image.scale_hint =  parse_enum(0,
-                                    "NONE", EVAS_IMAGE_SCALE_HINT_NONE,
-                                    "DYNAMIC", EVAS_IMAGE_SCALE_HINT_DYNAMIC,
-                                    "STATIC", EVAS_IMAGE_SCALE_HINT_STATIC,
-                                    "0", EVAS_IMAGE_SCALE_HINT_NONE,
-                                    NULL);
+				      "NONE", EVAS_IMAGE_SCALE_HINT_NONE,
+				      "DYNAMIC", EVAS_IMAGE_SCALE_HINT_DYNAMIC,
+				      "STATIC", EVAS_IMAGE_SCALE_HINT_STATIC,
+				      "0", EVAS_IMAGE_SCALE_HINT_NONE,
+				      NULL);
 }
 
 /**
@@ -4469,7 +4469,7 @@ st_collections_group_parts_part_description_fill_smooth(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->fill.smooth = parse_bool(0);
+   ed->image.fill.smooth = parse_bool(0);
 }
 
 /**
@@ -4506,7 +4506,7 @@ st_collections_group_parts_part_description_fill_spread(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->fill.spread = parse_int_range(0, 0, 1);
+   ed->image.fill.spread = parse_int_range(0, 0, 1);
 }
 
 /**
@@ -4542,10 +4542,10 @@ st_collections_group_parts_part_description_fill_type(void)
 	exit(-1);
      }
 
-   ed->fill.type = parse_enum(0,
-                              "SCALE", EDJE_FILL_TYPE_SCALE,
-                              "TILE", EDJE_FILL_TYPE_TILE,
-                              NULL);
+   ed->image.fill.type = parse_enum(0,
+				    "SCALE", EDJE_FILL_TYPE_SCALE,
+				    "TILE", EDJE_FILL_TYPE_TILE,
+				    NULL);
 }
 
 /**
@@ -4601,8 +4601,8 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->fill.pos_rel_x = FROM_DOUBLE(parse_float_range(0, -999999999.0, 999999999.0));
-   ed->fill.pos_rel_y = FROM_DOUBLE(parse_float_range(1, -999999999.0, 999999999.0));
+   ed->image.fill.pos_rel_x = FROM_DOUBLE(parse_float_range(0, -999999999.0, 999999999.0));
+   ed->image.fill.pos_rel_y = FROM_DOUBLE(parse_float_range(1, -999999999.0, 999999999.0));
 }
 
 /**
@@ -4637,8 +4637,8 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->fill.pos_abs_x = parse_int(0);
-   ed->fill.pos_abs_y = parse_int(1);
+   ed->image.fill.pos_abs_x = parse_int(0);
+   ed->image.fill.pos_abs_y = parse_int(1);
 }
 
 /**
@@ -4696,8 +4696,8 @@ st_collections_group_parts_part_description_fill_size_relative(void)
 	exit(-1);
      }
 
-   ed->fill.rel_x = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
-   ed->fill.rel_y = FROM_DOUBLE(parse_float_range(1, 0.0, 999999999.0));
+   ed->image.fill.rel_x = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
+   ed->image.fill.rel_y = FROM_DOUBLE(parse_float_range(1, 0.0, 999999999.0));
 }
 
 /**
@@ -4732,8 +4732,8 @@ st_collections_group_parts_part_description_fill_size_offset(void)
 	exit(-1);
      }
 
-   ed->fill.abs_x = parse_int(0);
-   ed->fill.abs_y = parse_int(1);
+   ed->image.fill.abs_x = parse_int(0);
+   ed->image.fill.abs_y = parse_int(1);
 }
 
 

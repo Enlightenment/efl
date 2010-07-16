@@ -1794,37 +1794,37 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
 	 CHKPARAM(6);
 
-	 GETINT(rp->custom->description->border.l, params[3]);
-	 GETINT(rp->custom->description->border.r, params[4]);
-	 GETINT(rp->custom->description->border.t, params[5]);
-	 GETINT(rp->custom->description->border.b, params[6]);
+	 GETINT(rp->custom->description->image.border.l, params[3]);
+	 GETINT(rp->custom->description->image.border.r, params[4]);
+	 GETINT(rp->custom->description->image.border.t, params[5]);
+	 GETINT(rp->custom->description->image.border.b, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_FILL_SMOOTH:
 	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
 	 CHKPARAM(3);
 
-	 GETINT(rp->custom->description->fill.smooth, params[3]);
+	 GETINT(rp->custom->description->image.fill.smooth, params[3]);
 
 	 break;
       case EDJE_STATE_PARAM_FILL_POS:
 	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
 	 CHKPARAM(6);
 
-	 GETFLOAT_T(rp->custom->description->fill.pos_rel_x, params[3]);
-	 GETFLOAT_T(rp->custom->description->fill.pos_rel_y, params[4]);
-	 GETINT(rp->custom->description->fill.pos_abs_x, params[5]);
-	 GETINT(rp->custom->description->fill.pos_abs_y, params[6]);
+	 GETFLOAT_T(rp->custom->description->image.fill.pos_rel_x, params[3]);
+	 GETFLOAT_T(rp->custom->description->image.fill.pos_rel_y, params[4]);
+	 GETINT(rp->custom->description->image.fill.pos_abs_x, params[5]);
+	 GETINT(rp->custom->description->image.fill.pos_abs_y, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_FILL_SIZE:
 	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
 	 CHKPARAM(6);
 
-	 GETFLOAT_T(rp->custom->description->fill.rel_x, params[3]);
-	 GETFLOAT_T(rp->custom->description->fill.rel_y, params[4]);
-	 GETINT(rp->custom->description->fill.abs_x, params[5]);
-	 GETINT(rp->custom->description->fill.abs_y, params[6]);
+	 GETFLOAT_T(rp->custom->description->image.fill.rel_x, params[3]);
+	 GETFLOAT_T(rp->custom->description->image.fill.rel_y, params[4]);
+	 GETINT(rp->custom->description->image.fill.abs_x, params[5]);
+	 GETINT(rp->custom->description->image.fill.abs_y, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_TEXT:
@@ -2141,37 +2141,37 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
 	 CHKPARAM(6);
 
-	 SETINT(rp->custom->description->border.l, params[3]);
-	 SETINT(rp->custom->description->border.r, params[4]);
-	 SETINT(rp->custom->description->border.t, params[5]);
-	 SETINT(rp->custom->description->border.b, params[6]);
+	 SETINT(rp->custom->description->image.border.l, params[3]);
+	 SETINT(rp->custom->description->image.border.r, params[4]);
+	 SETINT(rp->custom->description->image.border.t, params[5]);
+	 SETINT(rp->custom->description->image.border.b, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_FILL_SMOOTH:
 	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
 	 CHKPARAM(3);
 
-	 SETINT(rp->custom->description->fill.smooth, params[3]);
+	 SETINT(rp->custom->description->image.fill.smooth, params[3]);
 
 	 break;
       case EDJE_STATE_PARAM_FILL_POS:
 	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
 	 CHKPARAM(6);
 
-	 SETFLOAT_T(rp->custom->description->fill.pos_rel_x, params[3]);
-	 SETFLOAT_T(rp->custom->description->fill.pos_rel_y, params[4]);
-	 SETINT(rp->custom->description->fill.pos_abs_x, params[5]);
-	 SETINT(rp->custom->description->fill.pos_abs_y, params[6]);
+	 SETFLOAT_T(rp->custom->description->image.fill.pos_rel_x, params[3]);
+	 SETFLOAT_T(rp->custom->description->image.fill.pos_rel_y, params[4]);
+	 SETINT(rp->custom->description->image.fill.pos_abs_x, params[5]);
+	 SETINT(rp->custom->description->image.fill.pos_abs_y, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_FILL_SIZE:
 	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
 	 CHKPARAM(6);
 
-	 SETFLOAT_T(rp->custom->description->fill.rel_x, params[3]);
-	 SETFLOAT_T(rp->custom->description->fill.rel_y, params[4]);
-	 SETINT(rp->custom->description->fill.abs_x, params[5]);
-	 SETINT(rp->custom->description->fill.abs_y, params[6]);
+	 SETFLOAT_T(rp->custom->description->image.fill.rel_x, params[3]);
+	 SETFLOAT_T(rp->custom->description->image.fill.rel_y, params[4]);
+	 SETINT(rp->custom->description->image.fill.abs_x, params[5]);
+	 SETINT(rp->custom->description->image.fill.abs_y, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_TEXT:

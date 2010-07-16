@@ -1099,7 +1099,7 @@ _edje_part_recalc_single_drag(Edje_Real_Part *ep,
 
 static void
 _edje_part_recalc_single_fill(Edje_Real_Part *ep,
-			      Edje_Part_Description *desc,
+			      Edje_Part_Description_Spec_Image *desc,
 			      Edje_Calc_Params *params,
 			      int flags)
 {
@@ -1281,7 +1281,7 @@ _edje_part_recalc_single(Edje *ed,
 
    /* fill */
    if (ep->part->type == EDJE_PART_TYPE_IMAGE)
-     _edje_part_recalc_single_fill(ep, desc, params, flags);
+     _edje_part_recalc_single_fill(ep, &desc->image, params, flags);
 
    /* colors */
    if ((desc->color_class) && (*desc->color_class))
@@ -1311,13 +1311,13 @@ _edje_part_recalc_single(Edje *ed,
 	 /* border */
 	 if (flags & FLAG_X)
 	   {
-	      params->type.common.spec.image.l = desc->border.l;
-	      params->type.common.spec.image.r = desc->border.r;
+	      params->type.common.spec.image.l = desc->image.border.l;
+	      params->type.common.spec.image.r = desc->image.border.r;
 	   }
 	 if (flags & FLAG_Y)
 	   {
-	      params->type.common.spec.image.t = desc->border.t;
-	      params->type.common.spec.image.b = desc->border.b;
+	      params->type.common.spec.image.t = desc->image.border.t;
+	      params->type.common.spec.image.b = desc->image.border.b;
 	   }
 	 break;
       case EDJE_PART_TYPE_TEXT:
@@ -1496,17 +1496,17 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
    evas_object_image_fill_set(ep->object, p3->type.common.fill.x, p3->type.common.fill.y,
 			      p3->type.common.fill.w, p3->type.common.fill.h);
    evas_object_image_smooth_scale_set(ep->object, p3->smooth);
-   if (chosen_desc->border.scale)
+   if (chosen_desc->image.border.scale)
      evas_object_image_border_scale_set(ep->object, TO_DOUBLE(sc));
    else
      evas_object_image_border_scale_set(ep->object, 1.0);
    evas_object_image_border_set(ep->object, p3->type.common.spec.image.l, p3->type.common.spec.image.r,
 				p3->type.common.spec.image.t, p3->type.common.spec.image.b);
-   if (chosen_desc->border.no_fill == 0)
+   if (chosen_desc->image.border.no_fill == 0)
      evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_DEFAULT);
-   else if (chosen_desc->border.no_fill == 1)
+   else if (chosen_desc->image.border.no_fill == 1)
      evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_NONE);
-   else if (chosen_desc->border.no_fill == 2)
+   else if (chosen_desc->image.border.no_fill == 2)
      evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_SOLID);
 
    image_id = _edje_image_find(ep->object, ed,
