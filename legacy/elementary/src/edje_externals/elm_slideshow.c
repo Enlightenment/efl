@@ -4,6 +4,7 @@ typedef struct _Elm_Params_Slideshow
 {
    int timeout;
    const char *transition;
+   const char *layout;
    Eina_Bool loop:1;
    Eina_Bool timeout_exists:1;
    Eina_Bool loop_exists:1;
@@ -11,6 +12,7 @@ typedef struct _Elm_Params_Slideshow
 
 static const char *transitions[] = { "fade", "black_fade", "horizontal",
 				     "vertical", "square", NULL};
+static const char *layout[] = { "fullscreen", "not_fullscreen", NULL};
 
 static void
 external_slideshow_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
@@ -27,6 +29,9 @@ external_slideshow_state_set(void *data __UNUSED__, Evas_Object *obj, const void
      elm_slideshow_loop_set(obj, p->loop);
    if (p->transition) {
       elm_slideshow_transition_set(obj, p->transition);
+   }
+   if (p->layout) {
+         elm_slideshow_layout_set(obj, p->layout);
    }
 }
 
@@ -57,6 +62,14 @@ external_slideshow_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje
 	     return EINA_TRUE;
 	  }
      }
+   else if (!strcmp(param->name, "layout"))
+        {
+   	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+   	  {
+   	     elm_slideshow_layout_set(obj, param->s);
+   	     return EINA_TRUE;
+   	  }
+        }
 
    ERR("unknown parameter '%s' of type '%s'",
        param->name, edje_external_param_type_str(param->type));
@@ -91,6 +104,14 @@ external_slideshow_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje
 	     return EINA_TRUE;
 	  }
      }
+   else if (!strcmp(param->name, "layout"))
+        {
+   	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+   	  {
+   	     param->s = elm_slideshow_layout_get(obj);
+   	     return EINA_TRUE;
+   	  }
+        }
 
    ERR("unknown parameter '%s' of type '%s'",
        param->name, edje_external_param_type_str(param->type));
@@ -125,6 +146,10 @@ external_slideshow_params_parse(void *data, Evas_Object *obj, const Eina_List *p
 	  {
 	     mem->transition = param->s;
 	  }
+    else if (!strcmp(param->name, "layout"))
+   	  {
+   	     mem->layout = param->s;
+   	  }
      }
 
    return mem;
@@ -140,6 +165,7 @@ static Edje_External_Param_Info external_slideshow_params[] = {
    EDJE_EXTERNAL_PARAM_INFO_INT("timeout"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("loop"),
    EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("transition", "fade", transitions),
+   EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("layout", "fullscreen", transitions),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
