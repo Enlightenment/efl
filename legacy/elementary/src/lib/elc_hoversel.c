@@ -260,6 +260,7 @@ elm_hoversel_add(Evas_Object *parent)
    evas_object_event_callback_add(wd->btn, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _changed_size_hints, obj);
    evas_object_smart_callback_add(wd->btn, "clicked", _button_clicked, obj);
+   elm_hoversel_hover_parent_set(obj, parent);
    _sizing_eval(obj);
    return obj;
 }

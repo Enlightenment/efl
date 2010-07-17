@@ -308,6 +308,8 @@ elm_hover_add(Evas_Object *parent)
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 
+   elm_hover_parent_set(obj, parent);
+
    _sizing_eval(obj);
    return obj;
 }
