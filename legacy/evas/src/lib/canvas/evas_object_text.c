@@ -9,7 +9,7 @@
 static const char o_type[] = "text";
 
 /* private struct for text object internal data */
-typedef struct _Evas_Object_Text      Evas_Object_Text;
+typedef struct _Evas_Object_Text Evas_Object_Text;
 
 struct _Evas_Object_Text
 {
@@ -132,9 +132,12 @@ evas_object_text_font_source_set(Evas_Object *obj, const char *font_source)
    if ((o->cur.source) && (font_source) &&
        (!strcmp(o->cur.source, font_source)))
      return;
+   /*
    if (o->cur.source) eina_stringshare_del(o->cur.source);
    if (font_source) o->cur.source = eina_stringshare_add(font_source);
    else o->cur.source = NULL;
+    */
+   eina_stringshare_replace(&o->cur.source, font_source);
 }
 
 /**
@@ -172,8 +175,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    int is, was = 0, pass = 0;
    int same_font = 0;
 
-   if (!font) return;
-   if (size <= 0) return;
+   if ((!font) || (size <= 0)) return;
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -209,9 +211,12 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
      }
    if (!same_font)
      {
+	/*
 	if (o->cur.font) eina_stringshare_del(o->cur.font);
 	if (font) o->cur.font = eina_stringshare_add(font);
 	else o->cur.font = NULL;
+	 */
+	eina_stringshare_replace(&o->cur.font, font);
 	o->prev.font = NULL;
      }
    o->cur.size = size;
@@ -222,10 +227,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
      {
 	int w, h;
 
-	ENFN->font_string_size_get(ENDT,
-				   o->engine_data,
-				   o->cur.text,
-				   &w, &h);
+	ENFN->font_string_size_get(ENDT, o->engine_data, o->cur.text, &w, &h);
 	o->ascent = ENFN->font_ascent_get(ENDT, o->engine_data);
 	o->descent = ENFN->font_descent_get(ENDT, o->engine_data);
 	o->max_ascent = ENFN->font_max_ascent_get(ENDT, o->engine_data);
@@ -332,19 +334,19 @@ evas_object_text_text_set(Evas_Object *obj, const char *text)
 				       obj->layer->evas->pointer.x,
 				       obj->layer->evas->pointer.y, 1, 1);
    /* DO II */
+   /*
    if (o->cur.text) eina_stringshare_del(o->cur.text);
    if ((text) && (*text)) o->cur.text = eina_stringshare_add(text);
    else o->cur.text = NULL;
+    */
+   eina_stringshare_replace(&o->cur.text, text);
    o->prev.text = NULL;
    if ((o->engine_data) && (o->cur.text))
      {
 	int w, h;
 	int l = 0, r = 0, t = 0, b = 0;
 
-	ENFN->font_string_size_get(ENDT,
-				   o->engine_data,
-				   o->cur.text,
-				   &w, &h);
+	ENFN->font_string_size_get(ENDT, o->engine_data, o->cur.text, &w, &h);
 	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
 	obj->cur.geometry.w = w + l + r;
         obj->cur.geometry.h = h + t + b;
@@ -586,9 +588,7 @@ evas_object_text_char_pos_get(const Evas_Object *obj, int pos, Evas_Coord *cx, E
    inset =
      ENFN->font_inset_get(ENDT, o->engine_data, o->cur.text);
    ret = ENFN->font_char_coords_get(ENDT, o->engine_data, o->cur.text,
-							     pos,
-							     &x, &y,
-							     &w, &h);
+				    pos, &x, &y, &w, &h);
    evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
    y += o->max_ascent - t;
    x -= inset + l;
@@ -597,14 +597,14 @@ evas_object_text_char_pos_get(const Evas_Object *obj, int pos, Evas_Coord *cx, E
 	w += x;
 	x = 0;
      }
-   if (x + w > obj->cur.geometry.w) w = obj->cur.geometry.w - x;
+   if ((x + w) > obj->cur.geometry.w) w = obj->cur.geometry.w - x;
    if (w < 0) w = 0;
    if (y < 0)
      {
 	h += y;
 	y = 0;
      }
-   if (y + h > obj->cur.geometry.h) h = obj->cur.geometry.h - y;
+   if ((y + h) > obj->cur.geometry.h) h = obj->cur.geometry.h - y;
    if (h < 0) h = 0;
    if (cx) *cx = x;
    if (cy) *cy = y;
@@ -640,11 +640,8 @@ evas_object_text_last_up_to_pos(const Evas_Object *obj, Evas_Coord x, Evas_Coord
    if (!o->cur.text) return -1;
    inset =
      ENFN->font_inset_get(ENDT, o->engine_data, o->cur.text);
-   return ENFN->font_last_up_to_pos(ENDT,
-				       o->engine_data,
-				       o->cur.text,
-				       x + inset,
-				       y - o->max_ascent);	
+   return ENFN->font_last_up_to_pos(ENDT, o->engine_data, o->cur.text,
+				    x + inset, y - o->max_ascent);	
 }
 
 /**
@@ -672,13 +669,9 @@ evas_object_text_char_coords_get(const Evas_Object *obj, Evas_Coord x, Evas_Coor
    if (!o->cur.text) return -1;
    inset =
      ENFN->font_inset_get(ENDT, o->engine_data, o->cur.text);
-   ret = ENFN->font_char_at_coords_get(ENDT,
-				       o->engine_data,
-				       o->cur.text,
-				       x + inset,
-				       y - o->max_ascent,
-				       &rx, &ry,
-				       &rw, &rh);
+   ret = ENFN->font_char_at_coords_get(ENDT, o->engine_data, o->cur.text,
+				       x + inset, y - o->max_ascent,
+				       &rx, &ry, &rw, &rh);
    evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
    ry += o->max_ascent - t;
    rx -= inset + l;
@@ -687,14 +680,14 @@ evas_object_text_char_coords_get(const Evas_Object *obj, Evas_Coord x, Evas_Coor
 	rw += rx;
 	rx = 0;
      }
-   if (rx + rw > obj->cur.geometry.w) rw = obj->cur.geometry.w - rx;
+   if ((rx + rw) > obj->cur.geometry.w) rw = obj->cur.geometry.w - rx;
    if (rw < 0) rw = 0;
    if (ry < 0)
      {
 	rh += ry;
 	ry = 0;
      }
-   if (ry + rh > obj->cur.geometry.h) rh = obj->cur.geometry.h - ry;
+   if ((ry + rh) > obj->cur.geometry.h) rh = obj->cur.geometry.h - ry;
    if (rh < 0) rh = 0;
    if (cx) *cx = rx;
    if (cy) *cy = ry;
@@ -722,8 +715,7 @@ evas_object_text_style_set(Evas_Object *obj, Evas_Text_Style_Type style)
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return;
    MAGIC_CHECK_END();
-   if (o->cur.style == style)
-     return;
+   if (o->cur.style == style) return;
    evas_text_style_pad_get(o->cur.style, &pl, &pr, &pt, &pb);
    o->cur.style = style;
    evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
@@ -1036,8 +1028,8 @@ evas_font_path_append(Evas *e, const char *path)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   if (!path) return;
 
+   if (!path) return;
    e->font_path = eina_list_append(e->font_path, eina_stringshare_add(path));
 }
 
@@ -1264,8 +1256,7 @@ evas_string_char_next_get(const char *str, int pos, int *decoded)
    int p, d;
 
    if (decoded) *decoded = 0;
-   if (!str) return 0;
-   if (pos < 0) return 0;
+   if ((!str) || (pos < 0)) return 0;
    p = pos;
    d = evas_common_font_utf8_get_next((unsigned char *)str, &p);
    if (decoded) *decoded = d;
@@ -1285,8 +1276,7 @@ evas_string_char_prev_get(const char *str, int pos, int *decoded)
    int p, d;
 
    if (decoded) *decoded = 0;
-   if (!str) return 0;
-   if (pos < 1) return 0;
+   if ((!str) || (pos < 1)) return 0;
    p = pos;
    d = evas_common_font_utf8_get_prev((unsigned char *)str, &p);
    if (decoded) *decoded = d;
@@ -1302,8 +1292,8 @@ evas_string_char_prev_get(const char *str, int pos, int *decoded)
 EAPI int
 evas_string_char_len_get(const char *str)
 {
-	if (!str) return 0;
-	return evas_common_font_utf8_get_len((const unsigned char *) str);
+   if (!str) return 0;
+   return evas_common_font_utf8_get_len((const unsigned char *) str);
 }
 
 /**
@@ -1456,11 +1446,11 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
    Evas_Object_Text *o;
    const char vals[5][5] =
      {
-	  {0, 1, 2, 1, 0},
-	  {1, 3, 4, 3, 1},
-	  {2, 4, 5, 4, 2},
-	  {1, 3, 4, 3, 1},
-	  {0, 1, 2, 1, 0}
+	{0, 1, 2, 1, 0},
+	{1, 3, 4, 3, 1},
+	{2, 4, 5, 4, 2},
+	{1, 3, 4, 3, 1},
+	{0, 1, 2, 1, 0}
      };
    int sl = 0, st = 0;
 
@@ -1652,11 +1642,11 @@ evas_object_text_render_pre(Evas_Object *obj)
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
    obj->pre_render_done = 1;
-   /* pre-render phase. this does anything an object needs to do just before */
-   /* rendering. this could mean loading the image data, retrieving it from */
-   /* elsewhere, decoding video etc. */
-   /* then when this is done the object needs to figure if it changed and */
-   /* if so what and where and add thr appropriate redraw rectangles */
+   /* pre-render phase. this does anything an object needs to do just before
+    rendering. This could mean loading the image data, retrieving it from 
+    elsewhere, decoding video etc.
+    Then when this is done the object needs to figure if it changed and 
+    if so what and where and add the appropriate redraw rectangles */
    o = (Evas_Object_Text *)(obj->object_data);
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur.clipper)
@@ -1665,19 +1655,21 @@ evas_object_text_render_pre(Evas_Object *obj)
 	  evas_object_clip_recalc(obj->cur.clipper);
 	obj->cur.clipper->func->render_pre(obj->cur.clipper);
      }
-   /* now figure what changed and add draw rects */
-   /* if it just became visible or invisible */
+   /* now figure what changed and add draw rects
+    if it just became visible or invisible */
    is_v = evas_object_is_visible(obj);
    was_v = evas_object_was_visible(obj);
    if (is_v != was_v)
      {
-	evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, obj, is_v, was_v);
+	evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, 
+					      obj, is_v, was_v);
 	goto done;
      }
    if ((obj->cur.map != obj->prev.map) ||
        (obj->cur.usemap != obj->prev.usemap))
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+					    obj);
         goto done;
      }
    /* its not visible - we accounted for it appearing or not so just abort */
@@ -1687,7 +1679,8 @@ evas_object_text_render_pre(Evas_Object *obj)
    /* if we restacked (layer or just within a layer) and dont clip anyone */
    if (obj->restack)
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+					    obj);
 	goto done;
      }
    /* if it changed color */
@@ -1696,37 +1689,43 @@ evas_object_text_render_pre(Evas_Object *obj)
        (obj->cur.color.b != obj->prev.color.b) ||
        (obj->cur.color.a != obj->prev.color.a))
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+					    obj);
 	goto done;
      }
-   /* if it changed geometry - and obviously not visibility or color */
-   /* caluclate differences since we have a constant color fill */
-   /* we really only need to update the differences */
+   /* if it changed geometry - and obviously not visibility or color
+    calculate differences since we have a constant color fill
+    we really only need to update the differences */
    if ((obj->cur.geometry.x != obj->prev.geometry.x) ||
        (obj->cur.geometry.y != obj->prev.geometry.y) ||
        (obj->cur.geometry.w != obj->prev.geometry.w) ||
        (obj->cur.geometry.h != obj->prev.geometry.h))
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+					    obj);
 	goto done;
      }
    if (obj->cur.render_op != obj->prev.render_op)
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+					    obj);
 	goto done;
      }
    if (obj->cur.scale != obj->prev.scale)
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+					    obj);
 	goto done;
      }
    if (o->changed)
      {
 	if ((o->cur.size != o->prev.size) ||
-	    ((o->cur.font) && (o->prev.font) && (strcmp(o->cur.font, o->prev.font))) ||
+	    ((o->cur.font) && (o->prev.font) && 
+		(strcmp(o->cur.font, o->prev.font))) ||
 	    ((o->cur.font) && (!o->prev.font)) ||
 	    ((!o->cur.font) && (o->prev.font)) ||
-	    ((o->cur.text) && (o->prev.text) && (strcmp(o->cur.text, o->prev.text))) ||
+	    ((o->cur.text) && (o->prev.text) && 
+		(strcmp(o->cur.text, o->prev.text))) ||
 	    ((o->cur.text) && (!o->prev.text)) ||
 	    ((!o->cur.text) && (o->prev.text)) ||
 	    ((o->cur.style != o->prev.style)) ||
@@ -1747,12 +1746,14 @@ evas_object_text_render_pre(Evas_Object *obj)
 	    ((o->cur.glow2.b != o->prev.glow2.b)) ||
 	    ((o->cur.glow2.a != o->prev.glow2.a)))
 	  {
-	     evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	     evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+						 obj);
 	     goto done;
 	  }
      }
    done:
-   evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, obj, is_v, was_v);
+   evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, 
+					 obj, is_v, was_v);
 }
 
 static void
@@ -1760,9 +1761,9 @@ evas_object_text_render_post(Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
-   /* this moves the current data to the previous state parts of the object */
-   /* in whatever way is safest for the object. also if we don't need object */
-   /* data anymore we can free it if the object deems this is a good idea */
+   /* this moves the current data to the previous state parts of the object
+    in whatever way is safest for the object. also if we don't need object
+    data anymore we can free it if the object deems this is a good idea */
    o = (Evas_Object_Text *)(obj->object_data);
    /* remove those pesky changes */
    evas_object_clip_changes_clean(obj);
@@ -1772,7 +1773,8 @@ evas_object_text_render_post(Evas_Object *obj)
    o->changed = 0;
 }
 
-static unsigned int evas_object_text_id_get(Evas_Object *obj)
+static unsigned int 
+evas_object_text_id_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
@@ -1781,7 +1783,8 @@ static unsigned int evas_object_text_id_get(Evas_Object *obj)
    return MAGIC_OBJ_TEXT;
 }
 
-static unsigned int evas_object_text_visual_id_get(Evas_Object *obj)
+static unsigned int 
+evas_object_text_visual_id_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
@@ -1790,7 +1793,8 @@ static unsigned int evas_object_text_visual_id_get(Evas_Object *obj)
    return MAGIC_OBJ_SHAPE;
 }
 
-static void *evas_object_text_engine_data_get(Evas_Object *obj)
+static void *
+evas_object_text_engine_data_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
@@ -1802,16 +1806,16 @@ static void *evas_object_text_engine_data_get(Evas_Object *obj)
 static int
 evas_object_text_is_opaque(Evas_Object *obj)
 {
-   /* this returns 1 if the internal object data implies that the object is */
-   /* currently fulyl opque over the entire gradient it occupies */
+   /* this returns 1 if the internal object data implies that the object is 
+    currently fully opaque over the entire gradient it occupies */
    return 0;
 }
 
 static int
 evas_object_text_was_opaque(Evas_Object *obj)
 {
-   /* this returns 1 if the internal object data implies that the object was */
-   /* currently fulyl opque over the entire gradient it occupies */
+   /* this returns 1 if the internal object data implies that the object was
+    currently fully opaque over the entire gradient it occupies */
    return 0;
 }
 
@@ -1856,10 +1860,7 @@ _evas_object_text_rehint(Evas_Object *obj)
 	int w, h;
 	int l = 0, r = 0, t = 0, b = 0;
 
-	ENFN->font_string_size_get(ENDT,
-				   o->engine_data,
-				   o->cur.text,
-				   &w, &h);
+	ENFN->font_string_size_get(ENDT, o->engine_data, o->cur.text, &w, &h);
 	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
 	obj->cur.geometry.w = w + l + r;
 	obj->cur.geometry.h = h + t + b;
