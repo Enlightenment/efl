@@ -1101,7 +1101,7 @@ eina_stringshare_threads_shutdown(void)
  * it is added to the strings to be searched and a duplicated string
  * of @p str is returned.
  *
- * This function does not check string size, but uses the give the
+ * This function does not check string size, but uses the
  * exact given size. This can be used to stringshare part of a larger
  * buffer or substring.
  *

@@ -73,6 +73,7 @@ EAPI int eina_stringshare_strlen(const char *str) EINA_CONST EINA_WARN_UNUSED_RE
 EAPI void eina_stringshare_dump(void);
 
 static inline Eina_Bool eina_stringshare_replace(const char **p_str, const char *news) EINA_ARG_NONNULL(1);
+static inline Eina_Bool eina_stringshare_replace_length(const char **p_str, const char *news, unsigned int slen) EINA_ARG_NONNULL(1);
 
 #include "eina_inline_stringshare.x"
 
