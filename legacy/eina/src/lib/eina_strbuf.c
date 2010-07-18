@@ -855,9 +855,7 @@ eina_strbuf_string_steal(Eina_Strbuf *buf)
 EAPI void
 eina_strbuf_string_free(Eina_Strbuf *buf)
 {
-   char *ret;
-
-   EINA_MAGIC_CHECK_STRBUF(buf, NULL);
+   EINA_MAGIC_CHECK_STRBUF(buf);
 
    free(buf->buf);
    _eina_strbuf_init(buf);
