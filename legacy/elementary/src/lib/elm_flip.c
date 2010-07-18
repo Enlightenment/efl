@@ -510,8 +510,8 @@ elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc __UNUSED__, Evas_Coord
  * ELM_FLIP_ROTATE_X_CENTER_AXIS
  * ELM_FLIP_ROTATE_XZ_CENTER_AXIS
  * ELM_FLIP_ROTATE_YZ_CENTER_AXIS
- * ELM_FLIP_SLIDE_LEFT
- * ELM_FLIP_SLIDE_RIGHT
+ * ELM_FLIP_CUBE_LEFT
+ * ELM_FLIP_CUBE_RIGHT
  *
  * @ingroup Flip
  */
