@@ -788,9 +788,9 @@ eina_hash_stringshared_new(Eina_Free_Cb data_free_cb)
 }
 
 /**
- * Retrieves the number of buckets available in the given hash table.
+ * Returns the number of entires in the hash table.
  * @param hash The given hash table.
- * @return @c 256 if @p hash is not @c NULL.  @c 0 otherwise.
+ * @return The number of entries in the hash table, @c 0 on error
  */
 EAPI int
 eina_hash_population(const Eina_Hash *hash)
