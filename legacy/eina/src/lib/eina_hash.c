@@ -686,6 +686,14 @@ eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb)
 			EINA_HASH_BUCKET_SIZE);
 }
 
+/**
+ * Create a new hash for use with strings.
+ * @param data_free_cb The function to call on values when the hash table is freed
+ * @return The @ref Eina_Hash object, or @c NULL on error
+ *
+ * NOTE: If your hash is created by this, you CAN look up values with pointers other
+ * than the original key pointer that was used to add a value.
+ */
 EAPI Eina_Hash *
 eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb)
 {
@@ -696,6 +704,15 @@ eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb)
 			EINA_HASH_BUCKET_SIZE);
 }
 
+/**
+ * Create a new hash for use with strings. If you are unsure of which hash creation
+ * function to use, use this one.
+ * @param data_free_cb The function to call on values when the hash table is freed
+ * @return The @ref Eina_Hash object, or @c NULL on error
+ *
+ * NOTE: If your hash is created by this, you CAN look up values with pointers other
+ * than the original key pointer that was used to add a value.
+ */
 EAPI Eina_Hash *
 eina_hash_string_small_new(Eina_Free_Cb data_free_cb)
 {
@@ -743,7 +760,23 @@ eina_hash_pointer_new(Eina_Free_Cb data_free_cb)
 			EINA_HASH_BUCKET_SIZE);
 #endif
 }
-
+/**
+ * Create a new hash optimized for stringshared values.
+ * @param data_free_cb The function to call on values when the hash table is freed
+ * @return The @ref Eina_Hash object, or @c NULL on error
+ *
+ * NOTE: If your hash is created by this, you CANNOT look up values with pointers other
+ * than the original key pointer that was used to add a value.
+ * The following code will NOT work with this type of hash:
+ * @code
+ * extern Eina_Hash *hash;
+ * extern const char *value;
+ * const char *a = eina_stringshare_add("key");
+ *
+ * eina_hash_add(hash, a, value);
+ * eina_hash_find(hash, "key")
+ * @endcode
+ */
 EAPI Eina_Hash *
 eina_hash_stringshared_new(Eina_Free_Cb data_free_cb)
 {
@@ -769,7 +802,7 @@ eina_hash_population(const Eina_Hash *hash)
 }
 
 /**
- * Free an entire hash table
+ * Calls @ref Eina_Free_Cb if one was specified at time of creation, then frees an entire hash table
  * @param hash The hash table to be freed
  *
  * This function frees up all the memory allocated to storing the specified
@@ -872,10 +905,12 @@ eina_hash_direct_add_by_hash(Eina_Hash *hash,
 /**
  * Adds an entry to the given hash table.
  *
- * @p key is expected to be a unique string within the hash table.
- * Otherwise, you cannot be sure which inserted data pointer will be
- * accessed with @ref eina_hash_find , and removed with
- * @ref eina_hash_del .
+ * @p key is expected to be unique within the hash table.  Key uniqueness varies depending
+ * on the type of @p hash: a stringshared @ref Eina_Hash need only have unique pointers for
+ * keys, but the strings in the pointers may be identical.  All other hash types require
+ * the strings themselves to be unique.  Failure to use sufficient uniqueness will result in
+ * unexpected results when inserting data pointers accessed with @ref eina_hash_find ,
+ * and removed with @ref eina_hash_del .
  *
  * Key strings are case sensitive.
  *
@@ -907,13 +942,16 @@ eina_hash_add(Eina_Hash *hash, const void *key, const void *data)
 }
 
 /**
- * Adds an entry to the given hash table and does not duplicate the string key.
+ * Adds an entry to the given hash table but does not duplicate the string key.
  *
- * @p key is expected to be a unique string within the hash table.
- * Otherwise, you cannot be sure which inserted data pointer will be
- * accessed with @ref eina_hash_find , and removed with
- * @ref eina_hash_del . This call does not make a copy of the key so it must
- * be a string constant or stored elsewhere (in the object being added) etc.
+ * @p key is expected to be unique within the hash table.  Key uniqueness varies depending
+ * on the type of @p hash: a stringshared @ref Eina_Hash need only have unique pointers for
+ * keys, but the strings in the pointers may be identical.  All other hash types require
+ * the strings themselves to be unique.  Failure to use sufficient uniqueness will result in
+ * unexpected results when inserting data pointers accessed with @ref eina_hash_find ,
+ * and removed with @ref eina_hash_del . This call does not make a copy
+ * of the key so it must be a string constant or stored elsewhere (in the object
+ * being added) etc.
  *
  * Key strings are case sensitive.
  *
