@@ -687,10 +687,10 @@ eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb)
 }
 
 /**
- * Create a new hash for use with strings.
+ * @brief Create a new hash for use with strings.
  * @param data_free_cb The function to call on values when the hash table is freed
  * @return The @ref Eina_Hash object, or @c NULL on error
- *
+ * Use to create a new hash for use with strings.
  * NOTE: If your hash is created by this, you CAN look up values with pointers other
  * than the original key pointer that was used to add a value.
  */
@@ -705,11 +705,12 @@ eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb)
 }
 
 /**
- * Create a new hash for use with strings. If you are unsure of which hash creation
+ * @brief Create a new hash for use with strings. If you are unsure of which hash creation
  * function to use, use this one.
  * @param data_free_cb The function to call on values when the hash table is freed
  * @return The @ref Eina_Hash object, or @c NULL on error
- *
+ * Use to create a new hash with small bucket size for use with strings.
+ * If you are unsure of which hash creation function to use, you should probably use this one.
  * NOTE: If your hash is created by this, you CAN look up values with pointers other
  * than the original key pointer that was used to add a value.
  */
@@ -761,12 +762,12 @@ eina_hash_pointer_new(Eina_Free_Cb data_free_cb)
 #endif
 }
 /**
- * Create a new hash optimized for stringshared values.
+ * @brief Create a new hash optimized for stringshared values.
  * @param data_free_cb The function to call on values when the hash table is freed
  * @return The @ref Eina_Hash object, or @c NULL on error
- *
- * NOTE: If your hash is created by this, you CANNOT look up values with pointers other
- * than the original key pointer that was used to add a value.
+ * Use to create a new hash optimized for stringshared values.
+ * NOTE: If your hash is created by this, you CANNOT look up values with pointers not
+ * equal to the original key pointer that was used to add a value.
  * The following code will NOT work with this type of hash:
  * @code
  * extern Eina_Hash *hash;
@@ -788,9 +789,10 @@ eina_hash_stringshared_new(Eina_Free_Cb data_free_cb)
 }
 
 /**
- * Returns the number of entires in the hash table.
+ * @brief Returns the number of entires in the hash table.
  * @param hash The given hash table.
  * @return The number of entries in the hash table, @c 0 on error
+ * Returns the number of entires in the hash table.
  */
 EAPI int
 eina_hash_population(const Eina_Hash *hash)
@@ -803,7 +805,7 @@ eina_hash_population(const Eina_Hash *hash)
 
 /**
  * Calls @ref Eina_Free_Cb (if one was specified at time of creation) on all hash table
- * buckets, then frees the hash table
+ * buckets, frees the buckets, then frees the hash table
  * @param hash The hash table to be freed
  *
  * This function frees up all the memory allocated to storing the specified
@@ -839,7 +841,8 @@ eina_hash_free(Eina_Hash *hash)
 }
 
 /**
- * Calls @ref Eina_Free_Cb (if one was specified at time of creation) on all hash table buckets
+ * Calls @ref Eina_Free_Cb (if one was specified at time of creation) on all hash table buckets,
+ * then frees the buckets.
  * @param hash The hash table to free buckets on
  *
  * Frees all memory allocated for hash table buckets.  Note that the bucket value is not freed
