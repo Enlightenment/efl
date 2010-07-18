@@ -825,7 +825,7 @@ eina_strbuf_string_get(const Eina_Strbuf *buf)
  * @return The current string in the string buffer.
  *
  * This function returns the string contained in @p buf. @p buf is
- * then initialized and does not own anymore the returned string. The
+ * then initialized and does not own the returned string anymore. The
  * caller must release the memory of the returned string by calling
  * free(). 
  *
@@ -842,6 +842,25 @@ eina_strbuf_string_steal(Eina_Strbuf *buf)
    // TODO: Check return value and do something clever
    _eina_strbuf_init(buf);
    return ret;
+}
+
+/**
+ * @brief Free the contents of a string buffer but not the buffer.
+ *
+ * @param buf The string buffer to free the string of.
+  *
+ * This function frees the string contained in @p buf without freeing
+ * @p buf.
+ */
+EAPI void
+eina_strbuf_string_free(Eina_Strbuf *buf)
+{
+   char *ret;
+
+   EINA_MAGIC_CHECK_STRBUF(buf, NULL);
+
+   free(buf->buf);
+   _eina_strbuf_init(buf);
 }
 
 /**
