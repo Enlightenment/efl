@@ -802,15 +802,16 @@ eina_hash_population(const Eina_Hash *hash)
 }
 
 /**
- * Calls @ref Eina_Free_Cb if one was specified at time of creation, then frees an entire hash table
+ * Calls @ref Eina_Free_Cb (if one was specified at time of creation) on all hash table
+ * buckets, then frees the hash table
  * @param hash The hash table to be freed
  *
  * This function frees up all the memory allocated to storing the specified
- * hash tale pointed to by @p hash. If no data_free_cb has been passed to the
+ * hash table pointed to by @p hash. If no data_free_cb has been passed to the
  * hash at creation time, any entries in the table that the program
  * has no more pointers for elsewhere may now be lost, so this should only be
- * called if the program has lready freed any allocated data in the hash table
- * or has the pointers for data in teh table stored elswehere as well.
+ * called if the program has already freed any allocated data in the hash table
+ * or has the pointers for data in the table stored elsewhere as well.
  *
  * Example:
  * @code
@@ -835,6 +836,32 @@ eina_hash_free(Eina_Hash *hash)
 	free(hash->buckets);
      }
    free(hash);
+}
+
+/**
+ * Calls @ref Eina_Free_Cb (if one was specified at time of creation) on all hash table buckets
+ * @param hash The hash table to free buckets on
+ *
+ * Frees all memory allocated for hash table buckets.  Note that the bucket value is not freed
+ * unless an @ref Eina_Free_Cb was specified at creation time.
+ * @see Noooo they be stealin' my bucket!
+ */
+EAPI void
+eina_hash_free_buckets(Eina_Hash *hash)
+{
+   int i;
+
+   EINA_MAGIC_CHECK_HASH(hash);
+   EINA_SAFETY_ON_NULL_RETURN(hash);
+
+   if (hash->buckets)
+     {
+	for (i = 0; i < hash->size; i++)
+	  eina_rbtree_delete(hash->buckets[i], EINA_RBTREE_FREE_CB(_eina_hash_head_free), hash);
+	free(hash->buckets);
+	hash->buckets = NULL;
+	hash->population = 0;
+     }
 }
 
 /**

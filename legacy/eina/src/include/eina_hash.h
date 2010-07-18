@@ -79,6 +79,7 @@ EAPI Eina_Bool   eina_hash_del(Eina_Hash *hash, const void *key, const void *dat
 EAPI void      * eina_hash_find(const Eina_Hash *hash, const void *key) EINA_ARG_NONNULL(1, 2);
 EAPI void      * eina_hash_modify(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 EAPI void        eina_hash_free(Eina_Hash *hash) EINA_ARG_NONNULL(1);
+EAPI void        eina_hash_free_buckets(Eina_Hash *hash) EINA_ARG_NONNULL(1);
 EAPI int         eina_hash_population(const Eina_Hash *hash) EINA_ARG_NONNULL(1);
 
 EAPI Eina_Bool   eina_hash_add_by_hash(Eina_Hash *hash,
