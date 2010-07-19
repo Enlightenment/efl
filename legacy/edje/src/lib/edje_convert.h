@@ -35,7 +35,7 @@ struct _Old_Edje_File
    Eina_List                      *styles;
    Eina_List                      *color_classes;
 
-   char                           *compiler;
+   const char                     *compiler;
    int                             version;
    int                             feature_ver;
 };

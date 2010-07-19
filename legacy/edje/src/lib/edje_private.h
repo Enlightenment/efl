@@ -369,7 +369,7 @@ struct _Edje_Style_Tag
 
 struct _Edje_Data
 {
-   char *key;
+   const char *key;
    char *value;
 };
 
