@@ -562,5 +562,24 @@ eina_str_escape(const char *str)
 }
 
 /**
+ * @brief Lowercase all the characters in range [A-Z] in the given string.
+ *
+ * @param str the string to lowercase
+ *
+ * This modifies the original string, changing all characters in [A-Z] to lowercase.
+ */
+EAPI void
+eina_str_tolower(char **str)
+{
+   char *p;
+   if ((!str) || (!(*str))) return;
+
+   for (p = *str; (*p); *p++)
+     if ((*p >= 'A') && (*p <= 'Z'))
+       *p = tolower(*p);
+}
+
+
+/**
  * @}
  */

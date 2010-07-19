@@ -35,6 +35,7 @@ EAPI char *eina_str_convert(const char *enc_from, const char *enc_to, const char
 
 EAPI char *eina_str_escape(const char *str) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_ARG_NONNULL(1);
 
+EAPI void eina_str_tolower(char **str);
 
 static inline size_t eina_str_join(char *dst, size_t size, char sep, const char *a, const char *b) EINA_ARG_NONNULL(1, 4, 5);
 
