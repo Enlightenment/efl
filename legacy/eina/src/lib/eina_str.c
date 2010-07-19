@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <ctype.h>
 
 #ifdef HAVE_ICONV
 # include <errno.h>
@@ -574,7 +575,7 @@ eina_str_tolower(char **str)
    char *p;
    if ((!str) || (!(*str))) return;
 
-   for (p = *str; (*p); *p++)
+   for (p = *str; (*p); p++)
      if ((*p >= 'A') && (*p <= 'Z'))
        *p = tolower(*p);
 }
