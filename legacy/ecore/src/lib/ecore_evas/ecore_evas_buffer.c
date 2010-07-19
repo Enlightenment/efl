@@ -16,7 +16,6 @@ static int
 _ecore_evas_buffer_init(void)
 {
    _ecore_evas_init_count++;
-   if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
    return _ecore_evas_init_count;
 }
 
