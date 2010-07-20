@@ -59,9 +59,9 @@ static int ECORE_THREAD_PIPE_DEL = 0;
 
 #ifdef EFL_HAVE_PTHREAD
 static int _ecore_thread_count = 0;
-static Eina_List *_ecore_thread = NULL;
-static Eina_List *_ecore_thread_data = NULL;
-static Eina_List *_ecore_long_thread_data = NULL;
+static Eina_List *_ecore_active_job_threads = NULL;
+static Eina_List *_ecore_pending_job_threads = NULL;
+static Eina_List *_ecore_pending_job_threads_long = NULL;
 static Ecore_Event_Handler *del_handler = NULL;
 
 static pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -89,7 +89,7 @@ _ecore_thread_end(Ecore_Pthread_Data *pth)
    if (pthread_join(pth->thread, (void **) &p) != 0)
      return ;
 
-   _ecore_thread = eina_list_remove(_ecore_thread, pth);
+   _ecore_active_job_threads = eina_list_remove(_ecore_active_job_threads, pth);
 
    ecore_event_add(ECORE_THREAD_PIPE_DEL, pth->p, _ecore_thread_pipe_free, NULL);
 }
@@ -137,18 +137,18 @@ _ecore_short_job(Ecore_Pipe *end_pipe)
 {
    Ecore_Pthread_Worker *work;
 
-   while (_ecore_thread_data)
+   while (_ecore_pending_job_threads)
      {
 	pthread_mutex_lock(&_mutex);
 
-	if (!_ecore_thread_data)
+	if (!_ecore_pending_job_threads)
 	  {
 	     pthread_mutex_unlock(&_mutex);
 	     break;
 	  }
 
-	work = eina_list_data_get(_ecore_thread_data);
-	_ecore_thread_data = eina_list_remove_list(_ecore_thread_data, _ecore_thread_data);
+	work = eina_list_data_get(_ecore_pending_job_threads);
+	_ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads, _ecore_pending_job_threads);
 
 	pthread_mutex_unlock(&_mutex);
 
@@ -163,18 +163,18 @@ _ecore_long_job(Ecore_Pipe *end_pipe, pthread_t thread)
 {
    Ecore_Pthread_Worker *work;
 
-   while (_ecore_long_thread_data)
+   while (_ecore_pending_job_threads_long)
      {
 	pthread_mutex_lock(&_mutex);
 
-	if (!_ecore_long_thread_data)
+	if (!_ecore_pending_job_threads_long)
 	  {
 	     pthread_mutex_unlock(&_mutex);
 	     break;
 	  }
 
-	work = eina_list_data_get(_ecore_long_thread_data);
-	_ecore_long_thread_data = eina_list_remove_list(_ecore_long_thread_data, _ecore_long_thread_data);
+	work = eina_list_data_get(_ecore_pending_job_threads_long);
+	_ecore_pending_job_threads_long = eina_list_remove_list(_ecore_pending_job_threads_long, _ecore_pending_job_threads_long);
 
 	pthread_mutex_unlock(&_mutex);
 
@@ -242,18 +242,18 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
    pthread_mutex_unlock(&_mutex);
 
  on_error:
-   if (_ecore_thread_data) _ecore_short_job(pth->p);
-   if (_ecore_long_thread_data) _ecore_long_job(pth->p, pth->thread);
+   if (_ecore_pending_job_threads) _ecore_short_job(pth->p);
+   if (_ecore_pending_job_threads_long) _ecore_long_job(pth->p, pth->thread);
 
    /* FIXME: Check if there is long running task todo, and switch to long run handler. */
 
    pthread_mutex_lock(&_mutex);
-   if (_ecore_thread_data)
+   if (_ecore_pending_job_threads)
      {
 	pthread_mutex_unlock(&_mutex);
 	goto on_error;
      }
-   if (_ecore_long_thread_data)
+   if (_ecore_pending_job_threads_long)
      {
 	pthread_mutex_unlock(&_mutex);
 	goto on_error;
@@ -303,7 +303,7 @@ _ecore_thread_shutdown(void)
 
    pthread_mutex_lock(&_mutex);
 
-   EINA_LIST_FREE(_ecore_thread_data, work)
+   EINA_LIST_FREE(_ecore_pending_job_threads, work)
      {
 	if (work->func_cancel)
 	  work->func_cancel((void *)work->data);
@@ -312,7 +312,7 @@ _ecore_thread_shutdown(void)
 
    pthread_mutex_unlock(&_mutex);
 
-   EINA_LIST_FREE(_ecore_thread, pth)
+   EINA_LIST_FREE(_ecore_active_job_threads, pth)
      {
 	Ecore_Pipe *p;
 
@@ -374,7 +374,7 @@ ecore_thread_run(void (*func_blocking)(void *data),
    work->data = data;
 
    pthread_mutex_lock(&_mutex);
-   _ecore_thread_data = eina_list_append(_ecore_thread_data, work);
+   _ecore_pending_job_threads = eina_list_append(_ecore_pending_job_threads, work);
 
    if (_ecore_thread_count == _ecore_thread_count_max)
      {
@@ -445,10 +445,10 @@ ecore_thread_cancel(Ecore_Thread *thread)
 
    pthread_mutex_lock(&_mutex);
 
-   EINA_LIST_FOREACH(_ecore_thread_data, l, work)
+   EINA_LIST_FOREACH(_ecore_pending_job_threads, l, work)
      if ((void *) work == (void *) thread)
        {
-	  _ecore_thread_data = eina_list_remove_list(_ecore_thread_data, l);
+	  _ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads, l);
 
 	  pthread_mutex_unlock(&_mutex);
 
@@ -551,7 +551,7 @@ ecore_long_run(void (*func_heavy)(Ecore_Thread *thread, void *data),
      }
 
    pthread_mutex_lock(&_mutex);
-   _ecore_long_thread_data = eina_list_append(_ecore_long_thread_data, worker);
+   _ecore_pending_job_threads_long = eina_list_append(_ecore_pending_job_threads_long, worker);
 
    if (_ecore_thread_count == _ecore_thread_count_max)
      {
@@ -661,7 +661,7 @@ EAPI int
 ecore_thread_active_get(void)
 {
 #ifdef EFL_HAVE_PTHREAD
-   return eina_list_count(_ecore_thread);
+   return eina_list_count(_ecore_active_job_threads);
 #else
    return 0;
 #endif
@@ -677,7 +677,7 @@ EAPI int
 ecore_thread_pending_get(void)
 {
 #ifdef EFL_HAVE_PTHREAD
-   return eina_list_count(_ecore_thread_data);
+   return eina_list_count(_ecore_pending_job_threads);
 #else
    return 0;
 #endif
@@ -693,7 +693,7 @@ EAPI int
 ecore_thread_pending_long_get(void)
 {
 #ifdef EFL_HAVE_PTHREAD
-   return eina_list_count(_ecore_long_thread_data);
+   return eina_list_count(_ecore_pending_job_threads_long);
 #else
    return 0;
 #endif
