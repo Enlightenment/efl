@@ -15,8 +15,7 @@
  * The slideshow use 2 callbacks to create and delete the objects displayed. When an item
  * is displayed the function itc->func.get() is called. This function should create the object,
  * for example the object can be an evas_object_image or a photocam. When a object is no more
- * displayed the function itc->func.del() is called, the user can delete or hide the object here.
- * If itc->func.del is NULL the slideshow delete the object with evas_object_del().
+ * displayed the function itc->func.del() is called, the user can delete the dana associated to the item.
  */
 
 typedef struct _Widget_Data Widget_Data;
@@ -159,8 +158,7 @@ _item_realize(Elm_Slideshow_Item *item)
 		wd->items_built = eina_list_remove_list(wd->items_built, wd->items_built);
 		if(item->itc->func.del)
 			item->itc->func.del((void*)item->data, _item->o);
-		else
-			evas_object_del(_item->o);
+		evas_object_del(_item->o);
 		_item->o = NULL;
 	}
 }
@@ -264,7 +262,7 @@ elm_slideshow_add(Evas_Object *parent)
  * Add a object in the list. The object can be a evas object image or a elm photo for example.
  *
  * @param obj The slideshow object
- * @aram itc Callbacks used to create/delete the object. If itc->del.del is NULL, the object will be destroyed with evas_object_del()
+ * @aram itc Callbacks used to create the object and delete the data associated when the item is deleted.
  * @param data Data used by the user to identified the item
  * @return Returns The slideshow item
  *
@@ -595,8 +593,7 @@ elm_slideshow_clear(Evas_Object *obj)
 	{
 		if (item->itc->func.del)
 			item->itc->func.del((void*)item->data, item->o);
-		else
-			evas_object_del(item->o);
+		evas_object_del(item->o);
 	}
 
 	EINA_LIST_FREE(wd->items, item)
@@ -636,7 +633,7 @@ elm_slideshow_item_del(Elm_Slideshow_Item *item)
 
 	if (item->o && item->itc->func.del)
 		item->itc->func.del((void*)item->data, wd->previous->o);
-	else if (item->o)
+	if (item->o)
 		evas_object_del(item->o);
 	free(item);
 }
