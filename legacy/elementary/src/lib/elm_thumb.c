@@ -35,9 +35,6 @@ struct _Widget_Data
    struct {
 	Evas_Object *frm;
 	Evas_Object *view;
-	struct {
-	     float x, y;
-	} align;
    } children;
    const char *file;
    const char *key;
@@ -52,7 +49,6 @@ struct _Widget_Data
    Eina_Bool on_hold : 1;
    Eina_Bool is_video : 1;
    Eina_Bool was_video : 1;
-   Eina_Bool keep_aspect : 1;
 };
 
 static const char *widtype = NULL;
@@ -403,9 +399,6 @@ elm_need_ethumb(void)
  *
  * @see elm_thumb_file_set()
  * @see elm_thumb_ethumb_client_get()
- * @see elm_thumb_keep_aspect_set()
- * @see elm_thumb_align_set()
- * @see elm_thumb_align_get()
  *
  * @ingroup Thumb
  */
@@ -439,13 +432,10 @@ elm_thumb_add(Evas_Object *parent)
    wd->file = NULL;
    wd->key = NULL;
    wd->eeh = NULL;
-   wd->children.align.x = 0.5;
-   wd->children.align.y = 0.5;
    wd->id = -1;
    wd->on_hold = EINA_FALSE;
    wd->is_video = EINA_FALSE;
    wd->was_video = EINA_FALSE;
-   wd->keep_aspect = EINA_FALSE;
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
@@ -621,98 +611,6 @@ elm_thumb_animate_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    return wd->anim_setting;
-}
-
-/**
- * Set whether the thumbnail exhibition should keep the image or video aspect.
- *
- * For positioning the image/video within the object use the function
- * elm_thumb_align_set().
- *
- * @param obj The thumb object.
- * @param setting Whether keep or not the aspect.
- *
- * @see elm_thumb_file_set()
- * @see elm_thumb_align_set()
- *
- * @ingroup Thumb
- */
-EAPI void
-elm_thumb_keep_aspect_set(Evas_Object *obj, Eina_Bool setting)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   wd->keep_aspect = setting;
-}
-
-/**
- * Get back the aspect info set with @c elm_thumb_keep_aspect_set().
- *
- * @param obj The thumb object.
- * @return Whether the thumb object keeps or not the aspect for its content.
- *
- * @see elm_thumb_file_get()
- * @see elm_thumb_align_get()
- *
- * @ingroup Thumb
- */
-EAPI Eina_Bool
-elm_thumb_keep_aspect_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   return wd->keep_aspect;
-}
-
-/**
- * Set image/video's alignment within the thumbnail.
- *
- * @param obj The thumb object.
- * @param x_align The x alignment (0 <= x <= 1).
- * @param y_align The y alignment (0 <= y <= 1).
- *
- * @see elm_thumb_keep_aspect_set()
- * @see elm_thumb_align_get()
- *
- * @ingroup Thumb
- */
-EAPI void
-elm_thumb_align_set(Evas_Object *obj, float x_align, float y_align)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (x_align > 1.0)
-     x_align = 1.0;
-   else if (x_align < 0.0)
-     x_align = 0.0;
-   wd->children.align.x = x_align;
-
-   if (y_align > 1.0)
-     y_align = 1.0;
-   else if (y_align < 0.0)
-     y_align = 0.0;
-   wd->children.align.y = y_align;
-}
-
-/**
- * Get the alignenment set for the thumb object.
- *
- * @param obj The thumb object.
- * @param x Pointer to x alignenment.
- * @param y Pointer to y alignenment.
- *
- * @see elm_thumb_align_set()
- *
- * @ingroup Thumb
- */
-EAPI void
-elm_thumb_align_get(const Evas_Object *obj, float *x, float *y)
-{
-    ELM_CHECK_WIDTYPE(obj, widtype);
-    Widget_Data *wd = elm_widget_data_get(obj);
-    if (x) *x = wd->children.align.x;
-    if (y) *y = wd->children.align.y;
 }
 
 /**

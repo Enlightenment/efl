@@ -889,10 +889,6 @@ extern "C" {
    EAPI void	     elm_thumb_file_set(Evas_Object *obj, const char *file, const char *key);
    EAPI void	     elm_thumb_file_get(const Evas_Object *obj, const char **file, const char **key);
    EAPI void	     elm_thumb_path_get(const Evas_Object *obj, const char **file, const char **key);
-   EAPI void	     elm_thumb_keep_aspect_set(Evas_Object *obj, Eina_Bool setting);
-   EAPI Eina_Bool    elm_thumb_keep_aspect_get(const Evas_Object *obj);
-   EAPI void	     elm_thumb_align_set(Evas_Object *obj, float x_align, float y_align);
-   EAPI void	     elm_thumb_align_get(const Evas_Object *obj, float *x, float *y);
    EAPI void	     elm_thumb_animate_set(Evas_Object *obj, Elm_Thumb_Animation_Setting s);
    EAPI Elm_Thumb_Animation_Setting elm_thumb_animate_get(const Evas_Object *obj);
    EAPI Eina_Bool    elm_thumb_ethumb_client_connected(void);
