@@ -979,7 +979,7 @@ evas_common_pipe_flush(RGBA_Image *im)
 #endif
      {
         /* process pipe - 1 thead */
-        for (p = im->pipe; p; p = (RGBA_Pipe *)(EINA_INLIST_GET(p))->next)
+        for (p = im->cache_entry.pipe; p; p = (RGBA_Pipe *)(EINA_INLIST_GET(p))->next)
           {
              for (i = 0; i < p->op_num; i++)
                {
