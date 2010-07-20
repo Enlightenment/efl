@@ -105,7 +105,10 @@ static Elm_Slideshow_Item* _item_prev_get(Elm_Slideshow_Item* item)
 	Widget_Data *wd = elm_widget_data_get(item->obj);
 	Elm_Slideshow_Item* prev = eina_list_data_get(eina_list_prev(item->l));
 	if(!prev && wd->loop)
+	{
+		printf("LAST\n");
 		prev = eina_list_data_get(eina_list_last(item->l));
+	}
 	return prev;
 }
 static Elm_Slideshow_Item* _item_next_get(Elm_Slideshow_Item* item)
@@ -140,16 +143,42 @@ _item_realize(Elm_Slideshow_Item *item)
 
 	if (!wd) return;
 
-		if (!item->o && item->itc->func.get)
-		{
-			item->o = item->itc->func.get((void*)item->data, obj);
-			evas_object_smart_member_add(item->o, obj);
-			item->l_built = eina_list_append(NULL, item);
-			wd->items_built = eina_list_merge(wd->items_built, item->l_built);
-			evas_object_hide(item->o);
-		}
-		else if (item->l_built)
-			wd->items_built = eina_list_demote_list(wd->items_built, item->l_built);
+	if (!item->o && item->itc->func.get)
+	{
+		item->o = item->itc->func.get((void*)item->data, obj);
+		evas_object_smart_member_add(item->o, obj);
+		item->l_built = eina_list_append(NULL, item);
+		wd->items_built = eina_list_merge(wd->items_built, item->l_built);
+		evas_object_hide(item->o);
+	}
+	else if (item->l_built)
+		wd->items_built = eina_list_demote_list(wd->items_built, item->l_built);
+
+	//pre-create previous and next item
+	_item = _item_next_get(item);
+	if (_item && !_item->o && _item->itc->func.get)
+	{
+		_item->o = _item->itc->func.get((void*)_item->data, obj);
+		evas_object_smart_member_add(_item->o, obj);
+		_item->l_built = eina_list_append(NULL, _item);
+		wd->items_built = eina_list_merge(wd->items_built, _item->l_built);
+		evas_object_hide(_item->o);
+	}
+	else if (_item && _item->l_built)
+		wd->items_built = eina_list_demote_list(wd->items_built, _item->l_built);
+
+
+	_item = _item_prev_get(item);
+	if (_item && !_item->o && _item->itc->func.get)
+	{
+		_item->o = _item->itc->func.get((void*)_item->data, obj);
+		evas_object_smart_member_add(_item->o, obj);
+		_item->l_built = eina_list_append(NULL, _item);
+		wd->items_built = eina_list_merge(wd->items_built, _item->l_built);
+		evas_object_hide(_item->o);
+	}
+	else if (_item && _item->l_built)
+		wd->items_built = eina_list_demote_list(wd->items_built, _item->l_built);
 
 	//delete unused items
 	while (eina_list_count(wd->items_built) > 3)
@@ -285,6 +314,10 @@ elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, co
    wd->items = eina_list_merge(wd->items, item->l);
 
    if (!wd->current) elm_slideshow_show(item);
+
+   //we realize the current item
+   //the idea is to realize the previous and the next items
+   _item_realize(wd->current);
 
    return item;
 }
