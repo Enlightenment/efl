@@ -760,7 +760,7 @@ init_video_object(char *module_filename, char *filename)
    evas_object_show(oe);
 }
 
-static int
+static Eina_Bool 
 enter_idle(void *data)
 {
    double t;
@@ -775,7 +775,7 @@ enter_idle(void *data)
 //	printf("FPS: %3.3f\n", frames / (t - pt));
 	frames = 0;
      }
-   return 1;
+   return EINA_TRUE;
 }
 
 static Eina_Bool
