@@ -14,7 +14,7 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *clk;
-   double interval;
+   double interval, first_interval;
    Eina_Bool seconds : 1;
    Eina_Bool am_pm : 1;
    Eina_Bool edit : 1;
@@ -265,7 +265,7 @@ _signal_clock_val_up_start(void *data, Evas_Object *obj, const char *emission __
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   wd->interval = 0.85;
+   wd->interval = wd->first_interval;
    wd->sel_obj = obj;
    if (wd->spin) ecore_timer_del(wd->spin);
    wd->spin = ecore_timer_add(wd->interval, _signal_clock_val_up, data);
@@ -277,7 +277,7 @@ _signal_clock_val_down_start(void *data, Evas_Object *obj, const char *emission 
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   wd->interval = 0.85;
+   wd->interval = wd->first_interval;
    wd->sel_obj = obj;
    if (wd->spin) ecore_timer_del(wd->spin);
    wd->spin = ecore_timer_add(wd->interval, _signal_clock_val_down, data);
@@ -531,6 +531,7 @@ elm_clock_add(Evas_Object *parent)
    wd->cur.am_pm = EINA_TRUE;
    wd->cur.edit = EINA_TRUE;
    wd->cur.digedit = ELM_CLOCK_NONE;
+   wd->first_interval = 0.85;
 
    _time_update(obj);
    _ticker(obj);
@@ -762,4 +763,46 @@ elm_clock_show_seconds_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->seconds;
+}
+
+/**
+ * Set the interval for the clock
+ *
+ * @param obj The clock object
+ * @param interval The interval value in seconds
+ *
+ * The interval value is decreased while the user increments or decrements
+ * the clock value. The next interval value is the previous interval / 1.05,
+ * so it speed up a bit. Default value is 0.85 seconds.
+ *
+ * @ingroup Clock
+ */
+EAPI void
+elm_clock_interval_set(Evas_Object *obj, double interval)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->first_interval = interval;
+}
+
+/**
+ * Get the interval of the clock
+ *
+ * @param obj The clock object
+ * @return The value of the first interval in seconds
+ *
+ * The interval value is decreased while the user increments or decrements
+ * the clock value. The next interval value is the previous interval / 1.05,
+ * so it speed up a bit. Default value is 0.85 seconds.
+ *
+ * @ingroup Clock
+ */
+EAPI double
+elm_clock_interval_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0.0;
+   return wd->first_interval;
 }

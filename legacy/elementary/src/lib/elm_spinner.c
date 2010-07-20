@@ -30,7 +30,7 @@ struct _Widget_Data
    Evas_Object *spinner, *ent;
    const char *label;
    double val, val_min, val_max, orig_val, step;
-   double drag_start_pos, spin_speed, interval;
+   double drag_start_pos, spin_speed, interval, first_interval;
    Ecore_Timer *delay, *spin;
    Eina_List *special_values;
    Eina_Bool wrap : 1;
@@ -391,7 +391,7 @@ _val_inc_start(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->interval = 0.85;
+   wd->interval = wd->first_interval;
    wd->spin_speed = wd->step;
    if (wd->spin) ecore_timer_del(wd->spin);
    wd->spin = ecore_timer_add(wd->interval, _spin_value, obj);
@@ -403,7 +403,7 @@ _val_inc_stop(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->interval = 0.85;
+   wd->interval = wd->first_interval;
    wd->spin_speed = 0;
    if (wd->spin) ecore_timer_del(wd->spin);
    wd->spin = NULL;
@@ -414,7 +414,7 @@ _val_dec_start(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->interval = 0.85;
+   wd->interval = wd->first_interval;
    wd->spin_speed = -wd->step;
    if (wd->spin) ecore_timer_del(wd->spin);
    wd->spin = ecore_timer_add(wd->interval, _spin_value, obj);
@@ -426,7 +426,7 @@ _val_dec_stop(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->interval = 0.85;
+   wd->interval = wd->first_interval;
    wd->spin_speed = 0;
    if (wd->spin) ecore_timer_del(wd->spin);
    wd->spin = NULL;
@@ -543,6 +543,7 @@ elm_spinner_add(Evas_Object *parent)
    wd->val_max = 100.0;
    wd->wrap = 0;
    wd->step = 1.0;
+   wd->first_interval = 0.85;
    wd->entry_visible = 0;
    wd->editable = EINA_TRUE;
 
@@ -841,4 +842,46 @@ elm_spinner_editable_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->editable;
+}
+
+/**
+ * Set the interval for the spinner
+ *
+ * @param obj The spinner object
+ * @param interval The interval value in seconds
+ *
+ * The interval value is decreased while the user increments or decrements
+ * the spinner value. The next interval value is the previous interval / 1.05,
+ * so it speed up a bit. Default value is 0.85 seconds.
+ *
+ * @ingroup Spinner
+ */
+EAPI void
+elm_spinner_interval_set(Evas_Object *obj, double interval)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->first_interval = interval;
+}
+
+/**
+ * Get the interval of the spinner
+ *
+ * @param obj The spinner object
+ * @return The value of the first interval in seconds
+ *
+ * The interval value is decreased while the user increments or decrements
+ * the spinner value. The next interval value is the previous interval / 1.05,
+ * so it speed up a bit. Default value is 0.85 seconds.
+ *
+ * @ingroup Spinner
+ */
+EAPI double
+elm_spinner_interval_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0.0;
+   return wd->first_interval;
 }

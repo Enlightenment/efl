@@ -653,6 +653,8 @@ extern "C" {
    EAPI Eina_Bool    elm_clock_show_am_pm_get(const Evas_Object *obj);
    EAPI void         elm_clock_show_seconds_set(Evas_Object *obj, Eina_Bool seconds);
    EAPI Eina_Bool    elm_clock_show_seconds_get(const Evas_Object *obj);
+   EAPI void	     elm_clock_interval_set(Evas_Object *obj, double interval);
+   EAPI double	     elm_clock_interval_get(const Evas_Object *obj);
    /* smart callbacks called:
     * "changed" - the user changed the time
     */
@@ -1304,6 +1306,8 @@ extern "C" {
    EAPI void	     elm_spinner_editable_set(Evas_Object *obj, Eina_Bool editable);
    EAPI Eina_Bool    elm_spinner_editable_get(const Evas_Object *obj);
    EAPI void	     elm_spinner_special_value_add(Evas_Object *obj, double value, const char *label);
+   EAPI void	     elm_spinner_interval_set(Evas_Object *obj, double interval);
+   EAPI double	     elm_spinner_interval_get(const Evas_Object *obj);
    /* smart callbacks called:
     * "changed" - when the spinner value changes
     * "delay,changed" - when the spinner value changed, but a small time after a change (use this if you only want to respond to a change once the spinner is held still for a short while).
