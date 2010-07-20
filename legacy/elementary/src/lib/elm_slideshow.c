@@ -105,10 +105,7 @@ static Elm_Slideshow_Item* _item_prev_get(Elm_Slideshow_Item* item)
 	Widget_Data *wd = elm_widget_data_get(item->obj);
 	Elm_Slideshow_Item* prev = eina_list_data_get(eina_list_prev(item->l));
 	if(!prev && wd->loop)
-	{
-		printf("LAST\n");
 		prev = eina_list_data_get(eina_list_last(item->l));
-	}
 	return prev;
 }
 static Elm_Slideshow_Item* _item_next_get(Elm_Slideshow_Item* item)
@@ -314,10 +311,6 @@ elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, co
    wd->items = eina_list_merge(wd->items, item->l);
 
    if (!wd->current) elm_slideshow_show(item);
-
-   //we realize the current item
-   //the idea is to realize the previous and the next items
-   _item_realize(wd->current);
 
    return item;
 }
