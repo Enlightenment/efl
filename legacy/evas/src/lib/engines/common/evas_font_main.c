@@ -4,6 +4,8 @@
 
 #include "evas_common.h"
 #include "evas_private.h"
+#include "evas_font_private.h"
+
 FT_Library      evas_ft_lib = 0;
 static int      initialised = 0;
 
@@ -71,7 +73,9 @@ evas_common_font_ascent_get(RGBA_Font *fn)
              if (!fi->src->ft.face) continue;
              if (fi->src->current_size != fi->size)
                {
+		  FTLOCK();
                   FT_Activate_Size(fi->ft.size);
+		  FTUNLOCK();
                   fi->src->current_size = fi->size;
                }
              val = (int)fi->src->ft.face->size->metrics.ascender;
@@ -86,7 +90,9 @@ evas_common_font_ascent_get(RGBA_Font *fn)
    fi = fn->fonts->data;
    if (fi->src->current_size != fi->size)
      {
+	FTLOCK();
         FT_Activate_Size(fi->ft.size);
+	FTUNLOCK();
         fi->src->current_size = fi->size;
      }
    if (!FT_IS_SCALABLE(fi->src->ft.face))
@@ -114,7 +120,9 @@ evas_common_font_descent_get(RGBA_Font *fn)
    fi = fn->fonts->data;
    if (fi->src->current_size != fi->size)
      {
+	FTLOCK();
         FT_Activate_Size(fi->ft.size);
+	FTUNLOCK();
         fi->src->current_size = fi->size;
      }
    val = -(int)fi->src->ft.face->size->metrics.descender;
@@ -137,7 +145,9 @@ evas_common_font_max_ascent_get(RGBA_Font *fn)
    fi = fn->fonts->data;
    if (fi->src->current_size != fi->size)
      {
+	FTLOCK();
         FT_Activate_Size(fi->ft.size);
+	FTUNLOCK();
         fi->src->current_size = fi->size;
      }
    val = (int)fi->src->ft.face->bbox.yMax;
@@ -159,7 +169,9 @@ evas_common_font_max_descent_get(RGBA_Font *fn)
    fi = fn->fonts->data;
    if (fi->src->current_size != fi->size)
      {
+	FTLOCK();
         FT_Activate_Size(fi->ft.size);
+	FTUNLOCK();
         fi->src->current_size = fi->size;
      }
    val = -(int)fi->src->ft.face->bbox.yMin;
@@ -181,7 +193,9 @@ evas_common_font_get_line_advance(RGBA_Font *fn)
    fi = fn->fonts->data;
    if (fi->src->current_size != fi->size)
      {
+	FTLOCK();
         FT_Activate_Size(fi->ft.size);
+	FTUNLOCK();
         fi->src->current_size = fi->size;
      }
    val = (int)fi->src->ft.face->size->metrics.height;
