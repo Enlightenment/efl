@@ -5,8 +5,6 @@
 typedef struct _Elm_Params_Thumb
 {
    const char *animate;
-   Eina_Bool keep_aspect:1;
-   Eina_Bool aspect_exists:1;
 } Elm_Params_Thumb;
 
 static const char* choices[] = {"loop", "start", "stop", NULL};
@@ -41,8 +39,6 @@ external_thumb_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fr
 	if (set != ELM_THUMB_ANIMATION_LAST)
 	   elm_thumb_animate_set(obj, set);
      }
-   if (p->aspect_exists)
-     elm_thumb_keep_aspect_set(obj, p->keep_aspect);
 }
 
 static Eina_Bool
@@ -55,14 +51,6 @@ external_thumb_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
 	     Elm_Thumb_Animation_Setting set = _anim_setting_get(param->s);
 	     if (set == ELM_THUMB_ANIMATION_LAST) return EINA_FALSE;
 	     elm_thumb_animate_set(obj, set);
-	     return EINA_TRUE;
-	  }
-     }
-   else if (!strcmp(param->name, "aspect"))
-     {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	  {
-	     elm_thumb_keep_aspect_set(obj, param->i);
 	     return EINA_TRUE;
 	  }
      }
@@ -89,14 +77,6 @@ external_thumb_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ext
 	     return EINA_TRUE;
 	  }
      }
-   else if (!strcmp(param->name, "aspect"))
-     {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	  {
-	     param->i = elm_thumb_keep_aspect_get(obj);
-	     return EINA_TRUE;
-	  }
-     }
 
    ERR("unknown parameter '%s' of type '%s'",
        param->name, edje_external_param_type_str(param->type));
@@ -119,11 +99,6 @@ external_thumb_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, 
      {
 	if (!strcmp(param->name, "animate"))
 	  mem->animate = eina_stringshare_add(param->s);
-	else if (!strcmp(param->name, "aspect"))
-	  {
-	     mem->keep_aspect = !!param->i;
-	     mem->aspect_exists = EINA_TRUE;
-	  }
      }
 
    return mem;
@@ -142,7 +117,6 @@ external_thumb_params_free(void *params)
 static Edje_External_Param_Info external_thumb_params[] =
   {
     EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("animate", "loop", choices),
-    EDJE_EXTERNAL_PARAM_INFO_BOOL("keep aspect"),
     EDJE_EXTERNAL_PARAM_INFO_SENTINEL
   };
 
