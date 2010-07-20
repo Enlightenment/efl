@@ -53,6 +53,7 @@ _els_smart_icon_file_key_set(Evas_Object *obj, const char *file, const char *key
    if (sd->size != 0)
      evas_object_image_load_size_set(sd->obj, sd->size, sd->size);
    evas_object_image_file_set(sd->obj, file, key);
+   evas_object_image_preload(sd->obj, EINA_FALSE);
    if (evas_object_image_load_error_get(sd->obj) != EVAS_LOAD_ERROR_NONE)
      return EINA_FALSE;
    _smart_reconfigure(sd);
