@@ -44,7 +44,7 @@ struct cinfo {
 };
 
 
-
+LK(lock_words); // for word cache call
 static Eina_Inlist *words = NULL;
 static struct prword *evas_font_word_prerender(RGBA_Draw_Context *dc, const char *text, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning);
 
@@ -511,7 +511,9 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 	LKL(fi->ft_mutex);
         if (fi->src->current_size != fi->size)
           {
+	     FTLOCK();
              FT_Activate_Size(fi->ft.size);
+	     FTUNLOCK();
              fi->src->current_size = fi->size;
           }
 	/* hmmm kerning means i can't sanely do my own cached metric tables! */
@@ -794,14 +796,17 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const char *in_text, int len, RG
 
    const char *in_ss = eina_stringshare_add(in_text);
 
+   LKL(lock_words);
    EINA_INLIST_FOREACH(words,w){
 	if (w->len == len && w->font == fn && fi->size == w->size &&
 	      (w->str == in_ss)){
 	  words = eina_inlist_promote(words, EINA_INLIST_GET(w));
 	  eina_stringshare_del(in_ss);
+	  LKU(lock_words);
 	  return w;
 	}
    }
+   LKU(lock_words);
 
 #ifdef INTERNATIONAL_SUPPORT
    /*FIXME: should get the direction by parmater */
@@ -828,9 +833,12 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const char *in_text, int len, RG
 	ci->gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (ci->gl == 0) break;
 	ci->index = evas_common_font_glyph_search(fn, &fi, ci->gl);
+	LKL(fi->ft_mutex);
 	if (fi->src->current_size != fi->size)
 	  {
+	     FTLOCK();
 	     FT_Activate_Size(fi->ft.size);
+	     FTUNLOCK();
              fi->src->current_size = fi->size;
           }
 	if (use_kerning && char_index && (pface == fi->src->ft.face))
@@ -841,6 +849,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const char *in_text, int len, RG
 	  }
        pface = fi->src->ft.face;
        ci->fg = evas_common_font_int_cache_glyph_get(fi, ci->index);
+       LKU(fi->ft_mutex);
        if (!ci->fg) continue;
        if (gl){
 	    ci->fg->ext_dat =dc->font_ext.func.gl_new(dc->font_ext.data,ci->fg);
@@ -893,6 +902,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const char *in_text, int len, RG
    save->roww = width;
    save->height = height;
    save->baseline = baseline;
+   LKL(lock_words);
    words = eina_inlist_prepend(words, EINA_INLIST_GET(save));
 
    /* Clean up if too long */
@@ -904,6 +914,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const char *in_text, int len, RG
 	words = eina_inlist_remove(words,EINA_INLIST_GET(last));
 	free(last);
    }
+   LKU(lock_words);
 
 #ifdef INTERNATIONAL_SUPPORT
    if (level_list) free(level_list);
