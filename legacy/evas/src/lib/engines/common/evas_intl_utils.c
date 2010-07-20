@@ -11,10 +11,6 @@
 
 #define UTF8_BYTES_PER_CHAR 4
 
-#ifdef BUILD_PTHREAD
-static LK(fribidi_lock);
-#endif
-
 /* FIXME: fribidi_utf8_to_unicode should use char len and not byte len!*/
 char *
 evas_intl_utf8_to_visual(const char *text,
@@ -80,15 +76,15 @@ evas_intl_utf8_to_visual(const char *text,
  	 tmp_V_to_L_list = *position_V_to_L_list;
        }
 
-   LKL(fribidi_lock);
+   FBDLOCK();
    if (!fribidi_log2vis(unicode_in, len, direction,
          unicode_out, tmp_L_to_V_list, tmp_V_to_L_list, tmp_level_list))
      {
-        LKU(fribidi_lock);
+	FBDUNLOCK();
  	len = -2;
  	goto error2;
      }
-   LKU(fribidi_lock);
+   FBDUNLOCK();
 
    text_out = malloc(UTF8_BYTES_PER_CHAR * len + 1);
    if (!text_out)
@@ -97,6 +93,7 @@ evas_intl_utf8_to_visual(const char *text,
  	goto error2;
      }
 
+   FBDLOCK();
    fribidi_unicode_to_utf8(unicode_out, len, text_out);
    FBDUNLOCK();
    
