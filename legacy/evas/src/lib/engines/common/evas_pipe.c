@@ -1851,6 +1851,10 @@ evas_common_pipe_init(void)
 			    evas_common_pipe_load, &(task_thinfo[i]));
 	     pthread_attr_destroy(&attr);
 	  }
+
+#if defined(METRIC_CACHE) || defined(WORD_CACHE)
+	eina_stringshare_threads_init();
+#endif
      }
    if (thread_num == 1) return EINA_FALSE;
    return EINA_TRUE;
