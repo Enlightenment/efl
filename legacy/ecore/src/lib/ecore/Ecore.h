@@ -350,6 +350,10 @@ extern "C" {
    EAPI Eina_Bool     ecore_thread_cancel(Ecore_Thread *thread);
    EAPI Eina_Bool     ecore_thread_check(Ecore_Thread *thread);
    EAPI Eina_Bool     ecore_thread_notify(Ecore_Thread *thread, const void *msg_data);
+   EAPI int           ecore_thread_active_get(void);
+   EAPI int           ecore_thread_pending_get(void);
+   EAPI int           ecore_thread_pending_long_get(void);
+
 
    EAPI double ecore_time_get(void);
    EAPI double ecore_loop_time_get(void);

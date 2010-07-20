@@ -651,3 +651,50 @@ ecore_thread_notify(Ecore_Thread *thread, const void *data)
 #endif
 }
 
+/**
+ * @brief Get number of active thread jobs
+ * @return Number of active threads running jobs
+ * This returns the number of threads currently running jobs through the
+ * ecore_thread api.
+ */
+EAPI int
+ecore_thread_active_get(void)
+{
+#ifdef EFL_HAVE_PTHREAD
+   return eina_list_count(_ecore_thread);
+#else
+   return 0;
+#endif
+}
+
+/**
+ * @brief Get number of pending (short) thread jobs
+ * @return Number of pending threads running "short" jobs
+ * This returns the number of threads currently running jobs through the
+ * ecore_thread_run api call.
+ */
+EAPI int
+ecore_thread_pending_get(void)
+{
+#ifdef EFL_HAVE_PTHREAD
+   return eina_list_count(_ecore_thread_data);
+#else
+   return 0;
+#endif
+}
+
+/**
+ * @brief Get number of pending long thread jobs
+ * @return Number of pending threads running "long" jobs
+ * This returns the number of threads currently running jobs through the
+ * ecore_long_run api call.
+ */
+EAPI int
+ecore_thread_pending_long_get(void)
+{
+#ifdef EFL_HAVE_PTHREAD
+   return eina_list_count(_ecore_long_thread_data);
+#else
+   return 0;
+#endif
+}
