@@ -1447,7 +1447,8 @@ eet_open(const char *file, Eet_File_Mode mode)
      }
 
    /* We found one */
-   if (ef && (file_stat.st_mtime != ef->mtime))
+   if (ef &&
+       ((file_stat.st_mtime != ef->mtime) || (file_stat.st_size != ef->data_size)))
      {
 	ef->delete_me_now = 1;
 	ef->references++;
