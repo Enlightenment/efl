@@ -152,6 +152,7 @@ _finished_thumb(Widget_Data *wd, const char *thumb_path, const char *thumb_key)
 {
    Eina_Bool new_view = EINA_FALSE;
    int r;
+   Evas_Coord mw, mh;
    Evas *evas;
 
    evas = evas_object_evas_get(wd->self);
@@ -208,6 +209,9 @@ _finished_thumb(Widget_Data *wd, const char *thumb_path, const char *thumb_key)
    if (new_view) elm_widget_sub_object_add(wd->self, wd->children.view);
    edje_object_part_swallow(wd->children.frm, "elm.swallow.content",
 			    wd->children.view);
+   edje_object_size_min_get(wd->children.frm, &mw, &mh);
+   edje_object_size_min_restricted_calc(wd->children.frm, &mw, &mh, mw, mh);
+   evas_object_size_hint_min_set(wd->self, mw, mh);
    eina_stringshare_replace(&(wd->thumb.file), thumb_path);
    eina_stringshare_replace(&(wd->thumb.key), thumb_key);
    edje_object_signal_emit(wd->children.frm, EDJE_SIGNAL_GENERATE_STOP, "elm");
