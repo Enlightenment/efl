@@ -327,7 +327,7 @@ _ecore_thread_shutdown(void)
 #endif
 }
 
-/*
+/**
  * @brief Run some blocking code in a parrallel thread to avoid locking the main loop.
  * @param func_blocking The function that should run in another thread.
  * @param func_end The function that will be called in the main loop if the thread terminate correctly.
@@ -421,7 +421,7 @@ ecore_thread_run(void (*func_blocking)(void *data),
 #endif
 }
 
-/*
+/**
  * @brief Cancel a running thread.
  * @param thread The thread to cancel.
  * @return Will return EINA_TRUE if the thread has been cancelled,
@@ -469,7 +469,7 @@ ecore_thread_cancel(Ecore_Thread *thread)
 #endif
 }
 
-/*
+/**
  * @brief Tell if a thread was canceled or not.
  * @param thread The thread to test.
  * @return EINA_TRUE if the thread is cancelled,
@@ -486,7 +486,7 @@ ecore_thread_check(Ecore_Thread *thread)
    return worker->cancel;
 }
 
-/*
+/**
  * @brief Run some heavy code in a parrallel thread to avoid locking the main loop.
  * @param func_heavy The function that should run in another thread.
  * @param func_notify The function that will receive the data send by func_heavy in the main loop.
@@ -618,7 +618,7 @@ ecore_long_run(void (*func_heavy)(Ecore_Thread *thread, void *data),
 #endif
 }
 
-/*
+/**
  * @brief Send data to main loop from worker thread.
  * @param thread The current Ecore_Thread context to send data from
  * @param data Data to be transmitted to the main loop
