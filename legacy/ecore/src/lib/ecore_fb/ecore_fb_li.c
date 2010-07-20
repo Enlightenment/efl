@@ -384,9 +384,11 @@ _ecore_fb_li_device_fd_callback(void *data, Ecore_Fd_Handler *fdh)
 	return EINA_TRUE;
 }
 
-/* 
- * Starts getting events from the input device 
- *
+/** 
+ * @brief Sets the listen mode for an input device 
+ * @param dev The device to set the mode of
+ * @param listen The mode of listening (0 for off, 1 for on)
+ * This enables or disables listening on an input device.
  */
 EAPI void 
 ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, int listen)
@@ -408,7 +410,10 @@ ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, int listen)
 #endif
 
 /*
- * Opens an input device
+ * @brief Opens an input device
+ * @param dev The device to open
+ * @return The @ref Ecore_Fb_Input_Device object that has been opened
+ * This opens an input device and returns the object for it, or returns NULL on failure.
  */
 EAPI Ecore_Fb_Input_Device *
 ecore_fb_input_device_open(const char *dev)
