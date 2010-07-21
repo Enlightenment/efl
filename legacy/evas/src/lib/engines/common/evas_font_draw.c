@@ -447,6 +447,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 	//      y = ext_y;
 	  }
 
+	  if (xrun < 1) return;
 #ifdef WORD_CACHE
 	  for (j = rowstart ; j < rowend ; j ++){
 	       func(NULL, word->im + (word->roww * j) + xstart, dc->col.col,
