@@ -1,11 +1,29 @@
 
+#define NEONDEBUG 0
+
+
+#if NEONDEBUG
+#define DEBUG_FNCOUNT(x)	\
+	do {			\
+	static int _foo = 0;		\
+	if (_foo++%10000 ==0)		\
+		printf("%s %+d %s: %d (%s)\n",__FILE__,__LINE__,__FUNCTION__,\
+				_foo, x " optimised");\
+	} while (0)
+#else
+#define	DEBUG_FNCOUNT(x)	((void)x)
+#endif
+
+
 /* blend mask x color -> dst */
 
 #ifdef BUILD_NEON
 static void
 _op_blend_mas_c_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e;
-   int alpha = 256 - (c >> 24);
+
+   DEBUG_FNCOUNT("");
+
 #define AP "blend_mas_c_dp_"
      asm volatile (
 	"	vdup.i32	q15, %[c]			\n\t"
@@ -60,6 +78,8 @@ _op_blend_mas_c_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int
 	"	sub		%[tmp], %[e], %[d]		\n\t"
 	"	cmp		%[tmp], #16			\n\t"
 	"	blt		"AP"loopout			\n\t"
+
+
 	"	sub		%[tmp], %[e], #15		\n\t"
 
 	"	sub		%[d],	#16			\n\t"
@@ -109,6 +129,15 @@ _op_blend_mas_c_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int
 	"	bhi		"AP"quadloopint			\n\t"
 
 	AP"loopout:						\n\t"
+#if NEONDEBUG
+		"cmp		%[d], %[e]		\n\t"
+		"ble		"AP"foo		\n\t"
+		"cmp		%[tmp], %[m]	\n\t"
+		"sub		%[x],	%[x]		\n\t"
+		"vst1.32	d0[0], [%[x]]		\n\t"
+	AP"foo: \n\t"
+#endif
+
 	"	cmp		%[d], %[e]			\n\t"
 	"	beq		"AP"done			\n\t"
 	"	sub		%[tmp],%[e], %[d]		\n\t"
@@ -116,7 +145,7 @@ _op_blend_mas_c_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int
 	"	beq		"AP"singleout			\n\t"
 
 	AP "dualloop2:					\n\t"
-		"sub		%[tmp],%[e],$0x7	\n\t"
+		"sub		%[tmp],%[e],$0x8	\n\t"
 	"	vld1.16		d0[0],	[%[m]]!			\n\t"
 	"	vldm		%[d],	{d4}			\n\t"
 	"	vmovl.u8	q0,	d0			\n\t"
@@ -150,7 +179,13 @@ _op_blend_mas_c_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int
 	"	vst1.32		d0[0],	[%[d]]!			\n\t"
 
 	AP"done:						\n\t"
-
+#if NEONDEBUG
+		"cmp		%[d], %[e]		\n\t"
+		"beq		"AP"reallydone		\n\t"
+		"sub		%[tmp],	%[tmp]		\n\t"
+		"vst1.32	d0[0], [%[tmp]]		\n\t"
+	AP"reallydone:"
+#endif
 	: // Out
 	:  [e] "r" (d + l), [d] "r" (d), [c] "r" (c),
 		[tmp] "r" (7), [m] "r" (m), [x] "r" (0)
@@ -166,6 +201,9 @@ static void
 _op_blend_mas_can_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e,*tmp;
    int alpha;
+
+   DEBUG_FNCOUNT("");
+
 #define AP	"_blend_mas_can_dp_neon_"
      asm volatile (
 		"vdup.u32	q9,	%[c]		\n\t"
@@ -204,7 +242,7 @@ _op_blend_mas_can_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, i
 	AP"dualstart:					\n\t"
 	"	sub		%[tmp], %[e], %[d]	\n\t"
 	"	cmp		%[tmp],	#16		\n\t"
-	"	ble		"AP"loopout		\n\t"
+	"	blt		"AP"loopout		\n\t"
 
 	AP"dualloop:					\n\t"
 	"	vld1.16		d0[0],	[%[m]]!		\n\t"
@@ -232,21 +270,23 @@ _op_blend_mas_can_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, i
 	AP"fastloop:					\n\t"
 	"	add		%[d],	#16		\n\t"
 	"	cmp		%[tmp], %[d]		\n\t"
-	"	ble		"AP"loopout		\n\t"
+	"	blt		"AP"loopout		\n\t"
 
 	AP"quadloopint:					\n\t"
 		// Load the mask: 4 bytes: It has d0/d1
 	"	ldr		%[x],	[%[m]]		\n\t"
 	"	add		%[m], #4		\n\t"
+
+		// Check for shortcuts
 	"	cmp		%[x],	#0		\n\t"
 	"	beq		"AP"fastloop		\n\t"
-	"	vmov.32		d0[0],	%[x]		\n\t"
 
-		// Load d into d8/d9 q4
-	"	vldm		%[d],	{d8,d9}		\n\t"
 	"	cmp		%[x],	$0xffffffff	\n\t"
 	"	beq		"AP"quadstore		\n\t"
 
+	"	vmov.32		d0[0],	%[x]		\n\t"
+		// Load d into d8/d9 q4
+	"	vldm		%[d],	{d8,d9}		\n\t"
 
 		// Get the alpha channel ready (m)
 	"	vmovl.u8	q0,	d0		\n\t"
@@ -293,8 +333,14 @@ _op_blend_mas_can_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, i
 	"	cmp		%[tmp], %[d]		\n\t"
 	"	bhi		"AP"quadloopint		\n\t"
 
-
 	AP"loopout:					\n\t"
+#if NEONDEBUG
+		"cmp		%[d], %[e]		\n\t"
+		"ble		"AP"foo		\n\t"
+		"sub		%[tmp],	%[tmp]		\n\t"
+		"vst1.32	d0[0], [%[tmp]]		\n\t"
+	AP"foo: \n\t"
+#endif
 
 	"	cmp		%[e], %[d]		\n\t"
 	"	beq		"AP"done		\n\t"
@@ -356,13 +402,22 @@ _op_blend_mas_can_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, i
 		"vqmovun.s16	d2,  q6			\n\t"
 		"vst1.32	d2[0], [%[d]]!		\n\t"
 
+
 	AP"done:					\n\t"
+#if NEONDEBUG
+		"cmp		%[d], %[e]		\n\t"
+		"beq		"AP"reallydone		\n\t"
+		"sub		%[m],	%[m]		\n\t"
+		"vst1.32	d0[0], [%[m]]		\n\t"
+	AP"reallydone:"
+#endif
+
 
 	  : // output regs
 	  // Input
           :  [e] "r" (e = d + l), [d] "r" (d), [c] "r" (c),
 		[m] "r" (m), [tmp] "r" (7), [x] "r" (33)
-          : "q0", "q1", "q2","q3", "q4","q5","q6", "q7","q14","q15",
+          : "q0", "q1", "q2","q3", "q4","q5","q6", "q7","q9","q14","q15",
 			"memory" // clobbered
 
      );
@@ -436,6 +491,9 @@ static void
 _op_blend_rel_mas_c_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e;
    int alpha;
+
+   DEBUG_FNCOUNT("not");
+
    UNROLL8_PLD_WHILE(d, l, e,
                      {
                         DATA32 mc = MUL_SYM(*m, c);
