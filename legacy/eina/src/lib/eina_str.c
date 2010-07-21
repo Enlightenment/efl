@@ -576,8 +576,7 @@ eina_str_tolower(char **str)
    if ((!str) || (!(*str))) return;
 
    for (p = *str; (*p); p++)
-     if ((*p >= 'A') && (*p <= 'Z'))
-       *p += 32;
+     *p = tolower(*p);
 }
 
 
