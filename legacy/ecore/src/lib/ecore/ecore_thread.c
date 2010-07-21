@@ -326,6 +326,10 @@ _ecore_thread_shutdown(void)
    del_handler = NULL;
 #endif
 }
+/**
+ * @defgroup Ecore_Thread Ecore Thread Functions
+ * These functions allow for ecore-managed threads which integrate with ecore's main loop.
+	*/
 
 /**
  * @brief Run some blocking code in a parrallel thread to avoid locking the main loop.
@@ -697,4 +701,33 @@ ecore_thread_pending_long_get(void)
 #else
    return 0;
 #endif
+}
+
+
+/**
+ * @brief Get the max number of threads that can run simultaneously
+ * @return Max number of threads ecore will run
+ * This returns the total number of threads that ecore will attempt to run
+ * simultaneously.
+ */
+EAPI int
+ecore_thread_max_get(void)
+{
+	  return _ecore_thread_count_max;
+}
+
+/**
+ * @brief Set the max number of threads that can run simultaneously
+ * @param num The new maximum
+ * This sets the maximum number of threads that ecore will try to run
+ * simultaneously.  This number cannot be < 1 or >= 2x the number of active cpus.
+ */
+EAPI void
+ecore_thread_max_set(int num)
+{
+   if (num < 1) return;
+   /* avoid doing something hilarious by blocking dumb users */
+   if (num >= (2 * eina_cpu_count())) return;
+
+   _ecore_thread_count_max = num;
 }

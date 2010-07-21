@@ -353,6 +353,8 @@ extern "C" {
    EAPI int           ecore_thread_active_get(void);
    EAPI int           ecore_thread_pending_get(void);
    EAPI int           ecore_thread_pending_long_get(void);
+   EAPI int           ecore_thread_max_get(void);
+   EAPI void          ecore_thread_max_set(int num);
 
 
    EAPI double ecore_time_get(void);
