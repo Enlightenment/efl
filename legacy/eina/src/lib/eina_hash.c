@@ -1228,13 +1228,61 @@ eina_hash_modify_by_hash(Eina_Hash *hash, const void *key, int key_length, int k
    el = _eina_hash_find_by_hash(hash, &tuple, key_hash, &eh);
    if (el)
      {
-	old_data = el->tuple.data;
-	el->tuple.data = (void *) data;
+        old_data = el->tuple.data;
+        el->tuple.data = (void *) data;
      }
 
    return old_data;
 }
 
+/**
+ * Modifies the entry pointer at the specified key and returns the old entry or
+ * adds the entry if not found
+ * @param   hash The given hash table.
+ * @param   key  The key of the entry to modify.
+ * @param   data The data to replace the old entry
+ * @return  The data pointer for the old stored entry, or @c NULL if not
+ *          found. If an existing entry is not found, the entry is added to the hash.
+ *
+ * This function adds the specified data to the table at with the key regardless
+ * of whether it is there.  To check for errors, use @ref eina_error_get
+ */
+EAPI void *
+eina_hash_modify_or_add(Eina_Hash *hash, const void *key, const void *data)
+{
+   Eina_Hash_Tuple tuple;
+   Eina_Hash_Head *eh;
+   Eina_Hash_El *el;
+   int key_length;
+   int key_hash;
+
+   EINA_MAGIC_CHECK_HASH(hash);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(hash->key_hash_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data, NULL);
+
+   key_length = hash->key_length_cb ? hash->key_length_cb(key) : 0;
+   key_hash = hash->key_hash_cb(key, key_length);
+
+   tuple.key = key;
+   tuple.key_length = key_length;
+   tuple.data = NULL;
+
+   el = _eina_hash_find_by_hash(hash, &tuple, key_hash, &eh);
+   if (el)
+     {
+        void *old_data = NULL;
+
+        old_data = el->tuple.data;
+        el->tuple.data = (void *) data;
+        return old_data;
+     }
+
+   eina_hash_add_alloc_by_hash(hash, key, key_length, key_length, key_hash, data);
+
+   return NULL;
+}
 /**
  * Modifies the entry pointer at the specified key and returns the old entry
  * @param   hash The given hash table.
