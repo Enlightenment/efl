@@ -664,8 +664,12 @@ ecore_thread_notify(Ecore_Thread *thread, const void *data)
 EAPI int
 ecore_thread_active_get(void)
 {
+   int ret;
 #ifdef EFL_HAVE_PTHREAD
-   return _ecore_thread_count;
+   pthread_mutex_lock(&_mutex);
+   ret = _ecore_thread_count;
+   pthread_mutex_unlock(&_mutex);
+   return ret;
 #else
    return 0;
 #endif
@@ -680,8 +684,12 @@ ecore_thread_active_get(void)
 EAPI int
 ecore_thread_pending_get(void)
 {
+   int ret;
 #ifdef EFL_HAVE_PTHREAD
-   return eina_list_count(_ecore_pending_job_threads);
+   pthread_mutex_lock(&_mutex);
+   ret = eina_list_count(_ecore_pending_job_threads);
+   pthread_mutex_unlock(&_mutex);
+   return ret;
 #else
    return 0;
 #endif
@@ -696,8 +704,12 @@ ecore_thread_pending_get(void)
 EAPI int
 ecore_thread_pending_long_get(void)
 {
+   int ret;
 #ifdef EFL_HAVE_PTHREAD
-   return eina_list_count(_ecore_pending_job_threads_long);
+   pthread_mutex_lock(&_mutex);
+   ret = eina_list_count(_ecore_pending_job_threads_long);
+   pthread_mutex_unlock(&_mutex);
+   return ret;
 #else
    return 0;
 #endif
@@ -712,8 +724,12 @@ ecore_thread_pending_long_get(void)
 EAPI int
 ecore_thread_pending_total_get(void)
 {
+   int ret;
 #ifdef EFL_HAVE_PTHREAD
-   return eina_list_count(_ecore_pending_job_threads) + eina_list_count(_ecore_pending_job_threads_long);
+   pthread_mutex_lock(&_mutex);
+   ret = eina_list_count(_ecore_pending_job_threads) + eina_list_count(_ecore_pending_job_threads_long);
+   pthread_mutex_unlock(&_mutex);
+   return ret;
 #else
    return 0;
 #endif
@@ -728,6 +744,11 @@ ecore_thread_pending_total_get(void)
 EAPI int
 ecore_thread_max_get(void)
 {
+   int ret;
+   pthread_mutex_lock(&_mutex);
+   ret = _ecore_thread_count_max;
+   pthread_mutex_unlock(&_mutex);
+
    return _ecore_thread_count_max;
 }
 
@@ -744,7 +765,9 @@ ecore_thread_max_set(int num)
    /* avoid doing something hilarious by blocking dumb users */
    if (num >= (2 * eina_cpu_count())) return;
 
+   pthread_mutex_lock(&_mutex);
    _ecore_thread_count_max = num;
+   pthread_mutex_unlock(&_mutex);
 }
 
 /**
@@ -755,7 +778,9 @@ ecore_thread_max_set(int num)
 EAPI void
 ecore_thread_max_reset(void)
 {
+   pthread_mutex_lock(&_mutex);
    _ecore_thread_count_max = eina_cpu_count();
+   pthread_mutex_unlock(&_mutex);
 }
 
 /**
@@ -768,8 +793,12 @@ ecore_thread_max_reset(void)
 EAPI int
 ecore_thread_available_get(void)
 {
+   int ret;
 #ifdef EFL_HAVE_PTHREAD
-   return _ecore_thread_count_max - _ecore_thread_count);
+   pthread_mutex_lock(&_mutex);
+   ret = _ecore_thread_count_max - _ecore_thread_count;
+   pthread_mutex_unlock(&_mutex);
+   return ret;
 #else
    return 0;
 #endif
