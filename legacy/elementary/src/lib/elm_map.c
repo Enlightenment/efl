@@ -2465,9 +2465,11 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
 {
    int i;
    Eina_List *groups;
-   Widget_Data *wd = marker->wd;
+   Widget_Data *wd;
 
    if (!marker) return;
+   wd = marker->wd;
+   if (!wd) return;
    for (i = 0; i <= ZOOM_MAX; i++)
      {
 	marker->groups[i]->markers = eina_list_remove(marker->groups[i]->markers, marker);
