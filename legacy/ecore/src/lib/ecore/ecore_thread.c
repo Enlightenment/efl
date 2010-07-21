@@ -703,6 +703,21 @@ ecore_thread_pending_long_get(void)
 #endif
 }
 
+/**
+ * @brief Get number of pending thread jobs
+ * @return Number of pending threads running jobs
+ * This returns the number of threads currently running jobs through the
+ * ecore_thread_run and ecore_long_run api calls combined.
+ */
+EAPI int
+ecore_thread_pending_total_get(void)
+{
+#ifdef EFL_HAVE_PTHREAD
+   return eina_list_count(_ecore_pending_job_threads) + eina_list_count(_ecore_pending_job_threads_long);
+#else
+   return 0;
+#endif
+}
 
 /**
  * @brief Get the max number of threads that can run simultaneously
