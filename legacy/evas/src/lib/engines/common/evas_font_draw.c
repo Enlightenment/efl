@@ -818,7 +818,8 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const char *in_text, int len, RG
     * holder, will change in the future.*/
    char *visual_text = evas_intl_utf8_to_visual(in_text, &len, &direction, NULL, NULL, &level_list);
    text = (visual_text) ? visual_text : in_text;
-   
+#else
+   text = in_text;
 #endif
 
    gl = dc->font_ext.func.gl_new ? 1: 0;
