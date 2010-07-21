@@ -665,7 +665,7 @@ EAPI int
 ecore_thread_active_get(void)
 {
 #ifdef EFL_HAVE_PTHREAD
-   return eina_list_count(_ecore_active_job_threads);
+   return _ecore_thread_count;
 #else
    return 0;
 #endif
@@ -766,10 +766,10 @@ ecore_thread_max_reset(void)
  * this should be equal to (num_cpus - (active_running + active_long_running))
  */
 EAPI int
-ecore_thread_avail_get(void)
+ecore_thread_available_get(void)
 {
 #ifdef EFL_HAVE_PTHREAD
-   return _ecore_thread_count_max - (eina_list_count(_ecore_pending_job_threads_long) + eina_list_count(_ecore_pending_job_threads));
+   return _ecore_thread_count_max - _ecore_thread_count);
 #else
    return 0;
 #endif
