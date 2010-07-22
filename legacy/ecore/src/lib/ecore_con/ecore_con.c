@@ -71,6 +71,8 @@ static void _ecore_con_event_server_add_free(void *data, void *ev);
 static void _ecore_con_event_server_del_free(void *data, void *ev);
 static void _ecore_con_event_server_data_free(void *data, void *ev);
 
+static void _ecore_con_lookup_done(void *data, Ecore_Con_Info *infos);
+
 EAPI int ECORE_CON_EVENT_CLIENT_ADD = 0;
 EAPI int ECORE_CON_EVENT_CLIENT_DEL = 0;
 EAPI int ECORE_CON_EVENT_SERVER_ADD = 0;
@@ -740,6 +742,68 @@ ecore_con_client_flush(Ecore_Con_Client *cl)
 	return;
      }
    _ecore_con_client_flush(cl);
+}
+
+/**
+ * Do an asynchronous DNS lookup.
+ *
+ * @params name IP address or server name to translate.
+ * @params done_cb Callback to notify when done.
+ * @params data User data to be given to done_cb.
+ * @return EINA_TRUE if the request is going on, EINA_FALSE if it failed.
+ */
+EAPI Eina_Bool
+ecore_con_lookup(const char *name, Ecore_Con_Dns_Cb done_cb, const void *data)
+{
+   Ecore_Con_Server *svr;
+   Ecore_Con_Lookup *lk;
+   struct addrinfo hints;
+
+   if (!name || !done_cb)
+     return EINA_FALSE;
+
+   svr = calloc(1, sizeof(Ecore_Con_Server));
+   if (!svr) return EINA_FALSE;
+
+   lk = malloc(sizeof (Ecore_Con_Lookup));
+   if (!lk)
+     {
+	free(svr);
+	return EINA_FALSE;
+     }
+
+   lk->done_cb = done_cb;
+   lk->data = data;
+
+   svr->name = strdup(name);
+   if (!svr->name) goto on_error;
+
+   svr->type = ECORE_CON_REMOTE_TCP;
+   svr->port = 1025;
+   svr->data = lk;
+   svr->created = 1;
+   svr->reject_excess_clients = 0;
+   svr->client_limit = -1;
+   svr->clients = NULL;
+   svr->ppid = getpid();
+
+   memset(&hints, 0, sizeof(struct addrinfo));
+   hints.ai_family = AF_INET6;
+   hints.ai_socktype = SOCK_STREAM;
+   hints.ai_flags = AI_CANONNAME;
+   hints.ai_protocol = IPPROTO_TCP;
+   hints.ai_canonname = NULL;
+   hints.ai_next = NULL;
+   hints.ai_addr = NULL;
+
+   if (ecore_con_info_get(svr, _ecore_con_lookup_done, svr, &hints))
+     return EINA_TRUE;
+
+   free(svr->name);
+ on_error:
+   free(lk);
+   free(svr);
+   return EINA_FALSE;
 }
 
 static void
@@ -1711,3 +1775,23 @@ _ecore_con_event_server_data_free(void *data __UNUSED__, void *ev)
      _ecore_con_server_free(e->server);
    free(e);
 }
+
+static void
+_ecore_con_lookup_done(void *data, Ecore_Con_Info *infos)
+{
+   Ecore_Con_Server *svr;
+   Ecore_Con_Lookup *lk;
+
+   svr = data;
+   lk = svr->data;
+
+   if (infos)
+     lk->done_cb(infos->info.ai_canonname, infos->ip, infos->info.ai_addr, infos->info.ai_addrlen, (void*) lk->data);
+   else
+     lk->done_cb(NULL, NULL, NULL, 0, (void*) lk->data);
+
+   free(svr->name);
+   free(lk);
+   free(svr);
+}
+

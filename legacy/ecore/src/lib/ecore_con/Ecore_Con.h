@@ -75,9 +75,12 @@ extern "C" {
    typedef struct _Ecore_Con_Server  Ecore_Con_Server; /**< A connection handle */
    typedef struct _Ecore_Con_Client  Ecore_Con_Client; /**< A connection handle */
    typedef struct _Ecore_Con_Url     Ecore_Con_Url;
-   typedef struct _Ecore_Con_Info    Ecore_Con_Info;
 
-   typedef void (*Ecore_Con_Info_Cb)(void *data, Ecore_Con_Info *infos);
+   typedef void (*Ecore_Con_Dns_Cb)(const char *canonname,
+				    const char *ip,
+				    struct sockaddr *addr,
+				    int addrlen,
+				    void *data);
 
    typedef enum _Ecore_Con_Type
      {
@@ -89,7 +92,7 @@ extern "C" {
 	ECORE_CON_REMOTE_UDP       = 5,
 	ECORE_CON_REMOTE_BROADCAST = 6,
 	ECORE_CON_REMOTE_NODELAY   = 7,
-          
+
 	ECORE_CON_USE_SSL2 = (1 << 4),
 	ECORE_CON_USE_SSL3 = (1 << 5),
 	ECORE_CON_USE_TLS  = (1 << 6)
@@ -227,7 +230,7 @@ extern "C" {
    EAPI int               ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length, const char *content_type);
    EAPI void              ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition, time_t tm);
 
-   EAPI int		  ecore_con_info_get(Ecore_Con_Server *svr, Ecore_Con_Info_Cb done_cb, void *data, struct addrinfo *hints);
+   EAPI Eina_Bool         ecore_con_lookup(const char *name, Ecore_Con_Dns_Cb done_cb, const void *data);
 
    EAPI int		  ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename, const char *user, const char *pass, const char *upload_dir);
    EAPI void		  ecore_con_url_verbose_set(Ecore_Con_Url *url_con, int verbose);

@@ -54,6 +54,11 @@ extern int  _ecore_con_log_dom ;
 #endif
 #define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_con_log_dom, __VA_ARGS__)
 
+typedef struct _Ecore_Con_Lookup Ecore_Con_Lookup;
+typedef struct _Ecore_Con_Info Ecore_Con_Info;
+
+typedef void (*Ecore_Con_Info_Cb)(void *data, Ecore_Con_Info *infos);
+
 typedef enum _Ecore_Con_State
   {
     ECORE_CON_CONNECTED,
@@ -163,6 +168,12 @@ struct _Ecore_Con_Info
    char		   service[NI_MAXSERV];
 };
 
+struct _Ecore_Con_Lookup
+{
+   Ecore_Con_Dns_Cb done_cb;
+   const void *data;
+};
+
 /* from ecore_local.c */
 int ecore_con_local_init(void);
 int ecore_con_local_shutdown(void);
@@ -190,6 +201,12 @@ Ecore_Con_Ssl_Error ecore_con_ssl_client_shutdown(Ecore_Con_Client *svr);
 Ecore_Con_State     ecore_con_ssl_client_try(Ecore_Con_Client *svr);
 int                 ecore_con_ssl_client_read(Ecore_Con_Client *svr, unsigned char *buf, int size);
 int                 ecore_con_ssl_client_write(Ecore_Con_Client *svr, unsigned char *buf, int size);
+
+int		    ecore_con_info_get(Ecore_Con_Server *svr,
+				       Ecore_Con_Info_Cb done_cb,
+				       void *data,
+				       struct addrinfo *hints);
+
 
 
 #endif
