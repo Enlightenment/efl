@@ -326,17 +326,32 @@ elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, co
 EAPI void
 elm_slideshow_show(Elm_Slideshow_Item *item)
 {
-   Widget_Data *wd = elm_widget_data_get(item->obj);
-   if (!wd) return;
-   if (item == wd->current) return;
+   char buf[1024];
+   Elm_Slideshow_Item *next = NULL;
+   Widget_Data *wd;
+   if (!item)
+     return;
+   ELM_CHECK_WIDTYPE(item->obj, widtype);
+   wd = elm_widget_data_get(item->obj);
+   if (!wd)
+     return;
+   if (item == wd->current)
+     return;
 
+   next = item;
    _end(item->obj, item->obj, NULL, NULL);
 
+   if (wd->timer) ecore_timer_del(wd->timer);
+   if (wd->timeout > 0)
+	   wd->timer = ecore_timer_add(wd->timeout, _timer_cb, item->obj);
+   _item_realize(next);
+   edje_object_part_swallow(wd->slideshow, "elm.swallow.2", next->o);
+   evas_object_show(next->o);
+   snprintf(buf, sizeof(buf), "%s,next", wd->transition);
+   edje_object_signal_emit(wd->slideshow, buf, "slideshow");
    wd->previous = wd->current;
-   wd->current = item;
-   _item_realize(item);
+   wd->current = next;
 
-   _end(item->obj, item->obj, NULL, NULL);
 }
 
 /**
