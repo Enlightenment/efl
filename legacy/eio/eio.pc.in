@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: eio
+Description: Enlightenned Asynchronous Input Output library
+@pkgconfig_requires_private@: @requirements_eio@
+Version: @VERSION@
+Libs: -L${libdir} -leio
+Libs.private: -lm
+Cflags: -I${includedir}/eio-@VMAJ@
