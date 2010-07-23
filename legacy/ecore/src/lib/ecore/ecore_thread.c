@@ -61,14 +61,15 @@ static int ECORE_THREAD_PIPE_DEL = 0;
 
 #ifdef EFL_HAVE_PTHREAD
 static int _ecore_thread_count = 0;
-static Eina_Hash *_ecore_thread_global_hash = NULL;
+
 static Eina_List *_ecore_active_job_threads = NULL;
 static Eina_List *_ecore_pending_job_threads = NULL;
 static Eina_List *_ecore_pending_job_threads_long = NULL;
 static Ecore_Event_Handler *del_handler = NULL;
-
 static pthread_mutex_t _ecore_pending_job_threads_mutex = PTHREAD_MUTEX_INITIALIZER;
 
+static Eina_Hash *_ecore_thread_global_hash = NULL;
+static pthread_rwlock_t _ecore_thread_global_hash_lock = PTHREAD_RWLOCK_INITIALIZER;
 static void
 _ecore_thread_pipe_free(void *data __UNUSED__, void *event)
 {
@@ -922,6 +923,129 @@ ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key)
    return EINA_TRUE;
 #endif
 }
+
+/**
+ * @brief Add data to the global data
+ * @param key The name string to add the data with
+ * @param value The data to add
+ * @param direct If true, this will not copy the key string (like eina_hash_direct_add)
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ * This adds data to the global thread data, and will return EINA_FALSE in any case but success.
+ * All data added to global should be manually freed to avoid stale pointers in the global thread data.
+ */
+EAPI Eina_Bool
+ecore_thread_global_data_add(const char *key, const void *value, Eina_Bool direct)
+{
+   Eina_Bool ret;
+   if ((!key) || (!value))
+     return EINA_FALSE;
+#ifdef EFL_HAVE_PTHREAD
+   pthread_rwlock_wrlock(&_ecore_thread_global_hash_lock);
+   if (!_ecore_thread_global_hash)
+     _ecore_thread_global_hash = eina_hash_string_small_new(NULL);
+   pthread_rwlock_unlock(&_ecore_thread_global_hash_lock);
+
+   if (!_ecore_thread_global_hash)
+     return EINA_FALSE;
+   pthread_rwlock_wrlock(&_ecore_thread_global_hash_lock);
+   if (direct)
+     ret = eina_hash_direct_add(_ecore_thread_global_hash, key, value);
+   else
+     ret = eina_hash_add(_ecore_thread_global_hash, key, value);
+   pthread_rwlock_unlock(&_ecore_thread_global_hash_lock);
+   return ret;
+#else
+   return EINA_TRUE;
+#endif
+}
+
+/**
+ * @brief Add data to the global data
+ * @param key The name string to add the data with
+ * @param value The data to add
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ * This adds data to the global thread data and returns NULL, or replaces the previous data
+ * associated with @p key and returning the previous data if it existed.  To see if an error occurred,
+ * one must use eina_error_get.
+ * All data added to global should be manually freed to avoid stale pointers in the global thread data.
+ */
+EAPI void *
+ecore_thread_global_data_set(const char *key, const void *value)
+{
+   void *ret;
+   if ((!key) || (!value))
+     return NULL;
+#ifdef EFL_HAVE_PTHREAD
+   pthread_rwlock_wrlock(&_ecore_thread_global_hash_lock);
+   if (!_ecore_thread_global_hash)
+     _ecore_thread_global_hash = eina_hash_string_small_new(NULL);
+   pthread_rwlock_unlock(&_ecore_thread_global_hash_lock);
+
+   if (!_ecore_thread_global_hash)
+     return NULL;
+
+   pthread_rwlock_wrlock(&_ecore_thread_global_hash_lock);
+   ret = eina_hash_set(_ecore_thread_global_hash, key, value);
+   pthread_rwlock_unlock(&_ecore_thread_global_hash_lock);
+   return ret;
+#else
+   return NULL;
+#endif
+}
+
+/**
+ * @brief Find data in the global data
+ * @param key The name string the data is associated with
+ * @return The value, or NULL on error
+ * This finds data in the global data that has been previously added with @ref ecore_thread_global_data_add
+ * This function will return NULL in any case but success.
+ */
+
+EAPI void *
+ecore_thread_global_data_find(const char *key)
+{
+   void *ret;
+   if (!key)
+     return NULL;
+#ifdef EFL_HAVE_PTHREAD
+   if (!_ecore_thread_global_hash) return NULL;
+
+   pthread_rwlock_rdlock(&_ecore_thread_global_hash_lock);
+   ret = eina_hash_find(_ecore_thread_global_hash, key);
+   pthread_rwlock_unlock(&_ecore_thread_global_hash_lock);
+   return ret;
+#else
+   return NULL;
+#endif
+}
+
+/**
+ * @brief Delete data from the global data
+ * @param key The name string the data is associated with
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ * This deletes the data pointer from the global data which was previously added with @ref ecore_thread_global_data_add
+ * This function will return EINA_FALSE in any case but success.
+ * Note that this WILL NOT free the data, it merely removes it from the global set.
+ */
+EAPI Eina_Bool
+ecore_thread_global_data_del(const char *key)
+{
+   Eina_Bool ret;
+   if (!key)
+     return EINA_FALSE;
+#ifdef EFL_HAVE_PTHREAD
+   if (!_ecore_thread_global_hash)
+     return EINA_FALSE;
+
+   pthread_rwlock_wrlock(&_ecore_thread_global_hash_lock);
+   ret = eina_hash_del_by_key(_ecore_thread_global_hash, key);
+   pthread_rwlock_unlock(&_ecore_thread_global_hash_lock);
+   return ret;
+#else
+   return EINA_TRUE;
+#endif
+}
+
 
 /**
  * @}
