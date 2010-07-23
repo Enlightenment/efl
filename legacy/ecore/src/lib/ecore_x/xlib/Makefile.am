@@ -79,8 +79,6 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 @EINA_LIBS@
 
-libecore_x_xlib_la_LDFLAGS = -version-info @version_info@
-
 endif
 
 EXTRA_DIST = ecore_x_private.h
