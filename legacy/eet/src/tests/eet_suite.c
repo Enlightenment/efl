@@ -1528,8 +1528,8 @@ START_TEST(eet_cache_concurrency)
 # else
    ret = WaitForSingleObject((HANDLE)thread, INFINITE);
    fail_if(ret != WAIT_OBJECT_0);
-   fail_if(GetExitCoeThread((HANDLE)thread, &ret) == FALSE);
-   fail_if(ret != 0)
+   fail_if(GetExitCodeThread((HANDLE)thread, &ret) == FALSE);
+   fail_if(ret != 0);
 # endif
 
    fail_if(unlink(file) != 0);
