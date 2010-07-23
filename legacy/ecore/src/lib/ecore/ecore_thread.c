@@ -126,7 +126,8 @@ _ecore_thread_handler(void *data __UNUSED__, void *buffer, unsigned int nbyte)
         ecore_pipe_del(work->u.long_run.notify);
    pthread_cond_destroy(&work->cond);
    pthread_mutex_destroy(&work->mutex);
-   eina_hash_free(work->hash);
+   if (work->hash)
+     eina_hash_free(work->hash);
    free(work);
 }
 
@@ -333,7 +334,8 @@ _ecore_thread_shutdown(void)
 
         ecore_pipe_del(pth->p);
      }
-   eina_hash_free(_ecore_thread_global_hash);
+   if (_ecore_thread_global_hash)
+     eina_hash_free(_ecore_thread_global_hash);
    ecore_event_handler_del(del_handler);
    del_handler = NULL;
 #endif
