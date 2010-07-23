@@ -26,27 +26,39 @@
 
 #include "Eio.h"
 
-struct _Eio_List
+typedef struct _Eio_File_Ls Eio_File_Ls;
+typedef struct _Eio_File_Direct_Ls Eio_File_Direct_Ls;
+typedef struct _Eio_File_Char_Ls Eio_File_Char_Ls;
+
+struct _Eio_File
 {
-   Eina_Iterator *it;
    Ecore_Thread *thread;
    const void *data;
 
-   Eio_Done_Cb done;
+   Eio_Done_Cb done_cb;
+   Eio_Done_Cb error_cb;
+};
 
-   union
-   {
-      struct
-      {
-	 Eio_Filter_Direct_Cb filter;
-	 Eio_Main_Direct_Cb main;
-      } direct;
-      struct
-      {
-	 Eio_Filter_Cb filter;
-	 Eio_Main_Cb main;
-      } str;
-   } u;
+struct _Eio_File_Ls
+{
+   Eio_File common;
+   const char *directory;
+};
+
+struct _Eio_File_Direct_Ls
+{
+   Eio_File_Ls ls;
+
+   Eio_Filter_Direct_Cb filter_cb;
+   Eio_Main_Direct_Cb main_cb;
+};
+
+struct _Eio_File_Char_Ls
+{
+   Eio_File_Ls ls;
+
+   Eio_Filter_Cb filter_cb;
+   Eio_Main_Cb main_cb;
 };
 
 static int _eio_count = 0;
@@ -54,36 +66,49 @@ static int _eio_count = 0;
 static void
 _eio_file_heavy(Ecore_Thread *thread, void *data)
 {
-   Eio_List *async;
+   Eio_File_Char_Ls *async;
+   Eina_Iterator *ls;
    const char *file;
 
    async = data;
 
-   EINA_ITERATOR_FOREACH(async->it, file)
+   ls = eina_file_ls(async->ls.directory);
+   if (!ls)
+     {
+	ecore_thread_cancel(thread);
+	return ;
+     }
+
+   EINA_ITERATOR_FOREACH(ls, file)
      {
 	Eina_Bool filter = EINA_TRUE;
 
-	if (async->u.str.filter)
+	if (async->filter_cb)
 	  {
-	     filter = async->u.str.filter(file, (void*) async->data);
+	     filter = async->filter_cb(file, (void*) async->ls.common.data);
 	  }
 
 	if (filter) ecore_thread_notify(thread, file);
 	else eina_stringshare_del(file);
+
+	if (ecore_thread_check(thread))
+	  break;
      }
+
+   eina_iterator_free(ls);
 }
 
 static void
-_eio_file_notify(__UNUSED__ Ecore_Thread *thread, void *msg_data, void *data)
+_eio_file_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
 {
-   Eio_List *async;
+   Eio_File_Char_Ls *async;
    const char *file;
 
    async = data;
    file = msg_data;
 
-   if (async->u.str.main)
-     async->u.str.main(file, (void*) async->data);
+   if (async->main_cb)
+     async->main_cb(file, (void*) async->ls.common.data);
 
    eina_stringshare_del(file);
 }
@@ -91,18 +116,26 @@ _eio_file_notify(__UNUSED__ Ecore_Thread *thread, void *msg_data, void *data)
 static void
 _eio_file_direct_heavy(Ecore_Thread *thread, void *data)
 {
-   Eio_List *async;
+   Eio_File_Direct_Ls *async;
+   Eina_Iterator *ls;
    const Eina_File_Direct_Info *info;
 
    async = data;
 
-   EINA_ITERATOR_FOREACH(async->it, info)
+   ls = eina_file_direct_ls(async->ls.directory);
+   if (!ls)
+     {
+	ecore_thread_cancel(thread);
+	return ;
+     }
+
+   EINA_ITERATOR_FOREACH(ls, info)
      {
 	Eina_Bool filter = EINA_TRUE;
 
-	if (async->u.direct.filter)
+	if (async->filter_cb)
 	  {
-	     filter = async->u.direct.filter(info, (void*) async->data);
+	     filter = async->filter_cb(info, (void*) async->ls.common.data);
 	  }
 
 	if (filter)
@@ -115,20 +148,25 @@ _eio_file_direct_heavy(Ecore_Thread *thread, void *data)
 	     memcpy(send, info, sizeof (Eina_File_Direct_Info));
 	     ecore_thread_notify(thread, send);
 	  }
+
+	if (ecore_thread_check(thread))
+	  break;
      }
+
+   eina_iterator_free(ls);
 }
 
 static void
-_eio_file_direct_notify(__UNUSED__ Ecore_Thread *thread, void *msg_data, void *data)
+_eio_file_direct_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
 {
-   Eio_List *async;
+   Eio_File_Direct_Ls *async;
    Eina_File_Direct_Info *info;
 
    async = data;
    info = msg_data;
 
-   if (async->u.direct.main)
-     async->u.direct.main(info, (void*) async->data);
+   if (async->main_cb)
+     async->main_cb(info, (void*) async->ls.common.data);
 
    free(info);
 }
@@ -136,14 +174,28 @@ _eio_file_direct_notify(__UNUSED__ Ecore_Thread *thread, void *msg_data, void *d
 static void
 _eio_file_end(void *data)
 {
-   Eio_List *async;
+   Eio_File_Ls *async;
 
    async = data;
 
-   if (async->done)
-     async->done((void*) async->data);
+   if (async->common.done_cb)
+     async->common.done_cb((void*) async->common.data);
 
-   eina_iterator_free(async->it);
+   eina_stringshare_del(async->directory);
+   free(async);
+}
+
+static void
+_eio_file_error(void *data)
+{
+   Eio_File_Ls *async;
+
+   async = data;
+
+   if (async->common.error_cb)
+     async->common.error_cb((void*) async->common.data);
+
+   eina_stringshare_del(async->directory);
    free(async);
 }
 
@@ -172,86 +224,103 @@ eio_shutdown(void)
    return _eio_count;
 }
 
-EAPI Eio_List *
+/**
+ * @brief List content of a directory without locking your app.
+ * @param dir The directory to list.
+ * @param filter_cb Callback called from another thread.
+ * @param main_cb Callback called from the main loop for each accepted file.
+ * @param done_cb Callback called from the main loop when the content of the directory has been listed.
+ * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
+ * @return A reference to the IO operation.
+ *
+ * eio_file_ls run eina_file_ls in a separated thread using ecore_long_run. This prevent
+ * any lock in your apps.
+ */
+EAPI Eio_File *
 eio_file_ls(const char *dir,
-	       Eio_Filter_Cb filter,
-	       Eio_Main_Cb main,
-	       Eio_Done_Cb done,
-	       const void *data)
+	    Eio_Filter_Cb filter_cb,
+	    Eio_Main_Cb main_cb,
+	    Eio_Done_Cb done_cb,
+	    Eio_Done_Cb error_cb,
+	    const void *data)
 {
-   Eina_Iterator *ls;
-   Eio_List *async = NULL;
+   Eio_File_Char_Ls *async = NULL;
 
-   ls = eina_file_ls(dir);
-   if (!ls) return NULL;
-
-   async = malloc(sizeof (Eio_List));
+   async = malloc(sizeof (Eio_File_Char_Ls));
    if (!async) goto on_error;
 
-   async->u.str.filter = filter;
-   async->u.str.main = main;
-   async->done = done;
-   async->data = data;
-   async->it = ls;
-   async->thread = ecore_long_run(_eio_file_heavy,
-				  _eio_file_notify,
-				  _eio_file_end,
-				  _eio_file_end,
-				  async,
-				  EINA_FALSE);
-   if (!async->thread) goto on_error;
+   async->filter_cb = filter_cb;
+   async->main_cb = main_cb;
+   async->ls.directory = eina_stringshare_add(dir);
+   async->ls.common.done_cb = done_cb;
+   async->ls.common.error_cb = error_cb;
+   async->ls.common.data = data;
+   async->ls.common.thread = ecore_long_run(_eio_file_heavy,
+					    _eio_file_notify,
+					    _eio_file_end,
+					    _eio_file_error,
+					    async,
+					    EINA_FALSE);
+   if (!async->ls.common.thread) goto on_error;
 
-   return async;
-
+   return &async->ls.common;
 
  on_error:
    free(async);
-   eina_iterator_free(ls);
    return NULL;
 }
 
-EAPI Eio_List *
+/**
+ * @brief List content of a directory without locking your app.
+ * @param dir The directory to list.
+ * @param filter_cb Callback called from another thread.
+ * @param main_cb Callback called from the main loop for each accepted file.
+ * @param done_cb Callback called from the main loop when the content of the directory has been listed.
+ * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
+ * @return A reference to the IO operation.
+ *
+ * eio_file_direct_ls run eina_file_direct_ls in a separated thread using
+ * ecore_long_run. This prevent any lock in your apps.
+ */
+EAPI Eio_File *
 eio_file_direct_ls(const char *dir,
-		      Eio_Filter_Direct_Cb filter,
-		      Eio_Main_Direct_Cb main,
-		      Eio_Done_Cb done,
-		      const void *data)
+		   Eio_Filter_Direct_Cb filter_cb,
+		   Eio_Main_Direct_Cb main_cb,
+		   Eio_Done_Cb done_cb,
+		   Eio_Done_Cb error_cb,
+		   const void *data)
 {
-   Eina_Iterator *ls;
-   Eio_List *async = NULL;
+   Eio_File_Direct_Ls *async = NULL;
 
-   ls = eina_file_direct_ls(dir);
-   if (!ls) return NULL;
-
-   async = malloc(sizeof (Eio_List));
+   async = malloc(sizeof (Eio_File_Direct_Ls));
    if (!async) goto on_error;
 
-   async->u.direct.filter = filter;
-   async->u.direct.main = main;
-   async->done = done;
-   async->data = data;
-   async->it = ls;
-   async->thread = ecore_long_run(_eio_file_direct_heavy,
-				  _eio_file_direct_notify,
-				  _eio_file_end,
-				  _eio_file_end,
-				  async,
-				  EINA_FALSE);
-   if (!async->thread) goto on_error;
+   async->filter_cb = filter_cb;
+   async->main_cb = main_cb;
+   async->ls.directory = eina_stringshare_add(dir);
+   async->ls.common.done_cb = done_cb;
+   async->ls.common.error_cb = error_cb;
+   async->ls.common.data = data;
+   async->ls.common.thread = ecore_long_run(_eio_file_direct_heavy,
+					 _eio_file_direct_notify,
+					 _eio_file_end,
+					 _eio_file_error,
+					 async,
+					 EINA_FALSE);
+   if (!async->ls.common.thread) goto on_error;
 
-   return async;
+   return &async->ls.common;
 
 
  on_error:
    free(async);
-   eina_iterator_free(ls);
    return NULL;
 }
 
 EAPI Eina_Bool
-eio_file_cancel(Eio_List *list)
+eio_file_cancel(Eio_File *ls)
 {
-   return ecore_thread_cancel(list->thread);
+   return ecore_thread_cancel(ls->thread);
 }
 
 

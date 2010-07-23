@@ -32,7 +32,7 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_ECORE_BUILD
+# ifdef EFL_EIO_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
@@ -40,7 +40,7 @@
 #  endif /* ! DLL_EXPORT */
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_ECORE_BUILD */
+# endif /* ! EFL_EIO_BUILD */
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -53,7 +53,7 @@
 # endif
 #endif /* ! _WIN32 */
 
-typedef struct _Eio_List Eio_List;
+typedef struct _Eio_File Eio_File;
 
 typedef Eina_Bool (*Eio_Filter_Cb)(const char *file, void *data);
 typedef void (*Eio_Main_Cb)(const char *file, void *data);
@@ -66,18 +66,20 @@ typedef void (*Eio_Done_Cb)(void *data);
 EAPI int eio_init(void);
 EAPI int eio_shutdown(void);
 
-EAPI Eio_List *eio_file_ls(const char *dir,
-				 Eio_Filter_Cb filter,
-				 Eio_Main_Cb main,
-				 Eio_Done_Cb done,
-				 const void *data);
+EAPI Eio_File *eio_file_ls(const char *dir,
+			   Eio_Filter_Cb filter_cb,
+			   Eio_Main_Cb main_cb,
+			   Eio_Done_Cb done_cb,
+			   Eio_Done_Cb error_cb,
+			   const void *data);
 
-EAPI Eio_List *eio_file_direct_ls(const char *dir,
-					Eio_Filter_Direct_Cb filter,
-					Eio_Main_Direct_Cb main,
-					Eio_Done_Cb done,
-					const void *data);
+EAPI Eio_File *eio_file_direct_ls(const char *dir,
+				  Eio_Filter_Direct_Cb filter_cb,
+				  Eio_Main_Direct_Cb main_cb,
+				  Eio_Done_Cb done_cb,
+				  Eio_Done_Cb error_cb,
+				  const void *data);
 
-EAPI Eina_Bool eio_file_cancel(Eio_List *list);
+EAPI Eina_Bool eio_file_cancel(Eio_File *ls);
 
 #endif
