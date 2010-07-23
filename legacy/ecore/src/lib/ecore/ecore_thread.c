@@ -849,6 +849,38 @@ ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, const void *va
 #endif
 }
 
+/**
+ * @brief Modify data in the pool, or add if not found
+ * @param thread The thread context
+ * @param key The name string to add the data with
+ * @param value The data to add
+ * @param direct If true, this will not copy the key string (like eina_hash_direct_add)
+ * @return The old data associated with @p key on success if modified, NULL if added
+ * This adds/modifies data in the thread context, adding only if modify fails.
+ * This function can only be called by a heavy_run thread INSIDE the thread.
+ * All data added to the thread pool must be freed in the thread's func_end/func_cancel
+ * functions to avoid leaks.
+ */
+EAPI void *
+ecore_thread_pool_data_modify_or_add(Ecore_Thread *thread, const char *key, const void *value)
+{
+   Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
+   if ((!thread) || (!key) || (!value))
+     return NULL;
+#ifdef EFL_HAVE_PTHREAD
+   if (worker->u.long_run.self != pthread_self()) return NULL;
+
+   if (!worker->u.long_run.hash)
+     worker->u.long_run.hash = eina_hash_string_small_new(NULL);
+
+   if (!worker->u.long_run.hash)
+     return NULL;
+
+   return eina_hash_modify_or_add(worker->u.long_run.hash, key, value);
+#else
+   return NULL;
+#endif
+}
 
 /**
  * @brief Find data in the pool's data
