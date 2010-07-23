@@ -925,6 +925,47 @@ ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key)
 }
 
 /**
+ * @brief Find data in the pool data and optionally wait for the data if not found
+ * @param key The name string the data is associated with
+ * @param seconds The amount of time in seconds to wait for the data.  If 0, the call will be async and not wait for data.
+ * If < 0 the call will wait indefinitely for the data.
+ * @return The value, or NULL on failure
+ * This finds data in the pool data that has been previously added with @ref ecore_thread_pool_data_add
+ * This function will return NULL in any case but success.
+ * Use @p seconds to specify the amount of time to wait.  Use > 0 for an actual wait time, 0 to not wait, and < 0 to wait indefinitely.
+ */
+EAPI void *
+ecore_thread_pool_data_wait(const char *key, double seconds)
+{
+   double time = 0;
+   void *ret;
+   Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
+   if ((!thread) || (!key))
+     return NULL;
+#ifdef EFL_HAVE_PTHREAD
+   if (worker->self != pthread_self()) return NULL;
+   if (seconds > 0)
+     time = ecore_time_get() + seconds;
+
+   while (1)
+     {
+        ret = eina_hash_find(thread->hash, key);
+        if ((ret) || (!seconds) || ((seconds > 0) && (time <= ecore_time_get())))
+          break;
+        //try to sleep for a reasonable amount of time
+        if (time)
+          usleep((seconds * 1000000) / 2);
+        else
+          usleep(1000000);
+     }
+   return ret;
+#else
+   return NULL;
+#endif
+}
+
+
+/**
  * @brief Add data to the global data
  * @param key The name string to add the data with
  * @param value The data to add
@@ -1046,6 +1087,47 @@ ecore_thread_global_data_del(const char *key)
 #endif
 }
 
+/**
+ * @brief Find data in the global data and optionally wait for the data if not found
+ * @param key The name string the data is associated with
+ * @param seconds The amount of time in seconds to wait for the data.  If 0, the call will be async and not wait for data.
+ * If < 0 the call will wait indefinitely for the data.
+ * @return The value, or NULL on failure
+ * This finds data in the global data that has been previously added with @ref ecore_thread_global_data_add
+ * This function will return NULL in any case but success.
+ * Use @p seconds to specify the amount of time to wait.  Use > 0 for an actual wait time, 0 to not wait, and < 0 to wait indefinitely.
+ */
+EAPI void *
+ecore_thread_global_data_wait(const char *key, double seconds)
+{
+   double time = 0;
+   void *ret = NULL;
+   if (!key)
+     return NULL;
+#ifdef EFL_HAVE_PTHREAD
+   if (!_ecore_thread_global_hash)
+     return NULL;
+   if (seconds > 0)
+     time = ecore_time_get() + seconds;
+
+   while (1)
+     {
+        pthread_rwlock_rdlock(&_ecore_thread_global_hash_lock);
+        ret = eina_hash_find(_ecore_thread_global_hash, key);
+        pthread_rwlock_unlock(&_ecore_thread_global_hash_lock);
+        if ((ret) || (!seconds) || ((seconds > 0) && (time <= ecore_time_get())))
+          break;
+        //try to sleep for a reasonable amount of time
+        if (time)
+          usleep((seconds * 1000000) / 2);
+        else
+          usleep(1000000);
+     }
+   return ret;
+#else
+   return NULL;
+#endif
+}
 
 /**
  * @}

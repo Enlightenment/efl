@@ -371,6 +371,7 @@ extern "C" {
    EAPI void         *ecore_thread_global_data_set(const char *key, const void *value);
    EAPI void         *ecore_thread_global_data_find(const char *key);
    EAPI Eina_Bool     ecore_thread_global_data_del(const char *key);
+   EAPI void         *ecore_thread_global_data_wait(const char *key, double seconds);
 
 
    EAPI double ecore_time_get(void);
