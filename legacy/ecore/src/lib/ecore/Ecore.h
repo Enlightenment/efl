@@ -365,6 +365,7 @@ extern "C" {
            const void *value);
    EAPI void         *ecore_thread_pool_data_find(Ecore_Thread *thread, const char *key);
    EAPI Eina_Bool     ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key);
+   EAPI void         *ecore_thread_pool_data_wait(Ecore_Thread *thread, const char *key, double seconds);
 
    EAPI Eina_Bool     ecore_thread_global_data_add(const char *key, const void *value,
            Eina_Bool direct);

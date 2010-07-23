@@ -935,7 +935,7 @@ ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key)
  * Use @p seconds to specify the amount of time to wait.  Use > 0 for an actual wait time, 0 to not wait, and < 0 to wait indefinitely.
  */
 EAPI void *
-ecore_thread_pool_data_wait(const char *key, double seconds)
+ecore_thread_pool_data_wait(Ecore_Thread *thread, const char *key, double seconds)
 {
    double time = 0;
    void *ret;
@@ -949,7 +949,7 @@ ecore_thread_pool_data_wait(const char *key, double seconds)
 
    while (1)
      {
-        ret = eina_hash_find(thread->hash, key);
+        ret = eina_hash_find(worker->hash, key);
         if ((ret) || (!seconds) || ((seconds > 0) && (time <= ecore_time_get())))
           break;
         //try to sleep for a reasonable amount of time
