@@ -819,6 +819,7 @@ ecore_thread_available_get(void)
  * @param thread The thread context to add to
  * @param key The name string to add the data with
  * @param value The data to add
+ * @param direct If true, this will not copy the key string (like eina_hash_direct_add)
  * @return EINA_TRUE on success, EINA_FALSE on failure
  * This adds data to the thread context, allowing for subsequent users of the thread's pool
  * to retrieve and use it without complicated mutexing.  This function can only be called by a
@@ -827,7 +828,7 @@ ecore_thread_available_get(void)
  * functions to avoid leaks.
  */
 EAPI Eina_Bool
-ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, const void *value)
+ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, const void *value, Eina_Bool direct)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
    if ((!thread) || (!key) || (!value))
@@ -840,12 +841,14 @@ ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, const void *va
 
    if (!worker->u.long_run.hash)
      return EINA_FALSE;
-
+   if (direct)
+     return eina_hash_direct_add(worker->u.long_run.hash, key, value);
    return eina_hash_add(worker->u.long_run.hash, key, value);
 #else
    return EINA_TRUE;
 #endif
 }
+
 
 /**
  * @brief Find data in the pool's data
