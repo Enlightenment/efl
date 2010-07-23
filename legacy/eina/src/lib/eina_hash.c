@@ -676,6 +676,14 @@ eina_hash_new(Eina_Key_Length key_length_cb,
    return NULL;
 }
 
+/**
+ * @brief Create a new hash using the djb2 algorithm.
+ * @param data_free_cb The function to call on values when the hash table is freed
+ * @return The @ref Eina_Hash object, or @c NULL on error
+ * Use to create a new hash using the djb2 algorithm for table management and strcmp to compare keys.
+ * NOTE: If your hash is created by this, you CAN look up values with pointers other
+ * than the original key pointer that was used to add a value.
+ */
 EAPI Eina_Hash *
 eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb)
 {
@@ -690,7 +698,7 @@ eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb)
  * @brief Create a new hash for use with strings.
  * @param data_free_cb The function to call on values when the hash table is freed
  * @return The @ref Eina_Hash object, or @c NULL on error
- * Use to create a new hash for use with strings.
+ * Use to create a new hash using the superfast algorithm for table management and strcmp to compare keys.
  * NOTE: If your hash is created by this, you CAN look up values with pointers other
  * than the original key pointer that was used to add a value.
  */
@@ -709,7 +717,8 @@ eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb)
  * function to use, use this one.
  * @param data_free_cb The function to call on values when the hash table is freed
  * @return The @ref Eina_Hash object, or @c NULL on error
- * Use to create a new hash with small bucket size for use with strings.
+ * Use to create a new hash using the superfast algorithm for table management and strcmp to compare keys.
+ * This method also uses a reduced bucket size which will minimize the memory used by the table.
  * If you are unsure of which hash creation function to use, you should probably use this one.
  * NOTE: If your hash is created by this, you CAN look up values with pointers other
  * than the original key pointer that was used to add a value.
@@ -724,6 +733,16 @@ eina_hash_string_small_new(Eina_Free_Cb data_free_cb)
 			EINA_HASH_SMALL_BUCKET_SIZE);
 }
 
+/**
+ * @brief Create a new hash for use with 32bit ints
+ * @param data_free_cb The function to call on values when the hash table is freed
+ * @return The @ref Eina_Hash object, or @c NULL on error
+ * Use to create a new hash using the int32 algorithm for table management and dereferenced 
+ * pointers to compare keys.
+ * NOTE: If your hash is created by this, you CAN look up values with pointers other
+ * than the original key pointer that was used to add a value. Also note that while this method may 
+ * appear to be able to match string keys, it is really only matching the first character.
+ */
 EAPI Eina_Hash *
 eina_hash_int32_new(Eina_Free_Cb data_free_cb)
 {
@@ -734,6 +753,16 @@ eina_hash_int32_new(Eina_Free_Cb data_free_cb)
 			EINA_HASH_BUCKET_SIZE);
 }
 
+/**
+ * @brief Create a new hash for use with 64bit ints
+ * @param data_free_cb The function to call on values when the hash table is freed
+ * @return The @ref Eina_Hash object, or @c NULL on error
+ * Use to create a new hash using the int64 algorithm for table management and dereferenced 
+ * pointers to compare keys.
+ * NOTE: If your hash is created by this, you CAN look up values with pointers other
+ * than the original key pointer that was used to add a value. Also note that while this method may 
+ * appear to be able to match string keys, it is really only matching the first character.
+ */
 EAPI Eina_Hash *
 eina_hash_int64_new(Eina_Free_Cb data_free_cb)
 {
@@ -744,6 +773,16 @@ eina_hash_int64_new(Eina_Free_Cb data_free_cb)
 			EINA_HASH_BUCKET_SIZE);
 }
 
+/**
+ * @brief Create a new hash for use with pointers
+ * @param data_free_cb The function to call on values when the hash table is freed
+ * @return The @ref Eina_Hash object, or @c NULL on error
+ * Use to create a new hash using the int64 algorithm for table management and dereferenced 
+ * pointers to compare keys.
+ * NOTE: If your hash is created by this, you CAN look up values with pointers other
+ * than the original key pointer that was used to add a value. Also note that while this method may 
+ * appear to be able to match string keys, it is really only matching the first character.
+ */
 EAPI Eina_Hash *
 eina_hash_pointer_new(Eina_Free_Cb data_free_cb)
 {
@@ -1248,7 +1287,7 @@ eina_hash_modify_by_hash(Eina_Hash *hash, const void *key, int key_length, int k
  * of whether it is there.  To check for errors, use @ref eina_error_get
  */
 EAPI void *
-eina_hash_modify_or_add(Eina_Hash *hash, const void *key, const void *data)
+eina_hash_set(Eina_Hash *hash, const void *key, const void *data)
 {
    Eina_Hash_Tuple tuple;
    Eina_Hash_Head *eh;
