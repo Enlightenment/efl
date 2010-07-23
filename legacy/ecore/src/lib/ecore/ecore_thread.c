@@ -333,8 +333,9 @@ _ecore_thread_shutdown(void)
 #endif
 }
 /**
- * @defgroup Ecore_Thread Ecore Thread Functions
+ * @addtogroup Ecore_Thread Ecore Thread Functions
  * These functions allow for ecore-managed threads which integrate with ecore's main loop.
+ * @{
  */
 
 /**
@@ -921,3 +922,7 @@ ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key)
    return EINA_TRUE;
 #endif
 }
+
+/**
+ * @}
+ */
