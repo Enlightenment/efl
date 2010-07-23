@@ -236,6 +236,9 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
    work->func_cancel = NULL;
    work->cancel = EINA_FALSE;
    work->long_run = EINA_FALSE;
+   work->hash = NULL;
+   pthread_cond_init(&work->cond, NULL);
+   pthread_mutex_init(&work->mutex, NULL);
 
    ecore_pipe_write(pth->p, &work, sizeof (Ecore_Pthread_Worker *));
 
@@ -285,6 +288,9 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
    work->func_cancel = NULL;
    work->cancel = EINA_FALSE;
    work->long_run = EINA_FALSE;
+   work->hash = NULL;
+   pthread_cond_init(&work->cond, NULL);
+   pthread_mutex_init(&work->mutex, NULL);
 
    ecore_pipe_write(pth->p, &work, sizeof (Ecore_Pthread_Worker *));
 
