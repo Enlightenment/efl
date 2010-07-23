@@ -349,7 +349,7 @@ extern "C" {
            Eina_Bool try_no_queue);
    EAPI Eina_Bool     ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key,
            const void *value, Eina_Bool direct);
-   EAPI void         *ecore_thread_pool_data_modify_or_add(Ecore_Thread *thread, const char *key,
+   EAPI void         *ecore_thread_pool_data_set(Ecore_Thread *thread, const char *key,
            const void *value);
    EAPI void         *ecore_thread_pool_data_find(Ecore_Thread *thread, const char *key);
    EAPI Eina_Bool     ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key);

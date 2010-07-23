@@ -20,25 +20,24 @@ struct _Ecore_Pthread_Worker
 {
    union
      {
-       struct
-         {
-            void (*func_blocking)(void *data);
-         } short_run;
+        struct
+          {
+             void (*func_blocking)(void *data);
+           } short_run;
         struct
           {
              void (*func_heavy)(Ecore_Thread *thread, void *data);
              void (*func_notify)(Ecore_Thread *thread, void *msg_data, void *data);
-
              Ecore_Pipe *notify;
-             Eina_Hash *hash;
- #ifdef EFL_HAVE_PTHREAD
-             pthread_t self;
- #endif
           } long_run;
      } u;
 
     void (*func_cancel)(void *data);
     void (*func_end)(void *data);
+ #ifdef EFL_HAVE_PTHREAD
+    pthread_t self;
+    Eina_Hash *hash;
+ #endif
 
     const void *data;
 
@@ -119,10 +118,9 @@ _ecore_thread_handler(void *data __UNUSED__, void *buffer, unsigned int nbyte)
      }
 
    if (work->long_run)
-     {
         ecore_pipe_del(work->u.long_run.notify);
-        eina_hash_free(work->u.long_run.hash);
-     }
+
+   eina_hash_free(work->hash);
    free(work);
 }
 
@@ -186,7 +184,7 @@ _ecore_long_job(Ecore_Pipe *end_pipe, pthread_t thread)
 
         pthread_mutex_unlock(&_mutex);
 
-        work->u.long_run.self = thread;
+        work->self = thread;
         work->u.long_run.func_heavy((Ecore_Thread *) work, (void *) work->data);
 
         ecore_pipe_write(end_pipe, &work, sizeof (Ecore_Pthread_Worker *));
@@ -212,7 +210,7 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
      }
    pth->thread = pthread_self();
 
-   work->u.long_run.self = pth->thread;
+   work->self = pth->thread;
    work->u.long_run.func_heavy((Ecore_Thread *) work, (void *) work->data);
 
    ecore_pipe_write(pth->p, &work, sizeof (Ecore_Pthread_Worker *));
@@ -546,7 +544,7 @@ ecore_long_run(void (*func_heavy)(Ecore_Thread *thread, void *data),
 
    worker->u.long_run.func_heavy = func_heavy;
    worker->u.long_run.func_notify = func_notify;
-   worker->u.long_run.hash = NULL;
+   worker->hash = NULL;
    worker->func_cancel = func_cancel;
    worker->func_end = func_end;
    worker->data = data;
@@ -615,7 +613,7 @@ ecore_long_run(void (*func_heavy)(Ecore_Thread *thread, void *data),
     */
    worker.u.long_run.func_heavy = func_heavy;
    worker.u.long_run.func_notify = func_notify;
-   worker->u.long_run.hash = NULL;
+   worker->hash = NULL;
    worker.u.long_run.notify = NULL;
    worker.func_cancel = func_cancel;
    worker.func_end = func_end;
@@ -653,7 +651,7 @@ ecore_thread_notify(Ecore_Thread *thread, const void *data)
    if (!worker->long_run) return EINA_FALSE;
 
 #ifdef EFL_HAVE_PTHREAD
-   if (worker->u.long_run.self != pthread_self()) return EINA_FALSE;
+   if (worker->self != pthread_self()) return EINA_FALSE;
 
    ecore_pipe_write(worker->u.long_run.notify, &data, sizeof (void *));
 
@@ -674,12 +672,8 @@ ecore_thread_notify(Ecore_Thread *thread, const void *data)
 EAPI int
 ecore_thread_active_get(void)
 {
-   int ret;
 #ifdef EFL_HAVE_PTHREAD
-   pthread_mutex_lock(&_mutex);
-   ret = _ecore_thread_count;
-   pthread_mutex_unlock(&_mutex);
-   return ret;
+   return _ecore_thread_count;
 #else
    return 0;
 #endif
@@ -754,11 +748,6 @@ ecore_thread_pending_total_get(void)
 EAPI int
 ecore_thread_max_get(void)
 {
-   int ret;
-   pthread_mutex_lock(&_mutex);
-   ret = _ecore_thread_count_max;
-   pthread_mutex_unlock(&_mutex);
-
    return _ecore_thread_count_max;
 }
 
@@ -775,9 +764,7 @@ ecore_thread_max_set(int num)
    /* avoid doing something hilarious by blocking dumb users */
    if (num >= (2 * eina_cpu_count())) return;
 
-   pthread_mutex_lock(&_mutex);
    _ecore_thread_count_max = num;
-   pthread_mutex_unlock(&_mutex);
 }
 
 /**
@@ -788,9 +775,7 @@ ecore_thread_max_set(int num)
 EAPI void
 ecore_thread_max_reset(void)
 {
-   pthread_mutex_lock(&_mutex);
    _ecore_thread_count_max = eina_cpu_count();
-   pthread_mutex_unlock(&_mutex);
 }
 
 /**
@@ -823,7 +808,7 @@ ecore_thread_available_get(void)
  * @return EINA_TRUE on success, EINA_FALSE on failure
  * This adds data to the thread context, allowing for subsequent users of the thread's pool
  * to retrieve and use it without complicated mutexing.  This function can only be called by a
- * heavy_run thread INSIDE the thread and will return EINA_FALSE in any case but success.
+ * *_run thread INSIDE the thread and will return EINA_FALSE in any case but success.
  * All data added to the thread pool must be freed in the thread's func_end/func_cancel
  * functions to avoid leaks.
  */
@@ -834,16 +819,16 @@ ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, const void *va
    if ((!thread) || (!key) || (!value))
      return EINA_FALSE;
 #ifdef EFL_HAVE_PTHREAD
-   if (worker->u.long_run.self != pthread_self()) return EINA_FALSE;
+   if (worker->self != pthread_self()) return EINA_FALSE;
 
-   if (!worker->u.long_run.hash)
-     worker->u.long_run.hash = eina_hash_string_small_new(NULL);
+   if (!worker->hash)
+     worker->hash = eina_hash_string_small_new(NULL);
 
-   if (!worker->u.long_run.hash)
+   if (!worker->hash)
      return EINA_FALSE;
    if (direct)
-     return eina_hash_direct_add(worker->u.long_run.hash, key, value);
-   return eina_hash_add(worker->u.long_run.hash, key, value);
+     return eina_hash_direct_add(worker->hash, key, value);
+   return eina_hash_add(worker->hash, key, value);
 #else
    return EINA_TRUE;
 #endif
@@ -857,26 +842,26 @@ ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, const void *va
  * @param direct If true, this will not copy the key string (like eina_hash_direct_add)
  * @return The old data associated with @p key on success if modified, NULL if added
  * This adds/modifies data in the thread context, adding only if modify fails.
- * This function can only be called by a heavy_run thread INSIDE the thread.
+ * This function can only be called by a *_run thread INSIDE the thread.
  * All data added to the thread pool must be freed in the thread's func_end/func_cancel
  * functions to avoid leaks.
  */
 EAPI void *
-ecore_thread_pool_data_modify_or_add(Ecore_Thread *thread, const char *key, const void *value)
+ecore_thread_pool_data_set(Ecore_Thread *thread, const char *key, const void *value)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
    if ((!thread) || (!key) || (!value))
      return NULL;
 #ifdef EFL_HAVE_PTHREAD
-   if (worker->u.long_run.self != pthread_self()) return NULL;
+   if (worker->self != pthread_self()) return NULL;
 
-   if (!worker->u.long_run.hash)
-     worker->u.long_run.hash = eina_hash_string_small_new(NULL);
+   if (!worker->hash)
+     worker->hash = eina_hash_string_small_new(NULL);
 
-   if (!worker->u.long_run.hash)
+   if (!worker->hash)
      return NULL;
 
-   return eina_hash_modify_or_add(worker->u.long_run.hash, key, value);
+   return eina_hash_set(worker->hash, key, value);
 #else
    return NULL;
 #endif
@@ -888,7 +873,7 @@ ecore_thread_pool_data_modify_or_add(Ecore_Thread *thread, const char *key, cons
  * @param key The name string the data is associated with
  * @return The value, or NULL on error
  * This finds data in the thread context that has been previously added with @ref ecore_thread_pool_data_add
- * This function can only be called by a heavy_run thread INSIDE the thread, and will return NULL
+ * This function can only be called by a *_run thread INSIDE the thread, and will return NULL
  * in any case but success.
  */
 
@@ -899,12 +884,12 @@ ecore_thread_pool_data_find(Ecore_Thread *thread, const char *key)
    if ((!thread) || (!key))
      return NULL;
 #ifdef EFL_HAVE_PTHREAD
-   if (worker->u.long_run.self != pthread_self()) return NULL;
+   if (worker->self != pthread_self()) return NULL;
 
-   if (!worker->u.long_run.hash)
+   if (!worker->hash)
      return NULL;
 
-   return eina_hash_find(worker->u.long_run.hash, key);
+   return eina_hash_find(worker->hash, key);
 #else
    return NULL;
 #endif
@@ -916,7 +901,7 @@ ecore_thread_pool_data_find(Ecore_Thread *thread, const char *key)
  * @param key The name string the data is associated with
  * @return EINA_TRUE on success, EINA_FALSE on failure
  * This deletes the data pointer from the thread context which was previously added with @ref ecore_thread_pool_data_add
- * This function can only be called by a heavy_run thread INSIDE the thread, and will return EINA_FALSE
+ * This function can only be called by a *_run thread INSIDE the thread, and will return EINA_FALSE
  * in any case but success.  Note that this WILL NOT free the data, it merely removes it from the thread pool.
  */
 EAPI Eina_Bool
@@ -926,12 +911,12 @@ ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key)
    if ((!thread) || (!key))
      return EINA_FALSE;
 #ifdef EFL_HAVE_PTHREAD
-   if (worker->u.long_run.self != pthread_self()) return EINA_FALSE;
+   if (worker->self != pthread_self()) return EINA_FALSE;
 
-   if (!worker->u.long_run.hash)
+   if (!worker->hash)
      return EINA_FALSE;
 
-   return eina_hash_del_by_key(worker->u.long_run.hash, key);
+   return eina_hash_del_by_key(worker->hash, key);
 #else
    return EINA_TRUE;
 #endif
