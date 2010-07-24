@@ -108,7 +108,6 @@ _edje_module_init(void)
 void
 _edje_module_shutdown(void)
 {
-   Eina_List *l;
    const char *data;
 
    eina_module_list_free(_available_modules);
@@ -126,7 +125,8 @@ _edje_module_shutdown(void)
 
    if (_modules_name)
      {
-       EINA_LIST_FOREACH(_modules_name, l, data)
+       const char *data;
+       EINA_LIST_FREE(_modules_name, data)
          {
            eina_stringshare_del(data);
          }
