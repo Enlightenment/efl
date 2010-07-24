@@ -90,46 +90,91 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_90 (DATA32 *src, DATA8 *dst, int 
 
    CONVERT_LOOP_END_ROT_90();
 #else
+   if ((w & 1) || (h & 1))
+     {
+	/* Rarely (if ever) if ever: so slow path is fine */
+	 DATA32 *src_ptr;
+	 DATA32 *dst_ptr;
+	 int x, y;
+
+	 dst_ptr = (DATA32 *)dst;
+	 CONVERT_LOOP_START_ROT_90();
+
+	 *dst_ptr = *src_ptr;
+
+	 CONVERT_LOOP_END_ROT_90();
+   } else {
 #define AP	"convert_rgba32_rot_90_"
-   asm volatile (
-	AP"outer:						\n\t"
-		// Set up src
-	"	sub		%[s1],		%[src], %[y],lsl #2	\n\t"
-	"	sub		%[s2],		%[src2], %[y],lsl #2	\n\t"
+	asm volatile (
+	"	mov		%[s1],	%[src]			\n\t"
+	"	add		%[s1],	%[h],lsl #2		\n\t"
+	"	sub		%[s1],	#8			\n\t"
+
+	"	mov		%[s2],	%[src]			\n\t"
+	"	add		%[s2],  %[h], lsl #3		\n\t"
+	"	add		%[s2],  %[sjmp], lsr #1		\n\t"
+	"	sub		%[s2],  #8			\n\t"
+
+	"	mov		%[d1],	%[dst]			\n\t"
+
+	"	add		%[d2],	%[d1], %[djmp]		\n\t"
+	"	add		%[d2],	%[w], lsl #2		\n\t"
+
+	"	mov		%[sadv], %[h], lsl #3		\n\t"
+	"	add		%[sadv], %[sjmp], lsl #1	\n\t"
+
+	"	mov		%[y],	#0			\n\t"
+	"	mov		%[x],	#0			\n\t"
+	AP"loop:						\n\t"
+	"	vld1.u32	d0,	[%[s1]]			\n\t"
+	"	vld1.u32	d1,	[%[s2]]			\n\t"
+	"	add		%[x],	#2			\n\t"
+	"	add		%[s1],  %[sadv]			\n\t"
+	"	add		%[s2],  %[sadv]			\n\t"
+	"	vtrn.u32	d0,	d1			\n\t"
+	"	cmp		%[x],	%[w]			\n\t"
+	"	vst1.u32	d1,	[%[d1]]!		\n\t"
+	"	vst1.u32	d0,	[%[d2]]!		\n\t"
+	"	blt		"AP"loop			\n\t"
+
+	"	mov		%[x],	#0			\n\t"
+	"	add		%[d1],  %[djmp]			\n\t"
+	"	add		%[d1],	%[w], lsl #2		\n\t"
+	"	add		%[d2],  %[djmp]			\n\t"
+	"	add		%[d2],	%[w], lsl #2		\n\t"
+
+	"	mov		%[s1],	%[src]			\n\t"
+	"	add		%[s1],  %[h], lsl #2		\n\t"
+	"	sub		%[s1],  %[y], lsl #2		\n\t"
+	"	sub		%[s1],  #8			\n\t"
+
+	"	add		%[s2],	%[s1], %[h], lsl #2	\n\t"
+	"	add		%[s2],  %[sjmp], lsl #2		\n\t"
+
 	"	add		%[y],	#2			\n\t"
-	"	add		%[x],	%[d1], %[w], lsl #2		\n\t"
-	AP"inner:						\n\t"
-	"	vldm		%[s1], {d0}			\n\t"
-	"	vldm		%[s2], {d1}			\n\t"
-	"	vtrn.u32	d1,d0				\n\t"
-	"	vstm		%[d1]!, {d0}			\n\t"
-	"	vstm		%[d2]!, {d1}			\n\t"
-	"	add		%[s1],		%[sadv]		\n\t"
-	"	add		%[s2],		%[sadv]		\n\t"
-	"	cmp		%[x],		%[d1]		\n\t"
-	"	bhi		"AP"inner			\n\t"
 
-	"	add		%[d1], %[djump]			\n\t"
-	"	add		%[d2], %[djump]			\n\t"
 	"	cmp		%[y],	%[h]			\n\t"
-	"	blt		"AP"outer			\n\t"
-
+	"	blt		"AP"loop			\n\t"
 
 	: // Out
-	:	[s1] "r" (src),
-		[s2] "r" (src + (h + src_jump) * 4),
-		[d1] "r" (dst),
-		[d2] "r" ((DATA32*)dst + w + dst_jump),
-		[sadv] "r" ((h + 2 * src_jump) * 8),
-		[src] "r" ((DATA32*)src + (h - 1)- 1),
-		[src2] "r" ((DATA32*)src + (h - 1)- 2),
-		[djump] "r" ((w + 2 * dst_jump) * 4),
-		[x] "r" (7),
-		[y] "r" (0),
+	:	[s1] "r" (1),
+		[s2] "r" (11),
+		[d1] "r" (2),
+		[d2] "r" (12),
+		[src] "r" (src),
+		[dst] "r" (dst),
+		[x] "r" (3),
+		[y] "r" (4),
 		[w] "r" (w),
-		[h] "r" (h)
-	: "q0", "q1", "memory", "cc"// Clober
-   );
+		[h] "r" (h),
+		[sadv] "r" (5),
+		[sjmp] "r" (src_jump * 4),
+		[djmp] "r" (dst_jump * 4 * 2)
+	: "d0", "d1", "memory", "cc"// Clober
+
+
+	);
+   }
 #undef AP
 #endif
    return;
