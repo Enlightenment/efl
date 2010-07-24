@@ -11,7 +11,7 @@
 
 #define WORD_CACHE_MAXLEN	50
 /* How many to cache */
-#define WORD_CACHE_NWORDS	20
+#define WORD_CACHE_NWORDS	40
 static int max_cached_words = WORD_CACHE_NWORDS;
 
 struct prword {
