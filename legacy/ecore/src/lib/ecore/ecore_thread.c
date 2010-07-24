@@ -100,6 +100,7 @@ _ecore_thread_end(Ecore_Pthread_Data *pth)
    _ecore_active_job_threads = eina_list_remove(_ecore_active_job_threads, pth);
 
    ecore_event_add(ECORE_THREAD_PIPE_DEL, pth->p, _ecore_thread_pipe_free, NULL);
+   free(pth);
 }
 
 static void
