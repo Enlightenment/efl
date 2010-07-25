@@ -596,7 +596,7 @@ efreet_ini_localestring_set(Efreet_Ini *ini, const char *key, const char *value)
     else if (lang)
         snprintf(buf, maxlen, "%s[%s]", key, lang);
     else
-        goto error;
+        return;
 
     efreet_ini_string_set(ini, buf, value);
 }
