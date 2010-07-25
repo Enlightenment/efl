@@ -440,6 +440,17 @@ emotion_object_size_get(const Evas_Object *obj, int *iw, int *ih)
    evas_object_image_size_get(sd->obj, iw, ih);
 }
 
+/**
+ * Sets whether to use of high-quality image scaling algorithm
+ * of the given video object.
+ *
+ * When enabled, a higher quality video scaling algorithm is used when
+ * scaling videos to sizes other than the source video. This gives
+ * better results but is more computationally expensive.
+ *
+ * @param obj The given video object.
+ * @param smooth Whether to use smooth scale or not.
+ */
 EAPI void
 emotion_object_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth)
 {
@@ -449,6 +460,12 @@ emotion_object_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth)
    evas_object_image_smooth_scale_set(sd->obj, smooth);
 }
 
+/**
+ * Gets whether the high-quality image scaling algorithm
+ * of the given video object is used.
+ *
+ * @return Whether the smooth scale is used or not.
+ */
 EAPI Eina_Bool
 emotion_object_smooth_scale_get(const Evas_Object *obj)
 {
@@ -469,6 +486,9 @@ emotion_object_ratio_get(const Evas_Object *obj)
    return sd->ratio;
 }
 
+/**
+ * Send a control event to the DVD.
+ */
 EAPI void
 emotion_object_event_simple_send(Evas_Object *obj, Emotion_Event ev)
 {
