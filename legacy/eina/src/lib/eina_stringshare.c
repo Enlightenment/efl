@@ -1211,6 +1211,51 @@ eina_stringshare_add(const char *str)
    return eina_stringshare_add_length(str, slen);
 }
 
+EAPI const char *
+eina_stringshare_printf(const char *fmt, ...)
+{
+   va_list args;
+   char *tmp;
+   const char *ret;
+   int len;
+
+   if (!fmt) return NULL;
+
+   va_start(args, fmt);
+   len = vasprintf(&tmp, fmt, args);
+   va_end(args);
+
+   if (len < 1)
+     return NULL;
+
+   ret = eina_stringshare_add_length(tmp, len);
+   free(tmp);
+
+   return ret;
+}
+
+EAPI const char *
+eina_stringshare_nprintf(unsigned int len, const char *fmt, ...)
+{
+   va_list args;
+   char *tmp;
+   int size;
+
+   if (!fmt) return NULL;
+   if (len < 1) return NULL;
+
+   tmp = alloca(sizeof(char) * len + 1);
+
+   va_start(args, fmt);
+   size = vsnprintf(tmp, len, fmt, args);
+   va_end(args);
+
+   if (size < 1)
+     return NULL;
+
+   return eina_stringshare_add_length(tmp, len);
+}
+
 /**
  * Increment references of the given shared string.
  *
