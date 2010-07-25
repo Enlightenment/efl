@@ -579,6 +579,23 @@ eina_str_tolower(char **str)
      *p = tolower(*p);
 }
 
+/**
+ * @brief Uppercase all the characters in range [a-z] in the given string.
+ *
+ * @param str the string to uppercase
+ *
+ * This modifies the original string, changing all characters in [a-z] to uppercase.
+ */
+EAPI void
+eina_str_toupper(char **str)
+{
+   char *p;
+   if ((!str) || (!(*str))) return;
+
+   for (p = *str; (*p); p++)
+     *p = toupper(*p);
+}
+
 
 /**
  * @}
