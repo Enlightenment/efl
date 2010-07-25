@@ -1389,8 +1389,8 @@ efreet_desktop_cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __U
                                Ecore_File_Event event, const char *path)
 {
     Eet_File *tmp;
-    Efreet_Event_Cache_Update *ev;
-    Efreet_Old_Cache *d;
+    Efreet_Event_Cache_Update *ev = NULL;
+    Efreet_Old_Cache *d = NULL;
 
     if (strcmp(path, efreet_desktop_cache_file())) return;
     if (event != ECORE_FILE_EVENT_CREATED_FILE &&
@@ -1414,6 +1414,8 @@ efreet_desktop_cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __U
     ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, efreet_desktop_cache_update_free, d);
     return;
 error:
+    IF_FREE(ev);
+    IF_FREE(d);
     eet_close(tmp);
 }
 
