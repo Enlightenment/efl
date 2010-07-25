@@ -1650,8 +1650,7 @@ efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, unsigned int s
     l = list;
     list = eina_list_prepend(list, cache);
 
-    if (!l) eina_hash_add(efreet_icon_cache, theme, list);
-    else eina_hash_modify(efreet_icon_cache, theme, list);
+    eina_hash_set(efreet_icon_cache, theme, list);
 
     //efreet_icon_cache_flush(theme, list);
 }
