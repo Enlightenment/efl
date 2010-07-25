@@ -585,7 +585,7 @@ efreet_ini_localestring_set(Efreet_Ini *ini, const char *key, const char *value)
     if (country) maxlen += strlen(country);
     if (modifier) maxlen += strlen(modifier);
 
-    buf = malloc(maxlen * sizeof(char));
+    buf = alloca(maxlen);
 
     if (lang && modifier && country)
         snprintf(buf, maxlen, "%s[%s_%s@%s]", key, lang, country, modifier);
@@ -596,10 +596,9 @@ efreet_ini_localestring_set(Efreet_Ini *ini, const char *key, const char *value)
     else if (lang)
         snprintf(buf, maxlen, "%s[%s]", key, lang);
     else
-        return;
+        goto error;
 
     efreet_ini_string_set(ini, buf, value);
-    FREE(buf);
 }
 
 /**

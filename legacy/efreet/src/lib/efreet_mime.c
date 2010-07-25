@@ -1149,6 +1149,7 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
                 case '=':
                     ptr++;
 
+                    tshort = 0;
                     memcpy(&tshort, ptr, sizeof(short));
                     entry->value_len = ntohs(tshort);
                     ptr += 2;
@@ -1299,7 +1300,7 @@ efreet_mime_magic_check_priority(const char *file,
             else if ((level > e->indent) && match)
             {
                 fclose(f);
-                if (last_mime) return last_mime;
+                return last_mime;
             }
 
             for (offset = e->offset; offset < e->offset + e->range_len; offset++)
