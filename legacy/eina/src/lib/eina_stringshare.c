@@ -1211,6 +1211,26 @@ eina_stringshare_add(const char *str)
    return eina_stringshare_add_length(str, slen);
 }
 
+/**
+ * @brief Retrieve an instance of a string for use in a program
+ * from a format string.
+ *
+ * @param   fmt The NULL terminated format string to retrieve an instance of.
+ * @return  A pointer to an instance of the string on success.
+ *          @c NULL on failure.
+ *
+ * This function retrieves an instance of @p fmt. If @p fmt is
+ * @c NULL, then @c NULL is returned. If @p fmt is already stored, it
+ * is just returned and its reference counter is increased. Otherwise
+ * it is added to the strings to be searched and a duplicated string
+ * is returned.
+ *
+ * The format string @p fmt must be NULL terminated ('@\0') and its full
+ * length will be used. To use part of the format string or non-null
+ * terminated, use eina_stringshare_nprintf() instead.
+ *
+ * @see eina_stringshare_nprintf()
+ */
 EAPI const char *
 eina_stringshare_printf(const char *fmt, ...)
 {
@@ -1234,6 +1254,25 @@ eina_stringshare_printf(const char *fmt, ...)
    return ret;
 }
 
+/**
+ * @brief Retrieve an instance of a string for use in a program
+ * from a format string with size limitation.
+ * @param   len The length of the format string to use
+ * @param   fmt The format string to retrieve an instance of.
+ * @return  A pointer to an instance of the string on success.
+ *          @c NULL on failure.
+ *
+ * This function retrieves an instance of @p fmt limited by @p len. If @p fmt is
+ * @c NULL or @p len is < 1, then @c NULL is returned. If the resulting string
+ * is already stored, it is returned and its reference counter is increased. Otherwise
+ * it is added to the strings to be searched and a duplicated string
+ * is returned.
+ *
+ * @p len length of the format string will be used. To use the 
+ * entire format string, use eina_stringshare_printf() instead.
+ *
+ * @see eina_stringshare_printf()
+ */
 EAPI const char *
 eina_stringshare_nprintf(unsigned int len, const char *fmt, ...)
 {
