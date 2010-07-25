@@ -365,6 +365,46 @@ eina_error_msg_static_register(const char *msg)
 }
 
 /**
+ * @brief Change the message of an already registered message
+ *
+ * @param error The Eina_Error to change the message of
+ * @param msg The description of the error. This string will be
+ * duplicated only if the error was registered with @ref eina_error_msg_register
+ * otherwise it must remain intact for the duration
+ * @return EINA_TRUE if successful, EINA_FALSE on error
+ *
+ * This function modifies the message associated with @p error and changes
+ * it to @p msg.  If the error was previously registered by @ref eina_error_msg_static_register
+ * then the string will not be duplicated, otherwise the previous message
+ * will be freed and @p msg copied.
+ *
+ * @see eina_error_msg_register()
+ */
+EAPI Eina_Bool
+eina_error_msg_modify(Eina_Error error, const char *msg)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(msg, EINA_FALSE);
+   if (error < 1)
+     return EINA_FALSE;
+   if ((size_t)error > _eina_errors_count)
+     return EINA_FALSE;
+   if (_eina_errors[error - 1].string_allocated)
+     {
+        const char *tmp;
+
+        if (!(tmp = strdup(msg)))
+             return EINA_FALSE;
+
+        free((void*)_eina_errors[error - 1].string);
+        _eina_errors[error - 1].string = tmp;
+        return EINA_TRUE;
+     }
+
+   _eina_errors[error - 1].string = msg;
+   return EINA_TRUE;
+}
+
+/**
  * @brief Return the description of the given an error number.
  *
  * @param error The error number.
