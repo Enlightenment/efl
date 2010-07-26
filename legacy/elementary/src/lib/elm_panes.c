@@ -220,7 +220,7 @@ EAPI void elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content)
      }
 }
 
-EAPI double elm_panes_content_left_size_get(Evas_Object *obj)
+EAPI double elm_panes_content_left_size_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    double w, h;
@@ -252,4 +252,10 @@ EAPI void elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
    elm_panes_content_left_size_set(obj, 0.5);
 }
 
+EAPI Eina_Bool elm_panes_horizontal_is(const Evas_Object *obj)
+{
+	  Widget_Data *wd = elm_widget_data_get(obj);
+
+	  return wd->horizontal;
+}
 
