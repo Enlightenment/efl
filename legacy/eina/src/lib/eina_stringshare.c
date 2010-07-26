@@ -2,10 +2,12 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 /* EINA - EFL data type library
- * Copyright (C) 2002-2008 Carsten Haitzler,
+ * Copyright (C) 2002,2003,2004,2005,2006,2007,2008,2010
+ *			   Carsten Haitzler,
  *                         Jorge Luis Zapata Muga,
  *                         Cedric Bail,
  *                         Gustavo Sverzut Barbieri
+ *                         Brett Nash
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -69,6 +71,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stddef.h>
 
 #ifdef EFL_HAVE_POSIX_THREADS
 # include <pthread.h>
@@ -719,8 +722,8 @@ _eina_stringshare_node_init(Eina_Stringshare_Node *node, const char *str, int sl
 static Eina_Stringshare_Head *
 _eina_stringshare_head_alloc(int slen)
 {
-   Eina_Stringshare_Head *head, t;
-   const size_t head_size = (char *)&(t.builtin_node.str) - (char *)&t;
+   Eina_Stringshare_Head *head;
+   const size_t head_size = offsetof(Eina_Stringshare_Head, builtin_node.str);
 
    head = malloc(head_size + slen + 1);
    if (!head)
@@ -832,8 +835,8 @@ _eina_stringshare_find_hash(Eina_Stringshare_Head *bucket, int hash)
 static Eina_Stringshare_Node *
 _eina_stringshare_node_alloc(int slen)
 {
-   Eina_Stringshare_Node *node, t;
-   const size_t node_size = (char *)&(t.str) - (char *)&t;
+   Eina_Stringshare_Node *node;
+   const size_t node_size = offsetof(Eina_Stringshare_Node, str);
 
    node = malloc(node_size + slen + 1);
    if (!node)
@@ -845,8 +848,8 @@ _eina_stringshare_node_alloc(int slen)
 static Eina_Stringshare_Node *
 _eina_stringshare_node_from_str(const char *str)
 {
-   Eina_Stringshare_Node *node, t;
-   const size_t offset = (char *)&(t.str) - (char *)&t;
+   Eina_Stringshare_Node *node;
+   const size_t offset = offsetof(Eina_Stringshare_Node, str);
 
    node = (Eina_Stringshare_Node *)(str - offset);
    EINA_MAGIC_CHECK_STRINGSHARE_NODE(node, );
