@@ -167,11 +167,11 @@ extern "C" {
    typedef struct _Ecore_Exe_Event_Data_Line   Ecore_Exe_Event_Data_Line; /**< Lines from a child process */
    typedef struct _Ecore_Exe_Event_Data        Ecore_Exe_Event_Data; /**< Data from a child process */
    typedef struct _Ecore_Thread                Ecore_Thread;
-   typedef void (*Ecore_Thread_Func_Blocking) (void *data);
-   typedef void (*Ecore_Thread_Func_End) (void *data);
-   typedef void (*Ecore_Thread_Func_Cancel) (void *data);
-   typedef void (*Ecore_Thread_Func_Heavy) (Ecore_Thread *thread, void *data);
-   typedef void (*Ecore_Thread_Func_Notify) (Ecore_Thread *thread, void *msg_data, void *data);
+   typedef void (*Ecore_Thread_Blocking_Cb) (void *data);
+   typedef void (*Ecore_Thread_End_Cb) (void *data);
+   typedef void (*Ecore_Thread_Cancel_Cb) (void *data);
+   typedef void (*Ecore_Thread_Heavy_Cb) (Ecore_Thread *thread, void *data);
+   typedef void (*Ecore_Thread_Notify_Cb) (Ecore_Thread *thread, void *msg_data, void *data);
 
 
 
@@ -342,14 +342,14 @@ extern "C" {
    EAPI void         ecore_pipe_write_close(Ecore_Pipe *p);
    EAPI void         ecore_pipe_read_close(Ecore_Pipe *p);
 
-   EAPI Ecore_Thread *ecore_thread_run(Ecore_Thread_Func_Blocking,
-				       Ecore_Thread_Func_End,
-				       Ecore_Thread_Func_Cancel,
+   EAPI Ecore_Thread *ecore_thread_run(Ecore_Thread_Blocking_Cb,
+				       Ecore_Thread_End_Cb,
+				       Ecore_Thread_Cancel_Cb,
 				       const void *data);
-   EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Func_Heavy,
-				     Ecore_Thread_Func_Notify,
-                                     Ecore_Thread_Func_End,
-                                     Ecore_Thread_Func_Cancel,
+   EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Heavy_Cb,
+				     Ecore_Thread_Notify_Cb,
+                                     Ecore_Thread_End_Cb,
+                                     Ecore_Thread_Cancel_Cb,
                                      const void *data,
                                      Eina_Bool try_no_queue);
    EAPI Eina_Bool     ecore_thread_cancel(Ecore_Thread *thread);
