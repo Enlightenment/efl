@@ -795,14 +795,12 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const char *in_text, int len, RG
    struct prword *w;
    int gl;
 
-   const char *in_ss = eina_stringshare_add(in_text);
 
    LKL(lock_words);
    EINA_INLIST_FOREACH(words,w){
 	if (w->len == len && w->font == fn && fi->size == w->size &&
-	      (w->str == in_ss)){
+	      (w->str == in_text || memcmp(w->str,in_text,len) == 0)){
 	  words = eina_inlist_promote(words, EINA_INLIST_GET(w));
-	  eina_stringshare_del(in_ss);
 	  LKU(lock_words);
 	  return w;
 	}
@@ -895,7 +893,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const char *in_text, int len, RG
 
    save = malloc(sizeof(struct prword));
    save->cinfo = metrics;
-   save->str = in_ss;
+   save->str = eina_stringshare_add(in_text);
    save->font = fn;
    save->size = fi->size;
    save->len = len;
