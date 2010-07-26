@@ -214,11 +214,13 @@ eina_one_big_shutdown(void *data)
 
    pool = data;
 
+#ifdef DEBUG
    if (pool->usage > 0)
      INF("Bad news we are destroying memory still referenced in mempool [%s]\n", pool->name);
 
    if (pool->over > 0)
      INF("Bad news we are loosing track of pointer from mempool [%s]\n", pool->name);
+#endif
 
    free(pool->base);
    free(pool);
