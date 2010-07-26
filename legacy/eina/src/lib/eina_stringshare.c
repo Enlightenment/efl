@@ -1259,6 +1259,47 @@ eina_stringshare_printf(const char *fmt, ...)
 
 /**
  * @brief Retrieve an instance of a string for use in a program
+ * from a format string.
+ *
+ * @param   fmt The NULL terminated format string to retrieve an instance of.
+ * @param   args The va_args for @p fmt
+ * @return  A pointer to an instance of the string on success.
+ *          @c NULL on failure.
+ *
+ * This function retrieves an instance of @p fmt with @p args. If @p fmt is
+ * @c NULL, then @c NULL is returned. If @p fmt with @p args is already stored, it
+ * is just returned and its reference counter is increased. Otherwise
+ * it is added to the strings to be searched and a duplicated string
+ * is returned.
+ *
+ * The format string @p fmt must be NULL terminated ('@\0') and its full
+ * length will be used. To use part of the format string or non-null
+ * terminated, use eina_stringshare_nprintf() instead.
+ *
+ * @see eina_stringshare_nprintf()
+ */
+EAPI const char *
+eina_stringshare_vprintf(const char *fmt, va_list args)
+{
+   char *tmp;
+   const char *ret;
+   int len;
+
+   if (!fmt) return NULL;
+
+   len = vasprintf(&tmp, fmt, args);
+
+   if (len < 1)
+     return NULL;
+
+   ret = eina_stringshare_add_length(tmp, len);
+   free(tmp);
+
+   return ret;
+}
+
+/**
+ * @brief Retrieve an instance of a string for use in a program
  * from a format string with size limitation.
  * @param   len The length of the format string to use
  * @param   fmt The format string to retrieve an instance of.
