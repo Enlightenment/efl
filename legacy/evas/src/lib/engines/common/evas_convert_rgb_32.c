@@ -146,7 +146,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_90 (DATA32 *src, DATA8 *dst, int 
 	"	mov		%[s1],	%[src]			\n\t"
 	"	add		%[s1],  %[h], lsl #2		\n\t"
 	"	sub		%[s1],  %[y], lsl #2		\n\t"
-	"	sub		%[s1],  #8			\n\t"
+	"	sub		%[s1],  #16			\n\t"
 
 	"	add		%[s2],	%[s1], %[h], lsl #2	\n\t"
 	"	add		%[s2],  %[sjmp], lsl #2		\n\t"
