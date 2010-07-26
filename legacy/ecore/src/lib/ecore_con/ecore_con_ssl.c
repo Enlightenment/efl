@@ -436,7 +436,7 @@ _ecore_con_ssl_init_openssl(void)
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_shutdown_openssl(void)
 {
-  // FIXME nothing to do ?
+  ERR_free_strings();
   return ECORE_CON_SSL_ERROR_NONE;
 }
 
