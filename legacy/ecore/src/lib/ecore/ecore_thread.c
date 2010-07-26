@@ -374,9 +374,9 @@ _ecore_thread_shutdown(void)
  * host CPU can handle.
  */
 EAPI Ecore_Thread *
-ecore_thread_run(Ecore_Thread_Func_Blocking,
-                 Ecore_Thread_Func_End,
-                 Ecore_Thread_Func_Cancel,
+ecore_thread_run(Ecore_Thread_Func_Blocking func_blocking,
+                 Ecore_Thread_Func_End func_end,
+                 Ecore_Thread_Func_Cancel func_cancel,
                  const void *data)
 {
 #ifdef EFL_HAVE_PTHREAD
@@ -543,10 +543,10 @@ ecore_thread_check(Ecore_Thread *thread)
  * the CPU down, so be carefull with that. Of course if it can't start a new thread, it will
  * try to use one from the pool.
  */
-EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Func_Heavy,
-                                  Ecore_Thread_Func_Notify,
-                                  Ecore_Thread_Func_End,
-                                  Ecore_Thread_Func_Cancel,
+EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Func_Heavy func_heavy,
+                                  Ecore_Thread_Func_Notify func_notify,
+                                  Ecore_Thread_Func_End func_end,
+                                  Ecore_Thread_Func_Cancel func_cancel,
                                   const void *data,
                                   Eina_Bool try_no_queue)
 {
