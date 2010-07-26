@@ -3,15 +3,15 @@
  */
 
 /**
- * @page luaref Edje LUA scripting
+ * @page luaref Edje Lua scripting
  *
  * @section intro Introduction
  * 
- * LUA is intended for script-only objects at this point (with embryo left
+ * Lua is intended for script-only objects at this point (with embryo left
  * for augmenting standard programs). Since script-only objects effectively
- * define objects entirely via LUA script (resize handling, event handling
+ * define objects entirely via Lua script (resize handling, event handling
  * etc. etc.) this places many more demands on them, and thus a more powerful
- * language is in order. LUA is that language.
+ * language is in order. Lua is that language.
  * 
  * To get you started, here's an example:
  * @code
