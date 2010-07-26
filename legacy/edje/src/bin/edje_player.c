@@ -608,6 +608,7 @@ int main(int argc, char **argv)
      return EXIT_FAILURE;
    if (!edje_init())
      goto shutdown_ecore_evas;
+   edje_frametime_set(1.0/60.0);
 
    args = ecore_getopt_parse(&optdesc, values, argc, argv);
    if (args < 0)

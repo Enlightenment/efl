@@ -1,3 +1,167 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+/**
+ * @page luaref Edje LUA scripting
+ *
+ * @section intro Introduction
+ * 
+ * LUA is intended for script-only objects at this point (with embryo left
+ * for augmenting standard programs). Since script-only objects effectively
+ * define objects entirely via LUA script (resize handling, event handling
+ * etc. etc.) this places many more demands on them, and thus a more powerful
+ * language is in order. LUA is that language.
+ * 
+ * To get you started, here's an example:
+ * @code
+ * collections {
+ *    group { name: "example";
+ *       lua_script_only: 1;
+ *       lua_script {
+ *          --// stick object private/local vars here
+ *          local D;
+ *          local count = 0;
+ *          local fndata = 99;
+ * 
+ *          local function mycb3 (v)
+ *            print("lua::callback transition " .. D.val .. " v: " .. v);
+ *            d = {};
+ *            edje.size(d);
+ *            print("lua::objsize= " .. d.w .. " , " .. d.h);
+ *            sz = {w=v * 80, h=v * 40};
+ *            D.rect:geom(((d.w / 2) * math.sin(v * 2 * math.pi)) + ((d.w - sz.w) / 2),
+ *                        ((d.h / 2) * math.cos(v * 2 * math.pi)) + ((d.h - sz.h) / 2),
+ *                        sz.w, sz.h);
+ *            D.rect:color(255, 128, v * 255, 255);
+ *            D.rect:move(d);
+ *            print("lua::pos= " .. d.x .. " , " .. d.y);
+ * 
+ *            r = D.rect:above();
+ *            if (r ~= nil) then
+ *              print("lua::rcol");
+ *              r:color(20, v * 255, 60, 255);
+ *            else
+ *              print("lua::r none!!!!!!!!!!!!!!1");
+ *            end
+ *            d = edje.size();
+ *            D.clip:geom(10, 10, d.w - 20, d.h - 20);
+ *            c = D.clip:clipees();
+ *            for i=1,table.getn(c),1 do
+ *              d = c[i]:geom();
+ *              print("lua::" .. i .. " geom = " .. d.x .. "," .. d.y .. " " .. d.w .. "x" .. d.h);
+ *            end
+ *            return true;
+ *          end
+ * 
+ *          local function mycb2 ()
+ *            print("lua::callback animator " .. count);
+ *            print("lua:: seconds: " .. edje.seconds());
+ *            print("lua:: looptime: " .. edje.looptime());
+ *            local date = edje.date();
+ *            print("lua:: date: " ..
+ *                  date.year .. "|" ..
+ *                  date.month .. "|" ..
+ *                  date.day .. "|" ..
+ *                  date.yearday .. "|" ..
+ *                  date.weekday .. "|" ..
+ *                  date.hour .. "|" ..
+ *                  date.min .. "|" ..
+ *                  date.sec
+ *                 );
+ *            return true;
+ *          end
+ * 
+ *          local function mycb ()
+ *            print("lua::callback " .. count .. " fndata = " .. fndata);
+ *            count = count + 1; --// keep count of calls - object data
+ *            fndata = fndata + 3; --// play with object vars to see if they persist
+ *            D.tim = edje.timer(0.25, mycb); --// inside cb add new timer
+ *            D.ani = edje.animator(mycb2);
+ *            return false; --// cease repeating the timer
+ *          end
+ * 
+ *          --// init object here
+ *          D = {}; --// data is empty table to start
+ *          D.val = math.random(); --// start with soem random value so
+ *          fndata = fndata + D.val; --// func data start point
+ *          print("lua::init ... " .. D.val);
+ *          edje.echo("lua::echo('hello world')");
+ *          --// actually add the timer to call mycb in 1.23 sec
+ *          D.tim = edje.timer(1.23, mycb);
+ *          D.tra = edje.transition(5.0, mycb3);
+ * 
+ *          if (edje.spanky) then edje.spanky(); end
+ * 
+ *          edje.messagesend(7, "none"      );
+ *          edje.messagesend(7, "sig",      "signal", "source");
+ *          edje.messagesend(7, "str",      "hello world");
+ *          edje.messagesend(7, "int",      987);
+ *          edje.messagesend(7, "float",    987.321);
+ *          edje.messagesend(7, "strset",   {"hello", "there", "world"});
+ *          edje.messagesend(7, "intset",   {1, 2, 3});
+ *          edje.messagesend(7, "floatset", {1.1, 2.2, 3.3});
+ *          edje.messagesend(7, "strint",   "hello world", 7);
+ *          edje.messagesend(7, "strfloat", "hello world", 7.654);
+ *          edje.messagesend(7, "strintset","hello world", {1, 2, 3});
+ *                  
+ *          D.rect = edje.rect();
+ *          D.rect:geom  (5, 10, 50, 30);
+ *          D.rect:color (255, 128, 60, 255);
+ *          D.rect:show  ();
+ *                  
+ *          D.rect2 = edje.rect();
+ *          D.rect2:geom  (50, 50, 50, 50);
+ *          D.rect2:color (20, 30, 60, 120);
+ *          D.rect2:show  ();
+ * 
+ *          D.clip = edje.rect();
+ *          D.clip:geom  (10, 10, 150, 150);
+ *          D.clip:color (200, 200, 50, 200);
+ *          D.clip:show  ();
+ * 
+ *          D.rect2:clip(D.clip);
+ *          D.rect:clip(D.clip);
+ * 
+ *          --// example of deleting something
+ *          --// D.tim:del();
+ * 
+ *          --// shutdown func - generally empty or not there. everything gcd for you
+ *          function shutdown ()
+ *            print("lua::shutdown ... " .. D.val);
+ *          end
+ *          function show ()
+ *            print("lua::show ... " .. D.val);
+ *          end
+ *         function hide ()
+ *            print("lua::hide ... " .. D.val);
+ *          end
+ *          function move (x, y)
+ *            print("lua::move ... " .. D.val);
+ *            print("  x=" .. x .. " x=" .. y);
+ *          end
+ *          function resize (w, h)
+ *            print("lua::resize ... " .. D.val);
+ *            print("  w=" .. w .. " h=" .. h);
+ *          end
+ *          function message (id, type, v1, v2)
+ *            print("lua::message ... " .. D.val);
+ *            print("  id=" .. id .. " type=" .. type);
+ *            --// handle youre message type here. chekc id + type then use v1
+ *            --// and/or v2 (or neither) appropriately. they are the same as
+ *            --// the 2nd and 3rd param passed to edje.messagesend() (if any
+ *            --// are passed at all)
+ *          end
+ *          function signal (sig, src)
+ *            print("lua::signal ... " .. D.val);
+ *            print("  sig=" .. sig .. " src=" .. src);
+ *          end
+ *       }
+ *    }
+ * }
+ * @endcode
+ * 
+ */
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -123,6 +287,7 @@ static int _elua_clipees(lua_State *L);
 static int _elua_type(lua_State *L);
 static int _elua_pass(lua_State *L);
 static int _elua_repeat(lua_State *L);
+static int _elua_precise(lua_State *L);
 
 static int _elua_rect(lua_State *L);
 
@@ -138,12 +303,31 @@ static jmp_buf panic_jmp;
 // // key up
 // // get dragable pos
 // // set dragable pos
+// // set drag size, step, page
+// // get drag size, step, page
+// // dragable step
+// // dragable page
 // // get part text
 // // set part text
 // // get swallow part
 // // set swallow part
+// // unswallow part
 // // textclass change
 // // colorclass change
+// // min size get <- ?? maybe set fn
+// // max size get <- ?? maybe set fn
+// // min size caclc (min/max restriction)
+// // preload
+// // preload cancel
+// // play set
+// // animation set
+// // parts extends calc
+// // part object get
+// // part geometry get
+// 
+// // LATER: all the entry calls
+// // LATER: box and table calls
+// // LATER: perspective stuff change
 // 
 static const struct luaL_reg _elua_edje_api [] =
 {
@@ -154,6 +338,7 @@ static const struct luaL_reg _elua_edje_api [] =
      {"timer",        _elua_timer}, // add timer
      {"animator",     _elua_animator}, // add animator
      {"transition",   _elua_transition}, // add transition
+   // FIXME: need poller
    
    // system information (time, date blah blah)
      {"seconds",      _elua_seconds}, // get seconds
@@ -206,10 +391,14 @@ static const struct luaL_reg _elua_edje_evas_obj [] =
      {"type",         _elua_type}, // get object type
      {"pass",         _elua_pass}, // set pass events, get pass events
      {"repeat",       _elua_repeat}, // set repeat events, get repeat events
+     {"precise",      _elua_precise}, // set precise inside flag, get precise
+   // FIXME: set callbacks (mouse down, up, blah blah blah)
+   // 
    // FIXME: set scale (explicit value)
    // FIXME: need to set auto-scale (same as scale: 1)
-   // FIXME: set precise inside
-   // FIXME: set callbacks (mouse down, up, blah blah blah)
+   
+   // FIXME: later - set render op, anti-alias, pointer mode (autograb, nograb)
+   // FIXME: later - 
    
    // FIXME: map api here
 
@@ -511,8 +700,10 @@ _edje_lua2_script_func_hide(Edje *ed)
 void
 _edje_lua2_script_func_move(Edje *ed)
 {
+   Eina_List *l;
    int err;
-   
+
+   // FIXME: move all objects created by script
    lua_getglobal(ed->L, "move");
    if (!lua_isnil(ed->L, -1))
      {
@@ -1691,6 +1882,23 @@ _elua_repeat(lua_State *L)
           }
      }
    lua_pushboolean(L, evas_object_repeat_events_get(elo->evas_obj));
+   return 1;
+}
+
+static int
+_elua_precise(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   int n;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   n = lua_gettop(L);
+   if (n == 2)
+     {
+        evas_object_precise_is_inside_set(elo->evas_obj, lua_toboolean(L, 2));
+     }
+   lua_pushboolean(L, evas_object_precise_is_inside_get(elo->evas_obj));
    return 1;
 }
 
