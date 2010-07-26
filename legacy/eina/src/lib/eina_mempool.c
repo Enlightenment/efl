@@ -118,6 +118,11 @@ Eina_Bool buddy_init(void);
 void buddy_shutdown(void);
 #endif
 
+#ifdef EINA_STATIC_BUILD_ONE_BIG
+Eina_Bool one_big_init(void);
+void one_big_shutdown(void);
+#endif
+
 /**
  * @endcond
  */
@@ -211,6 +216,9 @@ eina_mempool_init(void)
 #ifdef EINA_STATIC_BUILD_BUDDY
    buddy_init();
 #endif
+#ifdef EINA_STATIC_BUILD_ONE_BIG
+   one_big_init();
+#endif
 
    return EINA_TRUE;
 
@@ -242,6 +250,9 @@ eina_mempool_shutdown(void)
 #endif
 #ifdef EINA_STATIC_BUILD_BUDDY
    buddy_shutdown();
+#endif
+#ifdef EINA_STATIC_BUILD_ONE_BIG
+   one_big_shutdown();
 #endif
    /* dynamic backends */
    eina_module_list_free(_modules);
@@ -337,6 +348,28 @@ EAPI void eina_mempool_statistics(Eina_Mempool *mp)
         EINA_SAFETY_ON_NULL_RETURN(mp->backend.statistics);
 	DBG("mp=%p", mp);
 	mp->backend.statistics(mp->backend_data);
+}
+
+EAPI unsigned int
+eina_mempool_alignof(unsigned int size)
+{
+   int align;
+
+   if (size <= 2)
+     align = 2;
+   else if (size < 8)
+     align = 4;
+   else
+#if __WORDSIZE == 32
+     align = 8;
+#else
+   if (size < 16)
+     align = 8;
+   else
+     align = 16;
+#endif
+
+   return ((size / align) + 1) * align;
 }
 
 /**

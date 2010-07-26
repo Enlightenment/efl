@@ -45,6 +45,10 @@ if EINA_STATIC_BUILD_CHAINED_POOL
 base_sources += $(top_srcdir)/src/modules/mp/chained_pool/eina_chained_mempool.c
 endif
 
+if EINA_STATIC_BUILD_ONE_BIG
+base_sources += $(top_srcdir)/src/modules/mp/one_big/eina_one_big.c
+endif
+
 if EINA_STATIC_BUILD_EMEMOA_FIXED
 base_sources += $(top_srcdir)/src/modules/mp/ememoa_fixed/eina_ememoa_fixed.c
 endif

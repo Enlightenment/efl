@@ -185,11 +185,15 @@ static void*
 eina_fixed_bitmap_init(__UNUSED__ const char *context, __UNUSED__ const char *option, va_list args)
 {
    Eina_Fixed_Bitmap *mp;
+   int item_size;
 
    mp = malloc(sizeof (Eina_Fixed_Bitmap));
    if (!mp) return NULL;
 
-   mp->item_size = va_arg(args, int);
+   item_size = va_arg(args, int);
+
+   mp->item_size = eina_mempool_alignof(item_size);
+
    mp->lookup = NULL;
    mp->head = NULL;
 

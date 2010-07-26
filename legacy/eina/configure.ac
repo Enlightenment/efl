@@ -496,13 +496,15 @@ else
    enable_pass_through="no"
 fi
 
+enable_one_big="static"
+
 EINA_CHECK_MODULE([chained-pool],   [${enable_chained_pool}], [chained pool])
 EINA_CHECK_MODULE([ememoa-fixed],   [${enable_ememoa}],       [ememoa fixed])
 EINA_CHECK_MODULE([ememoa-unknown], [${enable_ememoa}],       [ememoa unknown])
 EINA_CHECK_MODULE([fixed-bitmap],   [no],                     [fixed bitmap])
 EINA_CHECK_MODULE([pass-through],   [${enable_pass_through}], [pass through])
 EINA_CHECK_MODULE([buddy],          [no],                     [buddy])
-
+EINA_CHECK_MODULE([one-big],        [${enable_one_big}],      [one big])
 
 ### Make the debug preprocessor configurable
 
@@ -555,6 +557,7 @@ src/modules/mp/ememoa_unknown/Makefile
 src/modules/mp/pass_through/Makefile
 src/modules/mp/fixed_bitmap/Makefile
 src/modules/mp/buddy/Makefile
+src/modules/mp/one_big/Makefile
 src/tests/Makefile
 ])
 

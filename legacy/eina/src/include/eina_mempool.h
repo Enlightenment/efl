@@ -62,6 +62,8 @@ EAPI void eina_mempool_statistics(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_mempool_register(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(1);
 EAPI void eina_mempool_unregister(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(1);
 
+EAPI unsigned int eina_mempool_alignof(unsigned int size);
+
 #include "eina_inline_mempool.x"
 
 /**

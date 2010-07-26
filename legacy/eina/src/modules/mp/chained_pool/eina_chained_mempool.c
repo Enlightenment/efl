@@ -2,7 +2,7 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 /* EINA - EFL data type library
- * Copyright (C) 2008 Cedric BAIL
+ * Copyright (C) 2008-2010 Cedric BAIL, Vincent Torri
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,6 +61,7 @@ struct _Chained_Mempool
    Eina_Inlist  *first;
    const char *name;
    int item_size;
+   int item_alloc;
    int pool_size;
    int usage;
 #ifdef EFL_HAVE_THREADS
@@ -85,14 +86,20 @@ _eina_chained_mp_pool_new(Chained_Mempool *pool)
 {
    Chained_Pool *p;
    unsigned char *ptr;
-   int item_alloc, i;
+   int i;
 
-   item_alloc = ((pool->item_size + sizeof(void *) - 1) / sizeof(void *)) * sizeof(void *);
-   p = malloc(sizeof(Chained_Pool) + (pool->pool_size * item_alloc));
+   eina_error_set(0);
+   p = malloc(sizeof(Chained_Pool) + (pool->pool_size * pool->item_alloc));
+   if (!p)
+     {
+	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+	return NULL;
+     }
+
    ptr = (unsigned char *) (p + 1);
    p->usage = 0;
    p->base = NULL;
-   for (i = 0; i < pool->pool_size; ++i, ptr += item_alloc)
+   for (i = 0; i < pool->pool_size; ++i, ptr += pool->item_alloc)
      eina_trash_push(&p->base, ptr);
    return p;
 }
@@ -248,6 +255,8 @@ eina_chained_mempool_init(const char *context, __UNUSED__ const char *option, va
 	mp->name = (const char*) (mp + 1);
 	memcpy((char*) mp->name, context, length);
      }
+
+   mp->item_alloc = eina_mempool_alignof(mp->item_size);
 
 #ifdef EFL_HAVE_THREADS
 # ifdef EFL_HAVE_POSIX_THREADS
