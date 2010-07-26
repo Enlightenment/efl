@@ -51,6 +51,8 @@
 #ifndef EINA_STRINGSHARE_H_
 #define EINA_STRINGSHARE_H_
 
+#include <stdarg.h>
+
 #include "eina_types.h"
 
 /**
