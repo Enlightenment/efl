@@ -167,6 +167,13 @@ extern "C" {
    typedef struct _Ecore_Exe_Event_Data_Line   Ecore_Exe_Event_Data_Line; /**< Lines from a child process */
    typedef struct _Ecore_Exe_Event_Data        Ecore_Exe_Event_Data; /**< Data from a child process */
    typedef struct _Ecore_Thread                Ecore_Thread;
+   typedef void (*Ecore_Thread_Func_Blocking) (void *data);
+   typedef void (*Ecore_Thread_Func_End) (void *data);
+   typedef void (*Ecore_Thread_Func_Cancel) (void *data);
+   typedef void (*Ecore_Thread_Func_Heavy) (Ecore_Thread *thread, void *data);
+   typedef void (*Ecore_Thread_Func_Notify) (Ecore_Thread *thread, void *msg_data, void *data);
+
+
 
    typedef struct _Ecore_Job Ecore_Job; /**< A job handle */
 
@@ -335,18 +342,16 @@ extern "C" {
    EAPI void         ecore_pipe_write_close(Ecore_Pipe *p);
    EAPI void         ecore_pipe_read_close(Ecore_Pipe *p);
 
-   EAPI Ecore_Thread *ecore_thread_run(void (*func_blocking)(void *data),
-				       void (*func_end)(void *data),
-				       void (*func_cancel)(void *data),
+   EAPI Ecore_Thread *ecore_thread_run(Ecore_Thread_Func_Blocking,
+				       Ecore_Thread_Func_End,
+				       Ecore_Thread_Func_Cancel,
 				       const void *data);
-   EAPI Ecore_Thread *ecore_long_run(void (*func_heavy)(Ecore_Thread *thread,
-							    void *data),
-				       void (*func_notify)(Ecore_Thread *thread,
-							    void *msg_data, void *data),
-           void (*func_end)(void *data),
-           void (*func_cancel)(void *data),
-           const void *data,
-           Eina_Bool try_no_queue);
+   EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Func_Heavy,
+				     Ecore_Thread_Func_Notify,
+                                     Ecore_Thread_Func_End,
+                                     Ecore_Thread_Func_Cancel,
+                                     const void *data,
+                                     Eina_Bool try_no_queue);
    EAPI Eina_Bool     ecore_thread_cancel(Ecore_Thread *thread);
    EAPI Eina_Bool     ecore_thread_check(Ecore_Thread *thread);
    EAPI Eina_Bool     ecore_thread_notify(Ecore_Thread *thread, const void *msg_data);
