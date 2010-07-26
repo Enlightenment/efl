@@ -472,6 +472,9 @@ ecore_thread_cancel(Ecore_Thread *thread)
    Ecore_Pthread_Worker *work;
    Eina_List *l;
 
+   if (!work)
+     return EINA_TRUE;
+
    pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
 
    EINA_LIST_FOREACH(_ecore_pending_job_threads, l, work)
