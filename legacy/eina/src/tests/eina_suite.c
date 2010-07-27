@@ -35,7 +35,9 @@ struct _Eina_Test_Case
 static const Eina_Test_Case etc[] = {
   { "FixedPoint", eina_test_fp },
   { "Array", eina_test_array },
+  { "Binary Share", eina_test_binshare },
   { "String Share", eina_test_stringshare },
+  { "UString Share", eina_test_ustringshare },
   { "Log", eina_test_log },
   { "Error", eina_test_error },
   { "Magic", eina_test_magic },

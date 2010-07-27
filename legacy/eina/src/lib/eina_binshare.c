@@ -150,7 +150,7 @@ eina_binshare_del(const char *str, unsigned int slen)
 EAPI const char *
 eina_binshare_add_length(const char *str, unsigned int slen)
 {
-   return (const char *) eina_share_common_add_length(share,(const char *) str, (slen + 1) * sizeof(char), 0);
+   return (const char *) eina_share_common_add_length(share,(const char *) str, (slen) * sizeof(char), 0);
 }
 
 /**

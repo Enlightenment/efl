@@ -557,6 +557,7 @@ EAPI void
 eina_stringshare_del(const char *str)
 {
    int slen;
+   DBG("str=%p (%s)", str, str ? str : "");
    if (!str)
       return;
    
@@ -605,6 +606,8 @@ eina_stringshare_del(const char *str)
 EAPI const char *
 eina_stringshare_add_length(const char *str, unsigned int slen)
 {
+   DBG("str=%p (%.*s), slen=%u", str, slen, str ? str : "", slen);
+   
    if (slen <= 0)
      return "";
    else if (slen == 1)
@@ -798,6 +801,8 @@ EAPI const char *
 eina_stringshare_ref(const char *str)
 {
    int slen;
+   DBG("str=%p (%s)", str, str ? str : "");
+
    if (!str) 
      {
         return eina_share_common_ref(share, str);

@@ -45,7 +45,14 @@ START_TEST(eina_stringshare_simple)
    fail_if(t1 == NULL);
    fail_if(strcmp(t0, TEST0) != 0);
    fail_if(strcmp(t1, TEST1) != 0);
+   fail_if((int) strlen(TEST0) != eina_stringshare_strlen(t0));
+   fail_if((int) strlen(TEST1) != eina_stringshare_strlen(t1));
 
+   t0 = eina_stringshare_ref(t0);
+   fail_if(t0 == NULL);
+   fail_if((int) strlen(TEST0) != eina_stringshare_strlen(t0));
+
+   eina_stringshare_del(t0);
    eina_stringshare_del(t0);
    eina_stringshare_del(t1);
 
@@ -79,6 +86,8 @@ START_TEST(eina_stringshare_small)
 	fail_if(t1 == NULL);
 	fail_if(t0 != t1);
 	fail_if(strcmp(t0, buf) != 0);
+        fail_if((int) strlen(buf) != eina_stringshare_strlen(t0));
+        fail_if((int) strlen(buf) != eina_stringshare_strlen(t1));
 
 	eina_stringshare_del(t0);
 	eina_stringshare_del(t1);
@@ -104,6 +113,7 @@ START_TEST(eina_stringshare_test_share)
    fail_if(strcmp(t0, TEST0) != 0);
    fail_if(strcmp(t1, TEST0) != 0);
    fail_if(t0 != t1);
+   fail_if((int) strlen(t0) != eina_stringshare_strlen(t0));
 
    eina_stringshare_del(t0);
    eina_stringshare_del(t1);

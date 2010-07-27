@@ -665,7 +665,6 @@ eina_share_common_add_length(Eina_Share *share, const char *str, unsigned int sl
    Eina_Share_Common_Node *el;
    int hash_num, hash;
 
-   DBG("str=%p (%.*s), slen=%u", str, slen, str ? str : "", slen);
    if (!str) return NULL;
 
    eina_share_common_population_add(share, slen);
@@ -721,13 +720,12 @@ eina_share_common_ref(Eina_Share *share, const char *str)
 {
    Eina_Share_Common_Node *node;
 
-   DBG("str=%p (%s)", str, str ? str : "");
    if (!str) return NULL;
 
    SHARE_COMMON_LOCK_BIG();
    node = _eina_share_common_node_from_str(str, share->node_magic);
    node->references++;
-   DBG("str=%p (%s) refs=%u", str, str, node->references);
+   DBG("str=%p refs=%u", str, node->references);
 
    SHARE_COMMON_UNLOCK_BIG();
 
@@ -745,7 +743,6 @@ eina_share_common_del(Eina_Share *share, const char *str, int slen)
    Eina_Share_Common_Node *node;
    int hash_num, hash;
 
-   DBG("str=%p (%s)", str, str ? str : "");
    if (!str) return;
 
    eina_share_common_population_del(share, slen);
@@ -756,12 +753,12 @@ eina_share_common_del(Eina_Share *share, const char *str, int slen)
    if (node->references > 1)
      {
 	node->references--;
-	DBG("str=%p (%s) refs=%u", str, str, node->references);
+	DBG("str=%p refs=%u", str, node->references);
 	SHARE_COMMON_UNLOCK_BIG();
 	return;
      }
 
-   DBG("str=%p (%s) refs=0, delete.", str, str);
+   DBG("str=%p refs=0, delete.", str);
    node->references = 0;
    slen = node->length;
 
