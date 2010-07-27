@@ -231,8 +231,7 @@ EAPI int               ecore_con_server_send(Ecore_Con_Server *svr,
                                              int size);
 EAPI void              ecore_con_server_client_limit_set(Ecore_Con_Server *svr,
                                                          int client_limit,
-                                                         char
-                                                         reject_excess_clients);
+                                                         char reject_excess_clients);
 EAPI char *            ecore_con_server_ip_get(Ecore_Con_Server *svr);
 EAPI void              ecore_con_server_flush(Ecore_Con_Server *svr);
 
@@ -258,14 +257,11 @@ EAPI void              ecore_con_url_destroy(Ecore_Con_Url *url_con);
 EAPI void              ecore_con_url_data_set(Ecore_Con_Url *url_con,
                                               void *data);
 EAPI void *            ecore_con_url_data_get(Ecore_Con_Url *url_con);
-EAPI void              ecore_con_url_additional_header_add(
-   Ecore_Con_Url *url_con,
-   const char *key,
-   const char *value);
-EAPI void              ecore_con_url_additional_headers_clear(
-   Ecore_Con_Url *url_con);
-EAPI const Eina_List * ecore_con_url_response_headers_get(
-   Ecore_Con_Url *url_con);
+EAPI void              ecore_con_url_additional_header_add(Ecore_Con_Url *url_con,
+                                                           const char *key,
+                                                           const char *value);
+EAPI void              ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_con);
+EAPI const Eina_List * ecore_con_url_response_headers_get(Ecore_Con_Url *url_con);
 EAPI int               ecore_con_url_url_set(Ecore_Con_Url *url_con,
                                              const char *url);
 EAPI void              ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd);
@@ -295,8 +291,7 @@ EAPI void              ecore_con_url_verbose_set(Ecore_Con_Url *url_con,
 EAPI void              ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con,
                                                       int use_epsv);
 EAPI int               ecore_con_url_http_post_send(Ecore_Con_Url *url_con,
-                                                    void *
-                                                    curl_httppost);
+                                                    void *curl_httppost);
 
 #ifdef __cplusplus
 }
