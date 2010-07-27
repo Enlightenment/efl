@@ -211,8 +211,19 @@ _edje_message_shutdown(void)
 void
 _edje_message_cb_set(Edje *ed, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data)
 {
+   int i;
+
    ed->message.func = func;
    ed->message.data = data;
+   for (i = 0 ; i < ed->table_parts_size ; i++) {
+      Edje_Real_Part *rp;
+      rp = ed->table_parts[i];
+      if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object) {
+         Edje *edj2 = _edje_fetch(rp->swallowed_object);
+         if (!edj2) continue;
+	 _edje_message_cb_set(edj2, func, data);
+      }
+   }
 }
 
 Edje_Message *
