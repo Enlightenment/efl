@@ -564,8 +564,8 @@ ecore_con_url_data_get(Ecore_Con_Url *url_con)
 }
 
 /**
- * FIXME: To be documented.
- * @return  FIXME: To be documented.
+ * FIXME
+ * Sets the @ref Ecore_Con_Url object's condition/time members.
  * @ingroup Ecore_Con_Url_Group
  */
 EAPI void

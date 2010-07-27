@@ -51,7 +51,8 @@
  * It is used regardless of whether the program is acting as a server or
  * client itself.
  *
- * To create a listening server, call @c ecore_con_server_add().
+ * To create a listening server call @c ecore_con_server_add(), optionally using
+ * an ECORE_CON_USE_* encryption type OR'ed with the type for encryption.
  *
  * To connect to a server, call @c ecore_con_server_connect().  Data can
  * then be sent to the server using the @c ecore_con_server_send().
@@ -59,7 +60,7 @@
  * Whenever a client connection is made to an @c Ecore_Con_Server, a
  * @c ECORE_CON_CLIENT_ADD event is emitted.  Any event callbacks that are
  * called receive a @c Ecore_Con_Client object, which represents a
- * connection that that particular client.
+ * connection to that particular client.
  *
  * Functions are described in the following groupings:
  * @li @ref Ecore_Con_Lib_Group
@@ -76,12 +77,20 @@ extern "C" {
    typedef struct _Ecore_Con_Client  Ecore_Con_Client; /**< A connection handle */
    typedef struct _Ecore_Con_Url     Ecore_Con_Url;
 
+/**
+ * A callback type for use with @ref ecore_con_lookup.
+ */
    typedef void (*Ecore_Con_Dns_Cb)(const char *canonname,
 				    const char *ip,
 				    struct sockaddr *addr,
 				    int addrlen,
 				    void *data);
 
+/**
+ * Types for an ecore_con client/server object.  A correct way to set this type is
+ * with an ECORE_CON_$TYPE, optionally OR'ed with an ECORE_CON_$USE if encryption is desired.
+ * @example ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS
+ */
    typedef enum _Ecore_Con_Type
      {
 	ECORE_CON_LOCAL_USER       = 0,
@@ -118,26 +127,31 @@ extern "C" {
    typedef struct _Ecore_Con_Event_Url_Complete Ecore_Con_Event_Url_Complete;
    typedef struct _Ecore_Con_Event_Url_Progress Ecore_Con_Event_Url_Progress;
 
+   /// Used as the @p data param for the corresponding event
    struct _Ecore_Con_Event_Client_Add
      {
 	Ecore_Con_Client *client;
      };
 
+   /// Used as the @p data param for the corresponding event
    struct _Ecore_Con_Event_Client_Del
      {
 	Ecore_Con_Client *client;
      };
 
+   /// Used as the @p data param for the corresponding event
    struct _Ecore_Con_Event_Server_Add
      {
 	Ecore_Con_Server *server;
      };
 
+   /// Used as the @p data param for the corresponding event
    struct _Ecore_Con_Event_Server_Del
      {
 	Ecore_Con_Server *server;
      };
 
+   /// Used as the @p data param for the corresponding event
    struct _Ecore_Con_Event_Client_Data
      {
 	Ecore_Con_Client *client;
@@ -145,6 +159,7 @@ extern "C" {
 	int               size;
      };
 
+   /// Used as the @p data param for the corresponding event
    struct _Ecore_Con_Event_Server_Data
      {
 	Ecore_Con_Server *server;
@@ -152,6 +167,7 @@ extern "C" {
 	int               size;
      };
 
+   /// Used as the @p data param for the corresponding event
    struct _Ecore_Con_Event_Url_Data
      {
 	Ecore_Con_Url    *url_con;
@@ -159,12 +175,14 @@ extern "C" {
 	unsigned char     data[1];
      };
 
+   /// Used as the @p data param for the corresponding event
    struct _Ecore_Con_Event_Url_Complete
      {
 	Ecore_Con_Url    *url_con;
 	int               status;
      };
 
+   /// Used as the @p data param for the corresponding event
    struct _Ecore_Con_Event_Url_Progress
      {
 	Ecore_Con_Url    *url_con;
@@ -178,15 +196,15 @@ extern "C" {
 	} up;
      };
 
-   EAPI extern int ECORE_CON_EVENT_CLIENT_ADD;
-   EAPI extern int ECORE_CON_EVENT_CLIENT_DEL;
-   EAPI extern int ECORE_CON_EVENT_SERVER_ADD;
-   EAPI extern int ECORE_CON_EVENT_SERVER_DEL;
-   EAPI extern int ECORE_CON_EVENT_CLIENT_DATA;
-   EAPI extern int ECORE_CON_EVENT_SERVER_DATA;
-   EAPI extern int ECORE_CON_EVENT_URL_DATA;
-   EAPI extern int ECORE_CON_EVENT_URL_COMPLETE;
-   EAPI extern int ECORE_CON_EVENT_URL_PROGRESS;
+   EAPI extern int ECORE_CON_EVENT_CLIENT_ADD; /** A client has connected to the server */
+   EAPI extern int ECORE_CON_EVENT_CLIENT_DEL; /** A client has disconnected from the server */
+   EAPI extern int ECORE_CON_EVENT_SERVER_ADD; /** A server was created */
+   EAPI extern int ECORE_CON_EVENT_SERVER_DEL; /** A server connection was lost */
+   EAPI extern int ECORE_CON_EVENT_CLIENT_DATA; /** A client object has data */
+   EAPI extern int ECORE_CON_EVENT_SERVER_DATA; /** A server object has data */
+   EAPI extern int ECORE_CON_EVENT_URL_DATA; /** A URL object has data */
+   EAPI extern int ECORE_CON_EVENT_URL_COMPLETE; /** A URL object has completed its transfer */
+   EAPI extern int ECORE_CON_EVENT_URL_PROGRESS; /** A URL object has made progress in its transfer */
 
    EAPI int               ecore_con_init(void);
    EAPI int               ecore_con_shutdown(void);

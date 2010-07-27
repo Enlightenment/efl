@@ -747,10 +747,13 @@ ecore_con_client_flush(Ecore_Con_Client *cl)
 /**
  * Do an asynchronous DNS lookup.
  *
+ * This function performs a DNS lookup on the hostname specified by @p name, then
+ * calls @p done_cb with 
+ *
  * @params name IP address or server name to translate.
  * @params done_cb Callback to notify when done.
  * @params data User data to be given to done_cb.
- * @return EINA_TRUE if the request is going on, EINA_FALSE if it failed.
+ * @return EINA_TRUE if the request did not fail to be set up, EINA_FALSE if it failed.
  */
 EAPI Eina_Bool
 ecore_con_lookup(const char *name, Ecore_Con_Dns_Cb done_cb, const void *data)
