@@ -45,6 +45,7 @@ void test_genlist6(void *data, Evas_Object *obj, void *event_info);
 void test_table(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid(void *data, Evas_Object *obj, void *event_info);
 void test_pager(void *data, Evas_Object *obj, void *event_info);
+void test_pager_slide(void *data, Evas_Object *obj, void *event_info);
 void test_win_state(void *data, Evas_Object *obj, void *event_info);
 void test_win_state2(void *data, Evas_Object *obj, void *event_info);
 void test_progressbar(void *data, Evas_Object *obj, void *event_info);
@@ -242,6 +243,7 @@ my_win_main(void)
    ADD_TEST("Checks", test_check);
    ADD_TEST("Radios", test_radio);
    ADD_TEST("Pager", test_pager);
+   ADD_TEST("Pager Slide", test_pager_slide);
    ADD_TEST("Window States", test_win_state);
    ADD_TEST("Window States 2", test_win_state2);
    ADD_TEST("Progressbar", test_progressbar);

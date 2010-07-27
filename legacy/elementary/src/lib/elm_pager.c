@@ -111,7 +111,10 @@ _eval_top(Evas_Object *obj)
 	if (wd->top)
 	  {
 	     o = wd->top->base;
-	     edje_object_signal_emit(o, "elm,action,hide", "elm");
+	     if (wd->top->popme)
+		edje_object_signal_emit(o, "elm,action,pop", "elm");
+	     else
+		edje_object_signal_emit(o, "elm,action,hide", "elm");
 	     onhide = edje_object_data_get(o, "onhide");
 	     if (onhide)
 	       {
@@ -119,10 +122,14 @@ _eval_top(Evas_Object *obj)
 		  else if (!strcmp(onhide, "lower")) evas_object_lower(o);
 	       }
 	  }
+	wd->oldtop = wd->top;
 	wd->top = ittop;
 	o = wd->top->base;
 	evas_object_show(o);
-	edje_object_signal_emit(o, "elm,action,show", "elm");
+	if (wd->oldtop && wd->oldtop->popme)
+	    edje_object_signal_emit(o, "elm,action,show", "elm");
+	else
+	    edje_object_signal_emit(o, "elm,action,push", "elm");
 	onshow = edje_object_data_get(o, "onshow");
 	if (onshow)
 	  {
@@ -271,7 +278,7 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
                                    _signal_hide_finished, it);
    evas_object_event_callback_add(it->content,
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				  _changed_size_hints, it);
+                                  _changed_size_hints, it);
    edje_object_part_swallow(it->base, "elm.swallow.content", it->content);
    edje_object_size_min_calc(it->base, &it->minw, &it->minh);
    evas_object_show(it->content);
@@ -313,7 +320,7 @@ elm_pager_content_pop(Evas_Object *obj)
 
 	     wd->top = it;
 	     o = wd->top->base;
-	     edje_object_signal_emit(o, "elm,action,hide", "elm");
+	     edje_object_signal_emit(o, "elm,action,pop", "elm");
 	     onhide = edje_object_data_get(o, "onhide");
 	     if (onhide)
 	       {

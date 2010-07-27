@@ -18691,6 +18691,14 @@ collections {
 	 }
       }
       programs {
+	 program { name: "push_start";
+	    signal: "elm,action,push";
+	    source: "elm";
+	    action:  STATE_SET "hidden" 0.0;
+	    target: "base";
+	    target: "clip";
+            after: "show_start2";
+	 }
          program { name: "show_start";
 	    signal: "elm,action,show";
 	    source: "elm";
@@ -18708,6 +18716,14 @@ collections {
 	 }
          program { name: "show_end";
             action: SIGNAL_EMIT "elm,action,show,finished" "";
+	 }
+         program { name: "pop_start";
+	    signal: "elm,action,pop";
+	    source: "elm";
+	    action:  STATE_SET "visible" 0.0;
+	    target: "base";
+	    target: "clip";
+            after: "hide_start2";
 	 }
          program { name: "hide_start";
 	    signal: "elm,action,hide";
@@ -18728,6 +18744,320 @@ collections {
             action: SIGNAL_EMIT "elm,action,hide,finished" "";
 	 }
          program { name: "reset";
+	    signal: "elm,action,reset";
+	    source: "elm";
+	    action:  STATE_SET "default" 0.0;
+	    target: "base";
+	    target: "clip";
+	 }
+      }
+   }
+
+   group { name: "elm/pager/base/slide";
+      images {
+	 image: "frame_1.png" COMP;
+	 image: "frame_2.png" COMP;
+	 image: "dia_grad.png" COMP;
+      }
+      parts {
+	 part { name: "clip";
+	    type: RECT;
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	       rel1 {
+		  to: "base";
+		  offset: -9999 -9999;
+	       }
+	       rel2 {
+		  to: "base";
+		  offset: 9999 9999;
+	       }
+	       color: 255 255 255 255;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	    }
+	    description { state: "hidden" 0.0;
+	       inherit: "default" 0.0;
+	       color: 255 255 255 0;
+	       visible: 0;
+	    }
+	    description { state: "hidden2" 0.0;
+	       inherit: "default" 0.0;
+	       color: 255 255 255 0;
+	       visible: 0;
+	    }
+	 }
+	 part { name: "base0";
+	    mouse_events:  0;
+	    clip_to: "clip";
+	    description { state: "default" 0.0;
+	       image.normal: "dia_grad.png";
+	       rel1.to: "over";
+	       rel2.to: "over";
+	       fill {
+		  smooth: 0;
+		  size {
+		     relative: 0.0 1.0;
+		     offset: 64 0;
+		  }
+	       }
+	    }
+	 }
+	 part { name: "base";
+	    mouse_events:  0;
+	    clip_to: "clip";
+	    description { state: "default" 0.0;
+	       image {
+		  normal: "frame_2.png";
+		  border: 5 5 32 26;
+		  middle: 0;
+	       }
+	       fill.smooth : 0;
+	    }
+	    description { state: "hidden" 0.0;
+	       inherit: "default" 0.0;
+	       rel1.relative: -1.0 0.0;
+	       rel2.relative: 0.0 1.0;
+	    }
+	    description { state: "hidden2" 0.0;
+	       inherit: "default" 0.0;
+	       rel1.relative: 1.0 0.0;
+	       rel2.relative: 2.0 1.0;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       rel1.relative: 0.0 0.0;
+	       rel2.relative: 1.0 1.0;
+	    }
+	 }
+	 part { name: "over";
+	    mouse_events:  0;
+	    clip_to: "clip";
+	    description { state:    "default" 0.0;
+	       rel1 {
+		  to: "base";
+		  offset: 4 4;
+	       }
+	       rel2 {
+		  to: "base";
+		  offset: -5 -5;
+	       }
+	       image {
+		  normal: "frame_1.png";
+		  border: 2 2 28 22;
+		  middle: 0;
+	       }
+	       fill.smooth : 0;
+	    }
+	 }
+	 part { name: "elm.swallow.content";
+	    type: SWALLOW;
+	    clip_to: "clip";
+	    description { state: "default" 0.0;
+	       rel1 {
+		  to: "base";
+		  offset: 8 8;
+	       }
+	       rel2 {
+		  to: "base";
+		  offset: -9 -9;
+	       }
+	    }
+	 }
+      }
+      programs {
+	 program { name: "push_start";
+	    signal: "elm,action,push";
+	    source: "elm";
+	    action:  STATE_SET "hidden2" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "show_start2";
+	 }
+	 program { name: "show_start";
+	    signal: "elm,action,show";
+	    source: "elm";
+	    action:  STATE_SET "hidden" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "show_start2";
+	 }
+	 program { name: "show_start2";
+	    action:  STATE_SET "visible" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "base";
+	    target: "clip";
+	    after: "show_end";
+	 }
+	 program { name: "show_end";
+	    action: SIGNAL_EMIT "elm,action,show,finished" "";
+	 }
+	 program { name: "pop_start";
+	    signal: "elm,action,pop";
+	    source: "elm";
+	    action:  STATE_SET "visible" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "pop_start2";
+	 }
+	 program { name: "pop_start2";
+	    action:  STATE_SET "hidden2" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "base";
+	    target: "clip";
+	    after: "hide_end";
+	 }
+	 program { name: "hide_start";
+	    signal: "elm,action,hide";
+	    source: "elm";
+	    action:  STATE_SET "visible" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "hide_start2";
+	 }
+	 program { name: "hide_start2";
+	    action:  STATE_SET "hidden" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "base";
+	    target: "clip";
+	    after: "hide_end";
+	 }
+	 program { name: "hide_end";
+	    action: SIGNAL_EMIT "elm,action,hide,finished" "";
+	 }
+	 program { name: "reset";
+	    signal: "elm,action,reset";
+	    source: "elm";
+	    action:  STATE_SET "default" 0.0;
+	    target: "base";
+	    target: "clip";
+	 }
+      }
+   }
+   group { name: "elm/pager/base/slide_invisible";
+      parts {
+	 part { name: "clip";
+	    type: RECT;
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	       rel1 {
+		  to: "base";
+		  offset: -9999 -9999;
+	    }
+	       rel2 {
+		  to: "base";
+		  offset: 9999 9999;
+	       }
+	       color: 255 255 255 255;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	    }
+	    description { state: "hidden" 0.0;
+	       inherit: "default" 0.0;
+	       color: 255 255 255 0;
+	       visible: 0;
+	    }
+	    description { state: "hidden2" 0.0;
+	       inherit: "default" 0.0;
+	       color: 255 255 255 0;
+	       visible: 0;
+	    }
+	 }
+	 part { name: "base";
+	    type: RECT;
+	    mouse_events:  0;
+	    clip_to: "clip";
+	    description { state: "default" 0.0;
+	       color: 0 0 0 0;
+	    }
+	    description { state: "hidden" 0.0;
+	       color: 0 0 0 0;
+	       rel1.relative: -1.0 0.0;
+	       rel2.relative: 0.0 1.0;
+	    }
+	    description { state: "hidden2" 0.0;
+	       color: 0 0 0 0;
+	       rel1.relative: 1.0 0.0;
+	       rel2.relative: 2.0 1.0;
+	    }
+	    description { state: "visible" 0.0;
+	       color: 0 0 0 0;
+	       rel1.relative: 0.0 0.0;
+	       rel2.relative: 1.0 1.0;
+	    }
+	 }
+	 part { name: "elm.swallow.content";
+	    type: SWALLOW;
+	    clip_to: "clip";
+	    description { state: "default" 0.0;
+	       rel1.to: "base";
+	       rel2.to: "base";
+	    }
+	 }
+      }
+      programs {
+	 program { name: "push_start";
+	    signal: "elm,action,push";
+	    source: "elm";
+	    action:  STATE_SET "hidden2" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "show_start2";
+	 }
+	 program { name: "show_start";
+	    signal: "elm,action,show";
+	    source: "elm";
+	    action:  STATE_SET "hidden" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "show_start2";
+	 }
+	 program { name: "show_start2";
+	    action:  STATE_SET "visible" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "base";
+	    target: "clip";
+	    after: "show_end";
+	 }
+	 program { name: "show_end";
+	    action: SIGNAL_EMIT "elm,action,show,finished" "";
+	 }
+	 program { name: "pop_start";
+	    signal: "elm,action,pop";
+	    source: "elm";
+	    action:  STATE_SET "visible" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "pop_start2";
+	 }
+	 program { name: "pop_start2";
+	    action:  STATE_SET "hidden2" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "base";
+	    target: "clip";
+	    after: "hide_end";
+	 }
+	 program { name: "hide_start";
+	    signal: "elm,action,hide";
+	    source: "elm";
+	    action:  STATE_SET "visible" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "hide_start2";
+	 }
+	 program { name: "hide_start2";
+	    action:  STATE_SET "hidden" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "base";
+	    target: "clip";
+	    after: "hide_end";
+	 }
+	 program { name: "hide_end";
+	    action: SIGNAL_EMIT "elm,action,hide,finished" "";
+	 }
+	 program { name: "reset";
 	    signal: "elm,action,reset";
 	    source: "elm";
 	    action:  STATE_SET "default" 0.0;
@@ -18858,6 +19188,14 @@ collections {
            }
        }
        programs {
+           program { name: "push_start";
+               signal: "elm,action,push";
+               source: "elm";
+               action:  STATE_SET "hidden" 0.0;
+               target: "clip";
+               target: "clip_base";
+               after: "show_start2";
+           }
            program { name: "show_start";
                signal: "elm,action,show";
                source: "elm";
@@ -18875,6 +19213,14 @@ collections {
            }
            program { name: "show_end";
                action: SIGNAL_EMIT "elm,action,show,finished" "";
+           }
+           program { name: "pop_start";
+               signal: "elm,action,pop";
+               source: "elm";
+               action:  STATE_SET "visible" 0.0;
+               target: "clip";
+               target: "clip_base";
+               after: "hide_start2";
            }
            program { name: "hide_start";
                signal: "elm,action,hide";
@@ -19024,6 +19370,14 @@ collections {
            }
        }
        programs {
+           program { name: "push_start";
+               signal: "elm,action,push";
+               source: "elm";
+               action:  STATE_SET "hidden" 0.0;
+               target: "clip";
+               target: "clip_base";
+               after: "show_start2";
+           }
            program { name: "show_start";
                signal: "elm,action,show";
                source: "elm";
@@ -19041,6 +19395,14 @@ collections {
            }
            program { name: "show_end";
                action: SIGNAL_EMIT "elm,action,show,finished" "";
+           }
+           program { name: "pop_start";
+               signal: "elm,action,pop";
+               source: "elm";
+               action:  STATE_SET "visible" 0.0;
+               target: "clip";
+               target: "clip_base";
+               after: "hide_start2";
            }
            program { name: "hide_start";
                signal: "elm,action,hide";
@@ -19110,6 +19472,13 @@ collections {
            }
        }
        programs {
+           program { name: "push_start";
+               signal: "elm,action,push";
+               source: "elm";
+               action:  STATE_SET "hidden" 0.0;
+               target: "clip";
+               after: "show_start2";
+           }
            program { name: "show_start";
                signal: "elm,action,show";
                source: "elm";
@@ -19125,6 +19494,13 @@ collections {
            }
            program { name: "show_end";
                action: SIGNAL_EMIT "elm,action,show,finished" "";
+           }
+           program { name: "pop_start";
+               signal: "elm,action,pop";
+               source: "elm";
+               action:  STATE_SET "visible" 0.0;
+               target: "clip";
+               after: "hide_start2";
            }
            program { name: "hide_start";
                signal: "elm,action,hide";
