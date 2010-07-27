@@ -53,6 +53,7 @@
  * @author Raphael Kubo da Costa <kubo@@profusion.mobi>
  * @author Tilman Sauerbeck <tilman@@code-monkey.de>
  * @author Vincent "caro" Torri  <vtorri at univ-evry dot fr>
+ * @author Tom Hacohen <tom@@stosb.com>
  * @date 2008-2010
  *
  * @section eina_intro_sec Introduction

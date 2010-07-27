@@ -68,11 +68,30 @@
 EAPI Eina_Bool eina_binshare_init(void);
 EAPI Eina_Bool eina_binshare_shutdown(void);
 EAPI const char *eina_binshare_add_length(const char *str, unsigned int slen) EINA_WARN_UNUSED_RESULT;
-EAPI const char *eina_binshare_add(const char *str) EINA_WARN_UNUSED_RESULT;
 EAPI const char *eina_binshare_ref(const char *str);
 EAPI void eina_binshare_del(const char *str);
 EAPI int eina_binshare_length(const char *str) EINA_CONST EINA_WARN_UNUSED_RESULT;
 EAPI void eina_binshare_dump(void);
+
+/**
+ * @brief Retrieve an instance of a blob for use in a program.
+ *
+ * @param   str The binary blob to retrieve an instance of.
+ * @return  A pointer to an instance of the string on success.
+ *          @c NULL on failure.
+ *
+ * This macro retrieves an instance of @p str. If @p str is
+ * @c NULL, then @c NULL is returned. If @p str is already stored, it
+ * is just returned and its reference counter is increased. Otherwise
+ * it is added to the blobs to be searched and a duplicated blob
+ * of @p str is returned.
+ *
+ * This macro essentially calls eina_binshare_add_length with ptr and sizeof(*ptr)
+ * as the parameters. It's useful for pointers to structures.
+ *
+ * @see eina_stringshare_add_length()
+ */
+#define eina_binshare_add(ptr) eina_binshare_add_length(ptr, sizeof(*ptr))
 
 /**
  * @}
