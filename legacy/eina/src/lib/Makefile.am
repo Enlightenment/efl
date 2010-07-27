@@ -32,7 +32,10 @@ eina_fp.c \
 eina_rbtree.c \
 eina_benchmark.c \
 eina_rectangle.c \
+eina_share_common.c \
+eina_binshare.c \
 eina_stringshare.c \
+eina_ustringshare.c \
 eina_cpu.c \
 eina_tiler.c \
 eina_hamster.c \

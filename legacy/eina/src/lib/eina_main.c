@@ -40,6 +40,7 @@
 #include "eina_log.h"
 #include "eina_hash.h"
 #include "eina_stringshare.h"
+#include "eina_ustringshare.h"
 #include "eina_list.h"
 #include "eina_matrixsparse.h"
 #include "eina_array.h"
@@ -110,6 +111,7 @@ S(module);
 S(mempool);
 S(list);
 S(stringshare);
+S(ustringshare);
 S(matrixsparse);
 S(convert);
 S(counter);
@@ -139,6 +141,7 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
   S(mempool),
   S(list),
   S(stringshare),
+  S(ustringshare),
   S(matrixsparse),
   S(convert),
   S(counter),
@@ -288,13 +291,13 @@ eina_threads_init(void)
     ++_eina_main_thread_count;
     ret = _eina_main_thread_count;
 
-    if(_eina_main_thread_count > 1) 
+    if(_eina_main_thread_count > 1)
     {
         UNLOCK();
         return ret;
     }
 
-    eina_stringshare_threads_init();
+    eina_share_common_threads_init();
     eina_log_threads_init();
     _threads_activated = EINA_TRUE;
 
@@ -332,7 +335,7 @@ eina_threads_shutdown(void)
         return ret; 
     }
 
-    eina_stringshare_threads_shutdown();
+    eina_share_common_threads_shutdown();
     eina_log_threads_shutdown();
 
     _threads_activated = EINA_FALSE;

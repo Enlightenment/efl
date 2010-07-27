@@ -15,6 +15,7 @@
  *           Raphael Kubo da Costa <kubo@profusion.mobi>
  *           Tilman Sauerbeck <tilman@code-monkey.de>
  *           Vincent "caro" Torri  <vtorri at univ-evry dot fr>
+ *           Tom Hacohen <tom@stosb.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -135,7 +136,9 @@ extern "C" {
 #include "eina_error.h"
 #include "eina_log.h"
 #include "eina_array.h"
+#include "eina_binshare.h"
 #include "eina_stringshare.h"
+#include "eina_ustringshare.h"
 #include "eina_magic.h"
 #include "eina_counter.h"
 #include "eina_rbtree.h"

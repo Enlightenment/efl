@@ -1,5 +1,6 @@
 /* EINA - EFL data type library
  * Copyright (C) 2002-2008 Gustavo Sverzut Barbieri
+                           Tom Hacohen
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,13 +17,13 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EINA_STRINGSHARE_INLINE_H_
-#define EINA_STRINGSHARE_INLINE_H_
+#ifndef EINA_USTRINGSHARE_INLINE_H_
+#define EINA_USTRINGSHARE_INLINE_H_
 
-#include <string.h>
-#include "eina_stringshare.h"
+#include "eina_unicode.h"
+#include "eina_ustringshare.h"
 /**
- * @addtogroup Eina_Stringshare_Group Stringshare
+ * @addtogroup Eina_UStringshare_Group UStringshare
  *
  * @{
  */
@@ -31,8 +32,8 @@
  * Replace the previously stringshared pointer with new content.
  *
  * The string pointed by @a p_str should be previously stringshared or
- * @c NULL and it will be eina_stringshare_del(). The new string will
- * be passed to eina_stringshare_add() and then assigned to @c *p_str.
+ * @c NULL and it will be eina_ustringshare_del(). The new string will
+ * be passed to eina_ustringshare_add() and then assigned to @c *p_str.
  *
  * @param p_str pointer to the stringhare to be replaced. Must not be
  *        @c NULL, but @c *p_str may be @c NULL as it is a valid
@@ -43,12 +44,12 @@
  *         #EINA_FALSE if the strings were the same after shared.
  */
 static inline Eina_Bool
-eina_stringshare_replace(const char **p_str, const char *news)
+eina_ustringshare_replace(const Eina_Unicode **p_str, const Eina_Unicode *news)
 {
    if (*p_str == news) return EINA_FALSE;
 
-   news = eina_stringshare_add(news);
-   eina_stringshare_del(*p_str);
+   news = eina_ustringshare_add(news);
+   eina_ustringshare_del(*p_str);
    if (*p_str == news)
      return EINA_FALSE;
    *p_str = news;
@@ -59,8 +60,8 @@ eina_stringshare_replace(const char **p_str, const char *news)
  * Replace the previously stringshared pointer with a new content.
  *
  * The string pointed by @a p_str should be previously stringshared or
- * @c NULL and it will be eina_stringshare_del(). The new string will
- * be passed to eina_stringshare_add_length() and then assigned to @c *p_str.
+ * @c NULL and it will be eina_ustringshare_del(). The new string will
+ * be passed to eina_ustringshare_add_length() and then assigned to @c *p_str.
  *
  * @param p_str pointer to the stringhare to be replaced. Must not be
  *        @c NULL, but @c *p_str may be @c NULL as it is a valid
@@ -72,12 +73,12 @@ eina_stringshare_replace(const char **p_str, const char *news)
  *         #EINA_FALSE if the strings were the same after shared.
  */
 static inline Eina_Bool
-eina_stringshare_replace_length(const char **p_str, const char *news, unsigned int slen)
+eina_ustringshare_replace_length(const Eina_Unicode **p_str, const Eina_Unicode *news, unsigned int slen)
 {
    if (*p_str == news) return EINA_FALSE;
 
-   news = eina_stringshare_add_length(news, slen);
-   eina_stringshare_del(*p_str);
+   news = eina_ustringshare_add_length(news, slen);
+   eina_ustringshare_del(*p_str);
    if (*p_str == news)
      return EINA_FALSE;
    *p_str = news;
@@ -88,4 +89,4 @@ eina_stringshare_replace_length(const char **p_str, const char *news, unsigned i
  * @}
  */
 
-#endif /* EINA_STRINGSHARE_INLINE_H_ */
+#endif /* EINA_USTRINGSHARE_INLINE_H_ */

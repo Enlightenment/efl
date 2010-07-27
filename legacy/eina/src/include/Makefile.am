@@ -25,7 +25,10 @@ eina_counter.h \
 eina_inline_array.x \
 eina_magic.h \
 eina_stringshare.h \
+eina_binshare.h \
+eina_ustringshare.h \
 eina_inline_stringshare.x \
+eina_inline_ustringshare.x \
 eina_inline_list.x \
 eina_accessor.h \
 eina_convert.h \
