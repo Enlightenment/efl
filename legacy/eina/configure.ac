@@ -631,3 +631,4 @@ echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...............: $prefix"
 echo
+EFL_FORM_VOLTRON
