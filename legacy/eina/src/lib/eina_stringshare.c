@@ -26,7 +26,7 @@
 */
 
  /**
- * @page tutorial_ustringshare_page UStringshare Tutorial
+ * @page tutorial_stringshare_page Stringshare Tutorial
  *
  * to be written...
  *
@@ -60,7 +60,7 @@
 #include "eina_share_common.h"
 
 /* The actual share */
-static Eina_Share *share;
+static Eina_Share *stringshare_share;
 static const char EINA_MAGIC_STRINGSHARE_NODE_STR[] = "Eina Stringshare Node";
 
 #ifdef EFL_HAVE_THREADS
@@ -484,7 +484,7 @@ Eina_Bool
 eina_stringshare_init(void)
 {
    Eina_Bool ret;
-   ret = eina_share_common_init(&share, EINA_MAGIC_STRINGSHARE_NODE, EINA_MAGIC_STRINGSHARE_NODE_STR);
+   ret = eina_share_common_init(&stringshare_share, EINA_MAGIC_STRINGSHARE_NODE, EINA_MAGIC_STRINGSHARE_NODE_STR);
    if (ret)
      {
         _eina_stringshare_small_init();
@@ -508,7 +508,7 @@ eina_stringshare_shutdown(void)
 {
    Eina_Bool ret;
    _eina_stringshare_small_shutdown();
-   ret = eina_share_common_shutdown(&share);
+   ret = eina_share_common_shutdown(&stringshare_share);
    return ret;
 }
 
@@ -572,13 +572,13 @@ eina_stringshare_del(const char *str)
      return;
    else if (slen < 4)
      {
-        eina_share_common_population_del(share, slen);
+        eina_share_common_population_del(stringshare_share, slen);
         STRINGSHARE_LOCK_SMALL();
         _eina_stringshare_small_del(str, slen);
         STRINGSHARE_UNLOCK_SMALL();
         return;
      }
-   eina_share_common_del(share, str);
+   eina_share_common_del(stringshare_share, str);
 }
 
 /**
@@ -619,7 +619,7 @@ eina_stringshare_add_length(const char *str, unsigned int slen)
         STRINGSHARE_UNLOCK_SMALL();
         return s;
      }
-   return eina_share_common_add_length(share, str, slen * sizeof(char), sizeof(char));
+   return eina_share_common_add_length(stringshare_share, str, slen * sizeof(char), sizeof(char));
 }
 
 /**
@@ -803,7 +803,7 @@ eina_stringshare_ref(const char *str)
 
    if (!str) 
      {
-        return eina_share_common_ref(share, str);
+        return eina_share_common_ref(stringshare_share, str);
      }
 
    /* special cases */
@@ -815,14 +815,14 @@ eina_stringshare_ref(const char *str)
 
    if (slen < 2)
      {
-	eina_share_common_population_add(share, slen);
+	eina_share_common_population_add(stringshare_share, slen);
 
 	return str;
      }
    else if (slen < 4)
      {
 	const char *s;
-	eina_share_common_population_add(share, slen);
+	eina_share_common_population_add(stringshare_share, slen);
 
 	STRINGSHARE_LOCK_SMALL();
 	s =  _eina_stringshare_small_add(str, slen);
@@ -831,7 +831,7 @@ eina_stringshare_ref(const char *str)
 	return s;
      }
 
-   return eina_share_common_ref(share, str);
+   return eina_share_common_ref(stringshare_share, str);
 }
 
 /**
@@ -855,7 +855,7 @@ eina_stringshare_strlen(const char *str)
    if (str[2] == '\0') return 2;
    if (str[3] == '\0') return 3;
 
-   len = eina_share_common_length(share, (const char *) str);
+   len = eina_share_common_length(stringshare_share, (const char *) str);
    len = (len > 0) ? len / (int) sizeof(char) : -1;
    return len;
 }
@@ -869,7 +869,7 @@ eina_stringshare_strlen(const char *str)
 EAPI void
 eina_stringshare_dump(void)
 {
-   eina_share_common_dump(share, _eina_stringshare_small_dump, sizeof(_eina_stringshare_single));
+   eina_share_common_dump(stringshare_share, _eina_stringshare_small_dump, sizeof(_eina_stringshare_single));
 }
 
 /**

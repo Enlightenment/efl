@@ -36,7 +36,7 @@
 #include "eina_private.h"
 
 /* The actual share */
-static Eina_Share *share;
+static Eina_Share *binshare_share;
 static const char EINA_MAGIC_BINSHARE_NODE_STR[] = "Eina Binshare Node";
 
 /*============================================================================*
@@ -57,7 +57,7 @@ static const char EINA_MAGIC_BINSHARE_NODE_STR[] = "Eina Binshare Node";
 EAPI Eina_Bool
 eina_binshare_init(void)
 {
-   return eina_share_common_init(&share, EINA_MAGIC_BINSHARE_NODE, EINA_MAGIC_BINSHARE_NODE_STR);
+   return eina_share_common_init(&binshare_share, EINA_MAGIC_BINSHARE_NODE, EINA_MAGIC_BINSHARE_NODE_STR);
 }
 
 /**
@@ -75,7 +75,7 @@ EAPI Eina_Bool
 eina_binshare_shutdown(void)
 {
    Eina_Bool ret;
-   ret = eina_share_common_shutdown(&share);
+   ret = eina_share_common_shutdown(&binshare_share);
    return ret;
 }
 
@@ -124,7 +124,7 @@ eina_binshare_del(const char *str)
 {
    if (!str)
       return;
-   eina_share_common_del(share,(const char *) str);
+   eina_share_common_del(binshare_share,(const char *) str);
 }
 
 /**
@@ -150,7 +150,7 @@ eina_binshare_del(const char *str)
 EAPI const char *
 eina_binshare_add_length(const char *str, unsigned int slen)
 {
-   return (const char *) eina_share_common_add_length(share,(const char *) str, (slen) * sizeof(char), 0);
+   return (const char *) eina_share_common_add_length(binshare_share,(const char *) str, (slen) * sizeof(char), 0);
 }
 
 /**
@@ -170,11 +170,7 @@ eina_binshare_add_length(const char *str, unsigned int slen)
 EAPI const char *
 eina_binshare_ref(const char *str)
 {
-   if (!str) 
-     {
-        return (const char *) eina_share_common_ref(share, (const char *) str);
-     }
-   return (const char *) eina_share_common_ref(share, (const char *) str);
+   return (const char *) eina_share_common_ref(binshare_share, (const char *) str);
 }
 
 /**
@@ -191,7 +187,7 @@ eina_binshare_ref(const char *str)
 EAPI int
 eina_binshare_length(const char *str)
 {
-   return eina_share_common_length(share, (const char *) str);
+   return eina_share_common_length(binshare_share, (const char *) str);
 }
 
 /**
@@ -203,7 +199,7 @@ eina_binshare_length(const char *str)
 EAPI void
 eina_binshare_dump(void)
 {
-   eina_share_common_dump(share, NULL, 0);
+   eina_share_common_dump(binshare_share, NULL, 0);
 }
 
 /**

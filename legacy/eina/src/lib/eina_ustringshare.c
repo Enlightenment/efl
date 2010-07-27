@@ -35,7 +35,7 @@
 #include "eina_private.h"
 
 /* The actual share */
-static Eina_Share *share;
+static Eina_Share *ustringshare_share;
 static const char EINA_MAGIC_USTRINGSHARE_NODE_STR[] = "Eina UStringshare Node";
 
 /*============================================================================*
@@ -56,7 +56,7 @@ static const char EINA_MAGIC_USTRINGSHARE_NODE_STR[] = "Eina UStringshare Node";
 Eina_Bool
 eina_ustringshare_init(void)
 {
-   return eina_share_common_init(&share, EINA_MAGIC_USTRINGSHARE_NODE, EINA_MAGIC_USTRINGSHARE_NODE_STR);
+   return eina_share_common_init(&ustringshare_share, EINA_MAGIC_USTRINGSHARE_NODE, EINA_MAGIC_USTRINGSHARE_NODE_STR);
 }
 
 /**
@@ -74,7 +74,7 @@ Eina_Bool
 eina_ustringshare_shutdown(void)
 {
    Eina_Bool ret;
-   ret = eina_share_common_shutdown(&share);
+   ret = eina_share_common_shutdown(&ustringshare_share);
    return ret;
 }
 
@@ -123,7 +123,7 @@ eina_ustringshare_del(const Eina_Unicode *str)
 {
    if (!str)
       return;
-   eina_share_common_del(share,(const char *) str);
+   eina_share_common_del(ustringshare_share,(const char *) str);
 }
 
 /**
@@ -149,7 +149,7 @@ eina_ustringshare_del(const Eina_Unicode *str)
 EAPI const Eina_Unicode *
 eina_ustringshare_add_length(const Eina_Unicode *str, unsigned int slen)
 {
-   return (const Eina_Unicode *) eina_share_common_add_length(share,(const char *) str, slen * sizeof(Eina_Unicode), sizeof(Eina_Unicode));
+   return (const Eina_Unicode *) eina_share_common_add_length(ustringshare_share,(const char *) str, slen * sizeof(Eina_Unicode), sizeof(Eina_Unicode));
 }
 
 /**
@@ -195,11 +195,7 @@ eina_ustringshare_add(const Eina_Unicode *str)
 EAPI const Eina_Unicode *
 eina_ustringshare_ref(const Eina_Unicode *str)
 {
-   if (!str) 
-     {
-        return (Eina_Unicode *) eina_share_common_ref(share, (const char *) str);
-     }
-   return (const Eina_Unicode *) eina_share_common_ref(share, (const char *) str);
+   return (const Eina_Unicode *) eina_share_common_ref(ustringshare_share, (const char *) str);
 }
 
 /**
@@ -216,7 +212,7 @@ eina_ustringshare_ref(const Eina_Unicode *str)
 EAPI int
 eina_ustringshare_strlen(const Eina_Unicode *str)
 {
-   int len = eina_share_common_length(share, (const char *) str);
+   int len = eina_share_common_length(ustringshare_share, (const char *) str);
    len = (len > 0) ? len / (int) sizeof(Eina_Unicode) : -1;
    return len;
 }
@@ -230,7 +226,7 @@ eina_ustringshare_strlen(const Eina_Unicode *str)
 EAPI void
 eina_ustringshare_dump(void)
 {
-   eina_share_common_dump(share, NULL, 0);
+   eina_share_common_dump(ustringshare_share, NULL, 0);
 }
 
 /**
