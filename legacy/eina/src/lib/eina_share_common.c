@@ -736,8 +736,9 @@ eina_share_common_ref(Eina_Share *share, const char *str)
 
 
 void
-eina_share_common_del(Eina_Share *share, const char *str, int slen)
+eina_share_common_del(Eina_Share *share, const char *str)
 {
+   unsigned int slen;
    Eina_Share_Common_Head *ed;
    Eina_Share_Common_Head **p_bucket;
    Eina_Share_Common_Node *node;
@@ -745,11 +746,11 @@ eina_share_common_del(Eina_Share *share, const char *str, int slen)
 
    if (!str) return;
 
-   eina_share_common_population_del(share, slen);
-
    SHARE_COMMON_LOCK_BIG();
 
    node = _eina_share_common_node_from_str(str, share->node_magic);
+   slen = node->length;
+   eina_share_common_population_del(share, slen);
    if (node->references > 1)
      {
 	node->references--;
@@ -760,7 +761,6 @@ eina_share_common_del(Eina_Share *share, const char *str, int slen)
 
    DBG("str=%p refs=0, delete.", str);
    node->references = 0;
-   slen = node->length;
 
    hash = eina_hash_superfast(str, slen);
    hash_num = hash & 0xFF;

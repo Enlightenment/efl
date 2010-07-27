@@ -121,12 +121,9 @@ eina_ustringshare_shutdown(void)
 EAPI void
 eina_ustringshare_del(const Eina_Unicode *str)
 {
-   int slen;
    if (!str)
       return;
-   slen = eina_unicode_strlen(str);
-   slen = (int) (slen * sizeof(Eina_Unicode));
-   eina_share_common_del(share,(const char *) str, slen);
+   eina_share_common_del(share,(const char *) str);
 }
 
 /**

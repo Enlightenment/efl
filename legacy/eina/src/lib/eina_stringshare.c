@@ -578,9 +578,7 @@ eina_stringshare_del(const char *str)
         STRINGSHARE_UNLOCK_SMALL();
         return;
      }
-   slen = strlen(str);
-   slen = (int) (slen * sizeof(char));
-   eina_share_common_del(share, str, slen);
+   eina_share_common_del(share, str);
 }
 
 /**

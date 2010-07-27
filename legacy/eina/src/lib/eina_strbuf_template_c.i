@@ -16,10 +16,6 @@
  * a lot easier since those are essentially the same just with different sizes.
  */
 
-#ifndef EINA_STRBUF_TEMPLATE_C_I
-#define EINA_STRBUF_TEMPLATE_C_I
-
-
 #include <Eina.h>
 #include "eina_strbuf_common.h"
 #include "eina_unicode.h"
@@ -217,8 +213,3 @@ _FUNC_EXPAND(length_get)(const _STRBUF_STRUCT_NAME *buf)
    EINA_MAGIC_CHECK_STRBUF(buf, 0);
    return eina_strbuf_common_length_get(buf);
 }
-
-#else
-#error Something went terribly wrong, shouldnt be included twice!
-
-#endif

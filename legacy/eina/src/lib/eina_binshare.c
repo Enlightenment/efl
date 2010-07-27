@@ -120,11 +120,11 @@ eina_binshare_shutdown(void)
  * will happen, likely a segmentation fault.
  */
 EAPI void
-eina_binshare_del(const char *str, unsigned int slen)
+eina_binshare_del(const char *str)
 {
    if (!str)
       return;
-   eina_share_common_del(share,(const char *) str, slen);
+   eina_share_common_del(share,(const char *) str);
 }
 
 /**

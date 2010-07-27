@@ -65,7 +65,7 @@ Eina_Bool eina_share_common_init(Eina_Share **share, Eina_Magic node_magic, cons
 Eina_Bool eina_share_common_shutdown(Eina_Share **share);
 const char *eina_share_common_add_length(Eina_Share *share, const char *str, unsigned int slen, unsigned int null_size) EINA_WARN_UNUSED_RESULT;
 const char *eina_share_common_ref(Eina_Share *share, const char *str);
-void eina_share_common_del(Eina_Share *share, const char *str, int slen);
+void eina_share_common_del(Eina_Share *share, const char *str);
 int eina_share_common_length(Eina_Share *share, const char *str) EINA_CONST EINA_WARN_UNUSED_RESULT;
 void eina_share_common_dump(Eina_Share *share, void (* additional_dump)(struct dumpinfo *), int used);
 
