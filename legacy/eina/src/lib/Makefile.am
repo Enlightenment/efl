@@ -42,6 +42,8 @@ eina_hamster.c \
 eina_safety_checks.c \
 eina_str.c \
 eina_strbuf.c \
+eina_strbuf_common.c \
+eina_ustrbuf.c \
 eina_unicode.c \
 eina_quadtree.c
 

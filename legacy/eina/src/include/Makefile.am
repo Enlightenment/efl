@@ -49,6 +49,7 @@ eina_inline_tiler.x \
 eina_str.h \
 eina_inline_str.x \
 eina_strbuf.h \
+eina_ustrbuf.h \
 eina_unicode.h \
 eina_quadtree.h
 

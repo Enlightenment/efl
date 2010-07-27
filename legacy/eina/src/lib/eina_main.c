@@ -118,6 +118,7 @@ S(counter);
 S(benchmark);
 S(rectangle);
 S(strbuf);
+S(ustrbuf);
 S(quadtree);
 #undef S
 
@@ -148,6 +149,7 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
   S(benchmark),
   S(rectangle),
   S(strbuf),
+  S(ustrbuf),
   S(quadtree)
 #undef S
 };
