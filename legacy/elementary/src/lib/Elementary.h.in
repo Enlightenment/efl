@@ -1125,6 +1125,9 @@ extern "C" {
    EAPI Eina_Bool         elm_genlist_homogeneous_get(const Evas_Object *obj);
    EAPI void              elm_genlist_block_count_set(Evas_Object *obj, int n);
    EAPI int               elm_genlist_block_count_get(const Evas_Object *obj);
+   EAPI void              elm_genlist_longpress_timeout_set(const Evas_Object *obj, double timeout);
+   EAPI double            elm_genlist_longpress_timeout_get(const Evas_Object *obj);
+
 
    /* operations to add items */
    EAPI Elm_Genlist_Item *elm_genlist_item_append(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item_Flags flags, Evas_Smart_Cb func, const void *func_data);

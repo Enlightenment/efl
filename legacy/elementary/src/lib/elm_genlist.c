@@ -269,6 +269,7 @@ struct _Widget_Data
    int item_width;
    int item_height;
    int max_items_per_block;
+   double longpress_timeout;
 };
 
 struct _Item_Block
@@ -681,6 +682,8 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
    Evas_Coord x, y;
 
    if (ev->button != 1) return;
+   Widget_Data *wd = elm_widget_data_get(it->wd->obj);
+
    it->down = 1;
    it->dragging  = 0;
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
@@ -695,7 +698,7 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
      evas_object_smart_callback_call(it->wd->obj, "clicked", it);
    if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->realized)
-     it->long_timer = ecore_timer_add(1.0, _long_press, it);
+     it->long_timer = ecore_timer_add(wd->longpress_timeout, _long_press, it);
    else
      it->long_timer = NULL;
 }
@@ -1495,6 +1498,7 @@ elm_genlist_add(Evas_Object *parent)
    wd->obj = obj;
    wd->mode = ELM_LIST_SCROLL;
    wd->max_items_per_block = 32;
+   wd->longpress_timeout = 1.0;
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
@@ -3144,4 +3148,38 @@ elm_genlist_block_count_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
    return wd->max_items_per_block;
+}
+
+/**
+ * Set the timeout in seconds for the longpress event
+ * 
+ * @param obj The genlist object
+ * @param timeout timeout in seconds
+ * 
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_longpress_timeout_set(const Evas_Object *obj, double timeout)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+   wd->longpress_timeout = timeout;
+}
+
+/**
+ * Get the timeout in seconds for the longpress event
+ * 
+ * @param obj The genlist object
+ * @return timeout in seconds
+ * 
+ * @ingroup Genlist
+ */
+EAPI double
+elm_genlist_longpress_timeout_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+   return wd->longpress_timeout;
 }
