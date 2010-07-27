@@ -200,8 +200,8 @@ extern "C" {
    EAPI extern int ECORE_CON_EVENT_CLIENT_DEL; /** A client has disconnected from the server */
    EAPI extern int ECORE_CON_EVENT_SERVER_ADD; /** A server was created */
    EAPI extern int ECORE_CON_EVENT_SERVER_DEL; /** A server connection was lost */
-   EAPI extern int ECORE_CON_EVENT_CLIENT_DATA; /** A client object has data */
-   EAPI extern int ECORE_CON_EVENT_SERVER_DATA; /** A server object has data */
+   EAPI extern int ECORE_CON_EVENT_CLIENT_DATA; /** A client connected to the server has sent data */
+   EAPI extern int ECORE_CON_EVENT_SERVER_DATA; /** A server connection object has data */
    EAPI extern int ECORE_CON_EVENT_URL_DATA; /** A URL object has data */
    EAPI extern int ECORE_CON_EVENT_URL_COMPLETE; /** A URL object has completed its transfer */
    EAPI extern int ECORE_CON_EVENT_URL_PROGRESS; /** A URL object has made progress in its transfer */
