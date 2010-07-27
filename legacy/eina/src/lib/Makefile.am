@@ -39,6 +39,7 @@ eina_hamster.c \
 eina_safety_checks.c \
 eina_str.c \
 eina_strbuf.c \
+eina_unicode.c \
 eina_quadtree.c
 
 if EINA_STATIC_BUILD_CHAINED_POOL
