@@ -739,8 +739,7 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username,
         return 0;
      }
 
-# ifdef CURLOPT_USERNAME
-#  ifdef CURLOPT_PASSWORD
+# if LIBCURL_VERSION_NUM >= 0x071301
    if ((username != NULL) && (password != NULL))
      {
         if (safe)
@@ -754,7 +753,6 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username,
         return 1;
      }
 
-#  endif
 # endif
 #endif
    return 0;
