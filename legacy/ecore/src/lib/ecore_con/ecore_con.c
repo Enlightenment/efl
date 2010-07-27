@@ -260,18 +260,17 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 }
 
 /**
- * Creates a server object to represent the server listening at the
- * given port.
+ * Creates a connection to the specified server and returns an associated object.
  *
- * The socket to which the server connects depends on the connection type:
+ * The socket to which the connection is made depends on the connection type:
  * @li If @a compl_type is @c ECORE_CON_LOCAL_USER, the function will
- *     connect to the server listening on the Unix socket
+ *     connect to the server at the Unix socket
  *     "~/.ecore/[name]/[port]".
  * @li If @a compl_type is @c ECORE_CON_LOCAL_SYSTEM, the function will
- *     connect to the server listening on the Unix socket
+ *     connect to the server at the Unix socket
  *     "/tmp/.ecore_service|[name]|[port]".
  * @li If @a compl_type is @c ECORE_CON_REMOTE_TCP, the function will
- *     connect to the server listening on the TCP port "[name]:[port]".
+ *     connect to the server at the TCP port "[name]:[port]".
  *
  * @param  compl_type The connection type.
  * @param  name       Name used when determining what socket to connect to.
@@ -361,6 +360,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
  * @param   svr The given server.
  * @return  Data associated with the server when it was created.
  * @ingroup Ecore_Con_Server_Group
+ * @see ecore_con_server_add, ecore_con_server_connect
  */
 EAPI void *
 ecore_con_server_del(Ecore_Con_Server *svr)
