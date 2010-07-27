@@ -636,9 +636,6 @@ EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Heavy_Cb func_heavy,
     */
    worker.u.long_run.func_heavy = func_heavy;
    worker.u.long_run.func_notify = func_notify;
-   worker->hash = NULL;
-   pthread_cond_init(&worker->cond, NULL);
-   pthread_mutex_init(&worker->mutex, NULL);
    worker.u.long_run.notify = NULL;
    worker.func_cancel = func_cancel;
    worker.func_end = func_end;
