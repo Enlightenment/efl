@@ -8,3 +8,9 @@ if BUILD_ENGINE_SOFTWARE_16
 SUBDIRS += common_16
 
 endif
+
+if BUILD_ENGINE_SOFTWARE_8
+
+SUBDIRS += common_8
+
+endif

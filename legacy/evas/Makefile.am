@@ -30,6 +30,7 @@ evas-software-buffer.pc \
 evas-software-qtopia.pc \
 evas-software-x11.pc \
 evas-software-16-x11.pc \
+evas-software-8-x11.pc \
 evas-xrender-x11.pc \
 evas-xrender-xcb.pc \
 evas-software-gdi.pc \
@@ -69,6 +70,7 @@ evas-software-buffer.pc.in \
 evas-software-qtopia.pc.in \
 evas-software-x11.pc.in \
 evas-software-16-x11.pc.in \
+evas-software-8-x11.pc.in \
 evas-xrender-x11.pc.in \
 evas-xrender-xcb.pc.in \
 evas-software-gdi.pc.in \
@@ -88,6 +90,10 @@ endif
 
 if BUILD_ENGINE_SOFTWARE_16_X11
 pkgconfig_DATA += evas-software-16-x11.pc
+endif
+
+if BUILD_ENGINE_SOFTWARE_8_X11
+pkgconfig_DATA += evas-software-8-x11.pc
 endif
 
 if BUILD_ENGINE_DIRECTFB

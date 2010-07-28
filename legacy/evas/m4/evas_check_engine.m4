@@ -248,6 +248,8 @@ PKG_CHECK_MODULES([XCB],
     requirement="xcb xcb-shm xcb-image pixman-1"
     evas_engine_[]$1[]_cflags="${XCB_CFLAGS}"
     evas_engine_[]$1[]_libs="${XCB_LIBS}"
+   ],[
+    have_dep="no"
    ]
 )
 
@@ -283,6 +285,8 @@ PKG_CHECK_MODULES([XCBRENDER],
     requirement="xcb xcb-shm xcb-render xcb-image pixman-1"
     evas_engine_[]$1[]_cflags="${XCBRENDER_CFLAGS}"
     evas_engine_[]$1[]_libs="${XCBRENDER_LIBS}"
+   ],[
+    have_dep="no"
    ]
 )
 
@@ -646,6 +650,42 @@ fi
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 AC_SUBST([evas_engine_$1_moc])
+
+if test "x${have_dep}" = "xyes" ; then
+  m4_default([$4], [:])
+else
+  m4_default([$5], [:])
+fi
+
+])
+
+dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_8_X11(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+
+AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_8_X11],
+[
+
+have_dep="no"
+evas_engine_[]$1[]_cflags=""
+evas_engine_[]$1[]_libs=""
+
+PKG_CHECK_MODULES([XCB],
+   [xcb xcb-shm xcb-image >= 0.2.1 pixman-1],
+   [
+    have_dep="yes"
+    requirement="xcb xcb-shm xcb-image pixman-1"
+    evas_engine_[]$1[]_cflags="${XCB_CFLAGS}"
+    evas_engine_[]$1[]_libs="${XCB_LIBS}"
+   ],[
+    have_dep="no"
+   ]
+)
+
+AC_SUBST([evas_engine_$1_cflags])
+AC_SUBST([evas_engine_$1_libs])
+
+if test "x$3" = "xstatic" ; then
+   requirement_evas="${requirement} ${requirement_evas}"
+fi
 
 if test "x${have_dep}" = "xyes" ; then
   m4_default([$4], [:])

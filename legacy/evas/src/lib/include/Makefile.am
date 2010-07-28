@@ -8,5 +8,6 @@ evas_options.h \
 evas_macros.h \
 evas_mmx.h \
 evas_common.h \
+evas_common_soft8.h \
 evas_common_soft16.h \
 evas_blend_ops.h

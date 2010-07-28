@@ -106,6 +106,7 @@ want_evas_engine_software_sdl="no"
 want_evas_engine_fb="no"
 want_evas_engine_directfb="no"
 want_evas_engine_software_qtopia="no"
+want_evas_engine_software_8_x11="no"
 want_evas_engine_software_16_x11="no"
 want_evas_engine_software_16_ddraw="no"
 want_evas_engine_software_16_wince="no"
@@ -148,6 +149,7 @@ case "$host_os" in
    *)
       want_evas_engine_software_xlib="auto"
       want_evas_engine_xrender_x11="auto"
+      want_evas_engine_software_8_x11="auto"
       want_evas_engine_software_16_x11="auto"
       ;;
 esac
@@ -521,6 +523,8 @@ EVAS_CHECK_ENGINE([directfb], [${want_evas_engine_directfb}], [no], [DirectFB])
 # disable cairo engine for the release
 #EVAS_CHECK_ENGINE([software-qtopia], [${want_evas_engine_software_qtopia}], [no], [Qtopia])
 
+EVAS_CHECK_ENGINE([software-8-x11], [${want_evas_engine_software_8_x11}], [yes], [Software X11 8 bits grayscale])
+
 EVAS_CHECK_ENGINE([software-16-x11], [${want_evas_engine_software_16_x11}], [yes], [Software X11 16 bits])
 
 EVAS_CHECK_ENGINE([software-16-ddraw], [${want_evas_engine_software_16_ddraw}], [no], [Software DirectDraw 16 bits])
@@ -657,6 +661,28 @@ AC_MSG_RESULT([${have_static_software_16}])
 AM_CONDITIONAL(EVAS_STATIC_BUILD_SOFTWARE_16, test "x${have_static_software_16}" = "xyes")
 if test "x${have_static_software_16}" = "xyes"; then
    AC_DEFINE(EVAS_STATIC_BUILD_SOFTWARE_16, [1], [Build software 16 engine as part of libevas])
+fi
+
+# if software 8 x11 is enabled - build software_8 (the generic 8bit
+# engine).
+have_evas_engine_software_8="no"
+if test "x$have_evas_engine_software_8_x11" = "xyes" -o "x$have_evas_engine_software_8_x11" = "xstatic"; then
+   have_evas_engine_software_8="yes"
+fi
+AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_8, test "x$have_evas_engine_software_8" = "xyes")
+
+# if software 8 need to be build as part of libevas.so
+have_static_software_8="no"
+AC_ARG_ENABLE([static-software-8],
+   [AC_HELP_STRING([--enable-static-software-8], [Build software 8 engine as part of libevas])],
+   [have_static_software_8=${enableval}]
+)
+AC_MSG_CHECKING([Whether to build software 8 engine as part of libevas])
+AC_MSG_RESULT([${have_static_software_8}])
+
+AM_CONDITIONAL(EVAS_STATIC_BUILD_SOFTWARE_8, test "x${have_static_software_8}" = "xyes")
+if test "x${have_static_software_8}" = "xyes"; then
+   AC_DEFINE(EVAS_STATIC_BUILD_SOFTWARE_8, [1], [Build software 8 engine as part of libevas])
 fi
 
 #####################################################################
@@ -1409,6 +1435,7 @@ evas-opengl-sdl.pc
 evas-quartz.pc
 evas-software-buffer.pc
 evas-software-x11.pc
+evas-software-8-x11.pc
 evas-software-16-x11.pc
 evas-xrender-x11.pc
 evas-xrender-xcb.pc
@@ -1437,6 +1464,7 @@ src/lib/engines/common/evas_op_copy/Makefile
 src/lib/engines/common/evas_op_mask/Makefile
 src/lib/engines/common/evas_op_mul/Makefile
 src/lib/engines/common/evas_op_sub/Makefile
+src/lib/engines/common_8/Makefile
 src/lib/engines/common_16/Makefile
 src/modules/Makefile
 src/modules/engines/Makefile
@@ -1456,6 +1484,8 @@ src/modules/engines/gl_sdl/Makefile
 src/modules/engines/quartz/Makefile
 src/modules/engines/xrender_x11/Makefile
 src/modules/engines/software_sdl/Makefile
+src/modules/engines/software_8/Makefile
+src/modules/engines/software_8_x11/Makefile
 src/modules/engines/software_16/Makefile
 src/modules/engines/software_16_x11/Makefile
 src/modules/engines/software_16_ddraw/Makefile
@@ -1530,6 +1560,7 @@ fi
 echo "  Software Framebuffer.......: $have_evas_engine_fb"
 echo "  DirectFB...................: $have_evas_engine_directfb"
 #echo "  Software Qtopia............: $have_evas_engine_software_qtopia"
+echo "  Software 8bit grayscale....: $have_evas_engine_software_8"
 echo "  Software 16bit ............: $have_evas_engine_software_16"
 echo "  Software 16bit X11.........: $have_evas_engine_software_16_x11"
 echo "  Software 16bit Directdraw..: $have_evas_engine_software_16_ddraw"
