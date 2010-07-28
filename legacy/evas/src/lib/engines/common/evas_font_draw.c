@@ -477,6 +477,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 		  func(NULL, word->im + (word->roww * j) + xstart, dc->col.col, im + ((y + j) * im_w) + x, xrun);
 	       }
 	  }
+	return;
 #endif
      }
 
