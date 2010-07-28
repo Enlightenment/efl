@@ -672,7 +672,7 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 
            window =
               (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->
-         xbutton.window);
+               xbutton.window);
            event_window = xevent->xbutton.window;
 
            e = _ecore_mouse_button(ECORE_EVENT_MOUSE_BUTTON_DOWN,
@@ -691,9 +691,9 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
                                    1,
                                    1,
                                    1.0,
- // pressure
+// pressure
                                    0.0,
- // angle
+// angle
                                    xevent->xbutton.x,
                                    xevent->xbutton.y,
                                    xevent->xbutton.x_root,
@@ -1993,6 +1993,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         if (e->state[0] == ECORE_X_WINDOW_STATE_UNKNOWN)
 //	     char *name;
            LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
 //	     name = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[1]);
 //	     if (name) ERR("Unknown state: %s", name);
 //	     XFree(name);
@@ -2001,6 +2002,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         if (e->state[1] == ECORE_X_WINDOW_STATE_UNKNOWN)
 //	     char *name;
            LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
 //	     name = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[2]);
 //	     if (name) ERR("Unknown state: %s", name);
 //	     XFree(name);
