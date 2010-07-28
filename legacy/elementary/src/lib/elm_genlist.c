@@ -266,6 +266,8 @@ struct _Widget_Data
    Eina_Bool bring_in : 1;
    Eina_Bool compress : 1;
    Eina_Bool homogeneous : 1;
+   Eina_Bool clear_me : 1;
+   int walking;
    int item_width;
    int item_height;
    int max_items_per_block;
@@ -510,6 +512,7 @@ static void
 _item_del(Elm_Genlist_Item *it)
 {
    elm_genlist_item_subitems_clear(it);
+   it->wd->walking -= it->walking;
    if (it->wd->show_item == it) it->wd->show_item = NULL;
    if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
    if (it->realized) _item_unrealize(it);
@@ -539,13 +542,20 @@ _item_select(Elm_Genlist_Item *it)
    it->wd->selected = eina_list_append(it->wd->selected, it);
    call:
    it->walking++;
+   it->wd->walking++;
    if (it->func.func) it->func.func((void *)it->func.data, it->wd->obj, it);
    if (!it->delete_me)
      evas_object_smart_callback_call(it->wd->obj, "selected", it);
    it->walking--;
-   if ((it->walking == 0) && (it->delete_me))
+   it->wd->walking--;
+   if ((it->wd->clear_me) && (it->wd->walking == 0))
+      elm_genlist_clear(it->wd->obj);
+   else
      {
-        if (it->relcount == 0) _item_del(it);
+        if ((it->walking == 0) && (it->delete_me))
+          {
+             if (it->relcount == 0) _item_del(it);
+          }
      }
 }
 
@@ -1963,6 +1973,18 @@ elm_genlist_clear(Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   if (wd->walking > 0)
+     {
+	Elm_Genlist_Item *it;
+        
+        wd->clear_me = 1;
+        EINA_INLIST_FOREACH(wd->items, it)
+          {
+             it->delete_me = 1;
+          }
+	return;
+     }
+   wd->clear_me = 0;
    while (wd->items)
      {
 	Elm_Genlist_Item *it = (Elm_Genlist_Item *)(wd->items);
