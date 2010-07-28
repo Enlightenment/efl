@@ -110,18 +110,24 @@ EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 #define EINA_INLIST_FOREACH(list, l) for (l = NULL, \
                                           l = \
                                              (list ? _EINA_INLIST_CONTAINER(l, \
-                                                                            list) : NULL); \
+                                                                            list) \
+                                              : NULL); \
                                           l; \
                                           l = \
                                              (EINA_INLIST_GET(l)->next ? \
                                               _EINA_INLIST_CONTAINER(l, \
                                                                      EINA_INLIST_GET( \
                                                                         l)-> \
-                                                                     next) : NULL))
+                                                                     next) : \
+                                              NULL))
 #define EINA_INLIST_REVERSE_FOREACH(list, l) for (l = NULL, \
                                                   l = \
                                                      (list ? \
-                                                      _EINA_INLIST_CONTAINER(l, list->last) : NULL); \
+                                                      _EINA_INLIST_CONTAINER(l, \
+                                                                             list \
+                                                                             -> \
+                                                                             last) \
+                                                      : NULL); \
                                                   l; \
                                                   l = \
                                                      (EINA_INLIST_GET(l)->prev \

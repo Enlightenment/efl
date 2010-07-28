@@ -153,7 +153,7 @@ static void _dir_list_cb(const char *name, const char *path, void *data)
         snprintf(file, length, "%s/%s", path, name);
         m = eina_module_new(file);
         if (!m)
-           return;  /* call the user provided cb on this module */
+           return; /* call the user provided cb on this module */
 
         if (!cb_data->cb(m, cb_data->data))
            eina_module_free(m);
@@ -487,7 +487,6 @@ EAPI char *eina_module_symbol_path_get(const void *symbol, const char *sub_dir)
                 return path;
              }
         }
-
 
 #endif /* ! HAVE_DLADDR */
 

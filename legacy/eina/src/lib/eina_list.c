@@ -1067,7 +1067,7 @@ eina_list_promote_list(Eina_List *list, Eina_List *move_list)
       return NULL;
 
    if (!move_list)
-      return list;  /* Promoting head to be head. */
+      return list; /* Promoting head to be head. */
 
    if (move_list == list)
       return list;
@@ -1136,7 +1136,7 @@ eina_list_demote_list(Eina_List *list, Eina_List *move_list)
       return NULL;
 
    if (!move_list)
-      return list;  /* Demoting tail to be tail. */
+      return list; /* Demoting tail to be tail. */
 
    if (move_list == list->accounting->last)
       return list;
@@ -1146,7 +1146,7 @@ eina_list_demote_list(Eina_List *list, Eina_List *move_list)
 
    /* Update pointer list if necessary. */
    if (list == move_list)
-      list = move_list->next;  /* Remove the demoted item from the list. */
+      list = move_list->next; /* Remove the demoted item from the list. */
 
    if (move_list->prev)
       move_list->prev->next = move_list->next;

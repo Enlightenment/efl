@@ -642,13 +642,14 @@ eina_convert_fptoa(Eina_F32p32 fp, char *des)
 
    /* fp >= 1 */
    if (fp >= 0x0000000100000000LL)
-      while (fp >= 0x0000000100000000LL)
-        {
-           p++;
-           /* fp /= 2 */
-           fp >>= 1;
-        }
-      /* fp < 0.5 */
+     {
+        while (fp >= 0x0000000100000000LL)
+          {
+             p++;
+             /* fp /= 2 */
+             fp >>= 1;
+          } /* fp < 0.5 */
+     }
    else if (fp < 0x80000000)
       while (fp < 0x80000000)
         {

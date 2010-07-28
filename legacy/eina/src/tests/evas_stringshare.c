@@ -192,7 +192,7 @@ evas_stringshare_add(const char *str)
    Evas_Stringshare_El *el, *pel = NULL;
 
    if (!str)
-      return NULL;  //   if (!f)
+      return NULL; //   if (!f)
 
 //     {
 //	char bf[256];

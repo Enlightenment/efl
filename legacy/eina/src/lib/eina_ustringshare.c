@@ -155,7 +155,8 @@ eina_ustringshare_add_length(const Eina_Unicode *str, unsigned int slen)
    return (const Eina_Unicode *)eina_share_common_add_length(ustringshare_share,
                                                              (const char *)str,
                                                              slen *
-                                                             sizeof(Eina_Unicode),
+                                                             sizeof(
+                                                                Eina_Unicode),
                                                              sizeof(
                                                                 Eina_Unicode));
 }

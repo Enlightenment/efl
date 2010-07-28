@@ -136,7 +136,14 @@ EINA_ARG_NONNULL(1, 2);
 #define EINA_ACCESSOR_FOREACH(accessor, counter, data) for ((counter) = 0; \
                                                             eina_accessor_data_get(( \
                                                                                       accessor), \
-                                                                                   (counter), (void **)&(data)); (counter)++)
+                                                                                   ( \
+                                                                                      counter), \
+                                                                                   ( \
+                                                                                      void \
+                                                                                      * \
+                                                                                      *) \
+                                                                                   &(data)); \
+                                                            (counter)++)
 
 /**
  * @}

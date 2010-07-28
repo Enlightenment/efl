@@ -100,7 +100,6 @@ eina_inlist_accessor_get_at(Eina_Accessor_Inlist *it,
            i < idx && over != NULL;
            ++i, over = over->next)
          ;
-
    else
      {
         middle = it->index >> 1;

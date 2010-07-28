@@ -252,10 +252,10 @@ _eina_share_common_population_stats(Eina_Share *share)
       fprintf(stderr, "eina share_common statistic:\n");
       fprintf(stderr,
            " * maximum shared strings : %i\n",
-              share->population.max);
+           share->population.max);
       fprintf(stderr,
            " * maximum shared strings per node : %i\n",
-              share->max_node_population);
+           share->max_node_population);
 
    for (i = 0;
         i < sizeof (share->population_group) /
@@ -924,7 +924,7 @@ eina_share_common_dump(Eina_Share *share, void (*additional_dump)(
    for (i = 0; i < EINA_SHARE_COMMON_BUCKETS; i++)
      {
         if (!share->share->buckets[i])
-           continue;  //	printf("DDD: BUCKET # %i (HEAD=%i, NODE=%i)\n", i,
+           continue; //	printf("DDD: BUCKET # %i (HEAD=%i, NODE=%i)\n", i,
 
 //	       sizeof(Eina_Share_Common_Head), sizeof(Eina_Share_Common_Node));
         it = eina_rbtree_iterator_prefix(

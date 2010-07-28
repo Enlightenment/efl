@@ -229,6 +229,7 @@ eina_strlcpy(char *dst, const char *src, size_t siz)
         if (siz != 0)
           {
              *d = '\0'; /* NUL-terminate dst */
+
           }
 
         while (*s++)

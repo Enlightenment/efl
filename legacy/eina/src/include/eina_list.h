@@ -333,7 +333,8 @@ EINA_WARN_UNUSED_RESULT;
                                                          eina_list_data_get(l); \
                                                       l; \
                                                       l = eina_list_prev(l), \
-                                                      data = eina_list_data_get(l))
+                                                      data = \
+                                                         eina_list_data_get(l))
 
 /**
  * @def EINA_LIST_FOREACH_SAFE
@@ -373,10 +374,15 @@ EINA_WARN_UNUSED_RESULT;
 #define EINA_LIST_FOREACH_SAFE(list, l, l_next, data) for (l = list, \
                                                            l_next = \
                                                               eina_list_next(l), \
-                                                           data = eina_list_data_get(l); \
+                                                           data = \
+                                                              eina_list_data_get( \
+                                                                 l); \
                                                            l; \
                                                            l = l_next, l_next = \
-                                                              eina_list_next(l), data = eina_list_data_get(l))
+                                                              eina_list_next(l), \
+                                                           data = \
+                                                              eina_list_data_get( \
+                                                                 l))
 
 /**
  * @def EINA_LIST_REVERSE_FOREACH_SAFE
@@ -418,10 +424,20 @@ EINA_WARN_UNUSED_RESULT;
 #define EINA_LIST_REVERSE_FOREACH_SAFE(list, l, l_prev, data) for (l = \
                                                                       eina_list_last( \
                                                                          list), \
-                                                                   l_prev = eina_list_prev(l), data = eina_list_data_get(l); \
+                                                                   l_prev = \
+                                                                      eina_list_prev( \
+                                                                         l), \
+                                                                   data = \
+                                                                      eina_list_data_get( \
+                                                                         l); \
                                                                    l; \
                                                                    l = l_prev, \
-                                                                   l_prev = eina_list_prev(l), data = eina_list_data_get(l))
+                                                                   l_prev = \
+                                                                      eina_list_prev( \
+                                                                         l), \
+                                                                   data = \
+                                                                      eina_list_data_get( \
+                                                                         l))
 
 /**
  * @def EINA_LIST_FREE
@@ -451,7 +467,8 @@ EINA_WARN_UNUSED_RESULT;
 #define EINA_LIST_FREE(list, data) for (data = eina_list_data_get(list); list; \
                                         list = \
                                            eina_list_remove_list(list, \
-                                                                 list), data = eina_list_data_get(list))
+                                                                 list), data = \
+                                           eina_list_data_get(list))
 
 #include "eina_inline_list.x"
 

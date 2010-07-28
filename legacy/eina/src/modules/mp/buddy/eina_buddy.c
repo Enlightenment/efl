@@ -165,11 +165,11 @@ static void _free(void *data, void *element)
 check:
    /* already on the last order */
    if (block->order + b->min_order == b->max_order)
-      goto end;  /* get the buddy */
+      goto end; /* get the buddy */
 
    buddy = &b->blocks[index ^ (1 << block->order)];
    if (!buddy->available)
-      goto end;  /* merge two blocks */
+      goto end; /* merge two blocks */
 
    b->areas[block->order] = eina_inlist_remove(b->areas[block->order],
                                                          EINA_INLIST_GET(buddy));

@@ -746,7 +746,7 @@ eina_strbuf_replace(Eina_Strbuf *buf,
         /* resize the buffer if necessary */
         if (EINA_UNLIKELY(!_eina_strbuf_common_grow(_STRBUF_CSIZE, buf,
                                                     buf->len - len1 + len2)))
-           return EINA_FALSE;  /* move the existing text */
+           return EINA_FALSE; /* move the existing text */
 
         memmove(buf->buf + pos + len2, buf->buf + pos + len1,
                 buf->len - pos - len1);
