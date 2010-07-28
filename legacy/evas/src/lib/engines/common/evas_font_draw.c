@@ -478,7 +478,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 	       }
 	  }
 #endif
-	  return;
      }
 
 }
