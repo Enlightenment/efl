@@ -156,7 +156,7 @@ my_pager_push(void *data, Evas_Object *obj, void *event_info)
    Pginfo *info = data;
    Evas_Object *bx, *bt, *lb;
    static int count = 2;
-   char *buf[32];
+   char buf[32];
 
    bx = elm_box_add(info->win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
