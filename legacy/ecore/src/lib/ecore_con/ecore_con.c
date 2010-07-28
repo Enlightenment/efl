@@ -598,7 +598,7 @@ ecore_con_server_client_limit_set(Ecore_Con_Server *svr, int client_limit,
  *          deletion for the @p svr object. If no IP is known NULL is returned.
  * @ingroup Ecore_Con_Server_Group
  */
-EAPI char *
+EAPI const char *
 ecore_con_server_ip_get(Ecore_Con_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
@@ -811,7 +811,7 @@ ecore_con_client_data_get(Ecore_Con_Client *cl)
  *          deletion for the @p cl object. If no IP is known NULL is returned.
  * @ingroup Ecore_Con_Client_Group
  */
-EAPI char *
+EAPI const char *
 ecore_con_client_ip_get(Ecore_Con_Client *cl)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
