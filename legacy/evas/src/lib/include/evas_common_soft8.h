@@ -1,5 +1,5 @@
-#ifndef EVAS_COMMON_SOFT16_H
-#define EVAS_COMMON_SOFT16_H
+#ifndef EVAS_COMMON_SOFT8_H
+#define EVAS_COMMON_SOFT8_H
 
 #include "evas_common.h"
 #include "evas_private.h"

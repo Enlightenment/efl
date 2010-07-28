@@ -876,60 +876,60 @@ eng_font_max_descent_get(void *data __UNUSED__, void *font)
 }
 
 static void
-eng_font_string_size_get(void *data __UNUSED__, void *font, const char *text,
+eng_font_string_size_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, 
                          int *w, int *h)
 {
-   evas_common_font_query_size(font, text, w, h);
+   evas_common_font_query_size(font, text, intl_props, w, h);
 }
 
 static int
-eng_font_inset_get(void *data __UNUSED__, void *font, const char *text)
+eng_font_inset_get(void *data __UNUSED__, void *font, const Eina_Unicode *text)
 {
    return evas_common_font_query_inset(font, text);
 }
 
 static int
-eng_font_h_advance_get(void *data __UNUSED__, void *font, const char *text)
+eng_font_h_advance_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
 {
    int h, v;
 
-   evas_common_font_query_advance(font, text, &h, &v);
+   evas_common_font_query_advance(font, text, intl_props, &h, &v);
    return h;
 }
 
 static int
-eng_font_v_advance_get(void *data __UNUSED__, void *font, const char *text)
+eng_font_v_advance_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
 {
    int h, v;
 
-   evas_common_font_query_advance(font, text, &h, &v);
+   evas_common_font_query_advance(font, text, intl_props, &h, &v);
    return v;
 }
 
 static int
-eng_font_char_coords_get(void *data __UNUSED__, void *font, const char *text,
+eng_font_char_coords_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, 
                          int pos, int *cx, int *cy, int *cw, int *ch)
 {
-   return evas_common_font_query_char_coords(font, text, pos, cx, cy, cw, ch);
+   return evas_common_font_query_char_coords(font, text, intl_props, pos, cx, cy, cw, ch);
 }
 
 static int
-eng_font_char_at_coords_get(void *data __UNUSED__, void *font, const char *text,
+eng_font_char_at_coords_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, 
                             int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
-   return evas_common_font_query_text_at_pos(font, text, x, y, cx, cy, cw, ch);
+   return evas_common_font_query_char_at_coords(font, text, intl_props, x, y, cx, cy, cw, ch);
 }
 
 static int
-eng_font_last_up_to_pos(void *data __UNUSED__, void *font, const char *text,
+eng_font_last_up_to_pos(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, 
                         int x, int y)
 {
-   return evas_common_font_query_last_up_to_pos(font, text, x, y);
+   return evas_common_font_query_last_up_to_pos(font, text, intl_props, x, y);
 }
 
 static void
 eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font,
-              int x, int y, int w, int h, int ow, int oh, const char *text)
+              int x, int y, int w, int h, int ow, int oh, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
 {
    static RGBA_Image *im = NULL;
    Soft8_Image *dst = surface;
@@ -942,7 +942,7 @@ eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font,
    evas_common_draw_context_font_ext_set(context, surface, soft8_font_glyph_new,
                                          soft8_font_glyph_free,
                                          soft8_font_glyph_draw);
-   evas_common_font_draw(im, context, font, x, y, text);
+   evas_common_font_draw(im, context, font, x, y, text, intl_props);
    evas_common_draw_context_font_ext_set(context, NULL, NULL, NULL, NULL);
 }
 
