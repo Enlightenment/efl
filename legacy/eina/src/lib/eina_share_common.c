@@ -575,7 +575,7 @@ eina_iterator_array_check(const Eina_Rbtree *rbtree __UNUSED__,
    for (node = head->head; node; node = node->next)
      {
         printf("DDD: %5i %5i ", node->length, node->references);
-        printf("'%s'\n",        ((char *)node) + sizeof(Eina_Share_Common_Node));
+        printf("'%.*s'\n", node->length, ((char *)node) + sizeof(Eina_Share_Common_Node));
         fdata->used += sizeof(Eina_Share_Common_Node);
         fdata->used += node->length;
         fdata->saved += (node->references - 1) * node->length;

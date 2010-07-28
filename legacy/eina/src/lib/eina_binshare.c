@@ -91,7 +91,7 @@ eina_binshare_shutdown(void)
  * throughout your program.
  *
  * This is a method to reduce the number of duplicated objects kept in
- * memory, or just add refcounting to them.
+ * memory.
  *
  * For more information, you can look at the @ref tutorial_binshare_page.
  *
