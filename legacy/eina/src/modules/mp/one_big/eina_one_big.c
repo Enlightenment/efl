@@ -80,7 +80,7 @@ static void *
 eina_one_big_malloc(void *data, __UNUSED__ unsigned int size)
 {
    One_Big *pool = data;
-   unsigned char *mem;
+   unsigned char *mem = NULL;
 
 #ifdef EFL_HAVE_THREADS
 # ifdef EFL_HAVE_POSIX_THREADS
@@ -90,7 +90,7 @@ eina_one_big_malloc(void *data, __UNUSED__ unsigned int size)
 # endif
 #endif
 
-   if (pool->base)
+   if (pool->empty)
      {
         mem = eina_trash_pop(&pool->empty);
         pool->usage++;
