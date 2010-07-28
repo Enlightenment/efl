@@ -87,21 +87,11 @@ eina_binshare_shutdown(void)
 /**
  * @addtogroup Eina_Binshare_Group Binary Share
  *
- * These functions allow you to store one copy of a string, and use it
+ * These functions allow you to store one copy of an object, and use it
  * throughout your program.
  *
- * This is a method to reduce the number of duplicated strings kept in
- * memory. It's pretty common for the same strings to be dynamically
- * allocated repeatedly between applications and libraries, especially in
- * circumstances where you could have multiple copies of a structure that
- * allocates the string. So rather than duplicating and freeing these
- * strings, you request a read-only pointer to an existing string and
- * only incur the overhead of a hash lookup.
- *
- * It sounds like micro-optimizing, but profiling has shown this can have
- * a significant impact as you scale the number of copies up. It improves
- * string creation/destruction speed, reduces memory use and decreases
- * memory fragmentation, so a win all-around.
+ * This is a method to reduce the number of duplicated objects kept in
+ * memory, or just add refcounting to them.
  *
  * For more information, you can look at the @ref tutorial_binshare_page.
  *
@@ -109,61 +99,61 @@ eina_binshare_shutdown(void)
  */
 
 /**
- * @brief Note that the given string has lost an instance.
+ * @brief Note that the given object has lost an instance.
  *
- * @param str string The given string.
+ * @param obj object The given object.
  *
- * This function decreases the reference counter associated to @p str
+ * This function decreases the reference counter associated to @p obj
  * if it exists. If that counter reaches 0, the memory associated to
- * @p str is freed. If @p str is NULL, the function returns
+ * @p obj is freed. If @p obj is NULL, the function returns
  * immediatly.
  *
  * Note that if the given pointer is not shared or NULL, bad things
  * will happen, likely a segmentation fault.
  */
 EAPI void
-eina_binshare_del(const char *str)
+eina_binshare_del(const void *obj)
 {
-   if (!str)
+   if (!obj)
       return;
 
-   eina_share_common_del(binshare_share,(const char *)str);
+   eina_share_common_del(binshare_share, obj);
 }
 
 /**
- * @brief Retrieve an instance of a string for use in a program.
+ * @brief Retrieve an instance of an object for use in a program.
  *
- * @param   str The binary string to retrieve an instance of.
- * @param   slen The byte size
- * @return  A pointer to an instance of the string on success.
+ * @param   obj The binary object to retrieve an instance of.
+ * @param   olen The byte size
+ * @return  A pointer to an instance of the object on success.
  *          @c NULL on failure.
  *
- * This function retrieves an instance of @p str. If @p str is
- * @c NULL, then @c NULL is returned. If @p str is already stored, it
+ * This function retrieves an instance of @p obj. If @p obj is
+ * @c NULL, then @c NULL is returned. If @p obj is already stored, it
  * is just returned and its reference counter is increased. Otherwise
- * it is added to the strings to be searched and a duplicated string
- * of @p str is returned.
+ * it is added to the objects to be searched and a duplicated object
+ * of @p obj is returned.
  *
- * This function does not check string size, but uses the
- * exact given size. This can be used to share_common part of a larger
- * buffer or substring.
+ * This function does not check object size, but uses the
+ * exact given size. This can be used to share part of a larger
+ * object or subobject.
  *
  * @see eina_binshare_add()
  */
-EAPI const char *
-eina_binshare_add_length(const char *str, unsigned int slen)
+EAPI const void *
+eina_binshare_add_length(const void *obj, unsigned int olen)
 {
-   return (const char *)eina_share_common_add_length(binshare_share,
-                                                     (const char *)str,
-                                                     (slen) * sizeof(char),
+   return eina_share_common_add_length(binshare_share,
+                                                     obj,
+                                                     (olen) * sizeof(char),
                                                      0);
 }
 
 /**
- * Increment references of the given shared string.
+ * Increment references of the given shared object.
  *
- * @param str The shared string.
- * @return    A pointer to an instance of the string on success.
+ * @param obj The shared object.
+ * @return    A pointer to an instance of the object on success.
  *            @c NULL on failure.
  *
  * This is similar to eina_share_common_add(), but it's faster since it will
@@ -173,33 +163,33 @@ eina_binshare_add_length(const char *str, unsigned int slen)
  *
  * There is no unref since this is the work of eina_binshare_del().
  */
-EAPI const char *
-eina_binshare_ref(const char *str)
+EAPI const void *
+eina_binshare_ref(const void *obj)
 {
-   return (const char *)eina_share_common_ref(binshare_share, (const char *)str);
+   return eina_share_common_ref(binshare_share, obj);
 }
 
 /**
- * @brief Note that the given string @b must be shared.
+ * @brief Note that the given object @b must be shared.
  *
- * @param str the shared string to know the length. It is safe to
+ * @param obj the shared object to know the length. It is safe to
  *        give NULL, in that case -1 is returned.
  *
  * This function is a cheap way to known the length of a shared
- * string. Note that if the given pointer is not shared, bad
+ * object. Note that if the given pointer is not shared, bad
  * things will happen, likely a segmentation fault. If in doubt, try
  * strlen().
  */
 EAPI int
-eina_binshare_length(const char *str)
+eina_binshare_length(const void *obj)
 {
-   return eina_share_common_length(binshare_share, (const char *)str);
+   return eina_share_common_length(binshare_share, obj);
 }
 
 /**
  * @brief Dump the contents of the share_common.
  *
- * This function dumps all strings in the share_common to stdout with a
+ * This function dumps all objects in the share_common to stdout with a
  * DDD: prefix per line and a memory usage summary.
  */
 EAPI void
