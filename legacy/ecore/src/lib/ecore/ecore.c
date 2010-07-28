@@ -121,6 +121,7 @@ ecore_init(void)
    _ecore_glib_init();
    _ecore_job_init();
    _ecore_loop_time = ecore_time_get();
+   _ecore_main_loop_init();
 
 #if HAVE_MALLINFO
    if (getenv("ECORE_MEM_STAT"))

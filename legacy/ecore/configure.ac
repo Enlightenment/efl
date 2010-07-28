@@ -890,6 +890,9 @@ m4_ifdef([AC_PROG_OBJC], [
 ])
 AC_SUBST(cocoa_ldflags)
 
+# check for epoll support
+AC_CHECK_HEADERS([sys/epoll.h])
+
 # basic pthread support
 
 EFL_CHECK_PTHREAD([no], [have_pthread="yes"], [have_pthread="no"])
