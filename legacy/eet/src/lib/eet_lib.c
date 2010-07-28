@@ -741,9 +741,12 @@ eet_init(void)
            WRN(
               "BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
      }
+
 #ifdef EFL_HAVE_POSIX_THREADS
    if (gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread))
-     WRN("YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
+           WRN(
+         "YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
+
 #endif
    if (gnutls_global_init())
       goto shutdown_eet;
