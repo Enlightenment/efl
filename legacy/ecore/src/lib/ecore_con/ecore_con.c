@@ -921,6 +921,7 @@ on_error:
  * @return EINA_FALSE if the file cannot be loaded,
  * otherwise EINA_TRUE.
  * @note Currently certificate verification is not implemented.
+ * @ingroup Ecore_Con_Server_Group
  */
 
 EAPI Eina_Bool
@@ -949,6 +950,7 @@ ecore_con_server_ssl_cert_add(const char *cert)
  * otherwise EINA_TRUE.
  * @note Currently CRL file adding and certificate verification is not implemented,
  * so specifying it here has no effect.
+ * @ingroup Ecore_Con_Client_Group
  */
 
 EAPI Eina_Bool
