@@ -39,6 +39,7 @@
 #include "eina_error.h"
 #include "eina_log.h"
 #include "eina_hash.h"
+#include "eina_binshare.h"
 #include "eina_stringshare.h"
 #include "eina_ustringshare.h"
 #include "eina_list.h"
@@ -111,6 +112,7 @@ static HANDLE _mutex = NULL;
    S(module);
    S(mempool);
    S(list);
+   S(binshare);
    S(stringshare);
    S(ustringshare);
    S(matrixsparse);
@@ -142,6 +144,7 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(module),
    S(mempool),
    S(list),
+   S(binshare),
    S(stringshare),
    S(ustringshare),
    S(matrixsparse),
