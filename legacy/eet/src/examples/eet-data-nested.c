@@ -11,7 +11,8 @@
 // will be automatically handled. The other members will have their
 // space reserved and zeroed (as it uses calloc()), but not
 // saved or loaded from eet files.
-typedef struct {
+typedef struct
+{
    unsigned int version; // it is recommended to use versioned configuration!
    const char *name;
    int id;
@@ -20,7 +21,8 @@ typedef struct {
    Eina_List *subs;
 } My_Conf_Type;
 
-typedef struct {
+typedef struct
+{
    const char *server;
    int port;
 } My_Conf_Subtype;
@@ -62,24 +64,24 @@ _my_conf_descriptor_init(void)
 
    // Describe the members to be saved:
    // Use a temporary macro so we don't type a lot, also avoid errors:
-#define MY_CONF_ADD_BASIC(member, eet_type)				\
-   EET_DATA_DESCRIPTOR_ADD_BASIC					\
-     (_my_conf_descriptor, My_Conf_Type, #member, member, eet_type)
-#define MY_CONF_SUB_ADD_BASIC(member, eet_type)				\
-   EET_DATA_DESCRIPTOR_ADD_BASIC					\
-     (_my_conf_sub_descriptor, My_Conf_Subtype, #member, member, eet_type)
+#define MY_CONF_ADD_BASIC(member, eet_type)                             \
+   EET_DATA_DESCRIPTOR_ADD_BASIC                                        \
+      (_my_conf_descriptor,     My_Conf_Type,    # member, member, eet_type)
+#define MY_CONF_SUB_ADD_BASIC(member, eet_type)                         \
+   EET_DATA_DESCRIPTOR_ADD_BASIC                                        \
+      (_my_conf_sub_descriptor, My_Conf_Subtype, # member, member, eet_type)
 
    MY_CONF_SUB_ADD_BASIC(server, EET_T_STRING);
-   MY_CONF_SUB_ADD_BASIC(port, EET_T_INT);
+   MY_CONF_SUB_ADD_BASIC(port,   EET_T_INT);
 
    MY_CONF_ADD_BASIC(version, EET_T_UINT);
-   MY_CONF_ADD_BASIC(name, EET_T_STRING);
-   MY_CONF_ADD_BASIC(id, EET_T_INT);
+   MY_CONF_ADD_BASIC(name,    EET_T_STRING);
+   MY_CONF_ADD_BASIC(id,      EET_T_INT);
    MY_CONF_ADD_BASIC(enabled, EET_T_UCHAR);
 
    // And add the sub descriptor as a linked list at 'subs' in the main struct
    EET_DATA_DESCRIPTOR_ADD_LIST
-     (_my_conf_descriptor, My_Conf_Type, "subs", subs, _my_conf_sub_descriptor);
+      (_my_conf_descriptor, My_Conf_Type, "subs", subs, _my_conf_sub_descriptor);
 
 #undef MY_CONF_ADD_BASIC
 #undef MY_CONF_SUB_ADD_BASIC
@@ -99,8 +101,8 @@ _my_conf_new(void)
    My_Conf_Subtype *sub;
    if (!my_conf)
      {
-	fprintf(stderr, "ERROR: could not calloc My_Conf_Type\n");
-	return NULL;
+        fprintf(stderr, "ERROR: could not calloc My_Conf_Type\n");
+        return NULL;
      }
 
    my_conf->version = 0x112233;
@@ -109,9 +111,9 @@ _my_conf_new(void)
    sub = calloc(1, sizeof(My_Conf_Subtype));
    if (sub)
      {
-	sub->server = eina_stringshare_add("my-server.com");
-	sub->port = 1234;
-	my_conf->subs = eina_list_append(my_conf->subs, sub);
+        sub->server = eina_stringshare_add("my-server.com");
+        sub->port = 1234;
+        my_conf->subs = eina_list_append(my_conf->subs, sub);
      }
 
    return my_conf;
@@ -122,10 +124,10 @@ _my_conf_free(My_Conf_Type *my_conf)
 {
    My_Conf_Subtype *sub;
    EINA_LIST_FREE(my_conf->subs, sub)
-     {
-	eina_stringshare_del(sub->server);
-	free(sub);
-     }
+   {
+      eina_stringshare_del(sub->server);
+      free(sub);
+   }
 
    eina_stringshare_del(my_conf->name);
    free(my_conf);
@@ -138,25 +140,25 @@ _my_conf_load(const char *filename)
    Eet_File *ef = eet_open(filename, EET_FILE_MODE_READ);
    if (!ef)
      {
-	fprintf(stderr, "ERROR: could not open '%s' for read\n", filename);
-	return NULL;
+        fprintf(stderr, "ERROR: could not open '%s' for read\n", filename);
+        return NULL;
      }
 
    my_conf = eet_data_read(ef, _my_conf_descriptor, MY_CONF_FILE_ENTRY);
    if (!my_conf)
-     goto end;
+      goto end;
 
    if (my_conf->version < 0x112233)
      {
-	fprintf(stderr,
-		"WARNING: version %#x was too old, upgrading it to %#x\n",
-		my_conf->version, 0x112233);
+        fprintf(stderr,
+                "WARNING: version %#x was too old, upgrading it to %#x\n",
+                my_conf->version, 0x112233);
 
-	my_conf->version = 0x112233;
-	my_conf->enabled = EINA_TRUE;
+        my_conf->version = 0x112233;
+        my_conf->enabled = EINA_TRUE;
      }
 
- end:
+end:
    eet_close(ef);
    return my_conf;
 }
@@ -173,33 +175,33 @@ _my_conf_save(const My_Conf_Type *my_conf, const char *filename)
    len = eina_strlcpy(tmp, filename, sizeof(tmp));
    if (len + 12 >= (int)sizeof(tmp))
      {
-	fprintf(stderr, "ERROR: file name is too big: %s\n", filename);
-	return EINA_FALSE;
+        fprintf(stderr, "ERROR: file name is too big: %s\n", filename);
+        return EINA_FALSE;
      }
 
    i = 0;
    do
      {
-	snprintf(tmp + len, 12, ".%u", i);
-	i++;
+        snprintf(tmp + len, 12, ".%u", i);
+        i++;
      }
    while (stat(tmp, &st) == 0);
 
    ef = eet_open(tmp, EET_FILE_MODE_WRITE);
    if (!ef)
      {
-	fprintf(stderr, "ERROR: could not open '%s' for write\n", tmp);
-	return EINA_FALSE;
+        fprintf(stderr, "ERROR: could not open '%s' for write\n", tmp);
+        return EINA_FALSE;
      }
 
    ret = eet_data_write
-     (ef, _my_conf_descriptor, MY_CONF_FILE_ENTRY, my_conf, EINA_TRUE);
+         (ef, _my_conf_descriptor, MY_CONF_FILE_ENTRY, my_conf, EINA_TRUE);
    eet_close(ef);
 
    if (ret)
      {
-	unlink(filename);
-	rename(tmp, filename);
+        unlink(filename);
+        rename(tmp, filename);
      }
 
    return ret;
@@ -214,8 +216,8 @@ int main(int argc, char *argv[])
 
    if (argc != 3)
      {
-	fprintf(stderr, "Usage:\n\t%s <input> <output>\n\n", argv[0]);
-	return -1;
+        fprintf(stderr, "Usage:\n\t%s <input> <output>\n\n", argv[0]);
+        return -1;
      }
 
    eina_init();
@@ -225,37 +227,37 @@ int main(int argc, char *argv[])
    my_conf = _my_conf_load(argv[1]);
    if (!my_conf)
      {
-	printf("creating new configuration.\n");
-	my_conf = _my_conf_new();
-	if (!my_conf)
-	  {
-	     ret = -2;
-	     goto end;
-	  }
+        printf("creating new configuration.\n");
+        my_conf = _my_conf_new();
+        if (!my_conf)
+          {
+             ret = -2;
+             goto end;
+          }
      }
 
-   printf("My_Conf_Type:\n"
-	  "\tversion: %#x\n"
-	  "\tname...: '%s'\n"
-	  "\tid.....: %d\n"
-	  "\tenabled: %hhu\n"
-	  "\tsubs...:\n",
-	  my_conf->version,
-	  my_conf->name ? my_conf->name : "",
-	  my_conf->id,
-	  my_conf->enabled);
+        printf("My_Conf_Type:\n"
+          "\tversion: %#x\n"
+          "\tname...: '%s'\n"
+          "\tid.....: %d\n"
+          "\tenabled: %hhu\n"
+          "\tsubs...:\n",
+          my_conf->version,
+          my_conf->name ? my_conf->name : "",
+          my_conf->id,
+          my_conf->enabled);
 
    EINA_LIST_FOREACH(my_conf->subs, l, sub)
-     printf("\t\tserver: '%s', port: %d\n",
-	    sub->server ? sub->server : "",
-	    sub->port);
+   printf("\t\tserver: '%s', port: %d\n",
+          sub->server ? sub->server : "",
+          sub->port);
 
    if (!_my_conf_save(my_conf, argv[2]))
-     ret = -3;
+      ret = -3;
 
    _my_conf_free(my_conf);
 
- end:
+end:
    _my_conf_descriptor_shutdown();
    eet_shutdown();
    eina_shutdown();
