@@ -48,9 +48,12 @@ typedef void (*Eina_Iterator_Free_Callback)(Eina_Iterator *it);
 
 struct _Eina_Iterator
 {
-   Eina_Iterator_Next_Callback          next EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
-   Eina_Iterator_Get_Container_Callback get_container EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
-   Eina_Iterator_Free_Callback          free EINA_ARG_NONNULL(1);
+   Eina_Iterator_Next_Callback next                   EINA_ARG_NONNULL(1,
+                                                                       2)
+   EINA_WARN_UNUSED_RESULT;
+   Eina_Iterator_Get_Container_Callback get_container EINA_ARG_NONNULL(1)
+   EINA_WARN_UNUSED_RESULT;
+   Eina_Iterator_Free_Callback free                   EINA_ARG_NONNULL(1);
 
 #define EINA_MAGIC_ITERATOR 0x98761233
    EINA_MAGIC
@@ -58,17 +61,25 @@ struct _Eina_Iterator
 
 
 #define FUNC_ITERATOR_NEXT(Function) ((Eina_Iterator_Next_Callback)Function)
-#define FUNC_ITERATOR_GET_CONTAINER(Function) ((Eina_Iterator_Get_Container_Callback)Function)
+#define FUNC_ITERATOR_GET_CONTAINER(Function) (( \
+                                                  Eina_Iterator_Get_Container_Callback) \
+                                               Function)
 #define FUNC_ITERATOR_FREE(Function) ((Eina_Iterator_Free_Callback)Function)
 
-EAPI void eina_iterator_free           (Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
+EAPI void      eina_iterator_free           (Eina_Iterator *iterator)
+EINA_ARG_NONNULL(1);
 
-EAPI void *eina_iterator_container_get (Eina_Iterator *iterator) EINA_ARG_NONNULL(1) EINA_PURE;
-EAPI Eina_Bool eina_iterator_next      (Eina_Iterator *iterator, void **data) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+EAPI void *    eina_iterator_container_get (Eina_Iterator *iterator)
+EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI Eina_Bool eina_iterator_next      (Eina_Iterator *iterator,
+                                        void **data) EINA_ARG_NONNULL(1,
+                                                                      2)
+EINA_WARN_UNUSED_RESULT;
 
-EAPI void eina_iterator_foreach        (Eina_Iterator *iterator,
-					Eina_Each callback,
-					const void *fdata) EINA_ARG_NONNULL(1, 2);
+EAPI void      eina_iterator_foreach        (Eina_Iterator *iterator,
+                                             Eina_Each callback,
+                                             const void *fdata)
+EINA_ARG_NONNULL(1, 2);
 
 /**
  * @def EINA_ITERATOR_FOREACH
@@ -112,7 +123,9 @@ EAPI void eina_iterator_foreach        (Eina_Iterator *iterator,
  *    rather in the iterators implementations to keep them as simple
  *    and fast as possible.
  */
-#define EINA_ITERATOR_FOREACH(itr, data) while (eina_iterator_next((itr), (void **)&(data)))
+#define EINA_ITERATOR_FOREACH(itr, \
+                              data) while (eina_iterator_next((itr), \
+                                                              (void **)&(data)))
 
 /**
  * @}

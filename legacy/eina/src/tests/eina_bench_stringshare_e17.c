@@ -41,41 +41,41 @@ struct _Eina_Stringshare_Test
    const char *name;
 
    int (*init)(void);
-   const char *(*add)(const char* str);
-   void (*del)(const char* str);
+   const char *(*add)(const char *str);
+   void (*del)(const char *str);
    int (*shutdown)(void);
 };
 
 static const char *strings[30000];
 static Eina_Stringshare_Test eina_str = {
-  "eina",
-  eina_init,
-  eina_stringshare_add,
-  eina_stringshare_del,
-  eina_shutdown
+   "eina",
+   eina_init,
+   eina_stringshare_add,
+   eina_stringshare_del,
+   eina_shutdown
 };
 
 static Eina_Stringshare_Test evas_str = {
-  "evas",
+   "evas",
 /*  evas_stringshare_init, */
-  evas_stringshare_add,
-  evas_stringshare_del
+   evas_stringshare_add,
+   evas_stringshare_del
 /*  evas_stringshare_shutdown */
 };
 
 static Eina_Stringshare_Test ecore_str = {
-  "ecore",
-  ecore_string_init,
-  ecore_string_instance,
-  ecore_string_release,
-  ecore_string_shutdown
+   "ecore",
+   ecore_string_init,
+   ecore_string_instance,
+   ecore_string_release,
+   ecore_string_shutdown
 };
 
-static Eina_Stringshare_Test* str[] = {
-  &eina_str,
-  &evas_str,
-  &ecore_str,
-  NULL
+static Eina_Stringshare_Test *str[] = {
+   &eina_str,
+   &evas_str,
+   &ecore_str,
+   NULL
 };
 
 static void
@@ -111,7 +111,7 @@ eina_bench_e17(void)
    eina_init();
 
    for (i = 0; str[i]; ++i)
-     eina_bench_e17_stringshare(str[i]);
+      eina_bench_e17_stringshare(str[i]);
 
    eina_shutdown();
 #endif

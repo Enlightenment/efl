@@ -42,8 +42,8 @@
 #include "eina_counter.h"
 
 /*============================================================================*
- *                                  Local                                     *
- *============================================================================*/
+*                                  Local                                     *
+*============================================================================*/
 
 /**
  * @cond LOCAL
@@ -91,7 +91,8 @@ _eina_counter_time_get(Eina_Nano_Time *tp)
 # endif
 }
 #else
-static const char EINA_ERROR_COUNTER_WINDOWS_STR[] = "Change your OS, you moron !";
+static const char EINA_ERROR_COUNTER_WINDOWS_STR[] =
+   "Change your OS, you moron !";
 static int EINA_ERROR_COUNTER_WINDOWS = 0;
 static LARGE_INTEGER _eina_counter_frequency;
 
@@ -111,28 +112,34 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
    va_list ap;
 
    tmp = realloc(base, sizeof (char) * (*position + size));
-   if (!tmp) return base;
+   if (!tmp)
+      return base;
+
    result = tmp;
 
    while (1)
      {
-	va_start(ap, format);
-	n = vsnprintf(result + *position, size, format, ap);
-	va_end(ap);
+        va_start(ap, format);
+        n = vsnprintf(result + *position, size, format, ap);
+        va_end(ap);
 
-	if (n > -1 && n < size)
-	  {
-	     /* If we always have glibc > 2.2, we could just return *position += n. */
-	     *position += strlen(result + *position);
-	     return result;
-	  }
+        if (n > -1 && n < size)
+          {
+             /* If we always have glibc > 2.2, we could just return *position += n. */
+             *position += strlen(result + *position);
+             return result;
+          }
 
-	if (n > -1) size = n + 1;
-	else size <<= 1;
+        if (n > -1)
+           size = n + 1;
+        else
+           size <<= 1;
 
-	tmp = realloc(result, sizeof (char) * (*position + size));
-	if (!tmp) return result;
-	result = tmp;
+        tmp = realloc(result, sizeof (char) * (*position + size));
+        if (!tmp)
+           return result;
+
+        result = tmp;
      }
 }
 
@@ -141,8 +148,8 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  */
 
 /*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+*                                 Global                                     *
+*============================================================================*/
 
 /**
  * @internal
@@ -165,12 +172,14 @@ Eina_Bool
 eina_counter_init(void)
 {
 #ifdef _WIN32
-   EINA_ERROR_COUNTER_WINDOWS = eina_error_msg_static_register(EINA_ERROR_COUNTER_WINDOWS_STR);
+   EINA_ERROR_COUNTER_WINDOWS = eina_error_msg_static_register(
+         EINA_ERROR_COUNTER_WINDOWS_STR);
    if (!QueryPerformanceFrequency(&_eina_counter_frequency))
      {
-	eina_error_set(EINA_ERROR_COUNTER_WINDOWS);
-	return EINA_FALSE;
+        eina_error_set(EINA_ERROR_COUNTER_WINDOWS);
+        return EINA_FALSE;
      }
+
 #endif /* _WIN2 */
    return EINA_TRUE;
 }
@@ -193,8 +202,8 @@ eina_counter_shutdown(void)
 }
 
 /*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+*                                   API                                      *
+*============================================================================*/
 
 /**
  * @addtogroup Eina_Counter_Group Counter
@@ -302,16 +311,16 @@ eina_counter_new(const char *name)
 
    length = strlen(name) + 1;
 
-   eina_error_set(0);
+        eina_error_set(0);
    counter = calloc(1, sizeof (Eina_Counter) + length);
    if (!counter)
      {
-	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-	return NULL;
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        return NULL;
      }
 
-   counter->name = (char*) (counter + 1);
-   memcpy((char*) counter->name, name, length);
+   counter->name = (char *)(counter + 1);
+   memcpy((char *)counter->name, name, length);
 
    return counter;
 }
@@ -333,13 +342,13 @@ eina_counter_free(Eina_Counter *counter)
 
    while (counter->clocks)
      {
-	Eina_Clock *clk = (Eina_Clock *) counter->clocks;
+        Eina_Clock *clk = (Eina_Clock *)counter->clocks;
 
-	counter->clocks = eina_inlist_remove(counter->clocks, counter->clocks);
-	free(clk);
+        counter->clocks = eina_inlist_remove(counter->clocks, counter->clocks);
+        free(clk);
      }
 
-   free(counter);
+        free(counter);
 }
 
 /**
@@ -365,14 +374,15 @@ eina_counter_start(Eina_Counter *counter)
    Eina_Nano_Time tp;
 
    EINA_SAFETY_ON_NULL_RETURN(counter);
-   if (_eina_counter_time_get(&tp) != 0) return;
+   if (_eina_counter_time_get(&tp) != 0)
+      return;
 
-   eina_error_set(0);
+        eina_error_set(0);
    clk = calloc(1, sizeof (Eina_Clock));
    if (!clk)
      {
-	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-	return;
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        return;
      }
 
    counter->clocks = eina_inlist_prepend(counter->clocks, EINA_INLIST_GET(clk));
@@ -400,11 +410,13 @@ eina_counter_stop(Eina_Counter *counter, int specimen)
    Eina_Nano_Time tp;
 
    EINA_SAFETY_ON_NULL_RETURN(counter);
-   if (_eina_counter_time_get(&tp) != 0) return;
+   if (_eina_counter_time_get(&tp) != 0)
+      return;
 
-   clk = (Eina_Clock *) counter->clocks;
+   clk = (Eina_Clock *)counter->clocks;
 
-   if (!clk || clk->valid == EINA_TRUE) return;
+   if (!clk || clk->valid == EINA_TRUE)
+      return;
 
    clk->end = tp;
    clk->specimen = specimen;
@@ -428,7 +440,7 @@ eina_counter_stop(Eina_Counter *counter, int specimen)
  * @endverbatim
  *
  * The unit of time is the nanosecond.
-*/
+ */
 EAPI char *
 eina_counter_dump(Eina_Counter *counter)
 {
@@ -438,34 +450,52 @@ eina_counter_dump(Eina_Counter *counter)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(counter, NULL);
 
-   result = _eina_counter_asiprintf(result, &position, "# specimen\texperiment time\tstarting time\tending time\n");
-   if (!result) return NULL;
+   result = _eina_counter_asiprintf(
+         result,
+         &position,
+         "# specimen\texperiment time\tstarting time\tending time\n");
+   if (!result)
+      return NULL;
 
    EINA_INLIST_REVERSE_FOREACH(counter->clocks, clk)
-     {
-        long int start;
-        long int end;
-        long int diff;
+   {
+      long int start;
+      long int end;
+      long int diff;
 
-	if (clk->valid == EINA_FALSE) continue;
+      if (clk->valid == EINA_FALSE)
+         continue;
 
 #ifndef _WIN32
-        start = clk->start.tv_sec * 1000000000 + clk->start.tv_nsec;
-        end = clk->end.tv_sec * 1000000000 + clk->end.tv_nsec;
-        diff = (clk->end.tv_sec - clk->start.tv_sec) * 1000000000 + clk->end.tv_nsec - clk->start.tv_nsec;
+      start = clk->start.tv_sec * 1000000000 + clk->start.tv_nsec;
+      end = clk->end.tv_sec * 1000000000 + clk->end.tv_nsec;
+      diff =
+         (clk->end.tv_sec -
+          clk->start.tv_sec) * 1000000000 + clk->end.tv_nsec -
+         clk->start.tv_nsec;
 #else
-        start = (long int)(((long long int)clk->start.QuadPart * 1000000000ll) / (long long int)_eina_counter_frequency.QuadPart);
-        end = (long int)(((long long int)clk->end.QuadPart * 1000000000LL) / (long long int)_eina_counter_frequency.QuadPart);
-        diff = (long int)(((long long int)(clk->end.QuadPart - clk->start.QuadPart) * 1000000000LL) / (long long int)_eina_counter_frequency.QuadPart);
+      start =
+         (long int)(((long long int)clk->start.QuadPart *
+                     1000000000ll) /
+                    (long long int)_eina_counter_frequency.QuadPart);
+      end =
+         (long int)(((long long int)clk->end.QuadPart *
+                     1000000000LL) /
+                    (long long int)_eina_counter_frequency.QuadPart);
+      diff =
+         (long int)(((long long int)(clk->end.QuadPart -
+                                     clk->start.QuadPart) *
+                     1000000000LL) /
+                    (long long int)_eina_counter_frequency.QuadPart);
 #endif /* _WIN2 */
 
-	result = _eina_counter_asiprintf(result, &position,
-					 "%i\t%li\t%li\t%li\n",
-					 clk->specimen,
-					 diff,
-					 start,
-					 end);
-     }
+      result = _eina_counter_asiprintf(result, &position,
+                                       "%i\t%li\t%li\t%li\n",
+                                       clk->specimen,
+                                       diff,
+                                       start,
+                                       end);
+   }
 
    return result;
 }

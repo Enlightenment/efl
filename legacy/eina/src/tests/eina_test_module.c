@@ -49,7 +49,11 @@ START_TEST(eina_module_load_unload)
    Eina_Array *_modules;
 
    eina_init();
-   _modules = eina_module_list_get(NULL, PACKAGE_BUILD_DIR"/src/tests/", 1, &list_cb, NULL);
+   _modules = eina_module_list_get(NULL,
+                                   PACKAGE_BUILD_DIR "/src/tests/",
+                                   1,
+                                   &list_cb,
+                                   NULL);
    fail_if(!_modules);
    eina_module_list_load(_modules);
    eina_module_list_unload(_modules);

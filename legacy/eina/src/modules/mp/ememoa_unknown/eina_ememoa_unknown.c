@@ -33,7 +33,8 @@
 #include "eina_private.h"
 #include "eina_mempool.h"
 
-typedef struct _Eina_Ememoa_Unknown_Size_Mempool Eina_Ememoa_Unknown_Size_Mempool;
+typedef struct _Eina_Ememoa_Unknown_Size_Mempool
+Eina_Ememoa_Unknown_Size_Mempool;
 struct _Eina_Ememoa_Unknown_Size_Mempool
 {
    struct ememoa_mempool_desc_s *desc;
@@ -56,7 +57,7 @@ eina_ememoa_unknown_size_free(void *data, void *ptr)
    ememoa_mempool_unknown_size_push_object(efm->pool, ptr);
 }
 
-static void*
+static void *
 eina_ememoa_unknown_size_realloc(void *data, void *element, unsigned int size)
 {
    Eina_Ememoa_Unknown_Size_Mempool *efm = data;
@@ -80,8 +81,10 @@ eina_ememoa_unknown_size_statistics(void *data)
    ememoa_mempool_unknown_size_display_statistic(efm->pool);
 }
 
-static void*
-eina_ememoa_unknown_size_init(const char *context, __UNUSED__ const char *option, va_list args)
+static void *
+eina_ememoa_unknown_size_init(const char *context,
+                              __UNUSED__ const char *option,
+                              va_list args)
 {
    struct ememoa_mempool_desc_s *desc = NULL;
    Eina_Ememoa_Unknown_Size_Mempool *efm = NULL;
@@ -93,13 +96,14 @@ eina_ememoa_unknown_size_init(const char *context, __UNUSED__ const char *option
 
    if (context)
      {
-	context_length = strlen(context) + 1;
+        context_length = strlen(context) + 1;
 
-	desc = calloc(1, sizeof (struct ememoa_mempool_desc_s) + context_length);
-	if (!desc) goto on_error;
+        desc = calloc(1, sizeof (struct ememoa_mempool_desc_s) + context_length);
+        if (!desc)
+           goto on_error;
 
-	desc->name = (char*) (desc + 1);
-	memcpy((char*) desc->name, context, context_length);
+        desc->name = (char *)(desc + 1);
+        memcpy((char *)desc->name, context, context_length);
      }
 
    thread_protect = va_arg(args, int);
@@ -108,23 +112,31 @@ eina_ememoa_unknown_size_init(const char *context, __UNUSED__ const char *option
    items_map = malloc(sizeof (unsigned int) * 2 * items_count);
 
    for (i = 0; i < (items_count << 1); ++i)
-     items_map[i] = va_arg(args, unsigned int);
+      items_map[i] = va_arg(args, unsigned int);
 
    efm = malloc(sizeof (Eina_Ememoa_Unknown_Size_Mempool));
-   if (!efm) goto on_error;
+   if (!efm)
+      goto on_error;
 
    efm->desc = desc;
-   efm->pool = ememoa_mempool_unknown_size_init(items_count,
-						items_map,
-						thread_protect ? EMEMOA_THREAD_PROTECTION : 0,
-						efm->desc);
-   if (efm->pool < 0) goto on_error;
+   efm->pool = ememoa_mempool_unknown_size_init(
+         items_count,
+         items_map,
+         thread_protect ?
+         EMEMOA_THREAD_PROTECTION : 0,
+         efm->desc);
+   if (efm->pool < 0)
+      goto on_error;
 
    return efm;
 
- on_error:
-   if (desc) free(desc);
-   if (efm) free(efm);
+on_error:
+   if (desc)
+      free(desc);
+
+   if (efm)
+      free(efm);
+
    return NULL;
 }
 
@@ -133,30 +145,32 @@ eina_ememoa_unknown_size_shutdown(void *data)
 {
    Eina_Ememoa_Unknown_Size_Mempool *efm = data;
 
-   if (efm->desc) free(efm->desc);
-   ememoa_mempool_unknown_size_clean(efm->pool);
+   if (efm->desc)
+      free(efm->desc);
+
+      ememoa_mempool_unknown_size_clean(efm->pool);
    free(efm);
 }
 
 static Eina_Mempool_Backend _eina_ememoa_unknown_mp_backend = {
-  .name = "ememoa_unknown",
-  .init = &eina_ememoa_unknown_size_init,
-  .shutdown = &eina_ememoa_unknown_size_shutdown,
-  .realloc = &eina_ememoa_unknown_size_realloc,
-  .alloc = &eina_ememoa_unknown_size_malloc,
-  .free = &eina_ememoa_unknown_size_free,
-  .garbage_collect = &eina_ememoa_unknown_size_gc,
-  .statistics = &eina_ememoa_unknown_size_statistics
+   .name = "ememoa_unknown",
+   .init = &eina_ememoa_unknown_size_init,
+   .shutdown = &eina_ememoa_unknown_size_shutdown,
+   .realloc = &eina_ememoa_unknown_size_realloc,
+   .alloc = &eina_ememoa_unknown_size_malloc,
+   .free = &eina_ememoa_unknown_size_free,
+   .garbage_collect = &eina_ememoa_unknown_size_gc,
+   .statistics = &eina_ememoa_unknown_size_statistics
 };
 
 Eina_Bool ememoa_unknown_init(void)
 {
-	return eina_mempool_register(&_eina_ememoa_unknown_mp_backend);
+   return eina_mempool_register(&_eina_ememoa_unknown_mp_backend);
 }
 
 void ememoa_unknown_shutdown(void)
 {
-	eina_mempool_unregister(&_eina_ememoa_unknown_mp_backend);
+   eina_mempool_unregister(&_eina_ememoa_unknown_mp_backend);
 }
 
 #ifndef EINA_STATIC_BUILD_EMEMOA_UNKNOWN

@@ -28,10 +28,14 @@ static Eina_Array *_modules;
 static void
 _mempool_init(void)
 {
-    eina_init();
-    /* force modules to be loaded in case they are not installed */
-    _modules = eina_module_list_get(NULL, PACKAGE_BUILD_DIR"/src/modules", 1, NULL, NULL);
-    eina_module_list_load(_modules);
+   eina_init();
+   /* force modules to be loaded in case they are not installed */
+   _modules = eina_module_list_get(NULL,
+                                   PACKAGE_BUILD_DIR "/src/modules",
+                                   1,
+                                   NULL,
+                                   NULL);
+   eina_module_list_load(_modules);
 }
 
 static void
@@ -48,30 +52,30 @@ _eina_mempool_test(Eina_Mempool *mp, Eina_Bool with_realloc, Eina_Bool with_gc)
    int *tbl[512];
    int i;
 
-   fail_if(!mp);
+        fail_if(!mp);
 
    for (i = 0; i < 512; ++i)
      {
-	tbl[i] = eina_mempool_malloc(mp, sizeof (int));
-	fail_if(!tbl[i]);
-	*tbl[i] = i;
+        tbl[i] = eina_mempool_malloc(mp, sizeof (int));
+        fail_if(!tbl[i]);
+        *tbl[i] = i;
      }
 
    for (i = 0; i < 512; ++i)
-     fail_if(*tbl[i] != i);
+        fail_if(*tbl[i] != i);
 
    for (i = 0; i < 256; ++i)
-     eina_mempool_free(mp, tbl[i]);
+        eina_mempool_free(mp, tbl[i]);
 
    if (with_realloc)
-     fail_if(eina_mempool_realloc(mp, tbl[500], 25) == NULL);
+      fail_if(eina_mempool_realloc(mp, tbl[500], 25) == NULL);
    else
-     fail_if(eina_mempool_realloc(mp, tbl[500], 25) != NULL);
+      fail_if(eina_mempool_realloc(mp, tbl[500], 25) != NULL);
 
    if (with_gc)
      {
-	eina_mempool_gc(mp);
-	eina_mempool_statistics(mp);
+        eina_mempool_gc(mp);
+        eina_mempool_statistics(mp);
      }
 
    eina_mempool_del(mp);
@@ -144,7 +148,15 @@ START_TEST(eina_mempool_ememoa_unknown)
 
    _mempool_init();
 
-   mp = eina_mempool_add("ememoa_unknown", "test", NULL, 0, 2, sizeof (int), 8, sizeof (int) * 2, 8);
+   mp = eina_mempool_add("ememoa_unknown",
+                         "test",
+                         NULL,
+                         0,
+                         2,
+                         sizeof (int),
+                         8,
+                         sizeof (int) * 2,
+                         8);
    _eina_mempool_test(mp, EINA_TRUE, EINA_TRUE);
 
    _mempool_shutdown();

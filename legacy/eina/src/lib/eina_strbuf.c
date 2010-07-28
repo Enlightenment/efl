@@ -32,7 +32,7 @@
 #define _STRBUF_MAGIC_STR         __STRBUF_MAGIC_STR
 static const char __STRBUF_MAGIC_STR[] = "Eina Strbuf";
 
-#define _FUNC_EXPAND(y) eina_strbuf_##y
+#define _FUNC_EXPAND(y) eina_strbuf_ ## y
 
 #define _GNU_SOURCE
 #include <stdio.h>
@@ -60,7 +60,7 @@ eina_strbuf_append_printf(Eina_Strbuf *buf, const char *fmt, ...)
    va_end(args);
 
    if (len <= 0 || !str)
-     return EINA_FALSE;
+      return EINA_FALSE;
 
    ret = eina_strbuf_append_length(buf, str, len);
    free(str);
@@ -77,7 +77,7 @@ eina_strbuf_append_vprintf(Eina_Strbuf *buf, const char *fmt, va_list args)
    len = vasprintf(&str, fmt, args);
 
    if (len <= 0 || !str)
-     return EINA_FALSE;
+      return EINA_FALSE;
 
    ret = eina_strbuf_append_length(buf, str, len);
    free(str);
@@ -97,7 +97,7 @@ eina_strbuf_insert_printf(Eina_Strbuf *buf, const char *fmt, size_t pos, ...)
    va_end(args);
 
    if (len <= 0 || !str)
-     return EINA_FALSE;
+      return EINA_FALSE;
 
    ret = eina_strbuf_insert(buf, str, pos);
    free(str);
@@ -105,7 +105,10 @@ eina_strbuf_insert_printf(Eina_Strbuf *buf, const char *fmt, size_t pos, ...)
 }
 
 EAPI Eina_Bool
-eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, size_t pos, va_list args)
+eina_strbuf_insert_vprintf(Eina_Strbuf *buf,
+                           const char *fmt,
+                           size_t pos,
+                           va_list args)
 {
    char *str;
    size_t len;
@@ -114,7 +117,7 @@ eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, size_t pos, va_lis
    len = vasprintf(&str, fmt, args);
 
    if (len <= 0 || !str)
-     return EINA_FALSE;
+      return EINA_FALSE;
 
    ret = eina_strbuf_insert(buf, str, pos);
    free(str);

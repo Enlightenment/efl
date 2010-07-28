@@ -23,7 +23,7 @@
  * if not, see <http://www.gnu.org/licenses/>.
 
  */
- /**
+/**
  * @page tutorial_binshare_page Binary Share Tutorial
  *
  * Should call eina_binshare_init() before usage and eina_binshare_shutdown() after.
@@ -40,8 +40,8 @@ static Eina_Share *binshare_share;
 static const char EINA_MAGIC_BINSHARE_NODE_STR[] = "Eina Binshare Node";
 
 /*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+*                                 Global                                     *
+*============================================================================*/
 
 /**
  * @internal
@@ -57,7 +57,9 @@ static const char EINA_MAGIC_BINSHARE_NODE_STR[] = "Eina Binshare Node";
 EAPI Eina_Bool
 eina_binshare_init(void)
 {
-   return eina_share_common_init(&binshare_share, EINA_MAGIC_BINSHARE_NODE, EINA_MAGIC_BINSHARE_NODE_STR);
+   return eina_share_common_init(&binshare_share,
+                                 EINA_MAGIC_BINSHARE_NODE,
+                                 EINA_MAGIC_BINSHARE_NODE_STR);
 }
 
 /**
@@ -80,8 +82,8 @@ eina_binshare_shutdown(void)
 }
 
 /*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+*                                   API                                      *
+*============================================================================*/
 /**
  * @addtogroup Eina_Binshare_Group Binary Share
  *
@@ -124,7 +126,8 @@ eina_binshare_del(const char *str)
 {
    if (!str)
       return;
-   eina_share_common_del(binshare_share,(const char *) str);
+
+   eina_share_common_del(binshare_share,(const char *)str);
 }
 
 /**
@@ -150,7 +153,10 @@ eina_binshare_del(const char *str)
 EAPI const char *
 eina_binshare_add_length(const char *str, unsigned int slen)
 {
-   return (const char *) eina_share_common_add_length(binshare_share,(const char *) str, (slen) * sizeof(char), 0);
+   return (const char *)eina_share_common_add_length(binshare_share,
+                                                     (const char *)str,
+                                                     (slen) * sizeof(char),
+                                                     0);
 }
 
 /**
@@ -170,7 +176,7 @@ eina_binshare_add_length(const char *str, unsigned int slen)
 EAPI const char *
 eina_binshare_ref(const char *str)
 {
-   return (const char *) eina_share_common_ref(binshare_share, (const char *) str);
+   return (const char *)eina_share_common_ref(binshare_share, (const char *)str);
 }
 
 /**
@@ -187,7 +193,7 @@ eina_binshare_ref(const char *str)
 EAPI int
 eina_binshare_length(const char *str)
 {
-   return eina_share_common_length(binshare_share, (const char *) str);
+   return eina_share_common_length(binshare_share, (const char *)str);
 }
 
 /**

@@ -42,8 +42,8 @@ START_TEST(eina_counter_simple)
 
    for (i = 0; i < 100000; ++i)
      {
-	void *tmp = malloc(sizeof(long int));
-	free(tmp);
+        void *tmp = malloc(sizeof(long int));
+        free(tmp);
      }
 
    eina_counter_stop(cnt, i);
@@ -52,8 +52,8 @@ START_TEST(eina_counter_simple)
 
    for (i = 0; i < 200000; ++i)
      {
-	void *tmp = malloc(sizeof(long int));
-	free(tmp);
+        void *tmp = malloc(sizeof(long int));
+        free(tmp);
      }
 
    eina_counter_stop(cnt, i);

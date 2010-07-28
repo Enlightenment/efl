@@ -15,9 +15,9 @@ typedef struct _Evas_Hash_El Evas_Hash_El;
 
 struct _Evas_Hash_El
 {
-   Evas_Object_List  _list_data;
-   const char       *key;
-   void             *data;
+   Evas_Object_List _list_data;
+   const char *key;
+   void *data;
 };
 
 static inline int _evas_hash_gen(const char *key);
@@ -29,11 +29,13 @@ _evas_hash_gen(const char *key)
 {
    unsigned int hash_num = 5381;
    const unsigned char *ptr;
-   
-   if (!key) return 0;
+
+   if (!key)
+      return 0;
+
    for (ptr = (unsigned char *)key; *ptr; ptr++)
-     hash_num = (hash_num * 33) ^ *ptr;
-   
+      hash_num = (hash_num * 33) ^ *ptr;
+
    hash_num &= 0xff;
    return (int)hash_num;
 }
@@ -106,32 +108,38 @@ evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
    int hash_num;
    Evas_Hash_El *el;
 
-   if ((!key) || (!data)) return hash;
+   if ((!key) || (!data))
+      return hash;
+
    _evas_hash_alloc_error = 0;
    if (!hash)
      {
-	hash = calloc(1, sizeof(struct _Evas_Hash));
-	if (!hash)
-	  {
-	     _evas_hash_alloc_error = 1;
-	     return NULL;
-	  }
+        hash = calloc(1, sizeof(struct _Evas_Hash));
+        if (!hash)
+          {
+             _evas_hash_alloc_error = 1;
+             return NULL;
+          }
      }
+
    if (!(el = malloc(sizeof(struct _Evas_Hash_El) + strlen(key) + 1)))
      {
         if (hash->population <= 0)
-	  {
-	     free(hash);
-	     hash = NULL;
-	  }
-	_evas_hash_alloc_error = 1;
-	return hash;
-     };
+          {
+             free(hash);
+             hash = NULL;
+          }
+
+        _evas_hash_alloc_error = 1;
+        return hash;
+     }
+
    el->key = ((char *)el) + sizeof(struct _Evas_Hash_El);
-   strcpy((char *) el->key, key);
+   strcpy((char *)el->key, key);
    el->data = (void *)data;
    hash_num = _evas_hash_gen(key);
-   hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
+   hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num],
+                                                      el);
    hash->population++;
    return hash;
 }
@@ -165,31 +173,37 @@ evas_hash_direct_add(Evas_Hash *hash, const char *key, const void *data)
    int hash_num;
    Evas_Hash_El *el;
 
-   if ((!key) || (!data)) return hash;
+   if ((!key) || (!data))
+      return hash;
+
    _evas_hash_alloc_error = 0;
    if (!hash)
      {
-	hash = calloc(1, sizeof(struct _Evas_Hash));
-	if (!hash)
-	  {
-	     _evas_hash_alloc_error = 1;
-	     return NULL;
-	  }
+        hash = calloc(1, sizeof(struct _Evas_Hash));
+        if (!hash)
+          {
+             _evas_hash_alloc_error = 1;
+             return NULL;
+          }
      }
+
    if (!(el = malloc(sizeof(struct _Evas_Hash_El))))
      {
         if (hash->population <= 0)
-	  {
-	     free(hash);
-	     hash = NULL;
-	  }
-	_evas_hash_alloc_error = 1;
-	return hash;
-     };
+          {
+                          free(hash);
+             hash = NULL;
+          }
+
+        _evas_hash_alloc_error = 1;
+        return hash;
+     }
+
    el->key = key;
    el->data = (void *)data;
    hash_num = _evas_hash_gen(key);
-   hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
+   hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num],
+                                                      el);
    hash->population++;
    return hash;
 }
@@ -216,52 +230,58 @@ evas_hash_del(Evas_Hash *hash, const char *key, const void *data)
    Evas_Hash_El *el;
    Evas_Object_List *l;
 
-   if (!hash) return NULL;
+   if (!hash)
+      return NULL;
+
    if (!key)
-     {
-	for (hash_num = 0; hash_num < 256; hash_num++)
-	  {
-	     for (l = hash->buckets[hash_num]; l; l = l->next)
-	       {
-		  el = (Evas_Hash_El *)l;
-		  if (el->data == data)
-		    {
-		       hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
-		       free(el);
-		       hash->population--;
-		       if (hash->population <= 0)
-			 {
-			    free(hash);
-			    hash = NULL;
-			 }
-		       return hash;
-		    }
-	       }
-	  }
-     }
+      for (hash_num = 0; hash_num < 256; hash_num++)
+        {
+           for (l = hash->buckets[hash_num]; l; l = l->next)
+             {
+                el = (Evas_Hash_El *)l;
+                if (el->data == data)
+                  {
+                     hash->buckets[hash_num] = evas_object_list_remove(
+                           hash->buckets[hash_num],
+                           el);
+                          free(el);
+                     hash->population--;
+                     if (hash->population <= 0)
+                       {
+                          free(hash);
+                          hash = NULL;
+                       }
+
+                     return hash;
+                  }
+             }
+        }
    else
      {
-	hash_num = _evas_hash_gen(key);
-	for (l = hash->buckets[hash_num]; l; l = l->next)
-	  {
-	     el = (Evas_Hash_El *)l;
-	     if (!strcmp(el->key, key))
-	       {
-                  if ((!data) || (el->data == data))
-		    {
-		       hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
-		       free(el);
-		       hash->population--;
-		       if (hash->population <= 0)
-			 {
-			    free(hash);
-			    hash = NULL;
-			 }
-		       return hash;
-		    }
-	       }
-	  }
+        hash_num = _evas_hash_gen(key);
+        for (l = hash->buckets[hash_num]; l; l = l->next)
+          {
+             el = (Evas_Hash_El *)l;
+             if (!strcmp(el->key, key))
+                if ((!data) || (el->data == data))
+                  {
+                     hash->buckets[hash_num] = evas_object_list_remove(
+                           hash->buckets[hash_num],
+                           el);
+                          free(el);
+                     hash->population--;
+                     if (hash->population <= 0)
+                       {
+                          free(hash);
+                          hash = NULL;
+                       }
+
+                     return hash;
+                  }
+
+          }
      }
+
    return hash;
 }
 
@@ -281,24 +301,27 @@ evas_hash_find(const Evas_Hash *hash, const char *key)
    Evas_Object_List *l;
 
    _evas_hash_alloc_error = 0;
-   if ((!hash) || (!key)) return NULL;
+   if ((!hash) || (!key))
+      return NULL;
+
    hash_num = _evas_hash_gen(key);
    for (l = hash->buckets[hash_num]; l; l = l->next)
      {
-	el = (Evas_Hash_El *)l;
-	if (!strcmp(el->key, key))
-	  {
-	     if (l != hash->buckets[hash_num])
-	       {
-		  Evas_Object_List *bucket;
+        el = (Evas_Hash_El *)l;
+        if (!strcmp(el->key, key))
+          {
+             if (l != hash->buckets[hash_num])
+               {
+                  Evas_Object_List *bucket;
 
-		  bucket = hash->buckets[hash_num];
-		  bucket = evas_object_list_remove(bucket, el);
-		  bucket = evas_object_list_prepend(bucket, el);
-		  ((Evas_Hash *)hash)->buckets[hash_num] = bucket;
-	       }
-	     return el->data;
-	  }
+                  bucket = hash->buckets[hash_num];
+                  bucket = evas_object_list_remove(bucket, el);
+                  bucket = evas_object_list_prepend(bucket, el);
+                  ((Evas_Hash *)hash)->buckets[hash_num] = bucket;
+               }
+
+             return el->data;
+          }
      }
    return NULL;
 }
@@ -321,24 +344,31 @@ evas_hash_modify(Evas_Hash *hash, const char *key, const void *data)
    Evas_Object_List *l;
 
    _evas_hash_alloc_error = 0;
-   if (!hash) return NULL;
+   if (!hash)
+      return NULL;
+
    hash_num = _evas_hash_gen(key);
    for (l = hash->buckets[hash_num]; l; l = l->next)
      {
-	el = (Evas_Hash_El *)l;
-	if ((key) && (!strcmp(el->key, key)))
-	  {
-	     void *old_data;
-	     
-	     if (l != hash->buckets[hash_num])
-	       {
-		  hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
-		  hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
-	       }
-	     old_data = el->data;
-	     el->data = (void *) data;
-	     return old_data;
-	  }
+        el = (Evas_Hash_El *)l;
+        if ((key) && (!strcmp(el->key, key)))
+          {
+             void *old_data;
+
+             if (l != hash->buckets[hash_num])
+               {
+                  hash->buckets[hash_num] = evas_object_list_remove(
+                        hash->buckets[hash_num],
+                        el);
+                  hash->buckets[hash_num] = evas_object_list_prepend(
+                        hash->buckets[hash_num],
+                        el);
+               }
+
+             old_data = el->data;
+             el->data = (void *)data;
+             return old_data;
+          }
      }
    return NULL;
 }
@@ -358,7 +388,9 @@ evas_hash_modify(Evas_Hash *hash, const char *key, const void *data)
 EAPI int
 evas_hash_size(const Evas_Hash *hash)
 {
-   if (!hash) return 0;
+   if (!hash)
+      return 0;
+
    return 256;
 }
 
@@ -391,20 +423,22 @@ evas_hash_free(Evas_Hash *hash)
 {
    int i, size;
 
-   if (!hash) return;
+   if (!hash)
+      return;
+
    size = evas_hash_size(hash);
    for (i = 0; i < size; i++)
      {
-	while (hash->buckets[i])
-	  {
-	     Evas_Hash_El *el;
+        while (hash->buckets[i])
+          {
+             Evas_Hash_El *el;
 
-	     el = (Evas_Hash_El *)hash->buckets[i];
-	     hash->buckets[i] = evas_object_list_remove(hash->buckets[i], el);
-	     free(el);
-	  }
+             el = (Evas_Hash_El *)hash->buckets[i];
+             hash->buckets[i] = evas_object_list_remove(hash->buckets[i], el);
+                          free(el);
+          }
      }
-   free(hash);
+                          free(hash);
 }
 
 /**
@@ -441,25 +475,33 @@ evas_hash_free(Evas_Hash *hash)
  * @ingroup Evas_Hash_General_Group
  */
 EAPI void
-evas_hash_foreach(const Evas_Hash *hash, Evas_Bool (*func) (const Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata)
+evas_hash_foreach(const Evas_Hash *hash, Evas_Bool (*func)(
+                     const Evas_Hash *hash,
+                     const char *key,
+                     void *data,
+                     void *fdata), const void *fdata)
 {
    int i, size;
 
-   if (!hash) return;
+   if (!hash)
+      return;
+
    size = evas_hash_size(hash);
    for (i = 0; i < size; i++)
      {
-	Evas_Object_List *l, *next_l;
+        Evas_Object_List *l, *next_l;
 
-	for (l = hash->buckets[i]; l;)
-	  {
-	     Evas_Hash_El *el;
+        for (l = hash->buckets[i]; l; )
+          {
+             Evas_Hash_El *el;
 
-	     next_l = l->next;
-	     el = (Evas_Hash_El *)l;
-	     if (!func(hash, el->key, el->data, (void *)fdata)) return;
-	     l = next_l;
-	  }
+             next_l = l->next;
+             el = (Evas_Hash_El *)l;
+             if (!func(hash, el->key, el->data, (void *)fdata))
+                return;
+
+             l = next_l;
+          }
      }
 }
 

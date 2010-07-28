@@ -37,6 +37,6 @@
 #define _STRBUF_MAGIC_STR         __USTRBUF_MAGIC_STR
 static const char __USTRBUF_MAGIC_STR[] = "Eina UStrbuf";
 
-#define _FUNC_EXPAND(y) eina_ustrbuf_##y
+#define _FUNC_EXPAND(y) eina_ustrbuf_ ## y
 
 #include "eina_strbuf_template_c.i"

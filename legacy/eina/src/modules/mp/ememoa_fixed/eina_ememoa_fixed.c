@@ -57,8 +57,10 @@ eina_ememoa_fixed_free(void *data, void *ptr)
    ememoa_mempool_fixed_push_object(efm->pool, ptr);
 }
 
-static void*
-eina_ememoa_fixed_realloc(__UNUSED__ void *data, __UNUSED__ void *element, __UNUSED__ unsigned int size)
+static void *
+eina_ememoa_fixed_realloc(__UNUSED__ void *data,
+                          __UNUSED__ void *element,
+                          __UNUSED__ unsigned int size)
 {
    return NULL;
 }
@@ -77,11 +79,13 @@ eina_ememoa_fixed_statistics(void *data)
    Eina_Ememoa_Fixed_Mempool *efm = data;
 
    ememoa_mempool_fixed_display_statistic(efm->pool);
-   (void) efm;
+   (void)efm;
 }
 
-static void*
-eina_ememoa_fixed_init(const char *context, __UNUSED__ const char *option, va_list args)
+static void *
+eina_ememoa_fixed_init(const char *context,
+                       __UNUSED__ const char *option,
+                       va_list args)
 {
    struct ememoa_mempool_desc_s *desc = NULL;
    Eina_Ememoa_Fixed_Mempool *efm = NULL;
@@ -92,13 +96,14 @@ eina_ememoa_fixed_init(const char *context, __UNUSED__ const char *option, va_li
 
    if (context)
      {
-	context_length = strlen(context) + 1;
+        context_length = strlen(context) + 1;
 
-	desc = calloc(1, sizeof (struct ememoa_mempool_desc_s) + context_length);
-	if (!desc) goto on_error;
+        desc = calloc(1, sizeof (struct ememoa_mempool_desc_s) + context_length);
+        if (!desc)
+           goto on_error;
 
-	desc->name = (char*) (desc + 1);
-	memcpy((char*) desc->name, context, context_length);
+        desc->name = (char *)(desc + 1);
+        memcpy((char *)desc->name, context, context_length);
      }
 
    item_size = va_arg(args, int);
@@ -106,20 +111,28 @@ eina_ememoa_fixed_init(const char *context, __UNUSED__ const char *option, va_li
    thread_protect = va_arg(args, int);
 
    efm = malloc(sizeof (Eina_Ememoa_Fixed_Mempool));
-   if (!efm) goto on_error;
+   if (!efm)
+      goto on_error;
 
    efm->desc = desc;
-   efm->pool = ememoa_mempool_fixed_init(item_size,
-					 pool_size,
-					 thread_protect ? EMEMOA_THREAD_PROTECTION : 0,
-					 efm->desc);
-   if (efm->pool < 0) goto on_error;
+   efm->pool = ememoa_mempool_fixed_init(
+         item_size,
+         pool_size,
+         thread_protect ?
+         EMEMOA_THREAD_PROTECTION : 0,
+         efm->desc);
+   if (efm->pool < 0)
+      goto on_error;
 
    return efm;
 
- on_error:
-   if (desc) free(desc);
-   if (efm) free(efm);
+on_error:
+   if (desc)
+      free(desc);
+
+   if (efm)
+      free(efm);
+
    return NULL;
 }
 
@@ -128,30 +141,32 @@ eina_ememoa_fixed_shutdown(void *data)
 {
    Eina_Ememoa_Fixed_Mempool *efm = data;
 
-   if (efm->desc) free(efm->desc);
-   ememoa_mempool_fixed_clean(efm->pool);
+   if (efm->desc)
+      free(efm->desc);
+
+      ememoa_mempool_fixed_clean(efm->pool);
    free(efm);
 }
 
 static Eina_Mempool_Backend _eina_ememoa_mp_backend = {
-  .name = "ememoa_fixed",
-  .init = &eina_ememoa_fixed_init,
-  .shutdown = &eina_ememoa_fixed_shutdown,
-  .realloc = &eina_ememoa_fixed_realloc,
-  .alloc = &eina_ememoa_fixed_malloc,
-  .free = &eina_ememoa_fixed_free,
-  .garbage_collect = &eina_ememoa_fixed_gc,
-  .statistics = &eina_ememoa_fixed_statistics
+   .name = "ememoa_fixed",
+   .init = &eina_ememoa_fixed_init,
+   .shutdown = &eina_ememoa_fixed_shutdown,
+   .realloc = &eina_ememoa_fixed_realloc,
+   .alloc = &eina_ememoa_fixed_malloc,
+   .free = &eina_ememoa_fixed_free,
+   .garbage_collect = &eina_ememoa_fixed_gc,
+   .statistics = &eina_ememoa_fixed_statistics
 };
 
 Eina_Bool ememoa_fixed_init(void)
 {
-	return eina_mempool_register(&_eina_ememoa_mp_backend);
+   return eina_mempool_register(&_eina_ememoa_mp_backend);
 }
 
 void ememoa_fixed_shutdown(void)
 {
-	eina_mempool_unregister(&_eina_ememoa_mp_backend);
+   eina_mempool_unregister(&_eina_ememoa_mp_backend);
 }
 
 

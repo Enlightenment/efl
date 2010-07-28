@@ -26,12 +26,12 @@
 #include "eina_safety_checks.h"
 
 /*============================================================================*
- *                                  Local                                     *
- *============================================================================*/
+*                                  Local                                     *
+*============================================================================*/
 
 /*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+*                                 Global                                     *
+*============================================================================*/
 
 /**
  * @internal
@@ -51,8 +51,8 @@ eina_safety_checks_shutdown(void)
 }
 
 /*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+*                                   API                                      *
+*============================================================================*/
 
 /**
  * @addtogroup Eina_Safety_Checks_Group Safety Checks
@@ -104,7 +104,8 @@ static const char EINA_ERROR_SAFETY_FAILED_STR[] = "Safety check failed.";
 Eina_Bool
 eina_safety_checks_init(void)
 {
-   EINA_ERROR_SAFETY_FAILED = eina_error_msg_static_register(EINA_ERROR_SAFETY_FAILED_STR);
+   EINA_ERROR_SAFETY_FAILED = eina_error_msg_static_register(
+         EINA_ERROR_SAFETY_FAILED_STR);
    return EINA_TRUE;
 }
 

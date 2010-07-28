@@ -104,8 +104,10 @@
 #  define EINA_WARN_UNUSED_RESULT
 # endif
 
-# if (!defined(EINA_SAFETY_CHECKS)) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3))
-#  define EINA_ARG_NONNULL(idx, ...) __attribute__ ((nonnull(idx, ## __VA_ARGS__)))
+# if (!defined(EINA_SAFETY_CHECKS)) && (__GNUC__ > 3 || (__GNUC__ == 3 && \
+                                                         __GNUC_MINOR__ >= 3))
+#  define EINA_ARG_NONNULL(idx, \
+                           ...) __attribute__ ((nonnull(idx, ## __VA_ARGS__)))
 # else
 #  define EINA_ARG_NONNULL(idx, ...)
 # endif
@@ -245,7 +247,7 @@ EAPI extern const unsigned int eina_prime_table[];
  * if it is 'greater', 1 must be returned, and if they are equal, 0
  * must be returned.
  */
-typedef int (*Eina_Compare_Cb) (const void *data1, const void *data2);
+typedef int (*Eina_Compare_Cb)(const void *data1, const void *data2);
 
 /**
  * @def EINA_COMPARE_CB
@@ -254,8 +256,8 @@ typedef int (*Eina_Compare_Cb) (const void *data1, const void *data2);
 #define EINA_COMPARE_CB(function) ((Eina_Compare_Cb)function)
 
 typedef Eina_Bool (*Eina_Each)(const void *container,
-			       void *data,
-			       void *fdata);
+                               void *data,
+                               void *fdata);
 
 /**
  * @def EINA_EACH

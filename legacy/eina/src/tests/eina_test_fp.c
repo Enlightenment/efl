@@ -36,22 +36,22 @@ START_TEST(eina_fp_cos)
    double dresult;
    double delta;
 
-   fail_if(!eina_init());
+        fail_if(!eina_init());
 
    fl = eina_f32p32_scale(EINA_F32P32_PI, 4);
    step = eina_f32p32_div(fl, eina_f32p32_int_from(2048));
 
    for (fc = 0; fc < fl; fc += step)
      {
-	fresult = eina_f32p32_cos(fc);
-	dc = eina_f32p32_double_to(fc);
-	dresult = cos(dc);
+        fresult = eina_f32p32_cos(fc);
+        dc = eina_f32p32_double_to(fc);
+        dresult = cos(dc);
 
-	delta = fabs(dresult - eina_f32p32_double_to(fresult));
-	fail_if(delta > 0.005);
+        delta = fabs(dresult - eina_f32p32_double_to(fresult));
+        fail_if(delta > 0.005);
      }
 
-   eina_shutdown();
+        eina_shutdown();
 }
 END_TEST
 
@@ -65,19 +65,19 @@ START_TEST(eina_fp_sin)
    double dresult;
    double delta;
 
-   fail_if(!eina_init());
+        fail_if(!eina_init());
 
    fl = eina_f32p32_scale(EINA_F32P32_PI, 4);
    step = eina_f32p32_div(fl, eina_f32p32_int_from(2048));
 
    for (fc = 0; fc < fl; fc += step)
      {
-	fresult = eina_f32p32_sin(fc);
-	dc = eina_f32p32_double_to(fc);
-	dresult = sin(dc);
+        fresult = eina_f32p32_sin(fc);
+        dc = eina_f32p32_double_to(fc);
+        dresult = sin(dc);
 
-	delta = fabs(dresult - eina_f32p32_double_to(fresult));
-	fail_if(delta > 0.005);
+        delta = fabs(dresult - eina_f32p32_double_to(fresult));
+        fail_if(delta > 0.005);
      }
 
 

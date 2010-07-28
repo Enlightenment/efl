@@ -53,19 +53,19 @@ eina_bench_sort_eina(int request)
 
    for (i = 0; i < request; ++i)
      {
-	char buffer[10];
+        char buffer[10];
 
-	eina_convert_itoa(rand() % request, buffer);
+        eina_convert_itoa(rand() % request, buffer);
 
-	list = eina_list_prepend(list, strdup(buffer));
+        list = eina_list_prepend(list, strdup(buffer));
      }
 
    list = eina_list_sort(list, -1, EINA_COMPARE_CB(_eina_cmp_str));
 
    while (list)
      {
-	free(eina_list_data_get(list));
-	list = eina_list_remove_list(list, list);
+        free(eina_list_data_get(list));
+        list = eina_list_remove_list(list, list);
      }
 
    eina_shutdown();
@@ -81,19 +81,19 @@ eina_bench_sort_evas(int request)
 
    for (i = 0; i < request; ++i)
      {
-	char buffer[10];
+        char buffer[10];
 
-	eina_convert_itoa(rand() % request, buffer);
+        eina_convert_itoa(rand() % request, buffer);
 
-	list = evas_list_prepend(list, strdup(buffer));
+        list = evas_list_prepend(list, strdup(buffer));
      }
 
-   list = evas_list_sort(list, -1, (void*) _eina_cmp_str);
+   list = evas_list_sort(list, -1, (void *)_eina_cmp_str);
 
    while (list)
      {
-	free(evas_list_data(list));
-	list = evas_list_remove_list(list, list);
+        free(evas_list_data(list));
+        list = evas_list_remove_list(list, list);
      }
 }
 
@@ -108,19 +108,19 @@ eina_bench_sort_glist(int request)
 
    for (i = 0; i < request; ++i)
      {
-	char buffer[10];
+        char buffer[10];
 
-	eina_convert_itoa(rand() % request, buffer);
+        eina_convert_itoa(rand() % request, buffer);
 
-	list = g_list_prepend(list, strdup(buffer));
+        list = g_list_prepend(list, strdup(buffer));
      }
 
-   list = g_list_sort(list, (void*) _eina_cmp_str);
+   list = g_list_sort(list, (void *)_eina_cmp_str);
 
    while (list)
      {
-	free(list->data);
-	list = g_list_delete_link(list, list);
+        free(list->data);
+        list = g_list_delete_link(list, list);
      }
 }
 #endif
@@ -136,11 +136,11 @@ eina_bench_sort_ecore_default(int request)
 
    for (i = 0; i < request; ++i)
      {
-	char buffer[10];
+        char buffer[10];
 
-	eina_convert_itoa(rand() % request, buffer);
+        eina_convert_itoa(rand() % request, buffer);
 
-	ecore_list_prepend(list, strdup(buffer));
+        ecore_list_prepend(list, strdup(buffer));
      }
 
    ecore_list_sort(list, ECORE_COMPARE_CB(_eina_cmp_str), 0);
@@ -159,11 +159,11 @@ eina_bench_sort_ecore_merge(int request)
 
    for (i = 0; i < request; ++i)
      {
-	char buffer[10];
+        char buffer[10];
 
-	eina_convert_itoa(rand() % request, buffer);
+        eina_convert_itoa(rand() % request, buffer);
 
-	ecore_list_prepend(list, strdup(buffer));
+        ecore_list_prepend(list, strdup(buffer));
      }
 
    ecore_list_mergesort(list, ECORE_COMPARE_CB(_eina_cmp_str), 0);
@@ -182,11 +182,11 @@ eina_bench_sort_ecore_heap(int request)
 
    for (i = 0; i < request; ++i)
      {
-	char buffer[10];
+        char buffer[10];
 
-	eina_convert_itoa(rand() % request, buffer);
+        eina_convert_itoa(rand() % request, buffer);
 
-	ecore_list_prepend(list, strdup(buffer));
+        ecore_list_prepend(list, strdup(buffer));
      }
 
    ecore_list_heapsort(list, ECORE_COMPARE_CB(_eina_cmp_str), 0);
@@ -196,14 +196,26 @@ eina_bench_sort_ecore_heap(int request)
 
 void eina_bench_sort(Eina_Benchmark *bench)
 {
-   eina_benchmark_register(bench, "eina", EINA_BENCHMARK(eina_bench_sort_eina), 10, 10000, 100);
+   eina_benchmark_register(bench, "eina",
+                           EINA_BENCHMARK(
+                              eina_bench_sort_eina),          10, 10000, 100);
 #ifdef EINA_BENCH_HAVE_GLIB
-   eina_benchmark_register(bench, "glist", EINA_BENCHMARK(eina_bench_sort_glist), 10, 10000, 100);
+   eina_benchmark_register(bench, "glist",
+                           EINA_BENCHMARK(
+                              eina_bench_sort_glist),         10, 10000, 100);
 #endif
-   eina_benchmark_register(bench, "ecore", EINA_BENCHMARK(eina_bench_sort_ecore_default), 10, 10000, 100);
-   eina_benchmark_register(bench, "ecore-merge", EINA_BENCHMARK(eina_bench_sort_ecore_merge), 10, 10000, 100);
-   eina_benchmark_register(bench, "ecore-heap", EINA_BENCHMARK(eina_bench_sort_ecore_heap), 10, 10000, 100);
-   eina_benchmark_register(bench, "evas", EINA_BENCHMARK(eina_bench_sort_evas), 10, 10000, 100);
+   eina_benchmark_register(bench, "ecore",
+                           EINA_BENCHMARK(
+                              eina_bench_sort_ecore_default), 10, 10000, 100);
+   eina_benchmark_register(bench, "ecore-merge",
+                           EINA_BENCHMARK(
+                              eina_bench_sort_ecore_merge),   10, 10000, 100);
+   eina_benchmark_register(bench, "ecore-heap",
+                           EINA_BENCHMARK(
+                              eina_bench_sort_ecore_heap),    10, 10000, 100);
+   eina_benchmark_register(bench, "evas",
+                           EINA_BENCHMARK(
+                              eina_bench_sort_evas),          10, 10000, 100);
 }
 
 

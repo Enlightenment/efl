@@ -33,8 +33,8 @@
 #include "eina_iterator.h"
 
 /*============================================================================*
- *                                  Local                                     *
- *============================================================================*/
+*                                  Local                                     *
+*============================================================================*/
 
 /**
  * @cond LOCAL
@@ -42,11 +42,11 @@
 
 static const char EINA_MAGIC_ITERATOR_STR[] = "Eina Iterator";
 
-#define EINA_MAGIC_CHECK_ITERATOR(d)				\
-  do {								\
-    if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ITERATOR))		\
-      EINA_MAGIC_FAIL(d, EINA_MAGIC_ITERATOR);			\
-  } while(0)
+#define EINA_MAGIC_CHECK_ITERATOR(d)                            \
+   do {                                                          \
+        if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ITERATOR)) {              \
+             EINA_MAGIC_FAIL(d, EINA_MAGIC_ITERATOR); }                  \
+     } while(0)
 
 /**
  * @endcond
@@ -54,8 +54,8 @@ static const char EINA_MAGIC_ITERATOR_STR[] = "Eina Iterator";
 
 
 /*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+*                                 Global                                     *
+*============================================================================*/
 
 /**
  * @internal
@@ -92,8 +92,8 @@ eina_iterator_shutdown(void)
 }
 
 /*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+*                                   API                                      *
+*============================================================================*/
 
 /**
  * @addtogroup Eina_Iterator_Group Iterator Functions
@@ -144,7 +144,7 @@ EAPI void *
 eina_iterator_container_get(Eina_Iterator *iterator)
 {
    EINA_MAGIC_CHECK_ITERATOR(iterator);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iterator, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iterator,                NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(iterator->get_container, NULL);
    return iterator->get_container(iterator);
 }
@@ -164,11 +164,13 @@ eina_iterator_container_get(Eina_Iterator *iterator)
 EAPI Eina_Bool
 eina_iterator_next(Eina_Iterator *iterator, void **data)
 {
-   if (!iterator) return EINA_FALSE;
+   if (!iterator)
+      return EINA_FALSE;
+
    EINA_MAGIC_CHECK_ITERATOR(iterator);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iterator, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iterator,       EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(iterator->next, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data,           EINA_FALSE);
    return iterator->next(iterator, data);
 }
 
@@ -187,8 +189,8 @@ eina_iterator_next(Eina_Iterator *iterator, void **data)
  */
 EAPI void
 eina_iterator_foreach(Eina_Iterator *iterator,
-		      Eina_Each cb,
-		      const void *fdata)
+                      Eina_Each cb,
+                      const void *fdata)
 {
    const void *container;
    void *data;
@@ -201,8 +203,9 @@ eina_iterator_foreach(Eina_Iterator *iterator,
 
    container = iterator->get_container(iterator);
    while (iterator->next(iterator, &data) == EINA_TRUE) {
-      if (cb(container, data, (void*) fdata) != EINA_TRUE) return ;
-   }
+        if (cb(container, data, (void *)fdata) != EINA_TRUE)
+           return;
+     }
 }
 
 /**

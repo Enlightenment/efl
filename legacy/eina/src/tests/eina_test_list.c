@@ -32,16 +32,17 @@ static Eina_Bool eina_list_sorted_check(const Eina_List *list)
    int last = *(int *)list->data;
 
    EINA_LIST_FOREACH(list->next, n, d)
-     {
-	int current = *(int *)d;
-	if (last > current)
-	  {
-	     fprintf(stderr, "list is not sorted: last=%d, current=%d\n",
-		     last, current);
-	     return 0;
-	  }
-	last = current;
-     }
+   {
+      int current = *(int *)d;
+      if (last > current)
+        {
+           fprintf(stderr, "list is not sorted: last=%d, current=%d\n",
+                   last, current);
+           return 0;
+        }
+
+      last = current;
+   }
 
    return 1;
 }
@@ -68,71 +69,71 @@ START_TEST(eina_test_simple)
    eina_init();
 
    list = eina_list_append(list, &data[0]);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_prepend(list, &data[1]);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_append(list, &data[2]);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_remove(list, &data[0]);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_remove(list, &data[0]);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    tmp = eina_list_data_find_list(list, &data[2]);
-   fail_if(tmp == NULL);
+        fail_if(tmp == NULL);
 
    list = eina_list_append_relative_list(list, &data[3], tmp);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_prepend_relative_list(list, &data[4], tmp);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_promote_list(list, tmp);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_append_relative(list, &data[5], &data[2]);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_prepend_relative(list, &data[6], &data[2]);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_remove_list(list, tmp);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
-   fail_if(eina_list_data_find_list(list, &data[2]) != NULL);
-   fail_if(eina_list_data_find(list, &data[2]) != NULL);
-   fail_if(eina_list_data_find(list, &data[5]) != &data[5]);
+        fail_if(eina_list_data_find_list(list, &data[2]) != NULL);
+        fail_if(eina_list_data_find(list, &data[2]) != NULL);
+        fail_if(eina_list_data_find(list, &data[5]) != &data[5]);
 
-   fail_if(eina_list_count(list) != 5);
-   fail_if(eina_list_nth(list, 4) != &data[3]);
-   fail_if(eina_list_nth(list, 10) != NULL);
-   fail_if(eina_list_nth_list(list, 10) != NULL);
+        fail_if(eina_list_count(list) != 5);
+        fail_if(eina_list_nth(list, 4) != &data[3]);
+        fail_if(eina_list_nth(list, 10) != NULL);
+        fail_if(eina_list_nth_list(list, 10) != NULL);
 
    for (tmp = list, i = 0; tmp != NULL; tmp = eina_list_next(tmp), ++i)
      {
-	int *d = eina_list_data_get(tmp);
-	fail_if(d == NULL);
-	fail_if(*d != result[i]);
+        int *d = eina_list_data_get(tmp);
+        fail_if(d == NULL);
+        fail_if(*d != result[i]);
      }
 
    list = eina_list_reverse(list);
 
    for (tmp = list; tmp != NULL; tmp = eina_list_next(tmp), --i)
      {
-	int *d = eina_list_data_get(tmp);
-	fail_if(d == NULL);
-	fail_if(*d != result[i - 1]);
+        int *d = eina_list_data_get(tmp);
+        fail_if(d == NULL);
+        fail_if(*d != result[i - 1]);
      }
 
    list = eina_list_append_relative(list, &data[7], &data[7]);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_prepend_relative(list, &data[8], &data[8]);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_sort(list, 2, eina_int_cmp);
 
@@ -142,9 +143,9 @@ START_TEST(eina_test_simple)
    test2 = eina_list_nth(list, 1);
    test3 = eina_list_nth(list, 2);
 
-   fail_if(test1 == NULL || test2 == NULL || test3 == NULL);
-   fail_if(*test1 > *test2);
-   fail_if(*test3 == *test2);
+        fail_if(test1 == NULL || test2 == NULL || test3 == NULL);
+        fail_if(*test1 > *test2);
+        fail_if(*test3 == *test2);
 
    list = eina_list_sort(list, 5, eina_int_cmp);
 
@@ -152,54 +153,54 @@ START_TEST(eina_test_simple)
    test2 = eina_list_nth(list, 4);
    test3 = eina_list_nth(list, 5);
 
-   fail_if(test1 == NULL || test2 == NULL || test3 == NULL);
-   fail_if(*test1 > *test2);
-   fail_if(*test3 > *test2);
+        fail_if(test1 == NULL || test2 == NULL || test3 == NULL);
+        fail_if(*test1 > *test2);
+        fail_if(*test3 > *test2);
 
    list = eina_list_append(list, &data[8]);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_append(list, &data[7]);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_sort(list, -1, eina_int_cmp);
 
    test1 = eina_list_nth(list, 0);
    for (tmp = list; tmp != NULL; tmp = eina_list_next(tmp))
      {
-	int *d = eina_list_data_get(tmp);
-	fail_if(*test1 > *d);
+        int *d = eina_list_data_get(tmp);
+        fail_if(*test1 > *d);
 
-	test1 = d;
+        test1 = d;
      }
 
    test3 = eina_list_nth(list, 5);
-   fail_if(test3 == NULL);
+        fail_if(test3 == NULL);
 
    list = eina_list_promote_list(list, list);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_promote_list(list, eina_list_last(list));
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    test1 = eina_list_nth(list, 0);
    test2 = eina_list_nth(list, 1);
 
    list = eina_list_promote_list(eina_list_next(list), list);
-   fail_if(list == NULL);
-   fail_if(eina_list_data_get(list) != test1);
-   fail_if(eina_list_data_get(eina_list_next(list)) != test2);
+        fail_if(list == NULL);
+        fail_if(eina_list_data_get(list) != test1);
+        fail_if(eina_list_data_get(eina_list_next(list)) != test2);
 
    list = eina_list_remove_list(list, list);
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_remove_list(list, eina_list_last(list));
-   fail_if(list == NULL);
+        fail_if(list == NULL);
 
    list = eina_list_free(list);
-   fail_if(list != NULL);
+        fail_if(list != NULL);
 
-   eina_shutdown();
+        eina_shutdown();
 }
 END_TEST
 
@@ -219,39 +220,39 @@ START_TEST(eina_test_merge)
    l1 = eina_list_append(l1, &data[1]);
    l1 = eina_list_append(l1, &data[2]);
    l1 = eina_list_append(l1, &data[3]);
-   fail_if(l1 == NULL);
+      fail_if(l1 == NULL);
 
    l2 = eina_list_append(NULL, &data[4]);
    l2 = eina_list_append(l2, &data[5]);
-   fail_if(l2 == NULL);
+      fail_if(l2 == NULL);
 
    l1 = eina_list_merge(l1, l2);
-   fail_if(l1 == NULL);
-   fail_if(eina_list_count(l1) != 6);
+      fail_if(l1 == NULL);
+      fail_if(eina_list_count(l1) != 6);
    for (i = 0, l2 = l1; ((l2 != NULL) && (i < 6)); ++i, l2 = l2->next)
-     fail_if(l2->data != &data[i]);
-   fail_if(i != 6);
-   fail_if(l2 != NULL);
+      fail_if(l2->data != &data[i]);
+      fail_if(i != 6);
+      fail_if(l2 != NULL);
 
-   eina_list_free(l1);
+      eina_list_free(l1);
 
    l1 = eina_list_append(NULL, &data[0]);
    l1 = eina_list_append(l1, &data[1]);
-   fail_if(l1 == NULL);
+      fail_if(l1 == NULL);
 
    l2 = eina_list_append(NULL, &data[2]);
    l2 = eina_list_append(l2, &data[3]);
    l2 = eina_list_append(l2, &data[4]);
    l2 = eina_list_append(l2, &data[5]);
-   fail_if(l2 == NULL);
+      fail_if(l2 == NULL);
 
    l1 = eina_list_merge(l1, l2);
-   fail_if(l1 == NULL);
-   fail_if(eina_list_count(l1) != 6);
+      fail_if(l1 == NULL);
+      fail_if(eina_list_count(l1) != 6);
    for (i = 0, l2 = l1; ((l2 != NULL) && (i < 6)); ++i, l2 = l2->next)
-     fail_if(l2->data != &data[i]);
-   fail_if(i != 6);
-   fail_if(l2 != NULL);
+      fail_if(l2->data != &data[i]);
+      fail_if(i != 6);
+      fail_if(l2 != NULL);
 
    l3 = eina_list_append(NULL, &data[6]);
    l3 = eina_list_append(l3, &data[7]);
@@ -271,20 +272,20 @@ START_TEST(eina_test_merge)
    l5 = eina_list_sort(l5, -1, eina_int_cmp);
 
    l1 = eina_list_sorted_merge(l1, l3, eina_int_cmp);
-   fail_if(l1 == NULL);
-   fail_if(eina_list_count(l1) != 9);
+      fail_if(l1 == NULL);
+      fail_if(eina_list_count(l1) != 9);
 
    l1 = eina_list_sorted_merge(l1, l4, eina_int_cmp);
-   fail_if(l1 == NULL);
-   fail_if(eina_list_count(l1) != 12);
+      fail_if(l1 == NULL);
+      fail_if(eina_list_count(l1) != 12);
 
    l1 = eina_list_sorted_merge(l1, l5, eina_int_cmp);
-   fail_if(l1 == NULL);
-   fail_if(eina_list_count(l1) != 15);
+      fail_if(l1 == NULL);
+      fail_if(eina_list_count(l1) != 15);
 
-   fail_if(!eina_list_sorted_check(l1));
+      fail_if(!eina_list_sorted_check(l1));
 
-   eina_shutdown();
+      eina_shutdown();
 }
 END_TEST
 
@@ -298,18 +299,18 @@ START_TEST(eina_test_sorted_insert)
 
    eina_init();
 
-   count = sizeof(data)/sizeof(data[0]);
+   count = sizeof(data) / sizeof(data[0]);
 
    l1 = NULL;
    for (i = 0; i < count; i++)
-     l1 = eina_list_sorted_insert(l1, eina_int_cmp, data + i);
+      l1 = eina_list_sorted_insert(l1, eina_int_cmp, data + i);
 
    fail_if(l1 == NULL);
    fail_if(!eina_list_sorted_check(l1));
 
    l2 = NULL;
    EINA_LIST_FOREACH(l1, itr, d)
-     l2 = eina_list_sorted_insert(l2, eina_int_cmp, d);
+   l2 = eina_list_sorted_insert(l2, eina_int_cmp, d);
 
    fail_if(l2 == NULL);
    fail_if(!eina_list_sorted_check(l2));
@@ -317,17 +318,17 @@ START_TEST(eina_test_sorted_insert)
 
    l2 = NULL;
    EINA_LIST_REVERSE_FOREACH(l1, itr, d)
-     l2 = eina_list_sorted_insert(l2, eina_int_cmp, d);
+   l2 = eina_list_sorted_insert(l2, eina_int_cmp, d);
 
    fail_if(l2 == NULL);
    fail_if(!eina_list_sorted_check(l2));
    eina_list_free(l2);
    eina_list_free(l1);
 
-   count = sizeof(data2)/sizeof(data2[0]);
+   count = sizeof(data2) / sizeof(data2[0]);
    l1 = NULL;
    for (i = 0; i < count; i++)
-     l1 = eina_list_sorted_insert(l1, eina_int_cmp, data2 + i);
+      l1 = eina_list_sorted_insert(l1, eina_int_cmp, data2 + i);
 
    fail_if(l1 == NULL);
    fail_if(!eina_list_sorted_check(l1));

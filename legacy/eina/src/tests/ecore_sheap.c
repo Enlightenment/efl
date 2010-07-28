@@ -34,13 +34,14 @@ ecore_sheap_new(Ecore_Compare_Cb compare, int size)
 
    heap = (Ecore_Sheap *)malloc(sizeof(Ecore_Sheap));
    if (!heap)
-     return NULL;
+      return NULL;
+
    memset(heap, 0, sizeof(Ecore_Sheap));
 
    if (!ecore_sheap_init(heap, compare, size))
      {
-	FREE(heap);
-	return NULL;
+        FREE(heap);
+        return NULL;
      }
 
    return heap;
@@ -60,14 +61,16 @@ ecore_sheap_init(Ecore_Sheap *heap, Ecore_Compare_Cb compare, int size)
 
    heap->space = size;
    if (!compare)
-     heap->compare = ecore_direct_compare;
+      heap->compare = ecore_direct_compare;
    else
-     heap->compare = compare;
+      heap->compare = compare;
+
    heap->order = ECORE_SORT_MIN;
 
    heap->data = (void **)malloc(heap->space * sizeof(void *));
    if (!heap->data)
-     return FALSE;
+      return FALSE;
+
    memset(heap->data, 0, heap->space * sizeof(void *));
 
    return TRUE;
@@ -92,8 +95,8 @@ ecore_sheap_destroy(Ecore_Sheap *heap)
     * Free data in heap
     */
    if (heap->free_func)
-     for (i = 0; i < heap->size; i++)
-       heap->free_func(heap->data[i]);
+      for (i = 0; i < heap->size; i++)
+         heap->free_func(heap->data[i]);
 
    FREE(heap->data);
 
@@ -139,7 +142,7 @@ ecore_sheap_insert(Ecore_Sheap *heap, void *data)
     * space available to add this data
     */
    if (heap->size >= heap->space)
-     return FALSE;
+      return FALSE;
 
    heap->sorted = FALSE;
 
@@ -159,53 +162,49 @@ ecore_sheap_insert(Ecore_Sheap *heap, void *data)
     * number of branching decisions that must be predicted.
     */
    if (heap->order == ECORE_SORT_MIN)
-     {
-	while ((position > 0) && heap->compare(heap->data[parent],
-					       heap->data[position]) > 0)
-	  {
+      while ((position > 0) && heap->compare(heap->data[parent],
+                                             heap->data[position]) > 0)
+        {
 
-	     /*
-	      * Swap the data with it's parents to move it up in
-	      * the heap.
-	      */
-	     temp = heap->data[position];
-	     heap->data[position] = heap->data[parent];
-	     heap->data[parent] = temp;
+           /*
+            * Swap the data with it's parents to move it up in
+            * the heap.
+            */
+           temp = heap->data[position];
+           heap->data[position] = heap->data[parent];
+           heap->data[parent] = temp;
 
-	     /*
-	      * Now determine the new position for the next
-	      * iteration of the loop, as well as it's parents
-	      * position.
-	      */
-	     i = PARENT(i);
-	     position = i - 1;
-	     parent = PARENT(i) - 1;
-	  }
-     }
+           /*
+            * Now determine the new position for the next
+            * iteration of the loop, as well as it's parents
+            * position.
+            */
+           i = PARENT(i);
+           position = i - 1;
+           parent = PARENT(i) - 1;
+        }
    else
-     {
-	while ((position > 0) && heap->compare(heap->data[parent],
-					       heap->data[position]) < 0)
-	  {
+      while ((position > 0) && heap->compare(heap->data[parent],
+                                             heap->data[position]) < 0)
+        {
 
-	     /*
-	      * Swap the data with it's parents to move it up in
-	      * the heap.
-	      */
-	     temp = heap->data[position];
-	     heap->data[position] = heap->data[PARENT(i) - 1];
-	     heap->data[PARENT(i) - 1] = temp;
+           /*
+            * Swap the data with it's parents to move it up in
+            * the heap.
+            */
+           temp = heap->data[position];
+           heap->data[position] = heap->data[PARENT(i) - 1];
+           heap->data[PARENT(i) - 1] = temp;
 
-	     /*
-	      * Now determine the new position for the next
-	      * iteration of the loop, as well as it's parents
-	      * position.
-	      */
-	     i = PARENT(i);
-	     position = i - 1;
-	     parent = PARENT(i) - 1;
-	  }
-     }
+           /*
+            * Now determine the new position for the next
+            * iteration of the loop, as well as it's parents
+            * position.
+            */
+           i = PARENT(i);
+           position = i - 1;
+           parent = PARENT(i) - 1;
+        }
 
    return TRUE;
 }
@@ -223,7 +222,7 @@ ecore_sheap_extract(Ecore_Sheap *heap)
    void *extreme;
 
    if (heap->size < 1)
-     return NULL;
+      return NULL;
 
    heap->sorted = FALSE;
 
@@ -246,7 +245,7 @@ EAPI void *
 ecore_sheap_extreme(Ecore_Sheap *heap)
 {
    if (heap->size < 1)
-     return NULL;
+      return NULL;
 
    return heap->data[0];
 }
@@ -267,12 +266,12 @@ ecore_sheap_change(Ecore_Sheap *heap, void *item, void *newval)
 
    CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
 
-   for (i = 0; i < heap->size && heap->compare(heap->data[i], item); i++);
+   for (i = 0; i < heap->size && heap->compare(heap->data[i], item); i++) ;
 
    if (i < heap->size)
-     heap->data[i] = newval;
+      heap->data[i] = newval;
    else
-     return FALSE;
+      return FALSE;
 
    /*
     * FIXME: This is not the correct procedure when a change occurs.
@@ -297,9 +296,9 @@ ecore_sheap_compare_set(Ecore_Sheap *heap, Ecore_Compare_Cb compare)
    CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
 
    if (!compare)
-     heap->compare = ecore_direct_compare;
+      heap->compare = ecore_direct_compare;
    else
-     heap->compare = compare;
+      heap->compare = compare;
 
    _ecore_sheap_update_data(heap);
 
@@ -345,7 +344,7 @@ ecore_sheap_sort(Ecore_Sheap *heap)
     * Extract the heap and insert into the new data array in order.
     */
    while (heap->size > 0)
-     new_data[i++] = ecore_sheap_extract(heap);
+      new_data[i++] = ecore_sheap_extract(heap);
 
    /*
     * Free the old data array and update the heap with the new data, also
@@ -369,13 +368,13 @@ EAPI inline void *
 ecore_sheap_item(Ecore_Sheap *heap, int i)
 {
    if (i >= heap->size)
-     return NULL;
+      return NULL;
 
    /*
     * Make sure the data is sorted so we return the correct value.
     */
    if (!heap->sorted)
-     ecore_sheap_sort(heap);
+      ecore_sheap_sort(heap);
 
    return heap->data[i];
 }
@@ -394,27 +393,27 @@ _ecore_sheap_heapify(Ecore_Sheap *heap, int i)
 
    if (heap->order == ECORE_SORT_MIN)
      {
-	if (left <= heap->size && heap->compare(heap->data[left - 1],
-						heap->data[i - 1]) < 0)
-	  extreme = left;
-	else
-	  extreme = i;
+        if (left <= heap->size && heap->compare(heap->data[left - 1],
+                                                heap->data[i - 1]) < 0)
+           extreme = left;
+        else
+           extreme = i;
 
-	if (right <= heap->size && heap->compare(heap->data[right - 1],
-						 heap->data[extreme - 1]) < 0)
-	  extreme = right;
+        if (right <= heap->size && heap->compare(heap->data[right - 1],
+                                                 heap->data[extreme - 1]) < 0)
+           extreme = right;
      }
    else
      {
-	if (left <= heap->size && heap->compare(heap->data[left - 1],
-						heap->data[i - 1]) > 0)
-	  extreme = left;
-	else
-	  extreme = i;
+        if (left <= heap->size && heap->compare(heap->data[left - 1],
+                                                heap->data[i - 1]) > 0)
+           extreme = left;
+        else
+           extreme = i;
 
-	if (right <= heap->size && heap->compare(heap->data[right - 1],
-						 heap->data[extreme - 1]) > 0)
-	  extreme = right;
+        if (right <= heap->size && heap->compare(heap->data[right - 1],
+                                                 heap->data[extreme - 1]) > 0)
+           extreme = right;
      }
 
    /*
@@ -423,13 +422,13 @@ _ecore_sheap_heapify(Ecore_Sheap *heap, int i)
     */
    if (extreme != i)
      {
-	void *temp;
+        void *temp;
 
-	temp = heap->data[extreme - 1];
-	heap->data[extreme - 1] = heap->data[i - 1];
-	heap->data[i - 1] = temp;
+        temp = heap->data[extreme - 1];
+        heap->data[extreme - 1] = heap->data[i - 1];
+        heap->data[i - 1] = temp;
 
-	_ecore_sheap_heapify(heap, extreme);
+        _ecore_sheap_heapify(heap, extreme);
      }
 }
 
@@ -449,7 +448,7 @@ _ecore_sheap_update_data(Ecore_Sheap *heap)
    heap->data = malloc(heap->space * sizeof(void *));
 
    for (i = 0; i < old_size; i++)
-     ecore_sheap_insert(heap, data[i]);
+      ecore_sheap_insert(heap, data[i]);
 
    FREE(data);
 }
@@ -459,14 +458,14 @@ ecore_direct_compare(const void *key1, const void *key2)
 {
    unsigned long k1, k2;
 
-   k1 = (unsigned long) key1;
-   k2 = (unsigned long) key2;
+   k1 = (unsigned long)key1;
+   k2 = (unsigned long)key2;
 
    if (k1 > k2)
-     return 1;
+      return 1;
 
    if (k1 < k2)
-     return -1;
+      return -1;
 
    return 0;
 }

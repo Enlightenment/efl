@@ -28,8 +28,8 @@
 #include "eina_hamster.h"
 
 /*============================================================================*
- *                                  Local                                     *
- *============================================================================*/
+*                                  Local                                     *
+*============================================================================*/
 
 /**
  * @cond LOCAL
@@ -44,12 +44,12 @@ static int _eina_hamsters = -1;
  */
 
 /*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+*                                 Global                                     *
+*============================================================================*/
 
 /*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+*                                   API                                      *
+*============================================================================*/
 
 /**
  * @addtogroup Eina_Hamster_Group Hamster
@@ -75,7 +75,7 @@ eina_hamster_count(void)
         char mon[8] = "";
         int monnum = 0, day = 0, year = 0;
         int fields;
-        
+
         fields = sscanf(_eina_hamster_time, "%02i:%02i:%02i", &hrs, &min, &sec);
         if (fields == 3)
           {
@@ -85,21 +85,21 @@ eina_hamster_count(void)
                {
                   int i;
                   const char *mons[] =
-                    {
-                       "Jan",
-                       "Feb",
-                       "Mar",
-                       "Apr",
-                       "May",
-                       "Jun",
-                       "Jul",
-                       "Aug",
-                       "Sep",
-                       "Oct",
-                       "Nov",
-                       "Dec"
-                    };
-                  
+                  {
+                     "Jan",
+                     "Feb",
+                     "Mar",
+                     "Apr",
+                     "May",
+                     "Jun",
+                     "Jul",
+                     "Aug",
+                     "Sep",
+                     "Oct",
+                     "Nov",
+                     "Dec"
+                  };
+
                   for (i = 0; i < 12; i++)
                     {
                        if (!strcmp(mon, mons[i]))
@@ -113,11 +113,12 @@ eina_hamster_count(void)
                   // use year as-is, for 31 bits (signed) this gives us up to
                   // 3584 years, which is good enough imho. - 1500 years from
                   // now or so. :)
-                  _eina_hamsters += 
-                    (day + (monnum * 32) + (13 * 32 * year)) * (24 * 60);
+                  _eina_hamsters +=
+                     (day + (monnum * 32) + (13 * 32 * year)) * (24 * 60);
                }
           }
      }
+
    // format: [rest - year][0-12 - month][0-31 - day][0-23 - hrs][0-59 - sec]
    return _eina_hamsters;
 }

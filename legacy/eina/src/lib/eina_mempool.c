@@ -37,8 +37,8 @@
 #include "eina_mempool.h"
 
 /*============================================================================*
- *                                  Local                                     *
- *============================================================================*/
+*                                  Local                                     *
+*============================================================================*/
 
 /**
  * @cond LOCAL
@@ -60,67 +60,71 @@ static int _eina_mempool_log_dom = -1;
 
 
 static Eina_Mempool *
-_new_va(const char *name, const char *context, const char *options, va_list args)
+_new_va(const char *name,
+        const char *context,
+        const char *options,
+        va_list args)
 {
-	Eina_Mempool_Backend *be;
-	Eina_Mempool *mp;
+   Eina_Mempool_Backend *be;
+   Eina_Mempool *mp;
 
-	Eina_Error err = EINA_ERROR_NOT_MEMPOOL_MODULE;
+   Eina_Error err = EINA_ERROR_NOT_MEMPOOL_MODULE;
 
-	eina_error_set(0);
-	be = eina_hash_find(_backends, name);
-	if (!be)
-		goto on_error;
+   eina_error_set(0);
+   be = eina_hash_find(_backends, name);
+   if (!be)
+      goto on_error;
 
-	err = EINA_ERROR_OUT_OF_MEMORY;
-	mp = malloc(sizeof(Eina_Mempool));
-	if (!mp) goto on_error;
+   err = EINA_ERROR_OUT_OF_MEMORY;
+   mp = malloc(sizeof(Eina_Mempool));
+   if (!mp)
+      goto on_error;
 
-	/* FIXME why backend is not a pointer? */
-	mp->backend = *be;
-	mp->backend_data = mp->backend.init(context, options, args);
+   /* FIXME why backend is not a pointer? */
+   mp->backend = *be;
+   mp->backend_data = mp->backend.init(context, options, args);
 
-	return mp;
+   return mp;
 
-  on_error:
-	eina_error_set(err);
-	return NULL;
+on_error:
+   eina_error_set(err);
+   return NULL;
 }
 
 /* Built-in backend's prototypes */
 #ifdef EINA_STATIC_BUILD_CHAINED_POOL
 Eina_Bool chained_init(void);
-void chained_shutdown(void);
+void      chained_shutdown(void);
 #endif
 
 #ifdef EINA_STATIC_BUILD_PASS_THROUGH
 Eina_Bool pass_through_init(void);
-void pass_through_shutdown(void);
+void      pass_through_shutdown(void);
 #endif
 
 #ifdef EINA_STATIC_BUILD_EMEMOA_UNKNOWN
 Eina_Bool ememoa_unknown_init(void);
-void ememoa_unknown_shutdown(void);
+void      ememoa_unknown_shutdown(void);
 #endif
 
 #ifdef EINA_STATIC_BUILD_EMEMOA_FIXED
 Eina_Bool ememoa_fixed_init(void);
-void ememoa_fixed_shutdown(void);
+void      ememoa_fixed_shutdown(void);
 #endif
 
 #ifdef EINA_STATIC_BUILD_FIXED_BITMAP
 Eina_Bool fixed_bitmap_init(void);
-void fixed_bitmap_shutdown(void);
+void      fixed_bitmap_shutdown(void);
 #endif
 
 #ifdef EINA_STATIC_BUILD_BUDDY
 Eina_Bool buddy_init(void);
-void buddy_shutdown(void);
+void      buddy_shutdown(void);
 #endif
 
 #ifdef EINA_STATIC_BUILD_ONE_BIG
 Eina_Bool one_big_init(void);
-void one_big_shutdown(void);
+void      one_big_shutdown(void);
 #endif
 
 /**
@@ -128,8 +132,8 @@ void one_big_shutdown(void);
  */
 
 /*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+*                                 Global                                     *
+*============================================================================*/
 
 /**
  * @cond LOCAL
@@ -137,7 +141,8 @@ void one_big_shutdown(void);
 
 EAPI Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE = 0;
 
-static const char EINA_ERROR_NOT_MEMPOOL_MODULE_STR[] = "Not a memory pool module.";
+static const char EINA_ERROR_NOT_MEMPOOL_MODULE_STR[] =
+   "Not a memory pool module.";
 
 /**
  * @endcond
@@ -164,39 +169,49 @@ eina_mempool_init(void)
 {
    char *path;
 
-   _eina_mempool_log_dom = eina_log_domain_register("eina_mempool", EINA_LOG_COLOR_DEFAULT);
+   _eina_mempool_log_dom = eina_log_domain_register("eina_mempool",
+                                                    EINA_LOG_COLOR_DEFAULT);
    if (_eina_mempool_log_dom < 0)
      {
-	EINA_LOG_ERR("Could not register log domain: eina_mempool");
-	return 0;
+        EINA_LOG_ERR("Could not register log domain: eina_mempool");
+        return 0;
      }
 
-   EINA_ERROR_NOT_MEMPOOL_MODULE = eina_error_msg_static_register(EINA_ERROR_NOT_MEMPOOL_MODULE_STR);
+   EINA_ERROR_NOT_MEMPOOL_MODULE = eina_error_msg_static_register(
+         EINA_ERROR_NOT_MEMPOOL_MODULE_STR);
    _backends = eina_hash_string_superfast_new(NULL);
 
    /* dynamic backends */
-   _modules = eina_module_arch_list_get(NULL, PACKAGE_LIB_DIR "/eina/modules/mp", MODULE_ARCH);
+   _modules = eina_module_arch_list_get(NULL,
+                                        PACKAGE_LIB_DIR "/eina/modules/mp",
+                                        MODULE_ARCH);
 
    path = eina_module_environment_path_get("HOME", "/.eina/mp/modules/mp");
    _modules = eina_module_arch_list_get(_modules, path, MODULE_ARCH);
-   if (path) free(path);
+   if (path)
+      free(path);
 
-   path = eina_module_environment_path_get("EINA_MODULES_MEMPOOL_DIR", "/eina/modules/mp");
+   path = eina_module_environment_path_get("EINA_MODULES_MEMPOOL_DIR",
+                                           "/eina/modules/mp");
    _modules = eina_module_arch_list_get(_modules, path, MODULE_ARCH);
-   if (path) free(path);
+   if (path)
+      free(path);
 
-   path = eina_module_symbol_path_get((const void *)eina_init, "/eina/modules/mp");
+   path = eina_module_symbol_path_get((const void *)eina_init,
+                                      "/eina/modules/mp");
    _modules = eina_module_arch_list_get(_modules, path, MODULE_ARCH);
-   if (path) free(path);
+   if (path)
+      free(path);
 
    if (!_modules)
      {
-	ERR("no mempool modules able to be loaded.");
-	eina_hash_free(_backends);
-	goto mempool_init_error;
+        ERR("no mempool modules able to be loaded.");
+        eina_hash_free(_backends);
+        goto mempool_init_error;
      }
+
    eina_module_list_load(_modules);
-   
+
    /* builtin backends */
 #ifdef EINA_STATIC_BUILD_CHAINED_POOL
    chained_init();
@@ -222,7 +237,7 @@ eina_mempool_init(void)
 
    return EINA_TRUE;
 
- mempool_init_error:
+mempool_init_error:
    eina_log_domain_unregister(_eina_mempool_log_dom);
    _eina_mempool_log_dom = -1;
 
@@ -257,10 +272,10 @@ eina_mempool_shutdown(void)
    /* dynamic backends */
    eina_module_list_free(_modules);
    if (_modules)
-     eina_array_free(_modules);
+      eina_array_free(_modules);
 
    if (_backends)
-     eina_hash_free(_backends);
+      eina_hash_free(_backends);
 
    eina_log_domain_unregister(_eina_mempool_log_dom);
    _eina_mempool_log_dom = -1;
@@ -269,8 +284,8 @@ eina_mempool_shutdown(void)
 }
 
 /*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+*                                   API                                      *
+*============================================================================*/
 
 /**
  * @addtogroup Eina_Memory_Pool_Group Memory Pool
@@ -306,48 +321,51 @@ eina_mempool_shutdown(void)
  */
 
 EAPI Eina_Mempool *
-eina_mempool_add(const char *name, const char *context, const char *options, ...)
+eina_mempool_add(const char *name,
+                 const char *context,
+                 const char *options,
+                 ...)
 {
-	Eina_Mempool *mp;
-	va_list args;
+   Eina_Mempool *mp;
+   va_list args;
 
-	EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
-	DBG("name=%s, context=%s, options=%s",
-	    name, context ? context : "", options ? options : "");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
+   DBG("name=%s, context=%s, options=%s",
+       name, context ? context : "", options ? options : "");
 
-	va_start(args, options);
-	mp = _new_va(name, context, options, args);
-	va_end(args);
+   va_start(args, options);
+   mp = _new_va(name, context, options, args);
+   va_end(args);
 
-	DBG("name=%s, context=%s, options=%s, mp=%p",
-	    name, context ? context : "", options ? options : "", mp);
+   DBG("name=%s, context=%s, options=%s, mp=%p",
+       name, context ? context : "", options ? options : "", mp);
 
-	return mp;
+   return mp;
 }
 
 EAPI void eina_mempool_del(Eina_Mempool *mp)
 {
-        EINA_SAFETY_ON_NULL_RETURN(mp);
-	EINA_SAFETY_ON_NULL_RETURN(mp->backend.shutdown);
-	DBG("mp=%p", mp);
-	mp->backend.shutdown(mp->backend_data);
-	free(mp);
+   EINA_SAFETY_ON_NULL_RETURN(mp);
+   EINA_SAFETY_ON_NULL_RETURN(mp->backend.shutdown);
+   DBG("mp=%p", mp);
+   mp->backend.shutdown(mp->backend_data);
+   free(mp);
 }
 
 EAPI void eina_mempool_gc(Eina_Mempool *mp)
 {
-        EINA_SAFETY_ON_NULL_RETURN(mp);
-        EINA_SAFETY_ON_NULL_RETURN(mp->backend.garbage_collect);
-	DBG("mp=%p", mp);
-	mp->backend.garbage_collect(mp->backend_data);
+   EINA_SAFETY_ON_NULL_RETURN(mp);
+   EINA_SAFETY_ON_NULL_RETURN(mp->backend.garbage_collect);
+   DBG("mp=%p", mp);
+   mp->backend.garbage_collect(mp->backend_data);
 }
 
 EAPI void eina_mempool_statistics(Eina_Mempool *mp)
 {
-        EINA_SAFETY_ON_NULL_RETURN(mp);
-        EINA_SAFETY_ON_NULL_RETURN(mp->backend.statistics);
-	DBG("mp=%p", mp);
-	mp->backend.statistics(mp->backend_data);
+   EINA_SAFETY_ON_NULL_RETURN(mp);
+   EINA_SAFETY_ON_NULL_RETURN(mp->backend.statistics);
+   DBG("mp=%p", mp);
+   mp->backend.statistics(mp->backend_data);
 }
 
 EAPI unsigned int
@@ -356,17 +374,18 @@ eina_mempool_alignof(unsigned int size)
    int align;
 
    if (size <= 2)
-     align = 2;
+      align = 2;
    else if (size < 8)
-     align = 4;
+      align = 4;
    else
 #if __WORDSIZE == 32
-     align = 8;
+      align = 8;
+
 #else
    if (size < 16)
-     align = 8;
+      align = 8;
    else
-     align = 16;
+      align = 16;
 #endif
 
    return ((size / align) + 1) * align;

@@ -78,19 +78,19 @@ _eina_convert_check(double test, int length)
    fail_if(fabs(r - test) > DBL_MIN);
 }
 
-START_TEST(eina_convert_double)
+   START_TEST(eina_convert_double)
 {
    long long int m = 0;
    long e = 0;
 
    eina_init();
 
-   _eina_convert_check(EET_TEST_DOUBLE0, 20);
+   _eina_convert_check(EET_TEST_DOUBLE0,  20);
    _eina_convert_check(-EET_TEST_DOUBLE0, 21);
-   _eina_convert_check(EET_TEST_DOUBLE1, 6);
-   _eina_convert_check(EET_TEST_DOUBLE2, 6);
-   _eina_convert_check(EET_TEST_DOUBLE3, 21);
-   _eina_convert_check(EET_TEST_DOUBLE4, 21);
+   _eina_convert_check(EET_TEST_DOUBLE1,   6);
+   _eina_convert_check(EET_TEST_DOUBLE2,   6);
+   _eina_convert_check(EET_TEST_DOUBLE3,  21);
+   _eina_convert_check(EET_TEST_DOUBLE4,  21);
 
    fail_if(eina_convert_atod("ah ah ah", 8, &m, &e) != EINA_FALSE);
    fail_if(eina_convert_atod("0xjo", 8, &m, &e) != EINA_FALSE);
@@ -145,13 +145,13 @@ _eina_convert_fp_check(double d, Eina_F32p32 fp, int length)
    fail_if(fabs(fpd - d) > DBL_MIN);
 }
 
-START_TEST(eina_convert_fp)
+   START_TEST(eina_convert_fp)
 {
-   _eina_convert_fp_check(1.0, 0x0000000100000000, 6);
-   _eina_convert_fp_check(0.5, 0x0000000080000000, 8);
-   _eina_convert_fp_check(0.625, 0x00000000a0000000, 8);
-   _eina_convert_fp_check(256.0, 0x0000010000000000, 6);
-   _eina_convert_fp_check(0.5, 0x0000000080000000, 8);
+   _eina_convert_fp_check(1.0,     0x0000000100000000,  6);
+   _eina_convert_fp_check(0.5,     0x0000000080000000,  8);
+   _eina_convert_fp_check(0.625,   0x00000000a0000000,  8);
+   _eina_convert_fp_check(256.0,   0x0000010000000000,  6);
+   _eina_convert_fp_check(0.5,     0x0000000080000000,  8);
    _eina_convert_fp_check(128.625, 0x00000080a0000000, 10);
 }
 END_TEST
@@ -161,5 +161,5 @@ eina_test_convert(TCase *tc)
 {
    tcase_add_test(tc, eina_convert_simple);
    tcase_add_test(tc, eina_convert_double);
-   tcase_add_test(tc, eina_convert_fp);
+   tcase_add_test(tc,     eina_convert_fp);
 }

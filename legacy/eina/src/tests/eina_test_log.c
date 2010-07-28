@@ -27,7 +27,7 @@
 #include "eina_suite.h"
 #include "Eina.h"
 
-START_TEST(eina_log_macro)
+   START_TEST(eina_log_macro)
 {
    fail_if(!eina_init());
 
@@ -63,15 +63,15 @@ END_TEST
 
 START_TEST(eina_log_domains_registry)
 {
-   fail_if(!eina_init());
+        fail_if(!eina_init());
 
    int i;
    int d[50];
 
    for (i = 0; i < 50; i++)
      {
-	d[i] = eina_log_domain_register("Test", EINA_COLOR_GREEN);
-	fail_if(d[i] < 0);
+        d[i] = eina_log_domain_register("Test", EINA_COLOR_GREEN);
+        fail_if(d[i] < 0);
      }
 
    for (i = 0; i < 50; i++)
@@ -83,8 +83,8 @@ END_TEST
 
 START_TEST(eina_log_domains_slot_reuse)
 {
-   fail_if(!eina_init());
-   fail_if(!eina_threads_init());
+        fail_if(!eina_init());
+        fail_if(!eina_threads_init());
 
    // Create 9 domains
    int idx[9];
@@ -92,8 +92,8 @@ START_TEST(eina_log_domains_slot_reuse)
 
    for (i = 0; i < 9; i++)
      {
-	idx[i] = eina_log_domain_register("Test1", EINA_COLOR_GREEN);
-	fail_if(idx[i] < 0);
+        idx[i] = eina_log_domain_register("Test1", EINA_COLOR_GREEN);
+        fail_if(idx[i] < 0);
      }
 
    // Slot 0 by default contains the global logger. The above code created
@@ -131,7 +131,7 @@ START_TEST(eina_log_level_indexes)
    EINA_LOG(d, -1, "Negative index message\n");
 
    // Displayed only if user sets level 6 or higher
-   EINA_LOG(d, 6, "Higher level debug\n");
+   EINA_LOG(d, 6,  "Higher level debug\n");
 
    eina_threads_shutdown();
    eina_threads_shutdown();
@@ -148,16 +148,16 @@ START_TEST(eina_log_customize)
 
    fail_if(!eina_init());
 
-#define test_set_get(func, val)			\
-   eina_log_##func##_set(val);			\
-   fail_if(eina_log_##func##_get() != val)
+#define test_set_get(func, val)                 \
+   eina_log_ ## func ## _set(val);                  \
+   fail_if(eina_log_ ## func ## _get() != val)
 
    test_set_get(level, -1234);
    test_set_get(level, 4567);
 
-#define test_set_get_bool(func)			\
-   test_set_get(func, EINA_FALSE);		\
-   test_set_get(func, EINA_TRUE)
+#define test_set_get_bool(func)                 \
+   test_set_get(func,  EINA_FALSE);              \
+   test_set_get(func,  EINA_TRUE)
 
    test_set_get_bool(color_disable);
    test_set_get_bool(file_disable);
@@ -183,8 +183,8 @@ START_TEST(eina_log_customize)
 
    eina_log_domain_unregister(d);
    fputs("NOTE: You should see a failed safety check or "
-	 "a crash if compiled without safety checks support.\n",
-	 stderr);
+         "a crash if compiled without safety checks support.\n",
+         stderr);
    eina_log_abort_on_critical_set(EINA_FALSE);
    fail_if(eina_log_domain_registered_level_get(d) != EINA_LOG_LEVEL_UNKNOWN);
 
@@ -201,19 +201,19 @@ START_TEST(eina_log_level_name)
 
    fail_if(!eina_init());
 
-#define tst(level, str)				\
-   eina_log_level_name_get(level, name);	\
+#define tst(level, str)                         \
+   eina_log_level_name_get(level, name);        \
    fail_if(strcmp(name, str) != 0)
 
-   tst(0, "CRI");
-   tst(1, "ERR");
-   tst(2, "WRN");
-   tst(3, "INF");
-   tst(4, "DBG");
-   tst(5, "005");
-   tst(12, "012");
+   tst(0,   "CRI");
+   tst(1,   "ERR");
+   tst(2,   "WRN");
+   tst(3,   "INF");
+   tst(4,   "DBG");
+   tst(5,   "005");
+   tst(12,  "012");
    tst(369, "369");
-   tst(-1, "-01");
+   tst(-1,  "-01");
    tst(-48, "-48");
 
 #undef tst

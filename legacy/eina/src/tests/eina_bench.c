@@ -35,15 +35,15 @@ struct _Eina_Benchmark_Case
 };
 
 static const Eina_Benchmark_Case etc[] = {
-  /* { "Hash", eina_bench_hash }, */
-  /* { "Array vs List vs Inlist", eina_bench_array }, */
-  /* { "Stringshare", eina_bench_stringshare }, */
-  /* { "Convert", eina_bench_convert }, */
-  /* { "Sort", eina_bench_sort }, */
-  /* { "Mempool", eina_bench_mempool }, */
-  /* { "Rectangle_Pool", eina_bench_rectangle_pool }, */
-  { "Render Loop", eina_bench_quadtree },
-  { NULL, NULL }
+   /* { "Hash", eina_bench_hash }, */
+   /* { "Array vs List vs Inlist", eina_bench_array }, */
+   /* { "Stringshare", eina_bench_stringshare }, */
+   /* { "Convert", eina_bench_convert }, */
+   /* { "Sort", eina_bench_sort }, */
+   /* { "Mempool", eina_bench_mempool }, */
+   /* { "Rectangle_Pool", eina_bench_rectangle_pool }, */
+   { "Render Loop", eina_bench_quadtree },
+   { NULL, NULL }
 };
 
 /* FIXME this is a copy from eina_test_mempool
@@ -52,10 +52,14 @@ static const Eina_Benchmark_Case etc[] = {
 static Eina_Array *_modules;
 static void _mempool_init(void)
 {
-    eina_init();
-    /* force modules to be loaded in case they are not installed */
-    _modules = eina_module_list_get(NULL, PACKAGE_BUILD_DIR"/src/modules", 1, NULL, NULL);
-    eina_module_list_load(_modules);
+   eina_init();
+   /* force modules to be loaded in case they are not installed */
+   _modules = eina_module_list_get(NULL,
+                                   PACKAGE_BUILD_DIR "/src/modules",
+                                   1,
+                                   NULL,
+                                   NULL);
+   eina_module_list_load(_modules);
 }
 
 static void _mempool_shutdown(void)
@@ -72,7 +76,8 @@ main(int argc, char **argv)
    Eina_Array *ea;
    unsigned int i;
 
-   if (argc != 2) return -1;
+   if (argc != 2)
+      return -1;
 
    _mempool_init();
 
@@ -80,14 +85,15 @@ main(int argc, char **argv)
 
    for (i = 0; etc[i].bench_case != NULL; ++i)
      {
-	test = eina_benchmark_new(etc[i].bench_case, argv[1]);
-	if (!test) continue ;
+        test = eina_benchmark_new(etc[i].bench_case, argv[1]);
+        if (!test)
+           continue;
 
-	etc[i].build(test);
+        etc[i].build(test);
 
-	ea = eina_benchmark_run(test);
+        ea = eina_benchmark_run(test);
 
-	eina_benchmark_free(test);
+        eina_benchmark_free(test);
      }
 
    eina_bench_e17();

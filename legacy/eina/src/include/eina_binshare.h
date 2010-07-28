@@ -65,13 +65,16 @@
  * @{
  */
 
-EAPI Eina_Bool eina_binshare_init(void);
-EAPI Eina_Bool eina_binshare_shutdown(void);
-EAPI const char *eina_binshare_add_length(const char *str, unsigned int slen) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Bool   eina_binshare_init(void);
+EAPI Eina_Bool   eina_binshare_shutdown(void);
+EAPI const char *eina_binshare_add_length(const char *str,
+                                          unsigned int slen)
+EINA_WARN_UNUSED_RESULT;
 EAPI const char *eina_binshare_ref(const char *str);
-EAPI void eina_binshare_del(const char *str);
-EAPI int eina_binshare_length(const char *str) EINA_CONST EINA_WARN_UNUSED_RESULT;
-EAPI void eina_binshare_dump(void);
+EAPI void        eina_binshare_del(const char *str);
+EAPI int         eina_binshare_length(const char *str) EINA_CONST
+EINA_WARN_UNUSED_RESULT;
+EAPI void        eina_binshare_dump(void);
 
 /**
  * @brief Retrieve an instance of a blob for use in a program.

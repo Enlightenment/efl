@@ -40,29 +40,29 @@ START_TEST(eina_rectangle_pool)
    fail_if(pool == NULL);
 
    eina_rectangle_pool_data_set(pool, rects);
-   fail_if(eina_rectangle_pool_data_get(pool) != rects);
+           fail_if(eina_rectangle_pool_data_get(pool) != rects);
 
-   fail_if(eina_rectangle_pool_request(pool, 1024, 1024) != NULL);
-
-   for (x = 0; x < 8; x++)
-     for (y = 0; y < 8; y++)
-       {
-	  rects[x][y] = eina_rectangle_pool_request(pool, 32, 32);
-	  fail_if(rects[x][y] == NULL);
-       }
-
-   fail_if(eina_rectangle_pool_count(pool) != 64);
-
-   fail_if(eina_rectangle_pool_get(rects[0][0]) != pool);
-
-   fail_if(eina_rectangle_pool_geometry_get(pool, &w, &h) != EINA_TRUE);
-   fail_if(w != 256 || h != 256);
-
-   fail_if(eina_rectangle_pool_request(pool, 32, 32) != NULL);
-   fail_if(eina_rectangle_pool_request(pool, 1024, 1024) != NULL);
+           fail_if(eina_rectangle_pool_request(pool, 1024, 1024) != NULL);
 
    for (x = 0; x < 8; x++)
-     eina_rectangle_pool_release(rects[0][x]);
+      for (y = 0; y < 8; y++)
+        {
+           rects[x][y] = eina_rectangle_pool_request(pool, 32, 32);
+           fail_if(rects[x][y] == NULL);
+        }
+
+           fail_if(eina_rectangle_pool_count(pool) != 64);
+
+           fail_if(eina_rectangle_pool_get(rects[0][0]) != pool);
+
+           fail_if(eina_rectangle_pool_geometry_get(pool, &w, &h) != EINA_TRUE);
+           fail_if(w != 256 || h != 256);
+
+           fail_if(eina_rectangle_pool_request(pool, 32, 32) != NULL);
+           fail_if(eina_rectangle_pool_request(pool, 1024, 1024) != NULL);
+
+   for (x = 0; x < 8; x++)
+           eina_rectangle_pool_release(rects[0][x]);
 
    fail_if(eina_rectangle_pool_request(pool, 16, 16) == NULL);
 
@@ -80,7 +80,7 @@ START_TEST(eina_rectangle_intersect)
 
    EINA_RECTANGLE_SET(&r1, 10, 10, 50, 50);
    EINA_RECTANGLE_SET(&r2, 20, 20, 20, 20);
-   EINA_RECTANGLE_SET(&r3, 0, 0, 10, 10);
+   EINA_RECTANGLE_SET(&r3, 0,   0, 10, 10);
    EINA_RECTANGLE_SET(&r4, 30, 30, 50, 50);
 
    rd = r1;
@@ -89,18 +89,18 @@ START_TEST(eina_rectangle_intersect)
    fail_if(!eina_rectangle_intersection(&rd, &r2));
 
    fail_if(rd.x != r2.x
-	   || rd.y != r2.y
-	   || rd.w != r2.w
-	   || rd.h != r2.h);
+           || rd.y != r2.y
+           || rd.w != r2.w
+           || rd.h != r2.h);
 
    rd = r1;
 
    fail_if(!eina_rectangle_intersection(&rd, &r4));
 
    fail_if(rd.x != 30
-	   || rd.y != 30
-	   || rd.w != 30
-	   || rd.h != 30);
+           || rd.y != 30
+           || rd.w != 30
+           || rd.h != 30);
 
    eina_shutdown();
 }

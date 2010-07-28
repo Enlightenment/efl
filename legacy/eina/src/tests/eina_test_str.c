@@ -25,7 +25,7 @@
 #include "eina_suite.h"
 #include "Eina.h"
 
-START_TEST(str_simple)
+   START_TEST(str_simple)
 {
    eina_init();
 
@@ -91,85 +91,85 @@ START_TEST(str_split)
    eina_init();
 
    result = eina_str_split_full("nomatch", "", -1, &elements);
-   fail_if(result != NULL);
-   fail_if(elements != 0);
+        fail_if(result != NULL);
+        fail_if(elements != 0);
 
    result = eina_str_split_full("nomatch", "x", -1, &elements);
-   fail_if(result == NULL);
-   fail_if(elements != 1);
-   fail_if(strcmp(result[0], "nomatch") != 0);
-   free(result[0]);
-   free(result);
+        fail_if(result == NULL);
+        fail_if(elements != 1);
+        fail_if(strcmp(result[0], "nomatch") != 0);
+        free(result[0]);
+        free(result);
 
    result = eina_str_split_full("nomatch", "xyz", -1, &elements);
-   fail_if(result == NULL);
-   fail_if(elements != 1);
-   fail_if(strcmp(result[0], "nomatch") != 0);
-   free(result[0]);
-   free(result);
+        fail_if(result == NULL);
+        fail_if(elements != 1);
+        fail_if(strcmp(result[0], "nomatch") != 0);
+        free(result[0]);
+        free(result);
 
    result = eina_str_split_full("match:match:match", ":", -1, &elements);
-   fail_if(result == NULL);
-   fail_if(elements != 3);
+        fail_if(result == NULL);
+        fail_if(elements != 3);
    while (elements >= 1)
      {
-	elements--;
-	fail_if(strcmp(result[elements], "match") != 0);
+        elements--;
+        fail_if(strcmp(result[elements], "match") != 0);
      }
-   free(result[0]);
-   free(result);
+        free(result[0]);
+        free(result);
 
    result = eina_str_split_full("a:b:c", ":", -1, &elements);
-   fail_if(result == NULL);
-   fail_if(elements != 3);
-   fail_if(strcmp(result[0], "a") != 0);
-   fail_if(strcmp(result[1], "b") != 0);
-   fail_if(strcmp(result[2], "c") != 0);
-   free(result[0]);
-   free(result);
+        fail_if(result == NULL);
+        fail_if(elements != 3);
+        fail_if(strcmp(result[0], "a") != 0);
+        fail_if(strcmp(result[1], "b") != 0);
+        fail_if(strcmp(result[2], "c") != 0);
+        free(result[0]);
+        free(result);
 
    result = eina_str_split_full("a:b:", ":", -1, &elements);
-   fail_if(result == NULL);
-   fail_if(elements != 3);
-   fail_if(strcmp(result[0], "a") != 0);
-   fail_if(strcmp(result[1], "b") != 0);
-   fail_if(strcmp(result[2], "") != 0);
-   free(result[0]);
-   free(result);
+        fail_if(result == NULL);
+        fail_if(elements != 3);
+        fail_if(strcmp(result[0], "a") != 0);
+        fail_if(strcmp(result[1], "b") != 0);
+        fail_if(strcmp(result[2], "") != 0);
+        free(result[0]);
+        free(result);
 
    result = eina_str_split_full(":b:c", ":", -1, &elements);
-   fail_if(result == NULL);
-   fail_if(elements != 3);
-   fail_if(strcmp(result[0], "") != 0);
-   fail_if(strcmp(result[1], "b") != 0);
-   fail_if(strcmp(result[2], "c") != 0);
-   free(result[0]);
-   free(result);
+        fail_if(result == NULL);
+        fail_if(elements != 3);
+        fail_if(strcmp(result[0], "") != 0);
+        fail_if(strcmp(result[1], "b") != 0);
+        fail_if(strcmp(result[2], "c") != 0);
+        free(result[0]);
+        free(result);
 
    result = eina_str_split_full(":", ":", -1, &elements);
-   fail_if(result == NULL);
-   fail_if(elements != 2);
-   fail_if(strcmp(result[0], "") != 0);
-   fail_if(strcmp(result[1], "") != 0);
-   free(result[0]);
-   free(result);
+        fail_if(result == NULL);
+        fail_if(elements != 2);
+        fail_if(strcmp(result[0], "") != 0);
+        fail_if(strcmp(result[1], "") != 0);
+        free(result[0]);
+        free(result);
 
    result = eina_str_split_full("a", "!!!!!!!!!", -1, &elements);
-   fail_if(result == NULL);
-   fail_if(elements != 1);
-   fail_if(strcmp(result[0], "a") != 0);
-   free(result[0]);
-   free(result);
+        fail_if(result == NULL);
+        fail_if(elements != 1);
+        fail_if(strcmp(result[0], "a") != 0);
+        free(result[0]);
+        free(result);
 
    result = eina_str_split_full("aaba", "ab", -1, &elements);
-   fail_if(result == NULL);
-   fail_if(elements != 2);
-   fail_if(strcmp(result[0], "a") != 0);
-   fail_if(strcmp(result[1], "a") != 0);
-   free(result[0]);
-   free(result);
+        fail_if(result == NULL);
+        fail_if(elements != 2);
+        fail_if(strcmp(result[0], "a") != 0);
+        fail_if(strcmp(result[1], "a") != 0);
+        free(result[0]);
+        free(result);
 
-   eina_shutdown();
+        eina_shutdown();
 }
 END_TEST
 

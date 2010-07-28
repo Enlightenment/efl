@@ -44,7 +44,8 @@
 #endif
 
 #ifndef CLAMP
-# define CLAMP(x, min, max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
+# define CLAMP(x, min, \
+               max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
 #endif
 
 #define READBUFSIZ 65536
@@ -58,7 +59,7 @@
 #define EINA_MAGIC_USTRINGSHARE_NODE 0x98761255
 #define EINA_MAGIC_BINSHARE_NODE 0x98761256
 
-#define EINA_MAGIC_LIST	0x98761237
+#define EINA_MAGIC_LIST 0x98761237
 #define EINA_MAGIC_LIST_ITERATOR 0x98761238
 #define EINA_MAGIC_LIST_ACCESSOR 0x98761239
 #define EINA_MAGIC_LIST_ACCOUNTING 0x9876123a
@@ -91,37 +92,37 @@
 
 /* undef the following, we want out version */
 #undef FREE
-#define FREE(ptr)				\
-  do {						\
-     free(ptr);					\
-     ptr = NULL;				\
-  } while(0);
+#define FREE(ptr)                               \
+   do {                                          \
+             free(ptr);                                 \
+        ptr = NULL;                                \
+     } while(0);
 
 #undef IF_FREE
-#define IF_FREE(ptr)				\
-  do {						\
-     if (ptr) {					\
-	free(ptr);				\
-	ptr = NULL;				\
-     }						\
-  } while(0);
+#define IF_FREE(ptr)                            \
+   do {                                          \
+        if (ptr) {                                 \
+             free(ptr);                              \
+             ptr = NULL;                             \
+          }                                          \
+     } while(0);
 
 #undef IF_FN_DEL
-#define IF_FN_DEL(_fn, ptr)			\
-  do {						\
-     if (ptr) {					\
-	_fn(ptr);				\
-	ptr = NULL;				\
-     }						\
-  } while(0);
+#define IF_FN_DEL(_fn, ptr)                     \
+   do {                                          \
+        if (ptr) {                                 \
+             _fn(ptr);                               \
+             ptr = NULL;                             \
+          }                                          \
+     } while(0);
 
-#define MAGIC_FREE(ptr)					\
-  do {							\
-     if (ptr) {						\
-	EINA_MAGIC_SET(ptr, EINA_MAGIC_NONE);		\
-	FREE(ptr);					\
-     }							\
-  } while(0);
+#define MAGIC_FREE(ptr)                                 \
+   do {                                                  \
+        if (ptr) {                                         \
+             EINA_MAGIC_SET(ptr, EINA_MAGIC_NONE);           \
+             FREE(ptr);                                      \
+          }                                                  \
+     } while(0);
 
 #ifdef EFL_HAVE_THREADS
 void eina_share_common_threads_init(void);

@@ -47,22 +47,22 @@ eina_bench_stringshare_job(int request)
 
    for (i = 0; i < request; ++i)
      {
-	char build[64] = "string_";
+        char build[64] = "string_";
 
-	eina_convert_xtoa(i, build + 7);
-	tmp = eina_stringshare_add(build);
+        eina_convert_xtoa(i, build + 7);
+        tmp = eina_stringshare_add(build);
      }
 
    srand(time(NULL));
 
    for (j = 0; j < 200; ++j)
-     for (i = 0; i < request; ++i)
-       {
-	  char build[64] = "string_";
+      for (i = 0; i < request; ++i)
+        {
+           char build[64] = "string_";
 
-	  eina_convert_xtoa(rand() % request, build + 7);
-	  tmp = eina_stringshare_add(build);
-       }
+           eina_convert_xtoa(rand() % request, build + 7);
+           tmp = eina_stringshare_add(build);
+        }
 
    eina_shutdown();
 }
@@ -79,22 +79,22 @@ eina_bench_stringchunk_job(int request)
 
    for (i = 0; i < request; ++i)
      {
-	char build[64] = "string_";
+        char build[64] = "string_";
 
-	eina_convert_xtoa(i, build + 7);
-	g_string_chunk_insert_const(chunk, build);
+        eina_convert_xtoa(i, build + 7);
+        g_string_chunk_insert_const(chunk, build);
      }
 
    srand(time(NULL));
 
    for (j = 0; j < 200; ++j)
-     for (i = 0; i < request; ++i)
-       {
-	  char build[64] = "string_";
+      for (i = 0; i < request; ++i)
+        {
+           char build[64] = "string_";
 
-	  eina_convert_xtoa(rand() % request, build + 7);
-	  g_string_chunk_insert_const(chunk, build);
-       }
+           eina_convert_xtoa(rand() % request, build + 7);
+           g_string_chunk_insert_const(chunk, build);
+        }
 
    g_string_chunk_free(chunk);
 }
@@ -109,22 +109,22 @@ eina_bench_evas_job(int request)
 
    for (i = 0; i < request; ++i)
      {
-	char build[64] = "string_";
+        char build[64] = "string_";
 
-	eina_convert_xtoa(i, build + 7);
-	tmp = evas_stringshare_add(build);
+        eina_convert_xtoa(i, build + 7);
+        tmp = evas_stringshare_add(build);
      }
 
    srand(time(NULL));
 
    for (j = 0; j < 200; ++j)
-     for (i = 0; i < request; ++i)
-       {
-	  char build[64] = "string_";
+      for (i = 0; i < request; ++i)
+        {
+           char build[64] = "string_";
 
-	  eina_convert_xtoa(rand() % request, build + 7);
-	  tmp = evas_stringshare_add(build);
-       }
+           eina_convert_xtoa(rand() % request, build + 7);
+           tmp = evas_stringshare_add(build);
+        }
 }
 
 static void
@@ -138,32 +138,40 @@ eina_bench_ecore_job(int request)
 
    for (i = 0; i < request; ++i)
      {
-	char build[64] = "string_";
+        char build[64] = "string_";
 
-	eina_convert_xtoa(i, build + 7);
-	tmp = ecore_string_instance(build);
+        eina_convert_xtoa(i, build + 7);
+        tmp = ecore_string_instance(build);
      }
 
    srand(time(NULL));
 
    for (j = 0; j < 200; ++j)
-     for (i = 0; i < request; ++i)
-       {
-	  char build[64] = "string_";
+      for (i = 0; i < request; ++i)
+        {
+           char build[64] = "string_";
 
-	  eina_convert_xtoa(rand() % request, build + 7);
-	  tmp = ecore_string_instance(build);
-       }
+           eina_convert_xtoa(rand() % request, build + 7);
+           tmp = ecore_string_instance(build);
+        }
 
    ecore_string_shutdown();
 }
 
 void eina_bench_stringshare(Eina_Benchmark *bench)
 {
-   eina_benchmark_register(bench, "stringshare", EINA_BENCHMARK(eina_bench_stringshare_job), 100, 20100, 500);
+   eina_benchmark_register(bench, "stringshare",
+                           EINA_BENCHMARK(
+                              eina_bench_stringshare_job), 100, 20100, 500);
 #ifdef EINA_BENCH_HAVE_GLIB
-   eina_benchmark_register(bench, "stringchunk (glib)", EINA_BENCHMARK(eina_bench_stringchunk_job), 100, 20100, 500);
+   eina_benchmark_register(bench, "stringchunk (glib)",
+                           EINA_BENCHMARK(
+                              eina_bench_stringchunk_job), 100, 20100, 500);
 #endif
-   eina_benchmark_register(bench, "stringshare (evas)", EINA_BENCHMARK(eina_bench_evas_job), 100, 20100, 500);
-   eina_benchmark_register(bench, "stringshare (ecore)", EINA_BENCHMARK(eina_bench_ecore_job), 100, 20100, 500);
+   eina_benchmark_register(bench, "stringshare (evas)",
+                           EINA_BENCHMARK(
+                              eina_bench_evas_job),        100, 20100, 500);
+   eina_benchmark_register(bench, "stringshare (ecore)",
+                           EINA_BENCHMARK(
+                              eina_bench_ecore_job),       100, 20100, 500);
 }

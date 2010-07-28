@@ -39,16 +39,16 @@
 #include "eina_fp.h"
 
 /*============================================================================*
- *                                  Local                                     *
- *============================================================================*/
+*                                  Local                                     *
+*============================================================================*/
 
 /**
  * @cond LOCAL
  */
 
 static const char look_up_table[] = {'0', '1', '2', '3', '4',
-				     '5', '6', '7', '8', '9',
-				     'a', 'b', 'c', 'd', 'e', 'f'};
+                                     '5', '6', '7', '8', '9',
+                                     'a', 'b', 'c', 'd', 'e', 'f'};
 static int _eina_convert_log_dom = -1;
 
 #ifdef ERR
@@ -70,9 +70,9 @@ static inline void reverse(char s[], int length)
 
    for (i = 0, j = length - 1; i < j; i++, j--)
      {
-	c = s[i];
-	s[i] = s[j];
-	s[j] = c;
+        c = s[i];
+        s[i] = s[j];
+        s[j] = c;
      }
 }
 
@@ -81,8 +81,8 @@ static inline void reverse(char s[], int length)
  */
 
 /*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+*                                 Global                                     *
+*============================================================================*/
 
 /**
  * @cond LOCAL
@@ -92,9 +92,12 @@ EAPI Eina_Error EINA_ERROR_CONVERT_P_NOT_FOUND = 0;
 EAPI Eina_Error EINA_ERROR_CONVERT_0X_NOT_FOUND = 0;
 EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
 
-static const char EINA_ERROR_CONVERT_0X_NOT_FOUND_STR[] = "Error during string convertion to float, First '0x' was not found.";
-static const char EINA_ERROR_CONVERT_P_NOT_FOUND_STR[] = "Error during string convertion to float, First 'p' was not found.";
-static const char EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH_STR[] = "Error outrun string limit during convertion string convertion to float.";
+static const char EINA_ERROR_CONVERT_0X_NOT_FOUND_STR[] =
+   "Error during string convertion to float, First '0x' was not found.";
+static const char EINA_ERROR_CONVERT_P_NOT_FOUND_STR[] =
+   "Error during string convertion to float, First 'p' was not found.";
+static const char EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH_STR[] =
+   "Error outrun string limit during convertion string convertion to float.";
 
 /**
  * @endcond
@@ -119,14 +122,15 @@ static const char EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH_STR[] = "Error outrun 
 Eina_Bool
 eina_convert_init(void)
 {
-   _eina_convert_log_dom = eina_log_domain_register("eina_convert", EINA_LOG_COLOR_DEFAULT);
+   _eina_convert_log_dom = eina_log_domain_register("eina_convert",
+                                                    EINA_LOG_COLOR_DEFAULT);
    if (_eina_convert_log_dom < 0)
      {
-	EINA_LOG_ERR("Could not register log domain: eina_convert");
-	return EINA_FALSE;
+        EINA_LOG_ERR("Could not register log domain: eina_convert");
+        return EINA_FALSE;
      }
 
-#define EEMR(n) n = eina_error_msg_static_register(n##_STR)
+#define EEMR(n) n = eina_error_msg_static_register(n ## _STR)
    EEMR(EINA_ERROR_CONVERT_0X_NOT_FOUND);
    EEMR(EINA_ERROR_CONVERT_P_NOT_FOUND);
    EEMR(EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH);
@@ -155,8 +159,8 @@ eina_convert_shutdown(void)
 }
 
 /*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+*                                   API                                      *
+*============================================================================*/
 
 /**
  * @addtogroup Eina_Convert_Group Convert
@@ -311,14 +315,14 @@ eina_convert_itoa(int n, char *s)
 
    if (n < 0)
      {
-	n = -n;
-	*s++ = '-';
-	r = 1;
+        n = -n;
+        *s++ = '-';
+        r = 1;
      }
 
    do {
-      s[i++] = n % 10 + '0';
-   } while ((n /= 10) > 0);
+        s[i++] = n % 10 + '0';
+     } while ((n /= 10) > 0);
 
    s[i] = '\0';
 
@@ -352,8 +356,8 @@ eina_convert_xtoa(unsigned int n, char *s)
 
    i = 0;
    do {
-      s[i++] = look_up_table[n & 0xF];
-   } while ((n >>= 4) > 0);
+        s[i++] = look_up_table[n & 0xF];
+     } while ((n >>= 4) > 0);
 
    s[i] = '\0';
 
@@ -408,31 +412,33 @@ EAPI Eina_Bool
 eina_convert_atod(const char *src, int length, long long *m, long *e)
 {
    const char *str = src;
-   long long   mantisse;
-   long        exponent;
-   int         nbr_decimals = 0;
-   int         sign = 1;
+   long long mantisse;
+   long exponent;
+   int nbr_decimals = 0;
+   int sign = 1;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(m, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(e, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(m,   EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e,   EINA_FALSE);
 
-   if (length <= 0) goto on_length_error;
+   if (length <= 0)
+      goto on_length_error;
 
    /* Compute the mantisse. */
    if (*str == '-')
      {
         sign = -1;
         str++;
-	length--;
+        length--;
      }
 
-   if (length <= 2) goto on_length_error;
+   if (length <= 2)
+      goto on_length_error;
 
    if (strncmp(str, "0x", 2))
      {
-	eina_error_set(EINA_ERROR_CONVERT_0X_NOT_FOUND);
-	DBG("'0x' not found in '%s'", src);
+        eina_error_set(EINA_ERROR_CONVERT_0X_NOT_FOUND);
+        DBG("'0x' not found in '%s'", src);
         return EINA_FALSE;
      }
 
@@ -442,35 +448,38 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
    mantisse = HEXA_TO_INT(*str);
 
    str++;
-   length--; if (length <= 0) goto on_length_error;
+   length--; if (length <= 0)
+      goto on_length_error;
 
    if (*str == '.')
-     {
-	for (str++, length--;
-	     length > 0 && *str != 'p';
-	     ++str, --length, ++nbr_decimals)
-          {
-             mantisse <<= 4;
-             mantisse += HEXA_TO_INT(*str);
-          }
-     }
-   if (sign < 0) mantisse = -mantisse;
+      for (str++, length--;
+           length > 0 && *str != 'p';
+           ++str, --length, ++nbr_decimals)
+        {
+           mantisse <<= 4;
+           mantisse += HEXA_TO_INT(*str);
+        }
+
+   if (sign < 0)
+      mantisse = -mantisse;
 
    /* Compute the exponent. */
    if (*str != 'p')
      {
-	eina_error_set(EINA_ERROR_CONVERT_P_NOT_FOUND);
-	DBG("'p' not found in '%s'", src);
+        eina_error_set(EINA_ERROR_CONVERT_P_NOT_FOUND);
+        DBG("'p' not found in '%s'", src);
         return EINA_FALSE;
      }
+
    sign = +1;
 
    str++;
-   length--; if (length <= 0) goto on_length_error;
+   length--; if (length <= 0)
+      goto on_length_error;
 
    if (strchr("-+", *str))
      {
-	sign = (*str == '-') ? -1 : +1;
+        sign = (*str == '-') ? -1 : +1;
 
         str++; length--;
      }
@@ -481,17 +490,18 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
         exponent += *str - '0';
      }
 
-   if (length < 0) goto on_length_error;
+   if (length < 0)
+      goto on_length_error;
 
    if (sign < 0)
-     exponent = -exponent;
+      exponent = -exponent;
 
    *m = mantisse;
    *e = exponent - (nbr_decimals << 2);
 
    return EINA_TRUE;
 
- on_length_error:
+on_length_error:
    eina_error_set(EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH);
    return EINA_FALSE;
 }
@@ -531,7 +541,7 @@ eina_convert_dtoa(double d, char *des)
      {
         *(des++) = '-';
         d = -d;
-	length++;
+        length++;
      }
 
    d = frexp(d, &p);
@@ -557,14 +567,14 @@ eina_convert_dtoa(double d, char *des)
 
    while (*(des - 1) == '0')
      {
-	des--;
-	length--;
+        des--;
+        length--;
      }
 
    if (*(des - 1) == '.')
      {
-	des--;
-	length--;
+        des--;
+        length--;
      }
 
    *(des++) = 'p';
@@ -574,7 +584,8 @@ eina_convert_dtoa(double d, char *des)
         p = -p;
      }
    else
-     *(des++) = '+';
+      *(des++) = '+';
+
    length += 2;
 
    return length + eina_convert_itoa(p, des);
@@ -618,42 +629,38 @@ eina_convert_fptoa(Eina_F32p32 fp, char *des)
 
    if (fp == 0)
      {
-       memcpy(des, "0x0p+0", 7);
-       return 7;
+        memcpy(des, "0x0p+0", 7);
+        return 7;
      }
 
    if (fp < 0)
      {
         *(des++) = '-';
         fp = -fp;
-	length++;
+        length++;
      }
 
    /* fp >= 1 */
    if (fp >= 0x0000000100000000LL)
-     {
-        while (fp >= 0x0000000100000000LL)
-          {
-            p++;
-            /* fp /= 2 */
-            fp >>= 1;
-          }
-     }
-   /* fp < 0.5 */
+      while (fp >= 0x0000000100000000LL)
+        {
+           p++;
+           /* fp /= 2 */
+           fp >>= 1;
+        }
+      /* fp < 0.5 */
    else if (fp < 0x80000000)
-     {
-        while (fp < 0x80000000)
-          {
-             p--;
-             /* fp *= 2 */
-             fp <<= 1;
-          }
-     }
+      while (fp < 0x80000000)
+        {
+           p--;
+           /* fp *= 2 */
+           fp <<= 1;
+        }
 
    if (p)
      {
         p--;
-	/* fp *= 2 */
+        /* fp *= 2 */
         fp <<= 1;
      }
 
@@ -672,14 +679,14 @@ eina_convert_fptoa(Eina_F32p32 fp, char *des)
 
    while (*(des - 1) == '0')
      {
-	des--;
-	length--;
+        des--;
+        length--;
      }
 
    if (*(des - 1) == '.')
      {
-	des--;
-	length--;
+        des--;
+        length--;
      }
 
    *(des++) = 'p';
@@ -689,7 +696,8 @@ eina_convert_fptoa(Eina_F32p32 fp, char *des)
         p = -p;
      }
    else
-     *(des++) = '+';
+      *(des++) = '+';
+
    length += 2;
 
    return length + eina_convert_itoa(p, des);
@@ -746,14 +754,17 @@ eina_convert_atofp(const char *src, int length, Eina_F32p32 *fp)
    long e;
 
    if (!eina_convert_atod(src, length, &m, &e))
-     return EINA_FALSE;
+      return EINA_FALSE;
 
-   if (!fp) return EINA_TRUE;
+   if (!fp)
+      return EINA_TRUE;
 
    e += 32;
 
-   if (e > 0) *fp = m << e;
-   else *fp = m >> -e;
+   if (e > 0)
+      *fp = m << e;
+   else
+      *fp = m >> -e;
 
    return EINA_TRUE;
 }

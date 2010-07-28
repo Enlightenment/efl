@@ -92,30 +92,26 @@ eina_one_big_malloc(void *data, __UNUSED__ unsigned int size)
 
    if (pool->base)
      {
-	mem = eina_trash_pop(&pool->empty);
-	pool->usage++;
-	goto on_exit;
+        mem = eina_trash_pop(&pool->empty);
+        pool->usage++;
+        goto on_exit;
      }
 
    if (pool->served < pool->max)
      {
-	mem = pool->base + (pool->served++ * pool->item_size);
-	pool->usage++;
-	goto on_exit;
+        mem = pool->base + (pool->served++ *pool->item_size);
+        pool->usage++;
+        goto on_exit;
      }
 
-   eina_error_set(0);
+      eina_error_set(0);
    mem = malloc(pool->item_size);
    if (!mem)
-     {
-	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-     }
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
    else
-     {
-	pool->over++;
-     }
+      pool->over++;
 
- on_exit:
+on_exit:
 #ifdef EFL_HAVE_THREADS
 # ifdef EFL_HAVE_POSIX_THREADS
    pthread_mutex_unlock(&pool->mutex);
@@ -139,16 +135,16 @@ eina_one_big_free(void *data, void *ptr)
 # endif
 #endif
 
-   if ((void*) pool->base <= ptr
-       && ptr < (void*) (pool->base + (pool->max * pool->item_size)))
+   if ((void *)pool->base <= ptr
+       && ptr < (void *)(pool->base + (pool->max * pool->item_size)))
      {
-	eina_trash_push(&pool->empty, ptr);
-	pool->usage--;
+        eina_trash_push(&pool->empty, ptr);
+        pool->usage--;
      }
    else
      {
-	free(ptr);
-	pool->over--;
+        free(ptr);
+        pool->over--;
      }
 
 #ifdef EFL_HAVE_THREADS
@@ -160,14 +156,18 @@ eina_one_big_free(void *data, void *ptr)
 #endif
 }
 
-static void*
-eina_one_big_realloc(__UNUSED__ void *data, __UNUSED__ void *element, __UNUSED__ unsigned int size)
+static void *
+eina_one_big_realloc(__UNUSED__ void *data,
+                     __UNUSED__ void *element,
+                     __UNUSED__ unsigned int size)
 {
    return NULL;
 }
 
-static void*
-eina_one_big_init(const char *context, __UNUSED__ const char *option, va_list args)
+static void *
+eina_one_big_init(const char *context,
+                  __UNUSED__ const char *option,
+                  va_list args)
 {
    One_Big *pool;
    int item_size;
@@ -176,7 +176,8 @@ eina_one_big_init(const char *context, __UNUSED__ const char *option, va_list ar
    length = context ? strlen(context) + 1 : 0;
 
    pool = calloc(1, sizeof (One_Big) + length);
-   if (!pool) return NULL;
+   if (!pool)
+      return NULL;
 
    item_size = va_arg(args, int);
 
@@ -185,15 +186,15 @@ eina_one_big_init(const char *context, __UNUSED__ const char *option, va_list ar
 
    if (length)
      {
-	pool->name = (const char*) (pool + 1);
-	memcpy((char*) pool->name, context, length);
+        pool->name = (const char *)(pool + 1);
+        memcpy((char *)pool->name, context, length);
      }
 
    pool->base = malloc(pool->item_size * pool->max);
    if (!pool->base)
      {
-	free(pool);
-	return NULL;
+        free(pool);
+        return NULL;
      }
 
 #ifdef EFL_HAVE_THREADS
@@ -216,10 +217,14 @@ eina_one_big_shutdown(void *data)
 
 #ifdef DEBUG
    if (pool->usage > 0)
-     INF("Bad news we are destroying memory still referenced in mempool [%s]\n", pool->name);
+      INF(
+          "Bad news we are destroying memory still referenced in mempool [%s]\n",
+          pool->name);
 
    if (pool->over > 0)
-     INF("Bad news we are loosing track of pointer from mempool [%s]\n", pool->name);
+      INF("Bad news we are loosing track of pointer from mempool [%s]\n",
+          pool->name);
+
 #endif
 
    free(pool->base);
@@ -228,25 +233,27 @@ eina_one_big_shutdown(void *data)
 
 
 static Eina_Mempool_Backend _eina_one_big_mp_backend = {
-  "one_big",
-  &eina_one_big_init,
-  &eina_one_big_free,
-  &eina_one_big_malloc,
-  &eina_one_big_realloc,
-  NULL,
-  NULL,
-  &eina_one_big_shutdown
+   "one_big",
+   &eina_one_big_init,
+   &eina_one_big_free,
+   &eina_one_big_malloc,
+   &eina_one_big_realloc,
+   NULL,
+   NULL,
+   &eina_one_big_shutdown
 };
 
 Eina_Bool one_big_init(void)
 {
 #ifdef DEBUG
-   _eina_mempool_log_dom = eina_log_domain_register("eina_one_big_mempool", EINA_LOG_COLOR_DEFAULT);
+   _eina_mempool_log_dom = eina_log_domain_register("eina_one_big_mempool",
+                                                    EINA_LOG_COLOR_DEFAULT);
    if (_eina_mempool_log_dom < 0)
      {
-	EINA_LOG_ERR("Could not register log domain: eina_one_big_mempool");
-	return EINA_FALSE;
+        EINA_LOG_ERR("Could not register log domain: eina_one_big_mempool");
+        return EINA_FALSE;
      }
+
 #endif
    return eina_mempool_register(&_eina_one_big_mp_backend);
 }

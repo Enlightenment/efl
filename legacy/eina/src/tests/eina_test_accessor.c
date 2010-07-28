@@ -27,7 +27,7 @@
 
 static Eina_Bool
 eina_accessor_check(__UNUSED__ const Eina_Array *array,
-		    int *data,  int *fdata)
+                    int *data,  int *fdata)
 {
    fail_if(*fdata > *data);
    *fdata = *data;
@@ -45,21 +45,21 @@ START_TEST(eina_accessor_array_simple)
    eina_init();
 
    ea = eina_array_new(11);
-   fail_if(!ea);
+        fail_if(!ea);
 
    for (i = 0; i < 200; ++i)
      {
-	tmp = malloc(sizeof(int));
-	fail_if(!tmp);
-	*tmp = i;
+        tmp = malloc(sizeof(int));
+        fail_if(!tmp);
+        *tmp = i;
 
-	eina_array_push(ea, tmp);
+        eina_array_push(ea, tmp);
      }
 
    it = eina_array_accessor_new(ea);
    fail_if(!it);
 
-   fail_if(eina_accessor_data_get(it, 100, (void**) &tmp) != EINA_TRUE);
+   fail_if(eina_accessor_data_get(it, 100, (void **)&tmp) != EINA_TRUE);
    fail_if(!tmp);
    fail_if(*tmp != 100);
 
@@ -84,7 +84,7 @@ struct _Eina_Test_Inlist
    int i;
 };
 
-static Eina_Test_Inlist*
+static Eina_Test_Inlist *
 _eina_test_inlist_build(int i)
 {
    Eina_Test_Inlist *tmp;
@@ -97,11 +97,14 @@ _eina_test_inlist_build(int i)
 }
 
 static Eina_Bool
-eina_accessor_inlist_data_check(__UNUSED__ const Eina_Inlist *in_list, Eina_Test_Inlist *data, int *fdata)
+eina_accessor_inlist_data_check(__UNUSED__ const Eina_Inlist *in_list,
+                                Eina_Test_Inlist *data,
+                                int *fdata)
 {
    switch (*fdata)
      {
       case 0: fail_if(data->i != 3227); break;
+
       case 1: fail_if(data->i != 1664); break;
      }
 
@@ -125,13 +128,14 @@ START_TEST(eina_accessor_inlist_simple)
    tmp = _eina_test_inlist_build(1664);
    lst = eina_inlist_append_relative(lst, EINA_INLIST_GET(tmp), lst);
    fail_if(!lst);
-   fail_if(((Eina_Test_Inlist*)lst)->i != 42);
+   fail_if(((Eina_Test_Inlist *)lst)->i != 42);
 
    prev = tmp;
    tmp = _eina_test_inlist_build(3227);
-   lst = eina_inlist_prepend_relative(lst, EINA_INLIST_GET(tmp), EINA_INLIST_GET(prev));
+   lst = eina_inlist_prepend_relative(lst, EINA_INLIST_GET(
+                                         tmp), EINA_INLIST_GET(prev));
    fail_if(!lst);
-   fail_if(((Eina_Test_Inlist*)lst)->i != 42);
+   fail_if(((Eina_Test_Inlist *)lst)->i != 42);
 
    tmp = _eina_test_inlist_build(27);
    lst = eina_inlist_prepend_relative(lst, EINA_INLIST_GET(tmp), NULL);
@@ -148,12 +152,12 @@ START_TEST(eina_accessor_inlist_simple)
 
    eina_accessor_over(it, EINA_EACH(eina_accessor_inlist_data_check), 2, 4, &i);
 
-   fail_if(eina_accessor_data_get(it, 5, (void**) &tmp) != EINA_TRUE);
-   fail_if(eina_accessor_data_get(it, 3, (void**) &tmp) != EINA_TRUE);
+   fail_if(eina_accessor_data_get(it, 5, (void **)&tmp) != EINA_TRUE);
+   fail_if(eina_accessor_data_get(it, 3, (void **)&tmp) != EINA_TRUE);
    fail_if(tmp->i != 1664);
-   fail_if(eina_accessor_data_get(it, 3, (void**) &tmp) != EINA_TRUE);
+   fail_if(eina_accessor_data_get(it, 3, (void **)&tmp) != EINA_TRUE);
    fail_if(tmp->i != 1664);
-   fail_if(eina_accessor_data_get(it, 1, (void**) &tmp) != EINA_TRUE);
+   fail_if(eina_accessor_data_get(it, 1, (void **)&tmp) != EINA_TRUE);
    fail_if(tmp->i != 42);
 
    eina_accessor_free(it);
@@ -163,11 +167,14 @@ START_TEST(eina_accessor_inlist_simple)
 END_TEST
 
 static Eina_Bool
-eina_iterator_list_data_check(__UNUSED__ const Eina_List *list, int *data, int *fdata)
+eina_iterator_list_data_check(__UNUSED__ const Eina_List *list,
+                              int *data,
+                              int *fdata)
 {
    switch (*fdata)
      {
       case 0: fail_if(*data != 9); break;
+
       case 1: fail_if(*data != 6); break;
      }
 
@@ -212,15 +219,15 @@ START_TEST(eina_accessor_list_simple)
 
    eina_accessor_over(it, EINA_EACH(eina_iterator_list_data_check), 2, 4, &i);
 
-   fail_if(eina_accessor_data_get(it, 5, (void**) &j) != EINA_TRUE);
+   fail_if(eina_accessor_data_get(it, 5, (void **)&j) != EINA_TRUE);
    fail_if(*j != 1);
-   fail_if(eina_accessor_data_get(it, 3, (void**) &j) != EINA_TRUE);
+   fail_if(eina_accessor_data_get(it, 3, (void **)&j) != EINA_TRUE);
    fail_if(*j != 6);
-   fail_if(eina_accessor_data_get(it, 3, (void**) &j) != EINA_TRUE);
+   fail_if(eina_accessor_data_get(it, 3, (void **)&j) != EINA_TRUE);
    fail_if(*j != 6);
-   fail_if(eina_accessor_data_get(it, 1, (void**) &j) != EINA_TRUE);
+   fail_if(eina_accessor_data_get(it, 1, (void **)&j) != EINA_TRUE);
    fail_if(*j != 7);
-   fail_if(eina_accessor_data_get(it, 5, (void**) &j) != EINA_TRUE);
+   fail_if(eina_accessor_data_get(it, 5, (void **)&j) != EINA_TRUE);
    fail_if(*j != 1);
 
    eina_accessor_free(it);

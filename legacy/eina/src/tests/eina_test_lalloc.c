@@ -36,8 +36,11 @@ struct _Eina_Lazy_Allocator_Test
 static Eina_Bool
 _test_alloc(Eina_Lazy_Allocator_Test *elat, int num)
 {
-   if (elat->num == 10 && num == 1) return EINA_FALSE;
-   if (elat->num == 122 && num == 128) return EINA_FALSE;
+   if (elat->num == 10 && num == 1)
+      return EINA_FALSE;
+
+   if (elat->num == 122 && num == 128)
+      return EINA_FALSE;
 
    elat->num += num;
    elat->data = realloc(elat->data, elat->num);
@@ -60,21 +63,22 @@ START_TEST(eina_lalloc_simple)
    int i;
 
    elat = calloc(1, sizeof (Eina_Lazy_Allocator_Test));
-   fail_if(!elat);
+      fail_if(!elat);
 
-   test = eina_lalloc_new(elat, EINA_LALLOC_ALLOC(_test_alloc), EINA_LALLOC_FREE(_test_free), 10);
-   fail_if(!test);
+   test = eina_lalloc_new(elat, EINA_LALLOC_ALLOC(
+                             _test_alloc), EINA_LALLOC_FREE(_test_free), 10);
+      fail_if(!test);
 
    for (i = 0; i < 10; ++i)
-     fail_if(eina_lalloc_element_add(test) != EINA_TRUE);
-   fail_if(eina_lalloc_element_add(test) != EINA_FALSE);
-   fail_if(eina_lalloc_elements_add(test, 5) != EINA_TRUE);
+      fail_if(eina_lalloc_element_add(test) != EINA_TRUE);
+      fail_if(eina_lalloc_element_add(test) != EINA_FALSE);
+      fail_if(eina_lalloc_elements_add(test, 5) != EINA_TRUE);
    for (i = 0; i < 21; ++i)
-     fail_if(eina_lalloc_element_add(test) != EINA_TRUE);
+      fail_if(eina_lalloc_element_add(test) != EINA_TRUE);
 
-   fail_if(eina_lalloc_elements_add(test, 50) != EINA_FALSE);
+      fail_if(eina_lalloc_elements_add(test, 50) != EINA_FALSE);
 
-   eina_lalloc_free(test);
+      eina_lalloc_free(test);
 }
 END_TEST
 

@@ -25,10 +25,11 @@
 #include "eina_suite.h"
 #include "Eina.h"
 
-struct test_rect {
-     unsigned long col, row;
-     int x, y, w, h;
-     Eina_Bool full;
+struct test_rect
+{
+   unsigned long col, row;
+   int x, y, w, h;
+   Eina_Bool full;
 };
 
 static void
@@ -37,53 +38,53 @@ check_iterator(Eina_Iterator *it, struct test_rect *cur_test)
    unsigned int i = 0;
    struct Eina_Tile_Grid_Info *tile;
 
-   EINA_ITERATOR_FOREACH(it, tile) {
+      EINA_ITERATOR_FOREACH(it, tile) {
       fail_if(cur_test[i].col != tile->col ||
-	      cur_test[i].row != tile->row ||
-	      cur_test[i].x != tile->rect.x ||
-	      cur_test[i].y != tile->rect.y ||
-	      cur_test[i].w != tile->rect.w ||
-	      cur_test[i].h != tile->rect.h ||
-	      cur_test[i].full != tile->full);
+              cur_test[i].row != tile->row ||
+              cur_test[i].x != tile->rect.x ||
+              cur_test[i].y != tile->rect.y ||
+              cur_test[i].w != tile->rect.w ||
+              cur_test[i].h != tile->rect.h ||
+              cur_test[i].full != tile->full);
       i++;
    }
 
-   fail_if(i == 0);
+      fail_if(i == 0);
 }
 
-START_TEST(eina_test_tile_grid_slicer_iterator)
+      START_TEST(eina_test_tile_grid_slicer_iterator)
 {
    Eina_Iterator *it;
    struct test_rect *cur_test;
    struct test_rect test1[] = {{1, 1, 72, 82, 10, 15, 0}};
    struct test_rect test2[] =
-     {{1, 1,  72,  82,  56,  15,  0},
-      {2, 1,   0,  82, 128,  15,  0},
-      {3, 1,   0,  82, 116,  15,  0}};
+   {{1, 1,  72,  82,  56,  15,  0},
+    {2, 1,   0,  82, 128,  15,  0},
+    {3, 1,   0,  82, 116,  15,  0}};
    struct test_rect test3[] =
-     {{1, 1,  72,  82,  10,  46,  0},
-      {1, 2,  72,   0,  10, 128,  0},
-      {1, 3,  72,   0,  10, 126,  0}};
+   {{1, 1,  72,  82,  10,  46,  0},
+    {1, 2,  72,   0,  10, 128,  0},
+    {1, 3,  72,   0,  10, 126,  0}};
    struct test_rect test4[] =
-     {{1, 1,  72,  82,  56,  46,  0},
-      {2, 1,   0,  82, 128,  46,  0},
-      {3, 1,   0,  82, 128,  46,  0},
-      {4, 1,   0,  82,  88,  46,  0},
-      {1, 2,  72,   0,  56, 128,  0},
-      {2, 2,   0,   0, 128, 128,  1},
-      {3, 2,   0,   0, 128, 128,  1},
-      {4, 2,   0,   0,  88, 128,  0},
-      {1, 3,  72,   0,  56, 126,  0},
-      {2, 3,   0,   0, 128, 126,  0},
-      {3, 3,   0,   0, 128, 126,  0},
-      {4, 3,   0,   0,  88, 126,  0}};
+   {{1, 1,  72,  82,  56,  46,  0},
+    {2, 1,   0,  82, 128,  46,  0},
+    {3, 1,   0,  82, 128,  46,  0},
+    {4, 1,   0,  82,  88,  46,  0},
+    {1, 2,  72,   0,  56, 128,  0},
+    {2, 2,   0,   0, 128, 128,  1},
+    {3, 2,   0,   0, 128, 128,  1},
+    {4, 2,   0,   0,  88, 128,  0},
+    {1, 3,  72,   0,  56, 126,  0},
+    {2, 3,   0,   0, 128, 126,  0},
+    {3, 3,   0,   0, 128, 126,  0},
+    {4, 3,   0,   0,  88, 126,  0}};
    struct test_rect test5[] = {{1, 1, 0, 0, 128, 128, 1}};
    struct test_rect test6[] = {{1, 1, 0, 0, 1, 1, 0}};
    struct test_rect test7[] =
-     {{1, 1,   0,   0, 128, 128,  1},
-      {2, 1,   0,   0,   1, 128,  0},
-      {1, 2,   0,   0, 128,   1,  0},
-      {2, 2,   0,   0,   1,   1,  0}};
+   {{1, 1,   0,   0, 128, 128,  1},
+    {2, 1,   0,   0,   1, 128,  0},
+    {1, 2,   0,   0, 128,   1,  0},
+    {2, 2,   0,   0,   1,   1,  0}};
 
    eina_init();
 
@@ -147,22 +148,22 @@ START_TEST(eina_test_tiler_all)
 
    EINA_RECTANGLE_SET(&r, 40, 40, 20, 20);
    eina_tiler_rect_del(tl, &r);
-   
+
    it = eina_tiler_iterator_new(tl);
    fail_if(!it);
 
    EINA_ITERATOR_FOREACH(it, r)
-     {
-       fail_if(r.w <= 0);
-       fail_if(r.h <= 0);
-       fail_if(r.x < 0 || r.x + r.w > 640);
-       fail_if(r.y < 0 || r.y + r.h > 480);
-       ++i;
-     }
+   {
+      fail_if(r.w <= 0);
+      fail_if(r.h <= 0);
+      fail_if(r.x < 0 || r.x + r.w > 640);
+      fail_if(r.y < 0 || r.y + r.h > 480);
+      ++i;
+   }
 
-   fail_if(eina_iterator_container_get(it) != tl);
+      fail_if(eina_iterator_container_get(it) != tl);
 
-   eina_iterator_free(it);
+      eina_iterator_free(it);
 
    fail_if(i == 0);
 

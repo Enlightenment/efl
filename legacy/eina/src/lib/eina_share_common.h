@@ -54,25 +54,34 @@
 #include "eina_types.h"
 #include "eina_magic.h"
 
-typedef struct _Eina_Share  Eina_Share;
+typedef struct _Eina_Share Eina_Share;
 
 struct dumpinfo
 {
    int used, saved, dups, unique;
 };
 
-Eina_Bool eina_share_common_init(Eina_Share **share, Eina_Magic node_magic, const char *node_magic_STR);
-Eina_Bool eina_share_common_shutdown(Eina_Share **share);
-const char *eina_share_common_add_length(Eina_Share *share, const char *str, unsigned int slen, unsigned int null_size) EINA_WARN_UNUSED_RESULT;
+Eina_Bool   eina_share_common_init(Eina_Share **share,
+                                   Eina_Magic node_magic,
+                                   const char *node_magic_STR);
+Eina_Bool   eina_share_common_shutdown(Eina_Share **share);
+const char *eina_share_common_add_length(Eina_Share *share,
+                                         const char *str,
+                                         unsigned int slen,
+                                         unsigned int null_size)
+EINA_WARN_UNUSED_RESULT;
 const char *eina_share_common_ref(Eina_Share *share, const char *str);
-void eina_share_common_del(Eina_Share *share, const char *str);
-int eina_share_common_length(Eina_Share *share, const char *str) EINA_CONST EINA_WARN_UNUSED_RESULT;
-void eina_share_common_dump(Eina_Share *share, void (* additional_dump)(struct dumpinfo *), int used);
+void        eina_share_common_del(Eina_Share *share, const char *str);
+int         eina_share_common_length(Eina_Share *share,
+                                     const char *str) EINA_CONST
+EINA_WARN_UNUSED_RESULT;
+void        eina_share_common_dump(Eina_Share *share, void (*additional_dump)(
+                                      struct dumpinfo *), int used);
 
 
 /* Population functions */
-void eina_share_common_population_add(Eina_Share *share, int slen);
-void eina_share_common_population_del(Eina_Share *share, int slen);
+void        eina_share_common_population_add(Eina_Share *share, int slen);
+void        eina_share_common_population_del(Eina_Share *share, int slen);
 
 /* Share logging */
 #ifdef CRITICAL

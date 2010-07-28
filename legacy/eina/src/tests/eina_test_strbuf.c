@@ -29,7 +29,8 @@ START_TEST(strbuf_simple)
 {
    Eina_Strbuf *buf;
    char *txt;
-#define TEXT "This test should be so long that it is longer than the initial size of strbuf"
+#define TEXT \
+   "This test should be so long that it is longer than the initial size of strbuf"
 
    eina_init();
 
@@ -92,7 +93,8 @@ START_TEST(strbuf_remove)
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    fail_if(strcmp(eina_strbuf_string_get(buf), ""));
 
-#define TEXT "This test should be so long that it is longer than the initial size of strbuf"
+#define TEXT \
+   "This test should be so long that it is longer than the initial size of strbuf"
    eina_strbuf_append(buf, TEXT TEXT);
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    eina_strbuf_remove(buf, 0, eina_strbuf_length_get(buf) - 1);
@@ -193,9 +195,11 @@ START_TEST(strbuf_insert)
    fail_if(strncmp(eina_strbuf_string_get(buf) + 3, "678", 3));
 
    eina_strbuf_insert_escaped(buf, "089 '\\", 9);
-   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
-   fail_if(strncmp(eina_strbuf_string_get(buf) + 9, "089\\ \\'\\\\",
-		   strlen("089\\ \\'\\\\")));
+                   fail_if(strlen(eina_strbuf_string_get(
+                     buf)) != eina_strbuf_length_get(buf));
+                   fail_if(strncmp(eina_strbuf_string_get(buf) + 9,
+                   "089\\ \\'\\\\",
+                   strlen("089\\ \\'\\\\")));
    eina_strbuf_reset(buf);
 
    eina_strbuf_free(buf);
@@ -260,7 +264,7 @@ START_TEST(strbuf_realloc)
    size_t sz;
 
    for (i = 0; i < sizeof(pattern) - 1; i++)
-     pattern[i] = 'a' + (i % 26);
+      pattern[i] = 'a' + (i % 26);
    pattern[i] = '\0';
 
    eina_init();
@@ -297,7 +301,8 @@ START_TEST(strbuf_realloc)
 
    eina_strbuf_append_length(buf, pattern, sizeof(pattern) - 1);
    fail_if(eina_strbuf_length_get(buf) != sz + sizeof(pattern) - 1);
-   fail_if(memcmp(eina_strbuf_string_get(buf) + sz, pattern, sizeof(pattern) - 1));
+   fail_if(memcmp(eina_strbuf_string_get(buf) + sz, pattern, sizeof(pattern) -
+                  1));
    sz += sizeof(pattern) - 1;
 
 
@@ -331,25 +336,25 @@ START_TEST(strbuf_append_realloc)
    eina_init();
 
    buf = eina_strbuf_new();
-   fail_if(!buf);
+        fail_if(!buf);
 
    for (i = 0; i < runs; i++)
      {
-	fail_if(!eina_strbuf_append(buf, "string"));
-	fail_if(!eina_strbuf_append_n(buf, "string", 3));
-	fail_if(!eina_strbuf_append_char(buf, 's'));
-	fail_if(!eina_strbuf_append_length(buf, "string", 3));
+        fail_if(!eina_strbuf_append(buf, "string"));
+        fail_if(!eina_strbuf_append_n(buf, "string", 3));
+        fail_if(!eina_strbuf_append_char(buf, 's'));
+        fail_if(!eina_strbuf_append_length(buf, "string", 3));
      }
 
    target_pattern_size = strlen(target_pattern);
-   fail_if(eina_strbuf_length_get(buf) != (runs * target_pattern_size));
+        fail_if(eina_strbuf_length_get(buf) != (runs * target_pattern_size));
 
    str = eina_strbuf_string_get(buf);
-   fail_if(str == NULL);
+        fail_if(str == NULL);
    for (i = 0; i < runs; i++, str += target_pattern_size)
-     fail_if(memcmp(str, target_pattern, target_pattern_size));
+        fail_if(memcmp(str, target_pattern, target_pattern_size));
 
-   eina_strbuf_free(buf);
+        eina_strbuf_free(buf);
 
    eina_shutdown();
 }
@@ -366,25 +371,25 @@ START_TEST(strbuf_prepend_realloc)
    eina_init();
 
    buf = eina_strbuf_new();
-   fail_if(!buf);
+        fail_if(!buf);
 
    for (i = 0; i < runs; i++)
      {
-	fail_if(!eina_strbuf_prepend(buf, "string"));
-	fail_if(!eina_strbuf_prepend_n(buf, "string", 3));
-	fail_if(!eina_strbuf_prepend_char(buf, 's'));
-	fail_if(!eina_strbuf_prepend_length(buf, "string", 3));
+        fail_if(!eina_strbuf_prepend(buf, "string"));
+        fail_if(!eina_strbuf_prepend_n(buf, "string", 3));
+        fail_if(!eina_strbuf_prepend_char(buf, 's'));
+        fail_if(!eina_strbuf_prepend_length(buf, "string", 3));
      }
 
    target_pattern_size = strlen(target_pattern);
-   fail_if(eina_strbuf_length_get(buf) != (runs * target_pattern_size));
+        fail_if(eina_strbuf_length_get(buf) != (runs * target_pattern_size));
 
    str = eina_strbuf_string_get(buf);
-   fail_if(str == NULL);
+        fail_if(str == NULL);
    for (i = 0; i < runs; i++, str += target_pattern_size)
-     fail_if(memcmp(str, target_pattern, target_pattern_size));
+        fail_if(memcmp(str, target_pattern, target_pattern_size));
 
-   eina_strbuf_free(buf);
+        eina_strbuf_free(buf);
 
    eina_shutdown();
 }

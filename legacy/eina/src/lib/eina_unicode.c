@@ -30,13 +30,13 @@ const Eina_Unicode *EINA_UNICODE_EMPTY_STRING = {0};
 EAPI int
 eina_unicode_strcmp(const Eina_Unicode *a, const Eina_Unicode *b)
 {
-   for ( ; *a && *a == *b ; a++, b++)
+   for (; *a && *a == *b; a++, b++)
       ;
    if (*a == *b)
       return 0;
    else if (*a < *b)
       return -1;
-   else 
+   else
       return 1;
 }
 
@@ -47,7 +47,7 @@ EAPI Eina_Unicode *
 eina_unicode_strcpy(Eina_Unicode *dest, const Eina_Unicode *source)
 {
    Eina_Unicode *ret = dest;
-   
+
    while (*source)
       *dest++ = *source++;
    return ret;
@@ -60,10 +60,10 @@ EAPI Eina_Unicode *
 eina_unicode_strncpy(Eina_Unicode *dest, const Eina_Unicode *source, size_t n)
 {
    Eina_Unicode *ret = dest;
-   
-   for (n = 0 ; *source && n ; n--)
+
+   for (n = 0; *source && n; n--)
       *dest++ = *source++;
-   for ( ; n ; n--)
+   for (; n; n--)
       *dest++ = 0;
    return ret;
 }
@@ -75,7 +75,7 @@ EAPI size_t
 eina_unicode_strlen(const Eina_Unicode *ustr)
 {
    const Eina_Unicode *end;
-   for (end = ustr ; *end ; end++)
+   for (end = ustr; *end; end++)
       ;
    return end - ustr;
 }
@@ -90,7 +90,7 @@ eina_unicode_strdup(const Eina_Unicode *text)
    int len;
 
    len = eina_unicode_strlen(text);
-   ustr = (Eina_Unicode *) calloc(sizeof(Eina_Unicode), len + 1);
+   ustr = (Eina_Unicode *)calloc(sizeof(Eina_Unicode), len + 1);
    memcpy(ustr, text, len * sizeof(Eina_Unicode));
 
    return ustr;
@@ -104,16 +104,14 @@ eina_unicode_strstr(const Eina_Unicode *haystack, const Eina_Unicode *needle)
 {
    const Eina_Unicode *i, *j;
 
-   for (i = haystack ; *i ; i++)
+   for (i = haystack; *i; i++)
      {
         haystack = i; /* set this location as the base position */
-        for (j = needle ; *j && *i && *j == *i ; j++, i++)
+        for (j = needle; *j && *i && *j == *i; j++, i++)
            ;
 
         if (!*j) /*if we got to the end of j this means we got a full match */
-          {
-             return (Eina_Unicode *) haystack; /* return the new base position */
-          }
+           return (Eina_Unicode *)haystack; /* return the new base position */
      }
 
    return NULL;
@@ -129,15 +127,18 @@ eina_unicode_escape(const Eina_Unicode *str)
    const Eina_Unicode *s;
 
    s2 = malloc((eina_unicode_strlen(str) * 2) + 1);
-   if (!s2) return NULL;
+   if (!s2)
+      return NULL;
+
    for (s = str, d = s2; *s != 0; s++, d++)
      {
-	if ((*s == ' ') || (*s == '\\') || (*s == '\''))
-	  {
-	     *d = '\\';
-	     d++;
-	  }
-	*d = *s;
+        if ((*s == ' ') || (*s == '\\') || (*s == '\''))
+          {
+             *d = '\\';
+             d++;
+          }
+
+        *d = *s;
      }
    *d = 0;
    return s2;

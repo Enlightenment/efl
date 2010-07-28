@@ -33,8 +33,8 @@
 #include "eina_accessor.h"
 
 /*============================================================================*
- *                                  Local                                     *
- *============================================================================*/
+*                                  Local                                     *
+*============================================================================*/
 
 /**
  * @cond LOCAL
@@ -42,19 +42,19 @@
 
 static const char EINA_MAGIC_ACCESSOR_STR[] = "Eina Accessor";
 
-#define EINA_MAGIC_CHECK_ACCESSOR(d)				\
-  do {								\
-    if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ACCESSOR))		\
-      EINA_MAGIC_FAIL(d, EINA_MAGIC_ACCESSOR);			\
-  } while(0)
+#define EINA_MAGIC_CHECK_ACCESSOR(d)                            \
+   do {                                                          \
+        if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ACCESSOR)) {              \
+             EINA_MAGIC_FAIL(d, EINA_MAGIC_ACCESSOR); }                  \
+     } while(0)
 
 /**
  * @endcond
  */
 
 /*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+*                                 Global                                     *
+*============================================================================*/
 
 /**
  * @internal
@@ -91,8 +91,8 @@ eina_accessor_shutdown(void)
 }
 
 /*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+*                                   API                                      *
+*============================================================================*/
 
 /**
  * @addtogroup Eina_Accessor_Group Accessor Functions
@@ -143,7 +143,7 @@ EAPI void *
 eina_accessor_container_get(Eina_Accessor *accessor)
 {
    EINA_MAGIC_CHECK_ACCESSOR(accessor);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(accessor, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(accessor,                NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(accessor->get_container, NULL);
    return accessor->get_container(accessor);
 }
@@ -162,12 +162,14 @@ eina_accessor_container_get(Eina_Accessor *accessor)
  * #EINA_FALSE is returned, otherwise EINA_TRUE is returned.
  */
 EAPI Eina_Bool
-eina_accessor_data_get(Eina_Accessor *accessor, unsigned int position, void **data)
+eina_accessor_data_get(Eina_Accessor *accessor,
+                       unsigned int position,
+                       void **data)
 {
    EINA_MAGIC_CHECK_ACCESSOR(accessor);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(accessor, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(accessor,         EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(accessor->get_at, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data,             EINA_FALSE);
    return accessor->get_at(accessor, position, data);
 }
 
@@ -189,10 +191,10 @@ eina_accessor_data_get(Eina_Accessor *accessor, unsigned int position, void **da
  */
 EAPI void
 eina_accessor_over(Eina_Accessor *accessor,
-		   Eina_Each cb,
-		   unsigned int start,
-		   unsigned int end,
-		   const void *fdata)
+                   Eina_Each cb,
+                   unsigned int start,
+                   unsigned int end,
+                   const void *fdata)
 {
    const void *container;
    void *data;
@@ -206,8 +208,11 @@ eina_accessor_over(Eina_Accessor *accessor,
    EINA_SAFETY_ON_FALSE_RETURN(start < end);
 
    container = accessor->get_container(accessor);
-   for (i = start; i < end && accessor->get_at(accessor, i, &data) == EINA_TRUE; ++i)
-      if (cb(container, data, (void*) fdata) != EINA_TRUE) return ;
+   for (i = start; i < end && accessor->get_at(accessor, i, &data) == EINA_TRUE;
+        ++i)
+      if (cb(container, data, (void *)fdata) != EINA_TRUE)
+         return;
+
 }
 
 /**

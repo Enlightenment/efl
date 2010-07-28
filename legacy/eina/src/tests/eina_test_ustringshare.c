@@ -45,12 +45,12 @@ START_TEST(eina_ustringshare_simple)
    fail_if(t1 == NULL);
    fail_if(eina_unicode_strcmp(t0, TEST0) != 0);
    fail_if(eina_unicode_strcmp(t1, TEST1) != 0);
-   fail_if((int) eina_unicode_strlen(TEST0) != eina_ustringshare_strlen(t0));
-   fail_if((int) eina_unicode_strlen(TEST1) != eina_ustringshare_strlen(t1));
+   fail_if((int)eina_unicode_strlen(TEST0) != eina_ustringshare_strlen(t0));
+   fail_if((int)eina_unicode_strlen(TEST1) != eina_ustringshare_strlen(t1));
 
    t0 = eina_ustringshare_ref(t0);
    fail_if(t0 == NULL);
-   fail_if((int) strlen(TEST0) != eina_stringshare_strlen(t0));
+   fail_if((int)strlen(TEST0) != eina_stringshare_strlen(t0));
 
    eina_ustringshare_del(t0);
    eina_ustringshare_del(t0);
@@ -76,8 +76,8 @@ START_TEST(eina_ustringshare_test_share)
    fail_if(eina_unicode_strcmp(t0, TEST0) != 0);
    fail_if(eina_unicode_strcmp(t1, TEST0) != 0);
    fail_if(t0 != t1);
-   fail_if((int) eina_unicode_strlen(TEST0) != eina_ustringshare_strlen(t0));
-   fail_if((int) eina_unicode_strlen(TEST0) != eina_ustringshare_strlen(t1));
+   fail_if((int)eina_unicode_strlen(TEST0) != eina_ustringshare_strlen(t0));
+   fail_if((int)eina_unicode_strlen(TEST0) != eina_ustringshare_strlen(t1));
 
    eina_ustringshare_del(t0);
    eina_ustringshare_del(t1);
@@ -96,17 +96,17 @@ START_TEST(eina_ustringshare_putstuff)
    for (i = 10000; i > 0; --i)
      {
         Eina_Unicode string_[] = {'s', 't', 'r', 'i', 'n', 'g', '_', 0};
-	Eina_Unicode build[64];
+        Eina_Unicode build[64];
         eina_unicode_strcpy(build, string_);
 
-	build[7] = i;
+        build[7] = i;
         build[8] = 0;
-	tmp = eina_ustringshare_add(build);
-	fail_if(tmp != eina_ustringshare_add(build));
-        fail_if((int) eina_unicode_strlen(build) != eina_ustringshare_strlen(tmp));
+        tmp = eina_ustringshare_add(build);
+        fail_if(tmp != eina_ustringshare_add(build));
+        fail_if((int)eina_unicode_strlen(build) != eina_ustringshare_strlen(tmp));
      }
 
-   eina_shutdown();
+        eina_shutdown();
 }
 END_TEST
 

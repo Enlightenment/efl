@@ -42,7 +42,7 @@ eina_bench_convert_itoa_10(int request)
 
    for (i = 0; i < request; ++i)
      {
-	eina_convert_itoa(rand(), tmp);
+        eina_convert_itoa(rand(), tmp);
      }
 }
 
@@ -56,7 +56,7 @@ eina_bench_convert_itoa_16(int request)
 
    for (i = 0; i < request; ++i)
      {
-	eina_convert_xtoa(rand(), tmp);
+        eina_convert_xtoa(rand(), tmp);
      }
 }
 
@@ -70,7 +70,7 @@ eina_bench_convert_snprintf_10(int request)
 
    for (i = 0; i < request; ++i)
      {
-	snprintf(tmp, 128, "%i", rand());
+        snprintf(tmp, 128, "%i", rand());
      }
 }
 
@@ -84,7 +84,7 @@ eina_bench_convert_snprintf_x(int request)
 
    for (i = 0; i < request; ++i)
      {
-	snprintf(tmp, 128, "%x", rand());
+        snprintf(tmp, 128, "%x", rand());
      }
 }
 
@@ -99,9 +99,9 @@ eina_bench_convert_snprintf_a(int request)
 
    for (i = 0; i < request; ++i)
      {
-	r = 10000 * (rand() / ((double)RAND_MAX + 1));
-	snprintf(tmp, 128, "%a", r);
-	sscanf(tmp, "%la", &r);
+        r = 10000 * (rand() / ((double)RAND_MAX + 1));
+        snprintf(tmp, 128, "%a", r);
+        sscanf(tmp, "%la", &r);
      }
 }
 
@@ -118,10 +118,10 @@ eina_bench_convert_dtoa(int request)
 
    for (i = 0; i < request; ++i)
      {
-	r = 10000 * (rand() / ((double)RAND_MAX + 1));
-	eina_convert_dtoa(r, tmp);
-	eina_convert_atod(tmp, 128, &m, &e);
-	r = ldexp((double)m, e);
+        r = 10000 * (rand() / ((double)RAND_MAX + 1));
+        eina_convert_dtoa(r, tmp);
+        eina_convert_atod(tmp, 128, &m, &e);
+        r = ldexp((double)m, e);
      }
 }
 
@@ -137,23 +137,44 @@ eina_bench_convert_gstrtod(int request)
 
    for (i = 0; i < request; ++i)
      {
-	r = 10000 * (rand() / ((double)RAND_MAX + 1));
-	g_ascii_dtostr(tmp, 128, r);
-	r = g_ascii_strtod(tmp, NULL);
+        r = 10000 * (rand() / ((double)RAND_MAX + 1));
+        g_ascii_dtostr(tmp, 128, r);
+        r = g_ascii_strtod(tmp, NULL);
      }
 }
 #endif
 
 void eina_bench_convert(Eina_Benchmark *bench)
 {
-   eina_benchmark_register(bench, "itoa 10", EINA_BENCHMARK(eina_bench_convert_itoa_10), 1000, 200000, 500);
-   eina_benchmark_register(bench, "itoa 16", EINA_BENCHMARK(eina_bench_convert_itoa_16), 1000, 200000, 500);
-   eina_benchmark_register(bench, "snprintf 10", EINA_BENCHMARK(eina_bench_convert_snprintf_10), 1000, 200000, 500);
-   eina_benchmark_register(bench, "snprintf 16", EINA_BENCHMARK(eina_bench_convert_snprintf_x), 1000, 200000, 500);
-   eina_benchmark_register(bench, "snprintf a", EINA_BENCHMARK(eina_bench_convert_snprintf_a), 1000, 200000, 500);
-   eina_benchmark_register(bench, "dtoa", EINA_BENCHMARK(eina_bench_convert_dtoa), 1000, 200000, 500);
+   eina_benchmark_register(bench, "itoa 10",
+                           EINA_BENCHMARK(
+                              eina_bench_convert_itoa_10),     1000, 200000,
+                           500);
+   eina_benchmark_register(bench, "itoa 16",
+                           EINA_BENCHMARK(
+                              eina_bench_convert_itoa_16),     1000, 200000,
+                           500);
+   eina_benchmark_register(bench, "snprintf 10",
+                           EINA_BENCHMARK(
+                              eina_bench_convert_snprintf_10), 1000, 200000,
+                           500);
+   eina_benchmark_register(bench, "snprintf 16",
+                           EINA_BENCHMARK(
+                              eina_bench_convert_snprintf_x),  1000, 200000,
+                           500);
+   eina_benchmark_register(bench, "snprintf a",
+                           EINA_BENCHMARK(
+                              eina_bench_convert_snprintf_a),  1000, 200000,
+                           500);
+   eina_benchmark_register(bench, "dtoa",
+                           EINA_BENCHMARK(
+                              eina_bench_convert_dtoa),        1000, 200000,
+                           500);
 #ifdef EINA_BENCH_HAVE_GLIB
-   eina_benchmark_register(bench, "gstrtod", EINA_BENCHMARK(eina_bench_convert_gstrtod), 1000, 200000, 500);
+   eina_benchmark_register(bench, "gstrtod",
+                           EINA_BENCHMARK(
+                              eina_bench_convert_gstrtod),     1000, 200000,
+                           500);
 #endif
 }
 

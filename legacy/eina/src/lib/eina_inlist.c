@@ -34,8 +34,8 @@
 /* FIXME: TODO please, refactor this :) */
 
 /*============================================================================*
- *                                  Local                                     *
- *============================================================================*/
+*                                  Local                                     *
+*============================================================================*/
 
 /**
  * @cond LOCAL
@@ -46,91 +46,99 @@ typedef struct _Eina_Accessor_Inlist Eina_Accessor_Inlist;
 
 struct _Eina_Iterator_Inlist
 {
-	Eina_Iterator iterator;
-	const Eina_Inlist *head;
-	const Eina_Inlist *current;
+   Eina_Iterator iterator;
+   const Eina_Inlist *head;
+   const Eina_Inlist *current;
 };
 
 struct _Eina_Accessor_Inlist
 {
-	Eina_Accessor accessor;
+   Eina_Accessor accessor;
 
-	const Eina_Inlist *head;
-	const Eina_Inlist *current;
+   const Eina_Inlist *head;
+   const Eina_Inlist *current;
 
-	unsigned int index;
+   unsigned int index;
 };
 
 static Eina_Bool
 eina_inlist_iterator_next(Eina_Iterator_Inlist *it, void **data) {
-	if (it->current == NULL) return EINA_FALSE;
-	if (data) *data = (void*) it->current;
+   if (it->current == NULL)
+      return EINA_FALSE;
 
-	it->current = it->current->next;
+   if (data)
+      *data = (void *)it->current;
 
-	return EINA_TRUE;
+   it->current = it->current->next;
+
+   return EINA_TRUE;
 }
 
 static Eina_Inlist *
 eina_inlist_iterator_get_container(Eina_Iterator_Inlist *it) {
-	return (Eina_Inlist*) it->head;
+   return (Eina_Inlist *)it->head;
 }
 
 static void
 eina_inlist_iterator_free(Eina_Iterator_Inlist *it) {
-	free(it);
+   free(it);
 }
 
 static Eina_Bool
-eina_inlist_accessor_get_at(Eina_Accessor_Inlist *it, unsigned int idx, void **data) {
-	const Eina_Inlist *over;
-	unsigned int middle;
-	unsigned int i;
+eina_inlist_accessor_get_at(Eina_Accessor_Inlist *it,
+                            unsigned int idx,
+                            void **data) {
+   const Eina_Inlist *over;
+   unsigned int middle;
+   unsigned int i;
 
-	if (it->index == idx) {
-		over = it->current;
-	} else if (idx > it->index) {
-		/* Looking after current. */
-		for (i = it->index, over = it->current;
-		     i < idx && over != NULL;
-		     ++i, over = over->next)
-			;
+   if (it->index == idx)
+      over = it->current;
+   else if (idx > it->index)
+      /* Looking after current. */
+      for (i = it->index, over = it->current;
+           i < idx && over != NULL;
+           ++i, over = over->next)
+         ;
 
-	} else {
-		middle = it->index >> 1;
+   else
+     {
+        middle = it->index >> 1;
 
-		if (idx > middle) {
-			/* Looking backward from current. */
-			for (i = it->index, over = it->current;
-			     i > idx && over != NULL;
-			     --i, over = over->prev)
-				;
-		} else {
-			/* Looking from the start. */
-			for (i = 0, over = it->head;
-			     i < idx && over != NULL;
-			     ++i, over = over->next)
-				;
-		}
-	}
+        if (idx > middle)
+           /* Looking backward from current. */
+           for (i = it->index, over = it->current;
+                i > idx && over != NULL;
+                --i, over = over->prev)
+              ;
+        else
+           /* Looking from the start. */
+           for (i = 0, over = it->head;
+                i < idx && over != NULL;
+                ++i, over = over->next)
+              ;
+     }
 
-	if (over == NULL) return EINA_FALSE;
+   if (over == NULL)
+      return EINA_FALSE;
 
-	it->current = over;
-	it->index = idx;
+   it->current = over;
+   it->index = idx;
 
-	if (data) *data = (void*) over;
-	return EINA_TRUE;
+   if (data)
+      *data = (void *)over;
+
+   return EINA_TRUE;
 }
 
 static Eina_Inlist *
 eina_inlist_accessor_get_container(Eina_Accessor_Inlist *it) {
-	return (Eina_Inlist *) it->head;
+   return (Eina_Inlist *)it->head;
 }
 
 static void
 eina_inlist_accessor_free(Eina_Accessor_Inlist *it) {
-	free(it);
+   free(it);
 }
 
 /**
@@ -139,12 +147,12 @@ eina_inlist_accessor_free(Eina_Accessor_Inlist *it) {
 
 
 /*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+*                                 Global                                     *
+*============================================================================*/
 
 /*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+*                                   API                                      *
+*============================================================================*/
 
 /**
  * @addtogroup Eina_Inline_List_Group Inline List
@@ -200,15 +208,15 @@ eina_inlist_accessor_free(Eina_Accessor_Inlist *it) {
  *    printf("list=%p\n", list);
  *    for (itr = list; itr != NULL; itr = itr->next)
  *      {
- * 	cur = EINA_INLIST_CONTAINER_GET(itr, struct my_struct);
- * 	printf("\ta=%d, b=%d\n", cur->a, cur->b);
+ *  cur = EINA_INLIST_CONTAINER_GET(itr, struct my_struct);
+ *  printf("\ta=%d, b=%d\n", cur->a, cur->b);
  *      }
  *
  *    while (list)
  *      {
- * 	Eina_Inlist *aux = list;
- * 	list = eina_inlist_remove(list, list);
- * 	free(aux);
+ *  Eina_Inlist *aux = list;
+ *  list = eina_inlist_remove(list, list);
+ *  free(aux);
  *      }
  *
  *    eina_shutdown();
@@ -244,16 +252,19 @@ eina_inlist_append(Eina_Inlist *list, Eina_Inlist *new_l)
    EINA_SAFETY_ON_NULL_RETURN_VAL(new_l, list);
 
    new_l->next = NULL;
-   if (!list) {
-      new_l->prev = NULL;
-      new_l->last = new_l;
-      return new_l;
-   }
+   if (!list)
+     {
+        new_l->prev = NULL;
+        new_l->last = new_l;
+        return new_l;
+     }
+
    if (list->last)
-     l = list->last;
+      l = list->last;
    else
-     for (l = list; (l) && (l->next); l = l->next)
-       ;
+      for (l = list; (l) && (l->next); l = l->next)
+         ;
+
    l->next = new_l;
    new_l->prev = l;
    list->last = new_l;
@@ -282,11 +293,13 @@ eina_inlist_prepend(Eina_Inlist *list, Eina_Inlist *new_l)
    EINA_SAFETY_ON_NULL_RETURN_VAL(new_l, list);
 
    new_l->prev = NULL;
-   if (!list) {
-      new_l->next = NULL;
-      new_l->last = new_l;
-      return new_l;
-   }
+   if (!list)
+     {
+        new_l->next = NULL;
+        new_l->last = new_l;
+        return new_l;
+     }
+
    new_l->next = list;
    list->prev = new_l;
    new_l->last = list->last;
@@ -318,23 +331,29 @@ eina_inlist_prepend(Eina_Inlist *list, Eina_Inlist *new_l)
  */
 EAPI Eina_Inlist *
 eina_inlist_append_relative(Eina_Inlist *list,
-			    Eina_Inlist *new_l,
-			    Eina_Inlist *relative)
+                            Eina_Inlist *new_l,
+                            Eina_Inlist *relative)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(new_l, list);
 
-   if (relative) {
-      if (relative->next) {
-	 new_l->next = relative->next;
-	 relative->next->prev = new_l;
-      } else
-	new_l->next = NULL;
-      relative->next = new_l;
-      new_l->prev = relative;
-      if (!new_l->next)
-	list->last = new_l;
-      return list;
-   }
+   if (relative)
+     {
+        if (relative->next)
+          {
+             new_l->next = relative->next;
+             relative->next->prev = new_l;
+          }
+        else
+           new_l->next = NULL;
+
+        relative->next = new_l;
+        new_l->prev = relative;
+        if (!new_l->next)
+           list->last = new_l;
+
+        return list;
+     }
+
    return eina_inlist_append(list, new_l);
 }
 
@@ -362,29 +381,34 @@ eina_inlist_append_relative(Eina_Inlist *list,
  */
 EAPI Eina_Inlist *
 eina_inlist_prepend_relative(Eina_Inlist *list,
-			     Eina_Inlist *new_l,
-			     Eina_Inlist *relative)
+                             Eina_Inlist *new_l,
+                             Eina_Inlist *relative)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(new_l, list);
 
-   if (relative) {
-      new_l->prev = relative->prev;
-      new_l->next = relative;
-      relative->prev = new_l;
-      if (new_l->prev) {
-	 new_l->prev->next = new_l;
-	 /* new_l->next could not be NULL, as it was set to 'relative' */
-	 assert(new_l->next);
-	 return list;
-      } else {
-	 /* new_l->next could not be NULL, as it was set to 'relative' */
-	 assert(new_l->next);
+   if (relative)
+     {
+        new_l->prev = relative->prev;
+        new_l->next = relative;
+        relative->prev = new_l;
+        if (new_l->prev)
+          {
+             new_l->prev->next = new_l;
+             /* new_l->next could not be NULL, as it was set to 'relative' */
+             assert(new_l->next);
+             return list;
+          }
+        else
+          {
+             /* new_l->next could not be NULL, as it was set to 'relative' */
+             assert(new_l->next);
 
-	 new_l->last = list->last;
-	 list->last = NULL;
-	 return new_l;
-      }
-   }
+             new_l->last = list->last;
+             list->last = NULL;
+             return new_l;
+          }
+     }
+
    return eina_inlist_prepend(list, new_l);
 }
 
@@ -414,21 +438,26 @@ eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
    EINA_SAFETY_ON_NULL_RETURN_VAL(list, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(item, list);
    EINA_SAFETY_ON_TRUE_RETURN_VAL
-     ((item != list) && (item->prev == NULL) && (item->next == NULL), list);
+      ((item != list) && (item->prev == NULL) && (item->next == NULL), list);
 
    if (item->next)
-     item->next->prev = item->prev;
+      item->next->prev = item->prev;
 
-   if (item->prev) {
-      item->prev->next = item->next;
-      return_l = list;
-   } else {
-      return_l = item->next;
-      if (return_l)
-	return_l->last = list->last;
-   }
+   if (item->prev)
+     {
+        item->prev->next = item->next;
+        return_l = list;
+     }
+   else
+     {
+        return_l = item->next;
+        if (return_l)
+           return_l->last = list->last;
+     }
+
    if (item == list->last)
-     list->last = item->prev;
+      list->last = item->prev;
+
    item->next = NULL;
    item->prev = NULL;
    return return_l;
@@ -455,14 +484,16 @@ eina_inlist_promote(Eina_Inlist *list, Eina_Inlist *item)
    EINA_SAFETY_ON_NULL_RETURN_VAL(list, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(item, list);
 
-   if (item == list) return list;
+   if (item == list)
+      return list;
 
    if (item->next)
-     item->next->prev = item->prev;
+      item->next->prev = item->prev;
+
    item->prev->next = item->next;
 
    if (list->last == item)
-     list->last = item->prev;
+      list->last = item->prev;
 
    item->next = list;
    item->prev = NULL;
@@ -497,20 +528,22 @@ eina_inlist_demote(Eina_Inlist *list, Eina_Inlist *item)
    EINA_SAFETY_ON_NULL_RETURN_VAL(list, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(item, list);
 
-   if (list->last == item) return list;
+   if (list->last == item)
+      return list;
 
    if (!list->last)
      {
-	for (l = list; l->next; l = l->next)
-	  ;
-	list->last = l;
+        for (l = list; l->next; l = l->next)
+           ;
+        list->last = l;
      }
 
    l = list;
    if (item->prev)
-     item->prev->next = item->next;
+      item->prev->next = item->next;
    else
-     l = item->next;
+      l = item->next;
+
    item->next->prev = item->prev;
 
    list->last->next = item;
@@ -538,9 +571,9 @@ eina_inlist_find(Eina_Inlist *list, Eina_Inlist *item)
    Eina_Inlist *l;
 
    for (l = list; l; l = l->next) {
-      if (l == item)
-	return item;
-   }
+        if (l == item)
+           return item;
+     }
    return NULL;
 }
 
@@ -564,7 +597,7 @@ eina_inlist_count(const Eina_Inlist *list)
    unsigned int i = 0;
 
    for (l = list; l; l = l->next)
-     i++;
+      i++;
 
    return i;
 }
@@ -594,18 +627,20 @@ eina_inlist_iterator_new(const Eina_Inlist *list)
 {
    Eina_Iterator_Inlist *it;
 
-   eina_error_set(0);
+        eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Inlist));
-   if (!it) {
-      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-      return NULL;
-   }
+   if (!it)
+     {
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        return NULL;
+     }
 
    it->head = list;
    it->current = list;
 
    it->iterator.next = FUNC_ITERATOR_NEXT(eina_inlist_iterator_next);
-   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(eina_inlist_iterator_get_container);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
+         eina_inlist_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(eina_inlist_iterator_free);
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
@@ -630,19 +665,21 @@ eina_inlist_accessor_new(const Eina_Inlist *list)
 {
    Eina_Accessor_Inlist *it;
 
-   eina_error_set(0);
+        eina_error_set(0);
    it = calloc(1, sizeof (Eina_Accessor_Inlist));
-   if (!it) {
-      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-      return NULL;
-   }
+   if (!it)
+     {
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        return NULL;
+     }
 
    it->head = list;
    it->current = list;
    it->index = 0;
 
    it->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_inlist_accessor_get_at);
-   it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(eina_inlist_accessor_get_container);
+   it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(
+         eina_inlist_accessor_get_container);
    it->accessor.free = FUNC_ACCESSOR_FREE(eina_inlist_accessor_free);
 
    EINA_MAGIC_SET(&it->accessor, EINA_MAGIC_ACCESSOR);

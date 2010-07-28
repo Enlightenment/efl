@@ -45,12 +45,12 @@ START_TEST(eina_stringshare_simple)
    fail_if(t1 == NULL);
    fail_if(strcmp(t0, TEST0) != 0);
    fail_if(strcmp(t1, TEST1) != 0);
-   fail_if((int) strlen(TEST0) != eina_stringshare_strlen(t0));
-   fail_if((int) strlen(TEST1) != eina_stringshare_strlen(t1));
+   fail_if((int)strlen(TEST0) != eina_stringshare_strlen(t0));
+   fail_if((int)strlen(TEST1) != eina_stringshare_strlen(t1));
 
    t0 = eina_stringshare_ref(t0);
    fail_if(t0 == NULL);
-   fail_if((int) strlen(TEST0) != eina_stringshare_strlen(t0));
+   fail_if((int)strlen(TEST0) != eina_stringshare_strlen(t0));
 
    eina_stringshare_del(t0);
    eina_stringshare_del(t0);
@@ -69,31 +69,31 @@ START_TEST(eina_stringshare_small)
 
    for (i = 0; i < 3; i++)
      {
-	const char *t0, *t1;
-	int j;
+        const char *t0, *t1;
+        int j;
 
-	for (j = 0; j < i; j++)
-	  {
-	     char c;
-	     for (c = 'a'; c <= 'z'; c++)
-	       buf[j] = c;
-	  }
-	buf[i] = '\0';
-	t0 = eina_stringshare_add(buf);
-	t1 = eina_stringshare_add(buf);
+        for (j = 0; j < i; j++)
+          {
+             char c;
+             for (c = 'a'; c <= 'z'; c++)
+                buf[j] = c;
+          }
+        buf[i] = '\0';
+        t0 = eina_stringshare_add(buf);
+        t1 = eina_stringshare_add(buf);
 
-	fail_if(t0 == NULL);
-	fail_if(t1 == NULL);
-	fail_if(t0 != t1);
-	fail_if(strcmp(t0, buf) != 0);
-        fail_if((int) strlen(buf) != eina_stringshare_strlen(t0));
-        fail_if((int) strlen(buf) != eina_stringshare_strlen(t1));
+        fail_if(t0 == NULL);
+        fail_if(t1 == NULL);
+        fail_if(t0 != t1);
+        fail_if(strcmp(t0, buf) != 0);
+        fail_if((int)strlen(buf) != eina_stringshare_strlen(t0));
+        fail_if((int)strlen(buf) != eina_stringshare_strlen(t1));
 
-	eina_stringshare_del(t0);
-	eina_stringshare_del(t1);
+        eina_stringshare_del(t0);
+        eina_stringshare_del(t1);
      }
 
-   eina_shutdown();
+        eina_shutdown();
 }
 END_TEST
 
@@ -113,7 +113,7 @@ START_TEST(eina_stringshare_test_share)
    fail_if(strcmp(t0, TEST0) != 0);
    fail_if(strcmp(t1, TEST0) != 0);
    fail_if(t0 != t1);
-   fail_if((int) strlen(t0) != eina_stringshare_strlen(t0));
+   fail_if((int)strlen(t0) != eina_stringshare_strlen(t0));
 
    eina_stringshare_del(t0);
    eina_stringshare_del(t1);
@@ -131,11 +131,11 @@ START_TEST(eina_stringshare_putstuff)
 
    for (i = 10000; i > 0; --i)
      {
-	char build[64] = "string_";
+        char build[64] = "string_";
 
-	eina_convert_xtoa(i, build + 7);
-	tmp = eina_stringshare_add(build);
-	fail_if(tmp != eina_stringshare_add(build));
+        eina_convert_xtoa(i, build + 7);
+        tmp = eina_stringshare_add(build);
+        fail_if(tmp != eina_stringshare_add(build));
      }
 
    eina_shutdown();
@@ -157,34 +157,34 @@ START_TEST(eina_stringshare_collision)
 
    for (i = 0; i < 10000; ++i)
      {
-	eina_convert_itoa(rand(), buffer);
-	eina_array_push(ea, (void*) eina_stringshare_add(buffer));
-	if (rand() > RAND_MAX / 2)
-	  {
-	     const char *r = eina_stringshare_add(buffer);
-	     fail_if(r == NULL);
-	  }
+        eina_convert_itoa(rand(), buffer);
+        eina_array_push(ea, (void *)eina_stringshare_add(buffer));
+        if (rand() > RAND_MAX / 2)
+          {
+             const char *r = eina_stringshare_add(buffer);
+             fail_if(r == NULL);
+          }
      }
 
    for (i = 0; i < 10000; ++i)
      {
-	const char *r;
+        const char *r;
 
-	eina_convert_itoa(60000 - i, buffer);
-	eina_array_push(ea, (void*) eina_stringshare_add(buffer));
-	r = eina_stringshare_add(buffer);
-	fail_if(r == NULL);
-	r = eina_stringshare_add(buffer);
-	fail_if(r == NULL);
+        eina_convert_itoa(60000 - i, buffer);
+        eina_array_push(ea, (void *)eina_stringshare_add(buffer));
+        r = eina_stringshare_add(buffer);
+        fail_if(r == NULL);
+        r = eina_stringshare_add(buffer);
+        fail_if(r == NULL);
      }
 
    for (i = 0; i < 200; ++i)
-     eina_stringshare_del(eina_array_data_get(ea, i));
+      eina_stringshare_del(eina_array_data_get(ea, i));
 
    for (i = 0; i < 1000; ++i)
-     eina_stringshare_del(eina_array_pop(ea));
+      eina_stringshare_del(eina_array_pop(ea));
 
-   eina_shutdown();
+      eina_shutdown();
 
    eina_array_free(ea);
 }

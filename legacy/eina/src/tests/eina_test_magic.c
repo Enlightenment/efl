@@ -61,7 +61,8 @@ START_TEST(eina_magic_simple)
    eina_magic_string_set(EINA_MAGIC_TEST2, EINA_MAGIC_STRING);
 
    fail_if(eina_magic_string_get(EINA_MAGIC_TEST) == NULL);
-   fail_if(strcmp(eina_magic_string_get(EINA_MAGIC_TEST), EINA_MAGIC_STRING) != 0);
+   fail_if(strcmp(eina_magic_string_get(
+                     EINA_MAGIC_TEST), EINA_MAGIC_STRING) != 0);
 
 #ifdef EINA_MAGIC_DEBUG
    fail_if(EINA_MAGIC_CHECK(ems, EINA_MAGIC_TEST));
@@ -75,7 +76,8 @@ START_TEST(eina_magic_simple)
    fail_if(!EINA_MAGIC_CHECK(ems, EINA_MAGIC_TEST));
 
    EINA_MAGIC_SET(ems, EINA_MAGIC_NONE);
-   fprintf(stderr, "you should see 'Input handle has already been freed' below\n");
+   fprintf(stderr,
+           "you should see 'Input handle has already been freed' below\n");
    EINA_MAGIC_FAIL(ems, EINA_MAGIC_TEST);
 
    EINA_MAGIC_SET(ems, 42424242);

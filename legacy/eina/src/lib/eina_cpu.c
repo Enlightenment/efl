@@ -26,7 +26,9 @@
 #  include <windows.h>
 # elif defined (__SUNPRO_C) || defined(__GNU__)
 #  include <unistd.h>
-# elif defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__) || ( defined (__MACH__) && defined (__APPLE__))
+# elif defined (__FreeBSD__) || defined (__OpenBSD__) || \
+   defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__) || \
+   (defined (__MACH__) && defined (__APPLE__))
 #  include <unistd.h>
 #  include <sys/param.h>
 #  include <sys/sysctl.h>
@@ -48,67 +50,70 @@
 #include "eina_cpu.h"
 
 /*============================================================================*
- *                                  Local                                     *
- *============================================================================*/
+*                                  Local                                     *
+*============================================================================*/
 
 /* FIXME this ifdefs should be replaced */
 #if defined(__i386__) || defined(__x86_64__)
 /* We save ebx and restore it to be PIC compatible */
 static inline void _x86_cpuid(int op, int *a, int *b, int *c, int *d)
 {
-	asm volatile(
+   asm volatile (
 #if defined(__x86_64__)
-		"pushq %%rbx      \n\t" /* save %ebx */
+      "pushq %%rbx      \n\t" /* save %ebx */
 #else
-		"pushl %%ebx      \n\t" /* save %ebx */
+      "pushl %%ebx      \n\t" /* save %ebx */
 #endif
-		"cpuid            \n\t"
-		"movl %%ebx, %1   \n\t" /* save what cpuid just put in %ebx */
+      "cpuid            \n\t"
+      "movl %%ebx, %1   \n\t" /* save what cpuid just put in %ebx */
 #if defined(__x86_64__)
-		"popq %%rbx       \n\t" /* restore the old %ebx */
+      "popq %%rbx       \n\t" /* restore the old %ebx */
 #else
-		"popl %%ebx       \n\t" /* restore the old %ebx */
+      "popl %%ebx       \n\t" /* restore the old %ebx */
 #endif
-		: "=a"(*a), "=r"(*b), "=c"(*c), "=d"(*d)
-		: "a"(op)
-		: "cc");
+      : "=a" (*a), "=r" (*b), "=c" (*c), "=d" (*d)
+      : "a" (op)
+      : "cc");
 }
 
 static
 void _x86_simd(Eina_Cpu_Features *features)
 {
-	int a, b, c, d;
+   int a, b, c, d;
 
-	_x86_cpuid(1, &a, &b, &c, &d);
-	/*
-	 * edx
-	 * 18 = PN (Processor Number)
-	 * 19 = CLFlush (Cache Line Flush)
-	 * 23 = MMX
-	 * 25 = SSE
-	 * 26 = SSE2
-	 * 28 = HTT (Hyper Threading)
-	 * ecx
-	 * 0 = SSE3
-	 */
-	if ((d >> 23) & 1)
-		*features |= EINA_CPU_MMX;
-	if ((d >> 25) & 1)
-		*features |= EINA_CPU_SSE;
-	if ((d >> 26) & 1)
-		*features |= EINA_CPU_SSE2;
-	if (c & 1)
-		*features |= EINA_CPU_SSE3;
+   _x86_cpuid(1, &a, &b, &c, &d);
+   /*
+    * edx
+    * 18 = PN (Processor Number)
+    * 19 = CLFlush (Cache Line Flush)
+    * 23 = MMX
+    * 25 = SSE
+    * 26 = SSE2
+    * 28 = HTT (Hyper Threading)
+    * ecx
+    * 0 = SSE3
+    */
+   if ((d >> 23) & 1)
+      *features |= EINA_CPU_MMX;
+
+   if ((d >> 25) & 1)
+      *features |= EINA_CPU_SSE;
+
+   if ((d >> 26) & 1)
+      *features |= EINA_CPU_SSE2;
+
+   if (c & 1)
+      *features |= EINA_CPU_SSE3;
 }
 #endif
 
 /*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+*                                 Global                                     *
+*============================================================================*/
 
 /*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+*                                   API                                      *
+*============================================================================*/
 
 /* FIXME the features checks should be called when this function is called?
  * or make it static by doing eina_cpu_init() and return a local var
@@ -119,11 +124,11 @@ void _x86_simd(Eina_Cpu_Features *features)
  */
 EAPI Eina_Cpu_Features eina_cpu_features_get(void)
 {
-	Eina_Cpu_Features ecf = 0;
+   Eina_Cpu_Features ecf = 0;
 #if defined(__i386__) || defined(__x86_64__)
-	_x86_simd(&ecf);
+   _x86_simd(&ecf);
 #endif
-	return ecf;
+   return ecf;
 }
 
 EAPI int eina_cpu_count(void)
@@ -149,10 +154,12 @@ EAPI int eina_cpu_count(void)
     */
    return sysconf(_SC_NPROCESSORS_ONLN);
 
-# elif defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__) || ( defined (__MACH__) && defined (__APPLE__))
+# elif defined (__FreeBSD__) || defined (__OpenBSD__) || \
+   defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__) || \
+   (defined (__MACH__) && defined (__APPLE__))
 
-   int    mib[4];
-   int    cpus;
+   int mib[4];
+   int cpus;
    size_t len = sizeof(cpus);
 
    mib[0] = CTL_HW;
@@ -163,7 +170,7 @@ EAPI int eina_cpu_count(void)
 #endif
    sysctl(mib, 2, &cpus, &len, NULL, 0);
    if (cpus < 1)
-     cpus = 1;
+      cpus = 1;
 
    return cpus;
 
@@ -172,18 +179,23 @@ EAPI int eina_cpu_count(void)
    int i;
    static int cpus = 0;
 
-   if (cpus != 0) return cpus;
+   if (cpus != 0)
+      return cpus;
 
    CPU_ZERO(&cpu);
    if (sched_getaffinity(0, sizeof(cpu), &cpu) != 0)
      {
-	fprintf(stderr, "[Eina] could not get cpu affinity: %s\n", strerror(errno));
-	return 1;
+        fprintf(stderr, "[Eina] could not get cpu affinity: %s\n",
+                strerror(errno));
+        return 1;
      }
+
    for (i = 0; i < TH_MAX; i++)
      {
-	if (CPU_ISSET(i, &cpu)) cpus = i + 1;
-	else break;
+        if (CPU_ISSET(i, &cpu))
+           cpus = i + 1;
+        else
+           break;
      }
    return cpus;
 

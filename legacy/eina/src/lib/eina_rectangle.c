@@ -40,8 +40,8 @@
 #include "eina_rectangle.h"
 
 /*============================================================================*
- *                                  Local                                     *
- *============================================================================*/
+*                                  Local                                     *
+*============================================================================*/
 
 /**
  * @cond LOCAL
@@ -78,17 +78,17 @@ struct _Eina_Rectangle_Alloc
    EINA_MAGIC
 };
 
-#define EINA_MAGIC_CHECK_RECTANGLE_POOL(d)		       \
-  do {							       \
-     if (!EINA_MAGIC_CHECK((d), EINA_RECTANGLE_POOL_MAGIC))    \
-       EINA_MAGIC_FAIL((d), EINA_RECTANGLE_POOL_MAGIC);	       \
-  } while (0)
+#define EINA_MAGIC_CHECK_RECTANGLE_POOL(d)                     \
+   do {                                                         \
+        if (!EINA_MAGIC_CHECK((d), EINA_RECTANGLE_POOL_MAGIC)) {    \
+             EINA_MAGIC_FAIL((d), EINA_RECTANGLE_POOL_MAGIC); }        \
+     } while (0)
 
-#define EINA_MAGIC_CHECK_RECTANGLE_ALLOC(d)		       \
-  do {							       \
-     if (!EINA_MAGIC_CHECK((d), EINA_RECTANGLE_ALLOC_MAGIC))   \
-       EINA_MAGIC_FAIL((d), EINA_RECTANGLE_ALLOC_MAGIC);       \
-  } while (0)
+#define EINA_MAGIC_CHECK_RECTANGLE_ALLOC(d)                    \
+   do {                                                         \
+        if (!EINA_MAGIC_CHECK((d), EINA_RECTANGLE_ALLOC_MAGIC)) {   \
+             EINA_MAGIC_FAIL((d), EINA_RECTANGLE_ALLOC_MAGIC); }       \
+     } while (0)
 
 static Eina_Mempool *_eina_rectangle_alloc_mp = NULL;
 static Eina_Mempool *_eina_rectangle_mp = NULL;
@@ -123,47 +123,49 @@ _eina_rectangle_merge_list(Eina_List *empty, Eina_Rectangle *r)
 
    if (r->w == 0 || r->h == 0)
      {
-	eina_rectangle_free(r);
-	return empty;
+        eina_rectangle_free(r);
+        return empty;
      }
 
- start_again:
+start_again:
    xw = r->x + r->w;
    yh = r->y + r->h;
 
    EINA_LIST_FOREACH(empty, l, match)
-     {
-	if (match->x == r->x && match->w == r->w
-	    && (match->y == yh || r->y == match->y + match->h))
-	  {
-	     if (match->y > r->y)
-	       match->y = r->y;
-	     match->h += r->h;
+   {
+      if (match->x == r->x && match->w == r->w
+          && (match->y == yh || r->y == match->y + match->h))
+        {
+           if (match->y > r->y)
+              match->y = r->y;
 
-	     eina_rectangle_free(r);
+           match->h += r->h;
 
-	     empty = eina_list_remove_list(empty, l);
+           eina_rectangle_free(r);
 
-	     r = match;
+           empty = eina_list_remove_list(empty, l);
 
-	     goto start_again;
-	  }
-	else if (match->y == r->y && match->h == r->h
-		 && (match->x == xw || r->x == match->x + match->w))
-	  {
-	     if (match->x > r->x)
-	       match->x = r->x;
-	     match->w += r->w;
+           r = match;
 
-	     eina_rectangle_free(r);
+           goto start_again;
+        }
+      else if (match->y == r->y && match->h == r->h
+               && (match->x == xw || r->x == match->x + match->w))
+        {
+           if (match->x > r->x)
+              match->x = r->x;
 
-	     empty = eina_list_remove_list(empty, l);
+           match->w += r->w;
 
-	     r = match;
+           eina_rectangle_free(r);
 
-	     goto start_again;
-	  }
-     }
+           empty = eina_list_remove_list(empty, l);
+
+           r = match;
+
+           goto start_again;
+        }
+   }
 
    return eina_list_append(empty, r);
 }
@@ -175,60 +177,62 @@ _eina_rectangle_empty_space_find(Eina_List *empty, int w, int h, int *x, int *y)
    Eina_List *l;
 
    EINA_LIST_FOREACH(empty, l, r)
-     {
-	if (r->w >= w && r->h >= h)
-	  {
-	     /* Remove l from empty */
-	     empty = eina_list_remove_list(empty, l);
-	     /* Remember x and y */
-	     *x = r->x;
-	     *y = r->y;
-	     /* Split r in 2 rectangle if needed (only the empty one) and insert them */
-	     if (r->w == w)
-	       {
-		  r->y += h;
-		  r->h -= h;
-	       }
-	     else if (r->h == h)
-	       {
-		  r->x += w;
-		  r->w -= w;
-	       }
-	     else
-	       {
-		  int rx1, ry1, rw1, rh1;
-		  int x2, y2, w2, h2;
+   {
+      if (r->w >= w && r->h >= h)
+        {
+           /* Remove l from empty */
+           empty = eina_list_remove_list(empty, l);
+           /* Remember x and y */
+           *x = r->x;
+           *y = r->y;
+           /* Split r in 2 rectangle if needed (only the empty one) and insert them */
+           if (r->w == w)
+             {
+                r->y += h;
+                r->h -= h;
+             }
+           else if (r->h == h)
+             {
+                r->x += w;
+                r->w -= w;
+             }
+           else
+             {
+                int rx1, ry1, rw1, rh1;
+                int x2, y2, w2, h2;
 
-		  rx1 = r->x + w;
-		  ry1 = r->y;
-		  rw1 = r->w - w;
-		  /* h1 could be h or r->h */
-		  x2 = r->x;
-		  y2 = r->y + h;
-		  /* w2 could be w or r->w */
-		  h2 = r->h - h;
+                rx1 = r->x + w;
+                ry1 = r->y;
+                rw1 = r->w - w;
+                /* h1 could be h or r->h */
+                x2 = r->x;
+                y2 = r->y + h;
+                /* w2 could be w or r->w */
+                h2 = r->h - h;
 
-		  if (rw1 * r->h > h2 * r->w)
-		    {
-		       rh1 = r->h;
-		       w2 = w;
-		    }
-		  else
-		    {
-		       rh1 = h;
-		       w2 = r->w;
-		    }
+                if (rw1 * r->h > h2 * r->w)
+                  {
+                     rh1 = r->h;
+                     w2 = w;
+                  }
+                else
+                  {
+                     rh1 = h;
+                     w2 = r->w;
+                  }
 
-		  EINA_RECTANGLE_SET(r, rx1, ry1, rw1, rh1);
-		  empty = _eina_rectangle_merge_list(empty, r);
+                EINA_RECTANGLE_SET(r, rx1, ry1, rw1, rh1);
+                empty = _eina_rectangle_merge_list(empty, r);
 
-		  r = eina_rectangle_new(x2, y2, w2, h2);
-	       }
-	     if (r) empty = _eina_rectangle_merge_list(empty, r);
-	     /* Return empty */
-	     return empty;
-	  }
-     }
+                r = eina_rectangle_new(x2, y2, w2, h2);
+             }
+
+           if (r)
+              empty = _eina_rectangle_merge_list(empty, r);  /* Return empty */
+
+           return empty;
+        }
+   }
 
    *x = -1;
    *y = -1;
@@ -240,19 +244,20 @@ _eina_rectangle_empty_space_find(Eina_List *empty, int w, int h, int *x, int *y)
  */
 
 /*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+*                                 Global                                     *
+*============================================================================*/
 
 Eina_Bool
 eina_rectangle_init(void)
 {
    const char *choice, *tmp;
 
-   _eina_rectangle_log_dom = eina_log_domain_register("eina_rectangle", EINA_LOG_COLOR_DEFAULT);
+   _eina_rectangle_log_dom = eina_log_domain_register("eina_rectangle",
+                                                      EINA_LOG_COLOR_DEFAULT);
    if (_eina_rectangle_log_dom < 0)
      {
-	EINA_LOG_ERR("Could not register log domain: eina_rectangle");
-	return EINA_FALSE;
+        EINA_LOG_ERR("Could not register log domain: eina_rectangle");
+        return EINA_FALSE;
      }
 
 #ifdef EINA_DEFAULT_MEMPOOL
@@ -262,11 +267,11 @@ eina_rectangle_init(void)
 #endif
    tmp = getenv("EINA_MEMPOOL");
    if (tmp && tmp[0])
-     choice = tmp;
+      choice = tmp;
 
    _eina_rectangle_alloc_mp = eina_mempool_add
-     (choice, "rectangle-alloc", NULL,
-      sizeof(Eina_Rectangle_Alloc) + sizeof(Eina_Rectangle), 1024);
+         (choice, "rectangle-alloc", NULL,
+         sizeof(Eina_Rectangle_Alloc) + sizeof(Eina_Rectangle), 1024);
    if (!_eina_rectangle_alloc_mp)
      {
         ERR("Mempool for rectangle cannot be allocated in rectangle init.");
@@ -274,7 +279,7 @@ eina_rectangle_init(void)
      }
 
    _eina_rectangle_mp = eina_mempool_add
-     (choice, "rectangle", NULL, sizeof(Eina_Rectangle), 256);
+         (choice, "rectangle", NULL, sizeof(Eina_Rectangle), 256);
    if (!_eina_rectangle_mp)
      {
         ERR("Mempool for rectangle cannot be allocated in rectangle init.");
@@ -283,7 +288,7 @@ eina_rectangle_init(void)
 
    return EINA_TRUE;
 
- init_error:
+init_error:
    eina_log_domain_unregister(_eina_rectangle_log_dom);
    _eina_rectangle_log_dom = -1;
 
@@ -296,7 +301,7 @@ eina_rectangle_shutdown(void)
    Eina_Rectangle *del;
 
    while ((del = eina_trash_pop(&_eina_rectangles)))
-     eina_mempool_free(_eina_rectangle_mp, del);
+      eina_mempool_free(_eina_rectangle_mp, del);
    _eina_rectangles_count = 0;
 
    eina_mempool_del(_eina_rectangle_alloc_mp);
@@ -309,8 +314,8 @@ eina_rectangle_shutdown(void)
 }
 
 /*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+*                                   API                                      *
+*============================================================================*/
 
 /**
  * @brief Create a new rectangle.
@@ -333,14 +338,14 @@ eina_rectangle_new(int x, int y, int w, int h)
 
    if (_eina_rectangles)
      {
-	rect = eina_trash_pop(&_eina_rectangles);
-	_eina_rectangles_count--;
+        rect = eina_trash_pop(&_eina_rectangles);
+        _eina_rectangles_count--;
      }
    else
-     {
-	rect = eina_mempool_malloc(_eina_rectangle_mp, sizeof (Eina_Rectangle));
-     }
-   if (!rect) return NULL;
+      rect = eina_mempool_malloc(_eina_rectangle_mp, sizeof (Eina_Rectangle));
+
+   if (!rect)
+      return NULL;
 
    EINA_RECTANGLE_SET(rect, x, y, w, h);
 
@@ -360,13 +365,11 @@ eina_rectangle_free(Eina_Rectangle *rect)
    EINA_SAFETY_ON_NULL_RETURN(rect);
 
    if (_eina_rectangles_count > BUCKET_THRESHOLD)
-     {
-	eina_mempool_free(_eina_rectangle_mp, rect);
-     }
+      eina_mempool_free(_eina_rectangle_mp, rect);
    else
      {
-	eina_trash_push(&_eina_rectangles, rect);
-	_eina_rectangles_count++;
+        eina_trash_push(&_eina_rectangles, rect);
+        _eina_rectangles_count++;
      }
 }
 
@@ -376,7 +379,8 @@ eina_rectangle_pool_new(int w, int h)
    Eina_Rectangle_Pool *new;
 
    new = malloc(sizeof (Eina_Rectangle_Pool));
-   if (!new) return NULL;
+   if (!new)
+      return NULL;
 
    new->head = NULL;
    new->empty = eina_list_append(NULL, eina_rectangle_new(0, 0, w, h));
@@ -403,21 +407,21 @@ eina_rectangle_pool_free(Eina_Rectangle_Pool *pool)
        pool, pool->w, pool->h, pool->references);
    while (pool->head)
      {
-	del = (Eina_Rectangle_Alloc*) pool->head;
+        del = (Eina_Rectangle_Alloc *)pool->head;
 
-	pool->head = (EINA_INLIST_GET(del))->next;
+        pool->head = (EINA_INLIST_GET(del))->next;
 
-	EINA_MAGIC_SET(del, EINA_MAGIC_NONE);
-	eina_mempool_free(_eina_rectangle_alloc_mp, del);
+        EINA_MAGIC_SET(del, EINA_MAGIC_NONE);
+        eina_mempool_free(_eina_rectangle_alloc_mp, del);
      }
 
    while (pool->bucket)
      {
-	del = eina_trash_pop(&pool->bucket);
-	eina_mempool_free(_eina_rectangle_alloc_mp, del);
+        del = eina_trash_pop(&pool->bucket);
+        eina_mempool_free(_eina_rectangle_alloc_mp, del);
      }
 
-   MAGIC_FREE(pool);
+        MAGIC_FREE(pool);
 }
 
 /**
@@ -448,33 +452,40 @@ eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h)
    DBG("pool=%p, size=(%d, %d), references=%u",
        pool, pool->w, pool->h, pool->references);
 
-   if (w <= 0 || h <= 0) return NULL;
-   if (w > pool->w || h > pool->h) return NULL;
+   if (w <= 0 || h <= 0)
+      return NULL;
+
+   if (w > pool->w || h > pool->h)
+      return NULL;
 
    /* Sort empty if dirty */
    if (pool->sorted)
      {
-	pool->empty = eina_list_sort(pool->empty, 0, EINA_COMPARE_CB(_eina_rectangle_cmp));
-	pool->sorted = EINA_TRUE;
+        pool->empty =
+           eina_list_sort(pool->empty, 0, EINA_COMPARE_CB(_eina_rectangle_cmp));
+        pool->sorted = EINA_TRUE;
      }
 
    pool->empty = _eina_rectangle_empty_space_find(pool->empty, w, h, &x, &y);
-   if (x == -1) return NULL;
+   if (x == -1)
+      return NULL;
+
    pool->sorted = EINA_FALSE;
 
    if (pool->bucket_count > 0)
      {
-	new = eina_trash_pop(&pool->bucket);
-	pool->bucket_count--;
+        new = eina_trash_pop(&pool->bucket);
+        pool->bucket_count--;
      }
    else
-     {
-	new = eina_mempool_malloc(_eina_rectangle_alloc_mp,
-				  sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle));
-     }
-   if (!new) return NULL;
+      new = eina_mempool_malloc(_eina_rectangle_alloc_mp,
+                                sizeof (Eina_Rectangle_Alloc) +
+                                sizeof (Eina_Rectangle));
 
-   rect = (Eina_Rectangle*) (new + 1);
+   if (!new)
+      return NULL;
+
+   rect = (Eina_Rectangle *)(new + 1);
    eina_rectangle_coords_from(rect, x, y, w, h);
 
    pool->head = eina_inlist_prepend(pool->head, EINA_INLIST_GET(new));
@@ -492,7 +503,7 @@ eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h)
 EAPI void
 eina_rectangle_pool_release(Eina_Rectangle *rect)
 {
-   Eina_Rectangle_Alloc *era = ((Eina_Rectangle_Alloc *) rect) - 1;
+   Eina_Rectangle_Alloc *era = ((Eina_Rectangle_Alloc *)rect) - 1;
    Eina_Rectangle *r;
 
    EINA_SAFETY_ON_NULL_RETURN(rect);
@@ -509,23 +520,23 @@ eina_rectangle_pool_release(Eina_Rectangle *rect)
    r = eina_rectangle_new(rect->x, rect->y, rect->w, rect->h);
    if (r)
      {
-	era->pool->empty = _eina_rectangle_merge_list(era->pool->empty, r);
-	era->pool->sorted = EINA_FALSE;
+        era->pool->empty = _eina_rectangle_merge_list(era->pool->empty, r);
+        era->pool->sorted = EINA_FALSE;
      }
 
    if (era->pool->bucket_count < BUCKET_THRESHOLD)
      {
-	Eina_Rectangle_Pool *pool;
+        Eina_Rectangle_Pool *pool;
 
-	pool = era->pool;
+        pool = era->pool;
 
-	pool->bucket_count++;
-	eina_trash_push(&pool->bucket, era);
+        pool->bucket_count++;
+        eina_trash_push(&pool->bucket, era);
      }
    else
      {
-	EINA_MAGIC_SET(era, EINA_MAGIC_NONE);
-	eina_mempool_free(_eina_rectangle_alloc_mp, era);
+        EINA_MAGIC_SET(era, EINA_MAGIC_NONE);
+        eina_mempool_free(_eina_rectangle_alloc_mp, era);
      }
 }
 
@@ -541,7 +552,7 @@ eina_rectangle_pool_release(Eina_Rectangle *rect)
 EAPI Eina_Rectangle_Pool *
 eina_rectangle_pool_get(Eina_Rectangle *rect)
 {
-   Eina_Rectangle_Alloc *era = ((Eina_Rectangle_Alloc *) rect) - 1;
+   Eina_Rectangle_Alloc *era = ((Eina_Rectangle_Alloc *)rect) - 1;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(rect, NULL);
 
@@ -569,7 +580,7 @@ eina_rectangle_pool_data_set(Eina_Rectangle_Pool *pool, const void *data)
    DBG("data=%p pool=%p, size=(%d, %d), references=%u",
        data, pool, pool->w, pool->h, pool->references);
 
-   pool->data = (void*) data;
+   pool->data = (void *)data;
 }
 
 /**
@@ -607,13 +618,17 @@ eina_rectangle_pool_data_get(Eina_Rectangle_Pool *pool)
 EAPI Eina_Bool
 eina_rectangle_pool_geometry_get(Eina_Rectangle_Pool *pool, int *w, int *h)
 {
-   if (!pool) return EINA_FALSE;
+   if (!pool)
+      return EINA_FALSE;
 
    EINA_MAGIC_CHECK_RECTANGLE_POOL(pool);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pool, EINA_FALSE);
 
-   if (w) *w = pool->w;
-   if (h) *h = pool->h;
+   if (w)
+      *w = pool->w;
+
+   if (h)
+      *h = pool->h;
 
    return EINA_TRUE;
 }

@@ -158,8 +158,8 @@
  */
 
 /*============================================================================*
- *                                  Local                                     *
- *============================================================================*/
+*                                  Local                                     *
+*============================================================================*/
 
 /**
  * @cond LOCAL
@@ -184,19 +184,20 @@ _eina_error_msg_alloc(void)
 
    if (_eina_errors_count == _eina_errors_allocated)
      {
-	void *tmp;
-	size_t size;
+        void *tmp;
+        size_t size;
 
-	if (EINA_UNLIKELY(_eina_errors_allocated == 0))
-	  size = 24;
-	else
-	  size = _eina_errors_allocated + 8;
+        if (EINA_UNLIKELY(_eina_errors_allocated == 0))
+           size = 24;
+        else
+           size = _eina_errors_allocated + 8;
 
-	tmp = realloc(_eina_errors, sizeof(Eina_Error_Message) * size);
-	if (!tmp)
-	  return NULL;
-	_eina_errors = tmp;
-	_eina_errors_allocated = size;
+        tmp = realloc(_eina_errors, sizeof(Eina_Error_Message) * size);
+        if (!tmp)
+           return NULL;
+
+        _eina_errors = tmp;
+        _eina_errors_allocated = size;
      }
 
    idx = _eina_errors_count;
@@ -210,8 +211,8 @@ _eina_error_msg_alloc(void)
 
 
 /*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+*                                 Global                                     *
+*============================================================================*/
 
 /**
  * @cond LOCAL
@@ -242,7 +243,8 @@ Eina_Bool
 eina_error_init(void)
 {
    /* TODO register the eina's basic errors */
-   EINA_ERROR_OUT_OF_MEMORY = eina_error_msg_static_register(EINA_ERROR_OUT_OF_MEMORY_STR);
+   EINA_ERROR_OUT_OF_MEMORY = eina_error_msg_static_register(
+         EINA_ERROR_OUT_OF_MEMORY_STR);
    return EINA_TRUE;
 }
 
@@ -266,10 +268,10 @@ eina_error_shutdown(void)
    eem_end = eem + _eina_errors_count;
 
    for (; eem < eem_end; eem++)
-     if (eem->string_allocated)
-       free((char *)eem->string);
+      if (eem->string_allocated)
+         free((char *)eem->string);
 
-   free(_eina_errors);
+         free(_eina_errors);
    _eina_errors = NULL;
    _eina_errors_count = 0;
    _eina_errors_allocated = 0;
@@ -278,8 +280,8 @@ eina_error_shutdown(void)
 }
 
 /*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+*                                   API                                      *
+*============================================================================*/
 
 /**
  * @addtogroup Eina_Error_Group Error
@@ -320,14 +322,14 @@ eina_error_msg_register(const char *msg)
 
    eem = _eina_error_msg_alloc();
    if (!eem)
-     return 0;
+      return 0;
 
    eem->string_allocated = EINA_TRUE;
    eem->string = strdup(msg);
    if (!eem->string)
      {
-	_eina_errors_count--;
-	return 0;
+        _eina_errors_count--;
+        return 0;
      }
 
    return _eina_errors_count; /* identifier = index + 1 (== _count). */
@@ -357,7 +359,7 @@ eina_error_msg_static_register(const char *msg)
 
    eem = _eina_error_msg_alloc();
    if (!eem)
-     return 0;
+      return 0;
 
    eem->string_allocated = EINA_FALSE;
    eem->string = msg;
@@ -385,17 +387,19 @@ eina_error_msg_modify(Eina_Error error, const char *msg)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(msg, EINA_FALSE);
    if (error < 1)
-     return EINA_FALSE;
+      return EINA_FALSE;
+
    if ((size_t)error > _eina_errors_count)
-     return EINA_FALSE;
+      return EINA_FALSE;
+
    if (_eina_errors[error - 1].string_allocated)
      {
         const char *tmp;
 
         if (!(tmp = strdup(msg)))
-             return EINA_FALSE;
+           return EINA_FALSE;
 
-        free((void*)_eina_errors[error - 1].string);
+        free((void *)_eina_errors[error - 1].string);
         _eina_errors[error - 1].string = tmp;
         return EINA_TRUE;
      }
@@ -418,9 +422,11 @@ EAPI const char *
 eina_error_msg_get(Eina_Error error)
 {
    if (error < 1)
-     return NULL;
+      return NULL;
+
    if ((size_t)error > _eina_errors_count)
-     return NULL;
+      return NULL;
+
    return _eina_errors[error - 1].string;
 }
 

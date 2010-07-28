@@ -35,28 +35,29 @@ eina_bench_eina_rectangle_pool(int request)
    eina_init();
 
    pool = eina_rectangle_pool_new(2048, 2048);
-   if (!pool) return ;
-
+   if (!pool)
+      return;
 
    for (i = 0; i < request; ++i)
      {
-	rect = NULL;
+        rect = NULL;
 
-	while (!rect)
-	  {
-	     rect = eina_rectangle_pool_request(pool, i & 0xFF, 256 - (i & 0xFF));
-	     if (!rect)
-	       {
-		  rect = eina_list_data_get(list);
-		  list = eina_list_remove_list(list, list);
-		  if (rect) eina_rectangle_pool_release(rect);
-	       }
-	     else
-	       {
-		  list = eina_list_append(list, rect);
-	       }
-	     if (!(i & 0xFF)) break;
-	  }
+        while (!rect)
+          {
+             rect = eina_rectangle_pool_request(pool, i & 0xFF, 256 - (i & 0xFF));
+             if (!rect)
+               {
+                  rect = eina_list_data_get(list);
+                  list = eina_list_remove_list(list, list);
+                  if (rect)
+                     eina_rectangle_pool_release(rect);
+               }
+             else
+                list = eina_list_append(list, rect);
+
+             if (!(i & 0xFF))
+                break;
+          }
      }
 
    eina_rectangle_pool_free(pool);
@@ -67,7 +68,9 @@ eina_bench_eina_rectangle_pool(int request)
 
 void eina_bench_rectangle_pool(Eina_Benchmark *bench)
 {
-   eina_benchmark_register(bench, "eina", EINA_BENCHMARK(eina_bench_eina_rectangle_pool), 10, 4000, 100);
+   eina_benchmark_register(bench, "eina",
+                           EINA_BENCHMARK(
+                              eina_bench_eina_rectangle_pool), 10, 4000, 100);
 }
 
 

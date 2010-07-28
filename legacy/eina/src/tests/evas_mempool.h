@@ -10,10 +10,10 @@ typedef struct _Evas_Mempool Evas_Mempool;
 
 struct _Evas_Mempool
 {
-   int           item_size;
-   int           pool_size;
-   int           usage;
-   void         *first, *last;
+   int item_size;
+   int pool_size;
+   int usage;
+   void *first, *last;
 };
 
 
