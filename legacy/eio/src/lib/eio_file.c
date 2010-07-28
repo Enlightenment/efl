@@ -2,6 +2,7 @@
  * Copyright (C) 2010 Enlightenment Developers:
  *           Cedric Bail <cedric.bail@free.fr>
  *           Vincent "caro" Torri  <vtorri at univ-evry dot fr>
+ *           Stephen "okra" Houston <UnixTitan@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,11 +25,30 @@
 
 #include <Ecore.h>
 
+#include <stdio.h>
+#include <string.h>
+
+#ifndef _MSC_VER
+# include <unistd.h>
+# include <libgen.h>
+#endif
+
+#ifdef HAVE_FEATURES_H
+# include <features.h>
+#endif
+#include <ctype.h>
+#include <errno.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+
 #include "Eio.h"
 
 typedef struct _Eio_File_Ls Eio_File_Ls;
 typedef struct _Eio_File_Direct_Ls Eio_File_Direct_Ls;
 typedef struct _Eio_File_Char_Ls Eio_File_Char_Ls;
+typedef struct _Eio_File_Op Eio_File_Op;
 
 struct _Eio_File
 {
@@ -59,6 +79,19 @@ struct _Eio_File_Char_Ls
 
    Eio_Filter_Cb filter_cb;
    Eio_Main_Cb main_cb;
+};
+
+struct _Eio_File_Op
+{
+   Eio_File common;
+   const char *file;
+   short int flags;
+   struct stat st;
+   int exists;
+   Eina_Bool can_read;
+   Eina_Bool can_write;
+   Eina_Bool can_execute;
+   Eio_File_Op_Main_Cb main_cb;
 };
 
 static int _eio_count = 0;
@@ -199,6 +232,109 @@ _eio_file_error(void *data)
    free(async);
 }
 
+static void
+_eio_file_op_cb(void *data)
+{
+   Eio_File_Op *async;
+
+   async = data;
+   if (stat(async->file, &async->st) >= 0)
+     {
+        if (async->flags & EIO_FILE_CAN_READ == EIO_FILE_CAN_READ)
+          {
+             if (!access(async->file, R_OK))
+               async->can_read = EINA_TRUE;
+             else
+               async->can_read = EINA_FALSE;
+          }
+        if (async->flags & EIO_FILE_CAN_WRITE == EIO_FILE_CAN_WRITE)
+          {
+             if (!access(async->file, W_OK))
+               async->can_write = EINA_TRUE;
+             else
+               async->can_write = EINA_FALSE;
+          }
+        if (async->flags & EIO_FILE_CAN_EXECUTE == EIO_FILE_CAN_EXECUTE)
+          {
+             if (!access(async->file, X_OK))
+               async->can_execute = EINA_TRUE;
+             else
+               async->can_execute = EINA_FALSE;
+          }
+        async->exists = 1;
+     }
+   else
+     async->exists = 0;
+}
+
+static void
+_eio_file_op_end(void *data)
+{
+   Eio_File_Op *async;
+   
+   async = data;
+
+   if (!async->exists)
+     {
+        if (async->flags & EIO_FILE_EXISTS == EIO_FILE_EXISTS)
+          async->main_cb((void *)EINA_FALSE, EIO_FILE_EXISTS, data);
+        ecore_thread_cancel(async->common.thread);
+        return;
+     }
+
+   if (async->flags & EIO_FILE_MOD_TIME == EIO_FILE_MOD_TIME)
+     async->main_cb((void *)async->st.st_mtime, EIO_FILE_MOD_TIME, data);
+   if (async->flags & EIO_FILE_SIZE == EIO_FILE_SIZE)
+     async->main_cb((void *)async->st.st_size, EIO_FILE_SIZE, data);   
+   if (async->flags & EIO_FILE_EXISTS == EIO_FILE_EXISTS)
+     async->main_cb((void *)EINA_TRUE, EIO_FILE_EXISTS, data);
+   if (async->flags & EIO_FILE_IS_DIR == EIO_FILE_IS_DIR)
+     {
+        if (S_ISDIR(async->st.st_mode))
+          async->main_cb((void *)EINA_TRUE, EIO_FILE_IS_DIR, data);
+        else
+          async->main_cb((void *)EINA_FALSE, EIO_FILE_IS_DIR, data);
+     }
+   if (async->flags & EIO_FILE_CAN_READ == EIO_FILE_CAN_READ)
+     {
+        if (async->can_read)
+          async->main_cb((void *)EINA_TRUE, EIO_FILE_CAN_READ, data);
+        else
+          async->main_cb((void *)EINA_FALSE, EIO_FILE_CAN_READ, data);
+     }
+   if (async->flags & EIO_FILE_CAN_WRITE == EIO_FILE_CAN_WRITE)
+     {
+        if (async->can_write)
+          async->main_cb((void *)EINA_TRUE, EIO_FILE_CAN_WRITE, data);
+        else
+          async->main_cb((void *)EINA_FALSE, EIO_FILE_CAN_WRITE, data);
+     }
+   if (async->flags & EIO_FILE_CAN_EXECUTE == EIO_FILE_CAN_EXECUTE)
+     {
+        if (async->can_execute)
+          async->main_cb((void *)EINA_TRUE, EIO_FILE_CAN_EXECUTE, data);
+        else
+          async->main_cb((void *)EINA_FALSE, EIO_FILE_CAN_EXECUTE, data);
+     }
+   if (async->common.done_cb)
+     async->common.done_cb((void *) async->common.data);
+
+   free(async);
+}
+
+static void
+_eio_file_op_error(void *data)
+{
+   Eio_File_Op *async;
+
+   async = data;
+
+   if (async->common.error_cb)
+     async->common.error_cb((void *) async->common.data);
+
+   free(async);
+}
+
 EAPI int
 eio_init(void)
 {
@@ -323,4 +459,48 @@ eio_file_cancel(Eio_File *ls)
    return ecore_thread_cancel(ls->thread);
 }
 
+/**
+ * @brief Perform standard File IO operations.
+ * @param file The file to operate on.
+ * @param flags Bit flags to specify which operations to do.
+ * @param main_cb Callback called from the main loop with the results of the file operations.
+ * @param done_cb Callback called from the main loop when the operations are through.
+ * @param error_cb Callback called from the main loop when the file operations could not be completed.
+ * @return A reference to the IO operation.
+ *
+ * eio_file_operation runs selected operations in a separated thread using
+ * ecore_thread_run. This prevents any locking in your apps.
+ */
+EAPI Eio_File *
+eio_file_operation(const char *file,
+		   short int eio_file_flags,
+		   Eio_File_Op_Main_Cb main_cb,
+		   Eio_Done_Cb done_cb,
+		   Eio_Done_Cb error_cb,
+		   const void *data)
+{
+   Eio_File_Op *async = NULL;
+
+   async = malloc(sizeof (Eio_File_Op));
+   if (!async) goto on_error;
+
+   async->main_cb = main_cb;
+   async->file = file;
+   async->flags = eio_file_flags;
+   async->common.done_cb = done_cb;
+   async->common.error_cb = error_cb;
+   async->common.data = data;
+
+   async->common.thread = ecore_thread_run(_eio_file_op_cb,
+					 _eio_file_op_end,
+					 _eio_file_op_error,
+					async);
+   if (!async->common.thread) goto on_error;
+
+   return &async->common;
+
+ on_error:
+   free(async);
+   return NULL;
+}
 
