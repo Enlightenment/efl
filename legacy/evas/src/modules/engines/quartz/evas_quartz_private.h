@@ -1,6 +1,7 @@
 #ifndef _EVAS_QUARTZ_PRIVATE_H_
 #define _EVAS_QUARTZ_PRIVATE_H_
 
+#include "evas_common.h"/* Also includes international specific stuff */
 #include "evas_engine.h"
 
 CG_EXTERN void CGContextResetClip (CGContextRef); // undocumented CoreGraphics function to clear clip rect/*
@@ -93,7 +94,7 @@ static int eng_font_ascent_get(void *data, void *font);
 static int eng_font_descent_get(void *data, void *font);
 static int eng_font_max_ascent_get(void *data, void *font);
 static int eng_font_max_descent_get(void *data, void *font);
-static void eng_font_string_size_get(void *data, void *font, const char *text, int *w, int *h);
+static void eng_font_string_size_get(void *data, void *font, const char *text, const Evas_BiDi_Props *intl_props, int *w, int *h);
 static int eng_font_inset_get(void *data, void *font, const char *text);
 static int eng_font_h_advance_get(void *data, void *font, const char *text);
 static int eng_font_v_advance_get(void *data, void *font, const char *text);

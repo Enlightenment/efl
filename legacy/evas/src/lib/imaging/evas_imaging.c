@@ -197,36 +197,86 @@ evas_imaging_font_line_advance_get(const Evas_Imaging_Font *fn)
 EAPI void
 evas_imaging_font_string_advance_get(const Evas_Imaging_Font *fn, const char *str, int *x, int *y)
 {
+   Evas_BiDi_Props intl_props;
+   Eina_Unicode *ustr;
    if (!fn) return;
-   evas_common_font_query_advance(fn->font, str, x, y);
+   ustr = evas_common_encoding_utf8_to_unicode(str, NULL);
+#ifdef BIDI_SUPPORT
+   evas_bidi_update_props(ustr, &intl_props);
+#endif
+   evas_common_font_query_advance(fn->font, ustr, &intl_props, x, y);
+#ifdef BIDI_SUPPORT
+   evas_bidi_props_clean(&intl_props);
+#endif
+   if (ustr) free(ustr);
 }
 
 EAPI void
 evas_imaging_font_string_size_query(const Evas_Imaging_Font *fn, const char *str, int *w, int *h)
 {
+   Evas_BiDi_Props intl_props;
+   Eina_Unicode *ustr;
    if (!fn) return;
-   evas_common_font_query_size(fn->font, str, w, h);
+   ustr = evas_common_encoding_utf8_to_unicode(str, NULL);
+#ifdef BIDI_SUPPORT
+   evas_bidi_update_props(ustr, &intl_props);
+#endif
+   evas_common_font_query_size(fn->font, ustr, &intl_props, w, h);
+#ifdef BIDI_SUPPORT
+   evas_bidi_props_clean(&intl_props);
+#endif
+   if (ustr) free(ustr);
 }
 
 EAPI int
 evas_imaging_font_string_inset_get(const Evas_Imaging_Font *fn, const char *str)
 {
+   Eina_Unicode *ustr;
+   int ret;
+   
    if (!fn) return 0;
-   return evas_common_font_query_inset(fn->font, str);
+   ustr = evas_common_encoding_utf8_to_unicode(str, NULL);
+   ret = evas_common_font_query_inset(fn->font, ustr);
+   if (ustr) free(ustr);
+   return ret;
 }
 
 EAPI int
 evas_imaging_font_string_char_coords_get(const Evas_Imaging_Font *fn, const char *str, int pos, int *cx, int *cy, int *cw, int *ch)
 {
+   int ret;
+   Evas_BiDi_Props intl_props;
+   Eina_Unicode *ustr;
    if (!fn) return 0;
-   return evas_common_font_query_char_coords(fn->font, str, pos, cx, cy, cw, ch);
+   ustr = evas_common_encoding_utf8_to_unicode(str, NULL);
+#ifdef BIDI_SUPPORT
+   evas_bidi_update_props(ustr, &intl_props);
+#endif
+   ret = evas_common_font_query_char_coords(fn->font, ustr, &intl_props, pos, cx, cy, cw, ch);
+#ifdef BIDI_SUPPORT
+   evas_bidi_props_clean(&intl_props);
+#endif
+   if (ustr) free(ustr);
+   return ret;
 }
 
 EAPI int
 evas_imaging_font_string_char_at_coords_get(const Evas_Imaging_Font *fn, const char *str, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
+   int ret;
+   Evas_BiDi_Props intl_props;
+   Eina_Unicode *ustr;
    if (!fn) return -1;
-   return evas_common_font_query_text_at_pos(fn->font, str, x, y, cx, cy, cw, ch);
+   ustr = evas_common_encoding_utf8_to_unicode(str, NULL);
+#ifdef BIDI_SUPPORT
+   evas_bidi_update_props(ustr, &intl_props);
+#endif
+   ret = evas_common_font_query_char_at_coords(fn->font, ustr, &intl_props, x, y, cx, cy, cw, ch);
+#ifdef BIDI_SUPPORT
+   evas_bidi_props_clean(&intl_props);
+#endif
+   if (ustr) free(ustr);
+   return ret;
 }
 
 EAPI void

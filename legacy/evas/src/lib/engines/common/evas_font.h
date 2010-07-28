@@ -4,6 +4,7 @@
 
 #ifndef _EVAS_FONT_H
 #define _EVAS_FONT_H
+#include "evas_bidi_utils.h"
 
 
 /* main */
@@ -18,14 +19,14 @@ EAPI int               evas_common_font_max_ascent_get       (RGBA_Font *fn);
 EAPI int               evas_common_font_max_descent_get      (RGBA_Font *fn);
 EAPI int               evas_common_font_get_line_advance     (RGBA_Font *fn);
 
-EAPI int               evas_common_font_utf8_get_next        (const unsigned char *buf, int *iindex);
-EAPI int               evas_common_font_utf8_get_prev        (const unsigned char *buf, int *iindex);
-EAPI int               evas_common_font_utf8_get_last        (const unsigned char *buf, int buflen);
-EAPI int               evas_common_font_utf8_get_len         (const unsigned char *buf);
+EINA_DEPRECATED EAPI int               evas_common_font_utf8_get_next        (const unsigned char *buf, int *iindex);
+EINA_DEPRECATED EAPI int               evas_common_font_utf8_get_prev        (const unsigned char *buf, int *iindex);
+EINA_DEPRECATED EAPI int               evas_common_font_utf8_get_last        (const unsigned char *buf, int buflen);
+EINA_DEPRECATED EAPI int               evas_common_font_utf8_get_len         (const unsigned char *buf);
 
 /* draw */
 
-EAPI void              evas_common_font_draw                 (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text);
+EAPI void              evas_common_font_draw                 (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props);
 EAPI int               evas_common_font_glyph_search         (RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl);
 EAPI RGBA_Font_Glyph  *evas_common_font_int_cache_glyph_get  (RGBA_Font_Int *fi, FT_UInt index);
 
@@ -62,12 +63,12 @@ EAPI RGBA_Font_Int    *evas_common_font_int_find             (const char *name, 
 /* query */
 
 EAPI int               evas_common_font_query_kerning        (RGBA_Font_Int* fi, FT_UInt prev, FT_UInt index, int* kerning);
-EAPI void              evas_common_font_query_size           (RGBA_Font *fn, const char *text, int *w, int *h);
-EAPI int               evas_common_font_query_inset          (RGBA_Font *fn, const char *text);
-EAPI void              evas_common_font_query_advance        (RGBA_Font *fn, const char *text, int *h_adv, int *v_adv);
-EAPI int               evas_common_font_query_char_coords    (RGBA_Font *fn, const char *text, int pos, int *cx, int *cy, int *cw, int *ch);
-EAPI int               evas_common_font_query_text_at_pos    (RGBA_Font *fn, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
-EAPI int               evas_common_font_query_last_up_to_pos (RGBA_Font *fn, const char *text, int x, int y);
+EAPI void              evas_common_font_query_size           (RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int *w, int *h);
+EAPI int               evas_common_font_query_inset          (RGBA_Font *fn, const Eina_Unicode *text);
+EAPI void              evas_common_font_query_advance        (RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int *h_adv, int *v_adv);
+EAPI int               evas_common_font_query_char_coords    (RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);
+EAPI int               evas_common_font_query_char_at_coords (RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch);
+EAPI int               evas_common_font_query_last_up_to_pos (RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int x, int y);
 
 void evas_common_font_load_init(void);
 void evas_common_font_load_shutdown(void);

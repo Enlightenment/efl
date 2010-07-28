@@ -1,3 +1,4 @@
+#include "evas_common.h" /* Also includes international specific stuff */
 #include "evas_engine.h"
 
 int _evas_engine_GL_glew_log_dom = -1;
@@ -986,7 +987,7 @@ eng_image_map_surface_free(void *data __UNUSED__, void *surface)
 }
 
 static void
-eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
+eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
 {
    Render_Engine *re;
 
@@ -1006,7 +1007,7 @@ eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y
 					      evas_gl_font_texture_new,
 					      evas_gl_font_texture_free,
 					      evas_gl_font_texture_draw);
-	evas_common_font_draw(im, context, font, x, y, text);
+	evas_common_font_draw(im, context, font, x, y, text, intl_props);
 	evas_common_draw_context_font_ext_set(context,
 					      NULL,
 					      NULL,

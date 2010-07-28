@@ -1,5 +1,5 @@
 #include "evas_common.h"
-#include "evas_intl_utils.h" /*defines INTERNATIONAL_SUPPORT if possible */
+#include "evas_bidi_utils.h" /*defines BIDI_SUPPORT if possible */
 #include "evas_font_private.h" /* for Frame-Queuing support */
 
 EAPI int
@@ -56,9 +56,15 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
    return error;
 }
 
-/* string extents */
+/* size of the string (width and height) in pixels
+ * BiDi handling: We recieve the shaped string + other props from intl_props,
+ * We only care about the size, and the size does not depend on the visual order.
+ * As long as we follow the logical string and get kerning data like we should,
+ * we are fine.
+ */
+
 EAPI void
-evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
+evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int *w, int *h)
 {
    int use_kerning;
    int pen_x, pen_y;
@@ -78,14 +84,14 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 //   evas_common_font_size_use(fn);
    use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    prev_index = 0;
-   for (chr = 0; text[chr];)
+   for (chr = 0; *text; text++)
      {
 	FT_UInt index;
 	RGBA_Font_Glyph *fg;
-	int chr_x, chr_y, chr_w;
+	int chr_x, chr_y, advw;
         int gl, kern;
 
-	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
+	gl = *text;
 	if (gl == 0) break;
 	index = evas_common_font_glyph_search(fn, &fi, gl);
 	LKL(fi->ft_mutex);
@@ -101,9 +107,9 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 	/* you want performance */
 	kern = 0;
 	if ((use_kerning) && (prev_index) && (index) &&
-	    (pface == fi->src->ft.face))
-	  if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
-	    pen_x += kern;
+	    (pface == fi->src->ft.face) && 
+            evas_common_font_query_kerning(fi, prev_index, index, &kern))
+	   pen_x += kern;
 
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
@@ -111,21 +117,28 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 	if (!fg) continue;
 
 	if (kern < 0) kern = 0;
-	chr_x = ((pen_x - kern) + (fg->glyph_out->left));
-	chr_y = (pen_y + (fg->glyph_out->top));
-//	chr_w = fg->glyph_out->bitmap.width;
-	chr_w = fg->glyph_out->bitmap.width + kern;
-	  {
-	     int advw;
+	
+        /* We care about advancing the whole string size, and not the actual
+         * paint size of each string, so we only care about advancing correctly
+         * and not the actual glyph width */
+        advw = ((fg->glyph->advance.x + (kern << 16)) >> 16);
+        chr_x = pen_x - kern;
+	chr_y = pen_y;
+        /* If it's not a compositing char, i.e it advances, we should also add
+         * the left/top padding of the glyph. As we don't care about the padding
+         * as the drawing location remains the same.
+         */
+        if (advw > 0)
+          {
+             chr_x += fg->glyph_out->left;
+	     chr_y += fg->glyph_out->top;
+          }
 
-	     advw = ((fg->glyph->advance.x + (kern << 16)) >> 16);
-	     if (chr_w < advw) chr_w = advw;
-	  }
 
 	if ((!prev_index) && (chr_x < 0))
 	  start_x = chr_x;
-	if ((chr_x + chr_w) > end_x)
-	  end_x = chr_x + chr_w;
+	if ((chr_x + advw) > end_x)
+	  end_x = chr_x + advw;
 
 	pen_x += fg->glyph->advance.x >> 16;
 	prev_index = index;
@@ -136,7 +149,7 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 
 /* text x inset */
 EAPI int
-evas_common_font_query_inset(RGBA_Font *fn, const char *text)
+evas_common_font_query_inset(RGBA_Font *fn, const Eina_Unicode *text)
 {
    FT_UInt index;
    RGBA_Font_Glyph *fg;
@@ -147,8 +160,8 @@ evas_common_font_query_inset(RGBA_Font *fn, const char *text)
    fi = fn->fonts->data;
 
    chr = 0;
-   if (!text[0]) return 0;
-   gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
+   if (!*text) return 0;
+   gl = *text;
    if (gl == 0) return 0;
 //   evas_common_font_size_use(fn);
    index = evas_common_font_glyph_search(fn, &fi, gl);
@@ -180,14 +193,20 @@ evas_common_font_query_inset(RGBA_Font *fn, const char *text)
    return fg->glyph_out->left;
 }
 
-/* h & v advance */
+/* h & v advance
+ * BiDi handling: We recieve the shaped string + other props from intl_props,
+ * We don't care about the order, as heights will remain the same (we already did
+ * shaping) and as long as we go through the logical string and match the kerning
+ * this way, we are safe.
+ */
+
 EAPI void
-evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int *v_adv)
+evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int *h_adv, int *v_adv)
 {
    int use_kerning;
    int pen_x, pen_y;
    int start_x;
-   int chr;
+   int char_index;
    FT_UInt prev_index;
    RGBA_Font_Int *fi;
    FT_Face pface = NULL;
@@ -202,14 +221,13 @@ evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int 
    use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    FTUNLOCK();
    prev_index = 0;
-   for (chr = 0; text[chr];)
+   for (char_index = 0 ; *text ; text++, char_index++)
      {
 	FT_UInt index;
 	RGBA_Font_Glyph *fg;
-	int chr_x, chr_y, chr_w;
         int gl, kern;
 
-	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
+	gl = *text;
 	if (gl == 0) break;
 	index = evas_common_font_glyph_search(fn, &fi, gl);
 	LKL(fi->ft_mutex);
@@ -220,105 +238,12 @@ evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int 
 	     FTUNLOCK();
              fi->src->current_size = fi->size;
           }
-      /* hmmm kerning means i can't sanely do my own cached metric tables! */
-	/* grrr - this means font face sharing is kinda... not an option if */
-	/* you want performance */
-	if ((use_kerning) && (prev_index) && (index) &&
-	    (pface == fi->src->ft.face))
-	  if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
-	    pen_x += kern;
-
-	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
-	LKU(fi->ft_mutex);
-	if (!fg) continue;
-
-        chr_x = (pen_x + (fg->glyph_out->left));
-	chr_y = (pen_y + (fg->glyph_out->top));
-	chr_w = fg->glyph_out->bitmap.width;
-
-	pen_x += fg->glyph->advance.x >> 16;
-	prev_index = index;
-     }
-   if (v_adv) *v_adv = evas_common_font_get_line_advance(fn);
-   if (h_adv) *h_adv = pen_x - start_x;
-}
-
-/* x y w h for char at char pos */
-EAPI int
-evas_common_font_query_char_coords(RGBA_Font *fn, const char *in_text, int pos, int *cx, int *cy, int *cw, int *ch)
-{
-   int use_kerning;
-   int pen_x, pen_y;
-   int prev_chr_end;
-   int chr;
-   int asc, desc;
-   int char_index = 0; /* the index of the current char */
-   int position;
-   const char *text = in_text;
-   int ret_val = 0;
-   FT_UInt prev_index;
-   RGBA_Font_Int *fi;
-   FT_Face pface = NULL;
-
-#ifdef INTERNATIONAL_SUPPORT
-   int len = 0;
-   EvasIntlParType direction = FRIBIDI_TYPE_ON;
-   EvasIntlLevel *level_list = NULL;
-   EvasIntlStrIndex *visual_to_logical = NULL;
-   char *visual_text = evas_intl_utf8_to_visual(in_text, &len, &direction, &visual_to_logical, NULL, &level_list);
-   text = (visual_text) ? visual_text : in_text;
-#endif
-
-   fi = fn->fonts->data;
-
-   pen_x = 0;
-   pen_y = 0;
-//   evas_common_font_size_use(fn);
-   if (fi->src->current_size != fi->size)
-     {
-	FTLOCK();
-        FT_Activate_Size(fi->ft.size);
-	FTUNLOCK();
-        fi->src->current_size = fi->size;
-     }
-   use_kerning = FT_HAS_KERNING(fi->src->ft.face);
-   prev_index = 0;
-   prev_chr_end = 0;
-   asc = evas_common_font_max_ascent_get(fn);
-   desc = evas_common_font_max_descent_get(fn);
-
-   /* find the actual index, not the byte position */
-   for (position = 0 , chr = 0 ; in_text[chr] && chr < pos ; position++) {
-      evas_common_font_utf8_get_next((unsigned char *)in_text, &chr);
-   }
-   /* if we couldn't reach the correct position for some reason,
-    * return with an error */
-   if (chr != pos) {
-      ret_val = 0;
-      goto end;
-   }
-     
-#ifdef INTERNATIONAL_SUPPORT 
-   /* if it's an in string position (not end), get logical position */
-   if (position < len)
-      position = evas_intl_position_visual_to_logical(visual_to_logical, position);
-#endif
-
-
-   for (char_index = 0, chr = 0; text[chr]; char_index++)
-     {
-	int pchr;
-	FT_UInt index;
-	RGBA_Font_Glyph *fg;
-	int chr_x, chr_y, chr_w;
-        int gl, kern;
-
-	pchr = chr;
-	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
-	if (gl == 0) break;
-	index = evas_common_font_glyph_search(fn, &fi, gl);
-	LKL(fi->ft_mutex);
+	if (!fg) 
+          {
+             LKU(fi->ft_mutex);
+             continue;
+          }
 	// FIXME: Why no FT_Activate_Size here ?
 	kern = 0;
         /* hmmm kerning means i can't sanely do my own cached metric tables! */
@@ -327,10 +252,14 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *in_text, int pos, 
 	if ((use_kerning) && (prev_index) && (index) &&
 	     (pface == fi->src->ft.face))
 	   {
-#ifdef INTERNATIONAL_SUPPORT
+#ifdef BIDI_SUPPORT
 	      /* if it's rtl, the kerning matching should be reversed, i.e prev
-	       * index is now the index and the other way around. */
-	      if (evas_intl_is_rtl_char(level_list, char_index))
+	       * index is now the index and the other way around. 
+               * There is a slight exception when there are compositing chars
+               * involved.*/
+	      if (intl_props && 
+                  evas_bidi_is_rtl_char(intl_props->embedding_levels, char_index) &&
+                  fg->glyph->advance.x >> 16 > 0)
 		{
 		   if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
 		      pen_x += kern;
@@ -345,74 +274,57 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *in_text, int pos, 
            }
 
 	pface = fi->src->ft.face;
-	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	LKU(fi->ft_mutex);
-	if (!fg) continue;
 
-	if (kern < 0) kern = 0;
-        chr_x = ((pen_x - kern) + (fg->glyph_out->left));
-	chr_y = (pen_y + (fg->glyph_out->top));
-	chr_w = fg->glyph_out->bitmap.width + (kern);
-/*	if (text[chr]) */
-	  {
-	     int advw;
-
-	     advw = ((fg->glyph->advance.x + (kern << 16)) >> 16);
-	     if (chr_w < advw) chr_w = advw;
-	  }
-	if (chr_x > prev_chr_end)
-	  {
-	     chr_w += (chr_x - prev_chr_end);
-	     chr_x = prev_chr_end;
-	  }
-	/* we need to see if the char at the visual position is the char wanted */
-	if (char_index == position)
-	  {
-	     if (cx) *cx = chr_x;
-	     if (cy) *cy = -asc;
-	     if (cw) *cw = chr_w;
-	     if (ch) *ch = asc + desc;
-	     ret_val = 1;
-	     goto end;
-	  }
-	prev_chr_end = chr_x + chr_w;
 	pen_x += fg->glyph->advance.x >> 16;
 	prev_index = index;
      }
-end:
-
-#ifdef INTERNATIONAL_SUPPORT
-   if (level_list) free(level_list);
-   if (visual_to_logical) free(visual_to_logical);
-   if (visual_text) free(visual_text);
-#endif
-
-   return ret_val;
+   if (v_adv) *v_adv = evas_common_font_get_line_advance(fn);
+   if (h_adv) *h_adv = pen_x - start_x;
 }
 
-/* char pos of text at xy pos */
+/* x y w h for char at char pos
+ * BiDi handling: We recieve the shaped string + other props from intl_props,
+ * We care about the actual drawing location of the string, this is why we need
+ * the visual string. We need to know how it's printed. After that we need to calculate
+ * the reverse kerning in case of rtl parts. "pos" passed to this function is an
+ * index in bytes, that is the actual byte location of the string, we need to find
+ * the index in order to find it in the visual string.
+ */
+
 EAPI int
-evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *in_text, int x, int y, int *cx, int *cy, int *cw, int *ch)
+evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_BiDi_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    int use_kerning;
    int pen_x, pen_y;
    int prev_chr_end;
-   int chr;
    int asc, desc;
    int char_index = 0; /* the index of the current char */
-   const char *text = in_text;
-   int ret_val = -1;
+   int position = 0;
+   const Eina_Unicode *text = in_text;
+   int ret_val = 0;
+   int last_adv;
    FT_UInt prev_index;
    RGBA_Font_Int *fi;
    FT_Face pface = NULL;
 
-#ifdef INTERNATIONAL_SUPPORT
+#ifdef BIDI_SUPPORT
    int len = 0;
-   EvasIntlParType direction = FRIBIDI_TYPE_ON;
-   EvasIntlLevel *level_list = NULL;
-   EvasIntlStrIndex *visual_to_logical = NULL;
-   char *visual_text = evas_intl_utf8_to_visual(in_text, &len, &direction, NULL, &visual_to_logical, &level_list);
-   text = (visual_text) ? visual_text : in_text;
+   EvasBiDiStrIndex *visual_to_logical = NULL;
+   Eina_Unicode *visual_text;
+
+   visual_text = eina_unicode_strdup(in_text);
+
+   if (visual_text)
+     {
+        evas_bidi_props_reorder_line(visual_text, intl_props, &visual_to_logical);
+        text = visual_text;
+     }
+   else
+     {
+        text = in_text;
+     }
+   len = eina_unicode_strlen(text);
 #endif
 
    fi = fn->fonts->data;
@@ -432,20 +344,189 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *in_text, int x, in
    prev_chr_end = 0;
    asc = evas_common_font_max_ascent_get(fn);
    desc = evas_common_font_max_descent_get(fn);
-   
-   for (char_index = 0, chr = 0; text[chr]; char_index++)
+
+#ifdef BIDI_SUPPORT 
+   /* Get the position in the visual string because those are the coords we care about */
+   position = evas_bidi_position_logical_to_visual(visual_to_logical, len, pos);
+#else
+   position = pos;
+#endif
+
+   last_adv = 0;
+   for (char_index = 0; *text ; text++, char_index++)
      {
-	int pchr;
+	FT_UInt index;
+	RGBA_Font_Glyph *fg;
+	int chr_x, chr_y, chr_w;
+   int gl, kern;
+
+	gl = *text;
+	if (gl == 0) break;
+	index = evas_common_font_glyph_search(fn, &fi, gl);
+	LKL(fi->ft_mutex);
+	fg = evas_common_font_int_cache_glyph_get(fi, index);
+	if (!fg) 
+          {
+             LKU(fi->ft_mutex);
+             continue;
+          }
+	// FIXME: Why no FT_Activate_Size here ?
+	kern = 0;
+        /* hmmm kerning means i can't sanely do my own cached metric tables! */
+	/* grrr - this means font face sharing is kinda... not an option if */
+	/* you want performance */
+	if ((use_kerning) && (prev_index) && (index) &&
+	     (pface == fi->src->ft.face))
+	   {
+#ifdef BIDI_SUPPORT
+	      /* if it's rtl, the kerning matching should be reversed, i.e prev
+	       * index is now the index and the other way around. 
+               * There is a slight exception when there are compositing chars
+               * involved.*/
+	      if (intl_props && 
+                  evas_bidi_is_rtl_char(intl_props->embedding_levels, char_index) &&
+                  fg->glyph->advance.x >> 16 > 0)
+		{
+		   if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
+		      pen_x += kern;
+		}
+	      else
+#endif
+              {
+
+	           if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+	              pen_x += kern;
+	      }
+           }
+        
+	pface = fi->src->ft.face;
+	LKU(fi->ft_mutex);
+	/* If the current one is not a compositing char, do the previous advance 
+	 * and set the current advance as the next advance to do */
+	if (fg->glyph->advance.x >> 16 > 0) 
+	  {
+	     pen_x += last_adv;
+	     last_adv = fg->glyph->advance.x >> 16;
+	  }
+	if (kern < 0) kern = 0;
+        chr_x = ((pen_x - kern) + (fg->glyph_out->left));
+	chr_y = (pen_y + (fg->glyph_out->top));
+        chr_w = fg->glyph_out->bitmap.width + (kern);
+/*	if (text[chr]) */
+	  {
+	     int advw;
+	     advw = ((fg->glyph->advance.x + (kern << 16)) >> 16);
+	     if (chr_w < advw) chr_w = advw;
+	  }
+#if 0 /* This looks like a hack, we don't want it. - leaving it here in case
+       * I'm wrong */
+	if (chr_x > prev_chr_end)
+	  {
+	     chr_w += (chr_x - prev_chr_end);
+	     chr_x = prev_chr_end;
+	  }
+#endif
+	/* we need to see if the char at the visual position is the char wanted */
+	if (char_index == position)
+	  { 
+	     if (cx) *cx = chr_x;
+	     if (cy) *cy = -asc;
+	     if (cw) *cw = chr_w;
+	     if (ch) *ch = asc + desc;
+	     ret_val = 1;
+	     goto end;
+	  }
+	prev_chr_end = chr_x + chr_w;
+	prev_index = index;
+     }
+end:
+
+#ifdef BIDI_SUPPORT
+   if (visual_to_logical) free(visual_to_logical);
+   if (visual_text) free(visual_text);
+#endif
+
+   return ret_val;
+}
+
+/* char pos of text at xy pos
+ * BiDi handling: Since we are looking for the char at the specific coords,
+ * we have to get the visual string (to which the coords relate to), do
+ * reverse kerning query because we are working on the visual string, and then
+ * we need to get the logical position of the char we found from the visual string.
+ */
+
+EAPI int
+evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_BiDi_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
+{
+   int use_kerning;
+   int pen_x, pen_y;
+   int prev_chr_end;
+   int asc, desc;
+   int char_index = 0; /* the index of the current char */
+   const Eina_Unicode *text = in_text;
+   int last_adv;
+   int ret_val = -1;
+   FT_UInt prev_index;
+   RGBA_Font_Int *fi;
+   FT_Face pface = NULL;
+
+#ifdef BIDI_SUPPORT
+   int len = 0;
+   EvasBiDiStrIndex *visual_to_logical = NULL;
+   Eina_Unicode *visual_text;
+
+   visual_text = eina_unicode_strdup(in_text);
+
+   if (visual_text)
+     {
+        evas_bidi_props_reorder_line(visual_text, intl_props, &visual_to_logical);
+        text = visual_text;
+     }
+   else
+     {
+        text = in_text;
+     }
+   len = eina_unicode_strlen(text);
+#endif
+
+   fi = fn->fonts->data;
+
+   pen_x = 0;
+   pen_y = 0;
+//   evas_common_font_size_use(fn);
+   if (fi->src->current_size != fi->size)
+     {
+	FTLOCK();
+        FT_Activate_Size(fi->ft.size);
+	FTUNLOCK();
+        fi->src->current_size = fi->size;
+     }
+   use_kerning = FT_HAS_KERNING(fi->src->ft.face);
+   last_adv = 0;
+   prev_index = 0;
+   prev_chr_end = 0;
+   asc = evas_common_font_max_ascent_get(fn);
+   desc = evas_common_font_max_descent_get(fn);
+
+   for (char_index = 0; *text; text++, char_index++)
+     {
 	FT_UInt index;
 	RGBA_Font_Glyph *fg;
 	int chr_x, chr_y, chr_w;
         int gl, kern;
 
-	pchr = chr;
-	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
+	gl = *text;
 	if (gl == 0) break;
 	index = evas_common_font_glyph_search(fn, &fi, gl);
 	LKL(fi->ft_mutex);
+	fg = evas_common_font_int_cache_glyph_get(fi, index);
+	if (!fg) 
+          {
+             LKU(fi->ft_mutex);
+             continue;
+          }
+           
 	// FIXME: Why not FT_Activate_Size here ?
 	kern = 0;
         /* hmmm kerning means i can't sanely do my own cached metric tables! */
@@ -454,10 +535,14 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *in_text, int x, in
 	if ((use_kerning) && (prev_index) && (index) &&
 	     (pface == fi->src->ft.face))
 	   {
-#ifdef INTERNATIONAL_SUPPORT
+#ifdef BIDI_SUPPORT
 	      /* if it's rtl, the kerning matching should be reversed, i.e prev
-	       * index is now the index and the other way around. */
-	      if (evas_intl_is_rtl_char(level_list, char_index))
+	       * index is now the index and the other way around. 
+               * There is a slight exception when there are compositing chars
+               * involved.*/
+	      if (intl_props && 
+                  evas_bidi_is_rtl_char(intl_props->embedding_levels, char_index) &&
+                  fg->glyph->advance.x >> 16 > 0)
 		{
 		   if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
 		      pen_x += kern;
@@ -470,16 +555,21 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *in_text, int x, in
 	              pen_x += kern;
 	        }
            }
-
 	pface = fi->src->ft.face;
-	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	LKU(fi->ft_mutex);
-	if (!fg) continue;
-
+	/* If the current one is not a compositing char, do the previous advance 
+	 * and set the current advance as the next advance to do */
+	if (fg->glyph->advance.x >> 16 > 0) 
+	  {
+	     pen_x += last_adv;
+	     last_adv = fg->glyph->advance.x >> 16;
+	  }         
 	if (kern < 0) kern = 0;
+
         chr_x = ((pen_x - kern) + (fg->glyph_out->left));
 	chr_y = (pen_y + (fg->glyph_out->top));
 	chr_w = fg->glyph_out->bitmap.width + kern;
+
 /*	if (text[chr]) */
 	  {
 	     int advw;
@@ -487,43 +577,38 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *in_text, int x, in
 	     advw = ((fg->glyph->advance.x + (kern << 16)) >> 16);
 	     if (chr_w < advw) chr_w = advw;
 	  }
+#if 0 /* This looks like a hack, we don't want it. - leaving it here in case
+       * I'm wrong */
 	if (chr_x > prev_chr_end)
 	  {
 	     chr_w += (chr_x - prev_chr_end);
 	     chr_x = prev_chr_end;
 	  }
+#endif
 	if ((x >= chr_x) && (x <= (chr_x + chr_w)) &&
 	    (y >= -asc) && (y <= desc))
 	  {
+             int position = char_index;
 	     if (cx) *cx = chr_x;
 	     if (cy) *cy = -asc;
 	     if (cw) *cw = chr_w;
 	     if (ch) *ch = asc + desc;
-#ifdef INTERNATIONAL_SUPPORT
-             {
-                /* we found the char position of the wanted char in the
-                 * visual string, we now need to translate it to the
-                 * position in the logical string */
-		int i;
-		int position = evas_intl_position_visual_to_logical(visual_to_logical, char_index);
-		 
-		/* ensure even if the list won't run */
-                for (pchr = 0, i = 0; i < position; i++)
-                  evas_common_font_utf8_get_next((unsigned char *)in_text, &pchr);
-             }
+#ifdef BIDI_SUPPORT
+             /* we found the char position of the wanted char in the
+              * visual string, we now need to translate it to the
+              * position in the logical string */
+             position = evas_bidi_position_visual_to_logical(visual_to_logical, position);
 #endif
-	     ret_val = pchr;
+	     ret_val = position;
 	     goto end;
 	  }
 	prev_chr_end = chr_x + chr_w;
-	pen_x += fg->glyph->advance.x >> 16;
 	prev_index = index;
      }
      
 end:
    
-#ifdef INTERNATIONAL_SUPPORT
-   if (level_list) free(level_list);
+#ifdef BIDI_SUPPORT
    if (visual_to_logical) free(visual_to_logical);
    if (visual_text) free(visual_text);
 #endif
@@ -531,17 +616,23 @@ end:
    return ret_val;
 }
 
-/* last char pos of text at xy pos
- * Note: no need for special rtl handling
- * because the string is in logical order, which is correct */
+/* position of the last char in thext text that will fit in xy.
+ * BiDi handling: We recieve the shaped string + other props from intl_props,
+ * All we care about is char sizes + kerning so we only really need to get the
+ * shaped string to utf8, and then just go through it like in english, as it's
+ * just the logical string, nothing special about that.
+ */
+
 EAPI int
-evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const char *text, int x, int y)
+evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_BiDi_Props *intl_props, int x, int y)
 {
    int use_kerning;
    int pen_x, pen_y;
    int prev_chr_end;
-   int chr;
+   int char_index;
    int asc, desc;
+   int ret=-1;
+   const Eina_Unicode *text = in_text;
    FT_UInt prev_index;
    RGBA_Font_Int *fi;
    FT_Face pface = NULL;
@@ -556,16 +647,14 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const char *text, int x, in
    prev_chr_end = 0;
    asc = evas_common_font_max_ascent_get(fn);
    desc = evas_common_font_max_descent_get(fn);
-   for (chr = 0; text[chr];)
+   for (char_index = 0; *text; text++, char_index++)
      {
-	int pchr;
 	FT_UInt index;
 	RGBA_Font_Glyph *fg;
 	int chr_x, chr_y, chr_w;
         int gl, kern;
 
-	pchr = chr;
-	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
+	gl = *text;
 	if (gl == 0) break;
 	index = evas_common_font_glyph_search(fn, &fi, gl);
 	LKL(fi->ft_mutex);
@@ -582,13 +671,14 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const char *text, int x, in
 	/* you want performance */
 	if ((use_kerning) && (prev_index) && (index) &&
 	    (pface == fi->src->ft.face))
-	  if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
-	    pen_x += kern;
-
+     {
+      /* No need for special RTL handling because we are working on the logical string*/
+      if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
+         pen_x += kern;
+     }
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	LKU(fi->ft_mutex);
-	if (!fg) continue;
 
 	if (kern < 0) kern = 0;
         chr_x = ((pen_x - kern) + (fg->glyph_out->left));
@@ -609,11 +699,14 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const char *text, int x, in
 	if ((x >= chr_x) && (x <= (chr_x + chr_w)) &&
 	    (y >= -asc) && (y <= desc))
 	  {
-	     return pchr;
+	     ret = char_index;
+             goto end;
 	  }
 	prev_chr_end = chr_x + chr_w;
 	pen_x += fg->glyph->advance.x >> 16;
 	prev_index = index;
      }
-   return -1;
+end:
+
+   return ret;
 }

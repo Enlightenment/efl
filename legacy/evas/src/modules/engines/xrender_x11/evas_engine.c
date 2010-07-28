@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common.h" /* Also includes international specific stuff */
 #include "evas_private.h"
 
 #include "Evas_Engine_XRender_X11.h"
@@ -1484,7 +1484,7 @@ eng_image_cache_get(void *data)
 }
 
 static void
-eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow __UNUSED__, int oh __UNUSED__, const char *text)
+eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow __UNUSED__, int oh __UNUSED__, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
 {
    Render_Engine        *re;
    RGBA_Image           *im;
@@ -1503,7 +1503,7 @@ eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y
                                          re->font_surface_new,
                                          re->font_surface_free,
                                          re->font_surface_draw);
-   evas_common_font_draw(im, context, font, x, y, text);
+   evas_common_font_draw(im, context, font, x, y, text, intl_props);
    evas_common_draw_context_font_ext_set(context,
                                          NULL,
                                          NULL,

@@ -4,6 +4,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include "evas_engine.h"
+#include "evas_common.h" /* Also includes international specific stuff */
 
 /* Uses Evas own image_draw primitive, for comparison purposes only. */
 //#define DFB_USE_EVAS_IMAGE_DRAW 1
@@ -1041,7 +1042,7 @@ evas_engine_dfb_output_idle_flush(void *data)
  * memory.
  */
 static void
-evas_engine_dfb_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const char *text)
+evas_engine_dfb_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
 {
    DirectFB_Engine_Image_Entry *eim = surface;
    IDirectFBSurface *screen;
@@ -1053,7 +1054,7 @@ evas_engine_dfb_font_draw(void *data, void *context, void *surface, void *font, 
    if (!_dfb_lock_and_sync_image(screen, im, DSLF_READ | DSLF_WRITE))
      return;
 
-   evas_common_font_draw(im, context, font, x, y, text);
+   evas_common_font_draw(im, context, font, x, y, text, intl_props);
    evas_common_cpu_end_opt();
 
    im->image.data = NULL;

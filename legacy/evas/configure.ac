@@ -280,7 +280,7 @@ AC_ARG_ENABLE([fribidi],
 
 if test "x${want_fribidi}" = "xyes" -o "x${want_fribidi}" = "xauto" ; then
    PKG_CHECK_MODULES([FRIBIDI],
-      [fribidi],
+      [fribidi >= 0.19.2],
       [
        have_fribidi="yes"
        AC_DEFINE(HAVE_FRIBIDI, 1, [have fribidi support])
