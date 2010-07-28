@@ -714,7 +714,7 @@ _ecore_con_ssl_server_cert_add_openssl(const char *cert_file)
    FILE *fp = NULL;
    X509 *cert = NULL;
 
-   if (!(fp = fopen(certificate_file, "r")))
+   if (!(fp = fopen(cert_file, "r")))
       goto on_error;
 
    if (!(cert = PEM_read_X509(fp, NULL, NULL, NULL)))
