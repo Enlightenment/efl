@@ -449,9 +449,12 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 
 	  if (xrun < 1) return;
 #ifdef WORD_CACHE
-	  for (j = rowstart ; j < rowend ; j ++){
-	       func(NULL, word->im + (word->roww * j) + xstart, dc->col.col,
-		     im + ((y + j) * im_w) + x, xrun);
+	  if (word->im){
+	     for (j = rowstart ; j < rowend ; j ++){
+		  func(NULL, word->im + (word->roww * j) + xstart, dc->col.col,
+			im + ((y + j) * im_w) + x, xrun);
+	     }
+	     return;
 	  }
 #elif defined(METRIC_CACHE)
 	  int ind;
@@ -459,19 +462,20 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 	  for (ind = 0 ; ind < len ; ind ++){
 	     // FIXME Do we need to draw?
 	     struct cinfo *ci = word->cinfo + ind;
-		 if ((ci->fg->ext_dat) && (dc->font_ext.func.gl_draw))
-			   {
-			      /* ext glyph draw */
-			      dc->font_ext.func.gl_draw(dc->font_ext.data,
-				    (void *)dst,
-				    dc, ci->fg,
-				    x + ci->pos.x,
-				    y - ci->bm.h
-				    );
-			   }
-	        else {
-		     func(NULL, word->im + (word->roww * j) + xstart, dc->col.col, im + ((y + j) * im_w) + x, xrun);
-	}
+	     if ((ci->fg->ext_dat) && (dc->font_ext.func.gl_draw))
+	       {
+		  /* ext glyph draw */
+		  dc->font_ext.func.gl_draw(dc->font_ext.data,
+			(void *)dst,
+			dc, ci->fg,
+			x + ci->pos.x,
+			y - ci->bm.h
+			);
+	       }
+	     else
+	       {
+		  func(NULL, word->im + (word->roww * j) + xstart, dc->col.col, im + ((y + j) * im_w) + x, xrun);
+	       }
 	  }
 #endif
 	  return;
