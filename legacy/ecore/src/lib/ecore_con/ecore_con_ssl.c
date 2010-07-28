@@ -711,10 +711,8 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
 static Eina_Bool
 _ecore_con_ssl_server_cert_add_openssl(const char *cert_file)
 {
-   FILE *fp;
-   X509 *cert;
-   const X509 *tmp2;
-
+   FILE *fp = NULL;
+   X509 *cert = NULL;
 
    if (!(fp = fopen(certificate_file, "r")))
       goto on_error;
