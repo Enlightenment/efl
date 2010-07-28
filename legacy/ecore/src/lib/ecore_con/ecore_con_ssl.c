@@ -1118,6 +1118,12 @@ _ecore_con_ssl_server_init_none(Ecore_Con_Server *svr)
    return ECORE_CON_SSL_ERROR_NOT_SUPPORTED;
 }
 
+static Eina_Bool
+_ecore_con_ssl_server_cert_add_none(const char *cert_file)
+{
+   return EINA_TRUE;
+}
+
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_shutdown_none(Ecore_Con_Server *svr)
 {
@@ -1158,6 +1164,14 @@ static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_none(Ecore_Con_Client *cl)
 {
    return ECORE_CON_SSL_ERROR_NOT_SUPPORTED;
+}
+
+static Eina_Bool
+_ecore_con_ssl_client_cert_add_none(const char *cert_file,
+                                      const char *crl_file,
+		                                     const char *key_file)
+{
+	  return EINA_TRUE;
 }
 
 static Ecore_Con_Ssl_Error
