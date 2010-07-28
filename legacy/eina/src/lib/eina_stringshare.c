@@ -601,10 +601,7 @@ eina_stringshare_del(const char *str)
    else if (str[3] == '\0')
       slen = 3;
    else
-     {
-        slen = 4; /* handled later */
-
-     }
+      slen = 4;  /* handled later */
 
    if (slen < 2)
       return;

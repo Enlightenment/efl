@@ -924,7 +924,10 @@ eina_share_common_dump(Eina_Share *share, void (*additional_dump)(
    for (i = 0; i < EINA_SHARE_COMMON_BUCKETS; i++)
      {
         if (!share->share->buckets[i])
-           continue; //	printf("DDD: BUCKET # %i (HEAD=%i, NODE=%i)\n", i,
+          {
+             continue; //	printf("DDD: BUCKET # %i (HEAD=%i, NODE=%i)\n", i,
+
+          }
 
 //	       sizeof(Eina_Share_Common_Head), sizeof(Eina_Share_Common_Node));
         it = eina_rbtree_iterator_prefix(

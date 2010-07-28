@@ -142,7 +142,8 @@ EINA_ARG_NONNULL(1, 2);
                                                                                       void \
                                                                                       * \
                                                                                       *) \
-                                                                                   &(data)); \
+                                                                                   &( \
+                                                                                      data)); \
                                                             (counter)++)
 
 /**

@@ -111,7 +111,9 @@ eina_unicode_strstr(const Eina_Unicode *haystack, const Eina_Unicode *needle)
            ;
 
         if (!*j) /*if we got to the end of j this means we got a full match */
-           return (Eina_Unicode *)haystack; /* return the new base position */
+          {
+             return (Eina_Unicode *)haystack; /* return the new base position */
+          }
      }
 
    return NULL;

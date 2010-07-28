@@ -286,33 +286,27 @@ static inline void _split_strict(list_t *dirty, const rect_t current, rect_t r)
      }
 
    if (w_1 > 0)
-     {
-        /* (b) r  .----.cur (a)
-         *     .--|-.  |      .--.r2   .-.r
-         *     |  | |  |  ->  |  |   + | |
-         *     `--|-'  |      `--'     `-'
-         *        `----'
-         */
-        rect_list_append_xywh(dirty, r.left, r.top, w_1, r.height); /* not necessary to keep these, r (b) will be destroyed */
-
-     }
+      /* (b) r  .----.cur (a)
+       *     .--|-.  |      .--.r2   .-.r
+       *     |  | |  |  ->  |  |   + | |
+       *     `--|-'  |      `--'     `-'
+       *        `----'
+       */
+        rect_list_append_xywh(dirty, r.left, r.top, w_1, r.height);  /* not necessary to keep these, r (b) will be destroyed */
 
    /* r.width -= w_1; */
    /* r.left = current.left; */
 
    if (w_2 > 0)
-     {
-        /*  .----.cur (a)
-         *  |    |
-         *  |  .-|--.r (b)  .-.r   .--.r2
-         *  |  | |  |    -> | |  + |  |
-         *  |  `-|--'       `-'    `--'
-         *  `----'
-         */
+      /*  .----.cur (a)
+       *  |    |
+       *  |  .-|--.r (b)  .-.r   .--.r2
+       *  |  | |  |    -> | |  + |  |
+       *  |  `-|--'       `-'    `--'
+       *  `----'
+       */
         rect_list_append_xywh(dirty, current.right, r.top, w_2,
-                              r.height); /* not necessary to keep this, r (b) will be destroyed */
-
-     }
+                            r.height);  /* not necessary to keep this, r (b) will be destroyed */
 
    /* r.width -= w_2; */
 }

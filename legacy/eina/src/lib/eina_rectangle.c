@@ -228,7 +228,10 @@ _eina_rectangle_empty_space_find(Eina_List *empty, int w, int h, int *x, int *y)
              }
 
            if (r)
-              empty = _eina_rectangle_merge_list(empty, r); /* Return empty */
+             {
+                empty = _eina_rectangle_merge_list(empty, r); /* Return empty */
+
+             }
 
            return empty;
         }
