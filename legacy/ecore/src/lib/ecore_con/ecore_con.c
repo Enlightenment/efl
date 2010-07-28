@@ -206,7 +206,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
    Ecore_Con_Type type;
 
    if (port < 0 || !name)
-      return NULL; /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
+      return NULL;  /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
 
    /* local  system socket: FILE:   /tmp/.ecore_service|[name]|[port] */
    /* remote system socket: TCP/IP: [name]:[port] */
@@ -317,7 +317,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
    Ecore_Con_Type type;
 
    if (!name)
-      return NULL; /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
+      return NULL;  /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
 
    /* local  system socket: FILE:   /tmp/.ecore_service|[name]|[port] */
    /* remote system socket: TCP/IP: [name]:[port] */
@@ -910,29 +910,57 @@ on_error:
 }
 
 /**
- * Add an ssl certificate for use in ecore_con functions.
+ * Add an ssl certificate for use in ecore_con_server functions.
  *
- * Use this function to add a SSL PEM certificate to your ecore_con clients
- * and servers.  Simply specify the cert here to make it available,
- * then OR the @ref ECORE_CON_LOAD_CERT flag into the @ref ecore_con_server_add or
- * @ref ecore_con_server_connect call to use it.  If there is an error loading the
- * certificate upon creating the connection, an error will be automatically logged.
+ * Use this function to add a SSL PEM certificate.
+ * Simply specify the cert here to make it available,
+ * then OR the @ref ECORE_CON_LOAD_CERT flag into the @ref ecore_con_server_connect
+ * call to use it.  If there is an error loading the certificate upon creating
+ * the connection, an error will be automatically logged.
  * @param cert The path to the certificate.
- * @return EINA_FALSE if the file does not exist or does not end with the 'pem' suffix,
+ * @return EINA_FALSE if the file cannot be loaded,
  * otherwise EINA_TRUE.
+ * @note Currently certificate verification is not implemented.
  */
 
 EAPI Eina_Bool
-ecore_con_ssl_cert_add(const char *cert)
+ecore_con_server_ssl_cert_add(const char *cert)
 {
-   struct stat st;
 
-   if (stat(cert,
-            &st) || !eina_str_has_extension(cert, "pem"))
+   if (!eina_str_has_extension(cert, "pem"))
       return EINA_FALSE;
 
-   _ecore_con_ssl_cert_add(cert);
-   return EINA_TRUE;
+   return ecore_con_ssl_server_cert_add(cert);
+}
+
+/**
+ * @brief Add an ssl certificate for use in ecore_con_client functions.
+ *
+ * Use this function to add a SSL PEM certificate.
+ * Simply specify the cert here to make it available,
+ * then OR the @ref ECORE_CON_LOAD_CERT flag into the @ref ecore_con_server_add
+ * call to use it.  If there is an error loading the certificate upon creating
+ * the connection, an error will be automatically logged.
+ * @param cert_file The path to the certificate.
+ * @param crl_file The path to the CRL file
+ * @param key_file The path to the private key file. If not specified, the private key
+ * from the cert will be loaded.
+ * @return EINA_FALSE if the file cannot be loaded,
+ * otherwise EINA_TRUE.
+ * @note Currently CRL file adding and certificate verification is not implemented,
+ * so specifying it here has no effect.
+ */
+
+EAPI Eina_Bool
+ecore_con_client_ssl_cert_add(const char *cert_file,
+                              const char *crl_file,
+                              const char *key_file)
+{
+
+   if (!eina_str_has_extension(cert_file, "pem"))
+      return EINA_FALSE;
+
+   return ecore_con_ssl_client_cert_add(cert_file, crl_file, key_file);
 }
 
 static void

@@ -213,7 +213,10 @@ EAPI extern int ECORE_CON_EVENT_URL_PROGRESS; /** A URL object has made progress
 
 EAPI int               ecore_con_init(void);
 EAPI int               ecore_con_shutdown(void);
-EAPI Eina_Bool         ecore_con_ssl_cert_add(const char *cert);
+EAPI Eina_Bool         ecore_con_server_ssl_cert_add(const char *cert);
+EAPI Eina_Bool         ecore_con_client_ssl_cert_add(const char *cert_file,
+                                                     const char *crl_file,
+                                                     const char *key_file);
 
 EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type,
                                             const char *name, int port,
@@ -229,9 +232,11 @@ EAPI Eina_List *       ecore_con_server_clients_get(Ecore_Con_Server *svr);
 EAPI int               ecore_con_server_send(Ecore_Con_Server *svr,
                                              const void *data,
                                              int size);
-EAPI void              ecore_con_server_client_limit_set(Ecore_Con_Server *svr,
-                                                         int client_limit,
-                                                         char reject_excess_clients);
+EAPI void              ecore_con_server_client_limit_set(
+   Ecore_Con_Server *svr,
+   int client_limit,
+   char
+   reject_excess_clients);
 EAPI char *            ecore_con_server_ip_get(Ecore_Con_Server *svr);
 EAPI void              ecore_con_server_flush(Ecore_Con_Server *svr);
 
@@ -257,11 +262,14 @@ EAPI void              ecore_con_url_destroy(Ecore_Con_Url *url_con);
 EAPI void              ecore_con_url_data_set(Ecore_Con_Url *url_con,
                                               void *data);
 EAPI void *            ecore_con_url_data_get(Ecore_Con_Url *url_con);
-EAPI void              ecore_con_url_additional_header_add(Ecore_Con_Url *url_con,
-                                                           const char *key,
-                                                           const char *value);
-EAPI void              ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_con);
-EAPI const Eina_List * ecore_con_url_response_headers_get(Ecore_Con_Url *url_con);
+EAPI void              ecore_con_url_additional_header_add(
+   Ecore_Con_Url *url_con,
+   const char *key,
+   const char *value);
+EAPI void              ecore_con_url_additional_headers_clear(
+   Ecore_Con_Url *url_con);
+EAPI const Eina_List * ecore_con_url_response_headers_get(
+   Ecore_Con_Url *url_con);
 EAPI int               ecore_con_url_url_set(Ecore_Con_Url *url_con,
                                              const char *url);
 EAPI void              ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd);

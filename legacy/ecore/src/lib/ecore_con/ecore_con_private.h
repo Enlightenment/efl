@@ -211,8 +211,10 @@ int                 ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
 /* from ecore_con_ssl.c */
 Ecore_Con_Ssl_Error ecore_con_ssl_init(void);
 Ecore_Con_Ssl_Error ecore_con_ssl_shutdown(void);
-void                _ecore_con_ssl_server_cert_add(Ecore_Con_Server *svr,
-                                                   const char *cert);
+Eina_Bool           ecore_con_ssl_server_cert_add(const char *cert);
+Eina_Bool           ecore_con_ssl_client_cert_add(const char *cert_file,
+                                                  const char *crl_file,
+                                                  const char *key_file);
 void                ecore_con_ssl_server_prepare(Ecore_Con_Server *svr);
 Ecore_Con_Ssl_Error ecore_con_ssl_server_init(Ecore_Con_Server *svr);
 Ecore_Con_Ssl_Error ecore_con_ssl_server_shutdown(Ecore_Con_Server *svr);
