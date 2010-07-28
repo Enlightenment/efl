@@ -3161,9 +3161,9 @@ elm_genlist_block_count_get(const Evas_Object *obj)
 EAPI void
 elm_genlist_longpress_timeout_set(const Evas_Object *obj, double timeout)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0;
+   if (!wd) return;
    wd->longpress_timeout = timeout;
 }
 
