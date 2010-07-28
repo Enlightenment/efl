@@ -38,6 +38,9 @@
 #   include <xcb/render.h>
 #   include <Evas_Engine_XRender_X11.h>
 #  endif
+#  ifdef BUILD_ECORE_EVAS_SOFTWARE_8_X11
+#   include <Evas_Engine_Software_8_X11.h>
+#  endif
 # endif
 # ifdef HAVE_ECORE_X_XLIB
 #  include <X11/Xlib.h>

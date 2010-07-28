@@ -84,6 +84,7 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_SOFTWARE_SDL,
    ECORE_EVAS_ENGINE_DIRECTFB,
    ECORE_EVAS_ENGINE_SOFTWARE_FB,
+   ECORE_EVAS_ENGINE_SOFTWARE_8_X11,
    ECORE_EVAS_ENGINE_SOFTWARE_16_X11,
    ECORE_EVAS_ENGINE_SOFTWARE_16_DDRAW,
    ECORE_EVAS_ENGINE_SOFTWARE_16_WINCE,
@@ -169,6 +170,13 @@ EAPI Ecore_X_Window  ecore_evas_xrender_x11_window_get(const Ecore_Evas *ee);
 EAPI void            ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee, int on);
 EAPI int             ecore_evas_xrender_x11_direct_resize_get(const Ecore_Evas *ee);
 EAPI void            ecore_evas_xrender_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
+
+EAPI Ecore_Evas     *ecore_evas_software_x11_8_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
+EAPI Ecore_X_Window  ecore_evas_software_x11_8_window_get(const Ecore_Evas *ee);
+EAPI Ecore_X_Window  ecore_evas_software_x11_8_subwindow_get(const Ecore_Evas *ee);
+EAPI void            ecore_evas_software_x11_8_direct_resize_set(Ecore_Evas *ee, int on);
+EAPI int             ecore_evas_software_x11_8_direct_resize_get(const Ecore_Evas *ee);
+EAPI void            ecore_evas_software_x11_8_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
 
 EAPI Ecore_Evas     *ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window  ecore_evas_software_x11_16_window_get(const Ecore_Evas *ee);

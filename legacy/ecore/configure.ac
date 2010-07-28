@@ -145,6 +145,7 @@ want_ecore_evas_software_x11="no"
 want_ecore_evas_xrender_x11="no"
 want_ecore_evas_opengl_x11="no"
 want_ecore_evas_software_16_x11="no"
+want_ecore_evas_software_8_x11="no"
 want_ecore_evas_software_xcb="no"
 want_ecore_evas_xrender_xcb="no"
 want_ecore_evas_software_gdi="no"
@@ -209,6 +210,7 @@ case "$host_os" in
       want_ecore_evas_xrender_x11="yes"
       want_ecore_evas_opengl_x11="yes"
       want_ecore_evas_software_16_x11="yes"
+      want_ecore_evas_software_8_x11="yes"
       want_ecore_evas_software_xcb="yes"
       want_ecore_evas_xrender_xcb="yes"
       want_ecore_evas_software_sdl="yes"
@@ -1198,6 +1200,12 @@ ECORE_EVAS_CHECK_MODULE([software-16-x11],
    [Software Xlib 16 bits],
    [${have_ecore_x_xlib}])
 
+ECORE_EVAS_CHECK_MODULE([software-8-x11],
+    [$want_ecore_evas_software_8_x11],
+    [Software 8bit X11],
+    $have_ecore_x_xcb)
+
+
 # ecore_evas_xrender_xcb
 
 ECORE_EVAS_CHECK_MODULE([xrender-xcb],
@@ -1208,6 +1216,7 @@ ECORE_EVAS_CHECK_MODULE([xrender-xcb],
 if test "x$have_ecore_evas_software_x11" = "xyes" -o \
         "x$have_ecore_evas_xrender_x11" = "xyes" -o \
         "x$have_ecore_evas_opengl_x11" = "xyes" -o \
+        "x$have_ecore_evas_software_8_x11" = "xyes" -o \
         "x$have_ecore_evas_software_16_x11" = "xyes" -o \
         "x$have_ecore_evas_software_xcb" = "xyes" -o \
         "x$have_ecore_evas_xrender_xcb" = "xyes"; then
@@ -1491,6 +1500,7 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    OpenGL SDL.................: $have_ecore_evas_opengl_sdl"
   echo "    DirectFB...................: $have_ecore_evas_directfb"
   echo "    Software Framebuffer.......: $have_ecore_evas_fb"
+  echo "    Software 8bit grayscale XCB: $have_ecore_evas_software_8_x11"
   echo "    Software 16bit X11.........: $have_ecore_evas_software_16_x11"
   echo "    Software 16bit DirectDraw..: $have_ecore_evas_software_16_ddraw"
   echo "    Software 16bit WinCE.......: $have_ecore_evas_software_16_wince"
