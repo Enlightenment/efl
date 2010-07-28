@@ -730,12 +730,12 @@ eet_init(void)
         /* Disable warning messages about problems with the secure memory subsystem.
            This command should be run right after gcry_check_version. */
         if (gcry_control(GCRYCTL_DISABLE_SECMEM_WARN))
-           goto shutdown_eet; /* This command is used to allocate a pool of secure memory and thus
-                                 enabling the use of secure memory. It also drops all extra privileges the
-                                 process has (i.e. if it is run as setuid (root)). If the argument nbytes
-                                 is 0, secure memory will be disabled. The minimum amount of secure memory
-                                 allocated is currently 16384 bytes; you may thus use a value of 1 to
-                                 request that default size. */
+           goto shutdown_eet;  /* This command is used to allocate a pool of secure memory and thus
+                                  enabling the use of secure memory. It also drops all extra privileges the
+                                  process has (i.e. if it is run as setuid (root)). If the argument nbytes
+                                  is 0, secure memory will be disabled. The minimum amount of secure memory
+                                  allocated is currently 16384 bytes; you may thus use a value of 1 to
+                                  request that default size. */
 
         if (gcry_control(GCRYCTL_INIT_SECMEM, 16384, 0))
            WRN(
@@ -1002,7 +1002,7 @@ eet_internal_read2(Eet_File *ef)
 
         /* read-only mode, so currently we have no data loaded */
         if (ef->mode == EET_FILE_MODE_READ)
-           efn->data = NULL; /* read-write mode - read everything into ram */
+           efn->data = NULL;  /* read-write mode - read everything into ram */
         else
           {
              efn->data = malloc(efn->size);
@@ -1283,7 +1283,7 @@ eet_internal_read1(Eet_File *ef)
 
         /* read-only mode, so currently we have no data loaded */
         if (ef->mode == EET_FILE_MODE_READ)
-           efn->data = NULL; /* read-write mode - read everything into ram */
+           efn->data = NULL;  /* read-write mode - read everything into ram */
         else
           {
              data = malloc(efn->size);
@@ -1352,7 +1352,7 @@ eet_internal_close(Eet_File *ef, Eina_Bool locked)
    ef->references--;
    /* if its still referenced - dont go any further */
    if (ef->references > 0)
-      goto on_error; /* flush any writes */
+      goto on_error;  /* flush any writes */
 
    err = eet_flush2(ef);
 
@@ -1367,7 +1367,10 @@ eet_internal_close(Eet_File *ef, Eina_Bool locked)
    if (ef->mode == EET_FILE_MODE_READ)
       eet_cache_del(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
    else if ((ef->mode == EET_FILE_MODE_WRITE) ||
-            (ef->mode == EET_FILE_MODE_READ_WRITE))
+            (
+               ef
+               ->
+               mode == EET_FILE_MODE_READ_WRITE))
       eet_cache_del(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
 
    /* we can unlock the cache now */
@@ -1957,7 +1960,7 @@ eet_read_direct(Eet_File *ef, const char *name, int *size_ret)
    /* uncompressed data */
    if (efn->compression == 0
        && efn->ciphered == 0)
-      data = efn->data ? efn->data : ef->data + efn->offset; /* compressed data */
+      data = efn->data ? efn->data : ef->data + efn->offset;  /* compressed data */
    else
       data = NULL;
 

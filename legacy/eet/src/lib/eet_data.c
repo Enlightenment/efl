@@ -1268,7 +1268,8 @@ eet_data_chunk_get(const Eet_Dictionary *ed, Eet_Data_Chunk *chnk,
         else
            chnk->group_type = EET_G_UNKNOWN;
         if ((chnk->type >= EET_T_LAST) ||
-            (chnk->group_type >= EET_G_LAST))
+            (chnk->group_type >=
+             EET_G_LAST))
           {
              chnk->type = 0;
              chnk->group_type = 0;
@@ -1541,11 +1542,11 @@ _eet_descriptor_hash_find(Eet_Data_Descriptor *edd, char *name, int hash)
       hash &= 0x3f;
 
    if (!edd->elements.hash.buckets[hash].element)
-      return NULL; /*
-                      When we use the dictionnary as a source for chunk name, we will always
-                      have the same pointer in name. It's a good idea to just compare pointer
-                      instead of running strcmp on both string.
-                    */
+      return NULL;  /*
+                       When we use the dictionnary as a source for chunk name, we will always
+                       have the same pointer in name. It's a good idea to just compare pointer
+                       instead of running strcmp on both string.
+                     */
 
    if (edd->elements.hash.buckets[hash].element->directory_name_ptr == name)
       return edd->elements.hash.buckets[hash].element;
@@ -2361,7 +2362,8 @@ _eet_data_dump_token_get(const char *src, int *len)
                {
                   if ((p[0] == '\"') && (p > src) && (p[-1] != '\\'))
                      in_quote = 0;
-                  else if ((p[0] == '\\') && (*len > 1) && (p[1] == '\"'))
+                  else if ((p[0] == '\\') && (*len > 1) &&
+                           (p[1] == '\"'))
                     {
 /* skip */
                     }
@@ -3129,7 +3131,7 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
         memset(&echnk, 0, sizeof(Eet_Data_Chunk));
         eet_data_chunk_get(ed, &echnk, p, size);
         if (!echnk.name)
-           goto error; /* FIXME: don't REPLY on edd - work without */
+           goto error;  /* FIXME: don't REPLY on edd - work without */
 
         if (edd)
           {
@@ -3150,8 +3152,10 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
 /* Needed when converting on the fly from FP to Float */
                           type = ede->type;
                        else if ((echnk.group_type > EET_G_UNKNOWN) &&
-                                (echnk.group_type < EET_G_LAST) &&
-                                (echnk.group_type == ede->group_type))
+                                (echnk.group_type <
+                                 EET_G_LAST) &&
+                                (echnk.group_type ==
+                                 ede->group_type))
                           group_type = echnk.group_type;
                     }
                }
@@ -3466,7 +3470,7 @@ eet_data_get_array(Eet_Free_Context *context,
 
         eet_data_chunk_get(ed, echnk, *p, *size);
         if (!echnk->name || strcmp(echnk->name, name) != 0)
-           goto on_error; /* get the data */
+           goto on_error;  /* get the data */
 
         if (echnk->group_type != group_type
             || (echnk->type != type && echnk->type != EET_T_NULL))
@@ -4150,7 +4154,7 @@ eet_data_put_array(Eet_Dictionary *ed,
       count = *(int *)(((char *)data_in) + ede->count - ede->offset);
 
    if (count <= 0)
-      return; /* Store number of elements */
+      return;  /* Store number of elements */
 
    data = eet_data_put_type(ed, EET_T_INT, &count, &size);
    if (data)
