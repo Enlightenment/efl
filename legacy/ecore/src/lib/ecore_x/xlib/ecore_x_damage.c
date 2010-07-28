@@ -24,9 +24,10 @@ _ecore_x_damage_init(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (XDamageQueryVersion(_ecore_x_disp, &_damage_major, &_damage_minor))
-     _damage_available = 1;
+      _damage_available = 1;
    else
-     _damage_available = 0;
+      _damage_available = 0;
+
 #else
    _damage_available = 0;
 #endif
@@ -62,7 +63,9 @@ ecore_x_damage_free(Ecore_X_Damage damage)
 }
 
 EAPI void
-ecore_x_damage_subtract(Ecore_X_Damage damage, Ecore_X_Region repair, Ecore_X_Region parts)
+ecore_x_damage_subtract(Ecore_X_Damage damage,
+                        Ecore_X_Region repair,
+                        Ecore_X_Region parts)
 {
 #ifdef ECORE_XDAMAGE
    LOGFN(__FILE__, __LINE__, __FUNCTION__);

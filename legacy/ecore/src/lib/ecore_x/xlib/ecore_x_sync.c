@@ -25,24 +25,24 @@ ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSyncIntToValue(&init, 0);
    XSyncSetCounter(_ecore_x_disp, counter, init);
-   
+
    values.trigger.counter = counter;
    values.trigger.value_type = XSyncAbsolute;
    XSyncIntToValue(&values.trigger.wait_value, 1);
    values.trigger.test_type = XSyncPositiveComparison;
 
-   XSyncIntToValue(&values.delta, 1);
+   XSyncIntToValue(&values.delta,              1);
 
    values.events = True;
 
    alarm = XSyncCreateAlarm(_ecore_x_disp,
-			    XSyncCACounter |
-			    XSyncCAValueType |
-			    XSyncCAValue |
-			    XSyncCATestType |
-			    XSyncCADelta |
-			    XSyncCAEvents,
-			    &values);
+                            XSyncCACounter |
+                            XSyncCAValueType |
+                            XSyncCAValue |
+                            XSyncCATestType |
+                            XSyncCADelta |
+                            XSyncCAEvents,
+                            &values);
 
    ecore_x_sync();
    return alarm;
@@ -59,14 +59,14 @@ EAPI int
 ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val)
 {
    XSyncValue value;
-   
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (XSyncQueryCounter(_ecore_x_disp, counter, &value))
      {
-        *val = (unsigned int) XSyncValueLow32(value);
+        *val = (unsigned int)XSyncValueLow32(value);
         return 1;
      }
-   
+
    return 0;
 }
 
@@ -75,7 +75,7 @@ ecore_x_sync_counter_new(int val)
 {
    XSyncCounter counter;
    XSyncValue v;
-   
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSyncIntToValue(&v, val);
    counter = XSyncCreateCounter(_ecore_x_disp, v);
@@ -93,7 +93,7 @@ EAPI void
 ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter, int by)
 {
    XSyncValue v;
-   
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSyncIntToValue(&v, by);
    XSyncChangeCounter(_ecore_x_disp, counter, v);
@@ -107,7 +107,7 @@ ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter, int val)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSyncQueryCounter(_ecore_x_disp, counter, &v);
-   XSyncIntToValue(&v, val);
+   XSyncIntToValue(&v,  val);
    XSyncIntToValue(&v2, val + 1);
    cond.trigger.counter = counter;
    cond.trigger.value_type = XSyncAbsolute;

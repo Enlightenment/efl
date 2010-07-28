@@ -20,9 +20,10 @@ _ecore_x_dpms_init(void)
    _dpms_minor = 0;
 
    if (DPMSGetVersion(_ecore_x_disp, &_dpms_major, &_dpms_minor))
-     _dpms_available = 1;
+      _dpms_available = 1;
    else
-     _dpms_available = 0;
+      _dpms_available = 0;
+
 #else
    _dpms_available = 0;
 #endif
@@ -92,9 +93,10 @@ ecore_x_dpms_enabled_set(int enabled)
 #ifdef ECORE_XDPMS
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (enabled)
-     DPMSEnable(_ecore_x_disp);
+      DPMSEnable(_ecore_x_disp);
    else
-     DPMSDisable(_ecore_x_disp);
+      DPMSDisable(_ecore_x_disp);
+
 #endif
 }
 
@@ -106,12 +108,14 @@ ecore_x_dpms_enabled_set(int enabled)
  * @ingroup Ecore_X_DPMS_Group
  */
 EAPI void
-ecore_x_dpms_timeouts_get(unsigned int *standby, unsigned int *suspend, unsigned int *off)
+ecore_x_dpms_timeouts_get(unsigned int *standby,
+                          unsigned int *suspend,
+                          unsigned int *off)
 {
 #ifdef ECORE_XDPMS
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   DPMSGetTimeouts(_ecore_x_disp, (unsigned short *)standby, 
-		   (unsigned short *)suspend, (unsigned short *)off);
+   DPMSGetTimeouts(_ecore_x_disp, (unsigned short *)standby,
+                   (unsigned short *)suspend, (unsigned short *)off);
 #endif
 }
 
@@ -123,7 +127,9 @@ ecore_x_dpms_timeouts_get(unsigned int *standby, unsigned int *suspend, unsigned
  * @ingroup Ecore_X_DPMS_Group
  */
 EAPI int
-ecore_x_dpms_timeouts_set(unsigned int standby, unsigned int suspend, unsigned int off)
+ecore_x_dpms_timeouts_set(unsigned int standby,
+                          unsigned int suspend,
+                          unsigned int off)
 {
 #ifdef ECORE_XDPMS
    LOGFN(__FILE__, __LINE__, __FUNCTION__);

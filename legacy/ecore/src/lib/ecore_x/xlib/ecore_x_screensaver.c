@@ -20,7 +20,9 @@ static int _screensaver_available = -1;
 EAPI int
 ecore_x_screensaver_event_available_get(void)
 {
-   if (_screensaver_available >= 0) return _screensaver_available;
+   if (_screensaver_available >= 0)
+      return _screensaver_available;
+
 #ifdef ECORE_XSS
    int _screensaver_major, _screensaver_minor;
 
@@ -28,10 +30,12 @@ ecore_x_screensaver_event_available_get(void)
    _screensaver_major = 1;
    _screensaver_minor = 0;
 
-   if (XScreenSaverQueryVersion(_ecore_x_disp, &_screensaver_major, &_screensaver_minor))
-     _screensaver_available = 1;
+   if (XScreenSaverQueryVersion(_ecore_x_disp, &_screensaver_major,
+                                &_screensaver_minor))
+      _screensaver_available = 1;
    else
-     _screensaver_available = 0;
+      _screensaver_available = 0;
+
 #else
    _screensaver_available = 0;
 #endif
@@ -47,7 +51,9 @@ ecore_x_screensaver_idle_time_get(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    xss = XScreenSaverAllocInfo();
-   XScreenSaverQueryInfo(_ecore_x_disp, RootWindow(_ecore_x_disp, DefaultScreen(_ecore_x_disp)), xss); 
+   XScreenSaverQueryInfo(_ecore_x_disp,
+                         RootWindow(_ecore_x_disp, DefaultScreen(
+                                       _ecore_x_disp)), xss);
    idle = xss->idle / 1000;
    XFree(xss);
 
@@ -58,10 +64,17 @@ ecore_x_screensaver_idle_time_get(void)
 }
 
 EAPI void
-ecore_x_screensaver_set(int timeout, int interval, int prefer_blanking, int allow_exposures)
+ecore_x_screensaver_set(int timeout,
+                        int interval,
+                        int prefer_blanking,
+                        int allow_exposures)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   XSetScreenSaver(_ecore_x_disp, timeout, interval, prefer_blanking, allow_exposures);
+   XSetScreenSaver(_ecore_x_disp,
+                   timeout,
+                   interval,
+                   prefer_blanking,
+                   allow_exposures);
 }
 
 EAPI void
@@ -153,8 +166,9 @@ ecore_x_screensaver_event_listen_set(int on)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    root = DefaultRootWindow(_ecore_x_disp);
    if (on)
-     XScreenSaverSelectInput(_ecore_x_disp, root, ScreenSaverNotifyMask);
+      XScreenSaverSelectInput(_ecore_x_disp, root, ScreenSaverNotifyMask);
    else
-     XScreenSaverSelectInput(_ecore_x_disp, root, 0);
+      XScreenSaverSelectInput(_ecore_x_disp, root, 0);
+
 #endif
 }

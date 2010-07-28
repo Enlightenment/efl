@@ -26,26 +26,37 @@
  * @ingroup Ecore_X_Drawable_Group
  */
 EAPI void
-ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h)
+ecore_x_drawable_geometry_get(Ecore_X_Drawable d,
+                              int *x,
+                              int *y,
+                              int *w,
+                              int *h)
 {
-   Window         dummy_win;
-   int            ret_x, ret_y;
-   unsigned int   ret_w, ret_h, dummy_border, dummy_depth;
+   Window dummy_win;
+   int ret_x, ret_y;
+   unsigned int ret_w, ret_h, dummy_border, dummy_depth;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!XGetGeometry(_ecore_x_disp, d, &dummy_win, &ret_x, &ret_y,
                      &ret_w, &ret_h, &dummy_border, &dummy_depth))
-   {
-      ret_x = 0;
-      ret_y = 0;
-      ret_w = 0;
-      ret_h = 0;
-   }
+     {
+        ret_x = 0;
+        ret_y = 0;
+        ret_w = 0;
+        ret_h = 0;
+     }
 
-   if (x) *x = ret_x;
-   if (y) *y = ret_y;
-   if (w) *w = (int) ret_w;
-   if (h) *h = (int) ret_h;
+   if (x)
+      *x = ret_x;
+
+   if (y)
+      *y = ret_y;
+
+   if (w)
+      *w = (int)ret_w;
+
+   if (h)
+      *h = (int)ret_h;
 }
 
 /**
@@ -57,16 +68,16 @@ ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h
 EAPI int
 ecore_x_drawable_border_width_get(Ecore_X_Drawable d)
 {
-   Window         dummy_win;
-   int            dummy_x, dummy_y;
-   unsigned int   dummy_w, dummy_h, border_ret, dummy_depth;
+   Window dummy_win;
+   int dummy_x, dummy_y;
+   unsigned int dummy_w, dummy_h, border_ret, dummy_depth;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!XGetGeometry(_ecore_x_disp, d, &dummy_win, &dummy_x, &dummy_y,
                      &dummy_w, &dummy_h, &border_ret, &dummy_depth))
       border_ret = 0;
 
-   return (int) border_ret;
+   return (int)border_ret;
 }
 
 /**
@@ -78,16 +89,16 @@ ecore_x_drawable_border_width_get(Ecore_X_Drawable d)
 EAPI int
 ecore_x_drawable_depth_get(Ecore_X_Drawable d)
 {
-   Window         dummy_win;
-   int            dummy_x, dummy_y;
-   unsigned int   dummy_w, dummy_h, dummy_border, depth_ret;
+   Window dummy_win;
+   int dummy_x, dummy_y;
+   unsigned int dummy_w, dummy_h, dummy_border, depth_ret;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!XGetGeometry(_ecore_x_disp, d, &dummy_win, &dummy_x, &dummy_y,
                      &dummy_w, &dummy_h, &dummy_border, &depth_ret))
       depth_ret = 0;
 
-   return (int) depth_ret;
+   return (int)depth_ret;
 }
 
 /**
@@ -100,7 +111,12 @@ ecore_x_drawable_depth_get(Ecore_X_Drawable d)
  * @param height The height of the rectangle.
  */
 EAPI void
-ecore_x_drawable_rectangle_fill(Ecore_X_Drawable d, Ecore_X_GC gc, int x, int y, int width, int height)
+ecore_x_drawable_rectangle_fill(Ecore_X_Drawable d,
+                                Ecore_X_GC gc,
+                                int x,
+                                int y,
+                                int width,
+                                int height)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFillRectangle(_ecore_x_disp, d, gc, x, y, width, height);
