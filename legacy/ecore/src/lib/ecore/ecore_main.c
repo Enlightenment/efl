@@ -153,7 +153,7 @@ static inline int _ecore_main_fdh_epoll_add(Ecore_Fd_Handler *fdh)
 {
    int r = 0;
 #ifdef HAVE_EPOLL
-   struct epoll_event ev;
+   struct epoll_event ev = {0};
 
    ev.events = _ecore_poll_events_from_fdh(fdh);
    ev.data.ptr = fdh;
@@ -166,7 +166,7 @@ static inline int _ecore_main_fdh_epoll_add(Ecore_Fd_Handler *fdh)
 static inline void _ecore_main_fdh_epoll_del(Ecore_Fd_Handler *fdh)
 {
 #ifdef HAVE_EPOLL
-   struct epoll_event ev;
+   struct epoll_event ev = {0};
    INF("removing poll on %d", fdh->fd);
    /* could get an EBADF if somebody closed the FD before removing it */
    if (0 > epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fdh->fd, &ev) &&
@@ -181,7 +181,7 @@ static inline int _ecore_main_fdh_epoll_modify(Ecore_Fd_Handler *fdh)
 {
    int r = 0;
 #ifdef HAVE_EPOLL
-   struct epoll_event ev;
+   struct epoll_event ev = {0};
 
    ev.events = _ecore_poll_events_from_fdh(fdh);
    ev.data.ptr = fdh;
@@ -194,11 +194,10 @@ static inline int _ecore_main_fdh_epoll_modify(Ecore_Fd_Handler *fdh)
 #ifdef HAVE_EPOLL
 static inline int _ecore_main_fdh_epoll_mark_active(void)
 {
-   const int num_epoll_fds = 10;
-   struct epoll_event ev[num_epoll_fds];
+   struct epoll_event ev[10] = {0};
    int i, ret;
 
-   ret = epoll_wait(epoll_fd, ev, num_epoll_fds, 0);
+   ret = epoll_wait(epoll_fd, ev, sizeof(ev) / sizeof(struct epoll_event), 0);
    if (ret < 0)
      {
         if (errno == EINTR) return -1;
