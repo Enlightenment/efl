@@ -330,7 +330,7 @@ eng_setup(Evas *e, void *in)
              
              if (re->win)
                {
-                  re->win->gl_context->shared->references++;
+                  re->win->gl_context->references++;
                   eng_window_free(re->win);
                   inc = 1;
                   gl_wins--;
@@ -348,7 +348,7 @@ eng_setup(Evas *e, void *in)
                                       info->info.rotation);
              if (re->win) gl_wins++;
              if ((re->win) && (inc))
-                re->win->gl_context->shared->references--;
+                re->win->gl_context->references--;
           }
         else if ((re->win->w != e->output.w) ||
                  (re->win->h != e->output.h))

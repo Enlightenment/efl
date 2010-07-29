@@ -395,14 +395,19 @@ eng_window_new(Display *disp,
 void
 eng_window_free(Evas_GL_X11_Window *gw)
 {
+   int ref = 0;
    win_count--;
    eng_window_use(gw);
    if (gw == _evas_gl_x11_window) _evas_gl_x11_window = NULL;
-   if (gw->gl_context) evas_gl_common_context_free(gw->gl_context);
+   if (gw->gl_context)
+      {
+         ref = gw->gl_context->references;
+         evas_gl_common_context_free(gw->gl_context);
+      }
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    if (gw->egl_surface[0] != EGL_NO_SURFACE)
      eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
-   if (win_count == 0)
+   if (ref == 0)
      {
         if (context) eglDestroyContext(gw->egl_disp, context);
         eglTerminate(gw->egl_disp);
@@ -411,7 +416,7 @@ eng_window_free(Evas_GL_X11_Window *gw)
    eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 #else
    if (gw->glxwin) glXDestroyWindow(gw->disp, gw->glxwin);
-   if (win_count == 0)
+   if (ref == 0)
      {
         if (context) glXDestroyContext(gw->disp, context);
         if (rgba_context) glXDestroyContext(gw->disp, rgba_context);
