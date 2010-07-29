@@ -2348,7 +2348,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                        _layout_line_advance(c, fmt);
                        x2 = w;
                     }
-                  fi = _layout_format_item_add(c, n, item);
+                  fi = _layout_format_item_add(c, n, NULL);
                   fi->x = c->x;
                   fi->vsize = vsize;
                   fi->size = size;
