@@ -124,7 +124,7 @@ ecore_con_ssl_shutdown(void)
      {
         client_count = 0;
         server_count = 0;
-#ifdef USE_OPENSSL
+#if USE_OPENSSL && !USE_GNUTLS
         private_count = 0;
 #endif
         SSL_SUFFIX(_ecore_con_ssl_shutdown) ();
@@ -624,7 +624,7 @@ _ecore_con_ssl_client_write_gnutls(Ecore_Con_Client *cl, unsigned char *buf,
    return -1;
 }
 
-#elif USE_OPENSSL
+#elif USE_OPENSSL && !USE_GNUTLS
 
 /*
  * OpenSSL
