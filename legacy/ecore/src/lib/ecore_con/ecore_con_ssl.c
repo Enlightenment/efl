@@ -968,7 +968,7 @@ _ecore_con_ssl_client_cert_add_openssl(const char *cert_file,
         X509_free(client_cert);
 
    if ((private_key) && ((--private_count) < 1))
-      EVP_KEY_free(private_key);
+      EVP_PKEY_free(private_key);
 
    private_key = privkey;
    client_cert = cert;
@@ -985,7 +985,7 @@ on_error:
       X509_free(cert);
 
    if (privkey)
-      EVP_KEY_free(privkey);
+      EVP_PKEY_free(privkey);
 
    return EINA_FALSE;
 }
