@@ -40,7 +40,7 @@ typedef unsigned int Eina_Unicode;
 
 #include "eina_types.h"
 
-extern const Eina_Unicode *EINA_UNICODE_EMPTY_STRING;
+EAPI extern const Eina_Unicode *EINA_UNICODE_EMPTY_STRING;
 
 EAPI size_t
                                                        eina_unicode_strlen(

@@ -23,7 +23,7 @@
 /* FIXME: check if sizeof(wchar_t) == sizeof(Eina_Unicode) if so,
  * probably better to use the standard functions */
 
-const Eina_Unicode *EINA_UNICODE_EMPTY_STRING = {0};
+EAPI const Eina_Unicode *EINA_UNICODE_EMPTY_STRING = {0};
 /**
  * @brief Same as the standard strcmp just with Eina_Unicode instead of char.
  */
