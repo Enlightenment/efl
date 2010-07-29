@@ -295,17 +295,13 @@ EAPI const char *
 edje_object_data_get(const Evas_Object *obj, const char *key)
 {
    Edje *ed;
-   Eina_List *l;
-   Edje_Data *di;
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!key))
      return NULL;
    if (!ed->collection) return NULL;
-   EINA_LIST_FOREACH(ed->collection->data, l, di)
-     if ((di->key) && (!strcmp(di->key, key)))
-       return (const char *)di->value;
-   return NULL;
+   if (!ed->collection->data) return NULL;
+   return eina_hash_find(ed->collection->data, key);
 }
 
 /**
@@ -2855,7 +2851,7 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 	     didw = 0;
 	     if (ep->chosen_description)
 	       {
-		  if (!ep->chosen_description->common.fixed.w)
+		  if (!ep->chosen_description->fixed.w)
 		    {
 		       if (w > maxw)
 			 {
@@ -2869,10 +2865,10 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 			    /* FIXME: do something */
 			 }
 		    }
-		  if (!ep->chosen_description->common.fixed.h)
+		  if (!ep->chosen_description->fixed.h)
 		    {
 		       if (!((ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
-			     (!ep->chosen_description->text.min_x) &&
+			     (!((Edje_Part_Description_Text *)ep->chosen_description)->text.min_x) &&
 			     (didw)))
 			 {
 			    if (h > maxh)
@@ -2959,18 +2955,18 @@ edje_object_part_state_get(const Evas_Object *obj, const char *part, double *val
      }
    if (rp->chosen_description)
      {
-	if (val_ret) *val_ret = rp->chosen_description->common.state.value;
-	if (rp->chosen_description->common.state.name)
-	  return rp->chosen_description->common.state.name;
+	if (val_ret) *val_ret = rp->chosen_description->state.value;
+	if (rp->chosen_description->state.name)
+	  return rp->chosen_description->state.name;
 	return "default";
      }
    else
      {
 	if (rp->param1.description)
 	  {
-	     if (val_ret) *val_ret = rp->param1.description->common.state.value;
-	     if (rp->param1.description->common.state.name)
-	       return rp->param1.description->common.state.name;
+	     if (val_ret) *val_ret = rp->param1.description->state.value;
+	     if (rp->param1.description->state.name)
+	       return rp->param1.description->state.name;
 	     return "default";
 	  }
      }
@@ -4454,15 +4450,14 @@ _edje_color_class_hash_free(void)
 void
 _edje_color_class_on_del(Edje *ed, Edje_Part *ep)
 {
-   Eina_List *tmp;
-   Edje_Part_Description *desc;
+   unsigned int i;
 
-   if ((ep->default_desc) && (ep->default_desc->common.color_class))
-     _edje_color_class_member_del(ed, ep->default_desc->common.color_class);
+   if ((ep->default_desc) && (ep->default_desc->color_class))
+     _edje_color_class_member_del(ed, ep->default_desc->color_class);
 
-   EINA_LIST_FOREACH(ep->other_desc, tmp, desc)
-     if (desc->common.color_class)
-       _edje_color_class_member_del(ed, desc->common.color_class);
+   for (i = 0; i < ep->other_count; ++i)
+     if (ep->other_desc[i]->color_class)
+       _edje_color_class_member_del(ed, ep->other_desc[i]->color_class);
 }
 
 Edje_Text_Class *

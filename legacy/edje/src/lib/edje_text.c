@@ -40,34 +40,46 @@ _edje_text_init(void)
 void
 _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep)
 {
-   Eina_List *tmp;
    Edje_Part *pt = ep->part;
-   Edje_Part_Description *desc;
+   Edje_Part_Description_Text *desc;
+   unsigned int i;
 
    if (ep->part->type != EDJE_PART_TYPE_TEXT) return;
 
    /* if text class exists for this part, add the edje to the tc member list */
-   if ((pt->default_desc) && (pt->default_desc->text.text_class))
-     _edje_text_class_member_add(ed, pt->default_desc->text.text_class);
+   desc = (Edje_Part_Description_Text *) pt->default_desc;
+   if ((pt->default_desc) && (desc->text.text_class))
+     _edje_text_class_member_add(ed, desc->text.text_class);
 
    /* If any other classes exist add them */
-   EINA_LIST_FOREACH(pt->other_desc, tmp, desc)
-     if ((desc) && (desc->text.text_class))
-       _edje_text_class_member_add(ed, desc->text.text_class);
+   for (i = 0; i < pt->other_count; ++i)
+     {
+	desc = (Edje_Part_Description_Text *) pt->other_desc[i];
+	if ((desc) && (desc->text.text_class))
+	  _edje_text_class_member_add(ed, desc->text.text_class);
+     }
 }
 
 void
 _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
 {
-   Eina_List *tmp;
-   Edje_Part_Description *desc;
+   Edje_Part_Description_Text *desc;
+   unsigned int i;
 
-   if ((pt->default_desc) && (pt->default_desc->text.text_class))
-     _edje_text_class_member_del(ed, pt->default_desc->text.text_class);
+   if (pt->type != EDJE_PART_TYPE_TEXT
+       && pt->type != EDJE_PART_TYPE_TEXTBLOCK)
+     return ;
 
-   EINA_LIST_FOREACH(pt->other_desc, tmp, desc)
-     if (desc->text.text_class)
-       _edje_text_class_member_del(ed, desc->text.text_class);
+   desc = (Edje_Part_Description_Text *) pt->default_desc;
+   if ((pt->default_desc) && (desc->text.text_class))
+     _edje_text_class_member_del(ed, desc->text.text_class);
+
+   for (i = 0; i < pt->other_count; ++i)
+     {
+	desc = (Edje_Part_Description_Text *) pt->other_desc[i];
+	if (desc->text.text_class)
+	  _edje_text_class_member_del(ed, desc->text.text_class);
+     }
 }
 
 static void
@@ -267,7 +279,7 @@ _edje_text_font_get(const char *base, const char *new, char **free_later)
 }
 
 const char *
-_edje_text_class_font_get(Edje *ed, Edje_Part_Description *chosen_desc, int *size, char **free_later)
+_edje_text_class_font_get(Edje *ed, Edje_Part_Description_Text *chosen_desc, int *size, char **free_later)
 {
    Edje_Text_Class *tc;
    const char *text_class_name, *font;
@@ -292,7 +304,7 @@ _edje_text_class_font_get(Edje *ed, Edje_Part_Description *chosen_desc, int *siz
 void
 _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 			Edje_Calc_Params *params,
-			Edje_Part_Description *chosen_desc)
+			Edje_Part_Description_Text *chosen_desc)
 {
    const char	*text;
    const char	*font;
@@ -315,13 +327,13 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
    if (ep->text.text_source)
      {
-	text = ep->text.text_source->chosen_description->text.text;
+	text = ((Edje_Part_Description_Text *)ep->text.text_source->chosen_description)->text.text;
 	if (ep->text.text_source->text.text) text = ep->text.text_source->text.text;
      }
    if (ep->text.source)
      {
-	font = ep->text.source->chosen_description->text.font;
-	size = ep->text.source->chosen_description->text.size;
+	font = ((Edje_Part_Description_Text *)ep->text.source->chosen_description)->text.font;
+	size = ((Edje_Part_Description_Text *)ep->text.source->chosen_description)->text.size;
 	if (ep->text.source->text.font) font = ep->text.source->text.font;
 	if (ep->text.source->text.size > 0) size = ep->text.source->text.size;
      }

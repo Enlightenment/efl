@@ -871,8 +871,8 @@ _edje_embryo_fn_get_state(Embryo_Program *ep, Embryo_Cell *params)
    rp = ed->table_parts[part_id % ed->table_parts_size];
    if (rp->chosen_description)
      {
-	SETFLOAT(rp->chosen_description->common.state.value, params[4]);
-	s = rp->chosen_description->common.state.name;
+	SETFLOAT(rp->chosen_description->state.value, params[4]);
+	s = rp->chosen_description->state.name;
 	if (s)
 	  {
 	     if ((int) strlen(s) < params[3])
@@ -1557,7 +1557,7 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
    Edje_Real_Part *rp;
-   Edje_Part_Description *parent, *d;
+   Edje_Part_Description_Common *parent, *d = NULL;
    Edje_Part_Image_Id *iid;
    Eina_List *l;
    char *name;
@@ -1585,8 +1585,38 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
      return 0;
 
    /* now create the custom state */
-   if (!(d = calloc(1, sizeof(Edje_Part_Description))))
-     return 0;
+   switch (rp->part->type)
+     {
+#define ALLOC_DESC(Short, Type, To)					\
+	case EDJE_PART_TYPE_##Short: To = calloc(1, sizeof (Edje_Part_Description_##Type)); break;
+
+#define ALLOC_COPY_DESC(Short, Type, To, Spec)				\
+	case EDJE_PART_TYPE_##Short:					\
+	  {								\
+	     Edje_Part_Description_##Type *tmp;				\
+	     Edje_Part_Description_##Type *new;				\
+									\
+	     tmp = (Edje_Part_Description_##Type *) parent;		\
+									\
+	     new = calloc(1, sizeof (Edje_Part_Description_##Type));	\
+	     new->Spec = tmp->Spec;					\
+	     d = &new->common;						\
+	     break;							\
+	  }
+
+	ALLOC_DESC(RECTANGLE, Common, d);
+	ALLOC_DESC(SWALLOW, Common, d);
+	ALLOC_DESC(GROUP, Common, d);
+
+	ALLOC_COPY_DESC(IMAGE, Image, d, image);
+	ALLOC_COPY_DESC(TEXT, Text, d, text);
+	ALLOC_COPY_DESC(TEXTBLOCK, Text, d, text);
+	ALLOC_COPY_DESC(BOX, Box, d, box);
+	ALLOC_COPY_DESC(TABLE, Table, d, table);
+	ALLOC_COPY_DESC(EXTERNAL, External, d, external_params);
+     }
+
+   if (!d) return 0;
 
    rp->custom = eina_mempool_malloc(_edje_real_part_state_mp, sizeof (Edje_Real_Part_State));
    if (!rp->custom)
@@ -1599,32 +1629,50 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
 
    *d = *parent;
 
-   d->common.state.name = (char *)eina_stringshare_add("custom");
-   d->common.state.value = 0.0;
+   d->state.name = (char *)eina_stringshare_add("custom");
+   d->state.value = 0.0;
 
    /* make sure all the allocated memory is getting copied,
     * not just referenced
     */
-   d->image.tween_list = NULL;
-
-   EINA_LIST_FOREACH(parent->image.tween_list, l, iid)
+   if (rp->part->type == EDJE_PART_TYPE_IMAGE)
      {
-        Edje_Part_Image_Id *iid_new;
+	Edje_Part_Description_Image *img_desc;
+	Edje_Part_Description_Image *parent_img_desc;
 
-	iid_new = calloc(1, sizeof(Edje_Part_Image_Id));
-	if (!iid_new) continue;
+	img_desc = (Edje_Part_Description_Image*) d;
+	parent_img_desc = (Edje_Part_Description_Image*) parent;
 
-	iid_new->id = iid->id;
+	img_desc->image.tween_list = NULL;
 
-	d->image.tween_list = eina_list_append(d->image.tween_list, iid_new);
+	EINA_LIST_FOREACH(parent_img_desc->image.tween_list, l, iid)
+	  {
+	     Edje_Part_Image_Id *iid_new;
+
+	     iid_new = calloc(1, sizeof(Edje_Part_Image_Id));
+	     if (!iid_new) continue;
+
+	     iid_new->id = iid->id;
+
+	     img_desc->image.tween_list = eina_list_append(img_desc->image.tween_list, iid_new);
+	  }
      }
 
 #define DUP(x) x ? (char *)eina_stringshare_add(x) : NULL
-   d->common.color_class = DUP(d->common.color_class);
-   d->text.text = DUP(d->text.text);
-   d->text.text_class = DUP(d->text.text_class);
-   d->text.font = DUP(d->text.font);
-   d->text.style = DUP(d->text.style);
+   d->color_class = DUP(d->color_class);
+
+   if (rp->part->type == EDJE_PART_TYPE_TEXT
+       || rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+     {
+	Edje_Part_Description_Text *text_desc;
+
+	text_desc = (Edje_Part_Description_Text*) d;
+
+	text_desc->text.text = DUP(text_desc->text.text);
+	text_desc->text.text_class = DUP(text_desc->text.text_class);
+	text_desc->text.font = DUP(text_desc->text.font);
+	text_desc->text.style = DUP(text_desc->text.style);
+     }
 #undef DUP
 
    rp->custom->description = d;
@@ -1659,323 +1707,414 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_ALIGNMENT:
 	 CHKPARAM(4);
 
-	 GETFLOAT_T(rp->custom->description->common.align.x, params[3]);
-	 GETFLOAT_T(rp->custom->description->common.align.y, params[4]);
+	 GETFLOAT_T(rp->custom->description->align.x, params[3]);
+	 GETFLOAT_T(rp->custom->description->align.y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_MIN:
 	 CHKPARAM(4);
 
-	 GETINT(rp->custom->description->common.min.w, params[3]);
-	 GETINT(rp->custom->description->common.min.h, params[4]);
+	 GETINT(rp->custom->description->min.w, params[3]);
+	 GETINT(rp->custom->description->min.h, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_MAX:
 	 CHKPARAM(4);
 
-	 GETINT(rp->custom->description->common.max.w, params[3]);
-	 GETINT(rp->custom->description->common.max.h, params[4]);
+	 GETINT(rp->custom->description->max.w, params[3]);
+	 GETINT(rp->custom->description->max.h, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_STEP:
 	 CHKPARAM(4);
 
-	 GETINT(rp->custom->description->common.step.x, params[3]);
-	 GETINT(rp->custom->description->common.step.y, params[4]);
+	 GETINT(rp->custom->description->step.x, params[3]);
+	 GETINT(rp->custom->description->step.y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_ASPECT:
 	 CHKPARAM(4);
 
-	 GETFLOAT_T(rp->custom->description->common.aspect.min, params[3]);
-	 GETFLOAT_T(rp->custom->description->common.aspect.max, params[4]);
+	 GETFLOAT_T(rp->custom->description->aspect.min, params[3]);
+	 GETFLOAT_T(rp->custom->description->aspect.max, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_ASPECT_PREF:
 	 CHKPARAM(3);
 
-	 GETINT(rp->custom->description->common.aspect.prefer, params[3]);
+	 GETINT(rp->custom->description->aspect.prefer, params[3]);
 
 	 break;
       case EDJE_STATE_PARAM_COLOR:
 	 CHKPARAM(6);
 
-	 GETINT(rp->custom->description->common.color.r, params[3]);
-	 GETINT(rp->custom->description->common.color.g, params[4]);
-	 GETINT(rp->custom->description->common.color.b, params[5]);
-	 GETINT(rp->custom->description->common.color.a, params[6]);
+	 GETINT(rp->custom->description->color.r, params[3]);
+	 GETINT(rp->custom->description->color.g, params[4]);
+	 GETINT(rp->custom->description->color.b, params[5]);
+	 GETINT(rp->custom->description->color.a, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_COLOR2:
 	 CHKPARAM(6);
 
-	 GETINT(rp->custom->description->common.color2.r, params[3]);
-	 GETINT(rp->custom->description->common.color2.g, params[4]);
-	 GETINT(rp->custom->description->common.color2.b, params[5]);
-	 GETINT(rp->custom->description->common.color2.a, params[6]);
+	 GETINT(rp->custom->description->color2.r, params[3]);
+	 GETINT(rp->custom->description->color2.g, params[4]);
+	 GETINT(rp->custom->description->color2.b, params[5]);
+	 GETINT(rp->custom->description->color2.a, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_COLOR3:
-	 CHKPARAM(6);
+	{
+	   Edje_Part_Description_Text *text;
 
-	 GETINT(rp->custom->description->text.color3.r, params[3]);
-	 GETINT(rp->custom->description->text.color3.g, params[4]);
-	 GETINT(rp->custom->description->text.color3.b, params[5]);
-	 GETINT(rp->custom->description->text.color3.a, params[6]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_TEXT) &&
+		(rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+	     return 0;
 
-	 break;
+	   CHKPARAM(6);
+
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   GETINT(text->text.color3.r, params[3]);
+	   GETINT(text->text.color3.g, params[4]);
+	   GETINT(text->text.color3.b, params[5]);
+	   GETINT(text->text.color3.a, params[6]);
+	   break;
+	}
       case EDJE_STATE_PARAM_COLOR_CLASS:
 	 CHKPARAM(3);
 
 	 GETSTR(s, params[3]);
-	 GETSTREVAS(s, rp->custom->description->common.color_class);
+	 GETSTREVAS(s, rp->custom->description->color_class);
 
 	 break;
       case EDJE_STATE_PARAM_REL1:
 	 CHKPARAM(4);
 
-	 GETFLOAT_T(rp->custom->description->common.rel1.relative_x, params[3]);
-	 GETFLOAT_T(rp->custom->description->common.rel1.relative_y, params[4]);
+	 GETFLOAT_T(rp->custom->description->rel1.relative_x, params[3]);
+	 GETFLOAT_T(rp->custom->description->rel1.relative_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL1_TO:
 	 CHKPARAM(4);
 
-	 GETINT(rp->custom->description->common.rel1.id_x, params[3]);
-	 GETINT(rp->custom->description->common.rel1.id_y, params[4]);
+	 GETINT(rp->custom->description->rel1.id_x, params[3]);
+	 GETINT(rp->custom->description->rel1.id_y, params[4]);
 
-	 if (rp->param1.description->common.rel1.id_x >= 0)
-	   rp->param1.rel1_to_x = ed->table_parts[rp->param1.description->common.rel1.id_x % ed->table_parts_size];
-	 if (rp->param1.description->common.rel1.id_y >= 0)
-	   rp->param1.rel1_to_y = ed->table_parts[rp->param1.description->common.rel1.id_y % ed->table_parts_size];
+	 if (rp->param1.description->rel1.id_x >= 0)
+	   rp->param1.rel1_to_x = ed->table_parts[rp->param1.description->rel1.id_x % ed->table_parts_size];
+	 if (rp->param1.description->rel1.id_y >= 0)
+	   rp->param1.rel1_to_y = ed->table_parts[rp->param1.description->rel1.id_y % ed->table_parts_size];
 
 	 break;
       case EDJE_STATE_PARAM_REL1_OFFSET:
 	 CHKPARAM(4);
 
-	 GETINT(rp->custom->description->common.rel1.offset_x, params[3]);
-	 GETINT(rp->custom->description->common.rel1.offset_y, params[4]);
+	 GETINT(rp->custom->description->rel1.offset_x, params[3]);
+	 GETINT(rp->custom->description->rel1.offset_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL2:
 	 CHKPARAM(4);
 
-	 GETFLOAT_T(rp->custom->description->common.rel2.relative_x, params[3]);
-	 GETFLOAT_T(rp->custom->description->common.rel2.relative_y, params[4]);
+	 GETFLOAT_T(rp->custom->description->rel2.relative_x, params[3]);
+	 GETFLOAT_T(rp->custom->description->rel2.relative_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL2_TO:
 	 CHKPARAM(4);
 
-	 GETINT(rp->custom->description->common.rel2.id_x, params[3]);
-	 GETINT(rp->custom->description->common.rel2.id_y, params[4]);
+	 GETINT(rp->custom->description->rel2.id_x, params[3]);
+	 GETINT(rp->custom->description->rel2.id_y, params[4]);
 
-	 if (rp->param1.description->common.rel2.id_x >= 0)
-	   rp->param1.rel2_to_x = ed->table_parts[rp->param1.description->common.rel2.id_x % ed->table_parts_size];
-	 if (rp->param1.description->common.rel2.id_y >= 0)
-	   rp->param1.rel2_to_y = ed->table_parts[rp->param1.description->common.rel2.id_y % ed->table_parts_size];
+	 if (rp->param1.description->rel2.id_x >= 0)
+	   rp->param1.rel2_to_x = ed->table_parts[rp->param1.description->rel2.id_x % ed->table_parts_size];
+	 if (rp->param1.description->rel2.id_y >= 0)
+	   rp->param1.rel2_to_y = ed->table_parts[rp->param1.description->rel2.id_y % ed->table_parts_size];
 
 	 break;
       case EDJE_STATE_PARAM_REL2_OFFSET:
 	 CHKPARAM(4);
 
-	 GETINT(rp->custom->description->common.rel2.offset_x, params[3]);
-	 GETINT(rp->custom->description->common.rel2.offset_y, params[4]);
+	 GETINT(rp->custom->description->rel2.offset_x, params[3]);
+	 GETINT(rp->custom->description->rel2.offset_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_IMAGE:
-	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
-	 CHKPARAM(3);
+	{
+	   Edje_Part_Description_Image *img;
 
-	 GETINT(rp->custom->description->image.id, params[3]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   CHKPARAM(3);
 
-	 break;
+	   img = (Edje_Part_Description_Image*) rp->custom->description;
+	   GETINT(img->image.id, params[3]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_BORDER:
-	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
-	 CHKPARAM(6);
+	{
+	   Edje_Part_Description_Image *img;
 
-	 GETINT(rp->custom->description->image.border.l, params[3]);
-	 GETINT(rp->custom->description->image.border.r, params[4]);
-	 GETINT(rp->custom->description->image.border.t, params[5]);
-	 GETINT(rp->custom->description->image.border.b, params[6]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   CHKPARAM(6);
 
-	 break;
+	   img = (Edje_Part_Description_Image*) rp->custom->description;
+
+	   GETINT(img->image.border.l, params[3]);
+	   GETINT(img->image.border.r, params[4]);
+	   GETINT(img->image.border.t, params[5]);
+	   GETINT(img->image.border.b, params[6]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_FILL_SMOOTH:
-	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
-	 CHKPARAM(3);
+	{
+	   Edje_Part_Description_Image *img;
 
-	 GETINT(rp->custom->description->image.fill.smooth, params[3]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   CHKPARAM(3);
 
-	 break;
+	   img = (Edje_Part_Description_Image*) rp->custom->description;
+
+	   GETINT(img->image.fill.smooth, params[3]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_FILL_POS:
-	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
-	 CHKPARAM(6);
+	{
+	   Edje_Part_Description_Image *img;
 
-	 GETFLOAT_T(rp->custom->description->image.fill.pos_rel_x, params[3]);
-	 GETFLOAT_T(rp->custom->description->image.fill.pos_rel_y, params[4]);
-	 GETINT(rp->custom->description->image.fill.pos_abs_x, params[5]);
-	 GETINT(rp->custom->description->image.fill.pos_abs_y, params[6]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   CHKPARAM(6);
 
-	 break;
+	   img = (Edje_Part_Description_Image*) rp->custom->description;
+
+	   GETFLOAT_T(img->image.fill.pos_rel_x, params[3]);
+	   GETFLOAT_T(img->image.fill.pos_rel_y, params[4]);
+	   GETINT(img->image.fill.pos_abs_x, params[5]);
+	   GETINT(img->image.fill.pos_abs_y, params[6]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_FILL_SIZE:
-	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
-	 CHKPARAM(6);
+	{
+	   Edje_Part_Description_Image *img;
 
-	 GETFLOAT_T(rp->custom->description->image.fill.rel_x, params[3]);
-	 GETFLOAT_T(rp->custom->description->image.fill.rel_y, params[4]);
-	 GETINT(rp->custom->description->image.fill.abs_x, params[5]);
-	 GETINT(rp->custom->description->image.fill.abs_y, params[6]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   CHKPARAM(6);
 
-	 break;
+	   img = (Edje_Part_Description_Image*) rp->custom->description;
+
+	   GETFLOAT_T(img->image.fill.rel_x, params[3]);
+	   GETFLOAT_T(img->image.fill.rel_y, params[4]);
+	   GETINT(img->image.fill.abs_x, params[5]);
+	   GETINT(img->image.fill.abs_y, params[6]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT:
-	 if ( (rp->part->type != EDJE_PART_TYPE_TEXT) && \
-	      (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
-	   return 0;
-	 CHKPARAM(3);
+	{
+	   Edje_Part_Description_Text *text;
 
-	 GETSTR(s, params[3]);
-	 GETSTREVAS(s, rp->custom->description->text.text);
+	   if ( (rp->part->type != EDJE_PART_TYPE_TEXT) &&
+		(rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+	     return 0;
+	   CHKPARAM(3);
 
-	 break;
+	   GETSTR(s, params[3]);
+
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+	   GETSTREVAS(s, text->text.text);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_CLASS:
-	 if ( (rp->part->type != EDJE_PART_TYPE_TEXT) && \
-	       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
-	   return 0;
-	 CHKPARAM(3);
+	{
+	   Edje_Part_Description_Text *text;
 
-	 GETSTR(s, params[3]);
-	 GETSTREVAS(s, rp->custom->description->text.text_class);
+	   if ( (rp->part->type != EDJE_PART_TYPE_TEXT) &&
+		(rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+	     return 0;
+	   CHKPARAM(3);
 
-	 break;
+	   GETSTR(s, params[3]);
+
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+	   GETSTREVAS(s, text->text.text_class);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_FONT:
-	 if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
-	 CHKPARAM(3);
+	{
+	   Edje_Part_Description_Text *text;
 
-	 GETSTR(s, params[3]);
-	 GETSTREVAS(s, rp->custom->description->text.font);
+	   if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
+	   CHKPARAM(3);
 
-	 break;
+	   GETSTR(s, params[3]);
+
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+	   GETSTREVAS(s, text->text.font);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_STYLE:
-	 if ((rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return 0;
-	 CHKPARAM(3);
+	{
+	   Edje_Part_Description_Text *text;
 
-	 GETSTR(s, params[3]);
-	 GETSTREVAS(s, rp->custom->description->text.style);
+	   if ((rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return 0;
+	   CHKPARAM(3);
 
-	 break;
+	   GETSTR(s, params[3]);
+
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+	   GETSTREVAS(s, text->text.style);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_SIZE:
-	 if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
-	 CHKPARAM(3);
+	{
+	   Edje_Part_Description_Text *text;
 
-	 GETINT(rp->custom->description->text.size, params[3]);
+	   if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
+	   CHKPARAM(3);
 
-	 break;
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+	   GETINT(text->text.size, params[3]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_FIT:
-	 if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
-	 CHKPARAM(4);
+	{
+	   Edje_Part_Description_Text *text;
 
-	 GETINT(rp->custom->description->text.fit_x, params[3]);
-	 GETINT(rp->custom->description->text.fit_y, params[4]);
+	   if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
+	   CHKPARAM(4);
 
-	 break;
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   GETINT(text->text.fit_x, params[3]);
+	   GETINT(text->text.fit_y, params[4]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_MIN:
-	 if ( (rp->part->type != EDJE_PART_TYPE_TEXT) && \
-	       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
-	   return 0;
-	 CHKPARAM(4);
+	{
+	   Edje_Part_Description_Text *text;
 
-	 GETINT(rp->custom->description->text.min_x, params[3]);
-	 GETINT(rp->custom->description->text.min_y, params[4]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_TEXT) &&
+		(rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+	     return 0;
+	   CHKPARAM(4);
 
-	 break;
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   GETINT(text->text.min_x, params[3]);
+	   GETINT(text->text.min_y, params[4]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_MAX:
-	 if ( (rp->part->type != EDJE_PART_TYPE_TEXT) && \
-	       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
-	   return 0;
-	 CHKPARAM(4);
+	{
+	   Edje_Part_Description_Text *text;
 
-	 GETINT(rp->custom->description->text.max_x, params[3]);
-	 GETINT(rp->custom->description->text.max_y, params[4]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_TEXT) &&
+		(rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+	     return 0;
+	   CHKPARAM(4);
 
-	 break;
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   GETINT(text->text.max_x, params[3]);
+	   GETINT(text->text.max_y, params[4]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_ALIGN:
-	 if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
-	 CHKPARAM(4);
+	{
+	   Edje_Part_Description_Text *text;
 
-	 GETFLOAT_T(rp->custom->description->text.align.x, params[3]);
-	 GETFLOAT_T(rp->custom->description->text.align.y, params[4]);
+	   if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
+	   CHKPARAM(4);
 
-	 break;
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   GETFLOAT_T(text->text.align.x, params[3]);
+	   GETFLOAT_T(text->text.align.y, params[4]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_VISIBLE:
 	 CHKPARAM(3);
 
-	 GETINT(rp->custom->description->common.visible, params[3]);
+	 GETINT(rp->custom->description->visible, params[3]);
 
 	 break;
       case EDJE_STATE_PARAM_MAP_OM:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->common.map.on, params[3]);
+        GETINT(rp->custom->description->map.on, params[3]);
         
         break;
       case EDJE_STATE_PARAM_MAP_PERSP:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->common.map.id_persp, params[3]);
+        GETINT(rp->custom->description->map.id_persp, params[3]);
         
         break;
       case EDJE_STATE_PARAM_MAP_LIGNT:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->common.map.id_light, params[3]);
+        GETINT(rp->custom->description->map.id_light, params[3]);
         
         break;
       case EDJE_STATE_PARAM_MAP_ROT_CENTER:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->common.map.rot.id_center, params[3]);
+        GETINT(rp->custom->description->map.rot.id_center, params[3]);
         
         break;
       case EDJE_STATE_PARAM_MAP_ROT_X:
         CHKPARAM(3);
 
-        GETFLOAT_T(rp->custom->description->common.map.rot.x, params[3]);
+        GETFLOAT_T(rp->custom->description->map.rot.x, params[3]);
 
         break;
       case EDJE_STATE_PARAM_MAP_ROT_Y:
         CHKPARAM(3);
         
-        GETFLOAT_T(rp->custom->description->common.map.rot.y, params[3]);
+        GETFLOAT_T(rp->custom->description->map.rot.y, params[3]);
         
         break;
       case EDJE_STATE_PARAM_MAP_ROT_Z:
         CHKPARAM(3);
         
-        GETFLOAT_T(rp->custom->description->common.map.rot.z, params[3]);
+        GETFLOAT_T(rp->custom->description->map.rot.z, params[3]);
 
         break;
       case EDJE_STATE_PARAM_MAP_BACK_CULL:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->common.map.backcull, params[3]);
+        GETINT(rp->custom->description->map.backcull, params[3]);
         
         break;
       case EDJE_STATE_PARAM_MAP_PERSP_ON:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->common.map.persp_on, params[3]);
+        GETINT(rp->custom->description->map.persp_on, params[3]);
         
         break;
       case EDJE_STATE_PARAM_PERSP_ZPLANE:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->common.persp.zplane, params[3]);
+        GETINT(rp->custom->description->persp.zplane, params[3]);
         
         break;
       case EDJE_STATE_PARAM_PERSP_FOCAL:
         CHKPARAM(3);
         
-        GETINT(rp->custom->description->common.persp.focal, params[3]);
+        GETINT(rp->custom->description->persp.focal, params[3]);
         
         break;
       default:
@@ -2016,247 +2155,349 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_ALIGNMENT:
 	 CHKPARAM(4);
 
-	 SETFLOAT_T(rp->custom->description->common.align.x, params[3]);
-	 SETFLOAT_T(rp->custom->description->common.align.y, params[4]);
+	 SETFLOAT_T(rp->custom->description->align.x, params[3]);
+	 SETFLOAT_T(rp->custom->description->align.y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_MIN:
 	 CHKPARAM(4);
 
-	 SETINT(rp->custom->description->common.min.w, params[3]);
-	 SETINT(rp->custom->description->common.min.h, params[4]);
+	 SETINT(rp->custom->description->min.w, params[3]);
+	 SETINT(rp->custom->description->min.h, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_MAX:
 	 CHKPARAM(4);
 
-	 SETINT(rp->custom->description->common.max.w, params[3]);
-	 SETINT(rp->custom->description->common.max.h, params[4]);
+	 SETINT(rp->custom->description->max.w, params[3]);
+	 SETINT(rp->custom->description->max.h, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_STEP:
 	 CHKPARAM(4);
 
-	 SETINT(rp->custom->description->common.step.x, params[3]);
-	 SETINT(rp->custom->description->common.step.y, params[4]);
+	 SETINT(rp->custom->description->step.x, params[3]);
+	 SETINT(rp->custom->description->step.y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_ASPECT:
 	 CHKPARAM(4);
 
-	 SETFLOAT_T(rp->custom->description->common.aspect.min, params[3]);
-	 SETFLOAT_T(rp->custom->description->common.aspect.max, params[4]);
+	 SETFLOAT_T(rp->custom->description->aspect.min, params[3]);
+	 SETFLOAT_T(rp->custom->description->aspect.max, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_ASPECT_PREF:
 	 CHKPARAM(3);
 
-	 SETINT(rp->custom->description->common.aspect.prefer, params[3]);
+	 SETINT(rp->custom->description->aspect.prefer, params[3]);
 
 	 break;
       case EDJE_STATE_PARAM_COLOR:
 	 CHKPARAM(6);
 
-	 SETINT(rp->custom->description->common.color.r, params[3]);
-	 SETINT(rp->custom->description->common.color.g, params[4]);
-	 SETINT(rp->custom->description->common.color.b, params[5]);
-	 SETINT(rp->custom->description->common.color.a, params[6]);
+	 SETINT(rp->custom->description->color.r, params[3]);
+	 SETINT(rp->custom->description->color.g, params[4]);
+	 SETINT(rp->custom->description->color.b, params[5]);
+	 SETINT(rp->custom->description->color.a, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_COLOR2:
 	 CHKPARAM(6);
 
-	 SETINT(rp->custom->description->common.color2.r, params[3]);
-	 SETINT(rp->custom->description->common.color2.g, params[4]);
-	 SETINT(rp->custom->description->common.color2.b, params[5]);
-	 SETINT(rp->custom->description->common.color2.a, params[6]);
+	 SETINT(rp->custom->description->color2.r, params[3]);
+	 SETINT(rp->custom->description->color2.g, params[4]);
+	 SETINT(rp->custom->description->color2.b, params[5]);
+	 SETINT(rp->custom->description->color2.a, params[6]);
 
 	 break;
       case EDJE_STATE_PARAM_COLOR3:
-	 CHKPARAM(6);
+ 	{
+	   Edje_Part_Description_Text *text;
 
-	 SETINT(rp->custom->description->text.color3.r, params[3]);
-	 SETINT(rp->custom->description->text.color3.g, params[4]);
-	 SETINT(rp->custom->description->text.color3.b, params[5]);
-	 SETINT(rp->custom->description->text.color3.a, params[6]);
+	   if (rp->part->type == EDJE_PART_TYPE_TEXT
+	       || rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+	     return 0;
 
-	 break;
+	   CHKPARAM(6);
+
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   SETINT(text->text.color3.r, params[3]);
+	   SETINT(text->text.color3.g, params[4]);
+	   SETINT(text->text.color3.b, params[5]);
+	   SETINT(text->text.color3.a, params[6]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_COLOR_CLASS:
 	 CHKPARAM(4);
 
-	 s = rp->custom->description->common.color_class;
+	 s = rp->custom->description->color_class;
 	 SETSTRALLOCATE(s);
 
 	 break;
       case EDJE_STATE_PARAM_REL1:
 	 CHKPARAM(4);
 
-	 SETFLOAT_T(rp->custom->description->common.rel1.relative_x, params[3]);
-	 SETFLOAT_T(rp->custom->description->common.rel1.relative_y, params[4]);
+	 SETFLOAT_T(rp->custom->description->rel1.relative_x, params[3]);
+	 SETFLOAT_T(rp->custom->description->rel1.relative_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL1_TO:
 	 CHKPARAM(4);
 
-	 SETINT(rp->custom->description->common.rel1.id_x, params[3]);
-	 SETINT(rp->custom->description->common.rel1.id_y, params[4]);
+	 SETINT(rp->custom->description->rel1.id_x, params[3]);
+	 SETINT(rp->custom->description->rel1.id_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL1_OFFSET:
 	 CHKPARAM(4);
 
-	 SETINT(rp->custom->description->common.rel1.offset_x, params[3]);
-	 SETINT(rp->custom->description->common.rel1.offset_y, params[4]);
+	 SETINT(rp->custom->description->rel1.offset_x, params[3]);
+	 SETINT(rp->custom->description->rel1.offset_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL2:
 	 CHKPARAM(4);
 
-	 SETFLOAT_T(rp->custom->description->common.rel2.relative_x, params[3]);
-	 SETFLOAT_T(rp->custom->description->common.rel2.relative_y, params[4]);
+	 SETFLOAT_T(rp->custom->description->rel2.relative_x, params[3]);
+	 SETFLOAT_T(rp->custom->description->rel2.relative_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL2_TO:
 	 CHKPARAM(4);
 
-	 SETINT(rp->custom->description->common.rel2.id_x, params[3]);
-	 SETINT(rp->custom->description->common.rel2.id_y, params[4]);
+	 SETINT(rp->custom->description->rel2.id_x, params[3]);
+	 SETINT(rp->custom->description->rel2.id_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_REL2_OFFSET:
 	 CHKPARAM(4);
 
-	 SETINT(rp->custom->description->common.rel2.offset_x, params[3]);
-	 SETINT(rp->custom->description->common.rel2.offset_y, params[4]);
+	 SETINT(rp->custom->description->rel2.offset_x, params[3]);
+	 SETINT(rp->custom->description->rel2.offset_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_IMAGE:
-	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
-	 CHKPARAM(3);
+	{
+	   Edje_Part_Description_Image *img;
 
-	 SETINT(rp->custom->description->image.id, params[3]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   CHKPARAM(3);
 
-	 break;
+	   img = (Edje_Part_Description_Image*) rp->custom->description;
+
+	   SETINT(img->image.id, params[3]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_BORDER:
-	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
-	 CHKPARAM(6);
+	{
+	   Edje_Part_Description_Image *img;
 
-	 SETINT(rp->custom->description->image.border.l, params[3]);
-	 SETINT(rp->custom->description->image.border.r, params[4]);
-	 SETINT(rp->custom->description->image.border.t, params[5]);
-	 SETINT(rp->custom->description->image.border.b, params[6]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   CHKPARAM(6);
 
-	 break;
+	   img = (Edje_Part_Description_Image*) rp->custom->description;
+
+	   SETINT(img->image.border.l, params[3]);
+	   SETINT(img->image.border.r, params[4]);
+	   SETINT(img->image.border.t, params[5]);
+	   SETINT(img->image.border.b, params[6]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_FILL_SMOOTH:
-	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
-	 CHKPARAM(3);
+	{
+	   Edje_Part_Description_Image *img;
 
-	 SETINT(rp->custom->description->image.fill.smooth, params[3]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   CHKPARAM(3);
 
-	 break;
+	   img = (Edje_Part_Description_Image*) rp->custom->description;
+
+	   SETINT(img->image.fill.smooth, params[3]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_FILL_POS:
-	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
-	 CHKPARAM(6);
+	{
+	   Edje_Part_Description_Image *img;
 
-	 SETFLOAT_T(rp->custom->description->image.fill.pos_rel_x, params[3]);
-	 SETFLOAT_T(rp->custom->description->image.fill.pos_rel_y, params[4]);
-	 SETINT(rp->custom->description->image.fill.pos_abs_x, params[5]);
-	 SETINT(rp->custom->description->image.fill.pos_abs_y, params[6]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   CHKPARAM(6);
 
-	 break;
+	   img = (Edje_Part_Description_Image*) rp->custom->description;
+
+	   SETFLOAT_T(img->image.fill.pos_rel_x, params[3]);
+	   SETFLOAT_T(img->image.fill.pos_rel_y, params[4]);
+	   SETINT(img->image.fill.pos_abs_x, params[5]);
+	   SETINT(img->image.fill.pos_abs_y, params[6]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_FILL_SIZE:
-	 if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
-	 CHKPARAM(6);
+	{
+	   Edje_Part_Description_Image *img;
 
-	 SETFLOAT_T(rp->custom->description->image.fill.rel_x, params[3]);
-	 SETFLOAT_T(rp->custom->description->image.fill.rel_y, params[4]);
-	 SETINT(rp->custom->description->image.fill.abs_x, params[5]);
-	 SETINT(rp->custom->description->image.fill.abs_y, params[6]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   CHKPARAM(6);
 
-	 break;
+	   img = (Edje_Part_Description_Image*) rp->custom->description;
+
+	   SETFLOAT_T(img->image.fill.rel_x, params[3]);
+	   SETFLOAT_T(img->image.fill.rel_y, params[4]);
+	   SETINT(img->image.fill.abs_x, params[5]);
+	   SETINT(img->image.fill.abs_y, params[6]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT:
-	 if ( (rp->part->type != EDJE_PART_TYPE_TEXT) && \
-	       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
-	   return 0;
-	 CHKPARAM(4);
+ 	{
+	   Edje_Part_Description_Text *text;
 
-	 s = rp->custom->description->text.text;
-	 SETSTRALLOCATE(s);
+	   if (rp->part->type == EDJE_PART_TYPE_TEXT
+	       || rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+	     return 0;
 
-	 break;
+	   CHKPARAM(4);
+
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   s = text->text.text;
+	   SETSTRALLOCATE(s);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_CLASS:
-	 if ( (rp->part->type != EDJE_PART_TYPE_TEXT) && \
+ 	{
+	   Edje_Part_Description_Text *text;
+
+	   if ( (rp->part->type != EDJE_PART_TYPE_TEXT) &&
 	       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
-	   return 0;
-	 CHKPARAM(4);
+	     return 0;
 
-	 s = rp->custom->description->text.text_class;
-	 SETSTRALLOCATE(s);
+	   CHKPARAM(4);
 
-	 break;
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   s = text->text.text_class;
+	   SETSTRALLOCATE(s);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_FONT:
-	 if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
-	 CHKPARAM(4);
+ 	{
+	   Edje_Part_Description_Text *text;
 
-	 s = rp->custom->description->text.font;
-	 SETSTRALLOCATE(s);
+	   if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
 
-	 break;
+	   CHKPARAM(4);
+
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   s = text->text.font;
+	   SETSTRALLOCATE(s);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_STYLE:
-	 if ((rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return 0;
-	 CHKPARAM(4);
+ 	{
+	   Edje_Part_Description_Text *text;
 
-	 s = rp->custom->description->text.style;
-	 SETSTRALLOCATE(s);
+	   if ((rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return 0;
 
-	 break;
+	   CHKPARAM(4);
+
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   s = text->text.style;
+	   SETSTRALLOCATE(s);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_SIZE:
-	 if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
-	 CHKPARAM(3);
+ 	{
+	   Edje_Part_Description_Text *text;
 
-	 SETINT(rp->custom->description->text.size, params[3]);
+	   if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
 
-	 break;
+	   CHKPARAM(3);
+
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   SETINT(text->text.size, params[3]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_FIT:
-	 if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
-	 CHKPARAM(4);
+ 	{
+	   Edje_Part_Description_Text *text;
 
-	 SETINT(rp->custom->description->text.fit_x, params[3]);
-	 SETINT(rp->custom->description->text.fit_y, params[4]);
+	   if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
+	   CHKPARAM(4);
 
-	 break;
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   SETINT(text->text.fit_x, params[3]);
+	   SETINT(text->text.fit_y, params[4]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_MIN:
-	 if ( (rp->part->type != EDJE_PART_TYPE_TEXT) && \
-	       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
-	   return 0;
-	 CHKPARAM(4);
+ 	{
+	   Edje_Part_Description_Text *text;
 
-	 SETINT(rp->custom->description->text.min_x, params[3]);
-	 SETINT(rp->custom->description->text.min_y, params[4]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_TEXT) &&
+		(rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+	     return 0;
 
-	 break;
+	   CHKPARAM(4);
+
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   SETINT(text->text.min_x, params[3]);
+	   SETINT(text->text.min_y, params[4]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_MAX:
-	 if ( (rp->part->type != EDJE_PART_TYPE_TEXT) && \
-	       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
-	   return 0;
-	 CHKPARAM(4);
+ 	{
+	   Edje_Part_Description_Text *text;
 
-	 SETINT(rp->custom->description->text.max_x, params[3]);
-	 SETINT(rp->custom->description->text.max_y, params[4]);
+	   if ( (rp->part->type != EDJE_PART_TYPE_TEXT) &&
+		(rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+	     return 0;
 
-	 break;
+	   CHKPARAM(4);
+
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   SETINT(text->text.max_x, params[3]);
+	   SETINT(text->text.max_y, params[4]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_TEXT_ALIGN:
-	 if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
-	 CHKPARAM(4);
+ 	{
+	   Edje_Part_Description_Text *text;
 
-	 SETFLOAT_T(rp->custom->description->text.align.x, params[3]);
-	 SETFLOAT_T(rp->custom->description->text.align.y, params[4]);
+	   if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
 
-	 break;
+	   CHKPARAM(4);
+
+	   text = (Edje_Part_Description_Text*) rp->custom->description;
+
+	   SETFLOAT_T(text->text.align.x, params[3]);
+	   SETFLOAT_T(text->text.align.y, params[4]);
+
+	   break;
+	}
       case EDJE_STATE_PARAM_VISIBLE:
 	 CHKPARAM(3);
 
-	 SETINT(rp->custom->description->common.visible, params[3]);
+	 SETINT(rp->custom->description->visible, params[3]);
 
 	 break;
       default:

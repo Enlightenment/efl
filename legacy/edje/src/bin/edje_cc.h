@@ -103,8 +103,8 @@ struct _SrcFile_List
 /* global fn calls */
 void    data_setup(void);
 void    data_write(void);
-void    data_queue_part_lookup(Edje_Part_Collection *pc, char *name, int *dest);
-void    data_queue_program_lookup(Edje_Part_Collection *pc, char *name, int *dest);
+void    data_queue_part_lookup(Old_Edje_Part_Collection *pc, char *name, int *dest);
+void    data_queue_program_lookup(Old_Edje_Part_Collection *pc, char *name, int *dest);
 void    data_queue_image_lookup(char *name, int *dest, Eina_Bool *set);
 void    data_queue_part_slave_lookup(int *master, int *slave);
 void    data_queue_image_slave_lookup(int *master, int *slave);

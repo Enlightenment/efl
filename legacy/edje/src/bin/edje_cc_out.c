@@ -52,14 +52,14 @@ struct _External_Lookup
 
 struct _Part_Lookup
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    char *name;
    int *dest;
 };
 
 struct _Program_Lookup
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    char *name;
    int *dest;
 };
@@ -96,7 +96,7 @@ struct _Code_Lookup
    Eina_Bool set;
 };
 
-static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char *ptr, int len));
+static void data_process_string(Old_Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Old_Edje_Part_Collection *pc, char *name, char *ptr, int len));
 
 Old_Edje_File *edje_file = NULL;
 Eina_List *edje_collections = NULL;
@@ -160,8 +160,8 @@ data_setup(void)
 }
 
 static void
-check_image_part_desc (Edje_Part_Collection *pc, Edje_Part *ep,
-                       Edje_Part_Description *epd, Eet_File *ef)
+check_image_part_desc (Old_Edje_Part_Collection *pc, Old_Edje_Part *ep,
+                       Old_Edje_Part_Description *epd, Eet_File *ef)
 {
    Eina_List *l;
    Edje_Part_Image_Id *iid;
@@ -182,7 +182,7 @@ check_image_part_desc (Edje_Part_Collection *pc, Edje_Part *ep,
 }
 
 static void
-check_packed_items(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
+check_packed_items(Old_Edje_Part_Collection *pc, Old_Edje_Part *ep, Eet_File *ef)
 {
    Eina_List *l;
    Edje_Pack_Element *it;
@@ -201,11 +201,11 @@ check_packed_items(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 }
 
 static void
-check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
+check_part (Old_Edje_Part_Collection *pc, Old_Edje_Part *ep, Eet_File *ef)
 {
-   Edje_Part_Description *epd = ep->default_desc;
+   Old_Edje_Part_Description *epd = ep->default_desc;
    Eina_List *l;
-   Edje_Part_Description *data;
+   Old_Edje_Part_Description *data;
 
    /* FIXME: check image set and sort them. */
    if (!epd)
@@ -225,7 +225,7 @@ check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 }
 
 static void
-check_program (Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
+check_program (Old_Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 {
    switch (ep->action)
      {
@@ -649,13 +649,13 @@ static void
 check_groups(Eet_File *ef)
 {
    Eina_List *l;
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
 
    /* sanity checks for parts and programs */
    EINA_LIST_FOREACH(edje_collections, l, pc)
      {
 	Eina_List *ll;
-	Edje_Part *part;
+	Old_Edje_Part *part;
 	Edje_Program *prog;
 
 	EINA_LIST_FOREACH(pc->parts, ll, part)
@@ -669,7 +669,7 @@ static int
 data_write_groups(Eet_File *ef, int *collection_num)
 {
    Eina_List *l;
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    int bytes = 0;
    int total_bytes = 0;
 
@@ -1111,7 +1111,7 @@ data_queue_group_lookup(char *name)
 }
 
 void
-data_queue_part_lookup(Edje_Part_Collection *pc, char *name, int *dest)
+data_queue_part_lookup(Old_Edje_Part_Collection *pc, char *name, int *dest)
 {
    Part_Lookup *pl;
 
@@ -1123,7 +1123,7 @@ data_queue_part_lookup(Edje_Part_Collection *pc, char *name, int *dest)
 }
 
 void
-data_queue_program_lookup(Edje_Part_Collection *pc, char *name, int *dest)
+data_queue_program_lookup(Old_Edje_Part_Collection *pc, char *name, int *dest)
 {
    Program_Lookup *pl;
 
@@ -1187,7 +1187,7 @@ data_process_lookups(void)
    while (part_lookups)
      {
 	Part_Lookup *pl;
-	Edje_Part *ep;
+	Old_Edje_Part *ep;
 
 	pl = eina_list_data_get(part_lookups);
 
@@ -1329,7 +1329,7 @@ data_process_lookups(void)
 }
 
 static void
-data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char* ptr, int len))
+data_process_string(Old_Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Old_Edje_Part_Collection *pc, char *name, char* ptr, int len))
 {
    char *p;
    char *key;
@@ -1440,7 +1440,7 @@ data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void 
 }
 
 static void
-_data_queue_part_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
+_data_queue_part_lookup(Old_Edje_Part_Collection *pc, char *name, char *ptr, int len)
 {
    Code_Lookup *cl;
    cl = mem_alloc(SZ(Code_Lookup));
@@ -1452,7 +1452,7 @@ _data_queue_part_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len
    code_lookups = eina_list_append(code_lookups, cl);
 }
 static void
-_data_queue_program_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
+_data_queue_program_lookup(Old_Edje_Part_Collection *pc, char *name, char *ptr, int len)
 {
    Code_Lookup *cl;
 
@@ -1465,12 +1465,12 @@ _data_queue_program_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int 
    code_lookups = eina_list_append(code_lookups, cl);
 }
 static void
-_data_queue_group_lookup(Edje_Part_Collection *pc __UNUSED__, char *name, char *ptr __UNUSED__, int len __UNUSED__)
+_data_queue_group_lookup(Old_Edje_Part_Collection *pc __UNUSED__, char *name, char *ptr __UNUSED__, int len __UNUSED__)
 {
-   data_queue_group_lookup(name);	
+   data_queue_group_lookup(name);
 }
 static void
-_data_queue_image_pc_lookup(Edje_Part_Collection *pc __UNUSED__, char *name, char *ptr, int len)
+_data_queue_image_pc_lookup(Old_Edje_Part_Collection *pc __UNUSED__, char *name, char *ptr, int len)
 {
    Code_Lookup *cl;
 
@@ -1491,7 +1491,7 @@ data_process_scripts(void)
    for (l = codes, l2 = edje_collections; (l) && (l2); l = eina_list_next(l), l2 = eina_list_next(l2))
      {
 	Code *cd;
-	Edje_Part_Collection *pc;
+	Old_Edje_Part_Collection *pc;
 
 	cd = eina_list_data_get(l);
 	pc = eina_list_data_get(l2);

@@ -1893,10 +1893,13 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
 
    if (rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD)
      {
+	Edje_Part_Description_Text *txt;
+
+	txt = (Edje_Part_Description_Text *) rp->chosen_description;
+
         en->select_allow = 0;
-	if ((rp->chosen_description) &&
-	    (rp->chosen_description->text.repch))
-	  evas_object_textblock_replace_char_set(rp->object, rp->chosen_description->text.repch);
+	if (txt && txt->text.repch)
+	  evas_object_textblock_replace_char_set(rp->object, txt->text.repch);
 	else
 	  evas_object_textblock_replace_char_set(rp->object, "*");
      }

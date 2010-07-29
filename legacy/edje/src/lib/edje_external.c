@@ -620,9 +620,10 @@ _edje_external_params_free(Eina_List *external_params, Eina_Bool free_strings)
 void
 _edje_external_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 			    Edje_Calc_Params *params,
-			    Edje_Part_Description *chosen_desc)
+			    Edje_Part_Description_Common *chosen_desc)
 {
    Edje_External_Type *type;
+   Edje_Part_Description_External *ext;
    void *params1, *params2 = NULL;
    if (!ep->swallowed_object) return;
 
@@ -632,14 +633,20 @@ _edje_external_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
    if (!type->state_set) return;
 
+   ext = (Edje_Part_Description_External*) ep->param1.description;
+
    params1 = ep->param1.external_params ?
 		  ep->param1.external_params :
-		  ep->param1.description->external_params;
+		  ext->external_params;
 
    if (ep->param2 && ep->param2->description)
-     params2 = ep->param2->external_params ?
+     {
+	ext = (Edje_Part_Description_External*) ep->param2->description;
+
+	params2 = ep->param2->external_params ?
 		  ep->param2->external_params :
-		  ep->param2->description->external_params;
+	  ext->external_params;
+     }
 
    type->state_set(type->data, ep->swallowed_object,
 	 params1, params2, ep->description_pos);

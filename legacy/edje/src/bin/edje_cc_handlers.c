@@ -1597,14 +1597,14 @@ static void
 ob_collections_group(void)
 {
    Edje_Part_Collection_Directory_Entry *de;
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Code *cd;
    
    de = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
    edje_file->collection_dir->entries = eina_list_append(edje_file->collection_dir->entries, de);
    de->id = eina_list_count(edje_file->collection_dir->entries) - 1;
 
-   pc = mem_alloc(SZ(Edje_Part_Collection));
+   pc = mem_alloc(SZ(Old_Edje_Part_Collection));
    edje_collections = eina_list_append(edje_collections, pc);
    pc->id = eina_list_count(edje_collections) - 1;
 
@@ -1640,7 +1640,7 @@ st_collections_group_name(void)
 	if ((de_other != de) && (de_other->entry) && 
 	    (!strcmp(de->entry, de_other->entry)))
 	  {
-	     Edje_Part_Collection *pc;
+	     Old_Edje_Part_Collection *pc;
 	     Code *cd;
 	     int i;
 	     
@@ -1689,7 +1689,7 @@ st_collections_group_name(void)
 static void
 st_collections_group_script_only(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
 
    check_arg_count(1);
 
@@ -1700,7 +1700,7 @@ st_collections_group_script_only(void)
 static void
 st_collections_group_lua_script_only(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
 
    check_arg_count(1);
 
@@ -1748,7 +1748,7 @@ st_collections_group_alias(void)
 static void
 st_collections_group_min(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
 
    check_arg_count(2);
 
@@ -1771,7 +1771,7 @@ st_collections_group_min(void)
 static void
 st_collections_group_max(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
 
    check_arg_count(2);
 
@@ -1871,7 +1871,7 @@ ob_collections_group_lua_script(void)
 static void
 st_collections_group_data_item(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Edje_Data *di;
 
    check_arg_count(2);
@@ -1902,7 +1902,7 @@ st_collections_group_data_item(void)
 static void
 st_collections_group_parts_alias(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
 
    check_arg_count(2);
 
@@ -1948,10 +1948,10 @@ st_collections_group_parts_alias(void)
 static void
 ob_collections_group_parts_part(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
-   ep = mem_alloc(SZ(Edje_Part));
+   ep = mem_alloc(SZ(Old_Edje_Part));
    pc = eina_list_data_get(eina_list_last(edje_collections));
    pc->parts = eina_list_append(pc->parts, ep);
    ep->id = eina_list_count(pc->parts) - 1;
@@ -1984,8 +1984,8 @@ ob_collections_group_parts_part(void)
 static void
 st_collections_group_parts_part_name(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -1995,7 +1995,7 @@ st_collections_group_parts_part_name(void)
 
    {
 	Eina_List *l;
-	Edje_Part *lep;
+	Old_Edje_Part *lep;
 
 	EINA_LIST_FOREACH(pc->parts, l, lep)
 	  {
@@ -2032,8 +2032,8 @@ st_collections_group_parts_part_name(void)
 static void
 st_collections_group_parts_part_type(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2068,8 +2068,8 @@ st_collections_group_parts_part_type(void)
 static void
 st_collections_group_parts_part_mouse_events(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2092,8 +2092,8 @@ st_collections_group_parts_part_mouse_events(void)
 static void
 st_collections_group_parts_part_repeat_events(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2120,8 +2120,8 @@ st_collections_group_parts_part_repeat_events(void)
 static void
 st_collections_group_parts_part_ignore_flags(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_min_arg_count(1);
 
@@ -2152,8 +2152,8 @@ st_collections_group_parts_part_ignore_flags(void)
 static void
 st_collections_group_parts_part_scale(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2181,8 +2181,8 @@ st_collections_group_parts_part_scale(void)
 static void
 st_collections_group_parts_part_pointer_mode(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2208,8 +2208,8 @@ st_collections_group_parts_part_pointer_mode(void)
 static void
 st_collections_group_parts_part_precise_is_inside(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2233,8 +2233,8 @@ st_collections_group_parts_part_precise_is_inside(void)
 static void
 st_collections_group_parts_part_use_alternate_font_metrics(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2257,8 +2257,8 @@ st_collections_group_parts_part_use_alternate_font_metrics(void)
 static void
 st_collections_group_parts_part_clip_to_id(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2290,8 +2290,8 @@ st_collections_group_parts_part_clip_to_id(void)
 static void
 st_collections_group_parts_part_source(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2317,8 +2317,8 @@ st_collections_group_parts_part_source(void)
 static void
 st_collections_group_parts_part_source2(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2344,8 +2344,8 @@ st_collections_group_parts_part_source2(void)
 static void
 st_collections_group_parts_part_source3(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2371,8 +2371,8 @@ st_collections_group_parts_part_source3(void)
 static void
 st_collections_group_parts_part_source4(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2398,8 +2398,8 @@ st_collections_group_parts_part_source4(void)
 static void
 st_collections_group_parts_part_source5(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2425,8 +2425,8 @@ st_collections_group_parts_part_source5(void)
 static void
 st_collections_group_parts_part_source6(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2461,8 +2461,8 @@ st_collections_group_parts_part_source6(void)
 static void
 st_collections_group_parts_part_effect(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2505,8 +2505,8 @@ st_collections_group_parts_part_effect(void)
 static void
 st_collections_group_parts_part_entry_mode(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2539,8 +2539,8 @@ st_collections_group_parts_part_entry_mode(void)
 static void
 st_collections_group_parts_part_select_mode(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2566,8 +2566,8 @@ st_collections_group_parts_part_select_mode(void)
 static void
 st_collections_group_parts_part_multiline(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2616,8 +2616,8 @@ st_collections_group_parts_part_multiline(void)
 static void
 st_collections_group_parts_part_dragable_x(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(3);
 
@@ -2646,8 +2646,8 @@ st_collections_group_parts_part_dragable_x(void)
 static void
 st_collections_group_parts_part_dragable_y(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(3);
 
@@ -2673,8 +2673,8 @@ st_collections_group_parts_part_dragable_y(void)
 static void
 st_collections_group_parts_part_dragable_confine(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2703,8 +2703,8 @@ st_collections_group_parts_part_dragable_confine(void)
 static void
 st_collections_group_parts_part_dragable_events(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_arg_count(1);
 
@@ -2754,8 +2754,8 @@ st_collections_group_parts_part_dragable_events(void)
 */
 static void ob_collections_group_parts_part_box_items_item(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
@@ -2810,8 +2810,8 @@ static void ob_collections_group_parts_part_box_items_item(void)
 */
 static void st_collections_group_parts_part_box_items_item_type(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    check_arg_count(1);
@@ -2849,8 +2849,8 @@ static void st_collections_group_parts_part_box_items_item_type(void)
 */
 static void st_collections_group_parts_part_box_items_item_name(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    check_arg_count(1);
@@ -2874,8 +2874,8 @@ static void st_collections_group_parts_part_box_items_item_name(void)
 */
 static void st_collections_group_parts_part_box_items_item_source(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    check_arg_count(1);
@@ -2899,8 +2899,8 @@ static void st_collections_group_parts_part_box_items_item_source(void)
 */
 static void st_collections_group_parts_part_box_items_item_min(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    check_arg_count(2);
@@ -2925,8 +2925,8 @@ static void st_collections_group_parts_part_box_items_item_min(void)
 */
 static void st_collections_group_parts_part_box_items_item_prefer(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    check_arg_count(2);
@@ -2950,8 +2950,8 @@ static void st_collections_group_parts_part_box_items_item_prefer(void)
 */
 static void st_collections_group_parts_part_box_items_item_max(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    check_arg_count(2);
@@ -2976,8 +2976,8 @@ static void st_collections_group_parts_part_box_items_item_max(void)
 */
 static void st_collections_group_parts_part_box_items_item_padding(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    check_arg_count(4);
@@ -3004,8 +3004,8 @@ static void st_collections_group_parts_part_box_items_item_padding(void)
 */
 static void st_collections_group_parts_part_box_items_item_align(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    check_arg_count(2);
@@ -3030,8 +3030,8 @@ static void st_collections_group_parts_part_box_items_item_align(void)
 */
 static void st_collections_group_parts_part_box_items_item_weight(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    check_arg_count(2);
@@ -3056,8 +3056,8 @@ static void st_collections_group_parts_part_box_items_item_weight(void)
 */
 static void st_collections_group_parts_part_box_items_item_aspect(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    check_arg_count(2);
@@ -3082,8 +3082,8 @@ static void st_collections_group_parts_part_box_items_item_aspect(void)
 */
 static void st_collections_group_parts_part_box_items_item_aspect_mode(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    check_arg_count(1);
@@ -3113,8 +3113,8 @@ static void st_collections_group_parts_part_box_items_item_aspect_mode(void)
 */
 static void st_collections_group_parts_part_box_items_item_options(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    check_arg_count(1);
@@ -3139,8 +3139,8 @@ static void st_collections_group_parts_part_box_items_item_options(void)
 */
 static void st_collections_group_parts_part_table_items_item_position(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    check_arg_count(2);
@@ -3174,8 +3174,8 @@ static void st_collections_group_parts_part_table_items_item_position(void)
 */
 static void st_collections_group_parts_part_table_items_item_span(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
    Edje_Pack_Element *item;
 
    check_arg_count(2);
@@ -3233,13 +3233,13 @@ static void st_collections_group_parts_part_table_items_item_span(void)
 static void
 ob_collections_group_parts_part_description(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
    ep = eina_list_data_get(eina_list_last(pc->parts));
-   ed = mem_alloc(SZ(Edje_Part_Description));
+   ed = mem_alloc(SZ(Old_Edje_Part_Description));
    if (!ep->default_desc)
      ep->default_desc = ed;
    else
@@ -3338,9 +3338,9 @@ ob_collections_group_parts_part_description(void)
 static void
 st_collections_group_parts_part_description_inherit(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed, *parent = NULL;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed, *parent = NULL;
    Eina_List *l;
    Edje_Part_Image_Id *iid;
    char *parent_name;
@@ -3380,7 +3380,7 @@ st_collections_group_parts_part_description_inherit(void)
    else
      {
 	double min_dst = 999.0;
-	Edje_Part_Description *d;
+	Old_Edje_Part_Description *d;
 
 	if (!strcmp(parent_name, "default"))
 	  {
@@ -3486,9 +3486,9 @@ st_collections_group_parts_part_description_inherit(void)
 static void
 st_collections_group_parts_part_description_state(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
    char *s;
 
    check_arg_count(2);
@@ -3525,9 +3525,9 @@ st_collections_group_parts_part_description_state(void)
 static void
 st_collections_group_parts_part_description_visible(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -3553,9 +3553,9 @@ st_collections_group_parts_part_description_visible(void)
 static void
 st_collections_group_parts_part_description_align(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -3584,9 +3584,9 @@ st_collections_group_parts_part_description_align(void)
 static void
 st_collections_group_parts_part_description_fixed(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -3611,9 +3611,9 @@ st_collections_group_parts_part_description_fixed(void)
 static void
 st_collections_group_parts_part_description_min(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -3638,9 +3638,9 @@ st_collections_group_parts_part_description_min(void)
 static void
 st_collections_group_parts_part_description_max(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -3667,9 +3667,9 @@ st_collections_group_parts_part_description_max(void)
 static void
 st_collections_group_parts_part_description_step(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -3698,9 +3698,9 @@ st_collections_group_parts_part_description_step(void)
 static void
 st_collections_group_parts_part_description_aspect(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -3726,9 +3726,9 @@ st_collections_group_parts_part_description_aspect(void)
 static void
 st_collections_group_parts_part_description_aspect_preference(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -3759,9 +3759,9 @@ st_collections_group_parts_part_description_aspect_preference(void)
 static void
 st_collections_group_parts_part_description_color_class(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -3785,9 +3785,9 @@ st_collections_group_parts_part_description_color_class(void)
 static void
 st_collections_group_parts_part_description_color(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(4);
 
@@ -3814,9 +3814,9 @@ st_collections_group_parts_part_description_color(void)
 static void
 st_collections_group_parts_part_description_color2(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(4);
 
@@ -3843,9 +3843,9 @@ st_collections_group_parts_part_description_color2(void)
 static void
 st_collections_group_parts_part_description_color3(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(4);
 
@@ -3896,9 +3896,9 @@ st_collections_group_parts_part_description_color3(void)
 static void
 st_collections_group_parts_part_description_rel1_relative(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -3923,9 +3923,9 @@ st_collections_group_parts_part_description_rel1_relative(void)
 static void
 st_collections_group_parts_part_description_rel1_offset(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -3951,9 +3951,9 @@ st_collections_group_parts_part_description_rel1_offset(void)
 static void
 st_collections_group_parts_part_description_rel1_to(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -3985,9 +3985,9 @@ st_collections_group_parts_part_description_rel1_to(void)
 static void
 st_collections_group_parts_part_description_rel1_to_x(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4019,9 +4019,9 @@ st_collections_group_parts_part_description_rel1_to_x(void)
 static void
 st_collections_group_parts_part_description_rel1_to_y(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4041,9 +4041,9 @@ st_collections_group_parts_part_description_rel1_to_y(void)
 static void
 st_collections_group_parts_part_description_rel2_relative(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -4058,9 +4058,9 @@ st_collections_group_parts_part_description_rel2_relative(void)
 static void
 st_collections_group_parts_part_description_rel2_offset(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -4075,9 +4075,9 @@ st_collections_group_parts_part_description_rel2_offset(void)
 static void
 st_collections_group_parts_part_description_rel2_to(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4098,9 +4098,9 @@ st_collections_group_parts_part_description_rel2_to(void)
 static void
 st_collections_group_parts_part_description_rel2_to_x(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4120,9 +4120,9 @@ st_collections_group_parts_part_description_rel2_to_x(void)
 static void
 st_collections_group_parts_part_description_rel2_to_y(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4176,9 +4176,9 @@ st_collections_group_parts_part_description_rel2_to_y(void)
 static void
 st_collections_group_parts_part_description_image_normal(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4219,9 +4219,9 @@ st_collections_group_parts_part_description_image_normal(void)
 static void
 st_collections_group_parts_part_description_image_tween(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4265,9 +4265,9 @@ st_collections_group_parts_part_description_image_tween(void)
 static void
 st_collections_group_parts_part_description_image_border(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(4);
 
@@ -4305,9 +4305,9 @@ st_collections_group_parts_part_description_image_border(void)
 static void
 st_collections_group_parts_part_description_image_middle(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4347,9 +4347,9 @@ st_collections_group_parts_part_description_image_middle(void)
 static void
 st_collections_group_parts_part_description_image_border_scale(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4386,9 +4386,9 @@ st_collections_group_parts_part_description_image_border_scale(void)
 static void
 st_collections_group_parts_part_description_image_scale_hint(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4450,9 +4450,9 @@ st_collections_group_parts_part_description_image_scale_hint(void)
 static void
 st_collections_group_parts_part_description_fill_smooth(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4486,9 +4486,9 @@ st_collections_group_parts_part_description_fill_smooth(void)
 static void
 st_collections_group_parts_part_description_fill_spread(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4523,9 +4523,9 @@ st_collections_group_parts_part_description_fill_spread(void)
 static void
 st_collections_group_parts_part_description_fill_type(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4582,9 +4582,9 @@ st_collections_group_parts_part_description_fill_type(void)
 static void
 st_collections_group_parts_part_description_fill_origin_relative(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -4618,9 +4618,9 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
 static void
 st_collections_group_parts_part_description_fill_origin_offset(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -4677,9 +4677,9 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
 static void
 st_collections_group_parts_part_description_fill_size_relative(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -4713,9 +4713,9 @@ st_collections_group_parts_part_description_fill_size_relative(void)
 static void
 st_collections_group_parts_part_description_fill_size_offset(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -4782,9 +4782,9 @@ st_collections_group_parts_part_description_fill_size_offset(void)
 static void
 st_collections_group_parts_part_description_text_text(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
    char *str = NULL;
    int i;
 
@@ -4834,9 +4834,9 @@ st_collections_group_parts_part_description_text_text(void)
 static void
 st_collections_group_parts_part_description_text_text_class(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4872,9 +4872,9 @@ st_collections_group_parts_part_description_text_text_class(void)
 static void
 st_collections_group_parts_part_description_text_font(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4909,9 +4909,9 @@ st_collections_group_parts_part_description_text_font(void)
 static void
 st_collections_group_parts_part_description_text_style(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4947,9 +4947,9 @@ st_collections_group_parts_part_description_text_style(void)
 static void
 st_collections_group_parts_part_description_text_repch(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -4984,9 +4984,9 @@ st_collections_group_parts_part_description_text_repch(void)
 static void
 st_collections_group_parts_part_description_text_size(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -5021,9 +5021,9 @@ st_collections_group_parts_part_description_text_size(void)
 static void
 st_collections_group_parts_part_description_text_fit(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -5060,9 +5060,9 @@ st_collections_group_parts_part_description_text_fit(void)
 static void
 st_collections_group_parts_part_description_text_min(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -5100,9 +5100,9 @@ st_collections_group_parts_part_description_text_min(void)
 static void
 st_collections_group_parts_part_description_text_max(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -5139,9 +5139,9 @@ st_collections_group_parts_part_description_text_max(void)
 static void
 st_collections_group_parts_part_description_text_align(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -5177,9 +5177,9 @@ st_collections_group_parts_part_description_text_align(void)
 static void
 st_collections_group_parts_part_description_text_source(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -5221,9 +5221,9 @@ st_collections_group_parts_part_description_text_source(void)
 static void
 st_collections_group_parts_part_description_text_text_source(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -5266,9 +5266,9 @@ st_collections_group_parts_part_description_text_text_source(void)
 static void
 st_collections_group_parts_part_description_text_elipsis(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
 
@@ -5367,9 +5367,9 @@ st_collections_group_parts_part_description_text_elipsis(void)
 */
 static void st_collections_group_parts_part_description_box_layout(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_min_arg_count(1);
 
@@ -5393,9 +5393,9 @@ static void st_collections_group_parts_part_description_box_layout(void)
 
 static void st_collections_group_parts_part_description_box_align(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -5418,9 +5418,9 @@ static void st_collections_group_parts_part_description_box_align(void)
 
 static void st_collections_group_parts_part_description_box_padding(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -5444,9 +5444,9 @@ static void st_collections_group_parts_part_description_box_padding(void)
 static void
 st_collections_group_parts_part_description_box_min(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -5525,9 +5525,9 @@ st_collections_group_parts_part_description_box_min(void)
 */
 static void st_collections_group_parts_part_description_table_homogeneous(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_min_arg_count(1);
 
@@ -5553,9 +5553,9 @@ static void st_collections_group_parts_part_description_table_homogeneous(void)
 
 static void st_collections_group_parts_part_description_table_align(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -5578,9 +5578,9 @@ static void st_collections_group_parts_part_description_table_align(void)
 
 static void st_collections_group_parts_part_description_table_padding(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(2);
 
@@ -5649,9 +5649,9 @@ static void st_collections_group_parts_part_description_table_padding(void)
 static void
 st_collections_group_parts_part_description_map_perspective(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
    
@@ -5691,9 +5691,9 @@ st_collections_group_parts_part_description_map_perspective(void)
 static void
 st_collections_group_parts_part_description_map_light(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
    
@@ -5724,9 +5724,9 @@ st_collections_group_parts_part_description_map_light(void)
 static void
 st_collections_group_parts_part_description_map_on(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
    
@@ -5754,9 +5754,9 @@ st_collections_group_parts_part_description_map_on(void)
 static void
 st_collections_group_parts_part_description_map_smooth(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
    
@@ -5781,9 +5781,9 @@ st_collections_group_parts_part_description_map_smooth(void)
 static void
 st_collections_group_parts_part_description_map_alpha(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
    
@@ -5810,9 +5810,9 @@ st_collections_group_parts_part_description_map_alpha(void)
 static void
 st_collections_group_parts_part_description_map_backface_cull(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
    
@@ -5840,9 +5840,9 @@ st_collections_group_parts_part_description_map_backface_cull(void)
 static void
 st_collections_group_parts_part_description_map_perspective_on(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
    
@@ -5887,9 +5887,9 @@ st_collections_group_parts_part_description_map_perspective_on(void)
 static void
 st_collections_group_parts_part_description_map_rotation_center(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
    
@@ -5921,9 +5921,9 @@ st_collections_group_parts_part_description_map_rotation_center(void)
 static void
 st_collections_group_parts_part_description_map_rotation_x(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
    
@@ -5949,9 +5949,9 @@ st_collections_group_parts_part_description_map_rotation_x(void)
 static void
 st_collections_group_parts_part_description_map_rotation_y(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
    
@@ -5977,9 +5977,9 @@ st_collections_group_parts_part_description_map_rotation_y(void)
 static void
 st_collections_group_parts_part_description_map_rotation_z(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
    
@@ -6021,9 +6021,9 @@ st_collections_group_parts_part_description_map_rotation_z(void)
 static void
 st_collections_group_parts_part_description_perspective_zplane(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
    
@@ -6050,9 +6050,9 @@ st_collections_group_parts_part_description_perspective_zplane(void)
 static void
 st_collections_group_parts_part_description_perspective_focal(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
 
    check_arg_count(1);
    
@@ -6093,9 +6093,9 @@ st_collections_group_parts_part_description_perspective_focal(void)
 static void
 _st_collections_group_parts_part_description_params(Edje_External_Param_Type type)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
+   Old_Edje_Part_Description *ed;
    Edje_External_Param *param;
    Eina_List *l;
    const char *name;
@@ -6283,7 +6283,7 @@ st_collections_group_parts_part_description_params_choice(void)
 static void
 ob_collections_group_programs_program(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Edje_Program *ep;
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
@@ -6307,7 +6307,7 @@ ob_collections_group_programs_program(void)
 static void
 st_collections_group_programs_program_name(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Edje_Program *ep;
 
    check_arg_count(1);
@@ -6348,7 +6348,7 @@ st_collections_group_programs_program_name(void)
 static void
 st_collections_group_programs_program_signal(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Edje_Program *ep;
 
    check_arg_count(1);
@@ -6373,7 +6373,7 @@ st_collections_group_programs_program_signal(void)
 static void
 st_collections_group_programs_program_source(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Edje_Program *ep;
 
    check_arg_count(1);
@@ -6398,7 +6398,7 @@ st_collections_group_programs_program_source(void)
 static void
 st_collections_group_programs_program_filter(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Edje_Program *ep;
 
    check_min_arg_count(1);
@@ -6428,7 +6428,7 @@ st_collections_group_programs_program_filter(void)
 static void
 st_collections_group_programs_program_in(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Edje_Program *ep;
 
    check_arg_count(2);
@@ -6465,7 +6465,7 @@ st_collections_group_programs_program_in(void)
 static void
 st_collections_group_programs_program_action(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Edje_Program *ep;
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
@@ -6580,7 +6580,7 @@ st_collections_group_programs_program_action(void)
 static void
 st_collections_group_programs_program_transition(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Edje_Program *ep;
 
    check_arg_count(2);
@@ -6611,7 +6611,7 @@ st_collections_group_programs_program_transition(void)
 static void
 st_collections_group_programs_program_target(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Edje_Program *ep;
 
    check_arg_count(1);
@@ -6664,7 +6664,7 @@ st_collections_group_programs_program_target(void)
 static void
 st_collections_group_programs_program_after(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Edje_Program *ep;
 
    check_arg_count(1);
@@ -6702,7 +6702,7 @@ st_collections_group_programs_program_after(void)
 static void
 st_collections_group_programs_program_api(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Edje_Program *ep;
 
    check_min_arg_count(1);
@@ -6721,8 +6721,8 @@ st_collections_group_programs_program_api(void)
 static void
 st_collections_group_parts_part_api(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Old_Edje_Part_Collection *pc;
+   Old_Edje_Part *ep;
 
    check_min_arg_count(1);
 
@@ -6739,7 +6739,7 @@ st_collections_group_parts_part_api(void)
 static void
 ob_collections_group_programs_program_script(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Edje_Program *ep;
    Code *cd;
 
@@ -6779,7 +6779,7 @@ ob_collections_group_programs_program_script(void)
 static void
 ob_collections_group_programs_program_lua_script(void)
 {
-   Edje_Part_Collection *pc;
+   Old_Edje_Part_Collection *pc;
    Edje_Program *ep;
    Code *cd;
 

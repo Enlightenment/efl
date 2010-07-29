@@ -12,7 +12,11 @@
 #define FLAG_Y    0x02
 #define FLAG_XY   (FLAG_X | FLAG_Y)
 
-static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep, Edje_Part_Description *desc, Edje_Part_Description *chosen_desc, Edje_Real_Part *rel1_to_x, Edje_Real_Part *rel1_to_y, Edje_Real_Part *rel2_to_x, Edje_Real_Part *rel2_to_y, Edje_Real_Part *confine_to, Edje_Calc_Params *params, int flags);
+static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep,
+				     Edje_Part_Description_Common *desc, Edje_Part_Description_Common *chosen_desc,
+				     Edje_Real_Part *rel1_to_x, Edje_Real_Part *rel1_to_y,
+				     Edje_Real_Part *rel2_to_x, Edje_Real_Part *rel2_to_y,
+				     Edje_Real_Part *confine_to, Edje_Calc_Params *params, int flags);
 static void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags);
 
 void
@@ -63,15 +67,15 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos)
 #endif
 }
 
-Edje_Part_Description *
+Edje_Part_Description_Common *
 _edje_part_description_find(Edje *ed __UNUSED__, Edje_Real_Part *rp, const char *name,
                             double val)
 {
    Edje_Part *ep = rp->part;
-   Edje_Part_Description *ret = NULL;
-   Edje_Part_Description *d;
-   Eina_List *l;
+   Edje_Part_Description_Common *ret = NULL;
+   Edje_Part_Description_Common *d;
    double min_dst = 99999.0;
+   unsigned int i;
 
    if (!strcmp(name, "default") && val == 0.0)
      return ep->default_desc;
@@ -82,15 +86,17 @@ _edje_part_description_find(Edje *ed __UNUSED__, Edje_Real_Part *rp, const char 
    if (!strcmp(name, "default"))
      {
 	ret = ep->default_desc;
-	min_dst = ABS(ep->default_desc->common.state.value - val);
+	min_dst = ABS(ep->default_desc->state.value - val);
      }
-   EINA_LIST_FOREACH(ep->other_desc, l, d)
+   for (i = 0; i < ep->other_count; ++i)
      {
-	if (!strcmp(d->common.state.name, name))
+	d = ep->other_desc[i];
+
+	if (!strcmp(d->state.name, name))
 	  {
 	     double dst;
 
-	     dst = ABS(d->common.state.value - val);
+	     dst = ABS(d->state.value - val);
 	     if (dst < min_dst)
 	       {
 		  ret = d;
@@ -105,9 +111,11 @@ _edje_part_description_find(Edje *ed __UNUSED__, Edje_Real_Part *rp, const char 
 void
 _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, double v1, const char *d2, double v2)
 {
-   Edje_Part_Description *epd1;
-   Edje_Part_Description *epd2 = NULL;
-   Edje_Part_Description *chosen_desc;
+   Edje_Part_Description_Common *epd1;
+   Edje_Part_Description_Common *epd2 = NULL;
+   Edje_Part_Description_Common *chosen_desc;
+
+   Edje_Part_Description_Image *epdi;
 
    if (!d1) d1 = "default";
 
@@ -118,8 +126,10 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
    if (d2)
      epd2 = _edje_part_description_find(ed, ep, d2, v2);
 
+   epdi = (Edje_Part_Description_Image*) epd2;
+
    /* There is an animation if both description are different or if description is an image with tweens */
-   if (epd2 != NULL && (epd1 != epd2 || (ep->part->type == EDJE_PART_TYPE_IMAGE && epd2->image.tween_list)))
+   if (epd2 != NULL && (epd1 != epd2 || (ep->part->type == EDJE_PART_TYPE_IMAGE && epdi->image.tween_list)))
      {
 	if (!ep->param2)
 	  {
@@ -148,20 +158,24 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
    ep->param1.rel1_to_x = ep->param1.rel1_to_y = NULL;
    ep->param1.rel2_to_x = ep->param1.rel2_to_y = NULL;
 
-   if (ep->param1.description->common.rel1.id_x >= 0)
-     ep->param1.rel1_to_x = ed->table_parts[ep->param1.description->common.rel1.id_x % ed->table_parts_size];
-   if (ep->param1.description->common.rel1.id_y >= 0)
-     ep->param1.rel1_to_y = ed->table_parts[ep->param1.description->common.rel1.id_y % ed->table_parts_size];
-   if (ep->param1.description->common.rel2.id_x >= 0)
-     ep->param1.rel2_to_x = ed->table_parts[ep->param1.description->common.rel2.id_x % ed->table_parts_size];
-   if (ep->param1.description->common.rel2.id_y >= 0)
-     ep->param1.rel2_to_y = ed->table_parts[ep->param1.description->common.rel2.id_y % ed->table_parts_size];
+   if (ep->param1.description->rel1.id_x >= 0)
+     ep->param1.rel1_to_x = ed->table_parts[ep->param1.description->rel1.id_x % ed->table_parts_size];
+   if (ep->param1.description->rel1.id_y >= 0)
+     ep->param1.rel1_to_y = ed->table_parts[ep->param1.description->rel1.id_y % ed->table_parts_size];
+   if (ep->param1.description->rel2.id_x >= 0)
+     ep->param1.rel2_to_x = ed->table_parts[ep->param1.description->rel2.id_x % ed->table_parts_size];
+   if (ep->param1.description->rel2.id_y >= 0)
+     ep->param1.rel2_to_y = ed->table_parts[ep->param1.description->rel2.id_y % ed->table_parts_size];
 
    if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
      {
+	Edje_Part_Description_External *external;
+
+	external = (Edje_Part_Description_External*) ep->param1.description;
+
 	if (ep->param1.external_params)
 	  _edje_external_parsed_params_free(ep->swallowed_object, ep->param1.external_params);
-	ep->param1.external_params = _edje_external_params_parse(ep->swallowed_object, ep->param1.description->external_params);
+	ep->param1.external_params = _edje_external_params_parse(ep->swallowed_object, external->external_params);
      }
 
    if (ep->param2)
@@ -173,17 +187,25 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
 
 	if (ep->param2->description)
 	  {
-	     if (ep->param2->description->common.rel1.id_x >= 0)
-	       ep->param2->rel1_to_x = ed->table_parts[ep->param2->description->common.rel1.id_x % ed->table_parts_size];
-	     if (ep->param2->description->common.rel1.id_y >= 0)
-	       ep->param2->rel1_to_y = ed->table_parts[ep->param2->description->common.rel1.id_y % ed->table_parts_size];
-	     if (ep->param2->description->common.rel2.id_x >= 0)
-	       ep->param2->rel2_to_x = ed->table_parts[ep->param2->description->common.rel2.id_x % ed->table_parts_size];
-	     if (ep->param2->description->common.rel2.id_y >= 0)
-	       ep->param2->rel2_to_y = ed->table_parts[ep->param2->description->common.rel2.id_y % ed->table_parts_size];
+	     if (ep->param2->description->rel1.id_x >= 0)
+	       ep->param2->rel1_to_x = ed->table_parts[ep->param2->description->rel1.id_x % ed->table_parts_size];
+	     if (ep->param2->description->rel1.id_y >= 0)
+	       ep->param2->rel1_to_y = ed->table_parts[ep->param2->description->rel1.id_y % ed->table_parts_size];
+	     if (ep->param2->description->rel2.id_x >= 0)
+	       ep->param2->rel2_to_x = ed->table_parts[ep->param2->description->rel2.id_x % ed->table_parts_size];
+	     if (ep->param2->description->rel2.id_y >= 0)
+	       ep->param2->rel2_to_y = ed->table_parts[ep->param2->description->rel2.id_y % ed->table_parts_size];
 
 	     if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
-	       ep->param2->external_params = _edje_external_params_parse(ep->swallowed_object, ep->param2->description->external_params);
+	       {
+		  Edje_Part_Description_External *external;
+
+		  external = (Edje_Part_Description_External*) ep->param2->description;
+
+		  if (ep->param2->external_params)
+		    _edje_external_parsed_params_free(ep->swallowed_object, ep->param2->external_params);
+		  ep->param2->external_params = _edje_external_params_parse(ep->swallowed_object, external->external_params);
+	       }
 	  }
 
 	if (ep->description_pos != 0.0)
@@ -644,7 +666,7 @@ static void
 _edje_part_recalc_single_textblock(FLOAT_T sc,
 				   Edje *ed,
 				   Edje_Real_Part *ep,
-				   Edje_Part_Description *chosen_desc,
+				   Edje_Part_Description_Text *chosen_desc,
 				   Edje_Calc_Params *params,
 				   int *minw, int *minh,
 				   int *maxw, int *maxh)
@@ -660,8 +682,8 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 	if (chosen_desc->text.id_source >= 0)
 	  {
 	     ep->text.source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
-	     if (ep->text.source->chosen_description->text.style)
-	       style = ep->text.source->chosen_description->text.style;
+	     if (((Edje_Part_Description_Text *)ep->text.source->chosen_description)->text.style)
+	       style = ((Edje_Part_Description_Text *)ep->text.source->chosen_description)->text.style;
 	  }
 	else
 	  {
@@ -673,7 +695,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 	if (chosen_desc->text.id_text_source >= 0)
 	  {
 	     ep->text.text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
-	     text = ep->text.text_source->chosen_description->text.text;
+	     text = ((Edje_Part_Description_Text*)ep->text.text_source->chosen_description)->text.text;
 	     if (ep->text.text_source->text.text) text = ep->text.text_source->text.text;
 	  }
 	else
@@ -767,8 +789,8 @@ static void
 _edje_part_recalc_single_text(FLOAT_T sc,
 			      Edje *ed,
 			      Edje_Real_Part *ep,
-			      Edje_Part_Description *desc,
-			      Edje_Part_Description *chosen_desc,
+			      Edje_Part_Description_Text *desc,
+			      Edje_Part_Description_Text *chosen_desc,
 			      Edje_Calc_Params *params,
 			      int *minw, int *minh,
 			      int *maxw, int *maxh)
@@ -797,12 +819,12 @@ _edje_part_recalc_single_text(FLOAT_T sc,
 	  ep->text.text_source = NULL;
 
 	if (ep->text.text_source)
-	  text = ep->text.text_source->chosen_description->text.text;
+	  text = ((Edje_Part_Description_Text*)ep->text.text_source->chosen_description)->text.text;
 	else
 	  text = chosen_desc->text.text;
 
 	if (ep->text.source)
-	  font = _edje_text_class_font_get(ed, ep->text.source->chosen_description, &size, &sfont);
+	  font = _edje_text_class_font_get(ed, ((Edje_Part_Description_Text*)ep->text.source->chosen_description), &size, &sfont);
 	else
 	  font = _edje_text_class_font_get(ed, chosen_desc, &size, &sfont);
 
@@ -1227,8 +1249,8 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
 static void
 _edje_part_recalc_single(Edje *ed,
 			 Edje_Real_Part *ep,
-			 Edje_Part_Description *desc,
-			 Edje_Part_Description *chosen_desc,
+			 Edje_Part_Description_Common *desc,
+			 Edje_Part_Description_Common *chosen_desc,
 			 Edje_Real_Part *rel1_to_x,
 			 Edje_Real_Part *rel1_to_y,
 			 Edje_Real_Part *rel2_to_x,
@@ -1245,23 +1267,23 @@ _edje_part_recalc_single(Edje *ed,
 
    sc = ed->scale;
    if (sc == 0.0) sc = _edje_scale;
-   _edje_part_recalc_single_min_max(sc, ep, &desc->common, &minw, &minh, &maxw, &maxh, flags);
+   _edje_part_recalc_single_min_max(sc, ep, desc, &minw, &minh, &maxw, &maxh, flags);
 
    /* relative coords of top left & bottom right */
-   _edje_part_recalc_single_rel(ed, ep, &desc->common, rel1_to_x, rel1_to_y, rel2_to_x, rel2_to_y, params, flags);
+   _edje_part_recalc_single_rel(ed, ep, desc, rel1_to_x, rel1_to_y, rel2_to_x, rel2_to_y, params, flags);
 
    /* aspect */
    if (((flags | ep->calculated) & FLAG_XY) == FLAG_XY)
-     _edje_part_recalc_single_aspect(ep, &desc->common, params, &minw, &minh, &maxw, &maxh);
+     _edje_part_recalc_single_aspect(ep, desc, params, &minw, &minh, &maxw, &maxh);
 
    /* size step */
-   _edje_part_recalc_single_step(&desc->common, params, flags);
+   _edje_part_recalc_single_step(desc, params, flags);
 
    /* if we have text that wants to make the min size the text size... */
    if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
-     _edje_part_recalc_single_textblock(sc, ed, ep, chosen_desc, params, &minw, &minh, &maxw, &maxh);
+     _edje_part_recalc_single_textblock(sc, ed, ep, (Edje_Part_Description_Text*) chosen_desc, params, &minw, &minh, &maxw, &maxh);
    else if (ep->part->type == EDJE_PART_TYPE_TEXT)
-     _edje_part_recalc_single_text(sc, ed, ep, desc, chosen_desc, params, &minw, &minh, &maxw, &maxh);
+     _edje_part_recalc_single_text(sc, ed, ep, (Edje_Part_Description_Text*) desc, (Edje_Part_Description_Text*) chosen_desc, params, &minw, &minh, &maxw, &maxh);
 
    /* remember what our size is BEFORE we go limit it */
    params->req.x = params->x;
@@ -1270,10 +1292,10 @@ _edje_part_recalc_single(Edje *ed,
    params->req.h = params->h;
 
    /* adjust for min size */
-   _edje_part_recalc_single_min(&desc->common, params, minw, minh, flags);
+   _edje_part_recalc_single_min(desc, params, minw, minh, flags);
 
    /* adjust for max size */
-   _edje_part_recalc_single_max(&desc->common, params, maxw, maxh, flags);
+   _edje_part_recalc_single_max(desc, params, maxw, maxh, flags);
 
    /* take care of dragable part */
    if (ep->drag)
@@ -1281,82 +1303,90 @@ _edje_part_recalc_single(Edje *ed,
 
    /* fill */
    if (ep->part->type == EDJE_PART_TYPE_IMAGE)
-     _edje_part_recalc_single_fill(ep, &desc->image, params, flags);
+     _edje_part_recalc_single_fill(ep, &((Edje_Part_Description_Image *)desc)->image, params, flags);
 
    /* colors */
-   if ((desc->common.color_class) && (*desc->common.color_class))
-     cc = _edje_color_class_find(ed, desc->common.color_class);
+   if ((desc->color_class) && (*desc->color_class))
+     cc = _edje_color_class_find(ed, desc->color_class);
 
    if (cc)
      {
-	params->color.r = (((int)cc->r + 1) * desc->common.color.r) >> 8;
-	params->color.g = (((int)cc->g + 1) * desc->common.color.g) >> 8;
-	params->color.b = (((int)cc->b + 1) * desc->common.color.b) >> 8;
-	params->color.a = (((int)cc->a + 1) * desc->common.color.a) >> 8;
+	params->color.r = (((int)cc->r + 1) * desc->color.r) >> 8;
+	params->color.g = (((int)cc->g + 1) * desc->color.g) >> 8;
+	params->color.b = (((int)cc->b + 1) * desc->color.b) >> 8;
+	params->color.a = (((int)cc->a + 1) * desc->color.a) >> 8;
      }
    else
      {
-	params->color.r = desc->common.color.r;
-	params->color.g = desc->common.color.g;
-	params->color.b = desc->common.color.b;
-	params->color.a = desc->common.color.a;
+	params->color.r = desc->color.r;
+	params->color.g = desc->color.g;
+	params->color.b = desc->color.b;
+	params->color.a = desc->color.a;
      }
 
    /* visible */
-   params->visible = desc->common.visible;
+   params->visible = desc->visible;
 
    switch (ep->part->type)
      {
       case EDJE_PART_TYPE_IMAGE:
-	 /* border */
-	 if (flags & FLAG_X)
-	   {
-	      params->type.common.spec.image.l = desc->image.border.l;
-	      params->type.common.spec.image.r = desc->image.border.r;
-	   }
-	 if (flags & FLAG_Y)
-	   {
-	      params->type.common.spec.image.t = desc->image.border.t;
-	      params->type.common.spec.image.b = desc->image.border.b;
-	   }
-	 break;
+	{
+	   Edje_Part_Description_Image *img_desc = (Edje_Part_Description_Image*) desc;
+
+	   /* border */
+	   if (flags & FLAG_X)
+	     {
+		params->type.common.spec.image.l = img_desc->image.border.l;
+		params->type.common.spec.image.r = img_desc->image.border.r;
+	     }
+	   if (flags & FLAG_Y)
+	     {
+		params->type.common.spec.image.t = img_desc->image.border.t;
+		params->type.common.spec.image.b = img_desc->image.border.b;
+	     }
+	   break;
+	}
       case EDJE_PART_TYPE_TEXT:
       case EDJE_PART_TYPE_TEXTBLOCK:
-	 /* text.align */
-	 if (flags & FLAG_X)
-	   {
-	      params->type.text.align.x = desc->text.align.x;
-	   }
-	 if (flags & FLAG_Y)
-	   {
-	      params->type.text.align.y = desc->text.align.y;
-	   }
-	 params->type.text.elipsis = desc->text.elipsis;
+	{
+	   Edje_Part_Description_Text *text_desc = (Edje_Part_Description_Text*) chosen_desc;
 
-	 /* text colors */
-	 if (cc)
-	   {
-	     params->type.text.color2.r = (((int)cc->r2 + 1) * desc->common.color2.r) >> 8;
-	     params->type.text.color2.g = (((int)cc->g2 + 1) * desc->common.color2.g) >> 8;
-	     params->type.text.color2.b = (((int)cc->b2 + 1) * desc->common.color2.b) >> 8;
-	     params->type.text.color2.a = (((int)cc->a2 + 1) * desc->common.color2.a) >> 8;
-	     params->type.text.color3.r = (((int)cc->r3 + 1) * desc->text.color3.r) >> 8;
-	     params->type.text.color3.g = (((int)cc->g3 + 1) * desc->text.color3.g) >> 8;
-	     params->type.text.color3.b = (((int)cc->b3 + 1) * desc->text.color3.b) >> 8;
-	     params->type.text.color3.a = (((int)cc->a3 + 1) * desc->text.color3.a) >> 8;
-	   }
-	 else
-	   {
-	      params->type.text.color2.r = desc->common.color2.r;
-	      params->type.text.color2.g = desc->common.color2.g;
-	      params->type.text.color2.b = desc->common.color2.b;
-	      params->type.text.color2.a = desc->common.color2.a;
-	      params->type.text.color3.r = desc->text.color3.r;
-	      params->type.text.color3.g = desc->text.color3.g;
-	      params->type.text.color3.b = desc->text.color3.b;
-	      params->type.text.color3.a = desc->text.color3.a;
-	   }
-	 break;
+	   /* text.align */
+	   if (flags & FLAG_X)
+	     {
+		params->type.text.align.x = text_desc->text.align.x;
+	     }
+	   if (flags & FLAG_Y)
+	     {
+		params->type.text.align.y = text_desc->text.align.y;
+	     }
+	   params->type.text.elipsis = text_desc->text.elipsis;
+
+	   /* text colors */
+	   if (cc)
+	     {
+		params->type.text.color2.r = (((int)cc->r2 + 1) * text_desc->common.color2.r) >> 8;
+		params->type.text.color2.g = (((int)cc->g2 + 1) * text_desc->common.color2.g) >> 8;
+		params->type.text.color2.b = (((int)cc->b2 + 1) * text_desc->common.color2.b) >> 8;
+		params->type.text.color2.a = (((int)cc->a2 + 1) * text_desc->common.color2.a) >> 8;
+		params->type.text.color3.r = (((int)cc->r3 + 1) * text_desc->text.color3.r) >> 8;
+		params->type.text.color3.g = (((int)cc->g3 + 1) * text_desc->text.color3.g) >> 8;
+		params->type.text.color3.b = (((int)cc->b3 + 1) * text_desc->text.color3.b) >> 8;
+		params->type.text.color3.a = (((int)cc->a3 + 1) * text_desc->text.color3.a) >> 8;
+	     }
+	   else
+	     {
+		params->type.text.color2.r = text_desc->common.color2.r;
+		params->type.text.color2.g = text_desc->common.color2.g;
+		params->type.text.color2.b = text_desc->common.color2.b;
+		params->type.text.color2.a = text_desc->common.color2.a;
+		params->type.text.color3.r = text_desc->text.color3.r;
+		params->type.text.color3.g = text_desc->text.color3.g;
+		params->type.text.color3.b = text_desc->text.color3.b;
+		params->type.text.color3.a = text_desc->text.color3.a;
+	     }
+	   break;
+	}
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_BOX:
       case EDJE_PART_TYPE_TABLE:
@@ -1371,7 +1401,7 @@ _edje_part_recalc_single(Edje *ed,
 }
 
 static void
-_edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc)
+_edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description_Box *chosen_desc)
 {
    Evas_Object_Box_Layout layout;
    void (*free_data)(void *data);
@@ -1408,7 +1438,10 @@ _edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params
 }
 
 static void
-_edje_table_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params *p3 __UNUSED__, Edje_Part_Description *chosen_desc)
+_edje_table_recalc_apply(Edje *ed __UNUSED__,
+			 Edje_Real_Part *ep,
+			 Edje_Calc_Params *p3 __UNUSED__,
+			 Edje_Part_Description_Table *chosen_desc)
 {
    evas_object_table_homogeneous_set(ep->object, chosen_desc->table.homogeneous);
    evas_object_table_align_set(ep->object, TO_DOUBLE(chosen_desc->table.align.x), TO_DOUBLE(chosen_desc->table.align.y));
@@ -1421,7 +1454,7 @@ _edje_table_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Para
 }
 
 static int
-_edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps, Edje_Part_Description *st, Edje_Part_Image_Id *imid)
+_edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps, Edje_Part_Description_Image *st, Edje_Part_Image_Id *imid)
 {
   Edje_Image_Directory_Set_Entry *entry;
   Edje_Image_Directory_Set *set = NULL;
@@ -1485,7 +1518,7 @@ _edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps, Edje_Part
 }
 
 static void
-_edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc, FLOAT_T pos)
+_edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description_Image *chosen_desc, FLOAT_T pos)
 {
    int image_id;
    int image_count, image_num;
@@ -1510,7 +1543,9 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
      evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_SOLID);
 
    image_id = _edje_image_find(ep->object, ed,
-			       &ep->param1.set, ep->param1.description, NULL);
+			       &ep->param1.set,
+			       (Edje_Part_Description_Image*) ep->param1.description,
+			       NULL);
    if (image_id < 0)
      {
 	Edje_Image_Directory_Entry *ie;
@@ -1528,7 +1563,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
      {
 	image_count = 2;
 	if (ep->param2)
-	  image_count += eina_list_count(ep->param2->description->image.tween_list);
+	  image_count += eina_list_count(((Edje_Part_Description_Image*) ep->param2->description)->image.tween_list);
 	image_num = TO_INT(MUL(pos, SUB(FROM_INT(image_count),
 					FROM_DOUBLE(0.5))));
 	if (image_num > (image_count - 1))
@@ -1536,7 +1571,8 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 	if (image_num == 0)
 	  {
 	    image_id = _edje_image_find(ep->object, ed,
-					&ep->param1.set, ep->param1.description, 
+					&ep->param1.set,
+					(Edje_Part_Description_Image*) ep->param1.description,
 					NULL);
 	  }
 	else
@@ -1545,14 +1581,15 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 	       if (image_num == (image_count - 1))
 		 {
 		   image_id = _edje_image_find(ep->object, ed,
-					       &ep->param2->set, ep->param2->description,
+					       &ep->param2->set,
+					       (Edje_Part_Description_Image*) ep->param2->description,
 					       NULL);
 		 }
 	       else
 		 {
 		    Edje_Part_Image_Id *imid;
 
-		    imid = eina_list_nth(ep->param2->description->image.tween_list,
+		    imid = eina_list_nth(((Edje_Part_Description_Image*) ep->param2->description)->image.tween_list,
 					 image_num - 1);
 		    image_id = _edje_image_find(ep->object, ed, NULL, NULL, imid);
 		 }
@@ -1562,8 +1599,8 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 	     ERR("¨Part \"%s\" has description, "
 		 "\"%s\" %3.3f with a missing image id!!!",
 		 ep->part->name,
-		 ep->param1.description->common.state.name,
-		 ep->param1.description->common.state.value);
+		 ep->param1.description->state.name,
+		 ep->param1.description->state.value);
 	  }
 	else
 	  {
@@ -1618,14 +1655,17 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
    Edje_Calc_Params lp1, lp2;
 #endif
    Edje_Calc_Params *p1, *pf;
-   Edje_Part_Description *chosen_desc;
+   Edje_Part_Description_Common *chosen_desc;
    Edje_Real_Part *confine_to = NULL;
    FLOAT_T pos = ZERO;
    Edje_Calc_Params lp3;
 
    /* GRADIENT ARE GONE, WE MUST IGNORE IT FROM OLD FILE. */
    if (ep->part->type == EDJE_PART_TYPE_GRADIENT)
-     return;
+     {
+	ERR("GRADIENT spotted during recalc ! That should never happen ! Send your edje file to devel ml.");
+	return;
+     }
 
    if ((ep->calculated & FLAG_XY) == FLAG_XY)
      {
@@ -1932,8 +1972,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	switch (ep->part->type)
 	  {
 	   case EDJE_PART_TYPE_IMAGE:
-             evas_object_image_scale_hint_set(ep->object, 
-                                              chosen_desc->image.scale_hint);
+	     {
+		Edje_Part_Description_Image *img_desc = (Edje_Part_Description_Image*) chosen_desc;
+
+		evas_object_image_scale_hint_set(ep->object,
+						 img_desc->image.scale_hint);
+	     }
 	   case EDJE_PART_TYPE_RECTANGLE:
 	   case EDJE_PART_TYPE_TEXTBLOCK:
 	   case EDJE_PART_TYPE_BOX:
@@ -1972,16 +2016,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	switch (ep->part->type)
 	  {
 	   case EDJE_PART_TYPE_TEXT:
-	      _edje_text_recalc_apply(ed, ep, pf, chosen_desc);
+	      _edje_text_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text*) chosen_desc);
 	      break;
 	   case EDJE_PART_TYPE_IMAGE:
-	      _edje_image_recalc_apply(ed, ep, pf, chosen_desc, pos);
+	      _edje_image_recalc_apply(ed, ep, pf, (Edje_Part_Description_Image*) chosen_desc, pos);
 	      break;
 	   case EDJE_PART_TYPE_BOX:
-	      _edje_box_recalc_apply(ed, ep, pf, chosen_desc);
+	      _edje_box_recalc_apply(ed, ep, pf, (Edje_Part_Description_Box*) chosen_desc);
 	      break;
 	   case EDJE_PART_TYPE_TABLE:
-	      _edje_table_recalc_apply(ed, ep, pf, chosen_desc);
+	      _edje_table_recalc_apply(ed, ep, pf, (Edje_Part_Description_Table*) chosen_desc);
 	      break;
 	   case EDJE_PART_TYPE_EXTERNAL:
 	   case EDJE_PART_TYPE_RECTANGLE:
@@ -2017,12 +2061,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
              mo = ep->swallowed_object;
 	  }
         else mo = ep->object;
-        if (chosen_desc->common.map.on)
+        if (chosen_desc->map.on)
           {
              Evas_Map *map;
              Evas_Coord cx, cy, cz;
              double rx, ry, rz;
-             Edje_Part_Description *desc1, *desc2;
+             Edje_Part_Description_Common *desc1, *desc2;
 
              desc1 = ep->param1.description;
              desc2 = NULL;
@@ -2051,12 +2095,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 
              // if another center is specified - find it and caculate it
              if ((desc1) &&
-                 (desc1->common.map.rot.id_center >= 0) &&
-                 (desc1->common.map.rot.id_center != ep->part->id))
+                 (desc1->map.rot.id_center >= 0) &&
+                 (desc1->map.rot.id_center != ep->part->id))
                {
                   Evas_Coord cx1, cy1, cz1, cx2, cy2, cz2;
                   Edje_Real_Part *ep2 =
-                    ed->table_parts[desc1->common.map.rot.id_center %
+                    ed->table_parts[desc1->map.rot.id_center %
                                     ed->table_parts_size];
                   // get center for desc1
                   if (ep2)
@@ -2068,10 +2112,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                     }
                   // if we have a desc2 and are on a partiual position to it
                   if ((pos != ZERO) && (desc2) &&
-                      (desc2->common.map.rot.id_center >= 0) &&
-                      (desc2->common.map.rot.id_center != ep->part->id))
+                      (desc2->map.rot.id_center >= 0) &&
+                      (desc2->map.rot.id_center != ep->part->id))
                     {
-                       ep2 = ed->table_parts[desc2->common.map.rot.id_center %
+                       ep2 = ed->table_parts[desc2->map.rot.id_center %
                                              ed->table_parts_size];
                        // get 2nd center & merge with pos with center 1
                        if (ep2)
@@ -2093,32 +2137,32 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
              // rotation - interpolate wit pos, if appropriate
              if ((pos != ZERO) && (desc2))
                {
-                  rx = TO_DOUBLE(ADD(desc1->common.map.rot.x,
-                                     MUL(pos, SUB(desc2->common.map.rot.x,
-                                                  desc1->common.map.rot.x))));
-                  ry = TO_DOUBLE(ADD(desc1->common.map.rot.y,
-				     MUL(pos, SUB(desc2->common.map.rot.y,
-                                                  desc1->common.map.rot.y))));
-                  rz = TO_DOUBLE(ADD(desc1->common.map.rot.z,
-				     MUL(pos, SUB(desc2->common.map.rot.z,
-                                                  desc1->common.map.rot.z))));
+                  rx = TO_DOUBLE(ADD(desc1->map.rot.x,
+                                     MUL(pos, SUB(desc2->map.rot.x,
+                                                  desc1->map.rot.x))));
+                  ry = TO_DOUBLE(ADD(desc1->map.rot.y,
+				     MUL(pos, SUB(desc2->map.rot.y,
+                                                  desc1->map.rot.y))));
+                  rz = TO_DOUBLE(ADD(desc1->map.rot.z,
+				     MUL(pos, SUB(desc2->map.rot.z,
+                                                  desc1->map.rot.z))));
                }
              else
                {
                   // no 2 descriptions - just use rot
-                  rx = TO_DOUBLE(desc1->common.map.rot.x);
-                  ry = TO_DOUBLE(desc1->common.map.rot.y);
-                  rz = TO_DOUBLE(desc1->common.map.rot.z);
+                  rx = TO_DOUBLE(desc1->map.rot.x);
+                  ry = TO_DOUBLE(desc1->map.rot.y);
+                  rz = TO_DOUBLE(desc1->map.rot.z);
                }
              evas_map_util_3d_rotate(map, rx, ry, rz, cx, cy, cz);
 
              // calculate light color & position etc. if there is one
              if (((desc1) &&
-                  (desc1->common.map.id_light >= 0) &&
-                  (desc1->common.map.id_light != ep->part->id)) ||
+                  (desc1->map.id_light >= 0) &&
+                  (desc1->map.id_light != ep->part->id)) ||
                  ((desc2) &&
-                  (desc2->common.map.id_light >= 0) &&
-                  (desc2->common.map.id_light != ep->part->id)))
+                  (desc2->map.id_light >= 0) &&
+                  (desc2->map.id_light != ep->part->id)))
                {
                   Evas_Coord lx, ly, lz;
                   int lr, lg, lb, lar, lag, lab;
@@ -2130,16 +2174,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                   do1 = do2 = 0;
 
                   if ((desc1) &&
-                      (desc1->common.map.id_light >= 0) &&
-                      (desc1->common.map.id_light != ep->part->id))
+                      (desc1->map.id_light >= 0) &&
+                      (desc1->map.id_light != ep->part->id))
                     {
                        Edje_Real_Part *ep2 =
-                         ed->table_parts[desc1->common.map.id_light %
+                         ed->table_parts[desc1->map.id_light %
                                          ed->table_parts_size];
                        // get light part
                        if (ep2)
                          {
-                            Edje_Part_Description *ep2desc1, *ep2desc2;
+                            Edje_Part_Description_Common *ep2desc1, *ep2desc2;
                             FLOAT_T ep2pos;
 
                             do1 = 1;
@@ -2156,51 +2200,51 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                             // if light is transitioning - interpolate it
                             if ((ep2pos != ZERO) && (ep2desc2))
                               {
-                                 lz1 = ep2desc1->common.persp.zplane +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.persp.zplane -
-                                                ep2desc1->common.persp.zplane));
-                                 lr1 = ep2desc1->common.color.r +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color.r -
-                                                ep2desc1->common.color.r));
-                                 lg1 = ep2desc1->common.color.g +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color.g -
-                                                ep2desc1->common.color.b));
-                                 lb1 = ep2desc1->common.color.b +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color.g -
-                                                ep2desc1->common.color.b));
-                                 lar1 = ep2desc1->common.color2.r +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color2.r -
-                                                ep2desc1->common.color2.r));
-                                 lag1 = ep2desc1->common.color2.g +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color2.g -
-                                                ep2desc1->common.color2.b));
-                                 lab1 = ep2desc1->common.color2.b +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color2.g -
-                                                ep2desc1->common.color2.b));
+                                 lz1 = ep2desc1->persp.zplane +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->persp.zplane -
+                                                ep2desc1->persp.zplane));
+                                 lr1 = ep2desc1->color.r +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color.r -
+                                                ep2desc1->color.r));
+                                 lg1 = ep2desc1->color.g +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
+                                                ep2desc1->color.b));
+                                 lb1 = ep2desc1->color.b +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
+                                                ep2desc1->color.b));
+                                 lar1 = ep2desc1->color2.r +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.r -
+                                                ep2desc1->color2.r));
+                                 lag1 = ep2desc1->color2.g +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
+                                                ep2desc1->color2.b));
+                                 lab1 = ep2desc1->color2.b +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
+                                                ep2desc1->color2.b));
                               }
                             else
                               {
-                                 lz1 = ep2desc1->common.persp.zplane;
-                                 lr1 = ep2desc1->common.color.r;
-                                 lg1 = ep2desc1->common.color.g;
-                                 lb1 = ep2desc1->common.color.b;
-                                 lar1 = ep2desc1->common.color2.r;
-                                 lag1 = ep2desc1->common.color2.g;
-                                 lab1 = ep2desc1->common.color2.b;
+                                 lz1 = ep2desc1->persp.zplane;
+                                 lr1 = ep2desc1->color.r;
+                                 lg1 = ep2desc1->color.g;
+                                 lb1 = ep2desc1->color.b;
+                                 lar1 = ep2desc1->color2.r;
+                                 lag1 = ep2desc1->color2.g;
+                                 lab1 = ep2desc1->color2.b;
                               }
                          }
                     }
                   if ((desc2) &&
-                      (desc2->common.map.id_light >= 0) &&
-                      (desc2->common.map.id_light != ep->part->id))
+                      (desc2->map.id_light >= 0) &&
+                      (desc2->map.id_light != ep->part->id))
                     {
                        Edje_Real_Part *ep2 =
-                         ed->table_parts[desc2->common.map.id_light %
+                         ed->table_parts[desc2->map.id_light %
                                          ed->table_parts_size];
                        // get light part
                        if (ep2)
                          {
-                            Edje_Part_Description *ep2desc1, *ep2desc2;
+                            Edje_Part_Description_Common *ep2desc1, *ep2desc2;
                             FLOAT_T ep2pos;
 
                             do2 = 1;
@@ -2217,37 +2261,37 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                             // if light is transitioning - interpolate it
                             if ((ep2pos != ZERO) && (ep2desc2))
                               {
-                                 lz2 = ep2desc1->common.persp.zplane +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.persp.zplane -
-                                                ep2desc1->common.persp.zplane));
-                                 lr2 = ep2desc1->common.color.r +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color.r -
-                                                ep2desc1->common.color.r));
-                                 lg2 = ep2desc1->common.color.g +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color.g -
-                                                ep2desc1->common.color.b));
-                                 lb2 = ep2desc1->common.color.b +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color.g -
-                                                ep2desc1->common.color.b));
-                                 lar2 = ep2desc1->common.color2.r +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color2.r -
-                                                ep2desc1->common.color2.r));
-                                 lag2 = ep2desc1->common.color2.g +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color2.g -
-                                                ep2desc1->common.color2.b));
-                                 lab2 = ep2desc1->common.color2.b +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.color2.g -
-                                                ep2desc1->common.color2.b));
+                                 lz2 = ep2desc1->persp.zplane +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->persp.zplane -
+                                                ep2desc1->persp.zplane));
+                                 lr2 = ep2desc1->color.r +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color.r -
+                                                ep2desc1->color.r));
+                                 lg2 = ep2desc1->color.g +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
+                                                ep2desc1->color.b));
+                                 lb2 = ep2desc1->color.b +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
+                                                ep2desc1->color.b));
+                                 lar2 = ep2desc1->color2.r +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.r -
+                                                ep2desc1->color2.r));
+                                 lag2 = ep2desc1->color2.g +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
+                                                ep2desc1->color2.b));
+                                 lab2 = ep2desc1->color2.b +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
+                                                ep2desc1->color2.b));
                               }
                             else
                               {
-                                 lz2 = ep2desc1->common.persp.zplane;
-                                 lr2 = ep2desc1->common.color.r;
-                                 lg2 = ep2desc1->common.color.g;
-                                 lb2 = ep2desc1->common.color.b;
-                                 lar2 = ep2desc1->common.color2.r;
-                                 lag2 = ep2desc1->common.color2.g;
-                                 lab2 = ep2desc1->common.color2.b;
+                                 lz2 = ep2desc1->persp.zplane;
+                                 lr2 = ep2desc1->color.r;
+                                 lg2 = ep2desc1->color.g;
+                                 lb2 = ep2desc1->color.b;
+                                 lar2 = ep2desc1->color2.r;
+                                 lag2 = ep2desc1->color2.g;
+                                 lab2 = ep2desc1->color2.b;
                               }
                          }
                     }
@@ -2282,7 +2326,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                }
 
              // calculate perspective point
-             if (chosen_desc->common.map.persp_on)
+             if (chosen_desc->map.persp_on)
                {
                   Evas_Coord px, py, zplane, foc;
                   Evas_Coord px1, py1, zplane1, foc1;
@@ -2298,14 +2342,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                   foc = 1000;
 
                   if ((desc1) &&
-                      (desc1->common.map.id_persp >= 0) &&
-                      (desc1->common.map.id_persp != ep->part->id))
+                      (desc1->map.id_persp >= 0) &&
+                      (desc1->map.id_persp != ep->part->id))
                     {
-                       Edje_Real_Part *ep2 = ed->table_parts[desc1->common.map.id_persp %
+                       Edje_Real_Part *ep2 = ed->table_parts[desc1->map.id_persp %
                                                              ed->table_parts_size];
                        if (ep2)
                          {
-                            Edje_Part_Description *ep2desc1, *ep2desc2;
+                            Edje_Part_Description_Common *ep2desc1, *ep2desc2;
                             FLOAT_T ep2pos;
 
                             do1 = 1;
@@ -2320,30 +2364,30 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                             py1 = ed->y + ep2->y + (ep2->h / 2);
                             if ((ep2pos != ZERO) && (ep2desc2))
                               {
-                                 zplane1 = ep2desc1->common.persp.zplane +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.persp.zplane -
-                                                ep2desc1->common.persp.zplane));
-                                 foc1 = ep2desc1->common.persp.focal +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.persp.focal -
-                                                ep2desc1->common.persp.focal));
+                                 zplane1 = ep2desc1->persp.zplane +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->persp.zplane -
+                                                ep2desc1->persp.zplane));
+                                 foc1 = ep2desc1->persp.focal +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->persp.focal -
+                                                ep2desc1->persp.focal));
                               }
                             else
                               {
-                                 zplane1 = ep2desc1->common.persp.zplane;
-                                 foc1 = ep2desc1->common.persp.focal;
+                                 zplane1 = ep2desc1->persp.zplane;
+                                 foc1 = ep2desc1->persp.focal;
                               }
                          }
                     }
 
                   if ((desc2) &&
-                      (desc2->common.map.id_persp >= 0) &&
-                      (desc2->common.map.id_persp != ep->part->id))
+                      (desc2->map.id_persp >= 0) &&
+                      (desc2->map.id_persp != ep->part->id))
                     {
-                       Edje_Real_Part *ep2 = ed->table_parts[desc2->common.map.id_persp %
+                       Edje_Real_Part *ep2 = ed->table_parts[desc2->map.id_persp %
                                                              ed->table_parts_size];
                        if (ep2)
                          {
-                            Edje_Part_Description *ep2desc1, *ep2desc2;
+                            Edje_Part_Description_Common *ep2desc1, *ep2desc2;
                             FLOAT_T ep2pos;
 
                             do2 = 1;
@@ -2358,17 +2402,17 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                             py2 = ed->y + ep2->y + (ep2->h / 2);
                             if ((ep2pos != ZERO) && (ep2desc2))
                               {
-                                 zplane2 = ep2desc1->common.persp.zplane +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.persp.zplane -
-                                                ep2desc1->common.persp.zplane));
-                                 foc2 = ep2desc1->common.persp.focal +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->common.persp.focal -
-                                                ep2desc1->common.persp.focal));
+                                 zplane2 = ep2desc1->persp.zplane +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->persp.zplane -
+                                                ep2desc1->persp.zplane));
+                                 foc2 = ep2desc1->persp.focal +
+                                   TO_INT(SCALE(ep2pos, ep2desc2->persp.focal -
+                                                ep2desc1->persp.focal));
                               }
                             else
                               {
-                                 zplane2 = ep2desc1->common.persp.zplane;
-                                 foc2 = ep2desc1->common.persp.focal;
+                                 zplane2 = ep2desc1->persp.zplane;
+                                 foc2 = ep2desc1->persp.focal;
                               }
                          }
                     }
@@ -2412,7 +2456,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                }
 
              // handle backface culling (object is facing away from view
-             if (chosen_desc->common.map.backcull)
+             if (chosen_desc->map.backcull)
                {
                   if (pf->visible)
                     {
@@ -2423,10 +2467,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                }
 
              // handle smooth
-             if (chosen_desc->common.map.smooth) evas_map_smooth_set(map, 1);
+             if (chosen_desc->map.smooth) evas_map_smooth_set(map, 1);
              else evas_map_smooth_set(map, 0);
              // handle alpha
-             if (chosen_desc->common.map.alpha) evas_map_alpha_set(map, 1);
+             if (chosen_desc->map.alpha) evas_map_alpha_set(map, 1);
              else evas_map_alpha_set(map, 0);
 
              evas_object_map_set(mo, map);

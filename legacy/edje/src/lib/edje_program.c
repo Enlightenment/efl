@@ -644,8 +644,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 			    if (rp->program)
 			      _edje_program_end(ed, rp->program);
 			    _edje_part_description_apply(ed, rp,
-							 rp->param1.description->common.state.name,
-							 rp->param1.description->common.state.value,
+							 rp->param1.description->state.name,
+							 rp->param1.description->state.value,
 							 pr->state,
 							 pr->value);
 			    _edje_part_pos_set(ed, rp, pr->tween.mode, ZERO);
@@ -1136,7 +1136,7 @@ static Eina_Bool _edje_glob_callback(Edje_Program *pr, void *dt)
      {
 	rp = _edje_real_part_get(data->ed, pr->filter.part ? pr->filter.part : data->source);
 	if (rp)
-	  exec = (rp->chosen_description->common.state.name == pr->filter.state);
+	  exec = (rp->chosen_description->state.name == pr->filter.state);
      }
 
    if (exec)

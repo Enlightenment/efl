@@ -53,7 +53,7 @@ _edje_collection_string_free(void *data)
 	    edf->path, edf->references,
 	    ce->ref->part, ce->ref->references);
 
-	_edje_collection_free(edf, ce->ref);
+	_edje_collection_free(edf, ce->ref, ce);
      }
 
    free(ce);
@@ -242,14 +242,12 @@ _edje_collection_convert(Edje_File *file, Old_Edje_Part_Collection *oedc)
 {
    Edje_Part_Collection_Directory_Entry *ce;
    Edje_Part_Collection *edc;
-   Edje_Part *part;
+   Old_Edje_Part *part;
+   Edje_Data *di;
    Eina_List *l;
-
-   edc = oedc;
+   unsigned int k;
 
    ce = eina_hash_find(file->collection, oedc->part);
-
-   ce->ref = edc;
 
    /* Count each type part and their respective state */
    EINA_LIST_FOREACH(oedc->parts, l, part)
@@ -281,7 +279,150 @@ _edje_collection_convert(Edje_File *file, Old_Edje_Part_Collection *oedc)
 
 	*count += eina_list_count(part->other_desc) + 1;
      }
+   ce->count.part = eina_list_count(oedc->parts);
 
-   /* FIXME : change structure layout */
+#define EMN(Tp, Sz, Ce)							\
+   Ce->mp.Tp = eina_mempool_add("one_big", #Tp, NULL, sizeof (Sz), Ce->count.Tp);
+
+   EMN(RECTANGLE, Edje_Part_Description_Common, ce);
+   EMN(TEXT, Edje_Part_Description_Text, ce);
+   EMN(IMAGE, Edje_Part_Description_Image, ce);
+   EMN(SWALLOW, Edje_Part_Description_Common, ce);
+   EMN(TEXTBLOCK, Edje_Part_Description_Text, ce);
+   EMN(GROUP, Edje_Part_Description_Common, ce);
+   EMN(BOX, Edje_Part_Description_Box, ce);
+   EMN(TABLE, Edje_Part_Description_Table, ce);
+   EMN(EXTERNAL, Edje_Part_Description_External, ce);
+   EMN(part, Edje_Part, ce);
+
+   /* Change structure layout */
+   edc = calloc(1, sizeof (Edje_Part_Collection));
+   if (!edc) return NULL;
+   ce->ref = edc;
+
+   edc->programs = oedc->programs;
+   oedc->programs = NULL;
+
+   edc->data = eina_hash_string_small_new(NULL);
+   EINA_LIST_FREE(oedc->data, di)
+     {
+	eina_hash_direct_add(edc->data, di->key, di->value);
+	free(di);
+     }
+
+   edc->parts_count = eina_list_count(oedc->parts);
+   edc->parts = calloc(edc->parts_count, sizeof (Edje_Part *));
+   k = 0;
+
+   EINA_LIST_FREE(oedc->parts, part)
+     {
+	Old_Edje_Part_Description *oepd;
+	Edje_Pack_Element *elm;
+	Edje_Part *replacement;
+	unsigned int i;
+
+	replacement = eina_mempool_malloc(ce->mp.part, sizeof (Edje_Part));
+
+	replacement->name = part->name;
+	replacement->default_desc = _edje_description_convert(part->type, ce, part->default_desc);
+
+	replacement->other_count = eina_list_count(part->other_desc);
+	replacement->other_desc = calloc(replacement->other_count, sizeof (Edje_Part_Description_Common*));
+
+	i = 0;
+	EINA_LIST_FREE(part->other_desc, oepd)
+	  replacement->other_desc[i++] = _edje_description_convert(part->type, ce, oepd);
+
+	replacement->source = part->source;
+	replacement->source2 = part->source2;
+	replacement->source3 = part->source3;
+	replacement->source4 = part->source4;
+	replacement->source5 = part->source5;
+	replacement->source6 = part->source6;
+	replacement->id = part->id;
+	replacement->clip_to_id = part->clip_to_id;
+	replacement->dragable = part->dragable;
+	replacement->items_count = eina_list_count(part->items);
+	replacement->items = calloc(replacement->items_count, sizeof (Edje_Pack_Element*));
+
+	i = 0;
+	EINA_LIST_FREE(part->items, elm)
+	  replacement->items[i++] = elm;
+
+	replacement->type = part->type;
+	replacement->effect = part->effect;
+	replacement->mouse_events = part->mouse_events;
+	replacement->repeat_events = part->repeat_events;
+	replacement->ignore_flags = part->ignore_flags;
+	replacement->scale = part->scale;
+	replacement->precise_is_inside = part->precise_is_inside;
+	replacement->use_alternate_font_metrics = part->use_alternate_font_metrics;
+	replacement->pointer_mode = part->pointer_mode;
+	replacement->entry_mode = part->entry_mode;
+	replacement->select_mode = part->select_mode;
+	replacement->multiline = part->multiline;
+	replacement->api = part->api;
+
+	edc->parts[k++] = replacement;
+
+	free(part);
+     }
+
+   edc->id = oedc->id;
+   edc->alias = oedc->alias;
+   edc->prop.min = oedc->prop.min;
+   edc->prop.max = oedc->prop.max;
+   edc->script = oedc->script;
+   edc->part = oedc->part;
+   edc->script_only = oedc->script_only;
+   edc->lua_script_only = oedc->lua_script_only;
+   edc->checked = oedc->checked;
+
+   free(oedc);
+
    return edc;
+}
+
+Edje_Part_Description_Common*
+_edje_description_convert(int type,
+			  Edje_Part_Collection_Directory_Entry *ce,
+			  Old_Edje_Part_Description *oed)
+{
+   Edje_Part_Description_Common *result = NULL;
+
+   switch (type)
+     {
+      case EDJE_PART_TYPE_RECTANGLE:
+	 result = eina_mempool_malloc(ce->mp.RECTANGLE, sizeof (Edje_Part_Description_Common));
+	 break;
+      case EDJE_PART_TYPE_SWALLOW:
+	 result = eina_mempool_malloc(ce->mp.SWALLOW, sizeof (Edje_Part_Description_Common));
+	 break;
+      case EDJE_PART_TYPE_GROUP:
+	 result = eina_mempool_malloc(ce->mp.GROUP, sizeof (Edje_Part_Description_Common));
+	 break;
+
+#define ALLOC_POOL(Short, Type, Name)					\
+	 case EDJE_PART_TYPE_##Short:					\
+	   {								\
+	      Edje_Part_Description_##Type *Name;			\
+	      								\
+	      Name = eina_mempool_malloc(ce->mp.Short, sizeof (Edje_Part_Description_##Type)); \
+	      Name->Name = oed->Name;					\
+	      result = &Name->common;					\
+	      break;							\
+	   }
+
+	 ALLOC_POOL(IMAGE, Image, image);
+	 ALLOC_POOL(TEXT, Text, text);
+	 ALLOC_POOL(TEXTBLOCK, Text, text);
+	 ALLOC_POOL(BOX, Box, box);
+	 ALLOC_POOL(TABLE, Table, table);
+	 ALLOC_POOL(EXTERNAL, External, external_params);
+     }
+
+   *result = oed->common;
+
+   free(oed);
+   return result;
 }
