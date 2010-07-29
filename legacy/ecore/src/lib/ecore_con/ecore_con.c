@@ -89,17 +89,17 @@ static int _ecore_con_init_count = 0;
 int _ecore_con_log_dom = -1;
 
 /**
- * @defgroup Ecore_Con_Lib_Group Ecore Connection Library Functions
+ * @addtogroup Ecore_Con_Lib_Group Ecore Connection Library Functions
  *
  * Utility functions that set up and shut down the Ecore Connection
  * library.
+ * @{
  */
 
 /**
  * Initialises the Ecore_Con library.
  * @return  Number of times the library has been initialised without being
  *          shut down.
- * @ingroup Ecore_Con_Lib_Group
  */
 EAPI int
 ecore_con_init(void)
@@ -143,7 +143,6 @@ ecore_con_init(void)
  * Shuts down the Ecore_Con library.
  * @return  Number of times the library has been initialised without being
  *          shut down.
- * @ingroup Ecore_Con_Lib_Group
  */
 EAPI int
 ecore_con_shutdown(void)
@@ -165,11 +164,14 @@ ecore_con_shutdown(void)
 
    return _ecore_con_init_count;
 }
+/** @} */
+
 
 /**
- * @defgroup Ecore_Con_Server_Group Ecore Connection Server Functions
+ * @addtogroup Ecore_Con_Server_Group Ecore Connection Server Functions
  *
  * Functions that operate on Ecore server objects.
+ * @{
  */
 
 /**
@@ -196,7 +198,6 @@ ecore_con_shutdown(void)
  * @param  data       Data to associate with the created Ecore_Con_Server
  *                    object.
  * @return A new Ecore_Con_Server.
- * @ingroup Ecore_Con_Server_Group
  */
 EAPI Ecore_Con_Server *
 ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
@@ -307,7 +308,6 @@ error:
  * @param  data       Data to associate with the created Ecore_Con_Server
  *                    object.
  * @return A new Ecore_Con_Server.
- * @ingroup Ecore_Con_Server_Group
  */
 EAPI Ecore_Con_Server *
 ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
@@ -398,7 +398,6 @@ error:
  * Closes the connection and frees the given server.
  * @param   svr The given server.
  * @return  Data associated with the server when it was created.
- * @ingroup Ecore_Con_Server_Group
  * @see ecore_con_server_add, ecore_con_server_connect
  */
 EAPI void *
@@ -436,7 +435,6 @@ ecore_con_server_del(Ecore_Con_Server *svr)
  * Retrieves the data associated with the given server.
  * @param   svr The given server.
  * @return  The associated data.
- * @ingroup Ecore_Con_Server_Group
  */
 EAPI void *
 ecore_con_server_data_get(Ecore_Con_Server *svr)
@@ -453,11 +451,34 @@ ecore_con_server_data_get(Ecore_Con_Server *svr)
 }
 
 /**
+ * Sets the data associated with the given server.
+ * @param svr The given server.
+ * @param data The data to associate with @p svr
+ * @return  The previously associated data, if any.
+ */
+EAPI void *
+ecore_con_server_data_set(Ecore_Con_Server *svr, void *data)
+{
+   void *ret = NULL;
+
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+        ECORE_MAGIC_FAIL(svr,
+                         ECORE_MAGIC_CON_SERVER,
+                         "ecore_con_server_data_get");
+        return NULL;
+     }
+
+   ret = svr->data;
+   svr->data = data;
+   return ret;
+}
+
+/**
  * Retrieves whether the given server is currently connected.
  * @todo Check that this function does what the documenter believes it does.
  * @param   svr The given server.
  * @return  @c 1 if the server is connected.  @c 0 otherwise.
- * @ingroup Ecore_Con_Server_Group
  */
 EAPI int
 ecore_con_server_connected_get(Ecore_Con_Server *svr)
@@ -479,7 +500,6 @@ ecore_con_server_connected_get(Ecore_Con_Server *svr)
  * Retrieves the current list of clients.
  * @param   svr The given server.
  * @return  The list of clients on this server.
- * @ingroup Ecore_Con_Server_Group
  */
 EAPI Eina_List *
 ecore_con_server_clients_get(Ecore_Con_Server *svr)
@@ -501,7 +521,6 @@ ecore_con_server_clients_get(Ecore_Con_Server *svr)
  * @param   size Length of the data, in bytes, to send.
  * @return  The number of bytes sent.  @c 0 will be returned if there is an
  *          error.
- * @ingroup Ecore_Con_Server_Group
  */
 EAPI int
 ecore_con_server_send(Ecore_Con_Server *svr, const void *data, int size)
@@ -571,7 +590,6 @@ ecore_con_server_send(Ecore_Con_Server *svr, const void *data, int size)
  *                        drops. This causes the kernel to queue up to 4096
  *                        connections (or your kernel's limit, whichever is
  *                        lower).
- * @ingroup Ecore_Con_Server_Group
  */
 EAPI void
 ecore_con_server_client_limit_set(Ecore_Con_Server *svr, int client_limit,
@@ -596,7 +614,6 @@ ecore_con_server_client_limit_set(Ecore_Con_Server *svr, int client_limit,
  *          the connected server in the form "XXX.YYY.ZZZ.AAA" IP notation.
  *          This string should not be modified or trusted to stay valid after
  *          deletion for the @p svr object. If no IP is known NULL is returned.
- * @ingroup Ecore_Con_Server_Group
  */
 EAPI const char *
 ecore_con_server_ip_get(Ecore_Con_Server *svr)
@@ -614,7 +631,6 @@ ecore_con_server_ip_get(Ecore_Con_Server *svr)
  * Flushes all pending data to the given server. Will return when done.
  *
  * @param   svr           The given server.
- * @ingroup Ecore_Con_Server_Group
  */
 EAPI void
 ecore_con_server_flush(Ecore_Con_Server *svr)
@@ -629,9 +645,37 @@ ecore_con_server_flush(Ecore_Con_Server *svr)
 }
 
 /**
- * @defgroup Ecore_Con_Client_Group Ecore Connection Client Functions
+ * Add an ssl certificate for use in ecore_con_server functions.
+ *
+ * Use this function to add a SSL PEM certificate.
+ * Simply specify the cert here to make it available,
+ * then OR the @ref ECORE_CON_LOAD_CERT flag into the @ref ecore_con_server_connect
+ * call to use it.  If there is an error loading the certificate upon creating
+ * the connection, an error will be automatically logged.
+ * @param cert The path to the certificate.
+ * @return EINA_FALSE if the file cannot be loaded,
+ * otherwise EINA_TRUE.
+ * @note Currently certificate verification is not implemented.
+ */
+
+EAPI Eina_Bool
+ecore_con_server_ssl_cert_add(const char *cert)
+{
+
+   if (!eina_str_has_extension(cert, "pem"))
+      return EINA_FALSE;
+
+   return ecore_con_ssl_server_cert_add(cert);
+}
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Ecore_Con_Client_Group Ecore Connection Client Functions
  *
  * Functions that operate on Ecore connection client objects.
+ * @{
  */
 
 /**
@@ -641,7 +685,6 @@ ecore_con_server_flush(Ecore_Con_Server *svr)
  * @param   size Length of the data, in bytes, to send.
  * @return  The number of bytes sent.  @c 0 will be returned if there is an
  *          error.
- * @ingroup Ecore_Con_Client_Group
  */
 EAPI int
 ecore_con_client_send(Ecore_Con_Client *cl, const void *data, int size)
@@ -699,7 +742,6 @@ ecore_con_client_send(Ecore_Con_Client *cl, const void *data, int size)
  * connected to.
  * @param   cl The given client.
  * @return  The server that the client connected to.
- * @ingroup Ecore_Con_Client_Group
  */
 EAPI Ecore_Con_Server *
 ecore_con_client_server_get(Ecore_Con_Client *cl)
@@ -718,7 +760,6 @@ ecore_con_client_server_get(Ecore_Con_Client *cl)
  * Closes the connection and frees memory allocated to the given client.
  * @param   cl The given client.
  * @return  Data associated with the client.
- * @ingroup Ecore_Con_Client_Group
  */
 EAPI void *
 ecore_con_client_del(Ecore_Con_Client *cl)
@@ -765,7 +806,6 @@ ecore_con_client_del(Ecore_Con_Client *cl)
  * Sets the data associated with the given client to @p data.
  * @param   cl   The given client.
  * @param   data What to set the data to.
- * @ingroup Ecore_Con_Client_Group
  */
 EAPI void
 ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data)
@@ -785,7 +825,6 @@ ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data)
  * Retrieves the data associated with the given client.
  * @param   cl The given client.
  * @return  The data associated with @p cl.
- * @ingroup Ecore_Con_Client_Group
  */
 EAPI void *
 ecore_con_client_data_get(Ecore_Con_Client *cl)
@@ -809,7 +848,6 @@ ecore_con_client_data_get(Ecore_Con_Client *cl)
  *          the connected client in the form "XXX.YYY.ZZZ.AAA" IP notation.
  *          This string should not be modified or trusted to stay valid after
  *          deletion for the @p cl object. If no IP is known NULL is returned.
- * @ingroup Ecore_Con_Client_Group
  */
 EAPI const char *
 ecore_con_client_ip_get(Ecore_Con_Client *cl)
@@ -827,7 +865,6 @@ ecore_con_client_ip_get(Ecore_Con_Client *cl)
  * Flushes all pending data to the given client. Will return when done.
  *
  * @param   cl            The given client.
- * @ingroup Ecore_Con_Client_Group
  */
 EAPI void
 ecore_con_client_flush(Ecore_Con_Client *cl)
@@ -840,6 +877,40 @@ ecore_con_client_flush(Ecore_Con_Client *cl)
 
    _ecore_con_client_flush(cl);
 }
+
+/**
+ * @brief Add an ssl certificate for use in ecore_con_client functions.
+ *
+ * Use this function to add a SSL PEM certificate.
+ * Simply specify the cert here to make it available,
+ * then OR the @ref ECORE_CON_LOAD_CERT flag into the @ref ecore_con_server_add
+ * call to use it.  If there is an error loading the certificate upon creating
+ * the connection, an error will be automatically logged.
+ * @param cert_file The path to the certificate.
+ * @param crl_file The path to the CRL file
+ * @param key_file The path to the private key file. If not specified, the private key
+ * from the cert will be loaded.
+ * @return EINA_FALSE if the file cannot be loaded,
+ * otherwise EINA_TRUE.
+ * @note Currently CRL file adding and certificate verification is not implemented,
+ * so specifying it here has no effect.
+ */
+
+EAPI Eina_Bool
+ecore_con_client_ssl_cert_add(const char *cert_file,
+                              const char *crl_file,
+                              const char *key_file)
+{
+
+   if (!eina_str_has_extension(cert_file, "pem"))
+      return EINA_FALSE;
+
+   return ecore_con_ssl_client_cert_add(cert_file, crl_file, key_file);
+}
+
+/**
+ * @}
+ */
 
 /**
  * Do an asynchronous DNS lookup.
@@ -907,62 +978,6 @@ on_error:
    free(lk);
    free(svr);
    return EINA_FALSE;
-}
-
-/**
- * Add an ssl certificate for use in ecore_con_server functions.
- *
- * Use this function to add a SSL PEM certificate.
- * Simply specify the cert here to make it available,
- * then OR the @ref ECORE_CON_LOAD_CERT flag into the @ref ecore_con_server_connect
- * call to use it.  If there is an error loading the certificate upon creating
- * the connection, an error will be automatically logged.
- * @param cert The path to the certificate.
- * @return EINA_FALSE if the file cannot be loaded,
- * otherwise EINA_TRUE.
- * @note Currently certificate verification is not implemented.
- * @ingroup Ecore_Con_Server_Group
- */
-
-EAPI Eina_Bool
-ecore_con_server_ssl_cert_add(const char *cert)
-{
-
-   if (!eina_str_has_extension(cert, "pem"))
-      return EINA_FALSE;
-
-   return ecore_con_ssl_server_cert_add(cert);
-}
-
-/**
- * @brief Add an ssl certificate for use in ecore_con_client functions.
- *
- * Use this function to add a SSL PEM certificate.
- * Simply specify the cert here to make it available,
- * then OR the @ref ECORE_CON_LOAD_CERT flag into the @ref ecore_con_server_add
- * call to use it.  If there is an error loading the certificate upon creating
- * the connection, an error will be automatically logged.
- * @param cert_file The path to the certificate.
- * @param crl_file The path to the CRL file
- * @param key_file The path to the private key file. If not specified, the private key
- * from the cert will be loaded.
- * @return EINA_FALSE if the file cannot be loaded,
- * otherwise EINA_TRUE.
- * @note Currently CRL file adding and certificate verification is not implemented,
- * so specifying it here has no effect.
- * @ingroup Ecore_Con_Client_Group
- */
-
-EAPI Eina_Bool
-ecore_con_client_ssl_cert_add(const char *cert_file,
-                              const char *crl_file,
-                              const char *key_file)
-{
-
-   if (!eina_str_has_extension(cert_file, "pem"))
-      return EINA_FALSE;
-
-   return ecore_con_ssl_client_cert_add(cert_file, crl_file, key_file);
 }
 
 static void
@@ -1803,7 +1818,8 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
                   if (e)
                     {
                        svr->event_count++;
-                       e->client = cl;
+                       /* be explicit here */
+                       e->client = NULL;
                             ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
                                        _ecore_con_event_client_del_free,
                                        NULL);
@@ -1885,7 +1901,7 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
                     {
                        if (!cl->delete_me)
                          {
-/* we lost our client! */
+                            /* we lost our client! */
                             Ecore_Con_Event_Client_Del *e;
 
                             e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
