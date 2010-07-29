@@ -773,8 +773,8 @@ ecore_con_client_del(Ecore_Con_Client *cl)
      }
 
    if (cl->client_addr && cl->server &&
-      ((cl->server->type & ECORE_CON_REMOTE_UDP) ||
-       (cl->server->type & ECORE_CON_REMOTE_MCAST)))
+      (((cl->server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP) ||
+       ((cl->server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST)))
       free(cl->client_addr);
 
    data = cl->data;
@@ -2080,8 +2080,8 @@ _ecore_con_event_client_data_free(void *data __UNUSED__, void *ev)
 
    if (((e->client->event_count == 0) && (e->client->delete_me)) ||
        ((e->client->server &&
-         (e->client->server->type & ECORE_CON_REMOTE_UDP ||
-          e->client->server->type & ECORE_CON_REMOTE_MCAST))))
+         ((e->client->server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP ||
+          (e->client->server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST))))
       ecore_con_client_del(e->client);
 
    free(e);
