@@ -240,6 +240,65 @@ To be documented...
 ...
 
 
+--enable-cpu-neon
+	This enables support for the Arm Cortex-A8 and later Neon register
+	set.  In particular it will use neon optimised code for rotations and
+	drawing with the software engines.  Open GL based renderers will gain
+	nothing from the use of neon.
+
+	To use neon with gcc-4.4 you need a post-2009 gcc and options
+	something like: -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon
+	Note that this slightly slows down non-optimised parts of evas  but
+	the gains in drawing are more then worth it overall.
+
+	This is enabled by default, and turns off if a small test program is
+	unable to compile.
+	
+	Performance is at least 50%, and in some real world tests approaches
+	100%.
+
+	If you have any issues with neon, please report them to either the
+	edevel mailing list or Brett Nash <nash@nash.id.uau>
+
+--enable-word-cache
+	Cache rendered words and draw them as a single object, instead of
+	individual characters.  This is a big gain for things like neon which
+	draw large runs effectively.
+
+	However it is useless on GL and similar backends as the cost in
+	sending a word sized texture kills the performance gain (and GL is
+	pretty good at drawing lots of small things anyway).
+
+	By default words (strings) of more then 50 characters are not cached.
+	The system caches 40 words by default, but this can be changed by
+	setting EVAS_WORD_CACHE_MAX_WORDS to another number.  Setting it to 0
+	will disable word-cache at run time.
+
+	Text based benchmarks are 50-100% quicker.
+
+	If you have any issues with word caching, please report them to either
+	the edevel mailing list or Brett Nash <nash@nash.id.uau>
+
+	For GL see metric caching...
+
+--enable-metric-cache
+	Metric caching saves character metrics between characters in words.
+	This enables it to render words much quicker as it avoids things like
+	space calculations and kerning calculation.
+
+	The cache seize is also controlled by  EVAS_WORD_CACHE_MAX_WORDS
+
+	It is useful for GL in particular, although software engines do get
+	some gain.
+
+	Generally it is recommended you enable either word or metric caching,
+	depending on your engine use.  If you are using software, enable word
+	caching (and neon on arm if you can), for GL, turn on metric caching.
+
+	If you have any issues with metric caching, please report them to either
+	the edevel mailing list or Brett Nash <nash@nash.id.uau>
+
+
 ------------------------------------------------------------------------------
 COMPILING AND INSTALLING:
 
