@@ -706,7 +706,7 @@ ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *svr)
  *          deletion for the @p svr object. If no IP is known NULL is returned.
  * @ingroup Ecore_Ipc_Server_Group
  */
-EAPI char *
+EAPI const char *
 ecore_ipc_server_ip_get(Ecore_Ipc_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
@@ -968,7 +968,7 @@ ecore_ipc_client_data_size_max_get(Ecore_Ipc_Client *cl)
  *          deletion for the @p cl object. If no IP is known NULL is returned.
  * @ingroup Ecore_Ipc_Client_Group
  */
-EAPI char *
+EAPI const char *
 ecore_ipc_client_ip_get(Ecore_Ipc_Client *cl)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
