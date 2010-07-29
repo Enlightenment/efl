@@ -176,6 +176,8 @@ typedef enum _Ecore_Con_Url_Time
 /**
  * @addtogroup Ecore_Con_Events_Group Events
  * @{
+ */
+
 /** @typedef Ecore_Con_Event_Client_Add
  * Used as the @p data param for the corresponding event
  */
