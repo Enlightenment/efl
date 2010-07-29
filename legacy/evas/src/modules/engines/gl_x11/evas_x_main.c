@@ -401,7 +401,7 @@ eng_window_free(Evas_GL_X11_Window *gw)
    if (gw == _evas_gl_x11_window) _evas_gl_x11_window = NULL;
    if (gw->gl_context)
       {
-         ref = gw->gl_context->references;
+         ref = gw->gl_context->references - 1;
          evas_gl_common_context_free(gw->gl_context);
       }
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
