@@ -257,6 +257,10 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr)
    return;
 }
 
+/* Tries to connect an Ecore_Con_Server to an SSL host.
+ * Returns 1 on success, -1 on fatal errors and 0 if the caller
+ * should try again later.
+ */
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
 {
@@ -376,10 +380,7 @@ _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
    return ECORE_CON_SSL_ERROR_NONE;
 }
 
-/* Tries to connect an Ecore_Con_Server to an SSL host.
- * Returns 1 on success, -1 on fatal errors and 0 if the caller
- * should try again later.
- */
+/* this is a stub function, the handshake is done in _init_gnutls */
 static Ecore_Con_State
 _ecore_con_ssl_server_try_gnutls(Ecore_Con_Server *svr __UNUSED__)
 {
