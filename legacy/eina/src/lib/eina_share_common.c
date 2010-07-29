@@ -408,6 +408,8 @@ _eina_share_common_node_init(Eina_Share_Common_Node *node,
    node->length = slen;
    memcpy(node->str, str, slen);
    memset(node->str + slen, 0, null_size); /* Nullify the null */
+
+   (void) node_magic; /* When magic are disable, node_magic is unused, this remove a warning. */
 }
 
 static Eina_Share_Common_Head *
@@ -560,6 +562,8 @@ _eina_share_common_node_from_str(const char *str, Eina_Magic node_magic)
    node = (Eina_Share_Common_Node *)(str - offset);
    EINA_MAGIC_CHECK_SHARE_COMMON_NODE(node, node_magic, );
    return node;
+
+   (void) node_magic; /* When magic are disable, node_magic is unused, this remove a warning. */
 }
 
 static Eina_Bool
