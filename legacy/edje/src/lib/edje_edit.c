@@ -2646,15 +2646,12 @@ _edje_edit_state_alloc(int type, Edje *ed)
      {
       case EDJE_PART_TYPE_RECTANGLE:
 	 pd = eina_mempool_malloc(ce->mp.RECTANGLE, sizeof (Edje_Part_Description_Common));
-	 memset(pd, 0, sizeof (pd));
 	 break;
       case EDJE_PART_TYPE_SWALLOW:
 	 pd = eina_mempool_malloc(ce->mp.SWALLOW, sizeof (Edje_Part_Description_Common));
-	 memset(pd, 0, sizeof (pd));
 	 break;
       case EDJE_PART_TYPE_GROUP:
 	 pd = eina_mempool_malloc(ce->mp.GROUP, sizeof (Edje_Part_Description_Common));
-	 memset(pd, 0, sizeof (pd));
 	 break;
 
 #define ALLOC_POOL(Short, Type, Name)					\
@@ -2662,8 +2659,8 @@ _edje_edit_state_alloc(int type, Edje *ed)
 	   {								\
 	      Edje_Part_Description_##Type *Name;			\
 	      								\
-	      Name = eina_mempool_malloc(ce->mp.Short, sizeof (Edje_Part_Description_##Type)); \
-	      memset(Name, 0, sizeof (Name));				\
+	      Name = eina_mempool_malloc(ce->mp.Short,			\
+					 sizeof (Edje_Part_Description_##Type)); \
 	      pd = &Name->common;					\
 	      break;							\
 	   }
@@ -2673,7 +2670,7 @@ _edje_edit_state_alloc(int type, Edje *ed)
 	 ALLOC_POOL(TEXTBLOCK, Text, text);
 	 ALLOC_POOL(BOX, Box, box);
 	 ALLOC_POOL(TABLE, Table, table);
-	 ALLOC_POOL(EXTERNAL, External, external);
+	 ALLOC_POOL(EXTERNAL, External, external_params);
      }
 
    return pd;
@@ -2702,6 +2699,8 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
 		      sizeof (Edje_Part_Description_Common *) * (rp->part->other_count + 1));
 	rp->part->other_desc[rp->part->other_count++] = pd;
      }
+
+   memset(pd, 0, sizeof (pd));
 
    pd->state.name = eina_stringshare_add(name);
    pd->state.value = value;
@@ -2735,6 +2734,19 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
    pd->color2.g = 0;
    pd->color2.b = 0;
    pd->color2.a = 255;
+   pd->map.id_persp = -1;
+   pd->map.id_light = -1;
+   pd->map.rot.id_center = -1;
+   pd->map.rot.x = FROM_DOUBLE(0.0);
+   pd->map.rot.y = FROM_DOUBLE(0.0);
+   pd->map.rot.z = FROM_DOUBLE(0.0);
+   pd->map.on = 0;
+   pd->map.smooth = 1;
+   pd->map.alpha = 1;
+   pd->map.backcull = 0;
+   pd->map.persp_on = 0;
+   pd->persp.zplane = 0;
+   pd->persp.focal = 1000;
 
    if (rp->part->type == EDJE_PART_TYPE_TEXT
        || rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
@@ -2742,6 +2754,8 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
 	Edje_Part_Description_Text *text;
 
 	text = (Edje_Part_Description_Text*) pd;
+
+	memset(&text->text, 0, sizeof (text->text));
 
 	text->text.color3.r = 0;
 	text->text.color3.g = 0;
@@ -2758,6 +2772,8 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
 
 	img = (Edje_Part_Description_Image*) pd;
 
+	memset(&img->image, 0, sizeof (img->image));
+
 	img->image.id = -1;
 	img->image.fill.smooth = 1;
 	img->image.fill.pos_rel_x = 0.0;
@@ -2772,47 +2788,67 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
 	img->image.fill.spread = 0;
 	img->image.fill.type = EDJE_FILL_TYPE_SCALE;
      }
-   else if ((rp->part->type == EDJE_PART_TYPE_EXTERNAL) && (rp->part->source))
+   else if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
      {
 	Edje_Part_Description_External *external;
 	Edje_External_Param_Info *pi;
 
 	external = (Edje_Part_Description_External*) pd;
-	pi = (Edje_External_Param_Info *)edje_external_param_info_get(rp->part->source);
-	while (pi && pi->name)
+
+	memset(&external->external_params, 0, sizeof (external->external_params));
+
+	if (rp->part->source)
 	  {
-	     Edje_External_Param *p;
-	     p = _alloc(sizeof(Edje_External_Param));
-	     /* error checking.. meh */
-	     p->name = eina_stringshare_add(pi->name);
-	     p->type = pi->type;
-	     switch(p->type)
+	     pi = (Edje_External_Param_Info *)edje_external_param_info_get(rp->part->source);
+	     while (pi && pi->name)
 	       {
-		case EDJE_EXTERNAL_PARAM_TYPE_INT:
-		case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
-		   if (pi->info.i.def != EDJE_EXTERNAL_INT_UNSET)
-		     p->i = pi->info.i.def;
-		   break;
-		case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
-		   if (pi->info.d.def != EDJE_EXTERNAL_DOUBLE_UNSET)
-		     p->d = pi->info.d.def;
-		   break;
-		case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
-		   if (pi->info.c.def)
-		     p->s = eina_stringshare_add(pi->info.c.def);
-		   break;
-		case EDJE_EXTERNAL_PARAM_TYPE_STRING:
-		   if (pi->info.s.def)
-		     p->s = eina_stringshare_add(pi->info.s.def);
-		   break;
-		default:
-		   ERR("unknown external parameter type '%d'", p->type);
+		  Edje_External_Param *p;
+		  p = _alloc(sizeof(Edje_External_Param));
+		  /* error checking.. meh */
+		  p->name = eina_stringshare_add(pi->name);
+		  p->type = pi->type;
+		  switch(p->type)
+		    {
+		     case EDJE_EXTERNAL_PARAM_TYPE_INT:
+		     case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+			if (pi->info.i.def != EDJE_EXTERNAL_INT_UNSET)
+			  p->i = pi->info.i.def;
+			break;
+		     case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+			if (pi->info.d.def != EDJE_EXTERNAL_DOUBLE_UNSET)
+			  p->d = pi->info.d.def;
+			break;
+		     case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
+			if (pi->info.c.def)
+			  p->s = eina_stringshare_add(pi->info.c.def);
+			break;
+		     case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+			if (pi->info.s.def)
+			  p->s = eina_stringshare_add(pi->info.s.def);
+			break;
+		     default:
+			ERR("unknown external parameter type '%d'", p->type);
+		    }
+		  external->external_params = eina_list_append(external->external_params, p);
+		  pi++;
 	       }
-	     external->external_params = eina_list_append(external->external_params, p);
-	     pi++;
+	     if (external->external_params)
+	       rp->param1.external_params = _edje_external_params_parse(rp->swallowed_object, external->external_params);
 	  }
-	if (external->external_params)
-	  rp->param1.external_params = _edje_external_params_parse(rp->swallowed_object, external->external_params);
+     }
+   else if (rp->part->type == EDJE_PART_TYPE_BOX)
+     {
+	Edje_Part_Description_Box *box;
+
+	box = (Edje_Part_Description_Box*) pd;
+	memset(&box->box, 0, sizeof (box->box));
+     }
+   else if (rp->part->type == EDJE_PART_TYPE_TABLE)
+     {
+	Edje_Part_Description_Table *table;
+
+	table = (Edje_Part_Description_Table*) pd;
+	memset(&table->table, 0, sizeof (table->table));
      }
 }
 
@@ -2973,7 +3009,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
   {									\
      GET_PD_OR_RETURN();						\
      pd->Sub.relative_##Value = FROM_DOUBLE(v);			\
-     edje_object_calc_force(obj);					\
+     edje_object_calc_force(obj);				\
   }
 
 FUNC_STATE_RELATIVE_DOUBLE(rel1, x);
