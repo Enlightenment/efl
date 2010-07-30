@@ -369,14 +369,14 @@ extern "C" {
 
    EAPI Eina_Bool     ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct);
    EAPI void         *ecore_thread_pool_data_set(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb);
-   EAPI const void   *ecore_thread_pool_data_find(Ecore_Thread *thread, const char *key);
+   EAPI void   *ecore_thread_pool_data_find(Ecore_Thread *thread, const char *key);
    EAPI Eina_Bool     ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key);
 
    EAPI Eina_Bool     ecore_thread_global_data_add(const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct);
    EAPI void         *ecore_thread_global_data_set(const char *key, void *value, Eina_Free_Cb cb);
-   EAPI const void   *ecore_thread_global_data_find(const char *key);
+   EAPI void   *ecore_thread_global_data_find(const char *key);
    EAPI Eina_Bool     ecore_thread_global_data_del(const char *key);
-   EAPI const void   *ecore_thread_global_data_wait(const char *key, double seconds);
+   EAPI void   *ecore_thread_global_data_wait(const char *key, double seconds);
 
 
 

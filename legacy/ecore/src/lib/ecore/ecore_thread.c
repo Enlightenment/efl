@@ -843,13 +843,15 @@ ecore_thread_available_get(void)
  * @param thread The thread context to add to
  * @param key The name string to add the data with
  * @param value The data to add
+ * @param cb The callback to free the data with
  * @param direct If true, this will not copy the key string (like eina_hash_direct_add)
  * @return EINA_TRUE on success, EINA_FALSE on failure
  * This adds data to the thread context, allowing for subsequent users of the thread's pool
  * to retrieve and use it without complicated mutexing.  This function can only be called by a
  * *_run thread INSIDE the thread and will return EINA_FALSE in any case but success.
- * All data added to the thread pool must be freed in the thread's func_end/func_cancel
- * functions to avoid leaks.
+ * All data added to the thread pool will be freed with its associated callback (if present)
+ * upon thread termination.  If no callback is specified, it is expected that the user will free the
+ * data, but this is most likely not what you want.
  */
 EAPI Eina_Bool
 ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct)
@@ -891,12 +893,14 @@ ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, void *value, E
  * @param thread The thread context
  * @param key The name string to add the data with
  * @param value The data to add
+ * @param cb The callback to free the data with
  * @param direct If true, this will not copy the key string (like eina_hash_direct_add)
  * @return The old data associated with @p key on success if modified, NULL if added
  * This adds/modifies data in the thread context, adding only if modify fails.
  * This function can only be called by a *_run thread INSIDE the thread.
- * All data added to the thread pool must be freed in the thread's func_end/func_cancel
- * functions to avoid leaks.
+ * All data added to the thread pool will be freed with its associated callback (if present)
+ * upon thread termination.  If no callback is specified, it is expected that the user will free the
+ * data, but this is most likely not what you want.
  */
 EAPI void *
 ecore_thread_pool_data_set(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb)
@@ -941,7 +945,7 @@ ecore_thread_pool_data_set(Ecore_Thread *thread, const char *key, void *value, E
  * in any case but success.
  */
 
-EAPI const void *
+EAPI void *
 ecore_thread_pool_data_find(Ecore_Thread *thread, const char *key)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
@@ -969,7 +973,7 @@ ecore_thread_pool_data_find(Ecore_Thread *thread, const char *key)
  * @return EINA_TRUE on success, EINA_FALSE on failure
  * This deletes the data pointer from the thread context which was previously added with @ref ecore_thread_pool_data_add
  * This function can only be called by a *_run thread INSIDE the thread, and will return EINA_FALSE
- * in any case but success.  Note that this WILL NOT free the data, it merely removes it from the thread pool.
+ * in any case but success.  Note that this WILL free the data if a callback was specified.
  */
 EAPI Eina_Bool
 ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key)
@@ -1000,7 +1004,8 @@ ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key)
  * @return EINA_TRUE on success, EINA_FALSE on failure
  * This adds data to the global thread data, and will return EINA_FALSE in any case but success.
  * All data added to global can be manually freed, or a callback can be provided with @p cb which will
- * be called upon ecore_thread shutting down.
+ * be called upon ecore_thread shutting down.  Note that if you have manually freed data that a callback
+ * was specified for, you will most likely encounter a segv later on.
  */
 EAPI Eina_Bool
 ecore_thread_global_data_add(const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct)
@@ -1047,7 +1052,8 @@ ecore_thread_global_data_add(const char *key, void *value, Eina_Free_Cb cb, Eina
  * associated with @p key and returning the previous data if it existed.  To see if an error occurred,
  * one must use eina_error_get.
  * All data added to global can be manually freed, or a callback can be provided with @p cb which will
- * be called upon ecore_thread shutting down.
+ * be called upon ecore_thread shutting down.  Note that if you have manually freed data that a callback
+ * was specified for, you will most likely encounter a segv later on.
  */
 EAPI void *
 ecore_thread_global_data_set(const char *key, void *value, Eina_Free_Cb cb)
@@ -1091,9 +1097,14 @@ ecore_thread_global_data_set(const char *key, void *value, Eina_Free_Cb cb)
  * @return The value, or NULL on error
  * This finds data in the global data that has been previously added with @ref ecore_thread_global_data_add
  * This function will return NULL in any case but success.
+ * All data added to global can be manually freed, or a callback can be provided with @p cb which will
+ * be called upon ecore_thread shutting down.  Note that if you have manually freed data that a callback
+ * was specified for, you will most likely encounter a segv later on.
+ * @note Keep in mind that the data returned can be used by multiple threads at a time, so you will most likely want to mutex
+ * if you will be doing anything with it.
  */
 
-EAPI const void *
+EAPI void *
 ecore_thread_global_data_find(const char *key)
 {
    Ecore_Thread_Data *ret;
@@ -1151,8 +1162,10 @@ ecore_thread_global_data_del(const char *key)
  * This finds data in the global data that has been previously added with @ref ecore_thread_global_data_add
  * This function will return NULL in any case but success.
  * Use @p seconds to specify the amount of time to wait.  Use > 0 for an actual wait time, 0 to not wait, and < 0 to wait indefinitely.
+ * @note Keep in mind that the data returned can be used by multiple threads at a time, so you will most likely want to mutex
+ * if you will be doing anything with it.
  */
-EAPI const void *
+EAPI void *
 ecore_thread_global_data_wait(const char *key, double seconds)
 {
    double time = 0;

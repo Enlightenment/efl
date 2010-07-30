@@ -142,20 +142,29 @@ typedef void (*Ecore_Con_Dns_Cb)(const char *canonname,
  */
 typedef enum _Ecore_Con_Type
 {
-   ECORE_CON_LOCAL_USER = 0, /** Socket in ~/.ecore */
-   ECORE_CON_LOCAL_SYSTEM = 1, /** Socket in /tmp */
-   ECORE_CON_LOCAL_ABSTRACT = 2, /** Abstract socket */
-   ECORE_CON_REMOTE_TCP = 3, /** Remote server using TCP */
-   ECORE_CON_REMOTE_MCAST = 4, /** Remote multicast server */
-   ECORE_CON_REMOTE_UDP = 5, /** Remote server using UDP */
-   ECORE_CON_REMOTE_BROADCAST = 6, /** Remote broadcast using UDP */
+   /** Socket in ~/.ecore */
+   ECORE_CON_LOCAL_USER = 0,
+   /** Socket in /tmp */
+   ECORE_CON_LOCAL_SYSTEM = 1,
+   /** Abstract socket */
+   ECORE_CON_LOCAL_ABSTRACT = 2,
+   /** Remote server using TCP */
+   ECORE_CON_REMOTE_TCP = 3,
+   /** Remote multicast server */
+   ECORE_CON_REMOTE_MCAST = 4,
+   /** Remote server using UDP */
+   ECORE_CON_REMOTE_UDP = 5,
+   /** Remote broadcast using UDP */
+   ECORE_CON_REMOTE_BROADCAST = 6,
    ECORE_CON_REMOTE_NODELAY = 7,
-
-   ECORE_CON_USE_SSL2 = (1 << 4), /** Use SSL2: UNSUPPORTED. **/
-   ECORE_CON_USE_SSL3 = (1 << 5), /** Use SSL3 */
-   ECORE_CON_USE_TLS = (1 << 6), /** Use TLS */
-
-   ECORE_CON_LOAD_CERT = (1 << 7) /** Attempt to use the previously loaded certificate */
+   /** Use SSL2: UNSUPPORTED. **/
+   ECORE_CON_USE_SSL2 = (1 << 4),
+   /** Use SSL3 */
+   ECORE_CON_USE_SSL3 = (1 << 5),
+   /** Use TLS */
+   ECORE_CON_USE_TLS = (1 << 6),
+   /** Attempt to use the previously loaded certificate */
+   ECORE_CON_LOAD_CERT = (1 << 7)
 } Ecore_Con_Type;
 #define ECORE_CON_USE_SSL ECORE_CON_USE_SSL2
 #define ECORE_CON_REMOTE_SYSTEM ECORE_CON_REMOTE_TCP
@@ -257,9 +266,12 @@ struct _Ecore_Con_Event_Server_Del
  */
 struct _Ecore_Con_Event_Client_Data
 {
-   Ecore_Con_Client *client; /** the client that connected */
-   void *data; /** the data that the client sent */
-   int size; /** the length of the data sent */
+ /** the client that connected */
+   Ecore_Con_Client *client;
+   /** the data that the client sent */
+   void *data;
+   /** the length of the data sent */
+   int size;
 };
 
 /**
@@ -268,9 +280,12 @@ struct _Ecore_Con_Event_Client_Data
  */
 struct _Ecore_Con_Event_Server_Data
 {
-   Ecore_Con_Server *server; /** the server that was connected to */
-   void *data; /** the data that the server sent */
-   int size; /** the length of the data sent */
+ /** the server that was connected to */
+   Ecore_Con_Server *server;
+   /** the data that the server sent */
+   void *data;
+   /** the length of the data sent */
+   int size;
 };
 
 /**
@@ -313,15 +328,24 @@ struct _Ecore_Con_Event_Url_Progress
    } up;
 };
 
-EAPI extern int ECORE_CON_EVENT_CLIENT_ADD; /** A client has connected to the server */
-EAPI extern int ECORE_CON_EVENT_CLIENT_DEL; /** A client has disconnected from the server */
-EAPI extern int ECORE_CON_EVENT_SERVER_ADD; /** A server was created */
-EAPI extern int ECORE_CON_EVENT_SERVER_DEL; /** A server connection was lost */
-EAPI extern int ECORE_CON_EVENT_CLIENT_DATA; /** A client connected to the server has sent data */
-EAPI extern int ECORE_CON_EVENT_SERVER_DATA; /** A server connection object has data */
-EAPI extern int ECORE_CON_EVENT_URL_DATA; /** A URL object has data */
-EAPI extern int ECORE_CON_EVENT_URL_COMPLETE; /** A URL object has completed its transfer to and from the server and can be reused */
-EAPI extern int ECORE_CON_EVENT_URL_PROGRESS; /** A URL object has made progress in its transfer */
+/** A client has connected to the server */
+EAPI extern int ECORE_CON_EVENT_CLIENT_ADD;
+/** A client has disconnected from the server */
+EAPI extern int ECORE_CON_EVENT_CLIENT_DEL;
+/** A server was created */
+EAPI extern int ECORE_CON_EVENT_SERVER_ADD;
+/** A server connection was lost */ 
+EAPI extern int ECORE_CON_EVENT_SERVER_DEL;
+/** A client connected to the server has sent data */
+EAPI extern int ECORE_CON_EVENT_CLIENT_DATA;
+/** A server connection object has data */
+EAPI extern int ECORE_CON_EVENT_SERVER_DATA;
+/** A URL object has data */
+EAPI extern int ECORE_CON_EVENT_URL_DATA;
+/** A URL object has completed its transfer to and from the server and can be reused */
+EAPI extern int ECORE_CON_EVENT_URL_COMPLETE;
+/** A URL object has made progress in its transfer */
+EAPI extern int ECORE_CON_EVENT_URL_PROGRESS;
 /**
  * @}
  */
