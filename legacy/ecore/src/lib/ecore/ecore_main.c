@@ -167,10 +167,11 @@ static inline void _ecore_main_fdh_epoll_del(Ecore_Fd_Handler *fdh)
 {
 #ifdef HAVE_EPOLL
    struct epoll_event ev = {0};
+   
    INF("removing poll on %d", fdh->fd);
    /* could get an EBADF if somebody closed the FD before removing it */
-   if (0 > epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fdh->fd, &ev) &&
-       errno != EBADF)
+   if ((epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fdh->fd, &ev) < 0) &&
+       (errno != EBADF))
      {
 	ERR("Failed to delete epoll fd %d! (errno=%d)", fdh->fd, errno);
      }
@@ -194,7 +195,7 @@ static inline int _ecore_main_fdh_epoll_modify(Ecore_Fd_Handler *fdh)
 #ifdef HAVE_EPOLL
 static inline int _ecore_main_fdh_epoll_mark_active(void)
 {
-   struct epoll_event ev[10] = {0};
+   struct epoll_event ev[32] = {0};
    int i, ret;
 
    ret = epoll_wait(epoll_fd, ev, sizeof(ev) / sizeof(struct epoll_event), 0);
@@ -205,14 +206,15 @@ static inline int _ecore_main_fdh_epoll_mark_active(void)
         return -1;
      }
 
-   for (i=0; i<ret; i++)
+   for (i = 0; i < ret; i++)
      {
-        Ecore_Fd_Handler *fdh = ev[i].data.ptr;
-
+        Ecore_Fd_Handler *fdh;
+        
+        fdh = ev[i].data.ptr;
         if (!ECORE_MAGIC_CHECK(fdh, ECORE_MAGIC_FD_HANDLER))
           {
              ECORE_MAGIC_FAIL(fdh, ECORE_MAGIC_FD_HANDLER,
-                "_ecore_main_select");
+                              "_ecore_main_fdh_epoll_mark_active");
              continue;
           }
         if (fdh->delete_me)
@@ -629,10 +631,10 @@ _ecore_main_select(double timeout)
 #ifndef HAVE_EPOLL
    EINA_INLIST_FOREACH(fd_handlers, fdh)
      {
-        if (!fdh->delete_me && fdh->prep_func)
+        if ((!fdh->delete_me) && (fdh->prep_func))
           {
              fdh->references++;
-             fdh->prep_func (fdh->prep_data, fdh);
+             fdh->prep_func(fdh->prep_data, fdh);
              fdh->references--;
           }
      }
@@ -672,8 +674,7 @@ _ecore_main_select(double timeout)
      {
 #ifndef _WIN32
 	if (errno == EINTR) return -1;
-	else if (errno == EBADF)
-          _ecore_main_fd_handlers_bads_rem();
+	else if (errno == EBADF) _ecore_main_fd_handlers_bads_rem();
 #endif
      }
    if (ret > 0)
@@ -682,15 +683,17 @@ _ecore_main_select(double timeout)
         _ecore_main_fdh_epoll_mark_active();
 #else /* HAVE_EPOLL */
 	EINA_INLIST_FOREACH(fd_handlers, fdh)
-	  if (!fdh->delete_me)
-	    {
-	       if (FD_ISSET(fdh->fd, &rfds))
-		 fdh->read_active = 1;
-	       if (FD_ISSET(fdh->fd, &wfds))
-		 fdh->write_active = 1;
-	       if (FD_ISSET(fdh->fd, &exfds))
-		 fdh->error_active = 1;
-	    }
+          {
+             if (!fdh->delete_me)
+               {
+                  if (FD_ISSET(fdh->fd, &rfds))
+                     fdh->read_active = 1;
+                  if (FD_ISSET(fdh->fd, &wfds))
+                     fdh->write_active = 1;
+                  if (FD_ISSET(fdh->fd, &exfds))
+                     fdh->error_active = 1;
+               }
+          }
 #endif /* HAVE_EPOLL */
 	_ecore_main_fd_handlers_cleanup();
 #ifdef _WIN32
@@ -773,10 +776,10 @@ _ecore_main_fd_handlers_cleanup(void)
 		  deleted_in_use++;
 		  continue;
 	       }
-
+             
 	     fd_handlers = (Ecore_Fd_Handler *)
-               eina_inlist_remove(EINA_INLIST_GET(fd_handlers),
-                                  EINA_INLIST_GET(fdh));
+                eina_inlist_remove(EINA_INLIST_GET(fd_handlers),
+                                   EINA_INLIST_GET(fdh));
 	     ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
 	     free(fdh);
 	  }
@@ -805,10 +808,10 @@ _ecore_main_win32_handlers_cleanup(void)
 		  deleted_in_use++;
 		  continue;
 	       }
-
+             
              win32_handlers = (Ecore_Win32_Handler *)
-               eina_inlist_remove(EINA_INLIST_GET(win32_handlers),
-                                  EINA_INLIST_GET(wh));
+                eina_inlist_remove(EINA_INLIST_GET(win32_handlers),
+                                   EINA_INLIST_GET(wh));
              ECORE_MAGIC_SET(wh, ECORE_MAGIC_NONE);
              free(wh);
           }
