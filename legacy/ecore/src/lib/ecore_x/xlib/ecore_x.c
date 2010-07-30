@@ -669,13 +669,13 @@ _ecore_x_shutdown(int close_display)
      }
 
 #endif
+   ecore_main_fd_handler_del(_ecore_x_fd_handler_handle);
    if (close_display)
       XCloseDisplay(_ecore_x_disp);
    else
       close(ConnectionNumber(_ecore_x_disp));
 
    free(_ecore_x_event_handlers);
-   ecore_main_fd_handler_del(_ecore_x_fd_handler_handle);
    _ecore_x_fd_handler_handle = NULL;
    _ecore_x_disp = NULL;
    _ecore_x_event_handlers = NULL;

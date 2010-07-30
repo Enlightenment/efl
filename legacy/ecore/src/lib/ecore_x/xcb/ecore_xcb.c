@@ -677,13 +677,13 @@ _ecore_x_shutdown(int close_display)
 
    if (!_ecore_xcb_conn) return _ecore_xcb_init_count;
 
+   ecore_main_fd_handler_del(_ecore_xcb_fd_handler_handle);
    if (close_display)
       xcb_disconnect(_ecore_xcb_conn);
    else
       close(xcb_get_file_descriptor(_ecore_xcb_conn));
    ecore_event_shutdown();
    free(_ecore_xcb_event_handlers);
-   ecore_main_fd_handler_del(_ecore_xcb_fd_handler_handle);
    ecore_event_filter_del(_ecore_xcb_filter_handler);
    _ecore_xcb_fd_handler_handle = NULL;
    _ecore_xcb_filter_handler = NULL;
