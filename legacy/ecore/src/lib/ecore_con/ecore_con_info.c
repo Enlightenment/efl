@@ -236,10 +236,10 @@ ecore_con_info_get(Ecore_Con_Server *svr,
      {
         Ecore_Con_Info *container;
         struct addrinfo *result = NULL;
-        char service[NI_MAXSERV];
-        char hbuf[NI_MAXHOST];
-        char sbuf[NI_MAXSERV];
-        void *tosend = NULL;
+        char service[NI_MAXSERV] = {0};
+        char hbuf[NI_MAXHOST] = {0};
+        char sbuf[NI_MAXSERV] = {0};
+        unsigned char *tosend = NULL;
         int tosend_len;
         int canonname_len = 0;
         int err;
@@ -249,30 +249,27 @@ ecore_con_info_get(Ecore_Con_Server *svr,
         if (!getaddrinfo(svr->name, service, hints, &result) && result)
           {
              if (result->ai_canonname)
-                canonname_len =
-                   strlen(result->ai_canonname) + 1;
-
+                canonname_len = strlen(result->ai_canonname) + 1;
+             
              tosend_len = sizeof(Ecore_Con_Info) + result->ai_addrlen +
                 canonname_len;
-
-             if (!(tosend = alloca(tosend_len)))
-                goto on_error;
-
+             
+             if (!(tosend = alloca(tosend_len))) goto on_error;
+             memset(tosend, 0, tosend_len);
+             
              container = (Ecore_Con_Info *)tosend;
-
              container->size = tosend_len;
-
-                  memcpy(&container->info,
+             
+             memcpy(&container->info,
                     result,
                     sizeof(struct addrinfo));
-                  memcpy((char *)tosend + sizeof(Ecore_Con_Info),
+             memcpy(tosend + sizeof(Ecore_Con_Info),
                     result->ai_addr,
                     result->ai_addrlen);
-                  memcpy(
-                (char *)tosend + sizeof(Ecore_Con_Info) + result->ai_addrlen,
-                result->ai_canonname,
-                canonname_len);
-
+             memcpy(tosend + sizeof(Ecore_Con_Info) + result->ai_addrlen,
+                    result->ai_canonname,
+                    canonname_len);
+             
              if (!getnameinfo(result->ai_addr, result->ai_addrlen,
                               hbuf, sizeof(hbuf), sbuf, sizeof(sbuf),
                               NI_NUMERICHOST | NI_NUMERICSERV))
@@ -280,23 +277,23 @@ ecore_con_info_get(Ecore_Con_Server *svr,
                   memcpy(container->ip,      hbuf, sizeof(container->ip));
                   memcpy(container->service, sbuf, sizeof(container->service));
                }
-
+             
              err = write(fd[1], tosend, tosend_len);
           }
 
 on_error:
         if (result)
            freeaddrinfo(result);
-
+        
         err = write(fd[1], "", 1);
         close(fd[1]);
-# ifdef __USE_ISOC99
+#ifdef __USE_ISOC99
         _Exit(0);
-# else
+#else
         _exit(0);
-# endif
+#endif
      }
-
+   
    /* PARENT */
    cbdata->handler =
       ecore_event_handler_add(ECORE_EXE_EVENT_DEL, _ecore_con_info_exit_handler,
@@ -309,9 +306,9 @@ on_error:
         close(fd[0]);
         return 0;
      }
-
+   
    info_slaves = (CB_Data *)eina_inlist_append(EINA_INLIST_GET(
-                                                  info_slaves),
+                                                               info_slaves),
                                                EINA_INLIST_GET(cbdata));
    return 1;
 }
