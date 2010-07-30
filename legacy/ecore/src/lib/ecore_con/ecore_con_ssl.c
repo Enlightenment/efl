@@ -313,7 +313,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
      }
 
    if ((server_cert) && (server_cert->cert) &&
-       ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOAD_CERT))
+       ((svr->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT))
      {
         svr->cert = server_cert->cert;
         server_cert->count++;
@@ -390,7 +390,7 @@ _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
         gnutls_deinit(svr->session);
      }
 
-   if (((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOAD_CERT) &&
+   if (((svr->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
        (server_cert) &&
        (server_cert->cert) && (--server_cert->count < 1))
      {
@@ -500,7 +500,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    gnutls_dh_params_generate2(dh_params, 1024);
 
    if ((client_cert) && (client_cert->cert) &&
-       ((cl->server->type & ECORE_CON_TYPE) == ECORE_CON_LOAD_CERT))
+       ((cl->server->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT))
      {
         cl->server->cert = client_cert->cert;
         client_cert->count++;
@@ -558,7 +558,7 @@ _ecore_con_ssl_client_shutdown_gnutls(Ecore_Con_Client *cl)
    if (cl->server->anoncred_s && !--_client_connected)
       gnutls_anon_free_server_credentials(cl->server->anoncred_s);
 
-   if (((cl->server->type & ECORE_CON_TYPE) == ECORE_CON_LOAD_CERT) &&
+   if (((cl->server->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
        (client_cert) &&
        (client_cert->cert) && (--client_cert->count < 1))
      {
@@ -729,7 +729,7 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
      }
 
    if ((server_cert) && (server_cert->cert) &&
-       ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOAD_CERT))
+       ((svr->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT))
      {
         //FIXME: just log and go on without cert if loading fails?
         if (!SSL_CTX_use_certificate(svr->ssl_ctx, server_cert->cert))
@@ -791,7 +791,7 @@ _ecore_con_ssl_server_shutdown_openssl(Ecore_Con_Server *svr)
         SSL_free(svr->ssl);
      }
 
-   if (((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOAD_CERT) &&
+   if (((svr->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
        (server_cert) && (server_cert->cert) &&
        (--server_cert->count < 1))
      {
@@ -960,7 +960,7 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
      }
 
    if ((client_cert) && (client_cert->cert) && (private_key->key) &&
-       ((cl->server->type & ECORE_CON_TYPE) == ECORE_CON_LOAD_CERT))
+       ((cl->server->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT))
      {
         //FIXME: just log and go on without cert if loading fails?
         if (!SSL_CTX_use_certificate(cl->server->ssl_ctx, client_cert->cert) ||
@@ -1057,7 +1057,7 @@ _ecore_con_ssl_client_shutdown_openssl(Ecore_Con_Client *cl)
    if (cl->ssl_ctx)
      {
         SSL_CTX_free(cl->ssl_ctx);
-        if (((cl->server->type & ECORE_CON_TYPE) == ECORE_CON_LOAD_CERT) &&
+        if (((cl->server->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
             (client_cert) && (client_cert->cert) && (--client_cert->count < 1))
           {
              X509_free(client_cert->cert);
@@ -1065,7 +1065,7 @@ _ecore_con_ssl_client_shutdown_openssl(Ecore_Con_Client *cl)
              client_cert = NULL;
           }
 
-        if (((cl->server->type & ECORE_CON_TYPE) == ECORE_CON_LOAD_CERT) &&
+        if (((cl->server->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
             (private_key) && (private_key->key) && (--private_key->count < 1))
           {
              EVP_PKEY_free(private_key->key);
