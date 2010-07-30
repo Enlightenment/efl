@@ -1782,6 +1782,7 @@ FUNC_PART_API_STRING(description);
 Eina_Bool
 _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type, const char *source)
 {
+   Edje_Part_Collection_Directory_Entry *ce;
    Edje_Part_Collection *pc;
    Edje_Part **tmp;
    Edje_Part *ep;
@@ -1917,6 +1918,9 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    edje_edit_state_add(obj, name, "default", 0.0);
    edje_edit_part_selected_state_set(obj, name, "default", 0.0);
 
+   ce = eina_hash_find(ed->file->collection, ed->group);
+   ce->count.part++;
+
    return EINA_TRUE;
 }
 
@@ -2028,6 +2032,10 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
      evas_object_hide(ed->clipper);
 
    edje_object_calc_force(obj);
+
+   ce = eina_hash_find(ed->file->collection, ed->group);
+   ce->count.part--;
+
    return EINA_TRUE;
 }
 
@@ -2608,6 +2616,21 @@ edje_edit_state_del(Evas_Object *obj, const char *part, const char *state, doubl
 	  rp->part->other_count--;
 	  break;
        }
+
+#define DEC_COUNT(Type) case EDJE_PART_TYPE_##Type: ce->count.Type--; break;
+
+   switch (rp->part->type)
+     {
+	DEC_COUNT(RECTANGLE);
+	DEC_COUNT(TEXT);
+	DEC_COUNT(IMAGE);
+	DEC_COUNT(SWALLOW);
+	DEC_COUNT(TEXTBLOCK);
+	DEC_COUNT(GROUP);
+	DEC_COUNT(BOX);
+	DEC_COUNT(TABLE);
+	DEC_COUNT(EXTERNAL);
+     }
 
    _edje_collection_free_part_description_free(rp->part->type, pd, ce, 0);
 }
