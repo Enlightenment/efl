@@ -664,7 +664,8 @@ _edje_fix_parts_id(Edje *ed)
 
 	//printf(" [%d]Checking part: %s id: %d\n", correct_id, p->name, p->id);
 	if (p->id != correct_id)
-	  _edje_part_id_set(ed, ed->table_parts[p->id], correct_id);
+	  if (ed->table_parts[p->id])
+	    _edje_part_id_set(ed, ed->table_parts[p->id], correct_id);
 
 	correct_id++;
      }
@@ -1031,12 +1032,10 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
    //if (pc->part && ed->file->free_strings) eina_stringshare_del(pc->part); TODO FIXME
    pce = eina_hash_find(ed->file->collection, pc->part);
 
-   eina_hash_del(ed->file->collection, pce->entry, pce);
+   eina_hash_move(ed->file->collection, pce->entry, new_name);
 
    pce->entry = eina_stringshare_add(new_name);
    pc->part = pce->entry;
-
-   eina_hash_add(ed->file->collection, pce->entry, pce);
 
    return EINA_FALSE;
 }
