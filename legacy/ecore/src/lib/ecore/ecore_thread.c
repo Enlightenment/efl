@@ -74,6 +74,16 @@ static Eina_Hash *_ecore_thread_global_hash = NULL;
 static pthread_rwlock_t _ecore_thread_global_hash_lock = PTHREAD_RWLOCK_INITIALIZER;
 static pthread_mutex_t _ecore_thread_global_hash_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t _ecore_thread_global_hash_cond = PTHREAD_COND_INITIALIZER;
+
+static void
+_ecore_thread_data_free(void *data)
+{
+   Ecore_Thread_Data *d = data;
+
+   if (d->cb) d->cb(d->data);
+   free(d);
+}
+
 static void
 _ecore_thread_pipe_free(void *data __UNUSED__, void *event)
 {
@@ -85,7 +95,7 @@ _ecore_thread_pipe_free(void *data __UNUSED__, void *event)
 static Eina_Bool
 _ecore_thread_pipe_del(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
-   /* This is a hack to delay pipe destruction until we are out of it's internal loop. */
+   /* This is a hack to delay pipe destruction until we are out of its internal loop. */
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -835,9 +845,10 @@ ecore_thread_available_get(void)
  * functions to avoid leaks.
  */
 EAPI Eina_Bool
-ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, const void *value, Eina_Bool direct)
+ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
+   Ecore_Thread_Data *d;
    Eina_Bool ret;
 
    if ((!thread) || (!key) || (!value))
@@ -846,20 +857,23 @@ ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, const void *va
    if (worker->self != pthread_self()) return EINA_FALSE;
 
    if (!worker->hash)
-     worker->hash = eina_hash_string_small_new(NULL);
+     worker->hash = eina_hash_string_small_new(_ecore_thread_data_free);
 
    if (!worker->hash)
      return EINA_FALSE;
-   if (direct)
-     ret = eina_hash_direct_add(worker->hash, key, value);
-   else
-     ret = eina_hash_add(worker->hash, key, value);
-   pthread_cond_broadcast(&worker->cond);
-   return ret;
+
+   if (!(d = malloc(sizeof(Ecore_Thread_Data))))
+     return EINA_FALSE;
+
+   d->data = value;
+   d->cb = cb;
 
    if (direct)
-     return eina_hash_direct_add(worker->hash, key, value);
-   return eina_hash_add(worker->hash, key, value);
+     ret = eina_hash_direct_add(worker->hash, key, d);
+   else
+     ret = eina_hash_add(worker->hash, key, d);
+   pthread_cond_broadcast(&worker->cond);
+   return ret;
 #else
    return EINA_TRUE;
 #endif
@@ -877,23 +891,29 @@ ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, const void *va
  * All data added to the thread pool must be freed in the thread's func_end/func_cancel
  * functions to avoid leaks.
  */
-EAPI void *
-ecore_thread_pool_data_set(Ecore_Thread *thread, const char *key, const void *value)
+EAPI Ecore_Thread_Data *
+ecore_thread_pool_data_set(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
-   void *ret;
+   Ecore_Thread_Data *d, *ret;
    if ((!thread) || (!key) || (!value))
      return NULL;
 #ifdef EFL_HAVE_PTHREAD
    if (worker->self != pthread_self()) return NULL;
 
    if (!worker->hash)
-     worker->hash = eina_hash_string_small_new(NULL);
+     worker->hash = eina_hash_string_small_new(_ecore_thread_data_free);
 
    if (!worker->hash)
      return NULL;
 
-   ret = eina_hash_set(worker->hash, key, value);
+   if (!(d = malloc(sizeof(Ecore_Thread_Data))))
+     return NULL;
+
+   d->data = value;
+   d->cb = cb;
+
+   ret = eina_hash_set(worker->hash, key, d);
    pthread_cond_broadcast(&worker->cond);
    return ret;
 #else
@@ -911,10 +931,12 @@ ecore_thread_pool_data_set(Ecore_Thread *thread, const char *key, const void *va
  * in any case but success.
  */
 
-EAPI void *
+EAPI const void *
 ecore_thread_pool_data_find(Ecore_Thread *thread, const char *key)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
+   Ecore_Thread_Data *d;
+
    if ((!thread) || (!key))
      return NULL;
 #ifdef EFL_HAVE_PTHREAD
@@ -923,7 +945,8 @@ ecore_thread_pool_data_find(Ecore_Thread *thread, const char *key)
    if (!worker->hash)
      return NULL;
 
-   return eina_hash_find(worker->hash, key);
+   d = eina_hash_find(worker->hash, key);
+   return d->data;
 #else
    return NULL;
 #endif
@@ -942,6 +965,7 @@ EAPI Eina_Bool
 ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
+   Ecore_Thread_Data *d;
    if ((!thread) || (!key))
      return EINA_FALSE;
 #ifdef EFL_HAVE_PTHREAD
@@ -949,7 +973,8 @@ ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key)
 
    if (!worker->hash)
      return EINA_FALSE;
-
+   if ((d = eina_hash_find(worker->hash, key)))
+     _ecore_thread_data_free(d);
    return eina_hash_del_by_key(worker->hash, key);
 #else
    return EINA_TRUE;
@@ -966,11 +991,11 @@ ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key)
  * This function will return NULL in any case but success.
  * Use @p seconds to specify the amount of time to wait.  Use > 0 for an actual wait time, 0 to not wait, and < 0 to wait indefinitely.
  */
-EAPI void *
+EAPI const void *
 ecore_thread_pool_data_wait(Ecore_Thread *thread, const char *key, double seconds)
 {
    double time = 0;
-   void *ret;
+   Ecore_Thread_Data *ret;
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
    if ((!thread) || (!key))
      return NULL;
@@ -988,7 +1013,8 @@ ecore_thread_pool_data_wait(Ecore_Thread *thread, const char *key, double second
         pthread_cond_wait(&worker->cond, &worker->mutex);
         pthread_mutex_unlock(&worker->mutex);
      }
-   return ret;
+   if (ret) return ret->data;
+   return NULL;
 #else
    return NULL;
 #endif
@@ -999,30 +1025,40 @@ ecore_thread_pool_data_wait(Ecore_Thread *thread, const char *key, double second
  * @brief Add data to the global data
  * @param key The name string to add the data with
  * @param value The data to add
+ * @param cb The optional callback to free the data with once ecore is shut down
  * @param direct If true, this will not copy the key string (like eina_hash_direct_add)
  * @return EINA_TRUE on success, EINA_FALSE on failure
  * This adds data to the global thread data, and will return EINA_FALSE in any case but success.
- * All data added to global should be manually freed to avoid stale pointers in the global thread data.
+ * All data added to global can be manually freed, or a callback can be provided with @p cb which will
+ * be called upon ecore_thread shutting down.
  */
 EAPI Eina_Bool
-ecore_thread_global_data_add(const char *key, const void *value, Eina_Bool direct)
+ecore_thread_global_data_add(const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct)
 {
    Eina_Bool ret;
+   Ecore_Thread_Data *d;
+
    if ((!key) || (!value))
      return EINA_FALSE;
 #ifdef EFL_HAVE_PTHREAD
    pthread_rwlock_wrlock(&_ecore_thread_global_hash_lock);
    if (!_ecore_thread_global_hash)
-     _ecore_thread_global_hash = eina_hash_string_small_new(NULL);
+     _ecore_thread_global_hash = eina_hash_string_small_new(_ecore_thread_data_free);
    pthread_rwlock_unlock(&_ecore_thread_global_hash_lock);
+
+   if (!(d = malloc(sizeof(Ecore_Thread_Data))))
+     return EINA_FALSE;
+
+   d->data = value;
+   d->cb = cb;
 
    if (!_ecore_thread_global_hash)
      return EINA_FALSE;
    pthread_rwlock_wrlock(&_ecore_thread_global_hash_lock);
    if (direct)
-     ret = eina_hash_direct_add(_ecore_thread_global_hash, key, value);
+     ret = eina_hash_direct_add(_ecore_thread_global_hash, key, d);
    else
-     ret = eina_hash_add(_ecore_thread_global_hash, key, value);
+     ret = eina_hash_add(_ecore_thread_global_hash, key, d);
    pthread_rwlock_unlock(&_ecore_thread_global_hash_lock);
    pthread_cond_broadcast(&_ecore_thread_global_hash_cond);
    return ret;
@@ -1035,31 +1071,41 @@ ecore_thread_global_data_add(const char *key, const void *value, Eina_Bool direc
  * @brief Add data to the global data
  * @param key The name string to add the data with
  * @param value The data to add
- * @return EINA_TRUE on success, EINA_FALSE on failure
+ * @param cb The optional callback to free the data with once ecore is shut down
+ * @return An @ref Ecore_Thread_Data on success, NULL on failure
  * This adds data to the global thread data and returns NULL, or replaces the previous data
  * associated with @p key and returning the previous data if it existed.  To see if an error occurred,
  * one must use eina_error_get.
- * All data added to global should be manually freed to avoid stale pointers in the global thread data.
+ * All data added to global can be manually freed, or a callback can be provided with @p cb which will
+ * be called upon ecore_thread shutting down.
  */
-EAPI void *
-ecore_thread_global_data_set(const char *key, const void *value)
+EAPI Ecore_Thread_Data *
+ecore_thread_global_data_set(const char *key, void *value, Eina_Free_Cb cb)
 {
-   void *ret;
+   Ecore_Thread_Data *d, *ret;
+
    if ((!key) || (!value))
      return NULL;
 #ifdef EFL_HAVE_PTHREAD
    pthread_rwlock_wrlock(&_ecore_thread_global_hash_lock);
    if (!_ecore_thread_global_hash)
-     _ecore_thread_global_hash = eina_hash_string_small_new(NULL);
+     _ecore_thread_global_hash = eina_hash_string_small_new(_ecore_thread_data_free);
    pthread_rwlock_unlock(&_ecore_thread_global_hash_lock);
 
    if (!_ecore_thread_global_hash)
      return NULL;
 
+   if (!(d = malloc(sizeof(Ecore_Thread_Data))))
+     return NULL;
+
+   d->data = value;
+   d->cb = cb;
+
    pthread_rwlock_wrlock(&_ecore_thread_global_hash_lock);
-   ret = eina_hash_set(_ecore_thread_global_hash, key, value);
+   ret = eina_hash_set(_ecore_thread_global_hash, key, d);
    pthread_rwlock_unlock(&_ecore_thread_global_hash_lock);
    pthread_cond_broadcast(&_ecore_thread_global_hash_cond);
+
    return ret;
 #else
    return NULL;
@@ -1074,10 +1120,10 @@ ecore_thread_global_data_set(const char *key, const void *value)
  * This function will return NULL in any case but success.
  */
 
-EAPI void *
+EAPI const void *
 ecore_thread_global_data_find(const char *key)
 {
-   void *ret;
+   Ecore_Thread_Data *ret;
    if (!key)
      return NULL;
 #ifdef EFL_HAVE_PTHREAD
@@ -1086,7 +1132,7 @@ ecore_thread_global_data_find(const char *key)
    pthread_rwlock_rdlock(&_ecore_thread_global_hash_lock);
    ret = eina_hash_find(_ecore_thread_global_hash, key);
    pthread_rwlock_unlock(&_ecore_thread_global_hash_lock);
-   return ret;
+   return ret->data;
 #else
    return NULL;
 #endif
@@ -1098,12 +1144,14 @@ ecore_thread_global_data_find(const char *key)
  * @return EINA_TRUE on success, EINA_FALSE on failure
  * This deletes the data pointer from the global data which was previously added with @ref ecore_thread_global_data_add
  * This function will return EINA_FALSE in any case but success.
- * Note that this WILL NOT free the data, it merely removes it from the global set.
+ * Note that this WILL free the data if an @c Eina_Free_Cb was specified when the data was added.
  */
 EAPI Eina_Bool
 ecore_thread_global_data_del(const char *key)
 {
    Eina_Bool ret;
+   Ecore_Thread_Data *d;
+
    if (!key)
      return EINA_FALSE;
 #ifdef EFL_HAVE_PTHREAD
@@ -1111,6 +1159,8 @@ ecore_thread_global_data_del(const char *key)
      return EINA_FALSE;
 
    pthread_rwlock_wrlock(&_ecore_thread_global_hash_lock);
+   if ((d = eina_hash_find(_ecore_thread_global_hash, key)))
+     _ecore_thread_data_free(d);
    ret = eina_hash_del_by_key(_ecore_thread_global_hash, key);
    pthread_rwlock_unlock(&_ecore_thread_global_hash_lock);
    return ret;
@@ -1129,11 +1179,11 @@ ecore_thread_global_data_del(const char *key)
  * This function will return NULL in any case but success.
  * Use @p seconds to specify the amount of time to wait.  Use > 0 for an actual wait time, 0 to not wait, and < 0 to wait indefinitely.
  */
-EAPI void *
+EAPI const void *
 ecore_thread_global_data_wait(const char *key, double seconds)
 {
    double time = 0;
-   void *ret = NULL;
+   Ecore_Thread_Data *ret = NULL;
    if (!key)
      return NULL;
 #ifdef EFL_HAVE_PTHREAD
@@ -1153,7 +1203,8 @@ ecore_thread_global_data_wait(const char *key, double seconds)
         pthread_cond_wait(&_ecore_thread_global_hash_cond, &_ecore_thread_global_hash_mutex);
         pthread_mutex_unlock(&_ecore_thread_global_hash_mutex);
      }
-   return ret;
+   if (ret) return ret->data;
+   return NULL;
 #else
    return NULL;
 #endif
