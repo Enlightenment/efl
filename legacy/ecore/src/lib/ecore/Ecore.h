@@ -167,12 +167,6 @@ extern "C" {
    typedef struct _Ecore_Exe_Event_Data_Line   Ecore_Exe_Event_Data_Line; /**< Lines from a child process */
    typedef struct _Ecore_Exe_Event_Data        Ecore_Exe_Event_Data; /**< Data from a child process */
 
-
-   typedef struct _Ecore_Thread_Data
-   {
-      void *data;
-      Eina_Free_Cb cb;
-   } Ecore_Thread_Data;
    typedef struct _Ecore_Thread                Ecore_Thread;
    typedef void (*Ecore_Thread_Blocking_Cb) (void *data);
    typedef void (*Ecore_Thread_End_Cb) (void *data);
@@ -374,13 +368,12 @@ extern "C" {
    EAPI int           ecore_thread_available_get(void);
 
    EAPI Eina_Bool     ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct);
-   EAPI Ecore_Thread_Data         *ecore_thread_pool_data_set(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb);
+   EAPI void         *ecore_thread_pool_data_set(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb);
    EAPI const void   *ecore_thread_pool_data_find(Ecore_Thread *thread, const char *key);
    EAPI Eina_Bool     ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key);
-   EAPI const void   *ecore_thread_pool_data_wait(Ecore_Thread *thread, const char *key, double seconds);
 
    EAPI Eina_Bool     ecore_thread_global_data_add(const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct);
-   EAPI Ecore_Thread_Data         *ecore_thread_global_data_set(const char *key, void *value, Eina_Free_Cb cb);
+   EAPI void         *ecore_thread_global_data_set(const char *key, void *value, Eina_Free_Cb cb);
    EAPI const void   *ecore_thread_global_data_find(const char *key);
    EAPI Eina_Bool     ecore_thread_global_data_del(const char *key);
    EAPI const void   *ecore_thread_global_data_wait(const char *key, double seconds);
