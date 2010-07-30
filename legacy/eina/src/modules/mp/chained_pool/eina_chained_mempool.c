@@ -60,9 +60,10 @@ struct _Chained_Mempool
 {
    Eina_Inlist *first;
    const char *name;
-   int item_size;
    int item_alloc;
    int pool_size;
+   int alloc_size;
+   int group_size;
    int usage;
 #ifdef EFL_HAVE_THREADS
 # ifdef EFL_HAVE_POSIX_THREADS
@@ -88,15 +89,15 @@ _eina_chained_mp_pool_new(Chained_Mempool *pool)
    unsigned char *ptr;
    int i;
 
-        eina_error_set(0);
-   p = malloc(sizeof(Chained_Pool) + (pool->pool_size * pool->item_alloc));
+   eina_error_set(0);
+   p = malloc(pool->alloc_size);
    if (!p)
      {
         eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
         return NULL;
      }
 
-   ptr = (unsigned char *)(p + 1);
+   ptr = (unsigned char *)p + eina_mempool_alignof(sizeof(Chained_Pool));
    p->usage = 0;
    p->base = NULL;
    for (i = 0; i < pool->pool_size; ++i, ptr += pool->item_alloc)
@@ -181,11 +182,9 @@ eina_chained_mempool_free(void *data, void *ptr)
    Chained_Mempool *pool = data;
    Chained_Pool *p;
    void *pmem;
-   int item_alloc, psize;
+   int psize;
 
-   item_alloc =
-      ((pool->item_size + sizeof(void *) - 1) / sizeof(void *)) * sizeof(void *);
-   psize = item_alloc * pool->pool_size;
+   psize = pool->group_size;
    // look 4 pool
 
 #ifdef EFL_HAVE_THREADS
@@ -246,6 +245,7 @@ eina_chained_mempool_init(const char *context,
                           va_list args)
 {
    Chained_Mempool *mp;
+   int item_size;
    size_t length;
 
    length = context ? strlen(context) + 1 : 0;
@@ -254,7 +254,7 @@ eina_chained_mempool_init(const char *context,
    if (!mp)
       return NULL;
 
-   mp->item_size = va_arg(args, int);
+   item_size = va_arg(args, int);
    mp->pool_size = va_arg(args, int);
 
    if (length)
@@ -263,7 +263,9 @@ eina_chained_mempool_init(const char *context,
         memcpy((char *)mp->name, context, length);
      }
 
-   mp->item_alloc = eina_mempool_alignof(mp->item_size);
+   mp->item_alloc = eina_mempool_alignof(item_size);
+   mp->group_size = mp->item_alloc * mp->pool_size;
+   mp->alloc_size = mp->group_size + eina_mempool_alignof(sizeof(Chained_Pool));
 
 #ifdef EFL_HAVE_THREADS
 # ifdef EFL_HAVE_POSIX_THREADS
