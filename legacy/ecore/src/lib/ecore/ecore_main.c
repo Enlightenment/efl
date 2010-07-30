@@ -433,10 +433,10 @@ ecore_main_win32_handler_add(void *h __UNUSED__,
  * @return  The data pointer set using @ref ecore_main_fd_handler_add,
  *          for @p fd_handler on success.  @c NULL otherwise.
  * @ingroup Ecore_FD_Handler_Group
- * 
+ *
  * Beware that if the fd is already closed, ecore may complain if it uses
  * epoll internally, and that in some rare cases this may be able to cause
- * crashes and instability. Rememebr to delete your fd handlers before the
+ * crashes and instability. Remember to delete your fd handlers before the
  * fd's they listen to are closed.
  */
 EAPI void *
