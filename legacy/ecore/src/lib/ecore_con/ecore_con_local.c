@@ -77,7 +77,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
    const char *homedir;
    int socket_unix_len;
 
-   if (svr->type == ECORE_CON_LOCAL_USER)
+   if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
      {
         homedir = getenv("HOME");
         if (!homedir)
@@ -89,7 +89,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
         snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i", homedir, svr->name,
                  svr->port);
      }
-   else if (svr->type == ECORE_CON_LOCAL_SYSTEM)
+   else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_SYSTEM)
      {
         if (svr->port < 0)
           {
@@ -110,7 +110,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
                          svr->port);
           }
      }
-   else if (svr->type == ECORE_CON_LOCAL_ABSTRACT)
+   else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
       strncpy(buf, svr->name,
               sizeof(buf));
 
@@ -130,7 +130,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
 
    socket_unix.sun_family = AF_UNIX;
 
-   if (svr->type == ECORE_CON_LOCAL_ABSTRACT)
+   if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
      {
 #ifdef HAVE_ABSTRACT_SOCKETS
         /* copy name insto sun_path, prefixed by null to indicate abstract namespace */
@@ -206,7 +206,7 @@ ecore_con_local_listen(
 
    mask = S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH;
 
-   if (svr->type == ECORE_CON_LOCAL_USER)
+   if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
      {
         homedir = getenv("HOME");
         if (!homedir)
@@ -232,7 +232,7 @@ ecore_con_local_listen(
                  svr->port);
         mask = S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH;
      }
-   else if (svr->type == ECORE_CON_LOCAL_SYSTEM)
+   else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_SYSTEM)
      {
         mask = 0;
         if (svr->name[0] == '/')
@@ -256,7 +256,7 @@ ecore_con_local_listen(
                     svr->name,
                     svr->port);
      }
-   else if (svr->type == ECORE_CON_LOCAL_ABSTRACT)
+   else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
       strncpy(buf, svr->name,
               sizeof(buf));
 
@@ -279,7 +279,7 @@ start:
       goto error_umask;
 
    socket_unix.sun_family = AF_UNIX;
-   if (svr->type == ECORE_CON_LOCAL_ABSTRACT)
+   if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
      {
 #ifdef HAVE_ABSTRACT_SOCKETS
         /* . is a placeholder */
@@ -302,8 +302,8 @@ start:
 
    if (bind(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
      {
-        if (((svr->type == ECORE_CON_LOCAL_USER) ||
-             (svr->type == ECORE_CON_LOCAL_SYSTEM)) &&
+        if ((((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER) ||
+             ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_SYSTEM)) &&
             (connect(svr->fd, (struct sockaddr *)&socket_unix,
                      socket_unix_len) < 0) &&
             (unlink(buf) >= 0))

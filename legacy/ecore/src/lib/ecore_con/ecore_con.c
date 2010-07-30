@@ -708,7 +708,7 @@ ecore_con_client_send(Ecore_Con_Client *cl, const void *data, int size)
       ecore_main_fd_handler_active_set(
          cl->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
 
-   if(cl->server && cl->server->type == ECORE_CON_REMOTE_UDP)
+   if(cl->server && ((cl->server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP))
       sendto(cl->server->fd, data, size, 0, (struct sockaddr *)cl->client_addr,
              cl->client_addr_len);
    else if (cl->buf)
@@ -1116,7 +1116,7 @@ _ecore_con_cb_tcp_listen(void *data, Ecore_Con_Info *net_info)
                   sizeof(struct linger)) < 0)
       goto error;
 
-   if (svr->type == ECORE_CON_REMOTE_NODELAY)
+   if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_NODELAY)
      {
         int flag = 1;
 
@@ -1248,7 +1248,7 @@ _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *net_info)
                   sizeof(curstate)) < 0)
       goto error;
 
-   if (svr->type == ECORE_CON_REMOTE_NODELAY)
+   if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_NODELAY)
      {
         int flag = 1;
 
@@ -1319,7 +1319,7 @@ _ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *net_info)
    if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0)
       goto error;
 
-   if(svr->type == ECORE_CON_REMOTE_BROADCAST)
+   if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_BROADCAST)
      {
         if (setsockopt(svr->fd, SOL_SOCKET, SO_BROADCAST,
                        (const void *)&broadcast,
