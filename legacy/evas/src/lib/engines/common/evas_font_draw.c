@@ -416,7 +416,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 
 #if defined(METRIC_CACHE) || defined(WORD_CACHE)
    /* A fast strNlen would be nice (there is a wcsnlen strangely) */
-   len = eina_unicode_strlen(text);
+   len = eina_unicode_strnlen(text,WORD_CACHE_MAXLEN);
 
    if (len > 2 && len < WORD_CACHE_MAXLEN){
      struct prword *word = evas_font_word_prerender(dc, text, intl_props, len, fn, fi,
