@@ -24,112 +24,116 @@
  * @file Eeze.h
  * @brief Easy device manipulation.
  * 
- * This header provides Eeze device handling functions.  Included are 
+ * This provides Eeze device handling functions.  Included are 
  * types and defines for accessing udev, mounting devices, and others.
- */
-
-/**
- * @defgroup subsystems Subsystems
- * @brief These are the device subsystems of udev.
- * 
- * - ac97
- * - acpi
- * - bdi
- * - block
- * - bsg
- * - dmi
- * - graphics
- * - hid
- * - hwmon
- * - i2c
- * - input
- * - mem
- * - misc
- * - net
- * - pci
- * - pci_bus
- * - pci_express
- * - platform
- * - pnp
- * - rtc
- * - scsi
- * - scsi_device
- * - scsi_disk
- * - scsi_generic
- * - scsi_host
- * - serio
- * - sound
- * - thermal
- * - tty
- * - usb
- * - usb_device
- * - vc
- * - vtconsole
  *
- * @ingroup udev
- */
-
-/**
- * @defgroup devices Device_Types
- * @brief These are the devtypes of udev.
- * 
- * - atapi
- * - audio
- * - block
- * - cd
- * - char
- * - disk
- * - floppy
- * - generic
- * - hid
- * - hub
- * - media
- * - optical
- * - printer
- * - rbc
- * - scsi
- * - storage
- * - tape
- * - video
  *
- * @ingroup udev
+ * For udev functions, see @ref udev.
  */
+/**
+ * @addtogroup udev
+ * 
+ * These are the device subsystems of udev:
+ * @li ac97
+ * @li acpi
+ * @li bdi
+ * @li block
+ * @li bsg
+ * @li dmi
+ * @li graphics
+ * @li hid
+ * @li hwmon
+ * @li i2c
+ * @li input
+ * @li mem
+ * @li misc
+ * @li net
+ * @li pci
+ * @li pci_bus
+ * @li pci_express
+ * @li platform
+ * @li pnp
+ * @li rtc
+ * @li scsi
+ * @li scsi_device
+ * @li scsi_disk
+ * @li scsi_generic
+ * @li scsi_host
+ * @li serio
+ * @li sound
+ * @li thermal
+ * @li tty
+ * @li usb
+ * @li usb_device
+ * @li vc
+ * @li vtconsole
+ *
+ * These are the devtypes of udev.
+ * @li atapi
+ * @li audio
+ * @li block
+ * @li cd
+ * @li char
+ * @li disk
+ * @li floppy
+ * @li generic
+ * @li hid
+ * @li hub
+ * @li media
+ * @li optical
+ * @li printer
+ * @li rbc
+ * @li scsi
+ * @li storage
+ * @li tape
+ * @li video
+ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
- * @defgroup event EEZE_UDEV_EVENT
- * @brief These are event types used in udev functions.
- * @ingroup udev
- * 
- * @{
+ * @addtogroup udev
+ * @typedef Eeze_Udev_Event
+ * @enum Eeze_Udev_Event
+ * @brief Flags for watch events
+ *
+ * These events are used to specify the events to watch in a
+ * @ref Eeze_Udev_Watch.  They can be OR'ed together.
+ *@{
  */
-
-/** - No event specified */
-#define EEZE_UDEV_EVENT_NONE 0x0000
-/** - Device added */
-#define EEZE_UDEV_EVENT_ADD 0x0001
-/** - Device removed */
-#define EEZE_UDEV_EVENT_REMOVE 0x0002
-/** - Device changed */
-#define EEZE_UDEV_EVENT_CHANGE 0x0004
-/** - Device has come online */
-#define EEZE_UDEV_EVENT_ONLINE 0x0008
-/** - Device has gone offline */
-#define EEZE_UDEV_EVENT_OFFLINE 0x0010
+typedef enum
+{
+    /** - No event specified */
+    EEZE_UDEV_EVENT_NONE = 0xf0,
+    /** - Device added */
+    EEZE_UDEV_EVENT_ADD = (1 << 1),
+    /** - Device removed */
+    EEZE_UDEV_EVENT_REMOVE = (1 << 2),
+    /** - Device changed */
+    EEZE_UDEV_EVENT_CHANGE = (1 << 3),
+    /** - Device has come online */
+    EEZE_UDEV_EVENT_ONLINE = (1 << 4),
+    /** - Device has gone offline */
+    EEZE_UDEV_EVENT_OFFLINE = (1 << 5)
+} Eeze_Udev_Event;
 /** @} */
 
 /**
- * @defgroup type Eeze_Udev_Type
+ * @addtogroup udev udev
+ * @typedef Eeze_Udev_Type Eeze_Udev_Type
+ * @enum Eeze_Udev_Type
  * @brief Convenience types to simplify udev access.
  * 
  * These types allow easy access to certain udev device types.  They
  * may only be used in specified functions.
  * 
- * @ingroup udev
  * @{
  */
 /*FIXME: these probably need to be bitmasks with categories*/
 typedef enum
-{  /** - No type */
+{
+   /** - No type */
    EEZE_UDEV_TYPE_NONE,
    /** - Keyboard device */
    EEZE_UDEV_TYPE_KEYBOARD,
@@ -157,10 +161,6 @@ typedef enum
 struct Eeze_Udev_Watch;
 typedef struct Eeze_Udev_Watch Eeze_Udev_Watch;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct _Eeze_Version
   {
      int major;
@@ -168,6 +168,12 @@ typedef struct _Eeze_Version
      int micro;
      int revision;
   } Eeze_Version;
+
+/**
+ * @addtogroup watch
+ * @brief Callback type for use with @ref Eeze_Udev_Watch
+ */
+typedef void(*Eeze_Udev_Watch_Cb)(const char *, Eeze_Udev_Event, void *, Eeze_Udev_Watch *);
 
 #define EEZE_VERSION_MAJOR 0
 #define EEZE_VERSION_MINOR 2
@@ -178,9 +184,9 @@ typedef struct _Eeze_Version
    EAPI int             eeze_shutdown(void);
 
    EAPI Eina_List       *eeze_udev_find_similar_from_syspath(const char *syspath);
-   EAPI void             eeze_udev_find_unlisted_similar(Eina_List *list);
+   EAPI Eina_List       *eeze_udev_find_unlisted_similar(Eina_List *list);
    EAPI Eina_List       *eeze_udev_find_by_sysattr(const char *sysattr, const char *value);
-   EAPI Eina_List       *eeze_udev_find_by_type(const Eeze_Udev_Type type, const char *name);
+   EAPI Eina_List       *eeze_udev_find_by_type(Eeze_Udev_Type type, const char *name);
    EAPI Eina_List       *eeze_udev_find_by_filter(const char *subsystem, const char *type, const char *name);
    
    EAPI const char      *eeze_udev_devpath_get_syspath(const char *devpath);
@@ -198,7 +204,7 @@ typedef struct _Eeze_Version
    EAPI Eina_Bool       eeze_udev_walk_check_sysattr(const char *syspath, const char *sysattr, const char *value);
    EAPI const char     *eeze_udev_walk_get_sysattr(const char *syspath, const char *sysattr);
 
-   EAPI Eeze_Udev_Watch *eeze_udev_watch_add(Eeze_Udev_Type type, int event, void(*func)(const char *, int, void *, Eeze_Udev_Watch *), void *user_data);
+   EAPI Eeze_Udev_Watch *eeze_udev_watch_add(Eeze_Udev_Type type, int event, Eeze_Udev_Watch_Cb cb, void *user_data);
    EAPI void            *eeze_udev_watch_del(Eeze_Udev_Watch *watch);
 
 #ifdef __cplusplus

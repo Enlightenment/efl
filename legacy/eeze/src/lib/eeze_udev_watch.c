@@ -19,7 +19,7 @@ struct Eeze_Udev_Watch
 /* private */
 struct _store_data
 {
-   void (*func)(const char *, int, void *, Eeze_Udev_Watch *);
+   void (*func)(const char *, Eeze_Udev_Event, void *, Eeze_Udev_Watch *);
    void *data;
    int event;
    _udev_monitor *mon;
@@ -50,7 +50,7 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
    struct _store_data *store = data;
    _udev_device *device, *parent, *tmpdev;
    const char *ret, *test;
-   void (*func)(const char *, int, void *, Eeze_Udev_Watch *) = store->func;
+   Eeze_Udev_Watch_Cb func = store->func;
    void *sdata = store->data;
    Eeze_Udev_Watch *watch = store->watch;
    int cap = 0, event = 0;
@@ -295,8 +295,7 @@ error:
  */
 EAPI Eeze_Udev_Watch *
 eeze_udev_watch_add(Eeze_Udev_Type type, int event,
-                    void (*func)(const char *syspath, int event, void *data,
-                                 Eeze_Udev_Watch * watch), void *user_data)
+                    Eeze_Udev_Watch_Cb cb, void *user_data)
 {
    _udev_monitor *mon = NULL;
    int fd;
@@ -361,7 +360,7 @@ eeze_udev_watch_add(Eeze_Udev_Type type, int event,
      goto error;
 
    fd = udev_monitor_get_fd(mon);
-   store->func = func;
+   store->func = cb;
    store->data = user_data;
    store->mon = mon;
    store->type = type;

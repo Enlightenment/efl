@@ -78,7 +78,7 @@ _walk_parents_get_attr(_udev_device * device, const char *sysattr)
  * check a list for all parents of a device,
  * stringshare adding all devices that are not in the list
  */
-void
+Eina_List *
 _get_unlisted_parents(Eina_List * list, _udev_device * device)
 {
    _udev_device *parent, *child = device;
@@ -126,5 +126,5 @@ _get_unlisted_parents(Eina_List * list, _udev_device * device)
           list = eina_list_prepend(list, eina_stringshare_add(devname));
      }
 
-   return;
+   return list;
 }

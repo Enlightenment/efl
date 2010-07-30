@@ -83,7 +83,7 @@ eeze_udev_find_similar_from_syspath(const char *syspath)
         * and we only need to check parents of the roots
         */
         if (udev_device_get_sysattr_value(device, "idVendor"))
-          _get_unlisted_parents(ret, device);
+          ret = _get_unlisted_parents(ret, device);
 
         udev_device_unref(device);
      }
@@ -97,6 +97,7 @@ eeze_udev_find_similar_from_syspath(const char *syspath)
  * device.
  *
  * @param list The list of devices to update
+ * @return The updated list
  *
  * This function will update @p list to include all devices matching
  * devices with syspaths currently stored in @p list.  All strings are
@@ -104,7 +105,7 @@ eeze_udev_find_similar_from_syspath(const char *syspath)
  *
  * @ingroup find
  */
-EAPI void
+EAPI Eina_List *
 eeze_udev_find_unlisted_similar(Eina_List * list)
 {
    _udev_device *device;
@@ -152,13 +153,13 @@ eeze_udev_find_unlisted_similar(Eina_List * list)
               * and we only need to check parents of the roots
               */
              if (udev_device_get_sysattr_value(device, "idVendor"))
-               _get_unlisted_parents(list, device);
+               list = _get_unlisted_parents(list, device);
 
              udev_device_unref(device);
           }
         udev_enumerate_unref(en);
      }
-   return;
+   return list;
 }
 
 /**
@@ -173,7 +174,7 @@ eeze_udev_find_unlisted_similar(Eina_List * list)
  * @ingroup find
  */
 EAPI Eina_List *
-eeze_udev_find_by_type(const Eeze_Udev_Type etype, const char *name)
+eeze_udev_find_by_type(Eeze_Udev_Type etype, const char *name)
 {
    _udev_enumerate *en;
    _udev_list_entry *devs, *cur;

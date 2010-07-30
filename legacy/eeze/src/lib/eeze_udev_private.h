@@ -10,7 +10,7 @@ typedef struct udev_monitor _udev_monitor;
 
 Eina_Bool _walk_parents_test_attr(_udev_device *device, const char *sysattr, const char* value);
 const char *_walk_parents_get_attr(_udev_device *device, const char *sysattr);
-void _get_unlisted_parents(Eina_List *list, _udev_device *device);
+Eina_List *_get_unlisted_parents(Eina_List *list, _udev_device *device);
 _udev_device *_copy_device(_udev_device *device);
 
 #endif
