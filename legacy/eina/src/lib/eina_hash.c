@@ -1483,6 +1483,40 @@ eina_hash_modify(Eina_Hash *hash, const void *key, const void *data)
    return eina_hash_modify_by_hash(hash, key, key_length, hash_num, data);
 }
 
+/**
+ * Change the key associated with a data without trigerring the del callback.
+ * @param hash    The given hash table.
+ * @param old_key The current key associated with the data
+ * @param new_key The new key to associate data with
+ * @return EINA_FALSE if somethings goes wrong.
+ */
+EAPI Eina_Bool
+eina_hash_move(Eina_Hash *hash, const void *old_key, const void *new_key)
+{
+   Eina_Free_Cb hash_free_cb;
+   const void *data;
+   Eina_Bool result;
+
+   EINA_MAGIC_CHECK_HASH(hash);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(hash,              EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(hash->key_hash_cb, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(old_key,           EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(new_key,           EINA_FALSE);
+
+   data = eina_hash_find(hash, old_key);
+   if (!data) return EINA_FALSE;
+
+   hash_free_cb = hash->data_free_cb;
+   hash->data_free_cb = NULL;
+
+   eina_hash_del(hash, old_key, data);
+   result = eina_hash_add(hash, new_key, data);
+
+   hash->data_free_cb = hash_free_cb;
+
+   return result;
+}
+
 /*============================================================================*
 *                                Iterator                                    *
 *============================================================================*/

@@ -122,6 +122,12 @@ eina_hash_set(
    Eina_Hash *hash,
    const void *key,
    const void *data) EINA_ARG_NONNULL(1, 2, 3);
+EAPI Eina_Bool
+eina_hash_move(
+   Eina_Hash *hash,
+   const void *old_key,
+   const void *new_key) EINA_ARG_NONNULL(1, 2, 3);
+
 EAPI void
 eina_hash_free(
    Eina_Hash *hash) EINA_ARG_NONNULL(1);
