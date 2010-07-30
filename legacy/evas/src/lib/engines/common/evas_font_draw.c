@@ -823,6 +823,11 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
    struct prword *w;
    int gl;
 
+#ifndef METRIC_CACHE
+   gl = dc->font_ext.func.gl_new ? 1: 0;
+   if (gl) return NULL;
+#endif
+
 
    LKL(lock_words);
    EINA_INLIST_FOREACH(words,w){
@@ -929,7 +934,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
 
    save = malloc(sizeof(struct prword));
    save->cinfo = metrics;
-   save->str = eina_ustringshare_add(text);
+   save->str = eina_ustringshare_add(in_text);
    save->font = fn;
    save->size = fi->size;
    save->len = len;
