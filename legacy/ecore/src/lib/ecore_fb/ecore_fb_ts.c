@@ -130,9 +130,9 @@ ecore_fb_ts_init(void)
 EAPI void
 ecore_fb_ts_shutdown(void)
 {
-   if (_ecore_fb_ts_fd >= 0) close(_ecore_fb_ts_fd);
    if (_ecore_fb_ts_fd_handler_handle)
      ecore_main_fd_handler_del(_ecore_fb_ts_fd_handler_handle);
+   if (_ecore_fb_ts_fd >= 0) close(_ecore_fb_ts_fd);
    _ecore_fb_ts_fd = -1;
    _ecore_fb_ts_fd_handler_handle = NULL;
 }

@@ -639,10 +639,10 @@ ecore_directfb_window_fullscreen_set(Ecore_DirectFB_Window *ecore_window, int on
 	}
 	else
 	{
+		ecore_main_fd_handler_del(_input_event_fd_handler_handle);
 		DFBCHECK(_input_event->Release(_input_event));	
 		DFBCHECK(_layer->SetCooperativeLevel(_layer,DLSCL_SHARED));
 		DFBCHECK(ecore_window->window->GetSurface(ecore_window->window, &ecore_window->surface));
-		ecore_main_fd_handler_del(_input_event_fd_handler_handle);
 		_ecore_directfb_fullscreen_window_id = 0;
 	}
 		

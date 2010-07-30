@@ -293,9 +293,9 @@ ecore_fb_kbd_init(void)
 void
 ecore_fb_kbd_shutdown(void)
 {
-   if (_ecore_fb_kbd_fd >= 0) close(_ecore_fb_kbd_fd);
    if (_ecore_fb_kbd_fd_handler_handle) 
      ecore_main_fd_handler_del(_ecore_fb_kbd_fd_handler_handle);
+   if (_ecore_fb_kbd_fd >= 0) close(_ecore_fb_kbd_fd);
    _ecore_fb_kbd_fd = 0;
    _ecore_fb_kbd_fd_handler_handle = NULL;
    _ecore_fb_ctrl = 0;
