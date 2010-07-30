@@ -369,8 +369,8 @@ _ecore_con_info_slave_free(CB_Data *cbdata)
 {
    info_slaves = (CB_Data *)eina_inlist_remove(EINA_INLIST_GET(info_slaves),
                                                EINA_INLIST_GET(cbdata));
-   close(ecore_main_fd_handler_fd_get(cbdata->fdh));
    ecore_main_fd_handler_del(cbdata->fdh);
+   close(ecore_main_fd_handler_fd_get(cbdata->fdh));
    ecore_event_handler_del(cbdata->handler);
    free(cbdata);
 }
