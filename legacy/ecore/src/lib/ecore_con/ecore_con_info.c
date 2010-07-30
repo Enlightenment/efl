@@ -318,7 +318,7 @@ _ecore_con_info_readdata(CB_Data *cbdata)
 {
    Ecore_Con_Info container;
    Ecore_Con_Info *recv;
-   void *torecv;
+   unsigned char *torecv;
    int torecv_len;
 
    ssize_t size;
@@ -329,31 +329,30 @@ _ecore_con_info_readdata(CB_Data *cbdata)
      {
         torecv_len = container.size;
         torecv = malloc(torecv_len);
-
+        
         memcpy(torecv, &container, sizeof(Ecore_Con_Info));
-
-        size = read(ecore_main_fd_handler_fd_get(
-                       cbdata->fdh), (char *)torecv + sizeof(Ecore_Con_Info),
+        
+        size = read(ecore_main_fd_handler_fd_get(cbdata->fdh), 
+                    torecv + sizeof(Ecore_Con_Info),
                     torecv_len - sizeof(Ecore_Con_Info));
-        if ((size > 0) && ((size_t)size == torecv_len - sizeof(Ecore_Con_Info)))
+        if ((size > 0) && 
+            ((size_t)size == torecv_len - sizeof(Ecore_Con_Info)))
           {
              recv = (Ecore_Con_Info *)torecv;
 
              recv->info.ai_addr =
-                (struct sockaddr *)((char *)torecv + sizeof(Ecore_Con_Info));
+                (struct sockaddr *)(torecv + sizeof(Ecore_Con_Info));
              if ((size_t)torecv_len !=
-                 (sizeof(Ecore_Con_Info) +
-                  recv->info.ai_addrlen))
+                 (sizeof(Ecore_Con_Info) + recv->info.ai_addrlen))
                 recv->info.ai_canonname =
-                   (char *)torecv +
-                   sizeof(Ecore_Con_Info) + recv->info.ai_addrlen;
+                torecv + sizeof(Ecore_Con_Info) + recv->info.ai_addrlen;
              else
                 recv->info.ai_canonname = NULL;
-
+             
              recv->info.ai_next = NULL;
-
+             
              cbdata->cb_done(cbdata->data, recv);
-
+             
              free(torecv);
           }
         else
@@ -361,15 +360,14 @@ _ecore_con_info_readdata(CB_Data *cbdata)
      }
    else
       cbdata->cb_done(cbdata->data, NULL);
-
+   
    cbdata->cb_done = NULL;
 }
 
 static void
 _ecore_con_info_slave_free(CB_Data *cbdata)
 {
-   info_slaves = (CB_Data *)eina_inlist_remove(EINA_INLIST_GET(
-                                                  info_slaves),
+   info_slaves = (CB_Data *)eina_inlist_remove(EINA_INLIST_GET(info_slaves),
                                                EINA_INLIST_GET(cbdata));
    close(ecore_main_fd_handler_fd_get(cbdata->fdh));
    ecore_main_fd_handler_del(cbdata->fdh);
