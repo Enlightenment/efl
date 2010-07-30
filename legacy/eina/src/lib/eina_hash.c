@@ -1484,11 +1484,14 @@ eina_hash_modify(Eina_Hash *hash, const void *key, const void *data)
 }
 
 /**
- * Change the key associated with a data without trigerring the del callback.
+ * @brief Change the key associated with a data without triggering the free callback.
  * @param hash    The given hash table.
  * @param old_key The current key associated with the data
  * @param new_key The new key to associate data with
- * @return EINA_FALSE if somethings goes wrong.
+ * @return EINA_FALSE in any case but success, EINA_TRUE on success.
+ * This function allows for the move of data from one key to another,
+ * but does not call the Eina_Free_Cb associated with the hash table
+ * when destroying the old key.
  */
 EAPI Eina_Bool
 eina_hash_move(Eina_Hash *hash, const void *old_key, const void *new_key)
