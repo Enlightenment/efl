@@ -81,6 +81,29 @@ eina_unicode_strlen(const Eina_Unicode *ustr)
 }
 
 /**
+ * @brief Returns the length of a Eina_Unicode string, up to a limit.
+ *
+ * This function returns the number of characters in string, up to a maximum
+ * of n.  If the terminating character is not found in the string, it returns
+ * n.
+ *
+ * @param ustr String to search
+ * @param n Max length to search
+ * @return Number of characters or n.
+ */
+EAPI size_t
+eina_unicode_strnlen(const Eina_Unicode *ustr, int n)
+{
+   const Eina_Unicode *end;
+   for (end = ustr; *end; end++)
+      ;
+   return end - ustr;
+}
+
+
+
+
+/**
  * @brief Same as the standard strdup just with Eina_Unicode instead of char.
  */
 EAPI Eina_Unicode *
