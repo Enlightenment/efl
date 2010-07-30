@@ -401,8 +401,8 @@ eeze_udev_watch_del(Eeze_Udev_Watch * watch)
    if ((!watch) || (!watch->mon) || (!watch->handler))
      return NULL;
 
-   udev_monitor_unref(watch->mon);
    sdata = ecore_main_fd_handler_del(watch->handler);
+   udev_monitor_unref(watch->mon);
 
    if (sdata)
      {
