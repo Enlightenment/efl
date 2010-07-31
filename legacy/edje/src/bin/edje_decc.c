@@ -314,10 +314,11 @@ output(void)
 		       ERR("Potential security violation. attempt to write in parent dir.");
 		       exit (-1);
 		    }
-		  f = fopen(out, "wb");
+		  if (!(f = fopen(out, "wb")))
+                    ERR("Could not open file: %s", out);
 		  if (fwrite(font, fontsize, 1, f) != 1)
 		    ERR("Could not write font: %s", strerror(errno));
-		  fclose(f);
+		  if (f) fclose(f);
 		  free(font);
 	       }
 	  }
