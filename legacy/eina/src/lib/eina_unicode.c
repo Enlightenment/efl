@@ -95,7 +95,8 @@ EAPI size_t
 eina_unicode_strnlen(const Eina_Unicode *ustr, int n)
 {
    const Eina_Unicode *end;
-   for (end = ustr; *end; end++)
+   const Eina_Unicode *last = ustr + n; /* technically not portable ;-) */
+   for (end = ustr; *end && last < end; end++)
       ;
    return end - ustr;
 }
