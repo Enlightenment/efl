@@ -318,8 +318,12 @@ next_token(char *p, char *end, char **new_p, int *delim)
 			   ((*delim) && (!isdelim(*p))) ||
 			   (isdelim(*p))
 			   )
-			 {
+			 {/*the line below this is never  used because it skips to
+                           * the 'done' label which is after the return call for
+                           * in_tok being 0. is this intentional?
+                           */
 			    in_tok = 0;
+
 			    tok_end = p - 1;
 			    if (*p == '\n') line--;
 			    goto done;
@@ -833,7 +837,6 @@ is_num(int n)
 {
    char *str;
    char *end;
-   long val;
 
    str = eina_list_nth(params, n);
    if (!str)
@@ -844,7 +847,7 @@ is_num(int n)
      }
    if (str[0] == 0) return 0;
    end = str;
-   val = strtol(str, &end, 0);
+   strtol(str, &end, 0);
    if ((end != str) && (end[0] == 0)) return 1;
    return 0;
 }
