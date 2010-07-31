@@ -487,7 +487,7 @@ AC_ARG_ENABLE(gles-variety-s3c6410,
 #####################################################################
 ## Engines
 
-EVAS_CHECK_ENGINE([buffer], [${want_evas_engine_buffer}], [no], [Buffer])
+EVAS_CHECK_ENGINE([buffer], [${want_evas_engine_buffer}], [yes], [Buffer])
 
 EVAS_CHECK_ENGINE([software-xlib], [${want_evas_engine_software_xlib}], [yes], [Software Xlib])
 
