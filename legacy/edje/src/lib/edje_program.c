@@ -1205,15 +1205,15 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 #endif   
    if (ed->collection)
      {
-	Edje_Part_Collection *ec;
 #ifdef EDJE_PROGRAM_CACHE
+	Edje_Part_Collection *ec;
 	char *tmps;
 	int l1, l2;
 #endif
 	int done;
 
-	ec = ed->collection;
 #ifdef EDJE_PROGRAM_CACHE
+	ec = ed->collection;
 	l1 = strlen(sig);
 	l2 = strlen(src);
 	tmps = alloca(l1 + l2 + 3); /* \0, \337, \0 */
@@ -1848,6 +1848,7 @@ _edje_param_convert(Edje_External_Param *param, const Edje_External_Param_Info *
 	      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
 	      case EDJE_EXTERNAL_PARAM_TYPE_INT:
 		 i = param->i;
+                 break;
 	      default:
 		 return NULL;
 	     }
