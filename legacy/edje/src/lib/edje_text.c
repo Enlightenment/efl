@@ -407,12 +407,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	part_get_geometry(ep, &tw, &th);
 	if (tw > sw)
 	  {
-	     int psize;
-
-	     psize = size;
 	     while ((tw > sw) && (size > 0) && (tw != 0))
 	       {
-		  psize = size;
+		  int psize = size;
 		  size = (size * sw) / tw;
 		  if ((psize - size) <= 0) size = psize - 1;
 		  if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
@@ -426,12 +423,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	  }
 	else if (tw < sw)
 	  {
-	     int psize;
-
-	     psize = size;
 	     while ((tw < sw) && (size > 0) && (tw != 0))
 	       {
-		  psize = size;
+		  int psize = size;
 		  size = (size * sw) / tw;
 		  /* fprintf(stderr, "size = %i (%i, %i)\n", size, sw, tw); */
 		  if ((psize - size) >= 0) size = psize + 1;
@@ -498,13 +492,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	       {
 		  int bottom, top;
 
-		  if (th < sh)
-		    bottom = 10;
-		  else if (th > sh)
-		    {
-		       bottom = 1;
-		       top = 10;
-		    }
+		  if (th < sh) bottom = 10;
+		  else if (th > sh) bottom = 1;
 		  else bottom = 0; /* XXX shut up GCC, th == sh is handled before! */
 
 		  top = size;
