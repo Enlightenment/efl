@@ -148,18 +148,18 @@ _edje_edit_smart_add(Evas_Object *obj)
 static void
 _edje_edit_smart_del(Evas_Object *obj)
 {
-   Edje_Edit *eed;
+//   Edje_Edit *eed;
 
-   eed = evas_object_smart_data_get(obj);
+//   eed = evas_object_smart_data_get(obj);
    _edje_edit_parent_sc->base.del(obj);
 }
 
 static Eina_Bool
 _edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group)
 {
-   Edje_Edit *eed;
+//   Edje_Edit *eed;
 
-   eed = evas_object_smart_data_get(obj);
+//   eed = evas_object_smart_data_get(obj);
    /* Nothing custom here yet, so we just call the parent function.
     * TODO and maybes:
     *  * The whole point of this thing is keep track of stuff such as
@@ -750,7 +750,7 @@ _edje_edit_group_references_update(Evas_Object *obj, const char *old_group_name,
 {
    Eina_Iterator *i;
    Eina_List *pll, *pl;
-   Edje_Part_Collection *pc;
+//   Edje_Part_Collection *pc;
    Edje_Part_Collection_Directory_Entry *pce;
    char *part_name;
    const char *source, *old;
@@ -759,7 +759,7 @@ _edje_edit_group_references_update(Evas_Object *obj, const char *old_group_name,
 
    GET_ED_OR_RETURN();
 
-   pc = ed->collection;
+//   pc = ed->collection;
 
    part_obj = edje_edit_object_add(ed->evas);
 

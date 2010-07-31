@@ -1710,7 +1710,7 @@ static int
 _elua_top(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
-   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+ //  Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
    Edje_Lua_Evas_Object *elo2;
    Evas_Object *o;
    Eina_List *list, *l;
@@ -1734,7 +1734,7 @@ static int
 _elua_bottom(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
-   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+//   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
    Edje_Lua_Evas_Object *elo2;
    Evas_Object *o;
    Eina_List *list, *l;
@@ -1907,9 +1907,9 @@ static void
 _elua_evas_obj_free(void *obj)
 {
    Edje_Lua_Evas_Object *elo = obj;
-   lua_State *L;
+//   lua_State *L;
    if (!elo->obj.ed) return;
-   L = elo->obj.ed->L;
+//   L = elo->obj.ed->L;
    evas_object_del(elo->evas_obj);
    elo->evas_obj = NULL;
 }

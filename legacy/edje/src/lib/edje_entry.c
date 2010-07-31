@@ -1527,7 +1527,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    Evas_Event_Mouse_Down *ev = event_info;
    Entry *en;
    Evas_Coord x, y, w, h;
-   Eina_Bool multiline;
+//   Eina_Bool multiline;
    Evas_Textblock_Cursor *tc;
    Eina_Bool dosel = EINA_FALSE;
    if (!rp) return;
@@ -1557,7 +1557,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
      }
    tc = evas_object_textblock_cursor_new(rp->object);
    evas_textblock_cursor_copy(en->cursor, tc);
-   multiline = rp->part->multiline;
+//   multiline = rp->part->multiline;
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
    en->cx = ev->canvas.x - x;
    en->cy = ev->canvas.y - y;
