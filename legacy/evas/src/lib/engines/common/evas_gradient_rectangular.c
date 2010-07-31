@@ -419,6 +419,7 @@ rectangular_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
 		sfunc = rectangular_pad;
 	   }
 	}
+        break;
       default:
 	sfunc = rectangular_reflect;
       break;
