@@ -539,6 +539,7 @@ angular_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
 	       sfunc = angular_pad;
 	   }
 	}
+        break;
       default:
 	sfunc = angular_reflect_aa;
       break;
