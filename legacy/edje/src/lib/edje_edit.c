@@ -318,6 +318,8 @@ _edje_import_font_file(Edje *ed, const char *path, const char *entry)
          }
       if (fread(fdata, fsize, 1, f) != 1)
 	 {
+            free(fdata);
+            fclose(f);
 	    ERR("Unable to read all of font file \"%s\"", path);
 	    return EINA_FALSE;
 	 }
