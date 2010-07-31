@@ -538,7 +538,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 {
    Eina_List *l;
    Edje_Program_Target *pt;
-   const char *pname = NULL;
+//   const char *pname = NULL;
    int free_runp = 0;
 
    if (ed->delete_me) return;
@@ -566,7 +566,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
      }
    _edje_recalc(ed);
    runp->delete_me = 1;
-   pname = runp->program->name;
+//   pname = runp->program->name;
    if (!ed->walking_actions)
      {
 	_edje_anim_count--;
@@ -1872,6 +1872,7 @@ _edje_param_convert(Edje_External_Param *param, const Edje_External_Param_Info *
 		 break;
 	      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
 		 d = (double)param->i;
+                 break;
 	      default:
 		 return NULL;
 	     }
