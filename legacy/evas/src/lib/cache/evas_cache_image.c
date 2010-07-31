@@ -1458,14 +1458,11 @@ EAPI void
 evas_cache_image_preload_cancel(Image_Entry *im, const void *target)
 {
 #ifdef BUILD_ASYNC_PRELOAD
-   Evas_Cache_Image *cache;
 
    assert(im);
    assert(im->cache);
-   cache = im->cache;
 
-   if (target == NULL) return ;
-
+   if (target == NULL) return;
    _evas_cache_image_entry_preload_remove(im, target);
 #else
    (void)im;
