@@ -198,8 +198,8 @@ rectangular_init_geom(RGBA_Gradient *gr)
      }
    gr->type.gdata = rectangular_data;
 
-   if (!gr->type.params || !*(gr->type.params))
-	return;
+   if (!gr->type.params || !*(gr->type.params)) 
+     return;
 
    s = strdup(gr->type.params);
    if (!s) return;
