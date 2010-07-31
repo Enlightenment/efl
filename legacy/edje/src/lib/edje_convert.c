@@ -402,7 +402,7 @@ _edje_description_convert(int type,
 	 result = eina_mempool_malloc(ce->mp.GROUP, sizeof (Edje_Part_Description_Common));
 	 break;
 
-#define ALLOC_POOL(Short, Type, Name)					\
+#define CONVERT_ALLOC_POOL(Short, Type, Name)					\
 	 case EDJE_PART_TYPE_##Short:					\
 	   {								\
 	      Edje_Part_Description_##Type *Name;			\
@@ -413,12 +413,12 @@ _edje_description_convert(int type,
 	      break;							\
 	   }
 
-	 ALLOC_POOL(IMAGE, Image, image);
-	 ALLOC_POOL(TEXT, Text, text);
-	 ALLOC_POOL(TEXTBLOCK, Text, text);
-	 ALLOC_POOL(BOX, Box, box);
-	 ALLOC_POOL(TABLE, Table, table);
-	 ALLOC_POOL(EXTERNAL, External, external_params);
+	 CONVERT_ALLOC_POOL(IMAGE, Image, image);
+	 CONVERT_ALLOC_POOL(TEXT, Text, text);
+	 CONVERT_ALLOC_POOL(TEXTBLOCK, Text, text);
+	 CONVERT_ALLOC_POOL(BOX, Box, box);
+	 CONVERT_ALLOC_POOL(TABLE, Table, table);
+	 CONVERT_ALLOC_POOL(EXTERNAL, External, external_params);
      }
 
    *result = oed->common;

@@ -2654,7 +2654,7 @@ _edje_edit_state_alloc(int type, Edje *ed)
 	 pd = eina_mempool_malloc(ce->mp.GROUP, sizeof (Edje_Part_Description_Common));
 	 break;
 
-#define ALLOC_POOL(Short, Type, Name)					\
+#define EDIT_ALLOC_POOL(Short, Type, Name)					\
 	 case EDJE_PART_TYPE_##Short:					\
 	   {								\
 	      Edje_Part_Description_##Type *Name;			\
@@ -2665,12 +2665,12 @@ _edje_edit_state_alloc(int type, Edje *ed)
 	      break;							\
 	   }
 
-	 ALLOC_POOL(IMAGE, Image, image);
-	 ALLOC_POOL(TEXT, Text, text);
-	 ALLOC_POOL(TEXTBLOCK, Text, text);
-	 ALLOC_POOL(BOX, Box, box);
-	 ALLOC_POOL(TABLE, Table, table);
-	 ALLOC_POOL(EXTERNAL, External, external_params);
+	 EDIT_ALLOC_POOL(IMAGE, Image, image);
+	 EDIT_ALLOC_POOL(TEXT, Text, text);
+	 EDIT_ALLOC_POOL(TEXTBLOCK, Text, text);
+	 EDIT_ALLOC_POOL(BOX, Box, box);
+	 EDIT_ALLOC_POOL(TABLE, Table, table);
+	 EDIT_ALLOC_POOL(EXTERNAL, External, external_params);
      }
 
    return pd;
