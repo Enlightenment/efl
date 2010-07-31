@@ -4,7 +4,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #include <stdio.h>
 #include <math.h>
@@ -13,12 +13,13 @@
 #include "Eet_private.h"
 
 int
-_eet_hash_gen(const char *key, int hash_size)
+_eet_hash_gen(const char * key,
+              int          hash_size)
 {
    int hash_num = 0;
    int value, i;
    int mask;
-   unsigned char *ptr;
+   unsigned char * ptr;
 
    /* no string - index 0 */
    if (!key)
@@ -35,5 +36,5 @@ _eet_hash_gen(const char *key, int hash_size)
    hash_num &= mask;
    /* return it */
    return hash_num;
-}
+} /* _eet_hash_gen */
 

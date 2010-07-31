@@ -1,7 +1,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -14,7 +14,7 @@
 
 #ifdef EFL_HAVE_POSIX_THREADS
 # include <pthread.h>
-#endif
+#endif /* ifdef EFL_HAVE_POSIX_THREADS */
 
 #include <check.h>
 
@@ -27,57 +27,57 @@ START_TEST(eet_test_init)
    int ret;
 
    ret = eet_init();
-        fail_if(ret != 1);
+   fail_if(ret != 1);
 
    ret = eet_shutdown();
-        fail_if(ret != 0);
+   fail_if(ret != 0);
 }
 END_TEST
 
-typedef struct _Eet_Test_Basic_Type Eet_Test_Basic_Type;
+typedef struct _Eet_Test_Basic_Type   Eet_Test_Basic_Type;
 struct _Eet_Test_Basic_Type
 {
-   char c;
-   short s;
-   int i;
-   long long l;
-   char *str;
-   char *istr;
-   float f1;
-   float f2;
-   double d;
-   unsigned char uc;
-   unsigned short us;
-   unsigned int ui;
-   unsigned long long ul;
-   Eet_Test_Basic_Type *empty;
-   Eet_Test_Basic_Type *with;
+   char                  c;
+   short                 s;
+   int                   i;
+   long long             l;
+   char *                str;
+   char *                istr;
+   float                 f1;
+   float                 f2;
+   double                d;
+   unsigned char         uc;
+   unsigned short        us;
+   unsigned int          ui;
+   unsigned long long    ul;
+   Eet_Test_Basic_Type * empty;
+   Eet_Test_Basic_Type * with;
 };
 
-#define EET_TEST_CHAR 0x42
-#define EET_TEST_SHORT 0x4224
-#define EET_TEST_INT 0x42211224
-#define EET_TEST_LONG_LONG 0x84CB42211224BC48
-#define EET_TEST_STRING "my little test with escape \\\""
-#define EET_TEST_KEY1 "key1"
-#define EET_TEST_KEY2 "key2"
-#define EET_TEST_FLOAT 123.45689
-#define EET_TEST_FLOAT2 1.0
-#define EET_TEST_FLOAT3 0.25
-#define EET_TEST_FLOAT4 0.0001234
-#define EET_TEST_DOUBLE 123456789.9876543210
-#define EET_TEST_DOUBLE2 1.0
-#define EET_TEST_DOUBLE3 0.25
-#define EET_TEST_FILE_KEY1 "keys/data/1"
-#define EET_TEST_FILE_KEY2 "keys/data/2"
+#define EET_TEST_CHAR       0x42
+#define EET_TEST_SHORT      0x4224
+#define EET_TEST_INT        0x42211224
+#define EET_TEST_LONG_LONG  0x84CB42211224BC48
+#define EET_TEST_STRING     "my little test with escape \\\""
+#define EET_TEST_KEY1       "key1"
+#define EET_TEST_KEY2       "key2"
+#define EET_TEST_FLOAT      123.45689
+#define EET_TEST_FLOAT2     1.0
+#define EET_TEST_FLOAT3     0.25
+#define EET_TEST_FLOAT4     0.0001234
+#define EET_TEST_DOUBLE     123456789.9876543210
+#define EET_TEST_DOUBLE2    1.0
+#define EET_TEST_DOUBLE3    0.25
+#define EET_TEST_FILE_KEY1  "keys/data/1"
+#define EET_TEST_FILE_KEY2  "keys/data/2"
 #define EET_TEST_FILE_IMAGE "keys/images/"
 
-typedef struct _Eet_Test_Image Eet_Test_Image;
+typedef struct _Eet_Test_Image   Eet_Test_Image;
 struct _Eet_Test_Image
 {
    unsigned int w;
    unsigned int h;
-   int alpha;
+   int          alpha;
    unsigned int color[64];
 };
 
@@ -126,7 +126,7 @@ static const Eet_Test_Image test_alpha = {
 };
 
 static void
-_eet_test_basic_set(Eet_Test_Basic_Type *res, int i)
+_eet_test_basic_set(Eet_Test_Basic_Type * res, int i)
 {
    res->c = EET_TEST_CHAR;
    res->s = EET_TEST_SHORT;
@@ -146,7 +146,7 @@ _eet_test_basic_set(Eet_Test_Basic_Type *res, int i)
 
    if (i == 0)
      {
-        Eet_Test_Basic_Type *tmp;
+        Eet_Test_Basic_Type * tmp;
 
         tmp = malloc(sizeof (Eet_Test_Basic_Type));
         fail_if(!tmp);
@@ -168,46 +168,46 @@ _eet_test_basic_set(Eet_Test_Basic_Type *res, int i)
         tmp->empty = NULL;
         tmp->with = NULL;
      }
-}
+} /* _eet_test_basic_set */
 
 static void
-_eet_test_basic_check(Eet_Test_Basic_Type *result, int i)
+_eet_test_basic_check(Eet_Test_Basic_Type * result, int i)
 {
    float tmp;
 
-        fail_if(result->c != EET_TEST_CHAR);
-        fail_if(result->s != EET_TEST_SHORT);
-        fail_if(result->i != EET_TEST_INT + i);
-        fail_if(result->l != (long long)EET_TEST_LONG_LONG);
-        fail_if(strcmp(result->str, EET_TEST_STRING) != 0);
-        fail_if(strcmp(result->istr, EET_TEST_STRING) != 0);
-        fail_if(result->uc != EET_TEST_CHAR);
-        fail_if(result->us != EET_TEST_SHORT);
-        fail_if(result->ui != EET_TEST_INT);
-        fail_if(result->ul != EET_TEST_LONG_LONG);
+   fail_if(result->c != EET_TEST_CHAR);
+   fail_if(result->s != EET_TEST_SHORT);
+   fail_if(result->i != EET_TEST_INT + i);
+   fail_if(result->l != (long long)EET_TEST_LONG_LONG);
+   fail_if(strcmp(result->str, EET_TEST_STRING) != 0);
+   fail_if(strcmp(result->istr, EET_TEST_STRING) != 0);
+   fail_if(result->uc != EET_TEST_CHAR);
+   fail_if(result->us != EET_TEST_SHORT);
+   fail_if(result->ui != EET_TEST_INT);
+   fail_if(result->ul != EET_TEST_LONG_LONG);
 
    tmp = (result->f1 + EET_TEST_FLOAT);
    if (tmp < 0)
       tmp = -tmp;
 
-        fail_if(tmp > 0.005);
+   fail_if(tmp > 0.005);
 
    tmp = (result->f2 - EET_TEST_FLOAT4);
    if (tmp < 0)
       tmp = -tmp;
 
-        fail_if(tmp > 0.005);
+   fail_if(tmp > 0.005);
 
    tmp = (result->d + EET_TEST_DOUBLE);
    if (tmp < 0)
       tmp = -tmp;
 
-        fail_if(tmp > 0.00005);
+   fail_if(tmp > 0.00005);
 
-        fail_if(result->empty != NULL);
+   fail_if(result->empty != NULL);
    if (i == 0)
      {
-        Eet_Test_Basic_Type *tmp;
+        Eet_Test_Basic_Type * tmp;
 
         tmp = result->with;
         fail_if(tmp == NULL);
@@ -224,11 +224,11 @@ _eet_test_basic_check(Eet_Test_Basic_Type *result, int i)
         fail_if(tmp->ul != EET_TEST_LONG_LONG);
      }
    else
-        fail_if(result->with != NULL);
-}
+      fail_if(result->with != NULL);
+} /* _eet_test_basic_check */
 
 static void
-_eet_build_basic_descriptor(Eet_Data_Descriptor *edd)
+_eet_build_basic_descriptor(Eet_Data_Descriptor * edd)
 {
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd,
                                  Eet_Test_Basic_Type,
@@ -298,15 +298,15 @@ _eet_build_basic_descriptor(Eet_Data_Descriptor *edd)
 
    EET_DATA_DESCRIPTOR_ADD_SUB(edd, Eet_Test_Basic_Type, "empty", empty, edd);
    EET_DATA_DESCRIPTOR_ADD_SUB(edd, Eet_Test_Basic_Type, "with",  with,  edd);
-}
+} /* _eet_build_basic_descriptor */
 
-   START_TEST(eet_test_basic_data_type_encoding_decoding)
+START_TEST(eet_test_basic_data_type_encoding_decoding)
 {
-   Eet_Data_Descriptor *edd;
-   Eet_Test_Basic_Type *result;
+   Eet_Data_Descriptor * edd;
+   Eet_Test_Basic_Type * result;
    Eet_Data_Descriptor_Class eddc;
    Eet_Test_Basic_Type etbt;
-   void *transfert;
+   void * transfert;
    int size;
 
    eet_init();
@@ -339,52 +339,51 @@ _eet_build_basic_descriptor(Eet_Data_Descriptor *edd)
 }
 END_TEST
 
-typedef struct _Eet_Test_Ex_Type Eet_Test_Ex_Type;
+typedef struct _Eet_Test_Ex_Type   Eet_Test_Ex_Type;
 struct _Eet_Test_Ex_Type
 {
-   char c;
-   short s;
-   int i;
-   unsigned long long l;
-   char *str;
-   char *istr;
-   float f1;
-   float f2;
-   float f3;
-   float f4;
-   double d1;
-   double d2;
-   double d3;
-   double d4;
-   Eina_List *list;
-   Eina_Hash *hash;
-   Eina_List *ilist;
-   Eina_List *slist;
-   Eina_Hash *ihash;
-   Eina_Hash *shash;
-   Eet_Test_Basic_Type sarray1[10];
-   unsigned int sarray2[5];
-   unsigned int varray1_count;
-   unsigned int *varray1;
-   unsigned int varray2_count;
-   Eet_Test_Basic_Type *varray2;
-   unsigned char uc;
-   unsigned short us;
-   unsigned int ui;
-   unsigned long long ul;
-   char *charray[10];
+   char                  c;
+   short                 s;
+   int                   i;
+   unsigned long long    l;
+   char *                str;
+   char *                istr;
+   float                 f1;
+   float                 f2;
+   float                 f3;
+   float                 f4;
+   double                d1;
+   double                d2;
+   double                d3;
+   double                d4;
+   Eina_List *           list;
+   Eina_Hash *           hash;
+   Eina_List *           ilist;
+   Eina_List *           slist;
+   Eina_Hash *           ihash;
+   Eina_Hash *           shash;
+   Eet_Test_Basic_Type   sarray1[10];
+   unsigned int          sarray2[5];
+   unsigned int          varray1_count;
+   unsigned int *        varray1;
+   unsigned int          varray2_count;
+   Eet_Test_Basic_Type * varray2;
+   unsigned char         uc;
+   unsigned short        us;
+   unsigned int          ui;
+   unsigned long long    ul;
+   char *                charray[10];
 };
 
 static int i42 = 42;
 static int i7 = 7;
 
-
 static void
-_eet_build_ex_descriptor(Eet_Data_Descriptor *edd)
+_eet_build_ex_descriptor(Eet_Data_Descriptor * edd)
 {
    Eet_Data_Descriptor_Class eddc;
    Eet_Test_Ex_Type etbt;
-   Eet_Data_Descriptor *eddb;
+   Eet_Data_Descriptor * eddb;
 
    eet_test_setup_eddc(&eddc);
    eddc.name = "Eet_Test_Basic_Type";
@@ -521,10 +520,10 @@ _eet_build_ex_descriptor(Eet_Data_Descriptor *edd)
    eet_data_descriptor_element_add(edd, "shash", EET_T_STRING, EET_G_HASH,
                                    (char *)(&(etbt.shash)) - (char *)(&(etbt)),
                                    0, /* 0,  */ NULL, NULL);
-}
+} /* _eet_build_ex_descriptor */
 
 static Eet_Test_Ex_Type *
-_eet_test_ex_set(Eet_Test_Ex_Type *res, int offset)
+_eet_test_ex_set(Eet_Test_Ex_Type * res, int offset)
 {
    unsigned int i;
 
@@ -579,10 +578,10 @@ _eet_test_ex_set(Eet_Test_Ex_Type *res, int offset)
    res->ul = EET_TEST_LONG_LONG + offset;
 
    return res;
-}
+} /* _eet_test_ex_set */
 
 static int
-_eet_test_ex_check(Eet_Test_Ex_Type *stuff, int offset)
+_eet_test_ex_check(Eet_Test_Ex_Type * stuff, int offset)
 {
    double tmp;
    unsigned int i;
@@ -669,12 +668,12 @@ _eet_test_ex_check(Eet_Test_Ex_Type *stuff, int offset)
      }
 
    return 0;
-}
+} /* _eet_test_ex_check */
 
 static Eina_Bool
-func(__UNUSED__ const Eina_Hash *hash, const void *key, void *data, void *fdata)
+func(__UNUSED__ const Eina_Hash * hash, const void * key, void * data, void * fdata)
 {
-   int *res = fdata;
+   int * res = fdata;
 
    if (strcmp(key, EET_TEST_KEY1) != 0
        && strcmp(key, EET_TEST_KEY2) != 0)
@@ -684,16 +683,16 @@ func(__UNUSED__ const Eina_Hash *hash, const void *key, void *data, void *fdata)
       *res = 1;
 
    return EINA_TRUE;
-}
+} /* func */
 
 static Eina_Bool
-func7(__UNUSED__ const Eina_Hash *hash,
-      __UNUSED__ const void *key,
-      void *data,
-      void *fdata)
+func7(__UNUSED__ const Eina_Hash * hash,
+      __UNUSED__ const void *      key,
+      void *                       data,
+      void *                       fdata)
 {
-   int *res = fdata;
-   int *val;
+   int * res = fdata;
+   int * val;
 
    val = data;
    if (!val)
@@ -703,13 +702,13 @@ func7(__UNUSED__ const Eina_Hash *hash,
       *res = 1;
 
    return EINA_TRUE;
-}
+} /* func7 */
 
 START_TEST(eet_test_data_type_encoding_decoding)
 {
-   Eet_Data_Descriptor *edd;
-   Eet_Test_Ex_Type *result;
-   void *transfert;
+   Eet_Data_Descriptor * edd;
+   Eet_Test_Ex_Type * result;
+   void * transfert;
    Eet_Data_Descriptor_Class eddc;
    Eet_Test_Ex_Type etbt;
    int size;
@@ -772,9 +771,9 @@ START_TEST(eet_test_data_type_encoding_decoding)
 END_TEST
 
 static void
-append_string(void *data, const char *str)
+append_string(void * data, const char * str)
 {
-   char **string = data;
+   char ** string = data;
    int length;
 
    if (!data)
@@ -784,18 +783,18 @@ append_string(void *data, const char *str)
    *string = realloc(*string, strlen(str) + length + 1);
 
    memcpy((*string) + length, str, strlen(str) + 1);
-}
+} /* append_string */
 
 START_TEST(eet_test_data_type_dump_undump)
 {
-   Eet_Data_Descriptor *edd;
-   Eet_Test_Ex_Type *result;
+   Eet_Data_Descriptor * edd;
+   Eet_Test_Ex_Type * result;
    Eet_Data_Descriptor_Class eddc;
    Eet_Test_Ex_Type etbt;
-   char *transfert1;
-   char *transfert2;
-   char *string1;
-   char *string2;
+   char * transfert1;
+   char * transfert2;
+   char * string1;
+   char * string2;
    int size1;
    int size2;
    int test;
@@ -876,10 +875,10 @@ END_TEST
 
 START_TEST(eet_file_simple_write)
 {
-   const char *buffer = "Here is a string of data to save !";
-   Eet_File *ef;
-   char *test;
-   char *file = strdup("/tmp/eet_suite_testXXXXXX");
+   const char * buffer = "Here is a string of data to save !";
+   Eet_File * ef;
+   char * test;
+   char * file = strdup("/tmp/eet_suite_testXXXXXX");
    int size;
 
    eet_init();
@@ -938,17 +937,18 @@ START_TEST(eet_file_simple_write)
    fail_if(unlink(file) != 0);
 
    eet_shutdown();
-}
+} /* START_TEST */
+
 END_TEST
 
 START_TEST(eet_file_data_test)
 {
-   Eet_Data_Descriptor *edd;
-   Eet_Test_Ex_Type *result;
-   Eet_Dictionary *ed;
-   Eet_File *ef;
-   char **list;
-   char *file = strdup("/tmp/eet_suite_testXXXXXX");
+   Eet_Data_Descriptor * edd;
+   Eet_Test_Ex_Type * result;
+   Eet_Dictionary * ed;
+   Eet_File * ef;
+   char ** list;
+   char * file = strdup("/tmp/eet_suite_testXXXXXX");
    Eet_Data_Descriptor_Class eddc;
    Eet_Test_Ex_Type etbt;
    int size;
@@ -1053,18 +1053,18 @@ START_TEST(eet_file_data_test)
    if (result->ihash)
       eina_hash_foreach(result->ihash, func7, &test);
 
-                fail_if(test != 0);
+   fail_if(test != 0);
 
    list = eet_list(ef, "keys/*", &size);
-                fail_if(eet_num_entries(ef) != 2);
-                fail_if(size != 2);
-                fail_if(!(strcmp(list[0],
+   fail_if(eet_num_entries(ef) != 2);
+   fail_if(size != 2);
+   fail_if(!(strcmp(list[0],
                     EET_TEST_FILE_KEY1) == 0 &&
-                strcmp(list[1], EET_TEST_FILE_KEY2) == 0)
+             strcmp(list[1], EET_TEST_FILE_KEY2) == 0)
            && !(strcmp(list[0],
                        EET_TEST_FILE_KEY2) == 0 &&
                 strcmp(list[1], EET_TEST_FILE_KEY1) == 0));
-                free(list);
+   free(list);
 
    fail_if(eet_delete(ef, NULL) != 0);
    fail_if(eet_delete(NULL, EET_TEST_FILE_KEY1) != 0);
@@ -1088,18 +1088,19 @@ START_TEST(eet_file_data_test)
    fail_if(unlink(file) != 0);
 
    eet_shutdown();
-}
+} /* START_TEST */
+
 END_TEST
 
 START_TEST(eet_file_data_dump_test)
 {
-   Eet_Data_Descriptor *edd;
-   Eet_Test_Ex_Type *result;
+   Eet_Data_Descriptor * edd;
+   Eet_Test_Ex_Type * result;
    Eet_Data_Descriptor_Class eddc;
    Eet_Test_Ex_Type etbt;
-   Eet_File *ef;
-   char *string1;
-   char *file = strdup("/tmp/eet_suite_testXXXXXX");
+   Eet_File * ef;
+   char * string1;
+   char * file = strdup("/tmp/eet_suite_testXXXXXX");
    int test;
 
    eet_init();
@@ -1183,14 +1184,15 @@ START_TEST(eet_file_data_dump_test)
    fail_if(unlink(file) != 0);
 
    eet_shutdown();
-}
+} /* START_TEST */
+
 END_TEST
 
 START_TEST(eet_image)
 {
-   Eet_File *ef;
-   char *file = strdup("/tmp/eet_suite_testXXXXXX");
-   unsigned int *data;
+   Eet_File * ef;
+   char * file = strdup("/tmp/eet_suite_testXXXXXX");
+   unsigned int * data;
    int compress;
    int quality;
    int result;
@@ -1540,7 +1542,8 @@ START_TEST(eet_image)
    fail_if(unlink(file) != 0);
 
    eet_shutdown();
-}
+} /* START_TEST */
+
 END_TEST
 
 #define IM0 0x00112233
@@ -1550,10 +1553,10 @@ END_TEST
 
 START_TEST(eet_small_image)
 {
-   char *file = strdup("/tmp/eet_suite_testXXXXXX");
+   char * file = strdup("/tmp/eet_suite_testXXXXXX");
    unsigned int image[4];
-   unsigned int *data;
-   Eet_File *ef;
+   unsigned int * data;
+   Eet_File * ef;
    unsigned int w;
    unsigned int h;
    int alpha;
@@ -1604,18 +1607,19 @@ START_TEST(eet_small_image)
    free(data);
 
    eet_shutdown();
-}
+} /* START_TEST */
+
 END_TEST
 
 START_TEST(eet_identity_simple)
 {
-   const char *buffer = "Here is a string of data to save !";
-   const void *tmp;
-   Eet_File *ef;
-   Eet_Key *k;
-   FILE *noread;
-   char *test;
-   char *file = strdup("/tmp/eet_suite_testXXXXXX");
+   const char * buffer = "Here is a string of data to save !";
+   const void * tmp;
+   Eet_File * ef;
+   Eet_Key * k;
+   FILE * noread;
+   char * test;
+   char * file = strdup("/tmp/eet_suite_testXXXXXX");
    int size;
    int fd;
 
@@ -1680,49 +1684,52 @@ START_TEST(eet_identity_simple)
    fail_if(unlink(file) != 0);
 
    eet_shutdown();
-}
+} /* START_TEST */
+
 END_TEST
 
 START_TEST(eet_identity_open_simple)
 {
-   Eet_Key *k = NULL;
+   Eet_Key * k = NULL;
 
    eet_init();
 
-      fail_if(chdir("src/tests"));
+   fail_if(chdir("src/tests"));
 
    k = eet_identity_open("cert.pem", "key.pem", NULL);
-      fail_if(!k);
+   fail_if(!k);
 
    if (k)
       eet_identity_close(k);
 
    eet_shutdown();
-}
+} /* START_TEST */
+
 END_TEST
 
 START_TEST(eet_identity_open_pkcs8)
 {
-   Eet_Key *k = NULL;
+   Eet_Key * k = NULL;
 
    eet_init();
 
-      fail_if(chdir("src/tests"));
+   fail_if(chdir("src/tests"));
 
    k = eet_identity_open("cert.pem", "key_enc_none.pem", NULL);
-      fail_if(!k);
+   fail_if(!k);
 
    if (k)
       eet_identity_close(k);
 
    eet_shutdown();
-}
+} /* START_TEST */
+
 END_TEST
 
-static int pass_get(char *pass,
-                    int size,
-                    __UNUSED__ int rwflags,
-                    __UNUSED__ void *u)
+static int pass_get(char *            pass,
+                    int               size,
+                    __UNUSED__ int    rwflags,
+                    __UNUSED__ void * u)
 {
    memset(pass, 0, size);
 
@@ -1731,12 +1738,12 @@ static int pass_get(char *pass,
 
    snprintf(pass, size, "%s", "password");
    return strlen(pass);
-}
+} /* pass_get */
 
-static int badpass_get(char *pass,
-                       int size,
-                       __UNUSED__ int rwflags,
-                       __UNUSED__ void *u)
+static int badpass_get(char *            pass,
+                       int               size,
+                       __UNUSED__ int    rwflags,
+                       __UNUSED__ void * u)
 {
    memset(pass, 0, size);
 
@@ -1745,19 +1752,18 @@ static int badpass_get(char *pass,
 
    snprintf(pass, size, "%s", "bad password");
    return strlen(pass);
-}
-
+} /* badpass_get */
 
 START_TEST(eet_identity_open_pkcs8_enc)
 {
-   Eet_Key *k = NULL;
+   Eet_Key * k = NULL;
 
    eet_init();
 
-      fail_if(chdir("src/tests"));
+   fail_if(chdir("src/tests"));
 
    k = eet_identity_open("cert.pem", "key_enc.pem", NULL);
-      fail_if(k);
+   fail_if(k);
 
    if (k)
       eet_identity_close(k);
@@ -1780,12 +1786,12 @@ END_TEST
 
 START_TEST(eet_cipher_decipher_simple)
 {
-   const char *buffer = "Here is a string of data to save !";
-   const char *key = "This is a crypto key";
-   const char *key_bad = "This is another crypto key";
-   Eet_File *ef;
-   char *test;
-   char *file = strdup("/tmp/eet_suite_testXXXXXX");
+   const char * buffer = "Here is a string of data to save !";
+   const char * key = "This is a crypto key";
+   const char * key_bad = "This is another crypto key";
+   Eet_File * ef;
+   char * test;
+   char * file = strdup("/tmp/eet_suite_testXXXXXX");
    int size;
 
    eet_init();
@@ -1816,19 +1822,20 @@ START_TEST(eet_cipher_decipher_simple)
 
    /* Decrypt an eet file. */
    ef = eet_open(file, EET_FILE_MODE_READ);
-      fail_if(!ef);
+   fail_if(!ef);
 
    test = eet_read_cipher(ef, "keys/tests", &size, key_bad);
 
    if (size == (int)strlen(buffer) + 1)
       fail_if(memcmp(test, buffer, strlen(buffer) + 1) == 0);
 
-      eet_close(ef);
+   eet_close(ef);
 
    fail_if(unlink(file) != 0);
 
    eet_shutdown();
-}
+} /* START_TEST */
+
 END_TEST
 
 #ifdef EFL_HAVE_THREADS
@@ -1838,13 +1845,13 @@ static Eina_Bool open_worker_stop;
 # ifdef EFL_HAVE_POSIX_THREADS
 
 static void *
-open_close_worker(void *path)
+open_close_worker(void * path)
 {
    while (!open_worker_stop)
      {
-        Eet_File *ef = eet_open((char const *)path, EET_FILE_MODE_READ);
+        Eet_File * ef = eet_open((char const *)path, EET_FILE_MODE_READ);
         if (ef == NULL)
-                pthread_exit("eet_open() failed");
+           pthread_exit("eet_open() failed");
         else
           {
              Eet_Error err_code = eet_close(ef);
@@ -1853,19 +1860,19 @@ open_close_worker(void *path)
           }
      }
 
-                pthread_exit(NULL);
-}
+   pthread_exit(NULL);
+} /* open_close_worker */
 
-# else
+# else /* ifdef EFL_HAVE_POSIX_THREADS */
 
 static unsigned int __stdcall
-open_close_worker(void *path)
+open_close_worker(void * path)
 {
    while (!open_worker_stop)
      {
-        Eet_File *ef = eet_open((char const *)path, EET_FILE_MODE_READ);
+        Eet_File * ef = eet_open((char const *)path, EET_FILE_MODE_READ);
         if (ef == NULL)
-                _endthreadex(-1);
+           _endthreadex(-1);
         else
           {
              Eet_Error err_code = eet_close(ef);
@@ -1874,25 +1881,25 @@ open_close_worker(void *path)
           }
      }
 
-                _endthreadex(0);
-}
+   _endthreadex(0);
+} /* open_close_worker */
 
-# endif
+# endif /* ifdef EFL_HAVE_POSIX_THREADS */
 
 START_TEST(eet_cache_concurrency)
 {
-   char *file = strdup("/tmp/eet_suite_testXXXXXX");
-   const char *buffer = "test data";
-   Eet_File *ef;
-   void *thread_ret;
+   char * file = strdup("/tmp/eet_suite_testXXXXXX");
+   const char * buffer = "test data";
+   Eet_File * ef;
+   void * thread_ret;
    unsigned int n;
 # ifdef EFL_HAVE_POSIX_THREADS
    pthread_t thread;
-# else
+# else /* ifdef EFL_HAVE_POSIX_THREADS */
    uintptr_t thread;
    unsigned int thread_id;
    DWORD ret;
-# endif
+# endif /* ifdef EFL_HAVE_POSIX_THREADS */
 
    eet_init();
 
@@ -1906,9 +1913,9 @@ START_TEST(eet_cache_concurrency)
    open_worker_stop = 0;
 # ifdef EFL_HAVE_POSIX_THREADS
    pthread_create(&thread, NULL, open_close_worker, file);
-# else
+# else /* ifdef EFL_HAVE_POSIX_THREADS */
    thread = _beginthreadex(NULL, 0, open_close_worker, file, 0, &thread_id);
-# endif
+# endif /* ifdef EFL_HAVE_POSIX_THREADS */
    /* clear the cache repeatedly in this thread */
    for (n = 0; n < 50000; ++n)
      {
@@ -1920,12 +1927,12 @@ START_TEST(eet_cache_concurrency)
 # ifdef EFL_HAVE_POSIX_THREADS
    fail_if(pthread_join(thread, &thread_ret) != 0);
    fail_unless(thread_ret == NULL, (char const *)thread_ret);
-# else
+# else /* ifdef EFL_HAVE_POSIX_THREADS */
    ret = WaitForSingleObject((HANDLE)thread, INFINITE);
    fail_if(ret != WAIT_OBJECT_0);
    fail_if(GetExitCodeThread((HANDLE)thread, &ret) == FALSE);
    fail_if(ret != 0);
-# endif
+# endif /* ifdef EFL_HAVE_POSIX_THREADS */
 
    fail_if(unlink(file) != 0);
    eet_shutdown();
@@ -1934,20 +1941,20 @@ END_TEST
 
 #endif /* EFL_HAVE_THREADS */
 
-typedef struct _Eet_Connection_Data Eet_Connection_Data;
+typedef struct _Eet_Connection_Data   Eet_Connection_Data;
 struct _Eet_Connection_Data
 {
-   Eet_Connection *conn;
-   Eet_Data_Descriptor *edd;
-   Eina_Bool test;
+   Eet_Connection *      conn;
+   Eet_Data_Descriptor * edd;
+   Eina_Bool             test;
 };
 
 static Eina_Bool
-_eet_connection_read(const void *eet_data, size_t size, void *user_data)
+_eet_connection_read(const void * eet_data, size_t size, void * user_data)
 {
-   Eet_Connection_Data *dt = user_data;
-   Eet_Test_Ex_Type *result;
-   Eet_Node *node;
+   Eet_Connection_Data * dt = user_data;
+   Eet_Test_Ex_Type * result;
+   Eet_Node * node;
    int test;
 
    result = eet_data_descriptor_decode(dt->edd, eet_data, size);
@@ -1973,7 +1980,7 @@ _eet_connection_read(const void *eet_data, size_t size, void *user_data)
    if (result->ihash)
       eina_hash_foreach(result->ihash, func7, &test);
 
-        fail_if(test != 0);
+   fail_if(test != 0);
 
    if (!dt->test)
      {
@@ -1982,12 +1989,12 @@ _eet_connection_read(const void *eet_data, size_t size, void *user_data)
      }
 
    return EINA_TRUE;
-}
+} /* _eet_connection_read */
 
 static Eina_Bool
-_eet_connection_write(const void *data, size_t size, void *user_data)
+_eet_connection_write(const void * data, size_t size, void * user_data)
 {
-   Eet_Connection_Data *dt = user_data;
+   Eet_Connection_Data * dt = user_data;
    int still;
 
    if (!dt->test)
@@ -2005,12 +2012,12 @@ _eet_connection_write(const void *data, size_t size, void *user_data)
    fail_if(still);
 
    return EINA_TRUE;
-}
+} /* _eet_connection_write */
 
 START_TEST(eet_connection_check)
 {
-   Eet_Connection *conn;
-   Eet_Data_Descriptor *edd;
+   Eet_Connection * conn;
+   Eet_Data_Descriptor * edd;
    Eet_Data_Descriptor_Class eddc;
    Eet_Connection_Data ecd;
    Eet_Test_Ex_Type etbt;
@@ -2069,31 +2076,31 @@ struct _Eet_5FP
 {
    Eina_F32p32 fp32;
    Eina_F16p16 fp16;
-   Eina_F8p24 fp8;
+   Eina_F8p24  fp8;
    Eina_F32p32 f1;
    Eina_F32p32 f0;
 };
-typedef struct _Eet_5FP Eet_5FP;
+typedef struct _Eet_5FP   Eet_5FP;
 
 struct _Eet_5DBL
 {
    double fp32;
    double fp16;
-   float fp8;
+   float  fp8;
    double f1;
    double f0;
 };
-typedef struct _Eet_5DBL Eet_5DBL;
+typedef struct _Eet_5DBL   Eet_5DBL;
 
 START_TEST(eet_fp)
 {
    Eet_Data_Descriptor_Class eddc;
-   Eet_Data_Descriptor *edd_5FP;
-   Eet_Data_Descriptor *edd_5DBL;
+   Eet_Data_Descriptor * edd_5FP;
+   Eet_Data_Descriptor * edd_5DBL;
    Eet_5FP origin;
-   Eet_5DBL *convert;
-   Eet_5FP *build;
-   void *blob;
+   Eet_5DBL * convert;
+   Eet_5FP * build;
+   void * blob;
    int size;
 
    eet_init();
@@ -2149,14 +2156,14 @@ END_TEST
 
 START_TEST(eet_file_fp)
 {
-   char *file = strdup("/tmp/eet_suite_testXXXXXX");
+   char * file = strdup("/tmp/eet_suite_testXXXXXX");
    Eet_Data_Descriptor_Class eddc;
-   Eet_Data_Descriptor *edd_5FP;
-   Eet_Data_Descriptor *edd_5DBL;
-   Eet_File *ef;
+   Eet_Data_Descriptor * edd_5FP;
+   Eet_Data_Descriptor * edd_5DBL;
+   Eet_File * ef;
    Eet_5FP origin;
-   Eet_5DBL *convert;
-   Eet_5FP *build;
+   Eet_5DBL * convert;
+   Eet_5FP * build;
 
    eet_init();
 
@@ -2214,19 +2221,20 @@ START_TEST(eet_file_fp)
    fail_if(unlink(file) != 0);
 
    eet_shutdown();
-}
+} /* START_TEST */
+
 END_TEST
 
-typedef struct _Eet_Union_Test Eet_Union_Test;
-typedef struct _Eet_Variant_Test Eet_Variant_Test;
-typedef struct _Eet_Variant_Type Eet_Variant_Type;
-typedef struct _Eet_Inherit_Test1 Eet_Inherit_Test1;
-typedef struct _Eet_Inherit_Test2 Eet_Inherit_Test2;
-typedef struct _Eet_Inherit_Test3 Eet_Inherit_Test3;
-typedef struct _Eet_St1 Eet_St1;
-typedef struct _Eet_St2 Eet_St2;
-typedef struct _Eet_St3 Eet_St3;
-typedef struct _Eet_List Eet_List;
+typedef struct _Eet_Union_Test      Eet_Union_Test;
+typedef struct _Eet_Variant_Test    Eet_Variant_Test;
+typedef struct _Eet_Variant_Type    Eet_Variant_Type;
+typedef struct _Eet_Inherit_Test1   Eet_Inherit_Test1;
+typedef struct _Eet_Inherit_Test2   Eet_Inherit_Test2;
+typedef struct _Eet_Inherit_Test3   Eet_Inherit_Test3;
+typedef struct _Eet_St1             Eet_St1;
+typedef struct _Eet_St2             Eet_St2;
+typedef struct _Eet_St3             Eet_St3;
+typedef struct _Eet_List            Eet_List;
 
 typedef enum _Eet_Union
 {
@@ -2238,8 +2246,8 @@ typedef enum _Eet_Union
 
 struct
 {
-   Eet_Union u;
-   const char *name;
+   Eet_Union    u;
+   const char * name;
 } eet_mapping[] = {
    { EET_ST1, "ST1" },
    { EET_ST2, "ST2" },
@@ -2250,13 +2258,13 @@ struct
 struct _Eet_St1
 {
    double val1;
-   int stuff;
-   char *s1;
+   int    stuff;
+   char * s1;
 };
 
 struct _Eet_St2
 {
-   Eina_Bool b1;
+   Eina_Bool          b1;
    unsigned long long v1;
 };
 
@@ -2278,43 +2286,43 @@ struct _Eet_Union_Test
 
 struct _Eet_Variant_Type
 {
-   const char *type;
-   Eina_Bool unknow : 1;
+   const char * type;
+   Eina_Bool    unknow : 1;
 };
 
 struct _Eet_Variant_Test
 {
    Eet_Variant_Type t;
 
-   void *data;
-   Eina_List *data_list;
+   void *           data;
+   Eina_List *      data_list;
 };
 
 struct _Eet_Inherit_Test1
 {
    Eet_Union type;
-   Eet_St1 st1;
+   Eet_St1   st1;
 };
 struct _Eet_Inherit_Test2
 {
    Eet_Union type;
-   Eet_St2 st2;
+   Eet_St2   st2;
 };
 struct _Eet_Inherit_Test3
 {
    Eet_Union type;
-   Eet_St3 st3;
+   Eet_St3   st3;
 };
 
 struct _Eet_List
 {
-   Eina_List *list;
+   Eina_List * list;
 };
 
 static const char *
-_eet_union_type_get(const void *data, Eina_Bool *unknow)
+_eet_union_type_get(const void * data, Eina_Bool * unknow)
 {
-   const Eet_Union *u = data;
+   const Eet_Union * u = data;
    int i;
 
    if (unknow)
@@ -2328,12 +2336,12 @@ _eet_union_type_get(const void *data, Eina_Bool *unknow)
       *unknow = EINA_TRUE;
 
    return NULL;
-}
+} /* _eet_union_type_get */
 
 static Eina_Bool
-_eet_union_type_set(const char *type, void *data, Eina_Bool unknow)
+_eet_union_type_set(const char * type, void * data, Eina_Bool unknow)
 {
-   Eet_Union *u = data;
+   Eet_Union * u = data;
    int i;
 
    if (unknow)
@@ -2347,12 +2355,12 @@ _eet_union_type_set(const char *type, void *data, Eina_Bool unknow)
         }
 
    return EINA_FALSE;
-}
+} /* _eet_union_type_set */
 
 static const char *
-_eet_variant_type_get(const void *data, Eina_Bool *unknow)
+_eet_variant_type_get(const void * data, Eina_Bool * unknow)
 {
-   const Eet_Variant_Type *type = data;
+   const Eet_Variant_Type * type = data;
    int i;
 
    if (unknow)
@@ -2366,23 +2374,23 @@ _eet_variant_type_get(const void *data, Eina_Bool *unknow)
       *unknow = EINA_FALSE;
 
    return type->type;
-}
+} /* _eet_variant_type_get */
 
 static Eina_Bool
-_eet_variant_type_set(const char *type, void *data, Eina_Bool unknow)
+_eet_variant_type_set(const char * type, void * data, Eina_Bool unknow)
 {
-   Eet_Variant_Type *vt = data;
+   Eet_Variant_Type * vt = data;
 
    vt->type = type;
    vt->unknow = unknow;
    return EINA_TRUE;
-}
+} /* _eet_variant_type_set */
 
 static Eet_Data_Descriptor *
 _eet_st1_dd(void)
 {
    Eet_Data_Descriptor_Class eddc;
-   Eet_Data_Descriptor *res;
+   Eet_Data_Descriptor * res;
 
    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_St1);
    res = eet_data_descriptor_stream_new(&eddc);
@@ -2391,18 +2399,18 @@ _eet_st1_dd(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(res, Eet_St1, "s1",    s1,    EET_T_STRING);
 
    return res;
-}
+} /* _eet_st1_dd */
 
 static void
-_eet_st1_set(Eet_St1 *st1, int i)
+_eet_st1_set(Eet_St1 * st1, int i)
 {
    st1->val1 = EET_TEST_DOUBLE;
    st1->stuff = EET_TEST_INT + i;
    st1->s1 = EET_TEST_STRING;
-}
+} /* _eet_st1_set */
 
 static void
-_eet_st1_cmp(Eet_St1 *st1, int i)
+_eet_st1_cmp(Eet_St1 * st1, int i)
 {
    double tmp;
 
@@ -2415,13 +2423,13 @@ _eet_st1_cmp(Eet_St1 *st1, int i)
    fail_if(tmp > 0.005);
    fail_if(st1->stuff != EET_TEST_INT + i);
    fail_if(strcmp(st1->s1, EET_TEST_STRING));
-}
+} /* _eet_st1_cmp */
 
 static Eet_Data_Descriptor *
 _eet_st2_dd(void)
 {
    Eet_Data_Descriptor_Class eddc;
-   Eet_Data_Descriptor *res;
+   Eet_Data_Descriptor * res;
 
    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_St2);
    res = eet_data_descriptor_stream_new(&eddc);
@@ -2429,56 +2437,56 @@ _eet_st2_dd(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(res, Eet_St2, "v1", v1, EET_T_ULONG_LONG);
 
    return res;
-}
+} /* _eet_st2_dd */
 
 static void
-_eet_st2_set(Eet_St2 *st2, int i)
+_eet_st2_set(Eet_St2 * st2, int i)
 {
    st2->b1 = EINA_TRUE;
    st2->v1 = EET_TEST_LONG_LONG + i;
-}
+} /* _eet_st2_set */
 
 static void
-_eet_st2_cmp(Eet_St2 *st2, int i)
+_eet_st2_cmp(Eet_St2 * st2, int i)
 {
    fail_if(!st2->b1);
    fail_if(st2->v1 != EET_TEST_LONG_LONG + i);
-}
+} /* _eet_st2_cmp */
 
 static Eet_Data_Descriptor *
 _eet_st3_dd(void)
 {
    Eet_Data_Descriptor_Class eddc;
-   Eet_Data_Descriptor *res;
+   Eet_Data_Descriptor * res;
 
    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_St3);
    res = eet_data_descriptor_stream_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(res, Eet_St3, "boby", boby, EET_T_INT);
 
    return res;
-}
+} /* _eet_st3_dd */
 
 static void
-_eet_st3_set(Eet_St3 *st3, int i)
+_eet_st3_set(Eet_St3 * st3, int i)
 {
    st3->boby = EET_TEST_INT + i;
-}
+} /* _eet_st3_set */
 
 static void
-_eet_st3_cmp(Eet_St3 *st3, int i)
+_eet_st3_cmp(Eet_St3 * st3, int i)
 {
    fail_if(st3->boby != EET_TEST_INT + i);
-}
+} /* _eet_st3_cmp */
 
 START_TEST(eet_test_union)
 {
-   Eet_Union_Test *eut;
-   Eet_List *l;
+   Eet_Union_Test * eut;
+   Eet_List * l;
    Eet_Data_Descriptor_Class eddc;
-   Eet_Data_Descriptor *edd;
-   Eet_Data_Descriptor *unified;
-   Eet_Data_Descriptor *m;
-   void *blob;
+   Eet_Data_Descriptor * edd;
+   Eet_Data_Descriptor * unified;
+   Eet_Data_Descriptor * m;
+   void * blob;
    int size;
    int i;
 
@@ -2506,9 +2514,9 @@ START_TEST(eet_test_union)
 
    l = calloc(1, sizeof (Eet_List));
 
-#define EUT_NEW(Type_Index)                     \
-   eut = calloc(1, sizeof (Eet_Union_Test));    \
-   eut->type = EET_ST ## Type_Index;              \
+#define EUT_NEW(Type_Index)\
+   eut = calloc(1, sizeof (Eet_Union_Test));\
+   eut->type = EET_ST ## Type_Index;\
    _eet_st ## Type_Index ## _set(&(eut->u.st ## Type_Index), i);
 
    for (i = 0; i < 3; ++i)
@@ -2531,9 +2539,9 @@ START_TEST(eet_test_union)
 
    fail_if(eina_list_count(l->list) != 9);
 
-#define EUT_CMP(Type_Index)                                     \
-   eut = eina_list_nth(l->list, i * 3 + Type_Index - 1);        \
-   fail_if(eut->type != EET_ST ## Type_Index);                    \
+#define EUT_CMP(Type_Index)\
+   eut = eina_list_nth(l->list, i * 3 + Type_Index - 1);\
+   fail_if(eut->type != EET_ST ## Type_Index);\
    _eet_st ## Type_Index ## _cmp(&(eut->u.st ## Type_Index), i);
 
    for (i = 0; i < 3; ++i)
@@ -2543,23 +2551,23 @@ START_TEST(eet_test_union)
         EUT_CMP(3);
      }
 
-        eet_shutdown();
+   eet_shutdown();
    eina_shutdown();
 }
 END_TEST
 
 START_TEST(eet_test_variant)
 {
-   Eet_Variant_Test *evt;
-   Eet_List *l;
-   Eet_St1 *st1;
-   Eet_St2 *st2;
-   Eet_St3 *st3;
+   Eet_Variant_Test * evt;
+   Eet_List * l;
+   Eet_St1 * st1;
+   Eet_St2 * st2;
+   Eet_St3 * st3;
    Eet_Data_Descriptor_Class eddc;
-   Eet_Data_Descriptor *edd;
-   Eet_Data_Descriptor *unified;
-   Eet_Data_Descriptor *m;
-   void *blob;
+   Eet_Data_Descriptor * edd;
+   Eet_Data_Descriptor * unified;
+   Eet_Data_Descriptor * m;
+   void * blob;
    int size;
    int i;
 
@@ -2603,11 +2611,11 @@ START_TEST(eet_test_variant)
 
    l = calloc(1, sizeof (Eet_List));
 
-#define EVT_NEW(Type_Index)                                     \
-   evt = calloc(1, sizeof (Eet_Variant_Test));                  \
-   evt->t.type = eet_mapping[Type_Index - 1].name;              \
-   st ## Type_Index = calloc(1, sizeof (Eet_St ## Type_Index));     \
-   _eet_st ## Type_Index ## _set(st ## Type_Index, i);                \
+#define EVT_NEW(Type_Index)\
+   evt = calloc(1, sizeof (Eet_Variant_Test));\
+   evt->t.type = eet_mapping[Type_Index - 1].name;\
+   st ## Type_Index = calloc(1, sizeof (Eet_St ## Type_Index));\
+   _eet_st ## Type_Index ## _set(st ## Type_Index, i);\
    evt->data = st ## Type_Index;
 
    for (i = 0; i < 3; ++i)
@@ -2634,9 +2642,9 @@ START_TEST(eet_test_variant)
 
    fail_if(eina_list_count(l->list) != 9);
 
-#define EVT_CMP(Type_Index)                                             \
-   evt = eina_list_nth(l->list, i * 3 + Type_Index - 1);                \
-   fail_if(strcmp(evt->t.type, eet_mapping[Type_Index - 1].name) != 0); \
+#define EVT_CMP(Type_Index)\
+   evt = eina_list_nth(l->list, i * 3 + Type_Index - 1);\
+   fail_if(strcmp(evt->t.type, eet_mapping[Type_Index - 1].name) != 0);\
    _eet_st ## Type_Index ## _cmp(evt->data, i);
 
    for (i = 0; i < 3; ++i)
@@ -2653,16 +2661,17 @@ START_TEST(eet_test_variant)
         EVT_CMP(3);
      }
 
-        eet_shutdown();
+   eet_shutdown();
    eina_shutdown();
-}
+} /* START_TEST */
+
 END_TEST
 
 Suite *
 eet_suite(void)
 {
-   Suite *s;
-   TCase *tc;
+   Suite * s;
+   TCase * tc;
 
    s = suite_create("Eet");
 
@@ -2698,32 +2707,32 @@ eet_suite(void)
    tcase_add_test(tc, eet_identity_open_pkcs8);
    tcase_add_test(tc, eet_identity_open_pkcs8_enc);
    suite_add_tcase(s, tc);
-#endif
+#endif /* ifdef HAVE_SIGNATURE */
 
 #ifdef HAVE_CIPHER
    tc = tcase_create("Eet Cipher");
    tcase_add_test(tc, eet_cipher_decipher_simple);
    suite_add_tcase(s, tc);
-#endif
+#endif /* ifdef HAVE_CIPHER */
 
 #ifdef EFL_HAVE_THREADS
    tc = tcase_create("Eet Cache");
    tcase_add_test(tc, eet_cache_concurrency);
    suite_add_tcase(s, tc);
-#endif
+#endif /* ifdef EFL_HAVE_THREADS */
 
    tc = tcase_create("Eet Connection");
    tcase_add_test(tc, eet_connection_check);
    suite_add_tcase(s, tc);
 
    return s;
-}
+} /* eet_suite */
 
 int
 main(void)
 {
-   Suite *s;
-   SRunner *sr;
+   Suite * s;
+   SRunner * sr;
    int failed_count;
 
    s = eet_suite();
@@ -2733,4 +2742,5 @@ main(void)
    srunner_free(sr);
 
    return (failed_count == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
-}
+} /* main */
+

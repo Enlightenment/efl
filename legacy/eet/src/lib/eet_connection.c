@@ -4,7 +4,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
@@ -15,24 +15,24 @@
 #elif defined _MSC_VER
 # include <malloc.h>
 # define alloca _alloca
-#else
+#else /* ifdef HAVE_ALLOCA_H */
 # include <stddef.h>
 # ifdef  __cplusplus
 extern "C"
-# endif
-void *alloca (size_t);
-#endif
+# endif /* ifdef  __cplusplus */
+void *    alloca (size_t);
+#endif /* ifdef HAVE_ALLOCA_H */
 
 #include <string.h>
 #include <stdlib.h>
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
-#endif
+#endif /* ifdef HAVE_NETINET_IN_H */
 
 #ifdef _WIN32
 # include <winsock2.h>
-#endif
+#endif /* ifdef _WIN32 */
 
 #include <Eina.h>
 
@@ -41,7 +41,7 @@ void *alloca (size_t);
 
 #define MAGIC_EET_DATA_PACKET 0x4270ACE1
 
-typedef struct _Eet_Message Eet_Message;
+typedef struct _Eet_Message   Eet_Message;
 struct _Eet_Message
 {
    int magic;
@@ -50,23 +50,23 @@ struct _Eet_Message
 
 struct _Eet_Connection
 {
-   Eet_Read_Cb *eet_read_cb;
-   Eet_Write_Cb *eet_write_cb;
-   void *user_data;
+   Eet_Read_Cb *  eet_read_cb;
+   Eet_Write_Cb * eet_write_cb;
+   void *         user_data;
 
-   size_t allocated;
-   size_t size;
-   size_t received;
+   size_t         allocated;
+   size_t         size;
+   size_t         received;
 
-   void *buffer;
+   void *         buffer;
 };
 
 EAPI Eet_Connection *
-eet_connection_new(Eet_Read_Cb *eet_read_cb,
-                   Eet_Write_Cb *eet_write_cb,
-                   const void *user_data)
+eet_connection_new(Eet_Read_Cb *  eet_read_cb,
+                   Eet_Write_Cb * eet_write_cb,
+                   const void *   user_data)
 {
-   Eet_Connection *conn;
+   Eet_Connection * conn;
 
    if (!eet_read_cb || !eet_write_cb)
       return NULL;
@@ -80,12 +80,14 @@ eet_connection_new(Eet_Read_Cb *eet_read_cb,
    conn->user_data = (void *)user_data;
 
    return conn;
-}
+} /* eet_connection_new */
 
 EAPI int
-eet_connection_received(Eet_Connection *conn, const void *data, size_t size)
+eet_connection_received(Eet_Connection * conn,
+                        const void *     data,
+                        size_t           size)
 {
-   if (!conn || !data || !size)
+   if ((!conn) || (!data) || (!size))
       return size;
 
    do {
@@ -93,7 +95,7 @@ eet_connection_received(Eet_Connection *conn, const void *data, size_t size)
 
         if (conn->size == 0)
           {
-             const Eet_Message *msg;
+             const Eet_Message * msg;
              size_t packet_size;
 
              if (size < sizeof (Eet_Message))
@@ -127,7 +129,7 @@ eet_connection_received(Eet_Connection *conn, const void *data, size_t size)
              conn->size = packet_size;
              if (conn->allocated < conn->size)
                {
-                  void *tmp;
+                  void * tmp;
 
                   tmp = realloc(conn->buffer, conn->size);
                   if (!tmp)
@@ -167,12 +169,14 @@ eet_connection_received(Eet_Connection *conn, const void *data, size_t size)
      } while (size > 0);
 
    return size;
-}
+} /* eet_connection_received */
 
 static Eina_Bool
-_eet_connection_raw_send(Eet_Connection *conn, void *data, int data_size)
+_eet_connection_raw_send(Eet_Connection * conn,
+                         void *           data,
+                         int              data_size)
 {
-   Eet_Message *message;
+   Eet_Message * message;
 
    /* Message should never be above 64K */
    if (data_size > 64 * 1024)
@@ -182,21 +186,21 @@ _eet_connection_raw_send(Eet_Connection *conn, void *data, int data_size)
    message->magic = htonl(MAGIC_EET_DATA_PACKET);
    message->size = htonl(data_size);
 
-        memcpy(message + 1, data, data_size);
+   memcpy(message + 1, data, data_size);
 
    conn->eet_write_cb(message,
                       data_size + sizeof (Eet_Message),
                       conn->user_data);
    return EINA_TRUE;
-}
+} /* _eet_connection_raw_send */
 
 EAPI Eina_Bool
-eet_connection_send(Eet_Connection *conn,
-                    Eet_Data_Descriptor *edd,
-                    const void *data_in,
-                    const char *cipher_key)
+eet_connection_send(Eet_Connection *      conn,
+                    Eet_Data_Descriptor * edd,
+                    const void *          data_in,
+                    const char *          cipher_key)
 {
-   void *flat_data;
+   void * flat_data;
    int data_size;
    Eina_Bool ret = EINA_FALSE;
 
@@ -212,14 +216,14 @@ eet_connection_send(Eet_Connection *conn,
 
    free(flat_data);
    return ret;
-}
+} /* eet_connection_send */
 
 EAPI Eina_Bool
-eet_connection_node_send(Eet_Connection *conn,
-                         Eet_Node *node,
-                         const char *cipher_key)
+eet_connection_node_send(Eet_Connection * conn,
+                         Eet_Node *       node,
+                         const char *     cipher_key)
 {
-   void *data;
+   void * data;
    int data_size;
    Eina_Bool ret = EINA_FALSE;
 
@@ -232,12 +236,13 @@ eet_connection_node_send(Eet_Connection *conn,
 
    free(data);
    return ret;
-}
+} /* eet_connection_node_send */
 
 EAPI void *
-eet_connection_close(Eet_Connection *conn, Eina_Bool *on_going)
+eet_connection_close(Eet_Connection * conn,
+                     Eina_Bool *      on_going)
 {
-   void *user_data;
+   void * user_data;
 
    if (!conn)
       return NULL;
@@ -251,4 +256,5 @@ eet_connection_close(Eet_Connection *conn, Eina_Bool *on_going)
    free(conn);
 
    return user_data;
-}
+} /* eet_connection_close */
+

@@ -4,55 +4,54 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifndef _MSC_VER
 # include <unistd.h>
-#endif
+#endif /* ifndef _MSC_VER */
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
-#endif
+#endif /* ifdef HAVE_EVIL */
 
 #include <Eet.h>
-
 
 static int _eet_main_log_dom = -1;
 
 #ifdef EET_DEFAULT_LOG_COLOR
 #undef EET_DEFAULT_LOG_COLOR
-#endif
+#endif /* ifdef EET_DEFAULT_LOG_COLOR */
 #define EET_DEFAULT_LOG_COLOR EINA_COLOR_CYAN
 #ifdef ERR
 #undef ERR
-#endif
-#define ERR(...) EINA_LOG_DOM_ERR(_eet_main_log_dom, __VA_ARGS__)
+#endif /* ifdef ERR */
+#define ERR(...)  EINA_LOG_DOM_ERR(_eet_main_log_dom, __VA_ARGS__)
 #ifdef DBG
 #undef DBG
-#endif
-#define DBG(...) EINA_LOG_DOM_DBG(_eet_main_log_dom, __VA_ARGS__)
+#endif /* ifdef DBG */
+#define DBG(...)  EINA_LOG_DOM_DBG(_eet_main_log_dom, __VA_ARGS__)
 #ifdef INF
 #undef INF
-#endif
-#define INF(...) EINA_LOG_DOM_INFO(_eet_main_log_dom, __VA_ARGS__)
+#endif /* ifdef INF */
+#define INF(...)  EINA_LOG_DOM_INFO(_eet_main_log_dom, __VA_ARGS__)
 #ifdef WRN
 #undef WRN
-#endif
-#define WRN(...) EINA_LOG_DOM_WARN(_eet_main_log_dom, __VA_ARGS__)
+#endif /* ifdef WRN */
+#define WRN(...)  EINA_LOG_DOM_WARN(_eet_main_log_dom, __VA_ARGS__)
 #ifdef CRIT
 #undef CRIT
-#endif
+#endif /* ifdef CRIT */
 #define CRIT(...) EINA_LOG_DOM_CRIT(_eet_main_log_dom, __VA_ARGS__)
 
 static void
-do_eet_list(const char *file)
+do_eet_list(const char * file)
 {
    int i, num;
-   char **list;
-   Eet_File *ef;
+   char ** list;
+   Eet_File * ef;
 
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
@@ -70,18 +69,18 @@ do_eet_list(const char *file)
      }
 
    eet_close(ef);
-}
+} /* do_eet_list */
 
 static void
-do_eet_extract(const char *file,
-               const char *key,
-               const char *out,
-               const char *crypto_key)
+do_eet_extract(const char * file,
+               const char * key,
+               const char * out,
+               const char * crypto_key)
 {
-   Eet_File *ef;
-   void *data;
+   Eet_File * ef;
+   void * data;
    int size = 0;
-   FILE *f;
+   FILE * f;
 
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
@@ -113,22 +112,22 @@ do_eet_extract(const char *file,
    fclose(f);
    free(data);
    eet_close(ef);
-}
+} /* do_eet_extract */
 
 static void
-do_eet_decode_dump(void *data, const char *str)
+do_eet_decode_dump(void * data, const char * str)
 {
    fputs(str, (FILE *)data);
-}
+} /* do_eet_decode_dump */
 
 static void
-do_eet_decode(const char *file,
-              const char *key,
-              const char *out,
-              const char *crypto_key)
+do_eet_decode(const char * file,
+              const char * key,
+              const char * out,
+              const char * crypto_key)
 {
-   Eet_File *ef;
-   FILE *f;
+   Eet_File * ef;
+   FILE * f;
 
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
@@ -152,19 +151,19 @@ do_eet_decode(const char *file,
 
    fclose(f);
    eet_close(ef);
-}
+} /* do_eet_decode */
 
 static void
-do_eet_insert(const char *file,
-              const char *key,
-              const char *out,
-              int compress,
-              const char *crypto_key)
+do_eet_insert(const char * file,
+              const char * key,
+              const char * out,
+              int          compress,
+              const char * crypto_key)
 {
-   Eet_File *ef;
-   void *data;
+   Eet_File * ef;
+   void * data;
    int size = 0;
-   FILE *f;
+   FILE * f;
 
    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
    if (!ef)
@@ -203,20 +202,20 @@ do_eet_insert(const char *file,
    eet_write_cipher(ef, key, data, size, compress, crypto_key);
    free(data);
    eet_close(ef);
-}
+} /* do_eet_insert */
 
 static void
-do_eet_encode(const char *file,
-              const char *key,
-              const char *out,
-              int compress,
-              const char *crypto_key)
+do_eet_encode(const char * file,
+              const char * key,
+              const char * out,
+              int          compress,
+              const char * crypto_key)
 {
-   Eet_File *ef;
-   char *text;
+   Eet_File * ef;
+   char * text;
    int textlen = 0;
    int size = 0;
-   FILE *f;
+   FILE * f;
 
    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
    if (!ef)
@@ -260,12 +259,12 @@ do_eet_encode(const char *file,
 
    free(text);
    eet_close(ef);
-}
+} /* do_eet_encode */
 
 static void
-do_eet_remove(const char *file, const char *key)
+do_eet_remove(const char * file, const char * key)
 {
-   Eet_File *ef;
+   Eet_File * ef;
 
    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
    if (!ef)
@@ -276,13 +275,13 @@ do_eet_remove(const char *file, const char *key)
 
    eet_delete(ef, key);
    eet_close(ef);
-}
+} /* do_eet_remove */
 
 static void
-do_eet_check(const char *file)
+do_eet_check(const char * file)
 {
-   Eet_File *ef;
-   const void *der;
+   Eet_File * ef;
+   const void * der;
    int der_length;
    int sign_length;
 
@@ -302,13 +301,13 @@ do_eet_check(const char *file)
    fprintf(stdout, "Signature length %i.\n", sign_length);
 
    eet_close(ef);
-}
+} /* do_eet_check */
 
 static void
-do_eet_sign(const char *file, const char *private_key, const char *public_key)
+do_eet_sign(const char * file, const char * private_key, const char * public_key)
 {
-   Eet_File *ef;
-   Eet_Key *key;
+   Eet_File * ef;
+   Eet_Key * key;
 
    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
    if (!ef)
@@ -330,10 +329,10 @@ do_eet_sign(const char *file, const char *private_key, const char *public_key)
    eet_identity_set(ef, key);
 
    eet_close(ef);
-}
+} /* do_eet_sign */
 
 int
-main(int argc, char **argv)
+main(int argc, char ** argv)
 {
    if (!eet_init())
       return -1;
@@ -397,7 +396,7 @@ help:
            do_eet_encode(argv[2], argv[3], argv[4], atoi(argv[5]), NULL);
      }
    else if ((!strcmp(argv[1], "-r")) && (argc > 3))
-           do_eet_remove(argv[2], argv[3]);
+      do_eet_remove(argv[2], argv[3]);
    else if ((!strcmp(argv[1], "-c")) && (argc > 2))
       do_eet_check(argv[2]);
    else if ((!strcmp(argv[1], "-s")) && (argc > 4))
@@ -408,4 +407,5 @@ help:
    eina_log_domain_unregister(_eet_main_log_dom);
    eet_shutdown();
    return 0;
-}
+} /* main */
+

@@ -6,28 +6,28 @@
 #include "eet_suite.h"
 
 static char *
-_eet_str_direct_alloc(const char *str)
+_eet_str_direct_alloc(const char * str)
 {
    return (char *)str;
-}
+} /* _eet_str_direct_alloc */
 
 static void
-_eet_str_direct_free(const char *str)
+_eet_str_direct_free(const char * str)
 {
    /* FIXME: Use attribute unused */
    (void)str;
-}
+} /* _eet_str_direct_free */
 
 static void
-_eet_eina_hash_foreach(void *hash, Eina_Hash_Foreach cb, void *fdata)
+_eet_eina_hash_foreach(void * hash, Eina_Hash_Foreach cb, void * fdata)
 {
    if (hash)
       eina_hash_foreach(hash, cb, fdata);
-}
+} /* _eet_eina_hash_foreach */
 
 /* Internal wrapper for eina_hash */
 static Eina_Hash *
-_eet_eina_hash_add(Eina_Hash *hash, const char *key, const void *data)
+_eet_eina_hash_add(Eina_Hash * hash, const char * key, const void * data)
 {
    if (!hash)
       hash = eina_hash_string_superfast_new(NULL);
@@ -37,17 +37,17 @@ _eet_eina_hash_add(Eina_Hash *hash, const char *key, const void *data)
 
    eina_hash_add(hash, key, data);
    return hash;
-}
+} /* _eet_eina_hash_add */
 
 static void
-_eet_eina_hash_free(Eina_Hash *hash)
+_eet_eina_hash_free(Eina_Hash * hash)
 {
    if (hash)
       eina_hash_free(hash);
-}
+} /* _eet_eina_hash_free */
 
 void
-eet_test_setup_eddc(Eet_Data_Descriptor_Class *eddc)
+eet_test_setup_eddc(Eet_Data_Descriptor_Class * eddc)
 {
    eddc->version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
    eddc->func.mem_alloc = NULL;
@@ -63,5 +63,5 @@ eet_test_setup_eddc(Eet_Data_Descriptor_Class *eddc)
    eddc->func.hash_free = (void *)_eet_eina_hash_free;
    eddc->func.str_direct_alloc = (void *)_eet_str_direct_alloc;
    eddc->func.str_direct_free = (void *)_eet_str_direct_free;
-}
+} /* eet_test_setup_eddc */
 

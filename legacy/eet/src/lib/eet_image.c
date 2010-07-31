@@ -4,7 +4,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
@@ -15,24 +15,24 @@
 #elif defined _MSC_VER
 # include <malloc.h>
 # define alloca _alloca
-#else
+#else /* ifdef HAVE_ALLOCA_H */
 # include <stddef.h>
 # ifdef  __cplusplus
 extern "C"
-# endif
-void *alloca (size_t);
-#endif
+# endif /* ifdef  __cplusplus */
+void *    alloca (size_t);
+#endif /* ifdef HAVE_ALLOCA_H */
 
 #ifdef HAVE_NETINET_IN_H
 # ifdef __OpenBSD__
 #  include <sys/types.h>
-# endif
+# endif /* ifdef __OpenBSD__ */
 # include <netinet/in.h>
-#endif
+#endif /* ifdef HAVE_NETINET_IN_H */
 
 #ifdef _WIN32
 # include <winsock2.h>
-#endif
+#endif /* ifdef _WIN32 */
 
 #include <stdio.h>
 #include <string.h>
@@ -45,22 +45,22 @@ void *alloca (size_t);
 
 /*---*/
 
-typedef struct _JPEG_error_mgr *emptr;
+typedef struct _JPEG_error_mgr * emptr;
 
 /*---*/
 
 struct _JPEG_error_mgr
 {
    struct jpeg_error_mgr pub;
-   jmp_buf setjmp_buffer;
+   jmp_buf               setjmp_buffer;
 };
 
 struct jpeg_membuf_src
 {
    struct jpeg_source_mgr pub;
 
-   const unsigned char *buf;
-   size_t len;
+   const unsigned char *  buf;
+   size_t                 len;
 };
 
 static void
@@ -68,40 +68,43 @@ _eet_jpeg_membuf_src_init(j_decompress_ptr cinfo)
 {
    /* FIXME: Use attribute unused */
    (void)cinfo;
-}
+} /* _eet_jpeg_membuf_src_init */
 
 static boolean
 _eet_jpeg_membuf_src_fill(j_decompress_ptr cinfo)
 {
    static const JOCTET jpeg_eoi[2] = { 0xFF, JPEG_EOI };
-   struct jpeg_membuf_src *src = (struct jpeg_membuf_src *)cinfo->src;
+   struct jpeg_membuf_src * src = (struct jpeg_membuf_src *)cinfo->src;
 
    src->pub.bytes_in_buffer = sizeof(jpeg_eoi);
    src->pub.next_input_byte = jpeg_eoi;
 
    return TRUE;
-}
+} /* _eet_jpeg_membuf_src_fill */
 
 static void
-_eet_jpeg_membuf_src_skip(j_decompress_ptr cinfo, long num_bytes)
+_eet_jpeg_membuf_src_skip(j_decompress_ptr cinfo,
+                          long             num_bytes)
 {
-   struct jpeg_membuf_src *src = (struct jpeg_membuf_src *)cinfo->src;
+   struct jpeg_membuf_src * src = (struct jpeg_membuf_src *)cinfo->src;
 
    src->pub.bytes_in_buffer -= num_bytes;
    src->pub.next_input_byte += num_bytes;
-}
+} /* _eet_jpeg_membuf_src_skip */
 
 static void
 _eet_jpeg_membuf_src_term(j_decompress_ptr cinfo)
 {
-        free(cinfo->src);
+   free(cinfo->src);
    cinfo->src = NULL;
-}
+} /* _eet_jpeg_membuf_src_term */
 
 static int
-eet_jpeg_membuf_src(j_decompress_ptr cinfo, const void *buf, size_t len)
+eet_jpeg_membuf_src(j_decompress_ptr cinfo,
+                    const void *     buf,
+                    size_t           len)
 {
-   struct jpeg_membuf_src *src;
+   struct jpeg_membuf_src * src;
 
    src = malloc(sizeof(*src));
    if (!src)
@@ -119,18 +122,18 @@ eet_jpeg_membuf_src(j_decompress_ptr cinfo, const void *buf, size_t len)
    src->pub.next_input_byte = src->buf;
 
    return 0;
-}
+} /* eet_jpeg_membuf_src */
 
 struct jpeg_membuf_dst
 {
    struct jpeg_destination_mgr pub;
 
-   void **dst_buf;
-   size_t *dst_len;
+   void **                     dst_buf;
+   size_t *                    dst_len;
 
-   unsigned char *buf;
-   size_t len;
-   int failed;
+   unsigned char *             buf;
+   size_t                      len;
+   int                         failed;
 };
 
 static void
@@ -138,13 +141,13 @@ _eet_jpeg_membuf_dst_init(j_compress_ptr cinfo)
 {
    /* FIXME: Use eina attribute */
    (void)cinfo;
-}
+} /* _eet_jpeg_membuf_dst_init */
 
 static boolean
 _eet_jpeg_membuf_dst_flush(j_compress_ptr cinfo)
 {
-   struct jpeg_membuf_dst *dst = (struct jpeg_membuf_dst *)cinfo->dest;
-   unsigned char *buf;
+   struct jpeg_membuf_dst * dst = (struct jpeg_membuf_dst *)cinfo->dest;
+   unsigned char * buf;
 
    if (dst->len >= 0x40000000 ||
        (buf = realloc(dst->buf, dst->len * 2)) == NULL)
@@ -162,12 +165,12 @@ _eet_jpeg_membuf_dst_flush(j_compress_ptr cinfo)
    dst->len *= 2;
 
    return FALSE;
-}
+} /* _eet_jpeg_membuf_dst_flush */
 
 static void
 _eet_jpeg_membuf_dst_term(j_compress_ptr cinfo)
 {
-   struct jpeg_membuf_dst *dst = (struct jpeg_membuf_dst *)cinfo->dest;
+   struct jpeg_membuf_dst * dst = (struct jpeg_membuf_dst *)cinfo->dest;
 
    if (dst->failed)
      {
@@ -181,14 +184,16 @@ _eet_jpeg_membuf_dst_term(j_compress_ptr cinfo)
         *dst->dst_len = (unsigned char *)dst->pub.next_output_byte - dst->buf;
      }
 
-        free(dst);
+   free(dst);
    cinfo->dest = NULL;
-}
+} /* _eet_jpeg_membuf_dst_term */
 
 static int
-eet_jpeg_membuf_dst(j_compress_ptr cinfo, void **buf, size_t *len)
+eet_jpeg_membuf_dst(j_compress_ptr cinfo,
+                    void **        buf,
+                    size_t *       len)
 {
-   struct jpeg_membuf_dst *dst;
+   struct jpeg_membuf_dst * dst;
 
    dst = malloc(sizeof(*dst));
    if (!dst)
@@ -214,57 +219,58 @@ eet_jpeg_membuf_dst(j_compress_ptr cinfo, void **buf, size_t *len)
    dst->failed = 0;
 
    return 0;
-}
+} /* eet_jpeg_membuf_dst */
 
 /*---*/
 
-static void _JPEGFatalErrorHandler(j_common_ptr cinfo);
-static void _JPEGErrorHandler(j_common_ptr cinfo);
-static void _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level);
+static void      _JPEGFatalErrorHandler(j_common_ptr cinfo);
+static void      _JPEGErrorHandler(j_common_ptr cinfo);
+static void      _JPEGErrorHandler2(j_common_ptr cinfo,
+                                    int          msg_level);
 
-static int  eet_data_image_jpeg_header_decode(const void *data,
-                                              int size,
-                                              unsigned int *w,
-                                              unsigned int *h);
-static int  eet_data_image_jpeg_rgb_decode(const void *data,
-                                           int size,
-                                           unsigned int src_x,
-                                           unsigned int src_y,
-                                           unsigned int *d,
-                                           unsigned int w,
-                                           unsigned int h,
-                                           unsigned int row_stride);
-static void *eet_data_image_jpeg_alpha_decode(const void *data,
-                                              int size,
-                                              unsigned int src_x,
-                                              unsigned int src_y,
-                                              unsigned int *d,
-                                              unsigned int w,
-                                              unsigned int h,
-                                              unsigned int row_stride);
-static void *eet_data_image_lossless_convert(int *size,
-                                             const void *data,
+static int       eet_data_image_jpeg_header_decode(const void *   data,
+                                                   int            size,
+                                                   unsigned int * w,
+                                                   unsigned int * h);
+static int       eet_data_image_jpeg_rgb_decode(const void *   data,
+                                                int            size,
+                                                unsigned int   src_x,
+                                                unsigned int   src_y,
+                                                unsigned int * d,
+                                                unsigned int   w,
+                                                unsigned int   h,
+                                                unsigned int   row_stride);
+static void *    eet_data_image_jpeg_alpha_decode(const void *   data,
+                                                  int            size,
+                                                  unsigned int   src_x,
+                                                  unsigned int   src_y,
+                                                  unsigned int * d,
+                                                  unsigned int   w,
+                                                  unsigned int   h,
+                                                  unsigned int   row_stride);
+static void *    eet_data_image_lossless_convert(int *        size,
+                                                 const void * data,
+                                                 unsigned int w,
+                                                 unsigned int h,
+                                                 int          alpha);
+static void *    eet_data_image_lossless_compressed_convert(int *        size,
+                                                            const void * data,
+                                                            unsigned int w,
+                                                            unsigned int h,
+                                                            int          alpha,
+                                                            int          compression);
+static void *    eet_data_image_jpeg_convert(int *        size,
+                                             const void * data,
                                              unsigned int w,
                                              unsigned int h,
-                                             int alpha);
-static void *eet_data_image_lossless_compressed_convert(int *size,
-                                                        const void *data,
-                                                        unsigned int w,
-                                                        unsigned int h,
-                                                        int alpha,
-                                                        int compression);
-static void *eet_data_image_jpeg_convert(int *size,
-                                         const void *data,
-                                         unsigned int w,
-                                         unsigned int h,
-                                         int alpha,
-                                         int quality);
-static void *eet_data_image_jpeg_alpha_convert(int *size,
-                                               const void *data,
-                                               unsigned int w,
-                                               unsigned int h,
-                                               int alpha,
-                                               int quality);
+                                             int          alpha,
+                                             int          quality);
+static void *    eet_data_image_jpeg_alpha_convert(int *        size,
+                                                   const void * data,
+                                                   unsigned int w,
+                                                   unsigned int h,
+                                                   int          alpha,
+                                                   int          quality);
 
 /*---*/
 
@@ -272,36 +278,36 @@ static int _eet_image_words_bigendian = -1;
 
 /*---*/
 
-#define SWAP64(x) (x) = \
-   ((((unsigned long long)(x) & 0x00000000000000ffULL) << 56) | \
-    (((unsigned long long)(x) & 0x000000000000ff00ULL) << 40) | \
-    (((unsigned long long)(x) & 0x0000000000ff0000ULL) << 24) | \
-    (((unsigned long long)(x) & 0x00000000ff000000ULL) << 8) | \
-    (((unsigned long long)(x) & 0x000000ff00000000ULL) >> 8) | \
-    (((unsigned long long)(x) & 0x0000ff0000000000ULL) >> 24) | \
-    (((unsigned long long)(x) & 0x00ff000000000000ULL) >> 40) | \
+#define SWAP64(x) (x) =\
+   ((((unsigned long long)(x) & 0x00000000000000ffULL) << 56) |\
+    (((unsigned long long)(x) & 0x000000000000ff00ULL) << 40) |\
+    (((unsigned long long)(x) & 0x0000000000ff0000ULL) << 24) |\
+    (((unsigned long long)(x) & 0x00000000ff000000ULL) << 8) |\
+    (((unsigned long long)(x) & 0x000000ff00000000ULL) >> 8) |\
+    (((unsigned long long)(x) & 0x0000ff0000000000ULL) >> 24) |\
+    (((unsigned long long)(x) & 0x00ff000000000000ULL) >> 40) |\
     (((unsigned long long)(x) & 0xff00000000000000ULL) >> 56))
-#define SWAP32(x) (x) = \
-   ((((int)(x) & 0x000000ff) << 24) | \
-    (((int)(x) & 0x0000ff00) << 8) | \
-    (((int)(x) & 0x00ff0000) >> 8) | \
+#define SWAP32(x) (x) =\
+   ((((int)(x) & 0x000000ff) << 24) |\
+    (((int)(x) & 0x0000ff00) << 8) |\
+    (((int)(x) & 0x00ff0000) >> 8) |\
     (((int)(x) & 0xff000000) >> 24))
-#define SWAP16(x) (x) = \
-   ((((short)(x) & 0x00ff) << 8) | \
+#define SWAP16(x) (x) =\
+   ((((short)(x) & 0x00ff) << 8) |\
     (((short)(x) & 0xff00) >> 8))
 
 #ifdef CONV8
 # undef CONV8
-#endif
+#endif /* ifdef CONV8 */
 #ifdef CONV16
 # undef CONV16
-#endif
+#endif /* ifdef CONV16 */
 #ifdef CONV32
 # undef CONV32
-#endif
+#endif /* ifdef CONV32 */
 #ifdef CONV64
 # undef CONV64
-#endif
+#endif /* ifdef CONV64 */
 
 #define CONV8(x)
 #define CONV16(x) {if (_eet_image_words_bigendian) {SWAP16(x); }}
@@ -319,7 +325,7 @@ _JPEGFatalErrorHandler(j_common_ptr cinfo)
    /*   cinfo->err->output_message(cinfo);*/
    longjmp(errmgr->setjmp_buffer, 1);
    return;
-}
+} /* _JPEGFatalErrorHandler */
 
 static void
 _JPEGErrorHandler(j_common_ptr cinfo __UNUSED__)
@@ -330,10 +336,11 @@ _JPEGErrorHandler(j_common_ptr cinfo __UNUSED__)
    /*   cinfo->err->output_message(cinfo);*/
    /*   longjmp(errmgr->setjmp_buffer, 1);*/
    return;
-}
+} /* _JPEGErrorHandler */
 
 static void
-_JPEGErrorHandler2(j_common_ptr cinfo __UNUSED__, int msg_level __UNUSED__)
+_JPEGErrorHandler2(j_common_ptr cinfo __UNUSED__,
+                   int msg_level      __UNUSED__)
 {
    /*   emptr errmgr; */
 
@@ -341,13 +348,13 @@ _JPEGErrorHandler2(j_common_ptr cinfo __UNUSED__, int msg_level __UNUSED__)
    /*   cinfo->err->output_message(cinfo);*/
    /*   longjmp(errmgr->setjmp_buffer, 1);*/
    return;
-}
+} /* _JPEGErrorHandler2 */
 
 static int
-eet_data_image_jpeg_header_decode(const void *data,
-                                  int size,
-                                  unsigned int *w,
-                                  unsigned int *h)
+eet_data_image_jpeg_header_decode(const void *   data,
+                                  int            size,
+                                  unsigned int * w,
+                                  unsigned int * h)
 {
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
@@ -387,22 +394,22 @@ eet_data_image_jpeg_header_decode(const void *data,
       return 0;
 
    return 1;
-}
+} /* eet_data_image_jpeg_header_decode */
 
 static int
-eet_data_image_jpeg_rgb_decode(const void *data,
-                               int size,
-                               unsigned int src_x,
-                               unsigned int src_y,
-                               unsigned int *d,
-                               unsigned int w,
-                               unsigned int h,
-                               unsigned int row_stride)
+eet_data_image_jpeg_rgb_decode(const void *   data,
+                               int            size,
+                               unsigned int   src_x,
+                               unsigned int   src_y,
+                               unsigned int * d,
+                               unsigned int   w,
+                               unsigned int   h,
+                               unsigned int   row_stride)
 {
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
-   unsigned char *ptr, *line[16], *tdata = NULL;
-   unsigned int *ptr2, *tmp;
+   unsigned char * ptr, * line[16], * tdata = NULL;
+   unsigned int * ptr2, * tmp;
    unsigned int iw, ih;
    unsigned int x, y, l, scans;
    unsigned int i;
@@ -540,22 +547,22 @@ eet_data_image_jpeg_rgb_decode(const void *data,
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
    return 1;
-}
+} /* eet_data_image_jpeg_rgb_decode */
 
 static void *
-eet_data_image_jpeg_alpha_decode(const void *data,
-                                 int size,
-                                 unsigned int src_x,
-                                 unsigned int src_y,
-                                 unsigned int *d,
-                                 unsigned int w,
-                                 unsigned int h,
-                                 unsigned int row_stride)
+eet_data_image_jpeg_alpha_decode(const void *   data,
+                                 int            size,
+                                 unsigned int   src_x,
+                                 unsigned int   src_y,
+                                 unsigned int * d,
+                                 unsigned int   w,
+                                 unsigned int   h,
+                                 unsigned int   row_stride)
 {
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
-   unsigned char *ptr, *line[16], *tdata = NULL;
-   unsigned int *ptr2, *tmp;
+   unsigned char * ptr, * line[16], * tdata = NULL;
+   unsigned int * ptr2, * tmp;
    unsigned int x, y, l, scans;
    unsigned int i, iw;
 
@@ -649,14 +656,14 @@ eet_data_image_jpeg_alpha_decode(const void *data,
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
    return d;
-}
+} /* eet_data_image_jpeg_alpha_decode */
 
 static void *
-eet_data_image_lossless_convert(int *size,
-                                const void *data,
+eet_data_image_lossless_convert(int *        size,
+                                const void * data,
                                 unsigned int w,
                                 unsigned int h,
-                                int alpha)
+                                int          alpha)
 {
    if (_eet_image_words_bigendian == -1)
      {
@@ -670,8 +677,8 @@ eet_data_image_lossless_convert(int *size,
      }
 
    {
-      unsigned char *d;
-      int *header;
+      unsigned char * d;
+      int * header;
 
       d = malloc((w * h * 4) + (8 * 4));
       if (!d)
@@ -697,15 +704,15 @@ eet_data_image_lossless_convert(int *size,
       *size = ((w * h * 4) + (8 * 4));
       return d;
    }
-}
+} /* eet_data_image_lossless_convert */
 
 static void *
-eet_data_image_lossless_compressed_convert(int *size,
-                                           const void *data,
+eet_data_image_lossless_compressed_convert(int *        size,
+                                           const void * data,
                                            unsigned int w,
                                            unsigned int h,
-                                           int alpha,
-                                           int compression)
+                                           int          alpha,
+                                           int          compression)
 {
    if (_eet_image_words_bigendian == -1)
      {
@@ -719,9 +726,9 @@ eet_data_image_lossless_compressed_convert(int *size,
      }
 
    {
-      unsigned char *d;
-      unsigned char *comp;
-      int *header;
+      unsigned char * d;
+      unsigned char * comp;
+      int * header;
       int ret;
       uLongf buflen;
 
@@ -771,23 +778,23 @@ eet_data_image_lossless_compressed_convert(int *size,
       free(comp);
       return d;
    }
-}
+} /* eet_data_image_lossless_compressed_convert */
 
 static void *
-eet_data_image_jpeg_convert(int *size,
-                            const void *data,
+eet_data_image_jpeg_convert(int *        size,
+                            const void * data,
                             unsigned int w,
                             unsigned int h,
-                            int alpha,
-                            int quality)
+                            int          alpha,
+                            int          quality)
 {
    struct jpeg_compress_struct cinfo;
    struct _JPEG_error_mgr jerr;
-   const int *ptr;
-   void *d = NULL;
+   const int * ptr;
+   void * d = NULL;
    size_t sz = 0;
-   JSAMPROW *jbuf;
-   unsigned char *buf;
+   JSAMPROW * jbuf;
+   unsigned char * buf;
 
    (void)alpha; /* unused */
 
@@ -850,19 +857,19 @@ eet_data_image_jpeg_convert(int *size,
 
    *size = sz;
    return d;
-}
+} /* eet_data_image_jpeg_convert */
 
 static void *
-eet_data_image_jpeg_alpha_convert(int *size,
-                                  const void *data,
+eet_data_image_jpeg_alpha_convert(int *        size,
+                                  const void * data,
                                   unsigned int w,
                                   unsigned int h,
-                                  int alpha,
-                                  int quality)
+                                  int          alpha,
+                                  int          quality)
 {
-   unsigned char *d1, *d2;
-   unsigned char *d;
-   int *header;
+   unsigned char * d1, * d2;
+   unsigned char * d;
+   int * header;
    int sz1, sz2;
 
    (void)alpha; /* unused */
@@ -879,13 +886,13 @@ eet_data_image_jpeg_alpha_convert(int *size,
      }
 
    {
-      const int *ptr;
-      void *dst = NULL;
+      const int * ptr;
+      void * dst = NULL;
       size_t sz = 0;
       struct _JPEG_error_mgr jerr;
-      JSAMPROW *jbuf;
+      JSAMPROW * jbuf;
       struct jpeg_compress_struct cinfo;
-      unsigned char *buf;
+      unsigned char * buf;
 
       buf = alloca(3 * w);
 
@@ -945,13 +952,13 @@ eet_data_image_jpeg_alpha_convert(int *size,
       sz1 = sz;
    }
    {
-      const int *ptr;
-      void *dst = NULL;
+      const int * ptr;
+      void * dst = NULL;
       size_t sz = 0;
       struct _JPEG_error_mgr jerr;
-      JSAMPROW *jbuf;
+      JSAMPROW * jbuf;
       struct jpeg_compress_struct cinfo;
-      unsigned char *buf;
+      unsigned char * buf;
 
       buf = alloca(3 * w);
 
@@ -1031,28 +1038,28 @@ eet_data_image_jpeg_alpha_convert(int *size,
         for (i = 0; i < 3; i++) SWAP32(header[i]);
      }
 
-                memcpy(d + 12,       d1, sz1);
-                memcpy(d + 12 + sz1, d2, sz2);
+   memcpy(d + 12,       d1, sz1);
+   memcpy(d + 12 + sz1, d2, sz2);
 
-                free(d1);
-                free(d2);
+   free(d1);
+   free(d2);
    *size = 12 + sz1 + sz2;
    return d;
-}
+} /* eet_data_image_jpeg_alpha_convert */
 
 EAPI int
-eet_data_image_write_cipher(Eet_File *ef,
-                            const char *name,
-                            const char *cipher_key,
-                            const void *data,
+eet_data_image_write_cipher(Eet_File *   ef,
+                            const char * name,
+                            const char * cipher_key,
+                            const void * data,
                             unsigned int w,
                             unsigned int h,
-                            int alpha,
-                            int comp,
-                            int quality,
-                            int lossy)
+                            int          alpha,
+                            int          comp,
+                            int          quality,
+                            int          lossy)
 {
-   void *d = NULL;
+   void * d = NULL;
    int size = 0;
 
    d = eet_data_image_encode(data, &size, w, h, alpha, comp, quality, lossy);
@@ -1061,23 +1068,23 @@ eet_data_image_write_cipher(Eet_File *ef,
         int v;
 
         v = eet_write_cipher(ef, name, d, size, 0, cipher_key);
-                free(d);
+        free(d);
         return v;
      }
 
    return 0;
-}
+} /* eet_data_image_write_cipher */
 
 EAPI int
-eet_data_image_write(Eet_File *ef,
-                     const char *name,
-                     const void *data,
+eet_data_image_write(Eet_File *   ef,
+                     const char * name,
+                     const void * data,
                      unsigned int w,
                      unsigned int h,
-                     int alpha,
-                     int comp,
-                     int quality,
-                     int lossy)
+                     int          alpha,
+                     int          comp,
+                     int          quality,
+                     int          lossy)
 {
    return eet_data_image_write_cipher(ef,
                                       name,
@@ -1089,22 +1096,21 @@ eet_data_image_write(Eet_File *ef,
                                       comp,
                                       quality,
                                       lossy);
-}
-
+} /* eet_data_image_write */
 
 EAPI void *
-eet_data_image_read_cipher(Eet_File *ef,
-                           const char *name,
-                           const char *cipher_key,
-                           unsigned int *w,
-                           unsigned int *h,
-                           int *alpha,
-                           int *comp,
-                           int *quality,
-                           int *lossy)
+eet_data_image_read_cipher(Eet_File *     ef,
+                           const char *   name,
+                           const char *   cipher_key,
+                           unsigned int * w,
+                           unsigned int * h,
+                           int *          alpha,
+                           int *          comp,
+                           int *          quality,
+                           int *          lossy)
 {
-   unsigned int *d = NULL;
-   void *data = NULL;
+   unsigned int * d = NULL;
+   void * data = NULL;
    int free_data = 0;
    int size;
 
@@ -1122,43 +1128,41 @@ eet_data_image_read_cipher(Eet_File *ef,
    d = eet_data_image_decode(data, size, w, h, alpha, comp, quality, lossy);
 
    if (free_data)
-                free(data);
+      free(data);
 
    return d;
-}
+} /* eet_data_image_read_cipher */
 
 EAPI void *
-eet_data_image_read(Eet_File *ef, const char *name,
-                    unsigned int *w, unsigned int *h, int *alpha,
-                    int *comp, int *quality, int *lossy)
+eet_data_image_read(Eet_File *     ef,
+                    const char *   name,
+                    unsigned int * w,
+                    unsigned int * h,
+                    int *          alpha,
+                    int *          comp,
+                    int *          quality,
+                    int *          lossy)
 {
-   return eet_data_image_read_cipher(ef,
-                                     name,
-                                     NULL,
-                                     w,
-                                     h,
-                                     alpha,
-                                     comp,
-                                     quality,
-                                     lossy);
-}
+   return eet_data_image_read_cipher(ef, name, NULL, w, h, alpha,
+                                     comp, quality, lossy);
+} /* eet_data_image_read */
 
 EAPI int
-eet_data_image_read_to_surface_cipher(Eet_File *ef,
-                                      const char *name,
-                                      const char *cipher_key,
-                                      unsigned int src_x,
-                                      unsigned int src_y,
-                                      unsigned int *d,
-                                      unsigned int w,
-                                      unsigned int h,
-                                      unsigned int row_stride,
-                                      int *alpha,
-                                      int *comp,
-                                      int *quality,
-                                      int *lossy)
+eet_data_image_read_to_surface_cipher(Eet_File *     ef,
+                                      const char *   name,
+                                      const char *   cipher_key,
+                                      unsigned int   src_x,
+                                      unsigned int   src_y,
+                                      unsigned int * d,
+                                      unsigned int   w,
+                                      unsigned int   h,
+                                      unsigned int   row_stride,
+                                      int *          alpha,
+                                      int *          comp,
+                                      int *          quality,
+                                      int *          lossy)
 {
-   void *data = NULL;
+   void * data = NULL;
    int free_data = 0;
    int res = 1;
    int size;
@@ -1174,66 +1178,49 @@ eet_data_image_read_to_surface_cipher(Eet_File *ef,
            return 0;
      }
 
-   res = eet_data_image_decode_to_surface(data,
-                                          size,
-                                          src_x,
-                                          src_y,
-                                          d,
-                                          w,
-                                          h,
-                                          row_stride,
-                                          alpha,
-                                          comp,
-                                          quality,
-                                          lossy);
+   res = eet_data_image_decode_to_surface(data, size, src_x, src_y, d,
+                                          w, h, row_stride, alpha,
+                                          comp, quality, lossy);
 
    if (free_data)
-                free(data);
+      free(data);
 
    return res;
-}
+} /* eet_data_image_read_to_surface_cipher */
 
 EAPI int
-eet_data_image_read_to_surface(Eet_File *ef,
-                               const char *name,
-                               unsigned int src_x,
-                               unsigned int src_y,
-                               unsigned int *d,
-                               unsigned int w,
-                               unsigned int h,
-                               unsigned int row_stride,
-                               int *alpha,
-                               int *comp,
-                               int *quality,
-                               int *lossy)
+eet_data_image_read_to_surface(Eet_File *     ef,
+                               const char *   name,
+                               unsigned int   src_x,
+                               unsigned int   src_y,
+                               unsigned int * d,
+                               unsigned int   w,
+                               unsigned int   h,
+                               unsigned int   row_stride,
+                               int *          alpha,
+                               int *          comp,
+                               int *          quality,
+                               int *          lossy)
 {
-   return eet_data_image_read_to_surface_cipher(ef,
-                                                name,
-                                                NULL,
-                                                src_x,
-                                                src_y,
-                                                d,
-                                                w,
-                                                h,
-                                                row_stride,
-                                                alpha,
-                                                comp,
-                                                quality,
+   return eet_data_image_read_to_surface_cipher(ef, name, NULL,
+                                                src_x, src_y, d,
+                                                w, h, row_stride,
+                                                alpha, comp, quality,
                                                 lossy);
-}
+} /* eet_data_image_read_to_surface */
 
 EAPI int
-eet_data_image_header_read_cipher(Eet_File *ef,
-                                  const char *name,
-                                  const char *cipher_key,
-                                  unsigned int *w,
-                                  unsigned int *h,
-                                  int *alpha,
-                                  int *comp,
-                                  int *quality,
-                                  int *lossy)
+eet_data_image_header_read_cipher(Eet_File *     ef,
+                                  const char *   name,
+                                  const char *   cipher_key,
+                                  unsigned int * w,
+                                  unsigned int * h,
+                                  int *          alpha,
+                                  int *          comp,
+                                  int *          quality,
+                                  int *          lossy)
 {
-   void *data = NULL;
+   void * data = NULL;
    int size = 0;
    int free_data = 0;
    int d;
@@ -1249,62 +1236,50 @@ eet_data_image_header_read_cipher(Eet_File *ef,
            return 0;
      }
 
-   d = eet_data_image_header_decode(data,
-                                    size,
-                                    w,
-                                    h,
-                                    alpha,
-                                    comp,
-                                    quality,
-                                    lossy);
+   d = eet_data_image_header_decode(data, size, w, h, alpha,
+                                    comp, quality, lossy);
    if (free_data)
-                free(data);
+      free(data);
 
    return d;
-}
+} /* eet_data_image_header_read_cipher */
 
 EAPI int
-eet_data_image_header_read(Eet_File *ef, const char *name,
-                           unsigned int *w, unsigned int *h, int *alpha,
-                           int *comp, int *quality, int *lossy)
+eet_data_image_header_read(Eet_File *     ef,
+                           const char *   name,
+                           unsigned int * w,
+                           unsigned int * h,
+                           int *          alpha,
+                           int *          comp,
+                           int *          quality,
+                           int *          lossy)
 {
-   return eet_data_image_header_read_cipher(ef,
-                                            name,
-                                            NULL,
-                                            w,
-                                            h,
-                                            alpha,
-                                            comp,
-                                            quality,
-                                            lossy);
-}
-
+   return eet_data_image_header_read_cipher(ef, name, NULL,
+                                            w, h, alpha,
+                                            comp, quality, lossy);
+} /* eet_data_image_header_read */
 
 EAPI void *
-eet_data_image_encode_cipher(const void *data,
-                             const char *cipher_key,
+eet_data_image_encode_cipher(const void * data,
+                             const char * cipher_key,
                              unsigned int w,
                              unsigned int h,
-                             int alpha,
-                             int comp,
-                             int quality,
-                             int lossy,
-                             int *size_ret)
+                             int          alpha,
+                             int          comp,
+                             int          quality,
+                             int          lossy,
+                             int *        size_ret)
 {
-   void *d = NULL;
-   void *ciphered_d = NULL;
+   void * d = NULL;
+   void * ciphered_d = NULL;
    unsigned int ciphered_sz = 0;
    int size = 0;
 
    if (lossy == 0)
      {
         if (comp > 0)
-           d = eet_data_image_lossless_compressed_convert(&size,
-                                                          data,
-                                                          w,
-                                                          h,
-                                                          alpha,
-                                                          comp);
+           d = eet_data_image_lossless_compressed_convert(&size, data,
+                                                          w, h, alpha, comp);
 
         /* eet_data_image_lossless_compressed_convert will refuse to compress something
            if the result is bigger than the entry. */
@@ -1316,12 +1291,8 @@ eet_data_image_encode_cipher(const void *data,
         if (!alpha)
            d = eet_data_image_jpeg_convert(&size, data, w, h, alpha, quality);
         else
-           d = eet_data_image_jpeg_alpha_convert(&size,
-                                                 data,
-                                                 w,
-                                                 h,
-                                                 alpha,
-                                                 quality);
+           d = eet_data_image_jpeg_alpha_convert(&size, data,
+                                                 w, h, alpha, quality);
      }
 
    if (cipher_key)
@@ -1337,49 +1308,42 @@ eet_data_image_encode_cipher(const void *data,
           }
         else
         if (ciphered_d)
-                free(ciphered_d);
+           free(ciphered_d);
      }
 
    if (size_ret)
       *size_ret = size;
 
    return d;
-}
+} /* eet_data_image_encode_cipher */
 
 EAPI void *
-eet_data_image_encode(const void *data,
-                      int *size_ret,
+eet_data_image_encode(const void * data,
+                      int *        size_ret,
                       unsigned int w,
                       unsigned int h,
-                      int alpha,
-                      int comp,
-                      int quality,
-                      int lossy)
+                      int          alpha,
+                      int          comp,
+                      int          quality,
+                      int          lossy)
 {
-   return eet_data_image_encode_cipher(data,
-                                       NULL,
-                                       w,
-                                       h,
-                                       alpha,
-                                       comp,
-                                       quality,
-                                       lossy,
-                                       size_ret);
-}
+   return eet_data_image_encode_cipher(data, NULL, w, h, alpha,
+                                       comp, quality, lossy, size_ret);
+} /* eet_data_image_encode */
 
 EAPI int
-eet_data_image_header_decode_cipher(const void *data,
-                                    const char *cipher_key,
-                                    int size,
-                                    unsigned int *w,
-                                    unsigned int *h,
-                                    int *alpha,
-                                    int *comp,
-                                    int *quality,
-                                    int *lossy)
+eet_data_image_header_decode_cipher(const void *   data,
+                                    const char *   cipher_key,
+                                    int            size,
+                                    unsigned int * w,
+                                    unsigned int * h,
+                                    int *          alpha,
+                                    int *          comp,
+                                    int *          quality,
+                                    int *          lossy)
 {
    int header[8];
-   void *deciphered_d = NULL;
+   void * deciphered_d = NULL;
    unsigned int deciphered_sz = 0;
 
    if (cipher_key)
@@ -1392,7 +1356,7 @@ eet_data_image_header_decode_cipher(const void *data,
           }
         else
         if (deciphered_d)
-                free(deciphered_d);
+           free(deciphered_d);
      }
 
    if (_eet_image_words_bigendian == -1)
@@ -1409,7 +1373,7 @@ eet_data_image_header_decode_cipher(const void *data,
    if (size < 32)
       return 0;
 
-           memcpy(header, data, 32);
+   memcpy(header, data, 32);
    if (_eet_image_words_bigendian)
      {
         int i;
@@ -1454,7 +1418,7 @@ eet_data_image_header_decode_cipher(const void *data,
    else if ((unsigned)header[0] == 0xbeeff00d)
      {
         unsigned int iw = 0, ih = 0;
-        unsigned const char *dt;
+        unsigned const char * dt;
         int sz1;
         int ok;
 
@@ -1517,17 +1481,17 @@ eet_data_image_header_decode_cipher(const void *data,
      }
 
    return 0;
-}
+} /* eet_data_image_header_decode_cipher */
 
 EAPI int
-eet_data_image_header_decode(const void *data,
-                             int size,
-                             unsigned int *w,
-                             unsigned int *h,
-                             int *alpha,
-                             int *comp,
-                             int *quality,
-                             int *lossy)
+eet_data_image_header_decode(const void *   data,
+                             int            size,
+                             unsigned int * w,
+                             unsigned int * h,
+                             int *          alpha,
+                             int *          comp,
+                             int *          quality,
+                             int *          lossy)
 {
    return eet_data_image_header_decode_cipher(data,
                                               NULL,
@@ -1538,63 +1502,56 @@ eet_data_image_header_decode(const void *data,
                                               comp,
                                               quality,
                                               lossy);
-}
+} /* eet_data_image_header_decode */
 
 static void
-_eet_data_image_copy_buffer(const unsigned int *src,
-                            unsigned int src_x,
-                            unsigned int src_y,
-                            unsigned int src_w,
-                            unsigned int *dst,
-                            unsigned int w,
-                            unsigned int h,
-                            unsigned int row_stride)
+_eet_data_image_copy_buffer(const unsigned int * src,
+                            unsigned int         src_x,
+                            unsigned int         src_y,
+                            unsigned int         src_w,
+                            unsigned int *       dst,
+                            unsigned int         w,
+                            unsigned int         h,
+                            unsigned int         row_stride)
 {
    src += src_x + src_y * src_w;
 
    if (row_stride == src_w * 4 && w == src_w)
-           memcpy(dst, src, row_stride * h);
+      memcpy(dst, src, row_stride * h);
    else
      {
-        unsigned int *over = dst;
+        unsigned int * over = dst;
         unsigned int y;
 
         for (y = 0; y < h; ++y, src += src_w, over += row_stride)
            memcpy(over, src, w * 4);
      }
-}
-
+} /* _eet_data_image_copy_buffer */
 
 static int
-_eet_data_image_decode_inside(const void *data,
-                              int size,
-                              unsigned int src_x,
-                              unsigned int src_y,
-                              unsigned int src_w,
-                              unsigned int src_h,
-                              unsigned int *d,
-                              unsigned int w,
-                              unsigned int h,
-                              unsigned int row_stride,
-                              int alpha,
-                              int comp,
-                              int quality,
-                              int lossy)
+_eet_data_image_decode_inside(const void *   data,
+                              int            size,
+                              unsigned int   src_x,
+                              unsigned int   src_y,
+                              unsigned int   src_w,
+                              unsigned int   src_h,
+                              unsigned int * d,
+                              unsigned int   w,
+                              unsigned int   h,
+                              unsigned int   row_stride,
+                              int            alpha,
+                              int            comp,
+                              int            quality,
+                              int            lossy)
 {
    if (lossy == 0 && quality == 100)
      {
-        unsigned int *body;
+        unsigned int * body;
 
         body = ((unsigned int *)data) + 8;
         if (!comp)
-           _eet_data_image_copy_buffer(body,
-                                       src_x,
-                                       src_y,
-                                       src_w,
-                                       d,
-                                       w,
-                                       h,
-                                       row_stride);
+           _eet_data_image_copy_buffer(body, src_x, src_y, src_w, d,
+                                       w, h, row_stride);
         else
           {
              if (src_h == h && src_w == w && row_stride == src_w * 4)
@@ -1607,7 +1564,7 @@ _eet_data_image_decode_inside(const void *data,
                }
              else
                {
-                  Bytef *dtmp;
+                  Bytef * dtmp;
                   uLongf dlen = src_w * src_h * 4;
 
                   /* FIXME: This could create a huge alloc. So compressed data and tile could not always work. */
@@ -1618,13 +1575,8 @@ _eet_data_image_decode_inside(const void *data,
                   uncompress(dtmp, &dlen, (Bytef *)body, (uLongf)(size - 32));
 
                   _eet_data_image_copy_buffer((unsigned int *)dtmp,
-                                              src_x,
-                                              src_y,
-                                              src_w,
-                                              d,
-                                              w,
-                                              h,
-                                              row_stride);
+                                              src_x, src_y, src_w, d,
+                                              w, h, row_stride);
 
                   free(dtmp);
                }
@@ -1642,7 +1594,7 @@ _eet_data_image_decode_inside(const void *data,
      {
         if (alpha)
           {
-             unsigned const char *dt;
+             unsigned const char * dt;
              int header[8];
              int sz1, sz2;
 
@@ -1676,23 +1628,23 @@ _eet_data_image_decode_inside(const void *data,
       abort();
 
    return 1;
-}
+} /* _eet_data_image_decode_inside */
 
 EAPI void *
-eet_data_image_decode_cipher(const void *data,
-                             const char *cipher_key,
-                             int size,
-                             unsigned int *w,
-                             unsigned int *h,
-                             int *alpha,
-                             int *comp,
-                             int *quality,
-                             int *lossy)
+eet_data_image_decode_cipher(const void *   data,
+                             const char *   cipher_key,
+                             int            size,
+                             unsigned int * w,
+                             unsigned int * h,
+                             int *          alpha,
+                             int *          comp,
+                             int *          quality,
+                             int *          lossy)
 {
-   unsigned int *d = NULL;
+   unsigned int * d = NULL;
    unsigned int iw, ih;
    int ialpha, icompress, iquality, ilossy;
-   void *deciphered_d = NULL;
+   void * deciphered_d = NULL;
    unsigned int deciphered_sz = 0;
 
    if (cipher_key)
@@ -1720,7 +1672,7 @@ eet_data_image_decode_cipher(const void *data,
    if (!_eet_data_image_decode_inside(data, size, 0, 0, iw, ih, d, iw, ih, iw *
                                       4, ialpha, icompress, iquality, ilossy))
      {
-           free(d);
+        free(d);
         return NULL;
      }
 
@@ -1743,47 +1695,40 @@ eet_data_image_decode_cipher(const void *data,
       *lossy = ilossy;
 
    return d;
-}
+} /* eet_data_image_decode_cipher */
 
 EAPI void *
-eet_data_image_decode(const void *data,
-                      int size,
-                      unsigned int *w,
-                      unsigned int *h,
-                      int *alpha,
-                      int *comp,
-                      int *quality,
-                      int *lossy)
+eet_data_image_decode(const void *   data,
+                      int            size,
+                      unsigned int * w,
+                      unsigned int * h,
+                      int *          alpha,
+                      int *          comp,
+                      int *          quality,
+                      int *          lossy)
 {
-   return eet_data_image_decode_cipher(data,
-                                       NULL,
-                                       size,
-                                       w,
-                                       h,
-                                       alpha,
-                                       comp,
-                                       quality,
-                                       lossy);
-}
+   return eet_data_image_decode_cipher(data, NULL, size, w, h,
+                                       alpha, comp, quality, lossy);
+} /* eet_data_image_decode */
 
 EAPI int
-eet_data_image_decode_to_surface_cipher(const void *data,
-                                        const char *cipher_key,
-                                        int size,
-                                        unsigned int src_x,
-                                        unsigned int src_y,
-                                        unsigned int *d,
-                                        unsigned int w,
-                                        unsigned int h,
-                                        unsigned int row_stride,
-                                        int *alpha,
-                                        int *comp,
-                                        int *quality,
-                                        int *lossy)
+eet_data_image_decode_to_surface_cipher(const void *   data,
+                                        const char *   cipher_key,
+                                        int            size,
+                                        unsigned int   src_x,
+                                        unsigned int   src_y,
+                                        unsigned int * d,
+                                        unsigned int   w,
+                                        unsigned int   h,
+                                        unsigned int   row_stride,
+                                        int *          alpha,
+                                        int *          comp,
+                                        int *          quality,
+                                        int *          lossy)
 {
    unsigned int iw, ih;
    int ialpha, icompress, iquality, ilossy;
-   void *deciphered_d = NULL;
+   void * deciphered_d = NULL;
    unsigned int deciphered_sz = 0;
 
    if (cipher_key)
@@ -1831,33 +1776,26 @@ eet_data_image_decode_to_surface_cipher(const void *data,
       *lossy = ilossy;
 
    return 1;
-}
+} /* eet_data_image_decode_to_surface_cipher */
 
 EAPI int
-eet_data_image_decode_to_surface(const void *data,
-                                 int size,
-                                 unsigned int src_x,
-                                 unsigned int src_y,
-                                 unsigned int *d,
-                                 unsigned int w,
-                                 unsigned int h,
-                                 unsigned int row_stride,
-                                 int *alpha,
-                                 int *comp,
-                                 int *quality,
-                                 int *lossy)
+eet_data_image_decode_to_surface(const void *   data,
+                                 int            size,
+                                 unsigned int   src_x,
+                                 unsigned int   src_y,
+                                 unsigned int * d,
+                                 unsigned int   w,
+                                 unsigned int   h,
+                                 unsigned int   row_stride,
+                                 int *          alpha,
+                                 int *          comp,
+                                 int *          quality,
+                                 int *          lossy)
 {
-   return eet_data_image_decode_to_surface_cipher(data,
-                                                  NULL,
-                                                  size,
-                                                  src_x,
-                                                  src_y,
-                                                  d,
-                                                  w,
-                                                  h,
-                                                  row_stride,
-                                                  alpha,
-                                                  comp,
-                                                  quality,
+   return eet_data_image_decode_to_surface_cipher(data, NULL, size,
+                                                  src_x, src_y,  d,
+                                                  w,  h, row_stride,
+                                                  alpha, comp, quality,
                                                   lossy);
-}
+} /* eet_data_image_decode_to_surface */
+
