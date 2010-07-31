@@ -474,10 +474,9 @@ evas_module_clean(void)
    if (noclean == -1)
      {
 	if (getenv("EVAS_NOCLEAN"))
-	  {
-	     noclean = 1;
-	  }
-	noclean = 0;
+          noclean = 1;
+	else 
+          noclean = 0;
      }
    if (noclean == 1) return;
 
