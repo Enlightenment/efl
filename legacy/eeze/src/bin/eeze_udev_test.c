@@ -18,7 +18,7 @@ typedef struct kbdmouse
 
 static void
 /* event will always be a syspath starting with /sys */
-catch_events(const char *device, int event, void *data, Eeze_Udev_Watch *watch)
+catch_events(const char *device, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch)
 {
    kbdmouse *akbdmouse = data;
    Eina_List *l;
@@ -100,7 +100,7 @@ int main()
    /* add all "link" devices that aren't explicitly found, but are still
     * part of the device chain
     */
-   eeze_udev_find_unlisted_similar(type);
+   type = eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FOREACH(type, l, name)
      {
         /* add the devpath to the hash for use in the cb later */
@@ -117,7 +117,7 @@ int main()
    printf("\nNext, I will find all of your mice and print the corresponding manufacturer.\n");
    /* find all mice using type EEZE_UDEV_TYPE_MOUSE */
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_MOUSE, NULL);
-   eeze_udev_find_unlisted_similar(type);
+   type = eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FOREACH(type, l, name)
      {  /* add the devpath to the hash for use in the cb later */
         if ((check = eeze_udev_syspath_get_devpath(name)))
@@ -133,7 +133,7 @@ int main()
    printf("\nNow let's try something a little more difficult.  Mountable filesystems!\n");
    /* find all mountable drives using type EEZE_UDEV_TYPE_DRIVE_MOUNTABLE */
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_MOUNTABLE, NULL);
-   eeze_udev_find_unlisted_similar(type);
+   type = eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FOREACH(type, l, name)
    {
      printf("Found device: %s\n", name);  /* get a property using the device's syspath */
@@ -152,7 +152,7 @@ int main()
    printf("\nInternal drives, anyone?  With serial numbers?\n");
    /* find all internal drives using type EEZE_UDEV_TYPE_DRIVE_INTERNAL */
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_INTERNAL, NULL);
-   eeze_udev_find_unlisted_similar(type);
+   type = eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FOREACH(type, l, name) /* get a property using the device's syspath */
         printf("%s: %s\n", name, eeze_udev_syspath_get_property(name, "ID_SERIAL"));
    eina_list_free(type);
@@ -160,7 +160,7 @@ int main()
    printf("\nGot any removables?  I'm gonna find em!\n");
    /* find all removable media using type EEZE_UDEV_TYPE_DRIVE_REMOVABLE */
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_REMOVABLE, NULL);
-   eeze_udev_find_unlisted_similar(type);
+   type = eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FOREACH(type, l, name)  /* get a property using the device's syspath */
      {
         if ((check = eeze_udev_syspath_get_property(name, "ID_MODEL")))
