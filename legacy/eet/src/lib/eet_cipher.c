@@ -80,18 +80,18 @@ void *    alloca (size_t);
 
 #ifdef HAVE_CIPHER
 # ifdef HAVE_GNUTLS
-static Eet_Error      eet_hmac_sha1(const void *   key,
+static Eet_Error      eet_hmac_sha1(const void    *key,
                                     size_t         key_len,
-                                    const void *   data,
+                                    const void    *data,
                                     size_t         data_len,
                                     unsigned char *res);
 # endif /* ifdef HAVE_GNUTLS */
-static Eet_Error      eet_pbkdf2_sha1(const char *         key,
+static Eet_Error      eet_pbkdf2_sha1(const char          *key,
                                       int                  key_len,
                                       const unsigned char *salt,
                                       unsigned int         salt_len,
                                       int                  iter,
-                                      unsigned char *      res,
+                                      unsigned char       *res,
                                       int                  res_len);
 #endif /* ifdef HAVE_CIPHER */
 
@@ -103,15 +103,15 @@ struct _Eet_Key
    gnutls_x509_crt_t     certificate;
    gnutls_x509_privkey_t private_key;
 # else /* ifdef HAVE_GNUTLS */
-   X509 *                certificate;
-   EVP_PKEY *            private_key;
+   X509                 *certificate;
+   EVP_PKEY             *private_key;
 # endif /* ifdef HAVE_GNUTLS */
 #endif /* ifdef HAVE_SIGNATURE */
 };
 
 EAPI Eet_Key *
-eet_identity_open(const char *              certificate_file,
-                  const char *              private_key_file,
+eet_identity_open(const char               *certificate_file,
+                  const char               *private_key_file,
                   Eet_Key_Password_Callback cb)
 {
 #ifdef HAVE_SIGNATURE
@@ -303,7 +303,7 @@ eet_identity_close(Eet_Key *key)
 
 EAPI void
 eet_identity_print(Eet_Key *key,
-                   FILE *   out)
+                   FILE    *out)
 {
 #ifdef HAVE_SIGNATURE
 # ifdef HAVE_GNUTLS
@@ -443,9 +443,9 @@ eet_identity_unref(Eet_Key *key)
 } /* eet_identity_unref */
 
 void *
-eet_identity_compute_sha1(const void * data_base,
+eet_identity_compute_sha1(const void  *data_base,
                           unsigned int data_length,
-                          int *        sha1_length)
+                          int         *sha1_length)
 {
    void *result;
 
@@ -481,7 +481,7 @@ eet_identity_compute_sha1(const void * data_base,
 } /* eet_identity_compute_sha1 */
 
 Eet_Error
-eet_identity_sign(FILE *   fp,
+eet_identity_sign(FILE    *fp,
                   Eet_Key *key)
 {
 #ifdef HAVE_SIGNATURE
@@ -647,15 +647,15 @@ on_error:
 } /* eet_identity_sign */
 
 const void *
-eet_identity_check(const void *  data_base,
+eet_identity_check(const void   *data_base,
                    unsigned int  data_length,
-                   void **       sha1,
-                   int *         sha1_length,
-                   const void *  signature_base,
+                   void        **sha1,
+                   int          *sha1_length,
+                   const void   *signature_base,
                    unsigned int  signature_length,
-                   const void ** raw_signature_base,
+                   const void  **raw_signature_base,
                    unsigned int *raw_signature_length,
-                   int *         x509_length)
+                   int          *x509_length)
 {
 #ifdef HAVE_SIGNATURE
    const int *header = signature_base;
@@ -820,7 +820,7 @@ eet_identity_check(const void *  data_base,
 EAPI void
 eet_identity_certificate_print(const unsigned char *certificate,
                                int                  der_length,
-                               FILE *               out)
+                               FILE                *out)
 {
 #ifdef HAVE_SIGNATURE
    if (!certificate || !out || der_length <= 0)
@@ -881,11 +881,11 @@ on_error:
 } /* eet_identity_certificate_print */
 
 Eet_Error
-eet_cipher(const void *  data,
+eet_cipher(const void   *data,
            unsigned int  size,
-           const char *  key,
+           const char   *key,
            unsigned int  length,
-           void **       result,
+           void        **result,
            unsigned int *result_length)
 {
 #ifdef HAVE_CIPHER
@@ -1058,11 +1058,11 @@ on_error:
 } /* eet_cipher */
 
 Eet_Error
-eet_decipher(const void *  data,
+eet_decipher(const void   *data,
              unsigned int  size,
-             const char *  key,
+             const char   *key,
              unsigned int  length,
-             void **       result,
+             void        **result,
              unsigned int *result_length)
 {
 #ifdef HAVE_CIPHER
@@ -1211,9 +1211,9 @@ on_error:
 #ifdef HAVE_CIPHER
 # ifdef HAVE_GNUTLS
 static Eet_Error
-eet_hmac_sha1(const void *   key,
+eet_hmac_sha1(const void    *key,
               size_t         key_len,
-              const void *   data,
+              const void    *data,
               size_t         data_len,
               unsigned char *res)
 {
@@ -1252,12 +1252,12 @@ eet_hmac_sha1(const void *   key,
 # endif /* ifdef HAVE_GNUTLS */
 
 static Eet_Error
-eet_pbkdf2_sha1(const char *         key,
+eet_pbkdf2_sha1(const char          *key,
                 int                  key_len,
                 const unsigned char *salt,
                 unsigned int         salt_len,
                 int                  iter,
-                unsigned char *      res,
+                unsigned char       *res,
                 int                  res_len)
 {
    unsigned char digest[20];

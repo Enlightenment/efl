@@ -49,7 +49,7 @@ eet_dictionary_free(Eet_Dictionary *ed)
 
 static int
 _eet_dictionary_lookup(Eet_Dictionary *ed,
-                       const char *    string,
+                       const char     *string,
                        int             hash)
 {
    int prev = -1;
@@ -79,7 +79,7 @@ _eet_dictionary_lookup(Eet_Dictionary *ed,
 
 int
 eet_dictionary_string_add(Eet_Dictionary *ed,
-                          const char *    string)
+                          const char     *string)
 {
    Eet_String *current;
    char *str;
@@ -225,8 +225,8 @@ eet_dictionary_string_get_char(const Eet_Dictionary *ed,
 static inline Eina_Bool
 _eet_dictionary_string_get_me_cache(const char *s,
                                     int         len,
-                                    int *       mantisse,
-                                    int *       exponent)
+                                    int        *mantisse,
+                                    int        *exponent)
 {
    if ((len == 6) && (s[0] == '0') && (s[1] == 'x') && (s[3] == 'p'))
      {
@@ -242,7 +242,7 @@ _eet_dictionary_string_get_me_cache(const char *s,
 static inline Eina_Bool
 _eet_dictionary_string_get_float_cache(const char *s,
                                        int         len,
-                                       float *     result)
+                                       float      *result)
 {
    int mantisse;
    int exponent;
@@ -263,7 +263,7 @@ _eet_dictionary_string_get_float_cache(const char *s,
 static inline Eina_Bool
 _eet_dictionary_string_get_double_cache(const char *s,
                                         int         len,
-                                        double *    result)
+                                        double     *result)
 {
    int mantisse;
    int exponent;
@@ -284,7 +284,7 @@ _eet_dictionary_string_get_double_cache(const char *s,
 static inline Eina_Bool
 _eet_dictionary_test(const Eet_Dictionary *ed,
                      int                   idx,
-                     void *                result)
+                     void                 *result)
 {
    if (!result)
       return EINA_FALSE;
@@ -304,7 +304,7 @@ _eet_dictionary_test(const Eet_Dictionary *ed,
 Eina_Bool
 eet_dictionary_string_get_float(const Eet_Dictionary *ed,
                                 int                   idx,
-                                float *               result)
+                                float                *result)
 {
    if (!_eet_dictionary_test(ed, idx, result))
       return EINA_FALSE;
@@ -338,7 +338,7 @@ eet_dictionary_string_get_float(const Eet_Dictionary *ed,
 Eina_Bool
 eet_dictionary_string_get_double(const Eet_Dictionary *ed,
                                  int                   idx,
-                                 double *              result)
+                                 double               *result)
 {
    if (!_eet_dictionary_test(ed, idx, result))
       return EINA_FALSE;
@@ -372,7 +372,7 @@ eet_dictionary_string_get_double(const Eet_Dictionary *ed,
 Eina_Bool
 eet_dictionary_string_get_fp(const Eet_Dictionary *ed,
                              int                   idx,
-                             Eina_F32p32 *         result)
+                             Eina_F32p32          *result)
 {
    if (!_eet_dictionary_test(ed, idx, result))
       return EINA_FALSE;
@@ -397,7 +397,7 @@ eet_dictionary_string_get_fp(const Eet_Dictionary *ed,
 
 EAPI int
 eet_dictionary_string_check(Eet_Dictionary *ed,
-                            const char *    string)
+                            const char     *string)
 {
    int i;
 

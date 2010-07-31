@@ -21,8 +21,8 @@ typedef struct _Eet_String   Eet_String;
 
 struct _Eet_String
 {
-   const char *     mmap;
-   char *           str;
+   const char      *mmap;
+   char            *str;
 
    int              hash;
    int              len;
@@ -56,11 +56,11 @@ struct _Eet_Node
 {
    int           type;
    int           count;
-   const char *  name;
-   const char *  key;
-   Eet_Node *    values;
-   Eet_Node *    next;
-   Eet_Node *    parent;
+   const char   *name;
+   const char   *key;
+   Eet_Node     *values;
+   Eet_Node     *next;
+   Eet_Node     *parent;
    Eet_Node_Data data;
 };
 
@@ -102,50 +102,50 @@ extern int _eet_log_dom_global;
 Eet_Dictionary *    eet_dictionary_add(void);
 void                eet_dictionary_free(Eet_Dictionary *ed);
 int                 eet_dictionary_string_add(Eet_Dictionary *ed,
-                                              const char *    string);
+                                              const char     *string);
 int                 eet_dictionary_string_get_size(const Eet_Dictionary *ed,
                                                    int                   index);
 const char *        eet_dictionary_string_get_char(const Eet_Dictionary *ed,
                                                    int                   index);
 Eina_Bool           eet_dictionary_string_get_float(const Eet_Dictionary *ed,
                                                     int                   index,
-                                                    float *               result);
+                                                    float                *result);
 Eina_Bool           eet_dictionary_string_get_double(const Eet_Dictionary *ed,
                                                      int                   index,
-                                                     double *              result);
+                                                     double               *result);
 Eina_Bool           eet_dictionary_string_get_fp(const Eet_Dictionary *ed,
                                                  int                   index,
-                                                 Eina_F32p32 *         result);
+                                                 Eina_F32p32          *result);
 int                 eet_dictionary_string_get_hash(const Eet_Dictionary *ed,
                                                    int                   index);
 
 int                 _eet_hash_gen(const char *key, int hash_size);
 
-const void *        eet_identity_check(const void *  data_base,
+const void *        eet_identity_check(const void   *data_base,
                                        unsigned int  data_length,
-                                       void **       sha1,
-                                       int *         sha1_length,
-                                       const void *  signature_base,
+                                       void        **sha1,
+                                       int          *sha1_length,
+                                       const void   *signature_base,
                                        unsigned int  signature_length,
-                                       const void ** raw_signature_base,
+                                       const void  **raw_signature_base,
                                        unsigned int *raw_signature_length,
-                                       int *         x509_length);
-void *         eet_identity_compute_sha1(const void * data_base,
+                                       int          *x509_length);
+void *         eet_identity_compute_sha1(const void  *data_base,
                                          unsigned int data_length,
-                                         int *        sha1_length);
-Eet_Error      eet_cipher(const void *  data,
+                                         int         *sha1_length);
+Eet_Error      eet_cipher(const void   *data,
                           unsigned int  size,
-                          const char *  key,
+                          const char   *key,
                           unsigned int  length,
-                          void **       result,
+                          void        **result,
                           unsigned int *result_length);
-Eet_Error      eet_decipher(const void *  data,
+Eet_Error      eet_decipher(const void   *data,
                             unsigned int  size,
-                            const char *  key,
+                            const char   *key,
                             unsigned int  length,
-                            void **       result,
+                            void        **result,
                             unsigned int *result_length);
-Eet_Error      eet_identity_sign(FILE *   fp,
+Eet_Error      eet_identity_sign(FILE    *fp,
                                  Eet_Key *key);
 void           eet_identity_unref(Eet_Key *key);
 void           eet_identity_ref(Eet_Key *key);

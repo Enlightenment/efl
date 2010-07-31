@@ -90,15 +90,15 @@ typedef struct _Eet_File_Directory   Eet_File_Directory;
 
 struct _Eet_File
 {
-   char *               path;
-   FILE *               readfp;
-   Eet_File_Header *    header;
-   Eet_Dictionary *     ed;
-   Eet_Key *            key;
+   char                *path;
+   FILE                *readfp;
+   Eet_File_Header     *header;
+   Eet_Dictionary      *ed;
+   Eet_Key             *key;
    const unsigned char *data;
-   const void *         x509_der;
-   const void *         signature;
-   void *               sha1;
+   const void          *x509_der;
+   const void          *signature;
+   void                *sha1;
 
    Eet_File_Mode        mode;
 
@@ -138,8 +138,8 @@ struct _Eet_File_Directory
 
 struct _Eet_File_Node
 {
-   char *         name;
-   void *         data;
+   char          *name;
+   void          *data;
    Eet_File_Node *next;  /* FIXME: make buckets linked lists */
 
    int            offset;
@@ -225,25 +225,25 @@ char x509[x509_length]; /* The public certificate. */
 
 /* prototypes of internal calls */
 static Eet_File *         eet_cache_find(const char *path,
-                                         Eet_File ** cache,
+                                         Eet_File  **cache,
                                          int         cache_num);
-static void               eet_cache_add(Eet_File *  ef,
+static void               eet_cache_add(Eet_File   *ef,
                                         Eet_File ***cache,
-                                        int *       cache_num,
-                                        int *       cache_alloc);
-static void               eet_cache_del(Eet_File *  ef,
+                                        int        *cache_num,
+                                        int        *cache_alloc);
+static void               eet_cache_del(Eet_File   *ef,
                                         Eet_File ***cache,
-                                        int *       cache_num,
-                                        int *       cache_alloc);
+                                        int        *cache_num,
+                                        int        *cache_alloc);
 static int                eet_string_match(const char *s1, const char *s2);
 #if 0 /* Unused */
 static Eet_Error          eet_flush(Eet_File *ef);
 #endif /* if 0 */
 static Eet_Error          eet_flush2(Eet_File *ef);
 static Eet_File_Node *    find_node_by_name(Eet_File *ef, const char *name);
-static int                read_data_from_disk(Eet_File *     ef,
+static int                read_data_from_disk(Eet_File      *ef,
                                               Eet_File_Node *efn,
-                                              void *         buf,
+                                              void          *buf,
                                               int            len);
 
 static Eet_Error          eet_internal_close(Eet_File *ef, Eina_Bool locked);
@@ -338,7 +338,7 @@ eet_test_close(int       test,
 /* find an eet file in the currently in use cache */
 static Eet_File *
 eet_cache_find(const char *path,
-               Eet_File ** cache,
+               Eet_File  **cache,
                int         cache_num)
 {
    int i;
@@ -360,10 +360,10 @@ eet_cache_find(const char *path,
 /* add to end of cache */
 /* this should only be called when the cache lock is already held */
 static void
-eet_cache_add(Eet_File *  ef,
+eet_cache_add(Eet_File   *ef,
               Eet_File ***cache,
-              int *       cache_num,
-              int *       cache_alloc)
+              int        *cache_num,
+              int        *cache_alloc)
 {
    Eet_File **new_cache;
    int new_cache_num;
@@ -416,10 +416,10 @@ eet_cache_add(Eet_File *  ef,
 /* delete from cache */
 /* this should only be called when the cache lock is already held */
 static void
-eet_cache_del(Eet_File *  ef,
+eet_cache_del(Eet_File   *ef,
               Eet_File ***cache,
-              int *       cache_num,
-              int *       cache_alloc)
+              int        *cache_num,
+              int        *cache_alloc)
 {
    Eet_File **new_cache;
    int new_cache_num, new_cache_alloc;
@@ -1489,7 +1489,7 @@ eet_memopen_read(const void *data,
 } /* eet_memopen_read */
 
 EAPI Eet_File *
-eet_open(const char *  file,
+eet_open(const char   *file,
          Eet_File_Mode mode)
 {
    FILE *fp;
@@ -1675,7 +1675,7 @@ eet_mode_get(Eet_File *ef)
 
 EAPI const void *
 eet_identity_x509(Eet_File *ef,
-                  int *     der_length)
+                  int      *der_length)
 {
    if (!ef->x509_der)
       return NULL;
@@ -1688,7 +1688,7 @@ eet_identity_x509(Eet_File *ef,
 
 EAPI const void *
 eet_identity_signature(Eet_File *ef,
-                       int *     signature_length)
+                       int      *signature_length)
 {
    if (!ef->signature)
       return NULL;
@@ -1701,7 +1701,7 @@ eet_identity_signature(Eet_File *ef,
 
 EAPI const void *
 eet_identity_sha1(Eet_File *ef,
-                  int *     sha1_length)
+                  int      *sha1_length)
 {
    if (!ef->sha1)
       ef->sha1 = eet_identity_compute_sha1(ef->data,
@@ -1716,7 +1716,7 @@ eet_identity_sha1(Eet_File *ef,
 
 EAPI Eet_Error
 eet_identity_set(Eet_File *ef,
-                 Eet_Key * key)
+                 Eet_Key  *key)
 {
    Eet_Key *tmp = ef->key;
 
@@ -1740,9 +1740,9 @@ eet_close(Eet_File *ef)
 } /* eet_close */
 
 EAPI void *
-eet_read_cipher(Eet_File *  ef,
+eet_read_cipher(Eet_File   *ef,
                 const char *name,
-                int *       size_ret,
+                int        *size_ret,
                 const char *cipher_key)
 {
    Eet_File_Node *efn;
@@ -1899,17 +1899,17 @@ on_error:
 } /* eet_read_cipher */
 
 EAPI void *
-eet_read(Eet_File *  ef,
+eet_read(Eet_File   *ef,
          const char *name,
-         int *       size_ret)
+         int        *size_ret)
 {
    return eet_read_cipher(ef, name, size_ret, NULL);
 } /* eet_read */
 
 EAPI const void *
-eet_read_direct(Eet_File *  ef,
+eet_read_direct(Eet_File   *ef,
                 const char *name,
-                int *       size_ret)
+                int        *size_ret)
 {
    Eet_File_Node *efn;
    const char *data = NULL;
@@ -2000,7 +2000,7 @@ on_error:
 } /* eet_read_direct */
 
 EAPI Eina_Bool
-eet_alias(Eet_File *  ef,
+eet_alias(Eet_File   *ef,
           const char *name,
           const char *destination,
           int         comp)
@@ -2155,7 +2155,7 @@ on_error:
 } /* eet_alias */
 
 EAPI int
-eet_write_cipher(Eet_File *  ef,
+eet_write_cipher(Eet_File   *ef,
                  const char *name,
                  const void *data,
                  int         size,
@@ -2337,7 +2337,7 @@ on_error:
 } /* eet_write_cipher */
 
 EAPI int
-eet_write(Eet_File *  ef,
+eet_write(Eet_File   *ef,
           const char *name,
           const void *data,
           int         size,
@@ -2347,7 +2347,7 @@ eet_write(Eet_File *  ef,
 } /* eet_write */
 
 EAPI int
-eet_delete(Eet_File *  ef,
+eet_delete(Eet_File   *ef,
            const char *name)
 {
    Eet_File_Node *efn;
@@ -2418,9 +2418,9 @@ eet_dictionary_get(Eet_File *ef)
 } /* eet_dictionary_get */
 
 EAPI char **
-eet_list(Eet_File *  ef,
+eet_list(Eet_File   *ef,
          const char *glob,
-         int *       count_ret)
+         int        *count_ret)
 {
    Eet_File_Node *efn;
    char **list_ret = NULL;
@@ -2529,7 +2529,7 @@ eet_num_entries(Eet_File *ef)
 } /* eet_num_entries */
 
 static Eet_File_Node *
-find_node_by_name(Eet_File *  ef,
+find_node_by_name(Eet_File   *ef,
                   const char *name)
 {
    Eet_File_Node *efn;
@@ -2548,9 +2548,9 @@ find_node_by_name(Eet_File *  ef,
 } /* find_node_by_name */
 
 static int
-read_data_from_disk(Eet_File *     ef,
+read_data_from_disk(Eet_File      *ef,
                     Eet_File_Node *efn,
-                    void *         buf,
+                    void          *buf,
                     int            len)
 {
    if (efn->offset < 0)

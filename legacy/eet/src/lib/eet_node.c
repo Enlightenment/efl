@@ -125,7 +125,7 @@ eet_node_null_new(const char *name)
 
 Eet_Node *
 eet_node_list_new(const char *name,
-                  Eina_List * nodes)
+                  Eina_List  *nodes)
 {
    Eet_Node *n;
 
@@ -141,7 +141,7 @@ eet_node_list_new(const char *name,
 Eet_Node *
 eet_node_array_new(const char *name,
                    int         count,
-                   Eina_List * nodes)
+                   Eina_List  *nodes)
 {
    Eet_Node *n;
 
@@ -158,7 +158,7 @@ eet_node_array_new(const char *name,
 
 Eet_Node *
 eet_node_var_array_new(const char *name,
-                       Eina_List * nodes)
+                       Eina_List  *nodes)
 {
    Eet_Node *n;
 
@@ -176,7 +176,7 @@ eet_node_var_array_new(const char *name,
 Eet_Node *
 eet_node_hash_new(const char *name,
                   const char *key,
-                  Eet_Node *  node)
+                  Eet_Node   *node)
 {
    Eina_List *nodes;
    Eet_Node *n;
@@ -198,7 +198,7 @@ eet_node_hash_new(const char *name,
 
 Eet_Node *
 eet_node_struct_new(const char *name,
-                    Eina_List * nodes)
+                    Eina_List  *nodes)
 {
    Eet_Node *n;
 
@@ -213,7 +213,7 @@ eet_node_struct_new(const char *name,
 
 Eet_Node *
 eet_node_struct_child_new(const char *parent,
-                          Eet_Node *  child)
+                          Eet_Node   *child)
 {
    Eet_Node *n;
 
@@ -230,9 +230,9 @@ eet_node_struct_child_new(const char *parent,
 } /* eet_node_struct_child_new */
 
 void
-eet_node_list_append(Eet_Node *  parent,
+eet_node_list_append(Eet_Node   *parent,
                      const char *name,
-                     Eet_Node *  child)
+                     Eet_Node   *child)
 {
    const char *tmp;
    Eet_Node *nn;
@@ -271,9 +271,9 @@ eet_node_list_append(Eet_Node *  parent,
 } /* eet_node_list_append */
 
 void
-eet_node_struct_append(Eet_Node *  parent,
+eet_node_struct_append(Eet_Node   *parent,
                        const char *name,
-                       Eet_Node *  child)
+                       Eet_Node   *child)
 {
    const char *tmp;
    Eet_Node *prev;
@@ -319,10 +319,10 @@ eet_node_struct_append(Eet_Node *  parent,
 } /* eet_node_struct_append */
 
 void
-eet_node_hash_add(Eet_Node *  parent,
+eet_node_hash_add(Eet_Node   *parent,
                   const char *name,
                   const char *key,
-                  Eet_Node *  child)
+                  Eet_Node   *child)
 {
    Eet_Node *nn;
 
@@ -634,11 +634,11 @@ eet_node_dump(Eet_Node *n,
 } /* eet_node_dump */
 
 void *
-eet_node_walk(void *         parent,
-              const char *   name,
-              Eet_Node *     root,
+eet_node_walk(void          *parent,
+              const char    *name,
+              Eet_Node      *root,
               Eet_Node_Walk *cb,
-              void *         user_data)
+              void          *user_data)
 {
    Eet_Node *it;
    void *me = NULL;

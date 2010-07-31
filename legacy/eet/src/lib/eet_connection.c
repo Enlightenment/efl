@@ -50,21 +50,21 @@ struct _Eet_Message
 
 struct _Eet_Connection
 {
-   Eet_Read_Cb * eet_read_cb;
+   Eet_Read_Cb  *eet_read_cb;
    Eet_Write_Cb *eet_write_cb;
-   void *        user_data;
+   void         *user_data;
 
    size_t        allocated;
    size_t        size;
    size_t        received;
 
-   void *        buffer;
+   void         *buffer;
 };
 
 EAPI Eet_Connection *
-eet_connection_new(Eet_Read_Cb * eet_read_cb,
+eet_connection_new(Eet_Read_Cb  *eet_read_cb,
                    Eet_Write_Cb *eet_write_cb,
-                   const void *  user_data)
+                   const void   *user_data)
 {
    Eet_Connection *conn;
 
@@ -84,7 +84,7 @@ eet_connection_new(Eet_Read_Cb * eet_read_cb,
 
 EAPI int
 eet_connection_received(Eet_Connection *conn,
-                        const void *    data,
+                        const void     *data,
                         size_t          size)
 {
    if ((!conn) || (!data) || (!size))
@@ -173,7 +173,7 @@ eet_connection_received(Eet_Connection *conn,
 
 static Eina_Bool
 _eet_connection_raw_send(Eet_Connection *conn,
-                         void *          data,
+                         void           *data,
                          int             data_size)
 {
    Eet_Message *message;
@@ -195,10 +195,10 @@ _eet_connection_raw_send(Eet_Connection *conn,
 } /* _eet_connection_raw_send */
 
 EAPI Eina_Bool
-eet_connection_send(Eet_Connection *     conn,
+eet_connection_send(Eet_Connection      *conn,
                     Eet_Data_Descriptor *edd,
-                    const void *         data_in,
-                    const char *         cipher_key)
+                    const void          *data_in,
+                    const char          *cipher_key)
 {
    void *flat_data;
    int data_size;
@@ -220,8 +220,8 @@ eet_connection_send(Eet_Connection *     conn,
 
 EAPI Eina_Bool
 eet_connection_node_send(Eet_Connection *conn,
-                         Eet_Node *      node,
-                         const char *    cipher_key)
+                         Eet_Node       *node,
+                         const char     *cipher_key)
 {
    void *data;
    int data_size;
@@ -240,7 +240,7 @@ eet_connection_node_send(Eet_Connection *conn,
 
 EAPI void *
 eet_connection_close(Eet_Connection *conn,
-                     Eina_Bool *     on_going)
+                     Eina_Bool      *on_going)
 {
    void *user_data;
 
