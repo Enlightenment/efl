@@ -365,9 +365,9 @@ output(void)
 static int
 compiler_cmd_is_sane()
 {
-   char *c = edje_file->compiler, *ptr;
+   const char *c = edje_file->compiler, *ptr;
 
-   if (!c || !*c)
+   if ((!c) || (!*c))
      {
 	return 0;
      }
@@ -375,7 +375,7 @@ compiler_cmd_is_sane()
    for (ptr = c; ptr && *ptr; ptr++)
      {
 	/* only allow [a-z][A-Z][0-9]_- */
-	if (!isalnum(*ptr) && *ptr != '_' && *ptr != '-')
+	if ((!isalnum(*ptr)) && (*ptr != '_') && (*ptr != '-'))
 	  {
 	     return 0;
 	  }
