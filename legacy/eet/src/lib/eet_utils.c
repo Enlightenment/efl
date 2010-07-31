@@ -13,13 +13,13 @@
 #include "Eet_private.h"
 
 int
-_eet_hash_gen(const char * key,
-              int          hash_size)
+_eet_hash_gen(const char *key,
+              int         hash_size)
 {
    int hash_num = 0;
    int value, i;
    int mask;
-   unsigned char * ptr;
+   unsigned char *ptr;
 
    /* no string - index 0 */
    if (!key)

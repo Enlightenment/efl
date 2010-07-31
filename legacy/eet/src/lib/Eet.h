@@ -76,7 +76,7 @@ typedef struct _Eet_Version
    int revision; /** < svn revision (0 if a proper rlease or the svn revsion number Eet is built from) */
 } Eet_Version;
 
-EAPI extern Eet_Version * eet_version;
+EAPI extern Eet_Version *eet_version;
 
 /**
  * @defgroup Eet_Group Top level functions
@@ -272,8 +272,8 @@ EAPI Eet_File *          eet_open(const char *  file,
  * @since 1.1.0
  * @ingroup Eet_File_Group
  */
-EAPI Eet_File *          eet_memopen_read(const void * data,
-                                          size_t       size);
+EAPI Eet_File *          eet_memopen_read(const void *data,
+                                          size_t      size);
 
 /**
  * Get the mode an Eet_File was opened with.
@@ -283,7 +283,7 @@ EAPI Eet_File *          eet_memopen_read(const void * data,
  * @since 1.0.0
  * @ingroup Eet_File_Group
  */
-EAPI Eet_File_Mode       eet_mode_get(Eet_File * ef);
+EAPI Eet_File_Mode       eet_mode_get(Eet_File *ef);
 
 /**
  * Close an eet file handle and flush and writes pending.
@@ -298,7 +298,7 @@ EAPI Eet_File_Mode       eet_mode_get(Eet_File * ef);
  * @since 1.0.0
  * @ingroup Eet_File_Group
  */
-EAPI Eet_Error           eet_close(Eet_File * ef);
+EAPI Eet_Error           eet_close(Eet_File *ef);
 
 /**
  * Sync content of an eet file handle, flushing pending writes.
@@ -312,7 +312,7 @@ EAPI Eet_Error           eet_close(Eet_File * ef);
  * @since 1.2.4
  * @ingroup Eet_File_Group
  */
-EAPI Eet_Error           eet_sync(Eet_File * ef);
+EAPI Eet_Error           eet_sync(Eet_File *ef);
 
 /**
  * Return a handle to the shared string dictionary of the Eet file
@@ -330,7 +330,7 @@ EAPI Eet_Error           eet_sync(Eet_File * ef);
  * @since 1.0.0
  * @ingroup Eet_File_Group
  */
-EAPI Eet_Dictionary *    eet_dictionary_get(Eet_File * ef);
+EAPI Eet_Dictionary *    eet_dictionary_get(Eet_File *ef);
 
 /**
  * Check if a given string comes from a given dictionary
@@ -346,8 +346,8 @@ EAPI Eet_Dictionary *    eet_dictionary_get(Eet_File * ef);
  * @since 1.0.0
  * @ingroup Eet_File_Group
  */
-EAPI int                 eet_dictionary_string_check(Eet_Dictionary * ed,
-                                                     const char *     string);
+EAPI int                 eet_dictionary_string_check(Eet_Dictionary *ed,
+                                                     const char *    string);
 
 /**
  * Read a specified entry from an eet file and return data
@@ -371,9 +371,9 @@ EAPI int                 eet_dictionary_string_check(Eet_Dictionary * ed,
  * @since 1.0.0
  * @ingroup Eet_File_Group
  */
-EAPI void *              eet_read(Eet_File *   ef,
-                                  const char * name,
-                                  int *        size_ret);
+EAPI void *              eet_read(Eet_File *  ef,
+                                  const char *name,
+                                  int *       size_ret);
 
 /**
  * Read a specified entry from an eet file and return data
@@ -395,9 +395,9 @@ EAPI void *              eet_read(Eet_File *   ef,
  * @since 1.0.0
  * @ingroup Eet_File_Group
  */
-EAPI const void *        eet_read_direct(Eet_File *   ef,
-                                         const char * name,
-                                         int *        size_ret);
+EAPI const void *        eet_read_direct(Eet_File *  ef,
+                                         const char *name,
+                                         int *       size_ret);
 
 /**
  * Write a specified entry to an eet file handle
@@ -427,11 +427,11 @@ EAPI const void *        eet_read_direct(Eet_File *   ef,
  * @since 1.0.0
  * @ingroup Eet_File_Group
  */
-EAPI int                 eet_write(Eet_File *   ef,
-                                   const char * name,
-                                   const void * data,
-                                   int          size,
-                                   int          compress);
+EAPI int                 eet_write(Eet_File *  ef,
+                                   const char *name,
+                                   const void *data,
+                                   int         size,
+                                   int         compress);
 
 /**
  * Delete a specified entry from an Eet file being written or re-written
@@ -451,8 +451,8 @@ EAPI int                 eet_write(Eet_File *   ef,
  * @since 1.0.0
  * @ingroup Eet_File_Group
  */
-EAPI int            eet_delete(Eet_File *   ef,
-                               const char * name);
+EAPI int            eet_delete(Eet_File *  ef,
+                               const char *name);
 
 /**
  * Alias a specific section to another one. Destination may exist or not,
@@ -468,10 +468,10 @@ EAPI int            eet_delete(Eet_File *   ef,
  * @since 1.3.3
  * @ingroup Eet_File_Group
  */
-EAPI Eina_Bool      eet_alias(Eet_File *   ef,
-                              const char * name,
-                              const char * destination,
-                              int          compress);
+EAPI Eina_Bool      eet_alias(Eet_File *  ef,
+                              const char *name,
+                              const char *destination,
+                              int         compress);
 
 /**
  * List all entries in eet file matching shell glob.
@@ -503,9 +503,9 @@ EAPI Eina_Bool      eet_alias(Eet_File *   ef,
  * @since 1.0.0
  * @ingroup Eet_File_Group
  */
-EAPI char **        eet_list(Eet_File *   ef,
-                             const char * glob,
-                             int *        count_ret);
+EAPI char **        eet_list(Eet_File *  ef,
+                             const char *glob,
+                             int *       count_ret);
 
 /**
  * Return the number of entries in the specified eet file.
@@ -516,7 +516,7 @@ EAPI char **        eet_list(Eet_File *   ef,
  * @since 1.0.0
  * @ingroup Eet_File_Group
  */
-EAPI int            eet_num_entries(Eet_File * ef);
+EAPI int            eet_num_entries(Eet_File *ef);
 
 /**
  * @defgroup Eet_File_Cipher_Group Eet File Ciphered Main Functions
@@ -552,10 +552,10 @@ EAPI int            eet_num_entries(Eet_File * ef);
  * @since 1.0.0
  * @ingroup Eet_File_Cipher_Group
  */
-EAPI void *         eet_read_cipher(Eet_File *   ef,
-                                    const char * name,
-                                    int *        size_ret,
-                                    const char * cipher_key);
+EAPI void *         eet_read_cipher(Eet_File *  ef,
+                                    const char *name,
+                                    int *       size_ret,
+                                    const char *cipher_key);
 
 /**
  * Write a specified entry to an eet file handle using a cipher.
@@ -586,12 +586,12 @@ EAPI void *         eet_read_cipher(Eet_File *   ef,
  * @since 1.0.0
  * @ingroup Eet_File_Cipher_Group
  */
-EAPI int            eet_write_cipher(Eet_File *   ef,
-                                     const char * name,
-                                     const void * data,
-                                     int          size,
-                                     int          compress,
-                                     const char * cipher_key);
+EAPI int            eet_write_cipher(Eet_File *  ef,
+                                     const char *name,
+                                     const void *data,
+                                     int         size,
+                                     int         compress,
+                                     const char *cipher_key);
 
 /**
  * @defgroup Eet_File_Image_Group Image Store and Load
@@ -636,14 +636,14 @@ EAPI int            eet_write_cipher(Eet_File *   ef,
  * @since 1.0.0
  * @ingroup Eet_File_Image_Group
  */
-EAPI int      eet_data_image_header_read(Eet_File *     ef,
-                                         const char *   name,
-                                         unsigned int * w,
-                                         unsigned int * h,
-                                         int *          alpha,
-                                         int *          compress,
-                                         int *          quality,
-                                         int *          lossy);
+EAPI int      eet_data_image_header_read(Eet_File *    ef,
+                                         const char *  name,
+                                         unsigned int *w,
+                                         unsigned int *h,
+                                         int *         alpha,
+                                         int *         compress,
+                                         int *         quality,
+                                         int *         lossy);
 
 /**
  * Read image data from the named key in the eet file.
@@ -683,14 +683,14 @@ EAPI int      eet_data_image_header_read(Eet_File *     ef,
  * @since 1.0.0
  * @ingroup Eet_File_Image_Group
  */
-EAPI void *    eet_data_image_read(Eet_File *     ef,
-                                   const char *   name,
-                                   unsigned int * w,
-                                   unsigned int * h,
-                                   int *          alpha,
-                                   int *          compress,
-                                   int *          quality,
-                                   int *          lossy);
+EAPI void *    eet_data_image_read(Eet_File *    ef,
+                                   const char *  name,
+                                   unsigned int *w,
+                                   unsigned int *h,
+                                   int *         alpha,
+                                   int *         compress,
+                                   int *         quality,
+                                   int *         lossy);
 
 /**
  * Read image data from the named key in the eet file.
@@ -732,18 +732,18 @@ EAPI void *    eet_data_image_read(Eet_File *     ef,
  * @since 1.0.2
  * @ingroup Eet_File_Image_Group
  */
-EAPI int      eet_data_image_read_to_surface(Eet_File *     ef,
-                                             const char *   name,
-                                             unsigned int   src_x,
-                                             unsigned int   src_y,
-                                             unsigned int * d,
-                                             unsigned int   w,
-                                             unsigned int   h,
-                                             unsigned int   row_stride,
-                                             int *          alpha,
-                                             int *          compress,
-                                             int *          quality,
-                                             int *          lossy);
+EAPI int      eet_data_image_read_to_surface(Eet_File *    ef,
+                                             const char *  name,
+                                             unsigned int  src_x,
+                                             unsigned int  src_y,
+                                             unsigned int *d,
+                                             unsigned int  w,
+                                             unsigned int  h,
+                                             unsigned int  row_stride,
+                                             int *         alpha,
+                                             int *         compress,
+                                             int *         quality,
+                                             int *         lossy);
 
 /**
  * Write image data to the named key in an eet file.
@@ -826,14 +826,14 @@ EAPI int      eet_data_image_write(Eet_File *   ef,
  * @since 1.0.0
  * @ingroup Eet_File_Image_Group
  */
-EAPI int      eet_data_image_header_decode(const void *   data,
-                                           int            size,
-                                           unsigned int * w,
-                                           unsigned int * h,
-                                           int *          alpha,
-                                           int *          compress,
-                                           int *          quality,
-                                           int *          lossy);
+EAPI int      eet_data_image_header_decode(const void *  data,
+                                           int           size,
+                                           unsigned int *w,
+                                           unsigned int *h,
+                                           int *         alpha,
+                                           int *         compress,
+                                           int *         quality,
+                                           int *         lossy);
 
 /**
  * Decode Image data into pixel data.
@@ -873,14 +873,14 @@ EAPI int      eet_data_image_header_decode(const void *   data,
  * @since 1.0.0
  * @ingroup Eet_File_Image_Group
  */
-EAPI void *    eet_data_image_decode(const void *   data,
-                                     int            size,
-                                     unsigned int * w,
-                                     unsigned int * h,
-                                     int *          alpha,
-                                     int *          compress,
-                                     int *          quality,
-                                     int *          lossy);
+EAPI void *    eet_data_image_decode(const void *  data,
+                                     int           size,
+                                     unsigned int *w,
+                                     unsigned int *h,
+                                     int *         alpha,
+                                     int *         compress,
+                                     int *         quality,
+                                     int *         lossy);
 
 /**
  * Decode Image data into pixel data.
@@ -922,18 +922,18 @@ EAPI void *    eet_data_image_decode(const void *   data,
  * @since 1.0.2
  * @ingroup Eet_File_Image_Group
  */
-EAPI int      eet_data_image_decode_to_surface(const void *   data,
-                                               int            size,
-                                               unsigned int   src_x,
-                                               unsigned int   src_y,
-                                               unsigned int * d,
-                                               unsigned int   w,
-                                               unsigned int   h,
-                                               unsigned int   row_stride,
-                                               int *          alpha,
-                                               int *          compress,
-                                               int *          quality,
-                                               int *          lossy);
+EAPI int      eet_data_image_decode_to_surface(const void *  data,
+                                               int           size,
+                                               unsigned int  src_x,
+                                               unsigned int  src_y,
+                                               unsigned int *d,
+                                               unsigned int  w,
+                                               unsigned int  h,
+                                               unsigned int  row_stride,
+                                               int *         alpha,
+                                               int *         compress,
+                                               int *         quality,
+                                               int *         lossy);
 
 /**
  * Encode image data for storage or transmission.
@@ -1026,15 +1026,15 @@ EAPI void *    eet_data_image_encode(const void * data,
  * @since 1.0.0
  * @ingroup Eet_File_Image_Cipher_Group
  */
-EAPI int      eet_data_image_header_read_cipher(Eet_File *     ef,
-                                                const char *   name,
-                                                const char *   cipher_key,
-                                                unsigned int * w,
-                                                unsigned int * h,
-                                                int *          alpha,
-                                                int *          compress,
-                                                int *          quality,
-                                                int *          lossy);
+EAPI int      eet_data_image_header_read_cipher(Eet_File *    ef,
+                                                const char *  name,
+                                                const char *  cipher_key,
+                                                unsigned int *w,
+                                                unsigned int *h,
+                                                int *         alpha,
+                                                int *         compress,
+                                                int *         quality,
+                                                int *         lossy);
 
 /**
  * Read image data from the named key in the eet file using a cipher.
@@ -1075,15 +1075,15 @@ EAPI int      eet_data_image_header_read_cipher(Eet_File *     ef,
  * @since 1.0.0
  * @ingroup Eet_File_Image_Cipher_Group
  */
-EAPI void *    eet_data_image_read_cipher(Eet_File *     ef,
-                                          const char *   name,
-                                          const char *   cipher_key,
-                                          unsigned int * w,
-                                          unsigned int * h,
-                                          int *          alpha,
-                                          int *          compress,
-                                          int *          quality,
-                                          int *          lossy);
+EAPI void *    eet_data_image_read_cipher(Eet_File *    ef,
+                                          const char *  name,
+                                          const char *  cipher_key,
+                                          unsigned int *w,
+                                          unsigned int *h,
+                                          int *         alpha,
+                                          int *         compress,
+                                          int *         quality,
+                                          int *         lossy);
 
 /**
  * Read image data from the named key in the eet file using a cipher.
@@ -1126,19 +1126,19 @@ EAPI void *    eet_data_image_read_cipher(Eet_File *     ef,
  * @since 1.0.2
  * @ingroup Eet_File_Image_Cipher_Group
  */
-EAPI int      eet_data_image_read_to_surface_cipher(Eet_File *     ef,
-                                                    const char *   name,
-                                                    const char *   cipher_key,
-                                                    unsigned int   src_x,
-                                                    unsigned int   src_y,
-                                                    unsigned int * d,
-                                                    unsigned int   w,
-                                                    unsigned int   h,
-                                                    unsigned int   row_stride,
-                                                    int *          alpha,
-                                                    int *          compress,
-                                                    int *          quality,
-                                                    int *          lossy);
+EAPI int      eet_data_image_read_to_surface_cipher(Eet_File *    ef,
+                                                    const char *  name,
+                                                    const char *  cipher_key,
+                                                    unsigned int  src_x,
+                                                    unsigned int  src_y,
+                                                    unsigned int *d,
+                                                    unsigned int  w,
+                                                    unsigned int  h,
+                                                    unsigned int  row_stride,
+                                                    int *         alpha,
+                                                    int *         compress,
+                                                    int *         quality,
+                                                    int *         lossy);
 
 /**
  * Write image data to the named key in an eet file using a cipher.
@@ -1224,15 +1224,15 @@ EAPI int      eet_data_image_write_cipher(Eet_File *   ef,
  * @since 1.0.0
  * @ingroup Eet_File_Image_Cipher_Group
  */
-EAPI int      eet_data_image_header_decode_cipher(const void *   data,
-                                                  const char *   cipher_key,
-                                                  int            size,
-                                                  unsigned int * w,
-                                                  unsigned int * h,
-                                                  int *          alpha,
-                                                  int *          compress,
-                                                  int *          quality,
-                                                  int *          lossy);
+EAPI int      eet_data_image_header_decode_cipher(const void *  data,
+                                                  const char *  cipher_key,
+                                                  int           size,
+                                                  unsigned int *w,
+                                                  unsigned int *h,
+                                                  int *         alpha,
+                                                  int *         compress,
+                                                  int *         quality,
+                                                  int *         lossy);
 
 /**
  * Decode Image data into pixel data using a cipher.
@@ -1273,15 +1273,15 @@ EAPI int      eet_data_image_header_decode_cipher(const void *   data,
  * @since 1.0.0
  * @ingroup Eet_File_Image_Cipher_Group
  */
-EAPI void *    eet_data_image_decode_cipher(const void *   data,
-                                            const char *   cipher_key,
-                                            int            size,
-                                            unsigned int * w,
-                                            unsigned int * h,
-                                            int *          alpha,
-                                            int *          compress,
-                                            int *          quality,
-                                            int *          lossy);
+EAPI void *    eet_data_image_decode_cipher(const void *  data,
+                                            const char *  cipher_key,
+                                            int           size,
+                                            unsigned int *w,
+                                            unsigned int *h,
+                                            int *         alpha,
+                                            int *         compress,
+                                            int *         quality,
+                                            int *         lossy);
 
 /**
  * Decode Image data into pixel data using a cipher.
@@ -1324,19 +1324,19 @@ EAPI void *    eet_data_image_decode_cipher(const void *   data,
  * @since 1.0.2
  * @ingroup Eet_File_Image_Cipher_Group
  */
-EAPI int      eet_data_image_decode_to_surface_cipher(const void *   data,
-                                                      const char *   cipher_key,
-                                                      int            size,
-                                                      unsigned int   src_x,
-                                                      unsigned int   src_y,
-                                                      unsigned int * d,
-                                                      unsigned int   w,
-                                                      unsigned int   h,
-                                                      unsigned int   row_stride,
-                                                      int *          alpha,
-                                                      int *          compress,
-                                                      int *          quality,
-                                                      int *          lossy);
+EAPI int      eet_data_image_decode_to_surface_cipher(const void *  data,
+                                                      const char *  cipher_key,
+                                                      int           size,
+                                                      unsigned int  src_x,
+                                                      unsigned int  src_y,
+                                                      unsigned int *d,
+                                                      unsigned int  w,
+                                                      unsigned int  h,
+                                                      unsigned int  row_stride,
+                                                      int *         alpha,
+                                                      int *         compress,
+                                                      int *         quality,
+                                                      int *         lossy);
 
 /**
  * Encode image data for storage or transmission using a cipher.
@@ -1419,7 +1419,7 @@ typedef struct _Eet_Key   Eet_Key;
  * @since 1.2.0
  * @ingroup Eet_Cipher_Group
  */
-typedef int (*            Eet_Key_Password_Callback)(char * buffer, int size, int rwflag, void * data);
+typedef int (*            Eet_Key_Password_Callback)(char *buffer, int size, int rwflag, void *data);
 
 /**
  * Create an Eet_Key needed for signing an eet file.
@@ -1452,7 +1452,7 @@ EAPI Eet_Key *       eet_identity_open(const char *              certificate_fil
  * @since 1.2.0
  * @ingroup Eet_Cipher_Group
  */
-EAPI void            eet_identity_close(Eet_Key * key);
+EAPI void            eet_identity_close(Eet_Key *key);
 
 /**
  * Set a key to sign a file
@@ -1465,8 +1465,8 @@ EAPI void            eet_identity_close(Eet_Key * key);
  * @since 1.2.0
  * @ingroup Eet_Cipher_Group
  */
-EAPI Eet_Error       eet_identity_set(Eet_File * ef,
-                                      Eet_Key *  key);
+EAPI Eet_Error       eet_identity_set(Eet_File *ef,
+                                      Eet_Key * key);
 
 /**
  * Display both private and public key of an Eet_Key.
@@ -1477,8 +1477,8 @@ EAPI Eet_Error       eet_identity_set(Eet_File * ef,
  * @since 1.2.0
  * @ingroup Eet_Cipher_Group
  */
-EAPI void            eet_identity_print(Eet_Key * key,
-                                        FILE *    out);
+EAPI void            eet_identity_print(Eet_Key *key,
+                                        FILE *   out);
 
 /**
  * Get the x509 der certificate associated with an Eet_File. Will return NULL
@@ -1491,8 +1491,8 @@ EAPI void            eet_identity_print(Eet_Key * key,
  * @since 1.2.0
  * @ingroup Eet_Cipher_Group
  */
-EAPI const void *    eet_identity_x509(Eet_File * ef,
-                                       int *      der_length);
+EAPI const void *    eet_identity_x509(Eet_File *ef,
+                                       int *     der_length);
 
 /**
  * Get the raw signature associated with an Eet_File. Will return NULL
@@ -1504,8 +1504,8 @@ EAPI const void *    eet_identity_x509(Eet_File * ef,
  *
  * @ingroup Eet_Cipher_Group
  */
-EAPI const void *    eet_identity_signature(Eet_File * ef,
-                                            int *      signature_length);
+EAPI const void *    eet_identity_signature(Eet_File *ef,
+                                            int *     signature_length);
 
 /**
  * Get the SHA1 associated with a file. Could be the one used to
@@ -1519,8 +1519,8 @@ EAPI const void *    eet_identity_signature(Eet_File * ef,
  * @since 1.2.0
  * @ingroup Eet_Cipher_Group
  */
-EAPI const void *    eet_identity_sha1(Eet_File * ef,
-                                       int *      sha1_length);
+EAPI const void *    eet_identity_sha1(Eet_File *ef,
+                                       int *     sha1_length);
 
 /**
  * Display the x509 der certificate to out.
@@ -1532,9 +1532,9 @@ EAPI const void *    eet_identity_sha1(Eet_File * ef,
  * @since 1.2.0
  * @ingroup Eet_Cipher_Group
  */
-EAPI void            eet_identity_certificate_print(const unsigned char * certificate,
-                                                    int                   der_length,
-                                                    FILE *                out);
+EAPI void            eet_identity_certificate_print(const unsigned char *certificate,
+                                                    int                  der_length,
+                                                    FILE *               out);
 
 /**
  * @defgroup Eet_Data_Group Eet Data Serialization
@@ -1758,26 +1758,26 @@ typedef struct _Eet_Data_Descriptor_Class   Eet_Data_Descriptor_Class;
  */
 struct _Eet_Data_Descriptor_Class
 {
-   int          version; /**< ABI version as #EET_DATA_DESCRIPTOR_CLASS_VERSION */
-   const char * name; /**< Name of data type to be serialized */
-   int          size; /**< Size in bytes of data type to be serialized */
+   int         version;  /**< ABI version as #EET_DATA_DESCRIPTOR_CLASS_VERSION */
+   const char *name;  /**< Name of data type to be serialized */
+   int         size;  /**< Size in bytes of data type to be serialized */
    struct
    {
-      void *      (* mem_alloc)(size_t size); /**< how to allocate memory (usually malloc()) */
-      void        (* mem_free)(void * mem); /**< how to free memory (usually free()) */
-      char *      (* str_alloc)(const char * str); /**< how to allocate a string */
-      void        (* str_free)(const char * str); /**< how to free a string */
-      void *      (* list_next)(void * l); /**< how to iterate to the next element of a list. Receives and should return the list node. */
-      void *      (* list_append)(void * l, void * d); /**< how to append data @p d to list which head node is @p l */
-      void *      (* list_data)(void * l); /**< retrieves the data from node @p l */
-      void *      (* list_free)(void * l); /**< free all the nodes from the list which head node is @p l */
-      void        (* hash_foreach)(void * h, int (* func)(void * h, const char * k, void * dt, void * fdt), void * fdt); /**< iterates over all elements in the hash @p h in no specific order */
-      void *      (* hash_add)(void * h, const char * k, void * d); /**< add a new data @p d as key @p k in hash @p h */
-      void        (* hash_free)(void * h); /**< free all entries from the hash @p h */
-      char *      (* str_direct_alloc)(const char * str); /**< how to allocate a string directly from file backed/mmaped region pointed by @p str */
-      void        (* str_direct_free)(const char * str); /**< how to free a string returned by str_direct_alloc */
-      const char *(* type_get)(const void * data, Eina_Bool * unknow); /**< convert any kind of data type to a name that define an Eet_Data_Element. */
-      Eina_Bool   (* type_set)(const char * type, void * data, Eina_Bool unknow); /**< set the type at a particular adress */
+      void *      (*mem_alloc)(size_t size);  /**< how to allocate memory (usually malloc()) */
+      void        (*mem_free)(void *mem);   /**< how to free memory (usually free()) */
+      char *      (*str_alloc)(const char *str);   /**< how to allocate a string */
+      void        (*str_free)(const char *str);   /**< how to free a string */
+      void *      (*list_next)(void *l);   /**< how to iterate to the next element of a list. Receives and should return the list node. */
+      void *      (*list_append)(void *l, void *d);    /**< how to append data @p d to list which head node is @p l */
+      void *      (*list_data)(void *l);   /**< retrieves the data from node @p l */
+      void *      (*list_free)(void *l);   /**< free all the nodes from the list which head node is @p l */
+      void        (*hash_foreach)(void *h, int (*func)(void *h, const char *k, void *dt, void *fdt), void *fdt); /**< iterates over all elements in the hash @p h in no specific order */
+      void *      (*hash_add)(void *h, const char *k, void *d);     /**< add a new data @p d as key @p k in hash @p h */
+      void        (*hash_free)(void *h);   /**< free all entries from the hash @p h */
+      char *      (*str_direct_alloc)(const char *str);   /**< how to allocate a string directly from file backed/mmaped region pointed by @p str */
+      void        (*str_direct_free)(const char *str);   /**< how to free a string returned by str_direct_alloc */
+      const char *(*type_get)(const void *data, Eina_Bool *unknow);    /**< convert any kind of data type to a name that define an Eet_Data_Element. */
+      Eina_Bool   (*type_set)(const char *type, void *data, Eina_Bool unknow);    /**< set the type at a particular adress */
    } func;
 };
 
@@ -1823,26 +1823,26 @@ struct _Eet_Data_Descriptor_Class
  * @deprecated use eet_data_descriptor_stream_new() or
  *             eet_data_descriptor_file_new()
  */
-EINA_DEPRECATED EAPI Eet_Data_Descriptor *    eet_data_descriptor_new(const char * name,
+EINA_DEPRECATED EAPI Eet_Data_Descriptor *    eet_data_descriptor_new(const char *name,
                                                                       int size,
-                                                                      void *(*func_list_next)(void * l),
-                                                                      void *(*func_list_append)(void * l, void * d),
-                                                                      void *(*func_list_data)(void * l),
-                                                                      void *(*func_list_free)(void * l),
-                                                                      void (* func_hash_foreach)(void * h, int (* func)(void *       h,
-                                                                                                                        const char * k,
-                                                                                                                        void *       dt,
-                                                                                                                        void *       fdt), void * fdt),
-                                                                      void *(*func_hash_add)(void * h, const char * k, void * d),
-                                                                      void (* func_hash_free)(void * h));
+                                                                      void *(*func_list_next)(void *l),
+                                                                      void *(*func_list_append)(void *l, void *d),
+                                                                      void *(*func_list_data)(void *l),
+                                                                      void *(*func_list_free)(void *l),
+                                                                      void (*func_hash_foreach)(void *h, int (*func)(void *      h,
+                                                                                                                     const char *k,
+                                                                                                                     void *      dt,
+                                                                                                                     void *      fdt), void *fdt),
+                                                                      void *(*func_hash_add)(void *h, const char *k, void *d),
+                                                                      void (*func_hash_free)(void *h));
 /*
  * FIXME:
  *
  * moving to this api from the old above. this will break things when the
  * move happens - but be warned
  */
-EINA_DEPRECATED EAPI Eet_Data_Descriptor *    eet_data_descriptor2_new(const Eet_Data_Descriptor_Class * eddc);
-EINA_DEPRECATED EAPI Eet_Data_Descriptor *    eet_data_descriptor3_new(const Eet_Data_Descriptor_Class * eddc);
+EINA_DEPRECATED EAPI Eet_Data_Descriptor *    eet_data_descriptor2_new(const Eet_Data_Descriptor_Class *eddc);
+EINA_DEPRECATED EAPI Eet_Data_Descriptor *    eet_data_descriptor3_new(const Eet_Data_Descriptor_Class *eddc);
 
 /**
  * This function creates a new data descriptore and returns a handle to the
@@ -1868,7 +1868,7 @@ EINA_DEPRECATED EAPI Eet_Data_Descriptor *    eet_data_descriptor3_new(const Eet
  * @since 1.2.3
  * @ingroup Eet_Data_Group
  */
-EAPI Eet_Data_Descriptor *                    eet_data_descriptor_stream_new(const Eet_Data_Descriptor_Class * eddc);
+EAPI Eet_Data_Descriptor *                    eet_data_descriptor_stream_new(const Eet_Data_Descriptor_Class *eddc);
 
 /**
  * This function creates a new data descriptore and returns a handle to the
@@ -1897,7 +1897,7 @@ EAPI Eet_Data_Descriptor *                    eet_data_descriptor_stream_new(con
  * @since 1.2.3
  * @ingroup Eet_Data_Group
  */
-EAPI Eet_Data_Descriptor *                    eet_data_descriptor_file_new(const Eet_Data_Descriptor_Class * eddc);
+EAPI Eet_Data_Descriptor *                    eet_data_descriptor_file_new(const Eet_Data_Descriptor_Class *eddc);
 
 /**
  * This function is an helper that set all the parameter of an
@@ -1913,9 +1913,9 @@ EAPI Eet_Data_Descriptor *                    eet_data_descriptor_file_new(const
  * @since 1.2.3
  * @ingroup Eet_Data_Group
  */
-EAPI Eina_Bool                                eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class * eddc,
-                                                                                        const char *                name,
-                                                                                        int                         size);
+EAPI Eina_Bool                                eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
+                                                                                        const char *               name,
+                                                                                        int                        size);
 
 /**
  * This macro is an helper that set all the parameter of an
@@ -1947,9 +1947,9 @@ EAPI Eina_Bool                                eet_eina_stream_data_descriptor_cl
  * @since 1.2.3
  * @ingroup Eet_Data_Group
  */
-EAPI Eina_Bool      eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class * eddc,
-                                                            const char *                name,
-                                                            int                         size);
+EAPI Eina_Bool      eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
+                                                            const char *               name,
+                                                            int                        size);
 
 /**
  * This macro is an helper that set all the parameter of an
@@ -1978,7 +1978,7 @@ EAPI Eina_Bool      eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_
  * @since 1.0.0
  * @ingroup Eet_Data_Group
  */
-EAPI void      eet_data_descriptor_free(Eet_Data_Descriptor * edd);
+EAPI void      eet_data_descriptor_free(Eet_Data_Descriptor *edd);
 
 /**
  * This function is an internal used by macros.
@@ -2006,15 +2006,15 @@ EAPI void      eet_data_descriptor_free(Eet_Data_Descriptor * edd);
  * @since 1.0.0
  * @ingroup Eet_Data_Group
  */
-EAPI void      eet_data_descriptor_element_add(Eet_Data_Descriptor * edd,
-                                               const char *          name,
-                                               int                   type,
-                                               int                   group_type,
-                                               int                   offset,
+EAPI void      eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
+                                               const char *         name,
+                                               int                  type,
+                                               int                  group_type,
+                                               int                  offset,
      /* int count_offset, */
-                                               int                   count,
-                                               const char *          counter_name,
-                                               Eet_Data_Descriptor * subtype);
+                                               int                  count,
+                                               const char *         counter_name,
+                                               Eet_Data_Descriptor *subtype);
 
 /**
  * Read a data structure from an eet file and decodes it.
@@ -2043,9 +2043,9 @@ EAPI void      eet_data_descriptor_element_add(Eet_Data_Descriptor * edd,
  * @since 1.0.0
  * @ingroup Eet_Data_Group
  */
-EAPI void *    eet_data_read(Eet_File *            ef,
-                             Eet_Data_Descriptor * edd,
-                             const char *          name);
+EAPI void *    eet_data_read(Eet_File *           ef,
+                             Eet_Data_Descriptor *edd,
+                             const char *         name);
 
 /**
  * Write a data structure from memory and store in an eet file.
@@ -2064,11 +2064,11 @@ EAPI void *    eet_data_read(Eet_File *            ef,
  * @since 1.0.0
  * @ingroup Eet_Data_Group
  */
-EAPI int       eet_data_write(Eet_File *            ef,
-                              Eet_Data_Descriptor * edd,
-                              const char *          name,
-                              const void *          data,
-                              int                   compress);
+EAPI int       eet_data_write(Eet_File *           ef,
+                              Eet_Data_Descriptor *edd,
+                              const char *         name,
+                              const void *         data,
+                              int                  compress);
 
 /**
  * Dump an eet encoded data structure into ascii text
@@ -2117,10 +2117,10 @@ EAPI int       eet_data_write(Eet_File *            ef,
  * @since 1.0.0
  * @ingroup Eet_Data_Group
  */
-EAPI int       eet_data_text_dump(const void * data_in,
+EAPI int       eet_data_text_dump(const void *data_in,
                                   int size_in,
-                                  void (* dumpfunc)(void * data, const char * str),
-                                  void * dumpdata);
+                                  void (*dumpfunc)(void *data, const char *str),
+                                  void *dumpdata);
 
 /**
  * Take an ascii encoding from eet_data_text_dump() and re-encode in binary.
@@ -2141,9 +2141,9 @@ EAPI int       eet_data_text_dump(const void * data_in,
  * @since 1.0.0
  * @ingroup Eet_Data_Group
  */
-EAPI void *    eet_data_text_undump(const char * text,
-                                    int          textlen,
-                                    int *        size_ret);
+EAPI void *    eet_data_text_undump(const char *text,
+                                    int         textlen,
+                                    int *       size_ret);
 
 /**
  * Dump an eet encoded data structure from an eet file into ascii text
@@ -2168,10 +2168,10 @@ EAPI void *    eet_data_text_undump(const char * text,
  * @since 1.0.0
  * @ingroup Eet_Data_Group
  */
-EAPI int       eet_data_dump(Eet_File * ef,
-                             const char * name,
-                             void (* dumpfunc)(void * data, const char * str),
-                             void * dumpdata);
+EAPI int       eet_data_dump(Eet_File *ef,
+                             const char *name,
+                             void (*dumpfunc)(void *data, const char *str),
+                             void *dumpdata);
 
 /**
  * Take an ascii encoding from eet_data_dump() and re-encode in binary.
@@ -2195,11 +2195,11 @@ EAPI int       eet_data_dump(Eet_File * ef,
  * @since 1.0.0
  * @ingroup Eet_Data_Group
  */
-EAPI int       eet_data_undump(Eet_File *   ef,
-                               const char * name,
-                               const char * text,
-                               int          textlen,
-                               int          compress);
+EAPI int       eet_data_undump(Eet_File *  ef,
+                               const char *name,
+                               const char *text,
+                               int         textlen,
+                               int         compress);
 
 /**
  * Decode a data structure from an arbitary location in memory.
@@ -2228,9 +2228,9 @@ EAPI int       eet_data_undump(Eet_File *   ef,
  * @since 1.0.0
  * @ingroup Eet_Data_Group
  */
-EAPI void *    eet_data_descriptor_decode(Eet_Data_Descriptor * edd,
-                                          const void *          data_in,
-                                          int                   size_in);
+EAPI void *    eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
+                                          const void *         data_in,
+                                          int                  size_in);
 
 /**
  * Encode a dsata struct to memory and return that encoded data.
@@ -2261,9 +2261,9 @@ EAPI void *    eet_data_descriptor_decode(Eet_Data_Descriptor * edd,
  * @since 1.0.0
  * @ingroup Eet_Data_Group
  */
-EAPI void *    eet_data_descriptor_encode(Eet_Data_Descriptor * edd,
-                                          const void *          data_in,
-                                          int *                 size_ret);
+EAPI void *    eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
+                                          const void *         data_in,
+                                          int *                size_ret);
 
 /**
  * Add a basic data element to a data descriptor.
@@ -2580,10 +2580,10 @@ EAPI void *    eet_data_descriptor_encode(Eet_Data_Descriptor * edd,
  * @since 1.0.0
  * @ingroup Eet_Data_Cipher_Group
  */
-EAPI void *    eet_data_read_cipher(Eet_File *            ef,
-                                    Eet_Data_Descriptor * edd,
-                                    const char *          name,
-                                    const char *          cipher_key);
+EAPI void *    eet_data_read_cipher(Eet_File *           ef,
+                                    Eet_Data_Descriptor *edd,
+                                    const char *         name,
+                                    const char *         cipher_key);
 
 /**
  * Write a data structure from memory and store in an eet file
@@ -2604,12 +2604,12 @@ EAPI void *    eet_data_read_cipher(Eet_File *            ef,
  * @since 1.0.0
  * @ingroup Eet_Data_Cipher_Group
  */
-EAPI int       eet_data_write_cipher(Eet_File *            ef,
-                                     Eet_Data_Descriptor * edd,
-                                     const char *          name,
-                                     const char *          cipher_key,
-                                     const void *          data,
-                                     int                   compress);
+EAPI int       eet_data_write_cipher(Eet_File *           ef,
+                                     Eet_Data_Descriptor *edd,
+                                     const char *         name,
+                                     const char *         cipher_key,
+                                     const void *         data,
+                                     int                  compress);
 
 /**
  * Dump an eet encoded data structure into ascii text using a cipher.
@@ -2659,11 +2659,11 @@ EAPI int       eet_data_write_cipher(Eet_File *            ef,
  * @since 1.0.0
  * @ingroup Eet_Data_Cipher_Group
  */
-EAPI int      eet_data_text_dump_cipher(const void * data_in,
-                                        const char * cipher_key,
+EAPI int      eet_data_text_dump_cipher(const void *data_in,
+                                        const char *cipher_key,
                                         int size_in,
-                                        void (* dumpfunc)(void * data, const char * str),
-                                        void * dumpdata);
+                                        void (*dumpfunc)(void *data, const char *str),
+                                        void *dumpdata);
 
 /**
  * Take an ascii encoding from eet_data_text_dump() and re-encode
@@ -2686,10 +2686,10 @@ EAPI int      eet_data_text_dump_cipher(const void * data_in,
  * @since 1.0.0
  * @ingroup Eet_Data_Cipher_Group
  */
-EAPI void *    eet_data_text_undump_cipher(const char * text,
-                                           const char * cipher_key,
-                                           int          textlen,
-                                           int *        size_ret);
+EAPI void *    eet_data_text_undump_cipher(const char *text,
+                                           const char *cipher_key,
+                                           int         textlen,
+                                           int *       size_ret);
 
 /**
  * Dump an eet encoded data structure from an eet file into ascii
@@ -2716,11 +2716,11 @@ EAPI void *    eet_data_text_undump_cipher(const char * text,
  * @since 1.0.0
  * @ingroup Eet_Data_Cipher_Group
  */
-EAPI int       eet_data_dump_cipher(Eet_File * ef,
-                                    const char * name,
-                                    const char * cipher_key,
-                                    void (* dumpfunc)(void * data, const char * str),
-                                    void * dumpdata);
+EAPI int       eet_data_dump_cipher(Eet_File *ef,
+                                    const char *name,
+                                    const char *cipher_key,
+                                    void (*dumpfunc)(void *data, const char *str),
+                                    void *dumpdata);
 
 /**
  * Take an ascii encoding from eet_data_dump() and re-encode in
@@ -2746,12 +2746,12 @@ EAPI int       eet_data_dump_cipher(Eet_File * ef,
  * @since 1.0.0
  * @ingroup Eet_Data_Cipher_Group
  */
-EAPI int      eet_data_undump_cipher(Eet_File *   ef,
-                                     const char * name,
-                                     const char * cipher_key,
-                                     const char * text,
-                                     int          textlen,
-                                     int          compress);
+EAPI int      eet_data_undump_cipher(Eet_File *  ef,
+                                     const char *name,
+                                     const char *cipher_key,
+                                     const char *text,
+                                     int         textlen,
+                                     int         compress);
 
 /**
  * Decode a data structure from an arbitary location in memory
@@ -2782,10 +2782,10 @@ EAPI int      eet_data_undump_cipher(Eet_File *   ef,
  * @since 1.0.0
  * @ingroup Eet_Data_Cipher_Group
  */
-EAPI void *    eet_data_descriptor_decode_cipher(Eet_Data_Descriptor * edd,
-                                                 const void *          data_in,
-                                                 const char *          cipher_key,
-                                                 int                   size_in);
+EAPI void *    eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd,
+                                                 const void *         data_in,
+                                                 const char *         cipher_key,
+                                                 int                  size_in);
 
 /**
  * Encode a data struct to memory and return that encoded data
@@ -2818,10 +2818,10 @@ EAPI void *    eet_data_descriptor_decode_cipher(Eet_Data_Descriptor * edd,
  * @since 1.0.0
  * @ingroup Eet_Data_Cipher_Group
  */
-EAPI void *    eet_data_descriptor_encode_cipher(Eet_Data_Descriptor * edd,
-                                                 const void *          data_in,
-                                                 const char *          cipher_key,
-                                                 int *                 size_ret);
+EAPI void *    eet_data_descriptor_encode_cipher(Eet_Data_Descriptor *edd,
+                                                 const void *         data_in,
+                                                 const char *         cipher_key,
+                                                 int *                size_ret);
 
 /**
  * @defgroup Eet_Node_Group Low-level Serialization Structures.
@@ -2873,43 +2873,43 @@ struct _Eet_Node_Data
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_char_new(const char * name,
-                                     char         c);
+EAPI Eet_Node *    eet_node_char_new(const char *name,
+                                     char        c);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_short_new(const char * name,
-                                      short        s);
+EAPI Eet_Node *    eet_node_short_new(const char *name,
+                                      short       s);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_int_new(const char * name,
-                                    int          i);
+EAPI Eet_Node *    eet_node_int_new(const char *name,
+                                    int         i);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_long_long_new(const char * name,
-                                          long long    l);
+EAPI Eet_Node *    eet_node_long_long_new(const char *name,
+                                          long long   l);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_float_new(const char * name,
-                                      float        f);
+EAPI Eet_Node *    eet_node_float_new(const char *name,
+                                      float       f);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_double_new(const char * name,
-                                       double       d);
+EAPI Eet_Node *    eet_node_double_new(const char *name,
+                                       double      d);
 
 /**
  * TODO FIX ME
@@ -2943,139 +2943,139 @@ EAPI Eet_Node *    eet_node_unsigned_long_long_new(const char *       name,
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_string_new(const char * name,
-                                       const char * str);
+EAPI Eet_Node *    eet_node_string_new(const char *name,
+                                       const char *str);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_inlined_string_new(const char * name,
-                                               const char * str);
+EAPI Eet_Node *    eet_node_inlined_string_new(const char *name,
+                                               const char *str);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_null_new(const char * name);
+EAPI Eet_Node *    eet_node_null_new(const char *name);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_list_new(const char * name,
-                                     Eina_List *  nodes);
+EAPI Eet_Node *    eet_node_list_new(const char *name,
+                                     Eina_List * nodes);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_array_new(const char * name,
-                                      int          count,
-                                      Eina_List *  nodes);
+EAPI Eet_Node *    eet_node_array_new(const char *name,
+                                      int         count,
+                                      Eina_List * nodes);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_var_array_new(const char * name,
-                                          Eina_List *  nodes);
+EAPI Eet_Node *    eet_node_var_array_new(const char *name,
+                                          Eina_List * nodes);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_hash_new(const char * name,
-                                     const char * key,
-                                     Eet_Node *   node);
+EAPI Eet_Node *    eet_node_hash_new(const char *name,
+                                     const char *key,
+                                     Eet_Node *  node);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_struct_new(const char * name,
-                                       Eina_List *  nodes);
+EAPI Eet_Node *    eet_node_struct_new(const char *name,
+                                       Eina_List * nodes);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_node_struct_child_new(const char * parent,
-                                             Eet_Node *   child);
+EAPI Eet_Node *    eet_node_struct_child_new(const char *parent,
+                                             Eet_Node *  child);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI void          eet_node_list_append(Eet_Node *   parent,
-                                        const char * name,
-                                        Eet_Node *   child);
+EAPI void          eet_node_list_append(Eet_Node *  parent,
+                                        const char *name,
+                                        Eet_Node *  child);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI void          eet_node_struct_append(Eet_Node *   parent,
-                                          const char * name,
-                                          Eet_Node *   child);
+EAPI void          eet_node_struct_append(Eet_Node *  parent,
+                                          const char *name,
+                                          Eet_Node *  child);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI void          eet_node_hash_add(Eet_Node *   parent,
-                                     const char * name,
-                                     const char * key,
-                                     Eet_Node *   child);
+EAPI void          eet_node_hash_add(Eet_Node *  parent,
+                                     const char *name,
+                                     const char *key,
+                                     Eet_Node *  child);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI void          eet_node_dump(Eet_Node * n,
+EAPI void          eet_node_dump(Eet_Node *n,
                                  int dumplevel,
-                                 void (* dumpfunc)(void * data, const char * str),
-                                 void * dumpdata);
+                                 void (*dumpfunc)(void *data, const char *str),
+                                 void *dumpdata);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI void          eet_node_del(Eet_Node * n);
+EAPI void          eet_node_del(Eet_Node *n);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI void *        eet_data_node_encode_cipher(Eet_Node *   node,
-                                               const char * cipher_key,
-                                               int *        size_ret);
+EAPI void *        eet_data_node_encode_cipher(Eet_Node *  node,
+                                               const char *cipher_key,
+                                               int *       size_ret);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_data_node_decode_cipher(const void * data_in,
-                                               const char * cipher_key,
-                                               int          size_in);
+EAPI Eet_Node *    eet_data_node_decode_cipher(const void *data_in,
+                                               const char *cipher_key,
+                                               int         size_in);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI Eet_Node *    eet_data_node_read_cipher(Eet_File *   ef,
-                                             const char * name,
-                                             const char * cipher_key);
+EAPI Eet_Node *    eet_data_node_read_cipher(Eet_File *  ef,
+                                             const char *name,
+                                             const char *cipher_key);
 
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
-EAPI int           eet_data_node_write_cipher(Eet_File *   ef,
-                                              const char * name,
-                                              const char * cipher_key,
-                                              Eet_Node *   node,
-                                              int          compress);
+EAPI int           eet_data_node_write_cipher(Eet_File *  ef,
+                                              const char *name,
+                                              const char *cipher_key,
+                                              Eet_Node *  node,
+                                              int         compress);
 
 /* EXPERIMENTAL: THIS API MAY CHANGE IN THE FUTURE, USE IT ONLY IF YOU KNOW WHAT YOU ARE DOING. */
 
@@ -3091,21 +3091,21 @@ typedef struct _Eet_Node_Walk   Eet_Node_Walk;
  */
 struct _Eet_Node_Walk
 {
-   void *(* struct_alloc)(const char * type, void * user_data);
-   void  (* struct_add)(void * parent, const char * name, void * child, void * user_data);
-   void *(* array)(Eina_Bool variable, const char * name, int count, void * user_data);
-   void  (* insert)(void * array, int index, void * child, void * user_data);
-   void *(* list)(const char * name, void * user_data);
-   void  (* append)(void * list, void * child, void * user_data);
-   void *(* hash)(void * parent, const char * name, const char * key, void * value, void * user_data);
-   void *(* simple)(int type, Eet_Node_Data * data, void * user_data);
+   void *(*struct_alloc)(const char *type, void *user_data);
+   void  (*struct_add)(void *parent, const char *name, void *child, void *user_data);
+   void *(*array)(Eina_Bool variable, const char *name, int count, void *user_data);
+   void  (*insert)(void *array, int index, void *child, void *user_data);
+   void *(*list)(const char *name, void *user_data);
+   void  (*append)(void *list, void *child, void *user_data);
+   void *(*hash)(void *parent, const char *name, const char *key, void *value, void *user_data);
+   void *(*simple)(int type, Eet_Node_Data *data, void *user_data);
 };
 
-EAPI void *    eet_node_walk(void *          parent,
-                             const char *    name,
-                             Eet_Node *      root,
-                             Eet_Node_Walk * cb,
-                             void *          user_data);
+EAPI void *    eet_node_walk(void *         parent,
+                             const char *   name,
+                             Eet_Node *     root,
+                             Eet_Node_Walk *cb,
+                             void *         user_data);
 
 /*******/
 
@@ -3130,7 +3130,7 @@ typedef struct _Eet_Connection   Eet_Connection;
  *
  * @ingroup Eet_Connection_Group
  */
-typedef Eina_Bool                Eet_Read_Cb (const void * eet_data, size_t size, void * user_data);
+typedef Eina_Bool                Eet_Read_Cb (const void *eet_data, size_t size, void *user_data);
 
 /**
  * @typedef Eet_Write_Cb
@@ -3138,7 +3138,7 @@ typedef Eina_Bool                Eet_Read_Cb (const void * eet_data, size_t size
  *
  * @ingroup Eet_Connection_Group
  */
-typedef Eina_Bool                Eet_Write_Cb (const void * data, size_t size, void * user_data);
+typedef Eina_Bool                Eet_Write_Cb (const void *data, size_t size, void *user_data);
 
 /**
  * Instanciate a new connection to track.
@@ -3152,9 +3152,9 @@ typedef Eina_Bool                Eet_Write_Cb (const void * data, size_t size, v
  * @since 1.2.4
  * @ingroup Eet_Connection_Group
  */
-EAPI Eet_Connection *    eet_connection_new(Eet_Read_Cb *  eet_read_cb,
-                                            Eet_Write_Cb * eet_write_cb,
-                                            const void *   user_data);
+EAPI Eet_Connection *    eet_connection_new(Eet_Read_Cb * eet_read_cb,
+                                            Eet_Write_Cb *eet_write_cb,
+                                            const void *  user_data);
 
 /**
  * Process a raw packet received over the link
@@ -3170,9 +3170,9 @@ EAPI Eet_Connection *    eet_connection_new(Eet_Read_Cb *  eet_read_cb,
  * @since 1.2.4
  * @ingroup Eet_Connection_Group
  */
-EAPI int                 eet_connection_received(Eet_Connection * conn,
-                                                 const void *     data,
-                                                 size_t           size);
+EAPI int                 eet_connection_received(Eet_Connection *conn,
+                                                 const void *    data,
+                                                 size_t          size);
 
 /**
  * Convert a complex structure and prepare it to be send.
@@ -3191,10 +3191,10 @@ EAPI int                 eet_connection_received(Eet_Connection * conn,
  * @since 1.2.4
  * @ingroup Eet_Connection_Group
  */
-EAPI Eina_Bool           eet_connection_send(Eet_Connection *      conn,
-                                             Eet_Data_Descriptor * edd,
-                                             const void *          data_in,
-                                             const char *          cipher_key);
+EAPI Eina_Bool           eet_connection_send(Eet_Connection *     conn,
+                                             Eet_Data_Descriptor *edd,
+                                             const void *         data_in,
+                                             const char *         cipher_key);
 
 /**
  * Convert a Eet_Node tree and prepare it to be send.
@@ -3212,9 +3212,9 @@ EAPI Eina_Bool           eet_connection_send(Eet_Connection *      conn,
  * @since 1.2.4
  * @ingroup Eet_Connection_Group
  */
-EAPI Eina_Bool           eet_connection_node_send(Eet_Connection * conn,
-                                                  Eet_Node *       node,
-                                                  const char *     cipher_key);
+EAPI Eina_Bool           eet_connection_node_send(Eet_Connection *conn,
+                                                  Eet_Node *      node,
+                                                  const char *    cipher_key);
 
 /**
  * Close a connection and lost its track.
@@ -3225,8 +3225,8 @@ EAPI Eina_Bool           eet_connection_node_send(Eet_Connection * conn,
  * @since 1.2.4
  * @ingroup Eet_Connection_Group
  */
-EAPI void *              eet_connection_close(Eet_Connection * conn,
-                                              Eina_Bool *      on_going);
+EAPI void *              eet_connection_close(Eet_Connection *conn,
+                                              Eina_Bool *     on_going);
 
 /***************************************************************************/
 

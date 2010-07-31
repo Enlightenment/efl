@@ -18,12 +18,12 @@
 #include "Eet.h"
 #include "Eet_private.h"
 
-static Eina_Mempool * _eet_node_mp = NULL;
+static Eina_Mempool *_eet_node_mp = NULL;
 
 Eet_Node *
 eet_node_new(void)
 {
-   Eet_Node * result;
+   Eet_Node *result;
 
    result = eina_mempool_malloc(_eet_node_mp, sizeof (Eet_Node));
    if (!result)
@@ -34,16 +34,16 @@ eet_node_new(void)
 } /* eet_node_new */
 
 void
-eet_node_free(Eet_Node * node)
+eet_node_free(Eet_Node *node)
 {
    eina_mempool_free(_eet_node_mp, node);
 } /* eet_node_free */
 
 static Eet_Node *
-_eet_node_new(const char * name,
-              int          type)
+_eet_node_new(const char *name,
+              int         type)
 {
-   Eet_Node * n;
+   Eet_Node *n;
 
    n = eet_node_new();
    if (!n)
@@ -56,10 +56,10 @@ _eet_node_new(const char * name,
 } /* _eet_node_new */
 
 static void
-_eet_node_append(Eet_Node * n, Eina_List * nodes)
+_eet_node_append(Eet_Node *n, Eina_List *nodes)
 {
-   Eet_Node * value;
-   Eina_List * l;
+   Eet_Node *value;
+   Eina_List *l;
 
    EINA_LIST_REVERSE_FOREACH(nodes, l, value)
    {
@@ -70,9 +70,9 @@ _eet_node_append(Eet_Node * n, Eina_List * nodes)
 
 #define EET_NODE_NEW(Eet_type, Name, Value, Type)\
    EAPI Eet_Node *\
-   eet_node_ ## Name ## _new(const char * name, Type Value)\
+   eet_node_ ## Name ## _new(const char *name, Type Value)\
    {\
-      Eet_Node * n;\
+      Eet_Node *n;\
 \
       n = _eet_node_new(name, Eet_type);\
       if (!n) { return NULL; }\
@@ -84,9 +84,9 @@ _eet_node_append(Eet_Node * n, Eina_List * nodes)
 
 #define EET_NODE_STR_NEW(Eet_type, Name, Value, Type)\
    EAPI Eet_Node *\
-   eet_node_ ## Name ## _new(const char * name, Type Value)\
+   eet_node_ ## Name ## _new(const char *name, Type Value)\
    {\
-      Eet_Node * n;\
+      Eet_Node *n;\
 \
       n = _eet_node_new(name, Eet_type);\
       if (!n) { return NULL; }\
@@ -110,9 +110,9 @@ EET_NODE_STR_NEW(EET_T_STRING,                 string, str, const char *)
 EET_NODE_STR_NEW(EET_T_INLINED_STRING, inlined_string, str, const char *)
 
 Eet_Node *
-eet_node_null_new(const char * name)
+eet_node_null_new(const char *name)
 {
-   Eet_Node * n;
+   Eet_Node *n;
 
    n = _eet_node_new(name, EET_T_NULL);
    if (!n)
@@ -124,10 +124,10 @@ eet_node_null_new(const char * name)
 }
 
 Eet_Node *
-eet_node_list_new(const char * name,
-                  Eina_List *  nodes)
+eet_node_list_new(const char *name,
+                  Eina_List * nodes)
 {
-   Eet_Node * n;
+   Eet_Node *n;
 
    n = _eet_node_new(name, EET_G_LIST);
    if (!n)
@@ -139,11 +139,11 @@ eet_node_list_new(const char * name,
 } /* eet_node_list_new */
 
 Eet_Node *
-eet_node_array_new(const char * name,
-                   int          count,
-                   Eina_List *  nodes)
+eet_node_array_new(const char *name,
+                   int         count,
+                   Eina_List * nodes)
 {
-   Eet_Node * n;
+   Eet_Node *n;
 
    n = _eet_node_new(name, EET_G_ARRAY);
    if (!n)
@@ -157,10 +157,10 @@ eet_node_array_new(const char * name,
 } /* eet_node_array_new */
 
 Eet_Node *
-eet_node_var_array_new(const char * name,
-                       Eina_List *  nodes)
+eet_node_var_array_new(const char *name,
+                       Eina_List * nodes)
 {
-   Eet_Node * n;
+   Eet_Node *n;
 
    n = _eet_node_new(name, EET_G_VAR_ARRAY);
    if (!n)
@@ -174,12 +174,12 @@ eet_node_var_array_new(const char * name,
 } /* eet_node_var_array_new */
 
 Eet_Node *
-eet_node_hash_new(const char * name,
-                  const char * key,
-                  Eet_Node *   node)
+eet_node_hash_new(const char *name,
+                  const char *key,
+                  Eet_Node *  node)
 {
-   Eina_List * nodes;
-   Eet_Node * n;
+   Eina_List *nodes;
+   Eet_Node *n;
 
    if (!node)
       return NULL;
@@ -197,10 +197,10 @@ eet_node_hash_new(const char * name,
 } /* eet_node_hash_new */
 
 Eet_Node *
-eet_node_struct_new(const char * name,
-                    Eina_List *  nodes)
+eet_node_struct_new(const char *name,
+                    Eina_List * nodes)
 {
-   Eet_Node * n;
+   Eet_Node *n;
 
    n = _eet_node_new(name, EET_G_UNKNOWN);
    if (!n)
@@ -212,10 +212,10 @@ eet_node_struct_new(const char * name,
 } /* eet_node_struct_new */
 
 Eet_Node *
-eet_node_struct_child_new(const char * parent,
-                          Eet_Node *   child)
+eet_node_struct_child_new(const char *parent,
+                          Eet_Node *  child)
 {
-   Eet_Node * n;
+   Eet_Node *n;
 
    if (child->type != EET_G_UNKNOWN)
       return child;
@@ -230,19 +230,19 @@ eet_node_struct_child_new(const char * parent,
 } /* eet_node_struct_child_new */
 
 void
-eet_node_list_append(Eet_Node *   parent,
-                     const char * name,
-                     Eet_Node *   child)
+eet_node_list_append(Eet_Node *  parent,
+                     const char *name,
+                     Eet_Node *  child)
 {
-   const char * tmp;
-   Eet_Node * nn;
+   const char *tmp;
+   Eet_Node *nn;
 
    tmp = eina_stringshare_add(name);
 
    for (nn = parent->values; nn; nn = nn->next)
       if (nn->name == tmp && nn->type == EET_G_LIST)
         {
-           Eet_Node * n;
+           Eet_Node *n;
 
            if (!nn->values)
               nn->values = child;
@@ -271,13 +271,13 @@ eet_node_list_append(Eet_Node *   parent,
 } /* eet_node_list_append */
 
 void
-eet_node_struct_append(Eet_Node *   parent,
-                       const char * name,
-                       Eet_Node *   child)
+eet_node_struct_append(Eet_Node *  parent,
+                       const char *name,
+                       Eet_Node *  child)
 {
-   const char * tmp;
-   Eet_Node * prev;
-   Eet_Node * nn;
+   const char *tmp;
+   Eet_Node *prev;
+   Eet_Node *nn;
 
    if (parent->type != EET_G_UNKNOWN)
      {
@@ -319,12 +319,12 @@ eet_node_struct_append(Eet_Node *   parent,
 } /* eet_node_struct_append */
 
 void
-eet_node_hash_add(Eet_Node *   parent,
-                  const char * name,
-                  const char * key,
-                  Eet_Node *   child)
+eet_node_hash_add(Eet_Node *  parent,
+                  const char *name,
+                  const char *key,
+                  Eet_Node *  child)
 {
-   Eet_Node * nn;
+   Eet_Node *nn;
 
    /* No list found, so create it. */
    nn = eet_node_hash_new(name, key, child);
@@ -335,10 +335,10 @@ eet_node_hash_add(Eet_Node *   parent,
 } /* eet_node_hash_add */
 
 void
-eet_node_del(Eet_Node * n)
+eet_node_del(Eet_Node *n)
 {
-   Eet_Node * nn;
-   Eet_Node * tmp;
+   Eet_Node *nn;
+   Eet_Node *tmp;
 
    if (!n)
       return;
@@ -381,7 +381,7 @@ eet_node_del(Eet_Node * n)
    eet_node_free(n);
 } /* eet_node_del */
 
-static const char * eet_node_dump_g_name[6] = {
+static const char *eet_node_dump_g_name[6] = {
    "struct",
    "array",
    "var_array",
@@ -390,7 +390,7 @@ static const char * eet_node_dump_g_name[6] = {
    "???"
 };
 
-static const char * eet_node_dump_t_name[14][2] = {
+static const char *eet_node_dump_t_name[14][2] = {
    { "???: ", "???" },
    { "char: ", "%hhi" },
    { "short: ", "%hi" },
@@ -407,8 +407,8 @@ static const char * eet_node_dump_t_name[14][2] = {
 
 static void
 eet_node_dump_level(int level,
-                    void (* dumpfunc)(void * data, const char * str),
-                    void * dumpdata)
+                    void (*dumpfunc)(void *data, const char *str),
+                    void *dumpdata)
 {
    int i;
 
@@ -416,10 +416,10 @@ eet_node_dump_level(int level,
 } /* eet_node_dump_level */
 
 static char *
-eet_node_string_escape(const char * str)
+eet_node_string_escape(const char *str)
 {
-   char * s, * sp;
-   const char * strp;
+   char *s, *sp;
+   const char *strp;
    int sz = 0;
 
    for (strp = str; *strp; strp++)
@@ -457,11 +457,11 @@ eet_node_string_escape(const char * str)
 } /* eet_node_string_escape */
 
 static void
-eet_node_dump_string_escape(void * dumpdata,
-                            void dumpfunc(void * data, const char * str),
-                            const char * str)
+eet_node_dump_string_escape(void *dumpdata,
+                            void dumpfunc(void *data, const char *str),
+                            const char *str)
 {
-   char * s;
+   char *s;
 
    s = eet_node_string_escape(str);
    if (!s)
@@ -472,11 +472,11 @@ eet_node_dump_string_escape(void * dumpdata,
 } /* eet_node_dump_string_escape */
 
 static void
-eet_node_dump_simple_type(Eet_Node * n, int level,
-                          void (* dumpfunc)(void * data, const char * str),
-                          void * dumpdata)
+eet_node_dump_simple_type(Eet_Node *n, int level,
+                          void (*dumpfunc)(void *data, const char *str),
+                          void *dumpdata)
 {
-   const char * type_name = NULL;
+   const char *type_name = NULL;
    char tbuf[256];
 
    eet_node_dump_level(level, dumpfunc, dumpdata);
@@ -539,10 +539,10 @@ eet_node_dump_simple_type(Eet_Node * n, int level,
 
 static void
 eet_node_dump_group_start(int level,
-                          void (* dumpfunc)(void * data, const char * str),
-                          void * dumpdata,
+                          void (*dumpfunc)(void *data, const char *str),
+                          void *dumpdata,
                           int group_type,
-                          const char * name)
+                          const char *name)
 {
    int chnk_type;
 
@@ -560,20 +560,20 @@ eet_node_dump_group_start(int level,
 
 static void
 eet_node_dump_group_end(int level,
-                        void (* dumpfunc)(void * data, const char * str),
-                        void * dumpdata)
+                        void (*dumpfunc)(void *data, const char *str),
+                        void *dumpdata)
 {
    eet_node_dump_level(level, dumpfunc, dumpdata);
    dumpfunc(dumpdata, "}\n");
 } /* eet_node_dump_group_end */
 
 void
-eet_node_dump(Eet_Node * n,
+eet_node_dump(Eet_Node *n,
               int dumplevel,
-              void (* dumpfunc)(void * data, const char * str),
-              void * dumpdata)
+              void (*dumpfunc)(void *data, const char *str),
+              void *dumpdata)
 {
-   Eet_Node * it;
+   Eet_Node *it;
 
    if (!n)
       return;
@@ -634,14 +634,14 @@ eet_node_dump(Eet_Node * n,
 } /* eet_node_dump */
 
 void *
-eet_node_walk(void *          parent,
-              const char *    name,
-              Eet_Node *      root,
-              Eet_Node_Walk * cb,
-              void *          user_data)
+eet_node_walk(void *         parent,
+              const char *   name,
+              Eet_Node *     root,
+              Eet_Node_Walk *cb,
+              void *         user_data)
 {
-   Eet_Node * it;
-   void * me = NULL;
+   Eet_Node *it;
+   void *me = NULL;
    int i;
 
    if (!root)
@@ -724,8 +724,8 @@ eet_node_walk(void *          parent,
 int
 eet_node_init(void)
 {
-   const char * choice;
-   const char * tmp;
+   const char *choice;
+   const char *tmp;
 
    choice = "chained_mempool";
    tmp = getenv("EET_MEMPOOL");
