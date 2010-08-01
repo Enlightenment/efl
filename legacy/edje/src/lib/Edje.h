@@ -384,6 +384,7 @@ struct _Edje_External_Type
   void (*signal_emit) (void *data, Evas_Object *obj, const char *emission, const char *source); /**< Feed a signal emitted with emission originally set as part_name:signal to this object (without the "part_name:" prefix) */
   Eina_Bool (*param_set) (void *data, Evas_Object *obj, const Edje_External_Param *param); /**< dynamically change a parameter of this external, called by scripts and user code. Returns @c EINA_TRUE on success */
   Eina_Bool (*param_get) (void *data, const Evas_Object *obj, Edje_External_Param *param); /**< dynamically fetch a parameter of this external, called by scripts and user code. Returns @c EINA_TRUE on success. (Must check parameter name and type!) */
+  Evas_Object *(*content_get) (void *data, const Evas_Object *obj, const char *content); /**< dynamically fetch a sub object of this external, called by scripts and user code. Returns @c Evas_Object * on success. (Must check parameter name and type!) */
   void *(*params_parse) (void *data, Evas_Object *obj, const Eina_List *params); /**< parses the list of parameters, converting into a friendly representation. Used with state_set() */
   void (*params_free) (void *params); /**< free parameters parsed with params_parse() */
 
@@ -555,6 +556,7 @@ typedef void (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Mess
    EAPI Evas_Object              *edje_object_part_external_object_get     (const Evas_Object *obj, const char *part);
    EAPI Eina_Bool                 edje_object_part_external_param_set      (Evas_Object *obj, const char *part, const Edje_External_Param *param);
    EAPI Eina_Bool                 edje_object_part_external_param_get      (const Evas_Object *obj, const char *part, Edje_External_Param *param);
+   EAPI Evas_Object 			 *edje_object_part_external_content_get    (const Evas_Object *obj, const char *part, const char *content);
    EAPI Edje_External_Param_Type  edje_object_part_external_param_type_get (const Evas_Object *obj, const char *part, const char *param);
 
    EAPI Eina_Bool    edje_object_part_box_append             (Evas_Object *obj, const char *part, Evas_Object *child);

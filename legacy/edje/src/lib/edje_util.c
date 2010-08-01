@@ -4253,6 +4253,9 @@ _edje_children_get(Edje_Real_Part *rp, const char *partid)
      if (rp->part->type == EDJE_PART_TYPE_TABLE)
        l = evas_object_table_children_get(rp->object);
      else
+       if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
+    	 return _edje_external_content_get(rp->swallowed_object, partid);
+     else
        return NULL;
 
    if (number)
@@ -4320,6 +4323,7 @@ _edje_real_part_recursive_get_helper(Edje *ed, char **path)
 	 return _edje_real_part_recursive_get_helper(ed, path);
       case EDJE_PART_TYPE_BOX:
       case EDJE_PART_TYPE_TABLE:
+      case EDJE_PART_TYPE_EXTERNAL:
 	 if (!idx) return rp;
 	 path++;
 

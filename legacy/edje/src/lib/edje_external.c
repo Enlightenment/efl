@@ -181,6 +181,29 @@ edje_object_part_external_param_get(const Evas_Object *obj, const char *part, Ed
    return _edje_external_param_get(rp->swallowed_object, param);
 }
 
+
+
+EAPI Evas_Object*
+edje_object_part_external_content_get(const Evas_Object *obj, const char *part, const char *content)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   if (!content) return EINA_FALSE;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return EINA_FALSE;
+
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp)
+     {
+	ERR("no part '%s'", part);
+	return EINA_FALSE;
+     }
+
+   return _edje_external_content_get(rp->swallowed_object, content);
+}
+
 /**
  * Facility to query the type of the given parameter of the given part.
  *
@@ -594,11 +617,29 @@ _edje_external_param_get(const Evas_Object *obj, Edje_External_Param *param)
      }
    if (!type->param_get)
      {
-	ERR("external type '%s' from module '%s' does not provide param_set()",
+	ERR("external type '%s' from module '%s' does not provide param_get()",
 	    type->module_name, type->module);
 	return EINA_FALSE;
      }
    return type->param_get(type->data, obj, param);
+}
+
+Evas_Object*
+_edje_external_content_get(const Evas_Object *obj, const char *content)
+{
+   Edje_External_Type *type = evas_object_data_get(obj, "Edje_External_Type");
+   if (!type)
+     {
+	ERR("no external type for object %p", obj);
+	return EINA_FALSE;
+     }
+   if (!type->content_get)
+     {
+	ERR("external type '%s' from module '%s' does not provide content_get()",
+	    type->module_name, type->module);
+	return EINA_FALSE;
+     }
+   return type->content_get(type->data, obj, content);
 }
 
 void
