@@ -140,6 +140,20 @@ static void * external_panes_params_parse(void *data, Evas_Object *obj,
 	return mem;
 }
 
+static Evas_Object *external_panes_content_get(void *data __UNUSED__,
+		const Evas_Object *obj, const char *content)
+{
+	if (!strcmp(content, "left"))
+		return elm_panes_content_left_get(obj);
+	else if (!strcmp(content, "right"))
+		return elm_panes_content_right_get(obj);
+
+	ERR("unknown content '%s'", content);
+
+	return NULL;
+}
+
+
 static void external_panes_params_free(void *params) {
 	Elm_Params_Panes *mem = params;
 

@@ -155,6 +155,13 @@ external_fileselector_params_parse(void *data __UNUSED__, Evas_Object *obj __UNU
    return mem;
 }
 
+static Evas_Object *external_fileselector_content_get(void *data __UNUSED__,
+		const Evas_Object *obj, const char *content)
+{
+	ERR("so content");
+	return NULL;
+}
+
 static void
 external_fileselector_params_free(void *params)
 {

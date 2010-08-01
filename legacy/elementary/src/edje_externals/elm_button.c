@@ -86,6 +86,13 @@ external_button_params_parse(void *data, Evas_Object *obj, const Eina_List *para
    return mem;
 }
 
+static Evas_Object *external_button_content_get(void *data __UNUSED__,
+		const Evas_Object *obj, const char *content)
+{
+	ERR("so content");
+	return NULL;
+}
+
 static void
 external_button_params_free(void *params)
 {

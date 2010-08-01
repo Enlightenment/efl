@@ -39,6 +39,7 @@ const Edje_External_Type external_##type_name##_type = {\
     .params_parse = external_##type_name##_params_parse,\
     .params_free = external_##type_name##_params_free,  \
     .label_get = external_##type_name##_label_get,      \
+    .content_get = external_##type_name##_content_get,  \
     .description_get = NULL,                            \
     .icon_add = external_##type_name##_icon_add,        \
     .preview_add = NULL,                                \

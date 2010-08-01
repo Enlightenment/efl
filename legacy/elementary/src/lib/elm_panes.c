@@ -220,6 +220,21 @@ EAPI void elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content)
      }
 }
 
+
+EAPI Evas_Object
+*elm_panes_content_left_get(const Evas_Object *obj)
+{
+	Widget_Data *wd = elm_widget_data_get(obj);
+	return wd->contents.left;
+}
+
+EAPI Evas_Object
+*elm_panes_content_right_get(const Evas_Object *obj)
+{
+	Widget_Data *wd = elm_widget_data_get(obj);
+	return wd->contents.right;
+}
+
 EAPI double elm_panes_content_left_size_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);

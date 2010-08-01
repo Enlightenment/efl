@@ -213,6 +213,13 @@ external_progressbar_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUS
    return mem;
 }
 
+static Evas_Object *external_progressbar_content_get(void *data __UNUSED__,
+		const Evas_Object *obj, const char *content)
+{
+	ERR("so content");
+	return NULL;
+}
+
 static void
 external_progressbar_params_free(void *params)
 {

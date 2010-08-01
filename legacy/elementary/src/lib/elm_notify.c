@@ -393,6 +393,25 @@ elm_notify_content_unset(Evas_Object *obj)
 }
 
 /**
+ * Return the content of the notify widget
+ *
+ * @param obj The notify object
+ * @return The content that is being used
+ *
+ * @ingroup Notify
+ */
+EAPI Evas_Object *
+elm_notify_content_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *content;
+   if (!wd) return NULL;
+   if (!wd->content) return NULL;
+   return wd->content;
+}
+
+/**
  * Set the notify parent
  *
  * @param obj The notify object
