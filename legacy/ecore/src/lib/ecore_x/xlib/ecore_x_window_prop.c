@@ -4,7 +4,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #include <stdlib.h>
 #include <string.h>
@@ -16,8 +16,8 @@
 #include <inttypes.h>
 #include <limits.h>
 
-#define _ATOM_SET_CARD32(win, atom, p_val, cnt) \
-   XChangeProperty(_ecore_x_disp, win, atom, XA_CARDINAL, 32, PropModeReplace, \
+#define _ATOM_SET_CARD32(win, atom, p_val, cnt)\
+   XChangeProperty(_ecore_x_disp, win, atom, XA_CARDINAL, 32, PropModeReplace,\
                    (unsigned char *)p_val, cnt)
 
 /*
@@ -29,7 +29,7 @@ ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X_Atom atom,
 {
 #if SIZEOF_INT == SIZEOF_LONG
    _ATOM_SET_CARD32(win, atom, val, num);
-#else
+#else /* if SIZEOF_INT == SIZEOF_LONG */
    long *v2;
    unsigned int i;
 
@@ -42,8 +42,8 @@ ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X_Atom atom,
       v2[i] = val[i];
    _ATOM_SET_CARD32(win, atom, v2, num);
    free(v2);
-#endif
-}
+#endif /* if SIZEOF_INT == SIZEOF_LONG */
+} /* ecore_x_window_prop_card32_set */
 
 /*
  * Get CARD32 (array) property
@@ -89,7 +89,7 @@ ecore_x_window_prop_card32_get(Ecore_X_Window win, Ecore_X_Atom atom,
       XFree(prop_ret);
 
    return num;
-}
+} /* ecore_x_window_prop_card32_get */
 
 /*
  * Get CARD32 (array) property of any length
@@ -134,7 +134,7 @@ ecore_x_window_prop_card32_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
       XFree(prop_ret);
 
    return num;
-}
+} /* ecore_x_window_prop_card32_list_get */
 
 /*
  * Set X ID (array) property
@@ -147,7 +147,7 @@ ecore_x_window_prop_xid_set(Ecore_X_Window win, Ecore_X_Atom atom,
 #if SIZEOF_INT == SIZEOF_LONG
    XChangeProperty(_ecore_x_disp, win, atom, type, 32, PropModeReplace,
                    (unsigned char *)lst, num);
-#else
+#else /* if SIZEOF_INT == SIZEOF_LONG */
    unsigned long *pl;
    unsigned int i;
 
@@ -161,8 +161,8 @@ ecore_x_window_prop_xid_set(Ecore_X_Window win, Ecore_X_Atom atom,
    XChangeProperty(_ecore_x_disp, win, atom, type, 32, PropModeReplace,
                    (unsigned char *)pl, num);
    free(pl);
-#endif
-}
+#endif /* if SIZEOF_INT == SIZEOF_LONG */
+} /* ecore_x_window_prop_xid_set */
 
 /*
  * Get X ID (array) property
@@ -209,7 +209,7 @@ ecore_x_window_prop_xid_get(Ecore_X_Window win, Ecore_X_Atom atom,
       XFree(prop_ret);
 
    return num;
-}
+} /* ecore_x_window_prop_xid_get */
 
 /*
  * Get X ID (array) property
@@ -256,7 +256,7 @@ ecore_x_window_prop_xid_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
       XFree(prop_ret);
 
    return num;
-}
+} /* ecore_x_window_prop_xid_list_get */
 
 /*
  * Remove/add/toggle X ID list item.
@@ -273,7 +273,6 @@ ecore_x_window_prop_xid_list_change(Ecore_X_Window win, Ecore_X_Atom atom,
    if (num < 0)
      {
         return; /* Error - assuming invalid window */
-
      }
 
    /* Is it there? */
@@ -309,7 +308,7 @@ ecore_x_window_prop_xid_list_change(Ecore_X_Window win, Ecore_X_Atom atom,
 done:
    if (lst)
       free(lst);
-}
+} /* ecore_x_window_prop_xid_list_change */
 
 /*
  * Set Atom (array) property
@@ -320,7 +319,7 @@ ecore_x_window_prop_atom_set(Ecore_X_Window win, Ecore_X_Atom atom,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_xid_set(win, atom, XA_ATOM, lst, num);
-}
+} /* ecore_x_window_prop_atom_set */
 
 /*
  * Get Atom (array) property
@@ -336,7 +335,7 @@ ecore_x_window_prop_atom_get(Ecore_X_Window win, Ecore_X_Atom atom,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return ecore_x_window_prop_xid_get(win, atom, XA_ATOM, lst, len);
-}
+} /* ecore_x_window_prop_atom_get */
 
 /*
  * Get Atom (array) property
@@ -352,7 +351,7 @@ ecore_x_window_prop_atom_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return ecore_x_window_prop_xid_list_get(win, atom, XA_ATOM, plst);
-}
+} /* ecore_x_window_prop_atom_list_get */
 
 /*
  * Remove/add/toggle atom list item.
@@ -363,7 +362,7 @@ ecore_x_window_prop_atom_list_change(Ecore_X_Window win, Ecore_X_Atom atom,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_xid_list_change(win, atom, XA_ATOM, item, op);
-}
+} /* ecore_x_window_prop_atom_list_change */
 
 /*
  * Set Window (array) property
@@ -374,7 +373,7 @@ ecore_x_window_prop_window_set(Ecore_X_Window win, Ecore_X_Atom atom,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_xid_set(win, atom, XA_WINDOW, lst, num);
-}
+} /* ecore_x_window_prop_window_set */
 
 /*
  * Get Window (array) property
@@ -390,7 +389,7 @@ ecore_x_window_prop_window_get(Ecore_X_Window win, Ecore_X_Atom atom,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return ecore_x_window_prop_xid_get(win, atom, XA_WINDOW, lst, len);
-}
+} /* ecore_x_window_prop_window_get */
 
 /*
  * Get Window (array) property
@@ -406,7 +405,7 @@ ecore_x_window_prop_window_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return ecore_x_window_prop_xid_list_get(win, atom, XA_WINDOW, plst);
-}
+} /* ecore_x_window_prop_window_list_get */
 
 /**
  * To be documented.
@@ -417,7 +416,7 @@ EAPI Ecore_X_Atom
 ecore_x_window_prop_any_type(void)
 {
    return AnyPropertyType;
-}
+} /* ecore_x_window_prop_any_type */
 
 /**
  * To be documented.
@@ -426,18 +425,18 @@ ecore_x_window_prop_any_type(void)
  */
 EAPI void
 ecore_x_window_prop_property_set(Ecore_X_Window win,
-                                 Ecore_X_Atom property,
-                                 Ecore_X_Atom type,
-                                 int size,
-                                 void *data,
-                                 int number)
+                                 Ecore_X_Atom   property,
+                                 Ecore_X_Atom   type,
+                                 int            size,
+                                 void          *data,
+                                 int            number)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (win == 0)
       win = DefaultRootWindow(_ecore_x_disp);
 
    if (size != 32)
-             XChangeProperty(_ecore_x_disp,
+      XChangeProperty(_ecore_x_disp,
                       win,
                       property,
                       type,
@@ -459,7 +458,7 @@ ecore_x_window_prop_property_set(Ecore_X_Window win,
              free(dat);
           }
      }
-}
+} /* ecore_x_window_prop_property_set */
 
 /**
  * To be documented.
@@ -467,12 +466,12 @@ ecore_x_window_prop_property_set(Ecore_X_Window win,
  * FIXME: To be fixed.
  */
 EAPI int
-ecore_x_window_prop_property_get(Ecore_X_Window win,
-                                 Ecore_X_Atom property,
-                                 Ecore_X_Atom type,
-                                 int size __UNUSED__,
+ecore_x_window_prop_property_get(Ecore_X_Window  win,
+                                 Ecore_X_Atom    property,
+                                 Ecore_X_Atom    type,
+                                 int size        __UNUSED__,
                                  unsigned char **data,
-                                 int *num)
+                                 int            *num)
 {
    Atom type_ret = 0;
    int ret, size_ret = 0;
@@ -526,22 +525,22 @@ ecore_x_window_prop_property_get(Ecore_X_Window win,
          for (i = 0; i < num_ret; i++)
             ((unsigned int *)*data)[i] = ((unsigned long *)prop_ret)[i];
          break;
-     }
+     } /* switch */
 
-        XFree(prop_ret);
+   XFree(prop_ret);
 
    if (num)
       *num = num_ret;
 
    return size_ret;
-}
+} /* ecore_x_window_prop_property_get */
 
 EAPI void
 ecore_x_window_prop_property_del(Ecore_X_Window win, Ecore_X_Atom property)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XDeleteProperty(_ecore_x_disp, win, property);
-}
+} /* ecore_x_window_prop_property_del */
 
 EAPI Ecore_X_Atom *
 ecore_x_window_prop_list(Ecore_X_Window win, int *num_ret)
@@ -568,7 +567,7 @@ ecore_x_window_prop_list(Ecore_X_Window win, int *num_ret)
 
    XFree(atom_ret);
    return atoms;
-}
+} /* ecore_x_window_prop_list */
 
 /**
  * Set a window string property.
@@ -580,8 +579,8 @@ ecore_x_window_prop_list(Ecore_X_Window win, int *num_ret)
  */
 EAPI void
 ecore_x_window_prop_string_set(Ecore_X_Window win,
-                               Ecore_X_Atom type,
-                               const char *str)
+                               Ecore_X_Atom   type,
+                               const char    *str)
 {
    XTextProperty xtp;
 
@@ -594,7 +593,7 @@ ecore_x_window_prop_string_set(Ecore_X_Window win,
    xtp.encoding = ECORE_X_ATOM_UTF8_STRING;
    xtp.nitems = strlen(str);
    XSetTextProperty(_ecore_x_disp, win, &xtp, type);
-}
+} /* ecore_x_window_prop_string_set */
 
 /**
  * Get a window string property.
@@ -626,10 +625,10 @@ ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type)
 #ifdef X_HAVE_UTF8_STRING
              s = Xutf8TextPropertyToTextList(_ecore_x_disp, &xtp,
                                              &list, &items);
-#else
+#else /* ifdef X_HAVE_UTF8_STRING */
              s = XmbTextPropertyToTextList(_ecore_x_disp, &xtp,
                                            &list, &items);
-#endif
+#endif /* ifdef X_HAVE_UTF8_STRING */
              if ((s == XLocaleNotSupported) ||
                  (s == XNoMemory) || (s == XConverterNotFound))
                 str = strdup((char *)xtp.value);
@@ -644,10 +643,10 @@ ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type)
      }
 
    return str;
-}
+} /* ecore_x_window_prop_string_get */
 
 EAPI int
-ecore_x_window_prop_protocol_isset(Ecore_X_Window win,
+ecore_x_window_prop_protocol_isset(Ecore_X_Window      win,
                                    Ecore_X_WM_Protocol protocol)
 {
    Atom proto, *protos = NULL;
@@ -673,7 +672,7 @@ ecore_x_window_prop_protocol_isset(Ecore_X_Window win,
    XFree(protos);
 
    return ret;
-}
+} /* ecore_x_window_prop_protocol_isset */
 
 /**
  * To be documented.
@@ -712,7 +711,8 @@ ecore_x_window_prop_protocol_list_get(Ecore_X_Window win, int *num_ret)
                 prot_ret[i] = j;
           }
      }
-        XFree(protos);
+   XFree(protos);
    *num_ret = protos_count;
    return prot_ret;
-}
+} /* ecore_x_window_prop_protocol_list_get */
+

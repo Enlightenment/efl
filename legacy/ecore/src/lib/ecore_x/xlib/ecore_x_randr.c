@@ -4,7 +4,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #include <stdlib.h>
 
@@ -15,7 +15,7 @@ static int _randr_available = 0;
 static int _randr_major, _randr_minor, _randr_version;
 #define RANDR_1_2 ((1 << 16) | 2)
 #define RANDR_1_3 ((1 << 16) | 3)
-#endif
+#endif /* ifdef ECORE_XRANDR */
 
 void
 _ecore_x_randr_init(void)
@@ -33,17 +33,17 @@ _ecore_x_randr_init(void)
    else
       _randr_available = 0;
 
-#else
+#else /* ifdef ECORE_XRANDR */
    _randr_available = 0;
-#endif
-}
+#endif /* ifdef ECORE_XRANDR */
+} /* _ecore_x_randr_init */
 
 EAPI int
 ecore_x_randr_query(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return _randr_available;
-}
+} /* ecore_x_randr_query */
 
 EAPI int
 ecore_x_randr_events_select(Ecore_X_Window win, int on)
@@ -66,10 +66,10 @@ ecore_x_randr_events_select(Ecore_X_Window win, int on)
    XRRSelectInput(_ecore_x_disp, win, mask);
 
    return 1;
-#else
+#else /* ifdef ECORE_XRANDR */
    return 0;
-#endif
-}
+#endif /* ifdef ECORE_XRANDR */
+} /* ecore_x_randr_events_select */
 
 EAPI Ecore_X_Randr_Rotation
 ecore_x_randr_screen_rotations_get(Ecore_X_Window root)
@@ -81,10 +81,10 @@ ecore_x_randr_screen_rotations_get(Ecore_X_Window root)
    rot = XRRRotations(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp,
                                                      root), &crot);
    return rot;
-#else
+#else /* ifdef ECORE_XRANDR */
    return 0;
-#endif
-}
+#endif /* ifdef ECORE_XRANDR */
+} /* ecore_x_randr_screen_rotations_get */
 
 EAPI Ecore_X_Randr_Rotation
 ecore_x_randr_screen_rotation_get(Ecore_X_Window root)
@@ -95,13 +95,13 @@ ecore_x_randr_screen_rotation_get(Ecore_X_Window root)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XRRRotations(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &crot);
    return crot;
-#else
+#else /* ifdef ECORE_XRANDR */
    return 0;
-#endif
-}
+#endif /* ifdef ECORE_XRANDR */
+} /* ecore_x_randr_screen_rotation_get */
 
 EAPI void
-ecore_x_randr_screen_rotation_set(Ecore_X_Window root,
+ecore_x_randr_screen_rotation_set(Ecore_X_Window         root,
                                   Ecore_X_Randr_Rotation rot)
 {
 #ifdef ECORE_XRANDR
@@ -117,8 +117,8 @@ ecore_x_randr_screen_rotation_set(Ecore_X_Window root,
    sizeid = XRRConfigCurrentConfiguration(xrrcfg, &crot);
    XRRSetScreenConfig(_ecore_x_disp, xrrcfg, root, sizeid, rot, CurrentTime);
    XRRFreeScreenConfigInfo(xrrcfg);
-#endif
-}
+#endif /* ifdef ECORE_XRANDR */
+} /* ecore_x_randr_screen_rotation_set */
 
 EAPI Ecore_X_Screen_Size *
 ecore_x_randr_screen_sizes_get(Ecore_X_Window root, int *num)
@@ -147,13 +147,13 @@ ecore_x_randr_screen_sizes_get(Ecore_X_Window root, int *num)
         ret[i].height = sizes[i].height;
      }
    return ret;
-#else
+#else /* ifdef ECORE_XRANDR */
    if (num)
       *num = 0;
 
    return NULL;
-#endif
-}
+#endif /* ifdef ECORE_XRANDR */
+} /* ecore_x_randr_screen_sizes_get */
 
 EAPI Ecore_X_Screen_Size
 ecore_x_randr_current_screen_size_get(Ecore_X_Window root)
@@ -184,9 +184,9 @@ ecore_x_randr_current_screen_size_get(Ecore_X_Window root)
      }
 
    XRRFreeScreenConfigInfo(sc);
-#endif
+#endif /* ifdef ECORE_XRANDR */
    return ret;
-}
+} /* ecore_x_randr_current_screen_size_get */
 
 EAPI int
 ecore_x_randr_screen_size_set(Ecore_X_Window root, Ecore_X_Screen_Size size)
@@ -219,12 +219,12 @@ ecore_x_randr_screen_size_set(Ecore_X_Window root, Ecore_X_Screen_Size size)
         return 0;
      }
 
-        XRRFreeScreenConfigInfo(sc);
+   XRRFreeScreenConfigInfo(sc);
    return 1;
-#else
+#else /* ifdef ECORE_XRANDR */
    return 0;
-#endif
-}
+#endif /* ifdef ECORE_XRANDR */
+} /* ecore_x_randr_screen_size_set */
 
 EAPI Ecore_X_Screen_Refresh_Rate
 ecore_x_randr_current_screen_refresh_rate_get(Ecore_X_Window root)
@@ -243,14 +243,14 @@ ecore_x_randr_current_screen_refresh_rate_get(Ecore_X_Window root)
 
    ret.rate = XRRConfigCurrentRate(sc);
    XRRFreeScreenConfigInfo(sc);
-#endif
+#endif /* ifdef ECORE_XRANDR */
    return ret;
-}
+} /* ecore_x_randr_current_screen_refresh_rate_get */
 
 EAPI Ecore_X_Screen_Refresh_Rate *
 ecore_x_randr_screen_refresh_rates_get(Ecore_X_Window root,
-                                       int size_id,
-                                       int *num)
+                                       int            size_id,
+                                       int           *num)
 {
 #ifdef ECORE_XRANDR
    Ecore_X_Screen_Refresh_Rate *ret = NULL;
@@ -285,19 +285,19 @@ ecore_x_randr_screen_refresh_rates_get(Ecore_X_Window root,
      {
         ret[i].rate = rates[i];
      }
-        XRRFreeScreenConfigInfo(sc);
+   XRRFreeScreenConfigInfo(sc);
    return ret;
-#else
+#else /* ifdef ECORE_XRANDR */
    if (num)
       *num = 0;
 
    return NULL;
-#endif
-}
+#endif /* ifdef ECORE_XRANDR */
+} /* ecore_x_randr_screen_refresh_rates_get */
 
 EAPI int
-ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window root,
-                                      Ecore_X_Screen_Size size,
+ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window              root,
+                                      Ecore_X_Screen_Size         size,
                                       Ecore_X_Screen_Refresh_Rate rate)
 {
 #ifdef ECORE_XRANDR
@@ -328,9 +328,10 @@ ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window root,
         return 0;
      }
 
-        XRRFreeScreenConfigInfo(sc);
+   XRRFreeScreenConfigInfo(sc);
    return 1;
-#else
+#else /* ifdef ECORE_XRANDR */
    return 1;
-#endif
-}
+#endif /* ifdef ECORE_XRANDR */
+} /* ecore_x_randr_screen_refresh_rate_set */
+

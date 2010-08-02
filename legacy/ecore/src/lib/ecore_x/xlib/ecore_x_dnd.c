@@ -4,7 +4,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #include <stdlib.h>
 #include <string.h>
@@ -28,7 +28,7 @@ static int _ecore_x_dnd_init_count = 0;
 typedef struct _Version_Cache_Item
 {
    Ecore_X_Window win;
-   int ver;
+   int            ver;
 } Version_Cache_Item;
 static Version_Cache_Item *_version_cache = NULL;
 static int _version_cache_num = 0, _version_cache_alloc = 0;
@@ -59,7 +59,7 @@ _ecore_x_dnd_init(void)
      }
 
    _ecore_x_dnd_init_count++;
-}
+} /* _ecore_x_dnd_init */
 
 void
 _ecore_x_dnd_shutdown(void)
@@ -79,16 +79,16 @@ _ecore_x_dnd_shutdown(void)
    _target = NULL;
 
    _ecore_x_dnd_init_count = 0;
-}
+} /* _ecore_x_dnd_shutdown */
 
 static int
-_ecore_x_dnd_converter_copy(char *target __UNUSED__,
-                            void *data,
-                            int size,
-                            void **data_ret,
-                            int *size_ret,
+_ecore_x_dnd_converter_copy(char *target  __UNUSED__,
+                            void         *data,
+                            int           size,
+                            void        **data_ret,
+                            int          *size_ret,
                             Ecore_X_Atom *tprop,
-                            int *count)
+                            int          *count)
 {
    XTextProperty text_prop;
    char *mystr;
@@ -101,7 +101,7 @@ _ecore_x_dnd_converter_copy(char *target __UNUSED__,
    if (!mystr)
       return 0;
 
-        memcpy(mystr, data, size);
+   memcpy(mystr, data, size);
 
    if (XmbTextListToTextProperty(_ecore_x_disp, &mystr, 1, style,
                                  &text_prop) == Success)
@@ -119,7 +119,7 @@ _ecore_x_dnd_converter_copy(char *target __UNUSED__,
         free(mystr);
         return 0;
      }
-}
+} /* _ecore_x_dnd_converter_copy */
 
 EAPI void
 ecore_x_dnd_aware_set(Ecore_X_Window win, int on)
@@ -132,7 +132,7 @@ ecore_x_dnd_aware_set(Ecore_X_Window win, int on)
                                        XA_ATOM, 32, &prop_data, 1);
    else
       ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_AWARE);
-}
+} /* ecore_x_dnd_aware_set */
 
 EAPI int
 ecore_x_dnd_version_get(Ecore_X_Window win)
@@ -192,7 +192,7 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
      }
 
    return 0;
-}
+} /* ecore_x_dnd_version_get */
 
 EAPI int
 ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type)
@@ -220,7 +220,7 @@ ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type)
 
    XFree(data);
    return ret;
-}
+} /* ecore_x_dnd_type_isset */
 
 EAPI void
 ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, int on)
@@ -286,12 +286,12 @@ ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, int on)
 
    XFree(oldset);
    free(newset);
-}
+} /* ecore_x_dnd_type_set */
 
 EAPI void
 ecore_x_dnd_types_set(Ecore_X_Window win,
-                      const char **types,
-                      unsigned int num_types)
+                      const char   **types,
+                      unsigned int   num_types)
 {
    Ecore_X_Atom *newset = NULL;
    unsigned int i;
@@ -317,12 +317,12 @@ ecore_x_dnd_types_set(Ecore_X_Window win,
                                          XA_ATOM, 32, data, num_types);
         free(newset);
      }
-}
+} /* ecore_x_dnd_types_set */
 
 EAPI void
 ecore_x_dnd_actions_set(Ecore_X_Window win,
-                        Ecore_X_Atom *actions,
-                        unsigned int num_actions)
+                        Ecore_X_Atom  *actions,
+                        unsigned int   num_actions)
 {
    unsigned int i;
    unsigned char *data = NULL;
@@ -341,24 +341,23 @@ ecore_x_dnd_actions_set(Ecore_X_Window win,
         ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_ACTION_LIST,
                                          XA_ATOM, 32, data, num_actions);
      }
-}
+} /* ecore_x_dnd_actions_set */
 
 Ecore_X_DND_Source *
 _ecore_x_dnd_source_get(void)
 {
    return _source;
-}
+} /* _ecore_x_dnd_source_get */
 
 Ecore_X_DND_Target *
 _ecore_x_dnd_target_get(void)
 {
    return _target;
-}
+} /* _ecore_x_dnd_target_get */
 
 EAPI int
 ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
 {
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_dnd_version_get(source))
       return 0;
@@ -389,7 +388,7 @@ ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
    _source->dest = None;
 
    return 1;
-}
+} /* ecore_x_dnd_begin */
 
 EAPI int
 ecore_x_dnd_drop(void)
@@ -436,13 +435,13 @@ ecore_x_dnd_drop(void)
    _source->prev.window = 0;
 
    return status;
-}
+} /* ecore_x_dnd_drop */
 
 EAPI void
-ecore_x_dnd_send_status(int will_accept,
-                        int suppress,
+ecore_x_dnd_send_status(int               will_accept,
+                        int               suppress,
                         Ecore_X_Rectangle rectangle,
-                        Ecore_X_Atom action)
+                        Ecore_X_Atom      action)
 {
    XEvent xev;
 
@@ -488,7 +487,7 @@ ecore_x_dnd_send_status(int will_accept,
      }
 
    XSendEvent(_ecore_x_disp, _target->source, False, 0, &xev);
-}
+} /* ecore_x_dnd_send_status */
 
 EAPI void
 ecore_x_dnd_send_finished(void)
@@ -517,7 +516,7 @@ ecore_x_dnd_send_finished(void)
    XSendEvent(_ecore_x_disp, _target->source, False, 0, &xev);
 
    _target->state = ECORE_X_DND_TARGET_IDLE;
-}
+} /* ecore_x_dnd_send_finished */
 
 void
 ecore_x_dnd_source_action_set(Ecore_X_Atom action)
@@ -525,13 +524,13 @@ ecore_x_dnd_source_action_set(Ecore_X_Atom action)
    _source->action = action;
    if (_source->prev.window)
       _ecore_x_dnd_drag(_source->prev.window, _source->prev.x, _source->prev.y);
-}
+} /* ecore_x_dnd_source_action_set */
 
 Ecore_X_Atom
 ecore_x_dnd_source_action_get(void)
 {
    return _source->action;
-}
+} /* ecore_x_dnd_source_action_get */
 
 void
 _ecore_x_dnd_drag(Ecore_X_Window root, int x, int y)
@@ -645,4 +644,5 @@ _ecore_x_dnd_drag(Ecore_X_Window root, int x, int y)
    _source->prev.y = y;
    _source->prev.window = root;
    _source->dest = win;
-}
+} /* _ecore_x_dnd_drag */
+

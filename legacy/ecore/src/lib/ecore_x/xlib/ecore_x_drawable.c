@@ -4,17 +4,15 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #include "ecore_x_private.h"
-
 
 /**
  * @defgroup Ecore_X_Drawable_Group X Drawable Functions
  *
  * Functions that operate on drawables.
  */
-
 
 /**
  * Retrieves the geometry of the given drawable.
@@ -27,10 +25,10 @@
  */
 EAPI void
 ecore_x_drawable_geometry_get(Ecore_X_Drawable d,
-                              int *x,
-                              int *y,
-                              int *w,
-                              int *h)
+                              int             *x,
+                              int             *y,
+                              int             *w,
+                              int             *h)
 {
    Window dummy_win;
    int ret_x, ret_y;
@@ -57,7 +55,7 @@ ecore_x_drawable_geometry_get(Ecore_X_Drawable d,
 
    if (h)
       *h = (int)ret_h;
-}
+} /* ecore_x_drawable_geometry_get */
 
 /**
  * Retrieves the width of the border of the given drawable.
@@ -78,7 +76,7 @@ ecore_x_drawable_border_width_get(Ecore_X_Drawable d)
       border_ret = 0;
 
    return (int)border_ret;
-}
+} /* ecore_x_drawable_border_width_get */
 
 /**
  * Retrieves the depth of the given drawable.
@@ -99,7 +97,7 @@ ecore_x_drawable_depth_get(Ecore_X_Drawable d)
       depth_ret = 0;
 
    return (int)depth_ret;
-}
+} /* ecore_x_drawable_depth_get */
 
 /**
  * Fill the specified rectangle on a drawable.
@@ -112,12 +110,13 @@ ecore_x_drawable_depth_get(Ecore_X_Drawable d)
  */
 EAPI void
 ecore_x_drawable_rectangle_fill(Ecore_X_Drawable d,
-                                Ecore_X_GC gc,
-                                int x,
-                                int y,
-                                int width,
-                                int height)
+                                Ecore_X_GC       gc,
+                                int              x,
+                                int              y,
+                                int              width,
+                                int              height)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFillRectangle(_ecore_x_disp, d, gc, x, y, width, height);
-}
+} /* ecore_x_drawable_rectangle_fill */
+

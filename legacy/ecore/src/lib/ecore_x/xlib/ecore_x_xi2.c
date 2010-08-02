@@ -4,7 +4,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #include <string.h>
 
@@ -14,14 +14,14 @@
 
 #ifdef ECORE_XI2
 #include "Ecore_Input.h"
-#endif
+#endif /* ifdef ECORE_XI2 */
 
 int _ecore_x_xi2_opcode = -1;
 
 #ifdef ECORE_XI2
 static XIDeviceInfo *_ecore_x_xi2_devs = NULL;
 static int _ecore_x_xi2_num = 0;
-#endif
+#endif /* ifdef ECORE_XI2 */
 
 void
 _ecore_x_input_init(void)
@@ -45,8 +45,8 @@ _ecore_x_input_init(void)
 
    _ecore_x_xi2_devs = XIQueryDevice(_ecore_x_disp, XIAllDevices,
                                      &_ecore_x_xi2_num);
-#endif
-}
+#endif /* ifdef ECORE_XI2 */
+} /* _ecore_x_input_init */
 
 void
 _ecore_x_input_shutdown(void)
@@ -60,8 +60,8 @@ _ecore_x_input_shutdown(void)
 
    _ecore_x_xi2_num = 0;
    _ecore_x_xi2_opcode = -1;
-#endif
-}
+#endif /* ifdef ECORE_XI2 */
+} /* _ecore_x_input_shutdown */
 
 void
 _ecore_x_input_handler(XEvent *xevent)
@@ -127,9 +127,9 @@ _ecore_x_input_handler(XEvent *xevent)
             evd->event_x, evd->event_y,
             evd->root_x, evd->root_y);
          break;
-     }
-#endif
-}
+     } /* switch */
+#endif /* ifdef ECORE_XI2 */
+} /* _ecore_x_input_handler */
 
 EAPI Eina_Bool
 ecore_x_input_multi_select(Ecore_X_Window win)
@@ -162,7 +162,8 @@ ecore_x_input_multi_select(Ecore_X_Window win)
      }
 
    return find;
-#else
+#else /* ifdef ECORE_XI2 */
    return 0;
-#endif
-}
+#endif /* ifdef ECORE_XI2 */
+} /* ecore_x_input_multi_select */
+

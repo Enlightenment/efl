@@ -11,7 +11,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #include <stdlib.h>
 
@@ -20,24 +20,24 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
-#define ECORE_X_MWM_HINTS_FUNCTIONS           (1 << 0)
-#define ECORE_X_MWM_HINTS_DECORATIONS         (1 << 1)
-#define ECORE_X_MWM_HINTS_INPUT_MODE          (1 << 2)
-#define ECORE_X_MWM_HINTS_STATUS              (1 << 3)
+#define ECORE_X_MWM_HINTS_FUNCTIONS   (1 << 0)
+#define ECORE_X_MWM_HINTS_DECORATIONS (1 << 1)
+#define ECORE_X_MWM_HINTS_INPUT_MODE  (1 << 2)
+#define ECORE_X_MWM_HINTS_STATUS      (1 << 3)
 
 typedef struct _mwmhints
 {
    CARD32 flags;
    CARD32 functions;
    CARD32 decorations;
-   INT32 inputmode;
+   INT32  inputmode;
    CARD32 status;
 }
 MWMHints;
 
 EAPI int
-ecore_x_mwm_hints_get(Ecore_X_Window win,
-                      Ecore_X_MWM_Hint_Func *fhint,
+ecore_x_mwm_hints_get(Ecore_X_Window          win,
+                      Ecore_X_MWM_Hint_Func  *fhint,
                       Ecore_X_MWM_Hint_Decor *dhint,
                       Ecore_X_MWM_Hint_Input *ihint)
 {
@@ -90,7 +90,7 @@ ecore_x_mwm_hints_get(Ecore_X_Window win,
      }
 
    return ret;
-}
+} /* ecore_x_mwm_hints_get */
 
 EAPI void
 ecore_x_mwm_borderless_set(Ecore_X_Window win, int borderless)
@@ -105,5 +105,5 @@ ecore_x_mwm_borderless_set(Ecore_X_Window win, int borderless)
                                     ECORE_X_ATOM_MOTIF_WM_HINTS,
                                     ECORE_X_ATOM_MOTIF_WM_HINTS,
                                     32, (void *)data, 5);
-}
+} /* ecore_x_mwm_borderless_set */
 

@@ -4,18 +4,17 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #include <stdlib.h>
 
 #ifdef ECORE_XTEST
 # include <X11/extensions/XTest.h>
-#endif
+#endif /* ifdef ECORE_XTEST */
 
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
 #include <string.h>
-
 
 EAPI int
 ecore_x_test_fake_key_down(const char *key)
@@ -40,10 +39,10 @@ ecore_x_test_fake_key_down(const char *key)
       return 0;
 
    return XTestFakeKeyEvent(_ecore_x_disp, keycode, 1, 0);
-#else
+#else /* ifdef ECORE_XTEST */
    return 0;
-#endif
-}
+#endif /* ifdef ECORE_XTEST */
+} /* ecore_x_test_fake_key_down */
 
 EAPI int
 ecore_x_test_fake_key_up(const char *key)
@@ -68,10 +67,10 @@ ecore_x_test_fake_key_up(const char *key)
       return 0;
 
    return XTestFakeKeyEvent(_ecore_x_disp, keycode, 0, 0);
-#else
+#else /* ifdef ECORE_XTEST */
    return 0;
-#endif
-}
+#endif /* ifdef ECORE_XTEST */
+} /* ecore_x_test_fake_key_up */
 
 EAPI int
 ecore_x_test_fake_key_press(const char *key)
@@ -128,20 +127,21 @@ ecore_x_test_fake_key_press(const char *key)
       XTestFakeKeyEvent(_ecore_x_disp,
                         XKeysymToKeycode(_ecore_x_disp, XK_Shift_L), 1, 0);
 
-                        XTestFakeKeyEvent(_ecore_x_disp, keycode, 1, 0);
-                        XTestFakeKeyEvent(_ecore_x_disp, keycode, 0, 0);
+   XTestFakeKeyEvent(_ecore_x_disp, keycode, 1, 0);
+   XTestFakeKeyEvent(_ecore_x_disp, keycode, 0, 0);
    if (shift)
-                        XTestFakeKeyEvent(_ecore_x_disp,
+      XTestFakeKeyEvent(_ecore_x_disp,
                         XKeysymToKeycode(_ecore_x_disp, XK_Shift_L), 0, 0);
 
    return 1;
-#else
+#else /* ifdef ECORE_XTEST */
    return 0;
-#endif
-}
+#endif /* ifdef ECORE_XTEST */
+} /* ecore_x_test_fake_key_press */
 
 EAPI const char *
 ecore_x_keysym_string_get(int keysym)
 {
    return XKeysymToString(keysym);
-}
+} /* ecore_x_keysym_string_get */
+

@@ -4,7 +4,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
@@ -22,7 +22,7 @@ static void
 _ecore_x_image_error_handler(Display *d __UNUSED__, XErrorEvent *ev __UNUSED__)
 {
    _ecore_x_image_err = 1;
-}
+} /* _ecore_x_image_error_handler */
 
 static void
 _ecore_x_image_shm_check(void)
@@ -92,18 +92,18 @@ _ecore_x_image_shm_check(void)
    shmctl(shminfo.shmid, IPC_RMID, 0);
 
    _ecore_x_image_shm_can = 1;
-}
+} /* _ecore_x_image_shm_check */
 
 struct _Ecore_X_Image
 {
    XShmSegmentInfo shminfo;
-   Ecore_X_Visual vis;
-   XImage *xim;
-   int depth;
-   int w, h;
-   int bpl, bpp, rows;
-   unsigned char *data;
-   Eina_Bool shm : 1;
+   Ecore_X_Visual  vis;
+   XImage         *xim;
+   int             depth;
+   int             w, h;
+   int             bpl, bpp, rows;
+   unsigned char  *data;
+   Eina_Bool       shm : 1;
 };
 
 EAPI Ecore_X_Image *
@@ -123,7 +123,7 @@ ecore_x_image_new(int w, int h, Ecore_X_Visual vis, int depth)
    _ecore_x_image_shm_check();
    im->shm = _ecore_x_image_shm_can;
    return im;
-}
+} /* ecore_x_image_new */
 
 EAPI void
 ecore_x_image_free(Ecore_X_Image *im)
@@ -147,7 +147,7 @@ ecore_x_image_free(Ecore_X_Image *im)
      }
 
    free(im);
-}
+} /* ecore_x_image_free */
 
 static void
 _ecore_x_image_shm_create(Ecore_X_Image *im)
@@ -191,7 +191,7 @@ _ecore_x_image_shm_create(Ecore_X_Image *im)
       im->bpp = 2;
    else
       im->bpp = 4;
-}
+} /* _ecore_x_image_shm_create */
 
 EAPI Eina_Bool
 ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw,
@@ -270,21 +270,21 @@ ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw,
      }
 
    return ret;
-}
+} /* ecore_x_image_get */
 
 EAPI void
-ecore_x_image_put(Ecore_X_Image *im __UNUSED__,
+ecore_x_image_put(Ecore_X_Image *im     __UNUSED__,
                   Ecore_X_Drawable draw __UNUSED__,
-                  int x __UNUSED__,
-                  int y __UNUSED__,
-                  int sx __UNUSED__,
-                  int sy __UNUSED__,
-                  int w __UNUSED__,
-                  int h __UNUSED__)
+                  int x                 __UNUSED__,
+                  int y                 __UNUSED__,
+                  int sx                __UNUSED__,
+                  int sy                __UNUSED__,
+                  int w                 __UNUSED__,
+                  int h                 __UNUSED__)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    printf("ecore_x_image_put: unimplemented!\n");
-}
+} /* ecore_x_image_put */
 
 EAPI void *
 ecore_x_image_data_get(Ecore_X_Image *im, int *bpl, int *rows, int *bpp)
@@ -306,4 +306,5 @@ ecore_x_image_data_get(Ecore_X_Image *im, int *bpl, int *rows, int *bpp)
       *bpp = im->bpp;
 
    return im->data;
-}
+} /* ecore_x_image_data_get */
+

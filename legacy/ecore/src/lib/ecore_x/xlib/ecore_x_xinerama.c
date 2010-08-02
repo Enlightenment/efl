@@ -8,7 +8,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #include "Ecore.h"
 #include "ecore_x_private.h"
@@ -18,7 +18,7 @@
 #ifdef ECORE_XINERAMA
 static XineramaScreenInfo *_xin_info = NULL;
 static int _xin_scr_num = 0;
-#endif
+#endif /* ifdef ECORE_XINERAMA */
 
 EAPI int
 ecore_x_xinerama_screen_count_get(void)
@@ -26,7 +26,7 @@ ecore_x_xinerama_screen_count_get(void)
 #ifdef ECORE_XINERAMA
    int event_base, error_base;
 
-      LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (_xin_info)
       XFree(_xin_info);
 
@@ -38,9 +38,9 @@ ecore_x_xinerama_screen_count_get(void)
            return _xin_scr_num;
      }
 
-#endif
+#endif /* ifdef ECORE_XINERAMA */
    return 0;
-}
+} /* ecore_x_xinerama_screen_count_get */
 
 EAPI int
 ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h)
@@ -72,7 +72,7 @@ ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h)
           }
      }
 
-#endif
+#endif /* ifdef ECORE_XINERAMA */
    if (x)
       *x = 0;
 
@@ -86,4 +86,5 @@ ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h)
       *h = DisplayHeight(_ecore_x_disp, 0);
 
    return 0;
-}
+} /* ecore_x_xinerama_screen_geometry_get */
+

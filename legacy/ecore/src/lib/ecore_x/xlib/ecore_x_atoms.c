@@ -4,7 +4,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
@@ -15,13 +15,13 @@
 #elif defined _MSC_VER
 # include <malloc.h>
 # define alloca _alloca
-#else
+#else /* ifdef HAVE_ALLOCA_H */
 # include <stddef.h>
 # ifdef  __cplusplus
 extern "C"
-# endif
-void *alloca (size_t);
-#endif
+# endif /* ifdef  __cplusplus */
+void *    alloca (size_t);
+#endif /* ifdef HAVE_ALLOCA_H */
 
 #include <string.h>
 
@@ -34,7 +34,7 @@ void *alloca (size_t);
 
 typedef struct
 {
-   const char *name;
+   const char   *name;
    Ecore_X_Atom *atom;
 } Atom_Item;
 
@@ -296,7 +296,7 @@ _ecore_x_atoms_init(void)
    for (i = 0; i < num; i++) names[i] = (char *)items[i].name;
    XInternAtoms(_ecore_x_disp, names, num, False, atoms);
    for (i = 0; i < num; i++) *(items[i].atom) = atoms[i];
-}
+} /* _ecore_x_atoms_init */
 
 /**
  * Retrieves the atom value associated with the given name.
@@ -311,7 +311,7 @@ ecore_x_atom_get(const char *name)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XInternAtom(_ecore_x_disp, name, False);
-}
+} /* ecore_x_atom_get */
 
 EAPI void
 ecore_x_atoms_get(const char **names, int num, Ecore_X_Atom *atoms)
@@ -327,7 +327,7 @@ ecore_x_atoms_get(const char **names, int num, Ecore_X_Atom *atoms)
    XInternAtoms(_ecore_x_disp, (char **)names, num, False, atoms_int);
    for (i = 0; i < num; i++)
       atoms[i] = atoms_int[i];
-}
+} /* ecore_x_atoms_get */
 
 EAPI char *
 ecore_x_atom_name_get(Ecore_X_Atom atom)
@@ -348,4 +348,5 @@ ecore_x_atom_name_get(Ecore_X_Atom atom)
    XFree(xname);
 
    return name;
-}
+} /* ecore_x_atom_name_get */
+

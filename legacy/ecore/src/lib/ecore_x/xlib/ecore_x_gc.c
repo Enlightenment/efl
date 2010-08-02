@@ -4,7 +4,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
+#endif /* ifdef HAVE_CONFIG_H */
 
 #include <string.h>
 
@@ -23,9 +23,9 @@
  * @return The new default graphics context.
  */
 EAPI Ecore_X_GC
-ecore_x_gc_new(Ecore_X_Drawable draw,
+ecore_x_gc_new(Ecore_X_Drawable      draw,
                Ecore_X_GC_Value_Mask value_mask,
-               const unsigned int *value_list)
+               const unsigned int   *value_list)
 {
    XGCValues gcv;
    int mask;
@@ -156,11 +156,11 @@ ecore_x_gc_new(Ecore_X_Drawable draw,
               gcv.arc_mode = value_list[index];
               index++;
               break;
-          }
+          } /* switch */
      }
 
    return XCreateGC(_ecore_x_disp, draw, value_mask, &gcv);
-}
+} /* ecore_x_gc_new */
 
 /**
  * Deletes and frees the given graphics context.
@@ -171,4 +171,5 @@ ecore_x_gc_free(Ecore_X_GC gc)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFreeGC(_ecore_x_disp, gc);
-}
+} /* ecore_x_gc_free */
+

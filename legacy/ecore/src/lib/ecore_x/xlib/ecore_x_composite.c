@@ -4,8 +4,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif
-
+#endif /* ifdef HAVE_CONFIG_H */
 
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
@@ -23,18 +22,18 @@ _ecore_x_composite_init(void)
    if (XCompositeQueryVersion(_ecore_x_disp, &major, &minor))
       _composite_available = 1;
 
-#endif
-}
+#endif /* ifdef ECORE_XCOMPOSITE */
+} /* _ecore_x_composite_init */
 
 EAPI int
 ecore_x_composite_query(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return _composite_available;
-}
+} /* ecore_x_composite_query */
 
 EAPI void
-ecore_x_composite_redirect_window(Ecore_X_Window win,
+ecore_x_composite_redirect_window(Ecore_X_Window                win,
                                   Ecore_X_Composite_Update_Type type)
 {
 #ifdef ECORE_XCOMPOSITE
@@ -50,13 +49,13 @@ ecore_x_composite_redirect_window(Ecore_X_Window win,
       case ECORE_X_COMPOSITE_UPDATE_MANUAL:
          update = CompositeRedirectManual;
          break;
-     }
+     } /* switch */
    XCompositeRedirectWindow(_ecore_x_disp, win, update);
-#endif
-}
+#endif /* ifdef ECORE_XCOMPOSITE */
+} /* ecore_x_composite_redirect_window */
 
 EAPI void
-ecore_x_composite_redirect_subwindows(Ecore_X_Window win,
+ecore_x_composite_redirect_subwindows(Ecore_X_Window                win,
                                       Ecore_X_Composite_Update_Type type)
 {
 #ifdef ECORE_XCOMPOSITE
@@ -72,13 +71,13 @@ ecore_x_composite_redirect_subwindows(Ecore_X_Window win,
       case ECORE_X_COMPOSITE_UPDATE_MANUAL:
          update = CompositeRedirectManual;
          break;
-     }
+     } /* switch */
    XCompositeRedirectSubwindows(_ecore_x_disp, win, update);
-#endif
-}
+#endif /* ifdef ECORE_XCOMPOSITE */
+} /* ecore_x_composite_redirect_subwindows */
 
 EAPI void
-ecore_x_composite_unredirect_window(Ecore_X_Window win,
+ecore_x_composite_unredirect_window(Ecore_X_Window                win,
                                     Ecore_X_Composite_Update_Type type)
 {
 #ifdef ECORE_XCOMPOSITE
@@ -94,13 +93,13 @@ ecore_x_composite_unredirect_window(Ecore_X_Window win,
       case ECORE_X_COMPOSITE_UPDATE_MANUAL:
          update = CompositeRedirectManual;
          break;
-     }
+     } /* switch */
    XCompositeUnredirectWindow(_ecore_x_disp, win, update);
-#endif
-}
+#endif /* ifdef ECORE_XCOMPOSITE */
+} /* ecore_x_composite_unredirect_window */
 
 EAPI void
-ecore_x_composite_unredirect_subwindows(Ecore_X_Window win,
+ecore_x_composite_unredirect_subwindows(Ecore_X_Window                win,
                                         Ecore_X_Composite_Update_Type type)
 {
 #ifdef ECORE_XCOMPOSITE
@@ -116,10 +115,10 @@ ecore_x_composite_unredirect_subwindows(Ecore_X_Window win,
       case ECORE_X_COMPOSITE_UPDATE_MANUAL:
          update = CompositeRedirectManual;
          break;
-     }
+     } /* switch */
    XCompositeUnredirectSubwindows(_ecore_x_disp, win, update);
-#endif
-}
+#endif /* ifdef ECORE_XCOMPOSITE */
+} /* ecore_x_composite_unredirect_subwindows */
 
 EAPI Ecore_X_Pixmap
 ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win)
@@ -129,10 +128,10 @@ ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win)
 #ifdef ECORE_XCOMPOSITE
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    pixmap = XCompositeNameWindowPixmap(_ecore_x_disp, win);
-#endif
+#endif /* ifdef ECORE_XCOMPOSITE */
 
    return pixmap;
-}
+} /* ecore_x_composite_name_window_pixmap_get */
 
 EAPI Ecore_X_Window
 ecore_x_composite_render_window_enable(Ecore_X_Window root)
@@ -149,9 +148,9 @@ ecore_x_composite_render_window_enable(Ecore_X_Window root)
    rect.height = 1;
    XShapeCombineRectangles(_ecore_x_disp, win, ShapeInput, 0, 0, &rect, 1,
                            ShapeSet, Unsorted);
-#endif
+#endif /* ifdef ECORE_XCOMPOSITE */
    return win;
-}
+} /* ecore_x_composite_render_window_enable */
 
 EAPI void
 ecore_x_composite_render_window_disable(Ecore_X_Window root)
@@ -159,5 +158,6 @@ ecore_x_composite_render_window_disable(Ecore_X_Window root)
 #ifdef ECORE_XCOMPOSITE
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XCompositeReleaseOverlayWindow(_ecore_x_disp, root);
-#endif
-}
+#endif /* ifdef ECORE_XCOMPOSITE */
+} /* ecore_x_composite_render_window_disable */
+
