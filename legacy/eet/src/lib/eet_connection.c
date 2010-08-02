@@ -41,13 +41,6 @@ void *    alloca (size_t);
 
 #define MAGIC_EET_DATA_PACKET 0x4270ACE1
 
-typedef struct _Eet_Message   Eet_Message;
-struct _Eet_Message
-{
-   int magic;
-   int size;
-};
-
 struct _Eet_Connection
 {
    Eet_Read_Cb  *eet_read_cb;
@@ -95,24 +88,24 @@ eet_connection_received(Eet_Connection *conn,
 
         if (conn->size == 0)
           {
-             const Eet_Message *msg;
+             const int *msg;
              size_t packet_size;
 
-             if (size < sizeof (Eet_Message))
+             if (size < sizeof (int) * 2)
                 break;
 
              msg = data;
              /* Check the magic */
-             if (ntohl(msg->magic) != MAGIC_EET_DATA_PACKET)
+             if (ntohl(msg[0]) != MAGIC_EET_DATA_PACKET)
                 break;
 
-             packet_size = ntohl(msg->size);
+             packet_size = ntohl(msg[1]);
              /* Message should always be under 64K */
              if (packet_size > 64 * 1024)
                 break;
 
-             data = (void *)(msg + 1);
-             size -= sizeof (msg);
+             data = (void *)(msg + 2);
+             size -= sizeof (int) * 2;
              if ((size_t)packet_size <= size)
                {
                   /* Not a partial receive, go the quick way. */
@@ -176,20 +169,20 @@ _eet_connection_raw_send(Eet_Connection *conn,
                          void           *data,
                          int             data_size)
 {
-   Eet_Message *message;
+   int *message;
 
    /* Message should never be above 64K */
    if (data_size > 64 * 1024)
       return EINA_FALSE;
 
-   message = alloca(data_size + sizeof (Eet_Message));
-   message->magic = htonl(MAGIC_EET_DATA_PACKET);
-   message->size = htonl(data_size);
+   message = alloca(data_size + sizeof (int) * 2);
+   message[0] = htonl(MAGIC_EET_DATA_PACKET);
+   message[1] = htonl(data_size);
 
-   memcpy(message + 1, data, data_size);
+   memcpy(message + 2, data, data_size);
 
    conn->eet_write_cb(message,
-                      data_size + sizeof (Eet_Message),
+                      data_size + sizeof (int) * 2,
                       conn->user_data);
    return EINA_TRUE;
 } /* _eet_connection_raw_send */
