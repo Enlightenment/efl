@@ -51,6 +51,7 @@ eina_unicode_strcpy(Eina_Unicode *dest, const Eina_Unicode *source)
 
    while (*source)
       *dest++ = *source++;
+   *dest = 0;
    return ret;
 }
 
