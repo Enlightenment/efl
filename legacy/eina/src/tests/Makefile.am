@@ -35,7 +35,8 @@ eina_suite.c 		\
 eina_test_fp.c		\
 eina_test_stringshare.c \
 eina_test_ustringshare.c\
-eina_test_binshare.c\
+eina_test_ustr.c	\
+eina_test_binshare.c    \
 eina_test_array.c 	\
 eina_test_error.c	\
 eina_test_log.c 	\
