@@ -917,6 +917,19 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
 
    //cd = _alloc(sizeof(Code));
    //codes = eina_list_append(codes, cd);
+#define EMN(Tp, Sz, Ce)							\
+   Ce->mp.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 10);
+
+   EMN(RECTANGLE, Edje_Part_Description_Common, de);
+   EMN(TEXT, Edje_Part_Description_Text, de);
+   EMN(IMAGE, Edje_Part_Description_Image, de);
+   EMN(SWALLOW, Edje_Part_Description_Common, de);
+   EMN(TEXTBLOCK, Edje_Part_Description_Text, de);
+   EMN(GROUP, Edje_Part_Description_Common, de);
+   EMN(BOX, Edje_Part_Description_Box, de);
+   EMN(TABLE, Edje_Part_Description_Table, de);
+   EMN(EXTERNAL, Edje_Part_Description_External, de);
+   EMN(part, Edje_Part, de);
 
    ed->file->collection_cache = eina_list_prepend(ed->file->collection_cache, pc);
    _edje_cache_coll_clean(ed->file);
@@ -2648,15 +2661,18 @@ _edje_edit_state_alloc(int type, Edje *ed)
      {
       case EDJE_PART_TYPE_RECTANGLE:
 	 pd = eina_mempool_malloc(ce->mp.RECTANGLE, sizeof (Edje_Part_Description_Common));
+	 ce->count.RECTANGLE++;
 	 break;
       case EDJE_PART_TYPE_SWALLOW:
 	 pd = eina_mempool_malloc(ce->mp.SWALLOW, sizeof (Edje_Part_Description_Common));
+	 ce->count.SWALLOW++;
 	 break;
       case EDJE_PART_TYPE_GROUP:
 	 pd = eina_mempool_malloc(ce->mp.GROUP, sizeof (Edje_Part_Description_Common));
+	 ce->count.GROUP++;
 	 break;
 
-#define EDIT_ALLOC_POOL(Short, Type, Name)					\
+#define EDIT_ALLOC_POOL(Short, Type, Name)				\
 	 case EDJE_PART_TYPE_##Short:					\
 	   {								\
 	      Edje_Part_Description_##Type *Name;			\
@@ -2664,6 +2680,7 @@ _edje_edit_state_alloc(int type, Edje *ed)
 	      Name = eina_mempool_malloc(ce->mp.Short,			\
 					 sizeof (Edje_Part_Description_##Type)); \
 	      pd = &Name->common;					\
+	      ce->count.Short++;					\
 	      break;							\
 	   }
 
