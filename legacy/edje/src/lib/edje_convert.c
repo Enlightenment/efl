@@ -281,19 +281,19 @@ _edje_collection_convert(Edje_File *file, Old_Edje_Part_Collection *oedc)
      }
    ce->count.part = eina_list_count(oedc->parts);
 
-#define EMN(Tp, Sz, Ce)							\
+#define CONVERT_EMN(Tp, Sz, Ce)							\
    Ce->mp.Tp = eina_mempool_add("one_big", #Tp, NULL, sizeof (Sz), Ce->count.Tp);
 
-   EMN(RECTANGLE, Edje_Part_Description_Common, ce);
-   EMN(TEXT, Edje_Part_Description_Text, ce);
-   EMN(IMAGE, Edje_Part_Description_Image, ce);
-   EMN(SWALLOW, Edje_Part_Description_Common, ce);
-   EMN(TEXTBLOCK, Edje_Part_Description_Text, ce);
-   EMN(GROUP, Edje_Part_Description_Common, ce);
-   EMN(BOX, Edje_Part_Description_Box, ce);
-   EMN(TABLE, Edje_Part_Description_Table, ce);
-   EMN(EXTERNAL, Edje_Part_Description_External, ce);
-   EMN(part, Edje_Part, ce);
+   CONVERT_EMN(RECTANGLE, Edje_Part_Description_Common, ce);
+   CONVERT_EMN(TEXT, Edje_Part_Description_Text, ce);
+   CONVERT_EMN(IMAGE, Edje_Part_Description_Image, ce);
+   CONVERT_EMN(SWALLOW, Edje_Part_Description_Common, ce);
+   CONVERT_EMN(TEXTBLOCK, Edje_Part_Description_Text, ce);
+   CONVERT_EMN(GROUP, Edje_Part_Description_Common, ce);
+   CONVERT_EMN(BOX, Edje_Part_Description_Box, ce);
+   CONVERT_EMN(TABLE, Edje_Part_Description_Table, ce);
+   CONVERT_EMN(EXTERNAL, Edje_Part_Description_External, ce);
+   CONVERT_EMN(part, Edje_Part, ce);
 
    /* Change structure layout */
    edc = calloc(1, sizeof (Edje_Part_Collection));

@@ -917,19 +917,19 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
 
    //cd = _alloc(sizeof(Code));
    //codes = eina_list_append(codes, cd);
-#define EMN(Tp, Sz, Ce)							\
+#define EDIT_EMN(Tp, Sz, Ce)							\
    Ce->mp.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 10);
 
-   EMN(RECTANGLE, Edje_Part_Description_Common, de);
-   EMN(TEXT, Edje_Part_Description_Text, de);
-   EMN(IMAGE, Edje_Part_Description_Image, de);
-   EMN(SWALLOW, Edje_Part_Description_Common, de);
-   EMN(TEXTBLOCK, Edje_Part_Description_Text, de);
-   EMN(GROUP, Edje_Part_Description_Common, de);
-   EMN(BOX, Edje_Part_Description_Box, de);
-   EMN(TABLE, Edje_Part_Description_Table, de);
-   EMN(EXTERNAL, Edje_Part_Description_External, de);
-   EMN(part, Edje_Part, de);
+   EDIT_EMN(RECTANGLE, Edje_Part_Description_Common, de);
+   EDIT_EMN(TEXT, Edje_Part_Description_Text, de);
+   EDIT_EMN(IMAGE, Edje_Part_Description_Image, de);
+   EDIT_EMN(SWALLOW, Edje_Part_Description_Common, de);
+   EDIT_EMN(TEXTBLOCK, Edje_Part_Description_Text, de);
+   EDIT_EMN(GROUP, Edje_Part_Description_Common, de);
+   EDIT_EMN(BOX, Edje_Part_Description_Box, de);
+   EDIT_EMN(TABLE, Edje_Part_Description_Table, de);
+   EDIT_EMN(EXTERNAL, Edje_Part_Description_External, de);
+   EDIT_EMN(part, Edje_Part, de);
 
    ed->file->collection_cache = eina_list_prepend(ed->file->collection_cache, pc);
    _edje_cache_coll_clean(ed->file);
