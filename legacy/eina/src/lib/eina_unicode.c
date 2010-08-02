@@ -63,7 +63,7 @@ eina_unicode_strncpy(Eina_Unicode *dest, const Eina_Unicode *source, size_t n)
 {
    Eina_Unicode *ret = dest;
 
-   for (n = 0; *source && n; n--)
+   for ( ; n && *source ; n--)
       *dest++ = *source++;
    for (; n; n--)
       *dest++ = 0;
