@@ -581,7 +581,11 @@ eng_output_flush(void *data)
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 #ifdef FRAMECOUNT
    double t0 = get_time();
-#endif   
+#endif
+   if (re->info->vsync)
+      eglSwapInterval(re->win->egl_disp, 1);
+   else
+      eglSwapInterval(re->win->egl_disp, 0);
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
 #ifdef FRAMECOUNT
    double t1 = get_time();
