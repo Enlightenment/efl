@@ -8,19 +8,18 @@
 #include "ecore_xcb_private.h"
 #include "Ecore_X_Atoms.h"
 
-
 /*
  * Set CARD32 (array) property
  */
 EAPI void
 ecore_x_window_prop_card32_set(Ecore_X_Window win,
                                Ecore_X_Atom   atom,
-			       unsigned int  *val,
+                               unsigned int  *val,
                                unsigned int   num)
 {
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win,
                        atom, ECORE_X_ATOM_CARDINAL, 32, num, (const void *)val);
-}
+} /* ecore_x_window_prop_card32_set */
 
 /**
  * Sends the GetProperty request.
@@ -29,7 +28,7 @@ ecore_x_window_prop_card32_set(Ecore_X_Window win,
  */
 EAPI void
 ecore_x_window_prop_card32_get_prefetch(Ecore_X_Window window,
-                                        Ecore_X_Atom atom)
+                                        Ecore_X_Atom   atom)
 {
    xcb_get_property_cookie_t cookie;
 
@@ -39,8 +38,7 @@ ecore_x_window_prop_card32_get_prefetch(Ecore_X_Window window,
                                        ECORE_X_ATOM_CARDINAL,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
-
+} /* ecore_x_window_prop_card32_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_window_prop_card32_get_prefetch().
@@ -54,7 +52,7 @@ ecore_x_window_prop_card32_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_window_prop_card32_get_fetch */
 
 /*
  * Get CARD32 (array) property
@@ -66,9 +64,9 @@ ecore_x_window_prop_card32_get_fetch(void)
  */
 EAPI int
 ecore_x_window_prop_card32_get(Ecore_X_Window win __UNUSED__,
-                               Ecore_X_Atom   atom __UNUSED__,
-			       unsigned int  *val,
-                               unsigned int   len)
+                               Ecore_X_Atom atom  __UNUSED__,
+                               unsigned int      *val,
+                               unsigned int       len)
 {
    xcb_get_property_reply_t *reply;
 
@@ -79,13 +77,13 @@ ecore_x_window_prop_card32_get(Ecore_X_Window win __UNUSED__,
       return -1;
 
    if (reply->value_len < len)
-     len = xcb_get_property_value_length(reply);
+      len = xcb_get_property_value_length(reply);
 
    if (val)
       memcpy(val, xcb_get_property_value(reply), len);
 
    return (int)len;
-}
+} /* ecore_x_window_prop_card32_get */
 
 /*
  * Get CARD32 (array) property of any length
@@ -96,11 +94,11 @@ ecore_x_window_prop_card32_get(Ecore_X_Window win __UNUSED__,
  */
 EAPI int
 ecore_x_window_prop_card32_list_get(Ecore_X_Window win __UNUSED__,
-                                    Ecore_X_Atom   atom __UNUSED__,
-				    unsigned int **plist)
+                                    Ecore_X_Atom atom  __UNUSED__,
+                                    unsigned int     **plist)
 {
    xcb_get_property_reply_t *reply;
-   int                       num = -1;
+   int num = -1;
 
    if (plist)
       *plist = NULL;
@@ -115,24 +113,24 @@ ecore_x_window_prop_card32_list_get(Ecore_X_Window win __UNUSED__,
    else if ((reply->type == ECORE_X_ATOM_CARDINAL) &&
             (reply->format == 32))
      {
-       uint32_t *val;
+        uint32_t *val;
 
-       num = xcb_get_property_value_length(reply);
-       if (plist)
-         {
-            val = (uint32_t *)malloc (num);
-            if (!val)
-               goto error;
+        num = xcb_get_property_value_length(reply);
+        if (plist)
+          {
+             val = (uint32_t *)malloc (num);
+             if (!val)
+                goto error;
 
-            memcpy(val, xcb_get_property_value(reply), num);
-            *plist = val;
-         }
+             memcpy(val, xcb_get_property_value(reply), num);
+             *plist = val;
+          }
      }
 
- error:
+error:
 
    return num;
-}
+} /* ecore_x_window_prop_card32_list_get */
 
 /*
  * Set X ID (array) property
@@ -140,13 +138,13 @@ ecore_x_window_prop_card32_list_get(Ecore_X_Window win __UNUSED__,
 EAPI void
 ecore_x_window_prop_xid_set(Ecore_X_Window win,
                             Ecore_X_Atom   atom,
-			    Ecore_X_Atom   type,
+                            Ecore_X_Atom   type,
                             Ecore_X_ID    *xids,
-			    unsigned int   num)
+                            unsigned int   num)
 {
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win,
                        atom, type, 32, num, xids);
-}
+} /* ecore_x_window_prop_xid_set */
 
 /**
  * Sends the GetProperty request.
@@ -167,8 +165,7 @@ ecore_x_window_prop_xid_get_prefetch(Ecore_X_Window window,
                                        type,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
-
+} /* ecore_x_window_prop_xid_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_window_prop_xid_get_prefetch().
@@ -182,7 +179,7 @@ ecore_x_window_prop_xid_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_window_prop_xid_get_fetch */
 
 /*
  * Get X ID (array) property
@@ -194,13 +191,13 @@ ecore_x_window_prop_xid_get_fetch(void)
  */
 EAPI int
 ecore_x_window_prop_xid_get(Ecore_X_Window win __UNUSED__,
-                            Ecore_X_Atom   atom __UNUSED__,
-			    Ecore_X_Atom   type __UNUSED__,
-                            Ecore_X_ID    *xids,
-			    unsigned int   len)
+                            Ecore_X_Atom atom  __UNUSED__,
+                            Ecore_X_Atom type  __UNUSED__,
+                            Ecore_X_ID        *xids,
+                            unsigned int       len)
 {
    xcb_get_property_reply_t *reply;
-   int                       num = len;
+   int num = len;
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
@@ -211,14 +208,14 @@ ecore_x_window_prop_xid_get(Ecore_X_Window win __UNUSED__,
    else if (reply->format == 32)
      {
         if (reply->value_len < len)
-          num = xcb_get_property_value_length(reply);
+           num = xcb_get_property_value_length(reply);
 
         if (xids)
            memcpy(xids, xcb_get_property_value(reply), num);
      }
 
    return num;
-}
+} /* ecore_x_window_prop_xid_get */
 
 /*
  * Get X ID (array) property
@@ -230,12 +227,12 @@ ecore_x_window_prop_xid_get(Ecore_X_Window win __UNUSED__,
  */
 EAPI int
 ecore_x_window_prop_xid_list_get(Ecore_X_Window win __UNUSED__,
-                                 Ecore_X_Atom   atom __UNUSED__,
-				 Ecore_X_Atom   type __UNUSED__,
-                                 Ecore_X_ID   **pxids)
+                                 Ecore_X_Atom atom  __UNUSED__,
+                                 Ecore_X_Atom type  __UNUSED__,
+                                 Ecore_X_ID       **pxids)
 {
    xcb_get_property_reply_t *reply;
-   int                       num = -1;
+   int num = -1;
 
    if (pxids)
       *pxids = NULL;
@@ -250,22 +247,22 @@ ecore_x_window_prop_xid_list_get(Ecore_X_Window win __UNUSED__,
    else if ((reply->type == ECORE_X_ATOM_CARDINAL) &&
             (reply->format == 32))
      {
-       uint32_t *val;
+        uint32_t *val;
 
-       num = xcb_get_property_value_length(reply);
-       if (pxids)
-         {
-            val = (uint32_t *)malloc (num);
-            if (!val)
-               return -1;
+        num = xcb_get_property_value_length(reply);
+        if (pxids)
+          {
+             val = (uint32_t *)malloc (num);
+             if (!val)
+                return -1;
 
-            memcpy(val, xcb_get_property_value(reply), num);
-            *pxids = val;
-         }
+             memcpy(val, xcb_get_property_value(reply), num);
+             *pxids = val;
+          }
      }
 
    return num;
-}
+} /* ecore_x_window_prop_xid_list_get */
 
 /*
  * Remove/add/toggle X ID list item.
@@ -278,47 +275,49 @@ ecore_x_window_prop_xid_list_change(Ecore_X_Window win,
                                     int            op)
 {
    Ecore_X_ID *lst;
-   int         i;
-   int         num;
+   int i;
+   int num;
 
    num = ecore_x_window_prop_xid_list_get(win, atom, type, &lst);
    if (num < 0)
-      return;			/* Error - assuming invalid window */
+      return;  /* Error - assuming invalid window */
 
    /* Is it there? */
    for (i = 0; i < num; i++)
      {
-	if (lst[i] == item)
-	   break;
+        if (lst[i] == item)
+           break;
      }
 
    if (i < num)
      {
-	/* Was in list */
-	if (op == ECORE_X_PROP_LIST_ADD)
-	   goto done;
-	/* Remove it */
-	num--;
-	for (; i < num; i++)
-	   lst[i] = lst[i + 1];
+        /* Was in list */
+        if (op == ECORE_X_PROP_LIST_ADD)
+           goto done;
+
+        /* Remove it */
+        num--;
+        for (; i < num; i++)
+           lst[i] = lst[i + 1];
      }
    else
      {
-	/* Was not in list */
-	if (op == ECORE_X_PROP_LIST_REMOVE)
-	   goto done;
-	/* Add it */
-	num++;
-	lst = realloc(lst, num * sizeof(Ecore_X_ID));
-	lst[i] = item;
+        /* Was not in list */
+        if (op == ECORE_X_PROP_LIST_REMOVE)
+           goto done;
+
+        /* Add it */
+        num++;
+        lst = realloc(lst, num * sizeof(Ecore_X_ID));
+        lst[i] = item;
      }
 
    ecore_x_window_prop_xid_set(win, atom, type, lst, num);
 
- done:
+done:
    if (lst)
       free(lst);
-}
+} /* ecore_x_window_prop_xid_list_change */
 
 /*
  * Set Atom (array) property
@@ -330,7 +329,7 @@ ecore_x_window_prop_atom_set(Ecore_X_Window win,
                              unsigned int   num)
 {
    ecore_x_window_prop_xid_set(win, atom, ECORE_X_ATOM_ATOM, list, num);
-}
+} /* ecore_x_window_prop_atom_set */
 
 /**
  * Sends the GetProperty request.
@@ -349,8 +348,7 @@ ecore_x_window_prop_atom_get_prefetch(Ecore_X_Window window,
                                        ECORE_X_ATOM_ATOM,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
-
+} /* ecore_x_window_prop_atom_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_window_prop_atom_get_prefetch().
@@ -364,7 +362,7 @@ ecore_x_window_prop_atom_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_window_prop_atom_get_fetch */
 
 /*
  * Get Atom (array) property
@@ -378,10 +376,10 @@ EAPI int
 ecore_x_window_prop_atom_get(Ecore_X_Window win,
                              Ecore_X_Atom   atom,
                              Ecore_X_Atom  *list,
-                             unsigned int len)
+                             unsigned int   len)
 {
    return ecore_x_window_prop_xid_get(win, atom, ECORE_X_ATOM_ATOM, list, len);
-}
+} /* ecore_x_window_prop_atom_get */
 
 /*
  * Get Atom (array) property
@@ -397,7 +395,7 @@ ecore_x_window_prop_atom_list_get(Ecore_X_Window win,
                                   Ecore_X_Atom **plist)
 {
    return ecore_x_window_prop_xid_list_get(win, atom, ECORE_X_ATOM_ATOM, plist);
-}
+} /* ecore_x_window_prop_atom_list_get */
 
 /*
  * Remove/add/toggle atom list item.
@@ -409,7 +407,7 @@ ecore_x_window_prop_atom_list_change(Ecore_X_Window win,
                                      int            op)
 {
    ecore_x_window_prop_xid_list_change(win, atom, ECORE_X_ATOM_ATOM, item, op);
-}
+} /* ecore_x_window_prop_atom_list_change */
 
 /*
  * Set Window (array) property
@@ -421,7 +419,7 @@ ecore_x_window_prop_window_set(Ecore_X_Window  win,
                                unsigned int    num)
 {
    ecore_x_window_prop_xid_set(win, atom, ECORE_X_ATOM_WINDOW, list, num);
-}
+} /* ecore_x_window_prop_window_set */
 
 /**
  * Sends the GetProperty request.
@@ -440,8 +438,7 @@ ecore_x_window_prop_window_get_prefetch(Ecore_X_Window window,
                                        ECORE_X_ATOM_WINDOW,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
-
+} /* ecore_x_window_prop_window_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_window_prop_window_get_prefetch().
@@ -455,7 +452,7 @@ ecore_x_window_prop_window_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_window_prop_window_get_fetch */
 
 /*
  * Get Window (array) property
@@ -472,7 +469,7 @@ ecore_x_window_prop_window_get(Ecore_X_Window  win,
                                unsigned int    len)
 {
    return ecore_x_window_prop_xid_get(win, atom, ECORE_X_ATOM_WINDOW, list, len);
-}
+} /* ecore_x_window_prop_window_get */
 
 /*
  * Get Window (array) property
@@ -488,7 +485,7 @@ ecore_x_window_prop_window_list_get(Ecore_X_Window   win,
                                     Ecore_X_Window **plist)
 {
    return ecore_x_window_prop_xid_list_get(win, atom, ECORE_X_ATOM_WINDOW, plist);
-}
+} /* ecore_x_window_prop_window_list_get */
 
 /**
  * To be documented.
@@ -499,7 +496,7 @@ EAPI Ecore_X_Atom
 ecore_x_window_prop_any_type(void)
 {
    return XCB_GET_PROPERTY_TYPE_ANY;
-}
+} /* ecore_x_window_prop_any_type */
 
 /**
  * To be documented.
@@ -520,11 +517,13 @@ ecore_x_window_prop_property_set(Ecore_X_Window window,
                                  void          *data,
                                  int            number)
 {
-   if (window == 0) window = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   if (window == 0)
+      window = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, window,
                        property, type,
                        size, number, data);
-}
+} /* ecore_x_window_prop_property_set */
 
 /**
  * Sends the GetProperty request.
@@ -543,8 +542,7 @@ ecore_x_window_prop_property_get_prefetch(Ecore_X_Window window,
                                        window ? window : ((xcb_screen_t *)_ecore_xcb_screen)->root,
                                        property, type, 0, LONG_MAX);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
-
+} /* ecore_x_window_prop_property_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_window_prop_property_get_prefetch().
@@ -558,7 +556,7 @@ ecore_x_window_prop_property_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_window_prop_property_get_fetch */
 
 /**
  * To be documented.
@@ -573,26 +571,27 @@ ecore_x_window_prop_property_get_fetch(void)
  * FIXME: To be fixed.
  */
 EAPI int
-ecore_x_window_prop_property_get(Ecore_X_Window  window __UNUSED__,
-                                 Ecore_X_Atom    property __UNUSED__,
-                                 Ecore_X_Atom    type __UNUSED__,
-                                 int             size __UNUSED__,
-                                 unsigned char **data,
-                                 int            *num)
+ecore_x_window_prop_property_get(Ecore_X_Window window __UNUSED__,
+                                 Ecore_X_Atom property __UNUSED__,
+                                 Ecore_X_Atom type     __UNUSED__,
+                                 int size              __UNUSED__,
+                                 unsigned char       **data,
+                                 int                  *num)
 {
    xcb_get_property_reply_t *reply;
 
    /* make sure these are initialized */
-   if (num) *num = 0L;
+   if (num)
+      *num = 0L;
 
    if (data)
-     *data = NULL;
+      *data = NULL;
    else /* we can't store the retrieved data, so just return */
-     return 0;
+      return 0;
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
-     return 0;
+      return 0;
 
    if ((reply->format != size) ||
        (reply->value_len == 0))
@@ -602,21 +601,21 @@ ecore_x_window_prop_property_get(Ecore_X_Window  window __UNUSED__,
    if (!*data)
       return 0;
 
-   memcpy(*data, xcb_get_property_value(reply), 
+   memcpy(*data, xcb_get_property_value(reply),
           xcb_get_property_value_length(reply));
 
    if (num)
       *num = reply->value_len;
 
    return reply->format;
-}
+} /* ecore_x_window_prop_property_get */
 
 EAPI void
 ecore_x_window_prop_property_del(Ecore_X_Window window,
                                  Ecore_X_Atom   property)
 {
    xcb_delete_property(_ecore_xcb_conn, window, property);
-}
+} /* ecore_x_window_prop_property_del */
 
 /**
  * Sends the ListProperties request.
@@ -629,8 +628,7 @@ ecore_x_window_prop_list_prefetch(Ecore_X_Window window)
 
    cookie = xcb_list_properties_unchecked(_ecore_xcb_conn, window);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
-
+} /* ecore_x_window_prop_list_prefetch */
 
 /**
  * Gets the reply of the ListProperties request sent by ecore_x_window_prop_list_prefetch().
@@ -644,8 +642,7 @@ ecore_x_window_prop_list_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_list_properties_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
-
+} /* ecore_x_window_prop_list_fetch */
 
 /**
  * To be documented.
@@ -657,12 +654,13 @@ ecore_x_window_prop_list_fetch(void)
  */
 EAPI Ecore_X_Atom *
 ecore_x_window_prop_list(Ecore_X_Window window __UNUSED__,
-                         int           *num_ret)
+                         int                  *num_ret)
 {
    xcb_list_properties_reply_t *reply;
-   Ecore_X_Atom                *atoms;
+   Ecore_X_Atom *atoms;
 
-   if (num_ret) *num_ret = 0;
+   if (num_ret)
+      *num_ret = 0;
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
@@ -671,14 +669,15 @@ ecore_x_window_prop_list(Ecore_X_Window window __UNUSED__,
    atoms = (Ecore_X_Atom *)malloc(reply->atoms_len * sizeof(Ecore_X_Atom));
    if (!atoms)
       return NULL;
+
    memcpy(atoms,
           xcb_list_properties_atoms(reply),
           reply->atoms_len * sizeof(Ecore_X_Atom));
    if(num_ret)
-     *num_ret = reply->atoms_len;
+      *num_ret = reply->atoms_len;
 
    return atoms;
-}
+} /* ecore_x_window_prop_list */
 
 /**
  * Set a window string property.
@@ -693,11 +692,13 @@ ecore_x_window_prop_string_set(Ecore_X_Window win,
                                Ecore_X_Atom   type,
                                const char    *str)
 {
-   if (win == 0) win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   if (win == 0)
+      win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win,
-                     type, ECORE_X_ATOM_UTF8_STRING,
-                     8, strlen(str), str);
-}
+                       type, ECORE_X_ATOM_UTF8_STRING,
+                       8, strlen(str), str);
+} /* ecore_x_window_prop_string_set */
 
 /**
  * Sends the GetProperty request.
@@ -714,8 +715,7 @@ ecore_x_window_prop_string_get_prefetch(Ecore_X_Window window,
                                        window ? window : ((xcb_screen_t *)_ecore_xcb_screen)->root,
                                        type, XCB_GET_PROPERTY_TYPE_ANY, 0L, 1000000L);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
-
+} /* ecore_x_window_prop_string_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_window_prop_string_get_prefetch().
@@ -729,7 +729,7 @@ ecore_x_window_prop_string_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_window_prop_string_get_fetch */
 
 /**
  * Get a window string property.
@@ -744,14 +744,14 @@ ecore_x_window_prop_string_get_fetch(void)
  */
 EAPI char *
 ecore_x_window_prop_string_get(Ecore_X_Window window __UNUSED__,
-                               Ecore_X_Atom   type __UNUSED__)
+                               Ecore_X_Atom type     __UNUSED__)
 {
    xcb_get_property_reply_t *reply;
-   char                     *str = NULL;
+   char *str = NULL;
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
-     return NULL;
+      return NULL;
 
    if (reply->type == ECORE_X_ATOM_UTF8_STRING)
      {
@@ -766,7 +766,7 @@ ecore_x_window_prop_string_get(Ecore_X_Window window __UNUSED__,
      }
    else
      {
-       /* FIXME: to be done... */
+        /* FIXME: to be done... */
 
 /* #ifdef X_HAVE_UTF8_STRING */
 /*         s = Xutf8TextPropertyToTextList(_ecore_xcb_conn, &xtp, */
@@ -789,7 +789,7 @@ ecore_x_window_prop_string_get(Ecore_X_Window window __UNUSED__,
      }
 
    return str;
-}
+} /* ecore_x_window_prop_string_get */
 
 /* FIXME : round trips because of GetWMProtocols */
 /*         should we rewrite its code ? */
@@ -797,34 +797,34 @@ EAPI int
 ecore_x_window_prop_protocol_isset(Ecore_X_Window      window,
                                    Ecore_X_WM_Protocol protocol)
 {
-   xcb_get_property_cookie_t    cookie;
+   xcb_get_property_cookie_t cookie;
    xcb_get_wm_protocols_reply_t protocols;
-   Ecore_X_Atom                 proto;
-   uint32_t                     i;
-   uint8_t                      ret = 0;
+   Ecore_X_Atom proto;
+   uint32_t i;
+   uint8_t ret = 0;
 
    /* check for invalid values */
    if (protocol >= ECORE_X_WM_PROTOCOL_NUM)
-	return ret;
+      return ret;
 
    proto = _ecore_xcb_atoms_wm_protocols[protocol];
 
    cookie = xcb_get_wm_protocols(_ecore_xcb_conn, window, ECORE_X_ATOM_WM_PROTOCOLS);
 
    if (!xcb_get_wm_protocols_reply(_ecore_xcb_conn, cookie, &protocols, NULL))
-     return ret;
+      return ret;
 
    for (i = 0; i < protocols.atoms_len; i++)
-     if (protocols.atoms[i] == proto)
-       {
-          ret = 1;
-          break;
-       }
+      if (protocols.atoms[i] == proto)
+        {
+           ret = 1;
+           break;
+        }
 
    xcb_get_wm_protocols_reply_wipe(&protocols);
 
    return ret;
-}
+} /* ecore_x_window_prop_protocol_isset */
 
 /**
  * To be documented.
@@ -842,38 +842,41 @@ EAPI Ecore_X_WM_Protocol *
 ecore_x_window_prop_protocol_list_get(Ecore_X_Window window,
                                       int           *num_ret)
 {
-   xcb_get_property_cookie_t    cookie;
+   xcb_get_property_cookie_t cookie;
    xcb_get_wm_protocols_reply_t protocols;
-   Ecore_X_WM_Protocol         *prot_ret = NULL;
-   uint32_t                     protos_count;
-   uint32_t                     i;
+   Ecore_X_WM_Protocol *prot_ret = NULL;
+   uint32_t protos_count;
+   uint32_t i;
 
    cookie = xcb_get_wm_protocols(_ecore_xcb_conn, window, ECORE_X_ATOM_WM_PROTOCOLS);
 
    if (!xcb_get_wm_protocols_reply(_ecore_xcb_conn, cookie, &protocols, NULL))
       return NULL;
 
-   if ((protocols.atoms_len <= 0)) return NULL;
+   if ((protocols.atoms_len <= 0))
+      return NULL;
 
    prot_ret = calloc(1, protocols.atoms_len * sizeof(Ecore_X_WM_Protocol));
    if (!prot_ret)
      {
-	xcb_get_wm_protocols_reply_wipe(&protocols);
-	return NULL;
+        xcb_get_wm_protocols_reply_wipe(&protocols);
+        return NULL;
      }
+
    for (i = 0; i < protocols.atoms_len; i++)
      {
-	Ecore_X_WM_Protocol j;
+        Ecore_X_WM_Protocol j;
 
-	prot_ret[i] = -1;
-	for (j = 0; j < ECORE_X_WM_PROTOCOL_NUM; j++)
-	  {
-	     if (_ecore_xcb_atoms_wm_protocols[j] == protocols.atoms[i])
-	       prot_ret[i] = j;
-	  }
+        prot_ret[i] = -1;
+        for (j = 0; j < ECORE_X_WM_PROTOCOL_NUM; j++)
+          {
+             if (_ecore_xcb_atoms_wm_protocols[j] == protocols.atoms[i])
+                prot_ret[i] = j;
+          }
      }
    xcb_get_wm_protocols_reply_wipe(&protocols);
    *num_ret = protos_count;
 
    return prot_ret;
-}
+} /* ecore_x_window_prop_protocol_list_get */
+

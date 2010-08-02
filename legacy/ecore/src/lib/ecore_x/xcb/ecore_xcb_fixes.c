@@ -4,19 +4,16 @@
 
 #include "ecore_xcb_private.h"
 
-
 /**
  * @defgroup Ecore_X_Fixes_Group X Fixes Extension Functions
  *
  * Functions related to the X Fixes extension.
  */
 
-
 #ifdef ECORE_XCB_FIXES
 static int _xfixes_available = 0;
 static xcb_xfixes_query_version_cookie_t _ecore_xcb_xfixes_init_cookie;
 #endif /* ECORE_XCB_FIXES */
-
 
 /* To avoid round trips, the initialization is separated in 2
    functions: _ecore_xcb_xfixes_init and
@@ -29,8 +26,9 @@ _ecore_x_xfixes_init(const xcb_query_extension_reply_t *reply)
 #ifdef ECORE_XCB_FIXES
    if (reply && (reply->present))
       _ecore_xcb_xfixes_init_cookie = xcb_xfixes_query_version_unchecked(_ecore_xcb_conn, 4, 0);
+
 #endif /* ECORE_XCB_FIXES */
-}
+} /* _ecore_x_xfixes_init */
 
 void
 _ecore_x_xfixes_init_finalize(void)
@@ -44,12 +42,13 @@ _ecore_x_xfixes_init_finalize(void)
    if (reply)
      {
         if (reply->major_version >= 3)
-          _xfixes_available = 1;
+           _xfixes_available = 1;
+
         free(reply);
      }
-#endif /* ECORE_XCB_FIXES */
-}
 
+#endif /* ECORE_XCB_FIXES */
+} /* _ecore_x_xfixes_init_finalize */
 
 /**
  * Return whether the X server supports the Fixes Extension.
@@ -64,11 +63,10 @@ ecore_x_xfixes_query(void)
 {
 #ifdef ECORE_XCB_FIXES
    return _xfixes_available;
-#else
+#else /* ifdef ECORE_XCB_FIXES */
    return 0;
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_xfixes_query */
 
 /**
  * Create a region from rectangles.
@@ -93,8 +91,7 @@ ecore_x_region_new(Ecore_X_Rectangle *rects,
 #endif /* ECORE_XCB_FIXES */
 
    return region;
-}
-
+} /* ecore_x_region_new */
 
 /**
  * Create a region from a pixmap.
@@ -116,8 +113,7 @@ ecore_x_region_new_from_bitmap(Ecore_X_Pixmap bitmap)
 #endif /* ECORE_XCB_FIXES */
 
    return region;
-}
-
+} /* ecore_x_region_new_from_bitmap */
 
 /**
  * Create a region from a window.
@@ -142,8 +138,7 @@ ecore_x_region_new_from_window(Ecore_X_Window      window,
 #endif /* ECORE_XCB_FIXES */
 
    return region;
-}
-
+} /* ecore_x_region_new_from_window */
 
 /**
  * Create a region from a graphic context.
@@ -164,8 +159,7 @@ ecore_x_region_new_from_gc(Ecore_X_GC gc)
 #endif /* ECORE_XCB_FIXES */
 
    return region;
-}
-
+} /* ecore_x_region_new_from_gc */
 
 /**
  * Create a region from a picture.
@@ -186,8 +180,7 @@ ecore_x_region_new_from_picture(Ecore_X_Picture picture)
 #endif /* ECORE_XCB_FIXES */
 
    return region;
-}
-
+} /* ecore_x_region_new_from_picture */
 
 /**
  * Destroy a region.
@@ -202,8 +195,7 @@ ecore_x_region_free(Ecore_X_Region region)
 #ifdef ECORE_XCB_FIXES
    xcb_xfixes_destroy_region(_ecore_xcb_conn, region);
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_free */
 
 /**
  * Set the content of a region.
@@ -223,8 +215,7 @@ ecore_x_region_set(Ecore_X_Region     region,
 #ifdef ECORE_XCB_FIXES
    xcb_xfixes_set_region(_ecore_xcb_conn, region, num, (xcb_rectangle_t *)rects);
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_set */
 
 /**
  * Copy the content of a region.
@@ -241,8 +232,7 @@ ecore_x_region_copy(Ecore_X_Region dest,
 #ifdef ECORE_XCB_FIXES
    xcb_xfixes_copy_region(_ecore_xcb_conn, source, dest);
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_copy */
 
 /**
  * Make the union of two regions.
@@ -262,8 +252,7 @@ ecore_x_region_combine(Ecore_X_Region dest,
 #ifdef ECORE_XCB_FIXES
    xcb_xfixes_union_region(_ecore_xcb_conn, source1, source2, dest);
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_combine */
 
 /**
  * Make the intersection of two regions.
@@ -283,8 +272,7 @@ ecore_x_region_intersect(Ecore_X_Region dest,
 #ifdef ECORE_XCB_FIXES
    xcb_xfixes_intersect_region(_ecore_xcb_conn, source1, source2, dest);
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_intersect */
 
 /**
  * Make the substraction of two regions.
@@ -304,8 +292,7 @@ ecore_x_region_subtract(Ecore_X_Region dest,
 #ifdef ECORE_XCB_FIXES
    xcb_xfixes_subtract_region(_ecore_xcb_conn, source1, source2, dest);
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_subtract */
 
 /**
  * Make the substraction of regions by bounds.
@@ -332,8 +319,7 @@ ecore_x_region_invert(Ecore_X_Region     dest,
    rect.height = bounds->height;
    xcb_xfixes_invert_region(_ecore_xcb_conn, source, rect, dest);
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_invert */
 
 /**
  * Translate a region.
@@ -352,8 +338,7 @@ ecore_x_region_translate(Ecore_X_Region region,
 #ifdef ECORE_XCB_FIXES
    xcb_xfixes_translate_region(_ecore_xcb_conn, region, dx, dy);
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_translate */
 
 /**
  * Extent a region.
@@ -370,8 +355,7 @@ ecore_x_region_extents(Ecore_X_Region dest,
 #ifdef ECORE_XCB_FIXES
    xcb_xfixes_region_extents(_ecore_xcb_conn, source, dest);
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_extents */
 
 /**
  * Sends the XFixesFetchRegion request.
@@ -387,8 +371,7 @@ ecore_x_region_fetch_prefetch(Ecore_X_Region region)
    cookie = xcb_xfixes_fetch_region_unchecked(_ecore_xcb_conn, region);
    _ecore_xcb_cookie_cache(cookie.sequence);
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_fetch_prefetch */
 
 /**
  * Gets the reply of the XFixesFetchRegion request sent by ecore_xcb_region_fetch_prefetch().
@@ -405,8 +388,7 @@ ecore_x_region_fetch_fetch(void)
    reply = xcb_xfixes_fetch_region_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_fetch_fetch */
 
 /**
  * Return the rectangles that compose a region.
@@ -424,34 +406,44 @@ ecore_x_region_fetch_fetch(void)
  * @ingroup Ecore_X_Fixes_Group
  */
 EAPI Ecore_X_Rectangle *
-ecore_x_region_fetch(Ecore_X_Region     region __UNUSED__,
-                     int               *num,
-                     Ecore_X_Rectangle *bounds)
+ecore_x_region_fetch(Ecore_X_Region region __UNUSED__,
+                     int                  *num,
+                     Ecore_X_Rectangle    *bounds)
 {
-   Ecore_X_Rectangle  extents = { 0, 0, 0, 0};
+   Ecore_X_Rectangle extents = { 0, 0, 0, 0};
    Ecore_X_Rectangle *rects = NULL;
 #ifdef ECORE_XCB_FIXES
-   int                n;
+   int n;
    xcb_xfixes_fetch_region_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
      {
-       if (num) *num = 0;
-       if (bounds) *bounds = extents;
-       return NULL;
+        if (num)
+           *num = 0;
+
+        if (bounds)
+           *bounds = extents;
+
+        return NULL;
      }
+
    n = xcb_xfixes_fetch_region_rectangles_length(reply);
    rects = (Ecore_X_Rectangle *)malloc(n * sizeof(Ecore_X_Rectangle));
    if (!rects)
      {
-       if (num) *num = 0;
-       if (bounds) *bounds = extents;
+        if (num)
+           *num = 0;
 
-       return NULL;
+        if (bounds)
+           *bounds = extents;
+
+        return NULL;
      }
 
-   if (num) *num = n;
+   if (num)
+      *num = n;
+
    if (bounds)
      {
         bounds->x = reply->extents.x;
@@ -459,18 +451,22 @@ ecore_x_region_fetch(Ecore_X_Region     region __UNUSED__,
         bounds->width = reply->extents.width;
         bounds->height = reply->extents.height;
      }
+
    memcpy(rects,
           xcb_xfixes_fetch_region_rectangles(reply),
           sizeof(Ecore_X_Rectangle) * n);
 
    return rects;
-#else
-   if (num) *num = 0;
-   if (bounds) *bounds = extents;
+#else /* ifdef ECORE_XCB_FIXES */
+   if (num)
+      *num = 0;
+
+   if (bounds)
+      *bounds = extents;
+
    return NULL;
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_fetch */
 
 /**
  * Expand a region.
@@ -497,8 +493,7 @@ ecore_x_region_expand(Ecore_X_Region dest,
 #ifdef ECORE_XCB_FIXES
    xcb_xfixes_expand_region(_ecore_xcb_conn, source, dest, left, right, top, bottom);
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_expand */
 
 /**
  * Change clip-mask in a graphic context to the specified region.
@@ -525,8 +520,7 @@ ecore_x_region_gc_clip_set(Ecore_X_Region region,
 #ifdef ECORE_XCB_FIXES
    xcb_xfixes_set_gc_clip_region(_ecore_xcb_conn, gc, region, x_origin, y_origin);
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_gc_clip_set */
 
 /**
  * Change the shape extension of a window.
@@ -551,8 +545,7 @@ ecore_x_region_window_shape_set(Ecore_X_Region     region,
 #ifdef ECORE_XCB_FIXES
    xcb_xfixes_set_window_shape_region(_ecore_xcb_conn, dest, type, x_offset, y_offset, region);
 #endif /* ECORE_XCB_FIXES */
-}
-
+} /* ecore_x_region_window_shape_set */
 
 /**
  * Change clip-mask in picture to the specified region.
@@ -578,4 +571,5 @@ ecore_x_region_picture_clip_set(Ecore_X_Region  region,
 #ifdef ECORE_XCB_FIXES
    xcb_xfixes_set_picture_clip_region(_ecore_xcb_conn, picture, region, x_origin, y_origin);
 #endif /* ECORE_XCB_FIXES */
-}
+} /* ecore_x_region_picture_clip_set */
+

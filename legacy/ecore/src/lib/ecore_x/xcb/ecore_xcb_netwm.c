@@ -12,51 +12,49 @@
 #include "ecore_xcb_private.h"
 #include "Ecore_X_Atoms.h"
 
-
 /**
  * @defgroup Ecore_X_NetWM_Group Extended Window Manager Hint (EWMH) functions
  *
  * Functions related to the Extended Window Manager Hint (EWMH).
  */
 
-
-typedef struct _Ecore_X_Startup_Info Ecore_X_Startup_Info;
+typedef struct _Ecore_X_Startup_Info   Ecore_X_Startup_Info;
 
 struct _Ecore_X_Startup_Info
 {
    Ecore_X_Window win;
 
-   int   init;
+   int            init;
 
-   int   buffer_size;
-   char *buffer;
+   int            buffer_size;
+   char          *buffer;
 
-   int   length;
+   int            length;
 
    /* These are the sequence info fields */
-   char *id;
-   char *name;
-   int   screen;
-   char *bin;
-   char *icon;
-   int   desktop;
-   int   timestamp;
-   char *description;
-   char *wmclass;
-   int   silent;
+   char          *id;
+   char          *name;
+   int            screen;
+   char          *bin;
+   char          *icon;
+   int            desktop;
+   int            timestamp;
+   char          *description;
+   char          *wmclass;
+   int            silent;
 };
 
 #if 0
-static void  _ecore_x_window_prop_string_utf8_get_prefetch(Ecore_X_Window window, Ecore_X_Atom atom);
-static void  _ecore_x_window_prop_string_utf8_get_fetch(void);
-#endif
-static void  _ecore_x_window_prop_string_utf8_set(Ecore_X_Window window, Ecore_X_Atom atom, const char *str);
-static char *_ecore_x_window_prop_string_utf8_get(Ecore_X_Window window, Ecore_X_Atom atom);
+static void      _ecore_x_window_prop_string_utf8_get_prefetch(Ecore_X_Window window, Ecore_X_Atom atom);
+static void      _ecore_x_window_prop_string_utf8_get_fetch(void);
+#endif /* if 0 */
+static void      _ecore_x_window_prop_string_utf8_set(Ecore_X_Window window, Ecore_X_Atom atom, const char *str);
+static char *    _ecore_x_window_prop_string_utf8_get(Ecore_X_Window window, Ecore_X_Atom atom);
 #if 0 /* Unused */
-static int   _ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info);
-static int   _ecore_x_netwm_startup_info_parse(Ecore_X_Startup_Info *info, char *data);
-#endif
-static void  _ecore_x_netwm_startup_info_free(void *data);
+static int       _ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info);
+static int       _ecore_x_netwm_startup_info_parse(Ecore_X_Startup_Info *info, char *data);
+#endif /* if 0 */
+static void      _ecore_x_netwm_startup_info_free(void *data);
 
 /*
  * Local variables
@@ -71,7 +69,7 @@ EAPI void
 ecore_x_netwm_init(void)
 {
    startup_info = eina_hash_string_superfast_new(_ecore_x_netwm_startup_info_free);
-}
+} /* ecore_x_netwm_init */
 
 /**
  * Shutdown the NetWM module
@@ -80,9 +78,10 @@ EAPI void
 ecore_x_netwm_shutdown(void)
 {
    if (startup_info)
-     eina_hash_free(startup_info);
+      eina_hash_free(startup_info);
+
    startup_info = NULL;
-}
+} /* ecore_x_netwm_shutdown */
 
 /**
  * Set the _NET_SUPPORTING_WM_CHECK property.
@@ -102,14 +101,14 @@ ecore_x_netwm_shutdown(void)
 EAPI void
 ecore_x_netwm_wm_identify(Ecore_X_Window root,
                           Ecore_X_Window check,
-			  const char    *wm_name)
+                          const char    *wm_name)
 {
    ecore_x_window_prop_window_set(root, ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK, &check, 1);
    ecore_x_window_prop_window_set(check, ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK, &check, 1);
    _ecore_x_window_prop_string_utf8_set(check, ECORE_X_ATOM_NET_WM_NAME, wm_name);
    /* This one isn't mandatory */
    _ecore_x_window_prop_string_utf8_set(root, ECORE_X_ATOM_NET_WM_NAME, wm_name);
-}
+} /* ecore_x_netwm_wm_identify */
 
 /**
  * Set the _NET_SUPPORTED property.
@@ -130,7 +129,7 @@ ecore_x_netwm_supported_set(Ecore_X_Window root,
                             int            num)
 {
    ecore_x_window_prop_atom_set(root, ECORE_X_ATOM_NET_SUPPORTED, supported, num);
-}
+} /* ecore_x_netwm_supported_set */
 
 /**
  * Sends the GetProperty request.
@@ -146,7 +145,7 @@ ecore_x_netwm_supported_get_prefetch(Ecore_X_Window root)
                                        ECORE_X_ATOM_NET_SUPPORTED, ECORE_X_ATOM_ATOM,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_supported_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_netwm_supported_get_prefetch().
@@ -161,7 +160,7 @@ ecore_x_netwm_supported_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_supported_get_fetch */
 
 /**
  * Get the hints supported by the Window Manager.
@@ -186,8 +185,11 @@ ecore_x_netwm_supported_get(Ecore_X_Window root,
 {
    int num_ret;
 
-   if (num) *num = 0UL;
-   if (supported) *supported = NULL;
+   if (num)
+      *num = 0UL;
+
+   if (supported)
+      *supported = NULL;
 
    num_ret = ecore_x_window_prop_xid_list_get(root,
                                               ECORE_X_ATOM_NET_SUPPORTED,
@@ -196,9 +198,11 @@ ecore_x_netwm_supported_get(Ecore_X_Window root,
    if (num_ret <= 0)
       return 0;
 
-   if (num) *num = (uint32_t)num_ret;
+   if (num)
+      *num = (uint32_t)num_ret;
+
    return 1;
-}
+} /* ecore_x_netwm_supported_get */
 
 /**
  * Set the _NET_NUMBER_OF_DESKTOPS property.
@@ -218,8 +222,8 @@ ecore_x_netwm_desk_count_set(Ecore_X_Window root,
                              unsigned int   n_desks)
 {
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_NUMBER_OF_DESKTOPS,
-				  &n_desks, 1);
-}
+                                  &n_desks, 1);
+} /* ecore_x_netwm_desk_count_set */
 
 /**
  * Set the _NET_VIRTUAL_ROOTS property.
@@ -238,11 +242,11 @@ ecore_x_netwm_desk_count_set(Ecore_X_Window root,
  */
 EAPI void
 ecore_x_netwm_desk_roots_set(Ecore_X_Window  root,
-			     Ecore_X_Window *vroots,
+                             Ecore_X_Window *vroots,
                              unsigned int    n_desks)
 {
    ecore_x_window_prop_window_set(root, ECORE_X_ATOM_NET_VIRTUAL_ROOTS, vroots, n_desks);
-}
+} /* ecore_x_netwm_desk_roots_set */
 
 /**
  * Set the _NET_DESKTOP_NAMES property.
@@ -264,33 +268,33 @@ ecore_x_netwm_desk_roots_set(Ecore_X_Window  root,
  */
 EAPI void
 ecore_x_netwm_desk_names_set(Ecore_X_Window root,
-			     const char   **names,
+                             const char   **names,
                              unsigned int   n_desks)
 {
-   char        ss[32];
-   char       *buf;
+   char ss[32];
+   char *buf;
    const char *s;
-   uint32_t    i;
-   uint32_t    len;
-   uint32_t    l;
+   uint32_t i;
+   uint32_t len;
+   uint32_t l;
 
    buf = NULL;
    len = 0;
 
    for (i = 0; i < n_desks; i++)
      {
-	s = (names) ? names[i] : NULL;
-	if (!s)
-	  {
-	     /* Default to "Desk-<number>" */
-	     sprintf(ss, "Desk-%d", i);
-	     s = ss;
-	  }
+        s = (names) ? names[i] : NULL;
+        if (!s)
+          {
+             /* Default to "Desk-<number>" */
+             sprintf(ss, "Desk-%d", i);
+             s = ss;
+          }
 
-	l = strlen(s) + 1;
-	buf = realloc(buf, len + l);
-	memcpy(buf + len, s, l);
-	len += l;
+        l = strlen(s) + 1;
+        buf = realloc(buf, len + l);
+        memcpy(buf + len, s, l);
+        len += l;
      }
 
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, root,
@@ -298,7 +302,7 @@ ecore_x_netwm_desk_names_set(Ecore_X_Window root,
                        ECORE_X_ATOM_UTF8_STRING,
                        8, len, (const void *)buf);
    free(buf);
-}
+} /* ecore_x_netwm_desk_names_set */
 
 /**
  * Set the _NET_DESKTOP_GEOMETRY property.
@@ -328,7 +332,7 @@ ecore_x_netwm_desk_size_set(Ecore_X_Window root,
    ecore_x_window_prop_card32_set(root,
                                   ECORE_X_ATOM_NET_DESKTOP_GEOMETRY,
                                   size, 2);
-}
+} /* ecore_x_netwm_desk_size_set */
 
 /**
  * Set the _NET_DESKTOP_VIEWPORT property.
@@ -354,7 +358,7 @@ ecore_x_netwm_desk_viewports_set(Ecore_X_Window root,
    ecore_x_window_prop_card32_set(root,
                                   ECORE_X_ATOM_NET_DESKTOP_VIEWPORT,
                                   origins, 2 * n_desks);
-}
+} /* ecore_x_netwm_desk_viewports_set */
 
 /**
  * Set the _NET_DESKTOP_LAYOUT property.
@@ -436,7 +440,7 @@ ecore_x_netwm_desk_layout_set(Ecore_X_Window root,
    layout[2] = rows;
    layout[3] = starting_corner;
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_DESKTOP_LAYOUT, layout, 4);
-}
+} /* ecore_x_netwm_desk_layout_set */
 
 /**
  * Set the _NET_WORKAREA property.
@@ -464,7 +468,7 @@ ecore_x_netwm_desk_workareas_set(Ecore_X_Window root,
    ecore_x_window_prop_card32_set(root,
                                   ECORE_X_ATOM_NET_WORKAREA,
                                   areas, 4 * n_desks);
-}
+} /* ecore_x_netwm_desk_workareas_set */
 
 /**
  * Set the _NET_CURRENT_DESKTOP property.
@@ -486,7 +490,7 @@ ecore_x_netwm_desk_current_set(Ecore_X_Window root,
    ecore_x_window_prop_card32_set(root,
                                   ECORE_X_ATOM_NET_CURRENT_DESKTOP,
                                   &desk, 1);
-}
+} /* ecore_x_netwm_desk_current_set */
 
 /**
  * Set the _NET_SHOWING_DESKTOP property.
@@ -512,7 +516,7 @@ ecore_x_netwm_showing_desktop_set(Ecore_X_Window root,
    ecore_x_window_prop_card32_set(root,
                                   ECORE_X_ATOM_NET_SHOWING_DESKTOP,
                                   &val, 1);
-}
+} /* ecore_x_netwm_showing_desktop_set */
 
 /*
  * Client status
@@ -540,7 +544,7 @@ ecore_x_netwm_client_list_set(Ecore_X_Window  root,
    ecore_x_window_prop_window_set(root,
                                   ECORE_X_ATOM_NET_CLIENT_LIST,
                                   p_clients, n_clients);
-}
+} /* ecore_x_netwm_client_list_set */
 
 /**
  * Set the _NET_CLIENT_LIST_STACKING property.
@@ -564,7 +568,7 @@ ecore_x_netwm_client_list_stacking_set(Ecore_X_Window  root,
    ecore_x_window_prop_window_set(root,
                                   ECORE_X_ATOM_NET_CLIENT_LIST_STACKING,
                                   p_clients, n_clients);
-}
+} /* ecore_x_netwm_client_list_stacking_set */
 
 /**
  * Set the _NET_ACTIVE_WINDOW property.
@@ -585,7 +589,7 @@ ecore_x_netwm_client_active_set(Ecore_X_Window root,
    ecore_x_window_prop_window_set(root,
                                   ECORE_X_ATOM_NET_ACTIVE_WINDOW,
                                   &window, 1);
-}
+} /* ecore_x_netwm_client_active_set */
 
 /**
  * Set the _NET_WM_NAME property.
@@ -604,7 +608,7 @@ ecore_x_netwm_name_set(Ecore_X_Window window,
                        const char    *name)
 {
    _ecore_x_window_prop_string_utf8_set(window, ECORE_X_ATOM_NET_WM_NAME, name);
-}
+} /* ecore_x_netwm_name_set */
 
 /**
  * Sends the GetProperty request.
@@ -620,7 +624,7 @@ ecore_x_netwm_name_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_NAME, ECORE_X_ATOM_UTF8_STRING,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_name_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_netwm_name_get_prefetch().
@@ -635,7 +639,7 @@ ecore_x_netwm_name_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_name_get_fetch */
 
 /**
  * Get the title of a window.
@@ -656,9 +660,10 @@ ecore_x_netwm_name_get(Ecore_X_Window window,
                        char         **name)
 {
    if (name)
-     *name = _ecore_x_window_prop_string_utf8_get(window, ECORE_X_ATOM_NET_WM_NAME);
+      *name = _ecore_x_window_prop_string_utf8_get(window, ECORE_X_ATOM_NET_WM_NAME);
+
    return 1;
-}
+} /* ecore_x_netwm_name_get */
 
 /**
  * Set the _NET_STARTUP_ID property.
@@ -679,7 +684,7 @@ ecore_x_netwm_startup_id_set(Ecore_X_Window window,
                              const char    *id)
 {
    _ecore_x_window_prop_string_utf8_set(window, ECORE_X_ATOM_NET_STARTUP_ID, id);
-}
+} /* ecore_x_netwm_startup_id_set */
 
 /**
  * Sends the GetProperty request.
@@ -695,7 +700,7 @@ ecore_x_netwm_startup_id_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_STARTUP_ID, ECORE_X_ATOM_UTF8_STRING,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_startup_id_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_netwm_startup_id_get_prefetch().
@@ -710,7 +715,7 @@ ecore_x_netwm_startup_id_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_startup_id_get_fetch */
 
 /**
  * Get the startup ID name of a window.
@@ -728,9 +733,10 @@ ecore_x_netwm_startup_id_get(Ecore_X_Window window,
                              char         **id)
 {
    if (id)
-     *id = _ecore_x_window_prop_string_utf8_get(window, ECORE_X_ATOM_NET_STARTUP_ID);
+      *id = _ecore_x_window_prop_string_utf8_get(window, ECORE_X_ATOM_NET_STARTUP_ID);
+
    return 1;
-}
+} /* ecore_x_netwm_startup_id_get */
 
 /**
  * Set the _NET_WM_VISIBLE_NAME property.
@@ -754,7 +760,7 @@ ecore_x_netwm_visible_name_set(Ecore_X_Window window,
 {
    _ecore_x_window_prop_string_utf8_set(window, ECORE_X_ATOM_NET_WM_VISIBLE_NAME,
                                         name);
-}
+} /* ecore_x_netwm_visible_name_set */
 
 /**
  * Sends the GetProperty request.
@@ -770,7 +776,7 @@ ecore_x_netwm_visible_name_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_VISIBLE_NAME, ECORE_X_ATOM_UTF8_STRING,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_visible_name_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_netwm_visible_name_get_prefetch().
@@ -785,7 +791,7 @@ ecore_x_netwm_visible_name_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_visible_name_get_fetch */
 
 /**
  * Get the visible title of a window.
@@ -807,10 +813,11 @@ ecore_x_netwm_visible_name_get(Ecore_X_Window window,
                                char         **name)
 {
    if (name)
-     *name = _ecore_x_window_prop_string_utf8_get(window,
-                                                  ECORE_X_ATOM_NET_WM_VISIBLE_NAME);
+      *name = _ecore_x_window_prop_string_utf8_get(window,
+                                                   ECORE_X_ATOM_NET_WM_VISIBLE_NAME);
+
    return 1;
-}
+} /* ecore_x_netwm_visible_name_get */
 
 /**
  * Set the _NET_WM_ICON_NAME property.
@@ -830,7 +837,7 @@ ecore_x_netwm_icon_name_set(Ecore_X_Window window,
 {
    _ecore_x_window_prop_string_utf8_set(window, ECORE_X_ATOM_NET_WM_ICON_NAME,
                                         name);
-}
+} /* ecore_x_netwm_icon_name_set */
 
 /**
  * Sends the GetProperty request.
@@ -846,7 +853,7 @@ ecore_x_netwm_icon_name_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_ICON_NAME, ECORE_X_ATOM_UTF8_STRING,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_icon_name_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_netwm_icon_name_get_prefetch().
@@ -861,7 +868,7 @@ ecore_x_netwm_icon_name_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_icon_name_get_fetch */
 
 /**
  * Get the icon name of a window.
@@ -882,10 +889,11 @@ ecore_x_netwm_icon_name_get(Ecore_X_Window window,
                             char         **name)
 {
    if (name)
-     *name = _ecore_x_window_prop_string_utf8_get(window,
-						  ECORE_X_ATOM_NET_WM_ICON_NAME);
+      *name = _ecore_x_window_prop_string_utf8_get(window,
+                                                   ECORE_X_ATOM_NET_WM_ICON_NAME);
+
    return 1;
-}
+} /* ecore_x_netwm_icon_name_get */
 
 /**
  * Set the _NET_WM_VISIBLE_ICON_NAME property.
@@ -909,7 +917,7 @@ ecore_x_netwm_visible_icon_name_set(Ecore_X_Window window,
    _ecore_x_window_prop_string_utf8_set(window,
                                         ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME,
                                         name);
-}
+} /* ecore_x_netwm_visible_icon_name_set */
 
 /**
  * Sends the GetProperty request.
@@ -925,7 +933,7 @@ ecore_x_netwm_visible_icon_name_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME, ECORE_X_ATOM_UTF8_STRING,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_visible_icon_name_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_netwm_visible_icon_name_get_prefetch().
@@ -940,7 +948,7 @@ ecore_x_netwm_visible_icon_name_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_visible_icon_name_get_fetch */
 
 /**
  * Get the visible icon name of a window.
@@ -961,10 +969,11 @@ ecore_x_netwm_visible_icon_name_get(Ecore_X_Window window,
                                     char         **name)
 {
    if (name)
-     *name = _ecore_x_window_prop_string_utf8_get(window,
-                                                  ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME);
+      *name = _ecore_x_window_prop_string_utf8_get(window,
+                                                   ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME);
+
    return 1;
-}
+} /* ecore_x_netwm_visible_icon_name_get */
 
 /**
  * Set the _NET_WM_DESKTOP property.
@@ -991,7 +1000,7 @@ ecore_x_netwm_desktop_set(Ecore_X_Window window,
                           unsigned int   desk)
 {
    ecore_x_window_prop_card32_set(window, ECORE_X_ATOM_NET_WM_DESKTOP, &desk, 1);
-}
+} /* ecore_x_netwm_desktop_set */
 
 /**
  * Sends the GetProperty request.
@@ -1007,7 +1016,7 @@ ecore_x_netwm_desktop_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_DESKTOP, ECORE_X_ATOM_CARDINAL,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_desktop_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_netwm_desktop_get_prefetch().
@@ -1022,7 +1031,7 @@ ecore_x_netwm_desktop_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_desktop_get_fetch */
 
 /**
  * Get the visible icon name of a window.
@@ -1042,17 +1051,19 @@ ecore_x_netwm_desktop_get_fetch(void)
  */
 EAPI int
 ecore_x_netwm_desktop_get(Ecore_X_Window window,
-                          unsigned int *desk)
+                          unsigned int  *desk)
 {
-   int      ret;
+   int ret;
    uint32_t tmp;
 
    ret = ecore_x_window_prop_card32_get(window, ECORE_X_ATOM_NET_WM_DESKTOP,
-					&tmp, 1);
+                                        &tmp, 1);
 
-   if (desk) *desk = tmp;
+   if (desk)
+      *desk = tmp;
+
    return (ret == 1) ? 1 : 0;
-}
+} /* ecore_x_netwm_desktop_get */
 
 /**
  * Set the _NET_WM_STRUT property.
@@ -1088,7 +1099,7 @@ ecore_x_netwm_strut_set(Ecore_X_Window window,
    strut[2] = top;
    strut[3] = bottom;
    ecore_x_window_prop_card32_set(window, ECORE_X_ATOM_NET_WM_STRUT, strut, 4);
-}
+} /* ecore_x_netwm_strut_set */
 
 /**
  * Sends the GetProperty request.
@@ -1104,7 +1115,7 @@ ecore_x_netwm_strut_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_STRUT, ECORE_X_ATOM_CARDINAL,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_strut_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_strut_get_prefetch().
@@ -1119,7 +1130,7 @@ ecore_x_netwm_strut_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_strut_get_fetch */
 
 /*
  * _NET_WM_STRUT is deprecated
@@ -1156,19 +1167,26 @@ ecore_x_netwm_strut_get(Ecore_X_Window window,
                         int           *bottom)
 {
    uint32_t strut[4];
-   int      ret = 0;
+   int ret = 0;
 
    ret = ecore_x_window_prop_card32_get(window, ECORE_X_ATOM_NET_WM_STRUT, strut, 4);
    if (ret != 4)
-     return 0;
+      return 0;
 
-   if (left)   *left   = strut[0];
-   if (right)  *right  = strut[1];
-   if (top)    *top    = strut[2];
-   if (bottom) *bottom = strut[3];
+   if (left)
+      *left = strut[0];
+
+   if (right)
+      *right = strut[1];
+
+   if (top)
+      *top = strut[2];
+
+   if (bottom)
+      *bottom = strut[3];
 
    return 1;
-}
+} /* ecore_x_netwm_strut_get */
 
 /**
  * Set the _NET_WM_STRUT_PARTIAL property.
@@ -1225,7 +1243,7 @@ ecore_x_netwm_strut_partial_set(Ecore_X_Window window,
    strut[10] = bottom_start_x;
    strut[11] = bottom_end_x;
    ecore_x_window_prop_card32_set(window, ECORE_X_ATOM_NET_WM_STRUT_PARTIAL, strut, 12);
-}
+} /* ecore_x_netwm_strut_partial_set */
 
 /**
  * Sends the GetProperty request.
@@ -1241,7 +1259,7 @@ ecore_x_netwm_strut_partial_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_STRUT_PARTIAL, ECORE_X_ATOM_CARDINAL,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_strut_partial_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_strut_partial_get_prefetch().
@@ -1256,7 +1274,7 @@ ecore_x_netwm_strut_partial_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_strut_partial_get_fetch */
 
 /**
  * Get the space at the edje of the screen of a window.
@@ -1303,26 +1321,50 @@ ecore_x_netwm_strut_partial_get(Ecore_X_Window window,
                                 int           *bottom_end_x)
 {
    uint32_t strut[12];
-   int      ret = 0;
+   int ret = 0;
 
    ret = ecore_x_window_prop_card32_get(window, ECORE_X_ATOM_NET_WM_STRUT_PARTIAL, strut, 12);
    if (ret != 12)
-     return 0;
+      return 0;
 
-   if (left)           *left           = strut[0];
-   if (right)          *right          = strut[1];
-   if (top)            *top            = strut[2];
-   if (bottom)         *bottom         = strut[3];
-   if (left_start_y)   *left_start_y   = strut[4];
-   if (left_end_y)     *left_end_y     = strut[5];
-   if (right_start_y)  *right_start_y  = strut[6];
-   if (right_end_y)    *right_end_y    = strut[7];
-   if (top_start_x)    *top_start_x    = strut[8];
-   if (top_end_x)      *top_end_x      = strut[9];
-   if (bottom_start_x) *bottom_start_x = strut[10];
-   if (bottom_end_x)   *bottom_end_x   = strut[11];
+   if (left)
+      *left = strut[0];
+
+   if (right)
+      *right = strut[1];
+
+   if (top)
+      *top = strut[2];
+
+   if (bottom)
+      *bottom = strut[3];
+
+   if (left_start_y)
+      *left_start_y = strut[4];
+
+   if (left_end_y)
+      *left_end_y = strut[5];
+
+   if (right_start_y)
+      *right_start_y = strut[6];
+
+   if (right_end_y)
+      *right_end_y = strut[7];
+
+   if (top_start_x)
+      *top_start_x = strut[8];
+
+   if (top_end_x)
+      *top_end_x = strut[9];
+
+   if (bottom_start_x)
+      *bottom_start_x = strut[10];
+
+   if (bottom_end_x)
+      *bottom_end_x = strut[11];
+
    return 1;
-}
+} /* ecore_x_netwm_strut_partial_get */
 
 /**
  * Sends the GetProperty request.
@@ -1338,7 +1380,7 @@ ecore_x_netwm_icons_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_ICON, ECORE_X_ATOM_CARDINAL,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_icons_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_icons_get_prefetch().
@@ -1353,7 +1395,7 @@ ecore_x_netwm_icons_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_icons_get_fetch */
 
 /**
  * Retrieve hte possible icons of a window.
@@ -1378,24 +1420,27 @@ ecore_x_netwm_icons_get(Ecore_X_Window window,
    uint32_t *data;
    uint32_t *p;
    uint32_t *src;
-   uint32_t  icons;
-   uint32_t  len;
-   uint32_t  i;
-   int       num_ret;
+   uint32_t icons;
+   uint32_t len;
+   uint32_t i;
+   int num_ret;
 
-   if (num) *num = 0UL;
-   if (icon) *icon = NULL;
+   if (num)
+      *num = 0UL;
+
+   if (icon)
+      *icon = NULL;
 
    num_ret = ecore_x_window_prop_card32_list_get(window,
                                                  ECORE_X_ATOM_NET_WM_ICON,
                                                  &data);
    if ((num_ret <= 0) || !data)
-     return 0;
+      return 0;
 
    if (num_ret < 2)
      {
-	free(data);
-	return 0;
+        free(data);
+        return 0;
      }
 
    /* Check how many icons there are */
@@ -1403,76 +1448,78 @@ ecore_x_netwm_icons_get(Ecore_X_Window window,
    p = data;
    while (p)
      {
-	len = p[0] * p[1];
-	p += (len + 2);
-	if ((p - data) > num_ret)
-	  {
-	     free(data);
-	     return 0;
-	  }
-	icons++;
+        len = p[0] * p[1];
+        p += (len + 2);
+        if ((p - data) > num_ret)
+          {
+             free(data);
+             return 0;
+          }
 
-	if ((p - data) == num_ret)
-	  p = NULL;
+        icons++;
+
+        if ((p - data) == num_ret)
+           p = NULL;
      }
-   if (num) *num = icons;
+   if (num)
+      *num = icons;
 
    /* If the user doesn't want the icons, return */
    if (!icon)
      {
-	free(data);
-	return 1;
+        free(data);
+        return 1;
      }
 
    /* Allocate memory */
    *icon = malloc(icons * sizeof(Ecore_X_Icon));
    if (!(*icon))
      {
-	free(data);
-	return 0;
+        free(data);
+        return 0;
      }
 
    /* Fetch the icons */
    p = data;
    for (i = 0; i < icons; i++)
      {
-	uint32_t *ps, *pd, *pe;
+        uint32_t *ps, *pd, *pe;
 
-	len = p[0] * p[1];
-	((*icon)[i]).width = p[0];
-	((*icon)[i]).height = p[1];
-	src = &(p[2]);
-	((*icon)[i]).data = malloc(len * sizeof(uint32_t));
-	if (!((*icon)[i]).data)
-	  {
-	     while (i)
-	       free(((*icon)[--i]).data);
-	     free(*icon);
-	     free(data);
-	     return 0;
-	  }
+        len = p[0] * p[1];
+        ((*icon)[i]).width = p[0];
+        ((*icon)[i]).height = p[1];
+        src = &(p[2]);
+        ((*icon)[i]).data = malloc(len * sizeof(uint32_t));
+        if (!((*icon)[i]).data)
+          {
+             while (i)
+                free(((*icon)[--i]).data);
+             free(*icon);
+             free(data);
+             return 0;
+          }
 
-	pd = ((*icon)[i]).data;
-	ps = src;
-	pe = ps + len;
-	for (; ps < pe; ps++)
-	  {
-	     uint32_t r, g, b, a;
+        pd = ((*icon)[i]).data;
+        ps = src;
+        pe = ps + len;
+        for (; ps < pe; ps++)
+          {
+             uint32_t r, g, b, a;
 
-	     a = (*ps >> 24) & 0xff;
-	     r = (((*ps >> 16) & 0xff) * a) / 255;
-	     g = (((*ps >>  8) & 0xff) * a) / 255;
-	     b = (((*ps      ) & 0xff) * a) / 255;
-	     *pd = (a << 24) | (r << 16) | (g << 8) | (b);
-	     pd++;
-	  }
-	p += (len + 2);
+             a = (*ps >> 24) & 0xff;
+             r = (((*ps >> 16) & 0xff) * a) / 255;
+             g = (((*ps >> 8) & 0xff) * a) / 255;
+             b = (((*ps) & 0xff) * a) / 255;
+             *pd = (a << 24) | (r << 16) | (g << 8) | (b);
+             pd++;
+          }
+        p += (len + 2);
      }
 
    free(data);
 
    return 1;
-}
+} /* ecore_x_netwm_icons_get */
 
 /**
  * Set the _NET_WM_ICON_GEOMETRY property.
@@ -1506,7 +1553,7 @@ ecore_x_netwm_icon_geometry_set(Ecore_X_Window window,
    geometry[2] = (uint32_t)width;
    geometry[3] = (uint32_t)height;
    ecore_x_window_prop_card32_set(window, ECORE_X_ATOM_NET_WM_ICON_GEOMETRY, geometry, 4);
-}
+} /* ecore_x_netwm_icon_geometry_set */
 
 /**
  * Sends the GetProperty request.
@@ -1522,7 +1569,7 @@ ecore_x_netwm_icon_geometry_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_ICON_GEOMETRY, ECORE_X_ATOM_CARDINAL,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_icon_geometry_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_icon_geometry_get_prefetch().
@@ -1537,7 +1584,7 @@ ecore_x_netwm_icon_geometry_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_icon_geometry_get_fetch */
 
 /**
  * Get the geometry of an icon.
@@ -1566,19 +1613,26 @@ ecore_x_netwm_icon_geometry_get(Ecore_X_Window window,
                                 int           *height)
 {
    uint32_t geometry[4];
-   int      ret;
+   int ret;
 
    ret = ecore_x_window_prop_card32_get(window, ECORE_X_ATOM_NET_WM_ICON_GEOMETRY, geometry, 4);
    if (ret != 4)
-     return 0;
+      return 0;
 
-   if (x)      *x      = geometry[0];
-   if (y)      *y      = geometry[1];
-   if (width)  *width  = geometry[2];
-   if (height) *height = geometry[3];
+   if (x)
+      *x = geometry[0];
+
+   if (y)
+      *y = geometry[1];
+
+   if (width)
+      *width = geometry[2];
+
+   if (height)
+      *height = geometry[3];
 
    return 1;
-}
+} /* ecore_x_netwm_icon_geometry_get */
 
 /**
  * Set the _NET_WM_PID property.
@@ -1603,8 +1657,8 @@ ecore_x_netwm_pid_set(Ecore_X_Window window,
 
    tmp = pid;
    ecore_x_window_prop_card32_set(window, ECORE_X_ATOM_NET_WM_PID,
-				  &tmp, 1);
-}
+                                  &tmp, 1);
+} /* ecore_x_netwm_pid_set */
 
 /**
  * Sends the GetProperty request.
@@ -1620,7 +1674,7 @@ ecore_x_netwm_pid_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_PID, ECORE_X_ATOM_CARDINAL,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_pid_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_pid_get_prefetch().
@@ -1635,7 +1689,7 @@ ecore_x_netwm_pid_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_pid_get_fetch */
 
 /**
  * Get the process ID of a client window.
@@ -1659,11 +1713,12 @@ ecore_x_netwm_pid_get(Ecore_X_Window window,
    uint32_t tmp;
 
    ret = ecore_x_window_prop_card32_get(window, ECORE_X_ATOM_NET_WM_PID,
-					&tmp, 1);
-   if (pid) *pid = tmp;
+                                        &tmp, 1);
+   if (pid)
+      *pid = tmp;
 
    return (ret == 1) ? 1 : 0;
-}
+} /* ecore_x_netwm_pid_get */
 
 /**
  * Set the _NET_WM_HANDLED_ICONS property.
@@ -1682,8 +1737,8 @@ EAPI void
 ecore_x_netwm_handled_icons_set(Ecore_X_Window window)
 {
    ecore_x_window_prop_card32_set(window, ECORE_X_ATOM_NET_WM_HANDLED_ICONS,
-				  NULL, 0);
-}
+                                  NULL, 0);
+} /* ecore_x_netwm_handled_icons_set */
 
 /**
  * Sends the GetProperty request.
@@ -1699,7 +1754,7 @@ ecore_x_netwm_handled_icons_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_HANDLED_ICONS, ECORE_X_ATOM_CARDINAL,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_handled_icons_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_handled_icons_get_prefetch().
@@ -1714,7 +1769,7 @@ ecore_x_netwm_handled_icons_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_handled_icons_get_fetch */
 
 /**
  * Return wheter the Client handles icons or not.
@@ -1734,9 +1789,9 @@ ecore_x_netwm_handled_icons_get(Ecore_X_Window window)
 {
    int ret = 0;
    ret = ecore_x_window_prop_card32_get(window, ECORE_X_ATOM_NET_WM_HANDLED_ICONS,
-					NULL, 0);
+                                        NULL, 0);
    return (ret == 0) ? 1 : 0;
-}
+} /* ecore_x_netwm_handled_icons_get */
 
 /**
  * Set the _NET_WM_USER_TIME property.
@@ -1758,8 +1813,8 @@ ecore_x_netwm_user_time_set(Ecore_X_Window window,
                             unsigned int   time)
 {
    ecore_x_window_prop_card32_set(window, ECORE_X_ATOM_NET_WM_USER_TIME,
-				  &time, 1);
-}
+                                  &time, 1);
+} /* ecore_x_netwm_user_time_set */
 
 /**
  * Sends the GetProperty request.
@@ -1775,7 +1830,7 @@ ecore_x_netwm_user_time_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_USER_TIME, ECORE_X_ATOM_CARDINAL,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_user_time_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_netwm_user_time_get_prefetch().
@@ -1790,7 +1845,7 @@ ecore_x_netwm_user_time_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_user_time_get_fetch */
 
 /**
  * Get the last user activity time in the window.
@@ -1814,41 +1869,43 @@ ecore_x_netwm_user_time_get(Ecore_X_Window window,
    uint32_t tmp;
 
    ret = ecore_x_window_prop_card32_get(window, ECORE_X_ATOM_NET_WM_USER_TIME,
-					&tmp, 1);
-   if (time) *time = tmp;
+                                        &tmp, 1);
+   if (time)
+      *time = tmp;
+
    return (ret == 1) ? 1 : 0;
-}
+} /* ecore_x_netwm_user_time_get */
 
 Ecore_X_Window_State
 _ecore_x_netwm_state_get(Ecore_X_Atom a)
 {
    if (a == ECORE_X_ATOM_NET_WM_STATE_MODAL)
-     return ECORE_X_WINDOW_STATE_MODAL;
+      return ECORE_X_WINDOW_STATE_MODAL;
    else if (a == ECORE_X_ATOM_NET_WM_STATE_STICKY)
-     return ECORE_X_WINDOW_STATE_STICKY;
+      return ECORE_X_WINDOW_STATE_STICKY;
    else if (a == ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_VERT)
-     return ECORE_X_WINDOW_STATE_MAXIMIZED_VERT;
+      return ECORE_X_WINDOW_STATE_MAXIMIZED_VERT;
    else if (a == ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_HORZ)
-     return ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ;
+      return ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ;
    else if (a == ECORE_X_ATOM_NET_WM_STATE_SHADED)
-     return ECORE_X_WINDOW_STATE_SHADED;
+      return ECORE_X_WINDOW_STATE_SHADED;
    else if (a == ECORE_X_ATOM_NET_WM_STATE_SKIP_TASKBAR)
-     return ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
+      return ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
    else if (a == ECORE_X_ATOM_NET_WM_STATE_SKIP_PAGER)
-     return ECORE_X_WINDOW_STATE_SKIP_PAGER;
+      return ECORE_X_WINDOW_STATE_SKIP_PAGER;
    else if (a == ECORE_X_ATOM_NET_WM_STATE_HIDDEN)
-     return ECORE_X_WINDOW_STATE_HIDDEN;
+      return ECORE_X_WINDOW_STATE_HIDDEN;
    else if (a == ECORE_X_ATOM_NET_WM_STATE_FULLSCREEN)
-     return ECORE_X_WINDOW_STATE_FULLSCREEN;
+      return ECORE_X_WINDOW_STATE_FULLSCREEN;
    else if (a == ECORE_X_ATOM_NET_WM_STATE_ABOVE)
-     return ECORE_X_WINDOW_STATE_ABOVE;
+      return ECORE_X_WINDOW_STATE_ABOVE;
    else if (a == ECORE_X_ATOM_NET_WM_STATE_BELOW)
-     return ECORE_X_WINDOW_STATE_BELOW;
+      return ECORE_X_WINDOW_STATE_BELOW;
    else if (a == ECORE_X_ATOM_NET_WM_STATE_DEMANDS_ATTENTION)
-     return ECORE_X_WINDOW_STATE_DEMANDS_ATTENTION;
+      return ECORE_X_WINDOW_STATE_DEMANDS_ATTENTION;
    else
-     return ECORE_X_WINDOW_STATE_UNKNOWN;
-}
+      return ECORE_X_WINDOW_STATE_UNKNOWN;
+} /* _ecore_x_netwm_state_get */
 
 static Ecore_X_Atom
 _ecore_x_netwm_state_atom_get(Ecore_X_Window_State s)
@@ -1856,33 +1913,45 @@ _ecore_x_netwm_state_atom_get(Ecore_X_Window_State s)
    switch(s)
      {
       case ECORE_X_WINDOW_STATE_MODAL:
-	 return ECORE_X_ATOM_NET_WM_STATE_MODAL;
+         return ECORE_X_ATOM_NET_WM_STATE_MODAL;
+
       case ECORE_X_WINDOW_STATE_STICKY:
-	 return ECORE_X_ATOM_NET_WM_STATE_STICKY;
+         return ECORE_X_ATOM_NET_WM_STATE_STICKY;
+
       case ECORE_X_WINDOW_STATE_MAXIMIZED_VERT:
-	 return ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_VERT;
+         return ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_VERT;
+
       case ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ:
-	 return ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_HORZ;
+         return ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_HORZ;
+
       case ECORE_X_WINDOW_STATE_SHADED:
-	 return ECORE_X_ATOM_NET_WM_STATE_SHADED;
+         return ECORE_X_ATOM_NET_WM_STATE_SHADED;
+
       case ECORE_X_WINDOW_STATE_SKIP_TASKBAR:
-	 return ECORE_X_ATOM_NET_WM_STATE_SKIP_TASKBAR;
+         return ECORE_X_ATOM_NET_WM_STATE_SKIP_TASKBAR;
+
       case ECORE_X_WINDOW_STATE_SKIP_PAGER:
-	 return ECORE_X_ATOM_NET_WM_STATE_SKIP_PAGER;
+         return ECORE_X_ATOM_NET_WM_STATE_SKIP_PAGER;
+
       case ECORE_X_WINDOW_STATE_HIDDEN:
-	 return ECORE_X_ATOM_NET_WM_STATE_HIDDEN;
+         return ECORE_X_ATOM_NET_WM_STATE_HIDDEN;
+
       case ECORE_X_WINDOW_STATE_FULLSCREEN:
-	 return ECORE_X_ATOM_NET_WM_STATE_FULLSCREEN;
+         return ECORE_X_ATOM_NET_WM_STATE_FULLSCREEN;
+
       case ECORE_X_WINDOW_STATE_ABOVE:
-	 return ECORE_X_ATOM_NET_WM_STATE_ABOVE;
+         return ECORE_X_ATOM_NET_WM_STATE_ABOVE;
+
       case ECORE_X_WINDOW_STATE_BELOW:
-	 return ECORE_X_ATOM_NET_WM_STATE_BELOW;
+         return ECORE_X_ATOM_NET_WM_STATE_BELOW;
+
       case ECORE_X_WINDOW_STATE_DEMANDS_ATTENTION:
-	 return ECORE_X_ATOM_NET_WM_STATE_DEMANDS_ATTENTION;
+         return ECORE_X_ATOM_NET_WM_STATE_DEMANDS_ATTENTION;
+
       default:
-	 return 0;
-     }
-}
+         return 0;
+     } /* switch */
+} /* _ecore_x_netwm_state_atom_get */
 
 /**
  * Set the _NET_WM_STATE property.
@@ -1906,25 +1975,26 @@ ecore_x_netwm_window_state_set(Ecore_X_Window        window,
                                Ecore_X_Window_State *state,
                                unsigned int          num)
 {
-   Ecore_X_Atom  *set;
-   uint32_t       i;
+   Ecore_X_Atom *set;
+   uint32_t i;
 
    if (!num)
      {
-	ecore_x_window_prop_property_del(window, ECORE_X_ATOM_NET_WM_STATE);
-	return;
+        ecore_x_window_prop_property_del(window, ECORE_X_ATOM_NET_WM_STATE);
+        return;
      }
 
    set = malloc(num * sizeof(Ecore_X_Atom));
-   if (!set) return;
+   if (!set)
+      return;
 
    for (i = 0; i < num; i++)
-     set[i] = _ecore_x_netwm_state_atom_get(state[i]);
+      set[i] = _ecore_x_netwm_state_atom_get(state[i]);
 
    ecore_x_window_prop_atom_set(window, ECORE_X_ATOM_NET_WM_STATE, set, num);
 
    free(set);
-}
+} /* ecore_x_netwm_window_state_set */
 
 /**
  * Sends the GetProperty request.
@@ -1938,9 +2008,9 @@ ecore_x_netwm_window_state_get_prefetch(Ecore_X_Window window)
 
    cookie = xcb_get_property_unchecked(_ecore_xcb_conn, 0, window,
                                        ECORE_X_ATOM_NET_WM_STATE, ECORE_X_ATOM_ATOM,
-                                       0, 0x7fffffff);;
+                                       0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_window_state_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_window_state_get_prefetch().
@@ -1955,7 +2025,7 @@ ecore_x_netwm_window_state_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_window_state_get_fetch */
 
 /**
  * Get the hints describing the window state.
@@ -1979,54 +2049,58 @@ ecore_x_netwm_window_state_get(Ecore_X_Window         window,
                                unsigned int          *num)
 {
    Ecore_X_Atom *atoms;
-   int           num_ret;
-   int           i;
+   int num_ret;
+   int i;
 
-   if (num) *num = 0;
-   if (state) *state = NULL;
+   if (num)
+      *num = 0;
+
+   if (state)
+      *state = NULL;
 
    num_ret = ecore_x_window_prop_atom_list_get(window, ECORE_X_ATOM_NET_WM_STATE,
-					       &atoms);
+                                               &atoms);
    if (num_ret <= 0)
       return 0;
 
    if (state)
      {
-	*state = malloc(num_ret * sizeof(Ecore_X_Window_State));
-	if (*state)
-	  for (i = 0; i < num_ret; ++i)
-	    (*state)[i] = _ecore_x_netwm_state_get(atoms[i]);
+        *state = malloc(num_ret * sizeof(Ecore_X_Window_State));
+        if (*state)
+           for (i = 0; i < num_ret; ++i)
+              (*state)[i] = _ecore_x_netwm_state_get(atoms[i]);
 
-	if (num) *num = num_ret;
+        if (num)
+           *num = num_ret;
      }
 
    free(atoms);
 
    return 1;
-}
+} /* ecore_x_netwm_window_state_get */
 
 static Ecore_X_Window_Type
 _ecore_x_netwm_window_type_type_get(Ecore_X_Atom atom)
 {
    if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DESKTOP)
-     return ECORE_X_WINDOW_TYPE_DESKTOP;
+      return ECORE_X_WINDOW_TYPE_DESKTOP;
    else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DOCK)
-     return ECORE_X_WINDOW_TYPE_DOCK;
+      return ECORE_X_WINDOW_TYPE_DOCK;
    else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_TOOLBAR)
-     return ECORE_X_WINDOW_TYPE_TOOLBAR;
+      return ECORE_X_WINDOW_TYPE_TOOLBAR;
    else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_MENU)
-     return ECORE_X_WINDOW_TYPE_MENU;
+      return ECORE_X_WINDOW_TYPE_MENU;
    else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_UTILITY)
-     return ECORE_X_WINDOW_TYPE_UTILITY;
+      return ECORE_X_WINDOW_TYPE_UTILITY;
    else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_SPLASH)
-     return ECORE_X_WINDOW_TYPE_SPLASH;
+      return ECORE_X_WINDOW_TYPE_SPLASH;
    else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DIALOG)
-     return ECORE_X_WINDOW_TYPE_DIALOG;
+      return ECORE_X_WINDOW_TYPE_DIALOG;
    else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_NORMAL)
-     return ECORE_X_WINDOW_TYPE_NORMAL;
+      return ECORE_X_WINDOW_TYPE_NORMAL;
    else
-     return ECORE_X_WINDOW_TYPE_UNKNOWN;
-}
+      return ECORE_X_WINDOW_TYPE_UNKNOWN;
+} /* _ecore_x_netwm_window_type_type_get */
 
 static Ecore_X_Atom
 _ecore_x_netwm_window_type_atom_get(Ecore_X_Window_Type type)
@@ -2034,25 +2108,33 @@ _ecore_x_netwm_window_type_atom_get(Ecore_X_Window_Type type)
    switch (type)
      {
       case ECORE_X_WINDOW_TYPE_DESKTOP:
-	 return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DESKTOP;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DESKTOP;
+
       case ECORE_X_WINDOW_TYPE_DOCK:
-	 return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DOCK;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DOCK;
+
       case ECORE_X_WINDOW_TYPE_TOOLBAR:
-	 return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_TOOLBAR;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_TOOLBAR;
+
       case ECORE_X_WINDOW_TYPE_MENU:
-	 return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_MENU;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_MENU;
+
       case ECORE_X_WINDOW_TYPE_UTILITY:
-	 return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_UTILITY;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_UTILITY;
+
       case ECORE_X_WINDOW_TYPE_SPLASH:
-	 return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_SPLASH;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_SPLASH;
+
       case ECORE_X_WINDOW_TYPE_DIALOG:
-	 return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DIALOG;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DIALOG;
+
       case ECORE_X_WINDOW_TYPE_NORMAL:
-	 return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_NORMAL;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_NORMAL;
+
       default:
-	 return 0;
-     }
-}
+         return 0;
+     } /* switch */
+} /* _ecore_x_netwm_window_type_atom_get */
 
 /*
  * FIXME: We should set WM_TRANSIENT_FOR if type is ECORE_X_WINDOW_TYPE_TOOLBAR
@@ -2084,8 +2166,8 @@ ecore_x_netwm_window_type_set(Ecore_X_Window      window,
 
    atom = _ecore_x_netwm_window_type_atom_get(type);
    ecore_x_window_prop_atom_set(window, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
-				&atom, 1);
-}
+                                &atom, 1);
+} /* ecore_x_netwm_window_type_set */
 
 /**
  * Sends the GetProperty request.
@@ -2101,7 +2183,7 @@ ecore_x_netwm_window_type_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_WINDOW_TYPE, ECORE_X_ATOM_ATOM,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_window_type_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_window_type_get_prefetch().
@@ -2116,7 +2198,7 @@ ecore_x_netwm_window_type_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_window_type_get_fetch */
 
 /* FIXME: Maybe return 0 on some conditions? */
 
@@ -2139,17 +2221,18 @@ ecore_x_netwm_window_type_get(Ecore_X_Window       window,
                               Ecore_X_Window_Type *type)
 {
    Ecore_X_Atom *atoms;
-   int           num;
-   int           i;
+   int num;
+   int i;
 
-   if (type) *type = ECORE_X_WINDOW_TYPE_NORMAL;
+   if (type)
+      *type = ECORE_X_WINDOW_TYPE_NORMAL;
 
    num = ecore_x_window_prop_atom_list_get(window, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
-					   &atoms);
+                                           &atoms);
    if (num < 0)
      {
-	/* IMO this is not the place to mix netwm and icccm /kwo */
-	/* Check if WM_TRANSIENT_FOR is set */
+        /* IMO this is not the place to mix netwm and icccm /kwo */
+        /* Check if WM_TRANSIENT_FOR is set */
 
         /* Disable it for xcb */
 
@@ -2160,18 +2243,18 @@ ecore_x_netwm_window_type_get(Ecore_X_Window       window,
 
    if (type)
      {
-	for (i = 0; i < num; ++i)
-	  {
-	     *type = _ecore_x_netwm_window_type_type_get(atoms[i]);
-	     if (*type != ECORE_X_WINDOW_TYPE_UNKNOWN)
-	       break;
-	  }
+        for (i = 0; i < num; ++i)
+          {
+             *type = _ecore_x_netwm_window_type_type_get(atoms[i]);
+             if (*type != ECORE_X_WINDOW_TYPE_UNKNOWN)
+                break;
+          }
      }
 
    free(atoms);
 
    return 1;
-}
+} /* ecore_x_netwm_window_type_get */
 
 static Ecore_X_Atom
 _ecore_x_netwm_action_atom_get(Ecore_X_Action action)
@@ -2179,33 +2262,45 @@ _ecore_x_netwm_action_atom_get(Ecore_X_Action action)
    switch (action)
      {
       case ECORE_X_ACTION_MOVE:
-	 return ECORE_X_ATOM_NET_WM_ACTION_MOVE;
+         return ECORE_X_ATOM_NET_WM_ACTION_MOVE;
+
       case ECORE_X_ACTION_RESIZE:
-	 return ECORE_X_ATOM_NET_WM_ACTION_RESIZE;
+         return ECORE_X_ATOM_NET_WM_ACTION_RESIZE;
+
       case ECORE_X_ACTION_MINIMIZE:
-	 return ECORE_X_ATOM_NET_WM_ACTION_MINIMIZE;
+         return ECORE_X_ATOM_NET_WM_ACTION_MINIMIZE;
+
       case ECORE_X_ACTION_SHADE:
-	 return ECORE_X_ATOM_NET_WM_ACTION_SHADE;
+         return ECORE_X_ATOM_NET_WM_ACTION_SHADE;
+
       case ECORE_X_ACTION_STICK:
-	 return ECORE_X_ATOM_NET_WM_ACTION_STICK;
+         return ECORE_X_ATOM_NET_WM_ACTION_STICK;
+
       case ECORE_X_ACTION_MAXIMIZE_HORZ:
-	 return ECORE_X_ATOM_NET_WM_ACTION_MAXIMIZE_HORZ;
+         return ECORE_X_ATOM_NET_WM_ACTION_MAXIMIZE_HORZ;
+
       case ECORE_X_ACTION_MAXIMIZE_VERT:
-	 return ECORE_X_ATOM_NET_WM_ACTION_MAXIMIZE_VERT;
+         return ECORE_X_ATOM_NET_WM_ACTION_MAXIMIZE_VERT;
+
       case ECORE_X_ACTION_FULLSCREEN:
-	 return ECORE_X_ATOM_NET_WM_ACTION_FULLSCREEN;
+         return ECORE_X_ATOM_NET_WM_ACTION_FULLSCREEN;
+
       case ECORE_X_ACTION_CHANGE_DESKTOP:
-	 return ECORE_X_ATOM_NET_WM_ACTION_CHANGE_DESKTOP;
+         return ECORE_X_ATOM_NET_WM_ACTION_CHANGE_DESKTOP;
+
       case ECORE_X_ACTION_CLOSE:
-	 return ECORE_X_ATOM_NET_WM_ACTION_CLOSE;
+         return ECORE_X_ATOM_NET_WM_ACTION_CLOSE;
+
       case ECORE_X_ACTION_ABOVE:
-	 return ECORE_X_ATOM_NET_WM_ACTION_ABOVE;
+         return ECORE_X_ATOM_NET_WM_ACTION_ABOVE;
+
       case ECORE_X_ACTION_BELOW:
-	 return ECORE_X_ATOM_NET_WM_ACTION_BELOW;
+         return ECORE_X_ATOM_NET_WM_ACTION_BELOW;
+
       default:
-	 return 0;
-     }
-}
+         return 0;
+     } /* switch */
+} /* _ecore_x_netwm_action_atom_get */
 
 /**
  * Sends the GetProperty request.
@@ -2221,7 +2316,7 @@ ecore_x_netwm_allowed_action_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS, ECORE_X_ATOM_ATOM,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_allowed_action_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_allowed_action_get_prefetch().
@@ -2236,7 +2331,7 @@ ecore_x_netwm_allowed_action_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_allowed_action_get_fetch */
 
 /* FIXME: Get complete list */
 
@@ -2259,31 +2354,31 @@ ecore_x_netwm_allowed_action_isset(Ecore_X_Window window,
                                    Ecore_X_Action action)
 {
    Ecore_X_Atom *atoms;
-   Ecore_X_Atom  atom;
-   int           num;
-   int           ret = 0;
-   int           i;
+   Ecore_X_Atom atom;
+   int num;
+   int ret = 0;
+   int i;
 
    num = ecore_x_window_prop_atom_list_get(window, ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS,
-					   &atoms);
+                                           &atoms);
    if (num <= 0)
-     return ret;
+      return ret;
 
    atom = _ecore_x_netwm_action_atom_get(action);
 
    for (i = 0; i < num; ++i)
      {
-	if (atom == atoms[i])
-	  {
-	     ret = 1;
-	     break;
-	  }
+        if (atom == atoms[i])
+          {
+             ret = 1;
+             break;
+          }
      }
 
    free(atoms);
 
    return ret;
-}
+} /* ecore_x_netwm_allowed_action_isset */
 
 /* FIXME: Set complete list */
 /**
@@ -2306,25 +2401,26 @@ ecore_x_netwm_allowed_action_set(Ecore_X_Window  window,
                                  Ecore_X_Action *action,
                                  unsigned int    num)
 {
-   Ecore_X_Atom  *set;
-   unsigned int   i;
+   Ecore_X_Atom *set;
+   unsigned int i;
 
    if (!num)
      {
-	ecore_x_window_prop_property_del(window, ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS);
-	return;
+        ecore_x_window_prop_property_del(window, ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS);
+        return;
      }
 
    set = malloc(num * sizeof(Ecore_X_Atom));
-   if (!set) return;
+   if (!set)
+      return;
 
    for (i = 0; i < num; i++)
-     set[i] = _ecore_x_netwm_action_atom_get(action[i]);
+      set[i] = _ecore_x_netwm_action_atom_get(action[i]);
 
    ecore_x_window_prop_atom_set(window, ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS, set, num);
 
    free(set);
-}
+} /* ecore_x_netwm_allowed_action_set */
 
 /**
  * Get the allowed actions supported by a window.
@@ -2348,31 +2444,35 @@ ecore_x_netwm_allowed_action_get(Ecore_X_Window   window,
                                  unsigned int    *num)
 {
    Ecore_X_Atom *atoms;
-   int           num_ret;
-   int           i;
+   int num_ret;
+   int i;
 
-   if (num) *num = 0;
-   if (action) *action = NULL;
+   if (num)
+      *num = 0;
+
+   if (action)
+      *action = NULL;
 
    num_ret = ecore_x_window_prop_atom_list_get(window, ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS,
-					       &atoms);
+                                               &atoms);
    if (num_ret <= 0)
       return 0;
 
    if (action)
      {
-	*action = malloc(num_ret * sizeof(Ecore_X_Action));
-	if (*action)
-	  for (i = 0; i < num_ret; ++i)
-	    (*action)[i] = _ecore_x_netwm_action_atom_get(atoms[i]);
+        *action = malloc(num_ret * sizeof(Ecore_X_Action));
+        if (*action)
+           for (i = 0; i < num_ret; ++i)
+              (*action)[i] = _ecore_x_netwm_action_atom_get(atoms[i]);
 
-	if (num) *num = num_ret;
+        if (num)
+           *num = num_ret;
      }
 
    free(atoms);
 
    return 1;
-}
+} /* ecore_x_netwm_allowed_action_get */
 
 /**
  * Set the _NET_WM_WINDOW_OPACITY property.
@@ -2399,8 +2499,8 @@ ecore_x_netwm_opacity_set(Ecore_X_Window window,
 {
    uint32_t op = opacity;
    ecore_x_window_prop_card32_set(window, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY,
-				  &op, 1);
-}
+                                  &op, 1);
+} /* ecore_x_netwm_opacity_set */
 
 /**
  * Sends the GetProperty request.
@@ -2416,7 +2516,7 @@ ecore_x_netwm_opacity_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_WINDOW_OPACITY, ECORE_X_ATOM_CARDINAL,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_opacity_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_netwm_opacity_get_prefetch().
@@ -2431,7 +2531,7 @@ ecore_x_netwm_opacity_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_opacity_get_fetch */
 
 /**
  * Get the opacity value of a window.
@@ -2455,10 +2555,12 @@ ecore_x_netwm_opacity_get(Ecore_X_Window window,
    unsigned int tmp;
 
    ret = ecore_x_window_prop_card32_get(window, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY,
-					&tmp, 1);
-   if (opacity) *opacity = tmp;
+                                        &tmp, 1);
+   if (opacity)
+      *opacity = tmp;
+
    return ret == 1 ? 1 : 0;
-}
+} /* ecore_x_netwm_opacity_get */
 
 /**
  * Set the _NET_FRAME_EXTENTS property.
@@ -2491,7 +2593,7 @@ ecore_x_netwm_frame_size_set(Ecore_X_Window window,
    frames[2] = ft;
    frames[3] = fb;
    ecore_x_window_prop_card32_set(window, ECORE_X_ATOM_NET_FRAME_EXTENTS, frames, 4);
-}
+} /* ecore_x_netwm_frame_size_set */
 
 /**
  * Sends the GetProperty request.
@@ -2507,7 +2609,7 @@ ecore_x_netwm_frame_size_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_FRAME_EXTENTS, ECORE_X_ATOM_CARDINAL,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_frame_size_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_netwm_frame_size_get_prefetch().
@@ -2522,7 +2624,7 @@ ecore_x_netwm_frame_size_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_frame_size_get_fetch */
 
 /**
  * Get the frame extent of a window.
@@ -2551,18 +2653,26 @@ ecore_x_netwm_frame_size_get(Ecore_X_Window window,
                              int           *fb)
 {
    uint32_t frames[4];
-   int      ret = 0;
+   int ret = 0;
 
    ret = ecore_x_window_prop_card32_get(window, ECORE_X_ATOM_NET_FRAME_EXTENTS, frames, 4);
    if (ret != 4)
-     return 0;
+      return 0;
 
-   if (fl) *fl = frames[0];
-   if (fr) *fr = frames[1];
-   if (ft) *ft = frames[2];
-   if (fb) *fb = frames[3];
+   if (fl)
+      *fl = frames[0];
+
+   if (fr)
+      *fr = frames[1];
+
+   if (ft)
+      *ft = frames[2];
+
+   if (fb)
+      *fb = frames[3];
+
    return 1;
-}
+} /* ecore_x_netwm_frame_size_get */
 
 /**
  * Sends the GetProperty request.
@@ -2578,7 +2688,7 @@ ecore_x_netwm_sync_counter_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER, ECORE_X_ATOM_CARDINAL,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_netwm_sync_counter_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_netwm_sync_counter_get_prefetch().
@@ -2593,7 +2703,7 @@ ecore_x_netwm_sync_counter_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_netwm_sync_counter_get_fetch */
 
 /**
  * Get the X ID of a X Sync counter.
@@ -2613,15 +2723,17 @@ EAPI int
 ecore_x_netwm_sync_counter_get(Ecore_X_Window        window,
                                Ecore_X_Sync_Counter *counter)
 {
-   int          ret;
+   int ret;
    unsigned int tmp;
 
    ret = ecore_x_window_prop_card32_get(window, ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER,
-					&tmp, 1);
+                                        &tmp, 1);
 
-   if (counter) *counter = tmp;
+   if (counter)
+      *counter = tmp;
+
    return (ret == 1) ? 1 : 0;
-}
+} /* ecore_x_netwm_sync_counter_get */
 
 /**
  * Send a _NET_WM_PING property event.
@@ -2636,7 +2748,8 @@ ecore_x_netwm_ping_send(Ecore_X_Window window)
 {
    xcb_client_message_event_t ev;
 
-   if (!window) return;
+   if (!window)
+      return;
 
    ev.response_type = XCB_CLIENT_MESSAGE | 0x80;
    ev.format = 32;
@@ -2651,7 +2764,7 @@ ecore_x_netwm_ping_send(Ecore_X_Window window)
    ev.data.data32[5] = 0;
 
    xcb_send_event(_ecore_xcb_conn, 0, window, XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
-}
+} /* ecore_x_netwm_ping_send */
 
 /**
  * Send a _NET_WM_SYNC_REQUEST property event.
@@ -2668,7 +2781,8 @@ ecore_x_netwm_sync_request_send(Ecore_X_Window window,
 {
    xcb_client_message_event_t ev;
 
-   if (!window) return;
+   if (!window)
+      return;
 
    ev.response_type = XCB_CLIENT_MESSAGE | 0x80;
    ev.format = 32;
@@ -2683,7 +2797,7 @@ ecore_x_netwm_sync_request_send(Ecore_X_Window window,
    ev.data.data32[4] = 0;
 
    xcb_send_event(_ecore_xcb_conn, 0, window, 0, (const char *)&ev);
-}
+} /* ecore_x_netwm_sync_request_send */
 
 /**
  * Send a _NET_WM_STATE property event.
@@ -2709,8 +2823,11 @@ ecore_x_netwm_state_request_send(Ecore_X_Window       window,
 {
    xcb_client_message_event_t ev;
 
-   if (!window) return;
-   if (!root) root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   if (!window)
+      return;
+
+   if (!root)
+      root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
    ev.response_type = XCB_CLIENT_MESSAGE | 0x80;
    ev.format = 32;
@@ -2727,7 +2844,7 @@ ecore_x_netwm_state_request_send(Ecore_X_Window       window,
    xcb_send_event(_ecore_xcb_conn, 0, root,
                   XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
                   (const char *)&ev);
-}
+} /* ecore_x_netwm_state_request_send */
 
 /**
  * Send a _NET_WM_DESKTOP property event.
@@ -2747,8 +2864,11 @@ ecore_x_netwm_desktop_request_send(Ecore_X_Window window,
 {
    xcb_client_message_event_t ev;
 
-   if (!window) return;
-   if (!root) root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   if (!window)
+      return;
+
+   if (!root)
+      root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
    ev.response_type = XCB_CLIENT_MESSAGE | 0x80;
    ev.format = 32;
@@ -2759,7 +2879,7 @@ ecore_x_netwm_desktop_request_send(Ecore_X_Window window,
    xcb_send_event(_ecore_xcb_conn, 0, root,
                   XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
                   (const char *)&ev);
-}
+} /* ecore_x_netwm_desktop_request_send */
 
 int
 _ecore_x_netwm_startup_info_begin(Ecore_X_Window window,
@@ -2767,46 +2887,54 @@ _ecore_x_netwm_startup_info_begin(Ecore_X_Window window,
 {
 #if 0
    Ecore_X_Startup_Info *info;
-   unsigned char	exists = 0;
+   unsigned char exists = 0;
 
-   if (!startup_info) return 0;
+   if (!startup_info)
+      return 0;
+
    info = eina_hash_find(startup_info, (void *)window);
    if (info)
      {
         exists = 1;
-	INF("Already got info for win: 0x%x", window);
-	_ecore_x_netwm_startup_info_free(info);
+        INF("Already got info for win: 0x%x", window);
+        _ecore_x_netwm_startup_info_free(info);
      }
+
    info = calloc(1, sizeof(Ecore_X_Startup_Info));
-   if (!info) return 0;
+   if (!info)
+      return 0;
+
    info->win = win;
    info->length = 0;
    info->buffer_size = 161;
    info->buffer = calloc(info->buffer_size, sizeof(char));
    if (!info->buffer)
      {
-	_ecore_x_netwm_startup_info_free(info);
-	return 0;
+        _ecore_x_netwm_startup_info_free(info);
+        return 0;
      }
+
    memcpy(info->buffer, data, 20);
    info->length += 20;
    info->buffer[info->length] = 0;
    if (exists)
-     eina_hash_modify(startup_info, (void *)info->win, info);
+      eina_hash_modify(startup_info, (void *)info->win, info);
    else
-     eina_hash_add(startup_info, (void *)info->win, info);
+      eina_hash_add(startup_info, (void *)info->win, info);
+
    if (strlen(info->buffer) != 20)
      {
-	/* We have a '\0' in there, the message is done */
-	_ecore_x_netwm_startup_info_process(info);
+        /* We have a '\0' in there, the message is done */
+        _ecore_x_netwm_startup_info_process(info);
      }
-#else
+
+#else /* if 0 */
    window = XCB_NONE;
    data = NULL;
-#endif
+#endif /* if 0 */
 
    return 1;
-}
+} /* _ecore_x_netwm_startup_info_begin */
 
 int
 _ecore_x_netwm_startup_info(Ecore_X_Window window,
@@ -2816,36 +2944,42 @@ _ecore_x_netwm_startup_info(Ecore_X_Window window,
    Ecore_X_Startup_Info *info;
    char *p;
 
-   if (!startup_info) return 0;
+   if (!startup_info)
+      return 0;
+
    info = eina_hash_find(startup_info, (void *)window);
-   if (!info) return 0;
+   if (!info)
+      return 0;
+
    if ((info->length + 20) > info->buffer_size)
      {
-	info->buffer_size += 160;
-	info->buffer = realloc(info->buffer, info->buffer_size * sizeof(char));
-	if (!info->buffer)
-	  {
-	     eina_hash_del(startup_info, (void *)info->win);
-	     _ecore_x_netwm_startup_info_free(info);
-	     return 0;
-	  }
+        info->buffer_size += 160;
+        info->buffer = realloc(info->buffer, info->buffer_size * sizeof(char));
+        if (!info->buffer)
+          {
+             eina_hash_del(startup_info, (void *)info->win);
+             _ecore_x_netwm_startup_info_free(info);
+             return 0;
+          }
      }
+
    memcpy(info->buffer + info->length, data, 20);
    p = info->buffer + info->length;
    info->length += 20;
    info->buffer[info->length] = 0;
    if (strlen(p) != 20)
      {
-	/* We have a '\0' in there, the message is done */
-	_ecore_x_netwm_startup_info_process(info);
+        /* We have a '\0' in there, the message is done */
+        _ecore_x_netwm_startup_info_process(info);
      }
-#else
+
+#else /* if 0 */
    window = XCB_NONE;
    data = NULL;
-#endif
+#endif /* if 0 */
 
    return 1;
-}
+} /* _ecore_x_netwm_startup_info */
 
 /*
  * Set UTF-8 string property
@@ -2858,11 +2992,11 @@ _ecore_x_window_prop_string_utf8_set(Ecore_X_Window window,
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, window,
                        atom, ECORE_X_ATOM_UTF8_STRING,
                        8, strlen(str), str);
-}
+} /* _ecore_x_window_prop_string_utf8_set */
 
 static void
 _ecore_x_window_prop_string_utf8_get_prefetch(Ecore_X_Window window,
-                                              Ecore_X_Atom atom)
+                                              Ecore_X_Atom   atom)
 {
    xcb_get_property_cookie_t cookie;
 
@@ -2870,7 +3004,7 @@ _ecore_x_window_prop_string_utf8_get_prefetch(Ecore_X_Window window,
                                        atom, ECORE_X_ATOM_UTF8_STRING,
                                        0, 0x7fffffff);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* _ecore_x_window_prop_string_utf8_get_prefetch */
 
 static void
 _ecore_x_window_prop_string_utf8_get_fetch(void)
@@ -2881,7 +3015,7 @@ _ecore_x_window_prop_string_utf8_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* _ecore_x_window_prop_string_utf8_get_fetch */
 
 /*
  * Get UTF-8 string property
@@ -2889,18 +3023,19 @@ _ecore_x_window_prop_string_utf8_get_fetch(void)
  */
 static char *
 _ecore_x_window_prop_string_utf8_get(Ecore_X_Window window __UNUSED__,
-                                     Ecore_X_Atom   atom __UNUSED__)
+                                     Ecore_X_Atom atom     __UNUSED__)
 {
    xcb_get_property_reply_t *reply;
-   char                     *str;
-   int                       length;
+   char *str;
+   int length;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return NULL;
+   if (!reply)
+      return NULL;
 
    if ((reply->format != 8) ||
        (reply->value_len <= 0))
-     return NULL;
+      return NULL;
 
    length = reply->value_len;
    str = (char *)malloc (sizeof (char) * (length + 1));
@@ -2908,11 +3043,12 @@ _ecore_x_window_prop_string_utf8_get(Ecore_X_Window window __UNUSED__,
      {
         return NULL;
      }
+
    memcpy(str, xcb_get_property_value(reply), length);
    str[length] = '\0';
 
    return str;
-}
+} /* _ecore_x_window_prop_string_utf8_get */
 
 #if 0 /* Unused */
 /*
@@ -2922,73 +3058,77 @@ static int
 _ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info)
 {
    Ecore_X_Event_Startup_Sequence *e;
-   int                             event;
-   char                           *p;
+   int event;
+   char *p;
 
    p = strchr(info->buffer, ':');
    if (!p)
      {
-	eina_hash_del(startup_info, (void *)info->win);
-	_ecore_x_netwm_startup_info_free(info);
-	return 0;
+        eina_hash_del(startup_info, (void *)info->win);
+        _ecore_x_netwm_startup_info_free(info);
+        return 0;
      }
+
    *p = 0;
    if (!strcmp(info->buffer, "new"))
      {
-	if (info->init)
-	  event = ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE;
-	else
-	  event = ECORE_X_EVENT_STARTUP_SEQUENCE_NEW;
-	info->init = 1;
+        if (info->init)
+           event = ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE;
+        else
+           event = ECORE_X_EVENT_STARTUP_SEQUENCE_NEW;
+
+        info->init = 1;
      }
    else if (!strcmp(info->buffer, "change"))
      {
-	event = ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE;
+        event = ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE;
      }
    else if (!strcmp(info->buffer, "remove"))
-     event = ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE;
+      event = ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE;
    else
      {
-	eina_hash_del(startup_info, (void *)info->win);
-	_ecore_x_netwm_startup_info_free(info);
-	return 0;
+        eina_hash_del(startup_info, (void *)info->win);
+        _ecore_x_netwm_startup_info_free(info);
+        return 0;
      }
 
    p++;
 
    if (!_ecore_x_netwm_startup_info_parse(info, p))
      {
-	eina_hash_del(startup_info, (void *)info->win);
-	_ecore_x_netwm_startup_info_free(info);
-	return 0;
+        eina_hash_del(startup_info, (void *)info->win);
+        _ecore_x_netwm_startup_info_free(info);
+        return 0;
      }
 
    if (info->init)
      {
-	e = calloc(1, sizeof(Ecore_X_Event_Startup_Sequence));
-	if (!e)
-	  {
-	     eina_hash_del(startup_info, (void *)info->win);
-	     _ecore_x_netwm_startup_info_free(info);
-	     return 0;
-	  }
-	e->win = info->win;
-	ecore_event_add(event, e, NULL, NULL);
+        e = calloc(1, sizeof(Ecore_X_Event_Startup_Sequence));
+        if (!e)
+          {
+             eina_hash_del(startup_info, (void *)info->win);
+             _ecore_x_netwm_startup_info_free(info);
+             return 0;
+          }
+
+        e->win = info->win;
+        ecore_event_add(event, e, NULL, NULL);
      }
 
    if (event == ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE)
      {
         eina_hash_del(startup_info, (void *)info->win);
-	_ecore_x_netwm_startup_info_free(info);
+        _ecore_x_netwm_startup_info_free(info);
      }
    else
      {
-	/* Discard buffer */
-	info->length = 0;
-	info->buffer[0] = 0;
+        /* Discard buffer */
+        info->length = 0;
+        info->buffer[0] = 0;
      }
+
    return 1;
-}
+} /* _ecore_x_netwm_startup_info_process */
 
 /*
  * Parse startup info
@@ -2997,148 +3137,169 @@ static int
 _ecore_x_netwm_startup_info_parse(Ecore_X_Startup_Info *info,
                                   char                 *data)
 {
-
    while (*data)
      {
-	int in_quot_sing, in_quot_dbl, escaped;
-	char *p, *pp;
-	char *key;
-	char value[1024];
+        int in_quot_sing, in_quot_dbl, escaped;
+        char *p, *pp;
+        char *key;
+        char value[1024];
 
-	/* Skip space */
-	while (*data == ' ') data++;
-	/* Get key */
-	key = data;
-	data = strchr(key, '=');
-	if (!data) return 0;
-	*data = 0;
-	data++;
+        /* Skip space */
+        while (*data == ' ') data++;
+        /* Get key */
+        key = data;
+        data = strchr(key, '=');
+        if (!data)
+           return 0;
 
-	/* Get value */
-	p = data;
-	pp = value;
-	in_quot_dbl = 0;
-	in_quot_sing = 0;
-	escaped = 0;
-	while (*p)
-	  {
-	     if ((pp - value) >= 1024) return 0;
-	     if (escaped)
-	       {
-		  *pp = *p;
-		  pp++;
-		  escaped = 0;
-	       }
-	     else if (in_quot_sing)
-	       {
-		  if (*p == '\\')
-		    escaped = 1;
-		  else if (*p == '\'')
-		    in_quot_sing = 0;
-		  else
-		    {
-		       *pp = *p;
-		       pp++;
-		    }
-	       }
-	     else if (in_quot_dbl)
-	       {
-		  if (*p == '\\')
-		    escaped = 1;
-		  else if (*p == '\"')
-		    in_quot_dbl = 0;
-		  else
-		    {
-		       *pp = *p;
-		       pp++;
-		    }
-	       }
-	     else
-	       {
-		  if (*p == '\\')
-		    escaped = 1;
-		  else if (*p == '\'')
-		    in_quot_sing = 1;
-		  else if (*p == '\"')
-		    in_quot_dbl = 1;
-		  else if (*p == ' ')
-		    {
-		       break;
-		    }
-		  else
-		    {
-		       *pp = *p;
-		       pp++;
-		    }
-	       }
-	     p++;
-	  }
-	if ((in_quot_dbl) || (in_quot_sing)) return 0;
-	data = p;
-	*pp = 0;
+        *data = 0;
+        data++;
 
-	/* Parse info */
-	if (!strcmp(key, "ID"))
-	  {
-	     if ((info->id) && (strcmp(info->id, value))) return 0;
-	     info->id = strdup(value);
-	     p = strstr(value, "_TIME");
-	     if (p)
-	       {
-		  info->timestamp = atoi(p + 5);
-	       }
-	  }
-	else if (!strcmp(key, "NAME"))
-	  {
-	     if (info->name) free(info->name);
-	     info->name = strdup(value);
-	  }
-	else if (!strcmp(key, "SCREEN"))
-	  {
-	     info->screen = atoi(value);
-	  }
-	else if (!strcmp(key, "BIN"))
-	  {
-	     if (info->bin) free(info->bin);
-	     info->bin = strdup(value);
-	  }
-	else if (!strcmp(key, "ICON"))
-	  {
-	     if (info->icon) free(info->icon);
-	     info->icon = strdup(value);
-	  }
-	else if (!strcmp(key, "DESKTOP"))
-	  {
-	     info->desktop = atoi(value);
-	  }
-	else if (!strcmp(key, "TIMESTAMP"))
-	  {
-	     if (!info->timestamp)
-	       info->timestamp = atoi(value);
-	  }
-	else if (!strcmp(key, "DESCRIPTION"))
-	  {
-	     if (info->description) free(info->description);
-	     info->description = strdup(value);
-	  }
-	else if (!strcmp(key, "WMCLASS"))
-	  {
-	     if (info->wmclass) free(info->wmclass);
-	     info->wmclass = strdup(value);
-	  }
-	else if (!strcmp(key, "SILENT"))
-	  {
-	     info->silent = atoi(value);
-	  }
-	else
-	  {
-	     WRN("Ecore X Sequence, Unknown: %s=%s", key, value);
-	  }
+        /* Get value */
+        p = data;
+        pp = value;
+        in_quot_dbl = 0;
+        in_quot_sing = 0;
+        escaped = 0;
+        while (*p)
+          {
+             if ((pp - value) >= 1024)
+                return 0;
+
+             if (escaped)
+               {
+                  *pp = *p;
+                  pp++;
+                  escaped = 0;
+               }
+             else if (in_quot_sing)
+               {
+                  if (*p == '\\')
+                     escaped = 1;
+                  else if (*p == '\'')
+                     in_quot_sing = 0;
+                  else
+                    {
+                       *pp = *p;
+                       pp++;
+                    }
+               }
+             else if (in_quot_dbl)
+               {
+                  if (*p == '\\')
+                     escaped = 1;
+                  else if (*p == '\"')
+                     in_quot_dbl = 0;
+                  else
+                    {
+                       *pp = *p;
+                       pp++;
+                    }
+               }
+             else
+               {
+                  if (*p == '\\')
+                     escaped = 1;
+                  else if (*p == '\'')
+                     in_quot_sing = 1;
+                  else if (*p == '\"')
+                     in_quot_dbl = 1;
+                  else if (*p == ' ')
+                    {
+                       break;
+                    }
+                  else
+                    {
+                       *pp = *p;
+                       pp++;
+                    }
+               }
+
+             p++;
+          }
+        if ((in_quot_dbl) || (in_quot_sing))
+           return 0;
+
+        data = p;
+        *pp = 0;
+
+        /* Parse info */
+        if (!strcmp(key, "ID"))
+          {
+             if ((info->id) && (strcmp(info->id, value)))
+                return 0;
+
+             info->id = strdup(value);
+             p = strstr(value, "_TIME");
+             if (p)
+               {
+                  info->timestamp = atoi(p + 5);
+               }
+          }
+        else if (!strcmp(key, "NAME"))
+          {
+             if (info->name)
+                free(info->name);
+
+             info->name = strdup(value);
+          }
+        else if (!strcmp(key, "SCREEN"))
+          {
+             info->screen = atoi(value);
+          }
+        else if (!strcmp(key, "BIN"))
+          {
+             if (info->bin)
+                free(info->bin);
+
+             info->bin = strdup(value);
+          }
+        else if (!strcmp(key, "ICON"))
+          {
+             if (info->icon)
+                free(info->icon);
+
+             info->icon = strdup(value);
+          }
+        else if (!strcmp(key, "DESKTOP"))
+          {
+             info->desktop = atoi(value);
+          }
+        else if (!strcmp(key, "TIMESTAMP"))
+          {
+             if (!info->timestamp)
+                info->timestamp = atoi(value);
+          }
+        else if (!strcmp(key, "DESCRIPTION"))
+          {
+             if (info->description)
+                free(info->description);
+
+             info->description = strdup(value);
+          }
+        else if (!strcmp(key, "WMCLASS"))
+          {
+             if (info->wmclass)
+                free(info->wmclass);
+
+             info->wmclass = strdup(value);
+          }
+        else if (!strcmp(key, "SILENT"))
+          {
+             info->silent = atoi(value);
+          }
+        else
+          {
+             WRN("Ecore X Sequence, Unknown: %s=%s", key, value);
+          }
      }
-   if (!info->id) return 0;
+   if (!info->id)
+      return 0;
+
    return 1;
-}
-#endif
+} /* _ecore_x_netwm_startup_info_parse */
+
+#endif /* if 0 */
 
 /*
  * Free startup info struct
@@ -3149,16 +3310,32 @@ _ecore_x_netwm_startup_info_free(void *data)
    Ecore_X_Startup_Info *info;
 
    info = data;
-   if (!info) return;
-   if (info->buffer) free(info->buffer);
-   if (info->id) free(info->id);
-   if (info->name) free(info->name);
-   if (info->bin) free(info->bin);
-   if (info->icon) free(info->icon);
-   if (info->description) free(info->description);
-   if (info->wmclass) free(info->wmclass);
+   if (!info)
+      return;
+
+   if (info->buffer)
+      free(info->buffer);
+
+   if (info->id)
+      free(info->id);
+
+   if (info->name)
+      free(info->name);
+
+   if (info->bin)
+      free(info->bin);
+
+   if (info->icon)
+      free(info->icon);
+
+   if (info->description)
+      free(info->description);
+
+   if (info->wmclass)
+      free(info->wmclass);
+
    free(info);
-}
+} /* _ecore_x_netwm_startup_info_free */
 
 /*
  * Is screen composited?
@@ -3176,28 +3353,32 @@ _ecore_x_netwm_startup_info_free(void *data)
 EAPI int
 ecore_x_screen_is_composited(int screen)
 {
-   char                             buf[32];
-   xcb_intern_atom_cookie_t         cookie_atom;
+   char buf[32];
+   xcb_intern_atom_cookie_t cookie_atom;
    xcb_get_selection_owner_cookie_t cookie_owner;
-   xcb_intern_atom_reply_t         *reply_atom;
+   xcb_intern_atom_reply_t *reply_atom;
    xcb_get_selection_owner_reply_t *reply_owner;
-   Ecore_X_Window                   window;
-   Ecore_X_Atom                     atom;
+   Ecore_X_Window window;
+   Ecore_X_Atom atom;
 
    snprintf(buf, sizeof(buf), "_NET_WM_CM_S%d", screen);
    cookie_atom = xcb_intern_atom_unchecked(_ecore_xcb_conn, 1,
                                            strlen(buf), buf);
    reply_atom = xcb_intern_atom_reply(_ecore_xcb_conn, cookie_atom, NULL);
-   if (!reply_atom) return 0;
+   if (!reply_atom)
+      return 0;
+
    atom = reply_atom->atom;
    free(reply_atom);
 
    cookie_owner = xcb_get_selection_owner_unchecked(_ecore_xcb_conn, atom);
    reply_owner = xcb_get_selection_owner_reply(_ecore_xcb_conn, cookie_owner, NULL);
-   if (!reply_owner) return 0;
+   if (!reply_owner)
+      return 0;
 
    window = reply_owner->owner;
    free(reply_owner);
 
    return window != XCB_NONE;
-}
+} /* ecore_x_screen_is_composited */
+

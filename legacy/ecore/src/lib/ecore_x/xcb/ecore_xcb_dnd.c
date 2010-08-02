@@ -8,65 +8,64 @@
 #include "ecore_xcb_private.h"
 #include "Ecore_X_Atoms.h"
 
-
-EAPI int ECORE_X_EVENT_XDND_ENTER    = 0;
+EAPI int ECORE_X_EVENT_XDND_ENTER = 0;
 EAPI int ECORE_X_EVENT_XDND_POSITION = 0;
-EAPI int ECORE_X_EVENT_XDND_STATUS   = 0;
-EAPI int ECORE_X_EVENT_XDND_LEAVE    = 0;
-EAPI int ECORE_X_EVENT_XDND_DROP     = 0;
+EAPI int ECORE_X_EVENT_XDND_STATUS = 0;
+EAPI int ECORE_X_EVENT_XDND_LEAVE = 0;
+EAPI int ECORE_X_EVENT_XDND_DROP = 0;
 EAPI int ECORE_X_EVENT_XDND_FINISHED = 0;
 
 static Ecore_X_DND_Source *_source = NULL;
 static Ecore_X_DND_Target *_target = NULL;
 static int _ecore_x_dnd_init_count = 0;
 
-
 void
 _ecore_x_dnd_init(void)
 {
    if (!_ecore_x_dnd_init_count)
      {
+        _source = calloc(1, sizeof(Ecore_X_DND_Source));
+        _source->version = ECORE_X_DND_VERSION;
+        _source->win = XCB_NONE;
+        _source->dest = XCB_NONE;
+        _source->state = ECORE_X_DND_SOURCE_IDLE;
+        _source->prev.window = 0;
 
-	_source = calloc(1, sizeof(Ecore_X_DND_Source));
-	_source->version = ECORE_X_DND_VERSION;
-	_source->win = XCB_NONE;
-	_source->dest = XCB_NONE;
-	_source->state = ECORE_X_DND_SOURCE_IDLE;
-	_source->prev.window = 0;
+        _target = calloc(1, sizeof(Ecore_X_DND_Target));
+        _target->win = XCB_NONE;
+        _target->source = XCB_NONE;
+        _target->state = ECORE_X_DND_TARGET_IDLE;
 
-	_target = calloc(1, sizeof(Ecore_X_DND_Target));
-	_target->win = XCB_NONE;
-	_target->source = XCB_NONE;
-	_target->state = ECORE_X_DND_TARGET_IDLE;
-
-	ECORE_X_EVENT_XDND_ENTER    = ecore_event_type_new();
-	ECORE_X_EVENT_XDND_POSITION = ecore_event_type_new();
-	ECORE_X_EVENT_XDND_STATUS   = ecore_event_type_new();
-	ECORE_X_EVENT_XDND_LEAVE    = ecore_event_type_new();
-	ECORE_X_EVENT_XDND_DROP     = ecore_event_type_new();
-	ECORE_X_EVENT_XDND_FINISHED = ecore_event_type_new();
+        ECORE_X_EVENT_XDND_ENTER = ecore_event_type_new();
+        ECORE_X_EVENT_XDND_POSITION = ecore_event_type_new();
+        ECORE_X_EVENT_XDND_STATUS = ecore_event_type_new();
+        ECORE_X_EVENT_XDND_LEAVE = ecore_event_type_new();
+        ECORE_X_EVENT_XDND_DROP = ecore_event_type_new();
+        ECORE_X_EVENT_XDND_FINISHED = ecore_event_type_new();
      }
 
    _ecore_x_dnd_init_count++;
-}
+} /* _ecore_x_dnd_init */
 
 void
 _ecore_x_dnd_shutdown(void)
 {
    _ecore_x_dnd_init_count--;
    if (_ecore_x_dnd_init_count > 0)
-     return;
+      return;
 
    if (_source)
-     free(_source);
+      free(_source);
+
    _source = NULL;
 
    if (_target)
-     free(_target);
+      free(_target);
+
    _target = NULL;
 
    _ecore_x_dnd_init_count = 0;
-}
+} /* _ecore_x_dnd_shutdown */
 
 EAPI void
 ecore_x_dnd_aware_set(Ecore_X_Window window,
@@ -75,11 +74,11 @@ ecore_x_dnd_aware_set(Ecore_X_Window window,
    Ecore_X_Atom prop_data = ECORE_X_DND_VERSION;
 
    if (on)
-     ecore_x_window_prop_property_set(window, ECORE_X_ATOM_XDND_AWARE,
-				      ECORE_X_ATOM_ATOM, 32, &prop_data, 1);
+      ecore_x_window_prop_property_set(window, ECORE_X_ATOM_XDND_AWARE,
+                                       ECORE_X_ATOM_ATOM, 32, &prop_data, 1);
    else
-     ecore_x_window_prop_property_del(window, ECORE_X_ATOM_XDND_AWARE);
-}
+      ecore_x_window_prop_property_del(window, ECORE_X_ATOM_XDND_AWARE);
+} /* ecore_x_dnd_aware_set */
 
 /**
  * Sends the GetProperty request.
@@ -96,8 +95,7 @@ ecore_x_dnd_version_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_ATOM,
                                        0, LONG_MAX);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
-
+} /* ecore_x_dnd_version_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_dnd_version_get_prefetch().
@@ -111,7 +109,7 @@ ecore_x_dnd_version_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_dnd_version_get_fetch */
 
 /**
  * Get the DnD version.
@@ -127,19 +125,19 @@ ecore_x_dnd_version_get_fetch(void)
 EAPI int
 ecore_x_dnd_version_get(Ecore_X_Window window)
 {
-   unsigned char            *prop_data;
-   int                       num;
+   unsigned char *prop_data;
+   int num;
 
    if (ecore_x_window_prop_property_get(window, ECORE_X_ATOM_XDND_AWARE,
                                         ECORE_X_ATOM_ATOM, 32, &prop_data, &num))
      {
-	int version = (int) *prop_data;
-	free(prop_data);
-	return version;
+        int version = (int)*prop_data;
+        free(prop_data);
+        return version;
      }
    else
-     return 0;
-}
+      return 0;
+} /* ecore_x_dnd_version_get */
 
 /**
  * Sends the GetProperty request.
@@ -156,8 +154,7 @@ ecore_x_dnd_type_get_prefetch(Ecore_X_Window window)
                                        ECORE_X_ATOM_ATOM,
                                        0, LONG_MAX);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
-
+} /* ecore_x_dnd_type_get_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_dnd_type_get_prefetch().
@@ -171,7 +168,7 @@ ecore_x_dnd_type_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_dnd_type_get_fetch */
 
 /* FIXME: round trip (InternAtomGet request) */
 
@@ -193,20 +190,22 @@ ecore_x_dnd_type_isset(Ecore_X_Window window,
 {
    xcb_intern_atom_cookie_t cookie;
    xcb_intern_atom_reply_t *reply;
-   Ecore_X_Atom            *atoms;
-   unsigned char           *data;
-   int                      num;
-   int                      i;
-   uint8_t                  ret = 0;
+   Ecore_X_Atom *atoms;
+   unsigned char *data;
+   int num;
+   int i;
+   uint8_t ret = 0;
 
    cookie = xcb_intern_atom_unchecked(_ecore_xcb_conn, 0,
                                       strlen(type), type);
 
    if (!ecore_x_window_prop_property_get(window, ECORE_X_ATOM_XDND_TYPE_LIST,
-					 ECORE_X_ATOM_ATOM, 32, &data, &num))
+                                         ECORE_X_ATOM_ATOM, 32, &data, &num))
      {
         reply = xcb_intern_atom_reply(_ecore_xcb_conn, cookie, NULL);
-        if (reply) free(reply);
+        if (reply)
+           free(reply);
+
         return ret;
      }
 
@@ -216,22 +215,23 @@ ecore_x_dnd_type_isset(Ecore_X_Window window,
         free(data);
         return 0;
      }
+
    atoms = (Ecore_X_Atom *)data;
 
    for (i = 0; i < num; ++i)
      {
-	if (reply->atom == atoms[i])
-	  {
-	     ret = 1;
-	     break;
-	  }
+        if (reply->atom == atoms[i])
+          {
+             ret = 1;
+             break;
+          }
      }
 
    free(data);
    free(reply);
 
    return ret;
-}
+} /* ecore_x_dnd_type_isset */
 
 /* FIXME: round trip (InternAtomGet request) */
 
@@ -254,12 +254,12 @@ ecore_x_dnd_type_set(Ecore_X_Window window,
 {
    xcb_intern_atom_cookie_t cookie;
    xcb_intern_atom_reply_t *reply;
-   Ecore_X_Atom            *oldset = NULL;
-   Ecore_X_Atom            *newset = NULL;
-   unsigned char           *data = NULL;
-   unsigned char           *old_data = NULL;
-   Ecore_X_Atom             atom;
-   int                      i, j = 0, num = 0;
+   Ecore_X_Atom *oldset = NULL;
+   Ecore_X_Atom *newset = NULL;
+   unsigned char *data = NULL;
+   unsigned char *old_data = NULL;
+   Ecore_X_Atom atom;
+   int i, j = 0, num = 0;
 
    cookie = xcb_intern_atom_unchecked(_ecore_xcb_conn, 0,
                                       strlen(type), type);
@@ -270,67 +270,79 @@ ecore_x_dnd_type_set(Ecore_X_Window window,
                                          32, &old_data, &num))
      {
         reply = xcb_intern_atom_reply(_ecore_xcb_conn, cookie, NULL);
-        if (reply) free(reply);
+        if (reply)
+           free(reply);
+
         return;
      }
+
    oldset = (Ecore_X_Atom *)old_data;
 
    if (on)
      {
-	if (ecore_x_dnd_type_isset(window, type))
-	  {
-	     free(old_data);
-             reply = xcb_intern_atom_reply(_ecore_xcb_conn, cookie, NULL);
-             if (reply) free(reply);
-	     return;
-	  }
-	data = calloc(num + 1, sizeof(Ecore_X_Atom));
-	if (!data)
+        if (ecore_x_dnd_type_isset(window, type))
           {
-	     free(old_data);
+             free(old_data);
              reply = xcb_intern_atom_reply(_ecore_xcb_conn, cookie, NULL);
-             if (reply) free(reply);
+             if (reply)
+                free(reply);
+
              return;
           }
-	newset = (Ecore_X_Atom *)data;
 
-	for (i = 0; i < num; i++)
-	  newset[i + 1] = oldset[i];
-	/* prepend the new type */
+        data = calloc(num + 1, sizeof(Ecore_X_Atom));
+        if (!data)
+          {
+             free(old_data);
+             reply = xcb_intern_atom_reply(_ecore_xcb_conn, cookie, NULL);
+             if (reply)
+                free(reply);
+
+             return;
+          }
+
+        newset = (Ecore_X_Atom *)data;
+
+        for (i = 0; i < num; i++)
+           newset[i + 1] = oldset[i];
+        /* prepend the new type */
 
         reply = xcb_intern_atom_reply(_ecore_xcb_conn, cookie, NULL);
         if (!reply)
           {
-            free(old_data);
-            return;
+             free(old_data);
+             return;
           }
-	newset[0] = reply->atom;
+
+        newset[0] = reply->atom;
         free(reply);
 
-	ecore_x_window_prop_property_set(window,
+        ecore_x_window_prop_property_set(window,
                                          ECORE_X_ATOM_XDND_TYPE_LIST,
                                          ECORE_X_ATOM_ATOM,
                                          32, data, num + 1);
      }
    else
      {
-	if (!ecore_x_dnd_type_isset(window, type))
-	  {
-	     free(old_data);
-	     return;
-	  }
-	newset = calloc(num - 1, sizeof(Ecore_X_Atom));
-	if (!newset)
-	  {
-	     free(old_data);
-	     return;
-	  }
-	data = (unsigned char *)newset;
-	for (i = 0; i < num; i++)
-	  if (oldset[i] != atom)
-	    newset[j++] = oldset[i];
+        if (!ecore_x_dnd_type_isset(window, type))
+          {
+             free(old_data);
+             return;
+          }
 
-	ecore_x_window_prop_property_set(window,
+        newset = calloc(num - 1, sizeof(Ecore_X_Atom));
+        if (!newset)
+          {
+             free(old_data);
+             return;
+          }
+
+        data = (unsigned char *)newset;
+        for (i = 0; i < num; i++)
+           if (oldset[i] != atom)
+              newset[j++] = oldset[i];
+
+        ecore_x_window_prop_property_set(window,
                                          ECORE_X_ATOM_XDND_TYPE_LIST,
                                          ECORE_X_ATOM_ATOM,
                                          32, data, num - 1);
@@ -338,7 +350,7 @@ ecore_x_dnd_type_set(Ecore_X_Window window,
 
    free(oldset);
    free(newset);
-}
+} /* ecore_x_dnd_type_set */
 
 /* FIXME: round trips, but I don't think we can do much, here */
 
@@ -360,36 +372,40 @@ ecore_x_dnd_types_set(Ecore_X_Window window,
                       unsigned int   num_types)
 {
    Ecore_X_Atom *newset = NULL;
-   void         *data = NULL;
-   uint32_t      i;
+   void *data = NULL;
+   uint32_t i;
 
    if (!num_types)
      {
-	ecore_x_window_prop_property_del(window, ECORE_X_ATOM_XDND_TYPE_LIST);
+        ecore_x_window_prop_property_del(window, ECORE_X_ATOM_XDND_TYPE_LIST);
      }
    else
      {
         xcb_intern_atom_cookie_t *cookies;
-        xcb_intern_atom_reply_t  *reply;
+        xcb_intern_atom_reply_t *reply;
 
         cookies = (xcb_intern_atom_cookie_t *)malloc(sizeof(xcb_intern_atom_cookie_t));
-        if (!cookies) return;
-	for (i = 0; i < num_types; i++)
-	  cookies[i] = xcb_intern_atom_unchecked(_ecore_xcb_conn, 0,
-                                                 strlen(types[i]), types[i]);
+        if (!cookies)
+           return;
+
+        for (i = 0; i < num_types; i++)
+           cookies[i] = xcb_intern_atom_unchecked(_ecore_xcb_conn, 0,
+                                                  strlen(types[i]), types[i]);
         data = calloc(num_types, sizeof(Ecore_X_Atom));
-	if (!data)
+        if (!data)
           {
-            for (i = 0; i < num_types; i++)
-              {
-                 reply = xcb_intern_atom_reply(_ecore_xcb_conn, cookies[i], NULL);
-                 if (reply) free(reply);
-              }
-            free(cookies);
-            return;
+             for (i = 0; i < num_types; i++)
+               {
+                  reply = xcb_intern_atom_reply(_ecore_xcb_conn, cookies[i], NULL);
+                  if (reply)
+                     free(reply);
+               }
+             free(cookies);
+             return;
           }
-	newset = data;
-	for (i = 0; i < num_types; i++)
+
+        newset = data;
+        for (i = 0; i < num_types; i++)
           {
              reply = xcb_intern_atom_reply(_ecore_xcb_conn, cookies[i], NULL);
              if (reply)
@@ -398,26 +414,26 @@ ecore_x_dnd_types_set(Ecore_X_Window window,
                   free(reply);
                }
              else
-               newset[i] = XCB_NONE;
+                newset[i] = XCB_NONE;
           }
         free(cookies);
-	ecore_x_window_prop_property_set(window, ECORE_X_ATOM_XDND_TYPE_LIST,
+        ecore_x_window_prop_property_set(window, ECORE_X_ATOM_XDND_TYPE_LIST,
                                          ECORE_X_ATOM_ATOM, 32, data, num_types);
-	free(data);
+        free(data);
      }
-}
+} /* ecore_x_dnd_types_set */
 
 Ecore_X_DND_Source *
 _ecore_x_dnd_source_get(void)
 {
    return _source;
-}
+} /* _ecore_x_dnd_source_get */
 
 Ecore_X_DND_Target *
 _ecore_x_dnd_target_get(void)
 {
    return _target;
-}
+} /* _ecore_x_dnd_target_get */
 
 /**
  * Sends the GetProperty request.
@@ -434,8 +450,7 @@ ecore_x_dnd_begin_prefetch(Ecore_X_Window source)
                                        ECORE_X_ATOM_ATOM,
                                        0, LONG_MAX);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
-
+} /* ecore_x_dnd_begin_prefetch */
 
 /**
  * Gets the reply of the GetProperty request sent by ecore_x_dnd_begin_prefetch().
@@ -449,7 +464,7 @@ ecore_x_dnd_begin_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_dnd_begin_fetch */
 
 /* FIXME: round trip */
 
@@ -482,7 +497,7 @@ ecore_x_dnd_begin(Ecore_X_Window source,
    ecore_x_selection_xdnd_prefetch();
    ecore_x_selection_xdnd_fetch();
    if (!ecore_x_selection_xdnd_set(source, data, size))
-     return 0;
+      return 0;
 
    _source->win = source;
    ecore_x_window_ignore_set(_source->win, 1);
@@ -494,7 +509,7 @@ ecore_x_dnd_begin(Ecore_X_Window source,
    _source->action = ECORE_X_ATOM_XDND_ACTION_COPY;
    _source->accepted_action = XCB_NONE;
    return 1;
-}
+} /* ecore_x_dnd_begin */
 
 EAPI int
 ecore_x_dnd_drop(void)
@@ -505,42 +520,43 @@ ecore_x_dnd_drop(void)
      {
         xcb_client_message_event_t ev;
 
-	ev.response_type = XCB_CLIENT_MESSAGE;
-	ev.format = 32;
-	ev.window = _source->dest;
+        ev.response_type = XCB_CLIENT_MESSAGE;
+        ev.format = 32;
+        ev.window = _source->dest;
 
-	if (_source->will_accept)
-	  {
-	     ev.type = ECORE_X_ATOM_XDND_DROP;
-	     ev.data.data32[0] = _source->win;
-	     ev.data.data32[1] = 0;
-	     ev.data.data32[2] = _source->time;
-	     xcb_send_event(_ecore_xcb_conn, 0, _source->dest, 0, (const char *)&ev);
-	     _source->state = ECORE_X_DND_SOURCE_DROPPED;
-	     status = 1;
-	  }
-	else
-	  {
-	     ev.type = ECORE_X_ATOM_XDND_LEAVE;
-	     ev.data.data32[0] = _source->win;
-	     ev.data.data32[1] = 0;
-	     xcb_send_event(_ecore_xcb_conn, 0, _source->dest, 0, (const char *)&ev);
-	     _source->state = ECORE_X_DND_SOURCE_IDLE;
-	  }
+        if (_source->will_accept)
+          {
+             ev.type = ECORE_X_ATOM_XDND_DROP;
+             ev.data.data32[0] = _source->win;
+             ev.data.data32[1] = 0;
+             ev.data.data32[2] = _source->time;
+             xcb_send_event(_ecore_xcb_conn, 0, _source->dest, 0, (const char *)&ev);
+             _source->state = ECORE_X_DND_SOURCE_DROPPED;
+             status = 1;
+          }
+        else
+          {
+             ev.type = ECORE_X_ATOM_XDND_LEAVE;
+             ev.data.data32[0] = _source->win;
+             ev.data.data32[1] = 0;
+             xcb_send_event(_ecore_xcb_conn, 0, _source->dest, 0, (const char *)&ev);
+             _source->state = ECORE_X_DND_SOURCE_IDLE;
+          }
      }
    else
      {
-	/* Dropping on nothing */
-	ecore_x_selection_xdnd_clear();
-	_source->state = ECORE_X_DND_SOURCE_IDLE;
+        /* Dropping on nothing */
+        ecore_x_selection_xdnd_clear();
+        _source->state = ECORE_X_DND_SOURCE_IDLE;
      }
+
    ecore_x_window_ignore_set(_source->win, 0);
 
    _source->prev.window = 0;
    _source->dest = XCB_NONE;
 
    return status;
-}
+} /* ecore_x_dnd_drop */
 
 EAPI void
 ecore_x_dnd_send_status(int               will_accept,
@@ -551,7 +567,7 @@ ecore_x_dnd_send_status(int               will_accept,
    xcb_client_message_event_t ev;
 
    if (_target->state == ECORE_X_DND_TARGET_IDLE)
-     return;
+      return;
 
    _target->will_accept = will_accept;
 
@@ -563,9 +579,10 @@ ecore_x_dnd_send_status(int               will_accept,
    ev.data.data32[0] = _target->win;
    ev.data.data32[1] = 0;
    if (will_accept)
-     ev.data.data32[1] |= 0x1UL;
+      ev.data.data32[1] |= 0x1UL;
+
    if (!suppress)
-     ev.data.data32[1] |= 0x2UL;
+      ev.data.data32[1] |= 0x2UL;
 
    /* Set rectangle information */
    ev.data.data32[2] = rectangle.x;
@@ -577,17 +594,17 @@ ecore_x_dnd_send_status(int               will_accept,
 
    if (will_accept)
      {
-	ev.data.data32[4] = action;
-	_target->accepted_action = action;
+        ev.data.data32[4] = action;
+        _target->accepted_action = action;
      }
    else
      {
-	ev.data.data32[4] = XCB_NONE;
-	_target->accepted_action = action;
+        ev.data.data32[4] = XCB_NONE;
+        _target->accepted_action = action;
      }
 
    xcb_send_event(_ecore_xcb_conn, 0, _target->source, 0, (const char *)&ev);
-}
+} /* ecore_x_dnd_send_status */
 
 EAPI void
 ecore_x_dnd_send_finished(void)
@@ -595,7 +612,7 @@ ecore_x_dnd_send_finished(void)
    xcb_client_message_event_t ev;
 
    if (_target->state == ECORE_X_DND_TARGET_IDLE)
-     return;
+      return;
 
    ev.response_type = XCB_CLIENT_MESSAGE;
    ev.format = 32;
@@ -607,40 +624,41 @@ ecore_x_dnd_send_finished(void)
    ev.data.data32[2] = 0;
    if (_target->will_accept)
      {
-	ev.data.data32[1] |= 0x1UL;
-	ev.data.data32[2] = _target->accepted_action;
+        ev.data.data32[1] |= 0x1UL;
+        ev.data.data32[2] = _target->accepted_action;
      }
+
    xcb_send_event(_ecore_xcb_conn, 0, _target->source, 0, (const char *)&ev);
 
    _target->state = ECORE_X_DND_TARGET_IDLE;
-}
+} /* ecore_x_dnd_send_finished */
 
 void
 ecore_x_dnd_source_action_set(Ecore_X_Atom action)
 {
    _source->action = action;
    if (_source->prev.window)
-     _ecore_x_dnd_drag(_source->prev.window, _source->prev.x, _source->prev.y);
-}
+      _ecore_x_dnd_drag(_source->prev.window, _source->prev.x, _source->prev.y);
+} /* ecore_x_dnd_source_action_set */
 
 Ecore_X_Atom
 ecore_x_dnd_source_action_get(void)
 {
    return _source->action;
-}
+} /* ecore_x_dnd_source_action_get */
 
 void
 _ecore_x_dnd_drag(Ecore_X_Window root,
-		  int x,
-                  int y)
+                  int            x,
+                  int            y)
 {
    xcb_client_message_event_t ev;
-   Ecore_X_Window             win;
-   Ecore_X_Window            *skip;
-   int                        num;
+   Ecore_X_Window win;
+   Ecore_X_Window *skip;
+   int num;
 
    if (_source->state != ECORE_X_DND_SOURCE_DRAGGING)
-     return;
+      return;
 
    ev.response_type = XCB_CLIENT_MESSAGE;
    ev.format = 32;
@@ -662,35 +680,38 @@ _ecore_x_dnd_drag(Ecore_X_Window root,
         if (ecore_x_dnd_version_get(win))
           {
              reply_tree = xcb_query_tree_reply(_ecore_xcb_conn, cookie_tree, NULL);
-             if (reply_tree) free(reply_tree);
+             if (reply_tree)
+                free(reply_tree);
+
              break;
           }
+
         reply_tree = xcb_query_tree_reply(_ecore_xcb_conn, cookie_tree, NULL);
         if (reply_tree)
           {
-            win = reply_tree->parent;
-            free(reply_tree);
+             win = reply_tree->parent;
+             free(reply_tree);
           }
      }
 
    /* Send XdndLeave to current destination window if we have left it */
    if ((_source->dest) && (win != _source->dest))
      {
-	ev.window = _source->dest;
-	ev.type = ECORE_X_ATOM_XDND_LEAVE;
-	ev.data.data32[0] = _source->win;
-	ev.data.data32[1] = 0;
+        ev.window = _source->dest;
+        ev.type = ECORE_X_ATOM_XDND_LEAVE;
+        ev.data.data32[0] = _source->win;
+        ev.data.data32[1] = 0;
 
-	xcb_send_event(_ecore_xcb_conn, 0, _source->dest, 0, (const char *)&ev);
-	_source->suppress = 0;
+        xcb_send_event(_ecore_xcb_conn, 0, _source->dest, 0, (const char *)&ev);
+        _source->suppress = 0;
      }
 
    if (win)
      {
-	int16_t                   x1;
-	int16_t                   x2;
-	int16_t                   y1;
-	int16_t                   y2;
+        int16_t x1;
+        int16_t x2;
+        int16_t y1;
+        int16_t y2;
 
         ecore_x_dnd_version_get_prefetch(win);
         ecore_x_dnd_type_get_prefetch(_source->win);
@@ -698,76 +719,78 @@ _ecore_x_dnd_drag(Ecore_X_Window root,
         ecore_x_dnd_version_get_fetch();
         if (!ecore_x_dnd_version_get(win))
           {
-            ecore_x_dnd_type_get_fetch();
-            return;
+             ecore_x_dnd_type_get_fetch();
+             return;
           }
 
-	_source->version = MIN(ECORE_X_DND_VERSION,
+        _source->version = MIN(ECORE_X_DND_VERSION,
                                ecore_x_dnd_version_get(win));
-	if (win != _source->dest)
-	  {
-	     unsigned char *data;
-	     Ecore_X_Atom  *types;
-	     int            num;
-	     int            i;
+        if (win != _source->dest)
+          {
+             unsigned char *data;
+             Ecore_X_Atom *types;
+             int num;
+             int i;
 
              ecore_x_dnd_type_get_fetch();
              if (!ecore_x_window_prop_property_get(_source->win,
                                                    ECORE_X_ATOM_XDND_TYPE_LIST,
                                                    ECORE_X_ATOM_ATOM,
                                                    32, &data, &num))
-               return;
+                return;
 
-	     types = (Ecore_X_Atom *)data;
+             types = (Ecore_X_Atom *)data;
 
-	     /* Entered new window, send XdndEnter */
-	     ev.window = win;
-	     ev.type = ECORE_X_ATOM_XDND_ENTER;
-	     ev.data.data32[0] = _source->win;
-	     ev.data.data32[1] = 0;
-	     if (num > 3)
-	       ev.data.data32[1] |= 0x1UL;
-	     else
-	       ev.data.data32[1] &= 0xfffffffeUL;
-	     ev.data.data32[1] |= ((unsigned long) _source->version) << 24;
+             /* Entered new window, send XdndEnter */
+             ev.window = win;
+             ev.type = ECORE_X_ATOM_XDND_ENTER;
+             ev.data.data32[0] = _source->win;
+             ev.data.data32[1] = 0;
+             if (num > 3)
+                ev.data.data32[1] |= 0x1UL;
+             else
+                ev.data.data32[1] &= 0xfffffffeUL;
 
-	     for (i = 2; i < 5; i++)
-	       ev.data.data32[i] = 0;
-	     for (i = 0; i < MIN(num, 3); ++i)
-	       ev.data.data32[i + 2] = types[i];
-	     free(data);
-	     xcb_send_event(_ecore_xcb_conn, 0, win, 0, (const char *)&ev);
-	     _source->await_status = 0;
-	     _source->will_accept = 0;
-	  }
+             ev.data.data32[1] |= ((unsigned long)_source->version) << 24;
+
+             for (i = 2; i < 5; i++)
+                ev.data.data32[i] = 0;
+             for (i = 0; i < MIN(num, 3); ++i)
+                ev.data.data32[i + 2] = types[i];
+             free(data);
+             xcb_send_event(_ecore_xcb_conn, 0, win, 0, (const char *)&ev);
+             _source->await_status = 0;
+             _source->will_accept = 0;
+          }
         else
-          ecore_x_dnd_type_get_fetch();
+           ecore_x_dnd_type_get_fetch();
 
-	/* Determine if we're still in the rectangle from the last status */
-	x1 = _source->rectangle.x;
-	x2 = _source->rectangle.x + _source->rectangle.width;
-	y1 = _source->rectangle.y;
-	y2 = _source->rectangle.y + _source->rectangle.height;
+        /* Determine if we're still in the rectangle from the last status */
+        x1 = _source->rectangle.x;
+        x2 = _source->rectangle.x + _source->rectangle.width;
+        y1 = _source->rectangle.y;
+        y2 = _source->rectangle.y + _source->rectangle.height;
 
-	if ((!_source->await_status) ||
-	    (!_source->suppress) ||
-	    ((x < x1) || (x > x2) || (y < y1) || (y > y2)))
-	  {
-	     ev.window = win;
-	     ev.type = ECORE_X_ATOM_XDND_POSITION;
-	     ev.data.data32[0] = _source->win;
-	     ev.data.data32[1] = 0; /* Reserved */
-	     ev.data.data32[2] = ((x << 16) & 0xffff0000) | (y & 0xffff);
-	     ev.data.data32[3] = _source->time; /* Version 1 */
-	     ev.data.data32[4] = _source->action; /* Version 2, Needs to be pre-set */
-	     xcb_send_event(_ecore_xcb_conn, 0, win, 0, (const char *)&ev);
+        if ((!_source->await_status) ||
+            (!_source->suppress) ||
+            ((x < x1) || (x > x2) || (y < y1) || (y > y2)))
+          {
+             ev.window = win;
+             ev.type = ECORE_X_ATOM_XDND_POSITION;
+             ev.data.data32[0] = _source->win;
+             ev.data.data32[1] = 0; /* Reserved */
+             ev.data.data32[2] = ((x << 16) & 0xffff0000) | (y & 0xffff);
+             ev.data.data32[3] = _source->time; /* Version 1 */
+             ev.data.data32[4] = _source->action; /* Version 2, Needs to be pre-set */
+             xcb_send_event(_ecore_xcb_conn, 0, win, 0, (const char *)&ev);
 
-	     _source->await_status = 1;
-	  }
+             _source->await_status = 1;
+          }
      }
 
    _source->prev.x = x;
    _source->prev.y = y;
    _source->prev.window = root;
    _source->dest = win;
-}
+} /* _ecore_x_dnd_drag */
+

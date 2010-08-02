@@ -6,7 +6,6 @@
 
 #include "ecore_xcb_private.h"
 
-
 /**
  * @defgroup Ecore_X_Atom_Group XCB Atom Functions
  *
@@ -24,14 +23,14 @@
    _ecore_xcb_atom_init_finalize. The first one gets the cookies and
    the second one gets the replies and set the atoms. */
 
-#define FETCH_ATOM(s) \
-   atom_cookies[i] = xcb_intern_atom(_ecore_xcb_conn, 0, strlen(s), s); \
+#define FETCH_ATOM(s)\
+   atom_cookies[i] = xcb_intern_atom(_ecore_xcb_conn, 0, strlen(s), s);\
    i++
 
-#define FETCH_ATOM_FINALIZE(x) \
-   reply = xcb_intern_atom_reply(_ecore_xcb_conn, atom_cookies[i], NULL); \
-   x = reply->atom; \
-   free(reply); \
+#define FETCH_ATOM_FINALIZE(x)\
+   reply = xcb_intern_atom_reply(_ecore_xcb_conn, atom_cookies[i], NULL);\
+   x = reply->atom;\
+   free(reply);\
    i++;
 
 void
@@ -187,30 +186,30 @@ _ecore_x_atom_init(xcb_intern_atom_cookie_t *atom_cookies)
    FETCH_ATOM("_ECORE_SELECTION_CLIPBOARD");
 
    /* These atoms are already internally defined */
-   ECORE_X_ATOM_SELECTION_PRIMARY   = 1;
+   ECORE_X_ATOM_SELECTION_PRIMARY = 1;
    ECORE_X_ATOM_SELECTION_SECONDARY = 2;
-   ECORE_X_ATOM_ATOM                = 4;
-   ECORE_X_ATOM_CARDINAL            = 6;
-   ECORE_X_ATOM_STRING              = 31;
-   ECORE_X_ATOM_WINDOW              = 33;
-   ECORE_X_ATOM_WM_NAME             = 39;
-   ECORE_X_ATOM_WM_ICON_NAME        = 37;
-   ECORE_X_ATOM_WM_NORMAL_HINTS     = 40;
-   ECORE_X_ATOM_WM_SIZE_HINTS       = 41;
-   ECORE_X_ATOM_WM_HINTS            = 35;
-   ECORE_X_ATOM_WM_CLASS            = 67;
-   ECORE_X_ATOM_WM_TRANSIENT_FOR    = 68;
-   ECORE_X_ATOM_WM_COMMAND          = 34;
-   ECORE_X_ATOM_WM_CLIENT_MACHINE   = 36;
-   ECORE_X_ATOM_WM_ICON_SIZE        = 38;
+   ECORE_X_ATOM_ATOM = 4;
+   ECORE_X_ATOM_CARDINAL = 6;
+   ECORE_X_ATOM_STRING = 31;
+   ECORE_X_ATOM_WINDOW = 33;
+   ECORE_X_ATOM_WM_NAME = 39;
+   ECORE_X_ATOM_WM_ICON_NAME = 37;
+   ECORE_X_ATOM_WM_NORMAL_HINTS = 40;
+   ECORE_X_ATOM_WM_SIZE_HINTS = 41;
+   ECORE_X_ATOM_WM_HINTS = 35;
+   ECORE_X_ATOM_WM_CLASS = 67;
+   ECORE_X_ATOM_WM_TRANSIENT_FOR = 68;
+   ECORE_X_ATOM_WM_COMMAND = 34;
+   ECORE_X_ATOM_WM_CLIENT_MACHINE = 36;
+   ECORE_X_ATOM_WM_ICON_SIZE = 38;
 
    /* Initialize the globally defined xdnd atoms */
-   ECORE_X_DND_ACTION_COPY          = ECORE_X_ATOM_XDND_ACTION_COPY;
-   ECORE_X_DND_ACTION_MOVE          = ECORE_X_ATOM_XDND_ACTION_MOVE;
-   ECORE_X_DND_ACTION_LINK          = ECORE_X_ATOM_XDND_ACTION_LINK;
-   ECORE_X_DND_ACTION_ASK           = ECORE_X_ATOM_XDND_ACTION_ASK;
-   ECORE_X_DND_ACTION_PRIVATE       = ECORE_X_ATOM_XDND_ACTION_PRIVATE;
-}
+   ECORE_X_DND_ACTION_COPY = ECORE_X_ATOM_XDND_ACTION_COPY;
+   ECORE_X_DND_ACTION_MOVE = ECORE_X_ATOM_XDND_ACTION_MOVE;
+   ECORE_X_DND_ACTION_LINK = ECORE_X_ATOM_XDND_ACTION_LINK;
+   ECORE_X_DND_ACTION_ASK = ECORE_X_ATOM_XDND_ACTION_ASK;
+   ECORE_X_DND_ACTION_PRIVATE = ECORE_X_ATOM_XDND_ACTION_PRIVATE;
+} /* _ecore_x_atom_init */
 
 void
 _ecore_x_atom_init_finalize(xcb_intern_atom_cookie_t *atom_cookies)
@@ -364,8 +363,7 @@ _ecore_x_atom_init_finalize(xcb_intern_atom_cookie_t *atom_cookies)
    FETCH_ATOM_FINALIZE(ECORE_X_ATOM_SELECTION_PROP_PRIMARY);
    FETCH_ATOM_FINALIZE(ECORE_X_ATOM_SELECTION_PROP_SECONDARY);
    FETCH_ATOM_FINALIZE(ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD);
-}
-
+} /* _ecore_x_atom_init_finalize */
 
 /**
  * Sends the InternAtom request.
@@ -379,7 +377,7 @@ ecore_x_atom_get_prefetch(const char *name)
 
    cookie = xcb_intern_atom_unchecked(_ecore_xcb_conn, 0, strlen(name), name);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_atom_get_prefetch */
 
 /**
  * Gets the reply of the InternAtom request sent by ecore_x_atom_get_prefetch().
@@ -394,7 +392,7 @@ ecore_x_atom_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_intern_atom_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_atom_get_fetch */
 
 /**
  * Retrieves the atom value associated to a name.
@@ -417,11 +415,11 @@ ecore_x_atom_get(const char *name __UNUSED__)
    xcb_intern_atom_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return XCB_NONE;
+   if (!reply)
+      return XCB_NONE;
 
    return reply->atom;
-}
-
+} /* ecore_x_atom_get */
 
 /**
  * Sends the GetAtomName request.
@@ -435,7 +433,7 @@ ecore_x_get_atom_name_prefetch(Ecore_X_Atom atom)
 
    cookie = xcb_get_atom_name_unchecked(_ecore_xcb_conn, atom);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_get_atom_name_prefetch */
 
 /**
  * Gets the reply of the GetAtomName request sent by ecore_x_get_atom_name_prefetch().
@@ -450,7 +448,7 @@ ecore_x_get_atom_name_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_atom_name_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_get_atom_name_fetch */
 
 /**
  * Retrieves the name of the given atom.
@@ -466,18 +464,21 @@ EAPI char *
 ecore_x_atom_name_get(Ecore_X_Atom atom)
 {
    xcb_get_atom_name_reply_t *reply;
-   char                      *name;
-   int                        length;
+   char *name;
+   int length;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return NULL;
+   if (!reply)
+      return NULL;
 
    length = xcb_get_atom_name_name_length(reply);
    name = (char *)malloc(sizeof(char) * (length + 1));
-   if (!name) return NULL;
+   if (!name)
+      return NULL;
 
    memcpy(name, xcb_get_atom_name_name(reply), length);
    name[length] = '\0';
 
    return name;
-}
+} /* ecore_x_atom_name_get */
+

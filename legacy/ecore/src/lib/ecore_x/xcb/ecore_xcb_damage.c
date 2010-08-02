@@ -4,19 +4,16 @@
 
 #include "ecore_xcb_private.h"
 
-
 /**
  * @defgroup Ecore_X_Damage_Group X Damage Extension Functions
  *
  * Functions related to the X Damage extension.
  */
 
-
 #ifdef ECORE_XCB_DAMAGE
 static uint8_t _damage_available = 0;
 static xcb_damage_query_version_cookie_t _ecore_xcb_damage_init_cookie;
 #endif /* ECORE_XCB_DAMAGE */
-
 
 /* To avoid round trips, the initialization is separated in 2
    functions: _ecore_xcb_damage_init and
@@ -29,8 +26,9 @@ _ecore_x_damage_init(const xcb_query_extension_reply_t *reply)
 #ifdef ECORE_XCB_DAMAGE
    if (reply && (reply->present))
       _ecore_xcb_damage_init_cookie = xcb_damage_query_version_unchecked(_ecore_xcb_conn, 1, 1);
+
 #endif /* ECORE_XCB_DAMAGE */
-}
+} /* _ecore_x_damage_init */
 
 void
 _ecore_x_damage_init_finalize(void)
@@ -44,12 +42,13 @@ _ecore_x_damage_init_finalize(void)
    if (reply)
      {
         if (reply->major_version >= 1)
-          _damage_available = 1;
+           _damage_available = 1;
+
         free(reply);
      }
-#endif /* ECORE_XCB_DAMAGE */
-}
 
+#endif /* ECORE_XCB_DAMAGE */
+} /* _ecore_x_damage_init_finalize */
 
 /**
  * Return whether the Damage Extension is available.
@@ -64,11 +63,10 @@ ecore_x_damage_query(void)
 {
 #ifdef ECORE_XCB_DAMAGE
    return _damage_available;
-#else
+#else /* ifdef ECORE_XCB_DAMAGE */
    return 0;
 #endif /* ECORE_XCB_DAMAGE */
-}
-
+} /* ecore_x_damage_query */
 
 /**
  * Creates a damage object.
@@ -92,8 +90,7 @@ ecore_x_damage_new(Ecore_X_Drawable            drawable,
 #endif /* ECORE_XCB_DAMAGE */
 
    return damage;
-}
-
+} /* ecore_x_damage_new */
 
 /**
  * Destroys a damage object.
@@ -108,8 +105,7 @@ ecore_x_damage_free(Ecore_X_Damage damage)
 #ifdef ECORE_XCB_DAMAGE
    xcb_damage_destroy(_ecore_xcb_conn, damage);
 #endif /* ECORE_XCB_DAMAGE */
-}
-
+} /* ecore_x_damage_free */
 
 /**
  * Synchronously modifies the region.
@@ -135,4 +131,5 @@ ecore_x_damage_subtract(Ecore_X_Damage damage,
 #ifdef ECORE_XCB_DAMAGE
    xcb_damage_subtract(_ecore_xcb_conn, damage, repair, parts);
 #endif /* ECORE_XCB_DAMAGE */
-}
+} /* ecore_x_damage_subtract */
+

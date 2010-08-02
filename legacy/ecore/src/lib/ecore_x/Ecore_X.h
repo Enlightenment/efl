@@ -1103,9 +1103,9 @@ EAPI Eina_Bool               ecore_x_bell(int percent);
 
 EAPI Ecore_X_Time            ecore_x_current_time_get(void);
 
-EAPI void ecore_x_error_handler_set(void (*func)(void *data), const void *data);
-EAPI void ecore_x_io_error_handler_set(void (*func)(
-                                          void *data), const void *data);
+EAPI void                    ecore_x_error_handler_set(void (*func)(void *data), const void *data);
+EAPI void                    ecore_x_io_error_handler_set(void (*func)(
+                                                             void *data), const void *data);
 EAPI int                     ecore_x_error_request_get(void);
 EAPI int                     ecore_x_error_code_get(void);
 
@@ -1157,29 +1157,29 @@ EAPI int                     ecore_x_selection_convert(Ecore_X_Atom  selection,
                                                        int          *len,
                                                        Ecore_X_Atom *targprop,
                                                        int          *targsize);
-EAPI void ecore_x_selection_converter_add(char *target, int (*func)(
-                                             char  *target,
-                                             void  *data,
-                                             int    size,
-                                             void **data_ret,
-                                             int   *size_ret,
-                                             Ecore_X_Atom *,
-                                             int *));
-EAPI void ecore_x_selection_converter_atom_add(Ecore_X_Atom target, int (*func)(
-                                                  char         *target,
-                                                  void         *data,
-                                                  int           size,
-                                                  void        **data_ret,
-                                                  int          *size_ret,
-                                                  Ecore_X_Atom *tprop,
-                                                  int          *tsize));
+EAPI void                    ecore_x_selection_converter_add(char *target, int (*func)(
+                                                                char  *target,
+                                                                void  *data,
+                                                                int    size,
+                                                                void **data_ret,
+                                                                int   *size_ret,
+                                                                Ecore_X_Atom *,
+                                                                int *));
+EAPI void      ecore_x_selection_converter_atom_add(Ecore_X_Atom target, int (*func)(
+                                                       char         *target,
+                                                       void         *data,
+                                                       int           size,
+                                                       void        **data_ret,
+                                                       int          *size_ret,
+                                                       Ecore_X_Atom *tprop,
+                                                       int          *tsize));
 EAPI void                ecore_x_selection_converter_del(char *target);
 EAPI void                ecore_x_selection_converter_atom_del(
    Ecore_X_Atom target);
-EAPI void ecore_x_selection_parser_add(const char *target,
-                                       void *(*func)(const char *target,
-                                                     void *data, int size,
-                                                     int format));
+EAPI void                ecore_x_selection_parser_add(const char *target,
+                                                      void *(*func)(const char *target,
+                                                                    void *data, int size,
+                                                                    int format));
 EAPI void                ecore_x_selection_parser_del(const char *target);
 
 EAPI void                ecore_x_dnd_aware_set(Ecore_X_Window win, int on);
@@ -2402,10 +2402,10 @@ EAPI int                  ecore_x_keyboard_grab(Ecore_X_Window win);
 EAPI void                 ecore_x_keyboard_ungrab(void);
 EAPI void                 ecore_x_grab(void);
 EAPI void                 ecore_x_ungrab(void);
-EAPI void ecore_x_passive_grab_replay_func_set(Eina_Bool (*func)(void *data,
-                                                                 int   event_type,
-                                                                 void *event),
-                                               void *data);
+EAPI void                 ecore_x_passive_grab_replay_func_set(Eina_Bool               (*func)(void *data,
+                                                                                 int   event_type,
+                                                                                 void *event),
+                                                               void                   *data);
 EAPI void                 ecore_x_window_button_grab(Ecore_X_Window win, int button,
                                                      Ecore_X_Event_Mask event_mask,
                                                      int mod, int any_mod);

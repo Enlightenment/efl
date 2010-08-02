@@ -4,13 +4,11 @@
 
 #include "ecore_xcb_private.h"
 
-
 /**
  * @defgroup Ecore_X_DPMS_Group X DPMS Extension Functions
  *
  * Functions related to the X DPMS extension.
  */
-
 
 #ifdef ECORE_XCB_DPMS
 static int _dpms_available = 0;
@@ -28,8 +26,9 @@ _ecore_x_dpms_init(const xcb_query_extension_reply_t *reply)
 #ifdef ECORE_XCB_DPMS
    if (reply && (reply->present))
       _ecore_xcb_dpms_init_cookie = xcb_dpms_get_version_unchecked(_ecore_xcb_conn, 0, 0);
+
 #endif /* ECORE_XCB_DPMS */
-}
+} /* _ecore_x_dpms_init */
 
 void
 _ecore_x_dpms_init_finalize(void)
@@ -43,12 +42,13 @@ _ecore_x_dpms_init_finalize(void)
    if (reply)
      {
         if (reply->server_major_version >= 1)
-          _dpms_available = 1;
+           _dpms_available = 1;
+
         free(reply);
      }
-#endif /* ECORE_XCB_DPMS */
-}
 
+#endif /* ECORE_XCB_DPMS */
+} /* _ecore_x_dpms_init_finalize */
 
 /**
  * Checks if the DPMS extension is available or not.
@@ -63,11 +63,10 @@ ecore_x_dpms_query(void)
 {
 #ifdef ECORE_XCB_DPMS
    return _dpms_available;
-#else
+#else /* ifdef ECORE_XCB_DPMS */
    return 0;
 #endif /* ECORE_XCB_DPMS */
-}
-
+} /* ecore_x_dpms_query */
 
 /**
  * Sends the DPMSCapable request.
@@ -82,8 +81,7 @@ ecore_x_dpms_capable_get_prefetch(void)
    cookie = xcb_dpms_capable_unchecked(_ecore_xcb_conn);
    _ecore_xcb_cookie_cache(cookie.sequence);
 #endif /* ECORE_XCB_DPMS */
-}
-
+} /* ecore_x_dpms_capable_get_prefetch */
 
 /**
  * Gets the reply of the DPMSCapable request sent by ecore_x_dpms_capable_get_prefetch().
@@ -100,8 +98,7 @@ ecore_x_dpms_capable_get_fetch(void)
    reply = xcb_dpms_capable_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
 #endif /* ECORE_XCB_DPMS */
-}
-
+} /* ecore_x_dpms_capable_get_fetch */
 
 /**
  * Checks if the X server is capable of DPMS.
@@ -115,19 +112,19 @@ ecore_x_dpms_capable_get_fetch(void)
 EAPI int
 ecore_x_dpms_capable_get(void)
 {
-   int                       capable = 0;
+   int capable = 0;
 #ifdef ECORE_XCB_DPMS
    xcb_dpms_capable_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return 0;
+   if (!reply)
+      return 0;
 
    capable = reply->capable;
 #endif /* ECORE_XCB_DPMS */
 
    return capable;
-}
-
+} /* ecore_x_dpms_capable_get */
 
 /**
  * Sends the DPMSInfo request.
@@ -142,8 +139,7 @@ ecore_x_dpms_enable_get_prefetch(void)
    cookie = xcb_dpms_info_unchecked(_ecore_xcb_conn);
    _ecore_xcb_cookie_cache(cookie.sequence);
 #endif /* ECORE_XCB_DPMS */
-}
-
+} /* ecore_x_dpms_enable_get_prefetch */
 
 /**
  * Gets the reply of the DPMSInfo request sent by ecore_x_dpms_enable_get_prefetch().
@@ -160,8 +156,7 @@ ecore_x_dpms_enable_get_fetch(void)
    reply = xcb_dpms_info_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
 #endif /* ECORE_XCB_DPMS */
-}
-
+} /* ecore_x_dpms_enable_get_fetch */
 
 /**
  * Checks the DPMS state of the display.
@@ -175,19 +170,19 @@ ecore_x_dpms_enable_get_fetch(void)
 EAPI int
 ecore_x_dpms_enable_get(void)
 {
-   int                    enable = 0;
+   int enable = 0;
 #ifdef ECORE_XCB_DPMS
    xcb_dpms_info_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return 0;
+   if (!reply)
+      return 0;
 
    enable = reply->state;
 #endif /* ECORE_XCB_DPMS */
 
    return enable;
-}
-
+} /* ecore_x_dpms_enable_get */
 
 /**
  * Sets the DPMS state of the display.
@@ -202,9 +197,9 @@ ecore_x_dpms_enabled_set(int enabled)
       xcb_dpms_enable(_ecore_xcb_conn);
    else
       xcb_dpms_disable(_ecore_xcb_conn);
-#endif /* ECORE_XCB_DPMS */
-}
 
+#endif /* ECORE_XCB_DPMS */
+} /* ecore_x_dpms_enabled_set */
 
 /**
  * Sets the timeouts. The values are in unit of seconds.
@@ -224,8 +219,7 @@ ecore_x_dpms_timeouts_set(unsigned int standby,
 #endif /* ECORE_XCB_DPMS */
 
    return 1;
-}
-
+} /* ecore_x_dpms_timeouts_set */
 
 /**
  * Sends the DPMSGetTimeouts request.
@@ -240,8 +234,7 @@ ecore_x_dpms_timeouts_get_prefetch(void)
    cookie = xcb_dpms_get_timeouts_unchecked(_ecore_xcb_conn);
    _ecore_xcb_cookie_cache(cookie.sequence);
 #endif /* ECORE_XCB_DPMS */
-}
-
+} /* ecore_x_dpms_timeouts_get_prefetch */
 
 /**
  * Gets the reply of the DPMSGetTimeouts request sent by ecore_x_dpms_timeouts_get_prefetch().
@@ -258,8 +251,7 @@ ecore_x_dpms_timeouts_get_fetch(void)
    reply = xcb_dpms_get_timeouts_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
 #endif /* ECORE_XCB_DPMS */
-}
-
+} /* ecore_x_dpms_timeouts_get_fetch */
 
 /**
  * Gets the timeouts. The values are in unit of seconds.
@@ -279,19 +271,28 @@ ecore_x_dpms_timeouts_get(unsigned int *standby,
    reply = _ecore_xcb_reply_get();
    if (reply)
      {
-        if (standby) *standby = reply->standby_timeout;
-        if (suspend) *suspend = reply->suspend_timeout;
-        if (off) *off = 0;
+        if (standby)
+           *standby = reply->standby_timeout;
+
+        if (suspend)
+           *suspend = reply->suspend_timeout;
+
+        if (off)
+           *off = 0;
      }
    else
 #endif /* ECORE_XCB_DPMS */
-     {
-        if (standby) *standby = 0;
-        if (suspend) *suspend = 0;
-        if (off) *off = 0;
-     }
-}
+   {
+      if (standby)
+         *standby = 0;
 
+      if (suspend)
+         *suspend = 0;
+
+      if (off)
+         *off = 0;
+   }
+} /* ecore_x_dpms_timeouts_get */
 
 /**
  * Returns the amount of time of inactivity before standby mode is invoked.
@@ -305,19 +306,19 @@ ecore_x_dpms_timeouts_get(unsigned int *standby,
 EAPI unsigned int
 ecore_x_dpms_timeout_standby_get(void)
 {
-   int                            standby = 0;
+   int standby = 0;
 #ifdef ECORE_XCB_DPMS
    xcb_dpms_get_timeouts_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return 0;
+   if (!reply)
+      return 0;
 
    standby = reply->standby_timeout;
 #endif /* ECORE_XCB_DPMS */
 
    return standby;
-}
-
+} /* ecore_x_dpms_timeout_standby_get */
 
 /**
  * Returns the amount of time of inactivity before the second level of
@@ -332,19 +333,19 @@ ecore_x_dpms_timeout_standby_get(void)
 EAPI unsigned int
 ecore_x_dpms_timeout_suspend_get(void)
 {
-   int                            suspend = 0;;
+   int suspend = 0;
 #ifdef ECORE_XCB_DPMS
    xcb_dpms_get_timeouts_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return 0;
+   if (!reply)
+      return 0;
 
    suspend = reply->suspend_timeout;
 #endif /* ECORE_XCB_DPMS */
 
    return suspend;
-}
-
+} /* ecore_x_dpms_timeout_suspend_get */
 
 /**
  * Returns the amount of time of inactivity before the third and final
@@ -359,19 +360,19 @@ ecore_x_dpms_timeout_suspend_get(void)
 EAPI unsigned int
 ecore_x_dpms_timeout_off_get(void)
 {
-   int                            off = 0;
+   int off = 0;
 #ifdef ECORE_XCB_DPMS
    xcb_dpms_get_timeouts_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return 0;
+   if (!reply)
+      return 0;
 
    off = reply->off_timeout;
 #endif /* ECORE_XCB_DPMS */
 
    return off;
-}
-
+} /* ecore_x_dpms_timeout_off_get */
 
 /**
  * Sets the standby timeout (in unit of seconds).
@@ -389,15 +390,15 @@ ecore_x_dpms_timeout_standby_set(unsigned int new_standby)
    xcb_dpms_get_timeouts_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return;
+   if (!reply)
+      return;
 
    xcb_dpms_set_timeouts(_ecore_xcb_conn,
                          new_standby,
                          reply->suspend_timeout,
                          reply->off_timeout);
 #endif /* ECORE_XCB_DPMS */
-}
-
+} /* ecore_x_dpms_timeout_standby_set */
 
 /**
  * Sets the suspend timeout (in unit of seconds).
@@ -415,15 +416,15 @@ ecore_x_dpms_timeout_suspend_set(unsigned int new_suspend)
    xcb_dpms_get_timeouts_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return;
+   if (!reply)
+      return;
 
    xcb_dpms_set_timeouts(_ecore_xcb_conn,
                          reply->standby_timeout,
                          new_suspend,
                          reply->off_timeout);
 #endif /* ECORE_XCB_DPMS */
-}
-
+} /* ecore_x_dpms_timeout_suspend_set */
 
 /**
  * Sets the off timeout (in unit of seconds).
@@ -441,11 +442,13 @@ ecore_x_dpms_timeout_off_set(unsigned int new_off)
    xcb_dpms_get_timeouts_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return;
+   if (!reply)
+      return;
 
    xcb_dpms_set_timeouts(_ecore_xcb_conn,
                          reply->standby_timeout,
                          reply->suspend_timeout,
                          new_off);
 #endif /* ECORE_XCB_DPMS */
-}
+} /* ecore_x_dpms_timeout_off_set */
+

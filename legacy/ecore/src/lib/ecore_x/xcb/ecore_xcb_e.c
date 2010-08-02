@@ -9,7 +9,6 @@
 #include "ecore_xcb_private.h"
 #include "Ecore_X_Atoms.h"
 
-
 EAPI void
 ecore_x_e_frame_size_set(Ecore_X_Window window,
                          int            fl,
@@ -26,4 +25,5 @@ ecore_x_e_frame_size_set(Ecore_X_Window window,
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, window,
                        ECORE_X_ATOM_E_FRAME_SIZE, ECORE_X_ATOM_CARDINAL, 32,
                        4, (const void *)frames);
-}
+} /* ecore_x_e_frame_size_set */
+

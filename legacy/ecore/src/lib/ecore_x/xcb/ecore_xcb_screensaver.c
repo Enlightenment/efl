@@ -4,19 +4,16 @@
 
 #include "ecore_xcb_private.h"
 
-
 /**
  * @defgroup Ecore_X_ScreenSaver_Group X ScreenSaver extension
  *
  * These functions use the ScreenSaver extension of the X server
-  */
-
+ */
 
 #ifdef ECORE_XCB_SCREENSAVER
 static int _screensaver_available = 0;
 static xcb_screensaver_query_version_cookie_t _ecore_xcb_screensaver_init_cookie;
 #endif /* ECORE_XCB_SCREENSAVER */
-
 
 /* To avoid round trips, the initialization is separated in 2
    functions: _ecore_xcb_screensaver_init and
@@ -29,8 +26,9 @@ _ecore_x_screensaver_init(const xcb_query_extension_reply_t *reply)
 #ifdef ECORE_XCB_SCREENSAVER
    if (reply && (reply->present))
       _ecore_xcb_screensaver_init_cookie = xcb_screensaver_query_version_unchecked(_ecore_xcb_conn, 1, 1);
+
 #endif /* ECORE_XCB_SCREENSAVER */
-}
+} /* _ecore_x_screensaver_init */
 
 void
 _ecore_x_screensaver_init_finalize(void)
@@ -45,12 +43,13 @@ _ecore_x_screensaver_init_finalize(void)
      {
         if ((reply->server_major_version >= 1) &&
             (reply->server_minor_version >= 1))
-          _screensaver_available = 1;
+           _screensaver_available = 1;
+
         free(reply);
      }
-#endif /* ECORE_XCB_SCREENSAVER */
-}
 
+#endif /* ECORE_XCB_SCREENSAVER */
+} /* _ecore_x_screensaver_init_finalize */
 
 /**
  * Return whether the X server supports the ScreenSaver Extension.
@@ -64,8 +63,7 @@ EAPI int
 ecore_x_screensaver_event_available_get(void)
 {
    return 1;
-}
-
+} /* ecore_x_screensaver_event_available_get */
 
 /**
  * Sends the QueryInfo request.
@@ -80,8 +78,7 @@ ecore_x_screensaver_idle_time_prefetch(void)
    cookie = xcb_screensaver_query_info_unchecked(_ecore_xcb_conn, ((xcb_screen_t *)_ecore_xcb_screen)->root);
    _ecore_xcb_cookie_cache(cookie.sequence);
 #endif /* ECORE_XCB_SCREENSAVER */
-}
-
+} /* ecore_x_screensaver_idle_time_prefetch */
 
 /**
  * Gets the reply of the QueryInfo request sent by ecore_x_get_screensaver_prefetch().
@@ -98,8 +95,7 @@ ecore_x_screensaver_idle_time_fetch(void)
    reply = xcb_screensaver_query_info_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
 #endif /* ECORE_XCB_SCREENSAVER */
-}
-
+} /* ecore_x_screensaver_idle_time_fetch */
 
 /**
  * Get the number of seconds since the last input was received.
@@ -116,21 +112,21 @@ ecore_x_screensaver_idle_time_fetch(void)
 EAPI int
 ecore_x_screensaver_idle_time_get(void)
 {
-  int idle = 0;
+   int idle = 0;
 #ifdef ECORE_XCB_SCREENSAVER
    xcb_screensaver_query_info_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
 
-   if (!reply) return 0;
+   if (!reply)
+      return 0;
 
    /* FIXME: check if it is ms_since_user_input or ms_until_server */
    idle = reply->ms_since_user_input / 1000;
 #endif /* ECORE_XCB_SCREENSAVER */
 
    return idle;
-}
-
+} /* ecore_x_screensaver_idle_time_get */
 
 /**
  * Set the parameters of the screen saver.
@@ -157,8 +153,7 @@ ecore_x_screensaver_set(int timeout,
                         (int16_t)interval,
                         (uint8_t)blank,
                         (uint8_t)expose);
-}
-
+} /* ecore_x_screensaver_set */
 
 /**
  * Sends the GetScreenSaver request.
@@ -171,8 +166,7 @@ ecore_x_get_screensaver_prefetch(void)
 
    cookie = xcb_get_screen_saver_unchecked(_ecore_xcb_conn);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
-
+} /* ecore_x_get_screensaver_prefetch */
 
 /**
  * Gets the reply of the GetScreenSaver request sent by ecore_x_get_screensaver_prefetch().
@@ -187,8 +181,7 @@ ecore_x_get_screensaver_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_screen_saver_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
-
+} /* ecore_x_get_screensaver_fetch */
 
 /**
  * Set the timeout of the screen saver.
@@ -207,15 +200,15 @@ ecore_x_screensaver_timeout_set(int timeout)
    xcb_get_screen_saver_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return;
+   if (!reply)
+      return;
 
    xcb_set_screen_saver(_ecore_xcb_conn,
                         (int16_t)timeout,
                         reply->interval,
                         reply->prefer_blanking,
                         reply->allow_exposures);
-}
-
+} /* ecore_x_screensaver_timeout_set */
 
 /**
  * Get the timeout of the screen saver.
@@ -234,11 +227,11 @@ ecore_x_screensaver_timeout_get(void)
    xcb_get_screen_saver_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return 0.0;
+   if (!reply)
+      return 0.0;
 
    return (int)reply->timeout;
-}
-
+} /* ecore_x_screensaver_timeout_get */
 
 /**
  * Set the interval of the screen saver.
@@ -257,15 +250,15 @@ ecore_x_screensaver_interval_set(int interval)
    xcb_get_screen_saver_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return;
+   if (!reply)
+      return;
 
    xcb_set_screen_saver(_ecore_xcb_conn,
                         reply->timeout,
                         (int16_t)interval,
                         reply->prefer_blanking,
                         reply->allow_exposures);
-}
-
+} /* ecore_x_screensaver_interval_set */
 
 /**
  * Get the interval of the screen saver.
@@ -284,11 +277,11 @@ ecore_x_screensaver_interval_get(void)
    xcb_get_screen_saver_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return 0.0;
+   if (!reply)
+      return 0.0;
 
    return (int)reply->interval;
-}
-
+} /* ecore_x_screensaver_interval_get */
 
 /**
  * Set the screen blanking.
@@ -307,15 +300,15 @@ ecore_x_screensaver_blank_set(int blank)
    xcb_get_screen_saver_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return;
+   if (!reply)
+      return;
 
    xcb_set_screen_saver(_ecore_xcb_conn,
                         reply->timeout,
                         reply->interval,
                         (uint8_t)blank,
                         reply->allow_exposures);
-}
-
+} /* ecore_x_screensaver_blank_set */
 
 /**
  * Get the screen blanking.
@@ -334,11 +327,11 @@ ecore_x_screensaver_blank_get(void)
    xcb_get_screen_saver_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return 0.0;
+   if (!reply)
+      return 0.0;
 
    return (int)reply->prefer_blanking;
-}
-
+} /* ecore_x_screensaver_blank_get */
 
 /**
  * Set the screen save control values.
@@ -357,15 +350,15 @@ ecore_x_screensaver_expose_set(int expose)
    xcb_get_screen_saver_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return;
+   if (!reply)
+      return;
 
    xcb_set_screen_saver(_ecore_xcb_conn,
                         reply->timeout,
                         reply->interval,
                         reply->prefer_blanking,
                         (uint8_t)expose);
-}
-
+} /* ecore_x_screensaver_expose_set */
 
 /**
  * Get the screen save control values.
@@ -384,11 +377,11 @@ ecore_x_screensaver_expose_get(void)
    xcb_get_screen_saver_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return 0.0;
+   if (!reply)
+      return 0.0;
 
    return (int)reply->allow_exposures;
-}
-
+} /* ecore_x_screensaver_expose_get */
 
 /**
  * Specifies if the Screen Saver NotifyMask event should be generated.
@@ -408,4 +401,5 @@ ecore_x_screensaver_event_listen_set(int on)
                                 ((xcb_screen_t *)_ecore_xcb_screen)->root,
                                 on ? XCB_SCREENSAVER_EVENT_NOTIFY_MASK : 0);
 #endif /* ECORE_XCB_SCREENSAVER */
-}
+} /* ecore_x_screensaver_event_listen_set */
+

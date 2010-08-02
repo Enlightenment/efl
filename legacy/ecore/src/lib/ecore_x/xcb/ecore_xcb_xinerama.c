@@ -4,19 +4,16 @@
 
 #include "ecore_xcb_private.h"
 
-
 /**
  * @defgroup Ecore_X_Xinerama_Group X Xinerama Extension Functions
  *
  * Functions related to the X Xinerama extension.
  */
 
-
 #ifdef ECORE_XCB_XINERAMA
 static int _xinerama_available = 0;
 static xcb_xinerama_query_version_cookie_t _ecore_xcb_xinerama_init_cookie;
 #endif /* ECORE_XCB_XINERAMA */
-
 
 /* To avoid round trips, the initialization is separated in 2
    functions: _ecore_xcb_xinerama_init and
@@ -29,8 +26,9 @@ _ecore_x_xinerama_init(const xcb_query_extension_reply_t *reply)
 #ifdef ECORE_XCB_XINERAMA
    if (reply && (reply->present))
       _ecore_xcb_xinerama_init_cookie = xcb_xinerama_query_version_unchecked(_ecore_xcb_conn, 1, 2);
+
 #endif /* ECORE_XCB_XINERAMA */
-}
+} /* _ecore_x_xinerama_init */
 
 void
 _ecore_x_xinerama_init_finalize(void)
@@ -39,18 +37,19 @@ _ecore_x_xinerama_init_finalize(void)
    xcb_xinerama_query_version_reply_t *reply;
 
    reply = xcb_xinerama_query_version_reply(_ecore_xcb_conn,
-                                          _ecore_xcb_xinerama_init_cookie, NULL);
+                                            _ecore_xcb_xinerama_init_cookie, NULL);
 
    if (reply)
      {
         if ((reply->major >= 1) &&
             (reply->minor >= 1))
-          _xinerama_available = 1;
+           _xinerama_available = 1;
+
         free(reply);
      }
-#endif /* ECORE_XCB_XINERAMA */
-}
 
+#endif /* ECORE_XCB_XINERAMA */
+} /* _ecore_x_xinerama_init_finalize */
 
 /**
  * Return whether the X server supports the Xinerama Extension.
@@ -65,11 +64,10 @@ ecore_x_xinerama_query(void)
 {
 #ifdef ECORE_XCB_XINERAMA
    return _xinerama_available;
-#else
+#else /* ifdef ECORE_XCB_XINERAMA */
    return 0;
 #endif /* ECORE_XCB_XINERAMA */
-}
-
+} /* ecore_x_xinerama_query */
 
 /**
  * Sends the XineramaQueryScreens request.
@@ -84,8 +82,7 @@ ecore_x_xinerama_query_screens_prefetch(void)
    cookie = xcb_xinerama_query_screens_unchecked(_ecore_xcb_conn);
    _ecore_xcb_cookie_cache(cookie.sequence);
 #endif /* ECORE_XCB_XINERAMA */
-}
-
+} /* ecore_x_xinerama_query_screens_prefetch */
 
 /**
  * Gets the reply of the XineramaQueryScreens request sent by ecore_x_xinerama_query_screens_prefetch().
@@ -102,8 +99,7 @@ ecore_x_xinerama_query_screens_fetch(void)
    reply = xcb_xinerama_query_screens_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
 #endif /* ECORE_XCB_XINERAMA */
-}
-
+} /* ecore_x_xinerama_query_screens_fetch */
 
 /**
  * Return the number of screens.
@@ -119,21 +115,21 @@ ecore_x_xinerama_query_screens_fetch(void)
 EAPI int
 ecore_x_xinerama_screen_count_get(void)
 {
-   int                                 screen_count = 0;
+   int screen_count = 0;
 #ifdef ECORE_XCB_XINERAMA
    xcb_xinerama_screen_info_iterator_t iter;
    xcb_xinerama_query_screens_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return 0;
+   if (!reply)
+      return 0;
 
    iter = xcb_xinerama_query_screens_screen_info_iterator(reply);
    screen_count = iter.rem;
 #endif /* ECORE_XCB_XINERAMA */
 
    return screen_count;
-}
-
+} /* ecore_x_xinerama_screen_count_get */
 
 /**
  * Get the geometry of the screen.
@@ -166,10 +162,17 @@ ecore_x_xinerama_screen_geometry_get(int  screen,
    reply = _ecore_xcb_reply_get();
    if (!reply)
      {
-        if (x) *x = 0;
-        if (y) *y = 0;
-        if (width) *width = ((xcb_screen_t *)_ecore_xcb_screen)->width_in_pixels;
-        if (height) *height = ((xcb_screen_t *)_ecore_xcb_screen)->height_in_pixels;
+        if (x)
+           *x = 0;
+
+        if (y)
+           *y = 0;
+
+        if (width)
+           *width = ((xcb_screen_t *)_ecore_xcb_screen)->width_in_pixels;
+
+        if (height)
+           *height = ((xcb_screen_t *)_ecore_xcb_screen)->height_in_pixels;
 
         return 0;
      }
@@ -179,19 +182,35 @@ ecore_x_xinerama_screen_geometry_get(int  screen,
      {
         if (screen == 0)
           {
-             if (x) *x = iter.data->x_org;
-             if (y) *y = iter.data->y_org;
-             if (width) *width = iter.data->width;
-             if (height) *height = iter.data->height;
+             if (x)
+                *x = iter.data->x_org;
+
+             if (y)
+                *y = iter.data->y_org;
+
+             if (width)
+                *width = iter.data->width;
+
+             if (height)
+                *height = iter.data->height;
+
              return 1;
           }
      }
 #endif /* ECORE_XCB_XINERAMA */
 
-   if (x) *x = 0;
-   if (y) *y = 0;
-   if (width) *width = ((xcb_screen_t *)_ecore_xcb_screen)->width_in_pixels;
-   if (height) *height = ((xcb_screen_t *)_ecore_xcb_screen)->height_in_pixels;
+   if (x)
+      *x = 0;
+
+   if (y)
+      *y = 0;
+
+   if (width)
+      *width = ((xcb_screen_t *)_ecore_xcb_screen)->width_in_pixels;
+
+   if (height)
+      *height = ((xcb_screen_t *)_ecore_xcb_screen)->height_in_pixels;
 
    return 0;
-}
+} /* ecore_x_xinerama_screen_geometry_get */
+

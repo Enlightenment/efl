@@ -9,28 +9,26 @@
 #include "ecore_xcb_private.h"
 #include "Ecore_X_Atoms.h"
 
-
-static int             ignore_num = 0;
+static int ignore_num = 0;
 static Ecore_X_Window *ignore_list = NULL;
 
-static Ecore_X_Window _ecore_x_window_at_xy_get(Ecore_X_Window  base,
-                                                int16_t         base_x,
-                                                int16_t         base_y,
-                                                int16_t         x,
-                                                int16_t         y,
-                                                Ecore_X_Window *skip,
-                                                int             skip_num);
+static Ecore_X_Window      _ecore_x_window_at_xy_get(Ecore_X_Window  base,
+                                                     int16_t         base_x,
+                                                     int16_t         base_y,
+                                                     int16_t         x,
+                                                     int16_t         y,
+                                                     Ecore_X_Window *skip,
+                                                     int             skip_num);
 
 #ifdef ECORE_XCB_RENDER
-static Ecore_X_Window _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
-                                                        int16_t        x,
-                                                        int16_t        y,
-                                                        uint16_t       w,
-                                                        uint16_t       h,
-                                                        uint8_t        override_redirect,
-                                                        uint8_t        save_under);
+static Ecore_X_Window      _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
+                                                             int16_t        x,
+                                                             int16_t        y,
+                                                             uint16_t       w,
+                                                             uint16_t       h,
+                                                             uint8_t        override_redirect,
+                                                             uint8_t        save_under);
 #endif /* ECORE_XCB_RENDER */
-
 
 /**
  * @defgroup Ecore_X_Window_Create_Group X Window Creation Functions
@@ -56,47 +54,50 @@ ecore_x_window_new(Ecore_X_Window parent,
                    int            width,
                    int            height)
 {
-   uint32_t       value_list[9];
+   uint32_t value_list[9];
    Ecore_X_Window window;
    xcb_visualid_t vis = { XCB_WINDOW_CLASS_COPY_FROM_PARENT };
-   uint32_t       value_mask;
+   uint32_t value_mask;
 
-   if (parent == 0) parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   if (parent == 0)
+      parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
    value_mask =
-     XCB_CW_BACK_PIXMAP | XCB_CW_BORDER_PIXEL  | XCB_CW_BIT_GRAVITY       |
-     XCB_CW_WIN_GRAVITY | XCB_CW_BACKING_STORE | XCB_CW_OVERRIDE_REDIRECT |
-     XCB_CW_SAVE_UNDER  | XCB_CW_EVENT_MASK    | XCB_CW_DONT_PROPAGATE;
+      XCB_CW_BACK_PIXMAP | XCB_CW_BORDER_PIXEL | XCB_CW_BIT_GRAVITY |
+      XCB_CW_WIN_GRAVITY | XCB_CW_BACKING_STORE | XCB_CW_OVERRIDE_REDIRECT |
+      XCB_CW_SAVE_UNDER | XCB_CW_EVENT_MASK | XCB_CW_DONT_PROPAGATE;
 
-   value_list[0]  = XCB_NONE;
-   value_list[1]  = 0;
-   value_list[2]  = XCB_GRAVITY_NORTH_WEST;
-   value_list[3]  = XCB_GRAVITY_NORTH_WEST;
-   value_list[4]  = XCB_BACKING_STORE_NOT_USEFUL;
-   value_list[5]  = 0;
-   value_list[6]  = 0;
-   value_list[7]  =
-     XCB_EVENT_MASK_KEY_PRESS         | XCB_EVENT_MASK_KEY_RELEASE      |
-     XCB_EVENT_MASK_BUTTON_PRESS      | XCB_EVENT_MASK_BUTTON_RELEASE   |
-     XCB_EVENT_MASK_ENTER_WINDOW      | XCB_EVENT_MASK_LEAVE_WINDOW     |
-     XCB_EVENT_MASK_POINTER_MOTION    | XCB_EVENT_MASK_EXPOSURE        |
-     XCB_EVENT_MASK_VISIBILITY_CHANGE | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
-     XCB_EVENT_MASK_FOCUS_CHANGE      | XCB_EVENT_MASK_PROPERTY_CHANGE  |
-     XCB_EVENT_MASK_COLOR_MAP_CHANGE;
-   value_list[8]  = XCB_EVENT_MASK_NO_EVENT;
+   value_list[0] = XCB_NONE;
+   value_list[1] = 0;
+   value_list[2] = XCB_GRAVITY_NORTH_WEST;
+   value_list[3] = XCB_GRAVITY_NORTH_WEST;
+   value_list[4] = XCB_BACKING_STORE_NOT_USEFUL;
+   value_list[5] = 0;
+   value_list[6] = 0;
+   value_list[7] =
+      XCB_EVENT_MASK_KEY_PRESS | XCB_EVENT_MASK_KEY_RELEASE |
+      XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_BUTTON_RELEASE |
+      XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW |
+      XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_EXPOSURE |
+      XCB_EVENT_MASK_VISIBILITY_CHANGE | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+      XCB_EVENT_MASK_FOCUS_CHANGE | XCB_EVENT_MASK_PROPERTY_CHANGE |
+      XCB_EVENT_MASK_COLOR_MAP_CHANGE;
+   value_list[8] = XCB_EVENT_MASK_NO_EVENT;
 
    window = xcb_generate_id(_ecore_xcb_conn);
    xcb_create_window(_ecore_xcb_conn,
-                   XCB_WINDOW_CLASS_COPY_FROM_PARENT,
-                   window, parent, x, y, width, height, 0,
-                   XCB_WINDOW_CLASS_INPUT_OUTPUT,
-                   vis,
-                   value_mask,
-                   value_list);
+                     XCB_WINDOW_CLASS_COPY_FROM_PARENT,
+                     window, parent, x, y, width, height, 0,
+                     XCB_WINDOW_CLASS_INPUT_OUTPUT,
+                     vis,
+                     value_mask,
+                     value_list);
 
-   if (parent == ((xcb_screen_t *)_ecore_xcb_screen)->root) ecore_x_window_defaults_set(window);
+   if (parent == ((xcb_screen_t *)_ecore_xcb_screen)->root)
+      ecore_x_window_defaults_set(window);
+
    return window;
-}
+} /* ecore_x_window_new */
 
 /**
  * Creates a window with the override redirect attribute set to @c True.
@@ -116,45 +117,46 @@ ecore_x_window_override_new(Ecore_X_Window parent,
                             int            width,
                             int            height)
 {
-   uint32_t         value_list[9];
+   uint32_t value_list[9];
    Ecore_X_Window window;
-   xcb_visualid_t   vis = { XCB_WINDOW_CLASS_COPY_FROM_PARENT };
-   uint32_t         value_mask;
+   xcb_visualid_t vis = { XCB_WINDOW_CLASS_COPY_FROM_PARENT };
+   uint32_t value_mask;
 
-   if (parent == 0) parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   if (parent == 0)
+      parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
    value_mask =
-     XCB_CW_BACK_PIXMAP | XCB_CW_BORDER_PIXEL  | XCB_CW_BIT_GRAVITY       |
-     XCB_CW_WIN_GRAVITY | XCB_CW_BACKING_STORE | XCB_CW_OVERRIDE_REDIRECT |
-     XCB_CW_SAVE_UNDER  | XCB_CW_EVENT_MASK    | XCB_CW_DONT_PROPAGATE;
+      XCB_CW_BACK_PIXMAP | XCB_CW_BORDER_PIXEL | XCB_CW_BIT_GRAVITY |
+      XCB_CW_WIN_GRAVITY | XCB_CW_BACKING_STORE | XCB_CW_OVERRIDE_REDIRECT |
+      XCB_CW_SAVE_UNDER | XCB_CW_EVENT_MASK | XCB_CW_DONT_PROPAGATE;
 
-   value_list[0]  = XCB_NONE;
-   value_list[1]  = 0;
-   value_list[2]  = XCB_GRAVITY_NORTH_WEST;
-   value_list[3]  = XCB_GRAVITY_NORTH_WEST;
-   value_list[4]  = XCB_BACKING_STORE_NOT_USEFUL;
-   value_list[5]  = 1;
-   value_list[6]  = 0;
-   value_list[7]  =
-     XCB_EVENT_MASK_KEY_PRESS         | XCB_EVENT_MASK_KEY_RELEASE      |
-     XCB_EVENT_MASK_BUTTON_PRESS      | XCB_EVENT_MASK_BUTTON_RELEASE   |
-     XCB_EVENT_MASK_ENTER_WINDOW      | XCB_EVENT_MASK_LEAVE_WINDOW     |
-     XCB_EVENT_MASK_POINTER_MOTION    | XCB_EVENT_MASK_EXPOSURE        |
-     XCB_EVENT_MASK_VISIBILITY_CHANGE | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
-     XCB_EVENT_MASK_FOCUS_CHANGE      | XCB_EVENT_MASK_PROPERTY_CHANGE  |
-     XCB_EVENT_MASK_COLOR_MAP_CHANGE;
-   value_list[8]  = XCB_EVENT_MASK_NO_EVENT;
+   value_list[0] = XCB_NONE;
+   value_list[1] = 0;
+   value_list[2] = XCB_GRAVITY_NORTH_WEST;
+   value_list[3] = XCB_GRAVITY_NORTH_WEST;
+   value_list[4] = XCB_BACKING_STORE_NOT_USEFUL;
+   value_list[5] = 1;
+   value_list[6] = 0;
+   value_list[7] =
+      XCB_EVENT_MASK_KEY_PRESS | XCB_EVENT_MASK_KEY_RELEASE |
+      XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_BUTTON_RELEASE |
+      XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW |
+      XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_EXPOSURE |
+      XCB_EVENT_MASK_VISIBILITY_CHANGE | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+      XCB_EVENT_MASK_FOCUS_CHANGE | XCB_EVENT_MASK_PROPERTY_CHANGE |
+      XCB_EVENT_MASK_COLOR_MAP_CHANGE;
+   value_list[8] = XCB_EVENT_MASK_NO_EVENT;
 
    window = xcb_generate_id(_ecore_xcb_conn);
    xcb_create_window(_ecore_xcb_conn,
-                   XCB_WINDOW_CLASS_COPY_FROM_PARENT,
-                   window, parent, x, y, width, height, 0,
-                   XCB_WINDOW_CLASS_INPUT_OUTPUT,
-                   vis,
-                   value_mask,
-                   value_list);
+                     XCB_WINDOW_CLASS_COPY_FROM_PARENT,
+                     window, parent, x, y, width, height, 0,
+                     XCB_WINDOW_CLASS_INPUT_OUTPUT,
+                     vis,
+                     value_mask,
+                     value_list);
    return window;
-}
+} /* ecore_x_window_override_new */
 
 /**
  * Creates a new input window.
@@ -174,41 +176,42 @@ ecore_x_window_input_new(Ecore_X_Window parent,
                          int            width,
                          int            height)
 {
-   uint32_t         value_list[3];
+   uint32_t value_list[3];
    Ecore_X_Window window;
-   xcb_visualid_t   vis = { XCB_WINDOW_CLASS_COPY_FROM_PARENT };
-   uint32_t         value_mask;
+   xcb_visualid_t vis = { XCB_WINDOW_CLASS_COPY_FROM_PARENT };
+   uint32_t value_mask;
 
-   if (parent == 0) parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   if (parent == 0)
+      parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
    value_mask = XCB_CW_OVERRIDE_REDIRECT | XCB_CW_EVENT_MASK | XCB_CW_DONT_PROPAGATE;
 
-   value_list[0]  = 1;
-   value_list[1]  =
-     XCB_EVENT_MASK_KEY_PRESS         | XCB_EVENT_MASK_KEY_RELEASE      |
-     XCB_EVENT_MASK_BUTTON_PRESS      | XCB_EVENT_MASK_BUTTON_RELEASE   |
-     XCB_EVENT_MASK_ENTER_WINDOW      | XCB_EVENT_MASK_LEAVE_WINDOW     |
-     XCB_EVENT_MASK_POINTER_MOTION    | XCB_EVENT_MASK_EXPOSURE        |
-     XCB_EVENT_MASK_VISIBILITY_CHANGE | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
-     XCB_EVENT_MASK_FOCUS_CHANGE      | XCB_EVENT_MASK_PROPERTY_CHANGE  |
-     XCB_EVENT_MASK_COLOR_MAP_CHANGE;
-   value_list[2]  = XCB_EVENT_MASK_NO_EVENT;
+   value_list[0] = 1;
+   value_list[1] =
+      XCB_EVENT_MASK_KEY_PRESS | XCB_EVENT_MASK_KEY_RELEASE |
+      XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_BUTTON_RELEASE |
+      XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW |
+      XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_EXPOSURE |
+      XCB_EVENT_MASK_VISIBILITY_CHANGE | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+      XCB_EVENT_MASK_FOCUS_CHANGE | XCB_EVENT_MASK_PROPERTY_CHANGE |
+      XCB_EVENT_MASK_COLOR_MAP_CHANGE;
+   value_list[2] = XCB_EVENT_MASK_NO_EVENT;
 
    window = xcb_generate_id(_ecore_xcb_conn);
    xcb_create_window(_ecore_xcb_conn,
-                   XCB_WINDOW_CLASS_COPY_FROM_PARENT,
-                   window, parent, x, y, width, height, 0,
-                   XCB_WINDOW_CLASS_INPUT_OUTPUT,
-                   vis,
-                   value_mask,
-                   value_list);
+                     XCB_WINDOW_CLASS_COPY_FROM_PARENT,
+                     window, parent, x, y, width, height, 0,
+                     XCB_WINDOW_CLASS_INPUT_OUTPUT,
+                     vis,
+                     value_mask,
+                     value_list);
 
    if (parent == ((xcb_screen_t *)_ecore_xcb_screen)->root)
      {
      }
 
    return window;
-}
+} /* ecore_x_window_input_new */
 
 /**
  * Creates a new window.
@@ -237,7 +240,7 @@ ecore_x_window_manager_argb_new(Ecore_X_Window parent,
 #endif /* ECORE_XCB_RENDER */
 
    return window;
-}
+} /* ecore_x_window_manager_argb_new */
 
 /**
  * Creates a new window.
@@ -266,7 +269,7 @@ ecore_x_window_argb_new(Ecore_X_Window parent,
 #endif /* ECORE_XCB_RENDER */
 
    return window;
-}
+} /* ecore_x_window_argb_new */
 
 /**
  * Creates a window with the override redirect attribute set to @c True.
@@ -295,7 +298,7 @@ ecore_x_window_override_argb_new(Ecore_X_Window parent,
 #endif /* ECORE_XCB_RENDER */
 
    return window;
-}
+} /* ecore_x_window_override_argb_new */
 
 /**
  * @defgroup Ecore_X_Window_Destroy_Group X Window Destroy Functions
@@ -316,7 +319,7 @@ ecore_x_window_free(Ecore_X_Window window)
     */
    if (window)
       xcb_destroy_window(_ecore_xcb_conn, window);
-}
+} /* ecore_x_window_free */
 
 /**
  * Sends a delete request to the given window.
@@ -344,14 +347,13 @@ ecore_x_window_delete_request_send(Ecore_X_Window window)
 
    xcb_send_event(_ecore_xcb_conn, 0, window,
                   XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
-}
+} /* ecore_x_window_delete_request_send */
 
 /**
  * @defgroup Ecore_X_Window_Configure_Group X Window Configure Functions
  *
  * Functions to configure X windows.
  */
-
 
 /**
  * Configures the given window with the given mask.
@@ -378,52 +380,59 @@ ecore_x_window_configure(Ecore_X_Window                window,
                          int                           stack_mode)
 {
    uint32_t *value_list;
-   uint32_t  value_mask;
-   int       length = 0;
+   uint32_t value_mask;
+   int length = 0;
 
    if (!window)
       return;
 
    value_mask = mask;
-   for ( ; value_mask; value_mask >>= 1)
-     if (value_mask & 1)
-       length++;
+   for (; value_mask; value_mask >>= 1)
+      if (value_mask & 1)
+         length++;
+
    value_list = (uint32_t *)malloc(sizeof(uint32_t) * length);
    if (!value_list)
       return;
 
    value_mask = mask;
-   for ( ; value_mask; value_mask >>= 1, value_list++)
+   for (; value_mask; value_mask >>= 1, value_list++)
       if (value_mask & 1)
         {
-          switch (value_mask) {
-          case XCB_CONFIG_WINDOW_X:
-            *value_list = x;
-            break;
-          case XCB_CONFIG_WINDOW_Y:
-            *value_list = y;
-            break;
-          case XCB_CONFIG_WINDOW_WIDTH:
-            *value_list = width;
-            break;
-          case XCB_CONFIG_WINDOW_HEIGHT:
-            *value_list = height;
-            break;
-          case XCB_CONFIG_WINDOW_BORDER_WIDTH:
-            *value_list = border_width;
-            break;
-          case XCB_CONFIG_WINDOW_SIBLING:
-            *value_list = sibling;
-            break;
-          case XCB_CONFIG_WINDOW_STACK_MODE:
-            *value_list = stack_mode;
-            break;
-          }
+           switch (value_mask) {
+              case XCB_CONFIG_WINDOW_X:
+                 *value_list = x;
+                 break;
+
+              case XCB_CONFIG_WINDOW_Y:
+                 *value_list = y;
+                 break;
+
+              case XCB_CONFIG_WINDOW_WIDTH:
+                 *value_list = width;
+                 break;
+
+              case XCB_CONFIG_WINDOW_HEIGHT:
+                 *value_list = height;
+                 break;
+
+              case XCB_CONFIG_WINDOW_BORDER_WIDTH:
+                 *value_list = border_width;
+                 break;
+
+              case XCB_CONFIG_WINDOW_SIBLING:
+                 *value_list = sibling;
+                 break;
+
+              case XCB_CONFIG_WINDOW_STACK_MODE:
+                 *value_list = stack_mode;
+                 break;
+             } /* switch */
         }
 
    xcb_configure_window(_ecore_xcb_conn, window, mask, value_list);
    free(value_list);
-}
+} /* ecore_x_window_configure */
 
 /**
  * Moves a window to the position @p x, @p y.
@@ -453,7 +462,7 @@ ecore_x_window_move(Ecore_X_Window window,
    value_list[1] = y;
 
    xcb_configure_window(_ecore_xcb_conn, window, value_mask, value_list);
-}
+} /* ecore_x_window_move */
 
 /**
  * Resizes a window.
@@ -473,8 +482,11 @@ ecore_x_window_resize(Ecore_X_Window window,
    if (!window)
       return;
 
-   if (width < 1) width = 1;
-   if (height < 1) height = 1;
+   if (width < 1)
+      width = 1;
+
+   if (height < 1)
+      height = 1;
 
    value_mask = XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT;
 
@@ -482,7 +494,7 @@ ecore_x_window_resize(Ecore_X_Window window,
    value_list[1] = height;
 
    xcb_configure_window(_ecore_xcb_conn, window, value_mask, value_list);
-}
+} /* ecore_x_window_resize */
 
 /**
  * Moves and resizes a window.
@@ -506,12 +518,15 @@ ecore_x_window_move_resize(Ecore_X_Window window,
    if (!window)
       return;
 
-   if (width < 1) width = 1;
-   if (height < 1) height = 1;
+   if (width < 1)
+      width = 1;
+
+   if (height < 1)
+      height = 1;
 
    value_mask =
-     XCB_CONFIG_WINDOW_X     | XCB_CONFIG_WINDOW_Y     |
-     XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT;
+      XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y |
+      XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT;
 
    value_list[0] = x;
    value_list[1] = y;
@@ -519,7 +534,7 @@ ecore_x_window_move_resize(Ecore_X_Window window,
    value_list[3] = height;
 
    xcb_configure_window(_ecore_xcb_conn, window, value_mask, value_list);
-}
+} /* ecore_x_window_move_resize */
 
 /**
  * Sets the width of the border of the given window.
@@ -540,7 +555,7 @@ ecore_x_window_border_width_set(Ecore_X_Window window,
    value_list = border_width;
 
    xcb_configure_window(_ecore_xcb_conn, window, XCB_CONFIG_WINDOW_BORDER_WIDTH, &value_list);
-}
+} /* ecore_x_window_border_width_set */
 
 /**
  * Raises the given window.
@@ -558,7 +573,7 @@ ecore_x_window_raise(Ecore_X_Window window)
    value_list = XCB_STACK_MODE_ABOVE;
 
    xcb_configure_window(_ecore_xcb_conn, window, XCB_CONFIG_WINDOW_STACK_MODE, &value_list);
-}
+} /* ecore_x_window_raise */
 
 /**
  * Lowers the given window.
@@ -576,7 +591,7 @@ ecore_x_window_lower(Ecore_X_Window window)
    value_list = XCB_STACK_MODE_BELOW;
 
    xcb_configure_window(_ecore_xcb_conn, window, XCB_CONFIG_WINDOW_STACK_MODE, &value_list);
-}
+} /* ecore_x_window_lower */
 
 /**
  * @defgroup Ecore_X_Window_Change_Properties_Group X Window Change Property Functions
@@ -596,9 +611,9 @@ ecore_x_window_lower(Ecore_X_Window window)
 EAPI void
 ecore_x_window_defaults_set(Ecore_X_Window window)
 {
-   char   buf[MAXHOSTNAMELEN];
-   pid_t  pid;
-   int    argc;
+   char buf[MAXHOSTNAMELEN];
+   pid_t pid;
+   int argc;
    char **argv;
 
    /*
@@ -609,7 +624,7 @@ ecore_x_window_defaults_set(Ecore_X_Window window)
    /* The ecore function uses UTF8 which Xlib may not like (especially
     * with older clients) */
    /* ecore_xcb_window_prop_string_set(win, ECORE_X_ATOM_WM_CLIENT_MACHINE,
-				  (char *)buf); */
+                                  (char *)buf); */
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, window,
                        ECORE_X_ATOM_WM_CLIENT_MACHINE,
                        ECORE_X_ATOM_STRING,
@@ -625,7 +640,7 @@ ecore_x_window_defaults_set(Ecore_X_Window window)
 
    ecore_app_args_get(&argc, &argv);
    ecore_x_icccm_command_set(window, argc, argv);
-}
+} /* ecore_x_window_defaults_set */
 
 /**
  * @defgroup Ecore_X_Window_Visibility_Group X Window Visibility Functions
@@ -645,7 +660,7 @@ EAPI void
 ecore_x_window_show(Ecore_X_Window window)
 {
    xcb_map_window(_ecore_xcb_conn, window);
-}
+} /* ecore_x_window_show */
 
 /**
  * Hides a window.
@@ -659,18 +674,18 @@ EAPI void
 ecore_x_window_hide(Ecore_X_Window window)
 {
    xcb_unmap_notify_event_t ev;
-   Ecore_X_Window           root;
+   Ecore_X_Window root;
 
    /* ICCCM: SEND unmap event... */
    root = window;
    /* FIXME: is it correct ? */
    if (xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn)).rem == 1)
-     root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+      root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
    else
      {
-        xcb_get_geometry_cookie_t   cookie;
-        xcb_get_geometry_reply_t   *rep;
-        Ecore_X_Drawable            draw;
+        xcb_get_geometry_cookie_t cookie;
+        xcb_get_geometry_reply_t *rep;
+        Ecore_X_Drawable draw;
 
         /* FIXME: can we avoid round trips, here ? */
         draw = window;
@@ -678,9 +693,11 @@ ecore_x_window_hide(Ecore_X_Window window)
         rep = xcb_get_geometry_reply(_ecore_xcb_conn, cookie, NULL);
         if (!rep)
            return;
+
         root = rep->root;
         free(rep);
      }
+
    ev.response_type = XCB_UNMAP_NOTIFY;
    ev.pad0 = 0;
    ev.sequence = 0;
@@ -692,7 +709,7 @@ ecore_x_window_hide(Ecore_X_Window window)
                   XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
                   (const char *)&ev);
    xcb_unmap_window(_ecore_xcb_conn, window);
-}
+} /* ecore_x_window_hide */
 
 /**
  * @defgroup Ecore_X_Window_Input_Focus_Group X Window Input Focus Functions
@@ -710,12 +727,13 @@ ecore_x_window_focus(Ecore_X_Window window)
 {
    Ecore_X_Time time = XCB_CURRENT_TIME;
 
-   if (window == 0) window = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   if (window == 0)
+      window = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
    /* xcb_set_input_focus(_ecore_xcb_conn, XCB_INPUT_FOCUS_NONE, win, time); */
    xcb_set_input_focus(_ecore_xcb_conn,
                        XCB_INPUT_FOCUS_POINTER_ROOT, window, time);
-}
+} /* ecore_x_window_focus */
 
 /**
  * Sets the focus to the given window at a specific time.
@@ -727,12 +745,13 @@ EAPI void
 ecore_x_window_focus_at_time(Ecore_X_Window window,
                              Ecore_X_Time   time)
 {
-   if (window == 0) window = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   if (window == 0)
+      window = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
    /* xcb_set_input_focus(_ecore_xcb_conn, XCB_INPUT_FOCUS_NONE, win, time); */
    xcb_set_input_focus(_ecore_xcb_conn,
                        XCB_INPUT_FOCUS_POINTER_ROOT, window, time);
-}
+} /* ecore_x_window_focus_at_time */
 
 /**
  * @defgroup Ecore_X_Window_Reparent_Group X Window Reparent Functions
@@ -754,11 +773,11 @@ ecore_x_window_reparent(Ecore_X_Window window,
                         int            x,
                         int            y)
 {
-   if (new_parent == 0) new_parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   if (new_parent == 0)
+      new_parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
    xcb_reparent_window(_ecore_xcb_conn, window, new_parent, x, y);
-}
-
+} /* ecore_x_window_reparent */
 
 /**
  * @defgroup Ecore_X_Window_Change_Attributes_Group X Window Change Attributes Functions
@@ -781,7 +800,7 @@ ecore_x_window_pixmap_set(Ecore_X_Window window,
    value_list = pixmap;
    xcb_change_window_attributes(_ecore_xcb_conn, window,
                                 XCB_CW_BACK_PIXMAP, &value_list);
-}
+} /* ecore_x_window_pixmap_set */
 
 /**
  * Sets the background color of the given window.
@@ -799,7 +818,7 @@ ecore_x_window_background_color_set(Ecore_X_Window window,
 {
    xcb_alloc_color_cookie_t cookie;
    xcb_alloc_color_reply_t *rep;
-   uint32_t                 value_list;
+   uint32_t value_list;
 
    /* FIXME: should I provide a reply, and not the color components, here ? */
    /*        (because of roundtrips) */
@@ -808,13 +827,13 @@ ecore_x_window_background_color_set(Ecore_X_Window window,
                                       red, green, blue);
    rep = xcb_alloc_color_reply(_ecore_xcb_conn, cookie, NULL);
    if (!rep)
-     return;
+      return;
 
    value_list = rep->pixel;
    xcb_change_window_attributes(_ecore_xcb_conn, window,
                                 XCB_CW_BACK_PIXEL, &value_list);
    free(rep);
-}
+} /* ecore_x_window_background_color_set */
 
 /**
  * Sets the bit gravity of the given window.
@@ -831,7 +850,7 @@ ecore_x_window_pixel_gravity_set(Ecore_X_Window  window,
    value_list = gravity;
    xcb_change_window_attributes(_ecore_xcb_conn, window,
                                 XCB_CW_BIT_GRAVITY, &value_list);
-}
+} /* ecore_x_window_pixel_gravity_set */
 
 /**
  * Sets the gravity of the given window.
@@ -848,7 +867,7 @@ ecore_x_window_gravity_set(Ecore_X_Window  window,
    value_list = gravity;
    xcb_change_window_attributes(_ecore_xcb_conn, window,
                                 XCB_CW_WIN_GRAVITY, &value_list);
-}
+} /* ecore_x_window_gravity_set */
 
 /**
  * Sets the override attribute of the given window.
@@ -865,7 +884,7 @@ ecore_x_window_override_set(Ecore_X_Window window,
    value_list = override_redirect;
    xcb_change_window_attributes(_ecore_xcb_conn, window,
                                 XCB_CW_OVERRIDE_REDIRECT, &value_list);
-}
+} /* ecore_x_window_override_set */
 
 /**
  * Shows the cursor of the given window.
@@ -877,17 +896,18 @@ EAPI void
 ecore_x_window_cursor_show(Ecore_X_Window window,
                            int            show)
 {
-   if (window == 0) window = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   if (window == 0)
+      window = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
    if (!show)
      {
-        Ecore_X_Cursor   cursor;
+        Ecore_X_Cursor cursor;
         Ecore_X_Drawable draw;
-        Ecore_X_Pixmap   pixmap;
-        Ecore_X_Pixmap   mask;
-        Ecore_X_GC       gc;
-        xcb_point_t      point;
-        uint32_t         value_list;
+        Ecore_X_Pixmap pixmap;
+        Ecore_X_Pixmap mask;
+        Ecore_X_GC gc;
+        xcb_point_t point;
+        uint32_t value_list;
 
         draw = window;
         pixmap = xcb_generate_id(_ecore_xcb_conn);
@@ -934,7 +954,7 @@ ecore_x_window_cursor_show(Ecore_X_Window window,
         xcb_change_window_attributes(_ecore_xcb_conn, window,
                                      XCB_CW_CURSOR, &value_list);
      }
-}
+} /* ecore_x_window_cursor_show */
 
 /**
  * Sets the cursor of the given window.
@@ -951,7 +971,7 @@ ecore_x_window_cursor_set(Ecore_X_Window window,
    value_list = cursor;
    xcb_change_window_attributes(_ecore_xcb_conn, window,
                                 XCB_CW_CURSOR, &value_list);
-}
+} /* ecore_x_window_cursor_set */
 
 /**
  * Todo
@@ -964,12 +984,11 @@ ecore_x_window_container_manage(Ecore_X_Window window)
    uint32_t value_list;
 
    value_list =
-     XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY |
-     XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT;
+      XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY |
+      XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT;
    xcb_change_window_attributes(_ecore_xcb_conn, window,
                                 XCB_CW_EVENT_MASK, &value_list);
-
-}
+} /* ecore_x_window_container_manage */
 
 /**
  * Todo
@@ -982,18 +1001,18 @@ ecore_x_window_client_manage(Ecore_X_Window window)
    uint32_t value_list;
 
    value_list =
-     XCB_EVENT_MASK_VISIBILITY_CHANGE |
+      XCB_EVENT_MASK_VISIBILITY_CHANGE |
 /*      XCB_EVENT_MASK_RESIZE_REDIRECT | */
-     XCB_EVENT_MASK_STRUCTURE_NOTIFY |
-     XCB_EVENT_MASK_FOCUS_CHANGE |
-     XCB_EVENT_MASK_PROPERTY_CHANGE |
-     XCB_EVENT_MASK_COLOR_MAP_CHANGE;
+      XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+      XCB_EVENT_MASK_FOCUS_CHANGE |
+      XCB_EVENT_MASK_PROPERTY_CHANGE |
+      XCB_EVENT_MASK_COLOR_MAP_CHANGE;
    xcb_change_window_attributes(_ecore_xcb_conn, window,
                                 XCB_CW_EVENT_MASK, &value_list);
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_select_input(_ecore_xcb_conn, window, 1);
 #endif /* ECORE_XCB_SHAPE */
-}
+} /* ecore_x_window_client_manage */
 
 /**
  * Todo
@@ -1006,11 +1025,11 @@ ecore_x_window_sniff(Ecore_X_Window window)
    uint32_t value_list;
 
    value_list =
-     XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY |
-     XCB_EVENT_MASK_PROPERTY_CHANGE;
+      XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY |
+      XCB_EVENT_MASK_PROPERTY_CHANGE;
    xcb_change_window_attributes(_ecore_xcb_conn, window,
                                 XCB_CW_EVENT_MASK, &value_list);
-}
+} /* ecore_x_window_sniff */
 
 /**
  * Todo
@@ -1023,17 +1042,17 @@ ecore_x_window_client_sniff(Ecore_X_Window window)
    uint32_t value_list;
 
    value_list =
-     XCB_EVENT_MASK_VISIBILITY_CHANGE |
-     XCB_EVENT_MASK_STRUCTURE_NOTIFY |
-     XCB_EVENT_MASK_FOCUS_CHANGE |
-     XCB_EVENT_MASK_PROPERTY_CHANGE |
-     XCB_EVENT_MASK_COLOR_MAP_CHANGE;
+      XCB_EVENT_MASK_VISIBILITY_CHANGE |
+      XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+      XCB_EVENT_MASK_FOCUS_CHANGE |
+      XCB_EVENT_MASK_PROPERTY_CHANGE |
+      XCB_EVENT_MASK_COLOR_MAP_CHANGE;
    xcb_change_window_attributes(_ecore_xcb_conn, window,
                                 XCB_CW_EVENT_MASK, &value_list);
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_select_input(_ecore_xcb_conn, window, 1);
 #endif /* ECORE_XCB_SHAPE */
-}
+} /* ecore_x_window_client_sniff */
 
 /**
  * Clears an area of the given window.
@@ -1052,7 +1071,7 @@ ecore_x_window_area_clear(Ecore_X_Window window,
                           int            height)
 {
    xcb_clear_area(_ecore_xcb_conn, 0, window, x, y, width, height);
-}
+} /* ecore_x_window_area_clear */
 
 /**
  * Exposes an area of the given window.
@@ -1071,8 +1090,7 @@ ecore_x_window_area_expose(Ecore_X_Window window,
                            int            height)
 {
    xcb_clear_area(_ecore_xcb_conn, 1, window, x, y, width, height);
-}
-
+} /* ecore_x_window_area_expose */
 
 /**
  * @defgroup Ecore_X_Window_Save_Set_Group X Window Change Save Set Functions
@@ -1090,7 +1108,7 @@ EAPI void
 ecore_x_window_save_set_add(Ecore_X_Window window)
 {
    xcb_change_save_set(_ecore_xcb_conn, XCB_SET_MODE_INSERT, window);
-}
+} /* ecore_x_window_save_set_add */
 
 /**
  * Deletes the window from the client's save-set.
@@ -1101,14 +1119,13 @@ EAPI void
 ecore_x_window_save_set_del(Ecore_X_Window window)
 {
    xcb_change_save_set(_ecore_xcb_conn, XCB_SET_MODE_DELETE, window);
-}
+} /* ecore_x_window_save_set_del */
 
 /******************************
- *
- * Request that have a reply
- *
- ******************************/
-
+*
+* Request that have a reply
+*
+******************************/
 
 /**
  * Sends the GetInputFocus request.
@@ -1121,7 +1138,7 @@ ecore_x_get_input_focus_prefetch(void)
 
    cookie = xcb_get_input_focus_unchecked(_ecore_xcb_conn);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_get_input_focus_prefetch */
 
 /**
  * Gets the reply of the GetInputFocus request sent by ecore_x_get_input_focus_prefetch().
@@ -1136,7 +1153,7 @@ ecore_x_get_input_focus_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_input_focus_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_get_input_focus_fetch */
 
 /**
  * Gets the window that has focus.
@@ -1154,21 +1171,20 @@ EAPI Ecore_X_Window
 ecore_x_window_focus_get(void)
 {
    xcb_get_input_focus_reply_t *reply;
-   Ecore_X_Window               window = 0;
+   Ecore_X_Window window = 0;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return window;
+   if (!reply)
+      return window;
 
    return reply->focus;
-}
-
+} /* ecore_x_window_focus_get */
 
 /**
  * @defgroup Ecore_X_Window_Get_Attributes_Group X Window Get Attributes Functions
  *
  * Functions that get the attributes of a window.
  */
-
 
 /**
  * Sends the GetWindowAttributes request.
@@ -1181,7 +1197,7 @@ ecore_x_get_window_attributes_prefetch(Ecore_X_Window window)
 
    cookie = xcb_get_window_attributes_unchecked(_ecore_xcb_conn, window);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_get_window_attributes_prefetch */
 
 /**
  * Gets the reply of the GetWindowAttributes request sent by ecore_x_get_window_attributes_prefetch().
@@ -1196,7 +1212,7 @@ ecore_x_get_window_attributes_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_get_window_attributes_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_get_window_attributes_fetch */
 
 /**
  * Retrieves the attributes of a window.
@@ -1216,34 +1232,45 @@ ecore_x_get_window_attributes_fetch(void)
  * @ingroup Ecore_X_Window_Get_Attributes_Group
  */
 EAPI int
-ecore_x_window_attributes_get(Ecore_X_Window             window __UNUSED__,
+ecore_x_window_attributes_get(Ecore_X_Window window      __UNUSED__,
                               Ecore_X_Window_Attributes *att_ret)
 {
    xcb_get_window_attributes_reply_t *reply;
 
-   if (!att_ret) return 0;
+   if (!att_ret)
+      return 0;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return 0;
+   if (!reply)
+      return 0;
 
    memset(att_ret, 0, sizeof(Ecore_X_Window_Attributes));
 
-   if (reply->map_state != XCB_MAP_STATE_UNMAPPED) att_ret->visible = 1;
-   if (reply->map_state == XCB_MAP_STATE_VIEWABLE) att_ret->viewable = 1;
-   if (reply->override_redirect) att_ret->override = 1;
-   if (reply->_class == XCB_WINDOW_CLASS_INPUT_ONLY) att_ret->input_only = 1;
-   if (reply->save_under) att_ret->save_under = 1;
+   if (reply->map_state != XCB_MAP_STATE_UNMAPPED)
+      att_ret->visible = 1;
 
-   att_ret->event_mask.mine         = reply->your_event_mask;
-   att_ret->event_mask.all          = reply->all_event_masks;
+   if (reply->map_state == XCB_MAP_STATE_VIEWABLE)
+      att_ret->viewable = 1;
+
+   if (reply->override_redirect)
+      att_ret->override = 1;
+
+   if (reply->_class == XCB_WINDOW_CLASS_INPUT_ONLY)
+      att_ret->input_only = 1;
+
+   if (reply->save_under)
+      att_ret->save_under = 1;
+
+   att_ret->event_mask.mine = reply->your_event_mask;
+   att_ret->event_mask.all = reply->all_event_masks;
    att_ret->event_mask.no_propagate = reply->do_not_propagate_mask;
-   att_ret->window_gravity          = reply->win_gravity;
-   att_ret->pixel_gravity           = reply->bit_gravity;
-   att_ret->colormap                = reply->colormap;
-   att_ret->visual                  = reply->visual;
+   att_ret->window_gravity = reply->win_gravity;
+   att_ret->pixel_gravity = reply->bit_gravity;
+   att_ret->colormap = reply->colormap;
+   att_ret->visual = reply->visual;
 
    return 1;
-}
+} /* ecore_x_window_attributes_get */
 
 /**
  * Finds out whether the given window is currently visible.
@@ -1265,11 +1292,11 @@ ecore_x_window_visible_get(Ecore_X_Window window __UNUSED__)
    xcb_get_window_attributes_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return 0;
+   if (!reply)
+      return 0;
 
    return (reply->map_state == XCB_MAP_STATE_VIEWABLE) ? 1 : 0;
-}
-
+} /* ecore_x_window_visible_get */
 
 /**
  * Sends the QueryPointer request.
@@ -1282,7 +1309,7 @@ ecore_x_pointer_xy_get_prefetch(Ecore_X_Window window)
 
    cookie = xcb_query_pointer_unchecked(_ecore_xcb_conn, window);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_pointer_xy_get_prefetch */
 
 /**
  * Gets the reply of the QueryPointer request sent by ecore_x_query_pointer_prefetch().
@@ -1297,7 +1324,7 @@ ecore_x_pointer_xy_get_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_query_pointer_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_pointer_xy_get_fetch */
 
 /**
  * Retrieves the coordinates of the pointer.
@@ -1319,24 +1346,29 @@ ecore_x_pointer_xy_get_fetch(void)
  */
 EAPI void
 ecore_x_pointer_xy_get(Ecore_X_Window window __UNUSED__,
-                       int           *x,
-                       int           *y)
+                       int                  *x,
+                       int                  *y)
 {
    xcb_query_pointer_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
      {
-       if (x) *x = 0;
-       if (y) *y = 0;
+        if (x)
+           *x = 0;
 
-       return;
+        if (y)
+           *y = 0;
+
+        return;
      }
 
-   if (x) *x = reply->win_x;
-   if (y) *y = reply->win_y;
-}
+   if (x)
+      *x = reply->win_x;
 
+   if (y)
+      *y = reply->win_y;
+} /* ecore_x_pointer_xy_get */
 
 /**
  * Sends the QueryTree request.
@@ -1349,7 +1381,7 @@ ecore_x_query_tree_prefetch(Ecore_X_Window window)
 
    cookie = xcb_query_tree_unchecked(_ecore_xcb_conn, window);
    _ecore_xcb_cookie_cache(cookie.sequence);
-}
+} /* ecore_x_query_tree_prefetch */
 
 /**
  * Gets the reply of the QueryTree request sent by ecore_x_query_tree_prefetch().
@@ -1364,7 +1396,7 @@ ecore_x_query_tree_fetch(void)
    cookie.sequence = _ecore_xcb_cookie_get();
    reply = xcb_query_tree_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
-}
+} /* ecore_x_query_tree_fetch */
 
 /**
  * Retrieves the parent window of the given window.
@@ -1385,11 +1417,11 @@ ecore_x_window_parent_get(Ecore_X_Window window __UNUSED__)
    xcb_query_tree_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
-   if (!reply) return 0;
+   if (!reply)
+      return 0;
 
    return reply->parent;
-}
-
+} /* ecore_x_window_parent_get */
 
 /**
  * Retrieves the children windows of the given window.
@@ -1407,26 +1439,31 @@ ecore_x_window_parent_get(Ecore_X_Window window __UNUSED__)
  */
 EAPI Ecore_X_Window *
 ecore_x_window_children_get(Ecore_X_Window window __UNUSED__,
-                            int           *num)
+                            int                  *num)
 {
    xcb_query_tree_reply_t *reply;
-   Ecore_X_Window         *windows = NULL;
+   Ecore_X_Window *windows = NULL;
 
-   if (num) *num = 0;
+   if (num)
+      *num = 0;
+
    reply = _ecore_xcb_reply_get();
-   if (!reply) return NULL;
+   if (!reply)
+      return NULL;
 
    windows = malloc(sizeof(Ecore_X_Window) * reply->children_len);
    if (!windows)
-     return NULL;
+      return NULL;
 
-   if (num) *num = reply->children_len;
+   if (num)
+      *num = reply->children_len;
+
    memcpy(windows,
           xcb_query_tree_children(reply),
           sizeof(Ecore_X_Window) * reply->children_len);
 
    return windows;
-}
+} /* ecore_x_window_children_get */
 
 /* FIXME: I've tried to remove the round trips. 3 cookies are */
 /*        created at the beginning of the function. Because of */
@@ -1441,20 +1478,20 @@ _ecore_x_window_at_xy_get(Ecore_X_Window  base,
                           int             skip_num)
 {
    xcb_get_window_attributes_cookie_t cookie_get_window_attributes;
-   xcb_get_geometry_cookie_t          cookie_get_geometry;
-   xcb_query_tree_cookie_t            cookie_query_tree;
+   xcb_get_geometry_cookie_t cookie_get_geometry;
+   xcb_query_tree_cookie_t cookie_query_tree;
    xcb_get_window_attributes_reply_t *reply_get_window_attributes;
-   xcb_get_geometry_reply_t          *reply_get_geometry;
-   xcb_query_tree_reply_t            *reply_query_tree;
-   Ecore_X_Window                     window = 0;
-   Ecore_X_Window                     child = 0;
-   int16_t                            win_x;
-   int16_t                            win_y;
-   uint16_t                           win_width;
-   uint16_t                           win_height;
-   xcb_window_t                      *wins = NULL;
-   int                                tree_c_len;
-   int                                i;
+   xcb_get_geometry_reply_t *reply_get_geometry;
+   xcb_query_tree_reply_t *reply_query_tree;
+   Ecore_X_Window window = 0;
+   Ecore_X_Window child = 0;
+   int16_t win_x;
+   int16_t win_y;
+   uint16_t win_width;
+   uint16_t win_height;
+   xcb_window_t *wins = NULL;
+   int tree_c_len;
+   int i;
 
    cookie_get_window_attributes = xcb_get_window_attributes_unchecked(_ecore_xcb_conn, base);
    cookie_get_geometry = xcb_get_geometry_unchecked(_ecore_xcb_conn, base);
@@ -1463,21 +1500,29 @@ _ecore_x_window_at_xy_get(Ecore_X_Window  base,
    reply_get_window_attributes = xcb_get_window_attributes_reply(_ecore_xcb_conn, cookie_get_window_attributes, NULL);
    if (!reply_get_window_attributes)
      {
-       reply_get_geometry = xcb_get_geometry_reply(_ecore_xcb_conn, cookie_get_geometry, NULL);
-       if (reply_get_geometry) free(reply_get_geometry);
-       reply_query_tree = xcb_query_tree_reply(_ecore_xcb_conn, cookie_query_tree, NULL);
-       if (reply_query_tree) free(reply_query_tree);
-       return window;
+        reply_get_geometry = xcb_get_geometry_reply(_ecore_xcb_conn, cookie_get_geometry, NULL);
+        if (reply_get_geometry)
+           free(reply_get_geometry);
+
+        reply_query_tree = xcb_query_tree_reply(_ecore_xcb_conn, cookie_query_tree, NULL);
+        if (reply_query_tree)
+           free(reply_query_tree);
+
+        return window;
      }
 
    if (reply_get_window_attributes->map_state != XCB_MAP_STATE_VIEWABLE)
      {
-       free(reply_get_window_attributes);
-       reply_get_geometry = xcb_get_geometry_reply(_ecore_xcb_conn, cookie_get_geometry, NULL);
-       if (reply_get_geometry) free(reply_get_geometry);
-       reply_query_tree = xcb_query_tree_reply(_ecore_xcb_conn, cookie_query_tree, NULL);
-       if (reply_query_tree) free(reply_query_tree);
-       return window;
+        free(reply_get_window_attributes);
+        reply_get_geometry = xcb_get_geometry_reply(_ecore_xcb_conn, cookie_get_geometry, NULL);
+        if (reply_get_geometry)
+           free(reply_get_geometry);
+
+        reply_query_tree = xcb_query_tree_reply(_ecore_xcb_conn, cookie_query_tree, NULL);
+        if (reply_query_tree)
+           free(reply_query_tree);
+
+        return window;
      }
 
    free(reply_get_window_attributes);
@@ -1485,9 +1530,11 @@ _ecore_x_window_at_xy_get(Ecore_X_Window  base,
    reply_get_geometry = xcb_get_geometry_reply(_ecore_xcb_conn, cookie_get_geometry, NULL);
    if (!reply_get_geometry)
      {
-       reply_query_tree = xcb_query_tree_reply(_ecore_xcb_conn, cookie_query_tree, NULL);
-       if (reply_query_tree) free(reply_query_tree);
-       return window;
+        reply_query_tree = xcb_query_tree_reply(_ecore_xcb_conn, cookie_query_tree, NULL);
+        if (reply_query_tree)
+           free(reply_query_tree);
+
+        return window;
      }
 
    win_x = reply_get_geometry->x;
@@ -1505,23 +1552,27 @@ _ecore_x_window_at_xy_get(Ecore_X_Window  base,
          (x < (int16_t)(win_x + win_width)) &&
          (y < (int16_t)(win_y + win_height))))
      {
-       reply_query_tree = xcb_query_tree_reply(_ecore_xcb_conn, cookie_query_tree, NULL);
-       if (reply_query_tree) free(reply_query_tree);
-       return window;
+        reply_query_tree = xcb_query_tree_reply(_ecore_xcb_conn, cookie_query_tree, NULL);
+        if (reply_query_tree)
+           free(reply_query_tree);
+
+        return window;
      }
 
    reply_query_tree = xcb_query_tree_reply(_ecore_xcb_conn, cookie_query_tree, NULL);
    if (!reply_query_tree)
      {
         if (skip)
-	  {
+          {
              int i;
 
-	     for (i = 0; i < skip_num; i++)
-	       if (base == skip[i])
-		 return window;
-	  }
-	return base;
+             for (i = 0; i < skip_num; i++)
+                if (base == skip[i])
+                   return window;
+
+          }
+
+        return base;
      }
 
    wins = xcb_query_tree_children(reply_query_tree);
@@ -1533,9 +1584,11 @@ _ecore_x_window_at_xy_get(Ecore_X_Window  base,
              int j;
 
              for (j = 0; j < skip_num; j++)
-               if (wins[i] == skip[j])
-                 continue;
+                if (wins[i] == skip[j])
+                   continue;
+
           }
+
         child = _ecore_x_window_at_xy_get(wins[i], win_x, win_y, x, y, skip, skip_num);
         if (child)
           {
@@ -1549,19 +1602,20 @@ _ecore_x_window_at_xy_get(Ecore_X_Window  base,
      {
         int i;
 
-	for (i = 0; i < skip_num; i++)
-	  if (base == skip[i])
-            {
-               /* We return 0. child has an xid equal to 0 */
-               free(reply_query_tree);
-               return child;
-            }
+        for (i = 0; i < skip_num; i++)
+           if (base == skip[i])
+             {
+                /* We return 0. child has an xid equal to 0 */
+                free(reply_query_tree);
+                return child;
+             }
+
      }
 
    free(reply_query_tree);
 
    return base;
-}
+} /* _ecore_x_window_at_xy_get */
 
 /**
  * @defgroup Ecore_X_Window_Geometry_Group X Window Geometry Functions
@@ -1578,7 +1632,7 @@ _ecore_x_window_at_xy_get(Ecore_X_Window  base,
  */
 EAPI Ecore_X_Window
 ecore_x_window_at_xy_get(int x,
-                           int y)
+                         int y)
 {
    Ecore_X_Window window;
    Ecore_X_Window root;
@@ -1592,7 +1646,7 @@ ecore_x_window_at_xy_get(int x,
    ecore_x_ungrab();
 
    return window ? window : root;
-}
+} /* ecore_x_window_at_xy_get */
 
 /**
  * Retrieves the top, visible window at the given location,
@@ -1604,9 +1658,9 @@ ecore_x_window_at_xy_get(int x,
  */
 EAPI Ecore_X_Window
 ecore_x_window_at_xy_with_skip_get(int             x,
-                                     int             y,
-                                     Ecore_X_Window *skip,
-                                     int             skip_num)
+                                   int             y,
+                                   Ecore_X_Window *skip,
+                                   int             skip_num)
 {
    Ecore_X_Window window;
    Ecore_X_Window root;
@@ -1620,7 +1674,7 @@ ecore_x_window_at_xy_with_skip_get(int             x,
    ecore_x_ungrab();
 
    return window ? window : root;
-}
+} /* ecore_x_window_at_xy_with_skip_get */
 
 /**
  * Retrieves the top, visible window at the given location,
@@ -1643,9 +1697,7 @@ ecore_x_window_at_xy_begin_get(Ecore_X_Window begin,
    ecore_x_ungrab();
 
    return window ? window : begin;
-}
-
-
+} /* ecore_x_window_at_xy_begin_get */
 
 /* FIXME: Should I provide the replies (or the cookies), instead of
           creating them in the function ? */
@@ -1659,30 +1711,30 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
                                   uint8_t        override_redirect,
                                   uint8_t        save_under)
 {
-   uint32_t                               value_list[10];
-   xcb_depth_iterator_t                   iter_depth;
-   xcb_visualtype_iterator_t              iter_visualtype;
+   uint32_t value_list[10];
+   xcb_depth_iterator_t iter_depth;
+   xcb_visualtype_iterator_t iter_visualtype;
    xcb_render_query_pict_formats_cookie_t cookie_pict_format;
    xcb_render_query_pict_formats_reply_t *rep_pict_format;
-   Ecore_X_Screen                        *screen = NULL;
-   Ecore_X_Window                         win = { 0 };
-   xcb_visualid_t                         vis = { 0 };
-   Ecore_X_Colormap                       colormap;
-   uint32_t                               value_mask;
+   Ecore_X_Screen *screen = NULL;
+   Ecore_X_Window win = { 0 };
+   xcb_visualid_t vis = { 0 };
+   Ecore_X_Colormap colormap;
+   uint32_t value_mask;
 
    cookie_pict_format = xcb_render_query_pict_formats_unchecked(_ecore_xcb_conn);
 
    if (parent == 0)
      {
         parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
-	screen = ((xcb_screen_t *)_ecore_xcb_screen);
+        screen = ((xcb_screen_t *)_ecore_xcb_screen);
      }
    else
      {
-        xcb_screen_iterator_t     iter_screen;
+        xcb_screen_iterator_t iter_screen;
         xcb_get_geometry_reply_t *rep;
-        Ecore_X_Drawable        draw;
-        Ecore_X_Window          root;
+        Ecore_X_Drawable draw;
+        Ecore_X_Window root;
 
         draw = parent;
         rep = xcb_get_geometry_reply(_ecore_xcb_conn,
@@ -1690,7 +1742,7 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
                                                                 draw),
                                      NULL);
         if (!rep)
-          return win;
+           return win;
 
         root = rep->root;
 
@@ -1700,99 +1752,106 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
           {
              if (iter_screen.data->root == root)
                {
-                 screen = iter_screen.data;
+                  screen = iter_screen.data;
                }
           }
      }
+
    if (!screen)
-     return win;
+      return win;
 
    /* we get the X visual types */
    iter_depth = xcb_screen_allowed_depths_iterator(screen);
    for (; iter_depth.rem; xcb_depth_next(&iter_depth)) {
-	if (iter_depth.data->depth == 32) {
-	     iter_visualtype = xcb_depth_visuals_iterator(iter_depth.data);
-	     break;
-	}
-   }
+        if (iter_depth.data->depth == 32)
+          {
+             iter_visualtype = xcb_depth_visuals_iterator(iter_depth.data);
+             break;
+          }
+     }
 
    /* we get the X render visual id */
    rep_pict_format = xcb_render_query_pict_formats_reply(_ecore_xcb_conn,
                                                          cookie_pict_format,
                                                          NULL);
    if (!rep_pict_format)
-     return win;
+      return win;
 
    for (; iter_visualtype.rem; xcb_visualtype_next(&iter_visualtype)) {
-      if (iter_visualtype.data->_class == XCB_VISUAL_CLASS_TRUE_COLOR) {
-         xcb_render_pictforminfo_iterator_t iter_forminfo;
-         xcb_render_pictscreen_iterator_t   iter_pictscreen;
-         xcb_render_pictformat_t            pict_format = { 0 };
+        if (iter_visualtype.data->_class == XCB_VISUAL_CLASS_TRUE_COLOR)
+          {
+             xcb_render_pictforminfo_iterator_t iter_forminfo;
+             xcb_render_pictscreen_iterator_t iter_pictscreen;
+             xcb_render_pictformat_t pict_format = { 0 };
 
-         iter_forminfo = xcb_render_query_pict_formats_formats_iterator(rep_pict_format);
-         for (; iter_forminfo.rem; xcb_render_pictforminfo_next(&iter_forminfo)) {
-            if (iter_forminfo.data->type == XCB_RENDER_PICT_TYPE_DIRECT &&
-                iter_forminfo.data->direct.alpha_mask && iter_forminfo.data->depth == 32) {
-               pict_format = iter_forminfo.data->id;
-               break;
-            }
-         }
-         if (pict_format == 0) {
-            free(rep_pict_format);
-            return win;
-         }
-         iter_pictscreen = xcb_render_query_pict_formats_screens_iterator(rep_pict_format);
-         for (; iter_pictscreen.rem; xcb_render_pictscreen_next(&iter_pictscreen)) {
-            xcb_render_pictdepth_iterator_t iter_depth;
-
-            iter_depth = xcb_render_pictscreen_depths_iterator(iter_pictscreen.data);
-            for (; iter_depth.rem; xcb_render_pictdepth_next(&iter_depth)) {
-               xcb_render_pictvisual_iterator_t iter_visual;
-
-               iter_visual = xcb_render_pictdepth_visuals_iterator(iter_depth.data);
-               for (; iter_visual.rem; xcb_render_pictvisual_next(&iter_visual)) {
-                  if ((iter_visual.data->visual == iter_visualtype.data->visual_id) &&
-                      (pict_format == iter_visual.data->format)) {
-                    vis = iter_visual.data->visual;
-                    break;
-                  }
+             iter_forminfo = xcb_render_query_pict_formats_formats_iterator(rep_pict_format);
+             for (; iter_forminfo.rem; xcb_render_pictforminfo_next(&iter_forminfo)) {
+                  if (iter_forminfo.data->type == XCB_RENDER_PICT_TYPE_DIRECT &&
+                      iter_forminfo.data->direct.alpha_mask && iter_forminfo.data->depth == 32)
+                    {
+                       pict_format = iter_forminfo.data->id;
+                       break;
+                    }
                }
-            }
-         }
-      }
-   }
+             if (pict_format == 0)
+               {
+                  free(rep_pict_format);
+                  return win;
+               }
+
+             iter_pictscreen = xcb_render_query_pict_formats_screens_iterator(rep_pict_format);
+             for (; iter_pictscreen.rem; xcb_render_pictscreen_next(&iter_pictscreen)) {
+                  xcb_render_pictdepth_iterator_t iter_depth;
+
+                  iter_depth = xcb_render_pictscreen_depths_iterator(iter_pictscreen.data);
+                  for (; iter_depth.rem; xcb_render_pictdepth_next(&iter_depth)) {
+                       xcb_render_pictvisual_iterator_t iter_visual;
+
+                       iter_visual = xcb_render_pictdepth_visuals_iterator(iter_depth.data);
+                       for (; iter_visual.rem; xcb_render_pictvisual_next(&iter_visual)) {
+                            if ((iter_visual.data->visual == iter_visualtype.data->visual_id) &&
+                                (pict_format == iter_visual.data->format))
+                              {
+                                 vis = iter_visual.data->visual;
+                                 break;
+                              }
+                         }
+                    }
+               }
+          }
+     }
 
    free(rep_pict_format);
 
    if (vis == 0)
-     return win;
+      return win;
 
    colormap = xcb_generate_id(_ecore_xcb_conn);
    xcb_create_colormap(_ecore_xcb_conn, XCB_COLORMAP_ALLOC_NONE, colormap, parent, vis);
 
    value_mask =
-     XCB_CW_BACK_PIXMAP | XCB_CW_BORDER_PIXEL  | XCB_CW_BIT_GRAVITY       |
-     XCB_CW_WIN_GRAVITY | XCB_CW_BACKING_STORE | XCB_CW_OVERRIDE_REDIRECT |
-     XCB_CW_SAVE_UNDER  | XCB_CW_EVENT_MASK    | XCB_CW_DONT_PROPAGATE    |
-     XCB_CW_COLORMAP;
+      XCB_CW_BACK_PIXMAP | XCB_CW_BORDER_PIXEL | XCB_CW_BIT_GRAVITY |
+      XCB_CW_WIN_GRAVITY | XCB_CW_BACKING_STORE | XCB_CW_OVERRIDE_REDIRECT |
+      XCB_CW_SAVE_UNDER | XCB_CW_EVENT_MASK | XCB_CW_DONT_PROPAGATE |
+      XCB_CW_COLORMAP;
 
-   value_list[0]  = XCB_NONE;
-   value_list[1]  = 0;
-   value_list[2]  = XCB_GRAVITY_NORTH_WEST;
-   value_list[3]  = XCB_GRAVITY_NORTH_WEST;
-   value_list[4]  = XCB_BACKING_STORE_NOT_USEFUL;
-   value_list[5]  = override_redirect;
-   value_list[6]  = save_under;
-   value_list[7]  =
-     XCB_EVENT_MASK_KEY_PRESS         | XCB_EVENT_MASK_KEY_RELEASE      |
-     XCB_EVENT_MASK_BUTTON_PRESS      | XCB_EVENT_MASK_BUTTON_RELEASE   |
-     XCB_EVENT_MASK_ENTER_WINDOW      | XCB_EVENT_MASK_LEAVE_WINDOW     |
-     XCB_EVENT_MASK_POINTER_MOTION    | XCB_EVENT_MASK_EXPOSURE        |
-     XCB_EVENT_MASK_VISIBILITY_CHANGE | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
-     XCB_EVENT_MASK_FOCUS_CHANGE      | XCB_EVENT_MASK_PROPERTY_CHANGE  |
-     XCB_EVENT_MASK_COLOR_MAP_CHANGE;
-   value_list[8]  = XCB_EVENT_MASK_NO_EVENT;
-   value_list[9]  = colormap;
+   value_list[0] = XCB_NONE;
+   value_list[1] = 0;
+   value_list[2] = XCB_GRAVITY_NORTH_WEST;
+   value_list[3] = XCB_GRAVITY_NORTH_WEST;
+   value_list[4] = XCB_BACKING_STORE_NOT_USEFUL;
+   value_list[5] = override_redirect;
+   value_list[6] = save_under;
+   value_list[7] =
+      XCB_EVENT_MASK_KEY_PRESS | XCB_EVENT_MASK_KEY_RELEASE |
+      XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_BUTTON_RELEASE |
+      XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW |
+      XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_EXPOSURE |
+      XCB_EVENT_MASK_VISIBILITY_CHANGE | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+      XCB_EVENT_MASK_FOCUS_CHANGE | XCB_EVENT_MASK_PROPERTY_CHANGE |
+      XCB_EVENT_MASK_COLOR_MAP_CHANGE;
+   value_list[8] = XCB_EVENT_MASK_NO_EVENT;
+   value_list[9] = colormap;
 
    win = xcb_generate_id(_ecore_xcb_conn);
    xcb_create_window(_ecore_xcb_conn,
@@ -1807,33 +1866,32 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
    xcb_free_colormap(_ecore_xcb_conn, colormap);
 
    if (parent == ((xcb_screen_t *)_ecore_xcb_screen)->root)
-     ecore_x_window_defaults_set(win);
+      ecore_x_window_defaults_set(win);
 
    return win;
-}
+} /* _ecore_x_window_argb_internal_new */
+
 #endif /* ECORE_XCB_RENDER */
-
-
 
 /* FIXME: round trip */
 EAPI int
 ecore_x_window_argb_get(Ecore_X_Window win)
 {
-   uint8_t                                ret = 0;
+   uint8_t ret = 0;
 #ifdef ECORE_XCB_RENDER
-   xcb_render_pictforminfo_iterator_t     iter_forminfo;
-   xcb_render_pictscreen_iterator_t       iter_pictscreen;
-   xcb_render_pictformat_t                pict_format = { 0 };
+   xcb_render_pictforminfo_iterator_t iter_forminfo;
+   xcb_render_pictscreen_iterator_t iter_pictscreen;
+   xcb_render_pictformat_t pict_format = { 0 };
    xcb_render_query_pict_formats_reply_t *rep_pictformat;
-   xcb_get_window_attributes_reply_t     *rep;
-   xcb_visualid_t                         visual;
+   xcb_get_window_attributes_reply_t *rep;
+   xcb_visualid_t visual;
 
    rep = xcb_get_window_attributes_reply(_ecore_xcb_conn,
                                          xcb_get_window_attributes_unchecked(_ecore_xcb_conn,
                                                                              win),
                                          NULL);
    if (!rep)
-     return ret;
+      return ret;
 
    visual = rep->visual;
 
@@ -1843,7 +1901,7 @@ ecore_x_window_argb_get(Ecore_X_Window win)
                                                         xcb_render_query_pict_formats_unchecked(_ecore_xcb_conn),
                                                         NULL);
    if (!rep_pictformat)
-     return ret;
+      return ret;
 
    iter_forminfo = xcb_render_query_pict_formats_formats_iterator(rep_pictformat);
    for (; iter_forminfo.rem; xcb_render_pictforminfo_next(&iter_forminfo))
@@ -1889,10 +1947,7 @@ ecore_x_window_argb_get(Ecore_X_Window win)
 #endif /* ECORE_XCB_RENDER */
 
    return ret;
-}
-
-
-
+} /* ecore_x_window_argb_get */
 
 /**
  * Set if a window should be ignored.
@@ -1907,37 +1962,41 @@ ecore_x_window_ignore_set(Ecore_X_Window window,
 
    if (ignore)
      {
-	if (ignore_list)
-	  {
-	     for (i = 0; i < ignore_num; i++)
-	       {
-		  if (window == ignore_list[i])
-		    return;
-	       }
-	     ignore_list = realloc(ignore_list, (ignore_num + 1) * sizeof(Ecore_X_Window));
-	     if (!ignore_list) return;
-	     ignore_list[ignore_num++] = window;
-	  }
-	else
-	  {
-	     ignore_num = 0;
-	     ignore_list = malloc(sizeof(Ecore_X_Window));
-	     ignore_list[ignore_num++] = window;
-	  }
+        if (ignore_list)
+          {
+             for (i = 0; i < ignore_num; i++)
+               {
+                  if (window == ignore_list[i])
+                     return;
+               }
+             ignore_list = realloc(ignore_list, (ignore_num + 1) * sizeof(Ecore_X_Window));
+             if (!ignore_list)
+                return;
+
+             ignore_list[ignore_num++] = window;
+          }
+        else
+          {
+             ignore_num = 0;
+             ignore_list = malloc(sizeof(Ecore_X_Window));
+             ignore_list[ignore_num++] = window;
+          }
      }
    else
      {
-	if (!ignore_list) return;
-	for (i = 0, j = 0; i < ignore_num; i++)
-	  {
-	     if (window != ignore_list[i])
-	       ignore_list[i] = ignore_list[j++];
-	     else
-	       ignore_num--;
-	  }
-	ignore_list = realloc(ignore_list, ignore_num * sizeof(Ecore_X_Window));
+        if (!ignore_list)
+           return;
+
+        for (i = 0, j = 0; i < ignore_num; i++)
+          {
+             if (window != ignore_list[i])
+                ignore_list[i] = ignore_list[j++];
+             else
+                ignore_num--;
+          }
+        ignore_list = realloc(ignore_list, ignore_num * sizeof(Ecore_X_Window));
      }
-}
+} /* ecore_x_window_ignore_set */
 
 /**
  * Get the ignore list
@@ -1947,9 +2006,11 @@ ecore_x_window_ignore_set(Ecore_X_Window window,
 EAPI Ecore_X_Window *
 ecore_x_window_ignore_list(int *num)
 {
-   if (num) *num = ignore_num;
+   if (num)
+      *num = ignore_num;
+
    return ignore_list;
-}
+} /* ecore_x_window_ignore_list */
 
 /**
  * Retrieves the size of the given window.
@@ -1971,7 +2032,7 @@ ecore_x_window_size_get(Ecore_X_Window window,
       window = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
    ecore_x_drawable_geometry_get(window, NULL, NULL, width, height);
-}
+} /* ecore_x_window_size_get */
 
 /**
  * Retrieves the geometry of the given window.
@@ -1997,7 +2058,7 @@ ecore_x_window_geometry_get(Ecore_X_Window window,
       window = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
    ecore_x_drawable_geometry_get(window, x, y, width, height);
-}
+} /* ecore_x_window_geometry_get */
 
 /**
  * Retrieves the width of the border of the given window.
@@ -2013,7 +2074,7 @@ ecore_x_window_border_width_get(Ecore_X_Window win)
       return 0;
 
    return ecore_x_drawable_border_width_get(win);
-}
+} /* ecore_x_window_border_width_get */
 
 /**
  * Retrieves the depth of the given window.
@@ -2024,4 +2085,5 @@ EAPI int
 ecore_x_window_depth_get(Ecore_X_Window win)
 {
    return ecore_x_drawable_depth_get(win);
-}
+} /* ecore_x_window_depth_get */
+

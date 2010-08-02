@@ -4,19 +4,16 @@
 
 #include "ecore_xcb_private.h"
 
-
 /**
  * @defgroup Ecore_X_RandR_Group X RandR Extension Functions
  *
  * Functions related to the X RandR extension.
  */
 
-
 #ifdef ECORE_XCB_RANDR
 static int _randr_available = 0;
 static xcb_randr_query_version_cookie_t _ecore_xcb_randr_init_cookie;
 #endif /* ECORE_XCB_RANDR */
-
 
 /* To avoid round trips, the initialization is separated in 2
    functions: _ecore_xcb_randr_init and
@@ -29,8 +26,9 @@ _ecore_x_randr_init(const xcb_query_extension_reply_t *reply)
 #ifdef ECORE_XCB_RANDR
    if (reply && (reply->present))
       _ecore_xcb_randr_init_cookie = xcb_randr_query_version_unchecked(_ecore_xcb_conn, 1, 2);
+
 #endif /* ECORE_XCB_RANDR */
-}
+} /* _ecore_x_randr_init */
 
 void
 _ecore_x_randr_init_finalize(void)
@@ -45,11 +43,13 @@ _ecore_x_randr_init_finalize(void)
      {
         if ((reply->major_version >= 1) &&
             (reply->minor_version >= 1))
-          _randr_available = 1;
+           _randr_available = 1;
+
         free(reply);
      }
+
 #endif /* ECORE_XCB_RANDR */
-}
+} /* _ecore_x_randr_init_finalize */
 
 /**
  * Return whether the X server supports the RandR Extension.
@@ -64,11 +64,10 @@ ecore_x_randr_query(void)
 {
 #ifdef ECORE_XCB_RANDR
    return _randr_available;
-#else
+#else /* ifdef ECORE_XCB_RANDR */
    return 0;
 #endif /* ECORE_XCB_RANDR */
-}
-
+} /* ecore_x_randr_query */
 
 static Ecore_X_Window
 _xcb_randr_root_to_screen(Ecore_X_Window root)
@@ -79,11 +78,11 @@ _xcb_randr_root_to_screen(Ecore_X_Window root)
    for (; iter.rem; xcb_screen_next(&iter))
      {
         if (iter.data->root == root)
-          return iter.data->root;
+           return iter.data->root;
      }
 
    return XCB_NONE;
-}
+} /* _xcb_randr_root_to_screen */
 
 /**
  * Select if the ScreenChangeNotify events  will be sent.
@@ -104,13 +103,13 @@ ecore_x_randr_events_select(Ecore_X_Window window,
                             int            on)
 {
 #ifdef ECORE_XCB_RANDR
-     xcb_randr_select_input(_ecore_xcb_conn, window,
-                            on ? XCB_RANDR_SCREEN_CHANGE_NOTIFY : 0);
-     return 1;
-#else
+   xcb_randr_select_input(_ecore_xcb_conn, window,
+                          on ? XCB_RANDR_SCREEN_CHANGE_NOTIFY : 0);
+   return 1;
+#else /* ifdef ECORE_XCB_RANDR */
    return 0;
 #endif /* ECORE_XCB_RANDR */
-}
+} /* ecore_x_randr_events_select */
 
 /**
  * Sends the GetScreenInfo request.
@@ -127,8 +126,7 @@ ecore_x_randr_get_screen_info_prefetch(Ecore_X_Window window)
                                                 _xcb_randr_root_to_screen(window));
    _ecore_xcb_cookie_cache(cookie.sequence);
 #endif /* ECORE_XCB_RANDR */
-}
-
+} /* ecore_x_randr_get_screen_info_prefetch */
 
 /**
  * Gets the reply of the GetScreenInfo request sent by ecore_x_randr_get_screen_info_prefetch().
@@ -145,7 +143,7 @@ ecore_x_randr_get_screen_info_fetch(void)
    reply = xcb_randr_get_screen_info_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
 #endif /* ECORE_XCB_RANDR */
-}
+} /* ecore_x_randr_get_screen_info_fetch */
 
 /**
  * Get the set of rotations and reflections.
@@ -169,13 +167,13 @@ ecore_x_randr_screen_rotations_get(Ecore_X_Window root __UNUSED__)
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
-     return 0;
+      return 0;
 
    return reply->rotations;
-#else
+#else /* ifdef ECORE_XCB_RANDR */
    return 0;
 #endif /* ECORE_XCB_RANDR */
-}
+} /* ecore_x_randr_screen_rotations_get */
 
 /**
  * Get the rotation.
@@ -199,13 +197,13 @@ ecore_x_randr_screen_rotation_get(Ecore_X_Window root __UNUSED__)
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
-     return 0;
+      return 0;
 
    return reply->rotation;
-#else
+#else /* ifdef ECORE_XCB_RANDR */
    return 0;
 #endif /* ECORE_XCB_RANDR */
-}
+} /* ecore_x_randr_screen_rotation_get */
 
 /**
  * Get the frame buffer sizes.
@@ -225,26 +223,30 @@ ecore_x_randr_screen_rotation_get(Ecore_X_Window root __UNUSED__)
  */
 EAPI Ecore_X_Screen_Size *
 ecore_x_randr_screen_sizes_get(Ecore_X_Window root __UNUSED__,
-                               int           *num)
+                               int                *num)
 {
 #ifdef ECORE_XCB_RANDR
    xcb_randr_get_screen_info_reply_t *reply;
-   xcb_randr_screen_size_t           *sizes;
-   Ecore_X_Screen_Size               *ret;
-   int                                n;
-   int                                i;
+   xcb_randr_screen_size_t *sizes;
+   Ecore_X_Screen_Size *ret;
+   int n;
+   int i;
 
-   if (num) *num = 0;
+   if (num)
+      *num = 0;
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
-     return NULL;
+      return NULL;
 
    n = xcb_randr_get_screen_info_sizes_length(reply);
    ret = calloc(n, sizeof(Ecore_X_Screen_Size));
-   if (!ret) return NULL;
+   if (!ret)
+      return NULL;
 
-   if (num) *num = n;
+   if (num)
+      *num = n;
+
    sizes = xcb_randr_get_screen_info_sizes(reply);
    for (i = 0; i < n; i++)
      {
@@ -253,11 +255,13 @@ ecore_x_randr_screen_sizes_get(Ecore_X_Window root __UNUSED__,
      }
 
    return ret;
-#else
-   if (num) *num = 0;
+#else /* ifdef ECORE_XCB_RANDR */
+   if (num)
+      *num = 0;
+
    return NULL;
 #endif /* ECORE_XCB_RANDR */
-}
+} /* ecore_x_randr_screen_sizes_get */
 
 /**
  * Get the current frame buffer size.
@@ -279,12 +283,12 @@ ecore_x_randr_current_screen_size_get(Ecore_X_Window root __UNUSED__)
    Ecore_X_Screen_Size ret = { -1, -1 };
 #ifdef ECORE_XCB_RANDR
    xcb_randr_get_screen_info_reply_t *reply;
-   xcb_randr_screen_size_t           *sizes;
-   uint16_t                           size_index;
+   xcb_randr_screen_size_t *sizes;
+   uint16_t size_index;
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
-     return ret;
+      return ret;
 
    size_index = reply->sizeID;
    sizes = xcb_randr_get_screen_info_sizes(reply);
@@ -293,10 +297,11 @@ ecore_x_randr_current_screen_size_get(Ecore_X_Window root __UNUSED__)
         ret.width = sizes[size_index].mwidth;
         ret.height = sizes[size_index].mheight;
      }
+
 #endif /* ECORE_XCB_RANDR */
 
    return ret;
-}
+} /* ecore_x_randr_current_screen_size_get */
 
 /**
  * Get the current refresh rate.
@@ -315,19 +320,19 @@ ecore_x_randr_current_screen_size_get(Ecore_X_Window root __UNUSED__)
 EAPI Ecore_X_Screen_Refresh_Rate
 ecore_x_randr_current_screen_refresh_rate_get(Ecore_X_Window root __UNUSED__)
 {
-   Ecore_X_Screen_Refresh_Rate        ret = { -1 };
+   Ecore_X_Screen_Refresh_Rate ret = { -1 };
 #ifdef ECORE_XCB_RANDR
    xcb_randr_get_screen_info_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
-     return ret;
+      return ret;
 
    ret.rate = reply->rate;
 #endif /* ECORE_XCB_RANDR */
 
    return ret;
-}
+} /* ecore_x_randr_current_screen_refresh_rate_get */
 
 /**
  * Get the refresh rates.
@@ -349,43 +354,47 @@ ecore_x_randr_current_screen_refresh_rate_get(Ecore_X_Window root __UNUSED__)
  */
 EAPI Ecore_X_Screen_Refresh_Rate *
 ecore_x_randr_screen_refresh_rates_get(Ecore_X_Window root __UNUSED__,
-                                       int            size_id __UNUSED__,
-                                       int           *num)
+                                       int size_id         __UNUSED__,
+                                       int                *num)
 {
 #ifdef ECORE_XCB_RANDR
    xcb_randr_get_screen_info_reply_t *reply;
-   Ecore_X_Screen_Refresh_Rate       *ret;
-   Ecore_X_Screen_Refresh_Rate       *tmp;
+   Ecore_X_Screen_Refresh_Rate *ret;
+   Ecore_X_Screen_Refresh_Rate *tmp;
    xcb_randr_refresh_rates_iterator_t iter;
-   uint16_t                           n;
+   uint16_t n;
 
-   if (num) *num = 0;
+   if (num)
+      *num = 0;
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
-     return NULL;
+      return NULL;
 
    n = reply->nSizes;
    ret = calloc(n, sizeof(Ecore_X_Screen_Refresh_Rate));
    if (!ret)
-     return NULL;
+      return NULL;
 
-   if (num) *num = n;
+   if (num)
+      *num = n;
 
    /* FIXME: maybe there's a missing function in xcb randr implementation */
    iter = xcb_randr_get_screen_info_rates_iterator(reply);
    tmp = ret;
    for (; iter.rem; xcb_randr_refresh_rates_next(&iter), tmp++)
      {
-       tmp->rate = iter.data->nRates;;
+        tmp->rate = iter.data->nRates;
      }
 
    return ret;
-#else
-   if (num) *num = 0;
+#else /* ifdef ECORE_XCB_RANDR */
+   if (num)
+      *num = 0;
+
    return NULL;
 #endif /* ECORE_XCB_RANDR */
-}
+} /* ecore_x_randr_screen_refresh_rates_get */
 
 /* FIXME: round trip. Should we remove it ? */
 
@@ -406,11 +415,11 @@ ecore_x_randr_screen_rotation_set(Ecore_X_Window         root,
 #ifdef ECORE_XCB_RANDR
    xcb_randr_set_screen_config_cookie_t cookie;
    xcb_randr_set_screen_config_reply_t *reply_config;
-   xcb_randr_get_screen_info_reply_t   *reply;
+   xcb_randr_get_screen_info_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
-     return;
+      return;
 
    cookie = xcb_randr_set_screen_config_unchecked(_ecore_xcb_conn, root,
                                                   XCB_CURRENT_TIME,
@@ -420,9 +429,10 @@ ecore_x_randr_screen_rotation_set(Ecore_X_Window         root,
                                                   0);
    reply_config = xcb_randr_set_screen_config_reply(_ecore_xcb_conn, cookie, NULL);
    if (reply_config)
-     free(reply_config);
+      free(reply_config);
+
 #endif /* ECORE_XCB_RANDR */
-}
+} /* ecore_x_randr_screen_rotation_set */
 
 /* FIXME: round trip. Should we remove it ? */
 
@@ -443,14 +453,14 @@ ecore_x_randr_screen_size_set(Ecore_X_Window      root,
 #ifdef ECORE_XCB_RANDR
    xcb_randr_set_screen_config_cookie_t cookie;
    xcb_randr_set_screen_config_reply_t *reply_config;
-   xcb_randr_get_screen_info_reply_t   *reply;
-   xcb_randr_screen_size_iterator_t     iter;
-   int                                  size_index = -1;
-   int                                  i;
+   xcb_randr_get_screen_info_reply_t *reply;
+   xcb_randr_screen_size_iterator_t iter;
+   int size_index = -1;
+   int i;
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
-     return 0;
+      return 0;
 
    iter = xcb_randr_get_screen_info_sizes_iterator(reply);
    for (i = 0; iter.rem; xcb_randr_screen_size_next(&iter), i++)
@@ -460,11 +470,12 @@ ecore_x_randr_screen_size_set(Ecore_X_Window      root,
             (iter.data->mwidth = size.width) &&
             (iter.data->mheight = size.height))
           {
-            size_index = i;
-            break;
+             size_index = i;
+             break;
           }
      }
-   if (size_index == -1) return 0;
+   if (size_index == -1)
+      return 0;
 
    cookie = xcb_randr_set_screen_config_unchecked(_ecore_xcb_conn, root,
                                                   XCB_CURRENT_TIME,
@@ -474,15 +485,15 @@ ecore_x_randr_screen_size_set(Ecore_X_Window      root,
                                                   0);
    reply_config = xcb_randr_set_screen_config_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply_config)
-     return 0;
+      return 0;
 
    free(reply_config);
 
    return 1;
-#else
+#else /* ifdef ECORE_XCB_RANDR */
    return 0;
 #endif /* ECORE_XCB_RANDR */
-}
+} /* ecore_x_randr_screen_size_set */
 
 /* FIXME: round trip. Should we remove it ? */
 
@@ -506,14 +517,14 @@ ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window              root,
 #ifdef ECORE_XCB_RANDR
    xcb_randr_set_screen_config_cookie_t cookie;
    xcb_randr_set_screen_config_reply_t *reply_config;
-   xcb_randr_get_screen_info_reply_t   *reply;
-   xcb_randr_screen_size_iterator_t     iter;
-   int                                  size_index = -1;
-   int                                  i;
+   xcb_randr_get_screen_info_reply_t *reply;
+   xcb_randr_screen_size_iterator_t iter;
+   int size_index = -1;
+   int i;
 
    reply = _ecore_xcb_reply_get();
    if (!reply)
-     return 0;
+      return 0;
 
    iter = xcb_randr_get_screen_info_sizes_iterator(reply);
    for (i = 0; iter.rem; xcb_randr_screen_size_next(&iter), i++)
@@ -523,11 +534,12 @@ ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window              root,
             (iter.data->mwidth = size.width) &&
             (iter.data->mheight = size.height))
           {
-            size_index = i;
-            break;
+             size_index = i;
+             break;
           }
      }
-   if (size_index == -1) return 0;
+   if (size_index == -1)
+      return 0;
 
    cookie = xcb_randr_set_screen_config_unchecked(_ecore_xcb_conn, root,
                                                   XCB_CURRENT_TIME,
@@ -537,12 +549,13 @@ ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window              root,
                                                   rate.rate);
    reply_config = xcb_randr_set_screen_config_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply_config)
-     return 0;
+      return 0;
 
    free(reply_config);
 
    return 1;
-#else
+#else /* ifdef ECORE_XCB_RANDR */
    return 0;
 #endif /* ECORE_XCB_RANDR */
-}
+} /* ecore_x_randr_screen_refresh_rate_set */
+
