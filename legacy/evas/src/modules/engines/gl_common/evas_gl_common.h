@@ -95,6 +95,8 @@ struct _Evas_GL_Shared
       Eina_Bool bgra : 1;
       Eina_Bool tex_npo2 : 1;
       Eina_Bool tex_rect : 1;
+      // tuning params - per gpu/cpu combo?
+      int cutout_max;
    } info;
    
    struct {

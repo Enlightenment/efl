@@ -399,12 +399,16 @@ evas_gl_common_context_new(void)
              if ((strstr((char*) ext, "GL_EXT_bgra")) ||
                  (strstr((char*) ext, "GL_EXT_texture_format_BGRA8888")))
                shared->info.bgra = 1;
-#endif             
+#endif
           }
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,
                       &(shared->info.max_texture_units));
         glGetIntegerv(GL_MAX_TEXTURE_SIZE,
                       &(shared->info.max_texture_size));
+        
+        shared->info.cutout_max = 512; // hmmm is this good?
+        if (getenv("EVAS_GL_CUTOUT_MAX"))
+           shared->info.cutout_max = atoi(getenv("EVAS_GL_CUTOUT_MAX"));
         
         fprintf(stderr, "max tex size %ix%i\n"
                 "max units %i\n"
@@ -412,13 +416,17 @@ evas_gl_common_context_new(void)
                 "rect tex %i\n"
                 "bgra : %i\n"
                 "max ansiotropic filtering: %3.3f\n"
+                "\n"
+                "cutout max: %i\n"
                 , 
                 shared->info.max_texture_size, shared->info.max_texture_size,
                 shared->info.max_texture_units,
                 (int)shared->info.tex_npo2,
                 (int)shared->info.tex_rect,
                 (int)shared->info.bgra,
-                (double)shared->info.anisotropic
+                (double)shared->info.anisotropic,
+                
+                shared->info.cutout_max
                 );
         
         glDisable(GL_DEPTH_TEST);
