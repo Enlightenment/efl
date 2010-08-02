@@ -486,7 +486,7 @@ EAPI Eina_Bool
 ecore_thread_cancel(Ecore_Thread *thread)
 {
 #ifdef EFL_HAVE_PTHREAD
-   Ecore_Pthread_Worker *work;
+   Ecore_Pthread_Worker *work = (Ecore_Pthread_Worker*) thread;
    Eina_List *l;
 
    if (!work)
