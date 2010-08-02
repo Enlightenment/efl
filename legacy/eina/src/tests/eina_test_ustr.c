@@ -114,13 +114,26 @@ START_TEST(eina_unicode_strncpy_test)
    rv = eina_unicode_strncpy(buf,STR1,1);
    fail_if(rv != buf);
    fail_if(buf[1] != '7');
-   fail_if(buf[0] != STR1[1]);
+   fail_if(buf[0] != STR1[0]);
 
    buf[9] = '7';
-   rv = eina_unicode_strncpy(buf, STR1, 10);
+   rv = eina_unicode_strncpy(buf, STR4, 10);
    fail_if(rv != buf);
-   fail_if(eina_unicode_strcmp(buf,STR1) != 0);
+   fail_if(eina_unicode_strcmp(buf,STR4) != 0);
    fail_if(buf[9] != 0);
+
+   buf[0] = '7';
+   rv = eina_unicode_strncpy(buf, STR1, 0);
+   fail_if(buf[0] != '7');
+
+   /* may segfault */
+   buf[0] = '7';
+   rv = eina_unicode_strncpy(buf, NULL, 0);
+   fail_if(buf[0] != '7');
+
+   /* Hopefully won't segfault */
+   rv = eina_unicode_strncpy(NULL, STR1, 0);
+   fail_if(rv != NULL);
 
    eina_shutdown();
 }
