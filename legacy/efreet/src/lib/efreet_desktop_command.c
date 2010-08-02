@@ -378,6 +378,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
             {
                 size = len + 1024;
                 exec = realloc(exec, size);
+                if (!exec) goto error;
             }
 
             /* XXX handle fields inside quotes? */
@@ -458,6 +459,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
             {
                 size = len + 1024;
                 exec = realloc(exec, size);
+                if (!exec) goto error;
             }
             exec[len++] = ' ';
             exec = efreet_desktop_command_append_multiple(exec, &size,
@@ -476,6 +478,13 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
     while ((l = eina_list_next(l)) != NULL);
 
     return execs;
+error:
+    if (execs)
+    {
+        EINA_LIST_FREE(execs, exec)
+            free(exec);
+    }
+    return NULL;
 }
 
 static void
@@ -836,6 +845,7 @@ efreet_string_append(char *dest, int *size, int *len, const char *src)
         *len = *size - 1;
         *size += 1024;
         dest = realloc(dest, *size);
+        if (!dest) return NULL;
         *(dest + *len) = '\0';
 
         l = eina_strlcpy(dest + *len, src + off, *size - *len);
@@ -852,6 +862,7 @@ efreet_string_append_char(char *dest, int *size, int *len, char c)
     {
         *size += 1024;
         dest = realloc(dest, *size);
+        if (!dest) return NULL;
     }
 
     dest[(*len)++] = c;

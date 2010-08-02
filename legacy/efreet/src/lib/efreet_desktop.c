@@ -824,6 +824,7 @@ efreet_desktop_string_list_join(Eina_List *list)
         {
             size = len + pos + 1024;
             string = realloc(string, size);
+            if (!string) return NULL;
         }
         strcpy(string + pos, tmp);
         pos += len;
