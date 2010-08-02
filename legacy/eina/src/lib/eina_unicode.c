@@ -1,5 +1,6 @@
 /* EINA - EFL data type library
- * Copyright (C) 2010-2010 Tom Hacohen
+ * Copyright (C) 2010 Tom Hacohen,
+ *		Brett Nash
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -96,7 +97,7 @@ eina_unicode_strnlen(const Eina_Unicode *ustr, int n)
 {
    const Eina_Unicode *end;
    const Eina_Unicode *last = ustr + n; /* technically not portable ;-) */
-   for (end = ustr; *end && end < last; end++)
+   for (end = ustr; end < last && *end; end++)
       ;
    return end - ustr;
 }
