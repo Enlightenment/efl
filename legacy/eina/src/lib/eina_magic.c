@@ -255,6 +255,12 @@ eina_magic_string_shutdown(void)
  *    free(ptr->name);
  *    free(ptr);
  * }
+ * struct base *base_new(int id, const char *name) {
+ *    struct base *ptr = malloc(sizeof(struct base));
+ *    EINA_MAGIC_SET(ptr, BASE_MAGIC);
+ *    ptr->id = id;
+ *    ptr->name = strdup(name);
+ * }
  *
  * struct subtype {
  *    struct base base;
