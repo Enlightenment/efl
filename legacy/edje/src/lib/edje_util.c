@@ -4241,35 +4241,45 @@ _edje_children_get(Edje_Real_Part *rp, const char *partid)
 {
    Evas_Object *child;
    Eina_List *l;
-   Eina_Bool number = EINA_TRUE;
-   unsigned int i;
+   long int v;
+   char *p;
 
-   for (i = 0; i < strlen(partid); ++i)
-     number &= isdigit(partid[i]) ? EINA_TRUE : EINA_FALSE;
+   if (!partid) return NULL;
 
-   if (rp->part->type == EDJE_PART_TYPE_BOX)
-     l = evas_object_box_children_get(rp->object);
-   else
-     if (rp->part->type == EDJE_PART_TYPE_TABLE)
-       l = evas_object_table_children_get(rp->object);
-     else
-       if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
-    	 return _edje_external_content_get(rp->swallowed_object, partid);
-     else
-       return NULL;
-
-   if (number)
+   switch (rp->part->type)
      {
-	child = eina_list_nth(l, atoi(partid));
-	eina_list_free(l);
+      case EDJE_PART_TYPE_EXTERNAL:
+         return _edje_external_content_get(rp->swallowed_object, partid);
+      case EDJE_PART_TYPE_BOX:
+         l = evas_object_box_children_get(rp->object);
+         break;
+      case EDJE_PART_TYPE_TABLE:
+         l = evas_object_table_children_get(rp->object);
+         break;
+      default:
+         return NULL;
+     }
+
+   v = strtol(partid, &p, 10);
+   if ((*p == '\0') && (v >= 0))
+     {
+        child = eina_list_nth(l, v);
      }
    else
      {
-	EINA_LIST_FREE(l, child)
-	  if (!strcmp(evas_object_name_get(child), partid))
-	    break ;
-	eina_list_free(l);
+        Evas_Object *cur;
+        child = NULL;
+        EINA_LIST_FREE(l, cur)
+          {
+             const char *name = evas_object_name_get(cur);
+             if ((name) && (!strcmp(name, partid)))
+               {
+                  child = cur;
+                  break;
+               }
+          }
      }
+   eina_list_free(l);
 
    return child;
 }
