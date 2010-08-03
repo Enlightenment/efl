@@ -2716,6 +2716,12 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
 
 	tmp = realloc(rp->part->other_desc,
 		      sizeof (Edje_Part_Description_Common *) * (rp->part->other_count + 1));
+	if (!tmp)
+	  {
+	     free(pd);
+	     return;
+	  }
+	rp->part->other_desc = tmp;
 	rp->part->other_desc[rp->part->other_count++] = pd;
      }
 
@@ -2901,6 +2907,12 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 
 	tmp = realloc(rp->part->other_desc,
 		      sizeof (Edje_Part_Description_Common *) * (rp->part->other_count + 1));
+	if (!tmp)
+	  {
+	     free(pdto);
+	     return EINA_FALSE;
+	  }
+	rp->part->other_desc = tmp;
 	rp->part->other_desc[rp->part->other_count++] = pdto;
 
 	pdto->state.name = eina_stringshare_add(to);
