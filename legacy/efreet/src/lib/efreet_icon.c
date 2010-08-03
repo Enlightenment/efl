@@ -355,6 +355,7 @@ efreet_icon_find_theme_check(const char *theme_name)
     {
         if ((fake_null) && (!theme_name)) return fake_null;
         theme = efreet_icon_theme_new();
+        if (!theme) return NULL;
         theme->fake = 1;
         if (theme_name)
         {
@@ -392,6 +393,7 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
         char *tmp;
 
         tmp = efreet_icon_remove_extension(icon);
+        if (!tmp) return NULL;
         value = efreet_icon_find_helper(theme, tmp, size);
         FREE(tmp);
     }
@@ -436,7 +438,11 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
         Eina_List *tmps = NULL;
 
         EINA_LIST_FOREACH(icons, l, icon)
-            tmps = eina_list_append(tmps, efreet_icon_remove_extension(icon));
+        {
+            data = efreet_icon_remove_extension(icon);
+            if (!data) return NULL;
+            tmps = eina_list_append(tmps, data);
+        }
 
         value = efreet_icon_list_find_helper(theme, tmps, size);
         EINA_LIST_FREE(tmps, data)
@@ -1311,6 +1317,7 @@ efreet_icon_theme_dir_scan(const char *search_dir, const char *theme_name)
         if (!theme)
         {
             theme = efreet_icon_theme_new();
+            if (!theme) goto error;
             theme->name.internal = key;
             eina_hash_add(efreet_icon_themes,
                           (void *)theme->name.internal, theme);
@@ -1332,6 +1339,7 @@ efreet_icon_theme_dir_scan(const char *search_dir, const char *theme_name)
         if (ecore_file_exists(path))
             efreet_icon_theme_index_read(theme, path);
     }
+error:
     closedir(dirs);
 
     /* if we were given a theme name we want to make sure that that given
@@ -1356,7 +1364,9 @@ efreet_icon_theme_dir_scan(const char *search_dir, const char *theme_name)
 static void
 efreet_icon_theme_index_read(Efreet_Icon_Theme *theme, const char *path)
 {
+    /* TODO: return error value */
     Efreet_Ini *ini;
+    Efreet_Icon_Theme_Directory *dir;
     const char *tmp;
 
     if (!theme || !path) return;
@@ -1426,13 +1436,15 @@ efreet_icon_theme_index_read(Efreet_Icon_Theme *theme, const char *path)
 
             if (p) *p = '\0';
 
-            theme->directories = eina_list_append(theme->directories,
-                            efreet_icon_theme_directory_new(ini, s));
+            dir = efreet_icon_theme_directory_new(ini, s);
+            if (!dir) goto error;
+            theme->directories = eina_list_append(theme->directories, dir);
 
             if (p) s = ++p;
         }
     }
 
+error:
     efreet_ini_free(ini);
 }
 
