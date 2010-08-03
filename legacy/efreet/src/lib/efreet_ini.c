@@ -522,7 +522,7 @@ efreet_ini_localestring_get(Efreet_Ini *ini, const char *key)
     if (country) maxlen += strlen(country);
     if (modifier) maxlen += strlen(modifier);
 
-    buf = alloca(maxlen * sizeof(char));
+    buf = alloca(maxlen);
 
     if (lang && modifier && country)
     {

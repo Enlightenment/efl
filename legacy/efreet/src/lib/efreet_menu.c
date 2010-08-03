@@ -953,7 +953,7 @@ efreet_menu_dump(Efreet_Menu *menu, const char *indent)
         size_t len;
 
         len = strlen(indent) + 3;
-        new_indent = alloca(sizeof(char *) * len);
+        new_indent = alloca(len);
         snprintf(new_indent, len, "%s  ", indent);
 
         EINA_LIST_FOREACH(menu->entries, l, entry)
