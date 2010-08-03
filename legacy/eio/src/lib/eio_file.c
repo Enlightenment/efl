@@ -85,9 +85,9 @@ struct _Eio_File_Op
 {
    Eio_File common;
    const char *file;
-   short int flags;
    struct stat st;
-   int exists;
+   Eio_File_Op_Flags flags;
+   Eina_Bool exists;
    Eina_Bool can_read;
    Eina_Bool can_write;
    Eina_Bool can_execute;
@@ -99,11 +99,9 @@ static int _eio_count = 0;
 static void
 _eio_file_heavy(Ecore_Thread *thread, void *data)
 {
-   Eio_File_Char_Ls *async;
+   Eio_File_Char_Ls *async = data;
    Eina_Iterator *ls;
    const char *file;
-
-   async = data;
 
    ls = eina_file_ls(async->ls.directory);
    if (!ls)
@@ -118,7 +116,7 @@ _eio_file_heavy(Ecore_Thread *thread, void *data)
 
 	if (async->filter_cb)
 	  {
-	     filter = async->filter_cb(file, (void*) async->ls.common.data);
+	     filter = async->filter_cb(async->ls.common.data, file);
 	  }
 
 	if (filter) ecore_thread_notify(thread, file);
@@ -134,14 +132,11 @@ _eio_file_heavy(Ecore_Thread *thread, void *data)
 static void
 _eio_file_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
 {
-   Eio_File_Char_Ls *async;
-   const char *file;
-
-   async = data;
-   file = msg_data;
+   Eio_File_Char_Ls *async = data;
+   const char *file = msg_data;
 
    if (async->main_cb)
-     async->main_cb(file, (void*) async->ls.common.data);
+     async->main_cb(async->ls.common.data, file);
 
    eina_stringshare_del(file);
 }
@@ -149,11 +144,9 @@ _eio_file_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
 static void
 _eio_file_direct_heavy(Ecore_Thread *thread, void *data)
 {
-   Eio_File_Direct_Ls *async;
+   Eio_File_Direct_Ls *async = data;
    Eina_Iterator *ls;
    const Eina_File_Direct_Info *info;
-
-   async = data;
 
    ls = eina_file_direct_ls(async->ls.directory);
    if (!ls)
@@ -168,7 +161,7 @@ _eio_file_direct_heavy(Ecore_Thread *thread, void *data)
 
 	if (async->filter_cb)
 	  {
-	     filter = async->filter_cb(info, (void*) async->ls.common.data);
+	     filter = async->filter_cb(async->ls.common.data, info);
 	  }
 
 	if (filter)
@@ -199,7 +192,7 @@ _eio_file_direct_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *d
    info = msg_data;
 
    if (async->main_cb)
-     async->main_cb(info, (void*) async->ls.common.data);
+     async->main_cb(async->ls.common.data, info);
 
    free(info);
 }
@@ -212,7 +205,7 @@ _eio_file_end(void *data)
    async = data;
 
    if (async->common.done_cb)
-     async->common.done_cb((void*) async->common.data);
+     async->common.done_cb(async->common.data);
 
    eina_stringshare_del(async->directory);
    free(async);
@@ -226,7 +219,7 @@ _eio_file_error(void *data)
    async = data;
 
    if (async->common.error_cb)
-     async->common.error_cb((void*) async->common.data);
+     async->common.error_cb(async->common.data);
 
    eina_stringshare_del(async->directory);
    free(async);
@@ -235,89 +228,69 @@ _eio_file_error(void *data)
 static void
 _eio_file_op_cb(void *data)
 {
-   Eio_File_Op *async;
+   Eio_File_Op *async = data;
 
-   async = data;
-   if (stat(async->file, &async->st) >= 0)
+   async->exists = (stat(async->file, &async->st) == 0);
+   if (async->exists)
      {
-        if (async->flags & EIO_FILE_CAN_READ == EIO_FILE_CAN_READ)
+        if ((async->flags & EIO_FILE_CAN_READ) == EIO_FILE_CAN_READ)
           {
              if (!access(async->file, R_OK))
                async->can_read = EINA_TRUE;
              else
                async->can_read = EINA_FALSE;
           }
-        if (async->flags & EIO_FILE_CAN_WRITE == EIO_FILE_CAN_WRITE)
+        if ((async->flags & EIO_FILE_CAN_WRITE) == EIO_FILE_CAN_WRITE)
           {
              if (!access(async->file, W_OK))
                async->can_write = EINA_TRUE;
              else
                async->can_write = EINA_FALSE;
           }
-        if (async->flags & EIO_FILE_CAN_EXECUTE == EIO_FILE_CAN_EXECUTE)
+        if ((async->flags & EIO_FILE_CAN_EXECUTE) == EIO_FILE_CAN_EXECUTE)
           {
              if (!access(async->file, X_OK))
                async->can_execute = EINA_TRUE;
              else
                async->can_execute = EINA_FALSE;
           }
-        async->exists = 1;
      }
-   else
-     async->exists = 0;
 }
 
 static void
 _eio_file_op_end(void *data)
 {
-   Eio_File_Op *async;
+   Eio_File_Op *async = data;
    
-   async = data;
-
    if (!async->exists)
      {
-        if (async->flags & EIO_FILE_EXISTS == EIO_FILE_EXISTS)
-          async->main_cb((void *)EINA_FALSE, EIO_FILE_EXISTS, data);
-        ecore_thread_cancel(async->common.thread);
+        if ((async->flags & EIO_FILE_EXISTS) == EIO_FILE_EXISTS)
+          {
+             async->main_cb(async->common.data, EIO_FILE_EXISTS, (void *)(long)async->exists);
+             if (async->common.done_cb)
+	       async->common.done_cb(async->common.data);
+          }
+        else
+     	  ecore_thread_cancel(async->common.thread);
         return;
      }
 
-   if (async->flags & EIO_FILE_MOD_TIME == EIO_FILE_MOD_TIME)
-     async->main_cb((void *)async->st.st_mtime, EIO_FILE_MOD_TIME, data);
-   if (async->flags & EIO_FILE_SIZE == EIO_FILE_SIZE)
-     async->main_cb((void *)async->st.st_size, EIO_FILE_SIZE, data);   
-   if (async->flags & EIO_FILE_EXISTS == EIO_FILE_EXISTS)
-     async->main_cb((void *)EINA_TRUE, EIO_FILE_EXISTS, data);
-   if (async->flags & EIO_FILE_IS_DIR == EIO_FILE_IS_DIR)
-     {
-        if (S_ISDIR(async->st.st_mode))
-          async->main_cb((void *)EINA_TRUE, EIO_FILE_IS_DIR, data);
-        else
-          async->main_cb((void *)EINA_FALSE, EIO_FILE_IS_DIR, data);
-     }
-   if (async->flags & EIO_FILE_CAN_READ == EIO_FILE_CAN_READ)
-     {
-        if (async->can_read)
-          async->main_cb((void *)EINA_TRUE, EIO_FILE_CAN_READ, data);
-        else
-          async->main_cb((void *)EINA_FALSE, EIO_FILE_CAN_READ, data);
-     }
-   if (async->flags & EIO_FILE_CAN_WRITE == EIO_FILE_CAN_WRITE)
-     {
-        if (async->can_write)
-          async->main_cb((void *)EINA_TRUE, EIO_FILE_CAN_WRITE, data);
-        else
-          async->main_cb((void *)EINA_FALSE, EIO_FILE_CAN_WRITE, data);
-     }
-   if (async->flags & EIO_FILE_CAN_EXECUTE == EIO_FILE_CAN_EXECUTE)
-     {
-        if (async->can_execute)
-          async->main_cb((void *)EINA_TRUE, EIO_FILE_CAN_EXECUTE, data);
-        else
-          async->main_cb((void *)EINA_FALSE, EIO_FILE_CAN_EXECUTE, data);
-     }
+   if ((async->flags & EIO_FILE_MOD_TIME) == EIO_FILE_MOD_TIME)
+     async->main_cb(async->common.data, EIO_FILE_MOD_TIME, (void *)(long)async->st.st_mtime);
+   if ((async->flags & EIO_FILE_SIZE) == EIO_FILE_SIZE)
+     async->main_cb(async->common.data, EIO_FILE_SIZE, (void *)(long)async->st.st_size);   
+   if ((async->flags & EIO_FILE_EXISTS) == EIO_FILE_EXISTS)
+     async->main_cb(async->common.data, EIO_FILE_EXISTS, (void *)(long)async->exists);
+   if ((async->flags & EIO_FILE_IS_DIR) == EIO_FILE_IS_DIR)
+     async->main_cb(async->common.data, EIO_FILE_IS_DIR, (void *)(long)S_ISDIR(async->st.st_mode));
+   if ((async->flags & EIO_FILE_CAN_READ) == EIO_FILE_CAN_READ)
+     async->main_cb(async->common.data, EIO_FILE_CAN_READ, (void *)(long)async->can_read);
+   if ((async->flags & EIO_FILE_CAN_WRITE) == EIO_FILE_CAN_WRITE)
+     async->main_cb(async->common.data, EIO_FILE_CAN_WRITE, (void *)(long)async->can_write);
+   if ((async->flags & EIO_FILE_CAN_EXECUTE) == EIO_FILE_CAN_EXECUTE)
+     async->main_cb(async->common.data, EIO_FILE_CAN_EXECUTE, (void *)(long)async->can_execute);
    if (async->common.done_cb)
-     async->common.done_cb((void *) async->common.data);
+     async->common.done_cb(async->common.data);
 
    free(async);
 }
@@ -330,7 +303,7 @@ _eio_file_op_error(void *data)
    async = data;
 
    if (async->common.error_cb)
-     async->common.error_cb((void *) async->common.data);
+     async->common.error_cb(async->common.data);
 
    free(async);
 }
@@ -462,7 +435,7 @@ eio_file_cancel(Eio_File *ls)
 /**
  * @brief Perform standard File IO operations.
  * @param file The file to operate on.
- * @param flags Bit flags to specify which operations to do.
+ * @param flags Eio_File_Op_Flags to specify which operations to do.
  * @param main_cb Callback called from the main loop with the results of the file operations.
  * @param done_cb Callback called from the main loop when the operations are through.
  * @param error_cb Callback called from the main loop when the file operations could not be completed.
@@ -473,7 +446,7 @@ eio_file_cancel(Eio_File *ls)
  */
 EAPI Eio_File *
 eio_file_operation(const char *file,
-		   short int eio_file_flags,
+		   Eio_File_Op_Flags eio_file_flags,
 		   Eio_File_Op_Main_Cb main_cb,
 		   Eio_Done_Cb done_cb,
 		   Eio_Done_Cb error_cb,
