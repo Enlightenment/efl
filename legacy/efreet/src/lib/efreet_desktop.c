@@ -233,13 +233,8 @@ efreet_desktop_shutdown(void)
     if (efreet_desktop_exe_handler) ecore_event_handler_del(efreet_desktop_exe_handler);
     IF_RELEASE(desktop_environment);
     IF_FREE_HASH(efreet_desktop_cache);
-    while (efreet_desktop_types)
-    {
-        info = eina_list_data_get(efreet_desktop_types);
+    EINA_LIST_FREE(efreet_desktop_types, info)
         efreet_desktop_type_info_free(info);
-        efreet_desktop_types = eina_list_remove_list(efreet_desktop_types,
-                                                     efreet_desktop_types);
-    }
     EINA_LIST_FREE(efreet_desktop_dirs, dir)
         eina_stringshare_del(dir);
     if (cache_monitor) ecore_file_monitor_del(cache_monitor);
