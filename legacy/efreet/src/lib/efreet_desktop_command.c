@@ -369,6 +369,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
         Efreet_Desktop_Command_File *file = eina_list_data_get(l);
 
         exec = malloc(size);
+        if (!exec) goto error;
         p = command->desktop->exec;
         len = 0;
 

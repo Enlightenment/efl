@@ -814,6 +814,7 @@ efreet_desktop_string_list_join(Eina_List *list)
 
     size = 1024;
     string = malloc(size);
+    if (!string) return NULL;
     pos = 0;
 
     EINA_LIST_FOREACH(list, l, elem)
