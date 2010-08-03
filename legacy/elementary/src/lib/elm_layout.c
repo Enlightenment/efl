@@ -235,7 +235,6 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
 	  {
 	     if (content == si->obj) return;
 	     evas_object_del(si->obj);
-	     si->obj = NULL;
 	     break;
 	  }
      }
