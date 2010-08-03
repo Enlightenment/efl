@@ -953,7 +953,7 @@ efreet_menu_dump(Efreet_Menu *menu, const char *indent)
         size_t len;
 
         len = strlen(indent) + 3;
-        new_indent = malloc(sizeof(char *) * len);
+        new_indent = alloca(sizeof(char *) * len);
         snprintf(new_indent, len, "%s  ", indent);
 
         EINA_LIST_FOREACH(menu->entries, l, entry)
@@ -967,8 +967,6 @@ efreet_menu_dump(Efreet_Menu *menu, const char *indent)
             else if (entry->type == EFREET_MENU_ENTRY_HEADER)
                 INF("%s|---%s", new_indent, entry->name);
         }
-
-        FREE(new_indent);
     }
 }
 
