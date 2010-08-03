@@ -806,7 +806,7 @@ EAPI char *
 efreet_desktop_string_list_join(Eina_List *list)
 {
     Eina_List *l;
-    const char *tmp;
+    const char *elem;
     char *string;
     size_t size, pos, len;
 
@@ -816,17 +816,23 @@ efreet_desktop_string_list_join(Eina_List *list)
     string = malloc(size);
     pos = 0;
 
-    EINA_LIST_FOREACH(list, l, tmp)
+    EINA_LIST_FOREACH(list, l, elem)
     {
-        len = strlen(tmp);
+        len = strlen(elem);
         /* +1 for ';' */
         if ((len + pos + 1) >= size)
         {
+            char *tmp;
             size = len + pos + 1024;
-            string = realloc(string, size);
-            if (!string) return NULL;
+            tmp = realloc(string, size);
+            if (!tmp)
+            {
+                free(string);
+                return NULL;
+            }
+            string = tmp;
         }
-        strcpy(string + pos, tmp);
+        strcpy(string + pos, elem);
         pos += len;
         strcpy(string + pos, ";");
         pos += 1;

@@ -376,9 +376,12 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
         {
             if (len >= size - 1)
             {
+                char *tmp;
+
                 size = len + 1024;
-                exec = realloc(exec, size);
-                if (!exec) goto error;
+                tmp = realloc(exec, size);
+                if (!tmp) goto error;
+                exec = tmp;
             }
 
             /* XXX handle fields inside quotes? */
@@ -457,9 +460,11 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
                 command->desktop->orig_path, command->desktop->exec);
             if (len >= size - 1)
             {
+                char *tmp;
                 size = len + 1024;
-                exec = realloc(exec, size);
-                if (!exec) goto error;
+                tmp = realloc(exec, size);
+                if (!tmp) goto error;
+                exec = tmp;
             }
             exec[len++] = ' ';
             exec = efreet_desktop_command_append_multiple(exec, &size,
@@ -470,6 +475,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
         exec[len++] = '\0';
 
         execs = eina_list_append(execs, exec);
+        exec = NULL;
 
         /* If no file was added, then the Exec field doesn't contain any file
          * fields (fFuUdDnN). We only want to run the app once in this case. */
@@ -479,11 +485,9 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
 
     return execs;
 error:
-    if (execs)
-    {
-        EINA_LIST_FREE(execs, exec)
-            free(exec);
-    }
+    IF_FREE(exec);
+    EINA_LIST_FREE(execs, exec)
+        free(exec);
     return NULL;
 }
 
@@ -840,12 +844,18 @@ efreet_string_append(char *dest, int *size, int *len, const char *src)
 
     while (l > *size - *len)
     {
+        char *tmp;
         /* we successfully appended this much */
         off += *size - *len - 1;
         *len = *size - 1;
         *size += 1024;
-        dest = realloc(dest, *size);
-        if (!dest) return NULL;
+        tmp = realloc(dest, *size);
+        if (!tmp)
+        {
+            free(dest);
+            return NULL;
+        }
+        dest = tmp;
         *(dest + *len) = '\0';
 
         l = eina_strlcpy(dest + *len, src + off, *size - *len);
@@ -860,9 +870,15 @@ efreet_string_append_char(char *dest, int *size, int *len, char c)
 {
     if (*len >= *size - 1)
     {
+        char *tmp;
         *size += 1024;
-        dest = realloc(dest, *size);
-        if (!dest) return NULL;
+        tmp = realloc(dest, *size);
+        if (!tmp)
+        {
+            free(dest);
+            return NULL;
+        }
+        dest = tmp;
     }
 
     dest[(*len)++] = c;
