@@ -455,10 +455,12 @@ _edje_cache_file_clean(void)
    count = eina_list_count(_edje_file_cache);
    while ((_edje_file_cache) && (count > _edje_file_cache_size))
      {
+	Eina_List *last;
 	Edje_File *edf;
 
-	edf = eina_list_data_get(eina_list_last(_edje_file_cache));
-	_edje_file_cache = eina_list_remove_list(_edje_file_cache, eina_list_last(_edje_file_cache));
+	last = eina_list_last(_edje_file_cache);
+	edf = eina_list_data_get(last);
+	_edje_file_cache = eina_list_remove_list(_edje_file_cache, last);
 	_edje_file_free(edf);
 	count = eina_list_count(_edje_file_cache);
      }
