@@ -6174,7 +6174,7 @@ _edje_edit_part_save(Edje_Part *ep)
    Old_Edje_Part *oep;
    unsigned int i;
 
-   oep = calloc(1, sizeof (oep));
+   oep = calloc(1, sizeof(*oep));
    if (!oep) return NULL;
 
    oep->name = ep->name;
@@ -6235,7 +6235,7 @@ _edje_edit_collection_save(Eet_File *eetf, Edje_Part_Collection *epc)
    it = eina_hash_iterator_tuple_new(epc->data);
    EINA_ITERATOR_FOREACH(it, tu)
      {
-	di = malloc(sizeof (di));
+	di = malloc(sizeof(*di));
 	if (!di) return EINA_FALSE;
 
 	di->key = tu->key;
