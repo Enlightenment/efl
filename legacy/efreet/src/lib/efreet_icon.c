@@ -360,7 +360,6 @@ efreet_icon_find_theme_check(const char *theme_name)
         if (theme_name)
         {
             theme->name.internal = eina_stringshare_add(theme_name);
-            eina_hash_del(efreet_icon_themes, (void *)theme->name.internal, NULL);
             eina_hash_add(efreet_icon_themes, (void *)theme->name.internal, theme);
         }
         else
