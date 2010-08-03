@@ -129,7 +129,7 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
    epdi = (Edje_Part_Description_Image*) epd2;
 
    /* There is an animation if both description are different or if description is an image with tweens */
-   if (epd2 != NULL && (epd1 != epd2 || (ep->part->type == EDJE_PART_TYPE_IMAGE && epdi->image.tween_list)))
+   if (epd2 != NULL && (epd1 != epd2 || (ep->part->type == EDJE_PART_TYPE_IMAGE && epdi->image.tweens_count)))
      {
 	if (!ep->param2)
 	  {
@@ -1563,7 +1563,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
      {
 	image_count = 2;
 	if (ep->param2)
-	  image_count += eina_list_count(((Edje_Part_Description_Image*) ep->param2->description)->image.tween_list);
+	  image_count += ((Edje_Part_Description_Image*) ep->param2->description)->image.tweens_count;
 	image_num = TO_INT(MUL(pos, SUB(FROM_INT(image_count),
 					FROM_DOUBLE(0.5))));
 	if (image_num > (image_count - 1))
@@ -1589,8 +1589,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 		 {
 		    Edje_Part_Image_Id *imid;
 
-		    imid = eina_list_nth(((Edje_Part_Description_Image*) ep->param2->description)->image.tween_list,
-					 image_num - 1);
+		    imid = ((Edje_Part_Description_Image*) ep->param2->description)->image.tweens[image_num - 1];
 		    image_id = _edje_image_find(ep->object, ed, NULL, NULL, imid);
 		 }
 	    }

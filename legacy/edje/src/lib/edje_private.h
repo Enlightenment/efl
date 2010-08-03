@@ -237,6 +237,8 @@ typedef struct _Edje_Part_Description_Box            Edje_Part_Description_Box;
 typedef struct _Edje_Part_Description_Table          Edje_Part_Description_Table;
 typedef struct _Edje_Part_Description_External       Edje_Part_Description_External;
 typedef struct _Edje_Part_Description_Common         Edje_Part_Description_Common;
+typedef struct _Edje_Part_Description_Spec_Fill      Edje_Part_Description_Spec_Fill;
+typedef struct _Edje_Part_Description_Spec_Border    Edje_Part_Description_Spec_Border;
 typedef struct _Edje_Part_Description_Spec_Image     Edje_Part_Description_Spec_Image;
 typedef struct _Edje_Part_Description_Spec_Text      Edje_Part_Description_Spec_Text;
 typedef struct _Edje_Part_Description_Spec_Box       Edje_Part_Description_Spec_Box;
@@ -708,33 +710,40 @@ struct _Edje_Part_Description_Common
    unsigned char     visible; /* is it shown */
 };
 
+struct _Edje_Part_Description_Spec_Fill
+{
+   FLOAT_T        pos_rel_x; /* fill offset x relative to area */
+   FLOAT_T        rel_x; /* relative size compared to area */
+   FLOAT_T        pos_rel_y; /* fill offset y relative to area */
+   FLOAT_T        rel_y; /* relative size compared to area */
+   int            pos_abs_x; /* fill offset x added to fill offset */
+   int            abs_x; /* size of fill added to relative fill */
+   int            pos_abs_y; /* fill offset y added to fill offset */
+   int            abs_y; /* size of fill added to relative fill */
+   int            angle; /* angle of fill -- currently only used by grads */
+   int            spread; /* spread of fill -- currently only used by grads */
+   char           smooth; /* fill with smooth scaling or not */
+   unsigned char  type; /* fill coordinate from container (SCALE) or from source image (TILE) */
+};
+
+struct _Edje_Part_Description_Spec_Border
+{
+   int            l, r, t, b; /* border scaling on image fill */
+   unsigned char  no_fill; /* do we fill the center of the image if bordered? 1 == NO!!!! */
+   unsigned char  scale; /* scale image border by same as scale factor */
+};
+
 struct _Edje_Part_Description_Spec_Image
 {
-   Eina_List     *tween_list; /* list of Edje_Part_Image_Id */
+   Edje_Part_Image_Id **tweens; /* list of Edje_Part_Image_Id */
+   unsigned int         tweens_count; /* number of tweens */
+
    int            id; /* the image id to use */
    int            scale_hint; /* evas scale hint */
    Eina_Bool      set; /* if image condition it's content */
 
-   struct {
-      int            l, r, t, b; /* border scaling on image fill */
-      unsigned char  no_fill; /* do we fill the center of the image if bordered? 1 == NO!!!! */
-      unsigned char  scale; /* scale image border by same as scale factor */
-   } border;
-
-   struct {
-      FLOAT_T        pos_rel_x; /* fill offset x relative to area */
-      FLOAT_T        rel_x; /* relative size compared to area */
-      FLOAT_T        pos_rel_y; /* fill offset y relative to area */
-      FLOAT_T        rel_y; /* relative size compared to area */
-      int            pos_abs_x; /* fill offset x added to fill offset */
-      int            abs_x; /* size of fill added to relative fill */
-      int            pos_abs_y; /* fill offset y added to fill offset */
-      int            abs_y; /* size of fill added to relative fill */
-      int            angle; /* angle of fill -- currently only used by grads */
-      int            spread; /* spread of fill -- currently only used by grads */
-      char           smooth; /* fill with smooth scaling or not */
-      unsigned char  type; /* fill coordinate from container (SCALE) or from source image (TILE) */
-   } fill;
+   Edje_Part_Description_Spec_Border border;
+   Edje_Part_Description_Spec_Fill   fill;
 };
 
 struct _Edje_Part_Description_Spec_Text

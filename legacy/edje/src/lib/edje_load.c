@@ -1206,8 +1206,6 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
 void
 _edje_collection_free_part_description_clean(int type, Edje_Part_Description_Common *desc, Eina_Bool free_strings)
 {
-   Edje_Part_Image_Id *pi;
-
    if (free_strings && desc->color_class) eina_stringshare_del(desc->color_class);
 
    switch (type)
@@ -1215,11 +1213,14 @@ _edje_collection_free_part_description_clean(int type, Edje_Part_Description_Com
       case EDJE_PART_TYPE_IMAGE:
 	{
 	   Edje_Part_Description_Image *img;
+	   unsigned int i;
 
 	   img = (Edje_Part_Description_Image *) desc;
 
-	   EINA_LIST_FREE(img->image.tween_list, pi)
-	     free(pi);
+	   for (i = 0; i < img->image.tweens_count; ++i)
+	     free(img->image.tweens[i]);
+	   free(img->image.tweens);
+	   break;
 	}
       case EDJE_PART_TYPE_EXTERNAL:
 	{
@@ -1229,6 +1230,7 @@ _edje_collection_free_part_description_clean(int type, Edje_Part_Description_Com
 
 	   if (external->external_params)
 	     _edje_external_params_free(external->external_params, free_strings);
+	   break;
 	}
       case EDJE_PART_TYPE_TEXT:
       case EDJE_PART_TYPE_TEXTBLOCK:
@@ -1243,6 +1245,7 @@ _edje_collection_free_part_description_clean(int type, Edje_Part_Description_Com
 	      if (text->text.style)         eina_stringshare_del(text->text.style);
 	      if (text->text.font)          eina_stringshare_del(text->text.font);
 	   }
+	 break;
      }
 }
 

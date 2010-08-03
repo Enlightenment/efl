@@ -7,7 +7,8 @@ typedef struct _Old_Edje_External_Directory	Old_Edje_External_Directory;
 typedef struct _Old_Edje_Part			Old_Edje_Part;
 typedef struct _Old_Edje_Part_Collection	Old_Edje_Part_Collection;
 typedef struct _Old_Edje_Part_Description       Old_Edje_Part_Description;
-typedef struct _Edje_Data                            Edje_Data;
+typedef struct _Old_Edje_Part_Description_Spec_Image Old_Edje_Part_Description_Spec_Image;
+typedef struct _Edje_Data                       Edje_Data;
 
 struct _Edje_Data
 {
@@ -108,10 +109,21 @@ struct _Old_Edje_Part
    Edje_Part_Api	  api;
 };
 
+struct _Old_Edje_Part_Description_Spec_Image
+{
+   Eina_List     *tween_list; /* list of Edje_Part_Image_Id */
+   int            id; /* the image id to use */
+   int            scale_hint; /* evas scale hint */
+   Eina_Bool      set; /* if image condition it's content */
+
+   Edje_Part_Description_Spec_Border border;
+   Edje_Part_Description_Spec_Fill   fill;
+};
+
 struct _Old_Edje_Part_Description
 {
    Edje_Part_Description_Common common;
-   Edje_Part_Description_Spec_Image image;
+   Old_Edje_Part_Description_Spec_Image image;
    Edje_Part_Description_Spec_Text text;
    Edje_Part_Description_Spec_Box box;
    Edje_Part_Description_Spec_Table table;

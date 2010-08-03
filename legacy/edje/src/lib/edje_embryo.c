@@ -1558,8 +1558,6 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
    Edje *ed = embryo_program_data_get(ep);
    Edje_Real_Part *rp;
    Edje_Part_Description_Common *parent, *d = NULL;
-   Edje_Part_Image_Id *iid;
-   Eina_List *l;
    char *name;
    float val;
 
@@ -1643,18 +1641,24 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
 	img_desc = (Edje_Part_Description_Image*) d;
 	parent_img_desc = (Edje_Part_Description_Image*) parent;
 
-	img_desc->image.tween_list = NULL;
-
-	EINA_LIST_FOREACH(parent_img_desc->image.tween_list, l, iid)
+	img_desc->image.tweens_count = parent_img_desc->image.tweens_count;
+	img_desc->image.tweens = calloc(img_desc->image.tweens_count,
+					sizeof(Edje_Part_Image_Id*));
+	if (img_desc->image.tweens)
 	  {
-	     Edje_Part_Image_Id *iid_new;
+	     unsigned int i;
 
-	     iid_new = calloc(1, sizeof(Edje_Part_Image_Id));
-	     if (!iid_new) continue;
+	     for (i = 0; i < parent_img_desc->image.tweens_count; ++i)
+	       {
+		  Edje_Part_Image_Id *iid_new;
 
-	     iid_new->id = iid->id;
+		  iid_new = calloc(1, sizeof(Edje_Part_Image_Id));
+		  if (!iid_new) continue;
 
-	     img_desc->image.tween_list = eina_list_append(img_desc->image.tween_list, iid_new);
+		  *iid_new = *parent_img_desc->image.tweens[i];
+
+		  img_desc->image.tweens[i] = iid_new;
+	       }
 	  }
      }
 

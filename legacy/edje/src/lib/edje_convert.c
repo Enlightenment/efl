@@ -393,16 +393,50 @@ _edje_description_convert(int type,
    switch (type)
      {
       case EDJE_PART_TYPE_RECTANGLE:
-	 result = eina_mempool_malloc(ce->mp.RECTANGLE, sizeof (Edje_Part_Description_Common));
+	 result = eina_mempool_malloc(ce->mp.RECTANGLE,
+				      sizeof (Edje_Part_Description_Common));
 	 break;
       case EDJE_PART_TYPE_SWALLOW:
-	 result = eina_mempool_malloc(ce->mp.SWALLOW, sizeof (Edje_Part_Description_Common));
+	 result = eina_mempool_malloc(ce->mp.SWALLOW,
+				      sizeof (Edje_Part_Description_Common));
 	 break;
       case EDJE_PART_TYPE_GROUP:
-	 result = eina_mempool_malloc(ce->mp.GROUP, sizeof (Edje_Part_Description_Common));
+	 result = eina_mempool_malloc(ce->mp.GROUP,
+				      sizeof (Edje_Part_Description_Common));
 	 break;
 
-#define CONVERT_ALLOC_POOL(Short, Type, Name)					\
+      case EDJE_PART_TYPE_IMAGE:
+	{
+	   Edje_Part_Description_Image *img;
+	   Edje_Part_Image_Id *id;
+	   unsigned int i = 0;
+
+	   img = eina_mempool_malloc(ce->mp.IMAGE, sizeof (Edje_Part_Description_Image));
+
+	   img->image.tweens_count = eina_list_count(oed->image.tween_list);
+	   img->image.tweens = calloc(img->image.tweens_count,
+				      sizeof (Edje_Part_Image_Id*));
+	   if (!img->image.tweens)
+	     {
+		eina_mempool_free(ce->mp.IMAGE, img);
+		return NULL;
+	     }
+
+	   EINA_LIST_FREE(oed->image.tween_list, id)
+	     img->image.tweens[i++] = id;
+
+	   img->image.id = oed->image.id;
+	   img->image.scale_hint = oed->image.scale_hint;
+	   img->image.set = oed->image.set;
+
+	   img->image.border = oed->image.border;
+	   img->image.fill = oed->image.fill;
+
+	   result = &img->common;
+	   break;
+	}
+
+#define CONVERT_ALLOC_POOL(Short, Type, Name)				\
 	 case EDJE_PART_TYPE_##Short:					\
 	   {								\
 	      Edje_Part_Description_##Type *Name;			\
@@ -413,7 +447,6 @@ _edje_description_convert(int type,
 	      break;							\
 	   }
 
-	 CONVERT_ALLOC_POOL(IMAGE, Image, image);
 	 CONVERT_ALLOC_POOL(TEXT, Text, text);
 	 CONVERT_ALLOC_POOL(TEXTBLOCK, Text, text);
 	 CONVERT_ALLOC_POOL(BOX, Box, box);

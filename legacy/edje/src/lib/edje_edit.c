@@ -2882,9 +2882,8 @@ EAPI Eina_Bool
 edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, double val_from, const char *to, double val_to)
 {
    Edje_Part_Description_Common *pdfrom, *pdto;
-   Edje_Part_Image_Id *i;
    Edje_External_Param *p;
-   Eina_List *l;
+
    GET_RP_OR_RETURN(EINA_FALSE);
 
    pdfrom = _edje_part_description_find_byname(eed, part, from, val_from);
@@ -2923,20 +2922,30 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 	{
 	   Edje_Part_Description_Image *img_to = (Edje_Part_Description_Image*) pdto;
 	   Edje_Part_Description_Image *img_from = (Edje_Part_Description_Image*) pdfrom;
+	   unsigned int i;
 
 	   img_to->image = img_from->image;
 
 	   /* Update pointers. */
-	   EINA_LIST_FREE(img_to->image.tween_list, i)
-	     free(i);
+	   for (i = 0; i < img_to->image.tweens_count; ++i)
+	     free(img_to->image.tweens[i]);
+	   free(img_to->image.tweens);
 
-	   EINA_LIST_FOREACH(img_from->image.tween_list, l, i)
+	   img_to->image.tweens_count = img_from->image.tweens_count;
+	   img_to->image.tweens = calloc(img_to->image.tweens_count,
+					 sizeof (Edje_Part_Image_Id*));
+	   if (!img_to->image.tweens)
+	     break;
+
+	   for (i = 0; i < img_to->image.tweens_count; ++i)
 	     {
 		Edje_Part_Image_Id *new_i;
 		new_i = _alloc(sizeof(Edje_Part_Image_Id));
-		/* error checking? What to do if failed? Rollbacgk, abort? */
-		new_i->id = i->id;
-		img_to->image.tween_list = eina_list_append(img_to->image.tween_list, new_i);
+		if (!new_i) continue ;
+
+		*new_i = *img_from->image.tweens[i];
+
+		img_to->image.tweens[i] = new_i;
 	     }
 	}
       case EDJE_PART_TYPE_TEXT:
@@ -2975,6 +2984,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 	{
 	   Edje_Part_Description_External *ext_to = (Edje_Part_Description_External*) pdto;
 	   Edje_Part_Description_External *ext_from = (Edje_Part_Description_External*) pdfrom;
+	   Eina_List *l;
 
 	   /* XXX: optimize this, most likely we don't need to remove and add */
 	   EINA_LIST_FREE(ext_to->external_params, p)
@@ -4221,9 +4231,9 @@ EAPI Eina_List *
 edje_edit_state_tweens_list_get(Evas_Object *obj, const char *part, const char *state, double value)
 {
    Edje_Part_Description_Image *img;
-   Edje_Part_Image_Id *i;
-   Eina_List *tweens = NULL, *l;
+   Eina_List *tweens = NULL;
    const char *name;
+   unsigned int i;
 
    GET_PD_OR_RETURN(NULL);
 
@@ -4231,9 +4241,9 @@ edje_edit_state_tweens_list_get(Evas_Object *obj, const char *part, const char *
 
    img = (Edje_Part_Description_Image *) pd;
 
-   EINA_LIST_FOREACH(img->image.tween_list, l, i)
+   for (i = 0; i < img->image.tweens_count; ++i)
      {
-	name = _edje_image_name_find(obj, i->id);
+	name = _edje_image_name_find(obj, img->image.tweens[i]->id);
 	//printf("   t: %s\n", name);
 	tweens = eina_list_append(tweens, eina_stringshare_add(name));
      }
@@ -4245,6 +4255,7 @@ EAPI Eina_Bool
 edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state, double value, const char *tween)
 {
    Edje_Part_Description_Image *img;
+   Edje_Part_Image_Id **tmp;
    Edje_Part_Image_Id *i;
    int id;
 
@@ -4261,7 +4272,16 @@ edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state,
    img = (Edje_Part_Description_Image *) pd;
 
    /* add to tween list */
-   img->image.tween_list = eina_list_append(img->image.tween_list, i);
+   tmp = realloc(img->image.tweens,
+		 sizeof (Edje_Part_Image_Id*) * img->image.tweens_count);
+   if (!tmp)
+     {
+	free(i);
+	return EINA_FALSE;
+     }
+
+   tmp[img->image.tweens_count++] = i;
+   img->image.tweens = tmp;
 
    return EINA_TRUE;
 }
@@ -4270,24 +4290,27 @@ EAPI Eina_Bool
 edje_edit_state_tween_del(Evas_Object *obj, const char *part, const char *state, double value, const char *tween)
 {
    Edje_Part_Description_Image *img;
-   Edje_Part_Image_Id *i;
-   Eina_List *l;
-   int id;
+   unsigned int i;
+   int search;
 
    GET_PD_OR_RETURN(EINA_FALSE);
 
    img = (Edje_Part_Description_Image *) pd;
 
-   if (!img->image.tween_list) return EINA_FALSE;
+   if (!img->image.tweens_count) return EINA_FALSE;
 
-   id = _edje_image_id_find(obj, tween);
-   if (id < 0) return EINA_FALSE;
+   search = _edje_image_id_find(obj, tween);
+   if (search < 0) return EINA_FALSE;
 
-   EINA_LIST_FOREACH(img->image.tween_list, l, i)
+   for (i = 0; i < img->image.tweens_count; ++i)
      {
-	if (i->id == id)
+	if (img->image.tweens[i]->id == search)
 	  {
-	     img->image.tween_list = eina_list_remove_list(img->image.tween_list, l);
+	     img->image.tweens_count--;
+	     free(img->image.tweens[i]);
+	     memmove(img->image.tweens + i,
+		     img->image.tweens + i + 1,
+		     sizeof (Edje_Part_Description_Image*) * (img->image.tweens_count - i));
 	     return EINA_TRUE;
 	  }
      }
@@ -6108,6 +6131,24 @@ _edje_edit_description_save(int type, Edje_Part_Description_Common *desc)
 
    switch (type)
      {
+      case EDJE_PART_TYPE_IMAGE:
+	{
+	   Edje_Part_Description_Image *img = (Edje_Part_Description_Image*) desc;
+	   unsigned int i;
+
+	   for (i = 0; i < img->image.tweens_count; ++i)
+	     result->image.tween_list = eina_list_append(result->image.tween_list,
+							 img->image.tweens[i]);
+
+	   result->image.id = img->image.id;
+	   result->image.scale_hint = img->image.scale_hint;
+	   result->image.set = img->image.set;
+	   result->image.border = img->image.border;
+	   result->image.fill = img->image.fill;
+
+	   break;
+	}
+
 #define COPY_OLD(Short, Type, Name)					\
 	case EDJE_PART_TYPE_##Short:					\
 	  {								\
@@ -6117,7 +6158,6 @@ _edje_edit_description_save(int type, Edje_Part_Description_Common *desc)
 	     break;							\
 	  }
 
-	COPY_OLD(IMAGE, Image, image);
 	COPY_OLD(TEXT, Text, text);
 	COPY_OLD(TEXTBLOCK, Text, text);
 	COPY_OLD(BOX, Box, box);
@@ -6229,7 +6269,10 @@ _edje_edit_collection_save(Eet_File *eetf, Edje_Part_Collection *epc)
    EINA_LIST_FREE(oepc.parts, oep)
      {
 	EINA_LIST_FREE(oep->other_desc, oepd)
-	  free(oepd);
+	  {
+	     eina_list_free(oepd->image.tween_list);
+	     free(oepd);
+	  }
 	eina_list_free(oep->items);
 	free(oep);
      }
