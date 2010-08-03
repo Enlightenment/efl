@@ -1376,12 +1376,7 @@ efreet_mime_magic_free(void *data)
     Efreet_Mime_Magic_Entry *entry = NULL;
 
     IF_RELEASE(m->mime);
-    while (m->entries)
-    {
-        entry = eina_list_data_get(m->entries);
-        efreet_mime_magic_entry_free(entry);
-        m->entries = eina_list_remove_list(m->entries, m->entries);
-    }
+    IF_FREE_LIST(m->entries, efreet_mime_magic_entry_free);
     IF_FREE(m);
 }
 
