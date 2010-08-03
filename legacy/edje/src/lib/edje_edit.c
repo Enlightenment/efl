@@ -2619,7 +2619,7 @@ edje_edit_state_del(Evas_Object *obj, const char *part, const char *state, doubl
    if (pd == rp->chosen_description)
      _edje_part_description_apply(ed, rp, "default", 0.0, NULL, 0.0);
 
-   ce = eina_hash_find(ed->file->collection, part);
+   ce = eina_hash_find(ed->file->collection, ed->group);
 
    for (i = 0; i < rp->part->other_count; ++i)
      if (pd == rp->part->other_desc[i])
