@@ -176,7 +176,8 @@ efreet_icon_deprecated_user_dir_get(void)
 
     user = efreet_home_dir_get();
     len = strlen(user) + strlen("/.icons") + 1;
-    efreet_icon_deprecated_user_dir = malloc(sizeof(char) * len);
+    efreet_icon_deprecated_user_dir = malloc(len);
+    if (!efreet_icon_deprecated_user_dir) return NULL;
     snprintf(efreet_icon_deprecated_user_dir, len, "%s/.icons", user);
 
     return efreet_icon_deprecated_user_dir;
@@ -192,7 +193,8 @@ efreet_icon_user_dir_get(void)
 
     user = efreet_data_home_get();
     len = strlen(user) + strlen("/icons") + 1;
-    efreet_icon_user_dir = malloc(sizeof(char) * len);
+    efreet_icon_user_dir = malloc(len);
+    if (!efreet_icon_user_dir) return NULL;
     snprintf(efreet_icon_user_dir, len, "%s/icons", user);
 
     return efreet_icon_user_dir;
