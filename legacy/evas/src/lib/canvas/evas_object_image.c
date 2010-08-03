@@ -1884,9 +1884,10 @@ evas_object_image_native_surface_set(Evas_Object *obj, Evas_Native_Surface *surf
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
-   obj->layer->evas->engine.func->image_native_set(obj->layer->evas->engine.data.output,
-						   o->engine_data,
-						   surf);
+   o->engine_data = 
+      obj->layer->evas->engine.func->image_native_set(obj->layer->evas->engine.data.output,
+                                                      o->engine_data,
+                                                      surf);
 }
 
 /**

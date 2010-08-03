@@ -688,7 +688,7 @@ struct _Evas_Func
    char *(*image_format_get)               (void *data, void *image);
    void (*image_colorspace_set)            (void *data, void *image, int cspace);
    int  (*image_colorspace_get)            (void *data, void *image);
-   void (*image_native_set)                (void *data, void *image, void *native);
+   void *(*image_native_set)               (void *data, void *image, void *native);
    void *(*image_native_get)               (void *data, void *image);
 
    void (*image_cache_flush)               (void *data);

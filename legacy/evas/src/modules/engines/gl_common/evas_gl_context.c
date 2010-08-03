@@ -532,6 +532,10 @@ evas_gl_common_context_new(void)
         // GLuint texes[8];
         // GLint loc = glGetUniformLocation(prog, "tex");
         // glUniform1iv(loc, 8, texes);
+
+        shared->native_hash = eina_hash_int32_new
+           (NULL);
+//           ((Eina_Free_Cb)evas_gl_common_texture_free);
      }
    gc->shared = shared;
    gc->shared->references++;
@@ -589,6 +593,7 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
                     }
                }
           }
+        eina_hash_free(gc->shared->native_hash);
         free(gc->shared);
         shared = NULL;
      }

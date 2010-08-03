@@ -607,9 +607,10 @@ eng_image_colorspace_set(void *data __UNUSED__, void *image, int cspace)
    evas_cache_image_colorspace(im, cspace);
 }
 
-static void
-eng_image_native_set(void *data __UNUSED__, void *image __UNUSED__, void *native __UNUSED__)
+static void *
+eng_image_native_set(void *data __UNUSED__, void *image, void *native __UNUSED__)
 {
+   return image;
 }
 
 static void *
