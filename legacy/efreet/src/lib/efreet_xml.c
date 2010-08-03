@@ -458,6 +458,7 @@ efreet_xml_attributes_parse(char **data, int *size,
     }
 
     *attributes = NEW(Efreet_Xml_Attribute *, count + 1);
+    if (!*attributes) goto efreet_error;
     for (i = 0; i < count; i++)
     {
         (*attributes)[i] = malloc(sizeof(Efreet_Xml_Attribute));

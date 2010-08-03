@@ -965,6 +965,7 @@ efreet_icon_new(const char *path)
     char *p;
 
     icon = NEW(Efreet_Icon, 1);
+    if (!icon) return NULL;
     icon->path = eina_stringshare_add(path);
 
     /* load the .icon file if it's available */
@@ -1096,6 +1097,7 @@ efreet_icon_populate(Efreet_Icon *icon, const char *file)
             if (!p) break;
 
             point = NEW(Efreet_Icon_Point, 1);
+            if (!point) goto error;
 
             *p = '\0';
             point->x = atoi(s);
@@ -1113,6 +1115,7 @@ efreet_icon_populate(Efreet_Icon *icon, const char *file)
         }
     }
 
+error:
     efreet_ini_free(ini);
 }
 
@@ -1127,6 +1130,7 @@ efreet_icon_theme_new(void)
     Efreet_Icon_Theme *theme;
 
     theme = NEW(Efreet_Icon_Theme, 1);
+    if (!theme) return NULL;
 
     return theme;
 }
@@ -1482,6 +1486,7 @@ efreet_icon_theme_directory_new(Efreet_Ini *ini, const char *name)
     if (!ini) return NULL;
 
     dir = NEW(Efreet_Icon_Theme_Directory, 1);
+    if (!dir) return NULL;
     dir->name = eina_stringshare_add(name);
 
     efreet_ini_section_set(ini, name);
@@ -1631,15 +1636,14 @@ efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, unsigned int
 static void
 efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, unsigned int size, const char *value)
 {
-    Eina_List *list, *l;
+    Eina_List *list;
     Efreet_Icon_Cache *cache;
     char key[4096];
     struct stat st;
 
-    list = eina_hash_find(efreet_icon_cache, theme);
-
-    snprintf(key, sizeof(key), "%s %d", icon, size);
     cache = NEW(Efreet_Icon_Cache, 1);
+    if (!cache) return;
+    snprintf(key, sizeof(key), "%s %d", icon, size);
     cache->key = eina_stringshare_add(key);
     if ((value) && !stat(value, &st))
     {
@@ -1649,7 +1653,7 @@ efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, unsigned int s
     else
         cache->lasttime = ecore_time_get();
 
-    l = list;
+    list = eina_hash_find(efreet_icon_cache, theme);
     list = eina_list_prepend(list, cache);
 
     eina_hash_set(efreet_icon_cache, theme, list);

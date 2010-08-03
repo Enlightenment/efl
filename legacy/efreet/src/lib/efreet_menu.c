@@ -1012,6 +1012,7 @@ efreet_menu_internal_new(void)
     Efreet_Menu_Internal *internal;
 
     internal = NEW(Efreet_Menu_Internal, 1);
+    if (!internal) return NULL;
     internal->show_empty = -1;
     internal->in_line = -1;
     internal->inline_limit = -1;
@@ -2436,6 +2437,7 @@ efreet_menu_filter_new(void)
     Efreet_Menu_Filter *filter;
 
     filter = NEW(Efreet_Menu_Filter, 1);
+    if (!filter) return NULL;
     filter->op = efreet_menu_filter_op_new();
     if (!filter->op)
     {
