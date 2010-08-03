@@ -185,11 +185,8 @@ _eio_file_direct_heavy(Ecore_Thread *thread, void *data)
 static void
 _eio_file_direct_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
 {
-   Eio_File_Direct_Ls *async;
-   Eina_File_Direct_Info *info;
-
-   async = data;
-   info = msg_data;
+   Eio_File_Direct_Ls *async = data;
+   Eina_File_Direct_Info *info = msg_data;
 
    if (async->main_cb)
      async->main_cb(async->ls.common.data, info);
@@ -200,9 +197,7 @@ _eio_file_direct_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *d
 static void
 _eio_file_end(void *data)
 {
-   Eio_File_Ls *async;
-
-   async = data;
+   Eio_File_Ls *async = data;
 
    if (async->common.done_cb)
      async->common.done_cb(async->common.data);
@@ -298,9 +293,7 @@ _eio_file_op_end(void *data)
 static void
 _eio_file_op_error(void *data)
 {
-   Eio_File_Op *async;
-
-   async = data;
+   Eio_File_Op *async = data;
 
    if (async->common.error_cb)
      async->common.error_cb(async->common.data);
