@@ -2573,26 +2573,19 @@ EAPI void                   ecore_x_region_picture_clip_set(Ecore_X_Region  regi
 
 /* XComposite Extension Support */
 EAPI int                    ecore_x_composite_query(void);
-EAPI void                   ecore_x_composite_redirect_window(
-   Ecore_X_Window win,
-   Ecore_X_Composite_Update_Type
-   type);
-EAPI void                   ecore_x_composite_redirect_subwindows(
-   Ecore_X_Window                win,
-   Ecore_X_Composite_Update_Type type);
-EAPI void                   ecore_x_composite_unredirect_window(
-   Ecore_X_Window win,
-   Ecore_X_Composite_Update_Type
-   type);
-EAPI void                   ecore_x_composite_unredirect_subwindows(
-   Ecore_X_Window                win,
-   Ecore_X_Composite_Update_Type type);
-EAPI Ecore_X_Pixmap         ecore_x_composite_name_window_pixmap_get(
-   Ecore_X_Window win);
-EAPI Ecore_X_Window         ecore_x_composite_render_window_enable(
-   Ecore_X_Window root);
-EAPI void                   ecore_x_composite_render_window_disable(
-   Ecore_X_Window root);
+EAPI void                   ecore_x_composite_redirect_window(Ecore_X_Window                win,
+                                                              Ecore_X_Composite_Update_Type type);
+EAPI void                   ecore_x_composite_redirect_subwindows(Ecore_X_Window                win,
+                                                                  Ecore_X_Composite_Update_Type type);
+EAPI void                   ecore_x_composite_unredirect_window(Ecore_X_Window                win,
+                                                                Ecore_X_Composite_Update_Type type);
+EAPI void                   ecore_x_composite_unredirect_subwindows(Ecore_X_Window                win,
+                                                                    Ecore_X_Composite_Update_Type type);
+EAPI Ecore_X_Pixmap         ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win);
+EAPI void                   ecore_x_composite_window_events_disable(Ecore_X_Window win);
+EAPI void                   ecore_x_composite_window_events_enable(Ecore_X_Window win);
+EAPI Ecore_X_Window         ecore_x_composite_render_window_enable(Ecore_X_Window root);
+EAPI void                   ecore_x_composite_render_window_disable(Ecore_X_Window root);
 
 /* XDamage Extension Support */
 typedef Ecore_X_ID   Ecore_X_Damage;

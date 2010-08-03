@@ -133,6 +133,34 @@ ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win)
    return pixmap;
 } /* ecore_x_composite_name_window_pixmap_get */
 
+EAPI void
+ecore_x_composite_window_events_disable(Ecore_X_Window win)
+{
+#ifdef ECORE_XCOMPOSITE
+   XRectangle rect;
+   rect.x = -1;
+   rect.y = -1;
+   rect.width = 1;
+   rect.height = 1;
+   XShapeCombineRectangles(_ecore_x_disp, win, ShapeInput, 0, 0, &rect, 1,
+                           ShapeSet, Unsorted);
+#endif /* ifdef ECORE_XCOMPOSITE */
+}
+
+EAPI void
+ecore_x_composite_window_events_enable(Ecore_X_Window win)
+{
+#ifdef ECORE_XCOMPOSITE
+   XRectangle rect;
+   rect.x = 0;
+   rect.y = 0;
+   rect.width = 65535;
+   rect.height = 65535;
+   XShapeCombineRectangles(_ecore_x_disp, win, ShapeInput, 0, 0, &rect, 1,
+                           ShapeSet, Unsorted);
+#endif /* ifdef ECORE_XCOMPOSITE */
+}
+
 EAPI Ecore_X_Window
 ecore_x_composite_render_window_enable(Ecore_X_Window root)
 {
