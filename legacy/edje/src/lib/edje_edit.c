@@ -1052,7 +1052,7 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
    pce->entry = eina_stringshare_add(new_name);
    pc->part = pce->entry;
 
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 #define FUNC_GROUP_ACCESSOR(Class, Value)			\
