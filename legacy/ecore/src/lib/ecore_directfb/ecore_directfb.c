@@ -161,7 +161,7 @@ _ecore_directfb_event_handle_key_down(DFBEvent *evt)
 
 			if(!k) 
 			{
-				ERR("error en el numero, %0X", evt->input.key_symbol);
+				ERR("Symbol %0X of class DFEC_INPUT not found.", evt->input.key_symbol);
 				return;
 			}
 			e->name = strdup(k->name);
@@ -177,7 +177,7 @@ _ecore_directfb_event_handle_key_down(DFBEvent *evt)
 
 			if(!k) 
 			{
-				ERR("error en el numero, %0X", evt->window.key_symbol);
+				ERR("Symbol %0X of class DFEC_WINDOW not found.", evt->window.key_symbol);
 				return;
 			}
 			e->name = strdup(k->name);
@@ -210,7 +210,7 @@ _ecore_directfb_event_handle_key_up(DFBEvent *evt)
 			
 			if(!k) 
 			{
-				ERR("error en el numero, %0X", evt->input.key_symbol);
+		        ERR("Symbol %0X of class DFEC_INPUT not found.", evt->input.key_symbol);
 				return;
 			}
 			e->name = strdup(k->name);
@@ -226,7 +226,7 @@ _ecore_directfb_event_handle_key_up(DFBEvent *evt)
 
 			if(!k) 
 			{
-				ERR("error en el numero, %0X", evt->window.key_symbol);
+			    ERR("Symbol %0X of class DFEC_WINDOW not found.", evt->window.key_symbol);
 				return;
 			}
 			e->name = strdup(k->name);
