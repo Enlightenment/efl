@@ -197,7 +197,7 @@ efreet_ini_parse(const char *file)
 
         if (sep < line_length)
         {
-            const char *key, *value;
+            char *key, *value;
             int key_end, value_start, value_end;
 
             /* trim whitespace from end of key */
@@ -234,16 +234,16 @@ efreet_ini_parse(const char *file)
                 goto next_line;
             }
 
-            key = alloca((key_end + 1) * sizeof(unsigned char));
-            value = alloca((value_end - value_start + 1) * sizeof(unsigned char));
+            key = alloca(key_end + 1);
+            value = alloca(value_end - value_start + 1);
             if (!key || !value) goto next_line;
 
-            memcpy((char*)key, line_start, key_end);
-            ((char*)key)[key_end] = '\0';
+            memcpy(key, line_start, key_end);
+            key[key_end] = '\0';
 
-            memcpy((char*)value, line_start + value_start,
+            memcpy(value, line_start + value_start,
                     value_end - value_start);
-            ((char*)value)[value_end - value_start] = '\0';
+            value[value_end - value_start] = '\0';
 
             eina_hash_del_by_key(section, key);
             eina_hash_add(section, key, efreet_ini_unescape(value));
