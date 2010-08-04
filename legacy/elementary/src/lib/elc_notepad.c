@@ -75,7 +75,7 @@ _buf_append(char *buf, const char *str, int *len, int *alloc)
 	char *buf2 = realloc(buf, *alloc + len2 + 512);
 	if (!buf2) return NULL;
 	buf = buf2;
-	*alloc += 512 + len2;
+	*alloc += (512 + len2);
      }
    strcpy(buf + *len, str);
    *len += len2;
@@ -88,7 +88,7 @@ _load_file(const char *file)
    FILE *f;
    size_t size;
    int alloc = 0, len = 0;
-   char *text = NULL, buf[4096];
+   char *text = NULL, buf[PATH_MAX];
 
    f = fopen(file, "rb");
    if (!f) return NULL;
@@ -104,11 +104,13 @@ _load_file(const char *file)
 static char *
 _load_plain(const char *file)
 {
-   char *text, *text2;
+   char *text;
 
    text = _load_file(file);
    if (text)
      {
+        char *text2;
+
 	text2 = elm_entry_utf8_to_markup(text);
 	free(text);
 	return text2;
@@ -136,8 +138,8 @@ _load(Evas_Object *obj)
 	text = _load_file(wd->file);
 	break;
      default:
-	elm_entry_entry_set(wd->entry, "Unknown Text Format");
 	text = NULL;
+        break;
      }
    if (text)
      {
@@ -284,6 +286,7 @@ elm_notepad_add(Evas_Object *parent)
 
    wd->scr = elm_scroller_add(parent);
    elm_widget_resize_object_set(obj, wd->scr);
+
    wd->entry = elm_entry_add(parent);
    evas_object_size_hint_weight_set(wd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(wd->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -306,12 +309,12 @@ elm_notepad_add(Evas_Object *parent)
 
 /**
  * This sets the file (and implicitly loads it) for the text to display and
- * then edit. All changes are written back to the file after a short delay.
+ * then edit. All changes are written back to the file after a short delay if
+ * the notepad object is set to autosave.
  *
  * @param obj The notepad object
  * @param file The path to the file to load and save
  * @param format The file format
- *
  *
  * @ingroup Notepad
  */
@@ -326,10 +329,36 @@ elm_notepad_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 	ecore_timer_del(wd->delay_write);
 	wd->delay_write = NULL;
      }
-   _save(obj);
+   if (wd->auto_write) _save(obj);
    eina_stringshare_replace(&wd->file, file);
    wd->format = format;
    _load(obj);
+}
+
+/**
+ * This function writes any changes made to the file.
+ * All changes are written back to the file after a short delay.
+ *
+ * @param obj The notepad object
+ * @param file The path to the file to save
+ * @param format The file format
+ *
+ * @ingroup Notepad
+ */
+EAPI void 
+elm_notepad_file_save(Evas_Object *obj, const char *file, Elm_Text_Format format) 
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if ((!wd) || (!file)) return;
+   if (wd->delay_write)
+     {
+	ecore_timer_del(wd->delay_write);
+	wd->delay_write = NULL;
+     }
+   wd->format = format;
+   eina_stringshare_replace(&wd->file, file);
+   wd->delay_write = ecore_timer_add(2.0, _delay_write, obj);
 }
 
 /**
@@ -349,4 +378,21 @@ elm_notepad_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_scroller_bounce_set(wd->scr, h_bounce, v_bounce);
+}
+
+/**
+ * This sets the notepad object to 'autosave' the loaded text file or not.
+ *
+ * @param obj The notepad object
+ * @param autosave Autosave the loaded file or not
+ *
+ * @ingroup Notepad
+ */
+EAPI void 
+elm_notepad_autosave_set(Evas_Object *obj, Eina_Bool autosave) 
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->auto_write = autosave;
 }
