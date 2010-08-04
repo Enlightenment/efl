@@ -118,8 +118,8 @@ collections {
          part { name: "bg";
 	    type: RECT;
 	    description { state: "default" 0.0;
-	       rel1.offset: 1 1;
-	       rel2.offset: -2 -2;
+	       rel1.offset: 2 2;
+	       rel2.offset: -3 -3;
 	       color: 255 255 255 0;
 	    }
 	 }
@@ -129,21 +129,25 @@ collections {
 	    description { state: "default" 0.0;
 	       rel1.to: "bg";
 	       rel2.to: "bg";
+	       rel1.offset: 2 2;
+	       rel2.offset: -3 -3;
 	    }
 	 }
 	 part { name: "elm.swallow.content";
 	    clip_to: "clipper";
 	    type: SWALLOW;
 	    description { state: "default" 0.0;
-	       rel1.offset: 1 1;
-	       rel2.offset: -2 -2;
+	       rel1.to: "bg";
+	       rel2.to: "bg";
+	       rel1.offset: 2 2;
+	       rel2.offset: -3 -3;
 	    }
 	 }
 	 part { name: "conf_over";
 	    mouse_events:  0;
 	    description { state: "default" 0.0;
-	       rel1.offset: 0 0;
-	       rel2.offset: -1 -1;
+	       rel1.to: "bg";
+	       rel2.to: "bg";
 	       image {
 		  normal: "shelf_inset.png";
 		  border: 7 7 7 7;
@@ -184,6 +188,7 @@ collections {
 	       rel1 {
 		  relative: 1.0 0.0;
 		  offset:   -2 2;
+		  to_y:     "elm.swallow.content";
 	       }
 	       rel2 {
 		  relative: 1.0 0.0;
@@ -292,7 +297,8 @@ collections {
 	       align: 0.0 1.0;
 	       rel1 {
 		  relative: 0.0 1.0;
-		  offset:   1 -2;
+		  offset:   2 -2;
+		  to_x:     "elm.swallow.content";
 	       }
 	       rel2 {
 		  relative: 0.0 1.0;
