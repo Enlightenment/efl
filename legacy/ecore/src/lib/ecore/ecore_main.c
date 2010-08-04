@@ -63,11 +63,11 @@ struct _Ecore_Fd_Handler
    ECORE_MAGIC;
    int                      fd;
    Ecore_Fd_Handler_Flags   flags;
-   Eina_Bool              (*func) (void *data, Ecore_Fd_Handler *fd_handler);
+   Ecore_Fd_Cb              func;
    void                    *data;
-   Eina_Bool              (*buf_func) (void *data, Ecore_Fd_Handler *fd_handler);
+   Ecore_Fd_Cb              buf_func;
    void                    *buf_data;
-   void                   (*prep_func) (void *data, Ecore_Fd_Handler *fd_handler);
+   Ecore_Fd_Prep_Cb         prep_func;
    void                    *prep_data;
    int                      references;
    Eina_Bool                read_active : 1;
@@ -82,7 +82,7 @@ struct _Ecore_Win32_Handler
    EINA_INLIST;
    ECORE_MAGIC;
    HANDLE         h;
-   Eina_Bool    (*func) (void *data, Ecore_Win32_Handler *win32_handler);
+   Ecore_Fd_Win32_Cb func;
    void          *data;
    int            references;
    Eina_Bool      delete_me : 1;
@@ -117,9 +117,9 @@ static int                  win32_handlers_delete_me = 0;
 #endif
 
 #ifdef _WIN32
-static int (*main_loop_select)(int , fd_set *, fd_set *, fd_set *, struct timeval *) = _ecore_main_win32_select;
+static Ecore_Select_Function main_loop_select = _ecore_main_win32_select;
 #else
-static int (*main_loop_select)(int , fd_set *, fd_set *, fd_set *, struct timeval *) = select;
+static Ecore_Select_Function main_loop_select = select;
 #endif
 
 static double            t1 = 0.0;
@@ -306,7 +306,7 @@ ecore_main_loop_quit(void)
  * @ingroup Ecore_Main_Loop_Group
  */
 EAPI void
-ecore_main_loop_select_func_set(int (*func) (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout))
+ecore_main_loop_select_func_set(Ecore_Select_Function func)
 {
    main_loop_select = func;
 }
@@ -362,9 +362,8 @@ ecore_main_loop_select_func_get(void)
  * @ingroup Ecore_FD_Handler_Group
  */
 EAPI Ecore_Fd_Handler *
-ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags,
-			  Eina_Bool (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data,
-			  Eina_Bool (*buf_func) (void *buf_data, Ecore_Fd_Handler *fd_handler), const void *buf_data)
+ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func, const void *data,
+                          Ecore_Fd_Cb buf_func, const void *buf_data)
 {
    Ecore_Fd_Handler *fdh;
 
@@ -397,9 +396,7 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags,
 
 #ifdef _WIN32
 EAPI Ecore_Win32_Handler *
-ecore_main_win32_handler_add(void *h,
-                             Eina_Bool (*func) (void *data, Ecore_Win32_Handler *wh),
-                             const void *data)
+ecore_main_win32_handler_add(void *h, Ecore_Fd_Win32_Cb func, const void *data)
 {
    Ecore_Win32_Handler *wh;
 
@@ -419,8 +416,7 @@ ecore_main_win32_handler_add(void *h,
 }
 #else
 EAPI Ecore_Win32_Handler *
-ecore_main_win32_handler_add(void *h __UNUSED__,
-                             Eina_Bool (*func) (void *data, Ecore_Win32_Handler *wh) __UNUSED__,
+ecore_main_win32_handler_add(void *h __UNUSED__, Ecore_Fd_Win32_Cb func __UNUSED__,
                              const void *data __UNUSED__)
 {
    return NULL;
@@ -477,7 +473,7 @@ ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler __UNUSED__)
 #endif
 
 EAPI void
-ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, void (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data)
+ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Prep_Cb func, const void *data)
 {
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {

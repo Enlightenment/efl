@@ -82,7 +82,7 @@ struct _Ecore_Exe
    Eina_Bool    close_stdin : 1;
    Eina_Bool    is_suspended : 1;
 
-   void (*pre_free_cb)(void *data, const Ecore_Exe *exe);
+   Ecore_Exe_Cb pre_free_cb;
 };
 
 static Ecore_Exe *exes = NULL;
@@ -292,7 +292,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 }
 
 EAPI void
-ecore_exe_callback_pre_free_set(Ecore_Exe *exe, void (*func)(void *data, const Ecore_Exe *exe))
+ecore_exe_callback_pre_free_set(Ecore_Exe *exe, Ecore_Exe_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {

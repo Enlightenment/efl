@@ -59,7 +59,7 @@ struct _Ecore_Pipe
    int               fd_write;
    Ecore_Fd_Handler *fd_handler;
    const void       *data;
-   void            (*handler) (void *data, void *buffer, unsigned int nbyte);
+   Ecore_Pipe_Cb     handler;
    unsigned int      len;
    size_t            already_read;
    void             *passed_data;
@@ -282,8 +282,7 @@ static Eina_Bool _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler);
  * @ingroup Ecore_Pipe_Group
  */
 EAPI Ecore_Pipe *
-ecore_pipe_add(void (*handler) (void *data, void *buffer, unsigned int nbyte),
-               const void *data)
+ecore_pipe_add(Ecore_Pipe_Cb handler, const void *data)
 {
    Ecore_Pipe *p;
    int         fds[2];

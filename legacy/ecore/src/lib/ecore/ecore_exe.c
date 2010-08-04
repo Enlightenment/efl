@@ -121,7 +121,7 @@ struct _Ecore_Exe
    Ecore_Timer *doomsday_clock; /* The Timer of Death.  Muahahahaha. */
    void *doomsday_clock_dead; /* data for the doomsday clock */
 
-   void (*pre_free_cb)(void *data, const Ecore_Exe *exe);
+   Ecore_Exe_Cb pre_free_cb;
 };
 
 
@@ -712,7 +712,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
  * @param func The function to call before @a exe is freed.
  */
 EAPI void
-ecore_exe_callback_pre_free_set(Ecore_Exe *exe, void (*func)(void *data, const Ecore_Exe *exe))
+ecore_exe_callback_pre_free_set(Ecore_Exe *exe, Ecore_Exe_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {

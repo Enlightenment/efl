@@ -18,7 +18,7 @@ struct _Ecore_Animator
    EINA_INLIST;
    ECORE_MAGIC;
 
-   Eina_Bool    (*func) (void *data);
+   Ecore_Task_Cb func;
    void          *data;
 
    Eina_Bool     delete_me : 1;
@@ -51,7 +51,7 @@ static double          animators_frametime = 1.0 / 30.0;
  * automatically making any references/handles for it invalid.
  */
 EAPI Ecore_Animator *
-ecore_animator_add(Eina_Bool (*func) (void *data), const void *data)
+ecore_animator_add(Ecore_Task_Cb func, const void *data)
 {
    Ecore_Animator *animator;
 

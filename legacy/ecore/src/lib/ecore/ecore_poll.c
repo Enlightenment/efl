@@ -18,7 +18,7 @@ struct _Ecore_Poller
    ECORE_MAGIC;
    int           ibit;
    unsigned char delete_me : 1;
-   Eina_Bool    (*func) (void *data);
+   Ecore_Task_Cb func;
    void          *data;
 };
 
@@ -282,7 +282,7 @@ ecore_poller_poll_interval_get(Ecore_Poller_Type type __UNUSED__)
  * invalid.
  */
 EAPI Ecore_Poller *
-ecore_poller_add(Ecore_Poller_Type type __UNUSED__, int interval, Eina_Bool (*func) (void *data), const void *data)
+ecore_poller_add(Ecore_Poller_Type type __UNUSED__, int interval, Ecore_Task_Cb func, const void *data)
 {
    Ecore_Poller *poller;
    int ibit;

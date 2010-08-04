@@ -21,7 +21,7 @@ struct _Ecore_Job
 {
    ECORE_MAGIC;
    Ecore_Event  *event;
-   void        (*func) (void *data);
+   Ecore_Cb func;
    void         *data;
 };
 
@@ -50,7 +50,7 @@ _ecore_job_shutdown(void)
  * @note    Once the job has been executed, the job handle is invalid.
  */
 EAPI Ecore_Job *
-ecore_job_add(void (*func) (void *data), const void *data)
+ecore_job_add(Ecore_Cb func, const void *data)
 {
    Ecore_Job *job;
    

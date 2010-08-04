@@ -29,18 +29,18 @@ struct _Ecore_Pthread_Worker
      {
         struct
           {
-             void (*func_blocking)(void *data);
+             Ecore_Cb func_blocking;
            } short_run;
         struct
           {
-             void (*func_heavy)(Ecore_Thread *thread, void *data);
-             void (*func_notify)(Ecore_Thread *thread, void *msg_data, void *data);
+             Ecore_Thread_Heavy_Cb func_heavy;
+             Ecore_Thread_Notify_Cb func_notify;
              Ecore_Pipe *notify;
           } long_run;
      } u;
 
-    void (*func_cancel)(void *data);
-    void (*func_end)(void *data);
+    Ecore_Cb func_cancel;
+    Ecore_Cb func_end;
  #ifdef EFL_HAVE_PTHREAD
     pthread_t self;
     Eina_Hash *hash;
@@ -391,9 +391,9 @@ _ecore_thread_shutdown(void)
  * host CPU can handle.
  */
 EAPI Ecore_Thread *
-ecore_thread_run(Ecore_Thread_Blocking_Cb func_blocking,
-                 Ecore_Thread_End_Cb func_end,
-                 Ecore_Thread_Cancel_Cb func_cancel,
+ecore_thread_run(Ecore_Cb func_blocking,
+                 Ecore_Cb func_end,
+                 Ecore_Cb func_cancel,
                  const void *data)
 {
 #ifdef EFL_HAVE_PTHREAD
@@ -565,8 +565,8 @@ ecore_thread_check(Ecore_Thread *thread)
  */
 EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Heavy_Cb func_heavy,
                                   Ecore_Thread_Notify_Cb func_notify,
-                                  Ecore_Thread_End_Cb func_end,
-                                  Ecore_Thread_Cancel_Cb func_cancel,
+                                  Ecore_Cb func_end,
+                                  Ecore_Cb func_cancel,
                                   const void *data,
                                   Eina_Bool try_no_queue)
 {

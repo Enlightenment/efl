@@ -16,7 +16,7 @@ struct _Ecore_Idle_Exiter
 {
    EINA_INLIST;
    ECORE_MAGIC;
-   Eina_Bool  (*func) (void *data);
+   Ecore_Task_Cb func;
    void        *data;
    int          references;
    Eina_Bool    delete_me : 1;
@@ -35,7 +35,7 @@ static int                idle_exiters_delete_me = 0;
  * @ingroup Idle_Group
  */
 EAPI Ecore_Idle_Exiter *
-ecore_idle_exiter_add(Eina_Bool (*func) (void *data), const void *data)
+ecore_idle_exiter_add(Ecore_Task_Cb func, const void *data)
 {
    Ecore_Idle_Exiter *ie;
 

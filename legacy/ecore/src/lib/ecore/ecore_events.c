@@ -18,7 +18,7 @@ struct _Ecore_Event_Handler
    EINA_INLIST;
    ECORE_MAGIC;
    int type;
-   Eina_Bool (*func) (void *data, int type, void *event);
+   Ecore_Event_Handler_Cb func;
    void *data;
    int       references;
    Eina_Bool delete_me : 1;
@@ -28,9 +28,9 @@ struct _Ecore_Event_Filter
 {
    EINA_INLIST;
    ECORE_MAGIC;
-   void *(*func_start) (void *data);
-   Eina_Bool (*func_filter) (void *data, void *loop_data, int type, void *event);
-   void (*func_end) (void *data, void *loop_data);
+   Ecore_Data_Cb func_start;
+   Ecore_Filter_Cb func_filter;
+   Ecore_End_Cb func_end;
    void *loop_data;
    void *data;
    int       references;
@@ -43,7 +43,7 @@ struct _Ecore_Event
    ECORE_MAGIC;
    int type;
    void *event;
-   void (*func_free) (void *data, void *ev);
+   Ecore_End_Cb func_free;
    void *data;
    int       references;
    Eina_Bool delete_me : 1;
@@ -98,7 +98,7 @@ static void *_ecore_event_del(Ecore_Event *event);
  * been called, will not be.
  */
 EAPI Ecore_Event_Handler *
-ecore_event_handler_add(int type, Eina_Bool (*func) (void *data, int type, void *event), const void *data)
+ecore_event_handler_add(int type, Ecore_Event_Handler_Cb func, const void *data)
 {
    Ecore_Event_Handler *eh;
 
@@ -187,7 +187,7 @@ _ecore_event_generic_free (void *data __UNUSED__, void *event)
  * func_free is passed @p data as its data parameter.
  */
 EAPI Ecore_Event *
-ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), void *data)
+ecore_event_add(int type, void *ev, Ecore_End_Cb func_free, void *data)
 {
 /*   if (!ev) return NULL;*/
    if (type <= ECORE_EVENT_NONE) return NULL;
@@ -258,7 +258,7 @@ ecore_event_type_new(void)
  * and @p data pointer to clean up.
  */
 EAPI Ecore_Event_Filter *
-ecore_event_filter_add(void * (*func_start) (void *data), Eina_Bool (*func_filter) (void *data, void *loop_data, int type, void *event), void (*func_end) (void *data, void *loop_data), const void *data)
+ecore_event_filter_add(Ecore_Data_Cb func_start, Ecore_Filter_Cb func_filter, Ecore_End_Cb func_end, const void *data)
 {
    Ecore_Event_Filter *ef;
 
@@ -382,7 +382,7 @@ _ecore_event_exist(void)
 }
 
 Ecore_Event *
-_ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), void *data)
+_ecore_event_add(int type, void *ev, Ecore_End_Cb func_free, void *data)
 {
    Ecore_Event *e;
 

@@ -16,7 +16,7 @@ struct _Ecore_Idler
 {
    EINA_INLIST;
    ECORE_MAGIC;
-   Eina_Bool  (*func) (void *data);
+   Ecore_Task_Cb func;
    void        *data;
    int          references;
    Eina_Bool    delete_me : 1;
@@ -43,7 +43,7 @@ static int          idlers_delete_me = 0;
  * Idlers are useful for progressively prossessing data without blocking.
  */
 EAPI Ecore_Idler *
-ecore_idler_add(Eina_Bool (*func) (void *data), const void *data)
+ecore_idler_add(Ecore_Task_Cb func, const void *data)
 {
    Ecore_Idler *ie;
 

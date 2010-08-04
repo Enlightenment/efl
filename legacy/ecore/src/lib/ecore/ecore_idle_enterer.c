@@ -16,7 +16,7 @@ struct _Ecore_Idle_Enterer
 {
    EINA_INLIST;
    ECORE_MAGIC;
-   Eina_Bool  (*func) (void *data);
+   Ecore_Task_Cb func;
    void        *data;
    int          references;
    Eina_Bool    delete_me : 1;
@@ -36,7 +36,7 @@ static int                 idle_enterers_delete_me = 0;
  * @ingroup Idle_Group
  */
 EAPI Ecore_Idle_Enterer *
-ecore_idle_enterer_add(Eina_Bool (*func) (void *data), const void *data)
+ecore_idle_enterer_add(Ecore_Task_Cb func, const void *data)
 {
    Ecore_Idle_Enterer *ie;
 
@@ -59,7 +59,7 @@ ecore_idle_enterer_add(Eina_Bool (*func) (void *data), const void *data)
  * @ingroup Idle_Group
  */
 EAPI Ecore_Idle_Enterer *
-ecore_idle_enterer_before_add(Eina_Bool (*func) (void *data), const void *data)
+ecore_idle_enterer_before_add(Ecore_Task_Cb func, const void *data)
 {
    Ecore_Idle_Enterer *ie;
 
