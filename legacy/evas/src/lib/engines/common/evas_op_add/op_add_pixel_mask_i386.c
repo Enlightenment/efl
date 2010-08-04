@@ -1,4 +1,3 @@
-
 /* add pixel x mask -> dst */
 
 #ifdef BUILD_MMX

@@ -1,4 +1,3 @@
-
 /* mul pixel --> dst */
 
 #ifdef BUILD_C

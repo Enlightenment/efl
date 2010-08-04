@@ -1,4 +1,3 @@
-
 /* sub pixel x color --> dst */
 
 #ifdef BUILD_MMX

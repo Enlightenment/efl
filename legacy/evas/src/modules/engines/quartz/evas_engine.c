@@ -1,6 +1,3 @@
-/*
- * vim:ts=3:sw=3:sts=3:expandtab
- */
 #include <ApplicationServices/ApplicationServices.h>
 
 #include "evas_common.h"

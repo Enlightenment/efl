@@ -1,4 +1,3 @@
-
 /* copy color --> dst */
 
 #ifdef BUILD_C

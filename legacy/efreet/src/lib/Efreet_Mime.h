@@ -1,4 +1,3 @@
-/* vim: set sw=4 ts=4 sts=4 et: */
 #ifndef EFREET_MIME_H
 #define EFREET_MIME_H
 

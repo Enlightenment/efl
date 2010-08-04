@@ -240,4 +240,3 @@ eina_test_ustr(TCase *tc)
 
 }
 
-/* vim: set sts=3 sw=3: */

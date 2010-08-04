@@ -1,4 +1,3 @@
-
 /* blend pixel --> dst */
 
 #ifdef BUILD_MMX

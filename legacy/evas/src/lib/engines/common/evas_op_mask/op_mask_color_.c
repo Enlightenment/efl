@@ -1,5 +1,3 @@
-
-
 /* mask color --> dst */
 
 #ifdef BUILD_C

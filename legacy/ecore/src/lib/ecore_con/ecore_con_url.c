@@ -1,8 +1,4 @@
 /*
- * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
- */
-
-/*
  * For info on how to use libcurl, see:
  * http://curl.haxx.se/libcurl/c/libcurl-tutorial.html
  */

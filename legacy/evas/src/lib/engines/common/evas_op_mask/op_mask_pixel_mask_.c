@@ -1,4 +1,3 @@
-
 /* mask pixel x mask --> dst */
 
 #ifdef BUILD_C

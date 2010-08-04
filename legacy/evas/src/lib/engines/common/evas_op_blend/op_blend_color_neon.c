@@ -1,4 +1,3 @@
-
 /* blend color --> dst */
 
 #ifdef BUILD_NEON

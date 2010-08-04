@@ -1,4 +1,3 @@
-
 /* EINA - EFL data type library
  * Copyright (C) 2002-2008 Carsten Haitzler, Gustavo Sverzut Barbieri,
  *                         Vincent Torri, Jorge Luis Zapata Muga, Cedric Bail

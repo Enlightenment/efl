@@ -1,4 +1,3 @@
-
 /* mask pixel x color --> dst */
 
 #ifdef BUILD_C

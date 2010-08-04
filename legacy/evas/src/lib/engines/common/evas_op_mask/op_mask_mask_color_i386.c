@@ -1,4 +1,3 @@
-
 /* mask mask x color -> dst */
 
 #ifdef BUILD_MMX

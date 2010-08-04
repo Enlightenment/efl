@@ -1,4 +1,3 @@
-
 /* sub pixel --> dst */
 
 #ifdef BUILD_C

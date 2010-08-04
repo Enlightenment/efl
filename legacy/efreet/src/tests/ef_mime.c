@@ -1,4 +1,3 @@
-/* vim: set sw=4 ts=4 sts=4 et: */
 #include "Efreet.h"
 #include "Efreet_Mime.h"
 #include "config.h"

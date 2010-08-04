@@ -1,4 +1,3 @@
-
 /* sub color -> dst */
 
 #ifdef BUILD_C

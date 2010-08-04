@@ -1,7 +1,3 @@
-/*
- * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
- */
-
 /* FIXME: Write an intro + explanation about all of this object, including
  * the internal types and functions. It's time consuming to understand what's
  * going on here without a reasonable amount of help. */

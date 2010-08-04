@@ -1,4 +1,3 @@
-
 /* blend pixel x color --> dst */
 #ifdef BUILD_NEON
 /* Note: Optimisation is based on keeping _dest_ aligned: else it's a pair of

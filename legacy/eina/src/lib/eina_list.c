@@ -1,5 +1,3 @@
-// vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
-
 /* EINA - EFL data type library
  * Copyright (C) 2002-2008 Carsten Haitzler, Gustavo Sverzut Barbieri, Tilman Sauerbeck,
  *                         Vincent Torri, Cedric Bail, Jorge Luis Zapata Muga,

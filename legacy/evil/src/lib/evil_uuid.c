@@ -1,4 +1,3 @@
-
 #ifndef __MINGW32CE__
 /*
  * Defines the windows UUID IID_IPersistFile used for links in

@@ -1,4 +1,3 @@
-/* vim: set sw=4 ts=4 sts=4 et: */
 #ifndef EFREET_ICON_H
 #define EFREET_ICON_H
 

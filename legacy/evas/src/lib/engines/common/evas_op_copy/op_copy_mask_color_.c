@@ -1,4 +1,3 @@
-
 /* copy mask x color -> dst */
 
 #ifdef BUILD_C
