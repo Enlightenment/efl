@@ -33,7 +33,7 @@ struct _Elm_Toolbar_Item
    Eina_Bool selected : 1;
    Eina_Bool disabled : 1;
    Eina_Bool separator : 1;
-   Eina_Bool menu;
+   Eina_Bool menu : 1;
    Evas_Object *o_menu;
 };
 
