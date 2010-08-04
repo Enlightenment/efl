@@ -25,7 +25,7 @@ struct _Widget_Data
    Elm_Text_Format format;
    Ecore_Timer *delay_write;
    Eina_Bool can_write : 1;
-   Eina_Bool auto_write : 1;
+   Eina_Bool autosave : 1;
 };
 
 static const char *widtype = NULL;
@@ -44,7 +44,7 @@ _del_hook(Evas_Object *obj)
    if (wd->delay_write)
      {
 	ecore_timer_del(wd->delay_write);
-	_save(obj);
+        if (wd->autosave) _save(obj);
      }
    free(wd);
 }
@@ -222,7 +222,7 @@ _entry_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSE
 	ecore_timer_del(wd->delay_write);
 	wd->delay_write = NULL;
      }
-   if (!wd->auto_write) return;
+   if (!wd->autosave) return;
    wd->delay_write = ecore_timer_add(2.0, _delay_write, data);
 }
 
@@ -301,7 +301,7 @@ elm_notepad_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
    
-   wd->auto_write = EINA_TRUE;
+   wd->autosave = EINA_TRUE;
 
    _sizing_eval(obj);
    return obj;
@@ -329,7 +329,7 @@ elm_notepad_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 	ecore_timer_del(wd->delay_write);
 	wd->delay_write = NULL;
      }
-   if (wd->auto_write) _save(obj);
+   if (wd->autosave) _save(obj);
    eina_stringshare_replace(&wd->file, file);
    wd->format = format;
    _load(obj);
@@ -394,5 +394,5 @@ elm_notepad_autosave_set(Evas_Object *obj, Eina_Bool autosave)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->auto_write = autosave;
+   wd->autosave = autosave;
 }
