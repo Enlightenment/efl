@@ -422,6 +422,7 @@ efreet_desktop_save(Efreet_Desktop *desktop)
     int ok = 1;
 
     ini = efreet_ini_new(NULL);
+    if (!ini) return 0;
     efreet_ini_section_add(ini, "Desktop Entry");
     efreet_ini_section_set(ini, "Desktop Entry");
 
@@ -911,6 +912,7 @@ efreet_desktop_read(Efreet_Desktop *desktop)
     int ok;
 
     ini = efreet_ini_new(desktop->orig_path);
+    if (!ini) return 0;
     if (!ini->data)
     {
         efreet_ini_free(ini);

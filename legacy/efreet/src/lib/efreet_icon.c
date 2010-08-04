@@ -1011,6 +1011,7 @@ efreet_icon_populate(Efreet_Icon *icon, const char *file)
     const char *tmp;
 
     ini = efreet_ini_new(file);
+    if (!ini) return;
     if (!ini->data)
     {
         efreet_ini_free(ini);
@@ -1346,6 +1347,7 @@ efreet_icon_theme_index_read(Efreet_Icon_Theme *theme, const char *path)
     if (!theme || !path) return;
 
     ini = efreet_ini_new(path);
+    if (!ini) return;
     if (!ini->data)
     {
         efreet_ini_free(ini);
