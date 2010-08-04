@@ -1210,7 +1210,23 @@ efreet_icon_theme_cache_check_dir(Efreet_Icon_Theme *theme, const char *dir)
     /* have we modified this directory since our last cache check? */
     if (stat(dir, &buf) || (buf.st_mtime > theme->last_cache_check))
     {
-        eina_hash_del(efreet_icon_cache, theme, NULL);
+        char key[4096];
+        char *elem;
+        Eina_Iterator *it;
+        Eina_List *keys = NULL;
+        size_t len;
+
+        snprintf(key, sizeof(key), "%s::", theme->name.internal);
+        len = strlen(key);
+
+        it = eina_hash_iterator_key_new(efreet_icon_cache);
+        EINA_ITERATOR_FOREACH(it, elem)
+            if (!strncmp(elem, key, len))
+                keys = eina_list_append(keys, elem);
+        eina_iterator_free(it);
+
+        EINA_LIST_FREE(keys, elem)
+            eina_hash_del_by_key(efreet_icon_cache, elem);
         return 0;
     }
 
