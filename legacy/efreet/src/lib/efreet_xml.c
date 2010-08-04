@@ -106,7 +106,7 @@ efreet_xml_new(const char *file)
 
     error = 0;
     xml = efreet_xml_parse(&data, &size);
-    if (error) goto efreet_error;
+    if (!xml || error) goto efreet_error;
 
     munmap(data, size);
     close(fd);
