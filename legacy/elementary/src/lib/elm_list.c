@@ -1164,7 +1164,7 @@ elm_list_item_separator_set(Elm_List_Item *it, Eina_Bool setting)
 EAPI Eina_Bool
 elm_list_item_separator_get(const Elm_List_Item *it)
 {
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, EINA_FALSE);
    return it->is_separator;
 }
 
