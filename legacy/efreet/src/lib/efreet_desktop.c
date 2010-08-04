@@ -442,14 +442,20 @@ efreet_desktop_save(Efreet_Desktop *desktop)
         if (desktop->only_show_in)
         {
             val = efreet_desktop_string_list_join(desktop->only_show_in);
-            efreet_ini_string_set(ini, "OnlyShowIn", val);
-            FREE(val);
+            if (val)
+            {
+                efreet_ini_string_set(ini, "OnlyShowIn", val);
+                FREE(val);
+            }
         }
         if (desktop->not_show_in)
         {
             val = efreet_desktop_string_list_join(desktop->not_show_in);
-            efreet_ini_string_set(ini, "NotShowIn", val);
-            FREE(val);
+            if (val)
+            {
+                efreet_ini_string_set(ini, "NotShowIn", val);
+                FREE(val);
+            }
         }
         efreet_desktop_generic_fields_save(desktop, ini);
         /* When we save the file, it should be updated to the
@@ -1058,15 +1064,21 @@ efreet_desktop_application_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
     if (desktop->categories)
     {
         val = efreet_desktop_string_list_join(desktop->categories);
-        efreet_ini_string_set(ini, "Categories", val);
-        FREE(val);
+        if (val)
+        {
+            efreet_ini_string_set(ini, "Categories", val);
+            FREE(val);
+        }
     }
 
     if (desktop->mime_types)
     {
         val = efreet_desktop_string_list_join(desktop->mime_types);
-        efreet_ini_string_set(ini, "MimeType", val);
-        FREE(val);
+        if (val)
+        {
+           efreet_ini_string_set(ini, "MimeType", val);
+           FREE(val);
+        }
     }
 
     efreet_ini_boolean_set(ini, "Terminal", desktop->terminal);
