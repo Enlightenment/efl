@@ -24,7 +24,7 @@
 static int _efreet_ini_log_dom = -1;
 
 static Eina_Hash *efreet_ini_parse(const char *file);
-static const char *efreet_ini_unescape(const char *str);
+static const char *efreet_ini_unescape(const char *str) EINA_ARG_NONNULL(1);
 static Eina_Bool
 efreet_ini_section_save(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 static Eina_Bool
@@ -624,7 +624,6 @@ efreet_ini_unescape(const char *str)
     char *buf, *dest;
     const char *p;
 
-    if (!str) return NULL;
     if (!strchr(str, '\\')) return eina_stringshare_add(str);
     buf = alloca(strlen(str) + 1);
 
