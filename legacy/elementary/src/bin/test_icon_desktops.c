@@ -24,16 +24,20 @@ desk_gl_icon_get(const void *data, Evas_Object *obj, const char *part)
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    if (!(!strcmp(part, "elm.swallow.icon"))) return ic;
    if (!d->icon) return ic;
-   path = efreet_icon_path_find("default", d->icon, 48);
-   if (!path)
+   path = efreet_icon_path_find(getenv("E_ICON_THEME"), d->icon, 48);
+   if (!path) 
      {
-        path = efreet_icon_path_find("hicolor", d->icon, 48);
+        path = efreet_icon_path_find("default", d->icon, 48);
         if (!path)
           {
-             path = efreet_icon_path_find("gnome", d->icon, 48);
+             path = efreet_icon_path_find("hicolor", d->icon, 48);
              if (!path)
                {
-                  path = efreet_icon_path_find("Human", d->icon, 48);
+                  path = efreet_icon_path_find("gnome", d->icon, 48);
+                  if (!path)
+                    {
+                       path = efreet_icon_path_find("Human", d->icon, 48);
+                    }
                }
           }
      }
