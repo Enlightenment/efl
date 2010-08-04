@@ -98,7 +98,7 @@ _els_smart_icon_object_get(Evas_Object *obj)
 {
    Smart_Data *sd;
    sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+   if (!sd) return NULL;
    return sd->obj;
 }
 
