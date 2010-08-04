@@ -1,4 +1,4 @@
- *  Small compiler - Error message system
+/*  Small compiler - Error message system
  *  In fact a very simple system, using only 'panic mode'.
  *
  *  Copyright (c) ITB CompuPhase, 1997-2003

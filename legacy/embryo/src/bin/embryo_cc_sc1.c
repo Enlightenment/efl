@@ -1,4 +1,4 @@
- *  Small compiler
+/*  Small compiler
  *  Function and variable definition and declaration, statement parser.
  *
  *  Copyright (c) ITB CompuPhase, 1997-2003

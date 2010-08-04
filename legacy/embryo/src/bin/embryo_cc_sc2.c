@@ -1,4 +1,4 @@
- *  Small compiler - File input, preprocessing and lexical analysis functions
+/*  Small compiler - File input, preprocessing and lexical analysis functions
  *
  *  Copyright (c) ITB CompuPhase, 1997-2003
  *
