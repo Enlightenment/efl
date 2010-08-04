@@ -488,7 +488,7 @@ elm_notify_orient_get(const Evas_Object *obj)
 {
 	ELM_CHECK_WIDTYPE(obj, widtype);
 	Widget_Data *wd = elm_widget_data_get(obj);
-	if (!wd) return;
+	if (!wd) return (Elm_Notify_Orient)-1;
 	return wd->orient;
 }
 
