@@ -518,7 +518,7 @@ elm_notify_timeout_get(const Evas_Object *obj)
 {
 	ELM_CHECK_WIDTYPE(obj, widtype);
 	Widget_Data *wd = elm_widget_data_get(obj);
-	if (!wd) return;
+	if (!wd) return -1;
 	return wd->timeout;
 }
 
@@ -576,7 +576,7 @@ elm_notify_repeat_events_get(const Evas_Object *obj)
 {
 	ELM_CHECK_WIDTYPE(obj, widtype);
 	Widget_Data *wd = elm_widget_data_get(obj);
-	if (!wd) return;
+	if (!wd) return EINA_FALSE;
 	return wd->repeat_events;
 }
 
