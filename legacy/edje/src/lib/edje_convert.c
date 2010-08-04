@@ -237,12 +237,52 @@ _edje_file_convert(Eet_File *file, Old_Edje_File *oedf)
    return NULL;
 }
 
+static void
+_edje_collection_program_add(Edje_Program ***array,
+			     unsigned int *count,
+			     Edje_Program *add)
+{
+   Edje_Program **tmp;
+
+   tmp = realloc(*array, sizeof (Edje_Program*) * (*count + 1));
+   if (!tmp) return ;
+
+   tmp[(*count)++] = add;
+   *array = tmp;
+}
+
+Eina_Bool
+edje_program_is_strncmp(const char *str)
+{
+   unsigned int length;
+
+   length = strlen(str);
+
+   if (strpbrk(str, "*?[\\") != str + length)
+     return EINA_FALSE;
+   if (str[length] == '['
+       || str[length] == '\\')
+     return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+Eina_Bool
+edje_program_is_strrncmp(const char *str)
+{
+   if (*str != '*' && *str != '?')
+     return EINA_FALSE;
+   if (strpbrk(str + 1, "*?[\\") != NULL)
+     return EINA_FALSE;
+   return EINA_TRUE;
+}
+
 Edje_Part_Collection *
 _edje_collection_convert(Edje_File *file, Old_Edje_Part_Collection *oedc)
 {
    Edje_Part_Collection_Directory_Entry *ce;
    Edje_Part_Collection *edc;
    Old_Edje_Part *part;
+   Edje_Program *pg;
    Edje_Data *di;
    Eina_List *l;
    unsigned int k;
@@ -300,8 +340,32 @@ _edje_collection_convert(Edje_File *file, Old_Edje_Part_Collection *oedc)
    if (!edc) return NULL;
    ce->ref = edc;
 
-   edc->programs = oedc->programs;
-   oedc->programs = NULL;
+   EINA_LIST_FREE(oedc->programs, pg)
+     {
+	if (!pg->signal && !pg->source)
+	  _edje_collection_program_add(&edc->programs.nocmp,
+				       &edc->programs.nocmp_count,
+				       pg);
+	else if (pg->signal && strpbrk(pg->signal, "*?[\\") == NULL
+		 && pg->source && strpbrk(pg->source, "*?[\\") == NULL)
+	  _edje_collection_program_add(&edc->programs.strcmp,
+				       &edc->programs.strcmp_count,
+				       pg);
+	else if (pg->signal && edje_program_is_strncmp(pg->signal)
+		 && pg->source && edje_program_is_strncmp(pg->source))
+	  _edje_collection_program_add(&edc->programs.strncmp,
+				       &edc->programs.strncmp_count,
+				       pg);
+	else if (pg->signal && edje_program_is_strrncmp(pg->signal)
+		 && pg->source && edje_program_is_strrncmp(pg->source))
+	  _edje_collection_program_add(&edc->programs.strrncmp,
+				       &edc->programs.strrncmp_count,
+				       pg);
+	else
+	  _edje_collection_program_add(&edc->programs.fnmatch,
+				       &edc->programs.fnmatch_count,
+				       pg);
+     }
 
    edc->data = eina_hash_string_small_new(NULL);
    EINA_LIST_FREE(oedc->data, di)

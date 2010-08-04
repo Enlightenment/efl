@@ -475,6 +475,27 @@ _edje_part_description_id_set(int type, Edje_Part_Description_Common *c, int old
 }
 
 static void
+_edje_part_program_id_set(Edje_Program *epr, int old_id, int new_id)
+{
+   Edje_Program_Target *pt;
+   Eina_List *ll, *l_next;
+
+   if (epr->action != EDJE_ACTION_TYPE_STATE_SET)
+     return;
+
+   EINA_LIST_FOREACH_SAFE(epr->targets, ll, l_next, pt)
+     {
+	if (pt->id == old_id)
+	  {
+	     if (new_id == -1)
+	       epr->targets = eina_list_remove_list(epr->targets, ll);
+	     else
+	       pt->id = new_id;
+	  }
+     }
+}
+
+static void
 _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
 {
    /* This function change the id of a given real_part.
@@ -483,11 +504,9 @@ _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
     * is lost.
     * If new Id = -1 then all the depencies will be deleted
     */
-   int old_id;
    Edje_Part *part;
-   Eina_List *l, *ll, *l_next;
-   Edje_Program *epr;
    unsigned int j;
+   int old_id;
 
    part = rp->part;
 
@@ -522,24 +541,15 @@ _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
      }
 
    /*...and also in programs targets */
-   EINA_LIST_FOREACH(ed->collection->programs, l, epr)
-     {
-       Edje_Program_Target *pt;
+#define EDJE_EDIT_PROGRAM_ID_SET(Array, Ed, It, Old, New)		\
+   for (It = 0; It < Ed->collection->programs.Array##_count; ++It)	\
+     _edje_part_program_id_set(Ed->collection->programs.Array[It], Old, New);
 
-	if (epr->action != EDJE_ACTION_TYPE_STATE_SET)
-	  continue;
-
-	EINA_LIST_FOREACH_SAFE(epr->targets, ll, l_next, pt)
-	  {
-	     if (pt->id == old_id)
-	       {
-		  if (new_id == -1)
-		    epr->targets = eina_list_remove_list(epr->targets, ll);
-		  else
-		    pt->id = new_id;
-	       }
-	  }
-     }
+   EDJE_EDIT_PROGRAM_ID_SET(fnmatch, ed, j, old_id, new_id);
+   EDJE_EDIT_PROGRAM_ID_SET(strcmp, ed, j, old_id, new_id);
+   EDJE_EDIT_PROGRAM_ID_SET(strncmp, ed, j, old_id, new_id);
+   EDJE_EDIT_PROGRAM_ID_SET(strrncmp, ed, j, old_id, new_id);
+   EDJE_EDIT_PROGRAM_ID_SET(nocmp, ed, j, old_id, new_id);
 
    /* Adjust table_parts */
    if (new_id >= 0)
@@ -573,6 +583,22 @@ _edje_part_description_id_switch(int type, Edje_Part_Description_Common *c, int 
 }
 
 static void
+_edje_part_program_id_switch(Edje_Program *epr, int id1, int id2)
+{
+   Edje_Program_Target *pt;
+   Eina_List *ll;
+
+   if (epr->action != EDJE_ACTION_TYPE_STATE_SET)
+     return;
+
+   EINA_LIST_FOREACH(epr->targets, ll, pt)
+     {
+	if (pt->id == id1) pt->id = id2;
+	else if (pt->id == id2) pt->id = id1;
+     }
+}
+
+static void
 _edje_parts_id_switch(Edje *ed, Edje_Real_Part *rp1, Edje_Real_Part *rp2)
 {
    /* This function switch the id of two parts.
@@ -582,8 +608,6 @@ _edje_parts_id_switch(Edje *ed, Edje_Real_Part *rp1, Edje_Real_Part *rp2)
     */
    int id1;
    int id2;
-   Eina_List *l, *ll;
-   Edje_Program *epr;
    unsigned int i;
 
    //printf("SWITCH ID OF PART %d AND %d\n", rp1->part->id, rp2->part->id);
@@ -625,19 +649,15 @@ _edje_parts_id_switch(Edje *ed, Edje_Real_Part *rp1, Edje_Real_Part *rp2)
      }
 
    //...and also in programs targets
-   EINA_LIST_FOREACH(ed->collection->programs, l, epr)
-     {
-        Edje_Program_Target *pt;
+#define EDJE_EDIT_PROGRAM_SWITCH(Array, Ed, It, Id1, Id2)		\
+   for (It = 0; It < Ed->collection->programs.Array##_count; ++It)	\
+     _edje_part_program_id_switch(Ed->collection->programs.Array[i], Id1, Id2);
 
-	if (epr->action != EDJE_ACTION_TYPE_STATE_SET)
-	  continue;
-
-	EINA_LIST_FOREACH(epr->targets, ll, pt)
-	  {
-	     if (pt->id == id1) pt->id = id2;
-	     else if (pt->id == id2) pt->id = id1;
-	  }
-     }
+   EDJE_EDIT_PROGRAM_SWITCH(fnmatch, ed, i, id1, id2);
+   EDJE_EDIT_PROGRAM_SWITCH(strcmp, ed, i, id1, id2);
+   EDJE_EDIT_PROGRAM_SWITCH(strncmp, ed, i, id1, id2);
+   EDJE_EDIT_PROGRAM_SWITCH(strrncmp, ed, i, id1, id2);
+   EDJE_EDIT_PROGRAM_SWITCH(nocmp, ed, i, id1, id2);
    //TODO Real part dependencies are ok?
 }
 
@@ -909,7 +929,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    /* Init Edje_Part_Collection */
    pc->id = id;
    pc->references = 0;
-   pc->programs = NULL;
+   memset(&pc->programs, 0, sizeof (pc->programs));
    pc->parts = NULL;
    pc->data = NULL;
    pc->script = NULL;
@@ -4459,10 +4479,14 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
 
    //Add program to group
    pc = ed->collection;
-   pc->programs = eina_list_append(pc->programs, epr);
+
+   /* By default, source and signal are empty, so they fill in nocmp category */
+   ed->collection->programs.nocmp = realloc(ed->collection->programs.nocmp,
+					    sizeof (Edje_Program*) * ed->collection->programs.nocmp_count);
+   ed->collection->programs.nocmp[ed->collection->programs.nocmp_count++] = epr;
 
    //Init Edje_Program
-   epr->id = eina_list_count(pc->programs) - 1;
+   epr->id = ed->table_programs_size;
    epr->name = eina_stringshare_add(name);
    epr->signal = NULL;
    epr->source = NULL;
@@ -4494,10 +4518,96 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
    return EINA_TRUE;
 }
 
+static void
+_edje_edit_program_remove(Edje *ed, Edje_Program *p)
+{
+   Edje_Program ***array;
+   unsigned int *count;
+   unsigned int i;
+
+   if (!p->signal && !p->source)
+     {
+	array = &ed->collection->programs.nocmp;
+	count = &ed->collection->programs.nocmp_count;
+     }
+   else if (p->signal && strpbrk(p->signal, "*?[\\") == NULL
+	    && p->source && strpbrk(p->source, "*?[\\") == NULL)
+     {
+	array = &ed->collection->programs.strcmp;
+	count = &ed->collection->programs.strcmp_count;
+     }
+   else if (p->signal && edje_program_is_strncmp(p->signal)
+	    && p->source && edje_program_is_strncmp(p->source))
+     {
+	array = &ed->collection->programs.strncmp;
+	count = &ed->collection->programs.strncmp_count;
+     }
+   else if (p->signal && edje_program_is_strrncmp(p->signal)
+	    && p->source && edje_program_is_strrncmp(p->source))
+     {
+	array = &ed->collection->programs.strrncmp;
+	count = &ed->collection->programs.strrncmp_count;
+     }
+   else
+     {
+	array = &ed->collection->programs.fnmatch;
+	count = &ed->collection->programs.fnmatch_count;
+     }
+
+   for (i = 0; i < *count; ++i)
+     if ((*array)[i] == p)
+       {
+	  memmove(*array + i, *array + i + 1, sizeof (Edje_Program *) * (*count - i -1));
+	  (*count)--;
+	  break;
+       }
+}
+
+static void
+_edje_edit_program_insert(Edje *ed, Edje_Program *p)
+{
+   Edje_Program ***array;
+   unsigned int *count;
+
+   if (!p->signal && !p->source)
+     {
+	array = &ed->collection->programs.nocmp;
+	count = &ed->collection->programs.nocmp_count;
+     }
+   else if (p->signal && strpbrk(p->signal, "*?[\\") == NULL
+	    && p->source && strpbrk(p->source, "*?[\\") == NULL)
+     {
+	array = &ed->collection->programs.strcmp;
+	count = &ed->collection->programs.strcmp_count;
+     }
+   else if (p->signal && edje_program_is_strncmp(p->signal)
+	    && p->source && edje_program_is_strncmp(p->source))
+     {
+	array = &ed->collection->programs.strncmp;
+	count = &ed->collection->programs.strncmp_count;
+     }
+   else if (p->signal && edje_program_is_strrncmp(p->signal)
+	    && p->source && edje_program_is_strrncmp(p->source))
+     {
+	array = &ed->collection->programs.strrncmp;
+	count = &ed->collection->programs.strrncmp_count;
+     }
+   else
+     {
+	array = &ed->collection->programs.fnmatch;
+	count = &ed->collection->programs.fnmatch_count;
+     }
+
+   *array = realloc(*array, sizeof (Edje_Program *) * (*count + 1));
+   *array[(*count)++] = p;
+}
+
 EAPI Eina_Bool
 edje_edit_program_del(Evas_Object *obj, const char *prog)
 {
-   Eina_List *l, *l_next, *rem;
+   Eina_List *l, *l_next;
+   Edje_Program_Target *prt;
+   Edje_Program_After *pa;
    Edje_Part_Collection *pc;
    Edje_Program *p;
    int id, i;
@@ -4508,24 +4618,19 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
 
    pc = ed->collection;
 
-   rem = eina_list_nth_list(pc->programs, epr->id);
-   l = eina_list_last(pc->programs);
-   if (rem != l)
+   //Remove program from programs list
+   id = epr->id;
+   _edje_edit_program_remove(ed, epr);
+
+   /* fix table program */
+   if (epr->id != ed->table_programs_size - 1)
      {
 	/* If the removed program is not the last in the list/table,
 	 * put the last one in its place and update references to it later */
-	p = eina_list_data_get(l);
-	pc->programs = eina_list_remove_list(pc->programs, l);
-	pc->programs = eina_list_append_relative_list(pc->programs, p, rem);
-
-	ed->table_programs[epr->id] = p;
-	old_id = p->id;
-	p->id = epr->id;
+	ed->table_programs[epr->id] = ed->table_programs[ed->table_programs_size - 1];
+	old_id = ed->table_programs_size - 1;
+	ed->table_programs[epr->id]->id = epr->id;
      }
-
-   //Remove program from programs list
-   id = epr->id;
-   pc->programs = eina_list_remove(pc->programs, epr);
 
    //Free Edje_Program
    _edje_if_string_free(ed, epr->name);
@@ -4536,22 +4641,10 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
    _edje_if_string_free(ed, epr->state);
    _edje_if_string_free(ed, epr->state2);
 
-   while (epr->targets)
-     {
-	Edje_Program_Target *prt;
-
-	prt = eina_list_data_get(epr->targets);
-	epr->targets = eina_list_remove_list(epr->targets, epr->targets);
-	free(prt);
-     }
-   while (epr->after)
-     {
-	Edje_Program_After *pa;
-
-	pa = eina_list_data_get(epr->after);
-	epr->after = eina_list_remove_list(epr->after, epr->after);
-	free(pa);
-     }
+   EINA_LIST_FREE(epr->targets, prt)
+     free(prt);
+   EINA_LIST_FREE(epr->after, pa)
+     free(pa);
    free(epr);
 
    ed->table_programs_size--;
@@ -4645,15 +4738,17 @@ edje_edit_program_source_set(Evas_Object *obj, const char *prog, const char *sou
 
    if (!source) return EINA_FALSE;
 
-   //printf("SET SOURCE for program: %s [%s]\n", prog, source);
-
+   /* Remove from program array */
+   _edje_edit_program_remove(ed, epr);
    _edje_if_string_free(ed, epr->source);
+
+   /* Insert it back */
    epr->source = eina_stringshare_add(source);
+   _edje_edit_program_insert(ed, epr);
 
    //Update patterns
-   if (ed->patterns.programs.sources_patterns)
-      edje_match_patterns_free(ed->patterns.programs.sources_patterns);
-   ed->patterns.programs.sources_patterns = edje_match_programs_source_init(ed->collection->programs);
+   _edje_programs_patterns_clean(ed);
+   _edje_programs_patterns_init(ed);
 
    return EINA_TRUE;
 }
@@ -4722,15 +4817,17 @@ edje_edit_program_signal_set(Evas_Object *obj, const char *prog, const char *sig
 
    if (!signal) return EINA_FALSE;
 
-   //printf("SET SIGNAL for program: %s [%s]\n", prog, signal);
-
+   /* Remove from program array */
+   _edje_edit_program_remove(ed, epr);
    _edje_if_string_free(ed, epr->signal);
+
+   /* Insert it back */
    epr->signal = eina_stringshare_add(signal);
+   _edje_edit_program_insert(ed, epr);
 
    //Update patterns
-   if (ed->patterns.programs.signals_patterns)
-      edje_match_patterns_free(ed->patterns.programs.signals_patterns);
-   ed->patterns.programs.signals_patterns = edje_match_programs_signal_init(ed->collection->programs);
+   _edje_programs_patterns_clean(ed);
+   _edje_programs_patterns_init(ed);
 
    return EINA_TRUE;
 }
@@ -6226,7 +6323,7 @@ _edje_edit_part_save(Edje_Part *ep)
 }
 
 static Eina_Bool
-_edje_edit_collection_save(Eet_File *eetf, Edje_Part_Collection *epc)
+_edje_edit_collection_save(Edje *ed, Eet_File *eetf, Edje_Part_Collection *epc)
 {
    Old_Edje_Part_Description *oepd;
    Old_Edje_Part_Collection oepc;
@@ -6236,13 +6333,15 @@ _edje_edit_collection_save(Eet_File *eetf, Edje_Part_Collection *epc)
    Edje_Data *di;
    char buf[256];
    unsigned int i;
+   int j;
    Eina_Bool err = EINA_TRUE;
 
    memset(&oepc, 0, sizeof(oepc));
 
    snprintf(buf, sizeof(buf), "collections/%i", epc->id);
 
-   oepc.programs = epc->programs;
+   for (j = 0; j < ed->table_programs_size; ++j)
+     oepc.programs = eina_list_append(oepc.programs, ed->table_programs[j]);
 
    it = eina_hash_iterator_tuple_new(epc->data);
    EINA_ITERATOR_FOREACH(it, tu)
@@ -6276,6 +6375,7 @@ _edje_edit_collection_save(Eet_File *eetf, Edje_Part_Collection *epc)
      }
 
    // FIXME
+   oepc.programs = eina_list_free(oepc.programs);
    EINA_LIST_FREE(oepc.data, di)
      free(di);
    EINA_LIST_FREE(oepc.parts, oep)
@@ -6405,7 +6505,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
 	  {
 	     INF("** Writing Edje_Part_Collection* ed->collection "
 		   "[id: %d]", ed->collection->id);
-	     if (!_edje_edit_collection_save(eetf, ed->collection))
+	     if (!_edje_edit_collection_save(ed, eetf, ed->collection))
 	       {
 		  eet_close(eetf);
 		  return EINA_FALSE;
@@ -6428,7 +6528,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
 	       {
 		  INF("** Writing hash Edje_Part_Collection* ed->collection "
 			"[id: %d]", ce->id);
-		  if(!_edje_edit_collection_save(eetf, ce->ref))
+		  if(!_edje_edit_collection_save(ed, eetf, ce->ref))
 		    {
 		       eet_close(eetf);
 		       return EINA_FALSE;
@@ -6441,7 +6541,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
 	  {
 	     INF("** Writing cache Edje_Part_Collection* ed->collection "
 		   "[id: %d]", edc->id);
-	     if(!_edje_edit_collection_save(eetf, edc))
+	     if(!_edje_edit_collection_save(ed, eetf, edc))
 	       {
 		  eet_close(eetf);
 		  return EINA_FALSE;
@@ -6485,8 +6585,8 @@ EAPI void
 edje_edit_print_internal_status(Evas_Object *obj)
 {
    Edje_Program *epr;
-   Eina_List *l;
    unsigned int i;
+   int j;
 
    GET_ED_OR_RETURN();
 
@@ -6517,18 +6617,16 @@ edje_edit_print_internal_status(Evas_Object *obj)
 	  WRN(" WRONG (table[%id]->name = '%s')", p->id, rp->part->name);
      }
 
-   INF("*** Programs [table:%d list:%d]", ed->table_programs_size,
-          eina_list_count(ed->collection->programs));
-   EINA_LIST_FOREACH(ed->collection->programs, l, epr)
+   INF("*** Programs [table:%d list:%d,%d,%d,%d,%d]", ed->table_programs_size,
+       ed->collection->programs.fnmatch_count,
+       ed->collection->programs.strcmp_count,
+       ed->collection->programs.strncmp_count,
+       ed->collection->programs.strrncmp_count,
+       ed->collection->programs.nocmp_count);
+   for(j = 0; j < ed->table_programs_size; ++j)
      {
-	Edje_Program *epr2;
-
-	epr2 = ed->table_programs[epr->id % ed->table_programs_size];
-	printf("     [%d]%s ", epr->id, epr->name);
-	if (epr == epr2)
-	  printf(" OK!\n");
-	else
-	  WRN(" WRONG (table[%id]->name = '%s')", epr->id, epr2->name);
+	epr = ed->table_programs[i % ed->table_programs_size];
+	printf("     [%d]%s\n", epr->id, epr->name);
      }
 
    printf("\n");

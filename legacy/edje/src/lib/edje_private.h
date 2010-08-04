@@ -568,7 +568,22 @@ struct _Edje_Pack_Element
 
 struct _Edje_Part_Collection
 {
-   Eina_List *programs; /* a list of Edje_Program *//* FIXME: use multiple array */
+   struct { /* list of Edje_Program */
+      Edje_Program **fnmatch; /* complex match with "*?[\" */
+      unsigned int fnmatch_count;
+
+      Edje_Program **strcmp; /* No special caractere, plain strcmp does the work */
+      unsigned int strcmp_count;
+
+      Edje_Program **strncmp; /* Finish by * or ?, plain strncmp does the work */
+      unsigned int strncmp_count;
+
+      Edje_Program **strrncmp; /* Start with * or ?, reverse strncmp will do the job */
+      unsigned int strrncmp_count;
+
+      Edje_Program **nocmp; /* Empty signal/source that will never match */
+      unsigned int nocmp_count;
+   } programs;
 
    Edje_Part **parts; /* an array of Edje_Part */
    unsigned int parts_count;
@@ -859,12 +874,22 @@ struct _Edje_Signal_Source_Char
 };
 
 struct _Edje_Signals_Sources_Patterns
+
 {
    Edje_Patterns *signals_patterns;
    Edje_Patterns *sources_patterns;
 
    Eina_Rbtree   *exact_match;
-   Eina_List     *globing;
+
+   union {
+      struct {
+	 Edje_Program **globing;
+	 unsigned int  count;
+      } programs;
+      struct {
+	 Eina_List     *globing;
+      } callbacks;
+   } u;
 };
 
 typedef struct _Edje_Signals_Sources_Patterns Edje_Signals_Sources_Patterns;
@@ -1284,11 +1309,13 @@ struct _Edje_Patterns
    size_t          finals[];
 };
 
-Edje_Patterns   *edje_match_collection_dir_init(Eina_List *lst);
-Edje_Patterns   *edje_match_programs_signal_init(Eina_List *lst);
-Edje_Patterns   *edje_match_programs_source_init(Eina_List *lst);
-Edje_Patterns   *edje_match_callback_signal_init(Eina_List *lst);
-Edje_Patterns   *edje_match_callback_source_init(Eina_List *lst);
+Edje_Patterns   *edje_match_collection_dir_init(const Eina_List *lst);
+Edje_Patterns   *edje_match_programs_signal_init(Edje_Program * const *array,
+						 unsigned int count);
+Edje_Patterns   *edje_match_programs_source_init(Edje_Program * const *array,
+						 unsigned int count);
+Edje_Patterns   *edje_match_callback_signal_init(const Eina_List *lst);
+Edje_Patterns   *edje_match_callback_source_init(const Eina_List *lst);
 
 Eina_Bool        edje_match_collection_dir_exec(const Edje_Patterns      *ppat,
 						const char               *string);
@@ -1296,7 +1323,7 @@ Eina_Bool        edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
 					  const Edje_Patterns    *ppat_source,
 					  const char             *signal,
 					  const char             *source,
-					  Eina_List              *programs,
+					  Edje_Program          **programs,
 					  Eina_Bool (*func)(Edje_Program *pr, void *data),
 					  void                   *data);
 int              edje_match_callback_exec(Edje_Patterns          *ppat_signal,
@@ -1308,7 +1335,8 @@ int              edje_match_callback_exec(Edje_Patterns          *ppat_signal,
 
 void             edje_match_patterns_free(Edje_Patterns *ppat);
 
-Eina_List *edje_match_program_hash_build(const Eina_List *callbacks,
+Eina_List *edje_match_program_hash_build(Edje_Program * const * programs,
+					 unsigned int count,
 					 Eina_Rbtree **tree);
 Eina_List *edje_match_callback_hash_build(const Eina_List *callbacks,
 					  Eina_Rbtree **tree);

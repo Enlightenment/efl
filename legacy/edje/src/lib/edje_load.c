@@ -272,22 +272,49 @@ _edje_programs_patterns_clean(Edje *ed)
 		      NULL);
    ed->patterns.programs.exact_match = NULL;
 
-   ed->patterns.programs.globing = eina_list_free(ed->patterns.programs.globing);
+   free(ed->patterns.programs.u.programs.globing);
+   ed->patterns.programs.u.programs.globing = NULL;
 }
 
 void
 _edje_programs_patterns_init(Edje *ed)
 {
    Edje_Signals_Sources_Patterns *ssp = &ed->patterns.programs;
+   Edje_Program **all;
+   unsigned int i, j;
 
    if (ssp->signals_patterns)
      return;
 
-   ssp->globing = edje_match_program_hash_build(ed->collection->programs,
-							  &ssp->exact_match);
+   edje_match_program_hash_build(ed->collection->programs.strcmp,
+				 ed->collection->programs.strcmp_count,
+				 &ssp->exact_match);
 
-   ssp->signals_patterns = edje_match_programs_signal_init(ssp->globing);
-   ssp->sources_patterns = edje_match_programs_source_init(ssp->globing);
+   j = ed->collection->programs.strncmp_count
+     + ed->collection->programs.strrncmp_count
+     + ed->collection->programs.fnmatch_count
+     + ed->collection->programs.nocmp_count;
+   if (j == 0) return ;
+
+   all = malloc(sizeof (Edje_Program *) * j);
+   if (!all) return ;
+   j = 0;
+
+   /* FIXME: Build specialized data type for each case */
+#define EDJE_LOAD_PROGRAMS_ADD(Array, Ed, It, Git, All)			\
+   for (It = 0; It < Ed->collection->programs.Array##_count; ++It, ++Git) \
+     All[Git] = Ed->collection->programs.Array[It];
+
+   EDJE_LOAD_PROGRAMS_ADD(fnmatch, ed, i, j, all);
+   EDJE_LOAD_PROGRAMS_ADD(strncmp, ed, i, j, all);
+   EDJE_LOAD_PROGRAMS_ADD(strrncmp, ed, i, j, all);
+   /* FIXME: Do a special pass for that one */
+   EDJE_LOAD_PROGRAMS_ADD(nocmp, ed, i, j, all);
+
+   ssp->u.programs.globing = all;
+   ssp->u.programs.count = j;
+   ssp->signals_patterns = edje_match_programs_signal_init(all, j);
+   ssp->sources_patterns = edje_match_programs_source_init(all, j);
 }
 
 int
@@ -567,22 +594,34 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 	       }
 	     
 	     _edje_programs_patterns_init(ed);
-	     
-	     n = eina_list_count(ed->collection->programs);
+
+	     n = ed->collection->programs.fnmatch_count +
+	       ed->collection->programs.strcmp_count +
+	       ed->collection->programs.strncmp_count +
+	       ed->collection->programs.strrncmp_count +
+	       ed->collection->programs.nocmp_count;
 	     if (n > 0)
 	       {
 		  Edje_Program *pr;
-		  Eina_List *l;
+		  unsigned int i;
 
-		  /* FIXME: keeping a table AND a list is just bad - nuke list */
 		  ed->table_programs = malloc(sizeof(Edje_Program *) * n);
-		  ed->table_programs_size = n;
-		  /* FIXME: check malloc return */
-		  n = 0;
-		  EINA_LIST_FOREACH(ed->collection->programs, l, pr)
+		  if (ed->table_programs)
 		    {
-		       ed->table_programs[n] = pr;
-		       n++;
+		       ed->table_programs_size = n;
+
+#define EDJE_LOAD_BUILD_TABLE(Array, Ed, It, Tmp)	\
+		       for (It = 0; It < Ed->collection->programs.Array##_count; ++It) \
+			 {						\
+			    Tmp = Ed->collection->programs.Array[It];	\
+			    Ed->table_programs[Tmp->id] = Tmp;		\
+			 }
+
+		       EDJE_LOAD_BUILD_TABLE(fnmatch, ed, i, pr);
+		       EDJE_LOAD_BUILD_TABLE(strcmp, ed, i, pr);
+		       EDJE_LOAD_BUILD_TABLE(strncmp, ed, i, pr);
+		       EDJE_LOAD_BUILD_TABLE(strrncmp, ed, i, pr);
+		       EDJE_LOAD_BUILD_TABLE(nocmp, ed, i, pr);
 		    }
 	       }
 	     _edje_ref(ed);
@@ -1123,34 +1162,47 @@ _edje_file_free(Edje_File *edf)
    _edje_file_set(prev);
 }
 
+static void
+_edje_program_free(Edje_Program *pr, Eina_Bool free_strings)
+{
+   Edje_Program_Target *prt;
+   Edje_Program_After *pa;
+
+   if (free_strings)
+     {
+	if (pr->name) eina_stringshare_del(pr->name);
+	if (pr->signal) eina_stringshare_del(pr->signal);
+	if (pr->source) eina_stringshare_del(pr->source);
+	if (pr->filter.part) eina_stringshare_del(pr->filter.part);
+	if (pr->filter.state) eina_stringshare_del(pr->filter.state);
+	if (pr->state) eina_stringshare_del(pr->state);
+	if (pr->state2) eina_stringshare_del(pr->state2);
+     }
+   EINA_LIST_FREE(pr->targets, prt)
+     free(prt);
+   EINA_LIST_FREE(pr->after, pa)
+     free(pa);
+   free(pr);
+}
+
 void
 _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collection_Directory_Entry *ce)
 {
-   Edje_Program *pr;
    unsigned int i;
 
    _edje_embryo_script_shutdown(ec);
-   EINA_LIST_FREE(ec->programs, pr)
-     {
-	Edje_Program_Target *prt;
-	Edje_Program_After *pa;
 
-        if (edf->free_strings)
-          {
-             if (pr->name) eina_stringshare_del(pr->name);
-             if (pr->signal) eina_stringshare_del(pr->signal);
-             if (pr->source) eina_stringshare_del(pr->source);
-             if (pr->filter.part) eina_stringshare_del(pr->filter.part);
-             if (pr->filter.state) eina_stringshare_del(pr->filter.state);
-             if (pr->state) eina_stringshare_del(pr->state);
-             if (pr->state2) eina_stringshare_del(pr->state2);
-          }
-	EINA_LIST_FREE(pr->targets, prt)
-	  free(prt);
-	EINA_LIST_FREE(pr->after, pa)
-	  free(pa);
-	free(pr);
-     }
+#define EDJE_LOAD_PROGRAM_FREE(Array, Ec, It, FreeStrings)	\
+   for (It = 0; It < Ec->programs.Array##_count; ++It)		\
+     _edje_program_free(Ec->programs.Array[It], FreeStrings);	\
+   free(Ec->programs.Array);
+
+   EDJE_LOAD_PROGRAM_FREE(fnmatch, ec, i, edf->free_strings);
+   EDJE_LOAD_PROGRAM_FREE(strcmp, ec, i, edf->free_strings);
+   EDJE_LOAD_PROGRAM_FREE(strncmp, ec, i, edf->free_strings);
+   EDJE_LOAD_PROGRAM_FREE(strrncmp, ec, i, edf->free_strings);
+   EDJE_LOAD_PROGRAM_FREE(nocmp, ec, i, edf->free_strings);
+
    for (i = 0; i < ec->parts_count; ++i)
      {
 	Edje_Part *ep;

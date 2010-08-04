@@ -250,9 +250,9 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
 
 /* Exported function. */
 
-#define EDJE_MATCH_INIT(Func, Type, Source, Show)               \
+#define EDJE_MATCH_INIT_LIST(Func, Type, Source, Show)		\
   Edje_Patterns*                                                \
-  Func(Eina_List *lst)                                          \
+  Func(const Eina_List *lst)					\
   {                                                             \
      Edje_Patterns      *r;                                     \
      size_t              i;                                     \
@@ -312,21 +312,79 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
      return r;                                                  \
   }
 
-EDJE_MATCH_INIT(edje_match_collection_dir_init,
-                Edje_Part_Collection_Directory_Entry,
-                entry, 0);
-EDJE_MATCH_INIT(edje_match_programs_signal_init,
-                Edje_Program,
-                signal, 0);
-EDJE_MATCH_INIT(edje_match_programs_source_init,
-                Edje_Program,
-                source, 0);
-EDJE_MATCH_INIT(edje_match_callback_signal_init,
-                Edje_Signal_Callback,
-                signal, 0);
-EDJE_MATCH_INIT(edje_match_callback_source_init,
-                Edje_Signal_Callback,
-                source, 0);
+#define EDJE_MATCH_INIT_ARRAY(Func, Type, Source, Show)		\
+  Edje_Patterns*                                                \
+  Func(Type * const *lst, unsigned int count)			\
+  {                                                             \
+     Edje_Patterns      *r;                                     \
+     size_t              i;                                     \
+                                                                \
+     if (!lst || count == 0)					\
+       return NULL;                                             \
+                                                                \
+     r = malloc(sizeof (Edje_Patterns) +                        \
+                count						\
+                * sizeof(*r->finals)                            \
+                * sizeof(*r->patterns));                        \
+     if (!r) return NULL;                                       \
+                                                                \
+     r->ref = 1;						\
+     r->delete_me = 0;						\
+     r->patterns_size = count;					\
+     r->max_length = 0;                                         \
+     r->patterns = (const char **) r->finals + r->patterns_size + 1;    \
+                                                                \
+     for (i = 0; i < count; ++i)				\
+       {                                                        \
+          const char    *str;                                   \
+          size_t         j;                                     \
+                                                                \
+          if (!lst[i])						\
+            {                                                   \
+               free(r);                                         \
+               return NULL;                                     \
+            }                                                   \
+                                                                \
+          str = lst[i]->Source;					\
+          if (!str) str = "";                                   \
+          r->patterns[i] = str;                                 \
+                                                                \
+          if (Show)                                             \
+            INF("%lu [%s]", (unsigned long)i, str);	        \
+                                                                \
+          r->finals[i] = 0;                                     \
+          for (j = 0; str[j]; ++j)                              \
+            if (str[j] != '*')                                  \
+              r->finals[i] = j + 1;                             \
+                                                                \
+          if (j > r->max_length)                                \
+            r->max_length = j;                                  \
+       }                                                        \
+                                                                \
+     if (!_edje_match_states_alloc(r, 2))                       \
+       {                                                        \
+          free(r);                                              \
+          return NULL;                                          \
+       }                                                        \
+                                                                \
+     return r;                                                  \
+  }
+
+EDJE_MATCH_INIT_LIST(edje_match_collection_dir_init,
+		     Edje_Part_Collection_Directory_Entry,
+		     entry, 0);
+EDJE_MATCH_INIT_ARRAY(edje_match_programs_signal_init,
+		     Edje_Program,
+		     signal, 0);
+EDJE_MATCH_INIT_ARRAY(edje_match_programs_source_init,
+		      Edje_Program,
+		      source, 0);
+EDJE_MATCH_INIT_LIST(edje_match_callback_signal_init,
+		     Edje_Signal_Callback,
+		     signal, 0);
+EDJE_MATCH_INIT_LIST(edje_match_callback_source_init,
+		     Edje_Signal_Callback,
+		     source, 0);
 
 static Eina_Bool
 _edje_match_collection_dir_exec_finals(const size_t      *finals,
@@ -345,7 +403,7 @@ edje_match_programs_exec_check_finals(const size_t      *signal_finals,
                                       const size_t      *source_finals,
                                       const Edje_States *signal_states,
                                       const Edje_States *source_states,
-                                      Eina_List         *programs,
+                                      Edje_Program     **programs,
                                       Eina_Bool (*func)(Edje_Program *pr, void *data),
                                       void              *data)
 {
@@ -360,7 +418,7 @@ edje_match_programs_exec_check_finals(const size_t      *signal_finals,
            {
               Edje_Program  *pr;
 
-              pr = eina_list_nth(programs, signal_states->states[i].idx);
+              pr = programs[signal_states->states[i].idx];
               if (pr)
                 {
                    if (func(pr, data))
@@ -487,7 +545,7 @@ edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
                          const Edje_Patterns    *ppat_source,
                          const char             *signal,
                          const char             *source,
-                         Eina_List              *programs,
+                         Edje_Program          **programs,
                          Eina_Bool (*func)(Edje_Program *pr, void *data),
                          void                   *data)
 {
@@ -609,40 +667,40 @@ _edje_signal_source_key_cmp(const Edje_Signal_Source_Char *node,
 
 
 Eina_List *
-edje_match_program_hash_build(const Eina_List *callbacks,
+edje_match_program_hash_build(Edje_Program * const *programs,
+			      unsigned int count,
 			      Eina_Rbtree **tree)
 {
    Eina_List *result = NULL;
    Eina_Rbtree *new = NULL;
-   Edje_Program *program;
-   const Eina_List *l;
+   unsigned int i;
 
-   EINA_LIST_FOREACH(callbacks, l, program)
+   for (i = 0; i < count; ++i)
      {
-	if (program->signal && strpbrk(program->signal, "*?[\\") == NULL
-	    && program->source && strpbrk(program->source, "*?[\\") == NULL)
+	if (programs[i]->signal && strpbrk(programs[i]->signal, "*?[\\") == NULL
+	    && programs[i]->source && strpbrk(programs[i]->source, "*?[\\") == NULL)
 	  {
 	     Edje_Signal_Source_Char *item;
 
-	     item = (Edje_Signal_Source_Char*) eina_rbtree_inline_lookup(new, program->signal, 0,
-									 EINA_RBTREE_CMP_KEY_CB(_edje_signal_source_key_cmp), program->source);
+	     item = (Edje_Signal_Source_Char*) eina_rbtree_inline_lookup(new, programs[i]->signal, 0,
+									 EINA_RBTREE_CMP_KEY_CB(_edje_signal_source_key_cmp), programs[i]->source);
 	     if (!item)
 	       {
 		  item = malloc(sizeof (Edje_Signal_Source_Char));
 		  if (!item) continue;
 
-		  item->signal = program->signal;
-		  item->source = program->source;
+		  item->signal = programs[i]->signal;
+		  item->source = programs[i]->source;
 		  item->list = NULL;
 
 		  new = eina_rbtree_inline_insert(new, EINA_RBTREE_GET(item),
 						  EINA_RBTREE_CMP_NODE_CB(_edje_signal_source_node_cmp), NULL);
 	       }
 
-	     item->list = eina_list_prepend(item->list, program);
+	     item->list = eina_list_prepend(item->list, programs[i]);
 	  }
 	else
-	  result = eina_list_prepend(result, program);
+	  result = eina_list_prepend(result, programs[i]);
      }
 
    *tree = new;

@@ -1169,7 +1169,7 @@ _edje_callbacks_patterns_clean(Edje *ed)
 		      NULL);
    ed->patterns.callbacks.exact_match = NULL;
 
-   ed->patterns.callbacks.globing = eina_list_free(ed->patterns.callbacks.globing);
+   ed->patterns.callbacks.u.callbacks.globing = eina_list_free(ed->patterns.callbacks.u.callbacks.globing);
 }
 
 static void
@@ -1178,14 +1178,14 @@ _edje_callbacks_patterns_init(Edje *ed)
    Edje_Signals_Sources_Patterns *ssp = &ed->patterns.callbacks;
 
    if ((ssp->signals_patterns) || (ssp->sources_patterns) ||
-       (ssp->globing) || (ssp->exact_match))
+       (ssp->u.callbacks.globing) || (ssp->exact_match))
      return;
 
-   ssp->globing = edje_match_callback_hash_build(ed->callbacks,
-						 &ssp->exact_match);
+   ssp->u.callbacks.globing = edje_match_callback_hash_build(ed->callbacks,
+							     &ssp->exact_match);
 
-   ssp->signals_patterns = edje_match_callback_signal_init(ssp->globing);
-   ssp->sources_patterns = edje_match_callback_source_init(ssp->globing);
+   ssp->signals_patterns = edje_match_callback_signal_init(ssp->u.callbacks.globing);
+   ssp->sources_patterns = edje_match_callback_source_init(ssp->u.callbacks.globing);
 }
 
 /* FIXME: what if we delete the evas object??? */
@@ -1258,18 +1258,18 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 	     data.matched = 0;
 	     data.matches = NULL;
 #endif
-             if (ed->collection->programs)
+             if (ed->table_programs_size > 0)
                {
 		  const Eina_List *match;
 		  const Eina_List *l;
 		  Edje_Program *pr;
 
-		  if (ed->patterns.programs.globing)
+		  if (ed->patterns.programs.u.programs.globing)
 		    if (edje_match_programs_exec(ed->patterns.programs.signals_patterns,
 						 ed->patterns.programs.sources_patterns,
 						 sig,
 						 src,
-						 ed->patterns.programs.globing,
+						 ed->patterns.programs.u.programs.globing,
 						 _edje_glob_callback,
 						 &data) == 0)
 		      goto break_prog;
@@ -1334,12 +1334,12 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
         int r = 1;
 
 	_edje_callbacks_patterns_init(ed);
-	if (ed->patterns.callbacks.globing)
+	if (ed->patterns.callbacks.u.callbacks.globing)
 	  r = edje_match_callback_exec(ed->patterns.callbacks.signals_patterns,
 				       ed->patterns.callbacks.sources_patterns,
 				       sig,
 				       src,
-				       ed->patterns.callbacks.globing,
+				       ed->patterns.callbacks.u.callbacks.globing,
 				       ed);
 
         if (!r)
