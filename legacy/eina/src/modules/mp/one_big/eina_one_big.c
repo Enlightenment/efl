@@ -212,6 +212,8 @@ eina_one_big_shutdown(void *data)
 
    pool = data;
 
+   if (!pool) return ;
+
 #ifdef DEBUG
    if (pool->usage > 0)
       INF(
