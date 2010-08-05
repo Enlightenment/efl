@@ -252,6 +252,7 @@ ecore_x_init(const char *name)
    _logrt_init();
 #endif /* ifdef LOGRT */
 
+   eina_init();
    _ecore_xlib_log_dom = eina_log_domain_register("EcoreX11",
                                                   ECORE_XLIB_DEFAULT_LOG_COLOR);
    if(_ecore_xlib_log_dom < 0)
@@ -261,12 +262,10 @@ ecore_x_init(const char *name)
         return --_ecore_x_init_count;
      }
 
+   if (!ecore_init())
+      goto shutdown_eina;
    if (!ecore_event_init())
-     {
-        eina_log_domain_unregister(_ecore_xlib_log_dom);
-        _ecore_xlib_log_dom = -1;
-        return --_ecore_x_init_count;
-     }
+      goto shutdown_ecore;
 
 #ifdef EVAS_FRAME_QUEUING
    XInitThreads();
@@ -639,6 +638,13 @@ close_display:
    _ecore_x_disp = NULL;
 shutdown_ecore_event:
    ecore_event_shutdown();
+shutdown_ecore:
+   ecore_shutdown();
+shutdown_eina:
+   eina_log_domain_unregister(_ecore_xlib_log_dom);
+   _ecore_xlib_log_dom = -1;
+   eina_shutdown();
+
    return --_ecore_x_init_count;
 } /* ecore_x_init */
 
@@ -681,9 +687,14 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_selection_shutdown();
    _ecore_x_dnd_shutdown();
    ecore_x_netwm_shutdown();
+
    ecore_event_shutdown();
+   ecore_shutdown();
+
    eina_log_domain_unregister(_ecore_xlib_log_dom);
    _ecore_xlib_log_dom = -1;
+   eina_shutdown();
+
    return _ecore_x_init_count;
 } /* _ecore_x_shutdown */
 

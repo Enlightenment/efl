@@ -192,20 +192,25 @@ ecore_x_init(const char *name)
    if (++_ecore_xcb_init_count != 1)
       return _ecore_xcb_init_count;
 
+   /* We init some components (not related to XCB) */
+   if (!eina_init())
+      return --_ecore_xcb_init_count;
+
    _ecore_x11xcb_log_dom = eina_log_domain_register("EcoreXCB", ECORE_XLIB_XCB_DEFAULT_LOG_COLOR);
-   if(_ecore_x11xcb_log_dom < 0)
+   if (_ecore_x11xcb_log_dom < 0)
      {
         EINA_LOG_ERR("Impossible to create a log domain the Ecore XCB module.");
-        return --_ecore_xcb_init_count;
+        goto shutdown_eina;
      }
+
+   if (!ecore_init())
+      goto shutdown_eina;
+   if (!ecore_event_init())
+      goto shutdown_ecore;
 
    _ecore_xcb_conn = xcb_connect(name, &screen);
    if (xcb_connection_has_error(_ecore_xcb_conn))
-     {
-        eina_log_domain_unregister(_ecore_x11xcb_log_dom);
-        _ecore_x11xcb_log_dom = -1;
-        return --_ecore_xcb_init_count;
-     }
+      goto shutdown_ecore_event;
 
    /* FIXME: no error code right now */
    /* _ecore_xcb_error_handler_init(); */
@@ -271,10 +276,6 @@ ecore_x_init(const char *name)
 #ifdef ECORE_XCB_XPRINT
    xcb_prefetch_extension_data(_ecore_xcb_conn, &xcb_x_print_id);
 #endif /* ECORE_XCB_XPRINT */
-
-   /* We init some components (not related to XCB) */
-   if (!ecore_event_init())
-      goto close_connection;
 
    _ecore_x_reply_init();
    _ecore_x_dnd_init();
@@ -678,12 +679,14 @@ finalize_extensions:
 #ifdef ECORE_XCB_XINERAMA
    _ecore_x_xinerama_init_finalize();
 #endif /* ECORE_XCB_XINERAMA */
+shutdown_ecore_event:
    ecore_event_shutdown();
-close_connection:
-   _ecore_x_atom_init_finalize(atom_cookies);
-   xcb_disconnect(_ecore_xcb_conn);
-   _ecore_xcb_fd_handler_handle = NULL;
-   _ecore_xcb_conn = NULL;
+shutdown_ecore:
+   ecore_shutdown();
+shutdown_eina:
+   eina_log_domain_unregister(_ecore_x11xcb_log_dom);
+   _ecore_x11xcb_log_dom = -1;
+   eina_shutdown();
 
    return --_ecore_xcb_init_count;
 } /* ecore_x_init */
@@ -703,7 +706,6 @@ _ecore_x_shutdown(int close_display)
    else
       close(xcb_get_file_descriptor(_ecore_xcb_conn));
 
-   ecore_event_shutdown();
    free(_ecore_xcb_event_handlers);
    ecore_event_filter_del(_ecore_xcb_filter_handler);
    _ecore_xcb_fd_handler_handle = NULL;
@@ -714,6 +716,13 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_dnd_shutdown();
    ecore_x_netwm_shutdown();
    _ecore_x_reply_shutdown();
+
+   ecore_event_shutdown();
+   ecore_shutdown();
+
+   eina_log_domain_unregister(_ecore_x11xcb_log_dom);
+   _ecore_x11xcb_log_dom = -1;
+   eina_shutdown();
 
    return _ecore_xcb_init_count;
 } /* _ecore_x_shutdown */
