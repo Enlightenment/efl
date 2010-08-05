@@ -199,7 +199,7 @@ extern Ecore_X_Atom _ecore_xcb_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
 extern int _ecore_window_grabs_num;
 extern Ecore_X_Window *_ecore_window_grabs;
-extern int (*_ecore_window_grab_replay_func)(void *data, int event_type, void *event);
+extern Eina_Bool (*_ecore_window_grab_replay_func)(void *data, int event_type, void *event);
 extern void *_ecore_window_grab_replay_data;
 
 extern Ecore_X_Window _ecore_xcb_private_window;
