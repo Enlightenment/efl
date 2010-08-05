@@ -622,6 +622,7 @@ echo "    Ememoa unknown.....: ${enable_ememoa_unknown}"
 echo "    Fixed bitmap.......: ${enable_fixed_bitmap}"
 echo "    Pass through.......: ${enable_pass_through}"
 echo "    Buddy..............: ${enable_buddy}"
+echo "    One big............: ${enable_one_big}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
