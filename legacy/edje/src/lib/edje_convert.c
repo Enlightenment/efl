@@ -480,7 +480,7 @@ _edje_description_convert(int type,
 	   img->image.tweens_count = eina_list_count(oed->image.tween_list);
 	   img->image.tweens = calloc(img->image.tweens_count,
 				      sizeof (Edje_Part_Image_Id*));
-	   if (!img->image.tweens)
+	   if (img->image.tweens_count > 0 && !img->image.tweens)
 	     {
 		eina_mempool_free(ce->mp.IMAGE, img);
 		return NULL;
