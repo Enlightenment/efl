@@ -4478,7 +4478,7 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
 
    /* By default, source and signal are empty, so they fill in nocmp category */
    ed->collection->programs.nocmp = realloc(ed->collection->programs.nocmp,
-					    sizeof (Edje_Program*) * ed->collection->programs.nocmp_count);
+					    sizeof (Edje_Program*) * ed->collection->programs.nocmp_count + 1);
    ed->collection->programs.nocmp[ed->collection->programs.nocmp_count++] = epr;
 
    //Init Edje_Program
@@ -4595,7 +4595,8 @@ _edje_edit_program_insert(Edje *ed, Edje_Program *p)
      }
 
    *array = realloc(*array, sizeof (Edje_Program *) * (*count + 1));
-   *array[(*count)++] = p;
+   (*array)[(*count)++] = p;
+
 }
 
 EAPI Eina_Bool
