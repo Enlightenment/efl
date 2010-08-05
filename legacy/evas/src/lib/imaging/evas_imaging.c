@@ -145,7 +145,7 @@ evas_imaging_font_load(const char *file, const char *key, int size)
 	font = evas_common_font_hinting_load((char *)file, size, _evas_hinting);
      }
    if (!font) return NULL;
-   fn = calloc(1, sizeof(RGBA_Font));
+   fn = calloc(1, sizeof(Evas_Imaging_Font));
    if (!fn) return NULL;
    fn->font = font;
    return fn;
