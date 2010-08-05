@@ -5724,7 +5724,8 @@ collections {
 	    source5: "elm/entry/anchor/default"; // anchor under
 //	    source6: "X"; // anchor over
 	    description { state: "default" 0.0;
-               fixed: 1 0;
+               /* we gotta use 0 0 here, because of scrolled entries */
+               fixed: 0 0;
 	       text {
 		  style: "entry_textblock_style";
 		  min: 0 1;
