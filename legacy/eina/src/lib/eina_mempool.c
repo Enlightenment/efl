@@ -316,6 +316,9 @@ eina_mempool_shutdown(void)
  * @li @c pass_through: it just call malloc() and free(). It may be
  * faster on some computers than using our own allocators (like having
  * a huge L2 cache, over 4MB).
+ * @li @c one_big: It call just one time malloc for the requested number
+ * of items. Usefull when you know in advance how many object of some
+ * type will live during the life of the mempool.
  *
  * @{
  */
