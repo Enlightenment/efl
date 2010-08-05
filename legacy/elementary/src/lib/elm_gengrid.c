@@ -239,7 +239,8 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
 	if (!item->wd->on_hold) 
 	  {
 	     item->wd->on_hold = EINA_TRUE;
-	     _item_unselect(item);
+             if (!item->wd->wasselected)
+               _item_unselect(item);
 	  }
      }
    if ((item->dragging) && (item->down))
@@ -282,9 +283,8 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
 	     ecore_timer_del(item->long_timer);
 	     item->long_timer = NULL;
 	  }
-	if (item->wd->wasselected)
+	if (!item->wd->wasselected)
 	  _item_unselect(item);
-	item->wd->wasselected = 0;
 	if (dy < 0)
 	  {
 	     if (ady > adx)

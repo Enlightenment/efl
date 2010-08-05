@@ -368,7 +368,8 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
                   ecore_timer_del(it->long_timer);
                   it->long_timer = NULL;
                }
-	     _item_unselect(it);
+             if (!wd->wasselected)
+               _item_unselect(it);
 	  }
      }
 }

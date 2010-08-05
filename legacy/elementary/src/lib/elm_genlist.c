@@ -590,7 +590,8 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
 	if (!it->wd->on_hold)
 	  {
 	     it->wd->on_hold = EINA_TRUE;
-	     _item_unselect(it);
+             if (!it->wd->wasselected)
+               _item_unselect(it);
 	  }
      }
    if ((it->dragging) && (it->down))
@@ -635,7 +636,6 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
           }
         if (!it->wd->wasselected)
           _item_unselect(it);
-        it->wd->wasselected = 0;
         if (dy < 0)
           {
              if (ady > adx)
@@ -688,7 +688,6 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
    Evas_Coord x, y;
 
    if (ev->button != 1) return;
-   Widget_Data *wd = elm_widget_data_get(it->wd->obj);
 
    it->down = 1;
    it->dragging  = 0;
@@ -704,7 +703,7 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
      evas_object_smart_callback_call(it->wd->obj, "clicked", it);
    if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->realized)
-     it->long_timer = ecore_timer_add(wd->longpress_timeout, _long_press, it);
+     it->long_timer = ecore_timer_add(it->wd->longpress_timeout, _long_press, it);
    else
      it->long_timer = NULL;
 }
