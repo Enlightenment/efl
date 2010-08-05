@@ -346,6 +346,7 @@ END_TEST
 START_TEST(ecore_test_ecore_x_bell)
 {
    int ret = 0, i;
+   ecore_init();
    ecore_x_init(NULL);
 
    printf("You should hear 3 beeps now.\n");
@@ -357,6 +358,7 @@ START_TEST(ecore_test_ecore_x_bell)
 	sleep(1);
      }
    ecore_x_shutdown();
+   ecore_shutdown();
 }
 END_TEST
 
