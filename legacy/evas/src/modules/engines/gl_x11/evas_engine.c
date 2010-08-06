@@ -1290,7 +1290,6 @@ struct _Native
 static void
 _native_bind_cb(void *data, void *image)
 {
-   Render_Engine *re = data;
    Evas_GL_Image *im = image;
    Native *n = im->native.data;
    
@@ -1308,6 +1307,8 @@ _native_bind_cb(void *data, void *image)
      }
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
+   Render_Engine *re = data;
+   
    if (glsym_glXBindTexImage)
      {
         glsym_glXBindTexImage(re->win->disp, n->glx_pixmap, 
@@ -1323,14 +1324,15 @@ _native_bind_cb(void *data, void *image)
 static void
 _native_unbind_cb(void *data, void *image)
 {
-   Render_Engine *re = data;
    Evas_GL_Image *im = image;
-   Native *n = im->native.data;
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    // nothing
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
+   Render_Engine *re = data;
+   Native *n = im->native.data;
+   
    if (glsym_glXReleaseTexImage)
      {
         glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap, 
@@ -1453,7 +1455,7 @@ eng_image_native_set(void *data, void *image, void *native)
    evas_gl_common_image_free(im);
    im = im2;
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   if ((native) 
+   if (native) 
      {
         n = calloc(1, sizeof(Native));
         if (n)
