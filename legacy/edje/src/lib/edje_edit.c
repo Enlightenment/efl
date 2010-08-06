@@ -2918,9 +2918,6 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 	  }
 	rp->part->other_desc = tmp;
 	rp->part->other_desc[rp->part->other_count++] = pdto;
-
-	pdto->state.name = eina_stringshare_add(to);
-	pdto->state.value = val_to;
      }
 
 #define PD_STRING_COPY(To, From, _x)			\
@@ -2929,6 +2926,9 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 
    /* Copy all value */
    *pdto = *pdfrom;
+   /* Keeping the pdto state name and value */
+   pdto->state.name = eina_stringshare_add(to);
+   pdto->state.value = val_to;
    /* Update pointer. */
    PD_STRING_COPY(pdto, pdfrom, color_class);
 
