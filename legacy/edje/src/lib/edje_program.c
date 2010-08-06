@@ -1044,7 +1044,7 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
                  if ((((rp->part->type == EDJE_PART_TYPE_GROUP
 			|| rp->part->type == EDJE_PART_TYPE_EXTERNAL)
 		       && (rp->swallowed_object))
-		      || rp->part->type == EDJE_PART_TYPE_BOX) &&
+		      || rp->part->type == EDJE_PART_TYPE_BOX || rp->part->type == EDJE_PART_TYPE_TABLE) &&
                      (rp->part) && (rp->part->name) &&
                      (strcmp(rp->part->name, part) == 0))
                    {
