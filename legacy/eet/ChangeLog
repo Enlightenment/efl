@@ -413,3 +413,8 @@
 2010-08-02  Cedric BAIL
 
 	* Fix bug in eet_connection code when running on 32bits machine.
+
+2010-08-06  Cedric BAIL
+
+	* Add EET_DATA_DESCRIPTOR_ADD_HASH_STRING.
+
