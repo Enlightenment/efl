@@ -3037,7 +3037,6 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
      }
 
 #undef PD_STRING_COPY
-#undef PD_COPY
 
    return EINA_TRUE;
 }
