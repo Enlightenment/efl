@@ -2401,7 +2401,7 @@ EAPI void *    eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
         eet_data_descriptor_element_add(edd, name, EET_T_STRING, EET_G_HASH,\
                                         (char *)(& (___ett.member)) -\
                                         (char *)(& (___ett)),\
-                                        0, /* 0,  */ NULL, subtype);\
+                                        0, /* 0,  */ NULL, NULL);\
      } while (0)
 
 /**
