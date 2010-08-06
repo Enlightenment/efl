@@ -2647,21 +2647,6 @@ edje_edit_state_del(Evas_Object *obj, const char *part, const char *state, doubl
 	  break;
        }
 
-#define DEC_COUNT(Type) case EDJE_PART_TYPE_##Type: ce->count.Type--; break;
-
-   switch (rp->part->type)
-     {
-	DEC_COUNT(RECTANGLE);
-	DEC_COUNT(TEXT);
-	DEC_COUNT(IMAGE);
-	DEC_COUNT(SWALLOW);
-	DEC_COUNT(TEXTBLOCK);
-	DEC_COUNT(GROUP);
-	DEC_COUNT(BOX);
-	DEC_COUNT(TABLE);
-	DEC_COUNT(EXTERNAL);
-     }
-
    _edje_collection_free_part_description_free(rp->part->type, pd, ce, 0);
 }
 

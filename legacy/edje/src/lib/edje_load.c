@@ -1304,7 +1304,9 @@ _edje_collection_free_part_description_free(int type,
 					    Eina_Bool free_strings)
 {
 #define FREE_POOL(Type, Ce, Desc)					\
-   case EDJE_PART_TYPE_##Type: eina_mempool_free(Ce->mp.Type, Desc); break;
+   case EDJE_PART_TYPE_##Type: eina_mempool_free(Ce->mp.Type, Desc);    \
+                               ce->count.Type--;                        \
+                               break;
 
    _edje_collection_free_part_description_clean(type, desc, free_strings);
 
