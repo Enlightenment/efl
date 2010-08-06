@@ -2945,7 +2945,8 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 	   /* Update pointers. */
 	   for (i = 0; i < img_to->image.tweens_count; ++i)
 	     free(img_to->image.tweens[i]);
-	   free(img_to->image.tweens);
+	   if (img_to->image.tweens_count > 0)
+		free(img_to->image.tweens);
 
 	   img_to->image.tweens_count = img_from->image.tweens_count;
 	   img_to->image.tweens = calloc(img_to->image.tweens_count,
