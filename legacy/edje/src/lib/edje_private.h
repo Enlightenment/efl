@@ -1731,11 +1731,10 @@ void _edje_external_parsed_params_free(Evas_Object *obj, void *params);
 void _edje_module_init();
 void _edje_module_shutdown();
 
-
-
-
-
-
+Eina_Bool edje_program_is_strncmp(const char *str);
+Eina_Bool edje_program_is_strrncmp(const char *str);
+void edje_edit_program_insert(Edje *ed, Edje_Program *p);
+void edje_edit_program_remove(Edje *ed, Edje_Program *p);
 
 // new lua stuff - supercedes the old
 #define LUA2 1

@@ -140,7 +140,4 @@ Edje_Part_Description_Common *_edje_description_convert(int type,
 const Edje_File *_edje_file_get(void);
 void _edje_file_set(const Edje_File *edf);
 
-Eina_Bool edje_program_is_strncmp(const char *str);
-Eina_Bool edje_program_is_strrncmp(const char *str);
-
 #endif

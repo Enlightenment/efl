@@ -4824,3 +4824,112 @@ _edje_object_signal_preload_cb(void *data, Evas_Object *obj, __UNUSED__ const ch
    edje_object_signal_callback_del(obj, EDJE_PRELOAD_EMISSION, EDJE_PRELOAD_SOURCE, _edje_object_signal_preload_cb);
    _edje_object_preload(ed);
 }
+
+void
+edje_edit_program_remove(Edje *ed, Edje_Program *p)
+{
+   Edje_Program ***array;
+   unsigned int *count;
+   unsigned int i;
+
+   if (!p->signal && !p->source)
+     {
+	array = &ed->collection->programs.nocmp;
+	count = &ed->collection->programs.nocmp_count;
+     }
+   else if (p->signal && strpbrk(p->signal, "*?[\\") == NULL
+	    && p->source && strpbrk(p->source, "*?[\\") == NULL)
+     {
+	array = &ed->collection->programs.strcmp;
+	count = &ed->collection->programs.strcmp_count;
+     }
+   else if (p->signal && edje_program_is_strncmp(p->signal)
+	    && p->source && edje_program_is_strncmp(p->source))
+     {
+	array = &ed->collection->programs.strncmp;
+	count = &ed->collection->programs.strncmp_count;
+     }
+   else if (p->signal && edje_program_is_strrncmp(p->signal)
+	    && p->source && edje_program_is_strrncmp(p->source))
+     {
+	array = &ed->collection->programs.strrncmp;
+	count = &ed->collection->programs.strrncmp_count;
+     }
+   else
+     {
+	array = &ed->collection->programs.fnmatch;
+	count = &ed->collection->programs.fnmatch_count;
+     }
+
+   for (i = 0; i < *count; ++i)
+     if ((*array)[i] == p)
+       {
+	  memmove(*array + i, *array + i + 1, sizeof (Edje_Program *) * (*count - i -1));
+	  (*count)--;
+	  break;
+       }
+}
+
+void
+edje_edit_program_insert(Edje *ed, Edje_Program *p)
+{
+   Edje_Program ***array;
+   unsigned int *count;
+
+   if (!p->signal && !p->source)
+     {
+	array = &ed->collection->programs.nocmp;
+	count = &ed->collection->programs.nocmp_count;
+     }
+   else if (p->signal && strpbrk(p->signal, "*?[\\") == NULL
+	    && p->source && strpbrk(p->source, "*?[\\") == NULL)
+     {
+	array = &ed->collection->programs.strcmp;
+	count = &ed->collection->programs.strcmp_count;
+     }
+   else if (p->signal && edje_program_is_strncmp(p->signal)
+	    && p->source && edje_program_is_strncmp(p->source))
+     {
+	array = &ed->collection->programs.strncmp;
+	count = &ed->collection->programs.strncmp_count;
+     }
+   else if (p->signal && edje_program_is_strrncmp(p->signal)
+	    && p->source && edje_program_is_strrncmp(p->source))
+     {
+	array = &ed->collection->programs.strrncmp;
+	count = &ed->collection->programs.strrncmp_count;
+     }
+   else
+     {
+	array = &ed->collection->programs.fnmatch;
+	count = &ed->collection->programs.fnmatch_count;
+     }
+
+   *array = realloc(*array, sizeof (Edje_Program *) * (*count + 1));
+   (*array)[(*count)++] = p;
+}
+
+Eina_Bool
+edje_program_is_strncmp(const char *str)
+{
+   unsigned int length;
+
+   length = strlen(str);
+
+   if (strpbrk(str, "*?[\\") != str + length)
+     return EINA_FALSE;
+   if (str[length] == '['
+       || str[length] == '\\')
+     return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+Eina_Bool
+edje_program_is_strrncmp(const char *str)
+{
+   if (*str != '*' && *str != '?')
+     return EINA_FALSE;
+   if (strpbrk(str + 1, "*?[\\") != NULL)
+     return EINA_FALSE;
+   return EINA_TRUE;
+}

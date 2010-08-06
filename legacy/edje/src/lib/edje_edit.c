@@ -4514,91 +4514,6 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
    return EINA_TRUE;
 }
 
-static void
-_edje_edit_program_remove(Edje *ed, Edje_Program *p)
-{
-   Edje_Program ***array;
-   unsigned int *count;
-   unsigned int i;
-
-   if (!p->signal && !p->source)
-     {
-	array = &ed->collection->programs.nocmp;
-	count = &ed->collection->programs.nocmp_count;
-     }
-   else if (p->signal && strpbrk(p->signal, "*?[\\") == NULL
-	    && p->source && strpbrk(p->source, "*?[\\") == NULL)
-     {
-	array = &ed->collection->programs.strcmp;
-	count = &ed->collection->programs.strcmp_count;
-     }
-   else if (p->signal && edje_program_is_strncmp(p->signal)
-	    && p->source && edje_program_is_strncmp(p->source))
-     {
-	array = &ed->collection->programs.strncmp;
-	count = &ed->collection->programs.strncmp_count;
-     }
-   else if (p->signal && edje_program_is_strrncmp(p->signal)
-	    && p->source && edje_program_is_strrncmp(p->source))
-     {
-	array = &ed->collection->programs.strrncmp;
-	count = &ed->collection->programs.strrncmp_count;
-     }
-   else
-     {
-	array = &ed->collection->programs.fnmatch;
-	count = &ed->collection->programs.fnmatch_count;
-     }
-
-   for (i = 0; i < *count; ++i)
-     if ((*array)[i] == p)
-       {
-	  memmove(*array + i, *array + i + 1, sizeof (Edje_Program *) * (*count - i -1));
-	  (*count)--;
-	  break;
-       }
-}
-
-static void
-_edje_edit_program_insert(Edje *ed, Edje_Program *p)
-{
-   Edje_Program ***array;
-   unsigned int *count;
-
-   if (!p->signal && !p->source)
-     {
-	array = &ed->collection->programs.nocmp;
-	count = &ed->collection->programs.nocmp_count;
-     }
-   else if (p->signal && strpbrk(p->signal, "*?[\\") == NULL
-	    && p->source && strpbrk(p->source, "*?[\\") == NULL)
-     {
-	array = &ed->collection->programs.strcmp;
-	count = &ed->collection->programs.strcmp_count;
-     }
-   else if (p->signal && edje_program_is_strncmp(p->signal)
-	    && p->source && edje_program_is_strncmp(p->source))
-     {
-	array = &ed->collection->programs.strncmp;
-	count = &ed->collection->programs.strncmp_count;
-     }
-   else if (p->signal && edje_program_is_strrncmp(p->signal)
-	    && p->source && edje_program_is_strrncmp(p->source))
-     {
-	array = &ed->collection->programs.strrncmp;
-	count = &ed->collection->programs.strrncmp_count;
-     }
-   else
-     {
-	array = &ed->collection->programs.fnmatch;
-	count = &ed->collection->programs.fnmatch_count;
-     }
-
-   *array = realloc(*array, sizeof (Edje_Program *) * (*count + 1));
-   (*array)[(*count)++] = p;
-
-}
-
 EAPI Eina_Bool
 edje_edit_program_del(Evas_Object *obj, const char *prog)
 {
@@ -4617,7 +4532,7 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
 
    //Remove program from programs list
    id = epr->id;
-   _edje_edit_program_remove(ed, epr);
+   edje_edit_program_remove(ed, epr);
 
    /* fix table program */
    if (epr->id != ed->table_programs_size - 1)
@@ -4736,12 +4651,12 @@ edje_edit_program_source_set(Evas_Object *obj, const char *prog, const char *sou
    if (!source) return EINA_FALSE;
 
    /* Remove from program array */
-   _edje_edit_program_remove(ed, epr);
+   edje_edit_program_remove(ed, epr);
    _edje_if_string_free(ed, epr->source);
 
    /* Insert it back */
    epr->source = eina_stringshare_add(source);
-   _edje_edit_program_insert(ed, epr);
+   edje_edit_program_insert(ed, epr);
 
    //Update patterns
    _edje_programs_patterns_clean(ed);
@@ -4815,12 +4730,12 @@ edje_edit_program_signal_set(Evas_Object *obj, const char *prog, const char *sig
    if (!signal) return EINA_FALSE;
 
    /* Remove from program array */
-   _edje_edit_program_remove(ed, epr);
+   edje_edit_program_remove(ed, epr);
    _edje_if_string_free(ed, epr->signal);
 
    /* Insert it back */
    epr->signal = eina_stringshare_add(signal);
-   _edje_edit_program_insert(ed, epr);
+   edje_edit_program_insert(ed, epr);
 
    //Update patterns
    _edje_programs_patterns_clean(ed);

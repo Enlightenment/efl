@@ -251,31 +251,6 @@ _edje_collection_program_add(Edje_Program ***array,
    *array = tmp;
 }
 
-Eina_Bool
-edje_program_is_strncmp(const char *str)
-{
-   unsigned int length;
-
-   length = strlen(str);
-
-   if (strpbrk(str, "*?[\\") != str + length)
-     return EINA_FALSE;
-   if (str[length] == '['
-       || str[length] == '\\')
-     return EINA_FALSE;
-   return EINA_TRUE;
-}
-
-Eina_Bool
-edje_program_is_strrncmp(const char *str)
-{
-   if (*str != '*' && *str != '?')
-     return EINA_FALSE;
-   if (strpbrk(str + 1, "*?[\\") != NULL)
-     return EINA_FALSE;
-   return EINA_TRUE;
-}
-
 Edje_Part_Collection *
 _edje_collection_convert(Edje_File *file, Old_Edje_Part_Collection *oedc)
 {
