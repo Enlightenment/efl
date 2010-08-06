@@ -2963,6 +2963,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 
 		img_to->image.tweens[i] = new_i;
 	     }
+	   break;
 	}
       case EDJE_PART_TYPE_TEXT:
       case EDJE_PART_TYPE_TEXTBLOCK:
@@ -2978,6 +2979,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 	   PD_STRING_COPY(text_to, text_from, text.style);
 	   PD_STRING_COPY(text_to, text_from, text.font);
 	   PD_STRING_COPY(text_to, text_from, text.repch);
+	   break;
 	}
       case EDJE_PART_TYPE_BOX:
 	{
@@ -2988,6 +2990,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 
 	   PD_STRING_COPY(box_to, box_from, box.layout);
 	   PD_STRING_COPY(box_to, box_from, box.alt_layout);
+	   break;
 	}
       case EDJE_PART_TYPE_TABLE:
 	{
@@ -2995,6 +2998,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 	   Edje_Part_Description_Table *table_from = (Edje_Part_Description_Table*) pdfrom;
 
 	   table_to->table = table_from->table;
+	   break;
 	}
       case EDJE_PART_TYPE_EXTERNAL:
 	{
@@ -3033,6 +3037,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 		  }
 		ext_to->external_params = eina_list_append(ext_to->external_params, new_p);
 	     }
+	   break;
 	}
      }
 
