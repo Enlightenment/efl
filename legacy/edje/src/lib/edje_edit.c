@@ -692,8 +692,8 @@ _edje_fix_parts_id(Edje *ed)
    count = ed->collection->parts_count;
    if (count != ed->table_parts_size)
      {
-	ed->table_parts = realloc(ed->table_parts, sizeof(Edje_Real_Part *) * count);
-	ed->table_parts_size = count;
+        ed->table_parts = realloc(ed->table_parts, sizeof(Edje_Real_Part *) * count);
+        ed->table_parts_size = count;
      }
 
    //printf("\n");
@@ -1977,8 +1977,8 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
    Edje_Part_Collection *pc;
    Edje_Part *ep;
    unsigned int k;
-   int id;
-   int i;
+   unsigned int id;
+   unsigned int i;
 
    GET_RP_OR_RETURN(EINA_FALSE);
 
@@ -1986,8 +1986,6 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 
    ep = rp->part;
    id = ep->id;
-
-   //if (ed->table_parts_size <= 1) return EINA_FALSE; //don't remove the last part
 
    /* Unlik Edje_Real_Parts that link to the removed one */
    for (i = 0; i < ed->table_parts_size; i++)
@@ -2035,11 +2033,17 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 
    /* Remove part from parts list */
    pc = ed->collection;
-   pc->parts[ep->id] = NULL; /* During save stage we need to garbage collect this empty id. */
+   pc->parts_count--;
+   if (id < pc->parts_count) /* Forward parts */
+     {
+	int mcount = (pc->parts_count - id) * sizeof(Edje_Part *);
+	memmove(&pc->parts[id], &pc->parts[id+1], mcount);
+     }
+   pc->parts[pc->parts_count] = NULL;
    _edje_fix_parts_id(ed);
 
    /* Free Edje_Part and all descriptions */
-   ce = eina_hash_find(ed->file->collection, ep->name);
+   ce = eina_hash_find(ed->file->collection, ed->group);
 
    _edje_if_string_free(ed, ep->name);
    if (ep->default_desc)
@@ -2052,7 +2056,7 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
      _edje_collection_free_part_description_free(ep->type, ep->other_desc[k], ce, 0);
 
    free(ep->other_desc);
-   free(ep);
+   eina_mempool_free(ce->mp.part, ep);
 
    /* Free Edje_Real_Part */
    _edje_real_part_free(rp);
@@ -2063,7 +2067,6 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 
    edje_object_calc_force(obj);
 
-   ce = eina_hash_find(ed->file->collection, ed->group);
    ce->count.part--;
 
    return EINA_TRUE;
