@@ -2146,6 +2146,22 @@ _ecore_x_event_handle_shape_change(XEvent *xevent)
 
    e->win = shape_event->window;
    e->time = shape_event->time;
+   switch (shape_event->kind)
+     {
+     case ShapeBounding:
+        e->type = ECORE_X_SHAPE_BOUNDING;
+        break;
+     case ShapeClip:
+        e->type = ECORE_X_SHAPE_CLIP;
+        break;
+     default:
+        break;
+     }
+   e->x = shape_event->x;
+   e->y = shape_event->y;
+   e->w = shape_event->width;
+   e->h = shape_event->height;
+   e->shaped = shape_event->shaped;
    ecore_event_add(ECORE_X_EVENT_WINDOW_SHAPE, e, NULL, NULL);
 } /* _ecore_x_event_handle_shape_change */
 

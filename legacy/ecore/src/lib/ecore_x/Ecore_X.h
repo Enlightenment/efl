@@ -288,24 +288,19 @@ typedef struct _Ecore_X_Event_Window_Focus_In     Ecore_X_Event_Window_Focus_In;
 typedef struct _Ecore_X_Event_Window_Focus_Out    Ecore_X_Event_Window_Focus_Out;
 typedef struct _Ecore_X_Event_Window_Keymap       Ecore_X_Event_Window_Keymap;
 typedef struct _Ecore_X_Event_Window_Damage       Ecore_X_Event_Window_Damage;
-typedef struct _Ecore_X_Event_Window_Visibility_Change
-Ecore_X_Event_Window_Visibility_Change;
+typedef struct _Ecore_X_Event_Window_Visibility_Change Ecore_X_Event_Window_Visibility_Change;
 typedef struct _Ecore_X_Event_Window_Create       Ecore_X_Event_Window_Create;
 typedef struct _Ecore_X_Event_Window_Destroy      Ecore_X_Event_Window_Destroy;
 typedef struct _Ecore_X_Event_Window_Hide         Ecore_X_Event_Window_Hide;
 typedef struct _Ecore_X_Event_Window_Show         Ecore_X_Event_Window_Show;
-typedef struct _Ecore_X_Event_Window_Show_Request
-Ecore_X_Event_Window_Show_Request;
+typedef struct _Ecore_X_Event_Window_Show_Request Ecore_X_Event_Window_Show_Request;
 typedef struct _Ecore_X_Event_Window_Reparent     Ecore_X_Event_Window_Reparent;
 typedef struct _Ecore_X_Event_Window_Configure    Ecore_X_Event_Window_Configure;
-typedef struct _Ecore_X_Event_Window_Configure_Request
-Ecore_X_Event_Window_Configure_Request;
+typedef struct _Ecore_X_Event_Window_Configure_Request Ecore_X_Event_Window_Configure_Request;
 typedef struct _Ecore_X_Event_Window_Gravity      Ecore_X_Event_Window_Gravity;
-typedef struct _Ecore_X_Event_Window_Resize_Request
-Ecore_X_Event_Window_Resize_Request;
+typedef struct _Ecore_X_Event_Window_Resize_Request Ecore_X_Event_Window_Resize_Request;
 typedef struct _Ecore_X_Event_Window_Stack        Ecore_X_Event_Window_Stack;
-typedef struct _Ecore_X_Event_Window_Stack_Request
-Ecore_X_Event_Window_Stack_Request;
+typedef struct _Ecore_X_Event_Window_Stack_Request Ecore_X_Event_Window_Stack_Request;
 typedef struct _Ecore_X_Event_Window_Property     Ecore_X_Event_Window_Property;
 typedef struct _Ecore_X_Event_Window_Colormap     Ecore_X_Event_Window_Colormap;
 typedef struct _Ecore_X_Event_Window_Mapping      Ecore_X_Event_Window_Mapping;
@@ -324,16 +319,13 @@ typedef struct _Ecore_X_Event_Xdnd_Drop           Ecore_X_Event_Xdnd_Drop;
 typedef struct _Ecore_X_Event_Xdnd_Finished       Ecore_X_Event_Xdnd_Finished;
 typedef struct _Ecore_X_Event_Client_Message      Ecore_X_Event_Client_Message;
 typedef struct _Ecore_X_Event_Window_Shape        Ecore_X_Event_Window_Shape;
-typedef struct _Ecore_X_Event_Screensaver_Notify
-Ecore_X_Event_Screensaver_Notify;
+typedef struct _Ecore_X_Event_Screensaver_Notify  Ecore_X_Event_Screensaver_Notify;
 typedef struct _Ecore_X_Event_Sync_Counter        Ecore_X_Event_Sync_Counter;
 typedef struct _Ecore_X_Event_Sync_Alarm          Ecore_X_Event_Sync_Alarm;
 typedef struct _Ecore_X_Event_Screen_Change       Ecore_X_Event_Screen_Change;
 typedef struct _Ecore_X_Event_Randr_Crtc_Change   Ecore_X_Event_Randr_Crtc_Change;
-typedef struct _Ecore_X_Event_Randr_Output_Change
-Ecore_X_Event_Randr_Output_Change;
-typedef struct _Ecore_X_Event_Randr_Output_Property_Notify
-Ecore_X_Event_Randr_Output_Property_Notify;
+typedef struct _Ecore_X_Event_Randr_Output_Change Ecore_X_Event_Randr_Output_Change;
+typedef struct _Ecore_X_Event_Randr_Output_Property_Notify Ecore_X_Event_Randr_Output_Property_Notify;
 
 typedef struct _Ecore_X_Event_Window_Delete_Request
 Ecore_X_Event_Window_Delete_Request;
@@ -681,6 +673,9 @@ struct _Ecore_X_Event_Window_Shape
 {
    Ecore_X_Window win;
    Ecore_X_Time   time;
+   Ecore_X_Shape_Type type;
+   int            x, y, w, h;
+   Eina_Bool      shaped : 1;
 };
 
 struct _Ecore_X_Event_Screensaver_Notify
