@@ -279,7 +279,8 @@ typedef enum _Ecore_X_Gravity
 typedef enum _Ecore_X_Shape_Type
 {
    ECORE_X_SHAPE_BOUNDING,
-   ECORE_X_SHAPE_CLIP
+   ECORE_X_SHAPE_CLIP,
+   ECORE_X_SHAPE_INPUT
 } Ecore_X_Shape_Type;
 
 typedef struct _Ecore_X_Event_Mouse_In            Ecore_X_Event_Mouse_In;

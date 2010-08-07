@@ -2154,6 +2154,9 @@ _ecore_x_event_handle_shape_change(XEvent *xevent)
      case ShapeClip:
         e->type = ECORE_X_SHAPE_CLIP;
         break;
+     case ShapeInput:
+        e->type = ECORE_X_SHAPE_INPUT;
+        break;
      default:
         break;
      }
