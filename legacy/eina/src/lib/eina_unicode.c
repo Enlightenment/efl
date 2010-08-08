@@ -116,7 +116,7 @@ eina_unicode_strdup(const Eina_Unicode *text)
    int len;
 
    len = eina_unicode_strlen(text);
-   ustr = (Eina_Unicode *)calloc(sizeof(Eina_Unicode), len + 1);
+   ustr = (Eina_Unicode *)calloc(len + 1, sizeof(Eina_Unicode));
    memcpy(ustr, text, len * sizeof(Eina_Unicode));
 
    return ustr;
