@@ -1,13 +1,13 @@
 dnl Copyright (C) 2010 Vincent Torri <vtorri at univ-evry dot fr>
-dnl That code is public domain and can be freely used or copied.
+dnl rwlock code added by Mike Blumenkrantz <mike at zentific dot com>
+dnl This code is public domain and can be freely used or copied.
 
 dnl Macro that check if POSIX or Win32 threads library is available or not.
 
-dnl Usage: EFL_CHECK_THREADS(want_pthread_spin[, ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+dnl Usage: EFL_CHECK_THREADS(ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND])
 dnl Call AC_SUBST(EFL_PTHREAD_CFLAGS)
 dnl Call AC_SUBST(EFL_PTHREAD_LIBS)
-dnl Define EFL_HAVE_POSIX_THREADS or EFL_HAVE_WIN32_THREADS, and EFL_HAVE_THREADS
-dnl Define EFL_HAVE_POSIX_THREADS_SPINLOCK
+dnl Defines EFL_HAVE_POSIX_THREADS or EFL_HAVE_WIN32_THREADS, and EFL_HAVE_THREADS
 
 AC_DEFUN([EFL_CHECK_THREADS],
 [
@@ -138,11 +138,29 @@ if test "x${_efl_have_posix_threads}" = "xyes" ; then
    AC_DEFINE([EFL_HAVE_POSIX_THREADS], [1], [Define to mention that POSIX threads are supported])
 fi
 
+
+if test "x${_efl_enable_win32_threads}" = "xyes" ; then
+   _efl_have_win32_threads="yes"
+   AC_DEFINE([EFL_HAVE_WIN32_THREADS], [1], [Define to mention that Win32 threads are supported])
+fi
+
+if test "x${_efl_have_posix_threads}" = "xyes" || test "x${_efl_have_win32_threads}" = "xyes" ; then
+   AC_DEFINE([EFL_HAVE_THREADS], [1], [Define to mention that POSIX or Win32 threads are supported])
+fi
+
+AS_IF([test "x$_efl_have_posix_threads" = "xyes" || test "x$_efl_have_win32_threads" = "xyes"], [$1], [$2])
+])
+
+dnl Usage: EFL_CHECK_SPINLOCK(ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND])
+dnl Defines EFL_HAVE_POSIX_THREADS_SPINLOCK
+AC_DEFUN([EFL_CHECK_SPINLOCK],
+[
+
 dnl check if the compiler supports pthreads spinlock
 
 _efl_have_posix_threads_spinlock="no"
 
-if test "x${_efl_have_posix_threads}" = "xyes" && test "x$1" = "xyes" ; then
+if test "x${_efl_have_posix_threads}" = "xyes" ; then
 
    SAVE_CFLAGS=${CFLAGS}
    CFLAGS="${CFLAGS} ${EFL_PTHREAD_CFLAGS}"
@@ -166,24 +184,55 @@ fi
 
 AC_MSG_CHECKING([whether to build POSIX threads spinlock code])
 AC_MSG_RESULT([${_efl_have_posix_threads_spinlock}])
-if test "x${_efl_enable_posix_threads}" = "xyes" && test "x${_efl_have_posix_threads_spinlock}" = "xno" && test "x$1" = "xyes" ; then
+if test "x${_efl_enable_posix_threads}" = "xyes" && test "x${_efl_have_posix_threads_spinlock}" = "xno" ; then
    AC_MSG_WARN([POSIX threads support requested but spinlocks are not supported])
 fi
 
 if test "x${_efl_have_posix_threads_spinlock}" = "xyes" ; then
    AC_DEFINE([EFL_HAVE_POSIX_THREADS_SPINLOCK], [1], [Define to mention that POSIX threads spinlocks are supported])
 fi
+AS_IF([test "x$_efl_have_posix_threads_spinlock" = "xyes"], [$1], [$2])
+])
 
-if test "x${_efl_enable_win32_threads}" = "xyes" ; then
-   _efl_have_win32_threads="yes"
-   AC_DEFINE([EFL_HAVE_WIN32_THREADS], [1], [Define to mention that Win32 threads are supported])
+
+dnl Usage: EFL_CHECK_RWLOCK(ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND])
+dnl Defines EFL_HAVE_POSIX_THREADS_RWLOCK
+AC_DEFUN([EFL_CHECK_RWLOCK],
+[
+dnl check if the compiler supports pthreads rwlock
+
+_efl_have_posix_threads_rwlock="no"
+
+if test "x${_efl_have_posix_threads}" = "xyes" ; then
+
+   SAVE_CFLAGS=${CFLAGS}
+   CFLAGS="${CFLAGS} ${EFL_PTHREAD_CFLAGS}"
+   SAVE_LIBS=${LIBS}
+   LIBS="${LIBS} ${EFL_PTHREAD_LIBS}"
+   AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([[
+#include <pthread.h>
+                       ]],
+                       [[
+pthread_rwlock_t lock = PTHREAD_RWLOCK_INITIALIZER;
+int res;
+res = pthread_rwlock_init(&lock, PTHREAD_PROCESS_PRIVATE);
+                       ]])],
+      [_efl_have_posix_threads_rwlock="yes"],
+      [_efl_have_posix_threads_rwlock="no"])
+   CFLAGS=${SAVE_CFLAGS}
+   LIBS=${SAVE_LIBS}
+
 fi
 
-if test "x${_efl_have_posix_threads}" = "xyes" || test "x${_efl_have_win32_threads}" = "xyes" ; then
-   AC_DEFINE([EFL_HAVE_THREADS], [1], [Define to mention that POSIX or Win32 threads are supported])
+AC_MSG_CHECKING([whether to build POSIX threads rwlock code])
+AC_MSG_RESULT([${_efl_have_posix_threads_rwlock}])
+if test "x${_efl_enable_posix_threads}" = "xyes" && test "x${_efl_have_posix_threads_rwlock}" = "xno" ; then
+   AC_MSG_WARN([POSIX threads support requested but rwlocks are not supported])
 fi
 
-AS_IF([test "x$_efl_have_posix_threads" = "xyes" || test "x$_efl_have_win32_threads" = "xyes"], [$2], [$3])
-AS_IF([test "x$_efl_have_posix_threads_spinlock" = "xyes"], [$4], [$5])
-
+if test "x${_efl_have_posix_threads_rwlock}" = "xyes" ; then
+   AC_DEFINE([EFL_HAVE_POSIX_THREADS_RWLOCK], [1], [Define to mention that POSIX threads rwlocks are supported])
+fi
+AS_IF([test "x$_efl_have_posix_threads_rwlock" = "xyes"], [$1], [$2])
 ])
