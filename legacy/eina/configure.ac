@@ -98,7 +98,11 @@ EFL_CHECK_THREADS(
    ],
    [have_threads="no"])
 EFL_CHECK_SPINLOCK([have_posix_threads_spinlock="yes"], [have_posix_threads_spinlock="no"])
-EFL_CHECK_RWLOCK([have_posix_threads_rwlock="yes"], [have_posix_threads_rwlock="no"])
+EFL_CHECK_RWLOCK(
+  [have_posix_threads_rwlock="yes"]
+  EINA_CONFIGURE_RWLOCKS_ENABLED="#define EINA_RWLOCKS_ENABLED",
+  [have_posix_threads_rwlock="no"])
+AC_SUBST([EINA_CONFIGURE_RWLOCKS_ENABLED])
 
 ### Additional options to configure
 
