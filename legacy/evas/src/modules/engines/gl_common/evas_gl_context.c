@@ -640,8 +640,15 @@ void
 evas_gl_common_context_newframe(Evas_GL_Context *gc)
 {
    int i;
+   static int dbgflushnum = -1;
 
-//   printf("prev frame flushnum = %i\n", gc->flushnum);
+   if (dbgflushnum < 0)
+     {
+        dbgflushnum = 0;
+        if (getenv("DBGEVAS")) dbgflushnum = 1;
+     }
+   if (dbgflushnum) printf("prev-flushnum: %i\n", gc->flushnum);
+   
    gc->flushnum = 0;
    gc->state.current.cur_prog = 0;
    gc->state.current.cur_tex = 0;
