@@ -258,7 +258,7 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Ev
                * There is a slight exception when there are compositing chars
                * involved.*/
 	      if (intl_props && 
-                  evas_bidi_is_rtl_char(intl_props->embedding_levels, char_index) &&
+                  evas_bidi_is_rtl_char(intl_props->props->embedding_levels, char_index) &&
                   fg->glyph->advance.x >> 16 > 0)
 		{
 		   if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
@@ -384,7 +384,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
                * There is a slight exception when there are compositing chars
                * involved.*/
 	      if (intl_props && 
-                  evas_bidi_is_rtl_char(intl_props->embedding_levels, char_index) &&
+                  evas_bidi_is_rtl_char(intl_props->props->embedding_levels, char_index) &&
                   fg->glyph->advance.x >> 16 > 0)
 		{
 		   if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
@@ -541,7 +541,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
                * There is a slight exception when there are compositing chars
                * involved.*/
 	      if (intl_props && 
-                  evas_bidi_is_rtl_char(intl_props->embedding_levels, char_index) &&
+                  evas_bidi_is_rtl_char(intl_props->props->embedding_levels, char_index) &&
                   fg->glyph->advance.x >> 16 > 0)
 		{
 		   if (evas_common_font_query_kerning(fi, index, prev_index, &kern))

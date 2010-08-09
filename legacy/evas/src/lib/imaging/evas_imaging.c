@@ -197,16 +197,18 @@ evas_imaging_font_line_advance_get(const Evas_Imaging_Font *fn)
 EAPI void
 evas_imaging_font_string_advance_get(const Evas_Imaging_Font *fn, const char *str, int *x, int *y)
 {
-   Evas_BiDi_Props intl_props;
+   Evas_BiDi_Props bidi_props;
+   Evas_BiDi_Paragraph_Props bidi_par_props;
+   bidi_props.props = &bidi_par_props;
    Eina_Unicode *ustr;
    if (!fn) return;
    ustr = evas_common_encoding_utf8_to_unicode(str, NULL);
 #ifdef BIDI_SUPPORT
-   evas_bidi_update_props(ustr, &intl_props);
+   evas_bidi_update_props(ustr, &bidi_par_props);
 #endif
-   evas_common_font_query_advance(fn->font, ustr, &intl_props, x, y);
+   evas_common_font_query_advance(fn->font, ustr, &bidi_props, x, y);
 #ifdef BIDI_SUPPORT
-   evas_bidi_props_clean(&intl_props);
+   evas_bidi_props_clean(&bidi_props);
 #endif
    if (ustr) free(ustr);
 }
@@ -215,11 +217,13 @@ EAPI void
 evas_imaging_font_string_size_query(const Evas_Imaging_Font *fn, const char *str, int *w, int *h)
 {
    Evas_BiDi_Props intl_props;
+   Evas_BiDi_Paragraph_Props bidi_paragraph_props;
+   intl_props.props = &bidi_paragraph_props;
    Eina_Unicode *ustr;
    if (!fn) return;
    ustr = evas_common_encoding_utf8_to_unicode(str, NULL);
 #ifdef BIDI_SUPPORT
-   evas_bidi_update_props(ustr, &intl_props);
+   evas_bidi_update_props(ustr, &bidi_paragraph_props);
 #endif
    evas_common_font_query_size(fn->font, ustr, &intl_props, w, h);
 #ifdef BIDI_SUPPORT
@@ -246,11 +250,13 @@ evas_imaging_font_string_char_coords_get(const Evas_Imaging_Font *fn, const char
 {
    int ret;
    Evas_BiDi_Props intl_props;
+   Evas_BiDi_Paragraph_Props bidi_paragraph_props;
+   intl_props.props = &bidi_paragraph_props;
    Eina_Unicode *ustr;
    if (!fn) return 0;
    ustr = evas_common_encoding_utf8_to_unicode(str, NULL);
 #ifdef BIDI_SUPPORT
-   evas_bidi_update_props(ustr, &intl_props);
+   evas_bidi_update_props(ustr, &bidi_paragraph_props);
 #endif
    ret = evas_common_font_query_char_coords(fn->font, ustr, &intl_props, pos, cx, cy, cw, ch);
 #ifdef BIDI_SUPPORT
@@ -265,11 +271,13 @@ evas_imaging_font_string_char_at_coords_get(const Evas_Imaging_Font *fn, const c
 {
    int ret;
    Evas_BiDi_Props intl_props;
+   Evas_BiDi_Paragraph_Props bidi_paragraph_props;
+   intl_props.props = &bidi_paragraph_props;
    Eina_Unicode *ustr;
    if (!fn) return -1;
    ustr = evas_common_encoding_utf8_to_unicode(str, NULL);
 #ifdef BIDI_SUPPORT
-   evas_bidi_update_props(ustr, &intl_props);
+   evas_bidi_update_props(ustr, &bidi_paragraph_props);
 #endif
    ret = evas_common_font_query_char_at_coords(fn->font, ustr, &intl_props, x, y, cx, cy, cw, ch);
 #ifdef BIDI_SUPPORT

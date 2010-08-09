@@ -40,21 +40,27 @@ _EVAS_BIDI_TYPEDEF(StrIndex);
 _EVAS_BIDI_TYPEDEF(Level);
 _EVAS_BIDI_TYPEDEF(JoiningType);
 
+typedef struct _Evas_BiDi_Paragraph_Props Evas_BiDi_Paragraph_Props;
+typedef struct _Evas_BiDi_Props Evas_BiDi_Props;
+
 /* This structure defines a set of properties of a BiDi string. In case of a 
  * non-bidi string, all values should be NULL.
  * To check if a structure describes a bidi string or not, use the macro
  * EVAS_BIDI_IS_BIDI_PROP. RTL-only strings are also treated as bidi ATM.
  */
-struct _Evas_BiDi_Props {
+struct _Evas_BiDi_Paragraph_Props {
    EvasBiDiCharType  *char_types; /* BiDi char types */
    EvasBiDiLevel     *embedding_levels; /* BiDi embedding levels */
 #ifdef USE_FRIBIDI
-   EvasBiDiParType    direction; /* The paragraph direction, FIXME-tom: should be a 
-                                 pointer to the paragraph structure */
+   EvasBiDiParType    direction;
 #endif
 };
 
-typedef struct _Evas_BiDi_Props Evas_BiDi_Props;
+struct _Evas_BiDi_Props {
+   Evas_BiDi_Paragraph_Props *props;
+   size_t                     start;
+};
+
 
 
 #ifdef USE_FRIBIDI
@@ -92,13 +98,18 @@ evas_bidi_props_reorder_line(Eina_Unicode *text, const Evas_BiDi_Props *intl_pro
  * Return value: the length of the string.
  */
 int
-evas_bidi_update_props(Eina_Unicode *text, Evas_BiDi_Props *intl_props) EINA_ARG_NONNULL(1, 2);
+evas_bidi_update_props(const Eina_Unicode *text, Evas_BiDi_Paragraph_Props *intl_props) EINA_ARG_NONNULL(1, 2);
 
+/* Actually shape the string */
+Eina_Bool
+evas_bidi_shape_string(Eina_Unicode *ustr, const Evas_BiDi_Props *intl_props, size_t len);
 /* Cleans and frees the international properties. - Just the content, not the
  * poitner itself. 
  */
 void
 evas_bidi_props_clean(Evas_BiDi_Props *intl_props) EINA_ARG_NONNULL(1);
+void
+evas_bidi_paragraph_props_clean(Evas_BiDi_Paragraph_Props *bidi_props) EINA_ARG_NONNULL(1);
 
 #endif
 
