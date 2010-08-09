@@ -1004,6 +1004,13 @@ data_write(void)
    int font_num = 0;
    int collection_num = 0;
 
+   if (!edje_file)
+     {
+	ERR("%s: Error. No data to put in \"%s\"",
+	    progname, file_out);
+	exit(-1);
+     }
+
    ef = eet_open(file_out, EET_FILE_MODE_WRITE);
    if (!ef)
      {
@@ -1016,6 +1023,12 @@ data_write(void)
 
    new_edje_file = _edje_file_convert(ef, edje_file);
    _edje_file_set(new_edje_file);
+
+   if (!new_edje_file)
+     {
+	ERR("%s: Error convertion failed for \"%s\"", progname, file_out);
+	exit(-1);
+     }
 
    /* convert old structure to new one */
    it = eina_hash_iterator_data_new(new_edje_file->collection);
