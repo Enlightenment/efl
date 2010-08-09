@@ -4661,9 +4661,9 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    /* Advance the formats */
    if (fnode && (fnode->text_node == cur->node))
      fnode->offset += len;
-
+#ifdef BIDI_SUPPORT
    evas_bidi_update_props(eina_ustrbuf_string_get(n->unicode), &n->bidi_props);
-
+#endif
    _evas_textblock_changed(o, cur->obj);
    free(text);
    return len;
