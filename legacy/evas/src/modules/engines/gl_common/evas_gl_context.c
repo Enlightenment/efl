@@ -412,8 +412,11 @@ evas_gl_common_context_new(void)
         glGetIntegerv(GL_MAX_TEXTURE_SIZE,
                       &(shared->info.max_texture_size));
         
-        shared->info.cutout_max = MAX_CUTOUT;
-        shared->info.pipes_max = MAX_PIPES;
+        // magic numbers that are a result of imperical testing and getting
+        // "best case" performance across a range of systems
+        shared->info.cutout_max = 512;
+        shared->info.pipes_max = 32;
+        
         if (getenv("EVAS_GL_CUTOUT_MAX"))
            shared->info.cutout_max = atoi(getenv("EVAS_GL_CUTOUT_MAX"));
         if (getenv("EVAS_GL_PIPES_MAX"))
