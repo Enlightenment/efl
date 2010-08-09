@@ -1,5 +1,7 @@
 #include "evas_gl_private.h"
 
+#define GLPIPES 1
+
 static int sym_done = 0;
 
 void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b) = NULL;
@@ -253,8 +255,9 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
    GLfloat proj[16];
    int w = 1, h = 1, m = 1, rot = 1;
 
-   if ((gc->shader.surface == gc->def_surface) ||
-       (!gc->shader.surface))
+   // surface in pipe 0 will be the same as all pipes
+   if ((gc->pipe[0].shader.surface == gc->def_surface) ||
+       (!gc->pipe[0].shader.surface))
      {
         w = gc->w;
         h = gc->h;
@@ -262,15 +265,16 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
      }
    else
      {
-        w = gc->shader.surface->w;
-        h = gc->shader.surface->h;
+        w = gc->pipe[0].shader.surface->w;
+        h = gc->pipe[0].shader.surface->h;
         rot = 0;
         m = -1;
      }
 
    if ((!gc->change.size) || 
-       ((gc->shared->w == w) && (gc->shared->h == h) && (gc->shared->rot == rot)))
-     return;
+       ((gc->shared->w == w) && (gc->shared->h == h) &&
+           (gc->shared->rot == rot)))
+      return;
    
    gc->shared->w = w;
    gc->shared->h = h;
@@ -342,7 +346,7 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
                       GL_FALSE, proj);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
-   glUseProgram(gc->shader.cur_prog);
+   glUseProgram(gc->pipe[0].shader.cur_prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 }
 
@@ -350,6 +354,7 @@ Evas_GL_Context *
 evas_gl_common_context_new(void)
 {
    Evas_GL_Context *gc;
+   int i;
 
 #if 1
    if (_evas_gl_common_context)
@@ -368,8 +373,9 @@ evas_gl_common_context_new(void)
    gc->references = 1;
    
    _evas_gl_common_context = gc;
-
-   gc->shader.render_op = EVAS_RENDER_BLEND;
+   
+   for (i = 0; i < MAX_PIPES; i++)
+      gc->pipe[i].shader.render_op = EVAS_RENDER_BLEND;
    
    if (!shared)
      {
@@ -523,7 +529,7 @@ evas_gl_common_context_new(void)
         glUniform1i(glGetUniformLocation(shared->shader.yuv_nomul.prog, "texv"), 2);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         
-        glUseProgram(gc->shader.cur_prog);
+        glUseProgram(gc->pipe[0].shader.cur_prog);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         // in shader:
         // uniform sampler2D tex[8];
@@ -533,9 +539,7 @@ evas_gl_common_context_new(void)
         // GLint loc = glGetUniformLocation(prog, "tex");
         // glUniform1iv(loc, 8, texes);
 
-        shared->native_hash = eina_hash_int32_new
-           (NULL);
-//           ((Eina_Free_Cb)evas_gl_common_texture_free);
+        shared->native_hash = eina_hash_int32_new(NULL);
      }
    gc->shared = shared;
    gc->shared->references++;
@@ -599,11 +603,14 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
      }
    
 
-   if (gc->array.vertex) free(gc->array.vertex);
-   if (gc->array.color) free(gc->array.color);
-   if (gc->array.texuv) free(gc->array.texuv);
-   if (gc->array.texuv2) free(gc->array.texuv2);
-   if (gc->array.texuv3) free(gc->array.texuv3);
+   for (i = 0; i < MAX_PIPES; i++)
+     {
+        if (gc->pipe[i].array.vertex) free(gc->pipe[i].array.vertex);
+        if (gc->pipe[i].array.color) free(gc->pipe[i].array.color);
+        if (gc->pipe[i].array.texuv) free(gc->pipe[i].array.texuv);
+        if (gc->pipe[i].array.texuv2) free(gc->pipe[i].array.texuv2);
+        if (gc->pipe[i].array.texuv3) free(gc->pipe[i].array.texuv3);
+     }
    
    if (gc == _evas_gl_common_context) _evas_gl_common_context = NULL;
    free(gc);
@@ -620,36 +627,52 @@ evas_gl_common_context_use(Evas_GL_Context *gc)
 void
 evas_gl_common_context_newframe(Evas_GL_Context *gc)
 {
-   gc->clip.x = 0;
-   gc->clip.y = 0;
-   gc->clip.w = 0;
-   gc->clip.h = 0;
-   gc->clip.active = 0;
-   gc->shader.surface = NULL;
-   gc->shader.cur_prog = 0;
-   gc->shader.cur_tex = 0;
-   gc->shader.cur_texu = 0;
-   gc->shader.cur_texv = 0;
-   gc->shader.render_op = EVAS_RENDER_BLEND;
-   gc->shader.cx = 0;
-   gc->shader.cy = 0;
-   gc->shader.cw = 0;
-   gc->shader.ch = 0;
-   gc->shader.smooth = 0;
-   gc->shader.blend = 0;
-   gc->shader.clip = 0;
-   gc->shader.current.cur_prog = 0;
-   gc->shader.current.cur_tex = 0;
-   gc->shader.current.cur_texu = 0;
-   gc->shader.current.cur_texv = 0;
-   gc->shader.current.render_op = 0;
-   gc->shader.current.cx = 0;
-   gc->shader.current.cy = 0;
-   gc->shader.current.cw = 0;
-   gc->shader.current.ch = 0;
-   gc->shader.current.smooth = 0;
-   gc->shader.current.blend = 0;
-   gc->shader.current.clip = 0;
+   int i;
+
+//   printf("prev frame flushnum = %i\n", gc->flushnum);
+   gc->flushnum = 0;
+///   printf("\n\n\n\n\n\n\n\n"
+///          "=========================NEW FRAME!========================="
+///          "\n\n");
+   gc->state.current.cur_prog = 0;
+   gc->state.current.cur_tex = 0;
+   gc->state.current.cur_texu = 0;
+   gc->state.current.cur_texv = 0;
+   gc->state.current.render_op = 0;
+   gc->state.current.cx = 0;
+   gc->state.current.cy = 0;
+   gc->state.current.cw = 0;
+   gc->state.current.ch = 0;
+   gc->state.current.smooth = 0;
+   gc->state.current.blend = 0;
+   gc->state.current.clip = 0;
+   
+   for (i = 0; i < MAX_PIPES; i++)
+     {
+        gc->pipe[i].region.x = 0;
+        gc->pipe[i].region.y = 0;
+        gc->pipe[i].region.w = 0;
+        gc->pipe[i].region.h = 0;
+        gc->pipe[i].region.type = 0;
+        gc->pipe[i].clip.x = 0;
+        gc->pipe[i].clip.y = 0;
+        gc->pipe[i].clip.w = 0;
+        gc->pipe[i].clip.h = 0;
+        gc->pipe[i].clip.active = 0;
+        gc->pipe[i].shader.surface = NULL;
+        gc->pipe[i].shader.cur_prog = 0;
+        gc->pipe[i].shader.cur_tex = 0;
+        gc->pipe[i].shader.cur_texu = 0;
+        gc->pipe[i].shader.cur_texv = 0;
+        gc->pipe[i].shader.render_op = EVAS_RENDER_BLEND;
+        gc->pipe[i].shader.cx = 0;
+        gc->pipe[i].shader.cy = 0;
+        gc->pipe[i].shader.cw = 0;
+        gc->pipe[i].shader.ch = 0;
+        gc->pipe[i].shader.smooth = 0;
+        gc->pipe[i].shader.blend = 0;
+        gc->pipe[i].shader.clip = 0;
+     }
    gc->change.size = 1;
    
    glDisable(GL_SCISSOR_TEST);
@@ -691,12 +714,12 @@ evas_gl_common_context_newframe(Evas_GL_Context *gc)
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glEnableVertexAttribArray(SHAD_COLOR);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glUseProgram(gc->shader.cur_prog);
+   glUseProgram(gc->pipe[0].shader.cur_prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    
    glActiveTexture(GL_TEXTURE0);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
+   glBindTexture(GL_TEXTURE_2D, gc->pipe[0].shader.cur_tex);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    _evas_gl_common_viewport_set(gc);
@@ -717,11 +740,11 @@ void
 evas_gl_common_context_target_surface_set(Evas_GL_Context *gc,
                                           Evas_GL_Image *surface)
 {
-   if (surface == gc->shader.surface) return;
+   if (surface == gc->pipe[0].shader.surface) return;
    
    evas_gl_common_context_flush(gc);
 
-   gc->shader.surface = surface;
+   gc->pipe[0].shader.surface = surface;
    gc->change.size = 1;
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 # ifndef GL_FRAMEBUFFER
@@ -732,7 +755,7 @@ evas_gl_common_context_target_surface_set(Evas_GL_Context *gc,
 #  define GL_FRAMEBUFFER GL_FRAMEBUFFER_EXT
 # endif   
 #endif   
-   if (gc->shader.surface == gc->def_surface)
+   if (gc->pipe[0].shader.surface == gc->def_surface)
      {
         glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -745,45 +768,119 @@ evas_gl_common_context_target_surface_set(Evas_GL_Context *gc,
    _evas_gl_common_viewport_set(gc);
 }
 
-#define PUSH_VERTEX(x, y, z) \
-   gc->array.vertex[nv++] = x; \
-   gc->array.vertex[nv++] = y; \
-   gc->array.vertex[nv++] = z
-#define PUSH_COLOR(r, g, b, a) \
-   gc->array.color[nc++] = r; \
-   gc->array.color[nc++] = g; \
-   gc->array.color[nc++] = b; \
-   gc->array.color[nc++] = a
-#define PUSH_TEXUV(u, v) \
-   gc->array.texuv[nu++] = u; \
-   gc->array.texuv[nu++] = v
-#define PUSH_TEXUV2(u, v) \
-   gc->array.texuv2[nu2++] = u; \
-   gc->array.texuv2[nu2++] = v
-#define PUSH_TEXUV3(u, v) \
-   gc->array.texuv3[nu3++] = u; \
-   gc->array.texuv3[nu3++] = v
+#define PUSH_VERTEX(n, x, y, z) \
+   gc->pipe[n].array.vertex[nv++] = x; \
+   gc->pipe[n].array.vertex[nv++] = y; \
+   gc->pipe[n].array.vertex[nv++] = z
+#define PUSH_COLOR(n, r, g, b, a) \
+   gc->pipe[n].array.color[nc++] = r; \
+   gc->pipe[n].array.color[nc++] = g; \
+   gc->pipe[n].array.color[nc++] = b; \
+   gc->pipe[n].array.color[nc++] = a
+#define PUSH_TEXUV(n, u, v) \
+   gc->pipe[n].array.texuv[nu++] = u; \
+   gc->pipe[n].array.texuv[nu++] = v
+#define PUSH_TEXUV2(n, u, v) \
+   gc->pipe[n].array.texuv2[nu2++] = u; \
+   gc->pipe[n].array.texuv2[nu2++] = v
+#define PUSH_TEXUV3(n, u, v) \
+   gc->pipe[n].array.texuv3[nu3++] = u; \
+   gc->pipe[n].array.texuv3[nu3++] = v
 
 static inline void
-_evas_gl_common_context_array_alloc(Evas_GL_Context *gc)
+array_alloc(Evas_GL_Context *gc, int n)
 {
-   if (gc->array.num <= gc->array.alloc) return;
-   gc->array.alloc += 6 * 1024;
-   if (gc->array.use_vertex)
-     gc->array.vertex = realloc(gc->array.vertex,
-                                gc->array.alloc * sizeof(GLshort) * 3);
-   if (gc->array.use_color)
-     gc->array.color  = realloc(gc->array.color,
-                                gc->array.alloc * sizeof(GLubyte) * 4);
-   if (gc->array.use_texuv)
-     gc->array.texuv  = realloc(gc->array.texuv,
-                                gc->array.alloc * sizeof(GLfloat) * 2);
-   if (gc->array.use_texuv2)
-     gc->array.texuv2  = realloc(gc->array.texuv2,
-                               gc->array.alloc * sizeof(GLfloat) * 2);
-   if (gc->array.use_texuv3)
-     gc->array.texuv3  = realloc(gc->array.texuv3,
-                                 gc->array.alloc * sizeof(GLfloat) * 2);
+   if (gc->pipe[n].array.num <= gc->pipe[n].array.alloc) return;
+   gc->pipe[n].array.alloc += 6 * 1024;
+   if (gc->pipe[n].array.use_vertex)
+     gc->pipe[n].array.vertex = realloc(gc->pipe[n].array.vertex,
+                                gc->pipe[n].array.alloc * sizeof(GLshort) * 3);
+   if (gc->pipe[n].array.use_color)
+     gc->pipe[n].array.color  = realloc(gc->pipe[n].array.color,
+                                gc->pipe[n].array.alloc * sizeof(GLubyte) * 4);
+   if (gc->pipe[n].array.use_texuv)
+     gc->pipe[n].array.texuv  = realloc(gc->pipe[n].array.texuv,
+                                gc->pipe[n].array.alloc * sizeof(GLfloat) * 2);
+   if (gc->pipe[n].array.use_texuv2)
+     gc->pipe[n].array.texuv2  = realloc(gc->pipe[n].array.texuv2,
+                               gc->pipe[n].array.alloc * sizeof(GLfloat) * 2);
+   if (gc->pipe[n].array.use_texuv3)
+     gc->pipe[n].array.texuv3  = realloc(gc->pipe[n].array.texuv3,
+                                 gc->pipe[n].array.alloc * sizeof(GLfloat) * 2);
+}
+
+static int
+pipe_region_intersects(Evas_GL_Context *gc, int n,
+                       int x, int y, int w, int h)
+{
+   int i, rx, ry, rw, rh, ii;
+   
+   rx = gc->pipe[n].region.x;
+   ry = gc->pipe[n].region.y;
+   rw = gc->pipe[n].region.w;
+   rh = gc->pipe[n].region.h;
+///   printf("CHECK region %3i %3i %3ix%3i in pipe [%2i] with %3i %3i %3ix%3i\n",
+///          x, y, w, h, n, rx, ry, rw, rh);
+   if (!RECTS_INTERSECT(x, y, w, h, rx, ry, rw, rh))
+      return 0;
+   for (i = 0, 
+        ii = 0; 
+        
+        i < gc->pipe[n].array.num; 
+        
+        i += (3 * 2), 
+        ii += (3 * 3 * 2))
+     {  // tri 1...
+        // 0, 1, 2 < top left
+        // 3, 4, 5 < top right
+        // 6. 7, 8 < bottom left
+        rx = gc->pipe[n].array.vertex[ii + 0];
+        ry = gc->pipe[n].array.vertex[ii + 1];
+        rw = gc->pipe[n].array.vertex[ii + 3] - rx;
+        rh = gc->pipe[n].array.vertex[ii + 7] - ry;
+///        printf("CHECK sub %3i %3i %3ix%3i in pipe [%2i] with %3i %3i %3ix%3i\n",
+///               x, y, w, h, n, rx, ry, rw, rh);
+        if (RECTS_INTERSECT(x, y, w, h, rx, ry, rw, rh))
+           return 1;
+     }
+   return 0;
+}
+
+static void
+pipe_region_expand(Evas_GL_Context *gc, int n,
+                   int x, int y, int w, int h)
+{
+   int x1, y1, x2, y2;
+   
+   if (gc->pipe[n].region.w <= 0)
+     {
+        gc->pipe[n].region.x = x;
+        gc->pipe[n].region.y = y;
+        gc->pipe[n].region.w = w;
+        gc->pipe[n].region.h = h;
+///        printf("SET pipe [%2i][%i] to %3i %3i %3ix%3i\n", 
+///               n, gc->pipe[n].region.type,
+///               x, y, w, h);
+        return;
+     }
+   x1 = gc->pipe[n].region.x;
+   y1 = gc->pipe[n].region.y;
+   x2 = gc->pipe[n].region.x + gc->pipe[n].region.w;
+   y2 = gc->pipe[n].region.y + gc->pipe[n].region.h;
+   if (x < x1) x1 = x;
+   if (y < y1) y1 = y;
+   if ((x + w) > x2) x2 = x + w;
+   if ((y + h) > y2) y2 = y + h;
+   gc->pipe[n].region.x = x1;
+   gc->pipe[n].region.y = y1;
+   gc->pipe[n].region.w = x2 - x1;
+   gc->pipe[n].region.h = y2 - y1;
+///   printf("EXPAND pipe [%2i][%i] to %3i %3i %3ix%3i\n", 
+///          n, gc->pipe[n].region.type,
+///          x1, 
+///          y1, 
+///          x2 - x1, 
+///          y2 - y1);
 }
 
 void
@@ -795,48 +892,52 @@ evas_gl_common_context_line_push(Evas_GL_Context *gc,
    int pnum, nv, nc, nu, nt, i;
    Eina_Bool blend = 0;
    GLuint prog = gc->shared->shader.rect.prog;
+   int pn = 0;
    
    shader_array_flush(gc);
    
    if (a < 255) blend = 1;
    if (gc->dc->render_op == EVAS_RENDER_COPY) blend = 0;
-   gc->shader.cur_tex = 0;
-   gc->shader.cur_prog = prog;
-   gc->shader.blend = blend;
-   gc->shader.render_op = gc->dc->render_op;
-   gc->shader.clip = clip;
-   gc->shader.cx = cx;
-   gc->shader.cy = cy;
-   gc->shader.cw = cw;
-   gc->shader.ch = ch;
    
-   gc->array.line = 1;
-   gc->array.use_vertex = 1;
-   gc->array.use_color = 1;
-   gc->array.use_texuv = 0;
-   gc->array.use_texuv2 = 0;
-   gc->array.use_texuv3 = 0;
+again:
+   pn = gc->state.top_pipe;
+   gc->pipe[pn].shader.cur_tex = 0;
+   gc->pipe[pn].shader.cur_prog = prog;
+   gc->pipe[pn].shader.blend = blend;
+   gc->pipe[pn].shader.render_op = gc->dc->render_op;
+   gc->pipe[pn].shader.clip = clip;
+   gc->pipe[pn].shader.cx = cx;
+   gc->pipe[pn].shader.cy = cy;
+   gc->pipe[pn].shader.cw = cw;
+   gc->pipe[pn].shader.ch = ch;
    
-   pnum = gc->array.num;
+   gc->pipe[pn].array.line = 1;
+   gc->pipe[pn].array.use_vertex = 1;
+   gc->pipe[pn].array.use_color = 1;
+   gc->pipe[pn].array.use_texuv = 0;
+   gc->pipe[pn].array.use_texuv2 = 0;
+   gc->pipe[pn].array.use_texuv3 = 0;
+   
+   pnum = gc->pipe[pn].array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nt = pnum * 4;
-   gc->array.num += 1;
-   _evas_gl_common_context_array_alloc(gc);
+   gc->pipe[pn].array.num += 1;
+   array_alloc(gc, pn);
   
-   PUSH_VERTEX(x1, y1, 0);
-   PUSH_VERTEX(x2, y2, 0);
+   PUSH_VERTEX(pn, x1, y1, 0);
+   PUSH_VERTEX(pn, x2, y2, 0);
    
    for (i = 0; i < 2; i++)
      {
-        PUSH_COLOR(r, g, b, a);
+        PUSH_COLOR(pn, r, g, b, a);
      }
    
    shader_array_flush(gc);
-   gc->array.line = 0;
-   gc->array.use_vertex = 0;
-   gc->array.use_color = 0;
-   gc->array.use_texuv = 0;
-   gc->array.use_texuv2 = 0;
-   gc->array.use_texuv3 = 0;
+   gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.use_vertex = 0;
+   gc->pipe[pn].array.use_color = 0;
+   gc->pipe[pn].array.use_texuv = 0;
+   gc->pipe[pn].array.use_texuv2 = 0;
+   gc->pipe[pn].array.use_texuv3 = 0;
 }
 
 void
@@ -847,48 +948,135 @@ evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
    int pnum, nv, nc, nu, nt, i;
    Eina_Bool blend = 0;
    GLuint prog = gc->shared->shader.rect.prog;
+   int pn = 0;
    
    if (a < 255) blend = 1;
    if (gc->dc->render_op == EVAS_RENDER_COPY) blend = 0;
    
-   if ((gc->shader.cur_tex != 0)
-       || (gc->shader.cur_prog != prog)
-       || (gc->shader.blend != blend)
-       || (gc->shader.render_op != gc->dc->render_op)
-       || (gc->shader.clip != 0)
+   /*xxx*/ shader_array_flush(gc);
+again:
+   pn = gc->state.top_pipe;
+#ifdef GLPIPES
+   if ((pn == 0) && (gc->pipe[pn].array.num == 0))
+     {
+        gc->pipe[pn].region.type = RTYPE_RECT;
+        gc->pipe[pn].shader.cur_tex = 0;
+        gc->pipe[pn].shader.cur_prog = prog;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = 1;
+        gc->pipe[pn].array.use_texuv = 0;
+        gc->pipe[pn].array.use_texuv2 = 0;
+        gc->pipe[pn].array.use_texuv3 = 0;
+        
+///        printf("  rec %i -> %i, size %i %i %ix%i\n",
+///               gc->pipe[i].shader.cur_tex,
+///               0,
+///               x, y, w, h);
+     }
+   else
+     {
+        int found = 0;
+        
+        for (i = pn; i >= 0; i--)
+          {
+             
+///             printf("  rec %i == %i, size %i %i %ix%i\n",
+///                    gc->pipe[i].shader.cur_tex,
+///                    0,
+///                    x, y, w, h);
+
+             if ((gc->pipe[i].shader.cur_tex == 0)
+                 && (gc->pipe[i].shader.cur_prog == prog)
+                 && (gc->pipe[i].shader.blend == blend)
+                 && (gc->pipe[i].shader.render_op == gc->dc->render_op)
+                 && (gc->pipe[i].shader.clip == 0)
+                )
+               {
+///                  printf("    drop %i -> %i\n", pn, i);
+                  found = 1;
+                  pn = i;
+                  break;
+               }
+//             if (i != pn)
+               {
+                  if (pipe_region_intersects(gc, i, x, y, w, h))
+                     {
+///                        printf("    abort drop. interset @ %i\n", i);
+                        break;
+                     }
+               }
+          }
+        if (!found)
+          {
+             pn = gc->state.top_pipe + 1;
+             if (pn >= MAX_PIPES)
+               {
+                  shader_array_flush(gc);
+                  goto again;
+               }
+             gc->state.top_pipe = pn;
+             gc->pipe[pn].shader.cur_tex = 0;
+             gc->pipe[pn].shader.cur_prog = prog;
+             gc->pipe[pn].shader.blend = blend;
+             gc->pipe[pn].shader.render_op = gc->dc->render_op;
+             gc->pipe[pn].shader.clip = 0;
+             gc->pipe[pn].region.type = RTYPE_RECT;
+             gc->pipe[pn].array.line = 0;
+             gc->pipe[pn].array.use_vertex = 1;
+             gc->pipe[pn].array.use_color = 1;
+             gc->pipe[pn].array.use_texuv = 0;
+             gc->pipe[pn].array.use_texuv2 = 0;
+             gc->pipe[pn].array.use_texuv3 = 0;
+         }
+     }
+#else   
+   if ((gc->pipe[pn].shader.cur_tex != 0)
+       || (gc->pipe[pn].shader.cur_prog != prog)
+       || (gc->pipe[pn].shader.blend != blend)
+       || (gc->pipe[pn].shader.render_op != gc->dc->render_op)
+       || (gc->pipe[pn].shader.clip != 0)
        )
      {
         shader_array_flush(gc);
-        gc->shader.cur_tex = 0;
-        gc->shader.cur_prog = prog;
-        gc->shader.blend = blend;
-        gc->shader.render_op = gc->dc->render_op;
-        gc->shader.clip = 0;
-
+        pn = gc->state.top_pipe;
+        gc->pipe[pn].shader.cur_tex = 0;
+        gc->pipe[pn].shader.cur_prog = prog;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.clip = 0;
      }
-   gc->array.line = 0;
-   gc->array.use_vertex = 1;
-   gc->array.use_color = 1;
-   gc->array.use_texuv = 0;
-   gc->array.use_texuv2 = 0;
-   gc->array.use_texuv3 = 0;
    
-   pnum = gc->array.num;
+   gc->pipe[pn].region.type = RTYPE_RECT;
+   gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.use_vertex = 1;
+   gc->pipe[pn].array.use_color = 1;
+   gc->pipe[pn].array.use_texuv = 0;
+   gc->pipe[pn].array.use_texuv2 = 0;
+   gc->pipe[pn].array.use_texuv3 = 0;
+#endif
+   
+   pipe_region_expand(gc, pn, x, y, w, h);
+   
+   pnum = gc->pipe[pn].array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nt = pnum * 4;
-   gc->array.num += 6;
-   _evas_gl_common_context_array_alloc(gc);
+   gc->pipe[pn].array.num += 6;
+   array_alloc(gc, pn);
   
-   PUSH_VERTEX(x    , y    , 0);
-   PUSH_VERTEX(x + w, y    , 0);
-   PUSH_VERTEX(x    , y + h, 0);
+   PUSH_VERTEX(pn, x    , y    , 0);
+   PUSH_VERTEX(pn, x + w, y    , 0);
+   PUSH_VERTEX(pn, x    , y + h, 0);
    
-   PUSH_VERTEX(x + w, y    , 0);
-   PUSH_VERTEX(x + w, y + h, 0);
-   PUSH_VERTEX(x    , y + h, 0);
+   PUSH_VERTEX(pn, x + w, y    , 0);
+   PUSH_VERTEX(pn, x + w, y + h, 0);
+   PUSH_VERTEX(pn, x    , y + h, 0);
    
    for (i = 0; i < 6; i++)
      {
-        PUSH_COLOR(r, g, b, a);
+        PUSH_COLOR(pn, r, g, b, a);
      }
 }
 
@@ -904,6 +1092,7 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    GLfloat tx1, tx2, ty1, ty2;
    Eina_Bool blend = 1;
    GLuint prog = gc->shared->shader.img.prog;
+   int pn = 0;
 
    if (!tex->alpha) blend = 0;
    if (a < 255) blend = 1;
@@ -933,44 +1122,141 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
           }
      }
 
-   if ((gc->shader.cur_tex != tex->pt->texture)
-       || (gc->shader.cur_prog != prog)
-       || (gc->shader.smooth != smooth)
-       || (gc->shader.blend != blend)
-       || (gc->shader.render_op != gc->dc->render_op)
-       || (gc->shader.clip != 0)
+again:
+   pn = gc->state.top_pipe;
+#ifdef GLPIPES
+   if ((pn == 0) && (gc->pipe[pn].array.num == 0))
+     {
+        gc->pipe[pn].region.type = RTYPE_IMAGE;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_prog = prog;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        // if nomul... dont need this
+        gc->pipe[pn].array.use_color = 1;
+        gc->pipe[pn].array.use_texuv = 1;
+        gc->pipe[pn].array.use_texuv2 = 0;
+        gc->pipe[pn].array.use_texuv3 = 0;
+           
+///        printf("  tex %i -> %i, size %i %i %ix%i\n",
+///               gc->pipe[i].shader.cur_tex,
+///               tex->pt->texture,
+///               x, y, w, h);
+     }
+   else
+     {
+        int found = 0;
+        
+        for (i = pn; i >= 0; i--)
+          {
+///             printf("  tex %i == %i, size %i %i %ix%i\n",
+///                    gc->pipe[i].shader.cur_tex,
+///                    tex->pt->texture,
+///                    x, y, w, h);
+             if ((gc->pipe[i].shader.cur_tex == tex->pt->texture)
+                 && (gc->pipe[i].shader.cur_prog == prog)
+                 && (gc->pipe[i].shader.smooth == smooth)
+                 && (gc->pipe[i].shader.blend == blend)
+                 && (gc->pipe[i].shader.render_op == gc->dc->render_op)
+                 && (gc->pipe[i].shader.clip == 0)
+                )
+               {
+///                  printf("    drop %i -> %i\n", pn, i);
+                  found = 1;
+                  pn = i;
+                  break;
+               }
+//             if (i != pn)
+               {
+                  if (pipe_region_intersects(gc, i, x, y, w, h))
+                     {
+///                        printf("    abort drop. interset @ %i\n", i);
+                        break;
+                     }
+               }
+          }
+        if (!found)
+          {
+             pn = gc->state.top_pipe + 1;
+             if (pn >= MAX_PIPES)
+               {
+                  shader_array_flush(gc);
+                  goto again;
+               }
+             gc->state.top_pipe = pn;
+             gc->pipe[pn].region.type = RTYPE_IMAGE;
+             gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+             gc->pipe[pn].shader.cur_prog = prog;
+             gc->pipe[pn].shader.smooth = smooth;
+             gc->pipe[pn].shader.blend = blend;
+             gc->pipe[pn].shader.render_op = gc->dc->render_op;
+             gc->pipe[pn].shader.clip = 0;
+             gc->pipe[pn].array.line = 0;
+             gc->pipe[pn].array.use_vertex = 1;
+             // if nomul... dont need this
+             gc->pipe[pn].array.use_color = 1;
+             gc->pipe[pn].array.use_texuv = 1;
+             gc->pipe[pn].array.use_texuv2 = 0;
+             gc->pipe[pn].array.use_texuv3 = 0;
+   
+         }
+     }
+   if ((tex->im) && (tex->im->native.data))
+     {
+        if (gc->pipe[pn].array.im != tex->im)
+          {
+             shader_array_flush(gc);
+             pn = gc->state.top_pipe;
+             gc->pipe[pn].array.im = tex->im;
+             goto again;
+          }
+     }
+#else   
+   if ((gc->pipe[pn].shader.cur_tex != tex->pt->texture)
+       || (gc->pipe[pn].shader.cur_prog != prog)
+       || (gc->pipe[pn].shader.smooth != smooth)
+       || (gc->pipe[pn].shader.blend != blend)
+       || (gc->pipe[pn].shader.render_op != gc->dc->render_op)
+       || (gc->pipe[pn].shader.clip != 0)
        )
      {
         shader_array_flush(gc);
-        gc->shader.cur_tex = tex->pt->texture;
-        gc->shader.cur_prog = prog;
-        gc->shader.smooth = smooth;
-        gc->shader.blend = blend;
-        gc->shader.render_op = gc->dc->render_op;
-        gc->shader.clip = 0;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_prog = prog;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.clip = 0;
      } 
    if ((tex->im) && (tex->im->native.data))
      {
-        if (gc->array.im != tex->im)
+        if (gc->pipe[pn].array.im != tex->im)
           {
              shader_array_flush(gc);
-             gc->array.im = tex->im;
+             gc->pipe[pn].array.im = tex->im;
           }
      }
-   
-   gc->array.line = 0;
-   gc->array.use_vertex = 1;
+
+   gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.use_vertex = 1;
    // if nomul... dont need this
-   gc->array.use_color = 1;
-   gc->array.use_texuv = 1;
-   gc->array.use_texuv2 = 0;
-   gc->array.use_texuv3 = 0;
+   gc->pipe[pn].array.use_color = 1;
+   gc->pipe[pn].array.use_texuv = 1;
+   gc->pipe[pn].array.use_texuv2 = 0;
+   gc->pipe[pn].array.use_texuv3 = 0;
+#endif
+
+   pipe_region_expand(gc, pn, x, y, w, h);
   
-   pnum = gc->array.num;
+   pnum = gc->pipe[pn].array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nu2 = pnum * 2;
    nt = pnum * 4;
-   gc->array.num += 6;
-   _evas_gl_common_context_array_alloc(gc);
+   gc->pipe[pn].array.num += 6;
+   array_alloc(gc, pn);
 
    if ((tex->im) && (tex->im->native.data) && (!tex->im->native.yinvert))
      {
@@ -987,26 +1273,26 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
         ty2 = ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
      }
 
-   PUSH_VERTEX(x    , y    , 0);
-   PUSH_VERTEX(x + w, y    , 0);
-   PUSH_VERTEX(x    , y + h, 0);
+   PUSH_VERTEX(pn, x    , y    , 0);
+   PUSH_VERTEX(pn, x + w, y    , 0);
+   PUSH_VERTEX(pn, x    , y + h, 0);
    
-   PUSH_TEXUV(tx1, ty1);
-   PUSH_TEXUV(tx2, ty1);
-   PUSH_TEXUV(tx1, ty2);
+   PUSH_TEXUV(pn, tx1, ty1);
+   PUSH_TEXUV(pn, tx2, ty1);
+   PUSH_TEXUV(pn, tx1, ty2);
    
-   PUSH_VERTEX(x + w, y    , 0);
-   PUSH_VERTEX(x + w, y + h, 0);
-   PUSH_VERTEX(x    , y + h, 0);
+   PUSH_VERTEX(pn, x + w, y    , 0);
+   PUSH_VERTEX(pn, x + w, y + h, 0);
+   PUSH_VERTEX(pn, x    , y + h, 0);
    
-   PUSH_TEXUV(tx2, ty1);
-   PUSH_TEXUV(tx2, ty2);
-   PUSH_TEXUV(tx1, ty2);
+   PUSH_TEXUV(pn, tx2, ty1);
+   PUSH_TEXUV(pn, tx2, ty2);
+   PUSH_TEXUV(pn, tx1, ty2);
 
    // if nomul... dont need this
    for (i = 0; i < 6; i++)
      {
-        PUSH_COLOR(r, g, b, a);
+        PUSH_COLOR(pn, r, g, b, a);
      }
 }
 
@@ -1019,34 +1305,116 @@ evas_gl_common_context_font_push(Evas_GL_Context *gc,
 {
    int pnum, nv, nc, nu, nt, i;
    GLfloat tx1, tx2, ty1, ty2;
+   int pn = 0;
 
-   if ((gc->shader.cur_tex != tex->pt->texture)
-       || (gc->shader.cur_prog != gc->shared->shader.font.prog)
-       || (gc->shader.smooth != 0)
-       || (gc->shader.blend != 1)
-       || (gc->shader.render_op != gc->dc->render_op)
-       || (gc->shader.clip != 0)
+again:
+   pn = gc->state.top_pipe;
+#ifdef GLPIPES
+   if ((pn == 0) && (gc->pipe[pn].array.num == 0))
+     {
+        gc->pipe[pn].region.type = RTYPE_FONT;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_prog = gc->shared->shader.font.prog;
+        gc->pipe[pn].shader.smooth = 0;
+        gc->pipe[pn].shader.blend = 1;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = 1;
+        gc->pipe[pn].array.use_texuv = 1;
+        gc->pipe[pn].array.use_texuv2 = 0;
+        gc->pipe[pn].array.use_texuv3 = 0;
+     }
+   else
+     {
+        int found = 0;
+        
+        for (i = pn; i >= 0; i--)
+          {
+///             printf("  fon %i == %i, size %i %i %ix%i\n",
+///                    gc->pipe[i].shader.cur_tex,
+///                    tex->pt->texture,
+///                    x, y, w, h);
+             if ((gc->pipe[i].shader.cur_tex == tex->pt->texture)
+                 && (gc->pipe[i].shader.cur_prog == gc->shared->shader.font.prog)
+                 && (gc->pipe[i].shader.smooth == 0)
+                 && (gc->pipe[i].shader.blend == 1)
+                 && (gc->pipe[i].shader.render_op == gc->dc->render_op)
+                 && (gc->pipe[i].shader.clip == 0)
+                )
+               {
+///                  printf("    drop %i -> %i\n", pn, i);
+                  found = 1;
+                  pn = i;
+                  break;
+               }
+//             if (i != pn)
+               {
+                  if (pipe_region_intersects(gc, i, x, y, w, h))
+                     {
+///                        printf("    abort drop. interset @ %i\n", i);
+                        break;
+                     }
+               }
+          }
+        if (!found)
+          {
+             pn = gc->state.top_pipe + 1;
+             if (pn >= MAX_PIPES)
+               {
+                  shader_array_flush(gc);
+                  goto again;
+               }
+             gc->state.top_pipe = pn;
+             gc->pipe[pn].region.type = RTYPE_FONT;
+             gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+             gc->pipe[pn].shader.cur_prog = gc->shared->shader.font.prog;
+             gc->pipe[pn].shader.smooth = 0;
+             gc->pipe[pn].shader.blend = 1;
+             gc->pipe[pn].shader.render_op = gc->dc->render_op;
+             gc->pipe[pn].shader.clip = 0;
+             gc->pipe[pn].array.line = 0;
+             gc->pipe[pn].array.use_vertex = 1;
+             gc->pipe[pn].array.use_color = 1;
+             gc->pipe[pn].array.use_texuv = 1;
+             gc->pipe[pn].array.use_texuv2 = 0;
+             gc->pipe[pn].array.use_texuv3 = 0;
+         }
+     }
+#else   
+   if ((gc->pipe[pn].shader.cur_tex != tex->pt->texture)
+       || (gc->pipe[pn].shader.cur_prog != gc->shared->shader.font.prog)
+       || (gc->pipe[pn].shader.smooth != 0)
+       || (gc->pipe[pn].shader.blend != 1)
+       || (gc->pipe[pn].shader.render_op != gc->dc->render_op)
+       || (gc->pipe[pn].shader.clip != 0)
        )
      {
         shader_array_flush(gc);
-        gc->shader.cur_tex = tex->pt->texture;
-        gc->shader.cur_prog = gc->shared->shader.font.prog;
-        gc->shader.smooth = 0;
-        gc->shader.blend = 1;
-        gc->shader.render_op = gc->dc->render_op;
-        gc->shader.clip = 0;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_prog = gc->shared->shader.font.prog;
+        gc->pipe[pn].shader.smooth = 0;
+        gc->pipe[pn].shader.blend = 1;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.clip = 0;
      }
-   gc->array.line = 0;
-   gc->array.use_vertex = 1;
-   gc->array.use_color = 1;
-   gc->array.use_texuv = 1;
-   gc->array.use_texuv2 = 0;
-   gc->array.use_texuv3 = 0;
+
+   gc->pipe[pn].region.type = RTYPE_FONT;
+   gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.use_vertex = 1;
+   gc->pipe[pn].array.use_color = 1;
+   gc->pipe[pn].array.use_texuv = 1;
+   gc->pipe[pn].array.use_texuv2 = 0;
+   gc->pipe[pn].array.use_texuv3 = 0;
+#endif
    
-   pnum = gc->array.num;
+   pipe_region_expand(gc, pn, x, y, w, h);
+   
+   pnum = gc->pipe[pn].array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nt = pnum * 4;
-   gc->array.num += 6;
-   _evas_gl_common_context_array_alloc(gc);
+   gc->pipe[pn].array.num += 6;
+   array_alloc(gc, pn);
 
    if (sw == 0.0)
      {
@@ -1063,25 +1431,25 @@ evas_gl_common_context_font_push(Evas_GL_Context *gc,
         ty2 = ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
      }
    
-   PUSH_VERTEX(x    , y    , 0);
-   PUSH_VERTEX(x + w, y    , 0);
-   PUSH_VERTEX(x    , y + h, 0);
+   PUSH_VERTEX(pn, x    , y    , 0);
+   PUSH_VERTEX(pn, x + w, y    , 0);
+   PUSH_VERTEX(pn, x    , y + h, 0);
    
-   PUSH_TEXUV(tx1, ty1);
-   PUSH_TEXUV(tx2, ty1);
-   PUSH_TEXUV(tx1, ty2);
+   PUSH_TEXUV(pn, tx1, ty1);
+   PUSH_TEXUV(pn, tx2, ty1);
+   PUSH_TEXUV(pn, tx1, ty2);
    
-   PUSH_VERTEX(x + w, y    , 0);
-   PUSH_VERTEX(x + w, y + h, 0);
-   PUSH_VERTEX(x    , y + h, 0);
+   PUSH_VERTEX(pn, x + w, y    , 0);
+   PUSH_VERTEX(pn, x + w, y + h, 0);
+   PUSH_VERTEX(pn, x    , y + h, 0);
    
-   PUSH_TEXUV(tx2, ty1);
-   PUSH_TEXUV(tx2, ty2);
-   PUSH_TEXUV(tx1, ty2);
+   PUSH_TEXUV(pn, tx2, ty1);
+   PUSH_TEXUV(pn, tx2, ty2);
+   PUSH_TEXUV(pn, tx1, ty2);
 
    for (i = 0; i < 6; i++)
      {
-        PUSH_COLOR(r, g, b, a);
+        PUSH_COLOR(pn, r, g, b, a);
      }
 }
 
@@ -1097,6 +1465,7 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
    GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
    Eina_Bool blend = 0;
    GLuint prog = gc->shared->shader.yuv.prog;
+   int pn = 0;
 
    if (a < 255) blend = 1;
    
@@ -1105,36 +1474,44 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
    else
      prog = gc->shared->shader.yuv.prog;
    
-   if ((gc->shader.cur_tex != tex->pt->texture)
-       || (gc->shader.cur_prog != prog)
-       || (gc->shader.smooth != smooth)
-       || (gc->shader.blend != blend)
-       || (gc->shader.render_op != gc->dc->render_op)
-       || (gc->shader.clip != 0)
+   /*xxx*/ shader_array_flush(gc);
+again:
+   pn = gc->state.top_pipe;
+   if ((gc->pipe[pn].shader.cur_tex != tex->pt->texture)
+       || (gc->pipe[pn].shader.cur_prog != prog)
+       || (gc->pipe[pn].shader.smooth != smooth)
+       || (gc->pipe[pn].shader.blend != blend)
+       || (gc->pipe[pn].shader.render_op != gc->dc->render_op)
+       || (gc->pipe[pn].shader.clip != 0)
        )
      {
         shader_array_flush(gc);
-        gc->shader.cur_tex = tex->pt->texture;
-        gc->shader.cur_texu = tex->ptu->texture;
-        gc->shader.cur_texv = tex->ptv->texture;
-        gc->shader.cur_prog = prog;
-        gc->shader.smooth = smooth;
-        gc->shader.blend = blend;
-        gc->shader.render_op = gc->dc->render_op;
-        gc->shader.clip = 0;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_texu = tex->ptu->texture;
+        gc->pipe[pn].shader.cur_texv = tex->ptv->texture;
+        gc->pipe[pn].shader.cur_prog = prog;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.clip = 0;
      }
-   gc->array.line = 0;
-   gc->array.use_vertex = 1;
-   gc->array.use_color = 1;
-   gc->array.use_texuv = 1;
-   gc->array.use_texuv2 = 1;
-   gc->array.use_texuv3 = 1;
    
-   pnum = gc->array.num;
+   // FIXME: do this once only on new pipe setupe
+   gc->pipe[pn].region.type = RTYPE_YUV;
+   gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.use_vertex = 1;
+   gc->pipe[pn].array.use_color = 1;
+   gc->pipe[pn].array.use_texuv = 1;
+   gc->pipe[pn].array.use_texuv2 = 1;
+   gc->pipe[pn].array.use_texuv3 = 1;
+   
+   pipe_region_expand(gc, pn, x, y, w, h);
+   
+   pnum = gc->pipe[pn].array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; 
    nu2 = pnum * 2; nu3 = pnum * 2; nt = pnum * 4;
-   gc->array.num += 6;
-   _evas_gl_common_context_array_alloc(gc);
+   gc->pipe[pn].array.num += 6;
+   array_alloc(gc, pn);
 
    tx1 = (sx) / (double)tex->pt->w;
    ty1 = (sy) / (double)tex->pt->h;
@@ -1146,41 +1523,41 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
    t2x2 = ((sx + sw) / 2) / (double)tex->ptu->w;
    t2y2 = ((sy + sh) / 2) / (double)tex->ptu->h;
    
-   PUSH_VERTEX(x    , y    , 0);
-   PUSH_VERTEX(x + w, y    , 0);
-   PUSH_VERTEX(x    , y + h, 0);
+   PUSH_VERTEX(pn, x    , y    , 0);
+   PUSH_VERTEX(pn, x + w, y    , 0);
+   PUSH_VERTEX(pn, x    , y + h, 0);
    
-   PUSH_TEXUV(tx1, ty1);
-   PUSH_TEXUV(tx2, ty1);
-   PUSH_TEXUV(tx1, ty2);
+   PUSH_TEXUV(pn, tx1, ty1);
+   PUSH_TEXUV(pn, tx2, ty1);
+   PUSH_TEXUV(pn, tx1, ty2);
    
-   PUSH_TEXUV2(t2x1, t2y1);
-   PUSH_TEXUV2(t2x2, t2y1);
-   PUSH_TEXUV2(t2x1, t2y2);
+   PUSH_TEXUV2(pn, t2x1, t2y1);
+   PUSH_TEXUV2(pn, t2x2, t2y1);
+   PUSH_TEXUV2(pn, t2x1, t2y2);
    
-   PUSH_TEXUV3(t2x1, t2y1);
-   PUSH_TEXUV3(t2x2, t2y1);
-   PUSH_TEXUV3(t2x1, t2y2);
+   PUSH_TEXUV3(pn, t2x1, t2y1);
+   PUSH_TEXUV3(pn, t2x2, t2y1);
+   PUSH_TEXUV3(pn, t2x1, t2y2);
    
-   PUSH_VERTEX(x + w, y    , 0);
-   PUSH_VERTEX(x + w, y + h, 0);
-   PUSH_VERTEX(x    , y + h, 0);
+   PUSH_VERTEX(pn, x + w, y    , 0);
+   PUSH_VERTEX(pn, x + w, y + h, 0);
+   PUSH_VERTEX(pn, x    , y + h, 0);
    
-   PUSH_TEXUV(tx2, ty1);
-   PUSH_TEXUV(tx2, ty2);
-   PUSH_TEXUV(tx1, ty2);
+   PUSH_TEXUV(pn, tx2, ty1);
+   PUSH_TEXUV(pn, tx2, ty2);
+   PUSH_TEXUV(pn, tx1, ty2);
 
-   PUSH_TEXUV2(t2x2, t2y1);
-   PUSH_TEXUV2(t2x2, t2y2);
-   PUSH_TEXUV2(t2x1, t2y2);
+   PUSH_TEXUV2(pn, t2x2, t2y1);
+   PUSH_TEXUV2(pn, t2x2, t2y2);
+   PUSH_TEXUV2(pn, t2x1, t2y2);
 
-   PUSH_TEXUV3(t2x2, t2y1);
-   PUSH_TEXUV3(t2x2, t2y2);
-   PUSH_TEXUV3(t2x1, t2y2);
+   PUSH_TEXUV3(pn, t2x2, t2y1);
+   PUSH_TEXUV3(pn, t2x2, t2y2);
+   PUSH_TEXUV3(pn, t2x1, t2y2);
 
    for (i = 0; i < 6; i++)
      {
-        PUSH_COLOR(r, g, b, a);
+        PUSH_COLOR(pn, r, g, b, a);
      }
 }
 
@@ -1199,6 +1576,7 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
    RGBA_Map_Point *pt;
    DATA32 cmul;
    GLuint prog = gc->shared->shader.img.prog;
+   int pn = 0;
 
    if (!tex->alpha) blend = 0;
    if (a < 255) blend = 1;
@@ -1249,50 +1627,59 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
           }
      }
    
-   if ((gc->shader.cur_tex != tex->pt->texture)
-       || (gc->shader.cur_prog != prog)
-       || (gc->shader.smooth != smooth)
-       || (gc->shader.blend != blend)
-       || (gc->shader.render_op != gc->dc->render_op)
-       || (gc->shader.clip != clip)
-       || (gc->shader.cx != cx)
-       || (gc->shader.cy != cy)
-       || (gc->shader.cw != cw)
-       || (gc->shader.ch != ch)
+   /*xxx*/ shader_array_flush(gc);
+again:
+   pn = gc->state.top_pipe;
+   if ((gc->pipe[pn].shader.cur_tex != tex->pt->texture)
+       || (gc->pipe[pn].shader.cur_prog != prog)
+       || (gc->pipe[pn].shader.smooth != smooth)
+       || (gc->pipe[pn].shader.blend != blend)
+       || (gc->pipe[pn].shader.render_op != gc->dc->render_op)
+       || (gc->pipe[pn].shader.clip != clip)
+       || (gc->pipe[pn].shader.cx != cx)
+       || (gc->pipe[pn].shader.cy != cy)
+       || (gc->pipe[pn].shader.cw != cw)
+       || (gc->pipe[pn].shader.ch != ch)
        )
      {
         shader_array_flush(gc);
-        gc->shader.cur_tex = tex->pt->texture;
-        gc->shader.cur_prog = prog;
-        gc->shader.smooth = smooth;
-        gc->shader.blend = blend;
-        gc->shader.render_op = gc->dc->render_op;
-        gc->shader.clip = clip;
-        gc->shader.cx = cx;
-        gc->shader.cy = cy;
-        gc->shader.cw = cw;
-        gc->shader.ch = ch;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_prog = prog;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.clip = clip;
+        gc->pipe[pn].shader.cx = cx;
+        gc->pipe[pn].shader.cy = cy;
+        gc->pipe[pn].shader.cw = cw;
+        gc->pipe[pn].shader.ch = ch;
      }
    if ((tex->im) && (tex->im->native.data))
      {
-        if (gc->array.im != tex->im)
+        if (gc->pipe[pn].array.im != tex->im)
           {
              shader_array_flush(gc);
-             gc->array.im = tex->im;
+             gc->pipe[pn].array.im = tex->im;
           }
      }
-   gc->array.line = 0;
-   gc->array.use_vertex = 1;
-   gc->array.use_color = 1;
-   gc->array.use_texuv = 1;
-   gc->array.use_texuv2 = 1;
-   gc->array.use_texuv3 = 0;
    
-   pnum = gc->array.num;
+   
+   // FIXME: do this once only on new pipe setupe
+   gc->pipe[pn].region.type = RTYPE_MAP;
+   gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.use_vertex = 1;
+   gc->pipe[pn].array.use_color = 1;
+   gc->pipe[pn].array.use_texuv = 1;
+   gc->pipe[pn].array.use_texuv2 = 1;
+   gc->pipe[pn].array.use_texuv3 = 0;
+
+//   pipe_region_expand(gc, pn, x, y, w, h);
+   
+   pnum = gc->pipe[pn].array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nu2 = pnum * 2;
    nt = pnum * 4;
-   gc->array.num += 6;
-   _evas_gl_common_context_array_alloc(gc);
+   gc->pipe[pn].array.num += 6;
+   array_alloc(gc, pn);
 
    for (i = 0; i < 4; i++)
      {
@@ -1310,13 +1697,16 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
    for (i = 0; i < 6; i++)
      {
         DATA32 cl = MUL4_SYM(cmul, p[points[i]].col);
-        PUSH_VERTEX((p[points[i]].x >> FP), 
+        PUSH_VERTEX(pn,
+                    (p[points[i]].x >> FP), 
                     (p[points[i]].y >> FP),
                     0);
-        PUSH_TEXUV(tx[points[i]],
+        PUSH_TEXUV(pn,
+                   tx[points[i]],
                    ty[points[i]]);
         
-        PUSH_COLOR(R_VAL(&cl),
+        PUSH_COLOR(pn,
+                   R_VAL(&cl),
                    G_VAL(&cl),
                    B_VAL(&cl),
                    A_VAL(&cl));
@@ -1333,259 +1723,285 @@ evas_gl_common_context_flush(Evas_GL_Context *gc)
 static void
 shader_array_flush(Evas_GL_Context *gc)
 {
-   if (gc->array.num <= 0) return;
+   int i;
+   
+   for (i = 0; i < MAX_PIPES; i++)
+     {
+        const char *tname[] = {
+           "N/A  ",
+           "RECT ",
+           "IMAGE",
+           "FONT ",
+           "YUV  ",
+           "MAP  "
+        };
+        if (gc->pipe[i].array.num <= 0) break;
 
-//   fprintf(stderr, "  flush array %i\n", gc->array.num);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "<flush err>");
-   if (gc->shader.cur_prog != gc->shader.current.cur_prog)
-     {
-        glUseProgram(gc->shader.cur_prog);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-     }
-
-   if (gc->shader.cur_tex != gc->shader.current.cur_tex)
-     {
-#if 0
-        if (gc->shader.cur_tex)
-          {
-             glEnable(GL_TEXTURE_2D);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-        else
-          {
-             glDisable(GL_TEXTURE_2D);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-#endif
-        glActiveTexture(GL_TEXTURE0);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-     }
-   if (gc->array.im)
-     {
-        if (!gc->array.im->native.loose)
-          {
-             if (gc->array.im->native.func.bind)
-               gc->array.im->native.func.bind(gc->array.im->native.func.data, 
-                                              gc->array.im);
-          }
-     }
-   if (gc->shader.render_op != gc->shader.current.render_op)
-     {
-        switch (gc->shader.render_op)
-          {
-          case EVAS_RENDER_BLEND: /**< default op: d = d*(1-sa) + s */
-             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             break;
-          case EVAS_RENDER_COPY: /**< d = s */
-             gc->shader.blend = 0;
-             glBlendFunc(GL_ONE, GL_ONE);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             break;
-             // FIXME: fix blend funcs below!
-          case EVAS_RENDER_BLEND_REL: /**< d = d*(1 - sa) + s*da */
-          case EVAS_RENDER_COPY_REL: /**< d = s*da */
-          case EVAS_RENDER_ADD: /**< d = d + s */
-          case EVAS_RENDER_ADD_REL: /**< d = d + s*da */
-          case EVAS_RENDER_SUB: /**< d = d - s */
-          case EVAS_RENDER_SUB_REL: /**< d = d - s*da */
-          case EVAS_RENDER_TINT: /**< d = d*s + d*(1 - sa) + s*(1 - da) */
-          case EVAS_RENDER_TINT_REL: /**< d = d*(1 - sa + s) */
-          case EVAS_RENDER_MASK: /**< d = d*sa */
-          case EVAS_RENDER_MUL: /**< d = d*s */
-          default:
-             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             break;
-          }
-     }
-   if (gc->shader.blend != gc->shader.current.blend)
-     {
-        if (gc->shader.blend)
-          {
-             glEnable(GL_BLEND);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-        else
-          {
-             glDisable(GL_BLEND);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-     }
-   if (gc->shader.smooth != gc->shader.current.smooth)
-     {
-        if (gc->shader.smooth)
-          {
-#ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
-             if (shared->info.anisotropic > 0.0)
-               {
-                  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
-                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-               }
-#endif
-             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-        else
-          {
-#ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
-             if (shared->info.anisotropic > 0.0)
-               {
-                  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0);
-                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-               }
-#endif
-             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-     }
-/* hmmm this breaks things. must find out why!   
-   if (gc->shader.clip != gc->shader.current.clip)
-     {
-        if (gc->shader.clip)
-          glEnable(GL_SCISSOR_TEST);
-        else
-          {
-             glDisable(GL_SCISSOR_TEST);
-//             glScissor(0, 0, 0, 0);
-          }
-     }
-   if (gc->shader.clip)
-     {
-        if ((gc->shader.cx != gc->shader.current.cx) ||
-            (gc->shader.cx != gc->shader.current.cx) ||
-            (gc->shader.cx != gc->shader.current.cx) ||
-            (gc->shader.cx != gc->shader.current.cx))
-          {
-             glScissor(gc->shader.cx, 
-                       gc->h - gc->shader.cy - gc->shader.ch,
-                       gc->shader.cw,
-                       gc->shader.ch);
-          }
-//                    gc->clip.x,
-//                    gc->h - gc->clip.y - gc->clip.h,
-//                    gc->clip.w,
-//                    gc->clip.h);
+        gc->flushnum++;
+///        printf("  ::: FLUSH PIPE [%2i] | %s | texid: %3i | tri: %i\n", 
+///               i, 
+///               tname[gc->pipe[i].region.type],
+///               gc->pipe[i].shader.cur_tex, 
+///               gc->pipe[i].array.num);
         
-     }
- */
-   glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, gc->array.vertex);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, gc->array.color);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   if (gc->array.use_texuv)
-     {
-        glEnableVertexAttribArray(SHAD_TEXUV);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-     }
-   else
-     {
-        glDisableVertexAttribArray(SHAD_TEXUV);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-     }
-
-   if (gc->array.line)
-     {
-        glDisableVertexAttribArray(SHAD_TEXUV);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        glDisableVertexAttribArray(SHAD_TEXUV2); 
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        glDisableVertexAttribArray(SHAD_TEXUV3);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        glDrawArrays(GL_LINES, 0, gc->array.num);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-     }
-   else
-     {
-        if ((gc->array.use_texuv2) && (gc->array.use_texuv3))
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "<flush err>");
+        if (gc->pipe[i].shader.cur_prog != gc->state.current.cur_prog)
           {
-             glEnableVertexAttribArray(SHAD_TEXUV2);
+             glUseProgram(gc->pipe[i].shader.cur_prog);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glEnableVertexAttribArray(SHAD_TEXUV3);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv2);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glVertexAttribPointer(SHAD_TEXUV3, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv3);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glActiveTexture(GL_TEXTURE1);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texu);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glActiveTexture(GL_TEXTURE2);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texv);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+          }
+        
+        if (gc->pipe[i].shader.cur_tex != gc->state.current.cur_tex)
+          {
+#if 0
+             if (gc->pipe[i].shader.cur_tex)
+               {
+                  glEnable(GL_TEXTURE_2D);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
+             else
+               {
+                  glDisable(GL_TEXTURE_2D);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
+#endif
              glActiveTexture(GL_TEXTURE0);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-        else if (gc->array.use_texuv2)
-          {
-             glEnableVertexAttribArray(SHAD_TEXUV2);
+             glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_tex);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv2);
+          }
+        if (gc->pipe[i].array.im)
+          {
+             if (!gc->pipe[i].array.im->native.loose)
+               {
+                  if (gc->pipe[i].array.im->native.func.bind)
+                     gc->pipe[i].array.im->native.func.bind(gc->pipe[i].array.im->native.func.data, 
+                                                            gc->pipe[i].array.im);
+               }
+          }
+        if (gc->pipe[i].shader.render_op != gc->state.current.render_op)
+          {
+             switch (gc->pipe[i].shader.render_op)
+               {
+               case EVAS_RENDER_BLEND: /**< default op: d = d*(1-sa) + s */
+                  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  break;
+               case EVAS_RENDER_COPY: /**< d = s */
+                  gc->pipe[i].shader.blend = 0;
+                  glBlendFunc(GL_ONE, GL_ONE);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  break;
+                  // FIXME: fix blend funcs below!
+               case EVAS_RENDER_BLEND_REL: /**< d = d*(1 - sa) + s*da */
+               case EVAS_RENDER_COPY_REL: /**< d = s*da */
+               case EVAS_RENDER_ADD: /**< d = d + s */
+               case EVAS_RENDER_ADD_REL: /**< d = d + s*da */
+               case EVAS_RENDER_SUB: /**< d = d - s */
+               case EVAS_RENDER_SUB_REL: /**< d = d - s*da */
+               case EVAS_RENDER_TINT: /**< d = d*s + d*(1 - sa) + s*(1 - da) */
+               case EVAS_RENDER_TINT_REL: /**< d = d*(1 - sa + s) */
+               case EVAS_RENDER_MASK: /**< d = d*sa */
+               case EVAS_RENDER_MUL: /**< d = d*s */
+               default:
+                     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  break;
+               }
+          }
+        if (gc->pipe[i].shader.blend != gc->state.current.blend)
+          {
+             if (gc->pipe[i].shader.blend)
+               {
+                  glEnable(GL_BLEND);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
+             else
+               {
+                  glDisable(GL_BLEND);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
+          }
+        if (gc->pipe[i].shader.smooth != gc->state.current.smooth)
+          {
+             if (gc->pipe[i].shader.smooth)
+               {
+#ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
+                  if (shared->info.anisotropic > 0.0)
+                    {
+                       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
+                       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                    }
+#endif
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
+             else
+               {
+#ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
+                  if (shared->info.anisotropic > 0.0)
+                    {
+                       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0);
+                       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                    }
+#endif
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
+          }
+        /* hmmm this breaks things. must find out why!   
+         if (gc->pipe[i].shader.clip != gc->state.current.clip)
+         {
+         if (gc->pipe[i].shader.clip)
+         glEnable(GL_SCISSOR_TEST);
+         else
+         {
+         glDisable(GL_SCISSOR_TEST);
+         //             glScissor(0, 0, 0, 0);
+         }
+         }
+         if (gc->pipe[i].shader.clip)
+         {
+         if ((gc->pipe[i].shader.cx != gc->state.current.cx) ||
+         (gc->pipe[i].shader.cx != gc->state.current.cx) ||
+         (gc->pipe[i].shader.cx != gc->state.current.cx) ||
+         (gc->pipe[i].shader.cx != gc->state.current.cx))
+         {
+         glScissor(gc->pipe[i].shader.cx, 
+         gc->h - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch,
+         gc->pipe[i].shader.cw,
+         gc->pipe[i].shader.ch);
+         }
+         //                    gc->pipe[i].clip.x,
+         //                    gc->h - gc->pipe[i].clip.y - gc->pipe[i].clip.h,
+         //                    gc->pipe[i].clip.w,
+         //                    gc->pipe[i].clip.h);
+         * 
+         }
+         */
+        glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, gc->pipe[i].array.vertex);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, gc->pipe[i].array.color);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        if (gc->pipe[i].array.use_texuv)
+          {
+             glEnableVertexAttribArray(SHAD_TEXUV);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+             glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0, gc->pipe[i].array.texuv);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
           }
         else
           {
-             glDisableVertexAttribArray(SHAD_TEXUV2);
+             glDisableVertexAttribArray(SHAD_TEXUV);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+          }
+        
+        if (gc->pipe[i].array.line)
+          {
+             glDisableVertexAttribArray(SHAD_TEXUV);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+             glDisableVertexAttribArray(SHAD_TEXUV2); 
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glDisableVertexAttribArray(SHAD_TEXUV3);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+             glDrawArrays(GL_LINES, 0, gc->pipe[i].array.num);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
           }
-   
-        glDrawArrays(GL_TRIANGLES, 0, gc->array.num);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-     }
-   if (gc->array.im)
-     {
-        if (!gc->array.im->native.loose)
+        else
           {
-             if (gc->array.im->native.func.unbind)
-               gc->array.im->native.func.unbind(gc->array.im->native.func.data, 
-                                                gc->array.im);
+             if ((gc->pipe[i].array.use_texuv2) && (gc->pipe[i].array.use_texuv3))
+               {
+                  glEnableVertexAttribArray(SHAD_TEXUV2);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glEnableVertexAttribArray(SHAD_TEXUV3);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, gc->pipe[i].array.texuv2);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glVertexAttribPointer(SHAD_TEXUV3, 2, GL_FLOAT, GL_FALSE, 0, gc->pipe[i].array.texuv3);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glActiveTexture(GL_TEXTURE1);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glActiveTexture(GL_TEXTURE2);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texv);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glActiveTexture(GL_TEXTURE0);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
+             else if (gc->pipe[i].array.use_texuv2)
+               {
+                  glEnableVertexAttribArray(SHAD_TEXUV2);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, gc->pipe[i].array.texuv2);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
+             else
+               {
+                  glDisableVertexAttribArray(SHAD_TEXUV2);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glDisableVertexAttribArray(SHAD_TEXUV3);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
+             
+             glDrawArrays(GL_TRIANGLES, 0, gc->pipe[i].array.num);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
           }
-        gc->array.im = NULL;
-     }
+        if (gc->pipe[i].array.im)
+          {
+             if (!gc->pipe[i].array.im->native.loose)
+               {
+                  if (gc->pipe[i].array.im->native.func.unbind)
+                     gc->pipe[i].array.im->native.func.unbind(gc->pipe[i].array.im->native.func.data, 
+                                                              gc->pipe[i].array.im);
+               }
+             gc->pipe[i].array.im = NULL;
+          }
+        
+        gc->state.current.cur_prog = gc->pipe[i].shader.cur_prog;
+        gc->state.current.cur_tex = gc->pipe[i].shader.cur_tex;
+        gc->state.current.blend = gc->pipe[i].shader.blend;
+        gc->state.current.smooth = gc->pipe[i].shader.smooth;
+        gc->state.current.render_op = gc->pipe[i].shader.render_op;
+        gc->state.current.clip = gc->pipe[i].shader.clip;
+        gc->state.current.cx = gc->pipe[i].shader.cx;
+        gc->state.current.cy = gc->pipe[i].shader.cy;
+        gc->state.current.cw = gc->pipe[i].shader.cw;
+        gc->state.current.ch = gc->pipe[i].shader.ch;
+        
+        if (gc->pipe[i].array.vertex) free(gc->pipe[i].array.vertex);
+        if (gc->pipe[i].array.color) free(gc->pipe[i].array.color);
+        if (gc->pipe[i].array.texuv) free(gc->pipe[i].array.texuv);
+        if (gc->pipe[i].array.texuv2) free(gc->pipe[i].array.texuv2);
+        if (gc->pipe[i].array.texuv3) free(gc->pipe[i].array.texuv3);
+        
+        gc->pipe[i].array.vertex = NULL;
+        gc->pipe[i].array.color = NULL;
+        gc->pipe[i].array.texuv = NULL;
+        gc->pipe[i].array.texuv2 = NULL;
+        gc->pipe[i].array.texuv3 = NULL;
 
-   gc->shader.current.cur_prog = gc->shader.cur_prog;
-   gc->shader.current.cur_tex = gc->shader.cur_tex;
-   gc->shader.current.blend = gc->shader.blend;
-   gc->shader.current.smooth = gc->shader.smooth;
-   gc->shader.current.render_op = gc->shader.render_op;
-   gc->shader.current.clip = gc->shader.clip;
-   gc->shader.current.cx = gc->shader.cx;
-   gc->shader.current.cy = gc->shader.cy;
-   gc->shader.current.cw = gc->shader.cw;
-   gc->shader.current.ch = gc->shader.ch;
-   
-   if (gc->array.vertex) free(gc->array.vertex);
-   if (gc->array.color) free(gc->array.color);
-   if (gc->array.texuv) free(gc->array.texuv);
-   if (gc->array.texuv2) free(gc->array.texuv2);
-   if (gc->array.texuv3) free(gc->array.texuv3);
-   
-   gc->array.vertex = NULL;
-   gc->array.color = NULL;
-   gc->array.texuv = NULL;
-   gc->array.texuv2 = NULL;
-   gc->array.texuv3 = NULL;
-   
-   gc->array.num = 0;
-   gc->array.alloc = 0;
+        gc->pipe[i].array.num = 0;
+        gc->pipe[i].array.alloc = 0;
+        
+        gc->pipe[i].region.x = 0;
+        gc->pipe[i].region.y = 0;
+        gc->pipe[i].region.w = 0;
+        gc->pipe[i].region.h = 0;
+        gc->pipe[i].region.type = 0;
+     }
+    gc->state.top_pipe = 0;
 }

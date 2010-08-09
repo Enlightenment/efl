@@ -57,6 +57,9 @@
 #define SHAD_TEXUV2 3
 #define SHAD_TEXUV3 4
 
+//#define MAX_PIPES 1
+#define MAX_PIPES 32
+
 typedef struct _Evas_GL_Program                      Evas_GL_Program;
 typedef struct _Evas_GL_Program_Source               Evas_GL_Program_Source;
 typedef struct _Evas_GL_Shared                       Evas_GL_Shared;
@@ -120,6 +123,14 @@ struct _Evas_GL_Shared
    int rot;
 };
 
+#define RTYPE_RECT  1
+#define RTYPE_IMAGE 2
+#define RTYPE_FONT  3
+#define RTYPE_YUV   4
+#define RTYPE_MAP   5 /* need to merge with image */ 
+
+
+
 struct _Evas_GL_Context
 {
    int                references;
@@ -128,19 +139,10 @@ struct _Evas_GL_Context
    RGBA_Draw_Context  *dc;
    
    Evas_GL_Shared     *shared;
+
+   int flushnum;
    struct {
-      int             x, y, w, h;
-      Eina_Bool       active : 1;
-   } clip;
-   struct {
-      Evas_GL_Image  *surface;
-      GLuint          cur_prog;
-      GLuint          cur_tex, cur_texu, cur_texv;
-      int             render_op;
-      int             cx, cy, cw, ch;
-      Eina_Bool       smooth : 1;
-      Eina_Bool       blend : 1;
-      Eina_Bool       clip : 1;
+      int                top_pipe;
       struct {
          GLuint          cur_prog;
          GLuint          cur_tex, cur_texu, cur_texv;
@@ -150,23 +152,44 @@ struct _Evas_GL_Context
          Eina_Bool       blend : 1;
          Eina_Bool       clip : 1;
       } current;
-   } shader;
+   } state;
+   
    struct {
-      int num;
-      int alloc;
-      GLshort *vertex;
-      GLubyte *color;
-      GLfloat *texuv;
-      GLfloat *texuv2;
-      GLfloat *texuv3;
-      Eina_Bool line : 1;
-      Eina_Bool use_vertex : 1;
-      Eina_Bool use_color : 1;
-      Eina_Bool use_texuv : 1;
-      Eina_Bool use_texuv2 : 1;
-      Eina_Bool use_texuv3 : 1;
-      Evas_GL_Image *im;
-   } array;
+      struct {
+         int             x, y, w, h;
+         int             type;
+      } region;
+      struct {
+         int             x, y, w, h;
+         Eina_Bool       active : 1;
+      } clip;
+      struct {
+         Evas_GL_Image  *surface;
+         GLuint          cur_prog;
+         GLuint          cur_tex, cur_texu, cur_texv;
+         int             render_op;
+         int             cx, cy, cw, ch;
+         Eina_Bool       smooth : 1;
+         Eina_Bool       blend : 1;
+         Eina_Bool       clip : 1;
+      } shader;
+      struct {
+         int num, alloc;
+         GLshort *vertex;
+         GLubyte *color;
+         GLfloat *texuv;
+         GLfloat *texuv2;
+         GLfloat *texuv3;
+         Eina_Bool line : 1;
+         Eina_Bool use_vertex : 1;
+         Eina_Bool use_color : 1;
+         Eina_Bool use_texuv : 1;
+         Eina_Bool use_texuv2 : 1;
+         Eina_Bool use_texuv3 : 1;
+         Evas_GL_Image *im;
+      } array;
+   } pipe[MAX_PIPES];
+   
    struct {
       Eina_Bool size : 1;
    } change;
