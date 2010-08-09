@@ -89,11 +89,27 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    id = ce->id;
    if (id < 0) return NULL;
 
+#define INIT_EMP(Tp, Sz, Ce)					\
+   Ce->mp.Tp = eina_mempool_add("one_big", #Tp, NULL, sizeof (Sz), Ce->count.Tp); \
+   _emp_##Tp = Ce->mp.Tp;
+
+   INIT_EMP(RECTANGLE, Edje_Part_Description_Common, ce);
+   INIT_EMP(TEXT, Edje_Part_Description_Text, ce);
+   INIT_EMP(IMAGE, Edje_Part_Description_Image, ce);
+   INIT_EMP(SWALLOW, Edje_Part_Description_Common, ce);
+   INIT_EMP(TEXTBLOCK, Edje_Part_Description_Text, ce);
+   INIT_EMP(GROUP, Edje_Part_Description_Common, ce);
+   INIT_EMP(BOX, Edje_Part_Description_Box, ce);
+   INIT_EMP(TABLE, Edje_Part_Description_Table, ce);
+   INIT_EMP(EXTERNAL, Edje_Part_Description_External, ce);
+   INIT_EMP(part, Edje_Part, ce);
+
    snprintf(buf, sizeof(buf), "edje/collections/%i", id);
    edc = eet_data_read(edf->ef, _edje_edd_edje_part_collection, buf);
    if (!edc) return NULL;
 
    edc->references = 1;
+   edc->part = ce->entry;
 
    snprintf(buf, sizeof(buf), "edje/scripts/embryo/compiled/%i", id);
    data = eet_read(edf->ef, buf, &size);
@@ -130,6 +146,8 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 #endif
 	free(data);
      }
+
+   ce->ref = edc;
 
    return edc;
 }
@@ -386,10 +404,8 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 void
 _edje_cache_coll_clean(Edje_File *edf)
 {
-   int count;
-
-   count = eina_list_count(edf->collection_cache);
-   while ((edf->collection_cache) && (count > _edje_collection_cache_size))
+   while ((edf->collection_cache) &&
+	  (eina_list_count(edf->collection_cache) > (unsigned int) _edje_collection_cache_size))
      {
 	Edje_Part_Collection_Directory_Entry *ce;
 	Edje_Part_Collection *edc;
@@ -399,8 +415,6 @@ _edje_cache_coll_clean(Edje_File *edf)
 
 	ce = eina_hash_find(edf->collection, edc->part);
 	_edje_collection_free(edf, edc, ce);
-
-	count = eina_list_count(edf->collection_cache);
      }
 }
 
@@ -411,9 +425,12 @@ _edje_cache_coll_flush(Edje_File *edf)
      {
 	Edje_Part_Collection_Directory_Entry *ce;
 	Edje_Part_Collection *edc;
+	Eina_List *last;
 
-	edc = eina_list_data_get(eina_list_last(edf->collection_cache));
-	edf->collection_cache = eina_list_remove_list(edf->collection_cache, eina_list_last(edf->collection_cache));
+	last = eina_list_last(edf->collection_cache);
+	edc = eina_list_data_get(last);
+	edf->collection_cache = eina_list_remove_list(edf->collection_cache,
+						      last);
 
 	ce = eina_hash_find(edf->collection, edc->part);
 	_edje_collection_free(edf, edc, ce);
@@ -430,9 +447,16 @@ _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc)
 
    ce = eina_hash_find(edf->collection, edc->part);
 
-   ce->ref = NULL;
-   edf->collection_cache = eina_list_prepend(edf->collection_cache, edc);
-   _edje_cache_coll_clean(edf);
+   if (ce->ref)
+     {
+	ce->ref = NULL;
+	edf->collection_cache = eina_list_prepend(edf->collection_cache, edc);
+	_edje_cache_coll_clean(edf);
+     }
+   else
+     {
+	ERR("Something is wrong with reference count of '%s'.", edc->part);
+     }
 }
 
 static void

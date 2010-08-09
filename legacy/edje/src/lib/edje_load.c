@@ -1212,7 +1212,6 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
 #endif
 
    /* Destroy all part and description. */
-#if 0 /* FIXME: USE mempool when possible. */
    eina_mempool_del(ce->mp.RECTANGLE);
    eina_mempool_del(ce->mp.TEXT);
    eina_mempool_del(ce->mp.IMAGE);
@@ -1224,7 +1223,6 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
    eina_mempool_del(ce->mp.EXTERNAL);
    eina_mempool_del(ce->mp.part);
    memset(&ce->mp, 0, sizeof (ce->mp));
-#endif
 
    free(ec);
    ce->ref = NULL;

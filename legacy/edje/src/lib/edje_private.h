@@ -1373,6 +1373,17 @@ extern Eina_List       *_edje_freeze_calc_list;
 extern Eina_Mempool *_edje_real_part_mp;
 extern Eina_Mempool *_edje_real_part_state_mp;
 
+extern Eina_Mempool *_emp_RECTANGLE;
+extern Eina_Mempool *_emp_TEXT;
+extern Eina_Mempool *_emp_IMAGE;
+extern Eina_Mempool *_emp_SWALLOW;
+extern Eina_Mempool *_emp_TEXTBLOCK;
+extern Eina_Mempool *_emp_GROUP;
+extern Eina_Mempool *_emp_BOX;
+extern Eina_Mempool *_emp_TABLE;
+extern Eina_Mempool *_emp_EXTERNAL;
+extern Eina_Mempool *_emp_part;
+
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos);
 Edje_Part_Description_Common *_edje_part_description_find(Edje *ed,
 							  Edje_Real_Part *rp,
