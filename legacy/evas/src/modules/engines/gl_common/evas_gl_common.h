@@ -57,8 +57,8 @@
 #define SHAD_TEXUV2 3
 #define SHAD_TEXUV3 4
 
-//#define MAX_PIPES 1
-#define MAX_PIPES 32
+#define MAX_CUTOUT 512
+#define MAX_PIPES  128
 
 typedef struct _Evas_GL_Program                      Evas_GL_Program;
 typedef struct _Evas_GL_Program_Source               Evas_GL_Program_Source;
@@ -100,6 +100,7 @@ struct _Evas_GL_Shared
       Eina_Bool tex_rect : 1;
       // tuning params - per gpu/cpu combo?
       int cutout_max;
+      int pipes_max;
    } info;
    
    struct {
