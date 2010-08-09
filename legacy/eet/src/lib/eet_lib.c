@@ -1963,6 +1963,8 @@ eet_read_direct(Eet_File   *ef,
              if (tmp[compr_size - 1] != '\0')
                 goto on_error;
 
+	     UNLOCK_FILE(ef);
+
              return eet_read_direct(ef, tmp, size_ret);
           }
 
@@ -1971,6 +1973,8 @@ eet_read_direct(Eet_File   *ef,
 
         if (data[size - 1] != '\0')
            goto on_error;
+
+	UNLOCK_FILE(ef);
 
         return eet_read_direct(ef, data, size_ret);
      }
