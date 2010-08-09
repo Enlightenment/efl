@@ -113,7 +113,7 @@ _edje_file_convert(Eet_File *ef, Old_Edje_File *oedf)
    Eina_List *l;
    Edje_Data *ed;
 
-   if (oedf->version != 2) return NULL;
+   if (oedf->version < 2) return NULL;
 
    edf = calloc(1, sizeof (Edje_File));
    if (!edf) return NULL;
