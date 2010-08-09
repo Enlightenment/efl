@@ -78,7 +78,8 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
-PKG_CHECK_MODULES([EEZE], [ecore libudev])
+PKG_CHECK_MODULES([ECORE], [ecore])
+PKG_CHECK_MODULES([LIBUDEV], [libudev])
 
 udev_version=$(pkg-config libudev --modversion)
 
