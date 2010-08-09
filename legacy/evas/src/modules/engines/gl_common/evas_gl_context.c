@@ -685,10 +685,6 @@ evas_gl_common_context_newframe(Evas_GL_Context *gc)
         gc->pipe[i].shader.cur_texu = 0;
         gc->pipe[i].shader.cur_texv = 0;
         gc->pipe[i].shader.render_op = EVAS_RENDER_BLEND;
-        gc->pipe[i].shader.cx = 0;
-        gc->pipe[i].shader.cy = 0;
-        gc->pipe[i].shader.cw = 0;
-        gc->pipe[i].shader.ch = 0;
         gc->pipe[i].shader.smooth = 0;
         gc->pipe[i].shader.blend = 0;
         gc->pipe[i].shader.clip = 0;
