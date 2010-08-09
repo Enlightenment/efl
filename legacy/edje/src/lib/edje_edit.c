@@ -58,12 +58,15 @@
 #define GET_PD_OR_RETURN(RET) \
    Edje *ed; \
    Edje_Edit *eed; \
+   Edje_Real_Part *rp; \
    Edje_Part_Description_Common *pd; \
    if (!evas_object_smart_type_check_ptr(obj, _edje_edit_type)) \
      return RET; \
    eed = evas_object_smart_data_get(obj); \
    if (!eed) return RET; \
    ed = (Edje *)eed; \
+   rp = _edje_real_part_get(ed, part); \
+   if (!rp) return RET; \
    pd = _edje_part_description_find_byname(eed, part, state, value); \
    if (!pd) return RET;
 
@@ -3165,6 +3168,16 @@ edje_edit_state_color3_get(Evas_Object *obj, const char *part, const char *state
 
    GET_PD_OR_RETURN();
 
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     {
+        if (r) *r = 0;
+        if (g) *g = 0;
+        if (b) *b = 0;
+        if (a) *a = 0;
+        return;
+     }
+
    txt = (Edje_Part_Description_Text*) pd;
 
    if (r) *r = txt->text.color3.r;
@@ -3179,6 +3192,10 @@ edje_edit_state_color3_set(Evas_Object *obj, const char *part, const char *state
    Edje_Part_Description_Text *txt;
 
    GET_PD_OR_RETURN();
+
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return;
 
    txt = (Edje_Part_Description_Text*) pd;
 
@@ -3236,6 +3253,9 @@ FUNC_STATE_DOUBLE(aspect, max);
      Edje_Part_Description_Image *img;					\
 									\
      GET_PD_OR_RETURN(0);						\
+                                                                        \
+     if (rp->part->type != EDJE_PART_TYPE_IMAGE)                        \
+       return 0;                                                        \
 									\
      img = (Edje_Part_Description_Image*) pd;				\
 									\
@@ -3247,6 +3267,9 @@ FUNC_STATE_DOUBLE(aspect, max);
      Edje_Part_Description_Image *img;					\
 									\
      GET_PD_OR_RETURN();						\
+                                                                        \
+     if (rp->part->type != EDJE_PART_TYPE_IMAGE)                        \
+       return;                                                          \
 									\
      img = (Edje_Part_Description_Image*) pd;				\
 									\
@@ -3261,6 +3284,9 @@ FUNC_STATE_DOUBLE(aspect, max);
      Edje_Part_Description_Image *img;					\
 									\
      GET_PD_OR_RETURN(0);						\
+                                                                        \
+     if (rp->part->type != EDJE_PART_TYPE_IMAGE)                        \
+       return 0;                                                        \
 									\
      img = (Edje_Part_Description_Image*) pd;				\
 									\
@@ -3272,6 +3298,9 @@ FUNC_STATE_DOUBLE(aspect, max);
      Edje_Part_Description_Image *img;					\
 									\
      GET_PD_OR_RETURN();						\
+                                                                        \
+     if (rp->part->type != EDJE_PART_TYPE_IMAGE)                        \
+       return;                                                          \
 									\
      img = (Edje_Part_Description_Image*) pd;				\
 									\
@@ -3349,6 +3378,9 @@ edje_edit_state_external_params_list_get(Evas_Object *obj, const char *part, con
 
    GET_PD_OR_RETURN(NULL);
 
+   if (rp->part->type != EDJE_PART_TYPE_EXTERNAL)
+     return NULL;
+
    external = (Edje_Part_Description_External *) pd;
 
    return external->external_params;
@@ -3362,6 +3394,9 @@ edje_edit_state_external_param_get(Evas_Object *obj, const char *part, const cha
    Eina_List *l;
 
    GET_PD_OR_RETURN(EINA_FALSE);
+
+   if (rp->part->type != EDJE_PART_TYPE_EXTERNAL)
+     return EINA_FALSE;
 
    external = (Edje_Part_Description_External *) pd;
 
@@ -3401,6 +3436,12 @@ edje_edit_state_external_param_int_get(Evas_Object *obj, const char *part, const
 
    GET_PD_OR_RETURN(EINA_FALSE);
 
+   if (rp->part->type != EDJE_PART_TYPE_EXTERNAL)
+     {
+        if (val) *val = 0;
+        return EINA_FALSE;
+     }
+
    external = (Edje_Part_Description_External *) pd;
 
    EINA_LIST_FOREACH(external->external_params, l, p)
@@ -3424,6 +3465,12 @@ edje_edit_state_external_param_bool_get(Evas_Object *obj, const char *part, cons
    Eina_List *l;
 
    GET_PD_OR_RETURN(EINA_FALSE);
+
+   if (rp->part->type != EDJE_PART_TYPE_EXTERNAL)
+     {
+        if (val) *val = 0;
+        return EINA_FALSE;
+     }
 
    external = (Edje_Part_Description_External *) pd;
 
@@ -3449,6 +3496,12 @@ edje_edit_state_external_param_double_get(Evas_Object *obj, const char *part, co
 
    GET_PD_OR_RETURN(EINA_FALSE);
 
+   if (rp->part->type != EDJE_PART_TYPE_EXTERNAL)
+     {
+        if (val) *val = 0;
+        return EINA_FALSE;
+     }
+
    external = (Edje_Part_Description_External *) pd;
 
    EINA_LIST_FOREACH(external->external_params, l, p)
@@ -3473,6 +3526,12 @@ edje_edit_state_external_param_string_get(Evas_Object *obj, const char *part, co
 
    GET_PD_OR_RETURN(EINA_FALSE);
 
+   if (rp->part->type != EDJE_PART_TYPE_EXTERNAL)
+     {
+        if (val) *val = NULL;
+        return EINA_FALSE;
+     }
+
    external = (Edje_Part_Description_External *) pd;
 
    EINA_LIST_FOREACH(external->external_params, l, p)
@@ -3496,6 +3555,12 @@ edje_edit_state_external_param_choice_get(Evas_Object *obj, const char *part, co
    Eina_List *l;
 
    GET_PD_OR_RETURN(EINA_FALSE);
+
+   if (rp->part->type != EDJE_PART_TYPE_EXTERNAL)
+     {
+        if (val) *val = NULL;
+        return EINA_FALSE;
+     }
 
    external = (Edje_Part_Description_External *) pd;
 
@@ -3530,14 +3595,14 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
    Eina_List *l;
    Edje_Part_Description_External *external;
    Edje_External_Param *p = NULL, old_p = { 0, 0, 0, 0, 0 };
-   Edje_Real_Part *rp;
    int found = 0;
 
    GET_PD_OR_RETURN(EINA_FALSE);
 
-   external = (Edje_Part_Description_External *) pd;
+   if (rp->part->type != EDJE_PART_TYPE_EXTERNAL)
+     return EINA_FALSE;
 
-   rp = _edje_real_part_get(ed, part);
+   external = (Edje_Part_Description_External *) pd;
 
    va_start(ap, type);
 
@@ -3664,6 +3729,10 @@ edje_edit_state_text_get(Evas_Object *obj, const char *part, const char *state, 
 
    GET_PD_OR_RETURN(NULL);
 
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return NULL;
+
    txt = (Edje_Part_Description_Text *) pd;
    //printf("GET TEXT of state: %s\n", state);
 
@@ -3684,6 +3753,10 @@ edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, 
 
    if (!text) return;
 
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return;
+
    txt = (Edje_Part_Description_Text *) pd;
 
    _edje_if_string_free(ed, txt->text.text);
@@ -3698,6 +3771,10 @@ edje_edit_state_text_size_get(Evas_Object *obj, const char *part, const char *st
    Edje_Part_Description_Text *txt;
 
    GET_PD_OR_RETURN(-1);
+
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return -1;
 
    txt = (Edje_Part_Description_Text *) pd;
    //printf("GET TEXT_SIZE of state: %s [%d]\n", state, pd->text.size);
@@ -3715,6 +3792,10 @@ edje_edit_state_text_size_set(Evas_Object *obj, const char *part, const char *st
 
    if (size < 0) return;
 
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return;
+
    txt = (Edje_Part_Description_Text *) pd;
 
    txt->text.size = size;
@@ -3730,6 +3811,10 @@ edje_edit_state_text_size_set(Evas_Object *obj, const char *part, const char *st
 									\
      GET_PD_OR_RETURN(0);						\
 									\
+     if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&                     \
+         (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))                  \
+       return 0;                                                        \
+                                                                        \
      txt = (Edje_Part_Description_Text *) pd;				\
      return TO_DOUBLE(txt->text.Value);					\
   }									\
@@ -3740,6 +3825,10 @@ edje_edit_state_text_size_set(Evas_Object *obj, const char *part, const char *st
 									\
      GET_PD_OR_RETURN();						\
 									\
+     if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&                     \
+         (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))                  \
+       return;                                                          \
+                                                                        \
      txt = (Edje_Part_Description_Text *) pd;				\
      txt->text.Value = FROM_DOUBLE(v);					\
      edje_object_calc_force(obj);					\
@@ -3756,6 +3845,10 @@ FUNC_TEXT_DOUBLE(elipsis, elipsis);
      Edje_Part_Description_Text *txt;					\
 									\
      GET_PD_OR_RETURN(EINA_FALSE);					\
+                                                                        \
+     if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&                     \
+         (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))                  \
+       return EINA_FALSE;                                               \
 									\
      txt = (Edje_Part_Description_Text *) pd;				\
      return txt->text.fit_##Value;					\
@@ -3766,6 +3859,10 @@ FUNC_TEXT_DOUBLE(elipsis, elipsis);
      Edje_Part_Description_Text *txt;					\
 									\
      GET_PD_OR_RETURN();						\
+                                                                        \
+     if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&                     \
+         (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))                  \
+       return;                                                          \
 									\
      txt = (Edje_Part_Description_Text *) pd;				\
      txt->text.fit_##Value = fit ? 1 : 0;				\
@@ -3909,7 +4006,10 @@ edje_edit_state_font_get(Evas_Object *obj, const char *part, const char *state, 
 
    GET_PD_OR_RETURN(NULL);
 
-   //printf("GET FONT of state: %s [%s]\n", state, pd->text.font);
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return NULL;
+
    txt = (Edje_Part_Description_Text*) pd;
 
    if (!txt->text.font) return NULL;
@@ -3923,7 +4023,10 @@ edje_edit_state_font_set(Evas_Object *obj, const char *part, const char *state, 
 
    GET_PD_OR_RETURN();
 
-   //printf("SET FONT of state: %s [%s]\n", state, font);
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return;
+
    txt = (Edje_Part_Description_Text*) pd;
 
    _edje_if_string_free(ed, txt->text.font);
@@ -4221,6 +4324,9 @@ edje_edit_state_image_get(Evas_Object *obj, const char *part, const char *state,
 
    GET_PD_OR_RETURN(NULL);
 
+   if (rp->part->type != EDJE_PART_TYPE_IMAGE)
+     return NULL;
+
    img = (Edje_Part_Description_Image *) pd;
 
    image = (char *)_edje_image_name_find(obj, img->image.id);
@@ -4239,6 +4345,9 @@ edje_edit_state_image_set(Evas_Object *obj, const char *part, const char *state,
    GET_PD_OR_RETURN();
 
    if (!image) return;
+
+   if (rp->part->type != EDJE_PART_TYPE_IMAGE)
+     return;
 
    id = _edje_image_id_find(obj, image);
    //printf("SET IMAGE for %s [%s]\n", state, image);
@@ -4260,7 +4369,8 @@ edje_edit_state_tweens_list_get(Evas_Object *obj, const char *part, const char *
 
    GET_PD_OR_RETURN(NULL);
 
-   //printf("GET TWEEN LIST for %s\n", state);
+   if (rp->part->type != EDJE_PART_TYPE_IMAGE)
+     return NULL;
 
    img = (Edje_Part_Description_Image *) pd;
 
@@ -4283,6 +4393,9 @@ edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state,
    int id;
 
    GET_PD_OR_RETURN(EINA_FALSE);
+
+   if (rp->part->type != EDJE_PART_TYPE_IMAGE)
+     return EINA_FALSE;
 
    id = _edje_image_id_find(obj, tween);
    if (id < EINA_FALSE) return 0;
@@ -4318,6 +4431,9 @@ edje_edit_state_tween_del(Evas_Object *obj, const char *part, const char *state,
 
    GET_PD_OR_RETURN(EINA_FALSE);
 
+   if (rp->part->type != EDJE_PART_TYPE_IMAGE)
+     return EINA_FALSE;
+
    img = (Edje_Part_Description_Image *) pd;
 
    if (!img->image.tweens_count) return EINA_FALSE;
@@ -4347,6 +4463,15 @@ edje_edit_state_image_border_get(Evas_Object *obj, const char *part, const char 
 
    GET_PD_OR_RETURN();
 
+   if (rp->part->type != EDJE_PART_TYPE_IMAGE)
+     {
+        if (l) *l = 0;
+        if (r) *r = 0;
+        if (t) *t = 0;
+        if (b) *b = 0;
+        return;
+     }
+
    img = (Edje_Part_Description_Image *) pd;
 
    //printf("GET IMAGE_BORDER of state '%s'\n", state);
@@ -4363,6 +4488,9 @@ edje_edit_state_image_border_set(Evas_Object *obj, const char *part, const char 
    Edje_Part_Description_Image *img;
 
    GET_PD_OR_RETURN();
+
+   if (rp->part->type != EDJE_PART_TYPE_IMAGE)
+     return;
 
    img = (Edje_Part_Description_Image *) pd;
 
@@ -4383,6 +4511,9 @@ edje_edit_state_image_border_fill_get(Evas_Object *obj, const char *part, const 
 
    GET_PD_OR_RETURN(0);
 
+   if (rp->part->type != EDJE_PART_TYPE_IMAGE)
+     return 0;
+
    img = (Edje_Part_Description_Image *) pd;
 
    if (img->image.border.no_fill == 0) return 1;
@@ -4397,6 +4528,9 @@ edje_edit_state_image_border_fill_set(Evas_Object *obj, const char *part, const 
    Edje_Part_Description_Image *img;
 
    GET_PD_OR_RETURN();
+
+   if (rp->part->type != EDJE_PART_TYPE_IMAGE)
+     return;
 
    img = (Edje_Part_Description_Image *) pd;
 
@@ -5408,13 +5542,9 @@ static Eina_Bool
 _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *state, double value, Eina_Strbuf *buf)
 {
    Eina_List *l, *ll;
-   Edje_Real_Part *rp;
    Eina_Bool ret = EINA_TRUE;
 
    GET_PD_OR_RETURN(EINA_FALSE);
-
-   rp = _edje_real_part_get(ed, part);
-   if (!rp) return EINA_FALSE;
 
    BUF_APPENDF(I4"description { state: \"%s\" %g;\n", pd->state.name, pd->state.value);
    //TODO Support inherit
