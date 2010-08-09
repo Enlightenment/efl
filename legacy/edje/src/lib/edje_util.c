@@ -4909,7 +4909,7 @@ edje_edit_program_insert(Edje *ed, Edje_Program *p)
    (*array)[(*count)++] = p;
 }
 
-Eina_Bool
+EAPI Eina_Bool
 edje_program_is_strncmp(const char *str)
 {
    unsigned int length;
@@ -4924,7 +4924,7 @@ edje_program_is_strncmp(const char *str)
    return EINA_TRUE;
 }
 
-Eina_Bool
+EAPI Eina_Bool
 edje_program_is_strrncmp(const char *str)
 {
    if (*str != '*' && *str != '?')

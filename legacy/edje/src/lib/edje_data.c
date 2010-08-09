@@ -130,7 +130,7 @@ _edje_description_variant_type_set(const char *type, void *data, Eina_Bool unkno
    return EINA_FALSE;
 }
 
-void
+EAPI void
 _edje_edd_shutdown(void)
 {
    FREED(_edje_edd_edje_file);
@@ -192,7 +192,7 @@ _edje_edd_shutdown(void)
      EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_##Name##_pointer, Edje_##Type##_Pointer, "pointer", pointer, _edje_edd_edje_##Name); \
    }
 
-void
+EAPI void
 _edje_edd_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
