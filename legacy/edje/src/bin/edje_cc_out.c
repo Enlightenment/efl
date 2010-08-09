@@ -28,6 +28,7 @@ void *alloca (size_t);
 
 #include "edje_cc.h"
 #include "edje_prefix.h"
+#include "edje_convert.h"
 
 #include <lua.h>
 #include <lauxlib.h>
@@ -95,6 +96,7 @@ struct _Code_Lookup
 static void data_process_string(Old_Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Old_Edje_Part_Collection *pc, char *name, char *ptr, int len));
 
 Old_Edje_File *edje_file = NULL;
+Edje_File *new_edje_file = NULL;
 Eina_List *edje_collections = NULL;
 Eina_List *externals = NULL;
 Eina_List *fonts = NULL;
@@ -103,16 +105,7 @@ Eina_List *code_lookups = NULL;
 Eina_List *aliases = NULL;
 
 static Eet_Data_Descriptor *edd_edje_file = NULL;
-static Eet_Data_Descriptor *edd_edje_image_directory = NULL;
-static Eet_Data_Descriptor *edd_edje_image_directory_entry = NULL;
-static Eet_Data_Descriptor *edd_edje_program = NULL;
-static Eet_Data_Descriptor *edd_edje_program_target = NULL;
-static Eet_Data_Descriptor *edd_edje_part_collection_directory = NULL;
-static Eet_Data_Descriptor *edd_edje_part_collection_directory_entry = NULL;
 static Eet_Data_Descriptor *edd_edje_part_collection = NULL;
-static Eet_Data_Descriptor *edd_edje_part = NULL;
-static Eet_Data_Descriptor *edd_edje_part_description = NULL;
-static Eet_Data_Descriptor *edd_edje_part_image_id = NULL;
 
 static Eina_List *part_lookups = NULL;
 static Eina_List *program_lookups = NULL;
@@ -126,7 +119,7 @@ static Eina_List *image_slave_lookups= NULL;
    unlink(file); \
    exit(-1);
 
-static void
+void
 error_and_abort(Eet_File *ef, const char *fmt, ...)
 {
    va_list ap;
@@ -143,16 +136,7 @@ void
 data_setup(void)
 {
    edd_edje_file = _edje_edd_edje_file;
-   edd_edje_image_directory = _edje_edd_edje_image_directory;
-   edd_edje_image_directory_entry = _edje_edd_edje_image_directory_entry;
-   edd_edje_program = _edje_edd_edje_program;
-   edd_edje_program_target = _edje_edd_edje_program_target;
-   edd_edje_part_collection_directory = _edje_edd_edje_part_collection_directory;
-   edd_edje_part_collection_directory_entry = _edje_edd_edje_part_collection_directory_entry;
    edd_edje_part_collection = _edje_edd_edje_part_collection;
-   edd_edje_part = _edje_edd_edje_part;
-   edd_edje_part_description = _edje_edd_edje_part_description;
-   edd_edje_part_image_id = _edje_edd_edje_part_image_id;
 }
 
 static void
@@ -244,19 +228,21 @@ data_write_header(Eet_File *ef)
 {
    int bytes = 0;
 
-   if (edje_file)
+   if (new_edje_file)
      {
-
-	if (edje_file->collection_dir)
+	if (new_edje_file->collection)
 	  {
+	     Edje_Part_Collection_Directory_Entry *ce;
+
 	     /* copy aliases into collection directory */
-	     while (aliases)
+	     EINA_LIST_FREE(aliases, ce)
 	       {
-		 edje_file->collection_dir->entries = eina_list_append(edje_file->collection_dir->entries, eina_list_data_get(aliases));
-		  aliases = eina_list_remove_list(aliases, aliases);
+		  if (!ce->entry)
+		    error_and_abort(ef, "Collection %i: name missing.\n", ce->id);
+		  eina_hash_direct_add(new_edje_file->collection, ce->entry, ce);
 	       }
 	  }
-	bytes = eet_data_write(ef, edd_edje_file, "edje_file", edje_file, 1);
+	bytes = eet_data_write(ef, edd_edje_file, "edje/file", new_edje_file, 1);
 	if (bytes <= 0)
 	  error_and_abort(ef, "Unable to write \"edje_file\" entry to \"%s\" \n",
 			  file_out);
@@ -343,7 +329,7 @@ data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_b
 	  {
 	     char buf[4096];
 
-	     snprintf(buf, sizeof(buf), "fonts/%s", fn->name);
+	     snprintf(buf, sizeof(buf), "edje/fonts/%s", fn->name);
 	     bytes = eet_write(ef, buf, fdata, fsize, 1);
 	     if (bytes <= 0)
 	       error_and_abort(ef, "Unable to write font part \"%s\" as \"%s\" "
@@ -453,11 +439,11 @@ error_and_abort_image_load_error(Eet_File *ef, const char *file, int error)
 static int
 data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw_bytes)
 {
-   Eina_List *l;
+   unsigned int i;
    int bytes = 0;
    int total_bytes = 0;
 
-   if ((edje_file) && (edje_file->image_dir))
+   if ((new_edje_file) && (new_edje_file->image_dir))
      {
 	Ecore_Evas *ee;
 	Evas *evas;
@@ -472,8 +458,10 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 			  "load.\n");
 
 	evas = ecore_evas_get(ee);
-	EINA_LIST_FOREACH(edje_file->image_dir->entries, l, img)
+	for (i = 0; i < new_edje_file->image_dir->entries_count; i++)
 	  {
+	     img = &new_edje_file->image_dir->entries[i];
+
 	     if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
 	       {
 	       }
@@ -532,7 +520,7 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 			 {
 			    int mode, qual;
 
-			    snprintf(buf, sizeof(buf), "images/%i", img->id);
+			    snprintf(buf, sizeof(buf), "edje/images/%i", img->id);
 			    qual = 80;
 			    if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
 				(img->source_param == 0))
@@ -627,21 +615,6 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 }
 
 static void
-check_groups_names(Eet_File *ef)
-{
-   Eina_List *l;
-   Edje_Part_Collection_Directory_Entry *de;
-
-   if (!edje_file->collection_dir)
-     return;
-
-   /* check that all groups have names */
-   EINA_LIST_FOREACH(edje_file->collection_dir->entries, l, de)
-	if (!de->entry)
-	  error_and_abort(ef, "Collection %i: name missing.\n", de->id);
-}
-
-static void
 check_groups(Eet_File *ef)
 {
    Eina_List *l;
@@ -665,7 +638,7 @@ static int
 data_write_groups(Eet_File *ef, int *collection_num)
 {
    Eina_List *l;
-   Old_Edje_Part_Collection *pc;
+   Edje_Part_Collection *pc;
    int bytes = 0;
    int total_bytes = 0;
 
@@ -673,7 +646,7 @@ data_write_groups(Eet_File *ef, int *collection_num)
      {
 	char buf[4096];
 
-	snprintf(buf, sizeof(buf), "collections/%i", pc->id);
+	snprintf(buf, sizeof(buf), "edje/collections/%i", pc->id);
 	bytes = eet_data_write(ef, edd_edje_part_collection, buf, pc, 1);
 	if (bytes <= 0)
 	  error_and_abort(ef, "Error. Unable to write \"%s\" part entry "
@@ -806,7 +779,7 @@ compile_script_file(Eet_File *ef, const char *source, const char *output,
 	       error_and_abort(ef, "Unable to read all of script object "
 			       "\"%s\"\n", output);
 
-	     snprintf(buf, sizeof(buf), "scripts/%i", script_num);
+	     snprintf(buf, sizeof(buf), "edje/scripts/embryo/compiled/%i", script_num);
 	     eet_write(ef, buf, data, size, 1);
 	     free(data);
 	  }
@@ -1005,7 +978,7 @@ data_write_lua_scripts(Eet_File *ef)
 	   printf("lua call error: %s\n", lua_tostring (L, -1));
 	 */
 	
-	snprintf(buf, sizeof(buf), "lua_scripts/%i", i);
+	snprintf(buf, sizeof(buf), "edje/scripts/lua/%i", i);
 	eet_write(ef, buf, data.buf, data.size, 1);
 #ifdef LUA_BINARY
 	free(data.buf);
@@ -1018,6 +991,10 @@ void
 data_write(void)
 {
    Eet_File *ef;
+   Edje_Part_Collection_Directory_Entry *ce;
+   Old_Edje_Part_Collection *pc;
+   Eina_Iterator *it;
+   Eina_List *tmp = NULL;
    int input_bytes = 0;
    int total_bytes = 0;
    int src_bytes = 0;
@@ -1035,14 +1012,31 @@ data_write(void)
 	exit(-1);
      }
 
+   check_groups(ef);
+
+   new_edje_file = _edje_file_convert(ef, edje_file);
+   _edje_file_set(new_edje_file);
+
+   /* convert old structure to new one */
+   it = eina_hash_iterator_data_new(new_edje_file->collection);
+
+   EINA_ITERATOR_FOREACH(it, ce)
+     {
+	pc = eina_list_nth(edje_collections, ce->id);
+	tmp = eina_list_append(tmp,
+			       _edje_collection_convert(ef,
+							ce, pc));
+     }
+
+   eina_iterator_free(it);
+   edje_collections = eina_list_free(edje_collections);
+   edje_collections = tmp;
+
    total_bytes += data_write_header(ef);
    total_bytes += data_write_fonts(ef, &font_num, &input_bytes,
 				   &input_raw_bytes);
    total_bytes += data_write_images(ef, &image_num, &input_bytes,
 				    &input_raw_bytes);
-
-   check_groups_names(ef);
-   check_groups(ef);
 
    total_bytes += data_write_groups(ef, &collection_num);
    data_write_scripts(ef);

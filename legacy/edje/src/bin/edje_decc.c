@@ -23,7 +23,7 @@ char *progname = NULL;
 char *file_in = NULL;
 char *file_out = NULL;
 
-Old_Edje_File *edje_file = NULL;
+Edje_File *edje_file = NULL;
 SrcFile_List *srcfiles = NULL;
 Font_List *fontlist = NULL;
 
@@ -134,7 +134,7 @@ decomp(void)
 	eet_close(ef);
 	return 0;
      }
-   edje_file = eet_data_read(ef, _edje_edd_edje_file, "edje_file");
+   edje_file = eet_data_read(ef, _edje_edd_edje_file, "edje/file");
    if (!edje_file)
      {
         ERR("ERROR: %s does not appear to be an edje file", file_in);
@@ -183,9 +183,12 @@ output(void)
    if (edje_file->image_dir)
      {
         Edje_Image_Directory_Entry *ei;
+	unsigned int i;
 
-	EINA_LIST_FOREACH(edje_file->image_dir->entries, l, ei)
+	for (i = 0; i < edje_file->image_dir->entries_count; ++i)
 	  {
+	     ei = &edje_file->image_dir->entries[i];
+
 	     if ((ei->source_type > EDJE_IMAGE_SOURCE_TYPE_NONE) &&
 		 (ei->source_type < EDJE_IMAGE_SOURCE_TYPE_LAST) &&
 		 (ei->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) &&

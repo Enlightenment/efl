@@ -1557,7 +1557,7 @@ static void
 ob_collections(void)
 {
    if (!edje_file->collection_dir)
-     edje_file->collection_dir = mem_alloc(SZ(Edje_Part_Collection_Directory));
+     edje_file->collection_dir = mem_alloc(SZ(Old_Edje_Part_Collection_Directory));
 }
 
 /**

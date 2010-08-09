@@ -84,9 +84,9 @@ _edje_part_description_find(Edje *ed __UNUSED__, Edje_Real_Part *rp, const char 
 	ret = ep->default_desc;
 	min_dst = ABS(ep->default_desc->state.value - val);
      }
-   for (i = 0; i < ep->other_count; ++i)
+   for (i = 0; i < ep->other.desc_count; ++i)
      {
-	d = ep->other_desc[i];
+	d = ep->other.desc[i];
 
 	if (!strcmp(d->state.name, name))
 	  {
@@ -1601,8 +1601,8 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 	  {
 	     char buf[1024];
 
-	     /* Replace snprint("images/%i") == memcpy + itoa */
-#define IMAGES "images/"
+	     /* Replace snprint("edje/images/%i") == memcpy + itoa */
+#define IMAGES "edje/images/"
 	     memcpy(buf, IMAGES, strlen(IMAGES));
 	     eina_convert_itoa(image_id, buf + strlen(IMAGES)); /* No need to check length as 2³² need only 10 characteres. */
 

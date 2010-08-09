@@ -58,7 +58,6 @@ static int          _edje_collection_cache_size = 16;
 static Edje_Part_Collection *
 _edje_file_coll_open(Edje_File *edf, const char *coll)
 {
-   Old_Edje_Part_Collection *oedc = NULL;
    Edje_Part_Collection *edc = NULL;
    Edje_Part_Collection_Directory_Entry *ce;
    int id = -1, size = 0;
@@ -90,18 +89,13 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    id = ce->id;
    if (id < 0) return NULL;
 
-   snprintf(buf, sizeof(buf), "collections/%i", id);
-   oedc = eet_data_read(edf->ef, _edje_edd_edje_part_collection, buf);
-   if (!oedc) return NULL;
-
-   oedc->part = ce->entry;
-
-   edc = _edje_collection_convert(edf, oedc);
-   oedc = NULL;
+   snprintf(buf, sizeof(buf), "edje/collections/%i", id);
+   edc = eet_data_read(edf->ef, _edje_edd_edje_part_collection, buf);
+   if (!edc) return NULL;
 
    edc->references = 1;
 
-   snprintf(buf, sizeof(buf), "scripts/%i", id);
+   snprintf(buf, sizeof(buf), "edje/scripts/embryo/compiled/%i", id);
    data = eet_read(edf->ef, buf, &size);
 
    if (data)
@@ -111,7 +105,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 	free(data);
      }
 
-   snprintf(buf, sizeof(buf), "lua_scripts/%i", id);
+   snprintf(buf, sizeof(buf), "edje/scripts/lua/%i", id);
    data = eet_read(edf->ef, buf, &size);
 
    if (data)
@@ -143,7 +137,6 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 static Edje_File *
 _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret)
 {
-   Old_Edje_File *oedf;
    Edje_File *edf;
    Edje_Part_Collection *edc;
    Eet_File *ef;
@@ -161,15 +154,13 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
 	*error_ret = EDJE_LOAD_ERROR_UNKNOWN_FORMAT;
 	return NULL;
      }
-   oedf = eet_data_read(ef, _edje_edd_edje_file, "edje_file");
-   if (!oedf)
+   edf = eet_data_read(ef, _edje_edd_edje_file, "edje/file");
+   if (!edf)
      {
 	*error_ret = EDJE_LOAD_ERROR_CORRUPT_FILE;
 	eet_close(ef);
 	return NULL;
      }
-
-   edf = _edje_file_convert(ef, oedf);
 
    edf->ef = ef;
    edf->mtime = st.st_mtime;

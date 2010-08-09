@@ -135,7 +135,7 @@ struct _Edje_Smart_Api
 /* increment this when the EET data descriptors have changed and old
  * EETs cannot be loaded/used correctly anymore.
  */
-#define EDJE_FILE_VERSION 2
+#define EDJE_FILE_VERSION 3
 
 /* FIXME:
  *
@@ -144,7 +144,6 @@ struct _Edje_Smart_Api
  * ? programs can do multiple actions from one signal
  * ? add containering (hbox, vbox, table, wrapping multi-line hbox & vbox)
  * ? text entry widget (single line only)
- * ? reduce linked list walking and list_nth calls
  *
  * ? recursions, unsafe callbacks outside Edje etc. with freeze, ref/unref and block/unblock and break_programs needs to be redesigned & fixed
  * ? all unsafe calls that may result in callbacks must be marked and dealt with
@@ -223,7 +222,6 @@ typedef struct _Edje_Image_Directory_Set_Entry       Edje_Image_Directory_Set_En
 typedef struct _Edje_Program                         Edje_Program;
 typedef struct _Edje_Program_Target                  Edje_Program_Target;
 typedef struct _Edje_Program_After                   Edje_Program_After;
-typedef struct _Edje_Part_Collection_Directory       Edje_Part_Collection_Directory;
 typedef struct _Edje_Part_Collection_Directory_Entry Edje_Part_Collection_Directory_Entry;
 typedef struct _Edje_Pack_Element                    Edje_Pack_Element;
 typedef struct _Edje_Part_Collection                 Edje_Part_Collection;
@@ -348,8 +346,6 @@ struct _Edje_File
    Edje_Patterns		  *collection_patterns;
 
    Eet_File                       *ef;
-
-   Old_Edje_File		  *oef;
 
    unsigned char                   free_strings : 1;
    unsigned char                   dangling : 1;
@@ -499,13 +495,6 @@ struct _Edje_Program_After /* the action to run after another action */
 
 /*----------*/
 
-struct _Edje_Part_Collection_Directory
-{
-   Eina_List *entries; /* a list of Edje_Part_Collection_Directory_Entry */
-
-   int        references;
-};
-
 struct _Edje_Part_Collection_Directory_Entry
 {
    const char *entry; /* the nominal name of the part collection */
@@ -640,12 +629,20 @@ struct _Edje_Part_Api
    const char         *description;
 };
 
+typedef struct _Edje_Part_Description_List Edje_Part_Description_List;
+struct _Edje_Part_Description_List
+{
+   Edje_Part_Description_Common **desc;
+   unsigned int desc_count;
+};
+
 struct _Edje_Part
 {
    const char                   *name; /* the name if any of the part */
    Edje_Part_Description_Common *default_desc; /* the part descriptor for default */
-   Edje_Part_Description_Common **other_desc; /* other possible descriptors */
-   unsigned int                  other_count;
+
+   Edje_Part_Description_List    other; /* other possible descriptors */
+
    const char           *source, *source2, *source3, *source4, *source5, *source6;
    int                    id; /* its id number */
    int                    clip_to_id; /* the part id to clip this one to */
@@ -1757,5 +1754,4 @@ void _edje_lua2_script_func_signal(Edje *ed, const char *sig, const char *src);
 
 #endif
 
-#include "edje_convert.h"
 #endif

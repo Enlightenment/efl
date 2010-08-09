@@ -115,7 +115,7 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
 			 {
 			    if (!tmp)
 			      tmp = eina_strbuf_new();
-			    eina_strbuf_append(tmp, "fonts/");
+			    eina_strbuf_append(tmp, "edje/fonts/");
 			    eina_strbuf_append(tmp, val);
 			    (*tag_ret)->font = eina_stringshare_add(eina_strbuf_string_get(tmp));
 			    eina_strbuf_reset(tmp);

@@ -91,6 +91,7 @@ EFL_ENABLE_BIN([edje-cc])
 EFL_ENABLE_BIN([edje-decc])
 EFL_ENABLE_BIN([edje-recc])
 EFL_ENABLE_BIN([edje-player])
+EFL_ENABLE_BIN([edje-convert])
 
 # Optional EDJE_PROGRAM_CACHE (use much more ram, but increase speed in some cases)
 want_edje_program_cache="no"

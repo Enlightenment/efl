@@ -15,9 +15,9 @@ AM_CPPFLAGS = \
 
 bin_SCRIPTS = @EDJE_RECC_PRG@
 
-bin_PROGRAMS = @EDJE_CC_PRG@ @EDJE_DECC_PRG@ @EDJE_PLAYER_PRG@
+bin_PROGRAMS = @EDJE_CC_PRG@ @EDJE_DECC_PRG@ @EDJE_PLAYER_PRG@ @EDJE_CONVERT_PRG@
 
-EXTRA_PROGRAMS = edje_cc edje_decc edje_player
+EXTRA_PROGRAMS = edje_cc edje_decc edje_player edje_convert
 
 edje_cc_SOURCES = \
 edje_cc.c \
@@ -26,7 +26,8 @@ edje_cc_parse.c \
 edje_cc_mem.c \
 edje_cc_handlers.c \
 edje_cc_sources.c \
-edje_prefix.c
+edje_prefix.c \
+edje_convert.c
 
 edje_cc_LDADD = $(top_builddir)/src/lib/libedje.la $(ECORE_EVAS_LIBS) $(EVIL_LIBS)
 edje_cc_LDFLAGS = @lt_enable_auto_import@
@@ -45,5 +46,9 @@ edje_player_SOURCES = edje_player.c
 edje_player_LDADD = $(top_builddir)/src/lib/libedje.la $(ECORE_EVAS_LIBS) $(EVIL_LIBS)
 edje_player_LDFLAGS = @lt_enable_auto_import@
 
-EXTRA_DIST = @EDJE_RECC_PRG@ edje_prefix.h edje_cc.h
+edje_convert_SOURCES = edje_convert.c edje_convert_main.c edje_data_convert.c
+edje_convert_LDADD = $(top_builddir)/src/lib/libedje.la $(EVIL_LIBS)
+edje_convert_LDFLAGS = @lt_enable_auto_import@
+
+EXTRA_DIST = @EDJE_RECC_PRG@ edje_prefix.h edje_cc.h edje_convert.h
 EXTRA_SCRIPTS = edje_recc

@@ -48,9 +48,9 @@ _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep)
      _edje_text_class_member_add(ed, desc->text.text_class);
 
    /* If any other classes exist add them */
-   for (i = 0; i < pt->other_count; ++i)
+   for (i = 0; i < pt->other.desc_count; ++i)
      {
-	desc = (Edje_Part_Description_Text *) pt->other_desc[i];
+	desc = (Edje_Part_Description_Text *) pt->other.desc[i];
 	if ((desc) && (desc->text.text_class))
 	  _edje_text_class_member_add(ed, desc->text.text_class);
      }
@@ -70,9 +70,9 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
    if ((pt->default_desc) && (desc->text.text_class))
      _edje_text_class_member_del(ed, desc->text.text_class);
 
-   for (i = 0; i < pt->other_count; ++i)
+   for (i = 0; i < pt->other.desc_count; ++i)
      {
-	desc = (Edje_Part_Description_Text *) pt->other_desc[i];
+	desc = (Edje_Part_Description_Text *) pt->other.desc[i];
 	if (desc->text.text_class)
 	  _edje_text_class_member_del(ed, desc->text.text_class);
      }

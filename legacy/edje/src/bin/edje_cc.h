@@ -3,6 +3,8 @@
 
 #include <edje_private.h>
 
+#include "edje_convert.h"
+
 /*
  * On Windows, if the file is not opened in binary mode,
  * read does not return the correct size, because of
@@ -148,6 +150,8 @@ Font_List *source_fontmap_load(Eet_File *ef);
 void   *mem_alloc(size_t size);
 char   *mem_strdup(const char *s);
 #define SZ sizeof
+
+void    error_and_abort(Eet_File *ef, const char *fmt, ...);
 
 /* global vars */
 extern Eina_List             *ext_dirs;

@@ -4465,9 +4465,9 @@ _edje_color_class_on_del(Edje *ed, Edje_Part *ep)
    if ((ep->default_desc) && (ep->default_desc->color_class))
      _edje_color_class_member_del(ed, ep->default_desc->color_class);
 
-   for (i = 0; i < ep->other_count; ++i)
-     if (ep->other_desc[i]->color_class)
-       _edje_color_class_member_del(ed, ep->other_desc[i]->color_class);
+   for (i = 0; i < ep->other.desc_count; ++i)
+     if (ep->other.desc[i]->color_class)
+       _edje_color_class_member_del(ed, ep->other.desc[i]->color_class);
 }
 
 Edje_Text_Class *

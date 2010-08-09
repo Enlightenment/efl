@@ -532,8 +532,8 @@ _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
 	_edje_part_description_id_set(p->type, p->default_desc, old_id, new_id);
 
 	/* ...and in all other descriptions */
-	for (k = 0; k < p->other_count; ++k)
-	  _edje_part_description_id_set(p->type, p->other_desc[k], old_id, new_id);
+	for (k = 0; k < p->other.desc_count; ++k)
+	  _edje_part_description_id_set(p->type, p->other.desc[k], old_id, new_id);
      }
 
    /*...and also in programs targets */
@@ -640,8 +640,8 @@ _edje_parts_id_switch(Edje *ed, Edje_Real_Part *rp1, Edje_Real_Part *rp2)
 	_edje_part_description_id_switch(p->type, p->default_desc, id1, id2);
 
 	// ...and in all other descriptions
-	for (j = 0; j < p->other_count; ++j)
-	  _edje_part_description_id_switch(p->type, p->other_desc[j], id1, id2);
+	for (j = 0; j < p->other.desc_count; ++j)
+	  _edje_part_description_id_switch(p->type, p->other.desc[j], id1, id2);
      }
 
    //...and also in programs targets
@@ -1871,7 +1871,8 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
      ep->source = eina_stringshare_add(source);
 
    ep->default_desc = NULL;
-   ep->other_desc = NULL;
+   ep->other.desc = NULL;
+   ep->other.desc_count = 0;
 
    /* Init Edje_Real_Part */
    rp->edje = ed;
@@ -2052,10 +2053,10 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 	ep->default_desc = NULL;
      }
 
-   for (k = 0; k < ep->other_count; ++k)
-     _edje_collection_free_part_description_free(ep->type, ep->other_desc[k], ce, 0);
+   for (k = 0; k < ep->other.desc_count; ++k)
+     _edje_collection_free_part_description_free(ep->type, ep->other.desc[k], ce, 0);
 
-   free(ep->other_desc);
+   free(ep->other.desc);
    eina_mempool_free(ce->mp.part, ep);
 
    /* Free Edje_Real_Part */
@@ -2562,12 +2563,12 @@ edje_edit_part_states_list_get(Evas_Object *obj, const char *part)
    //printf("NEW STATE def: %s\n", state->state.name);
 
    //append other states
-   for (i = 0; i < rp->part->other_count; ++i)
+   for (i = 0; i < rp->part->other.desc_count; ++i)
      {
 	snprintf(state_name, sizeof(state_name),
 	         "%s %.2f",
-		 rp->part->other_desc[i]->state.name,
-		 rp->part->other_desc[i]->state.value);
+		 rp->part->other.desc[i]->state.name,
+		 rp->part->other.desc[i]->state.value);
 	states = eina_list_append(states, eina_stringshare_add(state_name));
 	//printf("NEW STATE: %s\n", state_name);
      }
@@ -2640,13 +2641,13 @@ edje_edit_state_del(Evas_Object *obj, const char *part, const char *state, doubl
 
    ce = eina_hash_find(ed->file->collection, ed->group);
 
-   for (i = 0; i < rp->part->other_count; ++i)
-     if (pd == rp->part->other_desc[i])
+   for (i = 0; i < rp->part->other.desc_count; ++i)
+     if (pd == rp->part->other.desc[i])
        {
-	  memmove(rp->part->other_desc + i,
-		  rp->part->other_desc + i + 1,
-		  sizeof (Edje_Part_Description_Common*) * (rp->part->other_count - i - 1));
-	  rp->part->other_count--;
+	  memmove(rp->part->other.desc + i,
+		  rp->part->other.desc + i + 1,
+		  sizeof (Edje_Part_Description_Common*) * (rp->part->other.desc_count - i - 1));
+	  rp->part->other.desc_count--;
 	  break;
        }
 
@@ -2719,15 +2720,15 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
      {
 	Edje_Part_Description_Common **tmp;
 
-	tmp = realloc(rp->part->other_desc,
-		      sizeof (Edje_Part_Description_Common *) * (rp->part->other_count + 1));
+	tmp = realloc(rp->part->other.desc,
+		      sizeof (Edje_Part_Description_Common *) * (rp->part->other.desc_count + 1));
 	if (!tmp)
 	  {
 	     free(pd);
 	     return;
 	  }
-	rp->part->other_desc = tmp;
-	rp->part->other_desc[rp->part->other_count++] = pd;
+	rp->part->other.desc = tmp;
+	rp->part->other.desc[rp->part->other.desc_count++] = pd;
      }
 
    memset(pd, 0, sizeof (pd));
@@ -2910,15 +2911,15 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 	if (!pdto) return EINA_FALSE;
 	/* No need to check for default desc, at this point it must exist */
 
-	tmp = realloc(rp->part->other_desc,
-		      sizeof (Edje_Part_Description_Common *) * (rp->part->other_count + 1));
+	tmp = realloc(rp->part->other.desc,
+		      sizeof (Edje_Part_Description_Common *) * (rp->part->other.desc_count + 1));
 	if (!tmp)
 	  {
 	     free(pdto);
 	     return EINA_FALSE;
 	  }
-	rp->part->other_desc = tmp;
-	rp->part->other_desc[rp->part->other_count++] = pdto;
+	rp->part->other.desc = tmp;
+	rp->part->other.desc[rp->part->other.desc_count++] = pdto;
      }
 
 #define PD_STRING_COPY(To, From, _x)			\
@@ -6028,274 +6029,31 @@ source_edd(void)
 }
 /////////////////////////////////////////
 
-/* FIXME: error checks... not that they will help much at all though */
-static void
-_edje_edit_convert_to_old(Edje_File *ef)
-{
-   Eina_Iterator *itr;
-   Eina_Hash_Tuple *tpl;
-   unsigned int i;
-
-   itr = eina_hash_iterator_tuple_new(ef->data);
-   EINA_ITERATOR_FOREACH(itr, tpl)
-     {
-	Edje_Data *ed;
-	ed = malloc(sizeof(*ed));
-	ed->key = tpl->key;
-	ed->value = tpl->data;
-	ef->oef->data = eina_list_append(ef->oef->data, ed);
-     }
-   eina_iterator_free(itr);
-
-   itr = eina_hash_iterator_tuple_new(ef->fonts);
-   EINA_ITERATOR_FOREACH(itr, tpl)
-     {
-	if (!ef->oef->font_dir)
-	  ef->oef->font_dir = calloc(1, sizeof(Old_Edje_Font_Directory));
-	ef->oef->font_dir->entries =
-				eina_list_append(ef->oef->font_dir->entries,
-				tpl->data);
-     }
-   eina_iterator_free(itr);
-
-   if (ef->image_dir->entries || ef->image_dir->sets)
-     {
-	if (!ef->oef->image_dir)
-	  ef->oef->image_dir = calloc(1, sizeof(Old_Edje_Image_Directory));
-	for (i = 0; i < ef->image_dir->entries_count; i++)
-	  ef->oef->image_dir->entries = eina_list_append(
-						ef->oef->image_dir->entries,
-						&ef->image_dir->entries[i]);
-	for (i = 0; i < ef->image_dir->sets_count; i++)
-	  ef->oef->image_dir->sets = eina_list_append(
-						ef->oef->image_dir->sets,
-						&ef->image_dir->sets[i]);
-     }
-
-   if (ef->external_dir)
-     {
-	ef->oef->external_dir = calloc(1, sizeof(Old_Edje_External_Directory));
-	for (i = 0; i < ef->external_dir->entries_count; i++)
-	  ef->oef->external_dir->entries = eina_list_append(
-				ef->oef->external_dir->entries,
-				&ef->external_dir->entries[i]);
-     }
-
-   eina_list_free(ef->oef->collection_dir->entries);
-   ef->oef->collection_dir->entries = NULL;
-   itr = eina_hash_iterator_tuple_new(ef->collection);
-   EINA_ITERATOR_FOREACH(itr, tpl)
-      ef->oef->collection_dir->entries = eina_list_append(
-				ef->oef->collection_dir->entries,
-				tpl->data);
-   eina_iterator_free(itr);
-
-   ef->oef->compiler = ef->compiler;
-}
-
-static void
-_edje_edit_clean_old(Edje_File *ef)
-{
-   Edje_Data *ed;
-
-   EINA_LIST_FREE(ef->oef->data, ed)
-      free(ed);
-   if (ef->oef->font_dir)
-     {
-	eina_list_free(ef->oef->font_dir->entries);
-	ef->oef->font_dir = NULL;
-     }
-   if (ef->oef->image_dir)
-     {
-	eina_list_free(ef->oef->image_dir->entries);
-	eina_list_free(ef->oef->image_dir->sets);
-	ef->oef->image_dir->entries = ef->oef->image_dir->sets = NULL;
-     }
-   if (ef->oef->external_dir)
-     {
-	eina_list_free(ef->oef->external_dir->entries);
-	free(ef->oef->external_dir);
-	ef->oef->external_dir = NULL;
-     }
-}
-
 static Eina_Bool
 _edje_edit_edje_file_save(Eet_File *eetf, Edje_File *ef)
 {
    /* Write Edje_File structure */
    INF("** Writing Edje_File* ed->file");
-   _edje_edit_convert_to_old(ef);
-   if (eet_data_write(eetf, _edje_edd_edje_file, "edje_file", ef->oef, 1) <= 0)
+   if (eet_data_write(eetf, _edje_edd_edje_file, "edje/file", ef, 1) <= 0)
      {
 	ERR("Error. unable to write \"edje_file\" entry to \"%s\"", ef->path);
 	return EINA_FALSE;
      }
-   _edje_edit_clean_old(ef);
    return EINA_TRUE;
 }
 
-static Old_Edje_Part_Description *
-_edje_edit_description_save(int type, Edje_Part_Description_Common *desc)
-{
-   Old_Edje_Part_Description *result;
-
-   result = calloc(1, sizeof (Old_Edje_Part_Description));
-   if (!result) return NULL;
-
-   result->common = *desc;
-
-   switch (type)
-     {
-      case EDJE_PART_TYPE_IMAGE:
-	{
-	   Edje_Part_Description_Image *img = (Edje_Part_Description_Image*) desc;
-	   unsigned int i;
-
-	   for (i = 0; i < img->image.tweens_count; ++i)
-	     result->image.tween_list = eina_list_append(result->image.tween_list,
-							 img->image.tweens[i]);
-
-	   result->image.id = img->image.id;
-	   result->image.scale_hint = img->image.scale_hint;
-	   result->image.set = img->image.set;
-	   result->image.border = img->image.border;
-	   result->image.fill = img->image.fill;
-
-	   break;
-	}
-
-#define COPY_OLD(Short, Type, Name)					\
-	case EDJE_PART_TYPE_##Short:					\
-	  {								\
-	     Edje_Part_Description_##Type *Name = (Edje_Part_Description_##Type *) desc; \
-	     								\
-	     result->Name = Name->Name;					\
-	     break;							\
-	  }
-
-	COPY_OLD(TEXT, Text, text);
-	COPY_OLD(TEXTBLOCK, Text, text);
-	COPY_OLD(BOX, Box, box);
-	COPY_OLD(TABLE, Table, table);
-	COPY_OLD(EXTERNAL, External, external_params);
-     }
-
-   return result;
-}
-
-static Old_Edje_Part *
-_edje_edit_part_save(Edje_Part *ep)
-{
-   Old_Edje_Part *oep;
-   unsigned int i;
-
-   oep = calloc(1, sizeof(*oep));
-   if (!oep) return NULL;
-
-   oep->name = ep->name;
-   oep->default_desc = _edje_edit_description_save(ep->type, ep->default_desc);
-
-   for (i = 0; i < ep->other_count; ++i)
-     oep->other_desc = eina_list_append(oep->other_desc, _edje_edit_description_save(ep->type, ep->other_desc[i]));
-
-   oep->source = ep->source;
-   oep->source2 = ep->source2;
-   oep->source3 = ep->source3;
-   oep->source4 = ep->source4;
-   oep->source5 = ep->source5;
-   oep->source6 = ep->source6;
-   oep->id = ep->id;
-   oep->clip_to_id = ep->clip_to_id;
-   oep->dragable = ep->dragable;
-
-   for (i = 0; i < ep->items_count; ++i)
-     oep->items = eina_list_append(oep->items, ep->items[i]);
-
-   oep->type = ep->type;
-   oep->effect = ep->effect;
-   oep->mouse_events = ep->mouse_events;
-   oep->repeat_events = ep->repeat_events;
-   oep->ignore_flags = ep->ignore_flags;
-   oep->scale = ep->scale;
-   oep->precise_is_inside = ep->precise_is_inside;
-   oep->use_alternate_font_metrics = ep->use_alternate_font_metrics;
-   oep->pointer_mode = ep->pointer_mode;
-   oep->entry_mode = ep->entry_mode;
-   oep->select_mode = ep->select_mode;
-   oep->multiline = ep->multiline;
-   oep->api = ep->api;
-
-   return oep;
-}
-
 static Eina_Bool
-_edje_edit_collection_save(Edje *ed, Eet_File *eetf, Edje_Part_Collection *epc)
+_edje_edit_collection_save(Eet_File *eetf, Edje_Part_Collection *epc)
 {
-   Old_Edje_Part_Description *oepd;
-   Old_Edje_Part_Collection oepc;
-   Old_Edje_Part *oep;
-   Eina_Iterator *it;
-   Eina_Hash_Tuple *tu;
-   Edje_Data *di;
    char buf[256];
-   unsigned int i;
-   int j;
-   Eina_Bool err = EINA_TRUE;
 
-   memset(&oepc, 0, sizeof(oepc));
+   snprintf(buf, sizeof(buf), "edje/collections/%i", epc->id);
 
-   snprintf(buf, sizeof(buf), "collections/%i", epc->id);
+   if (eet_data_write(eetf, _edje_edd_edje_part_collection, buf, epc, 1) > 0)
+     return EINA_TRUE;
 
-   for (j = 0; j < ed->table_programs_size; ++j)
-     oepc.programs = eina_list_append(oepc.programs, ed->table_programs[j]);
-
-   it = eina_hash_iterator_tuple_new(epc->data);
-   EINA_ITERATOR_FOREACH(it, tu)
-     {
-	di = malloc(sizeof(*di));
-	if (!di) return EINA_FALSE;
-
-	di->key = tu->key;
-	di->value = tu->data;
-
-	oepc.data = eina_list_append(oepc.data, di);
-     }
-   eina_iterator_free(it);
-
-   for (i = 0; i < epc->parts_count; ++i)
-     oepc.parts = eina_list_append(oepc.parts, _edje_edit_part_save(epc->parts[i]));
-
-   oepc.id = epc->id;
-   oepc.alias = epc->alias;
-   oepc.prop.min = epc->prop.min;
-   oepc.prop.max = epc->prop.max;
-   oepc.script = epc->script;
-   oepc.script_only = epc->script_only;
-   oepc.lua_script_only = epc->lua_script_only;
-   oepc.checked = epc->checked;
-
-   if (eet_data_write(eetf, _edje_edd_edje_part_collection, buf, &oepc, 1) <= 0)
-     {
-	ERR("Error. unable to write \"%s\" part entry", buf);
-	err = EINA_FALSE;
-     }
-
-   // FIXME
-   oepc.programs = eina_list_free(oepc.programs);
-   EINA_LIST_FREE(oepc.data, di)
-     free(di);
-   EINA_LIST_FREE(oepc.parts, oep)
-     {
-	EINA_LIST_FREE(oep->other_desc, oepd)
-	  {
-	     eina_list_free(oepd->image.tween_list);
-	     free(oepd);
-	  }
-	eina_list_free(oep->items);
-	free(oep);
-     }
-
-   return err;
+   ERR("Error. unable to write \"%s\" part entry", buf);
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -6411,7 +6169,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
 	  {
 	     INF("** Writing Edje_Part_Collection* ed->collection "
 		   "[id: %d]", ed->collection->id);
-	     if (!_edje_edit_collection_save(ed, eetf, ed->collection))
+	     if (!_edje_edit_collection_save(eetf, ed->collection))
 	       {
 		  eet_close(eetf);
 		  return EINA_FALSE;
@@ -6434,7 +6192,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
 	       {
 		  INF("** Writing hash Edje_Part_Collection* ed->collection "
 			"[id: %d]", ce->id);
-		  if(!_edje_edit_collection_save(ed, eetf, ce->ref))
+		  if(!_edje_edit_collection_save(eetf, ce->ref))
 		    {
 		       eet_close(eetf);
 		       return EINA_FALSE;
@@ -6447,7 +6205,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
 	  {
 	     INF("** Writing cache Edje_Part_Collection* ed->collection "
 		   "[id: %d]", edc->id);
-	     if(!_edje_edit_collection_save(ed, eetf, edc))
+	     if(!_edje_edit_collection_save(eetf, edc))
 	       {
 		  eet_close(eetf);
 		  return EINA_FALSE;

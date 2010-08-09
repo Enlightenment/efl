@@ -389,11 +389,11 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  if ((ep->default_desc) && (ep->default_desc->color_class))
 		    _edje_color_class_member_add(ed, ep->default_desc->color_class);
 
-		  for (k = 0; k < ep->other_count; k++)
+		  for (k = 0; k < ep->other.desc_count; k++)
 		    {
 		       Edje_Part_Description_Common *desc;
 
-		       desc = ep->other_desc[k];
+		       desc = ep->other.desc[k];
 
 		       if (desc->color_class)
 			 _edje_color_class_member_add(ed, desc->color_class);
@@ -1084,13 +1084,9 @@ void
 _edje_file_free(Edje_File *edf)
 {
    Edje_Color_Class *ecc;
-   const Edje_File *prev;
-
-   prev = _edje_file_get();
-   _edje_file_set(edf);
 
 #define HASH_FREE(Hash)				\
-   eina_hash_free(Hash);			\
+   if (Hash) eina_hash_free(Hash);		\
    Hash = NULL;
 
    /* Clean cache before cleaning memory pool */
@@ -1099,23 +1095,6 @@ _edje_file_free(Edje_File *edf)
    HASH_FREE(edf->fonts);
    HASH_FREE(edf->collection);
    HASH_FREE(edf->data);
-
-   if (edf->oef)
-     {
-	if (edf->oef->font_dir)
-	  {
-	     eina_list_free(edf->oef->font_dir->entries);
-
-	     free(edf->oef->font_dir);
-	  }
-
-	if (edf->oef->collection_dir)
-	  {
-	     eina_list_free(edf->oef->collection_dir->entries);
-
-	     free(edf->oef->collection_dir);
-	  }
-     }
 
    if (edf->image_dir)
      {
@@ -1154,8 +1133,6 @@ _edje_file_free(Edje_File *edf)
    _edje_textblock_style_cleanup(edf);
    if (edf->ef) eet_close(edf->ef);
    free(edf);
-
-   _edje_file_set(prev);
 }
 
 static void
@@ -1212,10 +1189,10 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
 	     _edje_collection_free_part_description_clean(ep->type, ep->default_desc, edf->free_strings);
 	     ep->default_desc = NULL;
 	  }
-	for (j = 0; j < ep->other_count; ++j)
-	  _edje_collection_free_part_description_clean(ep->type, ep->other_desc[j], edf->free_strings);
+	for (j = 0; j < ep->other.desc_count; ++j)
+	  _edje_collection_free_part_description_clean(ep->type, ep->other.desc[j], edf->free_strings);
 
-	free(ep->other_desc);
+	free(ep->other.desc);
 	free(ep->items);
      }
    if (ec->data) eina_hash_free(ec->data);
@@ -1235,6 +1212,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
 #endif
 
    /* Destroy all part and description. */
+#if 0 /* FIXME: USE mempool when possible. */
    eina_mempool_del(ce->mp.RECTANGLE);
    eina_mempool_del(ce->mp.TEXT);
    eina_mempool_del(ce->mp.IMAGE);
@@ -1246,6 +1224,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
    eina_mempool_del(ce->mp.EXTERNAL);
    eina_mempool_del(ce->mp.part);
    memset(&ce->mp, 0, sizeof (ce->mp));
+#endif
 
    free(ec);
    ce->ref = NULL;
