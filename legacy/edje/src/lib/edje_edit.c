@@ -2731,7 +2731,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
 	rp->part->other.desc[rp->part->other.desc_count++] = pd;
      }
 
-   memset(pd, 0, sizeof (pd));
+   memset(pd, 0, sizeof (*pd));
 
    pd->state.name = eina_stringshare_add(name);
    pd->state.value = value;
