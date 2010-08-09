@@ -1487,7 +1487,9 @@ again:
      {
         gc->pipe[pn].region.type = RTYPE_YUV;
         gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-        gc->pipe[pn].shader.cur_prog = gc->shared->shader.font.prog;
+        gc->pipe[pn].shader.cur_texu = tex->ptu->texture;
+        gc->pipe[pn].shader.cur_texv = tex->ptv->texture;
+        gc->pipe[pn].shader.cur_prog = prog;
         gc->pipe[pn].shader.smooth = smooth;
         gc->pipe[pn].shader.blend = blend;
         gc->pipe[pn].shader.render_op = gc->dc->render_op;
@@ -1535,7 +1537,9 @@ again:
              gc->state.top_pipe = pn;
              gc->pipe[pn].region.type = RTYPE_YUV;
              gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-             gc->pipe[pn].shader.cur_prog = gc->shared->shader.font.prog;
+             gc->pipe[pn].shader.cur_texu = tex->ptu->texture;
+             gc->pipe[pn].shader.cur_texv = tex->ptv->texture;
+             gc->pipe[pn].shader.cur_prog = prog;
              gc->pipe[pn].shader.smooth = smooth;
              gc->pipe[pn].shader.blend = blend;
              gc->pipe[pn].shader.render_op = gc->dc->render_op;
