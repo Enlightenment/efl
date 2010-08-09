@@ -2,7 +2,8 @@ MAINTAINERCLEANFILES = Makefile.in
 
 EEZE_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
-@EEZE_CFLAGS@
+@ECORE_CFLAGS@ \
+@LIBUDEV_CFLAGS@
 
 EEZE_UDEV_PROG = eeze_udev_test
 
