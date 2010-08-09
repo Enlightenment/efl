@@ -301,6 +301,9 @@ efreet_mime_type_get(const char *file)
 {
     const char *type = NULL;
 
+    if (!file)
+      return NULL;
+
     if ((type = efreet_mime_special_check(file)))
         return type;
 
@@ -449,6 +452,8 @@ efreet_mime_globs_type_get(const char *file)
     char *ext, *mime;
 
     /* Check in the extension hash for the type */
+    if (!file) return NULL;
+
     ext = strchr(file, '.');
     if (ext)
     {
