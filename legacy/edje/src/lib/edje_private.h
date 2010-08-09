@@ -1736,11 +1736,11 @@ void _edje_external_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 void *_edje_external_params_parse(Evas_Object *obj, const Eina_List *params);
 void _edje_external_parsed_params_free(Evas_Object *obj, void *params);
 
-void _edje_module_init();
-void _edje_module_shutdown();
+EAPI void _edje_module_init();
+EAPI void _edje_module_shutdown();
 
-Eina_Bool edje_program_is_strncmp(const char *str);
-Eina_Bool edje_program_is_strrncmp(const char *str);
+EAPI Eina_Bool edje_program_is_strncmp(const char *str);
+EAPI Eina_Bool edje_program_is_strrncmp(const char *str);
 void edje_edit_program_insert(Edje *ed, Edje_Program *p);
 void edje_edit_program_remove(Edje *ed, Edje_Program *p);
 
