@@ -4,7 +4,7 @@
 #include "evas_common.h"/* Also includes international specific stuff */
 #include "evas_engine.h"
 
-CG_EXTERN void CGContextResetClip (CGContextRef); // undocumented CoreGraphics function to clear clip rect/*
+CG_EXTERN void CGContextResetClip (CGContextRef); // undocumented CoreGraphics function to clear clip rect
 
 static inline void flip_pixels(int *y, int *h, void *re);
 
