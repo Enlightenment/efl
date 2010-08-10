@@ -34,7 +34,7 @@ START_TEST(eina_array_simple)
 
    eina_init();
 
-   ea = eina_array_new(11);
+   ea = eina_array_threadsafe_new(11);
         fail_if(!ea);
 
    for (i = 0; i < 201; ++i)
@@ -132,7 +132,7 @@ START_TEST(eina_array_remove_stuff)
 
    eina_init();
 
-   ea = eina_array_new(64);
+   ea = eina_array_threadsafe_new(64);
         fail_if(!ea);
 
    for (i = 0; i < 1000; ++i)

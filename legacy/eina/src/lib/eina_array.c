@@ -169,7 +169,7 @@ struct _Eina_Iterator_Array
 {
    Eina_Iterator iterator;
 
-   Eina_Array *array;
+   const Eina_Array *array;
    unsigned int index;
 
    EINA_MAGIC
@@ -179,7 +179,7 @@ typedef struct _Eina_Accessor_Array Eina_Accessor_Array;
 struct _Eina_Accessor_Array
 {
    Eina_Accessor accessor;
-   Eina_Array *array;
+   const Eina_Array *array;
    EINA_MAGIC
 };
 
@@ -275,8 +275,9 @@ eina_array_grow(Eina_Array *array)
    void **tmp;
    unsigned int total;
 
-   EINA_MAGIC_CHECK_ARRAY(array);
    EINA_SAFETY_ON_NULL_RETURN_VAL(array, EINA_FALSE);
+
+   EINA_MAGIC_CHECK_ARRAY(array);
 
    total = array->total + array->step;
         eina_error_set(0);
@@ -350,36 +351,6 @@ eina_array_shutdown(void)
    _eina_array_log_dom = -1;
    return EINA_TRUE;
 }
-
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-/**
- * @brief Enable threadsafe mode in arrays
- *
- * This function enables threadsafe mode in all arrays.
- *
- * @warning Once enabled, this CANNOT be disabled.
- */
-
-void
-eina_array_threadsafety_init(void)
-{
-   _eina_array_threadsafety = EINA_TRUE;
-}
-
-/**
- * @brief Disable threadsafe mode in arrays
- *
- * This function disables threadsafe mode in all arrays.
- */
-
-void
-eina_array_threadsafety_shutdown(void)
-{
-   _eina_array_threadsafety = EINA_TRUE;
-}
-
-#endif
-
 
 /*============================================================================*
 *                                   API                                      *
@@ -456,13 +427,61 @@ eina_array_new(unsigned int step)
    array->total = 0;
    array->count = 0;
    array->step = step;
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   pthread_rwlock_init(&array->lock, NULL);
-#endif
 
    DBG("array=%p", array);
 
    return array;
+}
+
+/**
+ * @brief Create a new array that is threadsafe.
+ *
+ * @param step The count of pointers to add when increasing the array size.
+ * @return @c NULL on failure, non @c NULL otherwise.
+ *
+ * This function creates a new array which is different than a normal array.
+ * Arrays created with this function will automatically mutex themselves in eina_array_*
+ * function calls.  In order to ensure that the created array operates successfully
+ * in a threadsafe environment, only EINA_ARRAY_THREADSAFE_* macros can be used with
+ * this type of list.
+ * When adding an element, the array allocates @p step elements. When that buffer is
+ * full, then adding another element will increase the buffer of @p step elements again.
+ *
+ * This function return a valid array on success, or @c NULL if memory
+ * allocation fails. In that case, the error is set to
+ * #EINA_ERROR_OUT_OF_MEMORY.
+ */
+EAPI Eina_Array *
+eina_array_threadsafe_new(__UNUSED__ unsigned int step)
+{
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+   Eina_Array *array;
+
+        eina_error_set(0);
+   array = malloc(sizeof (Eina_Array));
+   if (!array)
+     {
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        return NULL;
+     }
+
+   EINA_MAGIC_SET(array, EINA_MAGIC_ARRAY);
+
+   array->data = NULL;
+   array->total = 0;
+   array->count = 0;
+   array->step = step;
+
+   pthread_rwlock_init(&array->lock, NULL);
+   array->threadsafe = EINA_TRUE;
+
+
+   DBG("array=%p", array);
+
+   return array;
+#else
+   return NULL;
+#endif
 }
 
 /**
@@ -479,17 +498,15 @@ eina_array_new(unsigned int step)
 EAPI void
 eina_array_free(Eina_Array *array)
 {
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   if (_eina_array_threadsafety)
-     pthread_rwlock_wrlock(&array->lock);
-#endif
    eina_array_flush(array);
 
-   EINA_MAGIC_CHECK_ARRAY(array);
    EINA_SAFETY_ON_NULL_RETURN(array);
+   if (!eina_array_wrlock(array))
+     return;
+   EINA_MAGIC_CHECK_ARRAY(array);
    DBG("array=%p", array);
 #ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   if (_eina_array_threadsafety)
+   if (array->threadsafe)
      pthread_rwlock_destroy(&array->lock);
 #endif
    MAGIC_FREE(array);
@@ -509,20 +526,15 @@ EAPI void
 eina_array_step_set(Eina_Array *array, unsigned int step)
 {
    EINA_SAFETY_ON_NULL_RETURN(array);
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   if (_eina_array_threadsafety)
-     pthread_rwlock_wrlock(&array->lock);
-#endif
+   if (!eina_array_wrlock(array))
+     return;
    array->data = NULL;
    array->total = 0;
    array->count = 0;
    array->step = step;
    EINA_MAGIC_SET(array, EINA_MAGIC_ARRAY);
    DBG("array=%p, step=%u", array, step);
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   if (_eina_array_threadsafety)
-     pthread_rwlock_unlock(&array->lock);
-#endif
+   eina_array_unlock(array);
 }
 
 /**
@@ -538,17 +550,12 @@ EAPI void
 eina_array_clean(Eina_Array *array)
 {
    EINA_SAFETY_ON_NULL_RETURN(array);
+   if (!eina_array_wrlock(array))
+     return;
    EINA_MAGIC_CHECK_ARRAY(array);
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   if (_eina_array_threadsafety)
-     pthread_rwlock_wrlock(&array->lock);
-#endif
    array->count = 0;
    DBG("array=%p", array);
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   if (_eina_array_threadsafety)
-     pthread_rwlock_unlock(&array->lock);
-#endif
+   eina_array_unlock(array);
 }
 
 /**
@@ -565,11 +572,9 @@ EAPI void
 eina_array_flush(Eina_Array *array)
 {
    EINA_SAFETY_ON_NULL_RETURN(array);
+   if (!eina_array_wrlock(array))
+     return;
    EINA_MAGIC_CHECK_ARRAY(array);
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   if (_eina_array_threadsafety)
-     pthread_rwlock_wrlock(&array->lock);
-#endif
    DBG("array=%p", array);
    array->count = 0;
    array->total = 0;
@@ -579,10 +584,7 @@ eina_array_flush(Eina_Array *array)
 
    free(array->data);
    array->data = NULL;
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   if (_eina_array_threadsafety)
-     pthread_rwlock_unlock(&array->lock);
-#endif
+   eina_array_unlock(array);
 }
 
 /**
@@ -619,11 +621,10 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data,
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(array, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(keep,  EINA_FALSE);
+   if (!eina_array_wrlock(array))
+     return EINA_FALSE;
    EINA_MAGIC_CHECK_ARRAY(array);
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   if (_eina_array_threadsafety)
-     pthread_rwlock_wrlock(&array->lock);
-#endif
+
    DBG("array=%p, keep=%p, gdata=%p", array, keep, gdata);
 
    if (array->total == 0)
@@ -698,10 +699,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data,
 
    array->data = tmp;
    array->count = total;
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   if (_eina_array_threadsafety)
-     pthread_rwlock_unlock(&array->lock);
-#endif
+   eina_array_unlock(array);
    return EINA_TRUE;
 }
 
@@ -718,7 +716,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data,
  * set. Otherwise, a valid iterator is returned.
  */
 EAPI Eina_Iterator *
-eina_array_iterator_new(Eina_Array *array)
+eina_array_iterator_new(const Eina_Array *array)
 {
    Eina_Iterator_Array *it;
 
@@ -736,10 +734,6 @@ eina_array_iterator_new(Eina_Array *array)
    EINA_MAGIC_SET(it,            EINA_MAGIC_ARRAY_ITERATOR);
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   if (_eina_array_threadsafety)
-     pthread_rwlock_rdlock(&array->lock);
-#endif
    it->array = array;
 
    it->iterator.next = FUNC_ITERATOR_NEXT(eina_array_iterator_next);
@@ -748,10 +742,7 @@ eina_array_iterator_new(Eina_Array *array)
    it->iterator.free = FUNC_ITERATOR_FREE(eina_array_iterator_free);
 
    DBG("array=%p, iterator=%p", array, it);
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   if (_eina_array_threadsafety)
-     pthread_rwlock_unlock(&array->lock);
-#endif
+
    return &it->iterator;
 }
 
@@ -768,7 +759,7 @@ eina_array_iterator_new(Eina_Array *array)
  * set. Otherwise, a valid accessor is returned.
  */
 EAPI Eina_Accessor *
-eina_array_accessor_new(Eina_Array *array)
+eina_array_accessor_new(const Eina_Array *array)
 {
    Eina_Accessor_Array *it;
 
@@ -786,10 +777,6 @@ eina_array_accessor_new(Eina_Array *array)
    EINA_MAGIC_SET(it,            EINA_MAGIC_ARRAY_ACCESSOR);
    EINA_MAGIC_SET(&it->accessor, EINA_MAGIC_ACCESSOR);
 
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   if (_eina_array_threadsafety)
-     pthread_rwlock_rdlock(&array->lock);
-#endif
    it->array = array;
 
    it->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_array_accessor_get_at);
@@ -798,10 +785,7 @@ eina_array_accessor_new(Eina_Array *array)
    it->accessor.free = FUNC_ACCESSOR_FREE(eina_array_accessor_free);
 
    DBG("array=%p, accessor=%p", array, it);
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   if (_eina_array_threadsafety)
-     pthread_rwlock_unlock(&array->lock);
-#endif
+
    return &it->accessor;
 }
 

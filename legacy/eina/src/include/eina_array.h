@@ -29,6 +29,11 @@
 #include "eina_accessor.h"
 #include "eina_magic.h"
 
+#ifdef EINA_RWLOCKS_ENABLED
+# include <pthread.h>
+# include <errno.h>
+#endif
+
 /**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
@@ -71,12 +76,15 @@ struct _Eina_Array
    unsigned int step; /**< How much must we grow the vector when it is full */
 #ifdef EINA_RWLOCKS_ENABLED
    pthread_rwlock_t lock;
+   int lockcount;
+   Eina_Bool threadsafe:1;
 #endif
 
    EINA_MAGIC
 };
 
 EAPI Eina_Array *               eina_array_new(unsigned int step) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Array *               eina_array_threadsafe_new(unsigned int step) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 EAPI void                       eina_array_free(Eina_Array *array) EINA_ARG_NONNULL(1);
 EAPI void                       eina_array_step_set(Eina_Array *array, unsigned int step) EINA_ARG_NONNULL(1);
 EAPI void                       eina_array_clean(Eina_Array *array) EINA_ARG_NONNULL(1);
@@ -85,12 +93,76 @@ EAPI Eina_Bool                  eina_array_remove(Eina_Array *array, Eina_Bool(*
 
 static inline Eina_Bool         eina_array_push(Eina_Array *array, const void *data) EINA_ARG_NONNULL(1, 2);
 static inline void *            eina_array_pop(Eina_Array *array) EINA_ARG_NONNULL(1);
-static inline void *            eina_array_data_get(Eina_Array *array, unsigned int idx) EINA_ARG_NONNULL(1);
-static inline void              eina_array_data_set(Eina_Array *array, unsigned int idx, const void *data) EINA_ARG_NONNULL(1, 3);
-static inline unsigned int      eina_array_count_get(Eina_Array *array) EINA_ARG_NONNULL(1);
+static inline void *            eina_array_data_get(const Eina_Array *array, unsigned int idx) EINA_ARG_NONNULL(1);
+static inline void              eina_array_data_set(const Eina_Array *array, unsigned int idx, const void *data) EINA_ARG_NONNULL(1, 3);
+static inline unsigned int      eina_array_count_get(const Eina_Array *array) EINA_ARG_NONNULL(1);
 
-EAPI Eina_Iterator *            eina_array_iterator_new(Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
-EAPI Eina_Accessor *            eina_array_accessor_new(Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Iterator *            eina_array_iterator_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Accessor *            eina_array_accessor_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+#ifdef EINA_RWLOCKS_ENABLED
+static inline Eina_Bool
+eina_array_rdlock(Eina_Array *array)
+{
+   if (!array) return EINA_FALSE;
+   if (array->threadsafe)
+     {
+        int ret;
+
+        ret = pthread_rwlock_rdlock(&array->lock);
+        if ((ret != 0) && (ret != EDEADLK))
+          return EINA_FALSE;
+        array->lockcount++;
+     }
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_array_wrlock(Eina_Array *array)
+{
+   if (!array) return EINA_FALSE;
+   if (array->threadsafe)
+     {
+        int ret;
+
+        ret = pthread_rwlock_wrlock(&array->lock);
+        if ((ret != 0) && (ret != EDEADLK))
+          return EINA_FALSE;
+        array->lockcount++;
+     }
+   return EINA_TRUE;
+}
+static inline Eina_Bool
+eina_array_unlock(Eina_Array *array)
+{
+   if (!array) return EINA_FALSE;
+   if ((array->threadsafe) && (!(--array->lockcount)))
+        if (pthread_rwlock_unlock(&array->lock))
+          return EINA_FALSE;
+   return EINA_TRUE;
+}
+#else
+static inline Eina_Bool
+eina_array_rdlock(Eina_Array *array)
+{
+   if (!array) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_array_wrlock(Eina_Array *array)
+{
+   if (!array) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_array_unlock(Eina_Array *array)
+{
+   if (!array) return EINA_FALSE;
+   return EINA_TRUE;
+}
+#endif
 
 /**
  * @def EINA_ARRAY_ITER_NEXT
@@ -129,7 +201,6 @@ EAPI Eina_Accessor *            eina_array_accessor_new(Eina_Array *array) EINA_
         (index < eina_array_count_get(array)) && ((item = *((iterator)++))); \
                                                    ++(index))
 
-#ifdef EINA_RWLOCKS_ENABLED
 /**
  * @def EINA_ARRAY_THREADSAFE_ITER_NEXT
  * @brief Macro to iterate over an array easily while mutexing.
@@ -170,28 +241,18 @@ EAPI Eina_Accessor *            eina_array_accessor_new(Eina_Array *array) EINA_
  * @endcode
  */
 #define EINA_ARRAY_THREADSAFE_ITER_NEXT(array, index, item, iterator, code...)   \
-   if (_eina_array_threadsafety)    \
-     pthread_rwlock_wrlock(&(array)->lock); \
-   for (index = 0, iterator = (array)->data; \
-        (index < (array)->count) && ((item = *((iterator)++))); \
-                                                   ++(index)) \
-        code \
-   if (_eina_array_threadsafety)    \
-     pthread_rwlock_unlock(&(array)->lock)
+do \
+  { \
+     if (eina_array_wrlock((Eina_Array*)array))    \
+       {                                \
+          for (index = 0, iterator = (array)->data; \
+               (index < (array)->count) && ((item = *((iterator)++))); \
+                                                          ++(index)) \
+               code \
+          eina_array_unlock((Eina_Array*)array); \
+       } \
+  } while (0)
 
-#else
-#define EINA_ARRAY_THREADSAFE_ITER_NEXT(array, index, item, iterator, code...)   \
-  do \
-    { \
-       for (index = 0, iterator = (array)->data; \
-            (index < (array)->count) && ((item = *((iterator)++))); \
-                                                       ++(index)) \
-            code \
-    } \
-  while (0)
-#endif
-
-#ifdef EINA_RWLOCKS_ENABLED
 
 /**
  * @def EINA_ARRAY_THREADSAFE_ITER_ESCAPE
@@ -200,7 +261,7 @@ EAPI Eina_Accessor *            eina_array_accessor_new(Eina_Array *array) EINA_
  * @param array The array being iterated over.
  * @param esc The code to "escape" the loop with
  *
- * This macro should be used any time the user wishes to leave break the loop
+ * This macro should be used any time the user wishes to leave the loop
  * while using EINA_ARRAY_THREADSAFE_ITER_NEXT. It will unlock any mutexes
  * which may have been locked while iterating.  Failure to use this will likely
  * result in a deadlock.
@@ -230,17 +291,10 @@ EAPI Eina_Accessor *            eina_array_accessor_new(Eina_Array *array) EINA_
 #define EINA_ARRAY_THREADSAFE_ITER_ESCAPE(array, esc...) \
 do \
   { \
-     if (_eina_array_threadsafety)    \
-       pthread_rwlock_unlock(&(array)->lock); \
+     eina_array_unlock((Eina_Array*)array); \
      esc \
   } \
 while (0)
-
-#else
-
-#define EINA_ARRAY_THREADSAFE_ITER_ESCAPE(array, esc...) \
-     esc
-#endif
 
 #include "eina_inline_array.x"
 
