@@ -1723,7 +1723,7 @@ primary(value * lval)
    if (tok == tSYMBOL && !findconst(st))
      {
 	/* first look for a local variable */
-	if ((sym = findloc(st)) != 0)
+	if ((sym = findloc(st)) != NULL)
 	  {
 	     if (sym->ident == iLABEL)
 	       {
@@ -1745,7 +1745,7 @@ primary(value * lval)
 	       }		/* if */
 	  }			/* if */
 	/* now try a global variable */
-	if ((sym = findglb(st)) != 0)
+	if ((sym = findglb(st)) != NULL)
 	  {
 	     if (sym->ident == iFUNCTN || sym->ident == iREFFUNC)
 	       {
@@ -2371,7 +2371,7 @@ constant(value * lval)
    symbol             *sym;
 
    tok = lex(&val, &st);
-   if (tok == tSYMBOL && (sym = findconst(st)) != 0)
+   if (tok == tSYMBOL && (sym = findconst(st)) != NULL)
      {
 	lval->constval = sym->addr;
 	const1(lval->constval);

@@ -1552,7 +1552,7 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
 	if (shell == NULL)
 	  {			/* Find users preferred shell. */
 	     shell = getenv("SHELL");
-	     if (shell == 0)
+	     if (shell == NULL)
 	       shell = "/bin/sh";
 	  }
 	errno = 0;

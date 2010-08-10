@@ -1710,7 +1710,7 @@ fetchfunc(char *name, int tag)
 	 * symbol instruction.
 	 */
      }				/* if */
-   if ((sym = findglb(name)) != 0)
+   if ((sym = findglb(name)) != NULL)
      {				/* already in symbol table? */
 	if (sym->ident != iFUNCTN)
 	  {
@@ -2517,7 +2517,7 @@ declargs(symbol * sym)
 		       sym->dim.arglist =
 			  (arginfo *) realloc(sym->dim.arglist,
 					      (argcnt + 2) * sizeof(arginfo));
-		       if (sym->dim.arglist == 0)
+		       if (sym->dim.arglist == NULL)
 			  error(103);	/* insufficient memory */
 		       sym->dim.arglist[argcnt] = arg;
 		       sym->dim.arglist[argcnt + 1].ident = 0;	/* keep the list
@@ -2554,7 +2554,7 @@ declargs(symbol * sym)
 		       sym->dim.arglist =
 			  (arginfo *) realloc(sym->dim.arglist,
 					      (argcnt + 2) * sizeof(arginfo));
-		       if (sym->dim.arglist == 0)
+		       if (sym->dim.arglist == NULL)
 			  error(103);	/* insufficient memory */
 		       sym->dim.arglist[argcnt + 1].ident = 0;	/* keep the list
 								 * terminated */
