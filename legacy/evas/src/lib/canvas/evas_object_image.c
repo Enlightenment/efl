@@ -33,6 +33,8 @@ struct _Evas_Object_Image
 
       unsigned char  smooth_scale : 1;
       unsigned char  has_alpha :1;
+      unsigned char  opaque :1;
+      unsigned char  opaque_valid :1;
    } cur, prev;
 
    int               pixels_checked_out;
@@ -337,6 +339,7 @@ evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
    o->cur.border.r = r;
    o->cur.border.t = t;
    o->cur.border.b = b;
+   o->cur.opaque_valid = 0;
    o->changed = 1;
    evas_object_change(obj);
 }
@@ -588,6 +591,7 @@ evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
    o->cur.fill.y = y;
    o->cur.fill.w = w;
    o->cur.fill.h = h;
+   o->cur.opaque_valid = 0;   
    o->changed = 1;
    evas_object_change(obj);
 }
@@ -2298,6 +2302,7 @@ evas_object_image_new(void)
    o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
    o->cur.transform.mxx = o->cur.transform.myy = o->cur.transform.mzz = 1;
    o->cur.spread = EVAS_TEXTURE_REPEAT;
+   o->cur.opaque_valid = 0;
    o->prev = o->cur;
    return o;
 }
@@ -2890,14 +2895,24 @@ evas_object_image_is_opaque(Evas_Object *obj)
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Image *)(obj->object_data);
-   if ((o->cur.fill.w < 1) || (o->cur.fill.h < 1))
-     return 0;
-   if (((o->cur.border.l != 0) ||
-	(o->cur.border.r != 0) ||
-	(o->cur.border.t != 0) ||
-	(o->cur.border.b != 0)) &&
-       (!o->cur.border.fill)) return 0;
-   if (!o->engine_data) return 0;
+   if (o->cur.opaque_valid)
+     {
+        if (!o->cur.opaque) return 0;
+     }
+   else
+     {
+        o->cur.opaque = 0;
+        o->cur.opaque_valid = 1;
+        if ((o->cur.fill.w < 1) || (o->cur.fill.h < 1))
+           return 0;
+        if (((o->cur.border.l != 0) ||
+             (o->cur.border.r != 0) ||
+             (o->cur.border.t != 0) ||
+             (o->cur.border.b != 0)) &&
+            (!o->cur.border.fill)) return 0;
+        if (!o->engine_data) return 0;
+        o->cur.opaque = 1;
+     }
    if ((obj->cur.map) && (obj->cur.usemap)) return 0;
    if (obj->cur.render_op == EVAS_RENDER_COPY) return 1;
    if (o->cur.has_alpha) return 0;
@@ -2912,14 +2927,24 @@ evas_object_image_was_opaque(Evas_Object *obj)
    /* this returns 1 if the internal object data implies that the object was */
    /* previously fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Image *)(obj->object_data);
-   if ((o->prev.fill.w < 1) || (o->prev.fill.h < 1))
-     return 0;
-   if (((o->prev.border.l != 0) ||
-	(o->prev.border.r != 0) ||
-	(o->prev.border.t != 0) ||
-	(o->prev.border.b != 0)) &&
-       (!o->prev.border.fill)) return 0;
-   if (!o->engine_data) return 0;
+   if (o->prev.opaque_valid)
+     {
+        if (!o->prev.opaque) return 0;
+     }
+   else
+     {
+        o->prev.opaque = 0;
+        o->prev.opaque_valid = 1;
+        if ((o->prev.fill.w < 1) || (o->prev.fill.h < 1))
+           return 0;
+        if (((o->prev.border.l != 0) ||
+             (o->prev.border.r != 0) ||
+             (o->prev.border.t != 0) ||
+             (o->prev.border.b != 0)) &&
+            (!o->prev.border.fill)) return 0;
+        if (!o->engine_data) return 0;
+        o->prev.opaque = 1;
+     }
    if (obj->prev.usemap) return 0;
    if (obj->prev.render_op == EVAS_RENDER_COPY) return 1;
    if (o->prev.has_alpha) return 0;

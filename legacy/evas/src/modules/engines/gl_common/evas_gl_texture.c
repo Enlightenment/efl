@@ -10,12 +10,12 @@ static const GLenum rgb_fmt    = GL_RGBA;
 static const GLenum rgb_ifmt   = GL_RGB;
 //#endif
 #ifdef GL_BGRA
-# if 0 //tegra 2 below. wtf?
+# if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 static const GLenum bgra_fmt   = GL_BGRA;
 static const GLenum bgra_ifmt  = GL_BGRA;
 static const GLenum bgr_fmt    = GL_BGRA;
 static const GLenum bgr_ifmt   = GL_BGRA;
-# else // everything else but tegra2
+# else
 static const GLenum bgra_fmt   = GL_BGRA;
 static const GLenum bgra_ifmt  = GL_RGBA;
 static const GLenum bgr_fmt    = GL_BGRA;
