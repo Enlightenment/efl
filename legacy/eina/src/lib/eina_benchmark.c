@@ -518,8 +518,9 @@ eina_benchmark_free(Eina_Benchmark *bench)
       char *tmp;
       unsigned int i;
 
-      EINA_ARRAY_ITER_NEXT(names, i, tmp, it)
-      free(tmp);
+      EINA_ARRAY_THREADSAFE_ITER_NEXT(names, i, tmp, it,
+        free(tmp);
+      );
 
       eina_array_free(names);
    }

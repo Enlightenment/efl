@@ -623,32 +623,33 @@ EAPI Eina_Array *eina_module_list_get(Eina_Array *array,
  * If the element is found return the module else NULL.
  */
 EAPI Eina_Module *
-eina_module_find(const Eina_Array *array, const char *module)
+eina_module_find(Eina_Array *array, const char *module)
 {
    unsigned int i;
    Eina_Array_Iterator iterator;
    Eina_Module *m;
 
-   EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
-   {
-      char *file_m;
-      char *tmp;
-      ssize_t len;
+   EINA_ARRAY_THREADSAFE_ITER_NEXT(array, i, m, iterator,
+     {
+        char *file_m;
+        char *tmp;
+        ssize_t len;
 
-      /* basename() can modify its argument, so we first get a copie */
-      /* do not use strdupa, as opensolaris does not have it */
-      len = strlen(eina_module_file_get(m));
-      tmp = alloca(len + 1);
-      memcpy(tmp, eina_module_file_get(m), len + 1);
-      file_m = basename(tmp);
-      len = strlen(file_m);
-      len -= sizeof(SHARED_LIB_SUFFIX) - 1;
-      if (len <= 0)
-         continue;
+        /* basename() can modify its argument, so we first get a copie */
+        /* do not use strdupa, as opensolaris does not have it */
+        len = strlen(eina_module_file_get(m));
+        tmp = alloca(len + 1);
+        memcpy(tmp, eina_module_file_get(m), len + 1);
+        file_m = basename(tmp);
+        len = strlen(file_m);
+        len -= sizeof(SHARED_LIB_SUFFIX) - 1;
+        if (len <= 0)
+           continue;
 
-      if (!strncmp(module, file_m, len))
-         return m;
-   }
+        if (!strncmp(module, file_m, len))
+           EINA_ARRAY_THREADSAFE_ITER_RETURN(array, m);
+     }
+   );
 
    return NULL;
 }
@@ -665,8 +666,9 @@ EAPI void eina_module_list_load(Eina_Array *array)
 
    EINA_SAFETY_ON_NULL_RETURN(array);
    DBG("array %p, count %u", array, array->count);
-   EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
-   eina_module_load(m);
+   EINA_ARRAY_THREADSAFE_ITER_NEXT(array, i, m, iterator,
+     eina_module_load(m);
+   );
 }
 
 /**
@@ -681,8 +683,9 @@ EAPI void eina_module_list_unload(Eina_Array *array)
 
    EINA_SAFETY_ON_NULL_RETURN(array);
    DBG("array %p, count %u", array, array->count);
-   EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
-   eina_module_unload(m);
+   EINA_ARRAY_THREADSAFE_ITER_NEXT(array, i, m, iterator,
+     eina_module_unload(m);
+   );
 }
 
 /**
@@ -697,8 +700,9 @@ EAPI void eina_module_list_free(Eina_Array *array)
 
    EINA_SAFETY_ON_NULL_RETURN(array);
    DBG("array %p, count %u", array, array->count);
-   EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
-   eina_module_free(m);
+   EINA_ARRAY_THREADSAFE_ITER_NEXT(array, i, m, iterator,
+     eina_module_free(m);
+   );
 
    eina_array_flush(array);
 }

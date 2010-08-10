@@ -19,7 +19,11 @@
 #ifndef EINA_INLINE_ARRAY_X_
 #define EINA_INLINE_ARRAY_X_
 
+#ifdef EINA_RWLOCKS_ENABLED
+# include <pthread.h>
+#endif
 
+extern Eina_Bool _eina_array_threadsafety;
 /**
  * @cond LOCAL
  */
@@ -57,10 +61,30 @@ eina_array_push(Eina_Array *array, const void *data)
 {
    if (!data) return EINA_FALSE;
 
+#ifdef EINA_RWLOCKS_ENABLED
+   if (_eina_array_threadsafety)
+     pthread_rwlock_wrlock(&array->lock);
+#endif
+
    if (EINA_UNLIKELY((array->count + 1) > array->total))
-     if (!eina_array_grow(array)) return EINA_FALSE;
+     if (!eina_array_grow(array))
+       {
+
+#ifdef EINA_RWLOCKS_ENABLED
+          if (_eina_array_threadsafety)
+            pthread_rwlock_unlock(&array->lock);
+#endif
+
+          return EINA_FALSE;
+       }
 
    array->data[array->count++] = (void*) data;
+
+#ifdef EINA_RWLOCKS_ENABLED
+   if (_eina_array_threadsafety)
+     pthread_rwlock_unlock(&array->lock);
+#endif
+
    return EINA_TRUE;
 }
 
@@ -79,8 +103,31 @@ eina_array_push(Eina_Array *array, const void *data)
 static inline void *
 eina_array_pop(Eina_Array *array)
 {
-   if (array->count <= 0) return NULL;
-   return array->data[--array->count];
+   void *ret = NULL;
+   
+#ifdef EINA_RWLOCKS_ENABLED
+   if (_eina_array_threadsafety)
+     pthread_rwlock_wrlock(&array->lock);
+#endif
+
+   if (array->count <= 0)
+     {
+      
+#ifdef EINA_RWLOCKS_ENABLED
+   if (_eina_array_threadsafety)
+     pthread_rwlock_unlock(&array->lock);
+#endif
+
+        return NULL;
+     }
+   ret = array->data[--array->count];
+   
+#ifdef EINA_RWLOCKS_ENABLED
+   if (_eina_array_threadsafety)
+     pthread_rwlock_unlock(&array->lock);
+#endif
+
+   return ret;
 }
 
 /**
@@ -95,26 +142,50 @@ eina_array_pop(Eina_Array *array)
  * idx. If it is @c NULL or invalid, the program may crash.
  */
 static inline void *
-eina_array_data_get(const Eina_Array *array, unsigned int idx)
+eina_array_data_get(Eina_Array *array, unsigned int idx)
 {
-   return array->data[idx];
+   void *ret = NULL;
+
+#ifdef EINA_RWLOCKS_ENABLED
+   if (_eina_array_threadsafety)
+     pthread_rwlock_rdlock(&array->lock);
+#endif
+
+   ret = array->data[idx];
+
+#ifdef EINA_RWLOCKS_ENABLED
+   if (_eina_array_threadsafety)
+     pthread_rwlock_unlock(&array->lock);
+#endif
+
+   return ret;
 }
 
 /**
- * @brief Return the data at a given position in an array.
+ * @brief Set the data at a given position in an array.
  *
  * @param array The array.
  * @param idx The potition of the data to set.
  * @param data The data to set.
  *
- * This function returns the data at the position @p idx in @p
+ * This function sets the data at the position @p idx in @p
  * array. For performance reasons, there is no check of @p array or @p
  * idx. If it is @c NULL or invalid, the program may crash.
  */
 static inline void
-eina_array_data_set(const Eina_Array *array, unsigned int idx, const void *data)
+eina_array_data_set(Eina_Array *array, unsigned int idx, const void *data)
 {
+#ifdef EINA_RWLOCKS_ENABLED
+   if (_eina_array_threadsafety)
+     pthread_rwlock_wrlock(&array->lock);
+#endif
+
    array->data[idx] = (void*) data;
+
+#ifdef EINA_RWLOCKS_ENABLED
+   if (_eina_array_threadsafety)
+     pthread_rwlock_unlock(&array->lock);
+#endif
 }
 
 /**
@@ -128,9 +199,19 @@ eina_array_data_set(const Eina_Array *array, unsigned int idx, const void *data)
  * @c NULL or invalid, the program may crash.
  */
 static inline unsigned int
-eina_array_count_get(const Eina_Array *array)
+eina_array_count_get(Eina_Array *array)
 {
+#ifdef EINA_RWLOCKS_ENABLED
+   if (_eina_array_threadsafety)
+     pthread_rwlock_rdlock(&array->lock);
+#endif
+
    return array->count;
+
+#ifdef EINA_RWLOCKS_ENABLED
+   if (_eina_array_threadsafety)
+     pthread_rwlock_unlock(&array->lock);
+#endif
 }
 
 /**

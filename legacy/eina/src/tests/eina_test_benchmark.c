@@ -57,11 +57,12 @@ START_TEST(eina_benchmark_simple)
    ea = eina_benchmark_run(eb);
    fail_if(!ea);
 
-   EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
-   {
-      fail_if(!tmp);
-      fail_if(unlink(tmp));
-   }
+   EINA_ARRAY_THREADSAFE_ITER_NEXT(ea, i, tmp, it,
+     {
+        fail_if(!tmp);
+        fail_if(unlink(tmp));
+     }
+   );
 
       fail_if(global_test != 499500);
 
