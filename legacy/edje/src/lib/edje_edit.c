@@ -1102,16 +1102,16 @@ EAPI Eina_List *
 edje_edit_group_data_list_get(Evas_Object * obj)
 {
    Eina_Iterator *it;
-   Eina_List *datas;
+   Eina_List *datas = NULL;
    const char *key;
 
    GET_ED_OR_RETURN(NULL);
 
-   if (!ed->file || !ed->collection)
+   if (!ed->file || !ed->collection || !ed->collection->data)
      return NULL;
 
-   datas = NULL;
    it = eina_hash_iterator_key_new(ed->collection->data);
+   if (!it) return NULL;
 
    EINA_ITERATOR_FOREACH(it, key)
      datas = eina_list_append(datas, eina_stringshare_add(key));
@@ -3875,19 +3875,21 @@ FUNC_TEXT_BOOL_FIT(y);
 EAPI Eina_List *
 edje_edit_fonts_list_get(Evas_Object *obj)
 {
-   Edje_Font_Directory_Entry *f;
-   Eina_Iterator *i;
+   Eina_Iterator *it;
    Eina_List *fonts = NULL;
+   Edje_Font_Directory_Entry *f;
 
    GET_ED_OR_RETURN(NULL);
 
-   if (!ed->file) return NULL;
+   if (!ed->file || !ed->file->fonts) return NULL;
 
-   //printf("GET FONT LIST for %s\n", ed->file->path);
-   i = eina_hash_iterator_data_new(ed->file->fonts);
+   it = eina_hash_iterator_data_new(ed->file->fonts);
+   if (!it) return NULL;
 
-   EINA_ITERATOR_FOREACH(i, f)
+   EINA_ITERATOR_FOREACH(it, f)
      fonts = eina_list_append(fonts, f);
+
+   eina_iterator_free(it);
 
    return fonts;
 }
