@@ -4246,7 +4246,7 @@ _evas_textblock_node_format_remove_all_at_pos(Evas_Object_Textblock *o, Evas_Obj
 {
    Evas_Object_Textblock_Node_Format *nnode;
    Evas_Object_Textblock_Node_Text *tnode;
-   int off;
+
    nnode = n;
    tnode = n->text_node;
    do
@@ -4254,11 +4254,10 @@ _evas_textblock_node_format_remove_all_at_pos(Evas_Object_Textblock *o, Evas_Obj
         Evas_Object_Textblock_Node_Format *curnode;
         curnode = nnode;
         nnode = _NODE_FORMAT(EINA_INLIST_GET(nnode)->next);
-        off = nnode->offset;
 
         _evas_textblock_node_format_remove(o, curnode);
      }
-   while (nnode && (nnode->text_node == tnode) && (off == 0));
+   while (nnode && (nnode->text_node == tnode) && (nnode->offset == 0));
 }
 
 /* end = -1 means to the end */
