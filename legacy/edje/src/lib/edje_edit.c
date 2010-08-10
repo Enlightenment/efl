@@ -1243,6 +1243,7 @@ edje_edit_group_data_value_set(Evas_Object *obj, const char *key, const char *va
    old_value = eina_hash_find(ed->collection->data, key);
    if (old_value)
      {
+        value = eina_stringshare_add(value);
 	eina_hash_modify(ed->collection->data, key, value);
 	_edje_if_string_free(ed, old_value);
 	return EINA_TRUE;
@@ -1261,9 +1262,14 @@ edje_edit_data_value_set(Evas_Object *obj, const char *itemname, const char *val
    if (!itemname || !value || !ed->file || !ed->file->data)
      return EINA_FALSE;
 
-   old = eina_hash_modify(ed->file->data, itemname, eina_stringshare_add(value));
+   old = eina_hash_find(ed->file->data, itemname);
    if (old)
-     return EINA_TRUE;
+     {
+        value = eina_stringshare_add(value);
+        eina_hash_modify(ed->file->data, itemname, value);
+        _edje_if_string_free(ed, old);
+        return EINA_TRUE;
+     }
    return EINA_FALSE;
 }
 
