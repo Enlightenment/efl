@@ -516,10 +516,11 @@ eng_image_colorspace_set(void *data __UNUSED__, void *image __UNUSED__, int cspa
    NOT_IMPLEMENTED();
 }
 
-static void
+static void *
 eng_image_native_set(void *data __UNUSED__, void *image __UNUSED__, void *native __UNUSED__)
 {
    NOT_IMPLEMENTED();
+   return NULL;
 }
 
 static void *
