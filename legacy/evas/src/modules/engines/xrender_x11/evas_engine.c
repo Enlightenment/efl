@@ -95,9 +95,9 @@ struct _Render_Engine
 
    Eina_List       *updates;
 
-   void *(*font_surface_new)(void *xinf, RGBA_Font_Glyph *fg);
-   void (*font_surface_free)(void *fs);
-   void (*font_surface_draw)(void *xinf, void *surface, void *dc, RGBA_Font_Glyph *fg, int x, int y);
+   XR_Font_Surface *(*font_surface_new)(Ximage_Info *xinf, RGBA_Font_Glyph *fg);
+   void (*font_surface_free)(XR_Font_Surface *fs);
+   void (*font_surface_draw)(Ximage_Info *xinf, RGBA_Image *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y);
 
    XR_Gradient *(*gradient_new)(Ximage_Info *xinf);
    void (*gradient_free)(XR_Gradient *gr);
@@ -135,7 +135,7 @@ struct _Render_Engine
    void (*image_cache_set)(int size);
    int  (*image_cache_get)(void);
 
-   Ximage_Info *(*ximage_info_get)(void *connection, unsigned int draw, void *vis);
+   Ximage_Info *(*ximage_info_get)(Display *connection, Drawable draw, Visual *vis);
    void (*ximage_info_free)(Ximage_Info *xinf);
    void (*ximage_info_pool_flush)(Ximage_Info *xinf, int max_num, int max_mem);
    Ximage_Image *(*ximage_new)(Ximage_Info *xinf, int w, int h, int depth);
@@ -143,8 +143,8 @@ struct _Render_Engine
    void (*ximage_put)(Ximage_Image *xim, Drawable draw, int x, int y, int w, int h);
 
    Xrender_Surface *(*render_surface_new)(Ximage_Info *xinf, int w, int h, XRenderPictFormat *fmt, int alpha);
-   Xrender_Surface *(*render_surface_adopt)(Ximage_Info *xinf, unsigned int draw, int w, int h, int alpha);
-   Xrender_Surface *(*render_surface_format_adopt)(Ximage_Info *xinf, unsigned int draw, int w, int h, void *fmt, int alpha);
+   Xrender_Surface *(*render_surface_adopt)(Ximage_Info *xinf, Drawable draw, int w, int h, int alpha);
+   Xrender_Surface *(*render_surface_format_adopt)(Ximage_Info *xinf, Drawable draw, int w, int h, XRenderPictFormat *fmt, int alpha);
    void (*render_surface_free)(Xrender_Surface *rs);
    void (*render_surface_repeat_set)(Xrender_Surface *rs, int repeat);
    void (*render_surface_solid_rectangle_set)(Xrender_Surface *rs, int r, int g, int b, int a, int x, int y, int w, int h);
@@ -474,7 +474,7 @@ eng_info_free(Evas *e __UNUSED__, void *info)
    free(in);
 }
 
-static void
+static int
 eng_setup(Evas *e, void *in)
 {
    Render_Engine *re = NULL;
@@ -548,6 +548,8 @@ eng_setup(Evas *e, void *in)
         if (re->tb)
 	  evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
      }
+
+   return 1;
 }
 
 static void
@@ -820,7 +822,7 @@ eng_gradient2_linear_free(void *data __UNUSED__, void *linear_gradient __UNUSED_
 }
 
 static void
-eng_gradient2_linear_fill_set(void *data __UNUSED__, void *linear_gradient __UNUSED__, int x0 __UNUSED__, int y0 __UNUSED__, int x1 __UNUSED__, int y1 __UNUSED__)
+eng_gradient2_linear_fill_set(void *data __UNUSED__, void *linear_gradient __UNUSED__, float x0 __UNUSED__, float y0 __UNUSED__, float x1 __UNUSED__, float y1 __UNUSED__)
 {
 }
 
@@ -1183,9 +1185,10 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
    re->image_region_dirty(im, 0, 0, im->w, im->h);
 }
 
-static void
+static void *
 eng_image_native_set(void *data __UNUSED__, void *image __UNUSED__, void *native __UNUSED__)
 {
+   return NULL;
 }
 
 static void *
@@ -1500,9 +1503,10 @@ eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y
                                              0, EVAS_COLORSPACE_ARGB8888);
    evas_common_draw_context_font_ext_set((RGBA_Draw_Context *)context,
                                          re->xinf,
-                                         re->font_surface_new,
-                                         re->font_surface_free,
-                                         re->font_surface_draw);
+            (void *(*)(void *, RGBA_Font_Glyph *)) re->font_surface_new,
+            (void (*)(void *))           re->font_surface_free,
+            (void  (*) (void *, void *, void *, RGBA_Font_Glyph *, int, int))
+                 re->font_surface_draw);
    evas_common_font_draw(im, context, font, x, y, text, intl_props);
    evas_common_draw_context_font_ext_set(context,
                                          NULL,
