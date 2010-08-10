@@ -107,12 +107,14 @@ eina_array_rdlock(Eina_Array *array)
    if (!array) return EINA_FALSE;
    if (array->threadsafe)
      {
-        int ret;
+        if (!array->lockcount++)
+          {
+             int ret;
 
-        ret = pthread_rwlock_rdlock(&array->lock);
-        if ((ret != 0) && (ret != EDEADLK))
-          return EINA_FALSE;
-        array->lockcount++;
+             ret = pthread_rwlock_rdlock(&array->lock);
+             if ((ret != 0) && (ret != EDEADLK))
+               return EINA_FALSE;
+          }
      }
    return EINA_TRUE;
 }
@@ -123,12 +125,14 @@ eina_array_wrlock(Eina_Array *array)
    if (!array) return EINA_FALSE;
    if (array->threadsafe)
      {
-        int ret;
+        if (!array->lockcount++)
+          {
+             int ret;
 
-        ret = pthread_rwlock_wrlock(&array->lock);
-        if ((ret != 0) && (ret != EDEADLK))
-          return EINA_FALSE;
-        array->lockcount++;
+             ret = pthread_rwlock_wrlock(&array->lock);
+             if ((ret != 0) && (ret != EDEADLK))
+               return EINA_FALSE;
+          }
      }
    return EINA_TRUE;
 }
