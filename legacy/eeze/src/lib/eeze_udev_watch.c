@@ -200,11 +200,10 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
             goto error;
 
           /* if device is not the one which has the temp input, we must go up the chain */
-          if (!(test = udev_device_get_sysattr_value(device, "temp1_input")))
+          if (!udev_device_get_sysattr_value(device, "temp1_input"))
             {
               for (parent = udev_device_get_parent(device); parent; parent = udev_device_get_parent(parent)) /*check for parent */
-                if (((test =
-                        udev_device_get_sysattr_value(parent, "temp1_input"))))
+                if (udev_device_get_sysattr_value(parent, "temp1_input"))
                   {
                     tmpdev = device;
 

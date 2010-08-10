@@ -34,7 +34,7 @@ _walk_parents_test_attr(_udev_device * device, const char *sysattr,
    _udev_device *parent, *child = device;
    const char *test;
 
-   if ((test = udev_device_get_sysattr_value(device, sysattr)))
+   if (udev_device_get_sysattr_value(device, sysattr))
      return 1;
 
    parent = udev_device_get_parent(child);
