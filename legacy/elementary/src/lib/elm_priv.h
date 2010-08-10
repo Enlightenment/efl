@@ -213,8 +213,17 @@ Eina_Bool	  elm_selection_get(enum _elm_sel_type selection, enum _elm_sel_format
 
 Eina_Bool         _elm_dangerous_call_check(const char *call);
 
+void              _elm_widtype_register(const char **ptr);
 
-#define ELM_SET_WIDTYPE(widtype, type) if (!widtype) widtype = eina_stringshare_add(type)
+
+#define ELM_SET_WIDTYPE(widtype, type) \
+   do { \
+      if (!widtype) { \
+         widtype = eina_stringshare_add(type); \
+         _elm_widtype_register(&widtype); \
+      } \
+   } while (0)
+
 //#define ELM_CHECK_WIDTYPE(obj, widtype) if (elm_widget_type_get(obj) != widtype) return
 #define ELM_CHECK_WIDTYPE(obj, widtype) if (!_elm_widget_type_check((obj), (widtype))) return
 
