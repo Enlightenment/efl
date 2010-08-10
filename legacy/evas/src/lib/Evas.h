@@ -1315,6 +1315,10 @@ typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj
  */
    typedef struct _Evas_Textblock_Style                 Evas_Textblock_Style;
    typedef struct _Evas_Textblock_Cursor                Evas_Textblock_Cursor;
+   /**
+    * @typedef Evas_Object_Textblock_Node_Format
+    * A format node.
+    */
    typedef struct _Evas_Object_Textblock_Node_Format    Evas_Object_Textblock_Node_Format;
    typedef struct _Evas_Textblock_Rectangle             Evas_Textblock_Rectangle;
 
