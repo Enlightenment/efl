@@ -164,7 +164,7 @@ eina_module_list_unload(Eina_Array *list) EINA_ARG_NONNULL(1);
 EAPI void
 eina_module_list_free(Eina_Array *list) EINA_ARG_NONNULL(1);
 EAPI Eina_Module *
-eina_module_find(Eina_Array *array, const char *module) EINA_ARG_NONNULL(
+eina_module_find(const Eina_Array *array, const char *module) EINA_ARG_NONNULL(
    1,
    2);
 

@@ -129,10 +129,6 @@ void eina_share_common_threads_init(void);
 void eina_share_common_threads_shutdown(void);
 void eina_log_threads_init(void);
 void eina_log_threads_shutdown(void);
-#ifdef EINA_RWLOCKS_ENABLE
-void eina_array_threadsafety_init(void);
-void eina_array_threadsafety_shutdown(void);
-#endif
 #endif
 
 #endif /* EINA_PRIVATE_H_ */

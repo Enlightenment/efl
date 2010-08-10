@@ -311,9 +311,6 @@ eina_threads_init(void)
 
    eina_share_common_threads_init();
    eina_log_threads_init();
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   eina_array_threadsafety_init();
-#endif
    _threads_activated = EINA_TRUE;
 
    return ret;
@@ -352,9 +349,6 @@ eina_threads_shutdown(void)
 
    eina_share_common_threads_shutdown();
    eina_log_threads_shutdown();
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   eina_array_threadsafety_shutdown();
-#endif
 
    _threads_activated = EINA_FALSE;
 
