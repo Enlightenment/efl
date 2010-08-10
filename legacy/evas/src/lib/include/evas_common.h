@@ -248,17 +248,19 @@ void *alloca (size_t);
 # define DM_BITS      4
 # define DM_DIV       16
 # define USE_DITHER_44 1
-# define DM_MSK       (DM_SIZE - 1)
-# define DM_SHF(_b)   (DM_BITS - (8 - _b))
 #else
 # define DM_TABLE     _evas_dither_128128
 # define DM_SIZE      128
 # define DM_BITS      6
 # define DM_DIV       64
 # define USE_DITHER_128128 1
-# define DM_MSK       (DM_SIZE - 1)
-# define DM_SHF(_b)   (DM_BITS - (8 - _b))
 #endif
+
+#define DM_MSK       (DM_SIZE - 1)
+#define DM_SHF(_b)   (DM_BITS - (8 - _b))
+/* Supports negative right shifts */
+#define DM_SHR(x, _b)   ((DM_SHF(_b) >= 0) ? \
+      ((x) >> DM_SHF(_b)) : ((x) << -DM_SHF(_b)))
 
 /* if more than 1/ALPHA_SPARSE_INV_FRACTION is "alpha" (1-254) then sparse
  * alpha flag gets set */
