@@ -427,6 +427,10 @@ eina_array_new(unsigned int step)
    array->total = 0;
    array->count = 0;
    array->step = step;
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+   array->threadsafe = EINA_FALSE;
+   array->lockcount = 0;
+#endif
 
    DBG("array=%p", array);
 
