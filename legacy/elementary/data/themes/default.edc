@@ -530,7 +530,7 @@ collections {
       styles
 	{
 	   style { name: "textblock_style";
-	      base: "font=Sans font_size=10 align=left color=#000 wrap=word";
+	      base: "font=Sans font_size=10 color=#000 wrap=word";
 
 	      tag:  "br" "\n";
 	      tag:  "ps" "ps";
@@ -5644,7 +5644,7 @@ collections {
       styles
 	{
 	   style { name: "entry_textblock_style";
- 	      base: "font=Sans font_size=10 align=left color=#000 wrap=word";
+ 	      base: "font=Sans font_size=10 color=#000 wrap=word";
 	      tag:  "br" "\n";
 	      tag:  "ps" "ps";
 	      tag:  "tab" "\t";
@@ -5654,7 +5654,7 @@ collections {
 	      tag:  "hilight" "+ font=Sans:style=Bold";
 	   }
 	   style { name: "entry_textblock_disabled_style";
- 	      base: "font=Sans font_size=10 align=left color=#00000080 wrap=word";
+ 	      base: "font=Sans font_size=10 color=#00000080 wrap=word";
 	      tag:  "br" "\n";
 	      tag:  "ps" "ps";
 	      tag:  "tab" "\t";
@@ -5723,7 +5723,7 @@ collections {
       styles
 	{
 	   style { name: "entry_textblock_style_charwrap";
- 	      base: "font=Sans font_size=10 align=left color=#000 wrap=char";
+ 	      base: "font=Sans font_size=10 color=#000 wrap=char";
 	      tag:  "br" "\n";
 	      tag:  "ps" "ps";
 	      tag:  "tab" "\t";
@@ -5733,7 +5733,7 @@ collections {
 	      tag:  "hilight" "+ font=Sans:style=Bold";
 	   }
 	   style { name: "entry_textblock_disabled_style_charwrap";
- 	      base: "font=Sans font_size=10 align=left color=#00000080 wrap=char";
+ 	      base: "font=Sans font_size=10 color=#00000080 wrap=char";
 	      tag:  "br" "\n";
 	      tag:  "ps" "ps";
 	      tag:  "tab" "\t";
@@ -5879,7 +5879,7 @@ collections {
       styles
 	{
 	   style { name: "entry_single_textblock_style";
-	      base: "font=Sans font_size=10 align=left color=#000 wrap=none";
+	      base: "font=Sans font_size=10 color=#000 wrap=none";
 	      tag:  "br" "\n";
 	      tag:  "ps" "ps";
 	      tag:  "tab" "\t";
@@ -5889,7 +5889,7 @@ collections {
 	      tag:  "hilight" "+ font=Sans:style=Bold";
 	   }
 	   style { name: "entry_single_textblock_disabled_style";
- 	      base: "font=Sans font_size=10 align=left color=#00000080 wrap=none";
+ 	      base: "font=Sans font_size=10 color=#00000080 wrap=none";
 	      tag:  "br" "\n";
 	      tag:  "ps" "ps";
 	      tag:  "tab" "\t";
