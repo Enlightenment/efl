@@ -118,8 +118,8 @@ collections {
          part { name: "bg";
 	    type: RECT;
 	    description { state: "default" 0.0;
-	       rel1.offset: 1 1;
-	       rel2.offset: -2 -2;
+	       rel1.offset: 2 2;
+	       rel2.offset: -3 -3;
 	       color: 255 255 255 0;
 	    }
 	 }
@@ -129,21 +129,25 @@ collections {
 	    description { state: "default" 0.0;
 	       rel1.to: "bg";
 	       rel2.to: "bg";
+	       rel1.offset: 2 2;
+	       rel2.offset: -3 -3;
 	    }
 	 }
 	 part { name: "elm.swallow.content";
 	    clip_to: "clipper";
 	    type: SWALLOW;
 	    description { state: "default" 0.0;
-	       rel1.offset: 1 1;
-	       rel2.offset: -2 -2;
+	       rel1.to: "bg";
+	       rel2.to: "bg";
+	       rel1.offset: 2 2;
+	       rel2.offset: -3 -3;
 	    }
 	 }
 	 part { name: "conf_over";
 	    mouse_events:  0;
 	    description { state: "default" 0.0;
-	       rel1.offset: 0 0;
-	       rel2.offset: -1 -1;
+	       rel1.to: "bg";
+	       rel2.to: "bg";
 	       image {
 		  normal: "shelf_inset.png";
 		  border: 7 7 7 7;
@@ -183,7 +187,8 @@ collections {
 	       align: 1.0 0.0;
 	       rel1 {
 		  relative: 1.0 0.0;
-		  offset:   -2 0;
+		  offset:   -2 2;
+		  to_y:     "elm.swallow.content";
 	       }
 	       rel2 {
 		  relative: 1.0 0.0;
@@ -292,7 +297,8 @@ collections {
 	       align: 0.0 1.0;
 	       rel1 {
 		  relative: 0.0 1.0;
-		  offset:   0 -2;
+		  offset:   2 -2;
+		  to_x:     "elm.swallow.content";
 	       }
 	       rel2 {
 		  relative: 0.0 1.0;
@@ -527,19 +533,27 @@ collections {
 
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/label/base/default";
-      styles
-	{
-	   style { name: "textblock_style";
-	      base: "font=Sans font_size=10 color=#000 wrap=word";
-
-	      tag:  "br" "\n";
-	      tag:  "ps" "ps";
-	      tag:  "hilight" "+ font=Sans:style=Bold";
-	      tag:  "b" "+ font=Sans:style=Bold";
-	      tag:  "tab" "\t";
+      data.item: "default_font_size" "24";
+      data.item: "min_font_size" "8";
+      data.item: "max_font_size" "60";
+      styles {
+         style { name: "textblock_style";
+            base: "font=Sans font_size=10 align=left color=#000 wrap=word";
+            tag:  "br" "\n";
+            tag:  "hilight" "+ font=Sans:style=Bold";
+            tag:  "b" "+ font=Sans:style=Bold";
+            tag:  "tab" "\t";
 	   }
 	}
       parts {
+         part { name: "label.swallow.background";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1 { relative: 0 0; to: "elm.text"; }
+               rel2 { relative: 1 1; to: "elm.text"; }
+            }
+         }
 	 part { name: "elm.text";
 	    type: TEXTBLOCK;
 	    mouse_events: 0;
@@ -555,7 +569,18 @@ collections {
    }
 
    group { name: "elm/label/base_wrap/default";
+      data.item: "default_font_size" "24";
+      data.item: "min_font_size" "8";
+      data.item: "max_font_size" "60";
       parts {
+         part { name: "label.swallow.background";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1 { relative: 0 0; to: "elm.text"; }
+               rel2 { relative: 1 1; to: "elm.text"; }
+            }
+         }
 	 part { name: "elm.text";
 	    type: TEXTBLOCK;
 	    mouse_events: 0;
@@ -571,19 +596,27 @@ collections {
    }
 
    group { name: "elm/label/base/marker";
-      styles
-	{
-	   style { name: "textblock_style2";
-	      base: "font=Sans:style=Bold font_size=10 align=center color=#fff wrap=word";
-
-	      tag:  "br" "\n";
-	      tag:  "ps" "ps";
-	      tag:  "hilight" "+ color=#ffff";
-	      tag:  "b" "+ color=#ffff";
-	      tag:  "tab" "\t";
-	   }
-	}
+      data.item: "default_font_size" "24";
+      data.item: "min_font_size" "8";
+      data.item: "max_font_size" "60";
+      styles {
+         style { name: "textblock_style2";
+	   base: "font=Sans:style=Bold font_size=10 align=center color=#fff wrap=word";
+           tag:  "br" "\n";
+	   tag:  "hilight" "+ color=#ffff";
+	   tag:  "b" "+ color=#ffff";
+	   tag:  "tab" "\t";
+	 }
+      }
       parts {
+         part { name: "label.swallow.background";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1 { relative: 0 0; to: "elm.text"; }
+               rel2 { relative: 1 1; to: "elm.text"; }
+            }
+         }
 	 part { name: "elm.text";
 	    type: TEXTBLOCK;
 	    mouse_events: 0;
@@ -599,8 +632,19 @@ collections {
    }
 
    group { name: "elm/label/base_wrap/marker";
+      data.item: "default_font_size" "24";
+      data.item: "min_font_size" "8";
+      data.item: "max_font_size" "60";
       parts {
-	 part { name: "elm.text";
+         part { name: "label.swallow.background";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1 { relative: 0 0; to: "elm.text"; }
+               rel2 { relative: 1 1; to: "elm.text"; }
+            }
+         }
+         part { name: "elm.text";
 	    type: TEXTBLOCK;
 	    mouse_events: 0;
 	    scale: 1;
@@ -5644,9 +5688,8 @@ collections {
       styles
 	{
 	   style { name: "entry_textblock_style";
- 	      base: "font=Sans font_size=10 color=#000 wrap=word";
+ 	      base: "font=Sans font_size=10 align=left color=#000 wrap=word";
 	      tag:  "br" "\n";
-	      tag:  "ps" "ps";
 	      tag:  "tab" "\t";
 	      tag:  "em" "+ font=Sans:style=Oblique";
 	      tag:  "b" "+ font=Sans:style=Bold";
@@ -5654,9 +5697,8 @@ collections {
 	      tag:  "hilight" "+ font=Sans:style=Bold";
 	   }
 	   style { name: "entry_textblock_disabled_style";
- 	      base: "font=Sans font_size=10 color=#00000080 wrap=word";
+ 	      base: "font=Sans font_size=10 align=left color=#00000080 wrap=word";
 	      tag:  "br" "\n";
-	      tag:  "ps" "ps";
 	      tag:  "tab" "\t";
 	      tag:  "em" "+ font=Sans:style=Oblique";
 	      tag:  "b" "+ font=Sans:style=Bold";
@@ -5682,7 +5724,8 @@ collections {
 	    source5: "elm/entry/anchor/default"; // anchor under
 //	    source6: "X"; // anchor over
 	    description { state: "default" 0.0;
-               fixed: 1 0;
+               /* we gotta use 0 0 here, because of scrolled entries */
+               fixed: 0 0;
 	       text {
 		  style: "entry_textblock_style";
 		  min: 0 1;
@@ -5723,9 +5766,8 @@ collections {
       styles
 	{
 	   style { name: "entry_textblock_style_charwrap";
- 	      base: "font=Sans font_size=10 color=#000 wrap=char";
+ 	      base: "font=Sans font_size=10 align=left color=#000 wrap=char";
 	      tag:  "br" "\n";
-	      tag:  "ps" "ps";
 	      tag:  "tab" "\t";
 	      tag:  "em" "+ font=Sans:style=Oblique";
 	      tag:  "b" "+ font=Sans:style=Bold";
@@ -5733,9 +5775,8 @@ collections {
 	      tag:  "hilight" "+ font=Sans:style=Bold";
 	   }
 	   style { name: "entry_textblock_disabled_style_charwrap";
- 	      base: "font=Sans font_size=10 color=#00000080 wrap=char";
+ 	      base: "font=Sans font_size=10 align=left color=#00000080 wrap=char";
 	      tag:  "br" "\n";
-	      tag:  "ps" "ps";
 	      tag:  "tab" "\t";
 	      tag:  "em" "+ font=Sans:style=Oblique";
 	      tag:  "b" "+ font=Sans:style=Bold";
@@ -5879,9 +5920,8 @@ collections {
       styles
 	{
 	   style { name: "entry_single_textblock_style";
-	      base: "font=Sans font_size=10 color=#000 wrap=none";
+	      base: "font=Sans font_size=10 align=left color=#000 wrap=none";
 	      tag:  "br" "\n";
-	      tag:  "ps" "ps";
 	      tag:  "tab" "\t";
 	      tag:  "em" "+ font=Sans:style=Oblique";
 	      tag:  "b" "+ font=Sans:style=Bold";
@@ -5889,9 +5929,8 @@ collections {
 	      tag:  "hilight" "+ font=Sans:style=Bold";
 	   }
 	   style { name: "entry_single_textblock_disabled_style";
- 	      base: "font=Sans font_size=10 color=#00000080 wrap=none";
+ 	      base: "font=Sans font_size=10 align=left color=#00000080 wrap=none";
 	      tag:  "br" "\n";
-	      tag:  "ps" "ps";
 	      tag:  "tab" "\t";
 	      tag:  "em" "+ font=Sans:style=Oblique";
 	      tag:  "b" "+ font=Sans:style=Bold";
@@ -7031,6 +7070,78 @@ collections {
 	 }
      }
    }
+   
+   group { name: "elm/photo/base/shadow";
+      	images {
+			image: "shadow.png" COMP;
+			image: "black.png" COMP;
+      	}
+      	script {
+      	public message(Msg_Type:type, id, ...) {
+        	if( (type==MSG_INT_SET) && (id==0) )
+        	{
+            	new w;
+            	new h;
+           
+            	custom_state(PART:"size", "default", 0.0);
+
+            	w = getarg(2);
+            	h = getarg(3);
+            	set_state_val(PART:"size", STATE_REL1_OFFSET, - w/2, - h/2);
+            	set_state_val(PART:"size", STATE_REL2_OFFSET, w/2 + 1, h/2 + 1);
+            	set_state(PART:"size", "custom", 0.0);
+        	}
+    	}
+    	}
+      	parts {
+      	part { name: "size";
+	    	type: SWALLOW;
+	    	description { state: "default" 0.0;
+	    		rel1.relative: 0.5 0.5;
+	    		rel2.relative: 0.5 0.5;
+	    	}
+	 	}
+      	part {
+        	name: "shadow";
+        	type: IMAGE;
+        	repeat_events: 1;
+        	description {
+            	state: "default" 0.0;
+            	rel1.to: "size";
+            	rel2.to: "size";
+            	rel1.relative: -0.06 -0.06;
+            	rel2.relative: 1.07 1.07; 
+            	image.normal: "shadow.png";
+        	}
+    	}
+      	
+    	
+	 	part { name: "elm.swallow.content";
+	    	type: SWALLOW;
+	    	description { state: "default" 0.0;
+            	rel1.offset: 3 3;
+            	rel2.offset: -3 -3;
+	    		fixed: 1 1;
+	    	}
+	 	}
+	 	
+	 	part {
+        	name: "border";
+        	type: IMAGE;
+        	repeat_events: 1;
+        	description {
+            	state: "default" 0.0;
+            	visible: 1;
+            	color: 0 0 0 255;
+            	rel1.to: "size";
+            	rel2.to: "size";
+            	image.normal: "black.png";
+            	image.border: 1 1 1 1;
+            	image.middle: 0;
+        	}
+    	}
+	 	}
+   }
 
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/thumb/base/default";
@@ -7590,7 +7701,7 @@ collections {
 		   }
 	   }
    }
-   group { name: "elm/notify/base/default";
+   group { name: "elm/notify/top/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -7688,7 +7799,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/center";
+   group { name: "elm/notify/center/default";
        //this group is a design similar to the inwin group
        images {
            image: "bt_dis_base.png" COMP;
@@ -7745,7 +7856,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/bottom";
+   group { name: "elm/notify/bottom/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -7843,7 +7954,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/left";
+   group { name: "elm/notify/left/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -7941,7 +8052,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/right";
+   group { name: "elm/notify/right/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -8039,7 +8150,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/top_left";
+   group { name: "elm/notify/top_left/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -8137,7 +8248,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/top_right";
+   group { name: "elm/notify/top_right/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -8235,7 +8346,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/bottom_left";
+   group { name: "elm/notify/bottom_left/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -8333,7 +8444,7 @@ collections {
            }
        }
    }
-   group { name: "elm/notify/base/bottom_right";
+   group { name: "elm/notify/bottom_right/default";
        //this group is a design similar to the inwin group
        images {
            image: "shad_circ.png" COMP;
@@ -8436,13 +8547,15 @@ collections {
    group { name: "elm/slideshow/base/default";
       data {
          item: transitions "fade black_fade horizontal vertical square";
+         item: layouts "fullscreen not_fullscreen";
       }
       parts {
          part { name: "whole";
+         	type: RECT;
             description {
                state: "default" 0.0;
                visible: 1;
-               color: 0 0 0 0;
+               color: 20 20 20 255;
             }
          }
          part { name: "image_1_whole";
@@ -8504,6 +8617,11 @@ collections {
                inherit: "default" 0.0;
                rel1.relative: 0.0 1.0;
                rel2.relative: 1.0 2.0;
+            }
+            description {
+               state: "square_prev_next" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 0;
             }
          }
          part { name: "image_2_whole";
@@ -8599,6 +8717,14 @@ collections {
                rel2.to: "image_1_whole";
                color: 255 255 255 255;
             }
+            description {
+               state: "not_fullscreen" 0.0;
+               rel1.relative: 0.1 0.1;
+               rel1.to: "image_1_whole";
+               rel2.relative: 0.9 0.9;
+               rel2.to: "image_1_whole";
+               color: 255 255 255 255;
+            }
          }
          part { name: "elm.swallow.2";
             type: SWALLOW;
@@ -8607,6 +8733,14 @@ collections {
                state: "default" 0.0;
                color: 255 255 255 255;
                rel1.to: "image_2_whole";
+               rel2.to: "image_2_whole";
+            }
+            description {
+               state: "not_fullscreen" 0.0;
+               color: 255 255 255 255;
+               rel1.relative: 0.1 0.1;
+               rel1.to: "image_2_whole";
+               rel2.relative: 0.9 0.9;
                rel2.to: "image_2_whole";
             }
          }
@@ -8621,6 +8755,24 @@ collections {
          }
       }
       programs {
+      	//Substyle
+      	program { name: "layout_fullscreen";
+            signal: "layout,fullscreen";
+            source: "slideshow";
+            action: STATE_SET "default" 0.0;
+            target: "elm.swallow.1";
+            target: "elm.swallow.2";
+            transition: SINUSOIDAL 1.0;
+        }
+        program { name: "layout_not_fullscreen";
+            signal: "layout,not_fullscreen";
+            source: "slideshow";
+            action: STATE_SET "not_fullscreen" 0.0;
+            target: "elm.swallow.1";
+            target: "elm.swallow.2";
+            transition: SINUSOIDAL 1.0;
+         } 
+      	 //
          program { name: "fade_next";
             signal: "fade,next";
             source: "slideshow";
@@ -8761,6 +8913,7 @@ collections {
          program { name: "square_next_2";
             action: STATE_SET "square_prev_next" 0.0;
             target: "image_2_whole";
+            target: "image_1_whole";
             transition: SINUSOIDAL 1.5;
             after: "end";
          }
@@ -8772,13 +8925,14 @@ collections {
             after: "square_next_2";
          }
          program { name: "end";
+            action: SIGNAL_EMIT "end" "slideshow";
+         }
+         program { name: "end_signal";
+	    signal: "anim,end";
+	    source: "slideshow";
             action: STATE_SET "default" 0.0;
             target: "image_1_whole";
             target: "image_2_whole";
-            after: "end_signal";
-         }
-         program { name: "end_signal";
-            action: SIGNAL_EMIT "end" "slideshow";
          }
       }
    }
@@ -13194,7 +13348,6 @@ collections {
            style { name: "genlist_style";
                base: "font=Sans font_size=10 align=left valign=0.5 color=#000";
                tag:  "br" "\n";
-	       tag:  "ps" "ps";
                tag:  "hilight" "+ font=Sans:style=Bold";
                tag:  "b" "+ font=Sans:style=Bold";
                tag:  "tab" "\t";
@@ -13202,7 +13355,6 @@ collections {
            style { name: "genlist_selected_style";
                base: "font=Sans font_size=10 align=left valign=0.5 color=#fff";
                tag:  "br" "\n";
-	       tag:  "ps" "ps";
                tag:  "hilight" "+ font=Sans:style=Bold";
                tag:  "b" "+ font=Sans:style=Bold";
                tag:  "tab" "\t";
@@ -18546,6 +18698,14 @@ collections {
 	 }
       }
       programs {
+	 program { name: "push_start";
+	    signal: "elm,action,push";
+	    source: "elm";
+	    action:  STATE_SET "hidden" 0.0;
+	    target: "base";
+	    target: "clip";
+            after: "show_start2";
+	 }
          program { name: "show_start";
 	    signal: "elm,action,show";
 	    source: "elm";
@@ -18563,6 +18723,14 @@ collections {
 	 }
          program { name: "show_end";
             action: SIGNAL_EMIT "elm,action,show,finished" "";
+	 }
+         program { name: "pop_start";
+	    signal: "elm,action,pop";
+	    source: "elm";
+	    action:  STATE_SET "visible" 0.0;
+	    target: "base";
+	    target: "clip";
+            after: "hide_start2";
 	 }
          program { name: "hide_start";
 	    signal: "elm,action,hide";
@@ -18583,6 +18751,320 @@ collections {
             action: SIGNAL_EMIT "elm,action,hide,finished" "";
 	 }
          program { name: "reset";
+	    signal: "elm,action,reset";
+	    source: "elm";
+	    action:  STATE_SET "default" 0.0;
+	    target: "base";
+	    target: "clip";
+	 }
+      }
+   }
+
+   group { name: "elm/pager/base/slide";
+      images {
+	 image: "frame_1.png" COMP;
+	 image: "frame_2.png" COMP;
+	 image: "dia_grad.png" COMP;
+      }
+      parts {
+	 part { name: "clip";
+	    type: RECT;
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	       rel1 {
+		  to: "base";
+		  offset: -9999 -9999;
+	       }
+	       rel2 {
+		  to: "base";
+		  offset: 9999 9999;
+	       }
+	       color: 255 255 255 255;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	    }
+	    description { state: "hidden" 0.0;
+	       inherit: "default" 0.0;
+	       color: 255 255 255 0;
+	       visible: 0;
+	    }
+	    description { state: "hidden2" 0.0;
+	       inherit: "default" 0.0;
+	       color: 255 255 255 0;
+	       visible: 0;
+	    }
+	 }
+	 part { name: "base0";
+	    mouse_events:  0;
+	    clip_to: "clip";
+	    description { state: "default" 0.0;
+	       image.normal: "dia_grad.png";
+	       rel1.to: "over";
+	       rel2.to: "over";
+	       fill {
+		  smooth: 0;
+		  size {
+		     relative: 0.0 1.0;
+		     offset: 64 0;
+		  }
+	       }
+	    }
+	 }
+	 part { name: "base";
+	    mouse_events:  0;
+	    clip_to: "clip";
+	    description { state: "default" 0.0;
+	       image {
+		  normal: "frame_2.png";
+		  border: 5 5 32 26;
+		  middle: 0;
+	       }
+	       fill.smooth : 0;
+	    }
+	    description { state: "hidden" 0.0;
+	       inherit: "default" 0.0;
+	       rel1.relative: -1.0 0.0;
+	       rel2.relative: 0.0 1.0;
+	    }
+	    description { state: "hidden2" 0.0;
+	       inherit: "default" 0.0;
+	       rel1.relative: 1.0 0.0;
+	       rel2.relative: 2.0 1.0;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       rel1.relative: 0.0 0.0;
+	       rel2.relative: 1.0 1.0;
+	    }
+	 }
+	 part { name: "over";
+	    mouse_events:  0;
+	    clip_to: "clip";
+	    description { state:    "default" 0.0;
+	       rel1 {
+		  to: "base";
+		  offset: 4 4;
+	       }
+	       rel2 {
+		  to: "base";
+		  offset: -5 -5;
+	       }
+	       image {
+		  normal: "frame_1.png";
+		  border: 2 2 28 22;
+		  middle: 0;
+	       }
+	       fill.smooth : 0;
+	    }
+	 }
+	 part { name: "elm.swallow.content";
+	    type: SWALLOW;
+	    clip_to: "clip";
+	    description { state: "default" 0.0;
+	       rel1 {
+		  to: "base";
+		  offset: 8 8;
+	       }
+	       rel2 {
+		  to: "base";
+		  offset: -9 -9;
+	       }
+	    }
+	 }
+      }
+      programs {
+	 program { name: "push_start";
+	    signal: "elm,action,push";
+	    source: "elm";
+	    action:  STATE_SET "hidden2" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "show_start2";
+	 }
+	 program { name: "show_start";
+	    signal: "elm,action,show";
+	    source: "elm";
+	    action:  STATE_SET "hidden" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "show_start2";
+	 }
+	 program { name: "show_start2";
+	    action:  STATE_SET "visible" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "base";
+	    target: "clip";
+	    after: "show_end";
+	 }
+	 program { name: "show_end";
+	    action: SIGNAL_EMIT "elm,action,show,finished" "";
+	 }
+	 program { name: "pop_start";
+	    signal: "elm,action,pop";
+	    source: "elm";
+	    action:  STATE_SET "visible" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "pop_start2";
+	 }
+	 program { name: "pop_start2";
+	    action:  STATE_SET "hidden2" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "base";
+	    target: "clip";
+	    after: "hide_end";
+	 }
+	 program { name: "hide_start";
+	    signal: "elm,action,hide";
+	    source: "elm";
+	    action:  STATE_SET "visible" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "hide_start2";
+	 }
+	 program { name: "hide_start2";
+	    action:  STATE_SET "hidden" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "base";
+	    target: "clip";
+	    after: "hide_end";
+	 }
+	 program { name: "hide_end";
+	    action: SIGNAL_EMIT "elm,action,hide,finished" "";
+	 }
+	 program { name: "reset";
+	    signal: "elm,action,reset";
+	    source: "elm";
+	    action:  STATE_SET "default" 0.0;
+	    target: "base";
+	    target: "clip";
+	 }
+      }
+   }
+   group { name: "elm/pager/base/slide_invisible";
+      parts {
+	 part { name: "clip";
+	    type: RECT;
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	       rel1 {
+		  to: "base";
+		  offset: -9999 -9999;
+	    }
+	       rel2 {
+		  to: "base";
+		  offset: 9999 9999;
+	       }
+	       color: 255 255 255 255;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	    }
+	    description { state: "hidden" 0.0;
+	       inherit: "default" 0.0;
+	       color: 255 255 255 0;
+	       visible: 0;
+	    }
+	    description { state: "hidden2" 0.0;
+	       inherit: "default" 0.0;
+	       color: 255 255 255 0;
+	       visible: 0;
+	    }
+	 }
+	 part { name: "base";
+	    type: RECT;
+	    mouse_events:  0;
+	    clip_to: "clip";
+	    description { state: "default" 0.0;
+	       color: 0 0 0 0;
+	    }
+	    description { state: "hidden" 0.0;
+	       color: 0 0 0 0;
+	       rel1.relative: -1.0 0.0;
+	       rel2.relative: 0.0 1.0;
+	    }
+	    description { state: "hidden2" 0.0;
+	       color: 0 0 0 0;
+	       rel1.relative: 1.0 0.0;
+	       rel2.relative: 2.0 1.0;
+	    }
+	    description { state: "visible" 0.0;
+	       color: 0 0 0 0;
+	       rel1.relative: 0.0 0.0;
+	       rel2.relative: 1.0 1.0;
+	    }
+	 }
+	 part { name: "elm.swallow.content";
+	    type: SWALLOW;
+	    clip_to: "clip";
+	    description { state: "default" 0.0;
+	       rel1.to: "base";
+	       rel2.to: "base";
+	    }
+	 }
+      }
+      programs {
+	 program { name: "push_start";
+	    signal: "elm,action,push";
+	    source: "elm";
+	    action:  STATE_SET "hidden2" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "show_start2";
+	 }
+	 program { name: "show_start";
+	    signal: "elm,action,show";
+	    source: "elm";
+	    action:  STATE_SET "hidden" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "show_start2";
+	 }
+	 program { name: "show_start2";
+	    action:  STATE_SET "visible" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "base";
+	    target: "clip";
+	    after: "show_end";
+	 }
+	 program { name: "show_end";
+	    action: SIGNAL_EMIT "elm,action,show,finished" "";
+	 }
+	 program { name: "pop_start";
+	    signal: "elm,action,pop";
+	    source: "elm";
+	    action:  STATE_SET "visible" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "pop_start2";
+	 }
+	 program { name: "pop_start2";
+	    action:  STATE_SET "hidden2" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "base";
+	    target: "clip";
+	    after: "hide_end";
+	 }
+	 program { name: "hide_start";
+	    signal: "elm,action,hide";
+	    source: "elm";
+	    action:  STATE_SET "visible" 0.0;
+	    target: "base";
+	    target: "clip";
+	    after: "hide_start2";
+	 }
+	 program { name: "hide_start2";
+	    action:  STATE_SET "hidden" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "base";
+	    target: "clip";
+	    after: "hide_end";
+	 }
+	 program { name: "hide_end";
+	    action: SIGNAL_EMIT "elm,action,hide,finished" "";
+	 }
+	 program { name: "reset";
 	    signal: "elm,action,reset";
 	    source: "elm";
 	    action:  STATE_SET "default" 0.0;
@@ -18713,6 +19195,14 @@ collections {
            }
        }
        programs {
+           program { name: "push_start";
+               signal: "elm,action,push";
+               source: "elm";
+               action:  STATE_SET "hidden" 0.0;
+               target: "clip";
+               target: "clip_base";
+               after: "show_start2";
+           }
            program { name: "show_start";
                signal: "elm,action,show";
                source: "elm";
@@ -18730,6 +19220,14 @@ collections {
            }
            program { name: "show_end";
                action: SIGNAL_EMIT "elm,action,show,finished" "";
+           }
+           program { name: "pop_start";
+               signal: "elm,action,pop";
+               source: "elm";
+               action:  STATE_SET "visible" 0.0;
+               target: "clip";
+               target: "clip_base";
+               after: "hide_start2";
            }
            program { name: "hide_start";
                signal: "elm,action,hide";
@@ -18879,6 +19377,14 @@ collections {
            }
        }
        programs {
+           program { name: "push_start";
+               signal: "elm,action,push";
+               source: "elm";
+               action:  STATE_SET "hidden" 0.0;
+               target: "clip";
+               target: "clip_base";
+               after: "show_start2";
+           }
            program { name: "show_start";
                signal: "elm,action,show";
                source: "elm";
@@ -18896,6 +19402,14 @@ collections {
            }
            program { name: "show_end";
                action: SIGNAL_EMIT "elm,action,show,finished" "";
+           }
+           program { name: "pop_start";
+               signal: "elm,action,pop";
+               source: "elm";
+               action:  STATE_SET "visible" 0.0;
+               target: "clip";
+               target: "clip_base";
+               after: "hide_start2";
            }
            program { name: "hide_start";
                signal: "elm,action,hide";
@@ -18965,6 +19479,13 @@ collections {
            }
        }
        programs {
+           program { name: "push_start";
+               signal: "elm,action,push";
+               source: "elm";
+               action:  STATE_SET "hidden" 0.0;
+               target: "clip";
+               after: "show_start2";
+           }
            program { name: "show_start";
                signal: "elm,action,show";
                source: "elm";
@@ -18980,6 +19501,13 @@ collections {
            }
            program { name: "show_end";
                action: SIGNAL_EMIT "elm,action,show,finished" "";
+           }
+           program { name: "pop_start";
+               signal: "elm,action,pop";
+               source: "elm";
+               action:  STATE_SET "visible" 0.0;
+               target: "clip";
+               after: "hide_start2";
            }
            program { name: "hide_start";
                signal: "elm,action,hide";
@@ -21539,7 +22067,6 @@ collections {
            style { name: "gengrid_style";
                base: "font=Sans font_size=10 align=left valign=0.5 color=#000";
                tag:  "br" "\n";
-	       tag:  "ps" "ps";
                tag:  "hilight" "+ font=Sans:style=Bold";
                tag:  "b" "+ font=Sans:style=Bold";
                tag:  "tab" "\t";
@@ -21547,7 +22074,6 @@ collections {
            style { name: "gengrid_selected_style";
                base: "font=Sans font_size=10 align=left valign=0.5 color=#fff";
                tag:  "br" "\n";
-	       tag:  "ps" "ps";
                tag:  "hilight" "+ font=Sans:style=Bold";
                tag:  "b" "+ font=Sans:style=Bold";
                tag:  "tab" "\t";
