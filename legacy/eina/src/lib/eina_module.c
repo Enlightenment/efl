@@ -647,7 +647,7 @@ eina_module_find(Eina_Array *array, const char *module)
            continue;
 
         if (!strncmp(module, file_m, len))
-           EINA_ARRAY_THREADSAFE_ITER_RETURN(array, m);
+           EINA_ARRAY_THREADSAFE_ITER_ESCAPE(array, return m;);
      }
    );
 

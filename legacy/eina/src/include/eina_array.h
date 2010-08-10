@@ -194,14 +194,14 @@ EAPI Eina_Accessor *            eina_array_accessor_new(Eina_Array *array) EINA_
 #ifdef EINA_RWLOCKS_ENABLED
 
 /**
- * @def EINA_ARRAY_THREADSAFE_ITER_RETURN
- * @brief Macro to perform a return while using EINA_ARRAY_THREADSAFE_ITER_NEXT
+ * @def EINA_ARRAY_THREADSAFE_ITER_ESCAPE
+ * @brief Macro to break a loop while using EINA_ARRAY_THREADSAFE_ITER_NEXT
  *
  * @param array The array being iterated over.
- * @param retval The value to be returned
+ * @param esc The code to "escape" the loop with
  *
- * This macro should be used any time the user wishes to perform a return
- * statement while using EINA_ARRAY_THREADSAFE_ITER_RETURN to unlock any mutexes
+ * This macro should be used any time the user wishes to leave break the loop
+ * while using EINA_ARRAY_THREADSAFE_ITER_NEXT. It will unlock any mutexes
  * which may have been locked while iterating.  Failure to use this will likely
  * result in a deadlock.
  *
@@ -222,25 +222,24 @@ EAPI Eina_Accessor *            eina_array_accessor_new(Eina_Array *array) EINA_
  *      if (item)
  *        free(item);
  *      else
- *        EINA_ARRAY_THREADSAFE_ITER_RETURN(array, NULL);
+ *        EINA_ARRAY_THREADSAFE_ITER_ESCAPE(array, return NULL;);
   *   }
  * );
  * @endcode
  */
-#define EINA_ARRAY_THREADSAFE_ITER_RETURN(array, retval) \
+#define EINA_ARRAY_THREADSAFE_ITER_ESCAPE(array, esc...) \
 do \
   { \
      if (_eina_array_threadsafety)    \
        pthread_rwlock_unlock(&(array)->lock); \
-     return (retval); \
+     esc \
   } \
 while (0)
 
 #else
 
-#define EINA_ARRAY_THREADSAFE_ITER_RETURN(array, retval) \
-     return (retval)
-
+#define EINA_ARRAY_THREADSAFE_ITER_ESCAPE(array, esc...) \
+     esc
 #endif
 
 #include "eina_inline_array.x"
