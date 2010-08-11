@@ -1246,26 +1246,33 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
            &(fmt->color.strikethrough.b), &(fmt->color.strikethrough.a));
    else if (cmd == alignstr)
      {
-        if (!strcmp(tmp_param, "middle")) fmt->halign = 0.5;
-        else if (!strcmp(tmp_param, "center")) fmt->halign = 0.5;
-        else if (!strcmp(tmp_param, "left")) fmt->halign = 0.0;
-        else if (!strcmp(tmp_param, "right")) fmt->halign = 1.0;
+        if (!strcmp(tmp_param, "auto"))
+          {
+             fmt->halign_auto = EINA_TRUE;
+          }
         else
           {
-             char *endptr = NULL;
-             double val = strtod(tmp_param, &endptr);
-             if (endptr)
+             if (!strcmp(tmp_param, "middle")) fmt->halign = 0.5;
+             else if (!strcmp(tmp_param, "center")) fmt->halign = 0.5;
+             else if (!strcmp(tmp_param, "left")) fmt->halign = 0.0;
+             else if (!strcmp(tmp_param, "right")) fmt->halign = 1.0;
+             else
                {
-                  while (*endptr && _is_white(*endptr))
-                    endptr++;
-                  if (*endptr == '%')
-                    val /= 100.0;
+                  char *endptr = NULL;
+                  double val = strtod(tmp_param, &endptr);
+                  if (endptr)
+                    {
+                       while (*endptr && _is_white(*endptr))
+                         endptr++;
+                       if (*endptr == '%')
+                         val /= 100.0;
+                    }
+                  fmt->halign = val;
+                  if (fmt->halign < 0.0) fmt->halign = 0.0;
+                  else if (fmt->halign > 1.0) fmt->halign = 1.0;
                }
-             fmt->halign = val;
-             if (fmt->halign < 0.0) fmt->halign = 0.0;
-             else if (fmt->halign > 1.0) fmt->halign = 1.0;
+             fmt->halign_auto = EINA_FALSE;
           }
-        fmt->halign_auto = EINA_FALSE;
      }
    else if (cmd == valignstr)
      {
