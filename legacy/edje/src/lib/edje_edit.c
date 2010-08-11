@@ -5904,25 +5904,26 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
       BUF_APPENDF(I2"max: %d %d;\n", w, h);
 
    /* Data */
-   if ((ll = edje_edit_group_data_list_get(obj)))
+   if (pce->ref->data)
      {
-	BUF_APPEND(I2"data {\n");
+        Eina_Iterator *it;
+        Eina_Hash_Tuple *tuple;
+        BUF_APPEND(I2"data {\n");
 
-	EINA_LIST_FOREACH(ll, l, data)
-	  {
-	     const char *value = edje_edit_group_data_value_get(obj, data);
-	     ret &= !!value;
-	     BUF_APPENDF(I3"item: \"%s\" \"%s\";\n", data, value);
-	  }
+        it = eina_hash_iterator_tuple_new(pce->ref->data);
 
-	BUF_APPEND(I2"}\n\n");
-	edje_edit_string_list_free(ll);
-     }
+        if (!it)
+          {
+             ERR("Generating EDC for Group[%s] data.", group);
+             return EINA_FALSE;
+          }
 
-   if (!ret)
-     {
-        ERR("Generating EDC for Group[%s] data.", group);
-        return EINA_FALSE;
+        EINA_ITERATOR_FOREACH(it, tuple)
+           BUF_APPENDF(I3"item: \"%s\" \"%s\";\n", (char *)tuple->key,
+                         (char *)tuple->data);
+
+        eina_iterator_free(it);
+        BUF_APPEND(I2"}\n\n");
      }
 
    //TODO Support script
