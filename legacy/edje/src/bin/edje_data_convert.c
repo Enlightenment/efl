@@ -139,11 +139,11 @@ _edje_edd_old_init(void)
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_old_edje_part_collection_directory, Old_Edje_Part_Collection_Directory, "entries", entries, _edje_edd_old_edje_part_collection_directory_entry);
 
    /* generic data attachment */
-   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Data);
+   eet_eina_file_data_descriptor_class_set(&eddc, "Edje_Data", sizeof (Old_Edje_Data));
    _edje_edd_old_edje_data =
      eet_data_descriptor_file_new(&eddc);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_data, Edje_Data, "key", key, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_data, Edje_Data, "value", value, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_data, Old_Edje_Data, "key", key, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_data, Old_Edje_Data, "value", value, EET_T_STRING);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Style_Tag);
    _edje_edd_old_edje_style_tag =

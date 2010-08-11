@@ -243,8 +243,6 @@ typedef struct _Edje_Part_Description_Spec_Box       Edje_Part_Description_Spec_
 typedef struct _Edje_Part_Description_Spec_Table     Edje_Part_Description_Spec_Table;
 typedef struct _Edje_Patterns                        Edje_Patterns;
 
-typedef struct _Old_Edje_File			     Old_Edje_File;
-
 #define EDJE_INF_MAX_W 100000
 #define EDJE_INF_MAX_H 100000
 

@@ -111,7 +111,7 @@ _edje_file_convert(Eet_File *ef, Old_Edje_File *oedf)
    Edje_Font_Directory_Entry *fnt;
    Edje_File *edf;
    Eina_List *l;
-   Edje_Data *ed;
+   Old_Edje_Data *ed;
 
    if (oedf->version < 2) return NULL;
 
@@ -195,7 +195,7 @@ _edje_collection_convert(Eet_File *ef, Edje_Part_Collection_Directory_Entry *ce,
    Edje_Part_Collection *edc;
    Old_Edje_Part *part;
    Edje_Program *pg;
-   Edje_Data *di;
+   Old_Edje_Data *di;
    Eina_List *l;
    unsigned int k;
 

@@ -1194,11 +1194,11 @@ st_fonts_font(void)
 static void
 st_data_item(void)
 {
-   Edje_Data *di;
+   Old_Edje_Data *di;
 
    check_arg_count(2);
 
-   di = mem_alloc(SZ(Edje_Data));
+   di = mem_alloc(SZ(Old_Edje_Data));
    di->key = parse_str(0);
    di->value = parse_str(1);
    edje_file->data = eina_list_append(edje_file->data, di);
@@ -1221,7 +1221,7 @@ st_data_file(void)
 {
    const char *data;
    const char *over;
-   Edje_Data *di;
+   Old_Edje_Data *di;
    char *filename;
    char *value;
    int fd;
@@ -1230,7 +1230,7 @@ st_data_file(void)
 
    check_arg_count(2);
 
-   di = mem_alloc(SZ(Edje_Data));
+   di = mem_alloc(SZ(Old_Edje_Data));
    di->key = parse_str(0);
    filename = parse_str(1);
 
@@ -1868,12 +1868,12 @@ static void
 st_collections_group_data_item(void)
 {
    Old_Edje_Part_Collection *pc;
-   Edje_Data *di;
+   Old_Edje_Data *di;
 
    check_arg_count(2);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
-   di = mem_alloc(SZ(Edje_Data));
+   di = mem_alloc(SZ(Old_Edje_Data));
    di->key = parse_str(0);
    di->value = parse_str(1);
    pc->data = eina_list_append(pc->data, di);

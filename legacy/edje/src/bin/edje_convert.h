@@ -1,6 +1,8 @@
 #ifndef EDJE_CONVERT_H__
 # define EDJE_CONVERT_H__
 
+
+typedef struct _Old_Edje_File			Old_Edje_File;
 typedef struct _Old_Edje_Image_Directory	Old_Edje_Image_Directory;
 typedef struct _Old_Edje_Font_Directory         Old_Edje_Font_Directory;
 typedef struct _Old_Edje_External_Directory	Old_Edje_External_Directory;
@@ -9,9 +11,9 @@ typedef struct _Old_Edje_Part_Collection	Old_Edje_Part_Collection;
 typedef struct _Old_Edje_Part_Collection_Directory Old_Edje_Part_Collection_Directory;
 typedef struct _Old_Edje_Part_Description       Old_Edje_Part_Description;
 typedef struct _Old_Edje_Part_Description_Spec_Image Old_Edje_Part_Description_Spec_Image;
-typedef struct _Edje_Data                       Edje_Data;
+typedef struct _Old_Edje_Data                   Old_Edje_Data;
 
-struct _Edje_Data
+struct _Old_Edje_Data
 {
    const char *key;
    char *value;
