@@ -1152,7 +1152,7 @@ _format_clean_param(char *dst, const char *src)
  *
  * @param obj the evas object - should not be NULL.
  * @param fmt The format to populate - should not be NULL.
- * @param[in] cmd the command to proccess
+ * @param[in] cmd the command to proccess, should be stringshared.
  * @param[in] param the parameter of the command.
  */
 static void
@@ -5887,7 +5887,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
    if (n1 == n2)
      {
         text = eina_ustrbuf_string_get(n1->unicode);
-        eina_ustrbuf_append_length(buf, text, cur2->pos - cur1->pos);
+        eina_ustrbuf_append_length(buf, text + cur1->pos, cur2->pos - cur1->pos);
      }
    else
      {
@@ -5903,11 +5903,10 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 
         len = eina_ustrbuf_length_get(n1->unicode);
         text = eina_ustrbuf_string_get(n1->unicode);
-        eina_ustrbuf_append_length(buf, text, len - cur1->pos);
+        eina_ustrbuf_append_length(buf, text + cur1->pos, len - cur1->pos);
 
-        len = eina_ustrbuf_length_get(n2->unicode);
         text = eina_ustrbuf_string_get(n2->unicode);
-        eina_ustrbuf_append_length(buf, text + cur2->pos, len - cur2->pos);
+        eina_ustrbuf_append_length(buf, text, cur2->pos);
      }
 
    /* return the string */
