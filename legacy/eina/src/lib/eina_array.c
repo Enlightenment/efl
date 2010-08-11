@@ -115,10 +115,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-# include <pthread.h>
-#endif
-
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_error.h"
@@ -185,10 +181,6 @@ struct _Eina_Accessor_Array
 
 static int _eina_array_log_dom = -1;
 
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-Eina_Bool _eina_array_threadsafety = EINA_FALSE;
-#endif
-
 #ifdef ERR
 #undef ERR
 #endif
@@ -240,6 +232,20 @@ eina_array_iterator_free(Eina_Iterator_Array *it)
 }
 
 static Eina_Bool
+eina_array_iterator_lock(Eina_Iterator_Array *it)
+{
+   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it, EINA_FALSE);
+   return eina_array_wrlock((Eina_Array *) it->array);
+}
+
+static Eina_Bool
+eina_array_iterator_unlock(Eina_Iterator_Array *it)
+{
+   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it, EINA_FALSE);
+   return eina_array_unlock(it->array);
+}
+
+static Eina_Bool
 eina_array_accessor_get_at(Eina_Accessor_Array *it,
                            unsigned int idx,
                            void **data)
@@ -267,6 +273,20 @@ eina_array_accessor_free(Eina_Accessor_Array *it)
 {
    EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it);
    MAGIC_FREE(it);
+}
+
+static Eina_Bool
+eina_array_accessor_lock(Eina_Accessor_Array *it)
+{
+   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it, EINA_FALSE);
+   return eina_array_wrlock((Eina_Array *) it->array);
+}
+
+static Eina_Bool
+eina_array_accessor_unlock(Eina_Accessor_Array *it)
+{
+   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it, EINA_FALSE);
+   return eina_array_unlock(it->array);
 }
 
 EAPI Eina_Bool
@@ -413,7 +433,7 @@ eina_array_new(unsigned int step)
 {
    Eina_Array *array;
 
-        eina_error_set(0);
+   eina_error_set(0);
    array = malloc(sizeof (Eina_Array));
    if (!array)
      {
@@ -427,12 +447,9 @@ eina_array_new(unsigned int step)
    array->total = 0;
    array->count = 0;
    array->step = step;
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+#ifdef EINA_RWLOCKS_ENABLED
    array->threadsafe = EINA_FALSE;
-   array->lockcount = 0;
 #endif
-
-   DBG("array=%p", array);
 
    return array;
 }
@@ -456,9 +473,9 @@ eina_array_new(unsigned int step)
  * #EINA_ERROR_OUT_OF_MEMORY.
  */
 EAPI Eina_Array *
-eina_array_threadsafe_new(__UNUSED__ unsigned int step)
+eina_array_threadsafe_new(unsigned int step)
 {
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+#ifdef EINA_RWLOCKS_ENABLED
    Eina_Array *array;
 
         eina_error_set(0);
@@ -479,11 +496,10 @@ eina_array_threadsafe_new(__UNUSED__ unsigned int step)
    pthread_rwlock_init(&array->lock, NULL);
    array->threadsafe = EINA_TRUE;
 
-
-   DBG("array=%p", array);
-
    return array;
 #else
+   (void) step;
+
    return NULL;
 #endif
 }
@@ -508,8 +524,7 @@ eina_array_free(Eina_Array *array)
    if (!eina_array_wrlock(array))
      return;
    EINA_MAGIC_CHECK_ARRAY(array);
-   DBG("array=%p", array);
-#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+#ifdef EINA_RWLOCKS_ENABLED
    if (array->threadsafe)
      pthread_rwlock_destroy(&array->lock);
 #endif
@@ -524,21 +539,21 @@ eina_array_free(Eina_Array *array)
  *
  * This function sets the step of @p array to @p step. For performance
  * reasons, there is no check of @p array. If it is @c NULL or
- * invalid, the program may crash.
+ * invalid, the program may crash. This function should be called when
+ * the array is not initialized.
  */
 EAPI void
 eina_array_step_set(Eina_Array *array, unsigned int step)
 {
    EINA_SAFETY_ON_NULL_RETURN(array);
-   if (!eina_array_wrlock(array))
-     return;
    array->data = NULL;
    array->total = 0;
    array->count = 0;
    array->step = step;
+#ifdef EINA_RWLOCKS_ENABLED
+   array->threadsafe = EINA_FALSE;
+#endif
    EINA_MAGIC_SET(array, EINA_MAGIC_ARRAY);
-   DBG("array=%p, step=%u", array, step);
-   eina_array_unlock(array);
 }
 
 /**
@@ -554,11 +569,12 @@ EAPI void
 eina_array_clean(Eina_Array *array)
 {
    EINA_SAFETY_ON_NULL_RETURN(array);
+   EINA_MAGIC_CHECK_ARRAY(array);
+
    if (!eina_array_wrlock(array))
      return;
-   EINA_MAGIC_CHECK_ARRAY(array);
+
    array->count = 0;
-   DBG("array=%p", array);
    eina_array_unlock(array);
 }
 
@@ -576,10 +592,9 @@ EAPI void
 eina_array_flush(Eina_Array *array)
 {
    EINA_SAFETY_ON_NULL_RETURN(array);
+   EINA_MAGIC_CHECK_ARRAY(array);
    if (!eina_array_wrlock(array))
      return;
-   EINA_MAGIC_CHECK_ARRAY(array);
-   DBG("array=%p", array);
    array->count = 0;
    array->total = 0;
 
@@ -628,8 +643,6 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data,
    if (!eina_array_wrlock(array))
      return EINA_FALSE;
    EINA_MAGIC_CHECK_ARRAY(array);
-
-   DBG("array=%p, keep=%p, gdata=%p", array, keep, gdata);
 
    if (array->total == 0)
       return EINA_TRUE;
@@ -727,7 +740,7 @@ eina_array_iterator_new(const Eina_Array *array)
    EINA_SAFETY_ON_NULL_RETURN_VAL(array, NULL);
    EINA_MAGIC_CHECK_ARRAY(array);
 
-        eina_error_set(0);
+   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Array));
    if (!it)
      {
@@ -745,7 +758,11 @@ eina_array_iterator_new(const Eina_Array *array)
          eina_array_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(eina_array_iterator_free);
 
-   DBG("array=%p, iterator=%p", array, it);
+   if (array->threadsafe)
+     {
+	it->iterator.lock = FUNC_ITERATOR_LOCK(eina_array_iterator_lock);
+	it->iterator.unlock = FUNC_ITERATOR_LOCK(eina_array_iterator_unlock);
+     }
 
    return &it->iterator;
 }
@@ -788,7 +805,11 @@ eina_array_accessor_new(const Eina_Array *array)
          eina_array_accessor_get_container);
    it->accessor.free = FUNC_ACCESSOR_FREE(eina_array_accessor_free);
 
-   DBG("array=%p, accessor=%p", array, it);
+   if (array->threadsafe)
+     {
+	it->accessor.lock = FUNC_ACCESSOR_LOCK(eina_array_accessor_lock);
+	it->accessor.unlock = FUNC_ACCESSOR_LOCK(eina_array_accessor_unlock);
+     }
 
    return &it->accessor;
 }

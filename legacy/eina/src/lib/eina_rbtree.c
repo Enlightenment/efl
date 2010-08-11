@@ -96,9 +96,8 @@ _eina_rbtree_iterator_free(Eina_Iterator_Rbtree *it)
    Eina_Array_Iterator et;
    unsigned int i;
 
-   EINA_ARRAY_THREADSAFE_ITER_NEXT(it->stack, i, item, et,
+   EINA_ARRAY_ITER_NEXT(it->stack, i, item, et)
      free(item);
-   );
 
    eina_array_free(it->stack);
                      free(it);

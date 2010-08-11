@@ -629,7 +629,7 @@ eina_module_find(const Eina_Array *array, const char *module)
    Eina_Array_Iterator iterator;
    Eina_Module *m;
 
-   EINA_ARRAY_THREADSAFE_ITER_NEXT(array, i, m, iterator,
+   EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
      {
         char *file_m;
         char *tmp;
@@ -647,9 +647,8 @@ eina_module_find(const Eina_Array *array, const char *module)
            continue;
 
         if (!strncmp(module, file_m, len))
-           EINA_ARRAY_THREADSAFE_ITER_ESCAPE(array, return m;);
+	   return m;;
      }
-   );
 
    return NULL;
 }
@@ -666,9 +665,8 @@ EAPI void eina_module_list_load(Eina_Array *array)
 
    EINA_SAFETY_ON_NULL_RETURN(array);
    DBG("array %p, count %u", array, array->count);
-   EINA_ARRAY_THREADSAFE_ITER_NEXT(array, i, m, iterator,
+   EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
      eina_module_load(m);
-   );
 }
 
 /**
@@ -683,9 +681,8 @@ EAPI void eina_module_list_unload(Eina_Array *array)
 
    EINA_SAFETY_ON_NULL_RETURN(array);
    DBG("array %p, count %u", array, array->count);
-   EINA_ARRAY_THREADSAFE_ITER_NEXT(array, i, m, iterator,
+   EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
      eina_module_unload(m);
-   );
 }
 
 /**
@@ -700,9 +697,8 @@ EAPI void eina_module_list_free(Eina_Array *array)
 
    EINA_SAFETY_ON_NULL_RETURN(array);
    DBG("array %p, count %u", array, array->count);
-   EINA_ARRAY_THREADSAFE_ITER_NEXT(array, i, m, iterator,
+   EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
      eina_module_free(m);
-   );
 
    eina_array_flush(array);
 }

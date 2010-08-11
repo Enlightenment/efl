@@ -19,6 +19,10 @@
 #ifndef EINA_INLINE_ARRAY_X_
 #define EINA_INLINE_ARRAY_X_
 
+#ifdef EINA_RWLOCKS_ENABLED
+# include <pthread.h>
+#endif
+
 /**
  * @cond LOCAL
  */
@@ -51,12 +55,14 @@ EAPI Eina_Bool eina_array_grow(Eina_Array *array);
  * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, #EINA_TRUE is
  * returned.
  */
+#include <stdio.h>
+
 static inline Eina_Bool
 eina_array_push(Eina_Array *array, const void *data)
 {
    if (!data) return EINA_FALSE;
 
-   if (!eina_array_wrlock(array))
+   if (EINA_UNLIKELY(!eina_array_wrlock(array)))
      return EINA_FALSE;
 
    if (EINA_UNLIKELY((array->count + 1) > array->total))
@@ -89,17 +95,16 @@ static inline void *
 eina_array_pop(Eina_Array *array)
 {
    void *ret = NULL;
-   
-   if (!eina_array_wrlock(array))
+
+   if (EINA_UNLIKELY(!eina_array_wrlock(array)))
      return NULL;
 
    if (array->count <= 0)
-     {
-        eina_array_unlock(array);
-        return NULL;
-     }
+     goto on_empty;
+
    ret = array->data[--array->count];
-   
+
+ on_empty:
    eina_array_unlock(array);
 
    return ret;
@@ -153,6 +158,109 @@ static inline unsigned int
 eina_array_count_get(const Eina_Array *array)
 {
    return array->count;
+}
+
+#ifdef EINA_RWLOCKS_ENABLED
+static inline Eina_Bool
+eina_array_rdlock(const Eina_Array *array)
+{
+   if (!array) return EINA_FALSE;
+   if (array->threadsafe)
+      {
+	 int ret;
+
+	 ret = pthread_rwlock_rdlock(&((Eina_Array*) array)->lock);
+	 if ((ret != 0) && (ret != EDEADLK))
+	    return EINA_FALSE;
+      }
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_array_wrlock(Eina_Array *array)
+{
+   if (!array) return EINA_FALSE;
+   if (array->threadsafe)
+      {
+	 int ret;
+
+	 ret = pthread_rwlock_wrlock(&array->lock);
+	 if ((ret != 0) && (ret != EDEADLK))
+	    return EINA_FALSE;
+      }
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_array_unlock(const Eina_Array *array)
+{
+   if (!array) return EINA_FALSE;
+   if (array->threadsafe)
+      if (pthread_rwlock_unlock(&((Eina_Array*) array)->lock))
+         return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+#else
+
+static inline Eina_Bool
+eina_array_rdlock(const Eina_Array *array)
+{
+   if (!array) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_array_wrlock(Eina_Array *array)
+{
+   if (!array) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_array_unlock(const Eina_Array *array)
+{
+   if (!array) return EINA_FALSE;
+   return EINA_TRUE;
+}
+#endif
+
+/**
+ * @brief Provide a safe way to iterate over an array
+ *
+ * @param array The array to iterate over.
+ * @param cb The callback to call for each item.
+ * @param fdata The user data to pass to the callback.
+ * @return EINA_TRUE if it successfully iterate all items of the array.
+ *
+ * This function provide a safe way to iterate over an array. If
+ * the array was created with @p eina_array_threadsafe_new, it will
+ * be correctly locked and unlocked. @p cb should return EINA_TRUE
+ * as long as you want the function to continue iterating, by
+ * returning EINA_FALSE it will stop and return EINA_FALSE as a
+ * result.
+ */
+static inline Eina_Bool
+eina_array_foreach(Eina_Array *array, Eina_Each_Cb cb, void *fdata)
+{
+   void *data;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+   Eina_Bool ret = EINA_TRUE;
+
+   if (EINA_UNLIKELY(!eina_array_wrlock(array)))
+     return EINA_FALSE;
+
+   EINA_ARRAY_ITER_NEXT(array, i, data, iterator)
+     if (cb(array, data, fdata) != EINA_TRUE)
+       {
+	  ret = EINA_FALSE;
+	  break;
+       }
+
+   eina_array_unlock(array);
+
+   return ret;
 }
 
 /**

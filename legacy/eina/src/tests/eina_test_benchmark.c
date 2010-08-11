@@ -51,22 +51,21 @@ START_TEST(eina_benchmark_simple)
    fail_if(!eb);
 
    eina_benchmark_register(eb, "specimens_check",
-                           EINA_BENCHMARK(
-                              _eina_benchmark_specimens), 1000, 1100, 100);
+                           EINA_BENCHMARK(_eina_benchmark_specimens),
+			   1000, 1100, 100);
 
    ea = eina_benchmark_run(eb);
    fail_if(!ea);
 
-   EINA_ARRAY_THREADSAFE_ITER_NEXT(ea, i, tmp, it,
+   EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
      {
         fail_if(!tmp);
         fail_if(unlink(tmp));
      }
-   );
 
-      fail_if(global_test != 499500);
+   fail_if(global_test != 499500);
 
-      eina_benchmark_free(eb);
+   eina_benchmark_free(eb);
 }
 END_TEST
 

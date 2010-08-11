@@ -255,15 +255,15 @@ typedef int (*Eina_Compare_Cb)(const void *data1, const void *data2);
  */
 #define EINA_COMPARE_CB(function) ((Eina_Compare_Cb)function)
 
-typedef Eina_Bool (*Eina_Each)(const void *container,
-                               void *data,
-                               void *fdata);
+typedef Eina_Bool (*Eina_Each_Cb)(const void *container,
+				  void *data,
+				  void *fdata);
 
 /**
- * @def EINA_EACH
+ * @def EINA_EACH_CB
  * Macro to cast to Eina_Each.
  */
-#define EINA_EACH(Function) ((Eina_Each)Function)
+#define EINA_EACH_CB(Function) ((Eina_Each_Cb)Function)
 
 /**
  * @typedef Eina_Free_Cb

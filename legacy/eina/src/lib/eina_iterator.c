@@ -186,7 +186,7 @@ eina_iterator_next(Eina_Iterator *iterator, void **data)
  */
 EAPI void
 eina_iterator_foreach(Eina_Iterator *iterator,
-                      Eina_Each cb,
+                      Eina_Each_Cb cb,
                       const void *fdata)
 {
    const void *container;
@@ -198,11 +198,61 @@ eina_iterator_foreach(Eina_Iterator *iterator,
    EINA_SAFETY_ON_NULL_RETURN(iterator->next);
    EINA_SAFETY_ON_NULL_RETURN(cb);
 
+   if (!eina_iterator_lock(iterator)) return ;
+
    container = iterator->get_container(iterator);
    while (iterator->next(iterator, &data) == EINA_TRUE) {
         if (cb(container, data, (void *)fdata) != EINA_TRUE)
-           return;
+	   goto on_exit;
      }
+
+ on_exit:
+   (void) eina_iterator_unlock(iterator);
+}
+
+/**
+ * @brief Lock the container of the iterator.
+ *
+ * @param iterator The iterator.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * If the container of the @p iterator permit it, it will be locked.
+ * If @p iterator is @c NULL or if a problem occured, #EINA_FALSE is
+ * returned, otherwise #EINA_TRUE is returned. If the container
+ * is not lockable, it will return EINA_TRUE.
+ */
+EAPI Eina_Bool
+eina_iterator_lock(Eina_Iterator *iterator)
+{
+   EINA_MAGIC_CHECK_ITERATOR(iterator);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iterator, EINA_FALSE);
+
+   if (iterator->lock)
+      return iterator->lock(iterator);
+   return EINA_TRUE;
+}
+
+/**
+ * @brief Unlock the container of the iterator.
+ *
+ * @param iterator The iterator.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * If the container of the @p iterator permit it and was previously
+ * locked, it will be unlocked. If @p iterator is @c NULL or if a
+ * problem occured, #EINA_FALSE is returned, otherwise #EINA_TRUE
+ * is returned. If the container is not lockable, it will return
+ * EINA_TRUE.
+ */
+EAPI Eina_Bool
+eina_iterator_unlock(Eina_Iterator *iterator)
+{
+   EINA_MAGIC_CHECK_ITERATOR(iterator);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iterator, EINA_FALSE);
+
+   if (iterator->unlock)
+      return iterator->unlock(iterator);
+   return EINA_TRUE;
 }
 
 /**

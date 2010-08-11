@@ -214,7 +214,7 @@ START_TEST(eina_rbtree_remove)
    _eina_rbtree_black_height(&root->node,
                              EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
 
-   EINA_ARRAY_THREADSAFE_ITER_NEXT(ea, i, item, it,
+   EINA_ARRAY_ITER_NEXT(ea, i, item, it)
      {
         root = (Eina_Rbtree_Int *)eina_rbtree_inline_remove(
               &root->node,
@@ -225,7 +225,6 @@ START_TEST(eina_rbtree_remove)
         _eina_rbtree_black_height(&root->node,
                                   EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
      }
-   );
 
    fail_if(root != NULL);
 

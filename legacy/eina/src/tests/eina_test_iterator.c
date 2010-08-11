@@ -60,7 +60,7 @@ START_TEST(eina_iterator_array_simple)
    fail_if(!it);
 
    i = -1;
-   eina_iterator_foreach(it, EINA_EACH(eina_iterator_array_check), &i);
+   eina_iterator_foreach(it, EINA_EACH_CB(eina_iterator_array_check), &i);
    fail_if(i != 199);
 
    fail_if(eina_iterator_container_get(it) != ea);
@@ -123,15 +123,15 @@ START_TEST(eina_iterator_hash_simple)
    fail_if(eina_hash_add(hash, "6", &array[4]) != EINA_TRUE);
 
    it = eina_hash_iterator_key_new(hash);
-   eina_iterator_foreach(it, EINA_EACH(eina_iterator_hash_key_check), NULL);
+   eina_iterator_foreach(it, EINA_EACH_CB(eina_iterator_hash_key_check), NULL);
    eina_iterator_free(it);
 
    it = eina_hash_iterator_data_new(hash);
-   eina_iterator_foreach(it, EINA_EACH(eina_iterator_hash_data_check), NULL);
+   eina_iterator_foreach(it, EINA_EACH_CB(eina_iterator_hash_data_check), NULL);
    eina_iterator_free(it);
 
    it = eina_hash_iterator_tuple_new(hash);
-   eina_iterator_foreach(it, EINA_EACH(eina_iterator_hash_tuple_check), NULL);
+   eina_iterator_foreach(it, EINA_EACH_CB(eina_iterator_hash_tuple_check), NULL);
    eina_iterator_free(it);
 
    eina_hash_free(hash);
@@ -215,7 +215,7 @@ START_TEST(eina_iterator_inlist_simple)
    it = eina_inlist_iterator_new(lst);
    fail_if(!it);
 
-   eina_iterator_foreach(it, EINA_EACH(eina_iterator_inlist_data_check), &i);
+   eina_iterator_foreach(it, EINA_EACH_CB(eina_iterator_inlist_data_check), &i);
    eina_iterator_free(it);
 
    fail_if(i != 5);
@@ -282,7 +282,7 @@ START_TEST(eina_iterator_list_simple)
    it = eina_list_iterator_new(list);
    fail_if(!it);
 
-   eina_iterator_foreach(it, EINA_EACH(eina_iterator_list_data_check), &i);
+   eina_iterator_foreach(it, EINA_EACH_CB(eina_iterator_list_data_check), &i);
    eina_iterator_free(it);
 }
 END_TEST
@@ -394,42 +394,43 @@ START_TEST(eina_iterator_rbtree_simple)
    Eina_Iterator *it;
    int i;
 
-   root = eina_rbtree_inline_insert(NULL, _eina_rbtree_int_new(
-                                       10),
-                                    EINA_RBTREE_CMP_NODE_CB(
-                                       eina_rbtree_int_cmp), NULL);
+   root = eina_rbtree_inline_insert(NULL,
+				    _eina_rbtree_int_new(10),
+                                    EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp),
+				    NULL);
    fail_if(!root);
 
-   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(
-                                       1337),
-                                    EINA_RBTREE_CMP_NODE_CB(
-                                       eina_rbtree_int_cmp), NULL);
+   root = eina_rbtree_inline_insert(root,
+				    _eina_rbtree_int_new(1337),
+                                    EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp),
+				    NULL);
    fail_if(!root);
 
-   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(
-                                       27),
-                                    EINA_RBTREE_CMP_NODE_CB(
-                                       eina_rbtree_int_cmp), NULL);
+   root = eina_rbtree_inline_insert(root,
+				    _eina_rbtree_int_new(27),
+                                    EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp),
+				    NULL);
    fail_if(!root);
 
-   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(
-                                       69),
-                                    EINA_RBTREE_CMP_NODE_CB(
-                                       eina_rbtree_int_cmp), NULL);
+   root = eina_rbtree_inline_insert(root,
+				    _eina_rbtree_int_new(69),
+                                    EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp),
+				    NULL);
    fail_if(!root);
 
-   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(
-                                       42),
-                                    EINA_RBTREE_CMP_NODE_CB(
-                                       eina_rbtree_int_cmp), NULL);
+   root = eina_rbtree_inline_insert(root,
+				    _eina_rbtree_int_new(42),
+                                    EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp),
+				    NULL);
    fail_if(!root);
 
    i = 0;
    it = eina_rbtree_iterator_prefix(root);
    fail_if(!it);
 
-   eina_iterator_foreach(it, EINA_EACH(
-                            eina_iterator_rbtree_data_check_prefix), &i);
+   eina_iterator_foreach(it,
+			 EINA_EACH_CB(eina_iterator_rbtree_data_check_prefix),
+			 &i);
    eina_iterator_free(it);
 
    /* This will return the item sorted. */
@@ -437,16 +438,18 @@ START_TEST(eina_iterator_rbtree_simple)
    it = eina_rbtree_iterator_infix(root);
    fail_if(!it);
 
-   eina_iterator_foreach(it, EINA_EACH(
-                            eina_iterator_rbtree_data_check_sorted), &i);
+   eina_iterator_foreach(it,
+			 EINA_EACH_CB(eina_iterator_rbtree_data_check_sorted),
+			 &i);
    eina_iterator_free(it);
 
    i = 0;
    it = eina_rbtree_iterator_postfix(root);
    fail_if(!it);
 
-   eina_iterator_foreach(it, EINA_EACH(
-                            eina_iterator_rbtree_data_check_postfix), &i);
+   eina_iterator_foreach(it,
+			 EINA_EACH_CB(eina_iterator_rbtree_data_check_postfix),
+			 &i);
    eina_iterator_free(it);
 }
 END_TEST

@@ -76,7 +76,6 @@ struct _Eina_Array
    unsigned int step; /**< How much must we grow the vector when it is full */
 #ifdef EINA_RWLOCKS_ENABLED
    pthread_rwlock_t lock;
-   int lockcount;
    Eina_Bool threadsafe:1;
 #endif
 
@@ -100,73 +99,11 @@ static inline unsigned int      eina_array_count_get(const Eina_Array *array) EI
 EAPI Eina_Iterator *            eina_array_iterator_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Accessor *            eina_array_accessor_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
-#ifdef EINA_RWLOCKS_ENABLED
-static inline Eina_Bool
-eina_array_rdlock(Eina_Array *array)
-{
-   if (!array) return EINA_FALSE;
-   if (array->threadsafe)
-     {
-        if (!array->lockcount++)
-          {
-             int ret;
+static inline Eina_Bool		eina_array_rdlock(const Eina_Array *array);
+static inline Eina_Bool		eina_array_wrlock(Eina_Array *array);
+static inline Eina_Bool		eina_array_unlock(const Eina_Array *array);
 
-             ret = pthread_rwlock_rdlock(&array->lock);
-             if ((ret != 0) && (ret != EDEADLK))
-               return EINA_FALSE;
-          }
-     }
-   return EINA_TRUE;
-}
-
-static inline Eina_Bool
-eina_array_wrlock(Eina_Array *array)
-{
-   if (!array) return EINA_FALSE;
-   if (array->threadsafe)
-     {
-        if (!array->lockcount++)
-          {
-             int ret;
-
-             ret = pthread_rwlock_wrlock(&array->lock);
-             if ((ret != 0) && (ret != EDEADLK))
-               return EINA_FALSE;
-          }
-     }
-   return EINA_TRUE;
-}
-static inline Eina_Bool
-eina_array_unlock(Eina_Array *array)
-{
-   if (!array) return EINA_FALSE;
-   if ((array->threadsafe) && (!(--array->lockcount)))
-        if (pthread_rwlock_unlock(&array->lock))
-          return EINA_FALSE;
-   return EINA_TRUE;
-}
-#else
-static inline Eina_Bool
-eina_array_rdlock(Eina_Array *array)
-{
-   if (!array) return EINA_FALSE;
-   return EINA_TRUE;
-}
-
-static inline Eina_Bool
-eina_array_wrlock(Eina_Array *array)
-{
-   if (!array) return EINA_FALSE;
-   return EINA_TRUE;
-}
-
-static inline Eina_Bool
-eina_array_unlock(Eina_Array *array)
-{
-   if (!array) return EINA_FALSE;
-   return EINA_TRUE;
-}
-#endif
+static inline Eina_Bool		eina_array_foreach(Eina_Array *array, Eina_Each_Cb cb, void *data);
 
 /**
  * @def EINA_ARRAY_ITER_NEXT
@@ -204,101 +141,6 @@ eina_array_unlock(Eina_Array *array)
    for (index = 0, iterator = (array)->data; \
         (index < eina_array_count_get(array)) && ((item = *((iterator)++))); \
                                                    ++(index))
-
-/**
- * @def EINA_ARRAY_THREADSAFE_ITER_NEXT
- * @brief Macro to iterate over an array easily while mutexing.
- *
- * @param array The array to iterate over.
- * @param index The integer number that is increased while itareting.
- * @param item The data
- * @param iterator The iterator
- * @param code The code in the iterator loop
- *
- * This macro allows the iteration over @p array in an easy way. It
- * iterates from the first element to the last one. @p index is an
- * integer that increases from 0 to the number of elements. @p item is
- * the data of each element of @p array, so it is a pointer to a type
- * chosen by the user. @p iterator is of type #Eina_Array_Iterator.
- * @p code is the entire chunk of code which will be in the iterator loop,
- * terminated by a semicolon.
- *
- * This macro can be used for safely freeing the data of an array in a thread,
- * like in the following example:
- *
- * @code
- * Eina_Array         *array;
- * char               *item;
- * Eina_Array_Iterator iterator;
- * unsigned int        i;
- *
- * // array is already filled,
- * // its elements are just duplicated strings,
- * // EINA_ARRAY_ITER_NEXT will be used to free those strings
- *
- * EINA_ARRAY_THREADSAFE_ITER_NEXT(array, i, item, iterator,
- *   {
- *      if (item)
- *        free(item);
- *   }
- * );
- * @endcode
- */
-#define EINA_ARRAY_THREADSAFE_ITER_NEXT(array, index, item, iterator, code...)   \
-do \
-  { \
-     if (eina_array_wrlock((Eina_Array*)array))    \
-       {                                \
-          for (index = 0, iterator = (array)->data; \
-               (index < (array)->count) && ((item = *((iterator)++))); \
-                                                          ++(index)) \
-               code \
-          eina_array_unlock((Eina_Array*)array); \
-       } \
-  } while (0)
-
-
-/**
- * @def EINA_ARRAY_THREADSAFE_ITER_ESCAPE
- * @brief Macro to break a loop while using EINA_ARRAY_THREADSAFE_ITER_NEXT
- *
- * @param array The array being iterated over.
- * @param esc The code to "escape" the loop with
- *
- * This macro should be used any time the user wishes to leave the loop
- * while using EINA_ARRAY_THREADSAFE_ITER_NEXT. It will unlock any mutexes
- * which may have been locked while iterating.  Failure to use this will likely
- * result in a deadlock.
- *
- * example:
- *
- * @code
- * Eina_Array         *array;
- * char               *item;
- * Eina_Array_Iterator iterator;
- * unsigned int        i;
- *
- * // array is already filled,
- * // its elements are just duplicated strings,
- * // EINA_ARRAY_ITER_NEXT will be used to free those strings
- *
- * EINA_ARRAY_THREADSAFE_ITER_NEXT(array, i, item, iterator,
- *   {
- *      if (item)
- *        free(item);
- *      else
- *        EINA_ARRAY_THREADSAFE_ITER_ESCAPE(array, return NULL;);
-  *   }
- * );
- * @endcode
- */
-#define EINA_ARRAY_THREADSAFE_ITER_ESCAPE(array, esc...) \
-do \
-  { \
-     eina_array_unlock((Eina_Array*)array); \
-     esc \
-  } \
-while (0)
 
 #include "eina_inline_array.x"
 

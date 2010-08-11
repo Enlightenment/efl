@@ -238,7 +238,7 @@ efreet_icon_theme_list_get(void)
 
     /* create the list for the user */
     it = eina_hash_iterator_key_new(efreet_icon_themes);
-    eina_iterator_foreach(it, EINA_EACH(_hash_keys), &theme_list);
+    eina_iterator_foreach(it, EINA_EACH_CB(_hash_keys), &theme_list);
     eina_iterator_free(it);
 
     EINA_LIST_FREE(theme_list, dir)
@@ -1458,7 +1458,7 @@ efreet_icon_theme_dir_validity_check(void)
 
     keys = NULL;
     it = eina_hash_iterator_key_new(efreet_icon_themes);
-    eina_iterator_foreach(it, EINA_EACH(_hash_keys), &keys);
+    eina_iterator_foreach(it, EINA_EACH_CB(_hash_keys), &keys);
     eina_iterator_free(it);
 
     EINA_LIST_FREE(keys, name)

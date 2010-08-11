@@ -64,7 +64,7 @@ START_TEST(eina_accessor_array_simple)
    fail_if(*tmp != 100);
 
    i = 50;
-   eina_accessor_over(it, EINA_EACH(eina_accessor_check), 50, 100, &i);
+   eina_accessor_over(it, EINA_EACH_CB(eina_accessor_check), 50, 100, &i);
    fail_if(i != 99);
 
    fail_if(eina_accessor_container_get(it) != ea);
@@ -150,7 +150,7 @@ START_TEST(eina_accessor_inlist_simple)
    fail_if(!it);
    fail_if(eina_accessor_container_get(it) != lst);
 
-   eina_accessor_over(it, EINA_EACH(eina_accessor_inlist_data_check), 2, 4, &i);
+   eina_accessor_over(it, EINA_EACH_CB(eina_accessor_inlist_data_check), 2, 4, &i);
 
    fail_if(eina_accessor_data_get(it, 5, (void **)&tmp) != EINA_TRUE);
    fail_if(eina_accessor_data_get(it, 3, (void **)&tmp) != EINA_TRUE);
@@ -217,7 +217,7 @@ START_TEST(eina_accessor_list_simple)
    it = eina_list_accessor_new(list);
    fail_if(!it);
 
-   eina_accessor_over(it, EINA_EACH(eina_iterator_list_data_check), 2, 4, &i);
+   eina_accessor_over(it, EINA_EACH_CB(eina_iterator_list_data_check), 2, 4, &i);
 
    fail_if(eina_accessor_data_get(it, 5, (void **)&j) != EINA_TRUE);
    fail_if(*j != 1);

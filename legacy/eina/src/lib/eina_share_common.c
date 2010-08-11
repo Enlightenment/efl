@@ -933,7 +933,7 @@ eina_share_common_dump(Eina_Share *share, void (*additional_dump)(
 //	       sizeof(Eina_Share_Common_Head), sizeof(Eina_Share_Common_Node));
         it = eina_rbtree_iterator_prefix(
               (Eina_Rbtree *)share->share->buckets[i]);
-        eina_iterator_foreach(it, EINA_EACH(eina_iterator_array_check), &di);
+        eina_iterator_foreach(it, EINA_EACH_CB(eina_iterator_array_check), &di);
         eina_iterator_free(it);
      }
    if (additional_dump)

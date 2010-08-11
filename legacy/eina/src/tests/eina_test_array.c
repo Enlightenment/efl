@@ -34,6 +34,61 @@ START_TEST(eina_array_simple)
 
    eina_init();
 
+   ea = eina_array_new(11);
+        fail_if(!ea);
+
+   for (i = 0; i < 201; ++i)
+     {
+        tmp = malloc(sizeof(char) * 10);
+        fail_if(!tmp);
+        eina_convert_itoa(i, tmp);
+
+        eina_array_push(ea, tmp);
+     }
+
+   fail_if(eina_array_data_get(ea, 10) == NULL);
+   fail_if(atoi(eina_array_data_get(ea, 10)) != 10);
+   tmp = eina_array_pop(ea);
+   fail_if(tmp == NULL);
+   fail_if(atoi(tmp) != 200);
+   free(tmp);
+
+   EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
+     {
+	fail_if((unsigned int)atoi(tmp) != i);
+	free(tmp);
+     }
+
+   fail_if(i != 200);
+
+   eina_array_clean(ea);
+   eina_array_flush(ea);
+   eina_array_free(ea);
+
+   eina_shutdown();
+}
+END_TEST
+
+static Eina_Bool
+_eina_array_clean(Eina_Array *ea, char *tmp, unsigned int *i)
+{
+   fail_if(!ea);
+   fail_if((unsigned int)atoi(tmp) != *i);
+   free(tmp);
+
+   (*i)++;
+
+   return EINA_TRUE;
+}
+
+START_TEST(eina_array_threadsafe)
+{
+   Eina_Array *ea;
+   char *tmp;
+   unsigned int i;
+
+   eina_init();
+
    ea = eina_array_threadsafe_new(11);
         fail_if(!ea);
 
@@ -53,12 +108,8 @@ START_TEST(eina_array_simple)
    fail_if(atoi(tmp) != 200);
    free(tmp);
 
-   EINA_ARRAY_THREADSAFE_ITER_NEXT(ea, i, tmp, it,
-     {
-        fail_if((unsigned int)atoi(tmp) != i);
-        free(tmp);
-     }
-   );
+   i = 0;
+   eina_array_foreach(ea, EINA_EACH_CB(_eina_array_clean), &i);
 
    fail_if(i != 200);
 
@@ -93,12 +144,11 @@ START_TEST(eina_array_static)
    fail_if(eina_array_data_get(&sea, 10) == NULL);
    fail_if(atoi(eina_array_data_get(&sea, 10)) != 10);
 
-   EINA_ARRAY_THREADSAFE_ITER_NEXT(&sea, i, tmp, it,
+   EINA_ARRAY_ITER_NEXT(&sea, i, tmp, it)
      {
-        fail_if((unsigned int)atoi(tmp) != i);
+	fail_if((unsigned int)atoi(tmp) != i);
         free(tmp);
      }
-   );
 
    fail_if(i != 200);
 
@@ -151,12 +201,11 @@ START_TEST(eina_array_remove_stuff)
         fail_if(!tmp);
         *tmp = 0;
      }
-        fail_if(eina_array_remove(ea, keep_int, NULL) != EINA_TRUE);
+   fail_if(eina_array_remove(ea, keep_int, NULL) != EINA_TRUE);
 
-        fail_if(eina_array_count_get(ea) != 990);
-        EINA_ARRAY_THREADSAFE_ITER_NEXT(ea, i, tmp, it,
-          fail_if(*tmp == 0);
-        );
+   fail_if(eina_array_count_get(ea) != 990);
+   EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
+     fail_if(*tmp == 0);
 
    // Remove the last items
    for (i = 980; i < 990; ++i)
@@ -169,12 +218,11 @@ START_TEST(eina_array_remove_stuff)
 
    // Remove all items
    fail_if(eina_array_count_get(ea) != 980);
-   EINA_ARRAY_THREADSAFE_ITER_NEXT(ea, i, tmp, it,
+   EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
      {
         fail_if(*tmp == 0);
         *tmp = 0;
      }
-   );
 
    eina_array_remove(ea, keep_int, NULL);
 
@@ -190,6 +238,7 @@ void
 eina_test_array(TCase *tc)
 {
    tcase_add_test(tc, eina_array_simple);
+   tcase_add_test(tc, eina_array_threadsafe);
    tcase_add_test(tc, eina_array_static);
    tcase_add_test(tc, eina_array_remove_stuff);
 }

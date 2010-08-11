@@ -379,7 +379,7 @@ _eina_hash_find_by_data(const Eina_Hash *hash,
            continue;
 
         it = eina_rbtree_iterator_prefix(hash->buckets[hash_num]);
-        eina_iterator_foreach(it, EINA_EACH(_eina_hash_rbtree_each), &each);
+        eina_iterator_foreach(it, EINA_EACH_CB(_eina_hash_rbtree_each), &each);
         eina_iterator_free(it);
 
         if (each.el)
@@ -1575,7 +1575,7 @@ eina_hash_foreach(const Eina_Hash *hash,
    if (!it)
       return;
 
-   eina_iterator_foreach(it, EINA_EACH(_eina_foreach_cb), &foreach);
+   eina_iterator_foreach(it, EINA_EACH_CB(_eina_foreach_cb), &foreach);
    eina_iterator_free(it);
 }
 

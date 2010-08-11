@@ -188,7 +188,7 @@ eina_accessor_data_get(Eina_Accessor *accessor,
  */
 EAPI void
 eina_accessor_over(Eina_Accessor *accessor,
-                   Eina_Each cb,
+                   Eina_Each_Cb cb,
                    unsigned int start,
                    unsigned int end,
                    const void *fdata)
@@ -204,12 +204,62 @@ eina_accessor_over(Eina_Accessor *accessor,
    EINA_SAFETY_ON_NULL_RETURN(cb);
    EINA_SAFETY_ON_FALSE_RETURN(start < end);
 
+   if (!eina_accessor_lock(accessor))
+      return ;
+
    container = accessor->get_container(accessor);
    for (i = start; i < end && accessor->get_at(accessor, i, &data) == EINA_TRUE;
         ++i)
       if (cb(container, data, (void *)fdata) != EINA_TRUE)
-         return;
+	 goto on_exit;
 
+ on_exit:
+   (void) eina_accessor_unlock(accessor);
+}
+
+/**
+ * @brief Lock the container of the accessor.
+ *
+ * @param accessor The accessor.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * If the container of the @p accessor permit it, it will be locked.
+ * If @p accessor is @c NULL or if a problem occured, #EINA_FALSE is
+ * returned, otherwise #EINA_TRUE is returned. If the container
+ * is not lockable, it will return EINA_TRUE.
+ */
+EAPI Eina_Bool
+eina_accessor_lock(Eina_Accessor *accessor)
+{
+   EINA_MAGIC_CHECK_ACCESSOR(accessor);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(accessor, EINA_FALSE);
+
+   if (accessor->lock)
+      return accessor->lock(accessor);
+   return EINA_TRUE;
+}
+
+/**
+ * @brief Unlock the container of the accessor.
+ *
+ * @param accessor The accessor.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * If the container of the @p accessor permit it and was previously
+ * locked, it will be unlocked. If @p accessor is @c NULL or if a
+ * problem occured, #EINA_FALSE is returned, otherwise #EINA_TRUE
+ * is returned. If the container is not lockable, it will return
+ * EINA_TRUE.
+ */
+EAPI Eina_Bool
+eina_accessor_unlock(Eina_Accessor *accessor)
+{
+   EINA_MAGIC_CHECK_ACCESSOR(accessor);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(accessor, EINA_FALSE);
+
+   if (accessor->unlock)
+      return accessor->unlock(accessor);
+   return EINA_TRUE;
 }
 
 /**
