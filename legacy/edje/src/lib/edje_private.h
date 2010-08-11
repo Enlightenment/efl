@@ -374,7 +374,6 @@ struct _Edje_Style_Tag
 struct _Edje_Font_Directory_Entry
 {
    const char *entry; /* the name of the font */
-   const char *path;
    const char *file; /* the name of the file */
 };
 

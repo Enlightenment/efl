@@ -344,7 +344,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
 	if (fnt)
 	  {
-	     font = fnt->path;
+             int len = strlen(fnt->entry) + sizeof("edje/fonts/") + 1;
+             font = alloca(len);
+             sprintf((char *)font, "edje/fonts/%s", fnt->entry);
 	     inlined_font = 1;
 	  }
      }

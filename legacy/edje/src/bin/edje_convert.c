@@ -141,21 +141,7 @@ _edje_file_convert(Eet_File *ef, Old_Edje_File *oedf)
 
    if (oedf->font_dir)
      EINA_LIST_FOREACH(oedf->font_dir->entries, l, fnt)
-       {
-	  char *tmp;
-	  int length;
-
-	  length = strlen(fnt->entry) + 7;
-	  tmp = alloca(length);
-
-	  snprintf(tmp, length, "fonts/%s", fnt->entry);
-	  fnt->path = eina_stringshare_add(tmp);
-	  if (edf->free_strings)
-	    eina_stringshare_del(fnt->entry);
-	  fnt->entry = fnt->path + 6;
-
-	  eina_hash_direct_add(edf->fonts, fnt->entry, fnt);
-       }
+        eina_hash_direct_add(edf->fonts, fnt->entry, fnt);
 
    if (!_edje_file_convert_images(edf, oedf))
      goto on_error;

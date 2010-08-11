@@ -3922,7 +3922,7 @@ edje_edit_font_add(Evas_Object *obj, const char* path, const char* alias)
 	if ((alias = strrchr(path, '/'))) alias ++;
 	else alias = (char *)path;
      }
-   snprintf(entry, sizeof(entry), "fonts/%s", alias);
+   snprintf(entry, sizeof(entry), "edje/fonts/%s", alias);
 
    /* Check if exists */
    fnt = eina_hash_find(ed->file->fonts, alias);
@@ -3937,7 +3937,6 @@ edje_edit_font_add(Evas_Object *obj, const char* path, const char* alias)
 	return EINA_FALSE;
      }
    fnt->entry = eina_stringshare_add(alias);
-   fnt->path = eina_stringshare_add(entry);
 
    eina_hash_direct_add(ed->file->fonts, fnt->entry, fnt);
 
