@@ -1843,8 +1843,8 @@ again:
    gc->pipe[pn].array.use_texuv3 = 0;
 #endif   
    
-   x = w = (p[points[i]].x >> FP);
-   y = h = (p[points[i]].y >> FP);
+   x = w = (p[points[0]].x >> FP);
+   y = h = (p[points[0]].y >> FP);
    for (i = 0; i < 4; i++)
      {
         tx[i] = ((double)(tex->x) + (((double)p[i].u) / FP1)) /
