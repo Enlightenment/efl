@@ -408,7 +408,7 @@ _edje_import_image_file(Edje *ed, const char *path, int id)
 	return EINA_FALSE;
      }
 
-   snprintf(entry, sizeof(entry), "images/%i", id);
+   snprintf(entry, sizeof(entry), "edje/images/%i", id);
 
    /* write the image data */
    bytes = eet_data_image_write(eetf, entry,
@@ -4198,7 +4198,7 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
 	   return EINA_FALSE;
 	}
 
-      snprintf(entry, sizeof(entry), "images/%i", de->id);
+      snprintf(entry, sizeof(entry), "edje/images/%i", de->id);
 
       if (eet_delete(eetf, entry) <= 0)
         {
