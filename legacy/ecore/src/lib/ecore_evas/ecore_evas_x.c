@@ -988,12 +988,23 @@ _ecore_evas_x_event_window_show(void *data __UNUSED__, int type __UNUSED__, void
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Show *e;
-
+   static int first_map_bug = -1;
+   
    e = event;
    ee = ecore_event_window_match(e->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   if (ee->visible) return ECORE_CALLBACK_DONE; /* dont pass it on */
+   if (first_map_bug < 0)
+     {
+        if (getenv("ECORE_EVAS_GL_FIRST_MAP_BUG"))
+           first_map_bug = atoi(getenv("ECORE_EVAS_GL_FIRST_MAP_BUG"));
+        else
+           first_map_bug = 0;
+        if ((first_map_bug) &&
+            (!strcmp(ee->driver, "opengl_x11")))
+           evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+     }
+   if (ee->visible) return ECORE_CALLBACK_PASS_ON;
 //   printf("SHOW EVENT %p\n", ee);
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
@@ -1010,7 +1021,7 @@ _ecore_evas_x_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void
    ee = ecore_event_window_match(e->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   if (!ee->visible) return ECORE_CALLBACK_DONE; /* dont pass it on */
+   if (!ee->visible) return ECORE_CALLBACK_PASS_ON;
 //   printf("HIDE EVENT %p\n", ee);
    ee->visible = 0;
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
