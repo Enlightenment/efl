@@ -2693,7 +2693,7 @@ _edje_edit_state_alloc(int type, Edje *ed)
 	      								\
 	      Name = eina_mempool_malloc(ce->mp.Short,			\
 					 sizeof (Edje_Part_Description_##Type)); \
-              memset(Name, 0, sizeof(Edje_Part_Description_##Type));    \
+	      memset(Name, 0, sizeof(Edje_Part_Description_##Type));    \
 	      pd = &Name->common;					\
 	      ce->count.Short++;					\
 	      break;							\
@@ -2835,7 +2835,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
 
 	external = (Edje_Part_Description_External*) pd;
 
-        external->external_params = NULL;
+	external->external_params = NULL;
 
 	if (rp->part->source)
 	  {
