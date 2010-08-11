@@ -3983,7 +3983,7 @@ edje_edit_font_del(Evas_Object *obj, const char* alias)
 	   return EINA_FALSE;
 	}
 
-      snprintf(entry, sizeof(entry), "fonts/%s", alias);
+      snprintf(entry, sizeof(entry), "edje/fonts/%s", alias);
 
       if (eet_delete(eetf, entry) <= 0)
         {
