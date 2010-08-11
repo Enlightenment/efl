@@ -2292,6 +2292,10 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
              new_it->source_pos = pit->source_pos + index;
              new_it->bidi_props.start = new_it->source_pos;
              new_it->bidi_props.props = &new_it->source_node->bidi_props;
+# ifdef BIDI_SUPPORT
+             evas_bidi_shape_string(new_it->text, &new_it->bidi_props,
+                   eina_unicode_strlen(new_it->text));
+# endif
              _layout_item_text_cutoff(c, pit, index);
              _layout_strip_trailing_whitespace(c, pit->format, pit);
              break;
@@ -2436,6 +2440,10 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
         it->source_pos = start + str - tbase;
         it->bidi_props.start = it->source_pos;
         it->bidi_props.props = &it->source_node->bidi_props;
+# ifdef BIDI_SUPPORT
+        evas_bidi_shape_string(it->text, &it->bidi_props,
+              eina_unicode_strlen(it->text));
+# endif
         tw = th = 0;
         if (fmt->font.font)
           c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &it->bidi_props, &tw, &th);
@@ -5452,6 +5460,8 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    if (fnode && (fnode->text_node == cur->node))
      fnode->offset += len;
 #ifdef BIDI_SUPPORT
+   /* Reset paragraph direction */
+   n->bidi_props.direction = FRIBIDI_PAR_ON;
    evas_bidi_update_props(eina_ustrbuf_string_get(n->unicode), &n->bidi_props);
 #endif
    _evas_textblock_changed(o, cur->obj);
@@ -5752,7 +5762,6 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node_Text *n1, *n2, *n;
    Evas_Object_Textblock_Node_Format *fnode = NULL;
-   /*FIXME: Update cursors */
 
    if (!cur1 || !cur1->node) return;
    if (!cur2 || !cur2->node) return;

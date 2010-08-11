@@ -76,6 +76,9 @@ evas_bidi_is_rtl_str(const Eina_Unicode *str)
 Eina_Bool
 evas_bidi_shape_string(Eina_Unicode *ustr, const Evas_BiDi_Props *bidi_props, size_t len)
 {
+   if (!EVAS_BIDI_IS_BIDI_PROP(bidi_props->props))
+     return EINA_FALSE;
+
    EvasBiDiJoiningType *join_types = NULL;
    join_types = (EvasBiDiJoiningType *) malloc(sizeof(EvasBiDiJoiningType) * len);
    if (!join_types)
@@ -84,7 +87,7 @@ evas_bidi_shape_string(Eina_Unicode *ustr, const Evas_BiDi_Props *bidi_props, si
      }
    fribidi_get_joining_types(ustr, len, join_types);
 
-   fribidi_join_arabic(bidi_props->props->char_types, len, bidi_props->props->embedding_levels + bidi_props->start, join_types);
+   fribidi_join_arabic(bidi_props->props->char_types + bidi_props->start, len, bidi_props->props->embedding_levels + bidi_props->start, join_types);
 
 
    /* Actually modify the string */
