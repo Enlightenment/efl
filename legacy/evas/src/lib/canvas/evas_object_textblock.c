@@ -979,6 +979,8 @@ _format_color_parse(const char *str, unsigned char *r, unsigned char *g, unsigne
    *b = (*b * *a) / 255;
 }
 
+/* The refcount for the formats. */
+static int format_refcount = 0;
 /* Holders for the stringshares */
 static const char *fontstr = NULL;
 static const char *font_fallbacksstr = NULL;
@@ -1017,7 +1019,7 @@ static const char *linefillstr = NULL;
 static void
 _format_command_init(void)
 {
-   if (!fontstr)
+   if (format_refcount == 0)
      {
         fontstr = eina_stringshare_add("font");
         font_fallbacksstr = eina_stringshare_add("font_fallbacks");
@@ -1049,40 +1051,7 @@ _format_command_init(void)
         itemstr = eina_stringshare_add("item");
         linefillstr = eina_stringshare_add("linefill");
      }
-   else
-     {
-        /*FIXME: just implement proper refcounting */
-        return;
-        eina_stringshare_ref(fontstr);
-        eina_stringshare_ref(font_fallbacksstr);
-        eina_stringshare_ref(font_sizestr);
-        eina_stringshare_ref(font_sourcestr);
-        eina_stringshare_ref(colorstr);
-        eina_stringshare_ref(underline_colorstr);
-        eina_stringshare_ref(underline2_colorstr);
-        eina_stringshare_ref(outline_colorstr);
-        eina_stringshare_ref(shadow_colorstr);
-        eina_stringshare_ref(glow_colorstr);
-        eina_stringshare_ref(glow2_colorstr);
-        eina_stringshare_ref(backing_colorstr);
-        eina_stringshare_ref(strikethrough_colorstr);
-        eina_stringshare_ref(alignstr);
-        eina_stringshare_ref(valignstr);
-        eina_stringshare_ref(wrapstr);
-        eina_stringshare_ref(left_marginstr);
-        eina_stringshare_ref(right_marginstr);
-        eina_stringshare_ref(underlinestr);
-        eina_stringshare_ref(strikethroughstr);
-        eina_stringshare_ref(backingstr);
-        eina_stringshare_ref(stylestr);
-        eina_stringshare_ref(tabstopsstr);
-        eina_stringshare_ref(linesizestr);
-        eina_stringshare_ref(linerelsizestr);
-        eina_stringshare_ref(linegapstr);
-        eina_stringshare_ref(linerelgapstr);
-        eina_stringshare_ref(itemstr);
-        eina_stringshare_ref(linefillstr);
-     }
+   format_refcount++;
 }
 
 /**
@@ -1092,10 +1061,8 @@ _format_command_init(void)
 static void
 _format_command_shutdown(void)
 {
-   return;
-   /*FIXME: should del, the problem is that it's not possible to know the ref
-    * count so it's not possible to know when the last textblock finished.
-    * Should probably just add a refcount to the object. */
+   if (--format_refcount > 0) return;
+
    eina_stringshare_del(fontstr);
    eina_stringshare_del(font_fallbacksstr);
    eina_stringshare_del(font_sizestr);
@@ -3769,7 +3736,6 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                   if (tag_end)
                     {
                        /* If we reached to a tag ending, analyze the tag */
-                       /* FIXME: Move tag analyzing to a different function */
                        char *ttag;
                        size_t ttag_len = tag_end - tag_start -1;
 
