@@ -1955,7 +1955,16 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    ed->table_parts[ep->id % ed->table_parts_size] = rp;
 
    /* Create default description */
-   edje_edit_state_add(obj, name, "default", 0.0);
+   if (!edje_edit_state_add(obj, name, "default", 0.0))
+     {
+	_edje_if_string_free(ed, ep->name);
+	if (source)
+	  _edje_if_string_free(ed, ep->source);
+	free(ep);
+	free(rp);
+	free(ed);
+	return EINA_FALSE;
+     }
    edje_edit_part_selected_state_set(obj, name, "default", 0.0);
 
    ce = eina_hash_find(ed->file->collection, ed->group);
@@ -2628,21 +2637,24 @@ edje_edit_state_name_set(Evas_Object *obj, const char *part, const char *state, 
    return EINA_TRUE;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_state_del(Evas_Object *obj, const char *part, const char *state, double value)
 {
    Edje_Part_Collection_Directory_Entry *ce;
    Edje_Part_Description_Common *pd;
    unsigned int i;
 
-   GET_RP_OR_RETURN();
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if (!edje_edit_state_exist(obj, part, state, value))
+       return EINA_FALSE;
 
    pd = _edje_part_description_find_byname(eed, part, state, value);
-   if (!pd) return;
+   if (!pd) return EINA_FALSE;
 
    /* Don't allow to delete default state, for now at least; */
    if (pd == rp->part->default_desc)
-     return;
+     return EINA_FALSE;
 
    /* And if we are deleting the current state, go back to default first */
    if (pd == rp->chosen_description)
@@ -2661,6 +2673,7 @@ edje_edit_state_del(Evas_Object *obj, const char *part, const char *state, doubl
        }
 
    _edje_collection_free_part_description_free(rp->part->type, pd, ce, 0);
+   return EINA_TRUE;
 }
 
 static Edje_Part_Description_Common *
@@ -2710,16 +2723,19 @@ _edje_edit_state_alloc(int type, Edje *ed)
    return pd;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double value)
 {
    Edje_Part_Description_Common *pd;
 
-   GET_RP_OR_RETURN();
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if (edje_edit_state_exist(obj, part, name, value))
+     return EINA_FALSE;
 
    //printf("ADD STATE: %s TO PART: %s\n", name , part);
    pd = _edje_edit_state_alloc(rp->part->type, ed);
-   if (!pd) return;
+   if (!pd) return EINA_FALSE;
 
    if (!rp->part->default_desc)
      {
@@ -2734,7 +2750,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
 	if (!tmp)
 	  {
 	     free(pd);
-	     return;
+	     return EINA_FALSE;
 	  }
 	rp->part->other.desc = tmp;
 	rp->part->other.desc[rp->part->other.desc_count++] = pd;
@@ -2890,6 +2906,8 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
 	table = (Edje_Part_Description_Table*) pd;
 	memset(&table->table, 0, sizeof (table->table));
      }
+
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool

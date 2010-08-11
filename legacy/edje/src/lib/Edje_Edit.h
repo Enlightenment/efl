@@ -1114,8 +1114,10 @@ EAPI Eina_Bool edje_edit_state_name_set(Evas_Object *obj, const char *part, cons
  * @param part Part to set the name of the new state.
  * @param name Name for the new state (not including the state value).
  * @param value The state value.
+ *
+ * @return EINA_TRUE if succesfully, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double value);
+EAPI Eina_Bool edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double value);
 
 /** Delete the given part state from the edje.
  *
@@ -1123,8 +1125,10 @@ EAPI void edje_edit_state_add(Evas_Object *obj, const char *part, const char *na
  * @param part Part that contain state.
  * @param state The current name of the state (not including the state value).
  * @param value The state value.
+ *
+ * @return EINA_TRUE if succesfully, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_del(Evas_Object *obj, const char *part, const char *state, double value);
+EAPI Eina_Bool edje_edit_state_del(Evas_Object *obj, const char *part, const char *state, double value);
 
 /** Check if a part state with the given name exist.
  *
