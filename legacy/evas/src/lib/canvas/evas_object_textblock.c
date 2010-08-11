@@ -2957,7 +2957,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         Evas_Object_Textblock_Node_Format *fnode;
         size_t start;
         int off;
-        int first_run;
 
         /*FIXME-tom: A hack, so we'll only have one paragraph
          * until full support is implemented */
@@ -2975,7 +2974,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
          * we don't want to print them. */
         fnode = n->format_node;
         start = off = 0;
-        first_run = 1;
         while (fnode && (fnode->text_node == n))
           {
              off += fnode->offset;
@@ -3000,7 +2998,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                {
                   off = 0;
                }
-             first_run = 0;
              fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
           }
         _layout_text_append(c, fmt, n, start, -1, o->repch);
@@ -3664,6 +3661,8 @@ _prepend_escaped_char(Evas_Textblock_Cursor *cur, const char *s,
 /**
  * Sets the tetxblock's text to the markup text.
  *
+ * @note assumes text does not include the unicode replacement char (0xFFFD)
+ *
  * @param obj  the textblock object.
  * @param text the markup text to use.
  * @return Return no value.
@@ -3702,6 +3701,8 @@ evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
 
 /**
  * Prepends markup to the cursor cur.
+ *
+ * @note assumes text does not include the unicode replacement char (0xFFFD)
  *
  * @param cur  the cursor to prepend to.
  * @param text the markup text to prepend.
@@ -3930,7 +3931,6 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
         Evas_Object_Textblock_Node_Format *fnode;
         Eina_Unicode *text_base, *text;
         int off;
-        int first_run;
 
         /* For each text node to thorugh all of it's format nodes
          * append text from the start to the offset of the next format
@@ -3942,7 +3942,6 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
            eina_unicode_strdup(eina_ustrbuf_string_get(n->unicode));
         fnode = n->format_node;
         off = 0;
-        first_run = 1;
         while (fnode && (fnode->text_node == n))
           {
              Eina_Unicode tmp_ch;
@@ -3963,7 +3962,6 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
                {
                   off = 0;
                }
-             first_run = 0;
              fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
           }
         /* Add the rest, skip replacement */
@@ -4956,6 +4954,7 @@ _evas_textblock_node_format_remove_all_at_pos(Evas_Object_Textblock *o, Evas_Obj
 }
 
 /**
+ * @internal
  * Removes all the format nodes between start and end in the text node n.
  * This function updates the offset of the next format node and the
  * text nodes pointing to it. if end == -1 end means the end of the string.
@@ -4993,6 +4992,41 @@ _evas_textblock_node_text_remove_formats_between(Evas_Object_Textblock *o,
         end -= itr->offset;
         itr = _NODE_FORMAT(EINA_INLIST_GET(itr)->next);
      }
+}
+
+/**
+ * @internal
+ * Returns the first format in the range between start and end in the textblock
+ * n.
+ *
+ * @param o the textblock object.
+ * @param n the text node the positinos refer to.
+ * @param start the start of where to delete from.
+ * @param end the end of the section to delete, if end == -1 it means the end of the string.
+ */
+static Evas_Object_Textblock_Node_Format *
+_evas_textblock_node_text_get_first_format_between(Evas_Object_Textblock *o,
+      Evas_Object_Textblock_Node_Text *n, int start, int end)
+{
+   Evas_Object_Textblock_Node_Format *itr;
+   int use_end = 1;
+   itr = n->format_node;
+   if (end < 0) end = 0;
+   while (itr && (itr->text_node == n))
+     {
+        start -= itr->offset;
+        end -= itr->offset;
+        if ((end <= 0) && use_end)
+          {
+             break;
+          }
+        if (start <= 0)
+          {
+             return itr;
+          }
+        itr = _NODE_FORMAT(EINA_INLIST_GET(itr)->next);
+     }
+   return NULL;
 }
 
 /**
@@ -5799,21 +5833,23 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 /**
  * Return the text in the range between cur1 and cur2
  *
+ * FIXME: format is currently unused, you always get markup back.
+ *
  * @param cur1 one side of the range.
  * @param cur2 the other side of the range
  * @param format to be documented
  * @return the text in the range
+ * @see elm_entry_markup_to_utf8()
  */
-/* FIXME: support format and markup */
 EAPI char *
-evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *_cur2, Evas_Textblock_Text_Type format)
+evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *_cur2, Evas_Textblock_Text_Type format __UNUSED__)
 {
    Evas_Object_Textblock *o;
-   Evas_Object_Textblock_Node_Text *n1, *n2, *n;
-   const Eina_Unicode *text;
-   Eina_UStrbuf *buf;
+   Evas_Object_Textblock_Node_Text *n1, *n2, *tnode;
+   Eina_Unicode *text;
+   Eina_Strbuf *buf;
    Evas_Textblock_Cursor *cur2;
-   buf = eina_ustrbuf_new();
+   buf = eina_strbuf_new();
 
    if (!cur1 || !cur1->node) return;
    if (!_cur2 || !_cur2->node) return;
@@ -5834,38 +5870,76 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
    cur2->obj = _cur2->obj;
    evas_textblock_cursor_copy(_cur2, cur2);
    cur2->pos++; /* We want to also copy the pointed to char */
-   if (n1 == n2)
+   /* Parse the text between the cursors. */
+   for (tnode = cur1->node ; tnode ;
+         tnode = _NODE_TEXT(EINA_INLIST_GET(tnode)->next))
      {
-        text = eina_ustrbuf_string_get(n1->unicode);
-        eina_ustrbuf_append_length(buf, text + cur1->pos, cur2->pos - cur1->pos);
-     }
-   else
-     {
-        int len;
-        n = _NODE_TEXT(EINA_INLIST_GET(n1)->next);
-        /* Add all the text nodes between */
-        while (n && (n != n2))
+        Evas_Object_Textblock_Node_Format *fnode;
+        Eina_Unicode *text_base, *text;
+        int off, first_pos;
+
+        text_base = text =
+           eina_unicode_strdup(eina_ustrbuf_string_get(n1->unicode));
+        fnode = _evas_textblock_node_text_get_first_format_between(o, n1, cur1->pos, cur2->pos);
+        /* Init the offset so the first one will count starting from cur1->pos
+         * and not the previous format node */
+        if ((tnode == cur1->node) && fnode)
           {
-             text = eina_ustrbuf_string_get(n->unicode);
-             eina_ustrbuf_append(buf, text);
-             n = _NODE_TEXT(EINA_INLIST_GET(n)->next);
+             off = _evas_textblock_node_format_pos_get(fnode) - cur1->pos - fnode->offset;
           }
-
-        len = eina_ustrbuf_length_get(n1->unicode);
-        text = eina_ustrbuf_string_get(n1->unicode);
-        eina_ustrbuf_append_length(buf, text + cur1->pos, len - cur1->pos);
-
-        text = eina_ustrbuf_string_get(n2->unicode);
-        eina_ustrbuf_append_length(buf, text, cur2->pos);
+        else
+          {
+             off = 0;
+          }
+        text += cur1->pos;
+        while (fnode && (fnode->text_node == tnode))
+          {
+             Eina_Unicode tmp_ch;
+             off += fnode->offset;
+             if ((tnode == cur2->node) && (text - text_base + off >= cur2->pos))
+               {
+                  break;
+               }
+             /* No need to skip on the first run */
+             tmp_ch = text[off];
+             text[off] = 0; /* Null terminate the part of the string */
+             _markup_get_text_append(buf, text);
+             _markup_get_format_append(o, buf, fnode);
+             text[off] = tmp_ch; /* Restore the char */
+             text += off;
+             if (fnode->visible)
+               {
+                  off = -1;
+                  text++;
+               }
+             else
+               {
+                  off = 0;
+               }
+             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
+          }
+        /* If we got to the last node, stop and add the rest outside */
+        if (cur2->node == tnode)
+          {
+             /* Add the rest, skip replacement */
+             /* Don't go past the second cursor pos */
+             text_base[cur2->pos] = '\0';
+             _markup_get_text_append(buf, text);
+             free(text_base);
+             break;
+          }
+        else
+          {
+             /* Add the rest, skip replacement */
+             _markup_get_text_append(buf, text);
+             free(text_base);
+          }
      }
-
    /* return the string */
      {
         char *ret;
-        const Eina_Unicode *tmp;
-        tmp = eina_ustrbuf_string_get(buf);
-        ret = evas_common_encoding_unicode_to_utf8(tmp, NULL);
-        eina_ustrbuf_free(buf);
+        ret = eina_strbuf_string_steal(buf);
+        eina_strbuf_free(buf);
         return ret;
      }
 }
