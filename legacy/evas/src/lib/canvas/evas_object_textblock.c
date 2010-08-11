@@ -240,6 +240,7 @@ struct _Evas_Object_Textblock_Format
 {
    int                  ref;
    double               halign;
+   Eina_Bool            halign_auto;
    double               valign;
    struct {
       const char       *name;
@@ -1260,10 +1261,11 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
                   if (*endptr == '%')
                     val /= 100.0;
                }
-             fmt->halign = val;;
+             fmt->halign = val;
              if (fmt->halign < 0.0) fmt->halign = 0.0;
              else if (fmt->halign > 1.0) fmt->halign = 1.0;
           }
+        fmt->halign_auto = EINA_FALSE;
      }
    else if (cmd == valignstr)
      {
@@ -1673,6 +1675,7 @@ struct _Ctxt
    int underline_extend;
    int have_underline, have_underline2;
    double align;
+   Eina_Bool align_auto;
 };
 
 /**
@@ -1737,6 +1740,7 @@ _layout_line_new(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
    c->ln = calloc(1, sizeof(Evas_Object_Textblock_Line));
    c->align = fmt->halign;
+   c->align_auto = fmt->halign_auto;
    c->marginl = fmt->margin.l;
    c->marginr = fmt->margin.r;
    c->par->lines = (Evas_Object_Textblock_Line *)eina_inlist_append(EINA_INLIST_GET(c->par->lines), EINA_INLIST_GET(c->ln));
@@ -1823,6 +1827,7 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt)
         c->format_stack  = eina_list_prepend(c->format_stack, fmt);
         fmt->ref = 1;
         fmt->halign = 0.0;
+        fmt->halign_auto = EINA_TRUE;
         fmt->valign = -1.0;
         fmt->style = EVAS_TEXT_STYLE_PLAIN;
         fmt->tabstops = 32;
@@ -1876,6 +1881,7 @@ _layout_format_value_handle(Ctxt *c, Evas_Object_Textblock_Format *fmt, const ch
    if (key) eina_stringshare_del(key);
    if (val) eina_stringshare_del(val);
    c->align = fmt->halign;
+   c->align_auto = fmt->halign_auto;
    c->marginl = fmt->margin.l;
    c->marginr = fmt->margin.r;
 }
@@ -1886,6 +1892,36 @@ _layout_format_value_handle(Ctxt *c, Evas_Object_Textblock_Format *fmt, const ch
 #define SIZE 0
 #define SIZE_ABS 1
 #define SIZE_REL 2
+
+/**
+ * @internal
+ * Get the current line's alignment from the context.
+ *
+ * @param c the context to work on - Not NULL.
+ */
+static inline double
+_layout_line_align_get(Ctxt *c)
+{
+#ifdef BIDI_SUPPORT
+   if (c->align_auto && c->ln && c->ln->items)
+     {
+        if ((c->ln->items->source_node->bidi_props.direction ==
+              FRIBIDI_PAR_RTL) ||
+              (c->ln->items->source_node->bidi_props.direction ==
+              FRIBIDI_PAR_WRTL))
+          {
+             /* Align right*/
+             return 1.0;
+          }
+        else
+          {
+             /* Align left */
+             return 0.0;
+          }
+     }
+#endif
+   return c->align;
+}
 
 /**
  * @internal
@@ -1982,7 +2018,7 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
         c->ln->x = c->marginl + c->o->style_pad.l +
            ((c->w - c->ln->w -
              c->o->style_pad.l - c->o->style_pad.r -
-             c->marginl - c->marginr) * c->align);
+             c->marginl - c->marginr) * _layout_line_align_get(c));
         if ((c->ln->x + c->ln->w + c->marginr - c->o->style_pad.l) > c->wmax)
           c->wmax = c->ln->x + c->ln->w + c->marginl + c->marginr - c->o->style_pad.l;
      }
@@ -2910,6 +2946,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    c->underline_extend = 0;
    c->line_no = 0;
    c->align = 0.0;
+   c->align_auto = EINA_TRUE;
    c->ln = NULL;
 
    /* setup default base style */
