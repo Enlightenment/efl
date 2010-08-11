@@ -2374,7 +2374,7 @@ _edje_entry_cursor_line_begin(Edje_Real_Part *rp, Edje_Cursor cur)
    Entry *en = rp->entry_data;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
    if (!c) return;
-   evas_textblock_cursor_line_char_last(c);
+   evas_textblock_cursor_line_char_first(c);
    _curs_update_from_curs(c, rp->object, rp->entry_data);
    _sel_update(c, rp->object, rp->entry_data);
 
