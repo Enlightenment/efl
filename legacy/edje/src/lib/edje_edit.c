@@ -2003,7 +2003,7 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 	Edje_Real_Part *real;
 
 	if (i == id) continue; //don't check the deleted id
-	real = ed->table_parts[i % ed->table_parts_size];
+	real = ed->table_parts[i];
 
 	if (real->text.source == rp) real->text.source = NULL;
 	if (real->text.text_source == rp) real->text.text_source = NULL;
@@ -5775,8 +5775,9 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 }
 
 static Eina_Bool
-_edje_generate_source_of_part(Evas_Object *obj, const char *part, Eina_Strbuf *buf)
+_edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
 {
+   const char *part = ep->name;
    const char *str;
    Eina_List *l, *ll;
    char *data;
@@ -5879,12 +5880,13 @@ _edje_generate_source_of_part(Evas_Object *obj, const char *part, Eina_Strbuf *b
 }
 
 static Eina_Bool
-_edje_generate_source_of_group(Edje *ed, const char *group, Eina_Strbuf *buf)
+_edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *pce, Eina_Strbuf *buf)
 {
    Evas_Object *obj;
    Eina_List *l, *ll;
-   int w, h;
+   int w, h, i;
    char *data;
+   const char *group = pce->entry;
    Eina_Bool ret = EINA_TRUE;
 
    obj = edje_edit_object_add(ed->evas);
@@ -5898,7 +5900,7 @@ _edje_generate_source_of_group(Edje *ed, const char *group, Eina_Strbuf *buf)
       BUF_APPENDF(I2"min: %d %d;\n", w, h);
    w = edje_edit_group_max_w_get(obj);
    h = edje_edit_group_max_h_get(obj);
-   if ((w > -1) || (h > -1))
+   if ((w > 0) || (h > 0))
       BUF_APPENDF(I2"max: %d %d;\n", w, h);
 
    /* Data */
@@ -5927,10 +5929,12 @@ _edje_generate_source_of_group(Edje *ed, const char *group, Eina_Strbuf *buf)
 
    /* Parts */
    BUF_APPEND(I2"parts {\n");
-   ll = edje_edit_parts_list_get(obj);
-   EINA_LIST_FOREACH(ll, l, data)
-     ret &= _edje_generate_source_of_part(obj, data, buf);
-   edje_edit_string_list_free(ll);
+   for (i = 0; i < pce->ref->parts_count; i++)
+     {
+        Edje_Part *ep;
+        ep = pce->ref->parts[i];
+        ret &= _edje_generate_source_of_part(obj, ep, buf);
+     }
    BUF_APPEND(I2"}\n");//parts
 
    if (!ret)
@@ -6093,34 +6097,44 @@ _edje_generate_source(Evas_Object *obj)
    /* Externals */
    if ((ll = edje_edit_externals_list_get(obj)))
      {
-	BUF_APPEND(I0 "externals {\n");
-	EINA_LIST_FOREACH(ll, l, entry)
-          BUF_APPENDF(I1 "external: \"%s\";\n", entry);
+        BUF_APPEND(I0 "externals {\n");
+        EINA_LIST_FOREACH(ll, l, entry)
+           BUF_APPENDF(I1 "external: \"%s\";\n", entry);
 
-	BUF_APPEND(I0 "}\n\n");
-	edje_edit_string_list_free(ll);
+        BUF_APPEND(I0 "}\n\n");
+        edje_edit_string_list_free(ll);
 
-	if (!ret)
-	  {
-	     ERR("Generating EDC for Externals");
-	     eina_strbuf_free(buf);
-	     return NULL;
-	  }
+        if (!ret)
+          {
+             ERR("Generating EDC for Externals");
+             eina_strbuf_free(buf);
+             return NULL;
+          }
      }
 
    /* Collections */
-   BUF_APPEND("collections {\n");
-   ll = edje_file_collection_list(ed->file->path);
-   EINA_LIST_FOREACH(ll, l, entry)
-     ret &= _edje_generate_source_of_group(ed, entry, buf);
-   BUF_APPEND("}\n\n");
-   edje_file_collection_list_free(ll);
-
-   if (!ret)
+   if (ed->file->collection)
      {
-        ERR("Generating EDC for Collections");
-	eina_strbuf_free(buf);
-	return NULL;
+        Eina_Iterator *it;
+        Edje_Part_Collection_Directory_Entry *pce;
+        BUF_APPEND("collections {\n");
+
+        it = eina_hash_iterator_data_new(ed->file->collection);
+
+        if (!it)
+          {
+             ERR("Generating EDC for Collections");
+             eina_strbuf_free(buf);
+             return NULL;
+          }
+
+        EINA_ITERATOR_FOREACH(it, pce)
+          {
+             ret &= _edje_generate_source_of_group(ed, pce, buf);
+          }
+
+        eina_iterator_free(it);
+        BUF_APPEND("}\n\n");
      }
 
    return buf;

@@ -4354,6 +4354,8 @@ _edje_real_part_get(Edje *ed, const char *part)
 {
    int i;
 
+   if (!part) return NULL;
+
    for (i = 0; i < ed->table_parts_size; i++)
      {
 	Edje_Real_Part *rp;
