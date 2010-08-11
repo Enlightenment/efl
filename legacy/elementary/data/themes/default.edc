@@ -538,8 +538,9 @@ collections {
       data.item: "max_font_size" "60";
       styles {
          style { name: "textblock_style";
-            base: "font=Sans font_size=10 align=left color=#000 wrap=word";
+            base: "font=Sans font_size=10 color=#000 wrap=word";
             tag:  "br" "\n";
+            tag:  "ps" "ps";
             tag:  "hilight" "+ font=Sans:style=Bold";
             tag:  "b" "+ font=Sans:style=Bold";
             tag:  "tab" "\t";
@@ -603,6 +604,7 @@ collections {
          style { name: "textblock_style2";
 	   base: "font=Sans:style=Bold font_size=10 align=center color=#fff wrap=word";
            tag:  "br" "\n";
+           tag:  "ps" "ps";
 	   tag:  "hilight" "+ color=#ffff";
 	   tag:  "b" "+ color=#ffff";
 	   tag:  "tab" "\t";
@@ -5688,8 +5690,9 @@ collections {
       styles
 	{
 	   style { name: "entry_textblock_style";
- 	      base: "font=Sans font_size=10 align=left color=#000 wrap=word";
+ 	      base: "font=Sans font_size=10 color=#000 wrap=word";
 	      tag:  "br" "\n";
+              tag:  "ps" "ps";
 	      tag:  "tab" "\t";
 	      tag:  "em" "+ font=Sans:style=Oblique";
 	      tag:  "b" "+ font=Sans:style=Bold";
@@ -5697,8 +5700,9 @@ collections {
 	      tag:  "hilight" "+ font=Sans:style=Bold";
 	   }
 	   style { name: "entry_textblock_disabled_style";
- 	      base: "font=Sans font_size=10 align=left color=#00000080 wrap=word";
+ 	      base: "font=Sans font_size=10 color=#00000080 wrap=word";
 	      tag:  "br" "\n";
+              tag:  "ps" "ps";
 	      tag:  "tab" "\t";
 	      tag:  "em" "+ font=Sans:style=Oblique";
 	      tag:  "b" "+ font=Sans:style=Bold";
@@ -5766,8 +5770,9 @@ collections {
       styles
 	{
 	   style { name: "entry_textblock_style_charwrap";
- 	      base: "font=Sans font_size=10 align=left color=#000 wrap=char";
+ 	      base: "font=Sans font_size=10 color=#000 wrap=char";
 	      tag:  "br" "\n";
+              tag:  "ps" "ps";
 	      tag:  "tab" "\t";
 	      tag:  "em" "+ font=Sans:style=Oblique";
 	      tag:  "b" "+ font=Sans:style=Bold";
@@ -5775,8 +5780,9 @@ collections {
 	      tag:  "hilight" "+ font=Sans:style=Bold";
 	   }
 	   style { name: "entry_textblock_disabled_style_charwrap";
- 	      base: "font=Sans font_size=10 align=left color=#00000080 wrap=char";
+ 	      base: "font=Sans font_size=10 color=#00000080 wrap=char";
 	      tag:  "br" "\n";
+              tag:  "ps" "ps";
 	      tag:  "tab" "\t";
 	      tag:  "em" "+ font=Sans:style=Oblique";
 	      tag:  "b" "+ font=Sans:style=Bold";
@@ -5920,8 +5926,9 @@ collections {
       styles
 	{
 	   style { name: "entry_single_textblock_style";
-	      base: "font=Sans font_size=10 align=left color=#000 wrap=none";
+	      base: "font=Sans font_size=10 color=#000 wrap=none";
 	      tag:  "br" "\n";
+              tag:  "ps" "ps";
 	      tag:  "tab" "\t";
 	      tag:  "em" "+ font=Sans:style=Oblique";
 	      tag:  "b" "+ font=Sans:style=Bold";
@@ -5929,8 +5936,9 @@ collections {
 	      tag:  "hilight" "+ font=Sans:style=Bold";
 	   }
 	   style { name: "entry_single_textblock_disabled_style";
- 	      base: "font=Sans font_size=10 align=left color=#00000080 wrap=none";
+ 	      base: "font=Sans font_size=10 color=#00000080 wrap=none";
 	      tag:  "br" "\n";
+              tag:  "ps" "ps";
 	      tag:  "tab" "\t";
 	      tag:  "em" "+ font=Sans:style=Oblique";
 	      tag:  "b" "+ font=Sans:style=Bold";
@@ -13348,6 +13356,7 @@ collections {
            style { name: "genlist_style";
                base: "font=Sans font_size=10 align=left valign=0.5 color=#000";
                tag:  "br" "\n";
+               tag:  "ps" "ps";
                tag:  "hilight" "+ font=Sans:style=Bold";
                tag:  "b" "+ font=Sans:style=Bold";
                tag:  "tab" "\t";
@@ -13355,6 +13364,7 @@ collections {
            style { name: "genlist_selected_style";
                base: "font=Sans font_size=10 align=left valign=0.5 color=#fff";
                tag:  "br" "\n";
+               tag:  "ps" "ps";
                tag:  "hilight" "+ font=Sans:style=Bold";
                tag:  "b" "+ font=Sans:style=Bold";
                tag:  "tab" "\t";
@@ -22067,6 +22077,7 @@ collections {
            style { name: "gengrid_style";
                base: "font=Sans font_size=10 align=left valign=0.5 color=#000";
                tag:  "br" "\n";
+               tag:  "ps" "ps";
                tag:  "hilight" "+ font=Sans:style=Bold";
                tag:  "b" "+ font=Sans:style=Bold";
                tag:  "tab" "\t";
@@ -22074,6 +22085,7 @@ collections {
            style { name: "gengrid_selected_style";
                base: "font=Sans font_size=10 align=left valign=0.5 color=#fff";
                tag:  "br" "\n";
+               tag:  "ps" "ps";
                tag:  "hilight" "+ font=Sans:style=Bold";
                tag:  "b" "+ font=Sans:style=Bold";
                tag:  "tab" "\t";
