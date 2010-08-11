@@ -5478,7 +5478,8 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
    switch (edje_edit_program_transition_get(obj, program))
      {
      case EDJE_TWEEN_MODE_LINEAR:
-	BUF_APPENDF(I4"transition: LINEAR %.5f;\n", db);
+	if (db)
+	  BUF_APPENDF(I4"transition: LINEAR %.5f;\n", db);
 	break;
      case EDJE_TWEEN_MODE_ACCELERATE:
 	BUF_APPENDF(I4"transition: ACCELERATE %.5f;\n", db);
@@ -5647,14 +5648,18 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
    //Image
    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
      {
-        char *data;
+	char *data;
+	const char *image_name;
 
 	Edje_Part_Description_Image *img;
 
 	img = (Edje_Part_Description_Image *) pd;
 
 	BUF_APPEND(I5"image {\n");
-	BUF_APPENDF(I6"normal: \"%s\";\n", _edje_image_name_find(obj, img->image.id));
+
+	image_name = _edje_image_name_find(obj, img->image.id);
+	if (image_name)
+	  BUF_APPENDF(I6"normal: \"%s\";\n", image_name);
 
 	ll = edje_edit_state_tweens_list_get(obj, part, state, value);
 	EINA_LIST_FOREACH(ll, l, data)
@@ -5714,8 +5719,10 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	BUF_APPEND(I5"text {\n");
 	if (txt->text.text)
 	  BUF_APPENDF(I6"text: \"%s\";\n", txt->text.text);
-	BUF_APPENDF(I6"font: \"%s\";\n", txt->text.font);
-	BUF_APPENDF(I6"size: %d;\n", txt->text.size);
+	if (txt->text.font)
+	  BUF_APPENDF(I6"font: \"%s\";\n", txt->text.font);
+	if (txt->text.size)
+	  BUF_APPENDF(I6"size: %d;\n", txt->text.size);
 	if (txt->text.text_class)
 	  BUF_APPENDF(I6"text_class: \"%s\";\n", txt->text.text_class);
 	if (txt->text.fit_x || txt->text.fit_y)
