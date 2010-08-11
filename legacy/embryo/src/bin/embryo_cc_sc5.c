@@ -110,7 +110,7 @@ error(int number, ...)
 	sc_error(0, "\nCompilation aborted.", NULL, 0, 0, argptr);
 	va_end(argptr);
 
-	if (outf != NULL)
+	if (outf)
 	  {
 	     sc_closeasm(outf);
 	     outf = NULL;

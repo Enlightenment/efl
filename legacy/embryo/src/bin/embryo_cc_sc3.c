@@ -154,11 +154,11 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
    /* find the name with the operator */
    if (numparam == 2)
      {
-	if (oper == NULL)
+	if (!oper)
 	  {
 	     /* assignment operator: a special case */
 	     strcpy(opername, "=");
-	     if (lval != NULL
+	     if (lval
 		 && (lval->ident == iARRAYCELL || lval->ident == iARRAYCHAR))
 		savealt = TRUE;
 	  }
@@ -205,10 +205,10 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
    operator_symname(symbolname, opername, tag1, tag2, numparam, tag2);
    swapparams = FALSE;
    sym = findglb(symbolname);
-   if (sym == NULL /*|| (sym->usage & uDEFINE)==0 */ )
+   if (!sym /*|| (sym->usage & uDEFINE)==0 */ )
      {				/* ??? should not check uDEFINE; first pass clears these bits */
 	/* check for commutative operators */
-	if (tag1 == tag2 || oper == NULL || !commutative(oper))
+	if (tag1 == tag2 || !oper || !commutative(oper))
 	   return FALSE;	/* not commutative, cannot swap operands */
 	/* if arrived here, the operator is commutative and the tags are different,
 	 * swap tags and try again
@@ -217,7 +217,7 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
 	operator_symname(symbolname, opername, tag2, tag1, numparam, tag1);
 	swapparams = TRUE;
 	sym = findglb(symbolname);
-	if (sym == NULL /*|| (sym->usage & uDEFINE)==0 */ )
+	if (!sym /*|| (sym->usage & uDEFINE)==0 */ )
 	   return FALSE;
      }				/* if */
 
@@ -275,7 +275,7 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
      }				/* if */
 
    /* push parameters, call the function */
-   paramspassed = (oper == NULL) ? 1 : numparam;
+   paramspassed = (!oper) ? 1 : numparam;
    switch (paramspassed)
      {
      case 1:
@@ -305,7 +305,7 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
    ffcall(sym, paramspassed);
    if (sc_status != statSKIP)
       markusage(sym, uREAD);	/* do not mark as "used" when this call itself is skipped */
-   if (sym->x.lib != NULL)
+   if (sym->x.lib)
       sym->x.lib->value += 1;	/* increment "usage count" of the library */
    sideeffect = TRUE;		/* assume functions carry out a side-effect */
    assert(resulttag != NULL);
@@ -483,7 +483,7 @@ checkfunction(value * lval)
 {
    symbol             *sym = lval->sym;
 
-   if (sym == NULL || (sym->ident != iFUNCTN && sym->ident != iREFFUNC))
+   if (!sym || (sym->ident != iFUNCTN && sym->ident != iREFFUNC))
       return;			/* no known symbol, or not a function result */
 
    if ((sym->usage & uDEFINE) != 0)
@@ -532,7 +532,7 @@ plnge(int *opstr, int opoff, int (*hier) (value * lval), value * lval,
 	plnge2(op1[opidx], hier, lval, &lval2);
 	if (op1[opidx] == ob_and || op1[opidx] == ob_or)
 	   bitwise_opercount++;
-	if (forcetag != NULL)
+	if (forcetag)
 	   lval->tag = sc_addtag(forcetag);
      }
    while (nextop(&opidx, opstr));	/* do */
@@ -671,13 +671,13 @@ plnge2(void         (*oper) (void),
 	if (lval1->ident == iARRAY || lval1->ident == iREFARRAY)
 	  {
 	     char               *ptr =
-		(lval1->sym != NULL) ? lval1->sym->name : "-unknown-";
+		(lval1->sym) ? lval1->sym->name : "-unknown-";
 	     error(33, ptr);	/* array must be indexed */
 	  }
 	else if (lval2->ident == iARRAY || lval2->ident == iREFARRAY)
 	  {
 	     char               *ptr =
-		(lval2->sym != NULL) ? lval2->sym->name : "-unknown-";
+		(lval2->sym) ? lval2->sym->name : "-unknown-";
 	     error(33, ptr);	/* array must be indexed */
 	  }			/* if */
 	/* ??? ^^^ should do same kind of error checking with functions */
@@ -775,7 +775,7 @@ expression(int *constant, cell * val, int *tag, int chkfuncresult)
 	*constant = FALSE;
 	*val = 0;
      }				/* if */
-   if (tag != NULL)
+   if (tag)
       *tag = lval.tag;
    if (chkfuncresult)
       checkfunction(&lval);
@@ -841,7 +841,7 @@ hier14(value * lval1)
    for (i = 0; i < sDIMEN_MAX; i++)
       arrayidx1[i] = arrayidx2[i] = 0;
    org_arrayidx = lval1->arrayidx;	/* save current pointer, to reset later */
-   if (lval1->arrayidx == NULL)
+   if (!lval1->arrayidx)
       lval1->arrayidx = arrayidx1;
    lvalue = plnge1(hier13, lval1);
    if (lval1->ident != iARRAYCELL && lval1->ident != iARRAYCHAR)
@@ -938,7 +938,7 @@ hier14(value * lval1)
 	   lval2.arrayidx = NULL;
 	if (oper)
 	   pop2();
-	if (!oper && lval3.arrayidx != NULL && lval2.arrayidx != NULL
+	if (!oper && lval3.arrayidx && lval2.arrayidx
 	    && lval3.ident == lval2.ident && lval3.sym == lval2.sym)
 	  {
 	     int                 same = TRUE;
@@ -984,7 +984,7 @@ hier14(value * lval1)
 
 	if (lval2.ident != iARRAY && lval2.ident != iREFARRAY)
 	   error(33, lval3.sym->name);	/* array must be indexed */
-	if (lval2.sym != NULL)
+	if (lval2.sym)
 	  {
 	     val = lval2.sym->dim.array.length;	/* array variable */
 	     level = lval2.sym->dim.array.level;
@@ -1095,13 +1095,13 @@ hier13(value * lval)
 	if (array1 && !array2)
 	  {
 	     char               *ptr =
-		(lval->sym->name != NULL) ? lval->sym->name : "-unknown-";
+		(lval->sym->name) ? lval->sym->name : "-unknown-";
 	     error(33, ptr);	/* array must be indexed */
 	  }
 	else if (!array1 && array2)
 	  {
 	     char               *ptr =
-		(lval2.sym->name != NULL) ? lval2.sym->name : "-unknown-";
+		(lval2.sym->name) ? lval2.sym->name : "-unknown-";
 	     error(33, ptr);	/* array must be indexed */
 	  }			/* if */
 	/* ??? if both are arrays, should check dimensions */
@@ -1295,13 +1295,13 @@ hier2(value * lval)
 	if (tok != tSYMBOL)
 	   return error(20, st);	/* illegal symbol name */
 	sym = findloc(st);
-	if (sym == NULL)
+	if (!sym)
 	   sym = findglb(st);
-	if (sym != NULL && sym->ident != iFUNCTN && sym->ident != iREFFUNC
+	if (sym && sym->ident != iFUNCTN && sym->ident != iREFFUNC
 	    && (sym->usage & uDEFINE) == 0)
 	   sym = NULL;		/* symbol is not a function, it is in the table, but not "defined" */
 	val = (sym != NULL);
-	if (!val && find_subst(st, strlen(st)) != NULL)
+	if (!val && find_subst(st, strlen(st)))
 	   val = 1;
 	clear_value(lval);
 	lval->ident = iCONSTEXPR;
@@ -1318,9 +1318,9 @@ hier2(value * lval)
 	if (tok != tSYMBOL)
 	   return error(20, st);	/* illegal symbol name */
 	sym = findloc(st);
-	if (sym == NULL)
+	if (!sym)
 	   sym = findglb(st);
-	if (sym == NULL)
+	if (!sym)
 	   return error(17, st);	/* undefined symbol */
 	if (sym->ident == iCONSTEXPR)
 	   error(39);		/* constant symbol has no size */
@@ -1341,7 +1341,7 @@ hier2(value * lval)
 		error(28);	/* invalid subscript */
 	     else
 		lval->constval = array_levelsize(sym, level);
-	     if (lval->constval == 0 && strchr(lptr, PREPROC_TERM) == NULL)
+	     if (lval->constval == 0 && !strchr(lptr, PREPROC_TERM))
 		error(224, st);	/* indeterminate array size in "sizeof" expression */
 	  }			/* if */
 	const1(lval->constval);
@@ -1362,9 +1362,9 @@ hier2(value * lval)
 	else
 	  {
 	     sym = findloc(st);
-	     if (sym == NULL)
+	     if (!sym)
 		sym = findglb(st);
-	     if (sym == NULL)
+	     if (!sym)
 		return error(17, st);	/* undefined symbol */
 	     if ((sym->usage & uDEFINE) == 0)
 		return error(17, st);	/* undefined symbol (symbol is in the table, but it is "used" only) */
@@ -1497,7 +1497,7 @@ hier1(value * lval1)
    if (matchtoken('[') || matchtoken('{') || matchtoken('('))
      {
 	tok = tokeninfo(&val, &st);	/* get token read by matchtoken() */
-	if (sym == NULL && symtok != tSYMBOL)
+	if (!sym && symtok != tSYMBOL)
 	  {
 	     /* we do not have a valid symbol and we appear not to have read a valid
 	      * symbol name (so it is unlikely that we would have read a name of an
@@ -1509,7 +1509,7 @@ hier1(value * lval1)
 	if (tok == '[' || tok == '{')
 	  {			/* subscript */
 	     close = (char)((tok == '[') ? ']' : '}');
-	     if (sym == NULL)
+	     if (!sym)
 	       {		/* sym==NULL if lval is a constant or a literal */
 		  error(28);	/* cannot subscript */
 		  needtoken(close);
@@ -1539,7 +1539,7 @@ hier1(value * lval1)
 	     if (lval2.ident == iCONSTEXPR)
 	       {		/* constant expression */
 		  stgdel(index, cidx);	/* scratch generated code */
-		  if (lval1->arrayidx != NULL)
+		  if (lval1->arrayidx)
 		    {		/* keep constant index, for checking */
 		       assert(sym->dim.array.level >= 0
 			      && sym->dim.array.level < sDIMEN_MAX);
@@ -1634,16 +1634,16 @@ hier1(value * lval1)
 	  }
 	else
 	  {			/* tok=='(' -> function(...) */
-	     if (sym == NULL
+	     if (!sym
 		 || (sym->ident != iFUNCTN && sym->ident != iREFFUNC))
 	       {
-		  if (sym == NULL && sc_status == statFIRST)
+		  if (!sym && sc_status == statFIRST)
 		    {
 		       /* could be a "use before declaration"; in that case, create a stub
 		        * function so that the usage can be marked.
 		        */
 		       sym = fetchfunc(lastsymbol, 0);
-		       if (sym != NULL)
+		       if (sym)
 			  markusage(sym, uREAD);
 		    }		/* if */
 		  return error(12);	/* invalid function call */
@@ -1662,7 +1662,7 @@ hier1(value * lval1)
 	     return FALSE;	/* result of function call is no lvalue */
 	  }			/* if */
      }				/* if */
-   if (sym != NULL && lval1->ident == iFUNCTN)
+   if (sym && lval1->ident == iFUNCTN)
      {
 	assert(sym->ident == iFUNCTN);
 	address(sym);
@@ -1723,7 +1723,7 @@ primary(value * lval)
    if (tok == tSYMBOL && !findconst(st))
      {
 	/* first look for a local variable */
-	if ((sym = findloc(st)) != NULL)
+	if ((sym = findloc(st)))
 	  {
 	     if (sym->ident == iLABEL)
 	       {
@@ -1745,7 +1745,7 @@ primary(value * lval)
 	       }		/* if */
 	  }			/* if */
 	/* now try a global variable */
-	if ((sym = findglb(st)) != NULL)
+	if ((sym = findglb(st)))
 	  {
 	     if (sym->ident == iFUNCTN || sym->ident == iREFFUNC)
 	       {
@@ -2009,7 +2009,7 @@ callfunction(symbol * sym)
 			 }	/* if */
 		       /* ??? handle const array passed by reference */
 		       /* otherwise, the address is already in PRI */
-		       if (lval.sym != NULL)
+		       if (lval.sym)
 			  markusage(lval.sym, uWRITTEN);
 /*
  * Dont need this warning - its varargs. there is no way of knowing the
@@ -2038,7 +2038,7 @@ callfunction(symbol * sym)
 		    case iREFERENCE:
 		       if (!lvalue || lval.ident == iARRAYCHAR)
 			  error(35, argidx + 1);	/* argument type mismatch */
-		       if (lval.sym != NULL && (lval.sym->usage & uCONST) != 0
+		       if (lval.sym && (lval.sym->usage & uCONST) != 0
 			   && (arg[argidx].usage & uCONST) == 0)
 			  error(35, argidx + 1);	/* argument type mismatch */
 		       if (lval.ident == iVARIABLE || lval.ident == iREFERENCE)
@@ -2059,7 +2059,7 @@ callfunction(symbol * sym)
 			   (arg[argidx].tags, arg[argidx].numtags, lval.tag))
 			  error(213);
 		       argidx++;	/* argument done */
-		       if (lval.sym != NULL)
+		       if (lval.sym)
 			  markusage(lval.sym, uWRITTEN);
 		       break;
 		    case iREFARRAY:
@@ -2069,14 +2069,14 @@ callfunction(symbol * sym)
 			    error(35, argidx + 1);	/* argument type mismatch */
 			    break;
 			 }	/* if */
-		       if (lval.sym != NULL && (lval.sym->usage & uCONST) != 0
+		       if (lval.sym && (lval.sym->usage & uCONST) != 0
 			   && (arg[argidx].usage & uCONST) == 0)
 			  error(35, argidx + 1);	/* argument type mismatch */
 		       /* Verify that the dimensions match with those in arg[argidx].
 		        * A literal array always has a single dimension.
 		        * An iARRAYCELL parameter is also assumed to have a single dimension.
 		        */
-		       if (lval.sym == NULL || lval.ident == iARRAYCELL)
+		       if (!lval.sym || lval.ident == iARRAYCELL)
 			 {
 			    if (arg[argidx].numdim != 1)
 			      {
@@ -2267,7 +2267,7 @@ callfunction(symbol * sym)
 	      */
 	     asz = find_constval(&arrayszlst, arg[argidx].defvalue.size.symname,
 				 arg[argidx].defvalue.size.level);
-	     if (asz != NULL)
+	     if (asz)
 	       {
 		  array_sz = asz->value;
 		  if (array_sz == 0)
@@ -2284,9 +2284,9 @@ callfunction(symbol * sym)
 
 	     assert((arg[argidx].hasdefault & uTAGOF) != 0);
 	     sym = findloc(arg[argidx].defvalue.size.symname);
-	     if (sym == NULL)
+	     if (!sym)
 		sym = findglb(arg[argidx].defvalue.size.symname);
-	     array_sz = (sym != NULL) ? sym->tag : 0;
+	     array_sz = (sym) ? sym->tag : 0;
 	     exporttag(array_sz);
 	  }			/* if */
 	const1(array_sz);
@@ -2301,7 +2301,7 @@ callfunction(symbol * sym)
    ffcall(sym, nargs);
    if (sc_status != statSKIP)
       markusage(sym, uREAD);	/* do not mark as "used" when this call itself is skipped */
-   if (sym->x.lib != NULL)
+   if (sym->x.lib)
       sym->x.lib->value += 1;	/* increment "usage count" of the library */
    modheap(-heapalloc * sizeof(cell));
    sideeffect = TRUE;		/* assume functions carry out a side-effect */
@@ -2371,7 +2371,7 @@ constant(value * lval)
    symbol             *sym;
 
    tok = lex(&val, &st);
-   if (tok == tSYMBOL && (sym = findconst(st)) != NULL)
+   if (tok == tSYMBOL && (sym = findconst(st)))
      {
 	lval->constval = sym->addr;
 	const1(lval->constval);
