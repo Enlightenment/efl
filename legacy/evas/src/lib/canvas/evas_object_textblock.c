@@ -2396,6 +2396,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
         else
           {
              int len;
+             int orig_off = off;
              len = eina_ustrbuf_length_get(n->unicode);
              if (off == 0) return;
              else if (off < 0) off = len - start;
@@ -2403,6 +2404,13 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
              if (start < 0)
                {
                   start = 0;
+               }
+             else if ((start == 0) && (off == 0) && (orig_off == -1))
+               {
+                  /* Special case that means that we need to add an empty
+                   * item */
+                  str = EINA_UNICODE_EMPTY_STRING;
+                  goto skip;
                }
              else if ((start >= len) || (off > len))
                {
@@ -2415,13 +2423,11 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
                {
                   alloc_str[off] = 0;
                }
-             tbase = str = alloc_str;
+             str = alloc_str;
           }
      }
-   else
-     {
-        tbase = str;
-     }
+skip:
+   tbase = str;
    //   printf("add: wrap: %i|%i, width: %i '%s'\n", fmt->wrap_word, fmt->wrap_char, c->w, str);
    new_line = 0;
    empty_item = 0;
