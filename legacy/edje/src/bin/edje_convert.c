@@ -451,7 +451,8 @@ _edje_description_convert(int type,
 	 CONVERT_ALLOC_POOL(EXTERNAL, External, external_params);
      }
 
-   *result = oed->common;
+   if (result)
+     *result = oed->common;
 
    free(oed);
    return result;
