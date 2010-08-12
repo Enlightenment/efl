@@ -1563,7 +1563,6 @@ _format_fill(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char *st
 
    while ((item = _format_parse(&s)))
      {
-        char tmp_delim = *s;
         if (_format_is_param(item))
           {
              const char *key = NULL, *val = NULL;
@@ -2373,7 +2372,6 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
    int wrap, twrap, ch, index, white_stripped;
    Eina_Unicode *alloc_str = NULL;
    const Eina_Unicode *str = EINA_UNICODE_EMPTY_STRING;
-   const Eina_Unicode *ustr;
    const Eina_Unicode *tbase;
    Evas_Object_Textblock_Item *it;
 
@@ -2391,7 +2389,8 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
              str = alloca((len + 1) * sizeof(Eina_Unicode));
              tbase = str;
              ind = 0;
-             urepch = evas_common_encoding_utf8_get_next(repch, &ind);
+             urepch = evas_common_encoding_utf8_get_next(
+                   (const unsigned char *)repch, &ind);
              for (i = 0, ptr = (Eina_Unicode *)tbase; i < len; ptr++, i++)
                *ptr = urepch;
              *ptr = 0;
@@ -3113,7 +3112,6 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *
    if (!o->formatted.valid) _relayout(obj);
    EINA_INLIST_FOREACH(o->lines, ln)
      {
-        Evas_Object_Textblock_Format_Item *fit;
         Evas_Object_Textblock_Item *it;
         Evas_Object_Textblock_Line *lnn;
 
@@ -4315,7 +4313,7 @@ evas_textblock_cursor_free(Evas_Textblock_Cursor *cur)
 EAPI Eina_Bool
 evas_textblock_cursor_is_format(const Evas_Textblock_Cursor *cur)
 {
-   if (!cur || !cur->node) return;
+   if (!cur || !cur->node) return EINA_FALSE;
    if (evas_textblock_cursor_format_is_visible_get(cur)) return EINA_TRUE;
    return (_evas_textblock_cursor_node_format_at_pos_get(cur)) ?
       EINA_TRUE : EINA_FALSE;
@@ -4870,8 +4868,6 @@ _evas_textblock_node_format_adjust_offset(Evas_Object_Textblock *o,
       Evas_Object_Textblock_Node_Text *tnode,
       Evas_Object_Textblock_Node_Format *fmt, int offset)
 {
-   size_t position = 0;
-
    if (fmt)
      {
         fmt = _NODE_FORMAT(EINA_INLIST_GET(fmt)->next);
@@ -5405,10 +5401,10 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    Evas_Object_Textblock_Node_Text *n;
    Evas_Object_Textblock_Node_Format *fnode = NULL;
    Eina_Unicode *text;
-   size_t len = 0;
+   int len = 0;
 
    if (!cur) return 0;
-   text = evas_common_encoding_utf8_to_unicode(_text, &len);
+   text = evas_common_encoding_utf8_to_unicode((const unsigned char *) _text, &len);
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    /* Update all the cursors after our position. */
    _evas_textblock_cursors_update(cur, cur->node, cur->pos, eina_unicode_strlen(text));
@@ -5478,13 +5474,14 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
  * @return Returns the len of the text added.
  * @see evas_textblock_cursor_text_append()
  */
-   EAPI size_t
+EAPI size_t
 evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *_text)
 {
    size_t len;
    /*append is essentially prepend without advancing */
    len = evas_textblock_cursor_text_append(cur, _text);
    cur->pos += len; /*Advance */
+   return len;
 }
 
 /**
@@ -5493,7 +5490,7 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *_text
  *
  * @prama n the format node to free
  */
-   static void
+static void
 _evas_textblock_node_format_free(Evas_Object_Textblock_Node_Format *n)
 {
    if (!n) return;
@@ -5855,14 +5852,13 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node_Text *n1, *n2, *tnode;
-   Eina_Unicode *text;
    Eina_Strbuf *buf;
    Evas_Textblock_Cursor *cur2;
    buf = eina_strbuf_new();
 
-   if (!cur1 || !cur1->node) return;
-   if (!_cur2 || !_cur2->node) return;
-   if (cur1->obj != _cur2->obj) return;
+   if (!cur1 || !cur1->node) return NULL;
+   if (!_cur2 || !_cur2->node) return NULL;
+   if (cur1->obj != _cur2->obj) return NULL;
    o = (Evas_Object_Textblock *)(cur1->obj->object_data);
    if (evas_textblock_cursor_compare(cur1, _cur2) > 0)
      {
@@ -5885,7 +5881,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
      {
         Evas_Object_Textblock_Node_Format *fnode;
         Eina_Unicode *text_base, *text;
-        int off, first_pos;
+        int off;
 
         text_base = text =
            eina_unicode_strdup(eina_ustrbuf_string_get(n1->unicode));
