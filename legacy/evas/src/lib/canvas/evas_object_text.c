@@ -336,7 +336,7 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
    return;
    MAGIC_CHECK_END();
 
-   text = evas_common_encoding_utf8_to_unicode(_text, NULL);
+   text = evas_common_encoding_utf8_to_unicode((unsigned char *) _text, NULL);
 
    if (!text) text = eina_unicode_strdup(EINA_UNICODE_EMPTY_STRING);
    if ((o->cur.text) && (text) && (!eina_unicode_strcmp(o->cur.text, text)))
