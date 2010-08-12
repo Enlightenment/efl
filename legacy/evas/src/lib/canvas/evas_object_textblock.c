@@ -1567,11 +1567,8 @@ _format_fill(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char *st
         if (_format_is_param(item))
           {
              const char *key = NULL, *val = NULL;
-             char *tmp = alloca(s - item + 1);
-             strncpy(tmp, item, s - item);
-             tmp[s - item] = '\0';
 
-             _format_param_parse(tmp, &key, &val);
+             _format_param_parse(item, &key, &val);
              _format_command(obj, fmt, key, val);
              eina_stringshare_del(key);
              eina_stringshare_del(val);
