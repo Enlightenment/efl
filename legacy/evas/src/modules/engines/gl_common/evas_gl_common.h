@@ -281,6 +281,8 @@ struct _Evas_GL_Image
       int           mipmap;
       unsigned char loose : 1;
    } native;
+
+   int scale_hint, content_hint;
    
    unsigned char    dirty : 1;
    unsigned char    cached : 1;
@@ -407,6 +409,8 @@ Evas_GL_Image    *evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, in
 Evas_GL_Image    *evas_gl_common_image_alpha_set(Evas_GL_Image *im, int alpha);
 void              evas_gl_common_image_native_enable(Evas_GL_Image *im);
 void              evas_gl_common_image_native_disable(Evas_GL_Image *im);
+void              evas_gl_common_image_scale_hint_set(Evas_GL_Image *im, int hint);
+void              evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint);
 void              evas_gl_common_image_free(Evas_GL_Image *im);
 Evas_GL_Image    *evas_gl_common_image_surface_new(Evas_GL_Context *gc, int w, int h, int alpha);
 void              evas_gl_common_image_dirty(Evas_GL_Image *im, int x, int y, int w, int h);

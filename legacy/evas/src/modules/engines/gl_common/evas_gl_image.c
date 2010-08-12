@@ -265,6 +265,22 @@ evas_gl_common_image_native_disable(Evas_GL_Image *im)
 }
 
 void
+evas_gl_common_image_scale_hint_set(Evas_GL_Image *im, int hint)
+{
+   im->scale_hint = hint;
+   // FIXME: take advantage of this even in gl (eg if image is
+   // 1600x1200 but we always use it at 800x600 or even less - drop
+   // the texture res down for "non dynamic" stuff to save memory)
+}
+
+void
+evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
+{
+   im->content_hint = hint;
+   // FIXME: make use of content hint
+}
+
+void
 evas_gl_common_image_free(Evas_GL_Image *im)
 {
    im->references--;

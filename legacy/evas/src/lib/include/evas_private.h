@@ -730,6 +730,9 @@ struct _Evas_Func
    void (*image_map4_draw)                 (void *data, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level);
    void *(*image_map_surface_new)          (void *data, int w, int h, int alpha);
    void (*image_map_surface_free)          (void *data, void *surface);
+
+   void (*image_content_hint_set)          (void *data, void *surface, int hint);
+   int  (*image_content_hint_get)          (void *data, void *surface);
 };
 
 struct _Evas_Image_Load_Func

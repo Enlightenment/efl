@@ -1240,7 +1240,9 @@ static Evas_Func func =
      /* FUTURE software generic calls go here (done) */
      eng_image_map4_draw,
      eng_image_map_surface_new,
-     eng_image_map_surface_free
+     eng_image_map_surface_free,
+     NULL, // eng_image_content_hint_set - software doesnt use it
+     NULL // eng_image_content_hint_get - software doesnt use it
      /* FUTURE software generic calls go here */
 };
 

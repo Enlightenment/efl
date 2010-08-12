@@ -1907,6 +1907,15 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 static void
 eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
 {
+   if (image) evas_gl_common_image_scale_hint_set(image, hint);
+}
+
+static int
+eng_image_scale_hint_get(void *data __UNUSED__, void *image)
+{
+   Evas_GL_Image *gim = image;
+   if (!gim) return EVAS_IMAGE_SCALE_HINT_NONE;
+   return gim->scale_hint;
 }
 
 static void
@@ -1936,10 +1945,18 @@ eng_image_map_surface_free(void *data __UNUSED__, void *surface)
    evas_gl_common_image_free(surface);
 }
 
-static int
-eng_image_scale_hint_get(void *data __UNUSED__, void *image)
+static void
+eng_image_content_hint_set(void *data __UNUSED__, void *image, int hint)
 {
-   return EVAS_IMAGE_SCALE_HINT_NONE;
+   if (image) evas_gl_common_image_content_hint_set(image, hint);
+}
+
+static int
+eng_image_content_hint_get(void *data __UNUSED__, void *image)
+{
+   Evas_GL_Image *gim = image;
+   if (!gim) return EVAS_IMAGE_CONTENT_HINT_NONE;
+   return gim->content_hint;
 }
 
 static void
@@ -2097,6 +2114,9 @@ module_open(Evas_Module *em)
    ORD(image_map4_draw);
    ORD(image_map_surface_new);
    ORD(image_map_surface_free);
+   
+   ORD(image_content_hint_set);
+   ORD(image_content_hint_get);
    
    /* now advertise out own api */
    em->functions = (void *)(&func);

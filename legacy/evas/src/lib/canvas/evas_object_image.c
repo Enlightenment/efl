@@ -1884,6 +1884,7 @@ evas_object_image_native_surface_set(Evas_Object *obj, Evas_Native_Surface *surf
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+   if (!obj->layer->evas->engine.func->image_native_set) return;
    o->engine_data = 
       obj->layer->evas->engine.func->image_native_set(obj->layer->evas->engine.data.output,
                                                       o->engine_data,
@@ -1911,6 +1912,7 @@ evas_object_image_native_surface_get(const Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return NULL;
    MAGIC_CHECK_END();
+   if (!obj->layer->evas->engine.func->image_native_get) return NULL;
    return obj->layer->evas->engine.func->image_native_get(obj->layer->evas->engine.data.output,
 							  o->engine_data);
 }
@@ -1945,6 +1947,10 @@ evas_object_image_scale_hint_set(Evas_Object *obj, Evas_Image_Scale_Hint hint)
      }
 #endif
    o->scale_hint = hint;
+   if (obj->layer->evas->engine.func->image_content_hint_set)
+      obj->layer->evas->engine.func->image_scale_hint_set
+      (obj->layer->evas->engine.data.output,
+          o->engine_data, o->content_hint);
 }
 
 /**
@@ -1998,8 +2004,12 @@ evas_object_image_content_hint_set(Evas_Object *obj, Evas_Image_Content_Hint hin
         if (o->engine_data)
           evas_common_pipe_op_image_flush(o->engine_data);
      }
-#endif   
+#endif
    o->content_hint = hint;
+   if (obj->layer->evas->engine.func->image_content_hint_set)
+      obj->layer->evas->engine.func->image_content_hint_set
+      (obj->layer->evas->engine.data.output,
+          o->engine_data, o->content_hint);
 }
 
 /**
