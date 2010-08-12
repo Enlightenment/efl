@@ -214,6 +214,9 @@ eina_one_big_shutdown(void *data)
 
    if (!pool) return ;
 
+   if (pool->over)
+      INF(stderr, "freeing ! %i (%i) %i [%s]\n", pool->usage, pool->max, pool->over, pool->name);
+
 #ifdef DEBUG
    if (pool->usage > 0)
       INF(
