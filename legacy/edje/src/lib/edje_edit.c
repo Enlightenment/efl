@@ -1146,6 +1146,8 @@ edje_edit_data_list_get(Evas_Object * obj)
 EAPI Eina_Bool
 edje_edit_group_data_add(Evas_Object *obj, const char *key, const char *value)
 {
+   Edje_String *es;
+
    GET_ED_OR_RETURN(EINA_FALSE);
 
    if (!key || !ed->file || !ed->collection)
@@ -1157,12 +1159,25 @@ edje_edit_group_data_add(Evas_Object *obj, const char *key, const char *value)
    if (eina_hash_find(ed->collection->data, key))
      return EINA_FALSE;
 
-   return eina_hash_add(ed->collection->data, key, eina_stringshare_add(value));
+   es = calloc(1, sizeof(Edje_String));
+   if (!es)
+     return EINA_FALSE;
+   es->str = eina_stringshare_add(value);
+
+   if (!eina_hash_add(ed->collection->data, key, es))
+     {
+        eina_stringshare_del(es->str);
+        free(es);
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
 edje_edit_data_add(Evas_Object *obj, const char *itemname, const char *value)
 {
+   Edje_String *es;
+
    GET_ED_OR_RETURN(EINA_FALSE);
 
    if (!itemname || !ed->file)
@@ -1171,15 +1186,24 @@ edje_edit_data_add(Evas_Object *obj, const char *itemname, const char *value)
    if (eina_hash_find(ed->file->data, itemname))
      return EINA_FALSE;
 
-   eina_hash_add(ed->file->data, itemname, eina_stringshare_add(value));
+   es = calloc(1, sizeof(Edje_String));
+   if (!es)
+     return EINA_FALSE;
+   es->str = eina_stringshare_add(value);
 
+   if (!eina_hash_add(ed->file->data, itemname, es))
+     {
+        eina_stringshare_del(es->str);
+        free(es);
+        return EINA_FALSE;
+     }
    return EINA_TRUE;
 }
 
 EAPI Eina_Bool
 edje_edit_group_data_del(Evas_Object *obj, const char *key)
 {
-   const char *value;
+   Edje_String *value;
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
@@ -1189,25 +1213,38 @@ edje_edit_group_data_del(Evas_Object *obj, const char *key)
    value = eina_hash_find(ed->collection->data, key);
    if (!value) return EINA_FALSE;
 
-   _edje_if_string_free(ed, value);
-   return eina_hash_del(ed->collection->data, key, value);
+   eina_hash_del(ed->collection->data, key, value);
+   _edje_if_string_free(ed, value->str);
+   free(value);
+
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
 edje_edit_data_del(Evas_Object *obj, const char *itemname)
 {
+   Edje_String *value;
+
    GET_ED_OR_RETURN(EINA_FALSE);
 
    if (!itemname || !ed->file || !ed->file->data)
      return 0;
 
-   return eina_hash_del(ed->file->data, itemname, NULL);
+   value = eina_hash_find(ed->file->data, itemname);
+   if (!value)
+     return EINA_FALSE;
+
+   eina_hash_del(ed->file->data, itemname, value);
+   _edje_if_string_free(ed, value->str);
+   free(value);
+
+   return EINA_TRUE;
 }
 
 EAPI const char *
 edje_edit_group_data_value_get(Evas_Object * obj, char *key)
 {
-   const char *value;
+   Edje_String *value;
 
    GET_ED_OR_RETURN(NULL);
 
@@ -1215,37 +1252,45 @@ edje_edit_group_data_value_get(Evas_Object * obj, char *key)
      return NULL;
 
    value = eina_hash_find(ed->collection->data, key);
-   if (value) value = eina_stringshare_add(value);
-   return value;
+   if (!value)
+     return NULL;
+
+   return eina_stringshare_add(edje_string_get(value));
 }
 
 EAPI const char *
 edje_edit_data_value_get(Evas_Object * obj, char *itemname)
 {
+   Edje_String *value;
+
    GET_ED_OR_RETURN(NULL);
 
    if (!itemname || !ed->file || !ed->file->data)
      return NULL;
 
-   return eina_stringshare_add(eina_hash_find(ed->file->data, itemname));
+   value = eina_hash_find(ed->file->data, itemname);
+   if (!value)
+     return NULL;
+
+   return eina_stringshare_add(edje_string_get(value));
 }
 
 EAPI Eina_Bool
 edje_edit_group_data_value_set(Evas_Object *obj, const char *key, const char *value)
 {
-   const char *old_value;
+   Edje_String *es;
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
    if (!key || !value || !ed->file || !ed->collection)
      return EINA_FALSE;
 
-   old_value = eina_hash_find(ed->collection->data, key);
-   if (old_value)
+   es = eina_hash_find(ed->collection->data, key);
+   if (es)
      {
-        value = eina_stringshare_add(value);
-	eina_hash_modify(ed->collection->data, key, value);
-	_edje_if_string_free(ed, old_value);
+        _edje_if_string_free(ed, es->str);
+        es->str = eina_stringshare_add(value);
+        es->id = 0;
 	return EINA_TRUE;
      }
 
@@ -1255,19 +1300,19 @@ edje_edit_group_data_value_set(Evas_Object *obj, const char *key, const char *va
 EAPI Eina_Bool
 edje_edit_data_value_set(Evas_Object *obj, const char *itemname, const char *value)
 {
-   const char *old;
+   Edje_String *es;
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
    if (!itemname || !value || !ed->file || !ed->file->data)
      return EINA_FALSE;
 
-   old = eina_hash_find(ed->file->data, itemname);
-   if (old)
+   es = eina_hash_find(ed->file->data, itemname);
+   if (es)
      {
-        value = eina_stringshare_add(value);
-        eina_hash_modify(ed->file->data, itemname, value);
-        _edje_if_string_free(ed, old);
+        _edje_if_string_free(ed, es->str);
+        es->str = eina_stringshare_add(value);
+        es->id = 0;
         return EINA_TRUE;
      }
    return EINA_FALSE;
@@ -1276,43 +1321,24 @@ edje_edit_data_value_set(Evas_Object *obj, const char *itemname, const char *val
 EAPI Eina_Bool
 edje_edit_group_data_name_set(Evas_Object *obj, const char *key,  const char *new_key)
 {
-   const char *value;
-
    GET_ED_OR_RETURN(EINA_FALSE);
 
    if (!key || !new_key || !ed->file || !ed->collection) {
       return EINA_FALSE;
    }
 
-   value = eina_hash_find(ed->collection->data, key);
-   if (value)
-     {
-	eina_hash_del(ed->collection->data, key, value);
-	return eina_hash_add(ed->collection->data, new_key, value);
-     }
-
-   return EINA_FALSE;
+   return eina_hash_move(ed->collection->data, key, new_key);
 }
 
 EAPI Eina_Bool
 edje_edit_data_name_set(Evas_Object *obj, const char *itemname,  const char *newname)
 {
-   const char *value;
-
    GET_ED_OR_RETURN(EINA_FALSE);
 
    if (!itemname || !newname || !ed->file || !ed->file->data)
      return EINA_FALSE;
 
-   /* Get value and prevent it's destruction */
-   value = eina_hash_find(ed->file->data, itemname);
-   value = eina_stringshare_add(value);
-   if (!value) return EINA_FALSE;
-
-   eina_hash_del(ed->file->data, itemname, NULL);
-   eina_hash_add(ed->file->data, itemname, value);
-
-   return EINA_TRUE;
+   return eina_hash_move(ed->file->data, itemname, newname);
 }
 
 /***********************/
