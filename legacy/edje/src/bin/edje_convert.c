@@ -204,6 +204,7 @@ _edje_collection_convert(Eet_File *ef, Edje_Part_Collection_Directory_Entry *ce,
    Edje_Program *pg;
    Old_Edje_Data *di;
    Eina_List *l;
+   char *buffer;
    unsigned int k;
 
    oedc->part = ce->entry;
@@ -240,8 +241,10 @@ _edje_collection_convert(Eet_File *ef, Edje_Part_Collection_Directory_Entry *ce,
      }
    ce->count.part = eina_list_count(oedc->parts);
 
-#define CONVERT_EMN(Tp, Sz, Ce)							\
-   Ce->mp.Tp = eina_mempool_add("one_big", #Tp, NULL, sizeof (Sz), Ce->count.Tp);
+#define CONVERT_EMN(Tp, Sz, Ce)						\
+   buffer = alloca(strlen(ce->entry) + strlen(#Tp) + 2);		\
+   sprintf(buffer, "%s/%s", ce->entry, #Tp);				\
+   Ce->mp.Tp = eina_mempool_add("one_big", buffer, NULL, sizeof (Sz), Ce->count.Tp);
 
    CONVERT_EMN(RECTANGLE, Edje_Part_Description_Common, ce);
    CONVERT_EMN(TEXT, Edje_Part_Description_Text, ce);

@@ -63,6 +63,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    int id = -1, size = 0;
    Eina_List *l;
    char buf[256];
+   char *buffer;
    void *data;
 
    ce = eina_hash_find(edf->collection, coll);
@@ -89,8 +90,10 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    id = ce->id;
    if (id < 0) return NULL;
 
-#define INIT_EMP(Tp, Sz, Ce)					\
-   Ce->mp.Tp = eina_mempool_add("one_big", #Tp, NULL, sizeof (Sz), Ce->count.Tp); \
+#define INIT_EMP(Tp, Sz, Ce)						\
+   buffer = alloca(strlen(ce->entry) + strlen(#Tp) + 2);		\
+   sprintf(buffer, "%s/%s", ce->entry, #Tp);				\
+   Ce->mp.Tp = eina_mempool_add("one_big", buffer, NULL, sizeof (Sz), Ce->count.Tp); \
    _emp_##Tp = Ce->mp.Tp;
 
    INIT_EMP(RECTANGLE, Edje_Part_Description_Common, ce);

@@ -237,8 +237,26 @@ data_write_header(Eet_File *ef)
 	     /* copy aliases into collection directory */
 	     EINA_LIST_FREE(aliases, ce)
 	       {
+		  Edje_Part_Collection_Directory_Entry *sce;
+		  Eina_Iterator *it;
+
 		  if (!ce->entry)
 		    error_and_abort(ef, "Collection %i: name missing.\n", ce->id);
+
+		  it = eina_hash_iterator_data_new(new_edje_file->collection);
+
+		  EINA_ITERATOR_FOREACH(it, sce)
+		    if (ce->id == sce->id)
+		      {
+			 memcpy(&ce->count, &sce->count, sizeof (ce->count));
+			 break;
+		      }
+
+		  if (!sce)
+		    error_and_abort(ef, "Collection %s (%i) can't find an correct alias.\n", ce->entry, ce->id);
+
+		  eina_iterator_free(it);
+
 		  eina_hash_direct_add(new_edje_file->collection, ce->entry, ce);
 	       }
 	  }

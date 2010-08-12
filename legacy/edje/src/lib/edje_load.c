@@ -1120,6 +1120,12 @@ _edje_file_free(Edje_File *edf)
 	free(edf->image_dir);
      }
 
+   if (edf->external_dir)
+     {
+	if (edf->external_dir->entries) free(edf->external_dir->entries);
+	free(edf->external_dir);
+     }
+
    EINA_LIST_FREE(edf->color_classes, ecc)
      {
 	if (edf->free_strings && ecc->name) eina_stringshare_del(ecc->name);
@@ -1197,7 +1203,18 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
    free(ec->parts);
    ec->parts = NULL;
 
-   if (ec->data) eina_hash_free(ec->data);
+   if (ec->data)
+     {
+	Eina_Iterator *it;
+	Edje_String *es;
+
+	it = eina_hash_iterator_data_new(ec->data);
+	EINA_ITERATOR_FOREACH(it, es)
+	  free(es);
+	eina_iterator_free(it);
+
+	eina_hash_free(ec->data);
+     }
 #ifdef EDJE_PROGRAM_CACHE
    if (ec->prog_cache.no_matches) eina_hash_free(ec->prog_cache.no_matches);
    if (ec->prog_cache.matches)
