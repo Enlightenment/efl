@@ -3442,9 +3442,9 @@ st_collections_group_parts_part_description_inherit(void)
 #define STRDUP(x) x ? strdup(x) : NULL
 
    ed->common.color_class = STRDUP(ed->common.color_class);
-   ed->text.text = STRDUP(ed->text.text);
+   ed->text.text.str = STRDUP(ed->text.text.str);
    ed->text.text_class = STRDUP(ed->text.text_class);
-   ed->text.font = STRDUP(ed->text.font);
+   ed->text.font.str = STRDUP(ed->text.font.str);
 #undef STRDUP
 
    data_queue_part_slave_lookup(&(parent->text.id_source), &(ed->text.id_source));
@@ -4812,7 +4812,7 @@ st_collections_group_parts_part_description_text_text(void)
 	     free(s);
 	  }
      }
-   ed->text.text = str;
+   ed->text.text.str = str;
 }
 
 /**
@@ -4887,7 +4887,7 @@ st_collections_group_parts_part_description_text_font(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->text.font = parse_str(0);
+   ed->text.font.str = parse_str(0);
 }
 
 /**
@@ -4924,7 +4924,7 @@ st_collections_group_parts_part_description_text_style(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->text.style = parse_str(0);
+   ed->text.style.str = parse_str(0);
 }
 
 /**
@@ -4962,7 +4962,7 @@ st_collections_group_parts_part_description_text_repch(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->text.repch = parse_str(0);
+   ed->text.repch.str = parse_str(0);
 }
 
 /**

@@ -1696,8 +1696,8 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
 	txt = (Edje_Part_Description_Text *) rp->chosen_description;
 
         en->select_allow = 0;
-	if (txt && txt->text.repch)
-	  evas_object_textblock_replace_char_set(rp->object, txt->text.repch);
+	if (txt && edje_string_get(&txt->text.repch))
+	  evas_object_textblock_replace_char_set(rp->object, edje_string_get(&txt->text.repch));
 	else
 	  evas_object_textblock_replace_char_set(rp->object, "*");
      }

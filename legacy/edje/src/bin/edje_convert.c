@@ -122,14 +122,21 @@ _edje_file_convert(Eet_File *ef, Old_Edje_File *oedf)
 
    edf->fonts = eina_hash_string_small_new(free);
    edf->collection = eina_hash_string_small_new(free);
-   edf->data = eina_hash_string_small_new(NULL);
+   edf->data = eina_hash_string_small_new(free);
 
    if (!edf->fonts || !edf->collection || !edf->data)
      goto on_error;
 
    EINA_LIST_FREE(oedf->data, ed)
      {
-	eina_hash_direct_add(edf->data, ed->key, ed->value);
+	Edje_String *es;
+
+	es = calloc(1, sizeof (Edje_String));
+	if (!es) continue;
+
+	es->str = ed->value;
+
+	eina_hash_direct_add(edf->data, ed->key, es);
 	free(ed);
      }
 
@@ -282,7 +289,14 @@ _edje_collection_convert(Eet_File *ef, Edje_Part_Collection_Directory_Entry *ce,
    edc->data = eina_hash_string_small_new(NULL);
    EINA_LIST_FREE(oedc->data, di)
      {
-	eina_hash_direct_add(edc->data, di->key, di->value);
+	Edje_String *es;
+
+	es = calloc(1, sizeof (Edje_String));
+	if (!es) continue ;
+
+	es->str = di->value;
+
+	eina_hash_direct_add(edc->data, di->key, es);
 	free(di);
      }
 

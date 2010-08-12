@@ -1,6 +1,7 @@
 #include "edje_private.h"
 
 EAPI Eet_Data_Descriptor *_edje_edd_edje_file = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_string = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_style = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_style_tag = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_color_class = NULL;
@@ -17,6 +18,7 @@ EAPI Eet_Data_Descriptor *_edje_edd_edje_program_target = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_program_after = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory_entry = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_pack_element = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_pack_element_pointer = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_part_collection = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_part = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_part_pointer = NULL;
@@ -130,10 +132,26 @@ _edje_description_variant_type_set(const char *type, void *data, Eina_Bool unkno
    return EINA_FALSE;
 }
 
+static Eina_Hash *
+_edje_eina_hash_add_alloc(Eina_Hash  *hash,
+			  const char *key,
+			  void       *data)
+{
+   if (!hash)
+     hash = eina_hash_string_small_new(free);
+
+   if (!hash)
+     return NULL;
+
+   eina_hash_add(hash, key, data);
+   return hash;
+}
+
 EAPI void
 _edje_edd_shutdown(void)
 {
    FREED(_edje_edd_edje_file);
+   FREED(_edje_edd_edje_string);
    FREED(_edje_edd_edje_style);
    FREED(_edje_edd_edje_style_tag);
    FREED(_edje_edd_edje_color_class);
@@ -148,6 +166,7 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_program_after);
    FREED(_edje_edd_edje_part_collection_directory_entry);
    FREED(_edje_edd_edje_pack_element);
+   FREED(_edje_edd_edje_pack_element_pointer);
    FREED(_edje_edd_edje_part_collection);
    FREED(_edje_edd_edje_part);
    FREED(_edje_edd_edje_part_pointer);
@@ -196,6 +215,12 @@ EAPI void
 _edje_edd_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
+
+   /* localisable string */
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_String);
+   _edje_edd_edje_string = eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_string, Edje_String, "str", str, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_string, Edje_String, "id", id, EET_T_UINT);
 
    /* external directory */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_External_Directory_Entry);
@@ -295,8 +320,8 @@ _edje_edd_init(void)
 
    /* the main file directory */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_File);
-   _edje_edd_edje_file =
-     eet_data_descriptor_file_new(&eddc);
+   eddc.func.hash_add = (void * (*)(void *, const char *, void *)) _edje_eina_hash_add_alloc;
+   _edje_edd_edje_file = eet_data_descriptor_file_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "compiler", compiler, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "version", version, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "feature_ver", feature_ver, EET_T_INT);
@@ -304,7 +329,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "image_dir", image_dir, _edje_edd_edje_image_directory);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "styles", styles, _edje_edd_edje_style);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "color_classes", color_classes, _edje_edd_edje_color_class);
-   EET_DATA_DESCRIPTOR_ADD_HASH_STRING(_edje_edd_edje_file, Edje_File, "data", data);
+   EET_DATA_DESCRIPTOR_ADD_HASH(_edje_edd_edje_file, Edje_File, "data", data, _edje_edd_edje_string);
    EET_DATA_DESCRIPTOR_ADD_HASH(_edje_edd_edje_file, Edje_File, "fonts", fonts, _edje_edd_edje_font_directory_entry);
    EET_DATA_DESCRIPTOR_ADD_HASH(_edje_edd_edje_file, Edje_File, "collection", collection, _edje_edd_edje_part_collection_directory_entry);
 
@@ -689,6 +714,8 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_pack_element, Edje_Pack_Element, "colspan", colspan, EET_T_USHORT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_pack_element, Edje_Pack_Element, "rowspan", rowspan, EET_T_USHORT);
 
+   EDJE_DEFINE_POINTER_TYPE(Pack_Element, pack_element);
+
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part);
    eddc.func.mem_free = mem_free_part;
    eddc.func.mem_alloc = mem_alloc_part;
@@ -713,7 +740,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "dragable.count_y", dragable.count_y, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "dragable.counfine_id", dragable.confine_id, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "dragable.events_id", dragable.event_id, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_part, Edje_Part, "items", items, _edje_edd_edje_pack_element);
+   EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_part, Edje_Part, "items", items, _edje_edd_edje_pack_element_pointer);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "type", type, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "effect", effect, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "mouse_events", mouse_events, EET_T_UCHAR);
@@ -743,7 +770,7 @@ _edje_edd_init(void)
    EDJE_DEFINE_POINTER_TYPE(Part, part);
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_part_collection, Edje_Part_Collection, "parts", parts, _edje_edd_edje_part_pointer);
 
-   EET_DATA_DESCRIPTOR_ADD_HASH_STRING(_edje_edd_edje_part_collection, Edje_Part_Collection, "data", data);
+   EET_DATA_DESCRIPTOR_ADD_HASH(_edje_edd_edje_part_collection, Edje_Part_Collection, "data", data, _edje_edd_edje_string);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "id", id, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_HASH_STRING(_edje_edd_edje_part_collection, Edje_Part_Collection, "alias", alias);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "prop.min.w", prop.min.w, EET_T_INT);

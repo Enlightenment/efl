@@ -441,7 +441,7 @@ _edje_import_image_file(Edje *ed, const char *path, int id)
 static int
 _edje_part_id_find(Edje *ed, const char *part)
 {
-   int id;
+   unsigned int id;
 
    for (id = 0; id < ed->table_parts_size; id++)
      {
@@ -669,7 +669,7 @@ _edje_fix_parts_id(Edje *ed)
     */
    unsigned int i;
    int correct_id;
-   int count;
+   unsigned int count;
 
    //printf("FIXING PARTS ID \n");
 
@@ -1764,7 +1764,7 @@ EAPI Eina_List *
 edje_edit_parts_list_get(Evas_Object *obj)
 {
    Eina_List *parts = NULL;
-   int i;
+   unsigned int i;
 
    GET_ED_OR_RETURN(NULL);
 
@@ -2119,7 +2119,7 @@ edje_edit_part_above_get(Evas_Object *obj, const char* part)
 
    GET_RP_OR_RETURN(0);
 
-   if (rp->part->id >= ed->table_parts_size - 1) return 0;
+   if ((unsigned int) rp->part->id >= ed->table_parts_size - 1) return 0;
 
    next = ed->table_parts[(rp->part->id + 1) % ed->table_parts_size];
 
@@ -2167,7 +2167,7 @@ edje_edit_part_restack_above(Evas_Object *obj, const char* part)
 
    //printf("RESTACK PART: %s ABOVE\n", part);
 
-   if (rp->part->id >= ed->table_parts_size - 1) return EINA_FALSE;
+   if ((unsigned int) rp->part->id >= ed->table_parts_size - 1) return EINA_FALSE;
 
    group = ed->collection;
 
@@ -3004,11 +3004,11 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 	   text_to->text = text_from->text;
 
 	   /* Update pointers. */
-	   PD_STRING_COPY(text_to, text_from, text.text);
+	   PD_STRING_COPY(text_to, text_from, text.text.str);
 	   PD_STRING_COPY(text_to, text_from, text.text_class);
-	   PD_STRING_COPY(text_to, text_from, text.style);
-	   PD_STRING_COPY(text_to, text_from, text.font);
-	   PD_STRING_COPY(text_to, text_from, text.repch);
+	   PD_STRING_COPY(text_to, text_from, text.style.str);
+	   PD_STRING_COPY(text_to, text_from, text.font.str);
+	   PD_STRING_COPY(text_to, text_from, text.repch.str);
 	   break;
 	}
       case EDJE_PART_TYPE_BOX:
@@ -3760,10 +3760,7 @@ edje_edit_state_text_get(Evas_Object *obj, const char *part, const char *state, 
    txt = (Edje_Part_Description_Text *) pd;
    //printf("GET TEXT of state: %s\n", state);
 
-   if (txt->text.text)
-     return eina_stringshare_add(txt->text.text);
-
-   return NULL;
+   return eina_stringshare_add(edje_string_get(&txt->text.text));
 }
 
 EAPI void
@@ -3783,8 +3780,9 @@ edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, 
 
    txt = (Edje_Part_Description_Text *) pd;
 
-   _edje_if_string_free(ed, txt->text.text);
-   txt->text.text = (char *)eina_stringshare_add(text);
+   _edje_if_string_free(ed, txt->text.text.str);
+   txt->text.text.str = (char *)eina_stringshare_add(text);
+   txt->text.text.id = 0;
 
    edje_object_calc_force(obj);
 }
@@ -4037,8 +4035,7 @@ edje_edit_state_font_get(Evas_Object *obj, const char *part, const char *state, 
 
    txt = (Edje_Part_Description_Text*) pd;
 
-   if (!txt->text.font) return NULL;
-   return eina_stringshare_add(txt->text.font);
+   return eina_stringshare_add(edje_string_get(&txt->text.font));
 }
 
 EAPI void
@@ -4054,8 +4051,9 @@ edje_edit_state_font_set(Evas_Object *obj, const char *part, const char *state, 
 
    txt = (Edje_Part_Description_Text*) pd;
 
-   _edje_if_string_free(ed, txt->text.font);
-   txt->text.font = (char *)eina_stringshare_add(font);
+   _edje_if_string_free(ed, txt->text.font.str);
+   txt->text.font.str = (char *)eina_stringshare_add(font);
+   txt->text.font.id = 0;
 
    edje_object_calc_force(obj);
 }
@@ -5735,10 +5733,20 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	txt = (Edje_Part_Description_Text *) pd;
 
 	BUF_APPEND(I5"text {\n");
-	if (txt->text.text)
-	  BUF_APPENDF(I6"text: \"%s\";\n", txt->text.text);
-	if (txt->text.font)
-	  BUF_APPENDF(I6"font: \"%s\";\n", txt->text.font);
+	if (edje_string_get(&txt->text.text))
+	  {
+	     if (txt->text.text.id)
+	       BUF_APPENDF(I6"text: _(\"%s\");\n", edje_string_id_get(&txt->text.text));
+	     else
+	       BUF_APPENDF(I6"text: \"%s\";\n", edje_string_get(&txt->text.text));
+	  }
+	if (edje_string_get(&txt->text.font))
+	  {
+	     if (txt->text.font.id)
+	       BUF_APPENDF(I6"font: _(\"%s\");\n", edje_string_id_get(&txt->text.font));
+	     else
+	       BUF_APPENDF(I6"font: \"%s\";\n", edje_string_get(&txt->text.font));
+	  }
 	if (txt->text.size)
 	  BUF_APPENDF(I6"size: %d;\n", txt->text.size);
 	if (txt->text.text_class)
@@ -5908,7 +5916,8 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
 {
    Evas_Object *obj;
    Eina_List *l, *ll;
-   int w, h, i;
+   unsigned int i;
+   int w, h;
    char *data;
    const char *group = pce->entry;
    Eina_Bool ret = EINA_TRUE;

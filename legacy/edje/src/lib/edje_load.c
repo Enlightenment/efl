@@ -248,7 +248,7 @@ edje_file_data_get(const char *file, const char *key)
 	edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
 	if (edf != NULL)
 	  {
-	     str = eina_hash_find(edf->data, key);
+	     str = (char*) edje_string_get(eina_hash_find(edf->data, key));
 
 	     if (str) str = strdup(str);
 
@@ -371,17 +371,16 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 	  }
 	else
 	  {
-	     int i;
+	     unsigned int i;
 	     int errors = 0;
-	     unsigned int j;
 
 	     /* colorclass stuff */
-	     for (j = 0; j < ed->collection->parts_count; ++j)
+	     for (i = 0; i < ed->collection->parts_count; ++i)
 	       {
 		  Edje_Part *ep;
 		  unsigned int k;
 
-		  ep = ed->collection->parts[j];
+		  ep = ed->collection->parts[i];
 
 		  if (errors)
 		    break;
@@ -852,7 +851,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                        const char *style;
 
 		       text = (Edje_Part_Description_Text *) rp->part->default_desc;
-                       style = text->text.style;
+                       style = edje_string_get(&text->text.style);
                        if (style)
                          {
 			    Eina_List *l;
@@ -903,7 +902,7 @@ static Eina_List *
 _edje_swallows_collect(Edje *ed)
 {
    Eina_List *swallows = NULL;
-   int i;
+   unsigned int i;
 
    if (!ed->file || !ed->table_parts) return NULL;
    for (i = 0; i < ed->table_parts_size; i++)
@@ -940,7 +939,7 @@ _edje_file_del(Edje *ed)
    if (!((ed->file) && (ed->collection))) return;
    if (ed->table_parts)
      {
-	int i;
+	unsigned int i;
 	for (i = 0; i < ed->table_parts_size; i++)
 	  {
 	     Edje_Real_Part *rp;
@@ -1195,6 +1194,9 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
 	free(ep->other.desc);
 	free(ep->items);
      }
+   free(ec->parts);
+   ec->parts = NULL;
+
    if (ec->data) eina_hash_free(ec->data);
 #ifdef EDJE_PROGRAM_CACHE
    if (ec->prog_cache.no_matches) eina_hash_free(ec->prog_cache.no_matches);
@@ -1265,10 +1267,10 @@ _edje_collection_free_part_description_clean(int type, Edje_Part_Description_Com
 
 	      text = (Edje_Part_Description_Text *) desc;
 
-	      if (text->text.text)          eina_stringshare_del(text->text.text);
+	      if (text->text.text.str)      eina_stringshare_del(text->text.text.str);
 	      if (text->text.text_class)    eina_stringshare_del(text->text.text_class);
-	      if (text->text.style)         eina_stringshare_del(text->text.style);
-	      if (text->text.font)          eina_stringshare_del(text->text.font);
+	      if (text->text.style.str)     eina_stringshare_del(text->text.style.str);
+	      if (text->text.font.str)      eina_stringshare_del(text->text.font.str);
 	   }
 	 break;
      }

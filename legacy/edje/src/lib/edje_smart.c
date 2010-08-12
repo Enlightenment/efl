@@ -147,7 +147,6 @@ static void
 _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 {
    Edje *ed;
-   int i;
 
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
@@ -174,6 +173,8 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
      }
    else
      {
+	unsigned int i;
+
         for (i = 0; i < ed->table_parts_size; i++)
           {
              Edje_Real_Part *ep;

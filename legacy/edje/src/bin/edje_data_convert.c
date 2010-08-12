@@ -308,11 +308,11 @@ _edje_edd_old_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "color3.g", text.color3.g, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "color3.b", text.color3.b, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "color3.a", text.color3.a, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "text.text", text.text, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "text.text", text.text.str, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "text.text_class", text.text_class, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "text.style", text.style, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "text.font", text.font, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "text.repch", text.repch, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "text.style", text.style.str, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "text.font", text.font.str, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "text.repch", text.repch.str, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "text.size", text.size, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "text.fit_x", text.fit_x, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "text.fit_y", text.fit_y, EET_T_UCHAR);

@@ -280,7 +280,7 @@ _edje_text_class_font_get(Edje *ed, Edje_Part_Description_Text *chosen_desc, int
    Edje_Text_Class *tc;
    const char *text_class_name, *font;
 
-   font = chosen_desc->text.font;
+   font = edje_string_get(&chosen_desc->text.font);
    *size = chosen_desc->text.size;
 
    text_class_name = chosen_desc->text.text_class;
@@ -291,7 +291,7 @@ _edje_text_class_font_get(Edje *ed, Edje_Part_Description_Text *chosen_desc, int
    if (!tc)
      return font;
 
-   font = _edje_text_font_get(chosen_desc->text.font, tc->font, free_later);
+   font = _edje_text_font_get(edje_string_get(&chosen_desc->text.font), tc->font, free_later);
    *size = _edje_text_size_calc(*size, tc);
 
    return font;
@@ -314,7 +314,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
    sc = ed->scale;
    if (sc == 0.0) sc = _edje_scale;
-   text = chosen_desc->text.text;
+   text = edje_string_get(&chosen_desc->text.text);
    font = _edje_text_class_font_get(ed, chosen_desc, &size, &sfont);
 
    if (ep->text.text) text = (char *) ep->text.text;
@@ -323,12 +323,12 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
    if (ep->text.text_source)
      {
-	text = ((Edje_Part_Description_Text *)ep->text.text_source->chosen_description)->text.text;
+	text = edje_string_get(&(((Edje_Part_Description_Text *)ep->text.text_source->chosen_description)->text.text));
 	if (ep->text.text_source->text.text) text = ep->text.text_source->text.text;
      }
    if (ep->text.source)
      {
-	font = ((Edje_Part_Description_Text *)ep->text.source->chosen_description)->text.font;
+	font = edje_string_get(&(((Edje_Part_Description_Text *)ep->text.source->chosen_description)->text.font));
 	size = ((Edje_Part_Description_Text *)ep->text.source->chosen_description)->text.size;
 	if (ep->text.source->text.font) font = ep->text.source->text.font;
 	if (ep->text.source->text.size > 0) size = ep->text.source->text.size;

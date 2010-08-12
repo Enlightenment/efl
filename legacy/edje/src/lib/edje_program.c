@@ -282,7 +282,7 @@ edje_object_play_set(Evas_Object *obj, Eina_Bool play)
    double t;
    Eina_List *l;
    Edje_Running_Program *runp;
-   int i;
+   unsigned int i;
 
    ed = _edje_fetch(obj);
    if (!ed) return;
@@ -356,7 +356,7 @@ edje_object_animation_set(Evas_Object *obj, Eina_Bool on)
 {
    Edje *ed;
    Eina_List *l;
-   int i;
+   unsigned int i;
 
    ed = _edje_fetch(obj);
    if (!ed) return;
@@ -912,7 +912,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 	     focused = evas_focus_get(evas_object_evas_get(ed->obj));
 	     if (focused)
 	       {
-		  int i;
+		  unsigned int i;
 
 		  /* Check if the current swallowed object is one of my child. */
 		  for (i = 0; i < ed->table_parts_size; ++i)
@@ -1026,7 +1026,7 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
        if (part)
 	 {
             char *newsig;
-	    int i;
+	    unsigned int i;
 
 	    memcpy(part, sig, length);
 

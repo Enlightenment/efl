@@ -200,6 +200,12 @@ struct _Edje_Aspect
    Edje_Aspect_Control mode;
 };
 
+struct _Edje_String
+{
+   char *str;
+   unsigned int id;
+};
+
 typedef struct _Edje_Position_Scale                  Edje_Alignment;
 typedef struct _Edje_Position_Scale                  Edje_Position_Scale;
 typedef struct _Edje_Position                        Edje_Position;
@@ -208,6 +214,7 @@ typedef struct _Edje_Rectangle                       Edje_Rectangle;
 typedef struct _Edje_Color                           Edje_Color;
 typedef struct _Edje_Aspect_Prefer                   Edje_Aspect_Prefer;
 typedef struct _Edje_Aspect                          Edje_Aspect;
+typedef struct _Edje_String                          Edje_String;
 
 typedef struct _Edje_File                            Edje_File;
 typedef struct _Edje_Style                           Edje_Style;
@@ -757,11 +764,11 @@ struct _Edje_Part_Description_Spec_Image
 
 struct _Edje_Part_Description_Spec_Text
 {
-   char          *text; /* if "" or NULL, then leave text unchanged */
+   Edje_String    text; /* if "" or NULL, then leave text unchanged */
    char          *text_class; /* how to apply/modify the font */
-   char          *style; /* the text style if a textblock */
-   char          *font; /* if a specific font is asked for */
-   char          *repch; /* replacement char for password mode entry */
+   Edje_String    style; /* the text style if a textblock */
+   Edje_String    font; /* if a specific font is asked for */
+   Edje_String    repch; /* replacement char for password mode entry */
 
    Edje_Alignment align; /* text alignment within bounds */
    Edje_Color     color3;
@@ -918,8 +925,8 @@ struct _Edje
    Eina_List            *text_insert_filter_callbacks;
    void                 *script_only_data;
    int                   table_programs_size;
-   int                   table_parts_size;
-   
+   unsigned int          table_parts_size;
+
    Edje_Perspective     *persp;
 
    struct {
@@ -1759,7 +1766,9 @@ void _edje_lua2_script_func_move(Edje *ed);
 void _edje_lua2_script_func_resize(Edje *ed);
 void _edje_lua2_script_func_message(Edje *ed, Edje_Message *em);
 void _edje_lua2_script_func_signal(Edje *ed, const char *sig, const char *src);
-
 #endif
+
+const char *edje_string_get(const Edje_String *es);
+const char *edje_string_id_get(const Edje_String *es);
 
 #endif

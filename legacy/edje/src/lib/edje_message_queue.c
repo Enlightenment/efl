@@ -45,7 +45,7 @@ EAPI void
 edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
 {
    Edje *ed;
-   int i;
+   unsigned int i;
 
    ed = _edje_fetch(obj);
    if (!ed) return;
@@ -207,7 +207,7 @@ _edje_message_shutdown(void)
 void
 _edje_message_cb_set(Edje *ed, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data)
 {
-   int i;
+   unsigned int i;
 
    ed->message.func = func;
    ed->message.data = data;

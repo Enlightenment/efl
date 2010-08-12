@@ -246,7 +246,7 @@ _edje_recalc(Edje *ed)
 void
 _edje_recalc_do(Edje *ed)
 {
-   int i;
+   unsigned int i;
 
    ed->postponed = 0;
    evas_object_smart_need_recalculate_set(ed->obj, 0);
@@ -673,31 +673,35 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 	const char *text = "";
 	const char *style = "";
 	Edje_Style *stl  = NULL;
+	const char *tmp;
 	Eina_List *l;
 
 	if (chosen_desc->text.id_source >= 0)
 	  {
 	     ep->text.source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
-	     if (((Edje_Part_Description_Text *)ep->text.source->chosen_description)->text.style)
-	       style = ((Edje_Part_Description_Text *)ep->text.source->chosen_description)->text.style;
+
+	     tmp = edje_string_get(&((Edje_Part_Description_Text *)ep->text.source->chosen_description)->text.style);
+	     if (tmp) style = tmp;
 	  }
 	else
 	  {
 	     ep->text.source = NULL;
-	     if (chosen_desc->text.style)
-	       style = chosen_desc->text.style;
+
+	     tmp = edje_string_get(&chosen_desc->text.style);
+	     if (tmp) style = tmp;
 	  }
 
 	if (chosen_desc->text.id_text_source >= 0)
 	  {
 	     ep->text.text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
-	     text = ((Edje_Part_Description_Text*)ep->text.text_source->chosen_description)->text.text;
+	     text = edje_string_get(&((Edje_Part_Description_Text*)ep->text.text_source->chosen_description)->text.text);
+
 	     if (ep->text.text_source->text.text) text = ep->text.text_source->text.text;
 	  }
 	else
 	  {
 	     ep->text.text_source = NULL;
-	     text = chosen_desc->text.text;
+	     text = edje_string_get(&chosen_desc->text.text);
 	     if (ep->text.text) text = ep->text.text;
 	  }
 
@@ -815,9 +819,9 @@ _edje_part_recalc_single_text(FLOAT_T sc,
 	  ep->text.text_source = NULL;
 
 	if (ep->text.text_source)
-	  text = ((Edje_Part_Description_Text*)ep->text.text_source->chosen_description)->text.text;
+	  text = edje_string_get(&(((Edje_Part_Description_Text*)ep->text.text_source->chosen_description)->text.text));
 	else
-	  text = chosen_desc->text.text;
+	  text = edje_string_get(&chosen_desc->text.text);
 
 	if (ep->text.source)
 	  font = _edje_text_class_font_get(ed, ((Edje_Part_Description_Text*)ep->text.source->chosen_description), &size, &sfont);
