@@ -1836,7 +1836,7 @@ edje_edit_part_name_set(Evas_Object *obj, const char* part, const char* new_name
   edje_edit_part_api_##Value##_set(Evas_Object *obj, const char *part, const char *s) \
   {									\
      GET_RP_OR_RETURN(EINA_FALSE);					\
-     _edje_if_string_free(ed, rp->part->api.name);			\
+     _edje_if_string_free(ed, rp->part->api.Value);			\
      rp->part->api.Value = eina_stringshare_add(s);			\
      return EINA_TRUE;							\
   }
