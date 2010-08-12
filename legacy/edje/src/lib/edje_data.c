@@ -1,50 +1,51 @@
 #include "edje_private.h"
 
 EAPI Eet_Data_Descriptor *_edje_edd_edje_file = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_string = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_style = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_style_tag = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_color_class = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_external_directory = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_external_directory_entry = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_image_directory = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_image_directory_set = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_image_directory_set_entry = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_program = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_program_pointer = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_program_target = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_program_after = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory_entry = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_pack_element = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_pack_element_pointer = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_part_collection = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_pointer = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_variant = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_rectangle = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_swallow = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_group = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_image = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_text = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_textblock = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_box = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_table = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_external = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_variant_list = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_rectangle_pointer = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_swallow_pointer = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_group_pointer = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_image_pointer = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_text_pointer = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_textblock_pointer = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_box_pointer = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_table_pointer = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description_external_pointer = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_image_id = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_image_id_pointer = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_external_param = NULL;
+
+Eet_Data_Descriptor *_edje_edd_edje_string = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_style = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_style_tag = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_color_class = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_external_directory = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_external_directory_entry = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_image_directory = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_image_directory_set = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_image_directory_set_entry = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_program = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_program_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_program_target = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_program_after = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory_entry = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_pack_element = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_pack_element_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_variant = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_rectangle = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_swallow = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_group = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_image = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_text = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_textblock = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_box = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_table = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_external = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_variant_list = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_rectangle_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_swallow_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_group_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_image_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_text_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_textblock_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_box_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_table_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_external_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_image_id = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_image_id_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_external_param = NULL;
 
 #define EMP(Type, Minus)				\
   Eina_Mempool *_emp_##Type = NULL;			\
@@ -147,7 +148,7 @@ _edje_eina_hash_add_alloc(Eina_Hash  *hash,
    return hash;
 }
 
-EAPI void
+void
 _edje_edd_shutdown(void)
 {
    FREED(_edje_edd_edje_file);
@@ -211,7 +212,7 @@ _edje_edd_shutdown(void)
      EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_##Name##_pointer, Edje_##Type##_Pointer, "pointer", pointer, _edje_edd_edje_##Name); \
    }
 
-EAPI void
+void
 _edje_edd_init(void)
 {
    Eet_Data_Descriptor_Class eddc;

@@ -1347,21 +1347,7 @@ const Eina_List *edje_match_signal_source_hash_get(const char *signal,
 void edje_match_signal_source_free(Edje_Signal_Source_Char *key, void *data);
 
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_file;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_style;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_style_tag;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_data;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_font_directory;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_image_directory;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_program;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_program_target;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory_entry;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_description;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_image_id;
 
 extern int              _edje_anim_count;
 extern Ecore_Animator  *_edje_timer;
@@ -1743,8 +1729,31 @@ void _edje_external_parsed_params_free(Evas_Object *obj, void *params);
 EAPI void _edje_module_init();
 EAPI void _edje_module_shutdown();
 
-EAPI Eina_Bool edje_program_is_strncmp(const char *str);
-EAPI Eina_Bool edje_program_is_strrncmp(const char *str);
+static inline Eina_Bool
+edje_program_is_strncmp(const char *str)
+{
+   unsigned int length;
+
+   length = strlen(str);
+
+   if (strpbrk(str, "*?[\\") != str + length)
+     return EINA_FALSE;
+   if (str[length] == '['
+       || str[length] == '\\')
+     return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+edje_program_is_strrncmp(const char *str)
+{
+   if (*str != '*' && *str != '?')
+     return EINA_FALSE;
+   if (strpbrk(str + 1, "*?[\\") != NULL)
+     return EINA_FALSE;
+   return EINA_TRUE;
+}
+
 void edje_edit_program_insert(Edje *ed, Edje_Program *p);
 void edje_edit_program_remove(Edje *ed, Edje_Program *p);
 

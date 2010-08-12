@@ -244,6 +244,12 @@ if test "x${have_lua}" = "xno" ; then
    AC_MSG_ERROR([Cannot find lua library. Be sure that you have installed it and set CFLAGS and LDFLAGS correctly])
 fi
 
+PKG_CHECK_MODULES([MINIMAL],
+   [
+    eina-0
+    eet >= 1.2.3
+   ])
+
 PKG_CHECK_MODULES([EDJE],
    [
     eina-0

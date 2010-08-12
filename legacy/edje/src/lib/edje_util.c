@@ -4911,31 +4911,6 @@ edje_edit_program_insert(Edje *ed, Edje_Program *p)
    (*array)[(*count)++] = p;
 }
 
-EAPI Eina_Bool
-edje_program_is_strncmp(const char *str)
-{
-   unsigned int length;
-
-   length = strlen(str);
-
-   if (strpbrk(str, "*?[\\") != str + length)
-     return EINA_FALSE;
-   if (str[length] == '['
-       || str[length] == '\\')
-     return EINA_FALSE;
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-edje_program_is_strrncmp(const char *str)
-{
-   if (*str != '*' && *str != '?')
-     return EINA_FALSE;
-   if (strpbrk(str + 1, "*?[\\") != NULL)
-     return EINA_FALSE;
-   return EINA_TRUE;
-}
-
 const char *
 edje_string_get(const Edje_String *es)
 {

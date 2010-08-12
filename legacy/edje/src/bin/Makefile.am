@@ -46,8 +46,8 @@ edje_player_SOURCES = edje_player.c
 edje_player_LDADD = $(top_builddir)/src/lib/libedje.la $(ECORE_EVAS_LIBS) $(EVIL_LIBS)
 edje_player_LDFLAGS = @lt_enable_auto_import@
 
-edje_convert_SOURCES = edje_convert.c edje_convert_main.c edje_data_convert.c
-edje_convert_LDADD = $(top_builddir)/src/lib/libedje.la $(EVIL_LIBS)
+edje_convert_SOURCES = edje_convert.c edje_convert_main.c edje_data_convert.c ../lib/edje_data.c
+edje_convert_LDADD = $(EVIL_LIBS) @MINIMAL_LIBS@ -lm
 edje_convert_LDFLAGS = @lt_enable_auto_import@
 
 EXTRA_DIST = @EDJE_RECC_PRG@ edje_prefix.h edje_cc.h edje_convert.h
