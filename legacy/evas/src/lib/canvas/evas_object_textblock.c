@@ -3132,10 +3132,9 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *
 
                   itn = (Evas_Object_Textblock_Item *)(((Eina_Inlist *)it)->next);
                   p = (int)(it->source_pos + eina_unicode_strlen(it->text));
-                  /*FIXME: Bad, this sholud be > pos */
-                  if ((p >= pos) ||
+                  if ((p > pos) ||
                         ((p == pos) && (!lnn) &&
-                         ((!itn)  |
+                         ((!itn) ||
                           ((itn) && (itn->source_node != n)))))
                     {
                        *lnr = ln;
@@ -4786,8 +4785,7 @@ evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur)
 	cur->node = it->source_node;
 	index = eina_unicode_strlen(it->text) - 1;
         if (index < 0) index = 0;
-        if ((index >= 0) && (it->text[0] != 0))
-          GET_NEXT(it->text, index);
+        if (index >= 0) GET_NEXT(it->text, index);
 	if (index >= 0) cur->pos += index;
      }
    else if (fi)
