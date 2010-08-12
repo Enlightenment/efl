@@ -860,7 +860,7 @@ _clean_white(int clean_start, int clean_end, char *str)
  * @param[in] s start of the string
  * @param[in] p end of the string
  */
-static void
+static void __UNUSED__
 _append_text_run(Evas_Object_Textblock *o, const char *s, const char *p)
 {
    if ((s) && (p > s))
@@ -872,6 +872,7 @@ _append_text_run(Evas_Object_Textblock *o, const char *s, const char *p)
         ts[p - s] = 0;
         ts = _clean_white(0, 0, ts);
         evas_textblock_cursor_text_append(o->cursor, ts);
+        free(ts);
      }
 }
 
@@ -895,6 +896,7 @@ _prepend_text_run(Evas_Object_Textblock *o, const char *s, const char *p)
         ts[p - s] = 0;
         ts = _clean_white(0, 0, ts);
         evas_textblock_cursor_text_prepend(o->cursor, ts);
+        free(ts);
      }
 }
 
@@ -1477,29 +1479,28 @@ _format_is_param(const char *item)
  * It expects item to be of the structure:
  * "key=val"
  *
- * FIXME: item should be const.
- *
  * @param[in] item the item to parse - Not NULL.
  * @param[out] key where to store the key at - Not NULL.
  * @param[out] val where to store the value at - Not NULL.
  */
 static void
-_format_param_parse(char *item, const char **key, const char **val)
+_format_param_parse(const char *item, const char **key, const char **val)
 {
-   char *p, *tmp;
-   const char *k, *v;
+   const char *equal, *end;
 
-   p = strchr(item, '=');
-   *p = '\0';
-   k = eina_stringshare_add(item);
-   *key = k;
-   *p = '=';
-   p++;
+   equal = strchr(item, '=');
+   *key = eina_stringshare_add_length(item, equal - item);
+   equal++; /* Advance after the '=' */
    /* Null terminate before the spaces */
-   tmp = strchr(item, ' ');
-   if (tmp) *tmp = '\0';
-   v = eina_stringshare_add(p);
-   *val = v;
+   end = strchr(equal, ' ');
+   if (end)
+     {
+        *val = eina_stringshare_add_length(equal, end - equal);
+     }
+   else
+     {
+        *val = eina_stringshare_add(equal);
+     }
 }
 
 /**
@@ -4828,7 +4829,7 @@ _evas_textblock_format_is_visible(const char *s)
  * @param fmt the format to set according to.
  * @return nothing.
  */
-static void
+static void __UNUSED__
 _evas_textblock_cursor_node_text_at_format(Evas_Textblock_Cursor *cur, Evas_Object_Textblock_Node_Format *fmt)
 {
    Evas_Object_Textblock_Node_Text *text;
