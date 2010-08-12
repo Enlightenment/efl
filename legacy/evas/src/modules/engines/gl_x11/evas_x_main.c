@@ -289,6 +289,17 @@ eng_window_new(Display *disp,
         fprintf(stderr, "version: %s\n", version);
         
         if (strstr(vendor, "NVIDIA"))
+           // FIXME: also same as tegra2 - maybe check renderer too
+           // 
+           // vendor: NVIDIA Corporation
+           // renderer: NVIDIA Tegra
+           // version: OpenGL ES 2.0
+           // 
+           // vs (for example)
+           // 
+           // vendor: NVIDIA Corporation
+           // renderer: GeForce GT 220/PCI/SSE2
+           // version: 3.2.0 NVIDIA 195.36.24
           {
              gw->detected.loose_binding = 1;
           }

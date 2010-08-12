@@ -45,10 +45,38 @@
 #endif
 
 #ifndef GL_TEXTURE_RECTANGLE_NV
-#define GL_TEXTURE_RECTANGLE_NV 0x84F5
+# define GL_TEXTURE_RECTANGLE_NV 0x84F5
 #endif
 #ifndef GL_BGRA
-#define GL_BGRA 0x80E1
+# define GL_BGRA 0x80E1
+#endif
+
+#ifndef EGL_MAP_GL_TEXTURE_2D_SEC
+# define EGL_MAP_GL_TEXTURE_2D_SEC 0x3201
+#endif
+#ifndef  EGL_MAP_GL_TEXTURE_HEIGHT_SEC
+# define EGL_MAP_GL_TEXTURE_HEIGHT_SEC 0x3202
+#endif
+#ifndef EGL_MAP_GL_TEXTURE_WIDTH_SEC
+# define EGL_MAP_GL_TEXTURE_WIDTH_SEC 0x3203
+#endif
+#ifndef EGL_MAP_GL_TEXTURE_FORMAT_SEC
+# define EGL_MAP_GL_TEXTURE_FORMAT_SEC 0x3204
+#endif
+#ifndef EGL_MAP_GL_TEXTURE_RGB_SEC
+# define EGL_MAP_GL_TEXTURE_RGB_SEC 0x3205
+#endif
+#ifndef EGL_MAP_GL_TEXTURE_RGBA_SEC
+# define EGL_MAP_GL_TEXTURE_RGBA_SEC 0x3206
+#endif
+#ifndef EGL_MAP_GL_TEXTURE_PIXEL_TYPE_SEC
+# define EGL_MAP_GL_TEXTURE_PIXEL_TYPE_SEC 0x3206
+#endif
+#ifndef EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC
+# define EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC 0x3207
+#endif
+#ifdef EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC
+# define EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC 0x3208
 #endif
 
 #define SHAD_VERTEX 0
@@ -98,6 +126,7 @@ struct _Evas_GL_Shared
       Eina_Bool bgra : 1;
       Eina_Bool tex_npo2 : 1;
       Eina_Bool tex_rect : 1;
+      Eina_Bool sec_image_map : 1;
       // tuning params - per gpu/cpu combo?
       int cutout_max;
       int pipes_max;
@@ -398,6 +427,15 @@ void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b);
 void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);
 void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e);
 void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
+
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+void *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e);
+void  (*secsym_eglDestroyImage)              (void *a, void *b);
+void  (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b);
+void  (*secsym_eglMapImageSEC)               (void *a, void *b);
+void  (*secsym_eglUnmapImageSEC)             (void *a, void *b);
+void  (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d);
+#endif
 
 #define GL_ERRORS 1
 

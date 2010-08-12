@@ -1936,6 +1936,7 @@ evas_object_image_scale_hint_set(Evas_Object *obj, Evas_Image_Scale_Hint hint)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+   if (o->scale_hint == hint) return;
 #ifdef EVAS_FRAME_QUEUING
    if (o->scale_hint != hint)
      {
@@ -1990,6 +1991,14 @@ evas_object_image_content_hint_set(Evas_Object *obj, Evas_Image_Content_Hint hin
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+   if (o->content_hint == hint) return;
+#ifdef EVAS_FRAME_QUEUING
+   if (o->content_hint != hint)
+     {
+        if (o->engine_data)
+          evas_common_pipe_op_image_flush(o->engine_data);
+     }
+#endif   
    o->content_hint = hint;
 }
 

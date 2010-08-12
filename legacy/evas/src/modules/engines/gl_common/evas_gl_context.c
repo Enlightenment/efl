@@ -9,6 +9,19 @@ void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b) = NULL;
 void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e) = NULL;
 void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b) = NULL;
 
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+// just used for finding symbols :)
+typedef void (*_eng_fn) (void);
+static _eng_fn  (*secsym_eglGetProcAddress)          (const char *a) = NULL;
+
+void *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e) = NULL;
+void  (*secsym_eglDestroyImage)              (void *a, void *b) = NULL;
+void  (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b) = NULL;
+void  (*secsym_eglMapImageSEC)               (void *a, void *b) = NULL;
+void  (*secsym_eglUnmapImageSEC)             (void *a, void *b) = NULL;
+void  (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d) = NULL;
+#endif
+
 static void
 sym_missing(void)
 {
@@ -47,6 +60,44 @@ gl_symbols(void)
    FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersEXT");
    FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersARB");
    FALLBAK(glsym_glDeleteFramebuffers);
+
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#undef FINDSYM
+#define FINDSYM(dst, sym) \
+   if ((!dst) && (secsym_eglGetProcAddress)) dst = secsym_eglGetProcAddress(sym); \
+   if (!dst) dst = dlsym(RTLD_DEFAULT, sym)
+// yes - gl core looking for egl stuff. i know it's odd. a reverse-layer thing
+// but it will work as the egl/glx layer calls gl core common stuff and thus
+// these symbols will work. making the glx/egl + x11 layer do this kind-of is
+// wrong as this is not x11 (output) layer specific like the native surface
+// stuff. this is generic zero-copy textures for gl
+
+   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddress");
+   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddressEXT");
+   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddressARB");
+   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddressKHR");
+   
+   FINDSYM(secsym_eglCreateImage, "eglCreateImage");
+   FINDSYM(secsym_eglCreateImage, "eglCreateImageEXT");
+   FINDSYM(secsym_eglCreateImage, "eglCreateImageARB");
+   FINDSYM(secsym_eglCreateImage, "eglCreateImageKHR");
+   
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImage");
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageEXT");
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageARB");
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR");
+   
+   FINDSYM(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES");
+   
+   FINDSYM(secsym_eglMapImageSEC, "eglMapImageSEC");
+//   FALLBAK(secsym_eglMapImageSEC);
+   
+   FINDSYM(secsym_eglUnmapImageSEC, "eglUnmapImageSEC");
+//   FALLBAK(secsym_eglUnmapImageSEC);
+   
+   FINDSYM(secsym_eglGetImageAttribSEC, "eglGetImageAttribSEC");
+//   FALLBAK(secsym_eglGetImageAttribSEC);
+#endif   
 }
 
 static void shader_array_flush(Evas_GL_Context *gc);
@@ -354,6 +405,7 @@ Evas_GL_Context *
 evas_gl_common_context_new(void)
 {
    Evas_GL_Context *gc;
+   const char *s;
    int i;
 
 #if 1
@@ -388,24 +440,43 @@ evas_gl_common_context_new(void)
         if (ext)
           {
              fprintf(stderr, "EXT:\n%s\n", ext);
-             if ((strstr((char*) ext, "GL_ARB_texture_non_power_of_two")) ||
-                 (strstr((char*) ext, "OES_texture_npot")) ||
-                 (strstr((char*) ext, "GL_IMG_texture_npot")))
+             if ((strstr((char *)ext, "GL_ARB_texture_non_power_of_two")) ||
+                 (strstr((char *)ext, "OES_texture_npot")) ||
+                 (strstr((char *)ext, "GL_IMG_texture_npot")))
                shared->info.tex_npo2 = 1;
-             if ((strstr((char*) ext, "GL_NV_texture_rectangle")) ||
-                 (strstr((char*) ext, "GL_EXT_texture_rectangle")) ||
-                 (strstr((char*) ext, "GL_ARB_texture_rectangle")))
+             if ((strstr((char *)ext, "GL_NV_texture_rectangle")) ||
+                 (strstr((char *)ext, "GL_EXT_texture_rectangle")) ||
+                 (strstr((char *)ext, "GL_ARB_texture_rectangle")))
                shared->info.tex_rect = 1;
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
-             if ((strstr((char*) ext, "GL_EXT_texture_filter_anisotropic")))
+             if ((strstr((char *)ext, "GL_EXT_texture_filter_anisotropic")))
                glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, 
                            &(shared->info.anisotropic));
 #endif
 #ifdef GL_BGRA
-             if ((strstr((char*) ext, "GL_EXT_bgra")) ||
-                 (strstr((char*) ext, "GL_EXT_texture_format_BGRA8888")))
+             if ((strstr((char *)ext, "GL_EXT_bgra")) ||
+                 (strstr((char *)ext, "GL_EXT_texture_format_BGRA8888")))
                shared->info.bgra = 1;
 #endif
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+             // FIXME: there should be an extension name/string to check for
+             // not just symbols in the lib
+             i = 0;
+             if (getenv("EVAS_GL_NO_MAP_IMAGE_SEC"))
+                i = atoi(getenv("EVAS_GL_NO_MAP_IMAGE_SEC"));
+             if (!i)
+               {
+                  // test for all needed symbols - be "conservative" and
+                  // need all of it
+                  if ((secsym_eglCreateImage) &&
+                      (secsym_eglDestroyImage) &&
+                      (secsym_glEGLImageTargetTexture2DOES) &&
+                      (secsym_eglMapImageSEC) &&
+                      (secsym_eglUnmapImageSEC) &&
+                      (secsym_eglGetImageAttribSEC))
+                     shared->info.sec_image_map = 1;
+               }
+#endif             
           }
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,
                       &(shared->info.max_texture_units));
@@ -416,6 +487,16 @@ evas_gl_common_context_new(void)
         // "best case" performance across a range of systems
         shared->info.cutout_max = 512;
         shared->info.pipes_max = 32;
+        
+        // per gpu hacks. based on impirical measurement of some known gpu's
+        s = glGetString(GL_RENDERER);
+        if (s)
+          {
+             if      (strstr(s, "PowerVR SGX 540"))
+                shared->info.pipes_max = 32;
+             else if (strstr(s, "NVIDIA Tegra"))
+                shared->info.pipes_max = 1;
+          }
         
         if (getenv("EVAS_GL_CUTOUT_MAX"))
            shared->info.cutout_max = atoi(getenv("EVAS_GL_CUTOUT_MAX"));
@@ -428,26 +509,28 @@ evas_gl_common_context_new(void)
                 shared->info.pipes_max = 1;
           }
         
-        
-        fprintf(stderr, "max tex size %ix%i\n"
+        fprintf(stderr,
+                "max tex size %ix%i\n"
                 "max units %i\n"
                 "non-power-2 tex %i\n"
                 "rect tex %i\n"
                 "bgra : %i\n"
                 "max ansiotropic filtering: %3.3f\n"
+                "egl sec map image: %i\n"
                 "\n"
                 "cutout max: %i\n"
                 "pipes max: %i\n"
                 , 
-                shared->info.max_texture_size, shared->info.max_texture_size,
-                shared->info.max_texture_units,
+                (int)shared->info.max_texture_size, (int)shared->info.max_texture_size,
+                (int)shared->info.max_texture_units,
                 (int)shared->info.tex_npo2,
                 (int)shared->info.tex_rect,
                 (int)shared->info.bgra,
                 (double)shared->info.anisotropic,
+                (int)shared->info.sec_image_map,
                 
-                shared->info.cutout_max,
-                shared->info.pipes_max
+                (int)shared->info.cutout_max,
+                (int)shared->info.pipes_max
                 );
         
         glDisable(GL_DEPTH_TEST);
