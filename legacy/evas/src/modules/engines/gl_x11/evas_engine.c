@@ -1776,7 +1776,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
         *image_data = NULL;
         return im;
      }
-   if (im->tex->pt->dyn.data)
+   if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.data))
      {
         *image_data = im->tex->pt->dyn.data;
         return im;
@@ -1830,7 +1830,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    im = image;
    if (im->native.data) return image;
    eng_window_use(re->win);
-   if (im->tex->pt->dyn.data)
+   if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.data))
      {
         if (im->tex->pt->dyn.data == image_data)
           {
