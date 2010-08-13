@@ -68,7 +68,7 @@
 #define EINA_HASH_RBTREE_MASK 0xFFF
 
 typedef struct _Eina_Hash_Head Eina_Hash_Head;
-typedef struct _Eina_Hash_El Eina_Hash_El;
+typedef struct _Eina_Hash_Element Eina_Hash_Element;
 typedef struct _Eina_Hash_Foreach_Data Eina_Hash_Foreach_Data;
 typedef struct _Eina_Iterator_Hash Eina_Iterator_Hash;
 typedef struct _Eina_Hash_Each Eina_Hash_Each;
@@ -97,7 +97,7 @@ struct _Eina_Hash_Head
    Eina_Rbtree *head;
 };
 
-struct _Eina_Hash_El
+struct _Eina_Hash_Element
 {
    EINA_RBTREE;
    Eina_Hash_Tuple tuple;
@@ -111,9 +111,7 @@ struct _Eina_Hash_Foreach_Data
 };
 
 typedef void *(*Eina_Iterator_Get_Content_Callback)(Eina_Iterator_Hash *it);
-#define FUNC_ITERATOR_GET_CONTENT(Function) (( \
-                                                Eina_Iterator_Get_Content_Callback) \
-                                             Function)
+#define FUNC_ITERATOR_GET_CONTENT(Function) ((Eina_Iterator_Get_Content_Callback)Function)
 
 struct _Eina_Iterator_Hash
 {
@@ -124,8 +122,8 @@ struct _Eina_Iterator_Hash
 
    Eina_Iterator *current;
    Eina_Iterator *list;
-   Eina_Hash_Head *eh;
-   Eina_Hash_El *el;
+   Eina_Hash_Head *hash_head;
+   Eina_Hash_Element *hash_element;
    int bucket;
 
    int index;
@@ -135,8 +133,8 @@ struct _Eina_Iterator_Hash
 
 struct _Eina_Hash_Each
 {
-   Eina_Hash_Head *eh;
-   const Eina_Hash_El *el;
+   Eina_Hash_Head *hash_head;
+   const Eina_Hash_Element *hash_element;
    const void *data;
 };
 
@@ -152,12 +150,12 @@ struct _Eina_Hash_Each
 #endif
 
 static inline int
-_eina_hash_hash_rbtree_cmp_hash(const Eina_Hash_Head *eh,
+_eina_hash_hash_rbtree_cmp_hash(const Eina_Hash_Head *hash_head,
                                 const int *hash,
                                 __UNUSED__ int key_length,
                                 __UNUSED__ void *data)
 {
-   return eh->hash - *hash;
+   return hash_head->hash - *hash;
 }
 
 static Eina_Rbtree_Direction
@@ -172,27 +170,27 @@ _eina_hash_hash_rbtree_cmp_node(const Eina_Hash_Head *left,
 }
 
 static inline int
-_eina_hash_key_rbtree_cmp_key_data(const Eina_Hash_El *el,
+_eina_hash_key_rbtree_cmp_key_data(const Eina_Hash_Element *hash_element,
                                    const Eina_Hash_Tuple *tuple,
                                    __UNUSED__ unsigned int key_length,
                                    Eina_Key_Cmp cmp)
 {
    int result;
 
-   result = cmp(el->tuple.key,
-                el->tuple.key_length,
+   result = cmp(hash_element->tuple.key,
+                hash_element->tuple.key_length,
                 tuple->key,
                 tuple->key_length);
 
-   if (result == 0 && tuple->data && tuple->data != el->tuple.data)
+   if (result == 0 && tuple->data && tuple->data != hash_element->tuple.data)
       return 1;
 
    return result;
 }
 
 static Eina_Rbtree_Direction
-_eina_hash_key_rbtree_cmp_node(const Eina_Hash_El *left,
-                               const Eina_Hash_El *right,
+_eina_hash_key_rbtree_cmp_node(const Eina_Hash_Element *left,
+                               const Eina_Hash_Element *right,
                                Eina_Key_Cmp cmp)
 {
    int result;
@@ -212,8 +210,8 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
                             int key_hash,
                             const void *data)
 {
-   Eina_Hash_El *el = NULL;
-   Eina_Hash_Head *eh;
+   Eina_Hash_Element *hash_element = NULL;
+   Eina_Hash_Head *hash_head;
    Eina_Error error = 0;
    int hash_num;
 
@@ -232,63 +230,61 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
         hash->buckets = malloc(sizeof (Eina_Rbtree *) * hash->size);
         memset(hash->buckets, 0, sizeof (Eina_Rbtree *) * hash->size);
 
-        eh = NULL;
+        hash_head = NULL;
      }
    else
       /* Look up for head node. */
-      eh = (Eina_Hash_Head *)eina_rbtree_inline_lookup(hash->buckets[hash_num],
+      hash_head = (Eina_Hash_Head *)eina_rbtree_inline_lookup(hash->buckets[hash_num],
                                                        &key_hash, 0,
                                                        EINA_RBTREE_CMP_KEY_CB(
                                                           _eina_hash_hash_rbtree_cmp_hash),
                                                        NULL);
 
-   if (!eh)
+   if (!hash_head)
      {
         /* If not found allocate it and a element. */
-        eh = malloc(
-              sizeof (Eina_Hash_Head) + sizeof (Eina_Hash_El) + alloc_length);
-        if (!eh)
+        hash_head = malloc(sizeof(Eina_Hash_Head) + sizeof(Eina_Hash_Element) + alloc_length);
+        if (!hash_head)
            goto on_error;
 
-        eh->hash = key_hash;
-        eh->head = NULL;
+        hash_head->hash = key_hash;
+        hash_head->head = NULL;
 
         hash->buckets[hash_num] =
-           eina_rbtree_inline_insert(hash->buckets[hash_num], EINA_RBTREE_GET(
-                                        eh),
+           eina_rbtree_inline_insert(hash->buckets[hash_num], EINA_RBTREE_GET(hash_head),
                                      EINA_RBTREE_CMP_NODE_CB(
                                         _eina_hash_hash_rbtree_cmp_node), NULL);
 
-        el = (Eina_Hash_El *)(eh + 1);
-        el->begin = EINA_TRUE;
+        hash_element = (Eina_Hash_Element *)(hash_head + 1);
+        hash_element->begin = EINA_TRUE;
      }
 
-   if (!el)
+   if (!hash_element)
      {
         /*
            Alloc every needed things
            (No more lookup as we expect to support more than one item for one key).
          */
-        el = malloc(sizeof (Eina_Hash_El) + alloc_length);
-        if (!el)
+        hash_element = malloc(sizeof (Eina_Hash_Element) + alloc_length);
+        if (!hash_element)
            goto on_error;
 
-        el->begin = EINA_FALSE;
+        hash_element->begin = EINA_FALSE;
      }
 
    /* Setup the element */
-   el->tuple.key_length = key_length;
-   el->tuple.data = (void *)data;
+   hash_element->tuple.key_length = key_length;
+   hash_element->tuple.data = (void *)data;
    if (alloc_length > 0)
      {
-        el->tuple.key = (char *)(el + 1);
-        memcpy((char *)el->tuple.key, key, alloc_length);
+        hash_element->tuple.key = (char *)(hash_element + 1);
+        memcpy((char *)hash_element->tuple.key, key, alloc_length);
      }
    else
-      el->tuple.key = key;
+      hash_element->tuple.key = key;
 
    /* add the new element to the hash. */
-   eh->head = eina_rbtree_inline_insert(eh->head, EINA_RBTREE_GET(el),
+   hash_head->head = eina_rbtree_inline_insert(hash_head->head, EINA_RBTREE_GET(hash_element),
                                         EINA_RBTREE_CMP_NODE_CB(
                                            _eina_hash_key_rbtree_cmp_node),
                                         (const void *)hash->key_cmp_cb);
@@ -302,20 +298,20 @@ on_error:
 
 static Eina_Bool
 _eina_hash_rbtree_each(__UNUSED__ const Eina_Rbtree *container,
-                       const Eina_Hash_Head *eh,
+                       const Eina_Hash_Head *hash_head,
                        Eina_Hash_Each *data)
 {
    Eina_Iterator *it;
-   Eina_Hash_El *el;
+   Eina_Hash_Element *hash_element;
    Eina_Bool found = EINA_TRUE;
 
-   it = eina_rbtree_iterator_prefix(eh->head);
-   EINA_ITERATOR_FOREACH(it, el)
+   it = eina_rbtree_iterator_prefix(hash_head->head);
+   EINA_ITERATOR_FOREACH(it, hash_element)
    {
-      if (el->tuple.data == data->data)
+      if (hash_element->tuple.data == data->data)
         {
-           data->el = el;
-           data->eh = (Eina_Hash_Head *)eh;
+           data->hash_element = hash_element;
+           data->hash_head = (Eina_Hash_Head *)hash_head;
            found = EINA_FALSE;
            break;
         }
@@ -325,13 +321,13 @@ _eina_hash_rbtree_each(__UNUSED__ const Eina_Rbtree *container,
    return found;
 }
 
-static inline Eina_Hash_El *
+static inline Eina_Hash_Element *
 _eina_hash_find_by_hash(const Eina_Hash *hash,
                         Eina_Hash_Tuple *tuple,
                         int key_hash,
-                        Eina_Hash_Head **eh)
+                        Eina_Hash_Head **hash_head)
 {
-   Eina_Hash_El *el;
+   Eina_Hash_Element *hash_element;
    int rb_hash = key_hash & EINA_HASH_RBTREE_MASK;
 
    key_hash &= hash->mask;
@@ -339,29 +335,29 @@ _eina_hash_find_by_hash(const Eina_Hash *hash,
    if (!hash->buckets)
       return NULL;
 
-   *eh = (Eina_Hash_Head *)eina_rbtree_inline_lookup(hash->buckets[key_hash],
+   *hash_head = (Eina_Hash_Head *)eina_rbtree_inline_lookup(hash->buckets[key_hash],
                                                      &rb_hash, 0,
                                                      EINA_RBTREE_CMP_KEY_CB(
                                                         _eina_hash_hash_rbtree_cmp_hash),
                                                      NULL);
-   if (!*eh)
+   if (!*hash_head)
       return NULL;
 
-   el = (Eina_Hash_El *)eina_rbtree_inline_lookup((*eh)->head,
+   hash_element = (Eina_Hash_Element *)eina_rbtree_inline_lookup((*hash_head)->head,
                                                   tuple, 0,
                                                      EINA_RBTREE_CMP_KEY_CB(
                                                      _eina_hash_key_rbtree_cmp_key_data),
                                                   (const void *)hash->
                                                   key_cmp_cb);
 
-   return el;
+   return hash_element;
 }
 
-static inline Eina_Hash_El *
+static inline Eina_Hash_Element *
 _eina_hash_find_by_data(const Eina_Hash *hash,
                         const void *data,
                         int *key_hash,
-                        Eina_Hash_Head **eh)
+                        Eina_Hash_Head **hash_head)
 {
    Eina_Hash_Each each;
    Eina_Iterator *it;
@@ -370,7 +366,7 @@ _eina_hash_find_by_data(const Eina_Hash *hash,
    if (!hash->buckets)
       return NULL;
 
-   each.el = NULL;
+   each.hash_element = NULL;
    each.data = data;
 
    for (hash_num = 0; hash_num < hash->size; hash_num++)
@@ -382,11 +378,11 @@ _eina_hash_find_by_data(const Eina_Hash *hash,
         eina_iterator_foreach(it, EINA_EACH_CB(_eina_hash_rbtree_each), &each);
         eina_iterator_free(it);
 
-        if (each.el)
+        if (each.hash_element)
           {
              *key_hash = hash_num;
-             *eh = each.eh;
-             return (Eina_Hash_El *)each.el;
+             *hash_head = each.hash_head;
+             return (Eina_Hash_Element *)each.hash_element;
           }
      }
 
@@ -394,44 +390,44 @@ _eina_hash_find_by_data(const Eina_Hash *hash,
 }
 
 static void
-_eina_hash_el_free(Eina_Hash_El *el, Eina_Hash *hash)
+_eina_hash_el_free(Eina_Hash_Element *hash_element, Eina_Hash *hash)
 {
    if (hash->data_free_cb)
-      hash->data_free_cb(el->tuple.data);
+      hash->data_free_cb(hash_element->tuple.data);
 
-   if (el->begin == EINA_FALSE)
-      free(el);
+   if (hash_element->begin == EINA_FALSE)
+      free(hash_element);
 }
 
 static void
-_eina_hash_head_free(Eina_Hash_Head *eh, Eina_Hash *hash)
+_eina_hash_head_free(Eina_Hash_Head *hash_head, Eina_Hash *hash)
 {
-   eina_rbtree_delete(eh->head, EINA_RBTREE_FREE_CB(_eina_hash_el_free), hash);
-   free(eh);
+   eina_rbtree_delete(hash_head->head, EINA_RBTREE_FREE_CB(_eina_hash_el_free), hash);
+   free(hash_head);
 }
 
 static Eina_Bool
 _eina_hash_del_by_hash_el(Eina_Hash *hash,
-                          Eina_Hash_El *el,
-                          Eina_Hash_Head *eh,
+                          Eina_Hash_Element *hash_element,
+                          Eina_Hash_Head *hash_head,
                           int key_hash)
 {
-   eh->head = eina_rbtree_inline_remove(eh->head, EINA_RBTREE_GET(
-                                           el), EINA_RBTREE_CMP_NODE_CB(
+   hash_head->head = eina_rbtree_inline_remove(hash_head->head, EINA_RBTREE_GET(
+                                           hash_element), EINA_RBTREE_CMP_NODE_CB(
                                            _eina_hash_key_rbtree_cmp_node),
                                         (const void *)hash->key_cmp_cb);
-   _eina_hash_el_free(el, hash);
+   _eina_hash_el_free(hash_element, hash);
 
-   if (!eh->head)
+   if (!hash_head->head)
      {
         key_hash &= hash->mask;
 
         hash->buckets[key_hash] =
            eina_rbtree_inline_remove(hash->buckets[key_hash], EINA_RBTREE_GET(
-                                        eh),
+                                        hash_head),
                                      EINA_RBTREE_CMP_NODE_CB(
                                         _eina_hash_hash_rbtree_cmp_node), NULL);
-        free(eh);
+        free(hash_head);
      }
 
    hash->population--;
@@ -451,8 +447,8 @@ _eina_hash_del_by_key_hash(Eina_Hash *hash,
                            int key_hash,
                            const void *data)
 {
-   Eina_Hash_El *el;
-   Eina_Hash_Head *eh;
+   Eina_Hash_Element *hash_element;
+   Eina_Hash_Head *hash_head;
    Eina_Hash_Tuple tuple;
 
    EINA_MAGIC_CHECK_HASH(hash);
@@ -466,11 +462,11 @@ _eina_hash_del_by_key_hash(Eina_Hash *hash,
    tuple.key_length = key_length;
    tuple.data = (void *)data;
 
-   el = _eina_hash_find_by_hash(hash, &tuple, key_hash, &eh);
-   if (!el)
+   hash_element = _eina_hash_find_by_hash(hash, &tuple, key_hash, &hash_head);
+   if (!hash_element)
       return EINA_FALSE;
 
-   return _eina_hash_del_by_hash_el(hash, el, eh, key_hash);
+   return _eina_hash_del_by_hash_el(hash, hash_element, hash_head, key_hash);
 }
 
 static Eina_Bool
@@ -556,11 +552,11 @@ _eina_foreach_cb(const Eina_Hash *hash,
 static void *
 _eina_hash_iterator_data_get_content(Eina_Iterator_Hash *it)
 {
-   Eina_Hash_El *stuff;
+   Eina_Hash_Element *stuff;
 
    EINA_MAGIC_CHECK_HASH_ITERATOR(it, NULL);
 
-   stuff = it->el;
+   stuff = it->hash_element;
 
    if (!stuff)
       return NULL;
@@ -571,11 +567,11 @@ _eina_hash_iterator_data_get_content(Eina_Iterator_Hash *it)
 static void *
 _eina_hash_iterator_key_get_content(Eina_Iterator_Hash *it)
 {
-   Eina_Hash_El *stuff;
+   Eina_Hash_Element *stuff;
 
    EINA_MAGIC_CHECK_HASH_ITERATOR(it, NULL);
 
-   stuff = it->el;
+   stuff = it->hash_element;
 
    if (!stuff)
       return NULL;
@@ -586,11 +582,11 @@ _eina_hash_iterator_key_get_content(Eina_Iterator_Hash *it)
 static Eina_Hash_Tuple *
 _eina_hash_iterator_tuple_get_content(Eina_Iterator_Hash *it)
 {
-   Eina_Hash_El *stuff;
+   Eina_Hash_Element *stuff;
 
    EINA_MAGIC_CHECK_HASH_ITERATOR(it, NULL);
 
-   stuff = it->el;
+   stuff = it->hash_element;
 
    if (!stuff)
       return NULL;
@@ -615,13 +611,13 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
      }
    else
      {
-        ok = eina_iterator_next(it->list, (void **)&it->el);
+        ok = eina_iterator_next(it->list, (void **)&it->hash_element);
         if (!ok)
           {
                   eina_iterator_free(it->list);
              it->list = NULL;
 
-             ok = eina_iterator_next(it->current, (void **)&it->eh);
+             ok = eina_iterator_next(it->current, (void **)&it->hash_head);
              if (!ok)
                {
                   eina_iterator_free(it->current);
@@ -630,8 +626,8 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
                }
              else
                {
-                  it->list = eina_rbtree_iterator_prefix(it->eh->head);
-                  ok = eina_iterator_next(it->list, (void **)&it->el);
+                  it->list = eina_rbtree_iterator_prefix(it->hash_head->head);
+                  ok = eina_iterator_next(it->list, (void **)&it->hash_element);
                }
           }
 
@@ -646,7 +642,7 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
                {
                   it->current =
                      eina_rbtree_iterator_prefix(it->hash->buckets[bucket]);
-                  ok = eina_iterator_next(it->current, (void **)&it->eh);
+                  ok = eina_iterator_next(it->current, (void **)&it->hash_head);
                   if (ok)
                      break;
 
@@ -659,8 +655,8 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
         if (it->list)
                   eina_iterator_free(it->list);
 
-        it->list = eina_rbtree_iterator_prefix(it->eh->head);
-        ok = eina_iterator_next(it->list, (void **)&it->el);
+        it->list = eina_rbtree_iterator_prefix(it->hash_head->head);
+        ok = eina_iterator_next(it->list, (void **)&it->hash_element);
         if (bucket == it->hash->size)
            ok = EINA_FALSE;
      }
@@ -1216,22 +1212,22 @@ eina_hash_del_by_key(Eina_Hash *hash, const void *key)
 EAPI Eina_Bool
 eina_hash_del_by_data(Eina_Hash *hash, const void *data)
 {
-   Eina_Hash_El *el;
-   Eina_Hash_Head *eh;
+   Eina_Hash_Element *hash_element;
+   Eina_Hash_Head *hash_head;
    int key_hash;
 
    EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
 
-   el = _eina_hash_find_by_data(hash, data, &key_hash, &eh);
-   if (!el)
+   hash_element = _eina_hash_find_by_data(hash, data, &key_hash, &hash_head);
+   if (!hash_element)
       return EINA_FALSE;
 
-   if (el->tuple.data != data)
+   if (hash_element->tuple.data != data)
       return EINA_FALSE;
 
-   return _eina_hash_del_by_hash_el(hash, el, eh, key_hash);
+   return _eina_hash_del_by_hash_el(hash, hash_element, hash_head, key_hash);
 }
 
 /**
@@ -1314,8 +1310,8 @@ eina_hash_find_by_hash(const Eina_Hash *hash,
                        int key_length,
                        int key_hash)
 {
-   Eina_Hash_Head *eh;
-   Eina_Hash_El *el;
+   Eina_Hash_Head *hash_head;
+   Eina_Hash_Element *hash_element;
    Eina_Hash_Tuple tuple;
 
    if (!hash)
@@ -1328,9 +1324,9 @@ eina_hash_find_by_hash(const Eina_Hash *hash,
    tuple.key_length = key_length;
    tuple.data = NULL;
 
-   el = _eina_hash_find_by_hash(hash, &tuple, key_hash, &eh);
-   if (el)
-      return el->tuple.data;
+   hash_element = _eina_hash_find_by_hash(hash, &tuple, key_hash, &hash_head);
+   if (hash_element)
+      return hash_element->tuple.data;
 
    return NULL;
 }
@@ -1379,8 +1375,8 @@ eina_hash_modify_by_hash(Eina_Hash *hash,
                          int key_hash,
                          const void *data)
 {
-   Eina_Hash_Head *eh;
-   Eina_Hash_El *el;
+   Eina_Hash_Head *hash_head;
+   Eina_Hash_Element *hash_element;
    void *old_data = NULL;
    Eina_Hash_Tuple tuple;
 
@@ -1393,11 +1389,11 @@ eina_hash_modify_by_hash(Eina_Hash *hash,
    tuple.key_length = key_length;
    tuple.data = NULL;
 
-   el = _eina_hash_find_by_hash(hash, &tuple, key_hash, &eh);
-   if (el)
+   hash_element = _eina_hash_find_by_hash(hash, &tuple, key_hash, &hash_head);
+   if (hash_element)
      {
-        old_data = el->tuple.data;
-        el->tuple.data = (void *)data;
+        old_data = hash_element->tuple.data;
+        hash_element->tuple.data = (void *)data;
      }
 
    return old_data;
@@ -1419,8 +1415,8 @@ EAPI void *
 eina_hash_set(Eina_Hash *hash, const void *key, const void *data)
 {
    Eina_Hash_Tuple tuple;
-   Eina_Hash_Head *eh;
-   Eina_Hash_El *el;
+   Eina_Hash_Head *hash_head;
+   Eina_Hash_Element *hash_element;
    int key_length;
    int key_hash;
 
@@ -1437,13 +1433,13 @@ eina_hash_set(Eina_Hash *hash, const void *key, const void *data)
    tuple.key_length = key_length;
    tuple.data = NULL;
 
-   el = _eina_hash_find_by_hash(hash, &tuple, key_hash, &eh);
-   if (el)
+   hash_element = _eina_hash_find_by_hash(hash, &tuple, key_hash, &hash_head);
+   if (hash_element)
      {
         void *old_data = NULL;
 
-        old_data = el->tuple.data;
-        el->tuple.data = (void *)data;
+        old_data = hash_element->tuple.data;
+        hash_element->tuple.data = (void *)data;
         return old_data;
      }
 
