@@ -1161,6 +1161,8 @@ eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data)
 /**
  * Removes the entry identified by @p key and @p key_hash from the given
  * hash table.
+ * If a free function was given to the callback on creation, it will be
+ * called for the data being deleted.
  *
  * @param   hash The given hash table.
  * @param   key  The key.  Cannot be @c NULL.
@@ -1185,6 +1187,8 @@ eina_hash_del_by_key_hash(Eina_Hash *hash,
 
 /**
  * Removes the entry identified by @p key from the given hash table.
+ * If a free function was given to the callback on creation, it will be
+ * called for the data being deleted.
  *
  * This version will calculate key length and hash by using functions
  * provided to hash creation function.
@@ -1207,6 +1211,8 @@ eina_hash_del_by_key(Eina_Hash *hash, const void *key)
 
 /**
  * Removes the entry identified by @p data from the given hash table.
+ * If a free function was given to the callback on creation, it will be
+ * called for the data being deleted.
  *
  * This version is slow since there is no quick access to nodes based on data.
  *
@@ -1241,6 +1247,8 @@ eina_hash_del_by_data(Eina_Hash *hash, const void *data)
 /**
  * Removes the entry identified by @p key and @p key_hash or @p data from the given
  * hash table.
+ * If a free function was given to the callback on creation, it will be
+ * called for the data being deleted.
  *
  * If @p key is @c NULL, then @p data is used to find a match to
  * remove.
@@ -1276,6 +1284,8 @@ eina_hash_del_by_hash(Eina_Hash *hash,
 /**
  * Removes the entry identified by @p key or @p data from the given
  * hash table.
+ * If a free function was given to the callback on creation, it will be
+ * called for the data being deleted.
  *
  * If @p key is @c NULL, then @p data is used to find a match to
  * remove.
