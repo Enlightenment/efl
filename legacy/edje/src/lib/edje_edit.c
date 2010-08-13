@@ -5993,8 +5993,8 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
           }
 
         EINA_ITERATOR_FOREACH(it, tuple)
-           BUF_APPENDF(I3"item: \"%s\" \"%s\";\n", (char *)tuple->key,
-                         (char *)tuple->data);
+           BUF_APPENDF(I3"item: \"%s\" \"%s\"; \n", (char *)tuple->key,
+                         edje_string_get(tuple->data));
 
         eina_iterator_free(it);
         BUF_APPEND(I2"}\n\n");
