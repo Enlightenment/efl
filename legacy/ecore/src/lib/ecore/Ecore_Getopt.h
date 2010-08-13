@@ -249,7 +249,7 @@ extern "C" {
 #define ECORE_GETOPT_STORE_DEF_UINT(shortname, longname, help, default_value) \
   ECORE_GETOPT_STORE_DEF(shortname, longname, help,			\
 			 ECORE_GETOPT_TYPE_UINT,			\
-			 {.uintv, default_value})
+			 {.uintv = default_value})
 #define ECORE_GETOPT_STORE_DEF_ULONG(shortname, longname, help, default_value) \
   ECORE_GETOPT_STORE_DEF(shortname, longname, help,			\
 			 ECORE_GETOPT_TYPE_ULONG,			\
@@ -293,7 +293,7 @@ extern "C" {
   ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,		\
 			  ECORE_GETOPT_TYPE_UINT,			\
 			  arg_requirement,				\
-			  {.uintv, default_value})
+			  {.uintv = default_value})
 #define ECORE_GETOPT_STORE_FULL_ULONG(shortname, longname, help, metavar, arg_requirement, default_value) \
   ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,		\
 			  ECORE_GETOPT_TYPE_ULONG,			\
