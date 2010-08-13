@@ -251,8 +251,7 @@ _ecore_config_ipc_init(const char *pipe_name)
    ret_srv = NULL;
    list = NULL;
 
-   list = malloc(sizeof(Ecore_Config_Server));
-   memset(list, 0, sizeof(Ecore_Config_Server));
+   list = calloc(1, sizeof(Ecore_Config_Server));
    if ((ret = _ecore_config_ipc_ecore_init(pipe_name, &list->server)) != ECORE_CONFIG_ERR_SUCC)
      {
 	ERR("_ecore_config_ipc_init: failed to register %s, code %d",

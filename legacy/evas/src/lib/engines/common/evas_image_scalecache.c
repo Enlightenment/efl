@@ -265,8 +265,7 @@ _sci_find(RGBA_Image *im,
 
         if (eina_list_count(im->cache.list) > (max_scale_items - 1))
           return NULL;
-        sci = malloc(sizeof(Scaleitem));
-        memset(sci, 0, sizeof(Eina_Inlist));
+        sci = calloc(1, sizeof(Scaleitem));
         sci->parent_im = im;
 #ifdef EVAS_FRAME_QUEUING
         RWLKI(sci->lock);

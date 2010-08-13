@@ -1309,13 +1309,12 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                   len++;
                }
              DBG("... malloc msg");
-             msg = malloc(len);
+             msg = calloc(1, len);
              if (msg)
                {
                   unsigned char *p;
                   
                   DBG("...   init msg");
-                  memset(msg, 0, len);
                   p = (unsigned char *)msg;
                   msg->active.mem_total = 0;
                   msg->active.count = 0;
