@@ -410,8 +410,7 @@ _pool_tex_dynamic_new(Evas_GL_Context *gc, int w, int h, int intformat, int form
         EGL_MAP_GL_TEXTURE_PIXEL_TYPE_SEC, EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC,
         EGL_NONE
      };
-   void *egldisplay = pt->gc->egldisp;
-   
+   void *egldisplay;
    
    pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
    if (!pt) return NULL;
@@ -438,13 +437,17 @@ _pool_tex_dynamic_new(Evas_GL_Context *gc, int w, int h, int intformat, int form
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
+   egldisplay = pt->gc->egldisp;
+   
    attr[1] = pt->w;
-   attr[2] = pt->h;
+   attr[3] = pt->h;
 
+   printf("make egl image for %p... %ix%i\n", pt, pt->w, pt->h);
    pt->dyn.img = secsym_eglCreateImage(egldisplay,
                                        EGL_NO_CONTEXT, 
                                        EGL_MAP_GL_TEXTURE_2D_SEC,
                                        0, attr);
+   printf("pt->dyn.img = %p\n", pt->dyn.img);
    if (!pt->dyn.img)
      {
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
