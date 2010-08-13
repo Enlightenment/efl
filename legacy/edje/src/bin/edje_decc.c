@@ -216,7 +216,7 @@ output(void)
 		       ERR("Cannot create image object for save.");
 		       exit(-1);
 		    }
-		  snprintf(buf, sizeof(buf), "images/%i", ei->id);
+		  snprintf(buf, sizeof(buf), "edje/images/%i", ei->id);
 		  evas_object_image_file_set(im, file_in, buf);
 		  snprintf(out, sizeof(out), "%s/%s", outdir, ei->entry);
 		  printf("Output Image: %s\n", out);
@@ -279,17 +279,19 @@ output(void)
 	if (sf->file) fputs(sf->file, f);
 	fclose(f);
      }
-   if (fontlist)
+   if (edje_file->fonts)
      {
-        Font *fn;
+        Edje_Font_Directory_Entry *fn;
+        Eina_Iterator *it;
 
-	EINA_LIST_FOREACH(fontlist->list, l, fn)
+        it = eina_hash_iterator_data_new(edje_file->fonts);
+	EINA_ITERATOR_FOREACH(it, fn)
 	  {
 	     void *font;
 	     int fontsize;
 	     char out[4096];
 
-	     snprintf(out, sizeof(out), "fonts/%s", fn->name);
+	     snprintf(out, sizeof(out), "edje/fonts/%s", fn->entry);
 	     font = eet_read(ef, out, &fontsize);
 	     if (font)
 	       {
@@ -321,6 +323,7 @@ output(void)
 		  free(font);
 	       }
 	  }
+        eina_iterator_free(it);
      }
      {
 	char out[4096];

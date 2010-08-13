@@ -2163,7 +2163,7 @@ _edje_lua_image_set_file(lua_State *L)
    Edje_Lua_Evas_Object *obj = _edje_lua_checkudata(L, 1, &mImage);
    int id = edje_edit_image_id_get(obj->ed->obj, luaL_checkstring(L, 2));
    char buf[256];
-   sprintf(buf, "images/%i", id);
+   sprintf(buf, "edje/images/%i", id);
    evas_object_image_file_set(obj->eo, obj->ed->path, buf);
    return 0;
 }

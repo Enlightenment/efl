@@ -3946,6 +3946,7 @@ EAPI Eina_Bool
 edje_edit_font_add(Evas_Object *obj, const char* path, const char* alias)
 {
    char entry[PATH_MAX];
+   char *new_path;
    struct stat st;
    Edje_Font_Directory_Entry *fnt;
 
@@ -3959,12 +3960,25 @@ edje_edit_font_add(Evas_Object *obj, const char* path, const char* alias)
    if (!ed->path) return EINA_FALSE;
 
    /* Alias */
-   if (!alias)
+   if (alias)
+     {
+	if ((new_path = strrchr(path, '/'))) new_path ++;
+	else new_path = (char *)path;
+     }
+   else
      {
 	if ((alias = strrchr(path, '/'))) alias ++;
 	else alias = (char *)path;
+        new_path = (char *)alias;
      }
    snprintf(entry, sizeof(entry), "edje/fonts/%s", alias);
+
+   /* Initializing a new font hash, if no exist */
+   if (!ed->file->fonts)
+     {
+        ed->file->fonts = eina_hash_string_small_new(NULL);
+        if (!ed->file->fonts) return EINA_FALSE;
+     }
 
    /* Check if exists */
    fnt = eina_hash_find(ed->file->fonts, alias);
@@ -3978,6 +3992,7 @@ edje_edit_font_add(Evas_Object *obj, const char* path, const char* alias)
 	ERR("Unable to alloc font entry part \"%s\"", alias);
 	return EINA_FALSE;
      }
+   fnt->file = eina_stringshare_add(new_path);
    fnt->entry = eina_stringshare_add(alias);
 
    eina_hash_direct_add(ed->file->fonts, fnt->entry, fnt);
