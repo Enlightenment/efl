@@ -1736,7 +1736,7 @@ typedef struct _Eet_Data_Descriptor         Eet_Data_Descriptor;
  * version member so it is compatible with abi changes, or at least
  * will not crash with them.
  */
-#define EET_DATA_DESCRIPTOR_CLASS_VERSION 3
+#define EET_DATA_DESCRIPTOR_CLASS_VERSION 4
 
 /**
  * @typedef Eet_Data_Descriptor_Class
@@ -1778,6 +1778,8 @@ struct _Eet_Data_Descriptor_Class
       void        (*str_direct_free)(const char *str);   /**< how to free a string returned by str_direct_alloc */
       const char *(*type_get)(const void *data, Eina_Bool *unknow);    /**< convert any kind of data type to a name that define an Eet_Data_Element. */
       Eina_Bool   (*type_set)(const char *type, void *data, Eina_Bool unknow);    /**< set the type at a particular adress */
+      void      * (*array_alloc)(size_t size); /**< how to allocate memory for array (usually malloc()) */
+      void        (*array_free)(void *mem); /**< how to free memory for array (usually malloc()) */
    } func;
 };
 
@@ -1914,6 +1916,7 @@ EAPI Eet_Data_Descriptor *                    eet_data_descriptor_file_new(const
  * @ingroup Eet_Data_Group
  */
 EAPI Eina_Bool                                eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
+											unsigned int		   eddc_size,
                                                                                         const char                *name,
                                                                                         int                        size);
 
@@ -1931,7 +1934,7 @@ EAPI Eina_Bool                                eet_eina_stream_data_descriptor_cl
  * @ingroup Eet_Data_Group
  */
 #define EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(clas, type)\
-   (eet_eina_stream_data_descriptor_class_set(clas, # type, sizeof(type)))
+   (eet_eina_stream_data_descriptor_class_set(clas, sizeof (*(clas)), # type, sizeof(type)))
 
 /**
  * This function is an helper that set all the parameter of an
@@ -1948,6 +1951,7 @@ EAPI Eina_Bool                                eet_eina_stream_data_descriptor_cl
  * @ingroup Eet_Data_Group
  */
 EAPI Eina_Bool      eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
+							    unsigned int               eddc_size,
                                                             const char                *name,
                                                             int                        size);
 
@@ -1964,8 +1968,8 @@ EAPI Eina_Bool      eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_
  * @since 1.2.3
  * @ingroup Eet_Data_Group
  */
-#define EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(clas, type) (\
-      eet_eina_file_data_descriptor_class_set(clas, # type, sizeof(type)))
+#define EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(clas, type)\
+  (eet_eina_file_data_descriptor_class_set(clas, sizeof (*(clas)), # type, sizeof(type)))
 
 /**
  * This function frees a data descriptor when it is not needed anymore.

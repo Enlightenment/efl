@@ -418,3 +418,11 @@
 
 	* Add EET_DATA_DESCRIPTOR_ADD_HASH_STRING.
 
+2010-08-06  Cedric BAIL
+
+	* Break eet_eina_* function helper to provide a clean API/ABI to
+	prevent futur break. This should prevent the ABI break that was
+	introduced with release 1.3.0.
+
+	* Add a specific allocator for array. This should fix wrong allocation
+	case discovered with recent edje file format change.

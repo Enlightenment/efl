@@ -138,6 +138,8 @@ struct _Eet_Data_Descriptor
       void        (*hash_free)(void *h);
       const char *(*type_get)(const void *data, Eina_Bool *unknow);
       Eina_Bool   (*type_set)(const char *type, void *data, Eina_Bool unknow);
+      void      * (*array_alloc)(size_t size);
+      void        (*array_free)(void *mem);
    } func;
    struct
    {
@@ -186,6 +188,7 @@ struct _Eet_Free
 struct _Eet_Free_Context
 {
    Eet_Free freelist;
+   Eet_Free freelist_array;
    Eet_Free freelist_list;
    Eet_Free freelist_hash;
    Eet_Free freelist_str;
@@ -1670,10 +1673,12 @@ _eet_eina_hash_free(void *hash)
 /*---*/
 EAPI Eina_Bool
 eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
+					  /* When we change the structure content in the future, we need to handle old structure type too */
+					  unsigned int		     eddc_size,
                                           const char                *name,
                                           int                        size)
 {
-   if (!eddc || !name)
+   if (!eddc || !name || eddc_size != sizeof (Eet_Data_Descriptor_Class))
       return EINA_FALSE;
 
    eddc->name = name;
@@ -1692,15 +1697,21 @@ eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
    eddc->func.hash_add = (void * (*)(void *, const char *, void *))_eet_eina_hash_add_alloc;
    eddc->func.hash_free = (void (*)(void *))_eet_eina_hash_free;
 
+   /* This will cause an ABI incompatibility */
+   eddc->func.array_alloc = _eet_mem_alloc;
+   eddc->func.array_free = _eet_mem_free;
+
    return EINA_TRUE;
 } /* eet_eina_stream_data_descriptor_class_set */
 
 EAPI Eina_Bool
 eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
+					/* When we change the structure content in the future, we need to handle old structure type too */
+					unsigned int		   eddc_size,
                                         const char                *name,
                                         int                        size)
 {
-   if (!eet_eina_stream_data_descriptor_class_set(eddc, name, size))
+   if (!eet_eina_stream_data_descriptor_class_set(eddc, eddc_size, name, size))
       return EINA_FALSE;
 
    eddc->version = 2;
@@ -1762,6 +1773,12 @@ _eet_data_descriptor_new(const Eet_Data_Descriptor_Class *eddc,
      {
         edd->func.type_get = eddc->func.type_get;
         edd->func.type_set = eddc->func.type_set;
+     }
+
+   if (eddc->version > 3)
+     {
+	edd->func.array_alloc = eddc->func.array_alloc;
+	edd->func.array_free = eddc->func.array_free;
      }
 
    return edd;
@@ -2153,6 +2170,37 @@ _eet_freelist_free(Eet_Free_Context    *context,
         }
    _eet_free_reset(&context->freelist);
 } /* _eet_freelist_free */
+
+#define _eet_freelist_array_add(Ctx, Data) _eet_free_add(&Ctx->freelist_array, Data);
+#define _eet_freelist_array_reset(Ctx)     _eet_free_reset(&Ctx->freelist_array);
+#define _eet_freelist_array_ref(Ctx)       _eet_free_ref(&Ctx->freelist_array);
+#define _eet_freelist_array_unref(Ctx)     _eet_free_unref(&Ctx->freelist_array);
+
+static void
+_eet_freelist_array_free(Eet_Free_Context    *context,
+			 Eet_Data_Descriptor *edd)
+{
+   int j;
+   int i;
+
+   if (context->freelist_array.ref > 0)
+      return;
+
+   for (j = 0; j < 256; ++j)
+      for (i = 0; i < context->freelist_array.num[j]; ++i)
+        {
+           if (edd)
+	     {
+		if (edd->func.array_free)
+		  edd->func.array_free(context->freelist_array.list[j][i]);
+		else
+		  edd->func.mem_free(context->freelist_array.list[j][i]);
+	     }
+           else
+              free(context->freelist_array.list[j][i]);
+        }
+   _eet_free_reset(&context->freelist_array);
+} /* _eet_freelist_array_free */
 
 #define _eet_freelist_list_add(Ctx, Data) _eet_free_add(&Ctx->freelist_list, Data);
 #define _eet_freelist_list_reset(Ctx)     _eet_free_reset(&Ctx->freelist_list);
@@ -3224,6 +3272,7 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
         _eet_freelist_direct_str_free(context, edd);
         _eet_freelist_list_free(context, edd);
         _eet_freelist_hash_free(context, edd);
+	_eet_freelist_array_free(context, edd);
         _eet_freelist_free(context, edd);
      }
    else
@@ -3233,6 +3282,7 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
         _eet_freelist_list_reset(context);
         _eet_freelist_hash_reset(context);
         _eet_freelist_direct_str_reset(context);
+	_eet_freelist_array_reset(context);
      }
 
    if (!edd)
@@ -3248,6 +3298,7 @@ error:
    _eet_freelist_direct_str_free(context, edd);
    _eet_freelist_list_free(context, edd);
    _eet_freelist_hash_free(context, edd);
+   _eet_freelist_array_free(context, edd);
    _eet_freelist_free(context, edd);
 
    /* FIXME: Warn that something goes wrong here. */
@@ -3454,14 +3505,17 @@ eet_data_get_array(Eet_Free_Context     *context,
               * on the counter offset */
              *(int *)(((char *)data) + ede->count - ede->offset) = count;
              /* allocate space for the array of elements */
-             *(void **)ptr = edd->func.mem_alloc(count * subsize);
+	     if (edd->func.array_alloc)
+	       *(void **) ptr = edd->func.array_alloc(count * subsize);
+	     else
+	       *(void **) ptr = edd->func.mem_alloc(count * subsize);
 
              if (!*(void **)ptr)
                 return 0;
 
              memset(*(void **)ptr, 0, count * subsize);
 
-             _eet_freelist_add(context, *(void **)ptr);
+             _eet_freelist_array_add(context, *(void **)ptr);
           }
      }
 

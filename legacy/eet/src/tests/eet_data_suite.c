@@ -63,5 +63,7 @@ eet_test_setup_eddc(Eet_Data_Descriptor_Class * eddc)
    eddc->func.hash_free = (void *)_eet_eina_hash_free;
    eddc->func.str_direct_alloc = (void *)_eet_str_direct_alloc;
    eddc->func.str_direct_free = (void *)_eet_str_direct_free;
+   eddc->func.array_alloc = NULL;
+   eddc->func.array_free = NULL;
 } /* eet_test_setup_eddc */
 

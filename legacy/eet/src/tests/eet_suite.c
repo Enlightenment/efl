@@ -1121,7 +1121,8 @@ START_TEST(eet_file_data_dump_test)
    memset(&etbt.charray, 0, sizeof(etbt.charray));
    etbt.charray[0] = "test";
 
-   eet_eina_file_data_descriptor_class_set(&eddc, "Eet_Test_Ex_Type",
+   eet_eina_file_data_descriptor_class_set(&eddc, sizeof (eddc),
+					   "Eet_Test_Ex_Type",
                                            sizeof(Eet_Test_Ex_Type));
 
    edd = eet_data_descriptor_file_new(&eddc);
@@ -2041,7 +2042,8 @@ START_TEST(eet_connection_check)
    memset(&etbt.charray, 0, sizeof(etbt.charray));
    etbt.charray[0] = "test";
 
-   eet_eina_file_data_descriptor_class_set(&eddc, "Eet_Test_Ex_Type",
+   eet_eina_file_data_descriptor_class_set(&eddc, sizeof (eddc),
+					   "Eet_Test_Ex_Type",
                                            sizeof(Eet_Test_Ex_Type));
 
    edd = eet_data_descriptor_file_new(&eddc);
@@ -2113,7 +2115,7 @@ START_TEST(eet_fp)
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5FP, Eet_5FP, "f1",   f1,   EET_T_F32P32);
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5FP, Eet_5FP, "f0",   f0,   EET_T_F32P32);
 
-   eet_eina_stream_data_descriptor_class_set(&eddc, "Eet_5FP", sizeof (Eet_5DBL));
+   eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc), "Eet_5FP", sizeof (Eet_5DBL));
    edd_5DBL = eet_data_descriptor_stream_new(&eddc);
 
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5DBL, Eet_5DBL, "fp32", fp32, EET_T_DOUBLE);
@@ -2175,7 +2177,7 @@ START_TEST(eet_file_fp)
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5FP, Eet_5FP, "f1",   f1,   EET_T_F32P32);
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5FP, Eet_5FP, "f0",   f0,   EET_T_F32P32);
 
-   eet_eina_file_data_descriptor_class_set(&eddc, "Eet_5FP", sizeof (Eet_5DBL));
+   eet_eina_file_data_descriptor_class_set(&eddc, sizeof (eddc), "Eet_5FP", sizeof (Eet_5DBL));
    edd_5DBL = eet_data_descriptor_file_new(&eddc);
 
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd_5DBL, Eet_5DBL, "fp32", fp32, EET_T_DOUBLE);
