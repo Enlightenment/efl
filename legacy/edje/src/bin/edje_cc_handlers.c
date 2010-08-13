@@ -4363,8 +4363,8 @@ st_collections_group_parts_part_description_image_border_scale(void)
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
    ed->image.border.scale =  parse_enum(0,
-					"1", 0,
-					"0", 1,
+					"0", 0,
+					"1", 1,
 					NULL);
 }
 
