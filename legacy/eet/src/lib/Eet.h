@@ -1779,7 +1779,7 @@ struct _Eet_Data_Descriptor_Class
       const char *(*type_get)(const void *data, Eina_Bool *unknow);    /**< convert any kind of data type to a name that define an Eet_Data_Element. */
       Eina_Bool   (*type_set)(const char *type, void *data, Eina_Bool unknow);    /**< set the type at a particular adress */
       void      * (*array_alloc)(size_t size); /**< how to allocate memory for array (usually malloc()) */
-      void        (*array_free)(void *mem); /**< how to free memory for array (usually malloc()) */
+      void        (*array_free)(void *mem); /**< how to free memory for array (usually free()) */
    } func;
 };
 
