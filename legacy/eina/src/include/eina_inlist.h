@@ -66,41 +66,27 @@ struct _Eina_Inlist
                                                   offsetof(type, __in_list)))
 
 EAPI Eina_Inlist *  eina_inlist_append(Eina_Inlist *in_list,
-                                       Eina_Inlist *in_item) EINA_ARG_NONNULL(2)
-EINA_WARN_UNUSED_RESULT;
+                                       Eina_Inlist *in_item) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Inlist *  eina_inlist_prepend(Eina_Inlist *in_list,
-                                        Eina_Inlist *in_item) EINA_ARG_NONNULL(
-   2) EINA_WARN_UNUSED_RESULT;
+                                        Eina_Inlist *in_item) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Inlist *  eina_inlist_append_relative(Eina_Inlist *in_list,
                                                 Eina_Inlist *in_item,
-                                                Eina_Inlist *in_relative)
-EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
+                                                Eina_Inlist *in_relative) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Inlist *  eina_inlist_prepend_relative(Eina_Inlist *in_list,
                                                  Eina_Inlist *in_item,
-                                                 Eina_Inlist *in_relative)
-EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
+                                                 Eina_Inlist *in_relative) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Inlist *  eina_inlist_remove(Eina_Inlist *in_list,
-                                       Eina_Inlist *in_item) EINA_ARG_NONNULL(1,
-                                                                              2)
-EINA_WARN_UNUSED_RESULT;
+                                       Eina_Inlist *in_item) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Inlist *  eina_inlist_find(Eina_Inlist *in_list,
-                                     Eina_Inlist *in_item) EINA_ARG_NONNULL(2)
-EINA_WARN_UNUSED_RESULT;
+                                     Eina_Inlist *in_item) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Inlist *  eina_inlist_promote(Eina_Inlist *list,
-                                        Eina_Inlist *item) EINA_ARG_NONNULL(1,
-                                                                            2)
-EINA_WARN_UNUSED_RESULT;
+                                        Eina_Inlist *item) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Inlist *  eina_inlist_demote(Eina_Inlist *list,
-                                       Eina_Inlist *item) EINA_ARG_NONNULL(1,
-                                                                           2)
-EINA_WARN_UNUSED_RESULT;
-EAPI unsigned int   eina_inlist_count(const Eina_Inlist *list)
-EINA_WARN_UNUSED_RESULT;
+                                       Eina_Inlist *item) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+EAPI unsigned int   eina_inlist_count(const Eina_Inlist *list) EINA_WARN_UNUSED_RESULT;
 
-EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list)
-EINA_MALLOC EINA_WARN_UNUSED_RESULT;
-EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list)
-EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /* This two macros are helpers for the _FOREACH ones, don't use them */
 #define _EINA_INLIST_OFFSET(ref) ((char *)&(ref)->__in_list - (char *)(ref))

@@ -84,56 +84,26 @@ EAPI Eina_Bool          eina_matrixsparse_size_set(Eina_Matrixsparse *m,
                                                    unsigned long cols);
 
 /* data getting */
-EAPI Eina_Bool          eina_matrixsparse_cell_idx_get(
-   const Eina_Matrixsparse *m,
-   unsigned long row,
-   unsigned long col,
-   Eina_Matrixsparse_Cell **cell);
-EAPI void *             eina_matrixsparse_cell_data_get(
-   const Eina_Matrixsparse_Cell *cell);
-EAPI void *             eina_matrixsparse_data_idx_get(
-   const Eina_Matrixsparse *m,
-   unsigned long row,
-   unsigned long col);
-EAPI Eina_Bool          eina_matrixsparse_cell_position_get(
-   const Eina_Matrixsparse_Cell *cell,
-   unsigned long *row,
-   unsigned long *col);
+EAPI Eina_Bool          eina_matrixsparse_cell_idx_get(const Eina_Matrixsparse *m, unsigned long row, unsigned long col, Eina_Matrixsparse_Cell **cell);
+EAPI void *             eina_matrixsparse_cell_data_get(const Eina_Matrixsparse_Cell *cell);
+EAPI void *             eina_matrixsparse_data_idx_get(const Eina_Matrixsparse *m, unsigned long row, unsigned long col);
+EAPI Eina_Bool          eina_matrixsparse_cell_position_get(const Eina_Matrixsparse_Cell *cell, unsigned long *row, unsigned long *col);
 
 /* data setting */
-EAPI Eina_Bool eina_matrixsparse_cell_data_replace(
-   Eina_Matrixsparse_Cell *cell,
-   const void *data,
-   void **p_old);
-EAPI Eina_Bool eina_matrixsparse_cell_data_set(
-   Eina_Matrixsparse_Cell *cell,
-   const void *data);
-EAPI Eina_Bool eina_matrixsparse_data_idx_replace(Eina_Matrixsparse *m,
-                                                  unsigned long row,
-                                                  unsigned long col,
-                                                  const void *data,
-                                                  void **p_old);
-EAPI Eina_Bool eina_matrixsparse_data_idx_set(Eina_Matrixsparse *m,
-                                              unsigned long row,
-                                              unsigned long col,
-                                              const void *data);
+EAPI Eina_Bool eina_matrixsparse_cell_data_replace(Eina_Matrixsparse_Cell *cell, const void *data, void **p_old);
+EAPI Eina_Bool eina_matrixsparse_cell_data_set(Eina_Matrixsparse_Cell *cell, const void *data);
+EAPI Eina_Bool eina_matrixsparse_data_idx_replace(Eina_Matrixsparse *m, unsigned long row, unsigned long col, const void *data, void **p_old);
+EAPI Eina_Bool eina_matrixsparse_data_idx_set(Eina_Matrixsparse *m, unsigned long row, unsigned long col, const void *data);
 
 /* data deleting */
-EAPI Eina_Bool      eina_matrixsparse_row_idx_clear(Eina_Matrixsparse *m,
-                                                    unsigned long row);
-EAPI Eina_Bool      eina_matrixsparse_column_idx_clear(Eina_Matrixsparse *m,
-                                                       unsigned long col);
-EAPI Eina_Bool      eina_matrixsparse_cell_idx_clear(Eina_Matrixsparse *m,
-                                                     unsigned long row,
-                                                     unsigned long col);
-EAPI Eina_Bool      eina_matrixsparse_cell_clear(
-   Eina_Matrixsparse_Cell *cell);
+EAPI Eina_Bool      eina_matrixsparse_row_idx_clear(Eina_Matrixsparse *m, unsigned long row);
+EAPI Eina_Bool      eina_matrixsparse_column_idx_clear(Eina_Matrixsparse *m, unsigned long col);
+EAPI Eina_Bool      eina_matrixsparse_cell_idx_clear(Eina_Matrixsparse *m, unsigned long row, unsigned long col);
+EAPI Eina_Bool      eina_matrixsparse_cell_clear(Eina_Matrixsparse_Cell *cell);
 
 /* iterators */
-EAPI Eina_Iterator *eina_matrixsparse_iterator_new(
-   const Eina_Matrixsparse *m);
-EAPI Eina_Iterator *eina_matrixsparse_iterator_complete_new(
-   const Eina_Matrixsparse *m);
+EAPI Eina_Iterator *eina_matrixsparse_iterator_new(const Eina_Matrixsparse *m);
+EAPI Eina_Iterator *eina_matrixsparse_iterator_complete_new(const Eina_Matrixsparse *m);
 
 /**
  * @}

@@ -68,12 +68,10 @@
 EAPI Eina_Bool   eina_binshare_init(void);
 EAPI Eina_Bool   eina_binshare_shutdown(void);
 EAPI const void *eina_binshare_add_length(const void *obj,
-                                          unsigned int olen)
-EINA_WARN_UNUSED_RESULT;
+                                          unsigned int olen) EINA_WARN_UNUSED_RESULT;
 EAPI const void *eina_binshare_ref(const void *obj);
 EAPI void        eina_binshare_del(const void *obj);
-EAPI int         eina_binshare_length(const void *obj) EINA_CONST
-EINA_WARN_UNUSED_RESULT;
+EAPI int         eina_binshare_length(const void *obj) EINA_CONST EINA_WARN_UNUSED_RESULT;
 EAPI void        eina_binshare_dump(void);
 
 /**

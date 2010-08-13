@@ -64,29 +64,13 @@ typedef struct _Eina_Tile_Grid_Slicer Eina_Tile_Grid_Slicer;
 EAPI Eina_Tiler *   eina_tiler_new(int w, int h);
 EAPI void           eina_tiler_free(Eina_Tiler *t);
 EAPI void           eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h);
-EAPI Eina_Bool      eina_tiler_rect_add(Eina_Tiler *t,
-                                        const Eina_Rectangle *r);
-EAPI void           eina_tiler_rect_del(Eina_Tiler *t,
-                                        const Eina_Rectangle *r);
+EAPI Eina_Bool      eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r);
+EAPI void           eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r);
 EAPI void           eina_tiler_clear(Eina_Tiler *t);
 EAPI Eina_Iterator *eina_tiler_iterator_new(const Eina_Tiler *t);
-EAPI Eina_Iterator *eina_tile_grid_slicer_iterator_new(int x,
-                                                       int y,
-                                                       int w,
-                                                       int h,
-                                                       int tile_w,
-                                                       int tile_h);
-static inline Eina_Bool eina_tile_grid_slicer_next(
-   Eina_Tile_Grid_Slicer *slc,
-   const Eina_Tile_Grid_Info **
-   rect);
-static inline Eina_Bool eina_tile_grid_slicer_setup(Eina_Tile_Grid_Slicer *slc,
-                                                    int x,
-                                                    int y,
-                                                    int w,
-                                                    int h,
-                                                    int tile_w,
-                                                    int tile_h);
+EAPI Eina_Iterator *eina_tile_grid_slicer_iterator_new(int x, int y, int w, int h, int tile_w, int tile_h);
+static inline Eina_Bool eina_tile_grid_slicer_next(Eina_Tile_Grid_Slicer *slc, const Eina_Tile_Grid_Info **rect);
+static inline Eina_Bool eina_tile_grid_slicer_setup(Eina_Tile_Grid_Slicer *slc, int x, int y, int w, int h, int tile_w, int tile_h);
 
 #include "eina_inline_tiler.x"
 

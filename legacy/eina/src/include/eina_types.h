@@ -104,10 +104,8 @@
 #  define EINA_WARN_UNUSED_RESULT
 # endif
 
-# if (!defined(EINA_SAFETY_CHECKS)) && (__GNUC__ > 3 || (__GNUC__ == 3 && \
-                                                         __GNUC_MINOR__ >= 3))
-#  define EINA_ARG_NONNULL(idx, \
-                           ...) __attribute__ ((nonnull(idx, ## __VA_ARGS__)))
+# if (!defined(EINA_SAFETY_CHECKS)) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3))
+#  define EINA_ARG_NONNULL(idx, ...) __attribute__ ((nonnull(idx, ## __VA_ARGS__)))
 # else
 #  define EINA_ARG_NONNULL(idx, ...)
 # endif
@@ -255,9 +253,7 @@ typedef int (*Eina_Compare_Cb)(const void *data1, const void *data2);
  */
 #define EINA_COMPARE_CB(function) ((Eina_Compare_Cb)function)
 
-typedef Eina_Bool (*Eina_Each_Cb)(const void *container,
-				  void *data,
-				  void *fdata);
+typedef Eina_Bool (*Eina_Each_Cb)(const void *container, void *data, void *fdata);
 
 /**
  * @def EINA_EACH_CB

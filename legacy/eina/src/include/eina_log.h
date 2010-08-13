@@ -303,11 +303,9 @@ EAPI int
 eina_log_abort_on_critical_level_get(void) EINA_WARN_UNUSED_RESULT;
 
 EAPI void
-eina_log_domain_level_set(const char *domain_name, int level) EINA_ARG_NONNULL(
-   1);
+eina_log_domain_level_set(const char *domain_name, int level) EINA_ARG_NONNULL(1);
 EAPI int
-eina_log_domain_level_get(const char *domain_name) EINA_WARN_UNUSED_RESULT
-EINA_ARG_NONNULL(1);
+eina_log_domain_level_get(const char *domain_name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 EAPI int
 eina_log_domain_registered_level_get(int domain) EINA_WARN_UNUSED_RESULT;
 static inline Eina_Bool
@@ -318,8 +316,7 @@ eina_log_domain_level_check(int domain, int level);
  * Logging domains
  */
 EAPI int
-eina_log_domain_register(const char *name, const char *color) EINA_ARG_NONNULL(
-   1);
+eina_log_domain_register(const char *name, const char *color) EINA_ARG_NONNULL(1);
 EAPI void
 eina_log_domain_unregister(int domain);
 
@@ -333,8 +330,7 @@ eina_log_print(int domain,
                const char *function,
                int line,
                const char *fmt,
-               ...) EINA_ARG_NONNULL(3, 4, 6) EINA_PRINTF(6,
-                                                          7) EINA_NOINSTRUMENT;
+               ...) EINA_ARG_NONNULL(3, 4, 6) EINA_PRINTF(6, 7) EINA_NOINSTRUMENT;
 EAPI void
 eina_log_vprint(int domain,
                 Eina_Log_Level level,

@@ -99,10 +99,7 @@ struct _Eina_Rbtree
  * @typedef Eina_Rbtree_Cmp_Node_Cb
  * Function used compare two nodes and see which direction to navigate.
  */
-typedef Eina_Rbtree_Direction (*Eina_Rbtree_Cmp_Node_Cb)(const Eina_Rbtree *
-                                                         left,
-                                                         const Eina_Rbtree *
-                                                         right, void *data);
+typedef Eina_Rbtree_Direction (*Eina_Rbtree_Cmp_Node_Cb)(const Eina_Rbtree *left, const Eina_Rbtree *right, void *data);
 
 /**
  * @def EINA_RBTREE_CMP_NODE_CB
@@ -114,8 +111,7 @@ typedef Eina_Rbtree_Direction (*Eina_Rbtree_Cmp_Node_Cb)(const Eina_Rbtree *
  * @typedef Eina_Rbtree_Cmp_Key_Cb
  * Function used compare node with a given key of specified length.
  */
-typedef int (*Eina_Rbtree_Cmp_Key_Cb)(const Eina_Rbtree *node, const void *key,
-                                      int length, void *data);
+typedef int (*Eina_Rbtree_Cmp_Key_Cb)(const Eina_Rbtree *node, const void *key, int length, void *data);
 /**
  * @def EINA_RBTREE_CMP_KEY_CB
  * Cast using #Eina_Rbtree_Cmp_Key_Cb
@@ -133,47 +129,15 @@ typedef void (*Eina_Rbtree_Free_Cb)(Eina_Rbtree *node, void *data);
  */
 #define EINA_RBTREE_FREE_CB(Function) ((Eina_Rbtree_Free_Cb)Function)
 
-EAPI Eina_Rbtree *
-eina_rbtree_inline_insert(
-   Eina_Rbtree *root,
-   Eina_Rbtree *node,
-   Eina_Rbtree_Cmp_Node_Cb cmp,
-   const void *data) EINA_ARG_NONNULL(2,
-                                      3) EINA_WARN_UNUSED_RESULT;
-EAPI Eina_Rbtree *
-eina_rbtree_inline_remove(
-   Eina_Rbtree *root,
-   Eina_Rbtree *node,
-   Eina_Rbtree_Cmp_Node_Cb cmp,
-   const void *data) EINA_ARG_NONNULL(2,
-                                      3) EINA_WARN_UNUSED_RESULT;
-EAPI void
-eina_rbtree_delete(
-   Eina_Rbtree *root,
-   Eina_Rbtree_Free_Cb func,
-   void *data) EINA_ARG_NONNULL(2);
+EAPI Eina_Rbtree *              eina_rbtree_inline_insert(Eina_Rbtree *root,Eina_Rbtree *node,Eina_Rbtree_Cmp_Node_Cb cmp,const void *data) EINA_ARG_NONNULL(2, 3) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Rbtree *              eina_rbtree_inline_remove(Eina_Rbtree *root,Eina_Rbtree *node,Eina_Rbtree_Cmp_Node_Cb cmp,const void *data) EINA_ARG_NONNULL(2, 3) EINA_WARN_UNUSED_RESULT;
+EAPI void                       eina_rbtree_delete(Eina_Rbtree *root,Eina_Rbtree_Free_Cb func,void *data) EINA_ARG_NONNULL(2);
 
-static inline Eina_Rbtree *
-                               eina_rbtree_inline_lookup(
-   const Eina_Rbtree *root,
-   const void *key,
-   int length,
-   Eina_Rbtree_Cmp_Key_Cb cmp,
-   const void *data) EINA_PURE EINA_ARG_NONNULL(2,
-                                                4) EINA_WARN_UNUSED_RESULT;
+static inline Eina_Rbtree *     eina_rbtree_inline_lookup(const Eina_Rbtree *root,const void *key,int length,Eina_Rbtree_Cmp_Key_Cb cmp,const void *data) EINA_PURE EINA_ARG_NONNULL(2, 4) EINA_WARN_UNUSED_RESULT;
 
-EAPI Eina_Iterator *
-                               eina_rbtree_iterator_prefix(
-   const Eina_Rbtree *root) EINA_MALLOC
-EINA_WARN_UNUSED_RESULT;
-EAPI Eina_Iterator *
-                               eina_rbtree_iterator_infix(
-   const Eina_Rbtree *root) EINA_MALLOC
-EINA_WARN_UNUSED_RESULT;
-EAPI Eina_Iterator *
-                               eina_rbtree_iterator_postfix(
-   const Eina_Rbtree *root) EINA_MALLOC
-EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Iterator *            eina_rbtree_iterator_prefix(const Eina_Rbtree *root) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Iterator *            eina_rbtree_iterator_infix(const Eina_Rbtree *root) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Iterator *            eina_rbtree_iterator_postfix(const Eina_Rbtree *root) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 #include "eina_inline_rbtree.x"
 

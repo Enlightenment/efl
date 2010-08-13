@@ -46,35 +46,17 @@ EAPI size_t eina_unicode_strlen(const Eina_Unicode *ustr) EINA_ARG_NONNULL(1) EI
 EAPI size_t eina_unicode_strnlen(const Eina_Unicode *ustr, int n) EINA_ARG_NONNULL(1) EINA_PURE;
 
 
-EAPI Eina_Unicode *
-                                                       eina_unicode_strdup(
-   const Eina_Unicode *text) EINA_WARN_UNUSED_RESULT   EINA_ARG_NONNULL(1)
-EINA_MALLOC;
+EAPI Eina_Unicode *eina_unicode_strdup(const Eina_Unicode *text) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
-EAPI int
-                                                       eina_unicode_strcmp(
-   const Eina_Unicode *a,
-   const Eina_Unicode *b) EINA_WARN_UNUSED_RESULT      EINA_ARG_NONNULL(1, 2);
+EAPI int           eina_unicode_strcmp(const Eina_Unicode *a, const Eina_Unicode *b) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
 
-EAPI Eina_Unicode *
-                                                       eina_unicode_strcpy(
-   Eina_Unicode *dest,
-   const Eina_Unicode *source);
+EAPI Eina_Unicode *eina_unicode_strcpy(Eina_Unicode *dest, const Eina_Unicode *source);
 
-EAPI Eina_Unicode *
-                                                       eina_unicode_strstr(
-   const Eina_Unicode *haystack,
-   const Eina_Unicode *needle) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Unicode *eina_unicode_strstr(const Eina_Unicode *haystack, const Eina_Unicode *needle) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
 
-EAPI Eina_Unicode *
-                                                       eina_unicode_strncpy(
-   Eina_Unicode *dest,
-   const Eina_Unicode *source,
-   size_t n);
+EAPI Eina_Unicode *eina_unicode_strncpy(Eina_Unicode *dest, const Eina_Unicode *source, size_t n);
 
-EAPI Eina_Unicode *
-eina_unicode_escape(
-   const Eina_Unicode *str);
+EAPI Eina_Unicode *eina_unicode_escape(const Eina_Unicode *str);
 
 /**
  * @}

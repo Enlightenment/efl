@@ -49,11 +49,8 @@ typedef Eina_Bool (*Eina_Iterator_Lock_Callback)(Eina_Iterator *it);
 
 struct _Eina_Iterator
 {
-   Eina_Iterator_Next_Callback next                   EINA_ARG_NONNULL(1,
-                                                                       2)
-   EINA_WARN_UNUSED_RESULT;
-   Eina_Iterator_Get_Container_Callback get_container EINA_ARG_NONNULL(1)
-   EINA_WARN_UNUSED_RESULT;
+   Eina_Iterator_Next_Callback next                   EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+   Eina_Iterator_Get_Container_Callback get_container EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
    Eina_Iterator_Free_Callback free                   EINA_ARG_NONNULL(1);
 
    Eina_Iterator_Lock_Callback lock   EINA_WARN_UNUSED_RESULT;
@@ -71,20 +68,15 @@ struct _Eina_Iterator
 #define FUNC_ITERATOR_FREE(Function) ((Eina_Iterator_Free_Callback)Function)
 #define FUNC_ITERATOR_LOCK(Function) ((Eina_Iterator_Lock_Callback)Function)
 
-EAPI void      eina_iterator_free           (Eina_Iterator *iterator)
-EINA_ARG_NONNULL(1);
+EAPI void      eina_iterator_free           (Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
 
-EAPI void *    eina_iterator_container_get (Eina_Iterator *iterator)
-EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI void *    eina_iterator_container_get (Eina_Iterator *iterator) EINA_ARG_NONNULL(1) EINA_PURE;
 EAPI Eina_Bool eina_iterator_next      (Eina_Iterator *iterator,
-                                        void **data) EINA_ARG_NONNULL(1,
-                                                                      2)
-EINA_WARN_UNUSED_RESULT;
+                                        void **data) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 EAPI void      eina_iterator_foreach        (Eina_Iterator *iterator,
                                              Eina_Each_Cb callback,
-                                             const void *fdata)
-EINA_ARG_NONNULL(1, 2);
+                                             const void *fdata) EINA_ARG_NONNULL(1, 2);
 
 EAPI Eina_Bool eina_iterator_lock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_iterator_unlock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);

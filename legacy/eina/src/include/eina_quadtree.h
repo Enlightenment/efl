@@ -32,16 +32,11 @@ typedef enum {
    EINA_QUAD_BOTH
 } Eina_Quad_Direction;
 
-typedef Eina_Quad_Direction (*Eina_Quad_Callback)(const void *object,
-                                                  size_t middle);
+typedef Eina_Quad_Direction (*Eina_Quad_Callback)(const void *object, size_t middle);
 
-EAPI Eina_QuadTree *     eina_quadtree_new(size_t w, size_t h,
-                                           Eina_Quad_Callback vertical,
-                                           Eina_Quad_Callback horizontal);
+EAPI Eina_QuadTree *     eina_quadtree_new(size_t w, size_t h, Eina_Quad_Callback vertical, Eina_Quad_Callback horizontal);
 EAPI void                eina_quadtree_free(Eina_QuadTree *q);
-EAPI void                eina_quadtree_resize(Eina_QuadTree *q,
-                                              size_t w,
-                                              size_t h);
+EAPI void                eina_quadtree_resize(Eina_QuadTree *q, size_t w, size_t h);
 
 EAPI void                eina_quadtree_cycle(Eina_QuadTree *q);
 EAPI void                eina_quadtree_increase(Eina_QuadTree_Item *object);
@@ -52,8 +47,7 @@ EAPI Eina_Bool           eina_quadtree_change(Eina_QuadTree_Item *object);
 EAPI Eina_Bool           eina_quadtree_hide(Eina_QuadTree_Item *object);
 EAPI Eina_Bool           eina_quadtree_show(Eina_QuadTree_Item *object);
 
-EAPI Eina_Inlist *       eina_quadtree_collide(Eina_QuadTree *q,
-                                               int x, int y, int w, int h);
+EAPI Eina_Inlist *       eina_quadtree_collide(Eina_QuadTree *q, int x, int y, int w, int h);
 EAPI void *              eina_quadtree_object(Eina_Inlist *list);
 
 #endif
