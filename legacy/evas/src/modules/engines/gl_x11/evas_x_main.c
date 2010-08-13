@@ -397,6 +397,9 @@ eng_window_new(Display *disp,
 	eng_window_free(gw);
 	return NULL;
      }
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   gw->gl_context->egldisp = gw->egl_disp;
+#endif   
    evas_gl_common_context_use(gw->gl_context);
    evas_gl_common_context_resize(gw->gl_context, w, h, rot);
    win_count++;

@@ -51,6 +51,19 @@
 # define GL_BGRA 0x80E1
 #endif
 
+#ifndef EGL_NO_CONTEXT
+# define EGL_NO_CONTEXT 0
+#endif
+#ifndef EGL_NONE
+# define EGL_NONE 0x3038
+#endif
+#ifndef EGL_TRUE
+# define EGL_TRUE 1
+#endif
+#ifndef EGL_FALSE
+# define EGL_FALSE 0
+#endif
+
 #ifndef EGL_MAP_GL_TEXTURE_2D_SEC
 # define EGL_MAP_GL_TEXTURE_2D_SEC 0x3201
 #endif
@@ -75,7 +88,7 @@
 #ifndef EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC
 # define EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC 0x3207
 #endif
-#ifdef EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC
+#ifndef EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC
 # define EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC 0x3208
 #endif
 
@@ -225,6 +238,11 @@ struct _Evas_GL_Context
    } change;
    
    Evas_GL_Image *def_surface;
+   
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+// FIXME: hack. expose egl display to gl core for egl image sec extn.   
+   void *egldisp;
+#endif   
 };
 
 struct _Evas_GL_Texture_Pool
@@ -235,10 +253,17 @@ struct _Evas_GL_Texture_Pool
    int              w, h;
    int              references;
    int              slot, fslot;
+   struct {
+      void         *img;
+      unsigned int *data;
+      int           w, h;
+      int           stride;
+   } dyn;
    Eina_List       *allocations;
    Eina_Bool        whole : 1;
    Eina_Bool        render : 1;
    Eina_Bool        native : 1;
+   Eina_Bool        dynamic : 1;
 };
 
 struct _Evas_GL_Texture
@@ -393,6 +418,7 @@ void              evas_gl_common_rect_draw(Evas_GL_Context *gc, int x, int y, in
 Evas_GL_Texture  *evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im);
 Evas_GL_Texture  *evas_gl_common_texture_native_new(Evas_GL_Context *gc, int w, int h, int alpha, Evas_GL_Image *im);
 Evas_GL_Texture  *evas_gl_common_texture_render_new(Evas_GL_Context *gc, int w, int h, int alpha);
+Evas_GL_Texture  *evas_gl_common_texture_dynamic_new(Evas_GL_Context *gc, Evas_GL_Image *im);
 void              evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im);
 void              evas_gl_common_texture_free(Evas_GL_Texture *tex);
 Evas_GL_Texture  *evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels, int w, int h, int fh);
@@ -433,12 +459,12 @@ void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GL
 void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-void *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e);
-void  (*secsym_eglDestroyImage)              (void *a, void *b);
-void  (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b);
-void  (*secsym_eglMapImageSEC)               (void *a, void *b);
-void  (*secsym_eglUnmapImageSEC)             (void *a, void *b);
-void  (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d);
+void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e);
+unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b);
+void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b);
+void          *(*secsym_eglMapImageSEC)               (void *a, void *b);
+unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b);
+unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d);
 #endif
 
 #define GL_ERRORS 1

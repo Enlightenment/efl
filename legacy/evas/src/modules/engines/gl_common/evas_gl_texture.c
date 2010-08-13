@@ -42,8 +42,6 @@ _nearest_pow2(int num)
 static void
 _tex_adjust(Evas_GL_Context *gc, int *w, int *h)
 {
-   unsigned int n;
-   
    if (gc->shared->info.tex_npo2) return;
    /*if (gc->shared->info.tex_rect) return;*/
    *w = _nearest_pow2(*w);
@@ -396,6 +394,142 @@ _pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    return pt;
 }
 
+static Evas_GL_Texture_Pool *
+_pool_tex_dynamic_new(Evas_GL_Context *gc, int w, int h, int intformat, int format)
+{
+   Evas_GL_Texture_Pool *pt = NULL;
+   
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   int fmt; // EGL_MAP_GL_TEXTURE_RGBA_SEC or EGL_MAP_GL_TEXTURE_RGB_SEC or bust
+   int pixtype; // EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC or bust
+   int attr[] =
+     {
+        EGL_MAP_GL_TEXTURE_WIDTH_SEC, 32,
+        EGL_MAP_GL_TEXTURE_HEIGHT_SEC, 32,
+        EGL_MAP_GL_TEXTURE_FORMAT_SEC, EGL_MAP_GL_TEXTURE_RGBA_SEC,
+        EGL_MAP_GL_TEXTURE_PIXEL_TYPE_SEC, EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC,
+        EGL_NONE
+     };
+   void *egldisplay = pt->gc->egldisp;
+   
+   
+   pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
+   if (!pt) return NULL;
+   h = _tex_round_slot(gc, h) << 4;
+   _tex_adjust(gc, &w, &h);
+   pt->gc = gc;
+   pt->w = w;
+   pt->h = h;
+   pt->intformat = intformat;
+   pt->format = format;
+   pt->dataformat = GL_UNSIGNED_BYTE;
+   pt->render = 1;
+   pt->references = 0;
+   glGenTextures(1, &(pt->texture));
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glBindTexture(GL_TEXTURE_2D, pt->texture);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+   attr[1] = pt->w;
+   attr[2] = pt->h;
+
+   pt->dyn.img = secsym_eglCreateImage(egldisplay,
+                                       EGL_NO_CONTEXT, 
+                                       EGL_MAP_GL_TEXTURE_2D_SEC,
+                                       0, attr);
+   if (!pt->dyn.img)
+     {
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        return pt;
+     }
+   pt->dyn.data = secsym_eglMapImageSEC(egldisplay,
+                                        pt->dyn.img);
+   if (!pt->dyn.data)
+     {
+        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
+        pt->dyn.img = NULL;
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        return pt;
+     }
+   if (secsym_eglGetImageAttribSEC(egldisplay,
+                                   pt->dyn.img,
+                                   EGL_MAP_GL_TEXTURE_WIDTH_SEC,
+                                   &(pt->dyn.w)) != EGL_TRUE)
+     {
+        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
+        pt->dyn.img = NULL;
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        return pt;
+     }
+   if (secsym_eglGetImageAttribSEC(egldisplay,
+                                   pt->dyn.img,
+                                   EGL_MAP_GL_TEXTURE_HEIGHT_SEC,
+                                   &(pt->dyn.h)) != EGL_TRUE)
+     {
+        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
+        pt->dyn.img = NULL;
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        return pt;
+     }
+   if (secsym_eglGetImageAttribSEC(egldisplay,
+                                   pt->dyn.img,
+                                   EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC,
+                                   &(pt->dyn.stride)) != EGL_TRUE)
+     {
+        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
+        pt->dyn.img = NULL;
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        return pt;
+     }
+   if (secsym_eglGetImageAttribSEC(egldisplay,
+                                   pt->dyn.img,
+                                   EGL_MAP_GL_TEXTURE_FORMAT_SEC,
+                                   &(fmt)) != EGL_TRUE)
+     {
+        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
+        pt->dyn.img = NULL;
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        return pt;
+     }
+   if (fmt != EGL_MAP_GL_TEXTURE_RGBA_SEC)
+     {
+        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
+        pt->dyn.img = NULL;
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        return pt;
+     }
+   if (secsym_eglGetImageAttribSEC(egldisplay,
+                                   pt->dyn.img,
+                                   EGL_MAP_GL_TEXTURE_PIXEL_TYPE_SEC,
+                                   &(pixtype)) != EGL_TRUE)
+     {
+        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
+        pt->dyn.img = NULL;
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        return pt;
+     }
+   if (pixtype != EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC)
+     {
+        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
+        pt->dyn.img = NULL;
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        return pt;
+     }
+   
+   glBindTexture(GL_TEXTURE_2D, gc->pipe[0].shader.cur_tex);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+#endif  
+   return pt;
+}
+
 static void
 pt_unref(Evas_GL_Texture_Pool *pt)
 {
@@ -409,6 +543,19 @@ pt_unref(Evas_GL_Texture_Pool *pt)
           pt->gc->shared->tex.atlas [pt->slot][pt->fslot] =
           eina_list_remove(pt->gc->shared->tex.atlas[pt->slot][pt->fslot], pt);
      }
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   if (pt->dyn.img)
+     {
+        void *egldisplay = pt->gc->egldisp;
+        
+        secsym_eglDestroyImage(pt->gc->egldisp, pt->dyn.img);
+        pt->dyn.img = NULL;
+        pt->dyn.data = NULL;
+        pt->dyn.w = 0;
+        pt->dyn.h = 0;
+        pt->dyn.stride = 0;
+     }
+#endif   
    
    glDeleteTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -425,8 +572,6 @@ Evas_GL_Texture *
 evas_gl_common_texture_native_new(Evas_GL_Context *gc, int w, int h, int alpha, Evas_GL_Image *im)
 {
    Evas_GL_Texture *tex;
-   Eina_List *l_after = NULL;
-   int u = 0, v = 0;
 
    tex = calloc(1, sizeof(Evas_GL_Texture));
    if (!tex) return NULL;
@@ -466,8 +611,6 @@ Evas_GL_Texture *
 evas_gl_common_texture_render_new(Evas_GL_Context *gc, int w, int h, int alpha)
 {
    Evas_GL_Texture *tex;
-   Eina_List *l_after = NULL;
-   int u = 0, v = 0;
 
    tex = calloc(1, sizeof(Evas_GL_Texture));
    if (!tex) return NULL;
@@ -500,6 +643,45 @@ evas_gl_common_texture_render_new(Evas_GL_Context *gc, int w, int h, int alpha)
    tex->w = w;
    tex->h = h;
    tex->pt->references++;
+   return tex;
+}
+
+Evas_GL_Texture *
+evas_gl_common_texture_dynamic_new(Evas_GL_Context *gc, Evas_GL_Image *im)
+{
+   Evas_GL_Texture *tex;
+
+   tex = calloc(1, sizeof(Evas_GL_Texture));
+   if (!tex) return NULL;
+   
+   tex->gc = gc;
+   tex->references = 1;
+   tex->alpha = im->alpha;
+   tex->x = 0;
+   tex->y = 0;
+   tex->w = im->w;
+   tex->h = im->h;
+   if (tex->alpha)
+     {
+        if (gc->shared->info.bgra)
+          tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h, rgba_ifmt, rgba_fmt);
+        else
+          tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h, rgba_ifmt, rgba_fmt);
+     }
+   else
+     {
+        if (gc->shared->info.bgra)
+          tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h, rgb_ifmt, rgb_fmt);
+        else
+          tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h, rgb_ifmt, rgb_fmt);
+     }
+   if (!tex->pt)
+     {
+        memset(tex, 0x44, sizeof(Evas_GL_Texture)); // mark as freed
+        free(tex);
+        return NULL;
+     }
+   
    return tex;
 }
 

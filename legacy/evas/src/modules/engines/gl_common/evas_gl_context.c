@@ -14,12 +14,12 @@ void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b) = NULL;
 typedef void (*_eng_fn) (void);
 static _eng_fn  (*secsym_eglGetProcAddress)          (const char *a) = NULL;
 
-void *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e) = NULL;
-void  (*secsym_eglDestroyImage)              (void *a, void *b) = NULL;
-void  (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b) = NULL;
-void  (*secsym_eglMapImageSEC)               (void *a, void *b) = NULL;
-void  (*secsym_eglUnmapImageSEC)             (void *a, void *b) = NULL;
-void  (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d) = NULL;
+void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e) = NULL;
+unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b) = NULL;
+void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b) = NULL;
+void          *(*secsym_eglMapImageSEC)               (void *a, void *b) = NULL;
+unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b) = NULL;
+unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d) = NULL;
 #endif
 
 static void
@@ -431,8 +431,6 @@ evas_gl_common_context_new(void)
    
    if (!shared)
      {
-        GLint linked;
-        unsigned int pixel = 0xffffffff;
         const GLubyte *ext;
 
         shared = calloc(1, sizeof(Evas_GL_Shared));
@@ -489,7 +487,7 @@ evas_gl_common_context_new(void)
         shared->info.pipes_max = 32;
         
         // per gpu hacks. based on impirical measurement of some known gpu's
-        s = glGetString(GL_RENDERER);
+        s = (const char *)glGetString(GL_RENDERER);
         if (s)
           {
              if      (strstr(s, "PowerVR SGX 540"))
@@ -997,7 +995,6 @@ evas_gl_common_context_line_push(Evas_GL_Context *gc,
    if (gc->dc->render_op == EVAS_RENDER_COPY) blend = 0;
    
    shader_array_flush(gc);
-again:
    pn = gc->state.top_pipe;
    gc->pipe[pn].shader.cur_tex = 0;
    gc->pipe[pn].shader.cur_prog = prog;
@@ -1298,6 +1295,16 @@ again:
              goto again;
           }
      }
+   if (tex->pt->dyn.img)
+     {
+        if (gc->pipe[pn].array.im != tex->im)
+          {
+             shader_array_flush(gc);
+             pn = gc->state.top_pipe;
+             gc->pipe[pn].array.im = tex->im;
+             goto again;
+          }
+     }
 #else   
    if ((gc->pipe[pn].shader.cur_tex != tex->pt->texture)
        || (gc->pipe[pn].shader.cur_prog != prog)
@@ -1320,6 +1327,14 @@ again:
         gc->pipe[pn].shader.ch = 0;
      } 
    if ((tex->im) && (tex->im->native.data))
+     {
+        if (gc->pipe[pn].array.im != tex->im)
+          {
+             shader_array_flush(gc);
+             gc->pipe[pn].array.im = tex->im;
+          }
+     }
+   if (tex->pt->dyn.img)
      {
         if (gc->pipe[pn].array.im != tex->im)
           {
@@ -1742,7 +1757,6 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
    int x, y, w, h, px, py;
    GLfloat tx[4], ty[4];
    Eina_Bool blend = 1;
-   RGBA_Map_Point *pt;
    DATA32 cmul;
    GLuint prog = gc->shared->shader.img.prog;
    int pn = 0;
@@ -1883,6 +1897,16 @@ again:
              goto again;
           }
      }
+   if (tex->pt->dyn.img)
+     {
+        if (gc->pipe[pn].array.im != tex->im)
+          {
+             shader_array_flush(gc);
+             pn = gc->state.top_pipe;
+             gc->pipe[pn].array.im = tex->im;
+             goto again;
+          }
+     }
 #else   
    if ((gc->pipe[pn].shader.cur_tex != tex->pt->texture)
        || (gc->pipe[pn].shader.cur_prog != prog)
@@ -1909,6 +1933,14 @@ again:
         gc->pipe[pn].shader.ch = ch;
      }
    if ((tex->im) && (tex->im->native.data))
+     {
+        if (gc->pipe[pn].array.im != tex->im)
+          {
+             shader_array_flush(gc);
+             gc->pipe[pn].array.im = tex->im;
+          }
+     }
+   if (tex->pt->dyn.img)
      {
         if (gc->pipe[pn].array.im != tex->im)
           {
@@ -2022,11 +2054,21 @@ shader_array_flush(Evas_GL_Context *gc)
           }
         if (gc->pipe[i].array.im)
           {
-             if (!gc->pipe[i].array.im->native.loose)
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+             if (gc->pipe[i].array.im->tex->pt->dyn.img)
                {
-                  if (gc->pipe[i].array.im->native.func.bind)
-                     gc->pipe[i].array.im->native.func.bind(gc->pipe[i].array.im->native.func.data, 
-                                                            gc->pipe[i].array.im);
+                  secsym_glEGLImageTargetTexture2DOES
+                     (GL_TEXTURE_2D, gc->pipe[i].array.im->tex->pt->dyn.img);
+               }
+             else
+#endif                
+               {
+                  if (!gc->pipe[i].array.im->native.loose)
+                    {
+                       if (gc->pipe[i].array.im->native.func.bind)
+                          gc->pipe[i].array.im->native.func.bind(gc->pipe[i].array.im->native.func.data, 
+                                                                 gc->pipe[i].array.im);
+                    }
                }
           }
         if (gc->pipe[i].shader.render_op != gc->state.current.render_op)

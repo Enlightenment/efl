@@ -277,7 +277,60 @@ void
 evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
 {
    im->content_hint = hint;
-   // FIXME: make use of content hint
+   if (im->content_hint == hint) return;
+   if (!im->gc) return;
+   if (!im->gc->shared->info.sec_image_map) return;
+   // does not handle yuv yet.
+   if (im->cs.space != EVAS_COLORSPACE_ARGB8888) return;
+   return;
+   if (im->content_hint == EVAS_IMAGE_CONTENT_HINT_DYNAMIC)
+     {
+        if (im->cs.data)
+          {
+             if (!im->cs.no_free) free(im->cs.data);
+             im->cs.data = NULL;
+          }
+        im->cs.no_free = 0;
+        if (im->cached)
+          {
+             im->gc->shared->images = eina_list_remove(im->gc->shared->images, im);
+             im->cached = 0;
+          }
+        if (im->im)
+          {
+             evas_cache_image_drop(&im->im->cache_entry);
+             im->im = NULL;
+          }
+        if (im->tex)
+          {
+             evas_gl_common_texture_free(im->tex);
+             im->tex = NULL;
+          }
+        im->tex = evas_gl_common_texture_dynamic_new(im->gc, im);
+        im->tex_only = 1;
+     }
+   else
+     {
+        if (im->im)
+          {
+             evas_cache_image_drop(&im->im->cache_entry);
+             im->im = NULL;
+          }
+        if (im->tex)
+          {
+             evas_gl_common_texture_free(im->tex);
+             im->tex = NULL;
+          }
+        im->tex_only = 0;
+        
+        im->im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
+        im->im->cache_entry.flags.alpha = im->alpha;
+        im->cs.space = EVAS_COLORSPACE_ARGB8888;
+        evas_cache_image_colorspace(&im->im->cache_entry, im->cs.space);
+        im->im = (RGBA_Image *)evas_cache_image_size_set(&im->im->cache_entry, im->w, im->h);
+        if (!im->tex)
+           im->tex = evas_gl_common_texture_new(im->gc, im->im);
+     }
 }
 
 void

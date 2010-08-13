@@ -1776,6 +1776,11 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
         *image_data = NULL;
         return im;
      }
+   if (im->tex->pt->dyn.data)
+     {
+        *image_data = im->tex->pt->dyn.data;
+        return im;
+     }
    eng_window_use(re->win);
    evas_cache_image_load_data(&im->im->cache_entry);
    switch (im->cs.space)
@@ -1825,6 +1830,28 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    im = image;
    if (im->native.data) return image;
    eng_window_use(re->win);
+   if (im->tex->pt->dyn.data)
+     {
+        if (im->tex->pt->dyn.data == image_data)
+          {
+             return image;
+          }
+        else
+          {
+	     int w, h;
+
+	     w = im->im->cache_entry.w;
+	     h = im->im->cache_entry.h;
+	     im2 = eng_image_new_from_data(data, w, h, image_data,
+					   eng_image_alpha_get(data, image),
+					   eng_image_colorspace_get(data, image));
+   	     if (!im2) return im;
+   	     evas_gl_common_image_free(im);
+   	     im = im2;
+             evas_gl_common_image_dirty(im, 0, 0, 0, 0);
+             return im;
+          }
+     }
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
