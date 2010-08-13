@@ -1288,7 +1288,7 @@ efreet_desktop_edd_init(void)
     Eet_Data_Descriptor *edd;
 
     Eet_Data_Descriptor_Class eddc;
-    if (!eet_eina_file_data_descriptor_class_set(&eddc, "cache", sizeof(Efreet_Desktop))) return NULL;
+    if (!eet_eina_file_data_descriptor_class_set(&eddc, sizeof (eddc), "cache", sizeof(Efreet_Desktop))) return NULL;
     edd = eet_data_descriptor_file_new(&eddc);
     if (!edd) return NULL;
     EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "type", type, EET_T_INT);
