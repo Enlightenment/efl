@@ -442,12 +442,14 @@ _pool_tex_dynamic_new(Evas_GL_Context *gc, int w, int h, int intformat, int form
    attr[1] = pt->w;
    attr[3] = pt->h;
 
-   printf("make egl image for %p... %ix%i\n", pt, pt->w, pt->h);
+   // FIXME: RGBA/ABGR is swapped.
+   // FIXME: seems a bit slower than i'd like - maybe too many flushes?
+   // FIXME: YCbCr no support as yet
+   // FIXME: stride not fetched or used from engine api
    pt->dyn.img = secsym_eglCreateImage(egldisplay,
                                        EGL_NO_CONTEXT, 
                                        EGL_MAP_GL_TEXTURE_2D_SEC,
                                        0, attr);
-   printf("pt->dyn.img = %p\n", pt->dyn.img);
    if (!pt->dyn.img)
      {
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
