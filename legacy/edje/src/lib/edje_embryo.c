@@ -2368,7 +2368,7 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 
 	   text = (Edje_Part_Description_Text*) rp->custom->description;
 
-	   s = text->text.text.str;
+	   s = (char *)text->text.text.str;
 	   SETSTRALLOCATE(s);
 
 	   break;
@@ -2400,7 +2400,7 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 
 	   text = (Edje_Part_Description_Text*) rp->custom->description;
 
-	   s = text->text.font.str;
+	   s = (char *)text->text.font.str;
 	   SETSTRALLOCATE(s);
 
 	   break;
@@ -2415,7 +2415,7 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 
 	   text = (Edje_Part_Description_Text*) rp->custom->description;
 
-	   s = text->text.style.str;
+	   s = (char *)text->text.style.str;
 	   SETSTRALLOCATE(s);
 
 	   break;
