@@ -446,6 +446,8 @@ _pool_tex_dynamic_new(Evas_GL_Context *gc, int w, int h, int intformat, int form
    // FIXME: seems a bit slower than i'd like - maybe too many flushes?
    // FIXME: YCbCr no support as yet
    // FIXME: stride not fetched or used from engine api
+   // FIXME: have to set dynamic AFTER setting alpha and size. shoudl allow
+   //        any order
    pt->dyn.img = secsym_eglCreateImage(egldisplay,
                                        EGL_NO_CONTEXT, 
                                        EGL_MAP_GL_TEXTURE_2D_SEC,
