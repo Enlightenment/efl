@@ -24,29 +24,29 @@ source_edd(void)
 {
    Eet_Data_Descriptor_Class eddc;
 
-   eet_eina_stream_data_descriptor_class_set(&eddc, "srcfile", sizeof (SrcFile));
+   eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc), "srcfile", sizeof (SrcFile));
    _srcfile_edd = eet_data_descriptor_stream_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "name", name, EET_T_INLINED_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "file", file, EET_T_INLINED_STRING);
 
-   eet_eina_stream_data_descriptor_class_set(&eddc, "srcfile_list", sizeof (SrcFile_List));
+   eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc), "srcfile_list", sizeof (SrcFile_List));
    _srcfile_list_edd = eet_data_descriptor_stream_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_LIST(_srcfile_list_edd, SrcFile_List, "list", list, _srcfile_edd);
 
-   eet_eina_stream_data_descriptor_class_set(&eddc, "external", sizeof (External));
+   eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc), "external", sizeof (External));
    _external_edd = eet_data_descriptor_stream_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_external_edd, External, "name", name, EET_T_INLINED_STRING);
 
-   eet_eina_stream_data_descriptor_class_set(&eddc, "external_list", sizeof (External_List));
+   eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc), "external_list", sizeof (External_List));
    _external_list_edd = eet_data_descriptor_stream_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_LIST(_external_list_edd, External_List, "list", list, _external_edd);
 
-   eet_eina_stream_data_descriptor_class_set(&eddc, "font", sizeof (Font));
+   eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc), "font", sizeof (Font));
    _font_edd = eet_data_descriptor_stream_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_font_edd, Font, "file", file, EET_T_INLINED_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_font_edd, Font, "name", name, EET_T_INLINED_STRING);
 
-   eet_eina_stream_data_descriptor_class_set(&eddc, "font_list", sizeof (Font_List));
+   eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc), "font_list", sizeof (Font_List));
    _font_list_edd = eet_data_descriptor_stream_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_LIST(_font_list_edd, Font_List, "list", list, _font_edd);
 }

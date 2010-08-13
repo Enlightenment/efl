@@ -73,7 +73,8 @@ _edje_edd_old_init(void)
      eet_data_descriptor_file_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_external_directory_entry, Edje_External_Directory_Entry, "entry", entry, EET_T_STRING);
 
-   eet_eina_file_data_descriptor_class_set(&eddc, "Edje_External_Directory",
+   eet_eina_file_data_descriptor_class_set(&eddc, sizeof (eddc),
+					   "Edje_External_Directory",
 					   sizeof (Old_Edje_External_Directory));
    _edje_edd_old_edje_external_directory =
      eet_data_descriptor_file_new(&eddc);
@@ -86,7 +87,8 @@ _edje_edd_old_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_font_directory_entry, Edje_Font_Directory_Entry, "entry", entry, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_font_directory_entry, Edje_Font_Directory_Entry, "file", file, EET_T_STRING);
 
-   eet_eina_file_data_descriptor_class_set(&eddc, "Edje_Font_Directory",
+   eet_eina_file_data_descriptor_class_set(&eddc, sizeof (eddc),
+					   "Edje_Font_Directory",
 					   sizeof (Old_Edje_Font_Directory));
    _edje_edd_old_edje_font_directory =
      eet_data_descriptor_file_new(&eddc);
