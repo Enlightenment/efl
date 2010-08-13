@@ -757,7 +757,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "api.name", api.name, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "api.description", api.description, EET_T_STRING);
 
-   eet_eina_file_data_descriptor_class_set(&eddc, "Edje_Part_Collection", sizeof (Edje_Part_Collection));
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Collection);
    _edje_edd_edje_part_collection  =
      eet_data_descriptor_file_new(&eddc);
 
