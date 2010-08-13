@@ -86,6 +86,11 @@ struct _Eina_Hash
 
    int population;
 
+#ifdef EINA_RWLOCKS_ENABLED
+   pthread_rwlock_t lock;
+   Eina_Bool threadsafe:1;
+#endif
+
    EINA_MAGIC
 };
 
@@ -102,6 +107,10 @@ struct _Eina_Hash_Element
    EINA_RBTREE;
    Eina_Hash_Tuple tuple;
    Eina_Bool begin : 1;
+#ifdef EINA_RWLOCKS_ENABLED
+   pthread_rwlock_t lock;
+   int threadcount;
+#endif
 };
 
 struct _Eina_Hash_Foreach_Data
@@ -210,7 +219,7 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
                             int key_hash,
                             const void *data)
 {
-   Eina_Hash_Element *hash_element = NULL;
+   Eina_Hash_Element *new_hash_element = NULL;
    Eina_Hash_Head *hash_head;
    Eina_Error error = 0;
    int hash_num;
@@ -227,18 +236,17 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
 
    if (!hash->buckets)
      {
-        hash->buckets = malloc(sizeof (Eina_Rbtree *) * hash->size);
-        memset(hash->buckets, 0, sizeof (Eina_Rbtree *) * hash->size);
+        hash->buckets = calloc(sizeof (Eina_Rbtree *), hash->size);
+        if (!hash->buckets) goto on_error;
 
         hash_head = NULL;
      }
    else
       /* Look up for head node. */
       hash_head = (Eina_Hash_Head *)eina_rbtree_inline_lookup(hash->buckets[hash_num],
-                                                       &key_hash, 0,
-                                                       EINA_RBTREE_CMP_KEY_CB(
-                                                          _eina_hash_hash_rbtree_cmp_hash),
-                                                       NULL);
+                                                              &key_hash, 0,
+                                                              EINA_RBTREE_CMP_KEY_CB(_eina_hash_hash_rbtree_cmp_hash),
+                                                              NULL);
 
    if (!hash_head)
      {
@@ -255,36 +263,36 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
                                      EINA_RBTREE_CMP_NODE_CB(
                                         _eina_hash_hash_rbtree_cmp_node), NULL);
 
-        hash_element = (Eina_Hash_Element *)(hash_head + 1);
-        hash_element->begin = EINA_TRUE;
+        new_hash_element = (Eina_Hash_Element *)(hash_head + 1);
+        new_hash_element->begin = EINA_TRUE;
      }
 
-   if (!hash_element)
+   if (!new_hash_element)
      {
         /*
            Alloc every needed things
            (No more lookup as we expect to support more than one item for one key).
          */
-        hash_element = malloc(sizeof (Eina_Hash_Element) + alloc_length);
-        if (!hash_element)
+        new_hash_element = malloc(sizeof (Eina_Hash_Element) + alloc_length);
+        if (!new_hash_element)
            goto on_error;
 
-        hash_element->begin = EINA_FALSE;
+        new_hash_element->begin = EINA_FALSE;
      }
 
    /* Setup the element */
-   hash_element->tuple.key_length = key_length;
-   hash_element->tuple.data = (void *)data;
+   new_hash_element->tuple.key_length = key_length;
+   new_hash_element->tuple.data = (void *)data;
    if (alloc_length > 0)
      {
-        hash_element->tuple.key = (char *)(hash_element + 1);
-        memcpy((char *)hash_element->tuple.key, key, alloc_length);
+        new_hash_element->tuple.key = (char *)(new_hash_element + 1);
+        memcpy((char *)new_hash_element->tuple.key, key, alloc_length);
      }
    else
-      hash_element->tuple.key = key;
+      new_hash_element->tuple.key = key;
 
    /* add the new element to the hash. */
-   hash_head->head = eina_rbtree_inline_insert(hash_head->head, EINA_RBTREE_GET(hash_element),
+   hash_head->head = eina_rbtree_inline_insert(hash_head->head, EINA_RBTREE_GET(new_hash_element),
                                         EINA_RBTREE_CMP_NODE_CB(
                                            _eina_hash_key_rbtree_cmp_node),
                                         (const void *)hash->key_cmp_cb);
