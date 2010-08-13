@@ -1683,7 +1683,7 @@ eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
 
    eddc->name = name;
    eddc->size = size;
-   eddc->version = 1;
+   eddc->version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
 
    eddc->func.mem_alloc = _eet_mem_alloc;
    eddc->func.mem_free = _eet_mem_free;
@@ -1714,7 +1714,7 @@ eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
    if (!eet_eina_stream_data_descriptor_class_set(eddc, eddc_size, name, size))
       return EINA_FALSE;
 
-   eddc->version = 2;
+   eddc->version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
 
    eddc->func.hash_add = (void * (*)(void *, const char *, void *))_eet_eina_hash_direct_add_alloc;
    eddc->func.str_direct_alloc = _eet_str_direct_alloc;
