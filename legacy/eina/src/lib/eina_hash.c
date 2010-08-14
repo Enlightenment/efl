@@ -108,12 +108,6 @@ struct _Eina_Hash_Element
    EINA_RBTREE;
    Eina_Hash_Tuple tuple;
    Eina_Bool begin : 1;
-#if 0 /* FIXME: implement this later for faster locking */
-# ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
-   pthread_rwlock_t lock;
-   int threadcount;
-# endif
-#endif
 };
 
 struct _Eina_Hash_Foreach_Data
