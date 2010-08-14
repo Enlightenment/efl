@@ -247,6 +247,21 @@ AC_ARG_ENABLE(glib-integration-always,
 
 if test "x${want_glib_integration_always}" = "xyes" ; then
   AC_DEFINE([GLIB_INTEGRATION_ALWAYS], [1], [Always integrate glib if support compiled])
+  want_glib=yes
+fi
+
+want_g_main_loop=no
+AC_ARG_ENABLE(g-main-loop,
+  AC_HELP_STRING([--enable-g-main-loop], [ecore_main_loop based on g_main_loop]),
+  [want_g_main_loop=$enableval])
+
+if test "x${want_g_main_loop}" = "xyes" ; then
+  AC_DEFINE([USE_G_MAIN_LOOP], [1], [Use g_main_loop in ecore])
+  want_glib=yes
+fi
+
+if test "x${want_glib_integration_always}" = "xyes" -a "x${want_g_main_loop}" = "xyes"; then
+  AC_MSG_ERROR([--enable-glib-integration-always and --enable-glib-main-loop are mutually exclusive])
 fi
 
 # abstract sockets (ecore_con.c)
@@ -1393,6 +1408,7 @@ echo "  Ecore........................: always"
 echo "    Thread support.............: $have_pthread"
 echo "    GLib support...............: $have_glib"
 echo "    Always integrate GLib......: $want_glib_integration_always"
+echo "    Use g_main_loop............: $want_g_main_loop"
 echo "    Gathering memory statistic.: $have_mallinfo"
 echo "  Ecore_Con....................: $have_ecore_con"
 if test "x$have_ecore_con" = "xyes" ; then

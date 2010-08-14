@@ -111,13 +111,13 @@ ecore_init(void)
    }
    if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
    if (_ecore_fps_debug) _ecore_fps_debug_init();
+   _ecore_main_loop_init();
    _ecore_signal_init();
    _ecore_exe_init();
    _ecore_thread_init();
    _ecore_glib_init();
    _ecore_job_init();
    _ecore_loop_time = ecore_time_get();
-   _ecore_main_loop_init();
 
 #if HAVE_MALLINFO
    if (getenv("ECORE_MEM_STAT"))
@@ -127,7 +127,7 @@ ecore_init(void)
      }
 #endif
 
-#ifdef GLIB_INTEGRATION_ALWAYS   
+#if defined(GLIB_INTEGRATION_ALWAYS)
    if (_ecore_glib_always_integrate) ecore_main_loop_glib_integrate();
 #endif
    
@@ -172,6 +172,7 @@ ecore_shutdown(void)
    _ecore_event_shutdown();
    _ecore_main_shutdown();
    _ecore_signal_shutdown();
+   _ecore_main_loop_shutdown();
 
 #if HAVE_MALLINFO
    if (getenv("ECORE_MEM_STAT"))
