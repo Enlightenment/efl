@@ -86,8 +86,9 @@ struct _Eina_Hash
 
    int population;
 
-#ifdef EINA_RWLOCKS_ENABLED
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
    pthread_rwlock_t lock;
+   Eina_Bool stay_locked:1; /* useful for iterator functions which don't want to lose lock */
    Eina_Bool threadsafe:1;
 #endif
 
@@ -107,9 +108,11 @@ struct _Eina_Hash_Element
    EINA_RBTREE;
    Eina_Hash_Tuple tuple;
    Eina_Bool begin : 1;
-#ifdef EINA_RWLOCKS_ENABLED
+#if 0 /* FIXME: implement this later for faster locking */
+# ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
    pthread_rwlock_t lock;
    int threadcount;
+# endif
 #endif
 };
 
@@ -156,6 +159,71 @@ struct _Eina_Hash_Each
 #if !defined (get16bits)
 # define get16bits(d) ((((uint32_t)(((const uint8_t *)(d))[1])) << 8) \
                        + (uint32_t)(((const uint8_t *)(d))[0]))
+#endif
+
+#ifdef EINA_RWLOCKS_ENABLED
+static inline Eina_Bool
+eina_hash_rdlock(const Eina_Hash *hash)
+{
+   if (!hash) return EINA_FALSE;
+   if (hash->threadsafe)
+      {
+         int ret;
+
+         ret = pthread_rwlock_rdlock(&((Eina_Hash*) hash)->lock);
+         if ((ret != 0) && (ret != EDEADLK))
+	         return EINA_FALSE;
+      }
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_hash_wrlock(Eina_Hash *hash)
+{
+   if (!hash) return EINA_FALSE;
+   if (hash->threadsafe)
+      {
+         int ret;
+
+         ret = pthread_rwlock_wrlock(&hash->lock);
+         if ((ret != 0) && (ret != EDEADLK))
+           return EINA_FALSE;
+      }
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_hash_unlock(const Eina_Hash *hash)
+{
+   if (!hash) return EINA_FALSE;
+   if ((hash->threadsafe) && (!hash->stay_locked))
+      if (pthread_rwlock_unlock(&((Eina_Hash*) hash)->lock))
+         return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+#else
+
+static inline Eina_Bool
+eina_hash_rdlock(const Eina_Hash *hash)
+{
+   if (!hash) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_hash_wrlock(Eina_Hash *hash)
+{
+   if (!hash) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_hash_unlock(const Eina_Hash *hash)
+{
+   if (!hash) return EINA_FALSE;
+   return EINA_TRUE;
+}
 #endif
 
 static inline int
@@ -224,10 +292,13 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
    Eina_Error error = 0;
    int hash_num;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key,  EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
+   EINA_MAGIC_CHECK_HASH(hash);
+
+   if (!eina_hash_wrlock(hash))
+       return EINA_FALSE;
    error = EINA_ERROR_OUT_OF_MEMORY;
 
    /* Apply eina mask to hash. */
@@ -250,7 +321,7 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
 
    if (!hash_head)
      {
-        /* If not found allocate it and a element. */
+        /* If not found allocate it and an element. */
         hash_head = malloc(sizeof(Eina_Hash_Head) + sizeof(Eina_Hash_Element) + alloc_length);
         if (!hash_head)
            goto on_error;
@@ -270,7 +341,7 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
    if (!new_hash_element)
      {
         /*
-           Alloc every needed things
+           Alloc a new element
            (No more lookup as we expect to support more than one item for one key).
          */
         new_hash_element = malloc(sizeof (Eina_Hash_Element) + alloc_length);
@@ -297,10 +368,12 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
                                            _eina_hash_key_rbtree_cmp_node),
                                         (const void *)hash->key_cmp_cb);
    hash->population++;
+   eina_hash_unlock(hash);
    return EINA_TRUE;
 
 on_error:
    eina_error_set(error);
+   eina_hash_unlock(hash);
    return EINA_FALSE;
 }
 
@@ -459,9 +532,9 @@ _eina_hash_del_by_key_hash(Eina_Hash *hash,
    Eina_Hash_Head *hash_head;
    Eina_Hash_Tuple tuple;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key,  EINA_FALSE);
+   EINA_MAGIC_CHECK_HASH(hash);
 
    if (!hash->buckets)
       return EINA_FALSE;
@@ -698,6 +771,22 @@ _eina_hash_iterator_free(Eina_Iterator_Hash *it)
       free(it);
 }
 
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+static Eina_Bool
+_eina_hash_iterator_lock(Eina_Iterator_Hash *it)
+{
+   EINA_MAGIC_CHECK_HASH_ITERATOR(it, EINA_FALSE);
+   return eina_hash_wrlock((Eina_Hash*)it->hash);
+}
+
+static Eina_Bool
+_eina_hash_iterator_unlock(Eina_Iterator_Hash *it)
+{
+   EINA_MAGIC_CHECK_HASH_ITERATOR(it, EINA_FALSE);
+   return eina_hash_unlock((Eina_Hash*)it->hash);
+}
+#endif
+
 /**
  * @endcond
  */
@@ -761,6 +850,10 @@ eina_hash_new(Eina_Key_Length key_length_cb,
    new->data_free_cb = data_free_cb;
    new->buckets = NULL;
    new->population = 0;
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+   new->threadsafe = EINA_FALSE;
+   new->stay_locked = EINA_FALSE;
+#endif
 
    new->size = 1 << buckets_power_size;
    new->mask = new->size - 1;
@@ -969,15 +1062,19 @@ eina_hash_free(Eina_Hash *hash)
    EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN(hash);
 
+   if (!eina_hash_wrlock(hash))
+    return;
    if (hash->buckets)
      {
         for (i = 0; i < hash->size; i++)
-           eina_rbtree_delete(hash->buckets[i],
-                              EINA_RBTREE_FREE_CB(_eina_hash_head_free), hash);
+           eina_rbtree_delete(hash->buckets[i], EINA_RBTREE_FREE_CB(_eina_hash_head_free), hash);
         free(hash->buckets);
      }
-
-        free(hash);
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+   if (hash->threadsafe)
+     pthread_rwlock_destroy(&hash->lock);
+#endif
+   free(hash);
 }
 
 /**
@@ -997,6 +1094,8 @@ eina_hash_free_buckets(Eina_Hash *hash)
    EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN(hash);
 
+   if (!eina_hash_wrlock(hash))
+    return;
    if (hash->buckets)
      {
         for (i = 0; i < hash->size; i++)
@@ -1006,6 +1105,7 @@ eina_hash_free_buckets(Eina_Hash *hash)
         hash->buckets = NULL;
         hash->population = 0;
      }
+   eina_hash_unlock(hash);
 }
 
 /**
@@ -1111,6 +1211,9 @@ eina_hash_add(Eina_Hash *hash, const void *key, const void *data)
    EINA_SAFETY_ON_NULL_RETURN_VAL(key,               EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(data,              EINA_FALSE);
 
+   if (!eina_hash_wrlock(hash))
+       return EINA_FALSE;
+
    key_length = hash->key_length_cb ? hash->key_length_cb(key) : 0;
    key_hash = hash->key_hash_cb(key, key_length);
 
@@ -1146,11 +1249,14 @@ eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data)
    int key_length;
    int key_hash;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash,              EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash->key_hash_cb, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key,               EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(data,              EINA_FALSE);
+   EINA_MAGIC_CHECK_HASH(hash);
+
+   if (!eina_hash_wrlock(hash))
+       return EINA_FALSE;
 
    key_length = hash->key_length_cb ? hash->key_length_cb(key) : 0;
    key_hash = hash->key_hash_cb(key, key_length);
@@ -1182,7 +1288,10 @@ eina_hash_del_by_key_hash(Eina_Hash *hash,
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key,  EINA_FALSE);
-   return _eina_hash_del_by_key_hash(hash, key, key_length, key_hash, NULL);
+
+   if (!eina_hash_wrlock(hash))
+       return EINA_FALSE;
+   return _eina_hash_del_by_key_hash(hash, key, key_length, key_hash, NULL) && eina_hash_unlock(hash);
 }
 
 /**
@@ -1206,7 +1315,10 @@ eina_hash_del_by_key(Eina_Hash *hash, const void *key)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key,  EINA_FALSE);
-   return _eina_hash_del_by_key(hash, key, NULL);
+
+   if (!eina_hash_wrlock(hash))
+       return EINA_FALSE;
+   return _eina_hash_del_by_key(hash, key, NULL) && eina_hash_unlock(hash);
 }
 
 /**
@@ -1230,18 +1342,25 @@ eina_hash_del_by_data(Eina_Hash *hash, const void *data)
    Eina_Hash_Head *hash_head;
    int key_hash;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
+   EINA_MAGIC_CHECK_HASH(hash);
+
+   if (!eina_hash_wrlock(hash))
+       return EINA_FALSE;
 
    hash_element = _eina_hash_find_by_data(hash, data, &key_hash, &hash_head);
    if (!hash_element)
-      return EINA_FALSE;
+      goto error;
 
    if (hash_element->tuple.data != data)
-      return EINA_FALSE;
+      goto error;
 
-   return _eina_hash_del_by_hash_el(hash, hash_element, hash_head, key_hash);
+   return _eina_hash_del_by_hash_el(hash, hash_element, hash_head, key_hash) && eina_hash_unlock(hash);
+
+error:
+   eina_hash_unlock(hash);
+   return EINA_FALSE;
 }
 
 /**
@@ -1273,12 +1392,16 @@ eina_hash_del_by_hash(Eina_Hash *hash,
                       int key_hash,
                       const void *data)
 {
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, EINA_FALSE);
+   EINA_MAGIC_CHECK_HASH(hash);
+
+   if (!eina_hash_wrlock(hash))
+       return EINA_FALSE;
+
    if (key)
-      return _eina_hash_del_by_key_hash(hash, key, key_length, key_hash, data);
+      return _eina_hash_del_by_key_hash(hash, key, key_length, key_hash, data) && eina_hash_unlock(hash);
    else
-      return eina_hash_del_by_data(hash, data);
+      return eina_hash_del_by_data(hash, data) && eina_hash_unlock(hash);
 }
 
 /**
@@ -1305,12 +1428,16 @@ eina_hash_del_by_hash(Eina_Hash *hash,
 EAPI Eina_Bool
 eina_hash_del(Eina_Hash *hash, const void *key, const void *data)
 {
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, EINA_FALSE);
+   EINA_MAGIC_CHECK_HASH(hash);
+
+   if (!eina_hash_wrlock(hash))
+       return EINA_FALSE;
+
    if (key)
-      return _eina_hash_del_by_key(hash, key, data);
+      return _eina_hash_del_by_key(hash, key, data) && eina_hash_unlock(hash);
    else
-      return eina_hash_del_by_data(hash, data);
+      return eina_hash_del_by_data(hash, data) && eina_hash_unlock(hash);
 }
 
 /**
@@ -1335,14 +1462,18 @@ eina_hash_find_by_hash(const Eina_Hash *hash,
    if (!hash)
       return NULL;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, NULL);
+   EINA_MAGIC_CHECK_HASH(hash);
 
    tuple.key = key;
    tuple.key_length = key_length;
    tuple.data = NULL;
 
+   if (!eina_hash_rdlock(hash))
+       return NULL;;
+
    hash_element = _eina_hash_find_by_hash(hash, &tuple, key_hash, &hash_head);
+   eina_hash_unlock(hash);
    if (hash_element)
       return hash_element->tuple.data;
 
@@ -1365,9 +1496,12 @@ eina_hash_find(const Eina_Hash *hash, const void *key)
    if (!hash)
       return NULL;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash->key_hash_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key,               NULL);
+   EINA_MAGIC_CHECK_HASH(hash);
+
+   if (!eina_hash_rdlock(hash))
+       return NULL;
 
    key_length = hash->key_length_cb ? hash->key_length_cb(key) : 0;
    hash_num = hash->key_hash_cb(key, key_length);
@@ -1398,14 +1532,17 @@ eina_hash_modify_by_hash(Eina_Hash *hash,
    void *old_data = NULL;
    Eina_Hash_Tuple tuple;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key,  NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, NULL);
+   EINA_MAGIC_CHECK_HASH(hash);
 
    tuple.key = key;
    tuple.key_length = key_length;
    tuple.data = NULL;
+
+   if (!eina_hash_rdlock(hash))
+       return NULL;
 
    hash_element = _eina_hash_find_by_hash(hash, &tuple, key_hash, &hash_head);
    if (hash_element)
@@ -1438,11 +1575,14 @@ eina_hash_set(Eina_Hash *hash, const void *key, const void *data)
    int key_length;
    int key_hash;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash,              NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash->key_hash_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key,               NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(data,              NULL);
+   EINA_MAGIC_CHECK_HASH(hash);
+
+   if (!eina_hash_wrlock(hash))
+       return NULL;
 
    key_length = hash->key_length_cb ? hash->key_length_cb(key) : 0;
    key_hash = hash->key_hash_cb(key, key_length);
@@ -1458,6 +1598,7 @@ eina_hash_set(Eina_Hash *hash, const void *key, const void *data)
 
         old_data = hash_element->tuple.data;
         hash_element->tuple.data = (void *)data;
+        eina_hash_unlock(hash);
         return old_data;
      }
 
@@ -1467,7 +1608,6 @@ eina_hash_set(Eina_Hash *hash, const void *key, const void *data)
                                key_length,
                                key_hash,
                                data);
-
    return NULL;
 }
 /**
@@ -1485,11 +1625,14 @@ eina_hash_modify(Eina_Hash *hash, const void *key, const void *data)
    int key_length;
    int hash_num;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash,              NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash->key_hash_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key,               NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(data,              NULL);
+   EINA_MAGIC_CHECK_HASH(hash);
+
+   if (!eina_hash_wrlock(hash))
+       return NULL;
 
    key_length = hash->key_length_cb ? hash->key_length_cb(key) : 0;
    hash_num = hash->key_hash_cb(key, key_length);
@@ -1512,16 +1655,20 @@ eina_hash_move(Eina_Hash *hash, const void *old_key, const void *new_key)
 {
    Eina_Free_Cb hash_free_cb;
    const void *data;
-   Eina_Bool result;
+   Eina_Bool result = EINA_FALSE;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash,              EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash->key_hash_cb, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(old_key,           EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(new_key,           EINA_FALSE);
+   EINA_MAGIC_CHECK_HASH(hash);
+
+   if (!eina_hash_wrlock(hash))
+       return EINA_FALSE;
 
    data = eina_hash_find(hash, old_key);
-   if (!data) return EINA_FALSE;
+
+   if (!data) goto error;
 
    hash_free_cb = hash->data_free_cb;
    hash->data_free_cb = NULL;
@@ -1531,6 +1678,8 @@ eina_hash_move(Eina_Hash *hash, const void *old_key, const void *new_key)
 
    hash->data_free_cb = hash_free_cb;
 
+error:
+   eina_hash_unlock(hash);
    return result;
 }
 
@@ -1589,7 +1738,17 @@ eina_hash_foreach(const Eina_Hash *hash,
    if (!it)
       return;
 
+   if (!eina_hash_rdlock((Eina_Hash*)hash))
+       return;
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+   ((Eina_Hash*)hash)->stay_locked = EINA_TRUE;
+#endif
+
    eina_iterator_foreach(it, EINA_EACH_CB(_eina_foreach_cb), &foreach);
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+   ((Eina_Hash*)hash)->stay_locked = EINA_FALSE;
+#endif
+   eina_hash_unlock(((Eina_Hash*)hash));
    eina_iterator_free(it);
 }
 
@@ -1617,8 +1776,8 @@ eina_hash_iterator_data_new(const Eina_Hash *hash)
 {
    Eina_Iterator_Hash *it;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
+   EINA_MAGIC_CHECK_HASH(hash);
 
         eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Hash));
@@ -1629,14 +1788,19 @@ eina_hash_iterator_data_new(const Eina_Hash *hash)
      }
 
    it->hash = hash;
-   it->get_content = FUNC_ITERATOR_GET_CONTENT(
-         _eina_hash_iterator_data_get_content);
+   it->get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_data_get_content);
 
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_hash_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _eina_hash_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_hash_iterator_free);
-
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+   if (hash->threadsafe)
+     {
+        it->iterator.lock = (Eina_Iterator_Lock_Callback)_eina_hash_iterator_lock;
+        it->iterator.unlock = (Eina_Iterator_Lock_Callback)_eina_hash_iterator_unlock;
+     }
+#endif
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
    EINA_MAGIC_SET(it,            EINA_MAGIC_HASH_ITERATOR);
 
@@ -1667,8 +1831,8 @@ eina_hash_iterator_key_new(const Eina_Hash *hash)
 {
    Eina_Iterator_Hash *it;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
+   EINA_MAGIC_CHECK_HASH(hash);
 
         eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Hash));
@@ -1682,6 +1846,13 @@ eina_hash_iterator_key_new(const Eina_Hash *hash)
    it->get_content = FUNC_ITERATOR_GET_CONTENT(
          _eina_hash_iterator_key_get_content);
 
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+   if (hash->threadsafe)
+     {
+        it->iterator.lock = (Eina_Iterator_Lock_Callback)_eina_hash_iterator_lock;
+        it->iterator.unlock = (Eina_Iterator_Lock_Callback)_eina_hash_iterator_unlock;
+     }
+#endif
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_hash_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _eina_hash_iterator_get_container);
@@ -1720,10 +1891,11 @@ eina_hash_iterator_tuple_new(const Eina_Hash *hash)
 {
    Eina_Iterator_Hash *it;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
+   EINA_MAGIC_CHECK_HASH(hash);
 
-        eina_error_set(0);
+   
+   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Hash));
    if (!it)
      {
@@ -1734,6 +1906,14 @@ eina_hash_iterator_tuple_new(const Eina_Hash *hash)
    it->hash = hash;
    it->get_content = FUNC_ITERATOR_GET_CONTENT(
          _eina_hash_iterator_tuple_get_content);
+
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+   if (hash->threadsafe)
+     {
+        it->iterator.lock = (Eina_Iterator_Lock_Callback)_eina_hash_iterator_lock;
+        it->iterator.unlock = (Eina_Iterator_Lock_Callback)_eina_hash_iterator_unlock;
+     }
+#endif
 
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_hash_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
@@ -1802,6 +1982,149 @@ eina_hash_superfast(const char *key, int len)
    return hash;
 }
 
+/* *************************************************
+ * THREADSAFE
+ */
+
 /**
+ * @addtogroup Eina_Hash_Threadsafe_Group Threadsafe Hash
+ * @brief This hash will automatically lock itself upon being accessed, and is safe to use without mutexes in threads.
+ * Threadsafe hash types are identical to regular hash types except that they will always mutex themselves properly upon being accessed
+ * to prevent pointer collision when using the same hash in multiple threads.  They function in exactly the same manner as a regular
+ * hash table, and regular api functions will automatically lock threadsafe hashes.
+ *
+ * All threadsafe api functions have identical arguments to regular api functions.
+ * @{
+ */
+EAPI Eina_Hash *
+eina_hash_threadsafe_new(__UNUSED__ Eina_Key_Length key_length_cb,
+              __UNUSED__ Eina_Key_Cmp key_cmp_cb,
+              __UNUSED__ Eina_Key_Hash key_hash_cb,
+              __UNUSED__ Eina_Free_Cb data_free_cb,
+              __UNUSED__ int buckets_power_size)
+{
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+   /* FIXME: Use mempool. */
+   Eina_Hash *new;
+
+   if (!(new = eina_hash_new(key_length_cb, key_cmp_cb, key_hash_cb, data_free_cb, buckets_power_size)))
+      return NULL;
+   new->threadsafe = EINA_TRUE;
+   new->stay_locked = EINA_FALSE;
+   if (pthread_rwlock_init(&new->lock, NULL))
+      {
+         free(new);
+         goto on_error;
+      }
+
+   return new;
+
+on_error:
+   eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+#endif
+   return NULL;
+}
+
+/**
+ * @see eina_hash_string_djb2_new
+ */
+EAPI Eina_Hash *
+eina_hash_threadsafe_string_djb2_new(Eina_Free_Cb data_free_cb)
+{
+   return eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
+                        EINA_KEY_CMP(_eina_string_key_cmp),
+                        EINA_KEY_HASH(eina_hash_djb2),
+                        data_free_cb,
+                        EINA_HASH_BUCKET_SIZE);
+}
+
+/**
+ * @brief 
+ * @see eina_hash_string_superfast_new
+ */
+EAPI Eina_Hash *
+eina_hash_threadsafe_string_superfast_new(Eina_Free_Cb data_free_cb)
+{
+   return eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
+                        EINA_KEY_CMP(_eina_string_key_cmp),
+                        EINA_KEY_HASH(eina_hash_superfast),
+                        data_free_cb,
+                        EINA_HASH_BUCKET_SIZE);
+}
+
+/**
+ * @see eina_hash_string_small_new
+ */
+EAPI Eina_Hash *
+eina_hash_threadsafe_string_small_new(Eina_Free_Cb data_free_cb)
+{
+   return eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
+                        EINA_KEY_CMP(_eina_string_key_cmp),
+                        EINA_KEY_HASH(eina_hash_superfast),
+                        data_free_cb,
+                        EINA_HASH_SMALL_BUCKET_SIZE);
+}
+
+/**
+ * @see eina_hash_int32_new
+ */
+EAPI Eina_Hash *
+eina_hash_threadsafe_int32_new(Eina_Free_Cb data_free_cb)
+{
+   return eina_hash_new(EINA_KEY_LENGTH(_eina_int32_key_length),
+                        EINA_KEY_CMP(_eina_int32_key_cmp),
+                        EINA_KEY_HASH(eina_hash_int32),
+                        data_free_cb,
+                        EINA_HASH_BUCKET_SIZE);
+}
+
+/**
+ * @see eina_hash_int64_new
+ */
+EAPI Eina_Hash *
+eina_hash_threadsafe_int64_new(Eina_Free_Cb data_free_cb)
+{
+   return eina_hash_new(EINA_KEY_LENGTH(_eina_int64_key_length),
+                        EINA_KEY_CMP(_eina_int64_key_cmp),
+                        EINA_KEY_HASH(eina_hash_int64),
+                        data_free_cb,
+                        EINA_HASH_BUCKET_SIZE);
+}
+
+/**
+ * @see eina_hash_pointer_new
+ */
+EAPI Eina_Hash *
+eina_hash_threadsafe_pointer_new(Eina_Free_Cb data_free_cb)
+{
+#ifdef __LP64__
+   return eina_hash_new(EINA_KEY_LENGTH(_eina_int64_key_length),
+                        EINA_KEY_CMP(_eina_int64_key_cmp),
+                        EINA_KEY_HASH(eina_hash_int64),
+                        data_free_cb,
+                        EINA_HASH_BUCKET_SIZE);
+#else
+   return eina_hash_new(EINA_KEY_LENGTH(_eina_int32_key_length),
+                        EINA_KEY_CMP(_eina_int32_key_cmp),
+                        EINA_KEY_HASH(eina_hash_int32),
+                        data_free_cb,
+                        EINA_HASH_BUCKET_SIZE);
+#endif
+}
+/**
+ * @see eina_hash_stringshared_new
+ */
+EAPI Eina_Hash *
+eina_hash_threadsafe_stringshared_new(Eina_Free_Cb data_free_cb)
+{
+   return eina_hash_new(NULL,
+                        EINA_KEY_CMP(_eina_stringshared_key_cmp),
+                        EINA_KEY_HASH(eina_hash_superfast),
+                        data_free_cb,
+                        EINA_HASH_BUCKET_SIZE);
+}
+
+/**
+ * @}
  * @}
  */

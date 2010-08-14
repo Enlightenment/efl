@@ -197,10 +197,73 @@ START_TEST(eina_hash_all_int)
 }
 END_TEST
 
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+START_TEST(eina_hash_threadsafe_simple)
+{
+   Eina_Hash *hash = NULL;
+   int *test;
+   int array[] = { 1, 42, 4, 5, 6 };
+
+   /* As mempool is already initialized and it use hash, we should have 2 init. */
+   fail_if(eina_init() != 2);
+
+   hash = eina_hash_threadsafe_string_superfast_new(NULL);
+   fail_if(hash == NULL);
+
+   fail_if(eina_hash_add(hash, "1", &array[0]) != EINA_TRUE);
+   fail_if(eina_hash_add(hash, "42", &array[1]) != EINA_TRUE);
+   fail_if(eina_hash_direct_add(hash, "4", &array[2]) != EINA_TRUE);
+   fail_if(eina_hash_direct_add(hash, "5", &array[3]) != EINA_TRUE);
+   fail_if(eina_hash_add(hash, "", "") != EINA_TRUE);
+
+   test = eina_hash_find(hash, "4");
+   fail_if(!test);
+   fail_if(*test != 4);
+
+   test = eina_hash_find(hash, "42");
+   fail_if(!test);
+   fail_if(*test != 42);
+
+   eina_hash_foreach(hash, eina_foreach_check, NULL);
+
+   test = eina_hash_modify(hash, "5", &array[4]);
+   fail_if(!test);
+   fail_if(*test != 5);
+
+   test = eina_hash_find(hash, "5");
+   fail_if(!test);
+   fail_if(*test != 6);
+
+   fail_if(eina_hash_population(hash) != 5);
+
+   fail_if(eina_hash_find(hash, "120") != NULL);
+
+   fail_if(eina_hash_del(hash, "5", NULL) != EINA_TRUE);
+   fail_if(eina_hash_find(hash, "5") != NULL);
+
+   fail_if(eina_hash_del(hash, NULL, &array[2]) != EINA_TRUE);
+   fail_if(eina_hash_find(hash, "4") != NULL);
+
+   fail_if(eina_hash_del(hash, NULL, &array[2]) != EINA_FALSE);
+
+   fail_if(eina_hash_del(hash, "1", NULL) != EINA_TRUE);
+   fail_if(eina_hash_del(hash, "42", NULL) != EINA_TRUE);
+
+   eina_hash_free(hash);
+
+   /* Same comment as eina_init */
+        fail_if(eina_shutdown() != 1);
+}
+END_TEST
+#endif
+
 void eina_test_hash(TCase *tc)
 {
    tcase_add_test(tc, eina_hash_simple);
    tcase_add_test(tc, eina_hash_extended);
    tcase_add_test(tc, eina_hash_double_item);
    tcase_add_test(tc, eina_hash_all_int);
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
+   tcase_add_test(tc, eina_hash_threadsafe_simple);
+#endif
 }
