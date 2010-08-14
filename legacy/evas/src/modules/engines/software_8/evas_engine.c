@@ -931,18 +931,7 @@ static void
 eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font,
               int x, int y, int w, int h, int ow, int oh, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
 {
-   static RGBA_Image *im = NULL;
-   Soft8_Image *dst = surface;
-
-   if (!im)
-      im = (RGBA_Image *)
-          evas_cache_image_empty(evas_common_soft8_image_cache_get());
-   evas_cache_image_surface_alloc(&im->cache_entry, dst->cache_entry.w,
-                                  dst->cache_entry.h);
-   evas_common_draw_context_font_ext_set(context, surface, soft8_font_glyph_new,
-                                         soft8_font_glyph_free,
-                                         soft8_font_glyph_draw);
-   evas_common_font_draw(im, context, font, x, y, text, intl_props);
+   evas_common_font_draw(surface, context, font, x, y, text);
    evas_common_draw_context_font_ext_set(context, NULL, NULL, NULL, NULL);
 }
 
