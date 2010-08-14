@@ -231,6 +231,7 @@ eina_array_iterator_free(Eina_Iterator_Array *it)
    MAGIC_FREE(it);
 }
 
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
 static Eina_Bool
 eina_array_iterator_lock(Eina_Iterator_Array *it)
 {
@@ -244,7 +245,7 @@ eina_array_iterator_unlock(Eina_Iterator_Array *it)
    EINA_MAGIC_CHECK_ARRAY_ITERATOR(it, EINA_FALSE);
    return eina_array_unlock(it->array);
 }
-
+#endif
 static Eina_Bool
 eina_array_accessor_get_at(Eina_Accessor_Array *it,
                            unsigned int idx,
@@ -275,6 +276,7 @@ eina_array_accessor_free(Eina_Accessor_Array *it)
    MAGIC_FREE(it);
 }
 
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
 static Eina_Bool
 eina_array_accessor_lock(Eina_Accessor_Array *it)
 {
@@ -288,7 +290,7 @@ eina_array_accessor_unlock(Eina_Accessor_Array *it)
    EINA_MAGIC_CHECK_ARRAY_ITERATOR(it, EINA_FALSE);
    return eina_array_unlock(it->array);
 }
-
+#endif
 EAPI Eina_Bool
 eina_array_grow(Eina_Array *array)
 {
@@ -758,11 +760,13 @@ eina_array_iterator_new(const Eina_Array *array)
          eina_array_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(eina_array_iterator_free);
 
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
    if (array->threadsafe)
      {
 	it->iterator.lock = FUNC_ITERATOR_LOCK(eina_array_iterator_lock);
 	it->iterator.unlock = FUNC_ITERATOR_LOCK(eina_array_iterator_unlock);
      }
+#endif
 
    return &it->iterator;
 }
@@ -805,12 +809,13 @@ eina_array_accessor_new(const Eina_Array *array)
          eina_array_accessor_get_container);
    it->accessor.free = FUNC_ACCESSOR_FREE(eina_array_accessor_free);
 
+#ifdef EFL_HAVE_POSIX_THREADS_RWLOCK
    if (array->threadsafe)
      {
 	it->accessor.lock = FUNC_ACCESSOR_LOCK(eina_array_accessor_lock);
 	it->accessor.unlock = FUNC_ACCESSOR_LOCK(eina_array_accessor_unlock);
      }
-
+#endif
    return &it->accessor;
 }
 
