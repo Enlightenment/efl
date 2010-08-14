@@ -1263,7 +1263,9 @@ _edje_collection_free_part_description_clean(int type, Edje_Part_Description_Com
 
 	   for (i = 0; i < img->image.tweens_count; ++i)
 	     free(img->image.tweens[i]);
-	   free(img->image.tweens);
+// cedric: this array is part of the img struct - no? not separately alloced
+// anymore - right? thus shouldnt be free()'d... no?           
+//	   free(img->image.tweens);
 	   break;
 	}
       case EDJE_PART_TYPE_EXTERNAL:
