@@ -335,7 +335,7 @@ elm_theme_overlay_del(Elm_Theme *th, const char *item)
 }
 
 /**
- * Prepends a theme extension to the list of extensions.
+ * Appends a theme extension to the list of extensions.
  *
  * @param th The theme to add to, or if NULL, the default theme
  * @param item The Edje file path to be used
