@@ -70,6 +70,7 @@ typedef Ecore_X_ID       Ecore_X_Randr_Output;
 typedef Ecore_X_ID       Ecore_X_Randr_Crtc;
 typedef Ecore_X_ID       Ecore_X_Randr_Mode;
 typedef unsigned short   Ecore_X_Randr_Size_ID;
+typedef int              Ecore_X_Randr_Screen;
 
 typedef Ecore_X_ID       Ecore_X_Device;
 
@@ -167,20 +168,34 @@ typedef enum _Ecore_X_Window_Stack_Mode {
    ECORE_X_WINDOW_STACK_OPPOSITE = 4
 } Ecore_X_Window_Stack_Mode;
 
-typedef enum _Ecore_X_Randr_Rotation {
-   ECORE_X_RANDR_ROT_0 = (1 << 0),
-   ECORE_X_RANDR_ROT_90 = (1 << 1),
-   ECORE_X_RANDR_ROT_180 = (1 << 2),
-   ECORE_X_RANDR_ROT_270 = (1 << 3),
-   ECORE_X_RANDR_FLIP_X = (1 << 4),
-   ECORE_X_RANDR_FLIP_Y = (1 << 5)
-} Ecore_X_Randr_Rotation;
+typedef enum _Ecore_X_Randr_Orientation {
+   ECORE_X_RANDR_ORIENTATION_ROT_0 = (1 << 0),
+   ECORE_X_RANDR_ORIENTATION_ROT_90 = (1 << 1),
+   ECORE_X_RANDR_ORIENTATION_ROT_180 = (1 << 2),
+   ECORE_X_RANDR_ORIENTATION_ROT_270 = (1 << 3),
+   ECORE_X_RANDR_ORIENTATION_FLIP_X = (1 << 4),
+   ECORE_X_RANDR_ORIENTATION_FLIP_Y = (1 << 5)
+} Ecore_X_Randr_Orientation;
 
-typedef enum _Ecore_X_Randr_Connection {
-   ECORE_X_RANDR_CONNECTED = 0,
-   ECORE_X_RANDR_DISCONNECTED = 1,
-   ECORE_X_RANDR_UNKNOWN_CONNECTION = 2
-} Ecore_X_Randr_Connection;
+typedef enum _Ecore_X_Randr_Connection_Status {
+   ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED = 0,
+   ECORE_X_RANDR_CONNECTION_STATUS_DISCONNECTED = 1,
+   ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN = 2
+} Ecore_X_Randr_Connection_Status;
+
+typedef enum _Ecore_X_Randr_Output_Policy {
+   ECORE_X_RANDR_OUTPUT_POLICY_ABOVE = 1,
+   ECORE_X_RANDR_OUTPUT_POLICY_RIGHT = 2,
+   ECORE_X_RANDR_OUTPUT_POLICY_BELOW = 3,
+   ECORE_X_RANDR_OUTPUT_POLICY_LEFT = 4,
+   ECORE_X_RANDR_OUTPUT_POLICY_CLONE = 5
+} Ecore_X_Randr_Output_Policy;
+
+typedef enum _Ecore_X_Randr_Relative_Alignment {
+   ECORE_X_RANDR_RELATIVE_ALIGNMENT_NONE = 0,
+   ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_REL = 1,
+   ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_SCR = 2
+} Ecore_X_Randr_Relative_Alignment;
 
 typedef enum _Ecore_X_Render_Subpixel_Order {
    ECORE_X_RENDER_SUBPIXEL_ORDER_UNKNOWN = 0,
@@ -359,6 +374,9 @@ typedef struct _Ecore_X_Event_Desktop_Change     Ecore_X_Event_Desktop_Change;
 typedef struct _Ecore_X_Event_Startup_Sequence   Ecore_X_Event_Startup_Sequence;
 
 typedef struct _Ecore_X_Event_Generic            Ecore_X_Event_Generic;
+
+typedef struct _Ecore_X_Randr_Screen_Size        Ecore_X_Randr_Screen_Size;
+typedef struct _Ecore_X_Randr_Screen_Size_MM     Ecore_X_Randr_Screen_Size_MM;
 
 struct _Ecore_X_Event_Mouse_In
 {
@@ -697,42 +715,46 @@ struct _Ecore_X_Event_Sync_Alarm
    Ecore_X_Sync_Alarm alarm;
 };
 
+struct _Ecore_X_Randr_Screen_Size
+{
+   int width, height;
+};
+
+struct _Ecore_X_Randr_Screen_Size_MM
+{
+   int width, height, width_mm, height_mm;
+};
+
 struct _Ecore_X_Event_Screen_Change
 {
    Ecore_X_Window                win;
    Ecore_X_Window                root;
-   int                           width;
-   int                           height;
+   Ecore_X_Randr_Screen_Size_MM  size;  /* in pixel and millimeters */
    Ecore_X_Time                  time;
    Ecore_X_Time                  config_time;
-   int                           mm_width; /* in millimeters */
-   int                           mm_height; /* in millimeters */
-   Ecore_X_Randr_Rotation        rotation;
+   Ecore_X_Randr_Orientation     orientation;
    Ecore_X_Render_Subpixel_Order subpixel_order;
    Ecore_X_Randr_Size_ID         size_id;
 };
 
 struct _Ecore_X_Event_Randr_Crtc_Change
 {
-   Ecore_X_Window         win;
-   Ecore_X_Randr_Crtc     crtc;
-   Ecore_X_Randr_Mode     mode;
-   Ecore_X_Randr_Rotation rotation;
-   int                    x;
-   int                    y;
-   int                    width;
-   int                    height;
+   Ecore_X_Window            win;
+   Ecore_X_Randr_Crtc        crtc;
+   Ecore_X_Randr_Mode        mode;
+   Ecore_X_Randr_Orientation orientation;
+   Eina_Rectangle            geo;
 };
 
 struct _Ecore_X_Event_Randr_Output_Change
 {
-   Ecore_X_Window                win;
-   Ecore_X_Randr_Output          output;
-   Ecore_X_Randr_Crtc            crtc;
-   Ecore_X_Randr_Mode            mode;
-   Ecore_X_Randr_Rotation        rotation;
-   Ecore_X_Randr_Connection      connection;
-   Ecore_X_Render_Subpixel_Order subpixel_order;
+   Ecore_X_Window                  win;
+   Ecore_X_Randr_Output            output;
+   Ecore_X_Randr_Crtc              crtc;
+   Ecore_X_Randr_Mode              mode;
+   Ecore_X_Randr_Orientation       orientation;
+   Ecore_X_Randr_Connection_Status connection;
+   Ecore_X_Render_Subpixel_Order   subpixel_order;
 };
 
 struct _Ecore_X_Event_Randr_Output_Property_Notify
@@ -2451,52 +2473,339 @@ EAPI int                  ecore_x_xregion_rect_contain(Ecore_X_XRegion   *region
                                                        Ecore_X_Rectangle *rect);
 
 /* ecore_x_randr.c */
-typedef struct _Ecore_X_Screen_Size           Ecore_X_Screen_Size;
-struct _Ecore_X_Screen_Size
+
+/* The usage of 'Ecore_X_Randr_None' or 'Ecore_X_Randr_Unset'
+ * depends on the context. In most cases 'Ecore_X_Randr_Unset'
+ * can be used, but in some cases -1 is a special value to
+ * functions, thus 'Ecore_X_Randr_None' (=0) musst be used.
+ */
+
+typedef short Ecore_X_Randr_Refresh_Rate;
+typedef int   Ecore_X_Randr_Crtc_Gamma;
+typedef int   Ecore_X_Randr_Signal_Format;
+typedef int   Ecore_X_Randr_Signal_Property;
+typedef int   Ecore_X_Randr_Connector_Type;
+
+typedef struct _Ecore_X_Randr_Mode_Info
 {
-   int width, height;
-};
+   Ecore_X_ID xid;
+   unsigned int width;
+   unsigned int height;
+   unsigned long dotClock;
+   unsigned int hSyncStart;
+   unsigned int hSyncEnd;
+   unsigned int hTotal;
+   unsigned int hSkew;
+   unsigned int vSyncStart;
+   unsigned int vSyncEnd;
+   unsigned int vTotal;
+   char *name;
+   unsigned int nameLength;
+   unsigned long modeFlags;
+} Ecore_X_Randr_Mode_Info;
 
-typedef struct _Ecore_X_Screen_Refresh_Rate   Ecore_X_Screen_Refresh_Rate;
-struct _Ecore_X_Screen_Refresh_Rate
-{
-   int rate;
-};
+EAPI int             ecore_x_randr_version_get(
+   void);
+EAPI const Eina_Bool ecore_x_randr_query(void);
 
-EAPI int                              ecore_x_randr_query(void);
-EAPI int                              ecore_x_randr_events_select(
-   Ecore_X_Window win,
-   int            on);
-EAPI void                             ecore_x_randr_get_screen_info_prefetch(
-   Ecore_X_Window window);
-EAPI void                             ecore_x_randr_get_screen_info_fetch(void);
-EAPI Ecore_X_Randr_Rotation           ecore_x_randr_screen_rotations_get(
+/* ecore_x_randr_11.c */
+EAPI Ecore_X_Randr_Orientation
+                     ecore_x_randr_screen_primary_output_orientations_get(
    Ecore_X_Window root);
-EAPI Ecore_X_Randr_Rotation           ecore_x_randr_screen_rotation_get(
+EAPI Ecore_X_Randr_Orientation
+                     ecore_x_randr_screen_primary_output_orientation_get(
    Ecore_X_Window root);
-EAPI void                             ecore_x_randr_screen_rotation_set(
-   Ecore_X_Window         root,
-   Ecore_X_Randr_Rotation rot);
-EAPI Ecore_X_Screen_Size *            ecore_x_randr_screen_sizes_get(
+EAPI Eina_Bool
+                     ecore_x_randr_screen_primary_output_orientation_set(
    Ecore_X_Window root,
-   int           *num);
-EAPI Ecore_X_Screen_Size              ecore_x_randr_current_screen_size_get(
-   Ecore_X_Window root);
-EAPI int                              ecore_x_randr_screen_size_set(
-   Ecore_X_Window      root,
-   Ecore_X_Screen_Size size);
-
-EAPI Ecore_X_Screen_Refresh_Rate *    ecore_x_randr_screen_refresh_rates_get(
+   Ecore_X_Randr_Orientation
+   orientation);
+EAPI Ecore_X_Randr_Screen_Size_MM *
+                     ecore_x_randr_screen_primary_output_sizes_get(
    Ecore_X_Window root,
-   int            size_id,
-   int           *num);
-EAPI Ecore_X_Screen_Refresh_Rate      ecore_x_randr_current_screen_refresh_rate_get(
+   int *num);
+EAPI void
+                     ecore_x_randr_screen_primary_output_current_size_get(
+   Ecore_X_Window root,
+   int *w,
+   int *h,
+   int *w_mm,
+   int *h_mm,
+   int *size_index);
+EAPI Eina_Bool
+ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root,
+                                             int size_index);
+EAPI Ecore_X_Randr_Refresh_Rate
+ecore_x_randr_screen_primary_output_current_refresh_rate_get(
    Ecore_X_Window root);
+EAPI Ecore_X_Randr_Refresh_Rate *
+ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root,
+                                                      int size_index,
+                                                      int *num);
+EAPI Eina_Bool
+ecore_x_randr_screen_primary_output_refresh_rate_set(
+   Ecore_X_Window root,
+   int size_index,
+   Ecore_X_Randr_Refresh_Rate
+   rate);
 
-EAPI int                              ecore_x_randr_screen_refresh_rate_set(
-   Ecore_X_Window              root,
-   Ecore_X_Screen_Size         size,
-   Ecore_X_Screen_Refresh_Rate rate);
+/* ecore_x_randr_12.c */
+EAPI void
+ecore_x_randr_events_select(Ecore_X_Window win,
+                            Eina_Bool on);
+
+EAPI void
+ecore_x_randr_screen_current_size_get(Ecore_X_Window root,
+                                      int *w,
+                                      int *h,
+                                      int *w_mm,
+                                      int *h_mm);
+EAPI void
+          ecore_x_randr_screen_size_range_get(Ecore_X_Window root,
+                                    int *wmin,
+                                    int *hmin,
+                                    int *wmax,
+                                    int *hmax);
+EAPI void ecore_x_randr_screen_reset(
+   Ecore_X_Window root);
+EAPI Eina_Bool
+          ecore_x_randr_screen_current_size_set(Ecore_X_Window root,
+                                      int w,
+                                      int h,
+                                      int w_mm,
+                                      int h_mm);
+EAPI Ecore_X_Randr_Mode_Info **
+                           ecore_x_randr_modes_info_get(Ecore_X_Window root,
+                             int *num);
+EAPI Ecore_X_Randr_Mode_Info *
+                           ecore_x_randr_mode_info_get(Ecore_X_Window root,
+                            Ecore_X_Randr_Mode mode);
+EAPI void
+                           ecore_x_randr_mode_info_free(
+   Ecore_X_Randr_Mode_Info *mode_info);
+EAPI Ecore_X_Randr_Crtc *  ecore_x_randr_crtcs_get(
+   Ecore_X_Window root,
+   int *num);
+EAPI Ecore_X_Randr_Output *ecore_x_randr_outputs_get(
+   Ecore_X_Window root,
+   int *num);
+EAPI Ecore_X_Randr_Output *
+                           ecore_x_randr_current_output_get(
+   Ecore_X_Window window,
+   int *num);
+EAPI Ecore_X_Randr_Crtc *
+                           ecore_x_randr_current_crtc_get(Ecore_X_Window window,
+                               int *num);
+EAPI Ecore_X_Randr_Output *
+                           ecore_x_randr_crtc_outputs_get(Ecore_X_Window root,
+                               Ecore_X_Randr_Crtc crtc,
+                               int *num);
+EAPI Ecore_X_Randr_Output *
+                           ecore_x_randr_crtc_possible_outputs_get(
+   Ecore_X_Window root,
+   Ecore_X_Randr_Crtc crtc,
+   int *num);
+EAPI void
+                           ecore_x_randr_crtc_geometry_get(Ecore_X_Window root,
+                                Ecore_X_Randr_Crtc crtc,
+                                int *x,
+                                int *y,
+                                int *w,
+                                int *h);
+EAPI void
+ecore_x_randr_crtc_pos_get(Ecore_X_Window root,
+                           Ecore_X_Randr_Crtc crtc,
+                           int *x,
+                           int *y);
+EAPI Eina_Bool
+ecore_x_randr_crtc_pos_set(Ecore_X_Window root,
+                           Ecore_X_Randr_Crtc crtc,
+                           int x,
+                           int y);
+EAPI Ecore_X_Randr_Mode
+ecore_x_randr_crtc_mode_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc);
+EAPI Eina_Bool
+ecore_x_randr_crtc_mode_set(Ecore_X_Window root,
+                            Ecore_X_Randr_Crtc crtc,
+                            Ecore_X_Randr_Output *outputs,
+                            int noutputs,
+                            Ecore_X_Randr_Mode mode);
+EAPI void
+ecore_x_randr_crtc_size_get(Ecore_X_Window root,
+                            Ecore_X_Randr_Crtc crtc,
+                            int *w,
+                            int *h);
+EAPI Ecore_X_Randr_Refresh_Rate
+ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window root,
+                                    Ecore_X_Randr_Crtc crtc,
+                                    Ecore_X_Randr_Mode mode);
+EAPI Ecore_X_Randr_Orientation
+ecore_x_randr_crtc_orientations_get(Ecore_X_Window root,
+                                    Ecore_X_Randr_Crtc crtc);
+EAPI Ecore_X_Randr_Orientation
+ecore_x_randr_crtc_orientation_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc);
+EAPI Eina_Bool
+ecore_x_randr_crtc_orientation_set(Ecore_X_Window root,
+                                   Ecore_X_Randr_Crtc crtc,
+                                   const Ecore_X_Randr_Orientation orientation);
+EAPI Eina_Bool
+ecore_x_randr_crtc_clone_set(Ecore_X_Window root,
+                             Ecore_X_Randr_Crtc original,
+                             Ecore_X_Randr_Crtc clone);
+EAPI Eina_Bool
+ecore_x_randr_crtc_settings_set(Ecore_X_Window root,
+                                Ecore_X_Randr_Crtc crtc,
+                                Ecore_X_Randr_Output *outputs,
+                                int noutputs,
+                                int x,
+                                int y,
+                                Ecore_X_Randr_Mode mode,
+                                Ecore_X_Randr_Orientation orientation);
+EAPI Eina_Bool
+ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root,
+                                    Ecore_X_Randr_Crtc crtc_r1,
+                                    Ecore_X_Randr_Crtc crtc_r2,
+                                    Ecore_X_Randr_Output_Policy policy,
+                                    Ecore_X_Randr_Relative_Alignment alignment);
+EAPI Ecore_X_Randr_Mode *
+                     ecore_x_randr_output_modes_get(Ecore_X_Window root,
+                               Ecore_X_Randr_Output output,
+                               int *num,
+                               int *npreferred);
+EAPI Ecore_X_Randr_Output * ecore_x_randr_output_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num);
+EAPI Ecore_X_Randr_Crtc * ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num);
+EAPI Ecore_X_Randr_Crtc
+                     ecore_x_randr_output_crtc_get(Ecore_X_Window root,
+                              Ecore_X_Randr_Output output);
+EAPI char *
+                     ecore_x_randr_output_name_get(Ecore_X_Window root,
+                              Ecore_X_Randr_Output output,
+                              int *len);
+EAPI int
+                     ecore_x_randr_crtc_gamma_ramp_size_get(
+   Ecore_X_Randr_Crtc crtc);
+EAPI Ecore_X_Randr_Crtc_Gamma **
+                     ecore_x_randr_crtc_gamma_ramps_get(Ecore_X_Randr_Crtc crtc);
+EAPI Eina_Bool
+                     ecore_x_randr_crtc_gamma_ramps_set(Ecore_X_Randr_Crtc crtc,
+                                   const Ecore_X_Randr_Crtc_Gamma *red,
+                                   const Ecore_X_Randr_Crtc_Gamma *green,
+                                   const Ecore_X_Randr_Crtc_Gamma *blue);
+EAPI Eina_Bool
+                     ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root,
+                                 const Ecore_X_Randr_Crtc *not_moved,
+                                 int nnot_moved,
+                                 int dx,
+                                 int dy);
+EAPI Eina_Bool ecore_x_randr_move_crtcs(
+   Ecore_X_Window root,
+   const Ecore_X_Randr_Crtc *crtcs,
+   int ncrtc,
+   int dx,
+   int dy);
+EAPI void
+ecore_x_randr_mode_size_get(Ecore_X_Window root,
+                            Ecore_X_Randr_Mode mode,
+                            int *w,
+                            int *h);
+EAPI Ecore_X_Randr_Connection_Status
+ecore_x_randr_output_connection_status_get(Ecore_X_Window root,
+                                           Ecore_X_Randr_Output output);
+EAPI void
+ecore_x_randr_output_size_mm_get(Ecore_X_Window root,
+                                 Ecore_X_Randr_Output output,
+                                 int *w,
+                                 int *h);
+EAPI Eina_Bool
+ecore_x_randr_output_crtc_set(Ecore_X_Window root,
+                              Ecore_X_Randr_Output output,
+                              const Ecore_X_Randr_Crtc crtc);
+
+/* ecore_x_randr_13.c */
+EAPI void
+ecore_x_randr_screen_backlight_level_set(Ecore_X_Window root, double level);
+EAPI double
+ecore_x_randr_output_backlight_level_get(Ecore_X_Window root,
+                                         Ecore_X_Randr_Output output);
+EAPI Eina_Bool
+ecore_x_randr_output_backlight_level_set(Ecore_X_Window root,
+                                         Ecore_X_Randr_Output output,
+                                         double level);
+EAPI Ecore_X_Randr_Output
+ecore_x_randr_primary_output_get(Ecore_X_Window root);
+EAPI void
+ecore_x_randr_primary_output_set(Ecore_X_Window root,
+                                 Ecore_X_Randr_Output output);
+EAPI Ecore_X_Render_Subpixel_Order
+ecore_x_randr_output_subpixel_order_get(Ecore_X_Window root,
+                                        Ecore_X_Randr_Output output);
+EAPI unsigned char *
+ecore_x_randr_output_edid_get(Ecore_X_Window root,
+                              Ecore_X_Randr_Output output,
+                              unsigned long *length);
+EAPI Ecore_X_Randr_Output *
+ecore_x_randr_output_wired_clones_get(Ecore_X_Window root,
+                                      Ecore_X_Randr_Output output,
+                                      int *num);
+EAPI Ecore_X_Randr_Output **
+ecore_x_randr_output_compatibility_list_get(Ecore_X_Window root,
+                                            Ecore_X_Randr_Output output,
+                                            int *num);
+EAPI Ecore_X_Randr_Signal_Format *
+ecore_x_randr_output_signal_formats_get(Ecore_X_Window root,
+                                        Ecore_X_Randr_Output output,
+                                        int *num);
+EAPI Eina_Bool
+ecore_x_randr_output_signal_format_set(Ecore_X_Window root,
+                                       Ecore_X_Randr_Output output,
+                                       Ecore_X_Randr_Signal_Format *signal);
+EAPI Ecore_X_Randr_Signal_Property *
+ecore_x_randr_output_signal_properties_get(Ecore_X_Window root,
+                                           Ecore_X_Randr_Output output,
+                                           int *num);
+EAPI int
+ecore_x_randr_output_connector_number_get(Ecore_X_Window root,
+                                          Ecore_X_Randr_Output output);
+EAPI Ecore_X_Randr_Connector_Type
+ecore_x_randr_output_connector_type_get(Ecore_X_Window root,
+                                        Ecore_X_Randr_Output output);
+EAPI Eina_Rectangle *
+ecore_x_randr_crtc_panning_area_get(Ecore_X_Window root,
+                                    Ecore_X_Randr_Crtc crtc,
+                                    int *x,
+                                    int *y,
+                                    int *w,
+                                    int *h);
+EAPI Eina_Bool
+ecore_x_randr_crtc_panning_area_set(Ecore_X_Window root,
+                                    Ecore_X_Randr_Crtc crtc,
+                                    int x,
+                                    const int y,
+                                    const int w,
+                                    const int h);
+EAPI Eina_Rectangle *
+ecore_x_randr_crtc_tracking_area_get(Ecore_X_Window root,
+                                     Ecore_X_Randr_Crtc crtc,
+                                     int *x,
+                                     int *y,
+                                     int *w,
+                                     int *h);
+EAPI Eina_Bool
+ecore_x_randr_crtc_tracking_area_set(Ecore_X_Window root,
+                                     Ecore_X_Randr_Crtc crtc,
+                                     int x,
+                                     const int y,
+                                     const int w,
+                                     const int h);
+EAPI Eina_Rectangle *
+ecore_x_randr_crtc_border_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc);
+EAPI Eina_Bool
+ecore_x_randr_crtc_border_area_set(Ecore_X_Window root,
+                                   Ecore_X_Randr_Crtc crtc,
+                                   int left,
+                                   const int top,
+                                   const int right,
+                                   const int bottom);
 
 /* XRender Support (horrendously incomplete) */
 typedef Ecore_X_ID   Ecore_X_Picture;

@@ -2246,13 +2246,13 @@ _ecore_x_event_handle_randr_change(XEvent *xevent)
 
    e->win = randr_event->window;
    e->root = randr_event->root;
-   e->width = randr_event->width;
-   e->height = randr_event->height;
+   e->size.width = randr_event->width;
+   e->size.height = randr_event->height;
    e->time = randr_event->timestamp;
    e->config_time = randr_event->config_timestamp;
-   e->mm_width = randr_event->mwidth;
-   e->mm_height = randr_event->mheight;
-   e->rotation = randr_event->rotation;
+   e->size.width_mm = randr_event->mwidth;
+   e->size.height_mm = randr_event->mheight;
+   e->orientation = randr_event->rotation;
    e->subpixel_order = randr_event->subpixel_order;
    ecore_event_add(ECORE_X_EVENT_SCREEN_CHANGE, e, NULL, NULL);
 } /* _ecore_x_event_handle_randr_change */
@@ -2272,11 +2272,11 @@ _ecore_x_event_handle_randr_notify_crtc_change(const XRRNotifyEvent *xevent)
    e->win = randr_event->window;
    e->crtc = randr_event->crtc;
    e->mode = randr_event->mode;
-   e->rotation = randr_event->rotation;
-   e->x = randr_event->x;
-   e->y = randr_event->y;
-   e->width = randr_event->width;
-   e->height = randr_event->height;
+   e->orientation = randr_event->rotation;
+   e->geo.x = randr_event->x;
+   e->geo.y = randr_event->y;
+   e->geo.w = randr_event->width;
+   e->geo.h = randr_event->height;
    ecore_event_add(ECORE_X_EVENT_RANDR_CRTC_CHANGE, e, NULL, NULL);
 } /* _ecore_x_event_handle_randr_notify_crtc_change */
 
@@ -2296,7 +2296,7 @@ _ecore_x_event_handle_randr_notify_output_change(const XRRNotifyEvent *xevent)
    e->output = randr_event->output;
    e->crtc = randr_event->crtc;
    e->mode = randr_event->mode;
-   e->rotation = randr_event->rotation;
+   e->orientation = randr_event->rotation;
    e->connection = randr_event->connection;
    e->subpixel_order = randr_event->subpixel_order;
    ecore_event_add(ECORE_X_EVENT_RANDR_OUTPUT_CHANGE, e, NULL, NULL);
