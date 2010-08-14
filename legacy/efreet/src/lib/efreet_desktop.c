@@ -243,8 +243,11 @@ efreet_desktop_shutdown(void)
     eina_log_domain_unregister(_efreet_desktop_log_dom);
     IF_RELEASE(cache_file);
     IF_RELEASE(cache_dirs);
-    if (efreet_desktop_job) ecore_job_del(efreet_desktop_job);
-    efreet_desktop_job = NULL;
+    if (efreet_desktop_job)
+      {
+         ecore_job_del(efreet_desktop_job);
+         efreet_desktop_job = NULL;
+      }
 }
 
 /**
@@ -1395,7 +1398,6 @@ error:
     if (map != MAP_FAILED) munmap(map, st.st_size);
     if (fd > 0) close(fd);
     if (cachefd > 0) close(cachefd);
-    efreet_desktop_job = NULL;
     return 0;
 }
 
@@ -1499,6 +1501,8 @@ efreet_desktop_update_cache_job(void *data __UNUSED__)
     char file[PATH_MAX];
     struct flock fl;
 
+    efreet_desktop_job = NULL;
+   
     /* TODO: Retry update cache later */
     if (efreet_desktop_exe_lock > 0) return;
 
