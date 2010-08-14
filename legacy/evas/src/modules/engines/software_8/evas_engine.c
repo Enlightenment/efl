@@ -931,7 +931,7 @@ static void
 eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font,
               int x, int y, int w, int h, int ow, int oh, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
 {
-   evas_common_font_draw(surface, context, font, x, y, text);
+   evas_common_font_draw(surface, context, font, x, y, text, intl_props);
    evas_common_draw_context_font_ext_set(context, NULL, NULL, NULL, NULL);
 }
 
