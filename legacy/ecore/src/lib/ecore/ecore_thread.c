@@ -81,6 +81,7 @@ static Eina_Hash *_ecore_thread_global_hash = NULL;
 static pthread_rwlock_t _ecore_thread_global_hash_lock = PTHREAD_RWLOCK_INITIALIZER;
 static pthread_mutex_t _ecore_thread_global_hash_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t _ecore_thread_global_hash_cond = PTHREAD_COND_INITIALIZER;
+static pthread_t main_loop_thread = 0;
 
 static void
 _ecore_thread_data_free(void *data)
@@ -183,7 +184,8 @@ _ecore_short_job(Ecore_Pipe *end_pipe)
 
         pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
-        work->u.short_run.func_blocking((void *) work->data);
+	if (!work->cancel)
+	  work->u.short_run.func_blocking((void *) work->data);
 
         ecore_pipe_write(end_pipe, &work, sizeof (Ecore_Pthread_Worker *));
      }
@@ -210,7 +212,8 @@ _ecore_long_job(Ecore_Pipe *end_pipe, pthread_t thread)
         pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
         work->self = thread;
-        work->u.long_run.func_heavy((Ecore_Thread *) work, (void *) work->data);
+	if (!work->cancel)
+	  work->u.long_run.func_heavy((Ecore_Thread *) work, (void *) work->data);
 
         ecore_pipe_write(end_pipe, &work, sizeof (Ecore_Pthread_Worker *));
      }
@@ -328,6 +331,7 @@ _ecore_thread_init(void)
 #ifdef EFL_HAVE_PTHREAD
    del_handler = ecore_event_handler_add(ECORE_THREAD_PIPE_DEL, _ecore_thread_pipe_del, NULL);
 #endif
+   main_loop_thread = pthread_self();
 }
 
 void
@@ -362,6 +366,7 @@ _ecore_thread_shutdown(void)
      eina_hash_free(_ecore_thread_global_hash);
    ecore_event_handler_del(del_handler);
    del_handler = NULL;
+   main_loop_thread = 0;
 #endif
 }
 /**
@@ -494,19 +499,20 @@ ecore_thread_cancel(Ecore_Thread *thread)
 
    pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
 
-   EINA_LIST_FOREACH(_ecore_pending_job_threads, l, work)
-     if ((void *) work == (void *) thread)
-       {
-         _ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads, l);
+   if (main_loop_thread == pthread_self())
+     EINA_LIST_FOREACH(_ecore_pending_job_threads, l, work)
+       if ((void *) work == (void *) thread)
+	 {
+	    _ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads, l);
 
-         pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
+	    pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
-         if (work->func_cancel)
-           work->func_cancel((void *) work->data);
-         free(work);
+	    if (work->func_cancel)
+	      work->func_cancel((void *) work->data);
+	    free(work);
 
-         return EINA_TRUE;
-       }
+	    return EINA_TRUE;
+	 }
 
    pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
@@ -1180,7 +1186,7 @@ ecore_thread_global_data_wait(const char *key, double seconds)
 
    while (1)
      {
-        struct timespec t = {0};
+        struct timespec t = { 0, 0 };
 
         t.tv_sec = (long int)time;
         t.tv_nsec = (long int)((time - (double)t.tv_sec) * 1000000000);
