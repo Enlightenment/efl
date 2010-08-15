@@ -91,6 +91,8 @@ ecore_file_monitor_poll_add(const char *path,
    em->data = data;
 
    ECORE_FILE_MONITOR_POLL(em)->mtime = ecore_file_mod_time(em->path);
+   _monitors = ECORE_FILE_MONITOR(eina_inlist_append(EINA_INLIST_GET(_monitors), EINA_INLIST_GET(em)));
+
    if (ecore_file_exists(em->path))
      {
 	if (ecore_file_is_dir(em->path))
@@ -125,8 +127,6 @@ ecore_file_monitor_poll_add(const char *path,
 	ecore_file_monitor_poll_del(em);
 	return NULL;
      }
-
-   _monitors = ECORE_FILE_MONITOR(eina_inlist_append(EINA_INLIST_GET(_monitors), EINA_INLIST_GET(em)));
 
    return em;
 }
