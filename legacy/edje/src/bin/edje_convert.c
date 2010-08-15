@@ -2,6 +2,7 @@
 
 #include "edje_cc.h"
 #include "edje_prefix.h"
+#include "edje_convert.h"
 
 static const Edje_File *_current_edje_file = NULL;
 

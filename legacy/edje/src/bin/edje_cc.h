@@ -3,8 +3,6 @@
 
 #include <edje_private.h>
 
-#include "edje_convert.h"
-
 /*
  * On Windows, if the file is not opened in binary mode,
  * read does not return the correct size, because of
@@ -105,8 +103,8 @@ struct _SrcFile_List
 /* global fn calls */
 void    data_setup(void);
 void    data_write(void);
-void    data_queue_part_lookup(Old_Edje_Part_Collection *pc, char *name, int *dest);
-void    data_queue_program_lookup(Old_Edje_Part_Collection *pc, char *name, int *dest);
+void    data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest);
+void    data_queue_program_lookup(Edje_Part_Collection *pc, const char *name, int *dest);
 void    data_queue_image_lookup(char *name, int *dest, Eina_Bool *set);
 void    data_queue_part_slave_lookup(int *master, int *slave);
 void    data_queue_image_slave_lookup(int *master, int *slave);
@@ -170,7 +168,7 @@ extern int                    max_quality;
 extern int                    line;
 extern Eina_List             *stack;
 extern Eina_List             *params;
-extern Old_Edje_File         *edje_file;
+extern Edje_File             *edje_file;
 extern Eina_List             *edje_collections;
 extern Eina_List             *externals;
 extern Eina_List             *fonts;

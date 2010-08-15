@@ -202,7 +202,7 @@ struct _Edje_Aspect
 
 struct _Edje_String
 {
-   const char *str;
+   char *str;
    unsigned int id;
 };
 
@@ -1754,8 +1754,8 @@ edje_program_is_strrncmp(const char *str)
    return EINA_TRUE;
 }
 
-void edje_edit_program_insert(Edje *ed, Edje_Program *p);
-void edje_edit_program_remove(Edje *ed, Edje_Program *p);
+void _edje_program_insert(Edje_Part_Collection *ed, Edje_Program *p);
+void _edje_program_remove(Edje_Part_Collection *ed, Edje_Program *p);
 
 // new lua stuff - supercedes the old
 #define LUA2 1

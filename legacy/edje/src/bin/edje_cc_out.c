@@ -49,14 +49,14 @@ struct _External_Lookup
 
 struct _Part_Lookup
 {
-   Old_Edje_Part_Collection *pc;
+   Edje_Part_Collection *pc;
    char *name;
    int *dest;
 };
 
 struct _Program_Lookup
 {
-   Old_Edje_Part_Collection *pc;
+   Edje_Part_Collection *pc;
    char *name;
    int *dest;
 };
@@ -93,10 +93,9 @@ struct _Code_Lookup
    Eina_Bool set;
 };
 
-static void data_process_string(Old_Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Old_Edje_Part_Collection *pc, char *name, char *ptr, int len));
+static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char *ptr, int len));
 
-Old_Edje_File *edje_file = NULL;
-Edje_File *new_edje_file = NULL;
+Edje_File *edje_file = NULL;
 Eina_List *edje_collections = NULL;
 Eina_List *externals = NULL;
 Eina_List *fonts = NULL;
@@ -140,21 +139,21 @@ data_setup(void)
 }
 
 static void
-check_image_part_desc (Old_Edje_Part_Collection *pc, Old_Edje_Part *ep,
-                       Old_Edje_Part_Description *epd, Eet_File *ef)
+check_image_part_desc (Edje_Part_Collection *pc, Edje_Part *ep,
+                       Edje_Part_Description_Image *epd, Eet_File *ef)
 {
-   Eina_List *l;
-   Edje_Part_Image_Id *iid;
+   unsigned int i;
 
-   return;
+#if 0 /* FIXME: This check sounds like not a usefull one */
    if (epd->image.id == -1)
-     error_and_abort(ef, "Collection %i: image attributes missing for "
-		     "part \"%s\", description \"%s\" %f\n",
-		     pc->id, ep->name, epd->common.state.name, epd->common.state.value);
+     ERR(ef, "Collection %s(%i): image attributes missing for "
+	 "part \"%s\", description \"%s\" %f\n",
+	 pc->part, pc->id, ep->name, epd->common.state.name, epd->common.state.value);
+#endif
 
-   EINA_LIST_FOREACH(epd->image.tween_list, l, iid)
+   for (i = 0; i < epd->image.tweens_count; ++i)
      {
-	if (iid->id == -1)
+	if (epd->image.tweens[i]->id == -1)
 	  error_and_abort(ef, "Collection %i: tween image id missing for "
 			  "part \"%s\", description \"%s\" %f\n",
 			  pc->id, ep->name, epd->common.state.name, epd->common.state.value);
@@ -162,18 +161,17 @@ check_image_part_desc (Old_Edje_Part_Collection *pc, Old_Edje_Part *ep,
 }
 
 static void
-check_packed_items(Old_Edje_Part_Collection *pc, Old_Edje_Part *ep, Eet_File *ef)
+check_packed_items(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
-   Eina_List *l;
-   Edje_Pack_Element *it;
+   unsigned int i;
 
-   EINA_LIST_FOREACH(ep->items, l, it)
+   for (i = 0; i < ep->items_count; ++i)
      {
-	if (it->type == EDJE_PART_TYPE_GROUP && !it->source)
+	if (ep->items[i]->type == EDJE_PART_TYPE_GROUP && !ep->items[i]->source)
 	  error_and_abort(ef, "Collection %i: missing source on packed item "
 			  "of type GROUP in part \"%s\"\n",
 			  pc->id, ep->name);
-	if (ep->type == EDJE_PART_TYPE_TABLE && (it->col < 0 || it->row < 0))
+	if (ep->type == EDJE_PART_TYPE_TABLE && (ep->items[i]->col < 0 || ep->items[i]->row < 0))
 	  error_and_abort(ef, "Collection %i: missing col/row on packed item "
 			  "for part \"%s\" of type TABLE\n",
 			  pc->id, ep->name);
@@ -181,23 +179,21 @@ check_packed_items(Old_Edje_Part_Collection *pc, Old_Edje_Part *ep, Eet_File *ef
 }
 
 static void
-check_part (Old_Edje_Part_Collection *pc, Old_Edje_Part *ep, Eet_File *ef)
+check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
-   Old_Edje_Part_Description *epd = ep->default_desc;
-   Eina_List *l;
-   Old_Edje_Part_Description *data;
-
    /* FIXME: check image set and sort them. */
-   if (!epd)
+   if (!ep->default_desc)
      error_and_abort(ef, "Collection %i: default description missing "
 		     "for part \"%s\"\n", pc->id, ep->name);
 
    if (ep->type == EDJE_PART_TYPE_IMAGE)
      {
-	check_image_part_desc (pc, ep, epd, ef);
+	unsigned int i;
 
-	EINA_LIST_FOREACH(ep->other_desc, l, data)
-	  check_image_part_desc (pc, ep, data, ef);
+	check_image_part_desc(pc, ep, (Edje_Part_Description_Image*) ep->default_desc, ef);
+
+	for (i = 0; i < ep->other.desc_count; ++i)
+	  check_image_part_desc (pc, ep, (Edje_Part_Description_Image*) ep->other.desc[i], ef);
      }
    else if ((ep->type == EDJE_PART_TYPE_BOX) ||
 	    (ep->type == EDJE_PART_TYPE_TABLE))
@@ -205,7 +201,7 @@ check_part (Old_Edje_Part_Collection *pc, Old_Edje_Part *ep, Eet_File *ef)
 }
 
 static void
-check_program (Old_Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
+check_program (Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 {
    switch (ep->action)
      {
@@ -228,9 +224,9 @@ data_write_header(Eet_File *ef)
 {
    int bytes = 0;
 
-   if (new_edje_file)
+   if (edje_file)
      {
-	if (new_edje_file->collection)
+	if (edje_file->collection)
 	  {
 	     Edje_Part_Collection_Directory_Entry *ce;
 
@@ -243,7 +239,7 @@ data_write_header(Eet_File *ef)
 		  if (!ce->entry)
 		    error_and_abort(ef, "Collection %i: name missing.\n", ce->id);
 
-		  it = eina_hash_iterator_data_new(new_edje_file->collection);
+		  it = eina_hash_iterator_data_new(edje_file->collection);
 
 		  EINA_ITERATOR_FOREACH(it, sce)
 		    if (ce->id == sce->id)
@@ -257,10 +253,10 @@ data_write_header(Eet_File *ef)
 
 		  eina_iterator_free(it);
 
-		  eina_hash_direct_add(new_edje_file->collection, ce->entry, ce);
+		  eina_hash_direct_add(edje_file->collection, ce->entry, ce);
 	       }
 	  }
-	bytes = eet_data_write(ef, edd_edje_file, "edje/file", new_edje_file, 1);
+	bytes = eet_data_write(ef, edd_edje_file, "edje/file", edje_file, 1);
 	if (bytes <= 0)
 	  error_and_abort(ef, "Unable to write \"edje_file\" entry to \"%s\" \n",
 			  file_out);
@@ -461,7 +457,7 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
    int bytes = 0;
    int total_bytes = 0;
 
-   if ((new_edje_file) && (new_edje_file->image_dir))
+   if ((edje_file) && (edje_file->image_dir))
      {
 	Ecore_Evas *ee;
 	Evas *evas;
@@ -476,9 +472,9 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 			  "load.\n");
 
 	evas = ecore_evas_get(ee);
-	for (i = 0; i < new_edje_file->image_dir->entries_count; i++)
+	for (i = 0; i < edje_file->image_dir->entries_count; i++)
 	  {
-	     img = &new_edje_file->image_dir->entries[i];
+	     img = &edje_file->image_dir->entries[i];
 
 	     if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
 	       {
@@ -635,20 +631,26 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 static void
 check_groups(Eet_File *ef)
 {
+   Edje_Part_Collection *pc;
    Eina_List *l;
-   Old_Edje_Part_Collection *pc;
 
    /* sanity checks for parts and programs */
    EINA_LIST_FOREACH(edje_collections, l, pc)
      {
-	Eina_List *ll;
-	Old_Edje_Part *part;
-	Edje_Program *prog;
+	unsigned int i;
 
-	EINA_LIST_FOREACH(pc->parts, ll, part)
-	  check_part(pc, part, ef);
-	EINA_LIST_FOREACH(pc->programs, ll, prog)
-	  check_program(pc, prog, ef);
+	for (i = 0; i < pc->parts_count; ++i)
+	  check_part(pc, pc->parts[i], ef);
+
+#define CHECK_PROGRAM(Type, Pc, It)				\
+	for (It = 0; It < Pc->programs.Type ## _count; ++It)	\
+	  check_program(Pc, Pc->programs.Type[i], ef);		\
+
+	CHECK_PROGRAM(fnmatch, pc, i);
+	CHECK_PROGRAM(strcmp, pc, i);
+	CHECK_PROGRAM(strncmp, pc, i);
+	CHECK_PROGRAM(strrncmp, pc, i);
+	CHECK_PROGRAM(nocmp, pc, i);
      }
 }
 
@@ -1009,10 +1011,6 @@ void
 data_write(void)
 {
    Eet_File *ef;
-   Edje_Part_Collection_Directory_Entry *ce;
-   Old_Edje_Part_Collection *pc;
-   Eina_Iterator *it;
-   Eina_List *tmp = NULL;
    int input_bytes = 0;
    int total_bytes = 0;
    int src_bytes = 0;
@@ -1038,30 +1036,6 @@ data_write(void)
      }
 
    check_groups(ef);
-
-   new_edje_file = _edje_file_convert(ef, edje_file);
-   _edje_file_set(new_edje_file);
-
-   if (!new_edje_file)
-     {
-	ERR("%s: Error convertion failed for \"%s\"", progname, file_out);
-	exit(-1);
-     }
-
-   /* convert old structure to new one */
-   it = eina_hash_iterator_data_new(new_edje_file->collection);
-
-   EINA_ITERATOR_FOREACH(it, ce)
-     {
-	pc = eina_list_nth(edje_collections, ce->id);
-	tmp = eina_list_append(tmp,
-			       _edje_collection_convert(ef,
-							ce, pc));
-     }
-
-   eina_iterator_free(it);
-   edje_collections = eina_list_free(edje_collections);
-   edje_collections = tmp;
 
    total_bytes += data_write_header(ef);
    total_bytes += data_write_fonts(ef, &font_num, &input_bytes,
@@ -1132,7 +1106,7 @@ data_queue_group_lookup(char *name)
 }
 
 void
-data_queue_part_lookup(Old_Edje_Part_Collection *pc, char *name, int *dest)
+data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 {
    Part_Lookup *pl;
 
@@ -1144,7 +1118,7 @@ data_queue_part_lookup(Old_Edje_Part_Collection *pc, char *name, int *dest)
 }
 
 void
-data_queue_program_lookup(Old_Edje_Part_Collection *pc, char *name, int *dest)
+data_queue_program_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 {
    Program_Lookup *pl;
 
@@ -1203,154 +1177,184 @@ handle_slave_lookup(Eina_List *list, int *master, int value)
 void
 data_process_lookups(void)
 {
+   Edje_Part_Collection *pc;
+   Part_Lookup *part;
+   Program_Lookup *program;
+   Group_Lookup *group;
+   Image_Lookup *image;
    Eina_List *l;
+   void *data;
 
-   while (part_lookups)
+   EINA_LIST_FOREACH(edje_collections, l, pc)
      {
-	Part_Lookup *pl;
-	Old_Edje_Part *ep;
+	unsigned int count = 0;
+	unsigned int i;
 
-	pl = eina_list_data_get(part_lookups);
+#define PROGRAM_ID_SET(Type, Pc, It, Count)				\
+	for (It = 0; It < Pc->programs.Type ## _count; ++It)		\
+	  {								\
+	     Pc->programs.Type[It]->id = Count++;			\
+	  }
 
-	EINA_LIST_FOREACH(pl->pc->parts, l, ep)
+	PROGRAM_ID_SET(fnmatch, pc, i, count);
+	PROGRAM_ID_SET(strcmp, pc, i, count);
+	PROGRAM_ID_SET(strncmp, pc, i, count);
+	PROGRAM_ID_SET(strrncmp, pc, i, count);
+	PROGRAM_ID_SET(nocmp, pc, i, count);
+
+#undef PROGRAM_ID_SET
+     }
+
+   EINA_LIST_FREE(part_lookups, part)
+     {
+	Edje_Part *ep;
+	unsigned int i;
+
+	for (i = 0; i < part->pc->parts_count; ++i)
 	  {
-	     if ((ep->name) && (!strcmp(ep->name, pl->name)))
+	     ep = part->pc->parts[i];
+
+	     if ((ep->name) && (!strcmp(ep->name, part->name)))
 	       {
-		  handle_slave_lookup(part_slave_lookups, pl->dest, ep->id);
-		  *(pl->dest) = ep->id;
+		  handle_slave_lookup(part_slave_lookups, part->dest, ep->id);
+		  *(part->dest) = ep->id;
 		  break;
 	       }
 	  }
-	if (!l)
+
+	if (i == part->pc->parts_count)
 	  {
 	     ERR("%s: Error. Unable to find part name \"%s\".",
-		 progname, pl->name);
+		 progname, part->name);
 	     exit(-1);
 	  }
-	part_lookups = eina_list_remove(part_lookups, pl);
-	free(pl->name);
-	free(pl);
+
+	free(part->name);
+	free(part);
      }
 
-   while (program_lookups)
+   EINA_LIST_FREE(program_lookups, program)
      {
-	Program_Lookup *pl;
-	Edje_Program *ep;
+	unsigned int i;
+	Eina_Bool find = EINA_FALSE;
 
-	pl = eina_list_data_get(program_lookups);
-
-	EINA_LIST_FOREACH(pl->pc->programs, l, ep)
-	  {
-	     if ((ep->name) && (!strcmp(ep->name, pl->name)))
-	       {
-		  *(pl->dest) = ep->id;
-		  break;
-	       }
+#define PROGRAM_MATCH(Type, Pl, It)					\
+	for (It = 0; It < Pl->pc->programs.Type ## _count; ++It)	\
+	  {								\
+	     Edje_Program *ep;						\
+	     								\
+	     ep = Pl->pc->programs.Type[It];				\
+	     								\
+	     if ((ep->name) && (!strcmp(ep->name, Pl->name)))		\
+	       {							\
+		  *(Pl->dest) = ep->id;					\
+		  find = EINA_TRUE;					\
+		  break;						\
+	       }							\
 	  }
-	if (!l)
+
+	PROGRAM_MATCH(fnmatch, program, i);
+	PROGRAM_MATCH(strcmp, program, i);
+	PROGRAM_MATCH(strncmp, program, i);
+	PROGRAM_MATCH(strrncmp, program, i);
+	PROGRAM_MATCH(nocmp, program, i);
+
+#undef PROGRAM_MATCH
+
+	if (!find)
 	  {
 	     ERR("%s: Error. Unable to find program name \"%s\".",
-		 progname, pl->name);
+		 progname, program->name);
 	     exit(-1);
 	  }
-	program_lookups = eina_list_remove(program_lookups, pl);
-	free(pl->name);
-	free(pl);
+
+	free(program->name);
+	free(program);
      }
 
-   while (group_lookups)
+   EINA_LIST_FREE(group_lookups, group)
      {
-        Group_Lookup *gl;
 	Edje_Part_Collection_Directory_Entry *de;
 
-        gl = eina_list_data_get(group_lookups);
+	de = eina_hash_find(edje_file->collection, group->name);
 
-	EINA_LIST_FOREACH(edje_file->collection_dir->entries, l, de)
-          {
-             if (!strcmp(de->entry, gl->name))
-               {
-                  break;
-               }
-          }
-        if (!l)
+	if (!de)
           {
              ERR("%s: Error. Unable to find group name \"%s\".",
-		 progname, gl->name);
+		 progname, group->name);
              exit(-1);
           }
-        group_lookups = eina_list_remove(group_lookups, gl);
-        free(gl->name);
-        free(gl);
+
+        free(group->name);
+        free(group);
      }
 
-   while (image_lookups)
+   EINA_LIST_FREE(image_lookups, image)
      {
-	Image_Lookup *il;
 	Edje_Image_Directory_Entry *de;
+	Eina_Bool find = EINA_FALSE;
 
-	il = eina_list_data_get(image_lookups);
-
-	if (!edje_file->image_dir)
-	  l = NULL;
-	else
+	if (edje_file->image_dir)
 	  {
-	     EINA_LIST_FOREACH(edje_file->image_dir->entries, l, de)
+	     unsigned int i;
+
+	     for (i = 0; i < edje_file->image_dir->entries_count; ++i)
 	       {
-		  if ((de->entry) && (!strcmp(de->entry, il->name)))
+		  de = edje_file->image_dir->entries + i;
+
+		  if ((de->entry) && (!strcmp(de->entry, image->name)))
 		    {
-		       handle_slave_lookup(image_slave_lookups, il->dest, de->id);
+		       handle_slave_lookup(image_slave_lookups, image->dest, de->id);
 		       if (de->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
-			 *(il->dest) = -de->id - 1;
+			 *(image->dest) = -de->id - 1;
 		       else
-			 *(il->dest) = de->id;
-		       *(il->set) = EINA_FALSE;
+			 *(image->dest) = de->id;
+		       *(image->set) = EINA_FALSE;
+		       find = EINA_TRUE;
 		       break;
 		    }
 	       }
 
-	     if (!l)
+	     if (!find)
 	       {
 		 Edje_Image_Directory_Set *set;
 
-		 EINA_LIST_FOREACH(edje_file->image_dir->sets, l, set)
+		 for (i = 0; i < edje_file->image_dir->sets_count; ++i)
 		   {
-		     if ((set->name) && (!strcmp(set->name, il->name)))
-		       {
-			 handle_slave_lookup(image_slave_lookups, il->dest, set->id);
-			 *(il->dest) = set->id;
-			 *(il->set) = EINA_TRUE;
-			 break;
-		       }
+		      set = edje_file->image_dir->sets + i;
+
+		      if ((set->name) && (!strcmp(set->name, image->name)))
+			{
+			   handle_slave_lookup(image_slave_lookups, image->dest, set->id);
+			   *(image->dest) = set->id;
+			   *(image->set) = EINA_TRUE;
+			   find = EINA_TRUE;
+			   break;
+			}
 		   }
 	       }
 	  }
 
-	if (!l)
+	if (!find)
 	  {
 	     ERR("%s: Error. Unable to find image name \"%s\".",
-		 progname, il->name);
+		 progname, image->name);
 	     exit(-1);
 	  }
-	image_lookups = eina_list_remove(image_lookups, il);
-	free(il->name);
-	free(il);
+
+	free(image->name);
+	free(image);
      }
 
-   while (part_slave_lookups)
-     {
-        free(eina_list_data_get(part_slave_lookups));
-	part_slave_lookups = eina_list_remove_list(part_slave_lookups, part_slave_lookups);
-     }
+   EINA_LIST_FREE(part_slave_lookups, data)
+     free(data);
 
-   while (image_slave_lookups)
-     {
-        free(eina_list_data_get(image_slave_lookups));
-	image_slave_lookups = eina_list_remove_list(image_slave_lookups, image_slave_lookups);
-     }
+   EINA_LIST_FREE(image_slave_lookups, data)
+     free(data);
 }
 
 static void
-data_process_string(Old_Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Old_Edje_Part_Collection *pc, char *name, char* ptr, int len))
+data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char* ptr, int len))
 {
    char *p;
    char *key;
@@ -1461,7 +1465,7 @@ data_process_string(Old_Edje_Part_Collection *pc, const char *prefix, char *s, v
 }
 
 static void
-_data_queue_part_lookup(Old_Edje_Part_Collection *pc, char *name, char *ptr, int len)
+_data_queue_part_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
 {
    Code_Lookup *cl;
    cl = mem_alloc(SZ(Code_Lookup));
@@ -1473,7 +1477,7 @@ _data_queue_part_lookup(Old_Edje_Part_Collection *pc, char *name, char *ptr, int
    code_lookups = eina_list_append(code_lookups, cl);
 }
 static void
-_data_queue_program_lookup(Old_Edje_Part_Collection *pc, char *name, char *ptr, int len)
+_data_queue_program_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
 {
    Code_Lookup *cl;
 
@@ -1486,12 +1490,12 @@ _data_queue_program_lookup(Old_Edje_Part_Collection *pc, char *name, char *ptr, 
    code_lookups = eina_list_append(code_lookups, cl);
 }
 static void
-_data_queue_group_lookup(Old_Edje_Part_Collection *pc __UNUSED__, char *name, char *ptr __UNUSED__, int len __UNUSED__)
+_data_queue_group_lookup(Edje_Part_Collection *pc __UNUSED__, char *name, char *ptr __UNUSED__, int len __UNUSED__)
 {
    data_queue_group_lookup(name);
 }
 static void
-_data_queue_image_pc_lookup(Old_Edje_Part_Collection *pc __UNUSED__, char *name, char *ptr, int len)
+_data_queue_image_pc_lookup(Edje_Part_Collection *pc __UNUSED__, char *name, char *ptr, int len)
 {
    Code_Lookup *cl;
 
@@ -1511,23 +1515,25 @@ data_process_scripts(void)
 
    for (l = codes, l2 = edje_collections; (l) && (l2); l = eina_list_next(l), l2 = eina_list_next(l2))
      {
+	Edje_Part_Collection *pc;
 	Code *cd;
-	Old_Edje_Part_Collection *pc;
 
 	cd = eina_list_data_get(l);
 	pc = eina_list_data_get(l2);
-	if ((cd->shared) || (cd->programs))
-	  {
-	     Eina_List *ll;
-	     Code_Program *cp;
 
-	     if ((cd->shared) && (!cd->is_lua))
-	       {
-		  data_process_string(pc, "PART",    cd->shared, _data_queue_part_lookup);
-		  data_process_string(pc, "PROGRAM", cd->shared, _data_queue_program_lookup);
-		  data_process_string(pc, "IMAGE",   cd->shared, _data_queue_image_pc_lookup);
-		  data_process_string(pc, "GROUP",   cd->shared, _data_queue_group_lookup);
-	       }
+	if ((cd->shared) && (!cd->is_lua))
+	  {
+	     data_process_string(pc, "PART",    cd->shared, _data_queue_part_lookup);
+	     data_process_string(pc, "PROGRAM", cd->shared, _data_queue_program_lookup);
+	     data_process_string(pc, "IMAGE",   cd->shared, _data_queue_image_pc_lookup);
+	     data_process_string(pc, "GROUP",   cd->shared, _data_queue_group_lookup);
+	  }
+
+	if (cd->programs)
+	  {
+	     Code_Program *cp;
+	     Eina_List *ll;
+
 	     EINA_LIST_FOREACH(cd->programs, ll, cp)
 	       {
 		  if (cp->script)

@@ -26,8 +26,7 @@ edje_cc_parse.c \
 edje_cc_mem.c \
 edje_cc_handlers.c \
 edje_cc_sources.c \
-edje_prefix.c \
-edje_convert.c
+edje_prefix.c
 
 edje_cc_LDADD = $(top_builddir)/src/lib/libedje.la $(ECORE_EVAS_LIBS) $(EVIL_LIBS)
 edje_cc_LDFLAGS = @lt_enable_auto_import@

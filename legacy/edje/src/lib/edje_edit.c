@@ -4725,7 +4725,7 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
 
    //Remove program from programs list
    id = epr->id;
-   edje_edit_program_remove(ed, epr);
+   _edje_program_remove(ed->collection, epr);
 
    /* fix table program */
    if (epr->id != ed->table_programs_size - 1)
@@ -4844,12 +4844,12 @@ edje_edit_program_source_set(Evas_Object *obj, const char *prog, const char *sou
    if (!source) return EINA_FALSE;
 
    /* Remove from program array */
-   edje_edit_program_remove(ed, epr);
+   _edje_program_remove(ed->collection, epr);
    _edje_if_string_free(ed, epr->source);
 
    /* Insert it back */
    epr->source = eina_stringshare_add(source);
-   edje_edit_program_insert(ed, epr);
+   _edje_program_insert(ed->collection, epr);
 
    //Update patterns
    _edje_programs_patterns_clean(ed);
@@ -4923,12 +4923,12 @@ edje_edit_program_signal_set(Evas_Object *obj, const char *prog, const char *sig
    if (!signal) return EINA_FALSE;
 
    /* Remove from program array */
-   edje_edit_program_remove(ed, epr);
+   _edje_program_remove(ed->collection, epr);
    _edje_if_string_free(ed, epr->signal);
 
    /* Insert it back */
    epr->signal = eina_stringshare_add(signal);
-   edje_edit_program_insert(ed, epr);
+   _edje_program_insert(ed->collection, epr);
 
    //Update patterns
    _edje_programs_patterns_clean(ed);
