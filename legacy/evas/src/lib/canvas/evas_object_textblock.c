@@ -4681,7 +4681,7 @@ evas_textblock_cursor_line_char_first(Evas_Textblock_Cursor *cur)
      {
         _find_layout_format_item_line_match(cur->obj,
               _evas_textblock_node_visible_at_pos_get(
-                 _evas_textblock_cursor_node_format_before_or_at_pos_get(cur)),
+                 _evas_textblock_cursor_node_format_at_pos_get(cur)),
               &ln, &fi);
      }
    else
@@ -4734,7 +4734,7 @@ evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur)
      {
         _find_layout_format_item_line_match(cur->obj,
               _evas_textblock_node_visible_at_pos_get(
-                 _evas_textblock_cursor_node_format_before_or_at_pos_get(cur)),
+                 _evas_textblock_cursor_node_format_at_pos_get(cur)),
               &ln, &fi);
      }
    else
@@ -4786,9 +4786,11 @@ _evas_textblock_format_is_visible(const char *s)
 {
    if (!s) return EINA_FALSE;
    const char *item;
+   Eina_Bool is_opener = EINA_TRUE;
 
    if (s[0] == '+' || s[0] == '-')
      {
+        is_opener = (s[0] == '+') ? EINA_TRUE : EINA_FALSE;
         s++;
      }
    while ((item = _format_parse(&s)))
@@ -4797,10 +4799,13 @@ _evas_textblock_format_is_visible(const char *s)
         tmp = alloca(s - item + 1);
         strncpy(tmp, item, s - item);
         tmp[s - item] = '\0';
+        /* We care about all of the formats even after a - except for
+         * item which we don't care after a - because it's just a standard
+         * closing */
         if (((!strcmp(item, "\n")) || (!strcmp(item, "\\n"))) ||
               ((!strcmp(item, "\t")) || (!strcmp(item, "\\t"))) ||
               (!strcmp(item, "ps")) ||
-              (!strcmp(item, "item")))
+              (!strncmp(item, "item", 4) && is_opener)) /*FIXME: formats like item2 will break it. */
           return EINA_TRUE;
      }
    return EINA_FALSE;
@@ -6109,8 +6114,9 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
    if (!o->formatted.valid) _relayout(cur->obj);
    if (evas_textblock_cursor_format_is_visible_get(cur))
      {
-	_find_layout_format_item_line_match(cur->obj,
-              _evas_textblock_cursor_node_format_at_pos_get(cur),
+        _find_layout_format_item_line_match(cur->obj,
+              _evas_textblock_node_visible_at_pos_get(
+                 _evas_textblock_cursor_node_format_at_pos_get(cur)),
               &ln, &fi);
      }
    else
@@ -6202,7 +6208,7 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
           {
              _find_layout_format_item_line_match(cur->obj,
                    _evas_textblock_node_visible_at_pos_get(
-                      _evas_textblock_cursor_node_format_before_or_at_pos_get(cur)),
+                      _evas_textblock_cursor_node_format_at_pos_get(cur)),
                    &ln, &fi);
           }
         else
@@ -6446,11 +6452,13 @@ evas_textblock_cursor_format_item_geometry_get(const Evas_Textblock_Cursor *cur,
    Evas_Object_Textblock_Format_Item *fi = NULL;
    Evas_Coord x, y, w, h;
 
-   if (!cur) return 0;
+   if (!cur || !evas_textblock_cursor_format_is_visible_get(cur)) return 0;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
    _find_layout_format_item_line_match(cur->obj,
-         _evas_textblock_cursor_node_format_before_or_at_pos_get(cur), &ln, &fi);
+         _evas_textblock_node_visible_at_pos_get(
+            _evas_textblock_cursor_node_format_at_pos_get(cur)),
+         &ln, &fi);
    if ((!ln) || (!fi)) return 0;
    x = ln->x + fi->x;
    y = ln->y + ln->baseline + fi->y;
