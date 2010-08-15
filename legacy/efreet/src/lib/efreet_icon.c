@@ -538,9 +538,9 @@ efreet_icon_find_helper(Efreet_Icon_Theme *theme,
 
     /* go no further if this theme is fake */
     if (theme->fake || !theme->valid)
-	value = NULL;
+        value = NULL;
     else
-	value = efreet_icon_lookup_icon(theme, icon, size);
+        value = efreet_icon_lookup_icon(theme, icon, size);
 
     /* we didin't find the image check the inherited themes */
     if (!value || (value == NON_EXISTING))
