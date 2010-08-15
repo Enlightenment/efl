@@ -554,26 +554,6 @@ _line_free(const Evas_Object *obj, Evas_Object_Textblock_Line *ln)
    if (ln) free(ln);
 }
 
-/**
- * @internal
- * Free all the lines
- * @param obj The evas object, must not be NULL.
- * @param lines the layout lines inlist to be freed.
- * @see _line_free()
- */
-static void
-_lines_clear(const Evas_Object *obj, Evas_Object_Textblock_Line *lines)
-{
-   while (lines)
-     {
-        Evas_Object_Textblock_Line *ln;
-
-        ln = (Evas_Object_Textblock_Line *)lines;
-        lines = (Evas_Object_Textblock_Line *)eina_inlist_remove(EINA_INLIST_GET(lines), EINA_INLIST_GET(ln));
-        _line_free(obj, ln);
-     }
-}
-
 /* table of html escapes (that i can find) this should be ordered with the
  * most common first as it's a linear search to match - no hash for this.
  *
