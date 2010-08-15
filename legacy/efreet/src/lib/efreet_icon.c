@@ -531,14 +531,16 @@ efreet_icon_find_helper(Efreet_Icon_Theme *theme,
 
     efreet_icon_theme_cache_check(theme);
 
-    /* go no further if this theme is fake */
-    if (theme->fake || !theme->valid) return NULL;
 
     /* limit recursion in finding themes and inherited themes to 256 levels */
     if (recurse > 256) return NULL;
     recurse++;
 
-    value = efreet_icon_lookup_icon(theme, icon, size);
+    /* go no further if this theme is fake */
+    if (theme->fake || !theme->valid)
+	value = NULL;
+    else
+	value = efreet_icon_lookup_icon(theme, icon, size);
 
     /* we didin't find the image check the inherited themes */
     if (!value || (value == NON_EXISTING))
@@ -839,6 +841,17 @@ efreet_icon_fallback_icon(const char *icon_name)
             if (icon)
             {
                 efreet_icon_cache_add(NULL, icon_name, 0, icon);
+                return icon;
+            }
+        }
+
+        EINA_LIST_FOREACH(xdg_dirs, l, dir)
+        {
+            snprintf(path, PATH_MAX, "%s/pixmaps", dir);
+            icon = efreet_icon_fallback_dir_scan(path, icon_name);
+            if (icon)
+            {
+                efreet_icon_cache_add(efreet_icon_find_theme_check(NULL), icon_name, 0, icon);
                 return icon;
             }
         }
@@ -1254,6 +1267,12 @@ efreet_icon_theme_dir_scan_all(const char *theme_name)
     EINA_LIST_FOREACH(xdg_dirs, l, dir)
     {
         snprintf(path, sizeof(path), "%s/icons", dir);
+        efreet_icon_theme_dir_scan(path, theme_name);
+    }
+
+    EINA_LIST_FOREACH(xdg_dirs, l, dir)
+    {
+        snprintf(path, sizeof(path), "%s/pixmaps", dir);
         efreet_icon_theme_dir_scan(path, theme_name);
     }
 
