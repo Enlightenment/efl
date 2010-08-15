@@ -851,7 +851,7 @@ efreet_icon_fallback_icon(const char *icon_name)
             icon = efreet_icon_fallback_dir_scan(path, icon_name);
             if (icon)
             {
-                efreet_icon_cache_add(efreet_icon_find_theme_check(NULL), icon_name, 0, icon);
+                efreet_icon_cache_add(NULL, icon_name, 0, icon);
                 return icon;
             }
         }
