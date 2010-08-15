@@ -70,7 +70,7 @@ EAPI const Eina_Unicode *eina_ustringshare_add_length(const Eina_Unicode *str, u
 EAPI const Eina_Unicode *eina_ustringshare_add(const Eina_Unicode *str) EINA_WARN_UNUSED_RESULT;
 EAPI const Eina_Unicode *eina_ustringshare_ref(const Eina_Unicode *str);
 EAPI void                eina_ustringshare_del(const Eina_Unicode *str);
-EAPI int                 eina_ustringshare_strlen(const Eina_Unicode *str) EINA_CONST EINA_WARN_UNUSED_RESULT;
+EAPI int                 eina_ustringshare_strlen(const Eina_Unicode *str) EINA_PURE EINA_WARN_UNUSED_RESULT;
 EAPI void                eina_ustringshare_dump(void);
 
 static inline Eina_Bool  eina_ustringshare_replace(const Eina_Unicode **p_str, const Eina_Unicode *news) EINA_ARG_NONNULL(1);
