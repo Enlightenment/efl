@@ -299,7 +299,6 @@ struct _Evas_Object_Textblock
    Evas_Object_Textblock_Node_Text    *text_nodes;
    Evas_Object_Textblock_Node_Format  *format_nodes;
    Evas_Object_Textblock_Paragraph    *paragraphs;
-   Evas_Object_Textblock_Line         *lines;
    int                                 last_w;
    struct {
       int                              l, r, t, b;
@@ -3049,7 +3048,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
      }
    if (!calc_only)
      {
-        o->lines = c->par->lines;
         o->paragraphs = c->paragraphs;
         return;
      }
@@ -3068,7 +3066,6 @@ _relayout(const Evas_Object *obj)
    o = (Evas_Object_Textblock *)(obj->object_data);
    paragraphs = o->paragraphs;
    o->paragraphs = NULL;
-   o->lines = NULL;
    o->formatted.valid = 0;
    o->native.valid = 0;
    _layout(obj,
@@ -3101,7 +3098,7 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *
 
    o = (Evas_Object_Textblock *)(obj->object_data);
    if (!o->formatted.valid) _relayout(obj);
-   EINA_INLIST_FOREACH(o->lines, ln)
+   EINA_INLIST_FOREACH(o->paragraphs->lines, ln)
      {
         Evas_Object_Textblock_Item *it;
         Evas_Object_Textblock_Line *lnn;
@@ -3148,7 +3145,7 @@ _find_layout_format_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node
 
    o = (Evas_Object_Textblock *)(obj->object_data);
    if (!o->formatted.valid) _relayout(obj);
-   EINA_INLIST_FOREACH(o->lines, ln)
+   EINA_INLIST_FOREACH(o->paragraphs->lines, ln)
      {
         Evas_Object_Textblock_Format_Item *fi;
 
@@ -3179,7 +3176,7 @@ _find_layout_line_num(const Evas_Object *obj, int line)
    Evas_Object_Textblock *o;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-   EINA_INLIST_FOREACH(o->lines, ln)
+   EINA_INLIST_FOREACH(o->paragraphs->lines, ln)
      {
         if (ln->line_no == line) return ln;
      }
@@ -6099,7 +6096,8 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
      {
         if (!o->text_nodes)
           {
-             ln = o->lines;
+             if (!o->paragraphs) return -1;
+             ln = o->paragraphs->lines;
              if (!ln) return -1;
              if (cx) *cx = ln->x;
              if (cy) *cy = ln->y;
@@ -6198,7 +6196,7 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
    if (!o->formatted.valid) _relayout(cur->obj);
    if (!cur->node)
      {
-        ln = o->lines;
+        ln = o->paragraphs->lines;
      }
    else
      {
@@ -6247,7 +6245,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
    if (!o->formatted.valid) _relayout(cur->obj);
    x += o->style_pad.l;
    y += o->style_pad.t;
-   EINA_INLIST_FOREACH(o->lines, ln)
+   EINA_INLIST_FOREACH(o->paragraphs->lines, ln)
      {
 	if (ln->y > y) break;
 	if ((ln->y <= y) && ((ln->y + ln->h) > y))
@@ -6320,7 +6318,7 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
    y += o->style_pad.t;
-   EINA_INLIST_FOREACH(o->lines, ln)
+   EINA_INLIST_FOREACH(o->paragraphs->lines, ln)
      {
 	if (ln->y > y) break;
 	if ((ln->y <= y) && ((ln->y + ln->h) > y))
@@ -6543,7 +6541,6 @@ evas_object_textblock_clear(Evas_Object *obj)
      {
 	_paragraphs_clear(obj, o->paragraphs);
 	o->paragraphs = NULL;
-	o->lines = NULL;
      }
     _evas_textblock_changed(o, obj);
 }
@@ -6703,7 +6700,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 							   context);
    clip = ENFN->context_clip_get(output, context, &cx, &cy, &cw, &ch);
 #define ITEM_WALK() \
-   EINA_INLIST_FOREACH(o->lines, ln) \
+   EINA_INLIST_FOREACH(o->paragraphs->lines, ln) \
      { \
 	Evas_Object_Textblock_Item *it; \
 	\
@@ -7119,7 +7116,6 @@ evas_object_textblock_render_pre(Evas_Object *obj)
 
 	paragraphs = o->paragraphs;
 	o->paragraphs = NULL;
-	o->lines = NULL;
 	o->formatted.valid = 0;
 	o->native.valid = 0;
 	_layout(obj,
@@ -7296,7 +7292,7 @@ _evas_object_textblock_rehint(Evas_Object *obj)
    Evas_Object_Textblock_Line *ln;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-   EINA_INLIST_FOREACH(o->lines, ln)
+   EINA_INLIST_FOREACH(o->paragraphs->lines, ln)
      {
 	Evas_Object_Textblock_Item *it;
 
