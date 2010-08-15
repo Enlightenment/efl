@@ -1,7 +1,7 @@
 /*  Abstract Machine for the Small compiler
  *
  *  Copyright (c) ITB CompuPhase, 1997-2003
- *  Portions Copyright (c) Carsten Haitzler, 2004 <raster@rasterman.com>
+ *  Portions Copyright (c) Carsten Haitzler, 2004-2010 <raster@rasterman.com>
  *
  *  This software is provided "as-is", without any express or implied warranty.
  *  In no event will the authors be held liable for any damages arising from
