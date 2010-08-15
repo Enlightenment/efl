@@ -1457,7 +1457,7 @@ evas_object_text_new(void)
    o->prev = o->cur;
    o->cur.intl_props.props = &o->cur.paragraph_bidi_props;
 #ifdef BIDI_SUPPORT
-   o->cur.intl_props.props->direction = FRIBIDI_PAR_ON;
+   o->cur.intl_props.props->direction = EVAS_BIDI_PARAGRAPH_NATURAL;
 #endif
    return o;
 }

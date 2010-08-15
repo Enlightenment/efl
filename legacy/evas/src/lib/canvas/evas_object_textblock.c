@@ -1860,10 +1860,8 @@ _layout_line_align_get(Ctxt *c)
    if (c->align_auto && c->ln && c->ln->items)
      {
         if (c->ln->items->source_node &&
-              ((c->ln->items->source_node->bidi_props.direction ==
-                FRIBIDI_PAR_RTL) ||
-               (c->ln->items->source_node->bidi_props.direction ==
-                FRIBIDI_PAR_WRTL)))
+              EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(
+                 c->ln->items->source_node->bidi_props.direction))
           {
              /* Align right*/
              return 1.0;
@@ -5231,7 +5229,7 @@ _evas_textblock_node_text_new(void)
    n = calloc(1, sizeof(Evas_Object_Textblock_Node_Text));
    n->unicode = eina_ustrbuf_new();
 #ifdef BIDI_SUPPORT
-   n->bidi_props.direction = FRIBIDI_PAR_ON;
+   n->bidi_props.direction = EVAS_BIDI_PARAGRAPH_NATURAL;
 #endif
 
    return n;
@@ -5475,7 +5473,7 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
      fnode->offset += len;
 #ifdef BIDI_SUPPORT
    /* Reset paragraph direction */
-   n->bidi_props.direction = FRIBIDI_PAR_ON;
+   n->bidi_props.direction = EVAS_BIDI_PARAGRAPH_NATURAL;
    evas_bidi_update_props(eina_ustrbuf_string_get(n->unicode), &n->bidi_props);
 #endif
    _evas_textblock_changed(o, cur->obj);

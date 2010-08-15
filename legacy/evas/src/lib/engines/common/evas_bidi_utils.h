@@ -25,6 +25,7 @@
 # define BIDI_SUPPORT
 #endif
 
+#include <Eina.h>
 #include "evas_common.h"
 
 #ifdef USE_FRIBIDI
@@ -79,6 +80,17 @@ struct _Evas_BiDi_Props {
 
 
 #ifdef USE_FRIBIDI
+#define EVAS_BIDI_PARAGRAPH_NATURAL FRIBIDI_PAR_ON
+#define EVAS_BIDI_PARAGRAPH_LTR     FRIBIDI_PAR_LTR
+#define EVAS_BIDI_PARAGRAPH_RTL     FRIBIDI_PAR_RTL
+#define EVAS_BIDI_PARAGRAPH_WLTR    FRIBIDI_PAR_WLTR
+#define EVAS_BIDI_PARAGRAPH_WRTL    FRIBIDI_PAR_WRTL
+
+#define EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(direction)       \
+                (((direction == EVAS_BIDI_PARAGRAPH_RTL) ||   \
+                 (direction == EVAS_BIDI_PARAGRAPH_WRTL)) ?   \
+                 EINA_TRUE : EINA_FALSE)
+
 
 # define EVAS_BIDI_IS_BIDI_PROP(intl_props) ((intl_props) && (intl_props)->char_types)
 # define evas_bidi_position_visual_to_logical(list, position) \
