@@ -1768,6 +1768,8 @@ _paragraph_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
 static void
 _paragraphs_clear(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *pars)
 {
+   Evas_Object_Textblock *o;
+   o = (Evas_Object_Textblock *)(obj->object_data);
    while (pars)
      {
         Evas_Object_Textblock_Paragraph *par;
@@ -3062,12 +3064,13 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         o->style_pad.t = style_pad_t;
         o->style_pad.b = style_pad_b;
         _layout(obj, calc_only, w, h, w_ret, h_ret);
-        _lines_clear(obj, lines);
+        _paragraphs_clear(obj, c->paragraphs);
         return;
      }
    if (!calc_only)
      {
         o->lines = c->par->lines;
+        o->paragraphs = c->paragraphs;
         return;
      }
    if (c->paragraphs) _paragraphs_clear(obj, c->paragraphs);
@@ -3080,10 +3083,11 @@ static void
 _relayout(const Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   Evas_Object_Textblock_Line *lines;
+   Evas_Object_Textblock_Paragraph *paragraphs;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-   lines = o->lines;
+   paragraphs = o->paragraphs;
+   o->paragraphs = NULL;
    o->lines = NULL;
    o->formatted.valid = 0;
    o->native.valid = 0;
@@ -3092,7 +3096,7 @@ _relayout(const Evas_Object *obj)
          obj->cur.geometry.w, obj->cur.geometry.h,
          &o->formatted.w, &o->formatted.h);
    o->formatted.valid = 1;
-   if (lines) _lines_clear(obj, lines);
+   if (paragraphs) _paragraphs_clear(obj, paragraphs);
    o->last_w = obj->cur.geometry.w;
    o->changed = 0;
    o->redraw = 1;
@@ -6555,10 +6559,10 @@ evas_object_textblock_clear(Evas_Object *obj)
 	cur->pos = 0;
 
      }
-   /* FIXME: free the paragraphs as well */
-   if (o->lines)
+   if (o->paragraphs)
      {
-	_lines_clear(obj, o->lines);
+	_paragraphs_clear(obj, o->paragraphs);
+	o->paragraphs = NULL;
 	o->lines = NULL;
      }
     _evas_textblock_changed(o, obj);
@@ -7131,9 +7135,10 @@ evas_object_textblock_render_pre(Evas_Object *obj)
    if ((o->changed) ||
        (o->last_w != obj->cur.geometry.w))
      {
-	Evas_Object_Textblock_Line *lines;
+	Evas_Object_Textblock_Paragraph *paragraphs;
 
-	lines = o->lines;
+	paragraphs = o->paragraphs;
+	o->paragraphs = NULL;
 	o->lines = NULL;
 	o->formatted.valid = 0;
 	o->native.valid = 0;
@@ -7142,7 +7147,10 @@ evas_object_textblock_render_pre(Evas_Object *obj)
 		obj->cur.geometry.w, obj->cur.geometry.h,
 		&o->formatted.w, &o->formatted.h);
 	o->formatted.valid = 1;
-	if (lines) _lines_clear(obj, lines);
+        if (paragraphs)
+          {
+             _paragraphs_clear(obj, paragraphs);
+          }
 	o->last_w = obj->cur.geometry.w;
 	o->redraw = 0;
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
