@@ -1,10 +1,18 @@
-Embryo @VERSION@
+Embryo @VERSION@ ALPHA
 
+******************************************************************************
+
+ FOR ANY ISSUES PLEASE EMAIL:
+ enlightenment-devel@lists.sourceforge.net
+  
+******************************************************************************
+  
 Requirements:
 -------------
 
 Must:
-  libc libm
+  libc
+  libm
 
 WARNING: gcc compatibility!!!
 There seems to be some bug (or disagreement) between embryo and gcc 3.2.x
@@ -80,25 +88,3 @@ COMPILING AND INSTALLING:
   make
 (as root unless youa re installing in your users directories):
   make install
-      
-------------------------------------------------------------------------------
-BUILDING PACKAGES:
-
-RPM: To build rpm packages:
-  
-  sudo rpm -ta @PACKAGE@-@VERSION@.tar.gz
-
-You will find rpm packages in your system /usr/src/redhat/* dirs (note you may
-not need to use sudo or root if you have your own ~/.rpmrc. see rpm documents
-for more details)
-
-DEB: To build deb packages:
-
-  tar zvf @PACKAGE@-@VERSION@.tar.gz
-  cd @PACKAGE@-@VERSION@
-  dpkg-buildpackage -us -uc -rfakeroot
-  cd ..
-  rm -rf @PACKAGE@-@VERSION@
-
-You will find all the debian source, binary etc. packages put in the directory
-where you first untarred the source tarball.
