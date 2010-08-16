@@ -2420,7 +2420,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
              Eina_Unicode *ptr;
              Eina_Unicode urepch;
 
-             len = eina_unicode_strlen(eina_ustrbuf_string_get(n->unicode));
+             len = eina_ustrbuf_length_get(n->unicode);
              str = alloca((len + 1) * sizeof(Eina_Unicode));
              tbase = str;
              ind = 0;
@@ -4721,7 +4721,7 @@ evas_textblock_cursor_paragraph_char_last(Evas_Textblock_Cursor *cur)
 
    if (!cur) return;
    if (!cur->node) return;
-   index = eina_unicode_strlen(eina_ustrbuf_string_get(cur->node->unicode)) - 1;
+   index = eina_ustrbuf_length_get(cur->node->unicode) - 1;
    if (index < 0) cur->pos = 0;
    cur->pos = index;
 
@@ -5496,7 +5496,7 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    text = evas_common_encoding_utf8_to_unicode((const unsigned char *) _text, &len);
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    /* Update all the cursors after our position. */
-   _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, eina_unicode_strlen(text));
+   _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, len);
 
    n = cur->node;
    if (n)
