@@ -36,6 +36,30 @@
         }             \
      } while(0)
 
+/* Convert bidichar to eina_unicode assume both are valid pointers */
+static Eina_Unicode *
+_evas_bidi_fribidichar_to_unicode(Eina_Unicode *dest, const FriBidiChar *src)
+{
+   Eina_Unicode *ret = dest;
+
+   while (*src)
+        *dest++ = *src++;
+   *dest = 0;
+   return ret;
+}
+
+/* Convert eina_unicode to bidi_char assume both are valid pointers */
+static FriBidiChar *
+_evas_bidi_unicode_to_fribidichar(FriBidiChar *dest, const Eina_Unicode *src)
+{
+   FriBidiChar *ret = dest;
+
+   while (*src)
+        *dest++ = *src++;
+   *dest = 0;
+   return ret;
+}
+
 /**
  * @internal
  * Checks if the string has RTL characters.
@@ -53,7 +77,7 @@ evas_bidi_is_rtl_str(const Eina_Unicode *str)
 
    for ( ; *str ; str++)
      {
-        type = fribidi_get_bidi_type(*str);
+        type = fribidi_get_bidi_type((FriBidiChar) *str);
         if (FRIBIDI_IS_LETTER(type) && FRIBIDI_IS_RTL(type))
           {
              return EINA_TRUE;
@@ -72,10 +96,26 @@ evas_bidi_is_rtl_str(const Eina_Unicode *str)
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  */
 Eina_Bool
-evas_bidi_shape_string(Eina_Unicode *ustr, const Evas_BiDi_Props *bidi_props, size_t len)
+evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Props *bidi_props, size_t len)
 {
+   FriBidiChar *ustr, *base_ustr = NULL;
+
    if (!EVAS_BIDI_IS_BIDI_PROP(bidi_props->props))
      return EINA_FALSE;
+
+   /* The size of fribidichar is different than eina_unicode, convert */
+   /*FIXME: Make this comparison at compile time and compile out
+    * unwanted code. - In all of this source file. */
+   if (sizeof(Eina_Unicode) != sizeof(FriBidiChar))
+     {
+        base_ustr = ustr = calloc(len + 1, sizeof(FriBidiChar));
+        ustr = _evas_bidi_unicode_to_fribidichar(ustr, eina_ustr);
+     }
+   else
+     {
+        ustr = (FriBidiChar *) eina_ustr;
+     }
+
 
    EvasBiDiJoiningType *join_types = NULL;
    join_types = (EvasBiDiJoiningType *) malloc(sizeof(EvasBiDiJoiningType) * len);
@@ -93,6 +133,13 @@ evas_bidi_shape_string(Eina_Unicode *ustr, const Evas_BiDi_Props *bidi_props, si
                bidi_props->props->embedding_levels + bidi_props->start, len, join_types, ustr);
 
    if (join_types) free(join_types);
+
+   /* Convert back */
+   if (sizeof(Eina_Unicode) != sizeof(FriBidiChar))
+     {
+        eina_ustr = _evas_bidi_fribidichar_to_unicode(eina_ustr, ustr);
+        if (base_ustr) free(base_ustr);
+     }
    return EINA_TRUE;
 }
 
@@ -109,22 +156,37 @@ evas_bidi_shape_string(Eina_Unicode *ustr, const Evas_BiDi_Props *bidi_props, si
  * @return returns the length of the string on success, a negative value on error.
  */
 int
-evas_bidi_update_props(const Eina_Unicode *ustr, Evas_BiDi_Paragraph_Props *bidi_props)
+evas_bidi_update_props(const Eina_Unicode *eina_ustr, Evas_BiDi_Paragraph_Props *bidi_props)
 {
    EvasBiDiCharType *char_types = NULL;
    EvasBiDiLevel *embedding_levels = NULL;
+   const FriBidiChar *ustr;
+   FriBidiChar *base_ustr = NULL;
    size_t len;
 
-   if (!ustr)
+   if (!eina_ustr)
       return -2;
 
-   if (!evas_bidi_is_rtl_str(ustr)) /* No need to handle bidi */
+
+   len = eina_unicode_strlen(eina_ustr);
+   /* The size of fribidichar s different than eina_unicode, convert */
+   if (sizeof(Eina_Unicode) != sizeof(FriBidiChar))
+     {
+        base_ustr = calloc(len + 1, sizeof(FriBidiChar));
+        base_ustr = _evas_bidi_unicode_to_fribidichar(base_ustr, eina_ustr);
+        ustr = base_ustr;
+     }
+   else
+     {
+        ustr = (const FriBidiChar *) eina_ustr;
+     }
+
+
+   if (!evas_bidi_is_rtl_str(eina_ustr)) /* No need to handle bidi */
      {
         len = -1;
         goto cleanup;
      }
-
-   len = eina_unicode_strlen(ustr);
 
    /* Prep work for reordering */
    char_types = (EvasBiDiCharType *) malloc(sizeof(EvasBiDiCharType) * len);
@@ -163,6 +225,8 @@ evas_bidi_update_props(const Eina_Unicode *ustr, Evas_BiDi_Paragraph_Props *bidi
      }
    bidi_props->char_types = char_types;
 
+   if (base_ustr) free(base_ustr);
+
 
    return len;
 
@@ -170,6 +234,7 @@ evas_bidi_update_props(const Eina_Unicode *ustr, Evas_BiDi_Paragraph_Props *bidi
 cleanup:
    if (char_types) free(char_types);
    if (embedding_levels) free(embedding_levels);
+   if (base_ustr) free(base_ustr);
    evas_bidi_paragraph_props_clean(bidi_props); /*Mark that we don't need bidi handling */
    return len;
 }
@@ -184,15 +249,27 @@ cleanup:
  * @return #EINA_FALSE on success, #EINA_TRUE on error.
  */
 Eina_Bool
-evas_bidi_props_reorder_line(Eina_Unicode *ustr, const Evas_BiDi_Props *intl_props, EvasBiDiStrIndex **_v_to_l)
+evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, const Evas_BiDi_Props *intl_props, EvasBiDiStrIndex **_v_to_l)
 {
    EvasBiDiStrIndex *v_to_l = NULL;
+   FriBidiChar *ustr, *base_ustr = NULL;
    size_t len;
 
    if (!EVAS_BIDI_IS_BIDI_PROP(intl_props->props))
      return EINA_FALSE;
 
-   len = eina_unicode_strlen(ustr);
+   len = eina_unicode_strlen(eina_ustr);
+   /* The size of fribidichar is different than eina_unicode, convert */
+   if (sizeof(Eina_Unicode) != sizeof(FriBidiChar))
+     {
+        base_ustr = ustr = calloc(len + 1, sizeof(FriBidiChar));
+        ustr = _evas_bidi_unicode_to_fribidichar(ustr, eina_ustr);
+     }
+   else
+     {
+        ustr = (FriBidiChar *) eina_ustr;
+     }
+
 
    if (_v_to_l) {
       int i;
@@ -220,9 +297,16 @@ evas_bidi_props_reorder_line(Eina_Unicode *ustr, const Evas_BiDi_Props *intl_pro
      }
 
 
+   /* The size of fribidichar is different than eina_unicode, convert */
+   if (sizeof(Eina_Unicode) != sizeof(FriBidiChar))
+     {
+        eina_ustr = _evas_bidi_fribidichar_to_unicode(eina_ustr, base_ustr);
+        free(base_ustr);
+     }
    return EINA_FALSE;
 /* ERROR HANDLING */
 error:
+   if (base_ustr) free(base_ustr);
    _SAFE_FREE(v_to_l);
    return EINA_TRUE;
 }
