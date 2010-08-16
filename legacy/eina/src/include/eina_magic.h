@@ -111,12 +111,13 @@ EAPI Eina_Bool   eina_magic_string_static_set(Eina_Magic magic,
  * If the magic feature of Eina is disabled, #EINA_MAGIC_FAIL does
  * nothing.
  */
-#define EINA_MAGIC_FAIL(d, m)      eina_magic_fail((void *)(d), \
-                                                   (d) ? (d)->__magic : 0, \
-                                                   (m), \
-                                                   __FILE__, \
-                                                   __FUNCTION__, \
-                                                   __LINE__);
+#define EINA_MAGIC_FAIL(d, m)			\
+  eina_magic_fail((void *)(d),			\
+		  (d) ? (d)->__magic : 0,	\
+		  (m),				\
+		  __FILE__,			\
+		  __FUNCTION__,			\
+		  __LINE__);
 
 EAPI void eina_magic_fail(void *d, Eina_Magic m, Eina_Magic req_m,
                           const char *file, const char *fnc,

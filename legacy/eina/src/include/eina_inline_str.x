@@ -48,6 +48,28 @@ eina_strlen_bounded(const char *str, size_t maxlen)
 }
 
 /**
+ * @brief Join two strings of known length.
+ *
+ * @param dst The buffer to store the result.
+ * @param size Size (in byte) of the buffer.
+ * @param sep The separator character to use.
+ * @param a First string to use, before @p sep.
+ * @param b Second string to use, after @p sep.
+ * @return The number of characters printed.
+ *
+ * This function is similar to eina_str_join_len(), but will compute
+ * the length of @p a  and @p b using strlen().
+ *
+ * @see eina_str_join_len()
+ * @see eina_str_join_static()
+ */
+static inline size_t
+eina_str_join(char *dst, size_t size, char sep, const char *a, const char *b)
+{
+   return eina_str_join_len(dst, size, sep, a, strlen(a), b, strlen(b));
+}
+
+/**
  * @}
  */
 

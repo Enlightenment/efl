@@ -68,14 +68,14 @@ struct _Eina_Accessor
 #define FUNC_ACCESSOR_LOCK(Function) ((Eina_Accessor_Lock_Callback)Function)
 
 EAPI void      eina_accessor_free(Eina_Accessor *accessor) EINA_ARG_NONNULL(1);
-EAPI Eina_Bool eina_accessor_data_get(Eina_Accessor *accessor, 
-                                      unsigned int position, 
+EAPI Eina_Bool eina_accessor_data_get(Eina_Accessor *accessor,
+                                      unsigned int position,
                                       void **data) EINA_ARG_NONNULL(1);
 EAPI void *    eina_accessor_container_get(Eina_Accessor *accessor) EINA_ARG_NONNULL(1) EINA_PURE;
-EAPI void      eina_accessor_over(Eina_Accessor *accessor, 
-                                  Eina_Each_Cb cb, 
-                                  unsigned int start, 
-                                  unsigned int end, 
+EAPI void      eina_accessor_over(Eina_Accessor *accessor,
+                                  Eina_Each_Cb cb,
+                                  unsigned int start,
+                                  unsigned int end,
                                   const void *fdata) EINA_ARG_NONNULL(1, 2);
 EAPI Eina_Bool eina_accessor_lock(Eina_Accessor *accessor) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_accessor_unlock(Eina_Accessor *accessor) EINA_ARG_NONNULL(1);
@@ -129,10 +129,10 @@ EAPI Eina_Bool eina_accessor_unlock(Eina_Accessor *accessor) EINA_ARG_NONNULL(1)
  *    rather in the accessors implementations to keep them as simple
  *    and fast as possible.
  */
-#define EINA_ACCESSOR_FOREACH(accessor, counter, data) \
-   for ((counter) = 0; \
-        eina_accessor_data_get((accessor), (counter), (void **)&(data)); \
-        (counter)++)
+#define EINA_ACCESSOR_FOREACH(accessor, counter, data)			\
+  for ((counter) = 0;							\
+       eina_accessor_data_get((accessor), (counter), (void **)&(data)); \
+       (counter)++)
 
 /**
  * @}

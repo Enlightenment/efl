@@ -92,37 +92,37 @@
 
 /* undef the following, we want out version */
 #undef FREE
-#define FREE(ptr)                               \
-   do {                                          \
-             free(ptr);                                 \
-        ptr = NULL;                                \
-     } while(0);
+#define FREE(ptr)				\
+  do {						\
+     free(ptr);					\
+     ptr = NULL;				\
+  } while(0);
 
 #undef IF_FREE
-#define IF_FREE(ptr)                            \
-   do {                                          \
-        if (ptr) {                                 \
-             free(ptr);                              \
-             ptr = NULL;                             \
-          }                                          \
-     } while(0);
+#define IF_FREE(ptr)				\
+  do {						\
+     if (ptr) {					\
+	free(ptr);				\
+	ptr = NULL;				\
+     }						\
+  } while(0);
 
 #undef IF_FN_DEL
-#define IF_FN_DEL(_fn, ptr)                     \
-   do {                                          \
-        if (ptr) {                                 \
-             _fn(ptr);                               \
-             ptr = NULL;                             \
-          }                                          \
-     } while(0);
+#define IF_FN_DEL(_fn, ptr)			\
+  do {						\
+     if (ptr) {					\
+	_fn(ptr);				\
+	ptr = NULL;				\
+     }						\
+  } while(0);
 
-#define MAGIC_FREE(ptr)                                 \
-   do {                                                  \
-        if (ptr) {                                         \
-             EINA_MAGIC_SET(ptr, EINA_MAGIC_NONE);           \
-             FREE(ptr);                                      \
-          }                                                  \
-     } while(0);
+#define MAGIC_FREE(ptr)				\
+  do {						\
+     if (ptr) {					\
+	EINA_MAGIC_SET(ptr, EINA_MAGIC_NONE);	\
+	FREE(ptr);				\
+     }						\
+  } while(0);
 
 #ifdef EFL_HAVE_THREADS
 void eina_share_common_threads_init(void);

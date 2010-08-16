@@ -83,9 +83,9 @@ EAPI void eina_rectangle_pool_release(Eina_Rectangle *rect) EINA_ARG_NONNULL(1);
  * width and @p H is its height.
  */
 #define EINA_RECTANGLE_SET(Rectangle, X, Y, W, H) \
-                          (Rectangle)->x = X; \
-                          (Rectangle)->y = Y; \
-                          (Rectangle)->w = W; \
+                          (Rectangle)->x = X;     \
+                          (Rectangle)->y = Y;     \
+                          (Rectangle)->w = W;     \
                           (Rectangle)->h = H;
 
 EAPI Eina_Rectangle *eina_rectangle_new(int x, int y, int w, int h) EINA_MALLOC EINA_WARN_UNUSED_RESULT;

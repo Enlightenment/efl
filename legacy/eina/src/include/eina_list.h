@@ -156,11 +156,12 @@ EAPI Eina_Accessor *               eina_list_accessor_new(const Eina_List *list)
  *          For destructive operations such as this, consider
  *          using EINA_LIST_FOREACH_SAFE().
  */
-#define EINA_LIST_FOREACH(list, l, data) for (l = list, \
-                                              data = eina_list_data_get(l); \
-                                              l; \
-                                              l = eina_list_next(l), data = \
-                                                         eina_list_data_get(l))
+#define EINA_LIST_FOREACH(list, l, data)	\
+  for (l = list,				\
+	 data = eina_list_data_get(l);		\
+       l;					\
+       l = eina_list_next(l),			\
+	 data = eina_list_data_get(l))
 
 /**
  * @def EINA_LIST_REVERSE_FOREACH
@@ -203,13 +204,12 @@ EAPI Eina_Accessor *               eina_list_accessor_new(const Eina_List *list)
  *          For destructive operations such as this, consider
  *          using EINA_LIST_REVERSE_FOREACH_SAFE().
  */
-#define EINA_LIST_REVERSE_FOREACH(list, l, data) for (l = eina_list_last(list), \
-                                                      data = \
-                                                         eina_list_data_get(l); \
-                                                      l; \
-                                                      l = eina_list_prev(l), \
-                                                      data = \
-                                                         eina_list_data_get(l))
+#define EINA_LIST_REVERSE_FOREACH(list, l, data)	\
+  for (l = eina_list_last(list),			\
+	 data = eina_list_data_get(l);			\
+       l;						\
+       l = eina_list_prev(l),				\
+	 data = eina_list_data_get(l))
 
 /**
  * @def EINA_LIST_FOREACH_SAFE
@@ -246,16 +246,14 @@ EAPI Eina_Accessor *               eina_list_accessor_new(const Eina_List *list)
  *   }
  * @endcode
  */
-#define EINA_LIST_FOREACH_SAFE(list, l, l_next, data) for (l = list, \
-                                                           l_next = \
-                                                              eina_list_next(l), \
-                                                           data = \
-                                                              eina_list_data_get(l); \
-                                                           l; \
-                                                           l = l_next, l_next = \
-                                                              eina_list_next(l), \
-                                                           data = \
-                                                              eina_list_data_get(l))
+#define EINA_LIST_FOREACH_SAFE(list, l, l_next, data)	\
+  for (l = list,					\
+	 l_next = eina_list_next(l),			\
+	 data = eina_list_data_get(l);			\
+       l;						\
+       l = l_next,					\
+	 l_next = eina_list_next(l),			\
+	 data = eina_list_data_get(l))
 
 /**
  * @def EINA_LIST_REVERSE_FOREACH_SAFE
@@ -294,18 +292,14 @@ EAPI Eina_Accessor *               eina_list_accessor_new(const Eina_List *list)
  *   }
  * @endcode
  */
-#define EINA_LIST_REVERSE_FOREACH_SAFE(list, l, l_prev, data) for (l = \
-                                                                      eina_list_last(list), \
-                                                                   l_prev = \
-                                                                      eina_list_prev(l), \
-                                                                   data = \
-                                                                      eina_list_data_get(l); \
-                                                                   l; \
-                                                                   l = l_prev, \
-                                                                   l_prev = \
-                                                                      eina_list_prev(l), \
-                                                                   data = \
-                                                                      eina_list_data_get(l))
+#define EINA_LIST_REVERSE_FOREACH_SAFE(list, l, l_prev, data)	\
+  for (l = eina_list_last(list),				\
+	 l_prev = eina_list_prev(l),				\
+	 data = eina_list_data_get(l);				\
+       l;							\
+       l = l_prev,						\
+	 l_prev = eina_list_prev(l),				\
+	 data = eina_list_data_get(l))
 
 /**
  * @def EINA_LIST_FREE
@@ -332,11 +326,11 @@ EAPI Eina_Accessor *               eina_list_accessor_new(const Eina_List *list)
  *
  * @see eina_list_free()
  */
-#define EINA_LIST_FREE(list, data) for (data = eina_list_data_get(list); list; \
-                                        list = \
-                                           eina_list_remove_list(list, \
-                                                                 list), data = \
-                                           eina_list_data_get(list))
+#define EINA_LIST_FREE(list, data)			\
+  for (data = eina_list_data_get(list);			\
+       list;						\
+       list = eina_list_remove_list(list, list),	\
+	 data = eina_list_data_get(list))
 
 #include "eina_inline_list.x"
 

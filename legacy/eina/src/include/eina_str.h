@@ -41,27 +41,6 @@ EAPI void        eina_str_toupper(char **str);
 static inline size_t eina_str_join(char *dst, size_t size, char sep, const char *a, const char *b) EINA_ARG_NONNULL(1, 4, 5);
 
 /**
- * @brief Join two strings of known length.
- *
- * @param dst The buffer to store the result.
- * @param size Size (in byte) of the buffer.
- * @param sep The separator character to use.
- * @param a First string to use, before @p sep.
- * @param b Second string to use, after @p sep.
- * @return The number of characters printed.
- *
- * This function is similar to eina_str_join_len(), but will compute
- * the length of @p a  and @p b using strlen().
- *
- * @see eina_str_join_len()
- * @see eina_str_join_static()
- */
-static inline size_t eina_str_join(char *dst, size_t size, char sep, const char *a, const char *b)
-{
-   return eina_str_join_len(dst, size, sep, a, strlen(a), b, strlen(b));
-}
-
-/**
  * @def eina_str_join_static(dst, sep, a, b)
  * @brief Join two static strings and store the result in a static buffer.
  *
