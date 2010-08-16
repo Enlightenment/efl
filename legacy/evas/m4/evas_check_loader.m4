@@ -37,7 +37,7 @@ have_dep="no"
 evas_image_loader_[]$1[]_cflags=""
 evas_image_loader_[]$1[]_libs=""
 
-PKG_CHECK_MODULES([EET], [eet >= 1.0.1], [have_dep="yes" requirement="eet"], [have_dep="no"])
+PKG_CHECK_MODULES([EET], [eet >= 1.4.0], [have_dep="yes" requirement="eet"], [have_dep="no"])
 evas_image_loader_[]$1[]_cflags="${EET_CFLAGS}"
 evas_image_loader_[]$1[]_libs="${EET_LIBS}"
 
@@ -439,7 +439,7 @@ AC_MSG_CHECKING([whether to enable Eet font loader])
 AC_MSG_RESULT([${want_loader}])
 
 if test "x$want_loader" = "xyes" -o "x$want_loader" = "xauto"; then
-    PKG_CHECK_MODULES([EET], [eet >= 1.0.1], [have_evas_font_loader_eet="yes"], [have_evas_font_loader_eet="no"])
+    PKG_CHECK_MODULES([EET], [eet >= 1.4.0], [have_evas_font_loader_eet="yes"], [have_evas_font_loader_eet="no"])
 fi
 
 if test "x${have_evas_font_loader_eet}" = "xno" -a "x$want_loader" = "xyes" -a "x$use_strict" = "xyes" ; then

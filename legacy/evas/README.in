@@ -1,14 +1,19 @@
-Evas @VERSION@
+Evas @VERSION@ ALPHA
 
-Evas is a clean display canvas API for several target display systems
-that can draw anti-aliased text, smooth super and sub-sampled scaled
-images, alpha-blend objects much and more.
+******************************************************************************
 
+ FOR ANY ISSUES PLEASE EMAIL:
+ enlightenment-devel@lists.sourceforge.net
+  
+******************************************************************************
+  
 Requirements:
 -------------
 
 Must:
-  libc libm freetype2.1.9+
+  libc
+  libm
+  freetype (2.1.9 or better)
 
 Recommended:
   libX11 libXext libXrender fontconfig libpng libjpeg eet libpthread
@@ -16,19 +21,12 @@ Recommended:
 Optional:
   XCB SDL OpenGL Qtopia librsvg libtiff libgif edb DirectFB
 
---------------------------------------------------------------------------
-Evas as of 0.9.9 has a new (and incompatible) API. Why? It's much cleaner
-and more compact. Designed for portable access to different display systems.
-It is also much more optimised internally, uses much less ram than previous
-Evas libraries, and is tiny. Evas when compiled for the Ipaq is a grand
-total of 191Kb (thats all of Evas minus libjpeg, libpng, libz (required for 
-libpng), and minus freetype (required for font rendering)). I have plans that 
-may involve having an alternative font engine other than freetype to minimise
-requirements, and having a native (optional) image loader for an image
-format that may end up being custom to evas, but will minimise code &
-requirements especially for embedded use.
+Evas is a clean display canvas API for several target display systems
+that can draw anti-aliased text, smooth super and sub-sampled scaled
+images, alpha-blend objects much and more.
 
-Evas uses very little RAM too (try profiling it in memprof if you want to 
+Evas is designed to be portable to different display systems. Evas uses very
+little RAM too (try profiling it in memprof if you want to 
 know) most of the ram allocated, if you look, is for freetype itself,
 image pixel data, and font glyph data. You can't really avoid this, though
 evas tries to share this data as much as possible and not duplicate where it
@@ -44,19 +42,25 @@ Though this requires a unicode compatible font with unicode charmap support
 only from left to right, so arabic, hebrew etc. won't display quite right,
 direction-wise, but the characters do.
 
---------------------------------------------------------------------------
+------------------------------------------------------------------------------
+COMPILING AND INSTALLING:
+
+  ./configure
+  make
+(as root unless youa re installing in your users directories):
+  make install
+
 if you want to know what options to enable
 ./configure --help
 
 Notes:
   the small dither mask is faster on the ipaq, but is not as good looking. on
-    desktop machines it makes no speed difference so only use
-    --enable-small-dither-mask if you are compiling for the ipaq
+  desktop machines it makes no speed difference so only use
+  --enable-small-dither-mask if you are compiling for the ipaq
   you need at least 1 image loader if you want to load images.
   gcc 3.0.x on solaris screws up the jpeg code so erroring out doesn't work.
     use gcc 3.2 on solaris.
 
---------------------------------------------------------------------------
 notes on features:
 
 SCALING:
@@ -298,38 +302,6 @@ To be documented...
 	If you have any issues with metric caching, please report them to either
 	the edevel mailing list or Brett Nash <nash@nash.id.uau>
 
-
-------------------------------------------------------------------------------
-COMPILING AND INSTALLING:
-
-  ./configure
-  make
-(as root unless youa re installing in your users directories):
-  make install
-      
-------------------------------------------------------------------------------
-BUILDING PACKAGES:
-
-RPM: To build rpm packages:
-  
-  sudo rpm -ta @PACKAGE@-@VERSION@.tar.gz
-
-You will find rpm packages in your system /usr/src/redhat/* dirs (note you may
-not need to use sudo or root if you have your own ~/.rpmrc. see rpm documents
-for more details)
-
-DEB: To build deb packages:
-
-  tar zvf @PACKAGE@-@VERSION@.tar.gz
-  cd @PACKAGE@-@VERSION@
-  dpkg-buildpackage -us -uc -rfakeroot
-  cd ..
-  rm -rf @PACKAGE@-@VERSION@
-
-You will find all the debian source, binary etc. packages put in the directory
-where you first untarred the source tarball.
-
-
 NOTES:
 
 For the arm optimizations you want to try:
@@ -339,3 +311,12 @@ To enable the async renderer compile with:
   --enable-async-render
 and also runtime set this environment variable:
   export EVAS_RENDER_MODE=non-blocking
+
+For compilation with MinGW, fnmatch.h is probably missing. That file can be
+found here:
+  http://www.koders.com/c/fid2B518462CB1EED3D4E31E271DB83CD1582F6EEBE.aspx
+It should be installed in the mingw include directory.
+            
+For the OpenGL engine on Windows, the glew library is needed:
+  http://glew.sourceforge.net/
+                  
