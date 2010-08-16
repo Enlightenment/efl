@@ -317,9 +317,9 @@ elm_selection_get(enum _elm_sel_type selection, enum _elm_sel_format format,
    top = elm_widget_top_get(widget);
    if (!top) return EINA_FALSE;
 
-   sel->request(elm_win_xwindow_get(top), "TARGETS");
    sel->requestformat = format;
    sel->requestwidget = widget;
+   sel->request(elm_win_xwindow_get(top), ECORE_X_SELECTION_TARGET_UTF8_STRING);
 
    return EINA_TRUE;
 #else
@@ -784,6 +784,7 @@ mark_up(const char *start, int *lenp){
   const char *p;
   char *q,*ret;
 
+  if (!start) return NULL;
   /* First pass: Count characters */
   for (l = 0, p = start ; *p ; p ++)
     {

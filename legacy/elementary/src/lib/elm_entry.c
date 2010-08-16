@@ -464,6 +464,7 @@ _paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    if (wd->sel_notify_handler)
      {
 #ifdef HAVE_ELEMENTARY_X
+        wd->selection_asked = EINA_TRUE;
 	elm_selection_get(ELM_SEL_CLIPBOARD, ELM_SEL_MARKUP, data);
 #endif
      }
@@ -1010,9 +1011,8 @@ _signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char 
 	top = elm_widget_top_get(data);
 	if ((top) && (elm_win_xwindow_get(top)))
 	  {
-	     ecore_x_selection_primary_request(elm_win_xwindow_get(top),
-                                               ECORE_X_SELECTION_TARGET_UTF8_STRING);
-	     wd->selection_asked = EINA_TRUE;
+             wd->selection_asked = EINA_TRUE;
+             elm_selection_get(ELM_SEL_CLIPBOARD, ELM_SEL_MARKUP, data);
 	  }
 #endif
      }
