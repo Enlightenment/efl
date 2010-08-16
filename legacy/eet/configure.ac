@@ -1,4 +1,4 @@
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+y##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [1])
 m4_define([v_min], [4])
@@ -253,8 +253,8 @@ AC_SUBST(EET_LIBS)
 
 # Eina library
 
-PKG_CHECK_MODULES(EINA, [eina-1])
-requirement_eet="eina-1 >= 1.0.0 ${requirement_eet}"
+PKG_CHECK_MODULES(EINA, [eina >= 1.0.0])
+requirement_eet="eina >= 1.0.0 ${requirement_eet}"
 
 # Gnutls library
 have_gnutls="no"
