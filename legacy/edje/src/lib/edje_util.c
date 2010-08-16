@@ -4827,7 +4827,7 @@ _edje_object_signal_preload_cb(void *data, Evas_Object *obj, __UNUSED__ const ch
    _edje_object_preload(ed);
 }
 
-void
+EAPI void
 _edje_program_remove(Edje_Part_Collection *edc, Edje_Program *p)
 {
    Edje_Program ***array;
@@ -4872,7 +4872,7 @@ _edje_program_remove(Edje_Part_Collection *edc, Edje_Program *p)
        }
 }
 
-void
+EAPI void
 _edje_program_insert(Edje_Part_Collection *edc, Edje_Program *p)
 {
    Edje_Program ***array;
