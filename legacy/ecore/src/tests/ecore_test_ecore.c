@@ -24,7 +24,7 @@ _quit_cb(void *data)
 static Eina_Bool
 _dummy_cb(void *data)
 {
-   return (int)(long)data;
+   return !!data;
 }
 
 START_TEST(ecore_test_ecore_init)

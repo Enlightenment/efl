@@ -131,7 +131,8 @@ EAPI Eina_Bool
 ecore_x_input_multi_select(Ecore_X_Window win)
 {
 #ifdef ECORE_XI2
-   int i, find = 0;
+   int i;
+   Eina_Bool find = EINA_FALSE;
 
    if (!_ecore_x_xi2_devs)
       return 0;
@@ -153,13 +154,13 @@ ecore_x_input_multi_select(Ecore_X_Window win)
              XISetMask(mask, XI_ButtonRelease);
              XISetMask(mask, XI_Motion);
              XISelectEvents(_ecore_x_disp, win, &eventmask, 1);
-             find = 1;
+             find = EINA_TRUE;
           }
      }
 
    return find;
 #else /* ifdef ECORE_XI2 */
-   return 0;
+   return EINA_FALSE;
 #endif /* ifdef ECORE_XI2 */
 } /* ecore_x_input_multi_select */
 

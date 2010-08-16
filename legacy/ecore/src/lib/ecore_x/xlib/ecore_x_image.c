@@ -193,7 +193,7 @@ EAPI Eina_Bool
 ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw,
                   int x, int y, int sx, int sy, int w, int h)
 {
-   int ret = 1;
+   Eina_Bool ret = EINA_TRUE;
    XErrorHandler ph;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -215,7 +215,7 @@ ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw,
              im->xim->width = w;
              im->xim->height = h;
              if (!XShmGetImage(_ecore_x_disp, draw, im->xim, x, y, 0xffffffff))
-                ret = 0;
+                ret = EINA_FALSE;
 
              ecore_x_sync();
           }
@@ -257,12 +257,12 @@ ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw,
 
         XSetErrorHandler((XErrorHandler)ph);
         if (_ecore_x_image_err)
-           ret = 0;
+           ret = EINA_FALSE;
      }
    else
      {
         printf("currently unimplemented ecore_x_image_get without shm\n");
-        ret = 0;
+        ret = EINA_FALSE;
      }
 
    return ret;
