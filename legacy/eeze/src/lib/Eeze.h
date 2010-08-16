@@ -161,24 +161,24 @@ typedef enum
 struct Eeze_Udev_Watch;
 typedef struct Eeze_Udev_Watch Eeze_Udev_Watch;
 
-typedef struct _Eeze_Version
-  {
-     int major;
-     int minor;
-     int micro;
-     int revision;
-  } Eeze_Version;
+#define EEZE_VERSION_MAJOR 1
+#define EEZE_VERSION_MINOR 0
+
+   typedef struct _Eeze_Version
+     {
+        int major;
+        int minor;
+        int micro;
+        int revision;
+     } Eeze_Version;
+
+   EAPI extern Eeze_Version *eeze_version;
 
 /**
  * @addtogroup watch
  * @brief Callback type for use with @ref Eeze_Udev_Watch
  */
 typedef void(*Eeze_Udev_Watch_Cb)(const char *, Eeze_Udev_Event, void *, Eeze_Udev_Watch *);
-
-#define EEZE_VERSION_MAJOR 0
-#define EEZE_VERSION_MINOR 2
-
-   EAPI extern Eeze_Version *eeze_version;
 
    EAPI int             eeze_init(void);
    EAPI int             eeze_shutdown(void);

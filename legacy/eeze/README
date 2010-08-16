@@ -1,3 +1,28 @@
-eeze v?.??
+Embryo 1.0.0-alpha ALPHA
 
-eeze is a library to simplify the use of devices.  Dependencies may vary, use at your own risk, i before e except after c.
+******************************************************************************
+
+ FOR ANY ISSUES PLEASE EMAIL:
+ enlightenment-devel@lists.sourceforge.net
+ 
+******************************************************************************
+
+
+Requirements:
+-------------
+
+Must:
+  libc
+  ecore (at least 1.0.0)
+
+Eeze is a library for handling devicekit and friends .... disco-stu...
+fill the rest in!
+
+------------------------------------------------------------------------------
+COMPILING AND INSTALLING:
+
+  ./configure
+  make
+(as root unless youa re installing in your users directories):
+  make install
+      
