@@ -5,12 +5,72 @@
  */
 
 /**
+ * @section Evas_Object_Textblock_Tutorial Textblock Object Tutorial
+ *
+ * This part explains about the textblock object's API and proper usage.
+ * If you want to develop textblock, you should also refer to @ref Evas_Object_Textblock_Internal.
+ * The main user of the textblock object is the edje entry object in Edje, so
+ * that's a good place to learn from, but I think this document is more than
+ * enough, if it's not, please request for me info and I'll update it.
+ *
+ * @subsection textblock_intro Introduction
+ * The textblock objects is, as implied, an object that can show big chunks of
+ * text. Textblock supports many features including: Text formatting, automatic
+ * and manual text alignment, embedding items (for example icons) and more.
+ * Textblock has three important parts, the text paragraphs, the format nodes
+ * and the cursors.
+ *
+ * @subsection textblock_cursors Textblock Object Cursors
+ * A textblock Cursor @ref Evas_Textblock_Cursor is data type that represents
+ * a position in a textblock. Each cursor contains information about the
+ * paragraph it points to, the position in that paragraph and the object itself.
+ * Cursors register to textblock objects upon creation, this means that once
+ * you created a cursor, it belongs to a specific obj and you can't for example
+ * copy a cursor "into" a cursor of a different object. Registered cursors
+ * also have the added benefit of updating automatically upon textblock changes,
+ * this means that if you have a cursor pointing to a specific character, it'll
+ * still point to it even after you change the whole object completely (as long
+ * as the char was not deleted), this is not possible without updating, beacuse
+ * as mentioned, each cursor holds a character position. There are many
+ * functions that handle cursors, just check out the evas_textblock_cursor*
+ * functions. For creation and deletion of cursors check out:
+ * @see evas_object_textblock_cursor_new()
+ * @see evas_textblock_cursor_free()
+ * @note Cursors are generally the correct way to handle text in the textblock object, and there are enough functions to do everything you need with them (no need to get big chunks of text and processing them yourself).
+ *
+ * @subsection textblock_paragraphs Textblock Object Paragraphs
+ * The textblock object is made out of text splitted to paragraphs (delimited
+ * by the paragraph separation character). Each paragraph has many (or none)
+ * format nodes associated with it which are responsible for the formatting
+ * of that paragraph.
+ *
+ * @subsection textblock_format_nodes Textblock Object Format Nodes
+ * As explained in @ref textblock_paragraphs each one of the format nodes
+ * is associated with a paragraph.
+ * There are two types of format nodes, visible and invisible:
+ * Visible: formats that a cursor can point to, i.e formats that
+ * occupy space, for example: newlines, tabs, items and etc.
+ * Invisible: formats that don't occupy space, for example: bold and underline.
+ * Being able to access format nodes is very important for some uses. For
+ * example, edje uses the "<a>" format to create links in the text (and pop
+ * popups above them when clicked). For the textblock object a is just a
+ * formatting instruction (how to color the text), but edje utilizes the access
+ * to the format nodes to make it do more.
+ * For more information, take a look at all the evas_textblock_node_format_*
+ * functions.
+ *
+ * @subsection textblock_special_formats Special Formats
+ * @todo Write @textblock_special_formats
+ */
+
+/**
  * @internal
  * @section Evas_Object_Textblock_Internal Internal Textblock Object Tutorial
  *
- * This explains the internal design of the Evas Textblock Object.
+ * This explains the internal design of the Evas Textblock Object, it's assumed
+ * that the reader of this section has already read @ref Evas_Object_Textblock_Tutorial "Textblock's usage docs.".
  *
- * @subsection textblock_intro Introduction
+ * @subsection textblock_internal_intro Introduction
  * There are two main parts to the textblock object, the first being the node
  * system, and the second being the layout system. The former is just an
  * internal representation of the markup text, while the latter is the internal
@@ -26,7 +86,7 @@
  * Each text node is essentially a paragraph, it includes an @ref Eina_UStrbuf
  * that stores the actual paragraph text, a utf8 string to store the paragraph
  * text in utf8 (which is not used internally at all), A pointer to it's
- * main @ref textblock_nodes_format "Format Node" and the paragraph's
+ * main @ref textblock_nodes_format_internal "Format Node" and the paragraph's
  * @ref evas_bidi_props "BiDi properties". The pointer to the format node may be
  * NULL if there's no format node anywhere before the end of the text node,
  * not even in previous text nodes. If not NULL, it points to the first format
@@ -37,7 +97,7 @@
  * happens because text nodes are paragraphs and paragraphs are delimited by
  * paragraph separators.
  *
- * @subsection textblock_nodes_format Format Nodes
+ * @subsection textblock_nodes_format_internal Format Nodes - Internal
  * Each format node stores a group of format information, for example the
  * markup: \<font=Vera,Kochi font_size=10 align=left\> will all be inserted
  * inside the same format node, altohugh it consists of different formatting
@@ -4251,7 +4311,7 @@ evas_object_textblock_cursor_get(const Evas_Object *obj)
  * to the start of the textblock. Association to the object means the cursor
  * will be updated when the object will change.
  *
- * @note if you need speed and you know what you are doing, it's slightly faster to just allocate the cursor yourself and not associate it.
+ * @note if you need speed and you know what you are doing, it's slightly faster to just allocate the cursor yourself and not associate it. (only people developing the actual object, and not users of the object).
  *
  * @param obj the object to associate to.
  * @return the new cursor.
