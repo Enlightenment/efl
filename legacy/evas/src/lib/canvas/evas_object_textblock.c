@@ -5980,7 +5980,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
         int off;
 
         text_base = text =
-           eina_unicode_strdup(eina_ustrbuf_string_get(n1->unicode));
+           eina_unicode_strdup(eina_ustrbuf_string_get(tnode->unicode));
         if (tnode == cur2->node)
           {
              fnode = _evas_textblock_node_text_get_first_format_between(o, n1,
