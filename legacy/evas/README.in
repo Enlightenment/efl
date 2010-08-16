@@ -17,7 +17,14 @@ Must:
   freetype (2.1.9 or better)
 
 Recommended:
-  libX11 libXext libXrender fontconfig libpng libjpeg eet libpthread
+  libX11
+  libXext
+  libXrender
+  fontconfig
+  libpng
+  libjpeg
+  eet (1.4.0 or better)
+  libpthread
 
 Optional:
   XCB SDL OpenGL Qtopia librsvg libtiff libgif edb DirectFB
