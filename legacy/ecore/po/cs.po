@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ecore\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2010-05-14 23:51+1000\n"
+"POT-Creation-Date: 2010-08-16 17:14+0900\n"
 "PO-Revision-Date: 2009-10-27 19:35+0100\n"
 "Last-Translator: quaker66 <quaker66@gmail.com>\n"
 "Language-Team: cs <quaker66@gmail.com>\n"
@@ -12,159 +12,159 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/ecore/ecore_getopt.c:91
+#: src/lib/ecore/ecore_getopt.c:87
 msgid "Version:"
 msgstr "Verze:"
 
-#: src/lib/ecore/ecore_getopt.c:99
+#: src/lib/ecore/ecore_getopt.c:95
 msgid "Usage:"
 msgstr "Použití:"
 
-#: src/lib/ecore/ecore_getopt.c:104
+#: src/lib/ecore/ecore_getopt.c:100
 #, c-format
 msgid "%s [options]\n"
 msgstr "%s [volby]\n"
 
-#: src/lib/ecore/ecore_getopt.c:252
+#: src/lib/ecore/ecore_getopt.c:248
 msgid "Copyright:"
 msgstr "Copyright:"
 
-#: src/lib/ecore/ecore_getopt.c:263
+#: src/lib/ecore/ecore_getopt.c:259
 msgid "License:"
 msgstr "Licence:"
 
-#: src/lib/ecore/ecore_getopt.c:415
+#: src/lib/ecore/ecore_getopt.c:411
 msgid "Type: "
 msgstr "Typ: "
 
-#: src/lib/ecore/ecore_getopt.c:482
+#: src/lib/ecore/ecore_getopt.c:478
 msgid "Default: "
 msgstr "Výchozí: "
 
-#: src/lib/ecore/ecore_getopt.c:505
+#: src/lib/ecore/ecore_getopt.c:501
 msgid "Choices: "
 msgstr "Možnosti: "
 
-#: src/lib/ecore/ecore_getopt.c:602
+#: src/lib/ecore/ecore_getopt.c:598
 msgid "Options:\n"
 msgstr "Volby:\n"
 
-#: src/lib/ecore/ecore_getopt.c:722
+#: src/lib/ecore/ecore_getopt.c:718
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
 msgstr "CHYBA: neznámá volba --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:724
+#: src/lib/ecore/ecore_getopt.c:720
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
 msgstr "CHYBA: neznámá volba -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:780
+#: src/lib/ecore/ecore_getopt.c:776
 msgid "ERROR: "
 msgstr "CHYBA: "
 
-#: src/lib/ecore/ecore_getopt.c:857 src/lib/ecore/ecore_getopt.c:973
-#: src/lib/ecore/ecore_getopt.c:986 src/lib/ecore/ecore_getopt.c:998
-#: src/lib/ecore/ecore_getopt.c:1012 src/lib/ecore/ecore_getopt.c:1056
-#: src/lib/ecore/ecore_getopt.c:1165 src/lib/ecore/ecore_getopt.c:1202
+#: src/lib/ecore/ecore_getopt.c:853 src/lib/ecore/ecore_getopt.c:969
+#: src/lib/ecore/ecore_getopt.c:982 src/lib/ecore/ecore_getopt.c:994
+#: src/lib/ecore/ecore_getopt.c:1008 src/lib/ecore/ecore_getopt.c:1052
+#: src/lib/ecore/ecore_getopt.c:1161 src/lib/ecore/ecore_getopt.c:1198
 msgid "value has no pointer set.\n"
 msgstr "hodnota nemá nastaven pointer.\n"
 
-#: src/lib/ecore/ecore_getopt.c:886 src/lib/ecore/ecore_getopt.c:1076
+#: src/lib/ecore/ecore_getopt.c:882 src/lib/ecore/ecore_getopt.c:1072
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "neznámá boolean hodnota %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:930 src/lib/ecore/ecore_getopt.c:1156
+#: src/lib/ecore/ecore_getopt.c:926 src/lib/ecore/ecore_getopt.c:1152
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "neznámý číselný formát %s\n"
 
-#: src/lib/ecore/ecore_getopt.c:1025
+#: src/lib/ecore/ecore_getopt.c:1021
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
 msgstr "neznámá volba \"%s\". Možné hodnoty jsou: "
 
-#: src/lib/ecore/ecore_getopt.c:1050
+#: src/lib/ecore/ecore_getopt.c:1046
 msgid "missing parameter to append.\n"
 msgstr "chybějící parametr k připojení.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1146
+#: src/lib/ecore/ecore_getopt.c:1142
 msgid "could not parse value.\n"
 msgstr "nemůžu parsovat hodnotu.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1195
+#: src/lib/ecore/ecore_getopt.c:1191
 msgid "missing parameter.\n"
 msgstr "chybějící parametr.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1209
+#: src/lib/ecore/ecore_getopt.c:1205
 msgid "missing callback function!\n"
 msgstr "chybějící callback funkce!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1232
+#: src/lib/ecore/ecore_getopt.c:1228
 msgid "no version was defined.\n"
 msgstr "nebyla definována verze.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1246
+#: src/lib/ecore/ecore_getopt.c:1242
 msgid "no copyright was defined.\n"
 msgstr "nebyl definován copyright.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1260
+#: src/lib/ecore/ecore_getopt.c:1256
 msgid "no license was defined.\n"
 msgstr "nebyla definována licence.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1314
+#: src/lib/ecore/ecore_getopt.c:1310
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "CHYBA: neznámá volba --%s, ignoruji.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1347
+#: src/lib/ecore/ecore_getopt.c:1343
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr "CHYBA: volba --%s vyžaduje argument!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1383
+#: src/lib/ecore/ecore_getopt.c:1379
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "CHYBA: neznámá volba -%c, ignoruji.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1421
+#: src/lib/ecore/ecore_getopt.c:1417
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr "CHYBA: volba -%c vyžaduje argument!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1624
+#: src/lib/ecore/ecore_getopt.c:1620
 msgid "ERROR: no parser provided.\n"
 msgstr "CHYBA: nebyl poskytnut parser.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1629
+#: src/lib/ecore/ecore_getopt.c:1625
 msgid "ERROR: no values provided.\n"
 msgstr "CHYBA: nebyly poskytnuty hodnoty.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1638
+#: src/lib/ecore/ecore_getopt.c:1634
 msgid "ERROR: no arguments provided.\n"
 msgstr "CHYBA: nebyly poskytnuty argumenty.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1664
+#: src/lib/ecore/ecore_getopt.c:1660
 msgid "ERROR: invalid options found."
 msgstr "CHYBA: nalezeny neplatné volby."
 
-#: src/lib/ecore/ecore_getopt.c:1670
+#: src/lib/ecore/ecore_getopt.c:1666
 #, c-format
 msgid " See --%s.\n"
 msgstr " viz. --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1672
+#: src/lib/ecore/ecore_getopt.c:1668
 #, c-format
 msgid " See -%c.\n"
 msgstr " viz. -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1709
+#: src/lib/ecore/ecore_getopt.c:1705
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr "CHYBA: neplatná hodnota geometrie '%s'\n"
 
-#: src/lib/ecore/ecore_getopt.c:1732
+#: src/lib/ecore/ecore_getopt.c:1728
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "CHYBA: neplatná hodnota velikosti '%s'\n"

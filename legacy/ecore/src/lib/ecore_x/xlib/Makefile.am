@@ -61,7 +61,8 @@ ecore_x_test.c \
 ecore_x_atoms.c \
 ecore_x_region.c \
 ecore_x_image.c \
-ecore_x_xi2.c
+ecore_x_xi2.c \
+ecore_x_inline.x
 
 libecore_x_xlib_la_LIBADD = \
 @Xcursor_libs@ \
