@@ -163,14 +163,14 @@ AM_CONDITIONAL([ELEMENTARY_WINDOWS_BUILD], [test "x${have_windows}" = "xyes"])
 
 PKG_CHECK_MODULES([ELEMENTARY],
    [
-    eina-0 >= 0.0.1
-    eet >= 1.2.3
-    evas >= 0.9.9
-    ecore >= 0.9.9
-    ecore-evas >= 0.9.9
-    ecore-file >= 0.9.9
-    ecore-imf >= 0.9.9
-    edje >= 0.9.9
+    eina >= 1.0.0
+    eet >= 1.4.0
+    evas >= 1.0.0
+    ecore >= 1.0.0
+    ecore-evas >= 1.0.0
+    ecore-file >= 1.0.0
+    ecore-imf >= 1.0.0
+    edje >= 1.0.0
    ]
 )
 
@@ -185,7 +185,7 @@ AC_ARG_WITH(eet-eet,
 ])
 AC_SUBST(eet_eet)
         
-requirement_elm="edje ecore-file ecore-evas ecore evas eet eina-0 ${requirement_elm}"
+requirement_elm="edje >= 1.0.0 ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_elm}"
 
 have_elementary_x="no"
 want_elementary_x="auto"
@@ -195,11 +195,11 @@ AC_ARG_ENABLE([ecore-x],
 
 if test "x$want_elementary_x" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_X],
-      [ecore-x],
+      [ecore-x >= 1.0.0],
       [
        AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
        have_elementary_x="yes"
-       requirement_elm="ecore-x ${requirement_elm}"
+       requirement_elm="ecore-x >= 1.0.0 ${requirement_elm}"
       ],
       [have_elementary_x="no"]
    )
@@ -219,11 +219,11 @@ AC_ARG_ENABLE([ecore-fb],
 
 if test "x$want_elementary_fb" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_FB],
-      [ecore-fb],
+      [ecore-fb >= 1.0.0],
       [
        AC_DEFINE(HAVE_ELEMENTARY_FB, 1, [FB support for Elementary])
        have_elementary_fb="yes"
-       requirement_elm="ecore-fb ${requirement_elm}"
+       requirement_elm="ecore-fb >= 1.0.0 ${requirement_elm}"
       ],
       [have_elementary_fb="no"]
    )
@@ -242,11 +242,11 @@ AC_ARG_ENABLE([ecore-sdl],
 
 if test "x$want_elementary_sdl" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_SDL],
-      [ecore-sdl],
+      [ecore-sdl >= 1.0.0],
       [
        AC_DEFINE(HAVE_ELEMENTARY_SDL, 1, [SDL support for Elementary])
        have_elementary_sdl="yes"
-       requirement_elm="ecore-sdl ${requirement_elm}"
+       requirement_elm="ecore-sdl >= 1.0.0 ${requirement_elm}"
       ],
       [have_elementary_sdl="no"]
    )
@@ -265,11 +265,11 @@ AC_ARG_ENABLE([ecore-win32],
 
 if test "x$want_elementary_win32" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_WIN32],
-      [ecore-win32],
+      [ecore-win32 >= 1.0.0],
       [
        AC_DEFINE(HAVE_ELEMENTARY_WIN32, 1, [Windows XP support for Elementary])
        have_elementary_win32="yes"
-       requirement_elm="ecore-win32 ${requirement_elm}"
+       requirement_elm="ecore-win32 >= 1.0.0 ${requirement_elm}"
       ],
       [have_elementary_win32="no"]
    )
@@ -288,11 +288,11 @@ AC_ARG_ENABLE([ecore-wince],
 
 if test "x$want_elementary_wince" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_WINCE],
-      [ecore-wince],
+      [ecore-wince >= 1.0.0],
       [
        AC_DEFINE(HAVE_ELEMENTARY_WINCE, 1, [Windows CE support for Elementary])
        have_elementary_wince="yes"
-       requirement_elm="ecore-wince ${requirement_elm}"
+       requirement_elm="ecore-wince >= 1.0.0 ${requirement_elm}"
       ],
       [have_elementary_wince="no"]
    )
@@ -313,14 +313,14 @@ AC_ARG_ENABLE([edbus],
 if test "x$want_elementary_edbus" != "xno"; then
     PKG_CHECK_MODULES([ELEMENTARY_EDBUS],
        [
-        edbus
-        ehal
+        edbus >= 1.0.0
+        ehal >= 1.0.0
        ],
        [
         AC_DEFINE(HAVE_ELEMENTARY_EDBUS, 1, [EDBus support for Elementary])
         have_elementary_edbus="yes"
         ELM_EDBUS_DEF="#define"
-        requirement_elm="ehal edbus ${requirement_elm}"
+        requirement_elm="ehal >= 1.0.0 edbus >= 1.0.0 ${requirement_elm}"
        ],
        [have_elementary_edbus="no"]
     )
@@ -342,15 +342,15 @@ AC_ARG_ENABLE([efreet],
 if test "x$want_elementary_efreet" != "xno"; then
     PKG_CHECK_MODULES([ELEMENTARY_EFREET],
        [
-        efreet
-        efreet-mime
-        efreet-trash
+        efreet >= 1.0.0
+        efreet-mime >= 1.0.0
+        efreet-trash >= 1.0.0
        ],
        [
         AC_DEFINE(HAVE_ELEMENTARY_EFREET, 1, [Efreet support for Elementary])
         have_elementary_efreet="yes"
         ELM_EFREET_DEF="#define"
-        requirement_elm="efreet efreet-mime efreet-trash ${requirement_elm}"
+        requirement_elm="efreet >= 1.0.0 efreet-mime >= 1.0.0 efreet-trash >= 1.0.0 ${requirement_elm}"
        ],
        [have_elementary_efreet="no"]
     )
