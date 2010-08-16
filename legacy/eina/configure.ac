@@ -97,11 +97,6 @@ EFL_CHECK_THREADS(
    ],
    [have_threads="no"])
 EFL_CHECK_SPINLOCK([have_posix_threads_spinlock="yes"], [have_posix_threads_spinlock="no"])
-EFL_CHECK_RWLOCK(
-  [EINA_CONFIGURE_RWLOCKS_ENABLED="#define EINA_RWLOCKS_ENABLED"]
-  [have_posix_threads_rwlock="yes"],
-  [have_posix_threads_rwlock="no"])
-AC_SUBST([EINA_CONFIGURE_RWLOCKS_ENABLED])
 
 ### Additional options to configure
 
@@ -597,7 +592,6 @@ echo "  Default mempool......: ${have_default_mempool}"
 echo "  Thread Support.......: ${have_threads}"
 if test "${have_threads}" = "POSIX" ; then
 echo "    spinlock...........: ${have_posix_threads_spinlock}"
-echo "    rwlock.............: ${have_posix_threads_rwlock}"
 fi
 echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Iconv support........: ${have_iconv}"
