@@ -25,7 +25,7 @@ the code. Some of the datatypes handles are:
   Matricies
   Quadtrees
   Red/black trees
-  Strinbuffers (expandable string bufers)
+  Stringbuffers (expandable string buffers)
 
 In addition Eina supports shared string token hashes with Stringshare
 and Unistringshare (standard ascii/utf8 strings and full unicode
