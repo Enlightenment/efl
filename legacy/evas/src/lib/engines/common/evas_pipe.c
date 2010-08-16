@@ -1850,7 +1850,7 @@ evas_common_pipe_init(void)
 	  }
 
 #if defined(METRIC_CACHE) || defined(WORD_CACHE)
-	eina_stringshare_threads_init();
+	eina_threads_init();
 #endif
      }
    if (thread_num == 1) return EINA_FALSE;
