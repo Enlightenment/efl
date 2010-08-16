@@ -1780,8 +1780,6 @@ _layout_paragraph_new(Ctxt *c)
 /**
  * @internal
  * Free the layout paragraph and all of it's lines.
- *
- * FIXME: should get the context
  */
 static void
 _paragraph_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
@@ -6562,7 +6560,7 @@ evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur)
    Eina_Bool ret = EINA_FALSE;
    Evas_Textblock_Cursor cur2;
    if (!cur) return EINA_FALSE;
-   /* FIXME: optimize a bit */
+
    evas_textblock_cursor_copy(cur, &cur2);
    evas_textblock_cursor_line_char_last(&cur2);
    if (cur2.pos == cur->pos)
