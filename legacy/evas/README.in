@@ -55,7 +55,7 @@ COMPILING AND INSTALLING:
 
   ./configure
   make
-(as root unless youa re installing in your users directories):
+(as root unless you are installing in your users directories):
   make install
 
 if you want to know what options to enable
