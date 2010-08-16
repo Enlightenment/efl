@@ -37,7 +37,7 @@ have_dep="no"
 evas_image_loader_[]$1[]_cflags=""
 evas_image_loader_[]$1[]_libs=""
 
-PKG_CHECK_MODULES([EET], [eet >= 1.4.0], [have_dep="yes" requirement="eet"], [have_dep="no"])
+PKG_CHECK_MODULES([EET], [eet >= 1.4.0], [have_dep="yes" requirement="eet >= 1.4.0"], [have_dep="no"])
 evas_image_loader_[]$1[]_cflags="${EET_CFLAGS}"
 evas_image_loader_[]$1[]_libs="${EET_LIBS}"
 
