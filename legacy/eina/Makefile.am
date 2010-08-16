@@ -19,16 +19,15 @@ ltmain.sh \
 missing
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = eina-0.pc
+pkgconfig_DATA = eina-1.pc
 
 EXTRA_DIST = \
 AUTHORS \
 COPYING \
-OLD-COPYING.PLAIN \
 README \
 $(pkgconfig_DATA) \
 autogen.sh \
-eina-0.pc.in \
+eina-1.pc.in \
 eina.spec \
 eina.spec.in \
 m4/ac_attribute.m4 \

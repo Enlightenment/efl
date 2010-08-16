@@ -19,11 +19,10 @@
 #ifndef EINA_MAIN_H_
 #define EINA_MAIN_H_
 
-
 #include "eina_types.h"
 
-#define EINA_VERSION_MAJOR 0
-#define EINA_VERSION_MINOR 9
+#define EINA_VERSION_MAJOR 1
+#define EINA_VERSION_MINOR 0
 
 typedef struct _Eina_Version
 {
@@ -48,11 +47,8 @@ EAPI extern Eina_Version *eina_version;
  */
 
 EAPI int eina_init(void);
-
 EAPI int eina_shutdown(void);
-
 EAPI int eina_threads_init(void);
-
 EAPI int eina_threads_shutdown(void);
 
 /**

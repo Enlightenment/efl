@@ -1,2 +1,47 @@
-Data types library (List, hash, etc)
+Eina 1.0.0 ALPHA
 
+******************************************************************************
+
+ FOR ANY ISSUES PLEASE EMAIL:
+ enlightenment-devel@lists.sourceforge.net
+
+******************************************************************************
+
+Requirements:
+-------------
+Must have:
+ libc
+ libm
+ (For windows you also need: evil)
+
+Eina is a library providing data structure utilities for EFL that are meant
+to be lean, efficient and tailored to EFL's needs. This saves each
+library implementing its own custom datatype handling and duplicating
+the code. Some of the datatypes handles are:
+  Arrays (variable sized)
+  Hash tables
+  Inlined linked lists
+  Linked lists
+  Matricies
+  Quadtrees
+  Red/black trees
+  Strinbuffers (expandable string bufers)
+
+In addition Eina supports shared string token hashes with Stringshare
+and Unistringshare (standard ascii/utf8 strings and full unicode
+strings). It has a Trash pointer collector for deferring freeing until
+work is complete on a dataset, Unicode string wrapping and handling,
+UTF8 string parsing, 2D tile structure handling and rectangle
+utilities, module loading wrapper, Memory pools for faster allocation
+and less fragmentation of the heap, Output logging and selective
+aborting on critical enough states, fixed point math functions, CPU
+feature detection (like MMX, SSE, VFP, NEON etc.), Counters, binary
+token sharing and more.
+
+------------------------------------------------------------------------------
+COMPILING AND INSTALLING:
+
+  ./configure
+  make
+(do this as root unless you are installing in your users directories):
+  make install

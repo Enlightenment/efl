@@ -137,10 +137,10 @@ static inline Eina_Bool		eina_array_foreach(Eina_Array *array, Eina_Each_Cb cb, 
  *   free(item);
  * @endcode
  */
-#define EINA_ARRAY_ITER_NEXT(array, index, item, iterator)              \
+#define EINA_ARRAY_ITER_NEXT(array, index, item, iterator) \
    for (index = 0, iterator = (array)->data; \
         (index < eina_array_count_get(array)) && ((item = *((iterator)++))); \
-                                                   ++(index))
+        ++(index))
 
 #include "eina_inline_array.x"
 
