@@ -57,15 +57,12 @@ typedef struct _Evas_Post_Callback          Evas_Post_Callback;
 #define MAGIC_OBJ                  0x71777770
 #define MAGIC_OBJ_RECTANGLE        0x71777771
 #define MAGIC_OBJ_LINE             0x71777772
-#define MAGIC_OBJ_GRADIENT         0x71777773
 #define MAGIC_OBJ_POLYGON          0x71777774
 #define MAGIC_OBJ_IMAGE            0x71777775
 #define MAGIC_OBJ_TEXT             0x71777776
 #define MAGIC_OBJ_SMART            0x71777777
 #define MAGIC_OBJ_TEXTBLOCK        0x71777778
 #define MAGIC_SMART                0x72777770
-#define MAGIC_OBJ_GRADIENT_LINEAR  0x72777771
-#define MAGIC_OBJ_GRADIENT_RADIAL  0x72777772
 #define MAGIC_OBJ_SHAPE            0x72777773
 #define MAGIC_OBJ_CONTAINER        0x72777774
 #define MAGIC_OBJ_CUSTOM           0x72777775
@@ -623,49 +620,6 @@ struct _Evas_Func
    void *(*polygon_point_add)              (void *data, void *context, void *polygon, int x, int y);
    void *(*polygon_points_clear)           (void *data, void *context, void *polygon);
    void (*polygon_draw)                    (void *data, void *context, void *surface, void *polygon, int x, int y);
-
-   void (*gradient2_color_np_stop_insert)   (void *data, void *gradient, int r, int g, int b, int a, float pos);
-   void (*gradient2_clear)                  (void *data, void *gradient);
-   void (*gradient2_fill_transform_set)     (void *data, void *gradient, void *transform);
-   void (*gradient2_fill_spread_set)        (void *data, void *gradient, int spread);
-
-   void *(*gradient2_linear_new)                   (void *data);
-   void (*gradient2_linear_free)                   (void *data, void *linear_gradient);
-   void (*gradient2_linear_fill_set)               (void *data, void *linear_gradient, float x0, float y0, float x1, float y1);
-   int  (*gradient2_linear_is_opaque)              (void *data, void *context, void *linear_gradient, int x, int y, int w, int h);
-   int  (*gradient2_linear_is_visible)             (void *data, void *context, void *linear_gradient, int x, int y, int w, int h);
-   void (*gradient2_linear_render_pre)             (void *data, void *context, void *linear_gradient);
-   void (*gradient2_linear_render_post)            (void *data, void *linear_gradient);
-   void (*gradient2_linear_draw)                   (void *data, void *context, void *surface, void *linear_gradient, int x, int y, int w, int h);
-
-   void *(*gradient2_radial_new)                   (void *data);
-   void (*gradient2_radial_free)                   (void *data, void *radial_gradient);
-   void (*gradient2_radial_fill_set)               (void *data, void *radial_gradient, float cx, float cy, float rx, float ry);
-   int  (*gradient2_radial_is_opaque)              (void *data, void *context, void *radial_gradient, int x, int y, int w, int h);
-   int  (*gradient2_radial_is_visible)             (void *data, void *context, void *radial_gradient, int x, int y, int w, int h);
-   void (*gradient2_radial_render_pre)             (void *data, void *context, void *radial_gradient);
-   void (*gradient2_radial_render_post)            (void *data, void *radial_gradient);
-   void (*gradient2_radial_draw)                   (void *data, void *context, void *surface, void *radial_gradient, int x, int y, int w, int h);
-
-   void *(*gradient_new)                   (void *data);
-   void (*gradient_free)                   (void *data, void *gradient);
-   void (*gradient_color_stop_add)         (void *data, void *gradient, int r, int g, int b, int a, int delta);
-   void (*gradient_alpha_stop_add)         (void *data, void *gradient, int a, int delta);
-   void (*gradient_color_data_set)         (void *data, void *gradient, void *map, int len, int alpha_flag);
-   void (*gradient_alpha_data_set)         (void *data, void *gradient, void *alpha_map, int len);
-   void (*gradient_clear)                  (void *data, void *gradient);
-   void (*gradient_fill_set)               (void *data, void *gradient, int x, int y, int w, int h);
-   void (*gradient_fill_angle_set)         (void *data, void *gradient, double fill_angle);
-   void (*gradient_fill_spread_set)        (void *data, void *gradient, int spread);
-   void (*gradient_angle_set)              (void *data, void *gradient, double angle);
-   void (*gradient_offset_set)             (void *data, void *gradient, float offset);
-   void (*gradient_direction_set)          (void *data, void *gradient, int direction);
-   void (*gradient_type_set)               (void *data, void *gradient, char *name, char *params);
-   int  (*gradient_is_opaque)              (void *data, void *context, void *gradient, int x, int y, int w, int h);
-   int  (*gradient_is_visible)             (void *data, void *context, void *gradient, int x, int y, int w, int h);
-   void (*gradient_render_pre)             (void *data, void *context, void *gradient);
-   void (*gradient_render_post)            (void *data, void *gradient);
-   void (*gradient_draw)                   (void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h);
 
    void *(*image_load)                     (void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
    void *(*image_new_from_data)            (void *data, int w, int h, DATA32 *image_data, int alpha, int cspace);

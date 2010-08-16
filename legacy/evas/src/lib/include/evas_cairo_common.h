@@ -23,7 +23,6 @@ typedef struct _Evas_Cairo_Context                   Evas_Cairo_Context;
 typedef struct _Evas_Cairo_Image                     Evas_Cairo_Image;
 typedef struct _Evas_Cairo_Polygon                   Evas_Cairo_Polygon;
 typedef struct _Evas_Cairo_Polygon_Point             Evas_Cairo_Polygon_Point;
-typedef struct _Evas_Cairo_Gradient                  Evas_Cairo_Gradient;
 
 struct _Evas_Cairo_Context
 {
@@ -114,11 +113,6 @@ struct _Evas_Cairo_Polygon_Point
 {
    int x, y;
 };
-
-struct _Evas_Cairo_Gradient
-{
-   RGBA_Gradient   *grad;
-};
 #endif
 
 /*
@@ -150,16 +144,12 @@ void              evas_gl_common_image_dirty(Evas_GL_Image *im);
 Evas_GL_Polygon  *evas_gl_common_poly_point_add(Evas_GL_Polygon *poly, int x, int y);
 Evas_GL_Polygon  *evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly);
 
-Evas_GL_Gradient *evas_gl_common_gradient_color_add(Evas_GL_Gradient *gr, int r, int g, int b, int a, int distance);
-Evas_GL_Gradient *evas_gl_common_gradient_colors_clear(Evas_GL_Gradient *gr);
-
 void              evas_gl_common_swap_rect(Evas_GL_Context *gc, int x, int y, int w, int h);
 
 void              evas_gl_common_rect_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, int x, int y, int w, int h);
 void              evas_gl_common_image_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth);
 void              evas_gl_common_line_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
 void              evas_gl_common_poly_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Polygon *poly);
-void              evas_gl_common_gradient_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Gradient *gr, int x, int y, int w, int h, double angle);
 
 Evas_GL_Font_Texture *evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg);
 void                  evas_gl_font_texture_free(Evas_GL_Font_Texture *ft);

@@ -111,9 +111,6 @@ typedef struct _Evas_GL_Image                        Evas_GL_Image;
 typedef struct _Evas_GL_Font_Texture                 Evas_GL_Font_Texture;
 typedef struct _Evas_GL_Polygon                      Evas_GL_Polygon;
 typedef struct _Evas_GL_Polygon_Point                Evas_GL_Polygon_Point;
-/*
-typedef struct _Evas_GL_Gradient                     Evas_GL_Gradient;
-*/
 
 struct _Evas_GL_Program
 {
@@ -330,16 +327,6 @@ struct _Evas_GL_Polygon_Point
 {
    int x, y;
 };
-
-/*
-struct _Evas_GL_Gradient
-{
-   RGBA_Gradient   *grad;
-   Evas_GL_Texture *tex;
-   int              tw, th;
-   unsigned char    changed : 1;
-};
-*/
 
 extern Evas_GL_Program_Source shader_rect_frag_src;
 extern Evas_GL_Program_Source shader_rect_vert_src;

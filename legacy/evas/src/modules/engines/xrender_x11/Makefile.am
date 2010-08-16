@@ -15,7 +15,6 @@ if BUILD_ENGINE_XRENDER_X11
 
 XRENDER_X11_SOURCES = \
 evas_engine_xlib_font.c \
-evas_engine_xlib_gradient.c \
 evas_engine_xlib_image.c \
 evas_engine_xlib_render.c \
 evas_engine_xlib_ximage.c \
@@ -25,7 +24,6 @@ if BUILD_ENGINE_XRENDER_XCB
 
 XRENDER_X11_SOURCES += \
 evas_engine_xcb_font.c \
-evas_engine_xcb_gradient.c \
 evas_engine_xcb_image.c \
 evas_engine_xcb_render.c \
 evas_engine_xcb_ximage.c

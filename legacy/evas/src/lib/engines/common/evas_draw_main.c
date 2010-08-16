@@ -42,7 +42,6 @@ evas_common_init(void)
    evas_common_convert_init();
    evas_common_scale_init();
    evas_common_rectangle_init();
-   evas_common_gradient_init();
    evas_common_polygon_init();
    evas_common_line_init();
    evas_common_font_init();

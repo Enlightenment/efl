@@ -738,7 +738,6 @@ _evas_common_init(void)
    evas_common_convert_init();
    evas_common_scale_init();
    evas_common_rectangle_init();
-   evas_common_gradient_init();
    evas_common_polygon_init();
    evas_common_line_init();
    evas_common_font_init();
@@ -1167,29 +1166,6 @@ evas_engine_dfb_polygon_draw(void *data, void *context, void *surface, void *pol
    screen->Unlock(screen);
 }
 #endif
-
-static void
-evas_engine_dfb_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h)
-{
-   DirectFB_Engine_Image_Entry *eim = surface;
-   IDirectFBSurface *screen;
-   Render_Engine *re = data;
-   RGBA_Image *dst, *src;
-
-   dst = (RGBA_Image *)eim->cache_entry.src;
-   screen = eim->surface;
-   if (!_dfb_lock_and_sync_image(screen, dst, DSLF_READ | DSLF_WRITE))
-     return;
-
-   evas_common_gradient_draw(dst, context, x, y, w, h, gradient);
-   evas_common_cpu_end_opt();
-
-   dst->image.data = NULL;
-
-   screen->Unlock(screen);
-
-   return;
-}
 
 /** Image Object *******************************************************/
 static void *
@@ -1742,7 +1718,6 @@ module_open(Evas_Module *em)
    ORD(line_draw);
    ORD(rectangle_draw);
    ORD(polygon_draw);
-   ORD(gradient_draw);
    ORD(image_scale_hint_set);
    ORD(image_scale_hint_get);
 

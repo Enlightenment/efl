@@ -186,9 +186,6 @@ evas_debug_magic_string_get(DATA32 magic)
       case MAGIC_OBJ_LINE:
 	return "Evas_Object (Line)";
 	break;
-      case MAGIC_OBJ_GRADIENT:
-	return "Evas_Object (Gradient)";
-	break;
       case MAGIC_OBJ_POLYGON:
 	return "Evas_Object (Polygon)";
 	break;

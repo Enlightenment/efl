@@ -44,15 +44,6 @@ evas_font_draw.c \
 evas_font_load.c \
 evas_font_main.c \
 evas_font_query.c \
-evas_gradient_main.c \
-evas_gradient_linear.c \
-evas_gradient_radial.c \
-evas_gradient_angular.c \
-evas_gradient_rectangular.c \
-evas_gradient_sinusoidal.c \
-evas_gradient2_main.c \
-evas_gradient2_linear.c \
-evas_gradient2_radial.c \
 evas_image_load.c \
 evas_image_save.c \
 evas_image_main.c \
@@ -91,8 +82,6 @@ evas_draw.h \
 evas_encoding.h \
 evas_font.h \
 evas_font_private.h \
-evas_gradient.h \
-evas_gradient_private.h \
 evas_image.h \
 evas_image_private.h \
 evas_line.h \

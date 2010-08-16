@@ -379,13 +379,6 @@ typedef struct _RGBA_Pipe_Thread_Info RGBA_Pipe_Thread_Info;
 typedef struct _RGBA_Image            RGBA_Image;
 typedef struct _RGBA_Image_Span       RGBA_Image_Span;
 typedef struct _RGBA_Draw_Context     RGBA_Draw_Context;
-typedef struct _RGBA_Gradient         RGBA_Gradient;
-typedef struct _RGBA_Gradient_Color_Stop   RGBA_Gradient_Color_Stop;
-typedef struct _RGBA_Gradient_Alpha_Stop   RGBA_Gradient_Alpha_Stop;
-typedef struct _RGBA_Gradient_Type    RGBA_Gradient_Type;
-typedef struct _RGBA_Gradient2         RGBA_Gradient2;
-typedef struct _RGBA_Gradient2_Type    RGBA_Gradient2_Type;
-typedef struct _RGBA_Gradient2_Color_Np_Stop   RGBA_Gradient2_Color_Np_Stop;
 typedef struct _RGBA_Polygon_Point    RGBA_Polygon_Point;
 typedef struct _RGBA_Map_Point        RGBA_Map_Point;
 typedef struct _RGBA_Font             RGBA_Font;
@@ -426,16 +419,6 @@ typedef void (*RGBA_Gfx_Pt_Func) (DATA32 src, DATA8 mask, DATA32 col, DATA32 *ds
 typedef void (*Gfx_Func_Copy)    (DATA32 *src, DATA32 *dst, int len);
 
 typedef void (*Gfx_Func_Convert) (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-
-typedef void (*Gfx_Func_Gradient_Fill)(DATA32 *src, int src_len,
-                                         DATA32 *dst, DATA8 *mask, int len,
-                                         int x, int y, int axx, int axy, int ayx, int ayy,
-                                         void *geom_data);
-
-typedef void (*Gfx_Func_Gradient2_Fill)(DATA32 *src, int src_len,
-                                         DATA32 *dst, DATA8 *mask, int len,
-                                         int x, int y,
-                                         void *geom_data);
 
 #include "../cache/evas_cache.h"
 
@@ -689,14 +672,6 @@ struct _RGBA_Pipe_Op
 	 RGBA_Polygon_Point *points;
       } poly;
       struct {
-	 RGBA_Gradient      *grad;
-	 int                 x, y, w, h;
-      } grad;
-      struct {
-	 RGBA_Gradient2      *grad;
-	 int                 x, y, w, h;
-      } grad2;
-      struct {
 	 RGBA_Font          *font;
 	 int                 x, y;
 	 Eina_Unicode       *text;
@@ -775,150 +750,6 @@ struct _RGBA_Image
       unsigned long long newest_usage_count;
    } cache;
 };
-
-struct _RGBA_Gradient_Color_Stop
-{
-   EINA_INLIST;
-   int               r, g, b, a;
-   int               dist;
-};
-
-struct _RGBA_Gradient_Alpha_Stop
-{
-   EINA_INLIST;
-   int               a;
-   int               dist;
-};
-
-struct _RGBA_Gradient
-{
-   struct
-     {
-	DATA32        *data;
-	int            len;
-	float          angle;
-	int            direction;
-	float          offset;
-	Eina_Bool      has_alpha : 1;
-     } map;
-
-   struct {
-	Eina_Inlist *stops;
-	DATA32           *data;
-	int               nstops;
-	int               len;
-   }  color;
-   struct {
-	Eina_Inlist *stops;
-	DATA8            *data;
-	int               nstops;
-	int               len;
-   }  alpha;
-
-   struct
-     {
-	int            x, y, w, h;
-	int            spread;
-	float          angle;
-     } fill;
-   struct
-     {
-	char          *name;
-	char          *params;
-	RGBA_Gradient_Type *geometer;
-	void          *gdata;
-     } type;
-
-   int references;
-#ifdef EVAS_FRAME_QUEUING
-   LK(ref_fq_add);
-   LK(ref_fq_del);
-   pthread_cond_t cond_fq_del;
-   int ref_fq[2];	//ref_fq[0] is for addition,
-                         //ref_fq[1] is for deletion
-#endif
-
-   Eina_Bool imported_data : 1;
-   Eina_Bool has_alpha : 1;
-};
-
-struct _RGBA_Gradient_Type
-{
-   const char              *name;
-   void                    (*init)(void);
-   void                    (*shutdown)(void);
-   void                    (*geom_init)(RGBA_Gradient *gr);
-   void                    (*geom_set)(RGBA_Gradient *gr);
-   void                    (*geom_free)(void *gdata);
-   int                     (*has_alpha)(RGBA_Gradient *gr, int render_op);
-   int                     (*has_mask)(RGBA_Gradient *gr, int render_op);
-   int                     (*get_map_len)(RGBA_Gradient *gr);
-   Gfx_Func_Gradient_Fill  (*get_fill_func)(RGBA_Gradient *gr, int render_op, unsigned char aa);
-};
-
-struct _RGBA_Gradient2_Color_Np_Stop
-{
-   EINA_INLIST;
-   int               r, g, b, a;
-   float             pos;
-   int               dist;
-};
-
-struct _RGBA_Gradient2
-{
-   struct
-     {
-	DATA32        *data;
-	int            len;
-	Eina_Bool      has_alpha : 1;
-     } map;
-
-   struct {
-	Eina_Inlist *stops;
-	int               nstops;
-	DATA32           *cdata;
-	DATA8            *adata;
-	int               len;
-   }  stops;
-
-   struct
-     {
-	Evas_Common_Transform  transform;
-	int                    spread;
-     } fill;
-   struct
-     {
-        int                 id;
-	RGBA_Gradient2_Type *geometer;
-	void                *gdata;
-     } type;
-
-   int references;
-#ifdef EVAS_FRAME_QUEUING
-   LK(ref_fq_add);
-   LK(ref_fq_del);
-   pthread_cond_t cond_fq_del;
-   int ref_fq[2];	//ref_fq[0] is for addition,
-                         //ref_fq[1] is for deletion
-#endif
-
-   Eina_Bool has_alpha : 1;
-};
-
-struct _RGBA_Gradient2_Type
-{
-   const char              *name;
-   void                    (*init)(void);
-   void                    (*shutdown)(void);
-   void                    (*geom_init)(RGBA_Gradient2 *gr);
-   void                    (*geom_update)(RGBA_Gradient2 *gr);
-   void                    (*geom_free)(void *gdata);
-   int                     (*has_alpha)(RGBA_Gradient2 *gr, int render_op);
-   int                     (*has_mask)(RGBA_Gradient2 *gr, int render_op);
-   int                     (*get_map_len)(RGBA_Gradient2 *gr);
-   Gfx_Func_Gradient2_Fill  (*get_fill_func)(RGBA_Gradient2 *gr, int render_op);
-};
-
 
 struct _RGBA_Polygon_Point
 {
@@ -1283,7 +1114,6 @@ EAPI void     evas_common_blit_init               (void);
 EAPI void     evas_common_blit_rectangle          (const RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, int h, int dst_x, int dst_y);
 
 /****/
-#include "../engines/common/evas_gradient.h"
 #include "../engines/common/evas_font.h"
 
 /****/

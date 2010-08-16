@@ -342,7 +342,7 @@ struct _Evas_Native_Surface
 #define EVAS_COLOR_SPACE_ARGB                      0 /**< ARGB color space */
 #define EVAS_COLOR_SPACE_AHSV                      1 /**< AHSV color space */
 
-#define EVAS_TEXTURE_REFLECT            0 /**< Gradient and image fill tiling mode - tiling reflects */
+#define EVAS_TEXTURE_REFLECT            0 /**< image fill tiling mode - tiling reflects */
 #define EVAS_TEXTURE_REPEAT             1 /**< tiling repeats */
 #define EVAS_TEXTURE_RESTRICT           2 /**< tiling clamps - range offset ignored */
 #define EVAS_TEXTURE_RESTRICT_REFLECT   3 /**< tiling clamps and any range offset reflects */
@@ -1439,58 +1439,6 @@ typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj
    EAPI Evas_Object      *evas_object_polygon_add           (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
    EAPI void              evas_object_polygon_point_add     (Evas_Object *obj, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_polygon_points_clear  (Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * @defgroup Evas_Object_Gradient_Group Gradient Object Functions
- *
- * Functions that work on evas gradient objects.
- *
- * @ingroup Evas_Object_Specific
- */
-   EINA_DEPRECATED EAPI Evas_Object      *evas_object_gradient_add            (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
-   EINA_DEPRECATED EAPI void              evas_object_gradient_color_stop_add (Evas_Object *obj, int r, int g, int b, int a, int delta) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void              evas_object_gradient_alpha_stop_add (Evas_Object *obj, int a, int delta) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void              evas_object_gradient_color_data_set (Evas_Object *obj, void *color_data, int len, Eina_Bool has_alpha) EINA_ARG_NONNULL(1, 2);
-   EINA_DEPRECATED EAPI void              evas_object_gradient_alpha_data_set (Evas_Object *obj, void *alpha_data, int len) EINA_ARG_NONNULL(1, 2);
-   EINA_DEPRECATED EAPI void              evas_object_gradient_clear          (Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void              evas_object_gradient_type_set       (Evas_Object *obj, const char *type, const char *instance_params) EINA_ARG_NONNULL(1, 2);
-   EINA_DEPRECATED EAPI void              evas_object_gradient_type_get       (const Evas_Object *obj, char **type, char **instance_params) EINA_ARG_NONNULL(1, 2);
-   EINA_DEPRECATED EAPI void              evas_object_gradient_fill_set       (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void              evas_object_gradient_fill_get       (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void              evas_object_gradient_fill_angle_set (Evas_Object *obj, Evas_Angle angle) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI Evas_Angle        evas_object_gradient_fill_angle_get (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EINA_DEPRECATED EAPI void              evas_object_gradient_fill_spread_set(Evas_Object *obj, int tile_mode) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI int               evas_object_gradient_fill_spread_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EINA_DEPRECATED EAPI void              evas_object_gradient_angle_set      (Evas_Object *obj, Evas_Angle angle) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI Evas_Angle        evas_object_gradient_angle_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EINA_DEPRECATED EAPI void              evas_object_gradient_direction_set  (Evas_Object *obj, int direction) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI int               evas_object_gradient_direction_get  (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EINA_DEPRECATED EAPI void              evas_object_gradient_offset_set     (Evas_Object *obj, float offset) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI float             evas_object_gradient_offset_get     (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-
-/**
- * @defgroup Evas_Object_Gradient2_Group Gradient2 Object Functions
- *
- * Functions that work on evas gradient2 objects.
- *
- * @ingroup Evas_Object_Specific
- */
-   EINA_DEPRECATED EAPI void              evas_object_gradient2_color_np_stop_insert (Evas_Object *obj, int r, int g, int b, int a, float pos) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void              evas_object_gradient2_fill_spread_set      (Evas_Object *obj, int tile_mode) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI int               evas_object_gradient2_fill_spread_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EINA_DEPRECATED EAPI void              evas_object_gradient2_fill_transform_set   (Evas_Object *obj, Evas_Transform *t) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void              evas_object_gradient2_fill_transform_get   (const Evas_Object *obj, Evas_Transform *t) EINA_ARG_NONNULL(1);
-
-/* linear gradient2 objects */
-   EINA_DEPRECATED EAPI Evas_Object      *evas_object_gradient2_linear_add      (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
-   EINA_DEPRECATED EAPI void              evas_object_gradient2_linear_fill_set (Evas_Object *obj, float x0, float y0, float x1, float y1) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void              evas_object_gradient2_linear_fill_get (const Evas_Object *obj, float *x0, float *y0, float *x1, float *y1) EINA_ARG_NONNULL(1);
-
-/* radial gradient2 objects */
-   EINA_DEPRECATED EAPI Evas_Object      *evas_object_gradient2_radial_add      (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
-   EINA_DEPRECATED EAPI void              evas_object_gradient2_radial_fill_set (Evas_Object *obj, float cx, float cy, float rx, float ry) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void              evas_object_gradient2_radial_fill_get (const Evas_Object *obj, float *cx, float *cy, float *rx, float *ry) EINA_ARG_NONNULL(1);
-
 
 /**
  * @defgroup Evas_Smart_Group Smart Functions

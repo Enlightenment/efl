@@ -46,25 +46,6 @@ static void *eng_polygon_point_add(void *data, void *context, void *polygon, int
 static void *eng_polygon_points_clear(void *data, void *context, void *polygon);
 static void eng_polygon_draw(void *data, void *context, void *surface, void *polygon);
 
-static void *eng_gradient_new(void *data);
-static void eng_gradient_free(void *data, void *gradient);
-static void eng_gradient_color_stop_add(void *data, void *gradient, int r, int g, int b, int a, int delta);
-static void eng_gradient_alpha_stop_add(void *data, void *gradient, int a, int delta);
-static void eng_gradient_color_data_set(void *data, void *gradient, void *map, int len, int has_alpha);
-static void eng_gradient_alpha_data_set(void *data, void *gradient, void *alpha_map, int len);
-static void eng_gradient_clear(void *data, void *gradient);
-static void eng_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h);
-static void eng_gradient_fill_angle_set(void *data, void *gradient, double angle);
-static void eng_gradient_fill_spread_set(void *data, void *gradient, int spread);
-static void eng_gradient_angle_set(void *data, void *gradient, double angle);
-static void eng_gradient_offset_set(void *data, void *gradient, float offset);
-static void eng_gradient_direction_set(void *data, void *gradient, int direction);
-static void eng_gradient_type_set(void *data, void *gradient, char *name, char *params);
-static int eng_gradient_is_opaque(void *data, void *context, void *gradient, int x, int y, int w, int h);
-static int eng_gradient_is_visible(void *data, void *context, void *gradient, int x, int y, int w, int h);
-static void eng_gradient_render_pre(void *data, void *context, void *gradient);
-static void eng_gradient_render_post(void *data, void *gradient);
-static void eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h);
 static void *eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
 
 static void *eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace);

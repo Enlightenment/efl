@@ -261,49 +261,4 @@ void             _xre_xcb_font_surface_free(XR_Font_Surface *fs);
 void             _xre_xcb_font_surface_draw(Ximage_Info *xinf, RGBA_Image *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y);
 #endif
 
-typedef struct _XR_Gradient XR_Gradient;
-
-struct _XR_Gradient
-{
-   Ximage_Info     *xinf;
-   Xrender_Surface *surface;
-   RGBA_Gradient   *grad;
-   unsigned char    changed : 1;
-   int              sw, sh;
-};
-
-XR_Gradient *_xre_xlib_gradient_new(Ximage_Info *xinf);
-void         _xre_xlib_gradient_free(XR_Gradient *gr);
-void         _xre_xlib_gradient_color_stop_add(XR_Gradient *gr, int r, int g, int b, int a, int delta);
-void         _xre_xlib_gradient_alpha_stop_add(XR_Gradient *gr, int a, int delta);
-void         _xre_xlib_gradient_color_data_set(XR_Gradient *gr, void *map, int len, int has_alpha);
-void         _xre_xlib_gradient_alpha_data_set(XR_Gradient *gr, void *alpha_map, int len);
-void         _xre_xlib_gradient_clear(XR_Gradient *gr);
-void         _xre_xlib_gradient_fill_set(XR_Gradient *gr, int x, int y, int w, int h);
-void         _xre_xlib_gradient_fill_angle_set(XR_Gradient *gr, double angle);
-void         _xre_xlib_gradient_fill_spread_set(XR_Gradient *gr, int spread);
-void         _xre_xlib_gradient_angle_set(XR_Gradient *gr, double angle);
-void         _xre_xlib_gradient_offset_set(XR_Gradient *gr, float offset);
-void         _xre_xlib_gradient_direction_set(XR_Gradient *gr, int direction);
-void         _xre_xlib_gradient_type_set(XR_Gradient *gr, char *name, char *params);
-void         _xre_xlib_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h);
-
-#ifdef BUILD_ENGINE_XRENDER_XCB
-XR_Gradient *_xre_xcb_gradient_new(Ximage_Info *xinf);
-void         _xre_xcb_gradient_free(XR_Gradient *gr);
-void         _xre_xcb_gradient_color_stop_add(XR_Gradient *gr, int r, int g, int b, int a, int delta);
-void         _xre_xcb_gradient_alpha_stop_add(XR_Gradient *gr, int a, int delta);
-void         _xre_xcb_gradient_color_data_set(XR_Gradient *gr, void *map, int len, int has_alpha);
-void         _xre_xcb_gradient_alpha_data_set(XR_Gradient *gr, void *alpha_map, int len);
-void         _xre_xcb_gradient_clear(XR_Gradient *gr);
-void         _xre_xcb_gradient_fill_set(XR_Gradient *gr, int x, int y, int w, int h);
-void         _xre_xcb_gradient_fill_angle_set(XR_Gradient *gr, double angle);
-void         _xre_xcb_gradient_fill_spread_set(XR_Gradient *gr, int spread);
-void         _xre_xcb_gradient_angle_set(XR_Gradient *gr, double angle);
-void         _xre_xcb_gradient_offset_set(XR_Gradient *gr, float offset);
-void         _xre_xcb_gradient_direction_set(XR_Gradient *gr, int direction);
-void         _xre_xcb_gradient_type_set(XR_Gradient *gr, char *name, char *params);
-void         _xre_xcb_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h);
-#endif
-
 #endif

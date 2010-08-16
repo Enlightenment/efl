@@ -53,7 +53,6 @@ _output_setup(int w, int h, int rot, QWidget *target)
    evas_common_convert_init();
    evas_common_scale_init();
    evas_common_rectangle_init();
-   evas_common_gradient_init();
    evas_common_polygon_init();
    evas_common_line_init();
    evas_common_font_init();
