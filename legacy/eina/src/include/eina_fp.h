@@ -41,11 +41,16 @@ static inline int32_t      eina_f32p32_int_to(Eina_F32p32 v);
 static inline Eina_F32p32  eina_f32p32_double_from(double v);
 static inline double       eina_f32p32_double_to(Eina_F32p32 v);
 
-static inline Eina_F32p32  eina_f32p32_add(Eina_F32p32 a, Eina_F32p32 b);
-static inline Eina_F32p32  eina_f32p32_sub(Eina_F32p32 a, Eina_F32p32 b);
-static inline Eina_F32p32  eina_f32p32_mul(Eina_F32p32 a, Eina_F32p32 b);
-static inline Eina_F32p32  eina_f32p32_scale(Eina_F32p32 a, int b);
-static inline Eina_F32p32  eina_f32p32_div(Eina_F32p32 a, Eina_F32p32 b);
+static inline Eina_F32p32  eina_f32p32_add(Eina_F32p32 a,
+                                           Eina_F32p32 b);
+static inline Eina_F32p32  eina_f32p32_sub(Eina_F32p32 a,
+                                           Eina_F32p32 b);
+static inline Eina_F32p32  eina_f32p32_mul(Eina_F32p32 a,
+                                           Eina_F32p32 b);
+static inline Eina_F32p32  eina_f32p32_scale(Eina_F32p32 a,
+                                             int b);
+static inline Eina_F32p32  eina_f32p32_div(Eina_F32p32 a,
+                                           Eina_F32p32 b);
 static inline Eina_F32p32  eina_f32p32_sqrt(Eina_F32p32 a);
 static inline unsigned int eina_f32p32_fracc_get(Eina_F32p32 v);
 
@@ -60,11 +65,16 @@ static inline int32_t      eina_f16p16_int_to(Eina_F16p16 v);
 static inline Eina_F16p16  eina_f16p16_float_from(float v);
 static inline float        eina_f16p16_float_to(Eina_F16p16 v);
 
-static inline Eina_F16p16  eina_f16p16_add(Eina_F16p16 a, Eina_F16p16 b);
-static inline Eina_F16p16  eina_f16p16_sub(Eina_F16p16 a, Eina_F16p16 b);
-static inline Eina_F16p16  eina_f16p16_mul(Eina_F16p16 a, Eina_F16p16 b);
-static inline Eina_F16p16  eina_f16p16_scale(Eina_F16p16 a, int b);
-static inline Eina_F16p16  eina_f16p16_div(Eina_F16p16 a, Eina_F16p16 b);
+static inline Eina_F16p16  eina_f16p16_add(Eina_F16p16 a,
+                                           Eina_F16p16 b);
+static inline Eina_F16p16  eina_f16p16_sub(Eina_F16p16 a,
+                                           Eina_F16p16 b);
+static inline Eina_F16p16  eina_f16p16_mul(Eina_F16p16 a,
+                                           Eina_F16p16 b);
+static inline Eina_F16p16  eina_f16p16_scale(Eina_F16p16 a,
+                                             int b);
+static inline Eina_F16p16  eina_f16p16_div(Eina_F16p16 a,
+                                           Eina_F16p16 b);
 static inline Eina_F16p16  eina_f16p16_sqrt(Eina_F16p16 a);
 static inline unsigned int eina_f16p16_fracc_get(Eina_F16p16 v);
 
@@ -73,11 +83,16 @@ static inline int32_t      eina_f8p24_int_to(Eina_F8p24 v);
 static inline Eina_F8p24   eina_f8p24_float_from(float v);
 static inline float        eina_f8p24_float_to(Eina_F8p24 v);
 
-static inline Eina_F8p24   eina_f8p24_add(Eina_F8p24 a, Eina_F8p24 b);
-static inline Eina_F8p24   eina_f8p24_sub(Eina_F8p24 a, Eina_F8p24 b);
-static inline Eina_F8p24   eina_f8p24_mul(Eina_F8p24 a, Eina_F8p24 b);
-static inline Eina_F8p24   eina_f8p24_scale(Eina_F8p24 a, int b);
-static inline Eina_F8p24   eina_f8p24_div(Eina_F8p24 a, Eina_F8p24 b);
+static inline Eina_F8p24   eina_f8p24_add(Eina_F8p24 a,
+                                          Eina_F8p24 b);
+static inline Eina_F8p24   eina_f8p24_sub(Eina_F8p24 a,
+                                          Eina_F8p24 b);
+static inline Eina_F8p24   eina_f8p24_mul(Eina_F8p24 a,
+                                          Eina_F8p24 b);
+static inline Eina_F8p24   eina_f8p24_scale(Eina_F8p24 a,
+                                            int b);
+static inline Eina_F8p24   eina_f8p24_div(Eina_F8p24 a,
+                                          Eina_F8p24 b);
 static inline Eina_F8p24   eina_f8p24_sqrt(Eina_F8p24 a);
 static inline unsigned int eina_f8p24_fracc_get(Eina_F8p24 v);
 
