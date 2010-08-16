@@ -202,7 +202,7 @@ struct _Edje_Aspect
 
 struct _Edje_String
 {
-   char *str;
+   const char *str;
    unsigned int id;
 };
 
