@@ -69,60 +69,6 @@ START_TEST(eina_array_simple)
 }
 END_TEST
 
-#ifdef EINA_RWLOCKS_ENABLED
-static Eina_Bool
-_eina_array_clean(Eina_Array *ea, char *tmp, unsigned int *i)
-{
-   fail_if(!ea);
-   fail_if((unsigned int)atoi(tmp) != *i);
-   free(tmp);
-
-   (*i)++;
-
-   return EINA_TRUE;
-}
-
-START_TEST(eina_array_threadsafe)
-{
-   Eina_Array *ea;
-   char *tmp;
-   unsigned int i;
-
-   eina_init();
-
-   ea = eina_array_threadsafe_new(11);
-        fail_if(!ea);
-
-   for (i = 0; i < 201; ++i)
-     {
-        tmp = malloc(sizeof(char) * 10);
-        fail_if(!tmp);
-        eina_convert_itoa(i, tmp);
-
-        eina_array_push(ea, tmp);
-     }
-
-   fail_if(eina_array_data_get(ea, 10) == NULL);
-   fail_if(atoi(eina_array_data_get(ea, 10)) != 10);
-   tmp = eina_array_pop(ea);
-   fail_if(tmp == NULL);
-   fail_if(atoi(tmp) != 200);
-   free(tmp);
-
-   i = 0;
-   eina_array_foreach(ea, EINA_EACH_CB(_eina_array_clean), &i);
-
-   fail_if(i != 200);
-
-   eina_array_clean(ea);
-   eina_array_flush(ea);
-   eina_array_free(ea);
-
-   eina_shutdown();
-}
-END_TEST
-#endif
-
 START_TEST(eina_array_static)
 {
    Eina_Array sea;
@@ -240,9 +186,6 @@ void
 eina_test_array(TCase *tc)
 {
    tcase_add_test(tc, eina_array_simple);
-#ifdef EINA_RWLOCKS_ENABLED
-   tcase_add_test(tc, eina_array_threadsafe);
-#endif
    tcase_add_test(tc, eina_array_static);
    tcase_add_test(tc, eina_array_remove_stuff);
 }

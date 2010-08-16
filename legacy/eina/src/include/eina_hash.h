@@ -23,10 +23,6 @@
 #include "eina_types.h"
 #include "eina_iterator.h"
 
-#ifdef EINA_RWLOCKS_ENABLED
-# include <pthread.h>
-# include <errno.h>
-#endif
 /**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
