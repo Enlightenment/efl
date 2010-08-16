@@ -555,7 +555,7 @@ AC_SUBST(requirement_eina)
 
 AC_CONFIG_FILES([
 Makefile
-eina-1.pc
+eina.pc
 eina.spec
 doc/Makefile
 src/Makefile
