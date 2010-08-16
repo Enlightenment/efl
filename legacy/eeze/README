@@ -1,4 +1,4 @@
-Embryo 1.0.0-alpha ALPHA
+Eeze 1.0.0-alpha ALPHA
 
 ******************************************************************************
 
@@ -14,15 +14,26 @@ Requirements:
 Must:
   libc
   ecore (at least 1.0.0)
+  libudev
 
-Eeze is a library for handling devicekit and friends .... disco-stu...
-fill the rest in!
+Eeze is a library for manipulating devices through udev with a simple and fast api.
+It interfaces directly with libudev, avoiding such middleman daemons as udisks/upower
+or hal, to immediately gather device information the instant it becomes known to
+the system.  This can be used to determine such things as:
+  *if a cdrom has a disk inserted
+  *the temperature of a cpu core
+  *the remaining power left in a battery
+  *the current power consumption of various parts
+  *monitor in realtime the status of peripheral devices
+Each of the above examples can be performed by using only a single eeze function,
+as one of the primary focuses of the library is to reduce the complexity of
+managing devices.
 
 ------------------------------------------------------------------------------
 COMPILING AND INSTALLING:
 
   ./configure
   make
-(as root unless youa re installing in your users directories):
+(as root unless you are installing in your users directories):
   make install
       
