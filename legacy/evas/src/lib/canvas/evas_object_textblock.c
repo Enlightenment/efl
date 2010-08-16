@@ -58,6 +58,8 @@
  * to the format nodes to make it do more.
  * For more information, take a look at all the evas_textblock_node_format_*
  * functions.
+ * The translation of "<tag>" tags to actual format is done according to the
+ * tags defined in the style, see @ref evas_textblock_style_set
  *
  * @subsection textblock_special_formats Special Formats
  * @todo Write @textblock_special_formats
