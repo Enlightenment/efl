@@ -45,10 +45,7 @@ eina_strbuf.c \
 eina_strbuf_common.c \
 eina_ustrbuf.c \
 eina_unicode.c \
-eina_quadtree.c \
-eina_share_common.h \
-eina_strbuf_common.h \
-eina_strbuf_template_c.i
+eina_quadtree.c
 
 if EINA_STATIC_BUILD_CHAINED_POOL
 base_sources += $(top_srcdir)/src/modules/mp/chained_pool/eina_chained_mempool.c

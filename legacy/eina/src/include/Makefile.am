@@ -61,4 +61,7 @@ dist_installed_headers_DATA = $(EINAHEADERS)
 
 EXTRA_DIST = \
 eina_config.h.in \
-eina_private.h
+eina_private.h \
+eina_share_common.h \
+eina_strbuf_common.h \
+eina_strbuf_template_c.x

@@ -43,7 +43,7 @@ static const char __STRBUF_MAGIC_STR[] = "Eina Strbuf";
 #include "eina_unicode.h"
 #include "eina_private.h"
 
-#include "eina_strbuf_template_c.i"
+#include "eina_strbuf_template_c.x"
 
 
 
