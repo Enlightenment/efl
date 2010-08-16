@@ -61,7 +61,7 @@ case "$host_os" in
       MODULE_ARCH="$host_os-$host_cpu"
       ;;
    *)
-      MODULE_ARCH="$host_os-$host_cpu-$relname"
+      MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
       ;;
 esac
 AC_SUBST(MODULE_ARCH)
