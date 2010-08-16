@@ -115,8 +115,8 @@
  * There are two types of format nodes, visible and invisible. They are the same
  * in every way, except for the representation in the text node. While invisible
  * format nodes have no representation in the text node, the visible ones do.
- * The Uniceode replacement character (0xFFFD) is inserted to every place a
- * visible format node points to. This makes it very easy to treat visible
+ * The Uniceode object replacement character (0xFFFC) is inserted to every place
+ * a visible format node points to. This makes it very easy to treat visible
  * formats as items in the text, both for BiDi purposes and cursor handling
  * purposes.
  * Here are a few example visible an invisible formats:
@@ -137,7 +137,7 @@
 static const char o_type[] = "textblock";
 
 /* The char to be inserted instead of visible formats */
-#define EVAS_TEXTBLOCK_REPLACEMENT_CHAR 0xFFFD
+#define EVAS_TEXTBLOCK_REPLACEMENT_CHAR 0xFFFC
 
 /* private struct for textblock object internal data */
 /**
@@ -3712,7 +3712,7 @@ _prepend_escaped_char(Evas_Textblock_Cursor *cur, const char *s,
 /**
  * Sets the tetxblock's text to the markup text.
  *
- * @note assumes text does not include the unicode replacement char (0xFFFD)
+ * @note assumes text does not include the unicode object replacement char (0xFFFC)
  *
  * @param obj  the textblock object.
  * @param text the markup text to use.
@@ -3753,7 +3753,7 @@ evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
 /**
  * Prepends markup to the cursor cur.
  *
- * @note assumes text does not include the unicode replacement char (0xFFFD)
+ * @note assumes text does not include the unicode object replacement char (0xFFFC)
  *
  * @param cur  the cursor to prepend to.
  * @param text the markup text to prepend.
@@ -3882,6 +3882,16 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                        esc_end = p;
                        s = p + 1;
                     }
+               }
+             /* Unicode object replcament char */
+             else if (!strncmp("\xEF\xBF\xBC", p, 3))
+               {
+                  /*FIXME: currently just remove them, maybe do something
+                   * fancier in the future, atm it breaks if this char
+                   * is inside <> */
+                  _prepend_text_run(o, s, p);
+                  p += 2; /* it's also advanced later in this loop */
+                  s = NULL;
                }
              p++;
           }
