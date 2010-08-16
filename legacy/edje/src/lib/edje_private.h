@@ -1754,8 +1754,8 @@ edje_program_is_strrncmp(const char *str)
    return EINA_TRUE;
 }
 
-void _edje_program_insert(Edje_Part_Collection *ed, Edje_Program *p);
-void _edje_program_remove(Edje_Part_Collection *ed, Edje_Program *p);
+EAPI void _edje_program_insert(Edje_Part_Collection *ed, Edje_Program *p);
+EAPI void _edje_program_remove(Edje_Part_Collection *ed, Edje_Program *p);
 
 // new lua stuff - supercedes the old
 #define LUA2 1
