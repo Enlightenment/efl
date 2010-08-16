@@ -69,6 +69,7 @@ START_TEST(eina_array_simple)
 }
 END_TEST
 
+#ifdef EINA_RWLOCKS_ENABLED
 static Eina_Bool
 _eina_array_clean(Eina_Array *ea, char *tmp, unsigned int *i)
 {
@@ -120,6 +121,7 @@ START_TEST(eina_array_threadsafe)
    eina_shutdown();
 }
 END_TEST
+#endif
 
 START_TEST(eina_array_static)
 {
@@ -182,7 +184,7 @@ START_TEST(eina_array_remove_stuff)
 
    eina_init();
 
-   ea = eina_array_threadsafe_new(64);
+   ea = eina_array_new(64);
         fail_if(!ea);
 
    for (i = 0; i < 1000; ++i)
@@ -238,7 +240,9 @@ void
 eina_test_array(TCase *tc)
 {
    tcase_add_test(tc, eina_array_simple);
+#ifdef EINA_RWLOCKS_ENABLED
    tcase_add_test(tc, eina_array_threadsafe);
+#endif
    tcase_add_test(tc, eina_array_static);
    tcase_add_test(tc, eina_array_remove_stuff);
 }
