@@ -38,8 +38,8 @@
 extern "C" {
 #endif
    
-#define EDJE_VERSION_MAJOR 0
-#define EDJE_VERSION_MINOR 9
+#define EDJE_VERSION_MAJOR 1
+#define EDJE_VERSION_MINOR 0
    
    typedef struct _Edje_Version
      {

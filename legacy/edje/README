@@ -1,82 +1,38 @@
-Edje 0.5.0
+Edje 1.0.0 ALPHA
 
+******************************************************************************
+
+ FOR ANY ISSUES PLEASE EMAIL:
+ enlightenment-devel@lists.sourceforge.net
+  
+******************************************************************************
+  
 Requirements:
 -------------
 
 Must:
-  libc libm eet ecore ecore-evas ecore-job ecore-file embryo evas
+  libc
+  libm 
+  eet (at least 1.4.0) 
+  ecore (at least 1.0.0)
+  ecore-evas (at least 1.0.0)
+  ecore-file (at least 1.0.0)
+  embryo (at least 1.0.0)
+  evas (at least 1.0.0)
 
-A graphical layout and animation library for animated resizable, compressed and
-scalable themes.
+Edje is a graphical layout and animation library for animated resizable,
+compressed and scalable themes. It is meant to abstract UI from the
+programmer to make it possible to plug in any replacement look at feel
+that can be generated any time after an application or library has
+already been developed, thus allowing full flexibility of look and
+feel without having to involve the software developers.
 
-It's current under development and isn't complete. See src/lib/edje_private.h
-for a list of FIXME's to do. Hopefully it will be complete in a few weeks.
+------------------------------------------------------------------------------
+COMPILING AND INSTALLING:
 
-Quick start-up guide:
-
-1. You need eet from the HEAD cvs branch (must be up-to-date)
-
-  cvs co e17/libs/eet
-  cd e17/libs/eet
-  ./autogen.sh
+  ./configure
   make
-  sudo make install
-  cd
-
-2. You need evas from the HEAD branch built with eet loader support.
-
-  cvs co e17/libs/evas
-  cd e17/libs/evas
-  ./autogen.sh
-  make
-  sudo make install
-  cd
-  
-3. You need ecore from the HEAD cvs branch
-
-  cvs co e17/libs/ecore
-  cd e17/libs/ecore
-  ./autogen.sh
-  make
-  sudo make install
-  cd
-
-4. You need embryo from the HEAD cvs branch
-
-  cvs co e17/libs/embryo
-  cd e17/libs/embryo
-  ./autogen.sh
-  make
-  sudo make install
-  cd
-
-5. You already have Edje. now build it:
-
-   ./autogen.sh
-   make
-   sudo make install
-
-You now want to go test it out. first you'll need to make an Edje EET file.
-   
-   cd data
-   ./e_logo.sh
-   
-Now you can view the Edje you just built:
-   
-   edje ./e_logo.edj
-   
-You can view multiple files at once with the Edje test program:
-   
-   edje ./e_logo.edj ./e_logo.edj ./e_logo.edj
-   
-to view the same one 3 times.
-   
-You can read the source file that builds the Edje EET file by looking at:
-
-   data/src/e_logo.edc
-
-Another test file is also there:
-
-   data/src/test.edc
-   
-The test file doesn't build anything useful at the moment.
+(as root unless you are installing in your users directories):
+  make install
+      
+      
