@@ -1,17 +1,25 @@
-Eet @VERSION@
+Eet @VERSION@ ALPHA
+
+******************************************************************************
+
+ FOR ANY ISSUES PLEASE EMAIL:
+ enlightenment-devel@lists.sourceforge.net
+
+******************************************************************************
 
 Requirements:
 -------------
-Must:
-  libc libm zlib libjpeg
-  Windows: evil
+Must have:
+  libc
+  libm
+  zlib
+  libjpeg
+  eina (1.0.0 or better) 
+  (For windows you also need: evil)
 
-******************************************************************************
-***
-*** FOR ANY ISSUES WITH EET PLEASE EMAIL:
-*** enlightenment-devel@lists.sourceforge.net
-***
-******************************************************************************
+Optional requirements:
+  gnutls (1.7.6 or better)
+  openssl
 
 Eet is a tiny library designed to write an arbitary set of chunks of
 data to a file and optionally compress each chunk (very much like a
@@ -23,7 +31,10 @@ It also can encode and decode data structures in memory, as well as
 image data for saving to eet files or sending across the network to
 other machines, or just writing to arbitary files on the system. All
 data is encoded in a platform independant way and can be written and
-read by any architecture.
+read by any architecture. This data once encoded can be sent to
+another process or machine and decoded on the other end without
+needing to go into an eet file. Eet can also optionally encrypt files
+and use digital signatures (with gnutls or openssl support).
 
 ------------------------------------------------------------------------------
 COMPILING AND INSTALLING:
@@ -33,13 +44,26 @@ COMPILING AND INSTALLING:
 (do this as root unless you are installing in your users directories):
   make install
 
-------------------------------------------------------------------------------
-BUILDING PACKAGES:
+To get the coverage report:
+    make coverage
+The report is created in the coverage/ subdir
+If you want to be able to run coverage test over eet, you will need gcov 
+(usually any distro provides it) and lcov from:
+  http://ltp.sourceforge.net/coverage/lcov.php.
+For coverage support you also need "make check" support with the check
+library (see below).
+ 
+For compilation with MinGW, fnmatch.h is probably missing. That file can be
+found here:
+  http://www.koders.com/c/fid2B518462CB1EED3D4E31E271DB83CD1582F6EEBE.aspx
+It should be installed in the mingw include directory.
 
-RPM: To build rpm packages:
+For compilation with mingw32ce, run configure with the option
+  --host=arm-wince-mingw32ce
 
-  sudo rpm -ta @PACKAGE@-@VERSION@.tar.gz
+For compilation with cegcc, follow the wiki:
+  http://wiki.enlightenment.org/index.php/Category:EFL_Windows_CE
 
-You will find rpm packages in your system /usr/src/redhat/* dirs (note you may
-not need to use sudo or root if you have your own ~/.rpmrc. see rpm documents
-for more details)
+If you want to be able to run "make check", you need library check
+  from http://check.sourceforge.net/
+
