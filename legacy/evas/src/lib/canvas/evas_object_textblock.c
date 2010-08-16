@@ -2424,8 +2424,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
              str = alloca((len + 1) * sizeof(Eina_Unicode));
              tbase = str;
              ind = 0;
-             urepch = evas_common_encoding_utf8_get_next(
-                   (const unsigned char *)repch, &ind);
+             urepch = evas_common_encoding_utf8_get_next(repch, &ind);
              for (i = 0, ptr = (Eina_Unicode *)tbase; i < len; ptr++, i++)
                *ptr = urepch;
              *ptr = 0;
@@ -4132,7 +4131,7 @@ _evas_textblock_cursor_node_format_at_pos_get(const Evas_Textblock_Cursor *cur)
 {
    Evas_Object_Textblock_Node_Format *node;
    Evas_Object_Textblock_Node_Format *itr;
-   size_t position = 0;
+   int position = 0;
 
    if (!cur->node) return NULL;
 
@@ -5493,7 +5492,7 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    int len = 0;
 
    if (!cur) return 0;
-   text = evas_common_encoding_utf8_to_unicode((const unsigned char *) _text, &len);
+   text = evas_common_encoding_utf8_to_unicode(_text, &len);
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    /* Update all the cursors after our position. */
    _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, len);

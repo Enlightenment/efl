@@ -7,7 +7,6 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 	   int dst_region_w, int dst_region_h)
 {
    DATA32  *dst_ptr;
-   int      dst_jump;
    int      dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h;
    int      src_w, src_h, dst_w, dst_h;
 

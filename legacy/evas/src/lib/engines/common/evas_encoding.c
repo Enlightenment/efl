@@ -1,8 +1,8 @@
 #include "evas_common.h"
 #include "evas_encoding.h"
 
-EAPI int
-evas_common_encoding_utf8_get_next(const unsigned char *buf, int *iindex)
+EAPI Eina_Unicode
+evas_common_encoding_utf8_get_next(const char *buf, int *iindex)
 {
    /* Reads UTF8 bytes from @buf, starting at *@index and returns
     * the decoded code point at iindex offset, and advances iindex
@@ -63,8 +63,8 @@ evas_common_encoding_utf8_get_next(const unsigned char *buf, int *iindex)
    return r;
 }
 
-EAPI int
-evas_common_encoding_utf8_get_prev(const unsigned char *buf, int *iindex)
+EAPI Eina_Unicode
+evas_common_encoding_utf8_get_prev(const char *buf, int *iindex)
 {
    /* Reads UTF8 bytes from @buf, starting at *@index and returns
     * the decoded code point at iindex offset, and advances iindex
@@ -93,8 +93,8 @@ evas_common_encoding_utf8_get_prev(const unsigned char *buf, int *iindex)
    return r;
 }
 
-EAPI int
-evas_common_encoding_utf8_get_last(const unsigned char *buf, int buflen)
+EAPI Eina_Unicode
+evas_common_encoding_utf8_get_last(const char *buf, int buflen)
 {
    /* jumps to the nul byte at the buffer end and decodes backwards and
     * returns the offset index byte in the buffer where the last character
@@ -124,7 +124,7 @@ evas_common_encoding_utf8_get_last(const unsigned char *buf, int buflen)
 }
 
 EAPI int
-evas_common_encoding_utf8_get_len(const unsigned char *buf)
+evas_common_encoding_utf8_get_len(const char *buf)
 {
    /* returns the number of utf8 characters (not bytes) in the string */
    int index = 0, len = 0;
@@ -140,7 +140,7 @@ evas_common_encoding_utf8_get_len(const unsigned char *buf)
 
 /* FIXME: Should optimize! */
 EAPI Eina_Unicode *
-evas_common_encoding_utf8_to_unicode(const unsigned char *utf, int *_len)
+evas_common_encoding_utf8_to_unicode(const char *utf, int *_len)
 {
    int len, i;
    int index;

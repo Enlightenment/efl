@@ -57,8 +57,7 @@ evas_common_font_font_all_unload(void)
 EAPI int
 evas_common_font_ascent_get(RGBA_Font *fn)
 {
-   int val, dv;
-   int ret;
+   int val;
    RGBA_Font_Int *fi;
 
 //   evas_common_font_size_use(fn);
@@ -110,8 +109,7 @@ evas_common_font_ascent_get(RGBA_Font *fn)
 EAPI int
 evas_common_font_descent_get(RGBA_Font *fn)
 {
-   int val, dv;
-   int ret;
+   int val;
    RGBA_Font_Int *fi;
 
 //   evas_common_font_size_use(fn);
@@ -183,8 +181,7 @@ evas_common_font_max_descent_get(RGBA_Font *fn)
 EAPI int
 evas_common_font_get_line_advance(RGBA_Font *fn)
 {
-   int val, dv;
-   int ret;
+   int val;
    RGBA_Font_Int *fi;
 
 //   evas_common_font_size_use(fn);
@@ -205,27 +202,3 @@ evas_common_font_get_line_advance(RGBA_Font *fn)
 //   return ret;
 }
 
-/*DEPRECATED! Should use evas_common_encoding_* instead */
-EAPI int
-evas_common_font_utf8_get_next(const unsigned char *buf, int *iindex)
-{
-   return evas_common_encoding_utf8_get_next(buf, iindex);
-}
-
-EAPI int
-evas_common_font_utf8_get_prev(const unsigned char *buf, int *iindex)
-{
-   return evas_common_encoding_utf8_get_prev(buf, iindex);
-}
-
-EAPI int
-evas_common_font_utf8_get_last(const unsigned char *buf, int buflen)
-{
-   return evas_common_encoding_utf8_get_last(buf, buflen);
-}
-
-EAPI int
-evas_common_font_utf8_get_len(const unsigned char *buf)
-{
-   return evas_common_encoding_utf8_get_len(buf);
-}

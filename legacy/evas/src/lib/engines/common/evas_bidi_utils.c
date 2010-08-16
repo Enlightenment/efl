@@ -46,8 +46,6 @@
 Eina_Bool
 evas_bidi_is_rtl_str(const Eina_Unicode *str)
 {
-   int i = 0;
-   int ch;
    EvasBiDiCharType type;
 
    if (!str)

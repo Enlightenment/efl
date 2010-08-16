@@ -39,9 +39,11 @@ struct cinfo {
 };
 
 
+#if defined(METRIC_CACHE) || defined(WORD_CACHE)
 LK(lock_words); // for word cache call
 static Eina_Inlist *words = NULL;
 static struct prword *evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *text, Evas_BiDi_Props *intl_props, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning);
+#endif
 
 EAPI void
 evas_common_font_draw_init(void)
@@ -399,14 +401,11 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 {
    int pen_x, pen_y;
    int last_adv;
-   int chr;
    const Eina_Unicode *text = in_text;
-   int len;
    FT_Face pface = NULL;
    FT_UInt prev_index;
    DATA32 *im;
    int c;
-   char *p;
    int char_index = 0; /* the index of the current char */
 
 
@@ -446,7 +445,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 	  }
 
 	  if (xrun < 1) return;
-#ifdef WORD_CACHE
+# ifdef WORD_CACHE
 	  if (word->im){
 	     for (j = rowstart ; j < rowend ; j ++){
 		  func(NULL, word->im + (word->roww * j) + xstart, dc->col.col,
@@ -454,7 +453,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 	     }
 	     return;
 	  }
-#elif defined(METRIC_CACHE)
+# elif defined(METRIC_CACHE)
 	  int ind;
 	  y += word->baseline;
 	  for (ind = 0 ; ind < len ; ind ++){
@@ -480,7 +479,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 	     }
 	  }
 	return;
-#endif
+# endif
      }
 
    }
@@ -802,6 +801,8 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 
 
 /* FIXME: Where is it freed at? */
+/* Only used if cache is on */
+#if defined(METRIC_CACHE) || defined(WORD_CACHE)
 struct prword *
 evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Evas_BiDi_Props *intl_props, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning){
    int pen_x, pen_y;
@@ -819,10 +820,10 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
    struct prword *w;
    int gl;
 
-#ifndef METRIC_CACHE
+# ifndef METRIC_CACHE
    gl = dc->font_ext.func.gl_new ? 1: 0;
    if (gl) return NULL;
-#endif
+# endif
 
 
    LKL(lock_words);
@@ -866,7 +867,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
 	     (pface == fi->src->ft.face))
 	   {
               int kern = 0;
-#ifdef BIDI_SUPPORT
+# ifdef BIDI_SUPPORT
 	      /* if it's rtl, the kerning matching should be reversed, i.e prev
 	       * index is now the index and the other way around. 
                * There is a slight exception when there are compositing chars
@@ -879,7 +880,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
 		      ci->pos.x += kern;
 		}
 	      else
-#endif
+# endif
               {
 
 	           if (evas_common_font_query_kerning(fi, prev_index, ci->index, &kern))
@@ -955,6 +956,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
 
    return save;
 }
+#endif
 
 
 
