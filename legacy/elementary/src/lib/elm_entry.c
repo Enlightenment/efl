@@ -745,6 +745,10 @@ _str_append(char *str, const char *txt, int *len, int *alloc)
    return str;
 }
 
+/*FIXME: Sholud be implemented somewhere else, it really depends on the context
+ * because some markups can be implemented otherwise according to style.
+ * probably doing it in textblock and making it translate according to it's
+ * style is correct. */
 static char *
 _mkup_to_text(const char *mkup)
 {
@@ -782,6 +786,8 @@ _mkup_to_text(const char *mkup)
 			 str = _str_append(str, "\t", &str_len, &str_alloc);
 		       else if (!strcmp(ttag, "\\t"))
 			 str = _str_append(str, "\t", &str_len, &str_alloc);
+		       else if (!strcmp(ttag, "ps")) /* Unicode paragraph separator */
+			 str = _str_append(str, "\xE2\x80\xA9", &str_len, &str_alloc);
 		       free(ttag);
 		    }
 		  tag_start = tag_end = NULL;
