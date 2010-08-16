@@ -448,7 +448,7 @@ fi
 
 if test "x$have_evas_font_loader_eet" = "xyes" ; then
    AC_DEFINE([BUILD_FONT_LOADER_EET], [1], [EET Font Loader Support])
-   requirement_evas="eet ${requirement_evas}"
+   requirement_evas="eet >= 1.4.0 ${requirement_evas}"
 fi
 
 popdef([UP])

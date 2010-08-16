@@ -226,12 +226,12 @@ esac
 ## strong dependencies
 
 # Eina
-PKG_CHECK_MODULES([EINA], [eina-1])
+PKG_CHECK_MODULES([EINA], [eina >= 1.0.0])
 
 # Freetype
 PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 9.3.0])
 
-requirement_evas="freetype2 eina-1 >= 1.0.0 ${requirement_evas}"
+requirement_evas="freetype2 eina >= 1.0.0 ${requirement_evas}"
 
 ## optional dependencies
 
