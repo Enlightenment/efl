@@ -13,6 +13,7 @@ Requirements:
 Must:
   libc
   libm
+  eina (1.0.0 or better)
   freetype (2.1.9 or better)
 
 Recommended:
