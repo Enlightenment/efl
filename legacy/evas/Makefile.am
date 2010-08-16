@@ -55,7 +55,6 @@ bin_SCRIPTS =
 EXTRA_DIST = \
 AUTHORS \
 COPYING \
-COPYING-PLAIN \
 autogen.sh \
 README.in \
 README \

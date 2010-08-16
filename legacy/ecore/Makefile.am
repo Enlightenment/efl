@@ -71,7 +71,7 @@ endif
 
 bin_SCRIPTS = 
 
-EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN \
+EXTRA_DIST = AUTHORS COPYING \
 	     autogen.sh ecore.supp \
 	     ecore.pc.in \
 	     ecore-con.pc.in \
