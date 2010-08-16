@@ -65,7 +65,7 @@ AC_SUBST(version_info)
 
 AC_PROG_CC
 
-PKG_CHECK_MODULES([EIO], [eina-0 ecore])
+PKG_CHECK_MODULES([EIO], [eina ecore])
 
 ### Checks for header files
 AC_HEADER_ASSERT
