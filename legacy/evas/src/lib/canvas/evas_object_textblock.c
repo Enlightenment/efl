@@ -5075,7 +5075,7 @@ _evas_textblock_node_text_get_first_format_between(Evas_Object_Textblock *o,
    Evas_Object_Textblock_Node_Format *itr;
    int use_end = 1;
    itr = n->format_node;
-   if (end < 0) end = 0;
+   if (end < 0) use_end = 0;
    while (itr && (itr->text_node == n))
      {
         start -= itr->offset;
@@ -5981,7 +5981,16 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 
         text_base = text =
            eina_unicode_strdup(eina_ustrbuf_string_get(n1->unicode));
-        fnode = _evas_textblock_node_text_get_first_format_between(o, n1, cur1->pos, cur2->pos);
+        if (tnode == cur2->node)
+          {
+             fnode = _evas_textblock_node_text_get_first_format_between(o, n1,
+                   cur1->pos, cur2->pos);
+          }
+        else
+          {
+             fnode = _evas_textblock_node_text_get_first_format_between(o, n1,
+                   cur1->pos, -1);
+          }
         /* Init the offset so the first one will count starting from cur1->pos
          * and not the previous format node */
         if ((tnode == cur1->node) && fnode)
