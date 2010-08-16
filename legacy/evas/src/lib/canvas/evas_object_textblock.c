@@ -6053,7 +6053,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 }
 
 /**
- * Return the text of the paragraph cur points to.
+ * Return the text of the paragraph cur points to - returns the text in markup..
  *
  * @param cur the cursor pointing to the paragraph.
  * @return the text on success, NULL otherwise.
@@ -6061,15 +6061,20 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 EAPI const char *
 evas_textblock_cursor_paragraph_text_get(const Evas_Textblock_Cursor *cur)
 {
+   Evas_Textblock_Cursor cur1, cur2;
    if (!cur) return NULL;
    if (!cur->node) return NULL;
-   /*FIXME-tom: strip replace chars */
    if (cur->node->utf8)
      {
         free(cur->node->utf8);
      }
-   cur->node->utf8 = evas_common_encoding_unicode_to_utf8(
-         eina_ustrbuf_string_get(cur->node->unicode), NULL);
+   cur1.obj = cur2.obj = cur->obj;
+   cur1.node = cur2.node = cur->node;
+   evas_textblock_cursor_paragraph_char_first(&cur1);
+   evas_textblock_cursor_paragraph_char_last(&cur2);
+
+   cur->node->utf8 = evas_textblock_cursor_range_text_get(&cur1, &cur2,
+         EVAS_TEXTBLOCK_TEXT_MARKUP);
    return cur->node->utf8;
 }
 
