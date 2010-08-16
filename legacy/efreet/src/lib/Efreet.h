@@ -58,8 +58,8 @@
 extern "C" {
 #endif
 
-#define EFREET_VERSION_MAJOR 0
-#define EFREET_VERSION_MINOR 5
+#define EFREET_VERSION_MAJOR 1
+#define EFREET_VERSION_MINOR 0
    
    typedef struct _Efreet_Version
      {
