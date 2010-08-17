@@ -99,4 +99,5 @@ void        eina_share_common_population_del(Eina_Share *share, int slen);
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_share_common_log_dom, __VA_ARGS__)
 extern int _eina_share_common_log_dom;
+
 #endif /* EINA_STRINGSHARE_H_ */

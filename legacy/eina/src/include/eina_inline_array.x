@@ -19,6 +19,8 @@
 #ifndef EINA_INLINE_ARRAY_X_
 #define EINA_INLINE_ARRAY_X_
 
+#include <stdio.h>
+
 /**
  * @cond LOCAL
  */
@@ -51,7 +53,6 @@ EAPI Eina_Bool eina_array_grow(Eina_Array *array);
  * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, #EINA_TRUE is
  * returned.
  */
-#include <stdio.h>
 
 static inline Eina_Bool
 eina_array_push(Eina_Array *array, const void *data)

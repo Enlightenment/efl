@@ -33,6 +33,48 @@
 #define EINA_STRBUF_MAX_STEP 4096
 
 /**
+ * @endcond
+ */
+
+/*============================================================================*
+*                                 Global                                     *
+*============================================================================*/
+
+/**
+ * @internal
+ * @brief Initialize the strbuf module.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function sets up the strbuf module of Eina. It is called by
+ * eina_init().
+ *
+ * @see eina_init()
+ */
+Eina_Bool
+eina_strbuf_common_init(void)
+{
+   return EINA_TRUE;
+}
+
+/**
+ * @internal
+ * @brief Shut down the strbuf module.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function shuts down the strbuf module set up by
+ * eina_strbuf_common_init(). It is called by eina_shutdown().
+ *
+ * @see eina_shutdown()
+ */
+Eina_Bool
+eina_strbuf_common_shutdown(void)
+{
+   return EINA_TRUE;
+}
+
+/**
  * @internal
  *
  * init the buffer
@@ -163,52 +205,6 @@ _eina_strbuf_common_insert_length(size_t csize,
 
    buf->len += len;
    memset(buf->buf + (buf->len * csize), 0, csize);
-   return EINA_TRUE;
-}
-
-/**
- * @endcond
- */
-
-/*============================================================================*
-*                                 Global                                     *
-*============================================================================*/
-
-/**
- * @cond LOCAL
- */
-
-/**
- * @internal
- * @brief Initialize the strbuf module.
- *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
- *
- * This function sets up the strbuf module of Eina. It is called by
- * eina_init().
- *
- * @see eina_init()
- */
-Eina_Bool
-eina_strbuf_common_init(void)
-{
-   return EINA_TRUE;
-}
-
-/**
- * @internal
- * @brief Shut down the strbuf module.
- *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
- *
- * This function shuts down the strbuf module set up by
- * eina_strbuf_common_init(). It is called by eina_shutdown().
- *
- * @see eina_shutdown()
- */
-Eina_Bool
-eina_strbuf_common_shutdown(void)
-{
    return EINA_TRUE;
 }
 
@@ -658,15 +654,7 @@ eina_strbuf_common_length_get(const Eina_Strbuf *buf)
 {
    return buf->len;
 }
-/**
- * @endcond
- */
 
-/**
- * @addtogroup Eina_Data_Types_Group Data Types
- *
- * @{
- */
 /**
  * @addtogroup Eina_String_Buffer_Group String Buffer
  *
@@ -677,25 +665,27 @@ eina_strbuf_common_length_get(const Eina_Strbuf *buf)
  *
  * @{
  */
-/*FIXME: Implementing them here is a hack! */
 
-#ifdef _STRBUF_CSIZE
-# undef _STRBUF_CSIZE
-#endif
-#ifdef _STRBUF_MAGIC
-# undef _STRBUF_MAGIC
-#endif
-#ifdef _STRBUF_MAGIC_STR
-# undef _STRBUF_MAGIC_STR
-#endif
+
+/**
+ * @cond LOCAL
+ */
+
+/*FIXME: Implementing them here is a hack! */
 
 #define _STRBUF_CSIZE 1
 #define _STRBUF_MAGIC             EINA_MAGIC_STRBUF
 #define _STRBUF_MAGIC_STR         __STRBUF_STR_MAGIC_STR
 static const char __STRBUF_STR_MAGIC_STR[] = "Eina Strbuf";
 
+
 /**
- * @ brief Replace the n-th string with an other string.
+ * @endcond
+ */
+
+
+/**
+ * @brief Replace the n-th string with an other string.
  *
  * @param buf The string buffer to work with.
  * @param str The string to replace.
@@ -855,9 +845,6 @@ eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
    return n;
 }
 
-/**
- * @}
- */
 /**
  * @}
  */

@@ -16,11 +16,11 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
+#include <stdio.h>
 
 #ifdef EFL_HAVE_POSIX_THREADS
 # include <pthread.h>
@@ -51,9 +51,6 @@
 #include "eina_rectangle.h"
 #include "eina_safety_checks.h"
 
-static Eina_Version _version = { VMAJ, VMIN, VMIC, VREV };
-EAPI Eina_Version *eina_version = &_version;
-
 /*============================================================================*
 *                                  Local                                     *
 *============================================================================*/
@@ -61,6 +58,8 @@ EAPI Eina_Version *eina_version = &_version;
 /**
  * @cond LOCAL
  */
+
+static Eina_Version _version = { VMAJ, VMIN, VMIC, VREV };
 
 static int _eina_main_count = 0;
 #ifdef EFL_HAVE_THREADS
@@ -182,6 +181,7 @@ _eina_shutdown_from_desc(const struct eina_desc_setup *itr)
 *                                 Global                                     *
 *============================================================================*/
 
+
 /*============================================================================*
 *                                   API                                      *
 *============================================================================*/
@@ -194,6 +194,12 @@ _eina_shutdown_from_desc(const struct eina_desc_setup *itr)
  *
  * @{
  */
+
+/**
+ * @var eina_version
+ * @brief Eina version (defined at configuration time)
+ */
+EAPI Eina_Version *eina_version = &_version;
 
 /**
  * @brief Initialize the Eina library.

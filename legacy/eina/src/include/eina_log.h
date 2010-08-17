@@ -55,6 +55,8 @@
  */
 EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
 
+#ifndef EINA_LOG_DOMAIN_DEFAULT
+
 /**
  * @def EINA_LOG_DOMAIN_DEFAULT
  * This macro defines the domain to use with the macros EINA_LOG_DOM_DBG(),
@@ -102,9 +104,9 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
  * @endcode
  *
  */
-#ifndef EINA_LOG_DOMAIN_DEFAULT
-#define EINA_LOG_DOMAIN_DEFAULT EINA_LOG_DOMAIN_GLOBAL
-#endif
+# define EINA_LOG_DOMAIN_DEFAULT EINA_LOG_DOMAIN_GLOBAL
+
+#endif /* EINA_LOG_DOMAIN_DEFAULT */
 
 
 /**

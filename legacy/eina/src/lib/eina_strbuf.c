@@ -16,6 +16,25 @@
  *                                  Local                                     *
  *============================================================================*/
 
+/**
+ * @cond LOCAL
+ */
+
+#define _STRBUF_DATA_TYPE         char
+#define _STRBUF_CSIZE             sizeof(_STRBUF_DATA_TYPE)
+#define _STRBUF_STRUCT_NAME       Eina_Strbuf
+#define _STRBUF_STRLEN_FUNC(x)    strlen(x)
+#define _STRBUF_STRESCAPE_FUNC(x) eina_str_escape(x)
+#define _STRBUF_MAGIC             EINA_MAGIC_STRBUF
+#define _STRBUF_MAGIC_STR         __STRBUF_MAGIC_STR
+static const char __STRBUF_MAGIC_STR[] = "Eina Strbuf";
+
+#define _FUNC_EXPAND(y) eina_strbuf_ ## y
+
+/**
+ * @endcond
+ */
+
 
 /*============================================================================*
  *                                 Global                                     *
@@ -25,6 +44,18 @@
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+
+
+/**
+ * @addtogroup Eina_String_Buffer_Group String Buffer
+ *
+ * @brief These functions provide string buffers management.
+ *
+ * The String Buffer data type is designed to be a mutable string,
+ * allowing to append, prepend or insert a string to a buffer.
+ *
+ * @{
+ */
 
 EAPI Eina_Bool
 eina_strbuf_append_printf(Eina_Strbuf *buf, const char *fmt, ...)
@@ -105,15 +136,8 @@ eina_strbuf_insert_vprintf(Eina_Strbuf *buf,
 
 /* Unicode */
 
-#define _STRBUF_DATA_TYPE         char
-#define _STRBUF_CSIZE             sizeof(_STRBUF_DATA_TYPE)
-#define _STRBUF_STRUCT_NAME       Eina_Strbuf
-#define _STRBUF_STRLEN_FUNC(x)    strlen(x)
-#define _STRBUF_STRESCAPE_FUNC(x) eina_str_escape(x)
-#define _STRBUF_MAGIC             EINA_MAGIC_STRBUF
-#define _STRBUF_MAGIC_STR         __STRBUF_MAGIC_STR
-static const char __STRBUF_MAGIC_STR[] = "Eina Strbuf";
-
-#define _FUNC_EXPAND(y) eina_strbuf_ ## y
-
 #include "eina_strbuf_template_c.x"
+
+/**
+ * @}
+ */

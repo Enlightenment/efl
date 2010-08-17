@@ -6,6 +6,13 @@
 #include "eina_unicode.h"
 #include "eina_ustrbuf.h"
 
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
 
 #define _STRBUF_DATA_TYPE         Eina_Unicode
 #define _STRBUF_CSIZE             sizeof(_STRBUF_DATA_TYPE)
@@ -18,4 +25,33 @@ static const char __USTRBUF_MAGIC_STR[] = "Eina UStrbuf";
 
 #define _FUNC_EXPAND(y) eina_ustrbuf_ ## y
 
+/**
+ * @endcond
+ */
+
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Eina_Unicode_String_Buffer_Group Unicode String Buffer
+ *
+ * @brief These functions provide unicode string buffers management.
+ *
+ * The Unicode String Buffer data type is designed to be a mutable string,
+ * allowing to append, prepend or insert a string to a buffer.
+ *
+ * @{
+ */
+
 #include "eina_strbuf_template_c.x"
+
+/**
+ * @}
+ */

@@ -22,8 +22,9 @@
 
 #include "eina_unicode.h"
 #include "eina_ustringshare.h"
+
 /**
- * @addtogroup Eina_UStringshare_Group UStringshare
+ * @addtogroup Eina_UStringshare_Group Unicode Stringshare
  *
  * @{
  */
