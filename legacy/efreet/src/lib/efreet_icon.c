@@ -143,7 +143,7 @@ efreet_icon_shutdown(void)
  * @return Returns the user icon directory
  * @brief Returns the user icon directory
  */
-const char *
+static const char *
 efreet_icon_deprecated_user_dir_get(void)
 {
     const char *user;
@@ -351,7 +351,7 @@ efreet_icon_find_theme_check(const char *theme_name)
 EAPI char *
 efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int size)
 {
-    char *value;
+    char *value = NULL;
     Efreet_Icon_Theme *theme;
 
     theme = efreet_icon_find_theme_check(theme_name);

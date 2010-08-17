@@ -398,7 +398,7 @@ efreet_menu_init(void)
 
     struct
     {
-        char *key;
+        const char *key;
         int (*cb)(Efreet_Menu_Internal *parent, Efreet_Xml *xml);
     } menu_cbs[] = {
         {"Menu", efreet_menu_handle_sub_menu},
@@ -427,7 +427,7 @@ efreet_menu_init(void)
 
     struct
     {
-        char *key;
+        const char *key;
         int (*cb)(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml);
     } filter_cbs[] = {
         {"Filename", efreet_menu_handle_filename},
@@ -441,7 +441,7 @@ efreet_menu_init(void)
 
     struct
     {
-        char *key;
+        const char *key;
         int (*cb)(Efreet_Menu_Internal *parent, Efreet_Xml *xml);
     } move_cbs[] = {
         {"Old", efreet_menu_handle_old},
@@ -451,7 +451,7 @@ efreet_menu_init(void)
 
     struct
     {
-        char *key;
+        const char *key;
         int (*cb)(Efreet_Menu_Internal *parent, Efreet_Xml *xml, int def);
     } layout_cbs[] = {
         {"Menuname", efreet_menu_handle_layout_menuname},

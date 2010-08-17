@@ -1376,7 +1376,6 @@ static void
 efreet_mime_magic_free(void *data)
 {
     Efreet_Mime_Magic *m = data;
-    Efreet_Mime_Magic_Entry *entry = NULL;
 
     IF_RELEASE(m->mime);
     IF_FREE_LIST(m->entries, efreet_mime_magic_entry_free);
