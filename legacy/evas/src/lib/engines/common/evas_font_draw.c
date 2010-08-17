@@ -556,7 +556,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 #endif
 		 {
 
-		    if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
+		    if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
 		      pen_x += kern;
 		 }
 	    }
