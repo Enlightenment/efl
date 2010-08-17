@@ -211,7 +211,7 @@ eina_convert_shutdown(void)
  * Compile this code with the following command:
  *
  * @code
- * gcc -Wall -o test_eina_convert test_eina.c `pkg-config --cflags --libs eina-0`
+ * gcc -Wall -o test_eina_convert test_eina.c `pkg-config --cflags --libs eina`
  * @endcode
  *
  * @note
@@ -280,7 +280,7 @@ eina_convert_shutdown(void)
  * Compile this code with the following command:
  *
  * @code
- * gcc -Wall -o test_eina_convert test_eina.c `pkg-config --cflags --libs eina-0` -lm
+ * gcc -Wall -o test_eina_convert test_eina.c `pkg-config --cflags --libs eina` -lm
  * @endcode
  *
  * @{

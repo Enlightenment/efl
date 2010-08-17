@@ -210,7 +210,7 @@ part of the given group. See the following annotated example:
  *     Requires edje_example.edj in the current folder.
  *
  * Compile:
- *    gcc -o edje_example edje_example.c `pkg-config --cflags --libs eina-0 evas ecore ecore-evas edje`
+ *    gcc -o edje_example edje_example.c `pkg-config --cflags --libs eina evas ecore ecore-evas edje`
  */
 
 #include <Eina.h>
@@ -408,7 +408,7 @@ collections {
 
 One should save these files as edje_example.c and edje_example.edc then:
 @verbatim
-gcc -o edje_example edje_example.c `pkg-config --cflags --libs eina-0 evas ecore ecore-evas edje`
+gcc -o edje_example edje_example.c `pkg-config --cflags --libs eina evas ecore ecore-evas edje`
 edje_cc edje_example.edc
 
 ./edje_example "some text"
