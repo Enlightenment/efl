@@ -54,19 +54,25 @@ VMAJ=v_maj
 AC_SUBST(VMAJ)
 
 ### Needed information
+EDJE_VERSION="1.0.0"
 
 case "$host_os" in
    mingw* | cegcc*)
+      MODULE_EDJE="$host_os-$host_cpu"
       want_xine="no"
       want_gstreamer="yes"
       want_vlc="no"
       ;;
    *)
+      MODULE_EDJE="$host_os-$host_cpu-${EDJE_VERSION}"
       want_xine="yes"
       want_gstreamer="yes"
       want_vlc="yes"
       ;;
 esac
+
+AC_SUBST(MODULE_EDJE)
+AC_DEFINE_UNQUOTED(MODULE_EDJE, "$MODULE_EDJE", "Edje module architecture")
 
 requirement_emotion=""
 
@@ -112,7 +118,7 @@ PKG_CHECK_MODULES(EMOTION, [eina >= 1.0.0 evas >= 1.0.0 ecore >= 1.0.0])
 requirement_emotion="ecore >= 1.0.0 evas >= 1.0.0 eina >= 1.0.0"
 
 if test "x${have_emotion_test}" = "xyes" ; then
-   PKG_CHECK_MODULES(EMOTION_BIN, [evas >= 1.0.0 ecore >= 1.0.0 ecore-evas >= 1.0.0 edje >= 1.0.0])
+   PKG_CHECK_MODULES(EMOTION_BIN, [evas >= 1.0.0 ecore >= 1.0.0 ecore-evas >= 1.0.0 edje >= ${EDJE_VERSION}])
 fi
 
 PKG_CHECK_MODULES(ECORE_X, [ecore-x >= 1.0.0], [have_ecore_x="yes"], [have_ecore_x="no"])

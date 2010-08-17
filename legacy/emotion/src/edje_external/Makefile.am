@@ -9,7 +9,7 @@ AM_CPPFLAGS = \
 @EFL_EMOTION_BUILD@ \
 @EDJE_EXTERNAL_CFLAGS@
 
-pkgdir = $(libdir)/edje
+pkgdir = $(libdir)/edje/modules/$(MODULE_EDJE)
 pkg_LTLIBRARIES = emotion.la
 
 emotion_la_SOURCES = emotion.c

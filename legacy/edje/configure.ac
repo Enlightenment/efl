@@ -60,10 +60,12 @@ EFL_CHECK_PATH_MAX
 
 case "$host_os" in
    mingw32ce* | cegcc*)
+      MODULE_ARCH="$host_os-$host_cpu"
       install_vim="no"
       have_edje_cc="no"
       ;;
    *)
+      MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
       install_vim="yes"
       have_edje_cc="yes"
       ;;
@@ -71,6 +73,8 @@ esac
 
 requirement_edje=""
 
+AC_SUBST(MODULE_ARCH)
+AC_DEFINE_UNQUOTED(MODULE_ARCH, "${MODULE_ARCH}", "Module architecture")
 
 ### Additional options to configure
 

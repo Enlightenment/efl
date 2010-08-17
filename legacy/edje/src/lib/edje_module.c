@@ -81,13 +81,42 @@ edje_module_load(const char *module)
 void
 _edje_module_init(void)
 {
-   unsigned int i;
    Eina_Array_Iterator it;
    Eina_Module *m;
+   char *paths[4] = { NULL, NULL, NULL, NULL };
+   unsigned int i;
+   unsigned int j;
 
    _registered_modules = eina_hash_string_small_new(NULL);
-   _available_modules = eina_module_list_get(_available_modules,
-           PACKAGE_LIB_DIR "/edje", 0, NULL, NULL);
+
+   /* 1. ~/.edje/modules/ */
+   paths[0] = eina_module_environment_path_get("HOME", "/.edje/modules");
+   /* 2. $(EVAS_MODULE_DIR)/edje/modules/ */
+   paths[1] = eina_module_environment_path_get("EDJE_MODULES_DIR", "/edje/modules");
+   /* 3. libedje.so/../edje/modules/ */
+   paths[2] = eina_module_symbol_path_get(_edje_module_init, "/edje/modules");
+   /* 4. PREFIX/evas/modules/ */
+#ifndef _MSC_VER
+   paths[3] = PACKAGE_LIB_DIR "/evas/modules";
+#endif
+
+   for (j = 0; j < ((sizeof (paths) / sizeof (char*)) - 1); ++j)
+     for (i = j + 1; i < sizeof (paths) / sizeof (char*); ++i)
+       if (paths[i] && paths[j] && !strcmp(paths[i], paths[j]))
+	 paths[i] = NULL;
+
+   for (i = 0; i < sizeof (paths) / sizeof (char*); ++i)
+     if (paths[i])
+       {
+	  char *tmp;
+	  unsigned int len;
+
+	  len = strlen(paths[i]) + strlen(MODULE_ARCH) + 5;
+	  tmp = alloca(len);
+	  snprintf(tmp, len, "%s/%s/", paths[i], MODULE_ARCH);
+
+	  _available_modules = eina_module_list_get(_available_modules, tmp, 0, NULL, NULL);
+       }
 
    if (!_available_modules)
      {
