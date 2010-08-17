@@ -6788,6 +6788,10 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    obj->layer->evas->engine.func->context_multiplier_unset(output,
 							   context);
    clip = ENFN->context_clip_get(output, context, &cx, &cy, &cw, &ch);
+   /* If there are no paragraphs and thus there are no lines,
+    * there's nothing left to do. */
+   if (!o->paragraphs) return;
+
 #define ITEM_WALK() \
    EINA_INLIST_FOREACH(o->paragraphs->lines, ln) \
      { \
@@ -6818,7 +6822,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                   if ((obj->cur.geometry.x + x + ln->x + it->x - it->inset) > (cx + cw + 20)) \
                     break; \
                }
-             
+
 #define ITEM_WALK_END() \
 	  } \
      }
