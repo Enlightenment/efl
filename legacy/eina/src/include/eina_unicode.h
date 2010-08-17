@@ -1,6 +1,11 @@
 #ifndef EINA_UNICODE_H
 #define EINA_UNICODE_H
 
+#include <stdlib.h>
+
+#include "eina_config.h"
+#include "eina_types.h"
+
 /**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
@@ -15,8 +20,6 @@
  *
  * @{
  */
-
-#include "eina_config.h"
 
 /**
  * @typedef Eina_Unicode
@@ -35,10 +38,6 @@ typedef uint32_t Eina_Unicode;
 /* Hope that int is big enough */
 typedef unsigned int Eina_Unicode;
 #endif
-
-#include <stdlib.h>
-
-#include "eina_types.h"
 
 EAPI extern const Eina_Unicode *EINA_UNICODE_EMPTY_STRING;
 
