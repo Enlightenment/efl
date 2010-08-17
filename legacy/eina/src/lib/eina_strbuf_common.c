@@ -673,6 +673,18 @@ eina_strbuf_common_length_get(const Eina_Strbuf *buf)
 
 /*FIXME: Implementing them here is a hack! */
 
+#ifdef _STRBUF_CSIZE
+# undef _STRBUF_CSIZE
+#endif
+
+#ifdef _STRBUF_MAGIC
+# undef _STRBUF_MAGIC
+#endif
+
+#ifdef _STRBUF_MAGIC_STR
+# undef _STRBUF_MAGIC_STR
+#endif
+
 #define _STRBUF_CSIZE 1
 #define _STRBUF_MAGIC             EINA_MAGIC_STRBUF
 #define _STRBUF_MAGIC_STR         __STRBUF_STR_MAGIC_STR

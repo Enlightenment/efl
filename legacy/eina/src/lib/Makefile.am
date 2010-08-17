@@ -122,6 +122,7 @@ eina_amalgamation.c: $(base_sources) Makefile
 	@echo "#include \"eina_private.h\"" >> eina_amalgamation.c
 	@echo "#include \"eina_safety_checks.h\"" >> eina_amalgamation.c
 	@echo "#include \"Eina.h\"" >> eina_amalgamation.c
+	@echo "#include \"eina_strbuf_common.h\"" >> eina_amalgamation.c
 	@echo "#include \"eina_share_common.h\"" >> eina_amalgamation.c
 
 	@for f in $(base_sources); do \
