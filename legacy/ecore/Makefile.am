@@ -71,25 +71,39 @@ endif
 
 bin_SCRIPTS = 
 
-EXTRA_DIST = AUTHORS COPYING \
-	     autogen.sh ecore.supp \
-	     ecore.pc.in \
-	     ecore-con.pc.in \
-	     ecore-config.pc.in \
-	     ecore-directfb.pc.in\
-	     ecore-evas.pc.in \
-	     ecore-fb.pc.in \
-	     ecore-file.pc.in \
-	     ecore-imf.pc.in \
-	     ecore-imf-evas.pc.in \
-	     ecore-ipc.pc.in \
-	     ecore-x.pc.in \
-	     ecore-win32.pc.in \
-	     ecore-sdl.pc.in \
-	     ecore-cocoa.pc.in \
-	     ecore-input.pc.in \
-	     ecore-wince.pc.in \
-	     ecore.spec.in ecore.spec
+EXTRA_DIST = \
+AUTHORS \
+COPYING \
+autogen.sh \
+ecore.supp \
+ecore.pc.in \
+ecore-con.pc.in \
+ecore-config.pc.in \
+ecore-directfb.pc.in\
+ecore-evas.pc.in \
+ecore-fb.pc.in \
+ecore-file.pc.in \
+ecore-imf.pc.in \
+ecore-imf-evas.pc.in \
+ecore-ipc.pc.in \
+ecore-x.pc.in \
+ecore-win32.pc.in \
+ecore-sdl.pc.in \
+ecore-cocoa.pc.in \
+ecore-input.pc.in \
+ecore-wince.pc.in \
+ecore.spec.in \
+ecore.spec \
+m4/ac_abstract_socket.m4 \
+m4/ac_attribute.m4 \
+m4/check_x_extension.m4 \
+m4/ecore_check_module.m4 \
+m4/ecore_check_options.m4 \
+m4/efl_doxygen.m4 \
+m4/efl_path_max.m4 \
+m4/efl_tests.m4 \
+m4/efl_threads.m4
+
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = ecore.pc
