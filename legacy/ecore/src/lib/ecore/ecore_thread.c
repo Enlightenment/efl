@@ -330,8 +330,8 @@ _ecore_thread_init(void)
    ECORE_THREAD_PIPE_DEL = ecore_event_type_new();
 #ifdef EFL_HAVE_PTHREAD
    del_handler = ecore_event_handler_add(ECORE_THREAD_PIPE_DEL, _ecore_thread_pipe_del, NULL);
-#endif
    main_loop_thread = pthread_self();
+#endif
 }
 
 void
