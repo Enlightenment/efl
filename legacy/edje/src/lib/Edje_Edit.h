@@ -3326,6 +3326,8 @@ EAPI double edje_edit_program_transition_time_get(Evas_Object *obj, const char *
  */
 EAPI Eina_Bool edje_edit_program_transition_time_set(Evas_Object *obj, const char *prog, double seconds);
 
+EAPI const char * edje_edit_program_filter_part_get(Evas_Object *obj, const char *prog);
+EAPI Eina_Bool edje_edit_program_filter_part_set(Evas_Object *obj, const char *prog, const char *filter_part);
 
 //@}
 /******************************************************************************/

@@ -766,7 +766,7 @@ _edje_edit_external_get(Edje *ed, const char *name)
    return NULL;
 }
 
-void
+static void
 _edje_edit_group_references_update(Evas_Object *obj, const char *old_group_name, const char *new_group_name)
 {
    Eina_Iterator *i;
@@ -1844,7 +1844,7 @@ edje_edit_part_name_set(Evas_Object *obj, const char* part, const char* new_name
 FUNC_PART_API_STRING(name);
 FUNC_PART_API_STRING(description);
 
-Eina_Bool
+static Eina_Bool
 _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type, const char *source)
 {
    Edje_Part_Collection_Directory_Entry *ce;
@@ -4608,7 +4608,7 @@ edje_edit_state_image_border_fill_set(Evas_Object *obj, const char *part, const 
 /******************/
 /*  PROGRAMS API  */
 /******************/
-Edje_Program *
+static Edje_Program *
 _edje_program_get_byname(Evas_Object *obj, const char *prog_name)
 {
    Edje_Program *epr;
