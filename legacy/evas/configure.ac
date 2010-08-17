@@ -483,6 +483,23 @@ AC_ARG_ENABLE(gles-variety-s3c6410,
   ]
 )
 
+if test "x$gl_flavor_gles" = "xyes"; then
+  eng=""
+  if test "x$gles_variety_sgx" = "xyes"; then eng="x"$eng; fi
+  if test "x$gles_variety_s3c6410" = "xyes"; then eng="x"$eng; fi
+  if test "x$eng" = "xx"; then
+    eng=""
+  else
+     AC_MSG_ERROR(
+       [Please enable just 1 OpenGL-ES flavor. Choices are:
+          --enable-gles-variety-sgx (Most GL-ES2 GPUs with shader compiler)
+          --enable-gles-variety-s3c6410 (s3c6410 with offline shader compiler)
+        You will also need to enable the OpenGL engine for X11 with:
+          --enable-gl-x11
+       ])
+  fi
+fi
+
 #####################################################################
 ## Engines
 
