@@ -429,16 +429,15 @@ _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc)
    if (edc->references != 0) return;
 
    ce = eina_hash_find(edf->collection, edc->part);
-
-   if (ce->ref)
+   if (!ce)
+     {
+	ERR("Something is wrong with reference count of '%s'.", edc->part);
+     }
+   else if (ce->ref)
      {
 	ce->ref = NULL;
 	edf->collection_cache = eina_list_prepend(edf->collection_cache, edc);
 	_edje_cache_coll_clean(edf);
-     }
-   else
-     {
-	ERR("Something is wrong with reference count of '%s'.", edc->part);
      }
 }
 
