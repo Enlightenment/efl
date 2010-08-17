@@ -1,9 +1,11 @@
 #ifndef EINA_STRBUF_COMMON_H
 #define EINA_STRBUF_COMMON_H
-#include <Eina.h>
+
+#include <stdlib.h>
 
 #include "eina_private.h"
 #include "eina_magic.h"
+#include "eina_strbuf.h"
 
 struct _Eina_Strbuf
 {

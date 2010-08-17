@@ -16,10 +16,6 @@
  * a lot easier since those are essentially the same just with different sizes.
  */
 
-#include <Eina.h>
-#include "eina_strbuf_common.h"
-#include "eina_unicode.h"
-
 /**
  * @internal
  * @brief Initialize the strbuf module.
