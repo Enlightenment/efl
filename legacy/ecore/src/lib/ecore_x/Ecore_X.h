@@ -2506,7 +2506,7 @@ typedef struct _Ecore_X_Randr_Mode_Info
 
 EAPI int             ecore_x_randr_version_get(
    void);
-EAPI const Eina_Bool ecore_x_randr_query(void);
+EAPI Eina_Bool ecore_x_randr_query(void);
 
 /* ecore_x_randr_11.c */
 EAPI Ecore_X_Randr_Orientation

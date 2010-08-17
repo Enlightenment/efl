@@ -57,7 +57,7 @@ _ecore_x_randr_init(void)
  * @brief query whether randr is available or not
  * @return EINA_TRUE, if extension is available, else EINA_FALSE
  */
-EAPI const Eina_Bool
+EAPI Eina_Bool
 ecore_x_randr_query(void)
 {
    return _randr_available;
