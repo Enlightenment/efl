@@ -21,7 +21,7 @@ if ELEMENTARY_WINDOWS_BUILD
 AM_CPPFLAGS += -DELEMENTARY_BUILD
 endif
 
-pkgdir = $(libdir)/edje
+pkgdir = $(libdir)/edje/modules/$(MODULE_EDJE)
 pkg_LTLIBRARIES = elm.la
 
 elm_la_SOURCES = private.h \

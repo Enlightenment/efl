@@ -63,17 +63,23 @@ VMIN=v_min
 AC_SUBST(VMAJ)
 AC_SUBST(VMIN)
 
+EDJE_VERSION="1.0.0"
+
 case "$host_os" in
   mingw32ce* | cegcc*)
     MODULE_ARCH="$host_os-$host_cpu"
+    MODULE_EDJE="$host_os-$host_cpu"
     ;;
   *)
-    MODULE_ARCH="$host_os-$host_cpu-relname"
+    MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
+    MODULE_EDJE="$host_os-$host_cpu-${EDJE_VERSION}"
     ;;
 esac
 AC_SUBST(release_info)
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
+AC_SUBST(MODULE_EDJE)
+AC_DEFINE_UNQUOTED(MODULE_EDJE, "$MODULE_EDJE", "Edje module architecture")
 
 EFL_SHARED_EXTENSION="${shrext_cmds}"
 AC_DEFINE_UNQUOTED(EFL_SHARED_EXTENSION, "${EFL_SHARED_EXTENSION}", "Shared extension")
@@ -170,7 +176,7 @@ PKG_CHECK_MODULES([ELEMENTARY],
     ecore-evas >= 1.0.0
     ecore-file >= 1.0.0
     ecore-imf >= 1.0.0
-    edje >= 1.0.0
+    edje >= ${EDJE_VERSION}
    ]
 )
 
@@ -185,7 +191,7 @@ AC_ARG_WITH(eet-eet,
 ])
 AC_SUBST(eet_eet)
         
-requirement_elm="edje >= 1.0.0 ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_elm}"
+requirement_elm="edje >= ${EDJE_VERSION} ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_elm}"
 
 have_elementary_x="no"
 want_elementary_x="auto"
