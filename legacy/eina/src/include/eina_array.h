@@ -69,10 +69,6 @@ struct _Eina_Array
    unsigned int total; /**< Total number of slots in the vector */
    unsigned int count; /**< Number of active slots in the vector */
    unsigned int step; /**< How much must we grow the vector when it is full */
-#ifdef EINA_RWLOCKS_ENABLED
-   pthread_rwlock_t lock;
-   Eina_Bool threadsafe:1;
-#endif
    EINA_MAGIC
 };
 
@@ -97,9 +93,6 @@ static inline void              eina_array_data_set(const Eina_Array *array,
 static inline unsigned int      eina_array_count_get(const Eina_Array *array) EINA_ARG_NONNULL(1);
 EAPI Eina_Iterator *            eina_array_iterator_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Accessor *            eina_array_accessor_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
-static inline Eina_Bool		eina_array_rdlock(const Eina_Array *array);
-static inline Eina_Bool		eina_array_wrlock(Eina_Array *array);
-static inline Eina_Bool		eina_array_unlock(const Eina_Array *array);
 static inline Eina_Bool		eina_array_foreach(Eina_Array *array,
                                                    Eina_Each_Cb cb,
                                                    void *data);
