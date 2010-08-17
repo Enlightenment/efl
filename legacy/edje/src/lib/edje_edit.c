@@ -996,8 +996,7 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
    if (e->ref)
      {
 	ERR("EEK: Group \"%s\" still in use !", group_name);
-	die = e->ref;
-	e->ref = NULL;
+	return EINA_FALSE;
      }
 
    EINA_LIST_FOREACH(ed->file->collection_cache, l, g)
