@@ -524,11 +524,11 @@ _edje_anchor_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
 	len = 200 + strlen(n);
 	buf = alloca(len);
         if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
-          snprintf(buf, len, "anchor,mouse,down,%i,%s,triple", ev->button, an->name);
+          snprintf(buf, len, "anchor,mouse,down,%i,%s,triple", ev->button, n);
         else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-	  snprintf(buf, len, "anchor,mouse,down,%i,%s,double", ev->button, an->name);
+	  snprintf(buf, len, "anchor,mouse,down,%i,%s,double", ev->button, n);
 	else
-	  snprintf(buf, len, "anchor,mouse,down,%i,%s", ev->button, an->name);
+	  snprintf(buf, len, "anchor,mouse,down,%i,%s", ev->button, n);
 	_edje_emit(rp->edje, buf, rp->part->name);
      }
 }
@@ -555,7 +555,7 @@ _edje_anchor_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 	if (!n) n = "";
 	len = 200 + strlen(n);
 	buf = alloca(len);
-	snprintf(buf, len, "anchor,mouse,up,%i,%s", ev->button, an->name);
+	snprintf(buf, len, "anchor,mouse,up,%i,%s", ev->button, n);
 	_edje_emit(rp->edje, buf, rp->part->name);
      }
 }
@@ -582,7 +582,7 @@ _edje_anchor_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
 	if (!n) n = "";
 	len = 200 + strlen(n);
 	buf = alloca(len);
-	snprintf(buf, len, "anchor,mouse,move,%s", an->name);
+	snprintf(buf, len, "anchor,mouse,move,%s", n);
 	_edje_emit(rp->edje, buf, rp->part->name);
      }
 }
@@ -604,7 +604,7 @@ _edje_anchor_mouse_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 	if (!n) n = "";
 	len = 200 + strlen(n);
 	buf = alloca(len);
-	snprintf(buf, len, "anchor,mouse,in,%s", an->name);
+	snprintf(buf, len, "anchor,mouse,in,%s", n);
 	_edje_emit(rp->edje, buf, rp->part->name);
      }
 }
@@ -626,7 +626,7 @@ _edje_anchor_mouse_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
 	if (!n) n = "";
 	len = 200 + strlen(n);
 	buf = alloca(len);
-	snprintf(buf, len, "anchor,mouse,out,%s", an->name);
+	snprintf(buf, len, "anchor,mouse,out,%s", n);
 	_edje_emit(rp->edje, buf, rp->part->name);
      }
 }

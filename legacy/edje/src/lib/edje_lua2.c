@@ -446,7 +446,7 @@ _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
    
    ptr2 = realloc(ptr, nsize);
    if (ptr2) return ptr2;
-   ERR("Edje Lua cannot re-allocate %i bytes", nsize);
+   ERR("Edje Lua cannot re-allocate %zu bytes", nsize);
    return ptr2;
 }
 
@@ -463,7 +463,7 @@ void
 _edje_lua2_error_full(const char *file, const char *fnc, int line,
                       lua_State *L, int err_code)
 {
-   char *err_type;
+   const char *err_type;
    
    switch (err_code)
      {

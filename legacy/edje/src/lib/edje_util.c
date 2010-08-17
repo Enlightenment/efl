@@ -2404,7 +2404,7 @@ _edje_box_layout_find(const char *name, Evas_Object_Box_Layout *cb, void **data,
    return EINA_TRUE;
 }
 
-void
+static void
 _edje_box_layout_external_free(Eina_Rbtree *node, __UNUSED__ void *data)
 {
    Edje_Box_Layout *l = (Edje_Box_Layout *)node;
