@@ -30,6 +30,7 @@
 #include "eina_share_common.h"
 #include "eina_unicode.h"
 #include "eina_private.h"
+#include "eina_ustringshare.h"
 
 /* The actual share */
 static Eina_Share *ustringshare_share;

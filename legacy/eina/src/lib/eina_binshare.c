@@ -31,6 +31,7 @@
 #include "eina_share_common.h"
 #include "eina_unicode.h"
 #include "eina_private.h"
+#include "eina_binshare.h"
 
 /* The actual share */
 static Eina_Share *binshare_share;

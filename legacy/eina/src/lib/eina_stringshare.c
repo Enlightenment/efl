@@ -69,6 +69,7 @@ void *alloca (size_t);
 #include "eina_hash.h"
 #include "eina_rbtree.h"
 #include "eina_error.h"
+#include "eina_stringshare.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
