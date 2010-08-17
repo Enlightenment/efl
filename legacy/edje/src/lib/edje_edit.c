@@ -998,7 +998,6 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
 	ERR("EEK: Group \"%s\" still in use !", group_name);
 	die = e->ref;
 	e->ref = NULL;
-	eina_hash_del(ed->file->collection, group_name, e);
      }
 
    EINA_LIST_FOREACH(ed->file->collection_cache, l, g)
@@ -1024,6 +1023,7 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
 
    /* Free Group */
    if (die) _edje_collection_free(ed->file, die, e);
+   eina_hash_del(ed->file->collection, group_name, e);
 
    /* we need to save everything to make sure the file won't have broken
     * references the next time is loaded */
