@@ -696,7 +696,6 @@ _edje_lua2_script_func_hide(Edje *ed)
 void
 _edje_lua2_script_func_move(Edje *ed)
 {
-   Eina_List *l;
    int err;
 
    // FIXME: move all objects created by script
