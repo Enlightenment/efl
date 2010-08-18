@@ -1968,6 +1968,9 @@ struct _Evas_Smart_Cb_Description
    struct _Evas_Object_Box_Option
    {
       Evas_Object *obj;
+      Eina_Bool max_reached:1;
+      Eina_Bool min_reached:1;
+      Evas_Coord alloc_size;
    };
 
    EAPI void evas_object_box_smart_set(Evas_Object_Box_Api *api) EINA_ARG_NONNULL(1);
