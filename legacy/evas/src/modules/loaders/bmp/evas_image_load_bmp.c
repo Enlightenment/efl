@@ -46,7 +46,7 @@ read_ushort(FILE *file, unsigned short *ret)
 static int
 read_int(FILE *file, int *ret)
 {
-   unsigned char       b[4];
+   unsigned char b[4];
    if (fread(b, sizeof(unsigned char), 4, file) != 4) return 0;
    *ret = ARGB_JOIN(b[3], b[2], b[1], b[0]);
    return 1;
@@ -1105,7 +1105,7 @@ module_open(Evas_Module *em)
 }
 
 static void
-module_close(__UNUSED__ Evas_Module *em)
+module_close(Evas_Module *em __UNUSED__)
 {
 }
 
