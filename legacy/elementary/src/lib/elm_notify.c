@@ -66,35 +66,38 @@ _notify_theme_apply(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *style = elm_widget_style_get(obj);
+
    switch (wd->orient)
      {
       case ELM_NOTIFY_ORIENT_TOP:
-	 _elm_theme_object_set(obj, wd->notify, "notify", "top", style);
-	 break;
+        _elm_theme_object_set(obj, wd->notify, "notify", "top", style);
+        break;
       case ELM_NOTIFY_ORIENT_CENTER:
-	 _elm_theme_object_set(obj, wd->notify, "notify", "center", style);
-	 break;
+        _elm_theme_object_set(obj, wd->notify, "notify", "center", style);
+        break;
       case ELM_NOTIFY_ORIENT_BOTTOM:
-	 _elm_theme_object_set(obj, wd->notify, "notify", "bottom", style);
-	 break;
+        _elm_theme_object_set(obj, wd->notify, "notify", "bottom", style);
+        break;
       case ELM_NOTIFY_ORIENT_LEFT:
-	 _elm_theme_object_set(obj, wd->notify, "notify", "left", style);
-	 break;
+        _elm_theme_object_set(obj, wd->notify, "notify", "left", style);
+        break;
       case ELM_NOTIFY_ORIENT_RIGHT:
-	 _elm_theme_object_set(obj, wd->notify, "notify", "right", style);
-	 break;
+        _elm_theme_object_set(obj, wd->notify, "notify", "right", style);
+        break;
       case ELM_NOTIFY_ORIENT_TOP_LEFT:
-	 _elm_theme_object_set(obj, wd->notify, "notify", "top_left", style);
-	 break;
+        _elm_theme_object_set(obj, wd->notify, "notify", "top_left", style);
+        break;
       case ELM_NOTIFY_ORIENT_TOP_RIGHT:
-	 _elm_theme_object_set(obj, wd->notify, "notify", "top_right", style);
-	 break;
+        _elm_theme_object_set(obj, wd->notify, "notify", "top_right", style);
+        break;
       case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
-	 _elm_theme_object_set(obj, wd->notify, "notify", "bottom_left", style);
-	 break;
+        _elm_theme_object_set(obj, wd->notify, "notify", "bottom_left", style);
+        break;
       case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
-	 _elm_theme_object_set(obj, wd->notify, "notify", "bottom_right", style);
-	 break;
+        _elm_theme_object_set(obj, wd->notify, "notify", "bottom_right", style);
+        break;
+      case ELM_NOTIFY_ORIENT_LAST:
+        break;
      }
 }
 
@@ -179,6 +182,7 @@ _calc(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord x, y, w, h;
+
    if (!wd) return;
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    edje_object_size_min_get(wd->notify, &minw, &minh);
@@ -217,6 +221,8 @@ _calc(Evas_Object *obj)
              break;
 	   case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
              evas_object_move(wd->notify, x + w - minw, y + h - minh);
+             break;
+           case ELM_NOTIFY_ORIENT_LAST:
              break;
 	  }
         evas_object_resize(wd->notify, minw, minh);
@@ -402,9 +408,8 @@ elm_notify_content_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *content;
-   if (!wd) return NULL;
-   if (!wd->content) return NULL;
+
+   if ((!wd) || (!wd->content)) return NULL;
    return wd->content;
 }
 
@@ -483,10 +488,10 @@ elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient)
 EAPI Elm_Notify_Orient
 elm_notify_orient_get(const Evas_Object *obj)
 {
-	ELM_CHECK_WIDTYPE(obj, widtype);
-	Widget_Data *wd = elm_widget_data_get(obj);
-	if (!wd) return (Elm_Notify_Orient)-1;
-	return wd->orient;
+   ELM_CHECK_WIDTYPE(obj, widtype) -1;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return -1;
+   return wd->orient;
 }
 
 /**
@@ -513,10 +518,10 @@ elm_notify_timeout_set(Evas_Object *obj, int timeout)
 EAPI int
 elm_notify_timeout_get(const Evas_Object *obj)
 {
-	ELM_CHECK_WIDTYPE(obj, widtype);
-	Widget_Data *wd = elm_widget_data_get(obj);
-	if (!wd) return -1;
-	return wd->timeout;
+   ELM_CHECK_WIDTYPE(obj, widtype) -1;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return -1;
+   return wd->timeout;
 }
 
 /**
@@ -571,9 +576,9 @@ elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
 EAPI Eina_Bool
 elm_notify_repeat_events_get(const Evas_Object *obj)
 {
-	ELM_CHECK_WIDTYPE(obj, widtype);
-	Widget_Data *wd = elm_widget_data_get(obj);
-	if (!wd) return EINA_FALSE;
-	return wd->repeat_events;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->repeat_events;
 }
 

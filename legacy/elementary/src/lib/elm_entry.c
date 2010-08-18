@@ -1210,11 +1210,11 @@ _event_selection_notify(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_event_selection_clear(void *data, int type __UNUSED__, void *event)
+_event_selection_clear(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
+/*
    Widget_Data *wd = elm_widget_data_get(data);
    Ecore_X_Event_Selection_Clear *ev = event;
-/*
    if (!wd) return 1;
    if (!wd->have_selection) return 1;
    if ((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
@@ -1228,7 +1228,7 @@ _event_selection_clear(void *data, int type __UNUSED__, void *event)
 #endif
 
 static Evas_Object *
-_get_item(void *data, Evas_Object *edje, const char *part, const char *item)
+_get_item(void *data, Evas_Object *edje __UNUSED__, const char *part __UNUSED__, const char *item)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Object *o;

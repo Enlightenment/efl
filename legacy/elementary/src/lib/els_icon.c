@@ -343,13 +343,13 @@ _smart_reconfigure(Smart_Data *sd)
 }
 
 static void
-_preloaded(void *data, Evas *e, Evas_Object *obj, void *event)
+_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-	Smart_Data *sd = data;
+   Smart_Data *sd = data;
 
-	sd->preloading = 0;
-	if(sd->show)
-		evas_object_show(sd->obj);
+   sd->preloading = 0;
+   if(sd->show)
+     evas_object_show(sd->obj);
 }
 
 static void

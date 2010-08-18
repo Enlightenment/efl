@@ -619,17 +619,16 @@ elm_label_text_align_set(Evas_Object *obj, const char *alignmode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   char *label;
    int len;
-   
+
    if (!wd) return;
    _elm_dangerous_call_check(__FUNCTION__);
    len = strlen(wd->label);
    if (len <= 0) return;
-   
+
    if (_stringshare_key_value_replace(&wd->label, "align", alignmode, 0) == 0)
      edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
-   
+
    wd->changed = 1;
    _sizing_eval(obj);
 }

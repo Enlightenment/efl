@@ -143,15 +143,16 @@ _parent_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 }
 
 static Evas_Object *
-_item_provider(void *data, Evas_Object *entry, const char *item)
+_item_provider(void *data, Evas_Object *entry __UNUSED__, const char *item)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Object *o;
    Eina_List *l;
    Elm_Anchorview_Item_Provider *ip;
    
    EINA_LIST_FOREACH(wd->item_providers, l, ip)
      {
+        Evas_Object *o;
+
         o = ip->func(ip->data, data, item);
         if (o) return o;
      }

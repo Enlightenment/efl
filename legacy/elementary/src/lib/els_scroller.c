@@ -1413,7 +1413,7 @@ _smart_hold_animator(void *data)
 }
 
 static Eina_Bool
-_smart_event_post_up(void *data, Evas *e)
+_smart_event_post_up(void *data, Evas *e __UNUSED__)
 {
    Smart_Data *sd = data;
    if (sd->widget)
@@ -1638,13 +1638,14 @@ _smart_onhold_animator(void *data)
 }
 
 static Eina_Bool
-_smart_event_post_move(void *data, Evas *e)
+_smart_event_post_move(void *data, Evas *e __UNUSED__)
 {
    Smart_Data *sd = data;
+
    if (sd->down.want_dragged)
      {
         int start = 0;
-        
+
         if (sd->down.hold_parent)
           {
              if ((sd->down.dir_x) && !can_scroll(sd, sd->down.hdir))

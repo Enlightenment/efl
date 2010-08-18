@@ -130,62 +130,58 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
 static void
 _item_realize(Elm_Slideshow_Item *item)
 {
-	Elm_Slideshow_Item *_item;
-	Evas_Object *obj = item->obj;
-	Widget_Data *wd = elm_widget_data_get(obj);
-	Evas_Coord w, h;
+   Elm_Slideshow_Item *_item;
+   Evas_Object *obj = item->obj;
+   Widget_Data *wd = elm_widget_data_get(obj);
 
-	if (!wd) return;
+   if (!wd) return;
+   if ((!item->o) && (item->itc->func.get))
+     {
+        item->o = item->itc->func.get((void*)item->data, obj);
+        evas_object_smart_member_add(item->o, obj);
+        item->l_built = eina_list_append(NULL, item);
+        wd->items_built = eina_list_merge(wd->items_built, item->l_built);
+        evas_object_hide(item->o);
+     }
+   else if (item->l_built)
+     wd->items_built = eina_list_demote_list(wd->items_built, item->l_built);
 
-	if (!item->o && item->itc->func.get)
-	{
-		item->o = item->itc->func.get((void*)item->data, obj);
-		evas_object_smart_member_add(item->o, obj);
-		item->l_built = eina_list_append(NULL, item);
-		wd->items_built = eina_list_merge(wd->items_built, item->l_built);
-		evas_object_hide(item->o);
-	}
-	else if (item->l_built)
-		wd->items_built = eina_list_demote_list(wd->items_built, item->l_built);
+   //pre-create previous and next item
+   _item = _item_next_get(item);
+   if ((_item) && (!_item->o) && (_item->itc->func.get))
+     {
+        _item->o = _item->itc->func.get((void*)_item->data, obj);
+        evas_object_smart_member_add(_item->o, obj);
+        _item->l_built = eina_list_append(NULL, _item);
+        wd->items_built = eina_list_merge(wd->items_built, _item->l_built);
+        evas_object_hide(_item->o);
+     }
+   else if ((_item) && (_item->l_built))
+     wd->items_built = eina_list_demote_list(wd->items_built, _item->l_built);
 
-	//pre-create previous and next item
-	_item = _item_next_get(item);
-	if (_item && !_item->o && _item->itc->func.get)
-	{
-		_item->o = _item->itc->func.get((void*)_item->data, obj);
-		evas_object_smart_member_add(_item->o, obj);
-		_item->l_built = eina_list_append(NULL, _item);
-		wd->items_built = eina_list_merge(wd->items_built, _item->l_built);
-		evas_object_hide(_item->o);
-	}
-	else if (_item && _item->l_built)
-		wd->items_built = eina_list_demote_list(wd->items_built, _item->l_built);
+   _item = _item_prev_get(item);
+   if ((_item) && (!_item->o) && (_item->itc->func.get))
+     {
+        _item->o = _item->itc->func.get((void*)_item->data, obj);
+        evas_object_smart_member_add(_item->o, obj);
+        _item->l_built = eina_list_append(NULL, _item);
+        wd->items_built = eina_list_merge(wd->items_built, _item->l_built);
+        evas_object_hide(_item->o);
+     }
+   else if ((_item) && (_item->l_built))
+     wd->items_built = eina_list_demote_list(wd->items_built, _item->l_built);
 
-
-	_item = _item_prev_get(item);
-	if (_item && !_item->o && _item->itc->func.get)
-	{
-		_item->o = _item->itc->func.get((void*)_item->data, obj);
-		evas_object_smart_member_add(_item->o, obj);
-		_item->l_built = eina_list_append(NULL, _item);
-		wd->items_built = eina_list_merge(wd->items_built, _item->l_built);
-		evas_object_hide(_item->o);
-	}
-	else if (_item && _item->l_built)
-		wd->items_built = eina_list_demote_list(wd->items_built, _item->l_built);
-
-	//delete unused items
-	while (eina_list_count(wd->items_built) > 3)
-	{
-		_item = eina_list_data_get(wd->items_built);
-		wd->items_built = eina_list_remove_list(wd->items_built, wd->items_built);
-		if(item->itc->func.del)
-			item->itc->func.del((void*)item->data, _item->o);
-		evas_object_del(_item->o);
-		_item->o = NULL;
-	}
+   //delete unused items
+   while (eina_list_count(wd->items_built) > 3)
+     {
+        _item = eina_list_data_get(wd->items_built);
+        wd->items_built = eina_list_remove_list(wd->items_built, wd->items_built);
+        if(item->itc->func.del)
+          item->itc->func.del((void*)item->data, _item->o);
+        evas_object_del(_item->o);
+        _item->o = NULL;
+     }
 }
-
 
 static void
 _end(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
@@ -239,8 +235,6 @@ _timer_cb(void *data)
 EAPI Evas_Object *
 elm_slideshow_add(Evas_Object *parent)
 {
-   Eina_List *layouts;
-   const char *s;
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;

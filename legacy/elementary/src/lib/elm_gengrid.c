@@ -923,7 +923,6 @@ elm_gengrid_add(Evas_Object *parent)
 {
    Evas_Object *obj;
    Evas *e;
-   Evas_Coord minw, minh;
    Widget_Data *wd;
    static Evas_Smart *smart = NULL;
 

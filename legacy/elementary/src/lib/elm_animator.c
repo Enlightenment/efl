@@ -1,4 +1,5 @@
 #include <Elementary.h>
+#include "elm_priv.h"
 
 /**
  * @addtogroup Animator Animator
@@ -129,7 +130,7 @@ _animator_animate_cb(void *data)
 }
 
 static void 
-_animator_parent_del(void *data, Evas *evas, Evas_Object *obj, void *event)
+_animator_parent_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    elm_animator_del(data);
 }

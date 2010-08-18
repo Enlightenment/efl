@@ -349,7 +349,7 @@ _elm_cnp_init(void){
 }
 
 static Eina_Bool
-selection_clear(void *udata __UNUSED__, int type, void *event){
+selection_clear(void *udata __UNUSED__, int type __UNUSED__, void *event){
    Ecore_X_Event_Selection_Clear *ev = event;
    struct _elm_cnp_selection *sel;
    int i;
@@ -416,7 +416,7 @@ printf("selection request callback: %d\n",ev->target);
  *	else it's the data we want.
  */
 static Eina_Bool
-selection_notify(void *udata __UNUSED__, int type, void *event){
+selection_notify(void *udata __UNUSED__, int type __UNUSED__, void *event){
    Ecore_X_Event_Selection_Notify *ev = event;
    struct _elm_cnp_selection *sel;
    int i;
@@ -457,9 +457,9 @@ selection_notify(void *udata __UNUSED__, int type, void *event){
 
 
 static int
-targets_converter(char *target, void *data, int size,
-		void **data_ret, int *size_ret,
-		Ecore_X_Atom *ttype, int *typesize){
+targets_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
+                  void **data_ret, int *size_ret,
+                  Ecore_X_Atom *ttype, int *typesize){
    int i,count;
    Ecore_X_Atom *aret;
    struct _elm_cnp_selection *sel;
@@ -486,10 +486,10 @@ targets_converter(char *target, void *data, int size,
 }
 
 static int
-png_converter(char *target, void *data, int size,
-      void **data_ret, int *size_ret,
-      Ecore_X_Atom *ttype, int *typesize){
-
+png_converter(char *target __UNUSED__, void *data __UNUSED__, int size __UNUSED__,
+              void **data_ret __UNUSED__, int *size_ret __UNUSED__,
+              Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
+{
      return 1;
 }
 
@@ -499,7 +499,8 @@ png_converter(char *target, void *data, int size,
  */
 static int
 notify_handler_targets(struct _elm_cnp_selection *sel,
-      Ecore_X_Event_Selection_Notify *notify){
+                       Ecore_X_Event_Selection_Notify *notify)
+{
    Ecore_X_Selection_Data_Targets *targets;
    Ecore_X_Atom *atomlist;
    int i,j;
@@ -533,7 +534,8 @@ notify_handler_targets(struct _elm_cnp_selection *sel,
 
 static int
 response_handler_targets(struct _elm_cnp_selection *sel,
-      Ecore_X_Event_Selection_Notify *notify){
+                         Ecore_X_Event_Selection_Notify *notify)
+{
    Ecore_X_Selection_Data_Targets *targets;
    Ecore_X_Atom *atomlist;
    Evas_Object *top;
@@ -574,7 +576,8 @@ response_handler_targets(struct _elm_cnp_selection *sel,
 
 static int
 notify_handler_text(struct _elm_cnp_selection *sel,
-      Ecore_X_Event_Selection_Notify *notify){
+                    Ecore_X_Event_Selection_Notify *notify)
+{
    Ecore_X_Selection_Data *data;
    char *str;
 
@@ -624,18 +627,19 @@ notify_handler_uri(struct _elm_cnp_selection *sel,
 }
 
 static int
-notify_handler_png(struct _elm_cnp_selection *sel,
-	 Ecore_X_Event_Selection_Notify *notify)
+notify_handler_png(struct _elm_cnp_selection *sel __UNUSED__,
+                   Ecore_X_Event_Selection_Notify *notify __UNUSED__)
 {
    cnp_debug("got a png!\n");
-	return 0;
+   return 0;
 }
 
 
 static int
-text_converter(char *target, void *data, int size,
-		void **data_ret, int *size_ret,
-		Ecore_X_Atom *ttype, int *typesize){
+text_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
+               void **data_ret, int *size_ret,
+               Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
+{
    struct _elm_cnp_selection *sel;
 
    sel = selections + *(int *)data;
@@ -658,8 +662,10 @@ text_converter(char *target, void *data, int size,
 }
 
 static int
-edje_converter(char *target, void *data, int size, void **data_ret,
-	    int *size_ret, Ecore_X_Atom *ttype, int *typesize){
+edje_converter(char *target __UNUSED__, void *data, int size __UNUSED__, 
+               void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, 
+               int *typesize __UNUSED__)
+{
    struct _elm_cnp_selection *sel;
 
    sel = selections + *(int *)data;
@@ -671,19 +677,24 @@ edje_converter(char *target, void *data, int size, void **data_ret,
 
 
 static int
-html_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize){
-     struct _elm_cnp_selection *sel;
+html_converter(char *target __UNUSED__, void *data, int size __UNUSED__, 
+               void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, 
+               int *typesize __UNUSED__)
+{
+   struct _elm_cnp_selection *sel;
 
-     sel = selections + *(int *)data;
-     if (data_ret) *data_ret = strdup(sel->selbuf);
-     if (size_ret) *size_ret = strlen(sel->selbuf);
+   sel = selections + *(int *)data;
+   if (data_ret) *data_ret = strdup(sel->selbuf);
+   if (size_ret) *size_ret = strlen(sel->selbuf);
 
-     return 1;
+   return 1;
 }
 
 static int
-uri_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize){
-
+uri_converter(char *target __UNUSED__, void *data, int size __UNUSED__, 
+              void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, 
+              int *typesize __UNUSED__)
+{
     struct _elm_cnp_selection *sel;
     sel = selections + *(int *)data;
     cnp_debug("Uri converter\n");
@@ -700,7 +711,7 @@ uri_converter(char *target, void *data, int size, void **data_ret, int *size_ret
 /* FIXME: Should add provider for each pated item: Use data to store it
  * much easier */
 static Evas_Object *
-image_provider(void *images, Evas_Object *entry, const char *item)
+image_provider(void *images __UNUSED__, Evas_Object *entry, const char *item)
 {
    struct pasteimage *pi;
    Eina_List *l;
@@ -724,7 +735,7 @@ image_provider(void *images, Evas_Object *entry, const char *item)
 }
 
 static void
-entry_deleted(void *images, Evas *e, Evas_Object *entry, void *unused)
+entry_deleted(void *images __UNUSED__, Evas *e __UNUSED__, Evas_Object *entry, void *unused __UNUSED__)
 {
    struct pasteimage *pi;
    Eina_List *l,*next;
