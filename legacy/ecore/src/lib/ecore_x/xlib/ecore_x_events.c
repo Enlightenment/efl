@@ -1988,21 +1988,24 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         LOGFN(__FILE__, __LINE__, __FUNCTION__);
         e->state[0] = _ecore_x_netwm_state_get(xevent->xclient.data.l[1]);
         if (e->state[0] == ECORE_X_WINDOW_STATE_UNKNOWN)
+          {
 //	     char *name;
            LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
 //	     name = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[1]);
 //	     if (name) ERR("Unknown state: %s", name);
 //	     XFree(name);
-
+          }
         e->state[1] = _ecore_x_netwm_state_get(xevent->xclient.data.l[2]);
         if (e->state[1] == ECORE_X_WINDOW_STATE_UNKNOWN)
+          {
 //	     char *name;
            LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
 //	     name = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[2]);
 //	     if (name) ERR("Unknown state: %s", name);
 //	     XFree(name);
+          }
 
         e->source = xevent->xclient.data.l[3];
 
