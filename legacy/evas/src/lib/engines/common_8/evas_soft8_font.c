@@ -233,7 +233,7 @@ soft8_font_glyph_draw(void *data, void *dest __UNUSED__, void *context,
    Soft8_Image *dst;
    RGBA_Draw_Context *dc;
    const DATA8 *bitmap;
-//   DATA8 alpha, r, g, b;
+   DATA8 alpha; // r, g, b
    DATA8 gry8;
    Eina_Rectangle ext;
    int bpitch, bw, bh;
