@@ -33,9 +33,27 @@ read_short(FILE *file, short *ret)
    *ret = (b[1] << 8) | b[0];
    return 1;
 }
-      
+
+static int
+read_ushort(FILE *file, unsigned short *ret)
+{
+   unsigned char b[2];
+   if (fread(b, sizeof(unsigned char), 2, file) != 2) return 0;
+   *ret = (b[1] << 8) | b[0];
+   return 1;
+}
+
 static int
 read_int(FILE *file, int *ret)
+{
+   unsigned char       b[4];
+   if (fread(b, sizeof(unsigned char), 4, file) != 4) return 0;
+   *ret = ARGB_JOIN(b[3], b[2], b[1], b[0]);
+   return 1;
+}
+
+static int
+read_uint(FILE *file, unsigned int *ret)
 {
    unsigned char       b[4];
    if (fread(b, sizeof(unsigned char), 4, file) != 4) return 0;
@@ -47,13 +65,13 @@ static Eina_Bool
 evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
    FILE *f;
-   unsigned char buf[4096];
+   char buf[4096];
    char hasa = 0;
-   int w = 0, h = 0, planes = 0, bit_count = 0, 
-     image_size = 0, comp = 0, hdpi = 0, vdpi = 0, 
-     palette_size = -1, important_colors = 0, rowlen = 0;
+   int w = 0, h = 0, planes = 0, bit_count = 0,
+     image_size = 0, comp = 0, hdpi = 0, vdpi = 0,
+     palette_size = -1, important_colors = 0;
    unsigned int offset, head_size, rmask = 0, gmask = 0, bmask = 0, amask = 0;
-   unsigned int *pal = NULL, pal_num = 0;
+   unsigned int pal_num = 0;
    int right_way_up = 0;
    int fsize = 0;
    unsigned int bmpsize;
@@ -75,11 +93,11 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
    if (fread(buf, 2, 1, f) != 1) goto close_file;
    if (strncmp(buf, "BM", 2)) goto close_file; // magic number
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-   if (!read_int(f, &bmpsize)) goto close_file;
-   if (!read_short(f, &res1)) goto close_file;
-   if (!read_short(f, &res2)) goto close_file;
-   if (!read_int(f, &offset)) goto close_file;
-   if (!read_int(f, &head_size)) goto close_file;
+   if (!read_uint(f, &bmpsize)) goto close_file;
+   if (!read_ushort(f, &res1)) goto close_file;
+   if (!read_ushort(f, &res2)) goto close_file;
+   if (!read_uint(f, &offset)) goto close_file;
+   if (!read_uint(f, &head_size)) goto close_file;
    if (head_size == 12) // OS/2 V1 + Windows 3.0
      {
         short tmp;
@@ -246,8 +264,6 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
    
    if (bit_count < 16)
      {
-        int i;
-        
         if ((palette_size < 0) || (palette_size > 256)) pal_num = 256;
         else pal_num = palette_size;
         if (bit_count == 1)
@@ -318,11 +334,12 @@ static Eina_Bool
 evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
    FILE *f;
-   unsigned char buf[4096], *buffer = NULL, *buffer_end = NULL, *p;
+   char buf[4096];
+   unsigned char *buffer = NULL, *buffer_end = NULL, *p;
    char hasa = 0;
-   int x = 0, y = 0, w = 0, h = 0, planes = 0, bit_count = 0, image_size = 0, 
-     comp = 0, hdpi = 0, vdpi = 0, palette_size = -1, important_colors = 0, 
-     offset = 0, head_size = 0;
+   int x = 0, y = 0, w = 0, h = 0, planes = 0, bit_count = 0, image_size = 0,
+     comp = 0, hdpi = 0, vdpi = 0, palette_size = -1, important_colors = 0;
+   unsigned int offset = 0, head_size = 0;
    unsigned int *pal = NULL, pal_num = 0, *pix = NULL, *surface = NULL, fix,
      rmask = 0, gmask = 0, bmask = 0, amask = 0;
    int right_way_up = 0;
@@ -347,11 +364,11 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
    if (fread(buf, 2, 1, f) != 1) goto close_file;
    if (strncmp(buf, "BM", 2)) goto close_file; // magic number
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-   if (!read_int(f, &bmpsize)) goto close_file;
-   if (!read_short(f, &res1)) goto close_file;
-   if (!read_short(f, &res2)) goto close_file;
-   if (!read_int(f, &offset)) goto close_file;
-   if (!read_int(f, &head_size)) goto close_file;
+   if (!read_uint(f, &bmpsize)) goto close_file;
+   if (!read_ushort(f, &res1)) goto close_file;
+   if (!read_ushort(f, &res2)) goto close_file;
+   if (!read_uint(f, &offset)) goto close_file;
+   if (!read_uint(f, &head_size)) goto close_file;
    image_size = fsize - offset;
    if (image_size < 1) goto close_file;
    
@@ -533,8 +550,8 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
    
    if (bit_count < 16)
      {
-        int i;
-        
+        unsigned int i;
+
         if (bit_count == 1)
           {
              if ((palette_size <= 0) || (palette_size > 2)) pal_num = 2;
@@ -958,9 +975,9 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
           }
         else if (comp == 3) // bit field
           {
-             if (!read_int(f, &rmask)) goto close_file;
-             if (!read_int(f, &gmask)) goto close_file;
-             if (!read_int(f, &bmask)) goto close_file;
+             if (!read_uint(f, &rmask)) goto close_file;
+             if (!read_uint(f, &gmask)) goto close_file;
+             if (!read_uint(f, &bmask)) goto close_file;
 
              fseek(f, offset, SEEK_SET);
              buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
@@ -1088,7 +1105,7 @@ module_open(Evas_Module *em)
 }
 
 static void
-module_close(Evas_Module *em)
+module_close(__UNUSED__ Evas_Module *em)
 {
 }
 

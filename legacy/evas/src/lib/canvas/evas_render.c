@@ -177,10 +177,10 @@ _evas_render_cur_clip_cache_del(Evas *e, Evas_Object *obj)
 }
 
 static void
-_evas_render_phase1_direct(Evas *e, 
-                           Eina_Array *active_objects, 
-                           Eina_Array *restack_objects, 
-                           Eina_Array *delete_objects, 
+_evas_render_phase1_direct(Evas *e,
+                           Eina_Array *active_objects __UNUSED__,
+                           Eina_Array *restack_objects __UNUSED__,
+                           Eina_Array *delete_objects __UNUSED__,
                            Eina_Array *render_objects)
 {
    unsigned int i;
@@ -1338,6 +1338,8 @@ evas_sync(Evas *e)
    MAGIC_CHECK_END();
 
    evas_common_frameq_flush ();
+#else
+   (void) e;
 #endif
 }
 

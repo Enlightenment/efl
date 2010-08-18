@@ -77,7 +77,7 @@ static const Evas_Object_Func object_func =
      NULL,
      evas_object_text_scale_update,
      NULL,
-     NULL, 
+     NULL,
      NULL
 };
 

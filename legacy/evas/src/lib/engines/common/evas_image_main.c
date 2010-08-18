@@ -291,6 +291,7 @@ static void
 _evas_common_rgba_image_unload(Image_Entry *im)
 {
 //   printf("unload: [%p] %s %s\n", im, im->file, im->key);
+   evas_common_rgba_image_scalecache_dirty(im);
    evas_common_rgba_image_unload(im);
 }
 

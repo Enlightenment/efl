@@ -58,7 +58,7 @@ _evas_preload_thread_end(Evas_Preload_Pthread_Data *pth)
 }
 
 static void
-_evas_preload_thread_done(void *target, Evas_Callback_Type type, void *event_info)
+_evas_preload_thread_done(void *target __UNUSED__, Evas_Callback_Type type __UNUSED__, void *event_info)
 {
    Evas_Preload_Pthread_Worker *work;
 
