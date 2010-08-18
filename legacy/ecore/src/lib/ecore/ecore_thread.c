@@ -845,22 +845,22 @@ ecore_thread_available_get(void)
 }
 
 /**
- * @brief Add data to the pool for subsequent uses
+ * @brief Add data to the thread for subsequent use
  * @param thread The thread context to add to
  * @param key The name string to add the data with
  * @param value The data to add
  * @param cb The callback to free the data with
  * @param direct If true, this will not copy the key string (like eina_hash_direct_add)
  * @return EINA_TRUE on success, EINA_FALSE on failure
- * This adds data to the thread context, allowing for subsequent users of the thread's pool
+ * This adds data to the thread context, allowing the thread
  * to retrieve and use it without complicated mutexing.  This function can only be called by a
  * *_run thread INSIDE the thread and will return EINA_FALSE in any case but success.
- * All data added to the thread pool will be freed with its associated callback (if present)
+ * All data added to the thread will be freed with its associated callback (if present)
  * upon thread termination.  If no callback is specified, it is expected that the user will free the
  * data, but this is most likely not what you want.
  */
 EAPI Eina_Bool
-ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct)
+ecore_thread_local_data_add(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
    Ecore_Thread_Data *d;
@@ -895,7 +895,7 @@ ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, void *value, E
 }
 
 /**
- * @brief Modify data in the pool, or add if not found
+ * @brief Modify data in the thread, or add if not found
  * @param thread The thread context
  * @param key The name string to add the data with
  * @param value The data to add
@@ -909,7 +909,7 @@ ecore_thread_pool_data_add(Ecore_Thread *thread, const char *key, void *value, E
  * data, but this is most likely not what you want.
  */
 EAPI void *
-ecore_thread_pool_data_set(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb)
+ecore_thread_local_data_set(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
    Ecore_Thread_Data *d, *r;
@@ -942,17 +942,17 @@ ecore_thread_pool_data_set(Ecore_Thread *thread, const char *key, void *value, E
 }
 
 /**
- * @brief Find data in the pool's data
+ * @brief Find data in the thread's data
  * @param thread The thread context
  * @param key The name string the data is associated with
  * @return The value, or NULL on error
- * This finds data in the thread context that has been previously added with @ref ecore_thread_pool_data_add
+ * This finds data in the thread context that has been previously added with @ref ecore_thread_local_data_add
  * This function can only be called by a *_run thread INSIDE the thread, and will return NULL
  * in any case but success.
  */
 
 EAPI void *
-ecore_thread_pool_data_find(Ecore_Thread *thread, const char *key)
+ecore_thread_local_data_find(Ecore_Thread *thread, const char *key)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
    Ecore_Thread_Data *d;
@@ -973,16 +973,16 @@ ecore_thread_pool_data_find(Ecore_Thread *thread, const char *key)
 }
 
 /**
- * @brief Delete data from the pool's data
+ * @brief Delete data from the thread's data
  * @param thread The thread context
  * @param key The name string the data is associated with
  * @return EINA_TRUE on success, EINA_FALSE on failure
- * This deletes the data pointer from the thread context which was previously added with @ref ecore_thread_pool_data_add
+ * This deletes the data pointer from the thread context which was previously added with @ref ecore_thread_local_data_add
  * This function can only be called by a *_run thread INSIDE the thread, and will return EINA_FALSE
  * in any case but success.  Note that this WILL free the data if a callback was specified.
  */
 EAPI Eina_Bool
-ecore_thread_pool_data_del(Ecore_Thread *thread, const char *key)
+ecore_thread_local_data_del(Ecore_Thread *thread, const char *key)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
    Ecore_Thread_Data *d;
