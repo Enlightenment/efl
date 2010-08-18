@@ -448,7 +448,7 @@ static const Evas_Object_Func object_func =
 static Evas_Object_Textblock_Node_Format *_evas_textblock_cursor_node_format_before_or_at_pos_get(const Evas_Textblock_Cursor *cur);
 static size_t _evas_textblock_node_format_pos_get(const Evas_Object_Textblock_Node_Format *fmt);
 static Eina_Bool _evas_textblock_format_is_visible(const char *s);
-static void _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Object_Textblock_Node_Format *n);
+static void _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Object_Textblock_Node_Format *n, int visual_adjustment);
 static void _evas_textblock_node_format_free(Evas_Object_Textblock_Node_Format *n);
 static void _evas_textblock_node_text_free(Evas_Object_Textblock_Node_Text *n);
 static void _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj);
@@ -4950,9 +4950,8 @@ _evas_textblock_node_format_adjust_offset(Evas_Object_Textblock *o,
  * @param n the fromat node to remove
  */
 static void
-_evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Object_Textblock_Node_Format *n)
+_evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Object_Textblock_Node_Format *n, int visible_adjustment)
 {
-   int visible_adjustment;
    /* Update the text nodes about the change */
      {
         Evas_Object_Textblock_Node_Format *nnode;
@@ -4979,8 +4978,6 @@ _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Object_Textblo
                }
           }
      }
-   /* If it's a visible format, reduce one */
-   visible_adjustment = (n->visible) ? 1 : 0;
    _evas_textblock_node_format_adjust_offset(o, n->text_node, n,
          n->offset - visible_adjustment);
 
@@ -5011,7 +5008,7 @@ _evas_textblock_node_format_remove_all_at_pos(Evas_Object_Textblock *o, Evas_Obj
         curnode = nnode;
         nnode = _NODE_FORMAT(EINA_INLIST_GET(nnode)->next);
 
-        _evas_textblock_node_format_remove(o, curnode);
+        _evas_textblock_node_format_remove(o, curnode, curnode->visible);
      }
    while (nnode && (nnode->text_node == tnode) && (nnode->offset == 0));
 }
@@ -5033,27 +5030,33 @@ _evas_textblock_node_text_remove_formats_between(Evas_Object_Textblock *o,
 {
    Evas_Object_Textblock_Node_Format *itr;
    int use_end = 1;
-   int offset = 0;
+   int offset = end - start;
    itr = n->format_node;
-   if (end < 0) end = 0;
+
+   start -= itr->offset;
+   if (offset < 0) offset = 0;
    while (itr && (itr->text_node == n))
      {
-        if ((end <= 0) && use_end)
+        Evas_Object_Textblock_Node_Format *nnode;
+        int tmp_offset;
+        /* start is negative when this gets relevant */
+        if ((offset + start <= 0) && use_end)
           {
-             itr->offset += offset;
              break;
+          }
+        nnode = _NODE_FORMAT(EINA_INLIST_GET(itr)->next);
+        if (nnode)
+          {
+             tmp_offset = nnode->offset;
           }
         if (start <= 0)
           {
-             offset += itr->offset;
-             _evas_textblock_node_format_remove(o, itr);
+             /* Don't do visible adjustments because we are removing the visual
+              * chars anyway and taking those into account */
+             _evas_textblock_node_format_remove(o, itr, 0);
           }
-        else
-          {
-             start -= itr->offset;
-          }
-        end -= itr->offset;
-        itr = _NODE_FORMAT(EINA_INLIST_GET(itr)->next);
+        start -= tmp_offset;
+        itr = nnode;
      }
 }
 
@@ -5869,9 +5872,10 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
    /* Find the first format node after cur2 */
    fnode = _evas_textblock_cursor_node_format_before_pos_get(cur2);
      {
-        Evas_Object_Textblock_Node_Text *tnode;
         if (fnode)
           {
+             fnode = _evas_textblock_node_format_last_at_off(fnode);
+             Evas_Object_Textblock_Node_Text *tnode;
              tnode = fnode->text_node;
              fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
              if (fnode && (tnode != fnode->text_node))
@@ -5881,7 +5885,11 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
           }
         else
           {
-             fnode = o->format_nodes;
+             fnode = cur2->node->format_node;
+             if (fnode && (cur2->node != fnode->text_node))
+               {
+                  fnode = NULL;
+               }
           }
      }
    if (n1 == n2)
