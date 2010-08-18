@@ -45,7 +45,6 @@ static always_inline void
 _glyph_pt_mask_transp_solid(DATA8 * dst,
                             DATA8 gry8, DATA8 alpha, const DATA8 * mask)
 {
-   DATA32 a, b;
    int rel_alpha;
 
    rel_alpha = *mask;
@@ -234,7 +233,7 @@ soft8_font_glyph_draw(void *data, void *dest __UNUSED__, void *context,
    Soft8_Image *dst;
    RGBA_Draw_Context *dc;
    const DATA8 *bitmap;
-   DATA8 alpha, r, g, b;
+//   DATA8 alpha, r, g, b;
    DATA8 gry8;
    Eina_Rectangle ext;
    int bpitch, bw, bh;
