@@ -509,7 +509,7 @@ static void
 eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
 {
    RGBA_Image *im, *srf;
-   RGBA_Map_Point *pt = p;
+//   RGBA_Map_Point *pt = p;
 
    if (!image) return;
    im = image;
@@ -558,7 +558,6 @@ eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *i
           evas_common_map4_rgba(im, surface, context, p, smooth, level);
      }
    evas_common_cpu_end_opt();
-
 }
 
 static void *
