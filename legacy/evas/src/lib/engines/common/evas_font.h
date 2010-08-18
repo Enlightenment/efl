@@ -25,6 +25,7 @@ EINA_DEPRECATED EAPI int               evas_common_font_utf8_get_len         (co
 EAPI void              evas_common_font_draw                 (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props);
 EAPI int               evas_common_font_glyph_search         (RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl);
 EAPI RGBA_Font_Glyph  *evas_common_font_int_cache_glyph_get  (RGBA_Font_Int *fi, FT_UInt index);
+EAPI void              evas_common_font_draw_init            (void);
 
 /* load */
 EAPI void              evas_common_font_dpi_set              (int dpi);
@@ -55,6 +56,7 @@ EAPI void              evas_common_font_cache_set            (int size);
 EAPI void              evas_common_font_flush                (void);
 EAPI void              evas_common_font_flush_last           (void);
 EAPI RGBA_Font_Int    *evas_common_font_int_find             (const char *name, int size);
+EAPI void              evas_common_font_all_clear            (void);
 
 /* query */
 
