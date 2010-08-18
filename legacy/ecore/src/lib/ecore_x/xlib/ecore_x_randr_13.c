@@ -7,7 +7,7 @@
 #endif
 
 #include "ecore_x_private.h"
-#include "ecore_x_inline.x"
+#include "ecore_x_randr.h"
 
 #define Ecore_X_Randr_None   0
 #define Ecore_X_Randr_Unset -1

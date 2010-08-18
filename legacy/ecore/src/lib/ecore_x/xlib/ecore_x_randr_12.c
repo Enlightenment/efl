@@ -7,7 +7,7 @@
 #endif
 
 #include "ecore_x_private.h"
-#include "ecore_x_inline.x"
+#include "ecore_x_randr.h"
 
 #define Ecore_X_Randr_None   0
 #define Ecore_X_Randr_Unset -1
@@ -105,7 +105,7 @@ _ecore_x_randr_crtc_validate(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 #endif
 }
 
-inline Eina_Bool
+Eina_Bool
 _ecore_x_randr_output_validate(Ecore_X_Window root, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR

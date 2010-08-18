@@ -3,7 +3,7 @@
 #endif /* ifdef HAVE_CONFIG_H */
 
 #include "ecore_x_private.h"
-#include "ecore_x_inline.x"
+#include "ecore_x_randr.h"
 
 static Eina_Bool _randr_available = EINA_FALSE;
 #ifdef ECORE_XRANDR
@@ -85,7 +85,7 @@ ecore_x_randr_version_get(void)
 #endif
 }
 
-inline Eina_Bool
+Eina_Bool
 _ecore_x_randr_root_validate(Ecore_X_Window root)
 {
 #ifdef ECORE_XRANDR
