@@ -2099,7 +2099,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                  (desc1->map.rot.id_center >= 0) &&
                  (desc1->map.rot.id_center != ep->part->id))
                {
-                  Evas_Coord cx1, cy1, cz1, cx2, cy2, cz2;
+                  Evas_Coord cx1 = 0, cy1 = 0, cz1 = 0, cx2 = 0, cy2 = 0, cz2 = 0;
                   Edje_Real_Part *ep2 =
                     ed->table_parts[desc1->map.rot.id_center %
                                     ed->table_parts_size];
@@ -2165,14 +2165,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                   (desc2->map.id_light >= 0) &&
                   (desc2->map.id_light != ep->part->id)))
                {
-                  Evas_Coord lx, ly, lz;
-                  int lr, lg, lb, lar, lag, lab;
-                  Evas_Coord lx1, ly1, lz1;
-                  int lr1, lg1, lb1, lar1, lag1, lab1, do1;
-                  Evas_Coord lx2, ly2, lz2;
-                  int lr2, lg2, lb2, lar2, lag2, lab2, do2;
-
-                  do1 = do2 = 0;
+                  Evas_Coord lx = 0, ly = 0, lz = 0;
+                  int lr = 0, lg = 0, lb = 0, lar = 0, lag = 0, lab = 0;
+                  Evas_Coord lx1 = 0, ly1 = 0, lz1 = 0;
+                  int lr1 = 0, lg1 = 0, lb1 = 0, lar1 = 0, lag1 = 0, lab1 = 0, do1 = 0;
+                  Evas_Coord lx2 = 0, ly2 = 0, lz2 = 0;
+                  int lr2 = 0, lg2 = 0, lb2 = 0, lar2 = 0, lag2 = 0, lab2 = 0, do2 = 0;
 
                   if ((desc1) &&
                       (desc1->map.id_light >= 0) &&
@@ -2329,12 +2327,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
              // calculate perspective point
              if (chosen_desc->map.persp_on)
                {
-                  Evas_Coord px, py, zplane, foc;
-                  Evas_Coord px1, py1, zplane1, foc1;
-                  Evas_Coord px2, py2, zplane2, foc2;
-                  int do1, do2;
-
-                  do1 = do2 = 0;
+                  Evas_Coord px = 0, py = 0, zplane = 0, foc = 0;
+                  Evas_Coord px1 = 0, py1 = 0, zplane1 = 0, foc1 = 0;
+                  Evas_Coord px2 = 0, py2 = 0, zplane2 = 0, foc2 = 0;
+                  int do1 = 0, do2 = 0;
 
                   // default perspective point
                   px = ed->x + (ed->w / 2);
