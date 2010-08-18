@@ -5039,7 +5039,8 @@ _evas_textblock_node_text_remove_formats_between(Evas_Object_Textblock *o,
    while (itr && (itr->text_node == n))
      {
         Evas_Object_Textblock_Node_Format *nnode;
-        int tmp_offset;
+        int tmp_offset = 0;
+
         /* start is negative when this gets relevant */
         if ((offset + start <= 0) && use_end)
           {
