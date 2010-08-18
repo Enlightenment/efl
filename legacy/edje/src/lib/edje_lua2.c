@@ -873,8 +873,7 @@ _elua_timer_cb(void *data)
 {
    Edje_Lua_Timer *elt = data;
    lua_State *L;
-   int ret = 0;
-   int err;
+   int ret = 0, err = 0;
    
    if (!elt->obj.ed) return 0;
    L = elt->obj.ed->L;
@@ -940,8 +939,7 @@ _elua_animator_cb(void *data)
 {
    Edje_Lua_Animator *ela = data;
    lua_State *L;
-   int ret = 0;
-   int err;
+   int ret = 0, err = 0;
    
    if (!ela->obj.ed) return 0;
    L = ela->obj.ed->L;
@@ -1005,10 +1003,9 @@ _elua_transition_cb(void *data)
 {
    Edje_Lua_Transition *elt = data;
    lua_State *L;
-   int ret = 0;
-   int err;
+   int ret = 0, err = 0;
    double t;
-   
+
    if (!elt->obj.ed) return 0;
    L = elt->obj.ed->L;
    if (!L) return 0;
@@ -1200,7 +1197,7 @@ _elua_messagesend(lua_State *L)
    else if (!strcmp(type, "strset"))
      {
         Edje_Message_String_Set *emsg;
-        int i, n, len;
+        int i, n;
         const char *str;
         luaL_checktype(L, 3, LUA_TTABLE);
         n = lua_objlen(L, 3);
@@ -1564,7 +1561,8 @@ _elua_move(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
-   int n, x, y;
+   int x, y;
+
    if (!obj) return 0;
    if (!obj->is_evas_obj) return 0;
    if (_elua_2_int_get(L, 2, EINA_TRUE, "x", &x, "y", &y) > 0)
@@ -1588,7 +1586,8 @@ _elua_resize(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
-   int n, w, h;
+   int w, h;
+
    if (!obj) return 0;
    if (!obj->is_evas_obj) return 0;
    if (_elua_2_int_get(L, 2, EINA_TRUE, "w", &w, "h", &h) > 0)
@@ -1622,7 +1621,8 @@ _elua_geom(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
-   int n, x, y, w, h;
+   int x, y, w, h;
+
    if (!obj) return 0;
    if (!obj->is_evas_obj) return 0;
    if (_elua_4_int_get(L, 2, EINA_TRUE, "x", &x, "y", &y, "w", &w, "h", &h) > 0)
@@ -1753,7 +1753,8 @@ _elua_color(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
-   int n, r, g, b, a;
+   int r, g, b, a;
+
    if (!obj) return 0;
    if (!obj->is_evas_obj) return 0;
    if (_elua_4_int_get(L, 2, EINA_TRUE, "r", &r, "g", &g, "b", &b, "a", &a) > 0)
