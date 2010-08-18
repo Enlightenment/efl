@@ -35,114 +35,89 @@ void *alloca (size_t);
 #include "edje_private.h"
 
 Eina_Hash *_registered_modules = NULL;
-Eina_Array *_available_modules = NULL;
-Eina_List *_modules_name = NULL;
+Eina_List *_modules_paths = NULL;
 
-const char *
-_edje_module_name_get(Eina_Module *m)
-{
-   const char *name;
-   ssize_t len;
+Eina_List *_modules_found = NULL;
 
-   name = ecore_file_file_get(eina_module_file_get(m));
-   len = strlen(name);
-   len -= sizeof(SHARED_LIB_SUFFIX) - 1;
-   if (len <= 0) return NULL;
-   return eina_stringshare_add_length(name, len);
-}
+#if defined(__CEGCC__) || defined(__MINGW32CE__)
+# define EDJE_MODULE_NAME "edje_%s.dll"
+#elif _WIN32
+# define EDJE_MODULE_NAME "module.dll"
+#else
+# define EDJE_MODULE_NAME "module.so"
+#endif
 
 EAPI Eina_Bool
 edje_module_load(const char *module)
 {
-   Eina_Module *m;
+   const char *path;
+   Eina_List *l;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(module, EINA_FALSE);
 
    if (eina_hash_find(_registered_modules, module))
      return EINA_TRUE;
 
-   m = eina_module_find(_available_modules, module);
-
-   if (!m)
+   EINA_LIST_FOREACH(_modules_paths, l, path)
      {
-       ERR("Could not find the module %s", module);
-       return EINA_FALSE;
+	Eina_Module *em;
+	char tmp[PATH_MAX];
+
+	/* A warning is expected has the naming change under wince. */
+	snprintf(tmp, sizeof (tmp), "%s/%s/%s/" EDJE_MODULE_NAME, path, module, MODULE_ARCH, module);
+	em = eina_module_new(tmp);
+	if (!em) continue ;
+
+	if (!eina_module_load(em))
+	  {
+	     eina_module_free(em);
+	     continue ;
+	  }
+
+	return !!eina_hash_add(_registered_modules, module, em);
      }
 
-   if (!eina_module_load(m))
-     {
-       ERR("Could not load the module %s", module);
-       return EINA_TRUE;
-     }
-
-   return !!eina_hash_add(_registered_modules, module, m);
+   ERR("Could not find the module %s", module);
+   return EINA_FALSE;
 }
 
 void
 _edje_module_init(void)
 {
-   Eina_Array_Iterator it;
-   Eina_Module *m;
    char *paths[4] = { NULL, NULL, NULL, NULL };
    unsigned int i;
    unsigned int j;
 
-   _registered_modules = eina_hash_string_small_new(NULL);
+   _registered_modules = eina_hash_string_small_new(EINA_FREE_CB(eina_module_free));
 
    /* 1. ~/.edje/modules/ */
    paths[0] = eina_module_environment_path_get("HOME", "/.edje/modules");
-   /* 2. $(EVAS_MODULE_DIR)/edje/modules/ */
+   /* 2. $(EDJE_MODULE_DIR)/edje/modules/ */
    paths[1] = eina_module_environment_path_get("EDJE_MODULES_DIR", "/edje/modules");
    /* 3. libedje.so/../edje/modules/ */
    paths[2] = eina_module_symbol_path_get(_edje_module_init, "/edje/modules");
-   /* 4. PREFIX/evas/modules/ */
+   /* 4. PREFIX/edje/modules/ */
 #ifndef _MSC_VER
-   paths[3] = PACKAGE_LIB_DIR "/evas/modules";
+   paths[3] = strdup(PACKAGE_LIB_DIR "/edje/modules");
 #endif
 
    for (j = 0; j < ((sizeof (paths) / sizeof (char*)) - 1); ++j)
      for (i = j + 1; i < sizeof (paths) / sizeof (char*); ++i)
        if (paths[i] && paths[j] && !strcmp(paths[i], paths[j]))
-	 paths[i] = NULL;
+	 {
+	    free(paths[i]);
+	    paths[i] = NULL;
+	 }
 
    for (i = 0; i < sizeof (paths) / sizeof (char*); ++i)
      if (paths[i])
-       {
-	  char *tmp;
-	  unsigned int len;
-
-	  len = strlen(paths[i]) + strlen(MODULE_ARCH) + 5;
-	  tmp = alloca(len);
-	  snprintf(tmp, len, "%s/%s/", paths[i], MODULE_ARCH);
-
-	  _available_modules = eina_module_list_get(_available_modules, tmp, 0, NULL, NULL);
-       }
-
-   if (!_available_modules)
-     {
-       eina_hash_free(_registered_modules);
-       return;
-     }
-
-   EINA_ARRAY_ITER_NEXT(_available_modules, i, m, it)
-     {
-       const char *name;
-
-       name = _edje_module_name_get(m);
-       _modules_name = eina_list_append(_modules_name, name);
-     }
-
+       _modules_paths = eina_list_append(_modules_paths, paths[i]);
 }
 
 void
 _edje_module_shutdown(void)
 {
-   eina_module_list_free(_available_modules);
-   if (_available_modules)
-     {
-       eina_array_free(_available_modules);
-       _available_modules = NULL;
-     }
+   char *path;
 
    if (_registered_modules)
      {
@@ -150,20 +125,51 @@ _edje_module_shutdown(void)
        _registered_modules = NULL;
      }
 
-   if (_modules_name)
-     {
-       const char *data;
+   EINA_LIST_FREE(_modules_paths, path)
+     free(path);
 
-       EINA_LIST_FREE(_modules_name, data)
-         {
-           eina_stringshare_del(data);
-         }
-       _modules_name = NULL;
-     }
+   EINA_LIST_FREE(_modules_found, path)
+     eina_stringshare_del(path);
 }
 
 EAPI const Eina_List *
 edje_available_modules_get(void)
 {
-   return _modules_name;
+   Eina_File_Direct_Info *info;
+   Eina_Iterator *it;
+   Eina_List *l;
+   const char *path;
+   Eina_List *result = NULL;
+
+   /* FIXME: Stat each possible dir and check if they did change, before starting a huge round of readdir/stat */
+   if (_modules_found)
+     {
+	EINA_LIST_FREE(_modules_found, path)
+	  eina_stringshare_del(path);
+     }
+
+   EINA_LIST_FOREACH(_modules_paths, l, path)
+     {
+	it = eina_file_direct_ls(path);
+
+	if (it)
+	  {
+	     EINA_ITERATOR_FOREACH(it, info)
+	       {
+		  char tmp[PATH_MAX];
+
+		  /* A warning is expected has the naming change under wince. */
+		  snprintf(tmp, sizeof (tmp), "%s/%s/" EDJE_MODULE_NAME, info->path, MODULE_ARCH, ecore_file_file_get(info->path));
+
+		  if (ecore_file_exists(tmp))
+		    result = eina_list_append(result, eina_stringshare_add(ecore_file_file_get(info->path)));
+	       }
+
+	     eina_iterator_free(it);
+	  }
+     }
+
+   _modules_found = result;
+
+   return result;
 }

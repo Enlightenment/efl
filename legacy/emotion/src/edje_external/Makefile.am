@@ -9,9 +9,9 @@ AM_CPPFLAGS = \
 @EFL_EMOTION_BUILD@ \
 @EDJE_EXTERNAL_CFLAGS@
 
-pkgdir = $(libdir)/edje/modules/$(MODULE_EDJE)
-pkg_LTLIBRARIES = emotion.la
+pkgdir = $(libdir)/edje/modules/emotion/$(MODULE_EDJE)
+pkg_LTLIBRARIES = module.la
 
-emotion_la_SOURCES = emotion.c
-emotion_la_LIBADD = $(top_builddir)/src/lib/libemotion.la @EDJE_EXTERNAL_LIBS@
-emotion_la_LDFLAGS = -no-undefined -module -avoid-version -shared -fPIC
+module_la_SOURCES = emotion.c
+module_la_LIBADD = $(top_builddir)/src/lib/libemotion.la @EDJE_EXTERNAL_LIBS@
+module_la_LDFLAGS = -no-undefined -module -avoid-version -shared -fPIC
