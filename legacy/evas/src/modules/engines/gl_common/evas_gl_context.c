@@ -1764,7 +1764,7 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
 {
    int pnum, nv, nc, nu, nu2, nt, i;
    const int points[6] = { 0, 1, 2, 0, 2, 3 };
-   int x, y, w, h, px, py;
+   int x = 0, y = 0, w = 0, h = 0, px = 0, py = 0;
    GLfloat tx[4], ty[4];
    Eina_Bool blend = 1;
    DATA32 cmul;

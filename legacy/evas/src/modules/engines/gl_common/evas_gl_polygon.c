@@ -125,7 +125,7 @@ evas_gl_common_poly_draw(Evas_GL_Context *gc, Evas_GL_Polygon *poly, int dx, int
    Cutout_Rects *rects;
    Cutout_Rect  *r;
    int c, cx, cy, cw, ch, cr, cg, cb, ca, i;
-   int x, y, w, h;
+   int x = 0, y = 0, w = 0, h = 0;
 
    Eina_List *l;
    int n, k, num_active_edges, y0, y1, *sorted_index, j;

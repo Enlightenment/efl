@@ -859,8 +859,8 @@ Evas_GL_Texture *
 evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, int w, int h)
 {
    Evas_GL_Texture *tex;
-   Eina_List *l_after = NULL;
-   int u = 0, v = 0;
+//   Eina_List *l_after = NULL;
+//   int u = 0, v = 0;
 
    tex = calloc(1, sizeof(Evas_GL_Texture));
    if (!tex) return NULL;
@@ -920,8 +920,6 @@ evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, int w, int h)
 void
 evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, int w, int h)
 {
-   int y;
-
    if (!tex->pt) return;
    // FIXME: works on lowest size 4 pixel high buffers. must also be multiple of 2
 #ifdef GL_UNPACK_ROW_LENGTH
@@ -943,6 +941,8 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, int w, int
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_sub_2d(0, 0, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat, rows[h + (h / 2)]);
 #else
+   int y;
+
    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
