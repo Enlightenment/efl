@@ -281,7 +281,7 @@ struct _Evas_Object_Textblock_Item
    Evas_Object_Textblock_Node_Text *source_node;
    int                              x, w, h;
    int                              inset, baseline;
-   int                              source_pos;
+   size_t                           source_pos;
    unsigned char                    type;
    Evas_BiDi_Props                  bidi_props;
 };
@@ -347,7 +347,7 @@ struct _Evas_Textblock_Style
 struct _Evas_Textblock_Cursor
 {
    Evas_Object                     *obj;
-   int                              pos;
+   size_t                           pos;
    Evas_Object_Textblock_Node_Text *node;
 
 };
@@ -452,7 +452,7 @@ static void _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Ob
 static void _evas_textblock_node_format_free(Evas_Object_Textblock_Node_Format *n);
 static void _evas_textblock_node_text_free(Evas_Object_Textblock_Node_Text *n);
 static void _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj);
-static void _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Text *n, int start, int offset);
+static void _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Text *n, size_t start, int offset);
 static void _evas_textblock_cursors_set_node(Evas_Object_Textblock *o, const Evas_Object_Textblock_Node_Text *n, Evas_Object_Textblock_Node_Text *new_node);
 
 /* styles */
@@ -5033,7 +5033,8 @@ _evas_textblock_node_text_remove_formats_between(Evas_Object_Textblock *o,
    int offset = end - start;
    itr = n->format_node;
 
-   start -= itr->offset;
+   if (itr)
+     start -= itr->offset;
    if (offset < 0) offset = 0;
    while (itr && (itr->text_node == n))
      {
@@ -5071,7 +5072,7 @@ _evas_textblock_node_text_remove_formats_between(Evas_Object_Textblock *o,
  * @param end the end of the section to delete, if end == -1 it means the end of the string.
  */
 static Evas_Object_Textblock_Node_Format *
-_evas_textblock_node_text_get_first_format_between(Evas_Object_Textblock *o,
+_evas_textblock_node_text_get_first_format_between(
       Evas_Object_Textblock_Node_Text *n, int start, int end)
 {
    Evas_Object_Textblock_Node_Format *itr;
@@ -5104,6 +5105,24 @@ _evas_textblock_node_text_get_first_format_between(Evas_Object_Textblock *o,
 static void
 _evas_textblock_node_text_remove(Evas_Object_Textblock *o, Evas_Object_Textblock_Node_Text *n)
 {
+   Evas_Object_Textblock_Node_Format *fnode;
+   Evas_Object_Textblock_Node_Text *tnode;
+   fnode = n->format_node;
+   /* We want to get the last format node that will exist so if
+    * it's a node to be deleted get the previous one */
+   if (fnode && (fnode->text_node == n))
+     {
+        fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->prev);
+     }
+   /* Update all the text node -> format node links
+    * go through all the text nodes starting from ours and update
+    * all the ones pointing to a format node that belongs to n */
+   tnode = _NODE_TEXT(EINA_INLIST_GET(n)->next);
+   while (tnode && tnode->format_node && (tnode->format_node->text_node = n))
+     {
+        tnode->format_node = fnode;
+        tnode = _NODE_TEXT(EINA_INLIST_GET(tnode)->next);
+     }
    _evas_textblock_node_text_remove_formats_between(o, n, 0, -1);
    o->text_nodes = _NODE_TEXT(eina_inlist_remove(
            EINA_INLIST_GET(o->text_nodes), EINA_INLIST_GET(n)));
@@ -5159,15 +5178,26 @@ evas_textblock_cursor_pos_get(const Evas_Textblock_Cursor *cur)
  * @param pos the pos to set.
  */
 EAPI void
-evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int pos)
+evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int _pos)
 {
-   unsigned int len;
+   size_t len, pos;
 
    if (!cur) return;
    if (!cur->node) return;
    len = eina_ustrbuf_length_get(cur->node->unicode);
-   if (pos < 0) pos = 0;
-   else if (pos > len) pos = len;
+   if (_pos < 0)
+     {
+        pos = 0;
+     }
+   else
+     {
+        pos = (size_t) _pos;
+     }
+
+   if (pos > len)
+     {
+        pos = len;
+     }
    cur->pos = pos;
 
 }
@@ -5426,7 +5456,7 @@ _evas_textblock_cursors_set_node(Evas_Object_Textblock *o,
 static void
 _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur,
       const Evas_Object_Textblock_Node_Text *n,
-      int start, int offset)
+      size_t start, int offset)
 {
    Eina_List *l;
    Evas_Textblock_Cursor *data;
@@ -5438,8 +5468,14 @@ _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur,
         if ((n == o->cursor->node) &&
               (o->cursor->pos > start))
           {
-             o->cursor->pos += offset;
-             if (o->cursor->pos < 0) o->cursor->pos = 0;
+             if ((offset < 0) && (o->cursor->pos <= (size_t) (-1 * offset)))
+               {
+                  o->cursor->pos = 0;
+               }
+             else
+               {
+                  o->cursor->pos += offset;
+               }
           }
      }
    EINA_LIST_FOREACH(o->cursors, l, data)
@@ -5449,8 +5485,14 @@ _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur,
              if ((n == data->node) &&
                    (data->pos > start))
                {
-                  data->pos += offset;
-                  if (data->pos < 0) data->pos = 0;
+                  if ((offset < 0) && (data->pos <= (size_t) (-1 * offset)))
+                    {
+                       data->pos = 0;
+                    }
+                  else
+                    {
+                       data->pos += offset;
+                    }
                }
           }
      }
@@ -5910,8 +5952,11 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
         /* Remove all the text nodes between */
         while (n && (n != n2))
           {
+             Evas_Object_Textblock_Node_Text *nnode;
+
+             nnode = _NODE_TEXT(EINA_INLIST_GET(n)->next);
              _evas_textblock_node_text_remove(o, n);
-             n = _NODE_TEXT(EINA_INLIST_GET(n)->next);
+             n = nnode;
           }
 
         /* Remove the formats and the strings in the first and last nodes */
@@ -5931,6 +5976,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
         _evas_textblock_cursors_update_offset(cur2, cur2->node, 0, - cur2->pos);
      }
    evas_textblock_cursor_copy(cur1, cur2);
+   evas_textblock_cursor_copy(cur1, o->cursor);
    _evas_textblock_changed(o, cur1->obj);
 }
 
@@ -5990,12 +6036,12 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
            eina_unicode_strdup(eina_ustrbuf_string_get(tnode->unicode));
         if (tnode == cur2->node)
           {
-             fnode = _evas_textblock_node_text_get_first_format_between(o, n1,
+             fnode = _evas_textblock_node_text_get_first_format_between(n1,
                    cur1->pos, cur2->pos);
           }
         else
           {
-             fnode = _evas_textblock_node_text_get_first_format_between(o, n1,
+             fnode = _evas_textblock_node_text_get_first_format_between(n1,
                    cur1->pos, -1);
           }
         /* Init the offset so the first one will count starting from cur1->pos
@@ -6013,7 +6059,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
           {
              Eina_Unicode tmp_ch;
              off += fnode->offset;
-             if ((tnode == cur2->node) && (text - text_base + off >= cur2->pos))
+             if ((tnode == cur2->node) && ((size_t) (text - text_base + off) >= cur2->pos))
                {
                   break;
                }
@@ -7351,7 +7397,7 @@ static void *evas_object_textblock_engine_data_get(Evas_Object *obj)
 }
 
 static int
-evas_object_textblock_is_opaque(Evas_Object *obj)
+evas_object_textblock_is_opaque(Evas_Object *obj __UNUSED__)
 {
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fulyl opque over the entire gradient it occupies */
@@ -7359,7 +7405,7 @@ evas_object_textblock_is_opaque(Evas_Object *obj)
 }
 
 static int
-evas_object_textblock_was_opaque(Evas_Object *obj)
+evas_object_textblock_was_opaque(Evas_Object *obj __UNUSED__)
 {
    /* this returns 1 if the internal object data implies that the object was */
    /* currently fulyl opque over the entire gradient it occupies */
