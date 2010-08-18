@@ -442,12 +442,11 @@ _pool_tex_dynamic_new(Evas_GL_Context *gc, int w, int h, int intformat, int form
    attr[1] = pt->w;
    attr[3] = pt->h;
 
-   // FIXME: RGBA/ABGR is swapped.
-   // FIXME: seems a bit slower than i'd like - maybe too many flushes?
-   // FIXME: YCbCr no support as yet
    // FIXME: stride not fetched or used from engine api
    // FIXME: have to set dynamic AFTER setting alpha and size. shoudl allow
    //        any order
+   // FIXME: seems a bit slower than i'd like - maybe too many flushes?
+   // FIXME: YCbCr no support as yet
    pt->dyn.img = secsym_eglCreateImage(egldisplay,
                                        EGL_NO_CONTEXT, 
                                        EGL_MAP_GL_TEXTURE_2D_SEC,
@@ -671,16 +670,16 @@ evas_gl_common_texture_dynamic_new(Evas_GL_Context *gc, Evas_GL_Image *im)
    if (tex->alpha)
      {
         if (gc->shared->info.bgra)
-          tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h, rgba_ifmt, rgba_fmt);
+          tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h, bgra_ifmt, bgra_fmt);
         else
-          tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h, rgba_ifmt, rgba_fmt);
+          tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h, bgra_ifmt, bgra_fmt);
      }
    else
      {
         if (gc->shared->info.bgra)
-          tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h, rgb_ifmt, rgb_fmt);
+          tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h, bgra_ifmt, bgra_fmt);
         else
-          tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h, rgb_ifmt, rgb_fmt);
+          tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h, bgra_ifmt, bgra_fmt);
      }
    if (!tex->pt)
      {

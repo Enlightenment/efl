@@ -1187,10 +1187,20 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    
    if (tex_only)
      {
-        if ((a == 255) && (r == 255) && (g == 255) && (b == 255))
-          prog = gc->shared->shader.tex_nomul.prog;
+        if (tex->pt->dyn.img)
+          {
+             if ((a == 255) && (r == 255) && (g == 255) && (b == 255))
+                prog = gc->shared->shader.img_nomul.prog;
+             else
+                prog = gc->shared->shader.img.prog;
+          }
         else
-          prog = gc->shared->shader.tex.prog;
+          {
+             if ((a == 255) && (r == 255) && (g == 255) && (b == 255))
+                prog = gc->shared->shader.tex_nomul.prog;
+             else
+                prog = gc->shared->shader.tex.prog;
+          }
      }
    else
      {
@@ -1769,16 +1779,32 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
    
    if (tex_only)
      {
-        if ((a == 255) && (r == 255) && (g == 255) && (b == 255))
+        if (tex->pt->dyn.img)
           {
-             if ((p[0].col == 0xffffffff) && (p[1].col == 0xffffffff) &&
-                 (p[2].col == 0xffffffff) && (p[3].col == 0xffffffff))
-               prog = gc->shared->shader.tex_nomul.prog;
+             if ((a == 255) && (r == 255) && (g == 255) && (b == 255))
+               {
+                  if ((p[0].col == 0xffffffff) && (p[1].col == 0xffffffff) &&
+                      (p[2].col == 0xffffffff) && (p[3].col == 0xffffffff))
+                     prog = gc->shared->shader.img_nomul.prog;
+                  else
+                     prog = gc->shared->shader.img.prog;
+               }
              else
-               prog = gc->shared->shader.tex.prog;
+                prog = gc->shared->shader.img.prog;
           }
         else
-          prog = gc->shared->shader.tex.prog;
+          {
+             if ((a == 255) && (r == 255) && (g == 255) && (b == 255))
+               {
+                  if ((p[0].col == 0xffffffff) && (p[1].col == 0xffffffff) &&
+                      (p[2].col == 0xffffffff) && (p[3].col == 0xffffffff))
+                     prog = gc->shared->shader.tex_nomul.prog;
+                  else
+                     prog = gc->shared->shader.tex.prog;
+               }
+             else
+                prog = gc->shared->shader.tex.prog;
+          }
      }
    else
      {

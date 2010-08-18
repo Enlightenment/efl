@@ -280,6 +280,7 @@ evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
    im->content_hint = hint;
    if (!im->gc) return;
    if (!im->gc->shared->info.sec_image_map) return;
+   if (!im->gc->shared->info.bgra) return;
    // does not handle yuv yet.
    if (im->cs.space != EVAS_COLORSPACE_ARGB8888) return;
    if (im->content_hint == EVAS_IMAGE_CONTENT_HINT_DYNAMIC)
