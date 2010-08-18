@@ -1069,6 +1069,7 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
 
    pce->entry = eina_stringshare_add(new_name);
    pc->part = pce->entry;
+   eina_stringshare_replace(&ed->group, new_name);
 
    return EINA_TRUE;
 }
