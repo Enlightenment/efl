@@ -817,7 +817,6 @@ _ecore_main_select(double timeout)
    fd_set         rfds, wfds, exfds;
    int            max_fd;
    int            ret;
-   Ecore_Fd_Handler *fdh;
 
    t = NULL;
    if ((!finite(timeout)) || (timeout == 0.0))  /* finite() tests for NaN, too big, too small, and infinity.  */
@@ -850,6 +849,8 @@ _ecore_main_select(double timeout)
    /* call the prepare callback for all handlers */
    _ecore_main_prepare_handlers();
 #ifndef HAVE_EPOLL
+   Ecore_Fd_Handler *fdh;
+
    EINA_INLIST_FOREACH(fd_handlers, fdh)
      {
         if (!fdh->delete_me)
@@ -894,6 +895,8 @@ _ecore_main_select(double timeout)
 #ifdef HAVE_EPOLL
         _ecore_main_fdh_epoll_mark_active();
 #else /* HAVE_EPOLL */
+        Ecore_Fd_Handler *fdh;
+
 	EINA_INLIST_FOREACH(fd_handlers, fdh)
           {
              if (!fdh->delete_me)
