@@ -553,26 +553,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\lib\engines\common\evas_image_fill_main.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\..\src\lib\engines\common\evas_image_load.c"
 					>
 				</File>
