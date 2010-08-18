@@ -77,6 +77,7 @@ static const Evas_Object_Func object_func =
      NULL,
      evas_object_text_scale_update,
      NULL,
+     NULL, 
      NULL
 };
 
@@ -1849,7 +1850,7 @@ evas_object_text_engine_data_get(Evas_Object *obj)
 }
 
 static int
-evas_object_text_is_opaque(Evas_Object *obj)
+evas_object_text_is_opaque(Evas_Object *obj __UNUSED__)
 {
    /* this returns 1 if the internal object data implies that the object is 
     currently fully opaque over the entire gradient it occupies */
@@ -1857,7 +1858,7 @@ evas_object_text_is_opaque(Evas_Object *obj)
 }
 
 static int
-evas_object_text_was_opaque(Evas_Object *obj)
+evas_object_text_was_opaque(Evas_Object *obj __UNUSED__)
 {
    /* this returns 1 if the internal object data implies that the object was
     currently fully opaque over the entire gradient it occupies */

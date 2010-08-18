@@ -480,7 +480,7 @@ static void *evas_object_polygon_engine_data_get(Evas_Object *obj)
 }
 
 static int
-evas_object_polygon_is_opaque(Evas_Object *obj)
+evas_object_polygon_is_opaque(Evas_Object *obj __UNUSED__)
 {
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire line it occupies */
@@ -488,7 +488,7 @@ evas_object_polygon_is_opaque(Evas_Object *obj)
 }
 
 static int
-evas_object_polygon_was_opaque(Evas_Object *obj)
+evas_object_polygon_was_opaque(Evas_Object *obj __UNUSED__)
 {
    /* this returns 1 if the internal object data implies that the object was */
    /* previously fully opaque over the entire line it occupies */
@@ -496,7 +496,7 @@ evas_object_polygon_was_opaque(Evas_Object *obj)
 }
 
 static int
-evas_object_polygon_is_inside(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
+evas_object_polygon_is_inside(Evas_Object *obj __UNUSED__, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 {
    /* this returns 1 if the canvas co-ordinates are inside the object based */
    /* on object private data. not much use for rects, but for polys, images */
@@ -505,7 +505,7 @@ evas_object_polygon_is_inside(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Co
 }
 
 static int
-evas_object_polygon_was_inside(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
+evas_object_polygon_was_inside(Evas_Object *obj __UNUSED__, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 {
    /* this returns 1 if the canvas co-ordinates were inside the object based */
    /* on object private data. not much use for rects, but for polys, images */

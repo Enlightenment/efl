@@ -3147,7 +3147,7 @@ evas_object_image_get_opaque_rect(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y
 }
 
 static int
-evas_object_image_can_map(Evas_Object *obj)
+evas_object_image_can_map(Evas_Object *obj __UNUSED__)
 {
    return 1;
 }

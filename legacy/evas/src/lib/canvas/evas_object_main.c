@@ -35,7 +35,7 @@ get_layer_objects(Evas_Layer *l)
 
 /* evas internal stuff */
 Evas_Object *
-evas_object_new(Evas *e)
+evas_object_new(Evas *e __UNUSED__)
 {
    Evas_Object *obj;
 
