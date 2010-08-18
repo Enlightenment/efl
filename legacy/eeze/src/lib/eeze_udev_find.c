@@ -115,14 +115,14 @@ eeze_udev_find_unlisted_similar(Eina_List * list)
    const char *vendor, *model, *revision, *devname, *dev;
 
    if (!list)
-     return;
+     return NULL;
 
    EINA_LIST_FOREACH(list, l, dev)
      {
         en = udev_enumerate_new((udev));
 
         if (!en)
-         return;
+         return NULL;
 
         device = udev_device_new_from_syspath(udev, dev);
 
