@@ -4040,7 +4040,7 @@ ecore_evas_software_x11_16_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Eco
  */
 EAPI Ecore_Evas *
 ecore_evas_software_x11_8_new(const char *disp_name, Ecore_X_Window parent,
-      int x, int y, int w, int h)
+                              int x, int y, int w, int h)
 {
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_8_X11)
    Evas_Engine_Info_Software_8_X11 *einfo;
