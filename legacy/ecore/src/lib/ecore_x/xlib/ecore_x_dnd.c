@@ -83,8 +83,8 @@ _ecore_x_dnd_converter_copy(char *target  __UNUSED__,
                             int           size,
                             void        **data_ret,
                             int          *size_ret,
-                            Ecore_X_Atom *tprop,
-                            int          *count)
+                            Ecore_X_Atom *tprop __UNUSED__,
+                            int          *count __UNUSED__)
 {
    XTextProperty text_prop;
    char *mystr;
