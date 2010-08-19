@@ -921,22 +921,20 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 
 
 static void
-_range_del(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
+_range_del(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o __UNUSED__, Entry *en)
 {
    evas_textblock_cursor_range_delete(en->sel_start, en->sel_end);
 }
 
 static void
-_backspace(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_backspace(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__, Entry *en __UNUSED__)
 {
    if (evas_textblock_cursor_char_prev(c))
-     {
-        evas_textblock_cursor_char_delete(c);
-     }
+     evas_textblock_cursor_char_delete(c);
 }
 
 static void
-_delete(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_delete(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__, Entry *en __UNUSED__)
 {
    evas_textblock_cursor_char_delete(c);
 }

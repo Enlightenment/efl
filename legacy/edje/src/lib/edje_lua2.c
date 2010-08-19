@@ -451,7 +451,7 @@ _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 }
 
 static int
-_elua_custom_panic(lua_State *L)
+_elua_custom_panic(lua_State *L __UNUSED__)
 {
    ERR("Lua Panic!!!!");
    return 1;
@@ -615,7 +615,7 @@ _elua_obj_new(lua_State *L, Edje *ed, int size)
 }
 
 static void
-_elua_obj_free(lua_State *L, Edje_Lua_Obj *obj)
+_elua_obj_free(lua_State *L __UNUSED__, Edje_Lua_Obj *obj)
 {
    if (!obj->free_func) return;
    obj->free_func(obj);
@@ -2037,15 +2037,16 @@ _edje_lua2_script_shutdown(Edje *ed)
 }
 
 void
-_edje_lua2_script_load(Edje_Part_Collection *edc, void *data, int size)
+_edje_lua2_script_load(Edje_Part_Collection *edc __UNUSED__, void *data __UNUSED__, int size __UNUSED__)
 {
    _elua_init();
 }
 
 void
-_edje_lua2_script_unload(Edje_Part_Collection *edc)
+_edje_lua2_script_unload(Edje_Part_Collection *edc __UNUSED__)
 {
    lua_State *L;
+
    if (!lstate) return;
    L = lstate;
    lua_gc(L, LUA_GCCOLLECT, 0);
