@@ -166,7 +166,6 @@ typedef enum _Evas_Object_Table_Homogeneous_Mode
   EVAS_OBJECT_TABLE_HOMOGENEOUS_ITEM = 2
 } Evas_Object_Table_Homogeneous_Mode; /**< Table cell pack mode. */
 
-typedef struct _Evas_Transform Evas_Transform; /**< An Evas projective or affine transform */
 typedef struct _Evas_Coord_Rectangle  Evas_Coord_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Point                   Evas_Point; /**< integer point */
 
@@ -226,13 +225,6 @@ typedef unsigned long long Evas_Modifier_Mask; /**< An Evas modifier mask type *
 typedef int           Evas_Coord;
 typedef int           Evas_Font_Size;
 typedef int           Evas_Angle;
-
-struct _Evas_Transform /** An affine or projective coordinate transformation matrix */
-{
-   float mxx, mxy, mxz;
-   float myx, myy, myz;
-   float mzx, mzy, mzz;
-};
 
 struct _Evas_Coord_Rectangle /**< A rectangle in Evas_Coord */
 {
@@ -1208,8 +1200,6 @@ typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj
    EAPI void              evas_object_image_fill_get        (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_image_fill_spread_set   (Evas_Object *obj, int tile_mode) EINA_ARG_NONNULL(1);
    EAPI int               evas_object_image_fill_spread_get   (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI void              evas_object_image_fill_transform_set (Evas_Object *obj, Evas_Transform *t) EINA_ARG_NONNULL(1);
-   EAPI void              evas_object_image_fill_transform_get (const Evas_Object *obj, Evas_Transform *t) EINA_ARG_NONNULL(1, 2);
    EAPI void              evas_object_image_size_set        (Evas_Object *obj, int w, int h) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_image_size_get        (const Evas_Object *obj, int *w, int *h) EINA_ARG_NONNULL(1);
    EAPI int               evas_object_image_stride_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
@@ -2147,20 +2137,6 @@ struct _Evas_Smart_Cb_Description
 
    EAPI void              evas_data_argb_premul             (unsigned int *data, unsigned int len);
    EAPI void              evas_data_argb_unpremul           (unsigned int *data, unsigned int len);
-
-/* Evas utility routines for working with transforms */
-   /* Set t to the identity */
-   EAPI void              evas_transform_identity_set       (Evas_Transform *t);
-   /* Left-multiply t by an xy rotation defined by the given angle (in degrees) */
-   EAPI void              evas_transform_rotate             (double angle, Evas_Transform *t);
-   /* Left-multiply t by an xy translation defined by the given dx, dy values */
-   EAPI void              evas_transform_translate          (float dx, float dy, Evas_Transform *t);
-   /* Left-multiply t by an xy scaling defined by the given sx, sy factors */
-   EAPI void              evas_transform_scale              (float sx, float sy, Evas_Transform *t);
-   /* Left-multiply t by an xy shearing defined by the given sh, sv values */
-   EAPI void              evas_transform_shear              (float sh, float sv, Evas_Transform *t);
-   /* Left-multiply t by the given transform l */
-   EAPI void              evas_transform_compose            (Evas_Transform *l, Evas_Transform *t);
 
 /* string and font handling */
    EAPI int               evas_string_char_next_get         (const char *str, int pos, int *decoded) EINA_ARG_NONNULL(1);
