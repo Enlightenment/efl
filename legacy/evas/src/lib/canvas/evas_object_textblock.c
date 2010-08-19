@@ -6690,12 +6690,25 @@ evas_object_textblock_clear(Evas_Object *obj)
 }
 
 /**
- * Get the formatted width.
+ * Get the formatted width. This calculates the actual size after restricting
+ * the textblock to the current size of the object.
+ * The main difference between this and @ref evas_object_textblock_size_native_get
+ * is that the "native" function does not wrapping into account
+ * it just calculates the real wdith of the objcet if it was placed on an
+ * infinite canvas, while this function gives the size after wrapping
+ * according to the size restrictions of the object.
+ *
+ * For example for a textblock containing the text: "You shall not pass!"
+ * with no margins or padding and assuming a monospace font and a size of
+ * 7x10 char widths (for simplicity) has a native size of 19x1
+ * and a formatted size of 5x4.
+ *
  *
  * @param obj the evas object.
- * @param w the w of the object.
- * @param h the h of the object.
+ * @param w[out] the w of the object.
+ * @param h[out] the h of the object
  * @return Returns no value.
+ * @see evas_object_textblock_size_native_get
  */
 EAPI void
 evas_object_textblock_size_formatted_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
@@ -6707,10 +6720,22 @@ evas_object_textblock_size_formatted_get(const Evas_Object *obj, Evas_Coord *w, 
 }
 
 /**
- * to be documented.
- * @param obj to be documented.
- * @param w to be documented.
- * @param h to be documented.
+ * Get the native idth. This calculates the actual size without taking account
+ * the current size of the object.
+ * The main difference between this and @ref evas_object_textblock_size_formatted_get
+ * is that the "native" function does not take wrapping into account
+ * it just calculates the real wdith of the objcet if it was placed on an
+ * infinite canvas, while the "formatted" function gives the size after
+ * wrapping text according to the size restrictions of the object.
+ *
+ * For example for a textblock containing the text: "You shall not pass!"
+ * with no margins or padding and assuming a monospace font and a size of
+ * 7x10 char widths (for simplicity) has a native size of 19x1
+ * and a formatted size of 5x4.
+ *
+ * @param obj the evas object of the textblock
+ * @param w[out] the width returned
+ * @param h[out] the height returned
  * @return Returns no value.
  */
 EAPI void
