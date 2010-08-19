@@ -276,13 +276,19 @@ evas_gl_common_image_scale_hint_set(Evas_GL_Image *im, int hint)
 void
 evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
 {
+   printf("xxxx1\n");
    if (im->content_hint == hint) return;
    im->content_hint = hint;
+   printf("xxxx2\n");
    if (!im->gc) return;
+   printf("xxxx3\n");
    if (!im->gc->shared->info.sec_image_map) return;
+   printf("xxxx4\n");
    if (!im->gc->shared->info.bgra) return;
+   printf("xxxx5\n");
    // does not handle yuv yet.
    if (im->cs.space != EVAS_COLORSPACE_ARGB8888) return;
+   printf("xxxx6\n");
    if (im->content_hint == EVAS_IMAGE_CONTENT_HINT_DYNAMIC)
      {
         if (im->cs.data)

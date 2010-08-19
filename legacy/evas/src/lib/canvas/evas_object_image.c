@@ -796,19 +796,33 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
    o->cur.image.w = w;
    o->cur.image.h = h;
    if (o->engine_data)
-     o->engine_data = obj->layer->evas->engine.func->image_size_set(obj->layer->evas->engine.data.output,
-								    o->engine_data,
-								    w, h);
+      o->engine_data = obj->layer->evas->engine.func->image_size_set(obj->layer->evas->engine.data.output,
+                                                                     o->engine_data,
+                                                                     w, h);
    else
-     o->engine_data = obj->layer->evas->engine.func->image_new_from_copied_data
-     (obj->layer->evas->engine.data.output, w, h, NULL, o->cur.has_alpha,
-      o->cur.cspace);
-
-   if (obj->layer->evas->engine.func->image_stride_get)
-     obj->layer->evas->engine.func->image_stride_get(obj->layer->evas->engine.data.output,
-						     o->engine_data, &stride);
+      o->engine_data = obj->layer->evas->engine.func->image_new_from_copied_data
+      (obj->layer->evas->engine.data.output, w, h, NULL, o->cur.has_alpha,
+          o->cur.cspace);
+   printf("size set %i %i -> %p\n", w, h, o->engine_data);
+   
+   if (o->engine_data)
+     {
+        if (obj->layer->evas->engine.func->image_scale_hint_set)
+           obj->layer->evas->engine.func->image_scale_hint_set
+           (obj->layer->evas->engine.data.output,
+               o->engine_data, o->scale_hint);
+        if (obj->layer->evas->engine.func->image_content_hint_set)
+           obj->layer->evas->engine.func->image_content_hint_set
+           (obj->layer->evas->engine.data.output,
+               o->engine_data, o->content_hint);
+        if (obj->layer->evas->engine.func->image_stride_get)
+           obj->layer->evas->engine.func->image_stride_get(obj->layer->evas->engine.data.output,
+                                                           o->engine_data, &stride);
+        else
+           stride = w;
+     }
    else
-     stride = w;
+      stride = w;
    o->cur.image.stride = stride;
 
 /* FIXME - in engine call above
@@ -978,6 +992,20 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
 									      data,
 									      o->cur.has_alpha,
 									      o->cur.cspace);
+        if (o->engine_data)
+          {
+             if (obj->layer->evas->engine.func->image_scale_hint_set)
+                obj->layer->evas->engine.func->image_scale_hint_set
+                (obj->layer->evas->engine.data.output,
+                    o->engine_data, o->scale_hint);
+             if (obj->layer->evas->engine.func->image_content_hint_set)
+                obj->layer->evas->engine.func->image_content_hint_set
+                (obj->layer->evas->engine.data.output,
+                    o->engine_data, o->content_hint);
+             if (obj->layer->evas->engine.func->image_stride_get)
+                obj->layer->evas->engine.func->image_stride_get(obj->layer->evas->engine.data.output,
+                                                                o->engine_data, &o->cur.image.stride);
+          }
      }
    else
      {
@@ -1040,10 +1068,21 @@ evas_object_image_data_get(const Evas_Object *obj, Eina_Bool for_writing)
 #endif
 
    data = NULL;
+   if (obj->layer->evas->engine.func->image_scale_hint_set)
+      obj->layer->evas->engine.func->image_scale_hint_set
+      (obj->layer->evas->engine.data.output,
+          o->engine_data, o->scale_hint);
+   if (obj->layer->evas->engine.func->image_content_hint_set)
+      obj->layer->evas->engine.func->image_content_hint_set
+      (obj->layer->evas->engine.data.output,
+          o->engine_data, o->content_hint);
    o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
 								  o->engine_data,
 								  for_writing,
 								  &data);
+   if (obj->layer->evas->engine.func->image_stride_get)
+      obj->layer->evas->engine.func->image_stride_get(obj->layer->evas->engine.data.output,
+                                                      o->engine_data, &o->cur.image.stride);
    o->pixels_checked_out++;
    if (for_writing)
      {
@@ -1141,9 +1180,22 @@ evas_object_image_data_copy_set(Evas_Object *obj, void *data)
 									      o->cur.has_alpha,
 									      o->cur.cspace);
    if (o->engine_data)
-     o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
-								     o->engine_data,
-								     o->cur.has_alpha);
+     {
+        o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
+                                                                        o->engine_data,
+                                                                        o->cur.has_alpha);
+        if (obj->layer->evas->engine.func->image_scale_hint_set)
+           obj->layer->evas->engine.func->image_scale_hint_set
+           (obj->layer->evas->engine.data.output,
+               o->engine_data, o->scale_hint);
+        if (obj->layer->evas->engine.func->image_content_hint_set)
+           obj->layer->evas->engine.func->image_content_hint_set
+           (obj->layer->evas->engine.data.output,
+               o->engine_data, o->content_hint);
+        if (obj->layer->evas->engine.func->image_stride_get)
+           obj->layer->evas->engine.func->image_stride_get(obj->layer->evas->engine.data.output,
+                                                           o->engine_data, &o->cur.image.stride);
+     }
    o->pixels_checked_out = 0;
    EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
 }
@@ -1217,6 +1269,17 @@ evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool has_alpha)
         o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
 								     o->engine_data,
 								     o->cur.has_alpha);
+        if (obj->layer->evas->engine.func->image_scale_hint_set)
+           obj->layer->evas->engine.func->image_scale_hint_set
+           (obj->layer->evas->engine.data.output,
+               o->engine_data, o->scale_hint);
+        if (obj->layer->evas->engine.func->image_content_hint_set)
+           obj->layer->evas->engine.func->image_content_hint_set
+           (obj->layer->evas->engine.data.output,
+               o->engine_data, o->content_hint);
+        if (obj->layer->evas->engine.func->image_stride_get)
+           obj->layer->evas->engine.func->image_stride_get(obj->layer->evas->engine.data.output,
+                                                           o->engine_data, &o->cur.image.stride);
      }
    evas_object_image_data_update_add(obj, 0, 0, o->cur.image.w, o->cur.image.h);
    EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
@@ -1947,10 +2010,13 @@ evas_object_image_scale_hint_set(Evas_Object *obj, Evas_Image_Scale_Hint hint)
      }
 #endif
    o->scale_hint = hint;
-   if (obj->layer->evas->engine.func->image_content_hint_set)
+   if (obj->layer->evas->engine.func->image_scale_hint_set)
       obj->layer->evas->engine.func->image_scale_hint_set
       (obj->layer->evas->engine.data.output,
-          o->engine_data, o->content_hint);
+          o->engine_data, o->scale_hint);
+   if (obj->layer->evas->engine.func->image_stride_get)
+      obj->layer->evas->engine.func->image_stride_get(obj->layer->evas->engine.data.output,
+                                                      o->engine_data, &o->cur.image.stride);
 }
 
 /**
@@ -2005,11 +2071,15 @@ evas_object_image_content_hint_set(Evas_Object *obj, Evas_Image_Content_Hint hin
           evas_common_pipe_op_image_flush(o->engine_data);
      }
 #endif
+   printf("content hint!!!!\n");
    o->content_hint = hint;
    if (obj->layer->evas->engine.func->image_content_hint_set)
       obj->layer->evas->engine.func->image_content_hint_set
       (obj->layer->evas->engine.data.output,
           o->engine_data, o->content_hint);
+   if (obj->layer->evas->engine.func->image_stride_get)
+      obj->layer->evas->engine.func->image_stride_get(obj->layer->evas->engine.data.output,
+                                                      o->engine_data, &o->cur.image.stride);
 }
 
 /**
