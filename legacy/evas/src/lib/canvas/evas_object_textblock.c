@@ -6037,25 +6037,30 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
            eina_unicode_strdup(eina_ustrbuf_string_get(tnode->unicode));
         if (tnode == cur2->node)
           {
-             fnode = _evas_textblock_node_text_get_first_format_between(n1,
+             fnode = _evas_textblock_node_text_get_first_format_between(tnode,
                    cur1->pos, cur2->pos);
+          }
+        else if (tnode == cur1->node)
+          {
+             fnode = _evas_textblock_node_text_get_first_format_between(tnode,
+                   cur1->pos, -1);
           }
         else
           {
-             fnode = _evas_textblock_node_text_get_first_format_between(n1,
-                   cur1->pos, -1);
+             fnode = _evas_textblock_node_text_get_first_format_between(tnode,
+                   0, -1);
           }
         /* Init the offset so the first one will count starting from cur1->pos
          * and not the previous format node */
         if ((tnode == cur1->node) && fnode)
           {
              off = _evas_textblock_node_format_pos_get(fnode) - cur1->pos - fnode->offset;
+             text += cur1->pos;
           }
         else
           {
              off = 0;
           }
-        text += cur1->pos;
         while (fnode && (fnode->text_node == tnode))
           {
              Eina_Unicode tmp_ch;
