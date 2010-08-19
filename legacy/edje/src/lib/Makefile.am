@@ -56,9 +56,9 @@ edje_amalgamation.c: $(base_sources) Makefile
 	@echo "# include \"config.h\"" >> edje_amalgamation.c
 	@echo "#endif" >> edje_amalgamation.c
 
-	@echo "#ifndef _WIN32" >> eina_amalgamation.c
-	@echo "#define _GNU_SOURCE" >> eina_amalgamation.c
-	@echo "#endif" >> eina_amalgamation.c
+	@echo "#ifndef _WIN32" >> edje_amalgamation.c
+	@echo "#define _GNU_SOURCE" >> edje_amalgamation.c
+	@echo "#endif" >> edje_amalgamation.c
 
 	@echo "#ifdef HAVE_ALLOCA_H" >> edje_amalgamation.c
 	@echo "# include <alloca.h>" >> edje_amalgamation.c
