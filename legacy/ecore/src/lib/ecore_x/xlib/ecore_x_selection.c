@@ -573,8 +573,8 @@ _ecore_x_selection_converter_text(char         *target,
                                   int           size,
                                   void        **data_ret,
                                   int          *size_ret,
-                                  Ecore_X_Atom *targprop,
-                                  int          *s)
+                                  Ecore_X_Atom *targprop __UNUSED__,
+                                  int          *s __UNUSED__)
 {
    XTextProperty text_prop;
    char *mystr;
