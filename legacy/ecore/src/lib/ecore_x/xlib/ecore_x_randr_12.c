@@ -1079,11 +1079,10 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root,
        || (ecore_x_randr_crtc_mode_get(root, crtc_r2) == Ecore_X_Randr_None))
       return EINA_FALSE;
 
-   if (!_ecore_x_randr_crtc_validate(root,
-                                     crtc_r1) ||
-	 (!(crtc_r1 != crtc_r2) &&
-       !_ecore_x_randr_crtc_validate(root, crtc_r2)))
-      return EINA_FALSE;
+   if (!_ecore_x_randr_crtc_validate(root, crtc_r1) ||
+       (!(crtc_r1 != crtc_r2) &&
+           !_ecore_x_randr_crtc_validate(root, crtc_r2)))
+     return EINA_FALSE;
 
    ecore_x_randr_crtc_geometry_get(root,
                                    crtc_r1,
@@ -1334,6 +1333,8 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root,
          free (r2_r1_outputs);
          return ret;
 	 */
+      case ECORE_X_RANDR_OUTPUT_POLICY_NONE:
+        break;
      }
    if ((x_n == r1_geo.x) && (y_n == r1_geo.x))
       return EINA_TRUE;
