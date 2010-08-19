@@ -38,12 +38,12 @@ little RAM too (try profiling it in memprof if you want to
 know) most of the ram allocated, if you look, is for freetype itself,
 image pixel data, and font glyph data. You can't really avoid this, though
 evas tries to share this data as much as possible and not duplicate where it
-can. Feel free to point me at sensible memory optimisations etc. though :) I 
+can. Feel free to point me at sensible memory optimizations etc. though :) I 
 want this baby to be lean, mean tiny, fast and do everything from your 
 massive multi-cpu desktop with gobs of ram and disk to a tiny watch.
 
 Evas also supports full UTF-8 for text object strings, thus allowing for
-full internationalised text strings (if your font gives you all the
+full internationalized text strings (if your font gives you all the
 characters). I've tested with quite a few fonts and it works quite well.
 Though this requires a unicode compatible font with unicode charmap support
 (cyberbit is quite good actually as a font). For now Evas draws the fonts
@@ -61,6 +61,13 @@ COMPILING AND INSTALLING:
 if you want to know what options to enable
 ./configure --help
 
+Evas's rendering code assumes a decently optimizing compiler. For
+example gcc with -O2 -march=nocona for example (compile for core2 duo
+x86 or better). Yoiu may choose not to compile for a very modern
+architecture, and Evas still has MMX/SSE, NEON and other hand-crafted
+assembly, but not for everything, so make use of your compiler
+optimizing as much as possible. At least use -O2 or equivalents.
+
 Notes:
   the small dither mask is faster on the ipaq, but is not as good looking. on
   desktop machines it makes no speed difference so only use
@@ -69,7 +76,9 @@ Notes:
   gcc 3.0.x on solaris screws up the jpeg code so erroring out doesn't work.
     use gcc 3.2 on solaris.
 
-notes on features:
+notes on features (--enable-FEATURE enables it and --disable-FEATURE
+disables it, some being enabled or disabled by default or if
+dependencies are found):
 
 SCALING:
 --enable-scale-sample
@@ -82,9 +91,7 @@ speed vs. quality tradeoff
 --enable-scale-smooth
 
 this is the nicest looking scaler that is not that much slower than
-tri-linear, but it looks really good. it also uses mipmaps and is optimised
-heavily. it is recommended to always use this unless you are really
-struggling for speed and are qilling to forego the quality
+tri-linear, but it looks really good.
 
 DITHERING:
 --enable-small-dither-mask
@@ -92,13 +99,33 @@ DITHERING:
 this uses a 4x4 dither mask instead of 128x128. on desktop boxes these days
 (pentium, pentium2, amd etc.) the speed difference is not really measurable,
 but the quality of the 128x128 dither mask is quite a lot better. patterns
-of dithering are much less noticable, so it is recommended to not enable
+of dithering are much less noticeable, so it is recommended to not enable
 this unless you are struggling for speed. the compaq ipaq for example shows
 a slowdown with this large a dither mask so enabling a small dither mask is
-recommended unless you really want to forego the speed.
+recommended unless you really want to forgo the speed.
+
+--enable-line-dither-mask
+
+this is a faster alternative to the small or large dither masks above.
+this dithers only on an alternating-line basis. this only provides 1
+intermediate "dither" level whose odd and even pixels alternate
+between the 2 closest colors available, but it is very fast. almost as
+fast as no dithering. quality though will not be as good as small or
+default "large" dither masks.
+
+--enable-no-dither-mask
+
+this disables dithering entirely. this is the fastest option, but the
+lowest quality. not suggested in general unless you are really in need
+of an extra few percent speed and are willing to have fairly awful
+quality. but in general this is the standard rendering for most
+"realtime graphics" if it has to drop to lower bit-depths, so it's
+not anything unusual. just in the evas world the quality is considered
+poor enough to be discouraged as evas's internal rendering is so much
+higher quality.
 
 ENGINES:
---enable-software-x11
+--enable-software-xlib
 
 this enables the software x11 rendering engine that renders to X drawable
 targets using highly optimised software routines. there is no hardware
@@ -107,22 +134,21 @@ This is a godo generic engine that is fast and can run in X for good
 development and debugging purposes.
 
 --enable-software-xcb
+
 this enable the software xcb rendering engine. It allows the same
-features than the software x11 engine. It require the XCB and XCBImage
+features than the software xlib engine. It require the XCB and XCBImage
 libraries. For the test programs, XCBICCCM is also needed.
 
 --enable-fb
 
 this is the software framebuffer driving engine. this uses the linux
-framebuffer device (/dev/fb<x>) and will currently just inherit the current
+framebuffer device (/dev/fb{X}) and will currently just inherit the current
 framebuffer settings on the fb device and use them to run in. this engine is
-almost fully functional except for the fb management itself. i'd be quite
-happy for people to help out with fixing up the fb init & management code to
-properly set up a vt and release it etc. this engine is specifically geared
-towards peoel writing minimalist display systems for embedded devices such
-as the ipaq, zaurus, etc. it also scales up to high-res desktop systems as
-well and performs outstandingly. i have measured up to 67% speedup over X11
-using the fb driver insetad of X11.
+almost fully functional except for the fb management itself. this engine is
+specifically geared towards people writing minimalist display systems for
+embedded devices such as the ipaq, zaurus, etc. it also scales up to high-res
+desktop systems as
+well.
 
 --enable-direcfb
 
@@ -131,40 +157,159 @@ linux to access the framebuffer with (or maybe without) acceleration. for
 people making set-top boxes or just wanting an alternative to X this is
 really good. it may also be useful for embedded devices supported by
 directfb that offer acceleration (otherwise the fb driver will likely be
-faster).
+faster). as such this engine is in relative disrepair and is not
+maintained. use with great care.
 
---enable-sdl
+--enable-buffer
+
+this enables the memory buffer rendering engine. this engine renders
+to a region of memory that is considered to be a 32bit ARGB buffer of
+pixels, allowing the results of rendering to be directly read out or
+used again for other purposes.
+
+--enable-xrender-x11
+
+this engine uses the xrender api to do drawing via (possibly)
+accelerated 2d or 3d hardware means. as such xrender has never lived
+up to its possible performance levels and has fallen into disrepair.
+use this engine at your own risk. it is considered to be "bitrotting"
+and be unmaintained.
+
+--enable-xrender-xcb
+
+this is the same as xrender-x11 but uses/exposes an xcb api.
+
+--enable-gl-x11
+
+this is the opengl engine. it is intended for an x11 target (via xlib)
+rather than framebuffer (even if you use EGL, the EGL flavor is
+expected to be an x11 one). it is a full opengl based rendering engine
+with all rendering implemented as a texture + triangle pipeline and
+more. it also supports opengl-es2.0 and is reliant on modern opengl2.0+
+shader support. this engine also supports the native surface api for
+adopting pixmaps directly to textures for compositing.
+
+--enable-gl-flavor-gles
+
+this enables the opengl-es 2.0 flavor of opengl (as opposed to desktop
+opengl) when building evas's gl-x11 engine above. this will be needed
+if you are building evas for opengl-es 2.0 enabled embedded devices.
+evas works on several opengl-es 2.0 compliant gpu's and gains more
+testing and optimization regularly. it is also capable of
+texture-from-pixmap support in opengl-es like it is in desktop opengl.
+
+--enable-gles-variety-sgx
+
+this tells evas that you are building the gl-es engine for a
+shader-compiler "sgx style" opengl-es 2.0 implementation. this is
+where the shader compiler is provided at runtime and can accept the
+shader glsl source and work
+
+--enable-gles-variety-s3c6410
+
+this tells evas that you have an s3c6410 style opengl-es
+implementation that has an offline shader compiler and that needs
+pre-compiled shader binaries (provided with evas). this has not been
+tested in quite a while as the drivers and environment for this system
+have gone missing
+
+--enable-software-gdi
+
+windows gdi based engine for evas
+
+--enable-software-ddraw
+
+windows direct-draw engine for evas
+
+--enable-direct3d
+
+evas direct3d engine (experimental)
+
+--enable-quartz
+
+macos-x quartz engine (experimental)
+
+--enable-gl-glew
+
+opengl glew based gl engine for evas (experimental)
+
+--enable-software-sdl
 
 this is the sdl engine that uses sdl library (http://www.libsdl.org). This
-library should work on many operating system.
+library should work on many operating system. the buffer is
+software-rendered with evas's default software rendering core.
 
+--enable-gl-sdl
+
+opengl (and opengl-es2.0) rendering engine that uses sdl as the front
+end interface. see --enable-gl-x11 etc. for information.
+
+--enable-software-8-x11
+
+8bit only rendering core. intended for greyscale output on things like
+e-paper or simplistic greyscale LCD devices which have no color.
+
+--enable-software-16-x11
+
+16bit specific renderer. lower quality than the default. also limited
+in abilities. in a state of disrepair. do not use.
+
+--enable-software-16-ddraw
+
+16bit renderer for direct-draw. same as software-16-x11 - don't use.
+in disrepair.
+
+--enable-software-16-wince
+
+same as software-16-ddraw but for windows-ce. in disrepair. don't use.
 
 CPU:
 --enable-cpu-c
 
-this enabled the c code. you can actually build the code withotu the c
+this enabled the c code. you can actually build the code without the c
 fallback code and only have the mmx routines for example. it is suggested to
-always use this regardless uness you have some definite size issues with the
+always use this regardless unless you have some definite size issues with the
 code.
 
 --enable-cpu-mmx
 
-this enables the mmx optimised routines. this works for pentium, pentium2,
+this enables the mmx optimized routines. this works for pentium, pentium2,
 pentium3, pentium4, athlon and duron processors. it can get quite
 considerable speedups, souse it if you can. ppc owners just have to live with
 the c fallback functions unfortunately as no one has provided any ALTIVEC asm 
 routines yet. :) arm owners will also have to rely on the c fallback
 routines as i haven't managed to come up with any arm assembly that actually
-can beat the c code (when compiled with all optimisations) in speed.
+can beat the c code (when compiled with all optimizations) in speed.
 
 --enable-cpu-sse
 
-this enables sse optimizations availbale in he pentium3 and 4 cpus (not
+this enables sse optimizations available in he pentium3 and 4 cpus (not
 athlon and duron or pentium 2 or pentium cpu's). ppc owners just have to
 live with the c fallback functions unfortunately as no one has provided any
 ALTIVEC asm routines yet. :) arm owners will also have to rely on the c
 fallback routines as i haven't managed to come up with any arm assembly that 
 actually can beat the c code (when compiled with all optimizations) in speed.
+
+--enable-cpu-neon
+
+This enables support for the Arm Cortex-A8 and later Neon register
+set.  In particular it will use neon optimised code for rotations and
+drawing with the software engines.  Open GL based renderers will gain
+nothing from the use of neon.
+
+To use neon with gcc-4.4 you need a post-2009 gcc and options
+something like: -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon
+Note that this slightly slows down non-optimised parts of evas  but
+the gains in drawing are more then worth it overall.
+
+This is enabled by default, and turns off if a small test program is
+unable to compile.
+	
+Performance is at least 50%, and in some real world tests approaches
+100%.
+
+If you have any issues with neon, please report them to either the
+edevel mailing list or Brett Nash <nash@nash.id.uau>
 
 IMAGE LOADERS:
 --enable-image-loader-png
@@ -176,9 +321,85 @@ for now this is the only loader so you may as well include it.
 
 --enable-image-loader-jpeg
 
-this enables the loader code that loads jpeg files using libjpeg.
+this enables the loader code that loads jpeg files using libjpeg. this
+loader also supports load options to pre-scale jpeg images down to
+provide much faster load times while also getting downscaling by 1/2,
+1/4 or 1/8th the size in each dimension for "free". with an added
+patch to libjpeg7, it can also fast-decode a specific region of a jpeg
+file (without the patch it take a slow-path to do this).
+
+--enable-image-loader-edb
+
+edb image loader- can load images inside edb database files. not very
+useful as edb itself is no longer used by enlightenment. may be
+removed at some point, so unless you have a burning need for this,
+don't use edb files to store image data and rely on this loader
+
+--enable-image-loader-eet
+
+loads image data from eet files. eet files are the backing for edje
+storage, so this is needed for edje to work. it is very useful as it
+can load an image from anywhere in the eet archive by key value so eet
+files are like "zip" files where you can pack a whole lot of image and
+other data together and just pick out the pieces you need at runtime.
+requires the eet library.
+
+--enable-image-loader-gif
+
+gif image loader. gif is an obsolete format, but due to its longevity,
+sitll has lots of existing data around.
+
+--enable-image-loader-pmaps
+
+ppm/pnm/pgm image loader that can load the "pnm" style image format.
+not very common, but the files are simple raw RGB, greyscale image or
+bitmap data in binary or ascii format
+
+--enable-image-loader-svg
+
+this loader can load svg files via librsvg (thus it is a dependency).
+this loader supports load options to set the dpi to decode the svg at
+etc. which can then be used to create scalable images that scale to
+any size without becoming blocky or blurry, if the source is an svg
+file.
+
+--enable-image-loader-tiff
+
+this loader uses libtiff to load tiff image files
+
+--enable-image-loader-xpm
+
+this is an xpm format image loader. xpm format images are ascii files
+that look like c/c++ source code that contain images. these files are
+old-fashioned unix+x11 images you may encounter, but are inefficient
+for storage and decoding and have been superseded by png files in
+almost every way
+
+--enable-image-loader-bmp
+
+this enables the bmp image format loader. note that there seems to be
+a disagreement on 32bit bmp format images where alpha channels are
+concerned and you may run into issues with bmps generated by the gimp
+that have alpha channels. there is a problem where they don't seem to
+be spec-conformant.
+
+--enable-image-loader-tga
+
+this loader load tga format files. these files are very old-fashioned
+but found often in the 3d graphics world.
+
+FONT LOADERS:
+--enable-font-loader-eet
+
+this loader can load font (ttf) files directly from eet archives like
+the eet image loader. requires the eet library
 
 CONVERTERS:
+--enable-convert-yuv
+
+this enables an optimized yuv (yv12 601 colorspace) to ARGB32
+converter in evas
+
 --enable-convert-16-rgb-565
 
 the most common converter you'll want for 16bpp. this means 5 bits for red,
@@ -206,11 +427,11 @@ fill 16bits, with unused bits in the color masks. X on the ipaq advertises
 it as a full 16bpp 565 display (i can't remember what the linux framebuffer
 advertised it as) and so many lumps of code can be fooled into rendering
 data badly because they think the output will look as the expect. This
-renderer assuems the upper 4 bits fo each color primitie only are
+renderer assumes the upper 4 bits fo each color primitive only are
 significant and renders accordingly. this produces nice quality images on
 the ipaq and even still works in 16bpp 565 on your pc. it is highly
 recommended to use this renderer if your target is an ipaq or your device
-dislpays similar qualities of the ipaq for display purposes.
+displays similar qualities of the ipaq for display purposes.
 
 --enable-convert-16-rgb-rot-0
 
@@ -220,95 +441,195 @@ only ever want to do portrait mode - perhaps like on an ipaq embedded device)
 
 --enable-convert-16-rgb-rot-270
 
-this enables the portrait mode (270 degree rotation) converteres for 16bpp.
+this enables the portrait mode (270 degree rotation) converters for 16bpp.
 this is the standard display mode for things like pocketpc on the ipaq and
-the zaurus etc. thsi si a optimized part of the rendering pipeline to allow
+the zaurus etc. this is an optimized part of the rendering pipeline to allow
 portrait display with a much lower overhead than doing it through X.
+
+--enable-convert-16-rgb-rot-180
+
+same as --enable-convert-16-rgb-rot-270 but for 180 degrees
+
+--enable-convert-16-rgb-rot-90
+
+same as --enable-convert-16-rgb-rot-270 but for 90 degrees
 
 --enable-convert-24-rgb-888
 
-To be documented...
+this converts evas's 32bit ARGB to 24bit RGB packed format for output
+if needed
 
 --enable-convert-24-bgr-888
 
-To be documented...
+this converts evas's 32bit ARGB to 24bit packed BGR format for output
+if needed
 
 --enable-convert-32-rgb-8888
 
-To be documented...
+32bit RGB output conversion support. byteswapping compared to evas's
+native colorspace
 
 --enable-convert-32-bgr-8888
 
-To be documented...
+conversion (reduces toa memory copy) from evas's native colorspace to
+the same color format.
 
 --enable-convert-32-rgb-rot-0
 
-To be documented...
+copies without rotation evas's native image format
 
 --enable-convert-32-rgb-rot-270
 
-To be documented...
+copies evas's native ARGB32 pixels but at a rotation of 270 degrees.
 
-...
+--enable-convert-32-rgb-rot-180
 
+same as --enable-convert-32-rgb-rot-270 but for 180 degrees
 
---enable-cpu-neon
-	This enables support for the Arm Cortex-A8 and later Neon register
-	set.  In particular it will use neon optimised code for rotations and
-	drawing with the software engines.  Open GL based renderers will gain
-	nothing from the use of neon.
+--enable-convert-32-rgb-rot-90
 
-	To use neon with gcc-4.4 you need a post-2009 gcc and options
-	something like: -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon
-	Note that this slightly slows down non-optimised parts of evas  but
-	the gains in drawing are more then worth it overall.
+same as --enable-convert-32-rgb-rot-270 but for 90 degrees
 
-	This is enabled by default, and turns off if a small test program is
-	unable to compile.
-	
-	Performance is at least 50%, and in some real world tests approaches
-	100%.
+--enable-convert-24-rgb-ezx
 
-	If you have any issues with neon, please report them to either the
-	edevel mailing list or Brett Nash <nash@nash.id.uau>
+a special colorspace handler for 18bit color packed into 24bit output
+(where only 6 bits per r, g and b byte are used). the only known
+platform that did this was the motorola esx based phones that used
+qtopia originally and have open ezx ports for them.
+
+--enable-convert-8-gry-1
+
+enable 8bit gray to 1 bit black & white converter
+
+--enable-convert-8-gry-16
+
+8bit grey to 16 level grayscale converter
+
+--enable-convert-8-grayscale-64
+
+8bit grey to 64 level grayscale converter
+
+--enable-convert-8-rgb-332
+
+enable converter from 32bit ARGB to 8bit color "332" colorspace (3bits
+red, 3 bits green, 2 bits blue)
+
+--enable-convert-8-rgb-666
+
+enable converter from 32bit ARGB to 8bit color "216" "websafe" 
+colorspace (6 values for red, 6 for green and 6 for blue - 6x6x6 being
+216 colors).
+
+--enable-convert-8-rgb-232
+
+same as convert-8-rgb-332 but 2 bits red, 3 green, 2 blue
+
+--enable-convert-8-rgb-222
+
+same as convert-8-rgb-332 but 2 bits red, 2 green, 2 blue
+
+--enable-convert-8-rgb-221
+
+same as convert-8-rgb-332 but 2 bits red, 2 green, 1 blue
+
+--enable-convert-8-rgb-121
+
+same as convert-8-rgb-332 but 1 bit red, 2 green, 1 blue
+
+--enable-convert-8-rgb-111
+
+same as convert-8-rgb-332 but 1 bit red, 1 green, 1 blue. this is the
+lowest sized colorspace supported for rgb (3bits, 8 color).
+
+MISC:
+--enable-pthreads
+
+this enables pthread support in evas so multiple threads may run
+internally for parallel rendering, loading etc.
+
+--enable-async-events
+
+this provides the ability for evas to have an asynchronous event
+notification pipe to provide events when background threads are done
+with tasks, like pre-loading image files
+
+--enable-async-preload
+
+evas can load images (preload) them in the background using a thread
+if you ask it to, and provide events when done. this goes hand-in-hand
+with --enable-pthreads and --enable-async-events. you really want all
+of these available.
+
+--enable-async-render
+
+this enables a software multi-frame threaded renderer. this will
+allocate (for example) 2 frames to 2 cores, with one core of the cpu
+rendering the previous frame while the next frame starts rendering on
+another core in the meantime allowing for higher framerates with
+software rendering, using more cpu resources that are available on
+modern multi-core cpu's.
 
 --enable-word-cache
-	Cache rendered words and draw them as a single object, instead of
-	individual characters.  This is a big gain for things like neon which
-	draw large runs effectively.
 
-	However it is useless on GL and similar backends as the cost in
-	sending a word sized texture kills the performance gain (and GL is
-	pretty good at drawing lots of small things anyway).
+Cache rendered words and draw them as a single object, instead of
+individual characters.  This is a big gain for things like neon which
+draw large runs effectively.
 
-	By default words (strings) of more then 50 characters are not cached.
-	The system caches 40 words by default, but this can be changed by
-	setting EVAS_WORD_CACHE_MAX_WORDS to another number.  Setting it to 0
-	will disable word-cache at run time.
+However it is useless on GL and similar back-ends as the cost in
+sending a word sized texture kills the performance gain (and GL is
+pretty good at drawing lots of small things anyway).
 
-	Text based benchmarks are 50-100% quicker.
+By default words (strings) of more then 50 characters are not cached.
+The system caches 40 words by default, but this can be changed by
+setting EVAS_WORD_CACHE_MAX_WORDS to another number.  Setting it to 0
+will disable word-cache at run time.
 
-	If you have any issues with word caching, please report them to either
-	the edevel mailing list or Brett Nash <nash@nash.id.uau>
+Text based benchmarks are 50-100% quicker.
 
-	For GL see metric caching...
+If you have any issues with word caching, please report them to either
+the e-devel mailing list or Brett Nash <nash@nash.id.uau>
+
+For GL see metric caching...
 
 --enable-metric-cache
-	Metric caching saves character metrics between characters in words.
-	This enables it to render words much quicker as it avoids things like
-	space calculations and kerning calculation.
 
-	The cache seize is also controlled by  EVAS_WORD_CACHE_MAX_WORDS
+Metric caching saves character metrics between characters in words.
+This enables it to render words much quicker as it avoids things like
+space calculations and kerning calculation.
 
-	It is useful for GL in particular, although software engines do get
-	some gain.
+The cache seize is also controlled by  EVAS_WORD_CACHE_MAX_WORDS
 
-	Generally it is recommended you enable either word or metric caching,
-	depending on your engine use.  If you are using software, enable word
-	caching (and neon on arm if you can), for GL, turn on metric caching.
+It is useful for GL in particular, although software engines do get
+some gain.
 
-	If you have any issues with metric caching, please report them to either
-	the edevel mailing list or Brett Nash <nash@nash.id.uau>
+Generally it is recommended you enable either word or metric caching,
+depending on your engine use.  If you are using software, enable word
+caching (and neon on arm if you can), for GL, turn on metric caching.
+
+If you have any issues with metric caching, please report them to either
+the e-devel mailing list or Brett Nash <nash@nash.id.uau>
+
+--enable-fontconfig
+
+this enables fontconfig support for loading font files by using
+generic fontconfig font names and styles. you really should use this
+by default on any linux/unix platform for universal font support.
+
+--enable-fribidi
+
+this enables support for the fribidi library to have right to left and
+left to right font rendering so languges such as arabic, hebrew and
+other "RTL" langauges display properly.
+
+--enable-evas-magic-debug
+
+this allows oyu to enable and disable evas's extra magic number
+checks.  these allow better stability with runtime object magic
+"number" checks to make sure you are accessing a real object in memory
+of the right type, and will avoid doing "bad things" if they detect
+the wrong object type being passed in. if you are absolutely sure your
+system has no bugs in accessing objects of the wrong type with the
+wrong calls, you can gain some small performance by disabling this.
 
 NOTES:
 
