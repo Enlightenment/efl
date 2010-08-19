@@ -51,6 +51,9 @@ typedef Eina_Bool (*Eina_Accessor_Lock_Callback)(Eina_Accessor *it);
 
 struct _Eina_Accessor
 {
+#define EINA_ACCESSOR_VERSION 1
+   int version;
+
    Eina_Accessor_Get_At_Callback get_at               EINA_ARG_NONNULL(1, 3) EINA_WARN_UNUSED_RESULT;
    Eina_Accessor_Get_Container_Callback get_container EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
    Eina_Accessor_Free_Callback free                   EINA_ARG_NONNULL(1);

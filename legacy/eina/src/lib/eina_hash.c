@@ -1621,7 +1621,7 @@ eina_hash_iterator_data_new(const Eina_Hash *hash)
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
    EINA_MAGIC_CHECK_HASH(hash);
 
-        eina_error_set(0);
+   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Hash));
    if (!it)
      {
@@ -1632,6 +1632,7 @@ eina_hash_iterator_data_new(const Eina_Hash *hash)
    it->hash = hash;
    it->get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_data_get_content);
 
+   it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_hash_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _eina_hash_iterator_get_container);
@@ -1670,7 +1671,7 @@ eina_hash_iterator_key_new(const Eina_Hash *hash)
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
    EINA_MAGIC_CHECK_HASH(hash);
 
-        eina_error_set(0);
+   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Hash));
    if (!it)
      {
@@ -1682,6 +1683,7 @@ eina_hash_iterator_key_new(const Eina_Hash *hash)
    it->get_content = FUNC_ITERATOR_GET_CONTENT(
          _eina_hash_iterator_key_get_content);
 
+   it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_hash_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _eina_hash_iterator_get_container);
@@ -1723,7 +1725,6 @@ eina_hash_iterator_tuple_new(const Eina_Hash *hash)
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
    EINA_MAGIC_CHECK_HASH(hash);
 
-   
    eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Hash));
    if (!it)
@@ -1736,6 +1737,7 @@ eina_hash_iterator_tuple_new(const Eina_Hash *hash)
    it->get_content = FUNC_ITERATOR_GET_CONTENT(
          _eina_hash_iterator_tuple_get_content);
 
+   it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_hash_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _eina_hash_iterator_get_container);

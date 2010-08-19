@@ -184,7 +184,7 @@ _eina_rbtree_iterator_build(const Eina_Rbtree *root, unsigned char mask)
    Eina_Iterator_Rbtree_List *first;
    Eina_Iterator_Rbtree *it;
 
-        eina_error_set(0);
+   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Rbtree));
    if (!it)
      {
@@ -204,6 +204,7 @@ _eina_rbtree_iterator_build(const Eina_Rbtree *root, unsigned char mask)
 
    it->mask = mask;
 
+   it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_rbtree_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _eina_rbtree_iterator_get_content);

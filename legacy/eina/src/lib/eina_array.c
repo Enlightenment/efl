@@ -415,6 +415,7 @@ eina_array_new(unsigned int step)
 
    EINA_MAGIC_SET(array, EINA_MAGIC_ARRAY);
 
+   array->version = EINA_ARRAY_VERSION;
    array->data = NULL;
    array->total = 0;
    array->count = 0;
@@ -448,6 +449,7 @@ eina_array_free(Eina_Array *array)
  * @brief Set the step of an array.
  *
  * @param array The array.
+ * @param sizeof_array Should be the value returned by sizeof (Eina_Array).
  * @param step The count of pointers to add when increasing the array size.
  *
  * This function sets the step of @p array to @p step. For performance
@@ -456,9 +458,23 @@ eina_array_free(Eina_Array *array)
  * the array is not initialized.
  */
 EAPI void
-eina_array_step_set(Eina_Array *array, unsigned int step)
+eina_array_step_set(Eina_Array *array,
+		    unsigned int sizeof_eina_array,
+		    unsigned int step)
 {
    EINA_SAFETY_ON_NULL_RETURN(array);
+
+   if (sizeof (Eina_Array) != sizeof_eina_array)
+     {
+	ERR("Unknow Eina_Array size ! Got %i, expected %i !\n",
+	    sizeof_eina_array,
+	    (int) sizeof (Eina_Array));
+	/* Force memory to zero to provide a small layer of security */
+	memset(array, 0, sizeof_eina_array);
+	return ;
+     }
+
+   array->version = EINA_ARRAY_VERSION;
    array->data = NULL;
    array->total = 0;
    array->count = 0;
@@ -654,6 +670,7 @@ eina_array_iterator_new(const Eina_Array *array)
 
    it->array = array;
 
+   it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(eina_array_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          eina_array_iterator_get_container);
@@ -682,7 +699,7 @@ eina_array_accessor_new(const Eina_Array *array)
    EINA_SAFETY_ON_NULL_RETURN_VAL(array, NULL);
    EINA_MAGIC_CHECK_ARRAY(array);
 
-        eina_error_set(0);
+   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Accessor_Array));
    if (!it)
      {
@@ -695,6 +712,7 @@ eina_array_accessor_new(const Eina_Array *array)
 
    it->array = array;
 
+   it->accessor.version = EINA_ACCESSOR_VERSION;
    it->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_array_accessor_get_at);
    it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(
          eina_array_accessor_get_container);

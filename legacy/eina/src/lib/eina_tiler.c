@@ -1190,6 +1190,7 @@ EAPI Eina_Iterator *eina_tiler_iterator_new(const Eina_Tiler *t)
    Eina_Iterator_Tiler *it;
 
    EINA_MAGIC_CHECK_TILER(t, NULL);
+
    it = calloc(1, sizeof (Eina_Iterator_Tiler));
    if (!it)
       return NULL;
@@ -1209,6 +1210,8 @@ EAPI Eina_Iterator *eina_tiler_iterator_new(const Eina_Tiler *t)
      }
 
    it->curr = it->tiler->splitter.rects.head;
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _iterator_get_container);
@@ -1282,6 +1285,7 @@ eina_tile_grid_slicer_iterator_new(int x,
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 
+   it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(eina_tile_grid_slicer_iterator_next);
    it->iterator.free = FUNC_ITERATOR_FREE(eina_tile_grid_slicer_iterator_free);
 

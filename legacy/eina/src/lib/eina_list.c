@@ -2064,7 +2064,7 @@ eina_list_iterator_new(const Eina_List *list)
 {
    Eina_Iterator_List *it;
 
-        eina_error_set(0);
+   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_List));
    if (!it)
      {
@@ -2078,6 +2078,7 @@ eina_list_iterator_new(const Eina_List *list)
    it->head = list;
    it->current = list;
 
+   it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(eina_list_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          eina_list_iterator_get_container);
@@ -2127,6 +2128,7 @@ eina_list_iterator_reversed_new(const Eina_List *list)
    it->head = eina_list_last(list);
    it->current = it->head;
 
+   it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(eina_list_iterator_prev);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          eina_list_iterator_get_container);
@@ -2167,6 +2169,7 @@ eina_list_accessor_new(const Eina_List *list)
    it->current = list;
    it->index = 0;
 
+   it->accessor.version = EINA_ACCESSOR_VERSION;
    it->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_list_accessor_get_at);
    it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(
          eina_list_accessor_get_container);

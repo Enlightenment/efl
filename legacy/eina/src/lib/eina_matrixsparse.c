@@ -1608,6 +1608,7 @@ eina_matrixsparse_iterator_new(const Eina_Matrixsparse *m)
    it->ref.row = m->rows;
    it->ref.col = m->rows ? m->rows->cols : NULL;
 
+   it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_matrixsparse_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _eina_matrixsparse_iterator_get_container);
@@ -1670,6 +1671,7 @@ eina_matrixsparse_iterator_complete_new(const Eina_Matrixsparse *m)
    it->dummy.col.parent = &it->dummy.row;
    EINA_MAGIC_SET(&it->dummy.col, EINA_MAGIC_MATRIXSPARSE_CELL);
 
+   it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(
          _eina_matrixsparse_iterator_complete_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(

@@ -49,6 +49,9 @@ typedef Eina_Bool (*Eina_Iterator_Lock_Callback)(Eina_Iterator *it);
 
 struct _Eina_Iterator
 {
+#define EINA_ITERATOR_VERSION 1
+   int version;
+
    Eina_Iterator_Next_Callback next                   EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
    Eina_Iterator_Get_Container_Callback get_container EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
    Eina_Iterator_Free_Callback free                   EINA_ARG_NONNULL(1);

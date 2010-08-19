@@ -431,7 +431,7 @@ eina_file_ls(const char *dir)
    if (length < 1)
       return NULL;
 
-   it = malloc(sizeof (Eina_File_Iterator) + length);
+   it = calloc(1, sizeof (Eina_File_Iterator) + length);
    if (!it)
       return NULL;
 
@@ -450,6 +450,7 @@ eina_file_ls(const char *dir)
    else
       it->length = length - 1;
 
+   it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_file_ls_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _eina_file_ls_iterator_container);
@@ -498,7 +499,7 @@ eina_file_direct_ls(const char *dir)
    if (length + NAME_MAX + 2 >= PATH_MAX)
       return NULL;
 
-   it = malloc(sizeof(Eina_File_Direct_Iterator) + length);
+   it = calloc(1, sizeof(Eina_File_Direct_Iterator) + length);
    if (!it)
       return NULL;
 
@@ -523,6 +524,7 @@ eina_file_direct_ls(const char *dir)
         it->info.name_start = length + 1;
      }
 
+   it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_file_direct_ls_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _eina_file_direct_ls_iterator_container);

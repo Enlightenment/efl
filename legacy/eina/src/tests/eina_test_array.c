@@ -78,7 +78,7 @@ START_TEST(eina_array_static)
 
    eina_init();
 
-   eina_array_step_set(&sea, 10);
+   eina_array_step_set(&sea, sizeof(sea), 10);
 
    for (i = 0; i < 200; ++i)
      {

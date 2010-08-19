@@ -65,6 +65,9 @@ typedef void **Eina_Array_Iterator;
  */
 struct _Eina_Array
 {
+#define EINA_ARRAY_VERSION 1
+   int version; /**< Should match EINA_ARRAY_VERSION used when compiled your apps, provided for ABI compatibility */
+
    void **data; /**< Pointer to a vector of pointer to payload */
    unsigned int total; /**< Total number of slots in the vector */
    unsigned int count; /**< Number of active slots in the vector */
@@ -76,6 +79,7 @@ EAPI Eina_Array *               eina_array_new(unsigned int step) EINA_WARN_UNUS
 EAPI Eina_Array *               eina_array_threadsafe_new(unsigned int step) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 EAPI void                       eina_array_free(Eina_Array *array) EINA_ARG_NONNULL(1);
 EAPI void                       eina_array_step_set(Eina_Array *array,
+                                                    unsigned int sizeof_eina_array,
                                                     unsigned int step) EINA_ARG_NONNULL(1);
 EAPI void                       eina_array_clean(Eina_Array *array) EINA_ARG_NONNULL(1);
 EAPI void                       eina_array_flush(Eina_Array *array) EINA_ARG_NONNULL(1);
