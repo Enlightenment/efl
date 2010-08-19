@@ -1357,6 +1357,13 @@ eng_image_size_set(void *data, void *image, int w, int h)
         return image;
      }
    eng_window_use(re->win);
+   if ((im->tex) && (im->tex->pt->dyn.img))
+     {
+        evas_gl_common_texture_free(im->tex);
+        im->tex = NULL;
+        im->tex = evas_gl_common_texture_dynamic_new(im->gc, im);
+        return image;
+     }
    im_old = image;
    if ((eng_image_colorspace_get(data, image) == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (eng_image_colorspace_get(data, image) == EVAS_COLORSPACE_YCBCR422P709_PL))
@@ -1625,6 +1632,15 @@ eng_image_content_hint_get(void *data __UNUSED__, void *image)
    return gim->content_hint;
 }
 
+static int
+eng_image_stride_get(void *data, void *image)
+{
+   Render_Engine *re = (Render_Engine *)data;
+   Evas_GL_Image *im = image;
+   if ((im->tex) && (im->tex->pt->dyn.img)) return im->tex->pt->dyn.w;
+   return im->w;
+}
+
 static void
 eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
 {
@@ -1732,10 +1748,12 @@ module_open(Evas_Module *em)
    ORD(image_colorspace_get);
    ORD(image_native_set);
    ORD(image_native_get);
+   
    ORD(font_draw);
    
    ORD(image_scale_hint_set);
    ORD(image_scale_hint_get);
+   ORD(image_stride_get);
    
    ORD(image_map4_draw);
    ORD(image_map_surface_new);
