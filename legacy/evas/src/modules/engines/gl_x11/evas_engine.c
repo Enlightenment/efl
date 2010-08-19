@@ -783,12 +783,19 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
    re = (Render_Engine *)data;
    if (!image) return NULL;
    im = image;
+   if (im->alpha == has_alpha) return image;
    if (im->native.data)
      {
         im->alpha = has_alpha;
         return image;
      }
    eng_window_use(re->win);
+   if ((im->tex) && (im->tex->pt->dyn.img))
+     {
+        im->alpha = has_alpha;
+        im->tex->alpha = im->alpha;
+        return image;
+     }
    /* FIXME: can move to gl_common */
    if (im->cs.space != EVAS_COLORSPACE_ARGB8888) return im;
    if ((has_alpha) && (im->im->cache_entry.flags.alpha)) return image;
@@ -1632,13 +1639,13 @@ eng_image_content_hint_get(void *data __UNUSED__, void *image)
    return gim->content_hint;
 }
 
-static int
-eng_image_stride_get(void *data, void *image)
+static void
+eng_image_stride_get(void *data, void *image, int *stride)
 {
    Render_Engine *re = (Render_Engine *)data;
    Evas_GL_Image *im = image;
-   if ((im->tex) && (im->tex->pt->dyn.img)) return im->tex->pt->dyn.w;
-   return im->w;
+   *stride = im->w;
+   if ((im->tex) && (im->tex->pt->dyn.img)) *stride = im->tex->pt->dyn.w;
 }
 
 static void
