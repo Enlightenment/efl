@@ -62,6 +62,14 @@ that the program sets up to handle those events. Handling them is
 simple and other Ecore modules produce more events on the queue,
 coming from other sources such as file descriptors etc.
 
+Ecore also help you work in a multi threaded environment and setup a
+thread pool that help you use the EFL on multi-cpu system. It help split
+the part that can't be called outside of the ecore main loop from the
+computation heavy function that could run on another CPU. Be aware that
+Evas and most of Ecore API is not thread safe and should only be called
+in the main loop. Eina and Eet could be used, if done carefully, in any
+heavy function on another cpu.
+
 Ecore also lets you have functions called when file descriptors become
 active for reading or writing, allowing for streamlined, non-blocking
 IO.
