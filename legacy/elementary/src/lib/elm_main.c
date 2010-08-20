@@ -282,7 +282,7 @@ myapp_CFLAGS =
  * applications. It is up to you to decide what is best for you. If you just
  * follow the template above, you can do it both ways and can decide at build
  * time. The more advanced of you may suggest making it a configure option.
- * That is perfectly valid, bu has been left out here for simplicity, as our
+ * That is perfectly valid, but has been left out here for simplicity, as our
  * aim to have an Elementary (and EFL) tutorial, not an autoconf & automake
  * document.
  *
