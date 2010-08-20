@@ -2787,7 +2787,9 @@ edje_object_parts_extends_calc(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, E
  * @param restrictedw Do not allow object min width calc to be less than this
  * @param restrictedh Do not allow object min height calc to be less than this
  *
- * Calculates the object's minimum size ?!
+ * Calculates the object's minimum size ?! Be carefull the behaviour of this
+ * fonction is not really defined when a TEXTBLOCK part is present in the
+ * Edje_Object. This may change in futur implementation.
  */
 EAPI void
 edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh)
