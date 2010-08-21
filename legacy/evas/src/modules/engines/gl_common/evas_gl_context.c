@@ -660,6 +660,15 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
    
    if (gc->def_surface) evas_gl_common_image_free(gc->def_surface);
    
+   for (i = 0; i < gc->shared->info.pipes_max; i++)
+     {
+        if (gc->pipe[i].array.vertex) free(gc->pipe[i].array.vertex);
+        if (gc->pipe[i].array.color) free(gc->pipe[i].array.color);
+        if (gc->pipe[i].array.texuv) free(gc->pipe[i].array.texuv);
+        if (gc->pipe[i].array.texuv2) free(gc->pipe[i].array.texuv2);
+        if (gc->pipe[i].array.texuv3) free(gc->pipe[i].array.texuv3);
+     }
+   
    if ((gc->shared) && (gc->shared->references == 0))
      {
         evas_gl_common_shader_program_shutdown(&(gc->shared->shader.rect));
@@ -697,17 +706,6 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
         free(gc->shared);
         shared = NULL;
      }
-   
-
-   for (i = 0; i < gc->shared->info.pipes_max; i++)
-     {
-        if (gc->pipe[i].array.vertex) free(gc->pipe[i].array.vertex);
-        if (gc->pipe[i].array.color) free(gc->pipe[i].array.color);
-        if (gc->pipe[i].array.texuv) free(gc->pipe[i].array.texuv);
-        if (gc->pipe[i].array.texuv2) free(gc->pipe[i].array.texuv2);
-        if (gc->pipe[i].array.texuv3) free(gc->pipe[i].array.texuv3);
-     }
-   
    if (gc == _evas_gl_common_context) _evas_gl_common_context = NULL;
    free(gc);
 }
