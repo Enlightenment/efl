@@ -200,6 +200,11 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\eina_binshare.c"
+				>
+			</File>
+			<File
+
 				RelativePath="..\..\src\lib\eina_convert.c"
 				>
 			</File>
@@ -272,6 +277,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\eina_quadtree.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\eina_rbtree.c"
 				>
 			</File>
@@ -284,7 +293,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\eina_share_common.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\eina_strbuf.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\eina_strbuf_common.c"
 				>
 			</File>
 			<File
@@ -300,6 +317,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\eina_unicode.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\eina_ustrbuf.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\eina_ustringshare.c"
+				>
+			</File>
+			<File
+
 				RelativePath="..\..\src\lib\eina_value.c"
 				>
 			</File>
@@ -339,6 +369,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\include\eina_benchmark.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\include\eina_binshare.h"
 				>
 			</File>
 			<File
@@ -418,6 +452,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\include\eina_quadtree.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\include\eina_rbtree.h"
 				>
 			</File>
@@ -431,6 +469,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\include\eina_strbuf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\include\eina_strbuf_common.h"
 				>
 			</File>
 			<File
@@ -457,6 +499,19 @@
 				RelativePath="..\..\src\include\eina_types.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\include\eina_unicode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\include\eina_ustrbuf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\include\eina_ustringshare.h"
+				>
+			</File>
+
 		</Filter>
 		<Filter
 			Name="Resource Files"
