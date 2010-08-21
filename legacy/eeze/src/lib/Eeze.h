@@ -24,8 +24,18 @@
  * @file Eeze.h
  * @brief Easy device manipulation.
  * 
- * This provides Eeze device handling functions.  Included are 
- * types and defines for accessing udev, mounting devices, and others.
+ * Eeze is a library for manipulating devices through udev with a simple and fast
+ * api. It interfaces directly with libudev, avoiding such middleman daemons as
+ * udisks/upower or hal, to immediately gather device information the instant it
+ * becomes known to the system.  This can be used to determine such things as:
+ * @li If a cdrom has a disk inserted
+ * @li The temperature of a cpu core
+ * @li The remaining power left in a battery
+ * @li The current power consumption of various parts
+ * @li Monitor in realtime the status of peripheral devices
+ * Each of the above examples can be performed by using only a single eeze
+ * function, as one of the primary focuses of the library is to reduce the
+ * complexity of managing devices.
  *
  *
  * For udev functions, see @ref udev.
