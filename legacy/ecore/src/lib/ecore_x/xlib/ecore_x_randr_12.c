@@ -536,7 +536,7 @@ ecore_x_randr_crtc_outputs_get(Ecore_X_Window root,
              memcpy(ret, crtc_info->outputs,
                     (sizeof(Ecore_X_Randr_Output) * crtc_info->noutput));
              if (num)
-                *num = res->ncrtc;
+                *num = crtc_info->noutput;
           }
 
         if (crtc_info)
