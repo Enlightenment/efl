@@ -7,6 +7,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "eina_private.h"
 #include "eina_str.h"
 #include "eina_strbuf_common.h"
