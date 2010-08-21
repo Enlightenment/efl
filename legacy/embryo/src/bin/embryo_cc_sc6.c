@@ -156,7 +156,7 @@ static void
 write_encoded(FILE * fbin, ucell * c, int num)
 {
    assert(sizeof(cell) <= 4);	/* code must be adjusted for larger cells */
-   assert(fbin != NULL);
+   assert(!!fbin);
    while (num-- > 0)
      {
 	if (sc_compress)
@@ -298,7 +298,7 @@ do_call(FILE * fbin, char *params, cell opcode)
     * already have been set (in order for static globals to be found).
     */
    sym = findglb(name);
-   assert(sym != NULL);
+   assert(!!sym);
    assert(sym->ident == iFUNCTN || sym->ident == iREFFUNC);
    assert(sym->vclass == sGLOBAL);
 
@@ -322,7 +322,7 @@ do_jump(FILE * fbin, char *params, cell opcode)
 
    if (fbin)
      {
-	assert(lbltab != NULL);
+	assert(!!lbltab);
 	p = lbltab[i];
 	write_encoded(fbin, (ucell *) & opcode, 1);
 	write_encoded(fbin, &p, 1);
@@ -414,7 +414,7 @@ do_switch(FILE * fbin, char *params, cell opcode)
 
    if (fbin)
      {
-	assert(lbltab != NULL);
+	assert(!!lbltab);
 	p = lbltab[i];
 	write_encoded(fbin, (ucell *) & opcode, 1);
 	write_encoded(fbin, &p, 1);
@@ -438,7 +438,7 @@ do_case(FILE * fbin, char *params, cell opcode __UNUSED__)
 
    if (fbin)
      {
-	assert(lbltab != NULL);
+	assert(!!lbltab);
 	p = lbltab[i];
 	write_encoded(fbin, &v, 1);
 	write_encoded(fbin, &p, 1);
@@ -625,7 +625,7 @@ findopcode(char *instr, int maxlen)
    while (low < high)
      {
 	mid = (low + high) / 2;
-	assert(opcodelist[mid].name != NULL);
+	assert(!!opcodelist[mid].name);
 	cmp = strcasecmp(str, opcodelist[mid].name);
 	if (cmp > 0)
 	   low = mid + 1;
@@ -664,10 +664,10 @@ assemble(FILE * fout, FILE * fin)
    /* verify that the opcode list is sorted (skip entry 1; it is reserved
     * for a non-existant opcode)
     */
-   assert(opcodelist[1].name != NULL);
+   assert(!!opcodelist[1].name);
    for (i = 2; i < (sizeof opcodelist / sizeof opcodelist[0]); i++)
      {
-	assert(opcodelist[i].name != NULL);
+	assert(!!opcodelist[i].name);
 	assert(strcasecmp(opcodelist[i].name, opcodelist[i - 1].name) > 0);
      }				/* for */
 #endif
@@ -867,7 +867,7 @@ assemble(FILE * fout, FILE * fin)
 	     char                alias[sNAMEMAX + 1];
 
 	     sym = nativelist[i];
-	     assert(sym != NULL);
+	     assert(!!sym);
 	     if (!lookup_alias(alias, sym->name))
 	       {
 		  assert(strlen(sym->name) <= sNAMEMAX);
@@ -1044,7 +1044,7 @@ assemble(FILE * fout, FILE * fin)
 		/* nothing */ ;
 	     assert(params > instr);
 	     i = findopcode(instr, (int)(params - instr));
-	     assert(opcodelist[i].name != NULL);
+	     assert(!!opcodelist[i].name);
 	     if (opcodelist[i].segment == pass)
 		opcodelist[i].func(fout, skipwhitespace(params),
 				   opcodelist[i].opcode);

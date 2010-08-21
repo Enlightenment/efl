@@ -661,7 +661,7 @@ _ecore_evas_wince_fullscreen_set(Ecore_Evas *ee, int on)
    }
 
    einfo = (Evas_Engine_Info_Software_16_WinCE *)evas_engine_info_get(ecore_evas_get(ee));
-   if (einfo != NULL)
+   if (einfo)
      {
         einfo->info.fullscreen = !!on;
 /*         einfo->info.layered = window->shape.layered; */

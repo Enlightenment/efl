@@ -30,7 +30,7 @@ _list_tests(void)
 
    itr = etc;
    fputs("Available Test Cases:\n", stderr);
-   for (; itr->test_case != NULL; itr++)
+   for (; itr->test_case; itr++)
      fprintf(stderr, "\t%s\n", itr->test_case);
 }
 
@@ -55,7 +55,7 @@ efreet_suite_build(int argc, const char **argv)
 
    s = suite_create("Efreet");
 
-   for (i = 0; etc[i].test_case != NULL; ++i)
+   for (i = 0; etc[i].test_case; ++i)
      {
 	if (!_use_test(argc, argv, etc[i].test_case)) continue;
 	tc = tcase_create(etc[i].test_case);

@@ -259,7 +259,7 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
 
    if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
 
-   if (obj == NULL)
+   if (!obj)
      {
 	ee->prop.cursor.object = NULL;
 	ee->prop.cursor.layer = 0;

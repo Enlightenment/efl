@@ -19,7 +19,7 @@ rect_list_node_pool_set_max(int max)
    int diff;
 
    diff = list_node_pool.len - max;
-   for (; diff > 0 && list_node_pool.node != NULL; diff--)
+   for (; diff > 0 && list_node_pool.node; diff--)
      {
         list_node_t *node;
 
@@ -104,10 +104,10 @@ rect_list_print(const list_t rects)
    int len;
 
    len = 0;
-   for (node = rects.head; node != NULL; node = node->next) len++;
+   for (node = rects.head; node; node = node->next) len++;
 
    putchar('[');
-   for (node = rects.head; node != NULL; node = node->next)
+   for (node = rects.head; node; node = node->next)
      {
 	rect_print(((rect_node_t *)node)->rect);
 	if (node->next)
@@ -775,7 +775,7 @@ rect_list_merge_rects(list_t *rects, list_t *to_merge, int accepted_error)
         merged = 0;
         parent_node = NULL;
         node = rects->head;
-        while (node != NULL)
+        while (node)
 	  {
 	     rect_t r2, outer;
 	     int area;
@@ -1060,7 +1060,7 @@ evas_common_tilebuf_add_motion_vector(Tilebuf *tb, int x, int y, int w, int h, i
 
    num = _add_redraw(&lr, tb->outbuf_w, tb->outbuf_h, x, y, w, h);
    num += _add_redraw(&lr, tb->outbuf_w, tb->outbuf_h, x + dx, y + dy, w, h);
-   while (lr.head != NULL)
+   while (lr.head)
      {
         list_node_t *node = rect_list_unlink_next(&lr, NULL);
         rect_list_add_split_fuzzy_and_merge(&tb->rects, node,
@@ -1109,7 +1109,7 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
        tb->need_merge = 0;
    }
 
-   for (n = tb->rects.head; n != NULL; n = n->next) {
+   for (n = tb->rects.head; n; n = n->next) {
        rect_t cur;
 
        cur = ((rect_node_t *)n)->rect;

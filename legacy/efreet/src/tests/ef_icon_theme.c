@@ -478,7 +478,7 @@ ef_cb_efreet_icon_match(void)
        themes = eina_list_remove_list(themes, themes);
 
     double start = ecore_time_get();
-    for (i = 0; system_icons[i] != NULL; i++)
+    for (i = 0; system_icons[i]; i++)
     {
         char *path, *s;
 
@@ -516,7 +516,7 @@ ef_cb_efreet_icon_match(void)
     eina_hash_free(icon_hash);
 
     start = ecore_time_get();
-    for (i = 0; system_icons[i] != NULL; i++)
+    for (i = 0; system_icons[i]; i++)
     {
         char *path, *s;
 

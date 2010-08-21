@@ -350,7 +350,7 @@ START_TEST(strbuf_append_realloc)
         fail_if(eina_strbuf_length_get(buf) != (runs * target_pattern_size));
 
    str = eina_strbuf_string_get(buf);
-        fail_if(str == NULL);
+        fail_if(!str);
    for (i = 0; i < runs; i++, str += target_pattern_size)
         fail_if(memcmp(str, target_pattern, target_pattern_size));
 
@@ -385,7 +385,7 @@ START_TEST(strbuf_prepend_realloc)
         fail_if(eina_strbuf_length_get(buf) != (runs * target_pattern_size));
 
    str = eina_strbuf_string_get(buf);
-        fail_if(str == NULL);
+        fail_if(!str);
    for (i = 0; i < runs; i++, str += target_pattern_size)
         fail_if(memcmp(str, target_pattern, target_pattern_size));
 

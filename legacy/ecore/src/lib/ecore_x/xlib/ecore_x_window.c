@@ -1438,7 +1438,7 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
                         VisualClassMask,
                         &vi_in,
                         &nvi);
-   if (xvi == NULL)
+   if (!xvi)
       return 0;
 
    vis = NULL;

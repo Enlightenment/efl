@@ -2373,19 +2373,19 @@ eina_log_print(int domain, Eina_Log_Level level, const char *file,
    va_list args;
 
 #ifdef EINA_SAFETY_CHECKS
-   if (EINA_UNLIKELY(file == NULL))
+   if (EINA_UNLIKELY(!file))
      {
         fputs("ERR: eina_log_print() file == NULL\n", stderr);
         return;
      }
 
-   if (EINA_UNLIKELY(fnc == NULL))
+   if (EINA_UNLIKELY(!fnc))
      {
         fputs("ERR: eina_log_print() fnc == NULL\n", stderr);
         return;
      }
 
-   if (EINA_UNLIKELY(fmt == NULL))
+   if (EINA_UNLIKELY(!fmt))
      {
         fputs("ERR: eina_log_print() fmt == NULL\n", stderr);
         return;
@@ -2428,19 +2428,19 @@ eina_log_vprint(int domain, Eina_Log_Level level, const char *file,
                 const char *fnc, int line, const char *fmt, va_list args)
 {
 #ifdef EINA_SAFETY_CHECKS
-   if (EINA_UNLIKELY(file == NULL))
+   if (EINA_UNLIKELY(!file))
      {
         fputs("ERR: eina_log_print() file == NULL\n", stderr);
         return;
      }
 
-   if (EINA_UNLIKELY(fnc == NULL))
+   if (EINA_UNLIKELY(!fnc))
      {
         fputs("ERR: eina_log_print() fnc == NULL\n", stderr);
         return;
      }
 
-   if (EINA_UNLIKELY(fmt == NULL))
+   if (EINA_UNLIKELY(!fmt))
      {
         fputs("ERR: eina_log_print() fmt == NULL\n", stderr);
         return;

@@ -429,7 +429,7 @@ _eina_matrixsparse_row_idx_get(const Eina_Matrixsparse *m, unsigned long row)
    assert(dir != 0);
    if (dir > 0)
      {
-        for (; r != NULL; r = r->next)
+        for (; r; r = r->next)
            if (r->row == row)
              {
                 ((Eina_Matrixsparse *)m)->last_used = r;
@@ -440,7 +440,7 @@ _eina_matrixsparse_row_idx_get(const Eina_Matrixsparse *m, unsigned long row)
 
      }
    else if (dir < 0)
-      for (; r != NULL; r = r->prev)
+      for (; r; r = r->prev)
          if (r->row == row)
            {
               ((Eina_Matrixsparse *)m)->last_used = r;
@@ -479,7 +479,7 @@ _eina_matrixsparse_row_cell_idx_get(const Eina_Matrixsparse_Row *r,
    assert(dir != 0);
    if (dir > 0)
      {
-        for (; r != NULL; c = c->next)
+        for (; r; c = c->next)
            if (c->col == col)
              {
                 ((Eina_Matrixsparse_Row *)r)->last_used = c;
@@ -490,7 +490,7 @@ _eina_matrixsparse_row_cell_idx_get(const Eina_Matrixsparse_Row *r,
 
      }
    else if (dir < 0)
-      for (; r != NULL; c = c->prev)
+      for (; r; c = c->prev)
          if (c->col == col)
            {
               ((Eina_Matrixsparse_Row *)r)->last_used = c;
@@ -527,21 +527,21 @@ _eina_matrixsparse_row_idx_siblings_find(const Eina_Matrixsparse *m,
         assert(dir != 0);
    if (dir > 0)
      {
-        for (; r != NULL; r = r->next)
+        for (; r; r = r->next)
            if (r->row > row)
               break;
 
-        assert(r != NULL);
+        assert(!!r);
         *p_prev = r->prev;
         *p_next = r;
      }
    else if (dir < 0)
      {
-        for (; r != NULL; r = r->prev)
+        for (; r; r = r->prev)
            if (r->row < row)
               break;
 
-        assert(r != NULL);
+        assert(!!r);
         *p_prev = r;
         *p_next = r->next;
      }
@@ -560,21 +560,21 @@ _eina_matrixsparse_row_cell_idx_siblings_find(const Eina_Matrixsparse_Row *r,
         assert(dir != 0);
    if (dir > 0)
      {
-        for (; c != NULL; c = c->next)
+        for (; c; c = c->next)
            if (c->col > col)
               break;
 
-        assert(c != NULL);
+        assert(!!c);
         *p_prev = c->prev;
         *p_next = c;
      }
    else if (dir < 0)
      {
-        for (; c != NULL; c = c->prev)
+        for (; c; c = c->prev)
            if (c->col < col)
               break;
 
-        assert(c != NULL);
+        assert(!!c);
         *p_prev = c;
         *p_next = c->next;
      }
@@ -613,8 +613,8 @@ _eina_matrixsparse_row_idx_add(Eina_Matrixsparse *m, unsigned long row)
      {
         Eina_Matrixsparse_Row *prev = NULL, *next = NULL;
         _eina_matrixsparse_row_idx_siblings_find(m, row, &prev, &next);
-        assert(prev != NULL);
-        assert(next != NULL);
+        assert(!!prev);
+        assert(!!next);
         r->prev = prev;
         r->next = next;
         prev->next = r;
@@ -666,8 +666,8 @@ _eina_matrixsparse_row_cell_idx_add(Eina_Matrixsparse_Row *r,
      {
         Eina_Matrixsparse_Cell *prev = NULL, *next = NULL;
         _eina_matrixsparse_row_cell_idx_siblings_find(r, col, &prev, &next);
-        assert(prev != NULL);
-        assert(next != NULL);
+        assert(!!prev);
+        assert(!!next);
         c->prev = prev;
         c->next = next;
         prev->next = c;
@@ -758,7 +758,7 @@ _eina_matrixsparse_iterator_complete_next(
    if (it->idx.row >= it->m->size.rows)
       return 0;
 
-   if (it->dummy.col.data != NULL)
+   if (it->dummy.col.data)
       ERR("Last iterator call changed dummy cell!");
 
    if ((it->ref.col) &&
@@ -806,7 +806,7 @@ _eina_matrixsparse_iterator_complete_free(
 {
       EINA_MAGIC_CHECK_MATRIXSPARSE_ITERATOR(it);
 
-   if (it->dummy.col.data != NULL)
+   if (it->dummy.col.data)
       ERR("Last iterator call changed dummy cell!");
 
    EINA_MAGIC_SET(it,            EINA_MAGIC_NONE);
@@ -1478,7 +1478,7 @@ eina_matrixsparse_column_idx_clear(Eina_Matrixsparse *m, unsigned long col)
    free_func = m->free.func;
    user_data = m->free.user_data;
 
-   for (r = m->rows; r != NULL; )
+   for (r = m->rows; r; )
      {
         Eina_Matrixsparse_Row *r_aux = r;
         Eina_Matrixsparse_Cell *c;

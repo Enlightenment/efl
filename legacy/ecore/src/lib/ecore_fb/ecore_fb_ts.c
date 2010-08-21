@@ -80,7 +80,7 @@ ecore_fb_ts_init(void)
 {
 #ifdef HAVE_TSLIB
    char *tslib_tsdevice = NULL;
-   if ( ( tslib_tsdevice = getenv("TSLIB_TSDEVICE") ) != NULL )
+   if ( (tslib_tsdevice = getenv("TSLIB_TSDEVICE")) )
     {
         printf( "ECORE_FB: TSLIB_TSDEVICE = '%s'\n", tslib_tsdevice );
         _ecore_fb_tslib_tsdev = ts_open( tslib_tsdevice, 1 ); /* 1 = nonblocking, 0 = blocking */

@@ -323,7 +323,7 @@ _evas_object_box_insert_at_default(Evas_Object *o, Evas_Object_Box_Data *priv, E
         return new_opt;
      }
 
-   for (l = priv->children, i = 0; l != NULL; l = l->next, i++)
+   for (l = priv->children, i = 0; l; l = l->next, i++)
      {
 	Evas_Object_Box_Option *opt = l->data;
 
@@ -1451,7 +1451,7 @@ _evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *p
    int off_y = 0, max_h = 0, n_rows = 0;
    Eina_List *l;
 
-   for (i = 0, l = priv->children; l != NULL; i++, l = l->next)
+   for (i = 0, l = priv->children; l; i++, l = l->next)
      {
         Evas_Object_Box_Option *opt = l->data;
         int padding_l, padding_r, padding_t, padding_b;
@@ -1666,7 +1666,7 @@ _evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *pri
    int off_x = 0, max_w = 0, n_cols = 0;
    Eina_List *l;
 
-   for (i = 0, l = priv->children; l != NULL; i++, l = l->next)
+   for (i = 0, l = priv->children; l; i++, l = l->next)
      {
         Evas_Object_Box_Option *opt = l->data;
         int padding_l, padding_r, padding_t, padding_b;

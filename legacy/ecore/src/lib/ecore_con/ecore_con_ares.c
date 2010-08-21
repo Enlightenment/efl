@@ -427,7 +427,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg, int status, int timeouts,
    switch (status)
      {
       case ARES_SUCCESS:
-         if (hostent->h_addr_list[0] == NULL)
+         if (!hostent->h_addr_list[0])
            {
               fprintf(stderr, "No IP found\n");
               goto on_error;

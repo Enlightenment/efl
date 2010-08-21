@@ -272,7 +272,7 @@ eina_list_iterator_next(Eina_Iterator_List *it, void **data)
 {
    EINA_MAGIC_CHECK_LIST_ITERATOR(it, EINA_FALSE);
 
-   if (it->current == NULL)
+   if (!it->current)
       return EINA_FALSE;
 
    *data = eina_list_data_get(it->current);
@@ -287,7 +287,7 @@ eina_list_iterator_prev(Eina_Iterator_List *it, void **data)
 {
    EINA_MAGIC_CHECK_LIST_ITERATOR(it, EINA_FALSE);
 
-   if (it->current == NULL)
+   if (!it->current)
       return EINA_FALSE;
 
    *data = eina_list_data_get(it->current);
@@ -336,13 +336,13 @@ eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int idx, void **data)
            /* Go backward from the end. */
            for (i = eina_list_count(it->head) - 1,
                 over = eina_list_last(it->head);
-                i > idx && over != NULL;
+                i > idx && over;
                 --i, over = eina_list_prev(over))
               ;
         else
            /* Go forward from current. */
            for (i = it->index, over = it->current;
-                i < idx && over != NULL;
+                i < idx && over;
                 ++i, over = eina_list_next(over))
               ;
      }
@@ -354,18 +354,18 @@ eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int idx, void **data)
         if (idx > middle)
            /* Go backward from current. */
            for (i = it->index, over = it->current;
-                i > idx && over != NULL;
+                i > idx && over;
                 --i, over = eina_list_prev(over))
               ;
         else
            /* Go forward from start. */
            for (i = 0, over = it->head;
-                i < idx && over != NULL;
+                i < idx && over;
                 ++i, over = eina_list_next(over))
               ;
      }
 
-   if (over == NULL)
+   if (!over)
       return EINA_FALSE;
 
    it->current = over;

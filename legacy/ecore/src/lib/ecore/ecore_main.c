@@ -1315,7 +1315,7 @@ _ecore_main_win32_select(int nfds __UNUSED__, fd_set *readfds, fd_set *writefds,
 
    /* Wait for any message sent or posted to this queue */
    /* or for one of the passed handles be set to signaled. */
-   if (tv == NULL)
+   if (!tv)
      timeout = INFINITE;
    else
      timeout = (DWORD)((tv->tv_sec * 1000.0) + (tv->tv_usec / 1000.0));

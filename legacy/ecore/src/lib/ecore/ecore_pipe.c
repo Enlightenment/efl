@@ -326,7 +326,7 @@ ecore_pipe_del(Ecore_Pipe *p)
 	ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_del");
 	return NULL;
      }
-   if (p->fd_handler != NULL) ecore_main_fd_handler_del(p->fd_handler);
+   if (p->fd_handler) ecore_main_fd_handler_del(p->fd_handler);
    if (p->fd_read != PIPE_FD_INVALID) pipe_close(p->fd_read);
    if (p->fd_write != PIPE_FD_INVALID) pipe_close(p->fd_write);
    data = (void *)p->data;

@@ -57,7 +57,7 @@ int ecore_win32_dnd_begin(const char *data,
    STGMEDIUM stgmed = { TYMED_HGLOBAL, { 0 }, 0 };
    int res = 0;
 
-   if (data == NULL)
+   if (!data)
       return 0;
    if (size < 0)
       size = strlen(data) + 1;
@@ -108,22 +108,22 @@ int ecore_win32_dnd_register_drop_target(Ecore_Win32_Window                 *win
 {
    struct _Ecore_Win32_Window *wnd = (struct _Ecore_Win32_Window *)window;
 
-   if (window == NULL)
+   if (!window)
       return 0;
 
    wnd->dnd_drop_target = _ecore_win32_dnd_register_drop_window(wnd->window,
                                                                 callback,
                                                                 (void *)wnd);
-   return (int)(wnd->dnd_drop_target != NULL);
+   return (int)(!!wnd->dnd_drop_target);
 }
 
 void ecore_win32_dnd_unregister_drop_target(Ecore_Win32_Window *window)
 {
    struct _Ecore_Win32_Window *wnd = (struct _Ecore_Win32_Window *)window;
 
-   if (window == NULL)
+   if (!window)
       return;
 
-   if (wnd->dnd_drop_target != NULL)
+   if (wnd->dnd_drop_target)
       _ecore_win32_dnd_unregister_drop_window(wnd->window, wnd->dnd_drop_target);
 }

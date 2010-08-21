@@ -44,7 +44,7 @@ ef_cb_locale(void)
     putenv("LC_MESSAGES=");
     putenv("LANG=");
 
-    for (i = 0; langs[i].lc_message != NULL; i++)
+    for (i = 0; langs[i].lc_message; i++)
     {
         const char *tmp;
 

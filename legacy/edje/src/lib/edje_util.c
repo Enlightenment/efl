@@ -2342,7 +2342,7 @@ _edje_box_layout_builtin_find(const char *name)
 	 return NULL;
      }
 
-   for (; (base->name != NULL) && (base->name[0] == name[0]); base++)
+   for (; (base->name) && (base->name[0] == name[0]); base++)
      if (strcmp(base->name, name) == 0)
        return base->cb;
 
@@ -4311,13 +4311,13 @@ _edje_real_part_recursive_get_helper(Edje *ed, char **path)
    if (alias)
      {
 	rp = _edje_real_part_recursive_get(ed, alias);
-	if (path[1] == NULL) return rp;
+	if (!path[1]) return rp;
 	if (!rp) return NULL;
      }
    else
      {
 	rp = _edje_real_part_get(ed, path[0]);
-	if (path[1] == NULL) return rp;
+	if (!path[1]) return rp;
 	if (!rp) return NULL;
      }
 
@@ -4841,8 +4841,8 @@ _edje_program_remove(Edje_Part_Collection *edc, Edje_Program *p)
 	array = &edc->programs.nocmp;
 	count = &edc->programs.nocmp_count;
      }
-   else if (p->signal && strpbrk(p->signal, "*?[\\") == NULL
-	    && p->source && strpbrk(p->source, "*?[\\") == NULL)
+   else if (p->signal && !strpbrk(p->signal, "*?[\\")
+	    && p->source && !strpbrk(p->source, "*?[\\"))
      {
 	array = &edc->programs.strcmp;
 	count = &edc->programs.strcmp_count;
@@ -4885,8 +4885,8 @@ _edje_program_insert(Edje_Part_Collection *edc, Edje_Program *p)
 	array = &edc->programs.nocmp;
 	count = &edc->programs.nocmp_count;
      }
-   else if (p->signal && strpbrk(p->signal, "*?[\\") == NULL
-	    && p->source && strpbrk(p->source, "*?[\\") == NULL)
+   else if (p->signal && !strpbrk(p->signal, "*?[\\")
+	    && p->source && !strpbrk(p->source, "*?[\\"))
      {
 	array = &edc->programs.strcmp;
 	count = &edc->programs.strcmp_count;

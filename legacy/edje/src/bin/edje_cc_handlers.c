@@ -1734,7 +1734,7 @@ ob_collections_group(void)
    Edje_Part_Collection *pc;
    Code *cd;
 
-   if (current_de != NULL && current_de->entry == NULL)
+   if (current_de && !current_de->entry)
      {
 	ERR("%p: Error. A collection without a name was detected, that's not allowed.", progname);
 	exit(-1);

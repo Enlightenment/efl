@@ -489,7 +489,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
          * fields (fFuUdDnN). We only want to run the app once in this case. */
         if (!file_added) break;
     }
-    while ((l = eina_list_next(l)) != NULL);
+    while ((l = eina_list_next(l)));
 
     return execs;
 error:

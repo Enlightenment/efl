@@ -1664,7 +1664,7 @@ _ecore_con_cl_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
                   unsigned char *inbuf;
 
                   inbuf = malloc(num);
-                  if(inbuf == NULL)
+                  if(!inbuf)
                      return 1;
 
                   memcpy(inbuf, buf, num);
@@ -1739,7 +1739,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 
                   /* Create a new client for use in the client data event */
                   cl = calloc(1, sizeof(Ecore_Con_Client));
-                  if(cl == NULL)
+                  if(!cl)
                      return ECORE_CALLBACK_RENEW;
 
                   cl->buf = NULL;
@@ -1748,7 +1748,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
                   cl->server = svr;
                   cl->client_addr = calloc(1, client_addr_len);
                   cl->client_addr_len = client_addr_len;
-                  if(cl->client_addr == NULL)
+                  if(!cl->client_addr)
                     {
                        free(cl);
                        return ECORE_CALLBACK_RENEW;
@@ -1762,7 +1762,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
                                                 cl->client_addr_len);
 
                   inbuf = malloc(num);
-                  if(inbuf == NULL)
+                  if(!inbuf)
                     {
                        free(cl->client_addr);
                        free(cl);

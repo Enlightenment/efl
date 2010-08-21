@@ -445,7 +445,7 @@ parse(char *data, off_t size)
    p = data;
    end = data + size;
    line = 1;
-   while ((token = next_token(p, end, &p, &delim)) != NULL)
+   while ((token = next_token(p, end, &p, &delim)))
      {
 	/* if we are in param mode, the only delimiter
 	 * we'll accept is the semicolon

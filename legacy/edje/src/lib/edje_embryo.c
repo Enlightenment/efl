@@ -1152,7 +1152,7 @@ _edje_embryo_fn_get_color_class(Embryo_Program *ep, Embryo_Cell *params)
    GETSTR(class, params[1]);
    if (!class) return 0;
    c_class = _edje_color_class_find(ed, class);
-   if (c_class == NULL) return 0;
+   if (!c_class) return 0;
    SETINT(c_class->r, params[2]);
    SETINT(c_class->g, params[3]);
    SETINT(c_class->b, params[4]);
@@ -1208,7 +1208,7 @@ _edje_embryo_fn_get_text_class(Embryo_Program *ep, Embryo_Cell *params)
    GETSTR(class, params[1]);
    if (!class) return 0;
    t_class = _edje_text_class_find(ed, class);
-   if (t_class == NULL) return 0;
+   if (!t_class) return 0;
    SETSTR((char *)t_class->font, params[2]);
    SETFLOAT(t_class->size, params[3]);
    return 0;

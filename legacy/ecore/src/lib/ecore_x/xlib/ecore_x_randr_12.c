@@ -1701,7 +1701,7 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root,
    Eina_Bool ret;
 
 
-   if ((nnot_moved <= 0) || (not_moved == NULL)
+   if ((nnot_moved <= 0) || (!not_moved)
        || !_ecore_x_randr_root_validate(root)
        || !(res =
                _ecore_x_randr_get_screen_resources (_ecore_x_disp, root)))

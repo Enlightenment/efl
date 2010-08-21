@@ -400,19 +400,19 @@ _evas_smart_class_callbacks_create(Evas_Smart *s)
    const Evas_Smart_Class *sc;
    unsigned int n = 0;
 
-   for (sc = s->smart_class; sc != NULL; sc = sc->parent)
+   for (sc = s->smart_class; sc; sc = sc->parent)
      {
 	const Evas_Smart_Cb_Description *d;
-	for (d = sc->callbacks; d && d->name != NULL; d++)
+	for (d = sc->callbacks; d && d->name; d++)
 	  n++;
      }
 
    if (n == 0) return;
    if (!evas_smart_cb_descriptions_resize(&s->callbacks, n)) return;
-   for (n = 0, sc = s->smart_class; sc != NULL; sc = sc->parent)
+   for (n = 0, sc = s->smart_class; sc; sc = sc->parent)
      {
 	const Evas_Smart_Cb_Description *d;
-	for (d = sc->callbacks; d->name != NULL; d++)
+	for (d = sc->callbacks; d->name; d++)
 	  s->callbacks.array[n++] = d;
      }
    evas_smart_cb_descriptions_fix(&s->callbacks);

@@ -773,7 +773,7 @@ _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
         Evas_Engine_Info_Software_DDraw *einfo;
 
         einfo = (Evas_Engine_Info_Software_DDraw *)evas_engine_info_get(ecore_evas_get(ee));
-        if (einfo != NULL)
+        if (einfo)
           {
              einfo->info.fullscreen = !!on;
 /*           einfo->info.layered = window->shape.layered; */
@@ -788,7 +788,7 @@ _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
         Evas_Engine_Info_Direct3D *einfo;
 
         einfo = (Evas_Engine_Info_Direct3D *)evas_engine_info_get(ecore_evas_get(ee));
-        if (einfo != NULL)
+        if (einfo)
           {
              einfo->info.fullscreen = !!on;
              einfo->info.layered = window->shape.layered;

@@ -139,7 +139,7 @@ edje_file_collection_list(const char *file)
 
    if ((!file) || (!*file)) return NULL;
    edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
-   if (edf != NULL)
+   if (edf)
      {
 	Eina_Iterator *i;
 	const char *key;
@@ -186,7 +186,7 @@ edje_file_group_exists(const char *file, const char *glob)
 
    if ((!file) || (!*file)) return EINA_FALSE;
    edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
-   if (edf != NULL)
+   if (edf)
      {
 	Edje_Patterns *patterns;
 
@@ -246,7 +246,7 @@ edje_file_data_get(const char *file, const char *key)
    if (key)
      {
 	edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
-	if (edf != NULL)
+	if (edf)
 	  {
 	     str = (char*) edje_string_get(eina_hash_find(edf->data, key));
 
@@ -883,7 +883,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 void
 _edje_file_add(Edje *ed)
 {
-   if (_edje_edd_edje_file == NULL) return;
+   if (!_edje_edd_edje_file) return;
    ed->file = _edje_cache_file_coll_open(ed->path, ed->group,
 					 &(ed->load_error),
 					 &(ed->collection));

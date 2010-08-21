@@ -591,7 +591,7 @@ ecore_x_init(const char *name)
         int i;
 
         XSetLocaleModifiers("@im=none");
-        if ((im = XOpenIM(_ecore_x_disp, NULL, NULL, NULL)) == NULL)
+        if (!(im = XOpenIM(_ecore_x_disp, NULL, NULL, NULL)))
            goto _im_create_end;
 
         ret = XGetIMValues(im, XNQueryInputStyle, &supported_styles, NULL);

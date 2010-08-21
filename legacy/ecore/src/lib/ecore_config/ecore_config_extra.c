@@ -423,7 +423,7 @@ ecore_config_theme_search_path_append(const char *path)
    len = strlen(path);
    search_len = strlen(search_path);
    
-   if (loc == NULL || (loc != search_path && *(loc - 1) != '|') || 
+   if (!loc || (loc != search_path && *(loc - 1) != '|') || 
        (loc != (search_path + search_len - len) && *(loc + len - 1) != '|'))
      {
 	new_search_path = malloc(search_len + len + 2); /* 2 = \0 + | */

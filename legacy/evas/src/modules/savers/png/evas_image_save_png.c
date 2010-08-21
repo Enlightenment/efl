@@ -55,7 +55,7 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
      goto close_file;
 
    info_ptr = png_create_info_struct(png_ptr);
-   if (info_ptr == NULL)
+   if (!info_ptr)
      {
 	png_destroy_write_struct(&png_ptr, NULL);
 	goto close_file;

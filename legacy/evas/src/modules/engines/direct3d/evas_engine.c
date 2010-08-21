@@ -97,7 +97,7 @@ eng_setup(Evas *e, void *info)
    Evas_Engine_Info_Direct3D *in;
    re = (Render_Engine *)e->engine.data.output;   
    in = (Evas_Engine_Info_Direct3D *)info;
-   if (e->engine.data.output == NULL)
+   if (!e->engine.data.output)
      {
         e->engine.data.output = _output_setup(e->output.w,
                                               e->output.h,
@@ -108,22 +108,22 @@ eng_setup(Evas *e, void *info)
      }
    else if (in->info.fullscreen != 0)
    {
-      if (re != NULL)
+      if (re)
          evas_direct3d_set_layered(re->d3d, 0, 0, 0, NULL);
       evas_direct3d_set_fullscreen(re->d3d, -1, -1, 1);
    }
    else if (in->info.fullscreen == 0)
    {
       evas_direct3d_set_fullscreen(re->d3d, re->width, re->height, 0);
-      if (re != NULL && in->info.layered == 0)
+      if (re && in->info.layered == 0)
          evas_direct3d_set_layered(re->d3d, 0, 0, 0, NULL);
-      else if (re != NULL && in->info.layered != 0 && in->shape != NULL)
+      else if (re && in->info.layered != 0 && in->shape)
          evas_direct3d_set_layered(re->d3d, 1, in->shape->width, in->shape->height, in->shape->mask);
    }
 
-   if (e->engine.data.output == NULL)
+   if (!e->engine.data.output)
      return 0;
-   if (e->engine.data.context == NULL)
+   if (!e->engine.data.context)
      e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
 
    return 1;

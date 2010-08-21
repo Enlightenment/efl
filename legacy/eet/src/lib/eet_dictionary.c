@@ -110,7 +110,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
         total = ed->total + 8;
 
         new = realloc(ed->all, sizeof (Eet_String) * total);
-        if (new == NULL)
+        if (!new)
            return -1;
 
         ed->all = new;
@@ -119,7 +119,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
 
    len = strlen(string) + 1;
    str = strdup(string);
-   if (str == NULL)
+   if (!str)
       return -1;
 
    current = ed->all + ed->count;
@@ -201,7 +201,7 @@ eet_dictionary_string_get_char(const Eet_Dictionary *ed,
      {
 #ifdef _WIN32
         /* Windows file system could change the mmaped file when replacing a file. So we need to copy all string in memory to avoid bugs. */
-        if (ed->all[idx].str == NULL)
+        if (!ed->all[idx].str)
           {
              ed->all[idx].str = strdup(ed->all[idx].mmap);
              ed->all[idx].mmap = NULL;
@@ -397,7 +397,7 @@ eet_dictionary_string_check(Eet_Dictionary *ed,
 {
    int i;
 
-   if ((ed == NULL) || (string == NULL))
+   if ((!ed) || (!string))
       return 0;
 
    if ((ed->start <= string) && (string < ed->end))

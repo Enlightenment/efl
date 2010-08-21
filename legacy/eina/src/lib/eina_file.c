@@ -375,7 +375,7 @@ eina_file_split(char *path)
       return NULL;
 
    for (current = strchr(path, PATH_DELIM);
-        current != NULL;
+        current;
         path = current + 1, current = strchr(path, PATH_DELIM))
      {
         length = current - path;

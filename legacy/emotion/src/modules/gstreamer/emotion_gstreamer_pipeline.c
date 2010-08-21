@@ -220,7 +220,7 @@ emotion_pipeline_cdda_track_count_get(void *video)
 	GstMessage *message;
 
 	message = gst_bus_pop(bus);
-	if (message == NULL)
+	if (!message)
 	  /* All messages read, we're done */
 	  break;
 

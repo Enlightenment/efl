@@ -79,7 +79,7 @@ ecore_win32_window_free(Ecore_Win32_Window *window)
 
    INF("destroying window");
 
-   if (wnd->shape.mask != NULL)
+   if (wnd->shape.mask)
       free(wnd->shape.mask);
 
    DestroyWindow(((struct _Ecore_Win32_Window *)window)->window);
@@ -473,12 +473,12 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
    int                         y;
    OSVERSIONINFO               version_info;
 
-   if (window == NULL)
+   if (!window)
       return;
 
    wnd = (struct _Ecore_Win32_Window *)window;
 
-   if (mask == NULL)
+   if (!mask)
      {
         wnd->shape.enabled = 0;
         if (wnd->shape.layered != 0)
@@ -518,7 +518,7 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
      {
        wnd->shape.width = width;
        wnd->shape.height = height;
-       if (wnd->shape.mask != NULL)
+       if (wnd->shape.mask)
          {
            free(wnd->shape.mask);
            wnd->shape.mask = NULL;

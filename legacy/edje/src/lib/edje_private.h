@@ -1749,7 +1749,7 @@ edje_program_is_strrncmp(const char *str)
 {
    if (*str != '*' && *str != '?')
      return EINA_FALSE;
-   if (strpbrk(str + 1, "*?[\\") != NULL)
+   if (strpbrk(str + 1, "*?[\\"))
      return EINA_FALSE;
    return EINA_TRUE;
 }

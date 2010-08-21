@@ -10,7 +10,7 @@
 static char *
 replace(char *prev, char *value)
 {
-   if (value == NULL)
+   if (!value)
      return prev;
 
    if (prev)
@@ -30,7 +30,7 @@ nl_langinfo(nl_item index)
         {
            char *p;
            result = replace(result, setlocale(LC_CTYPE, NULL));
-           if ((p = strrchr(result, '.' )) == NULL)
+           if (!(p = strrchr(result, '.')))
              return nothing;
 
            if ((++p - result) > 2)

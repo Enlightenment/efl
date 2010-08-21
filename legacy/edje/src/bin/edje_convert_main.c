@@ -57,7 +57,7 @@ _edje_alias_int(const char *target, Eet_File *ef, const char *base, const char *
 
    snprintf(buf, sizeof (buf), "%s/", base);
    strcat(buf, "%i");
-   for (i = 0; i < count && match != NULL; ++i)
+   for (i = 0; i < count && match; ++i)
      {
 	char name[1024];
 	int id;
@@ -87,7 +87,7 @@ _edje_alias_string(const char *target, Eet_File *ef, const char *base, const cha
 
    snprintf(buf, sizeof (buf), "%s/", base);
    strcat(buf, "%s");
-   for (i = 0; i < count && match != NULL; ++i)
+   for (i = 0; i < count && match; ++i)
      {
 	char name[1024];
 	char id[1024];

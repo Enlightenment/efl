@@ -167,7 +167,7 @@ _ecore_x_image_shm_create(Ecore_X_Image *im)
    im->shminfo.shmaddr = shmat(im->shminfo.shmid, 0, 0);
    im->xim->data = im->shminfo.shmaddr;
    if ((im->xim->data == (char *)-1) ||
-       (im->xim->data == NULL))
+       (!im->xim->data))
      {
         shmdt(im->shminfo.shmaddr);
         shmctl(im->shminfo.shmid, IPC_RMID, 0);

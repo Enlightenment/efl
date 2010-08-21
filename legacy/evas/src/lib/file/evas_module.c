@@ -260,7 +260,7 @@ evas_module_init(void)
 
    evas_engines = eina_array_new(4);
 
-   for (i = 0; evas_static_module[i].init != NULL; ++i)
+   for (i = 0; evas_static_module[i].init; ++i)
      evas_static_module[i].init();
 }
 
@@ -397,7 +397,7 @@ int
 evas_module_load(Evas_Module *em)
 {
    if (em->loaded) return 1;
-   if (em->definition == NULL) return 0;
+   if (!em->definition) return 0;
 
    if (!em->definition->func.open(em)) return 0;
    em->loaded = 1;
@@ -413,7 +413,7 @@ evas_module_unload(Evas_Module *em)
 {
    if (!em->loaded)
      return;
-   if (em->definition == NULL)
+   if (!em->definition)
      return ;
 
 // for now lets not unload modules - they may still be in use.   
@@ -515,7 +515,7 @@ evas_module_shutdown(void)
    char *path;
    int i;
 
-   for (i = 0; evas_static_module[i].shutdown != NULL; ++i)
+   for (i = 0; evas_static_module[i].shutdown; ++i)
      evas_static_module[i].shutdown();
 
    EINA_LIST_FREE(eina_evas_modules, en)

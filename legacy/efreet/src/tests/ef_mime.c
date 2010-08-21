@@ -30,7 +30,7 @@ ef_mime_cb_get(void)
         return 1;
     }
 
-    for (i = 0; files[i].file != NULL; ++i)
+    for (i = 0; files[i].file; ++i)
     {
         mime = efreet_mime_type_get(files[i].file);
         if (!mime)

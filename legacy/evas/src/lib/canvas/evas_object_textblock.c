@@ -2568,7 +2568,7 @@ skip:
                                  _layout_walk_back_to_item_word_redo(c, it);
                                  goto end;
                               }
-                            if (c->ln->items != NULL)
+                            if (c->ln->items)
                               {
                                  white_stripped = _layout_item_abort(c, fmt, it);
                                  empty_item = 1;
@@ -2617,7 +2617,7 @@ skip:
                             goto end;
                          }
                     }
-                  if (c->ln->items != NULL)
+                  if (c->ln->items)
                     {
                        white_stripped = _layout_item_abort(c, fmt, it);
                        empty_item = 1;

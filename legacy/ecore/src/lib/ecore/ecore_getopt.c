@@ -500,11 +500,11 @@ _ecore_getopt_help_desc_choices(FILE *fp, const int base, const int total, int u
    used = _ecore_getopt_help_line
      (fp, base, total, used, _("Choices: "), strlen(_("Choices: ")));
 
-   for (itr = desc->action_param.choices; *itr != NULL; itr++)
+   for (itr = desc->action_param.choices; *itr; itr++)
      {
 	used = _ecore_getopt_help_line
 	  (fp, base, total, used, *itr, strlen(*itr));
-	if (itr[1] != NULL)
+	if (itr[1])
 	  used = _ecore_getopt_help_line(fp, base, total, used, sep, seplen);
      }
 
@@ -587,7 +587,7 @@ _ecore_getopt_help_desc(FILE *fp, const Ecore_Getopt_Desc *desc)
 static unsigned char
 _ecore_getopt_desc_is_sentinel(const Ecore_Getopt_Desc *desc)
 {
-   return (desc->shortname == '\0') && (desc->longname == NULL);
+   return (desc->shortname == '\0') && (!desc->longname);
 }
 
 static void
@@ -618,7 +618,7 @@ ecore_getopt_help(FILE *fp, const Ecore_Getopt *parser)
    if (argc < 1)
      {
 	ecore_app_args_get(&argc, &argv);
-	if ((argc > 0) && (argv[0] != NULL))
+	if ((argc > 0) && (argv[0]))
 	  prog = argv[0];
 	else
 	  prog = parser->prog;
@@ -1010,7 +1010,7 @@ _ecore_getopt_parse_choice(const Ecore_Getopt *parser __UNUSED__, const Ecore_Ge
      }
 
    pchoice = desc->action_param.choices;
-   for (; *pchoice != NULL; pchoice++)
+   for (; *pchoice; pchoice++)
      if (strcmp(*pchoice, arg_val) == 0)
        {
 	  *val->strp = (char *)*pchoice;
@@ -1021,10 +1021,10 @@ _ecore_getopt_parse_choice(const Ecore_Getopt *parser __UNUSED__, const Ecore_Ge
      (desc, _("invalid choice \"%s\". Valid values are: "), arg_val);
 
    pchoice = desc->action_param.choices;
-   for (; *pchoice != NULL; pchoice++)
+   for (; *pchoice; pchoice++)
      {
 	fputs(*pchoice, stderr);
-	if (pchoice[1] != NULL)
+	if (pchoice[1])
 	  fputs(", ", stderr);
      }
 
@@ -1626,7 +1626,7 @@ ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int a
 	return -1;
      }
 
-   if ((argc < 1) || (argv == NULL))
+   if ((argc < 1) || (!argv))
      ecore_app_args_get(&argc, &argv);
 
    if (argc < 1)
@@ -1635,7 +1635,7 @@ ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int a
 	return -1;
      }
 
-   if (argv[0] != NULL)
+   if (argv[0])
      prog = argv[0];
    else
      prog = parser->prog;

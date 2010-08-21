@@ -395,12 +395,12 @@ _emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint3
 	     break;
 	  }
 	if (((format == XINE_IMGFMT_YV12)
-	     && ((fr->vo_frame.base[0] == NULL)
-		 || (fr->vo_frame.base[1] == NULL)
-		 || (fr->vo_frame.base[2] == NULL)))
+	     && ((!fr->vo_frame.base[0])
+		 || (!fr->vo_frame.base[1])
+		 || (!fr->vo_frame.base[2])))
 	    || ((format == XINE_IMGFMT_YUY2)
-		&& ((fr->vo_frame.base[0] == NULL)
-		    || (fr->frame.bgra_data == NULL))))
+		&& ((!fr->vo_frame.base[0])
+		    || (!fr->frame.bgra_data))))
 	  {
 	     _emotion_frame_data_free(fr);
 	  }

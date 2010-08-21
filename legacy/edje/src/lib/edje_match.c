@@ -673,8 +673,8 @@ edje_match_program_hash_build(Edje_Program * const *programs,
 
    for (i = 0; i < count; ++i)
      {
-	if (programs[i]->signal && strpbrk(programs[i]->signal, "*?[\\") == NULL
-	    && programs[i]->source && strpbrk(programs[i]->source, "*?[\\") == NULL)
+	if (programs[i]->signal && !strpbrk(programs[i]->signal, "*?[\\")
+	    && programs[i]->source && !strpbrk(programs[i]->source, "*?[\\"))
 	  {
 	     Edje_Signal_Source_Char *item;
 
@@ -714,8 +714,8 @@ edje_match_callback_hash_build(const Eina_List *callbacks,
 
    EINA_LIST_FOREACH(callbacks, l, callback)
      {
-	if (callback->signal && strpbrk(callback->signal, "*?[\\") == NULL
-	    && callback->source && strpbrk(callback->source, "*?[\\") == NULL)
+	if (callback->signal && !strpbrk(callback->signal, "*?[\\")
+	    && callback->source && !strpbrk(callback->source, "*?[\\"))
 	  {
 	     Edje_Signal_Source_Char *item;
 

@@ -325,7 +325,7 @@ ecore_exe_send(Ecore_Exe *exe, const void *data, int size)
      }
 
    buf = realloc(exe->pipe_write.data_buf, exe->pipe_write.data_size + size);
-   if (buf == NULL) return 0;
+   if (!buf) return 0;
 
    exe->pipe_write.data_buf = buf;
    memcpy((char *)exe->pipe_write.data_buf + exe->pipe_write.data_size, data, size);

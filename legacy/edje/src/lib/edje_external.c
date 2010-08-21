@@ -239,7 +239,7 @@ edje_object_part_external_param_type_get(const Evas_Object *obj, const char *par
 	    type->module_name);
 	return EDJE_EXTERNAL_PARAM_TYPE_MAX;
      }
-   for (info = type->parameters_info; info->name != NULL; info++)
+   for (info = type->parameters_info; info->name; info++)
      if (strcmp(info->name, param) == 0)
        return info->type;
 

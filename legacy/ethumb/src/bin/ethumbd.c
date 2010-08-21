@@ -1659,7 +1659,7 @@ static int
 _ethumb_dbus_interface_elements_add(E_DBus_Interface *iface, struct _Ethumb_DBus_Method_Table *mtable, struct _Ethumb_DBus_Signal_Table *stable)
 {
    int i = -1;
-   while (mtable && mtable[++i].name != NULL)
+   while (mtable && mtable[++i].name)
      if (!e_dbus_interface_method_add(iface,
 				      mtable[i].name,
 				      mtable[i].signature,
@@ -1668,7 +1668,7 @@ _ethumb_dbus_interface_elements_add(E_DBus_Interface *iface, struct _Ethumb_DBus
        return 0;
 
    i = -1;
-   while (stable && stable[++i].name != NULL)
+   while (stable && stable[++i].name)
      if (!e_dbus_interface_signal_add(iface,
 				      stable[i].name,
 				      stable[i].signature))

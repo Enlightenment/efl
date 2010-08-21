@@ -48,7 +48,7 @@ evas_object_data_set(Evas_Object *obj, const char *key, const void *data)
    if (!key) return;
 
    evas_object_data_del(obj, key);
-   if (data == NULL) return;
+   if (!data) return;
    node = malloc(sizeof(Evas_Data_Node) + strlen(key) + 1);
    node->key = (char *)node + sizeof(Evas_Data_Node);
    strcpy(node->key, key);

@@ -56,7 +56,7 @@ getpwuid (uid_t uid)
    pw.pw_gecos = (res ? user_name : NULL);
    pw.pw_dir = (char *)evil_homedir_get();
    pw.pw_shell = getenv("SHELL");
-   if (pw.pw_shell == NULL)
+   if (!pw.pw_shell)
      pw.pw_shell = "sh";
    pw.pw_expire = 0;
    pw.pw_fields = 0;

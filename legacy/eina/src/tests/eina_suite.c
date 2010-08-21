@@ -70,7 +70,7 @@ _list_tests(void)
 {
    const Eina_Test_Case *itr = etc;
       fputs("Available Test Cases:\n", stderr);
-   for (; itr->test_case != NULL; itr++)
+   for (; itr->test_case; itr++)
       fprintf(stderr, "\t%s\n", itr->test_case);
 }
 
@@ -96,7 +96,7 @@ eina_build_suite(int argc, const char **argv)
 
    s = suite_create("Eina");
 
-   for (i = 0; etc[i].test_case != NULL; ++i)
+   for (i = 0; etc[i].test_case; ++i)
      {
         if (!_use_test(argc, argv, etc[i].test_case))
            continue;

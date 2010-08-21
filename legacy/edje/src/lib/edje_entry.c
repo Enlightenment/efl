@@ -130,7 +130,7 @@ _edje_focus_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    _edje_emit(ed, "focus,in", "");
 #ifdef HAVE_ECORE_IMF
    rp = ed->focused_part;
-   if (rp == NULL) return;
+   if (!rp) return;
 
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||

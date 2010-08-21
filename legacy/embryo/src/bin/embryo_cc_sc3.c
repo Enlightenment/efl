@@ -179,7 +179,7 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
      }
    else
      {
-	assert(oper != NULL);
+	assert(!!oper);
 	assert(numparam == 1);
 	/* try a select group of unary operators */
 	assert((sizeof unoperstr / sizeof unoperstr[0]) ==
@@ -248,7 +248,7 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
    if (oper == user_inc || oper == user_dec)
      {
 	assert(!savepri);
-	assert(lval != NULL);
+	assert(!!lval);
 	if (lval->ident == iARRAYCELL || lval->ident == iARRAYCHAR)
 	   push1();		/* save current address in PRI */
 	rvalue(lval);		/* get the symbol's value in PRI */
@@ -269,7 +269,7 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
 	 * result must be stored; this address must be preserved accross the
 	 * call
 	 */
-	assert(lval != NULL);	/* this was checked earlier */
+	assert(!!lval);	/* this was checked earlier */
 	assert(lval->ident == iARRAYCELL || lval->ident == iARRAYCHAR);	/* checked earlier */
 	push2();
      }				/* if */
@@ -308,14 +308,14 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
    if (sym->x.lib)
       sym->x.lib->value += 1;	/* increment "usage count" of the library */
    sideeffect = TRUE;		/* assume functions carry out a side-effect */
-   assert(resulttag != NULL);
+   assert(!!resulttag);
    *resulttag = sym->tag;	/* save tag of the called function */
 
    if (savepri || savealt)
       pop2();			/* restore the saved PRI/ALT that into ALT */
    if (oper == user_inc || oper == user_dec)
      {
-	assert(lval != NULL);
+	assert(!!lval);
 	if (lval->ident == iARRAYCELL || lval->ident == iARRAYCHAR)
 	   pop2();		/* restore address (in ALT) */
 	store(lval);		/* store PRI in the symbol */
@@ -787,7 +787,7 @@ array_totalsize(symbol * sym)
 {
    cell                length;
 
-   assert(sym != NULL);
+   assert(!!sym);
    assert(sym->ident == iARRAY || sym->ident == iREFARRAY);
    length = sym->dim.array.length;
    if (sym->dim.array.level > 0)
@@ -805,13 +805,13 @@ array_totalsize(symbol * sym)
 static cell
 array_levelsize(symbol * sym, int level)
 {
-   assert(sym != NULL);
+   assert(!!sym);
    assert(sym->ident == iARRAY || sym->ident == iREFARRAY);
    assert(level <= sym->dim.array.level);
    while (level-- > 0)
      {
 	sym = finddepend(sym);
-	assert(sym != NULL);
+	assert(!!sym);
      }				/* if */
    return sym->dim.array.length;
 }
@@ -908,7 +908,7 @@ hier14(value * lval1)
 	/* array assignment is permitted too (with restrictions) */
 	if (oper)
 	   return error(23);	/* array assignment must be simple assigment */
-	assert(lval1->sym != NULL);
+	assert(!!lval1->sym);
 	if (array_totalsize(lval1->sym) == 0)
 	   return error(46, lval1->sym->name);	/* unknown array size */
 	lvalue = TRUE;
@@ -918,7 +918,7 @@ hier14(value * lval1)
    if (!lvalue)
       return error(22);		/* must be lvalue */
    /* may not change "constant" parameters */
-   assert(lval1->sym != NULL);
+   assert(!!lval1->sym);
    if ((lval1->sym->usage & uCONST) != 0)
       return error(22);		/* assignment to const argument */
    lval3 = *lval1;		/* save symbol to enable storage of expresion result */
@@ -969,7 +969,7 @@ hier14(value * lval1)
 	     if (lval2.ident == iVARIABLE && lval3.ident == lval2.ident
 		 && lval3.sym == lval2.sym)
 	       {
-		  assert(lval3.sym != NULL);
+		  assert(!!lval3.sym);
 		  error(226, lval3.sym->name);	/* self-assignment */
 	       }		/* if */
 	  }			/* if */
@@ -1015,7 +1015,7 @@ hier14(value * lval1)
 	     symbol             *sym2 = lval2.sym;
 	     int                 i;
 
-	     assert(sym1 != NULL && sym2 != NULL);
+	     assert(!!sym1 && !!sym2);
 	     /* ^^^ sym2 must be valid, because only variables can be
 	      *     multi-dimensional (there are no multi-dimensional arrays),
 	      *     sym1 must be valid because it must be an lvalue
@@ -1025,7 +1025,7 @@ hier14(value * lval1)
 	       {
 		  sym1 = finddepend(sym1);
 		  sym2 = finddepend(sym2);
-		  assert(sym1 != NULL && sym2 != NULL);
+		  assert(!!sym1 && !!sym2);
 		  /* ^^^ both arrays have the same dimensions (this was checked
 		   *     earlier) so the dependend should always be found
 		   */
@@ -1210,7 +1210,7 @@ hier2(value * lval)
      case tINC:		/* ++lval */
 	if (!hier2(lval))
 	   return error(22);	/* must be lvalue */
-	assert(lval->sym != NULL);
+	assert(!!lval->sym);
 	if ((lval->sym->usage & uCONST) != 0)
 	   return error(22);	/* assignment to const argument */
 	if (!check_userop(user_inc, lval->tag, 0, 1, lval, &lval->tag))
@@ -1221,7 +1221,7 @@ hier2(value * lval)
      case tDEC:		/* --lval */
 	if (!hier2(lval))
 	   return error(22);	/* must be lvalue */
-	assert(lval->sym != NULL);
+	assert(!!lval->sym);
 	if ((lval->sym->usage & uCONST) != 0)
 	   return error(22);	/* assignment to const argument */
 	if (!check_userop(user_dec, lval->tag, 0, 1, lval, &lval->tag))
@@ -1300,7 +1300,7 @@ hier2(value * lval)
 	if (sym && sym->ident != iFUNCTN && sym->ident != iREFFUNC
 	    && (sym->usage & uDEFINE) == 0)
 	   sym = NULL;		/* symbol is not a function, it is in the table, but not "defined" */
-	val = (sym != NULL);
+	val = (sym);
 	if (!val && find_subst(st, strlen(st)))
 	   val = 1;
 	clear_value(lval);
@@ -1405,7 +1405,7 @@ hier2(value * lval)
 	       case tINC:	/* lval++ */
 		  if (!lvalue)
 		     return error(22);	/* must be lvalue */
-		  assert(lval->sym != NULL);
+		  assert(!!lval->sym);
 		  if ((lval->sym->usage & uCONST) != 0)
 		     return error(22);	/* assignment to const argument */
 		  /* on incrementing array cells, the address in PRI must be saved for
@@ -1429,7 +1429,7 @@ hier2(value * lval)
 	       case tDEC:	/* lval-- */
 		  if (!lvalue)
 		     return error(22);	/* must be lvalue */
-		  assert(lval->sym != NULL);
+		  assert(!!lval->sym);
 		  if ((lval->sym->usage & uCONST) != 0)
 		     return error(22);	/* assignment to const argument */
 		  saveresult = (lval->ident == iARRAYCELL
@@ -1604,7 +1604,7 @@ hier1(value * lval1)
 		     charalign();	/* align character index into array */
 	       }		/* if */
 	     /* the indexed item may be another array (multi-dimensional arrays) */
-	     assert(lval1->sym == sym && sym != NULL);	/* should still be set */
+	     assert(lval1->sym == sym && !!sym);	/* should still be set */
 	     if (sym->dim.array.level > 0)
 	       {
 		  assert(close == ']');	/* checked earlier */
@@ -1617,7 +1617,7 @@ hier1(value * lval1)
 		  /* adjust the "value" structure and find the referenced array */
 		  lval1->ident = iREFARRAY;
 		  lval1->sym = finddepend(sym);
-		  assert(lval1->sym != NULL);
+		  assert(!!lval1->sym);
 		  assert(lval1->sym->dim.array.level ==
 			 sym->dim.array.level - 1);
 		  /* try to parse subsequent array indices */
@@ -1778,7 +1778,7 @@ primary(value * lval)
 	  {
 	     return error(17, st);	/* undefined symbol */
 	  }			/* endif */
-	assert(sym != NULL);
+	assert(!!sym);
 	assert(sym->ident == iFUNCTN || sym->ident != iREFFUNC);
 	lval->sym = sym;
 	lval->ident = sym->ident;
@@ -1814,10 +1814,10 @@ setdefarray(cell * string, cell size, cell array_sz, cell * dataaddr,
     * the default array data is "dumped" into the data segment only once (on the
     * first use).
     */
-   assert(string != NULL);
+   assert(!!string);
    assert(size > 0);
    /* check whether to dump the default array */
-   assert(dataaddr != NULL);
+   assert(!!dataaddr);
    if (sc_status == statWRITE && *dataaddr < 0)
      {
 	int                 i;
@@ -1907,9 +1907,9 @@ callfunction(symbol * sym)
    cell                lexval;
    char               *lexstr;
 
-   assert(sym != NULL);
+   assert(!!sym);
    arg = sym->dim.arglist;
-   assert(arg != NULL);
+   assert(!!arg);
    stgmark(sSTARTREORDER);
    for (argpos = 0; argpos < sMAXARGS; argpos++)
       arglist[argpos] = ARG_UNHANDLED;
@@ -1974,7 +1974,7 @@ callfunction(symbol * sym)
 		       /* always pass by reference */
 		       if (lval.ident == iVARIABLE || lval.ident == iREFERENCE)
 			 {
-			    assert(lval.sym != NULL);
+			    assert(!!lval.sym);
 			    if ((lval.sym->usage & uCONST) != 0
 				&& (arg[argidx].usage & uCONST) == 0)
 			      {
@@ -2045,7 +2045,7 @@ callfunction(symbol * sym)
 			 {
 			    if (lvalue)
 			      {
-				 assert(lval.sym != NULL);
+				 assert(!!lval.sym);
 				 address(lval.sym);
 			      }
 			    else
@@ -2121,7 +2121,7 @@ callfunction(symbol * sym)
 			    symbol             *sym = lval.sym;
 			    short               level = 0;
 
-			    assert(sym != NULL);
+			    assert(!!sym);
 			    if (sym->dim.array.level + 1 != arg[argidx].numdim)
 			       error(48);	/* array dimensions must match */
 			    /* the lengths for all dimensions must match, unless the dimension
@@ -2137,12 +2137,12 @@ callfunction(symbol * sym)
 				 append_constval(&arrayszlst, arg[argidx].name,
 						 sym->dim.array.length, level);
 				 sym = finddepend(sym);
-				 assert(sym != NULL);
+				 assert(!!sym);
 				 level++;
 			      }	/* if */
 			    /* the last dimension is checked too, again, unless it is zero */
 			    assert(level < sDIMEN_MAX);
-			    assert(sym != NULL);
+			    assert(!!sym);
 			    if (arg[argidx].dim[level] != 0
 				&& sym->dim.array.length !=
 				arg[argidx].dim[level])

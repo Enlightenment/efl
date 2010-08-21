@@ -430,7 +430,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 
    if (!exe_cmd) return NULL;
    exe = calloc(1, sizeof(Ecore_Exe));
-   if (exe == NULL) return NULL;
+   if (!exe) return NULL;
 
    if ((flags & ECORE_EXE_PIPE_AUTO) && (!(flags & ECORE_EXE_PIPE_ERROR))
        && (!(flags & ECORE_EXE_PIPE_READ)))
@@ -614,7 +614,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 						       ECORE_FD_READ,
 						       _ecore_exe_data_error_handler,
 						       exe, NULL, NULL);
-			  if (exe->error_fd_handler == NULL)
+			  if (!exe->error_fd_handler)
 			     ok = 0;
 		       }
 		    }
@@ -635,7 +635,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 						       ECORE_FD_READ,
 						       _ecore_exe_data_read_handler,
 						       exe, NULL, NULL);
-			  if (exe->read_fd_handler == NULL)
+			  if (!exe->read_fd_handler)
 			     ok = 0;
 		       }
 		    }
@@ -758,7 +758,7 @@ ecore_exe_send(Ecore_Exe * exe, const void *data, int size)
      }
 
    buf = realloc(exe->write_data_buf, exe->write_data_size + size);
-   if (buf == NULL) return EINA_FALSE;
+   if (!buf) return EINA_FALSE;
 
    exe->write_data_buf = buf;
    memcpy((char *)exe->write_data_buf + exe->write_data_size, data, size);
@@ -1388,7 +1388,7 @@ _ecore_exe_make_sure_its_dead(void *data)
      {
 	Ecore_Exe *exe = NULL;
 
-	if ((exe = _ecore_exe_is_it_alive(dead->pid)) != NULL)
+	if ((exe = _ecore_exe_is_it_alive(dead->pid)))
 	  {
 	     if (dead->cmd)
 		INF("Sending KILL signal to alledgedly dead %s (%d).",
@@ -1420,7 +1420,7 @@ _ecore_exe_make_sure_its_really_dead(void *data)
      {
 	Ecore_Exe *exe = NULL;
 
-	if ((exe = _ecore_exe_is_it_alive(dead->pid)) != NULL)
+	if ((exe = _ecore_exe_is_it_alive(dead->pid)))
 	  {
 	     ERR("RUN!  The zombie wants to eat your brains!  And your CPU!");
 	     if (dead->cmd)
@@ -1549,10 +1549,10 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
      }
    else if (use_sh)
      {				/* We have to use a shell to run this. */
-	if (shell == NULL)
+	if (!shell)
 	  {			/* Find users preferred shell. */
 	     shell = getenv("SHELL");
-	     if (shell == NULL)
+	     if (!shell)
 	       shell = "/bin/sh";
 	  }
 	errno = 0;

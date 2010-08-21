@@ -333,7 +333,7 @@ _xr_xcb_image_info_get(xcb_connection_t *conn, xcb_screen_t *screen, xcb_drawabl
            shm_info.shmid = shmget(IPC_PRIVATE, xim->size, IPC_CREAT | 0777);
            if (shm_info.shmid >= 0) {
               shm_info.shmaddr = xim->data = shmat(shm_info.shmid, 0, 0);
-              if ((shm_info.shmaddr != NULL) && (shm_info.shmaddr != (void *) -1)) {
+              if ((shm_info.shmaddr) && (shm_info.shmaddr != (void *) -1)) {
                  xcb_get_input_focus_reply_t *reply;
                  /*
                   * FIXME: no error mechanism

@@ -727,7 +727,7 @@ eet_data_get_string(const Eet_Dictionary *ed,
            return -1;
 
         str = eet_dictionary_string_get_char(ed, idx);
-        if (str == NULL)
+        if (!str)
            return -1;
 
         *d = (char *)str;
@@ -735,7 +735,7 @@ eet_data_get_string(const Eet_Dictionary *ed,
      }
 
    s = (char *)src;
-   if (s == NULL)
+   if (!s)
      {
         *d = NULL;
         return 0;
@@ -1873,7 +1873,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
         || group_type == EET_G_VARIANT)
        &&
        (type != EET_T_UNKNOW
-        || subtype == NULL
+        || !subtype
         || subtype->func.type_get == NULL
         || subtype->func.type_set == NULL))
       return;
@@ -1918,7 +1918,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
        && (group_type < EET_G_LAST)
        && (((type > EET_T_UNKNOW) && (type < EET_T_STRING))
            || ((type > EET_T_NULL) && (type < EET_T_LAST)))
-       && (subtype == NULL))
+       && (!subtype))
      {
         subtype = calloc(1, sizeof (Eet_Data_Descriptor));
         if (!subtype)
@@ -2522,7 +2522,7 @@ _eet_data_dump_encode(int             parent_type,
            _eet_data_words_bigendian = 0;
      }
 
-   if (node == NULL)
+   if (!node)
       return NULL;
 
    ds = eet_data_stream_new();
@@ -4123,7 +4123,7 @@ eet_data_get_unknown(Eet_Free_Context     *context,
                   str = (char **)(((char *)data));
                   if (*str)
                     {
-                       if ((ed == NULL) || (edd->func.str_direct_alloc == NULL))
+                       if ((!ed) || (edd->func.str_direct_alloc == NULL))
                          {
                             *str = edd->func.str_alloc(*str);
                             _eet_freelist_str_add(context, *str);

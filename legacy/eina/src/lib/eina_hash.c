@@ -603,7 +603,7 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
    if (!(it->index < it->hash->population))
       return EINA_FALSE;
 
-   if (it->current == NULL)
+   if (!it->current)
      {
         ok = EINA_FALSE;
         bucket = 0;
@@ -638,7 +638,7 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
      {
         while (bucket < it->hash->size)
           {
-             if (it->hash->buckets[bucket] != NULL)
+             if (it->hash->buckets[bucket])
                {
                   it->current =
                      eina_rbtree_iterator_prefix(it->hash->buckets[bucket]);

@@ -74,7 +74,7 @@ evas_software_x11_x_output_buffer_new(xcb_connection_t * c,
                        xob->shm_info->shmaddr = xob->xim->data =
                            shmat(xob->shm_info->shmid, 0, 0);
 
-                       if (xob->shm_info->shmaddr != NULL)
+                       if (xob->shm_info->shmaddr)
                          {
                             /*
                              * FIXME: no error mechanism

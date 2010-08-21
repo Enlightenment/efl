@@ -394,7 +394,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (ep->text.cache.in_str) eina_stringshare_del(ep->text.cache.in_str);
    ep->text.cache.in_str = eina_stringshare_add(text);
    ep->text.cache.in_size = size;
-   if (chosen_desc->text.fit_x && (ep->text.cache.in_str != NULL && eina_stringshare_strlen(ep->text.cache.in_str) > 0))
+   if (chosen_desc->text.fit_x && (ep->text.cache.in_str && eina_stringshare_strlen(ep->text.cache.in_str) > 0))
      {
         if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
 	else evas_object_text_font_source_set(ep->object, NULL);
@@ -437,7 +437,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	       }
 	  }
      }
-   if (chosen_desc->text.fit_y && (ep->text.cache.in_str != NULL && eina_stringshare_strlen(ep->text.cache.in_str) > 0))
+   if (chosen_desc->text.fit_y && (ep->text.cache.in_str && eina_stringshare_strlen(ep->text.cache.in_str) > 0))
      {
 	/* if we fit in the x axis, too, size already has a somewhat
 	 * meaningful value, so don't overwrite it with the starting

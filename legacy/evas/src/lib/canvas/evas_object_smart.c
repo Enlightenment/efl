@@ -559,7 +559,7 @@ evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, const Evas_Smart_
 	return 1;
      }
 
-   for (count = 0, d = descriptions; d->name != NULL; d++)
+   for (count = 0, d = descriptions; d->name; d++)
      count++;
 
    evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, count);

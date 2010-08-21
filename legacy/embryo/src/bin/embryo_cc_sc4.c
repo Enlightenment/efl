@@ -336,7 +336,7 @@ rvalue(value * lval)
    else if (lval->ident == iREFERENCE)
      {
 	/* indirect fetch, but address not yet in PRI */
-	assert(sym != NULL);
+	assert(!!sym);
 	assert(sym->vclass == sLOCAL);	/* global references don't exist in Small */
 	if (sym->vclass == sLOCAL)
 	   stgwrite("\tlref.s.pri ");
@@ -349,7 +349,7 @@ rvalue(value * lval)
    else
      {
 	/* direct or stack relative fetch */
-	assert(sym != NULL);
+	assert(!!sym);
 	if (sym->vclass == sLOCAL)
 	   stgwrite("\tload.s.pri ");
 	else
@@ -367,7 +367,7 @@ rvalue(value * lval)
 void
 address(symbol * sym)
 {
-   assert(sym != NULL);
+   assert(!!sym);
    /* the symbol can be a local array, a global array, or an array
     * that is passed by reference.
     */
@@ -416,7 +416,7 @@ store(value * lval)
      }
    else if (lval->ident == iREFERENCE)
      {
-	assert(sym != NULL);
+	assert(!!sym);
 	if (sym->vclass == sLOCAL)
 	   stgwrite("\tsref.s.pri ");
 	else
@@ -426,7 +426,7 @@ store(value * lval)
      }
    else
      {
-	assert(sym != NULL);
+	assert(!!sym);
 	markusage(sym, uWRITTEN);
 	if (sym->vclass == sLOCAL)
 	   stgwrite("\tstor.s.pri ");
@@ -455,7 +455,7 @@ memcopy(cell size)
 void
 copyarray(symbol * sym, cell size)
 {
-   assert(sym != NULL);
+   assert(!!sym);
    /* the symbol can be a local array, a global array, or an array
     * that is passed by reference.
     */
@@ -485,7 +485,7 @@ fillarray(symbol * sym, cell size, cell val)
 {
    const1(val);		/* load val in PRI */
 
-   assert(sym != NULL);
+   assert(!!sym);
    /* the symbol can be a local array, a global array, or an array
     * that is passed by reference.
     */
@@ -658,7 +658,7 @@ ffcase(cell val, char *labelname, int newtable)
 void
 ffcall(symbol * sym, int numargs)
 {
-   assert(sym != NULL);
+   assert(!!sym);
    assert(sym->ident == iFUNCTN);
    if ((sym->usage & uNATIVE) != 0)
      {
@@ -1177,7 +1177,7 @@ inc(value * lval)
      }
    else if (lval->ident == iREFERENCE)
      {
-	assert(sym != NULL);
+	assert(!!sym);
 	stgwrite("\tpush.pri\n");
 	/* load dereferenced value */
 	assert(sym->vclass == sLOCAL);	/* global references don't exist in Small */
@@ -1200,7 +1200,7 @@ inc(value * lval)
    else
      {
 	/* local or global variable */
-	assert(sym != NULL);
+	assert(!!sym);
 	if (sym->vclass == sLOCAL)
 	   stgwrite("\tinc.s ");
 	else
@@ -1243,7 +1243,7 @@ dec(value * lval)
      }
    else if (lval->ident == iREFERENCE)
      {
-	assert(sym != NULL);
+	assert(!!sym);
 	stgwrite("\tpush.pri\n");
 	/* load dereferenced value */
 	assert(sym->vclass == sLOCAL);	/* global references don't exist in Small */
@@ -1266,7 +1266,7 @@ dec(value * lval)
    else
      {
 	/* local or global variable */
-	assert(sym != NULL);
+	assert(!!sym);
 	if (sym->vclass == sLOCAL)
 	   stgwrite("\tdec.s ");
 	else

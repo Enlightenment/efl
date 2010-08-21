@@ -183,7 +183,7 @@ efreet_ini_parse(const char *file)
             goto next_line;
         }
 
-        if (section == NULL)
+        if (!section)
         {
 //            INF("Invalid file (%s) (missing section)", file);
             goto next_line;

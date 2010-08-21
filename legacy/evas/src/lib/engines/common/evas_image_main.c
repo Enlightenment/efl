@@ -242,7 +242,7 @@ _evas_common_rgba_image_surface_alloc(Image_Entry *ie, int w, int h)
 
    if (im->image.data) free(im->image.data);
    im->image.data = malloc(siz);
-   if (im->image.data == NULL) return -1;
+   if (!im->image.data) return -1;
 
 #ifdef HAVE_VALGRIND
 # ifdef VALGRIND_MAKE_READABLE
@@ -529,7 +529,7 @@ evas_common_image_colorspace_dirty(RGBA_Image *im)
 EAPI void
 evas_common_image_set_cache(int size)
 {
-   if (eci != NULL)
+   if (eci)
      evas_cache_image_set(eci, size);
 }
 
@@ -542,7 +542,7 @@ evas_common_image_get_cache(void)
 EAPI RGBA_Image *
 evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_Loadopts *lo, int *error)
 {
-   if (file == NULL)
+   if (!file)
      {
 	*error = EVAS_LOAD_ERROR_GENERIC;
 	return NULL;

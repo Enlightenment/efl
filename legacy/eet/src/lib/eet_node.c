@@ -606,7 +606,7 @@ eet_node_dump(Eet_Node *n,
               dumpfunc(dumpdata, "\";\n");
            }
 
-         for (it = n->values; it != NULL; it = it->next)
+         for (it = n->values; it; it = it->next)
             eet_node_dump(it, dumplevel + 2, dumpfunc, dumpdata);
 
          eet_node_dump_group_end(dumplevel, dumpfunc, dumpdata);
@@ -653,7 +653,7 @@ eet_node_walk(void          *parent,
       case EET_G_UNKNOWN:
          me = cb->struct_alloc(root->name, user_data);
 
-         for (it = root->values; it != NULL; it = it->next)
+         for (it = root->values; it; it = it->next)
             eet_node_walk(me, it->name, it, cb, user_data);
 
          break;
@@ -663,7 +663,7 @@ eet_node_walk(void          *parent,
          me = cb->array(root->type == EET_G_VAR_ARRAY ? EINA_TRUE : EINA_FALSE,
                         root->name, root->count, user_data);
 
-         for (i = 0, it = root->values; it != NULL; it = it->next)
+         for (i = 0, it = root->values; it; it = it->next)
             cb->insert(me, i++, eet_node_walk(NULL,
                                               NULL,
                                               it,
@@ -675,7 +675,7 @@ eet_node_walk(void          *parent,
       case EET_G_LIST:
          me = cb->list(root->name, user_data);
 
-         for (it = root->values; it != NULL; it = it->next)
+         for (it = root->values; it; it = it->next)
             cb->append(me, eet_node_walk(NULL,
                                          NULL,
                                          it,

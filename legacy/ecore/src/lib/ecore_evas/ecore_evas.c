@@ -731,7 +731,7 @@ ecore_evas_engines_get(void)
    const struct ecore_evas_engine *itr;
    Eina_List *lst = NULL;
 
-   for (itr = _engines; itr->name != NULL; itr++)
+   for (itr = _engines; itr->name; itr++)
      lst = eina_list_append(lst, itr->name);
 
    return lst;
@@ -753,7 +753,7 @@ _ecore_evas_new_auto_discover(int x, int y, int w, int h, const char *extra_opti
 
    DBG("auto discover engine");
 
-   for (itr = _engines; itr->constructor != NULL; itr++)
+   for (itr = _engines; itr->constructor; itr++)
      {
 	Ecore_Evas *ee = itr->constructor(x, y, w, h, extra_options);
 	if (ee)
@@ -801,7 +801,7 @@ ecore_evas_new(const char *engine_name, int x, int y, int w, int h, const char *
    if (!engine_name)
      return _ecore_evas_new_auto_discover(x, y, w, h, extra_options);
 
-   for (itr = _engines; itr->name != NULL; itr++)
+   for (itr = _engines; itr->name; itr++)
      if (strcmp(itr->name, engine_name) == 0)
        {
 	  INF("using engine '%s', extra_options=%s",

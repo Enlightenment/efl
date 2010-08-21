@@ -736,7 +736,7 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username,
      }
 
 # if LIBCURL_VERSION_NUM >= 0x071301
-   if ((username != NULL) && (password != NULL))
+   if ((username) && (password))
      {
         if (safe)
            curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPAUTH,
@@ -1073,7 +1073,7 @@ _ecore_con_url_restart_fd_handler(void)
 
    EINA_LIST_FOREACH(_url_con_list, l, url_con)
    {
-      if (url_con->fd_handler == NULL && url_con->fd != -1)
+      if (!url_con->fd_handler && url_con->fd != -1)
         {
            url_con->fd_handler =
               ecore_main_fd_handler_add(url_con->fd, url_con->flags,
@@ -1345,7 +1345,7 @@ _ecore_con_url_fd_handler(void *data __UNUSED__,
 {
    _ecore_con_url_suspend_fd_handler();
 
-   if (_fd_idler_handler == NULL)
+   if (!_fd_idler_handler)
       _fd_idler_handler = ecore_idler_add(
             _ecore_con_url_idler_handler, NULL);
 
@@ -1363,7 +1363,7 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
    int job_matched = 0;
 
    /* Loop jobs and check if any are done */
-   while ((curlmsg = curl_multi_info_read(curlm, &n_remaining)) != NULL)
+   while ((curlmsg = curl_multi_info_read(curlm, &n_remaining)))
      {
         if (curlmsg->msg != CURLMSG_DONE)
            continue;

@@ -844,7 +844,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 #ifdef LUA2
 	_edje_lua2_script_init(ed);
 #else        
-	if (ed->L == NULL) /* private state does not yet exist, create it */
+	if (!ed->L) /* private state does not yet exist, create it */
 	  {
 	     ed->L = _edje_lua_new_thread(ed, _edje_lua_state_get());
 	  }
@@ -1032,7 +1032,7 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
 
 	    /* The part contain a [index], retrieve it */
 	    idx = strchr(sig, EDJE_PART_PATH_SEPARATOR_INDEXL);
-	    if (idx == NULL || sep < idx) newsig = part + (sep - sig);
+	    if (!idx || sep < idx) newsig = part + (sep - sig);
 	    else newsig = part + (idx - sig);
 
 	    *newsig = '\0';
@@ -1391,7 +1391,7 @@ _edje_external_param_info_get(const Evas_Object *obj, const char *name)
 
    type = evas_object_data_get(obj, "Edje_External_Type");
    if (!type) return NULL;
-   for (info = type->parameters_info; info->name != NULL; info++)
+   for (info = type->parameters_info; info->name; info++)
      if (!strcmp(info->name, name)) return info;
 
    return NULL;
@@ -1974,7 +1974,7 @@ _edje_param_validate(const Edje_External_Param *param, const Edje_External_Param
 	{
 	   const char **itr = info->info.c.choices;
 	   if (!itr) return EINA_FALSE;
-	   for (; *itr != NULL; itr++)
+	   for (; *itr; itr++)
 	     if (!strcmp(*itr, param->s))
 	       return EINA_TRUE;
 	   return EINA_FALSE;

@@ -82,8 +82,8 @@ START_TEST(eina_stringshare_small)
         t0 = eina_stringshare_add(buf);
         t1 = eina_stringshare_add(buf);
 
-        fail_if(t0 == NULL);
-        fail_if(t1 == NULL);
+        fail_if(!t0);
+        fail_if(!t1);
         fail_if(t0 != t1);
         fail_if(strcmp(t0, buf) != 0);
         fail_if((int)strlen(buf) != eina_stringshare_strlen(t0));
@@ -108,8 +108,8 @@ START_TEST(eina_stringshare_test_share)
    t0 = eina_stringshare_add(TEST0);
    t1 = eina_stringshare_add(TEST0);
 
-   fail_if(t0 == NULL);
-   fail_if(t1 == NULL);
+   fail_if(!t0);
+   fail_if(!t1);
    fail_if(strcmp(t0, TEST0) != 0);
    fail_if(strcmp(t1, TEST0) != 0);
    fail_if(t0 != t1);
@@ -162,7 +162,7 @@ START_TEST(eina_stringshare_collision)
         if (rand() > RAND_MAX / 2)
           {
              const char *r = eina_stringshare_add(buffer);
-             fail_if(r == NULL);
+             fail_if(!r);
           }
      }
 
@@ -173,9 +173,9 @@ START_TEST(eina_stringshare_collision)
         eina_convert_itoa(60000 - i, buffer);
         eina_array_push(ea, (void *)eina_stringshare_add(buffer));
         r = eina_stringshare_add(buffer);
-        fail_if(r == NULL);
+        fail_if(!r);
         r = eina_stringshare_add(buffer);
-        fail_if(r == NULL);
+        fail_if(!r);
      }
 
    for (i = 0; i < 200; ++i)

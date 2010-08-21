@@ -426,7 +426,7 @@ on_error:
 void
 eet_identity_ref(Eet_Key *key)
 {
-   if (key == NULL)
+   if (!key)
       return;
 
    key->references++;
@@ -435,7 +435,7 @@ eet_identity_ref(Eet_Key *key)
 void
 eet_identity_unref(Eet_Key *key)
 {
-   if (key == NULL)
+   if (!key)
       return;
 
    key->references--;
@@ -573,7 +573,7 @@ eet_identity_sign(FILE    *fp,
 # else /* ifdef HAVE_GNUTLS */
    sign_len = EVP_PKEY_size(key->private_key);
    sign = malloc(sign_len);
-   if (sign == NULL)
+   if (!sign)
      {
         err = EET_ERROR_OUT_OF_MEMORY;
         goto on_error;
@@ -717,7 +717,7 @@ eet_identity_check(const void   *data_base,
    gcry_md_write(md, data_base, data_length);
 
    hash = gcry_md_read(md, GCRY_MD_SHA1);
-   if (hash == NULL)
+   if (!hash)
      {
         gcry_md_close(md);
         return NULL;
@@ -773,12 +773,12 @@ eet_identity_check(const void   *data_base,
    tmp = alloca(cert_len);
    memcpy((char *)tmp, cert_der, cert_len);
    x509 = d2i_X509(NULL, &tmp, cert_len);
-   if (x509 == NULL)
+   if (!x509)
       return NULL;
 
    /* Get public key - eay */
    pkey = X509_get_pubkey(x509);
-   if (pkey == NULL)
+   if (!pkey)
      {
         X509_free(x509);
         return NULL;
@@ -864,7 +864,7 @@ on_error:
    tmp = alloca(der_length);
    memcpy((char *)tmp, certificate, der_length);
    x509 = d2i_X509(NULL, &tmp, der_length);
-   if (x509 == NULL)
+   if (!x509)
      {
         INF("Not a valid certificate.");
         return;
@@ -1236,7 +1236,7 @@ eet_hmac_sha1(const void    *key,
    gcry_md_write(mdh, data, data_len);
 
    hash = gcry_md_read(mdh, GCRY_MD_SHA1);
-   if (hash == NULL)
+   if (!hash)
      {
         gcry_md_close(mdh);
         return 1;

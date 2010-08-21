@@ -116,11 +116,11 @@ _eina_rbtree_iterator_next(Eina_Iterator_Rbtree *it, void **data)
    last = eina_array_data_get(it->stack, eina_array_count_get(it->stack) - 1);
    tree = last->tree;
 
-   if (last->tree == NULL || last->up == EINA_TRUE)
+   if (!last->tree || last->up == EINA_TRUE)
      {
         last = eina_array_pop(it->stack);
         while (last->dir == EINA_RBTREE_LEFT
-               || last->tree == NULL)
+               || !last->tree)
           {
              if (tree)
                 if ((it->mask & EINA_RBTREE_ITERATOR_POSTFIX_MASK) ==
@@ -242,7 +242,7 @@ _eina_rbtree_node_init(Eina_Rbtree *node)
 static inline Eina_Bool
 _eina_rbtree_is_red(Eina_Rbtree *node)
 {
-   return node != NULL && node->color == EINA_RBTREE_RED;
+   return !!node && node->color == EINA_RBTREE_RED;
 }
 
 static inline Eina_Rbtree *
@@ -317,7 +317,7 @@ eina_rbtree_inline_insert(Eina_Rbtree *root,
    /* Search down the tree */
    for (;; )
      {
-        if (q == NULL)
+        if (!q)
            /* Insert new node at the bottom */
            p->son[dir] = q = node;
         else if (_eina_rbtree_is_red(q->son[0])
@@ -350,7 +350,7 @@ eina_rbtree_inline_insert(Eina_Rbtree *root,
         dir = cmp(q, node, (void *)data);
 
         /* Update helpers */
-        if ( g != NULL )
+        if ( g )
            t = g;
 
         g = p, p = q;
@@ -391,7 +391,7 @@ eina_rbtree_inline_remove(Eina_Rbtree *root,
    q->son[EINA_RBTREE_RIGHT] = root;
 
    /* Search and push a red down */
-   while (q->son[dir] != NULL)
+   while (q->son[dir])
      {
         Eina_Rbtree_Direction last = dir;
         Eina_Rbtree *g;
@@ -415,7 +415,7 @@ eina_rbtree_inline_remove(Eina_Rbtree *root,
                {
                   Eina_Rbtree *s = p->son[!last];
 
-                  if (s != NULL)
+                  if (s)
                     {
                        if (!_eina_rbtree_is_red(s->son[EINA_RBTREE_LEFT])
                            && !_eina_rbtree_is_red(s->son[EINA_RBTREE_RIGHT]))
@@ -466,13 +466,13 @@ eina_rbtree_inline_remove(Eina_Rbtree *root,
      }
 
    /* Replace and remove if found */
-   if (f != NULL)
+   if (f)
      {
         /* 'q' should take the place of 'node' parent */
         f->son[f->son[1] == node] = q;
 
         /* Switch the link from the parent to q's son */
-        p->son[p->son[1] == q] = q->son[q->son[0] == NULL];
+        p->son[p->son[1] == q] = q->son[!q->son[0]];
 
         /* Put q at the place of node */
         q->son[0] = node->son[0];
@@ -485,7 +485,7 @@ eina_rbtree_inline_remove(Eina_Rbtree *root,
      }
 
    root = head.son[1];
-   if (root != NULL)
+   if (root)
       root->color = EINA_RBTREE_BLACK;
 
    return root;

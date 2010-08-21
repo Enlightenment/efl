@@ -1117,7 +1117,7 @@ eet_internal_read2(Eet_File *ef)
                                           &ef->signature_length,
                                           &ef->x509_length);
 
-        if (eet_test_close(ef->x509_der == NULL, ef))
+        if (eet_test_close(!ef->x509_der, ef))
            return NULL;
 
 #else /* ifdef HAVE_SIGNATURE */
@@ -1264,7 +1264,7 @@ eet_internal_read1(Eet_File *ef)
         if (efn->free_name)
           {
              efn->name = malloc(sizeof(char) * name_size + 1);
-             if (eet_test_close(efn->name == NULL, ef))
+             if (eet_test_close(!efn->name, ef))
                {
                   free(efn);
                   return NULL;
@@ -1318,7 +1318,7 @@ eet_internal_read(Eet_File *ef)
 {
    const int *data = (const int *)ef->data;
 
-   if (eet_test_close((ef->data == (void *)-1) || (ef->data == NULL), ef))
+   if (eet_test_close((ef->data == (void *)-1) || (!ef->data), ef))
       return NULL;
 
    if (eet_test_close(ef->data_size < (int)sizeof(int) * 3, ef))
@@ -1454,7 +1454,7 @@ eet_memopen_read(const void *data,
 {
    Eet_File *ef;
 
-   if (data == NULL || size == 0)
+   if (!data || size == 0)
       return NULL;
 
    ef = malloc (sizeof (Eet_File));
@@ -1552,7 +1552,7 @@ eet_open(const char   *file,
           }
 
 open_error:
-        if (fp == NULL && mode == EET_FILE_MODE_READ)
+        if (!fp && mode == EET_FILE_MODE_READ)
            goto on_error;
      }
    else
@@ -1579,7 +1579,7 @@ open_error:
    if (ef)
      {
         /* reference it up and return it */
-        if (fp != NULL)
+        if (fp)
            fclose(fp);
 
         ef->references++;
@@ -2385,7 +2385,7 @@ eet_delete(Eet_File   *ef,
              if (efn->data)
                 free(efn->data);
 
-             if (pefn == NULL)
+             if (!pefn)
                 ef->header->directory->nodes[hash] = efn->next;
              else
                 pefn->next = efn->next;

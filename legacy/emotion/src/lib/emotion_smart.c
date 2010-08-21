@@ -161,7 +161,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 
    /* FIXME: Always look for a working backend. */
  retry:
-   if (name == NULL || index > 0)
+   if (!name || index > 0)
      name = _backend_priority[index++];
 
    plugin = eina_hash_find(_backends, name);

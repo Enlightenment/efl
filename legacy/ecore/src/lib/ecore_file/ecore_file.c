@@ -177,7 +177,7 @@ ecore_file_mkdirs(const char **dirs)
 
    if (!dirs) return -1;
 
-   for (; *dirs != NULL; dirs++)
+   for (; *dirs; dirs++)
      if (ecore_file_mkdir(*dirs))
        i++;
    return i;
@@ -234,7 +234,7 @@ ecore_file_mksubdirs(const char *base, const char **subdirs)
 #endif
 
    i = 0;
-   for (; *subdirs != NULL; subdirs++)
+   for (; *subdirs; subdirs++)
      {
 	struct stat st;
 
@@ -420,7 +420,7 @@ ecore_file_mkpaths(const char **paths)
 
    if (!paths) return -1;
 
-   for (; *paths != NULL; paths++)
+   for (; *paths; paths++)
      if (ecore_file_mkpath(*paths))
        i++;
    return i;

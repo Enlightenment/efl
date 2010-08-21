@@ -336,7 +336,7 @@ evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_
         ie->data1 = rep->handle;
      }
    if (rep) free(rep);
-   if (ie->data1 == NULL) return 0;
+   if (!ie->data1) return 0;
    ie->connect_num = connect_num;
    if (cserve)
      ie->server_id = cserve->server_id;
@@ -353,7 +353,7 @@ evas_cserve_image_data_load(Image_Entry *ie)
    if (csrve_init > 0) server_reinit();
    else return 0;
    if (!cserve) return 0;
-   if (ie->data1 == NULL) return 0;
+   if (!ie->data1) return 0;
    if (cserve->server_id != ie->server_id)
      {
         ie->data1 = NULL;
@@ -391,7 +391,7 @@ evas_cserve_image_free(Image_Entry *ie)
    if (csrve_init > 0) server_reinit();
    else return;
    if (!cserve) return;
-   if (ie->data1 == NULL) return;
+   if (!ie->data1) return;
    memset(&msg, 0, sizeof(msg));
    msg.handle = ie->data1;
    msg.server_id = cserve->server_id;
@@ -416,7 +416,7 @@ evas_cserve_image_unload(Image_Entry *ie)
    if (csrve_init > 0) server_reinit();
    else return;
    if (!cserve) return;
-   if (ie->data1 == NULL) return;
+   if (!ie->data1) return;
    if (ie->connect_num != connect_num) return;
    memset(&msg, 0, sizeof(msg));
    msg.handle = ie->data1;
@@ -438,7 +438,7 @@ evas_cserve_image_useless(Image_Entry *ie)
    if (csrve_init > 0) server_reinit();
    else return;
    if (!cserve) return;
-   if (ie->data1 == NULL) return;
+   if (!ie->data1) return;
    if (ie->connect_num != connect_num) return;
    memset(&msg, 0, sizeof(msg));
    msg.handle = ie->data1;

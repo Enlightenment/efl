@@ -240,7 +240,7 @@ _ecore_list_append_0(Ecore_List *list, Ecore_List_Node *end)
 
    list->last = end;
 
-   if (list->first == NULL)
+   if (!list->first)
      {
         list->first = end;
         list->index = 0;
@@ -288,7 +288,7 @@ _ecore_list_prepend_0(Ecore_List *list, Ecore_List_Node *start)
    list->first = start;
 
    /* If no last node, then the first node is the last node */
-   if (list->last == NULL)
+   if (!list->last)
       list->last = list->first;
 
    list->nodes++;
@@ -331,7 +331,7 @@ _ecore_list_insert(Ecore_List *list, Ecore_List_Node *new_node)
    if (list->current == list->first)
       return _ecore_list_prepend_0(list, new_node);
 
-   if (list->current == NULL)
+   if (!list->current)
      {
         int ret_value;
 
@@ -942,7 +942,7 @@ _ecore_list_for_each(Ecore_List *list, Ecore_For_Each function, void *user_data)
       return FALSE;
 
    _ecore_list_first_goto(list);
-   while ((value = _ecore_list_next(list)) != NULL)
+   while ((value = _ecore_list_next(list)))
       function(value, user_data);
 
    return TRUE;
@@ -976,7 +976,7 @@ _ecore_list_find(Ecore_List *list,
       return NULL;
 
    _ecore_list_first_goto(list);
-   while ((value = _ecore_list_current(list)) != NULL)
+   while ((value = _ecore_list_current(list)))
      {
         if (!function(value, user_data))
            return value;

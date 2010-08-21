@@ -111,7 +111,7 @@ START_TEST(eina_hash_extended)
         fail_if(eina_init() != 2);
 
    hash = eina_hash_string_djb2_new(NULL);
-        fail_if(hash == NULL);
+        fail_if(!hash);
 
         fail_if(eina_hash_direct_add(hash, "42", "42") != EINA_TRUE);
 
@@ -123,7 +123,7 @@ START_TEST(eina_hash_extended)
         fail_if(eina_hash_direct_add(hash, tmp, tmp) != EINA_TRUE);
      }
 
-        fail_if(eina_hash_find(hash, "42") == NULL);
+        fail_if(!eina_hash_find(hash, "42"));
 
         eina_hash_free(hash);
 
@@ -140,7 +140,7 @@ START_TEST(eina_hash_double_item)
    fail_if(eina_init() != 2);
 
    hash = eina_hash_string_superfast_new(NULL);
-   fail_if(hash == NULL);
+   fail_if(!hash);
 
    fail_if(eina_hash_add(hash, "7", &i[0]) != EINA_TRUE);
    fail_if(eina_hash_add(hash, "7", &i[1]) != EINA_TRUE);
@@ -167,7 +167,7 @@ START_TEST(eina_hash_all_int)
       fail_if(eina_init() != 2);
 
    hash = eina_hash_int32_new(NULL);
-      fail_if(hash == NULL);
+      fail_if(!hash);
 
    for (it = 0; it < 4; ++it)
       fail_if(eina_hash_add(hash, &i[it], &i[it]) != EINA_TRUE);
@@ -182,7 +182,7 @@ START_TEST(eina_hash_all_int)
       eina_hash_free(hash);
 
    hash = eina_hash_int64_new(NULL);
-      fail_if(hash == NULL);
+      fail_if(!hash);
 
    for (it = 0; it < 4; ++it)
       fail_if(eina_hash_add(hash, &j[it], &j[it]) != EINA_TRUE);

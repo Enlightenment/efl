@@ -286,7 +286,7 @@ START_TEST(eina_test_resize)
 
    matrix = eina_matrixsparse_new(MAX_ROWS, MAX_COLS,
                                   eina_matrixsparse_free_cell_cb, data);
-   fail_if(matrix == NULL);
+   fail_if(!matrix);
 
    /* cell insertion */
    data[0][5] = 5;
@@ -408,7 +408,7 @@ START_TEST(eina_test_iterators)
 
    matrix = eina_matrixsparse_new(MAX_ROWS, MAX_COLS,
                                   eina_matrixsparse_free_cell_cb, data);
-   fail_if(matrix == NULL);
+   fail_if(!matrix);
 
    r = eina_matrixsparse_data_idx_set(matrix, 3, 5, &data[3][5]);
    fail_if(r == EINA_FALSE);
@@ -448,23 +448,23 @@ START_TEST(eina_test_iterators)
    fail_if(r == EINA_FALSE);
 
    it = eina_matrixsparse_iterator_new(matrix);
-   fail_if(it == NULL);
+   fail_if(!it);
    EINA_ITERATOR_FOREACH(it, cell)
    {
-      fail_if(cell == NULL);
+      fail_if(!cell);
       r = eina_matrixsparse_cell_position_get(cell, &row, &col);
       fail_if(r == EINA_FALSE);
 
       test1 = eina_matrixsparse_cell_data_get(cell);
-      fail_if(test1 == NULL || *test1 != data[row][col]);
+      fail_if(!test1 || *test1 != data[row][col]);
    }
       eina_iterator_free(it);
 
    it = eina_matrixsparse_iterator_complete_new(matrix);
-   fail_if(it == NULL);
+   fail_if(!it);
    EINA_ITERATOR_FOREACH(it, cell)
    {
-         fail_if(cell == NULL);
+         fail_if(!cell);
       r = eina_matrixsparse_cell_position_get(cell, &row, &col);
          fail_if(r == EINA_FALSE);
 

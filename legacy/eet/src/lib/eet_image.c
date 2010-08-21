@@ -146,7 +146,7 @@ _eet_jpeg_membuf_dst_flush(j_compress_ptr cinfo)
    unsigned char *buf;
 
    if (dst->len >= 0x40000000 ||
-       (buf = realloc(dst->buf, dst->len * 2)) == NULL)
+       !(buf = realloc(dst->buf, dst->len * 2)))
      {
         dst->failed = 1;
         dst->pub.next_output_byte = dst->buf;
@@ -1279,7 +1279,7 @@ eet_data_image_encode_cipher(const void  *data,
 
         /* eet_data_image_lossless_compressed_convert will refuse to compress something
            if the result is bigger than the entry. */
-        if (comp <= 0 || d == NULL)
+        if (comp <= 0 || !d)
            d = eet_data_image_lossless_convert(&size, data, w, h, alpha);
      }
    else

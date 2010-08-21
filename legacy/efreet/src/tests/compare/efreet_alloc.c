@@ -13,7 +13,7 @@ main(void)
 
     for (k = 0; k < LOOPS; k++)
     {
-        for (i = 0; icons[i] != NULL; i++)
+        for (i = 0; icons[i]; i++)
         {
             path = efreet_icon_path_find(THEME, icons[i], SIZE);
 //            printf("%s: %s\n", icons[i], (path ? path : "NOT FOUND"));

@@ -691,7 +691,7 @@ _edje_message_queue_process(void)
 {
    int i;
 
-   if (msgq == NULL) return;
+   if (!msgq) return;
 
    /* allow the message queue to feed itself up to 8 times before forcing */
    /* us to go back to normal processing and let a 0 timeout deal with it */

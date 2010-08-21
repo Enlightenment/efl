@@ -179,14 +179,14 @@ sc_opensrc(char *filename)
 void
 sc_closesrc(void *handle)
 {
-   assert(handle != NULL);
+   assert(!!handle);
    fclose((FILE *) handle);
 }
 
 void
 sc_resetsrc(void *handle, void *position)
 {
-   assert(handle != NULL);
+   assert(!!handle);
    fsetpos((FILE *) handle, (fpos_t *) position);
 }
 
@@ -427,7 +427,7 @@ sc_compile(int argc, char *argv[])
    /* write the binary file (the file is already open) */
    if (errnum == 0 && jmpcode == 0)
      {
-	assert(binf != NULL);
+	assert(!!binf);
 	sc_resetasm(outf);	/* flush and loop back, for reading */
 	assemble(binf, outf);	/* assembler file is now input */
      }				/* if */
@@ -442,7 +442,7 @@ sc_compile(int argc, char *argv[])
       free(litq);
    phopt_cleanup();
    stgbuffer_cleanup();
-   assert(jmpcode != 0 || loctab.next == NULL);	/* on normal flow,
+   assert(jmpcode != 0 || !loctab.next);	/* on normal flow,
 						 * local symbols
 						 * should already have been deleted */
    delete_symbols(&loctab, 0, TRUE, TRUE);	/* delete local variables
@@ -1784,7 +1784,7 @@ operatorname(char *name)
    char               *str;
    cell                val;
 
-   assert(name != NULL);
+   assert(!!name);
 
    /* check the operator */
    opertok = lex(&val, &str);
@@ -1937,7 +1937,7 @@ operatoradjust(int opertok, symbol * sym, char *opername, int resulttag)
 static int
 check_operatortag(int opertok, int resulttag, char *opername)
 {
-   assert(opername != NULL && opername[0] != '\0');
+   assert(!!opername && opername[0] != '\0');
    switch (opertok)
      {
      case '!':
@@ -2043,7 +2043,7 @@ funcdisplayname(char *dest, char *funcname)
 
    unary = parse_funcname(funcname, &tags[0], &tags[1], opname);
    tagsym[1] = find_constval_byval(&tagname_tab, tags[1]);
-   assert(tagsym[1] != NULL);
+   assert(!!tagsym[1]);
    if (unary)
      {
 	sprintf(dest, "operator%s(%s:)", opname, tagsym[1]->name);
@@ -2343,7 +2343,7 @@ newfunc(char *firstname, int firsttag, int fpublic, int fstatic, int stock)
 					 * and labels */
    delete_symbols(&loctab, 0, TRUE, TRUE);	/* clear local variables
 						 * queue */
-   assert(loctab.next == NULL);
+   assert(!loctab.next);
    curfunc = NULL;
    if (sc_status == statSKIP)
      {
@@ -2587,7 +2587,7 @@ declargs(symbol * sym)
 	needtoken(')');
      }				/* if */
    /* resolve any "sizeof" arguments (now that all arguments are known) */
-   assert(sym->dim.arglist != NULL);
+   assert(!!sym->dim.arglist);
    arglist = sym->dim.arglist;
    for (idx = 0; idx < argcnt && arglist[idx].ident != 0; idx++)
      {
@@ -2845,7 +2845,7 @@ reduce_referrers(symbol * root)
 		    {
 		       if (ref->parent)
 			  continue;	/* hierarchical data type */
-		       assert(ref->refer != NULL);
+		       assert(!!ref->refer);
 		       for (i = 0; i < ref->numrefers && ref->refer[i] != sym;
 			    i++)
 			  /* nothing */ ;
@@ -2948,7 +2948,7 @@ calc_array_datasize(symbol * sym, cell * offset)
 {
    cell                length;
 
-   assert(sym != NULL);
+   assert(!!sym);
    assert(sym->ident == iARRAY || sym->ident == iREFARRAY);
    length = sym->dim.array.length;
    if (sym->dim.array.level > 0)
@@ -3606,7 +3606,7 @@ dofor(void)
     * "continue" must ignore these fields.
     */
    ptr = readwhile();
-   assert(ptr != NULL);
+   assert(!!ptr);
    ptr[wqBRK] = (int)declared;
    ptr[wqCONT] = (int)declared;
    jumplabel(skiplab);		/* skip expression 3 1st time */
@@ -3951,7 +3951,7 @@ doreturn(void)
 	needtoken(tTERM);
 	rettype |= uRETVALUE;	/* function returns a value */
 	/* check tagname with function tagname */
-	assert(curfunc != NULL);
+	assert(!!curfunc);
 	if (!matchtag(curfunc->tag, tag, TRUE))
 	   error(213);		/* tagname mismatch */
      }
@@ -3963,7 +3963,7 @@ doreturn(void)
 	  {
 	     char                symname[2 * sNAMEMAX + 16];	/* allow space for user
 								 * defined operators */
-	     assert(curfunc != NULL);
+	     assert(!!curfunc);
 	     funcdisplayname(symname, curfunc->name);
 	     error(209, symname);	/* function should return a value */
 	  }			/* if */

@@ -492,7 +492,7 @@ _eina_share_common_head_find(Eina_Share_Common_Head *head,
 
    prev = node;
    node = node->next;
-   for (; node != NULL; prev = node, node = node->next)
+   for (; node; prev = node, node = node->next)
       if (_eina_share_common_node_eq(node, str, slen))
         {
            /* promote node, make hot items be at the beginning */
@@ -519,7 +519,7 @@ _eina_share_common_head_remove_node(Eina_Share_Common_Head *head,
 
    prev = head->head;
    cur = head->head->next;
-   for (; cur != NULL; prev = cur, cur = cur->next)
+   for (; cur; prev = cur, cur = cur->next)
       if (cur == node)
         {
            prev->next = cur->next;

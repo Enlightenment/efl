@@ -346,7 +346,7 @@ evas_common_frameq_thread(void *data)
 		
         /* 1. pick a frame to draw */
         LKL(frameq->mutex);
-        while(frame == NULL)
+        while(!frame)
           {
              EINA_INLIST_FOREACH(EINA_INLIST_GET(frameq->frames), frame)
                {
@@ -567,7 +567,7 @@ get_max_interval()
 static long long 
 tv_to_long_long(struct timeval *tv)
 {
-   if (tv == NULL)
+   if (!tv)
      {
         return 0;
      }

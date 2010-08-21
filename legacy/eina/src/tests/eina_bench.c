@@ -83,7 +83,7 @@ main(int argc, char **argv)
 
    eina_init();
 
-   for (i = 0; etc[i].bench_case != NULL; ++i)
+   for (i = 0; etc[i].bench_case; ++i)
      {
         test = eina_benchmark_new(etc[i].bench_case, argv[1]);
         if (!test)

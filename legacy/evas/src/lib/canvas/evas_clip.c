@@ -133,7 +133,7 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
 	obj->cur.clipper = NULL;
      }
    /* clip me */
-   if ((clip->clip.clipees == NULL) && (clip->cur.visible))
+   if ((!clip->clip.clipees) && (clip->cur.visible))
      {
 	/* Basically it just went invisible */
 	clip->changed = 1;

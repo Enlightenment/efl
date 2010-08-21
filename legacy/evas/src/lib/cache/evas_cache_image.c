@@ -74,7 +74,7 @@ _evas_cache_image_make_activ(Evas_Cache_Image *cache,
 {
    /* FIXME: Handle case when image is being processed anyway and don't do a double decode. */
    im->cache_key = key;
-   if (key != NULL)
+   if (key)
      {
         im->flags.cached = 1;
         im->flags.activ = 1;
@@ -510,7 +510,7 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const void *target)
 	  }
      }
 
-   if (ie->targets == NULL && ie->preload && !ie->flags.pending)
+   if (!ie->targets && ie->preload && !ie->flags.pending)
      {
 	ie->cache->preload = eina_list_remove(ie->cache->preload, ie);
 	ie->cache->pending = eina_list_append(ie->cache->pending, ie);
@@ -525,7 +525,7 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const void *target)
 EAPI int
 evas_cache_image_usage_get(Evas_Cache_Image *cache)
 {
-   assert(cache != NULL);
+   assert(!!cache);
 
    return cache->usage;
 }
@@ -533,7 +533,7 @@ evas_cache_image_usage_get(Evas_Cache_Image *cache)
 EAPI int
 evas_cache_image_get(Evas_Cache_Image *cache)
 {
-   assert(cache != NULL);
+   assert(!!cache);
 
    return cache->limit;
 }
@@ -541,7 +541,7 @@ evas_cache_image_get(Evas_Cache_Image *cache)
 EAPI void
 evas_cache_image_set(Evas_Cache_Image *cache, int limit)
 {
-   assert(cache != NULL);
+   assert(!!cache);
 #ifdef EVAS_FRAME_QUEUING
    LKL(cache->lock);
 #endif
@@ -698,7 +698,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
    size_t                key_length;
    struct stat           st;
 
-   assert(cache != NULL);
+   assert(!!cache);
 
    if ((!file) || ((!file) && (!key)))
      {
@@ -1436,7 +1436,7 @@ evas_cache_image_preload_cancel(Image_Entry *im, const void *target)
    assert(im);
    assert(im->cache);
 
-   if (target == NULL) return;
+   if (!target) return;
    _evas_cache_image_entry_preload_remove(im, target);
 #else
    (void)im;

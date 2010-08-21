@@ -107,7 +107,7 @@ efreet_icon_init(void)
         }
 
         /* setup the default extension list */
-        for (i = 0; default_exts[i] != NULL; i++)
+        for (i = 0; default_exts[i]; i++)
             efreet_icon_extensions = eina_list_append(efreet_icon_extensions, eina_stringshare_add(default_exts[i]));
 
         efreet_icon_themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_icon_theme_free));
@@ -659,7 +659,7 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
     double minimal_distance = INT_MAX;
     unsigned int ret_size = 0;
 
-    if (!theme || (theme->paths == NULL) || !icon_name || !size)
+    if (!theme || (!theme->paths) || !icon_name || !size)
         return NULL;
 
     icon = efreet_icon_cache_check(theme, icon_name, size);
@@ -1317,7 +1317,7 @@ efreet_icon_theme_dir_scan(const char *search_dir, const char *theme_name)
         /* only care if this is a directory or the theme name matches the
          * given name */
         snprintf(path, sizeof(path), "%s/%s", search_dir, dir->d_name);
-        if (((theme_name != NULL) && (strcmp(theme_name, dir->d_name)))
+        if (((theme_name) && (strcmp(theme_name, dir->d_name)))
                 || !ecore_file_is_dir(path))
             continue;
 

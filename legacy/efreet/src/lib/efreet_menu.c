@@ -490,7 +490,7 @@ efreet_menu_init(void)
      * to handle it */
     efreet_tag_menu = eina_stringshare_add(menu_cbs[0].key);
 
-    for (i = 0; menu_cbs[i].key != NULL; i++)
+    for (i = 0; menu_cbs[i].key; i++)
     {
         eina_hash_del(efreet_menu_handle_cbs,
                         menu_cbs[i].key,
@@ -499,7 +499,7 @@ efreet_menu_init(void)
                         menu_cbs[i].key,
                         menu_cbs[i].cb);
     }
-    for (i = 0; filter_cbs[i].key != NULL; i++)
+    for (i = 0; filter_cbs[i].key; i++)
     {
         eina_hash_del(efreet_menu_filter_cbs,
                         filter_cbs[i].key,
@@ -508,7 +508,7 @@ efreet_menu_init(void)
                         filter_cbs[i].key,
                         filter_cbs[i].cb);
     }
-    for (i = 0; move_cbs[i].key != NULL; i++)
+    for (i = 0; move_cbs[i].key; i++)
     {
         eina_hash_del(efreet_menu_move_cbs,
                         move_cbs[i].key,
@@ -517,7 +517,7 @@ efreet_menu_init(void)
                         move_cbs[i].key,
                         move_cbs[i].cb);
     }
-    for (i = 0; layout_cbs[i].key != NULL; i++)
+    for (i = 0; layout_cbs[i].key; i++)
     {
         eina_hash_del(efreet_menu_layout_cbs,
                         layout_cbs[i].key,

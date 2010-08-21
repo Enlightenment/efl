@@ -133,7 +133,7 @@ START_TEST(eina_unicode_strncpy_test)
 
    /* Hopefully won't segfault */
    rv = eina_unicode_strncpy(NULL, STR1, 0);
-   fail_if(rv != NULL);
+   fail_if(!!rv);
 
    eina_shutdown();
 }

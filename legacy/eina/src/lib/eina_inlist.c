@@ -63,7 +63,7 @@ struct _Eina_Accessor_Inlist
 
 static Eina_Bool
 eina_inlist_iterator_next(Eina_Iterator_Inlist *it, void **data) {
-   if (it->current == NULL)
+   if (!it->current)
       return EINA_FALSE;
 
    if (data)
@@ -97,7 +97,7 @@ eina_inlist_accessor_get_at(Eina_Accessor_Inlist *it,
    else if (idx > it->index)
       /* Looking after current. */
       for (i = it->index, over = it->current;
-           i < idx && over != NULL;
+           i < idx && over;
            ++i, over = over->next)
          ;
    else
@@ -107,18 +107,18 @@ eina_inlist_accessor_get_at(Eina_Accessor_Inlist *it,
         if (idx > middle)
            /* Looking backward from current. */
            for (i = it->index, over = it->current;
-                i > idx && over != NULL;
+                i > idx && over;
                 --i, over = over->prev)
               ;
         else
            /* Looking from the start. */
            for (i = 0, over = it->head;
-                i < idx && over != NULL;
+                i < idx && over;
                 ++i, over = over->next)
               ;
      }
 
-   if (over == NULL)
+   if (!over)
       return EINA_FALSE;
 
    it->current = over;
@@ -437,7 +437,7 @@ eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
    EINA_SAFETY_ON_NULL_RETURN_VAL(list, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(item, list);
    EINA_SAFETY_ON_TRUE_RETURN_VAL
-      ((item != list) && (item->prev == NULL) && (item->next == NULL), list);
+      ((item != list) && (!item->prev) && (!item->next), list);
 
    if (item->next)
       item->next->prev = item->prev;

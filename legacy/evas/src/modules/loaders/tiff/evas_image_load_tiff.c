@@ -305,7 +305,7 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
 	return EINA_FALSE;
      }
 
-   if (rgba_image.rgba.put.any == NULL)
+   if (!rgba_image.rgba.put.any)
      {
 	ERR("Evas Tiff loader: no put function");
 

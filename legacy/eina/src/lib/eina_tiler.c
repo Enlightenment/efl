@@ -920,7 +920,7 @@ static void rect_list_merge_rects(list_t *rects,
         merged = 0;
         parent_node = NULL;
         node = rects->head;
-        while (node != NULL)
+        while (node)
           {
              rect_t r2, outer;
              int area;
@@ -1067,7 +1067,7 @@ static Eina_Bool _iterator_next(Eina_Iterator_Tiler *it, void **data)
    Eina_Rectangle *rect = (Eina_Rectangle *)data;
    list_node_t *n;
 
-   for (n = it->curr; n != NULL; n = n->next)
+   for (n = it->curr; n; n = n->next)
      {
         rect_t cur;
 

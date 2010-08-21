@@ -226,7 +226,7 @@ _slave_mode(void *data, Ecore_Fd_Handler *fd_handler)
 	  }
      }
 
-   for (itr = _slave_mode_commands; itr->cmd != NULL; itr++)
+   for (itr = _slave_mode_commands; itr->cmd; itr++)
      {
 	if (strcmp(itr->cmd, buf) == 0)
 	  {

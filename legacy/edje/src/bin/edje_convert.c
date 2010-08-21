@@ -269,8 +269,8 @@ _edje_collection_convert(Eet_File *ef, Edje_Part_Collection_Directory_Entry *ce,
 	  _edje_collection_program_add(&edc->programs.nocmp,
 				       &edc->programs.nocmp_count,
 				       pg);
-	else if (pg->signal && strpbrk(pg->signal, "*?[\\") == NULL
-		 && pg->source && strpbrk(pg->source, "*?[\\") == NULL)
+	else if (pg->signal && !strpbrk(pg->signal, "*?[\\")
+		 && pg->source && !strpbrk(pg->source, "*?[\\"))
 	  _edje_collection_program_add(&edc->programs.strcmp,
 				       &edc->programs.strcmp_count,
 				       pg);

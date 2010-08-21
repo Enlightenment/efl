@@ -147,7 +147,7 @@ ecore_file_download(const char *url, const char *dst,
 
 	job = _ecore_file_download_curl(url, dst, completion_cb, progress_cb, data);
 	if(job_ret) *job_ret = job;
-	return job != NULL;
+	return !!job;
      }
 # endif
    else

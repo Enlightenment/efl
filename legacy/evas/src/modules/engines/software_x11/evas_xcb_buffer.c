@@ -319,7 +319,7 @@ evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
                     {
                        xcbob->shm_info->shmaddr = xcbob->image->data =
                          shmat(xcbob->shm_info->shmid, 0, 0);
-                       if (xcbob->shm_info->shmaddr != NULL)
+                       if (xcbob->shm_info->shmaddr)
                          {
                             /*
                              * FIXME: no error mechanism

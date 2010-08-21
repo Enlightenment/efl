@@ -125,7 +125,7 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
    epdi = (Edje_Part_Description_Image*) epd2;
 
    /* There is an animation if both description are different or if description is an image with tweens */
-   if (epd2 != NULL && (epd1 != epd2 || (ep->part->type == EDJE_PART_TYPE_IMAGE && epdi->image.tweens_count)))
+   if (epd2 && (epd1 != epd2 || (ep->part->type == EDJE_PART_TYPE_IMAGE && epdi->image.tweens_count)))
      {
 	if (!ep->param2)
 	  {
