@@ -139,7 +139,7 @@ _get_value_in_key_string(const char *oldstring, char *key, char **value)
      {
         starttag = curlocater;
         endtag = curlocater + strlen(key);
-        if ((endtag == NULL) || (*endtag != '='))
+        if ((!endtag) || (*endtag != '='))
           {
              foundflag = 0;
              return -1;
@@ -160,10 +160,10 @@ _get_value_in_key_string(const char *oldstring, char *key, char **value)
                break;
              else 
                starttag--;
-             if (starttag == NULL) break;
+             if (!starttag) break;
           }
         
-        while (NULL != endtag)
+        while (endtag)
           {
              if (*endtag == '<')
                {
@@ -174,7 +174,7 @@ _get_value_in_key_string(const char *oldstring, char *key, char **value)
                break;
              else 
                endtag++;
-             if (endtag == NULL) break;
+             if (!endtag) break;
           }
         
         if ((foundflag != 0) && (*starttag == '<') && (*endtag == '>'))
@@ -205,7 +205,7 @@ _strbuf_key_value_replace(Eina_Strbuf *srcbuf, char *key, const char *value, int
    srcstring = eina_strbuf_string_get(srcbuf);
    curlocater = strstr(srcstring, key);
    
-   if (curlocater == NULL)
+   if (!curlocater)
      insertflag = 1;
    else
      {
@@ -216,7 +216,7 @@ _strbuf_key_value_replace(Eina_Strbuf *srcbuf, char *key, const char *value, int
              tagtxtlen = endtag - starttag;
              if (tagtxtlen <= 0) tagtxtlen = 0;
              if ((starttag < curlocater) && (curlocater < endtag)) break;
-             if ((endtag != NULL) && ((endtag + 1) != NULL))
+             if ((endtag) && ((endtag + 1)))
                srcstring = endtag + 1;
              else
                break;
@@ -229,20 +229,20 @@ _strbuf_key_value_replace(Eina_Strbuf *srcbuf, char *key, const char *value, int
              eina_strbuf_append_n(repbuf, starttag, tagtxtlen);
              srcstring = eina_strbuf_string_get(repbuf);
              curlocater = strstr(srcstring, key);
-             if (curlocater != NULL)
+             if (curlocater)
                {
                   replocater = curlocater + strlen(key) + 1;
-                  while ((*replocater != '=') && (replocater != NULL))
+                  while ((*replocater != '=') && (replocater))
                     replocater++;
-                  if (replocater != NULL)
+                  if (replocater)
                     {
                        replocater++;
                        while ((*replocater != ' ') && 
                               (*replocater != '>') && 
-                              (replocater == NULL))
+                              (!replocater))
                          replocater++;
                     }
-                  if (replocater != NULL)
+                  if (replocater)
                     {
                        replocater--;
                        eina_strbuf_append_n(diffbuf, curlocater, 
@@ -259,8 +259,8 @@ _strbuf_key_value_replace(Eina_Strbuf *srcbuf, char *key, const char *value, int
           insertflag = 1; 
      }
    
-   if (repbuf == NULL) repbuf = eina_strbuf_new();
-   if (diffbuf == NULL) diffbuf = eina_strbuf_new();
+   if (!repbuf) repbuf = eina_strbuf_new();
+   if (!diffbuf) diffbuf = eina_strbuf_new();
    
    if (insertflag)
      {
@@ -351,7 +351,7 @@ _ellipsis_label_to_width(Evas_Object *obj)
 
    if (_get_value_in_key_string(wd->label, "font_size", &kvalue) == 0)
      {
-        if (kvalue != NULL) cur_fontsize = atoi((char *)kvalue);
+        if (kvalue) cur_fontsize = atoi((char *)kvalue);
      }
    
    txtbuf = eina_strbuf_new();
@@ -362,7 +362,7 @@ _ellipsis_label_to_width(Evas_Object *obj)
         if (cur_fontsize > minfontsize)
           {
              cur_fontsize--;
-             if (fontbuf != NULL)
+             if (fontbuf)
                {
                   eina_strbuf_free(fontbuf);
                   fontbuf = NULL;
@@ -376,7 +376,7 @@ _ellipsis_label_to_width(Evas_Object *obj)
           }
         else
           {
-             if (txtbuf != NULL)
+             if (txtbuf)
                {
                   eina_strbuf_free(txtbuf);
                   txtbuf = NULL;

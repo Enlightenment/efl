@@ -715,7 +715,7 @@ save_env(void)
 
    oldenv = environ;
 
-   for (i = 0, size = 0; environ[i] != NULL; i++)
+   for (i = 0, size = 0; environ[i]; i++)
      size += strlen(environ[i]) + 1;
 
    p = malloc((i + 1) * sizeof(char *));
@@ -723,7 +723,7 @@ save_env(void)
 
    environ = p;
 
-   for (i = 0; oldenv[i] != NULL; i++)
+   for (i = 0; oldenv[i]; i++)
      environ[i] = strdup(oldenv[i]);
    environ[i] = NULL;
 }

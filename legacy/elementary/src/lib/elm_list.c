@@ -249,7 +249,7 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    Elm_List_Item *it;
 
    if (!wd) return;
-   if (sub == NULL) abort();
+   if (!sub) abort();
    if (sub == wd->scr)
      wd->scr = NULL;
    else

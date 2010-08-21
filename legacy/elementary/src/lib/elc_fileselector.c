@@ -342,7 +342,7 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
      }
 
    if (wd->entry2) elm_entry_entry_set(wd->entry2, "");
-   while ((dp = readdir(dir)) != NULL)
+   while ((dp = readdir(dir)))
      {
 	if (dp->d_name[0] == '.') continue; // TODO make this configurable
 

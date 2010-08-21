@@ -82,7 +82,7 @@ _fill_list(Evas_Object *obj)
    char *real;
 
    if (!(d = opendir(getenv("HOME")))) return;
-   while ((de = readdir(d)) != NULL) 
+   while ((de = readdir(d))) 
      {
         char buff[PATH_MAX];
 
@@ -122,7 +122,7 @@ _dir_has_subs(const char *path)
 
    if (!path) return result;
    if (!(d = opendir(path))) return result;
-   while ((de = readdir(d)) != NULL) 
+   while ((de = readdir(d))) 
      {
         char buff[PATH_MAX];
 

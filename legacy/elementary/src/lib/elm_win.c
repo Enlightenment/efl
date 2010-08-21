@@ -130,12 +130,12 @@ _elm_win_obj_callback_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void
    ecore_evas_callback_resize_set(win->ee, NULL);
    if (win->deferred_resize_job) ecore_job_del(win->deferred_resize_job);
    if (win->deferred_child_eval_job) ecore_job_del(win->deferred_child_eval_job);
-   while (((child = evas_object_bottom_get(win->evas)) != NULL) &&
+   while (((child = evas_object_bottom_get(win->evas))) &&
 	  (child != obj))
      {
 	evas_object_del(child);
      }
-   while (((child = evas_object_top_get(win->evas)) != NULL) &&
+   while (((child = evas_object_top_get(win->evas))) &&
 	  (child != obj))
      {
 	evas_object_del(child);
