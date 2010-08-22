@@ -2738,7 +2738,7 @@ main(void)
 
    s = eet_suite();
    sr = srunner_create(s);
-   srunner_run_all(sr, CK_NORMAL);
+   srunner_run_all(sr, CK_ENV);
    failed_count = srunner_ntests_failed(sr);
    srunner_free(sr);
 
