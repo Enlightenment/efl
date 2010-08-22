@@ -354,10 +354,11 @@ static pthread_t _main_thread;
    do {                                                                  \
         if (!IS_MAIN(pthread_self())) {                                    \
                      fprintf(stderr,                                                 \
-                     "ERR: not main thread! current=%lu, main=%lu\n",        \
-                     pthread_self(), _main_thread);                          \
-             return __VA_ARGS__;                                             \
-          }                                                                  \
+                     "ERR: not main thread! current=%lu, main=%lu\n",   \
+                     (unsigned long)pthread_self(),			\
+		     (unsigned long)_main_thread);                      \
+             return __VA_ARGS__;                                        \
+          }                                                             \
      } while (0)
 
 #  ifdef EFL_HAVE_POSIX_THREADS_SPINLOCK
@@ -368,7 +369,7 @@ static pthread_spinlock_t _log_lock;
       do {                                                                  \
            if (0) {                                                             \
                 fprintf(stderr, "+++LOG LOG_LOCKED!   [%s, %lu]\n",              \
-                        __FUNCTION__, pthread_self()); }                           \
+                        __FUNCTION__, (unsigned long)pthread_self()); }                           \
            if (EINA_UNLIKELY(_threads_enabled)) {                               \
                 pthread_spin_lock(&_log_lock); }                                   \
         } while (0)
@@ -380,7 +381,7 @@ static pthread_spinlock_t _log_lock;
            if (0) {                                                             \
                      fprintf(stderr,                                                  \
                         "---LOG LOG_UNLOCKED! [%s, %lu]\n",                      \
-                        __FUNCTION__, pthread_self()); }                           \
+                        __FUNCTION__, (unsigned long)pthread_self()); }                           \
         } while (0)
 #   define INIT() pthread_spin_init(&_log_lock, PTHREAD_PROCESS_PRIVATE)
 #   define SHUTDOWN() pthread_spin_destroy(&_log_lock)
@@ -777,7 +778,7 @@ eina_log_print_prefix_threads_NOcolor_file_func(FILE *fp,
    if (IS_OTHER(cur))
      {
         fprintf(fp, "%s:%s[T:%lu] %s:%d %s() ",
-                name, d->domain_str, cur, file, line, fnc);
+                name, d->domain_str, (unsigned long)cur, file, line, fnc);
         return;
      }
 
@@ -799,7 +800,7 @@ eina_log_print_prefix_threads_NOcolor_NOfile_func(FILE *fp,
    if (IS_OTHER(cur))
      {
         fprintf(fp, "%s:%s[T:%lu] %s() ",
-                name, d->domain_str, cur, fnc);
+                name, d->domain_str, (unsigned long)cur, fnc);
         return;
      }
 
@@ -821,7 +822,7 @@ eina_log_print_prefix_threads_NOcolor_file_NOfunc(FILE *fp,
    if (IS_OTHER(cur))
      {
         fprintf(fp, "%s:%s[T:%lu] %s:%d ",
-                name, d->domain_str, cur, file, line);
+                name, d->domain_str, (unsigned long)cur, file, line);
         return;
      }
 
@@ -883,7 +884,8 @@ eina_log_print_prefix_threads_color_file_func(FILE *fp,
         fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s[T:"
                 EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] %s:%d "
                 EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
-                color, name, d->domain_str, cur, file, line, fnc);
+                color, name, d->domain_str, (unsigned long)cur, file,
+		line, fnc);
 # endif
         return;
      }
@@ -951,7 +953,7 @@ eina_log_print_prefix_threads_color_NOfile_func(FILE *fp,
         fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s[T:"
                 EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] "
                 EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
-                color, name, d->domain_str, cur, fnc);
+                color, name, d->domain_str, (unsigned long)cur, fnc);
 # endif
         return;
      }
@@ -1013,7 +1015,7 @@ eina_log_print_prefix_threads_color_file_NOfunc(FILE *fp,
 # else
         fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s[T:"
                 EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] %s:%d ",
-                color, name, d->domain_str, cur, file, line);
+                color, name, d->domain_str, (unsigned long)cur, file, line);
 # endif
         return;
      }
@@ -2246,7 +2248,8 @@ eina_log_print_cb_file(const Eina_Log_Domain *d,
         cur = SELF();
         if (IS_OTHER(cur))
           {
-             fprintf(f, "%s[T:%lu] %s:%d %s() ", d->name, cur, file, line, fnc);
+             fprintf(f, "%s[T:%lu] %s:%d %s() ", d->name, (unsigned long)cur,
+	        file, line, fnc);
              goto end;
           }
      }
