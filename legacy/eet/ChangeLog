@@ -426,3 +426,9 @@
 
 	* Add a specific allocator for array. This should fix wrong allocation
 	case discovered with recent edje file format change.
+        
+2010-08-23  Carsten Haitzler (The Rasterman)
+
+        * Fix some cppcheck complaints - all of them bogus though.
+        Nothing actually fixed.
+
