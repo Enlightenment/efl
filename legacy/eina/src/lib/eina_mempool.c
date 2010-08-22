@@ -76,7 +76,7 @@ _new_va(const char *name,
       goto on_error;
 
    err = EINA_ERROR_OUT_OF_MEMORY;
-   mp = malloc(sizeof(Eina_Mempool));
+   mp = calloc(1, sizeof(Eina_Mempool));
    if (!mp)
       goto on_error;
 
