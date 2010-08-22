@@ -926,7 +926,13 @@ quartz_font_from_ats(ATSFontContainerRef container, int size)
    font = CTFontCreateWithPlatformFont(fonts[0], size, NULL, NULL);
 
    loaded_font = calloc(1, sizeof(Evas_Quartz_Font));
-   if (!font || !loaded_font) return NULL;
+   if (!font || !loaded_font)
+      {
+         if (loaded_font) free(loaded_font);
+         if (fonts) free(fonts);
+         if (font) CFRelease(font);
+         return NULL;
+      }
 
    keys[0] = kCTFontAttributeName;
    values[0] = font;
