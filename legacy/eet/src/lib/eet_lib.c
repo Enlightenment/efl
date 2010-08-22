@@ -958,9 +958,14 @@ eet_internal_read2(Eet_File *ef)
 
         /* out directory block is inconsistent - we have oveerun our */
         /* dynamic block buffer before we finished scanning dir entries */
-        efn = malloc (sizeof(Eet_File_Node));
+        efn = malloc(sizeof(Eet_File_Node));
         if (eet_test_close(!efn, ef))
-           return NULL;
+          {
+             if (efn) free(efn); /* yes i know - we only get here if 
+                                  * efn is null/0 -> trying to shut up
+                                  * warning tools like cppcheck */
+             return NULL;
+          }
 
         /* get entrie header */
         GET_INT(efn->offset,    data, idx);
@@ -1220,7 +1225,12 @@ eet_internal_read1(Eet_File *ef)
         /* allocate all the ram needed for this stored node accounting */
         efn = malloc (sizeof(Eet_File_Node));
         if (eet_test_close(!efn, ef))
-           return NULL;
+          {
+             if (efn) free(efn); /* yes i know - we only get here if 
+                                  * efn is null/0 -> trying to shut up
+                                  * warning tools like cppcheck */
+             return NULL;
+          }
 
         /* get entrie header */
         EXTRACT_INT(efn->offset,      p, indexn);
