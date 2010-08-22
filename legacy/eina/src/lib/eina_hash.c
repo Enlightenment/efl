@@ -747,6 +747,8 @@ eina_hash_new(Eina_Key_Length key_length_cb,
    if (!new)
       goto on_error;
 
+   EINA_MAGIC_SET(new, EINA_MAGIC_HASH);
+   
    new->key_length_cb = key_length_cb;
    new->key_cmp_cb = key_cmp_cb;
    new->key_hash_cb = key_hash_cb;
@@ -756,8 +758,6 @@ eina_hash_new(Eina_Key_Length key_length_cb,
 
    new->size = 1 << buckets_power_size;
    new->mask = new->size - 1;
-
-   EINA_MAGIC_SET(new, EINA_MAGIC_HASH);
 
    return new;
 
