@@ -1720,7 +1720,7 @@ _layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
           }
         else if (fmt->linerelsize > 0.0)
           {
-             descent = ((ascent + descent) * fmt->linerelsize) - (ascent * fmt->linerelsize);
+             descent = descent * fmt->linerelsize;
              ascent = ascent * fmt->linerelsize;
           }
         c->maxdescent += fmt->linegap;
