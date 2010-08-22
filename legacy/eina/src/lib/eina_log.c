@@ -483,7 +483,10 @@ eina_log_win32_color_get(const char *domain_str)
 
    /* this should not append */
    if (str[0] != '\033')
-      return 0;
+     {
+        free(str);
+        return 0;
+     }
 
    /* we skip the first char and the [ */
    tmp = tmp2 = str + 2;
