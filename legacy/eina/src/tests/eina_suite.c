@@ -163,7 +163,7 @@ main(int argc, char **argv)
 
    _mempool_init();
 
-   srunner_run_all(sr, CK_NORMAL);
+   srunner_run_all(sr, CK_ENV);
    failed_count = srunner_ntests_failed(sr);
    srunner_free(sr);
 
