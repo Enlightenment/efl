@@ -117,7 +117,6 @@ evas_common_blit_rectangle(const RGBA_Image *src, RGBA_Image *dst, int src_x, in
      }
 }
 
-
 /****************************************************************************/
 
 static void
@@ -126,8 +125,7 @@ evas_common_copy_rev_pixels_c(DATA32 *src, DATA32 *dst, int len)
    DATA32 *dst_end = dst + len;
 
    src += len - 1;
-   while (dst < dst_end)
-	*dst++ = *src--;
+   while (dst < dst_end) *dst++ = *src--;
 }
 
 
@@ -239,24 +237,24 @@ static void
 evas_common_copy_pixels_c(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *dst_end = dst + len;
-
-   while (dst < dst_end)
-	*dst++ = *src++;
+   
+   while (dst < dst_end) *dst++ = *src++;
 }
 #endif
 
 #ifdef BUILD_MMX
 static void
 evas_common_copy_pixels_mmx(DATA32 *src, DATA32 *dst, int len)
-{
+{ // XXX cppcheck: [./src/lib/engines/common/evas_blit_main.c:248]: (error) Invalid number of character ({). Can't process file.
+  // so... wtf? what's wrong with this { ? or anytrhing surrounding it?
    DATA32 *dst_end, *dst_end_pre;
 #ifdef ALIGN_FIX
    intptr_t src_align;
    intptr_t dst_align;
-
+   
    src_align = (intptr_t)src & 0x3f; /* 64 byte alignment */
    dst_align = (intptr_t)dst & 0x3f; /* 64 byte alignment */
-
+   
    if ((src_align != dst_align) ||
        ((src_align & 0x3) != 0))
      {
@@ -283,8 +281,7 @@ evas_common_copy_pixels_mmx(DATA32 *src, DATA32 *dst, int len)
 	src += 16;
 	dst += 16;
      }
-   while (dst < dst_end)
-	*dst++ = *src++;
+   while (dst < dst_end) *dst++ = *src++;
 }
 #endif
 
@@ -326,8 +323,7 @@ evas_common_copy_pixels_mmx2(DATA32 *src, DATA32 *dst, int len)
 	src += 16;
 	dst += 16;
      }
-   while (dst < dst_end)
-	*dst++ = *src++;
+   while (dst < dst_end) *dst++ = *src++;
 }
 #endif
 
@@ -506,8 +502,7 @@ evas_common_copy_pixels_rev_c(DATA32 *src, DATA32 *dst, int len)
    dst_end = dst - 1;
    dst = dst + len - 1;
 
-   while (dst > dst_end)
-	*dst-- = *src--;
+   while (dst > dst_end) *dst-- = *src--;
 }
 #endif
 
