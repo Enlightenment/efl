@@ -971,6 +971,8 @@ eina_matrixsparse_new(unsigned long rows, unsigned long cols, void (*free_func)(
         return NULL;
      }
 
+   EINA_MAGIC_SET(m, EINA_MAGIC_MATRIXSPARSE);
+   
    m->rows = NULL;
    m->last_row = NULL;
    m->last_used = NULL;
@@ -980,7 +982,6 @@ eina_matrixsparse_new(unsigned long rows, unsigned long cols, void (*free_func)(
    m->free.func = free_func;
    m->free.user_data = (void *)user_data;
 
-   EINA_MAGIC_SET(m, EINA_MAGIC_MATRIXSPARSE);
    eina_error_set(0);
    return m;
 }
