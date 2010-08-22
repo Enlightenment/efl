@@ -197,7 +197,7 @@ evas_cache_engine_image_dup(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_E
 {
    Evas_Cache_Engine_Image     *new;
 
-   new = malloc(sizeof (Evas_Cache_Engine_Image));
+   new = calloc(1, sizeof (Evas_Cache_Engine_Image));
    if (!new)
      return NULL;
 
