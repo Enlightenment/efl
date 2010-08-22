@@ -128,6 +128,9 @@ eina_ememoa_unknown_size_init(const char *context,
    return efm;
 
 on_error:
+   if (items_map)
+      free(items_map);
+   
    if (desc)
       free(desc);
 
