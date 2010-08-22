@@ -179,17 +179,6 @@ PKG_CHECK_MODULES([ELEMENTARY],
     edje >= ${EDJE_VERSION}
    ]
 )
-
-AC_ARG_WITH(eet-eet,
-[  --with-eet-eet=PATH              specify a specific path to eet utility],
-[
-  v=$withval;
-  eet_eet=$v
-  echo "  Elementary eet explicitly set to "$eet_eet;
-],[
-  eet_eet=$(pkg-config --variable=prefix eet)/bin/eet
-])
-AC_SUBST(eet_eet)
         
 requirement_elm="edje >= ${EDJE_VERSION} ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_elm}"
 
@@ -432,20 +421,12 @@ ELM_LIBINTL_H_DEF="#undef"
 AC_CHECK_HEADER(libintl.h, [ELM_LIBINTL_H_DEF="#define"])
 AC_SUBST(ELM_LIBINTL_H_DEF)
 
-AC_ARG_WITH(edje-cc,
-[  --with-edje-cc=PATH              specify a specific path to edje_cc],
-[
-  v=$withval;
-  edje_cc=$v
-  echo "  Elementary edje_cc explicitly set to "$edje_cc;
-],[
-  edje_cc=$(pkg-config --variable=prefix edje)/bin/edje_cc
-])
-AC_SUBST(edje_cc)
-
 my_libs="-lm"
 AC_SUBST(my_libs)
 AC_SUBST(requirement_elm)
+
+EFL_WITH_BIN([eet], [eet-eet], [eet])
+EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
@@ -499,6 +480,7 @@ echo "    EFreet.............: ${have_elementary_efreet}"
 echo "    EWeather...........: ${have_elementary_eweather}"
 echo "    Ethumb.............: ${have_elementary_ethumb}"
 echo
+echo "  eet..................: ${eet_eet}"
 echo "  edje_cc..............: ${edje_cc}"
 echo
 echo "Compilation............: make (or gmake)"
