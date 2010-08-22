@@ -351,31 +351,6 @@ START_TEST(ecore_test_ecore_main_loop_event_recursive)
 }
 END_TEST
 
-/* TODO: change to HAVE_ECORE_X when xcb implementation is done */
-#ifdef HAVE_ECORE_X_XLIB
-
-START_TEST(ecore_test_ecore_x_bell)
-{
-   int i;
-   int ret;
-
-   ret = ecore_x_init(NULL);
-   fail_if(ret != 1);
-
-   printf("You should hear 3 beeps now.\n");
-   for (i = 0; i < 3; i++)
-     {
-	ret = ecore_x_bell(0);
-	fail_if(ret != EINA_TRUE);
-	ecore_x_sync();
-	sleep(1);
-     }
-   ecore_x_shutdown();
-}
-END_TEST
-
-#endif
-
 void ecore_test_ecore(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_init);
@@ -388,9 +363,4 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop_event);
    tcase_add_test(tc, ecore_test_ecore_main_loop_timer_inner);
    tcase_add_test(tc, ecore_test_ecore_main_loop_event_recursive);
-
-/* TODO: change to HAVE_ECORE_X when xcb implementation is done */
-#ifdef HAVE_ECORE_X_XLIB
-   tcase_add_test(tc, ecore_test_ecore_x_bell);
-#endif
 }

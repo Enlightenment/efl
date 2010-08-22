@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_con \
+-I$(top_srcdir)/src/lib/ecore_x \
 @EINA_CFLAGS@ \
 @CHECK_CFLAGS@
 
@@ -15,7 +16,8 @@ check_PROGRAMS = ecore_suite
 ecore_suite_SOURCES = \
 ecore_suite.c \
 ecore_test_ecore.c \
-ecore_test_ecore_con.c
+ecore_test_ecore_con.c \
+ecore_test_ecore_x.c
 
 ecore_suite_LDADD = \
 @CHECK_LIBS@ \
