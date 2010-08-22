@@ -351,9 +351,9 @@ static pthread_t _main_thread;
 #  define IS_MAIN(t)  pthread_equal(t, _main_thread)
 #  define IS_OTHER(t) EINA_UNLIKELY(!IS_MAIN(t))
 #  define CHECK_MAIN(...)                                               \
-   do {                                                                  \
-        if (!IS_MAIN(pthread_self())) {                                    \
-                     fprintf(stderr,                                                 \
+   do {                                                                 \
+        if (!IS_MAIN(pthread_self())) {                                 \
+                     fprintf(stderr,                                    \
                      "ERR: not main thread! current=%lu, main=%lu\n",   \
                      (unsigned long)pthread_self(),			\
 		     (unsigned long)_main_thread);                      \
@@ -365,23 +365,23 @@ static pthread_t _main_thread;
 
 static pthread_spinlock_t _log_lock;
 #   define LOG_LOCK()                                                   \
-   if(_threads_enabled)                                                  \
-      do {                                                                  \
-           if (0) {                                                             \
-                fprintf(stderr, "+++LOG LOG_LOCKED!   [%s, %lu]\n",              \
-                        __FUNCTION__, (unsigned long)pthread_self()); }                           \
-           if (EINA_UNLIKELY(_threads_enabled)) {                               \
-                pthread_spin_lock(&_log_lock); }                                   \
+   if(_threads_enabled)                                                 \
+      do {                                                              \
+           if (0) {                                                     \
+                fprintf(stderr, "+++LOG LOG_LOCKED!   [%s, %lu]\n",     \
+                        __FUNCTION__, (unsigned long)pthread_self()); } \
+           if (EINA_UNLIKELY(_threads_enabled)) {                       \
+                pthread_spin_lock(&_log_lock); }                        \
         } while (0)
 #   define LOG_UNLOCK()                                                 \
-   if(_threads_enabled)                                                  \
-      do {                                                                  \
-           if (EINA_UNLIKELY(_threads_enabled)) {                               \
-                pthread_spin_unlock(&_log_lock); }                                 \
-           if (0) {                                                             \
-                     fprintf(stderr,                                                  \
-                        "---LOG LOG_UNLOCKED! [%s, %lu]\n",                      \
-                        __FUNCTION__, (unsigned long)pthread_self()); }                           \
+   if(_threads_enabled)                                                 \
+      do {                                                              \
+           if (EINA_UNLIKELY(_threads_enabled)) {                       \
+                pthread_spin_unlock(&_log_lock); }                      \
+           if (0) {                                                     \
+                     fprintf(stderr,                                    \
+                        "---LOG LOG_UNLOCKED! [%s, %lu]\n",             \
+                        __FUNCTION__, (unsigned long)pthread_self()); } \
         } while (0)
 #   define INIT() pthread_spin_init(&_log_lock, PTHREAD_PROCESS_PRIVATE)
 #   define SHUTDOWN() pthread_spin_destroy(&_log_lock)
@@ -406,19 +406,18 @@ static DWORD _main_thread;
 #  define IS_MAIN(t)  (t == _main_thread)
 #  define IS_OTHER(t) EINA_UNLIKELY(!IS_MAIN(t))
 #  define CHECK_MAIN(...)                                               \
-   do {                                                                  \
-        if (!IS_MAIN(GetCurrentThreadId())) {                              \
-                     fprintf(stderr,                                                 \
-                     "ERR: not main thread! current=%lu, main=%lu\n",        \
-                     GetCurrentThreadId(), _main_thread);                    \
-             return __VA_ARGS__;                                             \
-          }                                                                  \
+   do {                                                                 \
+        if (!IS_MAIN(GetCurrentThreadId())) {                           \
+                     fprintf(stderr,                                    \
+                     "ERR: not main thread! current=%lu, main=%lu\n",   \
+                     GetCurrentThreadId(), _main_thread);               \
+             return __VA_ARGS__;                                        \
+          }                                                             \
      } while (0)
 
 static HANDLE _log_mutex = NULL;
 
-#  define LOG_LOCK() if(_threads_enabled) WaitForSingleObject(_log_mutex, \
-                                                              INFINITE)
+#  define LOG_LOCK() if(_threads_enabled) WaitForSingleObject(_log_mutex, INFINITE)
 #  define LOG_UNLOCK() if(_threads_enabled) ReleaseMutex(_log_mutex)
 #  define INIT() ((_log_mutex = CreateMutex(NULL, FALSE, NULL)) ? 1 : 0)
 #  define SHUTDOWN()  if (_log_mutex) CloseHandle(_log_mutex)
