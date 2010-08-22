@@ -185,10 +185,15 @@ static Eina_Bool _timer1(void *data)
 
 START_TEST(ecore_test_ecore_main_loop_timer_inner)
 {
+   Ecore_Timer *timer;
+   int ret;
    int times = 0;
 
-   ecore_init();
-   ecore_timer_add(1.0, _timer1, &times);
+   ret = ecore_init();
+   fail_if(ret != 1);
+
+   timer = ecore_timer_add(1.0, _timer1, &times);
+   fail_if(timer == NULL);
 
    /* BEGIN: outer mainloop */
    ecore_main_loop_begin();
@@ -201,7 +206,9 @@ END_TEST
 static Eina_Bool
 _fd_handler_cb(void *data, Ecore_Fd_Handler *handler __UNUSED__)
 {
+   /* FIXME: why setting val if it is overwritten just after and what is its purpose ??? */
    Eina_Bool *val = data;
+
    *val = EINA_TRUE;
    ecore_main_loop_quit();
    return EINA_FALSE;
@@ -242,7 +249,9 @@ END_TEST
 static Eina_Bool
 _event_handler_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
 {
+   /* FIXME: why setting val if it is overwritten just after and what is its purpose ??? */
    Eina_Bool *val = data;
+
    *val = EINA_TRUE;
    ecore_main_loop_quit();
    return EINA_FALSE;
@@ -320,11 +329,13 @@ START_TEST(ecore_test_ecore_main_loop_event_recursive)
     */
    Ecore_Event *e;
    int type;
+   int ret;
 
    _log_dom = eina_log_domain_register("test", EINA_COLOR_CYAN);
 
    INF("main: begin");
-   ecore_init();
+   ret = ecore_init();
+   fail_if(ret != 1);
 
 
    type = ecore_event_type_new();
@@ -345,11 +356,14 @@ END_TEST
 
 START_TEST(ecore_test_ecore_x_bell)
 {
-   int ret = 0, i;
-   ecore_x_init(NULL);
+   int i;
+   int ret;
+
+   ret = ecore_x_init(NULL);
+   fail_if(ret != 1);
 
    printf("You should hear 3 beeps now.\n");
-   for (i=0; i < 3; i++)
+   for (i = 0; i < 3; i++)
      {
 	ret = ecore_x_bell(0);
 	fail_if(ret != EINA_TRUE);
