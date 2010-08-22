@@ -55,8 +55,9 @@ struct jpeg_membuf_src
 {
    struct jpeg_source_mgr pub;
 
-   const unsigned char   *buf;
-   size_t                 len;
+   const unsigned char    *buf;
+   size_t                  len;
+   struct jpeg_membuf_src *self;
 };
 
 static void
@@ -91,7 +92,9 @@ _eet_jpeg_membuf_src_skip(j_decompress_ptr cinfo,
 static void
 _eet_jpeg_membuf_src_term(j_decompress_ptr cinfo)
 {
-   free(cinfo->src);
+   struct jpeg_membuf_src *src = ((struct jpeg_membuf_src *)cinfo->src)->self;
+   
+   free(src);
    cinfo->src = NULL;
 } /* _eet_jpeg_membuf_src_term */
 
@@ -102,10 +105,12 @@ eet_jpeg_membuf_src(j_decompress_ptr cinfo,
 {
    struct jpeg_membuf_src *src;
 
-   src = malloc(sizeof(*src));
+   src = calloc(1, sizeof(*src));
    if (!src)
       return -1;
 
+   src->self = src;
+   
    cinfo->src = &src->pub;
    src->buf = buf;
    src->len = len;
@@ -1565,7 +1570,8 @@ _eet_data_image_decode_inside(const void   *data,
                   Bytef *dtmp;
                   uLongf dlen = src_w * src_h * 4;
 
-                  /* FIXME: This could create a huge alloc. So compressed data and tile could not always work. */
+                  /* FIXME: This could create a huge alloc. So compressed 
+                   data and tile could not always work. */
                   dtmp = malloc(dlen);
                   if (!dtmp)
                      return 0;
