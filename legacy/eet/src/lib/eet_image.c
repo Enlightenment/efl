@@ -130,6 +130,7 @@ struct jpeg_membuf_dst
    unsigned char              *buf;
    size_t                      len;
    int                         failed;
+   struct jpeg_membuf_dst     *self;
 };
 
 static void
@@ -166,7 +167,7 @@ _eet_jpeg_membuf_dst_flush(j_compress_ptr cinfo)
 static void
 _eet_jpeg_membuf_dst_term(j_compress_ptr cinfo)
 {
-   struct jpeg_membuf_dst *dst = (struct jpeg_membuf_dst *)cinfo->dest;
+   struct jpeg_membuf_dst *dst = ((struct jpeg_membuf_dst *)cinfo->dest)->self;
 
    if (dst->failed)
      {
@@ -191,7 +192,7 @@ eet_jpeg_membuf_dst(j_compress_ptr cinfo,
 {
    struct jpeg_membuf_dst *dst;
 
-   dst = malloc(sizeof(*dst));
+   dst = calloc(1, sizeof(*dst));
    if (!dst)
       return -1;
 
@@ -202,6 +203,7 @@ eet_jpeg_membuf_dst(j_compress_ptr cinfo,
         return -1;
      }
 
+   dst->self = dst;
    dst->len = 32768;
 
    cinfo->dest = &dst->pub;
