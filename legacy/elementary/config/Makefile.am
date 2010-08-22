@@ -16,4 +16,3 @@ files_DATA = profile.cfg
 
 clean-local:
 	rm -rf *.cfg *~
-                                
