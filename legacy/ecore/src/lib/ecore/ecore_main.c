@@ -156,8 +156,9 @@ static inline int _ecore_main_fdh_epoll_add(Ecore_Fd_Handler *fdh)
 {
    int r = 0;
 #ifdef HAVE_EPOLL
-   struct epoll_event ev = {0};
+   struct epoll_event ev;
 
+   memset(&ev, 0, sizeof (ev));
    ev.events = _ecore_poll_events_from_fdh(fdh);
    ev.data.ptr = fdh;
    INF("adding poll on %d %08x", fdh->fd, ev.events);
@@ -169,8 +170,9 @@ static inline int _ecore_main_fdh_epoll_add(Ecore_Fd_Handler *fdh)
 static inline void _ecore_main_fdh_epoll_del(Ecore_Fd_Handler *fdh)
 {
 #ifdef HAVE_EPOLL
-   struct epoll_event ev = {0};
-   
+   struct epoll_event ev;
+
+   memset(&ev, 0, sizeof (ev));
    INF("removing poll on %d", fdh->fd);
    /* could get an EBADF if somebody closed the FD before removing it */
    if ((epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fdh->fd, &ev) < 0) &&
@@ -185,8 +187,9 @@ static inline int _ecore_main_fdh_epoll_modify(Ecore_Fd_Handler *fdh)
 {
    int r = 0;
 #ifdef HAVE_EPOLL
-   struct epoll_event ev = {0};
+   struct epoll_event ev;
 
+   memset(&ev, 0, sizeof (ev));
    ev.events = _ecore_poll_events_from_fdh(fdh);
    ev.data.ptr = fdh;
    INF("modifing epoll on %d to %08x", fdh->fd, ev.events);
@@ -198,9 +201,10 @@ static inline int _ecore_main_fdh_epoll_modify(Ecore_Fd_Handler *fdh)
 #ifdef HAVE_EPOLL
 static inline int _ecore_main_fdh_epoll_mark_active(void)
 {
-   struct epoll_event ev[32] = {0};
+   struct epoll_event ev[32];
    int i, ret;
 
+   memset(&ev, 0, sizeof (ev));
    ret = epoll_wait(epoll_fd, ev, sizeof(ev) / sizeof(struct epoll_event), 0);
    if (ret < 0)
      {
