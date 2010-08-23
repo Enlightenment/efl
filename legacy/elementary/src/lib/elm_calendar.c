@@ -98,7 +98,8 @@ _maxdays_get(struct tm *time)
    month = time->tm_mon;
    year = time->tm_year + 1900;
 
-   return _days_in_month[(!(year % 4) && (!(year % 4) || (year % 100)))][month];
+   return _days_in_month[(!(year % 4) && (!(year % 400) || (year % 100)))]
+       [month];
 }
 
 static inline void
