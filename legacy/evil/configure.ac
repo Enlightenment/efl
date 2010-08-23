@@ -83,7 +83,7 @@ AC_C_CONST
 AC_C___ATTRIBUTE__
 
 win32_cppflags="-DEFL_EVIL_BUILD"
-win32_cflags="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -pedantic"
+win32_cflags="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls"
 win32_cxxflags=""
 have_wince="no"
 case "$host_os" in
