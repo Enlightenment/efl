@@ -128,7 +128,7 @@ main(int argc, char **argv)
    eet_init();
 
    progname = argv[0];
-   if (argc > 2 || !strcmp(argv[1], "-h"))
+   if (argc > 2 || argc < 2 || !strcmp(argv[1], "-h"))
      {
 	main_help();
 	return 0;
