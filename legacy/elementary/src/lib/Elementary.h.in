@@ -1612,6 +1612,31 @@ extern "C" {
    EAPI Eina_Bool elm_animator_operating_get(Elm_Animator *animator);
    EAPI unsigned int elm_animator_repeat_get(Elm_Animator *animator);
 
+   /* calendar */
+   typedef enum {ELM_CALENDAR_UNIQUE, ELM_CALENDAR_DAILY, ELM_CALENDAR_WEEKLY, ELM_CALENDAR_MONTHLY, ELM_CALENDAR_ANNUALLY} Elm_Calendar_Mark_Repeat;
+   typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;
+
+   EAPI Evas_Object *elm_calendar_add(Evas_Object *parent);
+   EAPI const char **elm_calendar_weekdays_names_get(const Evas_Object *obj);
+   EAPI void elm_calendar_weekdays_names_set(Evas_Object *obj, const char *weekdays[]);
+   EAPI double elm_calendar_interval_get(const Evas_Object *obj);
+   EAPI void elm_calendar_interval_set(Evas_Object *obj, double interval);
+   EAPI void elm_calendar_min_max_year_get(const Evas_Object *obj, int *min, int *max);
+   EAPI void elm_calendar_min_max_year_set(Evas_Object *obj, int min, int max);
+   EAPI Eina_Bool elm_calendar_day_selection_enabled_get(const Evas_Object *obj);
+   EAPI void elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled);
+   EAPI Eina_Bool elm_calendar_selected_time_get(const Evas_Object *obj, struct tm *selected_time);
+   EAPI void elm_calendar_selected_time_set(Evas_Object *obj, struct tm *selected_time);
+   EAPI void elm_calendar_format_function_set(Evas_Object *obj, char * (*format_function) (struct tm *stime));
+   EAPI Elm_Calendar_Mark *elm_calendar_mark_add(Evas_Object *obj, const char *mark_type, struct tm *mark_time, Elm_Calendar_Mark_Repeat repeat);
+   EAPI void elm_calendar_mark_del(Elm_Calendar_Mark *mark);
+   EAPI void elm_calendar_marks_clear(Evas_Object *obj);
+   EAPI const Eina_List *elm_calendar_marks_get(const Evas_Object *obj);
+   EAPI void elm_calendar_marks_draw(Evas_Object *obj);
+   /* smart callbacks called:
+    * changed - emitted when the user select a day or change the displayed
+    * month.
+    */
 
 #ifdef __cplusplus
 }

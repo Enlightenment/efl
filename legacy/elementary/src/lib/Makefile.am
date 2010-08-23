@@ -78,6 +78,7 @@ elm_mapbuf.c \
 elm_thumb.c \
 elm_config.c \
 elm_animator.c \
+elm_calendar.c \
 \
 elc_anchorblock.c \
 elc_anchorview.c \
