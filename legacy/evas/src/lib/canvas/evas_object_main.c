@@ -392,6 +392,7 @@ evas_object_del(Evas_Object *obj)
      }
    obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
    obj->mouse_grabbed = 0;
+   obj->mouse_in = 0;
    evas_object_hide(obj);
    evas_object_grabs_cleanup(obj);
    while (obj->clip.clipees) evas_object_clip_unset(obj->clip.clipees->data);
@@ -1137,7 +1138,8 @@ evas_object_hide(Evas_Object *obj)
 	evas_object_recalc_clippees(obj);
 	if (!evas_event_passes_through(obj))
 	  {
-	     if (!obj->smart.smart)
+	     if ((!obj->smart.smart) ||
+                 ((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap)))
 	       {
 		  if (evas_object_is_in_output_rect(obj,
 						    obj->layer->evas->pointer.x,
