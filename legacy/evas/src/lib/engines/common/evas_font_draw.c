@@ -518,7 +518,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 
 	gl = *text;
 
-	if (gl == 0) break;
 	index = evas_common_font_glyph_search(fn, &fi, gl);
 	LKL(fi->ft_mutex);
         if (fi->src->current_size != fi->size)
@@ -848,7 +847,6 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
    for (char_index = 0, c = 0, chr = 0 ; *text ; text++, char_index ++){
 	struct cinfo *ci = metrics + char_index;
 	ci->gl = *text;
-	if (ci->gl == 0) break;
 	ci->index = evas_common_font_glyph_search(fn, &fi, ci->gl);
 	LKL(fi->ft_mutex);
 	if (fi->src->current_size != fi->size)
