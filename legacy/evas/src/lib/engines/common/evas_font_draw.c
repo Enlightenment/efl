@@ -877,14 +877,14 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
                   ci->fg->glyph->advance.x >> 16 > 0)
 		{
 		   if (evas_common_font_query_kerning(fi, ci->index, prev_index, &kern))
-		      ci->pos.x += kern;
+		      pen_x += kern;
 		}
 	      else
 # endif
               {
 
 	           if (evas_common_font_query_kerning(fi, prev_index, ci->index, &kern))
-	              ci->pos.x += kern;
+	              pen_x += kern;
 	      }
            }
 
