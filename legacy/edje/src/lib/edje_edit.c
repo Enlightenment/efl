@@ -4001,6 +4001,8 @@ edje_edit_font_add(Evas_Object *obj, const char* path, const char* alias)
    if (!_edje_import_font_file(ed, path, entry))
      {
 	eina_hash_del(ed->file->fonts, fnt->entry, fnt);
+        eina_stringshare_del(fnt->file);
+        eina_stringshare_del(fnt->entry);
 	return EINA_FALSE;
      }
 
