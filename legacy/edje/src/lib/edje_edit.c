@@ -4024,7 +4024,7 @@ edje_edit_font_del(Evas_Object *obj, const char* alias)
    if (!fnt)
      {
 	WRN("Unable to find font entry part \"%s\"", alias);
-	return EINA_TRUE;
+	return EINA_FALSE;
      }
 
    /* Erase font to edje file */
@@ -4226,6 +4226,8 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
 
    /* Create Image_Directory if not exist */
    if (!ed->file->image_dir)
+      goto invalid_image;
+
      return EINA_TRUE;
 
    for (i = 0; i < ed->file->image_dir->entries_count; ++i)
@@ -4238,10 +4240,7 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
      }
 
    if (i == ed->file->image_dir->entries_count)
-     {
-	WRN("Unable to find image entry part \"%s\"", name);
-	return EINA_TRUE;
-     }
+      goto invalid_image;
 
    {
       char entry[PATH_MAX];
@@ -4278,6 +4277,10 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
    de->entry = NULL;
 
    return EINA_TRUE;
+
+invalid_image:
+   WRN("Unable to find image entry part \"%s\"", name);
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool

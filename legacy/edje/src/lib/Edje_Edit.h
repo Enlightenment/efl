@@ -2288,7 +2288,8 @@ EAPI Eina_Bool edje_edit_font_add(Evas_Object *obj, const char *path, const char
  * @param obj Object being edited.
  * @param alias The font alias
  *
- * @return EINA_TRUE if font deleted, EINA_FALSE otherwise.
+ * @return EINA_TRUE if succesful, EINA_FALSE otherwise (including the
+ * case when the alias is not valid).
  */
 EAPI Eina_Bool edje_edit_font_del(Evas_Object *obj, const char* alias);
 
@@ -2358,7 +2359,8 @@ EAPI Eina_Bool edje_edit_image_add(Evas_Object *obj, const char *path);
  * @param obj Object being edited.
  * @param name The name of the image file to include in the edje.
  *
- * @return EINA_TRUE if succesful, EINA_FALSE otherwise.
+ * @return EINA_TRUE if succesful, EINA_FALSE otherwise (including the
+ * case when the name is not valid).
  */
 EAPI Eina_Bool edje_edit_image_del(Evas_Object *obj, const char *name);
 
