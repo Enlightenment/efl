@@ -657,6 +657,11 @@ _ecore_evas_x_event_client_message(void *data __UNUSED__, int type __UNUSED__, v
         ee = ecore_event_window_match(e->data.l[0]);
         if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
         if (e->data.l[0] != (long)ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+        if (!ee->engine.x.sync_began)
+          {
+             // qeue a damage + draw. work around an event re-ordering thing.
+	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+          }
         ee->engine.x.sync_began = 1;
         ee->engine.x.sync_cancel = 0;
      }
@@ -2892,7 +2897,7 @@ static void
 _ecore_evas_x_flush_post(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee = data;
-   
+
    if (ee->no_comp_sync) return;
    if (!_ecore_evas_app_comp_sync) return;
    if (ee->engine.x.sync_counter)
