@@ -1302,9 +1302,9 @@ evas_object_anti_alias_set(Evas_Object *obj, Eina_Bool anti_alias)
    return;
    MAGIC_CHECK_END();
    if (obj->delete_me) return;
-   if (obj->cur.anti_alias == !!anti_alias)
-     return;
-   obj->cur.anti_alias = !!anti_alias;
+   anti_alias = !!anti_alias;
+   if (obj->cur.anti_alias == anti_alias)return;
+   obj->cur.anti_alias = anti_alias;
    evas_object_change(obj);
 }
 
@@ -1339,8 +1339,7 @@ evas_object_scale_set(Evas_Object *obj, double scale)
    return;
    MAGIC_CHECK_END();
    if (obj->delete_me) return;
-   if (obj->cur.scale == scale)
-     return;
+   if (obj->cur.scale == scale) return;
    obj->cur.scale = scale;
    evas_object_change(obj);
    if (obj->func->scale_update) obj->func->scale_update(obj);
