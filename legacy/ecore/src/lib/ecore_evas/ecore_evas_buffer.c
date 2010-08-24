@@ -481,13 +481,13 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 #endif
 
 static void *
-_ecore_evas_buffer_pix_alloc(void *data, int size)
+_ecore_evas_buffer_pix_alloc(void *data __UNUSED__, int size)
 {
    return malloc(size);
 }
 
 static void
-_ecore_evas_buffer_pix_free(void *data, void *pix)
+_ecore_evas_buffer_pix_free(void *data __UNUSED__, void *pix)
 {
    free(pix);
 }
