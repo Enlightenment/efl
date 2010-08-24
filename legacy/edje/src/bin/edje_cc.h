@@ -105,6 +105,7 @@ void    data_setup(void);
 void    data_write(void);
 void    data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest);
 void    data_queue_program_lookup(Edje_Part_Collection *pc, const char *name, int *dest);
+void    data_queue_anonymous_lookup(Edje_Part_Collection *pc, Edje_Program *ep, int *dest);
 void    data_queue_image_lookup(char *name, int *dest, Eina_Bool *set);
 void    data_queue_part_slave_lookup(int *master, int *slave);
 void    data_queue_image_slave_lookup(int *master, int *slave);

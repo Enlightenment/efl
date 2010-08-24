@@ -7050,7 +7050,7 @@ ob_collections_group_programs_program_script(void)
 	       }
 	     cd->is_lua = 0;
 	     cd->programs = eina_list_append(cd->programs, cp);
-	     data_queue_program_lookup(pc, current_program->name, &(cp->id));
+	     data_queue_anonymous_lookup(pc, current_program, &(cp->id));
 
 	     set_verbatim(NULL, 0, 0);
 	     current_program->action = EDJE_ACTION_TYPE_SCRIPT;
@@ -7089,7 +7089,7 @@ ob_collections_group_programs_program_lua_script(void)
 	       }
 	     cd->is_lua = 1;
 	     cd->programs = eina_list_append(cd->programs, cp);
-	     data_queue_program_lookup(pc, current_program->name, &(cp->id));
+	     data_queue_anonymous_lookup(pc, current_program, &(cp->id));
 	     set_verbatim(NULL, 0, 0);
 	     current_program->action = EDJE_ACTION_TYPE_LUA_SCRIPT;
 	  }

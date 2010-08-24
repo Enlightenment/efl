@@ -57,8 +57,16 @@ struct _Part_Lookup
 struct _Program_Lookup
 {
    Edje_Part_Collection *pc;
-   char *name;
+
+   union
+   {
+      char *name;
+      Edje_Program *ep;
+   } u;
+
    int *dest;
+
+   Eina_Bool anonymous : 1;
 };
 
 struct _Group_Lookup
@@ -1118,15 +1126,33 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 }
 
 void
-data_queue_program_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
+data_queue_anonymous_lookup(Edje_Part_Collection *pc, Edje_Program *ep, int *dest)
 {
    Program_Lookup *pl;
+
+   if (!ep) return ; /* FIXME: should we stop compiling ? */
 
    pl = mem_alloc(SZ(Program_Lookup));
    program_lookups = eina_list_append(program_lookups, pl);
    pl->pc = pc;
-   pl->name = mem_strdup(name);
+   pl->u.ep = ep;
    pl->dest = dest;
+   pl->anonymous = EINA_TRUE;
+}
+
+void
+data_queue_program_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
+{
+   Program_Lookup *pl;
+
+   if (!name) return ; /* FIXME: should we stop compiling ? */
+
+   pl = mem_alloc(SZ(Program_Lookup));
+   program_lookups = eina_list_append(program_lookups, pl);
+   pl->pc = pc;
+   pl->u.name = mem_strdup(name);
+   pl->dest = dest;
+   pl->anonymous = EINA_FALSE;
 }
 
 void
@@ -1245,7 +1271,8 @@ data_process_lookups(void)
 	     								\
 	     ep = Pl->pc->programs.Type[It];				\
 	     								\
-	     if ((ep->name) && (!strcmp(ep->name, Pl->name)))		\
+	     if ((Pl->anonymous && ep == Pl->u.ep) ||			\
+		 ((!Pl->anonymous) && (ep->name) && (!strcmp(ep->name, Pl->u.name)))) \
 	       {							\
 		  *(Pl->dest) = ep->id;					\
 		  find = EINA_TRUE;					\
@@ -1263,12 +1290,17 @@ data_process_lookups(void)
 
 	if (!find)
 	  {
-	     ERR("%s: Error. Unable to find program name \"%s\".",
-		 progname, program->name);
+	     if (!program->anonymous)
+	       ERR("%s: Error. Unable to find program name \"%s\".",
+		   progname, program->u.name);
+	     else
+	       ERR("%s: Error. Unable to find anonymous program.",
+		   progname);
 	     exit(-1);
 	  }
 
-	free(program->name);
+	if (!program->anonymous)
+	  free(program->u.name);
 	free(program);
      }
 
