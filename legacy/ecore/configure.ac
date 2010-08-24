@@ -105,7 +105,7 @@ want_glib="no"
 want_ecore_con="yes"
 want_ecore_ipc="no"
 want_ecore_file="yes"
-want_ecore_config="no"
+#want_ecore_config="no"
 want_ecore_imf="no"
 want_ecore_input="yes"
 
@@ -220,7 +220,7 @@ esac
 
 requirements_ecore=""
 requirements_ecore_con=""
-requirements_ecore_config=""
+#requirements_ecore_config=""
 requirements_ecore_directfb=""
 requirements_ecore_evas=""
 requirements_ecore_fb=""
@@ -419,7 +419,7 @@ PKG_CHECK_MODULES(EINA, [eina >= 1.0.0])
 #FIXME check all the requirements when the eina move will be finished
 requirements_ecore="eina >= 1.0.0 ${requirements_ecore}"
 requirements_ecore_con="ecore >= 1.0.0 eina >= 1.0.0 ${requirements_ecore_con}"
-requirements_ecore_config="ecore >= 1.0.0 eina >= 1.0.0 ${requirements_ecore_config}"
+#requirements_ecore_config="ecore >= 1.0.0 eina >= 1.0.0 ${requirements_ecore_config}"
 requirements_ecore_directfb="ecore >= 1.0.0 eina >= 1.0.0 ${requirements_ecore_directfb}"
 requirements_ecore_evas="ecore >= 1.0.0 eina >= 1.0.0 ${requirements_ecore_evas}"
 requirements_ecore_fb="ecore >= 1.0.0 eina >= 1.0.0 ${requirements_ecore_fb}"
@@ -493,10 +493,10 @@ PKG_CHECK_MODULES([DIRECTFB],
 
 # Eet library (ecore_config)
 
-PKG_CHECK_MODULES([EET],
-   [eet >= 1.4.0],
-   [have_eet="yes"],
-   [have_eet="no"])
+#PKG_CHECK_MODULES([EET],
+#   [eet >= 1.4.0],
+#   [have_eet="yes"],
+#   [have_eet="no"])
 
 
 # Xlib and XCB (ecore_x)
@@ -1060,13 +1060,15 @@ if test "x${have_ecore_file}" = "xyes" ; then
 fi
 
 # ecore_config
-ecore_config_deps="no"
-if test "x${have_eet}" = "xyes" -a "x${have_evas}"  -a "x${have_ecore_ipc}" ; then
-   ecore_config_deps="yes"
-fi
+#ecore_config_deps="no"
+#if test "x${have_eet}" = "xyes" -a "x${have_evas}"  -a "x${have_ecore_ipc}" ; then
+#   ecore_config_deps="yes"
+#fi
 
-ECORE_CHECK_MODULE([config], [${want_ecore_config}], [Config], [${ecore_config_deps}],
-   [requirements_ecore_config="ecore-ipc >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 ${requirements_ecore_config}"])
+#ECORE_CHECK_MODULE([config], [${want_ecore_config}], [Config], [${ecore_config_deps}],
+#   [requirements_ecore_config="ecore-ipc >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 ${requirements_ecore_config}"])
+
+AM_CONDITIONAL(BUILD_ECORE_CONFIG, false)
 
 # ecore_imf
 
@@ -1330,7 +1332,7 @@ ECORE_EVAS_CHECK_MODULE([software-16-wince],
 
 AC_SUBST(requirements_ecore)
 AC_SUBST(requirements_ecore_con)
-AC_SUBST(requirements_ecore_config)
+#AC_SUBST(requirements_ecore_config)
 AC_SUBST(requirements_ecore_directfb)
 AC_SUBST(requirements_ecore_evas)
 AC_SUBST(requirements_ecore_fb)
@@ -1438,7 +1440,7 @@ if test "x$have_ecore_file" = "xyes" ; then
   echo "    Poll.......................: $have_poll"
   echo "    CURL.......................: $have_curl"
 fi
-echo "  Ecore_Config.................: $have_ecore_config (deprecated)"
+#echo "  Ecore_Config.................: $have_ecore_config (deprecated)"
 echo "  Ecore_IMF....................: $have_ecore_imf"
 echo "  Ecore_IMF_Evas...............: $have_ecore_imf_evas"
 echo "  Ecore_Input..................: $have_ecore_input"
