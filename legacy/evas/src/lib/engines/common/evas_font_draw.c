@@ -528,7 +528,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
              fi->src->current_size = fi->size;
           }
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
-	if (!fg) 
+	if (!fg)
           {
              LKU(fi->ft_mutex);
              continue;
@@ -857,22 +857,22 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
              fi->src->current_size = fi->size;
           }
        ci->fg = evas_common_font_int_cache_glyph_get(fi, ci->index);
-       LKU(fi->ft_mutex);
-       if (!ci->fg) continue;
+       if (!ci->fg)
+	 {
+            LKU(fi->ft_mutex);
+	    continue;
+	 }
 
-        /* hmmm kerning means i can't sanely do my own cached metric tables! */
-	/* grrr - this means font face sharing is kinda... not an option if */
-	/* you want performance */
 	if ((use_kerning) && (prev_index) && (ci->index) &&
 	     (pface == fi->src->ft.face))
 	   {
               int kern = 0;
 # ifdef BIDI_SUPPORT
 	      /* if it's rtl, the kerning matching should be reversed, i.e prev
-	       * index is now the index and the other way around. 
+	       * index is now the index and the other way around.
                * There is a slight exception when there are compositing chars
                * involved.*/
-	      if (intl_props && 
+	      if (intl_props &&
                   evas_bidi_is_rtl_char(intl_props->props->embedding_levels, char_index) &&
                   ci->fg->glyph->advance.x >> 16 > 0)
 		{
@@ -889,6 +889,8 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
            }
 
        pface = fi->src->ft.face;
+
+       LKU(fi->ft_mutex);
        if (gl){
 	    ci->fg->ext_dat =dc->font_ext.func.gl_new(dc->font_ext.data,ci->fg);
 	    ci->fg->ext_dat_free = dc->font_ext.func.gl_free;
