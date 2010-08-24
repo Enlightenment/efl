@@ -872,7 +872,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
 	       * index is now the index and the other way around.
                * There is a slight exception when there are compositing chars
                * involved.*/
-	      if (intl_props &&
+	      if (intl_props && intl_props->props &&
                   evas_bidi_is_rtl_char(intl_props->props->embedding_levels, char_index) &&
                   ci->fg->glyph->advance.x >> 16 > 0)
 		{
