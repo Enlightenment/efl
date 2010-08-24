@@ -1522,7 +1522,8 @@ evas_object_pass_events_set(Evas_Object *obj, Eina_Bool pass)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   if (obj->pass_events == !!pass) return;
+   pass = !!pass;
+   if (obj->pass_events == pass) return;
    obj->pass_events = pass;
    evas_object_smart_member_cache_invalidate(obj);
    if (evas_object_is_in_output_rect(obj,
@@ -1571,7 +1572,8 @@ evas_object_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   if (obj->repeat_events == !!repeat) return;
+   repeat = !!repeat;
+   if (obj->repeat_events == repeat) return;
    obj->repeat_events = repeat;
    if (evas_object_is_in_output_rect(obj,
 				     obj->layer->evas->pointer.x,
