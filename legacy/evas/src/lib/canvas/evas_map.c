@@ -288,8 +288,9 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   if (obj->cur.usemap == !!enabled) return;
-   obj->cur.usemap = !!enabled;
+   enabled = !!enabled;
+   if (obj->cur.usemap == enabled) return;
+   obj->cur.usemap = enabled;
    if (enabled)
      {
         if (!obj->cur.map)

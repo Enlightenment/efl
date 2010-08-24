@@ -135,7 +135,7 @@ _evas_render_has_map(Evas_Object *obj)
 static Eina_Bool
 _evas_render_had_map(Evas_Object *obj)
 {
-   return ((!obj->cur.map) && (obj->prev.usemap));
+   return ((!obj->prev.map) && (obj->prev.usemap));
 }
 
 static Eina_Bool
@@ -232,7 +232,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                                    Eina_Array *restack_objects,
                                    Eina_Array *delete_objects,
                                    Eina_Array *render_objects,
-                                   int restack, int map
+                                   int restack, int map,
+                                   int *redraw_all
 #ifdef REND_DGB
                                    , int level
 #endif
@@ -241,7 +242,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
    Eina_Bool clean_them = EINA_FALSE;
    Evas_Object *obj2;
    int is_active;
-
+   Eina_Bool hmap;
+   
    obj->rect_del = 0;
    obj->render_pre = 0;
 
@@ -274,7 +276,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
      }
 #endif
 
-   if (_evas_render_has_map(obj)) map = 1;
+   map = _evas_render_has_map(obj);
+   hmap = _evas_render_had_map(obj);
 
    if ((restack) && (!map))
      {
@@ -293,6 +296,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
         RD("      obj mapped\n");
         if (obj->changed)
           {
+             if (map != hmap)
+                *redraw_all = 1;
              evas_object_clip_recalc(obj);
              if ((obj->restack) &&
                  (is_active) && (!obj->clip.clipees) &&
@@ -320,10 +325,13 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
         RD("      had map - restack objs\n");
 //        eina_array_push(restack_objects, obj);
         _evas_render_prev_cur_clip_cache_add(e, obj);
+        if (obj->changed)
+          {   
+             if (map != hmap) *redraw_all = 1;
+          }
      }
 
    /* handle normal rendering. this object knows how to handle maps */
-
    if (obj->changed)
      {
 	if (obj->smart.smart)
@@ -340,7 +348,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
 						     delete_objects,
 						     render_objects,
 						     obj->restack,
-                                                     map
+                                                     map,
+                                                     redraw_all
 #ifdef REND_DGB
                                                      , level + 1
 #endif
@@ -393,7 +402,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
 							  restack_objects,
 							  delete_objects,
 							  render_objects,
-							  restack, map
+							  restack, map,
+                                                          redraw_all
 #ifdef REND_DGB
                                                           , level + 1
 #endif
@@ -439,7 +449,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                                                      restack_objects,
                                                      delete_objects,
                                                      render_objects,
-                                                     restack, map
+                                                     restack, map,
+                                                     redraw_all
 #ifdef REND_DGB
                                                      , level + 1
 #endif
@@ -459,7 +470,8 @@ _evas_render_phase1_process(Evas *e,
                             Eina_Array *active_objects,
                             Eina_Array *restack_objects,
                             Eina_Array *delete_objects,
-                            Eina_Array *render_objects)
+                            Eina_Array *render_objects,
+                            int *redraw_all)
 {
    Evas_Layer *lay;
    Eina_Bool clean_them = EINA_FALSE;
@@ -473,7 +485,7 @@ _evas_render_phase1_process(Evas *e,
 	  {
 	     clean_them |= _evas_render_phase1_object_process
                (e, obj, active_objects, restack_objects, delete_objects,
-                render_objects, 0, 0
+                render_objects, 0, 0, redraw_all
 #ifdef REND_DGB
                 , 1
 #endif
@@ -481,7 +493,6 @@ _evas_render_phase1_process(Evas *e,
 	  }
      }
    RD("  ---]\n");
-
    return clean_them;
 }
 
@@ -825,6 +836,7 @@ evas_render_updates_internal(Evas *e,
    int cx, cy, cw, ch;
    unsigned int i, j;
    int haveup = 0;
+   int redraw_all = 0;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
@@ -841,7 +853,12 @@ evas_render_updates_internal(Evas *e,
 
    /* phase 1. add extra updates for changed objects */
    if (e->invalidate || e->render_objects.count <= 0)
-     clean_them = _evas_render_phase1_process(e, &e->active_objects, &e->restack_objects, &e->delete_objects, &e->render_objects);
+     clean_them = _evas_render_phase1_process(e, 
+                                              &e->active_objects, 
+                                              &e->restack_objects, 
+                                              &e->delete_objects, 
+                                              &e->render_objects,
+                                              &redraw_all);
 
    _evas_render_phase1_direct(e, &e->active_objects, &e->restack_objects, &e->delete_objects, &e->render_objects);
 
@@ -880,6 +897,12 @@ evas_render_updates_internal(Evas *e,
    if ((e->output.w != e->viewport.w) || (e->output.h != e->viewport.h))
      {
 	ERR("viewport size != output size!");
+     }
+   if (redraw_all)
+     {
+        e->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                0, 0,
+                                                e->output.w, e->output.h);
      }
    /* phase 5. add obscures */
    EINA_LIST_FOREACH(e->obscures, ll, r)
