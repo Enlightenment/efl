@@ -897,12 +897,13 @@ _edje_program_check(const char *name, Edje_Program *me, Edje_Program **pgrms, un
    unsigned int i;
 
    for (i = 0; i < count; ++i)
-     if (pgrms[i] != me && pgrms[i]->name && (!strcmp(name, pgrms[i]->name)))
-       {
-	  ERR("%s: Error. parse error %s:%i. There is already a program of the name %s\n",
-	      progname, file_in, line - 1, name);
-	  exit(-1);
-       }
+     if (pgrms[i]->name)
+       if (pgrms[i] != me && (!strcmp(name, pgrms[i]->name)))
+	 {
+	    ERR("%s: Error. parse error %s:%i. There is already a program of the name %s\n",
+		progname, file_in, line - 1, name);
+	    exit(-1);
+	 }
 }
 
 /*****/
