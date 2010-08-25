@@ -63,17 +63,20 @@ evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, DATA32 *da
    Evas_GL_Image *im;
    Eina_List *l;
 
-   EINA_LIST_FOREACH(gc->shared->images, l, im)
+   if (data)
      {
-	if (((void *)(im->im->image.data) == (void *)data) &&
-	    (im->im->cache_entry.w == w) &&
-	    (im->im->cache_entry.h == h))
-	  {
-	     gc->shared->images = eina_list_remove_list(gc->shared->images, l);
-	     gc->shared->images = eina_list_prepend(gc->shared->images, im);
-	     im->references++;
-	     return im;
-	  }
+        EINA_LIST_FOREACH(gc->shared->images, l, im)
+          {
+             if (((void *)(im->im->image.data) == (void *)data) &&
+                 (im->im->cache_entry.w == w) &&
+                 (im->im->cache_entry.h == h))
+               {
+                  gc->shared->images = eina_list_remove_list(gc->shared->images, l);
+                  gc->shared->images = eina_list_prepend(gc->shared->images, im);
+                  im->references++;
+                  return im;
+               }
+          }
      }
    im = calloc(1, sizeof(Evas_GL_Image));
    if (!im) return NULL;
