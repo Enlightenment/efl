@@ -5,10 +5,6 @@
 # include <config.h>
 #endif
 
-#ifdef HAVE_EVIL
-# include <Evil.h>
-#endif
-
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__
@@ -21,6 +17,10 @@
 #else
 # include <stddef.h>
 void *alloca (size_t);
+#endif
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
 #endif
 
 #include <Eina.h>
