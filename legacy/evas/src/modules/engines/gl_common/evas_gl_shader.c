@@ -441,6 +441,7 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glCompileShader(p->vert);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   ok = 0;
    glGetShaderiv(p->vert, GL_COMPILE_STATUS, &ok);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!ok)
@@ -454,6 +455,7 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glCompileShader(p->frag);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   ok = 0;
    glGetShaderiv(p->frag, GL_COMPILE_STATUS, &ok);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!ok)
@@ -482,6 +484,7 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
    
    glLinkProgram(p->prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   ok = 0;
    glGetProgramiv(p->prog, GL_LINK_STATUS, &ok);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!ok)
