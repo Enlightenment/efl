@@ -184,7 +184,6 @@ extern "C"
 #include "edje_private.h"
 
 //--------------------------------------------------------------------------//
-#ifdef LUA2
 #define MAX_LUA_MEM (4 * (1024 * 1024))
 
 
@@ -1986,7 +1985,7 @@ _edje_lua2_script_init(Edje *ed)
    
    _elua_table_ptr_set(L, _elua_key, ed);
    
-   snprintf(buf, sizeof(buf), "lua_scripts/%i", ed->collection->id);
+   snprintf(buf, sizeof(buf), "edje/scripts/lua/%i", ed->collection->id);
    data = eet_read(ed->file->ef, buf, &size);
    
    if (data)
@@ -2051,5 +2050,3 @@ _edje_lua2_script_unload(Edje_Part_Collection *edc __UNUSED__)
    L = lstate;
    lua_gc(L, LUA_GCCOLLECT, 0);
 }
-
-#endif

@@ -1757,10 +1757,6 @@ edje_program_is_strrncmp(const char *str)
 EAPI void _edje_program_insert(Edje_Part_Collection *ed, Edje_Program *p);
 EAPI void _edje_program_remove(Edje_Part_Collection *ed, Edje_Program *p);
 
-// new lua stuff - supercedes the old
-#define LUA2 1
-
-#ifdef LUA2
 void _edje_lua2_error_full(const char *file, const char *fnc, int line, lua_State *L, int err_code);
 #define _edje_lua2_error(L, err_code) _edje_lua2_error_full(__FILE__, __FUNCTION__, __LINE__, L, err_code)
 void _edje_lua2_script_init(Edje *ed);
@@ -1775,7 +1771,6 @@ void _edje_lua2_script_func_move(Edje *ed);
 void _edje_lua2_script_func_resize(Edje *ed);
 void _edje_lua2_script_func_message(Edje *ed, Edje_Message *em);
 void _edje_lua2_script_func_signal(Edje *ed, const char *sig, const char *src);
-#endif
 
 const char *edje_string_get(const Edje_String *es);
 const char *edje_string_id_get(const Edje_String *es);

@@ -33,287 +33,48 @@ void
 _edje_lua_script_only_init(Edje *ed)
 {
    if (ed->collection)
-     {
-#ifdef LUA2
-        _edje_lua2_script_init(ed);
-#else        
-	 ed->L = _edje_lua_new_thread(ed, _edje_lua_state_get()); // freed in _edje_lua_script_only_shutdown
-	 _edje_lua_new_reg(ed->L, -1, ed->L); // freed in _edje_lua_script_only_shutdown
-	 lua_pop(ed->L, 1); /* thread */
-
-	 lua_State *L = ed->L;
-	 _edje_lua_script_fn_new(ed);
-	 lua_pop(L, 1); /* script */
-
-	 lua_getglobal(L, "init");
-	 if (!lua_isnil (L, -1))
-	   {
-	      int err_code;
-
-	      lua_pushvalue(L, LUA_GLOBALSINDEX); /* set function environment from collection thread to edje object thread */
-	      lua_setfenv(L, -2);
-	      _edje_lua_get_reg(L, ed);
-
-              if ((err_code = lua_pcall(L, 1, 0, 0)))
-                _edje_lua_error(L, err_code);
-	   }
-	 else
-	   lua_pop(L, 1);
-#endif        
-     }
+      _edje_lua2_script_init(ed);
 }
 
 void
 _edje_lua_script_only_shutdown(Edje *ed)
 {
    if (ed->collection && ed->L)
-     {
-#ifdef LUA2
-        _edje_lua2_script_func_shutdown(ed);
-#else        
-	lua_State *L = ed->L;
-	lua_getglobal(L, "shutdown");
-	if (!lua_isnil (L, -1))
-	  {
-	     int err_code;
-
-	     lua_pushvalue(L, LUA_GLOBALSINDEX);
-	     lua_setfenv(L, -2);
-	     _edje_lua_get_reg(L, ed);
-
-             if ((err_code = lua_pcall(L, 1, 0, 0)))
-               _edje_lua_error(L, err_code);
-	  }
-	else
-	  lua_pop (L, 1);
-#endif        
-     }
+      _edje_lua2_script_func_shutdown(ed);
 }
 
 void
 _edje_lua_script_only_show(Edje * ed)
 {
    if (ed->collection && ed->L)
-     {
-#ifdef LUA2
-        _edje_lua2_script_func_show(ed);
-#else        
-	lua_State *L = ed->L;
-	lua_getglobal(L, "show");
-	if (!lua_isnil (L, -1))
-	  {
-	     int err_code;
-
-	     lua_pushvalue(L, LUA_GLOBALSINDEX);
-	     lua_setfenv(L, -2);
-	     _edje_lua_get_reg(L, ed);
-
-             if ((err_code = lua_pcall(L, 1, 0, 0)))
-               _edje_lua_error(L, err_code);
-	  }
-	else
-	  lua_pop (L, 1);
-#endif
-     }
+      _edje_lua2_script_func_show(ed);
 }
 
 void
 _edje_lua_script_only_hide(Edje * ed)
 {
    if (ed->collection && ed->L)
-     {
-#ifdef LUA2
-        _edje_lua2_script_func_hide(ed);
-#else        
-	lua_State *L = ed->L;
-	lua_getglobal(L, "hide");
-	if (!lua_isnil (L, -1))
-	  {
-	     int err_code;
-
-	     lua_pushvalue(L, LUA_GLOBALSINDEX);
-	     lua_setfenv(L, -2);
-	     _edje_lua_get_reg(L, ed);
-
-             if ((err_code = lua_pcall(L, 1, 0, 0)))
-               _edje_lua_error(L, err_code);
-	  }
-	else
-	  lua_pop (L, 1);
-#endif   
-     }
+      _edje_lua2_script_func_hide(ed);
 }
 
 void
 _edje_lua_script_only_move(Edje * ed)
 {
    if (ed->collection && ed->L)
-     {
-#ifdef LUA2
-        _edje_lua2_script_func_move(ed);
-#else        
-	lua_State *L = ed->L;
-	lua_getglobal(L, "move");
-	if (!lua_isnil (L, -1))
-	  {
-	     int err_code;
-
-	     lua_pushvalue(L, LUA_GLOBALSINDEX);
-	     lua_setfenv(L, -2);
-	     _edje_lua_get_reg(L, ed);
-	     lua_pushnumber(L, ed->x);
-	     lua_pushnumber(L, ed->y);
-
-             if ((err_code = lua_pcall(L, 3, 0, 0)))
-               _edje_lua_error(L, err_code);
-	  }
-	else
-	  lua_pop (L, 1);
-#endif   
-     }
+      _edje_lua2_script_func_move(ed);
 }
 
 void
 _edje_lua_script_only_resize(Edje * ed)
 {
    if (ed->collection && ed->L)
-     {
-#ifdef LUA2
-        _edje_lua2_script_func_resize(ed);
-#else        
-	lua_State *L = ed->L;
-	lua_getglobal(L, "resize");
-	if (!lua_isnil (L, -1))
-	  {
-	     int err_code;
-
-	     lua_pushvalue(L, LUA_GLOBALSINDEX);
-	     lua_setfenv(L, -2);
-	     _edje_lua_get_reg(L, ed);
-	     lua_pushnumber(L, ed->w);
-	     lua_pushnumber(L, ed->h);
-
-             if ((err_code = lua_pcall(L, 3, 0, 0)))
-               _edje_lua_error(L, err_code);
-	  }
-	else
-	  lua_pop (L, 1);
-#endif   
-     }
+      _edje_lua2_script_func_resize(ed);
 }
 
 void
 _edje_lua_script_only_message(Edje * ed, Edje_Message * em)
 {
    if (ed->collection && ed->L)
-     {
-#ifdef LUA2
-        _edje_lua2_script_func_message(ed, em);
-#else        
-	lua_State *L = ed->L;
-	lua_getglobal(L, "message");
-	if (!lua_isnil (L, -1))
-	  {
-	     int nargs = 3;
-	     int err_code;
-	     int count;
-	     int i;
-
-	     lua_pushvalue(L, LUA_GLOBALSINDEX);
-	     lua_setfenv(L, -2);
-	     _edje_lua_get_reg(L, ed);
-	     lua_pushnumber(L, em->type);
-	     lua_pushnumber(L, em->id);
-	     switch (em->type)
-	       {
-		case EDJE_MESSAGE_NONE:
-		   break;
-		case EDJE_MESSAGE_SIGNAL:
-		   break;
-		case EDJE_MESSAGE_STRING:
-		   lua_pushstring(L, ((Edje_Message_String *) em->msg)->str);
-		   nargs += 1;
-		   break;
-		case EDJE_MESSAGE_INT:
-		   lua_pushnumber(L, ((Edje_Message_Int *) em->msg)->val);
-		   nargs += 1;
-		   break;
-		case EDJE_MESSAGE_FLOAT:
-		   lua_pushnumber(L, ((Edje_Message_Float *) em->msg)->val);
-		   nargs += 1;
-		   break;
-		case EDJE_MESSAGE_STRING_SET:
-		   count = ((Edje_Message_String_Set *) em->msg)->count;
-		   lua_createtable(L, count, 0);
-		   for (i = 0; i < count; i++)
-		     {
-			lua_pushstring(L, ((Edje_Message_String_Set *) em->msg)->str[i]);
-			lua_rawseti(L, -2, i + 1);
-		     }
-		   nargs += 1;
-		   break;
-		case EDJE_MESSAGE_INT_SET:
-		   count = ((Edje_Message_Int_Set *) em->msg)->count;
-		   lua_createtable(L, count, 0);
-		   for (i = 0; i < count; i++)
-		     {
-			lua_pushnumber(L, ((Edje_Message_Int_Set *) em->msg)->val[i]);
-			lua_rawseti(L, -2, i + 1);
-		     }
-		   nargs += 1;
-		   break;
-		case EDJE_MESSAGE_FLOAT_SET:
-		   count = ((Edje_Message_Float_Set *) em->msg)->count;
-		   lua_createtable(L, count, 0);
-		   for (i = 0; i < count; i++)
-		     {
-			lua_pushnumber(L, ((Edje_Message_Float_Set *) em->msg)->val[i]);
-			lua_rawseti(L, -2, i + 1);
-		     }
-		   nargs += 1;
-		   break;
-		case EDJE_MESSAGE_STRING_INT:
-		   lua_pushstring(L, ((Edje_Message_String_Int *) em->msg)->str);
-		   lua_pushnumber(L, ((Edje_Message_String_Int *) em->msg)->val);
-		   nargs += 2;
-		   break;
-		case EDJE_MESSAGE_STRING_FLOAT:
-		   lua_pushstring(L, ((Edje_Message_String_Float *) em->msg)->str);
-		   lua_pushnumber(L, ((Edje_Message_String_Float *) em->msg)->val);
-		   nargs += 2;
-		   break;
-		case EDJE_MESSAGE_STRING_INT_SET:
-		   lua_pushstring(L, ((Edje_Message_String_Int_Set *) em->msg)->str);
-		   count = ((Edje_Message_String_Int_Set *) em->msg)->count;
-		   lua_createtable(L, count, 0);
-		   for (i = 0; i < count; i++)
-		     {
-			lua_pushnumber(L, ((Edje_Message_String_Int_Set *) em->msg)->val[i]);
-			lua_rawseti(L, -2, i + 1);
-		     }
-		   nargs += 2;
-		   break;
-		case EDJE_MESSAGE_STRING_FLOAT_SET:
-		   lua_pushstring(L, ((Edje_Message_String_Float_Set *) em->msg)->str);
-		   count = ((Edje_Message_String_Float_Set *) em->msg)->count;
-		   lua_createtable(L, count, 0);
-		   for (i = 0; i < count; i++)
-		     {
-			lua_pushnumber(L, ((Edje_Message_String_Float_Set *) em->msg)->val[i]);
-			lua_rawseti(L, -2, i + 1);
-		     }
-		   nargs += 2;
-		   break;
-		default:
-		   break;
-	       }
-
-             if ((err_code = lua_pcall(L, nargs, 0, 0)))
-               _edje_lua_error(L, err_code);
-	  }
-	else
-	  lua_pop (L, 1);
-#endif   
-     }
+      _edje_lua2_script_func_message(ed, em);
 }
 

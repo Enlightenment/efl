@@ -109,24 +109,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 
    if (data)
      {
-#ifdef LUA2
         _edje_lua2_script_load(edc, data, size);
-#else
-	int err_code;
-
-	//printf("lua chunk size: %d\n", size);
-	_edje_lua_new_reg(_edje_lua_state_get(), -1, edc); // gets freed in 'edje_load::_edje_collectoin_free'
-
-	if ((err_code = luaL_loadbuffer(_edje_lua_state_get(), data, size, "edje_lua_script")))
-	  {
-	     if (err_code == LUA_ERRSYNTAX)
-	       ERR("lua load syntax error: %s", lua_tostring(_edje_lua_state_get(), -1));
-	     else if (err_code == LUA_ERRMEM)
-	       ERR("lua load memory allocation error: %s", lua_tostring(_edje_lua_state_get(), -1));
-	  }
-	if (lua_pcall(_edje_lua_state_get(), 0, 0, 0))
-	  ERR("lua call error: %s", lua_tostring(_edje_lua_state_get(), -1));
-#endif
 	free(data);
      }
 

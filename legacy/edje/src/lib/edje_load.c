@@ -983,17 +983,7 @@ _edje_file_del(Edje *ed)
 
 	     if (rp->custom)
                {
-#ifdef LUA2
                   // xxx: lua2
-#else
-                  if (ed->L)
-                    {
-                       _edje_lua_get_reg(ed->L, rp->custom->description);
-                       _edje_lua_free_reg(ed->L, lua_touserdata(ed->L, -1)); // created in edje_lua.c::_edje_lua_part_fn_custom_state
-                       lua_pop(ed->L, 1);
-                       _edje_lua_free_reg(ed->L, rp->custom->description); // created in edje_lua.c::_edje_lua_part_fn_custom_state
-                    }
-#endif
                   _edje_collection_free_part_description_clean(rp->part->type,
 							       rp->custom->description,
 							       ed->file->free_strings);
@@ -1061,16 +1051,7 @@ _edje_file_del(Edje *ed)
 	  }
      }
    if (ed->L)
-     {
-#ifdef LUA2
-        _edje_lua2_script_shutdown(ed);
-#else
-	_edje_lua_free_reg(ed->L, ed); // created in edje_lua.c::_edje_lua_script_fn_new/_edje_lua_group_fn_new
-	_edje_lua_free_reg(ed->L, ed->L); // created in edje_program.c::_edje_program_run/edje_lua_script_only.c::_edje_lua_script_only_init
-	_edje_lua_free_thread(ed, ed->L); // created in edje_program.c::_edje_program_run/edje_lua_script_only.c::_edje_lua_script_only_init
-	ed->L = NULL;
-#endif   
-     }
+      _edje_lua2_script_shutdown(ed);
    if (ed->table_parts) free(ed->table_parts);
    ed->table_parts = NULL;
    ed->table_parts_size = 0;
@@ -1226,9 +1207,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
      }
 #endif
    if (ec->script) embryo_program_free(ec->script);
-#ifdef LUA2
    _edje_lua2_script_unload(ec);
-#endif
 
    /* Destroy all part and description. */
    eina_mempool_del(ce->mp.RECTANGLE);

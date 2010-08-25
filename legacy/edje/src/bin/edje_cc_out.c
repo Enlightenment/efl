@@ -869,14 +869,15 @@ data_write_scripts(Eet_File *ef)
 
 typedef struct _Edje_Lua_Script_Writer_Struct Edje_Lua_Script_Writer_Struct;
 
-struct _Edje_Lua_Script_Writer_Struct {
+struct _Edje_Lua_Script_Writer_Struct
+{
    char *buf;
    int size;
 };
 
 #ifdef LUA_BINARY
 static int
-_edje_lua_script_writer (lua_State *L __UNUSED__, const void* chunk_buf, size_t chunk_size, void* _data)
+_edje_lua_script_writer(lua_State *L __UNUSED__, const void *chunk_buf, size_t chunk_size, void *_data)
 {
    Edje_Lua_Script_Writer_Struct *data;
    void *old;

@@ -23,10 +23,14 @@ void *alloca(size_t);
 
 #include "edje_private.h"
 
+#if 0
+/////////////////////////////////////////////////////////////////////////////
+// the below is deprecated and here for reference only until removed. look
+// at edje_lua2.c for the active workign code
+/////////////////////////////////////////////////////////////////////////////
+
 #include <lauxlib.h>
 #include <lualib.h>
-
-#ifndef LUA2
 
 #define EDJE_LUA_GET 1
 #define EDJE_LUA_SET 2
@@ -5166,4 +5170,4 @@ _edje_lua_shutdown()
    Ledje = NULL;
 }
 
-#endif // not LUA2
+#endif
