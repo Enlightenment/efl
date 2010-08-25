@@ -25,33 +25,30 @@ struct _Ecore_Thread_Data
 
 struct _Ecore_Pthread_Worker
 {
-   union
-     {
-        struct
-          {
-             Ecore_Cb func_blocking;
-           } short_run;
-        struct
-          {
-             Ecore_Thread_Heavy_Cb func_heavy;
-             Ecore_Thread_Notify_Cb func_notify;
-             Ecore_Pipe *notify;
-          } long_run;
-     } u;
-
-    Ecore_Cb func_cancel;
-    Ecore_Cb func_end;
- #ifdef EFL_HAVE_PTHREAD
-    pthread_t self;
-    Eina_Hash *hash;
-    pthread_cond_t cond;
-    pthread_mutex_t mutex;
- #endif
-
-    const void *data;
-
-    Eina_Bool cancel : 1;
-    Eina_Bool long_run : 1;
+   union {
+      struct {
+         Ecore_Cb func_blocking;
+      } short_run;
+      struct {
+         Ecore_Thread_Heavy_Cb func_heavy;
+         Ecore_Thread_Notify_Cb func_notify;
+         Ecore_Pipe *notify;
+      } long_run;
+   } u;
+   
+   Ecore_Cb func_cancel;
+   Ecore_Cb func_end;
+#ifdef EFL_HAVE_PTHREAD
+   pthread_t self;
+   Eina_Hash *hash;
+   pthread_cond_t cond;
+   pthread_mutex_t mutex;
+#endif
+   
+   const void *data;
+   
+   Eina_Bool cancel : 1;
+   Eina_Bool long_run : 1;
 };
 
 #ifdef EFL_HAVE_PTHREAD
@@ -81,8 +78,8 @@ static Eina_Hash *_ecore_thread_global_hash = NULL;
 static pthread_rwlock_t _ecore_thread_global_hash_lock = PTHREAD_RWLOCK_INITIALIZER;
 static pthread_mutex_t _ecore_thread_global_hash_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t _ecore_thread_global_hash_cond = PTHREAD_COND_INITIALIZER;
-static pthread_t main_loop_thread = 0;
-
+static pthread_t main_loop_thread;
+static Eina_Bool have_main_loop_thread = 0;
 static void
 _ecore_thread_data_free(void *data)
 {
@@ -331,6 +328,7 @@ _ecore_thread_init(void)
 #ifdef EFL_HAVE_PTHREAD
    del_handler = ecore_event_handler_add(ECORE_THREAD_PIPE_DEL, _ecore_thread_pipe_del, NULL);
    main_loop_thread = pthread_self();
+   have_main_loop_thread = 1;
 #endif
 }
 
@@ -365,8 +363,8 @@ _ecore_thread_shutdown(void)
    if (_ecore_thread_global_hash)
      eina_hash_free(_ecore_thread_global_hash);
    ecore_event_handler_del(del_handler);
+   have_main_loop_thread = 0;
    del_handler = NULL;
-   main_loop_thread = 0;
 #endif
 }
 /**
@@ -491,28 +489,33 @@ EAPI Eina_Bool
 ecore_thread_cancel(Ecore_Thread *thread)
 {
 #ifdef EFL_HAVE_PTHREAD
-   Ecore_Pthread_Worker *work = (Ecore_Pthread_Worker*) thread;
+   Ecore_Pthread_Worker *work = (Ecore_Pthread_Worker *)thread;
    Eina_List *l;
-
+   
    if (!work)
-     return EINA_TRUE;
-
+      return EINA_TRUE;
+   
    pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
-
-   if (main_loop_thread == pthread_self())
-     EINA_LIST_FOREACH(_ecore_pending_job_threads, l, work)
-       if ((void *) work == (void *) thread)
-	 {
-	    _ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads, l);
-
-	    pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
-
-	    if (work->func_cancel)
-	      work->func_cancel((void *) work->data);
-	    free(work);
-
-	    return EINA_TRUE;
-	 }
+   
+   if ((have_main_loop_thread) &&
+       (pthread_equal(main_loop_thread, pthread_self())))
+     {
+        EINA_LIST_FOREACH(_ecore_pending_job_threads, l, work)
+          {
+             if ((void *) work == (void *) thread)
+               {
+                  _ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads, l);
+                  
+                  pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
+                  
+                  if (work->func_cancel)
+                     work->func_cancel((void *) work->data);
+                  free(work);
+                  
+                  return EINA_TRUE;
+               }
+          }
+     }
 
    pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
@@ -696,7 +699,7 @@ ecore_thread_notify(Ecore_Thread *thread, const void *data)
    if (!worker->long_run) return EINA_FALSE;
 
 #ifdef EFL_HAVE_PTHREAD
-   if (worker->self != pthread_self()) return EINA_FALSE;
+   if (!pthread_equal(worker->self, pthread_self())) return EINA_FALSE;
 
    ecore_pipe_write(worker->u.long_run.notify, &data, sizeof (void *));
 
@@ -869,7 +872,7 @@ ecore_thread_local_data_add(Ecore_Thread *thread, const char *key, void *value, 
    if ((!thread) || (!key) || (!value))
      return EINA_FALSE;
 #ifdef EFL_HAVE_PTHREAD
-   if (worker->self != pthread_self()) return EINA_FALSE;
+   if (!pthread_equal(worker->self, pthread_self())) return EINA_FALSE;
 
    if (!worker->hash)
      worker->hash = eina_hash_string_small_new(_ecore_thread_data_free);
@@ -917,7 +920,7 @@ ecore_thread_local_data_set(Ecore_Thread *thread, const char *key, void *value, 
    if ((!thread) || (!key) || (!value))
      return NULL;
 #ifdef EFL_HAVE_PTHREAD
-   if (worker->self != pthread_self()) return NULL;
+   if (!pthread_equal(worker->self, pthread_self())) return NULL;
 
    if (!worker->hash)
      worker->hash = eina_hash_string_small_new(_ecore_thread_data_free);
@@ -960,7 +963,7 @@ ecore_thread_local_data_find(Ecore_Thread *thread, const char *key)
    if ((!thread) || (!key))
      return NULL;
 #ifdef EFL_HAVE_PTHREAD
-   if (worker->self != pthread_self()) return NULL;
+   if (!pthread_equal(worker->self, pthread_self())) return NULL;
 
    if (!worker->hash)
      return NULL;
@@ -989,7 +992,7 @@ ecore_thread_local_data_del(Ecore_Thread *thread, const char *key)
    if ((!thread) || (!key))
      return EINA_FALSE;
 #ifdef EFL_HAVE_PTHREAD
-   if (worker->self != pthread_self()) return EINA_FALSE;
+   if (!pthread_equal(worker->self, pthread_self())) return EINA_FALSE;
 
    if (!worker->hash)
      return EINA_FALSE;
