@@ -612,7 +612,7 @@ eina_str_tolower(char **str)
       return;
 
    for (p = *str; (*p); p++)
-      *p = tolower(*p);
+      *p = tolower((unsigned char )(*p));
 }
 
 /**
@@ -630,7 +630,7 @@ eina_str_toupper(char **str)
       return;
 
    for (p = *str; (*p); p++)
-      *p = toupper(*p);
+      *p = toupper((unsigned char)(*p));
 }
 
 
