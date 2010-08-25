@@ -1,0 +1,16 @@
+*.o
+*.lo
+*.la
+.libs
+.deps
+.*.swp
+*.pc
+Makefile
+Makefile.in
+*.so
+*.edj
+elementary_config
+elementary_quicklaunch
+elementary_run
+elementary_test
+elementary_testql
