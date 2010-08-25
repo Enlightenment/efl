@@ -623,8 +623,9 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
    _edje_block(ed);
    _edje_ref(ed);
    _edje_freeze(ed);
-   if (pr->action == EDJE_ACTION_TYPE_STATE_SET)
+   switch (pr->action)
      {
+     case EDJE_ACTION_TYPE_STATE_SET:
 	if ((pr->tween.time > ZERO) && (!ed->no_anim))
 	  {
 	     Edje_Running_Program *runp;
@@ -649,7 +650,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 			 }
 		    }
 	       }
-//	     _edje_emit(ed, "program,start", pr->name);
+             // _edje_emit(ed, "program,start", pr->name);
 	     if (_edje_block_break(ed))
 	       {
 		  ed->actions = eina_list_append(ed->actions, runp);
@@ -685,9 +686,9 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 			 }
 		    }
 	       }
-//	     _edje_emit(ed, "program,start", pr->name);
+             // _edje_emit(ed, "program,start", pr->name);
 	     if (_edje_block_break(ed)) goto break_prog;
-//	     _edje_emit(ed, "program,stop", pr->name);
+             // _edje_emit(ed, "program,stop", pr->name);
 	     if (_edje_block_break(ed)) goto break_prog;
 
 	     EINA_LIST_FOREACH(pr->after, l, pa)
@@ -701,10 +702,9 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 	       }
 	     _edje_recalc(ed);
 	  }
-     }
-   else if (pr->action == EDJE_ACTION_TYPE_ACTION_STOP)
-     {
-//	_edje_emit(ed, "program,start", pr->name);
+        break;
+     case EDJE_ACTION_TYPE_ACTION_STOP:
+        // _edje_emit(ed, "program,start", pr->name);
         EINA_LIST_FOREACH(pr->targets, l, pt)
 	  {
 	     Eina_List *ll;
@@ -732,21 +732,19 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 //	     done:
 //	        continue;
 	  }
-//	_edje_emit(ed, "program,stop", pr->name);
+        // _edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
-     }
-   else if (pr->action == EDJE_ACTION_TYPE_SIGNAL_EMIT)
-     {
-//	_edje_emit(ed, "program,start", pr->name);
+        break;
+     case EDJE_ACTION_TYPE_SIGNAL_EMIT:
+        // _edje_emit(ed, "program,start", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
 	_edje_emit(ed, pr->state, pr->state2);
 	if (_edje_block_break(ed)) goto break_prog;
-//	_edje_emit(ed, "program,stop", pr->name);
+        // _edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
-     }
-   else if (pr->action == EDJE_ACTION_TYPE_DRAG_VAL_SET)
-     {
-//	_edje_emit(ed, "program,start", pr->name);
+        break;
+     case EDJE_ACTION_TYPE_DRAG_VAL_SET:
+        // _edje_emit(ed, "program,start", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
 	EINA_LIST_FOREACH(pr->targets, l, pt)
 	  {
@@ -767,12 +765,11 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 		    }
 	       }
 	  }
-//	_edje_emit(ed, "program,stop", pr->name);
+        // _edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
-     }
-   else if (pr->action == EDJE_ACTION_TYPE_DRAG_VAL_STEP)
-     {
-//	_edje_emit(ed, "program,start", pr->name);
+        break;
+     case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
+        // _edje_emit(ed, "program,start", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
 	EINA_LIST_FOREACH(pr->targets, l, pt)
 	  {
@@ -793,12 +790,11 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 		    }
 	       }
 	  }
-//	_edje_emit(ed, "program,stop", pr->name);
+        // _edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
-     }
-   else if (pr->action == EDJE_ACTION_TYPE_DRAG_VAL_PAGE)
-     {
-//	_edje_emit(ed, "program,start", pr->name);
+        break;
+     case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
+        // _edje_emit(ed, "program,start", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
 	EINA_LIST_FOREACH(pr->targets, l, pt)
 	  {
@@ -819,27 +815,25 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 		    }
 	       }
 	  }
-//	_edje_emit(ed, "program,stop", pr->name);
+        // _edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
-     }
-   else if (pr->action == EDJE_ACTION_TYPE_SCRIPT)
-     {
-	char fname[128];
+        break;
+     case EDJE_ACTION_TYPE_SCRIPT:
+          {
+             char fname[128];
 
-//	_edje_emit(ed, "program,start", pr->name);
-	if (_edje_block_break(ed)) goto break_prog;
-	snprintf(fname, sizeof(fname), "_p%i", pr->id);
-	_edje_embryo_test_run(ed, fname, ssig, ssrc);
-//	_edje_emit(ed, "program,stop", pr->name);
-	if (_edje_block_break(ed)) goto break_prog;
-	_edje_recalc_do(ed);
-     }
-   else if (pr->action == EDJE_ACTION_TYPE_FOCUS_SET)
-     {
+             // _edje_emit(ed, "program,start", pr->name);
+             if (_edje_block_break(ed)) goto break_prog;
+             snprintf(fname, sizeof(fname), "_p%i", pr->id);
+             _edje_embryo_test_run(ed, fname, ssig, ssrc);
+             // _edje_emit(ed, "program,stop", pr->name);
+             if (_edje_block_break(ed)) goto break_prog;
+             _edje_recalc_do(ed);
+          }
+        break;
+     case EDJE_ACTION_TYPE_FOCUS_SET:
 	if (!pr->targets)
-	  {
-	     ed->focused_part = NULL;
-	  }
+           ed->focused_part = NULL;
 	else
 	  {
 	     EINA_LIST_FOREACH(pr->targets, l, pt)
@@ -862,9 +856,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 		    }
 	       }
 	  }
-     }
-   else if (pr->action == EDJE_ACTION_TYPE_FOCUS_OBJECT)
-     {
+        break;
+     case EDJE_ACTION_TYPE_FOCUS_OBJECT:
 	if (!pr->targets)
 	  {
 	     Evas_Object *focused;
@@ -894,46 +887,46 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 		    {
 		       rp = ed->table_parts[pt->id % ed->table_parts_size];
 		       if (rp && rp->swallowed_object)
-			 {
-			    evas_object_focus_set(rp->swallowed_object, EINA_TRUE);
-			 }
+                          evas_object_focus_set(rp->swallowed_object, EINA_TRUE);
 		    }
 	       }
 	  }
-     }
-   else if (pr->action == EDJE_ACTION_TYPE_PARAM_COPY)
-     {
-	Edje_Real_Part *src_part, *dst_part;
+        break;
+     case EDJE_ACTION_TYPE_PARAM_COPY:
+          {
+             Edje_Real_Part *src_part, *dst_part;
 
-//	_edje_emit(ed, "program,start", pr->name);
-	if (_edje_block_break(ed)) goto break_prog;
+             // _edje_emit(ed, "program,start", pr->name);
+             if (_edje_block_break(ed)) goto break_prog;
+             
+             src_part = ed->table_parts[pr->param.src % ed->table_parts_size];
+             dst_part = ed->table_parts[pr->param.dst % ed->table_parts_size];
+             _edje_param_copy(src_part, pr->state, dst_part, pr->state2);
+             
+             if (_edje_block_break(ed)) goto break_prog;
+             // _edje_emit(ed, "program,stop", pr->name);
+             if (_edje_block_break(ed)) goto break_prog;
+          }
+        break;
+     case EDJE_ACTION_TYPE_PARAM_SET:
+          {
+             Edje_Real_Part *part;
 
-	src_part = ed->table_parts[pr->param.src % ed->table_parts_size];
-	dst_part = ed->table_parts[pr->param.dst % ed->table_parts_size];
-	_edje_param_copy(src_part, pr->state, dst_part, pr->state2);
-
-	if (_edje_block_break(ed)) goto break_prog;
-//	_edje_emit(ed, "program,stop", pr->name);
-	if (_edje_block_break(ed)) goto break_prog;
-     }
-   else if (pr->action == EDJE_ACTION_TYPE_PARAM_SET)
-     {
-	Edje_Real_Part *part;
-
-//	_edje_emit(ed, "program,start", pr->name);
-	if (_edje_block_break(ed)) goto break_prog;
-
-	part = ed->table_parts[pr->param.dst % ed->table_parts_size];
-	_edje_param_set(part, pr->state, pr->state2);
-
-	if (_edje_block_break(ed)) goto break_prog;
-//	_edje_emit(ed, "program,stop", pr->name);
-	if (_edje_block_break(ed)) goto break_prog;
-     }
-   else
-     {
-//	_edje_emit(ed, "program,start", pr->name);
-//	_edje_emit(ed, "program,stop", pr->name);
+             // _edje_emit(ed, "program,start", pr->name);
+             if (_edje_block_break(ed)) goto break_prog;
+             
+             part = ed->table_parts[pr->param.dst % ed->table_parts_size];
+             _edje_param_set(part, pr->state, pr->state2);
+             
+             if (_edje_block_break(ed)) goto break_prog;
+             // _edje_emit(ed, "program,stop", pr->name);
+             if (_edje_block_break(ed)) goto break_prog;
+          }
+        break;
+     default:
+        // _edje_emit(ed, "program,start", pr->name);
+        // _edje_emit(ed, "program,stop", pr->name);
+        break;
      }
    if (!((pr->action == EDJE_ACTION_TYPE_STATE_SET)
 	 /* hmm this fucks somethgin up. must look into it later */
