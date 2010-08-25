@@ -148,7 +148,8 @@ _edje_eina_hash_add_alloc(Eina_Hash  *hash,
    return hash;
 }
 
-void
+// FIXME: remove EAPI wehn edje_convert goes
+EAPI void
 _edje_edd_shutdown(void)
 {
    FREED(_edje_edd_edje_file);
@@ -212,7 +213,8 @@ _edje_edd_shutdown(void)
      EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_##Name##_pointer, Edje_##Type##_Pointer, "pointer", pointer, _edje_edd_edje_##Name); \
    }
 
-void
+// FIXME: remove EAPI when edje_convert goes
+EAPI void
 _edje_edd_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
