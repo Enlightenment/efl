@@ -5889,8 +5889,7 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
 	         effects[edje_edit_part_effect_get(obj, part)]);
 
    //Dragable
-   if (edje_edit_part_drag_x_get(obj, part) ||
-       edje_edit_part_drag_x_get(obj, part))
+   if (edje_edit_part_drag_x_get(obj, part))
      {
 	BUF_APPEND(I4"dragable {\n");
 	BUF_APPENDF(I5"x: %d %d %d;\n",
