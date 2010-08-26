@@ -64,7 +64,7 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
  */
 
 EAPI void
-evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int *w, int *h)
+evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props __UNUSED__, int *w, int *h)
 {
    int use_kerning;
    int pen_x, pen_y;
@@ -107,7 +107,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
 	/* you want performance */
 	kern = 0;
 	if ((use_kerning) && (prev_index) && (index) &&
-	    (pface == fi->src->ft.face) && 
+	    (pface == fi->src->ft.face) &&
             evas_common_font_query_kerning(fi, prev_index, index, &kern))
 	   pen_x += kern;
 
@@ -117,7 +117,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
 	if (!fg) continue;
 
 	if (kern < 0) kern = 0;
-	
+
         /* We care about advancing the whole string size, and not the actual
          * paint size of each string, so we only care about advancing correctly
          * and not the actual glyph width */
@@ -624,7 +624,7 @@ end:
  */
 
 EAPI int
-evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_BiDi_Props *intl_props, int x, int y)
+evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_BiDi_Props *intl_props __UNUSED__, int x, int y)
 {
    int use_kerning;
    int pen_x, pen_y;

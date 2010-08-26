@@ -850,8 +850,8 @@ struct _RGBA_Font_Source
 
    void             *data;
    int               data_size;
-   int               current_size;
-   
+   unsigned int      current_size;
+
    struct {
       int           orig_upem;
       FT_Face       face;
