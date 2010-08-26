@@ -4796,7 +4796,7 @@ evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur)
    if (!cur->node) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
-// kills "click below text" and up/downm arrow. disable   
+// kills "click below text" and up/downm arrow. disable
 
    if (evas_textblock_cursor_format_is_visible_get(cur))
      {
@@ -5896,11 +5896,13 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
         /* Adjust differently if we insert a format char */
         if (is_visible)
           {
-             _evas_textblock_node_format_adjust_offset(o, cur->node, n, -(n->offset - 1));
+             _evas_textblock_node_format_adjust_offset(o, cur->node, n,
+                   -(n->offset - 1));
           }
         else
           {
-             _evas_textblock_node_format_adjust_offset(o, cur->node, n, -n->offset);
+             _evas_textblock_node_format_adjust_offset(o, cur->node, n,
+                   -n->offset);
           }
 
         if (!fmt || (fmt->text_node != cur->node))
@@ -6060,13 +6062,15 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
    if (n1 == n2)
      {
         eina_ustrbuf_remove(n1->unicode, cur1->pos, cur2->pos);
-        if ((cur1->pos == 0) && (cur2->pos == eina_ustrbuf_length_get(n1->unicode)))
+        if ((cur1->pos == 0) &&
+              (cur2->pos == eina_ustrbuf_length_get(n1->unicode)))
           {
              _evas_textblock_node_text_remove_formats_between(o, n1, 0, -1);
           }
         else
           {
-             should_merge = _evas_textblock_node_text_adjust_offsets_to_start(o, n1, cur1->pos, cur2->pos);
+             should_merge = _evas_textblock_node_text_adjust_offsets_to_start(o,
+                   n1, cur1->pos, cur2->pos);
           }
         _evas_textblock_cursors_update_offset(cur1, cur1->node, cur1->pos, - (cur2->pos - cur1->pos));
      }
@@ -6085,14 +6089,16 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
              _evas_textblock_node_text_remove(o, n);
              n = nnode;
           }
-        should_merge = _evas_textblock_node_text_adjust_offsets_to_start(o, n2, 0, cur2->pos);
+        should_merge = _evas_textblock_node_text_adjust_offsets_to_start(o, n2,
+              0, cur2->pos);
 
         /* Remove the formats and the strings in the first and last nodes */
         len = eina_ustrbuf_length_get(n1->unicode);
         eina_ustrbuf_remove(n1->unicode, cur1->pos, len);
         eina_ustrbuf_remove(n2->unicode, 0, cur2->pos);
         /* Merge the nodes because we removed the PS */
-        _evas_textblock_cursors_update_offset(cur1, cur1->node, cur1->pos, - cur1->pos);
+        _evas_textblock_cursors_update_offset(cur1, cur1->node, cur1->pos,
+              - cur1->pos);
         _evas_textblock_cursors_update_offset(cur2, cur2->node, 0, - cur2->pos);
         _evas_textblock_nodes_merge(o, n1);
      }
@@ -6181,7 +6187,8 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
          * and not the previous format node */
         if ((tnode == cur1->node) && fnode)
           {
-             off = _evas_textblock_node_format_pos_get(fnode) - cur1->pos - fnode->offset;
+             off = _evas_textblock_node_format_pos_get(fnode) -
+                cur1->pos - fnode->offset;
              text += cur1->pos;
           }
         else
@@ -6192,7 +6199,8 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
           {
              Eina_Unicode tmp_ch;
              off += fnode->offset;
-             if ((tnode == cur2->node) && ((size_t) (text - text_base + off) >= cur2->pos))
+             if ((tnode == cur2->node) &&
+                   ((size_t) (text - text_base + off) >= cur2->pos))
                {
                   break;
                }
@@ -7042,62 +7050,62 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 #define ITEM_WALK() \
    EINA_INLIST_FOREACH(o->paragraphs->lines, ln) \
      { \
-	Evas_Object_Textblock_Item *it; \
-	\
+        Evas_Object_Textblock_Item *it; \
+        \
         pback = 0; \
         pline = 0; \
         pline2 = 0; \
-	pstrike = 0; \
+        pstrike = 0; \
         if (clip) \
           { \
              if ((obj->cur.geometry.y + y + ln->y + ln->h) < (cy - 20)) \
-               continue; \
+             continue; \
              if ((obj->cur.geometry.y + y + ln->y) > (cy + ch + 20)) \
-               break; \
+             break; \
           } \
-	EINA_INLIST_FOREACH(ln->items, it) \
-	  { \
-	     int yoff; \
-	     \
-	     yoff = ln->baseline; \
-	     if (it->format->valign != -1.0) \
-	       yoff = (it->format->valign * (double)(ln->h - it->h)) + it->baseline; \
+        EINA_INLIST_FOREACH(ln->items, it) \
+          { \
+             int yoff; \
+             \
+             yoff = ln->baseline; \
+             if (it->format->valign != -1.0) \
+             yoff = (it->format->valign * (double)(ln->h - it->h)) + it->baseline; \
              if (clip) \
                { \
                   if ((obj->cur.geometry.x + x + ln->x + it->x - it->inset + it->w) < (cx - 20)) \
-                    continue; \
+                  continue; \
                   if ((obj->cur.geometry.x + x + ln->x + it->x - it->inset) > (cx + cw + 20)) \
-                    break; \
+                  break; \
                }
 
 #define ITEM_WALK_END() \
-	  } \
+          } \
      }
 #define COLOR_SET(col) \
-	ENFN->context_color_set(output, context, \
-				(obj->cur.cache.clip.r * it->format->color.col.r) / 255, \
-				(obj->cur.cache.clip.g * it->format->color.col.g) / 255, \
-				(obj->cur.cache.clip.b * it->format->color.col.b) / 255, \
-				(obj->cur.cache.clip.a * it->format->color.col.a) / 255);
+   ENFN->context_color_set(output, context, \
+         (obj->cur.cache.clip.r * it->format->color.col.r) / 255, \
+         (obj->cur.cache.clip.g * it->format->color.col.g) / 255, \
+         (obj->cur.cache.clip.b * it->format->color.col.b) / 255, \
+         (obj->cur.cache.clip.a * it->format->color.col.a) / 255);
 #define COLOR_SET_AMUL(col, amul) \
-	ENFN->context_color_set(output, context, \
-				(obj->cur.cache.clip.r * it->format->color.col.r * (amul)) / 65025, \
-				(obj->cur.cache.clip.g * it->format->color.col.g * (amul)) / 65025, \
-				(obj->cur.cache.clip.b * it->format->color.col.b * (amul)) / 65025, \
-				(obj->cur.cache.clip.a * it->format->color.col.a * (amul)) / 65025);
+   ENFN->context_color_set(output, context, \
+         (obj->cur.cache.clip.r * it->format->color.col.r * (amul)) / 65025, \
+         (obj->cur.cache.clip.g * it->format->color.col.g * (amul)) / 65025, \
+         (obj->cur.cache.clip.b * it->format->color.col.b * (amul)) / 65025, \
+         (obj->cur.cache.clip.a * it->format->color.col.a * (amul)) / 65025);
 # define DRAW_TEXT(ox, oy) \
    if (it->format->font.font) ENFN->font_draw(output, context, surface, it->format->font.font, \
-						 obj->cur.geometry.x + ln->x + it->x - it->inset + x + (ox), \
-						 obj->cur.geometry.y + ln->y + yoff + y + (oy), \
-						 it->w, it->h, it->w, it->h, it->text, &it->bidi_props);
+         obj->cur.geometry.x + ln->x + it->x - it->inset + x + (ox), \
+         obj->cur.geometry.y + ln->y + yoff + y + (oy), \
+         it->w, it->h, it->w, it->h, it->text, &it->bidi_props);
 # if 0
 #define DRAW_TEXT(ox, oy) \
    if (it->format->font.font) ENFN->font_draw(output, context, surface, it->format->font.font, \
-						 obj->cur.geometry.x + ln->x + it->x - it->inset + x + (ox), \
-						 obj->cur.geometry.y + ln->y + yoff + y + (oy), \
-						 obj->cur.cache.geometry.x + ln->x + it->x - it->inset + x + (ox), \
-						 obj->cur.cache.geometry.y + ln->y + yoff + y + (oy), \
-						 it->w, it->h, it->w, it->h, it->text, &it->bidi_props);
+         obj->cur.geometry.x + ln->x + it->x - it->inset + x + (ox), \
+         obj->cur.geometry.y + ln->y + yoff + y + (oy), \
+         obj->cur.cache.geometry.x + ln->x + it->x - it->inset + x + (ox), \
+         obj->cur.cache.geometry.y + ln->y + yoff + y + (oy), \
+         it->w, it->h, it->w, it->h, it->text, &it->bidi_props);
 #endif
 #define ITEM_WALK_LINE_SKIP_DROP() \
    if ((ln->y + ln->h) <= 0) continue; \
