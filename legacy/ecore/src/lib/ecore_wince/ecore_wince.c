@@ -311,7 +311,8 @@ _ecore_wince_window_procedure(HWND   window,
        _ecore_wince_event_handle_destroy_notify(data);
        break;
      case WM_SHOWWINDOW:
-       if ((data->data_param == SW_OTHERUNZOOM))
+       if ((data->data_param == SW_OTHERUNZOOM) ||
+           (data->data_param == SW_OTHERZOOM))
          break;
 
        if (data->window_param)
