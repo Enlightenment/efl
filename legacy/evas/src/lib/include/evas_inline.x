@@ -176,7 +176,7 @@ evas_object_clip_recalc(Evas_Object *obj)
    int nx, ny, nw, nh, nvis, nr, ng, nb, na;
 
    if (!obj->cur.cache.clip.dirty &&
-       !(obj->cur.clipper == NULL || obj->cur.clipper->cur.cache.clip.dirty))
+       !(!obj->cur.clipper || obj->cur.clipper->cur.cache.clip.dirty))
      return;
    if (obj->layer->evas->events_frozen > 0) return;
    evas_object_coords_recalc(obj);

@@ -131,7 +131,7 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
    int error;
    RGBA_Font_Source *fs;
 
-   assert(!!name);
+   assert(name != NULL);
 
    fs = calloc(1, sizeof(RGBA_Font_Source) + data_size);
    if (!fs) return NULL;
@@ -164,7 +164,7 @@ evas_common_font_source_load(const char *name)
 {
    RGBA_Font_Source *fs;
 
-   assert(!!name);
+   assert(name != NULL);
 
    fs = calloc(1, sizeof(RGBA_Font_Source));
    if (!fs) return NULL;

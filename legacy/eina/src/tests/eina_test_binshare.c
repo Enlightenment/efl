@@ -85,8 +85,8 @@ START_TEST(eina_binshare_small)
         t0 = eina_binshare_add_length(buf, i);
         t1 = eina_binshare_add_length(buf, i);
 
-        fail_if(!t0);
-        fail_if(!t1);
+        fail_if(t0 == NULL);
+        fail_if(t1 == NULL);
         fail_if(t0 != t1);
         fail_if(memcmp(t0, buf, i) != 0);
 
@@ -110,8 +110,8 @@ START_TEST(eina_binshare_test_share)
    t0 = eina_binshare_add_length(TEST0, TEST0_SIZE);
    t1 = eina_binshare_add_length(TEST0, TEST0_SIZE);
 
-   fail_if(!t0);
-   fail_if(!t1);
+   fail_if(t0 == NULL);
+   fail_if(t1 == NULL);
    fail_if(memcmp(t0, TEST0, TEST0_SIZE) != 0);
    fail_if(memcmp(t1, TEST0, TEST0_SIZE) != 0);
    fail_if(t0 != t1);
@@ -168,7 +168,7 @@ START_TEST(eina_binshare_collision)
         if (rand() > RAND_MAX / 2)
           {
              const char *r = eina_binshare_add_length(buffer, strlen(buffer));
-             fail_if(!r);
+             fail_if(r == NULL);
           }
      }
 
@@ -180,9 +180,9 @@ START_TEST(eina_binshare_collision)
         eina_array_push(ea,
                         (void *)eina_binshare_add_length(buffer, strlen(buffer)));
         r = eina_binshare_add_length(buffer, strlen(buffer));
-        fail_if(!r);
+        fail_if(r == NULL);
         r = eina_binshare_add_length(buffer, strlen(buffer));
-        fail_if(!r);
+        fail_if(r == NULL);
      }
 
    for (i = 0; i < 200; ++i)

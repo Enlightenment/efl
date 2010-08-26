@@ -39,9 +39,9 @@ insert_stringpair(stringpair * root, char *first, char *second, int matchlength)
 {
    stringpair         *cur, *pred;
 
-   assert(!!root);
-   assert(!!first);
-   assert(!!second);
+   assert(root != NULL);
+   assert(first != NULL);
+   assert(second != NULL);
    /* create a new node, and check whether all is okay */
    if (!(cur = (stringpair *)malloc(sizeof(stringpair))))
       return NULL;
@@ -71,13 +71,13 @@ delete_stringpairtable(stringpair * root)
 {
    stringpair         *cur, *next;
 
-   assert(!!root);
+   assert(root != NULL);
    cur = root->next;
    while (cur)
      {
 	next = cur->next;
-	assert(!!cur->first);
-	assert(!!cur->second);
+	assert(cur->first != NULL);
+	assert(cur->second != NULL);
 	free(cur->first);
 	free(cur->second);
 	free(cur);
@@ -92,7 +92,7 @@ find_stringpair(stringpair * cur, char *first, int matchlength)
    int                 result = 0;
 
    assert(matchlength > 0);	/* the function cannot handle zero-length comparison */
-   assert(!!first);
+   assert(first != NULL);
    while (cur && result <= 0)
      {
 	result = (int)*cur->first - (int)*first;
@@ -112,15 +112,15 @@ delete_stringpair(stringpair * root, stringpair * item)
 {
    stringpair         *cur;
 
-   assert(!!root);
+   assert(root != NULL);
    cur = root;
    while (cur->next)
      {
 	if (cur->next == item)
 	  {
 	     cur->next = item->next;	/* unlink from list */
-	     assert(!!item->first);
-	     assert(!!item->second);
+	     assert(item->first != NULL);
+	     assert(item->second != NULL);
 	     free(item->first);
 	     free(item->second);
 	     free(item);
@@ -139,9 +139,9 @@ insert_alias(char *name, char *alias)
 {
    stringpair         *cur;
 
-   assert(!!name);
+   assert(name != NULL);
    assert(strlen(name) <= sNAMEMAX);
-   assert(!!alias);
+   assert(alias != NULL);
    assert(strlen(alias) <= sEXPMAX);
    if (!(cur = insert_stringpair(&alias_tab, name, alias, strlen(name))))
       error(103);		/* insufficient memory (fatal error) */
@@ -175,7 +175,7 @@ insert_path(char *path)
 {
    stringlist         *cur;
 
-   assert(!!path);
+   assert(path != NULL);
    if (!(cur = (stringlist *)malloc(sizeof(stringlist))))
       error(103);		/* insufficient memory (fatal error) */
    if (!(cur->line = strdup(path)))
@@ -194,7 +194,7 @@ get_path(int index)
       cur = cur->next;
    if (cur)
      {
-	assert(!!cur->line);
+	assert(cur->line != NULL);
 	return cur->line;
      }				/* if */
    return NULL;
@@ -208,7 +208,7 @@ delete_pathtable(void)
    while (cur)
      {
 	next = cur->next;
-	assert(!!cur->line);
+	assert(cur->line != NULL);
 	free(cur->line);
 	free(cur);
 	cur = next;
@@ -240,8 +240,8 @@ insert_subst(char *pattern, char *substitution, int prefixlen)
 {
    stringpair         *cur;
 
-   assert(!!pattern);
-   assert(!!substitution);
+   assert(pattern != NULL);
+   assert(substitution != NULL);
    if (!(cur = insert_stringpair(&substpair, pattern, substitution, prefixlen)))
       error(103);		/* insufficient memory (fatal error) */
    adjustindex(*pattern);
@@ -253,7 +253,7 @@ find_subst(char *name, int length)
 {
    stringpair         *item;
 
-   assert(!!name);
+   assert(name != NULL);
    assert(length > 0);
    assert((*name >= 'A' && *name <= 'Z') || (*name >= 'a' && *name <= 'z')
 	  || *name == '_');
@@ -268,7 +268,7 @@ delete_subst(char *name, int length)
 {
    stringpair         *item;
 
-   assert(!!name);
+   assert(name != NULL);
    assert(length > 0);
    assert((*name >= 'A' && *name <= 'Z') || (*name >= 'a' && *name <= 'z')
 	  || *name == '_');

@@ -531,7 +531,7 @@ _eina_matrixsparse_row_idx_siblings_find(const Eina_Matrixsparse *m,
            if (r->row > row)
               break;
 
-        assert(!!r);
+        assert(r != NULL);
         *p_prev = r->prev;
         *p_next = r;
      }
@@ -541,7 +541,7 @@ _eina_matrixsparse_row_idx_siblings_find(const Eina_Matrixsparse *m,
            if (r->row < row)
               break;
 
-        assert(!!r);
+        assert(r != NULL);
         *p_prev = r;
         *p_next = r->next;
      }
@@ -564,7 +564,7 @@ _eina_matrixsparse_row_cell_idx_siblings_find(const Eina_Matrixsparse_Row *r,
            if (c->col > col)
               break;
 
-        assert(!!c);
+        assert(c != NULL);
         *p_prev = c->prev;
         *p_next = c;
      }
@@ -574,7 +574,7 @@ _eina_matrixsparse_row_cell_idx_siblings_find(const Eina_Matrixsparse_Row *r,
            if (c->col < col)
               break;
 
-        assert(!!c);
+        assert(c != NULL);
         *p_prev = c;
         *p_next = c->next;
      }
@@ -613,8 +613,8 @@ _eina_matrixsparse_row_idx_add(Eina_Matrixsparse *m, unsigned long row)
      {
         Eina_Matrixsparse_Row *prev = NULL, *next = NULL;
         _eina_matrixsparse_row_idx_siblings_find(m, row, &prev, &next);
-        assert(!!prev);
-        assert(!!next);
+        assert(prev != NULL);
+        assert(next != NULL);
         r->prev = prev;
         r->next = next;
         prev->next = r;
@@ -666,8 +666,8 @@ _eina_matrixsparse_row_cell_idx_add(Eina_Matrixsparse_Row *r,
      {
         Eina_Matrixsparse_Cell *prev = NULL, *next = NULL;
         _eina_matrixsparse_row_cell_idx_siblings_find(r, col, &prev, &next);
-        assert(!!prev);
-        assert(!!next);
+        assert(prev != NULL);
+        assert(next != NULL);
         c->prev = prev;
         c->next = next;
         prev->next = c;

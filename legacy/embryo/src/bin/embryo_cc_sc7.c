@@ -533,7 +533,7 @@ replacesequence(char *pattern, char symbols[_maxoptvars][_aliasmax + 1],
     * that the same symbol may occur multiple times in the pattern) plus
     * line endings and startings ('\t' to start a line and '\n\0' to end one)
     */
-   assert(!!repl_length);
+   assert(repl_length != NULL);
    *repl_length = 0;
    lptr = pattern;
    while (*lptr)
@@ -627,7 +627,7 @@ stgopt(char *start, char *end)
    char                symbols[_maxoptvars][_aliasmax + 1];
    int                 seq, match_length, repl_length;
 
-   assert(!!sequences);
+   assert(sequences != NULL);
    while (start < end)
      {
 	if ((sc_debug & sNOOPTIMIZE) != 0 || sc_status != statWRITE)
@@ -677,7 +677,7 @@ stgopt(char *start, char *end)
 		       seq++;
 		    }		/* if */
 	       }		/* while */
-	     assert(!sequences[seq].find);
+	     assert(sequences[seq].find == NULL);
 	     filewrite(start);
 	  }			/* if */
 	assert(start < end);

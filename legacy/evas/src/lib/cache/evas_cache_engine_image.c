@@ -144,7 +144,7 @@ _evas_cache_engine_image_dealloc(Evas_Cache_Engine_Image *cache, Engine_Image_En
 EAPI int
 evas_cache_engine_image_usage_get(Evas_Cache_Engine_Image *cache)
 {
-   assert(!!cache);
+   assert(cache != NULL);
 
    return cache->usage;
 }
@@ -152,7 +152,7 @@ evas_cache_engine_image_usage_get(Evas_Cache_Engine_Image *cache)
 EAPI int
 evas_cache_engine_image_get(Evas_Cache_Engine_Image *cache)
 {
-   assert(!!cache);
+   assert(cache != NULL);
 
    return cache->limit;
 }
@@ -160,7 +160,7 @@ evas_cache_engine_image_get(Evas_Cache_Engine_Image *cache)
 EAPI void
 evas_cache_engine_image_set(Evas_Cache_Engine_Image *cache, int limit)
 {
-   assert(!!cache);
+   assert(cache != NULL);
 
    cache->limit = limit;
 }
@@ -247,7 +247,7 @@ _evas_cache_engine_image_free_cb(__UNUSED__ const Eina_Hash *hash, __UNUSED__ co
 EAPI void
 evas_cache_engine_image_flush(Evas_Cache_Engine_Image *cache)
 {
-   assert(!!cache);
+   assert(cache != NULL);
 
    while ((cache->lru) && (cache->limit < cache->usage))
      {
@@ -264,7 +264,7 @@ evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache)
    Engine_Image_Entry   *eim;
    Eina_List *delete_list = NULL;
 
-   assert(!!cache);
+   assert(cache != NULL);
 
    if (cache->func.debug) cache->func.debug("shutdown-engine", NULL);
 
@@ -303,7 +303,7 @@ evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
    Image_Entry          *im;
    const char          *ekey;
 
-   assert(!!cache);
+   assert(cache != NULL);
 
    *error = EVAS_LOAD_ERROR_NONE;
 

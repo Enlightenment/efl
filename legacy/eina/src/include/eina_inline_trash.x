@@ -81,7 +81,7 @@ eina_trash_pop(Eina_Trash **trash)
 
    tmp = *trash;
 
-   if (*trash != NULL)
+   if (*trash)
      *trash = (*trash)->next;
 
    return tmp;

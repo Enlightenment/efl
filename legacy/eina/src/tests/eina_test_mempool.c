@@ -68,9 +68,9 @@ _eina_mempool_test(Eina_Mempool *mp, Eina_Bool with_realloc, Eina_Bool with_gc)
         eina_mempool_free(mp, tbl[i]);
 
    if (with_realloc)
-      fail_if(!eina_mempool_realloc(mp, tbl[500], 25));
+      fail_if(eina_mempool_realloc(mp, tbl[500], 25) == NULL);
    else
-      fail_if(!!eina_mempool_realloc(mp, tbl[500], 25));
+      fail_if(eina_mempool_realloc(mp, tbl[500], 25) != NULL);
 
    if (with_gc)
      {

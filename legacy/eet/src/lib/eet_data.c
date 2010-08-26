@@ -1874,8 +1874,8 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
        &&
        (type != EET_T_UNKNOW
         || !subtype
-        || subtype->func.type_get == NULL
-        || subtype->func.type_set == NULL))
+        || !subtype->func.type_get
+        || !subtype->func.type_set))
       return;
 
    /* VARIANT type will only work if the map only contains EET_G_*, but not UNION, VARIANT and ARRAY. */
@@ -4123,7 +4123,7 @@ eet_data_get_unknown(Eet_Free_Context     *context,
                   str = (char **)(((char *)data));
                   if (*str)
                     {
-                       if ((!ed) || (edd->func.str_direct_alloc == NULL))
+                       if ((!ed) || (!edd->func.str_direct_alloc))
                          {
                             *str = edd->func.str_alloc(*str);
                             _eet_freelist_str_add(context, *str);

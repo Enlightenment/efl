@@ -525,7 +525,7 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const void *target)
 EAPI int
 evas_cache_image_usage_get(Evas_Cache_Image *cache)
 {
-   assert(!!cache);
+   assert(cache != NULL);
 
    return cache->usage;
 }
@@ -533,7 +533,7 @@ evas_cache_image_usage_get(Evas_Cache_Image *cache)
 EAPI int
 evas_cache_image_get(Evas_Cache_Image *cache)
 {
-   assert(!!cache);
+   assert(cache != NULL);
 
    return cache->limit;
 }
@@ -541,7 +541,7 @@ evas_cache_image_get(Evas_Cache_Image *cache)
 EAPI void
 evas_cache_image_set(Evas_Cache_Image *cache, int limit)
 {
-   assert(!!cache);
+   assert(cache != NULL);
 #ifdef EVAS_FRAME_QUEUING
    LKL(cache->lock);
 #endif
@@ -698,7 +698,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
    size_t                key_length;
    struct stat           st;
 
-   assert(!!cache);
+   assert(cache != NULL);
 
    if ((!file) || ((!file) && (!key)))
      {

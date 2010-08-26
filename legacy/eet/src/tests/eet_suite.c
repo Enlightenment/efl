@@ -203,13 +203,13 @@ _eet_test_basic_check(Eet_Test_Basic_Type * result, int i)
 
    fail_if(tmp > 0.00005);
 
-   fail_if(!!result->empty);
+   fail_if(result->empty != NULL);
    if (i == 0)
      {
         Eet_Test_Basic_Type * tmp;
 
         tmp = result->with;
-        fail_if(!tmp);
+        fail_if(tmp == NULL);
 
         fail_if(tmp->c != EET_TEST_CHAR);
         fail_if(tmp->s != EET_TEST_SHORT);
@@ -223,7 +223,7 @@ _eet_test_basic_check(Eet_Test_Basic_Type * result, int i)
         fail_if(tmp->ul != EET_TEST_LONG_LONG);
      }
    else
-      fail_if(!!result->with);
+      fail_if(result->with != NULL);
 } /* _eet_test_basic_check */
 
 static void
@@ -895,7 +895,7 @@ START_TEST(eet_file_simple_write)
 
    fail_if(eet_mode_get(ef) != EET_FILE_MODE_WRITE);
 
-   fail_if(!!eet_list(ef, "*", &size));
+   fail_if(eet_list(ef, "*", &size) != NULL);
    fail_if(eet_num_entries(ef) != -1);
 
    eet_close(ef);
@@ -1036,11 +1036,11 @@ START_TEST(eet_file_data_test)
    /* Test the resulting data. */
    fail_if(_eet_test_ex_check(result, 0) != 0);
    fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
-   fail_if(!eina_list_data_get(result->ilist));
+   fail_if(eina_list_data_get(result->ilist) == NULL);
    fail_if(*((int *)eina_list_data_get(result->ilist)) != 42);
-   fail_if(!eina_list_data_get(result->slist));
+   fail_if(eina_list_data_get(result->slist) == NULL);
    fail_if(strcmp(eina_list_data_get(result->slist), "test") != 0);
-   fail_if(!eina_hash_find(result->shash, EET_TEST_KEY1));
+   fail_if(eina_hash_find(result->shash, EET_TEST_KEY1) == NULL);
    fail_if(strcmp(eina_hash_find(result->shash, EET_TEST_KEY1), "test") != 0);
    fail_if(strcmp(result->charray[0], "test") != 0);
 
@@ -1074,13 +1074,13 @@ START_TEST(eet_file_data_test)
    fail_if(eet_num_entries(ef) != 1);
 
    /* Test some more wrong case */
-   fail_if(!!eet_data_read(ef, edd, "plop"));
-   fail_if(!!eet_data_read(ef, edd, EET_TEST_FILE_KEY1));
+   fail_if(eet_data_read(ef, edd, "plop") != NULL);
+   fail_if(eet_data_read(ef, edd, EET_TEST_FILE_KEY1) != NULL);
 
    /* Reinsert and reread data */
    fail_if(!eet_data_write(ef, edd, EET_TEST_FILE_KEY1, &etbt, 0));
-   fail_if(!eet_data_read(ef, edd, EET_TEST_FILE_KEY1));
-   fail_if(!eet_read_direct(ef, EET_TEST_FILE_KEY1, &size));
+   fail_if(eet_data_read(ef, edd, EET_TEST_FILE_KEY1) == NULL);
+   fail_if(eet_read_direct(ef, EET_TEST_FILE_KEY1, &size) == NULL);
 
    eet_close(ef);
 
@@ -1163,11 +1163,11 @@ START_TEST(eet_file_data_dump_test)
    /* Test the resulting data. */
    fail_if(_eet_test_ex_check(result, 0) != 0);
    fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
-   fail_if(!eina_list_data_get(result->ilist));
+   fail_if(eina_list_data_get(result->ilist) == NULL);
    fail_if(*((int *)eina_list_data_get(result->ilist)) != 42);
-   fail_if(!eina_list_data_get(result->slist));
+   fail_if(eina_list_data_get(result->slist) == NULL);
    fail_if(strcmp(eina_list_data_get(result->slist), "test") != 0);
-   fail_if(!eina_hash_find(result->shash, EET_TEST_KEY1));
+   fail_if(eina_hash_find(result->shash, EET_TEST_KEY1) == NULL);
    fail_if(strcmp(eina_hash_find(result->shash, EET_TEST_KEY1), "test") != 0);
    fail_if(strcmp(result->charray[0], "test") != 0);
 
@@ -1307,7 +1307,7 @@ START_TEST(eet_image)
                               &compress,
                               &quality,
                               &lossy);
-   fail_if(!data);
+   fail_if(data == NULL);
    fail_if(w != test_noalpha.w);
    fail_if(h != test_noalpha.h);
    fail_if(alpha != test_noalpha.alpha);
@@ -1353,7 +1353,7 @@ START_TEST(eet_image)
    fail_if(lossy != 0);
 
    data = malloc(w * h * 4);
-   fail_if(!data);
+   fail_if(data == NULL);
    result = eet_data_image_read_to_surface(ef,
                                            EET_TEST_FILE_IMAGE "0",
                                            4,
@@ -1375,7 +1375,7 @@ START_TEST(eet_image)
    free(data);
 
    data = malloc(w * h * 4);
-   fail_if(!data);
+   fail_if(data == NULL);
    result = eet_data_image_read_to_surface(ef,
                                            EET_TEST_FILE_IMAGE "0",
                                            0,
@@ -1404,7 +1404,7 @@ START_TEST(eet_image)
                               &compress,
                               &quality,
                               &lossy);
-   fail_if(!data);
+   fail_if(data == NULL);
    fail_if(w != test_noalpha.w);
    fail_if(h != test_noalpha.h);
    fail_if(alpha != test_noalpha.alpha);
@@ -1422,7 +1422,7 @@ START_TEST(eet_image)
                               &compress,
                               &quality,
                               &lossy);
-   fail_if(!data);
+   fail_if(data == NULL);
    fail_if(w != test_noalpha.w);
    fail_if(h != test_noalpha.h);
    fail_if(alpha != test_noalpha.alpha);
@@ -1439,7 +1439,7 @@ START_TEST(eet_image)
                               &compress,
                               &quality,
                               &lossy);
-   fail_if(!data);
+   fail_if(data == NULL);
    fail_if(w != test_noalpha.w);
    fail_if(h != test_noalpha.h);
    fail_if(alpha != test_noalpha.alpha);
@@ -1454,7 +1454,7 @@ START_TEST(eet_image)
                               &compress,
                               &quality,
                               &lossy);
-   fail_if(!data);
+   fail_if(data == NULL);
    fail_if(w != test_noalpha.w);
    fail_if(h != test_noalpha.h);
    fail_if(alpha != test_noalpha.alpha);
@@ -1469,7 +1469,7 @@ START_TEST(eet_image)
                               &compress,
                               &quality,
                               &lossy);
-   fail_if(!data);
+   fail_if(data == NULL);
    fail_if(w != test_noalpha.w);
    fail_if(h != test_noalpha.h);
    fail_if(alpha != test_noalpha.alpha);
@@ -1499,7 +1499,7 @@ START_TEST(eet_image)
                               &compress,
                               &quality,
                               &lossy);
-   fail_if(!data);
+   fail_if(data == NULL);
    fail_if(w != test_alpha.w);
    fail_if(h != test_alpha.h);
    fail_if(alpha != test_alpha.alpha);
@@ -1530,7 +1530,7 @@ START_TEST(eet_image)
                               &compress,
                               &quality,
                               &lossy);
-   fail_if(!data);
+   fail_if(data == NULL);
    fail_if(w != test_alpha.w);
    fail_if(h != test_alpha.h);
    fail_if(alpha != test_alpha.alpha);
@@ -1654,7 +1654,7 @@ START_TEST(eet_identity_simple)
    fail_if(memcmp(test, buffer, strlen(buffer) + 1) != 0);
 
    tmp = eet_identity_x509(ef, &size);
-   fail_if(!tmp);
+   fail_if(tmp == NULL);
 
    eet_identity_certificate_print(tmp, size, noread);
 
@@ -1850,7 +1850,7 @@ open_close_worker(void * path)
    while (!open_worker_stop)
      {
         Eet_File * ef = eet_open((char const *)path, EET_FILE_MODE_READ);
-        if (!ef)
+        if (ef == NULL)
            pthread_exit("eet_open() failed");
         else
           {
@@ -1871,7 +1871,7 @@ open_close_worker(void * path)
    while (!open_worker_stop)
      {
         Eet_File * ef = eet_open((char const *)path, EET_FILE_MODE_READ);
-        if (!ef)
+        if (ef == NULL)
            _endthreadex(-1);
         else
           {
@@ -1964,11 +1964,11 @@ _eet_connection_read(const void * eet_data, size_t size, void * user_data)
    fail_if(!node);
    fail_if(_eet_test_ex_check(result, 0) != 0);
    fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
-   fail_if(!eina_list_data_get(result->ilist));
+   fail_if(eina_list_data_get(result->ilist) == NULL);
    fail_if(*((int *)eina_list_data_get(result->ilist)) != 42);
-   fail_if(!eina_list_data_get(result->slist));
+   fail_if(eina_list_data_get(result->slist) == NULL);
    fail_if(strcmp(eina_list_data_get(result->slist), "test") != 0);
-   fail_if(!eina_hash_find(result->shash, EET_TEST_KEY1));
+   fail_if(eina_hash_find(result->shash, EET_TEST_KEY1) == NULL);
    fail_if(strcmp(eina_hash_find(result->shash, EET_TEST_KEY1), "test") != 0);
    fail_if(strcmp(result->charray[0], "test") != 0);
 
@@ -2329,7 +2329,7 @@ _eet_union_type_get(const void * data, Eina_Bool * unknow)
    if (unknow)
       *unknow = EINA_FALSE;
 
-   for (i = 0; eet_mapping[i].name; ++i)
+   for (i = 0; eet_mapping[i].name != NULL; ++i)
       if (*u == eet_mapping[i].u)
          return eet_mapping[i].name;
 
@@ -2348,7 +2348,7 @@ _eet_union_type_set(const char * type, void * data, Eina_Bool unknow)
    if (unknow)
       return EINA_FALSE;
 
-   for (i = 0; eet_mapping[i].name; ++i)
+   for (i = 0; eet_mapping[i].name != NULL; ++i)
       if (strcmp(eet_mapping[i].name, type) == 0)
         {
            *u = eet_mapping[i].u;
@@ -2367,7 +2367,7 @@ _eet_variant_type_get(const void * data, Eina_Bool * unknow)
    if (unknow)
       *unknow = type->unknow;
 
-   for (i = 0; eet_mapping[i].name; ++i)
+   for (i = 0; eet_mapping[i].name != NULL; ++i)
       if (strcmp(type->type, eet_mapping[i].name) == 0)
          return eet_mapping[i].name;
 

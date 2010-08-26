@@ -218,7 +218,7 @@
             amx_GetAddr((amx), (param), &amx_cstr_);                 \
             amx_StrLen(amx_cstr_, &amx_length_);                     \
             if (amx_length_ > 0 &&                                   \
-                ((result) = (char*)alloca(amx_length_ + 1)) != NULL) \
+                ((result) = (char *)alloca(amx_length_ + 1))) \
               amx_GetString((result), amx_cstr_);                    \
             else (result) = NULL;                                    \
 }

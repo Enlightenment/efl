@@ -389,7 +389,7 @@ _edje_lua_new_class(lua_State *L, const Edje_Lua_Reg ** class)
 {
    int n = 0;
    _edje_lua_new_metatable(L, class);
-   while (class && (class[n]))
+   while (class && (class[n] != NULL))
      {
 	luaL_register(L, NULL, class[n]->mt);
 	lua_pushstring(L, "hands off, it's none of your business!");
@@ -5079,7 +5079,7 @@ _edje_lua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 void
 _edje_lua_init()
 {
-   if (Ledje) return;
+   if (Ledje != NULL) return;
    /*
     * create main Lua state with the custom memory allocation function
     */
@@ -5165,7 +5165,7 @@ _edje_lua_init()
 void
 _edje_lua_shutdown()
 {
-   if (!Ledje) return;
+   if (Ledje == NULL) return;
    lua_close(Ledje);
    Ledje = NULL;
 }

@@ -741,7 +741,7 @@ preproc_expr(cell * val, int *tag)
     */
    assert(strlen(pline) < sLINEMAX);
    term = strchr(pline, '\0');
-   assert(!!term);
+   assert(term != NULL);
    chrcat(pline, PREPROC_TERM);	/* the "DEL" code (see SC.H) */
    result = constexpr(val, tag);	/* get value (or 0 on error) */
    *term = '\0';		/* erase the token (if still present) */
@@ -756,7 +756,7 @@ preproc_expr(cell * val, int *tag)
 static char        *
 getstring(char *dest, int max, char *line)
 {
-   assert(!!dest && !!line);
+   assert(dest != NULL && line != NULL);
    *dest = '\0';
    while (*line <= ' ' && *line != '\0')
       line++;			/* skip whitespace */
@@ -1133,7 +1133,7 @@ command(void)
 	if (skiplevel == 0)
 	  {
 	     check_empty(lptr);
-	     assert(!!inpf);
+	     assert(inpf != NULL);
 	     if (inpf != inpf_org)
 		sc_closesrc(inpf);
 	     inpf = NULL;
@@ -2074,7 +2074,7 @@ lexclr(int clreol)
    if (clreol)
      {
 	lptr = strchr(pline, '\0');
-	assert(!!lptr);
+	assert(lptr != NULL);
      }				/* if */
 }
 
@@ -2370,12 +2370,12 @@ free_symbol(symbol * sym)
    /* free all sub-symbol allocated memory blocks, depending on the
     * kind of the symbol
     */
-   assert(!!sym);
+   assert(sym != NULL);
    if (sym->ident == iFUNCTN)
      {
 	/* run through the argument list; "default array" arguments
 	 * must be freed explicitly; the tag list must also be freed */
-	assert(!!sym->dim.arglist);
+	assert(sym->dim.arglist != NULL);
 	for (arg = sym->dim.arglist; arg->ident != 0; arg++)
 	  {
 	     if (arg->ident == iREFARRAY && arg->hasdefault)
@@ -2384,12 +2384,12 @@ free_symbol(symbol * sym)
 		      && ((arg->hasdefault & uSIZEOF) != 0
 			  || (arg->hasdefault & uTAGOF) != 0))
 		free(arg->defvalue.size.symname);
-	     assert(!!arg->tags);
+	     assert(arg->tags != NULL);
 	     free(arg->tags);
 	  }			/* for */
 	free(sym->dim.arglist);
      }				/* if */
-   assert(!!sym->refer);
+   assert(sym->refer != NULL);
    free(sym->refer);
    free(sym);
 }
@@ -2405,7 +2405,7 @@ delete_symbol(symbol * root, symbol * sym)
    while (root->next != sym)
      {
 	root = root->next;
-	assert(!!root);
+	assert(root != NULL);
      }				/* while */
 
    /* unlink it, then free it */
@@ -2518,9 +2518,9 @@ refer_symbol(symbol * entry, symbol * bywhom)
 {
    int                 count;
 
-   assert(!!bywhom);	/* it makes no sense to add a "void" referrer */
-   assert(!!entry);
-   assert(!!entry->refer);
+   assert(bywhom != NULL);	/* it makes no sense to add a "void" referrer */
+   assert(entry != NULL);
+   assert(entry->refer != NULL);
 
    /* see if it is already there */
    for (count = 0; count < entry->numrefers && entry->refer[count] != bywhom;
@@ -2556,7 +2556,7 @@ refer_symbol(symbol * entry, symbol * bywhom)
      }				/* if */
 
    /* add the referrer */
-   assert(!entry->refer[count]);
+   assert(entry->refer[count] == NULL);
    entry->refer[count] = bywhom;
    return TRUE;
 }
@@ -2612,7 +2612,7 @@ findconst(char *name)
       sym = find_symbol(&glbtab, name, fcurrent);
    if (!sym || sym->ident != iCONSTEXPR)
       return NULL;
-   assert(!sym->parent);	/* constants have no hierarchy */
+   assert(sym->parent == NULL);	/* constants have no hierarchy */
    return sym;
 }
 
@@ -2639,9 +2639,9 @@ addsym(char *name, cell addr, int ident, int vclass, int tag, int usage)
 
    /* global variables/constants/functions may only be defined once */
    assert(!(ident == iFUNCTN || ident == iCONSTEXPR) || vclass != sGLOBAL
-	  || !findglb(name));
+	  || findglb(name) == NULL);
    /* labels may only be defined once */
-   assert(ident != iLABEL || !findloc(name));
+   assert(ident != iLABEL || findloc(name) == NULL);
 
    /* create an empty referrer list */
    if (!(refer = (symbol **)malloc(sizeof(symbol *))))
@@ -2680,7 +2680,7 @@ addvariable(char *name, cell addr, int ident, int vclass, int tag,
    int                 level;
 
    /* global variables may only be defined once */
-   assert(vclass != sGLOBAL || !(sym = findglb(name))
+   assert(vclass != sGLOBAL || (sym = findglb(name)) == NULL
 	  || (sym->usage & uDEFINE) == 0);
 
    if (ident == iARRAY || ident == iREFARRAY)

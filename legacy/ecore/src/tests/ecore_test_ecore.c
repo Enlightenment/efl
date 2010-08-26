@@ -49,7 +49,7 @@ START_TEST(ecore_test_ecore_main_loop)
    fail_if(ret != 1);
 
    timer = ecore_timer_add(0.0, _quit_cb, &did);
-   fail_if(!timer);
+   fail_if(timer == NULL);
 
    ecore_main_loop_begin();
 
@@ -70,7 +70,7 @@ START_TEST(ecore_test_ecore_main_loop_idler)
    fail_if(ret != 1);
 
    idler = ecore_idler_add(_quit_cb, &did);
-   fail_if(!idler);
+   fail_if(idler == NULL);
 
    ecore_main_loop_begin();
 
@@ -91,7 +91,7 @@ START_TEST(ecore_test_ecore_main_loop_idle_enterer)
    fail_if(ret != 1);
 
    idle_enterer = ecore_idle_enterer_add(_quit_cb, &did);
-   fail_if(!idle_enterer);
+   fail_if(idle_enterer == NULL);
 
    ecore_main_loop_begin();
 
@@ -114,10 +114,10 @@ START_TEST(ecore_test_ecore_main_loop_idle_exiter)
 
    /* make system exit idle */
    timer = ecore_timer_add(0.0, _dummy_cb, (void *)(long)0);
-   fail_if(!timer);
+   fail_if(timer == NULL);
 
    idle_exiter = ecore_idle_exiter_add(_quit_cb, &did);
-   fail_if(!idle_exiter);
+   fail_if(idle_exiter == NULL);
 
    ecore_main_loop_begin();
 
@@ -139,7 +139,7 @@ START_TEST(ecore_test_ecore_main_loop_timer)
    fail_if(ret != 1);
 
    timer = ecore_timer_add(2.0, _quit_cb, &did);
-   fail_if(!timer);
+   fail_if(timer == NULL);
 
    start = ecore_time_get();
    ecore_main_loop_begin();

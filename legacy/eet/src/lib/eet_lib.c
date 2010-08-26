@@ -1623,10 +1623,10 @@ open_error:
    ef->sha1_length = 0;
 
    ef->ed = (mode == EET_FILE_MODE_WRITE)
-      || (ef->readfp == NULL && mode == EET_FILE_MODE_READ_WRITE) ?
+      || (!ef->readfp && mode == EET_FILE_MODE_READ_WRITE) ?
       eet_dictionary_add() : NULL;
 
-   if (ef->readfp == NULL &&
+   if (!ef->readfp &&
        (mode == EET_FILE_MODE_READ_WRITE || mode == EET_FILE_MODE_WRITE))
       goto empty_file;
 
@@ -1946,7 +1946,7 @@ eet_read_direct(Eet_File   *ef,
    if (!efn)
       goto on_error;
 
-   if (efn->offset < 0 && efn->data == NULL)
+   if (efn->offset < 0 && !efn->data)
       goto on_error;
 
    /* get size (uncompressed, if compressed at all) */

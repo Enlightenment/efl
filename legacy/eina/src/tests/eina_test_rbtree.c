@@ -30,7 +30,7 @@
 static inline Eina_Bool
 _eina_rbtree_is_red(Eina_Rbtree *tree)
 {
-   return !!tree && tree->color == EINA_RBTREE_RED;
+   return tree != NULL && tree->color == EINA_RBTREE_RED;
 }
 
 static int
@@ -261,7 +261,7 @@ START_TEST(eina_rbtree_simple_remove)
    _eina_rbtree_black_height(root,
                              EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
 
-   fail_if(!root);
+   fail_if(root == NULL);
 
    i = 69;
    lookup = eina_rbtree_inline_lookup(root,
@@ -271,7 +271,7 @@ START_TEST(eina_rbtree_simple_remove)
                                          eina_rbtree_int_key),
                                       NULL);
    _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
-   fail_if(!lookup);
+   fail_if(lookup == NULL);
 
    root =
       eina_rbtree_inline_remove(root, lookup, EINA_RBTREE_CMP_NODE_CB(
@@ -325,7 +325,7 @@ START_TEST(eina_rbtree_simple_remove2)
    _eina_rbtree_black_height(root,
                              EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
 
-   fail_if(!root);
+   fail_if(root == NULL);
 
    i = 69;
    lookup = eina_rbtree_inline_lookup(root,
@@ -335,7 +335,7 @@ START_TEST(eina_rbtree_simple_remove2)
                                          eina_rbtree_int_key),
                                       NULL);
    _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
-   fail_if(!lookup);
+   fail_if(lookup == NULL);
 
    root =
       eina_rbtree_inline_remove(root, lookup, EINA_RBTREE_CMP_NODE_CB(
@@ -419,7 +419,7 @@ START_TEST(eina_rbtree_simple_remove3)
    _eina_rbtree_black_height(root,
                              EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
 
-   fail_if(!root);
+   fail_if(root == NULL);
 
    i = 1113497590;
    lookup = eina_rbtree_inline_lookup(root,
@@ -429,7 +429,7 @@ START_TEST(eina_rbtree_simple_remove3)
                                          eina_rbtree_int_key),
                                       NULL);
    _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
-   fail_if(!lookup);
+   fail_if(lookup == NULL);
 
    root =
       eina_rbtree_inline_remove(root, lookup, EINA_RBTREE_CMP_NODE_CB(

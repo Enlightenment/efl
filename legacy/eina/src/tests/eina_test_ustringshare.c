@@ -71,8 +71,8 @@ START_TEST(eina_ustringshare_test_share)
    t0 = eina_ustringshare_add(TEST0);
    t1 = eina_ustringshare_add(TEST0);
 
-   fail_if(!t0);
-   fail_if(!t1);
+   fail_if(t0 == NULL);
+   fail_if(t1 == NULL);
    fail_if(eina_unicode_strcmp(t0, TEST0) != 0);
    fail_if(eina_unicode_strcmp(t1, TEST0) != 0);
    fail_if(t0 != t1);
