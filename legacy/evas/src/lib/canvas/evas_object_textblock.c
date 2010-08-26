@@ -2902,14 +2902,15 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
                        Evas_Object_Textblock_Format_Item *fi;
                        int x2;
 
-                       x2 = (fmt->tabstops * ((c->x + fmt->tabstops) / fmt->tabstops));
-                       if (x2 >
+                       x2 = c->x + fmt->tabstops;
+                       /* Wrap lines if there's a size */
+                       if ((c->w > 0) && (x2 >
                              (c->w - c->o->style_pad.l -
                               c->o->style_pad.r -
-                              c->marginl - c->marginr))
+                              c->marginl - c->marginr)))
                          {
                             _layout_line_advance(c, fmt);
-                            x2 = (fmt->tabstops * ((c->x + fmt->tabstops) / fmt->tabstops));
+                            x2 = c->x + fmt->tabstops;
                          }
                        if (c->ln->items)
                          {
