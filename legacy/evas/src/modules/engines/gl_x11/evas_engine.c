@@ -25,6 +25,8 @@ struct _Render_Engine
    struct { // xres - dpi
       int        dpi; // xres - dpi
    } xr; // xres - dpi
+   
+   int w, h;
 };
 
 static int initted = 0;
@@ -204,6 +206,25 @@ eng_info_free(Evas *e __UNUSED__, void *info)
 }
 
 static int
+_re_wincheck(Render_Engine *re)
+{
+   if (re->win->surf) return 1;
+   eng_window_resurf(re->win);
+   if (!re->win->surf)
+     {
+        fprintf(stderr, "ERROR: GL engine can't re-create window surface!\n");
+     }
+   return 0;
+}
+
+static void
+_re_winfree(Render_Engine *re)
+{
+   if (!re->win->surf) return;
+   eng_window_unsurf(re->win);
+}
+
+static int
 eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
@@ -223,17 +244,19 @@ eng_setup(Evas *e, void *in)
         re->info = info;
         re->evas = e;
 	e->engine.data.output = re;
-	re->win = eng_window_new(info->info.display,
-				 info->info.drawable,
-                                 info->info.screen,
-				 info->info.visual,
-				 info->info.colormap,
-				 info->info.depth,
-				 e->output.w,
-				 e->output.h,
-                                 info->indirect,
-                                 info->info.destination_alpha,
-                                 info->info.rotation);
+        re->w = e->output.w;
+        re->h = e->output.h;
+	re->win = eng_window_new(re->info->info.display,
+				 re->info->info.drawable,
+                                 re->info->info.screen,
+				 re->info->info.visual,
+				 re->info->info.colormap,
+				 re->info->info.depth,
+                                 re->w,
+                                 re->h,
+                                 re->info->indirect,
+                                 re->info->info.destination_alpha,
+                                 re->info->info.rotation);
 	if (!re->win)
 	  {
 	     free(re);
@@ -252,7 +275,7 @@ eng_setup(Evas *e, void *in)
 	     status = xrdb_user_query("Xft.dpi", "Xft.Dpi", &type, &val);
 	     if ((!status) || (!type))
 	       {
-		  if (!re->xrdb) re->xrdb = XrmGetDatabase(info->info.display);
+		  if (!re->xrdb) re->xrdb = XrmGetDatabase(re->info->info.display);
 		  if (re->xrdb)
 		    status = XrmGetResource(re->xrdb,
 					    "Xft.dpi", "Xft.Dpi", &type, &val);
@@ -316,48 +339,54 @@ eng_setup(Evas *e, void *in)
    else
      {
 	re = e->engine.data.output;
-        if ((info->info.display != re->win->disp) ||
-            (info->info.drawable != re->win->win) ||
-            (info->info.screen != re->win->screen) ||
-            (info->info.visual != re->win->visual) ||
-            (info->info.colormap != re->win->colormap) ||
-            (info->info.depth != re->win->depth) ||
-            (info->info.destination_alpha != re->win->alpha) ||
-            (info->info.rotation != re->win->rot))
+        if (_re_wincheck(re))
           {
-             int inc = 0;
-             
-             if (re->win)
+             if ((re->info->info.display != re->win->disp) ||
+                 (re->info->info.drawable != re->win->win) ||
+                 (re->info->info.screen != re->win->screen) ||
+                 (re->info->info.visual != re->win->visual) ||
+                 (re->info->info.colormap != re->win->colormap) ||
+                 (re->info->info.depth != re->win->depth) ||
+                 (re->info->info.destination_alpha != re->win->alpha) ||
+                 (re->info->info.rotation != re->win->rot))
                {
-                  re->win->gl_context->references++;
-                  eng_window_free(re->win);
-                  inc = 1;
-                  gl_wins--;
+                  int inc = 0;
+                  
+                  if (re->win)
+                    {
+                       re->win->gl_context->references++;
+                       eng_window_free(re->win);
+                       inc = 1;
+                       gl_wins--;
+                    }
+                  re->w = e->output.w;
+                  re->h = e->output.h;
+                  re->win = eng_window_new(re->info->info.display,
+                                           re->info->info.drawable,
+                                           re->info->info.screen,
+                                           re->info->info.visual,
+                                           re->info->info.colormap,
+                                           re->info->info.depth,
+                                           re->w,
+                                           re->h,
+                                           re->info->indirect,
+                                           re->info->info.destination_alpha,
+                                           re->info->info.rotation);
+                  if (re->win) gl_wins++;
+                  if ((re->win) && (inc))
+                     re->win->gl_context->references--;
                }
-             re->win = eng_window_new(info->info.display,
-                                      info->info.drawable,
-                                      info->info.screen,
-                                      info->info.visual,
-                                      info->info.colormap,
-                                      info->info.depth,
-                                      e->output.w,
-                                      e->output.h,
-                                      info->indirect,
-                                      info->info.destination_alpha,
-                                      info->info.rotation);
-             if (re->win) gl_wins++;
-             if ((re->win) && (inc))
-                re->win->gl_context->references--;
+             else if ((re->win->w != e->output.w) ||
+                      (re->win->h != e->output.h))
+               {
+                  re->w = e->output.w;
+                  re->h = e->output.h;
+                  re->win->w = e->output.w;
+                  re->win->h = e->output.h;
+                  eng_window_use(re->win);
+                  evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h, re->win->rot);
+               }
           }
-        else if ((re->win->w != e->output.w) ||
-                 (re->win->h != e->output.h))
-          {
-             re->win->w = e->output.w;
-             re->win->h = e->output.h;
-             eng_window_use(re->win);
-             evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h, re->win->rot);
-          }
-        
      }
    if (!re->win)
      {
@@ -501,6 +530,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    re = (Render_Engine *)data;
    /* get the upate rect surface - return engine data as dummy */
    if (!re->win->draw.redraw) return NULL;
+   if (!_re_wincheck(re)) return NULL;
    evas_gl_common_context_flush(re->win->gl_context);
    eng_window_use(re->win);
    evas_gl_common_context_newframe(re->win->gl_context);
@@ -539,6 +569,7 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
    
    re = (Render_Engine *)data;
    /* put back update surface.. in this case just unflag redraw */
+   if (!_re_wincheck(re)) return;
    re->win->draw.redraw = 0;
    re->win->draw.drew = 1;
    evas_gl_common_context_flush(re->win->gl_context);
@@ -572,6 +603,7 @@ eng_output_flush(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   if (!_re_wincheck(re)) return;
    if (!re->win->draw.drew) return;
 //x//   printf("frame -> flush\n");
    re->win->draw.drew = 0;
@@ -674,6 +706,7 @@ eng_output_dump(void *data)
    evas_common_image_image_all_unload();
    evas_common_font_font_all_unload();
    evas_gl_common_image_all_unload(re->win->gl_context);
+   _re_winfree(re);
 }
 
 static void
@@ -1062,6 +1095,7 @@ eng_image_native_set(void *data, void *image, void *native)
    uint32_t pmid;
    
    if (!im) return NULL;
+   
    if (ns)
      {
         vis = ns->data.x11.visual;
@@ -1337,9 +1371,6 @@ eng_image_free(void *data, void *image)
 static void
 eng_image_size_get(void *data, void *image, int *w, int *h)
 {
-//   Render_Engine *re;
-//
-//   re = (Render_Engine *)data;
    if (!image)
      {
 	*w = 0;

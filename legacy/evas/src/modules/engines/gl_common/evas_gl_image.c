@@ -9,8 +9,14 @@ evas_gl_common_image_all_unload(Evas_GL_Context *gc)
    EINA_LIST_FOREACH(gc->shared->images, l, im)
      {
         if (im->im) evas_cache_image_unload_data(&im->im->cache_entry);
-        if (im->tex) evas_gl_common_texture_free(im->tex);
-        im->tex = NULL;
+        if (im->tex)
+          {
+             if (!im->tex->pt->dyn.img)
+               {
+                  evas_gl_common_texture_free(im->tex);
+                  im->tex = NULL;
+               }
+          }
      }
 }
 

@@ -59,7 +59,7 @@ eng_window_new(Display *disp,
    gw->rot = rot;
 
    vi_use = _evas_gl_x11_vi;
-   if (alpha)
+   if (gw->alpha)
      {
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
         if (_evas_gl_x11_rgba_vi)
@@ -135,7 +135,7 @@ eng_window_new(Display *disp,
    config_attrs[n++] = 1;
 // FIXME: end n900 breakage   
 #endif
-   if (alpha)
+   if (gw->alpha)
      {
         config_attrs[n++] = EGL_ALPHA_SIZE;
         config_attrs[n++] = 1;
@@ -222,38 +222,38 @@ eng_window_new(Display *disp,
      {
 #ifdef NEWGL        
         if (indirect)
-          context = glXCreateNewContext(disp, fbconf, 
+          context = glXCreateNewContext(gw->disp, fbconf, 
                                         GLX_RGBA_TYPE, NULL, 
                                         GL_TRUE);
         else
-          context = glXCreateNewContext(disp, fbconf, 
+          context = glXCreateNewContext(gw->disp, fbconf, 
                                         GLX_RGBA_TYPE, NULL, 
                                         GL_FALSE);
 #else
         if (indirect)
-          context = glXCreateContext(disp, gw->visualinfo, NULL, GL_FALSE);
+          context = glXCreateContext(gw->disp, gw->visualinfo, NULL, GL_FALSE);
         else
-          context = glXCreateContext(disp, gw->visualinfo, NULL, GL_TRUE);
+          context = glXCreateContext(gw->disp, gw->visualinfo, NULL, GL_TRUE);
 #endif
      }
 #ifdef NEWGL
-   if ((alpha) && (!rgba_context))
+   if ((gw->alpha) && (!rgba_context))
      {
         if (indirect)
-          rgba_context = glXCreateNewContext(disp, rgba_fbconf, 
+          rgba_context = glXCreateNewContext(gw->disp, rgba_fbconf, 
                                              GLX_RGBA_TYPE, context, 
                                              GL_TRUE);
         else
-          rgba_context = glXCreateNewContext(disp, rgba_fbconf, 
+          rgba_context = glXCreateNewContext(gw->disp, rgba_fbconf, 
                                              GLX_RGBA_TYPE, context, 
                                              GL_FALSE);
      }
-   if (alpha)
-     gw->glxwin = glXCreateWindow(disp, rgba_fbconf, gw->win, NULL);
+   if (gw->alpha)
+     gw->glxwin = glXCreateWindow(gw->disp, rgba_fbconf, gw->win, NULL);
    else
-     gw->glxwin = glXCreateWindow(disp, fbconf, gw->win, NULL);
+     gw->glxwin = glXCreateWindow(gw->disp, fbconf, gw->win, NULL);
    
-   if (alpha) gw->context = rgba_context;
+   if (gw->alpha) gw->context = rgba_context;
    else gw->context = context;
 #else   
    gw->context = context;
@@ -311,7 +311,7 @@ eng_window_new(Display *disp,
              // noothing yet. add more cases and options over time
           }
         
-        fbc = glXGetFBConfigs(disp, screen, &num);
+        fbc = glXGetFBConfigs(gw->disp, screen, &num);
         if (!fbc)
           {
              printf("Error: glXGetFBConfigs() returned no fb configs\n");
@@ -322,27 +322,27 @@ eng_window_new(Display *disp,
                {
                   XVisualInfo *vi;
                   int vd;
-                  int alpha, val, dbuf, stencil, depth;
+                  int alph, val, dbuf, stencil, depth;
                   int rgba;
                   
-                  vi = glXGetVisualFromFBConfig(disp, fbc[j]);
+                  vi = glXGetVisualFromFBConfig(gw->disp, fbc[j]);
                   if (!vi) continue;
                   vd = vi->depth;
                   XFree(vi);
                   
                   if (vd != i) continue;
                   
-                  glXGetFBConfigAttrib(disp, fbc[j], GLX_ALPHA_SIZE, &alpha);
-                  glXGetFBConfigAttrib(disp, fbc[j], GLX_BUFFER_SIZE, &val);
+                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_ALPHA_SIZE, &alph);
+                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_BUFFER_SIZE, &val);
                   
-                  if ((val != i) && ((val - alpha) != i)) continue;
+                  if ((val != i) && ((val - alph) != i)) continue;
                   
                   val = 0;
                   rgba = 0;
                   
                   if (i == 32)
                     {
-                       glXGetFBConfigAttrib(disp, fbc[j], GLX_BIND_TO_TEXTURE_RGBA_EXT, &val);
+                       glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_BIND_TO_TEXTURE_RGBA_EXT, &val);
                        if (val)
                          {
                             rgba = 1;
@@ -352,41 +352,41 @@ eng_window_new(Display *disp,
                   if (!val)
                     {
                        if (rgba) continue;
-                       glXGetFBConfigAttrib(disp, fbc[j], GLX_BIND_TO_TEXTURE_RGB_EXT, &val);
+                       glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_BIND_TO_TEXTURE_RGB_EXT, &val);
                        if (!val) continue;
                        gw->depth_cfg[i].tex_format = GLX_TEXTURE_FORMAT_RGB_EXT;
                     }
                   
                   dbuf = 0x7fff;
-                  glXGetFBConfigAttrib(disp, fbc[j], GLX_DOUBLEBUFFER, &val);
+                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_DOUBLEBUFFER, &val);
                   if (val > dbuf) continue;
                   dbuf = val;
                   
                   stencil = 0x7fff;
-                  glXGetFBConfigAttrib(disp, fbc[j], GLX_STENCIL_SIZE, &val);
+                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_STENCIL_SIZE, &val);
                   if (val > stencil) continue;
                   stencil = val;
                   
                   depth = 0x7fff;
-                  glXGetFBConfigAttrib(disp, fbc[j], GLX_DEPTH_SIZE, &val);
+                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_DEPTH_SIZE, &val);
                   if (val > depth) continue;
                   depth = val;
                   
-                  glXGetFBConfigAttrib(disp, fbc[j], GLX_BIND_TO_MIPMAP_TEXTURE_EXT, &val);
+                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_BIND_TO_MIPMAP_TEXTURE_EXT, &val);
                   if (val < 0) continue;
                   gw->depth_cfg[i].mipmap = val;
                   
-                  glXGetFBConfigAttrib(disp, fbc[j], GLX_Y_INVERTED_EXT, &val);
+                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_Y_INVERTED_EXT, &val);
                   gw->depth_cfg[i].yinvert = val;
                   
-                  glXGetFBConfigAttrib(disp, fbc[j], GLX_BIND_TO_TEXTURE_TARGETS_EXT, &val);
+                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_BIND_TO_TEXTURE_TARGETS_EXT, &val);
                   gw->depth_cfg[i].tex_target = val;
                   
                   gw->depth_cfg[i].fbc = fbc[j];
                }
           }
         XFree(fbc);
-        if (!gw->depth_cfg[DefaultDepth(disp, screen)].fbc)
+        if (!gw->depth_cfg[DefaultDepth(gw->disp, screen)].fbc)
           {
              printf("texture from pixmap not going to work\n");
           }
@@ -406,6 +406,7 @@ eng_window_new(Display *disp,
    evas_gl_common_context_use(gw->gl_context);
    evas_gl_common_context_resize(gw->gl_context, w, h, rot);
    win_count++;
+   gw->surf = 1;
    return gw;
 }
 
@@ -483,6 +484,50 @@ eng_window_use(Evas_GL_X11_Window *gw)
 #endif
      }
    evas_gl_common_context_use(gw->gl_context);
+}
+
+void
+eng_window_unsurf(Evas_GL_X11_Window *gw)
+{
+   if (!gw->surf) return;
+   if (getenv("EVAS_GL_INFO"))
+      printf("unsurf %p\n", gw);
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   if (gw->egl_surface[0] != EGL_NO_SURFACE)
+     eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
+   gw->egl_surface[0] = EGL_NO_SURFACE;
+   eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+#else
+   if (gw->glxwin) glXDestroyWindow(gw->disp, gw->glxwin);
+#endif
+   gw->surf = 0;
+}
+
+void
+eng_window_resurf(Evas_GL_X11_Window *gw)
+{
+   if (gw->surf) return;
+   if (getenv("EVAS_GL_INFO"))
+      printf("resurf %p\n", gw);
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   gw->egl_surface[0] = eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
+                                               (EGLNativeWindowType)gw->win,
+                                               NULL);
+   if (gw->egl_surface[0] == EGL_NO_SURFACE)
+     {
+        printf("Error: eglCreateWindowSurface() fail for 0x%x.\n", (unsigned int)gw->win);
+        printf("Error: error # was: 0x%x\n", eglGetError());
+        return;
+     }
+#else
+#ifdef NEWGL
+   if (gw->alpha)
+     gw->glxwin = glXCreateWindow(gw->disp, rgba_fbconf, gw->win, NULL);
+   else
+     gw->glxwin = glXCreateWindow(gw->disp, fbconf, gw->win, NULL);
+#endif   
+#endif   
+   gw->surf = 1;
 }
 
 Visual *
