@@ -98,9 +98,6 @@
 #define SHAD_TEXUV2 3
 #define SHAD_TEXUV3 4
 
-#define MAX_CUTOUT 512
-#define MAX_PIPES  128
-
 typedef struct _Evas_GL_Program                      Evas_GL_Program;
 typedef struct _Evas_GL_Program_Source               Evas_GL_Program_Source;
 typedef struct _Evas_GL_Shared                       Evas_GL_Shared;
@@ -138,8 +135,47 @@ struct _Evas_GL_Shared
       Eina_Bool tex_rect : 1;
       Eina_Bool sec_image_map : 1;
       // tuning params - per gpu/cpu combo?
-      int cutout_max;
-      int pipes_max;
+#define MAX_CUTOUT             512
+#define DEF_CUTOUT                  512
+      
+#define MAX_PIPES              128
+#define DEF_PIPES                    32
+#define DEF_PIPES_SGX_540            32
+#define DEF_PIPES_TEGRA_2             1
+      
+#define MIN_ATLAS_ALLOC         16
+#define MAX_ATLAS_ALLOC       1024
+#define DEF_ATLAS_ALLOC            1024
+      
+#define MIN_ATLAS_ALLOC_ALPHA   16
+#define MAX_ATLAS_ALLOC_ALPHA 4096
+#define DEF_ATLAS_ALLOC_ALPHA      4096
+      
+#define MAX_ATLAS_W            512
+#define DEF_ATLAS_W                 512
+      
+#define MAX_ATLAS_H            512
+#define DEF_ATLAS_H                 512
+      
+#define MIN_ATLAS_SLOT          16
+#define MAX_ATLAS_SLOT         512
+#define DEF_ATLAS_SLOT               16
+      
+      struct {
+         struct {
+            int max;
+         } cutout;
+         struct {
+            int max;
+         } pipes;
+         struct {
+            int max_alloc_size;
+            int max_alloc_alpha_size;
+            int max_w;
+            int max_h;
+            int slot_size;
+         } atlas;
+      } tune;
    } info;
    
    struct {

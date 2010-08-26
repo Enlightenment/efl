@@ -527,8 +527,8 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
    
    im->tex->im = im;
    if ((!gc->dc->cutout.rects) || 
-       ((gc->shared->info.cutout_max > 0) &&
-           (gc->dc->cutout.active > gc->shared->info.cutout_max)))
+       ((gc->shared->info.tune.cutout.max > 0) &&
+           (gc->dc->cutout.active > gc->shared->info.tune.cutout.max)))
      {
         if (gc->dc->clip.use)
           {

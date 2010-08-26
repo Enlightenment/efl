@@ -53,7 +53,8 @@ _tex_round_slot(Evas_GL_Context *gc, int h)
 {
    if (!gc->shared->info.tex_npo2)
      h = _nearest_pow2(h);
-   return (h + 15) >> 4;
+   return (h + gc->shared->info.tune.atlas.slot_size - 1) /
+      gc->shared->info.tune.atlas.slot_size;
 }
 
 static int
@@ -99,7 +100,7 @@ _pool_tex_new(Evas_GL_Context *gc, int w, int h, int intformat, int format)
    
    pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
    if (!pt) return NULL;
-   h = _tex_round_slot(gc, h) << 4;
+   h = _tex_round_slot(gc, h) * gc->shared->info.tune.atlas.slot_size;
    _tex_adjust(gc, &w, &h);
    pt->gc = gc;
    pt->w = w;
@@ -180,7 +181,10 @@ _pool_tex_find(Evas_GL_Context *gc, int w, int h,
    Eina_List *l;
    int th, th2;
    
-   if ((w > 512) || (h > 512))
+   if (atlas_w > gc->shared->info.max_texture_size)
+      atlas_w = gc->shared->info.max_texture_size;
+   if ((w > gc->shared->info.tune.atlas.max_w) || 
+       (h > gc->shared->info.tune.atlas.max_h))
      {
         pt = _pool_tex_new(gc, w, h, intformat, format);
         gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, pt);
@@ -233,30 +237,35 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im)
    if (im->cache_entry.flags.alpha)
      {
         if (gc->shared->info.bgra)
-          tex->pt = _pool_tex_find(gc, im->cache_entry.w + 2,
-                                   im->cache_entry.h + 1, bgra_ifmt, bgra_fmt, 
-                                   &u, &v, &l_after, 1024);
+           tex->pt = _pool_tex_find(gc, im->cache_entry.w + 2,
+                                    im->cache_entry.h + 1, bgra_ifmt, bgra_fmt, 
+                                    &u, &v, &l_after, 
+                                    gc->shared->info.tune.atlas.max_alloc_alpha_size);
         else
-          tex->pt = _pool_tex_find(gc, im->cache_entry.w + 2,
-                                   im->cache_entry.h + 1, rgba_ifmt, rgba_fmt, 
-                                   &u, &v, &l_after, 1024);
+           tex->pt = _pool_tex_find(gc, im->cache_entry.w + 2,
+                                    im->cache_entry.h + 1, rgba_ifmt, rgba_fmt, 
+                                    &u, &v, &l_after,
+                                    gc->shared->info.tune.atlas.max_alloc_alpha_size);
         tex->alpha = 1;
      }
    else
      {
         if (gc->shared->info.bgra)
-          tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
-                                 im->cache_entry.h + 1, bgr_ifmt, bgr_fmt,
-                                 &u, &v, &l_after, 1024);
+           tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
+                                    im->cache_entry.h + 1, bgr_ifmt, bgr_fmt,
+                                    &u, &v, &l_after,
+                                    gc->shared->info.tune.atlas.max_alloc_size);
         else
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-          tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
-                                 im->cache_entry.h + 1, rgba_ifmt, rgba_fmt,
-                                 &u, &v, &l_after, 1024);
+           tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
+                                    im->cache_entry.h + 1, rgba_ifmt, rgba_fmt,
+                                    &u, &v, &l_after,
+                                    gc->shared->info.tune.atlas.max_alloc_size);
 #else
-          tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
-                                 im->cache_entry.h + 1, rgb_ifmt, rgb_fmt,
-                                 &u, &v, &l_after, 1024);
+           tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
+                                    im->cache_entry.h + 1, rgb_ifmt, rgb_fmt,
+                                    &u, &v, &l_after,
+                                    gc->shared->info.tune.atlas.max_alloc_size);
 #endif
      }
    if (!tex->pt)
@@ -287,7 +296,7 @@ _pool_tex_render_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    
    pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
    if (!pt) return NULL;
-   h = _tex_round_slot(gc, h) << 4;
+   h = _tex_round_slot(gc, h) * gc->shared->info.tune.atlas.slot_size;
    _tex_adjust(gc, &w, &h);
    pt->gc = gc;
    pt->w = w;
@@ -414,7 +423,8 @@ _pool_tex_dynamic_new(Evas_GL_Context *gc, int w, int h, int intformat, int form
    
    pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
    if (!pt) return NULL;
-   h = _tex_round_slot(gc, h) << 4;
+// no atlas pools/sharing here   
+//   h = _tex_round_slot(gc, h) * gc->shared->info.tune.atlas.slot_size;
    _tex_adjust(gc, &w, &h);
    pt->gc = gc;
    pt->w = w;
@@ -801,20 +811,21 @@ evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels,
    Evas_GL_Texture *tex;
    Eina_List *l_after = NULL;
    int u = 0, v = 0;
-   int tw = 4096;
 
    tex = calloc(1, sizeof(Evas_GL_Texture));
    if (!tex) return NULL;
    
    tex->gc = gc;
    tex->references = 1;
-   if (tw > gc->shared->info.max_texture_size)
-     tw = gc->shared->info.max_texture_size;
    tex->pt = _pool_tex_find(gc, w + 3, fh, alpha_ifmt, alpha_fmt, &u, &v, 
-                            &l_after, tw);
+                            &l_after,
+                            gc->shared->info.tune.atlas.max_alloc_alpha_size);
    if (!tex->pt)
      {
-        memset(tex, 0x66, sizeof(Evas_GL_Texture)); // mark as freed
+        // FIXME: mark as freed for now with 0x66, but this is me TRYING to
+        // find some mysterious bug i simply have been unable to catch or
+        // reproduce - so leave a trail and see how it goes.
+        memset(tex, 0x66, sizeof(Evas_GL_Texture));
         free(tex);
         return NULL;
      }

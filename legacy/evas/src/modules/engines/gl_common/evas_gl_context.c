@@ -437,7 +437,8 @@ evas_gl_common_context_new(void)
         ext = glGetString(GL_EXTENSIONS);
         if (ext)
           {
-             fprintf(stderr, "EXT:\n%s\n", ext);
+             if (getenv("EVAS_GL_INFO"))
+                fprintf(stderr, "EXT:\n%s\n", ext);
              if ((strstr((char *)ext, "GL_ARB_texture_non_power_of_two")) ||
                  (strstr((char *)ext, "OES_texture_npot")) ||
                  (strstr((char *)ext, "GL_IMG_texture_npot")))
@@ -483,53 +484,76 @@ evas_gl_common_context_new(void)
         
         // magic numbers that are a result of imperical testing and getting
         // "best case" performance across a range of systems
-        shared->info.cutout_max = 512;
-        shared->info.pipes_max = 32;
+        shared->info.tune.cutout.max                 = DEF_CUTOUT;
+        shared->info.tune.pipes.max                  = DEF_PIPES;
+        shared->info.tune.atlas.max_alloc_size       = DEF_ATLAS_ALLOC;
+        shared->info.tune.atlas.max_alloc_alpha_size = DEF_ATLAS_ALLOC_ALPHA;
+        shared->info.tune.atlas.max_w                = DEF_ATLAS_W;
+        shared->info.tune.atlas.max_h                = DEF_ATLAS_H;
+        shared->info.tune.atlas.slot_size            = DEF_ATLAS_SLOT;
         
         // per gpu hacks. based on impirical measurement of some known gpu's
         s = (const char *)glGetString(GL_RENDERER);
         if (s)
           {
              if      (strstr(s, "PowerVR SGX 540"))
-                shared->info.pipes_max = 32;
+                shared->info.tune.pipes.max = DEF_PIPES_SGX_540;
              else if (strstr(s, "NVIDIA Tegra"))
-                shared->info.pipes_max = 1;
+                shared->info.tune.pipes.max = DEF_PIPES_TEGRA_2;
           }
         
-        if (getenv("EVAS_GL_CUTOUT_MAX"))
-           shared->info.cutout_max = atoi(getenv("EVAS_GL_CUTOUT_MAX"));
-        if (getenv("EVAS_GL_PIPES_MAX"))
-          {
-             shared->info.pipes_max = atoi(getenv("EVAS_GL_PIPES_MAX"));
-             if (shared->info.pipes_max > MAX_PIPES)
-                shared->info.pipes_max = MAX_PIPES;
-             else if (shared->info.pipes_max < 1)
-                shared->info.pipes_max = 1;
-          }
-        
-        fprintf(stderr,
-                "max tex size %ix%i\n"
-                "max units %i\n"
-                "non-power-2 tex %i\n"
-                "rect tex %i\n"
-                "bgra : %i\n"
-                "max ansiotropic filtering: %3.3f\n"
-                "egl sec map image: %i\n"
-                "\n"
-                "cutout max: %i\n"
-                "pipes max: %i\n"
-                , 
-                (int)shared->info.max_texture_size, (int)shared->info.max_texture_size,
-                (int)shared->info.max_texture_units,
-                (int)shared->info.tex_npo2,
-                (int)shared->info.tex_rect,
-                (int)shared->info.bgra,
-                (double)shared->info.anisotropic,
-                (int)shared->info.sec_image_map,
-                
-                (int)shared->info.cutout_max,
-                (int)shared->info.pipes_max
-                );
+#define GETENVOPT(name, tune_param, min, max) \
+        do { \
+           const char *__v = getenv(name); \
+           if (__v) { \
+                shared->info.tune.tune_param = atoi(__v); \
+                if (shared->info.tune.tune_param > max) \
+                   shared->info.tune.tune_param = max; \
+                else if (shared->info.tune.tune_param < min) \
+                   shared->info.tune.tune_param = min; \
+             } \
+        } while (0)
+
+        GETENVOPT("EVAS_GL_CUTOUT_MAX", cutout.max, -1, 0x7fffffff);
+        GETENVOPT("EVAS_GL_PIPES_MAX", pipes.max, 1, MAX_PIPES);
+        GETENVOPT("EVAS_GL_ATLAS_ALLOC_SIZE", atlas.max_alloc_size, MIN_ATLAS_ALLOC, MAX_ATLAS_ALLOC);
+        GETENVOPT("EVAS_GL_ATLAS_ALLOC_ALPHA_SIZE", atlas.max_alloc_alpha_size, MIN_ATLAS_ALLOC_ALPHA, MAX_ATLAS_ALLOC_ALPHA);
+        GETENVOPT("EVAS_GL_ATLAS_MAX_W", atlas.max_w, 0, MAX_ATLAS_W);
+        GETENVOPT("EVAS_GL_ATLAS_MAX_H", atlas.max_h, 0, MAX_ATLAS_H);
+        GETENVOPT("EVAS_GL_ATLAS_SLOT_SIZE", atlas.slot_size, MIN_ATLAS_SLOT, MAX_ATLAS_SLOT);
+
+        if (getenv("EVAS_GL_INFO"))
+           fprintf(stderr,
+                   "max tex size %ix%i\n"
+                   "max units %i\n"
+                   "non-power-2 tex %i\n"
+                   "rect tex %i\n"
+                   "bgra : %i\n"
+                   "max ansiotropic filtering: %3.3f\n"
+                   "egl sec map image: %i\n"
+                   "\n"
+                   "EVAS_GL_CUTOUT_MAX: %i\n"
+                   "EVAS_GL_PIPES_MAX: %i\n"
+                   "EVAS_GL_ATLAS_ALLOC_SIZE: %i\n"
+                   "EVAS_GL_ATLAS_ALLOC_ALPHA_SIZE: %i\n"
+                   "EVAS_GL_ATLAS_MAX_W x EVAS_GL_ATLAS_MAX_H: %i x %i\n"
+                   "EVAS_GL_ATLAS_SLOT_SIZE: %i\n"
+                   , 
+                   (int)shared->info.max_texture_size, (int)shared->info.max_texture_size,
+                   (int)shared->info.max_texture_units,
+                   (int)shared->info.tex_npo2,
+                   (int)shared->info.tex_rect,
+                   (int)shared->info.bgra,
+                   (double)shared->info.anisotropic,
+                   (int)shared->info.sec_image_map,
+                   
+                   (int)shared->info.tune.cutout.max,
+                   (int)shared->info.tune.pipes.max,
+                   (int)shared->info.tune.atlas.max_alloc_size,
+                   (int)shared->info.tune.atlas.max_alloc_alpha_size,
+                   (int)shared->info.tune.atlas.max_w, (int)shared->info.tune.atlas.max_h,
+                   (int)shared->info.tune.atlas.slot_size
+                  );
         
         glDisable(GL_DEPTH_TEST);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -662,7 +686,7 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
 
    if (gc->shared)
      {
-        for (i = 0; i < gc->shared->info.pipes_max; i++)
+        for (i = 0; i < gc->shared->info.tune.pipes.max; i++)
           {
              if (gc->pipe[i].array.vertex) free(gc->pipe[i].array.vertex);
              if (gc->pipe[i].array.color) free(gc->pipe[i].array.color);
@@ -752,7 +776,7 @@ evas_gl_common_context_newframe(Evas_GL_Context *gc)
    gc->state.current.cw = 0;
    gc->state.current.ch = 0;
    
-   for (i = 0; i < gc->shared->info.pipes_max; i++)
+   for (i = 0; i < gc->shared->info.tune.pipes.max; i++)
      {
         gc->pipe[i].region.x = 0;
         gc->pipe[i].region.y = 0;
@@ -1094,7 +1118,7 @@ again:
         if (!found)
           {
              pn = gc->state.top_pipe + 1;
-             if (pn >= gc->shared->info.pipes_max)
+             if (pn >= gc->shared->info.tune.pipes.max)
                {
                   shader_array_flush(gc);
                   goto again;
@@ -1269,7 +1293,7 @@ again:
         if (!found)
           {
              pn = gc->state.top_pipe + 1;
-             if (pn >= gc->shared->info.pipes_max)
+             if (pn >= gc->shared->info.tune.pipes.max)
                {
                   shader_array_flush(gc);
                   goto again;
@@ -1467,7 +1491,7 @@ again:
         if (!found)
           {
              pn = gc->state.top_pipe + 1;
-             if (pn >= gc->shared->info.pipes_max)
+             if (pn >= gc->shared->info.tune.pipes.max)
                {
                   shader_array_flush(gc);
                   goto again;
@@ -1637,7 +1661,7 @@ again:
         if (!found)
           {
              pn = gc->state.top_pipe + 1;
-             if (pn >= gc->shared->info.pipes_max)
+             if (pn >= gc->shared->info.tune.pipes.max)
                {
                   shader_array_flush(gc);
                   goto again;
@@ -1889,7 +1913,7 @@ again:
         if (!found)
           {
              pn = gc->state.top_pipe + 1;
-             if (pn >= gc->shared->info.pipes_max)
+             if (pn >= gc->shared->info.tune.pipes.max)
                {
                   shader_array_flush(gc);
                   goto again;
@@ -2048,7 +2072,7 @@ shader_array_flush(Evas_GL_Context *gc)
 {
    int i;
    
-   for (i = 0; i < gc->shared->info.pipes_max; i++)
+   for (i = 0; i < gc->shared->info.tune.pipes.max; i++)
      {
         if (gc->pipe[i].array.num <= 0) break;
 
@@ -2141,7 +2165,8 @@ shader_array_flush(Evas_GL_Context *gc)
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }
           }
-        if (gc->pipe[i].shader.smooth != gc->state.current.smooth)
+        if ((gc->pipe[i].shader.smooth != gc->state.current.smooth) ||
+            (gc->pipe[i].shader.cur_tex != gc->state.current.cur_tex))
           {
              if (gc->pipe[i].shader.smooth)
                {

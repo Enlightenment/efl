@@ -210,9 +210,12 @@ eng_window_new(Display *disp,
    if (!vendor) vendor = "-UNKNOWN-";
    if (!renderer) renderer = "-UNKNOWN-";
    if (!version) version = "-UNKNOWN-";
-   fprintf(stderr, "vendor: %s\n", vendor);
-   fprintf(stderr, "renderer: %s\n", renderer);
-   fprintf(stderr, "version: %s\n", version);
+   if (getenv("EVAS_GL_INFO"))
+     {
+        fprintf(stderr, "vendor: %s\n", vendor);
+        fprintf(stderr, "renderer: %s\n", renderer);
+        fprintf(stderr, "version: %s\n", version);
+     }
    
 // GLX   
 #else
@@ -284,10 +287,12 @@ eng_window_new(Display *disp,
         renderer = glGetString(GL_RENDERER);
         version = glGetString(GL_VERSION);
         
-        fprintf(stderr, "vendor: %s\n", vendor);
-        fprintf(stderr, "renderer: %s\n", renderer);
-        fprintf(stderr, "version: %s\n", version);
-        
+        if (getenv("EVAS_GL_INFO"))
+          {
+             fprintf(stderr, "vendor: %s\n", vendor);
+             fprintf(stderr, "renderer: %s\n", renderer);
+             fprintf(stderr, "version: %s\n", version);
+          }
         if (strstr(vendor, "NVIDIA"))
            // FIXME: also same as tegra2 - maybe check renderer too
            // 
