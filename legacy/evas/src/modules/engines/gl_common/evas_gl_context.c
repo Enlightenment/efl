@@ -506,12 +506,12 @@ evas_gl_common_context_new(void)
         do { \
            const char *__v = getenv(name); \
            if (__v) { \
-                shared->info.tune.tune_param = atoi(__v); \
-                if (shared->info.tune.tune_param > max) \
-                   shared->info.tune.tune_param = max; \
-                else if (shared->info.tune.tune_param < min) \
-                   shared->info.tune.tune_param = min; \
-             } \
+              shared->info.tune.tune_param = atoi(__v); \
+              if (shared->info.tune.tune_param > max) \
+                 shared->info.tune.tune_param = max; \
+              else if (shared->info.tune.tune_param < min) \
+                 shared->info.tune.tune_param = min; \
+           } \
         } while (0)
 
         GETENVOPT("EVAS_GL_CUTOUT_MAX", cutout.max, -1, 0x7fffffff);

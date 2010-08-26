@@ -216,7 +216,6 @@ eng_window_new(Display *disp,
         fprintf(stderr, "renderer: %s\n", renderer);
         fprintf(stderr, "version: %s\n", version);
      }
-   
 // GLX   
 #else
    if (!context)
@@ -286,7 +285,6 @@ eng_window_new(Display *disp,
         vendor = glGetString(GL_VENDOR);
         renderer = glGetString(GL_RENDERER);
         version = glGetString(GL_VERSION);
-        
         if (getenv("EVAS_GL_INFO"))
           {
              fprintf(stderr, "vendor: %s\n", vendor);
