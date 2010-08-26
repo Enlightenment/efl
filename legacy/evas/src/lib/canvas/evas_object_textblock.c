@@ -3891,8 +3891,9 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                    * fancier in the future, atm it breaks if this char
                    * is inside <> */
                   _prepend_text_run(o, s, p);
-                  p += 2; /* it's also advanced later in this loop */
-                  s = NULL;
+                  p += 2; /* it's also advanced later in this loop need +3
+                           * in total*/
+                  s = p + 1; /* One after the end of the replacement char */
                }
              p++;
           }
