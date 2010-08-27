@@ -27,6 +27,29 @@ static const GLenum alpha_ifmt = GL_ALPHA;
 static const GLenum lum_fmt    = GL_LUMINANCE;
 static const GLenum lum_ifmt   = GL_LUMINANCE;
 
+static struct {
+   struct {
+      int num, pix;
+   } c, a, v, r, n, d;
+} texinfo = {0};
+
+static int
+_print_tex_count(void)
+{
+   if (getenv("EVAS_GL_MEMINFO"))
+     {
+        fprintf(stderr,
+                "T: c:%i/%ik | a:%i/%ik | v:%i/%ik | r:%i/%ik | n:%i/%ik | d:%i/%ik\n",
+                texinfo.c.num, (texinfo.c.pix * 4) / 1024,
+                texinfo.a.num, (texinfo.a.pix    ) / 1024,
+                texinfo.v.num, (texinfo.v.pix    ) / 1024,
+                texinfo.r.num, (texinfo.r.pix * 4) / 1024,
+                texinfo.n.num, (texinfo.n.pix * 4) / 1024,
+                texinfo.d.num, (texinfo.d.pix * 4) / 1024
+               );
+     }
+}
+
 static int
 _nearest_pow2(int num)
 {
@@ -109,6 +132,25 @@ _pool_tex_new(Evas_GL_Context *gc, int w, int h, int intformat, int format)
    pt->format = format;
    pt->dataformat = GL_UNSIGNED_BYTE;
    pt->references = 0;
+   
+   if (format == alpha_fmt)
+      {
+         texinfo.a.num++;
+         texinfo.a.pix += pt->w * pt->h;
+      }
+   else if (format == lum_fmt)
+      {
+         texinfo.v.num++;
+         texinfo.v.pix += pt->w * pt->h;
+      }
+   else
+      {
+         texinfo.c.num++;
+         texinfo.c.pix += pt->w * pt->h;
+      }
+
+   _print_tex_count();
+   
    glGenTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindTexture(GL_TEXTURE_2D, pt->texture);
@@ -324,6 +366,11 @@ _pool_tex_render_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
 #  define GL_COLOR_ATTACHMENT0 GL_COLOR_ATTACHMENT0_EXT
 # endif
 #endif  
+   texinfo.r.num++;
+   texinfo.r.pix += pt->w * pt->h;
+   
+   _print_tex_count();
+   
    glGenTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindTexture(GL_TEXTURE_2D, pt->texture);
@@ -364,6 +411,8 @@ _pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    if (im->native.target == GL_TEXTURE_RECTANGLE_ARB)
      {
         printf("REEEEEEEEECT\n");
+        pt->w = w;
+        pt->h = h;
      }
    else
 #endif     
@@ -377,6 +426,11 @@ _pool_tex_native_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    pt->dataformat = GL_UNSIGNED_BYTE;
    pt->references = 0;
    pt->native = 1;
+   texinfo.n.num++;
+   texinfo.n.pix += pt->w * pt->h;
+   
+   _print_tex_count();
+   
    glGenTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindTexture(im->native.target, pt->texture);
@@ -436,6 +490,11 @@ _pool_tex_dynamic_new(Evas_GL_Context *gc, int w, int h, int intformat, int form
    pt->dataformat = GL_UNSIGNED_BYTE;
    pt->render = 1;
    pt->references = 0;
+   texinfo.d.num++;
+   texinfo.d.pix += pt->w * pt->h;
+   
+   _print_tex_count();
+   
    glGenTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindTexture(GL_TEXTURE_2D, pt->texture);
@@ -550,6 +609,40 @@ pt_unref(Evas_GL_Texture_Pool *pt)
 {
    pt->references--;
    if (pt->references != 0) return;
+   
+   if (pt->format == alpha_fmt)
+      {
+         texinfo.a.num--;
+         texinfo.a.pix -= pt->w * pt->h;
+      }
+   else if (pt->format == lum_fmt)
+      {
+         texinfo.v.num--;
+         texinfo.v.pix -= pt->w * pt->h;
+      }
+   else if (pt->dyn.img)
+      {
+         texinfo.d.num--;
+         texinfo.d.pix -= pt->w * pt->h;
+      }
+   else if (pt->render)
+      {
+         texinfo.r.num--;
+         texinfo.r.pix -= pt->w * pt->h;
+      }
+   else if (pt->native)
+      {
+         texinfo.n.num--;
+         texinfo.n.pix -= pt->w * pt->h;
+      }
+   else
+      {
+         texinfo.c.num--;
+         texinfo.c.pix -= pt->w * pt->h;
+      }
+   
+   _print_tex_count();
+   
    if (!((pt->render) || (pt->native)))
      {
         if (pt->whole)
