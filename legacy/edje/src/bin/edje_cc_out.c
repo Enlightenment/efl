@@ -282,12 +282,16 @@ data_write_header(Eet_File *ef)
 static int
 data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_bytes)
 {
-   Eina_List *l;;
+   Eina_Iterator *it;
    int bytes = 0;
    int total_bytes = 0;
    Font *fn;
 
-   EINA_LIST_FOREACH(fonts, l, fn)
+   if (!edje_file->fonts)
+     return 0;
+
+   it = eina_hash_iterator_data_new(edje_file->fonts);
+   EINA_ITERATOR_FOREACH(it, fn)
      {
 	void *fdata = NULL;
 	int fsize = 0;
@@ -372,6 +376,7 @@ data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_b
 	     free(fdata);
 	  }
      }
+   eina_iterator_free(it);
 
    return total_bytes;
 }
