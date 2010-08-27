@@ -4,6 +4,8 @@ AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/src/include \
 -I$(top_builddir)/src/include \
+-I$(top_srcdir)/src/lib \
+-I$(top_builddir)/src/lib \
 @EINA_CPPFLAGS@ \
 @EINA_CFLAGS@ \
 @EMEMOA_CFLAGS@ \
