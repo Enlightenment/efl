@@ -426,9 +426,13 @@
 
 	* Add a specific allocator for array. This should fix wrong allocation
 	case discovered with recent edje file format change.
-        
+
 2010-08-23  Carsten Haitzler (The Rasterman)
 
         * Fix some cppcheck complaints - all of them bogus though.
         Nothing actually fixed.
 
+2010-08-27  Cedric BAIL
+
+	* prevent the build of eet data structure that doesn't match what
+	the application is expecting.
