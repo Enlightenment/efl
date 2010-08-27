@@ -496,10 +496,16 @@ eng_window_unsurf(Evas_GL_X11_Window *gw)
    if (getenv("EVAS_GL_INFO"))
       printf("unsurf %p\n", gw);
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-   if (gw->egl_surface[0] != EGL_NO_SURFACE)
-     eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
-   gw->egl_surface[0] = EGL_NO_SURFACE;
+   if (_evas_gl_x11_window)
+      evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
+   if (_evas_gl_x11_window == gw)
+     {
+        eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        if (gw->egl_surface[0] != EGL_NO_SURFACE)
+           eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
+        gw->egl_surface[0] = EGL_NO_SURFACE;
+        _evas_gl_x11_window = NULL;
+     }
 #else
    if (gw->glxwin)
       {
