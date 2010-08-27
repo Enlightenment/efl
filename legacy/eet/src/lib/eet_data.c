@@ -2115,6 +2115,23 @@ _eet_free_add(Eet_Free *ef,
 } /* _eet_free_add */
 
 static void
+_eet_free_del(Eet_Free *ef,
+              void     *data)
+{
+   int hash;
+   int i;
+
+   hash = _eet_free_hash(data);
+
+   for (i = 0; i < ef->num[hash]; ++i)
+      if (ef->list[hash][i] == data)
+	{
+	   ef->list[hash][i] = NULL;
+	   return;
+	}
+}
+
+static void
 _eet_free_reset(Eet_Free *ef)
 {
    int i;
@@ -2146,6 +2163,7 @@ _eet_free_unref(Eet_Free *ef)
 } /* _eet_free_unref */
 
 #define _eet_freelist_add(Ctx, Data) _eet_free_add(&Ctx->freelist, Data);
+#define _eet_freelist_del(Ctx, Data) _eet_free_del(&Ctx->freelist, Data);
 #define _eet_freelist_reset(Ctx)     _eet_free_reset(&Ctx->freelist);
 #define _eet_freelist_ref(Ctx)       _eet_free_ref(&Ctx->freelist);
 #define _eet_freelist_unref(Ctx)     _eet_free_unref(&Ctx->freelist);
@@ -2162,16 +2180,18 @@ _eet_freelist_free(Eet_Free_Context    *context,
 
    for (j = 0; j < 256; ++j)
       for (i = 0; i < context->freelist.num[j]; ++i)
-        {
-           if (edd)
-              edd->func.mem_free(context->freelist.list[j][i]);
-           else
-              free(context->freelist.list[j][i]);
-        }
+	if (context->freelist.list[j][i])
+	  {
+	     if (edd)
+	       edd->func.mem_free(context->freelist.list[j][i]);
+	     else
+	       free(context->freelist.list[j][i]);
+	  }
    _eet_free_reset(&context->freelist);
 } /* _eet_freelist_free */
 
 #define _eet_freelist_array_add(Ctx, Data) _eet_free_add(&Ctx->freelist_array, Data);
+#define _eet_freelist_array_del(Ctx, Data) _eet_free_del(&Ctx->freelist_array, Data);
 #define _eet_freelist_array_reset(Ctx)     _eet_free_reset(&Ctx->freelist_array);
 #define _eet_freelist_array_ref(Ctx)       _eet_free_ref(&Ctx->freelist_array);
 #define _eet_freelist_array_unref(Ctx)     _eet_free_unref(&Ctx->freelist_array);
@@ -2188,21 +2208,23 @@ _eet_freelist_array_free(Eet_Free_Context    *context,
 
    for (j = 0; j < 256; ++j)
       for (i = 0; i < context->freelist_array.num[j]; ++i)
-        {
-           if (edd)
-	     {
-		if (edd->func.array_free)
-		  edd->func.array_free(context->freelist_array.list[j][i]);
-		else
-		  edd->func.mem_free(context->freelist_array.list[j][i]);
-	     }
-           else
-              free(context->freelist_array.list[j][i]);
-        }
+	if (context->freelist_array.list[j][i])
+	  {
+	     if (edd)
+	       {
+		  if (edd->func.array_free)
+		    edd->func.array_free(context->freelist_array.list[j][i]);
+		  else
+		    edd->func.mem_free(context->freelist_array.list[j][i]);
+	       }
+	     else
+	       free(context->freelist_array.list[j][i]);
+	  }
    _eet_free_reset(&context->freelist_array);
 } /* _eet_freelist_array_free */
 
 #define _eet_freelist_list_add(Ctx, Data) _eet_free_add(&Ctx->freelist_list, Data);
+#define _eet_freelist_list_del(Ctx, Data) _eet_free_del(&Ctx->freelist_list, Data);
 #define _eet_freelist_list_reset(Ctx)     _eet_free_reset(&Ctx->freelist_list);
 #define _eet_freelist_list_ref(Ctx)       _eet_free_ref(&Ctx->freelist_list);
 #define _eet_freelist_list_unref(Ctx)     _eet_free_unref(&Ctx->freelist_list);
@@ -2219,14 +2241,16 @@ _eet_freelist_list_free(Eet_Free_Context    *context,
 
    for (j = 0; j < 256; ++j)
       for (i = 0; i < context->freelist_list.num[j]; ++i)
-        {
-           if (edd)
-              edd->func.list_free(*((void **)(context->freelist_list.list[j][i])));
-        }
+	if (context->freelist_list.list[j][i])
+	  {
+	     if (edd)
+	       edd->func.list_free(*((void **)(context->freelist_list.list[j][i])));
+	  }
    _eet_free_reset(&context->freelist_list);
 } /* _eet_freelist_list_free */
 
 #define _eet_freelist_str_add(Ctx, Data) _eet_free_add(&Ctx->freelist_str, Data);
+#define _eet_freelist_str_del(Ctx, Data) _eet_free_del(&Ctx->freelist_str, Data);
 #define _eet_freelist_str_reset(Ctx)     _eet_free_reset(&Ctx->freelist_str);
 #define _eet_freelist_str_ref(Ctx)       _eet_free_ref(&Ctx->freelist_str);
 #define _eet_freelist_str_unref(Ctx)     _eet_free_unref(&Ctx->freelist_str);
@@ -2242,16 +2266,18 @@ _eet_freelist_str_free(Eet_Free_Context *context, Eet_Data_Descriptor *edd)
 
    for (j = 0; j < 256; ++j)
       for (i = 0; i < context->freelist_str.num[j]; ++i)
-        {
-           if (edd)
-              edd->func.str_free(context->freelist_str.list[j][i]);
-           else
-              free(context->freelist_str.list[j][i]);
-        }
+	if (context->freelist_str.list[j][i])
+	  {
+	     if (edd)
+	       edd->func.str_free(context->freelist_str.list[j][i]);
+	     else
+	       free(context->freelist_str.list[j][i]);
+	  }
    _eet_free_reset(&context->freelist_str);
 } /* _eet_freelist_str_free */
 
 #define _eet_freelist_direct_str_add(Ctx, Data) _eet_free_add(&Ctx->freelist_direct_str, Data);
+#define _eet_freelist_direct_str_del(Ctx, Data) _eet_free_del(&Ctx->freelist_direct_str, Data);
 #define _eet_freelist_direct_str_reset(Ctx)     _eet_free_reset(&Ctx->freelist_direct_str);
 #define _eet_freelist_direct_str_ref(Ctx)       _eet_free_ref(&Ctx->freelist_direct_str);
 #define _eet_freelist_direct_str_unref(Ctx)     _eet_free_unref(&Ctx->freelist_direct_str);
@@ -2268,16 +2294,18 @@ _eet_freelist_direct_str_free(Eet_Free_Context    *context,
 
    for (j = 0; j < 256; ++j)
       for (i = 0; i < context->freelist_direct_str.num[j]; ++i)
-        {
-           if (edd)
-              edd->func.str_direct_free(context->freelist_direct_str.list[j][i]);
-           else
-              free(context->freelist_direct_str.list[j][i]);
-        }
+	if (context->freelist_direct_str.list[j][i])
+	  {
+	     if (edd)
+	       edd->func.str_direct_free(context->freelist_direct_str.list[j][i]);
+	     else
+	       free(context->freelist_direct_str.list[j][i]);
+	  }
    _eet_free_reset(&context->freelist_direct_str);
 } /* _eet_freelist_direct_str_free */
 
 #define _eet_freelist_hash_add(Ctx, Data) _eet_free_add(&Ctx->freelist_hash, Data);
+#define _eet_freelist_hash_del(Ctx, Data) _eet_free_del(&Ctx->freelist_hash, Data);
 #define _eet_freelist_hash_reset(Ctx)     _eet_free_reset(&Ctx->freelist_hash);
 #define _eet_freelist_hash_ref(Ctx)       _eet_free_ref(&Ctx->freelist_hash);
 #define _eet_freelist_hash_unref(Ctx)     _eet_free_unref(&Ctx->freelist_hash);
@@ -2294,12 +2322,13 @@ _eet_freelist_hash_free(Eet_Free_Context    *context,
 
    for (j = 0; j < 256; ++j)
       for (i = 0; i < context->freelist_hash.num[j]; ++i)
-        {
-           if (edd)
-              edd->func.hash_free(context->freelist_hash.list[j][i]);
-           else
-              free(context->freelist_hash.list[j][i]);
-        }
+	if (context->freelist_hash.list[j][i])
+	  {
+	     if (edd)
+	       edd->func.hash_free(context->freelist_hash.list[j][i]);
+	     else
+	       free(context->freelist_hash.list[j][i]);
+	  }
    _eet_free_reset(&context->freelist_hash);
 } /* _eet_freelist_hash_free */
 
@@ -3248,17 +3277,12 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
                    &echnk,
                    type,
                    group_type,
-                   ede ? (void *)(((char
-                                    *)
-                                   data)
-                                  + ede->
-                                  offset)
-                   : (void **)&result,
+                   ede ? (void *)(((char*) data) + ede->offset) : (void **)&result,
                    &p,
                    &size);
 
              if (ret <= 0)
-                goto error;
+	        goto error;
           }
 
         /* advance to next chunk */
@@ -3324,7 +3348,7 @@ eet_data_get_list(Eet_Free_Context     *context,
 
    EET_ASSERT(!((type > EET_T_UNKNOW) && (type < EET_T_STRING)), return 0);
 
-   if (edd)
+   if (ede)
      {
         subtype = ede->subtype;
 
@@ -3403,6 +3427,9 @@ eet_data_get_hash(Eet_Free_Context     *context,
    if (ret <= 0)
       goto on_error;
 
+   if (!key)
+      goto on_error;
+
    /* Advance to next chunk */
    NEXT_CHUNK((*p), (*size), (*echnk), ed);
    memset(echnk, 0, sizeof(Eet_Data_Chunk));
@@ -3411,6 +3438,11 @@ eet_data_get_hash(Eet_Free_Context     *context,
    eet_data_chunk_get(ed, echnk, *p, *size);
    if (!echnk->name)
       goto on_error;
+
+   if (ede)
+     if ((ede->group_type != echnk->group_type)
+	 || (ede->type != echnk->type))
+       goto on_error;
 
    if (IS_POINTER_TYPE(echnk->type))
       POINTER_TYPE_DECODE(context,
@@ -3444,7 +3476,7 @@ eet_data_get_hash(Eet_Free_Context     *context,
    return 1;
 
 on_error:
-   return ret;
+   return 0;
 } /* eet_data_get_hash */
 
 /* var arrays and fixed arrays have to
@@ -3583,6 +3615,7 @@ eet_data_get_array(Eet_Free_Context     *context,
                   memcpy(dst, data_ret, subsize);
 		  if (edd) edd->func.mem_free(data_ret);
 		  else free(data_ret);
+		  _eet_freelist_del(context, data_ret);
                }
 
              if (!edd)
@@ -3972,7 +4005,7 @@ eet_data_get_variant(Eet_Free_Context        *context,
                                 sede->group_type, data, &p2, &size2);
 
                           if (ret <= 0)
-                             goto on_error;
+			     goto on_error;
 
 /* advance to next chunk */
                           NEXT_CHUNK(p2, size2, chnk, ed);
