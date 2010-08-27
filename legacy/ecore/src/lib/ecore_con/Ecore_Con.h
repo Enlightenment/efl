@@ -366,6 +366,8 @@ EAPI void *            ecore_con_server_data_set(Ecore_Con_Server *svr,
                                                  void *data);
 EAPI int               ecore_con_server_connected_get(Ecore_Con_Server *svr);
 EAPI Eina_List *       ecore_con_server_clients_get(Ecore_Con_Server *svr);
+EAPI const char *      ecore_con_server_name_get(Ecore_Con_Server *svr);
+EAPI int               ecore_con_server_port_get(Ecore_Con_Server *svr);
 EAPI int               ecore_con_server_send(Ecore_Con_Server *svr,
                                              const void *data,
                                              int size);
