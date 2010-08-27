@@ -76,7 +76,6 @@ struct _Eina_Array
 };
 
 EAPI Eina_Array *               eina_array_new(unsigned int step) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_WARN_UNUSED_RESULT;
-EAPI Eina_Array *               eina_array_threadsafe_new(unsigned int step) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 EAPI void                       eina_array_free(Eina_Array *array) EINA_ARG_NONNULL(1);
 EAPI void                       eina_array_step_set(Eina_Array *array,
                                                     unsigned int sizeof_eina_array,

@@ -344,9 +344,8 @@ eina_bench_lookup_evas(int request)
 
    evas_hash_free(hash);
 
-   EINA_ARRAY_THREADSAFE_ITER_NEXT(array, i, tmp_val, it,
+   EINA_ARRAY_ITER_NEXT(array, i, tmp_val, it)
      free(tmp_val);
-   );
 
    eina_array_free(array);
 }

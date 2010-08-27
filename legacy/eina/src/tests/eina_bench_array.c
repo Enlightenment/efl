@@ -88,23 +88,20 @@ eina_bench_array_4evas_render_inline(int request)
 
         if (i == 500)
           {
-             EINA_ARRAY_THREADSAFE_ITER_NEXT(array, j, ebo, it,
+             EINA_ARRAY_ITER_NEXT(array, j, ebo, it)
                free(ebo);
-             );
 
              eina_array_clean(array);
           }
         else if (i % 30 == 0)
            eina_array_remove(array, keep, NULL);
 
-        EINA_ARRAY_THREADSAFE_ITER_NEXT(array, j, ebo, it,
+        EINA_ARRAY_ITER_NEXT(array, j, ebo, it)
           ebo->keep = rand() < (RAND_MAX / 2) ? ebo->keep : EINA_FALSE;
-        );
      }
 
-        EINA_ARRAY_THREADSAFE_ITER_NEXT(array, j, ebo, it,
+        EINA_ARRAY_ITER_NEXT(array, j, ebo, it)
           free(ebo);
-        );
 
    eina_array_free(array);
 
