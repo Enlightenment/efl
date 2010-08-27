@@ -13,7 +13,7 @@ static GLXFBConfig rgba_fbconf = 0;
 #endif
 
 // fixme: something is up/wrong here - dont know what tho...
-//#define NEWGL 1
+// #define NEWGL 1
 
 static XVisualInfo *_evas_gl_x11_vi = NULL;
 static XVisualInfo *_evas_gl_x11_rgba_vi = NULL;
@@ -498,7 +498,13 @@ eng_window_unsurf(Evas_GL_X11_Window *gw)
    gw->egl_surface[0] = EGL_NO_SURFACE;
    eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 #else
-   if (gw->glxwin) glXDestroyWindow(gw->disp, gw->glxwin);
+   if (gw->glxwin)
+      {
+         glXDestroyWindow(gw->disp, gw->glxwin);
+      }
+   else
+     {
+     }
 #endif
    gw->surf = 0;
 }
@@ -525,6 +531,16 @@ eng_window_resurf(Evas_GL_X11_Window *gw)
      gw->glxwin = glXCreateWindow(gw->disp, rgba_fbconf, gw->win, NULL);
    else
      gw->glxwin = glXCreateWindow(gw->disp, fbconf, gw->win, NULL);
+   if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin, 
+                              gw->context))
+     {
+        printf("Error: glXMakeContextCurrent(%p, %p, %p, %p)\n", (void *)gw->disp, (void *)gw->win, (void *)gw->win, (void *)gw->context);
+     }
+#else   
+   if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
+     {
+        printf("Error: glXMakeCurrent(%p, 0x%x, %p) failed\n", (void *)gw->disp, (unsigned int)gw->win, (void *)gw->context);
+     }
 #endif   
 #endif   
    gw->surf = 1;
