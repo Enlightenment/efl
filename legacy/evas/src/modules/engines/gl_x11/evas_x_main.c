@@ -457,12 +457,15 @@ eng_window_use(Evas_GL_X11_Window *gw)
 	_evas_gl_x11_window = gw;
 // EGL / GLES
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-        if (eglMakeCurrent(gw->egl_disp, 
-                           gw->egl_surface[0], 
-                           gw->egl_surface[0],
-                           gw->egl_context[0]) == EGL_FALSE)
+        if (gw->egl_surface[0] != EGL_NO_SURFACE)
           {
-             printf("Error: eglMakeCurrent() failed!\n");
+             if (eglMakeCurrent(gw->egl_disp, 
+                                gw->egl_surface[0], 
+                                gw->egl_surface[0],
+                                gw->egl_context[0]) == EGL_FALSE)
+               {
+                  printf("Error: eglMakeCurrent() failed!\n");
+               }
           }
 // GLX        
 #else
@@ -493,10 +496,10 @@ eng_window_unsurf(Evas_GL_X11_Window *gw)
    if (getenv("EVAS_GL_INFO"))
       printf("unsurf %p\n", gw);
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
    if (gw->egl_surface[0] != EGL_NO_SURFACE)
      eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
    gw->egl_surface[0] = EGL_NO_SURFACE;
-   eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 #else
    if (gw->glxwin)
       {
@@ -524,6 +527,13 @@ eng_window_resurf(Evas_GL_X11_Window *gw)
         printf("Error: eglCreateWindowSurface() fail for 0x%x.\n", (unsigned int)gw->win);
         printf("Error: error # was: 0x%x\n", eglGetError());
         return;
+     }
+   if (eglMakeCurrent(gw->egl_disp, 
+                      gw->egl_surface[0], 
+                      gw->egl_surface[0],
+                      gw->egl_context[0]) == EGL_FALSE)
+     {
+        printf("Error: eglMakeCurrent() failed!\n");
      }
 #else
 #ifdef NEWGL
