@@ -560,7 +560,7 @@ if you ask it to, and provide events when done. this goes hand-in-hand
 with --enable-pthreads and --enable-async-events. you really want all
 of these available.
 
---enable-async-render
+--enable-async-render **DISABLED DUE TO BUGS**
 
 this enables a software multi-frame threaded renderer. this will
 allocate (for example) 2 frames to 2 cores, with one core of the cpu
@@ -568,6 +568,12 @@ rendering the previous frame while the next frame starts rendering on
 another core in the meantime allowing for higher framerates with
 software rendering, using more cpu resources that are available on
 modern multi-core cpu's.
+
+--enable-pipe-render **DISABLED DUE TO BUGS**
+
+this enables a multiple-thread renderer that divides the rendering
+into N regions (1 per core) to speed up rendering in software when you
+have multiple cpu cores.
 
 --enable-word-cache
 
