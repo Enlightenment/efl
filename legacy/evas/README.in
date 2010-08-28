@@ -560,7 +560,7 @@ if you ask it to, and provide events when done. this goes hand-in-hand
 with --enable-pthreads and --enable-async-events. you really want all
 of these available.
 
---enable-async-render **DISABLED DUE TO BUGS**
+--enable-async-render **CAUTION - MAY NOT WORK RIGHT**
 
 this enables a software multi-frame threaded renderer. this will
 allocate (for example) 2 frames to 2 cores, with one core of the cpu
