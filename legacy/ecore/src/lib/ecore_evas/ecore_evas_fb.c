@@ -285,6 +285,8 @@ _ecore_evas_fb_init(int w, int h)
 	       }
 	  }
      }
+   closedir(input_dir);
+   
    if (!mouse_handled)
      {
 	if (ecore_fb_ts_init())
