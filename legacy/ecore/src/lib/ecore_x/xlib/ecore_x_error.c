@@ -9,7 +9,7 @@
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
 
-static void      _ecore_x_error_handle(Display *d, XErrorEvent *ev);
+static int       _ecore_x_error_handle(Display *d, XErrorEvent *ev);
 static int       _ecore_x_io_error_handle(Display *d);
 
 static void (*_error_func)(void *data) = NULL;
@@ -78,7 +78,7 @@ _ecore_x_error_handler_init(void)
    XSetIOErrorHandler((XIOErrorHandler)_ecore_x_io_error_handle);
 } /* _ecore_x_error_handler_init */
 
-static void
+static int
 _ecore_x_error_handle(Display *d, XErrorEvent *ev)
 {
    if (d == _ecore_x_disp)
@@ -88,6 +88,7 @@ _ecore_x_error_handle(Display *d, XErrorEvent *ev)
         if (_error_func)
            _error_func(_error_data);
      }
+   return 0;
 } /* _ecore_x_error_handle */
 
 static int
