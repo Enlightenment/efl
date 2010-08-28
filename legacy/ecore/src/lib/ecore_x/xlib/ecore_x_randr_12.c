@@ -832,12 +832,12 @@ ecore_x_randr_crtc_orientations_get(Ecore_X_Window root,
        (crtc_info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
      {
         ret = crtc_info->rotations;
-        if (crtc_info)
-           XRRFreeCrtcInfo(crtc_info);
-
-        if (res)
-           XRRFreeScreenResources(res);
      }
+   if (crtc_info)
+      XRRFreeCrtcInfo(crtc_info);
+   
+   if (res)
+      XRRFreeScreenResources(res);
 
    return ret;
 #else
@@ -862,13 +862,13 @@ ecore_x_randr_crtc_orientation_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
        (crtc_info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
      {
         ret = crtc_info->rotation;
-        if (crtc_info)
-           XRRFreeCrtcInfo(crtc_info);
-
-        if (res)
-           XRRFreeScreenResources(res);
      }
-
+   if (crtc_info)
+      XRRFreeCrtcInfo(crtc_info);
+   
+   if (res)
+      XRRFreeScreenResources(res);
+   
    return ret;
 #else
    return Ecore_X_Randr_None;
