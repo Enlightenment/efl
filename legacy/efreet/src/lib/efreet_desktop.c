@@ -1392,12 +1392,14 @@ efreet_desktop_write_cache_dirs_file(void)
         eina_stringshare_del(dir);
     }
     efreet_desktop_dirs = NULL;
+    if (fd >= 0) close(fd);
+    if (cachefd >= 0) close(cachefd);
     return 1;
 
 error:
     if (map != MAP_FAILED) munmap(map, st.st_size);
-    if (fd > 0) close(fd);
-    if (cachefd > 0) close(cachefd);
+    if (fd >= 0) close(fd);
+    if (cachefd >= 0) close(cachefd);
     return 0;
 }
 

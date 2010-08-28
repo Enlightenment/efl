@@ -185,7 +185,11 @@ cache_scan(const char *path, const char *base_id, int priority, int recurse, int
         }
         else
         {
-            if (!cache_add(buf, file_id, priority, changed)) return 0;
+            if (!cache_add(buf, file_id, priority, changed))
+            {
+                closedir(files);
+                return 0;
+            }
         }
     }
     closedir(files);
