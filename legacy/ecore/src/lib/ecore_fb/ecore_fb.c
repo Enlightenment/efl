@@ -101,6 +101,7 @@ _ecore_fb_size_get(int *w, int *h)
      {
 	if (w) *w = 0;
 	if (h) *h = 0;
+        close(fb);
 	return;
      }
    close(fb);
