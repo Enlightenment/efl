@@ -235,7 +235,8 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 	ENFN->font_string_size_get(ENDT,
 				   o->engine_data,
 				   o->cur.text, &o->cur.intl_props,
-				   &w, &h);	o->ascent = ENFN->font_ascent_get(ENDT, o->engine_data);
+				   &w, &h);
+	o->ascent = ENFN->font_ascent_get(ENDT, o->engine_data);
 	o->descent = ENFN->font_descent_get(ENDT, o->engine_data);
 	o->max_ascent = ENFN->font_max_ascent_get(ENDT, o->engine_data);
 	o->max_descent = ENFN->font_max_descent_get(ENDT, o->engine_data);
