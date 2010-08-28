@@ -439,6 +439,7 @@ _embryo_str_strchr(Embryo_Program *ep, Embryo_Cell *params)
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    STRGET(ep, s1, params[1]);
    STRGET(ep, s2, params[2]);
+   if ((!s1) || (!s2)) return -1;
    p = strchr(s1, s2[0]);
    if (!p) return -1;
    return (Embryo_Cell)(p - s1);
@@ -454,6 +455,7 @@ _embryo_str_strrchr(Embryo_Program *ep, Embryo_Cell *params)
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    STRGET(ep, s1, params[1]);
    STRGET(ep, s2, params[2]);
+   if ((!s1) || (!s2)) return -1;
    p = strrchr(s1, s2[0]);
    if (!p) return -1;
    return (Embryo_Cell)(p - s1);
