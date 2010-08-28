@@ -184,10 +184,9 @@ ecore_con_shutdown(void)
  *
  * @param  compl_type The connection type.
  * @param  name       Name to associate with the socket.  It is used when
- *                    generating the socket name of a Unix socket.  Though
- *                    it is not used for the TCP socket, it still needs to
- *                    be a valid character array.  @c NULL will not be
- *                    accepted.
+ *                    generating the socket name of a Unix socket, or for
+ *                    determining what host to listen on for TCP sockets.
+ *                    @c NULL will not be accepted.
  * @param  port       Number to identify socket.  When a Unix socket is used,
  *                    it becomes part of the socket name.  When a TCP socket
  *                    is used, it is used as the TCP port.
