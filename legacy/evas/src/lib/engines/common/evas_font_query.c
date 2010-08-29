@@ -4,7 +4,7 @@
 
 EAPI int
 evas_common_font_query_kerning(RGBA_Font_Int* fi,
-			       FT_UInt prev, FT_UInt index,
+			       FT_UInt left, FT_UInt right,
 			       int* kerning)
 {
    int *result;
@@ -13,8 +13,8 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
    int error = 1;
 
 //   return 0;
-   key[0] = prev;
-   key[1] = index;
+   key[0] = left;
+   key[1] = right;
 
    result = eina_hash_find(fi->kerning, key);
    if (result)
@@ -70,6 +70,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
    int pen_x, pen_y;
    int start_x, end_x;
    int chr;
+   int char_index;
    FT_UInt prev_index;
    RGBA_Font_Int *fi;
    FT_Face pface = NULL;
@@ -84,7 +85,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
 //   evas_common_font_size_use(fn);
    use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    prev_index = 0;
-   for (chr = 0; *text; text++)
+   for (chr = 0, char_index = 0; *text; text++, char_index ++)
      {
 	FT_UInt index;
 	RGBA_Font_Glyph *fg;
@@ -102,14 +103,33 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
 	     FTUNLOCK();
              fi->src->current_size = fi->size;
           }
-      /* hmmm kerning means i can't sanely do my own cached metric tables! */
+	kern = 0;
+        /* hmmm kerning means i can't sanely do my own cached metric tables! */
 	/* grrr - this means font face sharing is kinda... not an option if */
 	/* you want performance */
-	kern = 0;
 	if ((use_kerning) && (prev_index) && (index) &&
-	    (pface == fi->src->ft.face) &&
-            evas_common_font_query_kerning(fi, prev_index, index, &kern))
-	   pen_x += kern;
+	     (pface == fi->src->ft.face))
+	   {
+#ifdef BIDI_SUPPORT
+              /* if it's rtl, the kerning matching should be reversed, i.e prev
+               * index is now the index and the other way around. 
+               * There is a slight exception when there are compositing chars
+               * involved.*/
+              if (intl_props && 
+                    evas_bidi_is_rtl_char(intl_props->props->embedding_levels, char_index) &&
+                    fg->glyph->advance.x >> 16 > 0)
+                {
+                   if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
+                     pen_x += kern;
+                }
+              else
+#endif
+                {
+
+                   if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+                     pen_x += kern;
+                }
+           }
 
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
@@ -253,24 +273,24 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Ev
 	     (pface == fi->src->ft.face))
 	   {
 #ifdef BIDI_SUPPORT
-	      /* if it's rtl, the kerning matching should be reversed, i.e prev
-	       * index is now the index and the other way around. 
+              /* if it's rtl, the kerning matching should be reversed, i.e prev
+               * index is now the index and the other way around. 
                * There is a slight exception when there are compositing chars
                * involved.*/
-	      if (intl_props && 
-                  evas_bidi_is_rtl_char(intl_props->props->embedding_levels, char_index) &&
-                  fg->glyph->advance.x >> 16 > 0)
-		{
-		   if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
-		      pen_x += kern;
-		}
-	      else
+              if (intl_props && 
+                    evas_bidi_is_rtl_char(intl_props->props->embedding_levels, char_index) &&
+                    fg->glyph->advance.x >> 16 > 0)
+                {
+                   if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
+                     pen_x += kern;
+                }
+              else
 #endif
-              {
+                {
 
-	           if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
-	              pen_x += kern;
-	      }
+                   if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+                     pen_x += kern;
+                }
            }
 
 	pface = fi->src->ft.face;
@@ -378,30 +398,13 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
 	if ((use_kerning) && (prev_index) && (index) &&
 	     (pface == fi->src->ft.face))
 	   {
-#ifdef BIDI_SUPPORT
-	      /* if it's rtl, the kerning matching should be reversed, i.e prev
-	       * index is now the index and the other way around. 
-               * There is a slight exception when there are compositing chars
-               * involved.*/
-	      if (intl_props && 
-                  evas_bidi_is_rtl_char(intl_props->props->embedding_levels, char_index) &&
-                  fg->glyph->advance.x >> 16 > 0)
-		{
-		   if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
-		      pen_x += kern;
-		}
-	      else
-#endif
-              {
-
-	           if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
-	              pen_x += kern;
-	      }
+              if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+                pen_x += kern;
            }
-        
+
 	pface = fi->src->ft.face;
 	LKU(fi->ft_mutex);
-	/* If the current one is not a compositing char, do the previous advance 
+	/* If the current one is not a compositing char, do the previous advance
 	 * and set the current advance as the next advance to do */
 	if (fg->glyph->advance.x >> 16 > 0) 
 	  {
@@ -535,25 +538,8 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
 	if ((use_kerning) && (prev_index) && (index) &&
 	     (pface == fi->src->ft.face))
 	   {
-#ifdef BIDI_SUPPORT
-	      /* if it's rtl, the kerning matching should be reversed, i.e prev
-	       * index is now the index and the other way around. 
-               * There is a slight exception when there are compositing chars
-               * involved.*/
-	      if (intl_props && 
-                  evas_bidi_is_rtl_char(intl_props->props->embedding_levels, char_index) &&
-                  fg->glyph->advance.x >> 16 > 0)
-		{
-		   if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
-		      pen_x += kern;
-		}
-	      else
-#endif
-                {
-
-	           if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
-	              pen_x += kern;
-	        }
+              if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+                pen_x += kern;
            }
 	pface = fi->src->ft.face;
 	LKU(fi->ft_mutex);
@@ -665,17 +651,35 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text
 	     FTUNLOCK();
              fi->src->current_size = fi->size;
           }
-	kern = 0;
+        kern = 0;
         /* hmmm kerning means i can't sanely do my own cached metric tables! */
-	/* grrr - this means font face sharing is kinda... not an option if */
-	/* you want performance */
-	if ((use_kerning) && (prev_index) && (index) &&
-	    (pface == fi->src->ft.face))
-     {
-      /* No need for special RTL handling because we are working on the logical string*/
-      if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
-         pen_x += kern;
-     }
+        /* grrr - this means font face sharing is kinda... not an option if */
+        /* you want performance */
+        if ((use_kerning) && (prev_index) && (index) &&
+              (pface == fi->src->ft.face))
+          {
+#ifdef BIDI_SUPPORT
+             /* if it's rtl, the kerning matching should be reversed, i.e prev
+              * index is now the index and the other way around.
+              * There is a slight exception when there are compositing chars
+              * involved.*/
+             if (intl_props &&
+                   evas_bidi_is_rtl_char(intl_props->props->embedding_levels,
+                      char_index) && fg->glyph->advance.x >> 16 > 0)
+               {
+                  if (evas_common_font_query_kerning(fi, index, prev_index,
+                           &kern))
+                    pen_x += kern;
+               }
+             else
+#endif
+               {
+
+                  if (evas_common_font_query_kerning(fi, prev_index, index,
+                           &kern))
+                    pen_x += kern;
+               }
+          }
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	LKU(fi->ft_mutex);

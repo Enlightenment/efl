@@ -539,25 +539,8 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 	  if ((use_kerning) && (prev_index) && (index) &&
 	     (pface == fi->src->ft.face))
 	    {
-#ifdef BIDI_SUPPORT
-	      /* if it's rtl, the kerning matching should be reversed, i.e prev
-	       * index is now the index and the other way around. 
-               * There is a slight exception when there are compositing chars
-               * involved.*/
-	      if (intl_props && intl_props->props &&
-                  evas_bidi_is_rtl_char(intl_props->props->embedding_levels, char_index) &&
-                  fg->glyph->advance.x >> 16 > 0)
-		{
-	            if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
-	            pen_x += kern;
-	         }
-	       else
-#endif
-		 {
-
-		    if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
-		      pen_x += kern;
-		 }
+               if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+                 pen_x += kern;
 	    }
 	  pface = fi->src->ft.face;
 	  LKU(fi->ft_mutex);
