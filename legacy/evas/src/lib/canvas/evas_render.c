@@ -754,11 +754,14 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                                      obj->cur.geometry.y + off_y,
                                      obj->cur.geometry.w,
                                      obj->cur.geometry.h);
-                  RECTS_CLIP_TO_RECT(x, y, w, h,
-                                     obj->cur.cache.clip.x + off_x,
-                                     obj->cur.cache.clip.y + off_y,
-                                     obj->cur.cache.clip.w,
-                                     obj->cur.cache.clip.h);
+                  if (!obj->cur.map)
+                    {
+                       RECTS_CLIP_TO_RECT(x, y, w, h,
+                                          obj->cur.cache.clip.x + off_x,
+                                          obj->cur.cache.clip.y + off_y,
+                                          obj->cur.cache.clip.w,
+                                          obj->cur.cache.clip.h);
+                    }
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    ctx, x, y, w, h);
                   obj->func->render(obj, e->engine.data.output, ctx,
@@ -809,12 +812,13 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                }
              else
                {
-                  e->engine.func->context_clip_set(e->engine.data.output,
-                                                   ctx,
-                                                   obj->cur.cache.clip.x + off_x,
-                                                   obj->cur.cache.clip.y + off_y, 
-                                                   obj->cur.cache.clip.w,
-                                                   obj->cur.cache.clip.h);
+                  if (!obj->cur.map)
+                     e->engine.func->context_clip_set(e->engine.data.output,
+                                                      ctx,
+                                                      obj->cur.cache.clip.x + off_x,
+                                                      obj->cur.cache.clip.y + off_y, 
+                                                      obj->cur.cache.clip.w,
+                                                      obj->cur.cache.clip.h);
                   obj->func->render(obj, e->engine.data.output, ctx,
                                     surface, off_x, off_y);
                }
