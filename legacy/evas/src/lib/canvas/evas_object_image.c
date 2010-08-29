@@ -50,8 +50,8 @@ struct _Evas_Object_Image
    } load_opts;
 
    struct {
-      void            (*get_pixels) (void *data, Evas_Object *o);
-      void             *get_pixels_data;
+      Evas_Object_Image_Pixels_Get_Cb  get_pixels;
+      void                            *get_pixels_data;
    } func;
 
    Evas_Image_Scale_Hint   scale_hint;
@@ -1534,7 +1534,7 @@ evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixe
  *
  */
 EAPI void
-evas_object_image_pixels_get_callback_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *o), void *data)
+evas_object_image_pixels_get_callback_set(Evas_Object *obj, Evas_Object_Image_Pixels_Get_Cb func, void *data)
 {
    Evas_Object_Image *o;
 

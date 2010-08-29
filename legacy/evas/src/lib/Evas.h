@@ -610,6 +610,7 @@ typedef void      (*Evas_Smart_Cb) (void *data, Evas_Object *obj, void *event_in
 typedef void      (*Evas_Event_Cb) (void *data, Evas *e, void *event_info);
 typedef Eina_Bool (*Evas_Object_Event_Post_Cb) (void *data, Evas *e);
 typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj, void *event_info);
+typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type type, void *event_info);
 
 /**
  * @defgroup Evas_Group Top Level Functions
@@ -623,7 +624,7 @@ typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj
 
    EAPI int               evas_async_events_fd_get          (void) EINA_WARN_UNUSED_RESULT EINA_PURE;
    EAPI int               evas_async_events_process         (void);
-   EAPI Eina_Bool         evas_async_events_put             (const void *target, Evas_Callback_Type type, void *event_info, void (*func)(void *target, Evas_Callback_Type type, void *event_info)) EINA_ARG_NONNULL(1, 4);
+   EAPI Eina_Bool         evas_async_events_put             (const void *target, Evas_Callback_Type type, void *event_info, Evas_Async_Events_Put_Cb func) EINA_ARG_NONNULL(1, 4);
 
 /**
  * @defgroup Evas_Canvas Canvas Functions
@@ -1055,30 +1056,43 @@ typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj
  *
  * @ingroup Evas_Object_Group
  */
-   EAPI void              evas_object_intercept_show_callback_add        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data) EINA_ARG_NONNULL(1, 2);
-   EAPI void             *evas_object_intercept_show_callback_del        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj)) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_object_intercept_hide_callback_add        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data) EINA_ARG_NONNULL(1, 2);
-   EAPI void             *evas_object_intercept_hide_callback_del        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj)) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_object_intercept_move_callback_add        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y), const void *data) EINA_ARG_NONNULL(1, 2);
-   EAPI void             *evas_object_intercept_move_callback_del        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y)) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_object_intercept_resize_callback_add      (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord w, Evas_Coord h), const void *data) EINA_ARG_NONNULL(1, 2);
-   EAPI void             *evas_object_intercept_resize_callback_del      (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord w, Evas_Coord h)) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_object_intercept_raise_callback_add       (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data) EINA_ARG_NONNULL(1, 2);
-   EAPI void             *evas_object_intercept_raise_callback_del       (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj)) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_object_intercept_lower_callback_add       (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data) EINA_ARG_NONNULL(1, 2);
-   EAPI void             *evas_object_intercept_lower_callback_del       (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj)) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_object_intercept_stack_above_callback_add (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *above), const void *data) EINA_ARG_NONNULL(1, 2);
-   EAPI void             *evas_object_intercept_stack_above_callback_del (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *above)) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_object_intercept_stack_below_callback_add (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *below), const void *data) EINA_ARG_NONNULL(1, 2);
-   EAPI void             *evas_object_intercept_stack_below_callback_del (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *below)) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_object_intercept_layer_set_callback_add   (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int l), const void *data) EINA_ARG_NONNULL(1, 2);
-   EAPI void             *evas_object_intercept_layer_set_callback_del   (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int l)) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_object_intercept_color_set_callback_add   (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int r, int g, int b, int a), const void *data) EINA_ARG_NONNULL(1, 2);
-   EAPI void             *evas_object_intercept_color_set_callback_del   (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int r, int g, int b, int a)) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_object_intercept_clip_set_callback_add    (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *clip), const void *data) EINA_ARG_NONNULL(1, 2);
-   EAPI void             *evas_object_intercept_clip_set_callback_del    (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *clip)) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_object_intercept_clip_unset_callback_add  (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data) EINA_ARG_NONNULL(1, 2);
-   EAPI void             *evas_object_intercept_clip_unset_callback_del  (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj)) EINA_ARG_NONNULL(1, 2);
+typedef void (*Evas_Object_Intercept_Show_Cb) (void *data, Evas_Object *obj);
+typedef void (*Evas_Object_Intercept_Hide_Cb) (void *data, Evas_Object *obj);
+typedef void (*Evas_Object_Intercept_Move_Cb) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+typedef void (*Evas_Object_Intercept_Resize_Cb) (void *data, Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+typedef void (*Evas_Object_Intercept_Raise_Cb) (void *data, Evas_Object *obj);
+typedef void (*Evas_Object_Intercept_Lower_Cb) (void *data, Evas_Object *obj);
+typedef void (*Evas_Object_Intercept_Stack_Above_Cb) (void *data, Evas_Object *obj, Evas_Object *above);
+typedef void (*Evas_Object_Intercept_Stack_Below_Cb) (void *data, Evas_Object *obj, Evas_Object *above);
+typedef void (*Evas_Object_Intercept_Layer_Set_Cb) (void *data, Evas_Object *obj, int l);
+typedef void (*Evas_Object_Intercept_Color_Set_Cb) (void *data, Evas_Object *obj, int r, int g, int b, int a);
+typedef void (*Evas_Object_Intercept_Clip_Set_Cb) (void *data, Evas_Object *obj, Evas_Object *clip);
+typedef void (*Evas_Object_Intercept_Clip_Unset_Cb) (void *data, Evas_Object *obj);
+   
+   EAPI void              evas_object_intercept_show_callback_add        (Evas_Object *obj, Evas_Object_Intercept_Show_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void             *evas_object_intercept_show_callback_del        (Evas_Object *obj, Evas_Object_Intercept_Show_Cb func) EINA_ARG_NONNULL(1, 2);
+   EAPI void              evas_object_intercept_hide_callback_add        (Evas_Object *obj, Evas_Object_Intercept_Hide_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void             *evas_object_intercept_hide_callback_del        (Evas_Object *obj, Evas_Object_Intercept_Hide_Cb func) EINA_ARG_NONNULL(1, 2);
+   EAPI void              evas_object_intercept_move_callback_add        (Evas_Object *obj, Evas_Object_Intercept_Move_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void             *evas_object_intercept_move_callback_del        (Evas_Object *obj, Evas_Object_Intercept_Move_Cb func) EINA_ARG_NONNULL(1, 2);
+   EAPI void              evas_object_intercept_resize_callback_add      (Evas_Object *obj, Evas_Object_Intercept_Resize_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void             *evas_object_intercept_resize_callback_del      (Evas_Object *obj, Evas_Object_Intercept_Resize_Cb func) EINA_ARG_NONNULL(1, 2);
+   EAPI void              evas_object_intercept_raise_callback_add       (Evas_Object *obj, Evas_Object_Intercept_Raise_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void             *evas_object_intercept_raise_callback_del       (Evas_Object *obj, Evas_Object_Intercept_Raise_Cb func) EINA_ARG_NONNULL(1, 2);
+   EAPI void              evas_object_intercept_lower_callback_add       (Evas_Object *obj, Evas_Object_Intercept_Lower_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void             *evas_object_intercept_lower_callback_del       (Evas_Object *obj, Evas_Object_Intercept_Lower_Cb func) EINA_ARG_NONNULL(1, 2);
+   EAPI void              evas_object_intercept_stack_above_callback_add (Evas_Object *obj, Evas_Object_Intercept_Stack_Above_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void             *evas_object_intercept_stack_above_callback_del (Evas_Object *obj, Evas_Object_Intercept_Stack_Above_Cb func) EINA_ARG_NONNULL(1, 2);
+   EAPI void              evas_object_intercept_stack_below_callback_add (Evas_Object *obj, Evas_Object_Intercept_Stack_Below_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void             *evas_object_intercept_stack_below_callback_del (Evas_Object *obj, Evas_Object_Intercept_Stack_Below_Cb func) EINA_ARG_NONNULL(1, 2);
+   EAPI void              evas_object_intercept_layer_set_callback_add   (Evas_Object *obj, Evas_Object_Intercept_Layer_Set_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void             *evas_object_intercept_layer_set_callback_del   (Evas_Object *obj, Evas_Object_Intercept_Layer_Set_Cb func) EINA_ARG_NONNULL(1, 2);
+   EAPI void              evas_object_intercept_color_set_callback_add   (Evas_Object *obj, Evas_Object_Intercept_Color_Set_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void             *evas_object_intercept_color_set_callback_del   (Evas_Object *obj, Evas_Object_Intercept_Color_Set_Cb func) EINA_ARG_NONNULL(1, 2);
+   EAPI void              evas_object_intercept_clip_set_callback_add    (Evas_Object *obj, Evas_Object_Intercept_Clip_Set_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void             *evas_object_intercept_clip_set_callback_del    (Evas_Object *obj, Evas_Object_Intercept_Clip_Set_Cb func) EINA_ARG_NONNULL(1, 2);
+   EAPI void              evas_object_intercept_clip_unset_callback_add  (Evas_Object *obj, Evas_Object_Intercept_Clip_Unset_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void             *evas_object_intercept_clip_unset_callback_del  (Evas_Object *obj, Evas_Object_Intercept_Clip_Unset_Cb func) EINA_ARG_NONNULL(1, 2);
 
 
 
@@ -1183,6 +1197,8 @@ typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj
  *
  * @ingroup Evas_Object_Specific
  */
+typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
+   
    EAPI Evas_Object      *evas_object_image_add             (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
    EAPI Evas_Object      *evas_object_image_filled_add      (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
@@ -1217,7 +1233,7 @@ typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj
    EAPI void              evas_object_image_reload          (Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool         evas_object_image_save            (const Evas_Object *obj, const char *file, const char *key, const char *flags)  EINA_ARG_NONNULL(1, 2);
    EAPI Eina_Bool         evas_object_image_pixels_import          (Evas_Object *obj, Evas_Pixel_Import_Source *pixels) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_object_image_pixels_get_callback_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *o), void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void              evas_object_image_pixels_get_callback_set(Evas_Object *obj, Evas_Object_Image_Pixels_Get_Cb func, void *data) EINA_ARG_NONNULL(1, 2);
    EAPI void              evas_object_image_pixels_dirty_set       (Evas_Object *obj, Eina_Bool dirty) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool         evas_object_image_pixels_dirty_get       (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void              evas_object_image_load_dpi_set           (Evas_Object *obj, double dpi) EINA_ARG_NONNULL(1);
@@ -1277,7 +1293,7 @@ typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj
    EAPI Evas_Coord        evas_object_text_inset_get        (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI Eina_Bool         evas_object_text_char_pos_get     (const Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch) EINA_ARG_NONNULL(1);
    EAPI int               evas_object_text_char_coords_get  (const Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch) EINA_ARG_NONNULL(1);
-   EAPI int               evas_object_text_last_up_to_pos(const Evas_Object *obj, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
+   EAPI int               evas_object_text_last_up_to_pos   (const Evas_Object *obj, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
    EAPI Evas_Text_Style_Type evas_object_text_style_get     (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void              evas_object_text_style_set        (Evas_Object *obj, Evas_Text_Style_Type type) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_text_shadow_color_set (Evas_Object *obj, int r, int g, int b, int a) EINA_ARG_NONNULL(1);
@@ -2143,6 +2159,8 @@ struct _Evas_Smart_Cb_Description
    EAPI int               evas_string_char_prev_get         (const char *str, int pos, int *decoded) EINA_ARG_NONNULL(1);
    EAPI int               evas_string_char_len_get          (const char *str) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
+/* FIXME: kill off!! evas_imaging before 1.0.0 !!!! */
+   
 /**
  * @defgroup Evas_Imaging Imaging and Commong GFX
  *

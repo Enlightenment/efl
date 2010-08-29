@@ -41,11 +41,6 @@ typedef struct _Evas_Image_Load_Func        Evas_Image_Load_Func;
 typedef struct _Evas_Image_Save_Func        Evas_Image_Save_Func;
 typedef struct _Evas_Object_Func            Evas_Object_Func;
 typedef struct _Evas_Intercept_Func         Evas_Intercept_Func;
-typedef struct _Evas_Intercept_Func_Basic   Evas_Intercept_Func_Basic;
-typedef struct _Evas_Intercept_Func_SizePos Evas_Intercept_Func_SizePos;
-typedef struct _Evas_Intercept_Func_Obj     Evas_Intercept_Func_Obj;
-typedef struct _Evas_Intercept_Func_Int     Evas_Intercept_Func_Int;
-typedef struct _Evas_Intercept_Func_Color   Evas_Intercept_Func_Color;
 typedef struct _Evas_Key_Grab               Evas_Key_Grab;
 typedef struct _Evas_Callbacks              Evas_Callbacks;
 typedef struct _Evas_Format                 Evas_Format;
@@ -116,36 +111,6 @@ MAGIC_CHECK_FAILED(o, t, m)
 	 (o)->prev.key = NULL;                                              \
      }
 
-struct _Evas_Intercept_Func_Basic
-{
-   void (*func) (void *data, Evas_Object *obj);
-   void *data;
-};
-
-struct _Evas_Intercept_Func_SizePos
-{
-   void (*func) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y);
-   void *data;
-};
-
-struct _Evas_Intercept_Func_Obj
-{
-   void (*func) (void *data, Evas_Object *obj, Evas_Object *obj2);
-   void *data;
-};
-
-struct _Evas_Intercept_Func_Int
-{
-   void (*func) (void *data, Evas_Object *obj, int n);
-   void *data;
-};
-
-struct _Evas_Intercept_Func_Color
-{
-   void (*func) (void *data, Evas_Object *obj, int r, int g, int b, int a);
-   void *data;
-};
-
 struct _Evas_Key_Grab
 {
    char               *keyname;
@@ -159,18 +124,54 @@ struct _Evas_Key_Grab
 
 struct _Evas_Intercept_Func
 {
-   Evas_Intercept_Func_Basic   show;
-   Evas_Intercept_Func_Basic   hide;
-   Evas_Intercept_Func_SizePos move;
-   Evas_Intercept_Func_SizePos resize;
-   Evas_Intercept_Func_Basic   raise;
-   Evas_Intercept_Func_Basic   lower;
-   Evas_Intercept_Func_Obj     stack_above;
-   Evas_Intercept_Func_Obj     stack_below;
-   Evas_Intercept_Func_Int     layer_set;
-   Evas_Intercept_Func_Color   color_set;
-   Evas_Intercept_Func_Obj     clip_set;
-   Evas_Intercept_Func_Basic   clip_unset;
+   struct {
+      Evas_Object_Intercept_Show_Cb func;
+      void *data;
+   } show;
+   struct {
+      Evas_Object_Intercept_Hide_Cb func;
+      void *data;
+   } hide;
+   struct {
+      Evas_Object_Intercept_Move_Cb func;
+      void *data;
+   } move;
+   struct {
+      Evas_Object_Intercept_Resize_Cb func;
+      void *data;
+   } resize;
+   struct {
+      Evas_Object_Intercept_Raise_Cb func;
+      void *data;
+   } raise;
+   struct {
+      Evas_Object_Intercept_Lower_Cb func;
+      void *data;
+   } lower;
+   struct {
+      Evas_Object_Intercept_Stack_Above_Cb func;
+      void *data;
+   } stack_above;
+   struct {
+      Evas_Object_Intercept_Stack_Below_Cb func;
+      void *data;
+   } stack_below;
+   struct {
+      Evas_Object_Intercept_Layer_Set_Cb func;
+      void *data;
+   } layer_set;
+   struct {
+      Evas_Object_Intercept_Color_Set_Cb func;
+      void *data;
+   } color_set;
+   struct {
+      Evas_Object_Intercept_Clip_Set_Cb func;
+      void *data;
+   } clip_set;
+   struct {
+      Evas_Object_Intercept_Clip_Unset_Cb func;
+      void *data;
+   } clip_unset;
 };
 
 struct _Evas_Smart_Cb_Description_Array
@@ -501,7 +502,7 @@ struct _Evas_Object
 struct _Evas_Func_Node
 {
    EINA_INLIST;
-   void (*func) ();
+   void (*func) (void);
    void *data;
    Evas_Callback_Type type;
    unsigned char delete_me : 1;

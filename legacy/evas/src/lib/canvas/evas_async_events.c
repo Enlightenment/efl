@@ -16,10 +16,10 @@ typedef struct _Evas_Event_Async	Evas_Event_Async;
 
 struct _Evas_Event_Async
 {
-   const void		 *target;
-   void			 *event_info;
-   void			(*func)(void *target, Evas_Callback_Type type, void *event_info);
-   Evas_Callback_Type	  type;
+   const void		    *target;
+   void			    *event_info;
+   Evas_Async_Events_Put_Cb  func;
+   Evas_Callback_Type	     type;
 };
 
 int
@@ -161,7 +161,7 @@ evas_async_events_process(void)
  * @ingroup Evas_Group
  */
 EAPI Eina_Bool
-evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_info, void (*func)(void *target, Evas_Callback_Type type, void *event_info))
+evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_info, Evas_Async_Events_Put_Cb func)
 {
 #ifdef BUILD_ASYNC_EVENTS
    Evas_Event_Async *ev;
