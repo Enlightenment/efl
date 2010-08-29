@@ -209,7 +209,6 @@ main(int argc, char **argv)
     Eina_List *dirs = NULL, *user_dirs = NULL;
     int priority = 0;
     char *dir = NULL;
-    char *map = MAP_FAILED;
     char *path;
     int fd = -1, tmpfd, dirsfd = -1;
     struct stat st;
@@ -297,25 +296,25 @@ main(int argc, char **argv)
     if (!dirs) goto error;
 
     dirsfd = open(efreet_desktop_cache_dirs(), O_APPEND | O_RDWR, S_IRUSR | S_IWUSR);
-    if ((dirsfd > 0) && (fstat(dirsfd, &st) == 0) && (st.st_size > 0))
+    if (dirsfd >= 0)
     {
-        char *p;
-
-        map = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, dirsfd, 0);
-        if (map == MAP_FAILED) goto error;
-        p = map;
-        while (p < map + st.st_size)
+        if ((fstat(dirsfd, &st) == 0) && (st.st_size > 0))
         {
-            unsigned int size = *(unsigned int *)p;
-            p += sizeof(unsigned int);
-            user_dirs = eina_list_append(user_dirs, eina_stringshare_add(p));
-            p += size;
+            char *p;
+            char *map;
+
+            map = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, dirsfd, 0);
+            if (map == MAP_FAILED) goto error;
+            p = map;
+            while (p < map + st.st_size)
+            {
+                unsigned int size = *(unsigned int *)p;
+                p += sizeof(unsigned int);
+                user_dirs = eina_list_append(user_dirs, eina_stringshare_add(p));
+                p += size;
+            }
+            munmap(map, st.st_size);
         }
-        munmap(map, st.st_size);
-        map = MAP_FAILED;
-    }
-    if (dirsfd > 0)
-    {
         close(dirsfd);
         dirsfd = -1;
         unlink(efreet_desktop_cache_dirs());
@@ -372,7 +371,7 @@ main(int argc, char **argv)
         if (old) eet_close(old);
 
     }
- 
+
     /* cleanup */
     eet_close(util_ef);
     eet_close(ef);
@@ -406,8 +405,7 @@ main(int argc, char **argv)
     close(fd);
     return 0;
 error:
-    if (map != MAP_FAILED) munmap(map, st.st_size);
-    if (dirsfd > 0) close(dirsfd);
+    if (dirsfd >= 0) close(dirsfd);
     IF_FREE(dir);
     efreet_desktop_edd_shutdown(edd);
 edd_error:

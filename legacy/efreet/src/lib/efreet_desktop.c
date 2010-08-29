@@ -75,7 +75,7 @@ static Eina_List           *old_caches = NULL;
 
 static Eina_Hash           *change_monitors = NULL;
 
-#ifdef EFREET_MODULE_LOG_DOM 
+#ifdef EFREET_MODULE_LOG_DOM
 #undef EFREET_MODULE_LOG_DOM
 #endif
 
@@ -1334,7 +1334,6 @@ efreet_desktop_write_cache_dirs_file(void)
     char file[PATH_MAX];
     int fd = -1;
     int cachefd = -1;
-    char *map = MAP_FAILED;
     char *dir;
     struct stat st;
     struct flock fl;
@@ -1357,6 +1356,7 @@ efreet_desktop_write_cache_dirs_file(void)
     {
         Eina_List *l, *ln;
         char *p;
+        char *map;
 
         map = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, cachefd, 0);
         if (map == MAP_FAILED) goto error;
@@ -1376,6 +1376,7 @@ efreet_desktop_write_cache_dirs_file(void)
             }
             p += size;
         }
+        munmap(map, st.st_size);
     }
     EINA_LIST_FREE(efreet_desktop_dirs, dir)
     {
@@ -1397,7 +1398,6 @@ efreet_desktop_write_cache_dirs_file(void)
     return 1;
 
 error:
-    if (map != MAP_FAILED) munmap(map, st.st_size);
     if (fd >= 0) close(fd);
     if (cachefd >= 0) close(cachefd);
     return 0;
@@ -1443,7 +1443,7 @@ efreet_desktop_cache_update_free(void *data, void *ev)
 {
    Efreet_Old_Cache *d;
    int dangling = 0;
-   
+
    d = data;
    /*
     * All users should now had the chance to update their pointers, so we can now
@@ -1453,19 +1453,19 @@ efreet_desktop_cache_update_free(void *data, void *ev)
      {
         Eina_Iterator *it;
         Eina_Hash_Tuple *tuple;
-        
+
         it = eina_hash_iterator_tuple_new(d->desktop_cache);
         EINA_ITERATOR_FOREACH(it, tuple)
           {
-             printf("Efreet: %d:%s still in cache on cache close!\n", 
+             printf("Efreet: %d:%s still in cache on cache close!\n",
                     ((Efreet_Desktop *)tuple->data)->ref, (char *)tuple->key);
              dangling++;
           }
         eina_iterator_free(it);
-        
+
         eina_hash_free(d->desktop_cache);
      }
-   /* 
+   /*
     * If there are dangling references the eet file won't be closed - to
     * avoid crashes, but this will leak instead.
     */
@@ -1504,7 +1504,7 @@ efreet_desktop_update_cache_job(void *data __UNUSED__)
     struct flock fl;
 
     efreet_desktop_job = NULL;
-   
+
     /* TODO: Retry update cache later */
     if (efreet_desktop_exe_lock > 0) return;
 
@@ -1567,28 +1567,31 @@ efreet_desktop_changes_listen(void)
     }
 
     dirsfd = open(efreet_desktop_cache_dirs(), O_RDONLY, S_IRUSR | S_IWUSR);
-    if ((dirsfd > 0) && (fstat(dirsfd, &st) == 0) && (st.st_size > 0))
+    if (dirsfd >= 0)
     {
-        char *p;
-        char *map;
-
-        map = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, dirsfd, 0);
-        if (map == MAP_FAILED) goto error;
-        p = map;
-        while (p < map + st.st_size)
+        if ((fstat(dirsfd, &st) == 0) && (st.st_size > 0))
         {
-            unsigned int size = *(unsigned int *)p;
-            p += sizeof(unsigned int);
-            efreet_desktop_changes_monitor_add(p);
-            p += size;
+            char *p;
+            char *map;
+
+            map = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, dirsfd, 0);
+            if (map == MAP_FAILED) goto error;
+            p = map;
+            while (p < map + st.st_size)
+            {
+                unsigned int size = *(unsigned int *)p;
+                p += sizeof(unsigned int);
+                efreet_desktop_changes_monitor_add(p);
+                p += size;
+            }
+            munmap(map, st.st_size);
         }
-        munmap(map, st.st_size);
+        close(dirsfd);
     }
-    if (dirsfd > 0) close(dirsfd);
 
     return;
 error:
-    if (dirsfd > 0) close(dirsfd);
+    if (dirsfd >= 0) close(dirsfd);
 }
 
 static void
