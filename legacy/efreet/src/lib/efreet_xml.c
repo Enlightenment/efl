@@ -37,7 +37,7 @@ static int error = 0;
 
 /* define macros and variable for using the eina logging system  */
 
-#ifdef EFREET_MODULE_LOG_DOM 
+#ifdef EFREET_MODULE_LOG_DOM
 #undef EFREET_MODULE_LOG_DOM
 #endif
 #define EFREET_MODULE_LOG_DOM _efreet_xml_log_dom
