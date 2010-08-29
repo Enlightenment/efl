@@ -6550,6 +6550,7 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
    Evas_Object_Textblock_Line *ln = NULL;
    Evas_Object_Textblock_Item *it = NULL;
    Evas_Object_Textblock_Format_Item *fi = NULL;
+   Evas_Textblock_Cursor cur2;
    int x, y, w, h;
 
    if (!cur) return -1;
@@ -6561,11 +6562,27 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
      }
    else
      {
+        /* Cur 2 is pointing to the previous char */
+        cur2.obj = cur->obj;
+        evas_textblock_cursor_copy(cur, &cur2);
+        if (cur2.pos > 0)
+          {
+             cur2.pos--;
+          }
+
         if (evas_textblock_cursor_format_is_visible_get(cur))
           {
              _find_layout_format_item_line_match(cur->obj,
                    _evas_textblock_node_visible_at_pos_get(
                       _evas_textblock_cursor_node_format_at_pos_get(cur)),
+                   &ln, &fi);
+          }
+        else if (_evas_textblock_cursor_is_at_the_end(cur) &&
+              evas_textblock_cursor_format_is_visible_get(&cur2))
+          {
+             _find_layout_format_item_line_match(cur->obj,
+                   _evas_textblock_node_visible_at_pos_get(
+                      _evas_textblock_cursor_node_format_at_pos_get(&cur2)),
                    &ln, &fi);
           }
         else
