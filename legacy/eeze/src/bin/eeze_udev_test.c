@@ -134,7 +134,7 @@ int main()
    /* find all mountable drives using type EEZE_UDEV_TYPE_DRIVE_MOUNTABLE */
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_MOUNTABLE, NULL);
    type = eeze_udev_find_unlisted_similar(type);
-   EINA_LIST_FOREACH(type, l, name)
+   EINA_LIST_FREE(type, name)
    {
      printf("Found device: %s\n", name);  /* get a property using the device's syspath */
      printf("\tYou probably know it better as %s\n", eeze_udev_syspath_get_property(name, "DEVNAME"));
@@ -147,26 +147,23 @@ int main()
           printf("!\n");
        }
    }
-   eina_list_free(type);
 
    printf("\nInternal drives, anyone?  With serial numbers?\n");
    /* find all internal drives using type EEZE_UDEV_TYPE_DRIVE_INTERNAL */
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_INTERNAL, NULL);
    type = eeze_udev_find_unlisted_similar(type);
-   EINA_LIST_FOREACH(type, l, name) /* get a property using the device's syspath */
+   EINA_LIST_FREE(type, name) /* get a property using the device's syspath */
         printf("%s: %s\n", name, eeze_udev_syspath_get_property(name, "ID_SERIAL"));
-   eina_list_free(type);
 
    printf("\nGot any removables?  I'm gonna find em!\n");
    /* find all removable media using type EEZE_UDEV_TYPE_DRIVE_REMOVABLE */
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_REMOVABLE, NULL);
    type = eeze_udev_find_unlisted_similar(type);
-   EINA_LIST_FOREACH(type, l, name)  /* get a property using the device's syspath */
+   EINA_LIST_FREE(type, name)  /* get a property using the device's syspath */
      {
         if ((check = eeze_udev_syspath_get_property(name, "ID_MODEL")))
           printf("\tOoh, a %s attached on your %s bus!\n", check, eeze_udev_syspath_get_property(name, "ID_BUS"));
      }
-   eina_list_free(type);
 
 
    /* set a udev watch, grab all events because no EEZE_UDEV_TYPE filter is specified,
