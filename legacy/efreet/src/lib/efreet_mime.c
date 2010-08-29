@@ -163,7 +163,7 @@ struct Efreet_Mime_Icon_Entry
 
 /* define macros and variable for using the eina logging system  */
 
-#ifdef EFREET_MODULE_LOG_DOM 
+#ifdef EFREET_MODULE_LOG_DOM
 #undef EFREET_MODULE_LOG_DOM
 #endif
 #define EFREET_MODULE_LOG_DOM _efreet_mime_log_dom
@@ -226,7 +226,7 @@ efreet_mime_init(void)
 
     _efreet_mime_log_dom = eina_log_domain_register("Efreet_mime", EFREET_DEFAULT_LOG_COLOR);
 
-    if (_efreet_mime_log_dom < 0) 
+    if (_efreet_mime_log_dom < 0)
     {
         ERROR("Efreet: Could not create a log domain for Efreet_mime.");
         goto shutdown_efreet;
@@ -806,7 +806,7 @@ efreet_mime_fallback_check(const char *file)
 
     if (ecore_file_can_exec(file))
         return _mime_application_x_executable;
-    
+
     if (!(f = fopen(file, "r"))) return NULL;
 
     i = fread(buf, 1, sizeof(buf), f);
