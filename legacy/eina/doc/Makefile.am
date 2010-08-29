@@ -8,7 +8,7 @@ if EFL_BUILD_DOC
 
 doc-clean:
 	rm -rf html/ latex/ man/ xml/ $(PACKAGE_DOCNAME).tar*
-        
+
 doc: all
 	$(efl_doxygen)
 	cp img/* html/
@@ -19,7 +19,7 @@ doc: all
 	bzip2 -9 $(PACKAGE_DOCNAME).tar
 	rm -rf $(PACKAGE_DOCNAME)/
 	mv $(PACKAGE_DOCNAME).tar.bz2 $(top_srcdir)
-                        
+
 clean-local: doc-clean
 
 else
