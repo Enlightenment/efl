@@ -502,7 +502,7 @@ struct _Evas_Object
 struct _Evas_Func_Node
 {
    EINA_INLIST;
-   void (*func) (void);
+   void (*func) ();
    void *data;
    Evas_Callback_Type type;
    unsigned char delete_me : 1;
