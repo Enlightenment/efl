@@ -3057,7 +3057,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         _layout_text_append(c, fmt, n, start, -1, o->repch);
      }
    /* Advance the line so it'll calculate the size */
-   if ((c->ln) && (c->ln->items) && (fmt))
+   if ((c->ln) && (c->ln->items || c->ln->format_items) && (fmt))
      _layout_line_advance(c, fmt);
 
    /* Clean the rest of the format stack */
@@ -5975,7 +5975,7 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
    const Eina_Unicode *text;
    int chr, index, ppos;
 
-   if (!cur) return;
+   if (!cur || !cur->node) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    n = cur->node;
 
