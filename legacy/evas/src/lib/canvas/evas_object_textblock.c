@@ -4065,6 +4065,12 @@ _evas_textblock_nodes_merge(Evas_Object_Textblock *o, Evas_Object_Textblock_Node
    text = eina_ustrbuf_string_get(from->unicode);
    len = eina_ustrbuf_length_get(from->unicode);
    eina_ustrbuf_append_length(to->unicode, text, len);
+#ifdef BIDI_SUPPORT
+        /* Reset paragraph direction */
+   to->bidi_props.direction = EVAS_BIDI_PARAGRAPH_NATURAL;
+   evas_bidi_update_props(eina_ustrbuf_string_get(to->unicode),
+         &to->bidi_props);
+#endif
 
    itr = from->format_node;
    if (itr && (itr->text_node == from))
@@ -5578,6 +5584,15 @@ _evas_textblock_cursor_break_paragraph(Evas_Textblock_Cursor *cur,
         len = eina_ustrbuf_length_get(cur->node->unicode) - start;
         eina_ustrbuf_append_length(n->unicode, text + start, len);
         eina_ustrbuf_remove(cur->node->unicode, start, start + len);
+#ifdef BIDI_SUPPORT
+        /* Reset paragraph direction */
+        n->bidi_props.direction = EVAS_BIDI_PARAGRAPH_NATURAL;
+        evas_bidi_update_props(eina_ustrbuf_string_get(n->unicode),
+              &n->bidi_props);
+        cur->node->bidi_props.direction = EVAS_BIDI_PARAGRAPH_NATURAL;
+        evas_bidi_update_props(eina_ustrbuf_string_get(cur->node->unicode),
+              &cur->node->bidi_props);
+#endif
      }
    else
      {
