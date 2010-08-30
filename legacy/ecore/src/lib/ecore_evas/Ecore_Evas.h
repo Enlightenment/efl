@@ -3,6 +3,7 @@
 
 #include <Evas.h>
 #include <Ecore_Getopt.h>
+#include <Ecore_Input.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -124,8 +125,6 @@ typedef void Ecore_WinCE_Window;
 /* basic data types */
 typedef struct _Ecore_Evas Ecore_Evas;
 #endif
-
-#include <Ecore_Input.h>
 
 /* module setup/shutdown calls */
 
