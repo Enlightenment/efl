@@ -13,5 +13,5 @@ pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = emotion.c
 module_la_LIBADD = $(top_builddir)/src/lib/libemotion.la @EDJE_EXTERNAL_LIBS@
-module_la_LDFLAGS = -no-undefined -module -avoid-version -shared -fPIC
+module_la_LDFLAGS = -no-undefined -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
