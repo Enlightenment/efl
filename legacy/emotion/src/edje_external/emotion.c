@@ -1,8 +1,10 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "Emotion.h"
+
 #include <Edje.h>
+
+#include "Emotion.h"
 
 typedef struct _External_Emotion_Params External_Emotion_Params;
 typedef struct _External_Emotion_Signals_Proxy_Context External_Emotion_Signals_Proxy_Context;
