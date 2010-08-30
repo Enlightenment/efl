@@ -143,19 +143,19 @@ static const char o_type[] = "textblock";
 
 /* private struct for textblock object internal data */
 /**
- * @intrenal
+ * @internal
  * @typedef Evas_Object_Textblock
  * The actual textblock object.
  */
 typedef struct _Evas_Object_Textblock             Evas_Object_Textblock;
 /**
- * @intrenal
+ * @internal
  * @typedef Evas_Object_Style_Tag
  * The structure used for finding style tags.
  */
 typedef struct _Evas_Object_Style_Tag             Evas_Object_Style_Tag;
 /**
- * @intrenal
+ * @internal
  * @typedef Evas_Object_Textblock_Node_Text
  * A text node.
  */
@@ -166,31 +166,31 @@ typedef struct _Evas_Object_Textblock_Node_Format Evas_Object_Textblock_Node_For
 */
 
 /**
- * @intrenal
+ * @internal
  * @typedef Evas_Object_Textblock_Paragraph
  * A layouting paragraph.
  */
 typedef struct _Evas_Object_Textblock_Paragraph   Evas_Object_Textblock_Paragraph;
 /**
- * @intrenal
+ * @internal
  * @typedef Evas_Object_Textblock_Line
  * A layouting line.
  */
 typedef struct _Evas_Object_Textblock_Line        Evas_Object_Textblock_Line;
 /**
- * @intrenal
+ * @internal
  * @typedef Evas_Object_Textblock_Item
  * A layouting item.
  */
 typedef struct _Evas_Object_Textblock_Item        Evas_Object_Textblock_Item;
 /**
- * @intrenal
+ * @internal
  * @typedef Evas_Object_Textblock_Format_Item
  * A layouting format item.
  */
 typedef struct _Evas_Object_Textblock_Format_Item Evas_Object_Textblock_Format_Item;
 /**
- * @intrenal
+ * @internal
  * @typedef Evas_Object_Textblock_Format
  * A textblock format.
  */
@@ -198,7 +198,7 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
 
 /* the current state of the formatting */
 /**
- * @intrenal
+ * @internal
  * @def GET_PREV(text, ind)
  * Gets the index of the previous char in the text text, this simply returns
  * the current char pointed to and decrements ind but ensures it stays in
@@ -206,7 +206,7 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
  */
 #define GET_PREV(text, ind) (((ind) > 0) ? (text[(ind)--]) : (text[ind]))
 /**
- * @intrenal
+ * @internal
  * @def GET_NEXT(text, ind)
  * Gets the index of the next in the text text, this simply returns
  * the current char pointed to and increments indd but ensures it stays in
@@ -243,13 +243,13 @@ struct _Evas_Object_Textblock_Node_Format
 };
 
 /**
- * @intrenal
+ * @internal
  * @def _NODE_TEXT(x)
  * A convinience macro for casting to a text node.
  */
 #define _NODE_TEXT(x)  ((Evas_Object_Textblock_Node_Text *) (x))
 /**
- * @intrenal
+ * @internal
  * @def _NODE_FORMAT(x)
  * A convinience macro for casting to a format node.
  */
