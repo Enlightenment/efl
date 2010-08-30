@@ -569,6 +569,18 @@ another core in the meantime allowing for higher framerates with
 software rendering, using more cpu resources that are available on
 modern multi-core cpu's.
 
+This has been tested on x86 desktop and laptop cpu's with 2 and 4
+cores and it works well, but there seem to be some issues on tested
+multi-core ARM platforms like the nvidia tegra2. The source of issue is
+unknown but you will notice rendering bugs with missing content or
+incorectly drawn content. This requires you also set the environment
+variable EVAS_RENDER_MODE to "non-blocking" to enable it at runtime,
+as the compile-time enable simply sets up the feature to be ready to
+work. The runtime switch actually turns it on. If you don't plan to
+use this feature, don't enable it in the build as there is a general
+performance hit of maintaining this feature at all, so beware that
+enabling it for single core systems will likely take a performance hit.
+
 --enable-pipe-render **DISABLED DUE TO BUGS**
 
 this enables a multiple-thread renderer that divides the rendering
