@@ -1263,13 +1263,13 @@ _pixels_get(void *data, Evas_Object *obj)
 /*******************************************/
 /* Internal smart object required routines */
 /*******************************************/
-#ifdef EINA_STATIC_BUILD_XINE
+#ifdef EMOTION_STATIC_BUILD_XINE
 Eina_Bool xine_module_init(void);
 #endif
-#ifdef EINA_STATIC_BUILD_VLC
+#ifdef EMOTION_STATIC_BUILD_VLC
 Eina_Bool vlc_module_init(void);
 #endif
-#ifdef EINA_STATIC_BUILD_GSTREAMER
+#ifdef EMOTION_STATIC_BUILD_GSTREAMER
 Eina_Bool gstreamer_module_init(void);
 #endif
 
