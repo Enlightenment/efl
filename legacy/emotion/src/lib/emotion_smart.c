@@ -145,7 +145,7 @@ _emotion_module_unregister(const char *name)
    return eina_hash_del(_backends, name, NULL);
 }
 
-static Eina_Bool
+static const char *
 _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **mod, void **video)
 {
    Eina_Emotion_Plugins *plugin;
@@ -156,7 +156,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
    if (!_backends)
      {
 	fprintf(stderr, "No backend loaded\n");
-	return EINA_FALSE;
+	return NULL;
      }
 
    /* FIXME: Always look for a working backend. */
@@ -179,7 +179,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 	if (*mod)
 	  {
 	     (*mod)->plugin = plugin;
-	     return EINA_TRUE;
+	     return name;
 	  }
      }
 
@@ -188,7 +188,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 
    fprintf (stderr, "Unable to load module %s\n", name);
 
-   return EINA_FALSE;
+   return NULL;
 }
 
 static void
@@ -240,14 +240,12 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    Smart_Data *sd;
    char *file;
 
-   if (!module_filename) return EINA_FALSE;
-
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
 
-   if ((sd->module_name) && (!strcmp(sd->module_name, module_filename)))
+   if ((sd->module_name) && module_filename && (!strcmp(sd->module_name, module_filename)))
      return EINA_TRUE;
    free(sd->module_name);
-   sd->module_name = strdup(module_filename);
+   sd->module_name = NULL;
 
    file = sd->file;
    sd->file = NULL;
@@ -272,8 +270,12 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    _emotion_module_close(sd->module, sd->video);
    sd->module = NULL;
    sd->video = NULL;
-   if (!_emotion_module_open(module_filename, obj, &sd->module, &sd->video))
+
+   module_filename = _emotion_module_open(module_filename, obj, &sd->module, &sd->video);
+   if (!module_filename)
      return EINA_FALSE;
+
+   sd->module_name = strdup(module_filename);
 
    if (file)
      {
