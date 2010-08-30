@@ -493,6 +493,7 @@ void
 eng_window_unsurf(Evas_GL_X11_Window *gw)
 {
    if (!gw->surf) return;
+   if (!getenv("EVAS_GL_WIN_RESURF")) return;
    if (getenv("EVAS_GL_INFO"))
       printf("unsurf %p\n", gw);
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
