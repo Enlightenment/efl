@@ -675,7 +675,7 @@ struct _RGBA_Pipe_Op
 	 RGBA_Font          *font;
 	 int                 x, y;
 	 Eina_Unicode       *text;
-         const Evas_BiDi_Props    *intl_props;
+         Evas_BiDi_Props     intl_props;
       } text;
       struct {
 	 RGBA_Image         *src;

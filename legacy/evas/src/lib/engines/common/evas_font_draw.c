@@ -50,10 +50,6 @@ evas_common_font_draw_init(void)
 {
    char *p;
    int tmp;
-#ifdef EVAS_FRAME_QUEUING
-   LKI(lock_font_draw);
-   LKI(lock_fribidi);
-#endif
    if ((p = getenv("EVAS_WORD_CACHE_MAX_WORDS")))
      {
 	tmp = strtol(p,NULL,10);
@@ -67,9 +63,7 @@ evas_common_font_draw_init(void)
 #ifdef EVAS_FRAME_QUEUING
 EAPI void
 evas_common_font_draw_finish(void)
-{
-   LKD(lock_font_draw);
-   LKD(lock_fribidi);
+{ 
 }
 #endif
 
@@ -488,6 +482,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 #endif
 
 #ifdef BIDI_SUPPORT
+   LKL(lock_fribidi);
    Eina_Unicode *visual_text;
 
    visual_text = eina_unicode_strdup(in_text);
@@ -501,6 +496,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
      {
         text = in_text;
      }
+   LKU(lock_fribidi);
 #endif
 
 
@@ -743,7 +739,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    if (ext_w <= 0) return;
    if (ext_h <= 0) return;
 
-#ifndef EVAS_FRAME_QUEUING
+#ifdef EVAS_FRAME_QUEUING
    LKL(fn->lock);
 #endif
 //   evas_common_font_size_use(fn);
@@ -778,7 +774,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
           }
         dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
      }
-#ifndef EVAS_FRAME_QUEUING
+#ifdef EVAS_FRAME_QUEUING
    LKU(fn->lock);
 #endif
 }
@@ -851,6 +847,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
 	   {
               int kern = 0;
 # ifdef BIDI_SUPPORT
+              LKL(lock_fribidi);
 	      /* if it's rtl, the kerning matching should be reversed, i.e prev
 	       * index is now the index and the other way around.
                * There is a slight exception when there are compositing chars
@@ -863,14 +860,18 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
 		      pen_x += kern;
 		}
 	      else
-# endif
-              {
-
+                {
 	           if (evas_common_font_query_kerning(fi, prev_index, ci->index, &kern))
 	              pen_x += kern;
-	      }
+                }
+              LKU(lock_fribidi);
+# else                 
+              
+              if (evas_common_font_query_kerning(fi, prev_index, ci->index, &kern))
+                 pen_x += kern;
+# endif
            }
-
+      
        pface = fi->src->ft.face;
 
        LKU(fi->ft_mutex);

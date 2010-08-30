@@ -67,6 +67,7 @@ typedef struct _Evas_BiDi_Props Evas_BiDi_Props;
 struct _Evas_BiDi_Paragraph_Props {
    EvasBiDiCharType  *char_types; /* BiDi char types */
    EvasBiDiLevel     *embedding_levels; /* BiDi embedding levels */
+   int                len; /* length of char_types & embedding_levels */
 #ifdef USE_FRIBIDI
    EvasBiDiParType    direction;
 #endif
@@ -112,6 +113,8 @@ evas_bidi_props_reorder_line(Eina_Unicode *text, const Evas_BiDi_Props *intl_pro
 
 int
 evas_bidi_update_props(const Eina_Unicode *text, Evas_BiDi_Paragraph_Props *intl_props) EINA_ARG_NONNULL(1, 2);
+int
+evas_bidi_update_props_dup(const Evas_BiDi_Props *src, Evas_BiDi_Props *dst);
 
 Eina_Bool
 evas_bidi_shape_string(Eina_Unicode *ustr, const Evas_BiDi_Props *intl_props, size_t len);

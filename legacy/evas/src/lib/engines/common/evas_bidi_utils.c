@@ -224,6 +224,8 @@ evas_bidi_update_props(const Eina_Unicode *eina_ustr, Evas_BiDi_Paragraph_Props 
         free(bidi_props->char_types);
      }
    bidi_props->char_types = char_types;
+   
+   bidi_props->len = len;
 
    if (base_ustr) free(base_ustr);
 
@@ -237,6 +239,61 @@ cleanup:
    if (base_ustr) free(base_ustr);
    evas_bidi_paragraph_props_clean(bidi_props); /*Mark that we don't need bidi handling */
    return len;
+}
+
+int
+evas_bidi_update_props_dup(const Evas_BiDi_Props *src, Evas_BiDi_Props *dst)
+{
+   dst->start = src->start;
+   dst->props = NULL;
+   if (!src->props) return 1;
+   dst->props = malloc(sizeof(Evas_BiDi_Paragraph_Props));
+   if (!dst->props) return 0;
+   if (src->props->len > 0)
+     {
+        if (src->props->char_types)
+          {
+             dst->props->char_types = 
+                malloc(sizeof(EvasBiDiCharType) * src->props->len);
+             if (!dst->props->char_types)
+               {
+                  free(dst->props);
+                  dst->props = NULL;
+                  dst->start = 0;
+                  return 0;
+               }
+             memcpy(dst->props->char_types, src->props->char_types, 
+                    sizeof(EvasBiDiCharType) * src->props->len);
+          }
+        else
+           dst->props->char_types = NULL;
+        if (src->props->embedding_levels)
+          {
+             dst->props->embedding_levels = 
+                malloc(sizeof(EvasBiDiLevel) * src->props->len);
+             if (!dst->props->embedding_levels)
+               {
+                  if (dst->props->char_types) free(dst->props->char_types);
+                  free(dst->props);
+                  dst->props = NULL;
+                  dst->start = 0;
+                  return 0;
+               }
+             memcpy(dst->props->embedding_levels, src->props->embedding_levels,
+                    sizeof(EvasBiDiLevel) * src->props->len);
+          }
+        else
+           dst->props->embedding_levels = NULL;
+     }
+   else
+     {
+        dst->props->char_types = NULL;
+        dst->props->embedding_levels = NULL;
+        dst->props->len = 0;
+     }     
+   dst->props->len = src->props->len;
+   dst->props->direction = src->props->direction;
+   return 1;
 }
 
 /**

@@ -111,24 +111,28 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
 	     (pface == fi->src->ft.face))
 	   {
 #ifdef BIDI_SUPPORT
+              LKL(lock_fribidi);
               /* if it's rtl, the kerning matching should be reversed, i.e prev
                * index is now the index and the other way around. 
                * There is a slight exception when there are compositing chars
                * involved.*/
               if (intl_props && 
-                    evas_bidi_is_rtl_char(intl_props->props->embedding_levels, char_index) &&
-                    fg->glyph->advance.x >> 16 > 0)
+                  evas_bidi_is_rtl_char(intl_props->props->embedding_levels, char_index) &&
+                  fg->glyph->advance.x >> 16 > 0)
                 {
                    if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
-                     pen_x += kern;
+                      pen_x += kern;
                 }
               else
-#endif
                 {
-
                    if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
-                     pen_x += kern;
+                      pen_x += kern;
                 }
+              LKU(lock_fribidi);
+#else                 
+              if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+                 pen_x += kern;
+#endif
            }
 
 	pface = fi->src->ft.face;
@@ -273,6 +277,7 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Ev
 	     (pface == fi->src->ft.face))
 	   {
 #ifdef BIDI_SUPPORT
+              LKL(lock_fribidi);
               /* if it's rtl, the kerning matching should be reversed, i.e prev
                * index is now the index and the other way around. 
                * There is a slight exception when there are compositing chars
@@ -285,12 +290,15 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Ev
                      pen_x += kern;
                 }
               else
-#endif
                 {
-
                    if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
                      pen_x += kern;
                 }
+              LKU(lock_fribidi);
+#else              
+              if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+                 pen_x += kern;
+#endif
            }
 
 	pface = fi->src->ft.face;
@@ -333,8 +341,8 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
    EvasBiDiStrIndex *visual_to_logical = NULL;
    Eina_Unicode *visual_text;
 
+   LKL(lock_fribidi);
    visual_text = eina_unicode_strdup(in_text);
-
    if (visual_text)
      {
         evas_bidi_props_reorder_line(visual_text, intl_props, &visual_to_logical);
@@ -345,6 +353,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
         text = in_text;
      }
    len = eina_unicode_strlen(text);
+   LKU(lock_fribidi);
 #endif
 
    fi = fn->fonts->data;
@@ -366,8 +375,10 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
    desc = evas_common_font_max_descent_get(fn);
 
 #ifdef BIDI_SUPPORT 
+   LKL(lock_fribidi);
    /* Get the position in the visual string because those are the coords we care about */
    position = evas_bidi_position_logical_to_visual(visual_to_logical, len, pos);
+   LKU(lock_fribidi);
 #else
    position = pos;
 #endif
@@ -479,6 +490,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
    EvasBiDiStrIndex *visual_to_logical = NULL;
    Eina_Unicode *visual_text;
 
+   LKL(lock_fribidi);
    visual_text = eina_unicode_strdup(in_text);
 
    if (visual_text)
@@ -491,6 +503,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
         text = in_text;
      }
    len = eina_unicode_strlen(text);
+   LKU(lock_fribidi);
 #endif
 
    fi = fn->fonts->data;
@@ -580,10 +593,12 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
 	     if (cw) *cw = chr_w;
 	     if (ch) *ch = asc + desc;
 #ifdef BIDI_SUPPORT
+             LKL(lock_fribidi);
              /* we found the char position of the wanted char in the
               * visual string, we now need to translate it to the
               * position in the logical string */
              position = evas_bidi_position_visual_to_logical(visual_to_logical, position);
+             LKU(lock_fribidi);
 #endif
 	     ret_val = position;
 	     goto end;
@@ -659,6 +674,7 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text
               (pface == fi->src->ft.face))
           {
 #ifdef BIDI_SUPPORT
+             LKL(lock_fribidi);
              /* if it's rtl, the kerning matching should be reversed, i.e prev
               * index is now the index and the other way around.
               * There is a slight exception when there are compositing chars
@@ -672,13 +688,17 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text
                     pen_x += kern;
                }
              else
-#endif
                {
-
                   if (evas_common_font_query_kerning(fi, prev_index, index,
                            &kern))
                     pen_x += kern;
                }
+             LKU(lock_fribidi);
+#else             
+             if (evas_common_font_query_kerning(fi, prev_index, index,
+                                                &kern))
+                pen_x += kern;
+#endif
           }
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);

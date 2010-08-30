@@ -1185,6 +1185,9 @@ evas_common_pipe_op_text_free(RGBA_Pipe_Op *op)
 #else
    evas_common_font_free(op->op.text.font);
 #endif
+#ifdef BIDI_SUPPORT
+   evas_bidi_props_clean(&(op->op.text.intl_props));
+#endif   
    free(op->op.text.text);
    evas_common_pipe_op_free(op);
 }
@@ -1223,13 +1226,13 @@ evas_common_pipe_text_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Threa
 #endif
         evas_common_font_draw(dst, &(context),
                   op->op.text.font, op->op.text.x, op->op.text.y,
-                  op->op.text.text, op->op.text.intl_props);
+                  op->op.text.text, &op->op.text.intl_props);
      }
    else
      {
         evas_common_font_draw(dst, &(op->context),
                   op->op.text.font, op->op.text.x, op->op.text.y,
-                  op->op.text.text, op->op.text.intl_props);
+                  op->op.text.text, &op->op.text.intl_props);
      }
 }
 
@@ -1245,7 +1248,9 @@ evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    op->op.text.x = x;
    op->op.text.y = y;
    op->op.text.text = eina_unicode_strdup(text);
-   op->op.text.intl_props = intl_props;
+#ifdef BIDI_SUPPORT
+   evas_bidi_update_props_dup(intl_props, &(op->op.text.intl_props));
+#endif   
 #ifdef EVAS_FRAME_QUEUING
    LKL(fn->ref_fq_add);
    fn->ref_fq[0]++;
