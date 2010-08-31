@@ -189,6 +189,97 @@ more. it also supports opengl-es2.0 and is reliant on modern opengl2.0+
 shader support. this engine also supports the native surface api for
 adopting pixmaps directly to textures for compositing.
 
+some environment variables that control the opengl engine are as
+follows:
+
+export EVAS_GL_INFO=1
+  set this environment variable to enable output of opengl information
+such as vendor, version, extensions, maximum texture size etc. unset
+the environment variable to make the output quiet again.
+
+export EVAS_GL_MEMINFO=1
+  set this environment variable to enable dumping of debug output
+whenever textures are allocated or freed, giving the number of
+textures of each time and how many kb worth of pixel data are
+allocated for the textures. unset it again to stop this dumping of
+information.
+
+export EVAS_GL_WIN_RESURF=1
+  set this environment variable to enable the gl engine to try and
+ddelete the window surface, if it can, when told to "dump resources"
+to save memory, and re-allocate it when needed (when rendering
+occurs). unset it to not have this behavior.
+
+export EVAS_GL_CUTOUT_MAX=N
+  set this environment variable to the maximum number of rectangles
+applied to a rendering of a primitive that "cut away" parts of that
+primitive to render to avoid overdraw. default is 512. unset it to use
+defaults, otherwise set N to the max value desired or to -1 for
+"unlimited rectangles".
+
+export EVAS_GL_PIPES_MAX=N
+  set the maximum number of parallel pending pipelines to N. the
+default number is 32 (except on tegra2 where is it 1). evas keeps 1 (or more)
+pipelines of gl draw commands in parallel at any time, to allow for merging
+of non-overlapping draw commands to avoid texture binding and context
+changes which allows for more streamlining of the draw arrays that are
+filled and passed to gl per frame. the more pipelines exist, the more
+chance evas has of merging draw commands that have the same modes,
+texture source etc., but the more overhead there is in finding a
+pipeline slot for the draw command to merge into, so there is a
+compromise here between spare cpu resources and gpu pipelining. unset
+this environment variable to let evas use it's default value.
+
+export EVAS_GL_ATLAS_ALLOC_SIZE=N
+  set the size (width in pixels) of the evas texture atlas strips that
+are allocated. the default is 1024. unset this to let evas use its
+default. if this value is larger than the maximum texture size, then it
+is limited to that maximum size internally anyway. evas tries to
+store images together in "atlases". these are large single textures
+that contain multiple images within the same texture. to do this evas
+allocates a "wide strip" of pixels (that is a certain height) and then
+tries to fit all images loaded that need textures into an existing
+atlas texture before allocating a new one. evas tries a best fit
+policy to avoid too much wasting of texture memory. texture atlas
+textures are always allocated to be EVAS_GL_ATLAS_ALLOC_SIZE width,
+and a multiple of EVAS_GL_ATLAS_SLOT_SIZE pixels high (if possible -
+power of 2 limits are enforced if required).
+
+export EVAS_GL_ATLAS_ALLOC_ALPHA_SIZE=N
+  this is exactly the same as EVAS_GL_ATLAS_ALLOC_SIZE, but for
+"alpha" textures (texture used for font glyph data). it works exactly
+the same way as for images, but per font glyph being put in an atlas
+slot. the default value for this is 4096.
+
+export EVAS_GL_ATLAS_MAX_W=N
+  set this to limit the maximum image size (width) that will be
+allowed to go into a texture atlas. if an image exceeds this size, it
+gets allocated its own separate individual texture (this is to help
+minimize fragmentation). the default value for this is 512. if you set
+this environment variable it will be overridden by the value it is set
+to. the maximum value possible here is 512. you may set it to a
+smaller value.
+  
+export EVAS_GL_ATLAS_MAX_H=N
+  this is the same as EVAS_GL_ATLAS_MAX_W, but sets the maximum height
+of an image that is allowed into an atlas texture.
+  
+export EVAS_GL_ATLAS_SLOT_SIZE=N
+  this sets the height granularity for atlas strips. the default (and
+minimum) value is 16. this means texture atlas strips are always a
+multiple of 16 pixels high (16, 32, 48, 64, etc...). this allows you
+to change the granularity to another value to avoid having more
+textures allocated or try and consolidate allocations into fewer atlas
+strips etc.
+  
+export EVAS_GL_NO_MAP_IMAGE_SEC=1
+  if this environment variable is set, it disabled support for the SEC
+map image extension (a zero copy direct-texture access extension that
+removes texture upload overhead). if you have problems with dynamic
+evas images, and this is detected by evas (see EVAS_GL_INFO above to
+find out if its detected), then setting this will allow it to be
+forcibly disabled. unset it to allow auto-detection to keep working.
+
 --enable-gl-flavor-gles
 
 this enables the opengl-es 2.0 flavor of opengl (as opposed to desktop
@@ -293,13 +384,13 @@ actually can beat the c code (when compiled with all optimizations) in speed.
 --enable-cpu-neon
 
 This enables support for the Arm Cortex-A8 and later Neon register
-set.  In particular it will use neon optimised code for rotations and
+set.  In particular it will use neon optimized code for rotations and
 drawing with the software engines.  Open GL based renderers will gain
 nothing from the use of neon.
 
 To use neon with gcc-4.4 you need a post-2009 gcc and options
 something like: -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon
-Note that this slightly slows down non-optimised parts of evas  but
+Note that this slightly slows down non-optimized parts of evas  but
 the gains in drawing are more then worth it overall.
 
 This is enabled by default, and turns off if a small test program is
@@ -573,7 +664,7 @@ This has been tested on x86 desktop and laptop cpu's with 2 and 4
 cores and it works well, but there seem to be some issues on tested
 multi-core ARM platforms like the nvidia tegra2. The source of issue is
 unknown but you will notice rendering bugs with missing content or
-incorectly drawn content. This requires you also set the environment
+incorrectly drawn content. This requires you also set the environment
 variable EVAS_RENDER_MODE to "non-blocking" to enable it at runtime,
 as the compile-time enable simply sets up the feature to be ready to
 work. The runtime switch actually turns it on. If you don't plan to
