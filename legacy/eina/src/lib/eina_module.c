@@ -163,6 +163,27 @@ static void _dir_list_cb(const char *name, const char *path, void *data)
      }
 }
 
+static void _dir_arch_list_db(const char *name, const char *path, void *data)
+{
+   Dir_List_Get_Cb_Data *cb_data = data;
+   Eina_Module *m;
+   char *file;
+   size_t length;
+
+   length = strlen(path) + 1 + strlen(name) + 1 +
+      strlen((char *)(cb_data->data)) + 1 + sizeof("module") +
+      sizeof(SHARED_LIB_SUFFIX) + 1;
+
+   file = alloca(length);
+   snprintf(file, length, "%s/%s/%s/module" SHARED_LIB_SUFFIX,
+            path, name, (char *)(cb_data->data));
+   m = eina_module_new(file);
+   if (!m)
+      return;
+
+   eina_array_push(cb_data->array, m);
+}
+
 /**
  * @endcond
  */
@@ -482,10 +503,9 @@ EAPI char *eina_module_symbol_path_get(const void *symbol, const char *sub_dir)
            path = malloc(l0 - l1 + l2 + 1);
            if (path)
              {
-                   memcpy(path,           eina_dl.dli_fname, l0 - l1);
+                memcpy(path, eina_dl.dli_fname, l0 - l1);
                 if (sub_dir && (*sub_dir != '\0'))
-                   memcpy(path + l0 - l1, sub_dir,           l2);
-
+                   memcpy(path + l0 - l1, sub_dir, l2);
                 path[l0 - l1 + l2] = '\0';
                 return path;
              }
@@ -528,27 +548,6 @@ EAPI char *eina_module_environment_path_get(const char *env,
      }
 
    return NULL;
-}
-
-static void _dir_arch_list_db(const char *name, const char *path, void *data)
-{
-   Dir_List_Get_Cb_Data *cb_data = data;
-   Eina_Module *m;
-   char *file;
-   size_t length;
-
-   length = strlen(path) + 1 + strlen(name) + 1 +
-      strlen((char *)(cb_data->data)) + 1 + sizeof("module") +
-      sizeof(SHARED_LIB_SUFFIX) + 1;
-
-   file = alloca(length);
-   snprintf(file, length, "%s/%s/%s/module" SHARED_LIB_SUFFIX,
-            path, name, (char *)(cb_data->data));
-   m = eina_module_new(file);
-   if (!m)
-      return;
-
-   eina_array_push(cb_data->array, m);
 }
 
 /**
