@@ -2159,84 +2159,32 @@ struct _Evas_Smart_Cb_Description
    EAPI int               evas_string_char_prev_get         (const char *str, int pos, int *decoded) EINA_ARG_NONNULL(1);
    EAPI int               evas_string_char_len_get          (const char *str) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-/* FIXME: kill off!! evas_imaging before 1.0.0 !!!! */
-   
-/**
- * @defgroup Evas_Imaging Imaging and Commong GFX
- *
- * Evas imaging api - exports some of the comon gfx engine routines
- * this is not complete and should be considered experimental. use at your
- * own risk
- */
-
-   typedef struct _Evas_Imaging_Image Evas_Imaging_Image;
-   typedef struct _Evas_Imaging_Font Evas_Imaging_Font;
-
-   /**
-    * Error identifier or EVAS_LOAD_ERROR_NONE. see evas_load_error_str().
-    * @ingroup Evas_Imaging
-    */
-   EAPI extern int          evas_imaging_image_load_error;
-
-   EAPI Evas_Imaging_Image *evas_imaging_image_load      (const char *file, const char *key) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_MALLOC;
-   EAPI void                evas_imaging_image_free      (Evas_Imaging_Image *im) EINA_ARG_NONNULL(1);
-   EAPI void                evas_imaging_image_size_get  (const Evas_Imaging_Image *im, int *w, int *h) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool           evas_imaging_image_alpha_get (const Evas_Imaging_Image *im) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI void                evas_imaging_image_cache_set (int bytes);
-   EAPI int                 evas_imaging_image_cache_get (void) EINA_WARN_UNUSED_RESULT;
-
-   EAPI void                    evas_imaging_font_hinting_set      (Evas_Font_Hinting_Flags hinting);
-   EAPI Evas_Font_Hinting_Flags evas_imaging_font_hinting_get      (void) EINA_WARN_UNUSED_RESULT;
-   EAPI Eina_Bool               evas_imaging_font_hinting_can_hint (Evas_Font_Hinting_Flags hinting) EINA_WARN_UNUSED_RESULT;
-
-   EAPI Evas_Imaging_Font  *evas_imaging_font_load                      (const char *file, const char *key, int size) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
-   EAPI void                evas_imaging_font_free                      (Evas_Imaging_Font *fn) EINA_ARG_NONNULL(1);
-   EAPI int                 evas_imaging_font_ascent_get                (const Evas_Imaging_Font *fn) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI int                 evas_imaging_font_descent_get               (const Evas_Imaging_Font *fn) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI int                 evas_imaging_font_max_ascent_get            (const Evas_Imaging_Font *fn) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI int                 evas_imaging_font_max_descent_get           (const Evas_Imaging_Font *fn) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI int                 evas_imaging_font_line_advance_get          (const Evas_Imaging_Font *fn) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI void                evas_imaging_font_string_advance_get        (const Evas_Imaging_Font *fn, const char *str, int *x, int *y) EINA_ARG_NONNULL(1, 2);
-   EAPI void                evas_imaging_font_string_size_query         (const Evas_Imaging_Font *fn, const char *str, int *w, int *h) EINA_ARG_NONNULL(1, 2);
-   EAPI int                 evas_imaging_font_string_inset_get          (const Evas_Imaging_Font *fn, const char *str) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
-   EAPI int                 evas_imaging_font_string_char_coords_get    (const Evas_Imaging_Font *fn, const char *str, int pos, int *cx, int *cy, int *cw, int *ch) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
-   EAPI int                 evas_imaging_font_string_char_at_coords_get (const Evas_Imaging_Font *fn, const char *str, int x, int y, int *cx, int *cy, int *cw, int *ch) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
-
-   EAPI void                evas_imaging_font_cache_set  (int bytes);
-   EAPI int                 evas_imaging_font_cache_get  (void) EINA_WARN_UNUSED_RESULT;
-
-
-
-
-
 /**
  * TO BE DOCUMENTED:
  * @todo document key modifiers.
  */
-   EAPI const Evas_Modifier *evas_key_modifier_get             (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI const Evas_Lock     *evas_key_lock_get                 (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-
-   EAPI Eina_Bool         evas_key_modifier_is_set          (const Evas_Modifier *m, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
-
-   EAPI Eina_Bool         evas_key_lock_is_set              (const Evas_Lock *l, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
-
-   EAPI void              evas_key_modifier_add             (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_key_modifier_del             (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_key_lock_add                 (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_key_lock_del                 (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
-
-   EAPI void              evas_key_modifier_on              (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_key_modifier_off             (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_key_lock_on                  (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_key_lock_off                 (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
-
-   EAPI Evas_Modifier_Mask evas_key_modifier_mask_get       (const Evas *e, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
-
-   EAPI Eina_Bool         evas_object_key_grab              (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
-   EAPI void              evas_object_key_ungrab            (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers) EINA_ARG_NONNULL(1, 2);
-
-
-
+   EAPI const Evas_Modifier *evas_key_modifier_get          (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+   EAPI const Evas_Lock     *evas_key_lock_get              (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+   
+   EAPI Eina_Bool            evas_key_modifier_is_set       (const Evas_Modifier *m, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
+   
+   EAPI Eina_Bool            evas_key_lock_is_set           (const Evas_Lock *l, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
+   
+   EAPI void                 evas_key_modifier_add          (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
+   EAPI void                 evas_key_modifier_del          (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
+   EAPI void                 evas_key_lock_add              (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
+   EAPI void                 evas_key_lock_del              (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
+   
+   EAPI void                 evas_key_modifier_on           (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
+   EAPI void                 evas_key_modifier_off          (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
+   EAPI void                 evas_key_lock_on               (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
+   EAPI void                 evas_key_lock_off              (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
+   
+   EAPI Evas_Modifier_Mask   evas_key_modifier_mask_get     (const Evas *e, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
+   
+   EAPI Eina_Bool            evas_object_key_grab           (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
+   EAPI void                 evas_object_key_ungrab         (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers) EINA_ARG_NONNULL(1, 2);
+   
 #ifdef __cplusplus
 }
 #endif

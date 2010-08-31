@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = canvas cache cserve file engines imaging include
+SUBDIRS = canvas cache cserve file engines include
 EVAS_STATIC_MODULE =
 EVAS_STATIC_LIBADD =
 
@@ -200,7 +200,6 @@ libevas_la_LIBADD = \
 canvas/libevas_canvas.la \
 file/libevas_file.la \
 cache/libevas_cache.la \
-imaging/libevas_imaging.la \
 $(libevas_cserve_la) \
 engines/common/libevas_engine_common.la \
 @FREETYPE_LIBS@ \
@@ -217,7 +216,6 @@ libevas_la_DEPENDENCIES = \
 canvas/libevas_canvas.la \
 file/libevas_file.la \
 cache/libevas_cache.la \
-imaging/libevas_imaging.la \
 $(libevas_cserve_la) \
 engines/common/libevas_engine_common.la \
 $(EVAS_STATIC_MODULE)
@@ -238,4 +236,4 @@ endif
 
 libevas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
-DIST_SUBDIRS = canvas cache cserve file engines imaging include
+DIST_SUBDIRS = canvas cache cserve file engines include
