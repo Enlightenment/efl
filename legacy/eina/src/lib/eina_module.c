@@ -480,6 +480,17 @@ EAPI const char *eina_module_file_get(const Eina_Module *m)
    return m->file;
 }
 
+/**
+ * @brief Get the path to module with a symbol and optional subdir
+ * @param symbol The symbol to search for
+ * @param sub_dir the subdir to search in
+ * @return The full path of the module, or NULL in any case but success
+ * This returns an allocated path to the module containing @p symbol.  the
+ * returned path must be freed.
+ * Searching begins in the directory containing libeina.so, and continues
+ * into @p sub_dir.  If the symbol is not found or DL_ADDR is not supported, 
+ * returns #NULL.
+ */
 EAPI char *eina_module_symbol_path_get(const void *symbol, const char *sub_dir)
 {
 #ifdef HAVE_DLADDR
@@ -516,6 +527,18 @@ EAPI char *eina_module_symbol_path_get(const void *symbol, const char *sub_dir)
    return NULL;
 }
 
+/**
+ * @brief Get the combined string of an environment variable + a subdir
+ * @param env The environment variable to expand
+ * @param sub_dir The subdir within @p env
+ * @return The combined path, or NULL in any case but success
+ * This returns the full path which is created by expanding @p env and
+ * adding @p sub_dir.  For example:
+ * @code
+ * eina_module_environment_path_get("HOME", "/docs/somedoc.txt");
+ * @endcode
+ * would return something like "/home/username/docs/somedoc.txt"
+ */
 EAPI char *eina_module_environment_path_get(const char *env,
                                             const char *sub_dir)
 {
@@ -551,14 +574,12 @@ EAPI char *eina_module_environment_path_get(const char *env,
 }
 
 /**
- * Get a list of modules found on the directory path
+ * @brief Get an array of modules found on the directory path matching an arch type
  *
  * @param array The array that stores the list of the modules.
  * @param path The directory's path to search for modules
  * @param arch the architecture string
- * @param cb Callback function to call, if the return value of the callback is zero
- * it won't be added to the list, if it is one, it will.
- * @param data Data passed to the callback function
+ * This returns an array of module names found in @p path which match the cpu architecture @p arch.
  */
 EAPI Eina_Array *eina_module_arch_list_get(Eina_Array *array,
                                            const char *path,
