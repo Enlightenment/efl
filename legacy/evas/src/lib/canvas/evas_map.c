@@ -295,6 +295,7 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
      {
         if (!obj->cur.map)
           obj->cur.map = _evas_map_new(4);
+        evas_object_mapped_clip_across_mark(obj);
 //        obj->cur.map->normal_geometry = obj->cur.geometry;
      }
    else
@@ -302,6 +303,7 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
         if (obj->cur.map)
           {
              _evas_map_calc_geom_change(obj);
+             evas_object_mapped_clip_across_mark(obj);
           }
      }
    _evas_map_calc_map_geometry(obj);
@@ -433,6 +435,8 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
              obj->cur.map = NULL;
              if (!obj->cur.usemap) _evas_map_calc_geom_change(obj);
              else _evas_map_calc_map_geometry(obj);
+             if (obj->cur.usemap)
+                evas_object_mapped_clip_across_mark(obj);
           }
         return;
      }
@@ -440,6 +444,8 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
      {
         obj->cur.map = _evas_map_dup(map);
         obj->prev.map = NULL;
+        if (obj->cur.usemap)
+           evas_object_mapped_clip_across_mark(obj);
      }
    else
      {

@@ -435,6 +435,7 @@ struct _Evas_Object
       Eina_Bool         visible : 1;
       Eina_Bool         have_clipees : 1;
       Eina_Bool         anti_alias : 1;
+      Eina_Bool         clip_across_map : 1;
       Evas_Render_Op    render_op : 4;
    } cur, prev;
 
@@ -733,6 +734,7 @@ int evas_object_was_opaque(Evas_Object *obj);
 int evas_object_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 int evas_object_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 int evas_object_clippers_was_visible(Evas_Object *obj);
+void evas_object_mapped_clip_across_mark(Evas_Object *obj);
 void evas_event_callback_call(Evas *e, Evas_Callback_Type type, void *event_info);
 void evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void *event_info);
 Eina_List *evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y);
