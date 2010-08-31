@@ -766,18 +766,18 @@ AC_CHECK_HEADER(pthread.h,
 
 # sched_getaffinity pthread_attr_setaffinity_np
 AC_CHECK_HEADERS(pthread.h sched.h,
+  [
+    AC_CHECK_LIB(pthread, pthread_attr_setaffinity_np,
       [
-        AC_CHECK_LIB(pthread, pthread_attr_setaffinity_np,
-          [
-            AC_CHECK_LIB(pthread, pthread_barrier_wait,
-              [ build_pthreads="yes" ],
-              [ build_pthreads="no" ]
-            )
-          ],
+        AC_CHECK_LIB(pthread, pthread_barrier_wait,
+          [ build_pthreads="yes" ],
           [ build_pthreads="no" ]
         )
       ],
       [ build_pthreads="no" ]
+    )
+  ],
+  [ build_pthreads="no" ]
 )
 
 #######################################
@@ -786,23 +786,23 @@ AC_MSG_CHECKING(whether to build pthread code)
 AC_ARG_ENABLE(pthreads,
   AC_HELP_STRING([--enable-pthreads], [enable threaded rendering]),
   [
-      if test "x$enableval" = "xyes" ; then
-        if test "x$build_pthreads" = "xyes"; then
-          AC_MSG_RESULT(yes)
-          AC_DEFINE(BUILD_PTHREAD, 1, [Build Threaded Rendering])
-          build_pthreads="yes"
-	  need_pthreads="yes"
-        else
-          if "x$use_strict" = "xyes"; then
-            AC_MSG_ERROR(pthreads headers or functions not found (strict dependencies checking))
-          else
-            AC_MSG_RESULT(no: pthread headers or functions not found)
-          fi
-        fi
+    if test "x$enableval" = "xyes" ; then
+      if test "x$build_pthreads" = "xyes"; then
+        AC_MSG_RESULT(yes)
+        AC_DEFINE(BUILD_PTHREAD, 1, [Build Threaded Rendering])
+        build_pthreads="yes"
+        need_pthreads="yes"
       else
-        AC_MSG_RESULT(no)
-        build_pthreads="no"
+        if "x$use_strict" = "xyes"; then
+          AC_MSG_ERROR(pthreads headers or functions not found (strict dependencies checking))
+        else
+          AC_MSG_RESULT(no: pthread headers or functions not found)
+        fi
       fi
+    else
+      AC_MSG_RESULT(no)
+      build_pthreads="no"
+    fi
   ],
   [
     AC_MSG_RESULT($build_pthreads)
@@ -860,9 +860,9 @@ if test \( "x$build_async_render" = "xyes" \); then
   need_pthreads="yes"
 
   PKG_CHECK_MODULES([XEXT],
-     [xext < 1.1.1],
-     [ build_avoid_libXext_bug=yes ],
-     [ build_avoid_libXext_bug=no ]
+    [xext < 1.1.1],
+    [ build_avoid_libXext_bug=yes ],
+    [ build_avoid_libXext_bug=no ]
   )
   if test \( "x$build_avoid_libXext_bug" = "xyes" \); then
     AC_DEFINE(LIBXEXT_VERSION_LOW, 1, [To avoid bug on old libXext version])
@@ -1545,6 +1545,27 @@ evas.spec
 
 
 #####################################################################
+## Sanity Checks
+
+if test "x$build_pthreads" = "xno" ; then
+  if test "x$build_async_render" = "xyes" ; then
+    echo "ERROR: PThreads off, but async rendering on. Async rendering"
+    echo "  needs thread support."
+    exit 1
+  fi
+  if test "x$build_async_preload" = "xyes" ; then
+    echo "ERROR: PThreads off, but Async Preload on. Async Preload"
+    echo "  needs thread support."
+    exit 1
+  fi
+  if test "x$build_pipe_render" = "xyes" ; then
+    echo "ERROR: PThreads off, but pipe rendering on. Pipe rendering"
+    echo "  needs thread support."
+    exit 1
+  fi
+fi
+
+#####################################################################
 ## Info
 
 echo
@@ -1562,11 +1583,11 @@ echo "  Software X11...............: $have_evas_engine_software_x11 (Xlib: $have
 echo "  XRender X11................: $have_evas_engine_xrender_x11 (XCB: $have_evas_engine_xrender_xcb)"
 echo $ECHO_N "  OpenGL X11.................: $have_evas_engine_gl_x11 $ECHO_C"
 if test "x$have_evas_engine_gl_x11" = "xyes"; then
-   echo "(GLES: $gl_flavor_gles) (SGX: $gles_variety_sgx) (s3c6410: $gles_variety_s3c6410)"
+  echo "(GLES: $gl_flavor_gles) (SGX: $gles_variety_sgx) (s3c6410: $gles_variety_s3c6410)"
 else
-   echo
+  echo
 fi
-#echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
+dnl echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
 echo "  Software GDI...............: $have_evas_engine_software_gdi"
 echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"
 echo "  Direct3d...................: $have_evas_engine_direct3d"
@@ -1575,20 +1596,20 @@ echo "  OpenGL Glew................: $have_evas_engine_gl_glew"
 echo "  Software SDL...............: $have_evas_engine_software_sdl (primitive: $sdl_primitive)"
 echo $ECHO_N "  OpenGL SDL.................: $have_evas_engine_gl_sdl $ECHO_C"
 if test "x$have_evas_engine_gl_sdl" = "xyes"; then
-   echo "(GLES: $gl_flavor_gles) (SGX: $gles_variety_sgx) (s3c6410: $gles_variety_s3c6410)"
+  echo "(GLES: $gl_flavor_gles) (SGX: $gles_variety_sgx) (s3c6410: $gles_variety_s3c6410)"
 else
-   echo
+  echo
 fi
 echo "  Software Framebuffer.......: $have_evas_engine_fb"
 echo "  DirectFB...................: $have_evas_engine_directfb"
-#echo "  Software Qtopia............: $have_evas_engine_software_qtopia"
+dnl echo "  Software Qtopia............: $have_evas_engine_software_qtopia"
 echo "  Software 8bit grayscale....: $have_evas_engine_software_8"
+# FIXME: kill software 16bit
 echo "  Software 16bit ............: $have_evas_engine_software_16"
 echo "  Software 16bit X11.........: $have_evas_engine_software_16_x11"
 echo "  Software 16bit Directdraw..: $have_evas_engine_software_16_ddraw"
 echo "  Software 16bit WinCE.......: $have_evas_engine_software_16_wince"
 echo "  Software 16bit SDL.........: $have_evas_engine_software_sdl (primitive: $sdl_primitive)"
-# FIXME: opengl engine needs to be fixed and tested lots for all drivers
 echo
 echo "Image Loaders:"
 echo "  EDB.....................: $have_evas_image_loader_edb"
@@ -1601,8 +1622,6 @@ echo "  SVG.....................: $have_evas_image_loader_svg"
 echo "  TIFF....................: $have_evas_image_loader_tiff"
 echo "  XPM.....................: $have_evas_image_loader_xpm"
 echo "  BMP.....................: $have_evas_image_loader_bmp"
-# FIXME: need to add modular image loader system
-# FIXME: add more image loader modules
 echo
 echo "Font Sourcing Systems:"
 echo "  EET.....................: $have_evas_font_loader_eet"
@@ -1659,7 +1678,7 @@ echo "  8bpp RGB 111............: $conv_8_rgb_111"
 echo "  8bpp Grayscale (256)....: $conv_8_gry_1"
 echo "  8bpp Grayscale (16).....: $conv_8_gry_16"
 echo "  8bpp Grayscale 64-pal...: $conv_8_grayscale_64"
-# FIXME: add grayscale and B&W support
+# FIXME: add grayscale and B&W support to standard x converters
 echo "  16bpp RGB 565...........: $conv_16_rgb_565"
 echo "  16bpp BGR 565...........: $conv_16_bgr_565"
 echo "  16bpp RGB 555...........: $conv_16_rgb_555"
@@ -1667,7 +1686,7 @@ echo "  16bpp RGB 444...........: $conv_16_rgb_444"
 echo "  16bpp RGB 565 (444 ipaq): $conv_16_rgb_ipq"
 # FIXME: add 555 (444 ipaq) support
 # FIXME: add 30bpp support
-# FIXME: add palletted support
+# FIXME: add palletted support (ugh!)
 # FIXME: add 8bpp and below rotation
 echo "  16bpp Rotation 0........: $conv_16_rgb_rot_0"
 echo "  16bpp Rotation 90.......: $conv_16_rgb_rot_90"
