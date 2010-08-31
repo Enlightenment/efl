@@ -1014,9 +1014,6 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
    EAPI void              evas_object_scale_set             (Evas_Object *obj, double scale) EINA_ARG_NONNULL(1);
    EAPI double            evas_object_scale_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-   EAPI void              evas_object_color_interpolation_set  (Evas_Object *obj, int color_space) EINA_ARG_NONNULL(1);
-   EAPI int               evas_object_color_interpolation_get  (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-
    EAPI void              evas_object_render_op_set         (Evas_Object *obj, Evas_Render_Op op) EINA_ARG_NONNULL(1);
    EAPI Evas_Render_Op    evas_object_render_op_get         (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 

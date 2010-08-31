@@ -1364,44 +1364,6 @@ evas_object_scale_get(const Evas_Object *obj)
 }
 
 /**
- * Sets the color_space to be used for linear interpolation of colors.
- *
- * @param   obj The given evas object.
- * @param   color_space one of EVAS_COLOR_SPACE_ARGB or EVAS_COLOR_SPACE_AHSV.
- *
- * @ingroup Evas_Object_Group_Extras
- */
-EAPI void
-evas_object_color_interpolation_set(Evas_Object *obj, int color_space)
-{
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   if (obj->delete_me) return;
-   if (obj->cur.interpolation_color_space == color_space)
-	return;
-   obj->cur.interpolation_color_space = color_space;
-   evas_object_change(obj);
-}
-
-
-/**
- * Retrieves the current value of the color space used for linear interpolation.
- * @param   obj The given evas object.
- * @return  @c EVAS_COLOR_SPACE_ARGB or EVAS_COLOR_SPACE_AHSV.
- * @ingroup Evas_Object_Group_Extras
- */
-EAPI int
-evas_object_color_interpolation_get(const Evas_Object *obj)
-{
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   if (obj->delete_me) return 0;
-   return obj->cur.interpolation_color_space;
-}
-
-/**
  * Sets the render_op to be used for rendering the evas object.
  * @param   obj The given evas object.
  * @param   render_op one of the Evas_Render_Op values.
@@ -1415,11 +1377,10 @@ evas_object_render_op_set(Evas_Object *obj, Evas_Render_Op render_op)
    MAGIC_CHECK_END();
    if (obj->delete_me) return;
    if ((Evas_Render_Op)obj->cur.render_op == render_op)
-	return;
+      return;
    obj->cur.render_op = render_op;
    evas_object_change(obj);
 }
-
 
 /**
  * Retrieves the current value of the operation used for rendering the evas object.

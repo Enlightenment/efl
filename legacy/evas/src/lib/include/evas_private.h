@@ -435,7 +435,6 @@ struct _Evas_Object
       Eina_Bool         visible : 1;
       Eina_Bool         have_clipees : 1;
       Eina_Bool         anti_alias : 1;
-      unsigned char     interpolation_color_space : 1;
       Evas_Render_Op    render_op : 4;
    } cur, prev;
 
