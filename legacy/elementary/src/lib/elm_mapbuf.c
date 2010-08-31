@@ -197,7 +197,9 @@ elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content)
      {
 	elm_widget_sub_object_add(content, obj);
 	evas_object_smart_member_add(content, obj);
-	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+        evas_object_clip_set(content, evas_object_clip_get(obj));
+	evas_object_event_callback_add(content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
      }
    _sizing_eval(obj);
@@ -225,6 +227,7 @@ elm_mapbuf_content_unset(Evas_Object *obj)
    content = wd->content;
    elm_widget_sub_object_del(obj, wd->content);
    evas_object_smart_member_del(wd->content);
+   evas_object_clip_unset(wd->content);
    wd->content = NULL;
    return content;
 }

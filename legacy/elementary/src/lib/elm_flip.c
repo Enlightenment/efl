@@ -335,6 +335,7 @@ elm_flip_add(Evas_Object *parent)
    evas_object_resize(wd->front.clip, 99999, 99999);
    elm_widget_sub_object_add(wd->front.clip, obj);
    evas_object_smart_member_add(wd->front.clip, obj);
+   evas_object_clip_set(wd->front.clip, evas_object_clip_get(obj));
    
    wd->back.clip = evas_object_rectangle_add(e);
    evas_object_color_set(wd->back.clip, 255, 255, 255, 255);
@@ -342,6 +343,7 @@ elm_flip_add(Evas_Object *parent)
    evas_object_resize(wd->back.clip, 99999, 99999);
    elm_widget_sub_object_add(wd->back.clip, obj);
    evas_object_smart_member_add(wd->back.clip, obj);
+   evas_object_clip_set(wd->back.clip, evas_object_clip_get(obj));
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move, NULL);
