@@ -6051,7 +6051,6 @@ _edje_generate_source(Evas_Object *obj)
    Eina_Strbuf *buf;
 
    Eina_List *l, *ll;
-   Eina_Iterator *it;
    Edje_Font_Directory_Entry *fnt;
 
    char *entry;
@@ -6101,23 +6100,28 @@ _edje_generate_source(Evas_Object *obj)
      }
 
    /* Fonts */
-   it = eina_hash_iterator_data_new(ed->file->fonts);
-   if (it)
+   if (ed->file->fonts)
      {
-        BUF_APPEND(I0"fonts {\n");
+        Eina_Iterator *it;
 
-        EINA_ITERATOR_FOREACH(it, fnt)
-           BUF_APPENDF(I1"font: \"%s\" \"%s\";\n", fnt->file,
-                       fnt->entry);
-
-        BUF_APPEND(I0"}\n\n");
-        eina_list_free(ll);
-
-        if (!ret)
+        it = eina_hash_iterator_data_new(ed->file->fonts);
+        if (it)
           {
-             ERR("Generating EDC for Fonts");
-             eina_strbuf_free(buf);
-             return NULL;
+             BUF_APPEND(I0"fonts {\n");
+
+             EINA_ITERATOR_FOREACH(it, fnt)
+                BUF_APPENDF(I1"font: \"%s\" \"%s\";\n", fnt->file,
+                            fnt->entry);
+
+             BUF_APPEND(I0"}\n\n");
+             eina_iterator_free(it);
+
+             if (!ret)
+               {
+                  ERR("Generating EDC for Fonts");
+                  eina_strbuf_free(buf);
+                  return NULL;
+               }
           }
      }
 
