@@ -542,7 +542,7 @@ EAPI Eina_List * edje_edit_style_tags_list_get(Evas_Object *obj, const char *sty
  * @param style Style containing the tag being.
  * @param tag Tag to get the value for.
  *
- * @param Value of the given tag.
+ * @return Value of the given tag.
  */
 EAPI const char * edje_edit_style_tag_value_get(Evas_Object *obj, const char *style, const char *tag);
 
@@ -915,10 +915,11 @@ EAPI void edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, E
  */
 EAPI Evas_Event_Flags edje_edit_part_ignore_flags_get(Evas_Object *obj, const char *part);
 
-/** Set repeat_events for part.
+/** Set ignore_flags for part.
  *
  * @param obj Object being edited.
- * @param part Part to set which event flags will be ignored
+ * @param part Part to set which event flags will be ignored.
+ * @param ignore_flags The Event flags to be ignored by the part.
  */
 EAPI void edje_edit_part_ignore_flags_set(Evas_Object *obj, const char *part, Evas_Event_Flags ignore_flags);
 
@@ -1021,7 +1022,7 @@ EAPI int edje_edit_part_drag_count_x_get(Evas_Object *obj, const char *part);
  *
  * @param obj Object being edited.
  * @param part Part to set the drag horizontal count value.
- * @aparam count The count value.
+ * @param count The count value.
  */
 EAPI void edje_edit_part_drag_count_x_set(Evas_Object *obj, const char *part, int count);
 
@@ -1036,7 +1037,7 @@ EAPI int edje_edit_part_drag_count_y_get(Evas_Object *obj, const char *part);
  *
  * @param obj Object being edited.
  * @param part Part to set the drag vertical count value.
- * @aparam count The count value.
+ * @param count The count value.
  */
 EAPI void edje_edit_part_drag_count_y_set(Evas_Object *obj, const char *part, int count);
 
@@ -1099,7 +1100,7 @@ EAPI Eina_List * edje_edit_part_states_list_get(Evas_Object *obj, const char *pa
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @oaram state Name of the state to rename.
+ * @param state Name of the state to rename.
  * @param value Value of the state to rename.
  * @param new_name The new name for the state.
  * @param new_value The new value for the state.
@@ -1214,7 +1215,7 @@ EAPI void edje_edit_state_rel1_relative_x_set(Evas_Object *obj, const char *part
  * @param part Part that contain state.
  * @param state The name of the state to set 'rel1 relative Y' (not including the state value).
  * @param value The state value.
- * @param x The new 'rel1 relative Y' value to set'.
+ * @param y The new 'rel1 relative Y' value to set'.
  */
 EAPI void edje_edit_state_rel1_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
 
@@ -1234,7 +1235,7 @@ EAPI void edje_edit_state_rel2_relative_x_set(Evas_Object *obj, const char *part
  * @param part Part that contain state.
  * @param state The name of the state to set 'rel2 relative Y' (not including the state value).
  * @param value The state value.
- * @param x The new 'rel2 relative Y' value to set'.
+ * @param y The new 'rel2 relative Y' value to set'.
  */
 EAPI void edje_edit_state_rel2_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
 
@@ -1298,7 +1299,7 @@ EAPI void edje_edit_state_rel1_offset_x_set(Evas_Object *obj, const char *part, 
  * @param part Part that contain state.
  * @param state The name of the state to set 'rel1 offset Y' (not including the state value).
  * @param value The state value.
- * @param x The new 'rel1 offset Y' value to set'.
+ * @param y The new 'rel1 offset Y' value to set'.
  */
 EAPI void edje_edit_state_rel1_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
 
@@ -1318,7 +1319,7 @@ EAPI void edje_edit_state_rel2_offset_x_set(Evas_Object *obj, const char *part, 
  * @param part Part that contain state.
  * @param state The name of the state to set 'rel2 offset Y' (not including the state value).
  * @param value The state value.
- * @param x The new 'rel2 offset Y' value to set'.
+ * @param y The new 'rel2 offset Y' value to set'.
  */
 EAPI void edje_edit_state_rel2_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
 
@@ -1520,7 +1521,7 @@ EAPI double edje_edit_state_align_y_get(Evas_Object *obj, const char *part, cons
  * @param part Part that contain state.
  * @param state The name of the state to get horizontal align (not including the state value).
  * @param value The state value.
- * @param The new vertical align value.
+ * @param align The new vertical align value.
  */
 EAPI void edje_edit_state_align_x_set(Evas_Object *obj, const char *part, const char *state, double value,  double align);
 
@@ -1530,7 +1531,7 @@ EAPI void edje_edit_state_align_x_set(Evas_Object *obj, const char *part, const 
  * @param part Part that contain state.
  * @param state The name of the state to get vertical align (not including the state value).
  * @param value The state value.
- * @param The new vertical align value.
+ * @param align The new vertical align value.
  */
 EAPI void edje_edit_state_align_y_set(Evas_Object *obj, const char *part, const char *state, double value,  double align);
 
@@ -1646,7 +1647,7 @@ EAPI double edje_edit_state_aspect_max_get(Evas_Object *obj, const char *part, c
  * @param part Part that contain state.
  * @param state The name of the state to set minimum aspect (not including the state value).
  * @param value The state value.
- * @param max_h Minimum aspect value.
+ * @param aspect Minimum aspect value.
  */
 EAPI void edje_edit_state_aspect_min_set(Evas_Object *obj, const char *part, const char *state, double value, double aspect);
 
@@ -1656,7 +1657,7 @@ EAPI void edje_edit_state_aspect_min_set(Evas_Object *obj, const char *part, con
  * @param part Part that contain state.
  * @param state The name of the state to set maximum aspect (not including the state value).
  * @param value The state value.
- * @param max_h Maximum aspect value.
+ * @param aspect Maximum aspect value.
  */
 EAPI void edje_edit_state_aspect_max_set(Evas_Object *obj, const char *part, const char *state, double value, double aspect);
 
@@ -1675,9 +1676,11 @@ EAPI unsigned char edje_edit_state_aspect_pref_get(Evas_Object *obj, const char 
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to set aspect preference (not including the state value).
+ * @param state The name of the state to set aspect preference (not
+ *              including the state value).
  * @param value The state value.
- * @param The aspect preference to set (0 = None, 1 = Vertical, 2 = Horizontal, 3 = Both)
+ * @param pref The aspect preference to set (0 = None, 1 = Vertical, 2
+ *             = Horizontal, 3 = Both)
  */
 EAPI void edje_edit_state_aspect_pref_set(Evas_Object *obj, const char *part, const char *state, double value, unsigned char pref);
 
@@ -1791,7 +1794,8 @@ EAPI double edje_edit_state_fill_size_relative_y_get(Evas_Object *obj, const cha
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to get fill horizontal size offset relative to area (not including the state value).
+ * @param state The name of the state to get fill horizontal size
+ * offset relative to area (not including the state value).
  * @param value The state value.
  *
  * @return The fill horizontal size offset relative to area.
@@ -1802,7 +1806,8 @@ EAPI int edje_edit_state_fill_size_offset_x_get(Evas_Object *obj, const char *pa
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to get fill vertical size offset relative to area (not including the state value).
+ * @param state The name of the state to get fill vertical size offset
+ * relative to area (not including the state value).
  * @param value The state value.
  *
  * @return The fill vertical size offset relative to area.
@@ -1813,7 +1818,8 @@ EAPI int edje_edit_state_fill_size_offset_y_get(Evas_Object *obj, const char *pa
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to set fill horizontal size relative value (not including the state value).
+ * @param state The name of the state to set fill horizontal size
+ * relative value (not including the state value).
  * @param value The state value.
  * @param x The horizontal size relative value.
  */
@@ -1823,9 +1829,10 @@ EAPI void edje_edit_state_fill_size_relative_x_set(Evas_Object *obj, const char 
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to set fill vertical size relative value (not including the state value).
+ * @param state The name of the state to set fill vertical size
+ * relative value (not including the state value).
  * @param value The state value.
- * @param y The vertical size relative value.
+ * @param x The vertical size relative value.
  */
 EAPI void edje_edit_state_fill_size_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
 
@@ -1833,7 +1840,8 @@ EAPI void edje_edit_state_fill_size_relative_y_set(Evas_Object *obj, const char 
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to set fill horizontal size offset relative value (not including the state value).
+ * @param state The name of the state to set fill horizontal size
+ * offset relative value (not including the state value).
  * @param value The state value.
  * @param x The horizontal size offset value.
  */
@@ -1843,7 +1851,8 @@ EAPI void edje_edit_state_fill_size_offset_x_set(Evas_Object *obj, const char *p
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to set fill vertical size offset relative value (not including the state value).
+ * @param state The name of the state to set fill vertical size offset
+ * relative value (not including the state value).
  * @param value The state value.
  * @param y The vertical size offset value.
  */
@@ -1963,12 +1972,14 @@ EAPI Eina_Bool edje_edit_state_external_param_double_get(Evas_Object *obj, const
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to get external parameter of type STRING (not including the state value).
+ * @param state The name of the state to get external parameter of
+ *              type STRING (not including the state value).
  * @param value The state value.
  * @param param The name of the paramter.
  * @param val The value of the parameter.
  *
- * @return EINA_TRUE if sucessful. EINA_FALSE if not found or is of different type.
+ * @return EINA_TRUE if sucessful. EINA_FALSE if not found or is of
+ * different type.
  */
 EAPI Eina_Bool edje_edit_state_external_param_string_get(Evas_Object *obj, const char *part, const char *state, double value, const char *param, const char **val);
 
@@ -1976,24 +1987,28 @@ EAPI Eina_Bool edje_edit_state_external_param_string_get(Evas_Object *obj, const
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to get external parameter of type CHOICE (not including the state value).
+ * @param state The name of the state to get external parameter of
+ *        type CHOICE (not including the state value).
  * @param value The state value.
  * @param param The name of the paramter.
  * @param val The value of the parameter.
  *
- * @return EINA_TRUE if sucessful. EINA_FALSE if not found or is of different type.
+ * @return EINA_TRUE if sucessful. EINA_FALSE if not found or is of
+ * different type.
  */
 EAPI Eina_Bool edje_edit_state_external_param_choice_get(Evas_Object *obj, const char *part, const char *state, double value, const char *param, const char **val);
 
-/** Set the external parameter type and value, adding it if it didn't exist before.
+/** Set the external parameter type and value, adding it if it didn't
+ * exist before.
  *
  * @param obj Object being edited.
+
  * @param part Part that contain state.
- * @param state The name of the state to get external parameter (not including the state value).
+ * @param state The name of the state to get external parameter (not
+ *              including the state value).
  * @param value The state value.
  * @param param The name of the paramter set.
  * @param type The type of the parameter.
- * @param val Value according to type.
  *
  * @return EINA_TRUE if it was set, EINA_FALSE otherwise.
  */
@@ -2003,7 +2018,8 @@ EAPI Eina_Bool edje_edit_state_external_param_set(Evas_Object *obj, const char *
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to get external parameter of type INT (not including the state value).
+ * @param state The name of the state to get external parameter of
+ *              type INT (not including the state value).
  * @param value The state value.
  * @param param The name of the paramter.
  * @param val Value will be stored here.
@@ -2423,9 +2439,10 @@ EAPI Edje_Edit_Image_Comp edje_edit_image_compression_type_get(Evas_Object *obj,
 /** Get compression rate for the given image.
  *
  * @param obj Object being edited.
- * @param name The name of the image.
+ * @param image The name of the image.
  *
- * @return The compression rate (if the imnage is EDJE_EDIT_IMAGE_COMP_LOSSY). Or < 0 on errors.
+ * @return The compression rate (if the imnage is @c
+ *         EDJE_EDIT_IMAGE_COMP_LOSSY) or < 0, on errors.
  */
 EAPI int edje_edit_image_compression_rate_get(Evas_Object *obj, const char *image);
 
@@ -2435,12 +2452,13 @@ EAPI int edje_edit_image_compression_rate_get(Evas_Object *obj, const char *imag
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to get the image border (not including the state value).
+ * @param state The name of the state to get the image border (not
+ *              including the state value).
  * @param value The state value.
  * @param l A pointer to store the left value
  * @param r A pointer to store the right value
  * @param t A pointer to store the top value
- * @param r A pointer to store the bottom value
+ * @param b A pointer to store the bottom value
  */
 EAPI void edje_edit_state_image_border_get(Evas_Object *obj, const char *part, const char *state, double value, int *l, int *r, int *t, int *b);
 
@@ -2450,12 +2468,13 @@ EAPI void edje_edit_state_image_border_get(Evas_Object *obj, const char *part, c
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to set the image border (not including the state value).
+ * @param state The name of the state to set the image border (not
+ *              including the state value).
  * @param value The state value.
  * @param l Left border value (or -1).
  * @param r Right border value (or -1).
  * @param t Top border value (or -1).
- * @param r Bottom border value (or -1).
+ * @param b Bottom border value (or -1).
  */
 EAPI void edje_edit_state_image_border_set(Evas_Object *obj, const char *part, const char *state, double value, int l, int r, int t, int b);
 
@@ -2547,7 +2566,7 @@ EAPI Eina_List * edje_edit_spectrum_list_get(Evas_Object *obj);
 /** Add a new spectra in the given edje object.
  *
  * @param obj Object being edited.
- * @param spectra The name of the spectra to include in the edje.
+ * @param name The name of the spectra to include in the edje.
  *
  * @return EINA_TRUE if succesful, EINA_FALSE otherwise.
  */
@@ -2941,7 +2960,7 @@ EAPI Eina_Bool edje_edit_program_del(Evas_Object *obj, const char *prog);
 /** Check if a program with the given name exist in the edje object.
  *
  * @param obj Object being edited.
- * @param The name of the program that will be searched,
+ * @param prog The prog of the program that will be searched.
  *
  * @return EINA_TRUE if the program exist, EINA_FALSE otherwise.
  */
@@ -2980,7 +2999,7 @@ EAPI const char * edje_edit_program_source_get(Evas_Object *obj, const char *pro
 /** Set source of the given program.
  *
  * @param obj Object being edited.
- * @param program The name of the program to set source.
+ * @param prog The name of the program to set source.
  * @param source The new source value.
  *
  * @return EINA_TRUE if succesful, EINA_FALSE otherwise.
@@ -3041,7 +3060,7 @@ EAPI double edje_edit_program_in_range_get(Evas_Object *obj, const char *prog);
  * @param prog The name of the program to set random delay.
  * @param seconds Max random number of seconds to delay.
  *
- * @returen EINA_TRUE if succesful, EINA_FALSE otherwise.
+ * @return EINA_TRUE if succesful, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool edje_edit_program_in_range_set(Evas_Object *obj, const char *prog, double seconds);
 
@@ -3078,13 +3097,16 @@ EAPI Eina_Bool edje_edit_program_action_set(Evas_Object *obj, const char *prog, 
  */
 EAPI Eina_List * edje_edit_program_targets_get(Evas_Object *obj, const char *prog);
 
-/** Add a new target name to the list of 'targets' in the given program.
+/** Add a new target program to the list of 'targets' in the given program.
  *
- * If program action is EDJE_ACTION_TYPE_ACTION_STOP then 'target' must be an existing program name.
- * If action is EDJE_ACTION_TYPE_STATE_SET then 'target' must be an existing part name.
+ * If program action is @c EDJE_ACTION_TYPE_ACTION_STOP, then 'target'
+ * must be an existing program name. If it's @c
+ * EDJE_ACTION_TYPE_STATE_SET, then 'target' must be an existing part
+ * name.
  *
  * @param obj Object being edited.
- * @param program The name of the program to add a new target.
+ * @param prog The name of the program to add a new target.
+ * @param target The name of the new target itself.
  *
  * @return EINA_TRUE if succesful, EINA_FALSE otherwise.
  */
