@@ -110,8 +110,11 @@ evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key
 	h2 = (ie->load_opts.w * h) / w;
 	if (h2 > ie->load_opts.h)
 	  {
+	     int w3;
 	     h2 = ie->load_opts.h;
-	     w2 = (ie->load_opts.h * w) / h;
+	     w3 = (ie->load_opts.h * w) / h;
+	     if (w3 > w2)
+	        w2 = w3;
 	  }
 	w = w2;
 	h = h2;
