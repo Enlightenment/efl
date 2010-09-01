@@ -3371,6 +3371,18 @@ EAPI Eina_Bool edje_edit_program_filter_part_set(Evas_Object *obj, const char *p
 EAPI const char * edje_edit_script_get(Evas_Object *obj);
 
 
+//@}
+/******************************************************************************/
+/**************************   ERROR API   ***********************************/
+/******************************************************************************/
+/** @name Error API
+ *   to deal with error messages (see @ref edcref).
+ */ //@{
+
+EAPI extern Eina_Error EDJE_EDIT_ERROR_GROUP_CURRENTLY_USED;
+EAPI extern Eina_Error EDJE_EDIT_ERROR_GROUP_REFERENCED;
+EAPI extern Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST;
+
 
 #ifdef __cplusplus
 }
