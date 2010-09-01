@@ -107,6 +107,8 @@ evas_object_clip_across_check(Evas_Object *obj)
 
 // this function is called on an object when map is enabled or disabled on it
 // thus creating a "map boundary" at that point.
+// 
+// FIXME: flip2 test broken in elm - might be show/hide of clips
 void
 evas_object_mapped_clip_across_mark(Evas_Object *obj)
 {
