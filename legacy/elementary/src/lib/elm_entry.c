@@ -900,6 +900,8 @@ _text_to_mkup(const char *text)
           str = _str_append(str, "&gt;", &str_len, &str_alloc);
 	else if (ch == '&')
           str = _str_append(str, "&amp;", &str_len, &str_alloc);
+        else if (ch == 0x2029) /* PS */
+          str = _str_append(str, "<ps>", &str_len, &str_alloc);
 	else
 	  {
 	     char tstr[16];
