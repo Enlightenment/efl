@@ -4065,12 +4065,6 @@ _evas_textblock_nodes_merge(Evas_Object_Textblock *o, Evas_Object_Textblock_Node
    text = eina_ustrbuf_string_get(from->unicode);
    len = eina_ustrbuf_length_get(from->unicode);
    eina_ustrbuf_append_length(to->unicode, text, len);
-#ifdef BIDI_SUPPORT
-        /* Reset paragraph direction */
-   to->bidi_props.direction = EVAS_BIDI_PARAGRAPH_NATURAL;
-   evas_bidi_update_props(eina_ustrbuf_string_get(to->unicode),
-         &to->bidi_props);
-#endif
 
    itr = from->format_node;
    if (itr && (itr->text_node == from))
@@ -6073,6 +6067,12 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
      {
         _evas_textblock_cursor_nodes_merge(cur);
      }
+#ifdef BIDI_SUPPORT
+   /* Reset paragraph direction */
+   n->bidi_props.direction = EVAS_BIDI_PARAGRAPH_NATURAL;
+   evas_bidi_update_props(eina_ustrbuf_string_get(n->unicode),
+         &n->bidi_props);
+#endif
 
    if (cur->pos == eina_ustrbuf_length_get(n->unicode))
      {
@@ -6166,8 +6166,18 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 
    if (should_merge)
      {
+        /* We call this function instead of the cursor one because we already
+         * updated the cursors */
         _evas_textblock_nodes_merge(o, n1);
      }
+
+#ifdef BIDI_SUPPORT
+   /* Reset paragraph direction */
+   n1->bidi_props.direction = EVAS_BIDI_PARAGRAPH_NATURAL;
+   evas_bidi_update_props(eina_ustrbuf_string_get(n1->unicode),
+         &n1->bidi_props);
+#endif
+
    evas_textblock_cursor_copy(cur1, cur2);
    evas_textblock_cursor_copy(cur1, o->cursor);
    _evas_textblock_changed(o, cur1->obj);
