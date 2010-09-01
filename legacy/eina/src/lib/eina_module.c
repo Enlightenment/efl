@@ -628,7 +628,7 @@ EAPI Eina_Array *eina_module_arch_list_get(Eina_Array *array,
  */
 EAPI Eina_Array *eina_module_list_get(Eina_Array *array,
                                       const char *path,
-                                      unsigned int recursive,
+                                      Eina_Bool recursive,
                                       Eina_Module_Cb cb,
                                       void *data)
 {
