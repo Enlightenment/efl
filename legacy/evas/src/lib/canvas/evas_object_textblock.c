@@ -5498,8 +5498,10 @@ _evas_textblock_node_text_free(Evas_Object_Textblock_Node_Text *n)
    eina_ustrbuf_free(n->unicode);
    if (n->utf8)
      free(n->utf8);
+#ifdef BIDI_SUPPORT
    if (&n->bidi_props)
      evas_bidi_paragraph_props_unref(n->bidi_props);
+#endif
    free(n);
 }
 

@@ -1457,7 +1457,9 @@ evas_object_text_new(void)
    o = calloc(1, sizeof(Evas_Object_Text));
    o->magic = MAGIC_OBJ_TEXT;
    o->prev = o->cur;
+#ifdef BIDI_SUPPORT
    o->cur.intl_props.props = evas_bidi_paragraph_props_new();
+#endif
    return o;
 }
 
@@ -1477,7 +1479,9 @@ evas_object_text_free(Evas_Object *obj)
    if (o->cur.font) eina_stringshare_del(o->cur.font);
    if (o->cur.source) eina_stringshare_del(o->cur.source);
    if (o->engine_data) evas_font_free(obj->layer->evas, o->engine_data);
+#ifdef BIDI_SUPPORT
    evas_bidi_props_clean(&o->cur.intl_props);
+#endif
    o->magic = 0;
    free(o);
 }
