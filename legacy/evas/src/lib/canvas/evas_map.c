@@ -429,6 +429,7 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
                {
 		  _evas_map_free(obj, obj->cur.map);
                   obj->cur.map = NULL;
+                  evas_object_mapped_clip_across_mark(obj);
                   return;
                }
              _evas_map_free(obj, obj->cur.map);

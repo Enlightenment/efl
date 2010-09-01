@@ -111,14 +111,8 @@ void
 evas_object_mapped_clip_across_mark(Evas_Object *obj)
 {
 #ifdef MAP_ACROSS
-   Eina_Bool map = 0;
-   
-   if ((obj->cur.map) && (obj->cur.usemap)) map = 1;
-   
-   if (map)
-     {
-        evas_object_child_map_across_mark(obj, obj, 0);
-     }
+   if ((obj->cur.map) && (obj->cur.usemap))
+      evas_object_child_map_across_mark(obj, obj, 0);
    else
      {
         if (obj->smart.parent)
@@ -241,7 +235,8 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
    evas_object_recalc_clippees(obj);
-   if (!obj->smart.smart)
+   if ((!obj->smart.smart) && 
+       (!((obj->cur.map) && (obj->cur.usemap))))
      {
 	if (evas_object_is_in_output_rect(obj,
 					  obj->layer->evas->pointer.x,
@@ -343,7 +338,8 @@ evas_object_clip_unset(Evas_Object *obj)
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
    evas_object_recalc_clippees(obj);
-   if (!obj->smart.smart)
+   if ((!obj->smart.smart) && 
+       (!((obj->cur.map) && (obj->cur.usemap))))
      {
 	if (evas_object_is_in_output_rect(obj,
 					  obj->layer->evas->pointer.x,
