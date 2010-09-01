@@ -5516,8 +5516,8 @@ _evas_textblock_node_text_new(void)
 
    n = calloc(1, sizeof(Evas_Object_Textblock_Node_Text));
    n->unicode = eina_ustrbuf_new();
-   n->bidi_props = evas_bidi_paragraph_props_new();
 #ifdef BIDI_SUPPORT
+   n->bidi_props = evas_bidi_paragraph_props_new();
    n->bidi_props->direction = EVAS_BIDI_PARAGRAPH_NATURAL;
 #endif
 
