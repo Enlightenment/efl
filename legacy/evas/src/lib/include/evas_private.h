@@ -430,12 +430,12 @@ struct _Evas_Object
 	 unsigned char  r, g, b, a;
       } color;
       Evas_Object      *clipper;
+      Evas_Object      *map_parent;
       short             layer;
       Eina_Bool         usemap : 1;
       Eina_Bool         visible : 1;
       Eina_Bool         have_clipees : 1;
       Eina_Bool         anti_alias : 1;
-      Eina_Bool         clip_across_map : 1;
       Evas_Render_Op    render_op : 4;
    } cur, prev;
 

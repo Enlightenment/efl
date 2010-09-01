@@ -175,9 +175,8 @@ evas_object_clip_recalc(Evas_Object *obj)
    int cx, cy, cw, ch, cvis, cr, cg, cb, ca;
    int nx, ny, nw, nh, nvis, nr, ng, nb, na;
 
-   if ((!obj->cur.cache.clip.dirty &&
-        !(!obj->cur.clipper || obj->cur.clipper->cur.cache.clip.dirty)) ||
-       (obj->cur.clip_across_map))
+   if ((!obj->cur.cache.clip.dirty) &&
+       !(!obj->cur.clipper || obj->cur.clipper->cur.cache.clip.dirty))
      return;
    if (obj->layer->evas->events_frozen > 0) return;
    evas_object_coords_recalc(obj);
@@ -201,7 +200,8 @@ evas_object_clip_recalc(Evas_Object *obj)
    else cvis = obj->cur.visible;
    cr = obj->cur.color.r; cg = obj->cur.color.g;
    cb = obj->cur.color.b; ca = obj->cur.color.a;
-   if ((obj->cur.clipper) && (!obj->cur.clip_across_map))
+   if ((obj->cur.clipper) &&
+       (obj->cur.clipper->cur.map_parent == obj->cur.map_parent))
      {
 // this causes problems... hmmm
 	if (obj->cur.clipper->cur.cache.clip.dirty)

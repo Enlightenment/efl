@@ -201,6 +201,7 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
    evas_object_smart_member_cache_invalidate(obj);
    obj->restack = 1;
    evas_object_change(obj);
+   evas_object_mapped_clip_across_mark(obj);
    if (smart_obj->smart.smart->smart_class->member_add)
      smart_obj->smart.smart->smart_class->member_add(smart_obj, obj);
 }
@@ -241,6 +242,7 @@ evas_object_smart_member_del(Evas_Object *obj)
    evas_object_inject(obj, obj->layer->evas);
    obj->restack = 1;
    evas_object_change(obj);
+   evas_object_mapped_clip_across_mark(obj);
 }
 
 /**
