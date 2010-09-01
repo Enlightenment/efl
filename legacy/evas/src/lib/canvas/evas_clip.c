@@ -68,6 +68,8 @@ evas_object_clippers_was_visible(Evas_Object *obj)
  * breaks in logic, or nasty re-work of apps or4 the whole concept of clipping,
  * smart objects and maps... and that will have to wait for evas 2.0
  * 
+ * the below does clip fixups etc. in the even a clip spans a map boundary.
+ * not pretty, but necessary.
  */
 
 #define MAP_ACROSS 1
@@ -105,9 +107,6 @@ evas_object_clip_across_check(Evas_Object *obj)
 
 // this function is called on an object when map is enabled or disabled on it
 // thus creating a "map boundary" at that point.
-// 
-// FIXME: smart member add/del and clip set/unset needs to check the new
-// smart parent (if any)
 void
 evas_object_mapped_clip_across_mark(Evas_Object *obj)
 {
