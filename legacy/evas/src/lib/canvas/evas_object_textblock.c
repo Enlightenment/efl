@@ -228,9 +228,9 @@ struct _Evas_Object_Textblock_Node_Text
 {
    EINA_INLIST;
    Eina_UStrbuf                       *unicode;
-   char *                              utf8;
+   char                               *utf8;
    Evas_Object_Textblock_Node_Format  *format_node;
-   Evas_BiDi_Paragraph_Props           bidi_props;
+   Evas_BiDi_Paragraph_Props          *bidi_props;
 };
 
 struct _Evas_Object_Textblock_Node_Format
@@ -1922,8 +1922,9 @@ _layout_line_align_get(Ctxt *c)
    if (c->align_auto && c->ln && c->ln->items)
      {
         if (c->ln->items->source_node &&
+
               EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(
-                 c->ln->items->source_node->bidi_props.direction))
+                 c->ln->items->source_node->bidi_props))
           {
              /* Align right*/
              return 1.0;
@@ -2329,7 +2330,7 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
              new_it->source_node = pit->source_node;
              new_it->source_pos = pit->source_pos + index;
              new_it->bidi_props.start = new_it->source_pos;
-             new_it->bidi_props.props = &new_it->source_node->bidi_props;
+             new_it->bidi_props.props = new_it->source_node->bidi_props;
 # ifdef BIDI_SUPPORT
              evas_bidi_shape_string(new_it->text, &new_it->bidi_props,
                    eina_unicode_strlen(new_it->text));
@@ -2484,7 +2485,7 @@ skip:
         if (it->source_node)
           {
              it->bidi_props.start = it->source_pos;
-             it->bidi_props.props = &it->source_node->bidi_props;
+             it->bidi_props.props = it->source_node->bidi_props;
 # ifdef BIDI_SUPPORT
              evas_bidi_shape_string(it->text, &it->bidi_props,
                    eina_unicode_strlen(it->text));
@@ -5497,6 +5498,8 @@ _evas_textblock_node_text_free(Evas_Object_Textblock_Node_Text *n)
    eina_ustrbuf_free(n->unicode);
    if (n->utf8)
      free(n->utf8);
+   if (&n->bidi_props)
+     evas_bidi_paragraph_props_unref(n->bidi_props);
    free(n);
 }
 
@@ -5513,8 +5516,9 @@ _evas_textblock_node_text_new(void)
 
    n = calloc(1, sizeof(Evas_Object_Textblock_Node_Text));
    n->unicode = eina_ustrbuf_new();
+   n->bidi_props = evas_bidi_paragraph_props_new();
 #ifdef BIDI_SUPPORT
-   n->bidi_props.direction = EVAS_BIDI_PARAGRAPH_NATURAL;
+   n->bidi_props->direction = EVAS_BIDI_PARAGRAPH_NATURAL;
 #endif
 
    return n;
@@ -5579,13 +5583,13 @@ _evas_textblock_cursor_break_paragraph(Evas_Textblock_Cursor *cur,
         eina_ustrbuf_append_length(n->unicode, text + start, len);
         eina_ustrbuf_remove(cur->node->unicode, start, start + len);
 #ifdef BIDI_SUPPORT
-        /* Reset paragraph direction */
-        n->bidi_props.direction = EVAS_BIDI_PARAGRAPH_NATURAL;
-        evas_bidi_update_props(eina_ustrbuf_string_get(n->unicode),
-              &n->bidi_props);
-        cur->node->bidi_props.direction = EVAS_BIDI_PARAGRAPH_NATURAL;
-        evas_bidi_update_props(eina_ustrbuf_string_get(cur->node->unicode),
-              &cur->node->bidi_props);
+   evas_bidi_paragraph_props_unref(n->bidi_props);
+   n->bidi_props = evas_bidi_paragraph_props_get(
+         eina_ustrbuf_string_get(n->unicode));
+
+   evas_bidi_paragraph_props_unref(cur->node->bidi_props);
+   cur->node->bidi_props = evas_bidi_paragraph_props_get(
+         eina_ustrbuf_string_get(cur->node->unicode));
 #endif
      }
    else
@@ -5778,9 +5782,8 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    if (fnode && (fnode->text_node == cur->node))
      fnode->offset += len;
 #ifdef BIDI_SUPPORT
-   /* Reset paragraph direction */
-   n->bidi_props.direction = EVAS_BIDI_PARAGRAPH_NATURAL;
-   evas_bidi_update_props(eina_ustrbuf_string_get(n->unicode), &n->bidi_props);
+   evas_bidi_paragraph_props_unref(n->bidi_props);
+   n->bidi_props = evas_bidi_paragraph_props_get(eina_ustrbuf_string_get(n->unicode));
 #endif
    _evas_textblock_changed(o, cur->obj);
    free(text);
@@ -6068,10 +6071,8 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
         _evas_textblock_cursor_nodes_merge(cur);
      }
 #ifdef BIDI_SUPPORT
-   /* Reset paragraph direction */
-   n->bidi_props.direction = EVAS_BIDI_PARAGRAPH_NATURAL;
-   evas_bidi_update_props(eina_ustrbuf_string_get(n->unicode),
-         &n->bidi_props);
+   evas_bidi_paragraph_props_unref(n->bidi_props);
+   n->bidi_props = evas_bidi_paragraph_props_get(eina_ustrbuf_string_get(n->unicode));
 #endif
 
    if (cur->pos == eina_ustrbuf_length_get(n->unicode))
@@ -6172,10 +6173,9 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
      }
 
 #ifdef BIDI_SUPPORT
-   /* Reset paragraph direction */
-   n1->bidi_props.direction = EVAS_BIDI_PARAGRAPH_NATURAL;
-   evas_bidi_update_props(eina_ustrbuf_string_get(n1->unicode),
-         &n1->bidi_props);
+   evas_bidi_paragraph_props_unref(n1->bidi_props);
+   n1->bidi_props = evas_bidi_paragraph_props_get(
+         eina_ustrbuf_string_get(n1->unicode));
 #endif
 
    evas_textblock_cursor_copy(cur1, cur2);

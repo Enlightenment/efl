@@ -1249,7 +1249,7 @@ evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    op->op.text.y = y;
    op->op.text.text = eina_unicode_strdup(text);
 #ifdef BIDI_SUPPORT
-   evas_bidi_update_props_dup(intl_props, &(op->op.text.intl_props));
+   evas_bidi_props_copy_and_ref(intl_props, &(op->op.text.intl_props));
 #endif   
 #ifdef EVAS_FRAME_QUEUING
    LKL(fn->ref_fq_add);

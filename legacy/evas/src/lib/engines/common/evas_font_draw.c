@@ -482,7 +482,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 #endif
 
 #ifdef BIDI_SUPPORT
-   LKL(lock_fribidi);
    Eina_Unicode *visual_text;
 
    visual_text = eina_unicode_strdup(in_text);
@@ -496,7 +495,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
      {
         text = in_text;
      }
-   LKU(lock_fribidi);
 #endif
 
 
@@ -847,13 +845,12 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
 	   {
               int kern = 0;
 # ifdef BIDI_SUPPORT
-              LKL(lock_fribidi);
 	      /* if it's rtl, the kerning matching should be reversed, i.e prev
 	       * index is now the index and the other way around.
                * There is a slight exception when there are compositing chars
                * involved.*/
 	      if (intl_props && intl_props->props &&
-                  evas_bidi_is_rtl_char(intl_props->props->embedding_levels, char_index) &&
+                  evas_bidi_is_rtl_char(intl_props, char_index) &&
                   ci->fg->glyph->advance.x >> 16 > 0)
 		{
 		   if (evas_common_font_query_kerning(fi, ci->index, prev_index, &kern))
@@ -864,9 +861,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
 	           if (evas_common_font_query_kerning(fi, prev_index, ci->index, &kern))
 	              pen_x += kern;
                 }
-              LKU(lock_fribidi);
-# else                 
-              
+# else
               if (evas_common_font_query_kerning(fi, prev_index, ci->index, &kern))
                  pen_x += kern;
 # endif

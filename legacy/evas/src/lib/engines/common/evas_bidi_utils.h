@@ -67,7 +67,7 @@ typedef struct _Evas_BiDi_Props Evas_BiDi_Props;
 struct _Evas_BiDi_Paragraph_Props {
    EvasBiDiCharType  *char_types; /* BiDi char types */
    EvasBiDiLevel     *embedding_levels; /* BiDi embedding levels */
-   int                len; /* length of char_types & embedding_levels */
+   int                refcount; /* The number of references to this object */
 #ifdef USE_FRIBIDI
    EvasBiDiParType    direction;
 #endif
@@ -89,13 +89,13 @@ struct _Evas_BiDi_Props {
 #define EVAS_BIDI_PARAGRAPH_WLTR    FRIBIDI_PAR_WLTR
 #define EVAS_BIDI_PARAGRAPH_WRTL    FRIBIDI_PAR_WRTL
 
-#define EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(direction)       \
-                (((direction == EVAS_BIDI_PARAGRAPH_RTL) ||   \
-                 (direction == EVAS_BIDI_PARAGRAPH_WRTL)) ?   \
-                 EINA_TRUE : EINA_FALSE)
+#define EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(x)       \
+   (((x) &&                                \
+     ((x->direction == EVAS_BIDI_PARAGRAPH_RTL) ||   \
+      (x->direction == EVAS_BIDI_PARAGRAPH_WRTL))) ?   \
+    EINA_TRUE : EINA_FALSE)
 
 
-# define EVAS_BIDI_IS_BIDI_PROP(intl_props) ((intl_props) && (intl_props)->char_types)
 # define evas_bidi_position_visual_to_logical(list, position) \
                 (list) ? list[position] : position;
 
@@ -106,15 +106,16 @@ Eina_Bool
 evas_bidi_is_rtl_str(const Eina_Unicode *str);
 
 Eina_Bool
-evas_bidi_is_rtl_char(EvasBiDiLevel *embedded_level_list, EvasBiDiStrIndex index);
+evas_bidi_is_rtl_char(const Evas_BiDi_Props *bidi_props, EvasBiDiStrIndex index);
 
 Eina_Bool
 evas_bidi_props_reorder_line(Eina_Unicode *text, const Evas_BiDi_Props *intl_props, EvasBiDiStrIndex **_v_to_l);
 
-int
-evas_bidi_update_props(const Eina_Unicode *text, Evas_BiDi_Paragraph_Props *intl_props) EINA_ARG_NONNULL(1, 2);
-int
-evas_bidi_update_props_dup(const Evas_BiDi_Props *src, Evas_BiDi_Props *dst);
+Evas_BiDi_Paragraph_Props *
+evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr) EINA_ARG_NONNULL(1) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+
+void
+evas_bidi_props_copy_and_ref(const Evas_BiDi_Props *src, Evas_BiDi_Props *dst);
 
 Eina_Bool
 evas_bidi_shape_string(Eina_Unicode *ustr, const Evas_BiDi_Props *intl_props, size_t len);
@@ -124,6 +125,15 @@ evas_bidi_props_clean(Evas_BiDi_Props *intl_props) EINA_ARG_NONNULL(1);
 
 void
 evas_bidi_paragraph_props_clean(Evas_BiDi_Paragraph_Props *bidi_props) EINA_ARG_NONNULL(1);
+
+Evas_BiDi_Paragraph_Props *
+evas_bidi_paragraph_props_ref(Evas_BiDi_Paragraph_Props *bidi_props) EINA_ARG_NONNULL(1);
+
+void
+evas_bidi_paragraph_props_unref(Evas_BiDi_Paragraph_Props *bidi_props) EINA_ARG_NONNULL(1);
+
+Evas_BiDi_Paragraph_Props *
+evas_bidi_paragraph_props_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 #endif
 /**

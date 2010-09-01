@@ -27,7 +27,6 @@ struct _Evas_Object_Text
 
       unsigned char               style;
       Evas_BiDi_Props             intl_props;
-      Evas_BiDi_Paragraph_Props   paragraph_bidi_props;
    } cur, prev;
 
    float                ascent, descent;
@@ -352,7 +351,8 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
    /* DO II */
    /*Update intl_props*/
 #ifdef BIDI_SUPPORT
-   evas_bidi_update_props(text, o->cur.intl_props.props);
+   evas_bidi_paragraph_props_unref(o->cur.intl_props.props);
+   o->cur.intl_props.props = evas_bidi_paragraph_props_get(text);
 #endif
    if (o->cur.text) eina_ustringshare_del(o->cur.text);
    if (o->cur.utf8_text) eina_stringshare_del(o->cur.utf8_text);
@@ -1457,10 +1457,7 @@ evas_object_text_new(void)
    o = calloc(1, sizeof(Evas_Object_Text));
    o->magic = MAGIC_OBJ_TEXT;
    o->prev = o->cur;
-   o->cur.intl_props.props = &o->cur.paragraph_bidi_props;
-#ifdef BIDI_SUPPORT
-   o->cur.intl_props.props->direction = EVAS_BIDI_PARAGRAPH_NATURAL;
-#endif
+   o->cur.intl_props.props = evas_bidi_paragraph_props_new();
    return o;
 }
 
@@ -1480,8 +1477,7 @@ evas_object_text_free(Evas_Object *obj)
    if (o->cur.font) eina_stringshare_del(o->cur.font);
    if (o->cur.source) eina_stringshare_del(o->cur.source);
    if (o->engine_data) evas_font_free(obj->layer->evas, o->engine_data);
-   if (o->cur.intl_props.props->embedding_levels) free(o->cur.intl_props.props->embedding_levels);
-   if (o->cur.intl_props.props->char_types) free(o->cur.intl_props.props->char_types);
+   evas_bidi_props_clean(&o->cur.intl_props);
    o->magic = 0;
    free(o);
 }
