@@ -619,7 +619,7 @@ EAPI Eina_Array *eina_module_arch_list_get(Eina_Array *array,
  *
  * This function adds to @p array the list of modules found in
  * @p path. If @p recursive is #EINA_TRUE, then recursive search is
- * done. The callback @p cb is called on each file found, and @p data
+ * done. The callback @p cb is called on each module found, and @p data
  * is passed to @p cb. If @p path is @c NULL, the function returns
  * immediatly @p array. If the returned value of @p cb is 0, the
  * module will not be added to the list, otherwise it will be added.
