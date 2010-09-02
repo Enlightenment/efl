@@ -368,7 +368,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
    asc = evas_common_font_max_ascent_get(fn);
    desc = evas_common_font_max_descent_get(fn);
 
-#ifdef BIDI_SUPPORT 
+#ifdef BIDI_SUPPORT
    /* Get the position in the visual string because those are the coords we care about */
    position = evas_bidi_position_logical_to_visual(visual_to_logical, len, pos);
 #else
@@ -379,6 +379,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
      {
         /* if it's rtl then the location is the left of the string,
          * otherwise, the right. */
+#ifdef BIDI_SUPPORT
         if (intl_props &&
               EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(intl_props->props))
           {
@@ -386,6 +387,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
              if (ch) *ch = asc + desc;
           }
         else
+#endif
           {
              evas_common_font_query_size(fn, text, intl_props, cx, ch);
           }
