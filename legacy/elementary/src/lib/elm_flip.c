@@ -25,6 +25,7 @@ struct _Widget_Data
    Ecore_Animator *animator;
    double start, len;
    Elm_Flip_Mode mode;
+   Evas_Object *clip;
    struct {
       Evas_Object *content, *clip;
    } front, back;
@@ -386,21 +387,31 @@ elm_flip_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
 
+   wd->clip = evas_object_rectangle_add(e);
+   evas_object_color_set(wd->clip, 255, 255, 255, 255);
+   evas_object_move(wd->clip, -49999, -49999);
+   evas_object_resize(wd->clip, 99999, 99999);
+   elm_widget_sub_object_add(obj, wd->clip);
+   evas_object_clip_set(wd->clip, evas_object_clip_get(obj));
+   evas_object_smart_member_add(wd->clip, obj);
+   
    wd->front.clip = evas_object_rectangle_add(e);
+   evas_object_data_set(wd->front.clip, "_elm_leaveme", obj);
    evas_object_color_set(wd->front.clip, 255, 255, 255, 255);
    evas_object_move(wd->front.clip, -49999, -49999);
    evas_object_resize(wd->front.clip, 99999, 99999);
    elm_widget_sub_object_add(obj, wd->front.clip);
    evas_object_smart_member_add(wd->front.clip, obj);
-   evas_object_clip_set(wd->front.clip, evas_object_clip_get(obj));
+   evas_object_clip_set(wd->front.clip, wd->clip);
    
    wd->back.clip = evas_object_rectangle_add(e);
+   evas_object_data_set(wd->back.clip, "_elm_leaveme", obj);
    evas_object_color_set(wd->back.clip, 255, 255, 255, 255);
    evas_object_move(wd->back.clip, -49999, -49999);
    evas_object_resize(wd->back.clip, 99999, 99999);
    elm_widget_sub_object_add(wd->back.clip, obj);
    evas_object_smart_member_add(obj, wd->back.clip);
-   evas_object_clip_set(wd->back.clip, evas_object_clip_get(obj));
+   evas_object_clip_set(wd->back.clip, wd->clip);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move, NULL);
