@@ -6570,7 +6570,6 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
 	x += ln->x + it->x - it->inset;
 	if (x < ln->x)
 	  {
-	     w -= (ln->x - x);
 	     x = ln->x;
 	  }
 	y = ln->y;
