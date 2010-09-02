@@ -50,8 +50,19 @@ typedef enum _Elm_Engine
 
 typedef struct _Elm_Config Elm_Config;
 
+/* increment this whenever we change config enough that you need new
+ * defaults for elm to work.
+ */
+#define ELM_CONFIG_EPOCH           0x0001
+/* increment this whenever a new set of config values are added but the users
+ * config doesn't need to be wiped - simply new values need to be put in
+ */
+#define ELM_CONFIG_FILE_GENERATION 0x0001
+#define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << 16) | ELM_CONFIG_FILE_GENERATION)
+
 struct _Elm_Config
 {
+   int config_version;
    int engine;
    int thumbscroll_enable;
    int thumbscroll_threshhold;
