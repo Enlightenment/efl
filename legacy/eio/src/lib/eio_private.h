@@ -9,6 +9,7 @@ typedef struct _Eio_File_Ls Eio_File_Ls;
 typedef struct _Eio_File_Direct_Ls Eio_File_Direct_Ls;
 typedef struct _Eio_File_Char_Ls Eio_File_Char_Ls;
 typedef struct _Eio_File_Mkdir Eio_File_Mkdir;
+typedef struct _Eio_File_Unlink Eio_File_Unlink;
 
 struct _Eio_File
 {
@@ -47,6 +48,13 @@ struct _Eio_File_Mkdir
 
    const char *path;
    mode_t mode;
+};
+
+struct _Eio_File_Unlink
+{
+   Eio_File common;
+
+   const char *path;
 };
 
 #endif

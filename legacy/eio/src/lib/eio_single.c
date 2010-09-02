@@ -60,6 +60,39 @@ _eio_file_mkdir(void *data)
      ecore_thread_cancel(r->common.thread);
 }
 
+static void
+_eio_file_unlink(void *data)
+{
+   Eio_File_Unlink *l = data;
+
+   if (unlink(l->path) != 0)
+     ecore_thread_cancel(l->common.thread);
+}
+
+static void
+_eio_file_unlink_done(void *data)
+{
+   Eio_File_Unlink *l = data;
+
+   if (l->common.done_cb)
+     l->common.done_cb(l->common.data);
+
+   eina_stringshare_del(l->path);
+   free(l);
+}
+
+static void
+_eio_file_unlink_error(void *data)
+{
+   Eio_File_Unlink *l = data;
+
+   if (l->common.error_cb)
+     l->common.error_cb(l->common.data);
+
+   eina_stringshare_del(l->path);
+   free(l);
+}
+
 /* ---- */
 
 EAPI Eio_File *
@@ -71,12 +104,44 @@ eio_file_direct_stat(const char *path,
    return NULL;
 }
 
+/**
+ * @brief Unlink a file/directory.
+ * @param mode The permission to set, follow (mode & ~umask & 0777).
+ * @param done_cb Callback called from the main loop when the directory has been created.
+ * @param error_cb Callback called from the main loop when the directory failed to be created or has been canceled.
+ * @return A reference to the IO operation.
+ *
+ * eio_file_unlink basically call unlink in another thread. This prevent any lock in your apps.
+ */
 EAPI Eio_File *
 eio_file_unlink(const char *path,
 		Eio_Done_Cb done_cb,
 		Eio_Done_Cb error_cb,
 		const void *data)
 {
+   Eio_File_Unlink *l = NULL;
+
+   if (!path || !done_cb || !error_cb)
+     return NULL;
+
+   l = malloc(sizeof (Eio_File_Unlink));
+   if (!l) return NULL;
+
+   l->path = eina_stringshare_add(path);
+   l->common.done_cb = done_cb;
+   l->common.error_cb = error_cb;
+   l->common.data = data;
+   l->common.thread = ecore_thread_run(_eio_file_unlink,
+				       _eio_file_unlink_done,
+				       _eio_file_unlink_error,
+				       l);
+   if (!l->common.thread) goto on_error;
+
+   return &l->common;
+
+ on_error:
+   eina_stringshare_del(l->path);
+   free(l);
    return NULL;
 }
 
