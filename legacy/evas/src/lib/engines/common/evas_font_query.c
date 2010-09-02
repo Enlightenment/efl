@@ -307,7 +307,8 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Ev
    if (h_adv) *h_adv = pen_x - start_x;
 }
 
-/* x y w h for char at char pos
+/* x y w h for char at char pos for null it returns the position right after
+ * the last char with 0 as width and height.
  * BiDi handling: We recieve the shaped string + other props from intl_props,
  * We care about the actual drawing location of the string, this is why we need
  * the visual string. We need to know how it's printed. After that we need to calculate
