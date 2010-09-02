@@ -6421,6 +6421,68 @@ evas_textblock_cursor_format_is_visible_get(const Evas_Textblock_Cursor *cur)
               EINA_TRUE : EINA_FALSE;
 }
 
+/**
+ * Returns the geometry of the cursor. Depends on the type of cursor requested.
+ * This should be used instead of char_geometry_get because there are weird
+ * special cases with BiDi text.
+ * in '_' cursor mode (i.e a line below the char) it's the same as char_geometry
+ * get, except for the case of the last char of a line which depends on the
+ * paragraph direction.
+ *
+ * in '|' cursor mode (i.e a line between two chars) it is very varyable.
+ * For example consider the following visual string:
+ * "abcCBA" (ABC are rtl chars), a cursor pointing on A should actually draw
+ * a '|' between the c and the C.
+ *
+ * @param cur the cursor.
+ * @param cx the x of the cursor
+ * @param cy the y of the cursor
+ * @param cw the w of the cursor
+ * @param ch the h of the cursor
+ * @return line number of the char on success, -1 on error.
+ */
+EAPI int
+evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_Textblock_Cursor_Type ctype)
+{
+   if (ctype == EVAS_TEXTBLOCK_CURSOR_UNDER)
+     {
+        return evas_textblock_cursor_char_geometry_get(cur, cx, cy, cw, ch);
+     }
+   else if (ctype == EVAS_TEXTBLOCK_CURSOR_BEFORE)
+     {
+        /*FIXME: Rough sketch, not yet implemented - VERY buggy. */
+        /* In the case of a "before cursor", we should get the coordinates
+         * of just after the previous char (which in bidi text may not be
+         * just before the current char). */
+        Evas_Coord x, y, h, w;
+        int ret;
+
+        if (cur->pos > 0)
+          {
+             Evas_Textblock_Cursor cur2;
+             cur2.obj = cur->obj;
+             evas_textblock_cursor_copy(cur, &cur2);
+             cur2.pos--;
+             ret = evas_textblock_cursor_char_geometry_get(&cur2, &x, &y, &w, &h);
+          }
+        else
+          {
+             ret = evas_textblock_cursor_char_geometry_get(cur, &x, &y, &w, &h);
+             w = 0;
+          }
+        if (ret > 0)
+          {
+             if (cx) *cx = x + w;
+             if (cy) *cy = y + h;
+             if (cw) *cw = 0;
+             if (ch) *ch = 0;
+          }
+        return ret;
+     }
+
+   return -1;
+}
+
 
 /**
  * Returns the geometry of the char at cur.
@@ -6498,27 +6560,18 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
         ret = -1;
 
         if (pos < 0) pos = 0;
-        if (it->format->font.font) 
+        if (it->format->font.font)
           {
              ret = cur->ENFN->font_char_coords_get(cur->ENDT, it->format->font.font,
                    it->text, &it->bidi_props,
                    pos,
                    &x, &y, &w, &h);
           }
-        if (ret <= 0)
-          {
-             if (it->format->font.font)
-               cur->ENFN->font_string_size_get(cur->ENDT, it->format->font.font,
-                     it->text, &it->bidi_props, &w, &h);
-             x = w;
-             y = 0;
-             w = 0;
-	  }
-	x = ln->x + it->x - it->inset + x;
+	x += ln->x + it->x - it->inset;
 	if (x < ln->x)
 	  {
-	     x = ln->x;
 	     w -= (ln->x - x);
+	     x = ln->x;
 	  }
 	y = ln->y;
 	h = ln->h;

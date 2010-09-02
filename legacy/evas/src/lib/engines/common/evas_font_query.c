@@ -374,6 +374,26 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
 #else
    position = pos;
 #endif
+   /* If it's the null, choose location according to the direction. */
+   if (!text[position])
+     {
+        /* if it's rtl then the location is the left of the string,
+         * otherwise, the right. */
+        if (intl_props &&
+              EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(intl_props->props))
+          {
+             if (cx) *cx = 0;
+             if (ch) *ch = asc + desc;
+          }
+        else
+          {
+             evas_common_font_query_size(fn, text, intl_props, cx, ch);
+          }
+        if (cy) *cy = 0;
+        if (cw) *cw = 0;
+        ret_val = 1;
+        goto end;
+     }
 
    last_adv = 0;
    for (char_index = 0; *text ; text++, char_index++)
