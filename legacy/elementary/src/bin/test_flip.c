@@ -359,8 +359,7 @@ test_flip2(void *data, Evas_Object *obj, void *event_info)
 void
 test_flip3(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *bx, *bx2, *bx3, *bx4, *bx5, *fl, *fl_f, *fl_b, *o,
-	       *bt, *ly, *lb;
+   Evas_Object *win, *bg, *bx, *bx2, *fl, *fl_f, *fl_b, *o, *bt, *fr;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "flip flip", ELM_WIN_BASIC);
@@ -381,136 +380,65 @@ test_flip3(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(fl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(fl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, fl);
+   evas_object_show(fl);
 
-   bx3 = elm_box_add(win);
-   evas_object_size_hint_align_set(bx3, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bx3, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bx3);
-
+   fr = elm_frame_add(win);
+   elm_frame_label_set(fr, "Front");
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_flip_content_front_set(fl, fr);
+   evas_object_show(fr);
+   
    fl_f = elm_flip_add(win);
    evas_object_size_hint_align_set(fl_f, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(fl_f, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-   bx5 = elm_box_add(win);
-   evas_object_size_hint_align_set(bx5, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bx5, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bx5);
-
+   elm_frame_content_set(fr, fl_f);
+   evas_object_show(fl_f);
+   
    o = elm_bg_add(win);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, "sky_01.jpg");
    elm_bg_file_set(o, buf, NULL);
+   elm_flip_content_front_set(fl_f, o);
    evas_object_show(o);
-   elm_box_pack_end(bx5, o);
-
-   lb = elm_label_add(win);
-   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0);
-   elm_label_label_set(lb, "Front Flip - Front");
-   evas_object_show(lb);
-   elm_box_pack_end(bx5, lb);
-
-   elm_flip_content_front_set(fl_f, bx5);
-
-   bx5 = elm_box_add(win);
-   evas_object_size_hint_align_set(bx5, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bx5, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bx5);
 
    o = elm_bg_add(win);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, "sky_02.jpg");
    elm_bg_file_set(o, buf, NULL);
+   elm_flip_content_back_set(fl_f, o);
    evas_object_show(o);
-   elm_box_pack_end(bx5, o);
 
-   lb = elm_label_add(win);
-   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0);
-   elm_label_label_set(lb, "Front Flip - Back");
-   evas_object_show(lb);
-   elm_box_pack_end(bx5, lb);
-
-   elm_flip_content_back_set(fl_f, bx5);
-
-   evas_object_show(fl_f);
-   elm_box_pack_end(bx3, fl_f);
-
-   lb = elm_label_add(win);
-   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0);
-   elm_label_label_set(lb, "Main Flip - Front");
-   evas_object_show(lb);
-   elm_box_pack_end(bx3, lb);
-
-   bx4 = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx4, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bx4);
-
+   fr = elm_frame_add(win);
+   elm_frame_label_set(fr, "Back");
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_flip_content_back_set(fl, fr);
+   evas_object_show(fr);
+   
    fl_b = elm_flip_add(win);
    evas_object_size_hint_align_set(fl_b, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(fl_b, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-   bx5 = elm_box_add(win);
-   evas_object_size_hint_align_set(bx5, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bx5, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bx5);
-
+   elm_frame_content_set(fr, fl_b);
+   evas_object_show(fl_b);
+   
    o = elm_bg_add(win);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, "sky_03.jpg");
    elm_bg_file_set(o, buf, NULL);
+   elm_flip_content_front_set(fl_b, o);
    evas_object_show(o);
-   elm_box_pack_end(bx5, o);
-
-   lb = elm_label_add(win);
-   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0);
-   elm_label_label_set(lb, "Back Flip - Front");
-   evas_object_show(lb);
-   elm_box_pack_end(bx5, lb);
-
-   elm_flip_content_front_set(fl_b, bx5);
-
-   bx5 = elm_box_add(win);
-   evas_object_size_hint_align_set(bx5, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bx5, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bx5);
 
    o = elm_bg_add(win);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, "sky_04.jpg");
    elm_bg_file_set(o, buf, NULL);
+   elm_flip_content_back_set(fl_b, o);
    evas_object_show(o);
-   elm_box_pack_end(bx5, o);
-
-   lb = elm_label_add(win);
-   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0);
-   elm_label_label_set(lb, "Back Flip - Back");
-   evas_object_show(lb);
-   elm_box_pack_end(bx5, lb);
-
-   elm_flip_content_back_set(fl_b, bx5);
-
-   evas_object_show(fl_b);
-   elm_box_pack_end(bx4, fl_b);
-
-   lb = elm_label_add(win);
-   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0);
-   elm_label_label_set(lb, "Main Flip - Back");
-   elm_box_pack_end(bx4, lb);
-   evas_object_show(lb);
-
-   elm_flip_content_front_set(fl, bx3);
-   elm_flip_content_back_set(fl, bx4);
-
-   evas_object_show(fl);
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
@@ -519,7 +447,7 @@ test_flip3(void *data, Evas_Object *obj, void *event_info)
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Main Flip");
-   evas_object_smart_callback_add(bt, "clicked", my_fl_1, fl);
+   evas_object_smart_callback_add(bt, "clicked", my_fl_6, fl);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
@@ -527,7 +455,7 @@ test_flip3(void *data, Evas_Object *obj, void *event_info)
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Front Flip");
-   evas_object_smart_callback_add(bt, "clicked", my_fl_1, fl_f);
+   evas_object_smart_callback_add(bt, "clicked", my_fl_6, fl_f);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
@@ -535,7 +463,7 @@ test_flip3(void *data, Evas_Object *obj, void *event_info)
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Back Flip");
-   evas_object_smart_callback_add(bt, "clicked", my_fl_1, fl_b);
+   evas_object_smart_callback_add(bt, "clicked", my_fl_6, fl_b);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
