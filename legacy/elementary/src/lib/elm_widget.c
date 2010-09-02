@@ -1256,6 +1256,14 @@ _smart_show(Evas_Object *obj)
    list = evas_object_smart_members_get(obj);
    EINA_LIST_FOREACH(list, l, o)
      {
+        Evas_Object *obj2;
+        
+        obj2 = evas_object_clip_get(o);
+        if (obj2)
+          {
+             obj2 = evas_object_smart_parent_get(obj2);
+             if (obj2 == obj) continue;
+          }
         evas_object_show(o);
      }
 }
@@ -1269,6 +1277,14 @@ _smart_hide(Evas_Object *obj)
    list = evas_object_smart_members_get(obj);
    EINA_LIST_FOREACH(list, l, o)
      {
+        Evas_Object *obj2;
+        
+        obj2 = evas_object_clip_get(o);
+        if (obj2)
+          {
+             obj2 = evas_object_smart_parent_get(obj2);
+             if (obj2 == obj) continue;
+          }
         evas_object_hide(o);
      }
    _if_focused_revert(obj);
@@ -1283,6 +1299,14 @@ _smart_color_set(Evas_Object *obj, int r, int g, int b, int a)
    list = evas_object_smart_members_get(obj);
    EINA_LIST_FOREACH(list, l, o)
      {
+        Evas_Object *obj2;
+        
+        obj2 = evas_object_clip_get(o);
+        if (obj2)
+          {
+             obj2 = evas_object_smart_parent_get(obj2);
+             if (obj2 == obj) continue;
+          }
         evas_object_color_set(o, r, g, b, a);
      }
 }
@@ -1296,6 +1320,14 @@ _smart_clip_set(Evas_Object *obj, Evas_Object *clip)
    list = evas_object_smart_members_get(obj);
    EINA_LIST_FOREACH(list, l, o)
      {
+        Evas_Object *obj2;
+        
+        obj2 = evas_object_clip_get(o);
+        if (obj2)
+          {
+             obj2 = evas_object_smart_parent_get(obj2);
+             if (obj2 == obj) continue;
+          }
         evas_object_clip_set(o, clip);
      }
 }
@@ -1309,6 +1341,14 @@ _smart_clip_unset(Evas_Object *obj)
    list = evas_object_smart_members_get(obj);
    EINA_LIST_FOREACH(list, l, o)
      {
+        Evas_Object *obj2;
+        
+        obj2 = evas_object_clip_get(o);
+        if (obj2)
+          {
+             obj2 = evas_object_smart_parent_get(obj2);
+             if (obj2 == obj) continue;
+          }
         evas_object_clip_unset(o);
      }
 }
