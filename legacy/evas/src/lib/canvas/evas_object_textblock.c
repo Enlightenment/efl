@@ -6748,9 +6748,17 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
 	     if (it_break)
 	       {
 		  it = it_break;
+		  cur->node = it->source_node;
 		  cur->pos = it->source_pos;
 
-		  cur->node = it->source_node;
+                  /*FIXME: needs smarter handling, ATM just check, if it's
+                   * the first item, then go to the end of the line, helps
+                   * with rtl langs, doesn't affect ltr langs that much. */
+                  if (!EINA_INLIST_GET(it)->prev)
+                    {
+                       evas_textblock_cursor_line_char_last(cur);
+                    }
+
 		  return EINA_TRUE;
 	       }
 	  }
