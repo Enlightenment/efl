@@ -51,7 +51,7 @@ START_TEST(eina_module_load_unload)
    eina_init();
    _modules = eina_module_list_get(NULL,
                                    PACKAGE_BUILD_DIR "/src/tests/",
-                                   1,
+                                   EINA_TRUE,
                                    &list_cb,
                                    NULL);
    fail_if(!_modules);

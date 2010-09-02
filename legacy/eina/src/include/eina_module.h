@@ -129,7 +129,7 @@ eina_module_environment_path_get(const char *env, const char *sub_dir) EINA_PURE
 EAPI Eina_Array *
 eina_module_arch_list_get(Eina_Array *array, const char *path, const char *arch);
 EAPI Eina_Array *
-eina_module_list_get(Eina_Array *array, const char *path, unsigned int recursive, Eina_Module_Cb cb, void *data) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+eina_module_list_get(Eina_Array *array, const char *path, Eina_Bool recursive, Eina_Module_Cb cb, void *data) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 EAPI void
 eina_module_list_load(Eina_Array *list) EINA_ARG_NONNULL(1);
 EAPI void
