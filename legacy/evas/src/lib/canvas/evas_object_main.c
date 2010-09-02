@@ -1080,6 +1080,7 @@ evas_object_show(Evas_Object *obj)
    evas_object_clip_dirty(obj);
    if (obj->layer->evas->events_frozen <= 0)
      {
+        evas_object_clip_across_clippees_check(obj);
 	evas_object_recalc_clippees(obj);
 	if (!evas_event_passes_through(obj))
 	  {
@@ -1135,6 +1136,7 @@ evas_object_hide(Evas_Object *obj)
    evas_object_clip_dirty(obj);
    if (obj->layer->evas->events_frozen <= 0)
      {
+        evas_object_clip_across_clippees_check(obj);
 	evas_object_recalc_clippees(obj);
 	if (!evas_event_passes_through(obj))
 	  {

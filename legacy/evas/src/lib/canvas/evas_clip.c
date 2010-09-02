@@ -93,16 +93,43 @@ evas_object_child_map_across_mark(Evas_Object *obj, Evas_Object *map_obj, Eina_B
                   evas_object_child_map_across_mark(obj2, map_obj, force);
                }
           }
+        else if (obj->clip.clipees)
+          {
+             Eina_List *l;
+             Evas_Object *obj2;
+             
+             EINA_LIST_FOREACH(obj->clip.clipees, l, obj2)
+                evas_object_child_map_across_mark(obj2, map_obj, force);
+          }
      }
 #endif   
 }
 
-static void
+void
 evas_object_clip_across_check(Evas_Object *obj)
 {
+#ifdef MAP_ACROSS
    if (!obj->cur.clipper) return;
    if (obj->cur.clipper->cur.map_parent != obj->cur.map_parent)
       evas_object_child_map_across_mark(obj, obj->cur.map_parent, 1);
+#endif   
+}
+
+void
+evas_object_clip_across_clippees_check(Evas_Object *obj)
+{
+#ifdef MAP_ACROSS
+   Eina_List *l;
+   Evas_Object *obj2;
+
+   if (!obj->clip.clipees) return;
+   evas_object_child_map_across_mark(obj, obj->cur.map_parent, 1);
+   if (obj->cur.cache.clip.dirty)
+     {
+	EINA_LIST_FOREACH(obj->clip.clipees, l, obj2)
+           evas_object_clip_across_clippees_check(obj2);
+     }
+#endif   
 }
 
 // this function is called on an object when map is enabled or disabled on it
