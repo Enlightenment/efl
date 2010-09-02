@@ -113,7 +113,7 @@ define([CHECK_MODULE_ETHUMBD],
 
 AC_ETH_OPTIONAL_MODULE([ethumbd], true, [CHECK_MODULE_ETHUMBD])
 if $USE_MODULE_ETHUMBD ; then
-        dbusservicedir=`$PKG_CONFIG --variable=session_bus_services_dir dbus-1`
+        dbusservicedir=${datadir}/dbus-1/services
         AC_ARG_WITH([dbus-services],
                     AC_HELP_STRING([--with-dbus-services=DBUS_SERVICES], [specify a directory to store dbus service files.]),
                     [

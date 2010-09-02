@@ -29,3 +29,6 @@ emotion_template.edj: Makefile $(EXTRADIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
 		$(top_srcdir)/src/plugins/emotion/template.edc \
 		$(top_builddir)/src/plugins/emotion/emotion_template.edj
+
+clean-local:
+	rm -f *.edj

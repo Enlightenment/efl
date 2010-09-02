@@ -23,8 +23,6 @@ pkgconfig_DATA = ethumb.pc
 if USE_MODULE_ETHUMBD
 
 pkgconfig_DATA += ethumb_client.pc
-## FIXME: this breaks "make distcheck" as this installs somethnig outside of
-## the prefix. try make distcheck (as a user)
 servicedir = $(dbusservicedir)
 service_DATA = org.enlightenment.Ethumb.service
 
