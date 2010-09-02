@@ -1384,14 +1384,6 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
                     _curs_lin_end(en->cursor, rp->object, en);
                }
           }
-        line = evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
-     }
-   else
-     {
-        Evas_Coord lx, ly, lw, lh;
-        int line;
-        
-        line = evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
      }
    if (dosel)
      {
@@ -1489,13 +1481,28 @@ _edje_part_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
    if (!evas_textblock_cursor_char_coord_set(en->cursor, en->cx, en->cy))
      {
         Evas_Coord lx, ly, lw, lh;
-        
-        evas_textblock_cursor_line_coord_set(en->cursor, en->cy);
-        evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
-        if (en->cx <= lx)
-          _curs_lin_start(en->cursor, rp->object, en);
+        int line;
+
+        line = evas_textblock_cursor_line_coord_set(en->cursor, en->cy);
+        if (line == -1)
+          _curs_end(en->cursor, rp->object, en);
         else
-          _curs_lin_end(en->cursor, rp->object, en);
+          {
+             int lnum;
+             
+             lnum = evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
+             if (lnum < 0)
+               {
+                  _curs_lin_start(en->cursor, rp->object, en);
+               }
+             else
+               {
+                  if (en->cx <= lx)
+                    _curs_lin_start(en->cursor, rp->object, en);
+                  else
+                    _curs_lin_end(en->cursor, rp->object, en);
+               }
+          }
      }
    if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT)
      {  
