@@ -830,10 +830,18 @@ evas_object_text_shadow_color_get(const Evas_Object *obj, int *r, int *g, int *b
    Evas_Object_Text *o;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (r) *r = 0;
+   if (g) *g = 0;
+   if (b) *b = 0;
+   if (a) *a = 0;
    return;
    MAGIC_CHECK_END();
    o = (Evas_Object_Text *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   if (r) *r = 0;
+   if (g) *g = 0;
+   if (b) *b = 0;
+   if (a) *a = 0;
    return;
    MAGIC_CHECK_END();
    if (r) *r = o->cur.shadow.r;
@@ -883,10 +891,18 @@ evas_object_text_glow_color_get(const Evas_Object *obj, int *r, int *g, int *b, 
    Evas_Object_Text *o;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (r) *r = 0;
+   if (g) *g = 0;
+   if (b) *b = 0;
+   if (a) *a = 0;
    return;
    MAGIC_CHECK_END();
    o = (Evas_Object_Text *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   if (r) *r = 0;
+   if (g) *g = 0;
+   if (b) *b = 0;
+   if (a) *a = 0;
    return;
    MAGIC_CHECK_END();
    if (r) *r = o->cur.glow.r;
@@ -936,10 +952,18 @@ evas_object_text_glow2_color_get(const Evas_Object *obj, int *r, int *g, int *b,
    Evas_Object_Text *o;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (r) *r = 0;
+   if (g) *g = 0;
+   if (b) *b = 0;
+   if (a) *a = 0;
    return;
    MAGIC_CHECK_END();
    o = (Evas_Object_Text *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   if (r) *r = 0;
+   if (g) *g = 0;
+   if (b) *b = 0;
+   if (a) *a = 0;
    return;
    MAGIC_CHECK_END();
    if (r) *r = o->cur.glow2.r;
@@ -989,10 +1013,18 @@ evas_object_text_outline_color_get(const Evas_Object *obj, int *r, int *g, int *
    Evas_Object_Text *o;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (r) *r = 0;
+   if (g) *g = 0;
+   if (b) *b = 0;
+   if (a) *a = 0;
    return;
    MAGIC_CHECK_END();
    o = (Evas_Object_Text *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   if (r) *r = 0;
+   if (g) *g = 0;
+   if (b) *b = 0;
+   if (a) *a = 0;
    return;
    MAGIC_CHECK_END();
    if (r) *r = o->cur.outline.r;
@@ -1018,10 +1050,18 @@ evas_object_text_style_pad_get(const Evas_Object *obj, int *l, int *r, int *t, i
    Evas_Object_Text *o;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (l) *l = 0;
+   if (r) *r = 0;
+   if (t) *t = 0;
+   if (b) *b = 0;
    return;
    MAGIC_CHECK_END();
    o = (Evas_Object_Text *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   if (l) *l = 0;
+   if (r) *r = 0;
+   if (t) *t = 0;
+   if (b) *b = 0;
    return;
    MAGIC_CHECK_END();
    /* use temps to be certain we have initialized values */
