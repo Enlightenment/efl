@@ -1,3 +1,9 @@
+eina (1.0.0-alpha1) lucid; urgency=low
+
+  * fix packaging to work for 1.0.0 alpha
+
+ -- Carsten Haitzler <raster@rasterman.com>  Fri, 03 Sep 2010 18:12:47 +0900
+
 eina (0.0.2.062+svnYYYYMMDD-1) unstable; urgency=low
 
   * Updated version

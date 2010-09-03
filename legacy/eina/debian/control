@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 6), cdbs, doxygen, pkg-config, libtool, automake
 Standards-Version: 3.8.3
 Homepage: http://www.enlightenment.org
 
-Package: libeina-svn-04
+Package: libeina
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Provides: libeina0
