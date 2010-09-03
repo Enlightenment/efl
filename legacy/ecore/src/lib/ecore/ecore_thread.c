@@ -441,7 +441,17 @@ ecore_thread_run(Ecore_Cb func_blocking,
    if (!pth->p) goto on_error;
 
    if (pthread_create(&pth->thread, NULL, (void *) _ecore_thread_worker, pth) == 0)
-     return (Ecore_Thread *) work;
+     {
+	/* lower priority of worker threads so they use up "bg cpu"
+	 * as it was really intended to work */
+	struct sched_param param;
+
+	memset(&param, 0, sizeof(param));
+	param.sched_priority = sched_get_priority_min(SCHED_RR);
+	pthread_setschedparam(pth->thread, SCHED_RR, &param);
+
+	return (Ecore_Thread *) work;
+     }
 
  on_error:
    if (pth)
@@ -607,7 +617,17 @@ EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Heavy_Cb func_heavy,
         pthread_t t;
 
         if (pthread_create(&t, NULL, (void *) _ecore_direct_worker, worker) == 0)
-          return (Ecore_Thread *) worker;
+	  {
+	     /* lower priority of worker threads so they use up "bg cpu"
+	      * as it was really intended to work */
+	     struct sched_param param;
+
+	     memset(&param, 0, sizeof(param));
+	     param.sched_priority = sched_get_priority_min(SCHED_RR);
+	     pthread_setschedparam(t, SCHED_RR, &param);
+
+	     return (Ecore_Thread *) worker;
+	  }
      }
 
    pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
@@ -629,7 +649,17 @@ EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Heavy_Cb func_heavy,
    if (pth->p) goto on_error;
 
    if (pthread_create(&pth->thread, NULL, (void *) _ecore_thread_worker, pth) == 0)
-     return (Ecore_Thread *) worker;
+     {
+	/* lower priority of worker threads so they use up "bg cpu"
+	 * as it was really intended to work */
+	struct sched_param param;
+
+	memset(&param, 0, sizeof(param));
+	param.sched_priority = sched_get_priority_min(SCHED_RR);
+	pthread_setschedparam(pth->thread, SCHED_RR, &param);
+
+	return (Ecore_Thread *) worker;
+     }
 
  on_error:
    if (pth)
