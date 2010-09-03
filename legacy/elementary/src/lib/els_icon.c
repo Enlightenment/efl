@@ -56,6 +56,7 @@ _els_smart_icon_file_key_set(Evas_Object *obj, const char *file, const char *key
      evas_object_image_load_size_set(sd->obj, sd->size, sd->size);
    evas_object_image_file_set(sd->obj, file, key);
    sd->preloading = 1;
+   sd->show = 1;
    evas_object_image_preload(sd->obj, EINA_FALSE);
    evas_object_hide(sd->obj);
    if (evas_object_image_load_error_get(sd->obj) != EVAS_LOAD_ERROR_NONE)
@@ -97,6 +98,7 @@ Evas_Object *
 _els_smart_icon_object_get(Evas_Object *obj)
 {
    Smart_Data *sd;
+
    sd = evas_object_smart_data_get(obj);
    if (!sd) return NULL;
    return sd->obj;
@@ -187,11 +189,11 @@ _els_smart_icon_scale_set(Evas_Object *obj, double scale)
 void
 _els_smart_icon_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
 {
-   Smart_Data *sd;
-   Evas_Object    *tmp;
-   unsigned int   *data, *data2, *to, *from;
-   int             x, y, w, hw, iw, ih;
-   const char     *file, *key;
+   Smart_Data   *sd;
+   Evas_Object  *tmp;
+   unsigned int *data, *data2, *to, *from;
+   int           x, y, w, hw, iw, ih;
+   const char   *file, *key;
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
@@ -273,7 +275,6 @@ _els_smart_icon_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
 static void
 _smart_reconfigure(Smart_Data *sd)
 {
-   int iw, ih;
    Evas_Coord x, y, w, h;
 
    if (!sd->obj) return;
@@ -288,8 +289,8 @@ _smart_reconfigure(Smart_Data *sd)
      }
    else
      {
-	iw = 0;
-	ih = 0;
+        int iw = 0, ih = 0;
+
 	evas_object_image_size_get(sd->obj, &iw, &ih);
 
 	iw = ((double)iw) * sd->scale;
@@ -348,7 +349,7 @@ _preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    Smart_Data *sd = data;
 
    sd->preloading = 0;
-   if(sd->show)
+   if (sd->show) 
      evas_object_show(sd->obj);
 }
 
@@ -402,7 +403,8 @@ _smart_add(Evas_Object *obj)
    sd->scale = 1.0;
    evas_object_smart_member_add(sd->obj, obj);
    evas_object_smart_data_set(obj, sd);
-   evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_IMAGE_PRELOADED, _preloaded, sd);
+   evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_IMAGE_PRELOADED, 
+                                  _preloaded, sd);
 }
 
 static void
@@ -450,8 +452,8 @@ _smart_show(Evas_Object *obj)
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    sd->show = 1;
-   if(!sd->preloading)
-	   evas_object_show(sd->obj);
+   if (!sd->preloading)
+     evas_object_show(sd->obj);
 }
 
 static void
