@@ -3,6 +3,7 @@
 
 // debug rendering
 //#define REND_DGB 1
+//#define STDOUT_DBG 1
 
 #ifdef REND_DGB
 static FILE *dbf = NULL;
@@ -12,7 +13,11 @@ rend_dbg(const char *txt)
 {
    if (!dbf)
      {
+#ifdef STDOUT_DBG
+        dbf = stdout;
+#else           
         dbf = fopen("EVAS-RENDER-DEBUG.log", "w");
+#endif        
         if (!dbf) return;
      }
    fputs(txt, dbf);
@@ -198,7 +203,12 @@ _evas_render_phase1_direct(Evas *e,
              obj->func->render_pre(obj);
              if (obj->pre_render_done)
                {
-                  if ((obj->smart.smart) && _evas_render_has_map(obj))
+                  RD("    pre-render-done smart:%p has_map:%i had_map:%i\n",
+                    obj->smart.smart,
+                    _evas_render_has_map(obj),
+                    _evas_render_had_map(obj));
+                  if ((obj->smart.smart) && 
+                      (_evas_render_has_map(obj)))
                     {
                        RD("    has map + smart\n");
                        _evas_render_prev_cur_clip_cache_add(e, obj);

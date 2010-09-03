@@ -123,7 +123,10 @@ evas_object_clip_across_clippees_check(Evas_Object *obj)
    Evas_Object *obj2;
 
    if (!obj->clip.clipees) return;
-   evas_object_child_map_across_mark(obj, obj->cur.map_parent, 1);
+// schloooooooooooow:
+//   evas_object_child_map_across_mark(obj, obj->cur.map_parent, 1);
+// buggy:
+   evas_object_child_map_across_mark(obj, obj->cur.map_parent, 0);
    if (obj->cur.cache.clip.dirty)
      {
 	EINA_LIST_FOREACH(obj->clip.clipees, l, obj2)
