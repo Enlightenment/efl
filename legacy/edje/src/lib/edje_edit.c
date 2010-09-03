@@ -4959,6 +4959,9 @@ edje_edit_programs_list_get(Evas_Object *obj)
 	Edje_Program *epr;
 
 	epr = ed->table_programs[i];
+        /* XXX: bad, we miss programs this way, but since you can't access
+         * them in any way without a name, better ignore them.  */
+        if (!epr->name) continue;
 	progs = eina_list_append(progs, eina_stringshare_add(epr->name));
      }
 
