@@ -1255,7 +1255,7 @@ _smart_show(Evas_Object *obj)
    INTERNAL_ENTRY;
    list = evas_object_smart_members_get(obj);
    EINA_LIST_FOREACH(list, l, o)
-     {
+    {
         if (evas_object_data_get(o, "_elm_leaveme")) continue;
         evas_object_show(o);
      }
@@ -1310,6 +1310,8 @@ _smart_clip_unset(Evas_Object *obj)
    Eina_List *list, *l;
    Evas_Object *o;
    INTERNAL_ENTRY;
+//   evas_object_clip_unset(sd->resize_obj);
+//   return;
    list = evas_object_smart_members_get(obj);
    EINA_LIST_FOREACH(list, l, o)
      {
