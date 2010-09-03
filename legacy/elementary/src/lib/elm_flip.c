@@ -313,6 +313,11 @@ _flip(Evas_Object *obj)
      {
         evas_object_map_enable_set(wd->front.content, 0);
         evas_object_map_enable_set(wd->back.content, 0);
+        // FIXME: hack around evas rendering bug (only fix makes evas bitch-slow
+        evas_object_resize(wd->front.content, 0, 0);
+        evas_object_resize(wd->back.content, 0, 0);
+        evas_smart_objects_calculate(evas_object_evas_get(obj));
+        // FIXME: end hack
         wd->animator = NULL;
         wd->state = !wd->state;
         _configure(obj);
