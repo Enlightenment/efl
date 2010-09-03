@@ -97,6 +97,7 @@ _edje_smart_add(Evas_Object *obj)
 
    ed->evas = evas_object_evas_get(obj);
    ed->clipper = evas_object_rectangle_add(ed->evas);
+   evas_object_static_clip_set(ed->clipper, 1);
    evas_object_smart_member_add(ed->clipper, obj);
    evas_object_color_set(ed->clipper, 255, 255, 255, 255);
    evas_object_move(ed->clipper, -10000, -10000);
