@@ -208,7 +208,7 @@ eio_file_ls(const char *dir,
 					    _eio_file_end,
 					    _eio_file_error,
 					    async,
-					    EINA_FALSE);
+					    EINA_TRUE);
    if (!async->ls.common.thread) goto on_error;
 
    return &async->ls.common;
@@ -258,7 +258,7 @@ eio_file_direct_ls(const char *dir,
 					 _eio_file_end,
 					 _eio_file_error,
 					 async,
-					 EINA_FALSE);
+					 EINA_TRUE);
    if (!async->ls.common.thread) goto on_error;
 
    return &async->ls.common;
