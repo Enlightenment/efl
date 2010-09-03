@@ -576,10 +576,10 @@ pending_change(void *data, void *gdata __UNUSED__)
    if (obj->delete_me) return EINA_FALSE;
    if (obj->pre_render_done)
      {
-   RD("  OBJ [%p] pending change %i -> 0, pre %i\n", obj, obj->changed, obj->pre_render_done);
-   obj->pre_render_done = 0;
+        RD("  OBJ [%p] pending change %i -> 0, pre %i\n", obj, obj->changed, obj->pre_render_done);
+        obj->pre_render_done = 0;
 //// FIXME: this wipes out changes
-   obj->changed = 0;
+        obj->changed = 0;
      }
    return obj->changed ? EINA_TRUE : EINA_FALSE;
 }
@@ -683,12 +683,18 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
         if (obj->smart.smart)
           {
              Evas_Object *obj2;
-
+             
              EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
                {
+                  if (!evas_object_is_visible(obj2) &&
+                      !evas_object_was_visible(obj2))
+                    {
+                       obj2->changed = 0;
+                       continue;
+                    }
                   if (obj2->changed)
                     {
-                       obj2->changed  = 0;
+                       obj2->changed = 0;
                        changed = 1;
                        break;
                     }
@@ -699,8 +705,8 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
           {
              if (obj->changed)
                {
-                  changed = 1;
                   obj->changed = 0;
+                  changed = 1;
                }
           }
 
@@ -802,20 +808,6 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                                                    e->engine.data.context,
                                                    x + off_x, y + off_y, w, h);
                }
-             if ((obj->cur.cache.clip.r == 255) &&
-                 (obj->cur.cache.clip.g == 255) &&
-                 (obj->cur.cache.clip.b == 255) &&
-                 (obj->cur.cache.clip.a == 255))
-                obj->layer->evas->engine.func->context_multiplier_unset
-                (e->engine.data.output, e->engine.data.context);
-             else
-                obj->layer->evas->engine.func->context_multiplier_set
-                (e->engine.data.output, e->engine.data.context,
-                 obj->cur.cache.clip.r, obj->cur.cache.clip.g,
-                 obj->cur.cache.clip.b, obj->cur.cache.clip.a);
-             obj->layer->evas->engine.func->context_render_op_set
-                (e->engine.data.output, e->engine.data.context,
-                 obj->cur.render_op);
           }
         if (obj->cur.cache.clip.visible)
            obj->layer->evas->engine.func->image_map4_draw
@@ -1501,7 +1493,7 @@ evas_render_object_recalc(Evas_Object *obj)
 #ifndef EVAS_FRAME_QUEUING
    if ((!obj->changed) && (obj->delete_me < 2))
 #else
-   if ((!obj->changed) )
+   if ((!obj->changed))
 #endif
      {
 	Evas *e;
@@ -1509,7 +1501,7 @@ evas_render_object_recalc(Evas_Object *obj)
 	e = obj->layer->evas;
 	if ((!e) || (e->cleanup)) return;
 #ifdef EVAS_FRAME_QUEUING
-   if (obj->delete_me >= evas_common_frameq_get_frameq_sz() + 2) return;
+        if (obj->delete_me >= evas_common_frameq_get_frameq_sz() + 2) return;
 #endif
         eina_array_push(&e->pending_objects, obj);
 	obj->changed = 1;

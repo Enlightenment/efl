@@ -31,7 +31,12 @@ evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_C
      {
 	Evas_Coord orig_x, orig_y;
 
-	evas_object_geometry_get(child, &orig_x, &orig_y, NULL, NULL);
+// shortcut as we are in evas        
+//	evas_object_geometry_get(child, &orig_x, &orig_y, NULL, NULL);
+        if (child->delete_me) continue;
+        if (child->is_static_clip) continue;
+        orig_x = child->cur.geometry.x;
+        orig_y = child->cur.geometry.y;
 	evas_object_move(child, orig_x + dx, orig_y + dy);
      }
 
@@ -68,6 +73,7 @@ evas_object_smart_clipped_smart_add(Evas_Object *obj)
 
    cso->evas = evas_object_evas_get(obj);
    clipper = evas_object_rectangle_add(cso->evas);
+   evas_object_static_clip_set(clipper, 1);
    cso->clipper = NULL;
    evas_object_smart_member_add(clipper, obj);
    cso->clipper = clipper;

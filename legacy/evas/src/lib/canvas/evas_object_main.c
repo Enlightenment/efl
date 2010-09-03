@@ -85,6 +85,13 @@ evas_object_change(Evas_Object *obj)
    Eina_List *l;
    Evas_Object *obj2;
 
+   if (obj->layer->evas->nochange)
+     {
+//        printf("nochange %p\n", obj);
+        return;
+     }
+//   else
+//      printf("ch %p\n", obj);
    obj->layer->evas->changed = 1;
    if (obj->changed) return;
 //   obj->changed = 1;
@@ -1672,3 +1679,42 @@ evas_object_precise_is_inside_get(const Evas_Object *obj)
    MAGIC_CHECK_END();
    return obj->precise_is_inside;
 }
+
+/**
+ * Set a hint flag on the object that this is used as a static "clipper".
+ * 
+ * This is a hint to evas that this object is used as a big static clipper
+ * andshouldnt be moved with children and otherwise considered specially. The
+ * Default is off.
+ * 
+ * @param obj The given object.
+ * @param is_static_clip The static clip flag (on or off)
+ * @ingroup Evas_Object_Group_Extras
+ */
+EAPI void
+evas_object_static_clip_set(Evas_Object *obj, Eina_Bool is_static_clip)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   obj->is_static_clip = is_static_clip;
+}
+
+/**
+ * Get static "clipper" hint flag.
+ * 
+ * @see evas_object_static_clip_set()
+ * 
+ * @param obj The given object.
+ * @return The static clip flag (on or off)
+ * @ingroup Evas_Object_Group_Extras
+ */
+EAPI Eina_Bool
+evas_object_static_clip_get(const Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   return obj->is_static_clip;
+}
+

@@ -1114,6 +1114,36 @@ evas_focus_state_get(const Evas *e)
    return e->focus;
 }
 
+/**
+ * Push the nochange flag up 1
+ *
+ * This tells evas, that while the nochange flag is greater than 0, do not
+ * mark objects as "changed" when making changes.
+ * 
+ * @param e The evas to change information.
+ * @ingroup Evas_Canvas
+ */
+EAPI void
+evas_nochange_push(Evas *e)
+{
+   e->nochange++;
+}
+
+/**
+ * Pop the nochange flag down 1
+ *
+ * This tells evas, that while the nochange flag is greater than 0, do not
+ * mark objects as "changed" when making changes.
+ * 
+ * @param e The evas to change information.
+ * @ingroup Evas_Canvas
+ */
+EAPI void
+evas_nochange_pop(Evas *e)
+{
+   e->nochange--;
+}
+
 void
 _evas_walk(Evas *e)
 {
@@ -1275,4 +1305,3 @@ evas_data_argb_unpremul(unsigned int *data, unsigned int len)
    if (!data || (len < 1)) return;
    evas_common_convert_argb_unpremul(data, len);
 }
-

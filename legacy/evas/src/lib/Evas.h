@@ -641,7 +641,9 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
    EAPI void              evas_focus_in                     (Evas *e);
    EAPI void              evas_focus_out                    (Evas *e);
    EAPI Eina_Bool         evas_focus_state_get              (const Evas *e) EINA_PURE;
-
+   EAPI void              evas_nochange_push                (Evas *e);
+   EAPI void              evas_nochange_pop                 (Evas *e);
+         
    EAPI void              evas_data_attach_set              (Evas *e, void *data) EINA_ARG_NONNULL(1);
    EAPI void             *evas_data_attach_get              (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -1020,6 +1022,9 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
    EAPI void              evas_object_precise_is_inside_set (Evas_Object *obj, Eina_Bool precise) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool         evas_object_precise_is_inside_get (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
+   EAPI void              evas_object_static_clip_set       (Evas_Object *obj, Eina_Bool is_static_clip) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool         evas_object_static_clip_get       (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+         
 /**
  * @defgroup Evas_Object_Group_Find Finding Objects
  *
@@ -1729,7 +1734,7 @@ struct _Evas_Smart_Cb_Description
    EAPI void             *evas_smart_data_get               (const Evas_Smart *s) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI const Evas_Smart_Cb_Description *evas_smart_callback_description_find(const Evas_Smart *s, const char *name) EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
-  EAPI Eina_Bool         evas_smart_class_inherit_full      (Evas_Smart_Class *sc, const Evas_Smart_Class *parent_sc, unsigned int parent_sc_size) EINA_ARG_NONNULL(1, 2);
+   EAPI Eina_Bool         evas_smart_class_inherit_full      (Evas_Smart_Class *sc, const Evas_Smart_Class *parent_sc, unsigned int parent_sc_size) EINA_ARG_NONNULL(1, 2);
   /**
    * @def evas_smart_class_inherit
    * Easy to use version of evas_smart_class_inherit_full().
@@ -1772,7 +1777,7 @@ struct _Evas_Smart_Cb_Description
 
    EAPI Eina_Bool         evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, const Evas_Smart_Cb_Description *descriptions) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_smart_callbacks_descriptions_get(const Evas_Object *obj, const Evas_Smart_Cb_Description ***class_descriptions, unsigned int *class_count, const Evas_Smart_Cb_Description ***instance_descriptions, unsigned int *instance_count) EINA_ARG_NONNULL(1);
-   EAPI void             evas_object_smart_callback_description_find(const Evas_Object *obj, const char *name, const Evas_Smart_Cb_Description **class_description, const Evas_Smart_Cb_Description **instance_description) EINA_ARG_NONNULL(1, 2);
+   EAPI void              evas_object_smart_callback_description_find(const Evas_Object *obj, const char *name, const Evas_Smart_Cb_Description **class_description, const Evas_Smart_Cb_Description **instance_description) EINA_ARG_NONNULL(1, 2);
 
    EAPI void              evas_object_smart_changed         (Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value) EINA_ARG_NONNULL(1);
