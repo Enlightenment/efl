@@ -3,7 +3,7 @@
 
 // debug rendering
 //#define REND_DGB 1
-//#define STDOUT_DBG 1
+#define STDOUT_DBG 1
 
 #ifdef REND_DGB
 static FILE *dbf = NULL;
@@ -140,7 +140,8 @@ _evas_render_has_map(Evas_Object *obj)
 static Eina_Bool
 _evas_render_had_map(Evas_Object *obj)
 {
-   return ((!obj->prev.map) && (obj->prev.usemap));
+//   return ((!obj->prev.map) && (obj->prev.usemap));
+   return ((!obj->cur.map) && (obj->prev.usemap));
 }
 
 static Eina_Bool
@@ -203,20 +204,23 @@ _evas_render_phase1_direct(Evas *e,
              obj->func->render_pre(obj);
              if (obj->pre_render_done)
                {
-                  RD("    pre-render-done smart:%p has_map:%i had_map:%i\n",
-                    obj->smart.smart,
-                    _evas_render_has_map(obj),
-                    _evas_render_had_map(obj));
+                  RD("      pre-render-done smart:%p|%p  [%p, %i] | [%p, %i] has_map:%i had_map:%i\n",
+                     obj->smart.smart, 
+                     evas_object_smart_members_get_direct(obj),
+                     obj->cur.map, obj->cur.usemap,
+                     obj->prev.map, obj->prev.usemap,
+                     _evas_render_has_map(obj),
+                     _evas_render_had_map(obj));
                   if ((obj->smart.smart) && 
                       (_evas_render_has_map(obj)))
                     {
-                       RD("    has map + smart\n");
+                       RD("      has map + smart\n");
                        _evas_render_prev_cur_clip_cache_add(e, obj);
                     }
                }
              else if (_evas_render_had_map(obj))
                {
-                  RD("    no pre-render done\n");
+                  RD("      no pre-render done\n");
                   _evas_render_prev_cur_clip_cache_add(e, obj);
                }
           }
