@@ -434,5 +434,9 @@
 
 2010-08-27  Cedric BAIL
 
-	* prevent the build of eet data structure that doesn't match what
+	* Prevent the build of eet data structure that doesn't match what
 	the application is expecting.
+
+2010-09-02  Cedric BAIL
+
+	* Fix bug of ever growing dictionnary and improve strcmp comparison.

@@ -46,8 +46,10 @@ eet_dictionary_free(Eet_Dictionary *ed)
 static int
 _eet_dictionary_lookup(Eet_Dictionary *ed,
                        const char     *string,
+		       int             len,
                        int             hash)
 {
+   Eina_Bool found = EINA_FALSE;
    int prev = -1;
    int current;
 
@@ -55,19 +57,28 @@ _eet_dictionary_lookup(Eet_Dictionary *ed,
 
    while (current != -1)
      {
-        if (ed->all[current].str)
-           if (strcmp(ed->all[current].str, string) >= 0)
-              break;
+	if (ed->all[current].len == len)
+	  {
+	     if (ed->all[current].str)
+	       if (strcmp(ed->all[current].str, string) == 0)
+		 {
+		    found = EINA_TRUE;
+		    break;
+		 }
 
-        if (ed->all[current].mmap)
-           if (strcmp(ed->all[current].mmap, string) >= 0)
-              break;
+	     if (ed->all[current].mmap)
+	       if (strcmp(ed->all[current].mmap, string) == 0)
+		 {
+		    found = EINA_TRUE;
+		    break;
+		 }
+	  }
 
         prev = current;
         current = ed->all[current].next;
      }
 
-   if (current == -1)
+   if (current == -1 && found)
       return prev;
 
    return current;
@@ -87,19 +98,19 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
       return -1;
 
    hash = _eet_hash_gen(string, 8);
+   len = strlen(string) + 1;
 
-   idx = _eet_dictionary_lookup(ed, string, hash);
+   idx = _eet_dictionary_lookup(ed, string, len, hash);
 
    if (idx != -1)
      {
         if (ed->all[idx].str)
-           if (strcmp(ed->all[idx].str, string) == 0)
-              return idx;
+	  if (strcmp(ed->all[idx].str, string) == 0)
+	    return idx;
 
         if (ed->all[idx].mmap)
-           if (strcmp(ed->all[idx].mmap, string) == 0)
-              return idx;
-
+	  if (strcmp(ed->all[idx].mmap, string) == 0)
+	    return idx;
      }
 
    if (ed->total == ed->count)
@@ -117,7 +128,6 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
         ed->total = total;
      }
 
-   len = strlen(string) + 1;
    str = strdup(string);
    if (!str)
       return -1;
