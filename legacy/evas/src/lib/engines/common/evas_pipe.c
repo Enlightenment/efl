@@ -1617,6 +1617,8 @@ evas_common_pipe_load(void *data)
 }
 #endif
 
+static volatile int bval = 0;
+
 static void
 evas_common_pipe_image_load_do(void)
 {
@@ -1640,7 +1642,9 @@ evas_common_pipe_init(void)
 
 	cpunum = eina_cpu_count();
 	thread_num = cpunum;
-	if (thread_num == 1) return EINA_FALSE;
+// on  single cpu we still want this initted.. otherwise we block forever
+// waiting onm pthread barriers for async rendering on a single core!
+//	if (thread_num == 1) return EINA_FALSE;
 
 	pthread_barrier_init(&(thbarrier[0]), NULL, thread_num + 1);
 	pthread_barrier_init(&(thbarrier[1]), NULL, thread_num + 1);
