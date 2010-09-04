@@ -447,8 +447,8 @@ ecore_thread_run(Ecore_Cb func_blocking,
 	struct sched_param param;
 
 	memset(&param, 0, sizeof(param));
-	param.sched_priority = sched_get_priority_min(SCHED_RR);
-	pthread_setschedparam(pth->thread, SCHED_RR, &param);
+	param.sched_priority = sched_get_priority_min(SCHED_OTHER);
+	pthread_setschedparam(pth->thread, SCHED_OTHER, &param);
 
 	return (Ecore_Thread *) work;
      }
@@ -623,8 +623,8 @@ EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Heavy_Cb func_heavy,
 	     struct sched_param param;
 
 	     memset(&param, 0, sizeof(param));
-	     param.sched_priority = sched_get_priority_min(SCHED_RR);
-	     pthread_setschedparam(t, SCHED_RR, &param);
+	     param.sched_priority = sched_get_priority_min(SCHED_OTHER);
+	     pthread_setschedparam(t, SCHED_OTHER, &param);
 
 	     return (Ecore_Thread *) worker;
 	  }
@@ -655,8 +655,8 @@ EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Heavy_Cb func_heavy,
 	struct sched_param param;
 
 	memset(&param, 0, sizeof(param));
-	param.sched_priority = sched_get_priority_min(SCHED_RR);
-	pthread_setschedparam(pth->thread, SCHED_RR, &param);
+	param.sched_priority = sched_get_priority_min(SCHED_OTHER);
+	pthread_setschedparam(pth->thread, SCHED_OTHER, &param);
 
 	return (Ecore_Thread *) worker;
      }
