@@ -65,7 +65,6 @@ tim_cb(void *data)
    Evas_Object *tb, *sc, *mb;
    Eina_List *list, *l;
    
-   printf("timeout!\n");
    evas_object_data_del(data, "timer");
    tb = evas_object_data_get(data, "tb");
    sc = evas_object_data_get(data, "sc");
@@ -89,7 +88,6 @@ ic_del_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    tim = evas_object_data_get(obj, "timer");
    if (tim)
      {
-        printf("nmotim\n");
         evas_object_data_del(obj, "timer");
         ecore_timer_del(tim);
      }
@@ -132,7 +130,6 @@ ic_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    tim = evas_object_data_get(obj, "timer");
    if (tim)
      {
-        printf("nmotim2\n");
         evas_object_data_del(obj, "timer");
         ecore_timer_del(tim);
      }
@@ -180,7 +177,6 @@ ic_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
         tim = evas_object_data_get(obj, "timer");
         if (tim)
           {
-             printf("nmotim3\n");
              evas_object_data_del(obj, "timer");
              ecore_timer_del(tim);
           }
@@ -492,6 +488,427 @@ test_launcher2(void *data, Evas_Object *obj, void *event_info)
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Close");
    evas_object_smart_callback_add(bt, "clicked", close_cb, win);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, 0.95, 0.99);
+   elm_table_pack(tb2, bt, 4, 0, 1, 1);
+   evas_object_show(bt);
+   
+   evas_object_show(tb2);
+
+   evas_object_resize(win, 480, 800);
+   evas_object_show(win);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static void
+l3_mode_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   Evas_Object *mb;
+   Eina_List *mbs, *l;
+   
+   mbs = evas_object_data_get(win, "mbs");
+   EINA_LIST_FOREACH(mbs, l, mb)
+     {
+        if (elm_mapbuf_enabled_get(mb))
+          elm_mapbuf_enabled_set(mb, 0);
+        else
+          elm_mapbuf_enabled_set(mb, 1);
+     }
+}
+
+static void
+l3_full_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   elm_win_fullscreen_set(win, !elm_win_fullscreen_get(win));
+}
+
+static void
+l3_alpha_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   Evas_Object *mb;
+   Eina_List *mbs, *l;
+   
+   mbs = evas_object_data_get(win, "mbs");
+   EINA_LIST_FOREACH(mbs, l, mb)
+     {
+        elm_mapbuf_alpha_set(mb, elm_check_state_get(obj));
+     }
+}
+
+static void
+l3_smooth_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   Evas_Object *mb;
+   Eina_List *mbs, *l;
+   
+   mbs = evas_object_data_get(win, "mbs");
+   EINA_LIST_FOREACH(mbs, l, mb)
+     {
+        elm_mapbuf_smooth_set(mb, elm_check_state_get(obj));
+     }
+}
+
+static void
+l3_close_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_del(data);
+}
+
+static Eina_Bool
+l3_tim_cb(void *data)
+{
+   Evas_Object *ly, *ly2, *sc, *mb;
+   Eina_List *list, *l;
+   char buf[256];
+   int slx, sly;
+   
+   evas_object_data_del(data, "timer");
+   ly = evas_object_data_get(data, "ly");
+   ly2 = evas_object_data_get(data, "ly2");
+   sc = evas_object_data_get(data, "sc");
+   mb = evas_object_data_get(data, "mb");
+   elm_object_scroll_freeze_push(sc);
+   evas_object_data_set(data, "dragging", (void *)(1));
+   evas_object_color_set(data, 255, 255, 255, 255);
+   list = (Eina_List *)evas_object_data_get
+      (elm_object_top_widget_get(data), "mbs");
+   EINA_LIST_FOREACH(list, l, mb)
+      evas_object_color_set(mb, 128, 128, 128, 128);
+   slx = (int)evas_object_data_get(data, "slx");
+   sly = (int)evas_object_data_get(data, "sly");
+   snprintf(buf, sizeof(buf), "slot.%i.%i", slx, sly);
+   elm_layout_content_unset(ly, buf);
+   edje_object_signal_emit(elm_layout_edje_get(ly2), "drag", "app");
+   return EINA_FALSE;
+}
+
+static void
+l3_ic_del_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Ecore_Timer *tim;
+   
+   tim = evas_object_data_get(obj, "timer");
+   if (tim)
+     {
+        evas_object_data_del(obj, "timer");
+        ecore_timer_del(tim);
+     }
+}
+
+static void
+l3_ic_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Evas_Event_Mouse_Down *ev = event_info;
+   Ecore_Timer *tim;
+   Evas_Coord x, y, w, h;
+   Evas_Object *ly2;
+   
+   tim = evas_object_data_get(obj, "timer");
+   if (tim) evas_object_data_del(obj, "timer");
+   tim = ecore_timer_add(1.0, l3_tim_cb, obj);
+   evas_object_data_set(obj, "timer", tim);
+
+   ly2 = evas_object_data_get(obj, "ly2");
+   evas_object_geometry_get(ly2, &x, &y, &w, &h);
+   evas_object_data_set(obj, "x", (void *)(ev->canvas.x));
+   evas_object_data_set(obj, "y", (void *)(ev->canvas.y));
+   evas_object_data_set(obj, "px", (void *)(x));
+   evas_object_data_set(obj, "py", (void *)(y));
+   
+   edje_object_signal_emit(elm_layout_edje_get(ly2), "click", "app");
+   
+   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
+     {
+        printf("double click %p\n", obj);
+     }
+}
+
+static void
+l3_ic_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Evas_Event_Mouse_Up *ev = event_info;
+   Ecore_Timer *tim;
+   Evas_Object *ly2;
+   
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   
+   ly2 = evas_object_data_get(obj, "ly2");
+   tim = evas_object_data_get(obj, "timer");
+   if (tim)
+     {
+        evas_object_data_del(obj, "timer");
+        ecore_timer_del(tim);
+     }
+   if (evas_object_data_get(obj, "dragging"))
+     {
+        Evas_Object *ly, *sc, *mb;
+        Eina_List *list, *l;
+        int slx, sly;
+        char buf[256];
+        
+        evas_object_data_del(obj, "dragging");
+        ly = evas_object_data_get(obj, "ly");
+        sc = evas_object_data_get(obj, "sc");
+        mb = evas_object_data_get(data, "mb");
+        elm_object_scroll_freeze_pop(sc);
+        slx = (int)evas_object_data_get(obj, "slx");
+        sly = (int)evas_object_data_get(obj, "sly");
+        snprintf(buf, sizeof(buf), "slot.%i.%i", slx, sly);
+        elm_layout_content_set(ly, buf, ly2);
+        list = (Eina_List *)evas_object_data_get
+           (elm_object_top_widget_get(obj), "mbs");
+        EINA_LIST_FOREACH(list, l, mb)
+           evas_object_color_set(mb, 255, 255, 255, 255);
+        edje_object_signal_emit(elm_layout_edje_get(ly2), "drop", "app");
+     }
+   else
+      edje_object_signal_emit(elm_layout_edje_get(ly2), "unclick", "app");
+}
+
+static void
+l3_ic_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Evas_Event_Mouse_Move *ev = event_info;
+   Evas_Object *ly2;
+   
+   ly2 = evas_object_data_get(obj, "ly2");
+   
+   if (evas_object_data_get(obj, "dragging"))
+     {
+        Evas_Coord x, y, px, py;
+        
+        x = (Evas_Coord)evas_object_data_get(obj, "x");
+        y = (Evas_Coord)evas_object_data_get(obj, "y");
+        px = (Evas_Coord)evas_object_data_get(obj, "px");
+        py = (Evas_Coord)evas_object_data_get(obj, "py");
+        evas_object_move(ly2, 
+                         px + ev->cur.canvas.x - x, 
+                         py + ev->cur.canvas.y - y);
+    }
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+     {
+        Ecore_Timer *tim;
+        
+        tim = evas_object_data_get(obj, "timer");
+        if (tim)
+          {
+             evas_object_data_del(obj, "timer");
+             ecore_timer_del(tim);
+          }
+        edje_object_signal_emit(elm_layout_edje_get(ly2), "cancel", "app");
+        return;
+     }
+}
+
+void
+test_launcher3(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *sc, *tb, *pad, *bt, *ic, *lb, *tb2, *mb, *ck, *bx, *bx2, *ly, *ly2;
+   int i, j, k, n, m;
+   char buf[PATH_MAX];
+   const char *names[] =
+     {
+        "Hello",    "World",    "Spam",  "Egg", 
+        "Ham",      "Good",     "Bad",   "Milk", 
+        "Smell",    "Of",       "Sky",   "Gold",
+        "Hole",     "Pig",      "And",   "Calm"
+     };
+   Eina_List *mbs = NULL;
+   
+   win = elm_win_add(NULL, "launcher", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Launcher");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", PACKAGE_DATA_DIR);
+   elm_bg_file_set(bg, buf, NULL);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bg);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_homogenous_set(bx, 1);
+   elm_box_horizontal_set(bx, 1);
+   
+   sc = elm_scroller_add(win);
+   elm_scroller_bounce_set(sc, 1, 0);
+   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   
+   n = 0; m = 0;
+   for (k = 0 ; k < 8; k++)
+     {
+        tb = elm_table_add(win);
+        evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+        pad = evas_object_rectangle_add(evas_object_evas_get(win));
+        evas_object_size_hint_min_set(pad, 450, 10);
+        elm_table_pack(tb, pad, 1, 0, 1, 1);
+        
+        pad = evas_object_rectangle_add(evas_object_evas_get(win));
+        evas_object_size_hint_min_set(pad, 450, 10);
+        elm_table_pack(tb, pad, 1, 2, 1, 1);
+        
+        pad = evas_object_rectangle_add(evas_object_evas_get(win));
+        evas_object_size_hint_min_set(pad, 10, 450);
+        elm_table_pack(tb, pad, 0, 1, 1, 1);
+        
+        pad = evas_object_rectangle_add(evas_object_evas_get(win));
+        evas_object_size_hint_min_set(pad, 10, 450);
+        elm_table_pack(tb, pad, 2, 1, 1, 1);
+
+        mb = elm_mapbuf_add(win);
+        mbs = eina_list_append(mbs, mb);
+        
+        elm_mapbuf_content_set(mb, tb);
+        evas_object_show(tb);
+        elm_box_pack_end(bx, mb);
+        evas_object_show(mb);
+        
+        ly = elm_layout_add(win);
+        snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+        elm_layout_file_set(ly, buf, "launcher_page");
+        evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_table_pack(tb, ly, 1, 1, 1, 1);
+        evas_object_show(ly);
+        
+        for (j = 0; j < 4; j++)
+          {
+             for (i = 0; i < 4; i++)
+               {
+                  ly2 = elm_layout_add(win);
+                  snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+                  elm_layout_file_set(ly2, buf, "launcher_icon");
+                  evas_object_size_hint_weight_set(ly2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+                  evas_object_size_hint_align_set(ly2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+                  edje_object_part_text_set(elm_layout_edje_get(ly2), "label", names[m]);
+
+                  ic = elm_icon_add(win);
+                  elm_object_scale_set(ic, 0.5);
+                  snprintf(buf, sizeof(buf), "%s/images/icon_%02i.png", PACKAGE_DATA_DIR, n);
+                  elm_icon_file_set(ic, buf, NULL);
+                  elm_icon_scale_set(ic, 0, 0);
+                  evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+                  evas_object_size_hint_align_set(ic, 0.5, 0.5);
+                  elm_layout_content_set(ly2, "slot", ic);
+                  evas_object_show(ic);
+                  
+                  evas_object_event_callback_add(ic, EVAS_CALLBACK_DEL, l3_ic_del_cb, ic);
+                  
+                  evas_object_event_callback_add(ic, EVAS_CALLBACK_MOUSE_DOWN, l3_ic_down_cb, ic);
+                  evas_object_event_callback_add(ic, EVAS_CALLBACK_MOUSE_UP,   l3_ic_up_cb,   ic);
+                  evas_object_event_callback_add(ic, EVAS_CALLBACK_MOUSE_MOVE, l3_ic_move_cb, ic);
+                  
+                  evas_object_data_set(ic, "ly", ly);
+                  evas_object_data_set(ic, "ly2", ly2);
+                  evas_object_data_set(ic, "sc", sc);
+                  evas_object_data_set(ic, "bx", bx);
+                  evas_object_data_set(ic, "mb", mb);
+                  evas_object_data_set(ic, "slx", (void *)(i));
+                  evas_object_data_set(ic, "sly", (void *)(j));
+                  
+                  snprintf(buf, sizeof(buf), "slot.%i.%i", i, j);
+                  elm_layout_content_set(ly, buf, ly2);
+                  evas_object_show(ly2);
+                  
+                  n++; if (n > 23) n = 0;
+                  m++; if (m > 15) m = 0;
+               }
+          }
+     }
+
+   // fixme: free mbs
+   evas_object_data_set(win, "mbs", mbs);
+   
+   bx2 = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_horizontal_set(bx2, 0);
+   elm_win_resize_object_add(win, bx2);
+   evas_object_show(bx2);
+   
+   elm_scroller_content_set(sc, bx);
+   evas_object_show(bx);
+   
+   elm_scroller_page_relative_set(sc, 1.0, 1.0);
+   evas_object_show(sc);
+
+   tb2 = elm_table_add(win);
+   evas_object_size_hint_weight_set(tb2, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_fill_set(tb2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx2, tb2);
+
+   elm_box_pack_end(bx2, sc);
+   
+   ck = elm_check_add(win);
+   elm_check_label_set(ck, "Map");
+   elm_check_state_set(ck, 0);
+   evas_object_smart_callback_add(ck, "changed", l3_mode_cb, win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, 0.05, 0.99);
+   elm_table_pack(tb2, ck, 0, 0, 1, 1);
+   evas_object_show(ck);
+   
+   ck = elm_check_add(win);
+   elm_check_label_set(ck, "A");
+   elm_check_state_set(ck, 1);
+   evas_object_smart_callback_add(ck, "changed", l3_alpha_cb, win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, 0.20, 0.99);
+   elm_table_pack(tb2, ck, 1, 0, 1, 1);
+   evas_object_show(ck);
+   
+   ck = elm_check_add(win);
+   elm_check_label_set(ck, "Smo");
+   elm_check_state_set(ck, 1);
+   evas_object_smart_callback_add(ck, "changed", l3_smooth_cb, win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, 0.40, 0.99);
+   elm_table_pack(tb2, ck, 2, 0, 1, 1);
+   evas_object_show(ck);
+   
+   ck = elm_check_add(win);
+   elm_check_label_set(ck, "FS");
+   elm_check_state_set(ck, 0);
+   evas_object_smart_callback_add(ck, "changed", l3_full_cb, win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, 0.5, 0.99);
+   elm_table_pack(tb2, ck, 3, 0, 1, 1);
+   evas_object_show(ck);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Close");
+   evas_object_smart_callback_add(bt, "clicked", l3_close_cb, win);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.95, 0.99);
    elm_table_pack(tb2, bt, 4, 0, 1, 1);

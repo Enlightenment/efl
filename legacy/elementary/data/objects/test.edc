@@ -148,5 +148,262 @@ collections {
          }
       }
    }
+   group { name: "launcher_page";
+      parts {
+         part { name: "slot.0.0"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.0  0.0;
+              }
+              rel2 { relative: 0.25 0.25;
+              }
+            }
+         }
+         part { name: "slot.1.0"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.25 0.0;
+              }
+              rel2 { relative: 0.50 0.25;
+              }
+            }
+         }
+         part { name: "slot.2.0"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.50 0.0;
+              }
+              rel2 { relative: 0.75 0.25;
+              }
+            }
+         }
+         part { name: "slot.3.0"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.75 0.0;
+              }
+              rel2 { relative: 1.00 0.25;
+              }
+            }
+         }
+         part { name: "slot.0.1"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.0  0.25;
+              }
+              rel2 { relative: 0.25 0.50;
+              }
+            }
+         }
+         part { name: "slot.1.1"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.25 0.25;
+              }
+              rel2 { relative: 0.50 0.50;
+              }
+            }
+         }
+         part { name: "slot.2.1"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.50 0.25;
+              }
+              rel2 { relative: 0.75 0.50;
+              }
+            }
+         }
+         part { name: "slot.3.1"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.75 0.25;
+              }
+              rel2 { relative: 1.00 0.50;
+              }
+            }
+         }
+         part { name: "slot.0.2"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.0  0.50;
+              }
+              rel2 { relative: 0.25 0.75;
+              }
+            }
+         }
+         part { name: "slot.1.2"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.25 0.50;
+              }
+              rel2 { relative: 0.50 0.75;
+              }
+            }
+         }
+         part { name: "slot.2.2"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.50 0.50;
+              }
+              rel2 { relative: 0.75 0.75;
+              }
+            }
+         }
+         part { name: "slot.3.2"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.75 0.50;
+              }
+              rel2 { relative: 1.00 0.75;
+              }
+            }
+         }
+         part { name: "slot.0.3"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.0  0.75;
+              }
+              rel2 { relative: 0.25 1.00;
+              }
+            }
+         }
+         part { name: "slot.1.3"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.25 0.75;
+              }
+              rel2 { relative: 0.50 1.00;
+              }
+            }
+         }
+         part { name: "slot.2.3"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.50 0.75;
+              }
+              rel2 { relative: 0.75 1.00;
+              }
+            }
+         }
+         part { name: "slot.3.3"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.75 0.75;
+              }
+              rel2 { relative: 1.00 1.00;
+              }
+            }
+         }
+      }
+   }
+   group { name: "launcher_icon";
+      parts {
+         part { name: "slot"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.0 0.0;
+              }
+              rel2 { relative: 1.00 0.00;
+                to_y: "label";
+              }
+            }
+            description { state: "drag1" 0.0;
+              inherit: "default" 0.0;
+              rel1.offset: -5 -3;
+              rel2.offset: -5 -3;
+            }
+            description { state: "drag2" 0.0;
+              inherit: "default" 0.0;
+              rel1.offset: 10 3;
+              rel2.offset: 10 3;
+            }
+            description { state: "drag3" 0.0;
+              inherit: "default" 0.0;
+              rel1.offset: -1  6;
+              rel2.offset: -1  6;
+            }
+         }
+         part { name: "label"; type: TEXT;
+            effect: SOFT_SHADOW;
+            scale: 1;
+            description { state: "default" 0.0;
+              fixed: 1 1;
+              align: 0.5 1.0;
+              rel1 { relative: 0.0  1.00;
+              }
+              rel2 { relative: 1.00 1.00;
+              }
+              color: 224 224 224 255;
+              color3: 0 0 0 64;
+              text {
+                font: "Sans:style=Bold,Edje-Vera-Bold";
+                size: 10;
+                min: 0 1;
+                max: 1 1;
+                align: 0.5 0.0;
+              }
+            }
+            description { state: "hi" 0.0;
+              inherit: "default" 0.0;
+              color: 255 0 0 255;
+              color3: 0 0 0 255;
+            }
+            description { state: "drag1" 0.0;
+              inherit: "default" 0.0;
+              color: 255 0 0 255;
+              color3: 0 0 0 255;
+              rel1.offset: -5 -3;
+              rel2.offset: -5 -3;
+            }
+            description { state: "drag2" 0.0;
+              inherit: "default" 0.0;
+              color: 255 0 0 255;
+              color3: 0 0 0 255;
+              rel1.offset: 10 3;
+              rel2.offset: 10 3;
+            }
+            description { state: "drag3" 0.0;
+              inherit: "default" 0.0;
+              color: 255 0 0 255;
+              color3: 0 0 0 255;
+              rel1.offset: -1  6;
+              rel2.offset: -1  6;
+            }
+         }
+      }
+      programs {
+         program { name: "click";
+            signal: "click"; source: "app";
+            action: STATE_SET "hi" 0.0;
+            transition: LINEAR 0.5;
+            target: "label";
+         }
+         program { name: "drag1";
+            signal: "drag"; source: "app";
+            action: STATE_SET "drag1" 0.0;
+            transition: LINEAR 0.1;
+            target: "label";
+            target: "slot";
+            after: "drag2";
+         }
+         program { name: "drag2";
+            action: STATE_SET "drag2" 0.0;
+            transition: LINEAR 0.2;
+            target: "label";
+            target: "slot";
+            after: "drag3";
+         }
+         program { name: "drag3";
+            action: STATE_SET "drag3" 0.0;
+            transition: LINEAR 0.1;
+            target: "label";
+            target: "slot";
+            after: "drag1";
+         }
+         program { name: "drop";
+            signal: "drop"; source: "app";
+            action: STATE_SET "default" 0.0;
+            target: "label";
+            target: "slot";
+         }
+         program { name: "unclick";
+            signal: "unclick"; source: "app";
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.5;
+            target: "label";
+            target: "slot";
+         }
+         program { name: "cancel";
+            signal: "cancel"; source: "app";
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.5;
+            target: "label";
+            target: "slot";
+         }
+      }
+   }
 }
 	 
