@@ -218,8 +218,8 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
         struct sched_param param;
 
         memset(&param, 0, sizeof(param));
-        param.sched_priority = sched_get_priority_min(SCHED_OTHER);
-        pthread_setschedparam(pth->thread, SCHED_OTHER, &param);
+        param.sched_priority = sched_get_priority_min(SCHED_RR);
+        pthread_setschedparam(pth->thread, SCHED_RR, &param);
         
 	LKL(_mutex);
 	_evas_preload_thread_count++;
