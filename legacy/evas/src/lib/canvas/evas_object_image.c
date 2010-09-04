@@ -1055,7 +1055,7 @@ evas_object_image_preload(Evas_Object *obj, Eina_Bool cancel)
    if (!o->engine_data)
      {
 	evas_object_inform_call_image_preloaded(obj);
-	return ;
+	return;
      }
    if (cancel)
      obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
