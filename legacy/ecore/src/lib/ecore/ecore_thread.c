@@ -8,6 +8,12 @@
 
 #ifdef EFL_HAVE_PTHREAD
 # include <pthread.h>
+# ifdef __linux__
+#  include <sched.h>
+#  include <sys/time.h>
+#  include <sys/resource.h>
+#  include <errno.h>
+# endif
 #endif
 
 #include "Ecore.h"
@@ -315,6 +321,35 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
    return pth->p;
 }
 
+static void
+_ecore_thread_pri_drop(pthread_t th)
+{
+   /* lower priority of worker threads so they use up "bg cpu"
+    * as it was really intended to work */
+#ifdef __linux__
+   struct sched_param param;
+   
+   /* yes - this may fail if not root. there is no portable way to do
+    * this so try - if it fails. meh. nothnig to be done.
+    */
+   memset(&param, 0, sizeof(param));
+   param.sched_priority = sched_get_priority_max(SCHED_RR);
+   if (pthread_setschedparam(th, SCHED_RR, &param) != 0)
+     {
+        int newp;
+        
+        errno = 0;
+        newp = getpriority(PRIO_PROCESS, 0);
+        if (errno == 0)
+          {
+             newp += 5;
+             if (newp > 19) newp = 19;
+             setpriority(PRIO_PROCESS, th, newp);
+          }
+     }
+#endif
+}
+
 #endif
 
 void
@@ -442,14 +477,7 @@ ecore_thread_run(Ecore_Cb func_blocking,
 
    if (pthread_create(&pth->thread, NULL, (void *) _ecore_thread_worker, pth) == 0)
      {
-	/* lower priority of worker threads so they use up "bg cpu"
-	 * as it was really intended to work */
-	struct sched_param param;
-
-	memset(&param, 0, sizeof(param));
-	param.sched_priority = sched_get_priority_min(SCHED_RR);
-	pthread_setschedparam(pth->thread, SCHED_RR, &param);
-
+        _ecore_thread_pri_drop(pth->thread);
 	return (Ecore_Thread *) work;
      }
 
@@ -618,14 +646,7 @@ EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Heavy_Cb func_heavy,
 
         if (pthread_create(&t, NULL, (void *) _ecore_direct_worker, worker) == 0)
 	  {
-	     /* lower priority of worker threads so they use up "bg cpu"
-	      * as it was really intended to work */
-	     struct sched_param param;
-
-	     memset(&param, 0, sizeof(param));
-	     param.sched_priority = sched_get_priority_min(SCHED_RR);
-	     pthread_setschedparam(t, SCHED_RR, &param);
-
+             _ecore_thread_pri_drop(t);
 	     return (Ecore_Thread *) worker;
 	  }
      }
@@ -650,14 +671,7 @@ EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Heavy_Cb func_heavy,
 
    if (pthread_create(&pth->thread, NULL, (void *) _ecore_thread_worker, pth) == 0)
      {
-	/* lower priority of worker threads so they use up "bg cpu"
-	 * as it was really intended to work */
-	struct sched_param param;
-
-	memset(&param, 0, sizeof(param));
-	param.sched_priority = sched_get_priority_min(SCHED_RR);
-	pthread_setschedparam(pth->thread, SCHED_RR, &param);
-
+        _ecore_thread_pri_drop(pth->thread);
 	return (Ecore_Thread *) worker;
      }
 
