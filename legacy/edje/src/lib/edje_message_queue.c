@@ -96,7 +96,7 @@ edje_object_message_handler_set(Evas_Object *obj, void (*func) (void *data, Evas
 EAPI void
 edje_object_message_signal_process(Evas_Object *obj)
 {
-   Eina_List *l, *tmpq = NULL;
+   Eina_List *l, *ln, *tmpq = NULL;
    Edje *ed;
    Edje_Message *em;
    const void *data;
@@ -104,12 +104,17 @@ edje_object_message_signal_process(Evas_Object *obj)
    ed = _edje_fetch(obj);
    if (!ed) return;
 
-   EINA_LIST_FOREACH(msgq, l, em)
-     if (em->edje == ed)
-       tmpq = eina_list_append(tmpq, em);
-   /* now remove them from the old queue */
-   EINA_LIST_FOREACH(tmpq, l, data)
-     msgq = eina_list_remove(msgq, data);
+   for (l = msgq; l; )
+     {
+        ln = l->next;
+        em = l->data;
+        if (em->edje == ed)
+          {
+             tmpq = eina_list_append(tmpq, em);
+             msgq = eina_list_remove_list(msgq, l);
+          }
+        l = ln;
+     }
    /* a temporary message queue */
    if (tmp_msgq)
      {
