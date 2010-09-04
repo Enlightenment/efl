@@ -82,7 +82,9 @@ PKG_CHECK_MODULES([LIBUDEV], [libudev])
 
 udev_version=$(pkg-config libudev --modversion)
 
-if test $udev_version -lt 148;then
+if test $udev_version -lt 143;then
+  AC_MSG_ERROR([udev version is too old!])
+elif test $udev_version -lt 148;then
   AC_MSG_WARN([Old udev version detected, enabling compat code])
   AC_DEFINE([OLD_UDEV_RRRRRRRRRRRRRR],[1],[compat functionality for udev < 148])
 fi
