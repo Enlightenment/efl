@@ -213,13 +213,30 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
 
    if (pthread_create(&pth->thread, NULL, (void *) _evas_preload_thread_worker, pth) == 0)
      {
-        /* lower priority of async loader threads so they use up "bg cpu"
-         * as it was really intended to work */
+#ifdef __linux__             
         struct sched_param param;
 
+        /* lower priority of async loader threads so they use up "bg cpu"
+         * as it was really intended to work.
+         * yes - this may fail if not root. there is no portable way to do
+         * this so try - if it fails. meh. nothnig to be done.
+         */
         memset(&param, 0, sizeof(param));
-        param.sched_priority = sched_get_priority_min(SCHED_RR);
-        pthread_setschedparam(pth->thread, SCHED_RR, &param);
+        param.sched_priority = sched_get_priority_max(SCHED_RR);
+        if (pthread_setschedparam(pth->thread, SCHED_RR, &param) != 0)
+          {
+             int newp;
+             
+             errno = 0;
+             newp = getpriority(PRIO_PROCESS, 0);
+             if (errno == 0)
+               {
+                  newp += 5;
+                  if (newp > 19) newp = 19;
+                  setpriority(PRIO_PROCESS, pth->thread, newp);
+               }
+          }
+#endif             
         
 	LKL(_mutex);
 	_evas_preload_thread_count++;
