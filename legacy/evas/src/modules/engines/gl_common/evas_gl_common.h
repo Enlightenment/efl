@@ -427,7 +427,8 @@ void             evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
                                                         int clip, int cx, int cy, int cw, int ch,
                                                         int r, int g, int b, int a,
                                                         Eina_Bool smooth, 
-                                                        Eina_Bool tex_only);
+                                                        Eina_Bool tex_only,
+                                                        Eina_Bool yuv);
 void              evas_gl_common_context_flush(Evas_GL_Context *gc);
 
 int               evas_gl_common_shader_program_init(Evas_GL_Program *p,

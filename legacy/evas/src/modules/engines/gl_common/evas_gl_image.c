@@ -468,6 +468,7 @@ evas_gl_common_image_map4_draw(Evas_GL_Context *gc, Evas_GL_Image *im,
    RGBA_Draw_Context *dc;
    int r, g, b, a;
    int c, cx, cy, cw, ch;
+   Eina_Bool yuv = 0;
    
    dc = gc->dc;
    if (dc->mul.use)
@@ -488,9 +489,13 @@ evas_gl_common_image_map4_draw(Evas_GL_Context *gc, Evas_GL_Image *im,
    cx = gc->dc->clip.x; cy = gc->dc->clip.y; 
    cw = gc->dc->clip.w; ch = gc->dc->clip.h;
    im->tex->im = im;
+   if ((im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
+       (im->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))
+      yuv = 1;
    evas_gl_common_context_image_map4_push(gc, im->tex, p, 
                                           c, cx, cy, cw, ch, 
-                                          r, g, b, a, smooth, im->tex_only);
+                                          r, g, b, a, smooth, im->tex_only,
+                                          yuv);
 }
 
 void
