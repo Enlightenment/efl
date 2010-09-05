@@ -2438,25 +2438,17 @@ _edje_entry_cursor_is_visible_format_get(Edje_Real_Part *rp, Edje_Cursor cur)
 const char *
 _edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur)
 {
+   static char *s = NULL;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
-   const char *s;
-   static char buf[16];
-   int pos, pos2, i;
-   if (!c) return NULL;
-   s = evas_textblock_node_format_text_get(evas_textblock_cursor_format_get(c));
-   if (s) return s;
-   s = evas_textblock_cursor_paragraph_text_get(c);
-   if (!s) return NULL;
-   pos = evas_textblock_cursor_pos_get(c);
-   /* Get the actual utf8 pos */
-   for (i = 0 ; pos > 0 ; pos--)
+
+   if (s)
      {
-        i = evas_string_char_next_get(s, i, NULL);
+        free(s);
+        s = NULL;
      }
-   pos2 = evas_string_char_next_get(s, i, NULL);
-   strncpy(buf, s + i, pos2 - i);
-   buf[pos2 - i] = 0;
-   return buf;
+
+   s = evas_textblock_cursor_content_get(c);
+   return s;
 }
 
 #ifdef HAVE_ECORE_IMF
