@@ -259,7 +259,7 @@ evas_bidi_props_copy_and_ref(const Evas_BiDi_Props *src, Evas_BiDi_Props *dst)
  * @internal
  * Reorders ustr according to the bidi props.
  *
- * @param ustr the string to reorder.
+ * @param ustr the string to reorder. - Null is ok, will just populate the map.
  * @param intl_props the intl properties to rerorder according to.
  * @param _v_to_l The visual to logical map to populate - if NULL it won't populate it.
  * @return #EINA_FALSE on success, #EINA_TRUE on error.
