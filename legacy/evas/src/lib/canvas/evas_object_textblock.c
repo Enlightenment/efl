@@ -4507,7 +4507,7 @@ evas_textblock_cursor_paragraph_next(Evas_Textblock_Cursor *cur)
 }
 
 /**
- * Advances to the the end of the next text node
+ * Advances to the the end of the previous text node
  *
  * @param cur the cursor to update
  * @return #EINA_TRUE if it managed to advance a paragraph, #EINA_FALSE otherwise.
@@ -7017,7 +7017,7 @@ evas_object_textblock_clear(Evas_Object *obj)
  * the textblock to the current size of the object.
  * The main difference between this and @ref evas_object_textblock_size_native_get
  * is that the "native" function does not wrapping into account
- * it just calculates the real wdith of the objcet if it was placed on an
+ * it just calculates the real width of the object if it was placed on an
  * infinite canvas, while this function gives the size after wrapping
  * according to the size restrictions of the object.
  *
@@ -7047,7 +7047,7 @@ evas_object_textblock_size_formatted_get(const Evas_Object *obj, Evas_Coord *w, 
  * the current size of the object.
  * The main difference between this and @ref evas_object_textblock_size_formatted_get
  * is that the "native" function does not take wrapping into account
- * it just calculates the real wdith of the objcet if it was placed on an
+ * it just calculates the real width of the object if it was placed on an
  * infinite canvas, while the "formatted" function gives the size after
  * wrapping text according to the size restrictions of the object.
  *
