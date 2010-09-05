@@ -6185,6 +6185,40 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
    _evas_textblock_changed(o, cur1->obj);
 }
 
+
+/**
+ * Return the content of the cursor.
+ *
+ * @param cur the cursor
+ * @return the text in the range
+ */
+EAPI char *
+evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur)
+{
+   const Eina_Unicode *ustr;
+   Eina_Unicode buf[2];
+   char *s;
+   if (!cur || !cur->node) return NULL;
+   if (evas_textblock_cursor_format_is_visible_get(cur))
+     {
+           if (evas_textblock_cursor_format_is_visible_get(cur))
+             {
+                const char *tmp;
+                tmp  = evas_textblock_node_format_text_get(
+                      _evas_textblock_node_visible_at_pos_get(
+                      evas_textblock_cursor_format_get(cur)));
+                return strdup(tmp);
+             }
+     }
+
+   ustr = eina_ustrbuf_string_get(cur->node->unicode);
+   buf[0] = ustr[cur->pos];
+   buf[1] = 0;
+   s = evas_common_encoding_unicode_to_utf8(buf, NULL);
+
+   return s;
+}
+
 /**
  * Return the text in the range between cur1 and cur2
  *
