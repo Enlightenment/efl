@@ -667,7 +667,7 @@ EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Heavy_Cb func_heavy,
    if (!pth) goto on_error;
 
    pth->p = ecore_pipe_add(_ecore_thread_handler, NULL);
-   if (pth->p) goto on_error;
+   if (!pth->p) goto on_error;
 
    if (pthread_create(&pth->thread, NULL, (void *) _ecore_thread_worker, pth) == 0)
      {
