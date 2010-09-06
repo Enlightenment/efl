@@ -3262,7 +3262,7 @@ eet_connection_new(Eet_Read_Cb  *eet_read_cb,
 
 /**
  * Process a raw packet received over the link
- * @oaram conn Connection handler to track.
+ * @param conn Connection handler to track.
  * @param data Raw data packet.
  * @param size The size of that packet.
  * @return 0 on complete success, any other value indicate where in the stream it got wrong (It could be before that packet).
