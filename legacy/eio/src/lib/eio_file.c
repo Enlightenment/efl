@@ -199,23 +199,18 @@ eio_file_ls(const char *dir,
    async->filter_cb = filter_cb;
    async->main_cb = main_cb;
    async->ls.directory = eina_stringshare_add(dir);
-   async->ls.common.done_cb = done_cb;
-   async->ls.common.error_cb = error_cb;
-   async->ls.common.data = data;
-   async->ls.common.thread = ecore_long_run(_eio_file_heavy,
-					    _eio_file_notify,
-					    _eio_file_end,
-					    _eio_file_error,
-					    async,
-					    EINA_TRUE);
-   if (!async->ls.common.thread) goto on_error;
+
+   if (!eio_long_file_set(&async->ls.common,
+			  done_cb,
+			  error_cb,
+			  data,
+			  _eio_file_heavy,
+			  _eio_file_notify,
+			  _eio_file_end,
+			  _eio_file_error))
+     return NULL;
 
    return &async->ls.common;
-
- on_error:
-   eina_stringshare_del(async->ls.directory);
-   free(async);
-   return NULL;
 }
 
 /**
@@ -249,23 +244,18 @@ eio_file_direct_ls(const char *dir,
    async->filter_cb = filter_cb;
    async->main_cb = main_cb;
    async->ls.directory = eina_stringshare_add(dir);
-   async->ls.common.done_cb = done_cb;
-   async->ls.common.error_cb = error_cb;
-   async->ls.common.data = data;
-   async->ls.common.thread = ecore_long_run(_eio_file_direct_heavy,
-					 _eio_file_direct_notify,
-					 _eio_file_end,
-					 _eio_file_error,
-					 async,
-					 EINA_TRUE);
-   if (!async->ls.common.thread) goto on_error;
+
+   if (!eio_long_file_set(&async->ls.common,
+			  done_cb,
+			  error_cb,
+			  data,
+			  _eio_file_direct_heavy,
+			  _eio_file_direct_notify,
+			  _eio_file_end,
+			  _eio_file_error))
+     return NULL;
 
    return &async->ls.common;
-
- on_error:
-   eina_stringshare_del(async->ls.directory);
-   free(async);
-   return NULL;
 }
 
 EAPI Eina_Bool

@@ -83,6 +83,7 @@ typedef void (*Eio_Stat_Cb)(const void *data, const struct stat *stat);
 typedef void (*Eio_Progress_Cb)(const void *data, const Eio_Progress *info);
 
 typedef void (*Eio_Done_Cb)(const void *data);
+typedef void (*Eio_Error_Cb)(int errno, const void *data);
 
 struct _Eio_Progress
 {

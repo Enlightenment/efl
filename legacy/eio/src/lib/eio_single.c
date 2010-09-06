@@ -40,6 +40,58 @@ eio_file_thread_error(Eio_File *common)
    ecore_thread_cancel(common->thread);
 }
 
+Eina_Bool
+eio_long_file_set(Eio_File *common,
+		  Eio_Done_Cb done_cb,
+		  Eio_Done_Cb error_cb,
+		  const void *data,
+		  Ecore_Thread_Heavy_Cb heavy_cb,
+		  Ecore_Thread_Notify_Cb notify_cb,
+		  Ecore_Cb end_cb,
+		  Ecore_Cb cancel_cb)
+{
+   Ecore_Thread *thread;
+
+   common->done_cb = done_cb;
+   common->error_cb = error_cb;
+   common->data = data;
+
+   thread = ecore_long_run(heavy_cb,
+			   notify_cb,
+			   end_cb,
+			   cancel_cb,
+			   common,
+			   EINA_TRUE);
+
+   if (!thread) return EINA_FALSE;
+   common->thread = thread;
+   return EINA_TRUE;
+}
+
+Eina_Bool
+eio_file_set(Eio_File *common,
+	     Eio_Done_Cb done_cb,
+	     Eio_Done_Cb error_cb,
+	     const void *data,
+	     Ecore_Cb job_cb,
+	     Ecore_Cb end_cb,
+	     Ecore_Cb cancel_cb)
+{
+   Ecore_Thread *thread;
+
+   common->done_cb = done_cb;
+   common->error_cb = error_cb;
+   common->data = data;
+   thread = ecore_thread_run(job_cb,
+			     end_cb,
+			     cancel_cb,
+			     common);
+
+   if (!thread) return EINA_FALSE;
+   common->thread = thread;
+   return EINA_TRUE;
+}
+
 /* --- */
 
 static void
@@ -176,21 +228,17 @@ eio_file_direct_stat(const char *path,
 
    s->path = eina_stringshare_add(path);
    s->done_cb = done_cb;
-   s->common.done_cb = NULL;
-   s->common.error_cb = error_cb;
-   s->common.data = data;
-   s->common.thread = ecore_thread_run(_eio_file_stat,
-				       _eio_file_stat_done,
-				       _eio_file_stat_error,
-				       s);
-   if (!s->common.thread) goto on_error;
+
+   if (!eio_file_set(&s->common,
+		      NULL,
+		      error_cb,
+		      data,
+		      _eio_file_stat,
+		      _eio_file_stat_done,
+		      _eio_file_stat_error))
+     return NULL;
 
    return &s->common;
-
- on_error:
-   eina_stringshare_del(s->path);
-   free(s);
-   return NULL;
 }
 
 /**
@@ -217,21 +265,17 @@ eio_file_unlink(const char *path,
    if (!l) return NULL;
 
    l->path = eina_stringshare_add(path);
-   l->common.done_cb = done_cb;
-   l->common.error_cb = error_cb;
-   l->common.data = data;
-   l->common.thread = ecore_thread_run(_eio_file_unlink,
-				       _eio_file_unlink_done,
-				       _eio_file_unlink_error,
-				       l);
-   if (!l->common.thread) goto on_error;
+
+   if (!eio_file_set(&l->common,
+		      done_cb,
+		      error_cb,
+		      data,
+		      _eio_file_unlink,
+		      _eio_file_unlink_done,
+		      _eio_file_unlink_error))
+     return NULL;
 
    return &l->common;
-
- on_error:
-   eina_stringshare_del(l->path);
-   free(l);
-   return NULL;
 }
 
 /**
@@ -261,21 +305,17 @@ eio_file_mkdir(const char *path,
 
    r->path = eina_stringshare_add(path);
    r->mode = mode;
-   r->common.done_cb = done_cb;
-   r->common.error_cb = error_cb;
-   r->common.data = data;
-   r->common.thread = ecore_thread_run(_eio_file_mkdir,
-				       _eio_file_mkdir_done,
-				       _eio_file_mkdir_error,
-				       r);
-   if (!r->common.thread) goto on_error;
+
+   if (!eio_file_set(&r->common,
+		     done_cb,
+		     error_cb,
+		      data,
+		     _eio_file_mkdir,
+		     _eio_file_mkdir_done,
+		     _eio_file_mkdir_error))
+     return NULL;
 
    return &r->common;
-
- on_error:
-   eina_stringshare_del(r->path);
-   free(r);
-   return NULL;
 }
 
 
