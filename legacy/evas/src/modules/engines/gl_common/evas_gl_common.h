@@ -128,6 +128,7 @@ struct _Evas_GL_Shared
    struct {
       GLint max_texture_units;
       GLint max_texture_size;
+      GLint max_vertex_elements;
       GLfloat anisotropic;
       Eina_Bool rgb : 1;
       Eina_Bool bgra : 1;
