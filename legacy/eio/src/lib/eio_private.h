@@ -3,6 +3,10 @@
 
 #include <Ecore.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include "Eio.h"
 
 typedef struct _Eio_File_Ls Eio_File_Ls;
@@ -10,6 +14,7 @@ typedef struct _Eio_File_Direct_Ls Eio_File_Direct_Ls;
 typedef struct _Eio_File_Char_Ls Eio_File_Char_Ls;
 typedef struct _Eio_File_Mkdir Eio_File_Mkdir;
 typedef struct _Eio_File_Unlink Eio_File_Unlink;
+typedef struct _Eio_File_Stat Eio_File_Stat;
 
 struct _Eio_File
 {
@@ -56,5 +61,18 @@ struct _Eio_File_Unlink
 
    const char *path;
 };
+
+struct _Eio_File_Stat
+{
+   Eio_File common;
+
+   Eio_Stat_Cb done_cb;
+
+   struct stat buffer;
+   const char *path;
+};
+
+void eio_file_error(Eio_File *common);
+void eio_file_thread_error(Eio_File *common);
 
 #endif

@@ -27,37 +27,55 @@
 
 #include "Eio.h"
 
+void
+eio_file_error(Eio_File *common)
+{
+   if (common->error_cb)
+     common->error_cb(common->data);
+}
+
+void
+eio_file_thread_error(Eio_File *common)
+{
+   ecore_thread_cancel(common->thread);
+}
+
+/* --- */
+
+static void
+_eio_file_mkdir(void *data)
+{
+   Eio_File_Mkdir *m = data;
+
+   if (mkdir(m->path, m->mode) != 0)
+     eio_file_thread_error(&m->common);
+}
+
+static void
+_eio_mkdir_free(Eio_File_Mkdir *m)
+{
+   eina_stringshare_del(m->path);
+   free(m);
+}
+
 static void
 _eio_file_mkdir_done(void *data)
 {
-   Eio_File_Mkdir *r = data;
+   Eio_File_Mkdir *m = data;
 
-   if (r->common.done_cb)
-     r->common.done_cb(r->common.data);
+   if (m->common.done_cb)
+     m->common.done_cb(m->common.data);
 
-   eina_stringshare_del(r->path);
-   free(r);
+   _eio_mkdir_free(m);
 }
 
 static void
 _eio_file_mkdir_error(void *data)
 {
-   Eio_File_Mkdir *r = data;
+   Eio_File_Mkdir *m = data;
 
-   if (r->common.error_cb)
-     r->common.error_cb(r->common.data);
-
-   eina_stringshare_del(r->path);
-   free(r);
-}
-
-static void
-_eio_file_mkdir(void *data)
-{
-   Eio_File_Mkdir *r = data;
-
-   if (mkdir(r->path, r->mode) != 0)
-     ecore_thread_cancel(r->common.thread);
+   eio_file_error(&m->common);
+   _eio_mkdir_free(m);
 }
 
 static void
@@ -66,7 +84,14 @@ _eio_file_unlink(void *data)
    Eio_File_Unlink *l = data;
 
    if (unlink(l->path) != 0)
-     ecore_thread_cancel(l->common.thread);
+     eio_file_thread_error(&l->common);
+}
+
+static void
+_eio_unlink_free(Eio_File_Unlink *l)
+{
+   eina_stringshare_del(l->path);
+   free(l);
 }
 
 static void
@@ -77,8 +102,7 @@ _eio_file_unlink_done(void *data)
    if (l->common.done_cb)
      l->common.done_cb(l->common.data);
 
-   eina_stringshare_del(l->path);
-   free(l);
+   _eio_unlink_free(l);
 }
 
 static void
@@ -86,21 +110,86 @@ _eio_file_unlink_error(void *data)
 {
    Eio_File_Unlink *l = data;
 
-   if (l->common.error_cb)
-     l->common.error_cb(l->common.data);
+   eio_file_error(&l->common);
+   _eio_unlink_free(l);
+}
 
-   eina_stringshare_del(l->path);
-   free(l);
+static void
+_eio_file_stat(void *data)
+{
+   Eio_File_Stat *s = data;
+
+   if (stat(s->path, &s->buffer) != 0)
+     eio_file_thread_error(&s->common);
+}
+
+static void
+_eio_stat_free(Eio_File_Stat *s)
+{
+   eina_stringshare_del(s->path);
+   free(s);
+}
+
+static void
+_eio_file_stat_done(void *data)
+{
+   Eio_File_Stat *s = data;
+
+   if (s->done_cb)
+     s->done_cb(s->common.data, &s->buffer);
+
+   _eio_stat_free(s);
+}
+
+static void
+_eio_file_stat_error(void *data)
+{
+   Eio_File_Stat *s = data;
+
+   eio_file_error(&s->common);
+   _eio_stat_free(s);
 }
 
 /* ---- */
 
+/**
+ * @brief Stat a file/directory.
+ * @param done_cb Callback called from the main loop when stat was successfully called..
+ * @param error_cb Callback called from the main loop when stat failed or has been canceled.
+ * @return A reference to the IO operation.
+ *
+ * eio_file_direct_stat basically call stat in another thread. This prevent any lock in your apps.
+ */
 EAPI Eio_File *
 eio_file_direct_stat(const char *path,
 		     Eio_Stat_Cb done_cb,
 		     Eio_Done_Cb error_cb,
 		     const void *data)
 {
+   Eio_File_Stat *s = NULL;
+
+   if (!path || !done_cb || !error_cb)
+     return NULL;
+
+   s = malloc(sizeof (Eio_File_Stat));
+   if (!s) return NULL;
+
+   s->path = eina_stringshare_add(path);
+   s->done_cb = done_cb;
+   s->common.done_cb = NULL;
+   s->common.error_cb = error_cb;
+   s->common.data = data;
+   s->common.thread = ecore_thread_run(_eio_file_stat,
+				       _eio_file_stat_done,
+				       _eio_file_stat_error,
+				       s);
+   if (!s->common.thread) goto on_error;
+
+   return &s->common;
+
+ on_error:
+   eina_stringshare_del(s->path);
+   free(s);
    return NULL;
 }
 

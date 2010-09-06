@@ -162,8 +162,7 @@ _eio_file_error(void *data)
 
    async = data;
 
-   if (async->common.error_cb)
-     async->common.error_cb(async->common.data);
+   eio_file_error(&async->common);
 
    eina_stringshare_del(async->directory);
    free(async);
