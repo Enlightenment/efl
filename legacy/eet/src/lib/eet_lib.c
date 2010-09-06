@@ -2271,7 +2271,7 @@ eet_write_cipher(Eet_File   *ef,
         unsigned int data_ciphered_sz = 0;
         const void *tmp;
 
-        tmp = data2 ? data2 : data;
+        tmp = comp ? data2 : data;
         if (!eet_cipher(tmp, data_size, cipher_key, strlen(cipher_key),
                         &data_ciphered, &data_ciphered_sz))
           {
@@ -2291,8 +2291,8 @@ eet_write_cipher(Eet_File   *ef,
           }
      }
    else
-   if (!comp)
-      memcpy(data2, data, size);
+     if (!comp)
+       memcpy(data2, data, size);
 
    /* Does this node already exist? */
    for (efn = ef->header->directory->nodes[hash]; efn; efn = efn->next)
