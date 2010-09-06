@@ -918,7 +918,7 @@ eina_hash_stringshared_new(Eina_Free_Cb data_free_cb)
 }
 
 /**
- * @brief Returns the number of entires in the hash table.
+ * @brief Returns the number of entries in the hash table.
  * @param hash The given hash table.
  * @return The number of entries in the hash table, @c 0 on error
  * Returns the number of entires in the hash table.
