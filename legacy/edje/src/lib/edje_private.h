@@ -1731,6 +1731,7 @@ void _edje_entry_cursor_begin(Edje_Real_Part *rp, Edje_Cursor cur);
 void _edje_entry_cursor_end(Edje_Real_Part *rp, Edje_Cursor cur);
 void _edje_entry_cursor_line_begin(Edje_Real_Part *rp, Edje_Cursor cur);
 void _edje_entry_cursor_line_end(Edje_Real_Part *rp, Edje_Cursor cur);
+Eina_Bool _edje_entry_cursor_coord_set(Edje_Real_Part *rp, Edje_Cursor cur, int x, int y);
 Eina_Bool _edje_entry_cursor_is_format_get(Edje_Real_Part *rp, Edje_Cursor cur);
 Eina_Bool _edje_entry_cursor_is_visible_format_get(Edje_Real_Part *rp, Edje_Cursor cur);
 const char *_edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur);

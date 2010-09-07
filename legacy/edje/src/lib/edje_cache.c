@@ -544,8 +544,6 @@ edje_file_cache_get(void)
 /**
  * @brief Clean the file cache.
  *
- * @return The file cache size.
- *
  * This function cleans the file cache entries, but keeps this cache's
  * size to the last value set.
  *
@@ -614,8 +612,6 @@ edje_collection_cache_get(void)
 
 /**
  * @brief Clean the collection cache.
- *
- * @return The collection cache size.
  *
  * This function cleans the collection cache, but keeps this cache's
  * size to the last value set.

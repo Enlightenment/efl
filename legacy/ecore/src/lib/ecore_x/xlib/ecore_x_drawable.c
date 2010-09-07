@@ -12,7 +12,7 @@
 
 /**
  * Retrieves the geometry of the given drawable.
- * @param d The given drawable.
+* @param d The given drawable.
  * @param x Pointer to an integer into which the X position is to be stored.
  * @param y Pointer to an integer into which the Y position is to be stored.
  * @param w Pointer to an integer into which the width is to be stored.

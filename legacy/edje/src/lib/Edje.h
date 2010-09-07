@@ -164,7 +164,11 @@ enum _Edje_Cursor
 {
    EDJE_CURSOR_MAIN,
    EDJE_CURSOR_SELECTION_BEGIN,
-   EDJE_CURSOR_SELECTION_END
+   EDJE_CURSOR_SELECTION_END,
+   EDJE_CURSOR_PREEDIT_START,
+   EDJE_CURSOR_PREEDIT_END,
+   EDJE_CURSOR_USER,
+   EDJE_CURSOR_USER_EXTRA,
    // more later
 };
 typedef enum _Edje_Cursor Edje_Cursor;
@@ -515,15 +519,16 @@ typedef void (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Mess
    EAPI void             edje_object_part_text_select_begin            (const Evas_Object *obj, const char *part);
    EAPI void             edje_object_part_text_select_extend           (const Evas_Object *obj, const char *part);
        
-   EAPI Eina_Bool        edje_object_part_text_cursor_next                 (const Evas_Object *obj, const char *part, Edje_Cursor cur);
-   EAPI Eina_Bool        edje_object_part_text_cursor_prev                 (const Evas_Object *obj, const char *part, Edje_Cursor cur);
-   EAPI Eina_Bool        edje_object_part_text_cursor_up                   (const Evas_Object *obj, const char *part, Edje_Cursor cur);
-   EAPI Eina_Bool        edje_object_part_text_cursor_down                 (const Evas_Object *obj, const char *part, Edje_Cursor cur);
-   EAPI void             edje_object_part_text_cursor_begin_set            (const Evas_Object *obj, const char *part, Edje_Cursor cur);
-   EAPI void             edje_object_part_text_cursor_end_set              (const Evas_Object *obj, const char *part, Edje_Cursor cur);
-   EAPI void             edje_object_part_text_cursor_copy                 (const Evas_Object *obj, const char *part, Edje_Cursor src, Edje_Cursor dst);
-   EAPI void             edje_object_part_text_cursor_line_begin_set       (const Evas_Object *obj, const char *part, Edje_Cursor cur);
-   EAPI void             edje_object_part_text_cursor_line_end_set         (const Evas_Object *obj, const char *part, Edje_Cursor cur);
+   EAPI Eina_Bool        edje_object_part_text_cursor_next                 (Evas_Object *obj, const char *part, Edje_Cursor cur);
+   EAPI Eina_Bool        edje_object_part_text_cursor_prev                 (Evas_Object *obj, const char *part, Edje_Cursor cur);
+   EAPI Eina_Bool        edje_object_part_text_cursor_up                   (Evas_Object *obj, const char *part, Edje_Cursor cur);
+   EAPI Eina_Bool        edje_object_part_text_cursor_down                 (Evas_Object *obj, const char *part, Edje_Cursor cur);
+   EAPI void             edje_object_part_text_cursor_begin_set            (Evas_Object *obj, const char *part, Edje_Cursor cur);
+   EAPI void             edje_object_part_text_cursor_end_set              (Evas_Object *obj, const char *part, Edje_Cursor cur);
+   EAPI void             edje_object_part_text_cursor_copy                 (Evas_Object *obj, const char *part, Edje_Cursor src, Edje_Cursor dst);
+   EAPI void             edje_object_part_text_cursor_line_begin_set       (Evas_Object *obj, const char *part, Edje_Cursor cur);
+   EAPI void             edje_object_part_text_cursor_line_end_set         (Evas_Object *obj, const char *part, Edje_Cursor cur);
+   EAPI Eina_Bool        edje_object_part_text_cursor_coord_set            (Evas_Object *obj, const char *part, Edje_Cursor cur, Evas_Coord x, Evas_Coord y);
    EAPI Eina_Bool        edje_object_part_text_cursor_is_format_get        (const Evas_Object *obj, const char *part, Edje_Cursor cur);
    EAPI Eina_Bool        edje_object_part_text_cursor_is_visible_format_get(const Evas_Object *obj, const char *part, Edje_Cursor cur);
    EAPI const char      *edje_object_part_text_cursor_content_get          (const Evas_Object *obj, const char *part, Edje_Cursor cur);

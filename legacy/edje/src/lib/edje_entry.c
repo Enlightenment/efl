@@ -44,6 +44,8 @@ struct _Entry
    Evas_Object *cursor_fg;
    Evas_Textblock_Cursor *cursor;
    Evas_Textblock_Cursor *sel_start, *sel_end;
+   Evas_Textblock_Cursor *cursor_user, *cursor_user_extra;
+   Evas_Textblock_Cursor *preedit_start, *preedit_end;
    Eina_List *sel;
    Eina_List *anchors;
    Eina_List *anchorlist;
@@ -2152,17 +2154,31 @@ _cursor_get(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Entry *en = rp->entry_data;
    if (!en) return NULL;
+
    switch (cur)
      {
      case EDJE_CURSOR_MAIN:
         return en->cursor;
-        break;
      case EDJE_CURSOR_SELECTION_BEGIN:
         return en->sel_start;
-        break;
      case EDJE_CURSOR_SELECTION_END:
         return en->sel_end;
-        break;
+     case EDJE_CURSOR_PREEDIT_START:
+        if (!en->preedit_start)
+           en->preedit_start = evas_object_textblock_cursor_new(rp->object);
+        return en->preedit_start;
+     case EDJE_CURSOR_PREEDIT_END:
+        if (!en->preedit_end)
+           en->preedit_end = evas_object_textblock_cursor_new(rp->object);
+        return en->preedit_end;
+     case EDJE_CURSOR_USER:
+        if (!en->cursor_user)
+           en->cursor_user = evas_object_textblock_cursor_new(rp->object);
+	return en->cursor_user;
+     case EDJE_CURSOR_USER_EXTRA:
+        if (!en->cursor_user_extra)
+           en->cursor_user_extra = evas_object_textblock_cursor_new(rp->object);
+	return en->cursor_user_extra;
      default:
         break;
      }
@@ -2418,6 +2434,16 @@ _edje_entry_cursor_line_end(Edje_Real_Part *rp, Edje_Cursor cur)
    _edje_entry_real_part_configure(rp);
 }
 
+
+Eina_Bool
+_edje_entry_cursor_coord_set(Edje_Real_Part *rp, Edje_Cursor cur,
+                             Evas_Coord x, Evas_Coord y)
+{
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   if (!c) return EINA_FALSE;
+   return evas_textblock_cursor_char_coord_set(c, x, y);
+}
+
 Eina_Bool
 _edje_entry_cursor_is_format_get(Edje_Real_Part *rp, Edje_Cursor cur)
 {
@@ -2603,3 +2629,5 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, int type __UNUSED__, voi
    return ECORE_CALLBACK_DONE;
 }
 #endif
+
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
