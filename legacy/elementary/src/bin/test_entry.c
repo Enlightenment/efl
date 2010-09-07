@@ -579,7 +579,7 @@ my_ent_bt_pas(void *data, Evas_Object *obj, void *event_info)
 void
 test_entry3(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *bx, *bx2, *bt, *en, *en_p, *sp;
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *en;
 
    win = elm_win_add(NULL, "entry3", ELM_WIN_BASIC);
    elm_win_title_set(win, "Entry 3");
@@ -1206,7 +1206,7 @@ test_entry4(void *data, Evas_Object *obj, void *event_info)
 void
 test_entry5(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *bx, *bx2, *bt, *en, *en_p, *sp;
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *en;
 
    win = elm_win_add(NULL, "entry5", ELM_WIN_BASIC);
    elm_win_title_set(win, "Entry 5");

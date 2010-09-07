@@ -121,6 +121,7 @@ struct _Widget_Data
    Eina_Bool deferred_cur : 1;
    Eina_Bool disabled : 1;
    Eina_Bool context_menu : 1;
+   Eina_Bool drag_selection_asked : 1;
 };
 
 struct _Elm_Entry_Context_Menu_Item
@@ -141,6 +142,8 @@ struct _Elm_Entry_Item_Provider
 };
 
 static const char *widtype = NULL;
+
+static Eina_Bool _drag_drop_cb(void *data, Evas_Object *obj, Elm_Drop_Data *);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
@@ -1185,7 +1188,8 @@ _event_selection_notify(void *data, int type __UNUSED__, void *event)
    Widget_Data *wd = elm_widget_data_get(data);
    Ecore_X_Event_Selection_Notify *ev = event;
    if (!wd) return ECORE_CALLBACK_PASS_ON;
-   if (!wd->selection_asked) return ECORE_CALLBACK_PASS_ON;
+   if (!wd->selection_asked && !wd->drag_selection_asked)
+      return ECORE_CALLBACK_PASS_ON;
 
    if ((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
        (ev->selection == ECORE_X_SELECTION_PRIMARY))
@@ -1208,6 +1212,30 @@ _event_selection_notify(void *data, int type __UNUSED__, void *event)
 	  }
 	wd->selection_asked = EINA_FALSE;
      }
+   else if (ev->selection == ECORE_X_SELECTION_XDND)
+     {
+	Ecore_X_Selection_Data_Text *text_data;
+
+	text_data = ev->data;
+	if (text_data->data.content == ECORE_X_SELECTION_CONTENT_TEXT)
+	  {
+	     if (text_data->text)
+	       {
+		  char *txt = _text_to_mkup(text_data->text);
+
+		  if (txt)
+		    {
+                     /* Massive FIXME: this should be at the drag point */
+		       elm_entry_entry_insert(data, txt);
+		       free(txt);
+		    }
+	       }
+	  }
+	wd->drag_selection_asked = EINA_FALSE;
+
+        ecore_x_dnd_send_finished();
+
+     }
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1226,6 +1254,30 @@ _event_selection_clear(void *data __UNUSED__, int type __UNUSED__, void *event _
      }
    return 1;*/
    return ECORE_CALLBACK_PASS_ON;
+}
+
+
+static Eina_Bool
+_drag_drop_cb(void *data, Evas_Object *obj, Elm_Drop_Data *drop)
+{
+   Widget_Data *wd;
+   Eina_Bool rv;
+
+   wd = elm_widget_data_get(obj);
+
+   if (!wd) return EINA_FALSE;
+printf("Inserting at (%d,%d) %s\n",drop->x,drop->y,(char*)drop->data);
+
+   edje_object_part_text_cursor_copy(wd->ent, "elm.text",
+                                     EDJE_CURSOR_MAIN,/*->*/EDJE_CURSOR_USER);
+   rv = edje_object_part_text_cursor_coord_set(wd->ent,"elm.text",
+                                          EDJE_CURSOR_MAIN,drop->x,drop->y);
+   if (!rv) printf("Warning: Failed to position cursor: paste anyway\n");
+   elm_entry_entry_insert(obj, drop->data);
+   edje_object_part_text_cursor_copy(wd->ent, "elm.text",
+                                     EDJE_CURSOR_USER,/*->*/EDJE_CURSOR_MAIN);
+
+   return EINA_TRUE;
 }
 #endif
 
@@ -1347,6 +1399,8 @@ elm_entry_add(Evas_Object *parent)
 	  ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR,
 				  _event_selection_clear, obj);
      }
+
+   elm_drop_target_add(obj, ELM_SEL_IMAGE | ELM_SEL_MARKUP,_drag_drop_cb, NULL);
 #endif
 
    entries = eina_list_prepend(entries, obj);
@@ -1628,6 +1682,12 @@ elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable)
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    _sizing_eval(obj);
+
+   if (editable)
+      elm_drop_target_add(obj, ELM_SEL_IMAGE | ELM_SEL_MARKUP,
+                          _drag_drop_cb, NULL);
+   else
+      elm_drop_target_del(obj);
 }
 
 /**
@@ -2167,3 +2227,7 @@ elm_entry_utf8_to_markup(const char *s)
    if (!ss) ss = strdup("");
    return ss;
 }
+
+
+
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

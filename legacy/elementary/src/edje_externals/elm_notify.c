@@ -105,7 +105,7 @@ static Eina_Bool external_notify_param_set(void *data __UNUSED__,
 			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	{
 		Elm_Notify_Orient set = _orient_get(param->s);
-		if (set == ELM_NOTIFY_ORIENT_LAST) return;
+		if (set == ELM_NOTIFY_ORIENT_LAST) return EINA_FALSE;
 		elm_notify_orient_set(obj, set);
 		return EINA_TRUE;
 	}

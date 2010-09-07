@@ -81,6 +81,9 @@ void test_launcher2(void *data, Evas_Object *obj, void *event_info);
 void test_launcher3(void *data, Evas_Object *obj, void *event_info);
 void test_anim(void *data, Evas_Object *obj, void *event_info);
 
+void test_drag_source(void *data, Evas_Object *obj, void *event_info);
+void test_drag_dest(void *data, Evas_Object *obj, void *event_info);
+void test_drag_genlist(void *data, Evas_Object *obj, void *event_info);
 
 struct elm_test
 {
@@ -202,6 +205,10 @@ my_win_main(void)
 
    tests = NULL;
 #define ADD_TEST(name_, cb_) elm_test_add(&tests, name_, cb_)
+   ADD_TEST("Drag Source", test_drag_source);
+   ADD_TEST("Drag Destination", test_drag_dest);
+   ADD_TEST("Drag GenList", test_drag_genlist);
+
    ADD_TEST("Bg Plain", test_bg_plain);
    ADD_TEST("Bg Image", test_bg_image);
    ADD_TEST("Icon Transparent", test_icon);

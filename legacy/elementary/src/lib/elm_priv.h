@@ -109,6 +109,7 @@ enum _elm_sel_type {
    ELM_SEL_PRIMARY,
    ELM_SEL_SECONDARY,
    ELM_SEL_CLIPBOARD,
+   ELM_SEL_XDND,
 
    ELM_SEL_MAX,
 };
@@ -218,9 +219,24 @@ void              _elm_config_init(void);
 void              _elm_config_sub_init(void);
 void              _elm_config_shutdown(void);
 
+/* FIXME: nash formatiing */
+typedef struct Elm_Drop_Data {
+	int x,y;
+
+	enum _elm_sel_format format;
+	void *data;
+	int len;
+} Elm_Drop_Data;
+
+typedef Eina_Bool (*elm_drop_cb)(void *, Evas_Object *, Elm_Drop_Data *data);
+
 Eina_Bool	  elm_selection_set(enum _elm_sel_type selection, Evas_Object *widget, enum _elm_sel_format format, const char *buf);
 Eina_Bool	  elm_selection_clear(enum _elm_sel_type selection, Evas_Object *widget);
 Eina_Bool	  elm_selection_get(enum _elm_sel_type selection, enum _elm_sel_format format, Evas_Object *widget);
+/* FIXME: Need a typedef for the callback */
+Eina_Bool	  elm_drop_target_add(Evas_Object *widget,
+			enum _elm_sel_type, elm_drop_cb, void *);
+Eina_Bool	  elm_drop_target_del(Evas_Object *widget);
 
 Eina_Bool         _elm_dangerous_call_check(const char *call);
 

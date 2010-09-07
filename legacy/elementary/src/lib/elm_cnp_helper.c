@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <sys/mman.h>
 
 #include <stdio.h> // debug
 
@@ -26,6 +27,7 @@
 enum {
      CNP_ATOM_TARGETS = 0,
      CNP_ATOM_text_uri,
+     CNP_ATOM_text_urilist,
      CNP_ATOM_image_png,
      CNP_ATOM_XELM,
      CNP_ATOM_text_html_utf8,
@@ -118,6 +120,8 @@ static int notify_handler_png(struct _elm_cnp_selection *sel,
 static int notify_handler_uri(struct _elm_cnp_selection *sel,
       Ecore_X_Event_Selection_Notify *notify);
 
+static struct pasteimage *pasteimage_alloc(const char *file);
+static bool pasteimage_append(struct pasteimage *pi, Evas_Object *entry);
 
 static struct {
    const char *name;
@@ -153,9 +157,17 @@ static struct {
 	notify_handler_uri,
 	0
    },
+   [CNP_ATOM_text_urilist] = {
+        "text/uri-list",
+        ELM_SEL_IMAGE | ELM_SEL_MARKUP,
+        uri_converter,
+        NULL,
+        notify_handler_uri,
+        0
+   },
    [CNP_ATOM_image_png] = {
 	"image/png",
-	ELM_SEL_IMAGE | ELM_SEL_IMAGE,
+	ELM_SEL_IMAGE,
 	png_converter,
 	NULL,
 	notify_handler_png,
@@ -240,8 +252,23 @@ static struct _elm_cnp_selection selections[ELM_SEL_MAX] = {
        .set = ecore_x_selection_clipboard_set,
        .clear = ecore_x_selection_clipboard_clear,
        .request = ecore_x_selection_clipboard_request,
-   }
+   },
+   ARRAYINIT(ELM_SEL_XDND) {
+       .debug = "XDnD",
+       .ecore_sel = ECORE_X_SELECTION_XDND,
+       .request = ecore_x_selection_xdnd_request,
+   },
 };
+
+/* Data for DND in progress */
+/* FIXME: BEtter name */
+struct {
+   int ntypes;
+   const char **types;
+   unsigned int textreq: 1;
+   struct pasteimage *pi;
+   int x,y;
+} savedtypes =  { 0, NULL, 0, NULL, 0, 0 };
 
 static int _elm_cnp_init_count = 0;
   /* Gah... who left this out of XAtoms.h */
@@ -250,6 +277,8 @@ static Ecore_X_Atom clipboard_atom;
 Eina_List *pastedimages;
 #endif
 
+/* Stringshared, so I can just compare pointers later */
+static const char *text_uri;
 
 Eina_Bool
 elm_selection_set(enum _elm_sel_type selection, Evas_Object *widget,
@@ -319,7 +348,7 @@ elm_selection_get(enum _elm_sel_type selection, enum _elm_sel_format format,
 
    sel->requestformat = format;
    sel->requestwidget = widget;
-   sel->request(elm_win_xwindow_get(top), ECORE_X_SELECTION_TARGET_UTF8_STRING);
+   sel->request(elm_win_xwindow_get(top), ECORE_X_SELECTION_TARGET_TARGETS);
 
    return EINA_TRUE;
 #else
@@ -345,7 +374,9 @@ _elm_cnp_init(void){
 
    ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR, selection_clear,NULL);
    ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY,selection_notify,NULL);
-    return EINA_TRUE;
+
+   text_uri = eina_stringshare_add("text/uri-list");
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -433,6 +464,9 @@ selection_notify(void *udata __UNUSED__, int type __UNUSED__, void *event){
       case ECORE_X_SELECTION_SECONDARY:
 	 sel = selections + ELM_SEL_SECONDARY;
 	 break;
+      case ECORE_X_SELECTION_XDND:
+         sel = selections + ELM_SEL_XDND;
+         break;
       default:
 	 return ECORE_CALLBACK_PASS_ON;
    }
@@ -486,11 +520,12 @@ targets_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
 }
 
 static int
-png_converter(char *target __UNUSED__, void *data __UNUSED__, int size __UNUSED__,
+png_converter(char *target __UNUSED__, void *data, int size,
               void **data_ret __UNUSED__, int *size_ret __UNUSED__,
               Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
 {
-     return 1;
+   cnp_debug("Png converter called\n");
+   return 1;
 }
 
 /*
@@ -582,7 +617,9 @@ notify_handler_text(struct _elm_cnp_selection *sel,
    char *str;
 
    data = notify->data;
+   cnp_debug("Notify handler text %d %d %p\n",data->format,data->length,data->data);
    str = mark_up((char*)data->data, NULL);
+   cnp_debug("String is %s (from %s)\n",str,data->data);
    elm_entry_entry_insert(sel->requestwidget, str);
    free(str);
 
@@ -598,30 +635,60 @@ notify_handler_uri(struct _elm_cnp_selection *sel,
 	 Ecore_X_Event_Selection_Notify *notify)
 {
    Ecore_X_Selection_Data *data;
+   Ecore_X_Selection_Data_Files *files;
    struct pasteimage *pi;
-   char entrytag[100];
    char *p;
 
    data = notify->data;
-   p = (char *)data->data;
+   printf("data->format is %d %p %p\n",data->format,notify,data);
+   if (data->content == ECORE_X_SELECTION_CONTENT_FILES)
+     {
+        cnp_debug("got a files list\n");
+        files = notify->data;
+        if (files->num_files > 1)
+          {
+             /* Don't handle many items */
+             cnp_debug("more then one file: Bailing\n");
+             return 0;
+          }
+        p = files->files[0];
+     }
+   else
+      p = (char *)data->data;
+   if (!p)
+     {
+        cnp_debug("Couldn't find a file\n");
+        return 0;
+      }
    cnp_debug("Got %s\n",p);
-   if (strncmp(p,"file://",7) != 0){
-	cnp_debug("Doesn't start with ;file;  %s\n",p);
+   if (strncmp(p,"file://",7) != 0)
+     {
+        cnp_debug("Doesn't start with ;file;  %s\n",p);
 	return 0;
-   }
+     }
 
    p += strlen("file://");
 
-   pi = calloc(1,sizeof(struct pasteimage));
-   snprintf(entrytag, sizeof(entrytag), "pasteimage-%p",pi);
-   pi->tag = strdup(entrytag);
-   pi->file = strndup(p,data->length - strlen("file://"));
+   if (!strstr(p,"png"))
+     {
+        /* FIXME: Better test: Load it in evasw & see is probably best */
+        cnp_debug("No png, ignoring\n");
+        if (savedtypes.textreq) savedtypes.textreq = 0;
+        return 0;
+     }
 
-   elm_entry_item_provider_append(sel->requestwidget, image_provider, pi);
-   pastedimages = eina_list_append(pastedimages, pi);
+   pi = pasteimage_alloc(p);
 
-   snprintf(entrytag, sizeof(entrytag), "<item absize=240x180 href=%s>",pi->tag);
-   elm_entry_entry_insert(sel->requestwidget, entrytag);
+   if (savedtypes.textreq)
+     {
+        savedtypes.textreq = 0;
+        savedtypes.pi = pi;
+     }
+   else
+     {
+        pasteimage_append(pi, sel->requestwidget);
+        savedtypes.pi = NULL;
+     }
 
    return 0;
 }
@@ -630,7 +697,64 @@ static int
 notify_handler_png(struct _elm_cnp_selection *sel __UNUSED__,
                    Ecore_X_Event_Selection_Notify *notify __UNUSED__)
 {
+   Ecore_X_Selection_Data *data;
+   char *fname,*tmppath;
+   struct pasteimage *pi;
+   int fd,len;
+   void *map;
+
    cnp_debug("got a png!\n");
+   data = notify->data;
+
+   cnp_debug("Size if %d\n",data->length);
+
+   /* generate tmp name */
+   tmppath = getenv("TMP");
+   if (!tmppath) tmppath = P_tmpdir;
+   if (!tmppath) tmppath = "/tmp";
+   len = snprintf(NULL,0,"%s/%sXXXXXX",tmppath, "elmcnpimage-");
+   if (len < 0) return 1;
+   len ++;
+   fname = malloc(len);
+   if (!fname) return 1;
+   len = snprintf(fname,len,"%s/%sXXXXXX",tmppath, "elmcnpimage-");
+
+   fd = mkstemp(fname);
+   if (fd < 0)
+     {
+        free(fname);
+        return 1;
+     }
+
+   if (ftruncate(fd, data->length))
+     {
+        perror("ftruncate");
+        unlink(fname);
+        free(fname);
+        close(fd);
+     }
+
+   map = mmap(NULL,data->length, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+   if (map == MAP_FAILED)
+     {
+        perror("mmap");
+        unlink(fname);
+        free(fname);
+        close(fd);
+     }
+   memcpy(map, data->data, data->length);
+   munmap(map,data->length);
+   close(fd);
+
+   /* FIXME: add clean up function */
+   // on_exit: file name + pid
+   //    need pid, as forked children inheret list :-(
+
+   /* FIXME: Add to paste image data to clean up */
+
+   pi = pasteimage_alloc(fname);
+   pasteimage_append(pi, sel->requestwidget);
+
    return 0;
 }
 
@@ -642,11 +766,9 @@ text_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
 {
    struct _elm_cnp_selection *sel;
 
+   cnp_debug("text converter\n");
    sel = selections + *(int *)data;
-   if (!sel->active)
-     {
-	return 1;
-     }
+   if (!sel->active) return 1;
 
    if (sel->format == ELM_SEL_MARKUP){
 	*data_ret = remove_tags(sel->selbuf, size_ret);
@@ -662,8 +784,8 @@ text_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
 }
 
 static int
-edje_converter(char *target __UNUSED__, void *data, int size __UNUSED__, 
-               void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, 
+edje_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
+               void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__,
                int *typesize __UNUSED__)
 {
    struct _elm_cnp_selection *sel;
@@ -677,8 +799,8 @@ edje_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
 
 
 static int
-html_converter(char *target __UNUSED__, void *data, int size __UNUSED__, 
-               void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, 
+html_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
+               void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__,
                int *typesize __UNUSED__)
 {
    struct _elm_cnp_selection *sel;
@@ -691,8 +813,8 @@ html_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
 }
 
 static int
-uri_converter(char *target __UNUSED__, void *data, int size __UNUSED__, 
-              void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, 
+uri_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
+              void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__,
               int *typesize __UNUSED__)
 {
     struct _elm_cnp_selection *sel;
@@ -732,6 +854,56 @@ image_provider(void *images __UNUSED__, Evas_Object *entry, const char *item)
 	}
      }
    return NULL;
+}
+
+
+static struct pasteimage *
+pasteimage_alloc(const char *file)
+{
+   struct pasteimage *pi;
+   int len;
+   char *buf;
+
+   pi = calloc(1,sizeof(struct pasteimage));
+   if (!pi) return NULL;
+
+   len = snprintf(NULL, 0, "pasteimage-%p",pi);
+   len ++;
+   buf = malloc(len);
+   if (!buf)
+     {
+        free(pi);
+        return NULL;
+     }
+   snprintf(buf, len, "pasteimage-%p",pi);
+   pi->tag = buf;
+
+   if (file)
+     {
+        if (strstr(file,"file://")) file += strlen("file://");
+        pi->file = strdup(file);
+     }
+
+   return pi;
+}
+
+static bool
+pasteimage_append(struct pasteimage *pi, Evas_Object *entry)
+{
+   char entrytag[100];
+
+   if (!pi) return false;
+   if (!entry) return false;
+
+   /* FIXME: Need to do this per widget */
+   if (!pastedimages)
+      elm_entry_item_provider_append(entry, image_provider, NULL);
+
+   pastedimages = eina_list_append(pastedimages, pi);
+   snprintf(entrytag, sizeof(entrytag),"<item absize=240x180 href=%s>",pi->tag);
+   elm_entry_entry_insert(entry, entrytag);
+
+   return true;
 }
 
 static void
@@ -835,5 +1007,303 @@ mark_up(const char *start, int *lenp){
   return ret;
 }
 
+
+/**
+ * Drag & Drop functions
+ */
+struct dropable {
+     Evas_Object *obj;
+     /* FIXME: Cache window */
+     int types; /* FIXME */
+     elm_drop_cb dropcb;
+     void *cbdata;
+};
+/* FIXME: Way too many globals */
+Eina_List *drops = NULL;
+Evas_Object *en;
+Ecore_Event_Handler *handler_pos, *handler_drop, *handler_enter;
+
+struct dropable *cur;
+
+static Eina_Bool
+_dnd_enter(void *data, int etype, void *ev)
+{
+   Ecore_X_Event_Xdnd_Enter *enter = ev;
+   int i;
+
+   /* Skip it */
+   if (enter->num_types == 0 || enter->types == NULL) return true;
+
+   cnp_debug("Types\n");
+   savedtypes.ntypes = enter->num_types;
+   if (savedtypes.types) free(savedtypes.types);
+   savedtypes.types = malloc(sizeof(char *) * enter->num_types);
+   for (i = 0 ; i < enter->num_types ; i ++)
+     {
+        savedtypes.types[i] = eina_stringshare_add(enter->types[i]);
+        cnp_debug("Type is %s %p %p\n",enter->types[i],
+                  savedtypes.types[i],text_uri);
+        if (savedtypes.types[i] == text_uri)
+          {
+             /* Request it, so we know what it is */
+             cnp_debug("Sending uri request\n");
+             savedtypes.textreq = 1;
+             savedtypes.pi = NULL; /* FIXME: Free? */
+             ecore_x_selection_xdnd_request(enter->win, text_uri);
+          }
+     }
+
+   /* FIXME: Find an object and make it current */
+
+   return true;
+}
+
+static Eina_Bool
+_dnd_drop(void *data, int etype, void *ev)
+{
+   struct _Ecore_X_Event_Xdnd_Drop *drop;
+   struct dropable *dropable;
+   Eina_List *l;
+   Evas_Object *elmwin;
+   Ecore_X_Window xwin;
+   Elm_Drop_Data ddata;
+   int x,y,w,h;
+
+   int i,j;
+
+   drop = ev;
+
+   // check we still have something to drop
+   if (!drops) return true;
+
+   /* Find any widget in our window; then work out geometry rel to our window */
+   for (l = drops ; l ; l = l->next)
+     {
+        dropable = l->data;
+        xwin = (Ecore_X_Window)ecore_evas_window_get(ecore_evas_ecore_evas_get(
+                                             evas_object_evas_get(
+                                                dropable->obj)));
+        if (xwin == drop->win)
+           break;
+
+
+     }
+   /* didn't find a window */
+   if (l == NULL)
+      return true;
+
+
+   /* Calculate real (widget relative) position */
+      // - window position
+      // - widget position
+   elmwin = elm_object_top_widget_get(dropable->obj);
+   elm_win_screen_position_get(elmwin, &x, &y);
+   savedtypes.x = drop->position.x - x;
+   savedtypes.y = drop->position.y - y;
+
+   printf("Drop position is %d,%d\n",savedtypes.x,savedtypes.y);
+
+   for ( ; l ; l = l->next)
+     {
+        dropable = l->data;
+        evas_object_geometry_get(dropable->obj, &x, &y, &w, &h);
+        if (savedtypes.x >= x && savedtypes.y >= y &&
+            savedtypes.x < x + w && savedtypes.y < y + h)
+           break; /* found! */
+     }
+
+   if (!l) /* didn't find one */
+      return true;
+
+   evas_object_geometry_get(dropable->obj, &x, &y, NULL, NULL);
+   savedtypes.x -= x;
+   savedtypes.y -= y;
+
+   /* Find our type from the previous list */
+   for (i = 0 ; i < CNP_N_ATOMS ; i ++)
+     {
+	for (j = 0 ; j < savedtypes.ntypes ; j ++)
+          {
+             if (strcmp(savedtypes.types[j], atoms[i].name) == 0)
+               {
+                  goto found;
+               }
+          }
+     }
+
+   cnp_debug("Didn't find a target\n");
+   return true;
+
+found:
+   printf("Found a target we'd like: %s\n",atoms[i].name);
+       cnp_debug("0x%x\n",xwin);
+
+   if (i == CNP_ATOM_text_urilist)
+     {
+        printf("We found a URI...\n");
+        if (savedtypes.pi)
+          {
+             char entrytag[100];
+             /* FIXME: Paste immediately */
+             cnp_debug("paste immediately\n");
+          //   pasteimage_append(savedtypes.pi, dropable->obj);
+
+             ddata.x = savedtypes.x;
+             ddata.y = savedtypes.y;
+             ddata.format = ELM_SEL_IMAGE;
+    /* FIXME: Need to do this per widget */
+   if (!pastedimages)
+      elm_entry_item_provider_append(dropable->obj, image_provider, NULL);
+   pastedimages = eina_list_append(pastedimages, savedtypes.pi);
+   snprintf(entrytag, sizeof(entrytag),"<item absize=240x180 href=%s>",savedtypes.pi->tag);
+             ddata.data = entrytag;
+             cnp_debug("Insert %s\n",(char *)ddata.data);
+             dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
+             ecore_x_dnd_send_finished();
+             return true;
+          }
+        else if (savedtypes.textreq)
+          {
+             /* Already asked: Pretend we asked now, and paste imediately when
+              * it comes in */
+             savedtypes.textreq = 0;
+             ecore_x_dnd_send_finished();
+             return true;
+          }
+     }
+
+   selections[ELM_SEL_XDND].requestwidget = dropable->obj;
+   selections[ELM_SEL_XDND].requestformat = ELM_SEL_MARKUP;
+   selections[ELM_SEL_XDND].active = true;
+
+   ecore_x_selection_xdnd_request(xwin, atoms[i].name);
+
+   return true;
+}
+static Eina_Bool
+_dnd_position(void *data, int etype, void *ev){
+	struct _Ecore_X_Event_Xdnd_Position *pos;
+	Ecore_X_Rectangle rect;
+
+	pos = ev;
+
+	printf("position: %3d,%3d, Action: %s\n",
+			pos->position.x,pos->position.y,
+			ecore_x_atom_name_get(pos->action));
+
+	/* Need to send a status back */
+	rect.x = pos->position.x - 5;
+	rect.y = pos->position.y - 5;
+	rect.width = 10;
+	rect.height = 10;
+	ecore_x_dnd_send_status(true, false, rect, pos->action);
+
+	return true;
+}
+
+
+/**
+ * Add a widget as drop target.
+ */
+Eina_Bool
+elm_drop_target_add(Evas_Object *obj, enum _elm_sel_type format,
+                    elm_drop_cb dropcb, void *cbdata)
+{
+     struct dropable *drop;
+     Ecore_X_Window xwin;
+     int first;
+
+printf("Adding %p as a drop target\n",obj);
+     if (!obj) return false;
+     if (!_elm_cnp_init_count) _elm_cnp_init();
+   
+
+     /* Is this the first? */
+     first = (drops == NULL) ? 1 : 0;
+   printf("Is first: %d\n",first);
+
+     drop = calloc(1,sizeof(struct dropable));
+     if (!drop) return false;
+     drop->dropcb = dropcb;
+     drop->cbdata = cbdata;
+
+     /* FIXME: Check it's not already there */
+
+     /* FIXME: Check for eina's deranged error method */
+     drops = eina_list_append(drops, drop);
+
+     if (!drops/* || or other error */)
+       {
+         free(drop);
+         return false;
+       }
+
+     drop->obj = obj;
+     /* Something for now */
+     drop->types = 1;
+
+     evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
+                                 /* I love C and varargs */
+                                 (Evas_Object_Event_Cb)elm_drop_target_del,
+                                 obj);
+     /* FIXME: Handle resizes */
+
+     /* If not the first: We're done */
+     if (!first) return true;
+
+printf("Enabling DND\n");
+     xwin = (Ecore_X_Window)ecore_evas_window_get(ecore_evas_ecore_evas_get(
+                                             evas_object_evas_get(obj)));
+     ecore_x_dnd_aware_set(xwin, true);
+
+     printf("Adding drop target calls\n");
+     handler_enter = ecore_event_handler_add(ECORE_X_EVENT_XDND_ENTER,
+                                             _dnd_enter, NULL);
+     handler_pos = ecore_event_handler_add(ECORE_X_EVENT_XDND_POSITION, _dnd_position, NULL);
+     handler_drop = ecore_event_handler_add(ECORE_X_EVENT_XDND_DROP, _dnd_drop, NULL);
+
+     return true;
+}
+
+Eina_Bool
+elm_drop_target_del(Evas_Object *obj){
+     struct dropable *drop,*del;
+     Eina_List *item,*tmp;
+     Ecore_X_Window xwin;
+
+     del = NULL;
+     EINA_LIST_FOREACH_SAFE(drops, item, tmp, drop)
+       {
+          if (drop->obj == obj)
+            {
+               drops = eina_list_remove_list(drops, tmp);
+               del = drop;
+               break;
+            }
+       }
+     if (!del) return false;
+
+     evas_object_event_callback_del(obj, EVAS_CALLBACK_FREE,
+                                    (Evas_Object_Event_Cb)elm_drop_target_del);
+     free(drop);
+
+     /* If still drops there: All fine.. continue */
+     if (drops != NULL) return true;
+
+     printf("Disabling DND\n");
+     xwin = (Ecore_X_Window)ecore_evas_window_get(ecore_evas_ecore_evas_get(
+                                             evas_object_evas_get(obj)));
+     ecore_x_dnd_aware_set(xwin, false);
+
+     printf("Adding drop target calls\n");
+     ecore_event_handler_del(handler_pos);
+     ecore_event_handler_del(handler_drop);
+
+     return true;
+}
+
+
+
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
 
 #endif

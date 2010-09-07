@@ -123,7 +123,7 @@ test_gengrid(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *grid;
    static Testitem ti[144];
-   int i, j, n;
+   int i, n;
    char buf[PATH_MAX];
    const char *img[9] =
      {

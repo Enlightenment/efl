@@ -1,5 +1,5 @@
-*.o
 *.lo
+*.o
 *.la
 .libs
 .deps
@@ -30,3 +30,14 @@ elementary_testql
 /ltmain.sh
 /missing
 /stamp-h1
+core
+cscope.out
+doc/elementary.dox
+elementary.spec
+m4/libtool.m4
+m4/ltoptions.m4
+m4/ltsugar.m4
+m4/ltversion.m4
+m4/lt~obsolete.m4
+src/lib/Elementary.h
+tags
