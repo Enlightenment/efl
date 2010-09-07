@@ -118,10 +118,11 @@ _dnd_drop(void *data, int etype, void *ev){
 			drop->position.x,drop->position.y,
 			ecore_x_atom_name_get(drop->action));
 
-	rv = elm_selection_get(ELM_SEL_XDND, ELM_SEL_MARKUP, en);
-	if (rv != true){
-		printf("Selection set fail\n");
-	}
+        /* elm_selection_get is in elm_priv.h and does not build with -fvisibility=hidden */
+// 	rv = elm_selection_get(ELM_SEL_XDND, ELM_SEL_MARKUP, en);
+// 	if (rv != true){
+// 		printf("Selection set fail\n");
+// 	}
 
 	return true;
 }
