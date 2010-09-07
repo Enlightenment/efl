@@ -24,6 +24,8 @@
 #endif
 
 
+#define PROVIDER_SET "__elm_cnp_provider_set"
+
 enum {
      CNP_ATOM_TARGETS = 0,
      CNP_ATOM_text_uri,
@@ -275,6 +277,7 @@ static int _elm_cnp_init_count = 0;
 static Ecore_X_Atom clipboard_atom;
 
 Eina_List *pastedimages;
+Eina_List *providedobjs;
 #endif
 
 /* Stringshared, so I can just compare pointers later */
@@ -888,16 +891,29 @@ pasteimage_alloc(const char *file)
 }
 
 static bool
+pasteimage_provider_set(Evas_Object *entry)
+{
+   void *v;
+   v = evas_object_data_get(entry, PROVIDER_SET);
+   if (!v)
+     {
+        evas_object_data_set(entry, PROVIDER_SET, pasteimage_provider_set);
+        elm_entry_item_provider_append(entry, image_provider, NULL);
+     }
+   return true;
+}
+
+
+static bool
 pasteimage_append(struct pasteimage *pi, Evas_Object *entry)
 {
    char entrytag[100];
+   char *v;
 
    if (!pi) return false;
    if (!entry) return false;
 
-   /* FIXME: Need to do this per widget */
-   if (!pastedimages)
-      elm_entry_item_provider_append(entry, image_provider, NULL);
+   pasteimage_provider_set(entry);
 
    pastedimages = eina_list_append(pastedimages, pi);
    snprintf(entrytag, sizeof(entrytag),"<item absize=240x180 href=%s>",pi->tag);
@@ -1152,8 +1168,8 @@ found:
              ddata.y = savedtypes.y;
              ddata.format = ELM_SEL_IMAGE;
     /* FIXME: Need to do this per widget */
-   if (!pastedimages)
-      elm_entry_item_provider_append(dropable->obj, image_provider, NULL);
+             pasteimage_provider_set(dropable->obj);
+
    pastedimages = eina_list_append(pastedimages, savedtypes.pi);
    snprintf(entrytag, sizeof(entrytag),"<item absize=240x180 href=%s>",savedtypes.pi->tag);
              ddata.data = entrytag;
