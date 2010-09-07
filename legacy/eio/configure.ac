@@ -97,6 +97,14 @@ AC_C___ATTRIBUTE__
 AC_PROG_CC_STDC
 AM_PROG_CC_C_O
 
+EFL_EIO_BUILD=""
+case "$host_os" in
+   mingw*)
+      EFL_EIO_BUILD="-DEFL_EIO_BUILD"
+   ;;
+esac
+AC_SUBST(EFL_EIO_BUILD)
+
 ### Checks for library functions
 AC_FUNC_ALLOCA
 AC_CHECK_FUNCS(strlcpy)
