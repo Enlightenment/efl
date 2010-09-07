@@ -185,7 +185,7 @@ eio_file_ls(const char *dir,
 	    Eio_Filter_Cb filter_cb,
 	    Eio_Main_Cb main_cb,
 	    Eio_Done_Cb done_cb,
-	    Eio_Done_Cb error_cb,
+	    Eio_Error_Cb error_cb,
 	    const void *data)
 {
    Eio_File_Char_Ls *async = NULL;
@@ -230,7 +230,7 @@ eio_file_direct_ls(const char *dir,
 		   Eio_Filter_Direct_Cb filter_cb,
 		   Eio_Main_Direct_Cb main_cb,
 		   Eio_Done_Cb done_cb,
-		   Eio_Done_Cb error_cb,
+		   Eio_Error_Cb error_cb,
 		   const void *data)
 {
    Eio_File_Direct_Ls *async = NULL;

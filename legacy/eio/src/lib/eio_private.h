@@ -21,8 +21,10 @@ struct _Eio_File
    Ecore_Thread *thread;
    const void *data;
 
+   int error;
+
+   Eio_Error_Cb error_cb;
    Eio_Done_Cb done_cb;
-   Eio_Done_Cb error_cb;
 };
 
 struct _Eio_File_Ls
@@ -72,17 +74,19 @@ struct _Eio_File_Stat
    const char *path;
 };
 
+/* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */
 Eina_Bool eio_file_set(Eio_File *common,
 		       Eio_Done_Cb done_cb,
-		       Eio_Done_Cb error_cb,
+		       Eio_Error_Cb error_cb,
 		       const void *data,
 		       Ecore_Cb job_cb,
 		       Ecore_Cb end_cb,
 		       Ecore_Cb cancel_cb);
 
+/* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */
 Eina_Bool eio_long_file_set(Eio_File *common,
 			    Eio_Done_Cb done_cb,
-			    Eio_Done_Cb error_cb,
+			    Eio_Error_Cb error_cb,
 			    const void *data,
 			    Ecore_Thread_Heavy_Cb heavy_cb,
 			    Ecore_Thread_Notify_Cb notify_cb,

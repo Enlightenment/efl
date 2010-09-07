@@ -83,7 +83,7 @@ typedef void (*Eio_Stat_Cb)(const void *data, const struct stat *stat);
 typedef void (*Eio_Progress_Cb)(const void *data, const Eio_Progress *info);
 
 typedef void (*Eio_Done_Cb)(const void *data);
-typedef void (*Eio_Error_Cb)(int errno, const void *data);
+typedef void (*Eio_Error_Cb)(int error, const void *data);
 
 struct _Eio_Progress
 {
@@ -99,64 +99,64 @@ EAPI Eio_File *eio_file_ls(const char *dir,
 			   Eio_Filter_Cb filter_cb,
 			   Eio_Main_Cb main_cb,
 			   Eio_Done_Cb done_cb,
-			   Eio_Done_Cb error_cb,
+			   Eio_Error_Cb error_cb,
 			   const void *data);
 
 EAPI Eio_File *eio_file_direct_ls(const char *dir,
 				  Eio_Filter_Direct_Cb filter_cb,
 				  Eio_Main_Direct_Cb main_cb,
 				  Eio_Done_Cb done_cb,
-				  Eio_Done_Cb error_cb,
+				  Eio_Error_Cb error_cb,
 				  const void *data);
 
 EAPI Eio_File *eio_file_direct_stat(const char *path,
 				    Eio_Stat_Cb done_cb,
-				    Eio_Done_Cb error_cb,
+				    Eio_Error_Cb error_cb,
 				    const void *data);
 
 EAPI Eio_File *eio_file_unlink(const char *path,
 			       Eio_Done_Cb done_cb,
-			       Eio_Done_Cb error_cb,
+			       Eio_Error_Cb error_cb,
 			       const void *data);
 
 EAPI Eio_File *eio_file_mkdir(const char *path,
 			      mode_t mode,
 			      Eio_Done_Cb done_cb,
-			      Eio_Done_Cb error_cb,
+			      Eio_Error_Cb error_cb,
 			      const void *data);
 
 EAPI Eio_File *eio_file_move(const char *source,
 			     const char *dest,
 			     Eio_Progress_Cb progress_cb,
 			     Eio_Done_Cb done_cb,
-			     Eio_Done_Cb error_cb,
+			     Eio_Error_Cb error_cb,
 			     const void *data);
 
 EAPI Eio_File *eio_file_copy(const char *source,
 			     const char *dest,
 			     Eio_Progress_Cb progress_cb,
 			     Eio_Done_Cb done_cb,
-			     Eio_Done_Cb error_cb,
+			     Eio_Error_Cb error_cb,
 			     const void *data);
 
 EAPI Eio_File *eio_dir_move(const char *source,
 			    const char *dest,
 			    Eio_Progress_Cb progress_cb,
 			    Eio_Done_Cb done_cb,
-			    Eio_Done_Cb error_cb,
+			    Eio_Error_Cb error_cb,
 			    const void *data);
 
 EAPI Eio_File *eio_dir_copy(const char *source,
 			    const char *dest,
 			    Eio_Progress_Cb progress_cb,
 			    Eio_Done_Cb done_cb,
-			    Eio_Done_Cb error_cb,
+			    Eio_Error_Cb error_cb,
 			    const void *data);
 
 EAPI Eio_File *eio_dir_unlink(const char *path,
 			      Eio_Progress_Cb progress_cb,
 			      Eio_Done_Cb done_cb,
-			      Eio_Done_Cb error_cb,
+			      Eio_Error_Cb error_cb,
 			      const void *data);
 
 EAPI Eina_Bool eio_file_cancel(Eio_File *ls);
