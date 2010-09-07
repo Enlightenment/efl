@@ -83,7 +83,7 @@ hash_free(void *data)
 int main()
 {
    Eina_List *type, *l;
-   const char *name, *check;
+   const char *name, *check, *check2;
    kbdmouse *akbdmouse;
    Eina_Hash *hash;
 
@@ -93,7 +93,7 @@ int main()
    hash = eina_hash_stringshared_new(hash_free);
    akbdmouse = malloc(sizeof(kbdmouse));
    akbdmouse->hash = hash;
-   
+
    printf("For my first trick, I will find all of your keyboards and return their syspaths.\n");
    /* find all keyboards using type EEZE_UDEV_TYPE_KEYBOARD */
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_KEYBOARD, NULL);
@@ -137,15 +137,24 @@ int main()
    EINA_LIST_FREE(type, name)
    {
      printf("Found device: %s\n", name);  /* get a property using the device's syspath */
-     printf("\tYou probably know it better as %s\n", eeze_udev_syspath_get_property(name, "DEVNAME"));
-     if ((check = eeze_udev_syspath_get_property(name, "ID_FS_TYPE")))
+     if ((check = eeze_udev_syspath_get_property(name, "DEVNAME")))
+        {
+           printf("\tYou probably know it better as %s\n", check);
+           eina_stringshare_del(check);
+        }
+      if ((check = eeze_udev_syspath_get_property(name, "ID_FS_TYPE")))
        {
           printf("\tIt's formatted as %s", check);
+          eina_stringshare_del(check);
           check = eeze_udev_syspath_get_property(name, "FSTAB_DIR");
           if (check)
-            printf(", and gets mounted at %s", check);
+            {
+               printf(", and gets mounted at %s", check);
+               eina_stringshare_del(check);
+            }
           printf("!\n");
        }
+      eina_stringshare_del(name);
    }
 
    printf("\nInternal drives, anyone?  With serial numbers?\n");
@@ -153,7 +162,14 @@ int main()
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_INTERNAL, NULL);
    type = eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FREE(type, name) /* get a property using the device's syspath */
-        printf("%s: %s\n", name, eeze_udev_syspath_get_property(name, "ID_SERIAL"));
+     {
+        if ((check = eeze_udev_syspath_get_property(name, "ID_SERIAL")))
+          {
+             printf("%s: %s\n", name, check);
+             eina_stringshare_del(check);
+          }
+        eina_stringshare_del(name);
+     }
 
    printf("\nGot any removables?  I'm gonna find em!\n");
    /* find all removable media using type EEZE_UDEV_TYPE_DRIVE_REMOVABLE */
@@ -162,7 +178,13 @@ int main()
    EINA_LIST_FREE(type, name)  /* get a property using the device's syspath */
      {
         if ((check = eeze_udev_syspath_get_property(name, "ID_MODEL")))
-          printf("\tOoh, a %s attached on your %s bus!\n", check, eeze_udev_syspath_get_property(name, "ID_BUS"));
+          {
+             check2 = eeze_udev_syspath_get_property(name, "ID_BUS");
+             printf("\tOoh, a %s attached on your %s bus!\n", check, check2);
+             eina_stringshare_del(check);
+             eina_stringshare_del(check2);
+          }
+        eina_stringshare_del(name);
      }
 
 
