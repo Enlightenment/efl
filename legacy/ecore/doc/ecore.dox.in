@@ -96,7 +96,7 @@ file descriptors etc.
 Ecore also lets you have functions called when file descriptors become active
 for reading or writing, allowing for streamlined, non-blocking IO.
 
-Here is an exmaple of a simple program and its basic event loop flow:
+Here is an example of a simple program and its basic event loop flow:
 
 @image html  prog_flow.png
 

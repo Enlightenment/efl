@@ -38,7 +38,7 @@
  *
  * The Ecore Connection Library ( @c Ecore_Con ) provides simple mechanisms
  * for communications between programs using reliable sockets.  It saves
- * the programmer from having to worry about file descripters and waiting
+ * the programmer from having to worry about file descriptors and waiting
  * for incoming connections.
  *
  * There are two main objects in the @c Ecore_Con library: the @c
@@ -91,14 +91,14 @@
  * data within this object is transient, so it must be duplicated in order to be
  * retained.  This event will continue to occur until the client has stopped sending its
  * message, so a good option for storing this data is an Eina_Strbuf.  Once the message has
- * been recieved in full, the client object must be freed with @ref ecore_con_client_free.
+ * been received in full, the client object must be freed with @ref ecore_con_client_free.
  * @li @ref ECORE_CON_EVENT_SERVER_DATA: Whenever your server object connects to its destination
  * and receives data, an event of this type is emitted.  The data will contain both
  * the size and contents of the message sent by the server.  It should be noted that
  * data within this object is transient, so it must be duplicated in order to be
  * retained.  This event will continue to occur until the server has stopped sending its
  * message, so a good option for storing this data is an Eina_Strbuf.  Once the message has
- * been recieved in full, the server object must be freed with @ref ecore_con_server_free.
+ * been received in full, the server object must be freed with @ref ecore_con_server_free.
  *
  */
 

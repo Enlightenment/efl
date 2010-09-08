@@ -233,7 +233,7 @@ ecore_timer_interval_get(Ecore_Timer *timer)
 }
 
 /**
- * Add some delay for the next occurence of a timer.
+ * Add some delay for the next occurrence of a timer.
  * This doesn't affect the interval of a timer.
  *
  * @param   timer The timer to change.

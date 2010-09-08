@@ -271,12 +271,12 @@ ecore_x_region_intersect(Ecore_X_Region dest,
 } /* ecore_x_region_intersect */
 
 /**
- * Make the substraction of two regions.
+ * Make the subtraction of two regions.
  * @param dest    The destination region.
  * @param source1 The first source region.
  * @param source2 The second source region.
  *
- * Replace the contents of @p dest with the substraction of @p source1 by
+ * Replace the contents of @p dest with the subtraction of @p source1 by
  * @p source2.
  * @ingroup Ecore_X_Fixes_Group
  */
@@ -291,7 +291,7 @@ ecore_x_region_subtract(Ecore_X_Region dest,
 } /* ecore_x_region_subtract */
 
 /**
- * Make the substraction of regions by bounds.
+ * Make the subtraction of regions by bounds.
  * @param dest   The destination region.
  * @param bounds The bounds.
  * @param source The source region.

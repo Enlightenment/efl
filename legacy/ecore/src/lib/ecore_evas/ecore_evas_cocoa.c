@@ -18,7 +18,7 @@
 #include "Ecore_Cocoa.h"
 #include "Evas_Engine_Quartz.h"
 
-// FIXME: this engine has lots of problems. only 1 window at a time, drawRect looks wrong, doesnt handle resizes and more
+// FIXME: this engine has lots of problems. only 1 window at a time, drawRect looks wrong, doesn't handle resizes and more
 
 static int                      _ecore_evas_init_count = 0;
 static Ecore_Evas               *ecore_evases = NULL;
@@ -411,7 +411,7 @@ ecore_evas_cocoa_new(const char* name, int w, int h)
 
    // Create our main window, and embed an EvasView in it
    main_window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,w,h) styleMask:(NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask) backing:NSBackingStoreBuffered defer:NO screen:nil];
-   /* FIXME: manage the case where main_window is NULL witht a goto free_evas; */
+   /* FIXME: manage the case where main_window is NULL with a goto free_evas; */
    [main_window makeKeyAndOrderFront:NSApp];
    [main_window setTitle:[NSString stringWithUTF8String:name]];
    [main_window makeMainWindow];

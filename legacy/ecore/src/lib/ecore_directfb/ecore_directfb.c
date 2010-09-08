@@ -55,7 +55,7 @@ static IDirectFB *_dfb = NULL; // the main interface
 static IDirectFBEventBuffer *_window_event;     // the main event buffer (all windows are attached to this)
 static IDirectFBEventBuffer *_input_event; // the main event buffer (all windows are attached to this)
 static IDirectFBDisplayLayer *_layer; // the main layer
-static DFBResult _err; // usefull for DFBCHECK
+static DFBResult _err; // useful for DFBCHECK
 
 /*******************/
 /* local functions */

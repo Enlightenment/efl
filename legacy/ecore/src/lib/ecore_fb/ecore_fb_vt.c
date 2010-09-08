@@ -87,7 +87,7 @@ _ecore_fb_vt_setup(void)
 		snprintf(buf, sizeof(buf), "/dev/tty%i", _ecore_fb_vt_current_vt);
 		if((_ecore_fb_vt_tty_fd = open(buf, O_RDWR)) < 0)
 		{
-			printf("[ecore_fb:vt_setup] cant open tty %d\n", _ecore_fb_vt_current_vt);
+			printf("[ecore_fb:vt_setup] can't open tty %d\n", _ecore_fb_vt_current_vt);
 			return 0;
 		}
 		close(_ecore_fb_vt_tty0_fd);
@@ -103,7 +103,7 @@ _ecore_fb_vt_setup(void)
 
 	if(ioctl(_ecore_fb_vt_tty_fd, KDSETMODE, KD_GRAPHICS) < 0)
 	{
-		perror("[ecore_fb:vt_setup] cant set the mode to KD_GRAPHICS");
+		perror("[ecore_fb:vt_setup] can't set the mode to KD_GRAPHICS");
 		close(_ecore_fb_vt_tty_fd);
 		return 0;
 	}
@@ -116,7 +116,7 @@ _ecore_fb_vt_setup(void)
 	new_vtmode.acqsig = SIGUSR2;
 	if(ioctl(_ecore_fb_vt_tty_fd, VT_SETMODE, &new_vtmode) < 0)
 	{
-		perror("[ecore_fb:vt_setup] cant set the tty mode");
+		perror("[ecore_fb:vt_setup] can't set the tty mode");
 		close(_ecore_fb_vt_tty_fd);
 		return 0;
 	}
@@ -140,7 +140,7 @@ _ecore_fb_vt_setup(void)
 		close(_ecore_fb_vt_tty_fd);
 		return 0;
 	}
-	/* FIXME assign the fb to the tty in case isnt setup */
+	/* FIXME assign the fb to the tty in case isn't setup */
 	return 1;
 }
 
@@ -154,13 +154,13 @@ ecore_fb_vt_init(void)
 		_ecore_fb_vt_do_switch = 1;
 	if((_ecore_fb_vt_tty0_fd = open("/dev/tty0", O_RDONLY)) < 0)
 	{
-		printf("[ecore_fb:init] cant open /dev/tty0\n");
+		printf("[ecore_fb:init] can't open /dev/tty0\n");
 		return 0;
 	}
 	/* query current vt state */
 	if((ioctl(_ecore_fb_vt_tty0_fd, VT_GETSTATE, &vtstat)) < 0)
 	{
-		printf("[ecore_fb:init] cant get current tty state\n");
+		printf("[ecore_fb:init] can't get current tty state\n");
 		return 0;
 	}
 	_ecore_fb_vt_prev_vt = vtstat.v_active;
@@ -171,7 +171,7 @@ ecore_fb_vt_init(void)
 
 		if ((ioctl(_ecore_fb_vt_tty0_fd, VT_OPENQRY, &vtno) < 0))
 		{
-			printf("[ecore_fb:init] cant query for a vt\n");
+			printf("[ecore_fb:init] can't query for a vt\n");
 			return 0;
 		}
 		_ecore_fb_vt_current_vt = vtno;
@@ -181,7 +181,7 @@ ecore_fb_vt_init(void)
 		_ecore_fb_vt_current_vt = _ecore_fb_vt_prev_vt;
 	if(!_ecore_fb_vt_setup())
 	{
-		printf("[ecore_fb:init] cant setup the vt, restoring previous mode...\n");
+		printf("[ecore_fb:init] can't setup the vt, restoring previous mode...\n");
 		/* TODO finish this */
 		if(_ecore_fb_vt_do_switch)
 		{

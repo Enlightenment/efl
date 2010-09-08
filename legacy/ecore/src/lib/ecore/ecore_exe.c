@@ -34,7 +34,7 @@
     * state that it cannot regenerate by just killing it and starting it again.
     * This includes state that the user code knows about, as the respawn is
     * transparent to that code.  On the other hand, maybe a respawn event might
-    * be useful, or maybe resend the currently non existant add event.  For
+    * be useful, or maybe resend the currently non existent add event.  For
     * consistancy with ecore_con, an add event is good anyway.
     *
     * The Ecore_exe structure is reused for respawning, so that the (opaque)
@@ -130,7 +130,7 @@ struct _Ecore_Exe
  * cmd = ecore_exe_comand_parameter_append(cmd, "firefox");
  * cmd = ecore_exe_comand_parameter_append(cmd, "http://www.foo.com/bar.html?baz=yes");
  * each parameter appended is one argument, and it gets escaped, quoted, and
- * appended with a preceeding space.  The first is the command off course.
+ * appended with a preceding space.  The first is the command off course.
  */
 
 struct _ecore_exe_dead_exe
@@ -519,7 +519,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	       {
 		  /* Setup the status pipe. */
 		  E_NO_ERRNO(result, close(statusPipe[0]), ok);
-		  E_IF_NO_ERRNO(result, fcntl(statusPipe[1], F_SETFD, FD_CLOEXEC), ok)	/* close on exec shows sucess */
+		  E_IF_NO_ERRNO(result, fcntl(statusPipe[1], F_SETFD, FD_CLOEXEC), ok)	/* close on exec shows success */
 		    {
 		       /* Run the actual command. */
 		       _ecore_exe_exec_it(exe_cmd, flags); /* no return */
@@ -720,7 +720,7 @@ ecore_exe_callback_pre_free_set(Ecore_Exe *exe, Ecore_Exe_Cb func)
 }
 
 /**
- * Sends data to the given child process which it recieves on stdin.
+ * Sends data to the given child process which it receives on stdin.
  *
  * This function writes to a child processes standard in, with unlimited
  * buffering. This call will never block. It may fail if the system runs out
@@ -846,7 +846,7 @@ ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int st
     * Spank programmer for freeing the event data if it came from the event system, as that autofrees.
     * Spank the programmer if they try to set the limits bigger than what has been gathered & ignored already, coz they just lost data.
     * Spank onefang and raster for opening this can of worms.
-    * Should we have seperate out/err limits?
+    * Should we have separate out/err limits?
     * Should we remove from the internal buffer the data that was delivered already?
     * If so, what to do about limits, start, and end?  They could loose their meaning.
     */
@@ -1346,7 +1346,7 @@ _ecore_exe_is_it_alive(pid_t pid)
 {
    Ecore_Exe *exe = NULL;
 
-   /* FIXME: There is no nice, safe, OS independant way to tell if a
+   /* FIXME: There is no nice, safe, OS independent way to tell if a
     * particular PID is still alive.  I have written code to do so
     * for my urunlevel busybox applet (http://urunlevel.sourceforge.net/),
     * but it's for linux only, and still not guaranteed.
@@ -1391,10 +1391,10 @@ _ecore_exe_make_sure_its_dead(void *data)
 	if ((exe = _ecore_exe_is_it_alive(dead->pid)))
 	  {
 	     if (dead->cmd)
-		INF("Sending KILL signal to alledgedly dead %s (%d).",
+		INF("Sending KILL signal to allegedly dead %s (%d).",
 		       dead->cmd, dead->pid);
 	     else
-		INF("Sending KILL signal to alledgedly dead PID %d.",
+		INF("Sending KILL signal to allegedly dead PID %d.",
 		    dead->pid);
 	     exe->doomsday_clock =
 		ecore_timer_add(10.0, _ecore_exe_make_sure_its_really_dead,

@@ -1331,7 +1331,7 @@ ecore_x_pointer_xy_get_fetch(void)
  * Retrieves the coordinates of the pointer.
  * If the window used in
  * ecore_x_query_pointer_prefetch() is not on the same screen than
- * the root window or if an error occured, @p x and @p y  are set
+ * the root window or if an error occurred, @p x and @p y  are set
  * to 0. Otherwise, they are respectively set to the X and Y
  * coordinates of the pointer.
  *
@@ -1400,7 +1400,7 @@ ecore_x_query_tree_fetch(void)
  * @return         The parent window of @p window.
  *
  * Retrieves the parent window of the given window. If
- * an error occured, @c 0 is returned.
+ * an error occurred, @c 0 is returned.
  *
  * To use this function, you must call before, and in order,
  * ecore_x_query_tree_prefetch(), which sends the QueryTree request,
@@ -1426,7 +1426,7 @@ ecore_x_window_parent_get(Ecore_X_Window window __UNUSED__)
  * @return         The children windows.
  *
  * Retrieves the children windows of the given window. If
- * an error occured, @c 0 is returned.
+ * an error occurred, @c 0 is returned.
  *
  * To use this function, you must call before, and in order,
  * ecore_x_query_tree_prefetch(), which sends the QueryTree request,

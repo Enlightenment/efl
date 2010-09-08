@@ -186,7 +186,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_SELECTION_PROP_PRIMARY;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_SELECTION_PROP_SECONDARY;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD;
 
-/* currenly E specific virtual keyboard extension, aim to submit to netwm spec
+/* currently E specific virtual keyboard extension, aim to submit to netwm spec
  * later */
 
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_VIRTUAL_KEYBOARD;

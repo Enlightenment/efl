@@ -1,4 +1,4 @@
-dnl use: ECORE_CHECK_MODULE(Foo, default-enabled, description[, dependancy[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]]])
+dnl use: ECORE_CHECK_MODULE(Foo, default-enabled, description[, dependency[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]]])
 AC_DEFUN([ECORE_CHECK_MODULE],
 [
 m4_pushdef([UP], m4_translit([[$1]], [-a-z], [_A-Z]))dnl

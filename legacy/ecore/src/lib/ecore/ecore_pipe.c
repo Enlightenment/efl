@@ -424,7 +424,7 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 	else
 	  {
 	     ERR("An unhandled error (ret: %zd errno: %d)"
-		 "occured while writing to the pipe the length",
+		 "occurred while writing to the pipe the length",
 		 ret, errno);
 	  }
      }
@@ -458,7 +458,7 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 	else
 	  {
 	     ERR("An unhandled error (ret: %zd errno: %d)"
-		 "occured while writing to the pipe the length",
+		 "occurred while writing to the pipe the length",
 		 ret, errno);
 	  }
      }
@@ -513,7 +513,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	     else
 	       {
 		  ERR("An unhandled error (ret: %zd errno: %d)"
-		      "occured while reading from the pipe the length",
+		      "occurred while reading from the pipe the length",
 		      ret, errno);
                   return ECORE_CALLBACK_RENEW;
 	       }
@@ -569,7 +569,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	else
 	  {
 	     ERR("An unhandled error (ret: %zd errno: %d)"
-		 "occured while reading from the pipe the data",
+		 "occurred while reading from the pipe the data",
 		 ret, errno);
 	     return ECORE_CALLBACK_RENEW;
 	  }

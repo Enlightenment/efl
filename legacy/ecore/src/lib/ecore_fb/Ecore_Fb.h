@@ -31,7 +31,7 @@
  * maybe a new module?
  * - code to get battery info
  * - code to get thermal info
- * ecore evas fb isnt good enough for weird things, like multiple fb's, same happens here.
+ * ecore evas fb isn't good enough for weird things, like multiple fb's, same happens here.
  * backlight support using new kernel interface
  * absolute axis
  * joystick

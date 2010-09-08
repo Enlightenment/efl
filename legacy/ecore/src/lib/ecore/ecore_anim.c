@@ -101,7 +101,7 @@ ecore_animator_del(Ecore_Animator *animator)
  * Set the animator call interval in seconds.
  * @param frametime The time in seconds in between animator ticks.
  *
- * This function sets the time interval (in seconds) inbetween animator ticks.
+ * This function sets the time interval (in seconds) between animator ticks.
  */
 EAPI void
 ecore_animator_frametime_set(double frametime)
@@ -122,7 +122,7 @@ ecore_animator_frametime_set(double frametime)
  * Get the animator call interval in seconds.
  * @return The time in second in between animator ticks.
  *
- * this function retrieves the time inbetween animator ticks, in seconds.
+ * this function retrieves the time between animator ticks, in seconds.
  */
 EAPI double
 ecore_animator_frametime_get(void)

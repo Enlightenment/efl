@@ -1788,7 +1788,7 @@ _ecore_config_system_load(void)
 	  {
 	     snprintf(buf, PATH_MAX, "%s/.e/config.eet", p);
 	     if (ecore_config_file_load(buf) != 0) {
-		/* even if this file (system.eet) dosen't exist we can 
+		/* even if this file (system.eet) doesn't exist we can 
 		 * continue without it as it isn't striclty necessary.
 		*/
 		ecore_config_file_load(PACKAGE_DATA_DIR "/system.eet");

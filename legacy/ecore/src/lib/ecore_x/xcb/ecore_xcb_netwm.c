@@ -2536,7 +2536,7 @@ ecore_x_netwm_opacity_get_fetch(void)
  * @return        1 on success, 0 otherwise.
  *
  * Retriee the opacity value of @p window and store it in
- * @p opacity. This function returns 1 on sucess, 0 otherwise.
+ * @p opacity. This function returns 1 on success, 0 otherwise.
  *
  * To use this function, you must call before, and in order,
  * ecore_x_netwm_opacity_get_prefetch(), which sends the GetProperty request,

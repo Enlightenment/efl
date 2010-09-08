@@ -1151,7 +1151,7 @@ _ecore_main_loop_iterate_internal(int once_only)
    /* if these calls caused any buffered events to appear - deal with them */
    _ecore_main_fd_handlers_buf_call();
 
-   /* if ther are any - jump to processing them */
+   /* if there are any - jump to processing them */
    if (_ecore_event_exist())
      {
 	have_event = 1;

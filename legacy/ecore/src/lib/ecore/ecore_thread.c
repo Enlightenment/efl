@@ -409,7 +409,7 @@ _ecore_thread_shutdown(void)
  */
 
 /**
- * @brief Run some blocking code in a parrallel thread to avoid locking the main loop.
+ * @brief Run some blocking code in a parallel thread to avoid locking the main loop.
  * @param func_blocking The function that should run in another thread.
  * @param func_end The function that will be called in the main loop if the thread terminate correctly.
  * @param func_cancel The function that will be called in the main loop if the thread is cancelled.
@@ -419,7 +419,7 @@ _ecore_thread_shutdown(void)
  * ecore_thread_run provide a facility for easily managing blocking task in a
  * parallel thread. You should provide three function. The first one, func_blocking,
  * that will do the blocking work in another thread (so you should not use the
- * EFL in it except Eina if you are carefull). The second one, func_end,
+ * EFL in it except Eina if you are careful). The second one, func_end,
  * that will be called in Ecore main loop when func_blocking is done. So you
  * can use all the EFL inside this function. The last one, func_cancel, will
  * be called in the main loop if the thread is cancelled or could not run at all.
@@ -583,7 +583,7 @@ ecore_thread_check(Ecore_Thread *thread)
 }
 
 /**
- * @brief Run some heavy code in a parrallel thread to avoid locking the main loop.
+ * @brief Run some heavy code in a parallel thread to avoid locking the main loop.
  * @param func_heavy The function that should run in another thread.
  * @param func_notify The function that will receive the data send by func_heavy in the main loop.
  * @param func_end The function that will be called in the main loop if the thread terminate correctly.
@@ -595,7 +595,7 @@ ecore_thread_check(Ecore_Thread *thread)
  * ecore_long_run provide a facility for easily managing heavy task in a
  * parallel thread. You should provide four functions. The first one, func_heavy,
  * that will do the heavy work in another thread (so you should not use the
- * EFL in it except Eina and Eet if you are carefull). The second one, func_notify,
+ * EFL in it except Eina and Eet if you are careful). The second one, func_notify,
  * will receive the data send from the thread function (func_heavy) by ecore_thread_notify
  * in the main loop (and so, can use all the EFL). Tje third, func_end,
  * that will be called in Ecore main loop when func_heavy is done. So you
@@ -607,7 +607,7 @@ ecore_thread_check(Ecore_Thread *thread)
  * host CPU can handle.
  *
  * If you set try_no_queue, it will try to run outside of the thread pool, this can bring
- * the CPU down, so be carefull with that. Of course if it can't start a new thread, it will
+ * the CPU down, so be careful with that. Of course if it can't start a new thread, it will
  * try to use one from the pool.
  */
 EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Heavy_Cb func_heavy,

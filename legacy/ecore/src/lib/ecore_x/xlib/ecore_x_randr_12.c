@@ -733,7 +733,7 @@ ecore_x_randr_crtc_mode_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
  * Ecore_X_Randr_Unset (or -1) to use currently used outputs.
  * @para mode XID of the mode to be set. If set to 0 the CRTC will be disabled.
  * If set to -1 the call will fail.
- * @return EINA_TRUE if mode setting was successfull. Else EINA_FALSE
+ * @return EINA_TRUE if mode setting was successful. Else EINA_FALSE
  */
 EAPI Eina_Bool
 ecore_x_randr_crtc_mode_set(Ecore_X_Window root,
@@ -1733,7 +1733,7 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root,
 }
 
 /*
- * @Brief move given CRTCs belonging to the given root window's screen dx/dy pixels relative to their current position. The screen size will be automatically adjusted if neccessary and possible.
+ * @Brief move given CRTCs belonging to the given root window's screen dx/dy pixels relative to their current position. The screen size will be automatically adjusted if necessary and possible.
  * @param root window which's screen's resources are used
  * @param crtcs list of CRTCs to be moved
  * @param ncrtc number of CRTCs in array

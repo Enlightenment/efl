@@ -29,8 +29,8 @@ static int _ecore_file_init_count = 0;
 /**
  * Initialize Ecore_File and the services it will use. Call this function
  * once before you use any of the ecore file functions.
- * @return Return the number howoften ecore_file_init() was call succesfully;
- *         0 if it failed.
+ * @return Number of times ecore_file_init() was called successfully or 0 if
+ * this call failed.
  */
 EAPI int
 ecore_file_init()
@@ -151,7 +151,7 @@ static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S
 /**
  * Create a new directory
  * @param  dir The name of the directory to create
- * @return EINA_TRUE on successfull creation, EINA_FALSE on failure
+ * @return EINA_TRUE on successful creation, EINA_FALSE on failure
  *
  * The directory is created with the mode: S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
  */
@@ -166,7 +166,7 @@ ecore_file_mkdir(const char *dir)
  * Create complete directory in a batch.
  *
  * @param dirs list of directories, null terminated.
- * @return number of successfull directories created, -1 if dirs is NULL.
+ * @return number of successful directories created, -1 if dirs is NULL.
  *
  * @see ecore_file_mkdir() and ecore_file_mkpaths()
  */
@@ -193,7 +193,7 @@ ecore_file_mkdirs(const char **dirs)
  *     path to that point must exists. So if creating base/a/b/c,
  *     provide subdirs with "a", "a/b" and "a/b/c" in that order!
  *
- * @return number of successfull directories created, -1 if subdirs or
+ * @return number of successful directories created, -1 if subdirs or
  *     base is NULL or invalid.
  *
  * @see ecore_file_mkdir() and ecore_file_mkpaths()
@@ -409,7 +409,7 @@ ecore_file_mkpath(const char *path)
  * Create complete paths in a batch.
  *
  * @param paths list of paths, null terminated.
- * @return number of successfull paths created, -1 if paths is NULL.
+ * @return number of successful paths created, -1 if paths is NULL.
  *
  * @see ecore_file_mkpath() and ecore_file_mkdirs()
  */

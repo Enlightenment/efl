@@ -149,7 +149,7 @@ extern "C" {
 	Ecore_IMF_Keyboard_Modifiers modifiers; /**< The keyboard modifiers active when the event has been emitted */
 	Ecore_IMF_Keyboard_Locks     locks;     /**< The keyboard locks active when the event has been emitted */
 	Ecore_IMF_Mouse_Flags        flags;     /**< The flags corresponding the mouse click (single, double or triple click) */
-	unsigned int                 timestamp; /**< The timestamp when the event occured */
+	unsigned int                 timestamp; /**< The timestamp when the event occurred */
      };
 
    struct _Ecore_IMF_Event_Mouse_Up
@@ -164,7 +164,7 @@ extern "C" {
 	Ecore_IMF_Keyboard_Modifiers modifiers; /**< The keyboard modifiers active when the event has been emitted */
 	Ecore_IMF_Keyboard_Locks     locks;     /**< The keyboard locks active when the event has been emitted */
 	Ecore_IMF_Mouse_Flags        flags;     /**< The flags corresponding the mouse click (single, double or triple click) */
-	unsigned int                 timestamp; /**< The timestamp when the event occured */
+	unsigned int                 timestamp; /**< The timestamp when the event occurred */
      };
 
    struct _Ecore_IMF_Event_Mouse_In
@@ -178,7 +178,7 @@ extern "C" {
 	} canvas;
 	Ecore_IMF_Keyboard_Modifiers modifiers; /**< The keyboard modifiers active when the event has been emitted */
 	Ecore_IMF_Keyboard_Locks     locks;     /**< The keyboard locks active when the event has been emitted */
-	unsigned int                 timestamp; /**< The timestamp when the event occured */
+	unsigned int                 timestamp; /**< The timestamp when the event occurred */
      };
 
    struct _Ecore_IMF_Event_Mouse_Out
@@ -192,7 +192,7 @@ extern "C" {
 	} canvas;
 	Ecore_IMF_Keyboard_Modifiers modifiers; /**< The keyboard modifiers active when the event has been emitted */
 	Ecore_IMF_Keyboard_Locks     locks;     /**< The keyboard locks active when the event has been emitted */
-	unsigned int                 timestamp; /**< The timestamp when the event occured */
+	unsigned int                 timestamp; /**< The timestamp when the event occurred */
      };
 
    struct _Ecore_IMF_Event_Mouse_Move
@@ -208,7 +208,7 @@ extern "C" {
 	} cur, prev;
 	Ecore_IMF_Keyboard_Modifiers modifiers; /**< The keyboard modifiers active when the event has been emitted */
 	Ecore_IMF_Keyboard_Locks     locks;     /**< The keyboard locks active when the event has been emitted */
-	unsigned int                 timestamp; /**< The timestamp when the event occured */
+	unsigned int                 timestamp; /**< The timestamp when the event occurred */
      };
 
    struct _Ecore_IMF_Event_Mouse_Wheel
@@ -223,7 +223,7 @@ extern "C" {
 	} canvas;
 	Ecore_IMF_Keyboard_Modifiers modifiers; /**< The keyboard modifiers active when the event has been emitted */
 	Ecore_IMF_Keyboard_Locks     locks;     /**< The keyboard locks active when the event has been emitted */
-	unsigned int                 timestamp; /**< The timestamp when the event occured */
+	unsigned int                 timestamp; /**< The timestamp when the event occurred */
      };
 
    struct _Ecore_IMF_Event_Key_Down
@@ -234,7 +234,7 @@ extern "C" {
 	const char                  *key;       /**< The logical key : (eg shift+1 == exclamation) */
 	const char                  *string;    /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
 	const char                  *compose;   /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
-	unsigned int                 timestamp; /**< The timestamp when the event occured */
+	unsigned int                 timestamp; /**< The timestamp when the event occurred */
    };
 
    struct _Ecore_IMF_Event_Key_Up
@@ -245,7 +245,7 @@ extern "C" {
 	const char                  *key;       /**< The logical key : (eg shift+1 == exclamation) */
 	const char                  *string;    /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
 	const char                  *compose;   /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
-	unsigned int                 timestamp; /**< The timestamp when the event occured */
+	unsigned int                 timestamp; /**< The timestamp when the event occurred */
      };
 
    union _Ecore_IMF_Event

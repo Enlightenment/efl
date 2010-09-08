@@ -59,7 +59,7 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 /**
  * Query if a particular renginering engine target has support
  * @param  engine The engine to check support for
- * @return 1 if the particualr engine is supported, 0 if it is not
+ * @return 1 if the particular engine is supported, 0 if it is not
  *
  * Query if engine @param engine is supported by ecore_evas. 1 is returned if
  * it is, and 0 is returned if it is not supported.

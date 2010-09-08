@@ -101,7 +101,7 @@ extern "C" {
 #define ECORE_EXE_PRIORITY_INHERIT 9999
    
    EAPI extern int ECORE_EXE_EVENT_ADD; /**< A child process has been added */
-   EAPI extern int ECORE_EXE_EVENT_DEL; /**< A child process has been deleted (it exited, naming consistant with the rest of ecore). */
+   EAPI extern int ECORE_EXE_EVENT_DEL; /**< A child process has been deleted (it exited, naming consistent with the rest of ecore). */
    EAPI extern int ECORE_EXE_EVENT_DATA; /**< Data from a child process. */
    EAPI extern int ECORE_EXE_EVENT_ERROR; /**< Errors from a child process. */
 
@@ -320,7 +320,7 @@ extern "C" {
    struct _Ecore_Exe_Event_Data /** Data from a child process event */
      {
 	Ecore_Exe *exe; /**< The handle to the process */
-	void *data; /**< the raw binary data from the child process that was recieved */
+	void *data; /**< the raw binary data from the child process that was received */
 	int   size; /**< the size of this data in bytes */
 	Ecore_Exe_Event_Data_Line *lines; /**< an array of line data if line buffered, the last one has it's line member set to NULL */
      };

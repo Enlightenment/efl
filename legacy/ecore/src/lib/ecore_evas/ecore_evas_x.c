@@ -723,7 +723,7 @@ _ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *e
 /*	     modes[e->mode], */
 /*	     details[e->detail]); */
 /*    } */
-   // disable. causes mroe problems than it fixes
+   // disable. causes more problems than it fixes
    //   if ((e->mode == ECORE_X_EVENT_MODE_GRAB) ||
    //       (e->mode == ECORE_X_EVENT_MODE_UNGRAB))
    //     return 0;
@@ -2868,7 +2868,7 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
 
 /*
  * FIXME: there are some round trips. Especially, we can split
- * ecore_x_init in 2 functions and supress some round trips.
+ * ecore_x_init in 2 functions and suppress some round trips.
  */
 
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_OPENGL_X11) || defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB) || defined (BUILD_ECORE_EVAS_SOFTWARE_16_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_8_X11)
