@@ -121,10 +121,11 @@ index_changed(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_win_main(void)
+my_win_main(char *autorun)
 {
    Evas_Object *win, *bg, *bx0, *lb, *li, *idx, *fr;
-   Eina_List *tests;
+   Eina_List *tests, *l;
+   struct elm_test *t;
 
    /* 1 create an elm window - it returns an evas object. this is a little
     * special as the object lives in the canvas that is inside the window
@@ -289,10 +290,16 @@ my_win_main(void)
    ADD_TEST("Calendar 2", test_calendar2);
 #undef ADD_TEST
 
+   if (autorun)
+     {
+        EINA_LIST_FOREACH(tests, l, t)
+          if ((t->name) && (t->cb) && (!strcmp(t->name, autorun)))
+            t->cb(NULL, NULL, NULL);
+     }
+
    if (tests)
      {
 	char last_letter = 0;
-	struct elm_test *t;
 	EINA_LIST_FREE(tests, t)
 	  {
 	     Elm_List_Item *it;
@@ -322,8 +329,16 @@ my_win_main(void)
 EAPI int
 elm_main(int argc, char **argv)
 {
-   /* put ere any init specific to this app like parsing args etc. */
-   my_win_main(); /* create main window */
+   char *autorun = NULL;
+
+   /* if called with a single argument try to autorun a test with
+    * the same name as the given param
+    * ex:  elementary_test "Box Vert 2" */
+   if (argc == 2)
+     autorun = argv[1];
+
+   /* put here any init specific to this app like parsing args etc. */
+   my_win_main(autorun); /* create main window */
    elm_run(); /* and run the program now  and handle all events etc. */
    /* if the mainloop that elm_run() runs exist - we exit the app */
    elm_shutdown(); /* clean up and shut down */
