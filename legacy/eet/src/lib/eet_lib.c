@@ -915,11 +915,11 @@ eet_internal_read2(Eet_File *ef)
    bytes_dictionary_entries = EET_FILE2_DICTIONARY_ENTRY_SIZE *
       num_dictionary_entries;
 
-   /* we cant have <= 0 values here - invalid */
+   /* we can't have <= 0 values here - invalid */
    if (eet_test_close((num_directory_entries <= 0), ef))
       return NULL;
 
-   /* we cant have more bytes directory and bytes in dictionaries than the size of the file */
+   /* we can't have more bytes directory and bytes in dictionaries than the size of the file */
    if (eet_test_close((bytes_directory_entries + bytes_dictionary_entries) >
                       ef->data_size, ef))
       return NULL;
@@ -1167,7 +1167,7 @@ eet_internal_read1(Eet_File *ef)
    EXTRACT_INT(num_entries,  ef->data, idx);
    EXTRACT_INT(byte_entries, ef->data, idx);
 
-   /* we cant have <= 0 values here - invalid */
+   /* we can't have <= 0 values here - invalid */
    if (eet_test_close((num_entries <= 0) || (byte_entries <= 0), ef))
       return NULL;
 
@@ -1289,7 +1289,7 @@ eet_internal_read1(Eet_File *ef)
                 efn->name);
           }
         else
-           /* The only really usefull peace of code for efn->name (no backward compatibility) */
+           /* The only really useful peace of code for efn->name (no backward compatibility) */
            efn->name = (char *)((unsigned char *)(p + HEADER_SIZE));
 
         /* get hash bucket it should go in */
@@ -1793,7 +1793,7 @@ eet_read_cipher(Eet_File   *ef,
      {
         void *data_deciphered = NULL;
         unsigned int data_deciphered_sz = 0;
-        /* if we alreayd have the data in ram... copy that */
+        /* if we already have the data in ram... copy that */
 
         if (efn->data)
            memcpy(data, efn->data, efn->size);

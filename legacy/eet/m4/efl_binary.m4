@@ -4,9 +4,9 @@ dnl That code is public domain and can be freely used or copied.
 dnl Macro that checks if a binary is built or not
 
 dnl Usage: EFL_ENABLE_BIN(binary)
-dnl Call AC_SUBST(BINARY_PRG) (BINARY is the uppercase of binary, - being tranformed into _)
-dnl Define have_binary (- is tranformed into _)
-dnl Define conditional BUILD_BINARY (BINARY is the uppercase of binary, - being tranformed into _)
+dnl Call AC_SUBST(BINARY_PRG) (BINARY is the uppercase of binary, - being transformed into _)
+dnl Define have_binary (- is transformed into _)
+dnl Define conditional BUILD_BINARY (BINARY is the uppercase of binary, - being transformed into _)
 
 AC_DEFUN([EFL_ENABLE_BIN],
 [
@@ -46,9 +46,9 @@ AS_IF([test "x$have_[]m4_defn([DOWN])" = "xyes"], [$2], [$3])
 dnl Macro that specifies the binary to be used
 
 dnl Usage: EFL_WITH_BIN(binary, package, msg)
-dnl Call AC_SUBST(BINARY_PRG) (BINARY is the uppercase of binary, - being tranformed into _)
-dnl Define with_binary (- is tranformed into _)
-dnl Define conditional BUILD_BINARY (BINARY is the uppercase of binary, - being tranformed into _)
+dnl Call AC_SUBST(BINARY_PRG) (BINARY is the uppercase of binary, - being transformed into _)
+dnl Define with_binary (- is transformed into _)
+dnl Define conditional BUILD_BINARY (BINARY is the uppercase of binary, - being transformed into _)
 
 AC_DEFUN([EFL_WITH_BIN],
 [

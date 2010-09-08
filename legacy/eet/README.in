@@ -21,7 +21,7 @@ Optional requirements:
   gnutls (1.7.6 or better)
   openssl
 
-Eet is a tiny library designed to write an arbitary set of chunks of
+Eet is a tiny library designed to write an arbitrary set of chunks of
 data to a file and optionally compress each chunk (very much like a
 zip file) and allow fast random-access reading of the file later
 on. It does not do zip as a zip itself has more complexity than is
@@ -29,8 +29,8 @@ needed, and it was much simpler to implement this once here.
 
 It also can encode and decode data structures in memory, as well as
 image data for saving to eet files or sending across the network to
-other machines, or just writing to arbitary files on the system. All
-data is encoded in a platform independant way and can be written and
+other machines, or just writing to arbitrary files on the system. All
+data is encoded in a platform independent way and can be written and
 read by any architecture. This data once encoded can be sent to
 another process or machine and decoded on the other end without
 needing to go into an eet file. Eet can also optionally encrypt files

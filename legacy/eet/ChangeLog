@@ -10,7 +10,7 @@
 
 2008-05-14  Cedric BAIL
 
-	* Fix convertion from a text to a hash (EET_G_HASH).
+	* Fix conversion from a text to a hash (EET_G_HASH).
 
 	* Fix inlined string (EET_T_INLINED_STRING) dump/undump by introducing
 	the new word for the parser 'inlined'.
@@ -273,7 +273,7 @@
 2009-12-07  Cedric BAIL
 
 	* Fix error when retrieving a different float type than the stored one.
-	* Reduce convertion with a little memory overhead.
+	* Reduce conversion with a little memory overhead.
 
 2009-12-07  Vincent Torri
 

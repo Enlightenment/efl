@@ -629,7 +629,7 @@ eet_write_cipher(Eet_File   *ef,
  * @param compress A pointer to the int to hold the compression amount.
  * @param quality A pointer to the int to hold the quality amount.
  * @param lossy A pointer to the int to hold the lossiness flag.
- * @return 1 on successfull decode, 0 otherwise
+ * @return 1 on successful decode, 0 otherwise
  *
  * This function reads an image from an eet file stored under the named
  * key in the eet file and return a pointer to the decompressed pixel data.
@@ -1027,7 +1027,7 @@ eet_data_image_encode(const void  *data,
  * @param compress A pointer to the int to hold the compression amount.
  * @param quality A pointer to the int to hold the quality amount.
  * @param lossy A pointer to the int to hold the lossiness flag.
- * @return 1 on successfull decode, 0 otherwise
+ * @return 1 on successful decode, 0 otherwise
  *
  * This function reads an image from an eet file stored under the named
  * key in the eet file and return a pointer to the decompressed pixel data.
@@ -1820,7 +1820,7 @@ struct _Eet_Data_Descriptor_Class
       char       *(*str_direct_alloc)(const char *str);   /**< how to allocate a string directly from file backed/mmaped region pointed by @p str */
       void        (*str_direct_free)(const char *str);   /**< how to free a string returned by str_direct_alloc */
       const char *(*type_get)(const void *data, Eina_Bool *unknow);    /**< convert any kind of data type to a name that define an Eet_Data_Element. */
-      Eina_Bool   (*type_set)(const char *type, void *data, Eina_Bool unknow);    /**< set the type at a particular adress */
+      Eina_Bool   (*type_set)(const char *type, void *data, Eina_Bool unknow);    /**< set the type at a particular address */
       void       *(*array_alloc)(size_t size); /**< how to allocate memory for array (usually malloc()) */
       void        (*array_free)(void *mem); /**< how to free memory for array (usually free()) */
    } func;
@@ -1856,7 +1856,7 @@ struct _Eet_Data_Descriptor_Class
  *
  * Once you have described all the members of a struct you want loaded, or
  * saved eet can load and save those members for you, encode them into
- * endian-independant serialised data chunks for transmission across a
+ * endian-independent serialised data chunks for transmission across a
  * a network or more.
  *
  * The function pointers to the list and hash table functions are only
@@ -1905,11 +1905,11 @@ eet_data_descriptor3_new(const Eet_Data_Descriptor_Class *eddc);
  *
  * Once you have described all the members of a struct you want loaded, or
  * saved eet can load and save those members for you, encode them into
- * endian-independant serialised data chunks for transmission across a
+ * endian-independent serialised data chunks for transmission across a
  * a network or more.
  *
  * This function specially ignore str_direct_alloc and str_direct_free. It
- * is usefull when the eet_data you are reading don't have a dictionnary
+ * is useful when the eet_data you are reading don't have a dictionnary
  * like network stream or ipc. It also mean that all string will be allocated
  * and duplicated in memory.
  *
@@ -1932,11 +1932,11 @@ eet_data_descriptor_stream_new(const Eet_Data_Descriptor_Class *eddc);
  *
  * Once you have described all the members of a struct you want loaded, or
  * saved eet can load and save those members for you, encode them into
- * endian-independant serialised data chunks for transmission across a
+ * endian-independent serialised data chunks for transmission across a
  * a network or more.
  *
  * This function use str_direct_alloc and str_direct_free. It is
- * usefull when the eet_data you are reading come from a file and
+ * useful when the eet_data you are reading come from a file and
  * have a dictionnary. This will reduce memory use, improve the
  * possibility for the OS to page this string out. But be carrefull
  * all EET_T_STRING are pointer to a mmapped area and it will point
@@ -2264,7 +2264,7 @@ eet_data_undump(Eet_File   *ef,
                 int         compress);
 
 /**
- * Decode a data structure from an arbitary location in memory.
+ * Decode a data structure from an arbitrary location in memory.
  * @param edd The data  descriptor to use when decoding.
  * @param data_in The pointer to the data to decode into a struct.
  * @param size_in The size of the data pointed to in bytes.
@@ -2826,7 +2826,7 @@ eet_data_undump_cipher(Eet_File   *ef,
                        int         compress);
 
 /**
- * Decode a data structure from an arbitary location in memory
+ * Decode a data structure from an arbitrary location in memory
  * using a cipher.
  * @param edd The data  descriptor to use when decoding.
  * @param data_in The pointer to the data to decode into a struct.

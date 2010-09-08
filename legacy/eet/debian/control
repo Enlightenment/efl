@@ -14,7 +14,7 @@ Architecture: any
 Depends: libeet1 (= ${binary:Version}), libjpeg62-dev, pkg-config
 Recommends: libeet-doc
 Description: Enlightenment DR17 file chunk reading/writing library development files
- Eet is a tiny library designed to write an arbitary set of chunks of data to a
+ Eet is a tiny library designed to write an arbitrary set of chunks of data to a
  file and optionally compress each chunk (very much like a zip file) and allow
  fast random-access reading of the file later on. It does not do zip as zip
  itself has more complexity than we need, and it was much simpler to implement
@@ -27,7 +27,7 @@ Section: doc
 Architecture: all
 Enhances: libeet-dev
 Description: libeet1 API documentation
- Eet is a tiny library designed to write an arbitary set of chunks of data to a
+ Eet is a tiny library designed to write an arbitrary set of chunks of data to a
  file and optionally compress each chunk (very much like a zip file) and allow
  fast random-access reading of the file later on. It does not do zip as zip
  itself has more complexity than we need, and it was much simpler to implement
@@ -40,7 +40,7 @@ Package: libeet1
 Architecture: any
 Depends: ${shlibs:Depends}
 Description: Enlightenment DR17 file chunk reading/writing library
- Eet is a tiny library designed to write an arbitary set of chunks of data to a
+ Eet is a tiny library designed to write an arbitrary set of chunks of data to a
  file and optionally compress each chunk (very much like a zip file) and allow
  fast random-access reading of the file later on. It does not do zip as zip
  itself has more complexity than we need, and it was much simpler to implement
@@ -52,7 +52,7 @@ Package: libeet-bin
 Architecture: any
 Depends: ${shlibs:Depends}
 Description: Enlightenment DR17 file chunk reading/writing utility
- Eet is a tiny library designed to write an arbitary set of chunks of data to a
+ Eet is a tiny library designed to write an arbitrary set of chunks of data to a
  file and optionally compress each chunk (very much like a zip file) and allow
  fast random-access reading of the file later on. It does not do zip as zip
  itself has more complexity than we need, and it was much simpler to implement
@@ -67,7 +67,7 @@ Section: libdevel
 Priority: extra
 Depends: libeet1 (= ${binary:Version})
 Description: Enlightenment DR17 file chunk reading/writing library - debug symbols
- Eet is a tiny library designed to write an arbitary set of chunks of data to a
+ Eet is a tiny library designed to write an arbitrary set of chunks of data to a
  file and optionally compress each chunk (very much like a zip file) and allow
  fast random-access reading of the file later on. It does not do zip as zip
  itself has more complexity than we need, and it was much simpler to implement
