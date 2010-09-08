@@ -190,12 +190,10 @@ elm_photo_size_set(Evas_Object *obj, int size)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->size = size;
 
-   if(size >= 0)
-	   _els_smart_icon_scale_size_set(wd->img, size);
-   else
-	   _els_smart_icon_scale_size_set(wd->img, 0);
+   wd->size = (size > 0) ? size : 0;
+
+   _els_smart_icon_scale_size_set(wd->img, wd->size);
 
    _sizing_eval(obj);
 }
