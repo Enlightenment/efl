@@ -217,6 +217,16 @@ elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill)
    _sizing_eval(obj);
 }
 
+/**
+ * Set editability of the photo.
+ *
+ * An editable photo can be dragged to or from, and can be cut or pasted too.
+ * Note that pasting an image or dropping an item on the image will delete the
+ * existing content.
+ *
+ * @param obj The photo object.
+ * @param set To set of clear editablity.
+ */
 EAPI void
 elm_photo_editable_set(Evas_Object *obj, Eina_Bool set)
 {
