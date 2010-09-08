@@ -281,6 +281,7 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
                                   _changed_size_hints, it);
    edje_object_part_swallow(it->base, "elm.swallow.content", it->content);
    edje_object_size_min_calc(it->base, &it->minw, &it->minh);
+   evas_object_data_set(it->base, "_elm_leaveme", obj);
    evas_object_show(it->content);
    wd->stack = eina_list_append(wd->stack, it);
    _eval_top(obj);
