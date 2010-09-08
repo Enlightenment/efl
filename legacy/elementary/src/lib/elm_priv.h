@@ -115,8 +115,12 @@ enum _elm_sel_type {
 };
 
 enum _elm_sel_format {
-   ELM_SEL_MARKUP	= 0x01,
-   ELM_SEL_IMAGE	= 0x02,
+   /** Plain unformated text: Used for things that don't want rich markup */
+   ELM_SEL_FORMAT_TEXT = 0x01,
+   /** Edje textblock markup, including inline images */
+   ELM_SEL_FORMAT_MARKUP = 0x02,
+   /** Images */
+   ELM_SEL_FORMAT_IMAGE	= 0x04,
 };
 
 

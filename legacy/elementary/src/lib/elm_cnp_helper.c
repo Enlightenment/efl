@@ -145,7 +145,7 @@ static struct {
    },
    [CNP_ATOM_XELM] =  {
 	"application/x-elementary-markup",
-	ELM_SEL_MARKUP,
+	ELM_SEL_FORMAT_MARKUP,
 	edje_converter,
 	NULL,
 	NULL,
@@ -153,7 +153,7 @@ static struct {
    },
    [CNP_ATOM_text_uri] = {
 	"text/uri",
-	ELM_SEL_MARKUP | ELM_SEL_IMAGE, /* Either images or entries */
+	ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE, /* Either images or entries */
 	uri_converter,
 	NULL,
 	notify_handler_uri,
@@ -161,7 +161,7 @@ static struct {
    },
    [CNP_ATOM_text_urilist] = {
         "text/uri-list",
-        ELM_SEL_IMAGE | ELM_SEL_MARKUP,
+        ELM_SEL_FORMAT_IMAGE | ELM_SEL_FORMAT_MARKUP,
         uri_converter,
         NULL,
         notify_handler_uri,
@@ -169,7 +169,7 @@ static struct {
    },
    [CNP_ATOM_image_png] = {
 	"image/png",
-	ELM_SEL_IMAGE,
+	ELM_SEL_FORMAT_IMAGE,
 	png_converter,
 	NULL,
 	notify_handler_png,
@@ -177,7 +177,7 @@ static struct {
    },
    [CNP_ATOM_text_html_utf8] = {
 	"text/html;charset=utf-8",
-	ELM_SEL_MARKUP,
+	ELM_SEL_FORMAT_MARKUP,
 	html_converter,
 	NULL,
 	NULL,
@@ -185,7 +185,7 @@ static struct {
    },
    [CNP_ATOM_text_html] = {
 	"text/html",
-	ELM_SEL_MARKUP,
+	ELM_SEL_FORMAT_MARKUP,
 	html_converter,
 	NULL,
 	NULL,
@@ -193,7 +193,7 @@ static struct {
    },
    [CNP_ATOM_UTF8STRING] = {
 	"UTF8_STRING",
-	ELM_SEL_MARKUP,
+	ELM_SEL_FORMAT_MARKUP,
 	text_converter,
 	NULL,
 	notify_handler_text,
@@ -201,7 +201,7 @@ static struct {
    },
    [CNP_ATOM_STRING] = {
 	"STRING",
-	ELM_SEL_MARKUP | ELM_SEL_IMAGE,
+	ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
 	text_converter,
 	NULL,
 	notify_handler_text,
@@ -209,7 +209,7 @@ static struct {
    },
    [CNP_ATOM_TEXT] = {
 	"TEXT",
-	ELM_SEL_MARKUP | ELM_SEL_IMAGE,
+	ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
 	text_converter,
 	NULL,
 	NULL,
@@ -217,7 +217,7 @@ static struct {
    },
    [CNP_ATOM_text_plain_utf8] = {
 	"text/plain;charset=ut-8",
-	ELM_SEL_MARKUP,
+	ELM_SEL_FORMAT_MARKUP,
 	text_converter,
 	NULL,
 	NULL,
@@ -225,7 +225,7 @@ static struct {
    },
    [CNP_ATOM_text_plain] = {
 	"text/plain",
-	ELM_SEL_MARKUP,
+	ELM_SEL_FORMAT_MARKUP,
 	text_converter,
 	NULL,
 	NULL,
@@ -292,7 +292,7 @@ elm_selection_set(enum _elm_sel_type selection, Evas_Object *widget,
 
    if ((unsigned int)selection >= (unsigned int)ELM_SEL_MAX) return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
-   if (!selbuf && format != ELM_SEL_IMAGE)
+   if (!selbuf && format != ELM_SEL_FORMAT_IMAGE)
      return elm_selection_clear(selection, widget);
 
    sel = selections + selection;
@@ -773,9 +773,9 @@ text_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
    sel = selections + *(int *)data;
    if (!sel->active) return 1;
 
-   if (sel->format == ELM_SEL_MARKUP){
+   if (sel->format == ELM_SEL_FORMAT_MARKUP){
 	*data_ret = remove_tags(sel->selbuf, size_ret);
-   } else if (sel->format == ELM_SEL_IMAGE){
+   } else if (sel->format == ELM_SEL_FORMAT_IMAGE){
 	cnp_debug("Image %s\n",evas_object_type_get(sel->widget));
 	cnp_debug("Elm type: %s\n",elm_object_widget_type_get(sel->widget));
 	evas_object_image_file_get(elm_photocam_internal_image_get(sel->widget), (const char **)data_ret, NULL);
@@ -1166,7 +1166,7 @@ found:
 
              ddata.x = savedtypes.x;
              ddata.y = savedtypes.y;
-             ddata.format = ELM_SEL_IMAGE;
+             ddata.format = ELM_SEL_FORMAT_IMAGE;
     /* FIXME: Need to do this per widget */
              pasteimage_provider_set(dropable->obj);
 
@@ -1189,7 +1189,7 @@ found:
      }
 
    selections[ELM_SEL_XDND].requestwidget = dropable->obj;
-   selections[ELM_SEL_XDND].requestformat = ELM_SEL_MARKUP;
+   selections[ELM_SEL_XDND].requestformat = ELM_SEL_FORMAT_MARKUP;
    selections[ELM_SEL_XDND].active = true;
 
    ecore_x_selection_xdnd_request(xwin, atoms[i].name);
