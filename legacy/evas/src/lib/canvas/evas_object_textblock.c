@@ -2216,7 +2216,11 @@ _layout_item_abort(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textb
    if (it->text) free(it->text);
    _format_unref_free(c->obj, it->format);
 #ifdef BIDI_SUPPORT
-   evas_bidi_props_clean(&it->bidi_props);
+   /* FIXME: this also unrefs the paragraph props, we should either
+    * really count the usage of the paragraph props in the items, or just
+    * not use clean here. I prefer the latter but that might break if we'll
+    * start doing fancy stuff in clean in the future. */
+   /* evas_bidi_props_clean(&it->bidi_props); */
 #endif
    free(it);
    if (c->ln->items)
