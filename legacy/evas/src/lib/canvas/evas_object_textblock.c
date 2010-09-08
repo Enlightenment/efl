@@ -2357,7 +2357,7 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
         /* append new_it */
         tw = th = 0;
         if (new_it->format->font.font)
-          c->ENFN->font_string_size_get(c->ENDT, new_it->format->font.font, new_it->text, &it->bidi_props, &tw, &th);
+          c->ENFN->font_string_size_get(c->ENDT, new_it->format->font.font, new_it->text, &new_it->bidi_props, &tw, &th);
         new_it->w = tw;
         new_it->h = th;
         inset = 0;
