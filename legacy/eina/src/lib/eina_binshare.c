@@ -104,7 +104,7 @@ eina_binshare_shutdown(void)
  * This function decreases the reference counter associated to @p obj
  * if it exists. If that counter reaches 0, the memory associated to
  * @p obj is freed. If @p obj is NULL, the function returns
- * immediatly.
+ * immediately.
  *
  * Note that if the given pointer is not shared or NULL, bad things
  * will happen, likely a segmentation fault.

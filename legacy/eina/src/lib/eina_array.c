@@ -638,7 +638,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data,
 }
 
 /**
- * @brief Returned a new iterator asociated to an array.
+ * @brief Returned a new iterator associated to an array.
  *
  * @param array The array.
  * @return A new iterator.
@@ -680,7 +680,7 @@ eina_array_iterator_new(const Eina_Array *array)
 }
 
 /**
- * @brief Returned a new accessor asociated to an array.
+ * @brief Returned a new accessor associated to an array.
  *
  * @param array The array.
  * @return A new accessor.

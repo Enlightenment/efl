@@ -20,7 +20,7 @@
  * This is a naive 'buddy' allocator following Knuth's documentation.
  * The main difference is that we dont store the block information
  * on the block memory itself but on another malloc'd area.
- * This is useful for managing memory which isnt as fast as the main
+ * This is useful for managing memory which isn't as fast as the main
  * memory like the video memory
  * The algorithm uses an area to store the linked list of blocks.
  * Each block size is equal to the minimum allocatable block size for

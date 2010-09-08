@@ -556,7 +556,7 @@ _eina_quadtree_remove(Eina_QuadTree_Item *object)
    if (object->root->right)
       goto end;
 
-   /* The root is not usefull anymore... */
+   /* The root is not useful anymore... */
    if (object->root->parent)
      {
         if (object->root->parent->left == object->root)

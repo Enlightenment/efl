@@ -128,7 +128,7 @@ eina_list_data_set(Eina_List *list, const void *data)
  * This function returns how many members @p list contains. If the
  * list is @c NULL, 0 is returned.
  *
- * NB: This is an order-1 operation and takes the same tiem regardless
+ * NB: This is an order-1 operation and takes the same time regardless
  * of the length of the list.
  */
 static inline unsigned int

@@ -2040,7 +2040,7 @@ eina_list_search_unsorted(const Eina_List *list,
 
 
 /**
- * @brief Returned a new iterator asociated to a list.
+ * @brief Returned a new iterator associated to a list.
  *
  * @param list The list.
  * @return A new iterator.
@@ -2088,7 +2088,7 @@ eina_list_iterator_new(const Eina_List *list)
 }
 
 /**
- * @brief Returned a new reversed iterator asociated to a list.
+ * @brief Returned a new reversed iterator associated to a list.
  *
  * @param list The list.
  * @return A new iterator.
@@ -2138,7 +2138,7 @@ eina_list_iterator_reversed_new(const Eina_List *list)
 }
 
 /**
- * @brief Returned a new accessor asociated to a list.
+ * @brief Returned a new accessor associated to a list.
  *
  * @param list The list.
  * @return A new accessor.

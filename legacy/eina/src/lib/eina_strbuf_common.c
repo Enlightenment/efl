@@ -705,7 +705,7 @@ static const char __STRBUF_STR_MAGIC_STR[] = "Eina Strbuf";
  * @param n The number of the fitting string.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function replaces the n-th occurence of @p str in @p buf with
+ * This function replaces the n-th occurrence of @p str in @p buf with
  * @p with. It returns #EINA_FALSE on failure, #EINA_TRUE otherwise.
  */
 EAPI Eina_Bool
@@ -769,7 +769,7 @@ eina_strbuf_replace(Eina_Strbuf *buf,
  * @param with The replaceing string.
  * @return How often the string was replaced.
  *
- * This function replaces all the occurences of @p str in @ buf with
+ * This function replaces all the occurrences of @p str in @ buf with
  * the string @p with. This function returns the number of times @p str
  * has been replaced. On failure, it returns 0.
  */

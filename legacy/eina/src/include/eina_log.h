@@ -67,7 +67,7 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
  * defaults to #EINA_LOG_DOMAIN_GLOBAL.
  *
  * @note One may like to redefine this in its code to avoid typing too
- *       much. In this case the recomended way is:
+ *       much. In this case the recommended way is:
  *
  * @code
  * #include <Eina.h>

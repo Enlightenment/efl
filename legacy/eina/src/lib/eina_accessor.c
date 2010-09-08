@@ -184,7 +184,7 @@ eina_accessor_data_get(Eina_Accessor *accessor,
  * element at position @p end. For Each element, the callback
  * @p cb is called with the data @p fdata. If @p accessor is @c NULL
  * or if @p start is greter or equal than @p end, the function returns
- * immediatly.
+ * immediately.
  */
 EAPI void
 eina_accessor_over(Eina_Accessor *accessor,
@@ -224,7 +224,7 @@ eina_accessor_over(Eina_Accessor *accessor,
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * If the container of the @p accessor permit it, it will be locked.
- * If @p accessor is @c NULL or if a problem occured, #EINA_FALSE is
+ * If @p accessor is @c NULL or if a problem occurred, #EINA_FALSE is
  * returned, otherwise #EINA_TRUE is returned. If the container
  * is not lockable, it will return EINA_TRUE.
  */
@@ -247,7 +247,7 @@ eina_accessor_lock(Eina_Accessor *accessor)
  *
  * If the container of the @p accessor permit it and was previously
  * locked, it will be unlocked. If @p accessor is @c NULL or if a
- * problem occured, #EINA_FALSE is returned, otherwise #EINA_TRUE
+ * problem occurred, #EINA_FALSE is returned, otherwise #EINA_TRUE
  * is returned. If the container is not lockable, it will return
  * EINA_TRUE.
  */

@@ -155,7 +155,7 @@ eina_iterator_container_get(Eina_Iterator *iterator)
  *
  * This function returns the value of the current element pointed by
  * @p iterator in @p data, then goes to the next element. If @p
- * iterator is @c NULL or if a problem occured, #EINA_FALSE is
+ * iterator is @c NULL or if a problem occurred, #EINA_FALSE is
  * returned, otherwise #EINA_TRUE is returned.
  */
 EAPI Eina_Bool
@@ -181,7 +181,7 @@ eina_iterator_next(Eina_Iterator *iterator, void **data)
  * This function iterates over the elements pointed by @p iterator,
  * beginning from the current element. For Each element, the callback
  * @p cb is called with the data @p fdata. If @p iterator is @c NULL,
- * the function returns immediatly. Also, if @p cb returns @c
+ * the function returns immediately. Also, if @p cb returns @c
  * EINA_FALSE, the iteration stops at that point.
  */
 EAPI void
@@ -217,7 +217,7 @@ eina_iterator_foreach(Eina_Iterator *iterator,
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * If the container of the @p iterator permit it, it will be locked.
- * If @p iterator is @c NULL or if a problem occured, #EINA_FALSE is
+ * If @p iterator is @c NULL or if a problem occurred, #EINA_FALSE is
  * returned, otherwise #EINA_TRUE is returned. If the container
  * is not lockable, it will return EINA_TRUE.
  */
@@ -240,7 +240,7 @@ eina_iterator_lock(Eina_Iterator *iterator)
  *
  * If the container of the @p iterator permit it and was previously
  * locked, it will be unlocked. If @p iterator is @c NULL or if a
- * problem occured, #EINA_FALSE is returned, otherwise #EINA_TRUE
+ * problem occurred, #EINA_FALSE is returned, otherwise #EINA_TRUE
  * is returned. If the container is not lockable, it will return
  * EINA_TRUE.
  */

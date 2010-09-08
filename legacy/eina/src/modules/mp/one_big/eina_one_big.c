@@ -221,7 +221,7 @@ eina_one_big_shutdown(void *data)
          pool->name);
 
    if (pool->over > 0)
-      INF("Bad news we are loosing track of pointer from mempool [%s]\n",
+      INF("Bad news we are losing track of pointer from mempool [%s]\n",
           pool->name);
 
 #endif

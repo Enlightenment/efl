@@ -458,7 +458,7 @@ EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char
  * @param with The replaceing string.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This macro is calling eina_strbuf_replace() with the n-th occurence
+ * This macro is calling eina_strbuf_replace() with the n-th occurrence
  * equal to @c 1. If @p buf can't replace it, #EINA_FALSE is returned,
  * otherwise #EINA_TRUE is returned.
  */

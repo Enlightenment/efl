@@ -403,7 +403,7 @@ evas_hash_size(const Evas_Hash *hash)
  * hash tale pointed to by @p hash. Any entries in the table that the program
  * has no more pointers for elsewhere may now be lost, so this should only be
  * called if the program has lready freed any allocated data in the hash table
- * or has the pointers for data in teh table stored elswehere as well.
+ * or has the pointers for data in the table stored elswehere as well.
  *
  * Example:
  * @code

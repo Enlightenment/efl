@@ -602,7 +602,7 @@ eina_inlist_count(const Eina_Inlist *list)
 }
 
 /**
- * @brief Returned a new iterator asociated to a list.
+ * @brief Returned a new iterator associated to a list.
  *
  * @param list The list.
  * @return A new iterator.
@@ -649,7 +649,7 @@ eina_inlist_iterator_new(const Eina_Inlist *list)
 }
 
 /**
- * @brief Returned a new accessor asociated to a list.
+ * @brief Returned a new accessor associated to a list.
  *
  * @param list The list.
  * @return A new accessor.

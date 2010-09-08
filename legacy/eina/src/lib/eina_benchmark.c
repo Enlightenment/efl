@@ -494,7 +494,7 @@ eina_benchmark_new(const char *name, const char *run)
  *
  * This function removes all the benchmark tests that have been
  * registered and frees @p bench. If @p bench is @c NULL, this
- * function returns immediatly.
+ * function returns immediately.
  */
 EAPI void
 eina_benchmark_free(Eina_Benchmark *bench)
@@ -605,7 +605,7 @@ eina_benchmark_register(Eina_Benchmark *bench,
  * controlled by the parameters passed to eina_benchmark_register().
  *
  * If @p bench is @c NULL, this functions returns @c NULL
- * immediatly. Otherwise, it returns the list of the names of each
+ * immediately. Otherwise, it returns the list of the names of each
  * test.
  */
 EAPI Eina_Array *

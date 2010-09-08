@@ -295,7 +295,7 @@ eina_counter_shutdown(void)
  *
  * This function returns a new counter. It is characterized by @p
  * name. If @p name is @c NULL, the function returns @c NULL
- * immediatly. If memory allocation fails, @c NULL is returned and the
+ * immediately. If memory allocation fails, @c NULL is returned and the
  * error is set to #EINA_ERROR_OUT_OF_MEMORY.
  *
  * Whe the new counter is not needed anymore, use eina_counter_free() to
@@ -333,7 +333,7 @@ eina_counter_new(const char *name)
  * This function remove the clock of @p counter from the used clocks
  * (see eina_counter_start()) and frees the memory allocated for
  * @p counter. If @p counter is @c NULL, the function returns
- * immediatly.
+ * immediately.
  */
 EAPI void
 eina_counter_free(Eina_Counter *counter)
@@ -358,7 +358,7 @@ eina_counter_free(Eina_Counter *counter)
  *
  * This function specifies that the part of the code beginning just
  * after its call is being to be timed, using @p counter. If
- * @p counter is @c NULL, this function returns immediatly.
+ * @p counter is @c NULL, this function returns immediately.
  *
  * This function adds the clock associated to @p counter in a list. If
  * the memory needed by that clock can not be allocated, the function
@@ -432,7 +432,7 @@ eina_counter_stop(Eina_Counter *counter, int specimen)
  * This function returns an malloc'd string containing the dump of
  * all the valid clocks of @p counter.
  * If @p counter @c NULL, the functions exits
- * immediatly. Otherwise, the output is formattted like that:
+ * immediately. Otherwise, the output is formattted like that:
  *
  * @verbatim
  * \# specimen    experiment time    starting time    ending time

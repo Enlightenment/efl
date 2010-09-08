@@ -1966,7 +1966,7 @@ eina_log_abort_on_critical_level_get(void)
  * @param color Color of the domain name
  *
  * @return Domain index that will be used as the DOMAIN parameter on log
- *         macros. A negative return value means an log ocurred.
+ *         macros. A negative return value means an log occurred.
  *
  * @note MT: safe to call from any thread.
  */

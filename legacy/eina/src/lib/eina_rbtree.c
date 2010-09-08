@@ -492,7 +492,7 @@ eina_rbtree_inline_remove(Eina_Rbtree *root,
 }
 
 /**
- * @brief Returned a new prefix iterator asociated to a rbtree.
+ * @brief Returned a new prefix iterator associated to a rbtree.
  *
  * @param root The root of rbtree.
  * @return A new iterator.
@@ -517,7 +517,7 @@ eina_rbtree_iterator_prefix(const Eina_Rbtree *root)
 }
 
 /**
- * @brief Returned a new prefix iterator asociated to a rbtree.
+ * @brief Returned a new prefix iterator associated to a rbtree.
  *
  * @param root The root of rbtree.
  * @return A new iterator.
@@ -542,7 +542,7 @@ eina_rbtree_iterator_infix(const Eina_Rbtree *root)
 }
 
 /**
- * @brief Returned a new prefix iterator asociated to a rbtree.
+ * @brief Returned a new prefix iterator associated to a rbtree.
  *
  * @param root The root of rbtree.
  * @return A new iterator.

@@ -611,7 +611,7 @@ eina_rectangle_pool_data_get(Eina_Rectangle_Pool *pool)
  * @param pool The pool.
  * @param w The returned width.
  * @param h The returned height.
- * @return #EINA_TRUE on sucess, #EINA_FALSE otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function returns the width and height of @p pool and store
  * them in respectively @p w and @p h if they are not @c NULL. If

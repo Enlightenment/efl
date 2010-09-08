@@ -329,7 +329,7 @@ EAPI Eina_Module *eina_module_new(const char *file)
  * This function calls eina_module_unload() if @p m has been previously
  * loaded and frees the allocated memory. On success this function
  * returns EINA_TRUE and EINA_FALSE otherwise. If @p m is @c NULL, the
- * function returns immediatly.
+ * function returns immediately.
  */
 EAPI Eina_Bool eina_module_free(Eina_Module *m)
 {
@@ -360,7 +360,7 @@ EAPI Eina_Bool eina_module_free(Eina_Module *m)
  * #EINA_ERROR_MODULE_INIT_FAILED is set and #EINA_FALSE is
  * returned. If the module has already been loaded, it's refeence
  * counter is increased by one and #EINA_TRUE is returned. If @p m is
- * @c NULL, the function returns immediatly #EINA_FALSE.
+ * @c NULL, the function returns immediately #EINA_FALSE.
  *
  * When the symbols of the shared file objetcts are not needed
  * anymore, call eina_module_unload() to unload the module.
@@ -420,7 +420,7 @@ loaded:
  * shared object file is closed and if it is a internal Eina module, it
  * is shutted down just before. In that case, #EINA_TRUE is
  * returned. In all case, the reference counter is decreased. If @p m
- * is @c NULL, the function returns immediatly #EINA_FALSE.
+ * is @c NULL, the function returns immediately #EINA_FALSE.
  */
 EAPI Eina_Bool eina_module_unload(Eina_Module *m)
 {
@@ -455,7 +455,7 @@ EAPI Eina_Bool eina_module_unload(Eina_Module *m)
  * This function returns the data associated to @p symbol of @p m. @p
  * m must have been loaded before with eina_module_load(). If @p m
  * is @c NULL, or if it has not been correctly loaded before, the
- * function returns immediatly @c NULL.
+ * function returns immediately @c NULL.
  */
 EAPI void *eina_module_symbol_get(const Eina_Module *m, const char *symbol)
 {
@@ -471,7 +471,7 @@ EAPI void *eina_module_symbol_get(const Eina_Module *m, const char *symbol)
  * @return The file name.
  *
  * This function returns the file name passed in eina_module_new(). If
- * @p m is @c NULL, the function returns immediatly @c NULL. The
+ * @p m is @c NULL, the function returns immediately @c NULL. The
  * returned value must no be freed.
  */
 EAPI const char *eina_module_file_get(const Eina_Module *m)
@@ -587,7 +587,7 @@ EAPI char *eina_module_environment_path_get(const char *env,
  *
  * This function adds to @p array the module names found in @p path
  * which match the cpu architecture @p arch. If @p path or @p arch is
- * @c NULL, the function returns immediatly @p array. @p array can be
+ * @c NULL, the function returns immediately @p array. @p array can be
  * @c NULL. In that case, it is created with 4 elements.
  */
 EAPI Eina_Array *eina_module_arch_list_get(Eina_Array *array,
@@ -621,7 +621,7 @@ EAPI Eina_Array *eina_module_arch_list_get(Eina_Array *array,
  * @p path. If @p recursive is #EINA_TRUE, then recursive search is
  * done. The callback @p cb is called on each module found, and @p data
  * is passed to @p cb. If @p path is @c NULL, the function returns
- * immediatly @p array. If the returned value of @p cb is 0, the
+ * immediately @p array. If the returned value of @p cb is 0, the
  * module will not be added to the list, otherwise it will be added.
  * @p array can be @c NULL. In that case, it is created with 4
  * elements. @p cb can be @c NULL.

@@ -1019,7 +1019,7 @@ eina_hash_free_buckets(Eina_Hash *hash)
  * @param   key_length Should be the length of @p key (don't forget to count '\\0' for string).
  * @param   key_hash The hash that will always match key.
  * @param   data Data to associate with the string given by @p key.
- * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ * @return  Will return EINA_FALSE if an error occurred, and EINA_TRUE if every
  *          thing goes fine.
  */
 EAPI Eina_Bool
@@ -1057,7 +1057,7 @@ eina_hash_add_by_hash(Eina_Hash *hash,
  * @param   key_length Should be the length of @p key (don't forget to count '\\0' for string).
  * @param   key_hash The hash that will always match key.
  * @param   data Data to associate with the string given by @p key.
- * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ * @return  Will return EINA_FALSE if an error occurred, and EINA_TRUE if every
  *          thing goes fine.
  */
 EAPI Eina_Bool
@@ -1086,7 +1086,7 @@ eina_hash_direct_add_by_hash(Eina_Hash *hash,
  * @param   hash The given hash table.  Can be @c NULL.
  * @param   key  A unique key.  Can be @c NULL.
  * @param   data Data to associate with the string given by @p key.
- * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ * @return  Will return EINA_FALSE if an error occurred, and EINA_TRUE if every
  *          thing goes fine.
  */
 EAPI Eina_Bool
@@ -1127,7 +1127,7 @@ eina_hash_add(Eina_Hash *hash, const void *key, const void *data)
  * @param   hash The given hash table.  Can be @c NULL.
  * @param   key  A unique key.  Can be @c NULL.
  * @param   data Data to associate with the string given by @p key.
- * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ * @return  Will return EINA_FALSE if an error occurred, and EINA_TRUE if every
  *          thing goes fine.
  */
 EAPI Eina_Bool
@@ -1158,7 +1158,7 @@ eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data)
  * @param   key  The key.  Cannot be @c NULL.
  * @param   key_length Should be the length of @p key (don't forget to count '\\0' for string).
  * @param   key_hash The hash that always match the key.
- * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ * @return  Will return EINA_FALSE if an error occurred, and EINA_TRUE if every
  *          thing goes fine.
  *
  * @note if you don't have the key_hash, use eina_hash_del_by_key() instead.
@@ -1186,7 +1186,7 @@ eina_hash_del_by_key_hash(Eina_Hash *hash,
  *
  * @param   hash The given hash table.
  * @param   key  The key.  Cannot be @c NULL.
- * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ * @return  Will return EINA_FALSE if an error occurred, and EINA_TRUE if every
  *          thing goes fine.
  *
  * @note if you already have the key_hash, use eina_hash_del_by_key_hash() instead.
@@ -1210,7 +1210,7 @@ eina_hash_del_by_key(Eina_Hash *hash, const void *key)
  *
  * @param   hash The given hash table.
  * @param   data  The data value to search and remove.
- * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ * @return  Will return EINA_FALSE if an error occurred, and EINA_TRUE if every
  *          thing goes fine.
  *
  * @note if you already have the key, use eina_hash_del_by_key() or eina_hash_del_by_key_hash() instead.
@@ -1254,7 +1254,7 @@ error:
  * @param   key_hash The hash that always match the key. Ignored if @p key is @c NULL.
  * @param   data The data pointer to remove if @p key is @c NULL.
  *               Otherwise, not required and can be @c NULL.
- * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ * @return  Will return EINA_FALSE if an error occurred, and EINA_TRUE if every
  *          thing goes fine.
  *
  * @note if you know you already have the key, use eina_hash_del_by_key_hash(),
@@ -1294,7 +1294,7 @@ eina_hash_del_by_hash(Eina_Hash *hash,
  * @param   key  The key.  Can be @c NULL.
  * @param   data The data pointer to remove if @p key is @c NULL.
  *               Otherwise, not required and can be @c NULL.
- * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ * @return  Will return EINA_FALSE if an error occurred, and EINA_TRUE if every
  *          thing goes fine.
  *
  * @note if you know you already have the key, use
@@ -1595,7 +1595,7 @@ eina_hash_foreach(const Eina_Hash *hash,
 }
 
 /**
- * @brief Returned a new iterator asociated to hash data.
+ * @brief Returned a new iterator associated to hash data.
  *
  * @param hash The hash.
  * @return A new iterator.
@@ -1645,7 +1645,7 @@ eina_hash_iterator_data_new(const Eina_Hash *hash)
 }
 
 /**
- * @brief Returned a new iterator asociated to hash keys.
+ * @brief Returned a new iterator associated to hash keys.
  *
  * @param hash The hash.
  * @return A new iterator.
@@ -1696,7 +1696,7 @@ eina_hash_iterator_key_new(const Eina_Hash *hash)
 }
 
 /**
- * @brief Returned a new iterator asociated to hash keys and data.
+ * @brief Returned a new iterator associated to hash keys and data.
  *
  * @param hash The hash.
  * @return A new iterator.

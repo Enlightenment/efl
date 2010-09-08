@@ -197,7 +197,7 @@ eina_str_split_full_helper(const char *str,
  * NUL-terminated string @p src to @p dst, NUL-terminating the result
  * (unless @p siz is equal to 0). The returned value is the length of
  * @p src. If the returned value is greater than @p siz, truncation
- * occured.
+ * occurred.
  */
 EAPI size_t
 eina_strlcpy(char *dst, const char *src, size_t siz)

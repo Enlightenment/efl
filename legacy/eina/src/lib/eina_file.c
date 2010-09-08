@@ -217,7 +217,7 @@ _eina_file_direct_ls_iterator_free(Eina_File_Direct_Iterator *it)
  *
  * If @p cb or @p dir are @c NULL, or if @p dir is a string of size 0,
  * or if @p dir can not be opened, this function returns #EINA_FALSE
- * immediatly. otherwise, it returns #EINA_TRUE.
+ * immediately. otherwise, it returns #EINA_TRUE.
  */
 EAPI Eina_Bool
 eina_file_dir_list(const char *dir,

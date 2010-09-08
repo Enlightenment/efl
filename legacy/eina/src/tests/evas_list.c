@@ -258,7 +258,7 @@ evas_list_append_relative_list(Evas_List *list,
 }
 
 /**
- * Prepend a data pointer to a linked list before the memeber specified
+ * Prepend a data pointer to a linked list before the member specified
  * @param list The list handle to prepend @p data too
  * @param data The data pointer to prepend to list @p list before @p relative
  * @param relative The data pointer before which to insert @p data
@@ -765,7 +765,7 @@ evas_list_data(const Evas_List *list)
  * This function returns how many members in the specified list: @p list. If
  * the list is empty (NULL), 0 is returned.
  *
- * NB: This is an order-1 operation and takes the same tiem regardless of the
+ * NB: This is an order-1 operation and takes the same time regardless of the
  * length of the list.
  *
  * Example:

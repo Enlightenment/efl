@@ -93,11 +93,11 @@ EAPI Eina_Error EINA_ERROR_CONVERT_0X_NOT_FOUND = 0;
 EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
 
 static const char EINA_ERROR_CONVERT_0X_NOT_FOUND_STR[] =
-   "Error during string convertion to float, First '0x' was not found.";
+   "Error during string conversion to float, First '0x' was not found.";
 static const char EINA_ERROR_CONVERT_P_NOT_FOUND_STR[] =
-   "Error during string convertion to float, First 'p' was not found.";
+   "Error during string conversion to float, First 'p' was not found.";
 static const char EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH_STR[] =
-   "Error outrun string limit during convertion string convertion to float.";
+   "Error outrun string limit during conversion string conversion to float.";
 
 /**
  * @endcond
@@ -178,7 +178,7 @@ eina_convert_shutdown(void)
  * wanted, eina_convert_xtoa() should be used. They all need a bufffer
  * sufficiently large to store all the cyphers.
  *
- * Here is an exemple of use:
+ * Here is an example of use:
  *
  * @code
  * #include <stdlib.h>
@@ -241,7 +241,7 @@ eina_convert_shutdown(void)
  * format. To obtain the double number from the mantiss and exponent,
  * use ldexp().
  *
- * Here is an exemple of use:
+ * Here is an example of use:
  *
  * @code
  * #include <stdlib.h>
