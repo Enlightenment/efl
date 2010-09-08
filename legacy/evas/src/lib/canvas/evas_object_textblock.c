@@ -6487,14 +6487,17 @@ evas_textblock_cursor_format_is_visible_get(const Evas_Textblock_Cursor *cur)
  * @param cy the y of the cursor
  * @param cw the w of the cursor
  * @param ch the h of the cursor
+ * @param dir the direction of the cursor, can be NULL.
+ * @param ctype the type of the cursor.
  * @return line number of the char on success, -1 on error.
  */
 EAPI int
-evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_Textblock_Cursor_Type ctype)
+evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_BiDi_Direction *dir, Evas_Textblock_Cursor_Type ctype)
 {
+   int ret = -1;
    if (ctype == EVAS_TEXTBLOCK_CURSOR_UNDER)
      {
-        return evas_textblock_cursor_char_geometry_get(cur, cx, cy, cw, ch);
+        ret = evas_textblock_cursor_char_geometry_get(cur, cx, cy, cw, ch);
      }
    else if (ctype == EVAS_TEXTBLOCK_CURSOR_BEFORE)
      {
@@ -6503,7 +6506,6 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
          * of just after the previous char (which in bidi text may not be
          * just before the current char). */
         Evas_Coord x, y, h, w;
-        int ret;
 
         if (cur->pos > 0)
           {
@@ -6525,10 +6527,22 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
              if (cw) *cw = 0;
              if (ch) *ch = 0;
           }
-        return ret;
      }
 
-   return -1;
+   if (dir && cur && cur->node)
+     {
+#ifdef BIDI_SUPPORT
+        Evas_BiDi_Props props;
+        props.props = cur->node->bidi_props;
+        props.start = 0;
+
+        *dir = (evas_bidi_is_rtl_char(&props, cur->pos)) ?
+           EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
+#else
+        *dir = EVAS_BIDI_DIRECTION_LTR;
+#endif
+     }
+   return ret;
 }
 
 
