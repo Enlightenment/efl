@@ -672,7 +672,7 @@ notify_handler_uri(struct _elm_cnp_selection *sel,
 
    p += strlen("file://");
 
-   if (!strstr(p,"png"))
+   if (!strstr(p,".png") && !strstr(p,".jpg"))
      {
         /* FIXME: Better test: Load it in evasw & see is probably best */
         cnp_debug("No png, ignoring\n");
@@ -1035,7 +1035,7 @@ mark_up(const char *start, int *lenp){
 struct dropable {
      Evas_Object *obj;
      /* FIXME: Cache window */
-     int types; /* FIXME */
+     enum _elm_sel_format types;
      elm_drop_cb dropcb;
      void *cbdata;
 };
@@ -1159,27 +1159,39 @@ found:
 
    if (i == CNP_ATOM_text_urilist)
      {
-        printf("We found a URI...\n");
+        cnp_debug("We found a URI... (%scached)\n",savedtypes.pi?"":"not ");
         if (savedtypes.pi)
           {
              char entrytag[100];
-             /* FIXME: Paste immediately */
-             cnp_debug("paste immediately\n");
-          //   pasteimage_append(savedtypes.pi, dropable->obj);
 
              ddata.x = savedtypes.x;
              ddata.y = savedtypes.y;
-             ddata.format = ELM_SEL_FORMAT_IMAGE;
-    /* FIXME: Need to do this per widget */
-             pasteimage_provider_set(dropable->obj);
 
-   pastedimages = eina_list_append(pastedimages, savedtypes.pi);
-   snprintf(entrytag, sizeof(entrytag),"<item absize=240x180 href=%s>",savedtypes.pi->tag);
-             ddata.data = entrytag;
-             cnp_debug("Insert %s\n",(char *)ddata.data);
-             dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
-             ecore_x_dnd_send_finished();
-             return true;
+             if (dropable->types & ELM_SEL_FORMAT_IMAGE)
+               {
+                  cnp_debug("Doing image insert (%s)\n",savedtypes.pi->file);
+                  ddata.format = ELM_SEL_FORMAT_IMAGE;
+                  ddata.data = savedtypes.pi->file;
+                  dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
+                  ecore_x_dnd_send_finished();
+                  /* FIXME: Clean up pi */
+
+                  return true;
+               }
+             else if (dropable->types & ELM_SEL_FORMAT_MARKUP)
+               {
+                  ddata.format = ELM_SEL_FORMAT_MARKUP;
+                  pasteimage_provider_set(dropable->obj);
+
+                  pastedimages = eina_list_append(pastedimages, savedtypes.pi);
+                  snprintf(entrytag, sizeof(entrytag),
+                           "<item absize=240x180 href=%s>",savedtypes.pi->tag);
+                  ddata.data = entrytag;
+                  cnp_debug("Insert %s\n",(char *)ddata.data);
+                  dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
+                  ecore_x_dnd_send_finished();
+                  return true;
+               }
           }
         else if (savedtypes.textreq)
           {
@@ -1191,6 +1203,7 @@ found:
           }
      }
 
+   cnp_debug("doing a request then\n");
    selections[ELM_SEL_XDND].requestwidget = dropable->obj;
    selections[ELM_SEL_XDND].requestformat = ELM_SEL_FORMAT_MARKUP;
    selections[ELM_SEL_XDND].active = true;
@@ -1259,7 +1272,7 @@ printf("Adding %p as a drop target\n",obj);
 
      drop->obj = obj;
      /* Something for now */
-     drop->types = 1;
+     drop->types = format;
 
      evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                  /* I love C and varargs */
