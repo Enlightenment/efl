@@ -137,7 +137,7 @@ static struct {
 } atoms[CNP_N_ATOMS] = {
    [CNP_ATOM_TARGETS] = {
 	"TARGETS",
-	(enum _elm_sel_format)-1,
+	(enum _elm_sel_format)-1, // everything 
 	targets_converter,
 	response_handler_targets,
 	notify_handler_targets,
@@ -169,7 +169,7 @@ static struct {
    },
    [CNP_ATOM_image_png] = {
 	"image/png",
-	ELM_SEL_FORMAT_IMAGE,
+	ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
 	png_converter,
 	NULL,
 	notify_handler_png,
@@ -193,7 +193,7 @@ static struct {
    },
    [CNP_ATOM_UTF8STRING] = {
 	"UTF8_STRING",
-	ELM_SEL_FORMAT_MARKUP,
+	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP,
 	text_converter,
 	NULL,
 	notify_handler_text,
@@ -201,7 +201,7 @@ static struct {
    },
    [CNP_ATOM_STRING] = {
 	"STRING",
-	ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
+	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP,
 	text_converter,
 	NULL,
 	notify_handler_text,
@@ -209,7 +209,7 @@ static struct {
    },
    [CNP_ATOM_TEXT] = {
 	"TEXT",
-	ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
+	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP,
 	text_converter,
 	NULL,
 	NULL,
@@ -217,7 +217,7 @@ static struct {
    },
    [CNP_ATOM_text_plain_utf8] = {
 	"text/plain;charset=ut-8",
-	ELM_SEL_FORMAT_MARKUP,
+	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP,
 	text_converter,
 	NULL,
 	NULL,
@@ -225,7 +225,7 @@ static struct {
    },
    [CNP_ATOM_text_plain] = {
 	"text/plain",
-	ELM_SEL_FORMAT_MARKUP,
+	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP,
 	text_converter,
 	NULL,
 	NULL,
