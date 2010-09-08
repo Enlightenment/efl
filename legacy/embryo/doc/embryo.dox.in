@@ -289,7 +289,7 @@ This is the @e only file you need to include.
 
 /**
   @def EMBRYO_FUNCTION_NONE 
-  An invalid/non-existant function.
+  An invalid/non-existent function.
 */
 
 /**

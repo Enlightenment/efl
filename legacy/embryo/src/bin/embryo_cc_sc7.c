@@ -235,7 +235,7 @@ typedef struct
  *  by '[', sENDREORDER by ']' and sEXPRSTART by '|' the following applies:
  *     '[]...'     valid, but useless; no output
  *     '[|...]     valid, but useless; only one string
- *     '[|...|...] valid and usefull
+ *     '[|...|...] valid and useful
  *     '[...|...]  invalid, first string doesn't start with '|'
  *     '[|...|]    invalid
  */
@@ -316,7 +316,7 @@ stgstring(char *start, char *end)
  *  Scraps code from the staging buffer by resetting "stgidx" to "index".
  *
  *  Global references: stgidx (altered)
- *                     staging (reffered to only)
+ *                     staging (referred to only)
  */
 void
 stgdel(int index, cell code_index)

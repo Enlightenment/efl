@@ -2062,7 +2062,7 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 
 		       entry_name = GETENTRYNAME(hdr, func_entry);
 		       if (i == offs)
-			 printf("EMBRYO: CALL [%i] %s() non-existant!\n", i, entry_name);
+			 printf("EMBRYO: CALL [%i] %s() non-existent!\n", i, entry_name);
 		       func_entry =
 			 (Embryo_Func_Stub *)((unsigned char *)func_entry + hdr->defsize);
 		    }
@@ -2193,7 +2193,7 @@ embryo_program_return_value_get(Embryo_Program *ep)
  * run for a specific period of time. If the cycle count is set to something
  * low like 5000 or 1000, then every 1000 (or 5000) cycles control will be
  * returned to the calling process where it can check a timer to see if a
- * physical runtime limit has been elapsed and then abort runing further
+ * physical runtime limit has been elapsed and then abort running further
  * assuming a "runaway script" or keep continuing the script run. This
  * limits resolution to only that many cycles which do not take a determined
  * amount of time to execute, as this varies from cpu to cpu and also depends

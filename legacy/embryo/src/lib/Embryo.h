@@ -76,7 +76,7 @@ extern "C" {
      };
 
    /* possible function type values that are enumerated */
-#define EMBRYO_FUNCTION_NONE 0x7fffffff /* An invalid/non existant function */
+#define EMBRYO_FUNCTION_NONE 0x7fffffff /* An invalid/non existent function */
 #define EMBRYO_FUNCTION_MAIN -1         /* Start at program entry point */
 #define EMBRYO_FUNCTION_CONT -2         /* Continue from last address */
   /** An invalid cell reference */

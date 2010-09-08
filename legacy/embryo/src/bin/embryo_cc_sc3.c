@@ -221,7 +221,7 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
 	   return FALSE;
      }				/* if */
 
-   /* check existance and the proper declaration of this function */
+   /* check existence and the proper declaration of this function */
    if ((sym->usage & uMISSING) != 0 || (sym->usage & uPROTOTYPED) == 0)
      {
 	char                symname[2 * sNAMEMAX + 16];	/* allow space for user defined operators */
@@ -266,7 +266,7 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
    else if (savealt)
      {
 	/* for the assignment operator, ALT may contain an address at which the
-	 * result must be stored; this address must be preserved accross the
+	 * result must be stored; this address must be preserved across the
 	 * call
 	 */
 	assert(lval != NULL);	/* this was checked earlier */
@@ -820,7 +820,7 @@ array_levelsize(symbol * sym, int level)
  *
  *  Lowest hierarchy level (except for the , operator).
  *
- *  Global references: intest   (reffered to only)
+ *  Global references: intest   (referred to only)
  */
 int
 hier14(value * lval1)

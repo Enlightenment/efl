@@ -828,7 +828,7 @@ parse(void)
 	  case tSTATIC:
 	     /* This can be a static function or a static global variable;
 	      * we know which of the two as soon as we have parsed up to the
-	      * point where an opening paranthesis of a function would be
+	      * point where an opening parenthesis of a function would be
 	      * expected. To back out after deciding it was a declaration of
 	      * a static variable after all, we have to store the symbol name
 	      * and tag.
@@ -2705,7 +2705,7 @@ doarg(char *name, int ident, int offset, int tags[], int numtags,
 		  arg->hasdefault = TRUE;	/* argument has default value */
 		  arg->defvalue.array.size = litidx;
 		  arg->defvalue.array.addr = -1;
-		  /* calulate size to reserve on the heap */
+		  /* calculate size to reserve on the heap */
 		  arg->defvalue.array.arraysize = 1;
 		  for (i = 0; i < arg->numdim; i++)
 		     arg->defvalue.array.arraysize *= arg->dim[i];
@@ -2989,7 +2989,7 @@ destructsymbols(symbol * root, int level)
 	     operator_symname(symbolname, "~", sym->tag, 0, 1, 0);
 	     if ((opsym = findglb(symbolname)))
 	       {
-		  /* save PRI, in case of a return statment */
+		  /* save PRI, in case of a return statement */
 		  if (!savepri)
 		    {
 		       push1();	/* right-hand operand is in PRI */
@@ -3797,7 +3797,7 @@ doswitch(void)
    while (tok != '}');
 
 #if !defined NDEBUG
-   /* verify that the case table is sorted (unfortunatly, duplicates can
+   /* verify that the case table is sorted (unfortunately, duplicates can
     * occur; there really shouldn't be duplicate cases, but the compiler
     * may not crash or drop into an assertion for a user error). */
    for (cse = caselist.next; cse && cse->next; cse = cse->next)
