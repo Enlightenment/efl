@@ -59,8 +59,8 @@ _els_smart_icon_file_key_set(Evas_Object *obj, const char *file, const char *key
    evas_object_image_file_set(sd->obj, file, key);
    sd->preloading = 1;
    sd->show = 1;
-   evas_object_image_preload(sd->obj, EINA_FALSE);
    evas_object_hide(sd->obj);
+   evas_object_image_preload(sd->obj, EINA_FALSE);
    if (evas_object_image_load_error_get(sd->obj) != EVAS_LOAD_ERROR_NONE)
      return EINA_FALSE;
    _smart_reconfigure(sd);
