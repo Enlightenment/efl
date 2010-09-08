@@ -98,7 +98,7 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
    footer = (tga_footer *)(filedata + (ss.st_size - sizeof(tga_footer)));
    if (!memcmp(footer->signature, TGA_SIGNATURE, sizeof(footer->signature)))
      {
-        // footer is ther and matches. this is a tga file - any problems now
+        // footer is there and matches. this is a tga file - any problems now
         // are a corrupt file
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
         footer_present = 1;
@@ -175,7 +175,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
    footer = (tga_footer *)(filedata + (ss.st_size - sizeof(tga_footer)));
    if (!memcmp(footer->signature, TGA_SIGNATURE, sizeof(footer->signature)))
      {
-        // footer is ther and matches. this is a tga file - any problems now
+        // footer is there and matches. this is a tga file - any problems now
         // are a corrupt file
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
         footer_present = 1;

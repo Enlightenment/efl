@@ -290,7 +290,7 @@ typedef struct _Evas_Event_Hold       Evas_Event_Hold; /**< Event structure for 
 
 /* load error identifiers, see evas_load_error_str() */
 #define EVAS_LOAD_ERROR_NONE                       0 /**< No error on load */
-#define EVAS_LOAD_ERROR_GENERIC                    1 /**< A non-specific error occured */
+#define EVAS_LOAD_ERROR_GENERIC                    1 /**< A non-specific error occurred */
 #define EVAS_LOAD_ERROR_DOES_NOT_EXIST             2 /**< File (or file path) does not exist */
 #define EVAS_LOAD_ERROR_PERMISSION_DENIED          3 /**< Permission deinied to an existing file (or path) */
 #define EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED 4 /**< Allocation of resources failure prevented load */

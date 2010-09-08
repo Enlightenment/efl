@@ -1584,7 +1584,7 @@ evas_object_pass_events_get(const Evas_Object *obj)
  * callbacks, but also to be repeated on the next lower object in the
  * stack.
  *
- * If @p repeat is false, events occuring on @p obj will be processed
+ * If @p repeat is false, events occurring on @p obj will be processed
  * normally.
  */
 EAPI void
@@ -1634,7 +1634,7 @@ evas_object_repeat_events_get(const Evas_Object *obj)
  * This function has no effect if @p obj is not a member of a smart
  * object.
  *
- * If @p prop is true, events occuring on this object will propagate on
+ * If @p prop is true, events occurring on this object will propagate on
  * to the smart object of which @p obj is a member.
  *
  * If @p prop is false, events for which callbacks are set on the member
@@ -1654,7 +1654,7 @@ evas_object_propagate_events_set(Evas_Object *obj, Eina_Bool prop)
 /**
  * Determine whether an object is set to propagate events.
  * @param obj
- * @return propogate events state
+ * @return propagate events state
  */
 EAPI Eina_Bool
 evas_object_propagate_events_get(const Evas_Object *obj)

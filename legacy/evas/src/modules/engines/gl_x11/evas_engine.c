@@ -654,7 +654,7 @@ eng_output_flush(void *data)
      }
    else
      {
-// FIXME: this doesnt work.. why oh why?        
+// FIXME: this doesn't work.. why oh why?        
         int sx, sy, sw, sh;
         
         // fimxe - reset when done

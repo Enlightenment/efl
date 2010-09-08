@@ -59,7 +59,7 @@ FB_Mode *fb_list_modes(int *num_return);
 /* be used. If refresh is 0 it uses the DEFAULT mode (the one with no        */
 /* refresh rate at the end of its name (WIDTHxHEIGHT-REFRESH)                */
 /* NB: in 8bpp you get a 332 palette. This is fixed so all modes are         */
-/* "truecolor" - the onyl difference is how many bits bep red, green and     */
+/* "truecolor" - the only difference is how many bits bep red, green and     */
 /* blue channel. This is for speed reasons                                   */
 FB_Mode *fb_setmode(int width, int height, int depth, int refresh);
 /* returns the current fb mode being used in FB_Mode                         */

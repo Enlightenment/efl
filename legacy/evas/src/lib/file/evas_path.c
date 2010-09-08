@@ -1,4 +1,4 @@
-/* os dependant file code. for unix-y like fs's only for now */
+/* os dependent file code. for unix-y like fs's only for now */
 /* if your os doesn't use unix-like fs starting with "/" for the root and */
 /* the file path separator isn't "/" then you may need to help out by */
 /* adding in a new set of functions here */

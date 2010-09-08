@@ -73,7 +73,7 @@ evas_async_events_shutdown(void)
  * that.
  *
  * An example of actual use of this API is for image asynchronous
- * preload inside evas. If the canvas was instantiated throught
+ * preload inside evas. If the canvas was instantiated through
  * ecore-evas usage, ecore itself will take care of calling those
  * events' processing.
  *

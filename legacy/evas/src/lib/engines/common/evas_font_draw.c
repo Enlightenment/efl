@@ -382,7 +382,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 
 
 /* 
- * BiDi handling: We recieve the shaped string + other props from intl_props,
+ * BiDi handling: We receive the shaped string + other props from intl_props,
  * we need to reorder it so we'll have the visual string (the way we draw)
  * and then for kerning we have to switch the order of the kerning query (as the prev
  * is on the right, and not on the left).

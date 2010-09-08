@@ -992,8 +992,8 @@ evas_map_util_points_color_set(Evas_Map *m, int r, int g, int b, int a)
  *
  * @param m map to change.
  * @param degrees amount of degrees from 0.0 to 360.0 to rotate.
- * @param cx rotation's center horizontal positon.
- * @param cy rotation's center vertical positon.
+ * @param cx rotation's center horizontal position.
+ * @param cy rotation's center vertical position.
  *
  * @see evas_map_point_coord_set()
  * @see evas_map_util_zoom()
@@ -1037,8 +1037,8 @@ evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
  * @param m map to change.
  * @param zoomx horizontal zoom to use.
  * @param zoomy vertical zoom to use.
- * @param cx zooming center horizontal positon.
- * @param cy zooming center vertical positon.
+ * @param cx zooming center horizontal position.
+ * @param cy zooming center vertical position.
  *
  * @see evas_map_point_coord_set()
  * @see evas_map_util_rotate()
@@ -1081,9 +1081,9 @@ evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_
  * @param dx amount of degrees from 0.0 to 360.0 to rotate arount X axis.
  * @param dy amount of degrees from 0.0 to 360.0 to rotate arount Y axis.
  * @param dz amount of degrees from 0.0 to 360.0 to rotate arount Z axis.
- * @param cx rotation's center horizontal positon.
- * @param cy rotation's center vertical positon.
- * @param cz rotation's center vertical positon.
+ * @param cx rotation's center horizontal position.
+ * @param cy rotation's center vertical position.
+ * @param cz rotation's center vertical position.
  */
 EAPI void
 evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz, 

@@ -548,7 +548,7 @@ void evas_direct3d_image_draw(Direct3DDeviceHandler d3d, Direct3DImageHandler im
          evas_cache_image_load_data(&evas_image->cache_entry);
    }
 
-   // If the image object wasnt initialized yet
+   // If the image object wasn't initialized yet
    if (evas_image != NULL && evas_image->image.data != NULL && !image_ref->IsValid())
    {
       D3DImageCache::CacheEntryInfo info;

@@ -160,7 +160,7 @@ evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 /* Thanks to Diz for this code. i've munged it a little and turned it into */
 /* inline macros. I tried beating it with a different algorithm using MMX */
 /* but failed. So here we are. This is the fastest YUV->RGB i know of for */
-/* x86. It has an issue that it doesnt convert colours accurately so the */
+/* x86. It has an issue that it doesn't convert colours accurately so the */
 /* image looks a little "yellowy". This is a result of only 10.6 fixed point */
 /* resolution as opposed to 16.16 in the C code. This could be fixed by */
 /* processing half the number of pixels per cycle and going up to 32bits */
@@ -557,7 +557,7 @@ _evas_yv12torgb_altivec(unsigned char **yuv, unsigned char *rgb, int w, int h)
 /* 2 */      tmp1 = vec_perm(tmp1, tmp1, uperm);
 /* 2 */      tmp2 = vec_perm(tmp2, tmp2, vperm);
 
-	     /* Avoid dependancy stalls on yperm and calculate the 4 u values */
+	     /* Avoid dependency stalls on yperm and calculate the 4 u values */
 /* 3 */      yperm = vec_lvsr(12, yp1);
 /* 1 */      tmp1 = (vector signed short)vec_mergeh((vector unsigned char)tmp1,
 						    (vector unsigned char)tmp1);
@@ -586,7 +586,7 @@ _evas_yv12torgb_altivec(unsigned char **yuv, unsigned char *rgb, int w, int h)
 /* 1 */      y = vec_sub(y, c16);
 /* 4 */      y = vec_mladd(ymul, y, (vector signed short)zero);
 
-	     /* Perform non-dependant multiplies first. */
+	     /* Perform non-dependent multiplies first. */
 /* 4 */      tmp1 = vec_mladd(crv, v, y);
 /* 4 */      tmp2 = vec_mladd(cgv, v, tmp2);
 /* 4 */      tmp3 = vec_mladd(cbu, u, y);
@@ -643,7 +643,7 @@ _evas_yv12torgb_altivec(unsigned char **yuv, unsigned char *rgb, int w, int h)
 /* 1 */      y = (vector signed short)vec_mergeh(zero,
 						 (vector unsigned char)y);
 
-	     /* Avoid dependancy stalls on yperm */
+	     /* Avoid dependency stalls on yperm */
 /* 2 */      tmp3 = vec_perm(tmp3, tmp3, yperm);
 /* 1 */      tmp3 = (vector signed short)vec_mergeh(zero,
 						    (vector unsigned char)tmp3);
@@ -656,7 +656,7 @@ _evas_yv12torgb_altivec(unsigned char **yuv, unsigned char *rgb, int w, int h)
 /* 1 */      y = vec_sub(y, c16);
 /* 4 */      y = vec_mladd(ymul, y, (vector signed short)zero);
 
-	     /* Perform non-dependant multiplies first. */
+	     /* Perform non-dependent multiplies first. */
 /* 4 */      tmp2 = vec_mladd(cgv, v, tmp2);
 /* 4 */      tmp1 = vec_mladd(crv, v, y);
 /* 4 */      tmp3 = vec_mladd(cbu, u, y);
@@ -775,7 +775,7 @@ _evas_yv12torgb_diz(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     u = (*up++) - 128;
 	     v = (*vp++) - 128;
 
-	     /* do the top 2 pixels of the 2x2 block whcih shared u & v */
+	     /* do the top 2 pixels of the 2x2 block which shared u & v */
 	     /* yuv to rgb */
 	     y = YMUL * ((*yp1++) - 16);
 	     r = LUT_CLIP((y + (crv * v)) >> 16);
@@ -854,7 +854,7 @@ _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     u = _v2018[u];
 	     v = _v1596[v];
 
-             /* do the top 2 pixels of the 2x2 block whcih shared u & v */
+             /* do the top 2 pixels of the 2x2 block which shared u & v */
 	     /* yuv to rgb */
 	     y = _v1164[*yp1++];
 	     *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));

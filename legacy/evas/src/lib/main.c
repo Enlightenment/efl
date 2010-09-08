@@ -10,15 +10,15 @@ static int _evas_debug_show = 0;
 static int _evas_debug_abort = 0;
 
 /**
- * Return if any allocation errors have occured during the prior function
+ * Return if any allocation errors have occurred during the prior function
  * @return The allocation error flag
  *
- * This function will return if any memory allocation errors occured during,
+ * This function will return if any memory allocation errors occurred during,
  * and what kind they were. The return value will be one of
  * EVAS_ALLOC_ERROR_NONE, EVAS_ALLOC_ERROR_FATAL or EVAS_ALLOC_ERROR_RECOVERED
  * with each meaning something different.
  *
- * EVAS_ALLOC_ERROR_NONE means that no errors occured at all and the function
+ * EVAS_ALLOC_ERROR_NONE means that no errors occurred at all and the function
  * worked as expected.
  *
  * EVAS_ALLOC_ERROR_FATAL means the function was completely unable to perform
@@ -27,7 +27,7 @@ static int _evas_debug_abort = 0;
  * recover from the prior functions failure (or try free up memory elsewhere
  * and try again after more memory is freed).
  *
- * EVAS_ALLOC_ERROR_RECOVERED means that an allocation error occured, but was
+ * EVAS_ALLOC_ERROR_RECOVERED means that an allocation error occurred, but was
  * recovered from by evas finding memory of its own it has allocated and
  * freeing what it sees as not really usefully allocated memory. What is freed
  * may vary. Evas may reduce the resolution of images, free cached images or
@@ -66,14 +66,14 @@ evas_alloc_error(void)
    return _evas_alloc_error;
 }
 
-/* free cached items only in ram for speed reasons. return 0 if cant free */
+/* free cached items only in ram for speed reasons. return 0 if can't free */
 int
 evas_mem_free(int mem_required __UNUSED__)
 {
    return 0;
 }
 
-/* start reducing quality of images etc. return 0 if cant free anything */
+/* start reducing quality of images etc. return 0 if can't free anything */
 int
 evas_mem_degrade(int mem_required __UNUSED__)
 {

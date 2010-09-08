@@ -891,8 +891,8 @@ static Evas_Func func =
      eng_image_map4_draw,
      eng_image_map_surface_new,
      eng_image_map_surface_free,
-     NULL, // eng_image_content_hint_set - software doesnt use it
-     NULL // eng_image_content_hint_get - software doesnt use it
+     NULL, // eng_image_content_hint_set - software doesn't use it
+     NULL // eng_image_content_hint_get - software doesn't use it
      /* FUTURE software generic calls go here */
 };
 

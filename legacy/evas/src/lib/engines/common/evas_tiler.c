@@ -1068,7 +1068,7 @@ evas_common_tilebuf_add_motion_vector(Tilebuf *tb, int x, int y, int w, int h, i
      }
    return num;
 #else
-   /* FIXME: need to actually impliment motion vectors. for now it just */
+   /* FIXME: need to actually implement motion vectors. for now it just */
    /*        implements redraws */
    int num;
 

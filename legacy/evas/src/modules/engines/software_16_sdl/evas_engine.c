@@ -686,7 +686,7 @@ evas_engine_sdl16_image_data_get(void *data __UNUSED__, void *image,
      eim = (SDL_Engine_Image_Entry *) evas_cache_engine_image_alone(&eim->cache_entry,
                                                                     NULL);
 
-   /* FIXME: Handle colorspace convertion correctly. */
+   /* FIXME: Handle colorspace conversion correctly. */
    if (image_data) *image_data = (DATA32 *) im->pixels;
 
    return eim;
@@ -703,7 +703,7 @@ evas_engine_sdl16_image_data_put(void *data, void *image, DATA32* image_data)
    if (!eim) return NULL;
    im = (Soft16_Image *) eim->cache_entry.src;
 
-   /* FIXME: Handle colorspace convertion correctly. */
+   /* FIXME: Handle colorspace conversion correctly. */
    if ((DATA16 *) image_data == im->pixels) return eim;
 
    eim_new = (SDL_Engine_Image_Entry *) evas_cache_engine_image_data(re->cache,

@@ -508,7 +508,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
  *       @endcode
  *       This is more evident in images, but text, textblock, lines
  *       and polygons will behave similarly. Check their specific APIs
- *       to know how to achive your desired behavior.
+ *       to know how to achieve your desired behavior.
  *
  * @ingroup Evas_Object_Group_Basic
  */

@@ -235,7 +235,7 @@ evas_common_regionbuf_span_del(Regionbuf *rb, int x1, int x2, int y)
 		       return;
 		    }
 	       }
-	     /* it ends on or after the end of thsi span */
+	     /* it ends on or after the end of this span */
 	     else if (x2 >= sp_start->x2)
 	       {
 		  /* it starts after the start */

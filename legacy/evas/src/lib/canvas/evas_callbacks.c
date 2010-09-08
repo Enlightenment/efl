@@ -282,8 +282,8 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  * The first parameter @p data in this function will be the same value
  * passed to evas_object_event_callback_add() as the @p data
  * parameter. The second parameter is a convenience for the programmer
- * to know what evas canvas the event occured on. The third parameter
- * @p obj is the Object handle on which the event occured. The foruth
+ * to know what evas canvas the event occurred on. The third parameter
+ * @p obj is the Object handle on which the event occurred. The foruth
  * parameter @p event_info is a pointer to a data structure that may
  * or may not be passed to the callback, depending on the event type
  * that triggered the callback.
@@ -604,7 +604,7 @@ evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, E
  * The first parameter @p data in this function will be the same value
  * passed to evas_event_callback_add() as the @p data parameter. The
  * second parameter @p e is the canvas handle on which the event
- * occured. The third parameter @p event_info is a pointer to a data
+ * occurred. The third parameter @p event_info is a pointer to a data
  * structure that may or may not be passed to the callback, depending
  * on the event type that triggered the callback.
  *

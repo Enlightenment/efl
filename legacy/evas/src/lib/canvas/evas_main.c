@@ -403,7 +403,7 @@ evas_engine_info_get(const Evas *e)
  *
  * @param   e    The pointer to the Evas Canvas
  * @param   info The pointer to the Engine Info to use
- * @return  1 if no error occured, 0 otherwise
+ * @return  1 if no error occurred, 0 otherwise
  * @ingroup Evas_Output_Method
  */
 EAPI int
@@ -1172,7 +1172,7 @@ evas_load_error_str(int error)
       case EVAS_LOAD_ERROR_NONE:
 	 return "No error on load";
       case EVAS_LOAD_ERROR_GENERIC:
-	 return "A non-specific error occured";
+	 return "A non-specific error occurred";
       case EVAS_LOAD_ERROR_DOES_NOT_EXIST:
 	 return "File (or file path) does not exist";
       case EVAS_LOAD_ERROR_PERMISSION_DENIED:
@@ -1274,7 +1274,7 @@ evas_color_argb_unpremul(int a, int *r, int *g, int *b)
  * Pre-multiplies data by an alpha factor.
  *
  * @param data The data value.
- * @param len  The lenght value.
+ * @param len  The length value.
  *
  * This function pre-multiplies a given data by an alpha
  * factor. Alpha factor is used to define transparency.
@@ -1292,7 +1292,7 @@ evas_data_argb_premul(unsigned int *data, unsigned int len)
  * Undo pre-multiplication data by an alpha factor.
  *
  * @param data The data value.
- * @param len  The lenght value.
+ * @param len  The length value.
  *
  * This function undoes pre-multiplication of a given data by an alpha
  * factor. Alpha factor is used to define transparency.

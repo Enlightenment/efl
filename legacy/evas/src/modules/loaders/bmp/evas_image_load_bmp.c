@@ -574,7 +574,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
              if (fread(&g, 1, 1, f) != 1) goto close_file;
              if (fread(&r, 1, 1, f) != 1) goto close_file;
              if ((head_size != 12) /*&& (palette_size != 0)*/)
-               { // OS/2 V1 doesnt do the pad byte
+               { // OS/2 V1 doesn't do the pad byte
                   if (fread(&a, 1, 1, f) != 1) goto close_file;
                }
              a = 0xff; // fillin a as solid for paletted images

@@ -777,7 +777,7 @@ _evas_object_box_layout_horizontal_weight_apply(Evas_Object_Box_Data *priv, Evas
  * properties apply for padding/positioning relative to the overall
  * height of the box. Finally, there is the @c weight_x property,
  * which, if set to a non-zero value, tells the container that the
- * child width is not pre-defined.  If the container can't accomodate
+ * child width is not pre-defined.  If the container can't accommodate
  * all its children, it sets the widths of the children *with weights*
  * to sizes as small as they can all fit into it.  If the size
  * required by the children is less than the available, the box

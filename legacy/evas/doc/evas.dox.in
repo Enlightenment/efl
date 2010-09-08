@@ -80,7 +80,7 @@ Ecore_Evas (http://docs.enlightenment.org/auto/ecore/).
 
 Evas is a canvas display library. This is markedly different from most
 display and windowing systems as a Canvas is structural and is also a state
-engine, wheras most display and windowing systems are immediate mode display
+engine, whereas most display and windowing systems are immediate mode display
 targets. Evas handles the logic between a structural display via its' state
 engine, and controls the target windowing system in order to produce
 rendered results of the current canvases state on the display.
@@ -102,7 +102,7 @@ The series of commands is executed by the windowing system and the results
 are displayed on the screen (normally). Once the commands are executed the
 display system has little or no idea of how to reproduce this image again,
 and so has to be instructed by the application how to redraw sections of the
-screen whenever needed. Each sucessive command will be executed as
+screen whenever needed. Each successive command will be executed as
 instructed by the application and either emulated by software or sent to the
 graphics hardware on the device to be performed.
 

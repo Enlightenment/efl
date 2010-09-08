@@ -25,7 +25,7 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
 
    /* NOTE: ft2 seems to have a bug. and sometimes returns bizarre
     * values to kern by - given same font, same size and same
-    * prev_index and index. auto/bytecode or none hinting doesnt
+    * prev_index and index. auto/bytecode or none hinting doesn't
     * matter */
    FTLOCK();
    if (FT_Get_Kerning(fi->src->ft.face,
@@ -57,7 +57,7 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
 }
 
 /* size of the string (width and height) in pixels
- * BiDi handling: We recieve the shaped string + other props from intl_props,
+ * BiDi handling: We receive the shaped string + other props from intl_props,
  * We only care about the size, and the size does not depend on the visual order.
  * As long as we follow the logical string and get kerning data like we should,
  * we are fine.
@@ -216,7 +216,7 @@ evas_common_font_query_inset(RGBA_Font *fn, const Eina_Unicode *text)
 }
 
 /* h & v advance
- * BiDi handling: We recieve the shaped string + other props from intl_props,
+ * BiDi handling: We receive the shaped string + other props from intl_props,
  * We don't care about the order, as heights will remain the same (we already did
  * shaping) and as long as we go through the logical string and match the kerning
  * this way, we are safe.
@@ -309,7 +309,7 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Ev
 
 /* x y w h for char at char pos for null it returns the position right after
  * the last char with 0 as width and height.
- * BiDi handling: We recieve the shaped string + other props from intl_props,
+ * BiDi handling: We receive the shaped string + other props from intl_props,
  * We care about the actual drawing location of the string, this is why we need
  * the visual string. We need to know how it's printed. After that we need to calculate
  * the reverse kerning in case of rtl parts. "pos" passed to this function is an
@@ -629,7 +629,7 @@ end:
 }
 
 /* position of the last char in thext text that will fit in xy.
- * BiDi handling: We recieve the shaped string + other props from intl_props,
+ * BiDi handling: We receive the shaped string + other props from intl_props,
  * All we care about is char sizes + kerning so we only really need to get the
  * shaped string to utf8, and then just go through it like in english, as it's
  * just the logical string, nothing special about that.

@@ -249,7 +249,7 @@ evas_object_intercept_call_clip_unset(Evas_Object *obj)
  *
  * @param obj The given canvas object pointer.
  * @param func The given function to be the callback function.
- * @param data The data passed to the callback fucntion.
+ * @param data The data passed to the callback function.
  *
  * This function sets a callback function to intercepts a show event
  * of a canvas object.
@@ -308,7 +308,7 @@ evas_object_intercept_show_callback_del(Evas_Object *obj, Evas_Object_Intercept_
  *
  * @param obj The given canvas object pointer.
  * @param func The given function to be the callback function.
- * @param data The data passed to the callback fucntion.
+ * @param data The data passed to the callback function.
  *
  * This function sets a callback function to intercepts a hide event
  * of a canvas object.
@@ -366,7 +366,7 @@ evas_object_intercept_hide_callback_del(Evas_Object *obj, Evas_Object_Intercept_
  *
  * @param obj The given canvas object pointer.
  * @param func The given function to be the callback function.
- * @param data The data passed to the callback fucntion.
+ * @param data The data passed to the callback function.
  *
  * This function sets a callback function to intercepts a move event
  * of a canvas object.

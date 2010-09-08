@@ -1202,7 +1202,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                     c->client_main->data = eina_list_remove(c->client_main->data, img);
                   else
                     c->data = eina_list_remove(c->data, img);
-                  // FIXME: preload doesnt work async
+                  // FIXME: preload doesn't work async
                   img_preload(img);
                   LKU(img->lock);
                }

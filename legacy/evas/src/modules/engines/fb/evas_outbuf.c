@@ -11,7 +11,7 @@ evas_fb_outbuf_fb_init(void)
 void
 evas_fb_outbuf_fb_free(Outbuf *buf)
 {
-   /* FIXME: impliment */
+   /* FIXME: implement */
    WRN("destroying fb info.. not implemented!!!! WARNING. LEAK!");
    if (buf->priv.back_buf)
      evas_cache_image_drop(&buf->priv.back_buf->cache_entry);
@@ -122,7 +122,7 @@ evas_fb_outbuf_fb_blit(Outbuf *buf, int src_x, int src_y, int w, int h, int dst_
      {
 	if (buf->priv.fb.fb)
 	  {
-	     /* FIXME: need to impliment an fb call for "copy area" */
+	     /* FIXME: need to implement an fb call for "copy area" */
 	  }
      }
 }
@@ -335,7 +335,7 @@ evas_fb_outbuf_fb_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth d
      }
    if (buf->priv.fb.fb)
      {
-	/* FIXME: impliment this */
+	/* FIXME: implement this */
      }
    /* if backbuf delet it */
    /* resize window or reset fb mode */

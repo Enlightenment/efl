@@ -1068,7 +1068,7 @@ case $host_cpu in
 esac
 AC_MSG_CHECKING(whether to build neon code)
 AC_ARG_ENABLE(cpu-neon,
-  AC_HELP_STRING([--enable-cpu-neon], [enable neon code - with gcc you will need these CFLAGS for it to begin to work, and even then your gcc may have broken or non-existant support: -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon]),
+  AC_HELP_STRING([--enable-cpu-neon], [enable neon code - with gcc you will need these CFLAGS for it to begin to work, and even then your gcc may have broken or non-existent support: -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon]),
   [
      if test "x$enableval" = "xyes" ; then
        AC_TRY_COMPILE([#include <arm_neon.h>],

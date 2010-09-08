@@ -30,7 +30,7 @@
  * also have the added benefit of updating automatically upon textblock changes,
  * this means that if you have a cursor pointing to a specific character, it'll
  * still point to it even after you change the whole object completely (as long
- * as the char was not deleted), this is not possible without updating, beacuse
+ * as the char was not deleted), this is not possible without updating, because
  * as mentioned, each cursor holds a character position. There are many
  * functions that handle cursors, just check out the evas_textblock_cursor*
  * functions. For creation and deletion of cursors check out:
@@ -1166,7 +1166,7 @@ _format_clean_param(char *dst, const char *src)
  *
  * @param obj the evas object - should not be NULL.
  * @param fmt The format to populate - should not be NULL.
- * @param[in] cmd the command to proccess, should be stringshared.
+ * @param[in] cmd the command to process, should be stringshared.
  * @param[in] param the parameter of the command.
  */
 static void
@@ -2729,8 +2729,8 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const cha
 
 /**
  * @internal
- * Handles a format by proccessing a format node. It returns the relevant format
- * through _fmt and updates the padding throught style_pad_*. If needed,
+ * Handles a format by processing a format node. It returns the relevant format
+ * through _fmt and updates the padding through style_pad_*. If needed,
  * it creates a format item.
  *
  * @param obj the evas object - NOT NULL.
@@ -2997,7 +2997,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    /* run through all text and format nodes generating lines */
    if (!c->o->text_nodes && !c->o->format_nodes)
      {
-        /* If there are no nodes and lines, do the inital creation. */
+        /* If there are no nodes and lines, do the initial creation. */
         if (!c->par && !c->ln)
           {
              _layout_paragraph_new(c);
@@ -4134,7 +4134,7 @@ _evas_textblock_cursor_nodes_merge(Evas_Textblock_Cursor *cur)
  * Return the format at a specific position.
  *
  * @param cur the cursor to the position.
- * @return the format node at the specific postion or NULL if not found.
+ * @return the format node at the specific position or NULL if not found.
  */
 static Evas_Object_Textblock_Node_Format *
 _evas_textblock_cursor_node_format_at_pos_get(const Evas_Textblock_Cursor *cur)
@@ -4169,7 +4169,7 @@ _evas_textblock_cursor_node_format_at_pos_get(const Evas_Textblock_Cursor *cur)
  * @internal
  * Return the last format node at the position of the format node n.
  *
- * @param n a format node at the positon.
+ * @param n a format node at the position.
  * @return the last format node at the position of n.
  */
 static Evas_Object_Textblock_Node_Format *
@@ -4193,7 +4193,7 @@ _evas_textblock_node_format_last_at_off(const Evas_Object_Textblock_Node_Format 
  * Returns the visible format at a specific location.
  *
  * @param n a format at the specific position.
- * @return the format node at the specific postion or NULL if not found.
+ * @return the format node at the specific position or NULL if not found.
  */
 static Evas_Object_Textblock_Node_Format *
 _evas_textblock_node_visible_at_pos_get(const Evas_Object_Textblock_Node_Format *n)
@@ -4222,7 +4222,7 @@ _evas_textblock_node_visible_at_pos_get(const Evas_Object_Textblock_Node_Format 
  * position of the cursor in the text node is returned or the previous's text
  * node's format node.
  *
- * @param cur teh position to look at.
+ * @param cur the position to look at.
  * @return the format node found.
  */
 static Evas_Object_Textblock_Node_Format *
@@ -4272,7 +4272,7 @@ _evas_textblock_cursor_node_format_before_or_at_pos_get(const Evas_Textblock_Cur
  * position of the cursor in the text node is returned or the previous's text
  * node's format node.
  *
- * @param cur teh position to look at.
+ * @param cur the position to look at.
  * @return the format node found.
  */
 static Evas_Object_Textblock_Node_Format *
@@ -7730,7 +7730,7 @@ evas_object_textblock_render_pre(Evas_Object *obj)
 	goto done;
      }
    /* if it changed geometry - and obviously not visibility or color */
-   /* caluclate differences since we have a constant color fill */
+   /* calculate differences since we have a constant color fill */
    /* we really only need to update the differences */
    if ((obj->cur.geometry.x != obj->prev.geometry.x) ||
        (obj->cur.geometry.y != obj->prev.geometry.y) ||

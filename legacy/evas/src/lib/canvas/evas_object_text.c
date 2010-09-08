@@ -650,7 +650,7 @@ evas_object_text_char_pos_get(const Evas_Object *obj, int pos, Evas_Coord *cx, E
 /**
  * Returns the logical position of the last char in the text
  * up to the pos given. this is NOT the position of the last char
- * because of the possibilty of RTL in the text.
+ * because of the possibility of RTL in the text.
  * To be documented.
  *
  * FIXME: To be fixed.

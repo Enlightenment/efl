@@ -195,7 +195,7 @@ evas_object_layer_set(Evas_Object *obj, short l)
 /**
  * Retrieves the layer of the evas that the given object is part of.
  *
- * Be carefull, it doesn't make sense to change the layer of smart object's
+ * Be careful, it doesn't make sense to change the layer of smart object's
  * child. So the returned value could be wrong in some case. Don't rely on
  * it's accuracy.
  *
