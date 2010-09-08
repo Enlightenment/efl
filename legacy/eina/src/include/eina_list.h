@@ -58,7 +58,7 @@ typedef struct _Eina_List_Accounting Eina_List_Accounting;
  * @struct _Eina_List
  * Type for a generic double linked list.
  */
-struct _Eina_List /** A linked list node */
+struct _Eina_List
 {
    void *data; /**< Pointer to list element payload */
    Eina_List *next; /**< Next member in the list */

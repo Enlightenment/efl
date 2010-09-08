@@ -1408,6 +1408,103 @@ eina_log_term_color_supported(const char *term)
      }
 }
 
+static inline void
+eina_log_domain_unregister_unlocked(int domain)
+{
+   Eina_Log_Domain *d;
+
+   if ((unsigned int)domain >= _log_domains_count)
+      return;
+
+   d = &_log_domains[domain];
+   eina_log_domain_free(d);
+   d->deleted = 1;
+}
+
+static inline void
+eina_log_print_unlocked(int domain,
+                        Eina_Log_Level level,
+                        const char *file,
+                        const char *fnc,
+                        int line,
+                        const char *fmt,
+                        va_list args)
+{
+   Eina_Log_Domain *d;
+
+#ifdef EINA_SAFETY_CHECKS
+   if (EINA_UNLIKELY((unsigned int)domain >= _log_domains_count) ||
+       EINA_UNLIKELY(domain < 0))
+     {
+        if (file && fnc && fmt)
+           fprintf(
+              stderr,
+              "CRI: %s:%d %s() eina_log_print() unknown domain %d, original message format '%s'\n",
+              file,
+              line,
+              fnc,
+              domain,
+              fmt);
+        else
+           fprintf(
+              stderr,
+              "CRI: eina_log_print() unknown domain %d, original message format '%s'\n",
+              domain,
+              fmt ? fmt : "");
+
+        if (_abort_on_critical)
+           abort();
+
+        return;
+     }
+
+#endif
+   d = _log_domains + domain;
+#ifdef EINA_SAFETY_CHECKS
+   if (EINA_UNLIKELY(d->deleted))
+     {
+           fprintf(stderr,
+                "ERR: eina_log_print() domain %d is deleted\n",
+                domain);
+        return;
+     }
+
+#endif
+
+   if (level > d->level)
+      return;
+
+#ifdef _WIN32
+   {
+      char *wfmt;
+      char *tmp;
+
+      wfmt = strdup(fmt);
+      if (!wfmt)
+        {
+           fprintf(stderr, "ERR: %s: can not allocate memory\n", __FUNCTION__);
+           return;
+        }
+
+      tmp = wfmt;
+      while (strchr(tmp, "%"))
+        {
+           tmp++;
+           if (*tmp == 'z')
+              *tmp = 'I';
+        }
+      _print_cb(d, level, file, fnc, line, wfmt, _print_cb_data, args);
+      free(wfmt);
+   }
+#else
+   _print_cb(d, level, file, fnc, line, fmt, _print_cb_data, args);
+#endif
+
+   if (EINA_UNLIKELY(_abort_on_critical) &&
+       EINA_UNLIKELY(level <= _abort_level_on_critical))
+      abort();
+}
+
 /**
  * @endcond
  */
@@ -1732,6 +1829,9 @@ eina_log_threads_enable(void)
 /**
  * Sets logging method to use.
  *
+ * @param cb The callback to call when printing a log.
+ * @param data The data to pass to the callback.
+ *
  * By default, eina_log_print_cb_stderr() is used.
  *
  * @note MT: safe to call from any thread.
@@ -1983,20 +2083,6 @@ eina_log_domain_register(const char *name, const char *color)
    return r;
 }
 
-
-static inline void
-eina_log_domain_unregister_unlocked(int domain)
-{
-   Eina_Log_Domain *d;
-
-   if ((unsigned int)domain >= _log_domains_count)
-      return;
-
-   d = &_log_domains[domain];
-   eina_log_domain_free(d);
-   d->deleted = 1;
-}
-
 /**
  * Forget about a logging domain registered by eina_log_domain_register()
  *
@@ -2018,7 +2104,7 @@ eina_log_domain_unregister(int domain)
  * Set the domain level given its name.
  *
  * This call has the same effect as setting
- * EINA_LOG_LEVELS=<domain_name>:<level>
+ * EINA_LOG_LEVELS=&lt;@p domain_name&gt;:&lt;@p level&gt;
  *
  * @param domain_name domain name to change the level. It may be of a
  *        still not registered domain. If the domain is not registered
@@ -2193,6 +2279,15 @@ eina_log_print_cb_stderr(const Eina_Log_Domain *d,
 /**
  * Alternative logging method, this will output to standard output stream.
  *
+ * @param d The domain.
+ * @param level The level.
+ * @param file The file which is logged.
+ * @param fnc The function which is logged.
+ * @param line The line which is logged.
+ * @param fmt The ouptut format to use.
+ * @param data Not used.
+ * @param args The arguments needed by the format.
+ *
  * This method will colorize output based on domain provided color and
  * message logging level. To disable color, set environment variable
  * EINA_LOG_COLOR_DISABLE=1. Similarly, to disable file and line
@@ -2224,6 +2319,15 @@ eina_log_print_cb_stdout(const Eina_Log_Domain *d,
 
 /**
  * Alternative logging method, this will output to given file stream.
+ *
+ * @param d The domain.
+ * @param level Not used.
+ * @param file The file which is logged.
+ * @param fnc The function which is logged.
+ * @param line The line which is logged.
+ * @param fmt The ouptut format to use.
+ * @param data The file which will store the output (as a FILE *).
+ * @param args The arguments needed by the format.
  *
  * This method will never output color.
  *
@@ -2263,90 +2367,6 @@ end:
 #endif
    vfprintf(f, fmt, args);
    putc('\n', f);
-}
-
-static inline void
-eina_log_print_unlocked(int domain,
-                        Eina_Log_Level level,
-                        const char *file,
-                        const char *fnc,
-                        int line,
-                        const char *fmt,
-                        va_list args)
-{
-   Eina_Log_Domain *d;
-
-#ifdef EINA_SAFETY_CHECKS
-   if (EINA_UNLIKELY((unsigned int)domain >= _log_domains_count) ||
-       EINA_UNLIKELY(domain < 0))
-     {
-        if (file && fnc && fmt)
-           fprintf(
-              stderr,
-              "CRI: %s:%d %s() eina_log_print() unknown domain %d, original message format '%s'\n",
-              file,
-              line,
-              fnc,
-              domain,
-              fmt);
-        else
-           fprintf(
-              stderr,
-              "CRI: eina_log_print() unknown domain %d, original message format '%s'\n",
-              domain,
-              fmt ? fmt : "");
-
-        if (_abort_on_critical)
-           abort();
-
-        return;
-     }
-
-#endif
-   d = _log_domains + domain;
-#ifdef EINA_SAFETY_CHECKS
-   if (EINA_UNLIKELY(d->deleted))
-     {
-           fprintf(stderr,
-                "ERR: eina_log_print() domain %d is deleted\n",
-                domain);
-        return;
-     }
-
-#endif
-
-   if (level > d->level)
-      return;
-
-#ifdef _WIN32
-   {
-      char *wfmt;
-      char *tmp;
-
-      wfmt = strdup(fmt);
-      if (!wfmt)
-        {
-           fprintf(stderr, "ERR: %s: can not allocate memory\n", __FUNCTION__);
-           return;
-        }
-
-      tmp = wfmt;
-      while (strchr(tmp, "%"))
-        {
-           tmp++;
-           if (*tmp == 'z')
-              *tmp = 'I';
-        }
-      _print_cb(d, level, file, fnc, line, wfmt, _print_cb_data, args);
-      free(wfmt);
-   }
-#else
-   _print_cb(d, level, file, fnc, line, fmt, _print_cb_data, args);
-#endif
-
-   if (EINA_UNLIKELY(_abort_on_critical) &&
-       EINA_UNLIKELY(level <= _abort_level_on_critical))
-      abort();
 }
 
 /**
@@ -2422,6 +2442,7 @@ eina_log_print(int domain, Eina_Log_Level level, const char *file,
  * @param line originating line in @a file.
  * @param fmt printf-like format to use. Should not provide trailing
  *        '\n' as it is automatically included.
+ * @param args the arguments needed by the format.
  *
  * @note MT: this function may be called from different threads if
  *       eina_log_threads_enable() was called before.

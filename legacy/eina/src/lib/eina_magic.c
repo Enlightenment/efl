@@ -220,10 +220,10 @@ eina_magic_string_shutdown(void)
  * };
  * @endcode
  *
- * It is perfectly valid to use @c{struct subtype} blobs for functions
- * that expect @c{struct base}, since the fields will have the same
+ * It is perfectly valid to use @c {struct subtype} blobs for functions
+ * that expect @c {struct base}, since the fields will have the same
  * offset (as base member is the first, at offset 0). We could give
- * the functions the @c{&subtype->base} and avoid the cast, but often
+ * the functions the @c {&subtype->base} and avoid the cast, but often
  * we just cast.
  *
  * In any case, we might be safe and check if the given pointer is

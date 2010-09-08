@@ -449,7 +449,7 @@ eina_array_free(Eina_Array *array)
  * @brief Set the step of an array.
  *
  * @param array The array.
- * @param sizeof_array Should be the value returned by sizeof (Eina_Array).
+ * @param sizeof_eina_array Should be the value returned by sizeof(Eina_Array).
  * @param step The count of pointers to add when increasing the array size.
  *
  * This function sets the step of @p array to @p step. For performance

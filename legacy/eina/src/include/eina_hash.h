@@ -41,13 +41,19 @@
  * @{
  */
 
+/**
+ * @typedef Eina_Hash
+ * Type for a generic hash table.
+ */
 typedef struct _Eina_Hash Eina_Hash;
+
 typedef struct _Eina_Hash_Tuple Eina_Hash_Tuple;
+
 struct _Eina_Hash_Tuple
 {
-   const void *key;
-   void *data;
-   unsigned int key_length;
+   const void *key; /**< The key */
+   void *data; /**< The data associated to the key */
+   unsigned int key_length; /**< The length of the key */
 };
 
 typedef unsigned int (*Eina_Key_Length)(const void *key);

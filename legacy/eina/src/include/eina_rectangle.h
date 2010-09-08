@@ -34,6 +34,7 @@
  */
 
 /**
+ * @typedef Eina_Rectangle
  * Simple rectangle structure.
  */
 typedef struct _Eina_Rectangle
@@ -44,6 +45,10 @@ typedef struct _Eina_Rectangle
   int h; /**< height of rectangle */
 } Eina_Rectangle;
 
+/**
+ * @typedef Eina_Rectangle_Pool
+ * Type for an opaque pool of rectangle.
+ */
 typedef struct _Eina_Rectangle_Pool Eina_Rectangle_Pool;
 
 static inline int eina_spans_intersect(int c1, int l1, int c2, int l2) EINA_WARN_UNUSED_RESULT;

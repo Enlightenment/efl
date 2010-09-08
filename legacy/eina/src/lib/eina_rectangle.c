@@ -376,6 +376,17 @@ eina_rectangle_free(Eina_Rectangle *rect)
      }
 }
 
+/**
+ * @brief Add a rectangle in a new pool.
+ *
+ * @param w The width of the rectangle.
+ * @param h The height of the rectangle.
+ * @return A newly allocated pool on success, @c NULL otherwise.
+ *
+ * This function adds the rectangle of size (@p width, @p height) to a
+ * new pool. If the pool can not be created, @c NULL is
+ * returned. Otherwise the newly allocated pool is returned.
+ */
 EAPI Eina_Rectangle_Pool *
 eina_rectangle_pool_new(int w, int h)
 {
@@ -400,6 +411,14 @@ eina_rectangle_pool_new(int w, int h)
    return new;
 }
 
+/**
+ * @brief Free the given pool.
+ *
+ * @param pool The pool to free.
+ *
+ * This function frees the allocated data of @p pool. If @p pool is
+ * @c NULL, ths function returned immediatly.
+ */
 EAPI void
 eina_rectangle_pool_free(Eina_Rectangle_Pool *pool)
 {
@@ -442,6 +461,21 @@ eina_rectangle_pool_count(Eina_Rectangle_Pool *pool)
    return pool->references;
 }
 
+/**
+ * @brief Request a rectangle of given size in the given pool.
+ *
+ * @param pool The pool.
+ * @param w The width of the rectangle to request.
+ * @param h The height of the rectangle to request.
+ * @return The requested rectangle on success, @c NULL otherwise.
+ *
+ * This function retrieve from @p pool the rectangle of width @p w and
+ * height @p h. If @p pool is @c NULL, or @p w or @p h are non-positive,
+ * the function returns @c NULL. If @p w or @p h are greater than the
+ * pool size, the function returns @c NULL. On success, the function
+ * returns the rectangle which matches the size (@p w, @p h).
+ * Otherwise it returns @c NULL.
+ */
 EAPI Eina_Rectangle *
 eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h)
 {
@@ -503,6 +537,15 @@ eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h)
    return rect;
 }
 
+/**
+ * @brief Remove the given rectangle from the pool.
+ *
+ * @param rect The rectangle to remove from the pool.
+ *
+ * This function removes @p rect from the pool. If @p rect is
+ * @c NULL, the function returns immediatly. Otherwise it remoes @p
+ * rect from the pool.
+ */
 EAPI void
 eina_rectangle_pool_release(Eina_Rectangle *rect)
 {

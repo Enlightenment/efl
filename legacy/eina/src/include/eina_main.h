@@ -46,7 +46,7 @@
 #define EINA_VERSION_MINOR 0
 
 /**
- * @struct Eina_Version
+ * @typedef Eina_Version
  * The version of Eina.
  */
 typedef struct _Eina_Version
