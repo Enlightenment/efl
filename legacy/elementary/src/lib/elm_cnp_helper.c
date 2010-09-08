@@ -94,6 +94,8 @@ static char *remove_tags(const char *p, int *len);
 static char *mark_up(const char *start, int *lenp);
 
 static Evas_Object *image_provider(void *images, Evas_Object *entry, const char *item);
+static void
+entry_deleted(void *images, Evas *e, Evas_Object *entry, void *unused);
 
 
 typedef int (*converter_fn)(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
@@ -905,6 +907,8 @@ pasteimage_provider_set(Evas_Object *entry)
      {
         evas_object_data_set(entry, PROVIDER_SET, pasteimage_provider_set);
         elm_entry_item_provider_append(entry, image_provider, NULL);
+        evas_object_event_callback_add(entry, EVAS_CALLBACK_FREE,
+                                       entry_deleted, NULL);
      }
    return true;
 }
@@ -1171,7 +1175,7 @@ found:
                {
                   cnp_debug("Doing image insert (%s)\n",savedtypes.pi->file);
                   ddata.format = ELM_SEL_FORMAT_IMAGE;
-                  ddata.data = savedtypes.pi->file;
+                  ddata.data = (char *)savedtypes.pi->file;
                   dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
                   ecore_x_dnd_send_finished();
                   /* FIXME: Clean up pi */
@@ -1300,7 +1304,7 @@ printf("Enabling DND\n");
 Eina_Bool
 elm_drop_target_del(Evas_Object *obj){
      struct dropable *drop,*del;
-     Eina_List *item,*tmp;
+     Eina_List *item;
      Ecore_X_Window xwin;
 
      del = NULL;
