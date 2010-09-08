@@ -11,8 +11,8 @@
  * 
  * Signals that you can add callbacks for are:
  *
- * clicked - This is called when a user has clicked the image
- * 
+ *  - clicked: This is called when a user has clicked the image
+ *  - drop: Something has been dropped on the image
  */
 
 typedef struct _Widget_Data Widget_Data;
@@ -329,7 +329,7 @@ elm_image_editable_set(Evas_Object *obj, Eina_Bool set)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;;
-   _els_smart_icon_edit_set(wd->img, set);
+   _els_smart_icon_edit_set(wd->img, set, obj);
 }
 
 

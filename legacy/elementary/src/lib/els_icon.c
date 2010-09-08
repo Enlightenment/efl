@@ -277,7 +277,7 @@ _els_smart_icon_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
  * Turns on editing through drag and drop and copy and paste.
  */
 void
-_els_smart_icon_edit_set(Evas_Object *obj, Eina_Bool edit)
+_els_smart_icon_edit_set(Evas_Object *obj, Eina_Bool edit, Evas_Object *parent)
 {
    Smart_Data   *sd;
 
@@ -301,7 +301,7 @@ _els_smart_icon_edit_set(Evas_Object *obj, Eina_Bool edit)
    if (sd->edit)
      {
         elm_drop_target_add(obj, ELM_SEL_FORMAT_IMAGE, _els_smart_icon_dropcb,
-                            NULL);
+                            parent);
      }
    else
      {
@@ -622,10 +622,11 @@ _els_smart_icon_rotate_180(Smart_Data *sd)
 }
 
 static Eina_Bool
-_els_smart_icon_dropcb(void *unsued __UNUSED__,Evas_Object *obj,
-                       Elm_Drop_Data *drop)
+_els_smart_icon_dropcb(void *elmobj,Evas_Object *obj, Elm_Drop_Data *drop)
 {
    _els_smart_icon_file_key_set(obj, drop->data, NULL);
+   evas_object_smart_callback_call(elmobj, "drop", drop->data);
+
    return EINA_TRUE;
 }
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
