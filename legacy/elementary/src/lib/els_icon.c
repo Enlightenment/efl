@@ -14,6 +14,7 @@ struct _Smart_Data
    unsigned char scale_down : 1;
    unsigned char preloading : 1;
    unsigned char show : 1;
+   unsigned char edit : 1;
 };
 
 /* local subsystem functions */
@@ -32,6 +33,7 @@ static void _smart_clip_unset(Evas_Object *obj);
 static void _els_smart_icon_flip_horizontal(Smart_Data *sd);
 static void _els_smart_icon_flip_vertical(Smart_Data *sd);
 static void _els_smart_icon_rotate_180(Smart_Data *sd);
+static Eina_Bool _els_smart_icon_dropcb(void *,Evas_Object *, Elm_Drop_Data *);
 
 /* local subsystem globals */
 static Evas_Smart *_e_smart = NULL;
@@ -269,6 +271,43 @@ _els_smart_icon_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
    evas_object_image_data_set(sd->obj, data);
    evas_object_image_data_update_add(sd->obj, 0, 0, iw, ih);
    _smart_reconfigure(sd);
+}
+
+/**
+ * Turns on editing through drag and drop and copy and paste.
+ */
+void
+_els_smart_icon_edit_set(Evas_Object *obj, Eina_Bool edit)
+{
+   Smart_Data   *sd;
+
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+
+   if (strcmp(evas_object_type_get(sd->obj), "edje")== 0)
+     {
+        printf("No editing edje objects yet (ever)\n");
+        return;
+     }
+
+   printf("FIXME: Implement editing in els_icon\n");
+   printf("%s +%d\n",__FILE__,__LINE__);
+   /* Unfortunately eina bool is not a bool, but a char */
+   edit = !!edit;
+   if (edit == sd->edit) return;
+
+   sd->edit = edit;
+
+   if (sd->edit)
+     {
+        elm_drop_target_add(obj, ELM_SEL_FORMAT_IMAGE, _els_smart_icon_dropcb,
+                            NULL);
+     }
+   else
+     {
+        elm_drop_target_del(obj);
+     }
+
 }
 
 /* local subsystem globals */
@@ -582,3 +621,11 @@ _els_smart_icon_rotate_180(Smart_Data *sd)
    _smart_reconfigure(sd);
 }
 
+static Eina_Bool
+_els_smart_icon_dropcb(void *unsued __UNUSED__,Evas_Object *obj,
+                       Elm_Drop_Data *drop)
+{
+   _els_smart_icon_file_key_set(obj, drop->data, NULL);
+   return EINA_TRUE;
+}
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

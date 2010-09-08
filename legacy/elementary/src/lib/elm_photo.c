@@ -217,3 +217,13 @@ elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill)
    _sizing_eval(obj);
 }
 
+EAPI void
+elm_photo_editable_set(Evas_Object *obj, Eina_Bool set)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return;;
+   _els_smart_icon_edit_set(wd->img, set);
+}
+

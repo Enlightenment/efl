@@ -10,3 +10,5 @@ void         _els_smart_icon_scale_down_set   (Evas_Object *obj, int scale_down)
 void         _els_smart_icon_scale_size_set   (Evas_Object *obj, int size);
 void         _els_smart_icon_scale_set        (Evas_Object *obj, double scale);
 void         _els_smart_icon_orient_set       (Evas_Object *obj, Elm_Image_Orient orient);
+
+void         _els_smart_icon_edit_set         (Evas_Object *obj, Eina_Bool);

@@ -42,6 +42,7 @@ test_photo(void *data, Evas_Object *obj, void *event_info)
              n++;
              if (n >= 9) n = 0;
              elm_photo_file_set(ph, buf);
+	     elm_photo_editable_set(ph, 1);
              evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, 
                                               EVAS_HINT_EXPAND);
              evas_object_size_hint_align_set(ph, EVAS_HINT_FILL, 

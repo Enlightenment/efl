@@ -312,3 +312,16 @@ elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
    if (!wd) return;
    _els_smart_icon_orient_set(wd->img, orient);
 }
+
+EAPI void
+elm_image_editable_set(Evas_Object *obj, Eina_Bool set)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return;;
+   _els_smart_icon_edit_set(wd->img, set);
+}
+
+
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
