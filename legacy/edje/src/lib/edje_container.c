@@ -249,7 +249,7 @@ edje_item_del(Edje_Item *ei)
 /**
  * @brief Return the smart object of the edje item.
  *
- * @param ei The edje item wich the smart object of type Evas_Object is get
+ * @param ei The edje item which the smart object of type Evas_Object is get
  * from.
  *
  * This function returns the smart object in the edje item.
@@ -263,7 +263,7 @@ edje_item_container_get(Edje_Item *ei)
    return ((Smart_Data *)(ei->sd))->smart_obj;
 }
 
-/* an arbitary data pointer to use to track other data */
+/* an arbitrary data pointer to use to track other data */
 /**
  * @brief Set the edje item data.
  *

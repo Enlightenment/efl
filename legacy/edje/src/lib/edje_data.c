@@ -148,7 +148,7 @@ _edje_eina_hash_add_alloc(Eina_Hash  *hash,
    return hash;
 }
 
-// FIXME: remove EAPI wehn edje_convert goes
+// FIXME: remove EAPI when edje_convert goes
 EAPI void
 _edje_edd_shutdown(void)
 {

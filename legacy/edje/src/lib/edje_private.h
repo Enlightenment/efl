@@ -1365,7 +1365,7 @@ const Eina_List *edje_match_signal_source_hash_get(const char *signal,
 						   const Eina_Rbtree *tree);
 void edje_match_signal_source_free(Edje_Signal_Source_Char *key, void *data);
 
-// FIXME remove below 2 eapi decls wehn edje_convert goes
+// FIXME remove below 2 eapi decls when edje_convert goes
 EAPI void _edje_edd_init(void);
 EAPI void _edje_edd_shutdown(void);
 

@@ -312,7 +312,7 @@ edje_external_type_unregister(const char *type_name)
  *
  * @note the given array is not modified, but the type name strings
  *       are @b not duplicated! That is, all type names must be @b
- *       live until they are unregistered! This was choosen to save
+ *       live until they are unregistered! This was chosen to save
  *       some memory and most people will just define the array as a
  *       global static const type anyway.
  *

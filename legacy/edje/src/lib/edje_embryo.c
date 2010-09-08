@@ -3039,8 +3039,8 @@ _edje_embryo_test_run(Edje *ed, const char *fname, const char *sig, const char *
 	embryo_parameter_string_push(ed->collection->script, (char *)src);
 	pdata = embryo_program_data_get(ed->collection->script);
 	embryo_program_data_set(ed->collection->script, ed);
-	/* 5 million instructions is an arbitary number. on my p4-2.6 here */
-	/* IF embryo is ONLY runing embryo stuff and NO native calls thats */
+	/* 5 million instructions is an arbitrary number. on my p4-2.6 here */
+	/* IF embryo is ONLY running embryo stuff and NO native calls thats */
 	/* about 0.016 seconds, and longer on slower cpu's. if a simple */
 	/* embryo script snippet hasn't managed to do its work in 5 MILLION */
 	/* embryo virtual machine instructions - something is wrong, or */

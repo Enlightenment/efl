@@ -2044,7 +2044,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 
 	if (ep->swallowed_object)
 	  {
-//// the below really is wrong - swallow color shouldnt affect swallowed object
+//// the below really is wrong - swallow color shouldn't affect swallowed object
 //// color - the edje color as a WHOLE should though - and that should be
 //// done via the clipper anyway. this created bugs when objects had their
 //// colro set and were swallowed - then had their color changed.

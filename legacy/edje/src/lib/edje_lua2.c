@@ -79,7 +79,7 @@
  * 
  *          --// init object here
  *          D = {}; --// data is empty table to start
- *          D.val = math.random(); --// start with soem random value so
+ *          D.val = math.random(); --// start with some random value so
  *          fndata = fndata + D.val; --// func data start point
  *          print("lua::init ... " .. D.val);
  *          edje.echo("lua::echo('hello world')");

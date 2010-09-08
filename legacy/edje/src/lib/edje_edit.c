@@ -177,7 +177,7 @@ _edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group)
     *    a group being used by the application in some other way, or multiple
     *    opens of the same file.
     *  * Here we probably want to allow opening groups with broken references
-    *    (GROUP parts or BOX/TABLE items pointing to non-existant/renamed
+    *    (GROUP parts or BOX/TABLE items pointing to non-existent/renamed
     *    groups).
     */
    return _edje_edit_parent_sc->file_set(obj, file, group);
@@ -888,7 +888,7 @@ edje_edit_compiler_get(Evas_Object *obj)
  * in memory, to the group set found in the .edj file which @a obj was
  * loaded with. This group can be manipulated by other API functions,
  * like @c edje_edit_part_add(), for example. If desired, the new
- * group can be actually commited the respective .edj by use of @c
+ * group can be actually committed the respective .edj by use of @c
  * edje_edit_save().
  *
  */

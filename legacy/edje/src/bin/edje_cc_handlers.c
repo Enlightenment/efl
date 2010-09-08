@@ -4091,7 +4091,7 @@ st_collections_group_parts_part_description_color3(void)
         [X axis] [Y axis]
     @effect
         Moves a corner to a relative position inside the container of the
-        relative "to" part. Values from 0.0 (0%, begining) to 1.0 (100%, end)
+        relative "to" part. Values from 0.0 (0%, beginning) to 1.0 (100%, end)
         of each axis.
     @endproperty
 */
@@ -4121,7 +4121,7 @@ st_collections_group_parts_part_description_rel1_relative(void)
     @parameters
         [X axis] [Y axis]
     @effect
-        Affects the corner postion a fixed number of pixels along each axis.
+        Affects the corner position a fixed number of pixels along each axis.
     @endproperty
 */
 static void
