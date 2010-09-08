@@ -65,7 +65,7 @@ struct Efreet_Icon_Theme
 
     unsigned char hidden:1;     /**< Should this theme be hidden from users */
     unsigned char valid:1;      /**< Have we seen an index for this theme */
-    unsigned char fake:1;       /**< This isnt' a real theme but the user has
+    unsigned char fake:1;       /**< This isn't' a real theme but the user has
                                         tried to query from it. We create the
                                         fake one to give us the theme cache. */
 };

@@ -698,7 +698,7 @@ efreet_menu_parse(const char *path)
     IF_FREE_HASH(efreet_merged_dirs);
     efreet_merged_dirs = eina_hash_string_superfast_new(NULL);
 
-    /* split appart the filename and the path */
+    /* split apart the filename and the path */
     internal = efreet_menu_internal_new();
     if (!internal) return NULL;
 
@@ -2705,7 +2705,7 @@ efreet_menu_process_dirs(Efreet_Menu_Internal *internal)
 /**
  * @internal
  * @param menu: the menu to process
- * @param only_unallocated: Only handle menus taht deal with unallocated items
+ * @param only_unallocated: Only handle menus that deal with unallocated items
  * @return Returns no value
  * @brief Handles the processing of the filters attached to the given menu.
  *

@@ -1122,7 +1122,7 @@ efreet_desktop_link_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
  * @internal
  * @param desktop: the Efreet_Desktop to store parsed fields in
  * @param ini: the Efreet_Ini to parse fields from
- * @return 1 if parsed succesfully, 0 otherwise
+ * @return 1 if parsed successfully, 0 otherwise
  * @brief Parse desktop fields that all types can include
  */
 static int

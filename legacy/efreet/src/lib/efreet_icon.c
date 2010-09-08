@@ -1292,7 +1292,7 @@ efreet_icon_theme_dir_scan_all(const char *theme_name)
  * themes.
  * @return Returns no value
  * @brief Scans the given directory and adds non-hidden icon themes to the
- * given list. If the theme isnt' in our cache then load the index.theme and
+ * given list. If the theme isn't' in our cache then load the index.theme and
  * add to the cache.
  */
 static void

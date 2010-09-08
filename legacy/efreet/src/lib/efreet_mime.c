@@ -1073,7 +1073,7 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
  * The indent, range-length, word-size and mask components are optional.
  * If missing, indent defaults to 0, range-length to 1, the word-size to 1,
  * and the mask to all 'one' bits.  In our case, mask is null as it is
- * quicker, uses less memory and will acheive the same exact effect.
+ * quicker, uses less memory and will achieve the same exact effect.
  */
 static void
 efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
