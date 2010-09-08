@@ -1304,11 +1304,11 @@ elm_drop_target_del(Evas_Object *obj){
      Ecore_X_Window xwin;
 
      del = NULL;
-     EINA_LIST_FOREACH_SAFE(drops, item, tmp, drop)
+     EINA_LIST_FOREACH(drops, item, drop)
        {
           if (drop->obj == obj)
             {
-               drops = eina_list_remove_list(drops, tmp);
+               drops = eina_list_remove_list(drops, item);
                del = drop;
                break;
             }
@@ -1318,7 +1318,6 @@ elm_drop_target_del(Evas_Object *obj){
      evas_object_event_callback_del(obj, EVAS_CALLBACK_FREE,
                                     (Evas_Object_Event_Cb)elm_drop_target_del);
      free(drop);
-
      /* If still drops there: All fine.. continue */
      if (drops != NULL) return true;
 
@@ -1327,9 +1326,9 @@ elm_drop_target_del(Evas_Object *obj){
                                              evas_object_evas_get(obj)));
      ecore_x_dnd_aware_set(xwin, false);
 
-     printf("Adding drop target calls\n");
      ecore_event_handler_del(handler_pos);
      ecore_event_handler_del(handler_drop);
+     ecore_event_handler_del(handler_enter);
 
      return true;
 }
