@@ -424,8 +424,18 @@ _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc)
    else if (ce->ref)
      {
 	ce->ref = NULL;
-	edf->collection_cache = eina_list_prepend(edf->collection_cache, edc);
-	_edje_cache_coll_clean(edf);
+
+	if (edf->dangling)
+	  {
+	     /* No need to keep the collection around if the file is dangling */
+	     _edje_collection_free(edf, edc, ce);
+	     _edje_cache_coll_flush(edf);
+	  }
+	else
+	  {
+	     edf->collection_cache = eina_list_prepend(edf->collection_cache, edc);
+	     _edje_cache_coll_clean(edf);
+	  }
      }
 }
 
