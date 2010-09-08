@@ -190,6 +190,17 @@ elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
    _sizing_eval(obj);
 }
 
+/**
+ * Gets the current size of the image.
+ *
+ * Either width or height (or both) may be NULL.
+ *
+ * On error, neither w or h will be written too.
+ *
+ * @param obj The image object.
+ * @param w Pointer to store width, or NULL.
+ * @param h Pointer to store height, or NULL.
+ */
 EAPI void
 elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
 {
