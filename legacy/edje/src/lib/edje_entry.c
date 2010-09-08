@@ -206,7 +206,7 @@ _curs_update_from_curs(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__, Entr
 {
    Evas_Coord cx, cy, cw, ch;
    if (c != en->cursor) return;
-   evas_textblock_cursor_geometry_get(c, &cx, &cy, &cw, &ch, EVAS_TEXTBLOCK_CURSOR_UNDER);
+   evas_textblock_cursor_geometry_get(c, &cx, &cy, &cw, &ch, NULL, EVAS_TEXTBLOCK_CURSOR_UNDER);
    en->cx = cx + (cw / 2);
    en->cy = cy + (ch / 2);
 }
@@ -1835,7 +1835,7 @@ _edje_entry_real_part_configure(Edje_Real_Part *rp)
    x = y = w = h = -1;
    xx = yy = ww = hh = -1;
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
-   evas_textblock_cursor_geometry_get(en->cursor, &xx, &yy, &ww, &hh, EVAS_TEXTBLOCK_CURSOR_UNDER);
+   evas_textblock_cursor_geometry_get(en->cursor, &xx, &yy, &ww, &hh, NULL, EVAS_TEXTBLOCK_CURSOR_UNDER);
    if (ww < 1) ww = 1;
    if (hh < 1) ww = 1;
    if (en->cursor_bg)
@@ -2103,7 +2103,7 @@ _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *
    x = y = w = h = -1;
    xx = yy = ww = hh = -1;
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
-   evas_textblock_cursor_geometry_get(en->cursor, &xx, &yy, &ww, &hh, EVAS_TEXTBLOCK_CURSOR_UNDER);
+   evas_textblock_cursor_geometry_get(en->cursor, &xx, &yy, &ww, &hh, NULL, EVAS_TEXTBLOCK_CURSOR_UNDER);
    if (ww < 1) ww = 1;
    if (hh < 1) ww = 1;
    if (cx) *cx = x + xx;
