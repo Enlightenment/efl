@@ -313,6 +313,15 @@ elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
    _els_smart_icon_orient_set(wd->img, orient);
 }
 
+/**
+ * Make the image 'editable'.
+ *
+ * This means the image is a valid drag target for drag and drop, and can be
+ * cut or pasted too.
+ *
+ * @param obj Image object.
+ * @param set Turn on or off editability.
+ */
 EAPI void
 elm_image_editable_set(Evas_Object *obj, Eina_Bool set)
 {
