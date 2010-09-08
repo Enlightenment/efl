@@ -894,6 +894,12 @@ static bool
 pasteimage_provider_set(Evas_Object *entry)
 {
    void *v;
+   const char *type;
+   if (!entry) return false;
+   type = elm_widget_type_get(entry);
+   printf("type is %s\n",type);
+   if (!type || strcmp(type,"entry") != 0) return false;
+
    v = evas_object_data_get(entry, PROVIDER_SET);
    if (!v)
      {
@@ -908,7 +914,6 @@ static bool
 pasteimage_append(struct pasteimage *pi, Evas_Object *entry)
 {
    char entrytag[100];
-   char *v;
 
    if (!pi) return false;
    if (!entry) return false;
@@ -1080,7 +1085,7 @@ _dnd_drop(void *data, int etype, void *ev)
    struct _Ecore_X_Event_Xdnd_Drop *drop;
    struct dropable *dropable;
    Eina_List *l;
-   Evas_Object *elmwin;
+   Ecore_Evas *ee;
    Ecore_X_Window xwin;
    Elm_Drop_Data ddata;
    int x,y,w,h;
@@ -1101,8 +1106,6 @@ _dnd_drop(void *data, int etype, void *ev)
                                                 dropable->obj)));
         if (xwin == drop->win)
            break;
-
-
      }
    /* didn't find a window */
    if (l == NULL)
@@ -1112,8 +1115,8 @@ _dnd_drop(void *data, int etype, void *ev)
    /* Calculate real (widget relative) position */
       // - window position
       // - widget position
-   elmwin = elm_object_top_widget_get(dropable->obj);
-   elm_win_screen_position_get(elmwin, &x, &y);
+   ee = ecore_evas_ecore_evas_get(evas_object_evas_get(dropable->obj));
+   ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
    savedtypes.x = drop->position.x - x;
    savedtypes.y = drop->position.y - y;
 
