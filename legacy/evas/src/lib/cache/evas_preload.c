@@ -217,6 +217,7 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
 	LKU(_mutex);
 	if (work->func_cancel) work->func_cancel(work->data);
 	free(work);
+        return NULL;
      }
    LKU(_mutex);
    return NULL;
