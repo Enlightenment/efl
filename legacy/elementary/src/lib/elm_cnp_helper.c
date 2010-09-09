@@ -1217,22 +1217,23 @@ found:
    return true;
 }
 static Eina_Bool
-_dnd_position(void *data, int etype, void *ev){
-	struct _Ecore_X_Event_Xdnd_Position *pos;
-	Ecore_X_Rectangle rect;
+_dnd_position(void *data, int etype, void *ev)
+{
+   struct _Ecore_X_Event_Xdnd_Position *pos;
+   Ecore_X_Rectangle rect;
 
-	pos = ev;
+   pos = ev;
 
-	/* Need to send a status back */
-        /* FIXME: Should check I can drop here */
-        /* FIXME: Should highlight widget */
-	rect.x = pos->position.x - 5;
-	rect.y = pos->position.y - 5;
-	rect.width = 10;
-	rect.height = 10;
-	ecore_x_dnd_send_status(true, false, rect, pos->action);
+   /* Need to send a status back */
+   /* FIXME: Should check I can drop here */
+   /* FIXME: Should highlight widget */
+   rect.x = pos->position.x - 5;
+   rect.y = pos->position.y - 5;
+   rect.width = 10;
+   rect.height = 10;
+   ecore_x_dnd_send_status(true, false, rect, pos->action);
 
-	return true;
+   return true;
 }
 
 
@@ -1243,92 +1244,93 @@ Eina_Bool
 elm_drop_target_add(Evas_Object *obj, enum _elm_sel_type format,
                     elm_drop_cb dropcb, void *cbdata)
 {
-     struct dropable *drop;
-     Ecore_X_Window xwin;
-     int first;
+   struct dropable *drop;
+   Ecore_X_Window xwin;
+   int first;
 
-     if (!obj) return false;
-     if (!_elm_cnp_init_count) _elm_cnp_init();
+   if (!obj) return false;
+   if (!_elm_cnp_init_count) _elm_cnp_init();
 
-     /* Is this the first? */
-     first = (drops == NULL) ? 1 : 0;
+   /* Is this the first? */
+   first = (drops == NULL) ? 1 : 0;
 
-     drop = calloc(1,sizeof(struct dropable));
-     if (!drop) return false;
-     drop->dropcb = dropcb;
-     drop->cbdata = cbdata;
+   drop = calloc(1,sizeof(struct dropable));
+   if (!drop) return false;
+   drop->dropcb = dropcb;
+   drop->cbdata = cbdata;
 
-     /* FIXME: Check it's not already there */
+   /* FIXME: Check it's not already there */
 
-     /* FIXME: Check for eina's deranged error method */
-     drops = eina_list_append(drops, drop);
+   /* FIXME: Check for eina's deranged error method */
+   drops = eina_list_append(drops, drop);
 
-     if (!drops/* || or other error */)
-       {
-         free(drop);
-         return false;
-       }
+   if (!drops/* || or other error */)
+     {
+        free(drop);
+        return false;
+     }
 
-     drop->obj = obj;
-     /* Something for now */
-     drop->types = format;
+   drop->obj = obj;
+   /* Something for now */
+   drop->types = format;
 
-     evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
-                                 /* I love C and varargs */
-                                 (Evas_Object_Event_Cb)elm_drop_target_del,
-                                 obj);
-     /* FIXME: Handle resizes */
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
+                                  /* I love C and varargs */
+                                  (Evas_Object_Event_Cb)elm_drop_target_del,
+                                  obj);
+   /* FIXME: Handle resizes */
 
-     /* If not the first: We're done */
-     if (!first) return true;
+   /* If not the first: We're done */
+   if (!first) return true;
 
-     xwin = (Ecore_X_Window)ecore_evas_window_get(ecore_evas_ecore_evas_get(
-                                             evas_object_evas_get(obj)));
-     ecore_x_dnd_aware_set(xwin, true);
+   xwin = (Ecore_X_Window)ecore_evas_window_get(ecore_evas_ecore_evas_get(
+         evas_object_evas_get(obj)));
+   ecore_x_dnd_aware_set(xwin, true);
 
-     printf("Adding drop target calls\n");
-     handler_enter = ecore_event_handler_add(ECORE_X_EVENT_XDND_ENTER,
-                                             _dnd_enter, NULL);
-     handler_pos = ecore_event_handler_add(ECORE_X_EVENT_XDND_POSITION, _dnd_position, NULL);
-     handler_drop = ecore_event_handler_add(ECORE_X_EVENT_XDND_DROP, _dnd_drop, NULL);
+   printf("Adding drop target calls\n");
+   handler_enter = ecore_event_handler_add(ECORE_X_EVENT_XDND_ENTER,
+                                           _dnd_enter, NULL);
+   handler_pos = ecore_event_handler_add(ECORE_X_EVENT_XDND_POSITION, _dnd_position, NULL);
+   handler_drop = ecore_event_handler_add(ECORE_X_EVENT_XDND_DROP, _dnd_drop, NULL);
 
-     return true;
+   return true;
 }
 
 Eina_Bool
-elm_drop_target_del(Evas_Object *obj){
-     struct dropable *drop,*del;
-     Eina_List *item;
-     Ecore_X_Window xwin;
+elm_drop_target_del(Evas_Object *obj)
+{
+   struct dropable *drop,*del;
+   Eina_List *item;
+   Ecore_X_Window xwin;
 
-     del = NULL;
-     EINA_LIST_FOREACH(drops, item, drop)
-       {
-          if (drop->obj == obj)
-            {
-               drops = eina_list_remove_list(drops, item);
-               del = drop;
-               break;
-            }
-       }
-     if (!del) return false;
+   del = NULL;
+   EINA_LIST_FOREACH(drops, item, drop)
+     {
+        if (drop->obj == obj)
+          {
+             drops = eina_list_remove_list(drops, item);
+             del = drop;
+             break;
+          }
+     }
+   if (!del) return false;
 
-     evas_object_event_callback_del(obj, EVAS_CALLBACK_FREE,
-                                    (Evas_Object_Event_Cb)elm_drop_target_del);
-     free(drop);
-     /* If still drops there: All fine.. continue */
-     if (drops != NULL) return true;
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_FREE,
+                                  (Evas_Object_Event_Cb)elm_drop_target_del);
+   free(drop);
+   /* If still drops there: All fine.. continue */
+   if (drops != NULL) return true;
 
-     printf("Disabling DND\n");
-     xwin = (Ecore_X_Window)ecore_evas_window_get(ecore_evas_ecore_evas_get(
-                                             evas_object_evas_get(obj)));
-     ecore_x_dnd_aware_set(xwin, false);
+   printf("Disabling DND\n");
+   xwin = (Ecore_X_Window)ecore_evas_window_get(ecore_evas_ecore_evas_get(
+         evas_object_evas_get(obj)));
+   ecore_x_dnd_aware_set(xwin, false);
 
-     ecore_event_handler_del(handler_pos);
-     ecore_event_handler_del(handler_drop);
-     ecore_event_handler_del(handler_enter);
+   ecore_event_handler_del(handler_pos);
+   ecore_event_handler_del(handler_drop);
+   ecore_event_handler_del(handler_enter);
 
-     return true;
+   return true;
 }
 
 
