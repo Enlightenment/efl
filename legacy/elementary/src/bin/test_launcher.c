@@ -499,29 +499,6 @@ test_launcher2(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(win);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 static void
 l3_mode_cb(void *data, Evas_Object *obj, void *event_info)
 {
