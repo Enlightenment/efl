@@ -3,7 +3,7 @@
 
 /* what are moodules in elementary for? for modularising behavior and features
  * so they can be plugged in and out where you dont want the core source to
- * alwyas behave like that or do it that way. plug it at runtime!
+ * always behave like that or do it that way. plug it at runtime!
  * 
  * they have module names (in config) and "slots" to plug that module into
  * to server a purpose. eg you plug plugin "xx" into the "entry-copy-paste"

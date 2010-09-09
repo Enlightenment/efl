@@ -151,7 +151,7 @@ my_win_main(char *autorun)
    evas_object_smart_callback_add(win, "delete,request", my_win_del, NULL);
 
    /* add a background to our window. this just uses the standard theme set
-    * background. without a backgorund, you could make a window seem
+    * background. without a background, you could make a window seem
     * transparent with elm_win_alpha_set(win, 1); for example. if you have
     * a compositor running this will make the window able to be
     * semi-transparent and any space not filled by object/widget pixels will

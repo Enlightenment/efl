@@ -244,7 +244,7 @@ elm_anchorview_text_set(Evas_Object *obj, const char *text)
   *
   * @param obj The anchorview object
   * @return text The markup text set or @c NULL, either if it was not set
-  * or an error ocurred
+  * or an error occurred
   *
   * @ingroup Anchorview
   */

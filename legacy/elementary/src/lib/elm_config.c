@@ -427,7 +427,7 @@ _config_update(void)
 #define COPYSTR(x) COPYPTR(x)
 
    /* we also need to update for property changes in the root window
-    * if needed, but that will be dependant on new properties added
+    * if needed, but that will be dependent on new properties added
     * with each version */
 
    /* nothing here, just an example */

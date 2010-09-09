@@ -683,7 +683,7 @@ elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max)
  * Set the value the slider indicates
  *
  * @param obj The slider object
- * @param val The value (must be beween min and max for the slider)
+ * @param val The value (must be between min and max for the slider)
  *
  * @ingroup Slider
  */

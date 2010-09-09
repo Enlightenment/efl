@@ -159,7 +159,7 @@ elm_photo_add(Evas_Object *parent)
  * @param obj The photo object
  * @param file The path to file that will be used as photo
  *
- * @return (1 = sucess, 0 = error)
+ * @return (1 = success, 0 = error)
  *
  * @ingroup Photo
  */

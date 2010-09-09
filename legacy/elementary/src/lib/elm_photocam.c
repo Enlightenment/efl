@@ -1610,7 +1610,7 @@ elm_photocam_paused_get(const Evas_Object *obj)
 }
 
 /**
- * Get ther internal low-res image used for photocam
+ * Get the internal low-res image used for photocam
  * 
  * This gets the internal image object inside photocam. Do not modify it. It
  * is for inspection only, and hooking callbacks to. Nothing else. It may be

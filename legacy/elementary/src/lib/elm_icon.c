@@ -142,7 +142,7 @@ elm_icon_add(Evas_Object *parent)
  * @param file The path to file that will be used as icon
  * @param group The group that the icon belongs in edje file
  *
- * @return (1 = sucess, 0 = error)
+ * @return (1 = success, 0 = error)
  *
  * @ingroup Icon
  */
@@ -171,7 +171,7 @@ elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
  * @param obj The icon object
  * @param name The theme name
  *
- * @return (1 = sucess, 0 = error)
+ * @return (1 = success, 0 = error)
  *
  * @ingroup Icon
  */

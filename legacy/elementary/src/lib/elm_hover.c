@@ -76,7 +76,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   // FIXME: hover contents doesnt seem to propagate resizes properly
+   // FIXME: hover contents doesn't seem to propagate resizes properly
    _elm_theme_object_set(obj, wd->cov, "hover", "base", elm_widget_style_get(obj));
    edje_object_scale_set(wd->cov, elm_widget_scale_get(obj) *
                          _elm_config->scale);

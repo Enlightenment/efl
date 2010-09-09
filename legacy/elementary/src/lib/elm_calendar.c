@@ -905,7 +905,7 @@ elm_calendar_format_function_set(Evas_Object *obj, char * (*format_function) (st
  *
  * @param obj The calendar object
  * @param mark_type A string used to define the type of mark. It will be
- * emmitted to the theme, that should display a related modification on these
+ * emitted to the theme, that should display a related modification on these
  * days representation.
  * @param mark_time A time struct to represent the date of inclusion of the
  * mark. For marks that repeats it will just be displayed after the inclusion

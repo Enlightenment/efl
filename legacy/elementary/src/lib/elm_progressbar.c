@@ -288,7 +288,7 @@ elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state)
  * Set the value the progressbar indicates
  *
  * @param obj The progressbar object
- * @param val The fraction value (must be beween 0.0 and 1.0)
+ * @param val The fraction value (must be between 0.0 and 1.0)
  *
  * @ingroup Progressbar
  */

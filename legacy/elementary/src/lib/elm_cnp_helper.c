@@ -1199,7 +1199,7 @@ found:
           }
         else if (savedtypes.textreq)
           {
-             /* Already asked: Pretend we asked now, and paste imediately when
+             /* Already asked: Pretend we asked now, and paste immediately when
               * it comes in */
              savedtypes.textreq = 0;
              ecore_x_dnd_send_finished();

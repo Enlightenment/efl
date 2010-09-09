@@ -1198,7 +1198,7 @@ elm_finger_size_all_set(Evas_Coord size)
  *
  * This takes width and height sizes (in pixels) as input and a size multiple
  * (which is how many fingers you want to place within the area), and adjusts
- * the size tobe large enough to accomodate finger. On return the w and h
+ * the size tobe large enough to accommodate finger. On return the w and h
  * sizes poiner do by these parameters will be modified.
  *
  * @param times_w How many fingers should fit horizontally
@@ -1305,7 +1305,7 @@ elm_object_focus_allow_get(const Evas_Object *obj)
  * @defgroup Scrollhints Scrollhints
  *
  * Objects when inside a scroller can scroll, but this may not always be
- * desireable in certain situations. This allows an object to hint to itself
+ * desirable in certain situations. This allows an object to hint to itself
  * and parents to "not scroll" in one of 2 ways.
  * 
  * 1. To hold on scrolling. This means just flicking and dragging may no

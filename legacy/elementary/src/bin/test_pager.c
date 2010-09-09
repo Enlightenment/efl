@@ -212,7 +212,7 @@ test_pager_slide(void *data, Evas_Object *obj, void *event_info)
    elm_label_label_set(lb,
 		       "This is page 1 in a slide pager.<br>"
 		       "<br>"
-		       "The slide pager style is usefull for browsing<br>"
+		       "The slide pager style is useful for browsing<br>"
 		       "a hierarchy of objects, as it makes clear<br>"
 		       "the direction of the browse.<br>"
 		       "This is the 'slide' style, also available<br>"

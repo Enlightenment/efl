@@ -713,7 +713,7 @@ elm_spinner_step_get(const Evas_Object *obj)
  * Set the value the spinner indicates
  *
  * @param obj The spinner object
- * @param val The value (must be beween min and max for the spinner)
+ * @param val The value (must be between min and max for the spinner)
  *
  * @ingroup Spinner
  */

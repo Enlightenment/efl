@@ -170,7 +170,7 @@ elm_layout_add(Evas_Object *parent)
  * @param file The path to file (edj) that will be used as layout
  * @param group The group that the layout belongs in edje file
  *
- * @return (1 = sucess, 0 = error)
+ * @return (1 = success, 0 = error)
  *
  * @ingroup Layout
  */
@@ -193,7 +193,7 @@ elm_layout_file_set(Evas_Object *obj, const char *file, const char *group)
  * @param group the group
  * @param style the style to used
  *
- * @return (1 = sucess, 0 = error)
+ * @return (1 = success, 0 = error)
  *
  * @ingroup Layout
  */

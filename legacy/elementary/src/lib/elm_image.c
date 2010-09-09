@@ -149,7 +149,7 @@ elm_image_add(Evas_Object *parent)
  * @param file The path to file that will be used as image
  * @param group The group that the image belongs in edje file
  *
- * @return (1 = sucess, 0 = error)
+ * @return (1 = success, 0 = error)
  *
  * @ingroup Image
  */
