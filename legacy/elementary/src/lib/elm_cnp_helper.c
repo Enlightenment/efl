@@ -1349,7 +1349,7 @@ elm_drop_target_del(Evas_Object *obj)
    /* If still drops there: All fine.. continue */
    if (drops != NULL) return true;
 
-   printf("Disabling DND\n");
+   cnp_debug("Disabling DND\n");
    xwin = (Ecore_X_Window)ecore_evas_window_get(ecore_evas_ecore_evas_get(
          evas_object_evas_get(obj)));
    ecore_x_dnd_aware_set(xwin, false);
@@ -1369,6 +1369,26 @@ elm_drop_target_del(Evas_Object *obj)
 
 
 
-/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
 
+
+#else
+/* Stubs for windows */
+Eina_Bool
+elm_drag_start(Evas_Object *o, enum _elm_sel_format f, const void *d)
+{
+   return false;
+}
+Eina_Bool
+_elm_drop_target_add(Evas_Object *obj, enum _elm_sel_type format,
+                    elm_drop_cb dropcb, void *cbdata){
+   return false;
+}
+
+Eina_Bool
+_elm_drop_target_del(Evas_Object *o)
+{
+   return true;
+}
 #endif
+
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

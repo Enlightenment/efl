@@ -1683,10 +1683,12 @@ elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable)
    eina_stringshare_del(t);
    _sizing_eval(obj);
 
+#ifdef HAVE_ELEMENTARY_X
    if (editable)
       elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP, _drag_drop_cb, NULL);
    else
       elm_drop_target_del(obj);
+#endif
 }
 
 /**
