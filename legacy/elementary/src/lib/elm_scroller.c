@@ -580,7 +580,7 @@ elm_scroller_child_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h
  * When scrolling, the scroller may "bounce" when reaching an edge of the child
  * object. This is a visual way to indicate the end has been reached. This is
  * enabled by default for both axes. This will set if it is enabled for that
- * axis with the boolean parameers for each axis.
+ * axis with the boolean parameters for each axis.
  *
  * @param obj The scroller object
  * @param h_bounce Will the scroller bounce horizontally or not
@@ -599,15 +599,15 @@ elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce
 }
 
 /**
- * Set scroll page size relative to viewport size
+ * Set scroll page size relative to viewport size.
  *
- * The scroller is sapale of limiting scrolling by the user to "pages". That
+ * The scroller is capable of limiting scrolling by the user to "pages". That
  * is to jump by and only show a "whole page" at a time as if the continuous
- * area of the scroller conent is split into page sized pieces. This sets
+ * area of the scroller content is split into page sized pieces. This sets
  * the size of a page relative to the viewport of the scroller. 1.0 is "1
  * viewport" is size (horizontally or vertically). 0.0 turns it off in that
  * axis. This is mutually exclusive with page size
- * (see elm_scroller_page_size_set()  for more information). likewise 0.5
+ * (see elm_scroller_page_size_set()  for more information). Likewise 0.5
  * is "half a viewport". Sane usable valus are normally between 0.0 and 1.0
  * including 1.0. If you only want 1 axis to be page "limited", use 0.0 for
  * the other axis.
@@ -632,10 +632,10 @@ elm_scroller_page_relative_set(Evas_Object *obj, double h_pagerel, double v_page
 }
 
 /**
- * Set scroll page size
+ * Set scroll page size.
  *
  * See also elm_scroller_page_relative_set(). This, instead of a page size
- * being relaive to the viewport, sets it to an absolute fixed value, with
+ * being relative to the viewport, sets it to an absolute fixed value, with
  * 0 turning it off for that axis.
  *
  * @param obj The scroller object
@@ -658,7 +658,7 @@ elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v
 }
 
 /**
- * Show a specific virtual region within the scroller content object
+ * Show a specific virtual region within the scroller content object.
  *
  * This will ensure all (or part if it does not fit) of the designated
  * region in the virtual content object (0, 0 starting at the top-left of the
