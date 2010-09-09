@@ -137,100 +137,100 @@ _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
 
 
 static void
-_entry_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    _sizing_eval(data);
-   evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
+   evas_object_smart_callback_call(data, SIG_CHANGED, event_info);
 }
 
 static void
-_entry_activated(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_activated(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_ACTIVATED, NULL);
+   evas_object_smart_callback_call(data, SIG_ACTIVATED, event_info);
 }
 
 static void
-_entry_press(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_press(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_PRESS, NULL);
+   evas_object_smart_callback_call(data, SIG_PRESS, event_info);
 }
 
 static void
-_entry_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
+   evas_object_smart_callback_call(data, SIG_CLICKED, event_info);
 }
 
 static void
-_entry_clicked_double(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_clicked_double(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_CLICKED_DOUBLE, NULL);
+   evas_object_smart_callback_call(data, SIG_CLICKED_DOUBLE, event_info);
 }
 
 static void
-_entry_cursor_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_cursor_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_CURSOR_CHANGED, NULL);
+   evas_object_smart_callback_call(data, SIG_CURSOR_CHANGED, event_info);
 }
 
 static void
-_entry_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, NULL);
+   evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, event_info);
 }
 
 static void
-_entry_selection_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_selection_start(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_SELECTION_START, NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_START, event_info);
 }
 
 static void
-_entry_selection_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_selection_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_SELECTION_CHANGED, NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_CHANGED, event_info);
 }
 
 static void
-_entry_selection_cleared(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_selection_cleared(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_SELECTION_CLEARED, NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_CLEARED, event_info);
 }
 
 static void
-_entry_selection_paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_selection_paste(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_SELECTION_PASTE, NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_PASTE, event_info);
 }
 
 static void
-_entry_selection_copy(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_selection_copy(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_SELECTION_COPY, NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_COPY, event_info);
 }
 
 static void
-_entry_selection_cut(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_selection_cut(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_SELECTION_CUT, NULL);
+   evas_object_smart_callback_call(data, SIG_SELECTION_CUT, event_info);
 }
 
 static void
-_entry_longpressed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_longpressed(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_LONGPRESSED, NULL);
+   evas_object_smart_callback_call(data, SIG_LONGPRESSED, event_info);
 }
 
 static void
-_entry_focused(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_focused(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_FOCUSED, NULL);
+   evas_object_smart_callback_call(data, SIG_FOCUSED, event_info);
 }
 
 static void
-_entry_unfocused(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_unfocused(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   evas_object_smart_callback_call(data, SIG_UNFOCUSED, NULL);
+   evas_object_smart_callback_call(data, SIG_UNFOCUSED, event_info);
 }
 
 
