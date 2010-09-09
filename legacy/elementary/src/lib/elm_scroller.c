@@ -105,6 +105,25 @@ _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
 }
 
 static void
+_signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_signal_callback_add(elm_smart_scroller_edje_object_get(wd->scr),
+	 emission, source, func_cb, data);
+}
+
+static void *
+_signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source))
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return edje_object_signal_callback_del(
+	 elm_smart_scroller_edje_object_get(wd->scr), emission, source,
+	 func_cb);
+}
+
+static void
 _show_region_hook(void *data, Evas_Object *obj)
 {
    
@@ -309,6 +328,8 @@ elm_scroller_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
+   elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
+   elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
 
    wd->widget_name = eina_stringshare_add("scroller");
    wd->widget_base = eina_stringshare_add("base");

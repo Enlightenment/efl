@@ -370,6 +370,22 @@ _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
 }
 
 static void
+_signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_signal_callback_add(wd->ent, emission, source, func_cb, data);
+}
+
+static void *
+_signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source))
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return edje_object_signal_callback_del(wd->ent, emission, source, func_cb);
+}
+
+static void
 _hoversel_position(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1330,6 +1346,8 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
+   elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
+   elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_widget_can_focus_set(obj, 1);
 
    wd->linewrap     = EINA_TRUE;

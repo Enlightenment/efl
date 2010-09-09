@@ -135,6 +135,25 @@ _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
    elm_object_signal_emit(wd->scroller, emission, source);
 }
 
+static void
+_signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_object_signal_callback_add(wd->entry, emission, source, func_cb, data);
+   elm_object_signal_callback_add(wd->scroller, emission, source, func_cb,
+	 data);
+}
+
+static void *
+_signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source))
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   elm_object_signal_callback_del(wd->entry, emission, source, func_cb);
+   return elm_object_signal_callback_del(wd->scroller, emission, source,
+	 func_cb);
+}
 
 static void
 _entry_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info)
@@ -262,6 +281,8 @@ elm_scrolled_entry_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, 1);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
+   elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
+   elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
 
    wd->scroller = elm_scroller_add(parent);
    elm_widget_resize_object_set(obj, wd->scroller);
