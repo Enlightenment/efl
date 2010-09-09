@@ -1,3 +1,8 @@
+/*
+ * todo
+ *  - move to stringshare for stuff when I can
+ */
+
 #include <stdbool.h>
 #include <sys/mman.h>
 
@@ -127,6 +132,7 @@ static int notify_handler_uri(struct _elm_cnp_selection *sel,
 
 static struct pasteimage *pasteimage_alloc(const char *file);
 static bool pasteimage_append(struct pasteimage *pi, Evas_Object *entry);
+static void pasteimage_free(struct pasteimage *pi);
 
 static struct {
    const char *name;
@@ -691,6 +697,8 @@ notify_handler_uri(struct _elm_cnp_selection *sel,
         return 0;
      }
 
+   if (savedtypes.pi) pasteimage_free(savedtypes.pi);
+
    pi = pasteimage_alloc(p);
 
    if (savedtypes.textreq)
@@ -899,6 +907,15 @@ pasteimage_alloc(const char *file)
      }
 
    return pi;
+}
+
+static void
+pasteimage_free(struct pasteimage *pi)
+{
+   if (!pi) return;
+   if (pi->file) free(pi->file);
+   if (pi->tag) free(pi->tag);
+   free(pi);
 }
 
 static bool
@@ -1187,7 +1204,9 @@ found:
                   ddata.data = (char *)savedtypes.pi->file;
                   dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
                   ecore_x_dnd_send_finished();
-                  /* FIXME: Clean up pi */
+
+                  pasteimage_free(savedtypes.pi);
+                  savedtypes.pi = NULL;
 
                   return true;
                }
@@ -1338,6 +1357,12 @@ elm_drop_target_del(Evas_Object *obj)
    ecore_event_handler_del(handler_pos);
    ecore_event_handler_del(handler_drop);
    ecore_event_handler_del(handler_enter);
+
+   if (savedtypes.pi)
+     {
+        pasteimage_free(savedtypes.pi);
+        savedtypes.pi = NULL;
+     }
 
    return true;
 }
