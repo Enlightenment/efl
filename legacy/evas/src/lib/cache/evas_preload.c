@@ -213,7 +213,7 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
 
    if (pthread_create(&pth->thread, NULL, (void *) _evas_preload_thread_worker, pth) == 0)
      {
-#ifdef __linux__             
+#ifdef __linux__
         struct sched_param param;
 
         /* lower priority of async loader threads so they use up "bg cpu"
@@ -226,7 +226,7 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
         if (pthread_setschedparam(pth->thread, SCHED_RR, &param) != 0)
           {
              int newp;
-             
+
              errno = 0;
              newp = getpriority(PRIO_PROCESS, 0);
              if (errno == 0)
@@ -236,8 +236,8 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
                   setpriority(PRIO_PROCESS, pth->thread, newp);
                }
           }
-#endif             
-        
+#endif
+
 	LKL(_mutex);
 	_evas_preload_thread_count++;
 	LKU(_mutex);
