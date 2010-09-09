@@ -31,6 +31,7 @@ enum {
      CNP_ATOM_text_uri,
      CNP_ATOM_text_urilist,
      CNP_ATOM_image_png,
+     CNP_ATOM_image_jpeg,
      CNP_ATOM_XELM,
      CNP_ATOM_text_html_utf8,
      CNP_ATOM_text_html,
@@ -139,7 +140,7 @@ static struct {
 } atoms[CNP_N_ATOMS] = {
    [CNP_ATOM_TARGETS] = {
 	"TARGETS",
-	(enum _elm_sel_format)-1, // everything 
+	(enum _elm_sel_format)-1, // everything
 	targets_converter,
 	response_handler_targets,
 	notify_handler_targets,
@@ -175,6 +176,14 @@ static struct {
 	png_converter,
 	NULL,
 	notify_handler_png,
+	0
+   },
+   [CNP_ATOM_image_jpeg] = {
+	"image/jpeg",
+	ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
+	png_converter,
+	NULL,
+	notify_handler_png,/* Raw image data is the same */
 	0
    },
    [CNP_ATOM_text_html_utf8] = {
@@ -708,7 +717,7 @@ notify_handler_png(struct _elm_cnp_selection *sel __UNUSED__,
    int fd,len;
    void *map;
 
-   cnp_debug("got a png!\n");
+   cnp_debug("got a png (or a jpeg)!\n");
    data = notify->data;
 
    cnp_debug("Size if %d\n",data->length);
