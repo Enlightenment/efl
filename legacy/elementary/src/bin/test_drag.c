@@ -111,14 +111,14 @@ Evas_Object *en;
 static Eina_Bool
 _dnd_drop(void *data, int etype, void *ev){
 	struct _Ecore_X_Event_Xdnd_Drop *drop;
-	bool rv;
+	/* bool rv; */
 
 	drop = ev;
 	printf("Drop: %3d,%3d, Action: %s\n",
 			drop->position.x,drop->position.y,
 			ecore_x_atom_name_get(drop->action));
 
-        /* elm_selection_get is in elm_priv.h and does not build with -fvisibility=hidden */
+        /* FIXME: elm_selection_get is in elm_priv.h and does not build with -fvisibility=hidden */
 // 	rv = elm_selection_get(ELM_SEL_XDND, ELM_SEL_MARKUP, en);
 // 	if (rv != true){
 // 		printf("Selection set fail\n");

@@ -96,8 +96,6 @@ static Evas_Object *external_button_content_get(void *data __UNUSED__,
 static void
 external_button_params_free(void *params)
 {
-   Elm_Params_Button *mem = params;
-
    external_common_params_free(params);
 }
 

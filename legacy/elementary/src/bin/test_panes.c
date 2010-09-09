@@ -40,8 +40,6 @@ void
 test_panes(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *panes, *panes_h, *bt;
-   char buf[PATH_MAX];
-   Evas_Object *list;
 
    win = elm_win_add(NULL, "panes", ELM_WIN_BASIC);
    elm_win_title_set(win, "Panes");

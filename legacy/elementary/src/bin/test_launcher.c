@@ -378,8 +378,8 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
 void
 test_launcher2(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *sc, *tb, *pad, *bt, *ic, *lb, *tb2, *mb, *ck, *bx, *rc, *ly;
-   int i, j, k, n, m;
+   Evas_Object *win, *bg, *sc, *bt, *tb2, *mb, *ck, *bx, *ly;
+   int k;
    char buf[PATH_MAX];
    Eina_List *mbs = NULL;
    
@@ -729,7 +729,7 @@ l3_ic_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 void
 test_launcher3(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *sc, *tb, *pad, *bt, *ic, *lb, *tb2, *mb, *ck, *bx, *bx2, *ly, *ly2;
+   Evas_Object *win, *bg, *sc, *tb, *pad, *bt, *ic, *tb2, *mb, *ck, *bx, *bx2, *ly, *ly2;
    int i, j, k, n, m;
    char buf[PATH_MAX];
    const char *names[] =

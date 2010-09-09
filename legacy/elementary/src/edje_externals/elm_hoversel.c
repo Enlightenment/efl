@@ -127,8 +127,6 @@ static Evas_Object *external_hoversel_content_get(void *data __UNUSED__,
  static void
 external_hoversel_params_free(void *params)
 {
-   Elm_Params_Hoversel *mem = params;
-
    external_common_params_free(params);
 }
 

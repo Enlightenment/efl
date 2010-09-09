@@ -61,17 +61,21 @@ desk_gl_del(const void *data, Evas_Object *obj)
 #endif   
 }
 
+#ifdef ELM_EFREET
 static void
 desktop_sel(void *data, Evas_Object *obj, void *event_info)
 {
    printf("sel\n");
 }
+#endif
 
 void
 test_icon_desktops(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *gl;
+#ifdef ELM_EFREET
    Eina_List *desktops;
+#endif
 
    win = elm_win_add(NULL, "icon_desktops", ELM_WIN_BASIC);
    elm_win_title_set(win, "Icon Desktops");
