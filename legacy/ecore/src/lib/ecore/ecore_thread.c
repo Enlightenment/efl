@@ -12,6 +12,7 @@
 #  include <sched.h>
 #  include <sys/time.h>
 #  include <sys/resource.h>
+#  include <sys/syscall.h>
 #  include <errno.h>
 # endif
 #endif
@@ -222,6 +223,58 @@ _ecore_long_job(Ecore_Pipe *end_pipe, pthread_t thread)
      }
 }
 
+/* Lower priority of current thread.
+ *
+ * It's used by worker threads so they use up "bg cpu" as it was really intended
+ * to work. If current thread is running with real-time priority, we decrease
+ * our priority by 5. This is done in a portable way.  Otherwise we are
+ * running with SCHED_OTHER policy and there's no portable way to set the nice
+ * level on current thread. In Linux, it does work and it's the only one that is
+ * implemented.
+ */
+static void
+_ecore_thread_pri_drop(void)
+{
+   struct sched_param param;
+   int pol, prio, ret;
+   pid_t tid;
+   pthread_t pthread_id;
+
+   pthread_id = pthread_self();
+   ret = pthread_getschedparam(pthread_id, &pol, &param);
+   if (ret)
+     {
+        ERR("Unable to query sched parameters");
+        return;
+     }
+
+   if (EINA_UNLIKELY(pol == SCHED_RR || pol == SCHED_FIFO))
+     {
+        prio = sched_get_priority_max(pol);
+        param.sched_priority += 5;
+        if (prio > 0 && param.sched_priority > prio)
+           param.sched_priority = prio;
+
+        pthread_setschedparam(pthread_id, pol, &param);
+     }
+#ifdef __linux__
+   else
+     {
+        tid = syscall(SYS_gettid);
+        errno = 0;
+        prio = getpriority(PRIO_PROCESS, tid);
+        if (errno == 0)
+          {
+             prio += 5;
+             if (prio > 19)
+                prio = 19;
+
+             setpriority(PRIO_PROCESS, tid, prio);
+          }
+     }
+#endif
+}
+
 static void *
 _ecore_direct_worker(Ecore_Pthread_Worker *work)
 {
@@ -229,6 +282,7 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
 
    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+   _ecore_thread_pri_drop();
 
    pth = malloc(sizeof (Ecore_Pthread_Data));
    if (!pth) return NULL;
@@ -276,6 +330,7 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
 
    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+   _ecore_thread_pri_drop();
 
    pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
    _ecore_thread_count++;
@@ -319,35 +374,6 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
    ecore_pipe_write(pth->p, &work, sizeof (Ecore_Pthread_Worker *));
 
    return pth->p;
-}
-
-static void
-_ecore_thread_pri_drop(pthread_t th)
-{
-   /* lower priority of worker threads so they use up "bg cpu"
-    * as it was really intended to work */
-#ifdef __linux__
-   struct sched_param param;
-   
-   /* yes - this may fail if not root. there is no portable way to do
-    * this so try - if it fails. meh. nothnig to be done.
-    */
-   memset(&param, 0, sizeof(param));
-   param.sched_priority = sched_get_priority_max(SCHED_RR);
-   if (pthread_setschedparam(th, SCHED_RR, &param) != 0)
-     {
-        int newp;
-        
-        errno = 0;
-        newp = getpriority(PRIO_PROCESS, 0);
-        if (errno == 0)
-          {
-             newp += 5;
-             if (newp > 19) newp = 19;
-             setpriority(PRIO_PROCESS, th, newp);
-          }
-     }
-#endif
 }
 
 #endif
@@ -476,10 +502,7 @@ ecore_thread_run(Ecore_Cb func_blocking,
    if (!pth->p) goto on_error;
 
    if (pthread_create(&pth->thread, NULL, (void *) _ecore_thread_worker, pth) == 0)
-     {
-        _ecore_thread_pri_drop(pth->thread);
-	return (Ecore_Thread *) work;
-     }
+      return (Ecore_Thread *) work;
 
  on_error:
    if (pth)
@@ -645,10 +668,7 @@ EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Heavy_Cb func_heavy,
         pthread_t t;
 
         if (pthread_create(&t, NULL, (void *) _ecore_direct_worker, worker) == 0)
-	  {
-             _ecore_thread_pri_drop(t);
-	     return (Ecore_Thread *) worker;
-	  }
+           return (Ecore_Thread *) worker;
      }
 
    pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
@@ -670,10 +690,7 @@ EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Heavy_Cb func_heavy,
    if (!pth->p) goto on_error;
 
    if (pthread_create(&pth->thread, NULL, (void *) _ecore_thread_worker, pth) == 0)
-     {
-        _ecore_thread_pri_drop(pth->thread);
-	return (Ecore_Thread *) worker;
-     }
+      return (Ecore_Thread *) worker;
 
  on_error:
    if (pth)
