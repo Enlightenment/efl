@@ -168,7 +168,7 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
    _workers = eina_list_append(_workers, work);
    if (_threads_count == _threads_max)
      {
-	pthread_mutex_unlock(&_mutex);
+	LKU(_mutex);
 	return (Evas_Preload_Pthread *)work;
      }
    LKU(_mutex);
