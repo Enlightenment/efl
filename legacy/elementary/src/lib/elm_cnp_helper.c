@@ -913,8 +913,8 @@ static void
 pasteimage_free(struct pasteimage *pi)
 {
    if (!pi) return;
-   if (pi->file) free(pi->file);
-   if (pi->tag) free(pi->tag);
+   if (pi->file) free((void*)pi->file);
+   if (pi->tag) free((void*)pi->tag);
    free(pi);
 }
 
@@ -1376,7 +1376,7 @@ elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const void *data)
 
    if (!_elm_cnp_init_count) _elm_cnp_init();
 
-   xwin = elm_win_xwindow_get(widget);
+   xwin = elm_win_xwindow_get(obj);
 
    cnp_debug("starting drag...\n");
 
@@ -1386,9 +1386,9 @@ elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const void *data)
    sel->active = 1;
    sel->widget = obj;
    sel->format = format;
-   sel->selbuf = selbuf ? strdup(selbuf) : NULL;
-   ecore_x_selection_xdnd_set(elm_win_xwindow_get(xwin), &selection,
-                              sizeof(enum _elm_sel_type));
+   sel->selbuf = data ? strdup(data) : NULL;
+   xwin = elm_win_xwindow_get(obj);
+   ecore_x_dnd_begin(xwin, (unsigned char *)&xdnd, sizeof(enum _elm_sel_type));
 
    // set types
    // start watching motion notify on mouse
