@@ -30,7 +30,6 @@ static Ecore_X_Window _root_1st = 0;
 #define ATOM_COUNT 5
 static Ecore_X_Atom _atom[ATOM_COUNT];
 static Ecore_X_Atom _atom_config = 0;
-static Ecore_X_Atom _atom_config_specific = 0;
 static const char *_atom_names[ATOM_COUNT] =
 {
      "ENLIGHTENMENT_SCALE",

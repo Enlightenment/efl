@@ -1274,7 +1274,7 @@ _event_selection_clear(void *data __UNUSED__, int type __UNUSED__, void *event _
 
 
 static Eina_Bool
-_drag_drop_cb(void *data, Evas_Object *obj, Elm_Drop_Data *drop)
+_drag_drop_cb(void *data __UNUSED__, Evas_Object *obj, Elm_Drop_Data *drop)
 {
    Widget_Data *wd;
    Eina_Bool rv;

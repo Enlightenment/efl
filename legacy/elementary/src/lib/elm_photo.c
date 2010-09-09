@@ -107,7 +107,7 @@ _longpress(void *objv)
 }
 
 static void
-_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
 
@@ -117,7 +117,7 @@ _mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
 
