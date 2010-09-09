@@ -374,8 +374,7 @@ typedef struct _Image_Entry             Image_Entry;
 typedef struct _Image_Entry_Flags	Image_Entry_Flags;
 typedef struct _Engine_Image_Entry      Engine_Image_Entry;
 typedef struct _Evas_Cache_Target       Evas_Cache_Target;
-typedef struct _Evas_Preload_Pthread_Worker Evas_Preload_Pthread_Worker;
-typedef struct _Evas_Preload_Pthread_Data   Evas_Preload_Pthread_Data;
+typedef struct _Evas_Preload_Pthread    Evas_Preload_Pthread;
 
 typedef struct _RGBA_Image_Loadopts   RGBA_Image_Loadopts;
 #ifdef BUILD_PIPE_RENDER
@@ -530,8 +529,8 @@ struct _Image_Entry
    const char            *file;
    const char            *key;
 
-   Evas_Cache_Target           *targets;
-   Evas_Preload_Pthread_Worker *preload;
+   Evas_Cache_Target     *targets;
+   Evas_Preload_Pthread   *preload;
 
    time_t                 timestamp;
    time_t                 laststat;
