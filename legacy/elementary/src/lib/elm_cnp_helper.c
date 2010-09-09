@@ -1223,11 +1223,9 @@ _dnd_position(void *data, int etype, void *ev){
 
 	pos = ev;
 
-	printf("position: %3d,%3d, Action: %s\n",
-			pos->position.x,pos->position.y,
-			ecore_x_atom_name_get(pos->action));
-
 	/* Need to send a status back */
+        /* FIXME: Should check I can drop here */
+        /* FIXME: Should highlight widget */
 	rect.x = pos->position.x - 5;
 	rect.y = pos->position.y - 5;
 	rect.width = 10;
@@ -1249,14 +1247,11 @@ elm_drop_target_add(Evas_Object *obj, enum _elm_sel_type format,
      Ecore_X_Window xwin;
      int first;
 
-printf("Adding %p as a drop target\n",obj);
      if (!obj) return false;
      if (!_elm_cnp_init_count) _elm_cnp_init();
-   
 
      /* Is this the first? */
      first = (drops == NULL) ? 1 : 0;
-   printf("Is first: %d\n",first);
 
      drop = calloc(1,sizeof(struct dropable));
      if (!drop) return false;
@@ -1287,7 +1282,6 @@ printf("Adding %p as a drop target\n",obj);
      /* If not the first: We're done */
      if (!first) return true;
 
-printf("Enabling DND\n");
      xwin = (Ecore_X_Window)ecore_evas_window_get(ecore_evas_ecore_evas_get(
                                              evas_object_evas_get(obj)));
      ecore_x_dnd_aware_set(xwin, true);
