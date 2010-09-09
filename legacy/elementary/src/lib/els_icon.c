@@ -290,8 +290,6 @@ _els_smart_icon_edit_set(Evas_Object *obj, Eina_Bool edit, Evas_Object *parent)
         return;
      }
 
-   printf("FIXME: Implement editing in els_icon\n");
-   printf("%s +%d\n",__FILE__,__LINE__);
    /* Unfortunately eina bool is not a bool, but a char */
    edit = !!edit;
    if (edit == sd->edit) return;
