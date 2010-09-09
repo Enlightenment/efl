@@ -1007,7 +1007,7 @@ eina_hash_population(const Eina_Hash *hash)
  * may now be lost, so this should only be called if the program has
  * already freed any allocated data in the hash table or has the
  * pointers for data in the table stored elsewhere as well. If @p hash
- * is @c NULL, the function returns immediatly.
+ * is @c NULL, the function returns immediately.
  *
  * Example:
  * @code
@@ -1044,7 +1044,7 @@ eina_hash_free(Eina_Hash *hash)
  * buckets if it has been passed to the hash table at creation time,
  * then frees the buckets. If no free callback has been passed, no
  * buckets value will be freed. If @p hash is @c NULL, the function
- * returns immediatly.
+ * returns immediately.
  */
 EAPI void
 eina_hash_free_buckets(Eina_Hash *hash)
@@ -1073,7 +1073,7 @@ eina_hash_free_buckets(Eina_Hash *hash)
  * @param key_length The length of the key.
  * @param key_hash The hash that will always match key.
  * @param data The data to associate with the string given by the key.
- * @return #EINA_FALSE if an error occured, #EINA_TRUE otherwise.
+ * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * This function adds @p key to @p hash. @p hash, @p key and @p data
  * can be @c NULL, in that case #EINA_FALSE is returned. @p key is
@@ -1086,7 +1086,7 @@ eina_hash_free_buckets(Eina_Hash *hash)
  * eina_hash_find_by_hash. Key strings are case sensitive. If an error
  * occurs, eina_error_get() should be used to determine if an
  * allocation error occurred during this function. This function
- * returns #EINA_FALSE if an error occured, #EINA_TRUE otherwise.
+ * returns #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  */
 EAPI Eina_Bool
 eina_hash_add_by_hash(Eina_Hash  *hash,
@@ -1111,7 +1111,7 @@ eina_hash_add_by_hash(Eina_Hash  *hash,
  * @param key_length Should be the length of @p key (don't forget to count '\\0' for string).
  * @param key_hash The hash that will always match key.
  * @param data Data to associate with the string given by @p key.
- * @return #EINA_FALSE if an error occured, #EINA_TRUE otherwise.
+ * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * This function adds @p key to @p hash. @p hash, @p key and @p data
  * can be @c NULL, in that case #EINA_FALSE is returned. @p key is
@@ -1126,7 +1126,7 @@ eina_hash_add_by_hash(Eina_Hash  *hash,
  * eina_hash_find_by_hash. Key strings are case sensitive. If an error
  * occurs, eina_error_get() should be used to determine if an
  * allocation error occurred during this function. This function
- * returns #EINA_FALSE if an error occured, #EINA_TRUE otherwise.
+ * returns #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  */
 EAPI Eina_Bool
 eina_hash_direct_add_by_hash(Eina_Hash  *hash,
@@ -1144,7 +1144,7 @@ eina_hash_direct_add_by_hash(Eina_Hash  *hash,
  * @param hash The given hash table.
  * @param key A unique key.
  * @param data Data to associate with the string given by @p key.
- * @return #EINA_FALSE if an error occured, #EINA_TRUE otherwise.
+ * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * This function adds @p key to @p hash. @p hash, @p key and @p data
  * can be @c NULL, in that case #EINA_FALSE is returned. @p key is
@@ -1158,7 +1158,7 @@ eina_hash_direct_add_by_hash(Eina_Hash  *hash,
  * strings are case sensitive. If an error occurs, eina_error_get()
  * should be used to determine if an allocation error occurred during
  * this function. This function returns #EINA_FALSE if an error
- * occured, #EINA_TRUE otherwise.
+ * occurred, #EINA_TRUE otherwise.
  */
 EAPI Eina_Bool
 eina_hash_add(Eina_Hash *hash, const void *key, const void *data)
@@ -1184,7 +1184,7 @@ eina_hash_add(Eina_Hash *hash, const void *key, const void *data)
  * @param hash The given hash table.  Can be @c NULL.
  * @param key A unique key.  Can be @c NULL.
  * @param data Data to associate with the string given by @p key.
- * @return #EINA_FALSE if an error occured, #EINA_TRUE otherwise.
+ * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * This function adds @p key to @p hash. @p hash, @p key and @p data
  * can be @c NULL, in that case #EINA_FALSE is returned. @p key is
@@ -1200,7 +1200,7 @@ eina_hash_add(Eina_Hash *hash, const void *key, const void *data)
  * strings are case sensitive. If an error occurs, eina_error_get()
  * should be used to determine if an allocation error occurred during
  * this function. This function returns #EINA_FALSE if an error
- * occured, #EINA_TRUE otherwise.
+ * occurred, #EINA_TRUE otherwise.
  */
 EAPI Eina_Bool
 eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data)
@@ -1227,15 +1227,15 @@ eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data)
  * @param key The key.
  * @param key_length The length of the key.
  * @param key_hash The hash that always match the key.
- * @return #EINA_FALSE if an error occured, #EINA_TRUE otherwise.
+ * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * This function removes the entry identified by @p key and
  * @p key_hash from @p hash. If a free function was given to the
  * callback on creation, it will be called for the data being
  * deleted. Do not forget to count '\\0' for string when setting the
  * value of @p key_length. If @p hash or @p key are @c NULL, the
- * functions returns immediatly #EINA_FALSE. This function returns
- * #EINA_FALSE if an error occured, #EINA_TRUE otherwise.
+ * functions returns immediately #EINA_FALSE. This function returns
+ * #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * @note if you don't have the key_hash, use eina_hash_del_by_key() instead.
  * @note if you don't have the key, use eina_hash_del_by_data() instead.
@@ -1260,15 +1260,15 @@ eina_hash_del_by_key_hash(Eina_Hash *hash,
  *
  * @param hash The given hash table.
  * @param key  The key.
- * @return #EINA_FALSE if an error occured, #EINA_TRUE otherwise.
+ * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * This function removes the entry identified by @p key from @p
  * hash. The key length and hash will be calculated automatically by
  * using functiond provided to has creation function. If a free
  * function was given to the callback on creation, it will be called
  * for the data being deleted. If @p hash or @p key are @c NULL, the
- * functions returns immediatly #EINA_FALSE. This function returns
- * #EINA_FALSE if an error occured, #EINA_TRUE otherwise.
+ * functions returns immediately #EINA_FALSE. This function returns
+ * #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * @note if you already have the key_hash, use eina_hash_del_by_key_hash() instead.
  * @note if you don't have the key, use eina_hash_del_by_data() instead.
@@ -1289,14 +1289,14 @@ eina_hash_del_by_key(Eina_Hash *hash, const void *key)
  *
  * @param hash The given hash table.
  * @param data The data value to search and remove.
- * @return #EINA_FALSE if an error occured, #EINA_TRUE otherwise.
+ * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *          thing goes fine.
  *
  * This function removes the entry identified by @p data from @p
  * hash. If a free function was given to the callback on creation, it
  * will be called for the data being deleted. If @p hash or @p data
- * are @c NULL, the functions returns immediatly #EINA_FALSE. This
- * function returns #EINA_FALSE if an error occured, #EINA_TRUE
+ * are @c NULL, the functions returns immediately #EINA_FALSE. This
+ * function returns #EINA_FALSE if an error occurred, #EINA_TRUE
  * otherwise.
  *
  * @note if you already have the key, use eina_hash_del_by_key() or eina_hash_del_by_key_hash() instead.
@@ -1337,18 +1337,18 @@ error:
  * @param key_length The length of the key.
  * @param key_hash The hash that always match the key.
  * @param data The data pointer to remove if the key is @c NULL.
- * @return #EINA_FALSE if an error occured, #EINA_TRUE otherwise.
+ * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * This function removes the entry identified by @p key and
  * @p key_hash, or @p data, from @p hash. If a free function was given to
  * the  callback on creation, it will be called for the data being
- * deleted. If @p hash is @c NULL, the functions returns immediatly
+ * deleted. If @p hash is @c NULL, the functions returns immediately
  * #EINA_FALSE. If @p key is @c NULL, then @p key_hash and @p key_hash
  * are ignored and @p data is used to find a match to remove,
  * otherwise @p key and @p key_hash are used and @p data is not
  * required and can be @c NULL. Do not forget to count '\\0' for
  * string when setting the value of @p key_length. This function
- * returns #EINA_FALSE if an error occured, #EINA_TRUE otherwise.
+ * returns #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * @note if you know you already have the key, use eina_hash_del_by_key_hash(),
  *       if you know you don't have the key, use eina_hash_del_by_data()
@@ -1381,16 +1381,16 @@ eina_hash_del_by_hash(Eina_Hash *hash,
  * @param hash The given hash table.
  * @param key  The key.
  * @param data The data pointer to remove if the key is @c NULL.
- * @return #EINA_FALSE if an error occured, #EINA_TRUE otherwise.
+ * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * This function removes the entry identified by @p key or @p data
  * from @p hash. If a free function was given to the
  * callback on creation, it will be called for the data being
- * deleted. If @p hash is @c NULL, the functions returns immediatly
+ * deleted. If @p hash is @c NULL, the functions returns immediately
  * #EINA_FALSE. If @p key is @c NULL, then @p data is used to find the a
  * match to remove, otherwise @p key is used and @p data is not
  * required and can be @c NULL. This function returns #EINA_FALSE if
- * an error occured, #EINA_TRUE otherwise.
+ * an error occurred, #EINA_TRUE otherwise.
  *
  * @note if you know you already have the key, use
  *       eina_hash_del_by_key() or eina_hash_del_by_key_hash(). If you
@@ -1423,7 +1423,7 @@ eina_hash_del(Eina_Hash *hash, const void *key, const void *data)
  * @p key_length in @p hash. @p key_hash is the hash that always match
  * @p key. It is ignored if @p key is @c NULL. Do not forget to count
  * '\\0' for string when setting the value of @p key_length. If
- * @p hash is @c NULL, this function returns immediatly @c NULL. This
+ * @p hash is @c NULL, this function returns immediately @c NULL. This
  * function returns the data pointer on success, @c NULL otherwise.
  */
 EAPI void *
@@ -1462,7 +1462,7 @@ eina_hash_find_by_hash(const Eina_Hash *hash,
  * otherwise.
  *
  * This function retrieves the entry associated to @p key in
- * @p hash. If @p hash is @c NULL, this function returns immediatly
+ * @p hash. If @p hash is @c NULL, this function returns immediately
  * @c NULL. This function returns the data pointer on success, @c NULL
  * otherwise.
  */
