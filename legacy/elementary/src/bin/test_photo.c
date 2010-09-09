@@ -44,6 +44,7 @@ test_photo(void *data, Evas_Object *obj, void *event_info)
                       PACKAGE_DATA_DIR, img[n]);
              n++;
              if (n >= 9) n = 0;
+             elm_photo_size_set(ph, 80);
              elm_photo_file_set(ph, buf);
 	     elm_photo_editable_set(ph, 1);
              evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND,
@@ -52,7 +53,6 @@ test_photo(void *data, Evas_Object *obj, void *event_info)
                                              EVAS_HINT_FILL);
 	     evas_object_smart_callback_add(ph, "drop",
                                             drop_cb, NULL);
-             elm_photo_size_set(ph, 80);
              if(n == 2 || n == 3) {
             	 elm_photo_fill_inside_set(ph, EINA_TRUE);
             	 elm_widget_style_set(ph, "shadow");
