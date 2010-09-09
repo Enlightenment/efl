@@ -12,7 +12,7 @@
 
 typedef struct _Widget_Data Widget_Data;
 
-struct _Menu_Item
+struct _Elm_Menu_Item
 {
    Evas_Object *menu;
    Evas_Object *o;

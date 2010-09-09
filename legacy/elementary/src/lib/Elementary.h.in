@@ -978,7 +978,7 @@ extern "C" {
     * "clicked" - when the user clicks on a toolbar item and becomes selected
     */
 
-   typedef struct _Menu_Item Elm_Menu_Item;
+   typedef struct _Elm_Menu_Item Elm_Menu_Item;
    EAPI Evas_Object     *elm_menu_add(Evas_Object *parent);
    EAPI void		 elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void		 elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
