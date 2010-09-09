@@ -137,7 +137,7 @@ _slave_mode_help(Evas_Object *edje __UNUSED__, char *args __UNUSED__)
 	"\t<command> [arguments]\n"
 	"\n"
 	"Available commands:\n"
-	"\tsignal <source> <emission>\n"
+	"\tsignal <emission> <source>\n"
 	"\t   sends a signal to edje\n"
 	"\tinfo <part>\n"
 	"\t   Print part geometry: <x>,<y>,<w>,<h>\n"
