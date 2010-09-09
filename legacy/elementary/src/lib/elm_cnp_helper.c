@@ -1367,6 +1367,40 @@ elm_drop_target_del(Evas_Object *obj)
    return true;
 }
 
+Eina_Bool
+elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const void *data)
+{
+   Ecore_X_Window xwin;
+   struct _elm_cnp_selection *sel;
+   enum _elm_sel_type xdnd = ELM_SEL_XDND;
+
+   if (!_elm_cnp_init_count) _elm_cnp_init();
+
+   xwin = elm_win_xwindow_get(widget);
+
+   cnp_debug("starting drag...\n");
+
+   //ecore_x_dnd_type_set(win, "text/uri-list", 1);
+      /* FIXME: just call elm_selection_set */
+   sel = selections + ELM_SEL_XDND;
+   sel->active = 1;
+   sel->widget = obj;
+   sel->format = format;
+   sel->selbuf = selbuf ? strdup(selbuf) : NULL;
+   ecore_x_selection_xdnd_set(elm_win_xwindow_get(xwin), &selection,
+                              sizeof(enum _elm_sel_type));
+
+   // set types
+   // start watching motion notify on mouse
+   //    - get window under cursor
+   //    - request data on dnd aware
+   //    - send dndenter/leave as mouse moves in/out
+   //    - update cursor
+   // start watching for dnd status
+   // start watching for mouse up
+
+   return true;
+}
 
 
 

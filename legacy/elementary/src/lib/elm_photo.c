@@ -11,7 +11,8 @@
  *
  *  - clicked: This is called when a user has clicked the photo
  *  - drop: Something was dropped on the widget
- *
+ *  - drag,start: Someone started dragging the image out of the object
+ *  - drag,end: Dragged item was dropped (somewhere)
  */
 
 typedef struct _Widget_Data Widget_Data;
@@ -22,6 +23,7 @@ struct _Widget_Data
    Evas_Object *img;
    int size;
    Eina_Bool fill;
+   Ecore_Timer *longtimer;
 };
 
 static const char *widtype = NULL;
@@ -90,12 +92,44 @@ _icon_move_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 	}
 }
 
+static Eina_Bool
+_longpress(void *objv)
+{
+   Widget_Data *wd = elm_widget_data_get(objv);
+
+   printf("Long press: start drag!\n");
+   wd->longtimer = NULL;
+
+   elm_drag_start(objv, ELM_SEL_FORMAT_IMAGE,"/home/nash/Desktop/IMG_4084.jpg");
+   evas_object_smart_callback_call(data, "drag,start", NULL);
+
+   return 0; /* Don't call again */
+}
 
 static void
-_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   Widget_Data *wd = elm_widget_data_get(data);
+
+   if (wd->longtimer) ecore_timer_del(wd->longtimer);
+   /* FIXME: Hard coded */
+   wd->longtimer = ecore_timer_add(0.7,_longpress, data);
+}
+
+static void
+_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+
+   if (wd && wd->longtimer)
+     {
+        ecore_timer_del(wd->longtimer);
+        wd->longtimer = NULL;
+     }
+
    evas_object_smart_callback_call(data, "clicked", NULL);
 }
+
 
 /**
  * Add a new photo to the parent
@@ -138,11 +172,14 @@ elm_photo_add(Evas_Object *parent)
    _els_smart_icon_scale_set(wd->img, elm_widget_scale_get(obj) * _elm_config->scale);
    evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_UP,
 				  _mouse_up, obj);
+   evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_DOWN,
+				  _mouse_down, obj);
    evas_object_repeat_events_set(wd->img, 1);
    edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->img);
    evas_object_show(wd->img);
    elm_widget_sub_object_add(obj, wd->img);
 
+   wd->longtimer = NULL;
 
    icon = _els_smart_icon_object_get(wd->img);
    evas_object_event_callback_add(icon, EVAS_CALLBACK_MOVE,
@@ -238,3 +275,4 @@ elm_photo_editable_set(Evas_Object *obj, Eina_Bool set)
    _els_smart_icon_edit_set(wd->img, set, obj);
 }
 
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
