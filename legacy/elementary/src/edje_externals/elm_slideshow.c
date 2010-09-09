@@ -172,7 +172,7 @@ static Edje_External_Param_Info external_slideshow_params[] = {
    EDJE_EXTERNAL_PARAM_INFO_INT("timeout"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("loop"),
    EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("transition", "fade", transitions),
-   EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("layout", "fullscreen", transitions),
+   EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("layout", "fullscreen", layout),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
