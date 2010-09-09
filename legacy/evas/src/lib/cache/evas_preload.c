@@ -84,9 +84,8 @@ on_error:
 
 	work = eina_list_data_get(_workers);
 	_workers = eina_list_remove_list(_workers, _workers);
-
 	LKU(_mutex);
-
+        
 	if (work->func_heavy) work->func_heavy(work->data);
 	evas_async_events_put(pth, 0, work, _evas_preload_thread_done);
      }
@@ -98,7 +97,6 @@ on_error:
 	goto on_error;
      }
    _threads_count--;
-
    LKU(_mutex);
 
    // dummy worker to wake things up
@@ -112,7 +110,6 @@ on_error:
    work->cancel = EINA_FALSE;
 
    evas_async_events_put(pth, 0, work, _evas_preload_thread_done);
-
    return pth;
 }
 #endif
@@ -121,7 +118,7 @@ void
 _evas_preload_thread_init(void)
 {
    _threads_max = eina_cpu_count();
-   if (_threads_max <= 0) _threads_max = 1;
+   if (_threads_max < 1) _threads_max = 1;
 }
 
 void
@@ -134,15 +131,12 @@ _evas_preload_thread_shutdown(void)
 
    /* Force processing of async events. */
    evas_async_events_process();
-
    LKL(_mutex);
-
    EINA_LIST_FREE(_workers, work)
      {
 	if (work->func_cancel) work->func_cancel(work->data);
 	free(work);
      }
-   
    LKU(_mutex);
 #endif
 }
@@ -172,13 +166,11 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
 
    LKL(_mutex);
    _workers = eina_list_append(_workers, work);
-
    if (_threads_count == _threads_max)
      {
 	pthread_mutex_unlock(&_mutex);
 	return (Evas_Preload_Pthread *)work;
      }
-
    LKU(_mutex);
 
    /* One more thread could be created. */
@@ -219,11 +211,14 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
      }
 
  on_error:
+   LKL(_mutex);
    if (_threads_count == 0)
      {
+	LKU(_mutex);
 	if (work->func_cancel) work->func_cancel(work->data);
 	free(work);
      }
+   LKU(_mutex);
    return NULL;
 #else
    /*
@@ -232,7 +227,7 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
     */
    func_heavy((void *)data);
    func_end((void *)data);
-   return EINA_TRUE;
+   return (void *)1;
 #endif
 }
 
@@ -243,6 +238,7 @@ evas_preload_thread_cancel(Evas_Preload_Pthread *thread)
    Evas_Preload_Pthread_Worker *work;
    Eina_List *l;
 
+   if (!thread) return EINA_TRUE;
    LKL(_mutex);
    EINA_LIST_FOREACH(_workers, l, work)
      {
