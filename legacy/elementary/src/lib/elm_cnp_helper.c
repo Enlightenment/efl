@@ -404,11 +404,12 @@ selection_clear(void *udata __UNUSED__, int type __UNUSED__, void *event){
    Ecore_X_Event_Selection_Clear *ev = event;
    struct _elm_cnp_selection *sel;
    int i;
-cnp_debug("selection %d clear\n",i);
+
    for (i = 0 ; i < ELM_SEL_MAX ; i ++)
      {
 	if (selections[i].ecore_sel == ev->selection) break;
      }
+cnp_debug("selection %d clear\n",i);
    /* Not me... Don't care */
    if (i == ELM_SEL_MAX) return ECORE_CALLBACK_PASS_ON;
 
@@ -682,11 +683,11 @@ notify_handler_uri(struct _elm_cnp_selection *sel,
    cnp_debug("Got %s\n",p);
    if (strncmp(p,"file://",7) != 0)
      {
-        cnp_debug("Doesn't start with ;file;  %s\n",p);
-	return 0;
+        /* Try and continue if it looks sane */
+        if (*p != '/') return 0;
      }
-
-   p += strlen("file://");
+   else
+      p += strlen("file://");
 
    if (!strstr(p,".png") && !strstr(p,".jpg"))
      {
