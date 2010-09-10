@@ -183,7 +183,6 @@ edje_file_group_exists(const char *file, const char *glob)
    Edje_File *edf;
    int error_ret = 0;
    Eina_Bool succeed = EINA_FALSE;
-   Edje_Patterns *patterns;
 
    if ((!file) || (!*file))
       return EINA_FALSE;
@@ -192,11 +191,7 @@ edje_file_group_exists(const char *file, const char *glob)
    if (!edf)
       return EINA_FALSE;
 
-   if (edf->collection_patterns)
-     {
-        patterns = edf->collection_patterns;
-     }
-   else
+   if (!edf->collection_patterns)
      {
         Edje_Part_Collection_Directory_Entry *ce;
         Eina_Iterator *i;
@@ -209,14 +204,11 @@ edje_file_group_exists(const char *file, const char *glob)
 
         eina_iterator_free(i);
 
-        patterns = edje_match_collection_dir_init(l);
+        edf->collection_patterns = edje_match_collection_dir_init(l);
         eina_list_free(l);
      }
 
-   succeed = edje_match_collection_dir_exec(patterns, glob);
-
-   edf->collection_patterns = patterns;
-
+   succeed = edje_match_collection_dir_exec(edf->collection_patterns, glob);
    _edje_cache_file_unref(edf);
    return succeed;
 }
