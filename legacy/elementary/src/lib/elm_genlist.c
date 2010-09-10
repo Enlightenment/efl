@@ -2023,8 +2023,11 @@ elm_genlist_clear(Evas_Object *obj)
    wd->pan_y = 0;
    wd->minw = 0;
    wd->minh = 0;
-   evas_object_size_hint_min_set(wd->pan_smart, wd->minw, wd->minh);
-   evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
+   if (wd->pan_smart)
+     {
+        evas_object_size_hint_min_set(wd->pan_smart, wd->minw, wd->minh);
+        evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
+     }
    _sizing_eval(obj);
 }
 
