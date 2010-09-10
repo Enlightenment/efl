@@ -142,12 +142,12 @@ typedef struct _Pan Pan;
 
 struct _Elm_Gengrid_Item
 {
-   Evas_Object *base, *spacer;
+   Elm_Widget_Item base;
+   Evas_Object *spacer;
    const Elm_Gengrid_Item_Class *gic;
    Ecore_Timer *long_timer;
    Widget_Data *wd;
    Eina_List *labels, *icons, *states, *icon_objs;
-   const void *data;
    struct
      {
 	Evas_Smart_Cb func;
@@ -442,7 +442,7 @@ static void
 _item_hilight(Elm_Gengrid_Item *item)
 {
    if ((item->wd->no_select) || (item->delete_me) || (item->hilighted)) return;
-   edje_object_signal_emit(item->base, "elm,state,selected", "elm");
+   edje_object_signal_emit(item->base.view, "elm,state,selected", "elm");
    item->hilighted = EINA_TRUE;
 }
 
@@ -453,35 +453,35 @@ _item_realize(Elm_Gengrid_Item *item)
    char style[1024];
 
    if ((item->realized) || (item->delete_me)) return;
-   item->base = edje_object_add(evas_object_evas_get(item->wd->self));
-   edje_object_scale_set(item->base, elm_widget_scale_get(item->wd->self) *
+   item->base.view = edje_object_add(evas_object_evas_get(item->wd->self));
+   edje_object_scale_set(item->base.view, elm_widget_scale_get(item->wd->self) *
 			 _elm_config->scale);
-   evas_object_smart_member_add(item->base, item->wd->pan_smart);
-   elm_widget_sub_object_add(item->wd->self, item->base);
+   evas_object_smart_member_add(item->base.view, item->wd->pan_smart);
+   elm_widget_sub_object_add(item->wd->self, item->base.view);
    snprintf(style, sizeof(style), "item/%s",
 	    item->gic->item_style ? item->gic->item_style : "default");
-   _elm_theme_object_set(item->wd->self, item->base, "gengrid", style,
+   _elm_theme_object_set(item->wd->self, item->base.view, "gengrid", style,
                          elm_widget_style_get(item->wd->self));
    item->spacer = evas_object_rectangle_add(evas_object_evas_get(item->wd->self));
    evas_object_color_set(item->spacer, 0, 0, 0, 0);
    elm_widget_sub_object_add(item->wd->self, item->spacer);
    evas_object_size_hint_min_set(item->spacer, 2 * _elm_config->scale, 1);
-   edje_object_part_swallow(item->base, "elm.swallow.pad", item->spacer);
+   edje_object_part_swallow(item->base.view, "elm.swallow.pad", item->spacer);
 
    if (item->gic->func.label_get)
      {
 	const Eina_List *l;
 	const char *key;
 
-	item->labels = _elm_stringlist_get(edje_object_data_get(item->base,
+	item->labels = _elm_stringlist_get(edje_object_data_get(item->base.view,
 							        "labels"));
 	EINA_LIST_FOREACH(item->labels, l, key)
 	  {
-	     char *s = item->gic->func.label_get(item->data, item->wd->self,
+	     char *s = item->gic->func.label_get(item->base.data, item->wd->self,
 						 l->data);
 	     if (s)
 	       {
-		  edje_object_part_text_set(item->base, l->data, s);
+		  edje_object_part_text_set(item->base.view, l->data, s);
 		  free(s);
 	       }
 	  }
@@ -492,17 +492,17 @@ _item_realize(Elm_Gengrid_Item *item)
 	const Eina_List *l;
 	const char *key;
 
-	item->icons = _elm_stringlist_get(edje_object_data_get(item->base,
+	item->icons = _elm_stringlist_get(edje_object_data_get(item->base.view,
 							       "icons"));
 	EINA_LIST_FOREACH(item->icons, l, key)
 	  {
-	     Evas_Object *ic = item->gic->func.icon_get(item->data,
+	     Evas_Object *ic = item->gic->func.icon_get(item->base.data,
 							item->wd->self,
 						        l->data);
 	     if (ic)
 	       {
 		  item->icon_objs = eina_list_append(item->icon_objs, ic);
-		  edje_object_part_swallow(item->base, key, ic);
+		  edje_object_part_swallow(item->base.view, key, ic);
 		  evas_object_show(ic);
 		  elm_widget_sub_object_add(item->wd->self, ic);
 	       }
@@ -514,42 +514,42 @@ _item_realize(Elm_Gengrid_Item *item)
 	const Eina_List *l;
 	const char *key;
 
-	item->states = _elm_stringlist_get(edje_object_data_get(item->base,
+	item->states = _elm_stringlist_get(edje_object_data_get(item->base.view,
 							        "states"));
 	EINA_LIST_FOREACH(item->states, l, key)
 	  {
-	     Eina_Bool on = item->gic->func.state_get(item->data,
+	     Eina_Bool on = item->gic->func.state_get(item->base.data,
 						      item->wd->self, l->data);
 	     if (on)
 	       {
 		  snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
-		  edje_object_signal_emit(item->base, buf, "elm");
+		  edje_object_signal_emit(item->base.view, buf, "elm");
 	       }
 	  }
      }
 
    if ((!item->wd->item_width) && (!item->wd->item_height))
      {
-	edje_object_size_min_restricted_calc(item->base,
+	edje_object_size_min_restricted_calc(item->base.view,
 					     &item->wd->item_width, &item->wd->item_height,
 					     item->wd->item_width, item->wd->item_height);
 	elm_coords_finger_size_adjust(1, &item->wd->item_width,
 				      1, &item->wd->item_height);
      }
 
-   evas_object_event_callback_add(item->base, EVAS_CALLBACK_MOUSE_DOWN,
+   evas_object_event_callback_add(item->base.view, EVAS_CALLBACK_MOUSE_DOWN,
 				  _mouse_down, item);
-   evas_object_event_callback_add(item->base, EVAS_CALLBACK_MOUSE_UP,
+   evas_object_event_callback_add(item->base.view, EVAS_CALLBACK_MOUSE_UP,
 				  _mouse_up, item);
-   evas_object_event_callback_add(item->base, EVAS_CALLBACK_MOUSE_MOVE,
+   evas_object_event_callback_add(item->base.view, EVAS_CALLBACK_MOUSE_MOVE,
 				  _mouse_move, item);
 
    if (item->selected)
-     edje_object_signal_emit(item->base, "elm,state,selected", "elm");
+     edje_object_signal_emit(item->base.view, "elm,state,selected", "elm");
    if (item->disabled)
-     edje_object_signal_emit(item->base, "elm,state,disabled", "elm");
+     edje_object_signal_emit(item->base.view, "elm,state,disabled", "elm");
 
-   evas_object_show(item->base);
+   evas_object_show(item->base.view);
    item->realized = EINA_TRUE;
    item->want_unrealize = EINA_FALSE;
 }
@@ -565,8 +565,8 @@ _item_unrealize(Elm_Gengrid_Item *item)
 	ecore_timer_del(item->long_timer);
 	item->long_timer = NULL;
      }
-   evas_object_del(item->base);
-   item->base = NULL;
+   evas_object_del(item->base.view);
+   item->base.view = NULL;
    evas_object_del(item->spacer);
    item->spacer = NULL;
    _elm_stringlist_free(item->labels);
@@ -644,8 +644,8 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
 	_item_realize(item);
 	if (!was_realized)
 	  evas_object_smart_callback_call(item->wd->self, "realized", item);
-	evas_object_move(item->base, x, y);
-	evas_object_resize(item->base, item->wd->item_width,
+	evas_object_move(item->base.view, x, y);
+	evas_object_resize(item->base.view, item->wd->item_width,
 			   item->wd->item_height);
      }
    else
@@ -657,11 +657,11 @@ _item_create(Widget_Data *wd, const Elm_Gengrid_Item_Class *gic, const void *dat
 {
    Elm_Gengrid_Item *item;
 
-   item = calloc(1, sizeof(*item));
+   item = elm_widget_item_new(wd->self, Elm_Gengrid_Item);
    if (!item) return NULL;
    item->wd = wd;
    item->gic = gic;
-   item->data = data;
+   item->base.data = data;
    item->func.func = func;
    item->func.data = func_data;
    return item;
@@ -670,15 +670,16 @@ _item_create(Widget_Data *wd, const Elm_Gengrid_Item_Class *gic, const void *dat
 static void
 _item_del(Elm_Gengrid_Item *item)
 {
+   elm_widget_item_pre_notify_del(item);
    if (item->selected)
      item->wd->selected = eina_list_remove(item->wd->selected, item);
    if (item->realized) _item_unrealize(item);
    if ((!item->delete_me) && (item->gic->func.del))
-     item->gic->func.del(item->data, item->wd->self);
+     item->gic->func.del(item->base.data, item->wd->self);
    item->delete_me = EINA_TRUE;
    item->wd->items = eina_list_remove(item->wd->items, item);
    if (item->long_timer) ecore_timer_del(item->long_timer);
-   free(item);
+   elm_widget_item_del(item);
 }
 
 static void
@@ -707,7 +708,7 @@ static void
 _item_unselect(Elm_Gengrid_Item *item)
 {
    if ((item->delete_me) || (!item->hilighted)) return;
-   edje_object_signal_emit(item->base, "elm,state,unselected", "elm");
+   edje_object_signal_emit(item->base.view, "elm,state,unselected", "elm");
    item->hilighted = EINA_FALSE;
    if (item->selected)
      {
@@ -1150,10 +1151,11 @@ elm_gengrid_item_del(Elm_Gengrid_Item *item)
    if ((item->relcount > 0) || (item->walking > 0))
      {
 	item->delete_me = EINA_TRUE;
+        elm_widget_item_pre_notify_del(item);
 	if (item->selected)
 	  item->wd->selected = eina_list_remove(item->wd->selected, item);
 	if (item->gic->func.del) 
-	  item->gic->func.del(item->data, item->wd->self);
+	  item->gic->func.del(item->base.data, item->wd->self);
 	return;
      }
 
@@ -1214,11 +1216,12 @@ elm_gengrid_clear(Evas_Object *obj)
 
    EINA_LIST_FOREACH_SAFE(wd->items, l, l_next, item)
      {
-	if (item->realized) _item_unrealize(item);
-	if (item->gic->func.del) item->gic->func.del(item->data, wd->self);
-	if (item->long_timer) ecore_timer_del(item->long_timer);
-	free(item);
 	wd->items = eina_list_remove_list(wd->items, l);
+        elm_widget_item_pre_notify_del(item);
+	if (item->realized) _item_unrealize(item);
+	if (item->gic->func.del) item->gic->func.del(item->base.data, wd->self);
+	if (item->long_timer) ecore_timer_del(item->long_timer);
+        elm_widget_item_del(item);
      }
 
    if (wd->selected)
@@ -1253,10 +1256,10 @@ elm_gengrid_clear(Evas_Object *obj)
  * @ingroup Gengrid
  */
 EAPI const Evas_Object *
-elm_gengrid_item_object_get(Elm_Gengrid_Item *item)
+elm_gengrid_item_object_get(const Elm_Gengrid_Item *item)
 {
    if (!item) return NULL;
-   return item->base;
+   return item->base.view;
 }
 
 /**
@@ -1274,10 +1277,9 @@ elm_gengrid_item_object_get(Elm_Gengrid_Item *item)
  * @ingroup Gengrid
  */
 EAPI void *
-elm_gengrid_item_data_get(Elm_Gengrid_Item *item)
+elm_gengrid_item_data_get(const Elm_Gengrid_Item *item)
 {
-   if (!item) return NULL;
-   return (void *)item->data;
+   return elm_widget_item_data_get(item);
 }
 
 /**
@@ -1455,9 +1457,9 @@ elm_gengrid_item_disabled_set(Elm_Gengrid_Item *item, Eina_Bool disabled)
    if (item->realized)
      {
 	if (item->disabled)
-	  edje_object_signal_emit(item->base, "elm,state,disabled", "elm");
+	  edje_object_signal_emit(item->base.view, "elm,state,disabled", "elm");
 	else
-	  edje_object_signal_emit(item->base, "elm,state,enabled", "elm");
+	  edje_object_signal_emit(item->base.view, "elm,state,enabled", "elm");
      }
 }
 

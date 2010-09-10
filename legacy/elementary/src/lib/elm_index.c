@@ -27,11 +27,9 @@ struct _Widget_Data
 
 struct _Elm_Index_Item
 {
-   Evas_Object *obj;
+   Elm_Widget_Item base;
    const char *letter;
-   const void *data;
    int level;
-   Evas_Object *base;
    Eina_Bool selected : 1;
 };
 
@@ -169,11 +167,10 @@ _item_new(Evas_Object *obj, const char *letter, const void *item)
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Index_Item *it;
    if (!wd) return NULL;
-   it = calloc(1, sizeof(Elm_Index_Item));
+   it = elm_widget_item_new(obj, Elm_Index_Item);
    if (!it) return NULL;
-   it->obj = obj;
    it->letter = eina_stringshare_add(letter);
-   it->data = item;
+   it->base.data = item;
    it->level = wd->level;
    return it;
 }
@@ -186,19 +183,19 @@ _item_find(Evas_Object *obj, const void *item)
    Elm_Index_Item *it;
    if (!wd) return NULL;
    EINA_LIST_FOREACH(wd->items, l, it)
-     if (it->data == item) return it;
+     if (it->base.data == item) return it;
    return NULL;
 }
 
 static void
 _item_free(Elm_Index_Item *it)
 {
-   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
    if (!wd) return;
    wd->items = eina_list_remove(wd->items, it);
-   if (it->base) evas_object_del(it->base);
+   elm_widget_item_pre_notify_del(it);
    eina_stringshare_del(it->letter);
-   free(it);
+   elm_widget_item_del(it);
 }
 
 // FIXME: always have index filled
@@ -220,7 +217,7 @@ _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level)
 
         if (it->level != level) continue;
         o = edje_object_add(evas_object_evas_get(obj));
-        it->base = o;
+        it->base.view = o;
         if (i & 0x1)
           _elm_theme_object_set(obj, o, "index", "item_odd/vertical", elm_widget_style_get(obj));
         else
@@ -265,10 +262,10 @@ _index_box_clear(Evas_Object *obj, Evas_Object *box __UNUSED__, int level)
    if (!wd->level_active[level]) return;
    EINA_LIST_FOREACH(wd->items, l, it)
      {
-        if (!it->base) continue;
+        if (!it->base.view) continue;
         if (it->level != level) continue;
-        evas_object_del(it->base);
-        it->base = 0;
+        evas_object_del(it->base.view);
+        it->base.view = NULL;
      }
    wd->level_active[level] = 0;
 }
@@ -306,8 +303,8 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
         evas_object_geometry_get(wd->bx[i], &bx, &by, &bw, &bh);
         EINA_LIST_FOREACH(wd->items, l, it)
           {
-             if (!((it->level == i) && (it->base))) continue;
-             if ((it->base) && (it->level != wd->level))
+             if (!((it->level == i) && (it->base.view))) continue;
+             if ((it->base.view) && (it->level != wd->level))
                {
                   if (it->selected)
                     {
@@ -321,7 +318,7 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
                   it_last = it;
                   it->selected = 0;
                }
-             evas_object_geometry_get(it->base, &x, &y, &w, &h);
+             evas_object_geometry_get(it->base.view, &x, &y, &w, &h);
              xx = x + (w / 2);
              yy = y + (h / 2);
              x = evx - xx;
@@ -349,13 +346,13 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
                   const char *stacking, *selectraise;
 
                   it = it_last;
-                  edje_object_signal_emit(it->base, "elm,state,inactive", "elm");
-                  stacking = edje_object_data_get(it->base, "stacking");
-                  selectraise = edje_object_data_get(it->base, "selectraise");
+                  edje_object_signal_emit(it->base.view, "elm,state,inactive", "elm");
+                  stacking = edje_object_data_get(it->base.view, "stacking");
+                  selectraise = edje_object_data_get(it->base.view, "selectraise");
                   if ((selectraise) && (!strcmp(selectraise, "on")))
                     {
                        if ((stacking) && (!strcmp(stacking, "below")))
-                         evas_object_lower(it->base);
+                         evas_object_lower(it->base.view);
                     }
                }
              if (it_closest)
@@ -363,11 +360,11 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
                   const char *selectraise;
 
                   it = it_closest;
-                  edje_object_signal_emit(it->base, "elm,state,active", "elm");
-                  selectraise = edje_object_data_get(it->base, "selectraise");
+                  edje_object_signal_emit(it->base.view, "elm,state,active", "elm");
+                  selectraise = edje_object_data_get(it->base.view, "selectraise");
                   if ((selectraise) && (!strcmp(selectraise, "on")))
-                    evas_object_raise(it->base);
-                  evas_object_smart_callback_call((void *)obj, "changed", (void *)it->data);
+                    evas_object_raise(it->base.view);
+                  evas_object_smart_callback_call((void *)obj, "changed", (void *)it->base.data);
                   if (wd->delay) ecore_timer_del(wd->delay);
                   wd->delay = ecore_timer_add(0.2, _delay_change, obj);
                }
@@ -646,7 +643,7 @@ elm_index_item_selected_get(const Evas_Object *obj, int level)
    Elm_Index_Item *it;
    if (!wd) return NULL;
    EINA_LIST_FOREACH(wd->items, l, it)
-     if ((it->selected) && (it->level == level)) return it->data;
+     if ((it->selected) && (it->level == level)) return it->base.data;
    return NULL;
 }
 
@@ -813,8 +810,8 @@ elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *i
 	else
 	  {
 	     Elm_Index_Item *p_it = eina_list_data_get(lnear);
-	     if (cmp_data_func(p_it->data, it->data) >= 0)
-	       p_it->data = it->data;
+	     if (cmp_data_func(p_it->base.data, it->base.data) >= 0)
+	       p_it->base.data = it->base.data;
 	     _item_free(it);
 	  }
      }
@@ -914,8 +911,7 @@ elm_index_item_go(Evas_Object *obj, int level __UNUSED__)
 EAPI void *
 elm_index_item_data_get(const Elm_Index_Item *it)
 {
-   if (!it) return NULL;
-   return (void *)it->data;
+   return elm_widget_item_data_get(it);
 }
 
 /**
@@ -931,8 +927,21 @@ elm_index_item_data_get(const Elm_Index_Item *it)
 EAPI void
 elm_index_item_data_set(Elm_Index_Item *it, const void *data)
 {
-   if (!it) return;
-   it->data = data;
+   elm_widget_item_data_set(it, data);
+}
+
+/**
+ * Set the function called when a index item is freed.
+ *
+ * @param it The item to set the callback on
+ * @param func The function called
+ *
+ * @ingroup Index
+ */
+EAPI void
+elm_index_item_del_cb_set(Elm_Index_Item *it, Evas_Smart_Cb func)
+{
+   elm_widget_item_del_cb_set(it, func);
 }
 
 /**

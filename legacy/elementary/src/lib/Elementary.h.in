@@ -617,11 +617,11 @@ extern "C" {
    EAPI void	     elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
    EAPI void	     elm_gengrid_horizontal_set(Evas_Object *obj, Eina_Bool setting);
    EAPI void	     elm_gengrid_clear(Evas_Object *obj);
-   EAPI void	    *elm_gengrid_item_data_get(Elm_Gengrid_Item *item);
+   EAPI void	    *elm_gengrid_item_data_get(const Elm_Gengrid_Item *item);
    EAPI void	     elm_gengrid_item_pos_get(const Elm_Gengrid_Item *item, unsigned int *x, unsigned int *y);
    EAPI void	     elm_gengrid_item_selected_set(Elm_Gengrid_Item *item, Eina_Bool selected);
    EAPI Eina_Bool    elm_gengrid_item_selected_get(const Elm_Gengrid_Item *item);
-   EAPI const Evas_Object *elm_gengrid_item_object_get(Elm_Gengrid_Item *item);
+   EAPI const Evas_Object *elm_gengrid_item_object_get(const Elm_Gengrid_Item *item);
    EAPI const Eina_List *elm_gengrid_selected_items_get(const Evas_Object *obj);
    EAPI const Eina_List *elm_gengrid_items_get(const Evas_Object *obj);
    EAPI Elm_Gengrid_Item *elm_gengrid_item_append(Evas_Object *obj, const Elm_Gengrid_Item_Class *gcc,  const void *data, Evas_Smart_Cb func, const void *func_data);
@@ -1060,7 +1060,10 @@ extern "C" {
    EAPI Evas_Object       *elm_carousel_add(Evas_Object *parent);
    EAPI Elm_Carousel_Item *elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb func, const void *data);
    EAPI void               elm_carousel_item_del(Elm_Carousel_Item *item);
+
    EAPI void               elm_carousel_item_select(Elm_Carousel_Item *item);
+   EAPI void               elm_carousel_item_del_cb_set(Elm_Carousel_Item *it, Evas_Smart_Cb func);
+   EAPI void              *elm_carousel_item_data_get(const Elm_Carousel_Item *it);
    /* smart callbacks called:
     * "clicked" - when the user clicks on a carousel item and becomes selected
     */
@@ -1341,6 +1344,7 @@ extern "C" {
    EAPI void         elm_index_item_go(Evas_Object *obj, int level);
    EAPI void         *elm_index_item_data_get(const Elm_Index_Item *item);
    EAPI void         elm_index_item_data_set(Elm_Index_Item *it, const void *data);
+   EAPI void         elm_index_item_del_cb_set(Elm_Index_Item *it, Evas_Smart_Cb func);
    EAPI const char   *elm_index_item_letter_get(const Elm_Index_Item *item);
    /* smart callbacks called:
     * "changed" - when the selected index item changes

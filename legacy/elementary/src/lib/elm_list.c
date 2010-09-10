@@ -27,13 +27,11 @@ struct _Widget_Data
 
 struct _Elm_List_Item
 {
+   Elm_Widget_Item base;
    Eina_List *node;
-   Evas_Object *obj, *base;
    const char *label;
    Evas_Object *icon, *end;
    Evas_Smart_Cb func;
-   Evas_Smart_Cb del_cb;
-   const void *data;
    Ecore_Timer *long_timer;
    Eina_Bool deleted : 1;
    Eina_Bool even : 1;
@@ -72,41 +70,33 @@ static void _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_in
        return __VA_ARGS__;						\
     }
 
-
-
-static inline void
-_elm_list_item_call_del_cb(Elm_List_Item *it)
-{
-   if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
-}
-
 static inline void
 _elm_list_item_free(Elm_List_Item *it)
 {
    evas_object_event_callback_del_full
-     (it->base, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, it);
+     (it->base.view, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, it);
    evas_object_event_callback_del_full
-     (it->base, EVAS_CALLBACK_MOUSE_UP, _mouse_up, it);
+     (it->base.view, EVAS_CALLBACK_MOUSE_UP, _mouse_up, it);
    evas_object_event_callback_del_full
-     (it->base, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move, it);
+     (it->base.view, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move, it);
 
    if (it->icon)
      evas_object_event_callback_del_full
        (it->icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-	_changed_size_hints, it->obj);
+	_changed_size_hints, it->base.widget);
 
    if (it->end)
      evas_object_event_callback_del_full
        (it->end, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-	_changed_size_hints, it->obj);
+	_changed_size_hints, it->base.widget);
 
    eina_stringshare_del(it->label);
 
    if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->icon) evas_object_del(it->icon);
    if (it->end) evas_object_del(it->end);
-   if (it->base) evas_object_del(it->base);
-   free(it);
+
+   elm_widget_item_del(it);
 }
 
 static void
@@ -118,7 +108,7 @@ _elm_list_process_deletions(Widget_Data *wd)
 
    EINA_LIST_FREE(wd->to_delete, it)
      {
-	_elm_list_item_call_del_cb(it);
+        elm_widget_item_pre_notify_del(it);
 
 	wd->items = eina_list_remove_list(wd->items, it->node);
 	_elm_list_item_free(it);
@@ -174,7 +164,7 @@ _del_hook(Evas_Object *obj)
      fprintf(stderr, "ERROR: list deleted while walking.\n");
 
    _elm_list_walk(wd);
-   EINA_LIST_FOREACH(wd->items, n, it) _elm_list_item_call_del_cb(it);
+   EINA_LIST_FOREACH(wd->items, n, it) elm_widget_item_pre_notify_del(it);
    _elm_list_unwalk(wd);
    if (wd->to_delete) fprintf(stderr, "ERROR: leaking nodes!\n");
 
@@ -303,7 +293,7 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 static void
 _item_hilight(Elm_List_Item *it)
 {
-   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
    const char *selectraise;
 
    if (!wd) return;
@@ -311,10 +301,10 @@ _item_hilight(Elm_List_Item *it)
    if (it->hilighted) return;
    _elm_list_walk(wd);
 
-   edje_object_signal_emit(it->base, "elm,state,selected", "elm");
-   selectraise = edje_object_data_get(it->base, "selectraise");
+   edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
+   selectraise = edje_object_data_get(it->base.view, "selectraise");
    if ((selectraise) && (!strcmp(selectraise, "on")))
-     evas_object_raise(it->base);
+     evas_object_raise(it->base.view);
    it->hilighted = EINA_TRUE;
 
    _elm_list_unwalk(wd);
@@ -323,7 +313,7 @@ _item_hilight(Elm_List_Item *it)
 static void
 _item_select(Elm_List_Item *it)
 {
-   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
 
    if (!wd) return;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
@@ -337,8 +327,8 @@ _item_select(Elm_List_Item *it)
    call:
    _elm_list_walk(wd);
 
-   if (it->func) it->func((void *)it->data, it->obj, it);
-   evas_object_smart_callback_call(it->obj, "selected", it);
+   if (it->func) it->func((void *)it->base.data, it->base.widget, it);
+   evas_object_smart_callback_call(it->base.widget, "selected", it);
 
    _elm_list_unwalk(wd);
 }
@@ -346,7 +336,7 @@ _item_select(Elm_List_Item *it)
 static void
 _item_unselect(Elm_List_Item *it)
 {
-   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
    const char *stacking, *selectraise;
 
    if (!wd) return;
@@ -354,20 +344,20 @@ _item_unselect(Elm_List_Item *it)
    if (!it->hilighted) return;
    _elm_list_walk(wd);
 
-   edje_object_signal_emit(it->base, "elm,state,unselected", "elm");
-   stacking = edje_object_data_get(it->base, "stacking");
-   selectraise = edje_object_data_get(it->base, "selectraise");
+   edje_object_signal_emit(it->base.view, "elm,state,unselected", "elm");
+   stacking = edje_object_data_get(it->base.view, "stacking");
+   selectraise = edje_object_data_get(it->base.view, "selectraise");
    if ((selectraise) && (!strcmp(selectraise, "on")))
      {
 	if ((stacking) && (!strcmp(stacking, "below")))
-	  evas_object_lower(it->base);
+	  evas_object_lower(it->base.view);
      }
    it->hilighted = EINA_FALSE;
    if (it->selected)
      {
 	it->selected = EINA_FALSE;
 	wd->selected = eina_list_remove(wd->selected, it);
-	evas_object_smart_callback_call(it->obj, "unselected", it);
+	evas_object_smart_callback_call(it->base.widget, "unselected", it);
      }
 
    _elm_list_unwalk(wd);
@@ -377,7 +367,7 @@ static void
 _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_List_Item *it = data;
-   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
    Evas_Event_Mouse_Move *ev = event_info;
 
    if (!wd) return;
@@ -402,13 +392,13 @@ static Eina_Bool
 _long_press(void *data)
 {
    Elm_List_Item *it = data;
-   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
 
    if (!wd) return ECORE_CALLBACK_CANCEL;
    it->long_timer = NULL;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, 0);
    wd->longpressed = EINA_TRUE;
-   evas_object_smart_callback_call(it->obj, "longpressed", it);
+   evas_object_smart_callback_call(it->base.widget, "longpressed", it);
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -416,7 +406,7 @@ static void
 _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_List_Item *it = data;
-   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
    Evas_Event_Mouse_Down *ev = event_info;
 
    if (!wd) return;
@@ -431,14 +421,14 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
    it->long_timer = ecore_timer_add(1.0, _long_press, it);
    /* Always call the callbacks last - the user may delete our context! */
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     evas_object_smart_callback_call(it->obj, "clicked", it);
+     evas_object_smart_callback_call(it->base.widget, "clicked", it);
 }
 
 static void
 _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_List_Item *it = data;
-   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
    Evas_Event_Mouse_Up *ev = event_info;
 
    if (!wd) return;
@@ -506,22 +496,21 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
    Elm_List_Item *it;
 
    if (!wd) return NULL;
-   it = calloc(1, sizeof(Elm_List_Item));
-   it->obj = obj;
+   it = elm_widget_item_new(obj, Elm_List_Item);
    it->label = eina_stringshare_add(label);
    it->icon = icon;
    it->end = end;
    it->func = func;
-   it->data = data;
-   it->base = edje_object_add(evas_object_evas_get(obj));
-   evas_object_event_callback_add(it->base, EVAS_CALLBACK_MOUSE_DOWN,
+   it->base.data = data;
+   it->base.view = edje_object_add(evas_object_evas_get(obj));
+   evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MOUSE_DOWN,
 				  _mouse_down, it);
-   evas_object_event_callback_add(it->base, EVAS_CALLBACK_MOUSE_UP,
+   evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MOUSE_UP,
 				  _mouse_up, it);
-   evas_object_event_callback_add(it->base, EVAS_CALLBACK_MOUSE_MOVE,
+   evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MOUSE_MOVE,
 				  _mouse_move, it);
-   evas_object_size_hint_weight_set(it->base, 1.0, 1.0);
-   evas_object_size_hint_align_set(it->base, -1.0, -1.0);
+   evas_object_size_hint_weight_set(it->base.view, 1.0, 1.0);
+   evas_object_size_hint_align_set(it->base.view, -1.0, -1.0);
    if (it->icon)
      {
 	elm_widget_sub_object_add(obj, it->icon);
@@ -592,39 +581,39 @@ _fix_items(Evas_Object *obj)
 	     const char *stacking;
 
 	     if (it->is_separator)
-	       _elm_theme_object_set(obj, it->base, "list", "separator", style);
+	       _elm_theme_object_set(obj, it->base.view, "list", "separator", style);
 	     else if (wd->mode == ELM_LIST_COMPRESS)
 	       {
 		  if (it->even)
-		    _elm_theme_object_set(obj, it->base, "list", "item_compress", style);
+		    _elm_theme_object_set(obj, it->base.view, "list", "item_compress", style);
 		  else
-		    _elm_theme_object_set(obj, it->base, "list", "item_compress_odd", style);
+		    _elm_theme_object_set(obj, it->base.view, "list", "item_compress_odd", style);
 	       }
 	     else
 	       {
 		  if (it->even)
-		    _elm_theme_object_set(obj, it->base, "list", "item", style);
+		    _elm_theme_object_set(obj, it->base.view, "list", "item", style);
 		  else
-		    _elm_theme_object_set(obj, it->base, "list", "item_odd", style);
+		    _elm_theme_object_set(obj, it->base.view, "list", "item_odd", style);
 	       }
-	     stacking = edje_object_data_get(it->base, "stacking");
+	     stacking = edje_object_data_get(it->base.view, "stacking");
 	     if (stacking)
 	       {
 		  if (!strcmp(stacking, "below"))
-		    evas_object_lower(it->base);
+		    evas_object_lower(it->base.view);
 		  else if (!strcmp(stacking, "above"))
-		    evas_object_raise(it->base);
+		    evas_object_raise(it->base.view);
 	       }
-	     edje_object_part_text_set(it->base, "elm.text", it->label);
+	     edje_object_part_text_set(it->base.view, "elm.text", it->label);
 	     if ((!it->icon) && (minh[0] > 0))
 	       {
-		  it->icon = evas_object_rectangle_add(evas_object_evas_get(it->base));
+		  it->icon = evas_object_rectangle_add(evas_object_evas_get(it->base.view));
 		  evas_object_color_set(it->icon, 0, 0, 0, 0);
 		  it->dummy_icon = EINA_TRUE;
 	       }
 	     if ((!it->end) && (minh[1] > 0))
 	       {
-		  it->end = evas_object_rectangle_add(evas_object_evas_get(it->base));
+		  it->end = evas_object_rectangle_add(evas_object_evas_get(it->base.view));
 		  evas_object_color_set(it->end, 0, 0, 0, 0);
 		  it->dummy_end = EINA_TRUE;
 	       }
@@ -632,28 +621,28 @@ _fix_items(Evas_Object *obj)
 	       {
 		  evas_object_size_hint_min_set(it->icon, minw[0], minh[0]);
 		  evas_object_size_hint_max_set(it->icon, 99999, 99999);
-		  edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
+		  edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
 	       }
 	     if (it->end)
 	       {
 		  evas_object_size_hint_min_set(it->end, minw[1], minh[1]);
 		  evas_object_size_hint_max_set(it->end, 99999, 99999);
-		  edje_object_part_swallow(it->base, "elm.swallow.end", it->end);
+		  edje_object_part_swallow(it->base.view, "elm.swallow.end", it->end);
 	       }
 	     if (!it->fixed)
 	       {
 		  // this may call up user and it may modify the list item
 		  // but we're safe as we're flagged as walking.
 		  // just don't process further
-		  edje_object_message_signal_process(it->base);
+		  edje_object_message_signal_process(it->base.view);
 		  if (it->deleted)
 		    continue;
 		  mw = mh = -1;
 		  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-		  edje_object_size_min_restricted_calc(it->base, &mw, &mh, mw, mh);
+		  edje_object_size_min_restricted_calc(it->base.view, &mw, &mh, mw, mh);
 		  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-		  evas_object_size_hint_min_set(it->base, mw, mh);
-		  evas_object_show(it->base);
+		  evas_object_size_hint_min_set(it->base.view, mw, mh);
+		  evas_object_show(it->base.view);
 	       }
 	     if ((it->selected) || (it->hilighted))
 	       {
@@ -662,14 +651,14 @@ _fix_items(Evas_Object *obj)
 		  // this may call up user and it may modify the list item
 		  // but we're safe as we're flagged as walking.
 		  // just don't process further
-		  edje_object_signal_emit(it->base, "elm,state,selected", "elm");
+		  edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
 		  if (it->deleted)
 		    continue;
 
-		  selectraise = edje_object_data_get(it->base, "selectraise");
+		  selectraise = edje_object_data_get(it->base.view, "selectraise");
 		  if ((selectraise) && (!strcmp(selectraise, "on")))
-		    evas_object_raise(it->base);
-		  stacking = edje_object_data_get(it->base, "stacking");
+		    evas_object_raise(it->base.view);
+		  stacking = edje_object_data_get(it->base.view, "stacking");
 	       }
 	     it->fixed = EINA_TRUE;
 	     it->is_even = it->even;
@@ -805,7 +794,7 @@ elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Eva
 
    wd->items = eina_list_append(wd->items, it);
    it->node = eina_list_last(wd->items);
-   elm_box_pack_end(wd->box, it->base);
+   elm_box_pack_end(wd->box, it->base.view);
    return it;
 }
 
@@ -832,7 +821,7 @@ elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Ev
 
    wd->items = eina_list_prepend(wd->items, it);
    it->node = wd->items;
-   elm_box_pack_start(wd->box, it->base);
+   elm_box_pack_start(wd->box, it->base.view);
    return it;
 }
 
@@ -866,7 +855,7 @@ elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char 
    it = _item_new(obj, label, icon, end, func, data);
    wd->items = eina_list_prepend_relative_list(wd->items, it, before->node);
    it->node = before->node->prev;
-   elm_box_pack_before(wd->box, it->base, before->base);
+   elm_box_pack_before(wd->box, it->base.view, before->base.view);
    return it;
 }
 
@@ -900,7 +889,7 @@ elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *l
    it = _item_new(obj, label, icon, end, func, data);
    wd->items = eina_list_append_relative_list(wd->items, it, after->node);
    it->node = after->node->next;
-   elm_box_pack_after(wd->box, it->base, after->base);
+   elm_box_pack_after(wd->box, it->base.view, after->base.view);
    return it;
 }
 
@@ -933,13 +922,13 @@ elm_list_item_sorted_insert(Evas_Object *obj, const char *label, Evas_Object *ic
    if (!l)
      {
 	it->node = eina_list_last(wd->items);
-	elm_box_pack_end(wd->box, it->base);
+	elm_box_pack_end(wd->box, it->base.view);
      }
    else
      {
 	Elm_List_Item *before = eina_list_data_get(l);
 	it->node = before->node->prev;
-	elm_box_pack_before(wd->box, it->base, before->base);
+	elm_box_pack_before(wd->box, it->base.view, before->base.view);
      }
    return it;
 }
@@ -981,7 +970,7 @@ elm_list_clear(Evas_Object *obj)
 
    EINA_LIST_FREE(wd->items, it)
      {
-	_elm_list_item_call_del_cb(it);
+        elm_widget_item_pre_notify_del(it);
 	_elm_list_item_free(it);
      }
 
@@ -1208,7 +1197,7 @@ elm_list_item_separator_get(const Elm_List_Item *it)
 EAPI void
 elm_list_item_selected_set(Elm_List_Item *it, Eina_Bool selected)
 {
-   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
    if (!wd) return;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    selected = !!selected;
@@ -1257,13 +1246,13 @@ elm_list_item_selected_get(Elm_List_Item *it)
 EAPI void
 elm_list_item_show(Elm_List_Item *it)
 {
-   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
    Evas_Coord bx, by, bw, bh;
    Evas_Coord x, y, w, h;
 
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    evas_object_geometry_get(wd->box, &bx, &by, &bw, &bh);
-   evas_object_geometry_get(it->base, &x, &y, &w, &h);
+   evas_object_geometry_get(it->base.view, &x, &y, &w, &h);
    x -= bx;
    y -= by;
    if (wd->scr)
@@ -1280,7 +1269,7 @@ elm_list_item_show(Elm_List_Item *it)
 EAPI void
 elm_list_item_del(Elm_List_Item *it)
 {
-   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
    if (!wd) return;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
 
@@ -1298,7 +1287,7 @@ elm_list_item_del(Elm_List_Item *it)
 
    _elm_list_walk(wd);
 
-   _elm_list_item_call_del_cb(it);
+   elm_widget_item_pre_notify_del(it);
    _elm_list_item_free(it);
 
    _elm_list_unwalk(wd);
@@ -1316,7 +1305,7 @@ EAPI void
 elm_list_item_del_cb_set(Elm_List_Item *it, Evas_Smart_Cb func)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-   it->del_cb = func;
+   elm_widget_item_del_cb_set(it, func);
 }
 
 /**
@@ -1331,7 +1320,7 @@ EAPI void *
 elm_list_item_data_get(const Elm_List_Item *it)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
-   return (void *)it->data;
+   return elm_widget_item_data_get(it);
 }
 
 /**
@@ -1375,7 +1364,7 @@ elm_list_item_icon_set(Elm_List_Item *it, Evas_Object *icon)
      }
    if (!icon)
      {
-	icon = evas_object_rectangle_add(evas_object_evas_get(it->obj));
+	icon = evas_object_rectangle_add(evas_object_evas_get(it->base.widget));
 	evas_object_color_set(icon, 0, 0, 0, 0);
 	it->dummy_icon = EINA_TRUE;
      }
@@ -1385,8 +1374,8 @@ elm_list_item_icon_set(Elm_List_Item *it, Evas_Object *icon)
 	it->icon = NULL;
      }
    it->icon = icon;
-   if (it->base)
-     edje_object_part_swallow(it->base, "elm.swallow.icon", icon);
+   if (it->base.view)
+     edje_object_part_swallow(it->base.view, "elm.swallow.icon", icon);
 }
 
 /**
@@ -1430,7 +1419,7 @@ elm_list_item_end_set(Elm_List_Item *it, Evas_Object *end)
      }
    if (!end)
      {
-	end = evas_object_rectangle_add(evas_object_evas_get(it->obj));
+	end = evas_object_rectangle_add(evas_object_evas_get(it->base.widget));
 	evas_object_color_set(end, 0, 0, 0, 0);
 	it->dummy_end = EINA_TRUE;
      }
@@ -1440,8 +1429,8 @@ elm_list_item_end_set(Elm_List_Item *it, Evas_Object *end)
 	it->end = NULL;
      }
    it->end = end;
-   if (it->base)
-     edje_object_part_swallow(it->base, "elm.swallow.end", end);
+   if (it->base.view)
+     edje_object_part_swallow(it->base.view, "elm.swallow.end", end);
 }
 
 /**
@@ -1456,7 +1445,7 @@ EAPI Evas_Object *
 elm_list_item_base_get(const Elm_List_Item *it)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
-   return it->base;
+   return it->base.view;
 }
 
 /**
@@ -1487,8 +1476,8 @@ elm_list_item_label_set(Elm_List_Item *it, const char *text)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    if (!eina_stringshare_replace(&it->label, text)) return;
-   if (it->base)
-     edje_object_part_text_set(it->base, "elm.text", it->label);
+   if (it->base.view)
+     edje_object_part_text_set(it->base.view, "elm.text", it->label);
 }
 
 /**

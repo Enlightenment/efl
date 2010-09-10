@@ -31,14 +31,12 @@ struct _Widget_Data
 
 struct _Elm_Hoversel_Item
 {
-   Evas_Object *obj;
+   Elm_Widget_Item base;
    const char *label;
    const char *icon_file;
    const char *icon_group;
    Elm_Icon_Type icon_type;
    Evas_Smart_Cb func;
-   Evas_Smart_Cb del_cb;
-   void *data;
 };
 
 static const char *widtype = NULL;
@@ -59,11 +57,11 @@ _del_pre_hook(Evas_Object *obj)
    elm_hoversel_hover_parent_set(obj, NULL);
    EINA_LIST_FREE(wd->items, it)
      {
-	if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
+        elm_widget_item_pre_notify_del(it);
 	eina_stringshare_del(it->label);
 	eina_stringshare_del(it->icon_file);
 	eina_stringshare_del(it->icon_group);
-	free(it);
+        elm_widget_item_del(it);
      }
 }
 
@@ -128,10 +126,10 @@ static void
 _item_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Hoversel_Item *it = data;
-   Evas_Object *obj2 = it->obj;
+   Evas_Object *obj2 = it->base.widget;
 
    elm_hoversel_hover_end(obj2);
-   if (it->func) it->func(it->data, obj2, it);
+   if (it->func) it->func((void *)it->base.data, obj2, it);
    evas_object_smart_callback_call(obj2, "selected", it);
 }
 
@@ -520,15 +518,14 @@ elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   Elm_Hoversel_Item *it = calloc(1, sizeof(Elm_Hoversel_Item));
+   Elm_Hoversel_Item *it = elm_widget_item_new(obj, Elm_Hoversel_Item);
    if (!it) return NULL;
    wd->items = eina_list_append(wd->items, it);
-   it->obj = obj;
    it->label = eina_stringshare_add(label);
    it->icon_file = eina_stringshare_add(icon_file);
    it->icon_type = icon_type;
    it->func = func;
-   it->data = (void *)data;
+   it->base.data = data;
    return it;
 }
 
@@ -547,15 +544,15 @@ EAPI void
 elm_hoversel_item_del(Elm_Hoversel_Item *it)
 {
    if (!it) return;
-   Widget_Data *wd = elm_widget_data_get(it->obj);
-   if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
    if (!wd) return;
-   elm_hoversel_hover_end(it->obj);
+   elm_hoversel_hover_end(it->base.widget);
    wd->items = eina_list_remove(wd->items, it);
+   elm_widget_item_pre_notify_del(it);
    eina_stringshare_del(it->label);
    eina_stringshare_del(it->icon_file);
    eina_stringshare_del(it->icon_group);
-   free(it);
+   elm_widget_item_del(it);
 }
 
 /**
@@ -574,8 +571,7 @@ elm_hoversel_item_del(Elm_Hoversel_Item *it)
 EAPI void
 elm_hoversel_item_del_cb_set(Elm_Hoversel_Item *it, Evas_Smart_Cb func)
 {
-   if (!it) return;
-   it->del_cb = func;
+   elm_widget_item_del_cb_set(it, func);
 }
 
 /**
@@ -590,8 +586,7 @@ elm_hoversel_item_del_cb_set(Elm_Hoversel_Item *it, Evas_Smart_Cb func)
 EAPI void *
 elm_hoversel_item_data_get(Elm_Hoversel_Item *it)
 {
-   if (!it) return NULL;
-   return it->data;
+   return elm_widget_item_data_get(it);
 }
 
 /**

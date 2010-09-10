@@ -14,10 +14,10 @@ struct _Widget_Data
 
 struct _Elm_Carousel_Item
 {
-   Evas_Object *obj, *base, *icon;
+   Elm_Widget_Item base;
+   Evas_Object *icon;
    const char *label;
    Evas_Smart_Cb func;
-   const void *data;
    Eina_Bool selected : 1;
 };
 
@@ -29,11 +29,11 @@ static void _sizing_eval(Evas_Object *obj);
 static void
 _item_show(Elm_Carousel_Item *it)
 {
-   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
    Evas_Coord x, y, w, h, bx, by;
    if (!wd) return;
    evas_object_geometry_get(wd->bx, &bx, &by, NULL, NULL);
-   evas_object_geometry_get(it->base, &x, &y, &w, &h);
+   evas_object_geometry_get(it->base.view, &x, &y, &w, &h);
    elm_smart_scroller_child_region_show(wd->scr, x - bx, y - by, w, h);
 }
 
@@ -41,7 +41,7 @@ static void
 _item_select(Elm_Carousel_Item *it)
 {
    Elm_Carousel_Item *it2;
-   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
    Evas_Object *obj2;
    const Eina_List *l;
    if (!wd) return;
@@ -51,15 +51,15 @@ _item_select(Elm_Carousel_Item *it)
 	if (it2->selected)
 	  {
 	     it2->selected = EINA_FALSE;
-	     edje_object_signal_emit(it2->base, "elm,state,unselected", "elm");
+	     edje_object_signal_emit(it2->base.view, "elm,state,unselected", "elm");
 	     break;
 	  }
      }
    it->selected = EINA_TRUE;
-   edje_object_signal_emit(it->base, "elm,state,selected", "elm");
+   edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
    _item_show(it);
-   obj2 = it->obj;
-   if (it->func) it->func((void *)(it->data), it->obj, it);
+   obj2 = it->base.widget;
+   if (it->func) it->func((void *)(it->base.data), it->base.widget, it);
    evas_object_smart_callback_call(obj2, "clicked", it);
 }
 
@@ -83,20 +83,20 @@ _theme_hook(Evas_Object *obj)
         Evas_Coord mw, mh;
 
 	if (it->selected)
-	  edje_object_signal_emit(it->base, "elm,state,selected", "elm");
-	_elm_theme_object_set(obj, it->base, "carousel", "item", elm_widget_style_get(obj));
-	edje_object_scale_set(it->base, elm_widget_scale_get(obj) * _elm_config->scale);
+	  edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
+	_elm_theme_object_set(obj, it->base.view, "carousel", "item", elm_widget_style_get(obj));
+	edje_object_scale_set(it->base.view, elm_widget_scale_get(obj) * _elm_config->scale);
 	if (it->icon)
 	  {
 	     edje_extern_object_min_size_set(it->icon,
 					     (double)wd->icon_size * _elm_config->scale,
 					     (double)wd->icon_size * _elm_config->scale);
-	     edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
+	     edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
 	  }
-	edje_object_part_text_set(it->base, "elm.text", it->label);
-	edje_object_size_min_calc(it->base, &mw, &mh);
-	evas_object_size_hint_min_set(it->base, mw, mh);
-	evas_object_size_hint_max_set(it->base, 9999, mh);
+	edje_object_part_text_set(it->base.view, "elm.text", it->label);
+	edje_object_size_min_calc(it->base.view, &mw, &mh);
+	evas_object_size_hint_min_set(it->base.view, mw, mh);
+	evas_object_size_hint_max_set(it->base.view, 9999, mh);
      }
    _sizing_eval(obj);
 }
@@ -200,37 +200,36 @@ elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Ev
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    Evas_Coord mw, mh;
-   Elm_Carousel_Item *it = calloc(1, sizeof(Elm_Carousel_Item));
+   Elm_Carousel_Item *it = elm_widget_item_new(obj, Elm_Carousel_Item);
 
    if (!it) return NULL;
    wd->items = eina_list_append(wd->items, it);
-   it->obj = obj;
    it->label = eina_stringshare_add(label);
    it->icon = icon;
    it->func = func;
-   it->data = data;
-   it->base = edje_object_add(evas_object_evas_get(obj));
-   _elm_theme_object_set(obj, it->base, "carousel", "item", elm_widget_style_get(obj));
-   edje_object_signal_callback_add(it->base, "elm,action,click", "elm",
+   it->base.data = data;
+   it->base.view = edje_object_add(evas_object_evas_get(obj));
+   _elm_theme_object_set(obj, it->base.view, "carousel", "item", elm_widget_style_get(obj));
+   edje_object_signal_callback_add(it->base.view, "elm,action,click", "elm",
 				   _select, it);
-   elm_widget_sub_object_add(obj, it->base);
+   elm_widget_sub_object_add(obj, it->base.view);
    if (it->icon)
      {
 	edje_extern_object_min_size_set(it->icon,
 					(double)wd->icon_size * _elm_config->scale,
 					(double)wd->icon_size * _elm_config->scale);
-	edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
+	edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
 	evas_object_show(it->icon);
 	elm_widget_sub_object_add(obj, it->icon);
      }
-   edje_object_part_text_set(it->base, "elm.text", it->label);
-   edje_object_size_min_calc(it->base, &mw, &mh);
-   evas_object_size_hint_weight_set(it->base, 0.0, 0.0);
-   evas_object_size_hint_align_set(it->base, -1.0, -1.0);
-   evas_object_size_hint_min_set(it->base, mw, mh);
-   evas_object_size_hint_max_set(it->base, 9999, mh);
-   evas_object_box_append(wd->bx, it->base);
-   evas_object_show(it->base);
+   edje_object_part_text_set(it->base.view, "elm.text", it->label);
+   edje_object_size_min_calc(it->base.view, &mw, &mh);
+   evas_object_size_hint_weight_set(it->base.view, 0.0, 0.0);
+   evas_object_size_hint_align_set(it->base.view, -1.0, -1.0);
+   evas_object_size_hint_min_set(it->base.view, mw, mh);
+   evas_object_size_hint_max_set(it->base.view, 9999, mh);
+   evas_object_box_append(wd->bx, it->base.view);
+   evas_object_show(it->base.view);
    _sizing_eval(obj);
    return it;
 }
@@ -238,15 +237,43 @@ elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Ev
 EAPI void
 elm_carousel_item_del(Elm_Carousel_Item *it)
 {
-   Widget_Data *wd = elm_widget_data_get(it->obj);
-   Evas_Object *obj2 = it->obj;
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
+   Evas_Object *obj2 = it->base.widget;
    if (!wd) return;
    wd->items = eina_list_remove(wd->items, it);
    eina_stringshare_del(it->label);
    if (it->icon) evas_object_del(it->icon);
-   evas_object_del(it->base);
+   evas_object_del(it->base.view);
    free(it);
    _theme_hook(obj2);
+}
+
+/**
+ * Set the function called when a carousel item is freed.
+ *
+ * @param it The item to set the callback on
+ * @param func The function called
+ *
+ * @ingroup Carousel
+ */
+EAPI void
+elm_carousel_item_del_cb_set(Elm_Carousel_Item *it, Evas_Smart_Cb func)
+{
+   elm_widget_item_del_cb_set(it, func);
+}
+
+/**
+ * Returns the data associated with the item.
+ *
+ * @param it The carousel item
+ * @return The data associated with @p it
+ *
+ * @ingroup Carousel
+ */
+EAPI void *
+elm_carousel_item_data_get(const Elm_Carousel_Item *it)
+{
+   return elm_widget_item_data_get(it);
 }
 
 EAPI void
