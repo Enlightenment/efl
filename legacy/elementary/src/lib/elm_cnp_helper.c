@@ -289,6 +289,9 @@ struct {
    int x,y;
 } savedtypes =  { 0, NULL, 0, NULL, 0, 0 };
 
+static void (*dragdonecb)(void *,Evas_Object*);
+static void *dragdonedata;
+
 static int _elm_cnp_init_count = 0;
   /* Gah... who left this out of XAtoms.h */
 static Ecore_X_Atom clipboard_atom;
@@ -1371,15 +1374,19 @@ elm_drop_target_del(Evas_Object *obj)
 static void
 _drag_mouse_up(void *un, Evas *e, Evas_Object *obj, void *data)
 {
-   printf("GOt mouse up\n");
-
    evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_UP, _drag_mouse_up);
    ecore_x_dnd_drop();
+   if (dragdonecb)
+     {
+        dragdonecb(dragdonecb,selections[ELM_SEL_XDND].widget);
+        dragdonecb = NULL;
+     }
 }
 
 
 Eina_Bool
-elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const void *data)
+elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const char *data,
+               void (*dragdone)(void *data, Evas_Object *),void *donecbdata)
 {
    Ecore_X_Window xwin;
    struct _elm_cnp_selection *sel;
@@ -1398,9 +1405,13 @@ elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const void *data)
    sel->widget = obj;
    sel->format = format;
    sel->selbuf = data ? strdup(data) : NULL;
+   dragdonecb = dragdone;
+   dragdonedata = donecbdata;
+
    ecore_x_dnd_begin(xwin, (unsigned char *)&xdnd, sizeof(enum _elm_sel_type));
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
                                   _drag_mouse_up, NULL);
+
 
    // set types
    // start watching motion notify on mouse
@@ -1420,7 +1431,8 @@ elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const void *data)
 #else
 /* Stubs for windows */
 Eina_Bool
-elm_drag_start(Evas_Object *o, enum _elm_sel_format f, const void *d)
+elm_drag_start(Evas_Object *o, enum _elm_sel_format f, const char *d,
+               void (*donecb)(void *, Evas_Object *),void *cbdata)
 {
    return false;
 }

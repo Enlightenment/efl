@@ -335,7 +335,8 @@ Eina_Bool	  elm_drop_target_add(Evas_Object *widget,
 			enum _elm_sel_type, elm_drop_cb, void *);
 Eina_Bool	  elm_drop_target_del(Evas_Object *widget);
 Eina_Bool         elm_drag_start(Evas_Object *, enum _elm_sel_format,
-		const void *);
+				const char *,
+				void (*)(void *,Evas_Object*),void*);
 
 Eina_Bool         _elm_dangerous_call_check(const char *call);
 
