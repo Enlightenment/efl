@@ -16,9 +16,20 @@ _ecore_x_composite_init(void)
    int major, minor;
 
    if (XCompositeQueryVersion(_ecore_x_disp, &major, &minor))
-      _composite_available = 1;
-
-#endif /* ifdef ECORE_XCOMPOSITE */
+     {
+# ifdef ECORE_XRENDER
+        if (XRenderQueryExtension(_ecore_x_disp, &major, &minor))
+          {
+#  ifdef ECORE_XFIXES
+             if (XFixesQueryVersion(_ecore_x_disp, &major, &minor))
+               {
+                  _composite_available = 1;
+               }
+#  endif
+          }
+# endif        
+     }
+#endif
 } /* _ecore_x_composite_init */
 
 EAPI int
