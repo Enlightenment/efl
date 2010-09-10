@@ -328,6 +328,9 @@ struct _Elm_Genlist_Item
    Eina_Bool updateme : 1;
 };
 
+#define ELM_GENLIST_ITEM_FROM_INLIST(item)      \
+  ((item) ? EINA_INLIST_CONTAINER_GET(item, Elm_Genlist_Item) : NULL)
+
 struct _Pan
 {
    Evas_Object_Smart_Clipped_Data __clipped_data;
@@ -1982,7 +1985,7 @@ elm_genlist_clear(Evas_Object *obj)
    wd->clear_me = 0;
    while (wd->items)
      {
-	Elm_Genlist_Item *it = (Elm_Genlist_Item *)(wd->items);
+	Elm_Genlist_Item *it = ELM_GENLIST_ITEM_FROM_INLIST(wd->items);
 
 	wd->items = eina_inlist_remove(wd->items, wd->items);
 	if (it->realized) _item_unrealize(it);
@@ -2243,9 +2246,9 @@ elm_genlist_first_item_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    if (!wd->items) return NULL;
-   Elm_Genlist_Item *it = (Elm_Genlist_Item *)(wd->items);
+   Elm_Genlist_Item *it = ELM_GENLIST_ITEM_FROM_INLIST(wd->items);
    while ((it) && (it->delete_me))
-     it = (Elm_Genlist_Item *)(EINA_INLIST_GET(it)->next);
+     it = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
    return it;
 }
 
@@ -2264,10 +2267,10 @@ elm_genlist_last_item_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd->items) return NULL;
-   Elm_Genlist_Item *it = (Elm_Genlist_Item *)(wd->items->last);
+   Elm_Genlist_Item *it = ELM_GENLIST_ITEM_FROM_INLIST(wd->items->last);
    if (!wd) return NULL;
    while ((it) && (it->delete_me))
-     it = (Elm_Genlist_Item *)(EINA_INLIST_GET(it)->prev);
+     it = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
    return it;
 }
 
@@ -2286,7 +2289,7 @@ elm_genlist_item_next_get(const Elm_Genlist_Item *it)
 {
    while (it)
      {
-	it = (Elm_Genlist_Item *)(EINA_INLIST_GET(it)->next);
+	it = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
 	if ((it) && (!it->delete_me)) break;
      }
    return (Elm_Genlist_Item *)it;
@@ -2307,7 +2310,7 @@ elm_genlist_item_prev_get(const Elm_Genlist_Item *it)
 {
    while (it)
      {
-	it = (Elm_Genlist_Item *)(EINA_INLIST_GET(it)->prev);
+	it = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
 	if ((it) && (!it->delete_me)) break;
      }
    return (Elm_Genlist_Item *)it;
