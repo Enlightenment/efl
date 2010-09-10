@@ -132,8 +132,6 @@ _mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Move *move = event;
-   int fsize;
-   int delta;
 
    /* Sanity */
    if (!wd->longtimer)
@@ -142,31 +140,25 @@ _mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event)
         return;
      }
 
-   delta = hypot(wd->press.x - move->cur.canvas.x,
-                 wd->press.y - move->cur.canvas.y);
-   fsize = elm_finger_size_get() / 2;
-   if (fsize < 5) fsize = 5;
-
-   /* Smaller movement: keep waiting for long press */
-   if (delta < fsize) return;
-
-   /* Moved too far: No longpress for you! */
-   ecore_timer_del(wd->longtimer);
-   wd->longtimer = NULL;
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move);
+   /* if the event is held, stop waiting */
+   if (move->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+     {
+        /* Moved too far: No longpress for you! */
+        ecore_timer_del(wd->longtimer);
+        wd->longtimer = NULL;
+        evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_MOVE,
+                                       _mouse_move);
+     }
 }
 
 static void
 _mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Event_Mouse_Down *down = event_info;
 
    if (wd->longtimer) ecore_timer_del(wd->longtimer);
 
-   wd->press.x = down->canvas.x;
-   wd->press.y = down->canvas.y;
-   /* FIXME: Hard coded */
+   /* FIXME: Hard coded timeout */
    wd->longtimer = ecore_timer_add(0.7,_longpress, data);
    evas_object_event_callback_add(obj,EVAS_CALLBACK_MOUSE_MOVE,
                                   _mouse_move,data);
