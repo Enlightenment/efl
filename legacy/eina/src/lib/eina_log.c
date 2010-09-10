@@ -1664,9 +1664,9 @@ eina_log_shutdown(void)
  * @brief Activate the log mutex.
  *
  * This function activate the mutex in the eina log module. It is called by
- * eina_thread_init().
+ * eina_threads_init().
  *
- * @see eina_thread_init()
+ * @see eina_threads_init()
  */
 void
 eina_log_threads_init(void)
@@ -1681,9 +1681,9 @@ eina_log_threads_init(void)
  * @brief Shut down the log mutex.
  *
  * This function shuts down the mutex in the log module.
- * It is called by eina_thread_shutdown().
+ * It is called by eina_threads_shutdown().
  *
- * @see eina_thread_shutdown()
+ * @see eina_threads_shutdown()
  */
 void
 eina_log_threads_shutdown(void)

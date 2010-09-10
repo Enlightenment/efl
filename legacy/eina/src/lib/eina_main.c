@@ -278,17 +278,17 @@ eina_shutdown(void)
 
 
 /**
- * @brief Initialize the mutexs of the Eina library.
+ * @brief Initialize the mutexes of the Eina library.
  *
  * @return 1 or greater on success, 0 on error.
  *
- * This function sets up all the mutexs in all eina modules. It returns 0 on
+ * This function sets up all the mutexes in all eina modules. It returns 0 on
  * failure (that is, when one of the module fails to initialize),
  * otherwise it returns the number of times it has already been
  * called.
  *
- * When the mutexs are not used anymore, call eina_thread_shutdown() to shut down
- * the mutexs.
+ * When the mutexes are not used anymore, call eina_threads_shutdown() to shut down
+ * the mutexes.
  */
 EAPI int
 eina_threads_init(void)
@@ -326,18 +326,18 @@ eina_threads_init(void)
 }
 
 /**
- * @brief Shut down mutexs in the Eina library.
+ * @brief Shut down mutexes in the Eina library.
  *
- * @return 0 when all mutexs are completely shut down, 1 or
+ * @return 0 when all mutexes are completely shut down, 1 or
  * greater otherwise.
  *
- * This function shuts down the mutexs in the Eina library. It returns 0 when it has
- * been called the same number of times than eina_thread_init(). In that case
- * it shut down all the mutexs.
+ * This function shuts down the mutexes in the Eina library. It returns 0 when it has
+ * been called the same number of times than eina_threads_init(). In that case
+ * it shut down all the mutexes.
  *
  * Once this function succeeds (that is, @c 0 is returned), you must
  * not call any of the Eina function in a thread anymore. You must call
- * eina_thread_init() again to use the Eina functions in a thread again.
+ * eina_threads_init() again to use the Eina functions in a thread again.
  */
 EAPI int
 eina_threads_shutdown(void)
