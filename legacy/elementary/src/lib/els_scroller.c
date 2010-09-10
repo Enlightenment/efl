@@ -196,6 +196,13 @@ elm_smart_scroller_extern_pan_set(Evas_Object *obj, Evas_Object *pan,
    API_ENTRY return;
 
    elm_smart_scroller_child_set(obj, NULL);
+
+   if (sd->pan_obj)
+     {
+        evas_object_smart_callback_del(sd->pan_obj, "changed", _smart_pan_changed_hook);
+        evas_object_smart_callback_del(sd->pan_obj, "pan_changed", _smart_pan_pan_changed_hook);
+     }
+
    if (sd->extern_pan)
      {
 	if (sd->pan_obj)
