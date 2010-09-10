@@ -24,6 +24,9 @@ struct _Widget_Data
    int size;
    Eina_Bool fill;
    Ecore_Timer *longtimer;
+   struct {
+        int x,y;
+   } press;
 };
 
 static const char *widtype = NULL;
@@ -31,6 +34,7 @@ static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -92,28 +96,80 @@ _icon_move_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 	}
 }
 
+
 static Eina_Bool
 _longpress(void *objv)
 {
    Widget_Data *wd = elm_widget_data_get(objv);
+   Evas_Object *tmp;
+   const char *file;
+   char *buf;
+   int len;
 
    printf("Long press: start drag!\n");
-   wd->longtimer = NULL;
+   wd->longtimer = NULL; /* clear: must return NULL now */
+   evas_object_event_callback_del(objv, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move);
 
-   elm_drag_start(objv, ELM_SEL_FORMAT_IMAGE,"file:///home/nash/Desktop/IMG_4084.jpg");
+   tmp = _els_smart_icon_object_get(wd->img);
+   file = NULL;
+   evas_object_image_file_get(tmp,&file,NULL);
+   if (file)
+     {
+        /* FIXME: Deal with relative paths */
+        buf = malloc(strlen(file) + strlen("file://") + 1);
+        sprintf(buf, "%s%s","file://",file);
+        elm_drag_start(objv, ELM_SEL_FORMAT_IMAGE, buf);
+        free(buf);
+     }
+
    evas_object_smart_callback_call(objv, "drag,start", NULL);
 
    return 0; /* Don't call again */
 }
 
 static void
-_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Event_Mouse_Move *move = event;
+   int fsize;
+   int delta;
+
+   /* Sanity */
+   if (!wd->longtimer)
+     {
+        evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move);
+        return;
+     }
+
+   delta = hypot(wd->press.x - move->cur.canvas.x,
+                 wd->press.y - move->cur.canvas.y);
+   fsize = elm_finger_size_get() / 2;
+   if (fsize < 5) fsize = 5;
+
+   /* Smaller movement: keep waiting for long press */
+   if (delta < fsize) return;
+
+   /* Moved too far: No longpress for you! */
+   ecore_timer_del(wd->longtimer);
+   wd->longtimer = NULL;
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move);
+}
+
+static void
+_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Event_Mouse_Down *down = event_info;
 
    if (wd->longtimer) ecore_timer_del(wd->longtimer);
+
+   wd->press.x = down->canvas.x;
+   wd->press.y = down->canvas.y;
    /* FIXME: Hard coded */
    wd->longtimer = ecore_timer_add(0.7,_longpress, data);
+   evas_object_event_callback_add(obj,EVAS_CALLBACK_MOUSE_MOVE,
+                                  _mouse_move,data);
 }
 
 static void
