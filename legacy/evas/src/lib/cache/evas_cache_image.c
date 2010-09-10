@@ -213,9 +213,9 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
      }
 #endif
 
-   cache->func.destructor(ie);
-
    _evas_cache_image_remove_activ(cache, ie);
+
+   cache->func.destructor(ie);
 
    if (ie->cache_key)
      {
