@@ -36,7 +36,6 @@ struct _Elm_Index_Item
 };
 
 static const char *widtype = NULL;
-static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level);
@@ -44,17 +43,20 @@ static void _index_box_clear(Evas_Object *obj, Evas_Object *box, int level);
 static void _item_free(Elm_Index_Item *it);
 
 static void
-_del_hook(Evas_Object *obj)
+_del_pre_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_Index_Item *it;
-   Eina_List *l, *clear = NULL;
    if (!wd) return;
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
    _index_box_clear(obj, wd->bx[0], 0);
-   EINA_LIST_FOREACH(wd->items, l, it) clear = eina_list_append(clear, it);
-   EINA_LIST_FREE(clear, it) _item_free(it);
+   while (wd->items) _item_free(wd->items->data);
    if (wd->delay) ecore_timer_del(wd->delay);
+}
+
+static void
+_del_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
    free(wd);
 }
 
@@ -512,6 +514,7 @@ elm_index_add(Evas_Object *parent)
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
