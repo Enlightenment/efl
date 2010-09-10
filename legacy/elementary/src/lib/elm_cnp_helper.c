@@ -20,7 +20,7 @@
 
 # define ARRAYINIT(foo)  [foo]=
 
-#define DEBUGON	0
+#define DEBUGON	1
 
 #if DEBUGON
 #define cnp_debug(x...) printf(__FILE__": " x)
@@ -404,7 +404,7 @@ selection_clear(void *udata __UNUSED__, int type __UNUSED__, void *event){
    Ecore_X_Event_Selection_Clear *ev = event;
    struct _elm_cnp_selection *sel;
    int i;
-
+cnp_debug("selection %d clear\n",i);
    for (i = 0 ; i < ELM_SEL_MAX ; i ++)
      {
 	if (selections[i].ecore_sel == ev->selection) break;
@@ -477,7 +477,6 @@ selection_notify(void *udata __UNUSED__, int type __UNUSED__, void *event){
       case ECORE_X_SELECTION_CLIPBOARD:
 	 sel = selections + ELM_SEL_CLIPBOARD;
 	 break;
-
       case ECORE_X_SELECTION_PRIMARY:
 	 sel = selections + ELM_SEL_PRIMARY;
 	 break;
@@ -1367,6 +1366,17 @@ elm_drop_target_del(Evas_Object *obj)
    return true;
 }
 
+
+static void
+_drag_mouse_up(void *un, Evas *e, Evas_Object *obj, void *data)
+{
+   printf("GOt mouse up\n");
+
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_UP, _drag_mouse_up);
+   ecore_x_dnd_drop();
+}
+
+
 Eina_Bool
 elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const void *data)
 {
@@ -1380,15 +1390,16 @@ elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const void *data)
 
    cnp_debug("starting drag...\n");
 
-   //ecore_x_dnd_type_set(win, "text/uri-list", 1);
+   ecore_x_dnd_type_set(xwin, "text/uri-list", 1);
       /* FIXME: just call elm_selection_set */
    sel = selections + ELM_SEL_XDND;
    sel->active = 1;
    sel->widget = obj;
    sel->format = format;
    sel->selbuf = data ? strdup(data) : NULL;
-   xwin = elm_win_xwindow_get(obj);
    ecore_x_dnd_begin(xwin, (unsigned char *)&xdnd, sizeof(enum _elm_sel_type));
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
+                                  _drag_mouse_up, NULL);
 
    // set types
    // start watching motion notify on mouse
@@ -1398,7 +1409,7 @@ elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const void *data)
    //    - update cursor
    // start watching for dnd status
    // start watching for mouse up
-
+      // ecore_x_dnd_drop
    return true;
 }
 
