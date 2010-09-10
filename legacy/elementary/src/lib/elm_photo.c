@@ -24,9 +24,6 @@ struct _Widget_Data
    int size;
    Eina_Bool fill;
    Ecore_Timer *longtimer;
-   struct {
-        int x,y;
-   } press;
 };
 
 static const char *widtype = NULL;
@@ -97,6 +94,13 @@ _icon_move_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 }
 
 
+static void
+_drag_done_cb(void *unused __UNUSED__, Evas_Object *obj)
+{
+   elm_object_scroll_freeze_pop(obj);
+   evas_object_smart_callback_call(obj, "drag,end", NULL);
+}
+
 static Eina_Bool
 _longpress(void *objv)
 {
@@ -104,7 +108,6 @@ _longpress(void *objv)
    Evas_Object *tmp;
    const char *file;
    char *buf;
-   int len;
 
    printf("Long press: start drag!\n");
    wd->longtimer = NULL; /* clear: must return NULL now */
@@ -118,9 +121,10 @@ _longpress(void *objv)
         /* FIXME: Deal with relative paths */
         buf = malloc(strlen(file) + strlen("file://") + 1);
         sprintf(buf, "%s%s","file://",file);
-        elm_drag_start(objv, ELM_SEL_FORMAT_IMAGE, buf);
+        elm_drag_start(objv, ELM_SEL_FORMAT_IMAGE, buf, _drag_done_cb, NULL);
         free(buf);
      }
+   elm_object_scroll_freeze_push(objv);
 
    evas_object_smart_callback_call(objv, "drag,start", NULL);
 

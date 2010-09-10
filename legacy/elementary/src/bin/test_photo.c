@@ -2,6 +2,8 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void drop_cb(void *mydata, Evas_Object *obj, void *evdata);
+static void drag_stop_cb(void *mydata, Evas_Object *obj, void *evdata);
+static void drag_start_cb(void *mydata, Evas_Object *obj, void *evdata);
 
 void
 test_photo(void *data, Evas_Object *obj, void *event_info)
@@ -53,6 +55,11 @@ test_photo(void *data, Evas_Object *obj, void *event_info)
                                              EVAS_HINT_FILL);
 	     evas_object_smart_callback_add(ph, "drop",
                                             drop_cb, NULL);
+             evas_object_smart_callback_add(ph, "drag,start",
+                                            drag_start_cb, NULL);
+             evas_object_smart_callback_add(ph, "drag,stop",
+                                            drag_stop_cb, NULL);
+
              if(n == 2 || n == 3) {
             	 elm_photo_fill_inside_set(ph, EINA_TRUE);
             	 elm_widget_style_set(ph, "shadow");
@@ -77,6 +84,16 @@ test_photo(void *data, Evas_Object *obj, void *event_info)
 static void
 drop_cb(void *mydata, Evas_Object *obj, void *evdata){
    printf("Drop on obj %p: Image: %s\n",obj,evdata);
+}
+
+static void
+drag_start_cb(void *mydata, Evas_Object *obj, void *evdata){
+   
+}
+
+static void
+drag_stop_cb(void *mydata, Evas_Object *obj, void *evdata){
+
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
