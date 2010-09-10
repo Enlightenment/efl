@@ -1437,13 +1437,13 @@ elm_drag_start(Evas_Object *o, enum _elm_sel_format f, const char *d,
    return false;
 }
 Eina_Bool
-_elm_drop_target_add(Evas_Object *obj, enum _elm_sel_type format,
+elm_drop_target_add(Evas_Object *obj, enum _elm_sel_type format,
                     elm_drop_cb dropcb, void *cbdata){
    return false;
 }
 
 Eina_Bool
-_elm_drop_target_del(Evas_Object *o)
+elm_drop_target_del(Evas_Object *o)
 {
    return true;
 }
