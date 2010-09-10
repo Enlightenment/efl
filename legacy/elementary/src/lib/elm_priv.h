@@ -18,6 +18,13 @@
 #include "els_box.h"
 #include "els_icon.h"
 
+
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_elm_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_elm_log_dom, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_elm_log_dom, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_elm_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_elm_log_dom, __VA_ARGS__)
+
 // FIXME: totally disorganised. clean this up!
 // 
 // Why EAPI in a private header ?
@@ -215,6 +222,92 @@ EAPI void         _elm_stringlist_free(Eina_List *list);
 
 Eina_Bool         _elm_widget_type_check(const Evas_Object *obj, const char *type);
 
+typedef struct _Elm_Widget_Item Elm_Widget_Item; /**< base structure for all widget items that are not Elm_Widget themselves */
+struct _Elm_Widget_Item
+{
+   /* ef1 ~~ efl, el3 ~~ elm */
+#define ELM_WIDGET_ITEM_MAGIC 0xef1e1301
+   EINA_MAGIC
+   Evas_Object *widget; /**< the owner widget that owns this item */
+   Evas_Object *view; /**< the base view object */
+   const void *data; /**< item specific data */
+   Evas_Smart_Cb del_cb; /**< used to notify the item is being deleted */
+   /* widget variations should have data from here and on */
+   /* @todo: TODO check if this is enough for 1.0 release, maybe add padding! */
+};
+
+Elm_Widget_Item *_elm_widget_item_new(Evas_Object *parent, size_t alloc_size);
+void             _elm_widget_item_del(Elm_Widget_Item *item);
+void             _elm_widget_item_pre_notify_del(Elm_Widget_Item *item);
+void             _elm_widget_item_del_cb_set(Elm_Widget_Item *item, Evas_Smart_Cb del_cb);
+void             _elm_widget_item_data_set(Elm_Widget_Item *item, const void *data);
+void            *_elm_widget_item_data_get(const Elm_Widget_Item *item);
+/**
+ * Convenience macro to create new widget item, doing casts for you.
+ * @see _elm_widget_item_new()
+ * @param parent a valid elm_widget variant.
+ * @param type the C type that extends Elm_Widget_Item
+ */
+#define elm_widget_item_new(parent, type)               \
+  (type *)_elm_widget_item_new((parent), sizeof(type))
+/**
+ * Convenience macro to delete widget item, doing casts for you.
+ * @see _elm_widget_item_del()
+ * @param item a valid item.
+ */
+#define elm_widget_item_del(item)               \
+  _elm_widget_item_del((Elm_Widget_Item *)item)
+/**
+ * Convenience macro to notify deletion of widget item, doing casts for you.
+ * @see _elm_widget_item_pre_notify_del()
+ */
+#define elm_widget_item_pre_notify_del(item)                    \
+  _elm_widget_item_pre_notify_del((Elm_Widget_Item *)item)
+/**
+ * Convenience macro to set deletion callback of widget item, doing casts for you.
+ * @see _elm_widget_item_del_cb_set()
+ */
+#define elm_widget_item_del_cb_set(item, del_cb)        \
+  _elm_widget_item_del_cb_set((Elm_Widget_Item *)item, del_cb)
+
+/**
+ * Set item's data
+ * @see _elm_widget_item_data_set()
+ */
+#define elm_widget_item_data_set(item, data)                    \
+  _elm_widget_item_data_set((Elm_Widget_Item *)item, data)
+/**
+ * Get item's data
+ * @see _elm_widget_item_data_get()
+ */
+#define elm_widget_item_data_get(item)                  \
+  _elm_widget_item_data_get((const Elm_Widget_Item *)item)
+
+
+/**
+ * Cast and ensure the given pointer is an Elm_Widget_Item or return NULL.
+ */
+#define           ELM_WIDGET_ITEM(item)                                 \
+  ((item && EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) ?            \
+   ((Elm_Widget_Item *)(item)) : NULL)
+
+#define           ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, ...)    \
+  do                                                            \
+    {                                                           \
+       if (!item)                                               \
+         {                                                      \
+            CRITICAL("Elm_Widget_Item " # item " is NULL!");    \
+            return __VA_ARGS__;                                 \
+         }                                                      \
+       if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC))      \
+         {                                                      \
+            EINA_MAGIC_FAIL(item, ELM_WIDGET_ITEM_MAGIC);       \
+            return __VA_ARGS__;                                 \
+         }                                                      \
+    }                                                           \
+  while (0)
+
+
 void		  _elm_unneed_ethumb(void);
 
 void              _elm_rescale(void);
@@ -267,11 +360,5 @@ extern const char *_elm_lib_dir;
 extern int _elm_log_dom;
 
 extern Eina_List *_elm_win_list;
-
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_elm_log_dom, __VA_ARGS__)
-#define ERR(...) EINA_LOG_DOM_ERR(_elm_log_dom, __VA_ARGS__)
-#define WRN(...) EINA_LOG_DOM_WARN(_elm_log_dom, __VA_ARGS__)
-#define INF(...) EINA_LOG_DOM_INFO(_elm_log_dom, __VA_ARGS__)
-#define DBG(...) EINA_LOG_DOM_DBG(_elm_log_dom, __VA_ARGS__)
 
 #endif

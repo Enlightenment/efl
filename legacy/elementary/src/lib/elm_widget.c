@@ -1423,3 +1423,144 @@ _elm_widget_is(const Evas_Object *obj)
    const char *type = evas_object_type_get(obj);
    return type == SMART_NAME;
 }
+
+/**
+ * Allocate a new Elm_Widget_Item-derived structure.
+ *
+ * The goal of this structure is to provide common ground for actions
+ * that a widget item have, such as the owner widget, callback to
+ * notify deletion, data pointer and maybe more.
+ *
+ * @param widget the owner widget that holds this item, must be an elm_widget!
+ * @param alloc_size any number greater than sizeof(Elm_Widget_Item) that will
+ *        be used to allocate memory.
+ *
+ * @return allocated memory that is already zeroed out, or NULL on errors.
+ *
+ * @see elm_widget_item_new() convenience macro.
+ * @see elm_widget_item_del() to release memory.
+ */
+Elm_Widget_Item *
+_elm_widget_item_new(Evas_Object *widget, size_t alloc_size)
+{
+   Elm_Widget_Item *item;
+
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(alloc_size < sizeof(Elm_Widget_Item), NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!_elm_widget_is(widget), NULL);
+
+   item = calloc(1, alloc_size);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(item, NULL);
+
+   EINA_MAGIC_SET(item, ELM_WIDGET_ITEM_MAGIC);
+   item->widget = widget;
+   return item;
+}
+
+/**
+ * Releases widget item memory, calling back del_cb() if it exists.
+ *
+ * If there is a Elm_Widget_Item::del_cb, then it will be called prior
+ * to memory release. Note that elm_widget_item_pre_notify_del() calls
+ * this function and then unset it, thus being useful for 2 step
+ * cleanup whenever the del_cb may use any of the data that must be
+ * deleted from item.
+ *
+ * The Elm_Widget_Item::view will be deleted (evas_object_del()) if it
+ * is presented!
+ *
+ * @param item a valid #Elm_Widget_Item to be deleted.
+ * @see elm_widget_item_del() convenience macro.
+ */
+void
+_elm_widget_item_del(Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+
+   if (item->del_cb)
+     item->del_cb((void *)item->data, item->widget, item);
+
+   if (item->view)
+     evas_object_del(item->view);
+
+   EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
+   free(item);
+}
+
+/**
+ * Notify object will be deleted without actually deleting it.
+ *
+ * This function will callback Elm_Widget_Item::del_cb if it is set
+ * and then unset it so it is not called twice (ie: from
+ * elm_widget_item_del()).
+ *
+ * @param item a valid #Elm_Widget_Item to be notified
+ * @see elm_widget_item_pre_notify_del() convenience macro.
+ */
+void
+_elm_widget_item_pre_notify_del(Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   if (!item->del_cb) return;
+   item->del_cb((void *)item->data, item->widget, item);
+   item->del_cb = NULL;
+}
+
+/**
+ * Set the function to notify when item is being deleted.
+ *
+ * This function will complain if there was a callback set already,
+ * however it will set the new one.
+ *
+ * The callback will be called from elm_widget_item_pre_notify_del()
+ * or elm_widget_item_del() will be called with:
+ *   - data: the Elm_Widget_Item::data value.
+ *   - obj: the Elm_Widget_Item::widget evas object.
+ *   - event_info: the item being deleted.
+ *
+ * @param item a valid #Elm_Widget_Item to be notified
+ * @see elm_widget_item_del_cb_set() convenience macro.
+ */
+void
+_elm_widget_item_del_cb_set(Elm_Widget_Item *item, Evas_Smart_Cb del_cb)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+
+   if ((item->del_cb) && (item->del_cb != del_cb))
+     WRN("You're replacing a previously set del_cb %p of item %p with %p",
+         item->del_cb, item, del_cb);
+
+   item->del_cb = del_cb;
+}
+
+/**
+ * Set user-data in this item.
+ *
+ * User data may be used to identify this item or just store any
+ * application data. It is automatically given as the first parameter
+ * of the deletion notify callback.
+ *
+ * @param item a valid #Elm_Widget_Item to store data in.
+ * @param data user data to store.
+ * @see elm_widget_item_del_cb_set() convenience macro.
+ */
+void
+_elm_widget_item_data_set(Elm_Widget_Item *item, const void *data)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   if ((item->data) && (item->data != data))
+     DBG("Replacing item %p data %p with %p", item, item->data, data);
+   item->data = data;
+}
+
+/**
+ * Retrieves user-data of this item.
+ *
+ * @param item a valid #Elm_Widget_Item to get data from.
+ * @see elm_widget_item_data_set()
+ */
+void *
+_elm_widget_item_data_get(const Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
+   return (void *)item->data;
+}
