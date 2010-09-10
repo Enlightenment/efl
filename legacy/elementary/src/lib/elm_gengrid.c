@@ -217,13 +217,19 @@ _theme_hook(Evas_Object *obj)
 }
 
 static void
-_del_hook(Evas_Object *obj)
+_del_pre_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_gengrid_clear(obj);
    evas_object_del(wd->pan_smart);
    wd->pan_smart = NULL;
+}
+
+static void
+_del_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
    free(wd);
 }
 
@@ -943,6 +949,7 @@ elm_gengrid_add(Evas_Object *parent)
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
 
