@@ -210,9 +210,7 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
    struct stat st;
 
    if (stat(file, &st) != 0)
-     {
-	return NULL;
-     }
+      return NULL;
 
    if (!_edje_file_hash)
      {
@@ -251,17 +249,20 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 	  }
      }
 
- open_new:
+open_new:
    if (!_edje_file_hash)
       _edje_file_hash = eina_hash_string_small_new(NULL);
+
    edf = _edje_file_open(file, coll, error_ret, edc_ret);
-   if (!edf) return NULL;
+   if (!edf)
+      return NULL;
+
    eina_hash_add(_edje_file_hash, file, edf);
    return edf;
 
- open:
-
-   if (!coll) return edf;
+open:
+   if (!coll)
+      return edf;
 
    edc = _edje_file_coll_open(edf, coll);
    if (!edc)
