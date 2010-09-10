@@ -55,35 +55,42 @@ static void _parent_resize(void *data, Evas *e, Evas_Object *obj, void *event_in
 static void _menu_hide(void *data, Evas_Object *obj, void *event_info);
 
 static void
+_del_item(Elm_Menu_Item *item)
+{
+   Elm_Menu_Item *child;
+
+   if (item->del_cb) item->del_cb((void*)item->data, item->o, item);
+
+   EINA_LIST_FREE(item->items, child)
+     _del_item(child);
+
+   if (item->label) eina_stringshare_del(item->label);
+   if (item->hv) evas_object_del(item->hv);
+   if (item->location) evas_object_del(item->location);
+   if (item->o) evas_object_del(item->o);
+   free(item);
+}
+
+static void
 _del_pre_hook(Evas_Object *obj)
 {
+   Elm_Menu_Item *item;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+
    evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_RESIZE, _parent_resize, obj);
+
+   EINA_LIST_FREE(wd->items, item)
+     _del_item(item);
+
+   if (wd->hv) evas_object_del(wd->hv);
+   if (wd->location) evas_object_del(wd->location);
 }
 
 static void
 _del_hook(Evas_Object *obj)
 {
-   Eina_List *l, *ll = NULL;
-   Elm_Menu_Item *item;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   ll = eina_list_append(ll, wd->items);
-   EINA_LIST_FOREACH(ll, ll, l)
-     {
-	EINA_LIST_FREE(l, item)
-	  {
-	     ll = eina_list_append(ll, item->items);
-	     if (item->del_cb) item->del_cb((void*)item->data, item->o, item);
-	     if (item->label) eina_stringshare_del(item->label);
-	     if (item->hv) evas_object_del(item->hv);
-	     if (item->location) evas_object_del(item->location);
-	     free(item);
-	  }
-     }
-   if (wd->hv) evas_object_del(wd->hv);
-   if (wd->location) evas_object_del(wd->location);
    free(wd);
 }
 
