@@ -100,7 +100,7 @@ _longpress(void *objv)
    printf("Long press: start drag!\n");
    wd->longtimer = NULL;
 
-   elm_drag_start(objv, ELM_SEL_FORMAT_IMAGE,"/home/nash/Desktop/IMG_4084.jpg");
+   elm_drag_start(objv, ELM_SEL_FORMAT_IMAGE,"file:///home/nash/Desktop/IMG_4084.jpg");
    evas_object_smart_callback_call(objv, "drag,start", NULL);
 
    return 0; /* Don't call again */
