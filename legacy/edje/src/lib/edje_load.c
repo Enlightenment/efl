@@ -183,40 +183,41 @@ edje_file_group_exists(const char *file, const char *glob)
    Edje_File *edf;
    int error_ret = 0;
    Eina_Bool succeed = EINA_FALSE;
+   Edje_Patterns *patterns;
 
-   if ((!file) || (!*file)) return EINA_FALSE;
+   if ((!file) || (!*file))
+      return EINA_FALSE;
+
    edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
-   if (edf)
+   if (!edf)
+      return EINA_FALSE;
+
+   if (edf->collection_patterns)
      {
-	Edje_Patterns *patterns;
-
-	if (edf->collection_patterns)
-	  {
-	     patterns = edf->collection_patterns;
-	  }
-	else
-	  {
-	     Edje_Part_Collection_Directory_Entry *ce;
-	     Eina_Iterator *i;
-	     Eina_List *l = NULL;
-
-	     i = eina_hash_iterator_data_new(edf->collection);
-
-	     EINA_ITERATOR_FOREACH(i, ce)
-	       l = eina_list_append(l, ce);
-
-	     eina_iterator_free(i);
-
-	     patterns = edje_match_collection_dir_init(l);
-	     eina_list_free(l);
-	  }
-
-	succeed = edje_match_collection_dir_exec(patterns, glob);
-
-	edf->collection_patterns = patterns;
-
-	_edje_cache_file_unref(edf);
+        patterns = edf->collection_patterns;
      }
+   else
+     {
+        Edje_Part_Collection_Directory_Entry *ce;
+        Eina_Iterator *i;
+        Eina_List *l = NULL;
+
+        i = eina_hash_iterator_data_new(edf->collection);
+
+        EINA_ITERATOR_FOREACH(i, ce)
+           l = eina_list_append(l, ce);
+
+        eina_iterator_free(i);
+
+        patterns = edje_match_collection_dir_init(l);
+        eina_list_free(l);
+     }
+
+   succeed = edje_match_collection_dir_exec(patterns, glob);
+
+   edf->collection_patterns = patterns;
+
+   _edje_cache_file_unref(edf);
    return succeed;
 }
 
