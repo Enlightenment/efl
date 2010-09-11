@@ -224,6 +224,7 @@ _desc_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "fps", fps, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "theme", theme, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "modules", modules, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "tooltip_delay", tooltip_delay, EET_T_DOUBLE);
 }
 
 static void
@@ -404,6 +405,7 @@ _config_load(void)
    _elm_config->fps = 60.0;
    _elm_config->theme = eina_stringshare_add("default");
    _elm_config->modules = NULL;
+   _elm_config->tooltip_delay = 1.0;
 }
 
 static void
@@ -588,6 +590,14 @@ _env_get(void)
 
    s = getenv("ELM_MODULES");
    if (s) eina_stringshare_replace(&_elm_config->modules, s);
+
+   s = getenv("ELM_TOOLTIP_DELAY");
+   if (s)
+     {
+        double delay = atof(s);
+        if (delay >= 0.0)
+          _elm_config->tooltip_delay = delay;
+     }
 }
 
 void

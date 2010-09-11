@@ -91,6 +91,7 @@ struct _Elm_Config
    double fps;
    const char *theme;
    const char *modules;
+   double tooltip_delay;
 };
 
 typedef struct _Elm_Module Elm_Module;
@@ -216,6 +217,10 @@ EAPI int          elm_widget_drag_child_locked_y_get(const Evas_Object *obj);
     
 EAPI Eina_Bool    elm_widget_is(const Evas_Object *obj);
 EAPI Evas_Object *elm_widget_parent_widget_get(const Evas_Object *obj);
+
+typedef struct _Elm_Tooltip Elm_Tooltip;
+void              elm_widget_tooltip_set(Evas_Object *obj, Elm_Tooltip *tt);
+void              elm_tooltip_theme(Elm_Tooltip *tt);
 
 EAPI Eina_List   *_elm_stringlist_get(const char *str);
 EAPI void         _elm_stringlist_free(Eina_List *list);

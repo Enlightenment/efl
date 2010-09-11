@@ -224,6 +224,7 @@ extern "C" {
         ELM_CLOCK_ALL	       = (1 << 6) - 1
      } Elm_Clock_Digedit;
 
+
 #ifndef ELM_LIB_QUICKLAUNCH
 #define ELM_MAIN() int main(int argc, char **argv) {elm_init(argc, argv); return elm_main(argc, argv);}
 #else
@@ -977,6 +978,24 @@ extern "C" {
    /* smart callbacks called:
     * "clicked" - when the user clicks on a toolbar item and becomes selected
     */
+
+   typedef Evas_Object *(*Elm_Tooltip_Content_Cb) (void *data, Evas_Object *obj);
+
+   /* available styles:
+    * default
+    * transparent (no background or shadow, just show the provided content)
+    */
+   EAPI double       elm_tooltip_delay_get(void);
+   EAPI Eina_Bool    elm_tooltip_delay_set(double delay);
+   EAPI void         elm_object_tooltip_show(Evas_Object *obj);
+   EAPI void         elm_object_tooltip_hide(Evas_Object *obj);
+   EAPI void         elm_object_tooltip_text_set(Evas_Object *obj, const char *text);
+   EAPI void         elm_object_tooltip_content_cb_set(Evas_Object *obj, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+   EAPI void         elm_object_tooltip_unset(Evas_Object *obj);
+
+   EAPI void         elm_object_tooltip_style_set(Evas_Object *obj, const char *style);
+   EAPI const char  *elm_object_tooltip_style_get(const Evas_Object *obj);
+
 
    typedef struct _Elm_Menu_Item Elm_Menu_Item;
    EAPI Evas_Object     *elm_menu_add(Evas_Object *parent);

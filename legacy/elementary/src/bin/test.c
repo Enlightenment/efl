@@ -80,6 +80,7 @@ void test_launcher(void *data, Evas_Object *obj, void *event_info);
 void test_launcher2(void *data, Evas_Object *obj, void *event_info);
 void test_launcher3(void *data, Evas_Object *obj, void *event_info);
 void test_anim(void *data, Evas_Object *obj, void *event_info);
+void test_tooltip(void *data, Evas_Object *obj, void *event_info);
 
 void test_drag_source(void *data, Evas_Object *obj, void *event_info);
 void test_drag_dest(void *data, Evas_Object *obj, void *event_info);
@@ -288,6 +289,7 @@ my_win_main(char *autorun)
    ADD_TEST("Animation", test_anim);
    ADD_TEST("Calendar", test_calendar);
    ADD_TEST("Calendar 2", test_calendar2);
+   ADD_TEST("Tooltip", test_tooltip);
 #undef ADD_TEST
 
    if (autorun)

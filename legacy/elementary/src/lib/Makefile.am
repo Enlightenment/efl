@@ -88,6 +88,7 @@ elc_hoversel.c \
 elc_notepad.c \
 elc_scrolled_entry.c \
 \
+els_tooltip.c \
 els_pan.c \
 els_pan.h \
 els_scroller.c \

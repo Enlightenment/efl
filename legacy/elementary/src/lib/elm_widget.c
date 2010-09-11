@@ -21,6 +21,7 @@ struct _Smart_Data
    Eina_List     *subobjs;
    Evas_Object   *resize_obj;
    Evas_Object   *hover_obj;
+   Elm_Tooltip   *tooltip;
    void         (*del_func) (Evas_Object *obj);
    void         (*del_pre_func) (Evas_Object *obj);
    void         (*focus_func) (Evas_Object *obj);
@@ -203,6 +204,7 @@ elm_widget_theme(Evas_Object *obj)
      elm_widget_theme(child);
    if (sd->resize_obj) elm_widget_theme(sd->resize_obj);
    if (sd->hover_obj) elm_widget_theme(sd->hover_obj);
+   if (sd->tooltip) elm_tooltip_theme(sd->tooltip);
    if (sd->theme_func) sd->theme_func(obj);
 }
 
@@ -1017,6 +1019,12 @@ elm_widget_type_get(const Evas_Object *obj)
    return "";
 }
 
+void
+elm_widget_tooltip_set(Evas_Object *obj, Elm_Tooltip *tt)
+{
+   API_ENTRY return;
+   sd->tooltip = tt;
+}
 
 
 
