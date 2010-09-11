@@ -103,6 +103,8 @@ _elm_tooltip_show(Elm_Tooltip *tt)
    tt->tooltip = edje_object_add(tt->evas);
    if (!tt->tooltip) return;
 
+   evas_object_layer_set(tt->tooltip, ELM_OBJECT_LAYER_TOOLTIP);
+
    evas_object_event_callback_add
      (tt->owner, EVAS_CALLBACK_MOVE, _elm_tooltip_obj_move_cb, tt);
    evas_object_event_callback_add
@@ -255,6 +257,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
              tt->tooltip = NULL;
              return;
           }
+        evas_object_layer_set(tt->content, ELM_OBJECT_LAYER_TOOLTIP);
         evas_object_pass_events_set(tt->content, EINA_TRUE);
         edje_object_part_swallow
           (tt->tooltip, "elm.swallow.content", tt->content);

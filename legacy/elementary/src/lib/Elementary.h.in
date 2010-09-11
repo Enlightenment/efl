@@ -136,6 +136,22 @@ extern "C" {
 #define ELM_RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && (((x) + (w)) > (xx)) && (((y) + (h)) > (yy)))
 #define ELM_PI 3.14159265358979323846
 
+  /**
+   * Defines couple of standard Evas_Object layers to be used
+   * with evas_object_layer_set().
+   *
+   * @note whenever extending with new values, try to keep some padding
+   *       to siblings so there is room for further extensions.
+   */
+  typedef enum _Elm_Object_Layer
+    {
+      ELM_OBJECT_LAYER_BACKGROUND = EVAS_LAYER_MIN + 64, /**< where to place backgrounds */
+      ELM_OBJECT_LAYER_DEFAULT = 0, /**< Evas_Object default layer (and thus for Elementary) */
+      ELM_OBJECT_LAYER_FOCUS = EVAS_LAYER_MAX - 128, /**< where focus object visualization is */
+      ELM_OBJECT_LAYER_TOOLTIP = EVAS_LAYER_MAX - 64, /**< where to show tooltips */
+      ELM_OBJECT_LAYER_LAST /**< last layer known by Elementary */
+    } Elm_Object_Layer;
+
 /**************************************************************************/
    EAPI extern int ELM_ECORE_EVENT_ETHUMB_CONNECT;
 
