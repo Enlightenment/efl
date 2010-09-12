@@ -93,7 +93,7 @@
  * @li @ref Eina_Safety_Checks_Group extra checks that will report unexpected conditions and can be disabled at compile time.
  * @li @ref Eina_String_Group a set of functions that manages C strings.
  *
- * @defgroup Eina_Data_Types_Group
+ * @defgroup Eina_Data_Types_Group Data types.
  *
  * Eina provide easy to use and optimized data types and structures.
  *

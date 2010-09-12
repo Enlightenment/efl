@@ -77,7 +77,7 @@ EAPI void         eina_binshare_dump(void);
 /**
  * @brief Retrieve an instance of a blob for use in a program.
  *
- * @param   obj The binary blob to retrieve an instance of.
+ * @param   ptr The binary blob to retrieve an instance of.
  * @return  A pointer to an instance of the string on success.
  *          @c NULL on failure.
  *

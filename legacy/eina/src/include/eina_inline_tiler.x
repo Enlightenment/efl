@@ -22,6 +22,7 @@
 #include "eina_safety_checks.h"
 
 /**
+ * @cond LOCAL
  * This struct should not be accessed directly, it is used by
  * eina_tile_grid_slicer functions to maintain context and fill "info"
  * member with correct values for given iteration.
@@ -36,6 +37,10 @@ struct _Eina_Tile_Grid_Slicer
    struct Eina_Tile_Grid_Info info; // info about the current tile
    Eina_Bool first;
 };
+
+/**
+ * @endcond
+ */
 
 /**
  * @brief Iterates over the tiles set by eina_tile_grid_slicer_setup().

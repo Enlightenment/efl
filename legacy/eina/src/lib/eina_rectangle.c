@@ -321,6 +321,14 @@ eina_rectangle_shutdown(void)
 *============================================================================*/
 
 /**
+ * @addtogroup Eina_Rectangle_Group Rectangle
+ *
+ * @brief These functions provide rectangle management.
+ *
+ * @{
+ */
+
+/**
  * @brief Create a new rectangle.
  *
  * @param x The X coordinate of the top left corner of the rectangle.
@@ -679,3 +687,6 @@ eina_rectangle_pool_geometry_get(Eina_Rectangle_Pool *pool, int *w, int *h)
    return EINA_TRUE;
 }
 
+/**
+ * @}
+ */

@@ -20,6 +20,14 @@
 #define EINA_INLINE_RECTANGLE_H__
 
 /**
+ * @addtogroup Eina_Rectangle_Group Rectangle
+ *
+ * @brief These functions provide rectangle management.
+ *
+ * @{
+ */
+
+/**
  * @brief Check if the given spans intersect.
  *
  * @param c1 The column of the first span.
@@ -150,7 +158,7 @@ eina_rectangle_coords_inside(const Eina_Rectangle *r, int x, int y)
  * @param dst The first rectangle.
  * @param src The second rectangle.
  *
- * This function get the union of the rectangles @dst and @p src. The
+ * This function get the union of the rectangles @p dst and @p src. The
  * result is stored in @p dst. No check is done on @p dst or @p src,
  * so they must be valid rectangles.
  */
@@ -238,5 +246,9 @@ eina_rectangle_rescale_out(const Eina_Rectangle *out, const Eina_Rectangle *in, 
 	res->w = out->w;
 	res->h = out->h;
 }
+
+/**
+ * @}
+ */
 
 #endif
