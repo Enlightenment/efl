@@ -2152,30 +2152,30 @@ eina_list_iterator_reversed_new(const Eina_List *list)
 EAPI Eina_Accessor *
 eina_list_accessor_new(const Eina_List *list)
 {
-   Eina_Accessor_List *it;
+   Eina_Accessor_List *ac;
 
         eina_error_set(0);
-   it = calloc(1, sizeof (Eina_Accessor_List));
-   if (!it)
+   ac = calloc(1, sizeof (Eina_Accessor_List));
+   if (!ac)
      {
         eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
         return NULL;
      }
 
-   EINA_MAGIC_SET(it,            EINA_MAGIC_LIST_ACCESSOR);
-   EINA_MAGIC_SET(&it->accessor, EINA_MAGIC_ACCESSOR);
+   EINA_MAGIC_SET(ac,            EINA_MAGIC_LIST_ACCESSOR);
+   EINA_MAGIC_SET(&ac->accessor, EINA_MAGIC_ACCESSOR);
 
-   it->head = list;
-   it->current = list;
-   it->index = 0;
+   ac->head = list;
+   ac->current = list;
+   ac->index = 0;
 
-   it->accessor.version = EINA_ACCESSOR_VERSION;
-   it->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_list_accessor_get_at);
-   it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(
+   ac->accessor.version = EINA_ACCESSOR_VERSION;
+   ac->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_list_accessor_get_at);
+   ac->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(
          eina_list_accessor_get_container);
-   it->accessor.free = FUNC_ACCESSOR_FREE(eina_list_accessor_free);
+   ac->accessor.free = FUNC_ACCESSOR_FREE(eina_list_accessor_free);
 
-   return &it->accessor;
+   return &ac->accessor;
 }
 
 /**
