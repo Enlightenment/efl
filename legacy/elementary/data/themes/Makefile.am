@@ -189,7 +189,17 @@ emo-wtf.png \
 map_item.png \
 map_item_2.png \
 shadow.png \
-black.png
+black.png \
+tooltip-corner-top-left-tip.png \
+tooltip-base.png \
+tooltip-corner-bottom-left-tip.png \
+tooltip-edge-top-tip.png \
+tooltip-corner-bottom-right-tip.png \
+tooltip-edge-left-tip.png \
+tooltip-edge-bottom-tip.png \
+tooltip-edge-right-tip.png \
+tooltip-corner-top-right-tip.png
+
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

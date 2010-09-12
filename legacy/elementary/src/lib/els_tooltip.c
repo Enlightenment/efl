@@ -39,11 +39,15 @@ struct _Elm_Tooltip
    Evas_Object             *owner;
    Evas_Object             *tooltip, *content;
    Ecore_Timer             *show_timer;
+   Ecore_Timer             *hide_timer;
    Ecore_Job               *reconfigure_job;
-   Ecore_Job               *hide_job;
    struct {
       Evas_Coord            x, y, bx, by;
    } pad;
+   struct {
+      double                x, y;
+   } rel_pos;
+   double                   hide_timeout; /* from theme */
    Eina_Bool                visible_lock:1;
    Eina_Bool                changed_style:1;
 };
@@ -51,8 +55,8 @@ struct _Elm_Tooltip
 static void _elm_tooltip_reconfigure(Elm_Tooltip *tt);
 static void _elm_tooltip_reconfigure_job_start(Elm_Tooltip *tt);
 static void _elm_tooltip_reconfigure_job_stop(Elm_Tooltip *tt);
-static void _elm_tooltip_hide_job_start(Elm_Tooltip *tt);
-static void _elm_tooltip_hide_job_stop(Elm_Tooltip *tt);
+static void _elm_tooltip_hide_anim_start(Elm_Tooltip *tt);
+static void _elm_tooltip_hide_anim_stop(Elm_Tooltip *tt);
 static void _elm_tooltip_show_timer_stop(Elm_Tooltip *tt);
 static void _elm_tooltip_hide(Elm_Tooltip *tt);
 
@@ -96,8 +100,11 @@ _elm_tooltip_obj_mouse_move_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj
 static void
 _elm_tooltip_show(Elm_Tooltip *tt)
 {
+   if ((tt->hide_timer) && (tt->tooltip))
+     edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
+
    _elm_tooltip_show_timer_stop(tt);
-   _elm_tooltip_hide_job_stop(tt);
+   _elm_tooltip_hide_anim_stop(tt);
 
    if (tt->tooltip) return;
    tt->tooltip = edje_object_add(tt->evas);
@@ -137,7 +144,7 @@ static void
 _elm_tooltip_hide(Elm_Tooltip *tt)
 {
    _elm_tooltip_show_timer_stop(tt);
-   _elm_tooltip_hide_job_stop(tt);
+   _elm_tooltip_hide_anim_stop(tt);
    _elm_tooltip_reconfigure_job_stop(tt);
 
    if (!tt->tooltip) return;
@@ -180,27 +187,30 @@ _elm_tooltip_reconfigure_job_start(Elm_Tooltip *tt)
      (_elm_tooltip_reconfigure_job, tt);
 }
 
-static void
-_elm_tooltip_hide_job(void *data)
+static Eina_Bool
+_elm_tooltip_hide_anim_cb(void *data)
 {
    Elm_Tooltip *tt = data;
-   tt->hide_job = NULL;
-   _elm_tooltip_hide(data);
+   tt->hide_timer = NULL;
+   _elm_tooltip_hide(tt);
+   return EINA_FALSE;
 }
 
 static void
-_elm_tooltip_hide_job_stop(Elm_Tooltip *tt)
+_elm_tooltip_hide_anim_start(Elm_Tooltip *tt)
 {
-   if (!tt->hide_job) return;
-   ecore_job_del(tt->hide_job);
-   tt->hide_job = NULL;
+   if (tt->hide_timer) return;
+   edje_object_signal_emit(tt->tooltip, "elm,action,hide", "elm");
+   tt->hide_timer = ecore_timer_add
+     (tt->hide_timeout, _elm_tooltip_hide_anim_cb, tt);
 }
 
 static void
-_elm_tooltip_hide_job_start(Elm_Tooltip *tt)
+_elm_tooltip_hide_anim_stop(Elm_Tooltip *tt)
 {
-   if (tt->hide_job) ecore_job_del(tt->hide_job);
-   tt->hide_job = ecore_job_add(_elm_tooltip_hide_job, tt);
+   if (!tt->hide_timer) return;
+   ecore_timer_del(tt->hide_timer);
+   tt->hide_timer = NULL;
 }
 
 static void
@@ -208,9 +218,12 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
 {
    Evas_Coord ox, oy, ow, oh, px, py, tx, ty, tw, th, cw, ch;
    Evas_Coord eminw, eminh, ominw, ominh;
+   double rel_x, rel_y;
+   Eina_Bool inside_owner;
 
    _elm_tooltip_reconfigure_job_stop(tt);
 
+   if (tt->hide_timer) return;
    if (!tt->tooltip) return;
    if (tt->changed_style)
      {
@@ -225,10 +238,14 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
              return;
           }
 
+        tt->rel_pos.x = 0;
+        tt->rel_pos.y = 0;
+
         tt->pad.x = 0;
         tt->pad.y = 0;
         tt->pad.bx = 0;
         tt->pad.by = 0;
+        tt->hide_timeout = 0.0;
 
         str = edje_object_data_get(tt->tooltip, "pad_x");
         if (str) tt->pad.x = atoi(str);
@@ -240,11 +257,20 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         str = edje_object_data_get(tt->tooltip, "pad_border_y");
         if (str) tt->pad.by = atoi(str);
 
+        str = edje_object_data_get(tt->tooltip, "hide_timeout");
+        if (str)
+          {
+             tt->hide_timeout = atof(str);
+             if (tt->hide_timeout < 0.0) tt->hide_timeout = 0.0;
+          }
+
         evas_object_pass_events_set(tt->tooltip, EINA_TRUE);
         tt->changed_style = EINA_FALSE;
         if (tt->tooltip)
           edje_object_part_swallow
             (tt->tooltip, "elm.swallow.content", tt->content);
+
+        edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
      }
 
    if (!tt->content)
@@ -276,6 +302,9 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    if (ominw < eminw) ominw = eminw;
    if (ominh < eminh) ominh = eminh;
 
+   if (ominw < 1) ominw = 10; /* at least it is noticeable */
+   if (ominh < 1) ominh = 10; /* at least it is noticeable */
+
    edje_object_size_min_restricted_calc
      (tt->tooltip, &tw, &th, ominw, ominh);
 
@@ -284,7 +313,9 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
 
    evas_object_geometry_get(tt->owner, &ox, &oy, &ow, &oh);
 
-   if ((px >= ox) && (py >= oy) && (px <= ox + ow) && (py <= oy + oh))
+   inside_owner = ((px >= ox) && (py >= oy) &&
+                   (px <= ox + ow) && (py <= oy + oh));
+   if (inside_owner)
      {
         tx = px;
         ty = py;
@@ -314,6 +345,33 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    evas_object_move(tt->tooltip, tx, ty);
    evas_object_resize(tt->tooltip, tw, th);
    evas_object_show(tt->tooltip);
+
+   if (inside_owner)
+     {
+        rel_x = (px - tx) / (double)tw;
+        rel_y = (py - ty) / (double)th;
+     }
+   else
+     {
+        rel_x = (ox + (ow / 2) - tx) / (double)tw;
+        rel_y = (oy + (oh / 2) - ty) / (double)th;
+     }
+
+#define FDIF(a, b) (fabs((a) - (b)) > 0.0001)
+   if (FDIF(rel_x, tt->rel_pos.x) || FDIF(rel_y, tt->rel_pos.y))
+     {
+        Edje_Message_Float_Set *msg;
+
+        msg = alloca(sizeof(Edje_Message_Float_Set) + sizeof(double));
+        msg->count = 2;
+        msg->val[0] = rel_x;
+        msg->val[1] = rel_y;
+        tt->rel_pos.x = rel_x;
+        tt->rel_pos.y = rel_y;
+
+        edje_object_message_send(tt->tooltip, EDJE_MESSAGE_FLOAT_SET, 1, msg);
+     }
+#undef FDIF
 }
 
 static void
@@ -338,7 +396,8 @@ _elm_tooltip_obj_mouse_in_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj _
 {
    Elm_Tooltip *tt = data;
 
-   _elm_tooltip_hide_job_stop(tt);
+   _elm_tooltip_hide_anim_stop(tt);
+
    if ((tt->show_timer) || (tt->tooltip)) return;
 
    tt->show_timer = ecore_timer_add
@@ -348,7 +407,17 @@ _elm_tooltip_obj_mouse_in_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj _
 static void
 _elm_tooltip_obj_mouse_out_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info  __UNUSED__)
 {
-   _elm_tooltip_hide_job_start(data);
+   Elm_Tooltip *tt = data;
+
+   if (tt->visible_lock) return;
+
+   if (!tt->tooltip)
+     {
+        _elm_tooltip_show_timer_stop(tt);
+        return;
+     }
+
+   _elm_tooltip_hide_anim_start(tt);
 }
 
 static void
@@ -363,6 +432,7 @@ _elm_tooltip_label_create(void *data, Evas_Object *obj)
    Evas_Object *label = elm_label_add(obj);
    if (!label)
      return NULL;
+   elm_object_style_set(label, "tooltip");
    elm_label_label_set(label, data);
    return label;
 }
@@ -431,7 +501,7 @@ elm_object_tooltip_hide(Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
    tt->visible_lock = EINA_FALSE;
-   _elm_tooltip_hide_job_start(tt);
+   _elm_tooltip_hide_anim_start(tt);
 }
 
 /**
@@ -535,11 +605,7 @@ elm_object_tooltip_content_cb_set(Evas_Object *obj, Elm_Tooltip_Content_Cb func,
    tt->data = data;
    tt->del_cb = del_cb;
 
-   if (!just_created)
-     {
-        _elm_tooltip_hide_job_stop(tt);
-        _elm_tooltip_reconfigure_job_start(tt);
-     }
+   if (!just_created) _elm_tooltip_reconfigure_job_start(tt);
    return;
 
  error:
