@@ -100,13 +100,14 @@ _elm_tooltip_obj_mouse_move_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj
 static void
 _elm_tooltip_show(Elm_Tooltip *tt)
 {
-   if ((tt->hide_timer) && (tt->tooltip))
-     edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
-
    _elm_tooltip_show_timer_stop(tt);
    _elm_tooltip_hide_anim_stop(tt);
 
-   if (tt->tooltip) return;
+   if (tt->tooltip)
+     {
+        _elm_tooltip_reconfigure_job_start(tt);
+        return;
+     }
    tt->tooltip = edje_object_add(tt->evas);
    if (!tt->tooltip) return;
 
@@ -209,6 +210,8 @@ static void
 _elm_tooltip_hide_anim_stop(Elm_Tooltip *tt)
 {
    if (!tt->hide_timer) return;
+   if (tt->tooltip)
+     edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
    ecore_timer_del(tt->hide_timer);
    tt->hide_timer = NULL;
 }
