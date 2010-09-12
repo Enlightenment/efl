@@ -85,7 +85,7 @@ struct _Anchor
 };
 
 #ifdef HAVE_ECORE_IMF   
-   static void 
+static void 
 _edje_entry_focus_in_cb(void *data, Evas_Object *o __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Edje_Real_Part *rp;
@@ -95,7 +95,7 @@ _edje_entry_focus_in_cb(void *data, Evas_Object *o __UNUSED__, const char *emiss
    if (!rp || !rp->entry_data || !rp->edje || !rp->edje->obj) return;
 
    en = rp->entry_data;
-   if (!en->imf_context) return;
+   if (!en || !en->imf_context) return;
 
    if (evas_object_focus_get(rp->edje->obj))
      {
@@ -104,7 +104,7 @@ _edje_entry_focus_in_cb(void *data, Evas_Object *o __UNUSED__, const char *emiss
      }
 }
 
-   static void
+static void
 _edje_entry_focus_out_cb(void *data, Evas_Object *o __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Edje_Real_Part *rp;
@@ -149,7 +149,7 @@ _edje_focus_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 #endif
 }
 
-   static void
+static void
 _edje_focus_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Edje *ed = data;
@@ -401,8 +401,8 @@ _sel_clear(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o __UNUSED__, Entry
 	Sel *sel;
 	
 	sel = en->sel->data;
-        en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_bg);
-        en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_fg);
+	en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_bg);
+	en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_fg);
 	if (sel->obj_bg) evas_object_del(sel->obj_bg);
 	if (sel->obj_fg) evas_object_del(sel->obj_fg);
 	free(sel);
@@ -1100,7 +1100,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 	_curs_update_from_curs(en->cursor, rp->object, en);
 	_anchors_get(en->cursor, rp->object, en);
 	_edje_emit(ed, "entry,changed", rp->part->name);
-        _edje_emit(ed, "entry,key,delete", rp->part->name);
+	_edje_emit(ed, "entry,key,delete", rp->part->name);
 	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "Home"))
@@ -2590,17 +2590,10 @@ _edje_entry_imf_event_changed_cb(void *data, int type __UNUSED__, void *event)
      }
 
    en->comp_len = length;
-
-   _sel_clear(en->cursor, rp->object, en);
-   _sel_enable(en->cursor, rp->object, en);
-   _sel_start(en->cursor, rp->object, en);
-
    en->have_composition = EINA_TRUE;
 
    //xx
    evas_object_textblock_text_markup_prepend(en->cursor, preedit_string);
-
-   _sel_extend(en->cursor, rp->object, en);
 
    _curs_update_from_curs(en->cursor, rp->object, en);
    _anchors_get(en->cursor, rp->object, en);
