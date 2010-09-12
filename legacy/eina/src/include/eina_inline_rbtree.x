@@ -19,6 +19,14 @@
 #ifndef EINA_RBTREE_INLINE_H_
 #define EINA_RBTREE_INLINE_H_
 
+/**
+ * @addtogroup Eina_Rbtree_Group Red-Black tree
+ *
+ * @brief These functions provide Red-Black trees management.
+ *
+ * @{
+ */
+
 static inline Eina_Rbtree *
 eina_rbtree_inline_lookup(const Eina_Rbtree *root, const void *key, int length, Eina_Rbtree_Cmp_Key_Cb cmp, const void *data)
 {
@@ -34,5 +42,9 @@ eina_rbtree_inline_lookup(const Eina_Rbtree *root, const void *key, int length, 
 
    return NULL;
 }
+
+/**
+ * @}
+ */
 
 #endif

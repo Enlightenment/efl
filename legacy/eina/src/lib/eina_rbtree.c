@@ -276,6 +276,14 @@ _eina_rbtree_inline_double_rotation(Eina_Rbtree *node,
 *                                   API                                      *
 *============================================================================*/
 
+/**
+ * @addtogroup Eina_Rbtree_Group Red-Black tree
+ *
+ * @brief These functions provide Red-Black trees management.
+ *
+ * @{
+ */
+
 EAPI Eina_Rbtree *
 eina_rbtree_inline_insert(Eina_Rbtree *root,
                           Eina_Rbtree *node,
@@ -578,3 +586,7 @@ eina_rbtree_delete(Eina_Rbtree *root, Eina_Rbtree_Free_Cb func, void *data)
    eina_rbtree_delete(root->son[1], func, data);
    func(root, data);
 }
+
+/**
+ * @}
+ */
