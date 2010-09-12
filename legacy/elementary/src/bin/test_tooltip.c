@@ -4,6 +4,26 @@
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
+static Evas_Object *
+_tt_item_icon(void *data __UNUSED__, Evas_Object *obj, void *item __UNUSED__)
+{
+   Evas_Object *ic = elm_icon_add(obj);
+   char buf[PATH_MAX];
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   evas_object_resize(ic, 64, 64);
+   return ic;
+}
+
+static void
+_tt_item_icon_del(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   // test to check for del_cb behavior!
+   printf("_tt_icon_del: data=%ld (== 456?), event_info=%p\n",
+          (long)data, event_info);
+}
+
 static void
 _tt_text_replace(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
@@ -158,7 +178,9 @@ _tt_visible_lock_toggle(void *data __UNUSED__, Evas_Object *obj, void *event_inf
 void
 test_tooltip(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *bt;
+   Evas_Object *win, *bg, *bx, *tb, *bt, *lst;
+   Elm_Toolbar_Item *ti;
+   Elm_List_Item *li;
 
    win = elm_win_add(NULL, "tooltip", ELM_WIN_BASIC);
    elm_win_title_set(win, "Tooltip");
@@ -173,6 +195,21 @@ test_tooltip(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
+
+   tb = elm_toolbar_add(win);
+   elm_toolbar_homogenous_set(tb, 0);
+   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(bx, tb);
+   evas_object_show(tb);
+
+   ti = elm_toolbar_item_add(tb, NULL, "Open", NULL, NULL);
+   elm_toolbar_item_tooltip_text_set(ti, "Opens a file");
+
+   ti = elm_toolbar_item_add(tb, NULL, "Icon", NULL, NULL);
+   elm_toolbar_item_tooltip_content_cb_set
+     (ti, _tt_item_icon, (void *)456L, _tt_item_icon_del);
+   elm_toolbar_item_tooltip_style_set(ti, "transparent");
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Simple text tooltip");
@@ -231,7 +268,20 @@ test_tooltip(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
+   lst = elm_list_add(win);
+   li = elm_list_item_append(lst, "Hello", NULL, NULL,  NULL, NULL);
+   elm_list_item_tooltip_text_set(li, "Something useful here?");
+   li = elm_list_item_append(lst, "Icon Tooltip", NULL, NULL,  NULL, NULL);
+   elm_list_item_tooltip_content_cb_set(li, _tt_item_icon, NULL, NULL);
+   evas_object_size_hint_weight_set(lst, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(lst, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_min_set(lst, 100, 100);
+   elm_list_go(lst);
+   elm_box_pack_end(bx, lst);
+   evas_object_show(lst);
 
    evas_object_show(win);
+
+   evas_object_resize(win, 400, 500);
 }
 #endif

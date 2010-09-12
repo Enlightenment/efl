@@ -152,6 +152,7 @@ extern "C" {
       ELM_OBJECT_LAYER_LAST /**< last layer known by Elementary */
     } Elm_Object_Layer;
 
+
 /**************************************************************************/
    EAPI extern int ELM_ECORE_EVENT_ETHUMB_CONNECT;
 
@@ -239,6 +240,22 @@ extern "C" {
         ELM_CLOCK_SEC_UNIT     = 1 << 5,
         ELM_CLOCK_ALL	       = (1 << 6) - 1
      } Elm_Clock_Digedit;
+
+  /**
+   * Called back when a widget's tooltip is activated and needs content.
+   * @param data user-data given to elm_object_tooltip_content_cb_set()
+   * @param obj owner widget.
+   */
+   typedef Evas_Object *(*Elm_Tooltip_Content_Cb) (void *data, Evas_Object *obj);
+
+  /**
+   * Called back when a widget's item tooltip is activated and needs content.
+   * @param data user-data given to elm_object_tooltip_content_cb_set()
+   * @param obj owner widget.
+   * @param item context dependent item. As an example, if tooltip was
+   *        set on Elm_List_Item, then it is of this type.
+   */
+  typedef Evas_Object *(*Elm_Tooltip_Item_Content_Cb) (void *data, Evas_Object *obj, void *item);
 
 
 #ifndef ELM_LIB_QUICKLAUNCH
@@ -600,7 +617,7 @@ extern "C" {
 
    typedef struct _Elm_Gengrid_Item_Class Elm_Gengrid_Item_Class;
    typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func;
-   typedef struct _Elm_Gengrid_Item Elm_Gengrid_Item;
+   typedef struct _Elm_Gengrid_Item Elm_Gengrid_Item; /**< Item of Elm_Gengrid. Sub-type of Elm_Widget_Item */
    typedef char        *(*GridItemLabelGetFunc) (const void *data, Evas_Object *obj, const char *part);
    typedef Evas_Object *(*GridItemIconGetFunc)  (const void *data, Evas_Object *obj, const char *part);
    typedef Eina_Bool    (*GridItemStateGetFunc) (const void *data, Evas_Object *obj, const char *part);
@@ -633,6 +650,12 @@ extern "C" {
    EAPI void	     elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
    EAPI void	     elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
    EAPI void	     elm_gengrid_horizontal_set(Evas_Object *obj, Eina_Bool setting);
+   EAPI void         elm_gengrid_item_tooltip_text_set(Elm_Gengrid_Item *item, const char *text);
+   EAPI void         elm_gengrid_item_tooltip_content_cb_set(Elm_Gengrid_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+   EAPI void         elm_gengrid_item_tooltip_unset(Elm_Gengrid_Item *item);
+   EAPI void         elm_gengrid_item_tooltip_style_set(Elm_Gengrid_Item *item, const char *style);
+   EAPI const char  *elm_gengrid_item_tooltip_style_get(const Elm_Gengrid_Item *item);
+
    EAPI void	     elm_gengrid_clear(Evas_Object *obj);
    EAPI void	    *elm_gengrid_item_data_get(const Elm_Gengrid_Item *item);
    EAPI void	     elm_gengrid_item_pos_get(const Elm_Gengrid_Item *item, unsigned int *x, unsigned int *y);
@@ -752,7 +775,7 @@ extern "C" {
 	  ELM_ICON_FILE,
 	  ELM_ICON_STANDARD
      } Elm_Icon_Type;
-   typedef struct _Elm_Hoversel_Item Elm_Hoversel_Item;
+   typedef struct _Elm_Hoversel_Item Elm_Hoversel_Item; /**< Item of Elm_Hoversel. Sub-type of Elm_Widget_Item */
    EAPI Evas_Object *elm_entry_add(Evas_Object *parent);
    EAPI void         elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line);
    EAPI Eina_Bool    elm_entry_single_line_get(const Evas_Object *obj);
@@ -956,7 +979,7 @@ extern "C" {
     * "dismissed" - the hover is dismissed
     */
 
-   typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item;
+   typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item; /**< Item of Elm_Toolbar. Sub-type of Elm_Widget_Item */
    EAPI Evas_Object      *elm_toolbar_add(Evas_Object *parent);
    EAPI void              elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size);
    EAPI int               elm_toolbar_icon_size_get(const Evas_Object *obj);
@@ -972,6 +995,13 @@ extern "C" {
    EAPI void              elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled);
    EAPI void              elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator);
    EAPI Eina_Bool         elm_toolbar_item_separator_get(Elm_Toolbar_Item *item);
+
+   EAPI void              elm_toolbar_item_tooltip_text_set(Elm_Toolbar_Item *item, const char *text);
+   EAPI void              elm_toolbar_item_tooltip_content_cb_set(Elm_Toolbar_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+   EAPI void              elm_toolbar_item_tooltip_unset(Elm_Toolbar_Item *item);
+   EAPI void              elm_toolbar_item_tooltip_style_set(Elm_Toolbar_Item *item, const char *style);
+   EAPI const char       *elm_toolbar_item_tooltip_style_get(const Elm_Toolbar_Item *item);
+
    EAPI Eina_List        *elm_toolbar_item_get_all(Evas_Object *obj);
    EAPI Elm_Toolbar_Item *elm_toolbar_item_get_first(Evas_Object *obj);
    EAPI Elm_Toolbar_Item *elm_toolbar_item_get_last(Evas_Object *obj);
@@ -995,8 +1025,6 @@ extern "C" {
     * "clicked" - when the user clicks on a toolbar item and becomes selected
     */
 
-   typedef Evas_Object *(*Elm_Tooltip_Content_Cb) (void *data, Evas_Object *obj);
-
    /* available styles:
     * default
     * transparent (no background or shadow, just show the provided content)
@@ -1013,7 +1041,7 @@ extern "C" {
    EAPI const char  *elm_object_tooltip_style_get(const Evas_Object *obj);
 
 
-   typedef struct _Elm_Menu_Item Elm_Menu_Item;
+   typedef struct _Elm_Menu_Item Elm_Menu_Item; /**< Item of Elm_Menu. Sub-type of Elm_Widget_Item */
    EAPI Evas_Object     *elm_menu_add(Evas_Object *parent);
    EAPI void		 elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void		 elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
@@ -1043,7 +1071,7 @@ extern "C" {
 	ELM_LIST_LIMIT,
 	ELM_LIST_LAST
      } Elm_List_Mode;
-   typedef struct _Elm_List_Item Elm_List_Item;
+   typedef struct _Elm_List_Item Elm_List_Item; /**< Item of Elm_List. Sub-type of Elm_Widget_Item */
    EAPI Evas_Object     *elm_list_add(Evas_Object *parent);
    EAPI Elm_List_Item   *elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
    EAPI Elm_List_Item   *elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
@@ -1080,6 +1108,13 @@ extern "C" {
    EAPI void             elm_list_item_label_set(Elm_List_Item *item, const char *text);
    EAPI Elm_List_Item   *elm_list_item_prev(const Elm_List_Item *it);
    EAPI Elm_List_Item   *elm_list_item_next(const Elm_List_Item *it);
+
+   EAPI void             elm_list_item_tooltip_text_set(Elm_List_Item *item, const char *text);
+   EAPI void             elm_list_item_tooltip_content_cb_set(Elm_List_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+   EAPI void             elm_list_item_tooltip_unset(Elm_List_Item *item);
+   EAPI void             elm_list_item_tooltip_style_set(Elm_List_Item *item, const char *style);
+   EAPI const char      *elm_list_item_tooltip_style_get(const Elm_List_Item *item);
+
    EAPI void             elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
    EAPI void             elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
    EAPI void             elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
@@ -1091,7 +1126,7 @@ extern "C" {
     */
 
    // FIXME: incomplete - carousel. don't use this until this comment is removed
-   typedef struct _Elm_Carousel_Item Elm_Carousel_Item;
+   typedef struct _Elm_Carousel_Item Elm_Carousel_Item; /**< Item of Elm_Carousel. Sub-type of Elm_Widget_Item */
    EAPI Evas_Object       *elm_carousel_add(Evas_Object *parent);
    EAPI Elm_Carousel_Item *elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb func, const void *data);
    EAPI void               elm_carousel_item_del(Elm_Carousel_Item *item);
@@ -1130,7 +1165,7 @@ extern "C" {
 	ELM_GENLIST_ITEM_SUBITEMS = (1 << 0)
      } Elm_Genlist_Item_Flags;
    typedef struct _Elm_Genlist_Item_Class Elm_Genlist_Item_Class;
-   typedef struct _Elm_Genlist_Item       Elm_Genlist_Item;
+   typedef struct _Elm_Genlist_Item       Elm_Genlist_Item; /**< Item of Elm_Genlist. Sub-type of Elm_Widget_Item */
    typedef struct _Elm_Genlist_Item_Class_Func Elm_Genlist_Item_Class_Func;
    typedef char        *(*GenlistItemLabelGetFunc) (const void *data, Evas_Object *obj, const char *part);
    typedef Evas_Object *(*GenlistItemIconGetFunc)  (const void *data, Evas_Object *obj, const char *part);
@@ -1216,6 +1251,13 @@ extern "C" {
    EAPI const Evas_Object *elm_genlist_item_object_get(const Elm_Genlist_Item *it);
    EAPI void              elm_genlist_item_update(Elm_Genlist_Item *item);
 
+   EAPI void              elm_genlist_item_tooltip_text_set(Elm_Genlist_Item *item, const char *text);
+   EAPI void              elm_genlist_item_tooltip_content_cb_set(Elm_Genlist_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+   EAPI void              elm_genlist_item_tooltip_unset(Elm_Genlist_Item *item);
+   EAPI void              elm_genlist_item_tooltip_style_set(Elm_Genlist_Item *item, const char *style);
+   EAPI const char       *elm_genlist_item_tooltip_style_get(const Elm_Genlist_Item *item);
+
+
    EAPI Evas_Object *elm_check_add(Evas_Object *parent);
    EAPI void         elm_check_label_set(Evas_Object *obj, const char *label);
    EAPI const char  *elm_check_label_get(const Evas_Object *obj);
@@ -1251,7 +1293,7 @@ extern "C" {
 
    typedef struct _Elm_Slideshow_Item_Class Elm_Slideshow_Item_Class;
    typedef struct _Elm_Slideshow_Item_Class_Func Elm_Slideshow_Item_Class_Func;
-   typedef struct _Elm_Slideshow_Item       Elm_Slideshow_Item;
+   typedef struct _Elm_Slideshow_Item       Elm_Slideshow_Item; /**< Item of Elm_Slideshow. Sub-type of Elm_Widget_Item */
    typedef Evas_Object *(*SlideshowItemGetFunc) (void *data, Evas_Object *obj);
    typedef void         (*SlideshowItemDelFunc) (void *data, Evas_Object *obj);
 
@@ -1362,7 +1404,7 @@ extern "C" {
     * vertical (two up/down buttons at the right side and text left aligned)
     */
 
-   typedef struct _Elm_Index_Item Elm_Index_Item;
+   typedef struct _Elm_Index_Item Elm_Index_Item; /**< Item of Elm_Index. Sub-type of Elm_Widget_Item */
    EAPI Evas_Object *elm_index_add(Evas_Object *parent);
    EAPI void         elm_index_active_set(Evas_Object *obj, Eina_Bool active);
    EAPI void         elm_index_item_level_set(Evas_Object *obj, int level);

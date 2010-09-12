@@ -219,8 +219,11 @@ EAPI Eina_Bool    elm_widget_is(const Evas_Object *obj);
 EAPI Evas_Object *elm_widget_parent_widget_get(const Evas_Object *obj);
 
 typedef struct _Elm_Tooltip Elm_Tooltip;
-void              elm_widget_tooltip_set(Evas_Object *obj, Elm_Tooltip *tt);
+void              elm_widget_tooltip_add(Evas_Object *obj, Elm_Tooltip *tt);
+void              elm_widget_tooltip_del(Evas_Object *obj, Elm_Tooltip *tt);
 void              elm_tooltip_theme(Elm_Tooltip *tt);
+EAPI void         elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+
 
 EAPI Eina_List   *_elm_stringlist_get(const char *str);
 EAPI void         _elm_stringlist_free(Eina_List *list);
@@ -247,6 +250,13 @@ void             _elm_widget_item_pre_notify_del(Elm_Widget_Item *item);
 void             _elm_widget_item_del_cb_set(Elm_Widget_Item *item, Evas_Smart_Cb del_cb);
 void             _elm_widget_item_data_set(Elm_Widget_Item *item, const void *data);
 void            *_elm_widget_item_data_get(const Elm_Widget_Item *item);
+void             _elm_widget_item_tooltip_text_set(Elm_Widget_Item *item, const char *text);
+void             _elm_widget_item_tooltip_content_cb_set(Elm_Widget_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+void             _elm_widget_item_tooltip_unset(Elm_Widget_Item *item);
+void             _elm_widget_item_tooltip_style_set(Elm_Widget_Item *item, const char *style);
+const char      *_elm_widget_item_tooltip_style_get(const Elm_Widget_Item *item);
+
+
 /**
  * Convenience macro to create new widget item, doing casts for you.
  * @see _elm_widget_item_new()
@@ -288,6 +298,40 @@ void            *_elm_widget_item_data_get(const Elm_Widget_Item *item);
 #define elm_widget_item_data_get(item)                  \
   _elm_widget_item_data_get((const Elm_Widget_Item *)item)
 
+/**
+ * Convenience function to set widget item tooltip as a text string.
+ * @see _elm_widget_item_tooltip_text_set()
+ */
+#define elm_widget_item_tooltip_text_set(item, text)    \
+  _elm_widget_item_tooltip_text_set((Elm_Widget_Item *)item, text)
+/**
+ * Convenience function to set widget item tooltip.
+ * @see _elm_widget_item_tooltip_content_cb_set()
+ */
+#define elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb) \
+  _elm_widget_item_tooltip_content_cb_set((Elm_Widget_Item *)item, \
+                                          func, data, del_cb)
+/**
+ * Convenience function to unset widget item tooltip.
+ * @see _elm_widget_item_tooltip_unset()
+ */
+#define elm_widget_item_tooltip_unset(item)     \
+  _elm_widget_item_tooltip_unset((Elm_Widget_Item *)item)
+/**
+ * Convenience function to change item's tooltip style.
+ * @see _elm_widget_item_tooltip_style_set()
+ */
+#define elm_widget_item_tooltip_style_set(item, style)  \
+  _elm_widget_item_tooltip_style_set((Elm_Widget_Item *)item, style)
+/**
+ * Convenience function to query item's tooltip style.
+ * @see _elm_widget_item_tooltip_style_get()
+ */
+#define elm_widget_item_tooltip_style_get(item)  \
+  _elm_widget_item_tooltip_style_get((const Elm_Widget_Item *)item)
+
+
+void             _elm_widget_item_tooltip_content_cb_set(Elm_Widget_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
 /**
  * Cast and ensure the given pointer is an Elm_Widget_Item or return NULL.
@@ -308,6 +352,22 @@ void            *_elm_widget_item_data_get(const Elm_Widget_Item *item);
          {                                                      \
             EINA_MAGIC_FAIL(item, ELM_WIDGET_ITEM_MAGIC);       \
             return __VA_ARGS__;                                 \
+         }                                                      \
+    }                                                           \
+  while (0)
+
+#define           ELM_WIDGET_ITEM_CHECK_OR_GOTO(item, label)    \
+  do                                                            \
+    {                                                           \
+       if (!item)                                               \
+         {                                                      \
+            CRITICAL("Elm_Widget_Item " # item " is NULL!");    \
+            goto label;                                         \
+         }                                                      \
+       if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC))      \
+         {                                                      \
+            EINA_MAGIC_FAIL(item, ELM_WIDGET_ITEM_MAGIC);       \
+            goto label;                                         \
          }                                                      \
     }                                                           \
   while (0)

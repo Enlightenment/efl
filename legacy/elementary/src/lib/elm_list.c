@@ -1513,6 +1513,101 @@ elm_list_item_next(const Elm_List_Item *it)
 }
 
 /**
+ * Set the text to be shown in the list item.
+ *
+ * @param item Target item
+ * @param text The text to set in the content
+ *
+ * Setup the text as tooltip to object. The item can have only one tooltip,
+ * so any previous tooltip data is removed.
+ *
+ * @ingroup List
+ */
+EAPI void
+elm_list_item_tooltip_text_set(Elm_List_Item *item, const char *text)
+{
+   elm_widget_item_tooltip_text_set(item, text);
+}
+
+/**
+ * Set the content to be shown in the tooltip item
+ *
+ * Setup the tooltip to item. The item can have only one tooltip,
+ * so any previous tooltip data is removed. @p func(with @p data) will
+ * be called every time that need show the tooltip and it should
+ * return a valid Evas_Object. This object is then managed fully by
+ * tooltip system and is deleted when the tooltip is gone.
+ *
+ * @param item the list item being attached a tooltip.
+ * @param func the function used to create the tooltip contents.
+ * @param data what to provide to @a func as callback data/context.
+ * @param del_cb called when data is not needed anymore, either when
+ *        another callback replaces @func, the tooltip is unset with
+ *        elm_list_item_tooltip_unset() or the owner @a item
+ *        dies. This callback receives as the first parameter the
+ *        given @a data, and @c event_info is the item.
+ *
+ * @ingroup List
+ */
+EAPI void
+elm_list_item_tooltip_content_cb_set(Elm_List_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
+{
+   elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb);
+}
+
+/**
+ * Unset tooltip from item
+ *
+ * @param item list item to remove previously set tooltip.
+ *
+ * Remove tooltip from item. The callback provided as del_cb to
+ * elm_list_item_tooltip_content_cb_set() will be called to notify
+ * it is not used anymore.
+ *
+ * @see elm_list_item_tooltip_content_cb_set()
+ *
+ * @ingroup List
+ */
+EAPI void
+elm_list_item_tooltip_unset(Elm_List_Item *item)
+{
+   elm_widget_item_tooltip_unset(item);
+}
+
+/**
+ * Sets a different style for this item tooltip.
+ *
+ * @note before you set a style you should define a tooltip with
+ *       elm_list_item_tooltip_content_cb_set() or
+ *       elm_list_item_tooltip_text_set()
+ *
+ * @param item list item with tooltip already set.
+ * @param style the theme style to use (default, transparent, ...)
+ *
+ * @ingroup List
+ */
+EAPI void
+elm_list_item_tooltip_style_set(Elm_List_Item *item, const char *style)
+{
+   elm_widget_item_tooltip_style_set(item, style);
+}
+
+/**
+ * Get the style for this item tooltip.
+ *
+ * @param item list item with tooltip already set.
+ * @return style the theme style in use, defaults to "default". If the
+ *         object does not have a tooltip set, then NULL is returned.
+ *
+ * @ingroup List
+ */
+EAPI const char *
+elm_list_item_tooltip_style_get(const Elm_List_Item *item)
+{
+   return elm_widget_item_tooltip_style_get(item);
+}
+
+/**
  * Set bounce mode
  *
  * This will enable or disable the scroller bounce mode for the list. See

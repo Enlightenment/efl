@@ -21,7 +21,7 @@ struct _Smart_Data
    Eina_List     *subobjs;
    Evas_Object   *resize_obj;
    Evas_Object   *hover_obj;
-   Elm_Tooltip   *tooltip;
+   Eina_List     *tooltips;
    void         (*del_func) (Evas_Object *obj);
    void         (*del_pre_func) (Evas_Object *obj);
    void         (*focus_func) (Evas_Object *obj);
@@ -198,13 +198,15 @@ elm_widget_theme(Evas_Object *obj)
 {
    const Eina_List *l;
    Evas_Object *child;
+   Elm_Tooltip *tt;
 
    API_ENTRY return;
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      elm_widget_theme(child);
    if (sd->resize_obj) elm_widget_theme(sd->resize_obj);
    if (sd->hover_obj) elm_widget_theme(sd->hover_obj);
-   if (sd->tooltip) elm_tooltip_theme(sd->tooltip);
+   EINA_LIST_FOREACH(sd->tooltips, l, tt)
+     elm_tooltip_theme(tt);
    if (sd->theme_func) sd->theme_func(obj);
 }
 
@@ -1020,10 +1022,17 @@ elm_widget_type_get(const Evas_Object *obj)
 }
 
 void
-elm_widget_tooltip_set(Evas_Object *obj, Elm_Tooltip *tt)
+elm_widget_tooltip_add(Evas_Object *obj, Elm_Tooltip *tt)
 {
    API_ENTRY return;
-   sd->tooltip = tt;
+   sd->tooltips = eina_list_append(sd->tooltips, tt);
+}
+
+void
+elm_widget_tooltip_del(Evas_Object *obj, Elm_Tooltip *tt)
+{
+   API_ENTRY return;
+   sd->tooltips = eina_list_remove(sd->tooltips, tt);
 }
 
 
@@ -1229,6 +1238,7 @@ _smart_del(Evas_Object *obj)
 	evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
 	evas_object_del(sobj);
      }
+   eina_list_free(sd->tooltips); /* should be empty anyway */
    if (sd->del_func) sd->del_func(obj);
    if (sd->style) eina_stringshare_del(sd->style);
    if (sd->type) eina_stringshare_del(sd->type);
@@ -1571,4 +1581,173 @@ _elm_widget_item_data_get(const Elm_Widget_Item *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
    return (void *)item->data;
+}
+
+typedef struct _Elm_Widget_Item_Tooltip Elm_Widget_Item_Tooltip;
+struct _Elm_Widget_Item_Tooltip
+{
+   Elm_Widget_Item             *item;
+   Elm_Tooltip_Item_Content_Cb  func;
+   Evas_Smart_Cb                del_cb;
+   const void                  *data;
+};
+
+static Evas_Object *
+_elm_widget_item_tooltip_label_create(void *data, Evas_Object *obj, void *item __UNUSED__)
+{
+   Evas_Object *label = elm_label_add(obj);
+   if (!label)
+     return NULL;
+   elm_object_style_set(label, "tooltip");
+   elm_label_label_set(label, data);
+   return label;
+}
+
+static void
+_elm_widget_item_tooltip_label_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   eina_stringshare_del(data);
+}
+
+/**
+ * Set the text to be shown in the widget item.
+ *
+ * @param item Target item
+ * @param text The text to set in the content
+ *
+ * Setup the text as tooltip to object. The item can have only one tooltip,
+ * so any previous tooltip data is removed.
+ *
+ * @internal
+ */
+void
+_elm_widget_item_tooltip_text_set(Elm_Widget_Item *item, const char *text)
+{
+   EINA_SAFETY_ON_NULL_RETURN(item);
+   EINA_SAFETY_ON_NULL_RETURN(text);
+
+   text = eina_stringshare_add(text);
+   _elm_widget_item_tooltip_content_cb_set
+     (item, _elm_widget_item_tooltip_label_create, text,
+      _elm_widget_item_tooltip_label_del_cb);
+}
+
+static Evas_Object *
+_elm_widget_item_tooltip_create(void *data, Evas_Object *obj)
+{
+   Elm_Widget_Item_Tooltip *wit = data;
+   return wit->func((void *)wit->data, obj, wit->item);
+}
+
+static void
+_elm_widget_item_tooltip_del_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Elm_Widget_Item_Tooltip *wit = data;
+   if (wit->del_cb) wit->del_cb((void *)wit->data, obj, wit->item);
+   free(wit);
+}
+
+/**
+ * Set the content to be shown in the tooltip item
+ *
+ * Setup the tooltip to item. The item can have only one tooltip,
+ * so any previous tooltip data is removed. @p func(with @p data) will
+ * be called every time that need show the tooltip and it should
+ * return a valid Evas_Object. This object is then managed fully by
+ * tooltip system and is deleted when the tooltip is gone.
+ *
+ * @param item the widget item being attached a tooltip.
+ * @param func the function used to create the tooltip contents.
+ * @param data what to provide to @a func as callback data/context.
+ * @param del_cb called when data is not needed anymore, either when
+ *        another callback replaces @func, the tooltip is unset with
+ *        elm_widget_item_tooltip_unset() or the owner @a item
+ *        dies. This callback receives as the first parameter the
+ *        given @a data, and @c event_info is the item.
+ *
+ * @internal
+ */
+void
+_elm_widget_item_tooltip_content_cb_set(Elm_Widget_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
+{
+   Elm_Widget_Item_Tooltip *wit;
+
+   ELM_WIDGET_ITEM_CHECK_OR_GOTO(item, error);
+
+   if (!func)
+     {
+        _elm_widget_item_tooltip_unset(item);
+        return;
+     }
+
+   wit = ELM_NEW(Elm_Widget_Item_Tooltip);
+   if (!wit) goto error;
+   wit->item = item;
+   wit->func = func;
+   wit->data = data;
+   wit->del_cb = del_cb;
+
+   elm_object_sub_tooltip_content_cb_set
+     (item->view, item->widget, _elm_widget_item_tooltip_create, wit,
+      _elm_widget_item_tooltip_del_cb);
+
+   return;
+
+ error:
+   if (del_cb) del_cb((void *)data, item->widget, item);
+}
+
+/**
+ * Unset tooltip from item
+ *
+ * @param item widget item to remove previously set tooltip.
+ *
+ * Remove tooltip from item. The callback provided as del_cb to
+ * elm_widget_item_tooltip_content_cb_set() will be called to notify
+ * it is not used anymore.
+ *
+ * @see elm_widget_item_tooltip_content_cb_set()
+ *
+ * @internal
+ */
+void
+_elm_widget_item_tooltip_unset(Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   elm_object_tooltip_unset(item->view);
+}
+
+/**
+ * Sets a different style for this item tooltip.
+ *
+ * @note before you set a style you should define a tooltip with
+ *       elm_widget_item_tooltip_content_cb_set() or
+ *       elm_widget_item_tooltip_text_set()
+ *
+ * @param item widget item with tooltip already set.
+ * @param style the theme style to use (default, transparent, ...)
+ *
+ * @internal
+ */
+void
+_elm_widget_item_tooltip_style_set(Elm_Widget_Item *item, const char *style)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   elm_object_tooltip_style_set(item->view, style);
+}
+
+/**
+ * Get the style for this item tooltip.
+ *
+ * @param item widget item with tooltip already set.
+ * @return style the theme style in use, defaults to "default". If the
+ *         object does not have a tooltip set, then NULL is returned.
+ *
+ * @internal
+ */
+const char *
+_elm_widget_item_tooltip_style_get(const Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
+   return elm_object_tooltip_style_get(item->view);
 }

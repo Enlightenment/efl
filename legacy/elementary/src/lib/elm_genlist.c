@@ -2897,6 +2897,101 @@ elm_genlist_item_update(Elm_Genlist_Item *it)
 }
 
 /**
+ * Set the text to be shown in the genlist item.
+ *
+ * @param item Target item
+ * @param text The text to set in the content
+ *
+ * Setup the text as tooltip to object. The item can have only one tooltip,
+ * so any previous tooltip data is removed.
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_tooltip_text_set(Elm_Genlist_Item *item, const char *text)
+{
+   elm_widget_item_tooltip_text_set(item, text);
+}
+
+/**
+ * Set the content to be shown in the tooltip item
+ *
+ * Setup the tooltip to item. The item can have only one tooltip,
+ * so any previous tooltip data is removed. @p func(with @p data) will
+ * be called every time that need show the tooltip and it should
+ * return a valid Evas_Object. This object is then managed fully by
+ * tooltip system and is deleted when the tooltip is gone.
+ *
+ * @param item the genlist item being attached a tooltip.
+ * @param func the function used to create the tooltip contents.
+ * @param data what to provide to @a func as callback data/context.
+ * @param del_cb called when data is not needed anymore, either when
+ *        another callback replaces @func, the tooltip is unset with
+ *        elm_genlist_item_tooltip_unset() or the owner @a item
+ *        dies. This callback receives as the first parameter the
+ *        given @a data, and @c event_info is the item.
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_tooltip_content_cb_set(Elm_Genlist_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
+{
+   elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb);
+}
+
+/**
+ * Unset tooltip from item
+ *
+ * @param item genlist item to remove previously set tooltip.
+ *
+ * Remove tooltip from item. The callback provided as del_cb to
+ * elm_genlist_item_tooltip_content_cb_set() will be called to notify
+ * it is not used anymore.
+ *
+ * @see elm_genlist_item_tooltip_content_cb_set()
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_tooltip_unset(Elm_Genlist_Item *item)
+{
+   elm_widget_item_tooltip_unset(item);
+}
+
+/**
+ * Sets a different style for this item tooltip.
+ *
+ * @note before you set a style you should define a tooltip with
+ *       elm_genlist_item_tooltip_content_cb_set() or
+ *       elm_genlist_item_tooltip_text_set()
+ *
+ * @param item genlist item with tooltip already set.
+ * @param style the theme style to use (default, transparent, ...)
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_tooltip_style_set(Elm_Genlist_Item *item, const char *style)
+{
+   elm_widget_item_tooltip_style_set(item, style);
+}
+
+/**
+ * Get the style for this item tooltip.
+ *
+ * @param item genlist item with tooltip already set.
+ * @return style the theme style in use, defaults to "default". If the
+ *         object does not have a tooltip set, then NULL is returned.
+ *
+ * @ingroup Genlist
+ */
+EAPI const char *
+elm_genlist_item_tooltip_style_get(const Elm_Genlist_Item *item)
+{
+   return elm_widget_item_tooltip_style_get(item);
+}
+
+/**
  * This sets the horizontal stretching mode
  *
  * This sets the mode used for sizing items horizontally. Valid modes are
