@@ -654,41 +654,36 @@ _anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
         if (an->item)
           {
              Evas_Object *ob;
-             
-	     while (an->sel)
-	       {
-		  sel = an->sel->data;
-                  en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_bg);
-                  en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_fg);
-		  if (sel->obj_bg) evas_object_del(sel->obj_bg);
-		  if (sel->obj_fg) evas_object_del(sel->obj_fg);
-		  if (sel->obj) evas_object_del(sel->obj);
-		  free(sel);
-		  an->sel = eina_list_remove_list(an->sel, an->sel);
-	       }
 
-             sel = calloc(1, sizeof(Sel));
-             an->sel = eina_list_append(an->sel, sel);
-/*             
-             ob = evas_object_rectangle_add(en->rp->edje->evas);
-             evas_object_color_set(ob, 0, 0, 0, 0);
-             evas_object_smart_member_add(ob, smart);
-             evas_object_stack_above(ob, o);
-             evas_object_clip_set(ob, clip);
-             evas_object_pass_events_set(ob, 1);
-             evas_object_show(ob);
- */
-             if (en->rp->edje->item_provider.func)
+             if (!an->sel)
                {
-                  ob = en->rp->edje->item_provider.func
-                    (en->rp->edje->item_provider.data, smart, 
-                     en->rp->part->name, an->name);
-                  evas_object_smart_member_add(ob, smart);
-                  evas_object_stack_above(ob, o);
-                  evas_object_clip_set(ob, clip);
-                  evas_object_pass_events_set(ob, 1);
-                  evas_object_show(ob);
-                  sel->obj = ob;
+                  while (an->sel)
+                    {
+                       sel = an->sel->data;
+                       en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_bg);
+                       en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_fg);
+                       if (sel->obj_bg) evas_object_del(sel->obj_bg);
+                       if (sel->obj_fg) evas_object_del(sel->obj_fg);
+                       if (sel->obj) evas_object_del(sel->obj);
+                       free(sel);
+                       an->sel = eina_list_remove_list(an->sel, an->sel);
+                    }
+                  
+                  sel = calloc(1, sizeof(Sel));
+                  an->sel = eina_list_append(an->sel, sel);
+                  
+                  if (en->rp->edje->item_provider.func)
+                    {
+                       ob = en->rp->edje->item_provider.func
+                          (en->rp->edje->item_provider.data, smart, 
+                              en->rp->part->name, an->name);
+                       evas_object_smart_member_add(ob, smart);
+                       evas_object_stack_above(ob, o);
+                       evas_object_clip_set(ob, clip);
+                       evas_object_pass_events_set(ob, 1);
+                       evas_object_show(ob);
+                       sel->obj = ob;
+                    }
                }
           }
         // for link anchors
@@ -756,8 +751,9 @@ _anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
                {
                   Evas_Coord cx, cy, cw, ch;
                   
-                  if (!evas_textblock_cursor_format_item_geometry_get(an->start, &cx, &cy, &cw, &ch))
-		    continue ;
+                  if (!evas_textblock_cursor_format_item_geometry_get
+                      (an->start, &cx, &cy, &cw, &ch))
+		    continue;
                   evas_object_move(sel->obj, x + cx, y + cy);
                   evas_object_resize(sel->obj, cw, ch);
                }
