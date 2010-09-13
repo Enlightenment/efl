@@ -28,6 +28,8 @@ typedef struct _Version_Cache_Item
 } Version_Cache_Item;
 static Version_Cache_Item *_version_cache = NULL;
 static int _version_cache_num = 0, _version_cache_alloc = 0;
+static void (*_posupdatecb)(void *, Ecore_X_Xdnd_Position *);
+static void *_posupdatedata;
 
 void
 _ecore_x_dnd_init(void)
@@ -339,6 +341,29 @@ ecore_x_dnd_actions_set(Ecore_X_Window win,
      }
 } /* ecore_x_dnd_actions_set */
 
+/**
+ * The DND position update cb is called Ecore_X sends a DND position to a
+ * client.
+ *
+ * It essentially mirrors some of the data sent in the position message.
+ * Generally this cb should be set just before position update is called.
+ * Please note well you need to look after your own data pointer if someone
+ * trashes you position update cb set.
+ *
+ * It is considered good form to clear this when the dnd event finishes.
+ *
+ * @param cb Callback to updated each time ecore_x sends a position update.
+ * @param data User data.
+ */
+EAPI void
+ecore_x_dnd_position_update_cb_set(
+                           void (*cb)(void *, Ecore_X_Xdnd_Position *data),
+			   void *data)
+{
+   _posupdatecb = cb;
+   _posupdatedata = data;
+}
+
 Ecore_X_DND_Source *
 _ecore_x_dnd_source_get(void)
 {
@@ -534,6 +559,7 @@ _ecore_x_dnd_drag(Ecore_X_Window root, int x, int y)
    XEvent xev;
    Ecore_X_Window win;
    Ecore_X_Window *skip;
+   Ecore_X_Xdnd_Position pos;
    int num;
 
    if (_source->state != ECORE_X_DND_SOURCE_DRAGGING)
@@ -636,9 +662,23 @@ _ecore_x_dnd_drag(Ecore_X_Window root, int x, int y)
           }
      }
 
+   if (_posupdatecb)
+     {
+        pos.position.x = x;
+        pos.position.y = y;
+        pos.win = win;
+        pos.prev = _source->dest;
+        _posupdatecb(_posupdatedata, &pos);
+     }
+
    _source->prev.x = x;
    _source->prev.y = y;
    _source->prev.window = root;
    _source->dest = win;
+
+
 } /* _ecore_x_dnd_drag */
 
+
+
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

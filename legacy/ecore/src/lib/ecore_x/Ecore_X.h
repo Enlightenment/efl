@@ -334,6 +334,7 @@ typedef struct _Ecore_X_Event_Xdnd_Status         Ecore_X_Event_Xdnd_Status;
 typedef struct _Ecore_X_Event_Xdnd_Leave          Ecore_X_Event_Xdnd_Leave;
 typedef struct _Ecore_X_Event_Xdnd_Drop           Ecore_X_Event_Xdnd_Drop;
 typedef struct _Ecore_X_Event_Xdnd_Finished       Ecore_X_Event_Xdnd_Finished;
+typedef struct _Ecore_X_Xdnd_Position		  Ecore_X_Xdnd_Position;
 typedef struct _Ecore_X_Event_Client_Message      Ecore_X_Event_Client_Message;
 typedef struct _Ecore_X_Event_Window_Shape        Ecore_X_Event_Window_Shape;
 typedef struct _Ecore_X_Event_Screensaver_Notify  Ecore_X_Event_Screensaver_Notify;
@@ -644,6 +645,15 @@ struct _Ecore_X_Event_Xdnd_Position
       int x, y;
    } position;
    Ecore_X_Atom   action;
+};
+
+struct _Ecore_X_Xdnd_Position
+{
+   Ecore_X_Window win, prev;
+   struct
+   {
+      int x, y;
+   } position;
 };
 
 struct _Ecore_X_Event_Xdnd_Status
