@@ -81,7 +81,6 @@ test_floating.c \
 test_launcher.c \
 test_anim.c \
 test_calendar.c \
-test_drag.c \
 test_tooltip.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@
