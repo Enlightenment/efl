@@ -33,7 +33,7 @@ void
 eio_file_error(Eio_File *common)
 {
    if (common->error_cb)
-     common->error_cb(common->error, common->data);
+     common->error_cb(common->error, (void*) common->data);
 }
 
 void
@@ -124,7 +124,7 @@ _eio_file_mkdir_done(void *data)
    Eio_File_Mkdir *m = data;
 
    if (m->common.done_cb)
-     m->common.done_cb(m->common.data);
+     m->common.done_cb((void*) m->common.data);
 
    _eio_mkdir_free(m);
 }
@@ -160,7 +160,7 @@ _eio_file_unlink_done(void *data)
    Eio_File_Unlink *l = data;
 
    if (l->common.done_cb)
-     l->common.done_cb(l->common.data);
+     l->common.done_cb((void*) l->common.data);
 
    _eio_unlink_free(l);
 }
@@ -196,7 +196,7 @@ _eio_file_stat_done(void *data)
    Eio_File_Stat *s = data;
 
    if (s->done_cb)
-     s->done_cb(s->common.data, &s->buffer);
+     s->done_cb((void*) s->common.data, &s->buffer);
 
    _eio_stat_free(s);
 }

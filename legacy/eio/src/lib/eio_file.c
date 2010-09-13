@@ -65,7 +65,7 @@ _eio_file_heavy(Ecore_Thread *thread, void *data)
 
 	if (async->filter_cb)
 	  {
-	     filter = async->filter_cb(async->ls.common.data, file);
+	     filter = async->filter_cb((void*) async->ls.common.data, file);
 	  }
 
 	if (filter) ecore_thread_notify(thread, file);
@@ -85,7 +85,7 @@ _eio_file_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
    const char *file = msg_data;
 
    if (async->main_cb)
-     async->main_cb(async->ls.common.data, file);
+     async->main_cb((void*) async->ls.common.data, file);
 
    eina_stringshare_del(file);
 }
@@ -110,7 +110,7 @@ _eio_file_direct_heavy(Ecore_Thread *thread, void *data)
 
 	if (async->filter_cb)
 	  {
-	     filter = async->filter_cb(async->ls.common.data, info);
+	     filter = async->filter_cb((void*) async->ls.common.data, info);
 	  }
 
 	if (filter)
@@ -138,7 +138,7 @@ _eio_file_direct_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *d
    Eina_File_Direct_Info *info = msg_data;
 
    if (async->main_cb)
-     async->main_cb(async->ls.common.data, info);
+     async->main_cb((void*) async->ls.common.data, info);
 
    free(info);
 }
@@ -149,7 +149,7 @@ _eio_file_end(void *data)
    Eio_File_Ls *async = data;
 
    if (async->common.done_cb)
-     async->common.done_cb(async->common.data);
+     async->common.done_cb((void*) async->common.data);
 
    eina_stringshare_del(async->directory);
    free(async);

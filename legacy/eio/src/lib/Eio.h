@@ -73,17 +73,17 @@ typedef struct _Eio_File Eio_File;
 typedef struct _Eio_Progress Eio_Progress;
 typedef struct _Eio_Stat Eio_Stat;
 
-typedef Eina_Bool (*Eio_Filter_Cb)(const void *data, const char *file);
-typedef void (*Eio_Main_Cb)(const void *data, const char *file);
+typedef Eina_Bool (*Eio_Filter_Cb)(void *data, const char *file);
+typedef void (*Eio_Main_Cb)(void *data, const char *file);
 
-typedef Eina_Bool (*Eio_Filter_Direct_Cb)(const void *data, const Eina_File_Direct_Info *info);
-typedef void (*Eio_Main_Direct_Cb)(const void *data, const Eina_File_Direct_Info *info);
+typedef Eina_Bool (*Eio_Filter_Direct_Cb)(void *data, const Eina_File_Direct_Info *info);
+typedef void (*Eio_Main_Direct_Cb)(void *data, const Eina_File_Direct_Info *info);
 
-typedef void (*Eio_Stat_Cb)(const void *data, const struct stat *stat);
-typedef void (*Eio_Progress_Cb)(const void *data, const Eio_Progress *info);
+typedef void (*Eio_Stat_Cb)(void *data, const struct stat *stat);
+typedef void (*Eio_Progress_Cb)(void *data, const Eio_Progress *info);
 
-typedef void (*Eio_Done_Cb)(const void *data);
-typedef void (*Eio_Error_Cb)(int error, const void *data);
+typedef void (*Eio_Done_Cb)(void *data);
+typedef void (*Eio_Error_Cb)(int error, void *data);
 
 struct _Eio_Progress
 {
