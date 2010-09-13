@@ -1005,10 +1005,10 @@ _ecore_evas_x_event_window_show(void *data __UNUSED__, int type __UNUSED__, void
            first_map_bug = atoi(getenv("ECORE_EVAS_GL_FIRST_MAP_BUG"));
         else
            first_map_bug = 0;
-        if ((first_map_bug) &&
-            (!strcmp(ee->driver, "opengl_x11")))
-           evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
      }
+   if ((first_map_bug) &&
+       (!strcmp(ee->driver, "opengl_x11")))
+      evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
    if (ee->visible) return ECORE_CALLBACK_DONE;
 //   printf("SHOW EVENT %p\n", ee);
    ee->visible = 1;
