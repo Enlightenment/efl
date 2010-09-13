@@ -1447,6 +1447,7 @@ EAPI int
 evas_cache_image_flush(Evas_Cache_Image *cache)
 {
    assert(cache);
+   assert(cache->usage >= 0);
 
    if (cache->limit == -1) return -1;
 
