@@ -1460,31 +1460,31 @@ elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const char *data,
                                             _dnd_status, NULL);
 
    dragwin = elm_win_add(NULL, "Elm Drag Object",ELM_WIN_UTILITY);
-   evas_object_resize(dragwin,100,100);
    elm_win_override_set(dragwin,1);
 
    /* FIXME: Images only */
    icon = elm_icon_add(dragwin);
    elm_icon_file_set(icon, data + 7, NULL); /* 7!? */
-   evas_object_resize(icon,100,100);
    elm_win_resize_object_add(dragwin,icon);
    evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND,EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(icon);
-   evas_object_show(dragwin);
 
    /* Position subwindow appropriately */
    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
-   evas_object_geometry_get(obj, &x2, &y2, NULL, NULL);
+   evas_object_geometry_get(obj, &x2, &y2, &w, &h);
    x += x2;
    y += y2;
    evas_object_move(dragwin, x, y);
+   evas_object_resize(icon,w,h);
+   evas_object_resize(dragwin,w,h);
+
+   evas_object_show(icon);
+   evas_object_show(dragwin);
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x3, &y3);
    _dragx = x3 - x2;
    _dragy = y3 - y2;
-   printf("X: %d Y %d\n",_dragx,_dragy);
 
    return true;
 }
