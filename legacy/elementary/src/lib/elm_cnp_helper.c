@@ -1074,8 +1074,9 @@ struct dropable {
 };
 /* FIXME: Way too many globals */
 Eina_List *drops = NULL;
-Evas_Object *en;
-Ecore_Event_Handler *handler_pos, *handler_drop, *handler_enter;
+Evas_Object *dragwin;
+Ecore_Event_Handler *handler_pos, *handler_drop, *handler_enter,
+                    *handler_status;
 
 struct dropable *cur;
 
@@ -1267,6 +1268,29 @@ _dnd_position(void *data, int etype, void *ev)
    return true;
 }
 
+/**
+ * When dragging this is callback response from the destination.
+ * The important thing we care about: Can we drop; thus update cursor
+ * appropriately.
+ */
+static Eina_Bool
+_dnd_status(void *data, int etype, void *ev)
+{
+   struct _Ecore_X_Event_Xdnd_Status *status = ev;
+
+   if (!status) return true;
+
+   /* Only thing we care about: will accept */
+   if (status->will_accept)
+     {
+         printf("Will accept\n");
+     }
+   else
+     { /* Won't accept */
+         printf("Won't accept accept\n");
+     }
+   return true;
+}
 
 /**
  * Add a widget as drop target.
@@ -1321,8 +1345,10 @@ elm_drop_target_add(Evas_Object *obj, enum _elm_sel_type format,
    printf("Adding drop target calls\n");
    handler_enter = ecore_event_handler_add(ECORE_X_EVENT_XDND_ENTER,
                                            _dnd_enter, NULL);
-   handler_pos = ecore_event_handler_add(ECORE_X_EVENT_XDND_POSITION, _dnd_position, NULL);
-   handler_drop = ecore_event_handler_add(ECORE_X_EVENT_XDND_DROP, _dnd_drop, NULL);
+   handler_pos = ecore_event_handler_add(ECORE_X_EVENT_XDND_POSITION,
+                                         _dnd_position, NULL);
+   handler_drop = ecore_event_handler_add(ECORE_X_EVENT_XDND_DROP,
+                                          _dnd_drop, NULL);
 
    return true;
 }
@@ -1381,6 +1407,17 @@ _drag_mouse_up(void *un, Evas *e, Evas_Object *obj, void *data)
         dragdonecb(dragdonecb,selections[ELM_SEL_XDND].widget);
         dragdonecb = NULL;
      }
+   if (dragwin)
+     {
+        evas_object_del(dragwin);
+        dragwin = NULL;
+     }
+
+}
+
+static void
+_drag_move(void *data __UNUSED__, Ecore_X_Xdnd_Position *pos){
+   evas_object_move(dragwin, pos->position.x - 10, pos->position.y - 10);
 }
 
 
@@ -1391,6 +1428,9 @@ elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const char *data,
    Ecore_X_Window xwin;
    struct _elm_cnp_selection *sel;
    enum _elm_sel_type xdnd = ELM_SEL_XDND;
+   int x,y;
+   Evas_Object *icon;
+   int w,h;
 
    if (!_elm_cnp_init_count) _elm_cnp_init();
 
@@ -1408,20 +1448,32 @@ elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const char *data,
    dragdonecb = dragdone;
    dragdonedata = donecbdata;
 
+   ecore_x_dnd_position_update_cb_set(_drag_move, NULL);
    ecore_x_dnd_begin(xwin, (unsigned char *)&xdnd, sizeof(enum _elm_sel_type));
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
                                   _drag_mouse_up, NULL);
 
+   handler_status = ecore_event_handler_add(ECORE_X_EVENT_XDND_STATUS,
+                                            _dnd_status, NULL);
 
-   // set types
-   // start watching motion notify on mouse
-   //    - get window under cursor
-   //    - request data on dnd aware
-   //    - send dndenter/leave as mouse moves in/out
-   //    - update cursor
-   // start watching for dnd status
-   // start watching for mouse up
-      // ecore_x_dnd_drop
+   dragwin = elm_win_add(NULL, "Elm Drag Object",ELM_WIN_UTILITY);
+   evas_object_resize(dragwin,100,100);
+   elm_win_override_set(dragwin,1);
+
+   /* FIXME: Images only */
+   icon = elm_icon_add(dragwin);
+   elm_icon_file_set(icon, data + 7, NULL); /* 7!? */
+   evas_object_resize(icon,100,100);
+   elm_win_resize_object_add(dragwin,icon);
+   evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND,EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(icon);
+   evas_object_show(dragwin);
+
+   /* Position subwindow appropriately */
+   ecore_x_pointer_xy_get(xwin, &x,&y);
+   printf("X: %d Y %d\n",x,y);
+
    return true;
 }
 
