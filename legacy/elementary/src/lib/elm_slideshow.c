@@ -64,7 +64,7 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_slideshow_clear(obj);
-   _elm_stringlist_free(wd->transitions);
+   elm_widget_stringlist_free(wd->transitions);
    if (wd->timer) ecore_timer_del(wd->timer);
    EINA_LIST_FREE(wd->layout.list, layout)
 	   eina_stringshare_del(layout);
@@ -255,11 +255,11 @@ elm_slideshow_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->slideshow);
    evas_object_show(wd->slideshow);
 
-   wd->transitions = _elm_stringlist_get(edje_object_data_get(wd->slideshow, "transitions"));
+   wd->transitions = elm_widget_stringlist_get(edje_object_data_get(wd->slideshow, "transitions"));
    if (eina_list_count(wd->transitions) > 0)
      wd->transition = eina_stringshare_add(eina_list_data_get(wd->transitions));
 
-   wd->layout.list = _elm_stringlist_get(edje_object_data_get(wd->slideshow, "layouts"));
+   wd->layout.list = elm_widget_stringlist_get(edje_object_data_get(wd->slideshow, "layouts"));
    if (eina_list_count(wd->layout.list) > 0)
        wd->layout.current = eina_list_data_get(wd->layout.list);
 

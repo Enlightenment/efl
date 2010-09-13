@@ -1,11 +1,14 @@
-#include <stdbool.h>
-
-#include <Ecore_X.h>
 #include <Elementary.h>
-#include "elm_priv.h"
 /* nash: I have NFI what this does: Just copying the other tests */
 #ifndef ELM_LIB_QUICKLAUNCH
 
+// FIXME: nash - depends on Ecore_X.h - shouldnt. should be agnostic of display
+// system here and elm provide any dnd stuff needed, wrapped as needed
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
+#ifdef HAVE_ELEMENTARY_X
+# include <Ecore_X.h>
 
 #define IM      "/home/nash/work/samsung/autopaste/images/"
 static const char *images[] = {
@@ -37,7 +40,7 @@ test_drag_source(void *data, Evas_Object *obj, void *eventinfo){
         evas_object_show(bx);
 
         ctrls = elm_box_add(win);
-        elm_box_horizontal_set(ctrls, true);
+        elm_box_horizontal_set(ctrls, EINA_TRUE);
         evas_object_size_hint_weight_set(ctrls, EVAS_HINT_EXPAND, 0);
         evas_object_size_hint_align_set(ctrls, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_box_pack_end(bx, ctrls);
@@ -72,13 +75,13 @@ test_drag_source(void *data, Evas_Object *obj, void *eventinfo){
 static Eina_Bool
 _dnd_enter(void *data, int etype, void *ev){
 	printf("enter\n");
-	return true;
+	return EINA_TRUE;
 }
 
 static Eina_Bool
 _dnd_leave(void *data, int etype, void *ev){
 	printf("leave\n");
-	return true;
+	return EINA_TRUE;
 }
 static Eina_Bool
 _dnd_position(void *data, int etype, void *ev){
@@ -96,14 +99,14 @@ _dnd_position(void *data, int etype, void *ev){
 	rect.y = pos->position.y - 5;
 	rect.width = 10;
 	rect.height = 10;
-	ecore_x_dnd_send_status(true, false, rect, pos->action);
+	ecore_x_dnd_send_status(EINA_TRUE, EINA_FALSE, rect, pos->action);
 
-	return true;
+	return EINA_TRUE;
 }
 static Eina_Bool
 _dnd_status(void *data, int etype, void *ev){
 	printf("status\n");
-	return true;
+	return EINA_TRUE;
 }
 
 
@@ -120,16 +123,16 @@ _dnd_drop(void *data, int etype, void *ev){
 
         /* FIXME: elm_selection_get is in elm_priv.h and does not build with -fvisibility=hidden */
 // 	rv = elm_selection_get(ELM_SEL_XDND, ELM_SEL_MARKUP, en);
-// 	if (rv != true){
+// 	if (rv != EINA_TRUE){
 // 		printf("Selection set fail\n");
 // 	}
 
-	return true;
+	return EINA_TRUE;
 }
 static Eina_Bool
 _dnd_finish(void *data, int etype, void *ev){
 	printf("finish\n");
-	return true;
+	return EINA_TRUE;
 }
 void
 test_drag_dest(void *data, Evas_Object *obj, void *event){
@@ -174,7 +177,7 @@ test_drag_dest(void *data, Evas_Object *obj, void *event){
 	ee = ecore_evas_ecore_evas_get(evas_object_evas_get(win));
 	xwin = (Ecore_X_Window)ecore_evas_window_get(ee);
 
-	ecore_x_dnd_aware_set(xwin, true);
+	ecore_x_dnd_aware_set(xwin, EINA_TRUE);
 
 	evas_object_show(win);
 }
@@ -183,6 +186,19 @@ void
 test_drag_genlist(void *data, Evas_Object *obj, void *event){
 	printf("No genlist yet\n");
 }
-
+#else
+void
+test_drag_source(void *data, Evas_Object *obj, void *eventinfo)
+{
+}
+void
+test_drag_dest(void *data, Evas_Object *obj, void *event)
+{
+}
+void
+test_drag_genlist(void *data, Evas_Object *obj, void *event)
+{
+}
+#endif
 
 #endif

@@ -2,6 +2,7 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
+-DELM_INTERAL_API_MDFGELQ=1 \
 -I. \
 -I$(top_builddir) \
 -I$(top_srcdir) \
@@ -25,11 +26,12 @@ endif
 
 lib_LTLIBRARIES = libelementary.la
 
-includes_HEADERS = Elementary.h
+includes_HEADERS = Elementary.h elm_widget.h
 includesdir = $(includedir)/elementary-@VMAJ@
 
 libelementary_la_SOURCES = \
 elm_priv.h \
+\
 elm_main.c \
 elm_theme.c \
 elm_module.c \

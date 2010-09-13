@@ -315,26 +315,6 @@ _elm_rescale(void)
    _elm_win_rescale();
 }
 
-static Eina_List *widtypes = NULL;
-
-void
-_elm_widtype_register(const char **ptr)
-{
-   widtypes = eina_list_append(widtypes, (void *)ptr);
-}
-
-static void
-_elm_widtype_clear(void)
-{
-   const char **ptr;
-   
-   EINA_LIST_FREE(widtypes, ptr)
-     {
-        eina_stringshare_del(*ptr);
-        *ptr = NULL;
-     }
-}
-
 /**
  * @defgroup General General
  */
@@ -611,7 +591,7 @@ elm_quicklaunch_shutdown(void)
 	_elm_log_dom = -1;
      }
 
-   _elm_widtype_clear();
+   _elm_widget_type_clear();
    
    eina_shutdown();
 }

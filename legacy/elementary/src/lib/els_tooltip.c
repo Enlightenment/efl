@@ -469,6 +469,112 @@ elm_tooltip_theme(Elm_Tooltip *tt)
    _elm_tooltip_reconfigure_job_start(tt);
 }
 
+
+/**
+ * Set the content to be shown in the tooltip object for specific event area.
+ *
+ * Setup the tooltip to object. The object @a eventarea can have only
+ * one tooltip, so any previous tooltip data is removed. @p func(with
+ * @p data) will be called every time that need show the tooltip and
+ * it should return a valid Evas_Object. This object is then managed
+ * fully by tooltip system and is deleted when the tooltip is gone.
+ *
+ * This is an internal function that is used by objects with sub-items
+ * that want to provide different tooltips for each of them. The @a
+ * owner object should be an elm_widget and will be used to track
+ * theme changes and to feed @a func and @a del_cb. The @a eventarea
+ * may be any object and is the one that should be used later on with
+ * elm_object_tooltip apis, such as elm_object_tooltip_hide(),
+ * elm_object_tooltip_show() or elm_object_tooltip_unset().
+ *
+ * @param eventarea the object being attached a tooltip.
+ * @param owner the elm_widget that owns this object, will be used to
+ *        track theme changes and to be used in @a func or @a del_cb.
+ * @param func the function used to create the tooltip contents. The
+ *        @a Evas_Object parameters will receive @a owner as value.
+ * @param data what to provide to @a func as callback data/context.
+ * @param del_cb called when data is not needed anymore, either when
+ *        another callback replaces @func, the tooltip is unset with
+ *        elm_object_tooltip_unset() or the owner object @a obj
+ *        dies. This callback receives as the first parameter the
+ *        given @a data, and @c event_info is NULL.
+ *
+ * @internal
+ * @ingroup Tooltips
+ */
+void
+elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
+{
+   Elm_Tooltip *tt = NULL;
+   Eina_Bool just_created;
+
+   EINA_SAFETY_ON_NULL_GOTO(owner, error);
+   EINA_SAFETY_ON_NULL_GOTO(eventarea, error);
+
+   if (!func)
+     {
+        elm_object_tooltip_unset(eventarea);
+        return;
+     }
+
+   tt = evas_object_data_get(eventarea, _tooltip_key);
+   if (tt)
+     {
+        if (tt->owner != owner)
+          {
+             evas_object_event_callback_del_full
+               (tt->owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+             elm_widget_tooltip_del(tt->owner, tt);
+
+             evas_object_event_callback_add
+               (owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+             elm_widget_tooltip_add(tt->owner, tt);
+          }
+
+        if ((tt->func == func) && (tt->data == data) &&
+            (tt->del_cb == del_cb))
+          return;
+        _elm_tooltip_data_clean(tt);
+        just_created = EINA_FALSE;
+     }
+   else
+     {
+        tt = ELM_NEW(Elm_Tooltip);
+        if (!tt) goto error;
+
+        tt->owner = owner;
+        tt->eventarea = eventarea;
+        tt->evas = evas_object_evas_get(eventarea);
+        evas_object_data_set(eventarea, _tooltip_key, tt);
+
+        just_created = EINA_TRUE;
+
+        evas_object_event_callback_add
+          (eventarea, EVAS_CALLBACK_MOUSE_IN,
+           _elm_tooltip_obj_mouse_in_cb, tt);
+        evas_object_event_callback_add
+          (eventarea, EVAS_CALLBACK_MOUSE_OUT,
+           _elm_tooltip_obj_mouse_out_cb, tt);
+        evas_object_event_callback_add
+          (eventarea, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+
+        evas_object_event_callback_add
+          (owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+        elm_widget_tooltip_add(tt->owner, tt);
+     }
+
+   tt->func = func;
+   tt->data = data;
+   tt->del_cb = del_cb;
+
+   if (!just_created) _elm_tooltip_reconfigure_job_start(tt);
+   return;
+
+ error:
+   if (tt) _elm_tooltip_hide(tt);
+   if (del_cb) del_cb((void *)data, owner, NULL);
+}
+
 /**
  * Force show tooltip of object
  *
@@ -553,111 +659,6 @@ EAPI void
 elm_object_tooltip_content_cb_set(Evas_Object *obj, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
    elm_object_sub_tooltip_content_cb_set(obj, obj, func, data, del_cb);
-}
-
-/**
- * Set the content to be shown in the tooltip object for specific event area.
- *
- * Setup the tooltip to object. The object @a eventarea can have only
- * one tooltip, so any previous tooltip data is removed. @p func(with
- * @p data) will be called every time that need show the tooltip and
- * it should return a valid Evas_Object. This object is then managed
- * fully by tooltip system and is deleted when the tooltip is gone.
- *
- * This is an internal function that is used by objects with sub-items
- * that want to provide different tooltips for each of them. The @a
- * owner object should be an elm_widget and will be used to track
- * theme changes and to feed @a func and @a del_cb. The @a eventarea
- * may be any object and is the one that should be used later on with
- * elm_object_tooltip apis, such as elm_object_tooltip_hide(),
- * elm_object_tooltip_show() or elm_object_tooltip_unset().
- *
- * @param eventarea the object being attached a tooltip.
- * @param owner the elm_widget that owns this object, will be used to
- *        track theme changes and to be used in @a func or @a del_cb.
- * @param func the function used to create the tooltip contents. The
- *        @a Evas_Object parameters will receive @a owner as value.
- * @param data what to provide to @a func as callback data/context.
- * @param del_cb called when data is not needed anymore, either when
- *        another callback replaces @func, the tooltip is unset with
- *        elm_object_tooltip_unset() or the owner object @a obj
- *        dies. This callback receives as the first parameter the
- *        given @a data, and @c event_info is NULL.
- *
- * @internal
- * @ingroup Tooltips
- */
-EAPI void
-elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
-{
-   Elm_Tooltip *tt = NULL;
-   Eina_Bool just_created;
-
-   EINA_SAFETY_ON_NULL_GOTO(owner, error);
-   EINA_SAFETY_ON_NULL_GOTO(eventarea, error);
-
-   if (!func)
-     {
-        elm_object_tooltip_unset(eventarea);
-        return;
-     }
-
-   tt = evas_object_data_get(eventarea, _tooltip_key);
-   if (tt)
-     {
-        if (tt->owner != owner)
-          {
-             evas_object_event_callback_del_full
-               (tt->owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
-             elm_widget_tooltip_del(tt->owner, tt);
-
-             evas_object_event_callback_add
-               (owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
-             elm_widget_tooltip_add(tt->owner, tt);
-          }
-
-        if ((tt->func == func) && (tt->data == data) &&
-            (tt->del_cb == del_cb))
-          return;
-        _elm_tooltip_data_clean(tt);
-        just_created = EINA_FALSE;
-     }
-   else
-     {
-        tt = ELM_NEW(Elm_Tooltip);
-        if (!tt) goto error;
-
-        tt->owner = owner;
-        tt->eventarea = eventarea;
-        tt->evas = evas_object_evas_get(eventarea);
-        evas_object_data_set(eventarea, _tooltip_key, tt);
-
-        just_created = EINA_TRUE;
-
-        evas_object_event_callback_add
-          (eventarea, EVAS_CALLBACK_MOUSE_IN,
-           _elm_tooltip_obj_mouse_in_cb, tt);
-        evas_object_event_callback_add
-          (eventarea, EVAS_CALLBACK_MOUSE_OUT,
-           _elm_tooltip_obj_mouse_out_cb, tt);
-        evas_object_event_callback_add
-          (eventarea, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
-
-        evas_object_event_callback_add
-          (owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
-        elm_widget_tooltip_add(tt->owner, tt);
-     }
-
-   tt->func = func;
-   tt->data = data;
-   tt->del_cb = del_cb;
-
-   if (!just_created) _elm_tooltip_reconfigure_job_start(tt);
-   return;
-
- error:
-   if (tt) _elm_tooltip_hide(tt);
-   if (del_cb) del_cb((void *)data, owner, NULL);
 }
 
 /**
