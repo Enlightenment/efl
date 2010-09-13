@@ -1075,6 +1075,7 @@ struct dropable {
 /* FIXME: Way too many globals */
 Eina_List *drops = NULL;
 Evas_Object *dragwin;
+int _dragx, _dragy;
 Ecore_Event_Handler *handler_pos, *handler_drop, *handler_enter,
                     *handler_status;
 
@@ -1417,7 +1418,8 @@ _drag_mouse_up(void *un, Evas *e, Evas_Object *obj, void *data)
 
 static void
 _drag_move(void *data __UNUSED__, Ecore_X_Xdnd_Position *pos){
-   evas_object_move(dragwin, pos->position.x - 10, pos->position.y - 10);
+   evas_object_move(dragwin, pos->position.x - _dragx,
+                    pos->position.y - _dragy);
 }
 
 
@@ -1428,7 +1430,8 @@ elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const char *data,
    Ecore_X_Window xwin;
    struct _elm_cnp_selection *sel;
    enum _elm_sel_type xdnd = ELM_SEL_XDND;
-   int x,y;
+   Ecore_Evas *ee;
+   int x,y,x2,y2,x3,y3;
    Evas_Object *icon;
    int w,h;
 
@@ -1448,7 +1451,7 @@ elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const char *data,
    dragdonecb = dragdone;
    dragdonedata = donecbdata;
 
-   ecore_x_dnd_position_update_cb_set(_drag_move, NULL);
+   ecore_x_dnd_callback_pos_update_set(_drag_move, NULL);
    ecore_x_dnd_begin(xwin, (unsigned char *)&xdnd, sizeof(enum _elm_sel_type));
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
                                   _drag_mouse_up, NULL);
@@ -1471,8 +1474,17 @@ elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const char *data,
    evas_object_show(dragwin);
 
    /* Position subwindow appropriately */
-   ecore_x_pointer_xy_get(xwin, &x,&y);
-   printf("X: %d Y %d\n",x,y);
+   ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+   ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
+   evas_object_geometry_get(obj, &x2, &y2, NULL, NULL);
+   x += x2;
+   y += y2;
+   evas_object_move(dragwin, x, y);
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x3, &y3);
+   _dragx = x3 - x2;
+   _dragy = y3 - y2;
+   printf("X: %d Y %d\n",_dragx,_dragy);
 
    return true;
 }
