@@ -82,7 +82,7 @@ ecore_x_randr_version_get(void)
       return Ecore_X_Randr_Unset;
    }
 #endif
-   return Ecore_X_Randr_Unset;
+   return -1;
 }
 
 Eina_Bool
