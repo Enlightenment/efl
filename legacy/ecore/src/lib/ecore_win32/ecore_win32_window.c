@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <stdio.h>   /* for printf */
 
-#define _WIN32_WINNT 0x0500  // For WS_EX_LAYERED
-
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
