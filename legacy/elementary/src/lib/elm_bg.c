@@ -34,7 +34,14 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord w, h;
    _elm_theme_object_set(obj, wd->img, "bg", "base", elm_widget_style_get(obj));
+   if (wd->custom_img)
+      edje_object_part_swallow(wd->img, "elm.swallow.background", wd->custom_img);
+// FIXME: if i don't do this, bg doesnt calc correctly. why?   
+   evas_object_geometry_get(wd->img, NULL, NULL, &w, &h);
+   evas_object_resize(wd->img, 0, 0);
+   evas_object_resize(wd->img, w, h);
 }
 
 static void
