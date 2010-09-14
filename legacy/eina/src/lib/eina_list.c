@@ -1859,6 +1859,9 @@ eina_list_search_sorted_near_list(const Eina_List *list,
         else if (tmp > cur)
            for (; tmp != cur; tmp--, ct = ct->prev) ;
 
+        if (!ct)
+           goto end;
+
         cmp = func(ct->data, data);
         if (cmp == 0)
            break;
