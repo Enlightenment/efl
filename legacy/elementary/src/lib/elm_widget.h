@@ -67,9 +67,8 @@
  *    Widget_Data *wd = elm_widget_data_get(obj);
  *    if (!wd) return;
  *    // handle change in theme/scale etc. etc.
- *    // XXX: export _elm_theme_object_set
- *    _elm_theme_object_set(obj, wd->sub, "mywidget", "base", 
- *                          elm_widget_style_get(obj));
+ *    elm_widget_theme_object_set(obj, wd->sub, "mywidget", "base", 
+ *                                elm_widget_style_get(obj));
  * }
  * 
  * static void
