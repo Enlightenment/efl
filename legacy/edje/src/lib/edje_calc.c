@@ -617,6 +617,8 @@ _edje_part_recalc_single_aspect(Edje_Real_Part *ep,
    params->y = TO_INT(ADD(want_y,
 			  MUL(SUB(want_h, FROM_INT(params->h)),
 			      desc->align.y)));
+
+   params->aspect = apref;
 }
 
 static void
@@ -954,31 +956,80 @@ _edje_part_recalc_single_text(FLOAT_T sc,
 }
 
 static void
+_edje_part_recalc_single_min_length(FLOAT_T align, int *start, int *length, int min)
+{
+   if (min >= 0)
+     {
+	if (*length < min)
+	  {
+	     *start += TO_INT(SCALE(align, (*length - min)));
+	     *length = min;
+	  }
+     }
+}
+
+static void
 _edje_part_recalc_single_min(Edje_Part_Description_Common *desc,
 			     Edje_Calc_Params *params,
 			     int minw, int minh,
-			     int flags)
+			     int flags __UNUSED__)
 {
-   if (flags & FLAG_X)
+   int tmp;
+   int w;
+   int h;
+
+   w = params->w ? params->w : 99999;
+   h = params->h ? params->h : 99999;
+
+   switch (params->aspect)
      {
-	if (minw >= 0)
-	  {
-	     if (params->w < minw)
-	       {
-		  params->x += TO_INT(SCALE(desc->align.x, (params->w - minw)));
-		  params->w = minw;
-	       }
-	  }
+      case EDJE_ASPECT_PREFER_NONE:
+	 break;
+      case EDJE_ASPECT_PREFER_VERTICAL:
+	 tmp = minh * params->w / h;
+	 if (tmp >= minw)
+	   {
+	      minw = tmp;
+	      break;
+	   }
+      case EDJE_ASPECT_PREFER_HORIZONTAL:
+	 tmp = minw * params->h / w;
+	 if (tmp >= minh)
+	   {
+	      minh = tmp;
+	      break;
+	   }
+      case EDJE_ASPECT_PREFER_BOTH:
+	 tmp = minh * params->w / h;
+	 if (tmp >= minw)
+	   {
+	      minw = tmp;
+	      break;
+	   }
+
+	 tmp = minw * params->h / w;
+	 if (tmp >= minh)
+	   {
+	      minh = tmp;
+	      break;
+	   }
+
+	 break;
      }
-   if (flags & FLAG_Y)
+
+   _edje_part_recalc_single_min_length(desc->align.x, &params->x, &params->w, minw);
+   _edje_part_recalc_single_min_length(desc->align.y, &params->y, &params->h, minh);
+}
+
+static void
+_edje_part_recalc_single_max_length(FLOAT_T align, int *start, int *length, int max)
+{
+   if (max >= 0)
      {
-	if (minh >= 0)
+	if (*length > max)
 	  {
-	     if (params->h < minh)
-	       {
-		  params->y += TO_INT(SCALE(desc->align.y, (params->h - minh)));
-		  params->h = minh;
-	       }
+	     *start += TO_INT(SCALE(align, (*length - max)));
+	     *length = max;
 	  }
      }
 }
@@ -987,30 +1038,53 @@ static void
 _edje_part_recalc_single_max(Edje_Part_Description_Common *desc,
 			     Edje_Calc_Params *params,
 			     int maxw, int maxh,
-			     int flags)
+			     int flags __UNUSED__)
 {
-   if (flags & FLAG_X)
+   int tmp;
+   int w;
+   int h;
+
+   w = params->w ? params->w : 99999;
+   h = params->h ? params->h : 99999;
+
+   switch (params->aspect)
      {
-	if (maxw >= 0)
-	  {
-	     if (params->w > maxw)
-	       {
-		  params->x += TO_INT(SCALE(desc->align.x, (params->w - maxw)));
-		  params->w = maxw;
-	       }
-	  }
+      case EDJE_ASPECT_PREFER_NONE:
+	 break;
+      case EDJE_ASPECT_PREFER_VERTICAL:
+	 tmp = maxh * params->w / h;
+	 if (tmp <= maxw)
+	   {
+	      maxw = tmp;
+	      break;
+	   }
+      case EDJE_ASPECT_PREFER_HORIZONTAL:
+	 tmp = maxw * params->h / w;
+	 if (tmp <= maxh)
+	   {
+	      maxh = tmp;
+	      break;
+	   }
+      case EDJE_ASPECT_PREFER_BOTH:
+	 tmp = maxh * params->w / h;
+	 if (tmp <= maxw)
+	   {
+	      maxw = tmp;
+	      break;
+	   }
+
+	 tmp = maxw * params->h / w;
+	 if (tmp <= maxh)
+	   {
+	      maxh = tmp;
+	      break;
+	   }
+
+	 break;
      }
-   if (flags & FLAG_Y)
-     {
-	if (maxh >= 0)
-	  {
-	     if (params->h > maxh)
-	       {
-		  params->y += TO_INT(SCALE(desc->align.y, (params->h - maxh)));
-		  params->h = maxh;
-	       }
-	  }
-     }
+
+   _edje_part_recalc_single_max_length(desc->align.x, &params->x, &params->w, maxw);
+   _edje_part_recalc_single_max_length(desc->align.y, &params->y, &params->h, maxh);
 }
 
 static void

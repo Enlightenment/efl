@@ -167,6 +167,13 @@ struct _Edje_Smart_Api
  * ? all unsafe calls that may result in callbacks must be marked and dealt with
  */
 
+typedef enum {
+  EDJE_ASPECT_PREFER_NONE,
+  EDJE_ASPECT_PREFER_VERTICAL,
+  EDJE_ASPECT_PREFER_HORIZONTAL,
+  EDJE_ASPECT_PREFER_BOTH
+} Edje_Internal_Aspect;
+
 struct _Edje_Perspective
 {
    Evas_Object *obj;
@@ -204,12 +211,7 @@ struct _Edje_Color
 struct _Edje_Aspect_Prefer
 {
    FLOAT_T min, max;
-   enum {
-     EDJE_ASPECT_PREFER_NONE,
-     EDJE_ASPECT_PREFER_VERTICAL,
-     EDJE_ASPECT_PREFER_HORIZONTAL,
-     EDJE_ASPECT_PREFER_BOTH
-   } prefer;
+   Edje_Internal_Aspect prefer;
 };
 
 struct _Edje_Aspect
@@ -1034,9 +1036,10 @@ struct _Edje_Calc_Params
 	 Edje_Color     color2, color3; // 8
       } text; // 36
    } type; // 40
+   Edje_Internal_Aspect aspect; // 4
    unsigned char    visible : 1;
    unsigned char    smooth : 1; // 1
-}; // 96
+}; // 100
 
 struct _Edje_Real_Part_Set
 {
