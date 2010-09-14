@@ -76,9 +76,7 @@ static const char EDJE_SIGNAL_LOAD_ERROR[] = "elm,thumb,load,error";
 static const char EDJE_SIGNAL_PULSE_START[] = "elm,state,pulse,start";
 static const char EDJE_SIGNAL_PULSE_STOP[] = "elm,state,pulse,stop";
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
-Ethumb_Client *_elm_ethumb_client = NULL;
-#endif
+struct _Ethumb_Client *_elm_ethumb_client = NULL;
 Eina_Bool _elm_ethumb_connected = EINA_FALSE;
 
 EAPI int ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
@@ -328,7 +326,7 @@ _thumb_hide_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 #endif
 
 #ifdef ELM_ETHUMB
-static Eina_Bool _elm_need_ethumb = EINA_FALSE;
+static int _elm_need_ethumb = 0;
 
 static void _on_die_cb(void *, Ethumb_Client *);
 
@@ -359,14 +357,12 @@ void
 _elm_unneed_ethumb(void)
 {
 #ifdef ELM_ETHUMB
-   if (_elm_need_ethumb)
-     {
-	_elm_need_ethumb = 0;
-	ethumb_client_disconnect(_elm_ethumb_client);
-	_elm_ethumb_client = NULL;
-	ethumb_client_shutdown();
-	ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
-     }
+   if (-- _elm_need_ethumb != 0) return;
+
+   ethumb_client_disconnect(_elm_ethumb_client);
+   _elm_ethumb_client = NULL;
+   ethumb_client_shutdown();
+   ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
 #endif
 }
 
@@ -380,10 +376,8 @@ EAPI void
 elm_need_ethumb(void)
 {
 #ifdef ELM_ETHUMB
-   if (_elm_need_ethumb)
-     return;
+   if (_elm_need_ethumb ++ != 0) return;
    ELM_ECORE_EVENT_ETHUMB_CONNECT = ecore_event_type_new();
-   _elm_need_ethumb = 1;
    ethumb_client_init();
    _elm_ethumb_client = ethumb_client_connect(_connect_cb, NULL, NULL);
 #endif
@@ -654,19 +648,11 @@ elm_thumb_animate_get(const Evas_Object *obj)
  *
  * @ingroup Thumb
  */
-#ifdef ELM_ETHUMB
-EAPI Ethumb_Client *
+EAPI struct _Ethumb_Client *
 elm_thumb_ethumb_client_get(void)
 {
    return _elm_ethumb_client;
 }
-#else
-EAPI void *
-elm_thumb_ethumb_client_get(void)
-{
-   return NULL;
-}
-#endif
 
 /**
  * Get the ethumb_client connection state.
