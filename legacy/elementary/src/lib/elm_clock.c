@@ -19,7 +19,7 @@ struct _Widget_Data
    Eina_Bool am_pm : 1;
    Eina_Bool edit : 1;
    Elm_Clock_Digedit digedit;
-   int hrs, min, sec;
+   int hrs, min, sec, timediff;
    Evas_Object *digit[6];
    Evas_Object *ampm;
    Evas_Object *sel_obj;
@@ -126,6 +126,20 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
    return edje_object_signal_callback_del(wd->clk, emission, source, func_cb);
 }
 
+static void
+_timediff_set(Widget_Data *wd)
+{
+   struct timeval timev;
+   struct tm *tm;
+   time_t tt;
+   gettimeofday(&timev, NULL);
+   tt = (time_t)(timev.tv_sec);
+   tzset();
+   tm = localtime(&tt);
+   wd->timediff = (((wd->hrs - tm->tm_hour) * 60 +
+	    wd->min - tm->tm_min) * 60) + wd->sec - tm->tm_sec;
+}
+
 static Eina_Bool
 _ticker(void *data)
 {
@@ -140,7 +154,7 @@ _ticker(void *data)
    wd->ticker = ecore_timer_add(t, _ticker, data);
    if (!wd->edit)
      {
-	tt = (time_t)(timev.tv_sec);
+	tt = (time_t)(timev.tv_sec) + wd->timediff;
 	tzset();
 	tm = localtime(&tt);
 	if (tm)
@@ -532,6 +546,7 @@ elm_clock_add(Evas_Object *parent)
    wd->cur.edit = EINA_TRUE;
    wd->cur.digedit = ELM_CLOCK_NONE;
    wd->first_interval = 0.85;
+   wd->timediff = 0;
 
    _time_update(obj);
    _ticker(obj);
@@ -560,6 +575,7 @@ elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec)
    wd->hrs = hrs;
    wd->min = min;
    wd->sec = sec;
+   _timediff_set(wd);
    _time_update(obj);
 }
 
@@ -610,6 +626,8 @@ elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->edit = edit;
+   if (!edit)
+     _timediff_set(wd);
    if (edit && (wd->digedit == ELM_CLOCK_NONE))
      elm_clock_digit_edit_set(obj, ELM_CLOCK_ALL);
    else
