@@ -903,8 +903,15 @@ m4_ifdef([AC_PROG_OBJC], [
 ])
 AC_SUBST(cocoa_ldflags)
 
-# check for epoll support
-AC_CHECK_HEADERS([sys/epoll.h])
+AC_ARG_ENABLE(epoll,
+  AC_HELP_STRING([--enable-epoll], [enable or disable epoll support]),
+  [want_epoll=$enableval])
+
+if test "x${want_epoll}" = "xyes" ; then
+  # check for epoll support
+  AC_CHECK_HEADERS([sys/epoll.h])
+fi
+
 
 # basic pthread support
 
