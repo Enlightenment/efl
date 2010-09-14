@@ -440,14 +440,16 @@ _eina_matrixsparse_row_idx_get(const Eina_Matrixsparse *m, unsigned long row)
 
      }
    else if (dir < 0)
-      for (; r; r = r->prev)
-         if (r->row == row)
-           {
-              ((Eina_Matrixsparse *)m)->last_used = r;
-              return r;
-           }
-         else if (r->row < row)
+     {
+        for (; r; r = r->prev)
+          if (r->row == row)
+            {
+               ((Eina_Matrixsparse *)m)->last_used = r;
+               return r;
+            }
+          else if (r->row < row)
             return NULL;
+     }
 
    return NULL;
 }
@@ -490,14 +492,16 @@ _eina_matrixsparse_row_cell_idx_get(const Eina_Matrixsparse_Row *r,
 
      }
    else if (dir < 0)
-      for (; r; c = c->prev)
-         if (c->col == col)
-           {
-              ((Eina_Matrixsparse_Row *)r)->last_used = c;
-              return c;
-           }
-         else if (c->col < col)
+     {
+        for (; r; c = c->prev)
+          if (c->col == col)
+            {
+               ((Eina_Matrixsparse_Row *)r)->last_used = c;
+               return c;
+            }
+          else if (c->col < col)
             return NULL;
+     }
 
    return NULL;
 }
