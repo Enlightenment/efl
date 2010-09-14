@@ -12,6 +12,7 @@ void test_button(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector_button(void *data, Evas_Object *obj, void *event_info);
 void test_toggle(void *data, Evas_Object *obj, void *event_info);
 void test_clock(void *data, Evas_Object *obj, void *event_info);
+void test_clock2(void *data, Evas_Object *obj, void *event_info);
 void test_check(void *data, Evas_Object *obj, void *event_info);
 void test_radio(void *data, Evas_Object *obj, void *event_info);
 void test_layout(void *data, Evas_Object *obj, void *event_info);
@@ -214,6 +215,7 @@ my_win_main(char *autorun)
    ADD_TEST("Toggles", test_toggle);
    ADD_TEST("Table", test_table);
    ADD_TEST("Clock", test_clock);
+   ADD_TEST("Clock 2", test_clock2);
    ADD_TEST("Layout", test_layout);
    ADD_TEST("Hover", test_hover);
    ADD_TEST("Hover 2", test_hover2);
