@@ -378,7 +378,8 @@ _ecore_main_gsource_finalize(GSource *source)
    INF("finalize");
 }
 
-static GSourceFuncs ecore_gsource_funcs = {
+static GSourceFuncs ecore_gsource_funcs =
+{
    .prepare  = _ecore_main_gsource_prepare,
    .check    = _ecore_main_gsource_check,
    .dispatch = _ecore_main_gsource_dispatch,
@@ -394,20 +395,23 @@ _ecore_main_loop_init(void)
 #ifdef HAVE_EPOLL
    epoll_fd = epoll_create(1);
    if (epoll_fd < 0)
-     CRIT("Failed to create epoll fd!");
+      CRIT("Failed to create epoll fd!");
 #endif
 
 #ifdef USE_G_MAIN_LOOP
    ecore_epoll_source = g_source_new(&ecore_gsource_funcs, sizeof (GSource));
    if (!ecore_epoll_source)
-     CRIT("Failed to create glib source for epoll!");
-   ecore_epoll_fd.fd = epoll_fd;
-   ecore_epoll_fd.events = G_IO_IN;
-   ecore_epoll_fd.revents = 0;
-   g_source_add_poll(ecore_epoll_source, &ecore_epoll_fd);
-   ecore_epoll_id = g_source_attach(ecore_epoll_source, NULL);
-   if (ecore_epoll_id <= 0)
-     CRIT("Failed to attach glib source to default context");
+      CRIT("Failed to create glib source for epoll!");
+   else
+     {
+        ecore_epoll_fd.fd = epoll_fd;
+        ecore_epoll_fd.events = G_IO_IN;
+        ecore_epoll_fd.revents = 0;
+        g_source_add_poll(ecore_epoll_source, &ecore_epoll_fd);
+        ecore_epoll_id = g_source_attach(ecore_epoll_source, NULL);
+        if (ecore_epoll_id <= 0)
+           CRIT("Failed to attach glib source to default context");
+     }
 #endif
    INF("leave");
 }
@@ -416,11 +420,19 @@ void
 _ecore_main_loop_shutdown(void)
 {
 #ifdef USE_G_MAIN_LOOP
-   g_source_destroy(ecore_epoll_source);
+   if (ecore_epoll_source)
+     {
+        g_source_destroy(ecore_epoll_source);
+        ecore_epoll_source = NULL;
+     }
 #endif
 
 #ifdef HAVE_EPOLL
-   close(epoll_fd);
+   if (epoll_fd >= 0)
+     {
+        close(epoll_fd);
+        epoll_fd = -1;
+     }
 #endif
 }
 
