@@ -12,7 +12,7 @@ static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep,
 				     Edje_Part_Description_Common *desc, Edje_Part_Description_Common *chosen_desc,
 				     Edje_Real_Part *rel1_to_x, Edje_Real_Part *rel1_to_y,
 				     Edje_Real_Part *rel2_to_x, Edje_Real_Part *rel2_to_y,
-				     Edje_Real_Part *confine_to, Edje_Calc_Params *params, int flags);
+				     Edje_Real_Part *confine_to, Edje_Calc_Params *params);
 static void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags);
 
 void
@@ -367,57 +367,50 @@ _edje_part_recalc_single_rel(Edje *ed,
 			     Edje_Real_Part *rel1_to_y,
 			     Edje_Real_Part *rel2_to_x,
 			     Edje_Real_Part *rel2_to_y,
-			     Edje_Calc_Params *params,
-			     int flags)
+			     Edje_Calc_Params *params)
 {
-   if (flags & FLAG_X)
-     {
-        FLOAT_T x, w;
+   FLOAT_T x, w;
+   FLOAT_T y, h;
 
-	if (rel1_to_x)
-	  x = ADD(FROM_INT(desc->rel1.offset_x + rel1_to_x->x),
-		  SCALE(desc->rel1.relative_x, rel1_to_x->w));
-	else
-	  x = ADD(FROM_INT(desc->rel1.offset_x),
-		  SCALE(desc->rel1.relative_x, ed->w));
-	params->x = TO_INT(x);
+   if (rel1_to_x)
+     x = ADD(FROM_INT(desc->rel1.offset_x + rel1_to_x->x),
+	     SCALE(desc->rel1.relative_x, rel1_to_x->w));
+   else
+     x = ADD(FROM_INT(desc->rel1.offset_x),
+	     SCALE(desc->rel1.relative_x, ed->w));
+   params->x = TO_INT(x);
 
-	if (rel2_to_x)
-	  w = ADD(SUB(ADD(FROM_INT(desc->rel2.offset_x + rel2_to_x->x),
-			  SCALE(desc->rel2.relative_x, rel2_to_x->w)),
-		      x),
-		  FROM_INT(1));
-	else
-	  w = ADD(SUB(ADD(FROM_INT(desc->rel2.offset_x),
-			  SCALE(desc->rel2.relative_x, ed->w)),
-		      x),
-		  FROM_INT(1));
-	params->w = TO_INT(w);
-     }
-   if (flags & FLAG_Y)
-     {
-        FLOAT_T y, h;
+   if (rel2_to_x)
+     w = ADD(SUB(ADD(FROM_INT(desc->rel2.offset_x + rel2_to_x->x),
+		     SCALE(desc->rel2.relative_x, rel2_to_x->w)),
+		 x),
+	     FROM_INT(1));
+   else
+     w = ADD(SUB(ADD(FROM_INT(desc->rel2.offset_x),
+		     SCALE(desc->rel2.relative_x, ed->w)),
+		 x),
+	     FROM_INT(1));
+   params->w = TO_INT(w);
 
-	if (rel1_to_y)
-	  y = ADD(FROM_INT(desc->rel1.offset_y + rel1_to_y->y),
-		  SCALE(desc->rel1.relative_y, rel1_to_y->h));
-	else
-	  y = ADD(FROM_INT(desc->rel1.offset_y),
-		  SCALE(desc->rel1.relative_y, ed->h));
-	params->y = TO_INT(y);
+   if (rel1_to_y)
+     y = ADD(FROM_INT(desc->rel1.offset_y + rel1_to_y->y),
+	     SCALE(desc->rel1.relative_y, rel1_to_y->h));
+   else
+     y = ADD(FROM_INT(desc->rel1.offset_y),
+	     SCALE(desc->rel1.relative_y, ed->h));
+   params->y = TO_INT(y);
 
-	if (rel2_to_y)
-	  h = ADD(SUB(ADD(FROM_INT(desc->rel2.offset_y + rel2_to_y->y),
-			  SCALE(desc->rel2.relative_y, rel2_to_y->h)),
-		      y),
-		  FROM_INT(1));
-	else
-	  h = ADD(SUB(ADD(FROM_INT(desc->rel2.offset_y),
-			  SCALE(desc->rel2.relative_y, ed->h)),
-		      y),
-		  FROM_INT(1));
-	params->h = TO_INT(h);
-     }
+   if (rel2_to_y)
+     h = ADD(SUB(ADD(FROM_INT(desc->rel2.offset_y + rel2_to_y->y),
+		     SCALE(desc->rel2.relative_y, rel2_to_y->h)),
+		 y),
+	     FROM_INT(1));
+   else
+     h = ADD(SUB(ADD(FROM_INT(desc->rel2.offset_y),
+		     SCALE(desc->rel2.relative_y, ed->h)),
+		 y),
+	     FROM_INT(1));
+   params->h = TO_INT(h);
 }
 
 static void
@@ -623,39 +616,33 @@ _edje_part_recalc_single_aspect(Edje_Real_Part *ep,
 
 static void
 _edje_part_recalc_single_step(Edje_Part_Description_Common *desc,
-			      Edje_Calc_Params *params,
-			      int flags)
+			      Edje_Calc_Params *params)
 {
-   if (flags & FLAG_X)
+   if (desc->step.x > 0)
      {
-	if (desc->step.x > 0)
-	  {
-	     int steps;
-	     int new_w;
+	int steps;
+	int new_w;
 
-	     steps = params->w / desc->step.x;
-	     new_w = desc->step.x * steps;
-	     if (params->w > new_w)
-	       {
-		  params->x += TO_INT(SCALE(desc->align.x, (params->w - new_w)));
-		  params->w = new_w;
-	       }
+	steps = params->w / desc->step.x;
+	new_w = desc->step.x * steps;
+	if (params->w > new_w)
+	  {
+	     params->x += TO_INT(SCALE(desc->align.x, (params->w - new_w)));
+	     params->w = new_w;
 	  }
      }
-   if (flags & FLAG_Y)
-     {
-	if (desc->step.y > 0)
-	  {
-	     int steps;
-	     int new_h;
 
-	     steps = params->h / desc->step.y;
-	     new_h = desc->step.y * steps;
-	     if (params->h > new_h)
-	       {
-		  params->y += TO_INT(SCALE(desc->align.y, (params->h - new_h)));
-		  params->h = new_h;
-	       }
+   if (desc->step.y > 0)
+     {
+	int steps;
+	int new_h;
+
+	steps = params->h / desc->step.y;
+	new_h = desc->step.y * steps;
+	if (params->h > new_h)
+	  {
+	     params->y += TO_INT(SCALE(desc->align.y, (params->h - new_h)));
+	     params->h = new_h;
 	  }
      }
 }
@@ -971,8 +958,7 @@ _edje_part_recalc_single_min_length(FLOAT_T align, int *start, int *length, int 
 static void
 _edje_part_recalc_single_min(Edje_Part_Description_Common *desc,
 			     Edje_Calc_Params *params,
-			     int minw, int minh,
-			     int flags __UNUSED__)
+			     int minw, int minh)
 {
    int tmp;
    int w;
@@ -1037,8 +1023,7 @@ _edje_part_recalc_single_max_length(FLOAT_T align, int *start, int *length, int 
 static void
 _edje_part_recalc_single_max(Edje_Part_Description_Common *desc,
 			     Edje_Calc_Params *params,
-			     int maxw, int maxh,
-			     int flags __UNUSED__)
+			     int maxw, int maxh)
 {
    int tmp;
    int w;
@@ -1092,8 +1077,7 @@ _edje_part_recalc_single_drag(Edje_Real_Part *ep,
 			      Edje_Real_Part *confine_to,
 			      Edje_Calc_Params *params,
 			      int minw, int minh,
-			      int maxw, int maxh,
-			      int flags)
+			      int maxw, int maxh)
 {
    /* confine */
    if (confine_to)
@@ -1103,133 +1087,113 @@ _edje_part_recalc_single_drag(Edje_Real_Part *ep,
 	FLOAT_T v;
 
 	/* complex dragable params */
-	if (flags & FLAG_X)
+	v = SCALE(ep->drag->size.x, confine_to->w);
+
+	if ((minw > 0) && (TO_INT(v) < minw)) params->w = minw;
+	else if ((maxw >= 0) && (TO_INT(v) > maxw)) params->w = maxw;
+	else params->w = TO_INT(v);
+
+	offset = TO_INT(SCALE(ep->drag->x, (confine_to->w - params->w)))
+	  + ep->drag->tmp.x;
+	if (ep->part->dragable.step_x > 0)
 	  {
-	     v = SCALE(ep->drag->size.x, confine_to->w);
-
-	     if ((minw > 0) && (TO_INT(v) < minw)) params->w = minw;
-	     else if ((maxw >= 0) && (TO_INT(v) > maxw)) params->w = maxw;
-	     else params->w = TO_INT(v);
-
-	     offset = TO_INT(SCALE(ep->drag->x, (confine_to->w - params->w)))
-	       + ep->drag->tmp.x;
-	     if (ep->part->dragable.step_x > 0)
-	       {
-		  params->x = confine_to->x +
-		    ((offset / ep->part->dragable.step_x) * ep->part->dragable.step_x);
-	       }
-	     else if (ep->part->dragable.count_x > 0)
-	       {
-		  step = (confine_to->w - params->w) / ep->part->dragable.count_x;
-		  if (step < 1) step = 1;
-		  params->x = confine_to->x +
-		    ((offset / step) * step);
-	       }
-	     params->req_drag.x = params->x;
-	     params->req_drag.w = params->w;
+	     params->x = confine_to->x +
+	       ((offset / ep->part->dragable.step_x) * ep->part->dragable.step_x);
 	  }
-	if (flags & FLAG_Y)
+	else if (ep->part->dragable.count_x > 0)
 	  {
-	     v = SCALE(ep->drag->size.y, confine_to->h);
-
-	     if ((minh > 0) && (TO_INT(v) < minh)) params->h = minh;
-	     else if ((maxh >= 0) && (TO_INT(v) > maxh)) params->h = maxh;
-	     else params->h = TO_INT(v);
-
-	     offset = TO_INT(SCALE(ep->drag->y, (confine_to->h - params->h)))
-	       + ep->drag->tmp.y;
-	     if (ep->part->dragable.step_y > 0)
-	       {
-		  params->y = confine_to->y +
-		    ((offset / ep->part->dragable.step_y) * ep->part->dragable.step_y);
-	       }
-	     else if (ep->part->dragable.count_y > 0)
-	       {
-		  step = (confine_to->h - params->h) / ep->part->dragable.count_y;
-		  if (step < 1) step = 1;
-		  params->y = confine_to->y +
-		    ((offset / step) * step);
-	       }
-	     params->req_drag.y = params->y;
-	     params->req_drag.h = params->h;
+	     step = (confine_to->w - params->w) / ep->part->dragable.count_x;
+	     if (step < 1) step = 1;
+	     params->x = confine_to->x +
+	       ((offset / step) * step);
 	  }
+	params->req_drag.x = params->x;
+	params->req_drag.w = params->w;
+
+	v = SCALE(ep->drag->size.y, confine_to->h);
+
+	if ((minh > 0) && (TO_INT(v) < minh)) params->h = minh;
+	else if ((maxh >= 0) && (TO_INT(v) > maxh)) params->h = maxh;
+	else params->h = TO_INT(v);
+
+	offset = TO_INT(SCALE(ep->drag->y, (confine_to->h - params->h)))
+	  + ep->drag->tmp.y;
+	if (ep->part->dragable.step_y > 0)
+	  {
+	     params->y = confine_to->y +
+	       ((offset / ep->part->dragable.step_y) * ep->part->dragable.step_y);
+	  }
+	else if (ep->part->dragable.count_y > 0)
+	  {
+	     step = (confine_to->h - params->h) / ep->part->dragable.count_y;
+	     if (step < 1) step = 1;
+	     params->y = confine_to->y +
+	       ((offset / step) * step);
+	  }
+	params->req_drag.y = params->y;
+	params->req_drag.h = params->h;
+
 	/* limit to confine */
-	if (flags & FLAG_X)
+	if (params->x < confine_to->x)
 	  {
-	     if (params->x < confine_to->x)
-	       {
-		  params->x = confine_to->x;
-	       }
-	     if ((params->x + params->w) > (confine_to->x + confine_to->w))
-	       {
-		  params->x = confine_to->x + confine_to->w - params->w;
-	       }
+	     params->x = confine_to->x;
 	  }
-	if (flags & FLAG_Y)
+	if ((params->x + params->w) > (confine_to->x + confine_to->w))
 	  {
-	     if (params->y < confine_to->y)
-	       {
-		  params->y = confine_to->y;
-	       }
-	     if ((params->y + params->h) > (confine_to->y + confine_to->h))
-	       {
-		  params->y = confine_to->y + confine_to->h - params->h;
-	       }
+	     params->x = confine_to->x + confine_to->w - params->w;
+	  }
+	if (params->y < confine_to->y)
+	  {
+	     params->y = confine_to->y;
+	  }
+	if ((params->y + params->h) > (confine_to->y + confine_to->h))
+	  {
+	     params->y = confine_to->y + confine_to->h - params->h;
 	  }
      }
    else
      {
 	/* simple dragable params */
-	if (flags & FLAG_X)
-	  {
-	     params->x += TO_INT(ep->drag->x) + ep->drag->tmp.x;
-	     params->req_drag.x = params->x;
-	     params->req_drag.w = params->w;
-	  }
-	if (flags & FLAG_Y)
-	  {
-	     params->y += TO_INT(ep->drag->y) + ep->drag->tmp.y;
-	     params->req_drag.y = params->y;
-	     params->req_drag.h = params->h;
-	  }
+	params->x += TO_INT(ep->drag->x) + ep->drag->tmp.x;
+	params->req_drag.x = params->x;
+	params->req_drag.w = params->w;
+
+	params->y += TO_INT(ep->drag->y) + ep->drag->tmp.y;
+	params->req_drag.y = params->y;
+	params->req_drag.h = params->h;
      }
 }
 
 static void
 _edje_part_recalc_single_fill(Edje_Real_Part *ep,
 			      Edje_Part_Description_Spec_Image *desc,
-			      Edje_Calc_Params *params,
-			      int flags)
+			      Edje_Calc_Params *params)
 {
+   int fw;
+   int fh;
+
    params->smooth = desc->fill.smooth;
-   if (flags & FLAG_X)
-     {
-	int fw;
 
-	if (desc->fill.type == EDJE_FILL_TYPE_TILE)
-	  evas_object_image_size_get(ep->object, &fw, NULL);
-	else
-	  fw = params->w;
+   if (desc->fill.type == EDJE_FILL_TYPE_TILE)
+     evas_object_image_size_get(ep->object, &fw, NULL);
+   else
+     fw = params->w;
 
-	params->type.common.fill.x = desc->fill.pos_abs_x
-	  + TO_INT(SCALE(desc->fill.pos_rel_x, fw));
-	params->type.common.fill.w = desc->fill.abs_x
-	  + TO_INT(SCALE(desc->fill.rel_x, fw));
-     }
-   if (flags & FLAG_Y)
-     {
-	int fh;
+   params->type.common.fill.x = desc->fill.pos_abs_x
+     + TO_INT(SCALE(desc->fill.pos_rel_x, fw));
+   params->type.common.fill.w = desc->fill.abs_x
+     + TO_INT(SCALE(desc->fill.rel_x, fw));
 
-	if (desc->fill.type == EDJE_FILL_TYPE_TILE)
-	  evas_object_image_size_get(ep->object, NULL, &fh);
-	else
-	  fh = params->h;
+   if (desc->fill.type == EDJE_FILL_TYPE_TILE)
+     evas_object_image_size_get(ep->object, NULL, &fh);
+   else
+     fh = params->h;
 
-	params->type.common.fill.y = desc->fill.pos_abs_y
-	  + TO_INT(SCALE(desc->fill.pos_rel_y, fh));
-	params->type.common.fill.h = desc->fill.abs_y
-	  + TO_INT(SCALE(desc->fill.rel_y, fh));
-     }
+   params->type.common.fill.y = desc->fill.pos_abs_y
+     + TO_INT(SCALE(desc->fill.pos_rel_y, fh));
+   params->type.common.fill.h = desc->fill.abs_y
+     + TO_INT(SCALE(desc->fill.rel_y, fh));
+
    params->type.common.fill.angle = desc->fill.angle;
    params->type.common.fill.spread = desc->fill.spread;
 }
@@ -1239,87 +1203,81 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
 				 Edje_Real_Part *ep,
 				 Edje_Part_Description_Common *desc,
 				 int *minw, int *minh,
-				 int *maxw, int *maxh,
-				 int flags __UNUSED__)
+				 int *maxw, int *maxh)
 {
-//   if (flags & FLAG_X)
-   {
-      *minw = desc->min.w;
-      if (ep->part->scale) *minw = TO_INT(SCALE(sc, *minw));
-      if (ep->swallow_params.min.w > desc->min.w)
-	*minw = ep->swallow_params.min.w;
+   *minw = desc->min.w;
+   if (ep->part->scale) *minw = TO_INT(SCALE(sc, *minw));
+   if (ep->swallow_params.min.w > desc->min.w)
+     *minw = ep->swallow_params.min.w;
 
-      /* XXX TODO: remove need of EDJE_INF_MAX_W, see edje_util.c */
-      if ((ep->swallow_params.max.w <= 0) ||
-	  (ep->swallow_params.max.w == EDJE_INF_MAX_W))
-	{
-	   *maxw = desc->max.w;
-	   if (*maxw > 0)
-	     {
-	        if (ep->part->scale) *maxw = TO_INT(SCALE(sc, *maxw));
-		if (*maxw < 1) *maxw = 1;
-	     }
-	}
-      else
-	{
-	   if (desc->max.w <= 0)
-	     *maxw = ep->swallow_params.max.w;
-	   else
-	     {
-		*maxw = desc->max.w;
-		if (*maxw > 0)
-		  {
-		     if (ep->part->scale) *maxw = TO_INT(SCALE(sc, *maxw));
-		     if (*maxw < 1) *maxw = 1;
-		  }
-		if (ep->swallow_params.max.w < *maxw)
-		  *maxw = ep->swallow_params.max.w;
-	     }
-	}
-      if (*maxw >= 0)
-	{
-	   if (*maxw < *minw) *maxw = *minw;
-	}
-   }
-//   if (flags & FLAG_Y)
-   {
-      *minh = desc->min.h;
-      if (ep->part->scale) *minh = TO_INT(SCALE(sc, *minh));
-      if (ep->swallow_params.min.h > desc->min.h)
-	*minh = ep->swallow_params.min.h;
+   /* XXX TODO: remove need of EDJE_INF_MAX_W, see edje_util.c */
+   if ((ep->swallow_params.max.w <= 0) ||
+       (ep->swallow_params.max.w == EDJE_INF_MAX_W))
+     {
+	*maxw = desc->max.w;
+	if (*maxw > 0)
+	  {
+	     if (ep->part->scale) *maxw = TO_INT(SCALE(sc, *maxw));
+	     if (*maxw < 1) *maxw = 1;
+	  }
+     }
+   else
+     {
+	if (desc->max.w <= 0)
+	  *maxw = ep->swallow_params.max.w;
+	else
+	  {
+	     *maxw = desc->max.w;
+	     if (*maxw > 0)
+	       {
+		  if (ep->part->scale) *maxw = TO_INT(SCALE(sc, *maxw));
+		  if (*maxw < 1) *maxw = 1;
+	       }
+	     if (ep->swallow_params.max.w < *maxw)
+	       *maxw = ep->swallow_params.max.w;
+	  }
+     }
+   if (*maxw >= 0)
+     {
+	if (*maxw < *minw) *maxw = *minw;
+     }
 
-      /* XXX TODO: remove need of EDJE_INF_MAX_H, see edje_util.c */
-      if ((ep->swallow_params.max.h <= 0) ||
-	  (ep->swallow_params.max.h == EDJE_INF_MAX_H))
-	{
-	   *maxh = desc->max.h;
-	   if (*maxh > 0)
-	     {
-	        if (ep->part->scale) *maxh = TO_INT(SCALE(sc, *maxh));
-		if (*maxh < 1) *maxh = 1;
-	     }
+   *minh = desc->min.h;
+   if (ep->part->scale) *minh = TO_INT(SCALE(sc, *minh));
+   if (ep->swallow_params.min.h > desc->min.h)
+     *minh = ep->swallow_params.min.h;
+
+   /* XXX TODO: remove need of EDJE_INF_MAX_H, see edje_util.c */
+   if ((ep->swallow_params.max.h <= 0) ||
+       (ep->swallow_params.max.h == EDJE_INF_MAX_H))
+     {
+	*maxh = desc->max.h;
+	if (*maxh > 0)
+	  {
+	     if (ep->part->scale) *maxh = TO_INT(SCALE(sc, *maxh));
+	     if (*maxh < 1) *maxh = 1;
+	  }
+     }
+   else
+     {
+	if (desc->max.h <= 0)
+	  *maxh = ep->swallow_params.max.h;
+	else
+	  {
+	     *maxh = desc->max.h;
+	     if (*maxh > 0)
+	       {
+		  if (ep->part->scale) *maxh = TO_INT(SCALE(sc, *maxh));
+		  if (*maxh < 1) *maxh = 1;
+	       }
+	     if (ep->swallow_params.max.h < *maxh)
+	       *maxh = ep->swallow_params.max.h;
+	  }
 	}
-      else
-	{
-	   if (desc->max.h <= 0)
-	     *maxh = ep->swallow_params.max.h;
-	   else
-	     {
-		*maxh = desc->max.h;
-		if (*maxh > 0)
-		  {
-		     if (ep->part->scale) *maxh = TO_INT(SCALE(sc, *maxh));
-		     if (*maxh < 1) *maxh = 1;
-		  }
-		if (ep->swallow_params.max.h < *maxh)
-		  *maxh = ep->swallow_params.max.h;
-	     }
-	}
-      if (*maxh >= 0)
-	{
-	   if (*maxh < *minh) *maxh = *minh;
-	}
-   }
+   if (*maxh >= 0)
+     {
+	if (*maxh < *minh) *maxh = *minh;
+     }
 }
 
 static void
@@ -1332,28 +1290,24 @@ _edje_part_recalc_single(Edje *ed,
 			 Edje_Real_Part *rel2_to_x,
 			 Edje_Real_Part *rel2_to_y,
 			 Edje_Real_Part *confine_to,
-			 Edje_Calc_Params *params,
-			 int flags)
+			 Edje_Calc_Params *params)
 {
    Edje_Color_Class *cc = NULL;
    int minw = 0, minh = 0, maxw = 0, maxh = 0;
    FLOAT_T sc;
 
-   flags = FLAG_XY;
-
    sc = ed->scale;
    if (sc == 0.0) sc = _edje_scale;
-   _edje_part_recalc_single_min_max(sc, ep, desc, &minw, &minh, &maxw, &maxh, flags);
+   _edje_part_recalc_single_min_max(sc, ep, desc, &minw, &minh, &maxw, &maxh);
 
    /* relative coords of top left & bottom right */
-   _edje_part_recalc_single_rel(ed, ep, desc, rel1_to_x, rel1_to_y, rel2_to_x, rel2_to_y, params, flags);
+   _edje_part_recalc_single_rel(ed, ep, desc, rel1_to_x, rel1_to_y, rel2_to_x, rel2_to_y, params);
 
    /* aspect */
-   if (((flags | ep->calculated) & FLAG_XY) == FLAG_XY)
-     _edje_part_recalc_single_aspect(ep, desc, params, &minw, &minh, &maxw, &maxh);
+   _edje_part_recalc_single_aspect(ep, desc, params, &minw, &minh, &maxw, &maxh);
 
    /* size step */
-   _edje_part_recalc_single_step(desc, params, flags);
+   _edje_part_recalc_single_step(desc, params);
 
    /* if we have text that wants to make the min size the text size... */
    if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
@@ -1368,18 +1322,18 @@ _edje_part_recalc_single(Edje *ed,
    params->req.h = params->h;
 
    /* adjust for min size */
-   _edje_part_recalc_single_min(desc, params, minw, minh, flags);
+   _edje_part_recalc_single_min(desc, params, minw, minh);
 
    /* adjust for max size */
-   _edje_part_recalc_single_max(desc, params, maxw, maxh, flags);
+   _edje_part_recalc_single_max(desc, params, maxw, maxh);
 
    /* take care of dragable part */
    if (ep->drag)
-     _edje_part_recalc_single_drag(ep, confine_to, params, minw, minh, maxw, maxh, flags);
+     _edje_part_recalc_single_drag(ep, confine_to, params, minw, minh, maxw, maxh);
 
    /* fill */
    if (ep->part->type == EDJE_PART_TYPE_IMAGE)
-     _edje_part_recalc_single_fill(ep, &((Edje_Part_Description_Image *)desc)->image, params, flags);
+     _edje_part_recalc_single_fill(ep, &((Edje_Part_Description_Image *)desc)->image, params);
 
    /* colors */
    if ((desc->color_class) && (*desc->color_class))
@@ -1410,16 +1364,11 @@ _edje_part_recalc_single(Edje *ed,
 	   Edje_Part_Description_Image *img_desc = (Edje_Part_Description_Image*) desc;
 
 	   /* border */
-	   if (flags & FLAG_X)
-	     {
-		params->type.common.spec.image.l = img_desc->image.border.l;
-		params->type.common.spec.image.r = img_desc->image.border.r;
-	     }
-	   if (flags & FLAG_Y)
-	     {
-		params->type.common.spec.image.t = img_desc->image.border.t;
-		params->type.common.spec.image.b = img_desc->image.border.b;
-	     }
+	   params->type.common.spec.image.l = img_desc->image.border.l;
+	   params->type.common.spec.image.r = img_desc->image.border.r;
+
+	   params->type.common.spec.image.t = img_desc->image.border.t;
+	   params->type.common.spec.image.b = img_desc->image.border.b;
 	   break;
 	}
       case EDJE_PART_TYPE_TEXT:
@@ -1428,14 +1377,8 @@ _edje_part_recalc_single(Edje *ed,
 	   Edje_Part_Description_Text *text_desc = (Edje_Part_Description_Text*) desc;
 
 	   /* text.align */
-	   if (flags & FLAG_X)
-	     {
-		params->type.text.align.x = text_desc->text.align.x;
-	     }
-	   if (flags & FLAG_Y)
-	     {
-		params->type.text.align.y = text_desc->text.align.y;
-	     }
+	   params->type.text.align.x = text_desc->text.align.x;
+	   params->type.text.align.y = text_desc->text.align.y;
 	   params->type.text.elipsis = text_desc->text.elipsis;
 
 	   /* text colors */
@@ -1896,8 +1839,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
  	     _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc,
  				      ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y,
  				      confine_to,
- 				      p1,
- 				      flags);
+ 				      p1);
 
 #ifdef EDJE_CALC_CACHE
  	     ep->param1.state = ed->state;
@@ -1926,8 +1868,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
  	     _edje_part_recalc_single(ed, ep, ep->param2->description, chosen_desc,
  				      ep->param2->rel1_to_x, ep->param2->rel1_to_y, ep->param2->rel2_to_x, ep->param2->rel2_to_y,
  				      confine_to,
-				      p2,
- 				      flags);
+				      p2);
 #ifdef EDJE_CALC_CACHE
  	     ep->param2->state = ed->state;
 #endif
