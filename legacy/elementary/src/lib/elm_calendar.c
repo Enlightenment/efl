@@ -1,3 +1,11 @@
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include <Elementary.h>
 #include "elm_priv.h"
 
