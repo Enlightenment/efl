@@ -11,6 +11,7 @@
 #define ECORE_X_CURSOR_BASED_ARROW_DOWN    4
 #define ECORE_X_CURSOR_UP                  6
 #define ECORE_X_CURSOR_BOAT                8
+#define ECORE_X_CURSOR_BOGOSITY            10
 #define ECORE_X_CURSOR_BOTTOM_LEFT_CORNER  12
 #define ECORE_X_CURSOR_BOTTOM_RIGHT_CORNER 14
 #define ECORE_X_CURSOR_BOTTOM_SIDE         16
