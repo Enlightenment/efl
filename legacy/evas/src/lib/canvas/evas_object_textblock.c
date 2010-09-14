@@ -2153,24 +2153,6 @@ _layout_word_start(const Eina_Unicode *str, int start)
 
 /**
  * @internal
- * Checks if the string ends with whitespace
- *
- * @param str the string to work on.
- * @return #EINA_TRUE if it does, #EINA_FALSE otherwise.
- */
-static Eina_Bool
-_str_ends_with_whitespace(const Eina_Unicode *str)
-{
-   int p, chr;
-
-   p = eina_unicode_strlen(str) - 1;
-   if (p < 0) return EINA_FALSE;
-   chr = GET_NEXT(str, p);
-   return _is_white(chr);
-}
-
-/**
- * @internal
  * Strips trailing whitespace from the item's text.
  *
  * @param c the context to work with - NOT NULL.
@@ -2233,24 +2215,6 @@ _layout_item_abort(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textb
 
 /**
  * @internal
- * checks if the last item ends with a whitespace.
- *
- * @param c the context to work with - NOT NULL.
- *
- * @return #EINA_TRUE if it stripped, #EINA_FALSE otherwise.
- */
-static Eina_Bool
-_layout_last_item_ends_with_whitespace(Ctxt *c)
-{
-   Evas_Object_Textblock_Item *it;
-
-   if (!c->ln->items) return EINA_TRUE;
-   it = (Evas_Object_Textblock_Item *)(EINA_INLIST_GET(c->ln->items))->last;
-   return _str_ends_with_whitespace(it->text);
-}
-
-/**
- * @internal
  * returns the index of the words end starting from p
  *
  * @param str the str to work on - NOT NULL.
@@ -2303,98 +2267,6 @@ _layout_word_next(Eina_Unicode *str, int p)
      }
    if (ch == 0) return -1;
    return p;
-}
-
-/**
- * FIXME: doc
- */
-static void
-_layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
-{
-   Evas_Object_Textblock_Item *pit, *new_it = NULL;
-   Eina_List *remove_items = NULL, *l;
-   Eina_Inlist *data;
-   int index, tw, th, inset, adv;
-
-   /* it is not appended yet */
-   EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(c->ln->items)), pit)
-     {
-        if (_str_ends_with_whitespace(pit->text))
-          {
-             break;
-          }
-        index = eina_unicode_strlen(pit->text) - 1;
-        if (index < 0) index = 0;
-        index = _layout_word_start(pit->text, index);
-        if (index == 0)
-          remove_items = eina_list_prepend(remove_items, pit);
-        else
-          {
-             new_it = _layout_item_new(c, pit->format, pit->text + index);
-             new_it->source_node = pit->source_node;
-             new_it->source_pos = pit->source_pos + index;
-             new_it->bidi_props.start = new_it->source_pos;
-             new_it->bidi_props.props = new_it->source_node->bidi_props;
-# ifdef BIDI_SUPPORT
-             evas_bidi_shape_string(new_it->text, &new_it->bidi_props,
-                   eina_unicode_strlen(new_it->text));
-# endif
-             _layout_item_text_cutoff(c, pit, index);
-             _layout_strip_trailing_whitespace(c, pit->format, pit);
-             break;
-          }
-     }
-   EINA_LIST_FOREACH(remove_items, l, data)
-      c->ln->items = (Evas_Object_Textblock_Item *)eina_inlist_remove(EINA_INLIST_GET(c->ln->items), data);
-   /* new line now */
-   if (remove_items)
-     {
-        pit = remove_items->data;
-        _layout_line_advance(c, pit->format);
-     }
-   else
-     {
-        _layout_line_advance(c, it->format);
-     }
-   if (new_it)
-     {
-        /* append new_it */
-        tw = th = 0;
-        if (new_it->format->font.font)
-          c->ENFN->font_string_size_get(c->ENDT, new_it->format->font.font, new_it->text, &new_it->bidi_props, &tw, &th);
-        new_it->w = tw;
-        new_it->h = th;
-        inset = 0;
-        if (new_it->format->font.font)
-          inset = c->ENFN->font_inset_get(c->ENDT, new_it->format->font.font, new_it->text);
-        new_it->inset = inset;
-        new_it->x = c->x;
-        adv = 0;
-        if (new_it->format->font.font)
-          adv = c->ENFN->font_h_advance_get(c->ENDT, new_it->format->font.font, new_it->text, &new_it->bidi_props);
-        c->x += adv;
-        c->ln->items = (Evas_Object_Textblock_Item *)eina_inlist_append(EINA_INLIST_GET(c->ln->items), EINA_INLIST_GET(new_it));
-     }
-   while (remove_items)
-     {
-        pit = remove_items->data;
-        remove_items = eina_list_remove_list(remove_items, remove_items);
-        /* append pit */
-        pit->x = c->x;
-        adv = c->ENFN->font_h_advance_get(c->ENDT, pit->format->font.font, pit->text, &pit->bidi_props);
-        c->x += adv;
-        c->ln->items = (Evas_Object_Textblock_Item *)eina_inlist_append(EINA_INLIST_GET(c->ln->items), EINA_INLIST_GET(pit));
-     }
-   if (it)
-     {
-        /* append it */
-        it->x = c->x;
-        adv = 0;
-        if (it->format->font.font)
-          adv = c->ENFN->font_h_advance_get(c->ENDT, it->format->font.font, it->text, &it->bidi_props);
-        c->x += adv;
-        c->ln->items = (Evas_Object_Textblock_Item *)eina_inlist_append(EINA_INLIST_GET(c->ln->items), EINA_INLIST_GET(it));
-     }
 }
 
 /**
@@ -2569,12 +2441,7 @@ skip:
                             /* wrap now is the index of the word START */
                             index = wrap;
                             ch = GET_NEXT(str, index);
-                            if (!_is_white(ch) &&
-                                  (!_layout_last_item_ends_with_whitespace(c)))
-                              {
-                                 _layout_walk_back_to_item_word_redo(c, it);
-                                 goto end;
-                              }
+
                             if (c->ln->items)
                               {
                                  white_stripped = _layout_item_abort(c, fmt, it);
@@ -2582,21 +2449,16 @@ skip:
                               }
                             else
                               {
-                                 if (wrap <= 0)
+                                 wrap = 0;
+                                 twrap = _layout_word_end(it->text, wrap);
+                                 wrap = twrap;
+                                 if (twrap >= 0)
                                    {
-                                      wrap = 0;
-                                      twrap = _layout_word_end(it->text, wrap);
-                                      wrap = twrap;
-                                      if (twrap >= 0)
-                                        {
-                                           ch = GET_NEXT(str, wrap);
-                                           _layout_item_text_cutoff(c, it, twrap);
-                                        }
-                                      if (wrap > 0)
-                                        str += wrap;
-                                      else
-                                        str = NULL;
+                                      ch = GET_NEXT(str, wrap);
+                                      _layout_item_text_cutoff(c, it, twrap);
                                    }
+                                 if (wrap > 0)
+                                   str += wrap;
                                  else
                                    str = NULL;
                               }
@@ -2612,18 +2474,10 @@ skip:
              else
                {
                   /* wrap now is the index of the word START */
-                  if (wrap <= 0)
-                    {
-                       if (wrap < 0) wrap = 0;
-                       index = wrap;
-                       ch = GET_NEXT(str, index);
-                       if (!_is_white(ch) &&
-                             (!_layout_last_item_ends_with_whitespace(c)))
-                         {
-                            _layout_walk_back_to_item_word_redo(c, it);
-                            goto end;
-                         }
-                    }
+                  if (wrap < 0) wrap = 0;
+                  index = wrap;
+                  ch = GET_NEXT(str, index);
+
                   if (c->ln->items)
                     {
                        white_stripped = _layout_item_abort(c, fmt, it);
@@ -2689,7 +2543,6 @@ skip:
              _layout_line_advance(c, fmt);
           }
      }
-end:
    if (alloc_str) free(alloc_str);
 }
 
