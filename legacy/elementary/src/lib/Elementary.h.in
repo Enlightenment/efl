@@ -938,11 +938,8 @@ extern "C" {
    EAPI void	     elm_thumb_animate_set(Evas_Object *obj, Elm_Thumb_Animation_Setting s);
    EAPI Elm_Thumb_Animation_Setting elm_thumb_animate_get(const Evas_Object *obj);
    EAPI Eina_Bool    elm_thumb_ethumb_client_connected(void);
-#ifdef ELM_ETHUMB
-   EAPI Ethumb_Client *elm_thumb_ethumb_client_get(void);
-#else
-   EAPI void	    *elm_thumb_ethumb_client_get(void);
-#endif
+   EAPI struct _Ethumb_Client *elm_thumb_ethumb_client_get(void);
+
    /* smart callbacks called:
     * "clicked" - the user clicked the thumb
     * "clicked,double" - the user double clicked the thumb
