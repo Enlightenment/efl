@@ -610,8 +610,8 @@ _edje_part_recalc_single_aspect(Edje_Real_Part *ep,
    params->y = TO_INT(ADD(want_y,
 			  MUL(SUB(want_h, FROM_INT(params->h)),
 			      desc->align.y)));
-
-   params->aspect = apref;
+// not tested enough -> cedric. e's config panel borks. disable.   
+//   params->aspect = apref;
 }
 
 static void

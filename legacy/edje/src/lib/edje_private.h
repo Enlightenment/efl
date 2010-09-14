@@ -167,11 +167,12 @@ struct _Edje_Smart_Api
  * ? all unsafe calls that may result in callbacks must be marked and dealt with
  */
 
-typedef enum {
-  EDJE_ASPECT_PREFER_NONE,
-  EDJE_ASPECT_PREFER_VERTICAL,
-  EDJE_ASPECT_PREFER_HORIZONTAL,
-  EDJE_ASPECT_PREFER_BOTH
+typedef enum
+{
+   EDJE_ASPECT_PREFER_NONE,
+   EDJE_ASPECT_PREFER_VERTICAL,
+   EDJE_ASPECT_PREFER_HORIZONTAL,
+   EDJE_ASPECT_PREFER_BOTH
 } Edje_Internal_Aspect;
 
 struct _Edje_Perspective
@@ -1039,7 +1040,7 @@ struct _Edje_Calc_Params
    Edje_Internal_Aspect aspect; // 4
    unsigned char    visible : 1;
    unsigned char    smooth : 1; // 1
-}; // 100
+}; // 96
 
 struct _Edje_Real_Part_Set
 {
