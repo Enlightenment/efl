@@ -42,6 +42,14 @@ _theme_hook(Evas_Object *obj)
    _elm_theme_object_set(obj, wd->bbl, "bubble", "base", elm_widget_style_get(obj));
    edje_object_part_text_set(wd->bbl, "elm.text", wd->label);
    edje_object_part_text_set(wd->bbl, "elm.info", wd->info);
+   if (wd->content)
+     {
+        edje_object_part_swallow(wd->bbl, "elm.swallow.content", wd->content);
+	edje_object_signal_emit(wd->bbl, "elm,state,icon,visible", "elm");
+	edje_object_message_signal_process(wd->bbl);
+     }
+   else
+      edje_object_signal_emit(wd->bbl, "elm,state,icon,hidden", "elm");
    edje_object_scale_set(wd->bbl, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
