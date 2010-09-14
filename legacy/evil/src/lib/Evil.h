@@ -65,6 +65,7 @@ extern "C" {
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/time.h>
+#include <time.h>
 #include <limits.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -117,6 +118,7 @@ typedef unsigned long  gid_t;
 #include "evil_stdlib.h"
 #include "evil_stdio.h"
 #include "evil_string.h"
+#include "evil_time.h"
 #include "evil_unistd.h"
 #include "evil_util.h"
 

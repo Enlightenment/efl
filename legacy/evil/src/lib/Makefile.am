@@ -14,6 +14,7 @@ evil_main.h \
 evil_stdlib.h \
 evil_stdio.h \
 evil_string.h \
+evil_time.h \
 evil_unistd.h \
 evil_util.h
 
@@ -38,6 +39,7 @@ evil_pwd.c \
 evil_stdlib.c \
 evil_stdio.c \
 evil_string.c \
+evil_time.c \
 evil_unistd.c \
 evil_util.c \
 evil_uuid.c

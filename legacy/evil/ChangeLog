@@ -1,3 +1,11 @@
+2010-09-14  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Makefile.am:
+	* src/lib/Evil.h:
+	* src/lib/evil_time.c:
+	* src/lib/evil_time.h:
+	add locatime_r() for calendar in Elementary.
+
 2010-05-29  Vincent Torri  <doursse at users dot sf dot net>
 
 	* doc/Doxyfile:
