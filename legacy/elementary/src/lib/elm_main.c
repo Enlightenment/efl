@@ -441,11 +441,6 @@ elm_quicklaunch_init(int argc, char **argv)
      ELM_EVENT_POLICY_CHANGED = ecore_event_type_new();
 
    ecore_file_init();
-   evas_init();
-   edje_init();
-   ecore_evas_init(); // FIXME: check errors
-   ecore_imf_init();
-   _elm_module_init();
 
    _elm_exit_handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
 
@@ -528,6 +523,11 @@ EAPI void
 elm_quicklaunch_sub_init(int argc, char **argv)
 {
    ecore_app_args_set(argc, (const char **)argv);
+   evas_init();
+   edje_init();
+   ecore_evas_init(); // FIXME: check errors
+   ecore_imf_init();
+   _elm_module_init();
    _elm_config_sub_init();
 }
 
@@ -550,6 +550,11 @@ elm_quicklaunch_sub_shutdown(void)
 #endif
 	evas_cserve_disconnect();
      }
+   _elm_module_shutdown();
+   ecore_imf_shutdown();
+   ecore_evas_shutdown();
+   edje_shutdown();
+   evas_shutdown();
 }
 
 EAPI void
@@ -572,11 +577,6 @@ elm_quicklaunch_shutdown(void)
    _elm_unneed_efreet();
    _elm_unneed_e_dbus();
    _elm_unneed_ethumb();
-   _elm_module_shutdown();
-   ecore_imf_shutdown();
-   ecore_evas_shutdown();
-   edje_shutdown();
-   evas_shutdown();
    ecore_file_shutdown();
    ecore_shutdown();
    eet_shutdown();
