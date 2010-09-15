@@ -386,7 +386,6 @@ _elm_cnp_init(void){
    int i;
    if (_elm_cnp_init_count ++) return EINA_TRUE;
 
-   /* FIXME: Handle XCB */
    for (i = 0 ; i < CNP_N_ATOMS ; i ++)
      {
 	atoms[i].atom = ecore_x_atom_get(atoms[i].name);
@@ -694,7 +693,6 @@ notify_handler_uri(struct _elm_cnp_selection *sel,
 
    if (!strstr(p,".png") && !strstr(p,".jpg"))
      {
-        /* FIXME: Better test: Load it in evasw & see is probably best */
         cnp_debug("No png, ignoring\n");
         if (savedtypes.textreq) savedtypes.textreq = 0;
         return 0;
@@ -855,7 +853,7 @@ uri_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
  * Image paste provide
  */
 
-/* FIXME: Should add provider for each pated item: Use data to store it
+/* FIXME: Should add provider for each pasted item: Use data to store it
  * much easier */
 static Evas_Object *
 image_provider(void *images __UNUSED__, Evas_Object *entry, const char *item)
@@ -1442,7 +1440,6 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    cnp_debug("starting drag...\n");
 
    ecore_x_dnd_type_set(xwin, "text/uri-list", 1);
-      /* FIXME: just call elm_selection_set */
    sel = selections + ELM_SEL_XDND;
    sel->active = 1;
    sel->widget = obj;
