@@ -3026,19 +3026,19 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *
           {
              if (it->source_node == n)
                {
-                  Evas_Object_Textblock_Item *itn;
                   int p;
 
-                  itn = (Evas_Object_Textblock_Item *)(((Eina_Inlist *)it)->next);
                   p = (int)(it->source_pos + eina_unicode_strlen(it->text));
-                  if ((p > pos) ||
-                        ((p == pos) && (!lnn) &&
-                         ((!itn) ||
-                          ((itn) && (itn->source_node != n)))))
+                  if (((pos >= (int) it->source_pos) && (pos < p)))
                     {
                        *lnr = ln;
                        *itr = it;
                        return;
+                    }
+                  else if (p == pos)
+                    {
+                       *lnr = ln;
+                       *itr = it;
                     }
                }
           }
