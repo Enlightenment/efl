@@ -64,6 +64,7 @@ static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _units_set(Evas_Object *obj);
+static void _val_set(Evas_Object *obj);
 static void _indicator_set(Evas_Object *obj);
 
 static const char SIG_CHANGED[] = "changed";
@@ -98,31 +99,34 @@ _theme_hook(Evas_Object *obj)
      _elm_theme_object_set(obj, wd->slider, "slider", "horizontal", elm_widget_style_get(obj));
    else
      _elm_theme_object_set(obj, wd->slider, "slider", "vertical", elm_widget_style_get(obj));
-   if (wd->inverted)
-     edje_object_signal_emit(wd->slider, "elm,state,inverted,on", "elm");
-   else
-     edje_object_signal_emit(wd->slider, "elm,state,inverted,off", "elm");
    if (wd->icon)
-     edje_object_signal_emit(wd->slider, "elm,state,icon,visible", "elm");
-   else
-     edje_object_signal_emit(wd->slider, "elm,state,icon,hidden", "elm");
+     {
+        edje_object_part_swallow(wd->slider, "elm.swallow.content", wd->icon);
+        edje_object_signal_emit(wd->slider, "elm,state,icon,visible", "elm");
+     }
    if (wd->label)
-     edje_object_signal_emit(wd->slider, "elm,state,text,visible", "elm");
-   else
-     edje_object_signal_emit(wd->slider, "elm,state,text,hidden", "elm");
-   edje_object_part_text_set(wd->slider, "elm.text", wd->label);
+     {
+        edje_object_part_text_set(wd->slider, "elm.text", wd->label);
+        edje_object_signal_emit(wd->slider, "elm,state,text,visible", "elm");
+     }
+   
    if (wd->units)
      edje_object_signal_emit(wd->slider, "elm,state,units,visible", "elm");
-   else
-     edje_object_signal_emit(wd->slider, "elm,state,units,hidden", "elm");
+   
    if (wd->horizontal)
      evas_object_size_hint_min_set(wd->spacer, (double)wd->size * elm_widget_scale_get(obj) * _elm_config->scale, 1);
    else
      evas_object_size_hint_min_set(wd->spacer, 1, (double)wd->size * elm_widget_scale_get(obj) * _elm_config->scale);
+   
+   if (wd->inverted)
+      edje_object_signal_emit(wd->slider, "elm,state,inverted,on", "elm");
+   
    edje_object_part_swallow(wd->slider, "elm.swallow.bar", wd->spacer);
    _units_set(obj);
+   _indicator_set(obj);
    edje_object_message_signal_process(wd->slider);
    edje_object_scale_set(wd->slider, elm_widget_scale_get(obj) * _elm_config->scale);
+   _val_set(obj);
    _sizing_eval(obj);
 }
 
