@@ -4823,7 +4823,9 @@ _evas_textblock_cursor_node_text_at_format(Evas_Textblock_Cursor *cur, Evas_Obje
 /**
  * @internal
  * Remove pairs of + and - formats and also remove formats without + or -
- * i.e formats that pair to themselves
+ * i.e formats that pair to themselves. Only removes invisible formats
+ * that pair themselves, if you want to remove invisible formats that pair
+ * themselves, please first change fmt->visible to EINA_FALSE.
  *
  * @param o the textblock object.
  * @param fmt the current format.
@@ -4867,7 +4869,7 @@ _evas_textblock_node_format_remove_matching(Evas_Object_Textblock *o,
                   _evas_textblock_node_format_remove(o, fmt, 0);
                }
           }
-        else
+        else if (!fmt->visible)
           {
              _evas_textblock_node_format_remove(o, fmt, 0);
           }
@@ -4958,7 +4960,7 @@ _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Object_Textblo
 /**
  * @internal
  * Sets all the offsets of the format nodes between start and end in the text
- * node n to 0.
+ * node n to 0 and sets visibility to EINA_FALSE.
  * If end == -1 end means the end of the string.
  *
  * @param n the text node the positinos refer to.
@@ -5042,6 +5044,7 @@ _evas_textblock_node_text_adjust_offsets_to_start(Evas_Object_Textblock *o,
         if (!first)
           {
              last_node->offset = 0;
+             last_node->visible = EINA_FALSE;
           }
         else
           {
@@ -5927,6 +5930,11 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
              if (format && _IS_PARAGRAPH_SEPARATOR(format))
                {
                   merge_nodes = 1;
+               }
+             /* If a singnular, mark as invisible, so we'll delete it. */
+             if (!format || ((*format != '+') && (*format != '-')))
+               {
+                  fmt->visible = EINA_FALSE;
                }
           }
 
