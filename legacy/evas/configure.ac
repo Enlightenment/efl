@@ -1549,13 +1549,16 @@ if test "x$build_pthreads" = "xno" ; then
     echo "  needs thread support."
     exit 1
   fi
-  if test "x$build_async_preload" = "xyes" ; then
-    echo "ERROR: PThreads off, but Async Preload on. Async Preload"
+  if test "x$build_pipe_render" = "xyes" ; then
+    echo "ERROR: PThreads off, but pipe rendering on. Pipe rendering"
     echo "  needs thread support."
     exit 1
   fi
-  if test "x$build_pipe_render" = "xyes" ; then
-    echo "ERROR: PThreads off, but pipe rendering on. Pipe rendering"
+fi
+
+if test "x${has_pthreads}" = "xno" ; then
+  if test "x$build_async_preload" = "xyes" ; then
+    echo "ERROR: PThreads off, but Async Preload on. Async Preload"
     echo "  needs thread support."
     exit 1
   fi
