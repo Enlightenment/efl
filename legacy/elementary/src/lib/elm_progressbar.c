@@ -67,32 +67,31 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   edje_object_part_unswallow(NULL, wd->spacer);
    if (wd->horizontal)
      _elm_theme_object_set(obj, wd->progressbar, "progressbar", "horizontal", elm_widget_style_get(obj));
    else
      _elm_theme_object_set(obj, wd->progressbar, "progressbar", "vertical", elm_widget_style_get(obj));
-   if (wd->inverted)
-     edje_object_signal_emit(wd->progressbar, "elm,state,inverted,on", "elm");
-   else
-     edje_object_signal_emit(wd->progressbar, "elm,state,inverted,off", "elm");
+   
    if (wd->icon)
-     edje_object_signal_emit(wd->progressbar, "elm,state,icon,visible", "elm");
-   else
-     edje_object_signal_emit(wd->progressbar, "elm,state,icon,hidden", "elm");
+     {
+	edje_object_part_swallow(wd->progressbar, "elm.swallow.content", wd->icon);
+	edje_object_signal_emit(wd->progressbar, "elm,state,icon,visible", "elm");
+     }
    if (wd->label)
-     edje_object_signal_emit(wd->progressbar, "elm,state,text,visible", "elm");
-   else
-     edje_object_signal_emit(wd->progressbar, "elm,state,text,hidden", "elm");
-   edje_object_part_text_set(wd->progressbar, "elm.text", wd->label);
+     {
+        edje_object_part_text_set(wd->progressbar, "elm.text", wd->label);
+        edje_object_signal_emit(wd->progressbar, "elm,state,text,visible", "elm");
+     }
    if (wd->pulse)
-     edje_object_signal_emit(wd->progressbar, "elm,state,pulse", "elm");
+      edje_object_signal_emit(wd->progressbar, "elm,state,pulse", "elm");
    else
-     edje_object_signal_emit(wd->progressbar, "elm,state,fraction", "elm");
+      edje_object_signal_emit(wd->progressbar, "elm,state,fraction", "elm");
+   if (wd->pulse_state)
+      edje_object_signal_emit(wd->progressbar, "elm,state,pulse,start", "elm");
+   
    if (wd->units && !wd->pulse)
-     edje_object_signal_emit(wd->progressbar, "elm,state,units,visible", "elm");
-   else
-     edje_object_signal_emit(wd->progressbar, "elm,state,units,hidden", "elm");
+      edje_object_signal_emit(wd->progressbar, "elm,state,units,visible", "elm");
+   
    if (wd->horizontal)
      evas_object_size_hint_min_set(wd->spacer, (double)wd->size * elm_widget_scale_get(obj) * _elm_config->scale, 1);
    else
@@ -100,6 +99,9 @@ _theme_hook(Evas_Object *obj)
 
    edje_object_part_swallow(wd->progressbar, "elm.swallow.bar", wd->spacer);
 
+   if (wd->inverted)
+      edje_object_signal_emit(wd->progressbar, "elm,state,inverted,on", "elm");
+   
    _units_set(obj);
    edje_object_message_signal_process(wd->progressbar);
    edje_object_scale_set(wd->progressbar, elm_widget_scale_get(obj) * _elm_config->scale);
