@@ -333,7 +333,7 @@ evas_object_map_enable_get(const Evas_Object *obj)
 
 
 /**
- * Set the map sourc eobject
+ * Set the map source object
  * 
  * This sets the object from which the map is taken - can be any object that
  * has map enabled on it.
@@ -352,7 +352,7 @@ evas_object_map_source_set(Evas_Object *obj, Evas_Object *src)
 }
 
 /**
- * get the map source object
+ * Get the map source object
  * 
  * See evas_object_map_source_set()
  * 
@@ -381,7 +381,7 @@ evas_object_map_source_get(const Evas_Object *obj)
  * image that is mapped to that map vertex/point. The u corresponds to the x
  * coordinate of this mapped point and v, the y coordinate. Note that these
  * coordinates describe a bounding region to sample. If you have a 200x100
- * source image and wannt to display it at 200x100 with proper pixel
+ * source image and want to display it at 200x100 with proper pixel
  * precision, then do:
  * 
  * @code
@@ -399,7 +399,7 @@ evas_object_map_source_get(const Evas_Object *obj)
  * @endcode
  * 
  * Note that the map points a uv coordinates match the image geometry. If
- * the @p map parameter is NULL, the sotred map will be freed and geometry
+ * the @p map parameter is NULL, the stored map will be freed and geometry
  * prior to enabling/setting a map will be restored.
  *
  * @param obj object to change transformation map
