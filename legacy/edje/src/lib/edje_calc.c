@@ -413,14 +413,14 @@ _edje_part_recalc_single_rel(Edje *ed,
    params->h = TO_INT(h);
 }
 
-static void
+static Edje_Internal_Aspect
 _edje_part_recalc_single_aspect(Edje_Real_Part *ep,
 				Edje_Part_Description_Common *desc,
 				Edje_Calc_Params *params,
 				int *minw, int *minh,
 				int *maxw, int *maxh)
 {
-   int apref = -10;
+   Edje_Internal_Aspect apref = EDJE_ASPECT_PREFER_NONE;
    FLOAT_T aspect, amax, amin;
    FLOAT_T new_w = ZERO, new_h = ZERO, want_x, want_y, want_w, want_h;
 
@@ -610,7 +610,7 @@ _edje_part_recalc_single_aspect(Edje_Real_Part *ep,
    params->y = TO_INT(ADD(want_y,
 			  MUL(SUB(want_h, FROM_INT(params->h)),
 			      desc->align.y)));
-   params->aspect = apref;
+   return apref;
 }
 
 static void
@@ -957,7 +957,8 @@ _edje_part_recalc_single_min_length(FLOAT_T align, int *start, int *length, int 
 static void
 _edje_part_recalc_single_min(Edje_Part_Description_Common *desc,
 			     Edje_Calc_Params *params,
-			     int minw, int minh)
+			     int minw, int minh,
+			     Edje_Internal_Aspect aspect)
 {
    int tmp;
    int w;
@@ -966,7 +967,7 @@ _edje_part_recalc_single_min(Edje_Part_Description_Common *desc,
    w = params->w ? params->w : 99999;
    h = params->h ? params->h : 99999;
 
-   switch (params->aspect)
+   switch (aspect)
      {
       case EDJE_ASPECT_PREFER_NONE:
 	 break;
@@ -1022,7 +1023,8 @@ _edje_part_recalc_single_max_length(FLOAT_T align, int *start, int *length, int 
 static void
 _edje_part_recalc_single_max(Edje_Part_Description_Common *desc,
 			     Edje_Calc_Params *params,
-			     int maxw, int maxh)
+			     int maxw, int maxh,
+			     Edje_Internal_Aspect aspect)
 {
    int tmp;
    int w;
@@ -1031,7 +1033,7 @@ _edje_part_recalc_single_max(Edje_Part_Description_Common *desc,
    w = params->w ? params->w : 99999;
    h = params->h ? params->h : 99999;
 
-   switch (params->aspect)
+   switch (aspect)
      {
       case EDJE_ASPECT_PREFER_NONE:
 	 break;
@@ -1292,6 +1294,7 @@ _edje_part_recalc_single(Edje *ed,
 			 Edje_Calc_Params *params)
 {
    Edje_Color_Class *cc = NULL;
+   Edje_Internal_Aspect apref;
    int minw = 0, minh = 0, maxw = 0, maxh = 0;
    FLOAT_T sc;
 
@@ -1303,7 +1306,7 @@ _edje_part_recalc_single(Edje *ed,
    _edje_part_recalc_single_rel(ed, ep, desc, rel1_to_x, rel1_to_y, rel2_to_x, rel2_to_y, params);
 
    /* aspect */
-   _edje_part_recalc_single_aspect(ep, desc, params, &minw, &minh, &maxw, &maxh);
+   apref = _edje_part_recalc_single_aspect(ep, desc, params, &minw, &minh, &maxw, &maxh);
 
    /* size step */
    _edje_part_recalc_single_step(desc, params);
@@ -1321,10 +1324,10 @@ _edje_part_recalc_single(Edje *ed,
    params->req.h = params->h;
 
    /* adjust for min size */
-   _edje_part_recalc_single_min(desc, params, minw, minh);
+   _edje_part_recalc_single_min(desc, params, minw, minh, apref);
 
    /* adjust for max size */
-   _edje_part_recalc_single_max(desc, params, maxw, maxh);
+   _edje_part_recalc_single_max(desc, params, maxw, maxh, apref);
 
    /* take care of dragable part */
    if (ep->drag)

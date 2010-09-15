@@ -1037,7 +1037,6 @@ struct _Edje_Calc_Params
 	 Edje_Color     color2, color3; // 8
       } text; // 36
    } type; // 40
-   Edje_Internal_Aspect aspect; // 4
    unsigned char    visible : 1;
    unsigned char    smooth : 1; // 1
 }; // 96
