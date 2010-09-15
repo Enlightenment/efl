@@ -2781,6 +2781,7 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
                        fi = _layout_format_item_add(c, n, item);
                        fi->x = c->x;
                        fi->w = x2 - c->x;
+                       fi->formatme = 1;
                        c->x = x2;
                     }
                }
