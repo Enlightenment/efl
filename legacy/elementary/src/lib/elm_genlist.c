@@ -1486,6 +1486,21 @@ elm_genlist_add(Evas_Object *parent)
    Evas_Coord minw, minh;
    static Evas_Smart *smart = NULL;
 
+   if (!smart)
+     {
+	static Evas_Smart_Class sc;
+
+	evas_object_smart_clipped_smart_set(&_pan_sc);
+	sc = _pan_sc;
+	sc.name = "elm_genlist_pan";
+	sc.version = EVAS_SMART_CLASS_VERSION;
+	sc.add = _pan_add;
+	sc.del = _pan_del;
+	sc.resize = _pan_resize;
+	sc.move = _pan_move;
+	sc.calculate = _pan_calculate;
+	if (!(smart = evas_smart_class_new(&sc))) return NULL;
+     }
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -1514,27 +1529,9 @@ elm_genlist_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
 
-   if (!smart)
-     {
-	static Evas_Smart_Class sc;
-
-	evas_object_smart_clipped_smart_set(&_pan_sc);
-	sc = _pan_sc;
-	sc.name = "elm_genlist_pan";
-	sc.version = EVAS_SMART_CLASS_VERSION;
-	sc.add = _pan_add;
-	sc.del = _pan_del;
-	sc.resize = _pan_resize;
-	sc.move = _pan_move;
-	sc.calculate = _pan_calculate;
-	smart = evas_smart_class_new(&sc);
-     }
-   if (smart)
-     {
-	wd->pan_smart = evas_object_smart_add(e, smart);
-	wd->pan = evas_object_smart_data_get(wd->pan_smart);
-	wd->pan->wd = wd;
-     }
+   wd->pan_smart = evas_object_smart_add(e, smart);
+   wd->pan = evas_object_smart_data_get(wd->pan_smart);
+   wd->pan->wd = wd;
 
    elm_smart_scroller_extern_pan_set(wd->scr, wd->pan_smart,
 				     _pan_set, _pan_get,
