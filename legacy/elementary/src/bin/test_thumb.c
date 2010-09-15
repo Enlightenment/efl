@@ -48,6 +48,7 @@ test_thumb(void *data, Evas_Object *obj, void *event_info)
 	     evas_object_size_hint_align_set(th, EVAS_HINT_FILL,
 					     EVAS_HINT_FILL);
              elm_table_pack(tb, th, i, j, 1, 1);
+	     elm_thumb_editable_set(th, EINA_TRUE);
              evas_object_show(th);
           }
      }

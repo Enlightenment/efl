@@ -47,6 +47,8 @@ struct _Widget_Data
    Eina_Bool on_hold : 1;
    Eina_Bool is_video : 1;
    Eina_Bool was_video : 1;
+   Eina_Bool edit : 1;
+
 };
 
 static const char *widtype = NULL;
@@ -366,6 +368,14 @@ _elm_unneed_ethumb(void)
 #endif
 }
 
+static Eina_Bool
+_elm_thumb_dropcb(void *data, Evas_Object *o, Elm_Drop_Data *drop)
+{
+   if (!o || !drop || !drop->data) return EINA_FALSE;
+   elm_thumb_file_set(o,drop->data,NULL);
+   return EINA_TRUE;
+}
+
 /**
  * This must be called before any other function that handle with
  * elm_thumb objects or ethumb_client instances.
@@ -665,3 +675,35 @@ elm_thumb_ethumb_client_connected(void)
 {
    return _elm_ethumb_connected;
 }
+
+
+EAPI Eina_Bool
+elm_thumb_editable_set(Evas_Object *obj, Eina_Bool edit)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return EINA_FALSE;
+   edit = !!edit;
+   if (wd->edit == edit) return EINA_TRUE;
+
+   wd->edit = edit;
+   if (wd->edit)
+      elm_drop_target_add(obj, ELM_SEL_FORMAT_IMAGE,
+                            _elm_thumb_dropcb, obj);
+   else
+      elm_drop_target_del(obj);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+elm_thumb_editable_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->edit;
+}
+
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
