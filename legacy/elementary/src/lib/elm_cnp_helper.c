@@ -60,7 +60,7 @@ struct _elm_cnp_selection {
    const char *debug;
    Evas_Object *widget;
 
-   enum _elm_sel_format format;
+   Elm_Sel_Format format;
    char *selbuf;
 
    unsigned int active : 1;
@@ -68,7 +68,7 @@ struct _elm_cnp_selection {
    Ecore_X_Selection ecore_sel;
 
    Evas_Object *requestwidget;
-   enum _elm_sel_format requestformat;
+   Elm_Sel_Format requestformat;
 
    int (*set)(Ecore_X_Window, const void *data, int size);
    int (*clear)(void);
@@ -136,7 +136,7 @@ static void pasteimage_free(struct pasteimage *pi);
 
 static struct {
    const char *name;
-   enum _elm_sel_format formats;
+   Elm_Sel_Format formats;
    /* Called by ecore to do conversion */
    converter_fn converter;
    response_handler response;
@@ -146,7 +146,7 @@ static struct {
 } atoms[CNP_N_ATOMS] = {
    [CNP_ATOM_TARGETS] = {
 	"TARGETS",
-	(enum _elm_sel_format)-1, // everything
+	(Elm_Sel_Format)-1, // everything
 	targets_converter,
 	response_handler_targets,
 	notify_handler_targets,
@@ -304,8 +304,8 @@ Eina_List *providedobjs;
 static const char *text_uri;
 
 Eina_Bool
-elm_selection_set(enum _elm_sel_type selection, Evas_Object *widget,
-			enum _elm_sel_format format, const char *selbuf)
+elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget,
+			Elm_Sel_Format format, const char *selbuf)
 {
 #ifdef HAVE_ELEMENTARY_X
    struct _elm_cnp_selection *sel;
@@ -320,7 +320,7 @@ elm_selection_set(enum _elm_sel_type selection, Evas_Object *widget,
    sel->active = 1;
    sel->widget = widget;
 
-   sel->set(elm_win_xwindow_get(widget),&selection,sizeof(enum _elm_sel_type));
+   sel->set(elm_win_xwindow_get(widget),&selection,sizeof(Elm_Sel_Type));
    sel->format = format;
    sel->selbuf = selbuf ? strdup(selbuf) : NULL;
 
@@ -331,7 +331,7 @@ elm_selection_set(enum _elm_sel_type selection, Evas_Object *widget,
 }
 
 Eina_Bool
-elm_selection_clear(enum _elm_sel_type selection, Evas_Object *widget)
+elm_selection_clear(Elm_Sel_Type selection, Evas_Object *widget)
 {
 #ifdef HAVE_ELEMENTARY_X
    struct _elm_cnp_selection *sel;
@@ -355,7 +355,7 @@ elm_selection_clear(enum _elm_sel_type selection, Evas_Object *widget)
 }
 
 Eina_Bool
-elm_selection_get(enum _elm_sel_type selection, enum _elm_sel_format format,
+elm_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format,
 			Evas_Object *widget)
 {
 #ifdef HAVE_ELEMENTARY_X
@@ -1068,8 +1068,8 @@ mark_up(const char *start, int *lenp){
 struct dropable {
      Evas_Object *obj;
      /* FIXME: Cache window */
-     enum _elm_sel_format types;
-     elm_drop_cb dropcb;
+     Elm_Sel_Format types;
+     Elm_Drop_Cb dropcb;
      void *cbdata;
 };
 /* FIXME: Way too many globals */
@@ -1297,8 +1297,8 @@ _dnd_status(void *data, int etype, void *ev)
  * Add a widget as drop target.
  */
 Eina_Bool
-elm_drop_target_add(Evas_Object *obj, enum _elm_sel_type format,
-                    elm_drop_cb dropcb, void *cbdata)
+elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format,
+                    Elm_Drop_Cb dropcb, void *cbdata)
 {
    struct dropable *drop;
    Ecore_X_Window xwin;
@@ -1424,12 +1424,12 @@ _drag_move(void *data __UNUSED__, Ecore_X_Xdnd_Position *pos){
 
 
 Eina_Bool
-elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const char *data,
+elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
                void (*dragdone)(void *data, Evas_Object *),void *donecbdata)
 {
    Ecore_X_Window xwin;
    struct _elm_cnp_selection *sel;
-   enum _elm_sel_type xdnd = ELM_SEL_XDND;
+   Elm_Sel_Type xdnd = ELM_SEL_XDND;
    Ecore_Evas *ee;
    int x,y,x2,y2,x3,y3;
    Evas_Object *icon;
@@ -1452,7 +1452,7 @@ elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const char *data,
    dragdonedata = donecbdata;
 
    ecore_x_dnd_callback_pos_update_set(_drag_move, NULL);
-   ecore_x_dnd_begin(xwin, (unsigned char *)&xdnd, sizeof(enum _elm_sel_type));
+   ecore_x_dnd_begin(xwin, (unsigned char *)&xdnd, sizeof(Elm_Sel_Type));
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
                                   _drag_mouse_up, NULL);
 
@@ -1495,14 +1495,14 @@ elm_drag_start(Evas_Object *obj, enum _elm_sel_format format, const char *data,
 #else
 /* Stubs for windows */
 Eina_Bool
-elm_drag_start(Evas_Object *o, enum _elm_sel_format f, const char *d,
+elm_drag_start(Evas_Object *o, Elm_Sel_Format f, const char *d,
                void (*donecb)(void *, Evas_Object *),void *cbdata)
 {
    return false;
 }
 Eina_Bool
-elm_drop_target_add(Evas_Object *obj, enum _elm_sel_type format,
-                    elm_drop_cb dropcb, void *cbdata){
+elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format,
+                    Elm_Drop_Cb dropcb, void *cbdata){
    return false;
 }
 

@@ -30,8 +30,7 @@ typedef struct _Elm_Config    Elm_Config;
 typedef struct _Elm_Module    Elm_Module;
 typedef struct _Elm_Drop_Data Elm_Drop_Data;
 
-// FIXME: nash - type name wrong (caps)
-typedef Eina_Bool (*elm_drop_cb) (void *d, Evas_Object *o, Elm_Drop_Data *data);
+typedef Eina_Bool (*Elm_Drop_Cb) (void *d, Evas_Object *o, Elm_Drop_Data *data);
 
 struct _Elm_Theme
 {
@@ -58,8 +57,7 @@ typedef enum _Elm_Engine
    ELM_OPENGL_SDL
 } Elm_Engine;
 
-// FIXME: nash - make typedef like above with caps etc. named right
-enum _elm_sel_type
+typedef enum _Elm_Sel_Type
 {
    ELM_SEL_PRIMARY,
    ELM_SEL_SECONDARY,
@@ -67,10 +65,9 @@ enum _elm_sel_type
    ELM_SEL_XDND,
 
    ELM_SEL_MAX,
-};
+} Elm_Sel_Type;
 
-// FIXME: nash - same as above
-enum _elm_sel_format
+typedef enum _Elm_Sel_Format
 {
    /** Plain unformated text: Used for things that don't want rich markup */
    ELM_SEL_FORMAT_TEXT   = 0x01,
@@ -78,12 +75,12 @@ enum _elm_sel_format
    ELM_SEL_FORMAT_MARKUP = 0x02,
    /** Images */
    ELM_SEL_FORMAT_IMAGE	 = 0x04,
-};
+} Elm_Sel_Format;
 
 struct _Elm_Drop_Data
 {
    int                   x, y;
-   enum _elm_sel_format  format;
+   Elm_Sel_Format        format;
    void                 *data;
    int                   len;
 };
@@ -172,12 +169,12 @@ void                _elm_config_shutdown(void);
 void                 elm_tooltip_theme(Elm_Tooltip *tt);
 void                 elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
-Eina_Bool            elm_selection_set(enum _elm_sel_type selection, Evas_Object *widget, enum _elm_sel_format format, const char *buf);
-Eina_Bool            elm_selection_clear(enum _elm_sel_type selection, Evas_Object *widget);
-Eina_Bool            elm_selection_get(enum _elm_sel_type selection, enum _elm_sel_format format, Evas_Object *widget);
-Eina_Bool            elm_drop_target_add(Evas_Object *widget, enum _elm_sel_type, elm_drop_cb, void *);
+Eina_Bool            elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format format, const char *buf);
+Eina_Bool            elm_selection_clear(Elm_Sel_Type selection, Evas_Object *widget);
+Eina_Bool            elm_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format, Evas_Object *widget);
+Eina_Bool            elm_drop_target_add(Evas_Object *widget, Elm_Sel_Type, Elm_Drop_Cb, void *);
 Eina_Bool            elm_drop_target_del(Evas_Object *widget);
-Eina_Bool            elm_drag_start(Evas_Object *, enum _elm_sel_format, const char *, void (*)(void *,Evas_Object*),void*);
+Eina_Bool            elm_drag_start(Evas_Object *, Elm_Sel_Format, const char *, void (*)(void *,Evas_Object*),void*);
 
 Eina_Bool           _elm_dangerous_call_check(const char *call);
 
