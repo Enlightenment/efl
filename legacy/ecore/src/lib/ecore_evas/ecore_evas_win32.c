@@ -1077,7 +1077,7 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
 
    ee->engine.func->fn_render = _ecore_evas_win32_render;
    _ecore_evas_register(ee);
-   ecore_event_window_register(ee->prop.window, ee, ee->evas, _ecore_evas_mouse_move_process);
+   ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process);
    
    return ee;
 }
