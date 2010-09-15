@@ -93,7 +93,7 @@ static Eina_Bool external_panes_param_get(void *data __UNUSED__,
 	else if (!strcmp(param->name, "horizontal")
 			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	{
-		param->i = elm_panes_horizontal_is(obj);
+		param->i = elm_panes_horizontal_get(obj);
 		return EINA_TRUE;
 	}
 	else if (!strcmp(param->name, "left size")
