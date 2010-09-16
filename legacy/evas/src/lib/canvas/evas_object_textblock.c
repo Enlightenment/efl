@@ -6170,10 +6170,13 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
           }
         /* Init the offset so the first one will count starting from cur1->pos
          * and not the previous format node */
-        if ((tnode == cur1->node) && fnode)
+        if (tnode == cur1->node)
           {
-             off = _evas_textblock_node_format_pos_get(fnode) -
-                cur1->pos - fnode->offset;
+             if (fnode)
+               {
+                  off = _evas_textblock_node_format_pos_get(fnode) -
+                     cur1->pos - fnode->offset;
+               }
              text += cur1->pos;
           }
         else
