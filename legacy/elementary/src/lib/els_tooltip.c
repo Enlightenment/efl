@@ -59,6 +59,7 @@ static void _elm_tooltip_hide_anim_start(Elm_Tooltip *tt);
 static void _elm_tooltip_hide_anim_stop(Elm_Tooltip *tt);
 static void _elm_tooltip_show_timer_stop(Elm_Tooltip *tt);
 static void _elm_tooltip_hide(Elm_Tooltip *tt);
+static void _elm_tooltip_data_clean(Elm_Tooltip *tt);
 
 
 static void
@@ -423,10 +424,46 @@ _elm_tooltip_obj_mouse_out_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj 
    _elm_tooltip_hide_anim_start(tt);
 }
 
+static void _elm_tooltip_obj_del_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj, void *event_info  __UNUSED__);
+
 static void
-_elm_tooltip_obj_del_cb(void *data __UNUSED__, Evas *e  __UNUSED__, Evas_Object *obj, void *event_info  __UNUSED__)
+_elm_tooltip_unset(Elm_Tooltip *tt)
 {
-   elm_object_tooltip_unset(obj);
+   tt->visible_lock = EINA_FALSE;
+   _elm_tooltip_hide(tt);
+   _elm_tooltip_data_clean(tt);
+
+   if (tt->eventarea)
+     {
+        evas_object_event_callback_del_full
+          (tt->eventarea, EVAS_CALLBACK_MOUSE_IN,
+           _elm_tooltip_obj_mouse_in_cb, tt);
+        evas_object_event_callback_del_full
+          (tt->eventarea, EVAS_CALLBACK_MOUSE_OUT,
+           _elm_tooltip_obj_mouse_out_cb, tt);
+        evas_object_event_callback_del_full
+          (tt->eventarea, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+
+        evas_object_data_del(tt->eventarea, _tooltip_key);
+     }
+   if (tt->owner)
+     {
+        evas_object_event_callback_del_full
+          (tt->owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+        elm_widget_tooltip_del(tt->owner, tt);
+     }
+
+   eina_stringshare_del(tt->style);
+   free(tt);
+}
+
+static void
+_elm_tooltip_obj_del_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj, void *event_info  __UNUSED__)
+{
+   Elm_Tooltip *tt = data;
+   if (tt->eventarea == obj) tt->eventarea = NULL;
+   if (tt->owner == obj) tt->owner = NULL;
+   _elm_tooltip_unset(tt);
 }
 
 static Evas_Object *
@@ -522,12 +559,16 @@ elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner
      {
         if (tt->owner != owner)
           {
-             evas_object_event_callback_del_full
-               (tt->owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+             if (tt->owner != eventarea)
+               evas_object_event_callback_del_full
+                 (tt->owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+
              elm_widget_tooltip_del(tt->owner, tt);
 
-             evas_object_event_callback_add
-               (owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+             if (owner != eventarea)
+               evas_object_event_callback_add
+                 (owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+
              elm_widget_tooltip_add(tt->owner, tt);
           }
 
@@ -558,8 +599,10 @@ elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner
         evas_object_event_callback_add
           (eventarea, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
 
-        evas_object_event_callback_add
-          (owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+        if (owner != eventarea)
+          evas_object_event_callback_add
+            (owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+
         elm_widget_tooltip_add(tt->owner, tt);
      }
 
@@ -678,26 +721,7 @@ EAPI void
 elm_object_tooltip_unset(Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
-
-   tt->visible_lock = EINA_FALSE;
-   _elm_tooltip_hide(tt);
-   _elm_tooltip_data_clean(tt);
-
-   evas_object_event_callback_del_full
-     (tt->eventarea, EVAS_CALLBACK_MOUSE_IN, _elm_tooltip_obj_mouse_in_cb, tt);
-   evas_object_event_callback_del_full
-     (tt->eventarea, EVAS_CALLBACK_MOUSE_OUT,
-      _elm_tooltip_obj_mouse_out_cb, tt);
-   evas_object_event_callback_del_full
-     (tt->eventarea, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
-
-   evas_object_event_callback_del_full
-     (tt->owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
-   elm_widget_tooltip_del(tt->owner, tt);
-
-   evas_object_data_del(obj, _tooltip_key);
-   eina_stringshare_del(tt->style);
-   free(tt);
+   _elm_tooltip_unset(tt);
 }
 
 /**
