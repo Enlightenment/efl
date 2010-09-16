@@ -131,7 +131,6 @@ test_anchorblock(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    ic = elm_icon_add(win);
-   printf("IC1: %p\n", ic);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
@@ -159,7 +158,6 @@ test_anchorblock(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bb);
 
    ic = elm_icon_add(win);
-   printf("IC2: %p\n", ic);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
@@ -195,7 +193,6 @@ test_anchorblock(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bb);
 
    ic = elm_icon_add(win);
-   printf("IC3: %p\n", ic);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
