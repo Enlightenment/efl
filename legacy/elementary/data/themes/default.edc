@@ -709,8 +709,8 @@ collections {
 	       inherit: "default" 0.0;
                fixed: 1 0;
 	       visible: 1;
-	       aspect: 1.0 1.0;
-	       aspect_preference: VERTICAL;
+//	       aspect: 1.0 1.0;
+//	       aspect_preference: VERTICAL;
 	       rel2.offset: 4 -5;
 	    }
 	    description { state: "icononly" 0.0;
@@ -718,10 +718,10 @@ collections {
                fixed: 0 0;
 	       visible: 1;
 	       align: 0.5 0.5;
-	       aspect: 1.0 1.0;
+//	       aspect: 1.0 1.0;
 	       rel2.offset: -5 -5;
 	       rel2.relative: 1.0 1.0;
-	       aspect_preference: VERTICAL;
+//	       aspect_preference: VERTICAL;
 	    }
 	 }
          part {
