@@ -2309,9 +2309,9 @@ _smart_add(Evas_Object *obj)
    sd->one_dir_at_a_time = 1;
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _smart_event_key_down, sd);
-   evas_object_propagate_events_set(obj, 0);
 
    o = edje_object_add(evas_object_evas_get(obj));
+   evas_object_propagate_events_set(o, 0);
    sd->edje_obj = o;
    // FIXME: null parent obj ... :(
    _elm_theme_object_set(NULL, o, "scroller", "base", "default");

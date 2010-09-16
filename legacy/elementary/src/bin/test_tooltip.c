@@ -178,7 +178,7 @@ _tt_visible_lock_toggle(void *data __UNUSED__, Evas_Object *obj, void *event_inf
 void
 test_tooltip(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *tb, *bt, *lst;
+   Evas_Object *win, *bg, *bx, *tb, *bt, *se, *lst;
    Elm_Toolbar_Item *ti;
    Elm_List_Item *li;
 
@@ -267,6 +267,16 @@ test_tooltip(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_smart_callback_add(bt, "clicked", _tt_visible_lock_toggle, NULL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
+
+   se = elm_scrolled_entry_add(win);
+   evas_object_size_hint_weight_set(se, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(se, EVAS_HINT_FILL, 0.5);
+   elm_scrolled_entry_scrollbar_policy_set(se, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scrolled_entry_entry_set(se, "Hello, some scrolled entry here!");
+   elm_object_tooltip_text_set(se, "Type something here!");
+   elm_scrolled_entry_single_line_set(se, 1);
+   elm_box_pack_end(bx, se);
+   evas_object_show(se);
 
    lst = elm_list_add(win);
    li = elm_list_item_append(lst, "Hello", NULL, NULL,  NULL, NULL);
