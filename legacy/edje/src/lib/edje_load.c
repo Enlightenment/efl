@@ -514,14 +514,18 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  for (i = 0; i < ed->table_parts_size; i++)
 		    {
 		       rp = ed->table_parts[i];
-		       if (rp->param1.description->rel1.id_x >= 0)
-			 rp->param1.rel1_to_x = ed->table_parts[rp->param1.description->rel1.id_x % ed->table_parts_size];
-		       if (rp->param1.description->rel1.id_y >= 0)
-			 rp->param1.rel1_to_y = ed->table_parts[rp->param1.description->rel1.id_y % ed->table_parts_size];
-		       if (rp->param1.description->rel2.id_x >= 0)
-			 rp->param1.rel2_to_x = ed->table_parts[rp->param1.description->rel2.id_x % ed->table_parts_size];
-		       if (rp->param1.description->rel2.id_y >= 0)
-			 rp->param1.rel2_to_y = ed->table_parts[rp->param1.description->rel2.id_y % ed->table_parts_size];
+		       if (rp->param1.description) /* FIXME: prevent rel to gone radient part to go wrong. You may
+						      be able to remove this when all theme are correctly rewritten. */
+			 {
+			    if (rp->param1.description->rel1.id_x >= 0)
+			      rp->param1.rel1_to_x = ed->table_parts[rp->param1.description->rel1.id_x % ed->table_parts_size];
+			    if (rp->param1.description->rel1.id_y >= 0)
+			      rp->param1.rel1_to_y = ed->table_parts[rp->param1.description->rel1.id_y % ed->table_parts_size];
+			    if (rp->param1.description->rel2.id_x >= 0)
+			      rp->param1.rel2_to_x = ed->table_parts[rp->param1.description->rel2.id_x % ed->table_parts_size];
+			    if (rp->param1.description->rel2.id_y >= 0)
+			      rp->param1.rel2_to_y = ed->table_parts[rp->param1.description->rel2.id_y % ed->table_parts_size];
+			 }
 		       if (rp->part->clip_to_id >= 0)
 			 {
 			    rp->clip_to = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
