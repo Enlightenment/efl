@@ -6364,6 +6364,10 @@ EAPI int
 evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_BiDi_Direction *dir, Evas_Textblock_Cursor_Type ctype)
 {
    int ret = -1;
+   const Evas_Textblock_Cursor *dir_cur;
+   Evas_Textblock_Cursor cur2;
+
+   dir_cur = cur;
    if (ctype == EVAS_TEXTBLOCK_CURSOR_UNDER)
      {
         ret = evas_textblock_cursor_char_geometry_get(cur, cx, cy, cw, ch);
@@ -6376,36 +6380,54 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
          * just before the current char). */
         Evas_Coord x, y, h, w;
 
-        if (cur->pos > 0)
+        /* If it's at the end of the line, we want to get the position, not
+         * the position of the previous */
+        if ((cur->pos > 0) && !_evas_textblock_cursor_is_at_the_end(cur))
           {
-             Evas_Textblock_Cursor cur2;
+             dir_cur = &cur2;
              cur2.obj = cur->obj;
              evas_textblock_cursor_copy(cur, &cur2);
              cur2.pos--;
              ret = evas_textblock_cursor_char_geometry_get(&cur2, &x, &y, &w, &h);
+#ifdef BIDI_SUPPORT
+             /* Adjust if the char is an rtl char */
+             if (ret >= 0)
+               {
+                  Evas_BiDi_Props props;
+                  props.props = cur2.node->bidi_props;
+                  props.start = 0;
+
+                  if (evas_bidi_is_rtl_char(&props, cur2.pos))
+                    {
+                       /* Just don't advance the width */
+                       w = 0;
+                    }
+               }
+#endif
+
           }
         else
           {
              ret = evas_textblock_cursor_char_geometry_get(cur, &x, &y, &w, &h);
              w = 0;
           }
-        if (ret > 0)
+        if (ret >= 0)
           {
              if (cx) *cx = x + w;
-             if (cy) *cy = y + h;
+             if (cy) *cy = y;
              if (cw) *cw = 0;
-             if (ch) *ch = 0;
+             if (ch) *ch = h;
           }
      }
 
-   if (dir && cur && cur->node)
+   if (dir && dir_cur && dir_cur->node)
      {
 #ifdef BIDI_SUPPORT
         Evas_BiDi_Props props;
-        props.props = cur->node->bidi_props;
+        props.props = dir_cur->node->bidi_props;
         props.start = 0;
 
-        *dir = (evas_bidi_is_rtl_char(&props, cur->pos)) ?
+        *dir = (evas_bidi_is_rtl_char(&props, dir_cur->pos)) ?
            EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
 #else
         *dir = EVAS_BIDI_DIRECTION_LTR;
