@@ -99,7 +99,6 @@ edje_object_message_signal_process(Evas_Object *obj)
    Eina_List *l, *ln, *tmpq = NULL;
    Edje *ed;
    Edje_Message *em;
-   const void *data;
 
    ed = _edje_fetch(obj);
    if (!ed) return;
