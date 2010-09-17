@@ -3,7 +3,7 @@
 static Elm_Genlist_Item_Class it_desk;
 
 static char *
-desk_gl_label_get(const void *data, Evas_Object *obj, const char *part)
+desk_gl_label_get(void *data, Evas_Object *obj, const char *part)
 {
 #ifdef ELM_EFREET   
    Efreet_Desktop *d = (Efreet_Desktop *)data;
@@ -13,7 +13,7 @@ desk_gl_label_get(const void *data, Evas_Object *obj, const char *part)
 #endif   
 }
 static Evas_Object *
-desk_gl_icon_get(const void *data, Evas_Object *obj, const char *part)
+desk_gl_icon_get(void *data, Evas_Object *obj, const char *part)
 {
    // FIXME: elm_icon should grok this
 #ifdef ELM_EFREET   
@@ -53,7 +53,7 @@ desk_gl_icon_get(const void *data, Evas_Object *obj, const char *part)
 #endif   
 }
 static void
-desk_gl_del(const void *data, Evas_Object *obj)
+desk_gl_del(void *data, Evas_Object *obj)
 {
 #ifdef ELM_EFREET   
    Efreet_Desktop *d = (Efreet_Desktop *)data;

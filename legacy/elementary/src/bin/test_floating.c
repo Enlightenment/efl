@@ -9,14 +9,14 @@ typedef struct _Testitem
 
 
 static Elm_Genlist_Item_Class itc1;
-static char *glf_label_get(const void *data, Evas_Object *obj, const char *part)
+static char *glf_label_get(void *data, Evas_Object *obj, const char *part)
 {
    char buf[256];
    snprintf(buf, sizeof(buf), "Item # %i", (int)data);
    return strdup(buf);
 }
 
-static Evas_Object *glf_icon_get(const void *data, Evas_Object *obj, const char *part)
+static Evas_Object *glf_icon_get(void *data, Evas_Object *obj, const char *part)
 {
    char buf[PATH_MAX];
    Evas_Object *ic = elm_icon_add(obj);
@@ -25,11 +25,11 @@ static Evas_Object *glf_icon_get(const void *data, Evas_Object *obj, const char 
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    return ic;
 }
-static Eina_Bool glf_state_get(const void *data, Evas_Object *obj, const char *part)
+static Eina_Bool glf_state_get(void *data, Evas_Object *obj, const char *part)
 {
    return EINA_FALSE;
 }
-static void glf_del(const void *data, Evas_Object *obj)
+static void glf_del(void *data, Evas_Object *obj)
 {
 }
 

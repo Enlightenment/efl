@@ -5,10 +5,10 @@ static Elm_Genlist_Item_Class itc;
 
 static void _bstatus(void *data, Evas_Object *obj, void *event_info);
 static void _tstatus(void *data, Evas_Object *obj, void *event_info);
-static char *_label_get(const void *data, Evas_Object *obj, const char *source);
-static Evas_Object *_icon_get(const void *data, Evas_Object *obj, const char *source);
-static Eina_Bool _state_get(const void *data, Evas_Object *obj, const char *source);
-static void _item_del(const void *data, Evas_Object *obj);
+static char *_label_get(void *data, Evas_Object *obj, const char *source);
+static Evas_Object *_icon_get(void *data, Evas_Object *obj, const char *source);
+static Eina_Bool _state_get(void *data, Evas_Object *obj, const char *source);
+static void _item_del(void *data, Evas_Object *obj);
 static void _fill_list(Evas_Object *obj);
 static Eina_Bool _dir_has_subs(const char *path);
 
@@ -37,13 +37,13 @@ _bstatus(void *data, Evas_Object *obj, void *event_info)
 }
 
 static char *
-_label_get(const void *data, Evas_Object *obj, const char *source) 
+_label_get(void *data, Evas_Object *obj, const char *source) 
 {
    return strdup(ecore_file_file_get(data));
 }
 
 static Evas_Object *
-_icon_get(const void *data, Evas_Object *obj, const char *source) 
+_icon_get(void *data, Evas_Object *obj, const char *source) 
 {
    if (!strcmp(source, "elm.swallow.icon")) 
      {
@@ -62,13 +62,13 @@ _icon_get(const void *data, Evas_Object *obj, const char *source)
 }
 
 static Eina_Bool 
-_state_get(const void *data, Evas_Object *obj, const char *source) 
+_state_get(void *data, Evas_Object *obj, const char *source) 
 {
    return EINA_FALSE;
 }
 
 static void 
-_item_del(const void *data, Evas_Object *obj) 
+_item_del(void *data, Evas_Object *obj) 
 {
    eina_stringshare_del(data);
 }

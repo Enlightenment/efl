@@ -67,7 +67,7 @@ grid_item_check_changed(void *data, Evas_Object *obj, void *event_info)
 }
 
 char *
-grid_label_get(const void *data, Evas_Object *obj, const char *part)
+grid_label_get(void *data, Evas_Object *obj, const char *part)
 {
    const Testitem *ti = data;
    char buf[256];
@@ -76,7 +76,7 @@ grid_label_get(const void *data, Evas_Object *obj, const char *part)
 }
 
 Evas_Object *
-grid_icon_get(const void *data, Evas_Object *obj, const char *part)
+grid_icon_get(void *data, Evas_Object *obj, const char *part)
 {
    const Testitem *ti = data;
    if (!strcmp(part, "elm.swallow.icon"))
@@ -102,13 +102,13 @@ grid_icon_get(const void *data, Evas_Object *obj, const char *part)
 }
 
 Eina_Bool
-grid_state_get(const void *data, Evas_Object *obj, const char *part)
+grid_state_get(void *data, Evas_Object *obj, const char *part)
 {
    return EINA_FALSE;
 }
 
 void
-grid_del(const void *data, Evas_Object *obj)
+grid_del(void *data, Evas_Object *obj)
 {
 }
 

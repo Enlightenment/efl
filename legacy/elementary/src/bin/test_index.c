@@ -1,7 +1,7 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 static Elm_Genlist_Item_Class itci;
-char *gli_label_get(const void *data, Evas_Object *obj, const char *part)
+char *gli_label_get(void *data, Evas_Object *obj, const char *part)
 {
    char buf[256];
    int j = (int)data;
