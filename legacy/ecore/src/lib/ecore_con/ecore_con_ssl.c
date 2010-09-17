@@ -971,9 +971,9 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
        ((cl->server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
      {
         //FIXME: just log and go on without cert if loading fails?
-        if (!SSL_CTX_use_certificate(cl->server->ssl_ctx, client_cert->cert) ||
-            !SSL_CTX_use_PrivateKey(cl->server->ssl_ctx, private_key->key) ||
-            !SSL_CTX_check_private_key(cl->server->ssl_ctx))
+        if (!SSL_CTX_use_certificate(cl->ssl_ctx, client_cert->cert) ||
+            !SSL_CTX_use_PrivateKey(cl->ssl_ctx, private_key->key) ||
+            !SSL_CTX_check_private_key(cl->ssl_ctx))
            ERR(
               "ssl cert load failed: %s", ERR_reason_error_string(ERR_get_error()));
 
