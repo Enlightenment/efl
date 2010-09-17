@@ -402,4 +402,57 @@ EAPI const char      *_elm_widget_item_tooltip_style_get(const Elm_Widget_Item *
 #define ELM_CHECK_WIDTYPE(obj, widtype) \
    if (!elm_widget_type_check((obj), (widtype))) return
 
+
+/**
+ * The drag and drop API.
+ * Currently experimental, and will change when it does dynamic type
+ * addition RSN.
+ *
+ * Here so applications can start to use it, if they ask elm nicely.
+ *
+ * And yes, elm_widget, should probably be elm_experimental...
+ * Complaints about this code should go to /dev/null, or failing that nash.
+ */
+typedef struct _Elm_Drop_Data Elm_Drop_Data;
+
+typedef Eina_Bool (*Elm_Drop_Cb) (void *d, Evas_Object *o, Elm_Drop_Data *data);
+
+typedef enum _Elm_Sel_Type
+{
+   ELM_SEL_PRIMARY,
+   ELM_SEL_SECONDARY,
+   ELM_SEL_CLIPBOARD,
+   ELM_SEL_XDND,
+
+   ELM_SEL_MAX,
+} Elm_Sel_Type;
+
+typedef enum _Elm_Sel_Format
+{
+   /** Plain unformated text: Used for things that don't want rich markup */
+   ELM_SEL_FORMAT_TEXT   = 0x01,
+   /** Edje textblock markup, including inline images */
+   ELM_SEL_FORMAT_MARKUP = 0x02,
+   /** Images */
+   ELM_SEL_FORMAT_IMAGE	 = 0x04,
+   /** Vcards */
+   ELM_SEL_FORMAT_VCARD =  0x08,
+} Elm_Sel_Format;
+
+struct _Elm_Drop_Data
+{
+   int                   x, y;
+   Elm_Sel_Format        format;
+   void                 *data;
+   int                   len;
+};
+
+Eina_Bool            elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format format, const char *buf);
+Eina_Bool            elm_selection_clear(Elm_Sel_Type selection, Evas_Object *widget);
+Eina_Bool            elm_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format, Evas_Object *widget);
+Eina_Bool            elm_drop_target_add(Evas_Object *widget, Elm_Sel_Type, Elm_Drop_Cb, void *);
+Eina_Bool            elm_drop_target_del(Evas_Object *widget);
+Eina_Bool            elm_drag_start(Evas_Object *, Elm_Sel_Format, const char *, void (*)(void *,Evas_Object*),void*);
+
+
 #endif
