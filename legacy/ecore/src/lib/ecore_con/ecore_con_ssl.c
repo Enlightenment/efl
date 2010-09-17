@@ -279,6 +279,7 @@ static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
 {
    const int *proto = NULL;
+   const int compress[] = { GNUTLS_COMP_DEFLATE, GNUTLS_COMP_NULL, 0 };
    int ret = 0;
    const int kx[] = { GNUTLS_KX_ANON_DH, 0 };
    const int ssl3_proto[] = { GNUTLS_SSL3, 0 };
@@ -318,20 +319,30 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
         server_cert->count++;
      }
 
-   gnutls_init(&(svr->session), GNUTLS_CLIENT);
-   gnutls_set_default_priority(svr->session);
-   gnutls_kx_set_priority(svr->session, kx);
+   if ((ret = gnutls_init(&(svr->session), GNUTLS_CLIENT)))
+          goto error;
+   if ((ret = gnutls_set_default_priority(svr->session)))
+          goto error;
+   if ((ret = gnutls_kx_set_priority(svr->session, kx)))
+          goto error;
    if (svr->cert)
-      gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE,
-                             svr->cert);
+      if ((ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE,
+                             svr->cert)))
+          goto error;
    else
      {
-        gnutls_anon_allocate_client_credentials(&svr->anoncred_c);
-        gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c);
+        if ((ret = gnutls_anon_allocate_client_credentials(&svr->anoncred_c)))
+          goto error;
+        if ((ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c)))
+          goto error;
      }
 
-   gnutls_kx_set_priority(svr->session, kx);
-   gnutls_protocol_set_priority(svr->session, proto);
+   if ((ret = gnutls_kx_set_priority(svr->session, kx)))
+          goto error;
+   if ((ret = gnutls_protocol_set_priority(svr->session, proto)))
+          goto error;
+   if ((ret = gnutls_compression_set_priority(svr->session, compress)))
+          goto error;
    gnutls_dh_set_prime_bits(svr->session, 2048);
 
    gnutls_transport_set_ptr(svr->session, (gnutls_transport_ptr_t)svr->fd);
@@ -347,6 +358,10 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
      }
 
    return ECORE_CON_SSL_ERROR_NONE;
+   
+error:
+   ERR("gnutls returned with error: %s", gnutls_strerror(ret));
+   return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
 static Eina_Bool
@@ -465,6 +480,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    const int *proto = NULL;
    gnutls_dh_params_t dh_params;
    int ret;
+   const int compress[] = { GNUTLS_COMP_DEFLATE, GNUTLS_COMP_NULL, 0 };
    const int kx[] = { GNUTLS_KX_ANON_DH, 0 };
    const int ssl3_proto[] = { GNUTLS_SSL3, 0 };
    const int tls_proto[] = {
@@ -540,6 +556,8 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
           goto error;
 
    if ((ret = gnutls_protocol_set_priority(cl->session, proto)))
+          goto error;
+   if ((ret = gnutls_compression_set_priority(cl->session, compress)))
           goto error;
 
    gnutls_transport_set_ptr(cl->session, (gnutls_transport_ptr_t)cl->fd);
