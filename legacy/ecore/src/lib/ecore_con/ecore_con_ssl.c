@@ -294,13 +294,16 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
    switch (svr->type & ECORE_CON_SSL)
      {
       case ECORE_CON_USE_SSL2: /* not supported because of security issues */
+      case ECORE_CON_USE_SSL2 | ECORE_CON_LOAD_CERT: /* not supported because of security issues */
          return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
 
       case ECORE_CON_USE_SSL3:
+      case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
          proto = ssl3_proto;
          break;
 
       case ECORE_CON_USE_TLS:
+      case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
          proto = tls_proto;
          break;
 
@@ -309,7 +312,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
      }
 
    if ((server_cert) && (server_cert->cert) &&
-       ((svr->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT))
+       ((svr->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
      {
         svr->cert = server_cert->cert;
         server_cert->count++;
@@ -476,13 +479,16 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    switch (cl->server->type & ECORE_CON_SSL)
      {
       case ECORE_CON_USE_SSL2: /* not supported because of security issues */
+      case ECORE_CON_USE_SSL2 | ECORE_CON_LOAD_CERT: /* not supported because of security issues */
          return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
 
       case ECORE_CON_USE_SSL3:
+      case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
          proto = ssl3_proto;
          break;
 
       case ECORE_CON_USE_TLS:
+      case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
          proto = tls_proto;
          break;
 
@@ -496,7 +502,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    gnutls_dh_params_generate2(dh_params, 1024);
 
    if ((client_cert) && (client_cert->cert) &&
-       ((cl->server->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT))
+       ((cl->server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
      {
         cl->server->cert = client_cert->cert;
         client_cert->count++;
@@ -691,6 +697,7 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
    switch (svr->type & ECORE_CON_SSL)
      {
       case ECORE_CON_USE_SSL2:
+      case ECORE_CON_USE_SSL2 | ECORE_CON_LOAD_CERT:
          /* Unsafe version of SSL */
          if (!(svr->ssl_ctx =
                   SSL_CTX_new(SSLv2_client_method())))
@@ -700,6 +707,7 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
          break;
 
       case ECORE_CON_USE_SSL3:
+      case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
          if (!(svr->ssl_ctx =
                   SSL_CTX_new(SSLv3_client_method())))
             return
@@ -708,6 +716,7 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
          break;
 
       case ECORE_CON_USE_TLS:
+      case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
          if (!(svr->ssl_ctx =
                   SSL_CTX_new(TLSv1_client_method())))
             return
@@ -725,7 +734,7 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
      }
 
    if ((server_cert) && (server_cert->cert) &&
-       ((svr->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT))
+       ((svr->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
      {
         //FIXME: just log and go on without cert if loading fails?
         if (!SSL_CTX_use_certificate(svr->ssl_ctx, server_cert->cert))
@@ -922,6 +931,7 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
    switch (cl->server->type & ECORE_CON_SSL)
      {
       case ECORE_CON_USE_SSL2:
+      case ECORE_CON_USE_SSL2 | ECORE_CON_LOAD_CERT:
          /* Unsafe version of SSL */
          if (!(cl->ssl_ctx =
                   SSL_CTX_new(SSLv2_client_method())))
@@ -931,6 +941,7 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
          break;
 
       case ECORE_CON_USE_SSL3:
+      case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
          if (!(cl->ssl_ctx =
                   SSL_CTX_new(SSLv3_client_method())))
             return
@@ -939,6 +950,7 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
          break;
 
       case ECORE_CON_USE_TLS:
+      case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
          if (!(cl->ssl_ctx =
                   SSL_CTX_new(TLSv1_client_method())))
             return
@@ -956,7 +968,7 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
      }
 
    if ((client_cert) && (client_cert->cert) && (private_key->key) &&
-       ((cl->server->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT))
+       ((cl->server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
      {
         //FIXME: just log and go on without cert if loading fails?
         if (!SSL_CTX_use_certificate(cl->server->ssl_ctx, client_cert->cert) ||
