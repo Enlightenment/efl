@@ -100,14 +100,14 @@ _sizing_eval(Evas_Object *obj)
 
 /***  GENLIST "MODEL"  ***/
 static char*
-_itc_label_get(const void *data, Evas_Object *obj __UNUSED__, const char *source __UNUSED__)
+_itc_label_get(void *data, Evas_Object *obj __UNUSED__, const char *source __UNUSED__)
 {
    //~ printf("LABEL_GET: %s\n", (char*) data);
    return strdup(ecore_file_file_get(data)); // NOTE this will be free() by the caller
 }
 
 static Evas_Object*
-_itc_icon_get(const void *data, Evas_Object *obj, const char *source)
+_itc_icon_get(void *data, Evas_Object *obj, const char *source)
 {
    Evas_Object *ic;
 
@@ -127,13 +127,13 @@ _itc_icon_get(const void *data, Evas_Object *obj, const char *source)
 }
 
 static Eina_Bool
-_itc_state_get(const void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *source __UNUSED__)
+_itc_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *source __UNUSED__)
 {
    return EINA_FALSE;
 }
 
 static void
-_itc_del(const void *data, Evas_Object *obj __UNUSED__)
+_itc_del(void *data, Evas_Object *obj __UNUSED__)
 {
    //~ printf("DEL DATA [%s]\n", (char*)data);
    eina_stringshare_del(data);

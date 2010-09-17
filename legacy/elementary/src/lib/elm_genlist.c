@@ -517,8 +517,8 @@ _item_del(Elm_Genlist_Item *it)
    if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
    if (it->realized) _item_unrealize(it);
    if (it->block) _item_block_del(it);
-   if ((!it->delete_me) && (it->itc->func.del)) 
-     it->itc->func.del(it->base.data, it->base.widget);
+   if ((!it->delete_me) && (it->itc->func.del))
+     it->itc->func.del((void *)it->base.data, it->base.widget);
    it->delete_me = EINA_TRUE;
    if (it->queued)
      it->wd->queue = eina_list_remove(it->wd->queue, it);
@@ -903,7 +903,8 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
 	     it->labels = elm_widget_stringlist_get(edje_object_data_get(it->base.view, "labels"));
 	     EINA_LIST_FOREACH(it->labels, l, key)
 	       {
-		  char *s = it->itc->func.label_get(it->base.data, it->base.widget, l->data);
+		  char *s = it->itc->func.label_get
+                    ((void *)it->base.data, it->base.widget, l->data);
 
 		  if (s)
 		    {
@@ -920,7 +921,8 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
 	     it->icons = elm_widget_stringlist_get(edje_object_data_get(it->base.view, "icons"));
 	     EINA_LIST_FOREACH(it->icons, l, key)
 	       {
-		  Evas_Object *ic = it->itc->func.icon_get(it->base.data, it->base.widget, l->data);
+		  Evas_Object *ic = it->itc->func.icon_get
+                    ((void *)it->base.data, it->base.widget, l->data);
 
 		  if (ic)
 		    {
@@ -939,7 +941,8 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
 	     it->states = elm_widget_stringlist_get(edje_object_data_get(it->base.view, "states"));
 	     EINA_LIST_FOREACH(it->states, l, key)
 	       {
-		  Eina_Bool on = it->itc->func.state_get(it->base.data, it->base.widget, l->data);
+		  Eina_Bool on = it->itc->func.state_get
+                    ((void *)it->base.data, it->base.widget, l->data);
 
 		  if (on)
 		    {
@@ -1988,7 +1991,8 @@ elm_genlist_clear(Evas_Object *obj)
 	wd->items = eina_inlist_remove(wd->items, wd->items);
         elm_widget_item_pre_notify_del(it);
 	if (it->realized) _item_unrealize(it);
-	if (it->itc->func.del) it->itc->func.del(it->base.data, it->base.widget);
+	if (it->itc->func.del)
+          it->itc->func.del((void *)it->base.data, it->base.widget);
 	if (it->long_timer) ecore_timer_del(it->long_timer);
         elm_widget_item_del(it);
      }
@@ -2805,7 +2809,8 @@ elm_genlist_item_del(Elm_Genlist_Item *it)
 	     if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
 	     it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
 	  }
-	if (it->itc->func.del) it->itc->func.del(it->base.data, it->base.widget);
+	if (it->itc->func.del)
+          it->itc->func.del((void *)it->base.data, it->base.widget);
 	return;
      }
    _item_del(it);

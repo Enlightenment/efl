@@ -618,10 +618,10 @@ extern "C" {
    typedef struct _Elm_Gengrid_Item_Class Elm_Gengrid_Item_Class;
    typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func;
    typedef struct _Elm_Gengrid_Item Elm_Gengrid_Item; /**< Item of Elm_Gengrid. Sub-type of Elm_Widget_Item */
-   typedef char        *(*GridItemLabelGetFunc) (const void *data, Evas_Object *obj, const char *part);
-   typedef Evas_Object *(*GridItemIconGetFunc)  (const void *data, Evas_Object *obj, const char *part);
-   typedef Eina_Bool    (*GridItemStateGetFunc) (const void *data, Evas_Object *obj, const char *part);
-   typedef void         (*GridItemDelFunc)      (const void *data, Evas_Object *obj);
+   typedef char        *(*GridItemLabelGetFunc) (void *data, Evas_Object *obj, const char *part);
+   typedef Evas_Object *(*GridItemIconGetFunc)  (void *data, Evas_Object *obj, const char *part);
+   typedef Eina_Bool    (*GridItemStateGetFunc) (void *data, Evas_Object *obj, const char *part);
+   typedef void         (*GridItemDelFunc)      (void *data, Evas_Object *obj);
 
    struct _Elm_Gengrid_Item_Class
      {
@@ -1164,10 +1164,10 @@ extern "C" {
    typedef struct _Elm_Genlist_Item_Class Elm_Genlist_Item_Class;
    typedef struct _Elm_Genlist_Item       Elm_Genlist_Item; /**< Item of Elm_Genlist. Sub-type of Elm_Widget_Item */
    typedef struct _Elm_Genlist_Item_Class_Func Elm_Genlist_Item_Class_Func;
-   typedef char        *(*GenlistItemLabelGetFunc) (const void *data, Evas_Object *obj, const char *part);
-   typedef Evas_Object *(*GenlistItemIconGetFunc)  (const void *data, Evas_Object *obj, const char *part);
-   typedef Eina_Bool    (*GenlistItemStateGetFunc) (const void *data, Evas_Object *obj, const char *part);
-   typedef void         (*GenlistItemDelFunc)      (const void *data, Evas_Object *obj);
+   typedef char        *(*GenlistItemLabelGetFunc) (void *data, Evas_Object *obj, const char *part);
+   typedef Evas_Object *(*GenlistItemIconGetFunc)  (void *data, Evas_Object *obj, const char *part);
+   typedef Eina_Bool    (*GenlistItemStateGetFunc) (void *data, Evas_Object *obj, const char *part);
+   typedef void         (*GenlistItemDelFunc)      (void *data, Evas_Object *obj);
 
    struct _Elm_Genlist_Item_Class
      {

@@ -477,8 +477,8 @@ _item_realize(Elm_Gengrid_Item *item)
 							        "labels"));
 	EINA_LIST_FOREACH(item->labels, l, key)
 	  {
-	     char *s = item->gic->func.label_get(item->base.data, item->wd->self,
-						 l->data);
+	     char *s = item->gic->func.label_get
+               ((void *)item->base.data, item->wd->self, l->data);
 	     if (s)
 	       {
 		  edje_object_part_text_set(item->base.view, l->data, s);
@@ -496,9 +496,8 @@ _item_realize(Elm_Gengrid_Item *item)
 							       "icons"));
 	EINA_LIST_FOREACH(item->icons, l, key)
 	  {
-	     Evas_Object *ic = item->gic->func.icon_get(item->base.data,
-							item->wd->self,
-						        l->data);
+	     Evas_Object *ic = item->gic->func.icon_get
+               ((void *)item->base.data, item->wd->self, l->data);
 	     if (ic)
 	       {
 		  item->icon_objs = eina_list_append(item->icon_objs, ic);
@@ -518,8 +517,8 @@ _item_realize(Elm_Gengrid_Item *item)
 							        "states"));
 	EINA_LIST_FOREACH(item->states, l, key)
 	  {
-	     Eina_Bool on = item->gic->func.state_get(item->base.data,
-						      item->wd->self, l->data);
+	     Eina_Bool on = item->gic->func.state_get
+               ((void *)item->base.data, item->wd->self, l->data);
 	     if (on)
 	       {
 		  snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
@@ -675,7 +674,7 @@ _item_del(Elm_Gengrid_Item *item)
      item->wd->selected = eina_list_remove(item->wd->selected, item);
    if (item->realized) _item_unrealize(item);
    if ((!item->delete_me) && (item->gic->func.del))
-     item->gic->func.del(item->base.data, item->wd->self);
+     item->gic->func.del((void *)item->base.data, item->wd->self);
    item->delete_me = EINA_TRUE;
    item->wd->items = eina_list_remove(item->wd->items, item);
    if (item->long_timer) ecore_timer_del(item->long_timer);
@@ -1154,8 +1153,8 @@ elm_gengrid_item_del(Elm_Gengrid_Item *item)
         elm_widget_item_pre_notify_del(item);
 	if (item->selected)
 	  item->wd->selected = eina_list_remove(item->wd->selected, item);
-	if (item->gic->func.del) 
-	  item->gic->func.del(item->base.data, item->wd->self);
+	if (item->gic->func.del)
+	  item->gic->func.del((void *)item->base.data, item->wd->self);
 	return;
      }
 
@@ -1219,7 +1218,8 @@ elm_gengrid_clear(Evas_Object *obj)
 	wd->items = eina_list_remove_list(wd->items, l);
         elm_widget_item_pre_notify_del(item);
 	if (item->realized) _item_unrealize(item);
-	if (item->gic->func.del) item->gic->func.del(item->base.data, wd->self);
+	if (item->gic->func.del)
+          item->gic->func.del((void *)item->base.data, wd->self);
 	if (item->long_timer) ecore_timer_del(item->long_timer);
         elm_widget_item_del(item);
      }
