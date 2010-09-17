@@ -134,7 +134,7 @@ elm_box_add(Evas_Object *parent)
  * Set the horizontal orientation
  *
  * By default box object arrange their contents vertically from top to bottom.
- * By calling this and providing @p orizontal as true, the box will become
+ * By calling this and providing @p horizontal as true, the box will become
  * horizontal arranging contents left to right.
  *
  * @param obj The box object
