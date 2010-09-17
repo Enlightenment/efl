@@ -22,10 +22,12 @@ if ELEMENTARY_WINDOWS_BUILD
 AM_CPPFLAGS += -DELEMENTARY_BUILD
 endif
 
-bin_PROGRAMS = elementary_test elementary_config
+bin_PROGRAMS = @ELEMENTARY_TEST_PRG@ @ELEMENTARY_CONFIG_PRG@
 if BUILD_QUICKLAUNCH
 bin_PROGRAMS += elementary_quicklaunch elementary_run elementary_testql
 endif
+
+EXTRA_PROGRAMS = elementary_test elementary_config
 
 elementary_test_SOURCES = \
 test.c \

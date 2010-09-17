@@ -179,7 +179,7 @@ PKG_CHECK_MODULES([ELEMENTARY],
     edje >= ${EDJE_VERSION}
    ]
 )
-        
+
 requirement_elm="edje >= ${EDJE_VERSION} ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_elm}"
 
 have_elementary_x="no"
@@ -430,6 +430,9 @@ EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
+EFL_ENABLE_BIN([elementary-test])
+EFL_ENABLE_BIN([elementary-config])
+
 AC_OUTPUT([
 Makefile
 elementary.spec
@@ -468,26 +471,29 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "  Engines:"
-echo "    X11................: ${have_elementary_x}"
-echo "    Framebuffer........: ${have_elementary_fb}"
-echo "    SDL................: ${have_elementary_sdl}"
-echo "    Windows XP.........: ${have_elementary_win32}"
-echo "    Windows CE.........: ${have_elementary_wince}"
+echo "    X11....................: ${have_elementary_x}"
+echo "    Framebuffer............: ${have_elementary_fb}"
+echo "    SDL....................: ${have_elementary_sdl}"
+echo "    Windows XP.............: ${have_elementary_win32}"
+echo "    Windows CE.............: ${have_elementary_wince}"
 echo
 echo "  Features:"
-echo "    EDBus..............: ${have_elementary_edbus}"
-echo "    EFreet.............: ${have_elementary_efreet}"
-echo "    EWeather...........: ${have_elementary_eweather}"
-echo "    Ethumb.............: ${have_elementary_ethumb}"
+echo "    EDBus..................: ${have_elementary_edbus}"
+echo "    EFreet.................: ${have_elementary_efreet}"
+echo "    EWeather...............: ${have_elementary_eweather}"
+echo "    Ethumb.................: ${have_elementary_ethumb}"
 echo
-echo "  eet..................: ${eet_eet}"
-echo "  edje_cc..............: ${edje_cc}"
+echo "  eet......................: ${eet_eet}"
+echo "  edje_cc..................: ${edje_cc}"
 echo
-echo "Compilation............: make (or gmake)"
-echo "  CPPFLAGS.............: $CPPFLAGS"
-echo "  CFLAGS...............: $CFLAGS"
-echo "  LDFLAGS..............: $LDFLAGS"
+echo "  Build elementary_test....: ${have_elementary_test}"
+echo "  Build elementary_config..: ${have_elementary_config}"
 echo
-echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
-echo "  prefix...............: $prefix"
+echo "Compilation................: make (or gmake)"
+echo "  CPPFLAGS.................: $CPPFLAGS"
+echo "  CFLAGS...................: $CFLAGS"
+echo "  LDFLAGS..................: $LDFLAGS"
+echo
+echo "Installation...............: make install (as root if needed, with 'su' or 'sudo')"
+echo "  prefix...................: $prefix"
 echo
