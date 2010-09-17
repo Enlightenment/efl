@@ -293,7 +293,6 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
    const int *proto = NULL;
    const int compress[] = { GNUTLS_COMP_DEFLATE, GNUTLS_COMP_NULL, 0 };
    int ret = 0;
-   const int kx[] = { GNUTLS_KX_ANON_DH, 0 };
    const int ssl3_proto[] = { GNUTLS_SSL3, 0 };
    const int tls_proto[] = {
       GNUTLS_TLS1_0,
@@ -333,18 +332,18 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
 
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&(svr->session), GNUTLS_CLIENT));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(svr->session));
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(svr->session, kx));
 
    if (svr->cert)
       SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE,
                              svr->cert));
    else
      {
+        const int kx[] = { GNUTLS_KX_ANON_DH, 0 };
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(svr->session, kx));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_client_credentials(&svr->anoncred_c));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c));
      }
 
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(svr->session, kx));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(svr->session, proto));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(svr->session, compress));
    gnutls_dh_set_prime_bits(svr->session, 2048);
@@ -482,7 +481,6 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    gnutls_dh_params_t dh_params;
    int ret;
    const int compress[] = { GNUTLS_COMP_DEFLATE, GNUTLS_COMP_NULL, 0 };
-   const int kx[] = { GNUTLS_KX_ANON_DH, 0 };
    const int ssl3_proto[] = { GNUTLS_SSL3, 0 };
    const int tls_proto[] = {
       GNUTLS_TLS1_0,
@@ -543,10 +541,13 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
      }
    else
-      SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON,
+     {
+        const int kx[] = { GNUTLS_KX_ANON_DH, 0 };
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(cl->session, kx));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON,
                              cl->server->anoncred_s));
+     }
 
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(cl->session, kx));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(cl->session, proto));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(cl->session, compress));
 
