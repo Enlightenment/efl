@@ -353,14 +353,14 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
             (ret == GNUTLS_E_INTERRUPTED))
            continue;
 
-        _ecore_con_ssl_server_shutdown_gnutls(svr);
-        return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
+        goto error;
      }
 
    return ECORE_CON_SSL_ERROR_NONE;
    
 error:
-   ERR("gnutls returned with error: %s", gnutls_strerror(ret));
+   ERR("gnutls returned with error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
+   _ecore_con_ssl_server_shutdown_gnutls(svr);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
@@ -568,14 +568,15 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
             (ret == GNUTLS_E_INTERRUPTED))
            continue;
 
-        _ecore_con_ssl_client_shutdown_gnutls(cl);
-        return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
+        goto error;
      }
 
    /* TODO: add cert verification support */
    return ECORE_CON_SSL_ERROR_NONE;
+
 error:
-   ERR("gnutls returned with error: %s", gnutls_strerror(ret));
+   ERR("gnutls returned with error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
+   _ecore_con_ssl_client_shutdown_gnutls(cl);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
