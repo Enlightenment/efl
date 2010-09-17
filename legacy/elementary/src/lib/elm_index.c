@@ -634,7 +634,7 @@ elm_index_item_level_get(const Evas_Object *obj)
  *
  * @ingroup Index
  */
-EAPI const void *
+EAPI void *
 elm_index_item_selected_get(const Evas_Object *obj, int level)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;

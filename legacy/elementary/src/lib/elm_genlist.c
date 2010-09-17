@@ -2847,7 +2847,7 @@ elm_genlist_item_data_set(Elm_Genlist_Item *it, const void *data)
  *
  * @ingroup Genlist
  */
-EAPI const void *
+EAPI void *
 elm_genlist_item_data_get(const Elm_Genlist_Item *it)
 {
    return elm_widget_item_data_get(it);

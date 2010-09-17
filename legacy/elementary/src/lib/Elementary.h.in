@@ -1243,7 +1243,7 @@ extern "C" {
    EAPI void		  elm_genlist_item_middle_show(Elm_Genlist_Item *it);
    EAPI void		  elm_genlist_item_middle_bring_in(Elm_Genlist_Item *it);
    EAPI void              elm_genlist_item_del(Elm_Genlist_Item *item);
-   EAPI const void       *elm_genlist_item_data_get(const Elm_Genlist_Item *item);
+   EAPI void             *elm_genlist_item_data_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_data_set(Elm_Genlist_Item *it, const void *data);
    EAPI const Evas_Object *elm_genlist_item_object_get(const Elm_Genlist_Item *it);
    EAPI void              elm_genlist_item_update(Elm_Genlist_Item *item);
@@ -1406,7 +1406,7 @@ extern "C" {
    EAPI void         elm_index_active_set(Evas_Object *obj, Eina_Bool active);
    EAPI void         elm_index_item_level_set(Evas_Object *obj, int level);
    EAPI int          elm_index_item_level_get(const Evas_Object *obj);
-   EAPI const void  *elm_index_item_selected_get(const Evas_Object *obj, int level);
+   EAPI void        *elm_index_item_selected_get(const Evas_Object *obj, int level);
    EAPI void         elm_index_item_append(Evas_Object *obj, const char *letter, const void *item);
    EAPI void         elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item);
    EAPI void         elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const void *relative);
