@@ -156,8 +156,11 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
             (!einfo->info.depth))
           {
              WRN("OpenGL X11 init engine '%s' failed - no visual, colormap or depth.", ee->driver);
-             evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-             return 0;
+             if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+               {
+                  WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+                  return 0;
+               }
           }
         
 	attr.backing_store = NotUseful;
@@ -1610,7 +1613,10 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 		  ee->engine.x.mask = 0;
 		  einfo->info.mask = 0;
-		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+		  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    {
+                       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+                    }
 		  ecore_x_window_shape_mask_set(ee->prop.window, 0);
 		  ecore_x_window_shape_input_mask_set(ee->prop.window, 0);
 	       }
@@ -1737,7 +1743,10 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 		  ee->engine.x.mask = 0;
 		  einfo->info.mask = 0;
-		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+		  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    {
+                       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+                    }
 		  ecore_x_window_shape_mask_set(ee->prop.window, 0);
 		  ecore_x_window_shape_input_mask_set(ee->prop.window, 0);
 	       }
