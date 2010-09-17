@@ -75,6 +75,8 @@ typedef enum _Elm_Sel_Format
    ELM_SEL_FORMAT_MARKUP = 0x02,
    /** Images */
    ELM_SEL_FORMAT_IMAGE	 = 0x04,
+   /** Vcards */
+   ELM_SEL_FORMAT_VCARD =  0x08,
 } Elm_Sel_Format;
 
 struct _Elm_Drop_Data

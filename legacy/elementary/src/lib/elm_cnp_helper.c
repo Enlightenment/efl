@@ -35,6 +35,7 @@ enum {
      CNP_ATOM_TARGETS = 0,
      CNP_ATOM_text_uri,
      CNP_ATOM_text_urilist,
+     CNP_ATOM_text_x_vcard,
      CNP_ATOM_image_png,
      CNP_ATOM_image_jpeg,
      CNP_ATOM_XELM,
@@ -112,6 +113,7 @@ static int html_converter(char *target, void *data, int size, void **data_ret, i
 static int edje_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 static int uri_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 static int png_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+static int vcard_send(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 
 /* FIXME: Which way should this be: Notify or response */
 typedef int (*response_handler)(struct _elm_cnp_selection *sel,
@@ -128,6 +130,8 @@ static int notify_handler_text(struct _elm_cnp_selection *sel,
 static int notify_handler_png(struct _elm_cnp_selection *sel,
       Ecore_X_Event_Selection_Notify *notify);
 static int notify_handler_uri(struct _elm_cnp_selection *sel,
+      Ecore_X_Event_Selection_Notify *notify);
+static int vcard_receive(struct _elm_cnp_selection *sed,
       Ecore_X_Event_Selection_Notify *notify);
 
 static struct pasteimage *pasteimage_alloc(const char *file);
@@ -175,6 +179,12 @@ static struct {
         NULL,
         notify_handler_uri,
         0
+   },
+   [CNP_ATOM_text_x_vcard] = {
+       "text/x-vcard",
+       ELM_SEL_FORMAT_VCARD,
+       vcard_send, NULL,
+       vcard_receive, 0
    },
    [CNP_ATOM_image_png] = {
 	"image/png",
@@ -298,6 +308,27 @@ static Ecore_X_Atom clipboard_atom;
 
 Eina_List *pastedimages;
 Eina_List *providedobjs;
+
+/**
+ * Drag & Drop functions
+ */
+struct dropable {
+     Evas_Object *obj;
+     /* FIXME: Cache window */
+     Elm_Sel_Format types;
+     Elm_Drop_Cb dropcb;
+     void *cbdata;
+};
+/* FIXME: Way too many globals */
+Eina_List *drops = NULL;
+Evas_Object *dragwin;
+int _dragx, _dragy;
+Ecore_Event_Handler *handler_pos, *handler_drop, *handler_enter,
+                    *handler_status;
+
+struct dropable *cur;
+
+
 #endif
 
 /* Stringshared, so I can just compare pointers later */
@@ -550,6 +581,14 @@ png_converter(char *target __UNUSED__, void *data, int size,
    return 1;
 }
 
+static int
+vcard_send(char *target __UNUSED__, void *data, int size,
+              void **data_ret __UNUSED__, int *size_ret __UNUSED__,
+              Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
+{
+   cnp_debug("vcard send called\n");
+   return 1;
+}
 /*
  * Callback to handle a targets response on a selection request:
  * So pick the format we'd like; and then request it.
@@ -716,9 +755,53 @@ notify_handler_uri(struct _elm_cnp_selection *sel,
    return 0;
 }
 
+/**
+ * Just receieved an vcard, either through cut and paste, or dnd.
+ */
 static int
-notify_handler_png(struct _elm_cnp_selection *sel __UNUSED__,
-                   Ecore_X_Event_Selection_Notify *notify __UNUSED__)
+vcard_receive(struct _elm_cnp_selection *sel,
+              Ecore_X_Event_Selection_Notify *notify)
+{
+   struct dropable *dropable;
+   Eina_List *l;
+   Ecore_X_Selection_Data *data;
+
+   data = notify->data;
+   cnp_debug("vcard receive\n");
+
+   if (sel == selections + ELM_SEL_XDND){
+        Elm_Drop_Data ddata;
+        cnp_debug("drag & drop\n");
+        /* FIXME: this needs to be generic: Used for all receives */
+        EINA_LIST_FOREACH(drops, l, dropable)
+             if (dropable->obj == sel->requestwidget)
+                break;
+        if (!dropable)
+          {
+             cnp_debug("Unable to find drop object");
+             ecore_x_dnd_send_finished();
+             return 0;
+        }
+        dropable = l->data;
+        ddata.x = savedtypes.x;
+        ddata.y = savedtypes.y;
+        ddata.format = ELM_SEL_FORMAT_VCARD;
+        ddata.data = data->data;
+        ddata.len = data->length;
+        dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
+        ecore_x_dnd_send_finished();
+   } else {
+        cnp_debug("Paste request\n");
+   }
+
+   return 0;
+
+}
+
+
+static int
+notify_handler_png(struct _elm_cnp_selection *sel,
+                   Ecore_X_Event_Selection_Notify *notify)
 {
    Ecore_X_Selection_Data *data;
    char *fname,*tmppath;
@@ -1060,25 +1143,6 @@ mark_up(const char *start, int *lenp){
 }
 
 
-/**
- * Drag & Drop functions
- */
-struct dropable {
-     Evas_Object *obj;
-     /* FIXME: Cache window */
-     Elm_Sel_Format types;
-     Elm_Drop_Cb dropcb;
-     void *cbdata;
-};
-/* FIXME: Way too many globals */
-Eina_List *drops = NULL;
-Evas_Object *dragwin;
-int _dragx, _dragy;
-Ecore_Event_Handler *handler_pos, *handler_drop, *handler_enter,
-                    *handler_status;
-
-struct dropable *cur;
-
 static Eina_Bool
 _dnd_enter(void *data, int etype, void *ev)
 {
@@ -1153,7 +1217,7 @@ _dnd_drop(void *data, int etype, void *ev)
    savedtypes.x = drop->position.x - x;
    savedtypes.y = drop->position.y - y;
 
-   printf("Drop position is %d,%d\n",savedtypes.x,savedtypes.y);
+   cnp_debug("Drop position is %d,%d\n",savedtypes.x,savedtypes.y);
 
    for ( ; l ; l = l->next)
      {
