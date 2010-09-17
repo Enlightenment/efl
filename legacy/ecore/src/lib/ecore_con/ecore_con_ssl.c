@@ -498,8 +498,11 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 
    _client_connected++;
 
-   gnutls_dh_params_init(&dh_params);
-   gnutls_dh_params_generate2(dh_params, 1024);
+   if ((ret = gnutls_dh_params_init(&dh_params)))
+     goto error;
+
+   if ((ret = gnutls_dh_params_generate2(dh_params, 1024)))
+     goto error;
 
    if ((client_cert) && (client_cert->cert) &&
        ((cl->server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
@@ -511,26 +514,33 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 
    if ((!cl->server->anoncred_s) && (!cl->server->cert))
      {
-        gnutls_anon_allocate_server_credentials(&(cl->server->anoncred_s));
+        if ((ret = gnutls_anon_allocate_server_credentials(&(cl->server->anoncred_s))))
+          goto error;
         gnutls_anon_set_server_dh_params(cl->server->anoncred_s, dh_params);
      }
 
-   gnutls_init(&(cl->session), GNUTLS_SERVER);
-   gnutls_set_default_priority(cl->session);
+   if ((ret = gnutls_init(&(cl->session), GNUTLS_SERVER)))
+          goto error;
+   if ((ret = gnutls_set_default_priority(cl->session)))
+          goto error;
    if (cl->server->cert)
      {
-        gnutls_credentials_set(cl->session,
+        if ((ret = gnutls_credentials_set(cl->session,
                                GNUTLS_CRD_CERTIFICATE,
-                               cl->server->cert);
+                               cl->server->cert)))
+          goto error;
         gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
      }
    else
-      gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON,
-                             cl->server->anoncred_s);
+      if ((ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON,
+                             cl->server->anoncred_s)))
+          goto error;
 
-   gnutls_kx_set_priority(cl->session, kx);
+   if ((ret = gnutls_kx_set_priority(cl->session, kx)))
+          goto error;
 
-   gnutls_protocol_set_priority(cl->session, proto);
+   if ((ret = gnutls_protocol_set_priority(cl->session, proto)))
+          goto error;
 
    gnutls_transport_set_ptr(cl->session, (gnutls_transport_ptr_t)cl->fd);
 
@@ -546,6 +556,9 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 
    /* TODO: add cert verification support */
    return ECORE_CON_SSL_ERROR_NONE;
+error:
+   ERR("gnutls returned with error: %s", gnutls_strerror(ret));
+   return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
 static Ecore_Con_Ssl_Error
