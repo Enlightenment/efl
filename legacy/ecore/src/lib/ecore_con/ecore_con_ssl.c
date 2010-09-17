@@ -66,6 +66,18 @@ static openssl *client_cert = NULL;
 static openssl *server_cert = NULL;
 #endif
 
+#define SSL_ERROR_CHECK_GOTO_ERROR(X) \
+do \
+  { \
+     if ((X)) \
+       { \
+          ERR("Error at %s:%s:%d!", __FILE__, __PRETTY_FUNCTION__, __LINE__); \
+          goto error; \
+       } \
+  } \
+while (0)
+
+
 static Ecore_Con_Ssl_Error
                  SSL_SUFFIX(_ecore_con_ssl_init) (void);
 static Ecore_Con_Ssl_Error
@@ -319,41 +331,30 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
         server_cert->count++;
      }
 
-   if ((ret = gnutls_init(&(svr->session), GNUTLS_CLIENT)))
-          goto error;
-   if ((ret = gnutls_set_default_priority(svr->session)))
-          goto error;
-   if ((ret = gnutls_kx_set_priority(svr->session, kx)))
-          goto error;
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&(svr->session), GNUTLS_CLIENT));
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(svr->session));
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(svr->session, kx));
+
    if (svr->cert)
-      if ((ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE,
-                             svr->cert)))
-          goto error;
+      SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE,
+                             svr->cert));
    else
      {
-        if ((ret = gnutls_anon_allocate_client_credentials(&svr->anoncred_c)))
-          goto error;
-        if ((ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c)))
-          goto error;
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_client_credentials(&svr->anoncred_c));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c));
      }
 
-   if ((ret = gnutls_kx_set_priority(svr->session, kx)))
-          goto error;
-   if ((ret = gnutls_protocol_set_priority(svr->session, proto)))
-          goto error;
-   if ((ret = gnutls_compression_set_priority(svr->session, compress)))
-          goto error;
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(svr->session, kx));
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(svr->session, proto));
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(svr->session, compress));
    gnutls_dh_set_prime_bits(svr->session, 2048);
 
    gnutls_transport_set_ptr(svr->session, (gnutls_transport_ptr_t)svr->fd);
 
    while ((ret = gnutls_handshake(svr->session)) < 0)
      {
-        if ((ret == GNUTLS_E_AGAIN) ||
-            (ret == GNUTLS_E_INTERRUPTED))
-           continue;
-
-        goto error;
+        SSL_ERROR_CHECK_GOTO_ERROR((ret != GNUTLS_E_AGAIN) &&
+            (ret != GNUTLS_E_INTERRUPTED));
      }
 
    return ECORE_CON_SSL_ERROR_NONE;
@@ -514,11 +515,9 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 
    _client_connected++;
 
-   if ((ret = gnutls_dh_params_init(&dh_params)))
-     goto error;
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_init(&dh_params));
 
-   if ((ret = gnutls_dh_params_generate2(dh_params, 1024)))
-     goto error;
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_generate2(dh_params, 1024));
 
    if ((client_cert) && (client_cert->cert) &&
        ((cl->server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
@@ -530,45 +529,33 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 
    if ((!cl->server->anoncred_s) && (!cl->server->cert))
      {
-        if ((ret = gnutls_anon_allocate_server_credentials(&(cl->server->anoncred_s))))
-          goto error;
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_server_credentials(&(cl->server->anoncred_s)));
         gnutls_anon_set_server_dh_params(cl->server->anoncred_s, dh_params);
      }
 
-   if ((ret = gnutls_init(&(cl->session), GNUTLS_SERVER)))
-          goto error;
-   if ((ret = gnutls_set_default_priority(cl->session)))
-          goto error;
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&(cl->session), GNUTLS_SERVER));
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(cl->session));
    if (cl->server->cert)
      {
-        if ((ret = gnutls_credentials_set(cl->session,
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session,
                                GNUTLS_CRD_CERTIFICATE,
-                               cl->server->cert)))
-          goto error;
+                               cl->server->cert));
         gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
      }
    else
-      if ((ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON,
-                             cl->server->anoncred_s)))
-          goto error;
+      SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON,
+                             cl->server->anoncred_s));
 
-   if ((ret = gnutls_kx_set_priority(cl->session, kx)))
-          goto error;
-
-   if ((ret = gnutls_protocol_set_priority(cl->session, proto)))
-          goto error;
-   if ((ret = gnutls_compression_set_priority(cl->session, compress)))
-          goto error;
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(cl->session, kx));
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(cl->session, proto));
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(cl->session, compress));
 
    gnutls_transport_set_ptr(cl->session, (gnutls_transport_ptr_t)cl->fd);
 
    while ((ret = gnutls_handshake(cl->session)) < 0)
      {
-        if ((ret == GNUTLS_E_AGAIN) ||
-            (ret == GNUTLS_E_INTERRUPTED))
-           continue;
-
-        goto error;
+        SSL_ERROR_CHECK_GOTO_ERROR((ret != GNUTLS_E_AGAIN) &&
+            (ret != GNUTLS_E_INTERRUPTED));
      }
 
    /* TODO: add cert verification support */
