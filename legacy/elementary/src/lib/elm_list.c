@@ -1608,6 +1608,35 @@ elm_list_item_tooltip_style_get(const Elm_List_Item *item)
 }
 
 /**
+ * Set the cursor to be shown when mouse is over the list item
+ *
+ * @param item Target item
+ * @param cursor the cursor name to be used.
+ *
+ * @see elm_object_cursor_set()
+ * @ingroup List
+ */
+EAPI void
+elm_list_item_cursor_set(Elm_List_Item *item, const char *cursor)
+{
+   elm_widget_item_cursor_set(item, cursor);
+}
+
+/**
+ * Unset the cursor to be shown when mouse is over the list item
+ *
+ * @param item Target item
+ *
+ * @see elm_object_cursor_unset()
+ * @ingroup List
+ */
+EAPI void
+elm_list_item_cursor_unset(Elm_List_Item *item)
+{
+   elm_widget_item_cursor_unset(item);
+}
+
+/**
  * Set bounce mode
  *
  * This will enable or disable the scroller bounce mode for the list. See

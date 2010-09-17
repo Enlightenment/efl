@@ -186,6 +186,7 @@
 #define ELM_INTERNAL_API_VERSION 7000
 
 typedef struct _Elm_Tooltip Elm_Tooltip;
+typedef struct _Elm_Cursor Elm_Cursor;
 typedef struct _Elm_Widget_Item Elm_Widget_Item; /**< base structure for all widget items that are not Elm_Widget themselves */
 
 struct _Elm_Widget_Item
@@ -286,6 +287,8 @@ EAPI void             _elm_widget_item_tooltip_content_cb_set(Elm_Widget_Item *i
 EAPI void             _elm_widget_item_tooltip_unset(Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_tooltip_style_set(Elm_Widget_Item *item, const char *style);
 EAPI const char      *_elm_widget_item_tooltip_style_get(const Elm_Widget_Item *item);
+EAPI void             _elm_widget_item_cursor_set(Elm_Widget_Item *item, const char *cursor);
+EAPI void             _elm_widget_item_cursor_unset(Elm_Widget_Item *item);
 
 /**
  * Convenience macro to create new widget item, doing casts for you.
@@ -359,6 +362,18 @@ EAPI const char      *_elm_widget_item_tooltip_style_get(const Elm_Widget_Item *
  */
 #define elm_widget_item_tooltip_style_get(item) \
   _elm_widget_item_tooltip_style_get((const Elm_Widget_Item *)item)
+/**
+ * Convenience function to set widget item cursor.
+ * @see _elm_widget_item_cursor_set()
+ */
+#define elm_widget_item_cursor_set(item, cursor) \
+  _elm_widget_item_cursor_set((Elm_Widget_Item *)item, cursor)
+/**
+ * Convenience function to unset widget item cursor.
+ * @see _elm_widget_item_cursor_unset()
+ */
+#define elm_widget_item_cursor_unset(item) \
+  _elm_widget_item_cursor_unset((Elm_Widget_Item *)item)
 
 /**
  * Cast and ensure the given pointer is an Elm_Widget_Item or return NULL.

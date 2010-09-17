@@ -950,6 +950,35 @@ elm_toolbar_item_tooltip_style_get(const Elm_Toolbar_Item *item)
 }
 
 /**
+ * Set the cursor to be shown when mouse is over the toolbar item
+ *
+ * @param item Target item
+ * @param cursor the cursor name to be used.
+ *
+ * @see elm_object_cursor_set()
+ * @ingroup Toolbar
+ */
+EAPI void
+elm_toolbar_item_cursor_set(Elm_Toolbar_Item *item, const char *cursor)
+{
+   elm_widget_item_cursor_set(item, cursor);
+}
+
+/**
+ * Unset the cursor to be shown when mouse is over the toolbar item
+ *
+ * @param item Target item
+ *
+ * @see elm_object_cursor_unset()
+ * @ingroup Toolbar
+ */
+EAPI void
+elm_toolbar_item_cursor_unset(Elm_Toolbar_Item *item)
+{
+   elm_widget_item_cursor_unset(item);
+}
+
+/**
  * Get whether the toolbar item opens a menu.
  *
  * @param item The toolbar item

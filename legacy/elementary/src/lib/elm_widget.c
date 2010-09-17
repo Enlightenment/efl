@@ -1523,6 +1523,20 @@ _elm_widget_item_tooltip_style_get(const Elm_Widget_Item *item)
    return elm_object_tooltip_style_get(item->view);
 }
 
+EAPI void
+_elm_widget_item_cursor_set(Elm_Widget_Item *item, const char *cursor)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   elm_object_cursor_set(item->view, cursor);
+}
+
+EAPI void
+_elm_widget_item_cursor_unset(Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   elm_object_cursor_unset(item->view);
+}
+
 // smart object funcs
 static void
 _smart_reconfigure(Smart_Data *sd)

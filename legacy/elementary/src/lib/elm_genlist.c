@@ -2994,6 +2994,35 @@ elm_genlist_item_tooltip_style_get(const Elm_Genlist_Item *item)
 }
 
 /**
+ * Set the cursor to be shown when mouse is over the genlist item
+ *
+ * @param item Target item
+ * @param cursor the cursor name to be used.
+ *
+ * @see elm_object_cursor_set()
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_cursor_set(Elm_Genlist_Item *item, const char *cursor)
+{
+   elm_widget_item_cursor_set(item, cursor);
+}
+
+/**
+ * Unset the cursor to be shown when mouse is over the genlist item
+ *
+ * @param item Target item
+ *
+ * @see elm_object_cursor_unset()
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_cursor_unset(Elm_Genlist_Item *item)
+{
+   elm_widget_item_cursor_unset(item);
+}
+
+/**
  * This sets the horizontal stretching mode
  *
  * This sets the mode used for sizing items horizontally. Valid modes are

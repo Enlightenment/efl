@@ -1577,6 +1577,35 @@ elm_gengrid_item_tooltip_style_get(const Elm_Gengrid_Item *item)
 }
 
 /**
+ * Set the cursor to be shown when mouse is over the gengrid item
+ *
+ * @param item Target item
+ * @param cursor the cursor name to be used.
+ *
+ * @see elm_object_cursor_set()
+ * @ingroup Gengrid
+ */
+EAPI void
+elm_gengrid_item_cursor_set(Elm_Gengrid_Item *item, const char *cursor)
+{
+   elm_widget_item_cursor_set(item, cursor);
+}
+
+/**
+ * Unset the cursor to be shown when mouse is over the gengrid item
+ *
+ * @param item Target item
+ *
+ * @see elm_object_cursor_unset()
+ * @ingroup Gengrid
+ */
+EAPI void
+elm_gengrid_item_cursor_unset(Elm_Gengrid_Item *item)
+{
+   elm_widget_item_cursor_unset(item);
+}
+
+/**
  * Set the always select mode.
  *
  * Cells will only call their selection func and callback when first becoming

@@ -26,7 +26,7 @@ endif
 
 lib_LTLIBRARIES = libelementary.la
 
-includes_HEADERS = Elementary.h elm_widget.h
+includes_HEADERS = Elementary.h Elementary_Cursor.h elm_widget.h
 includesdir = $(includedir)/elementary-@VMAJ@
 
 libelementary_la_SOURCES = \
@@ -91,6 +91,7 @@ elc_notepad.c \
 elc_scrolled_entry.c \
 \
 els_tooltip.c \
+els_cursor.c \
 els_pan.c \
 els_pan.h \
 els_scroller.c \
