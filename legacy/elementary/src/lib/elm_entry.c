@@ -1,4 +1,5 @@
 #include <Elementary.h>
+#include <Elementary_Cursor.h>
 #include "elm_priv.h"
 
 /**
@@ -1348,6 +1349,7 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
+   elm_object_cursor_set(obj, ELM_CURSOR_XTERM);
    elm_widget_can_focus_set(obj, 1);
 
    wd->linewrap     = EINA_TRUE;
