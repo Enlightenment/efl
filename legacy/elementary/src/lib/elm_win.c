@@ -357,7 +357,9 @@ _elm_win_eval_subobjs(Evas_Object *obj)
 static void
 _elm_win_subobj_callback_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   elm_win_resize_object_del(data, obj);
+   Elm_Win *win = elm_widget_data_get(data);
+   win->subobjs = eina_list_remove(win->subobjs, obj);
+   _elm_win_eval_subobjs(win->win_obj);
 }
 
 static void
