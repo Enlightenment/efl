@@ -153,10 +153,17 @@ esac
 AM_CONDITIONAL([BUILD_RUN], [test "x$have_socket" = "xyes"])
 
 have_fork="no"
-AC_CHECK_FUNCS(fork, [
-  have_fork="yes"
-  AC_DEFINE(HAVE_FORK)
-])
+want_quicklaunch="auto"
+AC_ARG_ENABLE([quick-launch],
+	[AC_HELP_STRING([--disable-quick-launch], [disable quick-launch support, @<:@default=detect@:>@])],
+	[want_quicklaunch=$enableval], [])
+
+if test "x$want_quicklaunch" != "xno"; then
+   AC_CHECK_FUNCS(fork, [
+   	have_fork="yes"
+  	AC_DEFINE(HAVE_FORK)
+   ])
+fi
 AM_CONDITIONAL([BUILD_QUICKLAUNCH], [test "x$have_fork" = "xyes"])
 
 AC_SUBST(dlopen_libs)
@@ -482,6 +489,7 @@ echo "    EDBus..................: ${have_elementary_edbus}"
 echo "    EFreet.................: ${have_elementary_efreet}"
 echo "    EWeather...............: ${have_elementary_eweather}"
 echo "    Ethumb.................: ${have_elementary_ethumb}"
+echo "    Quick Launch...........: ${have_fork}"
 echo
 echo "  eet......................: ${eet_eet}"
 echo "  edje_cc..................: ${edje_cc}"
