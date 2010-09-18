@@ -5,8 +5,6 @@ static void
 _evas_event_havemap_adjust(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
 {
    Evas_Object *pmap;
-   
-   if (!obj->havemap_parent) return;
    pmap = obj->smart.parent;
 
    while (pmap)
@@ -16,6 +14,7 @@ _evas_event_havemap_adjust(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
         pmap = pmap->smart.parent;
      }
    if (!pmap) return;
+
    evas_map_coords_get(pmap->cur.map, *x, *y, x, y, obj->mouse_grabbed);
    if (pmap->cur.map)
      {
@@ -26,16 +25,13 @@ _evas_event_havemap_adjust(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
 
 static Eina_List *
 _evas_event_object_list_in_get(Evas *e, Eina_List *in,
-                               const Eina_Inlist *list, Evas_Object *stop, 
-                               int x, int y, int *no_rep, int parmap)
+                               const Eina_Inlist *list, Evas_Object *stop,
+                               int x, int y, int *no_rep)
 {
    Evas_Object *obj;
    if (!list) return in;
    EINA_INLIST_REVERSE_FOREACH(list, obj)
      {
-        if (parmap) obj->havemap_parent = 1;
-        else obj->havemap_parent = 0;
-        
 	if (obj == stop)
 	  {
 	     *no_rep = 1;
@@ -70,8 +66,7 @@ _evas_event_object_list_in_get(Evas *e, Eina_List *in,
                                      evas_object_smart_members_get_direct(obj),
                                      stop,
                                      obj->cur.geometry.x + obj->cur.map->mx,
-                                     obj->cur.geometry.y + obj->cur.map->my,
-                                     &norep, 1);
+                                     obj->cur.geometry.y + obj->cur.map->my, &norep);
                               }
                          }
                     }
@@ -79,7 +74,7 @@ _evas_event_object_list_in_get(Evas *e, Eina_List *in,
                     {
                        in = _evas_event_object_list_in_get
                           (e, in, evas_object_smart_members_get_direct(obj),
-                           stop, x, y, &norep, parmap);
+                           stop, x, y, &norep);
                     }
                   if (norep)
                     {
@@ -137,7 +132,7 @@ evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y)
 	norep = 0;
 	in = _evas_event_object_list_in_get(e, in, 
                                             EINA_INLIST_GET(lay->objects), 
-                                            stop, x, y, &norep, 0);
+                                            stop, x, y, &norep);
 	if (norep) return in;
      }
    return in;
