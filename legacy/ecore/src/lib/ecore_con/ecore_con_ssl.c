@@ -692,6 +692,7 @@ _ecore_con_ssl_init_openssl(void)
 {
    SSL_library_init();
    SSL_load_error_strings();
+   OpenSSL_add_all_algorithms();
 
    return ECORE_CON_SSL_ERROR_NONE;
 }
@@ -700,6 +701,7 @@ static Ecore_Con_Ssl_Error
 _ecore_con_ssl_shutdown_openssl(void)
 {
    ERR_free_strings();
+   EVP_cleanup();
    return ECORE_CON_SSL_ERROR_NONE;
 }
 
