@@ -331,7 +331,7 @@ _img_dealloc(Image_Entry *ie)
 }
 
 static int
-_img_surface_alloc(Image_Entry *ie, int w, int h)
+_img_surface_alloc(Image_Entry *ie, unsigned int w, unsigned int h)
 {
    Img *img = (Img *)ie;
 
@@ -379,7 +379,7 @@ _img_unload(Image_Entry *ie)
 }
 
 static void
-_img_dirty_region(Image_Entry *ie, int x, int y, int w, int h)
+_img_dirty_region(Image_Entry *ie, unsigned int x, unsigned int y, unsigned int w, unsigned int h)
 {
 }
 
@@ -390,19 +390,19 @@ _img_dirty(Image_Entry *dst, const Image_Entry *src)
 }
 
 static int
-_img_size_set(Image_Entry *dst, const Image_Entry *src, int w, int h)
+_img_size_set(Image_Entry *dst, const Image_Entry *src, unsigned int w, unsigned int h)
 {
    return 0;
 }
 
 static int
-_img_copied_data(Image_Entry *ie, int w, int h, DATA32 *image_data, int alpha, int cspace)
+_img_copied_data(Image_Entry *ie, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace)
 {
    return 0;
 }
 
 static int
-_img_data(Image_Entry *ie, int w, int h, DATA32 *image_data, int alpha, int cspace)
+_img_data(Image_Entry *ie, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace)
 {
    return 0;
 }
@@ -433,23 +433,23 @@ img_init(void)
         _img_alloc,//Image_Entry *(*alloc)(void);
           _img_dealloc,//void         (*dealloc)(Image_Entry *im);
         /* The cache provide some helpers for surface manipulation. */
-          _img_surface_alloc,//int          (*surface_alloc)(Image_Entry *im, int w, int h);
+          _img_surface_alloc,//int          (*surface_alloc)(Image_Entry *im, unsigned int w, unsigned int h);
           _img_surface_delete,//void         (*surface_delete)(Image_Entry *im);
           _img_surface_pixels,//DATA32      *(*surface_pixels)(Image_Entry *im);
         /* The cache is doing the allocation and deallocation, you must just do the rest. */
           _img_load,//int          (*constructor)(Image_Entry *im);
           _img_unload,//void         (*destructor)(Image_Entry *im);
-          _img_dirty_region,//void         (*dirty_region)(Image_Entry *im, int x, int y, int w, int h);
+          _img_dirty_region,//void         (*dirty_region)(Image_Entry *im, unisnged int x, unisnged int y, unisnged int w, unsigned int h);
         /* Only called when references > 0. Need to provide a fresh copie of im. */
         /* The destination surface does have a surface, but no allocated pixel data. */
           _img_dirty,//int          (*dirty)(Image_Entry *dst, const Image_Entry *src);
         /* Only called when references == 1. We will call drop on im'. */
         /* The destination surface does not have any surface. */
-          _img_size_set,//int          (*size_set)(Image_Entry *dst, const Image_Entry *src, int w, int h);
+          _img_size_set,//int          (*size_set)(Image_Entry *dst, const Image_Entry *src, unisnged int w, unisnged int h);
         /* The destination surface does not have any surface. */
-          _img_copied_data,//int          (*copied_data)(Image_Entry *dst, int w, int h, DATA32 *image_data, int alpha, int cspace);
+          _img_copied_data,//int          (*copied_data)(Image_Entry *dst, unisnged int w, unisnged int h, DATA32 *image_data, int alpha, int cspace);
         /* The destination surface does not have any surface. */
-          _img_data,//int          (*data)(Image_Entry *dst, int w, int h, DATA32 *image_data, int alpha, int cspace);
+          _img_data,//int          (*data)(Image_Entry *dst, unsigned int w, unisgned int h, DATA32 *image_data, int alpha, int cspace);
           _img_color_space,//int          (*color_space)(Image_Entry *dst, int cspace);
         /* This function need to update im->w and im->h. */
           _img_load_data,//int          (*load)(Image_Entry *im);
