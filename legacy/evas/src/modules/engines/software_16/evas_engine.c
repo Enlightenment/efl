@@ -176,13 +176,13 @@ eng_context_render_op_get(void *data __UNUSED__, void *context)
 static void
 eng_rectangle_draw(void *data __UNUSED__, void *context, void *surface, int x, int y, int w, int h)
 {
-   soft16_rectangle_draw(surface, context, x, y, w, h);
+   evas_common_soft16_rectangle_draw(surface, context, x, y, w, h);
 }
 
 static void
 eng_line_draw(void *data __UNUSED__, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
-   soft16_line_draw(surface, context, x1, y1, x2, y2);
+   evas_common_soft16_line_draw(surface, context, x1, y1, x2, y2);
 }
 
 static void *
@@ -200,7 +200,7 @@ eng_polygon_points_clear(void *data __UNUSED__, void *context __UNUSED__, void *
 static void
 eng_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon, int x, int y)
 {
-   soft16_polygon_draw(surface, context, polygon, x, y);
+   evas_common_soft16_polygon_draw(surface, context, polygon, x, y);
 }
 
 static int
@@ -224,7 +224,7 @@ eng_image_alpha_set(void *data __UNUSED__, void *image, int have_alpha)
 {
    if (!image) return NULL;
    have_alpha = !!have_alpha;
-   image = soft16_image_alpha_set(image, have_alpha);
+   image = evas_common_soft16_image_alpha_set(image, have_alpha);
    return image;
 }
 
@@ -415,7 +415,7 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
    im = (Soft16_Image *) image;
 
    evas_cache_image_load_data(&im->cache_entry);
-   soft16_image_draw(im, surface, context,
+   evas_common_soft16_image_draw(im, surface, context,
 		     src_x, src_y, src_w, src_h,
 		     dst_x, dst_y, dst_w, dst_h,
 		     smooth);
@@ -563,9 +563,9 @@ eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, i
    evas_cache_image_surface_alloc(&im->cache_entry, dst->cache_entry.w, dst->cache_entry.h);
    evas_common_draw_context_font_ext_set(context,
 					 surface,
-					 soft16_font_glyph_new,
-					 soft16_font_glyph_free,
-					 soft16_font_glyph_draw);
+					 evas_common_soft16_font_glyph_new,
+					 evas_common_soft16_font_glyph_free,
+					 evas_common_soft16_font_glyph_draw);
    evas_common_font_draw(im, context, font, x, y, text, intl_props);
    evas_common_draw_context_font_ext_set(context,
 					 NULL,

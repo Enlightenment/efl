@@ -287,7 +287,7 @@ eng_setup(Evas *e, void *in)
      e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
    /* check if the display can do shm */
-   re->shm = evas_software_x11_x_can_do_shm(re->disp);
+   re->shm = evas_software_16_x11_x_can_do_shm(re->disp);
 
    return 1;
 }
@@ -302,7 +302,7 @@ eng_output_free(void *data)
 // NOTE: XrmGetDatabase() result is shared per connection, do not free it.
 //   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
    
-   if (re->shbuf) evas_software_x11_x_output_buffer_free(re->shbuf, 0);
+   if (re->shbuf) evas_software_16_x11_x_output_buffer_free(re->shbuf, 0);
    if (re->clip_rects) XDestroyRegion(re->clip_rects);
    if (re->gc) XFreeGC(re->disp, re->gc);
    if (re->tb) evas_common_tilebuf_free(re->tb);
@@ -332,7 +332,7 @@ eng_output_resize(void *data, int w, int h)
      evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
    if (re->shbuf)
      {
-        evas_software_x11_x_output_buffer_free(re->shbuf, 0);
+        evas_software_16_x11_x_output_buffer_free(re->shbuf, 0);
 	re->shbuf = NULL;
      }
    if (re->clip_rects)
@@ -400,7 +400,7 @@ _output_buffer_alloc(Render_Engine *re)
 	h = re->w;
      }
 
-   re->shbuf = evas_software_x11_x_output_buffer_new
+   re->shbuf = evas_software_16_x11_x_output_buffer_new
      (re->disp, DefaultVisual(re->disp, DefaultScreen(re->disp)),
       DefaultDepth(re->disp, DefaultScreen(re->disp)),
       w, h, 1, NULL);
@@ -625,7 +625,7 @@ eng_output_flush(void *data)
      }
    else return;
 
-   evas_software_x11_x_output_buffer_paste
+   evas_software_16_x11_x_output_buffer_paste
      (re->shbuf, re->draw, re->gc, 0, 0, re->shbuf->im->cache_entry.w, re->shbuf->im->cache_entry.h, 1);
    XSetClipMask(re->disp, re->gc, None);
 }
@@ -638,7 +638,7 @@ eng_output_idle_flush(void *data)
    re = (Render_Engine *)data;
    if (re->shbuf)
      {
-	evas_software_x11_x_output_buffer_free(re->shbuf, 0);
+	evas_software_16_x11_x_output_buffer_free(re->shbuf, 0);
 	re->shbuf = NULL;
      }
    if (re->clip_rects)

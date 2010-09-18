@@ -76,7 +76,7 @@ polygon_edge_sorter(const void *a, const void *b)
 }
 
 void
-soft8_polygon_draw(Soft8_Image * dst, RGBA_Draw_Context * dc,
+evas_common_soft8_polygon_draw(Soft8_Image * dst, RGBA_Draw_Context * dc,
                    RGBA_Polygon_Point * points, int x, int y)
 {
    RGBA_Polygon_Point *pt;

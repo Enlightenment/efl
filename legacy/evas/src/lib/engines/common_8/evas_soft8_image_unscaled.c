@@ -236,7 +236,7 @@ _soft8_image_draw_unscaled_mul(Soft8_Image * src, Soft8_Image * dst,
 }
 
 void
-soft8_image_draw_unscaled(Soft8_Image * src, Soft8_Image * dst,
+evas_common_soft8_image_draw_unscaled(Soft8_Image * src, Soft8_Image * dst,
                           RGBA_Draw_Context * dc,
                           const Eina_Rectangle sr,
                           const Eina_Rectangle dr, const Eina_Rectangle cr)

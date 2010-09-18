@@ -41,7 +41,7 @@ _soft8_convert_from_rgba_scanline(const DATA32 * src, DATA8 * dst,
 }
 
 void
-soft8_image_convert_from_rgba(Soft8_Image * im, const DATA32 * src)
+evas_common_soft8_image_convert_from_rgba(Soft8_Image * im, const DATA32 * src)
 {
    const DATA32 *sp;
    DATA8 *dp;
@@ -88,7 +88,7 @@ _soft8_convert_from_rgb_scanline(const DATA32 * src, DATA8 * dst, const int y,
 }
 
 void
-soft8_image_convert_from_rgb(Soft8_Image * im, const DATA32 * src)
+evas_common_soft8_image_convert_from_rgb(Soft8_Image * im, const DATA32 * src)
 {
    const DATA32 *sp;
    DATA8 *dp;

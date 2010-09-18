@@ -76,7 +76,7 @@ polygon_edge_sorter(const void *a, const void *b)
 }
 
 void
-soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points, int x, int y)
+evas_common_soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points, int x, int y)
 {
    RGBA_Polygon_Point *pt;
    RGBA_Vertex       *point;

@@ -416,7 +416,7 @@ _soft16_image_draw_scaled_mul(Soft16_Image *src, Soft16_Image *dst,
 }
 
 void
-soft16_image_draw_scaled_sampled(Soft16_Image *src, Soft16_Image *dst,
+evas_common_soft16_image_draw_scaled_sampled(Soft16_Image *src, Soft16_Image *dst,
 				 RGBA_Draw_Context *dc,
 				 const Eina_Rectangle sr,
 				 const Eina_Rectangle dr,

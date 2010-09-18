@@ -284,9 +284,9 @@ _evas_common_load_soft16_image_data_from_file(Image_Entry *ie)
 
         sp = im->source->image.data;
         if (im->alpha)
-          soft16_image_convert_from_rgba(im, sp);
+          evas_common_soft16_image_convert_from_rgba(im, sp);
         else
-          soft16_image_convert_from_rgb(im, sp);
+          evas_common_soft16_image_convert_from_rgb(im, sp);
      }
    evas_cache_image_drop(&im->source->cache_entry);
    im->cache_entry.info.module = NULL;
@@ -297,14 +297,14 @@ _evas_common_load_soft16_image_data_from_file(Image_Entry *ie)
 }
 
 /* Soft16_Image * */
-/* soft16_image_new(int w, int h, int stride, int have_alpha, DATA16 *pixels, */
+/* evas_common_soft16_image_new(int w, int h, int stride, int have_alpha, DATA16 *pixels, */
 /* 		 int copy) */
 /* { */
 /*    Soft16_Image *im; */
 
 /*    if (stride < 0) stride = _calc_stride(w); */
 
-/*    im = soft16_image_alloc(w, h, stride, have_alpha, copy); */
+/*    im = evas_common_soft16_image_alloc(w, h, stride, have_alpha, copy); */
 /*    if (!im) return NULL; */
 
 /*    if (pixels) */
@@ -460,13 +460,13 @@ _soft16_image_draw_sampled_int(Soft16_Image *src, Soft16_Image *dst,
      return;
 
    if ((dr.w == sr.w) && (dr.h == sr.h))
-     soft16_image_draw_unscaled(src, dst, dc, sr, dr, cr);
+     evas_common_soft16_image_draw_unscaled(src, dst, dc, sr, dr, cr);
    else
-     soft16_image_draw_scaled_sampled(src, dst, dc, sr, dr, cr);
+     evas_common_soft16_image_draw_scaled_sampled(src, dst, dc, sr, dr, cr);
 }
 
 EAPI void
-soft16_image_draw(Soft16_Image *src, Soft16_Image *dst,
+evas_common_soft16_image_draw(Soft16_Image *src, Soft16_Image *dst,
 		  RGBA_Draw_Context *dc,
 		  int src_region_x, int src_region_y,
 		  int src_region_w, int src_region_h,
@@ -522,7 +522,7 @@ soft16_image_draw(Soft16_Image *src, Soft16_Image *dst,
 }
 
 EAPI Soft16_Image *
-soft16_image_alpha_set(Soft16_Image *im, int have_alpha)
+evas_common_soft16_image_alpha_set(Soft16_Image *im, int have_alpha)
 {
    Soft16_Image   *new_im;
 
@@ -540,7 +540,7 @@ soft16_image_alpha_set(Soft16_Image *im, int have_alpha)
 }
 
 /* Soft16_Image * */
-/* soft16_image_size_set(Soft16_Image *old_im, int w, int h) */
+/* evas_common_soft16_image_size_set(Soft16_Image *old_im, int w, int h) */
 /* { */
 /*    Soft16_Image *new_im; */
 /*    DATA16 *dp, *sp; */
@@ -548,7 +548,7 @@ soft16_image_alpha_set(Soft16_Image *im, int have_alpha)
 
 /*    if ((old_im->cache_entry.w == w) && (old_im->cache_entry.h == h)) return old_im; */
 
-/*    new_im = soft16_image_new(w, h, -1, old_im->flags.have_alpha, NULL, 1); */
+/*    new_im = evas_common_soft16_image_new(w, h, -1, old_im->flags.have_alpha, NULL, 1); */
 
 /*    if (old_im->cache_entry.w < new_im->cache_entry.w) */
 /*      cw = old_im->cache_entry.w; */

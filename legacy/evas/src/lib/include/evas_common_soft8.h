@@ -155,37 +155,37 @@ EAPI void                evas_common_soft8_image_init(void);
 EAPI void                evas_common_soft8_image_shutdown(void);
 EAPI Evas_Cache_Image   *evas_common_soft8_image_cache_get(void);
 
-EAPI void                soft8_image_draw(Soft8_Image *src, Soft8_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, int smooth);
-EAPI Soft8_Image       *soft8_image_alpha_set(Soft8_Image *im, int have_alpha);
+EAPI void                evas_common_soft8_image_draw(Soft8_Image *src, Soft8_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, int smooth);
+EAPI Soft8_Image       *evas_common_soft8_image_alpha_set(Soft8_Image *im, int have_alpha);
 
-void                     soft8_image_draw_unscaled(Soft8_Image *src, Soft8_Image *dst, RGBA_Draw_Context *dc, const Eina_Rectangle sr, const Eina_Rectangle dr, const Eina_Rectangle cr);
-void                     soft8_image_draw_scaled_sampled(Soft8_Image *src, Soft8_Image *dst, RGBA_Draw_Context *dc, const Eina_Rectangle sr, const Eina_Rectangle dr, const Eina_Rectangle cr);
+void                     evas_common_soft8_image_draw_unscaled(Soft8_Image *src, Soft8_Image *dst, RGBA_Draw_Context *dc, const Eina_Rectangle sr, const Eina_Rectangle dr, const Eina_Rectangle cr);
+void                     evas_common_soft8_image_draw_scaled_sampled(Soft8_Image *src, Soft8_Image *dst, RGBA_Draw_Context *dc, const Eina_Rectangle sr, const Eina_Rectangle dr, const Eina_Rectangle cr);
 
 /* convert/dither functions */
-void                     soft8_image_convert_from_rgb(Soft8_Image *im, const DATA32 *src);
-void                     soft8_image_convert_from_rgba(Soft8_Image *im, const DATA32 *src);
+void                     evas_common_soft8_image_convert_from_rgb(Soft8_Image *im, const DATA32 *src);
+void                     evas_common_soft8_image_convert_from_rgba(Soft8_Image *im, const DATA32 *src);
 
 /**
  * Rectangle (evas_soft8_rectangle.c)
  */
-EAPI void                soft8_rectangle_draw(Soft8_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
+EAPI void                evas_common_soft8_rectangle_draw(Soft8_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
 
 /**
  * Polygon (evas_soft8_polygon.c)
  */
-EAPI void                soft8_polygon_draw(Soft8_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points, int x, int y);
+EAPI void                evas_common_soft8_polygon_draw(Soft8_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points, int x, int y);
 
 /**
  * Line (evas_soft8_line.c)
  */
-EAPI void                soft8_line_draw(Soft8_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, int y1);
+EAPI void                evas_common_soft8_line_draw(Soft8_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, int y1);
 
 /**
  * Font (evas_soft8_font.c)
  */
-EAPI void               *soft8_font_glyph_new(void *data, RGBA_Font_Glyph *fg);
-EAPI void                soft8_font_glyph_free(void *ext_dat);
-EAPI void                soft8_font_glyph_draw(void *data, void *dest, void *context, RGBA_Font_Glyph *fg, int x, int y);
+EAPI void               *evas_common_soft8_font_glyph_new(void *data, RGBA_Font_Glyph *fg);
+EAPI void                evas_common_soft8_font_glyph_free(void *ext_dat);
+EAPI void                evas_common_soft8_font_glyph_draw(void *data, void *dest, void *context, RGBA_Font_Glyph *fg, int x, int y);
 
 #ifdef __cplusplus
 }

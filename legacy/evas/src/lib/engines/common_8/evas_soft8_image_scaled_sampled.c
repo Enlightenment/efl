@@ -406,7 +406,7 @@ _soft8_image_draw_scaled_mul(Soft8_Image * src, Soft8_Image * dst,
 }
 
 void
-soft8_image_draw_scaled_sampled(Soft8_Image * src, Soft8_Image * dst,
+evas_common_soft8_image_draw_scaled_sampled(Soft8_Image * src, Soft8_Image * dst,
                                 RGBA_Draw_Context * dc,
                                 const Eina_Rectangle sr,
                                 const Eina_Rectangle dr,

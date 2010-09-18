@@ -53,15 +53,13 @@ struct _X_Output_Buffer
 };
 
 /****/
-void             evas_software_x11_x_init                        (void);
-
-int              evas_software_x11_x_can_do_shm                  (xcb_connection_t *c, xcb_screen_t *screen);
-X_Output_Buffer *evas_software_x11_x_output_buffer_new           (xcb_connection_t *, xcb_screen_t *screen, int depth, unsigned char *pal, int w, int h, int try_shm, void *data);
-void             evas_software_x11_x_output_buffer_free          (X_Output_Buffer *xob, int sync);
-void             evas_software_x11_x_output_buffer_paste         (X_Output_Buffer *xob, xcb_drawable_t d, xcb_gcontext_t gc, int x, int y, int w, int h, int sync);
-DATA8           *evas_software_x11_x_output_buffer_data          (X_Output_Buffer *xob, int *bytes_per_line_ret);
-int              evas_software_x11_x_output_buffer_depth         (X_Output_Buffer *xob);
-int              evas_software_x11_x_output_buffer_byte_order    (X_Output_Buffer *xob);
-int              evas_software_x11_x_output_buffer_bit_order     (X_Output_Buffer *xob);
+int              evas_software_8_x11_x_can_do_shm                  (xcb_connection_t *c, xcb_screen_t *screen);
+X_Output_Buffer *evas_software_8_x11_x_output_buffer_new           (xcb_connection_t *, xcb_screen_t *screen, int depth, unsigned char *pal, int w, int h, int try_shm, void *data);
+void             evas_software_8_x11_x_output_buffer_free          (X_Output_Buffer *xob, int sync);
+void             evas_software_8_x11_x_output_buffer_paste         (X_Output_Buffer *xob, xcb_drawable_t d, xcb_gcontext_t gc, int x, int y, int w, int h, int sync);
+DATA8           *evas_software_8_x11_x_output_buffer_data          (X_Output_Buffer *xob, int *bytes_per_line_ret);
+int              evas_software_8_x11_x_output_buffer_depth         (X_Output_Buffer *xob);
+int              evas_software_8_x11_x_output_buffer_byte_order    (X_Output_Buffer *xob);
+int              evas_software_8_x11_x_output_buffer_bit_order     (X_Output_Buffer *xob);
 
 #endif

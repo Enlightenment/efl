@@ -227,7 +227,7 @@ _soft8_font_glyph_draw_mono(Soft8_Image * dst,
 }
 
 void
-soft8_font_glyph_draw(void *data, void *dest __UNUSED__, void *context,
+evas_common_soft8_font_glyph_draw(void *data, void *dest __UNUSED__, void *context,
                       RGBA_Font_Glyph * fg, int x, int y)
 {
    Soft8_Image *dst;
@@ -274,12 +274,12 @@ soft8_font_glyph_draw(void *data, void *dest __UNUSED__, void *context,
 }
 
 void *
-soft8_font_glyph_new(void *data __UNUSED__, RGBA_Font_Glyph * fg __UNUSED__)
+evas_common_soft8_font_glyph_new(void *data __UNUSED__, RGBA_Font_Glyph * fg __UNUSED__)
 {
    return (void *)1;            /* core requires != NULL to work */
 }
 
 void
-soft8_font_glyph_free(void *ext_dat __UNUSED__)
+evas_common_soft8_font_glyph_free(void *ext_dat __UNUSED__)
 {
 }

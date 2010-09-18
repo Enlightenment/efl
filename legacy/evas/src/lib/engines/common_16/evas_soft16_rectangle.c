@@ -75,7 +75,7 @@ _soft16_rectangle_draw_int(Soft16_Image *dst, RGBA_Draw_Context *dc,
 }
 
 void
-soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Context *dc,
+evas_common_soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Context *dc,
                       int x, int y, int w, int h)
 {
    Eina_Rectangle dr;

@@ -213,7 +213,7 @@ eng_setup(Evas * e, void *in)
       e->engine.data.context =
           e->engine.func->context_new(e->engine.data.output);
    /* check if the display can do shm */
-   re->shm = evas_software_x11_x_can_do_shm(re->connection, re->screen);
+   re->shm = evas_software_8_x11_x_can_do_shm(re->connection, re->screen);
 
    return 1;
 }
@@ -225,7 +225,7 @@ eng_output_free(void *data)
 
    re = (Render_Engine *) data;
    if (re->shbuf)
-      evas_software_x11_x_output_buffer_free(re->shbuf, 0);
+      evas_software_8_x11_x_output_buffer_free(re->shbuf, 0);
    if (re->clip_rects)
      {
         pixman_region_fini(re->clip_rects);
@@ -263,7 +263,7 @@ eng_output_resize(void *data, int w, int h)
       evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
    if (re->shbuf)
      {
-        evas_software_x11_x_output_buffer_free(re->shbuf, 0);
+        evas_software_8_x11_x_output_buffer_free(re->shbuf, 0);
         re->shbuf = NULL;
      }
    if (re->clip_rects)
@@ -334,7 +334,7 @@ _output_buffer_alloc(Render_Engine * re)
         h = re->w;
      }
 
-   re->shbuf = evas_software_x11_x_output_buffer_new
+   re->shbuf = evas_software_8_x11_x_output_buffer_new
        (re->connection, re->screen, re->depth, re->pal, w, h, 1, NULL);
 
    re->shbuf->drawable = re->drawable;
@@ -595,7 +595,7 @@ eng_output_flush(void *data)
            pixman_box16_t *rects =
                pixman_region_rectangles(re->clip_rects, NULL);
            for (i = 0; i < pixman_region_n_rects(re->clip_rects); i++, rects++)
-              evas_software_x11_x_output_buffer_paste
+              evas_software_8_x11_x_output_buffer_paste
                   (re->shbuf, re->drawable, re->shbuf->gc, rects->x1, rects->y1,
                    rects->x2 - rects->x1, rects->y2 - rects->y1, 1);
         }
@@ -614,7 +614,7 @@ eng_output_idle_flush(void *data)
    re = (Render_Engine *) data;
    if (re->shbuf)
      {
-        evas_software_x11_x_output_buffer_free(re->shbuf, 0);
+        evas_software_8_x11_x_output_buffer_free(re->shbuf, 0);
         re->shbuf = NULL;
      }
    if (re->clip_rects)

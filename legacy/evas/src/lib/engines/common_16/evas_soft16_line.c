@@ -2,7 +2,7 @@
 #include "evas_soft16_scanline_fill.c"
 
 /*
- * All functions except by soft16_line_draw() expect x0 <= x1.
+ * All functions except by evas_common_soft16_line_draw() expect x0 <= x1.
  */
 
 static inline int
@@ -370,7 +370,7 @@ _soft16_line_aliased(Soft16_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 }
 
 void
-soft16_line_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, int y1)
+evas_common_soft16_line_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, int y1)
 {
    struct RGBA_Draw_Context_clip c_bkp, c_tmp;
    int dx, dy;

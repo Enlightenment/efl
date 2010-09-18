@@ -804,7 +804,7 @@ evas_engine_sdl16_image_draw(void *data __UNUSED__, void *context, void *surface
 	_SDL_UPDATE_PIXELS(eim);
      }
 
-   soft16_image_draw((Soft16_Image *) eim->cache_entry.src,
+   evas_common_soft16_image_draw((Soft16_Image *) eim->cache_entry.src,
                      (Soft16_Image *) dst->cache_entry.src,
                      context,
                      src_region_x, src_region_y, src_region_w, src_region_h,
@@ -895,9 +895,9 @@ evas_engine_sdl16_font_draw(void *data __UNUSED__, void *context, void *surface,
      }
    evas_common_draw_context_font_ext_set(context,
                                          dst,
-                                         soft16_font_glyph_new,
-                                         soft16_font_glyph_free,
-                                         soft16_font_glyph_draw);
+                                         evas_common_soft16_font_glyph_new,
+                                         evas_common_soft16_font_glyph_free,
+                                         evas_common_soft16_font_glyph_draw);
    evas_common_font_draw(im, context, font, x, y, text, intl_props);
    evas_common_draw_context_font_ext_set(context,
                                          NULL,
@@ -922,7 +922,7 @@ evas_engine_sdl16_line_draw(void *data __UNUSED__, void *context, void *surface,
 	_SDL_UPDATE_PIXELS(eim);
      }
 
-   soft16_line_draw((Soft16_Image *) eim->cache_entry.src,
+   evas_common_soft16_line_draw((Soft16_Image *) eim->cache_entry.src,
                     context,
                     x1, y1, x2, y2);
 
@@ -955,7 +955,7 @@ evas_engine_sdl16_rectangle_draw(void *data __UNUSED__, void *context, void *sur
 
              im = (Soft16_Image *) eim->cache_entry.src;
 
-             soft16_rectangle_draw(im, context, x, y, w, h);
+             evas_common_soft16_rectangle_draw(im, context, x, y, w, h);
 
              if (mustlock_im)
                SDL_UnlockSurface(eim->surface);
@@ -1004,7 +1004,7 @@ evas_engine_sdl16_polygon_draw(void *data __UNUSED__, void *context, void *surfa
 	_SDL_UPDATE_PIXELS(eim);
      }
 
-   soft16_polygon_draw((Soft16_Image *) eim->cache_entry.src, context, polygon, x, y);
+   evas_common_soft16_polygon_draw((Soft16_Image *) eim->cache_entry.src, context, polygon, x, y);
 
    if (mustlock_im)
      SDL_UnlockSurface(eim->surface);

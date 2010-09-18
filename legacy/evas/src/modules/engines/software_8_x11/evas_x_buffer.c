@@ -4,7 +4,7 @@
 static int _xcb_err = 0;
 
 int
-evas_software_x11_x_can_do_shm(xcb_connection_t * c, xcb_screen_t * screen)
+evas_software_8_x11_x_can_do_shm(xcb_connection_t * c, xcb_screen_t * screen)
 {
    static xcb_connection_t *cached_c = NULL;
    static int cached_result = 0;
@@ -17,17 +17,15 @@ evas_software_x11_x_can_do_shm(xcb_connection_t * c, xcb_screen_t * screen)
      {
         X_Output_Buffer *xob;
 
-        xob = evas_software_x11_x_output_buffer_new(c,
-                                                    screen,
-                                                    screen->root_depth,
-                                                    (unsigned char *)NULL,
-                                                    16, 16, 2, NULL);
+        xob = evas_software_8_x11_x_output_buffer_new
+          (c, screen, screen->root_depth, (unsigned char *)NULL,
+           16, 16, 2, NULL);
         if (!xob)
           {
              cached_result = 0;
              return 0;
           }
-        evas_software_x11_x_output_buffer_free(xob, 1);
+        evas_software_8_x11_x_output_buffer_free(xob, 1);
         cached_result = 1;
         return 1;
      }
@@ -36,11 +34,11 @@ evas_software_x11_x_can_do_shm(xcb_connection_t * c, xcb_screen_t * screen)
 }
 
 X_Output_Buffer *
-evas_software_x11_x_output_buffer_new(xcb_connection_t * c,
-                                      xcb_screen_t * s,
-                                      int depth,
-                                      unsigned char *pal,
-                                      int w, int h, int try_shm, void *data)
+evas_software_8_x11_x_output_buffer_new(xcb_connection_t * c,
+                                        xcb_screen_t * s,
+                                        int depth,
+                                        unsigned char *pal,
+                                        int w, int h, int try_shm, void *data)
 {
    X_Output_Buffer *xob;
 
@@ -159,7 +157,7 @@ evas_software_x11_x_output_buffer_new(xcb_connection_t * c,
 }
 
 void
-evas_software_x11_x_output_buffer_free(X_Output_Buffer * xob, int sync)
+evas_software_8_x11_x_output_buffer_free(X_Output_Buffer * xob, int sync)
 {
    if (xob->shm_info)
      {
@@ -185,7 +183,7 @@ evas_software_x11_x_output_buffer_free(X_Output_Buffer * xob, int sync)
 }
 
 void
-evas_software_x11_x_output_buffer_paste(X_Output_Buffer * xob,
+evas_software_8_x11_x_output_buffer_paste(X_Output_Buffer * xob,
                                         xcb_drawable_t d,
                                         xcb_gcontext_t gc,
                                         int x, int y, int w, int h, int sync)
@@ -218,7 +216,7 @@ evas_software_x11_x_output_buffer_paste(X_Output_Buffer * xob,
 }
 
 DATA8 *
-evas_software_x11_x_output_buffer_data(X_Output_Buffer * xob,
+evas_software_8_x11_x_output_buffer_data(X_Output_Buffer * xob,
                                        int *bytes_per_line_ret)
 {
    if (bytes_per_line_ret)
@@ -227,19 +225,19 @@ evas_software_x11_x_output_buffer_data(X_Output_Buffer * xob,
 }
 
 int
-evas_software_x11_x_output_buffer_depth(X_Output_Buffer * xob)
+evas_software_8_x11_x_output_buffer_depth(X_Output_Buffer * xob)
 {
    return xob->xim->bpp;
 }
 
 int
-evas_software_x11_x_output_buffer_byte_order(X_Output_Buffer * xob)
+evas_software_8_x11_x_output_buffer_byte_order(X_Output_Buffer * xob)
 {
    return xob->xim->byte_order;
 }
 
 int
-evas_software_x11_x_output_buffer_bit_order(X_Output_Buffer * xob)
+evas_software_8_x11_x_output_buffer_bit_order(X_Output_Buffer * xob)
 {
    return xob->xim->bit_order;
 }
