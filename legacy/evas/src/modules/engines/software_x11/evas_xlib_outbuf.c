@@ -23,7 +23,7 @@ struct _Outbuf_Region
 static Eina_List *shmpool = NULL;
 static int shmsize = 0;
 static int shmmemlimit = 10 * 1024 * 1024;
-static int shmcountlimit = 32;
+static const unsigned int shmcountlimit = 32;
 
 #ifdef EVAS_FRAME_QUEUING
 static LK(lock_shmpool);
@@ -357,7 +357,7 @@ evas_software_xlib_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 		       buf->priv.mask.r,
 		       buf->priv.mask.g,
 		       buf->priv.mask.b,
-		       buf->priv.pal ? buf->priv.pal->colors : -1);
+		       buf->priv.pal ? (int)buf->priv.pal->colors : -1);
 	     }
 	}
       evas_software_xlib_outbuf_drawable_set(buf, draw);

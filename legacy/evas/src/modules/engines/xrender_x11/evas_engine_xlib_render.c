@@ -393,7 +393,7 @@ _xr_xlib_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RG
 
    if ((dc) && (dc->mul.use))
      {
-	int r, g, b, a;
+	unsigned int r, g, b, a;
 
 	if ((op == PictOpOver) && (!dc->mul.col)) return;
 	a = dc->mul.col >> 24;

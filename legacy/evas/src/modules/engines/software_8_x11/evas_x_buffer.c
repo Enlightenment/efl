@@ -63,12 +63,12 @@ evas_software_8_x11_x_output_buffer_new(xcb_connection_t * c,
                                                 depth, NULL, ~0, NULL);
              if (xob->xim)
                {
-                  xob->shm_info->shmid = shmget(IPC_PRIVATE,
-                                                xob->xim->size,
-                                                IPC_CREAT | 0777);
+                  int shmid = shmget
+                    (IPC_PRIVATE, xob->xim->size, IPC_CREAT | 0777);
 
-                  if (xob->shm_info->shmid >= 0)
+                  if (shmid >= 0)
                     {
+                       xob->shm_info->shmid = shmid;
                        xob->shm_info->shmaddr = xob->xim->data =
                            shmat(xob->shm_info->shmid, 0, 0);
 

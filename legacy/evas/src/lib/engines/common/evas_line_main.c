@@ -16,10 +16,11 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
 
 
 #define IN_RANGE(x, y, w, h) \
-( ((unsigned)(x) < (w)) && ((unsigned)(y) < (h)) )
+  ( ((unsigned)(x) < (unsigned)(w)) && ((unsigned)(y) < (unsigned)(h)) )
 
-#define IN_RECT(x, y, rx, ry, rw, rh) \
-( ((unsigned)((x) - (rx)) < (rw)) && ((unsigned)((y) - (ry)) < (rh)) )
+#define IN_RECT(x, y, rx, ry, rw, rh)          \
+( ((unsigned)((x) - (rx)) < (unsigned)(rw)) && \
+  ((unsigned)((y) - (ry)) < (unsigned)(rh)) )
 
 #define EXCHANGE_POINTS(x0, y0, x1, y1) \
 { \
@@ -609,12 +610,12 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
 		if ((py < -1) && (dely < 0)) return;
 		if ((py > by) && (dely > 0)) return;
 	      }
-	    if ((unsigned)(px) < clw)
+	    if ((px) < clw)
 	      {
 		aa = ((yy - (y << 16)) >> 8);
-		if ((unsigned)(py) < clh)
+		if ((py) < clh)
 		   pfunc(0, 255 - aa, color, p);
-		if ((unsigned)(py + 1) < clh)
+		if ((py + 1) < clh)
 		   pfunc(0, aa, color, p + dstw);
 	      }
 	    yy += dyy;
@@ -644,12 +645,12 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
 	    if ((px < -1) && (delx < 0)) return;
 	    if ((px > rx) && (delx > 0)) return;
 	  }
-	if ((unsigned)(py) < clh)
+	if ((py) < clh)
 	  {
 	    aa = ((xx - (x << 16)) >> 8);
-	    if ((unsigned)(px) < clw)
+	    if ((px) < clw)
 		pfunc(0, 255 - aa, color, p);
-	    if ((unsigned)(px + 1) < clw)
+	    if ((px + 1) < clw)
 		pfunc(0, aa, color, p + 1);
 	  }
 	xx += dxx;

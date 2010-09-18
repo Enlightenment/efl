@@ -515,7 +515,8 @@ evas_cserve_raw_info_get(void)
    if (!cserve) return NULL;
    if (!server_send(cserve, 0, OP_GETINFO, 0, NULL)) return NULL;
    rep = (Op_Getinfo_Reply *)server_read(cserve, 0, &opcode, &size);
-   if ((rep) && (opcode == OP_GETINFO) && (size >= sizeof(Op_Getinfo_Reply)))
+   if ((rep) && (opcode == OP_GETINFO) &&
+       (size >= (int)sizeof(Op_Getinfo_Reply)))
      {
         return rep;
      }

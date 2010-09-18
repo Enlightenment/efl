@@ -269,7 +269,7 @@ evas_module_register(const Evas_Module_Api *module, Evas_Module_Type type)
 {
    Evas_Module *em;
 
-   if (type < 0 || type > 3) return EINA_FALSE;
+   if ((unsigned int)type > 3) return EINA_FALSE;
    if (module->version != EVAS_MODULE_API_VERSION) return EINA_FALSE;
    if (!module) return EINA_FALSE;
 
@@ -297,7 +297,7 @@ evas_module_unregister(const Evas_Module_Api *module, Evas_Module_Type type)
 {
    Evas_Module *em;
 
-   if (type < 0 || type > 3) return EINA_FALSE;
+   if ((unsigned int)type > 3) return EINA_FALSE;
    if (!module) return EINA_FALSE;
 
    em = eina_hash_find(evas_modules[type], module->name);
@@ -339,7 +339,7 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
    Eina_Module *en;
    Eina_List *l;
 
-   if (type < 0 || type > 3) return NULL;
+   if ((unsigned int)type > 3) return NULL;
 
    em = eina_hash_find(evas_modules[type], name);
    if (em) return em;
@@ -382,7 +382,8 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
 Evas_Module *
 evas_module_engine_get(int render_method)
 {
-   if (render_method <= 0 || render_method > eina_array_count_get(evas_engines))
+   if ((render_method <= 0) ||
+       ((unsigned int)render_method > eina_array_count_get(evas_engines)))
      return NULL;
    return eina_array_data_get(evas_engines, render_method - 1);
 }

@@ -324,7 +324,7 @@ struct _Evas_Native_Surface
    union {
       struct {
          void *visual;
-         long  pixmap;
+         unsigned long  pixmap;
       } x11;
       struct { /* padding data for future use - have space for 8 pointers */
          void *d[8];

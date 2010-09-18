@@ -291,7 +291,7 @@ eng_window_new(Display *disp,
              fprintf(stderr, "renderer: %s\n", renderer);
              fprintf(stderr, "version: %s\n", version);
           }
-        if (strstr(vendor, "NVIDIA"))
+        if (strstr((const char*)vendor, "NVIDIA"))
            // FIXME: also same as tegra2 - maybe check renderer too
            // 
            // vendor: NVIDIA Corporation

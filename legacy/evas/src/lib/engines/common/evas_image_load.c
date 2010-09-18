@@ -75,7 +75,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    const char           *loader = NULL;
    Evas_Module          *em;
    char                 *dot;
-   int                   i;
+   unsigned int          i;
    int                   ret = EVAS_LOAD_ERROR_NONE;
    struct evas_image_foreach_loader_data fdata;
 

@@ -86,16 +86,16 @@ static void
 raster(TIFFRGBAImage_Extra * img, uint32 * rast,
        uint32 x, uint32 y, uint32 w, uint32 h)
 {
-   int                 image_width, image_height;
+   unsigned int        image_width, image_height;
    uint32             *pixel, pixel_value;
-   int                 i, j, dy, rast_offset;
+   int                 i, dy, rast_offset;
    DATA32             *buffer_pixel, *buffer = evas_cache_image_pixels(img->image);
    int                 alpha_premult = 0;
 
    image_width = img->image->w;
    image_height = img->image->h;
 
-   dy = h > y ? -1 : y - h;
+   dy = h > y ? -1 : ((int)y - (int)h);
 
    /* rast seems to point to the beginning of the last strip processed */
    /* so you need use negative offsets. Bizzare. Someone please check this */
@@ -106,12 +106,14 @@ raster(TIFFRGBAImage_Extra * img, uint32 * rast,
      alpha_premult = 1;
    for (i = y, rast_offset = 0; i > dy; i--, rast_offset--)
      {
+        unsigned int j;
+
         pixel = rast + (rast_offset * image_width);
         buffer_pixel = buffer + ((((image_height - 1) - i) * image_width) + x);
 
         for (j = 0; j < w; j++)
           {
-	     int a, r, g, b;
+	     unsigned int a, r, g, b;
 
              pixel_value = (*(pixel++));
 	     a = TIFFGetA(pixel_value);

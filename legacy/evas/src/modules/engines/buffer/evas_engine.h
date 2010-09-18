@@ -51,7 +51,7 @@ struct _Outbuf
    Outbuf_Depth                  depth;
 
    void                         *dest;
-   int                           dest_row_bytes;
+   unsigned int                  dest_row_bytes;
 
    int                           alpha_level;
    DATA32                        color_key;

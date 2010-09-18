@@ -625,7 +625,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
              if (!tl) break;
 	     line = tl;
           }
-        if (((ptr) && ((ptr - evas_cache_image_pixels(ie)) >= (w * h * sizeof(DATA32)))) ||
+        if (((ptr) && ((ptr - evas_cache_image_pixels(ie)) >= (w * h * (int)sizeof(DATA32)))) ||
             ((context > 1) && (count >= pixels)))
 	  break;
      }

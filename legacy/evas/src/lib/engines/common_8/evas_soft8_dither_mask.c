@@ -45,7 +45,7 @@ evas_common_soft8_image_convert_from_rgba(Soft8_Image * im, const DATA32 * src)
    const DATA32 *sp;
    DATA8 *dp;
    DATA8 *ap;
-   int y;
+   unsigned int y;
 
    sp = src;
    dp = im->pixels;
@@ -89,7 +89,7 @@ evas_common_soft8_image_convert_from_rgb(Soft8_Image * im, const DATA32 * src)
 {
    const DATA32 *sp;
    DATA8 *dp;
-   int y;
+   unsigned int y;
 
    sp = src;
    dp = im->pixels;

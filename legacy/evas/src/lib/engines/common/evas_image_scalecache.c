@@ -32,10 +32,11 @@ struct _Scaleitem
    unsigned long long usage;
    unsigned long long usage_count;
    RGBA_Image *im, *parent_im;
-   int src_x, src_y, src_w, src_h;
-   int dst_w, dst_h;
-   int flop;
-   int size_adjust;
+   int src_x, src_y;
+   unsigned int src_w, src_h;
+   unsigned int dst_w, dst_h;
+   unsigned int flop;
+   unsigned int size_adjust;
 #ifdef EVAS_FRAME_QUEUING
    RWLK(lock);
 #endif
@@ -51,14 +52,14 @@ static unsigned long long use_counter = 0;
 static LK(cache_lock);
 #endif
 static Eina_Inlist *cache_list = NULL;
-static int cache_size = 0;
+static unsigned int cache_size = 0;
 static int init = 0;
 
-static int max_cache_size = SCALE_CACHE_SIZE;
-static int max_dimension = MAX_SCALECACHE_DIM;
-static int max_flop_count = MAX_FLOP_COUNT;
-static int max_scale_items = MAX_SCALEITEMS;
-static int min_scale_uses = MIN_SCALE_USES;
+static unsigned int max_cache_size = SCALE_CACHE_SIZE;
+static unsigned int max_dimension = MAX_SCALECACHE_DIM;
+static unsigned int max_flop_count = MAX_FLOP_COUNT;
+static unsigned int max_scale_items = MAX_SCALEITEMS;
+static unsigned int min_scale_uses = MIN_SCALE_USES;
 #endif
 
 void
@@ -207,8 +208,8 @@ static Scaleitem *
 _sci_find(RGBA_Image *im,
           RGBA_Draw_Context *dc __UNUSED__, int smooth,
           int src_region_x, int src_region_y,
-          int src_region_w, int src_region_h,
-          int dst_region_w, int dst_region_h)
+          unsigned int src_region_w, unsigned int src_region_h,
+          unsigned int dst_region_w, unsigned int dst_region_h)
 {
    Eina_List *l;
    Scaleitem *sci;
@@ -331,7 +332,7 @@ _cache_prune(Scaleitem *notsci, Eina_Bool copies_only)
 #endif
 
 EAPI void
-evas_common_rgba_image_scalecache_size_set(int size)
+evas_common_rgba_image_scalecache_size_set(unsigned int size)
 {
 #ifdef SCALECACHE
    LKL(cache_lock);
@@ -344,7 +345,7 @@ evas_common_rgba_image_scalecache_size_set(int size)
 #endif   
 }
 
-EAPI int
+EAPI unsigned int
 evas_common_rgba_image_scalecache_size_get(void)
 {
 #ifdef SCALECACHE
@@ -685,7 +686,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
           }
         else
           {
-             if (sci->flop > 0) sci->flop -= FLOP_DEL;
+             if (sci->flop >= FLOP_DEL) sci->flop -= FLOP_DEL;
           }
 //        INF("use cached!");
 #ifdef EVAS_FRAME_QUEUING
