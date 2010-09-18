@@ -1808,7 +1808,6 @@ again:
      }
 }
 
-// FIXME: we don't handle mapped yuv!!!! :(
 // FIXME: we don't handle clipped maps right :(
 void
 evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
@@ -1827,7 +1826,7 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
    DATA32 cmul;
    GLuint prog = gc->shared->shader.img.prog;
    int pn = 0;
-   
+
    if (!tex->alpha) blend = 0;
    if (a < 255) blend = 1;
    if ((A_VAL(&(p[0].col)) < 0xff) || (A_VAL(&(p[1].col)) < 0xff) ||
@@ -2303,36 +2302,37 @@ shader_array_flush(Evas_GL_Context *gc)
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }
           }
-        /* hmmm this breaks things. must find out why!   
-         if (gc->pipe[i].shader.clip != gc->state.current.clip)
-         {
-         if (gc->pipe[i].shader.clip)
-         glEnable(GL_SCISSOR_TEST);
-         else
-         {
-         glDisable(GL_SCISSOR_TEST);
-         //             glScissor(0, 0, 0, 0);
-         }
-         }
-         if (gc->pipe[i].shader.clip)
-         {
-         if ((gc->pipe[i].shader.cx != gc->state.current.cx) ||
-         (gc->pipe[i].shader.cx != gc->state.current.cx) ||
-         (gc->pipe[i].shader.cx != gc->state.current.cx) ||
-         (gc->pipe[i].shader.cx != gc->state.current.cx))
-         {
-         glScissor(gc->pipe[i].shader.cx, 
-         gc->h - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch,
-         gc->pipe[i].shader.cw,
-         gc->pipe[i].shader.ch);
-         }
-         //                    gc->pipe[i].clip.x,
-         //                    gc->h - gc->pipe[i].clip.y - gc->pipe[i].clip.h,
-         //                    gc->pipe[i].clip.w,
-         //                    gc->pipe[i].clip.h);
-         * 
-         }
-         */
+#if 1
+        if (gc->pipe[i].shader.clip != gc->state.current.clip)
+          {
+             if (gc->pipe[i].shader.clip)
+               {
+                  glEnable(GL_SCISSOR_TEST);
+                  glScissor(gc->pipe[i].shader.cx, 
+                            gc->h - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch,
+                            gc->pipe[i].shader.cw,
+                            gc->pipe[i].shader.ch);
+               }
+             else
+               {
+                  glDisable(GL_SCISSOR_TEST);
+//                  glScissor(0, 0, 0, 0);
+               }
+          }
+        if (gc->pipe[i].shader.clip)
+          {
+             if ((gc->pipe[i].shader.cx != gc->state.current.cx) ||
+                 (gc->pipe[i].shader.cx != gc->state.current.cx) ||
+                 (gc->pipe[i].shader.cx != gc->state.current.cx) ||
+                 (gc->pipe[i].shader.cx != gc->state.current.cx))
+               {
+                  glScissor(gc->pipe[i].shader.cx, 
+                            gc->h - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch,
+                            gc->pipe[i].shader.cw,
+                            gc->pipe[i].shader.ch);
+               }
+          }
+#endif
         glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, gc->pipe[i].array.vertex);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, gc->pipe[i].array.color);

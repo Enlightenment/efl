@@ -1638,13 +1638,49 @@ eng_image_scale_hint_get(void *data __UNUSED__, void *image)
 static void
 eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
 {
+   Evas_GL_Image *gim = image;
    Render_Engine *re;
    
    re = (Render_Engine *)data;
+   if (!image) return;
    eng_window_use(re->win);
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
-   evas_gl_common_image_map4_draw(re->win->gl_context, image, p, smooth, level);
+   if ((p[0].x == p[3].x) &&
+       (p[1].x == p[2].x) &&
+       (p[0].y == p[1].y) &&
+       (p[3].y == p[2].y) &&
+       (p[0].x <= p[1].x) &&
+       (p[0].y <= p[2].y) &&
+       (p[0].u == 0) &&
+       (p[0].v == 0) &&
+       (p[1].u == (gim->w << FP)) &&
+       (p[1].v == 0) &&
+       (p[2].u == (gim->w << FP)) &&
+       (p[2].v == (gim->h << FP)) &&
+       (p[3].u == 0) &&
+       (p[3].v == (gim->h << FP)) &&
+       (p[0].col == 0xffffffff) &&
+       (p[1].col == 0xffffffff) &&
+       (p[2].col == 0xffffffff) &&
+       (p[3].col == 0xffffffff))
+     {
+        int dx, dy, dw, dh;
+        
+        dx = p[0].x >> FP;
+        dy = p[0].y >> FP;
+        dw = (p[2].x >> FP) - dx;
+        dh = (p[2].y >> FP) - dy;
+        eng_image_draw
+           (data, context, surface, image,
+               0, 0, gim->w, gim->h,
+               dx, dy, dw, dh, smooth);
+     }
+   else
+     {
+        evas_gl_common_image_map4_draw(re->win->gl_context, image, p,
+                                       smooth, level);
+     }
 }
 
 static void *

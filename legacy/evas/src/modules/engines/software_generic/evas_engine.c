@@ -508,12 +508,10 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
 static void
 eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
 {
-   RGBA_Image *im, *srf;
-//   RGBA_Map_Point *pt = p;
+   RGBA_Image *im;
 
    if (!image) return;
    im = image;
-   srf = surface;
    if ((p[0].x == p[3].x) &&
        (p[1].x == p[2].x) &&
        (p[0].y == p[1].y) &&
