@@ -24,6 +24,7 @@ static int _init_con_ssl_init_count = 0;
 
 #if USE_GNUTLS
 # ifdef EFL_HAVE_PTHREAD
+#include <pthread.h>
 GCRY_THREAD_OPTION_PTHREAD_IMPL;
 # endif
 
@@ -596,7 +597,7 @@ _ecore_con_ssl_client_shutdown_gnutls(Ecore_Con_Client *cl)
 
 static Eina_Bool
 _ecore_con_ssl_client_cert_add_gnutls(const char *cert_file,
-                                      const char *crl_file,
+                                      const char *crl_file __UNUSED__,
                                       const char *key_file)
 {
    gnutls_certificate_credentials_t cert = NULL;
@@ -759,16 +760,24 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
        ((svr->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
      {
         //FIXME: just log and go on without cert if loading fails?
-        if (!SSL_CTX_use_certificate(svr->ssl_ctx, server_cert->cert))
-           ERR(
-              "ssl cert load failed: %s", ERR_reason_error_string(ERR_get_error()));
+        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_certificate(svr->ssl_ctx, server_cert->cert) < 1);
 
         server_cert->count++;
      }
 
-   SSL_set_fd(svr->ssl, svr->fd);
+   SSL_set_connect_state(svr->ssl);
+   SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(svr->ssl, svr->fd));
 
    return ECORE_CON_SSL_ERROR_NONE;
+
+error:
+   if (svr->ssl)
+     SSL_free(svr->ssl);
+   if (svr->ssl_ctx)
+     SSL_CTX_free(svr->ssl_ctx);
+
+   ERR("openssl error: %s", ERR_reason_error_string(ERR_get_error()));
+   return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
 static Eina_Bool
@@ -955,57 +964,54 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
       case ECORE_CON_USE_SSL2:
       case ECORE_CON_USE_SSL2 | ECORE_CON_LOAD_CERT:
          /* Unsafe version of SSL */
-         if (!(cl->ssl_ctx =
-                  SSL_CTX_new(SSLv2_client_method())))
-            return
-               ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
+         if (!(cl->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
+            return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 
          break;
 
       case ECORE_CON_USE_SSL3:
       case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
-         if (!(cl->ssl_ctx =
-                  SSL_CTX_new(SSLv3_client_method())))
-            return
-               ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
+         if (!(cl->ssl_ctx = SSL_CTX_new(SSLv3_client_method())))
+            return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 
          break;
 
       case ECORE_CON_USE_TLS:
       case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
-         if (!(cl->ssl_ctx =
-                  SSL_CTX_new(TLSv1_client_method())))
-            return
-               ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
+         if (!(cl->ssl_ctx = SSL_CTX_new(TLSv1_client_method())))
+            return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 
          break;
 
       default:
          return ECORE_CON_SSL_ERROR_NONE;
      }
-   if (!(cl->ssl = SSL_new(cl->ssl_ctx)))
-     {
-        SSL_CTX_free(cl->ssl_ctx);
-        return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
-     }
+   SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl = SSL_new(cl->ssl_ctx)));
 
    if ((client_cert) && (client_cert->cert) && (private_key->key) &&
        ((cl->server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
      {
-        //FIXME: just log and go on without cert if loading fails?
-        if (!SSL_CTX_use_certificate(cl->ssl_ctx, client_cert->cert) ||
-            !SSL_CTX_use_PrivateKey(cl->ssl_ctx, private_key->key) ||
-            !SSL_CTX_check_private_key(cl->ssl_ctx))
-           ERR(
-              "ssl cert load failed: %s", ERR_reason_error_string(ERR_get_error()));
+        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_certificate(cl->ssl_ctx, client_cert->cert) < 1);
+        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_PrivateKey(cl->ssl_ctx, private_key->key) < 1);
+        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_check_private_key(cl->ssl_ctx) < 1);
 
         client_cert->count++;
         private_key->count++;
      }
 
-   SSL_set_fd(cl->ssl, cl->fd);
-
+   SSL_set_accept_state(cl->ssl);
+   SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(cl->ssl, cl->fd));
+   
    return ECORE_CON_SSL_ERROR_NONE;
+
+error:
+   if (cl->ssl)
+     SSL_free(cl->ssl);
+   if (cl->ssl_ctx)
+     SSL_CTX_free(cl->ssl_ctx);
+
+   ERR("openssl error: %s", ERR_reason_error_string(ERR_get_error()));
+   return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
 
