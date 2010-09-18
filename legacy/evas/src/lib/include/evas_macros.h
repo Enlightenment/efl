@@ -24,7 +24,7 @@
     (((x) & 0xff00 ) >> 8))
 
 #define SPANS_COMMON(x1, w1, x2, w2) \
-(!((((x2) + (w2)) <= (x1)) || ((x2) >= ((x1) + (w1)))))
+(!(( (int)((x2) + (w2)) <= (int)(x1)) || (int)((x2) >= (int)((x1) + (w1)))))
 
 #define RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) \
 ((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
@@ -33,21 +33,21 @@
 { \
    if (RECTS_INTERSECT(_x, _y, _w, _h, _cx, _cy, _cw, _ch)) \
      { \
-	if (_x < (_cx)) \
+	if ((int)_x < (int)(_cx))               \
 	  { \
-	     _w += _x - (_cx); \
+             if ((int)_w +  (_x - (int)(_cx)) < 0) _w = 0;       \
+             else     _w += (_x - (int)(_cx)); \
 	     _x = (_cx); \
-	     if (_w < 0) _w = 0; \
 	  } \
-	if ((_x + _w) > ((_cx) + (_cw))) \
+	if ((int)(_x + _w) > (int)((_cx) + (_cw)))      \
 	  _w = (_cx) + (_cw) - _x; \
-	if (_y < (_cy)) \
+	if ((int)_y < (int)(_cy))  \
 	  { \
-	     _h += _y - (_cy); \
+             if ((int)_h +  (_y - (int)(_cy)) < 0) _h = 0; \
+             else     _h += (_y - (int)(_cy)); \
 	     _y = (_cy); \
-	     if (_h < 0) _h = 0; \
 	  } \
-	if ((_y + _h) > ((_cy) + (_ch))) \
+	if ((int)(_y + _h) > (int)((_cy) + (_ch)))      \
 	  _h = (_cy) + (_ch) - _y; \
      } \
    else \
