@@ -8,7 +8,7 @@ _evas_event_havemap_adjust(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
    
    if (!obj->havemap_parent) return;
    pmap = obj->smart.parent;
-   if (!pmap) return;
+
    while (pmap)
      {
         if ((pmap->cur.map) && (pmap->cur.map->count == 4) && (pmap->cur.usemap))
