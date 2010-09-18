@@ -722,7 +722,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		    {
                        ev.canvas.x = e->pointer.x;
                        ev.canvas.y = e->pointer.y;
-                       _evas_event_havemap_adjust(obj, &ev.canvas.x, &ev.canvas.y);
+                       _evas_event_havemap_adjust(obj, &ev.canvas.x, &ev.canvas.y, obj->mouse_grabbed);
 		       e->pointer.object.in = eina_list_remove(e->pointer.object.in, obj);
                        if (obj->mouse_in)
                          {
