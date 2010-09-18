@@ -1498,6 +1498,7 @@ static Eina_Bool
 _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Ecore_Con_Server *svr;
+   Ecore_Con_Client *cl;
    int new_fd;
    unsigned char incoming[256];
    size_t size_in;
@@ -1510,8 +1511,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
       return ECORE_CALLBACK_RENEW;
 
    if ((svr->client_limit >= 0) && (!svr->reject_excess_clients))
-      if (eina_list_count(svr->clients) >=
-          (unsigned int)svr->client_limit)
+      if (eina_list_count(svr->clients) >= (unsigned int)svr->client_limit)
          return ECORE_CALLBACK_RENEW;
 
    /* a new client */
@@ -1520,57 +1520,55 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 
    memset(&incoming, 0, size_in);
    new_fd = accept(svr->fd, (struct sockaddr *)&incoming, (socklen_t *)&size_in);
-   if (new_fd >= 0)
+   if (new_fd < 0)
+     /* error! */
+     return ECORE_CALLBACK_RENEW;
+     
+   if ((svr->client_limit >= 0) && (svr->reject_excess_clients))
+      if (eina_list_count(svr->clients) >= (unsigned int)svr->client_limit)
+        {
+           close(new_fd);
+           return ECORE_CALLBACK_RENEW;
+        }
+
+   cl = calloc(1, sizeof(Ecore_Con_Client));
+   if (!cl)
      {
-        Ecore_Con_Client *cl;
+        close(new_fd);
+        return ECORE_CALLBACK_RENEW;
+     }
 
-        if ((svr->client_limit >= 0) && (svr->reject_excess_clients))
-           if (eina_list_count(svr->clients) >= (unsigned int)svr->client_limit)
-             {
-                close(new_fd);
-                return ECORE_CALLBACK_RENEW;
-             }
+   fcntl(new_fd, F_SETFL, O_NONBLOCK);
+   fcntl(new_fd, F_SETFD, FD_CLOEXEC);
+   cl->fd = new_fd;
+   cl->server = svr;
 
-        cl = calloc(1, sizeof(Ecore_Con_Client));
-        if (!cl)
+   if ((svr->type & ECORE_CON_SSL) &&
+       (ecore_con_ssl_client_init(cl)))
+     {
+        close(new_fd);
+        ecore_con_ssl_client_shutdown(cl);
+        return ECORE_CALLBACK_RENEW;
+     }
+
+   cl->fd_handler = ecore_main_fd_handler_add(cl->fd, ECORE_FD_READ,
+                                _ecore_con_svr_cl_handler, cl, NULL, NULL);
+   ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
+   svr->clients = eina_list_append(svr->clients, cl);
+   if (!svr->path)
+      cl->ip = _ecore_con_pretty_ip((struct sockaddr *)&incoming, size_in);
+
+   if (!cl->delete_me)
+     {
+        Ecore_Con_Event_Client_Add *e;
+
+        e = calloc(1, sizeof(Ecore_Con_Event_Client_Add));
+        if (e)
           {
-                close(new_fd);
-             return ECORE_CALLBACK_RENEW;
-          }
-
-        fcntl(new_fd, F_SETFL, O_NONBLOCK);
-        fcntl(new_fd, F_SETFD, FD_CLOEXEC);
-        cl->fd = new_fd;
-        cl->server = svr;
-
-        if ((svr->type & ECORE_CON_SSL) &&
-            (ecore_con_ssl_client_init(cl)))
-          {
-             close(new_fd);
-             ecore_con_ssl_client_shutdown(cl);
-             return ECORE_CALLBACK_RENEW;
-          }
-
-        cl->fd_handler =
-           ecore_main_fd_handler_add(cl->fd, ECORE_FD_READ,
-                                     _ecore_con_svr_cl_handler, cl, NULL, NULL);
-        ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
-        svr->clients = eina_list_append(svr->clients, cl);
-        if (!svr->path)
-           cl->ip = _ecore_con_pretty_ip((struct sockaddr *)&incoming, size_in);
-
-        if (!cl->delete_me)
-          {
-             Ecore_Con_Event_Client_Add *e;
-
-             e = calloc(1, sizeof(Ecore_Con_Event_Client_Add));
-             if (e)
-               {
-                  cl->event_count++;
-                  e->client = cl;
-                  ecore_event_add(ECORE_CON_EVENT_CLIENT_ADD, e,
-                                  _ecore_con_event_client_add_free, NULL);
-               }
+             cl->event_count++;
+             e->client = cl;
+             ecore_event_add(ECORE_CON_EVENT_CLIENT_ADD, e,
+                             _ecore_con_event_client_add_free, NULL);
           }
      }
 
