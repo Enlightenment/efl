@@ -39,7 +39,7 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
    png_structp         png_ptr;
    png_infop           info_ptr;
    DATA32             *ptr, *data = NULL;
-   int                 x, y, j;
+   unsigned int        x, y, j;
    png_bytep           row_ptr, png_data = NULL;
    png_color_8         sig_bit;
    int                 num_passes = 1, pass;

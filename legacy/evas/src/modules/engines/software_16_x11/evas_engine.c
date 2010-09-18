@@ -120,12 +120,12 @@ static void
 _tmp_out_alloc(Render_Engine *re)
 {
    Tilebuf_Rect *r;
-   int w = 0, h = 0;
+   unsigned int w = 0, h = 0;
 
    EINA_INLIST_FOREACH(re->rects, r)
      {
-	if (r->w > w) w = r->w;
-	if (r->h > h) h = r->h;
+	if (r->w > (int)w) w = r->w;
+	if (r->h > (int)h) h = r->h;
      }
 
    if (re->tmp_out)
@@ -555,7 +555,8 @@ _tmp_out_process(Render_Engine *re, int out_x, int out_y, int w, int h)
    d = re->shbuf->im;
    s = re->tmp_out;
 
-   if ((w < 1) || (h < 1) || (out_x >= d->cache_entry.w) || (out_y >= d->cache_entry.h))
+   if ((w < 1) || (h < 1) ||
+       (out_x >= (int)d->cache_entry.w) || (out_y >= (int)d->cache_entry.h))
      return;
 
    if (re->rot == 90)

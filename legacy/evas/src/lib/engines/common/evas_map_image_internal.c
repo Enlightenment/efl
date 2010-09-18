@@ -64,11 +64,11 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    for (i = 0; i < 4; i++)
      {
         if (p[i].u < 0) p[i].u = 0;
-        else if (p[i].u > (src->cache_entry.w << FP))
+        else if (p[i].u > (int)(src->cache_entry.w << FP))
           p[i].u = src->cache_entry.w << FP;
         
         if (p[i].v < 0) p[i].v = 0;
-        else if (p[i].v > (src->cache_entry.h << FP))
+        else if (p[i].v > (int)(src->cache_entry.h << FP))
           p[i].v = src->cache_entry.h << FP;
      }
    

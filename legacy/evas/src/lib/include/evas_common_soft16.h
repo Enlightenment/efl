@@ -32,12 +32,10 @@ extern "C" {
    ((((g) >> 2) & 0x3f) << 5) |                                         \
    (((b) >> 3) & 0x1f))
 
-static inline int
-_calc_stride(int w)
+static inline unsigned int
+_calc_stride(unsigned int w)
 {
-   int pad;
-
-   pad = w % 4;
+   unsigned int pad = w % 4;
    if (!pad)  return w;
    else return w + 4 - pad;
 }

@@ -487,9 +487,9 @@ struct _RGBA_Image_Loadopts
 {
    int                  scale_down_by; // if > 1 then use this
    double               dpi; // if > 0.0 use this
-   int                  w, h; // if > 0 use this
+   unsigned int         w, h; // if > 0 use this
    struct {
-      int               x, y, w, h;
+      unsigned int      x, y, w, h;
    } region;
 };
 
@@ -554,13 +554,13 @@ struct _Image_Entry
 
    RGBA_Image_Loadopts    load_opts;
    int                    space;
-   int                    w;
-   int                    h;
+   unsigned int           w;
+   unsigned int           h;
 
    struct
      {
-        int		 w;
-        int		 h;
+        unsigned int w;
+        unsigned int h;
      } allocated;
 
    struct

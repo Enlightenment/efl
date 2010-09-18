@@ -78,7 +78,7 @@ _JPEGErrorHandler2(j_common_ptr cinfo __UNUSED__, int msg_level __UNUSED__)
 static Eina_Bool
 evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
 {
-   int w, h, scalew, scaleh;
+   unsigned int w, h, scalew, scaleh;
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
 
@@ -129,14 +129,14 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
      }
    else if ((ie->load_opts.w > 0) && (ie->load_opts.h > 0))
      {
-	int w2 = w, h2 = h;
+	unsigned int w2 = w, h2 = h;
 	if (ie->load_opts.w > 0)
 	  {
 	     w2 = ie->load_opts.w;
 	     h2 = (ie->load_opts.w * h) / w;
 	     if ((ie->load_opts.h > 0) && (h2 > ie->load_opts.h))
 	       {
-	          int w3;
+	          unsigned int w3;
 		  h2 = ie->load_opts.h;
 		  w3 = (ie->load_opts.h * w) / h;
 		  if (w3 > w2)
@@ -226,12 +226,12 @@ get_time(void)
 static Eina_Bool
 evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
 {
-   int w, h;
+   unsigned int w, h;
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
    DATA8 *ptr, *line[16], *data;
    DATA32 *ptr2;
-   int x, y, l, i, scans;
+   unsigned int x, y, l, i, scans;
    int region = 0;
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
@@ -339,7 +339,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
    if (cinfo.output_components == 4)
      {
         // FIXME: handle region
-	for (i = 0; i < cinfo.rec_outbuf_height; i++)
+	for (i = 0; (int)i < cinfo.rec_outbuf_height; i++)
 	  line[i] = data + (i * w * 4);
 	for (l = 0; l < h; l += cinfo.rec_outbuf_height)
 	  {
@@ -482,7 +482,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
           }
         t = get_time();
  */
-        for (i = 0; i < cinfo.rec_outbuf_height; i++)
+        for (i = 0; (int)i < cinfo.rec_outbuf_height; i++)
 	  line[i] = data + (i * w * 3);
 	for (l = 0; l < h; l += cinfo.rec_outbuf_height)
 	  {
@@ -547,7 +547,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
    /* We finally handle RGB with 1 component */
    else if (cinfo.output_components == 1)
      {
-	for (i = 0; i < cinfo.rec_outbuf_height; i++)
+	for (i = 0; (int)i < cinfo.rec_outbuf_height; i++)
 	  line[i] = data + (i * w);
 	for (l = 0; l < h; l += cinfo.rec_outbuf_height)
 	  {

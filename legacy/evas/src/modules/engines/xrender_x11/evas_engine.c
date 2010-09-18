@@ -121,7 +121,7 @@ struct _Render_Engine
 
    Ximage_Info *(*ximage_info_get)(Display *connection, Drawable draw, Visual *vis);
    void (*ximage_info_free)(Ximage_Info *xinf);
-   void (*ximage_info_pool_flush)(Ximage_Info *xinf, int max_num, int max_mem);
+   void (*ximage_info_pool_flush)(Ximage_Info *xinf, unsigned int max_num, unsigned int max_mem);
    Ximage_Image *(*ximage_new)(Ximage_Info *xinf, int w, int h, int depth);
    void (*ximage_free)(Ximage_Image *xim);
    void (*ximage_put)(Ximage_Image *xim, Drawable draw, int x, int y, int w, int h);

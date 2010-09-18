@@ -398,7 +398,7 @@ _xr_xcb_image_info_free(Ximage_Info *xinf)
 }
 
 void
-_xr_xcb_image_info_pool_flush(Ximage_Info *xinf, int max_num, int max_mem)
+_xr_xcb_image_info_pool_flush(Ximage_Info *xinf, unsigned int max_num, unsigned int max_mem)
 {
    if ((xinf->pool_mem <= max_mem) && (eina_list_count(xinf->pool) <= max_num)) return;
    while ((xinf->pool_mem > max_mem) || (eina_list_count(xinf->pool) > max_num))

@@ -1098,8 +1098,8 @@ eng_image_native_set(void *data, void *image, void *native)
         pm = ns->data.x11.pixmap;
         if (im->native.data)
           {
-             Evas_Native_Surface *n = im->native.data;
-             if ((n->data.x11.visual == vis) && (n->data.x11.pixmap == pm))
+             Evas_Native_Surface *ens = im->native.data;
+             if ((ens->data.x11.visual == vis) && (ens->data.x11.pixmap == pm))
                 return im;
           }
      }
@@ -1204,8 +1204,8 @@ eng_image_native_set(void *data, void *image, void *native)
         if (n)
           {
              int pixmap_att[20];
-             int target = 0;
-             int i = 0;
+             unsigned int target = 0;
+             unsigned int i = 0;
 
              eina_hash_add(re->win->gl_context->shared->native_hash, &pmid, im);
              if ((re->win->depth_cfg[depth].tex_target &
@@ -1403,7 +1403,9 @@ eng_image_size_set(void *data, void *image, int w, int h)
    if ((eng_image_colorspace_get(data, image) == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (eng_image_colorspace_get(data, image) == EVAS_COLORSPACE_YCBCR422P709_PL))
      w &= ~0x1;
-   if ((im_old) && (im_old->im->cache_entry.w == w) && (im_old->im->cache_entry.h == h))
+   if ((im_old) &&
+       ((int)im_old->im->cache_entry.w == w) &&
+       ((int)im_old->im->cache_entry.h == h))
      return image;
    if (im_old)
      {

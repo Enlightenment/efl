@@ -16,10 +16,10 @@ EAPI void              evas_common_image_premul                    (Image_Entry 
 EAPI void              evas_common_image_set_alpha_sparse          (Image_Entry *ie); /*2*/
 /* EAPI RGBA_Image   *evas_common_image_alpha_create      (int w, int h); */
 /* EAPI RGBA_Image   *evas_common_image_create            (int w, int h); */
-EAPI RGBA_Image       *evas_common_image_new                       (int w, int h, int alpha);
+EAPI RGBA_Image       *evas_common_image_new                       (unsigned int w, unsigned int h, unsigned int alpha);
 EAPI Evas_Cache_Image *evas_common_image_cache_get                 (void);
 
-EAPI void              evas_common_image_set_cache                 (int size);
+EAPI void              evas_common_image_set_cache                 (unsigned int size);
 EAPI int               evas_common_image_get_cache                 (void);
 
 EAPI RGBA_Image       *evas_common_image_line_buffer_obtain        (int len);
@@ -32,8 +32,8 @@ EAPI void              evas_common_image_alpha_line_buffer_free    (RGBA_Image *
 EAPI RGBA_Image       *evas_common_load_image_from_file            (const char *file, const char *key, RGBA_Image_Loadopts *lo, int *error);
 EAPI int               evas_common_save_image_to_file              (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 
-EAPI void evas_common_rgba_image_scalecache_size_set(int size);
-EAPI int evas_common_rgba_image_scalecache_size_get(void);
+EAPI void evas_common_rgba_image_scalecache_size_set(unsigned int size);
+EAPI unsigned int evas_common_rgba_image_scalecache_size_get(void);
 EAPI void evas_common_rgba_image_scalecache_flush(void);
     
 EAPI void

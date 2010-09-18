@@ -33,7 +33,7 @@ static struct {
    } c, a, v, r, n, d;
 } texinfo = {0};
 
-static int
+static void
 _print_tex_count(void)
 {
    if (getenv("EVAS_GL_MEMINFO"))
@@ -117,7 +117,7 @@ _tex_sub_2d(int x, int y, int w, int h, int fmt, int type, const void *pix)
 }
 
 static Evas_GL_Texture_Pool *
-_pool_tex_new(Evas_GL_Context *gc, int w, int h, int intformat, int format)
+_pool_tex_new(Evas_GL_Context *gc, int w, int h, int intformat, GLenum format)
 {
    Evas_GL_Texture_Pool *pt;
    
@@ -680,7 +680,7 @@ pt_unref(Evas_GL_Texture_Pool *pt)
 }
 
 Evas_GL_Texture *
-evas_gl_common_texture_native_new(Evas_GL_Context *gc, int w, int h, int alpha, Evas_GL_Image *im)
+evas_gl_common_texture_native_new(Evas_GL_Context *gc, unsigned int w, unsigned int h, int alpha, Evas_GL_Image *im)
 {
    Evas_GL_Texture *tex;
 
@@ -722,7 +722,7 @@ evas_gl_common_texture_native_new(Evas_GL_Context *gc, int w, int h, int alpha, 
 }
 
 Evas_GL_Texture *
-evas_gl_common_texture_render_new(Evas_GL_Context *gc, int w, int h, int alpha)
+evas_gl_common_texture_render_new(Evas_GL_Context *gc, unsigned int w, unsigned int h, int alpha)
 {
    Evas_GL_Texture *tex;
 
@@ -915,8 +915,8 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex)
 }
 
 Evas_GL_Texture *
-evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels, 
-                                 int w, int h, int fh)
+evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels,
+                                 unsigned int w, unsigned int h, int fh)
 {
    Evas_GL_Texture *tex;
    Eina_List *l_after = NULL;
@@ -954,8 +954,8 @@ evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels,
 }
 
 void
-evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels, 
-                                    int w, int h, int fh)
+evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels,
+                                    unsigned int w, unsigned int h, int fh)
 {
    if (!tex->pt) return;
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
@@ -976,7 +976,7 @@ evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels,
 }
 
 Evas_GL_Texture *
-evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, int w, int h)
+evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, unsigned int w, unsigned int h)
 {
    Evas_GL_Texture *tex;
 //   Eina_List *l_after = NULL;
@@ -1047,7 +1047,7 @@ evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, int w, int h)
 }
 
 void
-evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, int w, int h)
+evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned int w, unsigned int h)
 {
    if (!tex->pt) return;
    // FIXME: works on lowest size 4 pixel high buffers. must also be multiple of 2

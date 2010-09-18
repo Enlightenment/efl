@@ -19,7 +19,7 @@ static void                      _sdl16_image_delete      (Engine_Image_Entry *e
 static int                       _sdl16_image_constructor (Engine_Image_Entry *ie, void* data);
 static void                      _sdl16_image_destructor  (Engine_Image_Entry *eim);
 
-static void                      _sdl16_image_dirty_region(Engine_Image_Entry *eim, int x, int y, int w, int h);
+static void                      _sdl16_image_dirty_region(Engine_Image_Entry *eim, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
 
 static int                       _sdl16_image_dirty       (Engine_Image_Entry *dst, const Engine_Image_Entry *src);
 
@@ -84,12 +84,12 @@ static void
 _tmp_out_alloc(Render_Engine *re)
 {
    Tilebuf_Rect *r;
-   int w = 0, h = 0;
+   unsigned int w = 0, h = 0;
 
    EINA_INLIST_FOREACH(re->rects, r)
      {
-	if (r->w > w) w = r->w;
-	if (r->h > h) h = r->h;
+	if (r->w > (int)w) w = r->w;
+	if (r->h > (int)h) h = r->h;
      }
 
    if (re->tmp_out)
@@ -469,8 +469,8 @@ _tmp_out_process(Render_Engine *re, int out_x, int out_y, int w, int h)
    d = (Soft16_Image *) re->soft16_engine_image->cache_entry.src;
    s = re->tmp_out;
 
-   if ((w < 1) || (h < 1)
-       || (out_x >= d->cache_entry.w) || (out_y >= d->cache_entry.h))
+   if ((w < 1) || (h < 1) ||
+       (out_x >= (int)d->cache_entry.w) || (out_y >= (int)d->cache_entry.h))
      return;
 
    if (re->rot == 90)
@@ -1167,7 +1167,7 @@ _sdl16_image_destructor(Engine_Image_Entry *eim)
 }
 
 static void
-_sdl16_image_dirty_region(Engine_Image_Entry *eim, int x, int y, int w, int h)
+_sdl16_image_dirty_region(Engine_Image_Entry *eim, unsigned int x, unsigned int y, unsigned int w, unsigned int h)
 {
    SDL_Engine_Image_Entry       *dst;
    RGBA_Image *im;

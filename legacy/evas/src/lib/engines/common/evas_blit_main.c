@@ -37,7 +37,7 @@ evas_common_blit_rectangle(const RGBA_Image *src, RGBA_Image *dst, int src_x, in
 
    /* clip clip clip */
    if (w <= 0) return;
-   if (src_x + w > src->cache_entry.w) w = src->cache_entry.w - src_x;
+   if (src_x + w > (int)src->cache_entry.w) w = src->cache_entry.w - src_x;
    if (w <= 0) return;
    if (src_x < 0)
      {
@@ -48,7 +48,7 @@ evas_common_blit_rectangle(const RGBA_Image *src, RGBA_Image *dst, int src_x, in
    if (w <= 0) return;
 
    if (h <= 0) return;
-   if (src_y + h > src->cache_entry.h) h = src->cache_entry.h - src_y;
+   if (src_y + h > (int)src->cache_entry.h) h = src->cache_entry.h - src_y;
    if (h <= 0) return;
    if (src_y < 0)
      {
@@ -59,7 +59,7 @@ evas_common_blit_rectangle(const RGBA_Image *src, RGBA_Image *dst, int src_x, in
    if (h <= 0) return;
 
    if (w <= 0) return;
-   if (dst_x + w > dst->cache_entry.w) w = dst->cache_entry.w - dst_x;
+   if (dst_x + w > (int)dst->cache_entry.w) w = dst->cache_entry.w - dst_x;
    if (w <= 0) return;
    if (dst_x < 0)
      {
@@ -70,7 +70,7 @@ evas_common_blit_rectangle(const RGBA_Image *src, RGBA_Image *dst, int src_x, in
    if (w <= 0) return;
 
    if (h <= 0) return;
-   if (dst_y + h > dst->cache_entry.h) h = dst->cache_entry.h - dst_y;
+   if (dst_y + h > (int)dst->cache_entry.h) h = dst->cache_entry.h - dst_y;
    if (h <= 0) return;
    if (dst_y < 0)
      {

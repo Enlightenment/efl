@@ -322,7 +322,8 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
 static void
 _evas_cache_image_entry_surface_alloc__locked(Evas_Cache_Image *cache,
 					      Image_Entry *ie,
-					      int wmin, int hmin)
+					      unsigned int wmin,
+                                              unsigned int hmin)
 {
    if (ie->allocated.w == wmin && ie->allocated.h == hmin)
      return ;
@@ -539,7 +540,7 @@ evas_cache_image_get(Evas_Cache_Image *cache)
 }
 
 EAPI void
-evas_cache_image_set(Evas_Cache_Image *cache, int limit)
+evas_cache_image_set(Evas_Cache_Image *cache, unsigned int limit)
 {
    assert(cache != NULL);
 #ifdef EVAS_FRAME_QUEUING
@@ -977,7 +978,7 @@ evas_cache_image_data_not_needed(Image_Entry *im)
 }
 
 EAPI Image_Entry *
-evas_cache_image_dirty(Image_Entry *im, int x, int y, int w, int h)
+evas_cache_image_dirty(Image_Entry *im, unsigned int x, unsigned int y, unsigned int w, unsigned int h)
 {
    Image_Entry *im_dirty = im;
    Evas_Cache_Image *cache;
@@ -1129,7 +1130,7 @@ evas_cache_image_alone(Image_Entry *im)
 }
 
 EAPI Image_Entry *
-evas_cache_image_copied_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace)
+evas_cache_image_copied_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace)
 {
    Image_Entry *im;
 
@@ -1166,7 +1167,7 @@ evas_cache_image_copied_data(Evas_Cache_Image *cache, int w, int h, DATA32 *imag
 }
 
 EAPI Image_Entry *
-evas_cache_image_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace)
+evas_cache_image_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace)
 {
    Image_Entry *im;
 
@@ -1200,7 +1201,7 @@ evas_cache_image_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data,
 }
 
 EAPI void
-evas_cache_image_surface_alloc(Image_Entry *im, int w, int h)
+evas_cache_image_surface_alloc(Image_Entry *im, unsigned int w, unsigned int h)
 {
    Evas_Cache_Image *cache;
 
@@ -1220,7 +1221,7 @@ evas_cache_image_surface_alloc(Image_Entry *im, int w, int h)
 }
 
 EAPI Image_Entry *
-evas_cache_image_size_set(Image_Entry *im, int w, int h)
+evas_cache_image_size_set(Image_Entry *im, unsigned int w, unsigned int h)
 {
    Evas_Cache_Image *cache;
    Image_Entry *new;
@@ -1449,9 +1450,9 @@ evas_cache_image_flush(Evas_Cache_Image *cache)
    assert(cache);
    assert(cache->usage >= 0);
 
-   if (cache->limit == -1) return -1;
+   if (cache->limit == (unsigned int)-1) return -1;
 
-   while ((cache->lru) && (cache->limit < cache->usage))
+   while ((cache->lru) && (cache->limit < (unsigned int)cache->usage))
      {
         Image_Entry *im;
 
@@ -1459,7 +1460,7 @@ evas_cache_image_flush(Evas_Cache_Image *cache)
         _evas_cache_image_entry_delete(cache, im);
      }
 
-   while ((cache->lru_nodata) && (cache->limit < cache->usage))
+   while ((cache->lru_nodata) && (cache->limit < (unsigned int)cache->usage))
      {
         Image_Entry *im;
 

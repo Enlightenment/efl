@@ -33,13 +33,13 @@ static int                reference = 0;
 static Image_Entry      *_evas_common_rgba_image_new(void);
 static void              _evas_common_rgba_image_delete(Image_Entry *ie);
 
-static int               _evas_common_rgba_image_surface_alloc(Image_Entry *ie, int w, int h);
+static int               _evas_common_rgba_image_surface_alloc(Image_Entry *ie, unsigned int w, unsigned int h);
 static void              _evas_common_rgba_image_surface_delete(Image_Entry *ie);
 static DATA32           *_evas_common_rgba_image_surface_pixels(Image_Entry *ie);
 
 static void              _evas_common_rgba_image_unload(Image_Entry *im);
 
-static void              _evas_common_rgba_image_dirty_region(Image_Entry *im, int x, int y, int w, int h);
+static void              _evas_common_rgba_image_dirty_region(Image_Entry *im, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
 
 static int               _evas_common_rgba_image_ram_usage(Image_Entry *ie);
 
@@ -225,7 +225,7 @@ evas_common_rgba_image_unload(Image_Entry *ie)
 }
 
 static int
-_evas_common_rgba_image_surface_alloc(Image_Entry *ie, int w, int h)
+_evas_common_rgba_image_surface_alloc(Image_Entry *ie, unsigned int w, unsigned int h)
 {
    RGBA_Image   *im = (RGBA_Image *) ie;
    size_t        siz = 0;
@@ -296,7 +296,7 @@ _evas_common_rgba_image_unload(Image_Entry *im)
 }
 
 static void
-_evas_common_rgba_image_dirty_region(Image_Entry* ie, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+_evas_common_rgba_image_dirty_region(Image_Entry* ie, unsigned int x __UNUSED__, unsigned int y __UNUSED__, unsigned int w __UNUSED__, unsigned int h __UNUSED__)
 {
    RGBA_Image   *im = (RGBA_Image *) ie;
 
@@ -444,7 +444,7 @@ evas_common_image_surface_alpha_tiles_calc(RGBA_Surface *is, int tsize)
 /* } */
 
 static RGBA_Image *
-evas_common_image_create(int w, int h)
+evas_common_image_create(unsigned int w, unsigned int h)
 {
    RGBA_Image *im;
 
@@ -462,7 +462,7 @@ evas_common_image_create(int w, int h)
 }
 
 EAPI RGBA_Image *
-evas_common_image_alpha_create(int w, int h)
+evas_common_image_alpha_create(unsigned int w, unsigned int h)
 {
    RGBA_Image   *im;
 
@@ -481,7 +481,7 @@ evas_common_image_alpha_create(int w, int h)
 }
 
 EAPI RGBA_Image *
-evas_common_image_new(int w, int h, int alpha)
+evas_common_image_new(unsigned int w, unsigned int h, unsigned int alpha)
 {
    if (alpha)
      return evas_common_image_alpha_create(w, h);
@@ -527,7 +527,7 @@ evas_common_image_colorspace_dirty(RGBA_Image *im)
 }
 
 EAPI void
-evas_common_image_set_cache(int size)
+evas_common_image_set_cache(unsigned int size)
 {
    if (eci)
      evas_cache_image_set(eci, size);

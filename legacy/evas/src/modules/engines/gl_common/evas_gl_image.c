@@ -64,7 +64,7 @@ evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key
 }
 
 Evas_GL_Image *
-evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, DATA32 *data, int alpha, int cspace)
+evas_gl_common_image_new_from_data(Evas_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, int cspace)
 {
    Evas_GL_Image *im;
    Eina_List *l;
@@ -118,7 +118,7 @@ evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, DATA32 *da
 }
 
 Evas_GL_Image *
-evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, DATA32 *data, int alpha, int cspace)
+evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, int cspace)
 {
    Evas_GL_Image *im;
 
@@ -159,7 +159,7 @@ evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, DAT
 }
 
 Evas_GL_Image *
-evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, int alpha, int cspace)
+evas_gl_common_image_new(Evas_GL_Context *gc, unsigned int w, unsigned int h, int alpha, int cspace)
 {
    Evas_GL_Image *im;
 
@@ -362,7 +362,7 @@ evas_gl_common_image_free(Evas_GL_Image *im)
 }
 
 Evas_GL_Image *
-evas_gl_common_image_surface_new(Evas_GL_Context *gc, int w, int h, int alpha)
+evas_gl_common_image_surface_new(Evas_GL_Context *gc, unsigned int w, unsigned int h, int alpha)
 {
    Evas_GL_Image *im;
 
@@ -380,7 +380,7 @@ evas_gl_common_image_surface_new(Evas_GL_Context *gc, int w, int h, int alpha)
 }
 
 void
-evas_gl_common_image_dirty(Evas_GL_Image *im, int x, int y, int w, int h)
+evas_gl_common_image_dirty(Evas_GL_Image *im, unsigned int x, unsigned int y, unsigned int w, unsigned int h)
 {
    if ((w == 0) && (h == 0) && (x == 0) && (y == 0))
      {

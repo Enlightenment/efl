@@ -62,8 +62,8 @@ struct _Ximage_Info
       void        *fmt1;
       void        *fmtdef;
    } x11;
-   int                              depth;
-   int                              pool_mem;
+   unsigned int                     depth;
+   unsigned int                     pool_mem;
    Eina_List                       *pool;
    unsigned char                    can_do_shm;
    Xrender_Surface                 *mul;
@@ -122,7 +122,7 @@ struct _Xrender_Surface
 /* ximage support calls (ximage vs xshmimage, cache etc.) */
 Ximage_Info  *_xr_xlib_image_info_get(Display *disp, Drawable draw, Visual *vis);
 void          _xr_xlib_image_info_free(Ximage_Info *xinf);
-void          _xr_xlib_image_info_pool_flush(Ximage_Info *xinf, int max_num, int max_mem);
+void          _xr_xlib_image_info_pool_flush(Ximage_Info *xinf, unsigned int max_num, unsigned int max_mem);
 Ximage_Image *_xr_xlib_image_new(Ximage_Info *xinf, int w, int h, int depth);
 void          _xr_xlib_image_free(Ximage_Image *xim);
 void          _xr_xlib_image_put(Ximage_Image *xim, Drawable draw, int x, int y, int w, int h);
@@ -130,7 +130,7 @@ void          _xr_xlib_image_put(Ximage_Image *xim, Drawable draw, int x, int y,
 #ifdef BUILD_ENGINE_XRENDER_XCB
 Ximage_Info  *_xr_xcb_image_info_get(xcb_connection_t *conn, xcb_screen_t *screen, xcb_drawable_t draw, xcb_visualtype_t *visual);
 void          _xr_xcb_image_info_free(Ximage_Info *xinf);
-void          _xr_xcb_image_info_pool_flush(Ximage_Info *xinf, int max_num, int max_mem);
+void          _xr_xcb_image_info_pool_flush(Ximage_Info *xinf, unsigned int max_num, unsigned int max_mem);
 Ximage_Image *_xr_xcb_image_new(Ximage_Info *xinf, int w, int h, int depth);
 void          _xr_xcb_image_free(Ximage_Image *xim);
 void          _xr_xcb_image_put(Ximage_Image *xim, xcb_drawable_t draw, int x, int y, int w, int h);

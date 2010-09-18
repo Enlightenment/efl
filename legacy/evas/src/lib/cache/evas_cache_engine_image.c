@@ -397,7 +397,7 @@ evas_cache_engine_image_drop(Engine_Image_Entry *eim)
 }
 
 EAPI Engine_Image_Entry *
-evas_cache_engine_image_dirty(Engine_Image_Entry *eim, int x, int y, int w, int h)
+evas_cache_engine_image_dirty(Engine_Image_Entry *eim, unsigned int x, unsigned int y, unsigned int w, unsigned int h)
 {
    Engine_Image_Entry           *eim_dirty = eim;
    Image_Entry                  *im_dirty = NULL;
@@ -535,7 +535,7 @@ _evas_cache_engine_image_push_dirty(Evas_Cache_Engine_Image *cache, Image_Entry 
 }
 
 EAPI Engine_Image_Entry *
-evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace, void *engine_data)
+evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace, void *engine_data)
 {
    Image_Entry           *im;
 
@@ -547,7 +547,7 @@ evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, int w, int h
 }
 
 EAPI Engine_Image_Entry *
-evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace, void *engine_data)
+evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace, void *engine_data)
 {
    Image_Entry           *im;
 
@@ -559,7 +559,7 @@ evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, int w, int h, DATA3
 }
 
 EAPI Engine_Image_Entry *
-evas_cache_engine_image_size_set(Engine_Image_Entry *eim, int w, int h)
+evas_cache_engine_image_size_set(Engine_Image_Entry *eim, unsigned int w, unsigned int h)
 {
    Evas_Cache_Engine_Image      *cache;
    Engine_Image_Entry           *new;

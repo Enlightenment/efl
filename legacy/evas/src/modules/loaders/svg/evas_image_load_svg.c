@@ -104,13 +104,13 @@ evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key
    else if ((ie->load_opts.w > 0) &&
 	    (ie->load_opts.h > 0))
      {
-	int w2, h2;
+	unsigned int w2, h2;
 	
 	w2 = ie->load_opts.w;
 	h2 = (ie->load_opts.w * h) / w;
 	if (h2 > ie->load_opts.h)
 	  {
-	     int w3;
+	     unsigned int w3;
 	     h2 = ie->load_opts.h;
 	     w3 = (ie->load_opts.h * w) / h;
 	     if (w3 > w2)
@@ -184,7 +184,7 @@ evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key
    else if ((ie->load_opts.w > 0) &&
 	    (ie->load_opts.h > 0))
      {
-	int w2, h2;
+	unsigned int w2, h2;
 	
 	w2 = ie->load_opts.w;
 	h2 = (ie->load_opts.w * h) / w;

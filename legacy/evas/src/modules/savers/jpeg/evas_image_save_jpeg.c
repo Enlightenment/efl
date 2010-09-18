@@ -58,7 +58,6 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    DATA32             *ptr;
    JSAMPROW           *jbuf;
    int                 y = 0;
-   int                 i, j;
 
    if (!im || !im->image.data || !file)
       return 0;
@@ -91,6 +90,7 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    ptr = im->image.data;
    while (cinfo.next_scanline < cinfo.image_height)
      {
+        unsigned int i, j;
 	for (j = 0, i = 0; i < im->cache_entry.w; i++)
 	  {
 	     buf[j++] = ((*ptr) >> 16) & 0xff;
