@@ -184,7 +184,6 @@ _evas_preload_thread_shutdown(void)
    /* FIXME: If function are still running in the background, should we kill them ? */
 #ifdef BUILD_ASYNC_PRELOAD
    Evas_Preload_Pthread_Worker *work;
-   Evas_Preload_Pthread_Data *pth;
 
    /* Force processing of async events. */
    evas_async_events_process();

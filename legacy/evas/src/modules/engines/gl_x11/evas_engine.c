@@ -460,11 +460,8 @@ eng_output_resize(void *data, int w, int h)
 }
 
 static void
-eng_output_tile_size_set(void *data, int w __UNUSED__, int h __UNUSED__)
+eng_output_tile_size_set(void *data __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
-//   Render_Engine *re;
-//
-//   re = (Render_Engine *)data;
 }
 
 static void
@@ -502,11 +499,8 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 }
 
 static void
-eng_output_redraws_rect_del(void *data, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+eng_output_redraws_rect_del(void *data __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
-//   Render_Engine *re;
-//
-//   re = (Render_Engine *)data;
 }
 
 static void
@@ -712,7 +706,7 @@ eng_output_dump(void *data)
 }
 
 static void
-eng_context_cutout_add(void *data, void *context, int x, int y, int w, int h)
+eng_context_cutout_add(void *data __UNUSED__, void *context, int x, int y, int w, int h)
 {
 //   Render_Engine *re;
 //
@@ -722,7 +716,7 @@ eng_context_cutout_add(void *data, void *context, int x, int y, int w, int h)
 }
 
 static void
-eng_context_cutout_clear(void *data, void *context)
+eng_context_cutout_clear(void *data __UNUSED__, void *context)
 {
 //   Render_Engine *re;
 //
@@ -786,7 +780,7 @@ eng_polygon_draw(void *data, void *context, void *surface __UNUSED__, void *poly
 }
 
 static int
-eng_image_alpha_get(void *data, void *image)
+eng_image_alpha_get(void *data __UNUSED__, void *image)
 {
 //   Render_Engine *re;
    Evas_GL_Image *im;
@@ -798,7 +792,7 @@ eng_image_alpha_get(void *data, void *image)
 }
 
 static int
-eng_image_colorspace_get(void *data, void *image)
+eng_image_colorspace_get(void *data __UNUSED__, void *image)
 {
 //   Render_Engine *re;
    Evas_GL_Image *im;
@@ -856,7 +850,7 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
 }
 
 static void *
-eng_image_border_set(void *data, void *image, int l __UNUSED__, int r __UNUSED__, int t __UNUSED__, int b __UNUSED__)
+eng_image_border_set(void *data __UNUSED__, void *image, int l __UNUSED__, int r __UNUSED__, int t __UNUSED__, int b __UNUSED__)
 {
 //   Render_Engine *re;
 //
@@ -865,7 +859,7 @@ eng_image_border_set(void *data, void *image, int l __UNUSED__, int r __UNUSED__
 }
 
 static void
-eng_image_border_get(void *data, void *image __UNUSED__, int *l __UNUSED__, int *r __UNUSED__, int *t __UNUSED__, int *b __UNUSED__)
+eng_image_border_get(void *data __UNUSED__, void *image __UNUSED__, int *l __UNUSED__, int *r __UNUSED__, int *t __UNUSED__, int *b __UNUSED__)
 {
 //   Render_Engine *re;
 //
@@ -873,7 +867,7 @@ eng_image_border_get(void *data, void *image __UNUSED__, int *l __UNUSED__, int 
 }
 
 static char *
-eng_image_comment_get(void *data, void *image, char *key __UNUSED__)
+eng_image_comment_get(void *data __UNUSED__, void *image, char *key __UNUSED__)
 {
 //   Render_Engine *re;
    Evas_GL_Image *im;
@@ -886,7 +880,7 @@ eng_image_comment_get(void *data, void *image, char *key __UNUSED__)
 }
 
 static char *
-eng_image_format_get(void *data, void *image)
+eng_image_format_get(void *data __UNUSED__, void *image)
 {
 //   Render_Engine *re;
    Evas_GL_Image *im;
@@ -1313,9 +1307,8 @@ eng_image_native_set(void *data, void *image, void *native)
 }
 
 static void *
-eng_image_native_get(void *data, void *image)
+eng_image_native_get(void *data __UNUSED__, void *image)
 {
-   Render_Engine *re = (Render_Engine *)data;
    Evas_GL_Image *im = image;
    Native *n;
    if (!im) return NULL;
@@ -1371,7 +1364,7 @@ eng_image_free(void *data, void *image)
 }
 
 static void
-eng_image_size_get(void *data, void *image, int *w, int *h)
+eng_image_size_get(void *data __UNUSED__, void *image, int *w, int *h)
 {
    if (!image)
      {
@@ -1713,9 +1706,8 @@ eng_image_content_hint_get(void *data __UNUSED__, void *image)
 }
 
 static void
-eng_image_stride_get(void *data, void *image, int *stride)
+eng_image_stride_get(void *data __UNUSED__, void *image, int *stride)
 {
-   Render_Engine *re = (Render_Engine *)data;
    Evas_GL_Image *im = image;
    *stride = im->w;
    if ((im->tex) && (im->tex->pt->dyn.img)) *stride = im->tex->pt->dyn.w;
@@ -1848,7 +1840,7 @@ module_open(Evas_Module *em)
 }
 
 static void
-module_close(Evas_Module *em)
+module_close(Evas_Module *em __UNUSED__)
 {
     eina_log_domain_unregister(_evas_engine_GL_X11_log_dom);
     if (xrdb_user.db)

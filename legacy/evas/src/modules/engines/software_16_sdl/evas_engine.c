@@ -465,8 +465,6 @@ static void
 _tmp_out_process(Render_Engine *re, int out_x, int out_y, int w, int h)
 {
    Soft16_Image *d, *s;
-   DATA16 *dp, *sp;
-   int y, x, d_dir;
 
    d = (Soft16_Image *) re->soft16_engine_image->cache_entry.src;
    s = re->tmp_out;
@@ -819,17 +817,17 @@ evas_engine_sdl16_image_draw(void *data __UNUSED__, void *context, void *surface
 }
 
 static void
-evas_engine_sdl16_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
+evas_engine_sdl16_image_map4_draw(void *data __UNUSED__, void *context __UNUSED__, void *surface __UNUSED__, void *image __UNUSED__, RGBA_Map_Point *p __UNUSED__, int smooth __UNUSED__, int level __UNUSED__)
 {
 }
 
 static void
-evas_engine_sdl16_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
+evas_engine_sdl16_image_scale_hint_set(void *data __UNUSED__, void *image __UNUSED__, int hint __UNUSED__)
 {
 }
 
 static int
-evas_engine_sdl16_image_scale_hint_get(void *data __UNUSED__, void *image)
+evas_engine_sdl16_image_scale_hint_get(void *data __UNUSED__, void *image __UNUSED__)
 {
    return EVAS_IMAGE_SCALE_HINT_NONE;
 }
@@ -1021,7 +1019,7 @@ evas_engine_sdl16_image_stride_get(void *data __UNUSED__, void *image, int *stri
 }
 
 static Eina_Bool
-evas_engine_sdl16_canvas_alpha_get(void *data, void *context)
+evas_engine_sdl16_canvas_alpha_get(void *data __UNUSED__, void *context __UNUSED__)
 {
    return EINA_FALSE;
 }
@@ -1097,7 +1095,7 @@ module_open(Evas_Module *em)
 }
 
 static void
-module_close(Evas_Module *em)
+module_close(Evas_Module *em __UNUSED__)
 {
   eina_log_domain_unregister(_evas_engine_soft16_sdl_log_dom);
 }

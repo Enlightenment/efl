@@ -1,8 +1,7 @@
 #include "evas_common_soft8.h"
 
 static always_inline void
-_soft8_convert_from_rgba_pt(const DATA32 * src, DATA8 * dst, DATA8 * alpha,
-                            const int x, const int y)
+_soft8_convert_from_rgba_pt(const DATA32 * src, DATA8 * dst, DATA8 * alpha)
 {
    if (A_VAL(src) == 0)
      {
@@ -18,7 +17,7 @@ _soft8_convert_from_rgba_pt(const DATA32 * src, DATA8 * dst, DATA8 * alpha,
 
 static inline void
 _soft8_convert_from_rgba_scanline(const DATA32 * src, DATA8 * dst,
-                                  DATA8 * alpha, const int y, const int w)
+                                  DATA8 * alpha, const int w)
 {
    int x, m;
 
@@ -31,13 +30,13 @@ _soft8_convert_from_rgba_scanline(const DATA32 * src, DATA8 * dst,
         pld(src, 32);
         UNROLL8(
                   {
-                  _soft8_convert_from_rgba_pt(src, dst, alpha, x, y);
+                  _soft8_convert_from_rgba_pt(src, dst, alpha);
                   src++; dst++; alpha++; x++;}
         );
      }
 
    for (; x < w; x++, src++, dst++, alpha++)
-      _soft8_convert_from_rgba_pt(src, dst, alpha, x, y);
+      _soft8_convert_from_rgba_pt(src, dst, alpha);
 }
 
 void
@@ -54,19 +53,17 @@ evas_common_soft8_image_convert_from_rgba(Soft8_Image * im, const DATA32 * src)
 
    for (y = 0; y < im->cache_entry.h;
         y++, sp += im->cache_entry.w, dp += im->stride, ap += im->stride)
-      _soft8_convert_from_rgba_scanline(sp, dp, ap, y, im->cache_entry.w);
+      _soft8_convert_from_rgba_scanline(sp, dp, ap, im->cache_entry.w);
 }
 
 static always_inline void
-_soft8_convert_from_rgb_pt(const DATA32 * src, DATA8 * dst,
-                           const int x, const int y)
+_soft8_convert_from_rgb_pt(const DATA32 * src, DATA8 * dst)
 {
    *dst = GRY_8_FROM_RGB(src);
 }
 
 static inline void
-_soft8_convert_from_rgb_scanline(const DATA32 * src, DATA8 * dst, const int y,
-                                 const int w)
+_soft8_convert_from_rgb_scanline(const DATA32 * src, DATA8 * dst, const int w)
 {
    int x, m;
 
@@ -79,12 +76,12 @@ _soft8_convert_from_rgb_scanline(const DATA32 * src, DATA8 * dst, const int y,
         pld(src, 32);
         UNROLL8(
                   {
-                  _soft8_convert_from_rgb_pt(src, dst, x, y); src++; dst++; x++;}
+                  _soft8_convert_from_rgb_pt(src, dst); src++; dst++; x++;}
         );
      }
 
    for (; x < w; x++, src++, dst++)
-      _soft8_convert_from_rgb_pt(src, dst, x, y);
+      _soft8_convert_from_rgb_pt(src, dst);
 }
 
 void
@@ -99,5 +96,5 @@ evas_common_soft8_image_convert_from_rgb(Soft8_Image * im, const DATA32 * src)
 
    for (y = 0; y < im->cache_entry.h;
         y++, sp += im->cache_entry.w, dp += im->stride)
-      _soft8_convert_from_rgb_scanline(sp, dp, y, im->cache_entry.w);
+      _soft8_convert_from_rgb_scanline(sp, dp, im->cache_entry.w);
 }

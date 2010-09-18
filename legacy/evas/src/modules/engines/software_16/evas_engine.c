@@ -718,11 +718,12 @@ static Evas_Func func =
      eng_image_scale_hint_set,
      eng_image_scale_hint_get,
      /* more font draw functions */
-     eng_font_last_up_to_pos
-     /* FUTURE software generic calls go here */
-//   ORD(image_map4_draw);
-//   ORD(image_map_surface_new);
-//   ORD(image_map_surface_free);
+     eng_font_last_up_to_pos,
+     NULL, //   ORD(image_map4_draw);
+     NULL, //   ORD(image_map_surface_new);
+     NULL, //   ORD(image_map_surface_free);
+     NULL, // eng_image_content_hint_set - software doesn't use it
+     NULL // eng_image_content_hint_get - software doesn't use it
      /* FUTURE software generic calls go here */
 };
 
@@ -750,7 +751,7 @@ module_open(Evas_Module *em)
 }
 
 static void
-module_close(Evas_Module *em)
+module_close(Evas_Module *em __UNUSED__)
 {
    eina_log_domain_unregister(_evas_soft16_log_dom);
 }

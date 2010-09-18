@@ -291,7 +291,7 @@ _evas_common_soft8_image_from_copied_data(Image_Entry * ie_dst,
 }
 
 static int
-_evas_common_soft8_image_colorspace_set(Image_Entry * ie_dst,
+_evas_common_soft8_image_colorspace_set(Image_Entry * ie_dst __UNUSED__,
                                         int cspace __UNUSED__)
 {
    /* FIXME: handle colorspace */
@@ -524,7 +524,7 @@ evas_common_soft8_image_draw(Soft8_Image * src, Soft8_Image * dst,
                  int src_region_x, int src_region_y,
                  int src_region_w, int src_region_h,
                  int dst_region_x, int dst_region_y,
-                 int dst_region_w, int dst_region_h, int smooth)
+                 int dst_region_w, int dst_region_h, int smooth __UNUSED__)
 {
    Eina_Rectangle sr, dr;
    Cutout_Rects *rects;

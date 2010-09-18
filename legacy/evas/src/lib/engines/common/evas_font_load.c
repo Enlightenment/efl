@@ -254,12 +254,12 @@ evas_common_font_size_use(RGBA_Font *fn)
      }
 }
 
-static int
-_evas_common_font_int_cmp(const int *key1, __UNUSED__ int key1_length,
-			  const int *key2, __UNUSED__ int key2_length)
-{
-   return *key1 - *key2;
-}
+//static int
+//_evas_common_font_int_cmp(const int *key1, __UNUSED__ int key1_length,
+//			  const int *key2, __UNUSED__ int key2_length)
+//{
+//   return *key1 - *key2;
+//}
 
 static int
 _evas_common_font_double_int_cmp(const int *key1, __UNUSED__ int key1_length,
@@ -736,7 +736,7 @@ _evas_common_font_int_clear(RGBA_Font_Int *fi)
 }
 
 static Eina_Bool
-_evas_common_font_all_clear_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+_evas_common_font_all_clear_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
 {
    RGBA_Font_Int *fi = data;
    _evas_common_font_int_clear(fi);

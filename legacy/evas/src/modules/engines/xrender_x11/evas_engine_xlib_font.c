@@ -129,7 +129,7 @@ _xre_xlib_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
 }
 
 static Eina_Bool
-_xre_xlib_font_pool_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+_xre_xlib_font_pool_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
 {
    char buf[256];
    Eina_Hash *pool;

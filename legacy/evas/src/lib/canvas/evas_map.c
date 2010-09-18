@@ -349,6 +349,7 @@ evas_object_map_source_set(Evas_Object *obj, Evas_Object *src)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   (void)src; /* method still needs to be implemented. */
 }
 
 /**

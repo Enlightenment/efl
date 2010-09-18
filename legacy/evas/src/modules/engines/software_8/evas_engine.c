@@ -613,7 +613,7 @@ eng_font_last_up_to_pos(void *data __UNUSED__, void *font, const Eina_Unicode *t
 
 static void
 eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font,
-              int x, int y, int w, int h, int ow, int oh, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
+              int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
 {
    evas_common_font_draw(surface, context, font, x, y, text, intl_props);
    evas_common_draw_context_font_ext_set(context, NULL, NULL, NULL, NULL);
@@ -762,12 +762,13 @@ static Evas_Func func = {
    eng_image_scale_hint_set,
    eng_image_scale_hint_get,
    /* more font draw functions */
-   eng_font_last_up_to_pos
-       /* FUTURE software generic calls go here */
-//   ORD(image_map4_draw);
-//   ORD(image_map_surface_new);
-//   ORD(image_map_surface_free);
-       /* FUTURE software generic calls go here */
+   eng_font_last_up_to_pos,
+   NULL, //   ORD(image_map4_draw);
+   NULL, //   ORD(image_map_surface_new);
+   NULL, //   ORD(image_map_surface_free);
+   NULL, // eng_image_content_hint_set - software doesn't use it
+   NULL // eng_image_content_hint_get - software doesn't use it
+   /* FUTURE software generic calls go here */
 };
 
 /*
@@ -797,7 +798,7 @@ module_open(Evas_Module * em)
 }
 
 static void
-module_close(Evas_Module * em)
+module_close(Evas_Module * em __UNUSED__)
 {
    eina_log_domain_unregister(_evas_soft8_log_dom);
 }
