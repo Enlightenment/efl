@@ -717,44 +717,38 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr)
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
 {
+   long options;
+
    switch (svr->type & ECORE_CON_SSL)
      {
       case ECORE_CON_USE_SSL2:
       case ECORE_CON_USE_SSL2 | ECORE_CON_LOAD_CERT:
          /* Unsafe version of SSL */
-         if (!(svr->ssl_ctx =
-                  SSL_CTX_new(SSLv2_client_method())))
-            return
-               ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
-
+         SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())));
          break;
 
       case ECORE_CON_USE_SSL3:
       case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
-         if (!(svr->ssl_ctx =
-                  SSL_CTX_new(SSLv3_client_method())))
-            return
-               ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
-
+         SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv3_client_method())));
          break;
 
       case ECORE_CON_USE_TLS:
       case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
-         if (!(svr->ssl_ctx =
-                  SSL_CTX_new(TLSv1_client_method())))
-            return
-               ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
+         SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(TLSv1_client_method())));
+         break;
 
+      case ECORE_CON_USE_SSL3 | ECORE_CON_USE_TLS:
+      case ECORE_CON_USE_SSL3 | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
+         SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv23_client_method())));
+         options = SSL_CTX_get_options(svr->ssl_ctx);
+         SSL_CTX_set_options(svr->ssl_ctx, options | SSL_OP_NO_SSLv2);
          break;
 
       default:
          return ECORE_CON_SSL_ERROR_NONE;
      }
-   if (!(svr->ssl = SSL_new(svr->ssl_ctx)))
-     {
-        SSL_CTX_free(svr->ssl_ctx);
-        return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
-     }
+     
+   SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl = SSL_new(svr->ssl_ctx)));
 
    if ((server_cert) && (server_cert->cert) &&
        ((svr->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
@@ -959,28 +953,30 @@ _ecore_con_ssl_client_prepare_openssl(Ecore_Con_Client *cl)
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
 {
+   long options;
+   
    switch (cl->server->type & ECORE_CON_SSL)
      {
       case ECORE_CON_USE_SSL2:
       case ECORE_CON_USE_SSL2 | ECORE_CON_LOAD_CERT:
          /* Unsafe version of SSL */
-         if (!(cl->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
-            return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
-
-         break;
+         SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl_ctx = SSL_CTX_new(SSLv2_server_method())));
 
       case ECORE_CON_USE_SSL3:
       case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
-         if (!(cl->ssl_ctx = SSL_CTX_new(SSLv3_client_method())))
-            return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
-
+         SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl_ctx = SSL_CTX_new(SSLv3_server_method())));
          break;
 
       case ECORE_CON_USE_TLS:
       case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
-         if (!(cl->ssl_ctx = SSL_CTX_new(TLSv1_client_method())))
-            return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
+         SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl_ctx = SSL_CTX_new(TLSv1_server_method())));
+         break;
 
+      case ECORE_CON_USE_SSL3 | ECORE_CON_USE_TLS:
+      case ECORE_CON_USE_SSL3 | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
+         SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl_ctx = SSL_CTX_new(SSLv23_server_method())));
+         options = SSL_CTX_get_options(cl->ssl_ctx);
+         SSL_CTX_set_options(cl->ssl_ctx, options | SSL_OP_NO_SSLv2);
          break;
 
       default:
