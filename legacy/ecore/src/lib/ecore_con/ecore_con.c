@@ -51,7 +51,7 @@ static void      _ecore_con_cb_udp_listen(void *data, Ecore_Con_Info *info);
 static void      _ecore_con_server_free(Ecore_Con_Server *svr);
 static void      _ecore_con_client_free(Ecore_Con_Client *cl);
 
-static Eina_Bool _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_con_svr_tcp_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static Eina_Bool _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static Eina_Bool _ecore_con_cl_udp_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static Eina_Bool _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler);
@@ -220,7 +220,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
    svr->client_limit = -1;
    svr->clients = NULL;
    svr->ppid = getpid();
-   ecore_con_ssl_server_prepare(svr);
+   ecore_con_ssl_server_prepare(svr, compl_type & ECORE_CON_SSL);
 
    type = compl_type & ECORE_CON_TYPE;
 
@@ -228,7 +228,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
        (type == ECORE_CON_LOCAL_SYSTEM) ||
        (type == ECORE_CON_LOCAL_ABSTRACT))
       /* Local */
-      if (!ecore_con_local_listen(svr, _ecore_con_svr_handler, svr))
+      if (!ecore_con_local_listen(svr, _ecore_con_svr_tcp_handler, svr))
          goto error;
 
    if ((type == ECORE_CON_REMOTE_TCP) ||
@@ -310,8 +310,8 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
    Ecore_Con_Type type;
 
    if (!name)
-      return NULL;  /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
-
+      return NULL;
+   /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
    /* local  system socket: FILE:   /tmp/.ecore_service|[name]|[port] */
    /* remote system socket: TCP/IP: [name]:[port] */
    svr = calloc(1, sizeof(Ecore_Con_Server));
@@ -329,7 +329,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
    svr->reject_excess_clients = EINA_FALSE;
    svr->clients = NULL;
    svr->client_limit = -1;
-   ecore_con_ssl_server_prepare(svr);
+   ecore_con_ssl_server_prepare(svr, compl_type & ECORE_CON_SSL);
 
    type = compl_type & ECORE_CON_TYPE;
 
@@ -736,8 +736,8 @@ ecore_con_client_send(Ecore_Con_Client *cl, const void *data, int size)
       ecore_main_fd_handler_active_set(
          cl->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
 
-   if(cl->server && ((cl->server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP))
-      sendto(cl->server->fd, data, size, 0, (struct sockaddr *)cl->client_addr,
+   if(cl->host_server && ((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP))
+      sendto(cl->host_server->fd, data, size, 0, (struct sockaddr *)cl->client_addr,
              cl->client_addr_len);
    else if (cl->buf)
      {
@@ -781,7 +781,7 @@ ecore_con_client_server_get(Ecore_Con_Client *cl)
         return NULL;
      }
 
-   return cl->server;
+   return cl->host_server;
 }
 
 /**
@@ -800,9 +800,9 @@ ecore_con_client_del(Ecore_Con_Client *cl)
         return NULL;
      }
 
-   if (cl->client_addr && cl->server &&
-      (((cl->server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP) ||
-       ((cl->server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST)))
+   if (cl->client_addr && cl->host_server &&
+      (((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP) ||
+       ((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST)))
       free(cl->client_addr);
 
    data = cl->data;
@@ -819,9 +819,9 @@ ecore_con_client_del(Ecore_Con_Client *cl)
      }
    else
      {
-        if (cl->server)
-           cl->server->clients = eina_list_remove(
-                 cl->server->clients, cl);
+        if (cl->host_server)
+           cl->host_server->clients = eina_list_remove(
+                 cl->host_server->clients, cl);
 
         _ecore_con_client_free(cl);
      }
@@ -1034,8 +1034,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    EINA_LIST_FREE(svr->clients, cl)
    _ecore_con_client_free(cl);
    if ((svr->created) && (svr->path) && (svr->ppid == getpid()))
-      unlink(
-         svr->path);
+      unlink(svr->path);
 
    if (svr->fd >= 0)
       close(svr->fd);
@@ -1161,7 +1160,7 @@ _ecore_con_cb_tcp_listen(void *data, Ecore_Con_Info *net_info)
       goto error;
 
    svr->fd_handler = ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
-                                _ecore_con_svr_handler, svr, NULL, NULL);
+                                _ecore_con_svr_tcp_handler, svr, NULL, NULL);
    if (!svr->fd_handler)
       goto error;
 
@@ -1481,7 +1480,7 @@ _ecore_con_pretty_ip(struct sockaddr *client_addr, socklen_t size)
 }
 
 static Eina_Bool
-_ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
+_ecore_con_svr_tcp_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Ecore_Con_Server *svr;
    Ecore_Con_Client *cl = NULL;
@@ -1521,7 +1520,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    fcntl(new_fd, F_SETFL, O_NONBLOCK);
    fcntl(new_fd, F_SETFD, FD_CLOEXEC);
    cl->fd = new_fd;
-   cl->server = svr;
+   cl->host_server = svr;
 
    if ((svr->type & ECORE_CON_SSL) && (ecore_con_ssl_client_init(cl)))
      {
@@ -1756,7 +1755,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
                   cl->buf = NULL;
                   cl->fd = 0;
                   cl->fd_handler = NULL;
-                  cl->server = svr;
+                  cl->host_server = svr;
                   cl->client_addr = calloc(1, client_addr_len);
                   cl->client_addr_len = client_addr_len;
                   if(!cl->client_addr)
@@ -1861,7 +1860,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
 
         errno = 0;
 
-        if (!(cl->server->type & ECORE_CON_SSL))
+        if (!(cl->host_server->type & ECORE_CON_SSL))
           {
              if ((num = read(cl->fd, buf, READBUFSIZ)) <= 0)
                 if ((num < 0) && (errno == EAGAIN))
@@ -1997,7 +1996,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
       return;
 
    num = cl->buf_size - cl->buf_offset;
-   if (!(cl->server->type & ECORE_CON_SSL))
+   if (!(cl->host_server->type & ECORE_CON_SSL))
       count = write(
             cl->fd, cl->buf + cl->buf_offset, num);
    else
@@ -2083,9 +2082,9 @@ _ecore_con_event_client_data_free(void *data __UNUSED__, void *ev)
       free(e->data);
 
    if (((e->client->event_count == 0) && (e->client->delete_me)) ||
-       ((e->client->server &&
-         ((e->client->server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP ||
-          (e->client->server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST))))
+       ((e->client->host_server &&
+         ((e->client->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP ||
+          (e->client->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST))))
       ecore_con_client_del(e->client);
 
    free(e);

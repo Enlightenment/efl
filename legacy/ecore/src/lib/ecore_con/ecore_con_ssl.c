@@ -92,8 +92,7 @@ static Eina_Bool SSL_SUFFIX(_ecore_con_ssl_client_cert_add) (const char *
                                                              key_file);
 static Eina_Bool SSL_SUFFIX(_ecore_con_ssl_server_cert_add) (const char *cert);
 
-static void      SSL_SUFFIX(_ecore_con_ssl_server_prepare) (Ecore_Con_Server *
-                                                            svr);
+static Ecore_Con_Ssl_Error  SSL_SUFFIX(_ecore_con_ssl_server_prepare)(Ecore_Con_Server *svr, int ssl_type);
 static Ecore_Con_Ssl_Error
                  SSL_SUFFIX(_ecore_con_ssl_server_init) (Ecore_Con_Server * svr);
 static Ecore_Con_Ssl_Error
@@ -109,9 +108,6 @@ static int
                                          svr,
                                          unsigned char *buf, int size);
 
-static void
-                 SSL_SUFFIX(_ecore_con_ssl_client_prepare) (Ecore_Con_Client *
-                                           cl);
 static Ecore_Con_Ssl_Error
                  SSL_SUFFIX(_ecore_con_ssl_client_init) (Ecore_Con_Client * cl);
 static Ecore_Con_Ssl_Error
@@ -172,10 +168,10 @@ ecore_con_ssl_available_get(void)
 }
 
 
-void
-ecore_con_ssl_server_prepare(Ecore_Con_Server *svr)
+Ecore_Con_Ssl_Error
+ecore_con_ssl_server_prepare(Ecore_Con_Server *svr, int ssl_type)
 {
-        SSL_SUFFIX(_ecore_con_ssl_server_prepare) (svr);
+   return SSL_SUFFIX(_ecore_con_ssl_server_prepare) (svr, ssl_type);
 }
 
 Ecore_Con_Ssl_Error
@@ -276,12 +272,11 @@ _ecore_con_ssl_shutdown_gnutls(void)
    return ECORE_CON_SSL_ERROR_NONE;
 }
 
-static void
-_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr)
+static Ecore_Con_Ssl_Error
+_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr __UNUSED__, int ssl_type __UNUSED__)
 {
-   svr->session = NULL;
-   svr->anoncred_c = NULL;
-   return;
+
+   return ECORE_CON_SSL_ERROR_NONE;
 }
 
 /* Tries to connect an Ecore_Con_Server to an SSL host.
@@ -431,7 +426,8 @@ _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
    else if (svr->anoncred_c)
       gnutls_anon_free_client_credentials(svr->anoncred_c);
 
-   _ecore_con_ssl_server_prepare_gnutls(svr);
+   svr->session = NULL;
+   svr->anoncred_c = NULL;
 
    return ECORE_CON_SSL_ERROR_NONE;
 }
@@ -479,16 +475,6 @@ _ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *svr, unsigned char *buf,
    return -1;
 }
 
-static void
-_ecore_con_ssl_client_prepare_gnutls(Ecore_Con_Client *cl)
-{
-   cl->session = NULL;
-   if (!_client_connected)
-     {
-        cl->server->anoncred_s = NULL;
-        cl->server->cert = NULL;
-     }
-}
 
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
@@ -516,7 +502,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         GNUTLS_SSL3, 
         0 };
 
-   switch (cl->server->type & ECORE_CON_SSL)
+   switch (cl->host_server->type & ECORE_CON_SSL)
      {
       case ECORE_CON_USE_SSL2: /* not supported because of security issues */
       case ECORE_CON_USE_SSL2 | ECORE_CON_LOAD_CERT: /* not supported because of security issues */
@@ -548,26 +534,26 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_generate2(dh_params, 1024));
 
    if ((client_cert) && (client_cert->cert) &&
-       ((cl->server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
+       ((cl->host_server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
      {
-        cl->server->cert = client_cert->cert;
+        cl->host_server->cert = client_cert->cert;
         client_cert->count++;
-        gnutls_certificate_set_dh_params(cl->server->cert, dh_params);
+        gnutls_certificate_set_dh_params(cl->host_server->cert, dh_params);
      }
 
-   if ((!cl->server->anoncred_s) && (!cl->server->cert))
+   if ((!cl->host_server->anoncred_s) && (!cl->host_server->cert))
      {
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_server_credentials(&(cl->server->anoncred_s)));
-        gnutls_anon_set_server_dh_params(cl->server->anoncred_s, dh_params);
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_server_credentials(&(cl->host_server->anoncred_s)));
+        gnutls_anon_set_server_dh_params(cl->host_server->anoncred_s, dh_params);
      }
 
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&(cl->session), GNUTLS_SERVER));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(cl->session));
-   if (cl->server->cert)
+   if (cl->host_server->cert)
      {
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session,
                                GNUTLS_CRD_CERTIFICATE,
-                               cl->server->cert));
+                               cl->host_server->cert));
         gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
      }
    else
@@ -575,7 +561,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         const int kx[] = { GNUTLS_KX_ANON_DH, 0 };
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(cl->session, kx));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON,
-                             cl->server->anoncred_s));
+                             cl->host_server->anoncred_s));
      }
 
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(cl->session, proto));
@@ -607,10 +593,10 @@ _ecore_con_ssl_client_shutdown_gnutls(Ecore_Con_Client *cl)
         gnutls_deinit(cl->session);
      }
 
-   if (cl->server->anoncred_s && !--_client_connected)
-      gnutls_anon_free_server_credentials(cl->server->anoncred_s);
+   if (cl->host_server->anoncred_s && !--_client_connected)
+      gnutls_anon_free_server_credentials(cl->host_server->anoncred_s);
 
-   if (((cl->server->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
+   if (((cl->host_server->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
        (client_cert) &&
        (client_cert->cert) && (--client_cert->count < 1))
      {
@@ -619,7 +605,12 @@ _ecore_con_ssl_client_shutdown_gnutls(Ecore_Con_Client *cl)
         client_cert = NULL;
      }
 
-   _ecore_con_ssl_client_prepare_gnutls(cl);
+   cl->session = NULL;
+   if (!_client_connected)
+     {
+        cl->host_server->anoncred_s = NULL;
+        cl->host_server->cert = NULL;
+     }
 
    return ECORE_CON_SSL_ERROR_NONE;
 }
@@ -735,58 +726,85 @@ _ecore_con_ssl_shutdown_openssl(void)
    return ECORE_CON_SSL_ERROR_NONE;
 }
 
-static void
-_ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr)
-{
-   svr->ssl = NULL;
-   svr->ssl_ctx = NULL;
-   svr->ssl_err = SSL_ERROR_NONE;
-}
-
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
+_ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
 {
    long options;
 
-   switch (svr->type & ECORE_CON_SSL)
+   switch (ssl_type)
      {
       case ECORE_CON_USE_SSL2:
       case ECORE_CON_USE_SSL2 | ECORE_CON_LOAD_CERT:
          /* Unsafe version of SSL */
-         SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())));
+         if (!svr->created)
+           SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())));
+         else
+           SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv2_server_method())));
          break;
 
       case ECORE_CON_USE_SSL3:
       case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
-         SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv3_client_method())));
+         if (!svr->created)
+           SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv3_client_method())));
+         else
+           SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv3_server_method())));
          break;
 
       case ECORE_CON_USE_TLS:
       case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
-         SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(TLSv1_client_method())));
+         if (!svr->created)
+           SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(TLSv1_client_method())));
+         else
+           SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(TLSv1_server_method())));
          break;
 
       case ECORE_CON_USE_SSL3 | ECORE_CON_USE_TLS:
       case ECORE_CON_USE_SSL3 | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
-         SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv23_client_method())));
+         if (!svr->created)
+           SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv23_client_method())));
+         else
+           SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv23_server_method())));
          options = SSL_CTX_get_options(svr->ssl_ctx);
          SSL_CTX_set_options(svr->ssl_ctx, options | SSL_OP_NO_SSLv2);
          break;
 
       default:
-         return ECORE_CON_SSL_ERROR_NONE;
+         break;
      }
-     
-   SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl = SSL_new(svr->ssl_ctx)));
 
-   if ((server_cert) && (server_cert->cert) &&
-       ((svr->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
-     {
-        //FIXME: just log and go on without cert if loading fails?
+   if ((server_cert) && (server_cert->cert) && (!svr->created) &&
+       ((ssl_type & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT))
+     { /* this is a client */
         SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_certificate(svr->ssl_ctx, server_cert->cert) < 1);
 
         server_cert->count++;
      }
+
+   if ((client_cert) && (client_cert->cert) && (private_key->key) && (svr->created) &&
+       ((ssl_type & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT))
+     { /* this is a server */
+        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_certificate(svr->ssl_ctx, client_cert->cert) < 1);
+        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_PrivateKey(svr->ssl_ctx, private_key->key) < 1);
+        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_check_private_key(svr->ssl_ctx) < 1);
+
+        client_cert->count++;
+        private_key->count++;
+     }
+
+     return ECORE_CON_SSL_ERROR_NONE;
+
+error:
+   if (svr->ssl_ctx)
+     SSL_CTX_free(svr->ssl_ctx);
+
+   ERR("openssl error: %s", ERR_reason_error_string(ERR_get_error()));
+   return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
+}
+
+static Ecore_Con_Ssl_Error
+_ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
+{
+   SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl = SSL_new(svr->ssl_ctx)));
 
    SSL_set_connect_state(svr->ssl);
    SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(svr->ssl, svr->fd));
@@ -862,7 +880,9 @@ _ecore_con_ssl_server_shutdown_openssl(Ecore_Con_Server *svr)
    if (svr->ssl_ctx)
       SSL_CTX_free(svr->ssl_ctx);
 
-   _ecore_con_ssl_server_prepare_openssl(svr);
+   svr->ssl = NULL;
+   svr->ssl_ctx = NULL;
+   svr->ssl_err = SSL_ERROR_NONE;
 
    return ECORE_CON_SSL_ERROR_NONE;
 }
@@ -971,69 +991,20 @@ _ecore_con_ssl_server_write_openssl(Ecore_Con_Server *svr, unsigned char *buf,
    return num;
 }
 
-static void
-_ecore_con_ssl_client_prepare_openssl(Ecore_Con_Client *cl)
-{
-   cl->ssl = NULL;
-   cl->ssl_ctx = NULL;
-   cl->ssl_err = SSL_ERROR_NONE;
-}
-
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
 {
-   long options;
-   
-   switch (cl->server->type & ECORE_CON_SSL)
-     {
-      case ECORE_CON_USE_SSL2:
-      case ECORE_CON_USE_SSL2 | ECORE_CON_LOAD_CERT:
-         /* Unsafe version of SSL */
-         SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl_ctx = SSL_CTX_new(SSLv2_server_method())));
-
-      case ECORE_CON_USE_SSL3:
-      case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
-         SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl_ctx = SSL_CTX_new(SSLv3_server_method())));
-         break;
-
-      case ECORE_CON_USE_TLS:
-      case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
-         SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl_ctx = SSL_CTX_new(TLSv1_server_method())));
-         break;
-
-      case ECORE_CON_USE_SSL3 | ECORE_CON_USE_TLS:
-      case ECORE_CON_USE_SSL3 | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
-         SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl_ctx = SSL_CTX_new(SSLv23_server_method())));
-         options = SSL_CTX_get_options(cl->ssl_ctx);
-         SSL_CTX_set_options(cl->ssl_ctx, options | SSL_OP_NO_SSLv2);
-         break;
-
-      default:
-         return ECORE_CON_SSL_ERROR_NONE;
-     }
-   SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl = SSL_new(cl->ssl_ctx)));
-
-   if ((client_cert) && (client_cert->cert) && (private_key->key) &&
-       ((cl->server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
-     {
-        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_certificate(cl->ssl_ctx, client_cert->cert) < 1);
-        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_PrivateKey(cl->ssl_ctx, private_key->key) < 1);
-        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_check_private_key(cl->ssl_ctx) < 1);
-
-        client_cert->count++;
-        private_key->count++;
-     }
+   SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl = SSL_new(cl->host_server->ssl_ctx)));
 
    SSL_set_accept_state(cl->ssl);
    SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(cl->ssl, cl->fd));
+   SSL_ERROR_CHECK_GOTO_ERROR(SSL_do_handshake(cl->ssl) < 1);
    
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
    if (cl->ssl)
      SSL_free(cl->ssl);
-   if (cl->ssl_ctx)
-     SSL_CTX_free(cl->ssl_ctx);
 
    ERR("openssl error: %s", ERR_reason_error_string(ERR_get_error()));
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
@@ -1115,27 +1086,8 @@ _ecore_con_ssl_client_shutdown_openssl(Ecore_Con_Client *cl)
         SSL_free(cl->ssl);
      }
 
-   if (cl->ssl_ctx)
-     {
-        SSL_CTX_free(cl->ssl_ctx);
-        if (((cl->server->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
-            (client_cert) && (client_cert->cert) && (--client_cert->count < 1))
-          {
-             X509_free(client_cert->cert);
-             free(client_cert);
-             client_cert = NULL;
-          }
-
-        if (((cl->server->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
-            (private_key) && (private_key->key) && (--private_key->count < 1))
-          {
-             EVP_PKEY_free(private_key->key);
-             free(private_key);
-             private_key = NULL;
-          }
-     }
-
-   _ecore_con_ssl_client_prepare_openssl(cl);
+   cl->ssl = NULL;
+   cl->ssl_err = SSL_ERROR_NONE;
 
    return ECORE_CON_SSL_ERROR_NONE;
 }
@@ -1224,9 +1176,10 @@ _ecore_con_ssl_shutdown_none(void)
    return ECORE_CON_SSL_ERROR_NONE;
 }
 
-static void
-_ecore_con_ssl_server_prepare_none(Ecore_Con_Server *svr)
+static Ecore_Con_Ssl_Error
+_ecore_con_ssl_server_prepare_none(Ecore_Con_Server *svr __UNUSED__, int ssl_type __UNUSED__)
 {
+   return ECORE_CON_SSL_ERROR_NONE;
 }
 
 static Ecore_Con_Ssl_Error
@@ -1269,12 +1222,6 @@ _ecore_con_ssl_server_write_none(Ecore_Con_Server *svr, unsigned char *buf,
                                  int size)
 {
    return -1;
-}
-
-static void
-_ecore_con_ssl_client_prepare_none(Ecore_Con_Client *cl)
-{
-   return;
 }
 
 static Ecore_Con_Ssl_Error

@@ -79,7 +79,7 @@ struct _Ecore_Con_Client
 {
    ECORE_MAGIC;
    int fd;
-   Ecore_Con_Server *server;
+   Ecore_Con_Server *host_server;
    void *data;
    Ecore_Fd_Handler *fd_handler;
    int buf_size;
@@ -92,7 +92,6 @@ struct _Ecore_Con_Client
 #if USE_GNUTLS
    gnutls_session session;
 #elif USE_OPENSSL
-   SSL_CTX *ssl_ctx;
    SSL *ssl;
    int ssl_err;
 #endif
@@ -129,7 +128,7 @@ struct _Ecore_Con_Server
 #endif
    char *ip;
    Eina_Bool dead : 1;
-   Eina_Bool created : 1;
+   Eina_Bool created : 1; /* EINA_TRUE if server is our listening server */
    Eina_Bool connecting : 1;
    Eina_Bool reject_excess_clients : 1;
    Eina_Bool delete_me : 1;
@@ -215,7 +214,7 @@ Eina_Bool           ecore_con_ssl_server_cert_add(const char *cert);
 Eina_Bool           ecore_con_ssl_client_cert_add(const char *cert_file,
                                                   const char *crl_file,
                                                   const char *key_file);
-void                ecore_con_ssl_server_prepare(Ecore_Con_Server *svr);
+Ecore_Con_Ssl_Error ecore_con_ssl_server_prepare(Ecore_Con_Server *svr, int ssl_type);
 Ecore_Con_Ssl_Error ecore_con_ssl_server_init(Ecore_Con_Server *svr);
 Ecore_Con_Ssl_Error ecore_con_ssl_server_shutdown(Ecore_Con_Server *svr);
 Ecore_Con_State     ecore_con_ssl_server_try(Ecore_Con_Server *svr);
