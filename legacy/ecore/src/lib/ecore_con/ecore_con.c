@@ -220,7 +220,8 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
    svr->client_limit = -1;
    svr->clients = NULL;
    svr->ppid = getpid();
-   ecore_con_ssl_server_prepare(svr, compl_type & ECORE_CON_SSL);
+   if (ecore_con_ssl_server_prepare(svr, compl_type & ECORE_CON_SSL))
+     goto error;
 
    type = compl_type & ECORE_CON_TYPE;
 
@@ -329,7 +330,8 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
    svr->reject_excess_clients = EINA_FALSE;
    svr->clients = NULL;
    svr->client_limit = -1;
-   ecore_con_ssl_server_prepare(svr, compl_type & ECORE_CON_SSL);
+   if (ecore_con_ssl_server_prepare(svr, compl_type & ECORE_CON_SSL))
+     goto error;
 
    type = compl_type & ECORE_CON_TYPE;
 
