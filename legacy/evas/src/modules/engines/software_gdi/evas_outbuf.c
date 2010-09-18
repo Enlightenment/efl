@@ -408,8 +408,9 @@ evas_software_gdi_outbuf_push_updated_region(Outbuf     *buf,
    /* Region code */
    if (!buf->priv.gdi.region)
      {
-        if (regions)
-          DeleteObject(regions);
+        if (buf->priv.gdi.regions)
+          DeleteObject(buf->priv.gdi.regions);
+        buf->priv.gdi.regions = NULL;
         SetWindowRgn(buf->priv.gdi.window, NULL, 1);
         return;
      }
@@ -434,7 +435,6 @@ evas_software_gdi_outbuf_push_updated_region(Outbuf     *buf,
 
         ww = rect.right - rect.left;
         wh = rect.bottom - rect.top;
-        printf ("(%d,%d) (%d,%d)\n", w, h, ww, wh);
 
         if (!GetWindowRect(buf->priv.gdi.window, &rect))
           return;
@@ -554,6 +554,7 @@ evas_software_gdi_outbuf_push_updated_region(Outbuf     *buf,
 
         if (regions)
           SetWindowRgn(buf->priv.gdi.window, regions, 1);
+        buf->priv.gdi.regions = regions;
 
         buf->priv.region_built = 1;
      }

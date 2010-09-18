@@ -69,6 +69,7 @@ struct _Outbuf
          BITMAPINFO_GDI *bitmap_info;
          HWND            window;
          HDC             dc;
+         HRGN            regions;
          int             depth;
          unsigned char   borderless : 1;
          unsigned char   fullscreen : 1;

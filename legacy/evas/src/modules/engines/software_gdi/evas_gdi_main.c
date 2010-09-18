@@ -87,6 +87,8 @@ evas_software_gdi_shutdown(Outbuf *buf)
 
    free(buf->priv.gdi.bitmap_info);
    ReleaseDC(buf->priv.gdi.window, buf->priv.gdi.dc);
+   if (buf->priv.gdi.regions)
+     DeleteObject(buf->priv.gdi.regions);
 }
 
 void
