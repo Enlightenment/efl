@@ -592,7 +592,7 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
 //        printf("Error:  eglWaitNative(EGL_CORE_NATIVE_ENGINE) fail.\n");
 //     }
 #else
-   glXWaitGL();
+   glXWaitX();
 #endif
 //x//   printf("frame -> push\n");
 }
@@ -618,6 +618,7 @@ eng_output_flush(void *data)
    else
       eglSwapInterval(re->win->egl_disp, 0);
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
+   eglWaitGL();
 #ifdef FRAMECOUNT
    double t1 = get_time();
    printf("%1.5f\n", t1 - t0);
@@ -651,6 +652,7 @@ eng_output_flush(void *data)
        )
      {
         glXSwapBuffers(re->win->disp, re->win->win);
+        glXWaitGL();
      }
    else
      {
