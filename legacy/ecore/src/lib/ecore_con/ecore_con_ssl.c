@@ -303,6 +303,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
 #endif
       0
    };
+   const int mixed_proto[] = { GNUTLS_VERSION_MAX, GNUTLS_TLS1_1, GNUTLS_TLS1_0, GNUTLS_SSL3, 0 };
 
    switch (svr->type & ECORE_CON_SSL)
      {
@@ -318,6 +319,11 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
       case ECORE_CON_USE_TLS:
       case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
          proto = tls_proto;
+         break;
+
+      case ECORE_CON_USE_TLS | ECORE_CON_USE_SSL3:
+      case ECORE_CON_USE_TLS | ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
+         proto = mixed_proto;
          break;
 
       default:
@@ -491,6 +497,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 #endif
       0
    };
+   const int mixed_proto[] = { GNUTLS_VERSION_MAX, GNUTLS_TLS1_1, GNUTLS_TLS1_0, GNUTLS_SSL3, 0 };
 
    switch (cl->server->type & ECORE_CON_SSL)
      {
@@ -506,6 +513,11 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
       case ECORE_CON_USE_TLS:
       case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
          proto = tls_proto;
+         break;
+
+      case ECORE_CON_USE_TLS | ECORE_CON_USE_SSL3:
+      case ECORE_CON_USE_TLS | ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
+         proto = mixed_proto;
          break;
 
       default:
