@@ -620,46 +620,6 @@ evas_object_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, E
    if (h) *h = obj->cur.geometry.h;
 }
 
-/* If an evas object does not use any transformation it's much easier to know
- * if a point is within its bounds. This internal function is used by
- * evas_object_inside_get() that makes the proper checks to see if the given
- * evas object can use this version or a more elaborated one is needed.
- */
-static inline Eina_Bool
-_evas_object_unmapped_inside_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y)
-{
-   return ((x >= obj->cur.geometry.x) && (y >= obj->cur.geometry.y) &&
-           (x < (obj->cur.geometry.x + obj->cur.geometry.w)) &&
-           (y < (obj->cur.geometry.y + obj->cur.geometry.h)));
-}
-
-/**
- * Check if a certain point is inside of a rectangular evas object.
- *
- * This function takes into account if the given evas object suffered any
- * transformation by means of evas_map_* functions.
- *
- * @param obj The given evas object.
- * @param   x   X coordinate of the point to check for.
- * @param   y   Y coordinate of the point to check for.
- * @ngroup Evas_Object_Group_Basic
- */
-EAPI Eina_Bool
-evas_object_inside_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y)
-{
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return EINA_FALSE;
-   MAGIC_CHECK_END();
-
-   if (obj->delete_me)
-      return EINA_FALSE;
-
-   if ((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap))
-      return evas_map_inside_get(obj->cur.map, x, y);
-
-   return _evas_object_unmapped_inside_get(obj, x, y);
-}
-
 /**
  * @addtogroup Evas_Object_Group_Size_Hints
  * @{

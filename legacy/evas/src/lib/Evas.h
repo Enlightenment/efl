@@ -875,7 +875,6 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
    EAPI void              evas_object_move                  (Evas_Object *obj, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_resize                (Evas_Object *obj, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_geometry_get          (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool         evas_object_inside_get            (const Evas_Object *obj, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
 
    EAPI void              evas_object_show                  (Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_hide                  (Evas_Object *obj) EINA_ARG_NONNULL(1);
