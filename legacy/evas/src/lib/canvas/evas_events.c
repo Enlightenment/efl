@@ -65,14 +65,13 @@ _evas_event_object_list_in_get(Evas *e, Eina_List *in,
                               }
                             else
                               {
-                                 parmap = 1;
                                  in = _evas_event_object_list_in_get
                                     (e, in,
                                      evas_object_smart_members_get_direct(obj),
                                      stop,
                                      obj->cur.geometry.x + obj->cur.map->mx,
                                      obj->cur.geometry.y + obj->cur.map->my,
-                                     &norep, parmap);
+                                     &norep, 1);
                               }
                          }
                     }
