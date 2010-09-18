@@ -1557,8 +1557,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
         ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
         svr->clients = eina_list_append(svr->clients, cl);
         if (!svr->path)
-           cl->ip = _ecore_con_pretty_ip(
-                 (struct sockaddr *)&incoming, size_in);
+           cl->ip = _ecore_con_pretty_ip((struct sockaddr *)&incoming, size_in);
 
         if (!cl->delete_me)
           {
