@@ -5,8 +5,10 @@ static void
 _evas_event_havemap_adjust(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
 {
    Evas_Object *pmap;
-   pmap = obj->smart.parent;
 
+   evas_map_coords_get(obj->cur.map, *x, *y, x, y, obj->mouse_grabbed);
+
+   pmap = obj->smart.parent;
    while (pmap)
      {
         if ((pmap->cur.map) && (pmap->cur.map->count == 4) && (pmap->cur.usemap))
@@ -46,7 +48,7 @@ _evas_event_object_list_in_get(Evas *e, Eina_List *in,
                {
                   int norep;
                   int inside;
-                  
+
                   norep = 0;
                   if (((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap)))
                     {
