@@ -150,7 +150,11 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
      }
 
    /* if we havent read the header before, set the header data */
-   E_FREAD(buf, 1, PNG_BYTES_TO_CHECK, f);
+   if (E_FREAD(buf, 1, PNG_BYTES_TO_CHECK, f) != 1)
+     {
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        goto close_file;
+     }
    if (png_sig_cmp(buf, 0, PNG_BYTES_TO_CHECK))
      {
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;

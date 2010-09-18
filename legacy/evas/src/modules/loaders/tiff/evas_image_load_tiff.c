@@ -233,7 +233,12 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
 	return EINA_FALSE;
      }
 
-   fread(&magic_number, sizeof(uint16), 1, ffile);
+   if (fread(&magic_number, sizeof(uint16), 1, ffile) != 1)
+     {
+        fclose(ffile);
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+	return EINA_FALSE;
+     }
    /* Apparently rewind(f) isn't sufficient */
    fseek(ffile, (long)0, SEEK_SET);
 
@@ -241,7 +246,7 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
        && (magic_number != TIFF_LITTLEENDIAN))
      {
         fclose(ffile);
-	*error = EVAS_LOAD_ERROR_GENERIC;
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 	return EINA_FALSE;
      }
 
