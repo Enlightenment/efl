@@ -303,7 +303,16 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
 #endif
       0
    };
-   const int mixed_proto[] = { GNUTLS_VERSION_MAX, GNUTLS_TLS1_1, GNUTLS_TLS1_0, GNUTLS_SSL3, 0 };
+   const int mixed_proto[] = 
+     { 
+#ifdef GNUTLS_VERSION_MAX        
+        GNUTLS_VERSION_MAX, 
+#endif        
+        GNUTLS_TLS1_1, 
+        GNUTLS_TLS1_0, 
+        GNUTLS_SSL3, 
+        0 
+     };
 
    switch (svr->type & ECORE_CON_SSL)
      {
@@ -497,7 +506,15 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 #endif
       0
    };
-   const int mixed_proto[] = { GNUTLS_VERSION_MAX, GNUTLS_TLS1_1, GNUTLS_TLS1_0, GNUTLS_SSL3, 0 };
+   const int mixed_proto[] = 
+     { 
+#ifdef GNUTLS_VERSION_MAX        
+        GNUTLS_VERSION_MAX, 
+#endif        
+        GNUTLS_TLS1_1, 
+        GNUTLS_TLS1_0, 
+        GNUTLS_SSL3, 
+        0 };
 
    switch (cl->server->type & ECORE_CON_SSL)
      {
