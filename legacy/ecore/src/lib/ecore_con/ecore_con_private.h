@@ -96,8 +96,8 @@ struct _Ecore_Con_Client
    SSL *ssl;
    int ssl_err;
 #endif
-   char dead : 1;
-   char delete_me : 1;
+   Eina_Bool dead : 1;
+   Eina_Bool delete_me : 1;
 };
 
 struct _Ecore_Con_Server
@@ -128,11 +128,11 @@ struct _Ecore_Con_Server
    int ssl_err;
 #endif
    char *ip;
-   char dead : 1;
-   char created : 1;
-   char connecting : 1;
-   char reject_excess_clients : 1;
-   char delete_me : 1;
+   Eina_Bool dead : 1;
+   Eina_Bool created : 1;
+   Eina_Bool connecting : 1;
+   Eina_Bool reject_excess_clients : 1;
+   Eina_Bool delete_me : 1;
 };
 
 #ifdef HAVE_CURL
@@ -157,7 +157,7 @@ struct _Ecore_Con_Url
    int received;
    int write_fd;
 
-   unsigned char active : 1;
+   Eina_Bool active : 1;
 };
 #endif
 

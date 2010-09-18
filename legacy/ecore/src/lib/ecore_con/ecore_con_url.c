@@ -397,7 +397,7 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
 
         if (url_con->active)
           {
-             url_con->active = 0;
+             url_con->active = EINA_FALSE;
 
              curl_multi_remove_handle(curlm, url_con->curl_easy);
           }
@@ -1237,7 +1237,7 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
 
    _url_con_list = eina_list_append(_url_con_list, url_con);
 
-   url_con->active = 1;
+   url_con->active = EINA_TRUE;
    curl_multi_add_handle(curlm, url_con->curl_easy);
    /* This one can't be stopped, or the download never start. */
    while (curl_multi_perform(curlm, &still_running) == CURLM_CALL_MULTI_PERFORM) ;
@@ -1296,7 +1296,7 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
              /* Failed to set up an fd_handler */
              ecore_timer_freeze(_curl_timeout);
              curl_multi_remove_handle(curlm, url_con->curl_easy);
-             url_con->active = 0;
+             url_con->active = EINA_FALSE;
              url_con->fd = -1;
              return 0;
           }
@@ -1389,7 +1389,7 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
                   }
 
                 _url_con_list = eina_list_remove(_url_con_list, url_con);
-                url_con->active = 0;
+                url_con->active = EINA_FALSE;
                 e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
                 if (e)
                   {

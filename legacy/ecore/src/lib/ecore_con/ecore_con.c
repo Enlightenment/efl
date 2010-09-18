@@ -215,8 +215,8 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
    svr->type = compl_type;
    svr->port = port;
    svr->data = (void *)data;
-   svr->created = 1;
-   svr->reject_excess_clients = 0;
+   svr->created = EINA_TRUE;
+   svr->reject_excess_clients = EINA_FALSE;
    svr->client_limit = -1;
    svr->clients = NULL;
    svr->ppid = getpid();
@@ -325,8 +325,8 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
    svr->type = compl_type;
    svr->port = port;
    svr->data = (void *)data;
-   svr->created = 0;
-   svr->reject_excess_clients = 0;
+   svr->created = EINA_FALSE;
+   svr->reject_excess_clients = EINA_FALSE;
    svr->clients = NULL;
    svr->client_limit = -1;
    ecore_con_ssl_server_prepare(svr);
@@ -409,7 +409,7 @@ ecore_con_server_del(Ecore_Con_Server *svr)
 
    data = svr->data;
    svr->data = NULL;
-   svr->delete_me = 1;
+   svr->delete_me = EINA_TRUE;
    if (svr->event_count > 0)
      {
         if (svr->fd_handler)
@@ -808,7 +808,7 @@ ecore_con_client_del(Ecore_Con_Client *cl)
    data = cl->data;
 
    cl->data = NULL;
-   cl->delete_me = 1;
+   cl->delete_me = EINA_TRUE;
    if (cl->event_count > 0)
      {
         if (cl->fd_handler)
@@ -981,8 +981,8 @@ ecore_con_lookup(const char *name, Ecore_Con_Dns_Cb done_cb, const void *data)
    svr->type = ECORE_CON_REMOTE_TCP;
    svr->port = 1025;
    svr->data = lk;
-   svr->created = 1;
-   svr->reject_excess_clients = 0;
+   svr->created = EINA_TRUE;
+   svr->reject_excess_clients = EINA_FALSE;
    svr->client_limit = -1;
    svr->clients = NULL;
    svr->ppid = getpid();
@@ -1109,7 +1109,7 @@ kill_server(Ecore_Con_Server *svr)
           }
      }
 
-   svr->dead = 1;
+   svr->dead = EINA_TRUE;
    if (svr->fd_handler)
       ecore_main_fd_handler_del(svr->fd_handler);
 
@@ -1298,7 +1298,7 @@ _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *net_info)
            goto error;
 
 #endif
-        svr->connecting = 1;
+        svr->connecting = EINA_TRUE;
         svr->fd_handler =
            ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ | ECORE_FD_WRITE,
                                      _ecore_con_cl_handler, svr, NULL, NULL);
@@ -1409,7 +1409,7 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
         /* we got our server! */
         Ecore_Con_Event_Server_Add *e;
 
-        svr->connecting = 0;
+        svr->connecting = EINA_FALSE;
         e = calloc(1, sizeof(Ecore_Con_Event_Server_Add));
         if (e)
           {
@@ -1832,7 +1832,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
                     }
                }
 
-             svr->dead = 1;
+             svr->dead = EINA_TRUE;
              if (svr->fd_handler)
                 ecore_main_fd_handler_del(svr->fd_handler);
 
@@ -1912,7 +1912,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
 
         if (lost_client)
           {
-             cl->dead = 1;
+             cl->dead = EINA_TRUE;
              if (cl->fd_handler)
                 ecore_main_fd_handler_del(cl->fd_handler);
 
@@ -2021,7 +2021,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
                                      _ecore_con_event_client_del_free, NULL);
                   }
 
-                cl->dead = 1;
+                cl->dead = EINA_TRUE;
                 if (cl->fd_handler)
                    ecore_main_fd_handler_del(cl->fd_handler);
 
