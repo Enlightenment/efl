@@ -246,17 +246,18 @@ struct _Ecore_Evas_Engine
 #ifdef BUILD_ECORE_EVAS_WIN32
    struct {
       Ecore_Win32_Window *parent;
-     struct {
-       unsigned char fullscreen : 1;
-     } state;
+      struct {
+         unsigned char region     : 1;
+         unsigned char fullscreen : 1;
+      } state;
    } win32;
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
    struct {
       Ecore_WinCE_Window *window;
-     struct {
-       unsigned char fullscreen : 1;
-     } state;
+      struct {
+         unsigned char fullscreen : 1;
+      } state;
    } wince;
 #endif
 
