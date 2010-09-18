@@ -68,11 +68,11 @@ struct _Outbuf
       struct {
          BITMAPINFO_GDI *bitmap_info;
          HWND            window;
-         HBITMAP         mask;
          HDC             dc;
          int             depth;
-         unsigned char   layered    : 1;
+         unsigned char   borderless : 1;
          unsigned char   fullscreen : 1;
+         unsigned char   region     : 1;
       } gdi;
 
       /* 1 big buffer for updates - flush on idle_flush */
@@ -88,6 +88,8 @@ struct _Outbuf
       unsigned char      destination_alpha : 1;
       unsigned char      debug             : 1;
       unsigned char      synced            : 1;
+
+      unsigned char      region_built      : 1;
    } priv;
 };
 
@@ -116,10 +118,10 @@ struct _Gdi_Output_Buffer
 /* evas_gdi_main.c */
 
 int evas_software_gdi_init (HWND         window,
-                            HBITMAP      mask,
                             int          depth,
-                            unsigned int layered,
+                            unsigned int borderless,
                             unsigned int fullscreen,
+                            unsigned int region,
                             Outbuf      *buf);
 
 void evas_software_gdi_shutdown(Outbuf *buf);
@@ -157,10 +159,10 @@ Outbuf *evas_software_gdi_outbuf_setup(int          width,
                                        int          rotation,
                                        Outbuf_Depth depth,
                                        HWND         window,
-                                       HBITMAP      mask,
                                        int          w_depth,
-                                       unsigned int layered,
+                                       unsigned int borderless,
                                        unsigned int fullscreen,
+                                       unsigned int region,
                                        int          mask_dither,
                                        int          destination_alpha);
 

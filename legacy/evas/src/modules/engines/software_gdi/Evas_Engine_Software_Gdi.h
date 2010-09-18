@@ -17,11 +17,11 @@ struct _Evas_Engine_Info_Software_Gdi
 
    struct {
       HWND         window;
-      HBITMAP      mask;
       int          depth;
       int          rotation;
-      unsigned int layered    : 1;
+      unsigned int borderless : 1;
       unsigned int fullscreen : 1;
+      unsigned int region     : 1;
    } info;
 
    /* non-blocking or blocking mode */

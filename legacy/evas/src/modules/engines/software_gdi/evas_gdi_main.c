@@ -4,15 +4,12 @@
 
 int
 evas_software_gdi_init (HWND         window,
-                        HBITMAP      mask,
                         int          depth,
-                        unsigned int layered,
+                        unsigned int borderless,
                         unsigned int fullscreen __UNUSED__,
+                        unsigned int region,
                         Outbuf *buf)
 {
-   RECT window_rect;
-   SIZE mask_size;
-
    if (!window)
      {
         ERR("[Engine] [GDI] Window is NULL");
@@ -20,8 +17,9 @@ evas_software_gdi_init (HWND         window,
      }
 
    buf->priv.gdi.window = window;
-   buf->priv.gdi.mask = mask;
    buf->priv.gdi.dc = GetDC(window);
+   buf->priv.gdi.borderless = borderless;
+   buf->priv.gdi.region = region;
    if (!buf->priv.gdi.dc)
      {
         ERR("[Engine] [GDI] Can not get DC");
@@ -36,22 +34,6 @@ evas_software_gdi_init (HWND         window,
         return 0;
      }
    buf->priv.gdi.depth = depth;
-
-   /* mask */
-   if (layered && mask)
-     {
-        if (GetBitmapDimensionEx(mask, &mask_size) &&
-            GetClientRect(window, &window_rect))
-          {
-             if ((mask_size.cx == window_rect.right) &&
-                 (mask_size.cy == window_rect.bottom))
-               {
-/*                  if (SetLayeredWindowAttributes(window, RGB(0, 0, 0), 255, LWA_COLORKEY)) */
-/*                    { */
-/*                    } */
-               }
-          }
-     }
 
    /* FIXME: support fullscreen */
 

@@ -10,8 +10,8 @@ static int gdicountlimit = 32;
 static Gdi_Output_Buffer *
 _find_gdiob(HDC dc, BITMAPINFO_GDI *bitmap_info, int depth, int w, int h, void *data)
 {
-   Eina_List         *l;
-   Eina_List         *gdil;
+   Eina_List         *l = NULL;
+   Eina_List         *gdil = NULL;
    Gdi_Output_Buffer *gdiob = NULL;
    Gdi_Output_Buffer *gdiob2;
    int                sz;
@@ -132,10 +132,10 @@ evas_software_gdi_outbuf_setup(int          width,
                                int          rotation,
                                Outbuf_Depth depth,
                                HWND         window,
-                               HBITMAP      mask,
                                int          w_depth,
-                               unsigned int layered,
+                               unsigned int borderless,
                                unsigned int fullscreen,
+                               unsigned int region,
                                int          mask_dither,
                                int          destination_alpha)
 {
@@ -153,7 +153,7 @@ evas_software_gdi_outbuf_setup(int          width,
    buf->priv.mask_dither = mask_dither;
    buf->priv.destination_alpha = destination_alpha;
 
-   if (!evas_software_gdi_init(window, mask, w_depth, layered, fullscreen, buf))
+   if (!evas_software_gdi_init(window, w_depth, borderless, fullscreen, region, buf))
      {
         free(buf);
         return NULL;
@@ -205,8 +205,6 @@ evas_software_gdi_outbuf_setup(int          width,
                         buf->priv.gdi.bitmap_info->masks[2]);
              }
         }
-      if (buf->priv.gdi.mask != mask)
-        buf->priv.gdi.mask = mask;
    }
 
    return buf;
@@ -226,6 +224,7 @@ evas_software_gdi_outbuf_reconfigure(Outbuf      *buf,
    buf->height = height;
    buf->rot = rotation;
    evas_software_gdi_bitmap_resize(buf);
+   buf->priv.region_built = 0;
 }
 
 RGBA_Image *
@@ -254,7 +253,7 @@ evas_software_gdi_outbuf_new_region_for_update(Outbuf *buf,
    *cw = w;
    *ch = h;
 
-   alpha = ((buf->priv.gdi.mask) || (buf->priv.destination_alpha));
+   alpha = ((buf->priv.gdi.region) || (buf->priv.destination_alpha));
 
    if ((buf->rot == 0) &&
        (buf->priv.gdi.bitmap_info->masks[0] == 0xff0000) &&
@@ -319,7 +318,7 @@ evas_software_gdi_outbuf_new_region_for_update(Outbuf *buf,
 /*                                     1, */
 /*                                     w, h, NULL); */
      }
-   if ((buf->priv.gdi.mask) || (buf->priv.destination_alpha))
+   if ((buf->priv.gdi.region) || (buf->priv.destination_alpha))
      /* FIXME: faster memset! */
      memset(im->image.data, 0, w * h * sizeof(DATA32));
 
@@ -335,6 +334,7 @@ evas_software_gdi_outbuf_push_updated_region(Outbuf     *buf,
                                              int         w,
                                              int         h)
 {
+   HRGN             regions = NULL;
    Gfx_Func_Convert conv_func;
    Outbuf_Region   *obr;
    DATA32          *src_data;
@@ -404,13 +404,159 @@ evas_software_gdi_outbuf_push_updated_region(Outbuf     *buf,
                x,
                y,
                NULL);
-/*    if (obr->mxob) */
-/*      { */
-/*    int              yy; */
-/* 	for (yy = 0; yy < obr->h; yy++) */
-/* 	  evas_software_xlib_x_write_mask_line(buf, obr->mxob, */
-/* 					      src_data + */
-/* 					      (yy * obr->w), obr->w, yy); */
+
+   /* Region code */
+   if (!buf->priv.gdi.region)
+     {
+        if (regions)
+          DeleteObject(regions);
+        SetWindowRgn(buf->priv.gdi.window, NULL, 1);
+        return;
+     }
+
+   if (!buf->priv.region_built)
+     {
+        RECT  rect;
+        POINT pt = { 0, 0 };
+        HRGN region;
+        int *tmp;
+        int i;
+        int j;
+        int ww;
+        int wh;
+        int dx;
+        int dy;
+        int xmin;
+        int xmax;
+
+        if (!GetClientRect(buf->priv.gdi.window, &rect))
+          return;
+
+        ww = rect.right - rect.left;
+        wh = rect.bottom - rect.top;
+        printf ("(%d,%d) (%d,%d)\n", w, h, ww, wh);
+
+        if (!GetWindowRect(buf->priv.gdi.window, &rect))
+          return;
+        if (!ClientToScreen(buf->priv.gdi.window, &pt))
+          return;
+        dx = x + pt.x - rect.left;
+        dy = y + pt.y - rect.top;
+
+        tmp = src_data;
+
+        for (j = 0; j < h; j++)
+          {
+             i = 0;
+             while (i < w)
+               {
+                  if ((*tmp & 0xff000000) == 0xff000000)
+                    {
+                       xmin = dx + i;
+                       if ((i + 1) == w)
+                         {
+                            xmax = dx + i;
+                            region = CreateRectRgn(xmin, dy + j, xmax + 1, dy + j + 1);
+                            if (regions == NULL)
+                              regions = region;
+                            else
+                              {
+                                 CombineRgn(regions, regions, region, RGN_OR);
+                                 DeleteObject(region);
+                              }
+                         }
+                       else
+                         {
+                            i++;
+                            tmp++;
+
+                            while (i < w)
+                              {
+                                 if ((*tmp & 0xff000000) == 0xff000000)
+                                   {
+                                      if ((i + 1) == w)
+                                        {
+                                           xmax = dx + i;
+                                           region = CreateRectRgn(xmin, dy + j, xmax + 1, dy + j + 1);
+                                           if (regions == NULL)
+                                             regions = region;
+                                           else
+                                             {
+                                                CombineRgn(regions, regions, region, RGN_OR);
+                                                DeleteObject(region);
+                                             }
+                                           break;
+                                        }
+                                   }
+                                 else
+                                   {
+                                      xmax = dx + i - 1;
+                                      region = CreateRectRgn(xmin, dy + j, xmax + 1, dy + j + 1);
+                                      if (regions == NULL)
+                                        regions = region;
+                                      else
+                                        {
+                                           CombineRgn(regions, regions, region, RGN_OR);
+                                           DeleteObject(region);
+                                        }
+                                      break;
+                                   }
+                                 i++;
+                                 tmp++;
+                              }
+                         }
+                    }
+                  i++;
+                  tmp++;
+               }
+          }
+
+        if (!buf->priv.gdi.borderless)
+          {
+            RECT rnc;
+            RECT rc;
+            POINT pt = { 0, 0 };
+            LONG ncw;
+            LONG nch;
+            LONG cw;
+            LONG ch;
+
+            if (!GetWindowRect(buf->priv.gdi.window, &rnc))
+              return;
+            if (!GetClientRect(buf->priv.gdi.window, &rc))
+              return;
+            if (!ClientToScreen(buf->priv.gdi.window, &pt))
+              return;
+
+            ncw = rnc.right - rnc.left;
+            nch = rnc.bottom - rnc.top;
+            cw = rc.right - rc.left;
+            ch = rc.bottom - rc.top;
+
+            region = CreateRectRgn(0, 0, ncw, pt.y - rnc.top);
+            if (!regions)
+              regions = region;
+            else
+              {
+                 CombineRgn(regions, regions, region, RGN_OR);
+                 DeleteObject(region);
+              }
+            region = CreateRectRgn(0, pt.y - rnc.top, pt.x - rnc.left, nch);
+            CombineRgn(regions, regions, region, RGN_OR);
+            DeleteObject(region);
+            region = CreateRectRgn(pt.x - rnc.left, pt.y - rnc.top + ch, pt.x - rnc.left + cw, nch);
+            CombineRgn(regions, regions, region, RGN_OR);
+            DeleteObject(region);
+            region = CreateRectRgn(pt.x - rnc.left + cw, pt.y - rnc.top, ncw, nch);
+            CombineRgn(regions, regions, region, RGN_OR);
+            DeleteObject(region);
+          }
+
+        if (regions)
+          SetWindowRgn(buf->priv.gdi.window, regions, 1);
+
+        buf->priv.region_built = 1;
+     }
 }
 
 void

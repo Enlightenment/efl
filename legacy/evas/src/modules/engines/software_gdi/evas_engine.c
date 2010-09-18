@@ -25,10 +25,10 @@ _output_setup(int          width,
               int          height,
               int          rot,
               HWND         window,
-              HBITMAP      mask,
               int          depth,
-              unsigned int layered,
-              unsigned int fullscreen)
+              unsigned int borderless,
+              unsigned int fullscreen,
+              unsigned int region)
 {
    Render_Engine *re;
 
@@ -59,7 +59,7 @@ _output_setup(int          width,
 
    re->ob = evas_software_gdi_outbuf_setup(width, height, rot,
                                            OUTBUF_DEPTH_INHERIT,
-                                           window, mask, depth, layered, fullscreen,
+                                           window, depth, borderless, fullscreen, region,
                                            0, 0);
    if (!re->ob)
      {
@@ -122,10 +122,10 @@ eng_setup(Evas *e, void *in)
                                            e->output.h,
                                            info->info.rotation,
                                            info->info.window,
-                                           info->info.mask,
                                            info->info.depth,
-                                           info->info.layered,
-                                           info->info.fullscreen);
+                                           info->info.borderless,
+                                           info->info.fullscreen,
+                                           info->info.region);
    else
      {
 	int ponebuf = 0;
@@ -138,10 +138,10 @@ eng_setup(Evas *e, void *in)
                                                 info->info.rotation,
                                                 OUTBUF_DEPTH_INHERIT,
                                                 info->info.window,
-                                                info->info.mask,
                                                 info->info.depth,
-                                                info->info.layered,
+                                                info->info.borderless,
                                                 info->info.fullscreen,
+                                                info->info.region,
                                                 0, 0);
 	re->ob->onebuf = ponebuf;
      }
@@ -176,6 +176,7 @@ eng_output_resize(void *data, int width, int height)
 {
    Render_Engine *re;
 
+   printf ("%s\n", __FUNCTION__);
    re = (Render_Engine *)data;
    evas_software_gdi_outbuf_reconfigure(re->ob,
                                         width,
@@ -202,6 +203,7 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
+   printf ("%s\n", __FUNCTION__);
    re = (Render_Engine *)data;
    evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
 }
@@ -211,6 +213,7 @@ eng_output_redraws_rect_del(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
+   printf ("%s\n", __FUNCTION__);
    re = (Render_Engine *)data;
    evas_common_tilebuf_del_redraw(re->tb, x, y, w, h);
 }
@@ -243,6 +246,7 @@ eng_output_redraws_next_update_get(void *data,
    int            uw;
    int            uh;
 
+   printf ("%s\n", __FUNCTION__);
    re = (Render_Engine *)data;
    if (re->end)
      {
@@ -291,6 +295,7 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
 {
    Render_Engine *re;
 
+   printf ("%s\n", __FUNCTION__);
    re = (Render_Engine *)data;
 #ifdef BUILD_PIPE_RENDER
    evas_common_pipe_map4_begin(surface);
@@ -305,6 +310,7 @@ eng_output_flush(void *data)
 {
    Render_Engine *re;
 
+   printf ("%s\n", __FUNCTION__);
    re = (Render_Engine *)data;
    evas_software_gdi_outbuf_flush(re->ob);
 }
@@ -314,6 +320,7 @@ eng_output_idle_flush(void *data)
 {
    Render_Engine *re;
 
+   printf ("%s\n", __FUNCTION__);
    re = (Render_Engine *)data;
    evas_software_gdi_outbuf_idle_flush(re->ob);
 }
