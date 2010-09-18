@@ -79,8 +79,8 @@ _evas_event_object_list_in_get(Evas *e, Eina_List *in,
                   else
                     {
                        in = _evas_event_object_list_in_get
-                         (e, in, evas_object_smart_members_get_direct(obj),
-                          stop, x, y, &norep, parmap);
+                          (e, in, evas_object_smart_members_get_direct(obj),
+                           stop, x, y, &norep, parmap);
                     }
                   if (norep)
                     {
