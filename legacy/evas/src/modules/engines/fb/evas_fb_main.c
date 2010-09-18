@@ -112,7 +112,7 @@ fb_init_palette_linear(FB_Mode *mode)
 /* initialisation & cleanup                                             */
 
 FB_Mode *
-fb_list_modes(int *num_return)
+fb_list_modes(unsigned int *num_return)
 {
   FILE *f;
   char line[256], label[256], value[256];
@@ -211,10 +211,10 @@ fb_list_modes(int *num_return)
 }
 
 FB_Mode *
-fb_setmode(int width, int height, int depth, int refresh)
+fb_setmode(unsigned int width, unsigned int height, unsigned int depth, unsigned int refresh)
 {
   FB_Mode *modes, *mode = NULL;
-  int      i, num_modes;
+  unsigned int i, num_modes;
 
   modes = fb_list_modes(&num_modes);
   if (modes)
@@ -241,7 +241,7 @@ fb_setmode(int width, int height, int depth, int refresh)
 }
 
 FB_Mode *
-fb_changedepth(FB_Mode *cur_mode, int depth)
+fb_changedepth(FB_Mode *cur_mode, unsigned int depth)
 {
   cur_mode->fb_var.bits_per_pixel = depth;
 
@@ -253,10 +253,10 @@ fb_changedepth(FB_Mode *cur_mode, int depth)
 }
 
 FB_Mode *
-fb_changeres(FB_Mode *cur_mode, int width, int height, int refresh)
+fb_changeres(FB_Mode *cur_mode, unsigned int width, unsigned int height, unsigned int refresh)
 {
   FB_Mode *modes;
-  int      i, num_modes;
+  unsigned int i, num_modes;
 
   modes = fb_list_modes(&num_modes);
   if (modes)
@@ -283,10 +283,10 @@ fb_changeres(FB_Mode *cur_mode, int width, int height, int refresh)
 }
 
 FB_Mode *
-fb_changemode(FB_Mode *cur_mode, int width, int height, int depth, int refresh)
+fb_changemode(FB_Mode *cur_mode, unsigned int width, unsigned int height, unsigned int depth, unsigned int refresh)
 {
   FB_Mode *modes;
-  int      i, num_modes;
+  unsigned int i, num_modes;
 
   modes = fb_list_modes(&num_modes);
   if (modes)
