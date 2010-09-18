@@ -1017,7 +1017,7 @@ error:
 
 static Eina_Bool
 _ecore_con_ssl_client_cert_add_openssl(const char *cert_file,
-                                       const char *crl_file,
+                                       const char *crl_file __UNUSED__,
                                        const char *key_file)
 {
    FILE *fp = NULL;
