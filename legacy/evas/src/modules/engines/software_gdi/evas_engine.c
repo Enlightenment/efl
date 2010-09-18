@@ -176,7 +176,6 @@ eng_output_resize(void *data, int width, int height)
 {
    Render_Engine *re;
 
-   printf ("%s\n", __FUNCTION__);
    re = (Render_Engine *)data;
    evas_software_gdi_outbuf_reconfigure(re->ob,
                                         width,
@@ -203,7 +202,6 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
-   printf ("%s\n", __FUNCTION__);
    re = (Render_Engine *)data;
    evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
 }
@@ -213,7 +211,6 @@ eng_output_redraws_rect_del(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
-   printf ("%s\n", __FUNCTION__);
    re = (Render_Engine *)data;
    evas_common_tilebuf_del_redraw(re->tb, x, y, w, h);
 }
@@ -246,7 +243,6 @@ eng_output_redraws_next_update_get(void *data,
    int            uw;
    int            uh;
 
-   printf ("%s\n", __FUNCTION__);
    re = (Render_Engine *)data;
    if (re->end)
      {
@@ -295,7 +291,6 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
 {
    Render_Engine *re;
 
-   printf ("%s\n", __FUNCTION__);
    re = (Render_Engine *)data;
 #ifdef BUILD_PIPE_RENDER
    evas_common_pipe_map4_begin(surface);
@@ -310,7 +305,6 @@ eng_output_flush(void *data)
 {
    Render_Engine *re;
 
-   printf ("%s\n", __FUNCTION__);
    re = (Render_Engine *)data;
    evas_software_gdi_outbuf_flush(re->ob);
 }
@@ -320,7 +314,6 @@ eng_output_idle_flush(void *data)
 {
    Render_Engine *re;
 
-   printf ("%s\n", __FUNCTION__);
    re = (Render_Engine *)data;
    evas_software_gdi_outbuf_idle_flush(re->ob);
 }
