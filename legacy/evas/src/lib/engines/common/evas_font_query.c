@@ -305,6 +305,9 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Ev
      }
    if (v_adv) *v_adv = evas_common_font_get_line_advance(fn);
    if (h_adv) *h_adv = pen_x - start_x;
+#ifndef BIDI_SUPPORT
+   intl_props = NULL;
+#endif
 }
 
 /* x y w h for char at char pos for null it returns the position right after
@@ -623,6 +626,8 @@ end:
 #ifdef BIDI_SUPPORT
    if (visual_to_logical) free(visual_to_logical);
    if (visual_text) free(visual_text);
+#else
+   intl_props = NULL;
 #endif
 
    return ret_val;
