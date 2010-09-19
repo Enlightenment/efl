@@ -31,7 +31,7 @@ static struct {
    struct {
       int num, pix;
    } c, a, v, r, n, d;
-} texinfo = {0};
+} texinfo = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 
 static void
 _print_tex_count(void)
@@ -170,7 +170,7 @@ _pool_tex_new(Evas_GL_Context *gc, int w, int h, int intformat, GLenum format)
 }
 
 static int
-_pool_tex_alloc(Evas_GL_Texture_Pool *pt, int w, int h, int *u, int *v, Eina_List **l_after)
+_pool_tex_alloc(Evas_GL_Texture_Pool *pt, int w, int h __UNUSED__, int *u, int *v, Eina_List **l_after)
 {
    Eina_List *l;
    Evas_GL_Texture *tex, *tex2;
@@ -600,6 +600,12 @@ _pool_tex_dynamic_new(Evas_GL_Context *gc, int w, int h, int intformat, int form
    
    glBindTexture(GL_TEXTURE_2D, gc->pipe[0].shader.cur_tex);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+#else
+   gc = NULL;
+   w = 0;
+   h = 0;
+   intformat = 0;
+   format = 0;
 #endif  
    return pt;
 }
@@ -955,7 +961,7 @@ evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels,
 
 void
 evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels,
-                                    unsigned int w, unsigned int h, int fh)
+                                    unsigned int w, unsigned int h, int fh __UNUSED__)
 {
    if (!tex->pt) return;
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);

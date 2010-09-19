@@ -463,7 +463,7 @@ _evas_gl_common_image_update(Evas_GL_Context *gc, Evas_GL_Image *im)
 
 void
 evas_gl_common_image_map4_draw(Evas_GL_Context *gc, Evas_GL_Image *im, 
-                               RGBA_Map_Point *p, int smooth, int level)
+                               RGBA_Map_Point *p, int smooth, int level __UNUSED__)
 {
    RGBA_Draw_Context *dc;
    int r, g, b, a;
