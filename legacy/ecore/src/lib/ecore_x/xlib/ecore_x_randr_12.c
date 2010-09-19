@@ -9,8 +9,8 @@
 #include "ecore_x_private.h"
 #include "ecore_x_randr.h"
 
-#define Ecore_X_Randr_None   0
-#define Ecore_X_Randr_Unset -1
+#define Ecore_X_Randr_None   (Ecore_X_Randr_Crtc)0
+#define Ecore_X_Randr_Unset  (Ecore_X_Randr_Crtc)-1
 
 #ifdef ECORE_XRANDR
 
@@ -82,7 +82,8 @@ _ecore_x_randr_crtc_validate(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
    int i;
    Eina_Bool ret = EINA_FALSE;
 
-   if ((crtc == Ecore_X_Randr_None) || (crtc == Ecore_X_Randr_Unset))
+   if ((crtc == Ecore_X_Randr_None) || 
+       (crtc == Ecore_X_Randr_Unset))
       return ret;
 
    if (_ecore_x_randr_root_validate(root) && crtc &&
@@ -1010,7 +1011,7 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root,
                   outputs = NULL;
                   noutputs = 0;
                }
-             else if (noutputs == Ecore_X_Randr_Unset)
+             else if (noutputs == (int)Ecore_X_Randr_Unset)
                {
                   outputs = (Ecore_X_Randr_Output *)crtc_info->outputs;
                   noutputs = crtc_info->noutput;
@@ -1769,14 +1770,14 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root,
              i++)
           {
              if (((crtc_info[i]->x + dx) < 0) ||
-                 ((crtc_info[i]->x + crtc_info[i]->width + dx) > w_max)
+                 ((int)(crtc_info[i]->x + crtc_info[i]->width + dx) > w_max)
                  || ((crtc_info[i]->y + dy) < 0) ||
-                 ((crtc_info[i]->y + crtc_info[i]->height + dy) > h_max)
+                 ((int)(crtc_info[i]->y + crtc_info[i]->height + dy) > h_max)
                  )
                 goto _ecore_x_randr_move_crtcs_fail_free_crtc_info;
 
-             nw = MAX((crtc_info[i]->x + crtc_info[i]->width + dx), nw);
-             nh = MAX((crtc_info[i]->y + crtc_info[i]->height + dy), nh);
+             nw = MAX((int)(crtc_info[i]->x + crtc_info[i]->width + dx), nw);
+             nh = MAX((int)(crtc_info[i]->y + crtc_info[i]->height + dy), nh);
           }
         //not out of bounds
 
@@ -1868,10 +1869,10 @@ ecore_x_randr_screen_reset(Ecore_X_Window root)
 
 	enabled_crtcs[nenabled_crtcs++] = res->crtcs[i];
 
-        if ((crtc_info->x + crtc_info->width) > w_n)
+        if ((int)(crtc_info->x + crtc_info->width) > w_n)
            w_n = (crtc_info->x + crtc_info->width);
 
-        if ((crtc_info->y + crtc_info->height) > h_n)
+        if ((int)(crtc_info->y + crtc_info->height) > h_n)
            h_n = (crtc_info->y + crtc_info->height);
 
 	if (crtc_info->x < dx_min)
