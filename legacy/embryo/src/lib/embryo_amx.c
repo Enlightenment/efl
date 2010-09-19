@@ -206,12 +206,13 @@ _embryo_program_init(Embryo_Program *ep, void *code)
    ep->flags = EMBRYO_FLAG_RELOC;
 
      {
-	Embryo_Cell cip, code_size;
+	Embryo_Cell cip, code_size, cip_end;
 	Embryo_Cell *code;
 
 	code_size = hdr->dat - hdr->cod;
 	code = (Embryo_Cell *)((unsigned char *)ep->code + (int)hdr->cod);
-	for (cip = 0; cip < (code_size / sizeof(Embryo_Cell)); cip++)
+        cip_end = code_size / sizeof(Embryo_Cell);
+	for (cip = 0; cip < cip_end; cip++)
 	  {
 /* move this here - later we probably want something that verifies opcodes
  * are valid and ok...
@@ -547,7 +548,11 @@ embryo_program_vm_pop(Embryo_Program *ep)
  * @ingroup Embryo_Swap_Group
  */
 EAPI void
-embryo_swap_16(unsigned short *v)
+embryo_swap_16(unsigned short *v
+#ifndef WORDS_BIGENDIAN
+               __UNUSED__
+#endif               
+              )
 {
 #ifdef WORDS_BIGENDIAN
    _embryo_byte_swap_16(v);
@@ -561,7 +566,11 @@ embryo_swap_16(unsigned short *v)
  * @ingroup Embryo_Swap_Group
  */
 EAPI void
-embryo_swap_32(unsigned int *v)
+embryo_swap_32(unsigned int *v
+#ifndef WORDS_BIGENDIAN
+               __UNUSED__
+#endif
+               )
 {
 #ifdef WORDS_BIGENDIAN
    _embryo_byte_swap_32(v);

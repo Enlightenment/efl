@@ -91,7 +91,7 @@ _embryo_fp_str(Embryo_Program *ep, Embryo_Cell *params)
    if (params[0] != (1 * sizeof(Embryo_Cell))) return 0;
    str = embryo_data_address_get(ep, params[1]);
    len = embryo_data_string_length_get(ep, str);
-   if ((len == 0) || (len >= sizeof(buf))) return 0;
+   if ((len == 0) || (len >= (int)sizeof(buf))) return 0;
    embryo_data_string_get(ep, str, buf);
    f = (float)atof(buf);
    return EMBRYO_FLOAT_TO_CELL(f);

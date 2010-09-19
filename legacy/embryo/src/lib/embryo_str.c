@@ -276,7 +276,7 @@ _embryo_str_snprintf(Embryo_Program *ep, Embryo_Cell *params)
    /* params[2] = bufsize */
    /* params[3] = format_string */
    /* params[4] = first arg ... */
-   if (params[0] < (3 * sizeof(Embryo_Cell))) return 0;
+   if (params[0] < (Embryo_Cell)(3 * sizeof(Embryo_Cell))) return 0;
    if (params[2] <= 0) return 0;
    STRGET(ep, s1, params[3]);
    if (!s1) return -1;
