@@ -402,16 +402,16 @@ phopt_init(void)
 	len =
 	   strexpand(str, (unsigned char *)sequences_cmp[i].find, sizeof str,
 		     SCPACK_TABLE);
-	assert(len <= sizeof str);
-	assert(len == (int)strlen(str) + 1);
+	assert(len <= (int)(sizeof(str)));
+	assert(len == (int)(strlen(str) + 1));
 	sequences[i].find = (char *)malloc(len);
 	if (sequences[i].find)
 	   strcpy(sequences[i].find, str);
 	len =
 	   strexpand(str, (unsigned char *)sequences_cmp[i].replace, sizeof str,
 		     SCPACK_TABLE);
-	assert(len <= sizeof str);
-	assert(len == (int)strlen(str) + 1);
+	assert(len <= (int)(sizeof(str)));
+	assert(len == (int)(strlen(str) + 1));
 	sequences[i].replace = (char *)malloc(len);
 	if (sequences[i].replace)
 	   strcpy(sequences[i].replace, str);

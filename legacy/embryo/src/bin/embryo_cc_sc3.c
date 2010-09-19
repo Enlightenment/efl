@@ -166,7 +166,7 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
 	  {
 	     assert((sizeof binoperstr / sizeof binoperstr[0]) ==
 		    (sizeof op1 / sizeof op1[0]));
-	     for (i = 0; i < sizeof op1 / sizeof op1[0]; i++)
+	     for (i = 0; i < (int)(sizeof op1 / sizeof op1[0]); i++)
 	       {
 		  if (oper == op1[i])
 		    {
@@ -186,7 +186,7 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
 	       (sizeof unopers / sizeof unopers[0]));
 	if (opername[0] == '\0')
 	  {
-	     for (i = 0; i < sizeof unopers / sizeof unopers[0]; i++)
+	     for (i = 0; i < (int)(sizeof unopers / sizeof unopers[0]); i++)
 	       {
 		  if (oper == unopers[i])
 		    {

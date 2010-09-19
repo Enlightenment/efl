@@ -288,6 +288,6 @@ delete_substtable(void)
    int                 i;
 
    delete_stringpairtable(&substpair);
-   for (i = 0; i < sizeof substindex / sizeof substindex[0]; i++)
+   for (i = 0; i < (int)(sizeof(substindex) / sizeof(substindex[0])); i++)
       substindex[i] = NULL;
 }

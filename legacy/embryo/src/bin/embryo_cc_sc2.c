@@ -101,7 +101,8 @@ plungequalifiedfile(char *name)
 	  }			/* if */
 	ext_idx++;
      }
-   while (!fp && ext_idx < (sizeof extensions / sizeof extensions[0]));
+   while ((!fp) && 
+          (ext_idx < (int)(sizeof extensions / sizeof extensions[0])));
    if (!fp)
      {
 	*ext = '\0';		/* restore filename */
@@ -197,11 +198,11 @@ doinclude(void)
      }				/* if */
 
    i = 0;
-   while (*lptr != c && *lptr != '\0' && i < sizeof name - 1)	/* find the end of the string */
+   while ((*lptr != c) && (*lptr != '\0') && (i < (int)(sizeof(name) - 1))) /* find the end of the string */
       name[i++] = *lptr++;
    while (i > 0 && name[i - 1] <= ' ')
       i--;			/* strip trailing whitespace */
-   assert(i >= 0 && i < sizeof name);
+   assert((i >= 0) && (i < (int)(sizeof(name))));
    name[i] = '\0';		/* zero-terminate the string */
 
    if (*lptr != c)
@@ -989,7 +990,9 @@ command(void)
 			 {
 			    int                 i;
 
-			    for (i = 0; i < sizeof name && alphanum(*lptr);
+			    for (i = 0; 
+                                 (i < (int)(sizeof(name))) && 
+                                 (alphanum(*lptr));
 				 i++, lptr++)
 			       name[i] = *lptr;
 			    name[i] = '\0';
@@ -1022,9 +1025,11 @@ command(void)
 		       int                 i;
 
 		       /* first gather all information, start with the tag name */
-		       while (*lptr <= ' ' && *lptr != '\0')
+		       while ((*lptr <= ' ') && (*lptr != '\0'))
 			  lptr++;
-		       for (i = 0; i < sizeof name && alphanum(*lptr);
+		       for (i = 0; 
+                            (i < (int)(sizeof(name))) && 
+                            (alphanum(*lptr));
 			    i++, lptr++)
 			  name[i] = *lptr;
 		       name[i] = '\0';
@@ -1084,9 +1089,11 @@ command(void)
 		       do
 			 {
 			    /* get the name */
-			    while (*lptr <= ' ' && *lptr != '\0')
+			    while ((*lptr <= ' ') && (*lptr != '\0'))
 			       lptr++;
-			    for (i = 0; i < sizeof name && isalpha(*lptr);
+			    for (i = 0; 
+                                 (i < (int)(sizeof(name))) && 
+                                 (isalpha(*lptr));
 				 i++, lptr++)
 			       name[i] = *lptr;
 			    name[i] = '\0';

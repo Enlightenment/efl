@@ -247,7 +247,7 @@ alignframe(int numbytes)
    /* "numbytes" should be a power of 2 for this code to work */
    int                 i, count = 0;
 
-   for (i = 0; i < sizeof numbytes * 8; i++)
+   for (i = 0; i < (int)(sizeof(numbytes) * 8); i++)
       if (numbytes & (1 << i))
 	 count++;
    assert(count == 1);
