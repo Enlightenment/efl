@@ -141,21 +141,26 @@ static gboolean ecore_idling;
 static gboolean ecore_fds_ready;
 #endif
 
+#ifdef HAVE_EPOLL
 static inline int _ecore_poll_events_from_fdh(Ecore_Fd_Handler *fdh)
 {
    int events = 0;
-#ifdef HAVE_EPOLL
    if (fdh->flags & ECORE_FD_READ)  events |= EPOLLIN;
    if (fdh->flags & ECORE_FD_WRITE) events |= EPOLLOUT;
    if (fdh->flags & ECORE_FD_ERROR) events |= EPOLLERR;
-#endif
    return events;
 }
+#else
+static inline int _ecore_poll_events_from_fdh(Ecore_Fd_Handler *fdh __UNUSED__)
+{
+   return 0;
+}
+#endif
 
+#ifdef HAVE_EPOLL
 static inline int _ecore_main_fdh_epoll_add(Ecore_Fd_Handler *fdh)
 {
    int r = 0;
-#ifdef HAVE_EPOLL
    struct epoll_event ev;
 
    memset(&ev, 0, sizeof (ev));
@@ -163,13 +168,18 @@ static inline int _ecore_main_fdh_epoll_add(Ecore_Fd_Handler *fdh)
    ev.data.ptr = fdh;
    INF("adding poll on %d %08x", fdh->fd, ev.events);
    r = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fdh->fd, &ev);
-#endif
    return r;
 }
+#else
+static inline int _ecore_main_fdh_epoll_add(Ecore_Fd_Handler *fdh __UNUSED__)
+{
+   return 0;
+}
+#endif
 
+#ifdef HAVE_EPOLL
 static inline void _ecore_main_fdh_epoll_del(Ecore_Fd_Handler *fdh)
 {
-#ifdef HAVE_EPOLL
    struct epoll_event ev;
 
    memset(&ev, 0, sizeof (ev));
@@ -180,13 +190,17 @@ static inline void _ecore_main_fdh_epoll_del(Ecore_Fd_Handler *fdh)
      {
 	ERR("Failed to delete epoll fd %d! (errno=%d)", fdh->fd, errno);
      }
-#endif
 }
+#else
+static inline void _ecore_main_fdh_epoll_del(Ecore_Fd_Handler *fdh __UNUSED__)
+{
+}
+#endif
 
+#ifdef HAVE_EPOLL
 static inline int _ecore_main_fdh_epoll_modify(Ecore_Fd_Handler *fdh)
 {
    int r = 0;
-#ifdef HAVE_EPOLL
    struct epoll_event ev;
 
    memset(&ev, 0, sizeof (ev));
@@ -194,9 +208,14 @@ static inline int _ecore_main_fdh_epoll_modify(Ecore_Fd_Handler *fdh)
    ev.data.ptr = fdh;
    INF("modifing epoll on %d to %08x", fdh->fd, ev.events);
    r = epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fdh->fd, &ev);
-#endif
    return r;
 }
+#else
+static inline int _ecore_main_fdh_epoll_modify(Ecore_Fd_Handler *fdh __UNUSED__)
+{
+   return 0;
+}
+#endif
 
 #ifdef HAVE_EPOLL
 static inline int _ecore_main_fdh_epoll_mark_active(void)
