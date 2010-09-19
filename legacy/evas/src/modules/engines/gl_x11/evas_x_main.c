@@ -36,10 +36,12 @@ eng_window_new(Display *disp,
                int      rot)
 {
    Evas_GL_X11_Window *gw;
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    int context_attrs[3];
    int config_attrs[40];
    int major_version, minor_version;
    int num_config, n = 0;
+#endif   
    XVisualInfo *vi_use;
    const GLubyte *vendor, *renderer, *version;
    
