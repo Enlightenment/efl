@@ -836,7 +836,7 @@ _ecore_x_selection_parser_text(const char *target __UNUSED__,
                                int format         __UNUSED__)
 {
    Ecore_X_Selection_Data_Text *sel;
-   char *data = _data;
+   unsigned char *data = _data;
 
    sel = calloc(1, sizeof(Ecore_X_Selection_Data_Text));
 
