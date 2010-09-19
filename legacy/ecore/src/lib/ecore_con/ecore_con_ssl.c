@@ -273,10 +273,20 @@ _ecore_con_ssl_shutdown_gnutls(void)
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr __UNUSED__, int ssl_type __UNUSED__)
+_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type __UNUSED__)
 {
+   int ret;
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_init(&svr->dh_params));
 
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_generate2(svr->dh_params, 1024));
    return ECORE_CON_SSL_ERROR_NONE;
+
+error:
+   ERR("gnutls returned with error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
+   if (svr->dh_params)
+     gnutls_dh_params_deinit(svr->dh_params);
+   svr->dh_params = NULL;
+   return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
 /* Tries to connect an Ecore_Con_Server to an SSL host.
@@ -415,6 +425,12 @@ _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
         gnutls_deinit(svr->session);
      }
 
+   if (svr->dh_params)
+     {
+        gnutls_dh_params_deinit(svr->dh_params);
+        svr->dh_params = NULL;
+     }
+
    if (((svr->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
        (server_cert) &&
        (server_cert->cert) && (--server_cert->count < 1))
@@ -480,7 +496,6 @@ static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 {
    const int *proto = NULL;
-   gnutls_dh_params_t dh_params;
    int ret;
    const int compress[] = { GNUTLS_COMP_DEFLATE, GNUTLS_COMP_NULL, 0 };
    const int ssl3_proto[] = { GNUTLS_SSL3, 0 };
@@ -529,25 +544,21 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 
    _client_connected++;
 
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_init(&dh_params));
-
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_generate2(dh_params, 1024));
-
    if ((client_cert) && (client_cert->cert) &&
        ((cl->host_server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
      {
         cl->host_server->cert = client_cert->cert;
         client_cert->count++;
-        gnutls_certificate_set_dh_params(cl->host_server->cert, dh_params);
+        gnutls_certificate_set_dh_params(cl->host_server->cert, cl->host_server->dh_params);
      }
 
    if ((!cl->host_server->anoncred_s) && (!cl->host_server->cert))
      {
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_server_credentials(&(cl->host_server->anoncred_s)));
-        gnutls_anon_set_server_dh_params(cl->host_server->anoncred_s, dh_params);
+        gnutls_anon_set_server_dh_params(cl->host_server->anoncred_s, cl->host_server->dh_params);
      }
 
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&(cl->session), GNUTLS_SERVER));
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&cl->session, GNUTLS_SERVER));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(cl->session));
    if (cl->host_server->cert)
      {
@@ -994,7 +1005,7 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
 
    SSL_set_accept_state(cl->ssl);
    SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(cl->ssl, cl->fd));
-   SSL_ERROR_CHECK_GOTO_ERROR(SSL_accept(cl->ssl) < 1);
+   SSL_ERROR_CHECK_GOTO_ERROR(SSL_do_handshake(cl->ssl) < 1);
    
    return ECORE_CON_SSL_ERROR_NONE;
 
