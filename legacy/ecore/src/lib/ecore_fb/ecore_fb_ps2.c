@@ -19,18 +19,18 @@ ecore_fb_ps2_init(void)
    if (_ecore_fb_ps2_fd >= 0)
      {
 	prev_flags = fcntl(_ecore_fb_ps2_fd, F_GETFL);
- 	fcntl(_ecore_fb_ps2_fd, F_SETFL, prev_flags | O_NONBLOCK);
+        fcntl(_ecore_fb_ps2_fd, F_SETFL, prev_flags | O_NONBLOCK);
 	_ecore_fb_ts_fd_handler_handle = ecore_main_fd_handler_add(_ecore_fb_ps2_fd, 
-									ECORE_FD_READ,
-									_ecore_fb_ps2_fd_handler, NULL,	NULL, NULL);
+                                                                   ECORE_FD_READ,
+                                                                   _ecore_fb_ps2_fd_handler, NULL,	NULL, NULL);
 	if (!_ecore_fb_ts_fd_handler_handle)
-	 {
-	   close(_ecore_fb_ps2_fd);
-	   return 0;
-         }
+          {
+             close(_ecore_fb_ps2_fd);
+             return 0;
+          }
 	return 1;
      }
-  return 0;   
+   return 0;   
 }
 
 void
@@ -47,7 +47,7 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
    static double last_time = 0;
    static double last_last_time = 0;
    int v = 0;
-
+   
    do
      {
 	int x, y, button, i;
@@ -66,13 +66,13 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 	t = ecore_time_get();
 	_ecore_fb_ps2_event_byte_count = 0;
 	if (_ecore_fb_ps2_event.button & 0x10)
-	  x = prev_x + (0xffffff00 | _ecore_fb_ps2_event.x);
+           x = prev_x + (0xffffff00 | _ecore_fb_ps2_event.x);
 	else
-	  x = prev_x + _ecore_fb_ps2_event.x;
+           x = prev_x + _ecore_fb_ps2_event.x;
 	if (_ecore_fb_ps2_event.button & 0x20)
-	  y = prev_y - (0xffffff00 | _ecore_fb_ps2_event.y);
+           y = prev_y - (0xffffff00 | _ecore_fb_ps2_event.y);
 	else
-	  y = prev_y - _ecore_fb_ps2_event.y;
+           y = prev_y - _ecore_fb_ps2_event.y;
 	button = _ecore_fb_ps2_event.button & 0x7;
 	if (x < 0) x = 0;
 	if (y < 0) y = 0;
@@ -107,7 +107,7 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 		  e->y = y;
 		  e->button = 1;
 		  if ((t - last_time) <= _ecore_fb_double_click_time)
-		    e->double_click = 1;
+                     e->double_click = 1;
 		  if ((t - last_last_time) <= (2 * _ecore_fb_double_click_time))
 		    {
 		       did_triple = 1;

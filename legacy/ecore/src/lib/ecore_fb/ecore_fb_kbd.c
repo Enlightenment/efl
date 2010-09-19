@@ -184,7 +184,7 @@ _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 		  e->key_compose = strdup(_ecore_fb_kbd_syms[((buf & 0x7f) * 6) + 3 + add]);
 	       }
 	     else
-	       e->keyname = strdup(_ecore_fb_btn_syms[buf & 0x7f]);
+                e->keyname = strdup(_ecore_fb_btn_syms[buf & 0x7f]);
 	     if (!e->keyname)
 	       {
 		  free(e);
@@ -192,19 +192,19 @@ _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 	       }
 	     ecore_event_add(ECORE_FB_EVENT_KEY_DOWN, e, _ecore_fb_event_free_key_down, NULL);
 	     if (!strcmp(e->keyname, "Control_L"))
-	       _ecore_fb_ctrl++;
+                _ecore_fb_ctrl++;
 	     else if (!strcmp(e->keyname, "Control_R"))
-	       _ecore_fb_ctrl++;
+                _ecore_fb_ctrl++;
 	     else if (!strcmp(e->keyname, "Alt_L"))
-	       _ecore_fb_alt++;
+                _ecore_fb_alt++;
 	     else if (!strcmp(e->keyname, "Alt_R"))
-	       _ecore_fb_alt++;
+                _ecore_fb_alt++;
 	     else if (!strcmp(e->keyname, "Shift_L"))
-	       _ecore_fb_shift++;
+                _ecore_fb_shift++;
 	     else if (!strcmp(e->keyname, "Shift_R"))
-	       _ecore_fb_shift++;
+                _ecore_fb_shift++;
 	     else if (!strcmp(e->keyname, "Caps_Lock"))
-	       _ecore_fb_lock++;
+                _ecore_fb_lock++;
 	     else if (!strcmp(e->keyname, "F1")) vt_switch = 0;
 	     else if (!strcmp(e->keyname, "F2")) vt_switch = 1;
 	     else if (!strcmp(e->keyname, "F3")) vt_switch = 2;
@@ -222,7 +222,7 @@ _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 	     if ((vt_switch >= 0) &&
 		 (_ecore_fb_ctrl) &&
 		 (_ecore_fb_alt))
-	       _ecore_fb_vt_switch(vt_switch);
+                _ecore_fb_vt_switch(vt_switch);
 	  }
 	else
 	  {
@@ -242,7 +242,7 @@ _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 		  e->key_compose = strdup(_ecore_fb_kbd_syms[((buf & 0x7f) * 6) + 3 + add]);
 	       }
 	     else
-	       e->keyname = strdup(_ecore_fb_btn_syms[buf & 0x7f]);
+                e->keyname = strdup(_ecore_fb_btn_syms[buf & 0x7f]);
 	     if (!e->keyname)
 	       {
 		  free(e);
@@ -250,25 +250,25 @@ _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 	       }
 	     ecore_event_add(ECORE_FB_EVENT_KEY_UP, e, _ecore_fb_event_free_key_up, NULL);
 	     if (!strcmp(e->keyname, "Control_L"))
-	       _ecore_fb_ctrl--;
+                _ecore_fb_ctrl--;
 	     else if (!strcmp(e->keyname, "Control_R"))
-	       _ecore_fb_ctrl--;
+                _ecore_fb_ctrl--;
 	     else if (!strcmp(e->keyname, "Alt_L"))
-	       _ecore_fb_alt--;
+                _ecore_fb_alt--;
 	     else if (!strcmp(e->keyname, "Alt_R"))
-	       _ecore_fb_alt--;
+                _ecore_fb_alt--;
 	     else if (!strcmp(e->keyname, "Shift_L"))
-	       _ecore_fb_shift--;
+                _ecore_fb_shift--;
 	     else if (!strcmp(e->keyname, "Shift_R"))
-	       _ecore_fb_shift--;
+                _ecore_fb_shift--;
 	     else if (!strcmp(e->keyname, "Caps_Lock"))
-	       _ecore_fb_lock--;
+                _ecore_fb_lock--;
 	     if (_ecore_fb_ctrl < 0) _ecore_fb_ctrl = 0;
 	     if (_ecore_fb_alt < 0) _ecore_fb_alt = 0;
 	     if (_ecore_fb_shift < 0) _ecore_fb_shift = 0;
 	     if (_ecore_fb_lock < 0) _ecore_fb_lock = 0;
 	  }
-	retry:
+retry:
 	;
      }
    while (v > 0);
@@ -283,9 +283,9 @@ ecore_fb_kbd_init(void)
    prev_flags = fcntl(_ecore_fb_kbd_fd, F_GETFL);
    fcntl(_ecore_fb_kbd_fd, F_SETFL, prev_flags | O_NONBLOCK);
    _ecore_fb_kbd_fd_handler_handle = ecore_main_fd_handler_add(_ecore_fb_kbd_fd,
-								    ECORE_FD_READ,
-								    _ecore_fb_kbd_fd_handler, NULL,
-								    NULL, NULL);
+                                                               ECORE_FD_READ,
+                                                               _ecore_fb_kbd_fd_handler, NULL,
+                                                               NULL, NULL);
    if(!_ecore_fb_kbd_fd_handler_handle) return 0;
    return 1;
 }
@@ -294,7 +294,7 @@ void
 ecore_fb_kbd_shutdown(void)
 {
    if (_ecore_fb_kbd_fd_handler_handle) 
-     ecore_main_fd_handler_del(_ecore_fb_kbd_fd_handler_handle);
+      ecore_main_fd_handler_del(_ecore_fb_kbd_fd_handler_handle);
    if (_ecore_fb_kbd_fd >= 0) close(_ecore_fb_kbd_fd);
    _ecore_fb_kbd_fd = 0;
    _ecore_fb_kbd_fd_handler_handle = NULL;
