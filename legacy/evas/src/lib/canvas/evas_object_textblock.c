@@ -4836,7 +4836,7 @@ _evas_textblock_node_format_remove_matching(Evas_Object_Textblock *o,
 {
    Evas_Object_Textblock_Node_Text *tnode;
    Eina_List *formats = NULL;
-   size_t offset;
+   size_t offset = 0;
 
    if (!fmt) return;
 
@@ -6149,7 +6149,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
      {
         Evas_Object_Textblock_Node_Format *fnode;
         Eina_Unicode *text_base, *text;
-        int off;
+        int off = 0;
 
         text_base = text =
            eina_unicode_strdup(eina_ustrbuf_string_get(tnode->unicode));

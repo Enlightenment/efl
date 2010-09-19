@@ -4,6 +4,8 @@
 
 static int sym_done = 0;
 
+typedef void    (*glsym_func_void) ();
+
 void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b) = NULL;
 void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b) = NULL;
 void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e) = NULL;
@@ -12,6 +14,11 @@ void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b) = NULL;
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 // just used for finding symbols :)
 typedef void (*_eng_fn) (void);
+
+typedef _eng_fn       (*secsym_func_eng_fn) ();
+typedef unsigned int  (*secsym_func_uint) ();
+typedef void         *(*secsym_func_void_ptr) ();
+
 static _eng_fn  (*secsym_eglGetProcAddress)          (const char *a) = NULL;
 
 void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e) = NULL;
@@ -35,68 +42,65 @@ gl_symbols(void)
    sym_done = 1;
 
 #ifdef _EVAS_ENGINE_SDL_H
-# define FINDSYM(dst, sym) if (!dst) dst = SDL_GL_GetProcAddress(sym)
+# define FINDSYM(dst, sym, typ) if (!dst) dst = (typ)SDL_GL_GetProcAddress(sym)
 #else
-# define FINDSYM(dst, sym) if (!dst) dst = dlsym(RTLD_DEFAULT, sym)
+# define FINDSYM(dst, sym, typ) if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym)
 #endif
-#define FALLBAK(dst) if (!dst) dst = (void *)sym_missing;
+#define FALLBAK(dst, typ) if (!dst) dst = (typ)sym_missing;
    
-   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers");
-   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersEXT");
-   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersARB");
-   FALLBAK(glsym_glGenFramebuffers);
+   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", glsym_func_void);
+   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersEXT", glsym_func_void);
+   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersARB", glsym_func_void);
+   FALLBAK(glsym_glGenFramebuffers, glsym_func_void);
    
-   FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer");
-   FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferEXT");
-   FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferARB");
-   FALLBAK(glsym_glBindFramebuffer);
+   FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer", glsym_func_void);
+   FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferEXT", glsym_func_void);
+   FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferARB", glsym_func_void);
+   FALLBAK(glsym_glBindFramebuffer, glsym_func_void);
    
-   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2D");
-   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DEXT");
-   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DARB");
-   FALLBAK(glsym_glFramebufferTexture2D);
+   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2D", glsym_func_void);
+   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DEXT", glsym_func_void);
+   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DARB", glsym_func_void);
+   FALLBAK(glsym_glFramebufferTexture2D, glsym_func_void);
 
-   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffers");
-   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersEXT");
-   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersARB");
-   FALLBAK(glsym_glDeleteFramebuffers);
+   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffers", glsym_func_void);
+   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersEXT", glsym_func_void);
+   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersARB", glsym_func_void);
+   FALLBAK(glsym_glDeleteFramebuffers, glsym_func_void);
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 #undef FINDSYM
-#define FINDSYM(dst, sym) \
-   if ((!dst) && (secsym_eglGetProcAddress)) dst = secsym_eglGetProcAddress(sym); \
-   if (!dst) dst = dlsym(RTLD_DEFAULT, sym)
+#define FINDSYM(dst, sym, typ) \
+   if ((!dst) && (secsym_eglGetProcAddress)) dst = (typ)secsym_eglGetProcAddress(sym); \
+   if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym)
 // yes - gl core looking for egl stuff. i know it's odd. a reverse-layer thing
 // but it will work as the egl/glx layer calls gl core common stuff and thus
 // these symbols will work. making the glx/egl + x11 layer do this kind-of is
 // wrong as this is not x11 (output) layer specific like the native surface
 // stuff. this is generic zero-copy textures for gl
 
-   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddress");
-   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddressEXT");
-   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddressARB");
-   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddressKHR");
+   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddress", secsym_func_eng_fn);
+   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddressEXT", secsym_func_eng_fn);
+   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddressARB", secsym_func_eng_fn);
+   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddressKHR", secsym_func_eng_fn);
    
-   FINDSYM(secsym_eglCreateImage, "eglCreateImage");
-   FINDSYM(secsym_eglCreateImage, "eglCreateImageEXT");
-   FINDSYM(secsym_eglCreateImage, "eglCreateImageARB");
-   FINDSYM(secsym_eglCreateImage, "eglCreateImageKHR");
+   FINDSYM(secsym_eglCreateImage, "eglCreateImage", secsym_func_void_ptr);
+   FINDSYM(secsym_eglCreateImage, "eglCreateImageEXT", secsym_func_void_ptr);
+   FINDSYM(secsym_eglCreateImage, "eglCreateImageARB", secsym_func_void_ptr);
+   FINDSYM(secsym_eglCreateImage, "eglCreateImageKHR", secsym_func_void_ptr);
    
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImage");
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageEXT");
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageARB");
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR");
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImage", secsym_func_uint);
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageEXT", secsym_func_uint);
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageARB", secsym_func_uint);
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR", secsym_func_uint);
    
-   FINDSYM(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES");
+   FINDSYM(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", glsym_func_void);
    
-   FINDSYM(secsym_eglMapImageSEC, "eglMapImageSEC");
-//   FALLBAK(secsym_eglMapImageSEC);
+   FINDSYM(secsym_eglMapImageSEC, "eglMapImageSEC", secsym_func_void_ptr);
    
-   FINDSYM(secsym_eglUnmapImageSEC, "eglUnmapImageSEC");
-//   FALLBAK(secsym_eglUnmapImageSEC);
+   FINDSYM(secsym_eglUnmapImageSEC, "eglUnmapImageSEC", secsym_func_uint);
    
-   FINDSYM(secsym_eglGetImageAttribSEC, "eglGetImageAttribSEC");
-//   FALLBAK(secsym_eglGetImageAttribSEC);
+   FINDSYM(secsym_eglGetImageAttribSEC, "eglGetImageAttribSEC", secsym_func_uint);
 #endif   
 }
 
