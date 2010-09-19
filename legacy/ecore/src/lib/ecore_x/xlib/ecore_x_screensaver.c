@@ -154,7 +154,7 @@ ecore_x_screensaver_interval_get(void)
 } /* ecore_x_screensaver_interval_get */
 
 EAPI void
-ecore_x_screensaver_event_listen_set(int on)
+ecore_x_screensaver_event_listen_set(int on __UNUSED__)
 {
 #ifdef ECORE_XSS
    Ecore_X_Window root;
