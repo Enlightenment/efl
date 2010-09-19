@@ -39,6 +39,10 @@ static int gl_wins = 0;
 #endif
 typedef void (*_eng_fn) (void);
 
+typedef _eng_fn (*glsym_func_eng_fn) ();
+typedef void    (*glsym_func_void) ();
+typedef void   *(*glsym_func_void_ptr) ();
+
 _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
 void     (*glsym_eglBindTexImage)              (EGLDisplay a, EGLSurface b, int c) = NULL;
 void     (*glsym_eglReleaseTexImage)           (EGLDisplay a, EGLSurface b, int c) = NULL;
@@ -47,6 +51,11 @@ void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
 void     (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 #else
 typedef void (*_eng_fn) (void);
+
+typedef _eng_fn (*glsym_func_eng_fn) ();
+typedef void    (*glsym_func_void) ();
+typedef int     (*glsym_func_int) ();
+typedef XID     (*glsym_func_xid) ();
 
 _eng_fn  (*glsym_glXGetProcAddress)  (const char *a) = NULL;
 void     (*glsym_glXBindTexImage)    (Display *a, GLXDrawable b, int c, int *d) = NULL;
@@ -66,68 +75,68 @@ _sym_init(void)
    if (done) return;
    
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-#define FINDSYM(dst, sym) \
-   if ((!dst) && (glsym_eglGetProcAddress)) dst = glsym_eglGetProcAddress(sym); \
-   if (!dst) dst = dlsym(RTLD_DEFAULT, sym)
+#define FINDSYM(dst, sym, typ) \
+   if ((!dst) && (glsym_eglGetProcAddress)) dst = (typ)glsym_eglGetProcAddress(sym); \
+   if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym)
    
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress");
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT");
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB");
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR");
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR", glsym_func_eng_fn);
    
-   FINDSYM(glsym_eglBindTexImage, "eglBindTexImage");
-   FINDSYM(glsym_eglBindTexImage, "eglBindTexImageEXT");
-   FINDSYM(glsym_eglBindTexImage, "eglBindTexImageARB");
-   FINDSYM(glsym_eglBindTexImage, "eglBindTexImageKHR");
+   FINDSYM(glsym_eglBindTexImage, "eglBindTexImage", glsym_func_void);
+   FINDSYM(glsym_eglBindTexImage, "eglBindTexImageEXT", glsym_func_void);
+   FINDSYM(glsym_eglBindTexImage, "eglBindTexImageARB", glsym_func_void);
+   FINDSYM(glsym_eglBindTexImage, "eglBindTexImageKHR", glsym_func_void);
    
-   FINDSYM(glsym_eglReleaseTexImage, "eglReleaseTexImage");
-   FINDSYM(glsym_eglReleaseTexImage, "eglReleaseTexImageEXT");
-   FINDSYM(glsym_eglReleaseTexImage, "eglReleaseTexImageARB");
-   FINDSYM(glsym_eglReleaseTexImage, "eglReleaseTexImageKHR");
+   FINDSYM(glsym_eglReleaseTexImage, "eglReleaseTexImage", glsym_func_void);
+   FINDSYM(glsym_eglReleaseTexImage, "eglReleaseTexImageEXT", glsym_func_void);
+   FINDSYM(glsym_eglReleaseTexImage, "eglReleaseTexImageARB", glsym_func_void);
+   FINDSYM(glsym_eglReleaseTexImage, "eglReleaseTexImageKHR", glsym_func_void);
    
-   FINDSYM(glsym_eglCreateImage, "eglCreateImage");
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageEXT");
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageARB");
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR");
+   FINDSYM(glsym_eglCreateImage, "eglCreateImage", glsym_func_void_ptr);
+   FINDSYM(glsym_eglCreateImage, "eglCreateImageEXT", glsym_func_void_ptr);
+   FINDSYM(glsym_eglCreateImage, "eglCreateImageARB", glsym_func_void_ptr);
+   FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR", glsym_func_void_ptr);
 
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImage");
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageEXT");
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageARB");
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR");
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImage", glsym_func_void);
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageEXT", glsym_func_void);
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageARB", glsym_func_void);
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR", glsym_func_void);
 
    FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES");
 #else
-#define FINDSYM(dst, sym) \
-   if ((!dst) && (glsym_glXGetProcAddress)) dst = glsym_glXGetProcAddress(sym); \
-   if (!dst) dst = dlsym(RTLD_DEFAULT, sym)
+#define FINDSYM(dst, sym, typ) \
+   if ((!dst) && (glsym_glXGetProcAddress)) dst = (typ)glsym_glXGetProcAddress(sym); \
+   if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym)
 
-   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress");
-   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT");
-   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressARB");
+   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress", glsym_func_eng_fn);
+   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT", glsym_func_eng_fn);
+   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressARB", glsym_func_eng_fn);
    
-   FINDSYM(glsym_glXBindTexImage, "glXBindTexImage");
-   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageEXT");
-   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageARB");
+   FINDSYM(glsym_glXBindTexImage, "glXBindTexImage", glsym_func_void);
+   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageEXT", glsym_func_void);
+   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageARB", glsym_func_void);
 
-   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImage");
-   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageEXT");
-   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageARB");
+   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImage", glsym_func_void);
+   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageEXT", glsym_func_void);
+   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageARB", glsym_func_void);
 
-   FINDSYM(glsym_glXGetVideoSync, "glXGetVideoSyncSGI");
+   FINDSYM(glsym_glXGetVideoSync, "glXGetVideoSyncSGI", glsym_func_int);
    
-   FINDSYM(glsym_glXWaitVideoSync, "glXWaitVideoSyncSGI");
+   FINDSYM(glsym_glXWaitVideoSync, "glXWaitVideoSyncSGI", glsym_func_int);
 
-   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmap");
-   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmapEXT");
-   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmapARB");
+   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmap", glsym_func_xid);
+   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmapEXT", glsym_func_xid);
+   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmapARB", glsym_func_xid);
    
-   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap");
-   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmapEXT");
-   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmapARB");
+   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap", glsym_func_void);
+   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmapEXT", glsym_func_void);
+   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmapARB", glsym_func_void);
    
-   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable");
-   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableEXT");
-   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableARB");
+   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", glsym_func_void);
+   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableEXT", glsym_func_void);
+   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableARB", glsym_func_void);
 #endif
 }
 
@@ -1712,7 +1721,11 @@ eng_image_stride_get(void *data __UNUSED__, void *image, int *stride)
 {
    Evas_GL_Image *im = image;
    *stride = im->w;
-   if ((im->tex) && (im->tex->pt->dyn.img)) *stride = im->tex->pt->dyn.w;
+   if ((im->tex) && (im->tex->pt->dyn.img))
+     {
+        *stride = im->tex->pt->dyn.w * 4;
+        // FIXME: for other image formats (yuv etc.) different stride needed
+     }
 }
 
 static void
