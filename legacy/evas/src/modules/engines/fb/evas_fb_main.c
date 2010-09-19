@@ -24,7 +24,7 @@
 static struct fb_fix_screeninfo  fb_fix;
 static int                       fb, tty;
 static int                       bpp, depth;
-static int                       orig_vt_no = 0;
+//static int                       orig_vt_no = 0;
 static int                       kd_mode;
 static struct vt_mode            vt_omode;
 static struct fb_var_screeninfo  fb_ovar;
@@ -38,7 +38,7 @@ static struct fb_cmap            cmap  = { 0, 256, red,  green,  blue, NULL };
 
 static void fb_cleanup(void);
 //static void fb_cleanup_fork(void);
-static void fb_setvt(int vtno);
+//static void fb_setvt(int vtno);
 static void fb_init_palette_332(FB_Mode *mode);
 static void fb_init_palette_linear(FB_Mode *mode);
 
@@ -387,6 +387,7 @@ fb_getmode(void)
    return mode;
 }
 
+/* XXX: unused
 static void
 fb_setvt(int vtno)
 {
@@ -442,9 +443,10 @@ fb_setvt(int vtno)
     }
 #endif
 }
+*/
 
 void
-fb_init(int vt, int device)
+fb_init(int vt __UNUSED__, int device)
 {
    char dev[32];
    
