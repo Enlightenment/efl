@@ -41,6 +41,7 @@ Eina_List *_modules_found = NULL;
 
 #if defined(__CEGCC__) || defined(__MINGW32CE__)
 # define EDJE_MODULE_NAME "edje_%s.dll"
+# define EDJE_EXTRA_MODULE_NAME 1
 #elif _WIN32
 # define EDJE_MODULE_NAME "module.dll"
 #else
@@ -63,8 +64,11 @@ edje_module_load(const char *module)
 	Eina_Module *em;
 	char tmp[PATH_MAX];
 
-	/* A warning is expected has the naming change under wince. */
-	snprintf(tmp, sizeof (tmp), "%s/%s/%s/" EDJE_MODULE_NAME, path, module, MODULE_ARCH, module);
+	snprintf(tmp, sizeof (tmp), "%s/%s/%s/" EDJE_MODULE_NAME, path, module, MODULE_ARCH
+#ifdef EDJE_EXTRA_MODULE_NAME                 
+                 , module
+#endif                 
+                );
 	em = eina_module_new(tmp);
 	if (!em) continue ;
 
@@ -158,8 +162,11 @@ edje_available_modules_get(void)
 	       {
 		  char tmp[PATH_MAX];
 
-		  /* A warning is expected has the naming change under wince. */
-		  snprintf(tmp, sizeof (tmp), "%s/%s/" EDJE_MODULE_NAME, info->path, MODULE_ARCH, ecore_file_file_get(info->path));
+		  snprintf(tmp, sizeof (tmp), "%s/%s/" EDJE_MODULE_NAME, info->path, MODULE_ARCH
+#ifdef EDJE_EXTRA_MODULE_NAME                 
+                           , ecore_file_file_get(info->path)
+#endif
+                           );
 
 		  if (ecore_file_exists(tmp))
 		    result = eina_list_append(result, eina_stringshare_add(ecore_file_file_get(info->path)));

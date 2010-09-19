@@ -553,6 +553,7 @@ _elua_table_ptr_get(lua_State *L, const void *key)
    return ptr;
 }
 
+/* XXX: not used
 static void
 _elua_table_ptr_del(lua_State *L, const void *key)
 {
@@ -560,6 +561,7 @@ _elua_table_ptr_del(lua_State *L, const void *key)
    lua_pushnil(L);
    lua_settable(L, LUA_REGISTRYINDEX);
 }
+*/
 
 static void
 _elua_gc(lua_State *L)
@@ -1388,6 +1390,7 @@ _elua_2_int_get(lua_State *L, int i, Eina_Bool tr,
    return n;
 }
 
+/* XXX: not used
 static int
 _elua_3_int_get(lua_State *L, int i, Eina_Bool tr,
                 const char *n1, int *v1,
@@ -1436,6 +1439,7 @@ _elua_3_int_get(lua_State *L, int i, Eina_Bool tr,
      }
    return n;
 }
+*/
 
 static int
 _elua_4_int_get(lua_State *L, int i, Eina_Bool tr,
