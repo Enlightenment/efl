@@ -4244,6 +4244,12 @@ ecore_evas_software_x11_8_new(const char *disp_name, Ecore_X_Window parent,
    return ee;
 #else
    return NULL;
+   disp_name = NULL;
+   parent = 0;
+   x = 0;
+   y = 0;
+   w = 0;
+   h = 0;
 #endif /* ! BUILD_ECORE_EVAS_SOFTWARE_8_X11 */
 }
 
@@ -4259,6 +4265,7 @@ ecore_evas_software_x11_8_window_get(const Ecore_Evas *ee)
    return (Ecore_X_Window) ecore_evas_window_get(ee);
 #else
    return 0;
+   ee = NULL;
 #endif
 }
 
@@ -4274,6 +4281,7 @@ ecore_evas_software_x11_8_subwindow_get(const Ecore_Evas *ee)
    return (Ecore_X_Window) ecore_evas_window_get(ee);
 #else
    return 0;
+   ee = NULL;
 #endif
 }
 
@@ -4307,6 +4315,8 @@ ecore_evas_software_x11_8_direct_resize_set(Ecore_Evas *ee, int on)
      }
 #else
    return;
+   ee = NULL;
+   on = 0;
 #endif
 }
 
@@ -4322,6 +4332,7 @@ ecore_evas_software_x11_8_direct_resize_get(const Ecore_Evas *ee)
    return ee->engine.x.direct_resize;
 #else
    return 0;
+   ee = NULL;
 #endif
 }
 
@@ -4345,5 +4356,8 @@ ecore_evas_software_x11_8_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window 
 	ecore_event_window_register(win, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
      }
 #else
+   return;
+   ee = NULL;
+   win = 0;
 #endif
 }

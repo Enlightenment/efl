@@ -71,7 +71,6 @@ _ecore_evas_fb_match(void)
 static void
 _ecore_evas_fb_lose(void *data __UNUSED__)
 {
-   Ecore_Evas *ee;
    Eina_List *ll;
    Ecore_Fb_Input_Device *dev;
 
@@ -186,6 +185,7 @@ _ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *
    return EINA_FALSE; /* dont pass it on */
 }
 
+/* XXX: unused
 static int
 _ecore_evas_fb_render(Ecore_Evas *ee)
 {
@@ -221,6 +221,7 @@ _ecore_evas_fb_render(Ecore_Evas *ee)
      evas_norender(ee->evas);
    return rend;
 }
+*/
 
 static int
 _ecore_evas_fb_init(int w, int h)
@@ -351,7 +352,7 @@ _ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int 
 }
 
 static void
-_ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize)
+_ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize __UNUSED__)
 {
    Evas_Engine_Info_FB *einfo;
    int rot_dif;
