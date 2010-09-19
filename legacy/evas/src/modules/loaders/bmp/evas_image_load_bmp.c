@@ -535,7 +535,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
 	goto close_file;
      }
    
-   if ((w != ie->w) || (h != ie->h))
+   if ((w != (int)ie->w) || (h != (int)ie->h))
      {
 	*error = EVAS_LOAD_ERROR_GENERIC;
 	goto close_file;

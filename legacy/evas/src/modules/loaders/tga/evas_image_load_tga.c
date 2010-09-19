@@ -88,7 +88,8 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
    if (fstat(fd, &ss) < 0) goto close_file;
    
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-   if (ss.st_size < (sizeof(tga_header) + sizeof(tga_footer))) goto close_file;
+   if (ss.st_size < (off_t)(sizeof(tga_header) + sizeof(tga_footer)))
+      goto close_file;
    seg = mmap(0, ss.st_size, PROT_READ, MAP_SHARED, fd, 0);
    if (seg == MAP_FAILED) goto close_file;
    filedata = seg;
@@ -103,7 +104,7 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
         footer_present = 1;
      }
-   filedata = (char *)filedata + sizeof(tga_header);
+   filedata = (unsigned char *)filedata + sizeof(tga_header);
    vinverted = !(header->descriptor & TGA_DESC_VERTICAL);
    switch (header->imageType)
      {
@@ -165,7 +166,8 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
    if (fstat(fd, &ss) < 0) goto close_file;
    
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-   if (ss.st_size < (sizeof(tga_header) + sizeof(tga_footer))) goto close_file;
+   if (ss.st_size < (off_t)(sizeof(tga_header) + sizeof(tga_footer)))
+      goto close_file;
    seg = mmap(0, ss.st_size, PROT_READ, MAP_SHARED, fd, 0);
    if (seg == MAP_FAILED) goto close_file;
    filedata = seg;
@@ -180,7 +182,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
         footer_present = 1;
      }
-   filedata = (char *)filedata + sizeof(tga_header);
+   filedata = (unsigned char *)filedata + sizeof(tga_header);
    vinverted = !(header->descriptor & TGA_DESC_VERTICAL);
    switch (header->imageType)
      {
@@ -206,7 +208,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
        IMG_TOO_BIG(w, h))
      goto close_file;
    
-   if ((w != ie->w) || (h != ie->h))
+   if ((w != (int)ie->w) || (h != (int)ie->h))
      {
 	*error = EVAS_LOAD_ERROR_GENERIC;
 	goto close_file;
@@ -479,7 +481,7 @@ module_open(Evas_Module *em)
 }
 
 static void
-module_close(Evas_Module *em)
+module_close(Evas_Module *em __UNUSED__)
 {
 }
 

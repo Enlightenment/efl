@@ -174,7 +174,6 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
    if (ie->scale > 1)
      {
 	jpeg_destroy_decompress(&cinfo);
-
 	rewind(f);
 	jpeg_create_decompress(&cinfo);
 	jpeg_stdio_src(&cinfo, f);
