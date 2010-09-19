@@ -596,6 +596,7 @@ op_copy_rel_pixel_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst)
    return copy_rel_gfx_pt_func_cpu(s, m, c, d);
 }
 
+/* XXX: not used
 static RGBA_Gfx_Pt_Func
 op_copy_rel_color_pt_get(DATA32 col, RGBA_Image *dst)
 {
@@ -615,6 +616,7 @@ op_copy_rel_color_pt_get(DATA32 col, RGBA_Image *dst)
 	d = DP;
    return copy_rel_gfx_pt_func_cpu(s, m, c, d);
 }
+*/
 
 static RGBA_Gfx_Pt_Func
 op_copy_rel_pixel_color_pt_get(Image_Entry_Flags src_flags, DATA32 col, RGBA_Image *dst)

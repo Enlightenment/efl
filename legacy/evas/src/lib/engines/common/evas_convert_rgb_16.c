@@ -17,9 +17,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
 {
 #ifndef BUILD_NO_DITHER_MASK
    DATA16 *d = (DATA16 *)dst;
-   int r1, g1, b1;
-   int r2, g2, b2;
-   int dith, dith2;
+   DATA32 r1, g1, b1;
+   DATA32 r2, g2, b2;
+   unsigned int dith, dith2;
    int x, y;
 
 #ifdef BUILD_LINE_DITHER_MASK
@@ -80,37 +80,37 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
      {
 	for (x = 0; x < w; x++)
 	  {
-	    DATA32  p = *src++,  q = *src++;
-
-	    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK];
-	    dith2 = dith >> DM_SHF(6);
-	    dith >>= DM_SHF(5);
-	    r1 = (p & 0xff0000) >> 19;
-	    g1 = (p & 0xff00) >> 10;
-	    b1 = (p & 0xff) >> 3;
-	    if ((r1 < 0x1f) && ((((p & 0xff0000) >> 16) - (r1 << 3)) >= dith )) r1++;
-	    if ((g1 < 0x3f) && ((((p & 0xff00) >> 8) - (g1 << 2)) >= dith2)) g1++;
-	    if ((b1 < 0x1f) && (((p & 0xff) - (b1 << 3)) >= dith )) b1++;
-
-	    x++;
-	    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK];
-	    dith2 = dith >> DM_SHF(6);
-	    dith >>= DM_SHF(5);
-	    r2 = (q & 0xff0000) >> 19;
-	    g2 = (q & 0xff00) >> 10;
-	    b2 = (q & 0xff) >> 3;
-	    if ((r2 < 0x1f) && ((((q & 0xff0000) >> 16) - (r2 << 3)) >= dith )) r2++;
-	    if ((g2 < 0x3f) && ((((q & 0xff00) >> 8) - (g2 << 2)) >= dith2)) g2++;
-	    if ((b2 < 0x1f) && (((q & 0xff) - (b2 << 3)) >= dith )) b2++;
+             DATA32  p = *src++,  q = *src++;
+             
+             dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK];
+             dith2 = dith >> DM_SHF(6);
+             dith >>= DM_SHF(5);
+             r1 = (p & 0xff0000) >> 19;
+             g1 = (p & 0xff00) >> 10;
+             b1 = (p & 0xff) >> 3;
+             if ((r1 < 0x1f) && ((((p & 0xff0000) >> 16) - (r1 << 3)) >= dith )) r1++;
+             if ((g1 < 0x3f) && ((((p & 0xff00) >> 8) - (g1 << 2)) >= dith2)) g1++;
+             if ((b1 < 0x1f) && (((p & 0xff) - (b1 << 3)) >= dith )) b1++;
+             
+             x++;
+             dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK];
+             dith2 = dith >> DM_SHF(6);
+             dith >>= DM_SHF(5);
+             r2 = (q & 0xff0000) >> 19;
+             g2 = (q & 0xff00) >> 10;
+             b2 = (q & 0xff) >> 3;
+             if ((r2 < 0x1f) && ((((q & 0xff0000) >> 16) - (r2 << 3)) >= dith )) r2++;
+             if ((g2 < 0x3f) && ((((q & 0xff00) >> 8) - (g2 << 2)) >= dith2)) g2++;
+             if ((b2 < 0x1f) && (((q & 0xff) - (b2 << 3)) >= dith )) b2++;
 	     
 #ifndef WORDS_BIGENDIAN
-	    *((DATA32 *)d) = (r2 << 27) | (g2 << 21) | (b2 << 16) |
-	                     (r1 << 11) | (g1 << 5) | (b1);
+             *((DATA32 *)d) = (r2 << 27) | (g2 << 21) | (b2 << 16) |
+	                      (r1 << 11) | (g1 << 5) | (b1);
 #else
-	    *((DATA32 *)d) = (r1 << 27) | (g1 << 21) | (b1 << 16) |
-	                     (r2 << 11) | (g2 << 5) | (b2);
+             *((DATA32 *)d) = (r1 << 27) | (g1 << 21) | (b1 << 16) |
+	                      (r2 << 11) | (g2 << 5) | (b2);
 #endif
-	    d += 2;
+             d += 2;
 	  }
 	src += src_jump;
 	d += dst_jump;
@@ -129,15 +129,15 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
 	     DATA32  p = *src++, q = *src++;
 
 #ifndef WORDS_BIGENDIAN
-	    *((DATA32 *)d) =
-	          (((q & 0xff0000) >> 19) << 27) | (((q & 0xff00) >> 10) << 21) | (((q & 0xff) >> 3) << 16) |
-	          (((p & 0xff0000) >> 19) << 11) | (((p & 0xff00) >> 10) << 5) | ((p & 0xff) >> 3);
+             *((DATA32 *)d) =
+                (((q & 0xff0000) >> 19) << 27) | (((q & 0xff00) >> 10) << 21) | (((q & 0xff) >> 3) << 16) |
+                (((p & 0xff0000) >> 19) << 11) | (((p & 0xff00) >> 10) << 5) | ((p & 0xff) >> 3);
 #else
-	    *((DATA32 *)d) =
-	         (((p & 0xff0000) >> 19) << 27) | (((p & 0xff00) >> 10) << 21) | (((p & 0xff) >> 3) << 16) |
-	         (((q & 0xff0000) >> 19) << 11) | (((q & 0xff00) >> 10) << 5) | ((q & 0xff) >> 3);
+             *((DATA32 *)d) =
+                (((p & 0xff0000) >> 19) << 27) | (((p & 0xff00) >> 10) << 21) | (((p & 0xff) >> 3) << 16) |
+                (((q & 0xff0000) >> 19) << 11) | (((q & 0xff00) >> 10) << 5) | ((q & 0xff) >> 3);
 #endif
-            d += 2;  w -= 2;
+             d += 2;  w -= 2;
           }
 	w = w0;
 	src += src_jump;
@@ -157,8 +157,8 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src
 {
 #ifndef BUILD_NO_DITHER_MASK
    DATA16 *d = (DATA16 *)dst;
-   int r, g, b;
-   int dith, dith2;
+   DATA32 r, g, b;
+   unsigned int dith, dith2;
    int x, y;
 
 #ifdef BUILD_LINE_DITHER_MASK
@@ -197,19 +197,19 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src
      {
 	for (x = 0; x < w; x++)
 	  {
-	    DATA32  p = *src++;
-
-	    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK];
-	    dith2 = dith >> DM_SHF(6);
-	    dith >>= DM_SHF(5);
-	    r = (p & 0xff0000) >> 19;
-	    g = (p & 0xff00) >> 10;
-	    b = (p & 0xff) >> 3;
-	    if ((r < 0x1f) && ((((p & 0xff0000) >> 16) - (r << 3)) >= dith )) r++;
-	    if ((g < 0x3f) && ((((p & 0xff00) >> 8) - (g << 2)) >= dith2)) g++;
-	    if ((b < 0x1f) && (((p & 0xff) - (b << 3)) >= dith )) b++;
-
-	    *d++ = (r << 11) | (g << 5) | b;
+             DATA32  p = *src++;
+             
+             dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK];
+             dith2 = dith >> DM_SHF(6);
+             dith >>= DM_SHF(5);
+             r = (p & 0xff0000) >> 19;
+             g = (p & 0xff00) >> 10;
+             b = (p & 0xff) >> 3;
+             if ((r < 0x1f) && ((((p & 0xff0000) >> 16) - (r << 3)) >= dith )) r++;
+             if ((g < 0x3f) && ((((p & 0xff00) >> 8) - (g << 2)) >= dith2)) g++;
+             if ((b < 0x1f) && (((p & 0xff) - (b << 3)) >= dith )) b++;
+             
+             *d++ = (r << 11) | (g << 5) | b;
 	  }
 	src += src_jump;
 	d += dst_jump;
@@ -225,8 +225,8 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src
      {
 	while (w--)
 	  {
-	    *d++ = (((*src & 0xff0000) >> 19) << 11) | (((*src & 0xff00) >> 10) << 5) | ((*src & 0xff) >> 3);
-            src++;
+             *d++ = (((*src & 0xff0000) >> 19) << 11) | (((*src & 0xff00) >> 10) << 5) | ((*src & 0xff) >> 3);
+             src++;
           }
 	w = w0;
 	src += src_jump;
