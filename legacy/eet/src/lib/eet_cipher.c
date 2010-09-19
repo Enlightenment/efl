@@ -279,6 +279,10 @@ on_error:
       EVP_PKEY_free(pkey);
 
 # endif /* ifdef HAVE_GNUTLS */
+#else
+   certificate_file = NULL;
+   private_key_file = NULL;
+   cb = NULL;
 #endif /* ifdef HAVE_SIGNATURE */
    return NULL;
 } /* eet_identity_open */
@@ -298,6 +302,8 @@ eet_identity_close(Eet_Key *key)
    EVP_PKEY_free(key->private_key);
 # endif /* ifdef HAVE_GNUTLS */
    free(key);
+#else
+   key = NULL;
 #endif /* ifdef HAVE_SIGNATURE */
 } /* eet_identity_close */
 
@@ -419,6 +425,8 @@ on_error:
    X509_print_fp(out, key->certificate);
 # endif /* ifdef HAVE_GNUTLS */
 #else /* ifdef HAVE_SIGNATURE */
+   key = NULL;
+   out = NULL;
    ERR("You need to compile signature support in EET.");
 #endif /* ifdef HAVE_SIGNATURE */
 } /* eet_identity_print */
@@ -474,6 +482,9 @@ eet_identity_compute_sha1(const void  *data_base,
 #  endif /* ifdef HAVE_OPENSSL */
 # endif /* ifdef HAVE_GNUTLS */
 #else /* ifdef HAVE_SIGNATURE */
+   data_base = NULL;
+   data_length = 0;
+   sha1_length = NULL;
    result = NULL;
 #endif /* ifdef HAVE_SIGNATURE */
 
@@ -642,6 +653,8 @@ on_error:
    munmap(data, st_buf.st_size);
    return err;
 #else /* ifdef HAVE_SIGNATURE */
+   fp = NULL;
+   key = NULL;
    return EET_ERROR_NOT_IMPLEMENTED;
 #endif /* ifdef HAVE_SIGNATURE */
 } /* eet_identity_sign */
@@ -813,6 +826,15 @@ eet_identity_check(const void   *data_base,
 
    return cert_der;
 #else /* ifdef HAVE_SIGNATURE */
+   data_base = NULL;
+   data_length = 0;
+   sha1 = NULL;
+   sha1_length = NULL;
+   signature_base = NULL;
+   signature_length = 0;
+   raw_signature_base = NULL;
+   raw_signature_length = NULL;
+   x509_length = NULL;
    return NULL;
 #endif /* ifdef HAVE_SIGNATURE */
 } /* eet_identity_check */
@@ -876,6 +898,9 @@ on_error:
    X509_free(x509);
 # endif /* ifdef HAVE_GNUTLS */
 #else /* ifdef HAVE_SIGNATURE */
+   certificate = NULL;
+   der_length = 0;
+   out = NULL;
    ERR("You need to compile signature support in EET.");
 #endif /* ifdef HAVE_SIGNATURE */
 } /* eet_identity_certificate_print */
