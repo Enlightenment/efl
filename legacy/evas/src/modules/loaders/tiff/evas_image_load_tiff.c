@@ -151,11 +151,11 @@ evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *ke
    if (fread(&magic_number, sizeof(uint16), 1, ffile) != 1)
      {
         fclose(ffile);
-	*error = EVAS_LOAD_ERROR_GENERIC;
+	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
 	return EINA_FALSE;
      }
    /* Apparently rewind(f) isn't sufficient */
-   fseek(ffile, (long)0, SEEK_SET);
+   fseek(ffile, 0, SEEK_SET);
 
    if ((magic_number != TIFF_BIGENDIAN) /* Checks if actually tiff file */
        && (magic_number != TIFF_LITTLEENDIAN))
