@@ -167,8 +167,8 @@ ef_cb_desktop_command_get(void)
     Test_Info *info;
     int ret;
 
-    getcwd(olddir, PATH_MAX);
-    chdir("/");
+    if (getcwd(olddir, PATH_MAX) != 0) ret = 0;
+    if (chdir("/") != 0) ret = 0;
 
     printf("\n");
     desktop = efreet_desktop_empty_new("test.desktop");
@@ -321,10 +321,10 @@ ef_cb_desktop_command_get(void)
     efreet_desktop_free(desktop);
     eina_list_free(files);
 
+    if (chdir(olddir) != 0) ret = 0;
+   
     ret = info->error > 0 ? 0 : 1;
     free(info);
-
-    chdir(olddir);
 
     return ret;
 }
