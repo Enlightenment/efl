@@ -319,12 +319,11 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
         0 
      };
 
+   if (svr->type & ECORE_CON_USE_SSL2) /* not supported because of security issues */
+     return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
+
    switch (svr->type & ECORE_CON_SSL)
      {
-      case ECORE_CON_USE_SSL2: /* not supported because of security issues */
-      case ECORE_CON_USE_SSL2 | ECORE_CON_LOAD_CERT: /* not supported because of security issues */
-         return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
-
       case ECORE_CON_USE_SSL3:
       case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
          proto = ssl3_proto;
@@ -517,12 +516,11 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         GNUTLS_SSL3, 
         0 };
 
+   if (cl->host_server->type & ECORE_CON_USE_SSL2) /* not supported because of security issues */
+     return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
+
    switch (cl->host_server->type & ECORE_CON_SSL)
      {
-      case ECORE_CON_USE_SSL2: /* not supported because of security issues */
-      case ECORE_CON_USE_SSL2 | ECORE_CON_LOAD_CERT: /* not supported because of security issues */
-         return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
-
       case ECORE_CON_USE_SSL3:
       case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
          proto = ssl3_proto;
@@ -742,17 +740,11 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
 {
    long options;
 
+   if (ssl_type & ECORE_CON_USE_SSL2)
+     return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
+
    switch (ssl_type)
      {
-      case ECORE_CON_USE_SSL2:
-      case ECORE_CON_USE_SSL2 | ECORE_CON_LOAD_CERT:
-         /* Unsafe version of SSL */
-         if (!svr->created)
-           SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())));
-         else
-           SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv2_server_method())));
-         break;
-
       case ECORE_CON_USE_SSL3:
       case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
          if (!svr->created)
