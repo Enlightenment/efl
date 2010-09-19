@@ -748,12 +748,12 @@ eet_init(void)
               "BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
      }
 
-#ifdef EFL_HAVE_POSIX_THREADS
+# ifdef EFL_HAVE_POSIX_THREADS
    if (gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread))
       WRN(
          "YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
 
-#endif /* ifdef EFL_HAVE_POSIX_THREADS */
+# endif /* ifdef EFL_HAVE_POSIX_THREADS */
    if (gnutls_global_init())
       goto shutdown_eet;
 
@@ -765,7 +765,9 @@ eet_init(void)
 
    return eet_init_count;
 
+#ifdef HAVE_GNUTLS
 shutdown_eet:
+#endif   
    eet_node_shutdown();
 unregister_log_domain:
    eina_log_domain_unregister(_eet_log_dom_global);
