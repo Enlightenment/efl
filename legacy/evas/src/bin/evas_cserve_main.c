@@ -374,41 +374,41 @@ _img_load(Image_Entry *ie)
 }
 
 static void
-_img_unload(Image_Entry *ie)
+_img_unload(Image_Entry *ie __UNUSED__)
 {
 }
 
 static void
-_img_dirty_region(Image_Entry *ie, unsigned int x, unsigned int y, unsigned int w, unsigned int h)
+_img_dirty_region(Image_Entry *ie __UNUSED__, unsigned int x __UNUSED__, unsigned int y __UNUSED__, unsigned int w __UNUSED__, unsigned int h __UNUSED__)
 {
 }
 
 static int
-_img_dirty(Image_Entry *dst, const Image_Entry *src)
-{
-   return 0;
-}
-
-static int
-_img_size_set(Image_Entry *dst, const Image_Entry *src, unsigned int w, unsigned int h)
+_img_dirty(Image_Entry *dst __UNUSED__, const Image_Entry *src __UNUSED__)
 {
    return 0;
 }
 
 static int
-_img_copied_data(Image_Entry *ie, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace)
+_img_size_set(Image_Entry *dst __UNUSED__, const Image_Entry *src __UNUSED__, unsigned int w __UNUSED__, unsigned int h __UNUSED__)
 {
    return 0;
 }
 
 static int
-_img_data(Image_Entry *ie, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace)
+_img_copied_data(Image_Entry *ie __UNUSED__, unsigned int w __UNUSED__, unsigned int h __UNUSED__, DATA32 *image_data __UNUSED__, int alpha __UNUSED__, int cspace __UNUSED__)
 {
    return 0;
 }
 
 static int
-_img_color_space(Image_Entry *ie, int cspace)
+_img_data(Image_Entry *ie __UNUSED__, unsigned int w __UNUSED__, unsigned int h __UNUSED__, DATA32 *image_data __UNUSED__, int alpha __UNUSED__, int cspace __UNUSED__)
+{
+   return 0;
+}
+
+static int
+_img_color_space(Image_Entry *ie __UNUSED__, int cspace __UNUSED__)
 {
    return 0;
 }
@@ -420,7 +420,7 @@ _img_load_data(Image_Entry *ie)
 }
 
 static int
-_img_mem_size_get(Image_Entry *ie)
+_img_mem_size_get(Image_Entry *ie __UNUSED__)
 {
    return 1;
 }
@@ -952,7 +952,7 @@ load_data_thread(void *data)
 #endif
 
 static int
-message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *data)
+message(void *fdata __UNUSED__, Server *s __UNUSED__, Client *c, int opcode, int size, unsigned char *data)
 {
    // copy data into  local aligned buffer... in case.
    unsigned char *tdata = alloca(size + 16);
@@ -1453,13 +1453,13 @@ parse_args(int argc, char **argv)
 static int exit_flag = 0;
 
 static void
-exit_handler(int x, siginfo_t *info, void *data)
+exit_handler(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    exit_flag = 1;
 }
 
 static void
-pipe_handler(int x, siginfo_t *info, void *data)
+pipe_handler(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
 }
 
