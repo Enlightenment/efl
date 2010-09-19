@@ -52,12 +52,12 @@
  *    if (elm_widget_focus_get(obj))
  *      {
  *         edje_object_signal_emit(wd->sub, "elm,action,focus", "elm");
- *         evas_object_focus_set(wd->sub, 1);
+ *         evas_object_focus_set(wd->sub, EINA_TRUE);
  *      }
  *    else
  *      {
  *         edje_object_signal_emit(wd->sub, "elm,action,unfocus", "elm");
- *         evas_object_focus_set(wd->sub, 0);
+ *         evas_object_focus_set(wd->sub, EINA_FALSE);
  *      }
  * }
  * 
@@ -127,7 +127,7 @@
  *    elm_widget_theme_hook_set(obj, _theme_hook);
  *    elm_widget_disable_hook_set(obj, _disable_hook);
  *    // this widget can focus (true, means yes it can, false means it can't)
- *    elm_widget_can_focus_set(obj, EINA_TRUE);
+ *    elm_widget_can_focus_set(obj, 1);
  * 
  *    // for this widget we will ad d1 sub object that is an edje object
  *    wd->sub = edje_object_add(e);

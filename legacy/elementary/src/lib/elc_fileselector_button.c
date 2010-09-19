@@ -81,12 +81,12 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    if (elm_widget_focus_get(obj))
      {
 	edje_object_signal_emit(wd->btn, "elm,action,focus", "elm");
-	evas_object_focus_set(wd->btn, 1);
+	evas_object_focus_set(wd->btn, EINA_TRUE);
      }
    else
      {
 	edje_object_signal_emit(wd->btn, "elm,action,unfocus", "elm");
-	evas_object_focus_set(wd->btn, 0);
+	evas_object_focus_set(wd->btn, EINA_FALSE);
      }
 }
 

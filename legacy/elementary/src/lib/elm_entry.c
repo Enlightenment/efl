@@ -348,7 +348,7 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    if (!wd->editable) return;
    if (elm_widget_focus_get(obj))
      {
-	evas_object_focus_set(wd->ent, 1);
+	evas_object_focus_set(wd->ent, EINA_TRUE);
 	edje_object_signal_emit(wd->ent, "elm,action,focus", "elm");
 	if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
 	evas_object_smart_callback_call(obj, SIG_FOCUSED, NULL);
@@ -356,7 +356,7 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    else
      {
 	edje_object_signal_emit(wd->ent, "elm,action,unfocus", "elm");
-	evas_object_focus_set(wd->ent, 0);
+	evas_object_focus_set(wd->ent, EINA_FALSE);
 	if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
 	evas_object_smart_callback_call(obj, SIG_UNFOCUSED, NULL);
      }
@@ -455,7 +455,7 @@ _dismissed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    if (wd->selmode)
      {
         if (!wd->password)
-          edje_object_part_text_select_allow_set(wd->ent, "elm.text", 1);
+          edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
      }
    elm_widget_scroll_freeze_pop(data);
    if (wd->hovdeljob) ecore_job_del(wd->hovdeljob);
@@ -470,7 +470,7 @@ _select(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    wd->selmode = EINA_TRUE;
    edje_object_part_text_select_none(wd->ent, "elm.text");
    if (!wd->password)
-     edje_object_part_text_select_allow_set(wd->ent, "elm.text", 1);
+     edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
    edje_object_signal_emit(wd->ent, "elm,state,select,on", "elm");
    elm_widget_scroll_hold_push(data);
 }
@@ -574,7 +574,7 @@ _long_press(void *data)
           (wd->ent, "context_menu_orientation");
         if ((context_menu_orientation) &&
             (!strcmp(context_menu_orientation, "horizontal")))
-          elm_hoversel_horizontal_set(wd->hoversel, 1);
+          elm_hoversel_horizontal_set(wd->hoversel, EINA_TRUE);
         elm_object_style_set(wd->hoversel, "entry");
         elm_widget_sub_object_add(data, wd->hoversel);
         elm_hoversel_label_set(wd->hoversel, "Text");
@@ -1262,8 +1262,8 @@ _event_selection_clear(void *data __UNUSED__, int type __UNUSED__, void *event _
 /*
    Widget_Data *wd = elm_widget_data_get(data);
    Ecore_X_Event_Selection_Clear *ev = event;
-   if (!wd) return 1;
-   if (!wd->have_selection) return 1;
+   if (!wd) return ECORE_CALLBACK_PASS_ON;
+   if (!wd->have_selection) return ECORE_CALLBACK_PASS_ON;
    if ((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
        (ev->selection == ECORE_X_SELECTION_PRIMARY))
      {

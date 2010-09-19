@@ -197,8 +197,8 @@ elm_anchorblock_add(Evas_Object *parent)
    elm_entry_item_provider_prepend(wd->entry, _item_provider, obj);
    elm_widget_resize_object_set(obj, wd->entry);
    elm_entry_editable_set(wd->entry, 0);
-   evas_object_size_hint_weight_set(wd->entry, 1.0, 1.0);
-   evas_object_size_hint_align_set(wd->entry, -1.0, -1.0);
+   evas_object_size_hint_weight_set(wd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(wd->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    evas_object_event_callback_add(wd->entry, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _changed_size_hints, obj);

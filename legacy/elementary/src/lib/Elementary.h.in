@@ -1,6 +1,6 @@
 /*
  *
- * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ * vim:ts=8:sw=3:sts=3:expandtab:cino=>5n-2f0^-2{2(0W1st0
  */
 #ifndef ELEMENTARY_H
 #define ELEMENTARY_H
@@ -728,14 +728,14 @@ extern "C" {
    EAPI void         elm_notify_content_set(Evas_Object *obj, Evas_Object *content);
    EAPI Evas_Object *elm_notify_content_unset(Evas_Object *obj);
    EAPI Evas_Object *elm_notify_content_get(const Evas_Object *obj);
-   EAPI void	     elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent);
-   EAPI void	     elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient);
+   EAPI void         elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent);
+   EAPI void         elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient);
    EAPI Elm_Notify_Orient	    elm_notify_orient_get(const Evas_Object *obj);
    EAPI void         elm_notify_timeout_set(Evas_Object *obj, int timeout);
    EAPI int          elm_notify_timeout_get(const Evas_Object *obj);
-   EAPI void	     elm_notify_timer_init(Evas_Object *obj);
-   EAPI void	     elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat);
-   EAPI Eina_Bool	 elm_notify_repeat_events_get(const Evas_Object *obj);
+   EAPI void         elm_notify_timer_init(Evas_Object *obj);
+   EAPI void         elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat);
+   EAPI Eina_Bool    elm_notify_repeat_events_get(const Evas_Object *obj);
    /* smart callbacks called:
     */
 
@@ -928,7 +928,7 @@ extern "C" {
    EAPI Evas_Object *elm_photo_add(Evas_Object *parent);
    EAPI Eina_Bool    elm_photo_file_set(Evas_Object *obj, const char *file);
    EAPI void         elm_photo_size_set(Evas_Object *obj, int size);
-   EAPI void 		 elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill);
+   EAPI void         elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill);
    /* smart callbacks called:
     * "clicked" - the user clicked the icon
     */
@@ -1041,8 +1041,8 @@ extern "C" {
    EAPI void         elm_object_tooltip_style_set(Evas_Object *obj, const char *style);
    EAPI const char  *elm_object_tooltip_style_get(const Evas_Object *obj);
 
-   EAPI void        elm_object_cursor_set(Evas_Object *obj, const char *cursor);
-   EAPI void        elm_object_cursor_unset(Evas_Object *obj);
+   EAPI void         elm_object_cursor_set(Evas_Object *obj, const char *cursor);
+   EAPI void         elm_object_cursor_unset(Evas_Object *obj);
 
    typedef struct _Elm_Menu_Item Elm_Menu_Item; /**< Item of Elm_Menu. Sub-type of Elm_Widget_Item */
    EAPI Evas_Object     *elm_menu_add(Evas_Object *parent);
@@ -1312,27 +1312,27 @@ extern "C" {
 	} func;
      };
 
-   EAPI Evas_Object 		*elm_slideshow_add(Evas_Object *parent);
-   EAPI Elm_Slideshow_Item	*elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data);
-   EAPI void				 elm_slideshow_show(Elm_Slideshow_Item *item);
-   EAPI void				 elm_slideshow_next(Evas_Object *obj);
-   EAPI void				 elm_slideshow_previous(Evas_Object *obj);
-   EAPI const Eina_List 	*elm_slideshow_transitions_get(const Evas_Object *obj);
-   EAPI void	        	 elm_slideshow_transition_set(Evas_Object *obj, const char *);
-   EAPI const char     		*elm_slideshow_transition_get(const Evas_Object *obj);
-   EAPI void            	 elm_slideshow_timeout_set(Evas_Object *obj ,int timeout);
-   EAPI int					 elm_slideshow_timeout_get(const Evas_Object *obj);
-   EAPI void				 elm_slideshow_loop_set(Evas_Object *obj, Eina_Bool loop);
-   EAPI Eina_Bool			 elm_slideshow_loop_get(const Evas_Object *obj);
-   EAPI void				 elm_slideshow_clear(Evas_Object *obj);
-   EAPI const Eina_List 	*elm_slideshow_items_get(const Evas_Object *obj);
-   EAPI void				 elm_slideshow_item_del(Elm_Slideshow_Item *item);
-   EAPI void 				*elm_slideshow_item_data_get(Elm_Slideshow_Item *item);
-   EAPI Elm_Slideshow_Item	*elm_slideshow_item_current_get(const Evas_Object *obj);
-   EAPI Evas_Object*		 elm_slideshow_item_object_get(Elm_Slideshow_Item* item);
-   EAPI const char 			*elm_slideshow_layout_get(const Evas_Object *obj);
-   EAPI void 				 elm_slideshow_layout_set(Evas_Object *obj, const char *layout);
-   EAPI const Eina_List 	*elm_slideshow_layouts_get(const Evas_Object *obj);
+   EAPI Evas_Object        *elm_slideshow_add(Evas_Object *parent);
+   EAPI Elm_Slideshow_Item *elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data);
+   EAPI void                elm_slideshow_show(Elm_Slideshow_Item *item);
+   EAPI void                elm_slideshow_next(Evas_Object *obj);
+   EAPI void                elm_slideshow_previous(Evas_Object *obj);
+   EAPI const Eina_List    *elm_slideshow_transitions_get(const Evas_Object *obj);
+   EAPI void                elm_slideshow_transition_set(Evas_Object *obj, const char *);
+   EAPI const char         *elm_slideshow_transition_get(const Evas_Object *obj);
+   EAPI void                elm_slideshow_timeout_set(Evas_Object *obj ,int timeout);
+   EAPI int                 elm_slideshow_timeout_get(const Evas_Object *obj);
+   EAPI void                elm_slideshow_loop_set(Evas_Object *obj, Eina_Bool loop);
+   EAPI Eina_Bool           elm_slideshow_loop_get(const Evas_Object *obj);
+   EAPI void                elm_slideshow_clear(Evas_Object *obj);
+   EAPI const Eina_List    *elm_slideshow_items_get(const Evas_Object *obj);
+   EAPI void                elm_slideshow_item_del(Elm_Slideshow_Item *item);
+   EAPI void               *elm_slideshow_item_data_get(Elm_Slideshow_Item *item);
+   EAPI Elm_Slideshow_Item *elm_slideshow_item_current_get(const Evas_Object *obj);
+   EAPI Evas_Object*        elm_slideshow_item_object_get(Elm_Slideshow_Item* item);
+   EAPI const char         *elm_slideshow_layout_get(const Evas_Object *obj);
+   EAPI void                elm_slideshow_layout_set(Evas_Object *obj, const char *layout);
+   EAPI const Eina_List    *elm_slideshow_layouts_get(const Evas_Object *obj);
 
 
    EAPI Evas_Object *elm_fileselector_add(Evas_Object *parent);
@@ -1426,10 +1426,10 @@ extern "C" {
    EAPI Elm_Index_Item *elm_index_item_find(Evas_Object *obj, const void *item);
    EAPI void         elm_index_item_clear(Evas_Object *obj);
    EAPI void         elm_index_item_go(Evas_Object *obj, int level);
-   EAPI void         *elm_index_item_data_get(const Elm_Index_Item *item);
+   EAPI void        *elm_index_item_data_get(const Elm_Index_Item *item);
    EAPI void         elm_index_item_data_set(Elm_Index_Item *it, const void *data);
    EAPI void         elm_index_item_del_cb_set(Elm_Index_Item *it, Evas_Smart_Cb func);
-   EAPI const char   *elm_index_item_letter_get(const Elm_Index_Item *item);
+   EAPI const char  *elm_index_item_letter_get(const Elm_Index_Item *item);
    /* smart callbacks called:
     * "changed" - when the selected index item changes
     * "delay,changed" - when the selected index item changes, but after some small idle period
@@ -1688,18 +1688,18 @@ extern "C" {
    typedef enum {ELM_ANIMATOR_CURVE_LINEAR, ELM_ANIMATOR_CURVE_IN_OUT, ELM_ANIMATOR_CURVE_IN, ELM_ANIMATOR_CURVE_OUT} Elm_Animator_Curve_Style; 
 
    EAPI Elm_Animator* elm_animator_add(Evas_Object *parent);
-   EAPI void elm_animator_del(Elm_Animator *animator);
-   EAPI void elm_animator_duration_set(Elm_Animator *animator, double duration);
-   EAPI void elm_animator_operation_callback_set(Elm_Animator *animator, void (*func)(void *data, Elm_Animator *animator, double frame), void *data); 
-   EAPI void elm_animator_completion_callback_set(Elm_Animator *animator, void (*func)(void *data), void *data);
-   EAPI void elm_animator_stop(Elm_Animator *animator);
-   EAPI void elm_animator_repeat_set(Elm_Animator *animator, unsigned int repeat_cnt);
-   EAPI void elm_animator_animate(Elm_Animator *animator);
-   EAPI void elm_animator_curve_style_set(Elm_Animator *animator, Elm_Animator_Curve_Style cs);
-   EAPI void elm_animator_auto_reverse_set(Elm_Animator *animator, Eina_Bool reverse);
-   EAPI Eina_Bool elm_animator_auto_reverse_get(Elm_Animator *animator);
-   EAPI Eina_Bool elm_animator_operating_get(Elm_Animator *animator);
-   EAPI unsigned int elm_animator_repeat_get(Elm_Animator *animator);
+   EAPI void          elm_animator_del(Elm_Animator *animator);
+   EAPI void          elm_animator_duration_set(Elm_Animator *animator, double duration);
+   EAPI void          elm_animator_operation_callback_set(Elm_Animator *animator, void (*func)(void *data, Elm_Animator *animator, double frame), void *data); 
+   EAPI void          elm_animator_completion_callback_set(Elm_Animator *animator, void (*func)(void *data), void *data);
+   EAPI void          elm_animator_stop(Elm_Animator *animator);
+   EAPI void          elm_animator_repeat_set(Elm_Animator *animator, unsigned int repeat_cnt);
+   EAPI void          elm_animator_animate(Elm_Animator *animator);
+   EAPI void          elm_animator_curve_style_set(Elm_Animator *animator, Elm_Animator_Curve_Style cs);
+   EAPI void          elm_animator_auto_reverse_set(Elm_Animator *animator, Eina_Bool reverse);
+   EAPI Eina_Bool     elm_animator_auto_reverse_get(Elm_Animator *animator);
+   EAPI Eina_Bool     elm_animator_operating_get(Elm_Animator *animator);
+   EAPI unsigned int  elm_animator_repeat_get(Elm_Animator *animator);
 
    /* calendar */
    typedef enum {ELM_CALENDAR_UNIQUE, ELM_CALENDAR_DAILY, ELM_CALENDAR_WEEKLY, ELM_CALENDAR_MONTHLY, ELM_CALENDAR_ANNUALLY} Elm_Calendar_Mark_Repeat;
@@ -1707,21 +1707,21 @@ extern "C" {
 
    EAPI Evas_Object *elm_calendar_add(Evas_Object *parent);
    EAPI const char **elm_calendar_weekdays_names_get(const Evas_Object *obj);
-   EAPI void elm_calendar_weekdays_names_set(Evas_Object *obj, const char *weekdays[]);
-   EAPI double elm_calendar_interval_get(const Evas_Object *obj);
-   EAPI void elm_calendar_interval_set(Evas_Object *obj, double interval);
-   EAPI void elm_calendar_min_max_year_get(const Evas_Object *obj, int *min, int *max);
-   EAPI void elm_calendar_min_max_year_set(Evas_Object *obj, int min, int max);
-   EAPI Eina_Bool elm_calendar_day_selection_enabled_get(const Evas_Object *obj);
-   EAPI void elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled);
-   EAPI Eina_Bool elm_calendar_selected_time_get(const Evas_Object *obj, struct tm *selected_time);
-   EAPI void elm_calendar_selected_time_set(Evas_Object *obj, struct tm *selected_time);
-   EAPI void elm_calendar_format_function_set(Evas_Object *obj, char * (*format_function) (struct tm *stime));
+   EAPI void         elm_calendar_weekdays_names_set(Evas_Object *obj, const char *weekdays[]);
+   EAPI double       elm_calendar_interval_get(const Evas_Object *obj);
+   EAPI void         elm_calendar_interval_set(Evas_Object *obj, double interval);
+   EAPI void         elm_calendar_min_max_year_get(const Evas_Object *obj, int *min, int *max);
+   EAPI void         elm_calendar_min_max_year_set(Evas_Object *obj, int min, int max);
+   EAPI Eina_Bool    elm_calendar_day_selection_enabled_get(const Evas_Object *obj);
+   EAPI void         elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled);
+   EAPI Eina_Bool    elm_calendar_selected_time_get(const Evas_Object *obj, struct tm *selected_time);
+   EAPI void         elm_calendar_selected_time_set(Evas_Object *obj, struct tm *selected_time);
+   EAPI void         elm_calendar_format_function_set(Evas_Object *obj, char * (*format_function) (struct tm *stime));
    EAPI Elm_Calendar_Mark *elm_calendar_mark_add(Evas_Object *obj, const char *mark_type, struct tm *mark_time, Elm_Calendar_Mark_Repeat repeat);
-   EAPI void elm_calendar_mark_del(Elm_Calendar_Mark *mark);
-   EAPI void elm_calendar_marks_clear(Evas_Object *obj);
+   EAPI void         elm_calendar_mark_del(Elm_Calendar_Mark *mark);
+   EAPI void         elm_calendar_marks_clear(Evas_Object *obj);
    EAPI const Eina_List *elm_calendar_marks_get(const Evas_Object *obj);
-   EAPI void elm_calendar_marks_draw(Evas_Object *obj);
+   EAPI void         elm_calendar_marks_draw(Evas_Object *obj);
    /* smart callbacks called:
     * changed - emitted when the user select a day or change the displayed
     * month.

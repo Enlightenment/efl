@@ -480,7 +480,7 @@ elm_theme_flush(Elm_Theme *th)
 }
 
 /**
- * This flushes all themems (default and specific ones).
+ * This flushes all themes (default and specific ones).
  * 
  * This will flush all themes in the current application context, by calling
  * elm_theme_flush() on each of them.

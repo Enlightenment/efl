@@ -225,8 +225,8 @@ _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level)
         edje_object_part_text_set(o, "elm.text", it->letter);
         edje_object_size_min_restricted_calc(o, &mw, &mh, 0, 0);
         evas_object_size_hint_min_set(o, mw, mh);
-        evas_object_size_hint_weight_set(o, 1.0, 1.0);
-        evas_object_size_hint_align_set(o, -1.0, -1.0);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_widget_sub_object_add(obj, o);
         evas_object_box_append(box, o);
         stacking = edje_object_data_get(o, "stacking");

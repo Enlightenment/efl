@@ -181,8 +181,8 @@ _activate(Evas_Object *obj)
 	     elm_button_icon_set(bt, ic);
 	     evas_object_show(ic);
 	  }
-	evas_object_size_hint_weight_set(bt, 1.0, 0.0);
-	evas_object_size_hint_align_set(bt, -1.0, -1.0);
+	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_box_pack_end(bx, bt);
 	evas_object_smart_callback_add(bt, "clicked", _item_clicked, it);
 	evas_object_show(bt);

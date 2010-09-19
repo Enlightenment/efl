@@ -60,12 +60,12 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    if (elm_widget_focus_get(obj))
      {
 	edje_object_signal_emit(wd->btn, "elm,action,focus", "elm");
-	evas_object_focus_set(wd->btn, 1);
+	evas_object_focus_set(wd->btn, EINA_TRUE);
      }
    else
      {
 	edje_object_signal_emit(wd->btn, "elm,action,unfocus", "elm");
-	evas_object_focus_set(wd->btn, 0);
+	evas_object_focus_set(wd->btn, EINA_FALSE);
      }
 }
 
@@ -242,7 +242,7 @@ elm_button_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
-   elm_widget_can_focus_set(obj, 1 );                 
+   elm_widget_can_focus_set(obj, 1);                 
 
    wd->btn = edje_object_add(e);
    _elm_theme_object_set(obj, wd->btn, "button", "base", "default");
