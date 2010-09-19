@@ -278,11 +278,12 @@ eng_image_colorspace_set(void *data __UNUSED__, void *image __UNUSED__,
    NOT_IMPLEMENTED();
 }
 
-static void
-eng_image_native_set(void *data __UNUSED__, void *image __UNUSED__,
+static void *
+eng_image_native_set(void *data __UNUSED__, void *image,
                      void *native __UNUSED__)
 {
    NOT_IMPLEMENTED();
+   return image;
 }
 
 static void *

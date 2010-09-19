@@ -11,8 +11,7 @@
 int _evas_engine_soft_sdl_log_dom = -1;
 /* #define DEBUG_SDL */
 
-static Evas_Func	func = {};
-static Evas_Func	pfunc = {};
+static Evas_Func func, pfunc;
 
 static void*                     _sdl_output_setup	(int w, int h, int fullscreen, int noframe, int alpha, int hwsurface);
 
@@ -22,7 +21,7 @@ static void                      _sdl_image_delete      (Engine_Image_Entry *eim
 static int                       _sdl_image_constructor (Engine_Image_Entry*, void* data);
 static void                      _sdl_image_destructor  (Engine_Image_Entry *eim);
 
-static void                      _sdl_image_dirty_region(Engine_Image_Entry *eim, int x, int y, int w, int h);
+static void                      _sdl_image_dirty_region(Engine_Image_Entry *eim, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
 
 static int                       _sdl_image_dirty       (Engine_Image_Entry *dst, const Engine_Image_Entry *src);
 
@@ -281,7 +280,7 @@ evas_engine_sdl_output_redraws_next_update_push	(void *data, void *surface __UNU
 }
 
 static void
-_sdl_image_dirty_region(Engine_Image_Entry *eim, int x, int y, int w, int h)
+_sdl_image_dirty_region(Engine_Image_Entry *eim, unsigned int x, unsigned int y, unsigned int w, unsigned int h)
 {
    SDL_Engine_Image_Entry       *dst;
    RGBA_Image *im;

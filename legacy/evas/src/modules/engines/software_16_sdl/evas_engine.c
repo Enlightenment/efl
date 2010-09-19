@@ -10,8 +10,7 @@
 int _evas_engine_soft16_sdl_log_dom = -1;
 
 /* function tables - filled in later (func and parent func) */
-static Evas_Func        func = {};
-static Evas_Func        pfunc = {};
+static Evas_Func func, pfunc;
 
 static Engine_Image_Entry       *_sdl16_image_alloc       (void);
 static void                      _sdl16_image_delete      (Engine_Image_Entry *eim);
