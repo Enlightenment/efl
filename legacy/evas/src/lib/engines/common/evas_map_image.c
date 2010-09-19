@@ -80,7 +80,7 @@ _limit(Span *s, int c1, int c2, int nocol)
 
 // 12.63 % of time - this can improve
 static void
-_calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy, int cw, int ch)
+_calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy __UNUSED__, int cw, int ch __UNUSED__)
 {
    int i, y, yp;
    int py[4];

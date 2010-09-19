@@ -8,7 +8,10 @@
              FPc u, v, ud, vd, dv, ue, ve;
              DATA32 *d, *s;
 #ifdef COLMUL             
-             FPc cv, cd, cc; // col
+             FPc cv, cd; // col
+# ifdef SCALE_USING_MMX
+             FPc cc;
+#endif             
              DATA32 c1, c2; // col
 #endif             
              Line *line;
@@ -123,7 +126,7 @@
              FPc u, v, ud, vd, ue, ve;
              DATA32 *d, *s;
 #ifdef COLMUL
-             FPc cv, cd, cc; // col
+             FPc cv, cd; // col
              DATA32 c1, c2; // col
 #endif             
              Line *line;

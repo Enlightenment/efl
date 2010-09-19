@@ -89,7 +89,9 @@
    while (ww > 0)
      {
 # ifdef COLMUL
+#  ifndef COLBLACK        
         DATA32 val1, cval; // col
+#  endif
 # endif
 # ifdef COLBLACK
         *d = 0xff000000; // col
